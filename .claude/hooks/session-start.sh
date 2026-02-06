@@ -14,6 +14,3 @@ if ! command -v gh &>/dev/null; then
   cp "/tmp/gh_${GH_VERSION}_linux_amd64/bin/gh" /usr/local/bin/gh
   rm -rf /tmp/gh.tar.gz "/tmp/gh_${GH_VERSION}_linux_amd64"
 fi
-
-# Verify gh is available
-gh --version
