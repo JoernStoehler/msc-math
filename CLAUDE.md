@@ -58,6 +58,8 @@ Sessions follow: **scope → plan → implement → review → PR → [compare �
 - **review**: Compare code to plan and to scope. Look for mismatches across abstraction levels.
 - **triage**: Update GitHub issues — close completed, split, enrich, reprioritize.
 
+Agents commit and push to their working branch. Jörn creates PRs, reviews, and merges. Agents do not create PRs.
+
 Jörn gatekeeps between phases: PRs require his review before merge, and he steers scope and plan.
 
 Before the session ends, do a **post-session reflection**: report friction points, identify useful invariants or behavioral rules discovered during the session, flag any leftover tasks mentioned but not completed, and note workflow improvements (e.g. discovered subagent patterns, useful commands). Jörn aggregates these across sessions.
