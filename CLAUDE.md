@@ -103,3 +103,9 @@ pytest experiments/
 - Label invariants as `[aspirational]` if not yet satisfied
 - Put rules in the right CLAUDE.md file (root = all agents, crates/ = Rust, thesis/ = LaTeX, experiments/ = Python)
 - Prefer simple, common, expected rules that don't claim excessive agent attention beyond their assigned work
+
+## Workflows
+
+### Check clarity with subagents
+
+When you produce content other agents will consume (CLAUDE.md files, mathematical definitions, proofs, algorithm descriptions): run a Sonnet subagent with a targeted questionnaire to test whether a fresh agent can reproduce the intended understanding. Ask both for comprehension answers and for what's unclear or ambiguous.
