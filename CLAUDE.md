@@ -86,7 +86,6 @@ pytest experiments/
 ## Agent behavior rules
 
 - Attempt before escalating to Jörn. If you fail, present what you learned.
-- Keep files < 500 lines. Split proactively.
 - When verifying proofs: flag spots you're least confident in, even if you found no error. Never declare a proof "verified" — declare what you checked and what remains.
 - Agents cannot reliably verify mathematical proofs. Proof correctness requires Jörn's review. Agent-written proofs are drafts until Jörn reviews them.
 - Write proofs with enough annotation to be easily verifiable. Never handwave or gloss over gaps. This protects against subtly flawed proofs that look correct on a skim but hide errors in glossed-over steps.

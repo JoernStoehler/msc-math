@@ -35,7 +35,6 @@ Where domains overlap, algorithms must agree on the computed capacity.
 
 - Colocated tests: `foo.rs` has `foo_test.rs` in the same directory. Submodule tests use `#[path = "foo_test.rs"]`.
 - A source file may have multiple test files (e.g. `foo_math_test.rs`, `foo_test.rs`) — see testing philosophy below
-- Single-purpose files, < 500 lines each
 - Functional programming style
 - Types encode mathematical invariants, validated at construction
 - nalgebra for linear algebra, proptest for property-based testing
