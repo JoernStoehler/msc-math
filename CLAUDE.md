@@ -50,12 +50,12 @@ These are true about the repo right now and must remain true:
 
 ## Agent workflow
 
-Sessions follow: **scope → plan → implement → review → PR → [compare →] merge → triage**
+Sessions follow: **scope → plan → implement → review → push** · · · Jörn: **PR → merge** · · · **triage**
 
 - **scope**: Critically evaluate the assignment. Push back on contradictions, gaps, suboptimal reversible decisions. Situate in the broader thesis context.
 - **plan**: Decompose into steps. Compare to conventions. Play through the plan and notice gaps.
 - **implement**: Execute the plan. Trust signatures from the plan; react to feedback from the repo.
-- **review**: Compare code to plan and to scope. Look for mismatches across abstraction levels.
+- **review**: Re-read the result as a whole. Compare code to plan and to scope. Catch drift, gaps, and mismatches across abstraction levels.
 - **triage**: Update GitHub issues — close completed, split, enrich, reprioritize.
 
 Agents commit and push to their working branch. Jörn creates PRs, reviews, and merges. Agents do not create PRs.
