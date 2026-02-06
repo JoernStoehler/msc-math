@@ -423,6 +423,7 @@ dependencies = [
 name = "tube"
 version = "0.1.0"
 dependencies = [
+ "geom2d",
  "geom4d",
  "nalgebra",
  "proptest",
