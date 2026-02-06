@@ -1,0 +1,14 @@
+[package]
+name = "datasets"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+nalgebra = { workspace = true }
+geom4d = { path = "../geom4d" }
+hk2017 = { path = "../hk2017" }
+billiard = { path = "../billiard" }
+tube = { path = "../tube" }
+
+[dev-dependencies]
+proptest = { workspace = true }
