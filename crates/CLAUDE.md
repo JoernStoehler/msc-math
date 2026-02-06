@@ -13,13 +13,12 @@ All tests must pass before committing.
 ## Crate dependency graph
 
 ```
-geom2d
-  ├─> geom4d
-  │     ├─> hk2017
-  │     ├─> billiard
-  │     ├─> tube (also depends on geom2d directly)
-  │     └─> datasets (also depends on hk2017, billiard, tube)
-  └─> tube (CZ index, linear fixed-point problems)
+geom2d ─────────────────────────────────┐
+  └─> geom4d                            │
+        ├─> hk2017    (+ geom2d)        │
+        ├─> billiard  (+ geom2d)        │
+        ├─> tube      (+ geom2d)        │
+        └─> datasets  (+ hk2017, billiard, tube)
 ```
 
 ## Three capacity algorithms
