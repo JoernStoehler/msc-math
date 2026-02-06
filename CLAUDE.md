@@ -57,6 +57,8 @@ Sessions follow: **scope → plan → implement → review → PR → [compare �
 - **review**: Compare code to plan and to scope. Look for mismatches across abstraction levels.
 - **triage**: Update GitHub issues — close completed, split, enrich, reprioritize.
 
+Jörn gatekeeps between phases: PRs require his review before merge, and he steers scope and plan.
+
 ## Environment (Claude Code on the web)
 
 - Sessions run in isolated VMs with the repo cloned at `/home/user/msc-math`
@@ -86,3 +88,10 @@ pytest experiments/
 - When verifying proofs: flag spots you're least confident in, even if you found no error. Never declare a proof "verified" — declare what you checked and what remains.
 - Agents cannot reliably verify mathematical proofs. Proof correctness requires Jörn's review. Agent-written proofs are drafts until Jörn reviews them.
 - Write proofs with enough annotation to be easily verifiable. Never handwave or gloss over gaps. This protects against subtly flawed proofs that look correct on a skim but hide errors in glossed-over steps.
+
+## CLAUDE.md conventions
+
+- Invariants and behaviors are documented only after empirically confirmed as useful (from past work or Anthropic's guides)
+- Label invariants as `[aspirational]` if not yet satisfied
+- Put rules in the right CLAUDE.md file (root = all agents, crates/ = Rust, thesis/ = LaTeX, experiments/ = Python)
+- Prefer simple, common, expected rules that don't claim excessive agent attention beyond their assigned work
