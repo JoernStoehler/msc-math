@@ -15,15 +15,22 @@ This repo is a completed master thesis with:
 ## Repo structure
 
 ```
-thesis/          LaTeX thesis document
-crates/          Rust workspace (cargo build/test from here)
-  geom2d/        2D symplectic geometry primitives
-  geom4d/        4D convex geometry, polytopes, symplectic structures
-  hk2017/        Haim-Kislev 2017 algorithm (all polytopes, exponential cost)
-  billiard/      Billiard algorithm (Lagrangian products only, fast)
-  tube/           Tube algorithm (no Lagrangian 2-faces, moderate cost)
-  datasets/      Dataset generation orchestration
-experiments/     Python scripts consuming Rust-generated datasets
+CLAUDE.md          This file (all agents read this)
+thesis/            LaTeX thesis document
+  CLAUDE.md        Thesis-specific conventions
+crates/            Rust workspace (cargo build/test from here)
+  CLAUDE.md        Rust-specific conventions, testing philosophy, math docs
+  geom2d/          2D symplectic geometry primitives
+  geom4d/          4D convex geometry, polytopes, symplectic structures
+  hk2017/          Haim-Kislev 2017 algorithm (all polytopes, exponential cost)
+  billiard/        Billiard algorithm (Lagrangian products only, fast)
+  tube/            Tube algorithm (no Lagrangian 2-faces, moderate cost)
+  datasets/        Dataset generation orchestration
+experiments/       Python scripts consuming Rust-generated datasets
+  CLAUDE.md        Experiments-specific conventions
+  scripts/         Independent .py scripts
+  data/            gitignored — populated by Rust pipeline
+  figures/         gitignored — populated by Python scripts
 ```
 
 ## Mathematical context
