@@ -31,6 +31,7 @@ experiments/       Python scripts consuming Rust-generated datasets
   scripts/         Independent .py scripts
   data/            gitignored — populated by Rust pipeline
   figures/         gitignored — populated by Python scripts
+papers/            arxiv .tex sources for reference (HK2017, CH2021, HK-O 2024, ...)
 ```
 
 ## Mathematical context
