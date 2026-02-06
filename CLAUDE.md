@@ -39,10 +39,11 @@ We probe the conjecture by computing sys across large polytope datasets and look
 These are true about the repo right now and must remain true:
 
 - `cargo test` passes from `crates/` with zero failures
-- Source and test files are colocated: `foo.rs` is tested by `foo_test.rs` in the same directory
+- Source and test files are colocated: `foo.rs` is tested by `foo_test.rs` in the same directory (a source file may have multiple test files)
 - Each `.rs` file is single-purpose and < 500 lines
 - Rust types have enforced invariants matching their mathematical definitions (e.g. `Polytope4` = bounded, origin-interior, half-space representation — validated at construction)
 - Colocated test modules use `#[path = "..._test.rs"]` for submodules
+- Mathematical definitions, lemmas, and proofs are committed in doc comments (or `*_proof.md` for long proofs) — the Rust crates are self-contained mathematically, independent of thesis/
 
 ## Agent workflow
 
