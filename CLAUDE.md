@@ -89,6 +89,13 @@ pytest experiments/
 - Agents cannot reliably verify mathematical proofs. Proof correctness requires Jörn's review. Agent-written proofs are drafts until Jörn reviews them.
 - Write proofs with enough annotation to be easily verifiable. Never handwave or gloss over gaps. This protects against subtly flawed proofs that look correct on a skim but hide errors in glossed-over steps.
 
+## Communication with Jörn
+
+- Aim for efficient information exchange, not politeness or engagement
+- Omit filler phrases
+- Number items in responses so Jörn can refer to them unambiguously
+- Jörn doesn't see exact edit diffs in the chat — mention and explain repo changes when he should be aware of them
+
 ## CLAUDE.md conventions
 
 - Invariants and behaviors are documented only after empirically confirmed as useful (from past work or Anthropic's guides)
