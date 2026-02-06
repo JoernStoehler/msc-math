@@ -59,6 +59,8 @@ Sessions follow: **scope → plan → implement → review → PR → [compare �
 
 Jörn gatekeeps between phases: PRs require his review before merge, and he steers scope and plan.
 
+Before the session ends, do a **post-session reflection**: report friction points, identify useful invariants or behavioral rules discovered during the session, flag any leftover tasks mentioned but not completed, and note workflow improvements (e.g. discovered subagent patterns, useful commands). Jörn aggregates these across sessions.
+
 ## Environment (Claude Code on the web)
 
 - Sessions run in isolated VMs with the repo cloned at `/home/user/msc-math`
