@@ -1,0 +1,91 @@
+\begin{thebibliography}{10}
+
+\bibitem{Abbondandolo}
+{\sc A.~Abbondandolo and P.~Majer}, {\em A non-squeezing theorem for convex
+  symplectic images of the {H}ilbert ball}, Calculus of Variations and Partial
+  Differential Equations, 54 (2015), pp.~1469--1506.
+
+\bibitem{Karasev_private}
+{\sc A.~Akopyan and R.~Karasev}, {\em Estimating symplectic capacities from
+  lengths of closed curves on the unit spheres}, arXiv:1801.00242,  (2017).
+
+\bibitem{bang_problem}
+{\sc A.~Akopyan, R.~Karasev, and F.~Petrov}, {\em Bang’s problem and
+  symplectic invariants}, arXiv:1404.0871,  (2014).
+
+\bibitem{singular_capacity}
+{\sc S.~Artstein-Avidan and Y.~Ostrover}, {\em Bounds for {M}inkowski billiard
+  trajectories in convex bodies}, Int. Math. Res. Not. IMRN,  (2014),
+  p.~165–193.
+
+\bibitem{capacity_survey_1}
+{\sc K.~Cieliebak, H.~Hofer, J.~Latschev, and F.~Schlenk}, {\em Quantitative
+  symplectic geometry}, in Dynamics, ergodic theory, and geometry, vol.~54 of
+  Math. Sci. Res. Inst. Publ., Cambridge Univ. Press, Cambridge, 2007,
+  pp.~1--44.
+
+\bibitem{clarke}
+{\sc F.~H. Clarke}, {\em A classical variational principle for periodic
+  {H}amiltonian trajectories}, Proc. Amer. Math. Soc., 76 (1979), pp.~186--188.
+
+\bibitem{eh_capacity_def}
+{\sc I.~Ekeland and H.~Hofer}, {\em Symplectic topology and {H}amiltonian
+  dynamics}, Math. Z., 200 (1989), p.~355–378.
+
+\bibitem{non_squeezing}
+{\sc M.~Gromov}, {\em Pseudoholomorphic curves in symplectic manifolds},
+  Invent. Math., 82 (1985), pp.~307--347.
+
+\bibitem{hz_capacity}
+{\sc H.~{}Hofer and E.~Zehnder}, {\em A new capacity for symplectic manifolds},
+  in Analysis, et cetera, Academic Press, Boston, MA, 1990, p.~405–427.
+
+\bibitem{hofer_zehnder}
+{\sc H.~Hofer and E.~Zehnder}, {\em Symplectic Invariants and {H}amiltonian
+  Dynamics}, Birkhauser Advanced Texts, Birkhauser Verlag, 1994.
+
+\bibitem{singular_survey_1}
+{\sc A.~K\"unzle}, {\em Une capacit\'e symplectique pour les ensembles convexes
+  et quelques applications}, Ph.D. thesis, Universit\'e Paris IX Dauphine,
+  (1990).
+
+\bibitem{singular_survey_2}
+{\sc A.~{}K\"unzle}, {\em Singular {H}amiltonian systems and symplectic
+  capacities}, Singularities and differential equations, Banach Center Publ.,
+  33, Polish Acad. Sci., Warsaw,  (1996), pp.~171--187.
+
+\bibitem{capacity_survey_2}
+{\sc D.~McDuff}, {\em Symplectic topology today}, AMS Joint Mathematics
+  Meeting,  (2014).
+
+\bibitem{mcDuff_Salamon}
+{\sc D.~McDuff and D.~Salamon}, {\em Introduction to Symplectic Topology}, 2nd
+  edition, Oxford University Press, Oxford, England, 1998.
+
+\bibitem{Nir}
+{\sc Y.~Nir}, {\em On closed characteristics and billiards in convex bodies},
+  Master’s thesis, Tel Aviv University,  (2013).
+
+\bibitem{capacity_survey_3}
+{\sc Y.~Ostrover}, {\em When symplectic topology meets {B}anach space
+  geometry}, proceedings of the ICM, 2 (2014), pp.~959--981.
+
+\bibitem{subdiff_1}
+{\sc R.~Schneider}, {\em Convex Bodies: the {B}runn-{M}inkowski theory},
+  Encyclopedia of Mathematics and its Applications, 44. Cambridge University
+  Press, 1993.
+
+\bibitem{schaftingen}
+{\sc J.~Van~Schaftingen}, {\em Approximation in {S}obolev spaces by piecewise
+  affine interpolation}, Journal of Mathematical Analysis and Applications, 420
+  (2014), pp.~40--47.
+
+\bibitem{viterbo_cap}
+{\sc C.~Viterbo}, {\em Capacit\'es symplectiques et applications}, S\'eminaire
+  Bourbaki, Vol. 1988/89, Ast\'erisque 177–178 (1989), no. 714, 345–362.
+
+\bibitem{ball_add}
+{\sc K.~Zehmisch}, {\em The codisc radius capacity}, Electron. Res. Announc.
+  Math. Sci., 20 (2013), pp.~77--96.
+
+\end{thebibliography}

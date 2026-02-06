@@ -1,0 +1,161 @@
+\begin{thebibliography}{10}
+
+\bibitem{abbondandoloBenedetti}
+{\sc A.~Abbondandolo and G.~Benedetti}, {\em On the local systolic optimality of {Z}oll contact forms}, Geom. Funct. Anal., 33 (2023), pp.~299--363.
+
+\bibitem{abbondandolo-benedetti-edtmair}
+{\sc A.~Abbondandolo, G.~Benedetti, and O.~Edtmair}, {\em Symplectic capacities of domains close to the ball and {B}anach-{M}azur geodesics in the space of contact forms}, Duke Math. J., 174 (2025), pp.~1567--1646.
+
+\bibitem{abhs}
+{\sc A.~Abbondandolo, B.~Bramham, U.~L. Hryniewicz, and P.~A.~S. Salom\~{a}o}, {\em Sharp systolic inequalities for {R}eeb flows on the three-sphere}, Invent. Math., 211 (2018), pp.~687--778.
+
+\bibitem{Systolicratio}
+\leavevmode\vrule height 2pt depth -1.6pt width 23pt, {\em Systolic ratio, index of closed orbits and convexity for tight contact forms on the three-sphere}, Compos. Math., 154 (2018), pp.~2643--2680.
+
+\bibitem{A-E-K}
+{\sc A.~Abbondandolo, O.~Edtmair, and J.~Kang}, {\em On closed characteristics of minimal action on a convex three-sphere}, arXiv:2412.01777,  (2024).
+
+\bibitem{abbondandolo-kang}
+{\sc A.~Abbondandolo and J.~Kang}, {\em Symplectic homology of convex domains and {C}larke's duality}, Duke Math. J., 171 (2022), pp.~739--830.
+
+\bibitem{non_symmetric_mahler}
+{\sc A.~Akopyan, A.~Balitskiy, R.~Karasev, and A.~Sharipova}, {\em Elementary approach to closed billiard trajectories in asymmetric normed spaces}, Proc. Amer. Math. Soc., 144 (2016), p.~4501–4513.
+
+\bibitem{capacity_mahler}
+{\sc S.~Artstein-Avidan, R.~Karasev, and Y.~Ostrover}, {\em From symplectic measurements to the {M}ahler conjecture}, Duke Math. J., 163 (2014), p.~2003–2022.
+
+\bibitem{ArtsteinAvidanOstroverMilman}
+{\sc S.~Artstein-Avidan, V.~Milman, and Y.~Ostrover}, {\em The {$M$}-ellipsoid, symplectic capacities and volume}, Comment. Math. Helv., 83 (2008), pp.~359--369.
+
+\bibitem{AA-O}
+{\sc S.~Artstein-Avidan and Y.~Ostrover}, {\em Bounds for {M}inkowski billiard trajectories in convex bodies}, Int. Math. Res. Not. IMRN,  (2014), p.~165–193.
+
+\bibitem{balitsky}
+{\sc A.~Balitskiy}, {\em Equality cases in {V}iterbo's conjecture and isoperimetric billiard inequalities}, Int. Math. Res. Not. IMRN,  (2020), pp.~1957--1978.
+
+\bibitem{B-B-L-M}
+{\sc L.~Baracco, O.~Bernardi, C.~Lange, and M.~Mazzucchelli}, {\em On the local maximizers of higher capacity ratios}, to appear in Ann. Sc. Norm. Super. Pisa Cl. Sci.,  (2023).
+
+\bibitem{bezdek-bezdek}
+{\sc D.~Bezdek and K.~Bezdek}, {\em Shortest billiard trajectories}, Geom. Dedicata, 141 (2009), pp.~197--206.
+
+\bibitem{dynconvnotconvdim4}
+{\sc J.~Chaidez and O.~Edtmair}, {\em 3{D} convex contact forms and the {R}uelle invariant}, Invent. Math., 229 (2022), pp.~243--301.
+
+\bibitem{dynconvnotconvdim2n}
+\leavevmode\vrule height 2pt depth -1.6pt width 23pt, {\em The {R}uelle invariant and convexity in higher dimensions}, J. Eur. Math. Soc., published online,  (2025).
+
+\bibitem{Ch-H}
+{\sc J.~Chaidez and M.~Hutchings}, {\em Computing {R}eeb dynamics on four-dimensional convex polytopes}, J. Comput. Dyn., 8 (2021), pp.~403--445.
+
+\bibitem{C-CG-F-H-R}
+{\sc K.~Choi, D.~Cristofaro-Gardiner, D.~Frenkel, M.~Hutchings, and V.~G.~B. Ramos}, {\em Symplectic embeddings into four-dimensional concave toric domains}, J. Topol., 7 (2014), pp.~1054--1076.
+
+\bibitem{capacity_survey_1}
+{\sc K.~Cieliebak, H.~Hofer, J.~Latschev, and F.~Schlenk}, {\em Quantitative symplectic geometry}, in Dynamics, ergodic theory, and geometry, vol.~54 of Math. Sci. Res. Inst. Publ., Cambridge Univ. Press, Cambridge, 2007, pp.~1--44.
+
+\bibitem{CG}
+{\sc D.~Cristofaro-Gardiner}, {\em Symplectic embeddings from concave toric domains into convex ones}, J. Differential Geom., 112 (2019), pp.~199--232.
+\newblock With an appendix by Cristofaro-Gardiner and Keon Choi.
+
+\bibitem{CG-H}
+{\sc D.~Cristofaro-Gardiner and R.~Hind}, {\em On the agreement of symplectic capacities in high dimension}, arXiv:2307.12125,  (2023).
+
+\bibitem{edtmair}
+{\sc O.~Edtmair}, {\em Disk-like surfaces of section and symplectic capacities}, Geom. Funct. Anal., 34 (2024), pp.~1399--1459.
+
+\bibitem{hofer-ekeland}
+{\sc I.~Ekeland and H.~Hofer}, {\em Symplectic topology and {H}amiltonian dynamics}, Math. Z., 200 (1989), pp.~355--378.
+
+\bibitem{fathi22}
+{\sc A.~Fathi}, {\em On the existence of smooth {L}yapunov functions for arbitrary closed sets}, Bull. Braz. Math. Soc. (N.S.), 53 (2022), pp.~957--980.
+
+\bibitem{FHW94}
+{\sc A.~Floer, H.~Hofer, and K.~Wysocki}, {\em Applications of symplectic homology. {I}}, Math. Z., 217 (1994), pp.~577--606.
+
+\bibitem{ginzburg-shon}
+{\sc V.~L. Ginzburg and J.~Shon}, {\em On the filtered symplectic homology of prequantization bundles}, Internat. J. Math., 29 (2018), pp.~1850071, 35.
+
+\bibitem{gromov}
+{\sc M.~Gromov}, {\em Pseudo holomorphic curves in symplectic manifolds}, Invent. Math., 82 (1985), pp.~307--347.
+
+\bibitem{GutTab}
+{\sc E.~Gutkin and S.~Tabachnikov}, {\em Billiards in {F}insler and {M}inkowski geometries}, J. Geom. Phys., 40 (2002), pp.~277--301.
+
+\bibitem{Gu-Ha}
+{\sc J.~Gutt and M.~Hutchings}, {\em Symplectic capacities from positive $\mathrm{S}^1$-equivariant symplectic homology}, Algebr. Geom. Topol., 18 (2018), pp.~3537--3600.
+
+\bibitem{gutt-hutchings-ramos}
+{\sc J.~Gutt, M.~Hutchings, and V.~G.~B. Ramos}, {\em Examples around the strong {V}iterbo conjecture}, J. Fixed Point Theory Appl., 24 (2022), pp.~Paper No. 41, 22.
+
+\bibitem{GuttRamos}
+{\sc J.~Gutt and V.~G. Ramos}, {\em The equivalence of {E}keland-{H}ofer and equivariant symplectic homology capacities}, arXiv:2412.09555,  (2024).
+
+\bibitem{pazit-website}
+{\sc P.~Haim-Kislev}.
+\newblock Personal website: https://www.pazithaimkislev.com.
+
+\bibitem{pazit}
+\leavevmode\vrule height 2pt depth -1.6pt width 23pt, {\em On the symplectic size of convex polytopes}, Geom. Funct. Anal., 29 (2019), pp.~440--463.
+
+\bibitem{pazit-thesis}
+\leavevmode\vrule height 2pt depth -1.6pt width 23pt, {\em Symplectic invariants and convex bodies}, Ph.D. thesis, Tel Aviv University,  (2024).
+
+\bibitem{p-prod}
+{\sc P.~Haim-Kislev and Y.~Ostrover}, {\em Remarks on symplectic capacities of {$p$}-products}, Internat. J. Math., 34 (2023), pp.~Paper No. 2350021, 21.
+
+\bibitem{hermann}
+{\sc D.~Hermann}, {\em Non-equivalence of symplectic capacities for open sets with restricted contact type boundary}, Prépublication d’Orsay numéro 32,  (1998).
+
+\bibitem{hermann2000}
+{\sc D.~Hermann}, {\em Holomorphic curves and {H}amiltonian systems in an open set with restricted contact-type boundary}, Duke Math. J., 103 (2000), pp.~335--374.
+
+\bibitem{HWZ-3dconvex}
+{\sc H.~Hofer, K.~Wysocki, and E.~Zehnder}, {\em The dynamics on three-dimensional strictly convex energy surfaces}, Ann. of Math. (2), 148 (1998), pp.~197--289.
+
+\bibitem{hofer-zehnder}
+{\sc H.~Hofer and E.~Zehnder}, {\em A new capacity for symplectic manifolds}, in Analysis, et cetera, Academic Press, Boston, MA, 1990, pp.~405--427.
+
+\bibitem{Hryniewicz-Hutchings-Ramos}
+{\sc U.~Hryniewicz, M.~Hutchings, and R.~Vinicius~G.B.}, {\em Hopf orbits and the first {ECH} capacity}, arXiv:2312.11830,  (2024).
+
+\bibitem{ech}
+{\sc M.~Hutchings}, {\em Quantitative embedded contact homology}, J. Differential Geom., 88 (2011), pp.~231--266.
+
+\bibitem{Hut24}
+\leavevmode\vrule height 2pt depth -1.6pt width 23pt, {\em Zeta functions of dynamically tame {L}iouville domains}, arXiv:2402.07003,  (2024).
+
+\bibitem{irie}
+{\sc K.~Irie}, {\em Symplectic homology of fiberwise convex sets and homology of loop spaces}, J. Symplectic Geom., 20 (2022), pp.~417--470.
+
+\bibitem{mahler3dim}
+{\sc H.~Iriyeh and M.~Shibata}, {\em Symmetric {M}ahler's conjecture for the volume product in the {$3$}-dimensional case}, Duke Math. J., 169 (2020), pp.~1077--1134.
+
+\bibitem{karasev-sharipova}
+{\sc R.~Karasev and A.~Sharipova}, {\em Viterbo's conjecture for certain {H}amiltonians in classical mechanics}, Arnold Math. J., 5 (2019), pp.~483--500.
+
+\bibitem{Kunzle}
+{\sc A.~{}K\"unzle}, {\em Singular {H}amiltonian systems and symplectic capacities}, Singularities and differential equations, Banach Center Publ., 33, Polish Acad. Sci., Warsaw,  (1996), pp.~171--187.
+
+\bibitem{Mink-Bill-Rudolf}
+{\sc D.~Rudolf}, {\em The {M}inkowski billiard characterization of the {EHZ}-capacity of convex {L}agrangian products}, Journal of Dynamics and Differential Equations,  (2022).
+
+\bibitem{rudolf}
+\leavevmode\vrule height 2pt depth -1.6pt width 23pt, {\em Viterbo's conjecture for {L}agrangian products in {$\mathbb{R}^4$} and symplectomorphisms to the {E}uclidean ball}, arXiv:2203.02294,  (2022).
+
+\bibitem{R-K}
+{\sc D.~Rudolf and S.~Krupp}, {\em Shortest {M}inkowski billiard trajectories on convex bodies}, arXiv:2203.01802,  (2022).
+
+\bibitem{siegel}
+{\sc P.~Siegel, K}, {\em Higher symplectic capacities}, to appear in Algebraic \& Geometric Topology,  (2025).
+
+\bibitem{viterbo_cap}
+{\sc C.~Viterbo}, {\em Capacit\'es symplectiques et applications}, S\'eminaire Bourbaki, Vol. 1988/89, Ast\'erisque 177–178 (1989), no. 714, 345–362.
+
+\bibitem{viterbo-sh}
+\leavevmode\vrule height 2pt depth -1.6pt width 23pt, {\em Functors and computations in {F}loer homology with applications. {I}}, Geom. Funct. Anal., 9 (1999), pp.~985--1033.
+
+\bibitem{viterbo2000}
+\leavevmode\vrule height 2pt depth -1.6pt width 23pt, {\em Metric and isoperimetric problems in symplectic geometry}, J. Amer. Math. Soc., 13 (2000), pp.~411--431.
+
+\end{thebibliography}
