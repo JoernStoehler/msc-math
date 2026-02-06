@@ -4,6 +4,10 @@
 
 A reproducible pipeline: starting from zero data, produce all figures and tables for the thesis.
 
+- Two-step pipeline: (1) Rust generates datasets, (2) `run-all.sh` runs Python scripts
+- `run-all.sh` documents the dependency graph: which scripts depend on which inputs
+- Scripts are idempotent; `run-all.sh` skips stages whose inputs haven't changed (hash of script + input data)
+
 ## Current state
 
 Empty — no scripts or data yet.
