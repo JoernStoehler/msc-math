@@ -1,0 +1,12 @@
+[package]
+name = "billiard"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+nalgebra = { workspace = true }
+geom2d = { path = "../geom2d" }
+geom4d = { path = "../geom4d" }
+
+[dev-dependencies]
+proptest = { workspace = true }

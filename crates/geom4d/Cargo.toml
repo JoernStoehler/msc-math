@@ -1,0 +1,11 @@
+[package]
+name = "geom4d"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+nalgebra = { workspace = true }
+geom2d = { path = "../geom2d" }
+
+[dev-dependencies]
+proptest = { workspace = true }
