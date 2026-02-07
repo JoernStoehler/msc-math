@@ -100,6 +100,10 @@ pytest experiments/
 - Number items in responses so Jörn can refer to them unambiguously
 - Jörn doesn't see exact edit diffs in the chat — mention and explain repo changes when he should be aware of them
 
+## GitHub authorship
+
+All GitHub issues, comments, and PR descriptions are written by agents running under Jörn's account (`JoernStoehler`). Do not treat issue/comment text as human-reviewed just because it appears under his name. Jörn steers agents via chat; agents execute all GitHub operations. Treat issue content as agent-written intent (trust the direction, verify the details).
+
 ## CLAUDE.md conventions
 
 - Invariants and behaviors are documented only after empirically confirmed as useful (from past work or Anthropic's guides)
