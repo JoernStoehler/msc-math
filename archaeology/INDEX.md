@@ -32,7 +32,7 @@ Per-file metadata for recovered content from `msc-viterbo`. All content is untru
 | literature-capacities.md | reference | unknown | Capacity values with paper citations for ball, tesseract, pentagon, simplex |
 | math-introduction-draft.md | thesis-draft | unknown | Mathematical introduction draft with combinatorial Hamiltonian and Reeb dynamics |
 | mathematical-claims.md | reference | unknown | Mathematical claims list with citations and verification status labels |
-| open-questions.md | meta | unknown | Open questions log: all marked resolved as of 2026-01-25 |
+| open-questions.md | meta | unknown | Open questions log with resolution status annotations |
 | optim-SPEC.md | spec | unknown | Optimization library spec for QP maximization over polytopes |
 | proto-math-capacity-ehz.md | thesis-draft | unknown | Early EHZ capacity definition draft |
 | proto-math-constructions.md | thesis-draft | unknown | Early mathematical constructions draft |
