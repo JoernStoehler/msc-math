@@ -109,6 +109,14 @@ pytest experiments/
 
 ## Workflows
 
+### Spawning subagents
+
+- Always create a GitHub subissue before spawning an agent. The subissue IS the prompt (plus any corrections/extra context passed directly to Task). Zero cost, and: persistent record, Jörn can launch it as a web session instead, easier to restart if agent fails.
+- Post agent output as GitHub issue comments, not code — avoids anchoring future agents on unreviewed drafts.
+- Use Sonnet for read-heavy extraction tasks (literature, code review). Reserve Opus for tasks requiring deep reasoning.
+- Keep subagent tasks focused and small. Agents may stall on tasks requiring 1000+ lines across multiple files.
+- Foreground Task() calls block the main conversation — user messages queue up silently. Avoid foreground tasks that might take >1 minute. Prefer background, or just do the work inline.
+
 ### Check clarity with subagents
 
 When you produce content other agents will consume (CLAUDE.md files, mathematical definitions, proofs, algorithm descriptions): run a Sonnet subagent with a targeted questionnaire to test whether a fresh agent can reproduce the intended understanding. Ask both for comprehension answers and for what's unclear or ambiguous.
