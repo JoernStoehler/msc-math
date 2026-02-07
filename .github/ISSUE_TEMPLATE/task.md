@@ -4,7 +4,7 @@ about: A candidate task believed to constitute progress toward the thesis (#1)
 ---
 
 <!--
-LIFECYCLE
+LIFECYCLE — full description with examples: docs/references/issue-lifecycle.md
 
   created (label: draft)
     Issue captured from a spark — an idea that came up during triage, a session,
