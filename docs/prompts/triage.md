@@ -45,6 +45,24 @@ For each issue being refined: check against the authoring guidelines in the issu
 
 When capturing new issues, a rough draft with just Goal and a few notes is fine — refinement happens iteratively across sessions, not all at once.
 
+## Operational notes
+
+Useful starting sequence: `gh issue list --state open`, `gh issue list --state closed --limit 10`, then read each open issue body. Comparing issue claims against actual repo state (what files exist, what's a stub) catches stale issues quickly.
+
+Read issue bodies, not just titles — titles can be stale or misleading after edits.
+
+Subagent clarity checks (Sonnet) work well for refined issues: a fresh agent reads the issue and answers targeted comprehension questions. Catches ambiguities that the author is blind to.
+
+## Writing for other agents
+
+Content that agents will consume (issue bodies, specs, CLAUDE.md entries) benefits from:
+- **Grounded over speculative** — state what happened or what exists, not what might be useful
+- **Knowledge over instructions** — inform, don't command. Agents have their own task instructions
+- **Skimmable over comprehensive** — clear headers, so readers with different tasks can skip irrelevant sections
+- **Escaped behavior rules** — a `## Workflow` header is enough signal that the content is contextual, not a directive
+
+These principles apply to issue bodies too, not just reference docs.
+
 ## Known pitfalls from past sessions
 
 - Claiming relationships between components without verifying (e.g. "X determines Y", "X is a specialization of Y"). Check before asserting.
