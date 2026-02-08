@@ -5,8 +5,7 @@ edition = "2021"
 
 [dependencies]
 nalgebra = { workspace = true }
-geom2d = { path = "../geom2d" }
-geom4d = { path = "../geom4d" }
+geom = { path = "../geom" }
 
 [dev-dependencies]
 proptest = { workspace = true }

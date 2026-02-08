@@ -1,8 +1,7 @@
 [workspace]
 resolver = "2"
 members = [
-    "geom2d",
-    "geom4d",
+    "geom",
     "hk2017",
     "billiard",
     "tube",
