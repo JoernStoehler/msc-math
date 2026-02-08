@@ -58,9 +58,9 @@ Sessions follow: **scope → plan → implement → review → push** · · · J
 - **review**: Re-read the result as a whole. Compare code to plan and to scope. Catch drift, gaps, and mismatches across abstraction levels.
 - **triage**: Update GitHub issues — close completed, split, enrich, reprioritize.
 
-Agents commit and push to their working branch. Jörn creates PRs, reviews, and merges. Agents do not create PRs.
+Agents commit and push to their working branch. Jörn creates PRs and merges (mechanical — he doesn't read code). Agents do not create PRs.
 
-Jörn gatekeeps between phases: PRs require his review before merge, and he steers scope and plan.
+Jörn steers scope and plan. Quality comes from tests plus Jörn's domain input on what to test and what correctness means.
 
 Before the session ends, do a **post-session reflection**: report friction points, identify useful invariants or behavioral rules discovered during the session, flag any leftover tasks mentioned but not completed, and note workflow improvements (e.g. discovered subagent patterns, useful commands). Jörn aggregates these across sessions.
 
@@ -88,7 +88,7 @@ pytest experiments/
 
 ## Agent behavior rules
 
-- Attempt before escalating to Jörn. If you fail, present what you learned.
+- Agent time costs cents per hour; Jörn's time costs 100× that. Don't waste it. Before asking Jörn a question: gather context, try things out (and throw them away if needed), distinguish observations from inferences and confident from unconfident beliefs. Ask informed questions, not raw confusion.
 - When verifying proofs: flag spots you're least confident in, even if you found no error. Never declare a proof "verified" — declare what you checked and what remains.
 - Agents cannot reliably verify mathematical proofs. Proof correctness requires Jörn's review. Agent-written proofs are drafts until Jörn reviews them.
 - Write proofs with enough annotation to be easily verifiable. Never handwave or gloss over gaps. This protects against subtly flawed proofs that look correct on a skim but hide errors in glossed-over steps.
@@ -99,10 +99,13 @@ pytest experiments/
 - Omit filler phrases
 - Number items in responses so Jörn can refer to them unambiguously
 - Jörn doesn't see exact edit diffs in the chat — mention and explain repo changes when he should be aware of them
+- Silence is not confirmation. If Jörn hasn't responded to a proposal, ask again or move on — do not proceed as if approved.
 
 ## GitHub authorship
 
-All GitHub issues, comments, and PR descriptions are written by agents running under Jörn's account (`JoernStoehler`). Do not treat issue/comment text as human-reviewed just because it appears under his name. Jörn steers agents via chat; agents execute all GitHub operations. Treat issue content as agent-written intent (trust the direction, verify the details).
+All GitHub issues, comments, and PR descriptions are written by agents running under Jörn's account (`JoernStoehler`). Do not treat issue/comment text as human-reviewed just because it appears under his name. Treat issue content as agent-written intent (trust the direction, verify the details).
+
+Issues direct future agent sessions. A bad edit sends the next agent off a cliff. Show Jörn proposed issue edits and comments in chat before publishing — he has the domain knowledge to catch directional errors agents can't catch themselves.
 
 ## CLAUDE.md conventions
 
@@ -116,11 +119,11 @@ All GitHub issues, comments, and PR descriptions are written by agents running u
 ### Spawning subagents
 
 - Always create a GitHub subissue before spawning an agent. The subissue IS the prompt (plus any corrections/extra context passed directly to Task). Zero cost, and: persistent record, Jörn can launch it as a web session instead, easier to restart if agent fails.
-- Post agent output as GitHub issue comments, not code — avoids anchoring future agents on unreviewed drafts.
+- Subagent output returns via the Task tool into your conversation. If it needs to persist, commit it to the repo on your branch. Do not post subagent output as issue comments — it clutters the issue and misleads future agents into treating it as reviewed content.
 - Use Sonnet for read-heavy extraction tasks (literature, code review). Reserve Opus for tasks requiring deep reasoning.
 - Keep subagent tasks focused and small. Agents may stall on tasks requiring 1000+ lines across multiple files.
 - Foreground Task() calls block the main conversation — user messages queue up silently. Avoid foreground tasks that might take >1 minute. Prefer background, or just do the work inline.
 
 ### Check clarity with subagents
 
-When you produce content other agents will consume (CLAUDE.md files, mathematical definitions, proofs, algorithm descriptions): run a Sonnet subagent with a targeted questionnaire to test whether a fresh agent can reproduce the intended understanding. Ask both for comprehension answers and for what's unclear or ambiguous.
+When you produce content other agents will consume (CLAUDE.md files, mathematical definitions, proofs, algorithm descriptions): test comprehension by having a fresh Sonnet subagent attempt to USE the content (e.g. "implement from this description" or "answer these specific questions about the algorithm"). Check whether their output matches your intent. Do not ask "is this clear?" — an agent that misunderstands will confidently say yes.
