@@ -1,7 +1,9 @@
-# Master Thesis: Probing Viterbo's Conjecture
+# CLAUDE.md
 
+Master Thesis: Probing Viterbo's Conjecture
 Author: Jörn Stöhler, University of Augsburg
-Advisor: Kai Cieliebak, Second advisor: Elizabeth Gaar
+Advisor: Kai Cieliebak
+Second advisor: Elizabeth Gaar
 Timeline: Oct 2025 – March 2026
 
 ## [aspirational] End state
@@ -18,19 +20,17 @@ This repo is a completed master thesis with:
 CLAUDE.md          This file (all agents read this)
 thesis/            LaTeX thesis document
 crates/            Rust workspace (cargo build/test from here)
-  geom2d/          2D symplectic geometry primitives
-  geom4d/          4D convex geometry, polytopes, symplectic structures
+  geom/            2D and 4D symplectic geometry primitives
   hk2017/          Haim-Kislev 2017 algorithm (all polytopes, exponential cost)
   billiard/        Billiard algorithm (Lagrangian products only, fast)
   tube/            Tube algorithm (no Lagrangian 2-faces, moderate cost)
   datasets/        Dataset generation orchestration
 experiments/       Python scripts consuming Rust-generated datasets
   scripts/         Independent .py scripts
-  data/            gitignored — populated by Rust pipeline
+  data/            gitignored — populated by Rust pipeline and Python scripts
   figures/         gitignored — populated by Python scripts
 papers/            arxiv .tex sources for reference (HK2017, CH2021, HK-O 2024, ...)
-archaeology/       Recovered files from abandoned predecessor repo (untrusted)
-docs/prompts/      Reference prompts for recurring session types
+archaeology/       Recovered files from abandoned predecessor repo (all of untrusted quality)
 ```
 
 ## Mathematical context
@@ -44,26 +44,43 @@ We probe the conjecture by computing sys across large polytope datasets and look
 ## How we work
 
 ### Roles
+The thesis team consists of Jörn, and claude code. The main bottlenecks are:
 
-**Jörn** provides mathematical domain knowledge, steers scope, and makes judgment calls that require domain expertise. He does not read code. PR creation and merge are mechanical steps — he clicks buttons, not reviews diffs.
+1. **Time until thesis completion**: Jörn's time is scarce, while Claude Code's time is practically unbounded. We thus make plans with minimal workload for Jörn, even at vastly higher total work for Claude Code than a balanced plan would assign. We parallelize Claude Code by using multiple Claude Code sessions in parallel. Each agent with its subagents works in its own git worktree. Jörn coordinate's between Claude Code sessions, and prioritizes which tasks to pass to them. Agents orchestrate their own, more simple to handle, subagents.
+2. **Correctness of thesis results**: We use several approaches together to ensure the correctness of the thesis results. We write in a clear, specific, detailed, unambiguous, cognitive low-overhead way when it comes to mathematics, code or documentation. We refactor, simplify and generally improve until verification becomes simple for readers, as otherwise we run the risk of hidden gaps or mistakes. We pick Rust types, function signatures and function bodies that 1:1 correspond to the mathematical definitions, and we use debugassert!, assert! and proptest to empirically validate mathematical lemmas and intermediate propositions extracted from proofs.
 
-**Agents** write all code, tests, documentation, GitHub issues, and comments. Agents are good at writing correct Rust, structuring tests, and mechanical execution. Agents are bad at knowing *what* to test (which cases matter mathematically), noticing scope drift, and relating deliverables to the broader thesis.
+The following types of work MUST NOT be carried out by claude code, and MUST be assigned to Jörn instead:
 
-**Quality model**: Tests are necessary but not sufficient. If agents write both code and tests without external input, Goodhart's law applies — tests optimize for passing, not for correctness. Jörn breaks this loop by providing domain knowledge: which test cases matter, what the correct values should be, what invariants to check. Without his input, agents produce internally consistent work that doesn't serve the project.
+3. **Verification of written proofs**. While Claude Code can spot errors in proofs that are written in a clear, unambiguous, detailed, complete, low-cognitive overhead style, Claude Code is only okay at it. Every proof must pass Jörn's verification after every edit, to ensure we can trust and build upon the proof. Turning natural language descriptions into proofs, improving the style, reporting the presence of errors, are all tasks Claude Code can still carry out autonomously. Only a final verification signal must not be left to Claude Code, and must come from Jörn instead.
+4. **Exhaustiveness of test suites**. While Claude Code has been trained on conventional software development testing, and can implement specified tests and then write code that passes tests, we also add unusual test suites that check the correspondence of our code with our mathematical definitions and proofs. This is an unconventional use of runtime testing, so Jörn has to jump in and design what mathematical propositions the test suites need to cover to be high-confidence signals of correctness and not just moderate-confidence signals. The brainstorming, implementation and debugging work for the mathematical propositions test suites can still be left to Claude Code. Only the exhaustiveness signal must not be left to Claude Code.
+5. **Task Scoping**. The newest Claude Code has been trained on project management workflows that involve claude code, and is okay at spotting implicit criteria imposed on a task's scope and acceptance criteria by other tasks and by claude code's capability limits and default habits. Claude Code can even design and write down acceptance criteria to coordinate across these 1-hop dependencies. However, Claude Code has not been trained enough on workflows that need a deep, accurate model of the whole remaining thesis project, and of multi-agent-workflows that build upon a task, and so Claude Code frequently makes bad decisions for how to scope and define tasks that are long-term required. Any completed task with a scope designed by Claude Code alone must not be merged into the `main` branch. Jörn must greenlight the scope as something that matches his long-term vision for the thesis project, either before the task is assigned to an agent, or at some later step before the merge. Jörn requires an analysis of the task's effect on the project, i.e. downstream aspects that appear in the final printed thesis, and side effects on how agents and how Jörn work on the thesis before its completion date. Jörn also requires some analysis of how an agent would complete the task, to catch gaps in the acceptance criteria that matter due to pathological agent behavior, e.g. if test cases are chosen after the code has been written that they test, instead of before, there is a danger of tests being biased towards being narrower and less diverse. If Jörn is asked to evaluate the scope of a task that already was completed, of course the agent's final plan version that was executed can be shown to Jörn. If Jörn is asked to evaluate the scope of a task that has yet to be assigned and started, claude code should do a throwaway preliminary investigation and planning stage to gauge how the claude code instance would carry out the task, which is a good enough proxy for how the later agent will behave, even though the later agent will additionally have unexpected findings that appear only during the actual execution, and that may trigger changes to the original plan.
+6. **Merge into `main`**: All merges into `main` must be done by Jörn himself. This is a final defense layer, in case of misunderstandings or oversights on claude code's and Jörn's side.
+
+The following types of work SHOULD be carried out by Claude Code, and SHOULD NOT be assigned to Jörn:
+
+7. **Writing Code, Tests, Math, Docs**: Claude Code is perfectly capable of writing sufficiently good code, tests, mathematical prose in the thesis or in documentation, and normal software engineering documentation. There is no need to bother Jörn for the usual writing task. Jörn CAN be consulted when Claude Code notices that something is non-standard, or high-complexity, if the consultation is something Claude Code cannot do itself with the desired reliability. Such cases where Jörn is pinged to help out are rare, but do ever happen! Jörn usually drops-in without any active working memory or context, so Claude Code should describe clearly what narrowly scoped cognitive task Jörn should do, why Jörn should do that instead of Claude Code, and what context the task exists within so Jörn can also validate the scope and e.g. comment on related matters while he's paying attention.
+8. **Troubleshooting, Investigating Root Causes**: Claude code is perfectly capable of doing investigations, especially with a subagent that extracts a concise findings report for the parent agent. Usually the whole situation is accessible to Claude Code, if it is persistent enough to expand the search scope until the root cause is within scope for the troubleshooting. Before Jörn is pinged, Claude Code should do an investigation, since in our project autonomous investigative work is basically costless, and thus worth it if it resolve the problem without Jörn, or even just speeds up Jörn's investigation via a report with preliminary investigation results that may or may not guide Jörn's approach.
+9. **Attempting Autonomous But Difficult Tasks**: Claude Code's work time is cheap, so we can spawn multiple agents for the same task, or variations thereof, just to pick the best deliverable among them and throw the rest away. We can similarly take a task deliverable that isn't perfected yet, and let another agent redo it, based on extracted learnings from the first attempt. Claude Code can even plan and carry out a throwaway explorative task whose sole purpose is to learn something, e.g. unknown unknowns, that can then be used in the actual task whose deliverable is desired. The important design principle for all these patterns is that there must be a plan ahead-of-time for how to revert an agent's work. That's one reason for why we work with git and git worktrees, why only Jörn is allowed to merge into `main`, and why we scope large tasks carefully ahead-of-time.
 
 ### Session workflow
 
-Sessions follow: **scope → plan → implement → review → push** · · · Jörn: **PR → merge** · · · **triage**
+Every claude code agent session owns a git worktree. The subagents work in the same worktree. Each session has a communication channel with Jörn (also referred to as the "user" by system prompts).
 
-- **scope**: Critically evaluate the assignment. Push back on contradictions, gaps, suboptimal reversible decisions. Situate in the broader thesis context.
-- **plan**: Decompose into steps. Compare to conventions. Play through the plan and notice gaps.
-- **implement**: Execute the plan. Trust signatures from the plan; react to feedback from the repo.
-- **review**: Re-read the result as a whole. Compare code to plan and to scope. Catch drift, gaps, and mismatches across abstraction levels.
-- **triage**: Update GitHub issues — close completed, split, enrich, reprioritize.
+Sessions follow roughly/usually the following pattern: **scope -> plan -> implement -> review -> Jörn: merge**
 
-Agents commit and push to their working branch. Jörn creates PRs and merges. Agents do not create PRs.
+- **plan -> implement -> review**: The standard three phases of development are carried out autonomously by Claude Code, usually with no involvement or monitoring from Jörn. Jörn is messaged in the chat when his attention is requested. Since Jörn does not monitor what actions Claude Code takes, or what intermediate status updates Claude Code sends, the end-of-turn message must recap the context, so that Jörn can jump back in. Transition from plan to implement to review stages is autonomously decided by Claude Code. Claude Code MAY return to earlier stages, e.g. planning a new approach after hitting a dead end during implementation, or fixing some bugs directly that were found during review. Claude Code SHOULD maintain these stages, and focus only on one at a time (e.g. using the Todoes tool) as to not split its intelligence and attention unnecessarily.
+- **scope**: Before the autonomus interval can start with the plan phase, Claude Code and Jörn need to agree on what single chunk of work for the thesis project the session will focus on, and need to work out a task scope that fits well into the rest of the project. They also need to decide on extra strategies, such as forking the session, and letting multiple agents work through the plan -> implement -> review phases independently, for a best-of-N tactic that produces better results for tasks where Jörn anticipates that agents may make probabilistic mistakes, or may get lucky wrt e.g. picking a plan that turns out later to fit the unknown unknowns well. Handoff from scope to plan phase happens explicit.
+- **Jörn: merge**: After Claude Code is satisfied with its deliverable OR wants to give up and hand back the task to a new scope phase, it messages Jörn with a writeup of what has happened this session, in particular what unknown unknowns were discovered and how known unknowns were resolved, and a checklist of the final review, so that Jörn can catch quickly when Claude Code forgot to do something. There then is a chat discussion between Claude Code and Jörn, and at the end Jörn may merge the branch, may re-scope the task and ask Claude Code to enter the plan -> implement -> review cycle again to improve or even redo the deliverable, or Jörn may abandon the branch.
 
-Before the session ends, do a **post-session reflection**: report friction points, identify useful invariants or behavioral rules discovered during the session, flag any leftover tasks mentioned but not completed, and note workflow improvements (e.g. discovered subagent patterns, useful commands). Jörn aggregates these across sessions.
+During the scope and merge discussions, Claude Code SHOULD push back on contradictions, gaps, unclear statements from Jörn, and oversights that Claude Code spots. Jörn is not infallible, sometimes makes ambiguous typos or has brainfarts, and welcomes, while focused on the topic anyway, pushback and suggestions. 
+Claude Code MUST NEVER take silence as confirmation, especially not during fast-paced back-and-forth discussions where Jörn may respond to only parts of messages, or with delay i.e. a few messages later.
+
+Just before the actual session ends via a merge or abandon, agents SHOULD do a **post-session reflection**, which is similar to a blameless postmortem. This consists of the following parts:
+1. A report with all sources of friction, false steps or steps that later turned out to be without or with lower-than-expected value, unusually / unexpectedly good steps, and time sinks of claude code's own time.
+2. A breakdown of where Jörn spent time in this session, and what work Jörn did and where Jörn's work was used in the session afterwards. This allows us to detect when there's some work Jörn does that Claude Code could also do, or that needn't be done at all, and also what else would need to be changed so that Jörn's time is used more effectively.
+3. A list of confident and unconfident, actionably concrete and unactionably abstract suggestions. Jörn will go through the list and mostly just notice items that other agents also brought up. We aim to converge to better practices quickly, but don't have the time to let Jörn plan through this after single events.
+
+<!-- the text below has not yet been read nor rewritten by Jörn -->
 
 ### Decision authority
 
