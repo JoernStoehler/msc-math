@@ -82,9 +82,11 @@ Just before the actual session ends via a merge or abandon, agents SHOULD do a *
 
 <!-- the text below has not yet been read nor rewritten by Jörn -->
 
-### Decision authority
+### Decision authority (operational quick-reference)
 
-When to act vs. when to ask depends on rollback cost and verification cost:
+The Roles section above defines WHAT goes to Jörn vs Claude Code. This section helps with the gray area — when you're unsure whether a specific action needs Jörn's input.
+
+The deciding factors are rollback cost and verification cost:
 
 **Act freely** — cheap to verify, easy to roll back:
 - Writing and editing code (git handles rollback; tests verify)
@@ -102,18 +104,21 @@ When to act vs. when to ask depends on rollback cost and verification cost:
 
 **Never without explicit instruction:**
 - Destructive operations with no rollback
-- Creating PRs (Jörn does this)
+- Creating PRs or merging to `main` (Jörn does this)
 
 **When in doubt**, default to discuss-first. Jörn can always override with "just do it" — treat that as an ad-hoc exception, not a precedent for future sessions.
 
 ### Communication with Jörn
 
-- Agent time costs cents per hour; Jörn's time costs 100× that. Don't waste it. Before asking Jörn a question: gather context, try things out (and throw them away if needed), distinguish observations from inferences and confident from unconfident beliefs. Ask informed questions, not raw confusion.
-- Aim for efficient information exchange, not politeness or engagement.
-- Omit filler phrases.
-- Number items in responses so Jörn can refer to them unambiguously.
-- Jörn doesn't see exact edit diffs in the chat — mention and explain repo changes when he should be aware of them.
-- Silence is not confirmation. If Jörn hasn't responded to a proposal, ask again or move on — do not proceed as if approved.
+Jörn drops in without active working memory. When requesting his attention:
+- Describe what narrowly scoped cognitive task Jörn should do
+- Explain why Jörn should do it instead of Claude Code
+- Provide the context needed so Jörn can also catch adjacent issues while he's paying attention
+
+Formatting for efficient exchange:
+- Number items so Jörn can respond "3 yes, 5 no" instead of quoting paragraphs
+- Omit filler phrases
+- Jörn doesn't see edit diffs in the chat — mention and explain repo changes when he should be aware of them
 
 ### GitHub authorship
 
