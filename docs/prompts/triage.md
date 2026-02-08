@@ -63,6 +63,24 @@ Content that agents will consume (issue bodies, specs, CLAUDE.md entries) benefi
 
 These principles apply to issue bodies too, not just reference docs.
 
+## Creating new prompt files
+
+Part of triage is noticing when a recurring session type would benefit from a reference prompt — the way this file exists for board review sessions. Examples: a proof-writing prompt, an implementation prompt, a literature-extraction prompt.
+
+**How to produce a good prompt file:**
+
+1. **Taboo the name.** Before writing, define the session type without its shorthand label. "Triage" → "review the project board against repo state, update it so top items are session-ready." This forces you to identify the concrete steps rather than writing vague instructions.
+
+2. **Structure by reader questions.** Order sections by what a reader asks in sequence: "What is this?" → "What do I need to know?" → "What can I decide vs. what's Jörn's call?" → "How do we interact?" → "What goes wrong?" Each section answers one question.
+
+3. **Write from experience, not imagination.** Every pitfall, operational tip, and workflow note should come from something that actually happened in a session. Speculative advice tends to be vague or wrong. If no sessions of this type have happened yet, keep the file short — just the step decomposition and decision authority — and extend it after the first session.
+
+4. **Test with a subagent.** Have a Sonnet agent read the prompt and answer: "What would you do first? What decisions are yours? What's unclear?" This catches gaps the author is blind to.
+
+5. **Aim for activation, not instruction.** Agents already have good habits from training. The prompt's job is to activate the right habits and provide project-specific context — not to teach the agent how to think. "Check against the authoring guidelines in the issue template" activates an existing skill; "Make sure every sentence is clear and unambiguous" is generic advice the agent already follows.
+
+New prompt files go in `docs/prompts/`. Mention them in relevant CLAUDE.md files only if agents in that scope routinely need them.
+
 ## Known pitfalls from past sessions
 
 - Claiming relationships between components without verifying (e.g. "X determines Y", "X is a specialization of Y"). Check before asserting.
