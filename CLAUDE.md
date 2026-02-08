@@ -287,8 +287,6 @@ When you produce content other agents will consume (CLAUDE.md files, mathematica
 
 ### Triage sessions
 
-Reference: `docs/prompts/triage.md`
-
 The issue board should reflect reality after the session: audit open issues against repo state, close completed ones, capture new work, refine drafts, prioritize, prepare top items for approval.
 
 Decision authority during triage — agent's call: reading, summarizing, proposing edits. Jörn's call: whether an issue is worth pursuing, scope, priority, labeling `approved`.
