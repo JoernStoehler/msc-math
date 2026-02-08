@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Common setup for devcontainer environments.
-# Sourced by local/post-create.sh.
+# Sourced by post-create.sh.
 
 set -euo pipefail
 

@@ -125,7 +125,7 @@ main() {
   fi
 
   local repo_root
-  repo_root="$(cd "$(dirname "$0")/../.." && pwd)"
+  repo_root="$(cd "$(dirname "$0")/.." && pwd)"
   local path="${positional[0]}"
   local branch="${positional[1]}"
 

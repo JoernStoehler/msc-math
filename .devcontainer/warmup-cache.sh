@@ -8,11 +8,11 @@ set -euo pipefail
 # It does NOT block container startup.
 #
 # Usage (from post-create.sh):
-#   nohup .devcontainer/scripts/warmup-cache.sh >> ~/.cache/warmup.log 2>&1 &
+#   nohup .devcontainer/warmup-cache.sh >> ~/.cache/warmup.log 2>&1 &
 
 if [[ ${1:-} == "--help" || ${1:-} == "-h" ]]; then
   cat <<'EOF'
-Usage: .devcontainer/scripts/warmup-cache.sh
+Usage: .devcontainer/warmup-cache.sh
 
 Background cache warming.
 Runs cargo fetch/build and uv sync to populate caches.
@@ -23,7 +23,7 @@ EOF
   exit 0
 fi
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
 
 log() {

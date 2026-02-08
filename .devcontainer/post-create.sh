@@ -8,7 +8,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 echo "Local devcontainer post-create..."
 
 # Common setup
-source "${SCRIPT_DIR}/../scripts/setup-common.sh"
+source "${SCRIPT_DIR}/setup-common.sh"
 
 # Ensure TeX directories exist
 sudo mkdir -p \
