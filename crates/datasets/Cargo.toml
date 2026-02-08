@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 nalgebra = { workspace = true }
-geom4d = { path = "../geom4d" }
+geom = { path = "../geom" }
 hk2017 = { path = "../hk2017" }
 billiard = { path = "../billiard" }
 tube = { path = "../tube" }

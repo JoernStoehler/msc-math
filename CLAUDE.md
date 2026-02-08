@@ -203,11 +203,10 @@ pytest experiments/
 ### Crate dependency graph
 
 ```
-geom2d ─────────────────────────────────┐
-  └─> geom4d                            │
-        ├─> hk2017    (+ geom2d)        │
-        ├─> billiard  (+ geom2d)        │
-        ├─> tube      (+ geom2d)        │
+geom ───────────────────────────────────┐
+        ├─> hk2017                      │
+        ├─> billiard                    │
+        ├─> tube                        │
         └─> datasets  (+ hk2017, billiard, tube)
 ```
 

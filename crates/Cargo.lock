@@ -21,8 +21,7 @@ checksum = "c08606f8c3cbf4ce6ec8e28fb0014a2c086708fe954eaa885384a6165172e7e8"
 name = "billiard"
 version = "0.1.0"
 dependencies = [
- "geom2d",
- "geom4d",
+ "geom",
  "nalgebra",
  "proptest",
 ]
@@ -65,7 +64,7 @@ name = "datasets"
 version = "0.1.0"
 dependencies = [
  "billiard",
- "geom4d",
+ "geom",
  "hk2017",
  "nalgebra",
  "proptest",
@@ -95,18 +94,9 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3f9eec918d3f24069decb9af1554cad7c880e2da24a9afd88aca000531ab82c1"
 
 [[package]]
-name = "geom2d"
+name = "geom"
 version = "0.1.0"
 dependencies = [
- "nalgebra",
- "proptest",
-]
-
-[[package]]
-name = "geom4d"
-version = "0.1.0"
-dependencies = [
- "geom2d",
  "nalgebra",
  "proptest",
 ]
@@ -127,8 +117,7 @@ dependencies = [
 name = "hk2017"
 version = "0.1.0"
 dependencies = [
- "geom2d",
- "geom4d",
+ "geom",
  "nalgebra",
  "proptest",
 ]
@@ -425,8 +414,7 @@ dependencies = [
 name = "tube"
 version = "0.1.0"
 dependencies = [
- "geom2d",
- "geom4d",
+ "geom",
  "nalgebra",
  "proptest",
 ]
