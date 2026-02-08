@@ -14,8 +14,8 @@
   // - devcontainer CLI: npm i -g @devcontainers/cli
   //
   // Usage from host:
-  //   .devcontainer/local/host-devcontainer-rebuild.sh
-  //   .devcontainer/local/host-vscode-tunnel.sh
+  //   .devcontainer/host-devcontainer-rebuild.sh
+  //   .devcontainer/host-vscode-tunnel.sh
   "name": "msc-math-local",
   "dockerFile": "Dockerfile",
   "workspaceFolder": "/workspaces/msc-math",
@@ -24,8 +24,9 @@
   // Memory limit: 10GB RAM + 2GB swap max. Protects host from runaway processes.
   // Container survives OOM; only the offending process is killed.
   // --memory-swap is total (RAM+swap), so 12g-10g = 2GB swap allowed.
+  // --cap-add=SYS_ADMIN: needed for perf, strace, and other profiling tools inside the container.
   "runArgs": ["--memory=10g", "--memory-swap=12g", "--cap-add=SYS_ADMIN"],
-  "postCreateCommand": "bash .devcontainer/local/post-create.sh",
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
   "containerEnv": {
     "DEVCONTAINER_ENV": "local",
     "HISTFILE": "/home/vscode/.bash_history_dir/.bash_history",

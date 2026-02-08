@@ -5,12 +5,10 @@ set -euo pipefail
 
 if [[ ${1:-} == "--help" || ${1:-} == "-h" ]]; then
   cat <<'EOF'
-Usage: .devcontainer/local/host-vscode-tunnel.sh
+Usage: .devcontainer/host-vscode-tunnel.sh
 
 Launch a VS Code tunnel from the host into the devcontainer.
 Ensures the devcontainer is running, then starts the tunnel.
-
-Uses .devcontainer/local/ configuration.
 
 Requires:
   - devcontainer CLI (npm i -g @devcontainers/cli)
@@ -22,7 +20,7 @@ EOF
   exit 0
 fi
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 if ! command -v devcontainer >/dev/null 2>&1; then
   echo "devcontainer CLI not found. Install with 'npm i -g @devcontainers/cli' or via VS Code Dev Containers extension." >&2
@@ -31,7 +29,7 @@ fi
 
 TUNNEL_NAME="msc-math"
 CODE_TUNNEL_BIN="${CODE_TUNNEL_BIN:-/usr/local/bin/code-tunnel}"
-CONFIG_FILE="${REPO_ROOT}/.devcontainer/local/devcontainer.json"
+CONFIG_FILE="${REPO_ROOT}/.devcontainer/devcontainer.json"
 
 # Ensure the devcontainer is running so the tunnel can be launched inside it.
 devcontainer up --workspace-folder "${REPO_ROOT}" --config "${CONFIG_FILE}" >/dev/null
