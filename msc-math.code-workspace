@@ -1,0 +1,32 @@
+{
+	"folders": [
+		{
+			"path": ".",
+			"name": "main"
+		},
+		{
+			"path": "../worktrees",
+			"name": "worktrees"
+		}
+	],
+	"settings": {
+		"git.autoRepositoryDetection": "openEditors",
+		"git.ignoreLimitWarning": true,
+		"files.autoSave": "off",
+		"editor.wordWrap": "on",
+		"texlab.chktex.onOpenAndSave": true,
+		"texlab.chktex.onEdit": false,
+		"[markdown]": {
+			"editor.tabSize": 2
+		},
+	},
+	"extensions": {
+		"recommendations": [
+			"anthropic.claude-code",
+			"efoerster.texlab",
+			"mathematic.vscode-pdf",
+			"github.github-vscode-theme",
+			"miguelsolorio.symbols"
+		]
+	}
+}
