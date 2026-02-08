@@ -53,10 +53,10 @@ The following types of work MUST NOT be carried out by Claude Code, and MUST be 
 
 3. **Verification of written proofs**. While Claude Code can spot errors in proofs that are written in a clear, unambiguous, detailed, complete, low-cognitive overhead style, Claude Code is only okay at it. Every proof must pass Jörn's verification after every edit, to ensure we can trust and build upon the proof. Turning natural language descriptions into proofs, improving the style, reporting the presence of errors, are all tasks Claude Code can still carry out autonomously. Only a final verification signal must not be left to Claude Code, and must come from Jörn instead.
 4. **Exhaustiveness of test suites**. While Claude Code has been trained on conventional software development testing, and can implement specified tests and then write code that passes tests, we also add unusual test suites that check the correspondence of our code with our mathematical definitions and proofs. This is an unconventional use of runtime testing, so Jörn has to jump in and design what mathematical propositions the test suites need to cover to be high-confidence signals of correctness and not just moderate-confidence signals. The brainstorming, implementation and debugging work for the mathematical propositions test suites can still be left to Claude Code. Only the exhaustiveness signal must not be left to Claude Code.
-5. **Task Scoping**. Claude Code can spot implicit criteria imposed on a task's scope by adjacent tasks and by its own capability limits, and can design acceptance criteria to coordinate across these 1-hop dependencies. However, Claude Code has not been trained enough on workflows that need a deep, accurate model of the whole remaining thesis project and of multi-agent workflows that build upon a task, so it frequently makes bad scoping decisions for long-term work. Consequences:
-   - Any completed task with a scope designed by Claude Code alone must not be merged into `main`. Jörn must greenlight the scope as something that matches his long-term vision for the thesis project, either before assignment or before merge.
+5. **Task Scoping**. Claude Code can spot implicit criteria imposed on a task's scope and acceptance criteria by other tasks and by Claude Code's capability limits and default habits. Claude Code can design acceptance criteria to coordinate across these 1-hop dependencies. However, Claude Code has not been trained enough on workflows that need a deep, accurate model of the whole remaining thesis project and of multi-agent workflows that build upon a task, so it frequently makes bad scoping decisions for long-term work. Consequences:
+   - Any completed task with a scope designed by Claude Code alone must not be merged into `main`. Jörn must greenlight the scope as something that matches his long-term vision for the thesis project, either before the task is assigned to an agent, or at some later step before the merge.
    - Jörn requires an analysis of (a) the task's downstream effects on the printed thesis, and (b) side effects on how agents and Jörn work on the thesis before its completion date.
-   - Jörn also requires an analysis of how an agent would complete the task, to catch gaps in acceptance criteria caused by pathological agent behavior (e.g. writing tests after code risks tests biased toward narrow coverage).
+   - Jörn also requires an analysis of how an agent would complete the task, to catch gaps in acceptance criteria caused by pathological agent behavior (e.g. if test cases are chosen after the code has been written, there is a danger of tests being biased towards being narrower and less diverse).
    - For tasks not yet started: Claude Code should do a throwaway preliminary investigation to gauge how an agent would approach the task — this is a good enough proxy for the later agent's behavior, even though unexpected findings during execution may change the plan.
    - For already-completed tasks: show Jörn the final executed plan.
 6. **Merge into `main`**: All merges into `main` must be done by Jörn himself. This is a final defense layer, in case of misunderstandings or oversights on Claude Code's and Jörn's side.
@@ -118,9 +118,10 @@ The deciding factors are rollback cost and verification cost:
 When requesting Jörn's attention (see also Roles point 7 for what to include):
 
 Formatting for efficient exchange:
+- Aim for efficient information exchange, not politeness or engagement
 - Number items so Jörn can respond "3 yes, 5 no" instead of quoting paragraphs
 - Omit filler phrases
-- Jörn doesn't see edit diffs in the chat — mention and explain repo changes when he should be aware of them
+- Jörn doesn't see exact edit diffs in the chat — mention and explain repo changes when he should be aware of them
 
 ### GitHub authorship
 
