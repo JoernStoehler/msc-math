@@ -8,6 +8,7 @@ __pycache__/
 .venv/
 
 # LaTeX
+thesis/build/
 thesis/*.aux
 thesis/*.log
 thesis/*.out

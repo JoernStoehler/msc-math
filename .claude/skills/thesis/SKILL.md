@@ -12,7 +12,7 @@ Currently: skeleton only (`main.tex` with title, author, and section stubs).
 ## LaTeX conventions
 
 - Standard AMS theorem environments
-- LaTeX compilation is NOT available in this environment; focus on source correctness
+- Build: `cd thesis/ && latexmk` (TeX Live 2023, pdflatex, latexmk, biber available)
 
 ## Writing proofs
 

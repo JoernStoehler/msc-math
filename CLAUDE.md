@@ -52,6 +52,8 @@ The thesis team consists of Jörn and Claude Code.
 - Plans minimize Jörn's workload, even at vastly higher total Claude Code work than a balanced plan would assign.
 - We parallelize Claude Code via multiple sessions in parallel, via agent teams, and via subagents.
 - Each agent and its spawned teams and subagents work in its own git worktree.
+  - Create: `.devcontainer/worktree-new.sh <path> <branch>` (fetches, hydrates deps)
+  - Remove: `.devcontainer/worktree-remove.sh <path>` (safe removal with diagnostics)
 - Jörn coordinates between sessions and prioritizes which tasks to pass to new sessions.
 - Agents orchestrate their own, simpler-to-handle teams and subagents.
 
@@ -248,7 +250,7 @@ These are true about the repo right now and must remain true:
 
 - Sessions run in a devcontainer with the repo at `/workspaces/msc-math` and worktrees at `/workspaces/<name>`.
 - Pre-installed: Rust 1.93 (cargo, clippy), Python 3.11 (pytest, ruff, mypy, black), gh CLI (via post-create hook)
-- LaTeX is NOT available in this environment; thesis compilation happens elsewhere
+- LaTeX: TeX Live 2023 (pdflatex, xelatex, lualatex), latexmk, biber, chktex
 
 ## Commands
 
@@ -261,6 +263,9 @@ cd crates/ && cargo clippy
 # Python
 ruff check experiments/
 pytest experiments/
+
+# LaTeX
+cd thesis/ && latexmk
 ```
 
 ## Rust crates
@@ -293,7 +298,7 @@ Where domains overlap, algorithms must agree on the computed capacity.
 
 ## Thesis (LaTeX)
 
-[aspirational] A complete master thesis PDF. Currently: skeleton only (`main.tex` with title, author, and section stubs). LaTeX compilation is NOT available in this environment.
+[aspirational] A complete master thesis PDF. Currently: skeleton only (`main.tex` with title, author, and section stubs). Build with `cd thesis/ && latexmk`.
 <!-- Conventions and proof writing rules: .claude/skills/thesis/SKILL.md -->
 
 ## Archaeology
