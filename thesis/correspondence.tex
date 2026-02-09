@@ -1,0 +1,66 @@
+% correspondence.tex — Notation glossary: our conventions vs HK2017
+% \input'd from main.tex. Reviewed by Jörn before any chapter content is written.
+%
+% Sources: Jörn's definitions dictated in chat. No other source.
+
+\section{Notation Correspondence}\label{sec:correspondence}
+
+% ---------- 1. Notation table ----------
+
+\subsection{Symbol Glossary}\label{subsec:symbols}
+
+\begin{longtable}{p{5.5cm} p{3.5cm} p{3.5cm}}
+\hline
+\textbf{Concept} & \textbf{Ours} & \textbf{HK2017} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Concept} & \textbf{Ours} & \textbf{HK2017} \\
+\hline
+\endhead
+
+Ambient space                                    & $\mathbb{R}^4$      & $\mathbb{R}^{2n}$ \\
+Coordinates                                      & $(q,p)$              & --- \\
+Std.\ complex structure                          & $J_0$                & $J$ \\
+Std.\ symplectic form                            & $\omega_0$           & $\omega$ \\
+Liouville form                                   & $\lambda_0$          & --- \\
+Convex body                                      & $K$                  & $K$ \\
+Facet count                                      & $F$                  & $\mathbf{F}_K$ \\
+Facets                                           & $F_i$                & $F_i$ \\
+Outward unit normals                             & $n_i$                & $n_i$ \\
+Heights                                          & $h_i$                & $h_i$ \\
+Support function                                 & $h_K$                & $h_K$ \\
+Gauge function                                   & $g_K$                & $g_K$ \\
+Hamiltonian                                      & $g_K^2$              & $g_K^2$ \\
+Normal cone                                      & $N_K(x)$             & $N_K(x)$ \\
+Reeb vectors (per-facet)                         & $R_i$                & $p_i$ \\
+Curve domain                                     & $[0,T]$              & $[0,1]$ \\
+Gen.\ closed char.\ / Reeb orbit / Ham.\ orbit  & $\gamma$             & $\gamma$ \\
+Action                                           & $A(\gamma)$          & $A(\gamma)$ \\
+EHZ capacity                                     & $c_\mathrm{EHZ}(K)$ & $c_\mathrm{EHZ}(K)$ \\
+Dual variable                                    & $z$                  & $z$ \\
+Dual functional                                  & $I_K(z)$             & $I_K(z)$ \\
+$Q$-function                                     & $Q(\sigma,\beta)$    & (unnamed) \\
+Constraint set                                   & $M(K)$               & $M(K)$ \\
+Action matrix                                    & $H$                  & --- \\
+Adjacency graph                                  & ---                  & --- \\
+
+\hline
+\end{longtable}
+
+% ---------- 2. Notes ----------
+
+\subsection{Notes}\label{subsec:notes}
+
+\begin{description}
+
+\item[Two normalizations.]
+  We call ours \emph{period normalization} and theirs \emph{HK2017 normalization}.
+
+\item[Centering constraint.]
+  We include a centering constraint on the dual variable; HK2017 does not.
+
+\item[MATLAB sign convention.]
+  MATLAB minimizes a negative quantity; we maximize a positive one.
+
+\end{description}

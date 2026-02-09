@@ -1,335 +1,195 @@
-% chapter-algorithm.tex
-% Algorithm chapter: EHZ capacity of convex polytopes via HK2017
-% This file is \input'd from main.tex — no \documentclass.
-% Structure only: all theorem environments are empty, to be filled after notation review.
+% chapter-algorithm.tex — \input'd from main.tex
+%
+% FOUR AUDIENCES — every line must work for all four simultaneously.
+%
+% AUDIENCE 1: Human readers (Jörn, Kai, Elizabeth).
+%   - Jörn: knows enough symplectic geometry, optimization, this entire thesis, the bibliography materials
+%   - Kai: knows a lot of symplectic geometry
+%   - Elizabeth: knows a lot of optimization
+%   - All three: know typical basics such as linear algebra, polytopes, analysis, ...
+%   - Want the main result (algorithm + theorem) upfront on page 1, so they can
+%     read it and stop if that's all they need.
+%   - Will skim definitions and revisit if confused.
+%   - All proofs are skippable: clearly marked start/end, nothing outside a proof
+%     references proof internals.
+%   - Value: the algorithm itself, the interesting proof ideas, geometric intuition.
+%   - Remarks, examples, and illustrations live next to relevant lemmas/proofs.
+%     Redundancy is fine — readers pick what they want.
+%
+% AUDIENCE 2: Imaginary master student (nominal target audience of a master thesis).
+%   - Knows linear algebra, analysis, basic topology, intro symplectic geometry,
+%     intro optimization — a typical math master student's background.
+%   - Every definition must be stated in full, not deferred to the literature.
+%   - Must be able to follow the chapter linearly without external references.
+%   - This audience is why there's motivation even for standard definitions, while
+%     the other three audiences are familiar with the literature already.
+%
+% AUDIENCE 3: QC agents (pedantic correctness verification, AI).
+%   - Verify one chunk at a time, trusting previously verified chunks.
+%   - Each chunk is self-contained: a QC agent can read [definitions]
+%     [propositions] [lemma X] [theorem Y] [proof of Y] and check [proof of Y]
+%     while trusting that the rest is already verified.
+%   - For every proof step: if the agent cannot immediately confirm "yes, that
+%     follows directly," the step fails review.
+%   - If any step is incorrect, the chunk fails review.
+%   - Words must have clear, specific meanings. Natural language errs towards
+%     explicitness to prevent misunderstandings or overlooked edge cases.
+%   - We never state anything incorrect, even if the incorrectness is not fatal.
+%
+% AUDIENCE 4: Downstream agents (Rust implementers, test writers, AI).
+%   - Need full detail in all definitions, lemmas, proofs, algorithm specs.
+%   - Need all properties listed — including properties not cited later in
+%     the chapter — because they generate unit tests and proptests from them.
+%     E.g., capacity axioms: useful for intuition AND for test cases.
+%   - Need concrete values and example calculations that illustrate the
+%     algorithms and proof steps.
+%
+% CONTENT RULES:
+%   1. Every definition, theorem statement, and proof strategy must be traceable
+%      to a specific instruction from Jörn in the chat.
+%      Do NOT write anything Jörn did not dictate.
+%   2. No definition or theorem statement may be deferred to the literature.
+%      Every definition is stated in full. Every theorem is stated in full.
+%   3. A proof MAY be deferred to the literature ONLY IF:
+%      (a) the theorem exceeds thesis scope due to complexity, AND
+%      (b) the proof is not relevant to the thesis — only the theorem is.
+%   4. Notation and definitions must match correspondence.tex exactly.
+%      If correspondence.tex uses symbol X, this file uses symbol X.
+%      No synonyms, no alternative forms, no "equivalent" restatements
+%      unless a lemma proving equivalence is included.
+%
+% FORMAT RULES:
+%   - \definition, \lemma, \theorem, \proposition, \proof environments for
+%     mathematical content. \remark and \example for context/intuition/illustrations.
+%   - No prose paragraphs outside environments (except minimal connective text).
+%   - All calculations displayed as formulas, never described in English sentences.
+%   - Emphasis proportional to importance. No full sections for trivial identities.
+%
+% QC PROCEDURE:
+%   A QC agent is given correspondence.tex and this file. For each environment:
+%   (a) Does the definition/statement match correspondence.tex? Find one deviation.
+%   (b) Does each proof step follow immediately from stated assumptions? Find one gap.
+%   If the QC agent cannot find a deviation or gap, the environment passes.
 
-%% ============================================================
-%% Section A: Definitions and Prerequisites
-%% ============================================================
+%%% =================================================================
+%%% Section 1: Main Result
+%%% =================================================================
 
-\section{Definitions and Prerequisites}\label{sec:definitions}
+\section{Main Result}\label{sec:main-result}
 
-\subsection{Convex Geometry}\label{subsec:convex-geometry}
+\begin{theorem}[EHZ capacity algorithm]\label{thm:main}
+\end{theorem}
 
-\begin{definition}[Convex polytope in H-representation]\label{def:convex-polytope}
-  % TODO: Define convex polytope K ⊂ R^4 as bounded intersection of half-spaces,
-  %       with 0 ∈ int(K). Introduce F (number of facets), outward unit normals n_i,
-  %       oriented heights h_i > 0.
-  % Source: knowledge-dump.md Section A, subsection A1
+% Algorithm (functional pseudocode)
+
+%%% =================================================================
+%%% Section 2: Definitions
+%%% =================================================================
+
+\section{Definitions}\label{sec:definitions}
+
+% --- Smooth setting ---
+
+\begin{definition}[Standard symplectic form]\label{def:symplectic-form}
+\end{definition}
+
+\begin{definition}[Liouville form]\label{def:liouville-form}
+\end{definition}
+
+\begin{definition}[Convex body]\label{def:convex-body}
 \end{definition}
 
 \begin{definition}[Support function]\label{def:support-function}
-  % TODO: Define h_K(y) = sup_{x∈K} ⟨x, y⟩.
-  %       State properties: positively 1-homogeneous, convex, h_K(n_i) = h_i.
-  % Source: knowledge-dump.md Section A, subsection A2
 \end{definition}
 
 \begin{definition}[Gauge function]\label{def:gauge-function}
-  % TODO: Define g_K(x) = inf { r > 0 : x/r ∈ K }.
-  %       State properties: positively 1-homogeneous, convex,
-  %       g_K = 1 on ∂K, g_K < 1 in int(K).
-  % Source: knowledge-dump.md Section A, subsection A3
 \end{definition}
 
-\begin{theorem}[Legendre--Fenchel duality for $g_K^2$ and $\tfrac{1}{4}h_K^2$]\label{thm:fenchel-duality}
-  % TODO: State that g_K^2 and (1/4)h_K^2 are Legendre-Fenchel duals.
-  %       g_K^2(x) = sup_y ( ⟨x,y⟩ - (1/4)h_K^2(y) )
-  %       (1/4)h_K^2(y) = sup_x ( ⟨x,y⟩ - g_K^2(x) )
-  % Source: knowledge-dump.md Section A, subsection A4
-\end{theorem}
-
-\begin{lemma}[Fenchel inequality]\label{lem:fenchel-inequality}
-  % TODO: State g_K^2(x) + (1/4)h_K^2(y) ≥ ⟨x, y⟩ for all x, y.
-  % Source: knowledge-dump.md Section A, subsection A4
-\end{lemma}
-
-\begin{lemma}[Fenchel equality condition]\label{lem:fenchel-equality}
-  % TODO: State the three equivalent conditions for equality:
-  %       g_K^2(x) + (1/4)h_K^2(y) = ⟨x, y⟩
-  %       ⟺ y ∈ ∂g_K^2(x) ⟺ x ∈ ∂((1/4)h_K^2)(y)
-  % Source: knowledge-dump.md Section A, subsection A4
-\end{lemma}
-
-\begin{definition}[Outward normal cone]\label{def:normal-cone}
-  % TODO: Define N_K(x) for x ∈ ∂K as the conic hull of normals of adjacent facets.
-  %       Describe behavior at facet interiors (single ray) vs edges/vertices (cone).
-  % Source: knowledge-dump.md Section A, subsection A5
+\begin{definition}[Hamiltonian]\label{def:hamiltonian}
 \end{definition}
 
-\subsection{Symplectic Geometry}\label{subsec:symplectic-geometry}
-
-\begin{definition}[Standard symplectic structure on $\mathbb{R}^4$]\label{def:symplectic-structure}
-  % TODO: Define coordinates (q_1, q_2, p_1, p_2), the symplectic form ω,
-  %       the standard complex structure J, and the Liouville 1-form λ_0.
-  %       State key properties: J^2 = -I, J^T = -J, ω(u,v) = ⟨Ju, v⟩, dλ_0 = ω.
-  % Source: knowledge-dump.md Conventions
+\begin{definition}[Normal cone]\label{def:normal-cone}
 \end{definition}
 
-\begin{lemma}[Symplectic invariance of $J$]\label{lem:omega-J-invariance}
-  % TODO: State and prove ω(Ju, Jv) = ω(u, v).
-  %       Proof uses J^2 = -I and J^T = -J.
-  % Source: knowledge-dump.md Section A, subsection A11
-\end{lemma}
-
-\begin{definition}[Facet Reeb vectors]\label{def:reeb-vectors}
-  % TODO: Define p_i = (2/h_i) J n_i for each facet.
-  %       Derive from Hamiltonian vector field of g_K^2.
-  %       State properties: p_i tangent to F_i, |p_i| = 2/h_i.
-  % Source: knowledge-dump.md Section A, subsection A6
+\begin{definition}[Generalized Reeb orbit --- smooth]\label{def:reeb-orbit-smooth}
 \end{definition}
 
-\subsection{Closed Characteristics and Capacity}\label{subsec:characteristics-capacity}
-
-\begin{definition}[Generalized closed characteristic]\label{def:closed-characteristic}
-  % TODO: Define a closed loop γ ∈ W^{1,2}([0,T], R^4) with γ(0)=γ(T),
-  %       Im(γ) ⊂ ∂K, and the differential inclusion γ̇(t) ∈ J N_K(γ(t)) a.e.
-  %       Emphasize this is a differential inclusion, not equation, due to ∂K non-smooth.
-  % Source: knowledge-dump.md Section A, subsection A7
+\begin{definition}[Action of an orbit]\label{def:action}
 \end{definition}
-
-\begin{definition}[Symplectic action]\label{def:symplectic-action}
-  % TODO: Define A(γ) = (1/2) ∫_0^T ⟨Jγ(t), γ̇(t)⟩ dt = ∫_γ λ_0.
-  %       State geometric meaning: symplectic area enclosed by γ.
-  % Source: knowledge-dump.md Section A, subsection A8
-\end{definition}
-
-\begin{lemma}[Action of piecewise-constant velocity loops]\label{lem:action-piecewise}
-  % TODO: State the key identity for piecewise-constant velocity:
-  %       If ż is piecewise constant with velocity w_i on interval I_i,
-  %       then ∫⟨-Jż, z⟩ dt = Σ_{j<i} |I_i| |I_j| ω(w_i, w_j).
-  %       Reference: HK2017 Prop 3.4.
-  % Source: knowledge-dump.md Section A, subsection A8
-\end{lemma}
 
 \begin{definition}[EHZ capacity]\label{def:ehz-capacity}
-  % TODO: Define c_EHZ(K) = min { A(γ) : γ generalized closed characteristic on ∂K }.
-  %       State properties: symplectically invariant, translation invariant,
-  %       2-homogeneous.
-  % Source: knowledge-dump.md Section A, subsection A9
+\end{definition}
+
+\begin{lemma}[Symplectic capacity axioms]\label{lem:capacity-axioms}
+\end{lemma}
+
+% --- Polytope setting ---
+
+\begin{definition}[Polytope]\label{def:polytope}
+% 0 in int(K) — Jörn to confirm where this is used
+\end{definition}
+
+\begin{definition}[Facets, normals, heights]\label{def:facets}
+\end{definition}
+
+\begin{definition}[Facet Reeb vectors]\label{def:reeb-vectors}
+\end{definition}
+
+\begin{definition}[Generalized Reeb orbit --- polytope]\label{def:reeb-orbit-polytope}
+\end{definition}
+
+%%% =================================================================
+%%% Section 3: Simple Minimizer Existence
+%%% =================================================================
+
+\section{Simple Minimizer Existence}\label{sec:simple-minimizer}
+
+\begin{theorem}[Existence of Reeb orbits, positive infimum, minimum attained]\label{thm:orbit-existence}
+% Cited, no proof. Smooth: established. Polytope: CH2021?
+\end{theorem}
+
+\begin{theorem}[Simple minimizer structure]\label{thm:simple-minimizer}
+% Piecewise linear, pure facet Reeb vectors, contiguous intervals
+\end{theorem}
+
+%%% =================================================================
+%%% Section 4: Algorithm Correctness
+%%% =================================================================
+
+\section{Algorithm Correctness}\label{sec:algorithm-correctness}
+
+\begin{definition}[Dual variable]\label{def:dual-variable}
 \end{definition}
 
 \begin{definition}[Dual functional]\label{def:dual-functional}
-  % TODO: Define I_K(z) = (1/4) ∫_0^T h_K^2(-Jż(t)) dt.
-  %       Note: depends only on velocity ż, not position z. Translation invariant.
-  % Source: knowledge-dump.md Section A, subsection A10
 \end{definition}
 
-%% ============================================================
-%% Section B: Clarke's Dual Action Principle
-%% ============================================================
+\begin{definition}[$Q$-function]\label{def:q-function}
+\end{definition}
 
-\section{Clarke's Dual Action Principle}\label{sec:clarke-duality}
+\begin{definition}[Constraint set]\label{def:constraint-set}
+\end{definition}
 
-\begin{theorem}[Clarke's dual action principle]\label{thm:clarke-duality}
-  % TODO: State the primal problem (minimize A(γ) over generalized closed
-  %       characteristics on ∂K) and the dual problem (minimize I_K(z) over
-  %       z ∈ W^{1,2} with closure, centering, and action=period constraints).
-  %       State the 1:1 correspondence of minimizers and I_K(z*) = T = A(γ*).
-  %       State the consequence c_EHZ(K) = T = I_K(z*) = A(γ*).
-  % Source: knowledge-dump.md Section B, subsection B1
+\begin{definition}[Action matrix]\label{def:action-matrix}
+\end{definition}
+
+\begin{theorem}[Optimization formulation]\label{thm:optimization}
+% HK2017 max formula
 \end{theorem}
 
-\begin{proof}
-  % TODO: Five-step proof following the talk normalization.
-  %       Step 1: Fenchel inequality (from Lemma lem:fenchel-inequality).
-  %       Step 2: Apply to Hamiltonian orbit, use equality condition.
-  %       Step 3: Integrate over time, obtain T + I_K(γ) = 2A(γ).
-  %       Step 4: Use g_K ≡ 1 on ∂K to get I_K(γ) = T = A(γ).
-  %       Step 5: Critical point correspondence via Fenchel equality condition.
-  % Source: knowledge-dump.md Section B, subsection B2
-\end{proof}
-
-%% ============================================================
-%% Section C: Simple Orbit Structure
-%% ============================================================
-
-\section{Simple Orbit Structure}\label{sec:simple-orbit}
-
-\begin{definition}[Simple orbit]\label{def:simple-orbit}
-  % TODO: Define a simple orbit as a piecewise affine closed characteristic
-  %       that uses pure facet Reeb vectors and visits each facet on a
-  %       contiguous time interval.
-  % Source: knowledge-dump.md Section C, subsection C1
-\end{definition}
-
-\begin{theorem}[Existence of simple minimizers]\label{thm:simple-orbit}
-  % TODO: State HK2017 Thm 1.2: For every convex polytope K ⊂ R^4, there exists
-  %       a minimum-action generalized closed characteristic that is a simple orbit.
-  % Source: knowledge-dump.md Section C, subsection C1
-\end{theorem}
-
-\begin{proof}
-  % TODO: Five-step proof.
-  % The proof structure has dedicated lemmas below for each step.
-  % Source: knowledge-dump.md Section C, subsection C2
-\end{proof}
-
-\subsection{Proof Steps}\label{subsec:simple-orbit-proof}
-
-\begin{lemma}[Step 1: Piecewise affine approximation]\label{lem:simple-step1-approximate}
-  % TODO: Approximate the dual minimizer z by piecewise affine loops z_N
-  %       with velocities in conv{p_i}, preserving A and I_K in the limit.
-  %       Reference: HK2017 Lemma 4.2.
-  % Source: knowledge-dump.md Section C, subsection C2, Step 1
+\begin{lemma}[Domain decomposition]\label{lem:domain-decomposition}
+% Union of open domains, parameterized by (subset of facets, cyclic order)
 \end{lemma}
 
-\begin{lemma}[Step 2: Splitting mixed velocities]\label{lem:simple-step2-split}
-  % TODO: Replace mixed-velocity segments by concatenations of pure-velocity
-  %       segments. Show I_K = T exactly after splitting. Show action changes
-  %       by ±ε, and we can choose the sign.
-  % Source: knowledge-dump.md Section C, subsection C2, Step 2
+\begin{lemma}[Global maximum at local maximum]\label{lem:global-at-local}
 \end{lemma}
 
-\begin{lemma}[Step 3: Merging contiguous intervals]\label{lem:simple-step3-rearrange}
-  % TODO: Merge disjoint intervals with the same Reeb vector by rearranging.
-  %       Show one rearrangement has A ≥ original (or both equal).
-  %       Show I_K unchanged (depends only on velocity magnitudes and total time).
-  % Source: knowledge-dump.md Section C, subsection C2, Step 3
+\begin{corollary}[Enumeration computes capacity]\label{cor:enumeration}
+\end{corollary}
+
+\begin{lemma}[Local maximum characterization]\label{lem:local-max}
+% Explicit linear equation, saddle point check, domain membership check
 \end{lemma}
 
-\begin{lemma}[Step 4: Renormalization]\label{lem:simple-step4-renormalize}
-  % TODO: Rescale time by β = T / A(z_N'') to restore talk normalization.
-  %       Show A' = T' and I_K' = T'. Show β → 1 in the limit.
-  % Source: knowledge-dump.md Section C, subsection C2, Step 4
-\end{lemma}
+% Algorithm (verbatim copy from Section 1)
 
-\begin{lemma}[Step 5: Compactness and convergence]\label{lem:simple-step5-compactness}
-  % TODO: Simple loops are encoded by finite data (σ, |I_i|).
-  %       Finite orderings × compact segment-length set = compact.
-  %       Extract convergent subsequence; limit is a simple minimizer.
-  % Source: knowledge-dump.md Section C, subsection C2, Step 5
-\end{lemma}
-
-%% ============================================================
-%% Section D: Combinatorial Capacity Formula
-%% ============================================================
-
-\section{Combinatorial Capacity Formula}\label{sec:capacity-formula}
-
-\begin{definition}[The $Q$-function]\label{def:q-function}
-  % TODO: Define Q(σ, β) = Σ_{j<i} β_{σ(i)} β_{σ(j)} ω(n_{σ(i)}, n_{σ(j)}).
-  %       σ is a permutation of facets, β = (β_1,...,β_F) are weights.
-  % Source: knowledge-dump.md Section D, subsection D1
-\end{definition}
-
-\begin{definition}[Constraint set $M(K)$]\label{def:constraint-set}
-  % TODO: Define M(K) = { β ∈ R^F : β_i ≥ 0, Σβ_i h_i = 1, Σβ_i n_i = 0 }.
-  %       Explain the three constraints: non-negativity, height normalization, closure.
-  % Source: knowledge-dump.md Section D, subsection D2
-\end{definition}
-
-\begin{theorem}[Combinatorial capacity formula]\label{thm:capacity-formula}
-  % TODO: State HK2017 Thm 1.1:
-  %       c_EHZ(K) = (1/2) [max_{σ∈S_F, β∈M(K)} Q(σ,β)]^{-1}
-  % Source: knowledge-dump.md Section D, subsection D3
-\end{theorem}
-
-\begin{proof}
-  % TODO: Four-step derivation.
-  % Source: knowledge-dump.md Section D, subsection D4
-\end{proof}
-
-\subsection{Derivation Steps}\label{subsec:capacity-derivation}
-
-\begin{lemma}[Action of a simple orbit in talk normalization]\label{lem:capacity-step-a}
-  % TODO: Apply the piecewise-constant velocity identity (Lemma lem:action-piecewise)
-  %       to a simple orbit with velocities p_{σ(i)} = (2/h_{σ(i)}) J n_{σ(i)}.
-  %       Use ω(Ju, Jv) = ω(u, v) to simplify.
-  %       Result: 2A(z) = 4 Σ_{j<i} T_i T_j / (h_{σ(i)} h_{σ(j)}) · ω(n_{σ(i)}, n_{σ(j)})
-  % Source: knowledge-dump.md Section D, subsection D4, Step A
-\end{lemma}
-
-\begin{lemma}[Variable substitution and action as $Q$]\label{lem:capacity-step-bc}
-  % TODO: Introduce β_{σ(i)} = T_i / h_{σ(i)}.
-  %       Derive closure and normalization constraints from orbit constraints.
-  %       Show A(z) = 2Q(σ, β).
-  % Source: knowledge-dump.md Section D, subsection D4, Steps B--C
-\end{lemma}
-
-\begin{lemma}[Normalization bridge]\label{lem:normalization-bridge}
-  % TODO: Rescale from talk normalization (Σβ_i h_i = T) to HK2017 normalization
-  %       (Σβ̃_i h_i = 1) via β̃_i = β_i/T.
-  %       Use 2-homogeneity of Q to derive c_EHZ = 1/(2·Q(σ, β̃)).
-  %       Conclude the capacity formula by maximizing over σ and β̃.
-  % Source: knowledge-dump.md Section D, subsection D4, Step D
-\end{lemma}
-
-%% ============================================================
-%% Section E: The Algorithm
-%% ============================================================
-
-\section{The Algorithm}\label{sec:algorithm}
-
-\subsection{Preprocessing}\label{subsec:preprocessing}
-
-\begin{proposition}[Centering]\label{prop:centering}
-  % TODO: State that the polytope must have 0 ∈ int(K) for heights to be positive.
-  %       Any interior point works; the barycenter is canonical.
-  % Source: knowledge-dump.md Section E, subsection E5
-\end{proposition}
-
-\subsection{Main Algorithm}\label{subsec:main-algorithm}
-
-% TODO: Insert pseudocode for the main algorithm (Algorithm environment).
-%       Outer loop over subsets S ⊆ {1,...,F} with |S| ≥ 2.
-%       Inner: feasibility check, unique vs underdetermined cases,
-%       KKT solve, post-hoc non-negativity check.
-% Source: knowledge-dump.md Section E, subsection E1
-
-\subsection{The KKT System}\label{subsec:kkt-system}
-
-\begin{definition}[Symmetrized action matrix]\label{def:action-matrix}
-  % TODO: Define the matrix H encoding Q for a given ordering σ.
-  %       H_{ij} = ω(n_{σ(i)}, n_{σ(j)}) for i > j,
-  %       H_{ij} = -ω(n_{σ(i)}, n_{σ(j)}) for i < j, H_{ii} = 0.
-  %       State Q(σ,β) = (1/2) β^T H β.
-  % Source: knowledge-dump.md Section E, subsection E4
-\end{definition}
-
-\begin{proposition}[Correctness of the KKT approach]\label{prop:kkt-correctness}
-  % TODO: Explain why solving the equality-constrained KKT system
-  %       (without non-negativity) and checking β_i > 0 post-hoc is correct.
-  %       If equality-constrained optimum has β_j < 0, the non-negativity-constrained
-  %       optimum has β_j = 0, corresponding to a smaller subset explored separately.
-  % Source: knowledge-dump.md Section E, subsection E2
-\end{proposition}
-
-\begin{proposition}[Cyclic symmetry reduction]\label{prop:cyclic-symmetry}
-  % TODO: State that Q(σ,β) is invariant under cyclic rotations of σ.
-  %       Fix σ(1) to enumerate (|S|-1)! orderings instead of |S|!.
-  % Source: knowledge-dump.md Section E, subsection E3
-\end{proposition}
-
-\subsection{Complexity}\label{subsec:complexity}
-
-\begin{proposition}[Complexity of the algorithm]\label{prop:complexity}
-  % TODO: State total cost: Σ_{j=2}^{F} C(F,j) · (j-1)! = O(F!/F).
-  %       Exponential in F (number of facets).
-  % Source: knowledge-dump.md Section E, subsection E6
-\end{proposition}
-
-%% ============================================================
-%% Section F: Graph-Pruned Variant
-%% ============================================================
-
-\section{Graph-Pruned Variant}\label{sec:graph-pruned}
-
-\begin{definition}[Facet adjacency graph]\label{def:adjacency-graph}
-  % TODO: Define directed graph G with vertices = facets, directed edge i→j
-  %       iff Reeb flow on facet i can reach facet j.
-  % Source: knowledge-dump.md Section F, subsection F1
-\end{definition}
-
-\begin{proposition}[Correctness of graph pruning]\label{prop:graph-pruning-correctness}
-  % TODO: State that only directed cycles in G correspond to geometrically
-  %       realizable orbits, by Theorem thm:simple-orbit.
-  %       Replacing subset × permutation enumeration by cycle enumeration is correct.
-  % Source: knowledge-dump.md Section F, subsections F2--F3
-\end{proposition}
-
-\begin{proposition}[Computational benefit of graph pruning]\label{prop:graph-pruning-benefit}
-  % TODO: State that the number of simple cycles in G can be much smaller
-  %       than F!, especially for sparse adjacency. Still exponential in worst case.
-  %       Note: MATLAB reference implementation does NOT implement this pruning.
-  % Source: knowledge-dump.md Section F, subsection F4
-\end{proposition}
