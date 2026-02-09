@@ -222,6 +222,17 @@ All GitHub issues, comments, and PR descriptions are written by agents running u
 - Show Jörn proposed issue edits and comments in chat before publishing — he has the domain knowledge to catch directional errors agents can't catch themselves.
 - The **scope** stage of the session workflow serves to clarify the task and fix misunderstandings or stale content from the github issues.
 
+### Spawning subagents
+
+Spawn a subagent when a subtask can run in parallel, needs isolated context, or benefits from focused work (e.g., literature extraction, code review, exploratory investigation).
+
+- Create a temporary file, e.g. in /tmp/ with the subagent prompt. You can pass any corrections/extra context directly to Task. Zero cost, and: persistent record, easier to restart if agent fails.
+- Subagent output returns via the Task tool into your conversation. If it needs to persist, commit it to the repo on your branch. Do not post subagent output as issue comments — it clutters the issue and misleads future agents into treating it as reviewed content.
+- Use Sonnet for read-heavy extraction tasks (literature, code review). Reserve Opus for tasks requiring deep reasoning (mathematical reasoning, code writing).
+- Keep subagent tasks focused and small. Agents may stall on tasks requiring 1000+ lines across multiple files.
+
+<!-- Triage sessions, clarity checking, writing for other agents, editing CLAUDE.md: .claude/skills/triage/SKILL.md and .claude/skills/agent-writing/SKILL.md -->
+
 ## Issue lifecycle
 
 Issues follow a structured lifecycle: capture (draft) → refine (draft) → approve → session (in-progress) → PR + merge → close. Failed sessions go back to draft for re-scoping — no work is lost.
@@ -290,15 +301,3 @@ Where domains overlap, algorithms must agree on the computed capacity.
 The `archaeology/` directory contains files recovered from `msc-viterbo`, an abandoned predecessor repo. **Everything here is untrusted.** Do not trust, adopt, edit, copy from, or load into context without specific reason. Read for ideas and warnings only.
 <!-- Full trust rules and known-broken items: .claude/skills/archaeology/SKILL.md -->
 
-## Workflows
-
-### Spawning subagents
-
-Spawn a subagent when a subtask can run in parallel, needs isolated context, or benefits from focused work (e.g., literature extraction, code review, exploratory investigation).
-
-- Create a temporary file, e.g. in /tmp/ with the subagent prompt. You can pass any corrections/extra context directly to Task. Zero cost, and: persistent record, easier to restart if agent fails.
-- Subagent output returns via the Task tool into your conversation. If it needs to persist, commit it to the repo on your branch. Do not post subagent output as issue comments — it clutters the issue and misleads future agents into treating it as reviewed content.
-- Use Sonnet for read-heavy extraction tasks (literature, code review). Reserve Opus for tasks requiring deep reasoning (mathematical reasoning, code writing).
-- Keep subagent tasks focused and small. Agents may stall on tasks requiring 1000+ lines across multiple files.
-
-<!-- Triage sessions, clarity checking, writing for other agents, editing CLAUDE.md: .claude/skills/triage/SKILL.md and .claude/skills/agent-writing/SKILL.md -->
