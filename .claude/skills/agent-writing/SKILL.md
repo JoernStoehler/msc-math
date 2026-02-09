@@ -18,7 +18,9 @@ When you produce content other agents will consume (CLAUDE.md files, mathematica
 
 Agents edit CLAUDE.md directly on their branch. Jörn reviews via git diff in VS Code and merges.
 
-The file follows structural rules to prevent information-destroying edits. See `CLAUDE.adr.md` for the full style guide and the reasoning behind each rule. Key principles:
+When Jörn edits a file mid-session, immediately commit or snapshot his version before making further changes. This gives you a clean diff baseline to distinguish your changes from his.
+
+The file follows structural rules to prevent information-destroying edits. Read `CLAUDE.adr.md` for the full style guide and the reasoning behind each rule. Key principles:
 
 - **One claim per bullet.** Dense prose packs multiple claims that get lost when a sentence is rewritten.
 - **Qualifier preservation.** Every adjective narrows meaning. "Clear, detailed, explicit, structured" is not a synonym list — each word names a different quality bar. When rewriting, check: does this rewrite preserve all constraints the original imposed?
