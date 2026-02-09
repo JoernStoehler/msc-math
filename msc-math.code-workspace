@@ -5,8 +5,7 @@
 			"name": "main"
 		},
 		{
-			"path": "../worktrees",
-			"name": "worktrees"
+			"path": ".."
 		}
 	],
 	"settings": {

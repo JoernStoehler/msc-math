@@ -102,3 +102,28 @@ Per-file metadata for recovered content from `msc-viterbo`. All content is untru
 | tube_integration.rs | test-file | unknown | Tests tube algorithm with scaling axiom and Mahler bound |
 | tube_orbit_invariants.rs | test-file | unknown | Tests tube orbit breakpoint positions and Reeb flow properties |
 | tube_rotation_debug.rs | test-file | unknown | Debug tests for tube rotation computation on skewed simplex |
+
+## raw/talk-clarke-duality/ (18 files)
+
+Beamer talk slides on Clarke's Dual Action Principle, presented by Jörn at the Symplectic Geometry Seminar (Jan 2026). Recovered from `msc-viterbo` repo (`thesis/talk-clarke-duality/`). Covers: symplectic geometry refresh, Viterbo's conjecture, generalized closed characteristics on polytopes, Clarke duality, existence of simple minimizers (HK2017), and the combinatorial formula for c_EHZ.
+
+| File | Type | Origin | Description |
+|------|------|--------|-------------|
+| main.tex | beamer-slides | msc-viterbo (78472cda) | Talk slides: Clarke's Dual Action Principle — 7 sections, ~30 frames |
+| preamble.tex | latex-preamble | msc-viterbo (78472cda) | Math macros, beamer setup, DraftImage placeholder commands |
+| README.md | meta | msc-viterbo (78472cda) | Build instructions and lifecycle notes for the ephemeral talk package |
+| .latexmkrc | config | msc-viterbo (78472cda) | latexmk build configuration |
+| .chktexrc | config | msc-viterbo (78472cda) | ChkTeX linting configuration |
+| .gitignore | config | msc-viterbo (78472cda) | Git ignore rules for build artifacts |
+| docs/math_scratch.tex | latex-notes | msc-viterbo (78472cda) | Scratch math notes: definitions, Fenchel duality, proof skeleton, normalization conventions |
+| docs/brainstorm.md | meta | msc-viterbo (78472cda) | Talk content brainstorming notes |
+| docs/decisions.md | meta | msc-viterbo (78472cda) | Design decisions for talk content and presentation |
+| docs/feedback_questionnaire.md | meta | msc-viterbo (78472cda) | Pre-talk feedback questionnaire |
+| docs/feedback_followup_questionnaire.md | meta | msc-viterbo (78472cda) | Post-talk follow-up questionnaire |
+| docs/pre_talk_checklist.md | meta | msc-viterbo (78472cda) | Pre-talk preparation checklist |
+| docs/teardown.md | meta | msc-viterbo (78472cda) | Post-talk teardown instructions |
+| scripts/build.sh | script | msc-viterbo (78472cda) | LaTeX build script |
+| scripts/gen-version.sh | script | msc-viterbo (78472cda) | Git version info generator for slides footer |
+| scripts/lint.sh | script | msc-viterbo (78472cda) | ChkTeX linting script |
+| assets/manual/linearcombination.pdf | figure | msc-viterbo (78472cda) | Hand-drawn figure: linear combination visualization |
+| assets/manual/reorder.pdf | figure | msc-viterbo (78472cda) | Hand-drawn figure: reorder operation visualization |
