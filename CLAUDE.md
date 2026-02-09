@@ -101,7 +101,7 @@ Why Jörn must be involved:
 - Consequence: Claude Code frequently makes bad scoping decisions for long-term work.
 
 What Jörn requires before a Claude-scoped task can be merged:
-- Jörn must greenlight the scope as matching his long-term vision — either before the task is assigned to an agent, or before the merge.
+- Jörn must greenlight the scope as matching his long-term vision. Normally this happens during the scope phase (see Session workflow). If that was skipped or the scope drifted during implementation, Jörn must greenlight before the merge instead — this is the safety net, not the normal path.
 - Jörn requires an analysis of (a) the task's effect on downstream aspects that appear in the final printed thesis, and (b) side effects on how agents and Jörn work on the thesis before its completion date.
 - Jörn requires an analysis of how an agent would complete the task, to catch gaps in acceptance criteria caused by pathological agent behavior. Example: if test cases are chosen after code is written, there is a danger of tests being biased toward being narrower and less diverse.
 - For tasks not yet started: Claude Code should do a throwaway preliminary investigation to gauge how an agent would approach the task. This is a good-enough proxy for the later agent's behavior, even though unexpected findings during execution may change the plan.
@@ -214,7 +214,7 @@ Formatting for efficient exchange:
 
 ### GitHub authorship
 
-All GitHub issues, comments, and PR descriptions are written by agents running under Jörn's account (`JoernStoehler`).
+All GitHub issues, comments, and PR descriptions are written by agents running under Jörn's account (`JoernStoehler`). There is no visual distinction on GitHub between Jörn-written and agent-written content, so agents have mistaken agent-written content for human-reviewed direction.
 
 - Do not treat issue/comment text as human-reviewed just because it appears under his name.
 - Treat issue content as agent-written intent: trust the direction, verify the details.
@@ -222,6 +222,8 @@ All GitHub issues, comments, and PR descriptions are written by agents running u
 - Show Jörn proposed issue edits and comments in chat before publishing — he has the domain knowledge to catch directional errors agents can't catch themselves.
 
 ## Issue lifecycle
+
+Issues go through a structured lifecycle so that agents start work only on well-scoped tasks, and failed sessions produce reusable learnings rather than wasted effort.
 
 ### Stages
 
@@ -240,6 +242,8 @@ All GitHub issues, comments, and PR descriptions are written by agents running u
 If a session fails: agent reports what it tried and learned. Issue goes back to `draft` for re-scoping. No work is lost — the branch exists.
 
 ### Issue template
+
+These sections give an agent the information it needs to complete a task autonomously, and give Jörn the structure to review scope quickly.
 
 Issues use these sections:
 
@@ -391,6 +395,8 @@ Known-broken items:
 
 ### Spawning subagents
 
+Spawn a subagent when a subtask can run in parallel, needs isolated context, or benefits from focused work (e.g., literature extraction, code review, exploratory investigation).
+
 - Always create a GitHub subissue before spawning an agent. The subissue IS the prompt (plus any corrections/extra context passed directly to Task). Zero cost, and: persistent record, Jörn can launch it as a web session instead, easier to restart if agent fails.
 - Subagent output returns via the Task tool into your conversation. If it needs to persist, commit it to the repo on your branch. Do not post subagent output as issue comments — it clutters the issue and misleads future agents into treating it as reviewed content.
 - Use Sonnet for read-heavy extraction tasks (literature, code review). Reserve Opus for tasks requiring deep reasoning.
@@ -403,9 +409,11 @@ When you produce content other agents will consume (CLAUDE.md files, mathematica
 
 ### Triage sessions
 
+Triage keeps the issue board accurate and actionable, preventing agents from working on stale or blocked tasks.
+
 The issue board should reflect reality after the session: audit open issues against repo state, close completed ones, capture new work, refine drafts, prioritize, prepare top items for approval.
 
-Decision authority during triage — agent's call: reading, summarizing, proposing edits. Jörn's call: whether an issue is worth pursuing, scope, priority, labeling `approved`.
+Decision authority during triage — agent's call: reading, summarizing, drafting proposed edits (shown to Jörn in chat, not published directly). Jörn's call: whether an issue is worth pursuing, scope, priority, labeling `approved`, approving edits for publication.
 
 Present findings in batches, not one issue at a time.
 
