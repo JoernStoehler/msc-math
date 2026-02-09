@@ -300,6 +300,5 @@ Spawn a subagent when a subtask can run in parallel, needs isolated context, or 
 - Subagent output returns via the Task tool into your conversation. If it needs to persist, commit it to the repo on your branch. Do not post subagent output as issue comments — it clutters the issue and misleads future agents into treating it as reviewed content.
 - Use Sonnet for read-heavy extraction tasks (literature, code review). Reserve Opus for tasks requiring deep reasoning (mathematical reasoning, code writing).
 - Keep subagent tasks focused and small. Agents may stall on tasks requiring 1000+ lines across multiple files.
-- Foreground Task() calls block the main conversation — user messages queue up silently. Avoid foreground tasks that might take >1 minute. Prefer background, or just do the work inline.
 
 <!-- Triage sessions, clarity checking, writing for other agents, editing CLAUDE.md: .claude/skills/triage/SKILL.md and .claude/skills/agent-writing/SKILL.md -->
