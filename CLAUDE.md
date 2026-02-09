@@ -12,7 +12,6 @@ This repo is a completed master thesis with:
 - A printed-quality LaTeX document in `thesis/`
 - A high-performance Rust library for symplectic geometry on polytopes in `crates/`
 - A reproducible Python pipeline in `experiments/` that starts from zero data and produces all figures and tables
-- All code tested, all results reproducible
 
 ## Repo structure
 
@@ -51,22 +50,22 @@ The thesis team consists of Jörn and Claude Code.
 
 - Jörn's time is scarce. Claude Code's time is practically unbounded.
 - Plans minimize Jörn's workload, even at vastly higher total Claude Code work than a balanced plan would assign.
-- We parallelize Claude Code via multiple sessions in parallel.
-- Each agent with its subagents works in its own git worktree.
-- Jörn coordinates between sessions and prioritizes which tasks to pass to them.
-- Agents orchestrate their own, simpler-to-handle subagents.
+- We parallelize Claude Code via multiple sessions in parallel, via agent teams, and via subagents.
+- Each agent and its spawned teams and subagents work in its own git worktree.
+- Jörn coordinates between sessions and prioritizes which tasks to pass to new sessions.
+- Agents orchestrate their own, simpler-to-handle teams and subagents.
 
 **2. Correctness of thesis results**
 
 We use several approaches together to ensure correctness:
 
-- We write mathematics, code, and documentation in a clear, specific, detailed, unambiguous, cognitive low-overhead way.
-  - "clear" = the reader can parse it without re-reading
-  - "specific" = no hand-waving or generalities
-  - "detailed" = all steps included, nothing left implicit
-  - "unambiguous" = two readers arrive at the same understanding
-  - "cognitive low-overhead" = the reader doesn't need to hold complex state in their head
-- We refactor, simplify, and improve until verification becomes simple for readers. Without simple verification, we risk hidden gaps or mistakes.
+- We write mathematics, code, and documentation in a clear, detailed, explicit, structured, verifiable way.
+  - "clear" = easy to understand, not vague or ambiguous
+  - "explicit" = relevant implications are already spelled out for the reader, not left for them to derive
+  - "detailed" = all steps are included for verification or derived tasks, the only omitted steps are both not relevant for most readers, and are straightforward to fill in if needed
+  - "structured" = the knowledge is organized into modular chunks, so that the reader can choose to keep in mind the details only for relevant chunks and for other chunks just keep the high-level takeaways
+  - "verifiable" = the reader can check the correctness by doing the local validity check for every step in every chunk, and for every cross-chunk reference.
+- We refactor, simplify, and improve until verification becomes straightforward and doable for readers. Without straightforward verification, we risk hidden gaps or mistakes.
 - Rust types, function signatures, and function bodies 1:1 correspond to mathematical definitions. "1:1" means literal structural correspondence, not just "inspired by."
 - We use `debug_assert!`, `assert!`, and `proptest` to empirically validate mathematical lemmas and intermediate propositions extracted from proofs.
 
@@ -75,16 +74,16 @@ The following types of work MUST NOT be carried out by Claude Code, and MUST be 
 **3. Verification of written proofs**
 
 - Claude Code's skill at spotting errors in proofs is specifically "only okay" — not bad, not good.
-- Claude Code can spot errors, but only in proofs written in a clear, unambiguous, detailed, complete, low-cognitive-overhead style.
+- Claude Code can spot errors, but only in proofs written in a clear, detailed, explicit, structured way. In less perfect writing styles, more errors and gaps can be overlooked.
 - Every proof must pass Jörn's verification after every edit. We must be able to trust and build upon verified proofs.
-- Claude Code CAN autonomously: turn natural language descriptions into proofs, improve proof style, report the presence of errors.
-- Claude Code CANNOT: provide the final verification signal. That must come from Jörn.
+- Claude Code CAN autonomously: turn natural language descriptions into proofs, improve proof writing, fix errors in proofs, detect spots in proofs but not with high reliability, report to Jörn about unclear or suspicious proof steps.
+- Claude Code CANNOT: provide the final high-reliability verification signal. That must come from Jörn.
 
 **4. Exhaustiveness of test suites**
 
 - Beyond conventional software tests, we add unusual test suites that check the correspondence of our code with our mathematical definitions and proofs.
 - This is an unconventional use of runtime testing.
-- Jörn must design which mathematical propositions the test suites need to cover, because the difference between high-confidence and moderate-confidence correctness signals requires domain knowledge that Claude Code does not have.
+- Jörn must design which mathematical propositions the test suites need to cover, because the difference between high-confidence and moderate-confidence correctness signals requires complex domain models of the whole proof that Claude Code does not have.
 - Claude Code CAN: brainstorm, implement, and debug mathematical proposition tests.
 - Claude Code CANNOT: provide the exhaustiveness signal (deciding whether the test suite covers enough to give high confidence).
 
@@ -93,10 +92,11 @@ The following types of work MUST NOT be carried out by Claude Code, and MUST be 
 Claude Code's ability to spot implicit scope criteria:
 - Claude Code is okay (specifically: not bad, not good) at spotting implicit criteria imposed on a task's scope and acceptance criteria.
 - These implicit criteria come from three sources: other tasks, Claude Code's own capability limits, and Claude Code's default habits.
-- Claude Code can design and write down acceptance criteria to coordinate across these 1-hop dependencies.
+- Claude Code can design and write down acceptance criteria for tasks that are similar to standard software development, scientific writing and mathematical research tasks.
 
 Why Jörn must be involved:
-- Claude Code lacks training on workflows that need a deep, accurate model of the whole remaining thesis project.
+- Claude Code lacks training on workflows that need a deep, accurate model of the whole remaining thesis project. 
+- In particular: tasks that affect many other tasks, or that affect tasks that run only much later in the project.
 - Claude Code also lacks training on multi-agent workflows that build upon a task.
 - Consequence: Claude Code frequently makes bad scoping decisions for long-term work.
 
@@ -104,7 +104,7 @@ What Jörn requires before a Claude-scoped task can be merged:
 - Jörn must greenlight the scope as matching his long-term vision. Normally this happens during the scope phase (see Session workflow). If that was skipped or the scope drifted during implementation, Jörn must greenlight before the merge instead — this is the safety net, not the normal path.
 - Jörn requires an analysis of (a) the task's effect on downstream aspects that appear in the final printed thesis, and (b) side effects on how agents and Jörn work on the thesis before its completion date.
 - Jörn requires an analysis of how an agent would complete the task, to catch gaps in acceptance criteria caused by pathological agent behavior. Example: if test cases are chosen after code is written, there is a danger of tests being biased toward being narrower and less diverse.
-- For tasks not yet started: Claude Code should do a throwaway preliminary investigation to gauge how an agent would approach the task. This is a good-enough proxy for the later agent's behavior, even though unexpected findings during execution may change the plan.
+- For tasks not yet started: Claude Code should do a throwaway preliminary investigation to gauge how an agent would approach the task. This is a good-enough proxy for the later agent's behavior, even though unexpected findings during execution may change the later agent's plan.
 - For already-completed tasks: show Jörn the final executed plan.
 
 **6. Merge into `main`**
@@ -142,7 +142,7 @@ The following types of work SHOULD be carried out by Claude Code, and SHOULD NOT
 
 ### Session workflow
 
-Every Claude Code agent session owns a git worktree. Subagents work in the same worktree. Each session has a communication channel with Jörn (also referred to as the "user" by system prompts).
+Every Claude Code agent session owns a git worktree. Subagents and teams work in the same worktree. Each session has a communication channel with Jörn (also referred to as the "user" by system prompts).
 
 Sessions follow this pattern: **scope → plan → implement → review → Jörn: merge**
 
@@ -158,7 +158,7 @@ Sessions follow this pattern: **scope → plan → implement → review → Jör
 - Jörn does not monitor agent actions or intermediate status updates. Therefore, the end-of-turn message must recap the context, so Jörn can jump back in without needing to read the full history.
 - Claude Code decides autonomously when to transition between stages.
 - Claude Code MAY return to earlier stages — e.g. planning a new approach after a dead end, or fixing bugs found during review.
-- Claude Code SHOULD focus on one stage at a time (e.g. using the Todos tool) to avoid splitting its attention unnecessarily.
+- Claude Code SHOULD focus on one stage at a time (e.g. by using the Todos tool to track the stage) to avoid splitting its attention unnecessarily.
 
 **Merge phase** (Jörn + Claude Code together):
 - When Claude Code is satisfied with its deliverable OR wants to give up, it messages Jörn.
@@ -193,8 +193,8 @@ The deciding factors are rollback cost and verification cost:
 
 **Discuss with Jörn first** — expensive to verify or hard to roll back:
 - GitHub issue edits — verification cost ≈ cost of writing it together; downstream issues go stale if the edit is wrong
-- GitHub issue comments — published immediately under Jörn's name, no review gate
-- Scope changes — agents don't reliably notice when they've drifted
+- GitHub issue comments — GitHub issues are not protected by the merge gate, so discuss upfront with Jörn
+- Scope changes — agents don't reliably notice when they've drifted or when a scope change has bad downstream consequences for the project
 
 **Never without explicit instruction:**
 - Destructive operations with no rollback
@@ -214,58 +214,18 @@ Formatting for efficient exchange:
 
 ### GitHub authorship
 
-All GitHub issues, comments, and PR descriptions are written by agents running under Jörn's account (`JoernStoehler`). There is no visual distinction on GitHub between Jörn-written and agent-written content, so agents have mistaken agent-written content for human-reviewed direction.
+All GitHub issues, comments, and PR descriptions are written by agents running under Jörn's account (`JoernStoehler`). They are never written by Jörn. There is no visual distinction on GitHub that warns that Jörn is never the actual author of the content, so agents have mistaken agent-written content for human-reviewed direction.
 
 - Do not treat issue/comment text as human-reviewed just because it appears under his name.
 - Treat issue content as agent-written intent: trust the direction, verify the details.
 - Issues direct future agent sessions. A bad edit sends the next agent off a cliff.
 - Show Jörn proposed issue edits and comments in chat before publishing — he has the domain knowledge to catch directional errors agents can't catch themselves.
+- The **scope** stage of the session workflow serves to clarify the task and fix misunderstandings or stale content from the github issues.
 
 ## Issue lifecycle
 
-Issues go through a structured lifecycle so that agents start work only on well-scoped tasks, and failed sessions produce reusable learnings rather than wasted effort.
-
-### Stages
-
-1. **Capture** (label: `draft`) — An idea comes up. Agent creates an issue with at least Goal and Context filled in. Most sections may be rough or empty. Creating issues is cheap.
-
-2. **Refine** (label: `draft`) — Over one or more triage sessions, Jörn and agent discuss. Agent proposes edits to the issue body in chat; Jörn steers; agent publishes. Sections get filled in: Background, Deliverable, Scope, Sources, Acceptance criteria. Open questions get resolved — answers move into the appropriate section.
-
-3. **Approve** (label: `approved`) — Jörn judges the issue is ready. The goal is worth pursuing, scope is clear, open questions resolved. The issue is now the prompt for an agent session.
-
-4. **Session** (label: `in-progress`) — Agent reads the issue, follows the session workflow. Jörn provides mathematical direction during the session. If scope turns out to be wrong or the task is blocked, agent tells Jörn immediately — they re-scope together or abort. Agent does not silently produce something different from what was asked.
-
-5. **PR + merge** — Jörn creates PR, merges. Mechanical step.
-
-6. **Close** (label: `done`) — Follow-up ideas captured as new issues.
-
-If a session fails: agent reports what it tried and learned. Issue goes back to `draft` for re-scoping. No work is lost — the branch exists.
-
-### Issue template
-
-These sections give an agent the information it needs to complete a task autonomously, and give Jörn the structure to review scope quickly.
-
-Issues use these sections:
-
-- **Goal** — What this achieves for the thesis. One or two sentences.
-- **Background** — Domain knowledge needed. Link to papers, files, issues — don't repeat their content.
-- **Context** — Why this constitutes progress toward the thesis. What it unblocks.
-- **Deliverable** — What the agent produces. Describe substance, not form — the agent decides files and structure.
-- **Scope** — What's in, what's out, and why. Each exclusion has a reason.
-- **Sources** — Papers, code, specs. Flag trustworthiness.
-- **Acceptance criteria** — Measurable. Two kinds: external (serves the project) and internal (quality bar).
-- **Notes** — Preliminary findings, known risks, suggested sub-issues.
-- **Open questions** — Uncertainties needing Jörn's input. Resolve via edits; once empty and Jörn approves, the task is ready.
-
-### Authoring guidelines
-
-Known failure modes when writing issues:
-
-- **Unclear wording.** Prefer an extra sentence over a vague word. If a term could mean two things, say which.
-- **Misleading confidence.** If something is unreviewed, mark it — and mark EVERY such item. Labeling one item "unreviewed" implies the rest ARE reviewed.
-- **False facts.** Don't claim relationships unless verified. Don't call X a "specialization" of Y unless it literally is.
-- **Misrepresenting process.** Don't claim something is approved when it isn't. Represent decision state accurately.
-- **Over-constraining implementation.** Don't prescribe file names or structure. Constrain only what has external consequences (API surfaces, conventions, mathematical correctness).
+Issues follow a structured lifecycle: capture (draft) → refine (draft) → approve → session (in-progress) → PR + merge → close. Failed sessions go back to draft for re-scoping — no work is lost.
+<!-- Full details: .claude/skills/triage/SKILL.md -->
 
 ## Repo invariants
 
@@ -275,11 +235,8 @@ These are true about the repo right now and must remain true:
 
 ## Environment
 
-<!-- updated Feb 2026: was /home/user/msc-math on CC web VMs, now devcontainer -->
-- Sessions run in a devcontainer with the repo at `/workspaces/msc-math`
+- Sessions run in a devcontainer with the repo at `/workspaces/msc-math` and worktrees at `/workspaces/<name>`.
 - Pre-installed: Rust 1.93 (cargo, clippy), Python 3.11 (pytest, ruff, mypy, black), gh CLI (via post-create hook)
-- Network: limited to allowlisted domains by default (crates.io, pypi.org, github.com, etc.)
-- Git push is restricted to the current working branch via a proxy
 - LaTeX is NOT available in this environment; thesis compilation happens elsewhere
 
 ## Commands
@@ -300,11 +257,10 @@ pytest experiments/
 ### Crate dependency graph
 
 ```
-geom ───────────────────────────────────┐
-        ├─> hk2017                      │
-        ├─> billiard                    │
-        ├─> tube                        │
-        └─> datasets  (+ hk2017, billiard, tube)
+geom -> hk2017
+geom -> billiard
+geom -> tube
+geom, hk2017, billiard, tube -> datasets
 ```
 
 ### Three capacity algorithms
@@ -317,79 +273,22 @@ geom ─────────────────────────
 
 Where domains overlap, algorithms must agree on the computed capacity.
 
-### Conventions
-
-- Colocated tests: `foo.rs` has `foo_test.rs` in the same directory. Submodule tests use `#[path = "foo_test.rs"]`.
-- A source file may have multiple test files (e.g. `foo_math_test.rs`, `foo_test.rs`)
-- Functional programming style
-- Types encode mathematical invariants, validated at construction
-- nalgebra for linear algebra, proptest for property-based testing
-
-### Mathematical documentation
-
-- Definitions, lemmas, and proofs live as doc comments on the corresponding types/functions
-- Long proofs are outsourced to colocated `*_proof.md` files
-- The Rust crates are self-contained mathematically — no dependency on thesis/. The thesis is downstream
-- Quality bar: specific, correct, detailed, clearly written enough that (1) Jörn can verify with low effort and (2) agents can rely on them when implementing
-
-### Testing philosophy
-
-Two classes of tests, both applied excessively:
-
-1. **Math proposition tests** (due diligence falsification): proptest generators approximate mathematical quantifiers ("∀ polytopes K", "∀ A ∈ Sp(4)", etc.). Properties under test are mathematical propositions (e.g. J^2 = -I, symplectomorphisms preserve capacity).
-2. **Standard correctness tests**: Rust best practices for correctness-critical code — edge cases, invariant checking, regression tests.
+<!-- Coding conventions, test file naming, math documentation, testing philosophy: .claude/skills/rust-dev/SKILL.md -->
 
 ## Experiments (Python)
 
-[aspirational] A reproducible pipeline: starting from zero data, produce all figures and tables for the thesis.
-
-Currently empty — no scripts or data yet.
-
-Conventions:
-- Independent scripts, not a package — no `__init__.py`, no shared imports
-- Each script is self-contained: reads data, does analysis, writes output
-- No framework — plain Python with standard data science libs (numpy, pandas, matplotlib)
-- If two scripts share logic, copy-paste until it stabilizes
-- Pipeline: Rust → datasets → Python → figures/tables → thesis
+[aspirational] A reproducible pipeline: starting from zero data, produce all figures and tables for the thesis. Currently empty — no scripts or data yet. Pipeline direction: Rust → datasets → Python → figures/tables → thesis.
+<!-- Script conventions: .claude/skills/experiments/SKILL.md -->
 
 ## Thesis (LaTeX)
 
-[aspirational] A complete master thesis PDF following arxiv best practices.
-
-Currently: skeleton only (`main.tex` with title, author, and section stubs).
-
-Conventions:
-- Standard AMS theorem environments
-- LaTeX compilation is NOT available in this environment; focus on source correctness
-
-### Writing proofs
-
-- Every proof must be detailed enough for Jörn to verify by skimming
-- Annotate non-obvious steps: cite the specific theorem/lemma used, state why hypotheses are satisfied
-- Never gloss over gaps or handwave — if a step is non-trivial, say so explicitly
-- Agents cannot reliably verify mathematical proofs. Proof correctness requires Jörn's review. Agent-written proofs are drafts until Jörn reviews them.
+[aspirational] A complete master thesis PDF. Currently: skeleton only (`main.tex` with title, author, and section stubs). LaTeX compilation is NOT available in this environment.
+<!-- Conventions and proof writing rules: .claude/skills/thesis/SKILL.md -->
 
 ## Archaeology
 
-The `archaeology/` directory contains files recovered from `msc-viterbo`, an abandoned predecessor repo. **Everything here is untrusted.**
-
-- **Do not trust** any claim, value, formula, proof, test assertion, or status label. Treat every statement as unverified.
-- **Do not adopt** naming conventions, coordinate ordering, or type designs. Current conventions override.
-- **Do not edit** files in `raw/`. They are primary sources preserved verbatim.
-- **Do not use as a starting point** to copy-paste or modify. Write fresh code and proofs.
-- **Do not load into context** without a specific reason. These files are large and will waste context on unverified content.
-- **Read for ideas**: approaches tried, data structures considered, test cases proposed.
-- **Read for warnings**: what went wrong, which formulas were buggy. Bug reports (`findings-*.md`, `ARCHAEOLOGY.md`) are the highest-value files.
-- **Independently verify** anything you take from here against the actual papers.
-
-The old codebase had known bugs that persisted undetected through agent-written tests: the QP solver silently returned wrong values, the trivialization formula was wrong, orbit validation missed segments. These bugs looked correct on a skim. This is why Jörn's domain input on what to test matters.
-
-Known-broken items:
-1. **HK2019 QP solver** — misses optima on 2D+ faces, returns plausible but wrong values
-2. **Trivialization formula** — `tau_n(V) = (<V,Jn>, <V,Kn>)` not a bijection on 2-face tangent spaces
-3. **Billiard orbit validation** — only checked even-indexed segments; pentagon returned 2.127 instead of 3.441
-4. **Triangle × triangle discrepancy** — billiard returns 3.0, HK2017 returns 1.5; unresolved
-5. **Normalization convention mismatch** — some files use `sys = c^2/(2*vol)`, others `sys = c^2/(4*vol)`
+The `archaeology/` directory contains files recovered from `msc-viterbo`, an abandoned predecessor repo. **Everything here is untrusted.** Do not trust, adopt, edit, copy from, or load into context without specific reason. Read for ideas and warnings only.
+<!-- Full trust rules and known-broken items: .claude/skills/archaeology/SKILL.md -->
 
 ## Workflows
 
@@ -397,44 +296,10 @@ Known-broken items:
 
 Spawn a subagent when a subtask can run in parallel, needs isolated context, or benefits from focused work (e.g., literature extraction, code review, exploratory investigation).
 
-- Always create a GitHub subissue before spawning an agent. The subissue IS the prompt (plus any corrections/extra context passed directly to Task). Zero cost, and: persistent record, Jörn can launch it as a web session instead, easier to restart if agent fails.
+- Create a temporary file, e.g. in /tmp/ with the subagent prompt. You can pass any corrections/extra context directly to Task. Zero cost, and: persistent record, easier to restart if agent fails.
 - Subagent output returns via the Task tool into your conversation. If it needs to persist, commit it to the repo on your branch. Do not post subagent output as issue comments — it clutters the issue and misleads future agents into treating it as reviewed content.
-- Use Sonnet for read-heavy extraction tasks (literature, code review). Reserve Opus for tasks requiring deep reasoning.
+- Use Sonnet for read-heavy extraction tasks (literature, code review). Reserve Opus for tasks requiring deep reasoning (mathematical reasoning, code writing).
 - Keep subagent tasks focused and small. Agents may stall on tasks requiring 1000+ lines across multiple files.
 - Foreground Task() calls block the main conversation — user messages queue up silently. Avoid foreground tasks that might take >1 minute. Prefer background, or just do the work inline.
 
-### Check clarity with subagents
-
-When you produce content other agents will consume (CLAUDE.md files, mathematical definitions, proofs, algorithm descriptions): test comprehension by having a fresh Sonnet subagent attempt to USE the content (e.g. "implement from this description" or "answer these specific questions about the algorithm"). Check whether their output matches your intent. Do not ask "is this clear?" — an agent that misunderstands will confidently say yes.
-
-### Triage sessions
-
-Triage keeps the issue board accurate and actionable, preventing agents from working on stale or blocked tasks.
-
-The issue board should reflect reality after the session: audit open issues against repo state, close completed ones, capture new work, refine drafts, prioritize, prepare top items for approval.
-
-Decision authority during triage — agent's call: reading, summarizing, drafting proposed edits (shown to Jörn in chat, not published directly). Jörn's call: whether an issue is worth pursuing, scope, priority, labeling `approved`, approving edits for publication.
-
-Present findings in batches, not one issue at a time.
-
-### Writing for other agents
-
-Content that agents will consume (issue bodies, specs, CLAUDE.md entries) benefits from:
-- **Grounded over speculative** — state what happened or exists, not what might be useful
-- **Knowledge over instructions** — inform, don't command. Agents have their own task instructions
-- **Skimmable over comprehensive** — clear headers for different reader tasks
-
-## Editing this file
-
-Agents edit CLAUDE.md directly on their branch. Jörn reviews via git diff in VS Code and merges.
-
-The file follows structural rules to prevent information-destroying edits. See `CLAUDE.adr.md` for the full style guide and the reasoning behind each rule. Key principles:
-
-- **One claim per bullet.** Dense prose packs multiple claims that get lost when a sentence is rewritten.
-- **Qualifier preservation.** Every adjective narrows meaning. "Clear, specific, detailed, unambiguous" is not a synonym list — each word names a different quality bar. When rewriting, check: does this rewrite preserve all constraints the original imposed?
-- **Clarity & unambiguousness > correctness > maintainability >>> tokens.** Redundancy is welcome. Using 50 extra words to prevent a misunderstanding is always worth it.
-
-Content conventions:
-- Invariants and behaviors are documented only after empirically confirmed as useful
-- Label invariants as `[aspirational]` if not yet satisfied
-- Prefer simple, common, expected rules that don't claim excessive agent attention beyond their assigned work
+<!-- Triage sessions, clarity checking, writing for other agents, editing CLAUDE.md: .claude/skills/triage/SKILL.md and .claude/skills/agent-writing/SKILL.md -->

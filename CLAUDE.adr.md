@@ -107,6 +107,27 @@ This is the fundamental economic constraint of the project. Agent compute costs 
 
 **Decision:** Consolidate into single 310-line CLAUDE.md. YAGNI — split later if a section grows too large for agents to process effectively.
 
+### Why skills with progressive disclosure?
+
+**Previous state:** Single 437-line CLAUDE.md after the rewrite. Universal knowledge and situational knowledge mixed together. Every agent loaded all content regardless of task.
+
+**Problem:** Most content is irrelevant to most agents. A Rust development session doesn't need issue authoring guidelines. A triage session doesn't need Rust testing philosophy. Archaeology trust rules load for every session but apply to ~5% of sessions. Loading irrelevant content wastes context and dilutes attention.
+
+**Why not just split into multiple CLAUDE.md files again?** That was the original state (8 files, 818 lines) and it caused agents to piece together fragments and miss the full picture. The problem isn't splitting — it's that the old split was structural (per directory) rather than functional (per task type).
+
+**Solution:** Claude Code skills (`.claude/skills/<name>/SKILL.md`). Three-level progressive disclosure:
+1. **Always loaded** (~100 tokens per skill): YAML frontmatter with `name` and `description`. Tells the agent what skills exist and when to load them.
+2. **Loaded on trigger**: SKILL.md body. Contains the situational knowledge for that task type.
+3. **Referenced files** (not yet used): Deeper references from SKILL.md for rarely-needed detail.
+
+**Extraction criterion (Jörn's rule):** Content moves to a skill if it is (a) situational (not needed by every agent) AND (b) contains >= 4 items (worth the indirection cost).
+
+**What stays in CLAUDE.md:** Project identity, repo structure, mathematical context, roles, session workflow, decision authority, communication rules, GitHub authorship, repo invariants, environment, commands, crate dependency graph, algorithms table, spawning subagents. Summary pointers to skills for issue lifecycle, experiments, thesis, archaeology.
+
+**Skills created:** `triage` (~20% of sessions), `rust-dev` (~60%), `thesis` (~15%), `experiments` (~10%), `archaeology` (~5%), `agent-writing` (~16%). Total metadata cost: ~600 tokens always loaded. CLAUDE.md reduced from 437 to ~305 lines.
+
+**Verification:** Sonnet comprehension test (12/12 universal questions answerable from trimmed CLAUDE.md), content completeness check (all extracted content appears in skills), skill triggering test (7/8 scenarios trigger correct skill).
+
 ## Style guide for CLAUDE.md edits
 
 ### Why this style guide exists
@@ -144,12 +165,13 @@ This ordering protects information during edits: an agent rewriting top-down enc
 
 ### Rule 3: Qualifier preservation
 
-Every adjective narrows meaning. "Clear, specific, detailed, unambiguous" is not a synonym list — each word names a different quality bar:
+Every adjective narrows meaning. "Clear, detailed, explicit, structured, verifiable" is not a synonym list — each word names a different quality bar:
 
-- "clear" → the reader can parse it without re-reading
-- "specific" → no hand-waving or generalities
-- "detailed" → all steps included, nothing left implicit
-- "unambiguous" → two readers arrive at the same understanding
+- "clear" = easy to understand, not vague or ambiguous
+- "detailed" = all steps are included for verification or derived tasks
+- "explicit" = relevant implications are already spelled out, not left for the reader to derive
+- "structured" = knowledge is organized into modular chunks the reader can selectively zoom into
+- "verifiable" = the reader can check correctness by doing a local validity check for every step
 
 When rewriting, check: does this rewrite preserve all constraints the original imposed? If a word seems redundant, it probably distinguishes this claim from a weaker claim that was also considered and rejected.
 
