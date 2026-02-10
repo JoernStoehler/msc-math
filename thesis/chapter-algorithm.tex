@@ -298,9 +298,17 @@ $\dot{x}(t) = J_0 \nabla H(x(t))$.
 %   One-dimensionality: standard fact from symplectic geometry lectures —
 %   omega_0 is nondegenerate on R^4, so its restriction to a codimension-1
 %   hypersurface has a 1-dimensional kernel. (Verify or flag if unfamiliar.)
-%   Speed is free: any reparametrization is again a closed characteristic.
-% Downstream: a closed curve on bdry(K) with velocity in the characteristic
-%   direction at each point. Geometric object (image), not a parametrized curve.
+%   Orientation: lambda_0 picks out a positive half-line in ell_x. The Reeb
+%   vector R_x spans ell_x with lambda_0(R_x) = 1 > 0, so the positive
+%   half-line is {v in ell_x : lambda_0(v) > 0}.
+%   The condition lambda_0(gamma_dot) > 0 ensures: (a) gamma_dot != 0,
+%   (b) gamma traverses bdry(K) in the Reeb direction (not reversed).
+%   Speed is free (any positive rescaling preserves lambda_0 > 0), so any
+%   orientation-preserving reparametrization is again a closed characteristic.
+%   Ref: HKO2024 says "positive multiple of J nabla H"; our lambda_0 > 0
+%   condition is equivalent (both pick the same half-line of ell_x).
+% Downstream: a closed curve on bdry(K) with velocity in the positive
+%   characteristic direction at each point. gamma_dot != 0 always.
 %   Action A(gamma) is reparametrization-invariant (line integral of lambda_0).
 Let $K$ be a convex body with smooth boundary.
 At each $x \in \partial K$, the \emph{characteristic line} is
@@ -311,11 +319,18 @@ At each $x \in \partial K$, the \emph{characteristic line} is
 This is a one-dimensional subspace of $T_x(\partial K)$.
 A \emph{closed characteristic} on $\partial K$ is a closed curve
 $\gamma \colon [0, T] \to \partial K$ with $\gamma(0) = \gamma(T)$
-whose velocity lies in the characteristic line:
-$\dot{\gamma}(t) \in \ell_{\gamma(t)}$ for a.e.\ $t$.
-
-Any reparametrization of a closed characteristic is again a closed
-characteristic. The action $A(\gamma)$ is reparametrization-invariant
+whose velocity lies in the positive characteristic direction:
+\[
+  \dot{\gamma}(t) \in \ell_{\gamma(t)}
+  \quad\text{and}\quad
+  \lambda_0(\dot{\gamma}(t)) > 0
+  \qquad \text{for a.e.\ } t.
+\]
+The positivity condition orients the characteristic line and
+ensures $\dot{\gamma}(t) \neq 0$.
+Any orientation-preserving reparametrization of a closed characteristic
+is again a closed characteristic.
+The action $A(\gamma)$ is reparametrization-invariant
 (it is a line integral of $\lambda_0$).
 \end{definition}
 
@@ -417,8 +432,8 @@ Hence the two minima coincide.
 The \emph{Ekeland--Hofer--Zehnder capacity} of a convex body $K$ with smooth
 boundary is
 \[
-  c_{\mathrm{EHZ}}(K) \coloneqq \min\{ A(\gamma) :
-  \gamma \text{ is a closed characteristic on } \partial K \}.
+  c_{\mathrm{EHZ}}(K) \coloneqq \min\bigl\{ A(\gamma) :
+  \gamma \text{ is a closed characteristic on } \partial K \bigr\}.
 \]
 The minimum exists and is positive (Theorem~\ref{thm:orbit-existence}).
 The definition extends to all convex bodies by approximation;
@@ -489,9 +504,9 @@ The \emph{facets} of $K$ are the $(d{-}1)$-dimensional faces
   F_i \coloneqq \{ x \in K : \langle x, n_i \rangle = h_i \},
   \qquad i = 1, \ldots, F.
 \]
-The vectors $n_i \in S^3$ are the \emph{outward unit normals} and
-$h_i = h_K(n_i) > 0$ are the \emph{heights}.
-The integer $F$ is the \emph{facet count}.
+The vectors $n_i \in S^3$ are the \emph{outward unit normals},
+the scalars $h_i = h_K(n_i) > 0$ are the \emph{heights},
+and $F$ is the \emph{facet count}.
 \end{definition}
 
 \begin{definition}[Facet Reeb vectors]\label{def:reeb-vectors}
@@ -507,8 +522,9 @@ The \emph{facet Reeb vector} on facet $F_i$ is
 \[
   R_i \coloneqq \frac{2}{h_i}\, J_0\, n_i.
 \]
-It is the unique vector tangent to $\partial K$ along $\operatorname{int}(F_i)$
-that lies in $\ker(\omega_0|_{n_i^\perp})$ and satisfies
+It is the unique vector tangent to $\partial K$ along
+$\operatorname{int}(F_i)$ that lies in
+$\ker(\omega_0|_{n_i^\perp})$ and satisfies
 $\lambda_0|_x(R_i) = 1$ for all $x \in F_i$.
 \end{definition}
 
