@@ -29,7 +29,8 @@ sample attempt proceeds as follows:
     \item \emph{Boundedness}: for every triple~$(i,j,k)$ of normals, compute
       the 1D kernel~$d$ of the $3 \times 4$ matrix~$[n_i;\, n_j;\, n_k]$
       via the generalized cross product. Verify that some normal outside the
-      triple has positive inner product with both~$d$ and~$-d$.
+      triple has positive inner product with~$d$, and some normal outside the
+      triple has positive inner product with~$-d$.
     \item \emph{Vertex enumeration}: solve all~$\binom{F}{4}$ systems of
       $4$ active constraints, keep feasible solutions, deduplicate.
     \item \emph{Irredundancy}: for each facet, check that the incident
@@ -76,25 +77,26 @@ polytope, making boundedness easier to satisfy.
 
 \paragraph{Acceptance is insensitive to height range at low~$F$.}
 At~$F = 5$, all three height ranges give exactly the same rate (5.7\%).
-The dominant rejection cause at low facet count is the boundedness check,
-which depends only on the normal directions, not the heights.
+Since the boundedness check depends only on the normal directions and not on
+the heights, this suggests that boundedness is the dominant rejection cause at
+low facet count.
 
 \paragraph{Wide height ranges hurt at high~$F$.}
 At~$F = 10$, the rate drops from~72.9\% for~$h \in [0.8, 1.2]$ to~28.3\%
 for~$h \in [0.1, 5.0]$. Once boundedness is likely satisfied, the irredundancy
-check becomes the bottleneck: extreme height ratios produce degenerate vertex
-configurations that fail the affine rank test.
+check becomes the bottleneck: extreme height ratios make it more likely that
+some facet's incident vertices fail the affine rank test.
 
 \paragraph{Practical consequence.}
-For building datasets with~$F \le 8$, rejection sampling is efficient enough
-(acceptance~$\ge 37\%$) without biasing the distribution. For~$F = 5$, the
-5.7\% rate means roughly 18 attempts per accepted polytope --- still practical
-for datasets of a few thousand samples.
+For building datasets with~$F \ge 7$ and moderate height ranges, rejection
+sampling is efficient (acceptance~$\ge 30\%$). Even the worst case ($F = 5$,
+5.7\% acceptance) requires only~${\sim}18$ attempts per accepted polytope,
+which is practical for datasets of a few thousand samples.
 
 {\color{red}%
 \textbf{Stub data.}
-Timing data in this table uses stub implementations (constant 1.0 for volume
-and capacity, busy-spin for ${\sim}1$\,ms). The acceptance rates and
-acceptance/rejection counts are real. The systolic ratio experiment
-(Section~\ref{sec:systolic-ratios}, when written) will use real
-implementations from the \texttt{hk2017} crate.}
+The acceptance rates and counts in Table~\ref{tab:acceptance-rates} are from
+real code execution. Volume and capacity computations currently use stub
+implementations (return~$1.0$, busy-spin for~${\sim}1$\,ms); real
+implementations from the \texttt{hk2017} crate will be substituted for the
+systolic ratio experiment (Section~\ref{sec:systolic-ratios}, when written).}
