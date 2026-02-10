@@ -57,20 +57,18 @@ $x \in \partial(\tfrac{1}{4} h_K^2)(y)$.
 \end{lemma}
 
 \begin{definition}[Primal problem]\label{def:primal-problem}
-% QC: restates def:ehz-capacity. Uses "closed characteristic" matching that
-%   definition. Hamiltonian characterization valid for all convex bodies
-%   (smooth or not), via subdifferential of g_K^2.
-The \emph{primal problem} is the EHZ capacity
-(Definition~\ref{def:ehz-capacity}):
+% QC: restatement of the EHZ capacity minimization, using H = g_K^2.
+%   The Hamiltonian formulation (differential inclusion with subdifferential)
+%   is equivalent to the Reeb orbit formulation on polytopes.
+The \emph{primal problem} is:
 \begin{equation}\label{eq:primal-problem}
   c_{\mathrm{EHZ}}(K) = \min \Bigl\{ A(\gamma) :
   \gamma \text{ is a closed characteristic on } \partial K \Bigr\}.
 \end{equation}
-Equivalently, $\gamma$ is a closed curve on~$\partial K$ satisfying
-the Hamiltonian inclusion
+In the Hamiltonian formulation, a closed characteristic $\gamma$ on $\partial K$
+satisfies $g_K^2(\gamma(t)) \equiv 1$ and
 $-J_0\dot{\gamma}(t) \in \partial g_K^2(\gamma(t))$ a.e.,
-which forces $g_K(\gamma) \equiv 1$ (i.e., $\gamma$ lies on~$\partial K$)
-and $A(\gamma) = T$ (action equals period).
+and its action equals its period: $A(\gamma) = T$.
 \end{definition}
 
 \begin{definition}[Dual functional and dual problem]\label{def:dual-problem}
