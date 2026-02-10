@@ -3,8 +3,17 @@ name = "datasets"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name = "datasets"
+path = "src/main.rs"
+
 [dependencies]
 nalgebra = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+rand = { workspace = true }
+rand_chacha = { workspace = true }
+rand_distr = { workspace = true }
 geom = { path = "../geom" }
 hk2017 = { path = "../hk2017" }
 billiard = { path = "../billiard" }

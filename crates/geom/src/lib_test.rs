@@ -1,4 +1,4 @@
 #[test]
 fn placeholder() {
-    assert!(true);
+    // placeholder: tests live in per-module test files
 }

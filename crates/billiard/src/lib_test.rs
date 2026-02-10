@@ -1,4 +1,4 @@
 #[test]
 fn placeholder() {
-    assert!(true);
+    // placeholder: crate not yet implemented
 }

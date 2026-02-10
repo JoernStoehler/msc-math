@@ -1,0 +1,116 @@
+\subsection{Rejection sampling acceptance rates}
+\label{sec:rejection-sampling}
+
+To probe Viterbo's conjecture computationally, we need large datasets of
+random convex polytopes in~$\mathbb{R}^4$. We generate these by rejection
+sampling: sample a candidate halfspace representation, then validate that it
+defines a bounded, irredundant polytope.
+
+\subsubsection*{Sampling procedure}
+
+A polytope~$K \subset \mathbb{R}^4$ is specified in halfspace representation
+\[
+  K = \bigl\{\, x \in \mathbb{R}^4 \;\big|\; n_i \cdot x \le h_i,\;
+  i = 1, \ldots, F \,\bigr\},
+\]
+where~$n_i \in S^3$ are outward unit normals and~$h_i > 0$ are heights
+(positive heights ensure the origin lies in the interior).
+
+For a given facet count~$F$ and height range~$[h_{\min}, h_{\max}]$, each
+sample attempt proceeds as follows:
+\begin{enumerate}
+  \item Sample~$F$ independent unit normals uniformly on~$S^3$
+    (via normalized standard Gaussian vectors in~$\mathbb{R}^4$).
+  \item Sample~$F$ independent heights uniformly from~$[h_{\min}, h_{\max}]$.
+  \item Validate the candidate~$(n_1, \ldots, n_F, h_1, \ldots, h_F)$:
+  \begin{enumerate}
+    \item \emph{No duplicate normals}: reject if~$\|n_i - n_j\| < \varepsilon$
+      for any~$i \ne j$.
+      % Same-direction only (n_i ≈ n_j). Antiparallel normals (n_i ≈ -n_j)
+      % are valid opposite-facing facets, e.g. hypercube has ±e_i.
+    \item \emph{Boundedness}: the normals must positively span~$\mathbb{R}^4$,
+      i.e., no direction is left ``uncovered.'' For every triple~$(i,j,k)$,
+      the three normals share a 1D kernel direction~$d$ (computed via the
+      generalized cross product in~$\mathbb{R}^4$). The polytope is bounded
+      only if some other normal blocks~$d$ (has positive inner product
+      with~$d$) and some other normal blocks~$-d$.
+      % The degenerate case (three coplanar normals, kernel ≥ 2D) is skipped in
+      % the code — probability zero for continuous distributions on S^3.
+    \item \emph{Vertex enumeration}: a vertex lies at the intersection of
+      exactly~$4$ facet hyperplanes. Solve all~$\binom{F}{4}$ linear systems,
+      discard infeasible or duplicate solutions.
+    \item \emph{Irredundancy}: each facet must be a genuine 3-dimensional
+      face. Check that the vertices lying on each facet hyperplane span a
+      3-dimensional affine subspace (via SVD).
+  \end{enumerate}
+  \item If all checks pass, accept the polytope.
+\end{enumerate}
+
+\subsubsection*{Acceptance rate sweep}
+
+We measured acceptance rates across a grid of parameters: facet
+counts~$F \in \{5, 6, \ldots, 10\}$ and three height
+ranges~$[h_{\min}, h_{\max}]$, from narrow ($[0.8, 1.2]$, heights nearly
+equal) to wide ($[0.1, 5.0]$, heights spanning a 50$\times$ range). For each
+of the $6 \times 3 = 18$ configurations, 1000~independent attempts were made
+with a deterministic random seed.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{r ccc}
+\toprule
+& \multicolumn{3}{c}{Acceptance rate} \\
+\cmidrule(lr){2-4}
+$F$ & $h \in [0.5, 2.0]$ & $h \in [0.1, 5.0]$ & $h \in [0.8, 1.2]$ \\
+\midrule
+ 5 & 0.057 & 0.057 & 0.057 \\
+ 6 & 0.168 & 0.162 & 0.170 \\
+ 7 & 0.334 & 0.305 & 0.344 \\
+ 8 & 0.450 & 0.371 & 0.506 \\
+ 9 & 0.489 & 0.332 & 0.602 \\
+10 & 0.504 & 0.283 & 0.729 \\
+\bottomrule
+\end{tabular}
+\caption{Acceptance rates for rejection sampling of random 4-polytopes
+  with~$F$ facets. Each cell reports the fraction of 1000 attempts that passed
+  all validation checks.}
+\label{tab:acceptance-rates}
+\end{table}
+
+\subsubsection*{Observations}
+
+\paragraph{Acceptance increases with~$F$ for narrow height ranges.}
+For~$h \in [0.8, 1.2]$, the rate climbs from~5.7\% at~$F = 5$ to~72.9\%
+at~$F = 10$. More facets provide more directions to ``close off'' the
+polytope, making boundedness easier to satisfy.
+
+\paragraph{Acceptance is insensitive to height range at low~$F$.}
+At~$F = 5$, all three height ranges give exactly the same rate (5.7\%).
+This is not a coincidence: with only~5 facets, most random normal
+configurations fail the boundedness check regardless of the heights chosen.
+Since boundedness depends only on the normal directions, varying the height
+range has no effect.
+% The same seed produces the same normals for all three h-ranges of a given F.
+% Identical acceptance at F=5 confirms that rejection is dominated by the
+% boundedness check (which is height-independent), not irredundancy.
+
+\paragraph{Wide height ranges hurt at high~$F$.}
+At~$F = 10$, the rate drops from~72.9\% for~$h \in [0.8, 1.2]$ to~28.3\%
+for~$h \in [0.1, 5.0]$. With~10 facets, boundedness is almost always
+satisfied, so the irredundancy check becomes the bottleneck. When heights vary
+over a wide range, some facets end up with too few incident vertices to span
+a 3-dimensional face, causing rejection.
+
+\paragraph{Practical consequence.}
+For building datasets with~$F \ge 7$ and moderate height ranges, rejection
+sampling is efficient (acceptance~$\ge 30\%$). Even the worst case ($F = 5$,
+5.7\% acceptance) requires only~${\sim}18$ attempts per accepted polytope,
+which is practical for datasets of a few thousand samples.
+
+{\color{red}%
+\textbf{Stub data.}
+The acceptance rates and counts in Table~\ref{tab:acceptance-rates} are from
+real code execution. Volume and capacity computations currently use stub
+implementations (return~$1.0$, busy-spin for~${\sim}1$\,ms); real
+implementations from the \texttt{hk2017} crate will be substituted for the
+systolic ratio experiment (Section~\ref{sec:systolic-ratios}, when written).}
