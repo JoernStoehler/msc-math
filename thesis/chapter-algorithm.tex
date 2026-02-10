@@ -443,19 +443,21 @@ for polytopes, the minimum is attained by a generalized Reeb orbit
 
 \begin{lemma}[Symplectic capacity axioms]\label{lem:capacity-axioms}
 % QC: standard axioms from Hofer--Zehnder. Each testable.
+%   No 0-in-int(K) assumption needed: these hold for all convex bodies.
 % Downstream: each axiom is a proptest. Especially (ii) and (iii).
 %   (i) monotonicity: test with nested polytopes.
 %   (ii) conformality: test c(alpha*K) = alpha^2 * c(K) for random alpha > 0.
-%   (iii) symplectic invariance: test c(A*K) = c(K) for random A in Sp(4).
+%   (iii) symplectic invariance: test c(phi(K)) = c(K) for random
+%     symplectomorphisms phi (linear Sp(4), translations, compositions).
 %   (iv) normalization: test c(ball) = pi for unit ball.
-The EHZ capacity satisfies, for all convex bodies $K, K'$
-with $0 \in \operatorname{int}(K) \cap \operatorname{int}(K')$:
+The EHZ capacity satisfies, for all convex bodies $K, K'$:
 \begin{enumerate}
 \item \emph{Monotonicity:} $K \subset K' \implies c_{\mathrm{EHZ}}(K) \leq c_{\mathrm{EHZ}}(K')$.
 \item \emph{Conformality:} $c_{\mathrm{EHZ}}(\alpha K) = \alpha^2\, c_{\mathrm{EHZ}}(K)$
   for all $\alpha > 0$.
-\item \emph{Symplectic invariance:} $c_{\mathrm{EHZ}}(AK) = c_{\mathrm{EHZ}}(K)$
-  for all $A \in \mathrm{Sp}(4)$.
+\item \emph{Symplectic invariance:}
+  $c_{\mathrm{EHZ}}(\varphi(K)) = c_{\mathrm{EHZ}}(K)$
+  for every symplectomorphism $\varphi \colon \mathbb{R}^4 \to \mathbb{R}^4$.
 \item \emph{Normalization:}
   $c_{\mathrm{EHZ}}(B^4(r)) = c_{\mathrm{EHZ}}(B^2(r) \times \mathbb{R}^2) = \pi r^2$.
 \end{enumerate}
@@ -473,9 +475,9 @@ A \emph{polytope} is a bounded convex subset
 $K \subset \mathbb{R}^4$ that contains $0$ in its interior and is an
 intersection of finitely many closed half-spaces.
 
-An \emph{irredundant $H$-representation} of $K$ is an unordered finite set
-$\{(\hat{n}_i, \hat{h}_i)\}_{i=1}^{F}$ with $\hat{n}_i \in S^3$,
-$\hat{h}_i > 0$, such that
+An \emph{irredundant $H$-representation} of $K$ is an unordered
+finite set $\{(\hat{n}_i, \hat{h}_i)\}_{i=1}^{F}$ with
+$\hat{n}_i \in S^3$, $\hat{h}_i > 0$, such that
 \[
   K = \bigcap_{i=1}^{F} \{ x \in \mathbb{R}^4 : \langle x, \hat{n}_i \rangle \leq \hat{h}_i \},
 \]
@@ -560,8 +562,8 @@ such that
 
 \begin{remark}[Contact normalization]\label{rem:contact-normalization}
 % Downstream: useful sanity check in tests.
-Since $\lambda_0|_x(R_i) = 1$ for every $x \in F_i$ and every $i$, the convex
-combination preserves the normalization:
+Since $\lambda_0|_x(R_i) = 1$ for every $x \in F_i$ and every
+$i$, the convex combination preserves the normalization:
 $\lambda_0|_{\gamma(t)}(\dot{\gamma}(t)) = 1$ for a.e.\ $t$.
 In particular, the action simplifies to $A(\gamma) = T$
 (the period equals the action).
