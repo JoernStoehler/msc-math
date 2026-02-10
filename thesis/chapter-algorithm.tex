@@ -1,0 +1,785 @@
+% chapter-algorithm.tex — \input'd from main.tex
+%
+% FOUR AUDIENCES — every line must work for all four simultaneously.
+%
+% AUDIENCE 1: Human readers (Jörn, Kai, Elizabeth).
+%   - Jörn: knows enough symplectic geometry, optimization, this entire thesis, the bibliography materials
+%   - Kai: knows a lot of symplectic geometry
+%   - Elizabeth: knows a lot of optimization
+%   - All three: know typical basics such as linear algebra, polytopes, analysis, ...
+%   - Want the main result (algorithm + theorem) upfront on page 1, so they can
+%     read it and stop if that's all they need.
+%   - Will skim definitions and revisit if confused.
+%   - All proofs are skippable: clearly marked start/end, nothing outside a proof
+%     references proof internals.
+%   - Value: the algorithm itself, the interesting proof ideas, geometric intuition.
+%   - Remarks, examples, and illustrations live next to relevant lemmas/proofs.
+%     Redundancy is fine — readers pick what they want.
+%
+% AUDIENCE 2: Imaginary master student (nominal target audience of a master thesis).
+%   - Knows linear algebra, analysis, basic topology, intro symplectic geometry,
+%     intro optimization — a typical math master student's background.
+%   - Every definition must be stated in full, not deferred to the literature.
+%   - Must be able to follow the chapter linearly without external references.
+%   - This audience is why there's motivation even for standard definitions, while
+%     the other three audiences are familiar with the literature already.
+%
+% AUDIENCE 3: QC agents (pedantic correctness verification, AI).
+%   - Verify one chunk at a time, trusting previously verified chunks.
+%   - Each chunk is self-contained: a QC agent can read [definitions]
+%     [propositions] [lemma X] [theorem Y] [proof of Y] and check [proof of Y]
+%     while trusting that the rest is already verified.
+%   - For every proof step: if the agent cannot immediately confirm "yes, that
+%     follows directly," the step fails review.
+%   - If any step is incorrect, the chunk fails review.
+%   - Words must have clear, specific meanings. Natural language errs towards
+%     explicitness to prevent misunderstandings or overlooked edge cases.
+%   - We never state anything incorrect, even if the incorrectness is not fatal.
+%
+% AUDIENCE 4: Downstream agents (Rust implementers, test writers, AI).
+%   - Need full detail in all definitions, lemmas, proofs, algorithm specs.
+%   - Need all properties listed — including properties not cited later in
+%     the chapter — because they generate unit tests and proptests from them.
+%     E.g., capacity axioms: useful for intuition AND for test cases.
+%   - Need concrete values and example calculations that illustrate the
+%     algorithms and proof steps.
+%
+% CONTENT RULES:
+%   1. Every definition, theorem statement, and proof strategy must be traceable
+%      to a specific instruction from Jörn in the chat.
+%      Do NOT write anything Jörn did not dictate.
+%   2. No definition or theorem statement may be deferred to the literature.
+%      Every definition is stated in full. Every theorem is stated in full.
+%   3. A proof MAY be deferred to the literature ONLY IF:
+%      (a) the theorem exceeds thesis scope due to complexity, AND
+%      (b) the proof is not relevant to the thesis — only the theorem is.
+%   4. Notation and definitions must match correspondence.tex exactly.
+%      If correspondence.tex uses symbol X, this file uses symbol X.
+%      No synonyms, no alternative forms, no "equivalent" restatements
+%      unless a lemma proving equivalence is included.
+%
+% FORMAT RULES:
+%   - \definition, \lemma, \theorem, \proposition, \proof environments for
+%     mathematical content. \remark and \example for context/intuition/illustrations.
+%   - No prose paragraphs outside environments (except minimal connective text).
+%   - All calculations displayed as formulas, never described in English sentences.
+%   - Emphasis proportional to importance. No full sections for trivial identities.
+%
+% QC PROCEDURE:
+%   A QC agent is given correspondence.tex and this file. For each environment:
+%   (a) Does the definition/statement match correspondence.tex? Find one deviation.
+%   (b) Does each proof step follow immediately from stated assumptions? Find one gap.
+%   If the QC agent cannot find a deviation or gap, the environment passes.
+
+%%% =================================================================
+%%% Section 1: Main Result
+%%% =================================================================
+
+\section{Main Result}\label{sec:main-result}
+
+% QC: polytope per Definition~\ref{def:polytope}, facet data per Definition~\ref{def:facets},
+% capacity per Definition~\ref{def:ehz-capacity}.
+
+\begin{theorem}[EHZ capacity formula {\cite{hk2017}}]\label{thm:main}
+Let $K \subset \mathbb{R}^4$ be a polytope
+with $F$ facets, outward unit normals $n_1, \ldots, n_F \in S^3$,
+and heights $h_1, \ldots, h_F > 0$.
+Then
+\begin{equation}\label{eq:ehz-main}
+  c_{\mathrm{EHZ}}(K) = \frac{1}{2}
+  \left[
+    \max_{\substack{
+      \sigma \in S_F \\
+      \beta \in M(K)
+    }}
+    \sum_{1 \leq j < i \leq F}
+      \beta_{\sigma(i)} \beta_{\sigma(j)} \,
+      \omega_0(n_{\sigma(i)}, n_{\sigma(j)})
+  \right]^{-1},
+\end{equation}
+where
+\begin{equation}\label{eq:constraint-set}
+  M(K) = \left\{
+    (\beta_i)_{i=1}^{F} :
+    \beta_i \geq 0, \quad  % not >: M(K) includes boundary where some \beta_i = 0
+    \sum_{i=1}^{F} \beta_i h_i = 1, \quad
+    \sum_{i=1}^{F} \beta_i n_i = 0
+  \right\}.
+\end{equation}
+\end{theorem}
+
+% Proof: Section~\ref{sec:simple-minimizer} (search space)
+% and Section~\ref{sec:algorithm-correctness} (algorithm correctness).
+
+\medskip
+\noindent\textbf{Algorithm}\label{alg:ehz}
+(computes~\eqref{eq:ehz-main}).
+
+\smallskip\noindent
+\emph{Input:} $(n_1, h_1), \ldots, (n_F, h_F)$.
+\quad
+\emph{Output:} $c_{\mathrm{EHZ}}(K)$.
+
+\smallskip\noindent
+For each nonempty subset $S \subseteq \{1, \ldots, F\}$
+and each permutation $\sigma$ of $S$
+(identified up to cyclic shifts):
+
+\begin{enumerate}
+\item \textbf{Define}
+  the normal matrix $N \in \mathbb{R}^{|S| \times 4}$,
+  action matrix $H \in \mathbb{R}^{|S| \times |S|}$,
+  and height vector $\eta \in \mathbb{R}^{|S|}$:
+  \begin{align*}
+    N_{id} &= n_{\sigma(i),d},
+      & i &= 1, \ldots, |S|, \quad d = 1, \ldots, 4, \\
+    H_{ij} &= \begin{cases}
+      \omega_0(n_{\sigma(i)}, n_{\sigma(j)}) & \text{if } i < j, \\
+      0 & \text{if } i = j, \\
+      \omega_0(n_{\sigma(j)}, n_{\sigma(i)}) & \text{if } i > j,
+    \end{cases} \\
+    \eta_i &= h_{\sigma(i)},
+      & i &= 1, \ldots, |S|.
+  \end{align*}
+
+\item \textbf{Solve.}
+  \begin{equation}\label{eq:linear-system}
+    \begin{pmatrix} N^\top & 0 & 0 \\ H & -N & -\eta \\ \eta^\top & 0 & 0 \end{pmatrix}
+    \begin{pmatrix} \beta \\ \lambda \\ \nu \end{pmatrix}
+    = \begin{pmatrix} 0 \\ 0 \\ 1 \end{pmatrix},
+    \qquad
+    \beta \in \mathbb{R}^{|S|}, \quad \lambda \in \mathbb{R}^4, \quad \nu \in \mathbb{R}.
+    % QC: KKT for max Q(beta) subject to N^T beta = 0 (closure) and
+    %   eta^T beta = 1 (normalization). Two constraints need two multipliers:
+    %   lambda for closure, nu for normalization. Without nu, the system is
+    %   overdetermined ((|S|+5) x (|S|+4)) and generically inconsistent.
+  \end{equation}
+
+\item \textbf{Filter.}
+  Discard $(S, \sigma)$ if $\beta_i \leq 0$ for any $i$.
+  % QC: the filter demands beta_i > 0 (strict), while M(K) in the theorem
+  %   allows beta_i >= 0. This is intentional and correct:
+  %   If beta_i = 0 for some i in S, that facet is unused and the same orbit
+  %   appears as a solution for the strictly smaller subset S' = S \ {i}.
+  %   So the maximum over M(K) is attained at an interior point (all beta_i > 0)
+  %   of some sub-problem. The algorithm's enumeration over all subsets S
+  %   catches this. No solutions are lost by the strict filter.
+
+\item \textbf{Evaluate.}
+  \begin{equation}\label{eq:action-formula}
+    A(S, \sigma) = \tfrac{1}{2} \, Q(\beta)^{-1}.
+  \end{equation}
+\end{enumerate}
+
+\noindent
+Return $c_{\mathrm{EHZ}}(K) = \min_{S,\sigma} A(S, \sigma)$.
+
+% QC: Q depends on K (via normals n_i), S (subset of facets), and sigma
+%   (permutation determining the cyclic order). Written Q(beta) for brevity;
+%   the dependence on K, S, sigma is implicit from the algorithm's loop context.
+\begin{remark}\label{rem:critical-point}
+The solution $\beta$ with $\beta_i > 0$
+is the critical point of
+$Q(\beta) = \sum_{1 \leq j < i \leq |S|}
+  \beta_i \beta_j \, \omega_0(n_{\sigma(i)}, n_{\sigma(j)})$
+subject to $\sum_{i} \beta_i n_{\sigma(i)} = 0$,
+$\sum_{i} \beta_i h_{\sigma(i)} = 1$, and $\beta_i > 0$.
+\end{remark}
+
+%%% =================================================================
+%%% Section 2: Definitions
+%%% =================================================================
+
+\section{Definitions}\label{sec:definitions}
+
+% --- Smooth setting ---
+
+\begin{definition}[Standard symplectic structure]\label{def:symplectic-form}
+% QC: J_0^2 = -I. omega_0 antisymmetric, nondegenerate.
+%   omega_0(e_{q_i}, e_{p_i}) = +1 for i=1,2; all other basis pairs give 0.
+% Downstream: J_0 is the 4x4 matrix [[0,-I_2],[I_2,0]].
+%   omega_0(u,v) = dot(J_0*u, v) = u_q1*v_p1 - u_p1*v_q1 + u_q2*v_p2 - u_p2*v_q2.
+%   Properties: J_0^2 = -I, J_0^T = J_0^{-1} = -J_0,
+%   omega_0(J_0 u, J_0 v) = omega_0(u,v), |J_0 u| = |u|.
+Write $\mathbb{R}^4$ with coordinates $(q_1, q_2, p_1, p_2)$.
+The \emph{standard complex structure} is
+\[
+  J_0 = \begin{pmatrix} 0 & -I_2 \\ I_2 & 0 \end{pmatrix},
+  \qquad\text{i.e.,}\quad
+  J_0(q, p) = (-p, q).
+\]
+The \emph{standard symplectic form} is
+\[
+  \omega_0(u, v) \coloneqq \langle J_0 u, v \rangle
+  = \sum_{i=1}^{2} (u_{q_i} v_{p_i} - u_{p_i} v_{q_i}),
+\]
+equivalently $\omega_0 = dq_1 \wedge dp_1 + dq_2 \wedge dp_2$.
+\end{definition}
+
+\begin{remark}[Properties of $J_0$ and $\omega_0$]\label{rem:j0-properties}
+% Downstream: all testable via proptest on random vectors.
+\begin{enumerate}
+\item $J_0^2 = -I_4$, \quad $J_0^{-1} = J_0^\top = -J_0$.
+\item $\omega_0(J_0 u, J_0 v) = \omega_0(u, v)$ for all $u, v \in \mathbb{R}^4$.
+\item $|J_0 u| = |u|$ for all $u \in \mathbb{R}^4$.
+\item $\omega_0$ is nondegenerate: $\omega_0(u, v) = 0$ for all $v$ implies $u = 0$.
+\end{enumerate}
+\end{remark}
+
+\begin{definition}[Liouville form]\label{def:liouville-form}
+% QC: d(lambda_0) = omega_0.
+%   lambda_0 at x applied to v equals (1/2) omega_0(x, v) = (1/2) <J_0 x, v>.
+% Downstream: lambda_0(v) at point x = 0.5 * dot(J_0*x, v).
+%   For a closed curve gamma, A(gamma) = integral of lambda_0 along gamma.
+The \emph{standard Liouville form} is
+\[
+  \lambda_0 \coloneqq \tfrac{1}{2} \sum_{i=1}^{2} (q_i \, dp_i - p_i \, dq_i).
+\]
+At a point $x = (q, p) \in \mathbb{R}^4$, applied to a tangent vector $v$:
+\[
+  \lambda_0|_x(v) = \tfrac{1}{2}\, \omega_0(x, v) = \tfrac{1}{2}\, \langle J_0 x, v \rangle.
+\]
+It satisfies $d\lambda_0 = \omega_0$.
+\end{definition}
+
+% DRAFT: definitions below drafted from standard textbooks (Hofer--Zehnder,
+% McDuff--Salamon). Awaiting Jörn's review.
+
+\begin{definition}[Convex body]\label{def:convex-body}
+% QC: K compact, convex, nonempty interior, 0 in int(K).
+% Downstream: the input to all algorithms. Always centered at origin.
+A \emph{convex body} is a compact convex subset $K \subset \mathbb{R}^4$
+with nonempty interior.
+Throughout this chapter, every convex body satisfies $0 \in \operatorname{int}(K)$.
+\end{definition}
+
+\begin{definition}[Support function]\label{def:support-function}
+% QC: h_K positively 1-homogeneous, convex, h_K(v) > 0 for v != 0 (since 0 in int(K)).
+% Downstream: h_K(v) = max_{x in K} dot(x, v).
+%   For polytopes: h_K(n_i) = h_i. Test: h_K(alpha*v) = alpha * h_K(v) for alpha > 0.
+The \emph{support function} of a convex body $K$ is $h_K \colon \mathbb{R}^4 \to \mathbb{R}$,
+\[
+  h_K(v) \coloneqq \max_{x \in K} \langle x, v \rangle.
+\]
+Since $0 \in \operatorname{int}(K)$, we have $h_K(v) > 0$ for all $v \neq 0$.
+\end{definition}
+
+\begin{definition}[Gauge function]\label{def:gauge-function}
+% QC: g_K positively 1-homogeneous, convex, {g_K = 1} = bdry(K),
+%   g_K < 1 on int(K), g_K > 1 outside K.
+% Downstream: g_K(x) = inf { t > 0 : x in t*K }.
+%   For polytopes: g_K(x) = max_i <x, n_i>/h_i.
+%   Test: g_K(alpha*x) = alpha * g_K(x) for alpha > 0; g_K(x) = 1 iff x in bdry(K).
+The \emph{gauge function} (Minkowski functional) of a convex body $K$ with
+$0 \in \operatorname{int}(K)$ is $g_K \colon \mathbb{R}^4 \to [0,\infty)$,
+\[
+  g_K(x) \coloneqq \inf\{ \lambda > 0 : x \in \lambda K \}.
+\]
+The boundary is the level set: $\partial K = \{x : g_K(x) = 1\}$.
+\end{definition}
+
+% TRASH: gauge-support duality was never greenlighted by Jörn. Remove or rewrite
+% from scratch when/if needed.
+% \begin{proposition}[Gauge--support duality]\label{prop:gauge-support-duality}
+% \end{proposition}
+
+\begin{definition}[Hamiltonian]\label{def:hamiltonian}
+% QC: H = g_K^2 per correspondence.tex. {H = 1} = bdry(K).
+% Downstream: H(x) = g_K(x)^2. On interior of facet F_i of a polytope:
+%   grad(H)(x) = 2 n_i / h_i, so J_0 grad(H) = R_i = (2/h_i) J_0 n_i.
+The \emph{Hamiltonian} for a convex body $K$ is
+\[
+  H \coloneqq g_K^2.
+\]
+The energy surface $\{H = 1\} = \partial K$.
+Where $H$ is differentiable, Hamilton's equation reads
+$\dot{x}(t) = J_0 \nabla H(x(t))$.
+\end{definition}
+
+\begin{definition}[Closed characteristic]\label{def:closed-characteristic}
+% QC: geometric curve on bdry(K), velocity in characteristic line field.
+%   Characteristic line = kernel of omega_0 restricted to T_x(bdry(K)).
+%   One-dimensionality: standard fact from symplectic geometry lectures —
+%   omega_0 is nondegenerate on R^4, so its restriction to a codimension-1
+%   hypersurface has a 1-dimensional kernel. (Verify or flag if unfamiliar.)
+%   Orientation: lambda_0 picks out a positive half-line in ell_x. The Reeb
+%   vector R_x spans ell_x with lambda_0(R_x) = 1 > 0, so the positive
+%   half-line is {v in ell_x : lambda_0(v) > 0}.
+%   The condition lambda_0(gamma_dot) > 0 ensures: (a) gamma_dot != 0,
+%   (b) gamma traverses bdry(K) in the Reeb direction (not reversed).
+%   Speed is free (any positive rescaling preserves lambda_0 > 0), so any
+%   orientation-preserving reparametrization is again a closed characteristic.
+%   Ref: HKO2024 says "positive multiple of J nabla H"; our lambda_0 > 0
+%   condition is equivalent (both pick the same half-line of ell_x).
+% Downstream: a closed curve on bdry(K) with velocity in the positive
+%   characteristic direction at each point. gamma_dot != 0 always.
+%   Action A(gamma) is reparametrization-invariant (line integral of lambda_0).
+Let $K$ be a convex body with smooth boundary.
+At each $x \in \partial K$, the \emph{characteristic line} is
+\[
+  \ell_x \coloneqq \{ v \in T_x(\partial K) : \omega_0(v, w) = 0
+  \;\;\forall\, w \in T_x(\partial K) \}.
+\]
+This is a one-dimensional subspace of $T_x(\partial K)$.
+A \emph{closed characteristic} on $\partial K$ is a closed curve
+$\gamma \colon [0, T] \to \partial K$ with $\gamma(0) = \gamma(T)$
+whose velocity lies in the positive characteristic direction:
+\[
+  \dot{\gamma}(t) \in \ell_{\gamma(t)}
+  \quad\text{and}\quad
+  \lambda_0(\dot{\gamma}(t)) > 0
+  \qquad \text{for a.e.\ } t.
+\]
+The positivity condition orients the characteristic line and
+ensures $\dot{\gamma}(t) \neq 0$.
+Any orientation-preserving reparametrization of a closed characteristic
+is again a closed characteristic.
+The action $A(\gamma)$ is reparametrization-invariant
+(it is a line integral of $\lambda_0$).
+\end{definition}
+
+\begin{definition}[Reeb orbit --- smooth]\label{def:reeb-orbit-smooth}
+% QC: Reeb vector field R defined by contact normalization lambda_0(R) = 1
+%   and characteristic direction omega_0(R, .) = 0 on T(bdry(K)).
+%   A Reeb orbit is a periodic integral curve of R.
+%   Regularity: R is a smooth vector field on a smooth manifold, so its
+%   integral curves are C^infty. (Contrast polytope case: W^{1,2} only,
+%   because velocity jumps at edges.)
+%   Reeb orbits trace the same geometric curves as closed characteristics,
+%   but carry a canonical parametrization (fixed speed).
+% Downstream: R is the unique vector field on bdry(K) with
+%   lambda_0(R) = 1 and omega_0(R, v) = 0 for all v in T(bdry(K)).
+%   Reeb orbit gamma satisfies gamma_dot(t) = R_{gamma(t)}.
+%   Polytope version: Definition~\ref{def:reeb-orbit-polytope}.
+Let $K$ be a convex body with smooth boundary.
+The restriction $\alpha \coloneqq \lambda_0|_{\partial K}$ is a contact form.
+The \emph{Reeb vector field} $R$ on $\partial K$ is the unique vector field
+satisfying
+\[
+  \alpha(R_x) = 1
+  \quad\text{and}\quad
+  \omega_0(R_x, v) = 0 \;\;\forall\, v \in T_x(\partial K),
+  \qquad \text{at each } x \in \partial K.
+\]
+A \emph{Reeb orbit} is a periodic integral curve of $R$: a curve
+$\gamma \colon [0, T] \to \partial K$ with $T > 0$,
+$\gamma(0) = \gamma(T)$, and $\dot{\gamma}(t) = R_{\gamma(t)}$.
+
+Every Reeb orbit traces the same geometric curve as a closed characteristic,
+with the canonical parametrization fixed by
+$\lambda_0(\dot{\gamma}) = 1$.
+\end{definition}
+
+\begin{definition}[Action]\label{def:action}
+% QC: A(gamma) = integral of lambda_0 along gamma = (1/2) integral <J_0 gamma, gamma_dot>.
+%   A > 0 for orbits traversed in the correct (Reeb) direction.
+%   A is reparametrization-invariant (as a line integral of a 1-form).
+% Downstream: A(gamma) = 0.5 * integral_0^T dot(J_0*gamma(t), gamma_dot(t)) dt.
+%   Test: A(circle of radius r in q1-p1 plane) = pi * r^2.
+The \emph{action} of a closed curve $\gamma \colon [0, T] \to \mathbb{R}^4$
+with $\gamma(0) = \gamma(T)$ is
+\[
+  A(\gamma) \coloneqq \int_\gamma \lambda_0
+  = \frac{1}{2} \int_0^T \langle J_0\, \gamma(t),\, \dot{\gamma}(t) \rangle \, dt.
+\]
+\end{definition}
+
+\begin{remark}[Geometric meaning of action]\label{rem:action-geometric}
+% Downstream: action = symplectic area of any disc bounded by gamma
+%   (when gamma bounds a disc). By Stokes: integral of lambda_0 = integral of omega_0
+%   over any filling disc.
+By Stokes' theorem, if $\gamma = \partial D$ for a disc $D \subset \mathbb{R}^4$,
+then $A(\gamma) = \int_D \omega_0$.
+The action is the symplectic area enclosed by $\gamma$.
+\end{remark}
+
+\begin{lemma}[Action minima coincide]\label{lem:action-minima-coincide}
+% QC: proof uses (1) every Reeb orbit is a closed characteristic,
+%   (2) every closed characteristic can be reparametrized into a Reeb orbit,
+%   (3) action is reparametrization-invariant (line integral of lambda_0).
+%   Step (2) requires lambda_0(gamma_dot) != 0 along the characteristic.
+%   Why: gamma_dot lies in the characteristic line ell_x, which is spanned
+%   by R_x (the Reeb vector). Since alpha(R_x) = 1 != 0, any nonzero
+%   vector in ell_x has nonzero lambda_0-evaluation. So we can rescale
+%   speed to achieve lambda_0(gamma_dot) = 1, producing a Reeb orbit.
+% Downstream: justifies defining c_EHZ via closed characteristics
+%   and computing it via Reeb orbits interchangeably.
+Let $K$ be a convex body with smooth boundary. Then
+\begin{multline*}
+  \min\{ A(\gamma) : \gamma \text{ is a closed characteristic on } \partial K \}
+  \\= \min\{ A(\gamma) : \gamma \text{ is a Reeb orbit on } \partial K \}.
+\end{multline*}
+\end{lemma}
+
+\begin{proof}
+Every Reeb orbit is a closed characteristic
+(Definition~\ref{def:reeb-orbit-smooth}), so the left-hand side is
+${\leq}$ the right-hand side.
+Conversely, any closed characteristic can be reparametrized into a Reeb
+orbit (choose the parametrization with
+$\lambda_0(\dot{\gamma}) = 1$).
+Since $A(\gamma) = \int_\gamma \lambda_0$ is a line integral of a
+$1$-form, it is reparametrization-invariant
+(Definition~\ref{def:action}).
+Hence the two minima coincide.
+\end{proof}
+
+\begin{definition}[EHZ capacity]\label{def:ehz-capacity}
+% QC: c_EHZ(K) > 0 (positive, by thm:orbit-existence).
+%   c_EHZ(K) = min (not just inf) by thm:orbit-existence.
+%   Defined via closed characteristics (smooth case), extends to all convex bodies.
+% Downstream: c_EHZ(K) = minimum action over all closed characteristics on bdry(K).
+%   For polytopes: equivalent to minimum over generalized Reeb orbits
+%   (Definition~\ref{def:reeb-orbit-polytope}), since action is
+%   reparametrization-invariant and the contact normalization just picks
+%   a canonical parametrization.
+The \emph{Ekeland--Hofer--Zehnder capacity} of a convex body $K$ with smooth
+boundary is
+\[
+  c_{\mathrm{EHZ}}(K) \coloneqq \min\bigl\{ A(\gamma) :
+  \gamma \text{ is a closed characteristic on } \partial K \bigr\}.
+\]
+The minimum exists and is positive (Theorem~\ref{thm:orbit-existence}).
+The definition extends to all convex bodies by approximation;
+for polytopes, the minimum is attained by a generalized Reeb orbit
+(Definition~\ref{def:reeb-orbit-polytope}).
+\end{definition}
+
+\begin{lemma}[Symplectic capacity axioms]\label{lem:capacity-axioms}
+% QC: standard axioms from Hofer--Zehnder. Each testable.
+%   No 0-in-int(K) assumption needed: these hold for all convex bodies.
+% Downstream: each axiom is a proptest. Especially (ii) and (iii).
+%   (i) monotonicity: test with nested polytopes.
+%   (ii) conformality: test c(alpha*K) = alpha^2 * c(K) for random alpha > 0.
+%   (iii) symplectic invariance: test c(phi(K)) = c(K) for random
+%     symplectomorphisms phi (linear Sp(4), translations, compositions).
+%   (iv) normalization: test c(ball) = pi for unit ball.
+The EHZ capacity satisfies, for all convex bodies $K, K'$:
+\begin{enumerate}
+\item \emph{Monotonicity:} $K \subset K' \implies c_{\mathrm{EHZ}}(K) \leq c_{\mathrm{EHZ}}(K')$.
+\item \emph{Conformality:} $c_{\mathrm{EHZ}}(\alpha K) = \alpha^2\, c_{\mathrm{EHZ}}(K)$
+  for all $\alpha > 0$.
+\item \emph{Symplectic invariance:}
+  $c_{\mathrm{EHZ}}(\varphi(K)) = c_{\mathrm{EHZ}}(K)$
+  for every symplectomorphism $\varphi \colon \mathbb{R}^4 \to \mathbb{R}^4$.
+\item \emph{Normalization:}
+  $c_{\mathrm{EHZ}}(B^4(r)) = c_{\mathrm{EHZ}}(B^2(r) \times \mathbb{R}^2) = \pi r^2$.
+\end{enumerate}
+\end{lemma}
+
+% --- Polytope setting ---
+
+\begin{definition}[Polytope]\label{def:polytope}
+% QC: K bounded, convex, 0 in int(K), intersection of half-spaces.
+%   Facet count F >= 5 (at least 5 facets needed in R^4 for bounded intersection).
+% Downstream: input is an h-representation {(n_i, h_i)}_{i=1}^F.
+%   n_i in S^3, h_i > 0. Irredundancy means: removing any (n_i, h_i) strictly
+%   enlarges the intersection.
+A \emph{polytope} is a bounded convex subset
+$K \subset \mathbb{R}^4$ that contains $0$ in its interior and is an
+intersection of finitely many closed half-spaces.
+
+An \emph{irredundant $H$-representation} of $K$ is an unordered
+finite set $\{(\hat{n}_i, \hat{h}_i)\}_{i=1}^{F}$ with
+$\hat{n}_i \in S^3$, $\hat{h}_i > 0$, such that
+\[
+  K = \bigcap_{i=1}^{F} \{ x \in \mathbb{R}^4 : \langle x, \hat{n}_i \rangle \leq \hat{h}_i \},
+\]
+and removing any single inequality strictly enlarges the intersection.
+\end{definition}
+
+\begin{lemma}[Unique $H$-representation]\label{lem:h-rep-unique}
+% QC: the irredundant h-rep exists and is unique (as an unordered set).
+%   Each (n_i, h_i) corresponds to exactly one facet.
+% Downstream: polytope <-> h-rep is a bijection. Two polytopes are equal
+%   iff they have the same h-rep (as unordered sets of (n_i, h_i)).
+Every polytope has a unique irredundant $H$-representation,
+and every irredundant $H$-representation corresponds to a polytope.
+\end{lemma}
+
+\begin{definition}[Facets, normals, heights]\label{def:facets}
+% QC: F_i is the set of points where inequality i is tight.
+%   F_i is a 3-dimensional polytope (a facet = maximal proper face).
+%   Irredundancy guarantees each F_i is genuinely 3-dimensional (not
+%   lower-dimensional): if F_i were lower-dimensional, the inequality
+%   would be redundant (implied by the other inequalities).
+%   n_i is unit outward normal, h_i > 0 is the support function value.
+% Downstream: facet F_i = { x in K : dot(x, n_i) = h_i }.
+%   F is the number of facets (= number of inequalities in h-rep).
+%   h_i = h_K(n_i). n_i perpendicular to F_i, pointing outward.
+Let $K$ have irredundant $H$-representation
+$\{(n_i, h_i)\}_{i=1}^{F}$.
+Each facet of $K$ is $3$-dimensional (irredundancy prevents degeneracy).
+The \emph{facets} are
+\[
+  F_i \coloneqq \{ x \in K : \langle x, n_i \rangle = h_i \},
+  \qquad i = 1, \ldots, F.
+\]
+The vectors $n_i \in S^3$ are the \emph{outward unit normals},
+the scalars $h_i = h_K(n_i) > 0$ are the \emph{heights},
+and $F$ is the \emph{facet count}.
+\end{definition}
+
+\begin{definition}[Facet Reeb vectors]\label{def:reeb-vectors}
+% QC: R_i = (2/h_i) J_0 n_i per correspondence.tex (our R_i = HK2017's p_i).
+%   Derivation: R_i is the Reeb vector of the contact form lambda_0|_{F_i},
+%   normalized so that lambda_0(R_i) = 1 on F_i.
+%   On facet F_i, the Hamiltonian vector field J_0 grad(g_K^2) = R_i.
+% Downstream: R_i = (2.0 / h_i) * J_0 * n_i.
+%   R_i is tangent to bdry(K) (i.e., dot(R_i, n_i) = 0) because
+%   dot(J_0 n_i, n_i) = omega_0(n_i, n_i) = 0.
+%   |R_i| = 2/h_i (since |J_0 n_i| = |n_i| = 1).
+The \emph{facet Reeb vector} on facet $F_i$ is
+\[
+  R_i \coloneqq \frac{2}{h_i}\, J_0\, n_i.
+\]
+It is the unique vector tangent to $\partial K$ along
+$\operatorname{int}(F_i)$ that lies in
+$\ker(\omega_0|_{n_i^\perp})$ and satisfies
+$\lambda_0|_x(R_i) = 1$ for all $x \in F_i$.
+\end{definition}
+
+\begin{remark}[Reeb vector properties]\label{rem:reeb-properties}
+% Downstream: all testable.
+\begin{enumerate}
+\item $\langle R_i, n_i \rangle = 0$ (tangent to $\partial K$).
+\item $|R_i| = 2/h_i$.
+\item $\omega_0(R_i, v) = 0$ for all $v \in n_i^\perp$
+  (characteristic direction of $\omega_0$ restricted to the facet).
+\item On $\operatorname{int}(F_i)$: $J_0 \nabla(g_K^2) = R_i$
+  (Hamiltonian vector field equals Reeb vector).
+\end{enumerate}
+\end{remark}
+
+\begin{definition}[Generalized Reeb orbit --- polytope]\label{def:reeb-orbit-polytope}
+% QC: gamma in W^{1,2}, closed, on bdry(K), velocity in conv{R_i incident}.
+%   "incident" means gamma(t) in F_i.
+%   conv{R_i} automatically gives lambda_0(gamma_dot) = 1 (contact normalization),
+%   because lambda_0(R_i) = 1 on each facet and conv preserves this.
+% Downstream: gamma: [0,T] -> bdry(K), W^{1,2}, gamma(0) = gamma(T).
+%   gamma_dot(t) in convex hull of { R_i : gamma(t) in F_i } for a.e. t.
+%   For simple orbits: gamma_dot = R_{sigma(k)} on each segment (pure Reeb vector).
+A \emph{generalized Reeb orbit} on a polytope $K$ is a curve
+$\gamma \in W^{1,2}([0, T], \mathbb{R}^4)$ with $T > 0$,
+$\gamma(0) = \gamma(T)$, $\operatorname{Im}(\gamma) \subset \partial K$,
+such that
+\[
+  \dot{\gamma}(t) \in \operatorname{conv}\{ R_i : \gamma(t) \in F_i \}
+  \qquad \text{for a.e.\ } t \in [0, T].
+\]
+\end{definition}
+
+\begin{remark}[Contact normalization]\label{rem:contact-normalization}
+% Downstream: useful sanity check in tests.
+Since $\lambda_0|_x(R_i) = 1$ for every $x \in F_i$ and every
+$i$, the convex combination preserves the normalization:
+\[
+  \lambda_0|_{\gamma(t)}(\dot{\gamma}(t)) = 1
+  \qquad \text{for a.e.\ } t.
+\]
+In particular, the action simplifies to $A(\gamma) = T$
+(the period equals the action).
+\end{remark}
+
+%%% =================================================================
+%%% Section 3: Simple Minimizer Existence
+%%% =================================================================
+
+\section{Simple Minimizer Existence}\label{sec:simple-minimizer}
+
+\begin{definition}[Simple Reeb orbit]\label{def:simple-reeb-orbit}
+% QC: "simple" is HK2017's terminology ("simple closed characteristic").
+%   Our definition uses the Reeb parametrization (gamma_dot = R_i exactly,
+%   not gamma_dot = C J n_i with varying C > 0 as in HK2017). Equivalent
+%   up to reparametrization; our gamma_dot is Reeb-normalized (lambda_0 = 1).
+%   Key properties: (1) piecewise constant velocity, (2) pure facet Reeb
+%   vectors (not convex combinations), (3) each facet used at most once.
+%   Contrast def:reeb-orbit-polytope which allows convex combinations.
+% Downstream: simple orbits are the computational objects. The algorithm
+%   searches over all simple orbits by enumerating (sigma, beta).
+%   Rust: struct SimpleOrbit { sigma: Vec<FacetIdx>, tau: Vec<f64> }.
+A generalized Reeb orbit $\gamma$ on a polytope $K$
+(Definition~\ref{def:reeb-orbit-polytope}) is \emph{simple} if:
+\begin{enumerate}
+\item $\dot{\gamma}$ is piecewise constant;
+\item each constant value is a facet Reeb vector $R_i$
+  (not a nontrivial convex combination); and
+\item for each facet index $i$, the set
+  $\{ t \in [0, T] : \dot{\gamma}(t) = R_i \}$
+  is a single interval (possibly empty).
+\end{enumerate}
+\end{definition}
+
+\begin{remark}[Finite representation of simple orbits]\label{rem:simple-orbit-data}
+% QC: breakpoints are velocity changes, not facet transitions.
+%   Example (Jörn): orbit on a Lagrangian 2-face F_1 cap F_2,
+%   traveling first with R_1, breakpoint in int(F_1 cap F_2),
+%   then R_2. Facet incidence {F_1, F_2} is constant across the breakpoint.
+% Downstream: Rust representation: (sigma: Vec<FacetIdx>, tau: Vec<f64>).
+%   sigma is a cyclic permutation of facet indices. tau[k] >= 0 is the time
+%   with velocity R_{sigma[k]}. Two (sigma, tau) are equivalent iff
+%   they differ by a cyclic shift. Period T = sum(tau). Action A = T.
+A simple Reeb orbit is (not necessarily uniquely) determined by a
+pair $(\sigma, \tau)$:
+\begin{itemize}
+\item a permutation $\sigma$ of $\{1, \ldots, F\}$
+  (the cyclic order in which facet Reeb vectors appear as velocities), and
+\item durations $\tau_1, \ldots, \tau_F \geq 0$
+  (where $\tau_k$ is the time spent with velocity $R_{\sigma(k)}$;
+  $\tau_k = 0$ means facet $\sigma(k)$ is not visited).
+\end{itemize}
+The orbit depends only on the cyclic sequence of
+positive-duration entries: two pairs $(\sigma, \tau)$ and
+$(\sigma', \tau')$ represent the same orbit if and only if,
+after removing all entries with $\tau_k = 0$, the resulting
+subsequences of (facet, duration) pairs agree up to cyclic shift.
+The period is $T = \sum_k \tau_k$ and the action is $A(\gamma) = T$
+(Remark~\ref{rem:contact-normalization}).
+
+Breakpoints of $\dot{\gamma}$ are velocity changes, not necessarily
+facet transitions: for example, the orbit may travel along a lower-dimensional face
+$F_i \cap F_j$ with velocity $R_i$, then switch to $R_j$ at a
+breakpoint in the interior of $F_i \cap F_j$.
+\end{remark}
+
+\begin{theorem}[Existence of closed characteristics]\label{thm:orbit-existence}
+% QC: for smooth convex bodies, this is classical
+%   (Rabinowitz 1978, Weinstein 1978 — verify exact citations).
+%   For general convex bodies: smooth approximation + compactness.
+%   The minimum (not just infimum) is attained.
+%   Positivity: A(gamma) > 0 for any closed characteristic
+%   (lambda_0(gamma_dot) > 0 implies A = integral > 0).
+% Downstream: justifies c_EHZ being a well-defined positive number.
+% TODO: Jörn to confirm citation(s).
+Let $K$ be a convex body in $\mathbb{R}^4$.
+There exists a closed characteristic on $\partial K$.
+The infimum of the action over all closed characteristics
+is attained and positive:
+\[
+  c_{\mathrm{EHZ}}(K) = \min_{\gamma} A(\gamma) > 0.
+\]
+\end{theorem}
+
+\begin{theorem}[Simple minimizer {\cite{HK2017}}]\label{thm:simple-minimizer}
+% QC: main theorem of Haim-Kislev 2017. Deep result; we cite, not prove.
+%   The proof constructs a minimizing sequence and shows it can be
+%   "simplified" (breaking convex combinations into pure Reeb vectors,
+%   merging repeated facets into contiguous intervals).
+%   Jörn gave a 120-minute talk on this proof.
+% Downstream: reduces the infinite-dimensional optimization (min over all
+%   generalized Reeb orbits) to a finite search (over simple orbits).
+%   Combined with the finite representation (rem:simple-orbit-data),
+%   this makes the problem computationally tractable.
+Let $K$ be a polytope.
+Among all generalized Reeb orbits on $\partial K$, there exists one
+with minimum action that is simple
+(Definition~\ref{def:simple-reeb-orbit}).
+Consequently,
+\[
+  c_{\mathrm{EHZ}}(K) = \min\bigl\{ A(\gamma) :
+  \gamma \text{ is a simple Reeb orbit on } \partial K \bigr\}.
+\]
+\end{theorem}
+
+%%% =================================================================
+%%% Section 4: Algorithm Correctness
+%%% =================================================================
+
+\section{Algorithm Correctness}\label{sec:algorithm-correctness}
+
+\begin{definition}[Dual variable]\label{def:dual-variable}
+\end{definition}
+
+\begin{definition}[Dual functional]\label{def:dual-functional}
+\end{definition}
+
+\begin{definition}[$Q$-function]\label{def:q-function}
+\end{definition}
+
+\begin{definition}[Constraint set]\label{def:constraint-set}
+\end{definition}
+
+\begin{definition}[Action matrix]\label{def:action-matrix}
+\end{definition}
+
+\begin{theorem}[Optimization formulation]\label{thm:optimization}
+% HK2017 max formula
+\end{theorem}
+
+\begin{lemma}[Domain decomposition]\label{lem:domain-decomposition}
+% Union of open domains, parameterized by (subset of facets, cyclic order)
+\end{lemma}
+
+\begin{lemma}[Global maximum at local maximum]\label{lem:global-at-local}
+\end{lemma}
+
+\begin{corollary}[Enumeration computes capacity]\label{cor:enumeration}
+\end{corollary}
+
+\begin{lemma}[Local maximum characterization]\label{lem:local-max}
+% Explicit linear equation, saddle point check, domain membership check
+\end{lemma}
+
+% Algorithm (verbatim copy from Section 1)
+
+%%% =================================================================
+%%% Section 5: Optimizations
+%%% =================================================================
+
+\section{Optimizations}\label{sec:optimizations}
+
+\begin{definition}[Facet adjacency graph]\label{def:adjacency-graph}
+% QC: two facets are adjacent iff they share at least one point.
+%   In 4D, adjacent facets (3-faces) can share a 2-face (ridge),
+%   1-face (edge), or 0-face (vertex). This uses the weakest condition.
+% Downstream: Rust: precompute adjacency matrix once per polytope.
+%   Test: for the 4-simplex (5 facets), all pairs are adjacent (K_5).
+The \emph{facet adjacency graph} $G_K$ of a polytope $K$ has
+vertex set $\{1, \ldots, F\}$ (one vertex per facet) and an edge
+$\{i, j\}$ whenever $F_i \cap F_j \neq \emptyset$.
+\end{definition}
+
+\begin{lemma}[Adjacency constraint]\label{lem:adjacency-constraint}
+% QC: follows from the generalized Reeb orbit condition + continuity.
+%   Key step: velocity R_i requires the orbit to lie on F_i
+%   (otherwise R_i is not available in the convex hull).
+%   At the breakpoint, the orbit lies on both adjacent facets.
+% Downstream: prune (S, sigma) where consecutive facets in sigma
+%   are not adjacent in G_K. Significant speedup for polytopes
+%   with sparse adjacency graphs.
+Let $\gamma$ be a simple Reeb orbit on a polytope $K$ with
+representation $(\sigma, \tau)$
+(Remark~\ref{rem:simple-orbit-data}).
+If $\tau_k > 0$ and $\tau_{k+1} > 0$ (indices cyclic), then
+$\sigma(k)$ and $\sigma(k+1)$ are adjacent in~$G_K$:
+the breakpoint $\gamma(t^*)$ lies in
+$F_{\sigma(k)} \cap F_{\sigma(k+1)}$.
+\end{lemma}
+
+\begin{proof}
+During interval~$k$, the orbit has velocity
+$\dot{\gamma}(t) = R_{\sigma(k)}$ and therefore lies on~$F_{\sigma(k)}$
+(Definition~\ref{def:reeb-orbit-polytope}: for $R_i$ to appear
+in the velocity, $\gamma(t) \in F_i$ is required).
+Since $F_{\sigma(k)}$ is closed and $\gamma$ is continuous,
+$\gamma(t^*) \in F_{\sigma(k)}$ at the breakpoint~$t^*$.
+By the same argument applied to interval~$k{+}1$,
+$\gamma(t^*) \in F_{\sigma(k+1)}$.
+\end{proof}
+
+\begin{corollary}[Adjacency pruning]\label{cor:adjacency-pruning}
+% QC: in the algorithm, all facets in S have beta_i > 0 (by the filter),
+%   so all are active. The adjacency constraint applies to all consecutive
+%   pairs in sigma (cyclically). Equivalently: sigma must trace a
+%   Hamiltonian cycle in G_K[S].
+% Downstream: before solving the linear system, check adjacency of all
+%   consecutive pairs in sigma. Skip (S, sigma) if any pair is non-adjacent.
+%   Further: skip S entirely if G_K[S] has no Hamiltonian cycle.
+In the algorithm (Section~\ref{sec:main-result}), discard any
+$(S, \sigma)$ for which some consecutive pair
+$\sigma(k), \sigma(k{+}1)$ (cyclically) satisfies
+$F_{\sigma(k)} \cap F_{\sigma(k+1)} = \emptyset$.
+Equivalently, restrict to cyclic orderings~$\sigma$ of~$S$ that
+form a Hamiltonian cycle in the induced subgraph~$G_K[S]$.
+\end{corollary}
+
