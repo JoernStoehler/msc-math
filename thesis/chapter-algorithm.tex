@@ -181,53 +181,355 @@ $\sum_{i} \beta_i h_{\sigma(i)} = 1$, and $\beta_i > 0$.
 
 % --- Smooth setting ---
 
-\begin{definition}[Standard symplectic form]\label{def:symplectic-form}
+\begin{definition}[Standard symplectic structure]\label{def:symplectic-form}
+% QC: J_0^2 = -I. omega_0 antisymmetric, nondegenerate.
+%   omega_0(e_{q_i}, e_{p_i}) = +1 for i=1,2; all other basis pairs give 0.
+% Downstream: J_0 is the 4x4 matrix [[0,-I_2],[I_2,0]].
+%   omega_0(u,v) = dot(J_0*u, v) = u_q1*v_p1 - u_p1*v_q1 + u_q2*v_p2 - u_p2*v_q2.
+%   Properties: J_0^2 = -I, J_0^T = J_0^{-1} = -J_0,
+%   omega_0(J_0 u, J_0 v) = omega_0(u,v), |J_0 u| = |u|.
+Write $\mathbb{R}^4$ with coordinates $(q_1, q_2, p_1, p_2)$.
+The \emph{standard complex structure} is
+\[
+  J_0 = \begin{pmatrix} 0 & -I_2 \\ I_2 & 0 \end{pmatrix},
+  \qquad\text{i.e.,}\quad
+  J_0(q, p) = (-p, q).
+\]
+The \emph{standard symplectic form} is
+\[
+  \omega_0(u, v) \coloneqq \langle J_0 u, v \rangle
+  = \sum_{i=1}^{2} (u_{q_i} v_{p_i} - u_{p_i} v_{q_i}),
+\]
+equivalently $\omega_0 = dq_1 \wedge dp_1 + dq_2 \wedge dp_2$.
 \end{definition}
+
+\begin{remark}[Properties of $J_0$ and $\omega_0$]\label{rem:j0-properties}
+% Downstream: all testable via proptest on random vectors.
+\begin{enumerate}
+\item $J_0^2 = -I_4$, \quad $J_0^{-1} = J_0^\top = -J_0$.
+\item $\omega_0(J_0 u, J_0 v) = \omega_0(u, v)$ for all $u, v \in \mathbb{R}^4$.
+\item $|J_0 u| = |u|$ for all $u \in \mathbb{R}^4$.
+\item $\omega_0$ is nondegenerate: $\omega_0(u, v) = 0$ for all $v$ implies $u = 0$.
+\end{enumerate}
+\end{remark}
 
 \begin{definition}[Liouville form]\label{def:liouville-form}
+% QC: d(lambda_0) = omega_0.
+%   lambda_0 at x applied to v equals (1/2) omega_0(x, v) = (1/2) <J_0 x, v>.
+% Downstream: lambda_0(v) at point x = 0.5 * dot(J_0*x, v).
+%   For a closed curve gamma, A(gamma) = integral of lambda_0 along gamma.
+The \emph{standard Liouville form} is
+\[
+  \lambda_0 \coloneqq \tfrac{1}{2} \sum_{i=1}^{2} (q_i \, dp_i - p_i \, dq_i).
+\]
+At a point $x = (q, p) \in \mathbb{R}^4$, applied to a tangent vector $v$:
+\[
+  \lambda_0|_x(v) = \tfrac{1}{2}\, \omega_0(x, v) = \tfrac{1}{2}\, \langle J_0 x, v \rangle.
+\]
+It satisfies $d\lambda_0 = \omega_0$.
 \end{definition}
 
+% DRAFT: definitions below drafted from standard textbooks (Hofer--Zehnder,
+% McDuff--Salamon). Awaiting Jörn's review.
+
 \begin{definition}[Convex body]\label{def:convex-body}
+% QC: K compact, convex, nonempty interior, 0 in int(K).
+% Downstream: the input to all algorithms. Always centered at origin.
+A \emph{convex body} is a compact convex subset $K \subset \mathbb{R}^4$
+with nonempty interior.
+Throughout this chapter, every convex body satisfies $0 \in \operatorname{int}(K)$.
 \end{definition}
 
 \begin{definition}[Support function]\label{def:support-function}
+% QC: h_K positively 1-homogeneous, convex, h_K(v) > 0 for v != 0 (since 0 in int(K)).
+% Downstream: h_K(v) = max_{x in K} dot(x, v).
+%   For polytopes: h_K(n_i) = h_i. Test: h_K(alpha*v) = alpha * h_K(v) for alpha > 0.
+The \emph{support function} of a convex body $K$ is $h_K \colon \mathbb{R}^4 \to \mathbb{R}$,
+\[
+  h_K(v) \coloneqq \max_{x \in K} \langle x, v \rangle.
+\]
+Since $0 \in \operatorname{int}(K)$, we have $h_K(v) > 0$ for all $v \neq 0$.
 \end{definition}
 
 \begin{definition}[Gauge function]\label{def:gauge-function}
+% QC: g_K positively 1-homogeneous, convex, {g_K = 1} = bdry(K),
+%   g_K < 1 on int(K), g_K > 1 outside K.
+% Downstream: g_K(x) = inf { t > 0 : x in t*K }.
+%   For polytopes: g_K(x) = max_i <x, n_i>/h_i.
+%   Test: g_K(alpha*x) = alpha * g_K(x) for alpha > 0; g_K(x) = 1 iff x in bdry(K).
+The \emph{gauge function} (Minkowski functional) of a convex body $K$ with
+$0 \in \operatorname{int}(K)$ is $g_K \colon \mathbb{R}^4 \to [0,\infty)$,
+\[
+  g_K(x) \coloneqq \inf\{ \lambda > 0 : x \in \lambda K \}.
+\]
+The boundary is the level set: $\partial K = \{x : g_K(x) = 1\}$.
 \end{definition}
+
+% TRASH: gauge-support duality was never greenlighted by Jörn. Remove or rewrite
+% from scratch when/if needed.
+% \begin{proposition}[Gauge--support duality]\label{prop:gauge-support-duality}
+% \end{proposition}
 
 \begin{definition}[Hamiltonian]\label{def:hamiltonian}
+% QC: H = g_K^2 per correspondence.tex. {H = 1} = bdry(K).
+% Downstream: H(x) = g_K(x)^2. On interior of facet F_i of a polytope:
+%   grad(H)(x) = 2 n_i / h_i, so J_0 grad(H) = R_i = (2/h_i) J_0 n_i.
+The \emph{Hamiltonian} for a convex body $K$ is
+\[
+  H \coloneqq g_K^2.
+\]
+The energy surface $\{H = 1\} = \partial K$.
+Where $H$ is differentiable, Hamilton's equation reads
+$\dot{x}(t) = J_0 \nabla H(x(t))$.
 \end{definition}
 
-\begin{definition}[Normal cone]\label{def:normal-cone}
+\begin{definition}[Closed characteristic]\label{def:closed-characteristic}
+% QC: geometric curve on bdry(K), velocity in characteristic line field.
+%   Characteristic line = kernel of omega_0 restricted to T_x(bdry(K)).
+%   Speed is free: any reparametrization is again a closed characteristic.
+% Downstream: a closed curve on bdry(K) with velocity in the characteristic
+%   direction at each point. Geometric object (image), not a parametrized curve.
+%   Action A(gamma) is reparametrization-invariant (line integral of lambda_0).
+Let $K$ be a convex body with smooth boundary.
+At each $x \in \partial K$, the \emph{characteristic line} is
+\[
+  \ell_x \coloneqq \{ v \in T_x(\partial K) : \omega_0(v, w) = 0
+  \;\;\forall\, w \in T_x(\partial K) \}.
+\]
+This is a one-dimensional subspace of $T_x(\partial K)$.
+A \emph{closed characteristic} on $\partial K$ is a closed curve
+$\gamma \colon [0, T] \to \partial K$ with $\gamma(0) = \gamma(T)$
+whose velocity lies in the characteristic line:
+$\dot{\gamma}(t) \in \ell_{\gamma(t)}$ for a.e.\ $t$.
+
+Any reparametrization of a closed characteristic is again a closed
+characteristic. The action $A(\gamma)$ is reparametrization-invariant
+(it is a line integral of $\lambda_0$).
 \end{definition}
 
-\begin{definition}[Generalized Reeb orbit --- smooth]\label{def:reeb-orbit-smooth}
+\begin{definition}[Reeb orbit --- smooth]\label{def:reeb-orbit-smooth}
+% QC: Reeb vector field R defined by contact normalization lambda_0(R) = 1
+%   and characteristic direction omega_0(R, .) = 0 on T(bdry(K)).
+%   A Reeb orbit is a periodic integral curve of R.
+%   Reeb orbits trace the same geometric curves as closed characteristics,
+%   but carry a canonical parametrization (fixed speed).
+% Downstream: R is the unique vector field on bdry(K) with
+%   lambda_0(R) = 1 and omega_0(R, v) = 0 for all v in T(bdry(K)).
+%   Reeb orbit gamma satisfies gamma_dot(t) = R_{gamma(t)}.
+%   Polytope version: Definition~\ref{def:reeb-orbit-polytope}.
+Let $K$ be a convex body with smooth boundary.
+The restriction $\alpha \coloneqq \lambda_0|_{\partial K}$ is a contact form.
+The \emph{Reeb vector field} $R$ on $\partial K$ is the unique vector field
+satisfying
+\[
+  \alpha(R_x) = 1
+  \quad\text{and}\quad
+  \omega_0(R_x, v) = 0 \;\;\forall\, v \in T_x(\partial K),
+  \qquad \text{at each } x \in \partial K.
+\]
+A \emph{Reeb orbit} is a periodic integral curve of $R$: a curve
+$\gamma \colon [0, T] \to \partial K$ with $T > 0$,
+$\gamma(0) = \gamma(T)$, and $\dot{\gamma}(t) = R_{\gamma(t)}$.
+
+Every Reeb orbit traces the same geometric curve as a closed characteristic,
+with the canonical parametrization fixed by
+$\lambda_0(\dot{\gamma}) = 1$.
 \end{definition}
 
-\begin{definition}[Action of an orbit]\label{def:action}
+\begin{definition}[Action]\label{def:action}
+% QC: A(gamma) = integral of lambda_0 along gamma = (1/2) integral <J_0 gamma, gamma_dot>.
+%   A > 0 for orbits traversed in the correct (Reeb) direction.
+%   A is reparametrization-invariant (as a line integral of a 1-form).
+% Downstream: A(gamma) = 0.5 * integral_0^T dot(J_0*gamma(t), gamma_dot(t)) dt.
+%   Test: A(circle of radius r in q1-p1 plane) = pi * r^2.
+The \emph{action} of a closed curve $\gamma \colon [0, T] \to \mathbb{R}^4$
+with $\gamma(0) = \gamma(T)$ is
+\[
+  A(\gamma) \coloneqq \int_\gamma \lambda_0
+  = \frac{1}{2} \int_0^T \langle J_0\, \gamma(t),\, \dot{\gamma}(t) \rangle \, dt.
+\]
 \end{definition}
+
+\begin{remark}[Geometric meaning of action]\label{rem:action-geometric}
+% Downstream: action = symplectic area of any disc bounded by gamma
+%   (when gamma bounds a disc). By Stokes: integral of lambda_0 = integral of omega_0
+%   over any filling disc.
+By Stokes' theorem, if $\gamma = \partial D$ for a disc $D \subset \mathbb{R}^4$,
+then $A(\gamma) = \int_D \omega_0$.
+The action is the symplectic area enclosed by $\gamma$.
+\end{remark}
+
+\begin{lemma}[Action minima coincide]\label{lem:action-minima-coincide}
+% QC: proof uses (1) every Reeb orbit is a closed characteristic,
+%   (2) every closed characteristic can be reparametrized into a Reeb orbit,
+%   (3) action is reparametrization-invariant (line integral of lambda_0).
+% Downstream: justifies defining c_EHZ via closed characteristics
+%   and computing it via Reeb orbits interchangeably.
+Let $K$ be a convex body with smooth boundary. Then
+\[
+  \min\{ A(\gamma) : \gamma \text{ is a closed characteristic on } \partial K \}
+  = \min\{ A(\gamma) : \gamma \text{ is a Reeb orbit on } \partial K \}.
+\]
+\end{lemma}
+
+\begin{proof}
+Every Reeb orbit is a closed characteristic
+(Definition~\ref{def:reeb-orbit-smooth}), so the left-hand side is
+${\leq}$ the right-hand side.
+Conversely, any closed characteristic can be reparametrized into a Reeb
+orbit (choose the parametrization with
+$\lambda_0(\dot{\gamma}) = 1$).
+Since $A(\gamma) = \int_\gamma \lambda_0$ is a line integral of a
+$1$-form, it is reparametrization-invariant
+(Definition~\ref{def:action}).
+Hence the two minima coincide.
+\end{proof}
 
 \begin{definition}[EHZ capacity]\label{def:ehz-capacity}
+% QC: c_EHZ(K) > 0 (positive, by thm:orbit-existence).
+%   c_EHZ(K) = min (not just inf) by thm:orbit-existence.
+%   Defined via closed characteristics (smooth case), extends to all convex bodies.
+% Downstream: c_EHZ(K) = minimum action over all closed characteristics on bdry(K).
+%   For polytopes: equivalent to minimum over generalized Reeb orbits
+%   (Definition~\ref{def:reeb-orbit-polytope}), since action is
+%   reparametrization-invariant and the contact normalization just picks
+%   a canonical parametrization.
+The \emph{Ekeland--Hofer--Zehnder capacity} of a convex body $K$ with smooth
+boundary is
+\[
+  c_{\mathrm{EHZ}}(K) \coloneqq \min\{ A(\gamma) :
+  \gamma \text{ is a closed characteristic on } \partial K \}.
+\]
+The minimum exists and is positive (Theorem~\ref{thm:orbit-existence}).
+The definition extends to all convex bodies by approximation;
+for polytopes, the minimum is attained by a generalized Reeb orbit
+(Definition~\ref{def:reeb-orbit-polytope}).
 \end{definition}
 
 \begin{lemma}[Symplectic capacity axioms]\label{lem:capacity-axioms}
+% QC: standard axioms from Hofer--Zehnder. Each testable.
+% Downstream: each axiom is a proptest. Especially (ii) and (iii).
+%   (i) monotonicity: test with nested polytopes.
+%   (ii) conformality: test c(alpha*K) = alpha^2 * c(K) for random alpha > 0.
+%   (iii) symplectic invariance: test c(A*K) = c(K) for random A in Sp(4).
+%   (iv) normalization: test c(ball) = pi for unit ball.
+The EHZ capacity satisfies, for all convex bodies $K, K'$
+with $0 \in \operatorname{int}(K) \cap \operatorname{int}(K')$:
+\begin{enumerate}
+\item \emph{Monotonicity:} $K \subset K' \implies c_{\mathrm{EHZ}}(K) \leq c_{\mathrm{EHZ}}(K')$.
+\item \emph{Conformality:} $c_{\mathrm{EHZ}}(\alpha K) = \alpha^2\, c_{\mathrm{EHZ}}(K)$
+  for all $\alpha > 0$.
+\item \emph{Symplectic invariance:} $c_{\mathrm{EHZ}}(AK) = c_{\mathrm{EHZ}}(K)$
+  for all $A \in \mathrm{Sp}(4)$.
+\item \emph{Normalization:}
+  $c_{\mathrm{EHZ}}(B^4(r)) = c_{\mathrm{EHZ}}(B^2(r) \times \mathbb{R}^2) = \pi r^2$.
+\end{enumerate}
 \end{lemma}
 
 % --- Polytope setting ---
 
 \begin{definition}[Polytope]\label{def:polytope}
-% 0 in int(K) — Jörn to confirm where this is used
+% QC: K bounded, convex, 0 in int(K), intersection of half-spaces.
+%   Facet count F >= 5 (at least 5 facets needed in R^4 for bounded intersection).
+% Downstream: input is an h-representation {(n_i, h_i)}_{i=1}^F.
+%   n_i in S^3, h_i > 0. Irredundancy means: removing any (n_i, h_i) strictly
+%   enlarges the intersection.
+A \emph{polytope} is a bounded convex subset
+$K \subset \mathbb{R}^4$ that contains $0$ in its interior and is an
+intersection of finitely many closed half-spaces.
+
+An \emph{irredundant $H$-representation} of $K$ is an unordered finite set
+$\{(\hat{n}_i, \hat{h}_i)\}_{i=1}^{F}$ with $\hat{n}_i \in S^3$,
+$\hat{h}_i > 0$, such that
+\[
+  K = \bigcap_{i=1}^{F} \{ x \in \mathbb{R}^4 : \langle x, \hat{n}_i \rangle \leq \hat{h}_i \},
+\]
+and removing any single inequality strictly enlarges the intersection.
 \end{definition}
 
+\begin{lemma}[Unique $H$-representation]\label{lem:h-rep-unique}
+% QC: the irredundant h-rep exists and is unique (as an unordered set).
+%   Each (n_i, h_i) corresponds to exactly one facet.
+% Downstream: polytope <-> h-rep is a bijection. Two polytopes are equal
+%   iff they have the same h-rep (as unordered sets of (n_i, h_i)).
+Every polytope has a unique irredundant $H$-representation.
+\end{lemma}
+
 \begin{definition}[Facets, normals, heights]\label{def:facets}
+% QC: F_i is the set of points where inequality i is tight.
+%   F_i is a 3-dimensional polytope (a facet = maximal proper face).
+%   n_i is unit outward normal, h_i > 0 is the support function value.
+% Downstream: facet F_i = { x in K : dot(x, n_i) = h_i }.
+%   F is the number of facets (= number of inequalities in h-rep).
+%   h_i = h_K(n_i). n_i perpendicular to F_i, pointing outward.
+Let $K$ have irredundant $H$-representation
+$\{(n_i, h_i)\}_{i=1}^{F}$.
+The \emph{facets} of $K$ are the $(d{-}1)$-dimensional faces
+\[
+  F_i \coloneqq \{ x \in K : \langle x, n_i \rangle = h_i \},
+  \qquad i = 1, \ldots, F.
+\]
+The vectors $n_i \in S^3$ are the \emph{outward unit normals} and
+$h_i = h_K(n_i) > 0$ are the \emph{heights}.
+The integer $F$ is the \emph{facet count}.
 \end{definition}
 
 \begin{definition}[Facet Reeb vectors]\label{def:reeb-vectors}
+% QC: R_i = (2/h_i) J_0 n_i per correspondence.tex (our R_i = HK2017's p_i).
+%   Derivation: R_i is the Reeb vector of the contact form lambda_0|_{F_i},
+%   normalized so that lambda_0(R_i) = 1 on F_i.
+%   On facet F_i, the Hamiltonian vector field J_0 grad(g_K^2) = R_i.
+% Downstream: R_i = (2.0 / h_i) * J_0 * n_i.
+%   R_i is tangent to bdry(K) (i.e., dot(R_i, n_i) = 0) because
+%   dot(J_0 n_i, n_i) = omega_0(n_i, n_i) = 0.
+%   |R_i| = 2/h_i (since |J_0 n_i| = |n_i| = 1).
+The \emph{facet Reeb vector} on facet $F_i$ is
+\[
+  R_i \coloneqq \frac{2}{h_i}\, J_0\, n_i.
+\]
+It is the unique vector tangent to $\partial K$ along $\operatorname{int}(F_i)$
+that lies in $\ker(\omega_0|_{n_i^\perp})$ and satisfies
+$\lambda_0|_x(R_i) = 1$ for all $x \in F_i$.
 \end{definition}
 
+\begin{remark}[Reeb vector properties]\label{rem:reeb-properties}
+% Downstream: all testable.
+\begin{enumerate}
+\item $\langle R_i, n_i \rangle = 0$ (tangent to $\partial K$).
+\item $|R_i| = 2/h_i$.
+\item $\omega_0(R_i, v) = 0$ for all $v \in n_i^\perp$
+  (characteristic direction of $\omega_0$ restricted to the facet).
+\item On $\operatorname{int}(F_i)$: $J_0 \nabla(g_K^2) = R_i$
+  (Hamiltonian vector field equals Reeb vector).
+\end{enumerate}
+\end{remark}
+
 \begin{definition}[Generalized Reeb orbit --- polytope]\label{def:reeb-orbit-polytope}
+% QC: gamma in W^{1,2}, closed, on bdry(K), velocity in conv{R_i incident}.
+%   "incident" means gamma(t) in F_i.
+%   conv{R_i} automatically gives lambda_0(gamma_dot) = 1 (contact normalization),
+%   because lambda_0(R_i) = 1 on each facet and conv preserves this.
+% Downstream: gamma: [0,T] -> bdry(K), W^{1,2}, gamma(0) = gamma(T).
+%   gamma_dot(t) in convex hull of { R_i : gamma(t) in F_i } for a.e. t.
+%   For simple orbits: gamma_dot = R_{sigma(k)} on each segment (pure Reeb vector).
+A \emph{generalized Reeb orbit} on a polytope $K$ is a curve
+$\gamma \in W^{1,2}([0, T], \mathbb{R}^4)$ with $T > 0$,
+$\gamma(0) = \gamma(T)$, $\operatorname{Im}(\gamma) \subset \partial K$,
+such that
+\[
+  \dot{\gamma}(t) \in \operatorname{conv}\{ R_i : \gamma(t) \in F_i \}
+  \qquad \text{for a.e.\ } t \in [0, T].
+\]
 \end{definition}
+
+\begin{remark}[Contact normalization]\label{rem:contact-normalization}
+% Downstream: useful sanity check in tests.
+Since $\lambda_0|_x(R_i) = 1$ for every $x \in F_i$ and every $i$, the convex
+combination preserves the normalization:
+$\lambda_0|_{\gamma(t)}(\dot{\gamma}(t)) = 1$ for a.e.\ $t$.
+In particular, the action simplifies to $A(\gamma) = T$
+(the period equals the action).
+\end{remark}
 
 %%% =================================================================
 %%% Section 3: Simple Minimizer Existence
