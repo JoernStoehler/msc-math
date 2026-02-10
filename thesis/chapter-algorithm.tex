@@ -153,7 +153,13 @@ and each permutation $\sigma$ of $S$
 
 \item \textbf{Filter.}
   Discard $(S, \sigma)$ if $\beta_i \leq 0$ for any $i$.
-  % not <: we also discard \beta_i = 0 (degenerate); the remark below requires \beta_i > 0
+  % QC: the filter demands beta_i > 0 (strict), while M(K) in the theorem
+  %   allows beta_i >= 0. This is intentional and correct:
+  %   If beta_i = 0 for some i in S, that facet is unused and the same orbit
+  %   appears as a solution for the strictly smaller subset S' = S \ {i}.
+  %   So the maximum over M(K) is attained at an interior point (all beta_i > 0)
+  %   of some sub-problem. The algorithm's enumeration over all subsets S
+  %   catches this. No solutions are lost by the strict filter.
 
 \item \textbf{Evaluate.}
   \begin{equation}\label{eq:action-formula}
@@ -164,6 +170,9 @@ and each permutation $\sigma$ of $S$
 \noindent
 Return $c_{\mathrm{EHZ}}(K) = \min_{S,\sigma} A(S, \sigma)$.
 
+% QC: Q depends on K (via normals n_i), S (subset of facets), and sigma
+%   (permutation determining the cyclic order). Written Q(beta) for brevity;
+%   the dependence on K, S, sigma is implicit from the algorithm's loop context.
 \begin{remark}\label{rem:critical-point}
 The solution $\beta$ with $\beta_i > 0$
 is the critical point of
@@ -286,6 +295,9 @@ $\dot{x}(t) = J_0 \nabla H(x(t))$.
 \begin{definition}[Closed characteristic]\label{def:closed-characteristic}
 % QC: geometric curve on bdry(K), velocity in characteristic line field.
 %   Characteristic line = kernel of omega_0 restricted to T_x(bdry(K)).
+%   One-dimensionality: standard fact from symplectic geometry lectures —
+%   omega_0 is nondegenerate on R^4, so its restriction to a codimension-1
+%   hypersurface has a 1-dimensional kernel. (Verify or flag if unfamiliar.)
 %   Speed is free: any reparametrization is again a closed characteristic.
 % Downstream: a closed curve on bdry(K) with velocity in the characteristic
 %   direction at each point. Geometric object (image), not a parametrized curve.
@@ -311,6 +323,9 @@ characteristic. The action $A(\gamma)$ is reparametrization-invariant
 % QC: Reeb vector field R defined by contact normalization lambda_0(R) = 1
 %   and characteristic direction omega_0(R, .) = 0 on T(bdry(K)).
 %   A Reeb orbit is a periodic integral curve of R.
+%   Regularity: R is a smooth vector field on a smooth manifold, so its
+%   integral curves are C^infty. (Contrast polytope case: W^{1,2} only,
+%   because velocity jumps at edges.)
 %   Reeb orbits trace the same geometric curves as closed characteristics,
 %   but carry a canonical parametrization (fixed speed).
 % Downstream: R is the unique vector field on bdry(K) with
@@ -363,6 +378,11 @@ The action is the symplectic area enclosed by $\gamma$.
 % QC: proof uses (1) every Reeb orbit is a closed characteristic,
 %   (2) every closed characteristic can be reparametrized into a Reeb orbit,
 %   (3) action is reparametrization-invariant (line integral of lambda_0).
+%   Step (2) requires lambda_0(gamma_dot) != 0 along the characteristic.
+%   Why: gamma_dot lies in the characteristic line ell_x, which is spanned
+%   by R_x (the Reeb vector). Since alpha(R_x) = 1 != 0, any nonzero
+%   vector in ell_x has nonzero lambda_0-evaluation. So we can rescale
+%   speed to achieve lambda_0(gamma_dot) = 1, producing a Reeb orbit.
 % Downstream: justifies defining c_EHZ via closed characteristics
 %   and computing it via Reeb orbits interchangeably.
 Let $K$ be a convex body with smooth boundary. Then
