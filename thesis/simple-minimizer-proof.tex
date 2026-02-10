@@ -153,6 +153,10 @@ $b \in \mathbb{R}^4$:
   \quad \text{a.e.}
 \end{equation}
 
+% WARNING: The ν=1 argument below (lines 156-229) is INCOMPLETE and INCORRECT.
+% Do not trust this section. See NEXT-SESSION-PROMPT.md for instructions.
+% This needs Jörn's input - exceeds reliable Claude capability.
+
 \emph{Step~3: Correspondence via Fenchel duality.}
 Define $\gamma(t) = \nu z(t) + b$ (a translation and rescaling
 of~$z$). The inclusion~\eqref{eq:dual-euler-lagrange} is exactly
@@ -272,6 +276,9 @@ hence is also a minimizer.
 We have $z \in W^{1,2} \cap C^0$ with $z(0) = z(T)$,
 $\frac{1}{T} \int_0^T z = 0$, and $A(z) = T = I_K(z)$.
 
+% WARNING: This section (Step 1, lines 275-295) is a STUB.
+% See NEXT-SESSION-PROMPT.md for complete content from HK2017 + talk.
+
 \paragraph{Step 1: Piecewise linear approximation.}
 % QC: approximate z by a piecewise linear curve z' with velocities
 %   that are convex combinations of Reeb vectors. This is the key
@@ -293,6 +300,10 @@ such that:
   of facet Reeb vectors $R_1, \ldots, R_F$,
 \item $|A(z') - A(z)| < \varepsilon$ and $|I_K(z') - I_K(z)| < \varepsilon$.
 \end{itemize}
+
+% WARNING: Step 2 intro (lines 297-307) is a STUB.
+% The computation at lines 309-327 is CORRECT - keep it.
+% See NEXT-SESSION-PROMPT.md for intro content from HK2017.
 
 \paragraph{Step 2: Pure Reeb vectors.}
 % QC: split each segment's velocity (a convex combination of Reeb vectors)
@@ -326,6 +337,9 @@ for $\dot{z}(t) = R_i = \frac{2}{h_i} J_0 n_i$, we have
 \end{align*}
 hence $I_K(z'') = \frac{1}{4} \int_0^T 4 \, dt = T$.
 
+% WARNING: This section (Step 3, lines 329-352) is a STUB.
+% See NEXT-SESSION-PROMPT.md for complete content from HK2017 + talk.
+
 \paragraph{Step 3: Coalesce repeated Reeb vectors.}
 % QC: if the same Reeb vector R_i appears in two non-adjacent segments
 %   (e.g., pattern ABAC), merge them into a single contiguous segment
@@ -350,6 +364,11 @@ The resulting curve~$z'''$ satisfies:
 \item $I_K(z''') = I_K(z'') = T$ (rearrangement in time does not change the integral),
 \item each Reeb vector $R_i$ appears in at most one contiguous segment.
 \end{itemize}
+
+% WARNING: This section (Step 4, lines 354-392) uses WRONG reparametrization.
+% z^(4)(t) = z'''(t/c) changes velocity magnitudes to (1/c)·(pure Reeb) = NOT pure Reeb.
+% CORRECT approach: multiply each TIME INTERVAL by β, keep velocities unchanged.
+% See NEXT-SESSION-PROMPT.md for correct approach from talk notes.
 
 \paragraph{Step 4: Rescale to match action and period.}
 % QC: z''' has action A(z3) >= A(z) = T (with high probability > T due to
@@ -390,6 +409,9 @@ Thus
 \]
 As $\varepsilon \to 0$ (taking a sequence of approximations $z' \to z$),
 we have $I_K(z^{(4)}) \to T$ and hence $A(z^{(4)}) = T^{(4)} \to T$.
+
+% WARNING: This section (Step 5, lines 394-417) is a STUB.
+% See NEXT-SESSION-PROMPT.md for complete content from HK2017 (lines 436-449).
 
 \paragraph{Step 5: Compactness and limit.}
 % QC: the space of simple curves with bounded period is compact in
