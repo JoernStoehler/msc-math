@@ -1,3 +1,4 @@
+pub mod polytope;
 pub mod symplectic;
 
 #[cfg(test)]
