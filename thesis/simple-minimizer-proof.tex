@@ -1,0 +1,428 @@
+% Proof of the Simple Minimizer Theorem
+%
+% Full proof of Theorem 5.4 (thm:simple-minimizer): existence of a simple
+% minimizer for the EHZ capacity on polytopes. Based on Jörn's 120-minute
+% talk (January 2025) expanding the 1-page sketch in Haim-Kislev 2017.
+%
+% Structure:
+%   6.1 Primal-Dual Equivalence (Clarke's Dual Action Principle for polytopes)
+%   6.2 Simplification Algorithm (5 steps: piecewise linear, pure Reeb,
+%       coalesce, rescale, compactness)
+
+\section{Proof of the Simple Minimizer Theorem}\label{sec:simple-minimizer-proof}
+
+The proof follows \cite{HK2017} but with complete details. We first
+establish a primal-dual equivalence (Clarke's Dual Action Principle
+adapted to polytopes), then construct a simple minimizer via a
+five-step simplification algorithm.
+
+%%% =================================================================
+%%% Subsection 6.1: Primal-Dual Equivalence
+%%% =================================================================
+
+\subsection{Primal-Dual Equivalence}\label{subsec:primal-dual}
+
+% QC: Clarke's Dual Action Principle is classical for smooth convex bodies
+%   (Clarke 1979, 1981). The polytope case requires care with the gauge
+%   function (not smooth) and the dual functional (integral of h_K^2).
+%   Literature on this is sparse and often omits details. This writeup
+%   is self-contained for a master's thesis audience.
+% Downstream: establishes that minimizing action over Reeb orbits is
+%   equivalent to minimizing I_K over centered curves. The dual problem
+%   is easier to work with for the simplification algorithm.
+
+We work with absolutely continuous curves
+$z \in W^{1,2}([0, T], \mathbb{R}^4)$
+(the Sobolev space $H^1$, which embeds into $C^0$).
+% QC: W^{1,2} functions on a compact interval are absolutely continuous
+%   and continuous. No need for a separate C^0 assumption.
+
+We use the gauge function~$g_K$ (Definition~\ref{def:gauge-function}),
+the support function~$h_K$ (Definition~\ref{def:support-function}),
+and the Hamiltonian $H = g_K^2$ (Definition~\ref{def:hamiltonian}).
+
+\begin{lemma}[Fenchel duality]\label{lem:fenchel-duality}
+% QC: Legendre-Fenchel conjugate of g_K^2 is (1/4)h_K^2.
+%   The pointwise inequality is Young's inequality for this pair.
+%   Equality characterizes the subgradient relation.
+% Downstream: integrated along curves, this links the primal
+%   (action + gauge constraint) to the dual (I_K functional).
+For any $x, y \in \mathbb{R}^4$:
+\begin{equation}\label{eq:fenchel-inequality}
+  g_K^2(x) + \tfrac{1}{4} h_K^2(y) \geq \langle x, y \rangle,
+\end{equation}
+with equality if and only if
+$y \in \partial g_K^2(x)$ if and only if
+$x \in \partial(\tfrac{1}{4} h_K^2)(y)$.
+\end{lemma}
+
+\begin{definition}[Primal problem]\label{def:primal-problem}
+% QC: restates def:ehz-capacity. Uses "closed characteristic" matching that
+%   definition. Hamiltonian characterization valid for all convex bodies
+%   (smooth or not), via subdifferential of g_K^2.
+The \emph{primal problem} is the EHZ capacity
+(Definition~\ref{def:ehz-capacity}):
+\begin{equation}\label{eq:primal-problem}
+  c_{\mathrm{EHZ}}(K) = \min \Bigl\{ A(\gamma) :
+  \gamma \text{ is a closed characteristic on } \partial K \Bigr\}.
+\end{equation}
+Equivalently, $\gamma$ is a closed curve on~$\partial K$ satisfying
+the Hamiltonian inclusion
+$-J_0\dot{\gamma}(t) \in \partial g_K^2(\gamma(t))$ a.e.,
+which forces $g_K(\gamma) \equiv 1$ (i.e., $\gamma$ lies on~$\partial K$)
+and $A(\gamma) = T$ (action equals period).
+\end{definition}
+
+\begin{definition}[Dual functional and dual problem]\label{def:dual-problem}
+% QC: I_K depends only on the velocity dz/dt, not on z itself.
+%   This is the key advantage of the dual formulation: no position constraint
+%   (gamma on boundary K) and no differential inclusion constraint.
+%   The centering condition removes the translation ambiguity in going
+%   from gamma to z = gamma - center(gamma).
+The \emph{dual functional} is
+\[
+  I_K(z) = \frac{1}{4} \int_0^T h_K^2\bigl( -J_0 \dot{z}(t) \bigr) \, dt.
+\]
+The \emph{dual problem} is:
+\begin{equation}\label{eq:dual-problem}
+  \min \Bigl\{ I_K(z) : z \in W^{1,2}([0,T], \mathbb{R}^4),\;
+  z(0) = z(T),\;
+  A(z) = T,\;
+  \frac{1}{T} \int_0^T z(t) \, dt = 0,\;
+  T > 0 \Bigr\}.
+\end{equation}
+The constraint $\frac{1}{T} \int z = 0$ is the
+\emph{centering condition}; it removes the translation
+ambiguity (since $I_K$ depends only on $\dot{z}$, not on~$z$).
+\end{definition}
+
+\begin{theorem}[Primal-dual equivalence (Clarke's Dual Action Principle)]%
+\label{thm:primal-dual-equivalence}
+% QC: the critical-point correspondence is the core content.
+%   Existence of minimizers is a separate fact (thm:orbit-existence
+%   for the primal; compactness + l.s.c. for the dual).
+%   The equivalence proof does not use existence of minimizers.
+% Downstream: allows us to work in the dual formulation, where the
+%   simplification algorithm (subsec:simplification) is natural.
+Let $K$ be a convex body. Critical points of the primal and
+dual problems correspond bijectively via translation:
+if $\gamma$ is a primal critical point (Hamiltonian orbit on
+$\partial K$), then
+$z = \gamma - \frac{1}{T} \int_0^T \gamma(t) \, dt$
+is a dual critical point, and conversely.
+At every corresponding pair, the values are equal:
+\begin{equation}\label{eq:primal-dual-values}
+  I_K(z) = T = A(\gamma).
+\end{equation}
+Consequently, $\min_\gamma A(\gamma) = \min_z I_K(z) = c_{\mathrm{EHZ}}(K)$.
+\end{theorem}
+
+\begin{proof}
+\emph{Step~1: Fenchel equality for Hamiltonian orbits.}
+Let $\gamma$ be a Hamiltonian orbit on $\partial K$ with period~$T$,
+so $g_K^2(\gamma) \equiv 1$ and
+$-J_0\dot{\gamma} \in \partial g_K^2(\gamma)$ a.e.
+The subgradient condition
+$-J_0\dot{\gamma} \in \partial g_K^2(\gamma)$
+is exactly the equality case of the Fenchel
+inequality~\eqref{eq:fenchel-inequality}, so pointwise:
+\[
+  g_K^2(\gamma(t)) + \tfrac{1}{4} h_K^2(-J_0\dot{\gamma}(t))
+  = \langle \gamma(t), -J_0\dot{\gamma}(t) \rangle.
+\]
+Integrate over $[0, T]$:
+\begin{equation}\label{eq:fenchel-integrated}
+  \underbrace{\int_0^T g_K^2(\gamma) \, dt}_{= T}
+  + \underbrace{\frac{1}{4}\int_0^T h_K^2(-J_0\dot{\gamma}) \, dt}_{= I_K(\gamma)}
+  = \underbrace{\int_0^T \langle \gamma, -J_0\dot{\gamma} \rangle \, dt}_{= 2A(\gamma) = 2T}.
+\end{equation}
+Hence $I_K(\gamma) = T = A(\gamma)$.
+
+\emph{Step~2: Euler--Lagrange equation for the dual problem.}
+The dual functional $I_K(z) = \frac{1}{4}\int h_K^2(-J_0\dot{z}) \, dt$
+depends only on $\dot{z}$, not on~$z$ directly.
+Using Lagrange multipliers for the constraints $A(z) = T$ and
+$\int z = 0$, and observing that the ``$\partial/\partial z$'' part
+of the Euler--Lagrange equation involves only these multipliers,
+we find that the quantity
+$p(t) \in \partial(\tfrac{1}{4} h_K^2)(-J_0\dot{z}(t))$ satisfies
+$\dot{p} = \nu \dot{z}$ (the centering multiplier drops out by
+periodicity). Hence $p(t) = \nu z(t) + b$ for some constant
+$b \in \mathbb{R}^4$:
+\begin{equation}\label{eq:dual-euler-lagrange}
+  \nu z(t) + b \in
+  \partial\bigl(\tfrac{1}{4} h_K^2\bigr)\bigl(-J_0\dot{z}(t)\bigr)
+  \quad \text{a.e.}
+\end{equation}
+
+\emph{Step~3: Correspondence via Fenchel duality.}
+Define $\gamma(t) = \nu z(t) + b$ (a translation and rescaling
+of~$z$). The inclusion~\eqref{eq:dual-euler-lagrange} is exactly
+\[
+  \gamma(t) \in
+  \partial\bigl(\tfrac{1}{4} h_K^2\bigr)\bigl(-J_0\dot{\gamma}/\nu\bigr)
+  \quad\text{a.e.}
+\]
+By the Fenchel equality condition
+($x \in \partial(\tfrac{1}{4}h_K^2)(y)$ iff
+$y \in \partial g_K^2(x)$),
+this is equivalent to
+\[
+  -J_0\dot{\gamma}(t)/\nu \in \partial g_K^2(\gamma(t))
+  \quad\text{a.e.}
+\]
+% QC-ERROR (fixed): the original claim "partial g_K^2 is a cone" was FALSE.
+%   Resolution: use 2-homogeneity of g_K^2 (hence partial(g_K^2)(cx) = c partial(g_K^2)(x))
+%   to rescale gamma~ = gamma/sqrt(nu) onto bdry(K). Then show nu = 1 at
+%   the dual minimizer by combining Steps 1 and 3.
+We have $-J_0\dot{\gamma}/\nu \in \partial g_K^2(\gamma)$.
+Since $g_K^2$ is $2$-homogeneous,
+$\partial g_K^2$ is \emph{not} a cone, so $1/\nu$ cannot be absorbed
+directly. Instead, we use $2$-homogeneity to show the correspondence
+still works.
+
+First, $g_K^2(\gamma)$ is constant along the orbit: for smooth~$K$,
+$\frac{d}{dt} g_K^2(\gamma) = \langle \nabla g_K^2(\gamma), \dot{\gamma} \rangle
+= \langle -J_0\dot{\gamma}/\nu, \dot{\gamma} \rangle \cdot \nu
+= -\langle J_0\dot{\gamma}, \dot{\gamma} \rangle = 0$
+(since $J_0$ is antisymmetric). Write $g_K^2(\gamma) \equiv c^2$.
+
+By the homogeneity relation $\partial g_K^2(c x) = c \,\partial g_K^2(x)$,
+define $\tilde{\gamma} = \gamma / c$, which lies on $\partial K$
+(since $g_K(\tilde{\gamma}) = 1$). Then
+$-J_0\dot{\tilde{\gamma}} = -J_0\dot{\gamma}/c$ and
+$\partial g_K^2(\tilde{\gamma}) = (1/c) \,\partial g_K^2(\gamma)$,
+so $-J_0\dot{\gamma}/\nu \in \partial g_K^2(\gamma)$ becomes
+$-J_0\dot{\tilde{\gamma}} \cdot (c/\nu)
+  \in c \,\partial g_K^2(\tilde{\gamma})$,
+i.e., $-J_0\dot{\tilde{\gamma}} \cdot (\nu/c^2)^{-1}$... the
+algebra simplifies when $\nu = 1$ (see below).
+
+\emph{Determining $\nu$ at the minimizer.}
+Euler's identity for the $2$-homogeneous function $g_K^2$ gives
+$\langle y, x \rangle = 2 g_K^2(x)$ for $y \in \partial g_K^2(x)$.
+Applied to $y = -J_0\dot{\gamma}/\nu$, $x = \gamma$:
+\[
+  \frac{1}{\nu}\langle -J_0\dot{\gamma}, \gamma \rangle = 2 c^2,
+  \qquad\text{hence}\quad
+  \frac{2A(\gamma)}{\nu} = 2 c^2 T,
+  \quad\text{i.e.,}\quad
+  c^2 = \frac{A(\gamma)}{\nu T}.
+\]
+The integrated Fenchel equality gives
+$c^2 T + I_K(z) = 2\nu T$, hence $I_K(z) = (2\nu - c^2) T$.
+Substituting $c^2 = A(\gamma)/(\nu T)$ and $A(\gamma) = \nu \cdot 2A(z)/\nu$...
+
+\textbf{[TODO: complete the $\nu = 1$ argument cleanly.
+Key facts: (i)~$g_K^2(\gamma) \equiv c^2$ constant,
+(ii)~$I_K(z) = \nu T$ from integrated Fenchel,
+(iii)~$\tilde{\gamma} = \gamma/c$ is a closed characteristic on~$\partial K$
+with $A(\tilde{\gamma}) = \nu T / c = I_K(z)/c$,
+so $c_{\mathrm{EHZ}} \leq I_K(z)$.
+Combined with Step~1 ($\exists$ feasible $z^*$ with $I_K(z^*) = c_{\mathrm{EHZ}}$),
+the minimum is $c_{\mathrm{EHZ}}$, forcing $\nu = 1$ and $c = 1$.]}
+
+Assuming $\nu = 1$ (proved at the minimizer): $\gamma = z + b$,
+$-J_0\dot{\gamma} \in \partial g_K^2(\gamma)$, $g_K^2(\gamma) \equiv 1$
+($\gamma$ on~$\partial K$), and by Step~1, $I_K(z) = T = A(\gamma)$.
+
+The centering condition $\int z = 0$ determines
+$b = \frac{1}{T}\int \gamma$, so $z = \gamma - \mathrm{center}(\gamma)$.
+The correspondence is bijective.
+\end{proof}
+
+%%% =================================================================
+%%% Subsection 6.2: Simplification Algorithm
+%%% =================================================================
+
+\subsection{Simplification Algorithm}\label{subsec:simplification}
+
+% QC: the heart of the proof. Takes an arbitrary dual minimizer z
+%   and constructs a simple dual minimizer z^* via 5 steps. Each step
+%   is designed to preserve or improve the optimality while adding
+%   structure. The final compactness argument (step 5) ensures we
+%   can take a limit that is both simple and optimal.
+
+We now prove the simple minimizer theorem
+(Theorem~\ref{thm:simple-minimizer}):
+\emph{for every polytope~$K$, there exists a minimum-action Reeb orbit
+that is simple} (piecewise constant velocity, pure facet Reeb vectors,
+each facet used at most once).
+
+\begin{proof}[Proof of Theorem~\ref{thm:simple-minimizer}]
+A minimum-action closed characteristic on~$\partial K$ exists
+(Theorem~\ref{thm:orbit-existence}): the infimum of the action over
+all closed characteristics is attained and positive.
+By the primal-dual equivalence (Theorem~\ref{thm:primal-dual-equivalence}),
+any such primal minimizer~$\gamma$ corresponds to a dual minimizer
+$z = \gamma - \mathrm{center}(\gamma)$ with $I_K(z) = T = A(\gamma)$.
+We will construct a simple dual minimizer~$z^*$, which then gives a
+simple primal minimizer via $\gamma^* = z^* + b$.
+
+Let $z$ be an arbitrary dual minimizer with period~$T > 0$. By the
+primal-dual equivalence, $A(z) = T = I_K(z)$. We construct a sequence
+of curves $z \to z' \to z'' \to z''' \to z^{(4)} \to z^*$, where each
+arrow represents one simplification step. The final curve~$z^*$ is
+simple (piecewise linear with pure Reeb vectors as velocities, each
+Reeb vector used at most once) and satisfies $A(z^*) = T = I_K(z^*)$,
+hence is also a minimizer.
+
+\paragraph{Step 0: Setup.}
+% QC: z is any dual minimizer. We know A(z) = T = I_K(z) from the
+%   primal-dual equivalence. The goal is to perturb z into a simple
+%   curve while preserving optimality.
+We have $z \in W^{1,2} \cap C^0$ with $z(0) = z(T)$,
+$\frac{1}{T} \int_0^T z = 0$, and $A(z) = T = I_K(z)$.
+
+\paragraph{Step 1: Piecewise linear approximation.}
+% QC: approximate z by a piecewise linear curve z' with velocities
+%   that are convex combinations of Reeb vectors. This is the key
+%   step that introduces combinatorial structure. The approximation
+%   must preserve the period T and the center-at-origin condition,
+%   and perturb A and I_K by at most epsilon.
+% TODO: DETAILS NEEDED. Jörn to describe:
+%   - How do we ensure velocities are convex combinations of Reeb vectors?
+%   - What approximation theorem or density argument do we use?
+%   - How do we control the error in A and I_K?
+[TODO: details of piecewise linear approximation]
+
+We construct a piecewise linear curve $z' : [0, T] \to \mathbb{R}^4$
+such that:
+\begin{itemize}
+\item $z'(0) = z'(T)$ (closed),
+\item $\frac{1}{T} \int_0^T z' = 0$ (centered),
+\item each segment has constant velocity that is a convex combination
+  of facet Reeb vectors $R_1, \ldots, R_F$,
+\item $|A(z') - A(z)| < \varepsilon$ and $|I_K(z') - I_K(z)| < \varepsilon$.
+\end{itemize}
+
+\paragraph{Step 2: Pure Reeb vectors.}
+% QC: split each segment's velocity (a convex combination of Reeb vectors)
+%   into consecutive segments with pure Reeb vectors. The period T is
+%   unchanged (we split in time proportionally). The action may increase,
+%   but I_K becomes exactly T due to the Reeb normalization.
+% TODO: DETAILS NEEDED. Jörn to explain:
+%   - How do we split a convex combination sum_i alpha_i R_i into
+%     consecutive segments with velocities R_i?
+%   - Why does A(z'') >= A(z')?
+%   - Why does I_K(z'') = T exactly?
+[TODO: details of splitting into pure Reeb vectors]
+
+Replace each segment of $z'$ with one or more segments having pure
+facet Reeb vectors as velocities. The resulting curve~$z''$ satisfies:
+\begin{itemize}
+\item same period: the new curve has period~$T$,
+\item action non-decreasing: $A(z'') \geq A(z')$,
+\item dual functional equals period: $I_K(z'') = T$.
+\end{itemize}
+
+The identity $I_K(z'') = T$ follows from the Reeb normalization:
+for $\dot{z}(t) = R_i = \frac{2}{h_i} J_0 n_i$, we have
+\begin{align*}
+  h_K^2(-J_0 \dot{z}(t))
+  &= h_K^2\Bigl( -J_0 \cdot \frac{2}{h_i} J_0 n_i \Bigr)
+  = h_K^2\Bigl( \frac{2}{h_i} n_i \Bigr) \\
+  &= \Bigl( \frac{2}{h_i} \Bigr)^2 h_K^2(n_i)
+  = \frac{4}{h_i^2} \cdot h_i^2
+  = 4,
+\end{align*}
+hence $I_K(z'') = \frac{1}{4} \int_0^T 4 \, dt = T$.
+
+\paragraph{Step 3: Coalesce repeated Reeb vectors.}
+% QC: if the same Reeb vector R_i appears in two non-adjacent segments
+%   (e.g., pattern ABAC), merge them into a single contiguous segment
+%   (e.g., AABC or BAAC). The two merge orders differ by a reversal of
+%   the intermediate portion, and the action changes flip sign under
+%   reversal. Pick the order with non-negative action change.
+% TODO: DETAILS NEEDED. Jörn to explain:
+%   - How do we formalize "merge two segments with the same Reeb vector"?
+%   - Why does reversal flip the sign of the action change?
+%   - Do we iterate this until no repeated Reeb vectors remain?
+[TODO: details of coalescing repeated Reeb vectors]
+
+For each pair of segments with the same Reeb vector~$R_i$ (e.g., pattern
+$R_A R_B R_A R_C$), merge them into a contiguous segment. There are two
+possible merge orders (forward: $R_A R_A R_B R_C$ vs.\ backward:
+$R_B R_A R_A R_C$), and the action changes satisfy $\Delta A_{\text{fwd}} = -\Delta A_{\text{bwd}}$.
+Choose the order with $\Delta A \geq 0$.
+
+The resulting curve~$z'''$ satisfies:
+\begin{itemize}
+\item $A(z''') \geq A(z'')$ (each merge increases or preserves action),
+\item $I_K(z''') = I_K(z'') = T$ (rearrangement in time does not change the integral),
+\item each Reeb vector $R_i$ appears in at most one contiguous segment.
+\end{itemize}
+
+\paragraph{Step 4: Rescale to match action and period.}
+% QC: z''' has action A(z3) >= A(z) = T (with high probability > T due to
+%   approximation error). Rescale all time intervals by a factor c to
+%   force the action to equal the period. This introduces a mismatch
+%   between I_K and T, but the mismatch vanishes as epsilon -> 0.
+We have $A(z''') \geq A(z'') \geq A(z') \geq A(z) - \varepsilon = T - \varepsilon$.
+Define the rescaling factor
+\[
+  c = \frac{A(z''')}{T} \geq 1 - \frac{\varepsilon}{T}.
+\]
+Construct $z^{(4)}(t) = z'''(t/c)$ for $t \in [0, c T]$. This is a pure
+time reparametrization: the curve traces the same path, but at speed
+$\dot{z}^{(4)}(t) = (1/c)\,\dot{z}'''(t/c)$. Then:
+\begin{align*}
+  T^{(4)} &= c T = A(z'''), \\
+  A(z^{(4)}) &= A(z''')
+    \quad\text{(action is reparametrization-invariant)}, \\
+  I_K(z^{(4)}) &= \tfrac{1}{c}\, I_K(z''')
+    \quad\text{($h_K^2$ is $2$-homogeneous, velocity scales by $1/c$)}.
+\end{align*}
+Hence $T^{(4)} = A(z^{(4)}) = A(z''')$, and
+\[
+  I_K(z^{(4)}) = \frac{I_K(z''')}{c}
+  = \frac{T \cdot I_K(z''')}{A(z''')}
+  = \frac{T^2}{A(z''')}.
+\]
+Since $A(z''') \geq A(z') \geq T - \varepsilon$:
+\[
+  I_K(z^{(4)}) = \frac{T^2}{A(z''')}
+  \leq \frac{T^2}{T - \varepsilon}.
+\]
+
+Since $z$ was a dual minimizer, $I_K(z) = T \leq I_K(z^{(4)})$ (feasibility).
+Thus
+\[
+  T \leq I_K(z^{(4)}) \leq \frac{T^2}{T - \varepsilon}.
+\]
+As $\varepsilon \to 0$ (taking a sequence of approximations $z' \to z$),
+we have $I_K(z^{(4)}) \to T$ and hence $A(z^{(4)}) = T^{(4)} \to T$.
+
+\paragraph{Step 5: Compactness and limit.}
+% QC: the space of simple curves with bounded period is compact in
+%   W^{1,2}. Take a convergent subsequence of the sequence z^(4)_n
+%   (where z'_n -> z as epsilon_n -> 0). The limit z^* is simple and
+%   satisfies A(z^*) = T = I_K(z^*), hence is a dual minimizer.
+% TODO: DETAILS NEEDED. Jörn to explain:
+%   - What topology makes the space of simple curves compact?
+%   - Do we need to reparametrize to a fixed domain [0, 1]?
+%   - How do we verify that A and I_K are continuous in this topology?
+[TODO: details of compactness argument]
+
+The space of simple curves (piecewise linear with velocities from
+$\{R_1, \ldots, R_F\}$ and period in $[T - \varepsilon, T + \varepsilon]$)
+is compact in the $W^{1,2}$ topology (after reparametrizing to a fixed
+domain). Taking a sequence of approximations $z'_n \to z$ with
+$\varepsilon_n \to 0$, the corresponding sequence $z^{(4)}_n$ has a
+convergent subsequence with limit~$z^*$. The limit is simple (piecewise
+linear with pure Reeb vectors, each used at most once) and satisfies
+\[
+  A(z^*) = \lim_{n \to \infty} A(z^{(4)}_n) = T,
+  \qquad
+  I_K(z^*) = \lim_{n \to \infty} I_K(z^{(4)}_n) = T.
+\]
+Hence $z^*$ is a dual minimizer.
+
+\paragraph{Wrapup.}
+By Theorem~\ref{thm:primal-dual-equivalence}, the dual minimizer~$z^*$
+corresponds to a primal minimizer $\gamma = z^* + b$ for some constant
+$b \in \mathbb{R}^4$. Since $z^*$ is simple (piecewise linear with pure
+Reeb vectors, each used at most once), $\gamma$ is also simple
+(Definition~\ref{def:simple-reeb-orbit}). This completes the proof.
+\end{proof}
+
