@@ -489,19 +489,24 @@ and removing any single inequality strictly enlarges the intersection.
 %   Each (n_i, h_i) corresponds to exactly one facet.
 % Downstream: polytope <-> h-rep is a bijection. Two polytopes are equal
 %   iff they have the same h-rep (as unordered sets of (n_i, h_i)).
-Every polytope has a unique irredundant $H$-representation.
+Every polytope has a unique irredundant $H$-representation,
+and every irredundant $H$-representation corresponds to a polytope.
 \end{lemma}
 
 \begin{definition}[Facets, normals, heights]\label{def:facets}
 % QC: F_i is the set of points where inequality i is tight.
 %   F_i is a 3-dimensional polytope (a facet = maximal proper face).
+%   Irredundancy guarantees each F_i is genuinely 3-dimensional (not
+%   lower-dimensional): if F_i were lower-dimensional, the inequality
+%   would be redundant (implied by the other inequalities).
 %   n_i is unit outward normal, h_i > 0 is the support function value.
 % Downstream: facet F_i = { x in K : dot(x, n_i) = h_i }.
 %   F is the number of facets (= number of inequalities in h-rep).
 %   h_i = h_K(n_i). n_i perpendicular to F_i, pointing outward.
 Let $K$ have irredundant $H$-representation
 $\{(n_i, h_i)\}_{i=1}^{F}$.
-The \emph{facets} of $K$ are the $(d{-}1)$-dimensional faces
+Each facet of $K$ is $3$-dimensional (irredundancy prevents degeneracy).
+The \emph{facets} are
 \[
   F_i \coloneqq \{ x \in K : \langle x, n_i \rangle = h_i \},
   \qquad i = 1, \ldots, F.
@@ -564,7 +569,10 @@ such that
 % Downstream: useful sanity check in tests.
 Since $\lambda_0|_x(R_i) = 1$ for every $x \in F_i$ and every
 $i$, the convex combination preserves the normalization:
-$\lambda_0|_{\gamma(t)}(\dot{\gamma}(t)) = 1$ for a.e.\ $t$.
+\[
+  \lambda_0|_{\gamma(t)}(\dot{\gamma}(t)) = 1
+  \qquad \text{for a.e.\ } t.
+\]
 In particular, the action simplifies to $A(\gamma) = T$
 (the period equals the action).
 \end{remark}
