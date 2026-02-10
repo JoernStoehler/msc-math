@@ -1,8 +1,26 @@
 /// Qhull C library FFI wrapper for halfspace intersection.
 ///
+/// **STATUS:** Interface defined, implementation TODO for next agent session.
+///
 /// This module isolates all qhull C API calls so future code doesn't need
 /// to deal with raw FFI. The C API is weird (command-line args baked in,
 /// multi-step initialization, void functions that may call exit(), etc.).
+///
+/// # Requirements
+///
+/// The `halfspace_intersection_4d` function must:
+/// 1. Accept halfspaces in format {x ∈ ℝ⁴ : n·x ≤ h} with unit normals
+/// 2. Return ALL vertices of the polytope defined by the intersection
+/// 3. Vertices must satisfy n·v ≤ h + ε for all halfspaces (ε ≈ 1e-6)
+/// 4. Correctly handle 4D hypercube (16 vertices), cross-polytope (8 vertices), simplex (5 vertices)
+///
+/// # Next Steps for Implementation
+///
+/// 1. Study reference: `~/.cargo/registry/.../qhull-sys-0.4.0/qhull/src/qhalf/qhalf_r.c`
+/// 2. Understand qhull duality: in halfspace mode, what list contains the output vertices?
+/// 3. Clarify dimension parameter: does qh_init_B expect dim=4 (geometric) or dim=5 (data format)?
+/// 4. Run tests incrementally: check vertex count first, then verify coordinates
+/// 5. See function-level TODO comment for detailed findings from previous attempt
 use nalgebra::Vector4;
 use std::ffi::CString;
 use std::ptr;
@@ -58,86 +76,147 @@ pub(crate) fn halfspace_intersection_4d(
         halfspaces.push(-h);
     }
 
-    unsafe {
-        let mut qh: qhull_sys::qhT = std::mem::zeroed();
+    // TODO: Implement qhull C FFI wrapper for halfspace intersection
+    //
+    // REQUIREMENTS:
+    // - Convert halfspaces from format {x : n·x ≤ h} to qhull format
+    // - Call qhull C library (qhull-sys crate) in halfspace intersection mode
+    // - Extract output vertices as Vec<Vector4<f64>>
+    // - Handle all memory management correctly (qhull uses malloc/free)
+    //
+    // KNOWN ISSUES WITH PREVIOUS ATTEMPT (commit c7392e0):
+    // - Returns 7 vertices for hypercube [-1,1]^4 (expected 16)
+    // - Returns 7 vertices for other test cases (all wrong)
+    // - Volume tests fail with volume=0
+    //
+    // INVESTIGATION FINDINGS:
+    // - qhull C API is complex: requires qh_init_A, qh_init_B, qh_qhull, qh_prepare_output
+    // - Halfspace mode uses duality: need to understand vertex vs facet lists
+    // - Dimension parameter semantics unclear: dim=4 or dim=5 for 4D halfspaces?
+    // - Reference implementation: ~/.cargo/registry/.../qhull-sys-0.4.0/qhull/src/qhalf/qhalf_r.c
+    //
+    // TESTS:
+    // - See test module below for required behavior
+    // - Must pass: hypercube (16 vertices), cross-polytope (8 vertices), simplex (5 vertices)
+    // - All vertices must satisfy n·v ≤ h for all input halfspaces
+    //
+    // APPROACH SUGGESTIONS:
+    // 1. Study qhalf_r.c main() function completely before coding
+    // 2. Test incrementally: print vertex count first, then coordinates
+    // 3. Verify against known polytopes (hypercube is simplest test case)
+    // 4. Consider using qhull Rust crate as reference (but it has bugs in halfspace mode)
+    unimplemented!(
+        "qhull halfspace intersection not yet implemented - see TODO comment above"
+    )
+}
 
-        // Build argv for qhull initialization (following qhull Rust crate pattern)
-        let argv_strs = vec![
-            CString::new("qhull").unwrap(),
-            CString::new("H").unwrap(),  // Halfspace mode
+#[cfg(test)]
+mod test {
+    use super::*;
+    use nalgebra::Vector4;
+
+    /// Test case: 4D hypercube [-1,1]^4
+    /// Expected: 16 vertices at all combinations of (±1, ±1, ±1, ±1)
+    #[test]
+    #[ignore] // TODO: Enable when qhull wrapper is correctly implemented
+    fn hypercube_vertices() {
+        let normals = vec![
+            Vector4::new(1.0, 0.0, 0.0, 0.0),   // x₁ ≤ 1
+            Vector4::new(-1.0, 0.0, 0.0, 0.0),  // -x₁ ≤ 1
+            Vector4::new(0.0, 1.0, 0.0, 0.0),   // x₂ ≤ 1
+            Vector4::new(0.0, -1.0, 0.0, 0.0),  // -x₂ ≤ 1
+            Vector4::new(0.0, 0.0, 1.0, 0.0),   // x₃ ≤ 1
+            Vector4::new(0.0, 0.0, -1.0, 0.0),  // -x₃ ≤ 1
+            Vector4::new(0.0, 0.0, 0.0, 1.0),   // x₄ ≤ 1
+            Vector4::new(0.0, 0.0, 0.0, -1.0),  // -x₄ ≤ 1
         ];
-        let argv: Vec<*const i8> = argv_strs
-            .iter()
-            .map(|s| s.as_ptr())
-            .chain(std::iter::once(ptr::null()))
-            .collect();
-        let argc = (argv.len() - 1) as i32;
+        let heights = vec![1.0; 8];
 
-        // Step 1: Initialize qhull (from qhull Rust crate build() method)
-        // Open /dev/null for all output streams to suppress qhull messages
-        let devnull = CString::new("/dev/null").unwrap();
-        let read_mode = CString::new("r").unwrap();
-        let write_mode = CString::new("w").unwrap();
-        let stdin_file = libc::fopen(devnull.as_ptr(), read_mode.as_ptr());
-        let stdout_file = libc::fopen(devnull.as_ptr(), write_mode.as_ptr());
-        let stderr_file = libc::fopen(devnull.as_ptr(), write_mode.as_ptr());
+        let vertices = halfspace_intersection_4d(&normals, &heights)
+            .expect("hypercube halfspace intersection should succeed");
 
-        if stdin_file.is_null() || stdout_file.is_null() || stderr_file.is_null() {
-            return Err(QhullError::ComputationFailed);
-        }
+        assert_eq!(vertices.len(), 16, "hypercube [-1,1]^4 has 16 vertices");
 
-        qhull_sys::qh_init_A(
-            &mut qh as *mut _,
-            stdin_file as *mut _,     // stdin -> /dev/null
-            stdout_file as *mut _,    // stdout -> /dev/null
-            stderr_file as *mut _,    // stderr -> /dev/null
-            argc,
-            argv.as_ptr() as *mut *mut i8,
-        );
-
-        let qh_ptr = &mut qh as *mut _;
-
-        // NOTE: Skipping qh_checkflags and qh_initflags - they cause crashes
-        // qh_init_A should have already set up the flags from argv
-
-        // Set feasible point to origin (interior point guaranteed by Definition 3.2)
-        let mut feasible_point = vec![0.0; dim];
-        qh.feasible_point = feasible_point.as_mut_ptr();
-        std::mem::forget(feasible_point); // qhull will free this, so don't let Rust drop it
-
-        // Step 3: Initialize with halfspace data
-        qhull_sys::qh_init_B(
-            qh_ptr,
-            halfspaces.as_mut_ptr(),
-            num_halfspaces as i32,
-            dim as i32,
-            0, // ismalloc = false (we manage memory)
-        );
-
-        // Step 4: Run the qhull algorithm
-        qhull_sys::qh_qhull(qh_ptr);
-
-        // Step 5: Prepare output
-        qhull_sys::qh_prepare_output(qh_ptr);
-
-        // Extract vertices from vertex_list
-        let mut vertices = Vec::new();
-        let mut vertex_ptr = qh.vertex_list;
-
-        while !vertex_ptr.is_null() {
-            let vertex = &*vertex_ptr;
-            if !vertex.point.is_null() {
-                let coords = std::slice::from_raw_parts(vertex.point, dim);
-                vertices.push(Vector4::new(coords[0], coords[1], coords[2], coords[3]));
+        // All vertices should satisfy all halfspace constraints: n·v ≤ h
+        for v in &vertices {
+            for (n, &h) in normals.iter().zip(&heights) {
+                assert!(
+                    n.dot(v) <= h + 1e-6,
+                    "vertex {:?} violates constraint {:?} · x ≤ {}",
+                    v,
+                    n,
+                    h
+                );
             }
-            vertex_ptr = vertex.next;
         }
 
-        // Cleanup: qh_freeqhull handles all memory cleanup including FILE pointers
-        qhull_sys::qh_freeqhull(qh_ptr, !qhull_sys::qh_ALL);
+        // All vertices should be on the boundary (at least one constraint tight)
+        for v in &vertices {
+            let on_boundary = normals
+                .iter()
+                .zip(&heights)
+                .any(|(n, &h)| (n.dot(v) - h).abs() < 1e-6);
+            assert!(
+                on_boundary,
+                "vertex {:?} is not on any facet boundary",
+                v
+            );
+        }
+    }
 
-        // NOTE: Do NOT close FILE handles - qh_freeqhull already freed them
+    /// Test case: 4D cross-polytope (±2·eᵢ for i=1,2,3,4)
+    /// Defined by: (±1,±1,±1,±1)/2 · x ≤ 1 (16 facets, 8 vertices)
+    #[test]
+    #[ignore] // TODO: Enable when qhull wrapper is correctly implemented
+    fn crosspolytope_vertices() {
+        let mut normals = Vec::with_capacity(16);
+        for s0 in [-1.0_f64, 1.0] {
+            for s1 in [-1.0_f64, 1.0] {
+                for s2 in [-1.0_f64, 1.0] {
+                    for s3 in [-1.0_f64, 1.0] {
+                        normals.push(Vector4::new(s0, s1, s2, s3).normalize());
+                    }
+                }
+            }
+        }
+        let heights = vec![1.0; 16];
 
-        Ok(vertices)
+        let vertices = halfspace_intersection_4d(&normals, &heights)
+            .expect("crosspolytope halfspace intersection should succeed");
+
+        assert_eq!(vertices.len(), 8, "4D cross-polytope has 8 vertices");
+
+        // Check vertices satisfy constraints
+        for v in &vertices {
+            for (n, &h) in normals.iter().zip(&heights) {
+                assert!(
+                    n.dot(v) <= h + 1e-6,
+                    "vertex {:?} violates constraint {:?} · x ≤ {}",
+                    v,
+                    n,
+                    h
+                );
+            }
+        }
+    }
+
+    /// Test case: 4D simplex with 5 vertices
+    /// Standard simplex conv{0, e₁, e₂, e₃, e₄}
+    #[test]
+    #[ignore] // TODO: Enable when qhull wrapper is correctly implemented
+    fn simplex_vertices() {
+        let normals = vec![
+            Vector4::new(-1.0, 0.0, 0.0, 0.0),
+            Vector4::new(0.0, -1.0, 0.0, 0.0),
+            Vector4::new(0.0, 0.0, -1.0, 0.0),
+            Vector4::new(0.0, 0.0, 0.0, -1.0),
+            Vector4::new(1.0, 1.0, 1.0, 1.0).normalize(),
+        ];
+        let heights = vec![0.0, 0.0, 0.0, 0.0, 0.5];
+
+        let vertices = halfspace_intersection_4d(&normals, &heights)
+            .expect("simplex halfspace intersection should succeed");
+
+        assert_eq!(vertices.len(), 5, "4D simplex has 5 vertices");
     }
 }
