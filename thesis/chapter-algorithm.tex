@@ -111,24 +111,26 @@ where
 % Proof: Section~\ref{sec:simple-minimizer} (search space)
 % and Section~\ref{sec:algorithm-correctness} (algorithm correctness).
 
-\medskip\noindent
-\textbf{Algorithm.}\label{alg:ehz}
-The following algorithm computes~\eqref{eq:ehz-main}.
+\medskip
+\noindent\textbf{Algorithm}\label{alg:ehz}
+(computes~\eqref{eq:ehz-main}).
 
+\smallskip\noindent
 \emph{Input:} $(n_1, h_1), \ldots, (n_F, h_F)$.
+\quad
 \emph{Output:} $c_{\mathrm{EHZ}}(K)$.
 
-\medskip\noindent
+\smallskip\noindent
 For each nonempty subset $S \subseteq \{1, \ldots, F\}$
 and each permutation $\sigma$ of $S$
 (identified up to cyclic shifts):
 
 \begin{enumerate}
-\item \textbf{Define.}
-  The normal matrix $N \in \mathbb{R}^{|S| \times 4}$,
+\item \textbf{Define}
+  the normal matrix $N \in \mathbb{R}^{|S| \times 4}$,
   action matrix $H \in \mathbb{R}^{|S| \times |S|}$,
   and height vector $\eta \in \mathbb{R}^{|S|}$:
-  \begin{align}
+  \begin{align*}
     N_{id} &= n_{\sigma(i),d},
       & i &= 1, \ldots, |S|, \quad d = 1, \ldots, 4, \\
     H_{ij} &= \begin{cases}
@@ -138,7 +140,7 @@ and each permutation $\sigma$ of $S$
     \end{cases} \\
     \eta_i &= h_{\sigma(i)},
       & i &= 1, \ldots, |S|.
-  \end{align}
+  \end{align*}
 
 \item \textbf{Solve.}
   \begin{equation}\label{eq:linear-system}
@@ -153,15 +155,6 @@ and each permutation $\sigma$ of $S$
   Discard $(S, \sigma)$ if $\beta_i \leq 0$ for any $i$.
   % not <: we also discard \beta_i = 0 (degenerate); the remark below requires \beta_i > 0
 
-  \begin{remark}\label{rem:critical-point}
-  The solution $\beta$ with $\beta_i > 0$
-  is the critical point of
-  $Q(\beta) = \sum_{1 \leq j < i \leq |S|}
-    \beta_i \beta_j \, \omega_0(n_{\sigma(i)}, n_{\sigma(j)})$
-  subject to $\sum_{i} \beta_i n_{\sigma(i)} = 0$,
-  $\sum_{i} \beta_i h_{\sigma(i)} = 1$, and $\beta_i > 0$.
-  \end{remark}
-
 \item \textbf{Evaluate.}
   \begin{equation}\label{eq:action-formula}
     A(S, \sigma) = \tfrac{1}{2} \, Q(\beta)^{-1}.
@@ -170,6 +163,15 @@ and each permutation $\sigma$ of $S$
 
 \noindent
 Return $c_{\mathrm{EHZ}}(K) = \min_{S,\sigma} A(S, \sigma)$.
+
+\begin{remark}\label{rem:critical-point}
+The solution $\beta$ with $\beta_i > 0$
+is the critical point of
+$Q(\beta) = \sum_{1 \leq j < i \leq |S|}
+  \beta_i \beta_j \, \omega_0(n_{\sigma(i)}, n_{\sigma(j)})$
+subject to $\sum_{i} \beta_i n_{\sigma(i)} = 0$,
+$\sum_{i} \beta_i h_{\sigma(i)} = 1$, and $\beta_i > 0$.
+\end{remark}
 
 %%% =================================================================
 %%% Section 2: Definitions
