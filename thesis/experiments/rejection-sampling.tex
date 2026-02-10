@@ -26,15 +26,22 @@ sample attempt proceeds as follows:
   \begin{enumerate}
     \item \emph{No duplicate normals}: reject if~$\|n_i - n_j\| < \varepsilon$
       for any~$i \ne j$.
-    \item \emph{Boundedness}: for every triple~$(i,j,k)$ of normals, compute
-      the 1D kernel~$d$ of the $3 \times 4$ matrix~$[n_i;\, n_j;\, n_k]$
-      via the generalized cross product. Verify that some normal outside the
-      triple has positive inner product with~$d$, and some normal outside the
-      triple has positive inner product with~$-d$.
-    \item \emph{Vertex enumeration}: solve all~$\binom{F}{4}$ systems of
-      $4$ active constraints, keep feasible solutions, deduplicate.
-    \item \emph{Irredundancy}: for each facet, check that the incident
-      vertices have affine rank~$3$ (via SVD).
+      % Same-direction only (n_i ≈ n_j). Antiparallel normals (n_i ≈ -n_j)
+      % are valid opposite-facing facets, e.g. hypercube has ±e_i.
+    \item \emph{Boundedness}: the normals must positively span~$\mathbb{R}^4$,
+      i.e., no direction is left ``uncovered.'' For every triple~$(i,j,k)$,
+      the three normals share a 1D kernel direction~$d$ (computed via the
+      generalized cross product in~$\mathbb{R}^4$). The polytope is bounded
+      only if some other normal blocks~$d$ (has positive inner product
+      with~$d$) and some other normal blocks~$-d$.
+      % The degenerate case (three coplanar normals, kernel ≥ 2D) is skipped in
+      % the code — probability zero for continuous distributions on S^3.
+    \item \emph{Vertex enumeration}: a vertex lies at the intersection of
+      exactly~$4$ facet hyperplanes. Solve all~$\binom{F}{4}$ linear systems,
+      discard infeasible or duplicate solutions.
+    \item \emph{Irredundancy}: each facet must be a genuine 3-dimensional
+      face. Check that the vertices lying on each facet hyperplane span a
+      3-dimensional affine subspace (via SVD).
   \end{enumerate}
   \item If all checks pass, accept the polytope.
 \end{enumerate}
@@ -43,8 +50,10 @@ sample attempt proceeds as follows:
 
 We measured acceptance rates across a grid of parameters: facet
 counts~$F \in \{5, 6, \ldots, 10\}$ and three height
-ranges~$[h_{\min}, h_{\max}]$. For each configuration, 1000~attempts were
-made with a fixed random seed.
+ranges~$[h_{\min}, h_{\max}]$, from narrow ($[0.8, 1.2]$, heights nearly
+equal) to wide ($[0.1, 5.0]$, heights spanning a 50$\times$ range). For each
+of the $6 \times 3 = 18$ configurations, 1000~independent attempts were made
+with a deterministic random seed.
 
 \begin{table}[ht]
 \centering
@@ -77,15 +86,20 @@ polytope, making boundedness easier to satisfy.
 
 \paragraph{Acceptance is insensitive to height range at low~$F$.}
 At~$F = 5$, all three height ranges give exactly the same rate (5.7\%).
-Since the boundedness check depends only on the normal directions and not on
-the heights, this suggests that boundedness is the dominant rejection cause at
-low facet count.
+This is not a coincidence: with only~5 facets, most random normal
+configurations fail the boundedness check regardless of the heights chosen.
+Since boundedness depends only on the normal directions, varying the height
+range has no effect.
+% The same seed produces the same normals for all three h-ranges of a given F.
+% Identical acceptance at F=5 confirms that rejection is dominated by the
+% boundedness check (which is height-independent), not irredundancy.
 
 \paragraph{Wide height ranges hurt at high~$F$.}
 At~$F = 10$, the rate drops from~72.9\% for~$h \in [0.8, 1.2]$ to~28.3\%
-for~$h \in [0.1, 5.0]$. Once boundedness is likely satisfied, the irredundancy
-check becomes the bottleneck: extreme height ratios make it more likely that
-some facet's incident vertices fail the affine rank test.
+for~$h \in [0.1, 5.0]$. With~10 facets, boundedness is almost always
+satisfied, so the irredundancy check becomes the bottleneck. When heights vary
+over a wide range, some facets end up with too few incident vertices to span
+a 3-dimensional face, causing rejection.
 
 \paragraph{Practical consequence.}
 For building datasets with~$F \ge 7$ and moderate height ranges, rejection

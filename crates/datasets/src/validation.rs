@@ -4,7 +4,7 @@
 /// # Validation pipeline
 ///
 /// 1. Basic checks: lengths match, ≥5 facets, normals unit, heights > 0
-/// 2. No duplicate or proportional halfspaces
+/// 2. No duplicate halfspaces (same outward normal)
 /// 3. Boundedness: normals positively span R^4 (via triple kernel enumeration)
 /// 4. Vertex enumeration: intersect all C(F,4) hyperplane tuples
 /// 5. Irredundancy: each facet has incident vertices of affine rank 3
@@ -25,7 +25,7 @@ impl std::fmt::Display for ValidationError {
         match self {
             Self::Construction(e) => write!(f, "construction: {e}"),
             Self::DuplicateHalfspaces(i, j) => {
-                write!(f, "halfspaces {i} and {j} are duplicate/proportional")
+                write!(f, "halfspaces {i} and {j} have duplicate normals")
             }
             Self::Unbounded => write!(f, "polytope is unbounded"),
             Self::RedundantFacet(i) => write!(f, "facet {i} is redundant"),
