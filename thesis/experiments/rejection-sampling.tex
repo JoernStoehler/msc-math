@@ -1,0 +1,100 @@
+\subsection{Rejection sampling acceptance rates}
+\label{sec:rejection-sampling}
+
+To probe Viterbo's conjecture computationally, we need large datasets of
+random convex polytopes in~$\mathbb{R}^4$. We generate these by rejection
+sampling: sample a candidate halfspace representation, then validate that it
+defines a bounded, irredundant polytope.
+
+\subsubsection*{Sampling procedure}
+
+A polytope~$K \subset \mathbb{R}^4$ is specified in halfspace representation
+\[
+  K = \bigl\{\, x \in \mathbb{R}^4 \;\big|\; n_i \cdot x \le h_i,\;
+  i = 1, \ldots, F \,\bigr\},
+\]
+where~$n_i \in S^3$ are outward unit normals and~$h_i > 0$ are heights
+(positive heights ensure the origin lies in the interior).
+
+For a given facet count~$F$ and height range~$[h_{\min}, h_{\max}]$, each
+sample attempt proceeds as follows:
+\begin{enumerate}
+  \item Sample~$F$ independent unit normals uniformly on~$S^3$
+    (via normalized standard Gaussian vectors in~$\mathbb{R}^4$).
+  \item Sample~$F$ independent heights uniformly from~$[h_{\min}, h_{\max}]$.
+  \item Validate the candidate~$(n_1, \ldots, n_F, h_1, \ldots, h_F)$:
+  \begin{enumerate}
+    \item \emph{No duplicate normals}: reject if~$\|n_i - n_j\| < \varepsilon$
+      for any~$i \ne j$.
+    \item \emph{Boundedness}: for every triple~$(i,j,k)$ of normals, compute
+      the 1D kernel~$d$ of the $3 \times 4$ matrix~$[n_i;\, n_j;\, n_k]$
+      via the generalized cross product. Verify that some normal outside the
+      triple has positive inner product with both~$d$ and~$-d$.
+    \item \emph{Vertex enumeration}: solve all~$\binom{F}{4}$ systems of
+      $4$ active constraints, keep feasible solutions, deduplicate.
+    \item \emph{Irredundancy}: for each facet, check that the incident
+      vertices have affine rank~$3$ (via SVD).
+  \end{enumerate}
+  \item If all checks pass, accept the polytope.
+\end{enumerate}
+
+\subsubsection*{Acceptance rate sweep}
+
+We measured acceptance rates across a grid of parameters: facet
+counts~$F \in \{5, 6, \ldots, 10\}$ and three height
+ranges~$[h_{\min}, h_{\max}]$. For each configuration, 1000~attempts were
+made with a fixed random seed.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{r ccc}
+\toprule
+& \multicolumn{3}{c}{Acceptance rate} \\
+\cmidrule(lr){2-4}
+$F$ & $h \in [0.5, 2.0]$ & $h \in [0.1, 5.0]$ & $h \in [0.8, 1.2]$ \\
+\midrule
+ 5 & 0.057 & 0.057 & 0.057 \\
+ 6 & 0.168 & 0.162 & 0.170 \\
+ 7 & 0.334 & 0.305 & 0.344 \\
+ 8 & 0.450 & 0.371 & 0.506 \\
+ 9 & 0.489 & 0.332 & 0.602 \\
+10 & 0.504 & 0.283 & 0.729 \\
+\bottomrule
+\end{tabular}
+\caption{Acceptance rates for rejection sampling of random 4-polytopes
+  with~$F$ facets. Each cell reports the fraction of 1000 attempts that passed
+  all validation checks.}
+\label{tab:acceptance-rates}
+\end{table}
+
+\subsubsection*{Observations}
+
+\paragraph{Acceptance increases with~$F$ for narrow height ranges.}
+For~$h \in [0.8, 1.2]$, the rate climbs from~5.7\% at~$F = 5$ to~72.9\%
+at~$F = 10$. More facets provide more directions to ``close off'' the
+polytope, making boundedness easier to satisfy.
+
+\paragraph{Acceptance is insensitive to height range at low~$F$.}
+At~$F = 5$, all three height ranges give exactly the same rate (5.7\%).
+The dominant rejection cause at low facet count is the boundedness check,
+which depends only on the normal directions, not the heights.
+
+\paragraph{Wide height ranges hurt at high~$F$.}
+At~$F = 10$, the rate drops from~72.9\% for~$h \in [0.8, 1.2]$ to~28.3\%
+for~$h \in [0.1, 5.0]$. Once boundedness is likely satisfied, the irredundancy
+check becomes the bottleneck: extreme height ratios produce degenerate vertex
+configurations that fail the affine rank test.
+
+\paragraph{Practical consequence.}
+For building datasets with~$F \le 8$, rejection sampling is efficient enough
+(acceptance~$\ge 37\%$) without biasing the distribution. For~$F = 5$, the
+5.7\% rate means roughly 18 attempts per accepted polytope --- still practical
+for datasets of a few thousand samples.
+
+{\color{red}%
+\textbf{Stub data.}
+Timing data in this table uses stub implementations (constant 1.0 for volume
+and capacity, busy-spin for ${\sim}1$\,ms). The acceptance rates and
+acceptance/rejection counts are real. The systolic ratio experiment
+(Section~\ref{sec:systolic-ratios}, when written) will use real
+implementations from the \texttt{hk2017} crate.}
