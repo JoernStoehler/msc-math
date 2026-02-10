@@ -7,7 +7,6 @@ pub mod acceptance_sweep;
 pub mod dataset;
 pub mod known_polytopes;
 pub mod random;
-pub mod stubs;
 pub mod validation;
 
 #[cfg(test)]

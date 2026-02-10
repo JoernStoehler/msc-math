@@ -40,7 +40,7 @@ pub fn simplex() -> KnownPolytope {
         -Vector4::w(),
         Vector4::new(1.0, 1.0, 1.0, 1.0).normalize(),
     ];
-    let heights_raw = vec![0.0, 0.0, 0.0, 0.0, 1.0];
+    let heights_raw = vec![0.0, 0.0, 0.0, 0.0, 0.5];
     let heights: Vec<f64> = normals_raw
         .iter()
         .zip(&heights_raw)
@@ -85,16 +85,18 @@ pub fn hypercube() -> KnownPolytope {
 /// Normals: all (±1, ±1, ±1, ±1)/2, heights 1.0.
 /// Capacity not yet computed from literature — will use stub (1.0) for now.
 pub fn crosspolytope() -> KnownPolytope {
-    let mut normals = Vec::with_capacity(16);
-    for s0 in [-1.0_f64, 1.0] {
-        for s1 in [-1.0_f64, 1.0] {
-            for s2 in [-1.0_f64, 1.0] {
-                for s3 in [-1.0_f64, 1.0] {
-                    normals.push(Vector4::new(s0, s1, s2, s3).normalize());
-                }
-            }
-        }
-    }
+    let normals: Vec<Vector4<f64>> = [-1.0_f64, 1.0]
+        .into_iter()
+        .flat_map(|s0| {
+            [-1.0_f64, 1.0].into_iter().flat_map(move |s1| {
+                [-1.0_f64, 1.0].into_iter().flat_map(move |s2| {
+                    [-1.0_f64, 1.0]
+                        .into_iter()
+                        .map(move |s3| Vector4::new(s0, s1, s2, s3).normalize())
+                })
+            })
+        })
+        .collect();
     let heights = vec![1.0; 16];
 
     KnownPolytope {
@@ -154,25 +156,21 @@ pub fn hko_pentagon() -> KnownPolytope {
 /// Regular triangle with circumradius 1 in both q-space and p-space.
 /// Known capacity: 1.5.
 pub fn triangle_product() -> KnownPolytope {
-    let mut normals = Vec::with_capacity(6);
-    let mut heights = Vec::with_capacity(6);
-
     // Regular triangle: outward normals at angles π/2 + 2πk/3, inradius = cos(π/3) = 0.5
-    for k in 0..3 {
-        let angle = PI / 2.0 + 2.0 * PI * (k as f64) / 3.0;
-        let nx = angle.cos();
-        let ny = angle.sin();
-        normals.push(Vector4::new(nx, ny, 0.0, 0.0));
-        heights.push(0.5);
-    }
-    // Same triangle in p-space
-    for k in 0..3 {
-        let angle = PI / 2.0 + 2.0 * PI * (k as f64) / 3.0;
-        let nx = angle.cos();
-        let ny = angle.sin();
-        normals.push(Vector4::new(0.0, 0.0, nx, ny));
-        heights.push(0.5);
-    }
+    let triangle_angles: Vec<f64> = (0..3)
+        .map(|k| PI / 2.0 + 2.0 * PI * (k as f64) / 3.0)
+        .collect();
+
+    // Q-space triangle + P-space triangle (Lagrangian product)
+    let (normals, heights): (Vec<_>, Vec<_>) = triangle_angles
+        .iter()
+        .map(|a| (Vector4::new(a.cos(), a.sin(), 0.0, 0.0), 0.5))
+        .chain(
+            triangle_angles
+                .iter()
+                .map(|a| (Vector4::new(0.0, 0.0, a.cos(), a.sin()), 0.5)),
+        )
+        .unzip();
 
     KnownPolytope {
         polytope: Polytope4D::new(normals, heights).expect("triangle product construction"),
@@ -190,24 +188,24 @@ pub fn triangle_product() -> KnownPolytope {
 ///
 /// Source: Moser's theorem + functoriality of symplectic products.
 pub fn symplectic_triangle_square() -> KnownPolytope {
-    let mut normals = Vec::new();
-    let mut heights = Vec::new();
-
-    // Equilateral triangle in q-space (circumradius 1)
-    for k in 0..3 {
+    // Equilateral triangle in q-space (circumradius 1, inradius 0.5)
+    let triangle_normals = (0..3).map(|k| {
         let angle = PI / 2.0 + 2.0 * PI * (k as f64) / 3.0;
-        normals.push(Vector4::new(angle.cos(), angle.sin(), 0.0, 0.0));
-        heights.push(0.5); // inradius = cos(π/3) = 0.5
-    }
+        Vector4::new(angle.cos(), angle.sin(), 0.0, 0.0)
+    });
+
     // Square [-0.5, 0.5]^2 in p-space (4 facets)
-    normals.push(Vector4::new(0.0, 0.0, 1.0, 0.0));
-    heights.push(0.5);
-    normals.push(Vector4::new(0.0, 0.0, -1.0, 0.0));
-    heights.push(0.5);
-    normals.push(Vector4::new(0.0, 0.0, 0.0, 1.0));
-    heights.push(0.5);
-    normals.push(Vector4::new(0.0, 0.0, 0.0, -1.0));
-    heights.push(0.5);
+    let square_normals = [
+        Vector4::new(0.0, 0.0, 1.0, 0.0),
+        Vector4::new(0.0, 0.0, -1.0, 0.0),
+        Vector4::new(0.0, 0.0, 0.0, 1.0),
+        Vector4::new(0.0, 0.0, 0.0, -1.0),
+    ];
+
+    let (normals, heights): (Vec<_>, Vec<_>) = triangle_normals
+        .chain(square_normals)
+        .map(|n| (n, 0.5))
+        .unzip();
 
     // area(triangle) = 3√3/4 ≈ 1.299, area(square) = 1.0
     let area_tri = 3.0 * 3.0_f64.sqrt() / 4.0;

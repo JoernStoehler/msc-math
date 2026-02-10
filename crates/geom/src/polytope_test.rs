@@ -19,6 +19,21 @@ fn valid_construction() {
     assert_eq!(p.facet_count(), 5);
     assert_eq!(p.normals().len(), 5);
     assert_eq!(p.heights().len(), 5);
+    assert!(!p.vertices().is_empty(), "vertices should be precomputed");
+}
+
+#[test]
+fn reject_duplicate_normals() {
+    let normals = vec![
+        Vector4::x(),
+        Vector4::y(),
+        Vector4::z(),
+        Vector4::w(),
+        Vector4::x(), // duplicate of [0]
+    ];
+    let heights = vec![1.0; 5];
+    let err = Polytope4D::new(normals, heights).unwrap_err();
+    assert_eq!(err, ConstructionError::DuplicateHalfspaces { i: 0, j: 4 });
 }
 
 #[test]

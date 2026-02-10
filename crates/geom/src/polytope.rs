@@ -7,13 +7,18 @@
 /// - `normals.len() == heights.len() >= 5` (minimum facets for a bounded 4D polytope)
 /// - All normals are unit vectors: `‖n_i‖ = 1`
 /// - All heights are strictly positive: `h_i > 0` (origin is in the interior)
+/// - No two normals are (near-)identical: `‖n_i - n_j‖ > ε` for i ≠ j
+/// - Vertices are precomputed and cached from the H-representation
 use nalgebra::Vector4;
-use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+const EPS_UNIT: f64 = 1e-9;
+const EPS_DUPLICATE_NORMAL: f64 = 1e-8;
+
+#[derive(Clone, Debug)]
 pub struct Polytope4D {
     normals: Vec<Vector4<f64>>,
     heights: Vec<f64>,
+    vertices: Vec<Vector4<f64>>,
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -22,6 +27,7 @@ pub enum ConstructionError {
     TooFewFacets(usize),
     NonUnitNormal { index: usize, norm: f64 },
     NonPositiveHeight { index: usize, value: f64 },
+    DuplicateHalfspaces { i: usize, j: usize },
 }
 
 impl std::fmt::Display for ConstructionError {
@@ -37,12 +43,17 @@ impl std::fmt::Display for ConstructionError {
             Self::NonPositiveHeight { index, value } => {
                 write!(f, "height[{index}] = {value}, expected > 0")
             }
+            Self::DuplicateHalfspaces { i, j } => {
+                write!(f, "normals[{i}] and normals[{j}] are duplicates")
+            }
         }
     }
 }
 
 impl Polytope4D {
     /// Construct a polytope from outward unit normals and positive heights.
+    ///
+    /// Validates all invariants and precomputes vertices.
     pub fn new(
         normals: Vec<Vector4<f64>>,
         heights: Vec<f64>,
@@ -58,7 +69,7 @@ impl Polytope4D {
         }
         for (i, n) in normals.iter().enumerate() {
             let norm = n.norm();
-            if (norm - 1.0).abs() > 1e-9 {
+            if (norm - 1.0).abs() > EPS_UNIT {
                 return Err(ConstructionError::NonUnitNormal { index: i, norm });
             }
         }
@@ -67,7 +78,24 @@ impl Polytope4D {
                 return Err(ConstructionError::NonPositiveHeight { index: i, value: h });
             }
         }
-        Ok(Self { normals, heights })
+
+        // Check no two normals are (near-)identical
+        let f = normals.len();
+        for i in 0..f {
+            for j in (i + 1)..f {
+                if (normals[i] - normals[j]).norm() < EPS_DUPLICATE_NORMAL {
+                    return Err(ConstructionError::DuplicateHalfspaces { i, j });
+                }
+            }
+        }
+
+        let vertices = crate::vertices::compute_vertices(&normals, &heights);
+
+        Ok(Self {
+            normals,
+            heights,
+            vertices,
+        })
     }
 
     pub fn normals(&self) -> &[Vector4<f64>] {
@@ -76,6 +104,10 @@ impl Polytope4D {
 
     pub fn heights(&self) -> &[f64] {
         &self.heights
+    }
+
+    pub fn vertices(&self) -> &[Vector4<f64>] {
+        &self.vertices
     }
 
     pub fn facet_count(&self) -> usize {

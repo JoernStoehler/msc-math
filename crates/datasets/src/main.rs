@@ -2,7 +2,8 @@ use datasets::acceptance_sweep;
 use datasets::dataset::PolytopeRow;
 use datasets::known_polytopes;
 use datasets::random::generate_random_polytopes;
-use datasets::stubs::{capacity_stub, volume_stub};
+use geom::volume::volume;
+use hk2017::ehz_capacity_pruned;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use std::fs::File;
@@ -48,16 +49,31 @@ fn cmd_dataset(output: &PathBuf) {
     // 1. Known polytopes
     let known = known_polytopes::all_known();
     eprintln!("Writing {} known polytopes...", known.len());
+    const MAX_FACETS_BRUTEFORCE: usize = 10;
     for kp in &known {
-        let (vol, vol_time) = volume_stub(&kp.polytope);
-        let (_cap_stub, cap_time) = capacity_stub(&kp.polytope);
+        let start_vol = Instant::now();
+        let vol = volume(&kp.polytope);
+        let vol_time = start_vol.elapsed();
 
-        // For known polytopes, use the known capacity (not the stub).
+        let (cap, cap_time) = if kp.polytope.facet_count() <= MAX_FACETS_BRUTEFORCE {
+            let start_cap = Instant::now();
+            let cap_result =
+                ehz_capacity_pruned(&kp.polytope).expect("capacity computation failed");
+            (cap_result.capacity, start_cap.elapsed())
+        } else {
+            eprintln!(
+                "  Skipping capacity for {} ({} facets > {MAX_FACETS_BRUTEFORCE})",
+                kp.name,
+                kp.polytope.facet_count()
+            );
+            (f64::NAN, std::time::Duration::ZERO)
+        };
+
         let row = PolytopeRow::from_polytope(
             &kp.polytope,
             kp.name.to_string(),
             vol,
-            kp.capacity,
+            cap,
             vol_time.as_secs_f64() * 1000.0,
             cap_time.as_secs_f64() * 1000.0,
             0.0, // creation time negligible for hardcoded polytopes
@@ -80,8 +96,14 @@ fn cmd_dataset(output: &PathBuf) {
         let creation_time = start.elapsed();
 
         for p in &polytopes {
-            let (vol, vol_time) = volume_stub(p);
-            let (cap, cap_time) = capacity_stub(p);
+            let start_vol = Instant::now();
+            let vol = volume(p);
+            let vol_time = start_vol.elapsed();
+
+            let start_cap = Instant::now();
+            let cap_result = ehz_capacity_pruned(p).expect("capacity computation failed");
+            let cap_time = start_cap.elapsed();
+            let cap = cap_result.capacity;
 
             let row = PolytopeRow::from_polytope(
                 p,
