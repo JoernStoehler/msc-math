@@ -401,10 +401,10 @@ The action is the symplectic area enclosed by $\gamma$.
 % Downstream: justifies defining c_EHZ via closed characteristics
 %   and computing it via Reeb orbits interchangeably.
 Let $K$ be a convex body with smooth boundary. Then
-\[
+\begin{multline*}
   \min\{ A(\gamma) : \gamma \text{ is a closed characteristic on } \partial K \}
-  = \min\{ A(\gamma) : \gamma \text{ is a Reeb orbit on } \partial K \}.
-\]
+  \\= \min\{ A(\gamma) : \gamma \text{ is a Reeb orbit on } \partial K \}.
+\end{multline*}
 \end{lemma}
 
 \begin{proof}
@@ -583,12 +583,98 @@ In particular, the action simplifies to $A(\gamma) = T$
 
 \section{Simple Minimizer Existence}\label{sec:simple-minimizer}
 
-\begin{theorem}[Existence of Reeb orbits, positive infimum, minimum attained]\label{thm:orbit-existence}
-% Cited, no proof. Smooth: established. Polytope: CH2021?
+\begin{definition}[Simple Reeb orbit]\label{def:simple-reeb-orbit}
+% QC: "simple" is HK2017's terminology ("simple closed characteristic").
+%   Our definition uses the Reeb parametrization (gamma_dot = R_i exactly,
+%   not gamma_dot = C J n_i with varying C > 0 as in HK2017). Equivalent
+%   up to reparametrization; our gamma_dot is Reeb-normalized (lambda_0 = 1).
+%   Key properties: (1) piecewise constant velocity, (2) pure facet Reeb
+%   vectors (not convex combinations), (3) each facet used at most once.
+%   Contrast def:reeb-orbit-polytope which allows convex combinations.
+% Downstream: simple orbits are the computational objects. The algorithm
+%   searches over all simple orbits by enumerating (sigma, beta).
+%   Rust: struct SimpleOrbit { sigma: Vec<FacetIdx>, tau: Vec<f64> }.
+A generalized Reeb orbit $\gamma$ on a polytope $K$
+(Definition~\ref{def:reeb-orbit-polytope}) is \emph{simple} if:
+\begin{enumerate}
+\item $\dot{\gamma}$ is piecewise constant;
+\item each constant value is a facet Reeb vector $R_i$
+  (not a nontrivial convex combination); and
+\item for each facet index $i$, the set
+  $\{ t \in [0, T] : \dot{\gamma}(t) = R_i \}$
+  is a single interval (possibly empty).
+\end{enumerate}
+\end{definition}
+
+\begin{remark}[Finite representation of simple orbits]\label{rem:simple-orbit-data}
+% QC: breakpoints are velocity changes, not facet transitions.
+%   Example (Jörn): orbit on a Lagrangian 2-face F_1 cap F_2,
+%   traveling first with R_1, breakpoint in int(F_1 cap F_2),
+%   then R_2. Facet incidence {F_1, F_2} is constant across the breakpoint.
+% Downstream: Rust representation: (sigma: Vec<FacetIdx>, tau: Vec<f64>).
+%   sigma is a cyclic permutation of facet indices. tau[k] >= 0 is the time
+%   with velocity R_{sigma[k]}. Two (sigma, tau) are equivalent iff
+%   they differ by a cyclic shift. Period T = sum(tau). Action A = T.
+A simple Reeb orbit is (not necessarily uniquely) determined by a
+pair $(\sigma, \tau)$:
+\begin{itemize}
+\item a permutation $\sigma$ of $\{1, \ldots, F\}$
+  (the cyclic order in which facet Reeb vectors appear as velocities), and
+\item durations $\tau_1, \ldots, \tau_F \geq 0$
+  (where $\tau_k$ is the time spent with velocity $R_{\sigma(k)}$;
+  $\tau_k = 0$ means facet $\sigma(k)$ is not visited).
+\end{itemize}
+The orbit depends only on the cyclic sequence of
+positive-duration entries: two pairs $(\sigma, \tau)$ and
+$(\sigma', \tau')$ represent the same orbit if and only if,
+after removing all entries with $\tau_k = 0$, the resulting
+subsequences of (facet, duration) pairs agree up to cyclic shift.
+The period is $T = \sum_k \tau_k$ and the action is $A(\gamma) = T$
+(Remark~\ref{rem:contact-normalization}).
+
+Breakpoints of $\dot{\gamma}$ are velocity changes, not necessarily
+facet transitions: for example, the orbit may travel along a lower-dimensional face
+$F_i \cap F_j$ with velocity $R_i$, then switch to $R_j$ at a
+breakpoint in the interior of $F_i \cap F_j$.
+\end{remark}
+
+\begin{theorem}[Existence of closed characteristics]\label{thm:orbit-existence}
+% QC: for smooth convex bodies, this is classical
+%   (Rabinowitz 1978, Weinstein 1978 — verify exact citations).
+%   For general convex bodies: smooth approximation + compactness.
+%   The minimum (not just infimum) is attained.
+%   Positivity: A(gamma) > 0 for any closed characteristic
+%   (lambda_0(gamma_dot) > 0 implies A = integral > 0).
+% Downstream: justifies c_EHZ being a well-defined positive number.
+% TODO: Jörn to confirm citation(s).
+Let $K$ be a convex body in $\mathbb{R}^4$.
+There exists a closed characteristic on $\partial K$.
+The infimum of the action over all closed characteristics
+is attained and positive:
+\[
+  c_{\mathrm{EHZ}}(K) = \min_{\gamma} A(\gamma) > 0.
+\]
 \end{theorem}
 
-\begin{theorem}[Simple minimizer structure]\label{thm:simple-minimizer}
-% Piecewise linear, pure facet Reeb vectors, contiguous intervals
+\begin{theorem}[Simple minimizer {\cite{HK2017}}]\label{thm:simple-minimizer}
+% QC: main theorem of Haim-Kislev 2017. Deep result; we cite, not prove.
+%   The proof constructs a minimizing sequence and shows it can be
+%   "simplified" (breaking convex combinations into pure Reeb vectors,
+%   merging repeated facets into contiguous intervals).
+%   Jörn gave a 120-minute talk on this proof.
+% Downstream: reduces the infinite-dimensional optimization (min over all
+%   generalized Reeb orbits) to a finite search (over simple orbits).
+%   Combined with the finite representation (rem:simple-orbit-data),
+%   this makes the problem computationally tractable.
+Let $K$ be a polytope.
+Among all generalized Reeb orbits on $\partial K$, there exists one
+with minimum action that is simple
+(Definition~\ref{def:simple-reeb-orbit}).
+Consequently,
+\[
+  c_{\mathrm{EHZ}}(K) = \min\bigl\{ A(\gamma) :
+  \gamma \text{ is a simple Reeb orbit on } \partial K \bigr\}.
+\]
 \end{theorem}
 
 %%% =================================================================
