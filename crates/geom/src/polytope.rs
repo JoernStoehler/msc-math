@@ -1,14 +1,22 @@
 /// Convex polytope in R^4 via halfspace representation.
 ///
+/// See Definition 3.2 (Polytope) in thesis/chapter-algorithm.tex:
+///   A polytope is a bounded convex subset K ⊂ ℝ⁴ that contains 0 in its
+///   interior and is an intersection of finitely many closed half-spaces.
+///
 /// K = { x ∈ R^4 | n_i · x ≤ h_i for all i = 1, ..., F }
 ///
 /// # Invariants (enforced by constructor)
 ///
 /// - `normals.len() == heights.len() >= 5` (minimum facets for a bounded 4D polytope)
-/// - All normals are unit vectors: `‖n_i‖ = 1`
-/// - All heights are strictly positive: `h_i > 0` (origin is in the interior)
-/// - No two normals are (near-)identical: `‖n_i - n_j‖ > ε` for i ≠ j
-/// - Vertices are precomputed and cached from the H-representation
+/// - All normals are unit vectors: `‖n_i‖ = 1` (n_i ∈ S³)
+/// - All heights are strictly positive: `h_i > 0`
+/// - No two normals are (near-)identical: `‖n_i - n_j‖ > ε` for i ≠ j (irredundancy)
+/// - Vertices are precomputed via qhull from the H-representation
+///
+/// Note: h_i > 0 ensures 0 ∈ int(K) but does NOT imply boundedness.
+/// Boundedness is part of the polytope definition itself (Definition 3.2).
+/// Qhull checks boundedness during vertex enumeration.
 use nalgebra::Vector4;
 
 const EPS_UNIT: f64 = 1e-9;

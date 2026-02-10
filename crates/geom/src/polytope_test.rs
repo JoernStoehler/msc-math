@@ -96,3 +96,22 @@ fn reject_zero_height() {
         other => panic!("expected NonPositiveHeight at index 1, got {other:?}"),
     }
 }
+
+#[test]
+fn vertices_satisfy_halfspace_inequalities() {
+    let normals = unit_normals_5();
+    let heights = vec![1.0; 5];
+    let p = Polytope4D::new(normals, heights).unwrap();
+
+    const EPS: f64 = 1e-8;
+    for v in p.vertices() {
+        for (i, (n, &h)) in p.normals().iter().zip(p.heights().iter()).enumerate() {
+            let lhs = n.dot(v);
+            assert!(
+                lhs <= h + EPS,
+                "vertex {} violates halfspace {}: {} > {}",
+                v, i, lhs, h
+            );
+        }
+    }
+}
