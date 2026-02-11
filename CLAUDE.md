@@ -231,6 +231,7 @@ Spawn a subagent when a subtask can run in parallel, needs isolated context, or 
 - Subagent output returns via the Task tool into your conversation. If it needs to persist, commit it to the repo on your branch. Do not post subagent output as issue comments — it clutters the issue and misleads future agents into treating it as reviewed content.
 - Use Sonnet for read-heavy extraction tasks (literature, code review). Reserve Opus for tasks requiring deep reasoning (mathematical reasoning, code writing).
 - Keep subagent tasks focused and small. Agents may stall on tasks requiring 1000+ lines across multiple files.
+- **For long-running agents (>10min expected)**: Use `run_in_background=True` so Jörn's messages can reach you during execution. Without this, blocking agents prevent message delivery and you cannot respond to warnings or corrections.
 
 <!-- Triage sessions, clarity checking, writing for other agents, editing CLAUDE.md: .claude/skills/triage/SKILL.md and .claude/skills/agent-writing/SKILL.md -->
 
@@ -254,6 +255,13 @@ These are true about the repo right now and must remain true:
   - Remove: `.devcontainer/worktree-remove.sh <path>` (safe removal with diagnostics)
 - Pre-installed: Rust 1.93 (cargo, clippy), Python 3.11 (pytest, ruff, mypy, black), gh CLI (via post-create hook)
 - LaTeX: TeX Live 2023 (pdflatex, xelatex, lualatex), latexmk, biber, chktex
+
+**Runtime limits:**
+- Repeated standard commands (tests, builds, lints) **must complete in ≤10 minutes**
+- This prevents triggering the CPU monitor, which kills sessions after 20min of sustained high CPU
+- Exceptions: one-off tasks like finished experiments, final dataset generation, or thesis compilation
+- For tests: tune proptest parameters, mark slow tests with `#[ignore]`, or split into fast/slow suites
+- If a command needs >10min repeatedly, it's a signal to optimize or redesign
 
 ## Commands
 
