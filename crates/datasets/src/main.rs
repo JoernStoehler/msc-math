@@ -13,8 +13,15 @@ use std::time::Instant;
 
 // ---- Hardcoded parameters (KISS: refactor into CLI args later) ----
 
-const N_RANDOM: usize = 50;
-const RANDOM_FACET_COUNT: usize = 8;
+// Random polytopes by facet count
+const N_RANDOM_F5: usize = 50;
+const N_RANDOM_F6: usize = 50;
+const N_RANDOM_F7: usize = 50;
+const N_RANDOM_F8: usize = 50;
+const N_RANDOM_F9: usize = 50;
+const N_RANDOM_F10: usize = 20;
+
+// Shared parameters for all random batches
 const RANDOM_H_MIN: f64 = 0.5;
 const RANDOM_H_MAX: f64 = 2.0;
 const SWEEP_N_ATTEMPTS: usize = 1000;
@@ -82,17 +89,45 @@ fn cmd_dataset(output: &PathBuf) {
         writeln!(writer, "{line}").expect("write line");
     }
 
-    // 2. Random polytopes
-    eprintln!(
-        "Generating {} random polytopes (F={}, h in [{}, {}])...",
-        N_RANDOM, RANDOM_FACET_COUNT, RANDOM_H_MIN, RANDOM_H_MAX
-    );
+    // 2. Random polytopes (multiple facet counts)
     let mut rng = ChaCha8Rng::seed_from_u64(SEED);
+    let batches = [
+        (5, N_RANDOM_F5),
+        (6, N_RANDOM_F6),
+        (7, N_RANDOM_F7),
+        (8, N_RANDOM_F8),
+        (9, N_RANDOM_F9),
+        (10, N_RANDOM_F10),
+    ];
+
+    let mut total_random = 0;
+    for &(facet_count, n_random) in &batches {
+        eprintln!(
+            "Generating {n_random} random polytopes (F={facet_count}, h in [{}, {}])...",
+            RANDOM_H_MIN, RANDOM_H_MAX
+        );
+        generate_and_write_batch(&mut writer, &mut rng, n_random, facet_count);
+        total_random += n_random;
+    }
+
+    writer.flush().expect("flush output");
+    eprintln!(
+        "Done. Wrote {} rows to {}",
+        known.len() + total_random,
+        output.display()
+    );
+}
+
+fn generate_and_write_batch(
+    writer: &mut BufWriter<File>,
+    rng: &mut ChaCha8Rng,
+    n_random: usize,
+    facet_count: usize,
+) {
     let mut count = 0;
-    while count < N_RANDOM {
+    while count < n_random {
         let start = Instant::now();
-        let polytopes =
-            generate_random_polytopes(1, RANDOM_FACET_COUNT, RANDOM_H_MIN, RANDOM_H_MAX, &mut rng);
+        let polytopes = generate_random_polytopes(1, facet_count, RANDOM_H_MIN, RANDOM_H_MAX, rng);
         let creation_time = start.elapsed();
 
         for p in &polytopes {
@@ -120,16 +155,9 @@ fn cmd_dataset(output: &PathBuf) {
 
         count += 1;
         if count % 10 == 0 {
-            eprintln!("  {count}/{N_RANDOM}");
+            eprintln!("  {count}/{n_random}");
         }
     }
-
-    writer.flush().expect("flush output");
-    eprintln!(
-        "Done. Wrote {} rows to {}",
-        known.len() + N_RANDOM,
-        output.display()
-    );
 }
 
 fn cmd_sweep(output: &PathBuf) {

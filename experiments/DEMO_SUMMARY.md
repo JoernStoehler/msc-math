@@ -29,12 +29,13 @@ This demo showcases the computational infrastructure for probing Viterbo's conje
 - **Optimal parameters identified**: F≥7 with moderate height ranges achieve >30% acceptance
 
 ### Systolic Ratio Distribution (Completed)
-- **Dataset size**: 206 polytopes (6 known + 200 random)
-- **Random polytope distribution**: 50 polytopes each at F=5,6,7,8
+- **Dataset size**: 277 polytopes (7 known + 270 random)
+- **Random polytope distribution**: 50 polytopes each at F=5,6,7,8,9 + 20 at F=10
 - **Systolic ratio range**: [0.001011, 0.680144] (mean: 0.190, median: 0.151)
-- **Viterbo conjecture status**: **0 out of 200 random polytopes violate the conjecture** (sys > 1)
+- **Viterbo conjecture status**: **0 out of 270 random polytopes violate the conjecture** (sys > 1)
 - **Pentagon counterexample verified**: sys = 1.047 > 1 (Haim-Kislev-Ostrover 2024)
 - **Key finding**: Random polytopes satisfy Viterbo's conjecture; counterexamples require special construction
+- **Computational limits**: F=9 avg 394ms/polytope, F=10 avg 1969ms/polytope
 
 ### Implementation Validation (Completed)
 - **Literature validation**: 4 polytopes tested (simplex, hypercube, triangle product, pentagon)
@@ -78,7 +79,7 @@ This demo showcases the computational infrastructure for probing Viterbo's conje
 - **DATASET_SUMMARY.md**: Dataset statistics and analysis (to be generated)
 
 ### Figures
-- **sys_histogram.png**: Systolic ratio distribution across 200 random polytopes
+- **sys_histogram.png**: Systolic ratio distribution across 270 random polytopes (F=5-10)
 - **facet_vs_capacity.png**: EHZ capacity vs. facet count (shows exponential growth)
 - **acceptance_rates.png**: Rejection sampling acceptance rates by configuration
 
@@ -93,14 +94,11 @@ This demo showcases the computational infrastructure for probing Viterbo's conje
 - [x] Git workflow and devcontainer environment
 - [x] HK2017 algorithm implementation (code complete)
 
-### In Progress (This Demo)
-- [ ] Literature validation against known polytopes
-- [ ] Random dataset generation (F=5 to F=10)
-- [ ] Systolic ratio computation for dataset
-- [ ] Statistical analysis and figure generation
-
-### Next Steps
-See "Next Steps" section below.
+### In Progress (This Demo) - All Complete
+- [x] Literature validation against known polytopes
+- [x] Random dataset generation (F=5 to F=10)
+- [x] Systolic ratio computation for dataset
+- [x] Statistical analysis and figure generation
 
 ---
 

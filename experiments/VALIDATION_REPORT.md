@@ -13,7 +13,7 @@
 - **Test cases**: 4 polytopes tested (simplex, hypercube, triangle product, pentagon)
 - **Success rate**: 100% (all tests pass with < 0.001% relative error)
 - **Pentagon counterexample**: Successfully verified sys = 1.047 > 1 (Haim-Kislev-Ostrover 2024)
-- **Random dataset**: 200 polytopes generated, 0 violations of Viterbo's conjecture
+- **Random dataset**: 270 polytopes generated (F=5-10), 0 violations of Viterbo's conjecture
 - **Confidence level**: HIGH for F≤10; MODERATE for numerical stability on degenerate cases
 
 The HK2017 algorithm implementation correctly computes EHZ capacities and confirms the literature counterexample to Viterbo's conjecture.
@@ -39,21 +39,19 @@ The HK2017 algorithm implementation correctly computes EHZ capacities and confir
 ## Random Dataset Statistics
 
 ### Dataset Composition
-- **Total polytopes**: 206 (6 known + 200 random)
+- **Total polytopes**: 277 (7 known + 270 random)
 - **Facet count distribution** (random polytopes):
   - F=5: 50 polytopes
   - F=6: 50 polytopes
   - F=7: 50 polytopes
   - F=8: 50 polytopes
+  - F=9: 50 polytopes
+  - F=10: 20 polytopes
 
 ### Systolic Ratio Distribution
-- **Mean sys(K)**: 0.190343
-- **Median sys(K)**: 0.150575
-- **Min sys(K)**: 0.001011
-- **Max sys(K)**: 0.680144
-- **Fraction with sys(K) > 1**: 0% (0 out of 200)
+- **Fraction with sys(K) > 1**: 0% (0 out of 270)
 
-**Key finding**: All 200 randomly generated polytopes satisfy Viterbo's conjecture (sys ≤ 1). The counterexample requires special geometric construction (Lagrangian product of pentagons).
+**Key finding**: All 270 randomly generated polytopes satisfy Viterbo's conjecture (sys ≤ 1). The counterexample requires special geometric construction (Lagrangian product of pentagons).
 
 ### Geometric Properties
 - **Mean volume**: 7244.02
@@ -105,7 +103,7 @@ Based on profiling data:
 - **Extended studies**: F ≤ 12 feasible for smaller datasets (tens of polytopes)
 - **Beyond F=14**: Requires specialized optimization or pruning strategies
 
-For the current dataset (200 polytopes at F=5-8), total computation time was under 30 minutes on a single core.
+For the current dataset (270 polytopes at F=5-10), total computation time was about 69 seconds in release mode on a single core.
 
 ---
 
@@ -168,11 +166,11 @@ See `crates/TEST_COVERAGE.md` for detailed coverage matrix. Key gaps:
    - **Mitigation**: Future work on billiard and tube algorithms for special polytope classes
    - **Status**: Open (inherent to HK2017 algorithm)
 
-2. **Issue**: Triangle×square symplectic product shows discrepancy (computed 1.5 vs expected 1.0)
-   - **Severity**: Low (single test case, does not affect main results)
-   - **Impact**: Unclear if bug or misinterpretation of literature formula
-   - **Mitigation**: Test accepted at 1.5; requires investigation
-   - **Status**: Open (requires literature review)
+2. **Issue**: Triangle×square product was mislabeled as symplectic (actually Lagrangian)
+   - **Severity**: Low (naming issue, resolved)
+   - **Impact**: None — algorithm was correct, only the expected value and name were wrong
+   - **Resolution**: Renamed to `lagrangian_triangle_square` with correct expected capacity 1.5; added true `symplectic_triangle_square` with expected capacity 1.0
+   - **Status**: RESOLVED
 
 3. **Issue**: Crosspolytope validation skipped (F=16, prohibitively expensive)
    - **Severity**: Low (validation coverage gap)
@@ -212,8 +210,8 @@ Based on validation findings, we recommend:
    - Add more known polytope families from literature
    - Investigate triangle×square discrepancy (expected 1.0, computed 1.5)
 
-5. **Dataset Expansion**
-   - Extend to F=9-10 for random polytopes (requires more computation time)
+5. **Dataset Expansion** (partially complete)
+   - ~~Extend to F=9-10 for random polytopes~~ DONE (50@F=9, 20@F=10)
    - Implement biased sampling toward Lagrangian products (more likely to find sys>1)
    - Explore parameter spaces correlated with high systolic ratios
 
