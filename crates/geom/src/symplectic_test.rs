@@ -73,3 +73,36 @@ fn omega0_formula_equals_matrix_form() {
         );
     }
 }
+
+#[cfg(test)]
+mod proptests {
+    use super::*;
+    use proptest::prelude::*;
+
+    proptest! {
+        /// Property test: ω₀ antisymmetry ω₀(u, v) = -ω₀(v, u)
+        #[test]
+        fn omega0_is_antisymmetric(
+            u in prop::array::uniform4(-10.0f64..10.0f64),
+            v in prop::array::uniform4(-10.0f64..10.0f64)
+        ) {
+            let u_vec = Vector4::from(u);
+            let v_vec = Vector4::from(v);
+
+            let omega_uv = omega0(&u_vec, &v_vec);
+            let omega_vu = omega0(&v_vec, &u_vec);
+
+            // Tolerance scaled by magnitude (floating point precision)
+            let tol = 1e-13 * u_vec.norm() * v_vec.norm();
+
+            prop_assert!(
+                (omega_uv + omega_vu).abs() < tol,
+                "antisymmetry failed: ω₀(u,v)={}, ω₀(v,u)={}, sum={}, tol={}",
+                omega_uv,
+                omega_vu,
+                omega_uv + omega_vu,
+                tol
+            );
+        }
+    }
+}
