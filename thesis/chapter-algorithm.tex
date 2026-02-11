@@ -92,7 +92,8 @@ and each permutation $\sigma$ of $S$
   \end{equation}
 
 \item \textbf{Filter.}
-  Discard $(S, \sigma)$ if $\beta_i \leq 0$ for any $i$.
+  Discard $(S, \sigma)$ if $\beta_i \leq 0$ for any $i$,
+  or if $Q(\beta) \leq 0$.
   % QC: the filter demands beta_i > 0 (strict), while M(K) in the theorem
   %   allows beta_i >= 0. This is intentional and correct:
   %   If beta_i = 0 for some i in S, that facet is unused and the same orbit
@@ -100,6 +101,10 @@ and each permutation $\sigma$ of $S$
   %   So the maximum over M(K) is attained at an interior point (all beta_i > 0)
   %   of some sub-problem. The algorithm's enumeration over all subsets S
   %   catches this. No solutions are lost by the strict filter.
+  % QC: Q <= 0 filter: the bijection between (sigma, beta) and simple Reeb
+  %   orbits (Theorem thm:main proof, Step 6) requires Q > 0 for T = 1/(2Q) > 0.
+  %   Critical points of Q with Q <= 0 are saddle points or minima on the
+  %   constraint manifold; they do not correspond to valid Reeb orbits.
 
 \item \textbf{Evaluate.}
   \begin{equation}\label{eq:action-formula}
@@ -625,43 +630,320 @@ Consequently,
 
 \section{Algorithm Correctness}\label{sec:algorithm-correctness}
 
-\begin{definition}[Dual variable]\label{def:dual-variable}
-\end{definition}
+We prove Theorem~\ref{thm:main}: the algorithm in
+Section~\ref{sec:main-result} correctly computes
+$c_{\mathrm{EHZ}}(K)$.
 
-\begin{definition}[Dual functional]\label{def:dual-functional}
-\end{definition}
+\begin{lemma}[Symplectic shoelace formula]\label{lem:shoelace}
+% QC: direct computation, no external results needed.
+%   Key steps: (a) closure kills z(0) term, (b) self-pairing vanishes
+%   by omega_0 antisymmetry, (c) cross terms give the double sum.
+% Downstream: used in the proof of thm:main (this section) and in
+%   the simple-minimizer proof (Step~3). Corresponds to HK2017
+%   Proposition~3.2.
+%   Test: for a square orbit in the q_1-p_1 plane with vertices
+%   (0,0), (a,0), (a,a), (0,a), the formula gives
+%   2A = a^2 * omega_0(e_{p_1}, e_{q_1}) = a^2 * (-1) ... hmm,
+%   need to check orientation. Better test: action = symplectic area
+%   of the enclosed region.
+Let $z \colon [0, T] \to \mathbb{R}^4$ be a closed curve with
+piecewise-constant velocity:
+$\dot{z}(t) = w_k$ on $I_k = (\tau_{k-1}, \tau_k)$ for
+$k = 1, \ldots, m$, where $0 = \tau_0 < \cdots < \tau_m = T$.
+Then
+\begin{equation}\label{eq:shoelace}
+  \int_0^T \langle -J_0\, \dot{z}(t),\, z(t) \rangle \, dt
+  = \sum_{1 \leq j < i \leq m}
+    |I_j|\, |I_i|\, \omega_0(w_i, w_j).
+\end{equation}
+\end{lemma}
 
-\begin{definition}[$Q$-function]\label{def:q-function}
-\end{definition}
+\begin{proof}
+Since $z$ is closed, $\sum_{k=1}^m |I_k|\, w_k = 0$.
+For $t \in I_i$:
+\[
+  z(t) = z(0) + \sum_{j=1}^{i-1} |I_j|\, w_j
+    + (t - \tau_{i-1})\, w_i.
+\]
+Substitute into
+$\langle -J_0 w_i, z(t) \rangle$ and integrate over $[0, T]$:
+\begin{align*}
+\int_0^T \!\langle{-}J_0 \dot{z}, z \rangle \, dt
+  &= \sum_{i=1}^m \int_{I_i}
+    \!\langle -J_0 w_i,\;
+      z(0) + \textstyle\sum_{j < i} |I_j| w_j
+      + (t{-}\tau_{i-1}) w_i
+    \rangle\, dt \\
+  &= \underbrace{
+      \bigl\langle -J_0 \bigl(\textstyle\sum_i |I_i| w_i\bigr),\,
+      z(0) \bigr\rangle
+    }_{= \, 0 \;\text{(closure)}}
+  + \sum_{i=1}^m \sum_{j=1}^{i-1}
+      |I_i|\, |I_j|\, \omega_0(w_i, w_j) \\
+  &\quad
+  + \sum_{i=1}^m
+      \underbrace{\omega_0(w_i, w_i)}_{= \, 0}\;
+      \cdot \tfrac{|I_i|^2}{2}.
+\end{align*}
+The first term vanishes because
+$\sum |I_k| w_k = 0$ (closure of~$z$).
+The third term vanishes because
+$\omega_0$ is antisymmetric.
+\end{proof}
 
-\begin{definition}[Constraint set]\label{def:constraint-set}
-\end{definition}
+\begin{remark}\label{rem:shoelace-name}
+In $\mathbb{R}^2$, $\omega_0$ reduces to the determinant and
+the formula recovers the shoelace formula for the signed area of a
+polygon, expressed in edge vectors rather than vertices.
+\end{remark}
+
+\begin{proof}[Proof of Theorem~\ref{thm:main}]
+% QC: combines thm:simple-minimizer, lem:shoelace, and a variable
+%   substitution. Each step cites specific results and states which
+%   properties are used. The critical calculation is Q = 1/(2T).
+%   Verified against HK2017 proof of Theorem 1.1 (lines 455--478):
+%   same substitution beta_{sigma(i)} = T_i / h_{sigma(i)}, same
+%   identity Q = 1/(2T), same conclusion.
+
+\emph{Step~1: Reduce to simple orbits.}
+By Theorem~\ref{thm:simple-minimizer},
+$c_{\mathrm{EHZ}}(K) = \min\{ A(\gamma) :
+\gamma \text{ is a simple Reeb orbit on } \partial K \}$.
+A simple orbit is determined by a nonempty subset
+$S \subseteq \{1, \ldots, F\}$, a cyclic ordering~$\sigma$
+of~$S$, and positive durations
+$\tau_1, \ldots, \tau_{|S|} > 0$
+(Remark~\ref{rem:simple-orbit-data}).
+Its velocity on segment~$k$ is $R_{\sigma(k)}$, closure requires
+$\sum_{k=1}^{|S|} \tau_k R_{\sigma(k)} = 0$, and the action is
+$A(\gamma) = T = \sum_k \tau_k$
+(Remark~\ref{rem:contact-normalization}).
+
+\emph{Step~2: Apply the shoelace formula.}
+By Definition~\ref{def:action} and $J_0^\top = -J_0$
+(Remark~\ref{rem:j0-properties}),
+$2A(\gamma) = \int_0^T \langle -J_0 \dot{\gamma},\,
+\gamma \rangle\, dt$.
+By Lemma~\ref{lem:shoelace}:
+\begin{equation}\label{eq:shoelace-orbit}
+  2T = \sum_{1 \leq j < i \leq |S|}
+    \tau_j\, \tau_i\,
+    \omega_0(R_{\sigma(i)},\, R_{\sigma(j)}).
+\end{equation}
+
+\emph{Step~3: Expand Reeb vectors.}
+Since $R_i = \frac{2}{h_i} J_0 n_i$
+(Definition~\ref{def:reeb-vectors}) and
+$\omega_0(J_0 u, J_0 v) = \omega_0(u, v)$
+(Remark~\ref{rem:j0-properties}):
+\[
+  \omega_0(R_i, R_j)
+  = \frac{4}{h_i h_j}\, \omega_0(J_0 n_i,\, J_0 n_j)
+  = \frac{4}{h_i h_j}\, \omega_0(n_i, n_j).
+\]
+Substituting into~\eqref{eq:shoelace-orbit}:
+\begin{equation}\label{eq:shoelace-normals}
+  2T = 4 \sum_{1 \leq j < i \leq |S|}
+    \frac{\tau_j\, \tau_i}
+         {h_{\sigma(j)}\, h_{\sigma(i)}}\,
+    \omega_0(n_{\sigma(i)},\, n_{\sigma(j)}).
+\end{equation}
+
+\emph{Step~4: Variable substitution $\tau \to \beta$.}
+Define
+\begin{equation}\label{eq:beta-def}
+  \beta_{\sigma(k)} \coloneqq
+    \frac{\tau_k}{T\, h_{\sigma(k)}},
+  \qquad k = 1, \ldots, |S|,
+\end{equation}
+and $\beta_i = 0$ for $i \notin S$.
+We verify $\beta \in M(K)$
+(the constraint set~\eqref{eq:constraint-set}):
+\begin{enumerate}
+\item \emph{Non-negativity:}
+  $\beta_i \geq 0$ for all~$i$, with
+  $\beta_{\sigma(k)} > 0$ for $k \in \{1,\ldots,|S|\}$.
+\item \emph{Height normalization:}
+  $\displaystyle\sum_{i=1}^F \beta_i h_i
+  = \sum_{k=1}^{|S|}
+    \frac{\tau_k}{T h_{\sigma(k)}} \cdot h_{\sigma(k)}
+  = \frac{1}{T} \sum_k \tau_k = 1$.
+\item \emph{Closure:}
+  The orbit closure
+  $\sum_k \tau_k R_{\sigma(k)} = 0$ gives
+  $\sum_k \frac{2\tau_k}{h_{\sigma(k)}} J_0 n_{\sigma(k)} = 0$.
+  Since $J_0$ is invertible:
+  $\sum_k \frac{\tau_k}{h_{\sigma(k)}} n_{\sigma(k)} = 0$.
+  Dividing by~$T$:
+  $\sum_{i=1}^F \beta_i n_i = 0$.
+\end{enumerate}
+
+\emph{Step~5: Derive the action--$Q$ relation.}
+Substitute $\tau_k = T h_{\sigma(k)} \beta_{\sigma(k)}$
+into~\eqref{eq:shoelace-normals}:
+\begin{align*}
+  2T &= 4 \sum_{j < i}
+    \frac{(T h_{\sigma(j)} \beta_{\sigma(j)})\,
+          (T h_{\sigma(i)} \beta_{\sigma(i)})}
+         {h_{\sigma(j)}\, h_{\sigma(i)}}\,
+    \omega_0(n_{\sigma(i)},\, n_{\sigma(j)}) \\
+  &= 4T^2 \sum_{1 \leq j < i \leq |S|}
+    \beta_{\sigma(i)}\, \beta_{\sigma(j)}\,
+    \omega_0(n_{\sigma(i)},\, n_{\sigma(j)}).
+\end{align*}
+The sum on the right is $Q(\sigma, \beta)$ as
+in~\eqref{eq:ehz-main}. Hence
+\begin{equation}\label{eq:Q-action}
+  Q(\sigma, \beta) = \frac{1}{2T},
+  \qquad\text{equivalently}\qquad
+  T = \frac{1}{2\, Q(\sigma, \beta)}.
+\end{equation}
+
+\emph{Step~6: Conclude.}
+Steps~4--5 establish a bijection between simple Reeb orbits
+$(S, \sigma, \tau)$ with $\tau_k > 0$ and pairs
+$(\sigma, \beta)$ with $\beta \in M(K)$,
+$\beta_{\sigma(k)} > 0$ for $k \in S$, and $Q > 0$.
+Under this bijection, the action is
+$A(\gamma) = T = \frac{1}{2Q}$.
+Since $T$ is a decreasing function of~$Q$:
+\[
+  c_{\mathrm{EHZ}}(K)
+  = \min_{\sigma, \beta} T
+  = \frac{1}{2} \left[
+    \max_{\substack{\sigma \in S_F \\ \beta \in M(K)}}
+    Q(\sigma, \beta)
+  \right]^{-1}.
+  \qedhere
+\]
+\end{proof}
 
 \begin{definition}[Action matrix]\label{def:action-matrix}
+% QC: H is symmetric. H_{ij} = H_{ji} because both the i < j and
+%   i > j cases give omega_0(n_{sigma(min)}, n_{sigma(max)}).
+% Downstream: H is the matrix in the algorithm's linear system
+%   (eq:linear-system). Build H from normals and permutation sigma.
+%   Test: H is symmetric, H_{ii} = 0, H_{ij} = -omega_0(n_{sigma(i)}, n_{sigma(j)})
+%   for i > j (note sign!).
+For a subset $S \subseteq \{1,\ldots,F\}$ and cyclic
+ordering~$\sigma$ of~$S$, the \emph{action matrix}
+$H \in \mathbb{R}^{|S| \times |S|}$ has entries
+\[
+  H_{ij} = \begin{cases}
+    \omega_0(n_{\sigma(i)},\, n_{\sigma(j)})
+      & \text{if } i < j, \\
+    0 & \text{if } i = j, \\
+    \omega_0(n_{\sigma(j)},\, n_{\sigma(i)})
+      & \text{if } i > j.
+  \end{cases}
+\]
+The matrix $H$ is symmetric:
+$H_{ij} = H_{ji}
+= \omega_0(n_{\sigma(\min(i,j))},\, n_{\sigma(\max(i,j))})$
+for $i \neq j$.
 \end{definition}
 
-\begin{theorem}[Optimization formulation]\label{thm:optimization}
-% HK2017 max formula
-\end{theorem}
-
-\begin{lemma}[Domain decomposition]\label{lem:domain-decomposition}
-% Union of open domains, parameterized by (subset of facets, cyclic order)
+\begin{lemma}[$Q$ as a quadratic form]\label{lem:Q-quadratic}
+% QC: the sign comes from: Q sums omega_0(n_{sigma(i)}, n_{sigma(j)})
+%   for j < i, and H_{ij} for i > j equals omega_0(n_{sigma(j)}, n_{sigma(i)})
+%   = -omega_0(n_{sigma(i)}, n_{sigma(j)}). So Q = -sum_{j<i} beta_i beta_j H_{ij}
+%   = -(1/2) beta^T H beta.
+% Downstream: gradient is nabla Q = -H beta. Used in the KKT derivation.
+Write $\tilde{\beta}_k = \beta_{\sigma(k)}$ for
+$k = 1, \ldots, |S|$. Then
+\[
+  Q(\sigma, \beta)
+  = -\frac{1}{2}\, \tilde{\beta}^\top H\, \tilde{\beta}.
+\]
+In particular,
+$\nabla_{\tilde{\beta}} Q = -H \tilde{\beta}$.
 \end{lemma}
 
-\begin{lemma}[Global maximum at local maximum]\label{lem:global-at-local}
+\begin{proof}
+For $j < i$ (the summation range of~$Q$),
+$\omega_0(n_{\sigma(i)}, n_{\sigma(j)})
+= -\omega_0(n_{\sigma(j)}, n_{\sigma(i)}) = -H_{ij}$
+(using the $i > j$ entry of~$H$). Hence
+$Q = -\sum_{j < i} \tilde{\beta}_i\, \tilde{\beta}_j\, H_{ij}$.
+Since $H$ is symmetric with zero diagonal,
+$\sum_{j < i} \tilde{\beta}_i \tilde{\beta}_j H_{ij}
+= \tfrac{1}{2}\, \tilde{\beta}^\top H\, \tilde{\beta}$.
+\end{proof}
+
+\begin{lemma}[KKT conditions and the algorithm's linear system]%
+\label{lem:kkt}
+% QC: connects the abstract optimization (max Q on M(K)) to the
+%   algorithm's concrete linear system (eq:linear-system). The sign
+%   flip lambda = -mu accounts for Q = -(1/2) beta^T H beta.
+For fixed $(S, \sigma)$, the linear
+system~\eqref{eq:linear-system} is the Lagrange system for
+critical points of
+$Q(\sigma, \beta)$ on the constraint manifold
+$\{N^\top \tilde{\beta} = 0,\; \eta^\top \tilde{\beta} = 1\}$.
 \end{lemma}
 
-\begin{corollary}[Enumeration computes capacity]\label{cor:enumeration}
+\begin{proof}
+The gradient of~$Q$ with respect to $\tilde{\beta}$ is
+$\nabla_{\tilde{\beta}} Q = -H \tilde{\beta}$
+(Lemma~\ref{lem:Q-quadratic}).
+The Lagrange conditions
+$\nabla Q = N\mu + \eta\nu'$ become
+$-H\tilde{\beta} = N\mu + \eta\nu'$.
+Setting $\lambda = -\mu$ and $\nu = -\nu'$:
+\[
+  H \tilde{\beta} - N \lambda - \eta \nu = 0,
+\]
+which, together with $N^\top \tilde{\beta} = 0$ and
+$\eta^\top \tilde{\beta} = 1$, is exactly
+system~\eqref{eq:linear-system}.
+\end{proof}
+
+\begin{corollary}[Algorithm correctness]\label{cor:enumeration}
+% QC: combines thm:main proof with lem:kkt to show
+%   the algorithm finds the global maximum of Q.
+% Downstream: the algorithm is proven correct. Any faithful
+%   implementation computes c_EHZ.
+The algorithm in Section~\ref{sec:main-result} correctly computes
+$c_{\mathrm{EHZ}}(K)$.
 \end{corollary}
 
-\begin{lemma}[Local maximum characterization]\label{lem:local-max}
-% Explicit linear equation, saddle point check, domain membership check
-\end{lemma}
+\begin{proof}
+By Theorem~\ref{thm:main},
+$c_{\mathrm{EHZ}}(K) = \frac{1}{2}[\max Q]^{-1}$,
+where the maximum is over all $\sigma \in S_F$ and
+$\beta \in M(K)$.
+The maximum is attained ($M(K)$ is compact, $Q$ is continuous).
+At the maximizer~$\beta^*$, some coordinates are positive
+($\beta^*_i > 0$ for $i \in S$) and the rest are zero
+($\beta^*_i = 0$ for $i \notin S$) for some nonempty~$S$.
+Since $\beta^*$ maximizes~$Q$ over all of~$M(K)$, it also
+maximizes~$Q$ over the face
+$\{\beta \in M(K) : \beta_i = 0 \;\forall\, i \notin S\}$.
+As $\beta^*_i > 0$ for all $i \in S$, this is an interior
+maximum on the face, so the Lagrange conditions hold:
+$\beta^*$ satisfies the linear
+system~\eqref{eq:linear-system} for some $(S, \sigma^*)$
+(Lemma~\ref{lem:kkt}).
+The filter $\beta_i > 0$ passes, $Q(\sigma^*, \beta^*) > 0$
+(since $c_{\mathrm{EHZ}}(K) > 0$), and
+$A(S, \sigma^*) = \frac{1}{2Q(\sigma^*, \beta^*)}$ equals
+$c_{\mathrm{EHZ}}(K)$.
 
-% Algorithm (verbatim copy from Section 1)
+The algorithm enumerates all $(S, \sigma)$, solves the linear
+system for each, filters by $\beta > 0$ and $Q > 0$,
+evaluates $A = \frac{1}{2Q}$, and returns the minimum~$A$.
+Since $(S, \sigma^*, \beta^*)$ is among the candidates,
+the returned value is
+$\leq c_{\mathrm{EHZ}}(K)$.
+Every candidate with $Q > 0$ and $\beta > 0$ corresponds to a
+feasible simple orbit by the bijection in the proof of
+Theorem~\ref{thm:main}, so no candidate achieves
+$A < c_{\mathrm{EHZ}}(K)$.
+Hence the returned value equals $c_{\mathrm{EHZ}}(K)$.
+\end{proof}
 
 %%% =================================================================
-%%% Section 5: Optimizations
+%%% Section 7: Optimizations
 %%% =================================================================
 
 \section{Optimizations}\label{sec:optimizations}

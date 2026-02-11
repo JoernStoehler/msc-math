@@ -5,11 +5,12 @@
 %   sketch in Haim-Kislev 2017.
 %
 % Structure:
-%   6.1 Primal-Dual Equivalence (Clarke's Dual Action Principle for polytopes)
-%   6.2 Simplification Algorithm (5 steps: piecewise linear, pure Reeb,
+%   5.1 Primal-Dual Equivalence (Clarke's Dual Action Principle for polytopes)
+%   5.2 Simplification Algorithm (5 steps: piecewise linear, pure Reeb,
 %       coalesce, rescale, compactness)
 
-\section{Proof of the Simple Minimizer Theorem}\label{sec:simple-minimizer-proof}
+% No \section here: this file is \input'd inside Section "Simple Minimizer
+% Existence" in chapter-algorithm.tex, so its subsections become 5.x.
 
 The proof follows \cite{HK2017} but with complete details. We first
 establish a primal-dual equivalence (Clarke's Dual Action Principle
@@ -17,7 +18,7 @@ adapted to polytopes), then construct a simple minimizer via a
 five-step simplification algorithm.
 
 %%% =================================================================
-%%% Subsection 6.1: Primal-Dual Equivalence
+%%% Subsection 5.1: Primal-Dual Equivalence
 %%% =================================================================
 
 \subsection{Primal-Dual Equivalence}\label{subsec:primal-dual}
@@ -264,7 +265,7 @@ The correspondence is bijective.
 \end{proof}
 
 %%% =================================================================
-%%% Subsection 6.2: Simplification Algorithm
+%%% Subsection 5.2: Simplification Algorithm
 %%% =================================================================
 
 \subsection{Simplification Algorithm}\label{subsec:simplification}
