@@ -31,7 +31,8 @@ def plot_sys_histogram(rows, out_path):
     """Histogram of systolic ratio values."""
     import matplotlib.pyplot as plt
 
-    sys_vals = [r["sys"] for r in rows]
+    # Filter out None values (e.g., crosspolytope with >10 facets)
+    sys_vals = [r["sys"] for r in rows if r["sys"] is not None]
 
     fig, ax = plt.subplots(figsize=(8, 5))
     ax.hist(sys_vals, bins=30, edgecolor="black", alpha=0.7)
@@ -50,9 +51,11 @@ def plot_facet_vs_capacity(rows, out_path):
     """Scatter plot: facet count vs capacity."""
     import matplotlib.pyplot as plt
 
-    facets = [r["facet_count"] for r in rows]
-    caps = [r["capacity"] for r in rows]
-    sources = [r["source"] for r in rows]
+    # Filter out None capacity values
+    valid_rows = [r for r in rows if r["capacity"] is not None]
+    facets = [r["facet_count"] for r in valid_rows]
+    caps = [r["capacity"] for r in valid_rows]
+    sources = [r["source"] for r in valid_rows]
 
     fig, ax = plt.subplots(figsize=(8, 5))
     # Color by source

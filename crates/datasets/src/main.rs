@@ -13,8 +13,8 @@ use std::time::Instant;
 
 // ---- Hardcoded parameters (KISS: refactor into CLI args later) ----
 
-const N_RANDOM: usize = 100;
-const RANDOM_FACET_COUNT: usize = 6;
+const N_RANDOM: usize = 50;
+const RANDOM_FACET_COUNT: usize = 8;
 const RANDOM_H_MIN: f64 = 0.5;
 const RANDOM_H_MAX: f64 = 2.0;
 const SWEEP_N_ATTEMPTS: usize = 1000;

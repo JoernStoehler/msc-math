@@ -41,3 +41,49 @@ fn generate_fills_to_requested_count() {
         assert_eq!(p.facet_count(), 5);
     }
 }
+
+// ---- Property tests ----
+
+#[cfg(test)]
+mod proptests {
+    use super::*;
+    use proptest::prelude::*;
+
+    proptest! {
+        /// Property: every polytope accepted by sample_random_polytope passes full validation.
+        ///
+        /// This ensures the rejection sampling loop doesn't have bugs that let
+        /// invalid polytopes through.
+        ///
+        /// NOTE: Limited to 5-8 facets and 20 seeds to keep runtime reasonable.
+        /// Random polytope generation involves qhull and can be slow.
+        #[test]
+        fn random_polytopes_pass_validation(
+            facet_count in 5usize..=8,
+            seed in 0u64..20
+        ) {
+            let mut rng = ChaCha8Rng::seed_from_u64(seed);
+            let h_min = 0.5;
+            let h_max = 2.0;
+
+            // Attempt to sample
+            let result = sample_random_polytope(facet_count, h_min, h_max, &mut rng);
+
+            // If accepted, it must pass validate_polytope
+            if let Ok(polytope) = result {
+                let normals = polytope.normals().to_vec();
+                let heights = polytope.heights().to_vec();
+
+                // Validate should succeed (it already did in sample_random_polytope,
+                // but we verify the polytope is still valid after construction)
+                let revalidate = crate::validation::validate_polytope(&normals, &heights);
+                prop_assert!(
+                    revalidate.is_ok(),
+                    "accepted polytope failed revalidation: {:?}",
+                    revalidate.err()
+                );
+            }
+            // If rejected, that's fine — rejection sampling is allowed to reject
+        }
+    }
+}
