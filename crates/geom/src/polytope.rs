@@ -36,6 +36,7 @@ pub enum ConstructionError {
     NonUnitNormal { index: usize, norm: f64 },
     NonPositiveHeight { index: usize, value: f64 },
     DuplicateHalfspaces { i: usize, j: usize },
+    VertexEnumerationFailed(String),
 }
 
 impl std::fmt::Display for ConstructionError {
@@ -53,6 +54,9 @@ impl std::fmt::Display for ConstructionError {
             }
             Self::DuplicateHalfspaces { i, j } => {
                 write!(f, "normals[{i}] and normals[{j}] are duplicates")
+            }
+            Self::VertexEnumerationFailed(msg) => {
+                write!(f, "vertex enumeration failed: {msg}")
             }
         }
     }
@@ -97,7 +101,8 @@ impl Polytope4D {
             }
         }
 
-        let vertices = crate::vertices::compute_vertices(&normals, &heights);
+        let vertices = crate::vertices::compute_vertices(&normals, &heights)
+            .map_err(|e| ConstructionError::VertexEnumerationFailed(e.to_string()))?;
 
         Ok(Self {
             normals,

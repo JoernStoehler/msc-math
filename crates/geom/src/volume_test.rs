@@ -21,7 +21,6 @@ fn simplex_4d_volume() {
 }
 
 #[test]
-#[ignore] // TODO: Enable when qhull returns correct vertices (expects 16 vertices, volume=16)
 fn hypercube_volume() {
     // [-1, 1]^4 has volume 2^4 = 16
     let normals = vec![
@@ -44,7 +43,6 @@ fn hypercube_volume() {
 }
 
 #[test]
-#[ignore] // TODO: Enable when qhull returns correct vertices (expects 5 vertices, volume≈0.04167)
 fn simplex_polytope_volume() {
     // Standard simplex conv{0, e1, e2, e3, e4}, volume = 1/24
     let centroid = Vector4::new(0.2, 0.2, 0.2, 0.2);
@@ -89,7 +87,6 @@ fn scaled_hypercube(s: f64) -> Polytope4D {
 }
 
 #[test]
-#[ignore] // TODO: Enable when qhull returns correct vertices
 fn scaling_property() {
     // vol(λK) = λ^4 · vol(K) — for a hypercube, vol([-s,s]^4) = 16·s^4.
     let base_vol = volume(&scaled_hypercube(1.0));
@@ -105,7 +102,6 @@ fn scaling_property() {
 }
 
 #[test]
-#[ignore] // TODO: Enable when qhull returns correct vertices (expects volume > 0)
 fn volume_positive_for_known_polytopes() {
     let centroid = Vector4::new(0.2, 0.2, 0.2, 0.2);
     let simplex_n = vec![
@@ -134,7 +130,6 @@ fn volume_positive_for_known_polytopes() {
 }
 
 #[test]
-#[ignore] // TODO: Enable when qhull returns correct vertices (expects 8 vertices, volume≈10.667)
 fn crosspolytope_volume() {
     // 4D crosspolytope: conv{±e1, ±e2, ±e3, ±e4}, volume = 8/3
     // H-representation: (±1,±1,±1,±1)/2 · x ≤ 1 (16 facets)
@@ -158,4 +153,48 @@ fn crosspolytope_volume() {
         (vol - expected).abs() < 1e-6,
         "crosspolytope volume: got {vol}, expected {expected}"
     );
+}
+
+#[cfg(test)]
+mod proptests {
+    use super::*;
+    use proptest::prelude::*;
+
+    proptest! {
+        /// Property test: volume scaling property vol(λK) = λ⁴·vol(K)
+        #[test]
+        fn volume_scales_with_fourth_power(scale in 0.1f64..10.0) {
+            // Create unit hypercube [-1,1]^4
+            let normals = vec![
+                Vector4::new(1.0, 0.0, 0.0, 0.0),
+                Vector4::new(-1.0, 0.0, 0.0, 0.0),
+                Vector4::new(0.0, 1.0, 0.0, 0.0),
+                Vector4::new(0.0, -1.0, 0.0, 0.0),
+                Vector4::new(0.0, 0.0, 1.0, 0.0),
+                Vector4::new(0.0, 0.0, -1.0, 0.0),
+                Vector4::new(0.0, 0.0, 0.0, 1.0),
+                Vector4::new(0.0, 0.0, 0.0, -1.0),
+            ];
+            let heights_unit = vec![1.0; 8];
+            let heights_scaled = vec![scale; 8];
+
+            let unit_cube = Polytope4D::new(normals.clone(), heights_unit)
+                .expect("unit hypercube construction");
+            let scaled_cube = Polytope4D::new(normals, heights_scaled)
+                .expect("scaled hypercube construction");
+
+            let vol_unit = volume(&unit_cube);
+            let vol_scaled = volume(&scaled_cube);
+
+            // Volume should scale as λ⁴
+            let expected_scaled = vol_unit * scale.powi(4);
+            let relative_error = ((vol_scaled - expected_scaled) / expected_scaled).abs();
+
+            prop_assert!(
+                relative_error < 1e-4,
+                "volume scaling failed: scale={}, vol_unit={}, vol_scaled={}, expected={}, relative_error={}",
+                scale, vol_unit, vol_scaled, expected_scaled, relative_error
+            );
+        }
+    }
 }
