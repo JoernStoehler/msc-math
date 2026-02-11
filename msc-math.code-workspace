@@ -18,6 +18,12 @@
 		"[markdown]": {
 			"editor.tabSize": 2
 		},
+		"claudeCode.allowDangerouslySkipPermissions": true,
+		"claudeCode.hideOnboarding": true,
+		"claudeCode.initialPermissionMode": "bypassPermissions",
+		"claudeCode.preferredLocation": "panel",
+		"claudeCode.respectGitIgnore": false,
+		"claudeCode.useCtrlEnterToSend": true,
 	},
 	"extensions": {
 		"recommendations": [
