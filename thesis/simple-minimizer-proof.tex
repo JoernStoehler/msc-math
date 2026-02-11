@@ -4,6 +4,10 @@
 % minimizer for the EHZ capacity on polytopes. Based on Jörn's 120-minute
 % talk (January 2025) expanding the 1-page sketch in Haim-Kislev 2017.
 %
+% WRITING RULE: Proofs cannot cite external sources mid-proof. External results
+% must be proven inline or stated as Claims within the proof. The thesis must
+% be self-contained and verifiable by reading this document alone.
+%
 % Structure:
 %   6.1 Primal-Dual Equivalence (Clarke's Dual Action Principle for polytopes)
 %   6.2 Simplification Algorithm (5 steps: piecewise linear, pure Reeb,
@@ -147,28 +151,45 @@ We seek critical points of $I_K$ under the constraints:
 \item centering: $\int_0^T z(t) \, dt = 0$.
 \end{itemize}
 
-By standard variational calculus with Lagrange multipliers, the critical
-points satisfy (see talk notes, frame on dual problem critical points):
+% [TODO: JÖRN - verify this E-L derivation. Agent wrote this by expanding the original
+%  sketch, but agent-written proofs are unreliable. Check for errors in the calculation.]
+We compute the critical points using the calculus of variations with Lagrange multipliers.
+Form the Lagrangian incorporating the constraints:
+\[
+  L(z, \dot{z}, t) = \tfrac{1}{4}h_K^2(-J_0\dot{z}) + \nu\langle -J_0\dot{z}, z\rangle + \langle \mu, z\rangle,
+\]
+where $\nu \in \mathbb{R}$ is the multiplier for the action constraint $\int_0^T \langle -J_0\dot{z}, z \rangle \, dt = 2T$,
+and $\mu \in \mathbb{R}^4$ is the multiplier for the centering constraint $\int_0^T z \, dt = 0$.
+
+The Euler--Lagrange equation for this constrained variational problem is
+\[
+  \frac{d}{dt}\left[\frac{\partial L}{\partial \dot{z}}\right] = \frac{\partial L}{\partial z}.
+\]
+Since $I_K$ depends only on $\dot{z}$, the right-hand side comes solely from the multiplier terms:
+$\frac{\partial L}{\partial z} = -\nu J_0 \dot{z} + \mu$.
+For the left-hand side, let $p(t) \in \partial(\tfrac{1}{4}h_K^2)(-J_0\dot{z}(t))$ (the subdifferential).
+Then $\frac{\partial L}{\partial \dot{z}} = -J_0 p(t) - \nu J_0 z(t)$, and by periodicity of $z$,
+\[
+  \frac{d}{dt}[-J_0 p(t) - \nu J_0 z(t)] = -J_0 \dot{p}(t) - \nu J_0 \dot{z}(t).
+\]
+Equating left and right sides: $-J_0 \dot{p}(t) - \nu J_0 \dot{z}(t) = -\nu J_0 \dot{z}(t) + \mu$.
+This simplifies to $-J_0 \dot{p}(t) = \mu$.
+
+Integrating over $[0,T]$ and using periodicity $p(0) = p(T)$:
+\[
+  0 = -J_0[p(T) - p(0)] = \int_0^T \mu \, dt = T \mu,
+\]
+hence $\mu = 0$. Thus $\dot{p}(t) = 0$ a.e., so $p(t) = b$ is constant.
+This gives $b \in \partial(\tfrac{1}{4}h_K^2)(-J_0\dot{z}(t))$ a.e.
+
+Returning to the Lagrangian structure and using $J_0^T = -J_0$, the critical point condition becomes:
 \begin{equation}\label{eq:dual-euler-lagrange}
   \nu z(t) + b \in
   \partial\bigl(\tfrac{1}{4} h_K^2\bigr)\bigl(-J_0\dot{z}(t)\bigr)
   \quad \text{a.e.}
 \end{equation}
 for Lagrange multiplier $\nu \in \mathbb{R}$ (for the action constraint)
-and constant $b \in \mathbb{R}^4$ (the centering multiplier integrates to zero
-by periodicity).
-
-\emph{Sketch of derivation:}
-The Lagrangian $L = \tfrac{1}{4}h_K^2(-J_0\dot{z}) + \nu\langle -J_0\dot{z}, z\rangle + \langle \mu, z\rangle$
-yields the Euler--Lagrange equation
-$\frac{d}{dt}[\frac{\partial L}{\partial \dot{z}}] = \frac{\partial L}{\partial z}$.
-Since $I_K$ depends only on $\dot{z}$, the position-dependent terms come
-solely from the Lagrange multipliers. The $\mu$ term (from the centering constraint)
-drops out: integrating $\frac{d}{dt}[\cdots] = \cdots + \mu$ over $[0,T]$ and
-using periodicity forces $\int_0^T \mu \, dt = 0$, hence $\mu = 0$.
-The remaining equation, after using $J_0^T = -J_0$ and
-defining $p(t) \in \partial(\tfrac{1}{4}h_K^2)(-J_0\dot{z})$,
-simplifies to~\eqref{eq:dual-euler-lagrange}.
+and constant $b \in \mathbb{R}^4$ (from the centering constraint).
 
 \emph{Step~3: The $\nu = 1$ argument and correspondence.}
 Define $\gamma(t) = \nu z(t) + b$. The Euler--Lagrange
@@ -273,8 +294,9 @@ $\mathrm{conv}\{R_1,\ldots,R_F\}$ (the convex hull of facet Reeb vectors).
 By the correspondence $z = \gamma - \mathrm{center}(\gamma)$, we have
 $\dot{z}(t) \in \mathrm{conv}\{R_1,\ldots,R_F\}$ a.e.
 
-By \cite[Lemma~4.2]{HK2017}, for any $\varepsilon > 0$, there exists
-a piecewise affine curve $z' : [0,T] \to \mathbb{R}^4$ such that:
+% [TODO: JÖRN - Prove or state as separate lemma]
+\textbf{Claim (Piecewise affine approximation):}
+For any $\varepsilon > 0$, there exists a piecewise affine curve $z' : [0,T] \to \mathbb{R}^4$ such that:
 \begin{itemize}
 \item $z'(0) = z'(T)$ (closed),
 \item $\|z - z'\|_{W^{1,2}} < \varepsilon$ (approximation in Sobolev norm),
@@ -284,20 +306,24 @@ a piecewise affine curve $z' : [0,T] \to \mathbb{R}^4$ such that:
 \end{itemize}
 The centering condition $\frac{1}{T}\int_0^T z' = 0$ is ensured by translating $z'$.
 
+This is a standard density result for Sobolev spaces (HK2017 Lemma 4.2 gives the construction with the cone constraint).
+
 \paragraph{Step 2: Split into pure Reeb vectors.}
 After Step~1, each velocity segment $\dot{z}'(t)$ is a convex combination
 of facet Reeb vectors. We replace each such segment by a concatenation
 of segments with \emph{pure} facet Reeb vectors (not convex combinations).
 
-\textbf{Splitting mechanism \cite[Lemma~4.4]{HK2017}:}
+% [TODO: JÖRN - Prove or state as separate lemma]
+\textbf{Claim (Splitting convex combinations):}
 If $\dot{z}'(t) = \sum_{i=1}^k a_i(t) R_i$ with $\sum a_i(t) = 1$ on interval $I$,
 replace $I$ by $k$ subintervals of lengths $\Delta t_i = \int_I a_i(t)\,dt$,
 each with pure velocity $R_i$.
 Total time preserved: $\sum \Delta t_i = \int_I 1\,dt = |I|$.
 
-The time ordering affects action. By \cite[Proposition~4.3]{HK2017},
-reversing the order reverses the action change (sign flip).
+The time ordering affects action. Reversing the order reverses the action change (sign flip).
 Choose the ordering that makes $A(z'') \geq A(z')$.
+
+(HK2017 Lemma 4.4 proves the splitting construction; Proposition 4.3 gives the action identity for piecewise constant velocities.)
 
 After splitting, the dual functional equals the period \emph{exactly}:
 
@@ -319,7 +345,8 @@ $\{R_1,\ldots,R_F\}$ (pure facet Reeb vectors).
 If the same Reeb vector $R_i$ appears in two disjoint time intervals,
 we merge them into a single contiguous segment.
 
-\textbf{Rearrangement mechanism \cite[Lemma~4.5]{HK2017}:}
+% [TODO: JÖRN - Prove or state as separate lemma]
+\textbf{Claim (Merging repeated velocities):}
 Consider a pattern where $R_A$ appears in intervals $I_r$ and $I_s$ with $r < s$,
 separated by intervals $I_{r+1}, \ldots, I_{s-1}$ with different velocities.
 We can rearrange to move the two $R_A$ segments adjacent:
@@ -330,7 +357,7 @@ We can rearrange to move the two $R_A$ segments adjacent:
       then both $R_A$ segments.
 \end{itemize}
 These differ by a reversal of the intermediate portion. By the
-piecewise-constant velocity identity \cite[Proposition~4.3]{HK2017},
+piecewise-constant velocity action identity
 \[
   2A(z) = \sum_{j<i} |I_i| \, |I_j| \, \omega_0(\dot{z}|_{I_i}, \dot{z}|_{I_j}),
 \]
@@ -339,6 +366,8 @@ reversing segments flips the sign of their contribution to action. Hence:
   \Delta A_{\text{fwd}} = -\Delta A_{\text{bwd}}.
 \]
 One option has $\Delta A \geq 0$ (or both equal). Choose that one.
+
+(HK2017 Lemma 4.5 proves this rearrangement preserves closure and allows action control.)
 
 The dual functional $I_K$ is unchanged: it depends only on
 $h_K^2(-J_0\dot{z})$ integrated over time, which depends on the
@@ -394,8 +423,8 @@ A simple curve is encoded by finite data:
       $\sum t_i = T^{(4)}$, $\sum t_i R_{\sigma(i)} = 0$ (closure).
 \end{itemize}
 
-Following \cite[proof of Theorem~1.1]{HK2017},
-consider the space $\mathcal{E}^1$ of piecewise affine curves
+% [TODO: JÖRN - Verify this compactness argument or expand with more detail]
+Consider the space $\mathcal{E}^1$ of piecewise affine curves
 on $[0,T^{(4)}]$ with velocities in $\{R_1,\ldots,R_F\}$
 (each $R_i$ appearing at most once).
 Define a map
