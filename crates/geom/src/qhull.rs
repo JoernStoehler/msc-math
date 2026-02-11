@@ -28,8 +28,8 @@ use tempfile::NamedTempFile;
 
 #[derive(Debug)]
 pub enum QhullError {
-    /// Qhull computation failed (details printed to stderr by qhull)
-    ComputationFailed,
+    /// Qhull computation failed with diagnostic output
+    ComputationFailed(String),
     /// qhalf command not found - install qhull-bin package
     QhullNotInstalled,
     /// Failed to write input file or invoke subprocess
@@ -43,7 +43,7 @@ pub enum QhullError {
 impl std::fmt::Display for QhullError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::ComputationFailed => write!(f, "qhull halfspace intersection failed"),
+            Self::ComputationFailed(stderr) => write!(f, "qhull halfspace intersection failed: {}", stderr),
             Self::QhullNotInstalled => write!(f, "qhalf command not found - install qhull-bin package"),
             Self::InputWriteFailed(e) => write!(f, "failed to write qhull input or invoke subprocess: {}", e),
             Self::OutputParseFailed(msg) => write!(f, "failed to parse qhull output: {}", msg),
@@ -79,26 +79,17 @@ fn write_qhull_input(
 
 /// Run qhalf subprocess and capture output.
 ///
-/// Invokes: `qhalf H0,0,0,0 Fp` with input piped from the temp file.
+/// Invokes: `qhalf TI <path> H0,0,0,0 Fp` to read input file directly.
 fn run_qhalf(input_path: &Path) -> Result<String, QhullError> {
-    use std::fs::File;
-    use std::io::Read;
-
-    // Read input file content
-    let mut input_file = File::open(input_path).map_err(QhullError::InputWriteFailed)?;
-    let mut input_data = Vec::new();
-    input_file
-        .read_to_end(&mut input_data)
-        .map_err(QhullError::InputWriteFailed)?;
-
-    // Spawn qhalf process
-    let mut child = Command::new("qhalf")
+    // Spawn qhalf process with TI flag to read file directly
+    let output = Command::new("qhalf")
+        .arg("TI")
+        .arg(input_path)
         .arg("H0,0,0,0")
         .arg("Fp")
-        .stdin(std::process::Stdio::piped())
         .stdout(std::process::Stdio::piped())
         .stderr(std::process::Stdio::piped())
-        .spawn()
+        .output()
         .map_err(|e| {
             if e.kind() == std::io::ErrorKind::NotFound {
                 QhullError::QhullNotInstalled
@@ -107,21 +98,9 @@ fn run_qhalf(input_path: &Path) -> Result<String, QhullError> {
             }
         })?;
 
-    // Write input to stdin
-    if let Some(mut stdin) = child.stdin.take() {
-        stdin
-            .write_all(&input_data)
-            .map_err(QhullError::InputWriteFailed)?;
-    }
-
-    // Wait for completion and capture output
-    let output = child
-        .wait_with_output()
-        .map_err(QhullError::InputWriteFailed)?;
-
     if !output.status.success() {
-        eprintln!("qhalf stderr: {}", String::from_utf8_lossy(&output.stderr));
-        return Err(QhullError::ComputationFailed);
+        let stderr = String::from_utf8_lossy(&output.stderr).into_owned();
+        return Err(QhullError::ComputationFailed(stderr));
     }
 
     String::from_utf8(output.stdout)
@@ -206,8 +185,8 @@ fn parse_fp_output(output: &str) -> Result<Vec<Vector4<f64>>, QhullError> {
 /// Given halfspaces { x : n·x ≤ h } where n ∈ S³, h > 0, computes vertices
 /// of the polytope K = ⋂ { x : nᵢ·x ≤ hᵢ }.
 ///
-/// Uses qhull C library. Assumes origin [0,0,0,0] is in the interior (guaranteed
-/// by h > 0 and unit normals for convex polytopes).
+/// Uses `qhalf` subprocess (from qhull-bin package). Assumes origin [0,0,0,0]
+/// is in the interior (guaranteed by h > 0 and unit normals for convex polytopes).
 ///
 /// # Arguments
 /// * `normals` - Unit normal vectors (n̂ᵢ ∈ S³)
@@ -219,6 +198,13 @@ pub(crate) fn halfspace_intersection_4d(
     normals: &[Vector4<f64>],
     heights: &[f64],
 ) -> Result<Vec<Vector4<f64>>, QhullError> {
+    // Validate input
+    debug_assert_eq!(
+        normals.len(),
+        heights.len(),
+        "normals and heights must have the same length"
+    );
+
     // Write halfspaces to temp file
     let input_file = write_qhull_input(normals, heights)?;
 
@@ -318,8 +304,8 @@ mod test {
     }
 
     /// Test case: 4D simplex with 5 vertices
-    /// Standard simplex conv{0, e₁, e₂, e₃, e₄}
-    /// Note: Using small epsilon for zero heights to ensure origin is interior
+    /// Approximately the standard simplex conv{0, e₁, e₂, e₃, e₄}, shifted slightly
+    /// so all heights are positive (h > 0 required for origin to be interior)
     #[test]
     fn simplex_vertices() {
         let normals = vec![
@@ -335,5 +321,18 @@ mod test {
             .expect("simplex halfspace intersection should succeed");
 
         assert_eq!(vertices.len(), 5, "4D simplex has 5 vertices");
+
+        // Verify all vertices satisfy constraints
+        for v in &vertices {
+            for (n, &h) in normals.iter().zip(&heights) {
+                assert!(
+                    n.dot(v) <= h + 1e-6,
+                    "vertex {:?} violates constraint {:?} · x ≤ {}",
+                    v,
+                    n,
+                    h
+                );
+            }
+        }
     }
 }

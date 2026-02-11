@@ -1,4 +1,4 @@
-/// Vertex enumeration for 4D polytopes via qhull C library.
+/// Vertex enumeration for 4D polytopes via qhull subprocess.
 ///
 /// See Definition 3.2 (Polytope) in thesis/chapter-algorithm.tex:
 ///   A polytope is a bounded convex subset K ⊂ ℝ⁴ that contains 0 in its
@@ -9,8 +9,7 @@ use nalgebra::Vector4;
 
 /// Enumerate all vertices of a polytope given its H-representation.
 ///
-/// Uses qhull C library directly for robust vertex enumeration. Qhull provides
-/// higher correctness confidence (95-99%) compared to nalgebra-based enumeration (70-80%).
+/// Uses `qhalf` subprocess for robust vertex enumeration.
 ///
 /// Used internally by `Polytope4D::new()` to precompute vertices at
 /// construction time. External callers should use `Polytope4D::vertices()`.
@@ -19,7 +18,6 @@ use nalgebra::Vector4;
 pub(crate) fn compute_vertices(
     normals: &[Vector4<f64>],
     heights: &[f64],
-) -> Vec<Vector4<f64>> {
+) -> Result<Vec<Vector4<f64>>, crate::qhull::QhullError> {
     crate::qhull::halfspace_intersection_4d(normals, heights)
-        .expect("qhull failed")
 }
