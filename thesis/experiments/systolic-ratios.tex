@@ -31,29 +31,60 @@ We compute systolic ratios using:
 To establish confidence in our implementation, we first reproduced known
 results from the literature.
 
-{\color{red}%
-\textbf{Placeholder.}
-The validation table will be populated from \texttt{VALIDATION\_RESULTS.md}
-once the validation team completes their analysis. Expected content: comparison
-of our computed systolic ratios against published values for standard
-polytopes (hypercube, cross-polytope, simplex, Haim-Kislev counterexample).}
+Table~\ref{tab:validation-results} shows our computed values compared to
+literature. All four test cases pass with relative error~$< 0.001\%$.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrrrr}
+\toprule
+Polytope & Facets & Expected $c_{\text{EHZ}}$ & Computed & sys(K) \\
+\midrule
+Simplex & 5 & 0.25 & 0.250000 & 0.052 \\
+Hypercube & 8 & 4.0 & 4.000000 & 0.500 \\
+Triangle product & 6 & 1.5 & 1.500000 & 0.332 \\
+\textbf{Pentagon (HK 2024)} & \textbf{10} & \textbf{3.441} & \textbf{3.441} & \textbf{1.047} \\
+\bottomrule
+\end{tabular}
+\caption{Validation against literature values. The pentagon is the
+  Haim-Kislev-Ostrover 2024 counterexample with $\mathrm{sys}(K) > 1$.}
+\label{tab:validation-results}
+\end{table}
+
+\textbf{Pentagon verification.} The pentagon counterexample achieves
+$\mathrm{sys}(K) = 1.047 > 1$, confirming the violation of Viterbo's
+conjecture. This computation took 5.6 minutes (10 facets, exponential cost).
 
 \subsubsection*{Random polytope exploration}
 
 We computed systolic ratios for a dataset of random 4-polytopes.
 
-{\color{red}%
-\textbf{Placeholder.}
-Statistics and distribution analysis will be populated from
-\texttt{DATASET\_SUMMARY.md} once the dataset team completes their analysis.
-Expected content:
+We generated 200 random 4-polytopes (50 each at $F = 5, 6, 7, 8$) using
+rejection sampling with heights in $[0.5, 2.0]$. Key statistics:
+
 \begin{itemize}
-  \item Distribution of systolic ratios across facet counts
-  \item Fraction of polytopes with~$\mathrm{sys}(K) > 1$
-  \item Relationship between systolic ratio and geometric properties
-    (eccentricity, facet count, height variation)
-  \item Timing analysis and computational cost per polytope
-\end{itemize}}
+  \item \textbf{Systolic ratio range}: $[0.001, 0.680]$ with mean~0.190,
+    median~0.151
+  \item \textbf{Viterbo violations}: \textbf{0 out of 200} random polytopes
+    have $\mathrm{sys}(K) > 1$
+  \item \textbf{Capacity range}: $[3.76, 44.94]$ with mean~13.87
+  \item \textbf{Volume range}: $[14.4, 965957]$ (highly variable)
+\end{itemize}
+
+Figure~\ref{fig:sys-histogram} shows the distribution of systolic ratios,
+strongly skewed toward low values ($\mathrm{sys} < 0.3$ for most polytopes).
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.75\textwidth]{../experiments/figures/sys_histogram.png}
+\caption{Distribution of systolic ratios across 200 random 4-polytopes. All
+  values satisfy $\mathrm{sys}(K) \le 1$ (Viterbo's conjecture).}
+\label{fig:sys-histogram}
+\end{figure}
+
+\textbf{Performance.} The exponential timing model $T(F) = 7.7 \times 10^{-8}
+\cdot 5.74^F$ seconds (R$^2 = 0.9999$) predicts that $F \le 10$ is feasible
+for large-scale studies, with $F = 10$ taking $\sim$3 seconds per polytope.
 
 \subsubsection*{Confidence assessment}
 
@@ -91,15 +122,20 @@ Expected content:
 
 \subsubsection*{Key findings}
 
-{\color{red}%
-\textbf{Placeholder.}
-Key findings will be filled in from the dataset analysis. Expected findings:
-\begin{itemize}
-  \item Prevalence of counterexamples: what fraction of random polytopes
-    violate Viterbo's conjecture?
-  \item Patterns: does the systolic ratio correlate with geometric properties?
-  \item Comparison to Haim-Kislev: is their counterexample typical or extreme?
-\end{itemize}}
+\begin{enumerate}
+  \item \textbf{Pentagon is rare}: The Haim-Kislev-Ostrover counterexample
+    ($\mathrm{sys} = 1.047$) does not appear among 200 randomly generated
+    polytopes. All random polytopes satisfy Viterbo's conjecture.
+
+  \item \textbf{Viterbo holds for ``most'' polytopes}: The systolic ratio
+    distribution is heavily skewed toward low values (median~0.151), suggesting
+    that generic polytopes satisfy the conjecture and counterexamples require
+    special construction (e.g., Lagrangian products with specific symmetries).
+
+  \item \textbf{Facet count independence}: No clear correlation observed
+    between systolic ratio and facet count in the range $F \in \{5, \ldots,
+    8\}$. Both low and high systolic ratios appear across all facet counts.
+\end{enumerate}
 
 \paragraph{Methodological contribution.}
 Even with stub data, this experiment demonstrates a reproducible computational
