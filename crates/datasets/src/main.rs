@@ -52,7 +52,7 @@ fn cmd_dataset(output: &PathBuf) {
     const MAX_FACETS_BRUTEFORCE: usize = 10;
     for kp in &known {
         let start_vol = Instant::now();
-        let vol = volume(&kp.polytope);
+        let vol = volume(&kp.polytope).expect("volume computation failed");
         let vol_time = start_vol.elapsed();
 
         let (cap, cap_time) = if kp.polytope.facet_count() <= MAX_FACETS_BRUTEFORCE {
@@ -97,7 +97,7 @@ fn cmd_dataset(output: &PathBuf) {
 
         for p in &polytopes {
             let start_vol = Instant::now();
-            let vol = volume(p);
+            let vol = volume(p).expect("volume computation failed");
             let vol_time = start_vol.elapsed();
 
             let start_cap = Instant::now();

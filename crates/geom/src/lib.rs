@@ -7,5 +7,11 @@ pub mod volume;
 
 pub use qhull::QhullError;
 
+pub mod test_utils;
+
 #[cfg(test)]
 mod lib_test;
+
+#[cfg(test)]
+#[path = "qhull_boundedness_test.rs"]
+mod qhull_boundedness_test;

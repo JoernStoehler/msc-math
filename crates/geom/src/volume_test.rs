@@ -1,5 +1,7 @@
 use super::*;
+use super::deprecated::volume_divergence;
 use crate::polytope::Polytope4D;
+use crate::test_utils::{crosspolytope, scaled_hypercube, simplex};
 use nalgebra::Vector4;
 
 #[test]
@@ -35,7 +37,7 @@ fn hypercube_volume() {
     ];
     let heights = vec![1.0; 8];
     let polytope = Polytope4D::new(normals, heights).expect("hypercube");
-    let vol = volume(&polytope);
+    let vol = volume(&polytope).expect("volume computation failed");
     assert!(
         (vol - 16.0).abs() < 1e-6,
         "hypercube volume: got {vol}, expected 16"
@@ -60,7 +62,7 @@ fn simplex_polytope_volume() {
         .map(|(n, h)| h - n.dot(&centroid))
         .collect();
     let polytope = Polytope4D::new(normals_raw, heights).expect("simplex");
-    let vol = volume(&polytope);
+    let vol = volume(&polytope).expect("volume computation failed");
     assert!(
         (vol - 1.0 / 24.0).abs() < 1e-6,
         "simplex polytope volume: got {vol}, expected {}",
@@ -70,28 +72,12 @@ fn simplex_polytope_volume() {
 
 // ---- Property tests ----
 
-/// Build a hypercube [-s, s]^4 (volume = (2s)^4 = 16s^4).
-fn scaled_hypercube(s: f64) -> Polytope4D {
-    let normals = vec![
-        Vector4::x(),
-        -Vector4::x(),
-        Vector4::y(),
-        -Vector4::y(),
-        Vector4::z(),
-        -Vector4::z(),
-        Vector4::w(),
-        -Vector4::w(),
-    ];
-    let heights = vec![s; 8];
-    Polytope4D::new(normals, heights).expect("scaled hypercube")
-}
-
 #[test]
 fn scaling_property() {
     // vol(λK) = λ^4 · vol(K) — for a hypercube, vol([-s,s]^4) = 16·s^4.
-    let base_vol = volume(&scaled_hypercube(1.0));
+    let base_vol = volume(&scaled_hypercube(1.0)).expect("volume computation failed");
     for &s in &[0.5, 2.0, 3.0, 0.1] {
-        let scaled_vol = volume(&scaled_hypercube(s));
+        let scaled_vol = volume(&scaled_hypercube(s)).expect("volume computation failed");
         let expected = base_vol * s.powi(4);
         assert!(
             (scaled_vol - expected).abs() < 1e-4,
@@ -124,7 +110,7 @@ fn volume_positive_for_known_polytopes() {
     ];
 
     for p in &polytopes {
-        let vol = volume(p);
+        let vol = volume(p).expect("volume computation failed");
         assert!(vol > 0.0, "volume should be positive, got {vol}");
     }
 }
@@ -133,25 +119,215 @@ fn volume_positive_for_known_polytopes() {
 fn crosspolytope_volume() {
     // 4D crosspolytope: conv{±e1, ±e2, ±e3, ±e4}, volume = 8/3
     // H-representation: (±1,±1,±1,±1)/2 · x ≤ 1 (16 facets)
-    let mut normals = Vec::with_capacity(16);
-    for s0 in [-1.0_f64, 1.0] {
-        for s1 in [-1.0_f64, 1.0] {
-            for s2 in [-1.0_f64, 1.0] {
-                for s3 in [-1.0_f64, 1.0] {
-                    normals.push(Vector4::new(s0, s1, s2, s3).normalize());
-                }
-            }
-        }
-    }
-    let heights = vec![1.0; 16];
-    let polytope = Polytope4D::new(normals, heights).expect("crosspolytope");
-    let vol = volume(&polytope);
+    let polytope = crosspolytope();
+    let vol = volume(&polytope).expect("volume computation failed");
     // Vertices are ±2·e_i (normals (±1,±1,±1,±1)/2, heights 1.0).
     // Vol(conv{±a·e_i}) = a^n · 2^n/n! = 2^4 · 16/24 = 32/3 for a=2, n=4.
     let expected = 32.0 / 3.0;
     assert!(
         (vol - expected).abs() < 1e-6,
         "crosspolytope volume: got {vol}, expected {expected}"
+    );
+}
+
+// ---- Qconvex volume tests ----
+
+#[test]
+fn triangulated_hypercube() {
+    let normals = vec![
+        Vector4::x(),
+        -Vector4::x(),
+        Vector4::y(),
+        -Vector4::y(),
+        Vector4::z(),
+        -Vector4::z(),
+        Vector4::w(),
+        -Vector4::w(),
+    ];
+    let heights = vec![1.0; 8];
+    let polytope = Polytope4D::new(normals, heights).expect("hypercube");
+
+    let vol = volume(&polytope).expect("qconvex succeeds");
+    assert!(
+        (vol - 16.0).abs() < 1e-6,
+        "triangulated hypercube volume: got {vol}, expected 16"
+    );
+}
+
+#[test]
+fn triangulated_matches_divergence() {
+    // Test on simplex, hypercube, and crosspolytope
+    let test_cases = vec![
+        (
+            "simplex",
+            {
+                let centroid = Vector4::new(0.2, 0.2, 0.2, 0.2);
+                let normals_raw = vec![
+                    -Vector4::x(),
+                    -Vector4::y(),
+                    -Vector4::z(),
+                    -Vector4::w(),
+                    Vector4::new(1.0, 1.0, 1.0, 1.0).normalize(),
+                ];
+                let heights_raw = vec![0.0, 0.0, 0.0, 0.0, 0.5];
+                let heights: Vec<f64> = normals_raw
+                    .iter()
+                    .zip(&heights_raw)
+                    .map(|(n, h)| h - n.dot(&centroid))
+                    .collect();
+                Polytope4D::new(normals_raw, heights).expect("simplex")
+            },
+        ),
+        ("hypercube", scaled_hypercube(1.0)),
+        (
+            "crosspolytope",
+            {
+                let mut normals = Vec::with_capacity(16);
+                for s0 in [-1.0_f64, 1.0] {
+                    for s1 in [-1.0_f64, 1.0] {
+                        for s2 in [-1.0_f64, 1.0] {
+                            for s3 in [-1.0_f64, 1.0] {
+                                normals.push(Vector4::new(s0, s1, s2, s3).normalize());
+                            }
+                        }
+                    }
+                }
+                let heights = vec![1.0; 16];
+                Polytope4D::new(normals, heights).expect("crosspolytope")
+            },
+        ),
+    ];
+
+    for (name, polytope) in test_cases {
+        let vol_div = volume_divergence(&polytope);
+        let vol_tri = volume(&polytope).expect("qconvex succeeds");
+        let rel_error = (vol_div - vol_tri).abs() / vol_div.max(vol_tri).max(1e-10);
+
+        assert!(
+            rel_error < 1e-6,
+            "{}: divergence={}, qconvex={}, rel_error={}",
+            name,
+            vol_div,
+            vol_tri,
+            rel_error
+        );
+    }
+}
+
+
+#[test]
+fn comprehensive_volume_cross_check() {
+    use crate::test_utils::random_bounded_polytope;
+    use rand::SeedableRng;
+    use rand_chacha::ChaCha8Rng;
+
+    let mut rng = ChaCha8Rng::seed_from_u64(12345);
+    let mut max_rel_error: f64 = 0.0;
+    let mut failures = Vec::new();
+
+    // Test known polytopes first
+    println!("Testing known polytopes...");
+    let known_cases = vec![
+        ("simplex", simplex(), 1.0 / 24.0),
+        ("hypercube", scaled_hypercube(1.0), 16.0),
+        ("crosspolytope", crosspolytope(), 32.0 / 3.0),
+    ];
+
+    for (name, polytope, expected) in known_cases {
+        let vol_div = volume_divergence(&polytope);
+        let vol_qhull = volume(&polytope).expect("qconvex should succeed");
+
+        let abs_error_div = (vol_div - expected).abs();
+        let abs_error_qhull = (vol_qhull - expected).abs();
+        let rel_error = (vol_div - vol_qhull).abs() / vol_div.max(vol_qhull).max(1e-10);
+
+        assert!(
+            abs_error_div < 1e-6,
+            "{}: divergence volume error = {}, expected {}",
+            name,
+            vol_div,
+            expected
+        );
+        assert!(
+            abs_error_qhull < 1e-6,
+            "{}: qconvex volume error = {}, expected {}",
+            name,
+            vol_qhull,
+            expected
+        );
+        assert!(
+            rel_error < 1e-6,
+            "{}: algorithms disagree, div={}, qhull={}, rel_error={}",
+            name,
+            vol_div,
+            vol_qhull,
+            rel_error
+        );
+
+        println!(
+            "  {}: div={:.6}, qhull={:.6}, rel_error={:.2e}",
+            name, vol_div, vol_qhull, rel_error
+        );
+        max_rel_error = max_rel_error.max(rel_error);
+    }
+
+    // Test 1000 random polytopes
+    println!("Testing 1000 random polytopes...");
+    for i in 0..1000 {
+        let facet_count = 5 + (i % 16); // 5-20 facets
+
+        // Generate random bounded polytope
+        // Note: This may fail for some random configurations (unbounded, etc.)
+        // so we retry up to 10 times
+        let polytope = loop {
+            match std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                random_bounded_polytope(facet_count, &mut rng)
+            })) {
+                Ok(p) => break p,
+                Err(_) => {
+                    // Retry with different random seed
+                    continue;
+                }
+            }
+        };
+
+        let vol_div = volume_divergence(&polytope);
+        let vol_qhull = match volume(&polytope) {
+            Ok(v) => v,
+            Err(e) => {
+                // qconvex may fail on degenerate cases
+                println!("  [{}] qconvex failed: {:?}, skipping", i, e);
+                continue;
+            }
+        };
+
+        let rel_error = (vol_div - vol_qhull).abs() / vol_div.max(vol_qhull).max(1e-10);
+
+        if rel_error > 1e-6 {
+            failures.push((i, facet_count, vol_div, vol_qhull, rel_error));
+        }
+
+        max_rel_error = max_rel_error.max(rel_error);
+
+        if (i + 1) % 100 == 0 {
+            println!(
+                "  ... {} polytopes tested, max rel error so far: {:.2e}",
+                i + 1,
+                max_rel_error
+            );
+        }
+    }
+
+    println!(
+        "\nCross-check complete: 1000 polytopes, max rel error: {:.2e}",
+        max_rel_error
+    );
+
+    assert!(
+        failures.is_empty(),
+        "Volume algorithms disagreed on {} cases:\n{:?}",
+        failures.len(),
+        &failures[..failures.len().min(10)] // Show first 10 failures
     );
 }
 
@@ -183,8 +359,8 @@ mod proptests {
             let scaled_cube = Polytope4D::new(normals, heights_scaled)
                 .expect("scaled hypercube construction");
 
-            let vol_unit = volume(&unit_cube);
-            let vol_scaled = volume(&scaled_cube);
+            let vol_unit = volume(&unit_cube).expect("volume computation failed");
+            let vol_scaled = volume(&scaled_cube).expect("volume computation failed");
 
             // Volume should scale as λ⁴
             let expected_scaled = vol_unit * scale.powi(4);

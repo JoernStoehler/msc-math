@@ -1,62 +1,10 @@
 use super::*;
+use geom::test_utils::{hypercube, simplex, triangle_product};
 use nalgebra::Vector4;
-use std::f64::consts::PI;
-
-/// Build the simplex from known_polytopes (translated so origin at centroid).
-fn make_simplex() -> Polytope4D {
-    let centroid = Vector4::new(0.2, 0.2, 0.2, 0.2);
-    let normals_raw = vec![
-        -Vector4::x(),
-        -Vector4::y(),
-        -Vector4::z(),
-        -Vector4::w(),
-        Vector4::new(1.0, 1.0, 1.0, 1.0).normalize(),
-    ];
-    let heights_raw = vec![0.0, 0.0, 0.0, 0.0, 0.5];
-    let heights: Vec<f64> = normals_raw
-        .iter()
-        .zip(&heights_raw)
-        .map(|(n, h)| h - n.dot(&centroid))
-        .collect();
-    Polytope4D::new(normals_raw, heights).expect("simplex")
-}
-
-/// Build the hypercube [-1,1]^4.
-fn make_hypercube() -> Polytope4D {
-    let normals = vec![
-        Vector4::x(),
-        -Vector4::x(),
-        Vector4::y(),
-        -Vector4::y(),
-        Vector4::z(),
-        -Vector4::z(),
-        Vector4::w(),
-        -Vector4::w(),
-    ];
-    let heights = vec![1.0; 8];
-    Polytope4D::new(normals, heights).expect("hypercube")
-}
-
-/// Build the triangle ×_L triangle (Lagrangian product).
-fn make_triangle_product() -> Polytope4D {
-    let mut normals = Vec::with_capacity(6);
-    let mut heights = Vec::with_capacity(6);
-    for k in 0..3 {
-        let angle = PI / 2.0 + 2.0 * PI * (k as f64) / 3.0;
-        normals.push(Vector4::new(angle.cos(), angle.sin(), 0.0, 0.0));
-        heights.push(0.5);
-    }
-    for k in 0..3 {
-        let angle = PI / 2.0 + 2.0 * PI * (k as f64) / 3.0;
-        normals.push(Vector4::new(0.0, 0.0, angle.cos(), angle.sin()));
-        heights.push(0.5);
-    }
-    Polytope4D::new(normals, heights).expect("triangle product")
-}
 
 #[test]
 fn simplex_capacity() {
-    let simplex = make_simplex();
+    let simplex = simplex();
     let result = ehz_capacity(&simplex).expect("simplex should have capacity");
     let expected = 0.25;
     assert!(
@@ -69,7 +17,7 @@ fn simplex_capacity() {
 
 #[test]
 fn hypercube_capacity() {
-    let hypercube = make_hypercube();
+    let hypercube = hypercube();
     let result = ehz_capacity(&hypercube).expect("hypercube should have capacity");
     let expected = 4.0;
     assert!(
@@ -82,7 +30,7 @@ fn hypercube_capacity() {
 
 #[test]
 fn triangle_product_capacity() {
-    let tri = make_triangle_product();
+    let tri = triangle_product();
     let result = ehz_capacity(&tri).expect("triangle product should have capacity");
     let expected = 1.5;
     assert!(
@@ -103,7 +51,7 @@ fn combinations_basic() {
 #[test]
 fn pruned_matches_unpruned() {
     // Test that pruned and unpruned give same capacity
-    let hypercube = make_hypercube();
+    let hypercube = hypercube();
 
     let result_unpruned = ehz_capacity(&hypercube).expect("unpruned capacity");
     let result_pruned = ehz_capacity_pruned(&hypercube).expect("pruned capacity");
