@@ -306,9 +306,9 @@ Where domains overlap, algorithms must agree on the computed capacity.
 
 ### Parallelization strategy
 
-**Do NOT parallelize individual polytope capacity computations** (the three algorithms above).
+**Keep the three capacity algorithms (hk2017, billiard, tube) single-threaded.**
 
-We keep the three algorithms single-threaded. This simplifies correctness verification, testing, and debugging. Parallelizing within a single polytope adds complexity without corresponding benefit.
+This simplifies correctness verification, testing, and debugging. Internal optimizations (faster matrix ops, better algorithms, improved constants) are fair game. Just don't make the algorithms themselves concurrent.
 
 **DO parallelize at the dataset generation level** (embarrassingly parallel).
 
