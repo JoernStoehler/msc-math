@@ -293,8 +293,8 @@ Where domains overlap, algorithms must agree on the computed capacity.
 
 ## Experiments (Python)
 
-[aspirational] A reproducible pipeline: starting from zero data, produce all figures and tables for the thesis. Currently empty — no scripts or data yet. Pipeline direction: Rust → datasets → Python → figures/tables → thesis.
-<!-- Script conventions: .claude/skills/experiments/SKILL.md -->
+[aspirational] A reproducible pipeline: starting from zero data, produce all figures and tables for the thesis. Pipeline direction: Rust → datasets → Python → figures/tables → thesis.
+<!-- Full conventions: experiments/CLAUDE.md -->
 
 ## Thesis (LaTeX)
 
