@@ -7,6 +7,14 @@ edition = "2021"
 name = "datasets"
 path = "src/main.rs"
 
+[[bin]]
+name = "profile-capacity"
+path = "src/bin/profile_capacity.rs"
+
+[[bin]]
+name = "time-capacity"
+path = "src/bin/time_capacity.rs"
+
 [dependencies]
 nalgebra = { workspace = true }
 serde = { workspace = true }

@@ -1,0 +1,75 @@
+{
+  "model": {
+    "type": "exponential",
+    "formula": "T(F) = a * b^F",
+    "parameters": {
+      "a": 7.730076267367248e-08,
+      "b": 5.740418866524697
+    },
+    "units": "seconds"
+  },
+  "fit_quality": {
+    "r_squared": 0.9999952897177093,
+    "rmse_seconds": 0.0025829805707136056,
+    "data_points": 5,
+    "facet_range": [
+      5,
+      10
+    ]
+  },
+  "projections": {
+    "24h_8cores": {
+      "total_polytopes": 1000,
+      "total_compute_hours": 163.7377588447186,
+      "wallclock_hours": 20.467219855589825,
+      "breakdown": {
+        "5": {
+          "count": 200,
+          "time_per_polytope_sec": 0.00048183871777507294,
+          "total_hours": 2.676881765417072e-05
+        },
+        "6": {
+          "count": 200,
+          "time_per_polytope_sec": 0.0027659560661380976,
+          "total_hours": 0.00015366422589656098
+        },
+        "7": {
+          "count": 200,
+          "time_per_polytope_sec": 0.015877746386037568,
+          "total_hours": 0.0008820970214465316
+        },
+        "8": {
+          "count": 200,
+          "time_per_polytope_sec": 0.09114491491230438,
+          "total_hours": 0.00506360638401691
+        },
+        "9": {
+          "count": 100,
+          "time_per_polytope_sec": 0.5232099891503803,
+          "total_hours": 0.014533610809732787
+        },
+        "10": {
+          "count": 50,
+          "time_per_polytope_sec": 3.003444492873025,
+          "total_hours": 0.04171450684545868
+        },
+        "12": {
+          "count": 30,
+          "time_per_polytope_sec": 98.97073062659177,
+          "total_hours": 0.8247560885549314
+        },
+        "14": {
+          "count": 15,
+          "time_per_polytope_sec": 3261.3239711953274,
+          "total_hours": 13.58884987998053
+        },
+        "16": {
+          "count": 5,
+          "time_per_polytope_sec": 107468.48060789684,
+          "total_hours": 149.26177862207894
+        }
+      },
+      "feasible": true
+    }
+  }
+}
