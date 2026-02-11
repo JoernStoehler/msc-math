@@ -1,5 +1,6 @@
 use super::*;
 use geom::test_utils::{hypercube, simplex, triangle_product};
+use nalgebra::Vector4;
 
 #[test]
 fn simplex_capacity() {
@@ -50,7 +51,7 @@ fn combinations_basic() {
 #[test]
 fn pruned_matches_unpruned() {
     // Test that pruned and unpruned give same capacity
-    let hypercube = make_hypercube();
+    let hypercube = hypercube();
 
     let result_unpruned = ehz_capacity(&hypercube).expect("unpruned capacity");
     let result_pruned = ehz_capacity_pruned(&hypercube).expect("pruned capacity");

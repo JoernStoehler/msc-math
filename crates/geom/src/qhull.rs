@@ -48,6 +48,8 @@ pub enum QhullError {
     InvalidOutput(String),
     /// Qhull subprocess exceeded timeout limit
     Timeout(u64),
+    /// Unbounded polytope detected via sentinel vertices (-10.101)
+    Unbounded,
 }
 
 impl std::fmt::Display for QhullError {
@@ -59,6 +61,7 @@ impl std::fmt::Display for QhullError {
             Self::OutputParseFailed(msg) => write!(f, "failed to parse qhull output: {}", msg),
             Self::InvalidOutput(msg) => write!(f, "invalid qhull output: {}", msg),
             Self::Timeout(secs) => write!(f, "qhull subprocess exceeded {}s timeout - possible degenerate input", secs),
+            Self::Unbounded => write!(f, "unbounded polytope detected (qhull returned sentinel vertices)"),
         }
     }
 }
@@ -255,8 +258,26 @@ pub(crate) fn halfspace_intersection_4d(
     // Run qhalf subprocess
     let output = run_qhalf(input_file.path())?;
 
-    // Parse output and return vertices
-    parse_fp_output(&output)
+    // Parse output
+    let vertices = parse_fp_output(&output)?;
+
+    // Check for sentinel vertices indicating unbounded polytope
+    // Qhull signals unbounded intersections via sentinel value (-10.101, -10.101, -10.101, -10.101)
+    // See: https://github.com/qhull/qhull/blob/master/src/user_r.h#L513
+    // See: BOUNDEDNESS_INVESTIGATION.md for empirical validation (0% false negatives on 375 test cases)
+    const SENTINEL: f64 = -10.101;
+    const TOLERANCE: f64 = 0.001;
+    for vertex in &vertices {
+        if (vertex[0] - SENTINEL).abs() < TOLERANCE
+            || (vertex[1] - SENTINEL).abs() < TOLERANCE
+            || (vertex[2] - SENTINEL).abs() < TOLERANCE
+            || (vertex[3] - SENTINEL).abs() < TOLERANCE
+        {
+            return Err(QhullError::Unbounded);
+        }
+    }
+
+    Ok(vertices)
 }
 
 /// Write vertices to temporary file in qconvex format.
