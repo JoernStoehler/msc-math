@@ -142,6 +142,44 @@ pub fn simplex_volume_5(
     mat.determinant().abs() / 24.0
 }
 
+/// Compute volume via qconvex FA (direct volume computation).
+///
+/// Algorithm: Uses qconvex FA flag to compute volume directly from vertices.
+///
+/// This is simpler than the divergence theorem approach: qconvex handles all
+/// the complex geometry internally, giving us a single volume number to parse.
+/// The 1:1 correspondence is: "compute convex hull, extract volume".
+///
+/// Two-pass workflow: qhalf (vertices) → qconvex FA (volume).
+///
+/// Reference: qconvex FA flag documentation (Qhull manual, §4.3).
+pub fn volume_qconvex(polytope: &Polytope4D) -> Result<f64, crate::QhullError> {
+    let vertices = polytope.vertices();
+    crate::qhull::compute_volume_qconvex(vertices)
+}
+
+/// Compute volume with cross-checking (divergence theorem vs qconvex FA).
+///
+/// Calls both volume algorithms and asserts they agree within tolerance.
+/// This is a temporary wrapper for verification during the transition.
+///
+/// **TODO:** Remove after 1-week cross-check is complete.
+pub fn volume_with_cross_check(polytope: &Polytope4D) -> f64 {
+    let vol_div = volume(polytope);
+    let vol_qhull = volume_qconvex(polytope).expect("qconvex should succeed");
+
+    let rel_error = (vol_div - vol_qhull).abs() / vol_div.max(vol_qhull).max(1e-10);
+    assert!(
+        rel_error < 1e-6,
+        "Volume algorithms disagree: divergence={}, qconvex={}, rel_error={}",
+        vol_div,
+        vol_qhull,
+        rel_error
+    );
+
+    vol_div
+}
+
 #[cfg(test)]
 #[path = "volume_test.rs"]
 mod volume_test;

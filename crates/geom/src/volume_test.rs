@@ -155,6 +155,105 @@ fn crosspolytope_volume() {
     );
 }
 
+// ---- Qconvex volume tests ----
+
+#[test]
+fn triangulated_hypercube() {
+    let normals = vec![
+        Vector4::x(),
+        -Vector4::x(),
+        Vector4::y(),
+        -Vector4::y(),
+        Vector4::z(),
+        -Vector4::z(),
+        Vector4::w(),
+        -Vector4::w(),
+    ];
+    let heights = vec![1.0; 8];
+    let polytope = Polytope4D::new(normals, heights).expect("hypercube");
+
+    let vol = volume_qconvex(&polytope).expect("qconvex succeeds");
+    assert!(
+        (vol - 16.0).abs() < 1e-6,
+        "triangulated hypercube volume: got {vol}, expected 16"
+    );
+}
+
+#[test]
+fn triangulated_matches_divergence() {
+    // Test on simplex, hypercube, and crosspolytope
+    let test_cases = vec![
+        (
+            "simplex",
+            {
+                let centroid = Vector4::new(0.2, 0.2, 0.2, 0.2);
+                let normals_raw = vec![
+                    -Vector4::x(),
+                    -Vector4::y(),
+                    -Vector4::z(),
+                    -Vector4::w(),
+                    Vector4::new(1.0, 1.0, 1.0, 1.0).normalize(),
+                ];
+                let heights_raw = vec![0.0, 0.0, 0.0, 0.0, 0.5];
+                let heights: Vec<f64> = normals_raw
+                    .iter()
+                    .zip(&heights_raw)
+                    .map(|(n, h)| h - n.dot(&centroid))
+                    .collect();
+                Polytope4D::new(normals_raw, heights).expect("simplex")
+            },
+        ),
+        ("hypercube", scaled_hypercube(1.0)),
+        (
+            "crosspolytope",
+            {
+                let mut normals = Vec::with_capacity(16);
+                for s0 in [-1.0_f64, 1.0] {
+                    for s1 in [-1.0_f64, 1.0] {
+                        for s2 in [-1.0_f64, 1.0] {
+                            for s3 in [-1.0_f64, 1.0] {
+                                normals.push(Vector4::new(s0, s1, s2, s3).normalize());
+                            }
+                        }
+                    }
+                }
+                let heights = vec![1.0; 16];
+                Polytope4D::new(normals, heights).expect("crosspolytope")
+            },
+        ),
+    ];
+
+    for (name, polytope) in test_cases {
+        let vol_div = volume(&polytope);
+        let vol_tri = volume_qconvex(&polytope).expect("qconvex succeeds");
+        let rel_error = (vol_div - vol_tri).abs() / vol_div.max(vol_tri).max(1e-10);
+
+        assert!(
+            rel_error < 1e-6,
+            "{}: divergence={}, qconvex={}, rel_error={}",
+            name,
+            vol_div,
+            vol_tri,
+            rel_error
+        );
+    }
+}
+
+#[test]
+fn cross_check_wrapper_agrees() {
+    // Test that volume_with_cross_check doesn't panic on known polytopes
+    let polytopes = vec![
+        scaled_hypercube(1.0),
+        scaled_hypercube(0.5),
+        scaled_hypercube(2.0),
+    ];
+
+    for p in polytopes {
+        let vol = volume_with_cross_check(&p);
+        assert!(vol > 0.0, "volume should be positive");
+    }
+}
+
 #[cfg(test)]
 mod proptests {
     use super::*;
