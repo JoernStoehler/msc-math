@@ -210,6 +210,7 @@ Formatting for efficient exchange:
 - Aim for efficient information exchange, not politeness or engagement
 - Number items so Jörn can respond "3 yes, 5 no" instead of quoting paragraphs
 - Omit filler phrases
+- When presenting decisions with tradeoffs: use tables, quantify costs/benefits, state recommendation upfront
 - When you make repo changes Jörn should know about, mention and explain them — Jörn reviews diffs in VS Code but may not check them unprompted
 
 ### GitHub authorship

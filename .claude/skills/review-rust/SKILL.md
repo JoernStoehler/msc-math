@@ -11,6 +11,10 @@ You decide. Investigate, decide (MERGE / MERGE WITH IMPROVEMENTS / NEEDS WORK), 
 
 ## Methodology
 
+0. **Check for existing analysis** (before exploration):
+   - Look for `docs/reports/*`, `*_INVESTIGATION.md`, `*_REVIEW*.md` in worktree
+   - If found: read first, verify claims, explore gaps. Saves 20min vs redundant exploration.
+
 1. **Exploration** (parallel): Launch 3 Explore agents (git history, code structure, conventions)
 2. **Analysis** (focused): Identify 2-4 concerns, launch Plan agents for each
 3. **Synthesis**: Read critical code sections yourself
@@ -47,6 +51,24 @@ Use proptest for universal quantification: "∀ λ > 0: vol(λK) = λ⁴·vol(K)
 - Academic tangents
 - Forgetting to commit before reporting
 
+## File Location Decisions
+
+Template: `file-location-decisions.md` (colocated). Quick reference:
+- Investigation code: `*_test.rs` with `#[ignore]`
+- Session reports: `docs/reports/<timestamp>-<topic>.md`
+- Deprecated code: `#[cfg(test)] mod deprecated`
+
 ## Report format
 
 50-100 lines: Decision + summary + strengths + issues + improvements + recommendation. Not 550-line comprehensive analysis.
+
+**Decision table** (put at top):
+
+| Item | Recommendation | Confidence | Quantified Rationale |
+|------|---------------|------------|---------------------|
+| Investigation code | KEEP | HIGH | Saves 1-2hr debugging, 508 LOC test module (LOW cost) |
+
+- Quantify costs/benefits (time, LOC, frequency)
+- State weights explicitly (HIGH/MEDIUM/LOW + why)
+- Show actual importance, not artificial balance
+- Thesis context: Jörn's time > code cleanliness
