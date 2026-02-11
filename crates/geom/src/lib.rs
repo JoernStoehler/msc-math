@@ -10,6 +10,9 @@ pub use qhull::QhullError;
 pub mod test_utils;
 
 #[cfg(test)]
+mod volume_properties_test;
+
+#[cfg(test)]
 mod lib_test;
 
 #[cfg(test)]

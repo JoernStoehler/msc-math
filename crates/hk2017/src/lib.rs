@@ -307,5 +307,12 @@ pub fn ehz_capacity_pruned(polytope: &Polytope4D) -> Option<EhzResult> {
     })
 }
 
+/// Test dataset infrastructure for property tests.
+/// Only used in tests, but declared as a public module to allow cross-crate test imports.
+pub mod test_dataset;
+
+#[cfg(test)]
+mod capacity_properties_test;
+
 #[cfg(test)]
 mod lib_test;
