@@ -1,5 +1,6 @@
 use super::*;
 use crate::polytope::Polytope4D;
+use crate::test_utils::{crosspolytope, scaled_hypercube, simplex};
 use nalgebra::Vector4;
 
 #[test]
@@ -70,22 +71,6 @@ fn simplex_polytope_volume() {
 
 // ---- Property tests ----
 
-/// Build a hypercube [-s, s]^4 (volume = (2s)^4 = 16s^4).
-fn scaled_hypercube(s: f64) -> Polytope4D {
-    let normals = vec![
-        Vector4::x(),
-        -Vector4::x(),
-        Vector4::y(),
-        -Vector4::y(),
-        Vector4::z(),
-        -Vector4::z(),
-        Vector4::w(),
-        -Vector4::w(),
-    ];
-    let heights = vec![s; 8];
-    Polytope4D::new(normals, heights).expect("scaled hypercube")
-}
-
 #[test]
 fn scaling_property() {
     // vol(λK) = λ^4 · vol(K) — for a hypercube, vol([-s,s]^4) = 16·s^4.
@@ -133,18 +118,7 @@ fn volume_positive_for_known_polytopes() {
 fn crosspolytope_volume() {
     // 4D crosspolytope: conv{±e1, ±e2, ±e3, ±e4}, volume = 8/3
     // H-representation: (±1,±1,±1,±1)/2 · x ≤ 1 (16 facets)
-    let mut normals = Vec::with_capacity(16);
-    for s0 in [-1.0_f64, 1.0] {
-        for s1 in [-1.0_f64, 1.0] {
-            for s2 in [-1.0_f64, 1.0] {
-                for s3 in [-1.0_f64, 1.0] {
-                    normals.push(Vector4::new(s0, s1, s2, s3).normalize());
-                }
-            }
-        }
-    }
-    let heights = vec![1.0; 16];
-    let polytope = Polytope4D::new(normals, heights).expect("crosspolytope");
+    let polytope = crosspolytope();
     let vol = volume(&polytope);
     // Vertices are ±2·e_i (normals (±1,±1,±1,±1)/2, heights 1.0).
     // Vol(conv{±a·e_i}) = a^n · 2^n/n! = 2^4 · 16/24 = 32/3 for a=2, n=4.
