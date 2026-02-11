@@ -13,7 +13,7 @@ Statuses: `[draft]` (Jörn working) | `[ready]` (translate now) | `[question]` (
 ## Priority 1: Main result (tells Claude how everything is used)
 
 ### thm:main — EHZ capacity algorithm
-Status: [ready]
+Status: [done]
 
 Algorithm Pseudocode:
 Input: A polytope K \subset R^4 via
