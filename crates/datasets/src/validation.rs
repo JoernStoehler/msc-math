@@ -59,15 +59,36 @@ pub fn validate_polytope(
 
 /// Check that the normals positively span R^4, i.e., the polytope is bounded.
 ///
+/// # Mathematical Background
+///
+/// **Theorem:** A polytope K = {x : n_i · x ≤ h_i} with h_i > 0 is bounded
+/// if and only if the normals {n_1, ..., n_F} positively span ℝ⁴.
+///
+/// **Definition (Positive span):** Vectors {v_1, ..., v_k} positively span ℝⁿ
+/// if for every nonzero direction d ∈ ℝⁿ, there exist indices i, j such that
+/// v_i · d > 0 and v_j · d < 0. Equivalently: no nonzero direction d satisfies
+/// v_ℓ · d ≤ 0 for all ℓ (or all ≥ 0).
+///
+/// **Proof sketch:**
+/// - (⇐) If normals positively span, then for any direction d, some n_i · d > 0.
+///   Moving in direction d increases n_i · x, eventually violating n_i · x ≤ h_i.
+///   So K is bounded.
+/// - (⇒) If normals don't positively span, there exists d with n_i · d ≤ 0 for all i.
+///   Then x + t·d ∈ K for all t ≥ 0 (since n_i · (x + t·d) = n_i · x + t·(n_i · d) ≤ h_i).
+///   So K is unbounded.
+///
 /// # Algorithm
 ///
-/// For every triple (i, j, k) of normals, compute the 1D kernel d of the 3×4
-/// matrix [n_i; n_j; n_k]. A direction d with n_ℓ · d ≤ 0 for all ℓ would
-/// make the polytope unbounded. So for each kernel direction d (and -d), we
-/// verify that some normal outside the triple has a positive dot product.
+/// Enumerate all triples of normals (i, j, k) and compute their 1D kernel d
+/// (the direction orthogonal to all three). For each kernel direction d:
+/// - Check that some normal outside {i,j,k} has n_ℓ · d > ε (blocks +d direction)
+/// - Check that some normal outside {i,j,k} has n_ℓ · d < -ε (blocks -d direction)
 ///
-/// If every kernel direction is "blocked" by at least one normal on each side,
-/// the normals positively span R^4 and the polytope is bounded.
+/// **Correctness:** If a direction d violates positive span (e.g., n_ℓ · d ≤ 0 for all ℓ),
+/// then d is orthogonal to at most dim(ℝ⁴)-1 = 3 linearly independent normals.
+/// The algorithm enumerates all such kernel directions, so it detects any violation.
+///
+/// **Complexity:** O(F³) for F facets (all triples), with O(1) kernel computation per triple.
 fn check_bounded(normals: &[Vector4<f64>]) -> Result<(), ValidationError> {
     let f = normals.len();
 

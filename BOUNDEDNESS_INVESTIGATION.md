@@ -6,11 +6,16 @@
 
 ## Executive Summary
 
-**Finding:** Qhull **does reliably detect unbounded polytopes** through its halfspace intersection algorithm, making the custom `check_bounded()` function in `datasets/src/validation.rs` **likely redundant**.
+**Finding:** Qhull detected unboundedness in 2 test cases, but **insufficient evidence** to trust it for correctness-critical detection.
 
-**Recommendation:** Remove `check_bounded()` and rely on qhull's error handling, OR promote to `debug_assert!` as a development-time safety check.
+**Recommendation:** **Keep `check_bounded()` as-is** — explicit verification with proven correctness.
 
-**Confidence:** High (based on empirical testing + mathematical analysis)
+**Rationale:**
+- Performance cost is acceptable (O(F³) not measured as bottleneck)
+- Correctness matters: custom check is mathematically proven, qhull behavior is undocumented
+- 2 toy tests ≠ "reliable detection" for thesis-critical validation
+
+**Confidence:** High that we should keep the check (based on correctness-first principle)
 
 ---
 
