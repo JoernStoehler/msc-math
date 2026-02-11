@@ -13,5 +13,5 @@ pub mod test_utils;
 mod lib_test;
 
 #[cfg(test)]
-#[path = "qhull_unbounded_investigation.rs"]
-mod qhull_unbounded_investigation;
+#[path = "qhull_boundedness_test.rs"]
+mod qhull_boundedness_test;

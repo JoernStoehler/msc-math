@@ -1,4 +1,5 @@
 use super::*;
+use super::deprecated::volume_divergence;
 use crate::polytope::Polytope4D;
 use crate::test_utils::{crosspolytope, scaled_hypercube, simplex};
 use nalgebra::Vector4;
@@ -213,20 +214,6 @@ fn triangulated_matches_divergence() {
     }
 }
 
-#[test]
-fn cross_check_wrapper_agrees() {
-    // Test that volume_with_cross_check doesn't panic on known polytopes
-    let polytopes = vec![
-        scaled_hypercube(1.0),
-        scaled_hypercube(0.5),
-        scaled_hypercube(2.0),
-    ];
-
-    for p in polytopes {
-        let vol = volume_with_cross_check(&p);
-        assert!(vol > 0.0, "volume should be positive");
-    }
-}
 
 #[test]
 fn comprehensive_volume_cross_check() {
