@@ -245,6 +245,8 @@ These are true about the repo right now and must remain true:
 
 - `cargo test` passes from `crates/` with zero failures
 
+**Long-term periodic checks:** See [`MONITORING.md`](MONITORING.md) for validation tasks that run weekly or on-demand (e.g., algorithm agreement rates, issue board health). These complement repo invariants with checks that don't need to run every session.
+
 ## Environment
 
 - Sessions run in a devcontainer with the repo at `/workspaces/msc-math` and worktrees at `/workspaces/worktrees/<name>`.
