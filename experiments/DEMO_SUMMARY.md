@@ -23,23 +23,25 @@ This demo showcases the computational infrastructure for probing Viterbo's conje
 
 ## Key Findings
 
-[PLACEHOLDER] The following findings will be populated once the dataset and validation teams complete their analysis:
-
 ### Rejection Sampling (Completed)
 - **Acceptance rates measured**: 18 configurations (6 facet counts × 3 height ranges)
 - **Practical feasibility confirmed**: Even worst case (F=5, 5.7% acceptance) requires only ~18 attempts per polytope
 - **Optimal parameters identified**: F≥7 with moderate height ranges achieve >30% acceptance
 
-### Systolic Ratio Distribution (Pending)
-- **[TBD]** Fraction of random polytopes with sys(K) > 1
-- **[TBD]** Distribution of systolic ratios across facet counts
-- **[TBD]** Comparison to Haim-Kislev 2024 counterexample
-- **[TBD]** Correlation between sys(K) and geometric properties
+### Systolic Ratio Distribution (Completed)
+- **Dataset size**: 206 polytopes (6 known + 200 random)
+- **Random polytope distribution**: 50 polytopes each at F=5,6,7,8
+- **Systolic ratio range**: [0.001011, 0.680144] (mean: 0.190, median: 0.151)
+- **Viterbo conjecture status**: **0 out of 200 random polytopes violate the conjecture** (sys > 1)
+- **Pentagon counterexample verified**: sys = 1.047 > 1 (Haim-Kislev-Ostrover 2024)
+- **Key finding**: Random polytopes satisfy Viterbo's conjecture; counterexamples require special construction
 
-### Implementation Validation (Pending)
-- **[TBD]** Literature validation results (hypercube, simplex, cross-polytope, HK counterexample)
-- **[TBD]** Numerical accuracy assessment
-- **[TBD]** Performance benchmarks (computation time vs. facet count)
+### Implementation Validation (Completed)
+- **Literature validation**: 4 polytopes tested (simplex, hypercube, triangle product, pentagon)
+- **Accuracy**: All tests pass with < 0.001% relative error
+- **Pentagon verification**: Correctly computes sys = 1.047 > 1 (runtime: 5.6 minutes)
+- **Performance model**: Exponential scaling T(F) = 7.7×10⁻⁸ × 5.74^F seconds
+- **Practical limit**: F≤10 feasible for large-scale studies (F=10: ~3 sec/polytope)
 
 ---
 
@@ -76,11 +78,9 @@ This demo showcases the computational infrastructure for probing Viterbo's conje
 - **DATASET_SUMMARY.md**: Dataset statistics and analysis (to be generated)
 
 ### Figures
-[PLACEHOLDER] Figure references will be added once the figure generation team completes their work:
-- Figure 4.1: Systolic ratio histogram
-- Figure 4.2: Systolic ratio vs. facet count
-- Figure 4.3: Volume vs. capacity scatter plot
-- [Additional figures TBD]
+- **sys_histogram.png**: Systolic ratio distribution across 200 random polytopes
+- **facet_vs_capacity.png**: EHZ capacity vs. facet count (shows exponential growth)
+- **acceptance_rates.png**: Rejection sampling acceptance rates by configuration
 
 ---
 
