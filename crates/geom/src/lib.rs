@@ -12,3 +12,7 @@ pub mod test_utils;
 
 #[cfg(test)]
 mod lib_test;
+
+#[cfg(test)]
+#[path = "qhull_unbounded_investigation.rs"]
+mod qhull_unbounded_investigation;
