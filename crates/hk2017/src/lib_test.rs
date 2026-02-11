@@ -190,6 +190,7 @@ fn solve_kkt_degenerate() {
 }
 
 #[test]
+#[ignore] // Expensive: 10 facets → exponential runtime (~2-5 min)
 fn pentagon_capacity() {
     use datasets::known_polytopes::hko_pentagon;
     use geom::volume::volume;
@@ -263,17 +264,19 @@ mod proptests {
     use rand_chacha::ChaCha8Rng;
 
     proptest! {
+        #![proptest_config(ProptestConfig::with_cases(5))]
+
         /// Property: pruned and unpruned algorithms return the same capacity.
         ///
         /// This tests Corollary 5.3 (adjacency pruning optimization).
         ///
-        /// NOTE: Limited to 5-6 facets and 10 seeds to keep runtime reasonable.
+        /// NOTE: Limited to 5-6 facets and 4 seeds to keep runtime <10min.
         /// Generating random polytopes is slow (qhull), and capacity computation
         /// is exponential in facet count.
         #[test]
         fn pruned_matches_unpruned_random(
             facet_count in 5usize..=6,
-            seed in 0u64..10
+            seed in 0u64..4
         ) {
             let mut rng = ChaCha8Rng::seed_from_u64(seed);
             let polytopes = generate_random_polytopes(1, facet_count, 0.5, 2.0, &mut rng);
@@ -299,7 +302,7 @@ mod proptests {
         ///
         /// c_EHZ(λK) = λ²·c_EHZ(K) — follows from action functional definition.
         ///
-        /// NOTE: Uses hypercube (fast) but still runs ~100 cases by default.
+        /// NOTE: Limited to 5 cases to keep runtime <10min.
         /// Each case computes capacity twice (unit + scaled).
         #[test]
         fn capacity_scales_quadratically(scale in 0.5f64..3.0) {

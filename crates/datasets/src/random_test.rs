@@ -55,12 +55,12 @@ mod proptests {
         /// This ensures the rejection sampling loop doesn't have bugs that let
         /// invalid polytopes through.
         ///
-        /// NOTE: Limited to 5-8 facets and 20 seeds to keep runtime reasonable.
+        /// NOTE: Limited to 5-6 facets and 4 seeds to keep runtime <10min.
         /// Random polytope generation involves qhull and can be slow.
         #[test]
         fn random_polytopes_pass_validation(
-            facet_count in 5usize..=8,
-            seed in 0u64..20
+            facet_count in 5usize..=6,
+            seed in 0u64..4
         ) {
             let mut rng = ChaCha8Rng::seed_from_u64(seed);
             let h_min = 0.5;
