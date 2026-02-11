@@ -6,6 +6,11 @@ use crate::polytope::Polytope4D;
 use nalgebra::Vector4;
 use std::f64::consts::PI;
 
+#[cfg(test)]
+use rand::Rng;
+#[cfg(test)]
+use rand_distr::StandardNormal;
+
 /// Standard 4-simplex: conv{origin-offset vertices}.
 ///
 /// Translated so origin is at centroid (0.2, 0.2, 0.2, 0.2).
@@ -117,4 +122,41 @@ pub fn triangle_product() -> Polytope4D {
     }
 
     Polytope4D::new(normals, heights).expect("triangle product")
+}
+
+/// Generate a random bounded polytope with specified number of facets.
+///
+/// Normals are uniformly distributed on S³ (via sampling from 4D standard normal
+/// and normalizing). Heights are random in [0.5, 2.0] to ensure 0 ∈ int(K).
+///
+/// Used for cross-checking volume algorithms and other empirical validation.
+///
+/// # Arguments
+/// * `facet_count` - Number of facets (must be >= 5 for bounded polytope in 4D)
+/// * `rng` - Random number generator
+///
+/// # Panics
+/// Panics if Polytope4D::new() fails (unbounded, degenerate, etc.)
+#[cfg(test)]
+pub fn random_bounded_polytope(facet_count: usize, rng: &mut impl Rng) -> Polytope4D {
+    // Generate random unit vectors on S³
+    let normals: Vec<Vector4<f64>> = (0..facet_count)
+        .map(|_| {
+            // Sample from 4D standard normal, normalize
+            let v = Vector4::new(
+                rng.sample(StandardNormal),
+                rng.sample(StandardNormal),
+                rng.sample(StandardNormal),
+                rng.sample(StandardNormal),
+            );
+            v.normalize()
+        })
+        .collect();
+
+    // Random heights ensuring 0 ∈ int(K)
+    let heights: Vec<f64> = (0..facet_count)
+        .map(|_| rng.gen_range(0.5..2.0))
+        .collect();
+
+    Polytope4D::new(normals, heights).expect("random polytope should be valid")
 }
