@@ -306,20 +306,20 @@ Where domains overlap, algorithms must agree on the computed capacity.
 
 ### Parallelization strategy
 
-**Do NOT parallelize individual polytope computations** (the three algorithms above).
+**Do NOT parallelize individual polytope capacity computations** (the three algorithms above).
 
-The algorithms are already complex and highly optimized. Parallelizing within a single polytope's computation adds synchronization overhead, debugging complexity, and risk of subtle bugs, for minimal gain given the exponential runtime is dominated by combinatorial search, not parallelizable loops.
+We keep the three algorithms single-threaded. This simplifies correctness verification, testing, and debugging. Parallelizing within a single polytope adds complexity without corresponding benefit.
 
 **DO parallelize at the dataset generation level** (embarrassingly parallel).
 
-When generating large datasets (e.g., 100+ random polytopes), spawn independent worker threads to compute multiple polytopes in parallel. Each worker:
+When generating large datasets (100+ random polytopes), spawn independent worker threads. Each worker:
 - Generates an independent random polytope
 - Runs one of the three capacity algorithms on it
 - Writes result to output file
 
-This requires no synchronization, no shared state (except atomic counters), and scales linearly. Use `rayon` or `std::thread` with a queue for this pattern.
+This is truly embarrassingly parallel: no synchronization, no shared state except atomic counters. Use `rayon` or `std::thread` with a work queue.
 
-**Example:** Generating 200 random polytopes with 8 cores → ~25x speedup (single-threaded: 2–4 hours → multi-threaded: 5–10 minutes).
+**Example:** Generating 200 random polytopes with 8 cores → ~25x speedup.
 
 <!-- Full conventions: crates/CLAUDE.md -->
 
