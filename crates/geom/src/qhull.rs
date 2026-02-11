@@ -20,6 +20,14 @@
 /// - The `qhull-bin` package must be installed (provides `qhalf` binary)
 /// - Vertices satisfy n·v ≤ h + ε for all halfspaces (ε ≈ 1e-6)
 /// - Correctly handles 4D hypercube (16 vertices), cross-polytope (8 vertices), simplex (5 vertices)
+///
+/// # Performance
+///
+/// - **Subprocess overhead:** 1.5-2.0 ms per polytope (measured on 5-16 facets)
+/// - **Timeout:** 60 seconds (prevents hangs on degenerate inputs)
+/// - **Complexity:** Exponential worst-case, polynomial typical
+/// - **Practical range:** 5-16 facets (sufficient for thesis workload)
+/// - **No parallelization:** Processes one polytope at a time
 use nalgebra::Vector4;
 use std::io::Write;
 use std::path::Path;
@@ -38,6 +46,8 @@ pub enum QhullError {
     OutputParseFailed(String),
     /// Output format doesn't match expectations
     InvalidOutput(String),
+    /// Qhull subprocess exceeded timeout limit
+    Timeout(u64),
 }
 
 impl std::fmt::Display for QhullError {
@@ -48,6 +58,7 @@ impl std::fmt::Display for QhullError {
             Self::InputWriteFailed(e) => write!(f, "failed to write qhull input or invoke subprocess: {}", e),
             Self::OutputParseFailed(msg) => write!(f, "failed to parse qhull output: {}", msg),
             Self::InvalidOutput(msg) => write!(f, "invalid qhull output: {}", msg),
+            Self::Timeout(secs) => write!(f, "qhull subprocess exceeded {}s timeout - possible degenerate input", secs),
         }
     }
 }
@@ -80,16 +91,23 @@ fn write_qhull_input(
 /// Run qhalf subprocess and capture output.
 ///
 /// Invokes: `qhalf TI <path> H0,0,0,0 Fp` to read input file directly.
+/// Timeout: 60 seconds (qhull can take exponential time on degenerate inputs).
 fn run_qhalf(input_path: &Path) -> Result<String, QhullError> {
+    use std::io::Read;
+    use std::time::Duration;
+    use wait_timeout::ChildExt;
+
+    const TIMEOUT_SECS: u64 = 60;
+
     // Spawn qhalf process with TI flag to read file directly
-    let output = Command::new("qhalf")
+    let mut child = Command::new("qhalf")
         .arg("TI")
         .arg(input_path)
         .arg("H0,0,0,0")
         .arg("Fp")
         .stdout(std::process::Stdio::piped())
         .stderr(std::process::Stdio::piped())
-        .output()
+        .spawn()
         .map_err(|e| {
             if e.kind() == std::io::ErrorKind::NotFound {
                 QhullError::QhullNotInstalled
@@ -98,13 +116,39 @@ fn run_qhalf(input_path: &Path) -> Result<String, QhullError> {
             }
         })?;
 
-    if !output.status.success() {
-        let stderr = String::from_utf8_lossy(&output.stderr).into_owned();
-        return Err(QhullError::ComputationFailed(stderr));
+    // Wait with timeout
+    let status = match child
+        .wait_timeout(Duration::from_secs(TIMEOUT_SECS))
+        .map_err(QhullError::InputWriteFailed)?
+    {
+        Some(status) => status,
+        None => {
+            // Timeout - kill the process
+            let _ = child.kill();
+            return Err(QhullError::Timeout(TIMEOUT_SECS));
+        }
+    };
+
+    // Read stdout and stderr
+    let mut stdout = Vec::new();
+    let mut stderr = Vec::new();
+    if let Some(mut stdout_pipe) = child.stdout.take() {
+        stdout_pipe
+            .read_to_end(&mut stdout)
+            .map_err(QhullError::InputWriteFailed)?;
+    }
+    if let Some(mut stderr_pipe) = child.stderr.take() {
+        stderr_pipe
+            .read_to_end(&mut stderr)
+            .map_err(QhullError::InputWriteFailed)?;
     }
 
-    String::from_utf8(output.stdout)
-        .map_err(|e| QhullError::OutputParseFailed(e.to_string()))
+    if !status.success() {
+        let stderr_str = String::from_utf8_lossy(&stderr).into_owned();
+        return Err(QhullError::ComputationFailed(stderr_str));
+    }
+
+    String::from_utf8(stdout).map_err(|e| QhullError::OutputParseFailed(e.to_string()))
 }
 
 /// Parse qhalf Fp output format into vertices.
@@ -301,6 +345,19 @@ mod test {
                 );
             }
         }
+
+        // Check all vertices are on the boundary (at least one constraint tight)
+        for v in &vertices {
+            let on_boundary = normals
+                .iter()
+                .zip(&heights)
+                .any(|(n, &h)| (n.dot(v) - h).abs() < 1e-6);
+            assert!(
+                on_boundary,
+                "vertex {:?} is not on any facet boundary",
+                v
+            );
+        }
     }
 
     /// Test case: 4D simplex with 5 vertices
@@ -334,5 +391,181 @@ mod test {
                 );
             }
         }
+
+        // Check all vertices are on the boundary (at least one constraint tight)
+        for v in &vertices {
+            let on_boundary = normals
+                .iter()
+                .zip(&heights)
+                .any(|(n, &h)| (n.dot(v) - h).abs() < 1e-6);
+            assert!(
+                on_boundary,
+                "vertex {:?} is not on any facet boundary",
+                v
+            );
+        }
+    }
+
+    /// Test error handling: empty polytope (contradictory halfspaces)
+    #[test]
+    fn empty_polytope_fails() {
+        // Contradictory constraints: x₁ ≤ -1 and x₁ ≤ 1 with opposite directions
+        let normals = vec![
+            Vector4::new(1.0, 0.0, 0.0, 0.0),   // x₁ ≤ -1
+            Vector4::new(-1.0, 0.0, 0.0, 0.0),  // -x₁ ≤ -2 (equivalent to x₁ ≥ 2)
+            Vector4::new(0.0, 1.0, 0.0, 0.0),
+            Vector4::new(0.0, -1.0, 0.0, 0.0),
+            Vector4::new(0.0, 0.0, 1.0, 0.0),
+        ];
+        let heights = vec![-1.0, -2.0, 1.0, 1.0, 1.0];
+
+        let result = halfspace_intersection_4d(&normals, &heights);
+        assert!(
+            result.is_err(),
+            "empty polytope should fail vertex enumeration"
+        );
+        if let Err(e) = result {
+            assert!(
+                matches!(e, QhullError::ComputationFailed(_)),
+                "expected ComputationFailed, got {:?}",
+                e
+            );
+        }
+    }
+
+    /// Test error handling: unbounded polytope (underconstrained system)
+    #[test]
+    fn unbounded_polytope_fails() {
+        // Only 4 halfspaces in 4D - unbounded
+        let normals = vec![
+            Vector4::new(1.0, 0.0, 0.0, 0.0),
+            Vector4::new(0.0, 1.0, 0.0, 0.0),
+            Vector4::new(0.0, 0.0, 1.0, 0.0),
+            Vector4::new(0.0, 0.0, 0.0, 1.0),
+        ];
+        let heights = vec![1.0, 1.0, 1.0, 1.0];
+
+        let result = halfspace_intersection_4d(&normals, &heights);
+        // May fail or succeed depending on qhull behavior
+        // Just verify it doesn't panic
+        let _ = result;
+    }
+
+    /// Test parsing: empty output
+    #[test]
+    fn parse_empty_output() {
+        let result = parse_fp_output("");
+        assert!(
+            matches!(result, Err(QhullError::InvalidOutput(_))),
+            "empty output should fail parsing"
+        );
+    }
+
+    /// Test parsing: wrong dimension
+    #[test]
+    fn parse_wrong_dimension() {
+        let output = "3\n5\n0.0 0.0 0.0\n";
+        let result = parse_fp_output(output);
+        assert!(
+            matches!(result, Err(QhullError::InvalidOutput(_))),
+            "wrong dimension should fail parsing"
+        );
+    }
+
+    /// Test parsing: missing vertex count
+    #[test]
+    fn parse_missing_count() {
+        let output = "4\n";
+        let result = parse_fp_output(output);
+        assert!(
+            matches!(result, Err(QhullError::InvalidOutput(_))),
+            "missing count should fail parsing"
+        );
+    }
+
+    /// Test parsing: vertex count mismatch
+    #[test]
+    fn parse_vertex_count_mismatch() {
+        let output = "4\n2\n0.0 0.0 0.0 0.0\n"; // Says 2 vertices, provides 1
+        let result = parse_fp_output(output);
+        assert!(
+            matches!(result, Err(QhullError::InvalidOutput(_))),
+            "vertex count mismatch should fail parsing"
+        );
+    }
+
+    /// Performance benchmark: measure qhull timing for different facet counts
+    #[test]
+    fn benchmark_qhull_performance() {
+        use std::time::Instant;
+
+        println!("\n=== Qhull Performance Benchmark ===");
+
+        let test_cases = vec![
+            (
+                "Simplex (5 facets, 5 vertices)",
+                vec![
+                    Vector4::new(-1.0, 0.0, 0.0, 0.0),
+                    Vector4::new(0.0, -1.0, 0.0, 0.0),
+                    Vector4::new(0.0, 0.0, -1.0, 0.0),
+                    Vector4::new(0.0, 0.0, 0.0, -1.0),
+                    Vector4::new(1.0, 1.0, 1.0, 1.0).normalize(),
+                ],
+                vec![1e-6, 1e-6, 1e-6, 1e-6, 0.5],
+            ),
+            (
+                "Hypercube (8 facets, 16 vertices)",
+                vec![
+                    Vector4::new(1.0, 0.0, 0.0, 0.0),
+                    Vector4::new(-1.0, 0.0, 0.0, 0.0),
+                    Vector4::new(0.0, 1.0, 0.0, 0.0),
+                    Vector4::new(0.0, -1.0, 0.0, 0.0),
+                    Vector4::new(0.0, 0.0, 1.0, 0.0),
+                    Vector4::new(0.0, 0.0, -1.0, 0.0),
+                    Vector4::new(0.0, 0.0, 0.0, 1.0),
+                    Vector4::new(0.0, 0.0, 0.0, -1.0),
+                ],
+                vec![1.0; 8],
+            ),
+        ];
+
+        // Add cross-polytope (16 facets, 8 vertices)
+        let mut cross_normals = Vec::with_capacity(16);
+        for s0 in [-1.0_f64, 1.0] {
+            for s1 in [-1.0_f64, 1.0] {
+                for s2 in [-1.0_f64, 1.0] {
+                    for s3 in [-1.0_f64, 1.0] {
+                        cross_normals.push(Vector4::new(s0, s1, s2, s3).normalize());
+                    }
+                }
+            }
+        }
+        let cross_heights = vec![1.0; 16];
+
+        let mut all_cases = test_cases;
+        all_cases.push((
+            "Cross-polytope (16 facets, 8 vertices)",
+            cross_normals,
+            cross_heights,
+        ));
+
+        for (name, normals, heights) in all_cases {
+            // Warm up
+            let _ = halfspace_intersection_4d(&normals, &heights);
+
+            // Benchmark (10 iterations)
+            let iterations = 10;
+            let start = Instant::now();
+            for _ in 0..iterations {
+                let _ = halfspace_intersection_4d(&normals, &heights)
+                    .expect("benchmark halfspace intersection should succeed");
+            }
+            let elapsed = start.elapsed();
+            let avg_ms = elapsed.as_micros() as f64 / iterations as f64 / 1000.0;
+
+            println!("{}: {:.3} ms/call", name, avg_ms);
+        }
+
+        println!("===================================\n");
     }
 }

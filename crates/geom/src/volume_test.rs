@@ -154,3 +154,47 @@ fn crosspolytope_volume() {
         "crosspolytope volume: got {vol}, expected {expected}"
     );
 }
+
+#[cfg(test)]
+mod proptests {
+    use super::*;
+    use proptest::prelude::*;
+
+    proptest! {
+        /// Property test: volume scaling property vol(λK) = λ⁴·vol(K)
+        #[test]
+        fn volume_scales_with_fourth_power(scale in 0.1f64..10.0) {
+            // Create unit hypercube [-1,1]^4
+            let normals = vec![
+                Vector4::new(1.0, 0.0, 0.0, 0.0),
+                Vector4::new(-1.0, 0.0, 0.0, 0.0),
+                Vector4::new(0.0, 1.0, 0.0, 0.0),
+                Vector4::new(0.0, -1.0, 0.0, 0.0),
+                Vector4::new(0.0, 0.0, 1.0, 0.0),
+                Vector4::new(0.0, 0.0, -1.0, 0.0),
+                Vector4::new(0.0, 0.0, 0.0, 1.0),
+                Vector4::new(0.0, 0.0, 0.0, -1.0),
+            ];
+            let heights_unit = vec![1.0; 8];
+            let heights_scaled = vec![scale; 8];
+
+            let unit_cube = Polytope4D::new(normals.clone(), heights_unit)
+                .expect("unit hypercube construction");
+            let scaled_cube = Polytope4D::new(normals, heights_scaled)
+                .expect("scaled hypercube construction");
+
+            let vol_unit = volume(&unit_cube);
+            let vol_scaled = volume(&scaled_cube);
+
+            // Volume should scale as λ⁴
+            let expected_scaled = vol_unit * scale.powi(4);
+            let relative_error = ((vol_scaled - expected_scaled) / expected_scaled).abs();
+
+            prop_assert!(
+                relative_error < 1e-4,
+                "volume scaling failed: scale={}, vol_unit={}, vol_scaled={}, expected={}, relative_error={}",
+                scale, vol_unit, vol_scaled, expected_scaled, relative_error
+            );
+        }
+    }
+}
