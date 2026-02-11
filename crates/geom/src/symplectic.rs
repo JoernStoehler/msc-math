@@ -21,9 +21,12 @@ pub fn j4() -> Matrix4<f64> {
 /// Standard symplectic form: ω₀(u, v) = ⟨J₀ u, v⟩.
 ///
 /// In coordinates (q1, q2, p1, p2):
-///   ω₀(u, v) = u_p1 v_q1 - u_q1 v_p1 + u_p2 v_q2 - u_q2 v_p2
+///   ω₀(u, v) = u_q1 v_p1 - u_p1 v_q1 + u_q2 v_p2 - u_p2 v_q2
+///
+/// This is the direct formula, giving 1:1 correspondence with the mathematical definition.
+/// Equivalently: ω₀(u, v) = ⟨J₀ u, v⟩ where J₀ = [[0, -I₂], [I₂, 0]].
 pub fn omega0(u: &Vector4<f64>, v: &Vector4<f64>) -> f64 {
-    (j4() * u).dot(v)
+    u[0] * v[2] - u[2] * v[0] + u[1] * v[3] - u[3] * v[1]
 }
 
 #[cfg(test)]
