@@ -104,6 +104,7 @@ version = "0.1.0"
 dependencies = [
  "nalgebra",
  "proptest",
+ "rand 0.8.5",
  "serde",
  "tempfile",
  "wait-timeout",

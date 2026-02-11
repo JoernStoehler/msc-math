@@ -11,3 +11,4 @@ wait-timeout = "0.2"
 
 [dev-dependencies]
 proptest = { workspace = true }
+rand = { workspace = true }
