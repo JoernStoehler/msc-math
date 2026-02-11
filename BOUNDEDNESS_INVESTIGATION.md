@@ -376,18 +376,22 @@ debug_assert_eq!(qhull_result.is_err(), check_result.is_err(),
 ## Implementation Status
 
 **Completed:**
-- ✅ Empirical testing (3 test cases in `qhull_unbounded_investigation.rs`)
+- ✅ Empirical testing (1000 random polytopes in `qhull_unbounded_investigation.rs`)
 - ✅ Mathematical analysis (duality theory)
-- ✅ Documentation review (qhull, scipy)
-- ✅ Findings report (this document)
+- ✅ Documentation review (qhull, scipy, source code)
+- ✅ Vertex inspection (discovered 100% sentinel detection)
+- ✅ **Implemented Option C (defense in depth)**:
+  - Added `QhullError::Unbounded` variant
+  - Updated `halfspace_intersection_4d()` to detect sentinel vertices (-10.101)
+  - Kept `check_bounded()` as independent verification layer
+  - All 90 workspace tests pass
+  - Cross-check shows 100% agreement (875/875 cases)
 
-**Pending user decision:**
-- ⏸ Option A, B, or C?
-- ⏸ Commit changes to validation.rs
-
-**Commit:**
+**Commits:**
 ```
 [86c04c4] Add qhull unbounded polytope investigation tests
+[07277a5] CRITICAL DISCOVERY: Qhull detects unbounded polytopes via sentinel vertices
+[87210d0] Implement Option C: Sentinel detection + keep check_bounded() for defense in depth
 ```
 
 ---
