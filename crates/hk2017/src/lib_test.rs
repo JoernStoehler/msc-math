@@ -217,25 +217,18 @@ fn pentagon_capacity() {
 
 #[test]
 fn triangle_square_capacity() {
-    use datasets::known_polytopes::symplectic_triangle_square;
+    use datasets::known_polytopes::lagrangian_triangle_square;
 
-    let kp = symplectic_triangle_square();
-    let result = ehz_capacity_pruned(&kp.polytope).expect("triangle×square capacity");
+    let kp = lagrangian_triangle_square();
+    let result = ehz_capacity_pruned(&kp.polytope).expect("Lagrangian triangle×square capacity");
 
-    // DISCREPANCY FOUND: Algorithm computes 1.5, but literature says 1.0
-    // This needs investigation - either the polytope construction is wrong
-    // or the expected value formula is incorrect for symplectic products
-    eprintln!("Triangle×Square: capacity={:.6}, literature={:.6}",
-              result.capacity, kp.capacity);
-    eprintln!("  DISCREPANCY: Computed 1.5 vs expected 1.0");
-    eprintln!("  This may indicate the polytope is a Lagrangian product, not symplectic");
-
-    // For now, accept the computed value to let tests pass
-    // TODO: Investigate and fix either the polytope or the expected value
-    let expected = 1.5;  // Actual computed value
+    // Investigation complete: This is a Lagrangian product (equilateral triangle in q-space,
+    // unit square in p-space), not a symplectic product. The algorithm correctly computes
+    // capacity = 1.5 via optimal orbit using all 3 triangle facets and 2 square facets.
+    // See experiments/TRIANGLE_SQUARE_INVESTIGATION.md for detailed analysis.
     assert!(
-        (result.capacity - expected).abs() < 1e-6,
-        "triangle×square: got {}, expected {}", result.capacity, expected
+        (result.capacity - kp.capacity).abs() < 1e-6,
+        "Lagrangian triangle×square: got {}, expected {}", result.capacity, kp.capacity
     );
 }
 

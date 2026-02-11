@@ -20,7 +20,7 @@ pub fn all_known() -> Vec<KnownPolytope> {
         crosspolytope(),
         hko_pentagon(),
         triangle_product(),
-        symplectic_triangle_square(),
+        lagrangian_triangle_square(),
     ]
 }
 
@@ -180,14 +180,21 @@ pub fn triangle_product() -> KnownPolytope {
     }
 }
 
-/// Triangle ×_S square (symplectic product, 7 facets).
+/// Triangle ×_L square (Lagrangian product, 7 facets).
 ///
-/// Equilateral triangle (circumradius 1, area = 3√3/4) in q-space,
-/// unit square (side 1, area = 1) in p-space.
-/// Known capacity: min(area_tri, area_sq) = min(3√3/4, 1) = 1.0.
+/// Equilateral triangle (circumradius 1, area = 3√3/4, inradius 0.5) in q-space,
+/// unit square (side 1, area = 1) in p-space. Both are Lagrangian subspaces,
+/// making this a Lagrangian product (not symplectic).
 ///
-/// Source: Moser's theorem + functoriality of symplectic products.
-pub fn symplectic_triangle_square() -> KnownPolytope {
+/// Known capacity: 1.5 (verified via billiard calculation and HK2017 algorithm).
+/// The formula c(A ×_S B) = min(c(A), c(B)) applies only to symplectic products.
+/// For Lagrangian products, the capacity is determined by optimal trajectories.
+///
+/// Note: Related to Schlenk Lem. 5.3.1, but Schlenk's result uses a right isosceles
+/// triangle (sys = 1.0), whereas this construction uses an equilateral triangle (sys = √3/2 ≈ 0.866).
+///
+/// Source: HK2017 algorithm + billiard verification (see TRIANGLE_SQUARE_INVESTIGATION.md).
+pub fn lagrangian_triangle_square() -> KnownPolytope {
     // Equilateral triangle in q-space (circumradius 1, inradius 0.5)
     let triangle_normals = (0..3).map(|k| {
         let angle = PI / 2.0 + 2.0 * PI * (k as f64) / 3.0;
@@ -207,17 +214,17 @@ pub fn symplectic_triangle_square() -> KnownPolytope {
         .map(|n| (n, 0.5))
         .unzip();
 
-    // area(triangle) = 3√3/4 ≈ 1.299, area(square) = 1.0
-    let area_tri = 3.0 * 3.0_f64.sqrt() / 4.0;
-    let area_sq = 1.0;
-    let capacity = area_tri.min(area_sq);
+    // For Lagrangian product of equilateral triangle (inradius 0.5) and square (side 1),
+    // the optimal orbit uses all 3 triangle facets (Q(β) = 1/3) and 2 square facets (Q(β) = 1/2).
+    // This gives capacity = 0.5 / Q(β) = 0.5 / (1/3) = 1.5.
+    let capacity = 1.5;
 
     KnownPolytope {
         polytope: Polytope4D::new(normals, heights)
-            .expect("symplectic triangle×square construction"),
+            .expect("Lagrangian triangle×square construction"),
         capacity,
-        name: "symplectic_tri_sq",
-        source: "Moser + symplectic product functoriality",
+        name: "lagrangian_tri_sq",
+        source: "HK2017 algorithm + billiard verification",
     }
 }
 

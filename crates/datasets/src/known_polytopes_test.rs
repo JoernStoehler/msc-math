@@ -40,8 +40,8 @@ fn triangle_product_has_6_facets() {
 }
 
 #[test]
-fn symplectic_tri_sq_has_7_facets() {
-    assert_eq!(symplectic_triangle_square().polytope.facet_count(), 7);
+fn lagrangian_tri_sq_has_7_facets() {
+    assert_eq!(lagrangian_triangle_square().polytope.facet_count(), 7);
 }
 
 #[test]
