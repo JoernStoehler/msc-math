@@ -45,6 +45,11 @@ fn lagrangian_tri_sq_has_7_facets() {
 }
 
 #[test]
+fn symplectic_tri_sq_has_7_facets() {
+    assert_eq!(symplectic_triangle_square().polytope.facet_count(), 7);
+}
+
+#[test]
 fn all_known_capacities_positive() {
     for kp in all_known() {
         assert!(kp.capacity > 0.0, "{}: capacity should be > 0", kp.name);

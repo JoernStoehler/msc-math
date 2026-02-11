@@ -233,6 +233,26 @@ fn triangle_square_capacity() {
 }
 
 #[test]
+fn symplectic_triangle_square_capacity() {
+    use datasets::known_polytopes::symplectic_triangle_square;
+
+    let kp = symplectic_triangle_square();
+    let result = ehz_capacity_pruned(&kp.polytope).expect("symplectic triangle×square capacity");
+
+    // Symplectic product: triangle in (q₁, p₁) plane ×_S square in (q₂, p₂) plane.
+    // Moser's theorem: c(A ×_S B) = min(c(A), c(B))
+    // Expected: min(3√3/4, 1.0) = min(1.299..., 1.0) = 1.0
+    //
+    // This test verifies the algorithm correctly computes the symplectic product formula
+    // and distinguishes symplectic from Lagrangian products.
+    assert!(
+        (result.capacity - kp.capacity).abs() < 1e-6,
+        "symplectic triangle×square: got {}, expected {} (min formula)",
+        result.capacity, kp.capacity
+    );
+}
+
+#[test]
 #[ignore] // Too expensive: 16 facets → exponential runtime (~hours)
 fn crosspolytope_capacity() {
     use datasets::known_polytopes::crosspolytope;

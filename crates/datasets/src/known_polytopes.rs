@@ -21,6 +21,7 @@ pub fn all_known() -> Vec<KnownPolytope> {
         hko_pentagon(),
         triangle_product(),
         lagrangian_triangle_square(),
+        symplectic_triangle_square(),
     ]
 }
 
@@ -225,6 +226,54 @@ pub fn lagrangian_triangle_square() -> KnownPolytope {
         capacity,
         name: "lagrangian_tri_sq",
         source: "HK2017 algorithm + billiard verification",
+    }
+}
+
+/// Triangle ×_S square (true symplectic product, 7 facets).
+///
+/// Equilateral triangle (circumradius 1, area = 3√3/4) in the (q₁, p₁) plane,
+/// unit square (side 1, area = 1) in the (q₂, p₂) plane. Both planes are
+/// symplectic and symplectically orthogonal, making this a true symplectic product.
+///
+/// Known capacity: min(3√3/4, 1) = 1.0 (formula for symplectic products).
+/// This verifies Moser's theorem: c(A ×_S B) = min(c(A), c(B)).
+///
+/// Source: Moser's theorem + functoriality of symplectic products.
+/// Computed via investigation in TRIANGLE_SQUARE_INVESTIGATION.md.
+pub fn symplectic_triangle_square() -> KnownPolytope {
+    // Equilateral triangle in (q₁, p₁) plane (circumradius 1, inradius 0.5)
+    // In 4D: normals = (cos θ, 0, sin θ, 0) for θ = π/2 + 2πk/3
+    let triangle_normals = (0..3).map(|k| {
+        let angle = PI / 2.0 + 2.0 * PI * (k as f64) / 3.0;
+        Vector4::new(angle.cos(), 0.0, angle.sin(), 0.0)
+    });
+
+    // Square [-0.5, 0.5]^2 in (q₂, p₂) plane (4 facets)
+    // In 4D: normals are (0, ±1, 0, 0) and (0, 0, 0, ±1)
+    let square_normals = [
+        Vector4::new(0.0, 1.0, 0.0, 0.0),
+        Vector4::new(0.0, -1.0, 0.0, 0.0),
+        Vector4::new(0.0, 0.0, 0.0, 1.0),
+        Vector4::new(0.0, 0.0, 0.0, -1.0),
+    ];
+
+    let (normals, heights): (Vec<_>, Vec<_>) = triangle_normals
+        .chain(square_normals)
+        .map(|n| (n, 0.5))
+        .unzip();
+
+    // For symplectic product: c(A ×_S B) = min(c(A), c(B))
+    // area(triangle) = 3√3/4 ≈ 1.299, area(square) = 1.0
+    let area_tri = 3.0 * 3.0_f64.sqrt() / 4.0;
+    let area_sq = 1.0;
+    let capacity = area_tri.min(area_sq);
+
+    KnownPolytope {
+        polytope: Polytope4D::new(normals, heights)
+            .expect("symplectic triangle×square construction"),
+        capacity,
+        name: "symplectic_tri_sq",
+        source: "Moser's theorem (symplectic product formula)",
     }
 }
 
