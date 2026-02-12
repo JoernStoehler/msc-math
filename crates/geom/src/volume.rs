@@ -33,6 +33,7 @@ pub fn volume(polytope: &Polytope4D) -> Result<f64, crate::QhullError> {
     crate::qhull::compute_volume_qconvex(vertices)
 }
 
+// Visible to crate for cross-validation tests in volume_test.rs.
 #[cfg(test)]
 pub(crate) mod deprecated {
     //! Reference implementations kept for cross-validation during development.
@@ -46,6 +47,8 @@ pub(crate) mod deprecated {
     use nalgebra::Vector4;
 
     const EPS_ON_FACET: f64 = 1e-8;
+    /// Threshold for detecting degenerate (collinear) polygon vertices.
+    const EPS_DEGENERATE: f64 = 1e-10;
 
     /// Compute volume via divergence theorem (legacy implementation).
     ///
@@ -133,6 +136,7 @@ pub(crate) mod deprecated {
     /// The vertices lie in a 2D affine subspace. We build a 2D basis from the
     /// vertex data itself (no normal needed) and sort by atan2.
     fn sort_polygon_vertices(vertices: &[Vector4<f64>]) -> Vec<Vector4<f64>> {
+        // A triangle (or fewer) has a unique convex polygon ordering; no sorting needed.
         if vertices.len() <= 3 {
             return vertices.to_vec();
         }
@@ -147,7 +151,7 @@ pub(crate) mod deprecated {
         let d2 = match vertices.iter().skip(1).find_map(|v| {
             let rel = *v - centroid;
             let proj = rel - d1 * rel.dot(&d1);
-            (proj.norm() > 1e-10).then(|| proj.normalize())
+            (proj.norm() > EPS_DEGENERATE).then(|| proj.normalize())
         }) {
             Some(d) => d,
             None => return vertices.to_vec(), // degenerate
