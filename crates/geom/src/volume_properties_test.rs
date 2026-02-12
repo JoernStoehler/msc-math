@@ -4,14 +4,12 @@
 //! - Positivity: vol(K) > 0 for all valid polytopes
 //! - Accuracy: Known polytopes have expected volumes
 
-use super::*;
-use crate::test_utils::{crosspolytope, hypercube, random_bounded_polytope, simplex};
+use crate::test_utils::{crosspolytope, hypercube, simplex};
 use crate::volume::volume;
 use crate::polytope::Polytope4D;
 use nalgebra::Vector4;
 use rand::{Rng, SeedableRng};
 use rand_chacha::ChaCha8Rng;
-use rand_distr::StandardNormal;
 
 #[test]
 fn volume_positive_on_known_polytopes() {
@@ -41,7 +39,6 @@ fn volume_positive_on_known_polytopes() {
 fn volume_positive_on_random_polytopes() {
     // Generate small random polytopes (recompute every run, ~10 sec)
     // Note: Some random configurations may be unbounded - we skip those
-    let mut rng = ChaCha8Rng::seed_from_u64(12345);
     let mut tested = 0;
 
     for facet_count in 5..=8 {

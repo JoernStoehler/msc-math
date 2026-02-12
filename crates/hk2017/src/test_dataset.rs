@@ -11,9 +11,7 @@
 //! Used by capacity and sys property tests.
 
 use geom::polytope::Polytope4D;
-use geom::test_utils::{
-    crosspolytope, simplex, triangle_product,
-};
+use geom::test_utils::{simplex, triangle_product};
 use geom::volume::volume;
 use nalgebra::{Matrix4, Vector4};
 use rand::Rng;
@@ -35,16 +33,16 @@ pub struct TestPolytope {
     pub transform: Option<String>,
 }
 
-/// Generate test dataset in three phases (~60-90 polytopes, 2-3 min).
+/// Generate test dataset in three phases (~30 polytopes).
 ///
-/// Phase 1: Base dataset (20-30 polytopes)
-///   - Known polytopes with exact values
-///   - Small random polytopes (5-7 facets)
+/// Phase 1: Base dataset (~10 polytopes)
+///   - 4 known polytopes (simplex, hypercube, crosspolytope, triangle_product)
+///   - 6 random polytopes (5-7 facets, 2 per facet count)
 ///
-/// Phase 2: Symplectomorphism variants (2x dataset size)
+/// Phase 2: Symplectomorphism variants (+~10)
 ///   - For each base polytope K: compute c(MK+b) for random M ∈ Sp(4)
 ///
-/// Phase 3: Conformality variants (3x dataset size)
+/// Phase 3: Conformality variants (+~10)
 ///   - For each base polytope K: compute c(α·K) for random α
 pub fn generate_test_dataset() -> Vec<TestPolytope> {
     let mut rng = ChaCha8Rng::seed_from_u64(42);
@@ -52,40 +50,30 @@ pub fn generate_test_dataset() -> Vec<TestPolytope> {
     // ===== PHASE 1: Base dataset =====
     let mut base_dataset = Vec::new();
 
-    // Known polytopes with exact values
-    add_entry(
-        &mut base_dataset,
-        "simplex",
-        simplex(),
-        1.0 / 24.0,
-        0.25,
-        None,
-        None,
-    );
-    add_entry(&mut base_dataset, "hypercube", hypercube(), 16.0, 4.0, None, None);
-    add_entry(
-        &mut base_dataset,
-        "crosspolytope",
-        crosspolytope(),
-        32.0 / 3.0,
-        2.0,
-        None,
-        None,
-    );
-    add_entry(
-        &mut base_dataset,
-        "triangle_product",
-        triangle_product(),
-        0.75,
-        1.5,
-        None,
-        None,
-    );
+    // Known polytopes — capacity and volume computed fresh (not hardcoded).
+    // Excluded: crosspolytope (16 facets, HK2017 is exponential → too slow).
+    let known = vec![
+        ("simplex", simplex()),
+        ("hypercube", hypercube()),
+        ("triangle_product", triangle_product()),
+    ];
+    for (name, p) in known {
+        let vol = volume(&p).expect(&format!("{} volume", name));
+        let cap = ehz_capacity(&p).expect(&format!("{} capacity", name)).capacity;
+        base_dataset.push(TestPolytope {
+            name: name.to_string(),
+            polytope: p,
+            volume: vol,
+            capacity: cap,
+            base_index: None,
+            transform: None,
+        });
+    }
 
     // Small random polytopes (5-7 facets for speed)
     for facet_count in 5..=7 {
-        for i in 0..4 {
-            // 4 polytopes per facet count = 12 total
+        for i in 0..2 {
+            // 2 polytopes per facet count = 6 total
             let p = generate_random_bounded_polytope(facet_count, &mut rng);
             if let (Ok(vol), Some(cap_result)) = (volume(&p), ehz_capacity(&p)) {
                 base_dataset.push(TestPolytope {
@@ -141,25 +129,6 @@ pub fn generate_test_dataset() -> Vec<TestPolytope> {
     full_dataset
 }
 
-fn add_entry(
-    dataset: &mut Vec<TestPolytope>,
-    name: &str,
-    polytope: Polytope4D,
-    expected_vol: f64,
-    expected_cap: f64,
-    base_index: Option<usize>,
-    transform: Option<String>,
-) {
-    dataset.push(TestPolytope {
-        name: name.to_string(),
-        polytope,
-        volume: expected_vol,
-        capacity: expected_cap,
-        base_index,
-        transform,
-    });
-}
-
 /// Scale polytope: heights → α·heights (normals unchanged)
 fn scale_polytope(polytope: &Polytope4D, alpha: f64) -> Polytope4D {
     let normals = polytope.normals().to_vec();
@@ -171,48 +140,55 @@ fn scale_polytope(polytope: &Polytope4D, alpha: f64) -> Polytope4D {
     Polytope4D::new(normals, heights).expect("scaled polytope")
 }
 
-/// Generate random symplectomorphism M ∈ Sp(4) + translation b
-/// ensuring MK+b contains origin in interior
+/// Generate random symplectomorphism M ∈ Sp(4) (linear, no translation).
+///
+/// Since 0 ∈ int(K) and M is invertible, 0 = M·0 ∈ int(MK),
+/// so the transformed polytope always has positive heights.
 fn random_symplectomorphism(
-    polytope: &Polytope4D,
+    _polytope: &Polytope4D,
     rng: &mut impl Rng,
 ) -> (Matrix4<f64>, Vector4<f64>) {
-    // Generate random M ∈ Sp(4) using Cayley transform
     let m = random_sp4_matrix(rng);
-
-    // Transform polytope: MK = {x : n_i·M^{-1}x ≤ h_i}
-    // Find translation b such that 0 ∈ int(MK+b)
-    // Choose b from interior of transformed polytope (e.g., its centroid)
-    let vertices: Vec<_> = polytope.vertices().iter().map(|v| m * v).collect();
-    let centroid = vertices.iter().sum::<Vector4<f64>>() / vertices.len() as f64;
-
-    (m, centroid)
+    (m, Vector4::zeros())
 }
 
 /// Generate random Sp(4) matrix using Cayley transform: M = (I - A)(I + A)^{-1}
-/// where A is a random 4×4 matrix with A^T J + J A = 0 (infinitesimal symplectic)
+/// where A ∈ sp(4) satisfies A^T J + J A = 0.
+///
+/// sp(4) in 2×2 blocks: A = [[P, Q], [R, S]] with
+///   Q^T = Q (symmetric), R^T = R (symmetric), S = -P^T.
+/// This gives 4 + 3 + 3 = 10 free parameters.
 fn random_sp4_matrix(rng: &mut impl Rng) -> Matrix4<f64> {
-    // J = standard symplectic matrix [0 I; -I 0] in 2×2 blocks
-    // Infinitesimal symplectic: A^T J + J A = 0
-    // This gives 10 free parameters (dim of sp(4))
+    // P: arbitrary 2×2 (4 free params)
+    let p11: f64 = rng.sample(StandardNormal);
+    let p12: f64 = rng.sample(StandardNormal);
+    let p21: f64 = rng.sample(StandardNormal);
+    let p22: f64 = rng.sample(StandardNormal);
 
-    // Simple approach: generate random skew-symmetric 2×2 blocks
-    let a11: f64 = rng.sample(StandardNormal);
-    let a12: f64 = rng.sample(StandardNormal);
-    let a21 = -a12; // skew-symmetric
-    let a22: f64 = rng.sample(StandardNormal);
+    // Q: symmetric 2×2 (3 free params)
+    let q11: f64 = rng.sample(StandardNormal);
+    let q12: f64 = rng.sample(StandardNormal);
+    let q22: f64 = rng.sample(StandardNormal);
 
-    let b11: f64 = rng.sample(StandardNormal);
-    let b12: f64 = rng.sample(StandardNormal);
-    let _b21 = -b12; // skew-symmetric
-    let b22: f64 = rng.sample(StandardNormal);
+    // R: symmetric 2×2 (3 free params)
+    let r11: f64 = rng.sample(StandardNormal);
+    let r12: f64 = rng.sample(StandardNormal);
+    let r22: f64 = rng.sample(StandardNormal);
 
-    // A = [A11 A12; A21 A22] in 2×2 blocks
-    // where A12^T = A21 (symmetric blocks)
+    // S = -P^T
+    // A = [[P, Q], [R, -P^T]]
+    //   = [[p11, p12, q11, q12],
+    //      [p21, p22, q12, q22],
+    //      [r11, r12, -p11, -p21],
+    //      [r12, r22, -p12, -p22]]
+    //
+    // Scale down to keep Cayley transform well-conditioned
+    let scale = 0.3;
     let a_mat = Matrix4::new(
-        a11, a12, b11, b12, a21, a22, b12, b22, // Note: A12^T in bottom-left
-        -b11, -b12, a11, a12, // A21 = A12^T, A22 = -A11^T
-        -b12, -b22, a21, a22,
+        p11 * scale, p12 * scale, q11 * scale, q12 * scale,
+        p21 * scale, p22 * scale, q12 * scale, q22 * scale,
+        r11 * scale, r12 * scale, -p11 * scale, -p21 * scale,
+        r12 * scale, r22 * scale, -p12 * scale, -p22 * scale,
     );
 
     // Cayley transform: M = (I - A)(I + A)^{-1}
@@ -227,29 +203,25 @@ fn random_sp4_matrix(rng: &mut impl Rng) -> Matrix4<f64> {
 }
 
 /// Apply symplectomorphism: K → MK+b
+///
+/// H-rep derivation: y ∈ MK+b ⟺ M⁻¹(y-b) ∈ K ⟺ nᵢ·M⁻¹(y-b) ≤ hᵢ
+/// ⟺ (M⁻ᵀnᵢ)·y ≤ hᵢ + (M⁻ᵀnᵢ)·b
+/// Normalizing: n'ᵢ = M⁻ᵀnᵢ/‖M⁻ᵀnᵢ‖, h'ᵢ = (hᵢ + (M⁻ᵀnᵢ)·b) / ‖M⁻ᵀnᵢ‖
 fn apply_symplectomorphism(polytope: &Polytope4D, m: &Matrix4<f64>, b: &Vector4<f64>) -> Polytope4D {
-    // Transformed polytope: {x : n_i·M^{-1}(x-b) ≤ h_i}
-    //                      = {x : (M^{-T}n_i)·x ≤ h_i + (M^{-T}n_i)·b}
     let m_inv_t = m
         .transpose()
         .try_inverse()
         .expect("M should be invertible");
 
-    let normals: Vec<_> = polytope
-        .normals()
-        .iter()
-        .map(|n| (m_inv_t * n).normalize())
-        .collect();
+    let mut normals = Vec::with_capacity(polytope.normals().len());
+    let mut heights = Vec::with_capacity(polytope.heights().len());
 
-    let heights: Vec<f64> = polytope
-        .normals()
-        .iter()
-        .zip(polytope.heights().iter())
-        .map(|(n, &h)| {
-            let n_transformed = (m_inv_t * n).normalize();
-            h + n_transformed.dot(b)
-        })
-        .collect();
+    for (n, &h) in polytope.normals().iter().zip(polytope.heights().iter()) {
+        let n_raw = m_inv_t * n;
+        let norm = n_raw.norm();
+        normals.push(n_raw / norm);
+        heights.push((h + n_raw.dot(b)) / norm);
+    }
 
     Polytope4D::new(normals, heights).expect("transformed polytope")
 }

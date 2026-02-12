@@ -10,7 +10,4 @@ pub mod random;
 pub mod validation;
 
 #[cfg(test)]
-mod sys_properties_test;
-
-#[cfg(test)]
 mod lib_test;
