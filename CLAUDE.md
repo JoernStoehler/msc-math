@@ -304,23 +304,6 @@ geom, hk2017, billiard, tube -> datasets
 
 Where domains overlap, algorithms must agree on the computed capacity.
 
-### Parallelization strategy
-
-**Keep the three capacity algorithms (hk2017, billiard, tube) single-threaded.**
-
-This simplifies correctness verification, testing, and debugging. Internal optimizations (faster matrix ops, better algorithms, improved constants) are fair game. Just don't make the algorithms themselves concurrent.
-
-**DO parallelize at the dataset generation level** (embarrassingly parallel).
-
-When generating large datasets (100+ random polytopes), spawn independent worker threads. Each worker:
-- Generates an independent random polytope
-- Runs one of the three capacity algorithms on it
-- Writes result to output file
-
-This is truly embarrassingly parallel: no synchronization, no shared state except atomic counters. Use `rayon` or `std::thread` with a work queue.
-
-**Example:** Generating 200 random polytopes with 8 cores → ~25x speedup.
-
 <!-- Full conventions: crates/CLAUDE.md -->
 
 ## Experiments (Python)
