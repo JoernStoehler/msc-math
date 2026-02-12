@@ -78,6 +78,7 @@ pub fn scaled_hypercube(s: f64) -> Polytope4D {
 /// 4D cross-polytope: conv{±2·e_i for i=1,2,3,4}.
 ///
 /// H-representation: (±1,±1,±1,±1)/2 · x ≤ 1 (16 facets, 8 vertices).
+/// The vertices ±2·eᵢ satisfy every H-constraint: (±1,±1,±1,±1)/2 · (±2eᵢ) = ±1 ≤ 1.
 ///
 /// Expected properties:
 /// - Volume: 32/3 ≈ 10.667
@@ -137,6 +138,7 @@ pub fn triangle_product() -> Polytope4D {
 ///
 /// # Panics
 /// Panics if Polytope4D::new() fails (unbounded, degenerate, etc.)
+/// Also panics if `facet_count < 5` (minimum for bounded 4D polytope).
 #[cfg(test)]
 pub fn random_bounded_polytope(facet_count: usize, rng: &mut impl Rng) -> Polytope4D {
     // Generate random unit vectors on S³

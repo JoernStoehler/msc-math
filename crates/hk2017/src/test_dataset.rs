@@ -16,9 +16,13 @@
 //!
 //! ## Dataset phases
 //!
-//! - Phase 1: Base dataset (known and random polytopes)
-//! - Phase 2: Symplectomorphism variants (apply random M ∈ Sp(4))
-//! - Phase 3: Conformality variants (scale by random α)
+//! - Phase 1: Base dataset (~9 polytopes: 3 known + up to 6 random)
+//! - Phase 2: Symplectomorphism variants (up to +9, one per base polytope)
+//! - Phase 3: Conformality variants (up to +9, one per base polytope)
+//!
+//! Total: up to ~27 polytopes (fewer if random generation or computation fails for some).
+//!
+//! Used by capacity and sys property tests.
 
 use geom::polytope::Polytope4D;
 use geom::test_utils::{simplex, triangle_product};
@@ -123,7 +127,7 @@ pub fn load_test_dataset(path: &std::path::Path) -> Vec<TestPolytope> {
     entries.iter().map(DatasetEntry::to_test_polytope).collect()
 }
 
-/// Generate test dataset in three phases (~30 polytopes).
+/// Generate test dataset in three phases (up to ~27 polytopes).
 ///
 /// Phase 1: Base dataset (~9 polytopes)
 ///   - 3 known polytopes (simplex, hypercube, triangle_product)
