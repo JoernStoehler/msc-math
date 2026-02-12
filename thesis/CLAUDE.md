@@ -36,31 +36,51 @@ Every line of LaTeX must work for all four audiences simultaneously:
    - Need ALL properties listed (including unused ones) for generating tests
    - Need concrete values and example calculations
 
+## Default Status
+
+All content is **agent-written and unreviewed** unless explicitly marked otherwise. When a `.tex` file has no review markers, assume nothing has been verified by Jörn.
+
 ## Comment Conventions
 
 Use prefixed comments to separate meta information by audience:
 
-### For QC agents (verification checklists)
+### Jörn's review status (`% Jörn:`)
+
+Two levels, applied incrementally:
+
+1. **Structure**: proof approach/strategy is correct, section organization is right
+2. **Text**: the written prose is correct (implies structure was already approved)
+
+```latex
+% Jörn: structure approved — from \subsection{Sampling procedure} to \begin{proposition}
+% Jörn: text approved — from \subsection{Sampling procedure} to "Acceptance rate sweep"
+```
+
+Place these inline, near the content they apply to. Scope must be explicit (section names or line ranges). Content outside any `% Jörn:` marker is unreviewed.
+
+Jörn reviews the **PDF-visible text** (rendered output), not the `%` comments. The `% Jörn:` markers record what he approved in the PDF; they do not mean he reviewed the LaTeX source comments.
+
+### QC agent findings (`% QC:`)
 ```latex
 % QC: polytope per Definition~\ref{def:polytope}, facet data per Definition~\ref{def:facets}
 ```
-→ Instructions for QC agent on what to verify
+→ Instructions for QC agent on what to verify, or resolved QC findings that only a pedantic verifier would want spelled out. If a QC finding matters to human readers, expand it in the text instead.
 
-### For developer agents (Rust implementation notes)
+### Developer agents (`% Downstream:`)
 ```latex
 % Downstream: R_i = (2.0 / h_i) * J_0 * n_i
 % Downstream: Test: |R_i| = 2/h_i for all i
 ```
 → How to implement in Rust, what tests to write
 
-### For writing agents (incomplete content)
+### Writing agents (`% [TODO: JÖRN -`)
 ```latex
 % [TODO: JÖRN - verify this E-L derivation. Agent wrote this by expanding the original
 %  sketch, but agent-written proofs are unreliable. Check for errors in the calculation.]
 ```
 → Marks content needing Jörn's attention
 
-### For gap tracking
+### Gap tracking (`% [GAP -`)
 ```latex
 % [GAP - AGENT CONFIDENCE 70%: The derivation above shows X, but the equation below
 %  claims Y. Agent verified lines A-B are correct, but cannot connect them to lines C-D.
@@ -68,11 +88,21 @@ Use prefixed comments to separate meta information by audience:
 ```
 → Known mathematical gaps with epistemic confidence
 
-### For human readers (normal LaTeX comments)
+### Human readers (plain `%`)
 ```latex
 % Use J_0^2 = -I here
 ```
 → Regular LaTeX comments for humans reading the source
+
+## File Headers
+
+Every `.tex` file starts with a `%` header block containing:
+
+1. **Identity**: `% filename.tex — \input'd from parent.tex`
+2. **Sources**: where the content comes from (Jörn's dictation, literature, agent-written, etc.)
+3. **Structure**: outline of sections/subsections
+
+Do NOT put review status in the header. Review status lives inline via `% Jörn:` markers (see above).
 
 ## Content Rules
 

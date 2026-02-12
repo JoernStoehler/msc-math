@@ -1,75 +1,11 @@
 % chapter-algorithm.tex — \input'd from main.tex
+% Conventions: thesis/CLAUDE.md (audiences, content rules, format rules, comments)
 %
-% FOUR AUDIENCES — every line must work for all four simultaneously.
+% Sources: Jörn's dictation + HK2017 paper. Notation per correspondence.tex.
 %
-% AUDIENCE 1: Human readers (Jörn, Kai, Elizabeth).
-%   - Jörn: knows enough symplectic geometry, optimization, this entire thesis, the bibliography materials
-%   - Kai: knows a lot of symplectic geometry
-%   - Elizabeth: knows a lot of optimization
-%   - All three: know typical basics such as linear algebra, polytopes, analysis, ...
-%   - Want the main result (algorithm + theorem) upfront on page 1, so they can
-%     read it and stop if that's all they need.
-%   - Will skim definitions and revisit if confused.
-%   - All proofs are skippable: clearly marked start/end, nothing outside a proof
-%     references proof internals.
-%   - Value: the algorithm itself, the interesting proof ideas, geometric intuition.
-%   - Remarks, examples, and illustrations live next to relevant lemmas/proofs.
-%     Redundancy is fine — readers pick what they want.
-%
-% AUDIENCE 2: Imaginary master student (nominal target audience of a master thesis).
-%   - Knows linear algebra, analysis, basic topology, intro symplectic geometry,
-%     intro optimization — a typical math master student's background.
-%   - Every definition must be stated in full, not deferred to the literature.
-%   - Must be able to follow the chapter linearly without external references.
-%   - This audience is why there's motivation even for standard definitions, while
-%     the other three audiences are familiar with the literature already.
-%
-% AUDIENCE 3: QC agents (pedantic correctness verification, AI).
-%   - Verify one chunk at a time, trusting previously verified chunks.
-%   - Each chunk is self-contained: a QC agent can read [definitions]
-%     [propositions] [lemma X] [theorem Y] [proof of Y] and check [proof of Y]
-%     while trusting that the rest is already verified.
-%   - For every proof step: if the agent cannot immediately confirm "yes, that
-%     follows directly," the step fails review.
-%   - If any step is incorrect, the chunk fails review.
-%   - Words must have clear, specific meanings. Natural language errs towards
-%     explicitness to prevent misunderstandings or overlooked edge cases.
-%   - We never state anything incorrect, even if the incorrectness is not fatal.
-%
-% AUDIENCE 4: Downstream agents (Rust implementers, test writers, AI).
-%   - Need full detail in all definitions, lemmas, proofs, algorithm specs.
-%   - Need all properties listed — including properties not cited later in
-%     the chapter — because they generate unit tests and proptests from them.
-%     E.g., capacity axioms: useful for intuition AND for test cases.
-%   - Need concrete values and example calculations that illustrate the
-%     algorithms and proof steps.
-%
-% CONTENT RULES:
-%   1. Every definition, theorem statement, and proof strategy must be traceable
-%      to a specific instruction from Jörn in the chat.
-%      Do NOT write anything Jörn did not dictate.
-%   2. No definition or theorem statement may be deferred to the literature.
-%      Every definition is stated in full. Every theorem is stated in full.
-%   3. A proof MAY be deferred to the literature ONLY IF:
-%      (a) the theorem exceeds thesis scope due to complexity, AND
-%      (b) the proof is not relevant to the thesis — only the theorem is.
-%   4. Notation and definitions must match correspondence.tex exactly.
-%      If correspondence.tex uses symbol X, this file uses symbol X.
-%      No synonyms, no alternative forms, no "equivalent" restatements
-%      unless a lemma proving equivalence is included.
-%
-% FORMAT RULES:
-%   - \definition, \lemma, \theorem, \proposition, \proof environments for
-%     mathematical content. \remark and \example for context/intuition/illustrations.
-%   - No prose paragraphs outside environments (except minimal connective text).
-%   - All calculations displayed as formulas, never described in English sentences.
-%   - Emphasis proportional to importance. No full sections for trivial identities.
-%
-% QC PROCEDURE:
-%   A QC agent is given correspondence.tex and this file. For each environment:
-%   (a) Does the definition/statement match correspondence.tex? Find one deviation.
-%   (b) Does each proof step follow immediately from stated assumptions? Find one gap.
-%   If the QC agent cannot find a deviation or gap, the environment passes.
+% Structure:
+%   Section 1: Main Result (algorithm statement + theorem)
+%   Section 2+: Definitions, lemmas, proofs supporting the algorithm
 
 %%% =================================================================
 %%% Section 1: Main Result
