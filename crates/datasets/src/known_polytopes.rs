@@ -1,4 +1,8 @@
 /// Constructors for polytopes with known EHZ capacities from the literature.
+///
+/// These serve as ground-truth entries in datasets for algorithm validation.
+/// Each constructor returns a `KnownPolytope` with the polytope, its known
+/// capacity value, and a literature reference.
 use geom::polytope::Polytope4D;
 use nalgebra::Vector4;
 use std::f64::consts::PI;
@@ -30,7 +34,7 @@ pub fn all_known() -> Vec<KnownPolytope> {
 /// Standard simplex conv{0, e1, e2, e3, e4} with centroid at (0.2, 0.2, 0.2, 0.2).
 /// After translation, all heights are positive.
 ///
-/// Known capacity: 0.25 = 1/(2n) for n=2.
+/// Known capacity: 0.25 = 1/(2n) where n = 2 is the complex dimension (ℝ^{2n} = ℝ⁴).
 /// Source: Y. Nir thesis 2013; Siegel's Symplectic Capacities Project.
 pub fn simplex() -> KnownPolytope {
     let centroid = Vector4::new(0.2, 0.2, 0.2, 0.2);
@@ -41,7 +45,7 @@ pub fn simplex() -> KnownPolytope {
         -Vector4::w(),
         Vector4::new(1.0, 1.0, 1.0, 1.0).normalize(),
     ];
-    let heights_raw = vec![0.0, 0.0, 0.0, 0.0, 0.5];
+    let heights_raw = vec![0.0, 0.0, 0.0, 0.0, 0.5]; // h₅ = 1/‖(1,1,1,1)‖ = 1/2 for facet Σxᵢ ≤ 1
     let heights: Vec<f64> = normals_raw
         .iter()
         .zip(&heights_raw)
@@ -177,7 +181,7 @@ pub fn triangle_product() -> KnownPolytope {
         polytope: Polytope4D::new(normals, heights).expect("triangle product construction"),
         capacity: 1.5,
         name: "triangle_product",
-        source: "LP verification (see fixtures.rs)",
+        source: "LP verification (HK2017 algorithm + billiard)",
     }
 }
 
@@ -191,8 +195,8 @@ pub fn triangle_product() -> KnownPolytope {
 /// The formula c(A ×_S B) = min(c(A), c(B)) applies only to symplectic products.
 /// For Lagrangian products, the capacity is determined by optimal trajectories.
 ///
-/// Note: Related to Schlenk Lem. 5.3.1, but Schlenk's result uses a right isosceles
-/// triangle (sys = 1.0), whereas this construction uses an equilateral triangle (sys = √3/2 ≈ 0.866).
+/// Note: Schlenk Lem. 5.3.1 treats a right isosceles triangle (sys = 1.0); our equilateral
+/// triangle gives a different systolic ratio (√3/2 ≈ 0.866), so that lemma does not directly apply.
 ///
 /// Source: HK2017 algorithm + billiard verification (see experiments/triangle_square.md).
 pub fn lagrangian_triangle_square() -> KnownPolytope {
