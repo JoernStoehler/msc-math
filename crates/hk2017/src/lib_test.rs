@@ -208,7 +208,7 @@ fn pentagon_capacity() {
     );
 
     // Verify sys > 1 (counterexample property)
-    let vol = volume(&kp.polytope);
+    let vol = volume(&kp.polytope).expect("volume computation failed");
     let sys = result.capacity * result.capacity / (2.0 * vol);
     eprintln!("Pentagon: capacity={:.6}, volume={:.6}, sys={:.6}",
               result.capacity, vol, sys);
@@ -322,7 +322,7 @@ mod proptests {
 fn capacity_scales_quadratically() {
     let scale = std::f64::consts::E;
 
-    let unit_cube = make_hypercube();
+    let unit_cube = hypercube();
     let unit_cap = ehz_capacity(&unit_cube).unwrap().capacity;
 
     let normals = unit_cube.normals().to_vec();
