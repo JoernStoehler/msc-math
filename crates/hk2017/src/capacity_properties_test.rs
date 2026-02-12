@@ -58,26 +58,23 @@ fn capacity_conformality() {
             .expect("valid scale factor");
 
         // Test conformality: c(α·K) = α²·c(K)
-        // Tolerance: 1e-2. Algorithm has absolute thresholds (β > 1e-12, q > 1e-15)
-        // that cause scale-dependent filtering of candidate orbits.
         let expected_cap = alpha * alpha * base.capacity;
         let cap_error = (entry.capacity - expected_cap).abs() / expected_cap;
         assert!(
-            cap_error < 1e-2,
+            cap_error < 1e-6,
             "{}: conformality failed: c({:.2}·{}) = {}, expected {:.2}²·c({}) = {}, rel_error = {:.2e}",
             entry.name, alpha, base.name, entry.capacity,
             alpha, base.name, expected_cap, cap_error
         );
 
-        // Volume scaling diagnostic (not asserted — volume precision is tested in geom)
+        // Volume scaling: vol(α·K) = α⁴·vol(K)
         let expected_vol = alpha.powi(4) * base.volume;
         let vol_error = (entry.volume - expected_vol).abs() / expected_vol;
-        if vol_error > 1e-4 {
-            println!(
-                "  note: {}: vol scaling rel_error = {:.2e}",
-                entry.name, vol_error
-            );
-        }
+        assert!(
+            vol_error < 1e-6,
+            "{}: volume conformality failed: rel_error = {:.2e}",
+            entry.name, vol_error
+        );
     }
 
     println!(

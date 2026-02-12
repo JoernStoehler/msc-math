@@ -121,7 +121,7 @@ pub fn generate_test_dataset() -> Vec<TestPolytope> {
                 volume: vol,
                 capacity: cap_result.capacity,
                 base_index: Some(i),
-                transform: Some(format!("conform:{:.2}", alpha)),
+                transform: Some(format!("conform:{}", alpha)),
             });
         }
     }
