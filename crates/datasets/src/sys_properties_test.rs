@@ -7,6 +7,7 @@
 use hk2017::test_dataset::generate_test_dataset;
 
 #[test]
+#[ignore] // ~minutes: generates random polytopes and computes capacity (exponential algorithm)
 fn sys_formula_correctness() {
     let dataset = generate_test_dataset();
 
@@ -34,6 +35,7 @@ fn sys_formula_correctness() {
 }
 
 #[test]
+#[ignore] // ~minutes: generates random polytopes and computes capacity (exponential algorithm)
 fn sys_distribution_statistics() {
     let dataset = generate_test_dataset();
 

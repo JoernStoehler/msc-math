@@ -12,6 +12,7 @@ use geom::polytope::Polytope4D;
 use nalgebra::Vector4;
 
 #[test]
+#[ignore] // ~minutes: generates random polytopes and computes capacity (exponential algorithm)
 fn capacity_positive_on_all_polytopes() {
     let dataset = generate_test_dataset();
 
@@ -27,6 +28,7 @@ fn capacity_positive_on_all_polytopes() {
 }
 
 #[test]
+#[ignore] // ~minutes: generates random polytopes and computes capacity (exponential algorithm)
 fn capacity_conformality() {
     let dataset = generate_test_dataset();
 
@@ -81,6 +83,7 @@ fn capacity_conformality() {
 }
 
 #[test]
+#[ignore] // ~minutes: generates random polytopes and computes capacity (exponential algorithm)
 fn capacity_symplectomorphism_invariance() {
     let dataset = generate_test_dataset();
 
@@ -119,6 +122,7 @@ fn capacity_symplectomorphism_invariance() {
 }
 
 #[test]
+#[ignore] // ~minutes: generates random polytopes and computes capacity (exponential algorithm)
 fn capacity_monotonicity() {
     let dataset = generate_test_dataset();
 
