@@ -70,9 +70,9 @@ and each permutation $\sigma$ of $S$
     N_{id} &= n_{\sigma(i),d},
       & i &= 1, \ldots, |S|, \quad d = 1, \ldots, 4, \\
     H_{ij} &= \begin{cases}
-      \omega_0(n_{\sigma(i)}, n_{\sigma(j)}) & \text{if } i < j, \\
+      \omega_0(n_{\sigma(j)}, n_{\sigma(i)}) & \text{if } i < j, \\
       0 & \text{if } i = j, \\
-      \omega_0(n_{\sigma(j)}, n_{\sigma(i)}) & \text{if } i > j,
+      \omega_0(n_{\sigma(i)}, n_{\sigma(j)}) & \text{if } i > j,
     \end{cases} \\
     \eta_i &= h_{\sigma(i)},
       & i &= 1, \ldots, |S|.
@@ -85,7 +85,7 @@ and each permutation $\sigma$ of $S$
     = \begin{pmatrix} 0 \\ 0 \\ 1 \end{pmatrix},
     \qquad
     \beta \in \mathbb{R}^{|S|}, \quad \lambda \in \mathbb{R}^4, \quad \nu \in \mathbb{R}.
-    % QC: KKT for max Q(beta) subject to N^T beta = 0 (closure) and
+    % QC: KKT for max beta^T H beta subject to N^T beta = 0 (closure) and
     %   eta^T beta = 1 (normalization). Two constraints need two multipliers:
     %   lambda for closure, nu for normalization. Without nu, the system is
     %   overdetermined ((|S|+5) x (|S|+4)) and generically inconsistent.
@@ -93,7 +93,7 @@ and each permutation $\sigma$ of $S$
 
 \item \textbf{Filter.}
   Discard $(S, \sigma)$ if $\beta_i \leq 0$ for any $i$,
-  or if $Q(\beta) \leq 0$.
+  or if $\beta^\top H \beta \leq 0$.
   % QC: the filter demands beta_i > 0 (strict), while M(K) in the theorem
   %   allows beta_i >= 0. This is intentional and correct:
   %   If beta_i = 0 for some i in S, that facet is unused and the same orbit
@@ -101,30 +101,24 @@ and each permutation $\sigma$ of $S$
   %   So the maximum over M(K) is attained at an interior point (all beta_i > 0)
   %   of some sub-problem. The algorithm's enumeration over all subsets S
   %   catches this. No solutions are lost by the strict filter.
-  % QC: Q <= 0 filter: the bijection between (sigma, beta) and simple Reeb
-  %   orbits (Theorem thm:main proof, Step 6) requires Q > 0 for T = 1/(2Q) > 0.
-  %   Critical points of Q with Q <= 0 are saddle points or minima on the
-  %   constraint manifold; they do not correspond to valid Reeb orbits.
+  % QC: beta^T H beta <= 0 filter: the bijection between (sigma, beta) and
+  %   simple Reeb orbits (Theorem thm:main proof, Step 6) requires
+  %   beta^T H beta > 0 for T = (beta^T H beta)^{-1} > 0.
 
 \item \textbf{Evaluate.}
   \begin{equation}\label{eq:action-formula}
-    A(S, \sigma) = \tfrac{1}{2} \, Q(\beta)^{-1}.
+    A(S, \sigma) = (\beta^\top H \beta)^{-1}.
   \end{equation}
 \end{enumerate}
 
 \noindent
 Return $c_{\mathrm{EHZ}}(K) = \min_{S,\sigma} A(S, \sigma)$.
 
-% QC: Q depends on K (via normals n_i), S (subset of facets), and sigma
-%   (permutation determining the cyclic order). Written Q(beta) for brevity;
-%   the dependence on K, S, sigma is implicit from the algorithm's loop context.
 \begin{remark}\label{rem:critical-point}
 The solution $\beta$ with $\beta_i > 0$
-is the critical point of
-$Q(\beta) = \sum_{1 \leq j < i \leq |S|}
-  \beta_i \beta_j \, \omega_0(n_{\sigma(i)}, n_{\sigma(j)})$
-subject to $\sum_{i} \beta_i n_{\sigma(i)} = 0$,
-$\sum_{i} \beta_i h_{\sigma(i)} = 1$, and $\beta_i > 0$.
+is the critical point of $\beta^\top H \beta$
+subject to $N^\top \beta = 0$,
+$\eta^\top \beta = 1$, and $\beta_i > 0$.
 \end{remark}
 
 %%% =================================================================
@@ -730,10 +724,10 @@ where
 % Approval: proof structure approved by Jörn. Text not yet reviewed.
 % QC: combines thm:simple-minimizer, lem:shoelace, and a variable
 %   substitution. Each step cites specific results and states which
-%   properties are used. The critical calculation is Q = 1/(2T).
+%   properties are used. The critical calculation is beta^T H beta = 1/T.
 %   Verified against HK2017 proof of Theorem 1.1 (lines 455--478):
 %   same substitution beta_{sigma(i)} = T_i / h_{sigma(i)}, same
-%   identity Q = 1/(2T), same conclusion.
+%   identity, same conclusion.
 
 \emph{Step~1: Reduce to simple orbits.}
 By Theorem~\ref{thm:simple-minimizer},
@@ -808,41 +802,47 @@ We verify $\beta \in M(K)$
   $\sum_{i=1}^F \beta_i n_i = 0$.
 \end{enumerate}
 
-\emph{Step~5: Derive the action--$Q$ relation.}
-Substitute $\tau_k = T h_{\sigma(k)} \beta_{\sigma(k)}$
+\emph{Step~5: Derive the action formula.}
+Substitute $\tau_k = T h_{\sigma(k)} \tilde{\beta}_k$
 into~\eqref{eq:shoelace-normals}:
 \begin{align*}
   2T &= 4 \sum_{j < i}
-    \frac{(T h_{\sigma(j)} \beta_{\sigma(j)})\,
-          (T h_{\sigma(i)} \beta_{\sigma(i)})}
+    \frac{(T h_{\sigma(j)} \tilde{\beta}_j)\,
+          (T h_{\sigma(i)} \tilde{\beta}_i)}
          {h_{\sigma(j)}\, h_{\sigma(i)}}\,
     \omega_0(n_{\sigma(i)},\, n_{\sigma(j)}) \\
   &= 4T^2 \sum_{1 \leq j < i \leq |S|}
-    \beta_{\sigma(i)}\, \beta_{\sigma(j)}\,
+    \tilde{\beta}_i\, \tilde{\beta}_j\,
     \omega_0(n_{\sigma(i)},\, n_{\sigma(j)}).
 \end{align*}
-The sum on the right is $Q(\sigma, \beta)$ as
-in~\eqref{eq:ehz-main}. Hence
-\begin{equation}\label{eq:Q-action}
-  Q(\sigma, \beta) = \frac{1}{2T},
-  \qquad\text{equivalently}\qquad
-  T = \frac{1}{2\, Q(\sigma, \beta)}.
+The sum on the right is the expression
+in~\eqref{eq:ehz-main} evaluated at $(\sigma, \beta)$.
+Dividing by~$4T^2$:
+\begin{equation}\label{eq:action-sum}
+  \sum_{1 \leq j < i \leq |S|}
+    \tilde{\beta}_i\, \tilde{\beta}_j\,
+    \omega_0(n_{\sigma(i)},\, n_{\sigma(j)})
+  = \frac{1}{2T}.
 \end{equation}
 
 \emph{Step~6: Conclude.}
 Steps~4--5 establish a bijection between simple Reeb orbits
 $(S, \sigma, \tau)$ with $\tau_k > 0$ and pairs
 $(\sigma, \beta)$ with $\beta \in M(K)$,
-$\beta_{\sigma(k)} > 0$ for $k \in S$, and $Q > 0$.
+$\tilde{\beta}_k > 0$ for all $k \in S$.
 Under this bijection, the action is
-$A(\gamma) = T = \frac{1}{2Q}$.
-Since $T$ is a decreasing function of~$Q$:
+$A(\gamma) = T = \frac{1}{2} \bigl[
+  \text{double sum in~\eqref{eq:action-sum}}
+\bigr]^{-1}$.
+Since $T$ decreases as the double sum increases:
 \[
   c_{\mathrm{EHZ}}(K)
   = \min_{\sigma, \beta} T
   = \frac{1}{2} \left[
     \max_{\substack{\sigma \in S_F \\ \beta \in M(K)}}
-    Q(\sigma, \beta)
+    \sum_{1 \leq j < i \leq |S|}
+      \tilde{\beta}_i\, \tilde{\beta}_j\,
+      \omega_0(n_{\sigma(i)},\, n_{\sigma(j)})
   \right]^{-1}.
   \qedhere
 \]
@@ -869,9 +869,9 @@ and each cyclic ordering~$\sigma$ of~$S$:
     N_{id} &= n_{\sigma(i),d},
       & i &= 1, \ldots, |S|, \quad d = 1, \ldots, 4, \\
     H_{ij} &= \begin{cases}
-      \omega_0(n_{\sigma(i)}, n_{\sigma(j)}) & \text{if } i < j, \\
+      \omega_0(n_{\sigma(j)}, n_{\sigma(i)}) & \text{if } i < j, \\
       0 & \text{if } i = j, \\
-      \omega_0(n_{\sigma(j)}, n_{\sigma(i)}) & \text{if } i > j,
+      \omega_0(n_{\sigma(i)}, n_{\sigma(j)}) & \text{if } i > j,
     \end{cases} \\
     \eta_i &= h_{\sigma(i)},
       & i &= 1, \ldots, |S|.
@@ -887,10 +887,10 @@ and each cyclic ordering~$\sigma$ of~$S$:
 
 \item \textbf{Filter.}
   Discard if $\beta_i \leq 0$ for any $i$,
-  or if $Q(\beta) \leq 0$.
+  or if $\beta^\top H \beta \leq 0$.
 
 \item \textbf{Evaluate.}
-  $A(S, \sigma) = \tfrac{1}{2}\, Q(\beta)^{-1}$.
+  $A(S, \sigma) = (\beta^\top H \beta)^{-1}$.
 \end{enumerate}
 
 \noindent
@@ -898,29 +898,30 @@ Return $c_{\mathrm{EHZ}}(K) = \min_{S,\sigma} A(S, \sigma)$.
 
 \medskip
 
-\begin{lemma}[$Q$ as a quadratic form]\label{lem:Q-quadratic}
+\begin{lemma}[Double sum as quadratic form]\label{lem:H-quadratic}
 % Approval: proof structure approved by Jörn. Text not yet reviewed.
-% QC: the sign comes from: Q sums omega_0(n_{sigma(i)}, n_{sigma(j)})
-%   for j < i, and H_{ij} for i > j equals omega_0(n_{sigma(j)}, n_{sigma(i)})
-%   = -omega_0(n_{sigma(i)}, n_{sigma(j)}). So Q = -sum_{j<i} beta_i beta_j H_{ij}
-%   = -(1/2) beta^T H beta.
-% Downstream: gradient is nabla Q = -H beta. Used in the KKT derivation.
-Write $\tilde{\beta}_k = \beta_{\sigma(k)}$ for
-$k = 1, \ldots, |S|$. Then
+% QC: for i > j, H_{ij} = omega_0(n_{sigma(i)}, n_{sigma(j)}),
+%   which matches the summand in the double sum. Expanding
+%   beta^T H beta using symmetry + zero diagonal gives the sum.
+% Downstream: connects the double sum in the shoelace derivation
+%   to the matrix form beta^T H beta. Gradient is nabla(beta^T H beta) = 2H beta.
 \[
-  Q(\sigma, \beta)
-  = -\frac{1}{2}\, \tilde{\beta}^\top H\, \tilde{\beta}.
+  \sum_{1 \leq j < i \leq |S|}
+    \tilde{\beta}_i\, \tilde{\beta}_j\,
+    \omega_0(n_{\sigma(i)},\, n_{\sigma(j)})
+  = \tfrac{1}{2}\, \tilde{\beta}^\top H\, \tilde{\beta}.
 \]
 In particular,
-$\nabla_{\tilde{\beta}} Q = -H \tilde{\beta}$.
+$\nabla_{\tilde{\beta}}
+  (\tilde{\beta}^\top H\, \tilde{\beta}) = 2H \tilde{\beta}$.
 \end{lemma}
 
 \begin{proof}
-For $j < i$ (the summation range of~$Q$),
-$\omega_0(n_{\sigma(i)}, n_{\sigma(j)})
-= -\omega_0(n_{\sigma(j)}, n_{\sigma(i)}) = -H_{ij}$
-(using the $i > j$ entry of~$H$). Hence
-$Q = -\sum_{j < i} \tilde{\beta}_i\, \tilde{\beta}_j\, H_{ij}$.
+For $i > j$,
+$H_{ij} = \omega_0(n_{\sigma(i)}, n_{\sigma(j)})$
+by definition of~$H$.
+Hence the double sum equals
+$\sum_{j < i} \tilde{\beta}_i\, \tilde{\beta}_j\, H_{ij}$.
 Since $H$ is symmetric with zero diagonal,
 $\sum_{j < i} \tilde{\beta}_i \tilde{\beta}_j H_{ij}
 = \tfrac{1}{2}\, \tilde{\beta}^\top H\, \tilde{\beta}$.
@@ -929,26 +930,32 @@ $\sum_{j < i} \tilde{\beta}_i \tilde{\beta}_j H_{ij}
 \begin{lemma}[KKT conditions and the algorithm's linear system]%
 \label{lem:kkt}
 % Approval: proof structure approved by Jörn. Text not yet reviewed.
-% QC: connects the abstract optimization (max Q on M(K)) to the
-%   algorithm's concrete linear system (eq:linear-system). The sign
-%   flip lambda = -mu accounts for Q = -(1/2) beta^T H beta.
+% QC: connects the abstract optimization (max beta^T H beta on M(K))
+%   to the algorithm's concrete linear system (eq:linear-system).
+%   With the new H sign convention, no sign flip is needed:
+%   lambda = mu, nu = nu' directly.
 For fixed $(S, \sigma)$, the linear
 system~\eqref{eq:linear-system} is the Lagrange system for
 critical points of
-$Q(\sigma, \beta)$ on the constraint manifold
+$\tilde{\beta}^\top H\, \tilde{\beta}$ on the constraint
+manifold
 $\{N^\top \tilde{\beta} = 0,\; \eta^\top \tilde{\beta} = 1\}$.
 \end{lemma}
 
 \begin{proof}
-The gradient of~$Q$ with respect to $\tilde{\beta}$ is
-$\nabla_{\tilde{\beta}} Q = -H \tilde{\beta}$
-(Lemma~\ref{lem:Q-quadratic}).
+The gradient is
+$\nabla_{\tilde{\beta}}
+  (\tilde{\beta}^\top H \tilde{\beta}) = 2H \tilde{\beta}$
+(Lemma~\ref{lem:H-quadratic}).
 The Lagrange conditions
-$\nabla Q = N\mu + \eta\nu'$ become
-$-H\tilde{\beta} = N\mu + \eta\nu'$.
-Setting $\lambda = -\mu$ and $\nu = -\nu'$:
+$\nabla(\tilde{\beta}^\top H \tilde{\beta})
+= N\lambda + \eta\nu$
+give
+$2H\tilde{\beta} = N\lambda + \eta\nu$.
+Absorbing the factor~$2$ into the multipliers
+($\lambda' = \lambda/2$, $\nu' = \nu/2$):
 \[
-  H \tilde{\beta} - N \lambda - \eta \nu = 0,
+  H \tilde{\beta} - N \lambda' - \eta \nu' = 0,
 \]
 which, together with $N^\top \tilde{\beta} = 0$ and
 $\eta^\top \tilde{\beta} = 1$, is exactly
@@ -959,7 +966,7 @@ system~\eqref{eq:linear-system}.
 % Approval: proof structure approved by Jörn. Text not yet reviewed.
 % QC: the proof only uses completeness (the maximizer is found),
 %   not soundness (every candidate is valid). This is intentional:
-%   non-maximizing critical points of Q need not correspond to
+%   non-maximizing critical points need not correspond to
 %   Reeb orbits (see Remark below).
 % Downstream: the algorithm is proven correct. Any faithful
 %   implementation computes c_EHZ.
@@ -969,21 +976,26 @@ $c_{\mathrm{EHZ}}(K)$.
 
 \begin{proof}
 By Theorem~\ref{thm:main},
-$c_{\mathrm{EHZ}}(K) = \frac{1}{2}[\max Q]^{-1}$,
+$c_{\mathrm{EHZ}}(K)
+= [\max \tilde{\beta}^\top H\, \tilde{\beta}]^{-1}$,
 where the maximum is over all $\sigma \in S_F$ and
 $\beta \in M(K)$.
 
 \emph{Step~1: Existence.}
 $M(K)$ is compact (closed and bounded in~$\mathbb{R}^F$),
-$Q$ is continuous, and the set of cyclic orderings~$\sigma$
+$\tilde{\beta}^\top H\, \tilde{\beta}$ is continuous,
+and the set of cyclic orderings~$\sigma$
 is finite. Hence the maximum is attained at
-some~$(\sigma^*, \beta^*)$ with value $Q^* > 0$
+some~$(\sigma^*, \beta^*)$ with value
+$V^* = \tilde{\beta}^{*\top} H\, \tilde{\beta}^* > 0$
 (since $c_{\mathrm{EHZ}}(K) > 0$).
 
 \emph{Step~2: The maximizer is a candidate.}
 Define $S = \{i : \beta^*_i > 0\}$.
-Since $\beta^*$ maximizes~$Q$ over all of~$M(K)$, it also
-maximizes~$Q$ over the face
+Since $\beta^*$ maximizes
+$\tilde{\beta}^\top H\, \tilde{\beta}$
+over all of~$M(K)$, it also
+maximizes it over the face
 $\{\beta \in M(K) : \beta_i = 0 \;\forall\, i \notin S\}$.
 As $\beta^*_i > 0$ for all $i \in S$, this is an interior
 maximum on the face, so the Lagrange conditions hold:
@@ -991,29 +1003,36 @@ $\beta^*$ satisfies the linear
 system~\eqref{eq:linear-system} for~$(S, \sigma^*)$
 (Lemma~\ref{lem:kkt}).
 The filter passes: $\beta^*_i > 0$ for all $i \in S$ by
-definition, and $Q^* > 0$ by Step~1.
+definition, and $V^* > 0$ by Step~1.
 Hence the algorithm considers~$(\sigma^*, \beta^*)$ as a
-candidate with $A = \frac{1}{2Q^*} = c_{\mathrm{EHZ}}(K)$.
+candidate with
+$A = (V^*)^{-1} = c_{\mathrm{EHZ}}(K)$.
 
 \emph{Step~3: The algorithm returns it.}
-The algorithm returns $\min A = \min \frac{1}{2Q}$ over all
-candidates. For any candidate with value~$Q \leq Q^*$,
-we have $A = \frac{1}{2Q} \geq \frac{1}{2Q^*}$.
+The algorithm returns
+$\min A = \min (\tilde{\beta}^\top H\, \tilde{\beta})^{-1}$
+over all candidates. For any candidate with
+$\tilde{\beta}^\top H\, \tilde{\beta} \leq V^*$,
+we have
+$A = (\tilde{\beta}^\top H\, \tilde{\beta})^{-1}
+\geq (V^*)^{-1}$.
 Since $(\sigma^*, \beta^*)$ achieves
-$A = \frac{1}{2Q^*}$, this is the minimum.
+$A = (V^*)^{-1}$, this is the minimum.
 Hence the returned value is
-$\frac{1}{2Q^*} = c_{\mathrm{EHZ}}(K)$.
+$(V^*)^{-1} = c_{\mathrm{EHZ}}(K)$.
 \end{proof}
 
 \begin{remark}\label{rem:non-maximizer-warning}
 % Approval: proof structure approved by Jörn. Text not yet reviewed.
 % QC: important for agents/readers who might assume all critical
-%   points of Q correspond to Reeb orbits.
-The proof uses only that the global maximizer of~$Q$ corresponds
-to a minimum-action Reeb orbit
+%   points correspond to Reeb orbits.
+The proof uses only that the global maximizer
+of~$\tilde{\beta}^\top H\, \tilde{\beta}$
+corresponds to a minimum-action Reeb orbit
 (Theorem~\ref{thm:main}, Step~6).
-Non-maximizing critical points of~$Q$ that pass the filter
-($\beta > 0$, $Q > 0$) need not correspond to Reeb orbits:
+Non-maximizing critical points that pass the filter
+($\beta > 0$, $\tilde{\beta}^\top H\, \tilde{\beta} > 0$)
+need not correspond to Reeb orbits:
 the bijection between $(\sigma, \beta)$ and simple orbits is
 established only at the optimum.
 The algorithm may evaluate~$A$ at such spurious critical
