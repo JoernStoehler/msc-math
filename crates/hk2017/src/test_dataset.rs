@@ -217,8 +217,8 @@ fn random_sp4_matrix(rng: &mut impl Rng) -> Matrix4<f64> {
 
     // Cayley transform: M = (I - A)(I + A)^{-1}
     let id = Matrix4::identity();
-    let i_plus_a = id + a_mat;
-    let i_minus_a = id - a_mat;
+    let i_plus_a = &id + &a_mat;
+    let i_minus_a = &id - &a_mat;
 
     i_plus_a
         .try_inverse()
