@@ -186,7 +186,7 @@ pub fn polytope_catalog() -> Vec<CatalogEntry> {
     // Small random polytopes (5-7 facets for speed)
     for facet_count in 5..=7 {
         for i in 0..2 {
-            let p = generate_random_bounded_polytope(facet_count, &mut rng);
+            let p = geom::test_utils::random_bounded_polytope(facet_count, &mut rng);
             base_entries.push(CatalogEntry {
                 name: format!("random_f{}_n{}", facet_count, i),
                 polytope: p,
@@ -423,39 +423,6 @@ fn apply_symplectomorphism(polytope: &Polytope4D, m: &Matrix4<f64>, b: &Vector4<
     }
 
     Polytope4D::new(normals, heights).expect("transformed polytope")
-}
-
-/// Generate a random bounded polytope for testing.
-/// Retries if the polytope is unbounded (~5% acceptance rate, so 100 attempts is plenty).
-fn generate_random_bounded_polytope(facet_count: usize, rng: &mut impl Rng) -> Polytope4D {
-    for _attempt in 0..100 {
-        let normals: Vec<Vector4<f64>> = (0..facet_count)
-            .map(|_| {
-                let v = Vector4::new(
-                    rng.sample(StandardNormal),
-                    rng.sample(StandardNormal),
-                    rng.sample(StandardNormal),
-                    rng.sample(StandardNormal),
-                );
-                v.normalize()
-            })
-            .collect();
-
-        // Random heights ensuring 0 ∈ int(K)
-        let heights: Vec<f64> = (0..facet_count)
-            .map(|_| rng.gen_range(0.5..2.0))
-            .collect();
-
-        if let Ok(polytope) = Polytope4D::new(normals, heights) {
-            return polytope;
-        }
-    }
-
-    panic!(
-        "Failed to generate bounded {}-facet polytope in 100 attempts. \
-         If this triggers with a fixed seed, increase the retry count or change the seed.",
-        facet_count
-    );
 }
 
 #[cfg(test)]

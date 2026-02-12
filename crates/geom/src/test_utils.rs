@@ -1,14 +1,12 @@
-/// Convenience constructors returning bare `Polytope4D` for tests.
+/// Convenience constructors for tests and tooling.
 ///
-/// These delegate to `known_polytopes` and strip the metadata.
+/// Known polytopes delegate to `known_polytopes` and strip the metadata.
 /// For capacity values and literature references, use `known_polytopes` directly.
 ///
 /// **Coordinates**: (q₁, q₂, p₁, p₂). See `symplectic.rs` for J₀ and ω₀.
 use crate::polytope::Polytope4D;
-
-#[cfg(test)]
+use nalgebra::Vector4;
 use rand::Rng;
-#[cfg(test)]
 use rand_distr::StandardNormal;
 
 pub fn simplex() -> Polytope4D {
@@ -24,7 +22,6 @@ pub fn hypercube() -> Polytope4D {
 /// Not in `known_polytopes` because it's parameterized — no single known capacity.
 /// Expected: volume = 16s^4, EHZ capacity = 4s.
 pub fn scaled_hypercube(s: f64) -> Polytope4D {
-    use nalgebra::Vector4;
     let normals = vec![
         Vector4::x(),
         -Vector4::x(),
@@ -53,32 +50,37 @@ pub fn symplectic_triangle_product() -> Polytope4D {
 
 /// Generate a random bounded polytope with specified number of facets.
 ///
-/// Normals are uniformly distributed on S³ (via sampling from 4D standard normal
-/// and normalizing). Heights are random in [0.5, 2.0] to ensure 0 ∈ int(K).
+/// Normals are uniformly distributed on S³ (via 4D standard normal, normalized).
+/// Heights are random in [0.5, 2.0] to ensure 0 ∈ int(K).
+/// Retries up to 100 times if the random configuration is unbounded.
 ///
 /// # Panics
-/// Panics if Polytope4D::new() fails (unbounded, degenerate, etc.)
-/// Also panics if `facet_count < 5` (minimum for bounded 4D polytope).
-#[cfg(test)]
+/// Panics if no valid polytope is found in 100 attempts.
 pub fn random_bounded_polytope(facet_count: usize, rng: &mut impl Rng) -> Polytope4D {
-    use nalgebra::Vector4;
-    // Generate random unit vectors on S³
-    let normals: Vec<Vector4<f64>> = (0..facet_count)
-        .map(|_| {
-            let v = Vector4::new(
-                rng.sample(StandardNormal),
-                rng.sample(StandardNormal),
-                rng.sample(StandardNormal),
-                rng.sample(StandardNormal),
-            );
-            v.normalize()
-        })
-        .collect();
+    for _ in 0..100 {
+        let normals: Vec<Vector4<f64>> = (0..facet_count)
+            .map(|_| {
+                let v = Vector4::new(
+                    rng.sample(StandardNormal),
+                    rng.sample(StandardNormal),
+                    rng.sample(StandardNormal),
+                    rng.sample(StandardNormal),
+                );
+                v.normalize()
+            })
+            .collect();
 
-    // Random heights ensuring 0 ∈ int(K)
-    let heights: Vec<f64> = (0..facet_count)
-        .map(|_| rng.gen_range(0.5..2.0))
-        .collect();
+        let heights: Vec<f64> = (0..facet_count)
+            .map(|_| rng.gen_range(0.5..2.0))
+            .collect();
 
-    Polytope4D::new(normals, heights).expect("random polytope should be valid")
+        if let Ok(polytope) = Polytope4D::new(normals, heights) {
+            return polytope;
+        }
+    }
+
+    panic!(
+        "Failed to generate bounded {}-facet polytope in 100 attempts",
+        facet_count
+    );
 }
