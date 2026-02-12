@@ -235,7 +235,7 @@ main() {
   local abs_path
   abs_path="$(cd "$path" && pwd)"
   local stale_pids
-  stale_pids="$(ps aux | grep -F "$abs_path" | grep -v grep | awk '{print $2}' || true)"
+  stale_pids="$(ps aux | grep -F "$abs_path" | grep -v grep | awk -v me=$$ '$2 != me {print $2}' || true)"
   if [[ -n "$stale_pids" ]]; then
     local count
     count="$(echo "$stale_pids" | wc -l)"
@@ -244,7 +244,7 @@ main() {
     sleep 1
     # SIGKILL stragglers
     local remaining
-    remaining="$(ps aux | grep -F "$abs_path" | grep -v grep | awk '{print $2}' || true)"
+    remaining="$(ps aux | grep -F "$abs_path" | grep -v grep | awk -v me=$$ '$2 != me {print $2}' || true)"
     if [[ -n "$remaining" ]]; then
       echo "[worktree-remove][warn] force-killing stubborn processes"
       echo "$remaining" | xargs kill -9 2>/dev/null || true
