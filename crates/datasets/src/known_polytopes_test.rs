@@ -14,53 +14,6 @@ fn all_known_polytopes_pass_validation() {
     }
 }
 
-#[test]
-fn simplex_has_5_facets() {
-    assert_eq!(simplex().polytope.facet_count(), 5);
-}
-
-#[test]
-fn hypercube_has_8_facets() {
-    assert_eq!(hypercube().polytope.facet_count(), 8);
-}
-
-#[test]
-fn crosspolytope_has_16_facets() {
-    assert_eq!(crosspolytope().polytope.facet_count(), 16);
-}
-
-#[test]
-fn hko_pentagon_has_10_facets() {
-    assert_eq!(hko_pentagon().polytope.facet_count(), 10);
-}
-
-#[test]
-fn lagrangian_triangle_product_has_6_facets() {
-    assert_eq!(lagrangian_triangle_product().polytope.facet_count(), 6);
-}
-
-#[test]
-fn symplectic_triangle_product_has_6_facets() {
-    assert_eq!(symplectic_triangle_product().polytope.facet_count(), 6);
-}
-
-#[test]
-fn lagrangian_tri_sq_has_7_facets() {
-    assert_eq!(lagrangian_triangle_square().polytope.facet_count(), 7);
-}
-
-#[test]
-fn symplectic_tri_sq_has_7_facets() {
-    assert_eq!(symplectic_triangle_square().polytope.facet_count(), 7);
-}
-
-#[test]
-fn all_known_capacities_positive() {
-    for kp in all_known() {
-        assert!(kp.capacity > 0.0, "{}: capacity should be > 0", kp.name);
-    }
-}
-
 /// Verify symplectic_triangle_product capacity (3√3/4) against HK2017 algorithm.
 #[test]
 fn symplectic_triangle_product_capacity() {

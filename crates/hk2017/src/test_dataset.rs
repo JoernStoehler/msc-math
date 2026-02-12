@@ -29,7 +29,7 @@
 //!   unpruned computation.
 
 use geom::polytope::Polytope4D;
-use geom::test_utils::{simplex, lagrangian_triangle_product};
+use geom::test_utils::{hypercube, simplex, lagrangian_triangle_product};
 use nalgebra::{Matrix4, Vector4};
 use rand::Rng;
 use rand_distr::StandardNormal;
@@ -226,11 +226,12 @@ pub fn polytope_catalog() -> Vec<CatalogEntry> {
 }
 
 /// Known literature capacity values for validation.
-pub const LITERATURE_VALUES: &[(&str, f64)] = &[
-    ("simplex", 0.25),
-    ("hypercube", 4.0),
-    ("lagrangian_triangle_product", 1.5),
-];
+///
+/// Derived from `geom::known_polytopes` — single source of truth.
+/// Excludes polytopes with placeholder capacities (e.g. crosspolytope).
+pub fn literature_values() -> Vec<(&'static str, f64)> {
+    geom::known_polytopes::literature_values()
+}
 
 /// Generate test dataset with fail-fast inline validation.
 ///
@@ -275,7 +276,7 @@ pub fn generate_test_dataset() -> Vec<TestPolytope> {
         };
 
         // Fail-fast: literature values
-        for &(lit_name, lit_cap) in LITERATURE_VALUES {
+        for (lit_name, lit_cap) in literature_values() {
             if entry.name == lit_name {
                 let rel_err = (cap_pruned - lit_cap).abs() / lit_cap;
                 assert!(
@@ -455,22 +456,6 @@ fn generate_random_bounded_polytope(facet_count: usize, rng: &mut impl Rng) -> P
          If this triggers with a fixed seed, increase the retry count or change the seed.",
         facet_count
     );
-}
-
-// Helper: hypercube fixture (used in tests)
-fn hypercube() -> Polytope4D {
-    let normals = vec![
-        Vector4::x(),
-        -Vector4::x(),
-        Vector4::y(),
-        -Vector4::y(),
-        Vector4::z(),
-        -Vector4::z(),
-        Vector4::w(),
-        -Vector4::w(),
-    ];
-    let heights = vec![1.0; 8];
-    Polytope4D::new(normals, heights).expect("hypercube")
 }
 
 #[cfg(test)]

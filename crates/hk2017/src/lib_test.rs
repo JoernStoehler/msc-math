@@ -192,7 +192,7 @@ fn solve_kkt_degenerate() {
 #[test]
 #[ignore] // Expensive: 10 facets → exponential runtime (~2-5 min)
 fn pentagon_capacity() {
-    use datasets::known_polytopes::hko_pentagon;
+    use geom::known_polytopes::hko_pentagon;
     use geom::volume::volume;
 
     let kp = hko_pentagon();
@@ -217,7 +217,7 @@ fn pentagon_capacity() {
 
 #[test]
 fn triangle_square_capacity() {
-    use datasets::known_polytopes::lagrangian_triangle_square;
+    use geom::known_polytopes::lagrangian_triangle_square;
 
     let kp = lagrangian_triangle_square();
     let result = ehz_capacity_pruned(&kp.polytope).expect("Lagrangian triangle×square capacity");
@@ -234,7 +234,7 @@ fn triangle_square_capacity() {
 
 #[test]
 fn symplectic_triangle_square_capacity() {
-    use datasets::known_polytopes::symplectic_triangle_square;
+    use geom::known_polytopes::symplectic_triangle_square;
 
     let kp = symplectic_triangle_square();
     let result = ehz_capacity_pruned(&kp.polytope).expect("symplectic triangle×square capacity");
@@ -255,7 +255,7 @@ fn symplectic_triangle_square_capacity() {
 #[test]
 #[ignore] // Too expensive: 16 facets → exponential runtime (~hours)
 fn crosspolytope_capacity() {
-    use datasets::known_polytopes::crosspolytope;
+    use geom::known_polytopes::crosspolytope;
 
     let kp = crosspolytope();
     let result = ehz_capacity_pruned(&kp.polytope).expect("crosspolytope capacity");
