@@ -93,14 +93,15 @@ whose kernel direction~$r$ satisfies $n_\ell \cdot r \le 0$ for all~$\ell$
 
 Among all unit vectors in~$\operatorname{rec}(K)$, pick~$d$ maximizing the
 number of orthogonal normals $S_0 = \{\ell : n_\ell \cdot d = 0\}$.  We claim
-that~$S_0$ contains three linearly independent normals.  If not,
-$(\operatorname{span} S_0)^\perp$ has dimension~$\ge 2$ and contains~$d$, so
-there exists $v \in (\operatorname{span} S_0)^\perp$ not parallel to~$d$.  The
-path $d + tv$ stays in~$\operatorname{rec}(K)$ for small~$|t|$: the~$S_0$
-constraints remain tight (since $v \perp n_\ell$ for $\ell \in S_0$) and the
-strict inequalities $n_\ell \cdot d < 0$ remain negative by continuity.
-(Such strict inequalities exist: since the normals span~$\mathbb{R}^4$, $d$
-cannot be orthogonal to all normals, so $S_0 \neq \{1, \ldots, F\}$.)
+that~$\{n_\ell : \ell \in S_0\}$ contains three linearly independent normals.
+If not, $(\operatorname{span}\{n_\ell : \ell \in S_0\})^\perp$ has
+dimension~$\ge 2$ and contains~$d$, so there exists~$v$ in this orthogonal
+complement, not parallel to~$d$.  The path $d + tv$ stays
+in~$\operatorname{rec}(K)$ for small~$|t|$: the~$S_0$ constraints remain tight
+(since $v \perp n_\ell$ for $\ell \in S_0$) and the strict inequalities
+$n_\ell \cdot d < 0$ remain negative by continuity. (Such strict inequalities
+exist: since the normals span~$\mathbb{R}^4$, $d$ cannot be orthogonal to all
+normals, so $S_0 \neq \{1, \ldots, F\}$.)
 Increasing~$|t|$, eventually some new constraint $n_{\ell^*} \cdot (d + t^* v)
 = 0$ becomes tight, giving a direction in~$\operatorname{rec}(K)$ with
 strictly more orthogonal normals---contradicting maximality.
