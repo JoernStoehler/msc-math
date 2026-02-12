@@ -2,6 +2,8 @@
 ///
 /// This module provides standard test polytopes (simplex, hypercube, etc.)
 /// used in multiple test files. Single source of truth for test data.
+///
+/// **Coordinates**: (q₁, q₂, p₁, p₂). See `symplectic.rs` for J₀ and ω₀.
 use crate::polytope::Polytope4D;
 use nalgebra::Vector4;
 use std::f64::consts::PI;

@@ -3,6 +3,8 @@
 /// These serve as ground-truth entries in datasets for algorithm validation.
 /// Each constructor returns a `KnownPolytope` with the polytope, its known
 /// capacity value, and a literature reference.
+///
+/// **Coordinates**: (q₁, q₂, p₁, p₂). See `geom::symplectic` for J₀ and ω₀.
 use geom::polytope::Polytope4D;
 use nalgebra::Vector4;
 use std::f64::consts::PI;
