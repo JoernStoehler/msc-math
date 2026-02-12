@@ -425,14 +425,11 @@ fn apply_symplectomorphism(polytope: &Polytope4D, m: &Matrix4<f64>, b: &Vector4<
 }
 
 /// Generate a random bounded polytope for testing.
-/// Retries if the polytope is unbounded.
+/// Retries if the polytope is unbounded (~5% acceptance rate, so 100 attempts is plenty).
 fn generate_random_bounded_polytope(facet_count: usize, rng: &mut impl Rng) -> Polytope4D {
-    // Retry loop: sometimes random configurations are unbounded
-    for _attempt in 0..10 {
-        // Generate random unit vectors on S³
+    for _attempt in 0..100 {
         let normals: Vec<Vector4<f64>> = (0..facet_count)
             .map(|_| {
-                // Sample from 4D standard normal, normalize
                 let v = Vector4::new(
                     rng.sample(StandardNormal),
                     rng.sample(StandardNormal),
@@ -453,8 +450,11 @@ fn generate_random_bounded_polytope(facet_count: usize, rng: &mut impl Rng) -> P
         }
     }
 
-    // Fallback: use hypercube if random generation fails repeatedly
-    hypercube()
+    panic!(
+        "Failed to generate bounded {}-facet polytope in 100 attempts. \
+         If this triggers with a fixed seed, increase the retry count or change the seed.",
+        facet_count
+    );
 }
 
 // Helper: hypercube fixture (used in tests)
