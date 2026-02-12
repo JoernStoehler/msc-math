@@ -28,12 +28,13 @@ sample attempt proceeds as follows:
       for any~$i \ne j$.
       % Same-direction only (n_i ≈ n_j). Antiparallel normals (n_i ≈ -n_j)
       % are valid opposite-facing facets, e.g. hypercube has ±e_i.
-    \item \emph{Boundedness}: the normals must positively span~$\mathbb{R}^4$
-      (Proposition~\ref{prop:boundedness-iff} below). We check this by
-      enumerating all triples~$(i,j,k)$: the three normals share a 1D kernel
-      direction~$d$ (computed via the generalized cross product
-      in~$\mathbb{R}^4$), and we verify that some normal has positive inner
-      product with~$d$ and some normal has negative inner product with~$d$.
+    \item \emph{Boundedness}: the polytope must be bounded
+      (Proposition~\ref{prop:boundedness-iff} below). We first check that the
+      normals span~$\mathbb{R}^4$ (via SVD rank), then enumerate all
+      triples~$(i,j,k)$: the three normals share a 1D kernel direction~$d$
+      (computed via the generalized cross product in~$\mathbb{R}^4$), and we
+      verify that some normal has positive inner product with~$d$ and some
+      normal has negative inner product with~$d$.
       % The degenerate case (three coplanar normals, kernel ≥ 2D) is skipped in
       % the code — probability zero for continuous distributions on S^3.
     \item \emph{Vertex enumeration}: a vertex lies at the intersection of
@@ -69,18 +70,21 @@ $\operatorname{rec}(K) \subset K$ (since $0 \in K$, any $d \in
   \text{the normals positively span } \mathbb{R}^4,
 \]
 where \emph{positively span} means: no nonzero~$d$ has $n_\ell \cdot d \le 0$
-for all~$\ell$. It remains to show that the triple-enumeration check is
-equivalent to positive span.
+for all~$\ell$. It remains to show that positive span is equivalent to the
+conjunction: the normals span~$\mathbb{R}^4$ and all triples pass.
 
-\medskip\noindent\emph{($\Rightarrow$) Positive span implies all triples pass.}
-Let~$d$ be a kernel direction of triple~$(i,j,k)$, so $n_i \cdot d = n_j
+\medskip\noindent\emph{($\Rightarrow$) Positive span implies both conditions.}
+Positive span implies span~$\mathbb{R}^4$ (a fortiori). For the triple check:
+let~$d$ be a kernel direction of triple~$(i,j,k)$, so $n_i \cdot d = n_j
 \cdot d = n_k \cdot d = 0$. By positive span, some~$n_\ell$ has $n_\ell \cdot
 d > 0$; since the triple's own normals have zero dot product with~$d$, this
 $n_\ell$ lies outside the triple. Applying the same argument to~$-d$ gives a
 normal with negative inner product.
 
-\medskip\noindent\emph{($\Leftarrow$) All triples pass implies positive span.}
-We prove the contrapositive: if positive span fails, some triple fails.
+\medskip\noindent\emph{($\Leftarrow$) Span~$\mathbb{R}^4$ and all triples
+pass implies positive span.}
+We prove the contrapositive: if positive span fails but the normals
+span~$\mathbb{R}^4$, some triple fails.
 
 Suppose $\operatorname{rec}(K) \neq \{0\}$, i.e., there exists a nonzero~$d$
 with $n_\ell \cdot d \le 0$ for all~$\ell$. We produce a triple~$(i,j,k)$
@@ -95,6 +99,8 @@ there exists $v \in (\operatorname{span} S_0)^\perp$ not parallel to~$d$.  The
 path $d + tv$ stays in~$\operatorname{rec}(K)$ for small~$|t|$: the~$S_0$
 constraints remain tight (since $v \perp n_\ell$ for $\ell \in S_0$) and the
 strict inequalities $n_\ell \cdot d < 0$ remain negative by continuity.
+(Such strict inequalities exist: since the normals span~$\mathbb{R}^4$, $d$
+cannot be orthogonal to all normals, so $S_0 \neq \{1, \ldots, F\}$.)
 Increasing~$|t|$, eventually some new constraint $n_{\ell^*} \cdot (d + t^* v)
 = 0$ becomes tight, giving a direction in~$\operatorname{rec}(K)$ with
 strictly more orthogonal normals---contradicting maximality.
