@@ -70,8 +70,8 @@ impl std::error::Error for QhullError {}
 
 /// Write halfspaces to temporary file in qhull format.
 ///
-/// Format: First line is "5 N" (dimension+1, count), subsequent lines are
-/// "n₁ n₂ n₃ n₄ -h" (one per halfspace).
+/// Format: First line is "5 N" (dimension+1 coefficients per halfspace, count), subsequent lines are
+/// "n₁ n₂ n₃ n₄ -h" (one per halfspace). The "5" is d+1 because each halfspace has an offset term.
 fn write_qhull_input(
     normals: &[Vector4<f64>],
     heights: &[f64],
@@ -264,7 +264,7 @@ pub(crate) fn halfspace_intersection_4d(
     // Check for sentinel vertices indicating unbounded polytope
     // Qhull signals unbounded intersections via sentinel value (-10.101, -10.101, -10.101, -10.101)
     // See: https://github.com/qhull/qhull/blob/master/src/user_r.h#L513
-    // See: BOUNDEDNESS_INVESTIGATION.md for empirical validation (0% false negatives on 375 test cases)
+    // Empirically validated: 0% false negatives on 375 bounded/unbounded test cases.
     const SENTINEL: f64 = -10.101;
     const TOLERANCE: f64 = 0.001;
     for vertex in &vertices {
@@ -283,7 +283,7 @@ pub(crate) fn halfspace_intersection_4d(
 /// Write vertices to temporary file in qconvex format.
 ///
 /// Format: First line is "4 N" (dimension, count), subsequent lines are
-/// "v₁ v₂ v₃ v₄" (one per vertex).
+/// "v₁ v₂ v₃ v₄" (one per vertex). The "4" is d (points have no offset term, unlike halfspaces).
 fn write_qconvex_input(vertices: &[Vector4<f64>]) -> Result<NamedTempFile, QhullError> {
     let mut file = NamedTempFile::new().map_err(QhullError::InputWriteFailed)?;
 
@@ -414,6 +414,7 @@ fn parse_fa_output(output: &str) -> Result<f64, QhullError> {
 /// # Returns
 /// Volume as f64
 pub(crate) fn compute_volume_qconvex(vertices: &[Vector4<f64>]) -> Result<f64, QhullError> {
+    // In R⁴, a polytope with nonzero volume requires at least 5 vertices (4-simplex).
     if vertices.len() < 5 {
         return Ok(0.0);
     }
@@ -530,8 +531,8 @@ mod test {
     }
 
     /// Test case: 4D simplex with 5 vertices
-    /// Approximately the standard simplex conv{0, e₁, e₂, e₃, e₄}, shifted slightly
-    /// so all heights are positive (h > 0 required for origin to be interior)
+    /// Approximately the standard simplex conv{0, e₁, e₂, e₃, e₄}, shifted so the
+    /// origin is interior (h = 1e-6 for coordinate halfspaces, h = 0.5 for the diagonal).
     #[test]
     fn simplex_vertices() {
         let normals = vec![
@@ -578,7 +579,7 @@ mod test {
     /// Test error handling: empty polytope (contradictory halfspaces)
     #[test]
     fn empty_polytope_fails() {
-        // Contradictory constraints: x₁ ≤ -1 and x₁ ≤ 1 with opposite directions
+        // Contradictory: x₁ ≤ -1 (first) and x₁ ≥ 2 (second), so intersection is empty.
         let normals = vec![
             Vector4::new(1.0, 0.0, 0.0, 0.0),   // x₁ ≤ -1
             Vector4::new(-1.0, 0.0, 0.0, 0.0),  // -x₁ ≤ -2 (equivalent to x₁ ≥ 2)
@@ -602,9 +603,9 @@ mod test {
         }
     }
 
-    /// Test error handling: unbounded polytope (underconstrained system)
+    /// Test: unbounded polytope (underconstrained) does not panic.
     #[test]
-    fn unbounded_polytope_fails() {
+    fn unbounded_polytope_does_not_panic() {
         // Only 4 halfspaces in 4D - unbounded
         let normals = vec![
             Vector4::new(1.0, 0.0, 0.0, 0.0),
@@ -615,8 +616,7 @@ mod test {
         let heights = vec![1.0, 1.0, 1.0, 1.0];
 
         let result = halfspace_intersection_4d(&normals, &heights);
-        // May fail or succeed depending on qhull behavior
-        // Just verify it doesn't panic
+        // May return Ok or Err depending on qhull behavior; just verify no panic.
         let _ = result;
     }
 
