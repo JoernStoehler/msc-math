@@ -14,7 +14,7 @@ This document tracks test coverage across the crates, focusing on mathematical p
 | ehz_capacity | Correctness on triangle product | Unit | lib_test.rs:84 | ✓ |
 | ehz_capacity_pruned | Matches unpruned (hypercube) | Unit | lib_test.rs:104 | ✓ |
 | ehz_capacity_pruned | Matches unpruned (random) | Proptest | lib_test.rs (NEW) | ✓ |
-| ehz_capacity | Scaling law c_EHZ(λK) = λ²·c_EHZ(K) | Proptest | lib_test.rs (NEW) | ✓ |
+| ehz_capacity | Scaling law c_EHZ(λK) = λ²·c_EHZ(K) | Unit | lib_test.rs (NEW) | ✓ |
 | solve_kkt | Two facets | Unit | lib_test.rs:129 | ✓ |
 | solve_kkt | Four facets symplectic | Unit | lib_test.rs:157 | ✓ |
 | solve_kkt | Rank-deficient system | Unit | lib_test.rs:198 | ✓ |
@@ -114,8 +114,8 @@ This document tracks test coverage across the crates, focusing on mathematical p
 **Rationale**: Pruning by adjacency is an optimization that should not change the result. This is Corollary 5.3 in the thesis.
 
 **Implementation**:
-- Generate random polytopes with 5-8 facets (manageable search space)
-- Seeds 0-99 for reproducibility
+- Generate random polytopes with 5-6 facets (manageable search space)
+- Seeds 0-3 (4 seeds × 2 facet counts = ~8 test cases via proptest)
 - Compare capacities with tolerance 1e-6
 
 ### 2. capacity_scales_quadratically (hk2017/lib_test.rs)
@@ -126,7 +126,7 @@ This document tracks test coverage across the crates, focusing on mathematical p
 
 **Implementation**:
 - Use hypercube (fast, deterministic)
-- Test scale factors 0.5, 2.0, 3.0
+- Single scale factor λ = e (transcendental, avoids numerical coincidences)
 - Verify c_EHZ(λK) / λ² ≈ c_EHZ(K) with relative error < 1e-4
 
 ### 3. random_polytopes_pass_validation (datasets/random_test.rs)

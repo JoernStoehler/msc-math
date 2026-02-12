@@ -8,6 +8,11 @@ T(F) = 7.73 × 10⁻⁸ · 5.74^F seconds (R² = 0.9999)
 
 Fitted via log-linear regression on timing data from `experiments/profiling/timing_data.csv`.
 
+**Note:** The timing data was collected before the Lagrangian/symplectic product split.
+The `symplectic_tri_sq` row (F=7, capacity=1.5) is actually the Lagrangian product.
+The current `symplectic_triangle_square()` returns a different polytope (capacity=1.0).
+Timing would be similar (same facet count), but capacity values would differ if regenerated.
+
 ## Measured vs predicted
 
 | F  | Measured (ms) | Predicted (ms) |

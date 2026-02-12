@@ -225,7 +225,7 @@ fn triangle_square_capacity() {
     // Investigation complete: This is a Lagrangian product (equilateral triangle in q-space,
     // unit square in p-space), not a symplectic product. The algorithm correctly computes
     // capacity = 1.5 via optimal orbit using all 3 triangle facets and 2 square facets.
-    // See experiments/TRIANGLE_SQUARE_INVESTIGATION.md for detailed analysis.
+    // See experiments/triangle_square.md for detailed analysis.
     assert!(
         (result.capacity - kp.capacity).abs() < 1e-6,
         "Lagrangian triangle×square: got {}, expected {}", result.capacity, kp.capacity

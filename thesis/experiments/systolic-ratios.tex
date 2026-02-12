@@ -64,8 +64,8 @@ at $F = 10$) using rejection sampling with heights in $[0.5, 2.0]$. Key
 statistics:
 
 \begin{itemize}
-  \item \textbf{Systolic ratio range}: $[0.000, 0.674]$ with mean~0.215,
-    median~0.189
+  \item \textbf{Systolic ratio range}: $[0.001, 0.680]$ with mean~0.190,
+    median~0.151
   \item \textbf{Viterbo violations}: \textbf{0 out of 270} random polytopes
     have $\mathrm{sys}(K) > 1$
   \item \textbf{Capacity range}: $[3.49, 78.00]$ with mean~12.16
@@ -78,7 +78,7 @@ strongly skewed toward low values ($\mathrm{sys} < 0.3$ for most polytopes).
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.75\textwidth]{../experiments/figures/sys_histogram.png}
-\caption{Distribution of systolic ratios across 200 random 4-polytopes. All
+\caption{Distribution of systolic ratios across 270 random 4-polytopes. All
   values satisfy $\mathrm{sys}(K) \le 1$ (Viterbo's conjecture).}
 \label{fig:sys-histogram}
 \end{figure}
@@ -125,7 +125,7 @@ for large-scale studies, with $F = 10$ taking $\sim$3 seconds per polytope.
 
 \begin{enumerate}
   \item \textbf{Pentagon is rare}: The Haim-Kislev-Ostrover counterexample
-    ($\mathrm{sys} = 1.047$) does not appear among 200 randomly generated
+    ($\mathrm{sys} = 1.047$) does not appear among 270 randomly generated
     polytopes. All random polytopes satisfy Viterbo's conjecture.
 
   \item \textbf{Viterbo holds for ``most'' polytopes}: The systolic ratio
@@ -139,7 +139,7 @@ for large-scale studies, with $F = 10$ taking $\sim$3 seconds per polytope.
 \end{enumerate}
 
 \paragraph{Methodological contribution.}
-Even with stub data, this experiment demonstrates a reproducible computational
+This experiment demonstrates a reproducible computational
 pipeline for probing symplectic conjectures. The rejection sampling approach
 (Section~\ref{sec:rejection-sampling}) provides efficient generation of
 diverse polytope datasets, and the \texttt{hk2017} crate provides a validated

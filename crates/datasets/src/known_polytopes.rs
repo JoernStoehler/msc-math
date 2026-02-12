@@ -194,7 +194,7 @@ pub fn triangle_product() -> KnownPolytope {
 /// Note: Related to Schlenk Lem. 5.3.1, but Schlenk's result uses a right isosceles
 /// triangle (sys = 1.0), whereas this construction uses an equilateral triangle (sys = √3/2 ≈ 0.866).
 ///
-/// Source: HK2017 algorithm + billiard verification (see TRIANGLE_SQUARE_INVESTIGATION.md).
+/// Source: HK2017 algorithm + billiard verification (see experiments/triangle_square.md).
 pub fn lagrangian_triangle_square() -> KnownPolytope {
     // Equilateral triangle in q-space (circumradius 1, inradius 0.5)
     let triangle_normals = (0..3).map(|k| {
@@ -239,7 +239,7 @@ pub fn lagrangian_triangle_square() -> KnownPolytope {
 /// This verifies Moser's theorem: c(A ×_S B) = min(c(A), c(B)).
 ///
 /// Source: Moser's theorem + functoriality of symplectic products.
-/// Computed via investigation in TRIANGLE_SQUARE_INVESTIGATION.md.
+/// Computed via investigation in experiments/triangle_square.md.
 pub fn symplectic_triangle_square() -> KnownPolytope {
     // Equilateral triangle in (q₁, p₁) plane (circumradius 1, inradius 0.5)
     // In 4D: normals = (cos θ, 0, sin θ, 0) for θ = π/2 + 2πk/3
