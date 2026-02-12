@@ -59,6 +59,12 @@
 **Hotspot analysis:** (which crate/test dominates, what % of total)
 **Comparison to previous:** (faster/slower/same, by how much)
 
+### Check 6: Stale Processes
+
+**Status:** (PASS / FAIL / SKIPPED)
+**Key metric:** (N stale processes found, total CPU %)
+**Notes:**
+
 ---
 
 ## Alert Threshold Breaches

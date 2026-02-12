@@ -151,6 +151,29 @@ git -C /workspaces/msc-math worktree remove "$BENCH_WT"
 
 ---
 
+### Check 6: Stale Processes
+
+**Purpose:** Detect zombie cargo/test processes left behind by ended sessions.
+
+**Background:** When agent sessions end or background tasks are cancelled, child processes (test binaries, qhull subprocesses) can survive and consume CPU indefinitely. The `timeout` convention (CLAUDE.md) and worktree-remove.sh cleanup help prevent this, but detection catches what prevention misses.
+
+**Command:**
+```bash
+# Find cargo test binaries running longer than 30 minutes
+ps aux | grep -E 'target/debug/deps/' | grep -v grep
+```
+
+**Expected result:**
+- No output (no stale test processes)
+- Or: only processes from active sessions (recently started, reasonable CPU)
+
+**Alert threshold:**
+- Any test binary process older than 60 minutes
+- Any test binary process from a worktree that no longer exists
+- Total CPU usage from test processes > 400%
+
+---
+
 ## Running a Monitoring Session
 
 ### Workflow

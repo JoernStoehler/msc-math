@@ -263,6 +263,10 @@ cd crates/ && cargo build
 cd crates/ && cargo test
 cd crates/ && cargo clippy
 
+# Long-running commands: always wrap with timeout to prevent zombie processes
+timeout 5m cargo test              # routine tests
+timeout 30m cargo test -- --ignored  # slow property/monitoring tests
+
 # Python
 ruff check experiments/
 pytest experiments/
