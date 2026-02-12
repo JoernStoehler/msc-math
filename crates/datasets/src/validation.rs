@@ -67,19 +67,23 @@ pub fn validate_polytope(
 /// direction d, some normal has positive inner product with d and some has negative.
 ///
 /// *Proof.* The recession cone rec(K) = {d : Ad ≤ 0} satisfies rec(K) ⊂ K (since
-/// 0 ∈ K). So K bounded ⟺ rec(K) = {0} ⟺ normals positively span ℝ⁴, where
-/// "positively span" means: no nonzero d has n_ℓ · d ≤ 0 for all ℓ.
+/// 0 ∈ K); conversely, if K is unbounded it contains a ray, forcing some nonzero
+/// d ∈ rec(K). So K bounded ⟺ rec(K) = {0} ⟺ normals positively span ℝ⁴, where
+/// "positively span" means: for every nonzero d, some n_ℓ · d > 0.
 ///
-/// (⇒) Positive span → all triples pass: immediate, since kernel directions are
-/// nonzero and positive span gives a blocking normal outside the triple.
+/// (⇒) Positive span → (i) and (ii): span ℝ⁴ is a fortiori. For (ii), kernel
+/// directions are nonzero, so positive span gives a blocking normal outside the triple.
 ///
-/// (⇐) Contrapositive: if rec(K) ≠ {0}, some triple fails. Pick d ∈ rec(K) (unit)
-/// maximizing |S₀| where S₀ = {ℓ : n_ℓ · d = 0}. If S₀ has < 3 independent
-/// normals, (span S₀)⊥ has dim ≥ 2, contains d, so ∃ v ∈ (span S₀)⊥ not ∥ d.
-/// Perturbing d → d + tv stays in rec(K) for small |t| (S₀ stays tight, strict
-/// inequalities stay negative). Increasing |t|, a new constraint becomes tight,
-/// contradicting maximality of |S₀|. So d ⊥ three independent normals n_i, n_j, n_k,
-/// d ∈ ker(n_i, n_j, n_k), and n_ℓ · d ≤ 0 ∀ℓ — triple (i,j,k) fails. ∎
+/// (⇐) Contrapositive: if rec(K) ≠ {0} but normals span ℝ⁴, some triple fails.
+/// Pick d ∈ rec(K) (unit) maximizing |S₀| where S₀ = {ℓ : n_ℓ · d = 0}. If the
+/// normals in S₀ have < 3 independent, their span⊥ W has dim ≥ 2 and contains d.
+/// Pick v ∈ W not ∥ d. Then n_ℓ · (d+tv) = 0 for ℓ ∈ S₀ and n_ℓ · (d+tv) < 0
+/// for ℓ ∉ S₀ (small |t|). The interval T = {t : d+tv ∈ rec(K)} is bounded (else
+/// v ⊥ all normals, contradicting rank 4). At an endpoint t*, a new constraint
+/// becomes tight → |S₀| increases, contradicting maximality.
+/// So d ⊥ three independent normals n_i, n_j, n_k (whose kernel is 1D since they
+/// are independent in ℝ⁴). Triple (i,j,k) falls under (ii) and d ∈ rec(K) means
+/// no normal has positive inner product with d — triple fails. ∎
 ///
 /// # Algorithm
 ///
