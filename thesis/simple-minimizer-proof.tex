@@ -554,52 +554,46 @@ A simple curve is encoded by finite data:
 \end{itemize}
 
 % [AGENT-WRITTEN ARGUMENT, UNREVIEWED BY JÖRN]
-% [AGENT CONFIDENCE 70%: Structure matches HK2017 proof (lines 436-449). Agent verified:
-%  (1) space ℰ¹ definition matches, (2) map Φ: ℰ¹ → S_F × Δ^(F-1) matches,
-%  (3) compactness of image (finite × compact), (4) subsequence convergence structure.
-%  CONCERN: The argument may be missing details about why Φ is well-defined and why
-%  convergence in S_F × Δ^(F-1) implies W^{1,2} convergence of the curves. The connection
-%  between finite-dimensional convergence and functional convergence needs verification.
-%  JÖRN: verify completeness of compactness argument or expand with missing steps.]
-Consider the space $\mathcal{E}^1$ of piecewise affine curves
-on $[0,T^{(4)}]$ with velocities in $\{R_1,\ldots,R_F\}$
-(each $R_i$ appearing at most once).
-Define a map
-\[
-  \Phi : \mathcal{E}^1 \to S_F \times \Delta^{F-1},
-  \quad z' \mapsto \left(\sigma, \left(\frac{t_1}{T^{(4)}},\ldots,\frac{t_F}{T^{(4)}}\right)\right),
-\]
-where $\Delta^{F-1} = \{(s_1,\ldots,s_F) : s_i \geq 0, \sum s_i = 1\}$
-is the standard $(F-1)$-simplex.
+% QC: uses finite-dimensional compactness (S_F × simplex) and the action
+%   identity to bypass W^{1,2} convergence. A and I_K are computed
+%   directly from finite data (σ, durations), so convergence of durations
+%   gives convergence of A and I_K without functional analysis.
+Each curve $z^{(4)}_n$ (from Step~4 with $\varepsilon_n \to 0$)
+is determined by a permutation $\sigma^n \in S_F$
+and durations $(t^n_1, \ldots, t^n_F) \in \mathbb{R}_{\geq 0}^F$
+with $\sum t^n_i = T^{(4)}_n$ and $\sum t^n_i R_{\sigma^n(i)} = 0$.
 
-The image $\mathrm{Im}(\Phi) \subset S_F \times \Delta^{F-1}$ is compact
-(finite set times a compact set).
-The sequence $\{z^{(4)}_n\}$ (from Step~4 with $\varepsilon_n \to 0$) lies in $\mathcal{E}^1$.
-
-After passing to a subsequence:
+The normalized durations
+$(t^n_1/T^{(4)}_n, \ldots, t^n_F/T^{(4)}_n)$
+lie in the $(F{-}1)$-simplex
+$\Delta^{F-1} = \{s \in \mathbb{R}_{\geq 0}^F : \sum s_i = 1\}$.
+Since $S_F \times \Delta^{F-1}$ is compact (finite $\times$ compact),
+a subsequence converges:
 \begin{itemize}
-\item The permutation $\sigma^n = \sigma$ is constant,
-\item The normalized durations converge:
-      $(t^n_1/T^{(4)}_n,\ldots,t^n_F/T^{(4)}_n) \to (s^{\infty}_1,\ldots,s^{\infty}_F)$ in $\Delta^{F-1}$,
-\item The periods $T^{(4)}_n \to T$ (from Step~4 analysis).
+\item $\sigma^n = \sigma$ (constant, by pigeonhole),
+\item $(t^n_1/T^{(4)}_n, \ldots, t^n_F/T^{(4)}_n)
+      \to (s^\infty_1, \ldots, s^\infty_F) \in \Delta^{F-1}$,
+\item $T^{(4)}_n \to T$ (from Step~4).
 \end{itemize}
-
 Define $z^*$ as the piecewise affine curve with ordering $\sigma$,
-velocities $\{R_{\sigma(i)}\}$, and time durations $t^{\infty}_i = s^{\infty}_i \cdot T$.
-
-Then $\|z^{(4)}_n - z^*\|_{W^{1,2}} \to 0$ (convergence in $W^{1,2}$):
-The velocity $\dot{z}^{(4)}_n$ matches $\dot{z}^*$ on most of $[0,T]$,
-with the measure of mismatch tending to zero as
-$T^{(4)}_n \to T$ and $t^n_i/T^{(4)}_n \to s^{\infty}_i$.
-
-By continuity of $A$ and $I_K$ in $W^{1,2}$:
+velocities $R_{\sigma(i)}$, and durations $t^\infty_i = s^\infty_i \cdot T$.
+The closure condition
+$\sum t^\infty_i R_{\sigma(i)}
+  = \lim_n \sum t^n_i R_{\sigma(i)} = 0$
+holds by continuity.
+By the action identity~\eqref{eq:action-identity},
+$A$ is a polynomial in the durations (for fixed $\sigma$), so
 \[
-  A(z^*) = \lim_{n\to\infty} A(z^{(4)}_n) = T,
-  \qquad
-  I_K(z^*) = \lim_{n\to\infty} I_K(z^{(4)}_n) = T.
+  A(z^*) = \lim_{n\to\infty} A(z^{(4)}_n)
+  = \lim_{n\to\infty} T^{(4)}_n = T.
 \]
-Since $z$ was a dual minimizer with $I_K(z) = T$, and $I_K(z^*) = T$,
-the curve $z^*$ is also a dual minimizer. It is simple by construction
+Since all velocities are pure Reeb vectors,
+$I_K(z^*) = T$ (same computation as Step~2).
+As $z$ was a dual minimizer with $I_K(z) = T$,
+and $z^*$ is feasible (closed, $A(z^*) = T$, centered
+by translation) with $I_K(z^*) = T$,
+the curve $z^*$ is also a dual minimizer.
+It is simple by construction
 (piecewise affine, pure Reeb velocities, each facet used at most once).
 
 \paragraph{Conclusion.}
