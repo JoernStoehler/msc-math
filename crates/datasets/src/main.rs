@@ -8,7 +8,7 @@ use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use std::fs::File;
 use std::io::{BufWriter, Write};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::time::Instant;
 
 // ---- Hardcoded parameters (KISS: refactor into CLI args later) ----
@@ -21,7 +21,7 @@ const N_RANDOM_F8: usize = 50;
 const N_RANDOM_F9: usize = 50;
 const N_RANDOM_F10: usize = 20;
 
-// Shared parameters for all random batches
+// Shared parameters for random polytope generation and acceptance sweep
 const RANDOM_H_MIN: f64 = 0.5;
 const RANDOM_H_MAX: f64 = 2.0;
 const SWEEP_N_ATTEMPTS: usize = 1000;
@@ -49,7 +49,7 @@ fn main() {
     }
 }
 
-fn cmd_dataset(output: &PathBuf) {
+fn cmd_dataset(output: &Path) {
     let file = File::create(output).expect("cannot create output file");
     let mut writer = BufWriter::new(file);
 
@@ -160,7 +160,7 @@ fn generate_and_write_batch(
     }
 }
 
-fn cmd_sweep(output: &PathBuf) {
+fn cmd_sweep(output: &Path) {
     eprintln!(
         "Running acceptance sweep ({} attempts per config)...",
         SWEEP_N_ATTEMPTS

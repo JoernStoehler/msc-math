@@ -13,8 +13,11 @@ pub struct PolytopeRow {
     pub capacity: f64,
     /// Systolic ratio: sys = capacity² / (2 · volume).
     pub sys: f64,
+    /// Time to compute volume via qhull (milliseconds).
     pub time_volume_ms: f64,
+    /// Time to compute EHZ capacity via HK2017 algorithm (milliseconds).
     pub time_capacity_ms: f64,
+    /// Time to generate/validate the polytope (milliseconds).
     pub time_creation_ms: f64,
 }
 
@@ -53,13 +56,21 @@ impl PolytopeRow {
 /// A single row in the acceptance sweep dataset (dataset 2).
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AcceptanceRow {
+    /// Number of halfspaces in the sampled polytopes.
     pub facet_count: usize,
+    /// Minimum height parameter for rejection sampling.
     pub h_min: f64,
+    /// Maximum height parameter for rejection sampling.
     pub h_max: f64,
+    /// Total number of sampling attempts.
     pub n_total: usize,
+    /// Number of attempts that produced a valid polytope.
     pub n_accepted: usize,
+    /// Fraction of accepted samples: n_accepted / n_total.
     pub acceptance_ratio: f64,
+    /// Mean validation time for accepted samples (milliseconds).
     pub avg_time_accepted_ms: f64,
+    /// Mean validation time for rejected samples (milliseconds).
     pub avg_time_rejected_ms: f64,
 }
 
