@@ -23,7 +23,7 @@ Progression is fluid, with no clear cutoff points:
 No clear cutoff for "when to archive". It's continuous prioritization:
 - Blockers: lack of ideas for improvements
 - When cleaning up code that's no longer useful:
-  - If learnings worth preserving: create `learnings/[topic].md` with git ref to last commit
+  - If learnings worth preserving: create `experiments/<topic>.md` with git ref to last commit
   - Otherwise: just delete (it's in git history)
 - Purpose: keep `scripts/` focused, don't distract with low-priority work
 
@@ -33,14 +33,23 @@ No clear cutoff for "when to archive". It's continuous prioritization:
 experiments/
   CLAUDE.md              This file
   IDEAS.md               Ongoing thoughts, ideas, edge cases, preliminary findings
+  <topic>.md             Standalone writeups (investigation findings, learnings)
   scripts/               Experiment scripts (all investigative)
-  learnings/             Learnings from deleted experiments
-    [topic].md           Findings + git ref to experiment
+    <name>.py            Script
+    <name>.md            Colocated writeup (findings, methodology, key results)
+    <name>_<suffix>.py   Multi-script experiment variants
+  profiling/             Profiling raw data
   data/                  Generated datasets (gitignored)
   figures/               Generated plots (gitignored)
 ```
 
 ## Script conventions
+
+**File naming:**
+- Scripts: `scripts/<name>.py`
+- Colocated writeup: `scripts/<name>.md` (findings, methodology, key results)
+- Multi-script experiments: `scripts/<name>_<suffix>.py` (e.g., `timing_model_fit.py`, `timing_model_plot.py`)
+- Standalone writeups (no script): `experiments/<topic>.md` (e.g., investigation findings, learnings)
 
 **Independent scripts, not a package:**
 - No `__init__.py`, no shared imports between scripts
@@ -48,8 +57,9 @@ experiments/
 - If two scripts share logic, copy-paste until it stabilizes (don't prematurely abstract)
 
 **No framework:**
-- Use plain Python with standard data science libraries (numpy, pandas, matplotlib)
+- Use plain Python with standard data science libraries (numpy, pandas, matplotlib, scipy)
 - No custom framework, no complex dependencies
+- Dependencies listed in `experiments/requirements.txt`; install with `pip install -r experiments/requirements.txt`
 
 **Script headers:**
 Every script must document in the docstring:
