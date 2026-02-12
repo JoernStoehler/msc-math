@@ -1,8 +1,3 @@
----
-name: rust-dev
-description: Use when writing or modifying Rust code in crates/. Contains coding conventions, test file naming, mathematical documentation rules, and testing philosophy.
----
-
 # Rust crate conventions
 
 ## Coding conventions

@@ -292,7 +292,7 @@ geom, hk2017, billiard, tube -> datasets
 
 Where domains overlap, algorithms must agree on the computed capacity.
 
-<!-- Coding conventions, test file naming, math documentation, testing philosophy: .claude/skills/rust-dev/SKILL.md -->
+<!-- Full conventions: crates/CLAUDE.md -->
 
 ## Experiments (Python)
 
@@ -302,7 +302,7 @@ Where domains overlap, algorithms must agree on the computed capacity.
 ## Thesis (LaTeX)
 
 [aspirational] A complete master thesis PDF. Currently: skeleton only (`main.tex` with title, author, and section stubs). Build with `cd thesis/ && latexmk`.
-<!-- Conventions and proof writing rules: .claude/skills/thesis/SKILL.md -->
+<!-- Full conventions: thesis/CLAUDE.md -->
 
 ## Archaeology
 
