@@ -28,12 +28,12 @@ sample attempt proceeds as follows:
       for any~$i \ne j$.
       % Same-direction only (n_i ≈ n_j). Antiparallel normals (n_i ≈ -n_j)
       % are valid opposite-facing facets, e.g. hypercube has ±e_i.
-    \item \emph{Boundedness}: the normals must positively span~$\mathbb{R}^4$,
-      i.e., no direction is left ``uncovered.'' For every triple~$(i,j,k)$,
-      the three normals share a 1D kernel direction~$d$ (computed via the
-      generalized cross product in~$\mathbb{R}^4$). The polytope is bounded
-      only if some other normal blocks~$d$ (has positive inner product
-      with~$d$) and some other normal blocks~$-d$.
+    \item \emph{Boundedness}: the normals must positively span~$\mathbb{R}^4$
+      (Proposition~\ref{prop:boundedness-iff} below). We check this by
+      enumerating all triples~$(i,j,k)$: the three normals share a 1D kernel
+      direction~$d$ (computed via the generalized cross product
+      in~$\mathbb{R}^4$), and we verify that some normal has positive inner
+      product with~$d$ and some normal has negative inner product with~$d$.
       % The degenerate case (three coplanar normals, kernel ≥ 2D) is skipped in
       % the code — probability zero for continuous distributions on S^3.
     \item \emph{Vertex enumeration}: a vertex lies at the intersection of
@@ -45,6 +45,63 @@ sample attempt proceeds as follows:
   \end{enumerate}
   \item If all checks pass, accept the polytope.
 \end{enumerate}
+
+\begin{proposition}[Boundedness check]\label{prop:boundedness-iff}
+Write $K = \{x : Ax \le h\}$ where~$A$ has rows~$n_1, \ldots, n_F$ and
+$h_\ell > 0$ for all~$\ell$ (so $0 \in \operatorname{int} K$). Then $K$ is
+bounded if and only if, for every triple~$(i,j,k)$ whose normals have a
+1-dimensional kernel direction~$d$, some normal has positive inner product
+with~$d$ and some normal has negative inner product with~$d$.
+\end{proposition}
+
+\begin{proof}
+The recession cone $\operatorname{rec}(K) = \{d : Ad \le 0\}$ satisfies
+$\operatorname{rec}(K) \subset K$ (since $0 \in K$, any $d \in
+\operatorname{rec}(K)$ gives a ray $\{td : t \ge 0\} \subset K$). Hence
+\[
+  K \text{ bounded}
+  \;\Longleftrightarrow\;
+  \operatorname{rec}(K) = \{0\}
+  \;\Longleftrightarrow\;
+  \text{the normals positively span } \mathbb{R}^4,
+\]
+where \emph{positively span} means: no nonzero~$d$ has $n_\ell \cdot d \le 0$
+for all~$\ell$. It remains to show that the triple-enumeration check is
+equivalent to positive span.
+
+\medskip\noindent\emph{($\Rightarrow$) Positive span implies all triples pass.}
+Let~$d$ be a kernel direction of triple~$(i,j,k)$, so $n_i \cdot d = n_j
+\cdot d = n_k \cdot d = 0$. By positive span, some~$n_\ell$ has $n_\ell \cdot
+d > 0$; since the triple's own normals have zero dot product with~$d$, this
+$n_\ell$ lies outside the triple. Applying the same argument to~$-d$ gives a
+normal with negative inner product.
+
+\medskip\noindent\emph{($\Leftarrow$) All triples pass implies positive span.}
+We prove the contrapositive: if positive span fails, some triple fails.
+
+Suppose $\operatorname{rec}(K) \neq \{0\}$, i.e., there exists a nonzero~$d$
+with $n_\ell \cdot d \le 0$ for all~$\ell$. We produce a triple~$(i,j,k)$
+whose kernel direction~$r$ satisfies $n_\ell \cdot r \le 0$ for all~$\ell$
+(so no normal blocks~$r$).
+
+\emph{Case~1: $\operatorname{rec}(K)$ is pointed} (contains no line). Then it
+has an extreme ray~$r$. An extreme ray is a 1-dimensional face, and a
+$k$-dimensional face of a polyhedral cone in~$\mathbb{R}^4$ lies on at least
+$4 - k$ linearly independent tight constraints. For $k = 1$, this gives three
+linearly independent normals~$n_i, n_j, n_k$ with $n_i \cdot r = n_j \cdot r
+= n_k \cdot r = 0$, so $r \in \ker(n_i, n_j, n_k)$. Since $r \in
+\operatorname{rec}(K)$, we have $n_\ell \cdot r \le 0$ for all~$\ell$, and no
+normal has positive inner product with~$r$. Triple~$(i,j,k)$ fails.
+
+\emph{Case~2: $\operatorname{rec}(K)$ contains a line.} There exists a nonzero
+$v$ with $n_\ell \cdot v = 0$ for all~$\ell$ (both $v$ and $-v$ lie in
+$\operatorname{rec}(K)$, forcing all inner products to zero). All normals lie
+in~$v^\perp$, a 3-dimensional subspace. Take three linearly independent
+normals~$n_i, n_j, n_k$; they span~$v^\perp$, so $\ker(n_i, n_j, n_k) =
+(v^\perp)^\perp = \operatorname{span}(v)$. The kernel direction $w = v$
+satisfies $n_\ell \cdot w = 0$ for all~$\ell$, so no normal has positive inner
+product with~$w$. Triple~$(i,j,k)$ fails.
+\end{proof}
 
 \subsubsection*{Acceptance rate sweep}
 

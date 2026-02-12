@@ -84,9 +84,13 @@ pub fn validate_polytope(
 /// - Check that some normal outside {i,j,k} has n_ℓ · d > ε (blocks +d direction)
 /// - Check that some normal outside {i,j,k} has n_ℓ · d < -ε (blocks -d direction)
 ///
-/// **Correctness:** If a direction d violates positive span (e.g., n_ℓ · d ≤ 0 for all ℓ),
-/// then d is orthogonal to at most dim(ℝ⁴)-1 = 3 linearly independent normals.
-/// The algorithm enumerates all such kernel directions, so it detects any violation.
+/// **Correctness (iff):** Positive span → all triples pass is immediate. For the
+/// converse: if positive span fails, rec(K) = {d : n_ℓ · d ≤ 0 ∀ℓ} ≠ {0}. If rec(K)
+/// is pointed, an extreme ray r lies in ker(n_i, n_j, n_k) for some triple (a 1D face
+/// of a cone in ℝ⁴ needs ≥ 3 tight constraints), and n_ℓ · r ≤ 0 for all ℓ. If rec(K)
+/// contains a line, all normals lie in a 3D subspace v⊥, and ker of any spanning triple
+/// is span(v) with n_ℓ · v = 0 for all ℓ. Either way, some triple fails.
+/// See thesis Proposition (Boundedness check) for full proof.
 ///
 /// **Complexity:** O(F³) for F facets (all triples), with O(1) kernel computation per triple.
 fn check_bounded(normals: &[Vector4<f64>]) -> Result<(), ValidationError> {
