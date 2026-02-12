@@ -53,11 +53,15 @@ Three levels, strictly ordered: **text > math > structure**. Only record the hig
 3. **Text**: the written prose is correct (final quality)
 
 ```latex
-% Jörn: structure approved — from \subsection{Sampling procedure} to \end{proof}
-% Jörn: text approved — from \subsection{Sampling procedure} to "Acceptance rate sweep"
+% Jörn: structure approved (abc1234) — from \subsection{Sampling procedure} to \end{proof}
+% Jörn: text approved (abc1234) — from \subsection{Sampling procedure} to "Acceptance rate sweep"
 ```
 
+The commit hash is from `git rev-parse HEAD` after committing the approved version — it's the commit the agent is already making.
+
 Only one marker per scope. When a higher level is approved, replace the lower marker (e.g., `structure` → `text`). Scope must be explicit (section names or line ranges). Content outside any `% Jörn:` marker is unreviewed.
+
+**Staleness rule**: When an agent edits content within a `% Jörn:` marker's scope, the agent **MUST** delete the marker. The edited content reverts to the default status (agent-written, unreviewed). The commit hash serves as a backup: if a marker survived an edit, anyone can diff the file since that commit to detect staleness.
 
 Jörn reviews the **PDF-visible text** (rendered output), not the `%` comments. The `% Jörn:` markers record what he approved in the PDF; they do not mean he reviewed the LaTeX source comments.
 
