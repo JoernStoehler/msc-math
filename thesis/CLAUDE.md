@@ -46,17 +46,18 @@ Use prefixed comments to separate meta information by audience:
 
 ### Jörn's review status (`% Jörn:`)
 
-Two levels, applied incrementally:
+Three levels, strictly ordered: **text > math > structure**. Only record the highest approved level — higher implies all lower levels.
 
 1. **Structure**: proof approach/strategy is correct, section organization is right
-2. **Text**: the written prose is correct (implies structure was already approved)
+2. **Math**: mathematical content is correct (but writing may need polish)
+3. **Text**: the written prose is correct (final quality)
 
 ```latex
-% Jörn: structure approved — from \subsection{Sampling procedure} to \begin{proposition}
+% Jörn: structure approved — from \subsection{Sampling procedure} to \end{proof}
 % Jörn: text approved — from \subsection{Sampling procedure} to "Acceptance rate sweep"
 ```
 
-Place these inline, near the content they apply to. Scope must be explicit (section names or line ranges). Content outside any `% Jörn:` marker is unreviewed.
+Only one marker per scope. When a higher level is approved, replace the lower marker (e.g., `structure` → `text`). Scope must be explicit (section names or line ranges). Content outside any `% Jörn:` marker is unreviewed.
 
 Jörn reviews the **PDF-visible text** (rendered output), not the `%` comments. The `% Jörn:` markers record what he approved in the PDF; they do not mean he reviewed the LaTeX source comments.
 
