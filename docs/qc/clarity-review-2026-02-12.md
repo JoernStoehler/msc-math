@@ -222,13 +222,23 @@ Thesis/CLAUDE.md Content Rule 1 says "Do NOT write anything Jorn did not dictate
 - **Deleted**: `% Jörn: text approved (a013c1e) — entire file` in correspondence.tex (staleness rule: PDF-visible text changed — column header "Ours" → "This thesis", expanded MATLAB convention, added dash explanation)
 - **No other `% Jörn:` markers affected** — all other edited .tex files had no approval markers
 
-## Remaining Items for Jörn (Tier 2)
+## Fixes Applied (Tier 2)
 
-The following items need Jörn's decision and cannot be resolved autonomously:
+**Commits**: 4 additional commits after Tier 1, with Jörn's input on decisions.
 
-1. **Thesis proof gaps** (simple-minimizer-proof.tex): Two critical findings block verification. Known draft issues but should be tracked.
-2. **Section 4 empty skeletons** (chapter-algorithm.tex): Load-bearing definitions missing. At minimum, duplicate the M(K) definition from Section 1.
-3. **Lagrangian vs. symplectic terminology** (known_polytopes.rs, test_utils.rs): Verify which product type `triangle_product` actually is. If symplectic, rename throughout.
-4. **Stale thesis cross-references** (hk2017/lib.rs): Update to use label-based references matching actual thesis structure.
-5. **knowledge-dump.md "talk normalization"**: Define this term properly since downstream agents depend on it.
-6. **CLAUDE.md content rule conflict**: thesis/CLAUDE.md Content Rule 1 ("Do NOT write anything Jörn did not dictate") conflicts with root CLAUDE.md Role 7 ("Claude Code is perfectly capable of writing mathematical prose").
+| # | Commit | Fix |
+|---|--------|-----|
+| 20 | `e2a1701` | Rename `triangle_product` → `lagrangian_triangle_product`, add `symplectic_triangle_product` (×_S, capacity = 3√3/4 by Moser). Fix misleading "(q1, p1)" comments → "q-space (q₁, q₂)". |
+| 21 | `6e83701` | Remove thesis/CLAUDE.md Content Rule 1 ("Do NOT write anything Jörn did not dictate") — per Jörn's instruction. |
+| 22 | `db3071e` | Add staleness warning to knowledge-dump.md, redirect to thesis LaTeX as authoritative source. |
+| 23 | `4f303b4` | Replace all numbered thesis cross-refs with label-based syntax (`def:polytope`, `alg:ehz`, etc.). |
+
+### Verification (post Tier 2)
+
+- `cargo test`: **all pass** (109 tests, 6 ignored — +2 tests from new `symplectic_triangle_product` fixture)
+- `cargo clippy`: **clean**
+
+## Remaining Items (Tier 3 — deferred)
+
+1. **Thesis proof gaps** (simple-minimizer-proof.tex): Two critical findings block verification. Being addressed in a separate session.
+2. **Section 4 empty skeletons** (chapter-algorithm.tex): Load-bearing definitions missing. Being addressed in a separate session.
