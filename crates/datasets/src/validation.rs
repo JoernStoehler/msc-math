@@ -36,7 +36,12 @@ impl From<ConstructionError> for ValidationError {
     }
 }
 
+/// Threshold for positive-span check: n_ℓ · d > EPS_UNIT means "has positive component."
+/// Matches the unit-normal tolerance in geom::polytope (1e-9).
 const EPS_UNIT: f64 = 1e-9;
+
+/// Tolerance for vertex-facet incidence: |n_i · v - h_i| < EPS_FEASIBILITY.
+/// Matches qhull's numerical precision for vertex coordinates.
 const EPS_FEASIBILITY: f64 = 1e-8;
 
 /// Full validation: returns a `Polytope4D` or an error explaining why the input
@@ -103,7 +108,7 @@ fn check_bounded(normals: &[Vector4<f64>]) -> Result<(), ValidationError> {
     // Probability zero for random normals on S^3, but checked for correctness.
     let mat = nalgebra::DMatrix::from_fn(f, 4, |r, c| normals[r][c]);
     let svd = mat.svd(false, false);
-    let rank = svd.singular_values.iter().filter(|&&s| s > 1e-8).count();
+    let rank = svd.singular_values.iter().filter(|&&s| s > 1e-8).count(); // rank threshold matches EPS_FEASIBILITY
     if rank < 4 {
         return Err(ValidationError::Unbounded);
     }
@@ -120,14 +125,14 @@ fn check_bounded(normals: &[Vector4<f64>]) -> Result<(), ValidationError> {
                 let kernel_dirs = kernel_of_three(normals[i], normals[j], normals[k]);
 
                 for d in &kernel_dirs {
-                    if d.norm() < 1e-12 {
+                    if d.norm() < 1e-12 { // near-zero cross product → normals are dependent
                         continue;
                     }
                     // Check: is there any normal outside {i,j,k} with positive dot product with d?
                     let has_pos = (0..f)
                         .filter(|&l| l != i && l != j && l != k)
                         .any(|l| normals[l].dot(d) > EPS_UNIT);
-                    // Same for -d
+                    // Check that some normal outside {i,j,k} has negative dot product with d
                     let has_neg = (0..f)
                         .filter(|&l| l != i && l != j && l != k)
                         .any(|l| normals[l].dot(d) < -EPS_UNIT);
