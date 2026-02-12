@@ -58,8 +58,8 @@ pub fn generate_test_dataset() -> Vec<TestPolytope> {
         ("triangle_product", triangle_product()),
     ];
     for (name, p) in known {
-        let vol = volume(&p).expect(&format!("{} volume", name));
-        let cap = ehz_capacity(&p).expect(&format!("{} capacity", name)).capacity;
+        let vol = volume(&p).unwrap_or_else(|_| panic!("{} volume", name));
+        let cap = ehz_capacity(&p).unwrap_or_else(|| panic!("{} capacity", name)).capacity;
         base_dataset.push(TestPolytope {
             name: name.to_string(),
             polytope: p,
@@ -190,8 +190,8 @@ fn random_sp4_matrix(rng: &mut impl Rng) -> Matrix4<f64> {
 
     // Cayley transform: M = (I - A)(I + A)^{-1}
     let id = Matrix4::identity();
-    let i_plus_a = &id + &a_mat;
-    let i_minus_a = &id - &a_mat;
+    let i_plus_a = id + a_mat;
+    let i_minus_a = id - a_mat;
 
     i_plus_a
         .try_inverse()
