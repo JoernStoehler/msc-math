@@ -3,12 +3,22 @@
 //! This module is primarily intended for use in tests, but is defined as a normal
 //! module to allow cross-crate test imports.
 //!
-//! Generates a phased test dataset of polytopes with precomputed capacity and volume:
+//! ## Architecture: cached fixture
+//!
+//! Generating the test dataset is expensive (~27 `ehz_capacity()` calls, ~2-3 min).
+//! To keep `cargo test --lib` fast (<30s), the dataset is cached as a JSON fixture:
+//!
+//! - **Default path:** Property tests load from `tests/fixtures/capacity_dataset.json`
+//! - **Regeneration:** Run `cargo test -p hk2017 regenerate_test_dataset -- --ignored`
+//!   after changes to `ehz_capacity()` or the dataset generation logic.
+//!
+//! The fixture is committed to the repo so all worktrees have it immediately.
+//!
+//! ## Dataset phases
+//!
 //! - Phase 1: Base dataset (known and random polytopes)
 //! - Phase 2: Symplectomorphism variants (apply random M ∈ Sp(4))
 //! - Phase 3: Conformality variants (scale by random α)
-//!
-//! Used by capacity and sys property tests.
 
 use geom::polytope::Polytope4D;
 use geom::test_utils::{simplex, triangle_product};
@@ -31,6 +41,86 @@ pub struct TestPolytope {
     pub base_index: Option<usize>,
     /// Transformation type: None (base), "sympl", or "conform:1.50"
     pub transform: Option<String>,
+}
+
+/// Path to the cached dataset fixture, relative to the hk2017 crate root.
+pub const FIXTURE_PATH: &str = "tests/fixtures/capacity_dataset.json";
+
+/// Serializable representation of a test polytope (no nalgebra types).
+#[cfg(test)]
+#[derive(serde::Serialize, serde::Deserialize)]
+struct DatasetEntry {
+    name: String,
+    normals: Vec<[f64; 4]>,
+    heights: Vec<f64>,
+    volume: f64,
+    capacity: f64,
+    base_index: Option<usize>,
+    transform: Option<String>,
+}
+
+#[cfg(test)]
+impl DatasetEntry {
+    fn from_test_polytope(tp: &TestPolytope) -> Self {
+        Self {
+            name: tp.name.clone(),
+            normals: tp.polytope.normals().iter().map(|n| [n[0], n[1], n[2], n[3]]).collect(),
+            heights: tp.polytope.heights().to_vec(),
+            volume: tp.volume,
+            capacity: tp.capacity,
+            base_index: tp.base_index,
+            transform: tp.transform.clone(),
+        }
+    }
+
+    fn to_test_polytope(&self) -> TestPolytope {
+        let normals: Vec<Vector4<f64>> = self.normals.iter()
+            .map(|n| Vector4::new(n[0], n[1], n[2], n[3]))
+            .collect();
+        let polytope = Polytope4D::new(normals, self.heights.clone())
+            .unwrap_or_else(|e| panic!("fixture entry '{}': {}", self.name, e));
+        TestPolytope {
+            name: self.name.clone(),
+            polytope,
+            volume: self.volume,
+            capacity: self.capacity,
+            base_index: self.base_index,
+            transform: self.transform.clone(),
+        }
+    }
+}
+
+/// Save dataset to JSON fixture file.
+#[cfg(test)]
+pub fn save_test_dataset(path: &std::path::Path, dataset: &[TestPolytope]) {
+    let entries: Vec<DatasetEntry> = dataset.iter().map(DatasetEntry::from_test_polytope).collect();
+    let json = serde_json::to_string_pretty(&entries).expect("serialize dataset");
+    if let Some(parent) = path.parent() {
+        std::fs::create_dir_all(parent).expect("create fixture directory");
+    }
+    std::fs::write(path, json).expect("write fixture file");
+}
+
+/// Load dataset from JSON fixture file.
+#[cfg(test)]
+pub fn load_test_dataset(path: &std::path::Path) -> Vec<TestPolytope> {
+    let json = std::fs::read_to_string(path).unwrap_or_else(|e| {
+        panic!(
+            "Cannot read capacity dataset fixture at {}.\n\
+             Error: {}\n\
+             Regenerate with: cargo test -p hk2017 regenerate_test_dataset -- --ignored --nocapture",
+            path.display(), e
+        )
+    });
+    let entries: Vec<DatasetEntry> = serde_json::from_str(&json).unwrap_or_else(|e| {
+        panic!(
+            "Cannot parse capacity dataset fixture at {}.\n\
+             Error: {}\n\
+             Regenerate with: cargo test -p hk2017 regenerate_test_dataset -- --ignored --nocapture",
+            path.display(), e
+        )
+    });
+    entries.iter().map(DatasetEntry::to_test_polytope).collect()
 }
 
 /// Generate test dataset in three phases (~30 polytopes).
@@ -270,4 +360,47 @@ fn hypercube() -> Polytope4D {
     ];
     let heights = vec![1.0; 8];
     Polytope4D::new(normals, heights).expect("hypercube")
+}
+
+#[cfg(test)]
+mod test_dataset_tests {
+    use super::*;
+    use std::path::PathBuf;
+
+    fn fixture_path() -> PathBuf {
+        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(FIXTURE_PATH)
+    }
+
+    /// Regenerate the cached capacity dataset fixture.
+    ///
+    /// Run after changes to `ehz_capacity()` or the dataset generation logic:
+    /// ```
+    /// cargo test -p hk2017 regenerate_test_dataset -- --ignored --nocapture
+    /// ```
+    #[test]
+    #[ignore] // Expensive: ~27 ehz_capacity() calls, ~2-3 min
+    fn regenerate_test_dataset() {
+        let dataset = generate_test_dataset();
+        let path = fixture_path();
+        save_test_dataset(&path, &dataset);
+        println!("Saved {} polytopes to {}", dataset.len(), path.display());
+
+        // Verify round-trip
+        let reloaded = load_test_dataset(&path);
+        assert_eq!(dataset.len(), reloaded.len());
+        for (orig, loaded) in dataset.iter().zip(reloaded.iter()) {
+            assert_eq!(orig.name, loaded.name);
+            // JSON round-trip may lose ~1 ULP; 1e-12 is far tighter than the 1e-6
+            // tolerance used by property tests, so this is safe.
+            assert!(
+                (orig.capacity - loaded.capacity).abs() < 1e-12,
+                "{}: capacity drift: {} vs {}", orig.name, orig.capacity, loaded.capacity
+            );
+            assert!(
+                (orig.volume - loaded.volume).abs() < 1e-12,
+                "{}: volume drift: {} vs {}", orig.name, orig.volume, loaded.volume
+            );
+        }
+        println!("Round-trip verification passed");
+    }
 }

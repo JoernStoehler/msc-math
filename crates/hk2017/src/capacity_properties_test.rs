@@ -6,13 +6,20 @@
 //! - Symplectomorphism invariance: c_EHZ(MK+b) = c_EHZ(K)
 //! - Monotonicity: K₁ ⊆ K₂ ⟹ c_EHZ(K₁) ≤ c_EHZ(K₂)
 
-use crate::test_dataset::{generate_test_dataset, TestPolytope};
+use crate::test_dataset::{load_test_dataset, TestPolytope, FIXTURE_PATH};
 use geom::polytope::Polytope4D;
 use nalgebra::Vector4;
+use std::path::PathBuf;
 use std::sync::LazyLock;
 
-/// Shared dataset across all capacity property tests (computed once).
-static DATASET: LazyLock<Vec<TestPolytope>> = LazyLock::new(generate_test_dataset);
+/// Shared dataset loaded from cached fixture (fast, <1ms).
+///
+/// If the fixture is missing, panics with instructions to regenerate:
+/// `cargo test -p hk2017 regenerate_test_dataset -- --ignored --nocapture`
+static DATASET: LazyLock<Vec<TestPolytope>> = LazyLock::new(|| {
+    let path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(FIXTURE_PATH);
+    load_test_dataset(&path)
+});
 
 #[test]
 fn capacity_positive_on_all_polytopes() {
