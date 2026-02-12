@@ -1,10 +1,10 @@
-/// Vertex enumeration for 4D polytopes via qhull subprocess.
-///
-/// See Definition 3.2 (Polytope) in thesis/chapter-algorithm.tex:
-///   A polytope is a bounded convex subset K ⊂ ℝ⁴ that contains 0 in its
-///   interior and is an intersection of finitely many closed half-spaces.
-///   An irredundant H-representation is {(n̂ᵢ, ĥᵢ)}ᵢ₌₁^F with n̂ᵢ ∈ S³, ĥᵢ > 0,
-///   such that K = ⋂ᵢ { x : ⟨x, n̂ᵢ⟩ ≤ ĥᵢ }.
+//! Vertex enumeration for 4D polytopes via qhull subprocess.
+//!
+//! See Definition 3.2 (Polytope) in thesis/chapter-algorithm.tex:
+//!   A polytope is a bounded convex subset K ⊂ ℝ⁴ that contains 0 in its
+//!   interior and is an intersection of finitely many closed half-spaces.
+//!   An irredundant H-representation is {(n̂ᵢ, ĥᵢ)}ᵢ₌₁^F with n̂ᵢ ∈ S³, ĥᵢ > 0,
+//!   such that K = ⋂ᵢ { x : ⟨x, n̂ᵢ⟩ ≤ ĥᵢ }.
 
 use nalgebra::Vector4;
 
