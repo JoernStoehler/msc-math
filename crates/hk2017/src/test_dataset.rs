@@ -35,8 +35,8 @@ pub struct TestPolytope {
 
 /// Generate test dataset in three phases (~30 polytopes).
 ///
-/// Phase 1: Base dataset (~10 polytopes)
-///   - 4 known polytopes (simplex, hypercube, crosspolytope, triangle_product)
+/// Phase 1: Base dataset (~9 polytopes)
+///   - 3 known polytopes (simplex, hypercube, triangle_product)
 ///   - 6 random polytopes (5-7 facets, 2 per facet count)
 ///
 /// Phase 2: Symplectomorphism variants (+~10)
@@ -93,7 +93,7 @@ pub fn generate_test_dataset() -> Vec<TestPolytope> {
 
     for (i, entry) in base_dataset.iter().enumerate() {
         // Generate random M ∈ Sp(4) and translation b
-        let (m, b) = random_symplectomorphism(&entry.polytope, &mut rng);
+        let (m, b) = random_symplectomorphism(&mut rng);
         let transformed = apply_symplectomorphism(&entry.polytope, &m, &b);
 
         if let (Ok(vol), Some(cap_result)) = (volume(&transformed), ehz_capacity(&transformed)) {
@@ -144,10 +144,7 @@ fn scale_polytope(polytope: &Polytope4D, alpha: f64) -> Polytope4D {
 ///
 /// Since 0 ∈ int(K) and M is invertible, 0 = M·0 ∈ int(MK),
 /// so the transformed polytope always has positive heights.
-fn random_symplectomorphism(
-    _polytope: &Polytope4D,
-    rng: &mut impl Rng,
-) -> (Matrix4<f64>, Vector4<f64>) {
+fn random_symplectomorphism(rng: &mut impl Rng) -> (Matrix4<f64>, Vector4<f64>) {
     let m = random_sp4_matrix(rng);
     (m, Vector4::zeros())
 }
