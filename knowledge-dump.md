@@ -1,7 +1,12 @@
 # Knowledge Dump: HK2017 Algorithm Writeup
 
-This file is the single source of truth for writing ALGORITHM.md sections.
-Section writers: use ONLY this file for mathematical content. Do not invent formulas or claims.
+> **STATUS: STALE / LOW QUALITY.** This file was written early in the project and has not been
+> maintained. It may contain outdated definitions, inconsistent notation, or undefined terms
+> (e.g. "talk normalization"). Do not treat as authoritative — cross-check against
+> `thesis/chapter-algorithm.tex` and `thesis/correspondence.tex` for current definitions.
+
+This file was originally the single source of truth for writing ALGORITHM.md sections.
+That role has since moved to the thesis LaTeX files.
 
 ---
 
