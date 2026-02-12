@@ -10,7 +10,7 @@
 //! cached as a JSON fixture:
 //!
 //! - **Default path:** Property tests load from `tests/fixtures/capacity_dataset.json`
-//! - **Regeneration:** Run `cargo test -p hk2017 regenerate_test_dataset -- --ignored`
+//! - **Regeneration:** Run `cargo test --release -p hk2017 regenerate_test_dataset -- --ignored`
 //!   after changes to `ehz_capacity_pruned()` or the catalog generation logic.
 //!
 //! The fixture is committed to the repo so all worktrees have it immediately.
@@ -135,7 +135,7 @@ pub fn load_test_dataset(path: &std::path::Path) -> Vec<TestPolytope> {
         panic!(
             "Cannot read capacity dataset fixture at {}.\n\
              Error: {}\n\
-             Regenerate with: cargo test -p hk2017 regenerate_test_dataset -- --ignored --nocapture",
+             Regenerate with: cargo test --release -p hk2017 regenerate_test_dataset -- --ignored --nocapture",
             path.display(), e
         )
     });
@@ -143,7 +143,7 @@ pub fn load_test_dataset(path: &std::path::Path) -> Vec<TestPolytope> {
         panic!(
             "Cannot parse capacity dataset fixture at {}.\n\
              Error: {}\n\
-             Regenerate with: cargo test -p hk2017 regenerate_test_dataset -- --ignored --nocapture",
+             Regenerate with: cargo test --release -p hk2017 regenerate_test_dataset -- --ignored --nocapture",
             path.display(), e
         )
     });
@@ -438,10 +438,10 @@ mod test_dataset_tests {
     ///
     /// Run after changes to `ehz_capacity_pruned()` or the catalog generation logic:
     /// ```
-    /// cargo test -p hk2017 regenerate_test_dataset -- --ignored --nocapture
+    /// cargo test --release -p hk2017 regenerate_test_dataset -- --ignored --nocapture
     /// ```
     #[test]
-    #[ignore] // Expensive: ~27 capacity computations, ~2-3 min
+    #[ignore] // ~27 capacity computations; ~1s in release, ~2-3 min in debug
     fn regenerate_test_dataset() {
         let dataset = generate_test_dataset();
         let path = fixture_path();

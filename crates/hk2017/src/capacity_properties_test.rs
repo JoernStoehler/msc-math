@@ -17,7 +17,7 @@ use std::sync::LazyLock;
 /// Shared dataset loaded from cached fixture (fast, <1ms).
 ///
 /// If the fixture is missing, panics with instructions to regenerate:
-/// `cargo test -p hk2017 regenerate_test_dataset -- --ignored --nocapture`
+/// `cargo test --release -p hk2017 regenerate_test_dataset -- --ignored --nocapture`
 static DATASET: LazyLock<Vec<TestPolytope>> = LazyLock::new(|| {
     let path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(FIXTURE_PATH);
     load_test_dataset(&path)
@@ -71,7 +71,7 @@ fn fixture_staleness_check() {
     if !missing.is_empty() || !orphaned.is_empty() {
         eprintln!(
             "WARNING: fixture staleness detected ({} missing, {} orphaned). \
-             Regenerate with: cargo test -p hk2017 regenerate_test_dataset -- --ignored --nocapture",
+             Regenerate with: cargo test --release -p hk2017 regenerate_test_dataset -- --ignored --nocapture",
             missing.len(), orphaned.len()
         );
     } else {

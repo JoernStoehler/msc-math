@@ -33,7 +33,7 @@ Property tests load from a cached JSON fixture so they run fast (<1s) while stil
 | Suite | Command | When to run | Time (2026-02-12) |
 |-------|---------|-------------|-------------------|
 | **Default** | `cargo test --lib` | Every iteration | ~54s wall, ~98s CPU |
-| Regenerate capacity fixture | `cargo test -p hk2017 regenerate_test_dataset -- --ignored` | After changes to `ehz_capacity()` | ~2-3 min |
+| Regenerate capacity fixture | `cargo test --release -p hk2017 regenerate_test_dataset -- --ignored` | After changes to `ehz_capacity()` | ~20s |
 | Pruned vs unpruned agreement | `cargo test -p hk2017 pruned_matches_unpruned -- --ignored` | After changes to adjacency pruning | ~30s |
 | Boundedness cross-check | `cargo test -p geom -- --ignored` | Monitoring, or after qhull/boundedness changes | ~3s |
 | Expensive capacity (pentagon, crosspolytope) | `cargo test -p hk2017 pentagon_capacity -- --ignored` | Rare, specific investigations | 2-5 min |
