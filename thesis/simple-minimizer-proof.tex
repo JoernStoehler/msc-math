@@ -156,58 +156,56 @@ We seek critical points of $I_K$ under the constraints:
 \end{itemize}
 
 % [AGENT-WRITTEN, UNREVIEWED BY JÖRN]
-% [AGENT CONFIDENCE 80%: The algebraic steps (lines 156-183) are verified correct.
-%  However, agent cannot verify the correctness of the overall variational calculus
-%  setup with subdifferentials. The calculation follows standard E-L machinery,
-%  but may have errors in how subdifferentials interact with Lagrange multipliers.
-%  JÖRN: verify the E-L derivation is correct, especially the subdifferential handling.]
+% QC: sign in ∂L/∂ż: chain rule for f(Aż) with A = -J₀ gives Aᵀ·∂f(Aż).
+%   Since (-J₀)ᵀ = J₀ (because J₀ᵀ = -J₀), we get +J₀·p, not -J₀·p.
+%   Similarly ∂/∂ż[⟨-J₀ż, z⟩] = (-J₀)ᵀz = J₀z.
+%   Previous version had wrong signs here, which made the νJ₀ż terms cancel
+%   prematurely and hid the mechanism by which νz enters the final condition.
 We compute the critical points using the calculus of variations with Lagrange multipliers.
 Form the Lagrangian incorporating the constraints:
 \[
-  L(z, \dot{z}, t) = \tfrac{1}{4}h_K^2(-J_0\dot{z}) + \nu\langle -J_0\dot{z}, z\rangle + \langle \mu, z\rangle,
+  L(z, \dot{z}, t) = \tfrac{1}{4}h_K^2(-J_0\dot{z}) + \alpha\langle -J_0\dot{z}, z\rangle + \langle \mu, z\rangle,
 \]
-where $\nu \in \mathbb{R}$ is the multiplier for the action constraint $\int_0^T \langle -J_0\dot{z}, z \rangle \, dt = 2T$,
+where $\alpha \in \mathbb{R}$ is the multiplier for the action constraint $\int_0^T \langle -J_0\dot{z}, z \rangle \, dt = 2T$,
 and $\mu \in \mathbb{R}^4$ is the multiplier for the centering constraint $\int_0^T z \, dt = 0$.
 
-The Euler--Lagrange equation for this constrained variational problem is
+The Euler--Lagrange equation is
+$\frac{d}{dt}[\partial L / \partial \dot{z}] = \partial L / \partial z$.
+The right-hand side comes solely from the multiplier terms
+(since $\tfrac{1}{4}h_K^2(-J_0\dot{z})$ is independent of~$z$):
+$\partial L / \partial z = -\alpha J_0 \dot{z} + \mu$.
+For the left-hand side, let $p(t) \in \partial(\tfrac{1}{4}h_K^2)(-J_0\dot{z}(t))$.
+The chain rule for $f \circ A$ with $A = -J_0$ gives
+$(-J_0)^\top p = J_0 p$ (using $J_0^\top = -J_0$).
+Similarly $\partial / \partial \dot{z}\, [\alpha\langle -J_0\dot{z}, z\rangle] = \alpha J_0 z$.
+Hence $\partial L / \partial \dot{z} = J_0 p(t) + \alpha J_0 z(t)$, and
 \[
-  \frac{d}{dt}\left[\frac{\partial L}{\partial \dot{z}}\right] = \frac{\partial L}{\partial z}.
+  \frac{d}{dt}[J_0 p + \alpha J_0 z]
+  = J_0 \dot{p} + \alpha J_0 \dot{z}.
 \]
-Since $I_K$ depends only on $\dot{z}$, the right-hand side comes solely from the multiplier terms:
-$\frac{\partial L}{\partial z} = -\nu J_0 \dot{z} + \mu$.
-For the left-hand side, let $p(t) \in \partial(\tfrac{1}{4}h_K^2)(-J_0\dot{z}(t))$ (the subdifferential).
-Then $\frac{\partial L}{\partial \dot{z}} = -J_0 p(t) - \nu J_0 z(t)$, and by periodicity of $z$,
-\[
-  \frac{d}{dt}[-J_0 p(t) - \nu J_0 z(t)] = -J_0 \dot{p}(t) - \nu J_0 \dot{z}(t).
-\]
-Equating left and right sides: $-J_0 \dot{p}(t) - \nu J_0 \dot{z}(t) = -\nu J_0 \dot{z}(t) + \mu$.
-This simplifies to $-J_0 \dot{p}(t) = \mu$.
+Equating: $J_0 \dot{p} + \alpha J_0 \dot{z} = -\alpha J_0 \dot{z} + \mu$,
+so $J_0 \dot{p} = -2\alpha J_0 \dot{z} + \mu$.
 
-Integrating over $[0,T]$ and using periodicity $p(0) = p(T)$:
+Integrating over $[0,T]$ and using periodicity of~$p$ and~$z$:
 \[
-  0 = -J_0[p(T) - p(0)] = \int_0^T \mu \, dt = T \mu,
+  J_0\underbrace{[p(T) - p(0)]}_{= 0}
+  = -2\alpha J_0 \underbrace{[z(T) - z(0)]}_{= 0} + T\mu,
 \]
-hence $\mu = 0$. Thus $\dot{p}(t) = 0$ a.e., so $p(t) = b$ is constant.
-This gives $b \in \partial(\tfrac{1}{4}h_K^2)(-J_0\dot{z}(t))$ a.e.
-
-% [GAP - AGENT CONFIDENCE 70%: The derivation above shows b ∈ ∂(¼h_K²)(-J₀ż),
-%  but the equation below claims νz + b ∈ ∂(¼h_K²)(-J₀ż). The jump from line 179
-%  to line 186 is not justified. EITHER there's a missing step in the variational
-%  calculus (relating the E-L equation back to the original formulation), OR the
-%  final form should just be "b ∈ ∂(...)" without the νz term. Talk notes (line
-%  500-501) say "z(t) + const ∈ ∂(...)" which doesn't match either form here.
-%  Agent verified lines 150-179 are correct, but cannot connect them to lines
-%  186-189. Possible agent misunderstands subdifferential calculus for constrained
-%  problems, but cannot find the connection. JÖRN: verify if gap is real, fix if
-%  so, or explain the connection if agent missed it.]
-Returning to the Lagrangian structure and using $J_0^T = -J_0$, the critical point condition becomes:
+hence $\mu = 0$. Thus $\dot{p} = -2\alpha \dot{z}$ a.e.,
+so $p(t) = c - 2\alpha\, z(t)$ for a constant $c \in \mathbb{R}^4$.
+Since $p(t) \in \partial(\tfrac{1}{4}h_K^2)(-J_0\dot{z}(t))$:
+\[
+  c - 2\alpha\, z(t)
+  \in \partial\bigl(\tfrac{1}{4}h_K^2\bigr)\bigl(-J_0\dot{z}(t)\bigr)
+  \quad \text{a.e.}
+\]
+Writing $\nu = -2\alpha$ and $b = c$:
 \begin{equation}\label{eq:dual-euler-lagrange}
   \nu z(t) + b \in
   \partial\bigl(\tfrac{1}{4} h_K^2\bigr)\bigl(-J_0\dot{z}(t)\bigr)
   \quad \text{a.e.}
 \end{equation}
-for Lagrange multiplier $\nu \in \mathbb{R}$ (for the action constraint)
-and constant $b \in \mathbb{R}^4$ (from the centering constraint).
+for some $\nu \in \mathbb{R}$ and constant $b \in \mathbb{R}^4$.
 
 \emph{Step~3: The $\nu = 1$ argument and correspondence.}
 Define $\gamma(t) = \nu z(t) + b$. The Euler--Lagrange
