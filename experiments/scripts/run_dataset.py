@@ -2,9 +2,9 @@
 """
 Run Rust dataset generation binary and summarize results.
 
-Builds the binary (release), then runs both subcommands:
-  1. `datasets dataset` — known + random polytopes
-  2. `datasets sweep`  — acceptance rate sweep
+Goal: Build and run the datasets binary, then print summary statistics.
+Input: Rust source code in crates/ (compiled with cargo build --release).
+Output: experiments/data/polytopes.jsonl, experiments/data/acceptance.jsonl
 """
 import json
 import subprocess
@@ -22,6 +22,7 @@ SWEEP_OUTPUT = DATA_DIR / "acceptance.jsonl"
 
 
 def build():
+    """Build datasets binary with cargo build --release."""
     print("Building datasets binary (release)...")
     result = subprocess.run(
         ["cargo", "build", "--release", "--bin", "datasets"],
@@ -37,6 +38,7 @@ def build():
 
 
 def run_dataset():
+    """Run 'datasets dataset' subcommand to generate polytope JSONL."""
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     print(f"\nGenerating polytope dataset -> {POLYTOPE_OUTPUT}")
     t0 = time.time()
@@ -54,6 +56,7 @@ def run_dataset():
 
 
 def run_sweep():
+    """Run 'datasets sweep' subcommand to generate acceptance sweep JSONL."""
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     print(f"\nRunning acceptance sweep -> {SWEEP_OUTPUT}")
     t0 = time.time()
@@ -71,11 +74,13 @@ def run_sweep():
 
 
 def load_jsonl(path):
+    """Load a JSONL file as a list of dicts."""
     with open(path) as f:
         return [json.loads(line) for line in f if line.strip()]
 
 
 def summarize_polytopes(rows):
+    """Print summary statistics for the polytope dataset."""
     print(f"\n=== Polytope Dataset: {len(rows)} rows ===")
     sources = {}
     for r in rows:
@@ -98,6 +103,7 @@ def summarize_polytopes(rows):
 
 
 def summarize_sweep(rows):
+    """Print formatted table of acceptance sweep results."""
     print(f"\n=== Acceptance Sweep: {len(rows)} configs ===")
     print(f"{'F':>3} {'h_min':>6} {'h_max':>6} {'accepted':>10} {'ratio':>8}")
     for r in rows:

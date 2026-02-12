@@ -14,6 +14,8 @@ from pathlib import Path
 from scipy.optimize import curve_fit
 from typing import Tuple
 
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+
 
 def exponential_model(F: np.ndarray, a: float, b: float) -> np.ndarray:
     """T(F) = a·b^F"""
@@ -58,8 +60,7 @@ def fit_timing_model(csv_path: Path) -> Tuple[float, float, dict]:
 
 def project_dataset_size(a: float, b: float, total_hours: float, cores: int,
                          facet_distribution: dict) -> dict:
-    """
-    Project how many polytopes can be generated in total_hours on cores CPUs.
+    """Project how many polytopes can be generated in total_hours on cores CPUs.
 
     Args:
         a, b: Model parameters for T(F) = a·b^F (seconds)
@@ -103,10 +104,11 @@ def project_dataset_size(a: float, b: float, total_hours: float, cores: int,
 
 
 def main():
+    """Fit timing model and project dataset sizes."""
     # Paths
-    repo_root = Path(__file__).parent.parent.parent
-    csv_path = repo_root / 'experiments' / 'profiling' / 'timing_data.csv'
-    output_path = repo_root / 'experiments' / 'profiling' / 'timing_model.json'
+    csv_path = REPO_ROOT / 'experiments' / 'profiling' / 'timing_data.csv'
+    output_path = REPO_ROOT / 'experiments' / 'profiling' / 'timing_model.json'
+    # Model lives with raw timing data, not in experiments/data/ (which is for datasets)
 
     print(f"Reading timing data from {csv_path}")
     a, b, metrics = fit_timing_model(csv_path)
