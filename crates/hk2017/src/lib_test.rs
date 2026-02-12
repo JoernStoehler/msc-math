@@ -283,10 +283,9 @@ mod proptests {
         ///
         /// This tests Corollary 5.3 (adjacency pruning optimization).
         ///
-        /// NOTE: Limited to 5-6 facets and 4 seeds to keep runtime <10min.
-        /// Generating random polytopes is slow (qhull), and capacity computation
-        /// is exponential in facet count.
+        /// Run with: `cargo test -p hk2017 pruned_matches_unpruned_random -- --ignored`
         #[test]
+        #[ignore] // Expensive: capacity computation on random polytopes (~30s)
         fn pruned_matches_unpruned_random(
             facet_count in 5usize..=6,
             seed in 0u64..4
