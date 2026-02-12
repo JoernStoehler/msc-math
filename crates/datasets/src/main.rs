@@ -1,6 +1,6 @@
 use datasets::acceptance_sweep;
 use datasets::dataset::PolytopeRow;
-use datasets::known_polytopes;
+use geom::known_polytopes;
 use datasets::random::generate_random_polytopes;
 use geom::volume::volume;
 use hk2017::ehz_capacity_pruned;

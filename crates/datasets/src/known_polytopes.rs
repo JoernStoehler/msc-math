@@ -1,8 +1,7 @@
-/// Re-export from `geom::known_polytopes`.
+/// Re-export from `geom::known_polytopes` (canonical source).
 ///
-/// The canonical definitions live in `geom::known_polytopes`. This module
-/// re-exports everything so existing `datasets::known_polytopes::*` imports
-/// continue to work.
+/// This module exists to host dataset-specific integration tests
+/// (validation checks on known polytopes).
 pub use geom::known_polytopes::*;
 
 #[cfg(test)]

@@ -1,4 +1,4 @@
-use datasets::known_polytopes::*;
+use geom::known_polytopes::*;
 use hk2017::ehz_capacity_pruned;
 use std::time::Instant;
 

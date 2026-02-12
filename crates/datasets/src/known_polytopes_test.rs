@@ -14,17 +14,15 @@ fn all_known_polytopes_pass_validation() {
     }
 }
 
-/// Verify symplectic_triangle_product capacity (3√3/4) against HK2017 algorithm.
+/// Verify symplectic_triangle_product capacity against HK2017 algorithm.
 #[test]
 fn symplectic_triangle_product_capacity() {
     let kp = symplectic_triangle_product();
     let result = hk2017::ehz_capacity(&kp.polytope)
         .expect("symplectic_triangle_product should have capacity");
-    let expected = 3.0 * 3.0_f64.sqrt() / 4.0;
     assert!(
-        (result.capacity - expected).abs() < 1e-6,
-        "symplectic_triangle_product capacity: got {}, expected {} (3√3/4)",
-        result.capacity,
-        expected
+        (result.capacity - kp.capacity).abs() < 1e-6,
+        "symplectic_triangle_product capacity: got {}, expected {}",
+        result.capacity, kp.capacity
     );
 }

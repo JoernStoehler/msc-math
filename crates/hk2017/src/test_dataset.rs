@@ -28,8 +28,8 @@
 //!   to verify pruned ≈ unpruned agreement. Variants skip the expensive
 //!   unpruned computation.
 
+use geom::known_polytopes;
 use geom::polytope::Polytope4D;
-use geom::test_utils::{hypercube, simplex, lagrangian_triangle_product};
 use nalgebra::{Matrix4, Vector4};
 use rand::Rng;
 use rand_distr::StandardNormal;
@@ -167,17 +167,17 @@ pub fn polytope_catalog() -> Vec<CatalogEntry> {
     // ===== PHASE 1: Base polytopes =====
     let mut base_entries = Vec::new();
 
-    // Known polytopes.
+    // Known polytopes (from geom::known_polytopes, single source of truth).
     // Excluded: crosspolytope (16 facets, HK2017 is exponential → too slow).
     let known = vec![
-        ("simplex", simplex()),
-        ("hypercube", hypercube()),
-        ("lagrangian_triangle_product", lagrangian_triangle_product()),
+        known_polytopes::simplex(),
+        known_polytopes::hypercube(),
+        known_polytopes::lagrangian_triangle_product(),
     ];
-    for (name, p) in known {
+    for kp in known {
         base_entries.push(CatalogEntry {
-            name: name.to_string(),
-            polytope: p,
+            name: kp.name.to_string(),
+            polytope: kp.polytope,
             base_index: None,
             transform: None,
         });

@@ -1,43 +1,37 @@
 use super::*;
-use geom::test_utils::{hypercube, lagrangian_triangle_product, simplex};
+use geom::known_polytopes;
 use nalgebra::Vector4;
 
 #[test]
 fn simplex_capacity() {
-    let simplex = simplex();
-    let result = ehz_capacity(&simplex).expect("simplex should have capacity");
-    let expected = 0.25;
+    let kp = known_polytopes::simplex();
+    let result = ehz_capacity(&kp.polytope).expect("simplex should have capacity");
     assert!(
-        (result.capacity - expected).abs() < 1e-6,
+        (result.capacity - kp.capacity).abs() < 1e-6,
         "simplex capacity: got {}, expected {}",
-        result.capacity,
-        expected
+        result.capacity, kp.capacity
     );
 }
 
 #[test]
 fn hypercube_capacity() {
-    let hypercube = hypercube();
-    let result = ehz_capacity(&hypercube).expect("hypercube should have capacity");
-    let expected = 4.0;
+    let kp = known_polytopes::hypercube();
+    let result = ehz_capacity(&kp.polytope).expect("hypercube should have capacity");
     assert!(
-        (result.capacity - expected).abs() < 1e-6,
+        (result.capacity - kp.capacity).abs() < 1e-6,
         "hypercube capacity: got {}, expected {}",
-        result.capacity,
-        expected
+        result.capacity, kp.capacity
     );
 }
 
 #[test]
 fn lagrangian_triangle_product_capacity() {
-    let tri = lagrangian_triangle_product();
-    let result = ehz_capacity(&tri).expect("lagrangian triangle product should have capacity");
-    let expected = 1.5;
+    let kp = known_polytopes::lagrangian_triangle_product();
+    let result = ehz_capacity(&kp.polytope).expect("lagrangian triangle product should have capacity");
     assert!(
-        (result.capacity - expected).abs() < 1e-6,
+        (result.capacity - kp.capacity).abs() < 1e-6,
         "lagrangian triangle product capacity: got {}, expected {}",
-        result.capacity,
-        expected
+        result.capacity, kp.capacity
     );
 }
 
@@ -50,11 +44,10 @@ fn combinations_basic() {
 
 #[test]
 fn pruned_matches_unpruned() {
-    // Test that pruned and unpruned give same capacity
-    let hypercube = hypercube();
+    let kp = known_polytopes::hypercube();
 
-    let result_unpruned = ehz_capacity(&hypercube).expect("unpruned capacity");
-    let result_pruned = ehz_capacity_pruned(&hypercube).expect("pruned capacity");
+    let result_unpruned = ehz_capacity(&kp.polytope).expect("unpruned capacity");
+    let result_pruned = ehz_capacity_pruned(&kp.polytope).expect("pruned capacity");
 
     assert!(
         (result_unpruned.capacity - result_pruned.capacity).abs() < 1e-6,
@@ -192,19 +185,14 @@ fn solve_kkt_degenerate() {
 #[test]
 #[ignore] // Expensive: 10 facets → exponential runtime (~2-5 min)
 fn pentagon_capacity() {
-    use geom::known_polytopes::hko_pentagon;
     use geom::volume::volume;
 
-    let kp = hko_pentagon();
+    let kp = known_polytopes::hko_pentagon();
     let result = ehz_capacity_pruned(&kp.polytope).expect("pentagon capacity");
 
-    // Expected: 2·cos(π/10)·(1 + cos(π/5)) ≈ 3.441464...
-    let expected = 2.0 * (std::f64::consts::PI / 10.0).cos()
-                   * (1.0 + (std::f64::consts::PI / 5.0).cos());
-
     assert!(
-        (result.capacity - expected).abs() < 1e-6,
-        "pentagon: got {}, expected {}", result.capacity, expected
+        (result.capacity - kp.capacity).abs() < 1e-6,
+        "pentagon: got {}, expected {}", result.capacity, kp.capacity
     );
 
     // Verify sys > 1 (counterexample property)
@@ -217,9 +205,7 @@ fn pentagon_capacity() {
 
 #[test]
 fn triangle_square_capacity() {
-    use geom::known_polytopes::lagrangian_triangle_square;
-
-    let kp = lagrangian_triangle_square();
+    let kp = known_polytopes::lagrangian_triangle_square();
     let result = ehz_capacity_pruned(&kp.polytope).expect("Lagrangian triangle×square capacity");
 
     // Investigation complete: This is a Lagrangian product (equilateral triangle in q-space,
@@ -234,9 +220,7 @@ fn triangle_square_capacity() {
 
 #[test]
 fn symplectic_triangle_square_capacity() {
-    use geom::known_polytopes::symplectic_triangle_square;
-
-    let kp = symplectic_triangle_square();
+    let kp = known_polytopes::symplectic_triangle_square();
     let result = ehz_capacity_pruned(&kp.polytope).expect("symplectic triangle×square capacity");
 
     // Symplectic product: triangle in (q₁, p₁) plane ×_S square in (q₂, p₂) plane.
@@ -255,9 +239,7 @@ fn symplectic_triangle_square_capacity() {
 #[test]
 #[ignore] // Too expensive: 16 facets → exponential runtime (~hours)
 fn crosspolytope_capacity() {
-    use geom::known_polytopes::crosspolytope;
-
-    let kp = crosspolytope();
+    let kp = known_polytopes::crosspolytope();
     let result = ehz_capacity_pruned(&kp.polytope).expect("crosspolytope capacity");
 
     // No known literature value - just verify computation succeeds
@@ -321,13 +303,10 @@ mod proptests {
 fn capacity_scales_quadratically() {
     let scale = std::f64::consts::E;
 
-    let unit_cube = hypercube();
-    let unit_cap = ehz_capacity(&unit_cube).unwrap().capacity;
+    let kp = known_polytopes::hypercube();
+    let unit_cap = ehz_capacity(&kp.polytope).unwrap().capacity;
 
-    let normals = unit_cube.normals().to_vec();
-    let heights: Vec<f64> = unit_cube.heights().iter().map(|&h| h * scale).collect();
-    let scaled_cube = Polytope4D::new(normals, heights).expect("scaled hypercube");
-
+    let scaled_cube = geom::test_utils::scaled_hypercube(scale);
     let scaled_cap = ehz_capacity(&scaled_cube).unwrap().capacity;
 
     let expected = unit_cap * scale * scale;
