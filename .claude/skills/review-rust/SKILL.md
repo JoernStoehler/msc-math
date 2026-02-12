@@ -42,6 +42,12 @@ Do suggest: Critical path tests, benchmarks for claims, robustness fixes (timeou
 
 Use proptest for universal quantification: "∀ λ > 0: vol(λK) = λ⁴·vol(K)" → proptest. Not for single examples.
 
+## Git comparison base
+
+**Always compare against local `main`, never `origin/main`.** Jörn merges locally and pushes later, so `origin/main` is frequently stale. Comparing against `origin/main` inflates the diff with already-merged commits.
+
+**State the base explicitly in the report.** Example: "Compared against local `main` at `abc1234`." If a discrepancy appears (e.g. unexpected files in diff), investigate — it likely means the branch needs rebasing onto local `main`.
+
 ## Common pitfalls
 
 - Writing report for Jörn instead of deciding
@@ -50,6 +56,8 @@ Use proptest for universal quantification: "∀ λ > 0: vol(λK) = λ⁴·vol(K)
 - Performance claims without measurements
 - Academic tangents
 - Forgetting to commit before reporting
+- Using `origin/main` instead of local `main` as comparison base
+- Not stating which base was used for the diff
 
 ## File Location Decisions
 
