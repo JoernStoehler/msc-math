@@ -16,7 +16,7 @@
 % QC: polytope per Definition~\ref{def:polytope}, facet data per Definition~\ref{def:facets},
 % capacity per Definition~\ref{def:ehz-capacity}.
 
-\begin{theorem}[EHZ capacity formula {\cite{hk2017}}]\label{thm:main}
+\begin{theorem}[EHZ capacity formula {\cite{HK2017}}]\label{thm:main}
 Let $K \subset \mathbb{R}^4$ be a polytope
 with $F$ facets, outward unit normals $n_1, \ldots, n_F \in S^3$,
 and heights $h_1, \ldots, h_F > 0$.
@@ -92,8 +92,7 @@ and each permutation $\sigma$ of $S$
   \end{equation}
 
 \item \textbf{Filter.}
-  Discard $(S, \sigma)$ if $\beta_i \leq 0$ for any $i$,
-  or if $\beta^\top H \beta \leq 0$.
+  Discard $(S, \sigma)$ if $\beta_i \leq 0$ for any $i$.
   % QC: the filter demands beta_i > 0 (strict), while M(K) in the theorem
   %   allows beta_i >= 0. This is intentional and correct:
   %   If beta_i = 0 for some i in S, that facet is unused and the same orbit
@@ -101,18 +100,16 @@ and each permutation $\sigma$ of $S$
   %   So the maximum over M(K) is attained at an interior point (all beta_i > 0)
   %   of some sub-problem. The algorithm's enumeration over all subsets S
   %   catches this. No solutions are lost by the strict filter.
-  % QC: beta^T H beta <= 0 filter: the bijection between (sigma, beta) and
-  %   simple Reeb orbits (Theorem thm:main proof, Step 6) requires
-  %   beta^T H beta > 0 for T = (beta^T H beta)^{-1} > 0.
 
 \item \textbf{Evaluate.}
-  \begin{equation}\label{eq:action-formula}
-    A(S, \sigma) = (\beta^\top H \beta)^{-1}.
-  \end{equation}
+  Record $\beta^\top H \beta$.
 \end{enumerate}
 
 \noindent
-Return $c_{\mathrm{EHZ}}(K) = \min_{S,\sigma} A(S, \sigma)$.
+Return
+\begin{equation}\label{eq:action-formula}
+  c_{\mathrm{EHZ}}(K) = \bigl(\max_{S,\sigma} \beta^\top H \beta\bigr)^{-1}.
+\end{equation}
 
 \begin{remark}\label{rem:critical-point}
 The solution $\beta$ with $\beta_i > 0$
@@ -886,15 +883,14 @@ and each cyclic ordering~$\sigma$ of~$S$:
   $(\beta, \lambda, \nu)$.
 
 \item \textbf{Filter.}
-  Discard if $\beta_i \leq 0$ for any $i$,
-  or if $\beta^\top H \beta \leq 0$.
+  Discard if $\beta_i \leq 0$ for any $i$.
 
 \item \textbf{Evaluate.}
-  $A(S, \sigma) = (\beta^\top H \beta)^{-1}$.
+  Record $\beta^\top H \beta$.
 \end{enumerate}
 
 \noindent
-Return $c_{\mathrm{EHZ}}(K) = \min_{S,\sigma} A(S, \sigma)$.
+Return $c_{\mathrm{EHZ}}(K) = (\max_{S,\sigma} \beta^\top H \beta)^{-1}$.
 
 \medskip
 
@@ -1003,22 +999,16 @@ $\beta^*$ satisfies the linear
 system~\eqref{eq:linear-system} for~$(S, \sigma^*)$
 (Lemma~\ref{lem:kkt}).
 The filter passes: $\beta^*_i > 0$ for all $i \in S$ by
-definition, and $V^* > 0$ by Step~1.
-Hence the algorithm considers~$(\sigma^*, \beta^*)$ as a
-candidate with
-$A = (V^*)^{-1} = c_{\mathrm{EHZ}}(K)$.
+definition.
+Hence the algorithm records
+$\beta^{*\top} H\, \beta^* = V^*$ for~$(S, \sigma^*)$.
 
 \emph{Step~3: The algorithm returns it.}
-The algorithm returns
-$\min A = \min (\tilde{\beta}^\top H\, \tilde{\beta})^{-1}$
-over all candidates. For any candidate with
-$\tilde{\beta}^\top H\, \tilde{\beta} \leq V^*$,
-we have
-$A = (\tilde{\beta}^\top H\, \tilde{\beta})^{-1}
-\geq (V^*)^{-1}$.
-Since $(\sigma^*, \beta^*)$ achieves
-$A = (V^*)^{-1}$, this is the minimum.
-Hence the returned value is
+For any other candidate~$(S', \sigma')$,
+$\tilde{\beta}'^\top H\, \tilde{\beta}' \leq V^*$
+by maximality. Hence
+$\max_{S,\sigma} \beta^\top H\, \beta = V^*$,
+and the algorithm returns
 $(V^*)^{-1} = c_{\mathrm{EHZ}}(K)$.
 \end{proof}
 
@@ -1030,13 +1020,13 @@ The proof uses only that the global maximizer
 of~$\tilde{\beta}^\top H\, \tilde{\beta}$
 corresponds to a minimum-action Reeb orbit
 (Theorem~\ref{thm:main}, Step~6).
-Non-maximizing critical points that pass the filter
-($\beta > 0$, $\tilde{\beta}^\top H\, \tilde{\beta} > 0$)
+Non-maximizing critical points with $\beta > 0$
 need not correspond to Reeb orbits:
-the bijection between $(\sigma, \beta)$ and simple orbits is
-established only at the optimum.
-The algorithm may evaluate~$A$ at such spurious critical
-points, but they cannot affect the returned minimum
+the correspondence between $(\sigma, \beta)$ and simple orbits
+is established only at the global maximum.
+The algorithm may record $\beta^\top H\, \beta$ at such
+spurious critical points, but they cannot affect the
+returned value since they are not the maximum
 (Step~3 above).
 \end{remark}
 
