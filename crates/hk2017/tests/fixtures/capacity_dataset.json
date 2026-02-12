@@ -42,6 +42,7 @@
     ],
     "volume": 0.041666667,
     "capacity": 0.24999999999999944,
+    "capacity_unpruned": 0.24999999999999944,
     "base_index": null,
     "transform": null
   },
@@ -109,6 +110,7 @@
     ],
     "volume": 16.0,
     "capacity": 3.999999999999993,
+    "capacity_unpruned": 3.999999999999993,
     "base_index": null,
     "transform": null
   },
@@ -162,6 +164,7 @@
     ],
     "volume": 1.6875,
     "capacity": 1.5,
+    "capacity_unpruned": 1.5,
     "base_index": null,
     "transform": null
   },
@@ -208,6 +211,7 @@
     ],
     "volume": 176.14148,
     "capacity": 6.4050608379235,
+    "capacity_unpruned": 6.4050608379235,
     "base_index": null,
     "transform": null
   },
@@ -254,6 +258,7 @@
     ],
     "volume": 2736.4563,
     "capacity": 9.560224540552248,
+    "capacity_unpruned": 9.560224540552248,
     "base_index": null,
     "transform": null
   },
@@ -321,6 +326,7 @@
     ],
     "volume": 16.0,
     "capacity": 3.999999999999993,
+    "capacity_unpruned": 3.999999999999993,
     "base_index": null,
     "transform": null
   },
@@ -374,6 +380,7 @@
     ],
     "volume": 161.12881,
     "capacity": 9.080839002099836,
+    "capacity_unpruned": 9.080839002099836,
     "base_index": null,
     "transform": null
   },
@@ -434,6 +441,7 @@
     ],
     "volume": 154.23281,
     "capacity": 9.3283138497119,
+    "capacity_unpruned": 9.3283138497119,
     "base_index": null,
     "transform": null
   },
@@ -494,6 +502,7 @@
     ],
     "volume": 171.28475,
     "capacity": 10.414918547565243,
+    "capacity_unpruned": 10.414918547565243,
     "base_index": null,
     "transform": null
   },
@@ -540,6 +549,7 @@
     ],
     "volume": 0.041666667,
     "capacity": 0.24999999999999933,
+    "capacity_unpruned": null,
     "base_index": 0,
     "transform": "sympl"
   },
@@ -607,6 +617,7 @@
     ],
     "volume": 16.0,
     "capacity": 3.9999999999999947,
+    "capacity_unpruned": null,
     "base_index": 1,
     "transform": "sympl"
   },
@@ -660,6 +671,7 @@
     ],
     "volume": 1.6875,
     "capacity": 1.4999999999999467,
+    "capacity_unpruned": null,
     "base_index": 2,
     "transform": "sympl"
   },
@@ -706,6 +718,7 @@
     ],
     "volume": 176.14148,
     "capacity": 6.405060837923519,
+    "capacity_unpruned": null,
     "base_index": 3,
     "transform": "sympl"
   },
@@ -752,6 +765,7 @@
     ],
     "volume": 2736.4563,
     "capacity": 9.560224540552204,
+    "capacity_unpruned": null,
     "base_index": 4,
     "transform": "sympl"
   },
@@ -819,6 +833,7 @@
     ],
     "volume": 16.0,
     "capacity": 3.999999999999991,
+    "capacity_unpruned": null,
     "base_index": 5,
     "transform": "sympl"
   },
@@ -872,6 +887,7 @@
     ],
     "volume": 161.12881,
     "capacity": 9.080839002099877,
+    "capacity_unpruned": null,
     "base_index": 6,
     "transform": "sympl"
   },
@@ -932,6 +948,7 @@
     ],
     "volume": 154.23281,
     "capacity": 9.328313849711895,
+    "capacity_unpruned": null,
     "base_index": 7,
     "transform": "sympl"
   },
@@ -992,6 +1009,7 @@
     ],
     "volume": 171.28475,
     "capacity": 10.414918547565131,
+    "capacity_unpruned": null,
     "base_index": 8,
     "transform": "sympl"
   },
@@ -1038,6 +1056,7 @@
     ],
     "volume": 0.27744942,
     "capacity": 0.6451155914447814,
+    "capacity_unpruned": null,
     "base_index": 0,
     "transform": "conform:1.6063817621534204"
   },
@@ -1105,6 +1124,7 @@
     ],
     "volume": 6.8580797,
     "capacity": 2.6187935569805556,
+    "capacity_unpruned": null,
     "base_index": 1,
     "transform": "conform:0.8091343456096389"
   },
@@ -1158,6 +1178,7 @@
     ],
     "volume": 13.08715,
     "capacity": 4.177263788618445,
+    "capacity_unpruned": null,
     "base_index": 2,
     "transform": "conform:1.6687847451800457"
   },
@@ -1204,6 +1225,7 @@
     ],
     "volume": 62.976229,
     "capacity": 3.829841219635103,
+    "capacity_unpruned": null,
     "base_index": 3,
     "transform": "conform:0.7732657150525695"
   },
@@ -1250,6 +1272,7 @@
     ],
     "volume": 11160.478,
     "capacity": 19.307019266596686,
+    "capacity_unpruned": null,
     "base_index": 4,
     "transform": "conform:1.421096496165882"
   },
@@ -1317,6 +1340,7 @@
     ],
     "volume": 9.7288859,
     "capacity": 3.119116198316937,
+    "capacity_unpruned": null,
     "base_index": 5,
     "transform": "conform:0.8830509892295207"
   },
@@ -1370,6 +1394,7 @@
     ],
     "volume": 51.897056,
     "capacity": 5.153600390252068,
+    "capacity_unpruned": null,
     "base_index": 6,
     "transform": "conform:0.7533423495179192"
   },
@@ -1430,6 +1455,7 @@
     ],
     "volume": 1589.269,
     "capacity": 29.944252803109265,
+    "capacity_unpruned": null,
     "base_index": 7,
     "transform": "conform:1.7916582166327126"
   },
@@ -1490,6 +1516,7 @@
     ],
     "volume": 1952.6375,
     "capacity": 35.16473396599371,
+    "capacity_unpruned": null,
     "base_index": 8,
     "transform": "conform:1.837493151850325"
   }

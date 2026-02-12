@@ -6,7 +6,9 @@
 //! - Symplectomorphism invariance: c_EHZ(MK+b) = c_EHZ(K)
 //! - Monotonicity: K₁ ⊆ K₂ ⟹ c_EHZ(K₁) ≤ c_EHZ(K₂)
 
-use crate::test_dataset::{load_test_dataset, TestPolytope, FIXTURE_PATH};
+use crate::test_dataset::{
+    load_test_dataset, polytope_catalog, TestPolytope, FIXTURE_PATH, LITERATURE_VALUES,
+};
 use geom::polytope::Polytope4D;
 use nalgebra::Vector4;
 use std::path::PathBuf;
@@ -20,6 +22,118 @@ static DATASET: LazyLock<Vec<TestPolytope>> = LazyLock::new(|| {
     let path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(FIXTURE_PATH);
     load_test_dataset(&path)
 });
+
+// ===== Staleness and validation checks =====
+
+/// Verify that polytope_catalog() is deterministic (same seed → same polytopes).
+#[test]
+fn catalog_determinism() {
+    let c1 = polytope_catalog();
+    let c2 = polytope_catalog();
+    assert_eq!(c1.len(), c2.len());
+    for (a, b) in c1.iter().zip(c2.iter()) {
+        assert_eq!(a.name, b.name);
+        assert_eq!(a.polytope.normals(), b.polytope.normals(),
+            "'{}': normals non-deterministic", a.name);
+        assert_eq!(a.polytope.heights(), b.polytope.heights(),
+            "'{}': heights non-deterministic", a.name);
+    }
+}
+
+/// Check that the fixture covers the current polytope catalog.
+///
+/// Compares by name: if the catalog and fixture have the same polytope names,
+/// they're in sync. Warns (does not fail) on mismatches.
+///
+/// Why by name, not geometry? The catalog uses `Vector4::normalize()` which can
+/// produce slightly different results across recompilations (FMA, inlining
+/// differences). Name comparison avoids false staleness from benign recompilation.
+#[test]
+fn fixture_staleness_check() {
+    let catalog = polytope_catalog();
+    let dataset = &*DATASET;
+
+    let catalog_names: std::collections::HashSet<&str> =
+        catalog.iter().map(|c| c.name.as_str()).collect();
+    let fixture_names: std::collections::HashSet<&str> =
+        dataset.iter().map(|tp| tp.name.as_str()).collect();
+
+    let missing: Vec<_> = catalog_names.difference(&fixture_names).collect();
+    let orphaned: Vec<_> = fixture_names.difference(&catalog_names).collect();
+
+    for name in &missing {
+        eprintln!("WARNING: catalog polytope '{}' not in fixture", name);
+    }
+    for name in &orphaned {
+        eprintln!("WARNING: fixture polytope '{}' not in current catalog", name);
+    }
+
+    if !missing.is_empty() || !orphaned.is_empty() {
+        eprintln!(
+            "WARNING: fixture staleness detected ({} missing, {} orphaned). \
+             Regenerate with: cargo test -p hk2017 regenerate_test_dataset -- --ignored --nocapture",
+            missing.len(), orphaned.len()
+        );
+    } else {
+        eprintln!(
+            "Fixture covers all {} catalog polytopes",
+            catalog.len()
+        );
+    }
+}
+
+/// Verify known polytopes match literature capacity values (from fixture, ~0 cost).
+#[test]
+fn literature_capacity_values() {
+    let dataset = &*DATASET;
+
+    for &(name, expected) in LITERATURE_VALUES {
+        if let Some(tp) = dataset.iter().find(|tp| tp.name == name) {
+            let rel_err = (tp.capacity - expected).abs() / expected;
+            assert!(
+                rel_err < 1e-6,
+                "'{}': fixture capacity {} disagrees with literature value {}, rel_error = {:.2e}",
+                name, tp.capacity, expected, rel_err
+            );
+        } else {
+            eprintln!("WARNING: '{}' not in fixture, skipping literature check", name);
+        }
+    }
+
+    eprintln!(
+        "Verified {} literature values from fixture",
+        LITERATURE_VALUES.len()
+    );
+}
+
+/// Verify pruned ≈ unpruned agreement from fixture data (~0 cost).
+///
+/// Only checks entries that have `capacity_unpruned` (base polytopes).
+#[test]
+fn pruned_matches_unpruned_from_fixture() {
+    let dataset = &*DATASET;
+
+    let mut checked = 0;
+    for tp in dataset.iter() {
+        if let Some(cap_unpruned) = tp.capacity_unpruned {
+            let rel_err = (tp.capacity - cap_unpruned).abs() / cap_unpruned;
+            assert!(
+                rel_err < 1e-6,
+                "'{}': pruned ({}) ≠ unpruned ({}) from fixture, rel_error = {:.2e}",
+                tp.name, tp.capacity, cap_unpruned, rel_err
+            );
+            checked += 1;
+        }
+    }
+
+    eprintln!(
+        "Verified pruned == unpruned for {}/{} fixture entries",
+        checked,
+        dataset.len()
+    );
+}
+
+// ===== Mathematical property tests =====
 
 #[test]
 fn capacity_positive_on_all_polytopes() {
@@ -46,7 +160,7 @@ fn capacity_conformality() {
         .filter(|e| {
             e.transform
                 .as_ref()
-                .map_or(false, |t| t.starts_with("conform:"))
+                .is_some_and(|t| t.starts_with("conform:"))
         })
         .collect();
 
@@ -97,7 +211,7 @@ fn capacity_symplectomorphism_invariance() {
     // Extract symplectomorphism variants
     let sympl_tests: Vec<_> = dataset
         .iter()
-        .filter(|e| e.transform.as_ref().map_or(false, |t| t == "sympl"))
+        .filter(|e| e.transform.as_ref().is_some_and(|t| t == "sympl"))
         .collect();
 
     for entry in &sympl_tests {
@@ -143,7 +257,7 @@ fn capacity_monotonicity() {
 
             // Find max α such that α·K1 ⊆ K2
             let vertices1 = k1.polytope.vertices();
-            let max_alpha = compute_max_containment_scale(&vertices1, &k2.polytope);
+            let max_alpha = compute_max_containment_scale(vertices1, &k2.polytope);
 
             if let Some(alpha) = max_alpha {
                 if alpha > 1e-6 {
