@@ -1,3 +1,9 @@
+% systolic-ratios.tex — \input'd from experiments/experiments.tex
+%
+% Sources: generated data from experiments/data/polytopes.jsonl (via Rust pipeline).
+%   Literature values: Nir 2013 (simplex), HK2019 (hypercube), HK-O 2024 (pentagon).
+% Structure: computational setup, validation, random exploration, findings.
+
 \subsection{Systolic Ratios of 4D Polytopes}
 \label{sec:systolic-ratios}
 
@@ -79,7 +85,7 @@ strongly skewed toward low values ($\mathrm{sys} < 0.3$ for most polytopes).
 \centering
 \includegraphics[width=0.75\textwidth]{../experiments/figures/sys_histogram.png}
 \caption{Distribution of systolic ratios across 270 random 4-polytopes. All
-  values satisfy $\mathrm{sys}(K) \le 1$ (Viterbo's conjecture).}
+  values satisfy $\mathrm{sys}(K) \le 1$ (the Viterbo bound).}
 \label{fig:sys-histogram}
 \end{figure}
 

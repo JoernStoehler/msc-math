@@ -2,8 +2,6 @@
 %
 % Sources: Jörn's definitions dictated in chat. No other source.
 %
-% Jörn: text approved (a013c1e) — entire file (reviewed before any chapter content was written)
-
 \section{Notation Correspondence}\label{sec:correspondence}
 
 % ---------- 1. Notation table ----------
@@ -12,11 +10,11 @@
 
 \begin{longtable}{p{5.5cm} p{3.5cm} p{3.5cm}}
 \toprule
-\textbf{Concept} & \textbf{Ours} & \textbf{HK2017} \\
+\textbf{Concept} & \textbf{This thesis} & \textbf{HK2017} \\
 \midrule
 \endfirsthead
 \midrule
-\textbf{Concept} & \textbf{Ours} & \textbf{HK2017} \\
+\textbf{Concept} & \textbf{This thesis} & \textbf{HK2017} \\
 \midrule
 \endhead
 
@@ -41,13 +39,15 @@ Action                                           & $A(\gamma)$          & $A(\ga
 EHZ capacity                                     & $c_\mathrm{EHZ}(K)$ & $c_\mathrm{EHZ}(K)$ \\
 Dual variable                                    & $z$                  & $z$ \\
 Dual functional                                  & $I_K(z)$             & $I_K(z)$ \\
-$Q$-function                                     & $Q(\sigma,\beta)$    & (unnamed) \\
+$Q$-function                                     & $Q(\sigma,\beta)$    & (expression appears, unnamed) \\
 Constraint set                                   & $M(K)$               & $M(K)$ \\
 Action matrix                                    & $H$                  & --- \\
 Adjacency graph                                  & ---                  & --- \\
 
 \bottomrule
 \end{longtable}
+
+A dash (---) indicates the concept is not explicitly named in that source.
 
 % ---------- 2. Notes ----------
 
@@ -62,6 +62,6 @@ Adjacency graph                                  & ---                  & --- \\
   We include a centering constraint on the dual variable; HK2017 does not.
 
 \item[MATLAB sign convention.]
-  MATLAB minimizes a negative quantity; we maximize a positive one.
+  HK2017's MATLAB implementation minimizes~$-Q(\sigma,\beta)$; our Rust code maximizes~$Q$ directly. The optima coincide.
 
 \end{description}

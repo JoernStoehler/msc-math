@@ -142,8 +142,9 @@ The \emph{standard complex structure} is
 \[
   J_0 = \begin{pmatrix} 0 & -I_2 \\ I_2 & 0 \end{pmatrix},
   \qquad\text{i.e.,}\quad
-  J_0(q, p) = (-p, q).
+  J_0(q, p) = (-p, q),
 \]
+where $I_2$ is the $2 \times 2$ identity matrix.
 The \emph{standard symplectic form} is
 \[
   \omega_0(u, v) \coloneqq \langle J_0 u, v \rangle
@@ -178,8 +179,8 @@ At a point $x = (q, p) \in \mathbb{R}^4$, applied to a tangent vector $v$:
 It satisfies $d\lambda_0 = \omega_0$.
 \end{definition}
 
-% DRAFT: definitions below drafted from standard textbooks (Hofer--Zehnder,
-% McDuff--Salamon). Awaiting Jörn's review.
+% [TODO: JÖRN - review definitions below, drafted from standard textbooks
+%   (Hofer--Zehnder, McDuff--Salamon).]
 
 \begin{definition}[Convex body]\label{def:convex-body}
 % QC: K compact, convex, nonempty interior, 0 in int(K).
@@ -214,8 +215,7 @@ $0 \in \operatorname{int}(K)$ is $g_K \colon \mathbb{R}^4 \to [0,\infty)$,
 The boundary is the level set: $\partial K = \{x : g_K(x) = 1\}$.
 \end{definition}
 
-% TRASH: gauge-support duality was never greenlighted by Jörn. Remove or rewrite
-% from scratch when/if needed.
+% [TODO: JÖRN - verify or remove this content]
 % \begin{proposition}[Gauge--support duality]\label{prop:gauge-support-duality}
 % \end{proposition}
 
