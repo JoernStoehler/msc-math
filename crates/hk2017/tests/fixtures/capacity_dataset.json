@@ -113,7 +113,7 @@
     "transform": null
   },
   {
-    "name": "triangle_product",
+    "name": "lagrangian_triangle_product",
     "normals": [
       [
         6.123233995736766e-17,
@@ -611,7 +611,7 @@
     "transform": "sympl"
   },
   {
-    "name": "triangle_product_sympl",
+    "name": "lagrangian_triangle_product_sympl",
     "normals": [
       [
         0.4661492505782684,
@@ -1109,7 +1109,7 @@
     "transform": "conform:0.8091343456096389"
   },
   {
-    "name": "triangle_product_scale_1.67",
+    "name": "lagrangian_triangle_product_scale_1.67",
     "normals": [
       [
         6.123233995736766e-17,
