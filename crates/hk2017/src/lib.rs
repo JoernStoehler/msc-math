@@ -23,8 +23,28 @@ use geom::symplectic::omega0;
 use nalgebra::{DMatrix, DVector};
 use permutations::cyclic_permutations;
 
+/// Minimum β_i value to consider a solution valid (filters numerical noise near zero).
+const EPS_BETA_POSITIVE: f64 = 1e-12;
+
+/// Minimum Q(β) value to consider a solution valid (avoids division-by-near-zero in action).
+const EPS_Q_POSITIVE: f64 = 1e-15;
+
+/// SVD tolerance for solving the KKT system (singular values below this are treated as zero).
+const EPS_SVD_TOLERANCE: f64 = 1e-10;
+
+/// Maximum acceptable residual norm for the KKT solution (rejects numerically poor solutions).
+const EPS_KKT_RESIDUAL: f64 = 1e-6;
+
+/// Tolerance for vertex-facet incidence in adjacency matrix (matches qhull precision).
+const EPS_FACET_INCIDENCE: f64 = 1e-8;
+
 /// Intermediate best candidate: (action, subset, permutation, beta).
-type Candidate = (f64, Vec<usize>, Vec<usize>, Vec<f64>);
+type Candidate = (
+    f64,        // action = 0.5 / Q(β)
+    Vec<usize>, // subset S ⊆ {0,...,F-1}
+    Vec<usize>, // cyclic permutation σ of S
+    Vec<f64>,   // optimal β vector
+);
 
 /// Result of the EHZ capacity computation.
 #[derive(Clone, Debug)]
@@ -62,7 +82,7 @@ pub fn ehz_capacity(polytope: &Polytope4D) -> Option<EhzResult> {
 
                 if let Some((beta, q_val)) = solve_kkt(normals, heights, &perm) {
                     // All β_i > 0 filter
-                    if beta.iter().all(|&b| b > 1e-12) && q_val > 1e-15 {
+                    if beta.iter().all(|&b| b > EPS_BETA_POSITIVE) && q_val > EPS_Q_POSITIVE {
                         let action = 0.5 / q_val;
                         let update = match &best {
                             None => true,
@@ -170,11 +190,11 @@ fn solve_kkt(
     // don't span R^4, e.g. hypercube's optimal 4-facet orbit uses
     // normals in a 2D symplectic subplane, giving rank(N^T) = 2).
     let svd = kkt.clone().svd(true, true);
-    let solution = svd.solve(&rhs, 1e-10).ok()?;
+    let solution = svd.solve(&rhs, EPS_SVD_TOLERANCE).ok()?;
 
     // Verify the solution satisfies the constraints
     let residual = &kkt * &solution - &rhs;
-    if residual.norm() > 1e-6 {
+    if residual.norm() > EPS_KKT_RESIDUAL {
         return None;
     }
 
@@ -195,7 +215,7 @@ fn solve_kkt(
     Some((beta, q_val))
 }
 
-/// Generate all combinations of `k` elements from `{0, ..., n-1}`.
+/// Generate all combinations of `k` elements from `{0, ..., n-1}` in lexicographic order.
 fn combinations(n: usize, k: usize) -> Vec<Vec<usize>> {
     let mut result = Vec::new();
     let mut combo = vec![0usize; k];
@@ -232,7 +252,7 @@ fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     // Facet i is adjacent to facet j if some vertex lies on both
     for v in polytope.vertices() {
         let incident: Vec<usize> = (0..f)
-            .filter(|&i| (normals[i].dot(v) - heights[i]).abs() < 1e-8)
+            .filter(|&i| (normals[i].dot(v) - heights[i]).abs() < EPS_FACET_INCIDENCE)
             .collect();
         // All pairs in incident are adjacent
         for &i in &incident {
@@ -278,7 +298,7 @@ pub fn ehz_capacity_pruned(polytope: &Polytope4D) -> Option<EhzResult> {
 
                 // Rest is identical to ehz_capacity
                 if let Some((beta, q_val)) = solve_kkt(normals, heights, &perm) {
-                    if beta.iter().all(|&b| b > 1e-12) && q_val > 1e-15 {
+                    if beta.iter().all(|&b| b > EPS_BETA_POSITIVE) && q_val > EPS_Q_POSITIVE {
                         let action = 0.5 / q_val;
                         let update = match &best {
                             None => true,
