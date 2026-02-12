@@ -29,6 +29,7 @@ pub struct Polytope4D {
     vertices: Vec<Vector4<f64>>,
 }
 
+/// Errors from [`Polytope4D::new()`] when invariants are violated.
 #[derive(Clone, Debug, PartialEq)]
 pub enum ConstructionError {
     LengthMismatch { normals: usize, heights: usize },
@@ -86,7 +87,7 @@ impl Polytope4D {
             }
         }
         for (i, &h) in heights.iter().enumerate() {
-            if h <= 0.0 || !h.is_finite() {
+            if h <= 0.0 || !h.is_finite() { // also rejects NaN and infinity
                 return Err(ConstructionError::NonPositiveHeight { index: i, value: h });
             }
         }
@@ -111,18 +112,22 @@ impl Polytope4D {
         })
     }
 
+    /// Outward unit normal vectors (n̂ᵢ ∈ S³) defining the halfspaces.
     pub fn normals(&self) -> &[Vector4<f64>] {
         &self.normals
     }
 
+    /// Positive heights (ĥᵢ > 0) defining the halfspaces n̂ᵢ · x ≤ ĥᵢ.
     pub fn heights(&self) -> &[f64] {
         &self.heights
     }
 
+    /// Vertices of the polytope, precomputed via qhull at construction time.
     pub fn vertices(&self) -> &[Vector4<f64>] {
         &self.vertices
     }
 
+    /// Number of facets F = number of halfspaces in the H-representation.
     pub fn facet_count(&self) -> usize {
         self.normals.len()
     }
