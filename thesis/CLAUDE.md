@@ -111,17 +111,15 @@ Do NOT put review status in the header. Review status lives inline via `% Jörn:
 
 ## Content Rules
 
-1. **Traceability**: Every definition, theorem statement, and proof strategy must be traceable to a specific instruction from Jörn in chat or dictation.md. **Do NOT write anything Jörn did not dictate.**
+1. **Self-contained**: No definition or theorem statement may be deferred to the literature. Every definition is stated in full. Every theorem is stated in full.
 
-2. **Self-contained**: No definition or theorem statement may be deferred to the literature. Every definition is stated in full. Every theorem is stated in full.
-
-3. **Deferred proofs**: A proof MAY be deferred to the literature ONLY IF:
+2. **Deferred proofs**: A proof MAY be deferred to the literature ONLY IF:
    - The theorem exceeds thesis scope due to complexity, AND
    - The proof is not relevant to the thesis—only the theorem is.
 
-4. **Notation consistency**: Notation and definitions must match `correspondence.tex` exactly. If correspondence.tex uses symbol X, this file uses symbol X. No synonyms, no alternative forms, no "equivalent" restatements unless a lemma proving equivalence is included.
+3. **Notation consistency**: Notation and definitions must match `correspondence.tex` exactly. If correspondence.tex uses symbol X, this file uses symbol X. No synonyms, no alternative forms, no "equivalent" restatements unless a lemma proving equivalence is included.
 
-5. **Writing rule**: Proofs cannot cite external sources mid-proof. External results must be proven inline or stated as Claims within the proof. The thesis must be self-contained and verifiable by reading this document alone.
+4. **Writing rule**: Proofs cannot cite external sources mid-proof. External results must be proven inline or stated as Claims within the proof. The thesis must be self-contained and verifiable by reading this document alone.
 
 ## Proof Writing
 
