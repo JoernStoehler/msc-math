@@ -313,7 +313,7 @@ mod investigation {
     ///
     /// **Run with:** `cargo test --package geom cross_check_boundedness -- --ignored --nocapture`
     #[test]
-    #[ignore] // Long-running test (1000+ cases)
+    #[ignore] // ~3s, 875 cases. Non-default: monitoring or after qhull/boundedness changes.
     fn cross_check_boundedness_detection() {
         println!("\n========================================");
         println!("Empirical Cross-Check: qhull vs check_bounded()");
