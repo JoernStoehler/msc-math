@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Generate all figures for the Kai demo experiments.
+Generate publication-ready figures from polytope datasets.
 
 Goal: Produce publication-ready plots of systolic ratios, capacity vs facet count,
       and acceptance rates from the polytope dataset.
@@ -18,7 +18,7 @@ import numpy as np
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 DATA_DIR = REPO_ROOT / "experiments" / "data"
-FIG_DIR = REPO_ROOT / "experiments" / "figures"
+FIGURES_DIR = REPO_ROOT / "experiments" / "figures"
 
 
 def load_polytopes():
@@ -38,7 +38,7 @@ def plot_sys_histogram(rows):
 
     for fc in facet_counts:
         vals = [r["sys"] for r in random_rows if r["facet_count"] == fc]
-        ax.hist(vals, bins=20, alpha=0.6, label=f"F={fc}")
+        ax.hist(vals, bins=20, alpha=0.6, label=f"F={fc}")  # 20 bins for visual clarity at typical dataset sizes (~50 per facet count)
 
     # Mark pentagon
     pentagon = [r for r in rows if r["source"] == "hko_pentagon"]
@@ -53,13 +53,13 @@ def plot_sys_histogram(rows):
     ax.set_title(f"Systolic ratios of {len(random_rows)} random 4D polytopes (F=5-{max(facet_counts)})")
     ax.legend()
     fig.tight_layout()
-    fig.savefig(FIG_DIR / "sys_histogram.png", dpi=150)
+    fig.savefig(FIGURES_DIR / "sys_histogram.png", dpi=150)
     plt.close(fig)
     print(f"  sys_histogram.png: {len(random_rows)} random polytopes")
 
 
 def plot_facet_vs_capacity(rows):
-    """Scatter plot: facet count vs capacity, with timing as color."""
+    """Two-panel figure: (left) facet count vs systolic ratio, (right) facet count vs capacity computation time."""
     valid = [r for r in rows if r["capacity"] is not None and r["sys"] is not None]
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
@@ -91,7 +91,7 @@ def plot_facet_vs_capacity(rows):
     ax2.set_yscale("log")
 
     fig.tight_layout()
-    fig.savefig(FIG_DIR / "facet_vs_capacity.png", dpi=150)
+    fig.savefig(FIGURES_DIR / "facet_vs_capacity.png", dpi=150)
     plt.close(fig)
     print(f"  facet_vs_capacity.png: {len(valid)} polytopes")
 
@@ -122,13 +122,14 @@ def plot_acceptance_ratios(data_path=None):
     ax.set_title("Random polytope acceptance rates")
     ax.legend()
     fig.tight_layout()
-    fig.savefig(FIG_DIR / "acceptance_rates.png", dpi=150)
+    fig.savefig(FIGURES_DIR / "acceptance_rates.png", dpi=150)
     plt.close(fig)
     print(f"  acceptance_rates.png: {len(rows)} sweep rows")
 
 
 def main():
-    FIG_DIR.mkdir(parents=True, exist_ok=True)
+    """Generate all figures, creating output directory if needed."""
+    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
     rows = load_polytopes()
     print(f"Loaded {len(rows)} polytopes from {DATA_DIR / 'polytopes.jsonl'}")
 
