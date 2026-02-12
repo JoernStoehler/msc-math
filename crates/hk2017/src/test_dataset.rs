@@ -3,36 +3,49 @@
 //! This module is primarily intended for use in tests, but is defined as a normal
 //! module to allow cross-crate test imports.
 //!
-//! ## Architecture: cached fixture
+//! ## Architecture: catalog + cached fixture
 //!
-//! Generating the test dataset is expensive (~27 `ehz_capacity()` calls, ~2-3 min).
-//! To keep `cargo test --lib` fast (<30s), the dataset is cached as a JSON fixture:
+//! The polytope catalog (`polytope_catalog()`) deterministically generates ~27 test
+//! polytopes. Computing their capacities is expensive (~2-3 min), so values are
+//! cached as a JSON fixture:
 //!
 //! - **Default path:** Property tests load from `tests/fixtures/capacity_dataset.json`
 //! - **Regeneration:** Run `cargo test -p hk2017 regenerate_test_dataset -- --ignored`
-//!   after changes to `ehz_capacity()` or the dataset generation logic.
+//!   after changes to `ehz_capacity_pruned()` or the catalog generation logic.
 //!
 //! The fixture is committed to the repo so all worktrees have it immediately.
 //!
-//! ## Dataset phases
+//! ## Catalog phases
 //!
-//! - Phase 1: Base dataset (~9 polytopes: 3 known + up to 6 random)
-//! - Phase 2: Symplectomorphism variants (up to +9, one per base polytope)
-//! - Phase 3: Conformality variants (up to +9, one per base polytope)
+//! - Phase 1: Base polytopes (known and random)
+//! - Phase 2: Symplectomorphism variants (apply random M ∈ Sp(4))
+//! - Phase 3: Conformality variants (scale by random α)
 //!
-//! Total: up to ~27 polytopes (fewer if random generation or computation fails for some).
+//! ## Capacity variants
 //!
-//! Used by capacity and sys property tests.
+//! - `capacity`: from `ehz_capacity_pruned()` — the production code path.
+//! - `capacity_unpruned`: from `ehz_capacity()` — only for base polytopes,
+//!   to verify pruned ≈ unpruned agreement. Variants skip the expensive
+//!   unpruned computation.
 
 use geom::polytope::Polytope4D;
 use geom::test_utils::{simplex, lagrangian_triangle_product};
-use geom::volume::volume;
 use nalgebra::{Matrix4, Vector4};
 use rand::Rng;
 use rand_distr::StandardNormal;
 use rand_chacha::ChaCha8Rng;
 use rand::SeedableRng;
-use crate::ehz_capacity;
+
+/// Entry in the polytope catalog (no computed values).
+#[derive(Clone, Debug)]
+pub struct CatalogEntry {
+    pub name: String,
+    pub polytope: Polytope4D,
+    /// Index of the base polytope this was derived from (None for base polytopes).
+    pub base_index: Option<usize>,
+    /// Transformation type: None (base), "sympl", or "conform:1.50".
+    pub transform: Option<String>,
+}
 
 /// Test polytope with precomputed volume and capacity.
 #[derive(Clone, Debug)]
@@ -40,10 +53,13 @@ pub struct TestPolytope {
     pub name: String,
     pub polytope: Polytope4D,
     pub volume: f64,
+    /// EHZ capacity from `ehz_capacity_pruned()` (production code path).
     pub capacity: f64,
-    /// Index of the base polytope this was derived from
+    /// EHZ capacity from `ehz_capacity()` (unpruned). Only set for base polytopes.
+    pub capacity_unpruned: Option<f64>,
+    /// Index of the base polytope this was derived from.
     pub base_index: Option<usize>,
-    /// Transformation type: None (base), "sympl", or "conform:1.50"
+    /// Transformation type: None (base), "sympl", or "conform:1.50".
     pub transform: Option<String>,
 }
 
@@ -59,6 +75,8 @@ struct DatasetEntry {
     heights: Vec<f64>,
     volume: f64,
     capacity: f64,
+    #[serde(default)]
+    capacity_unpruned: Option<f64>,
     base_index: Option<usize>,
     transform: Option<String>,
 }
@@ -72,6 +90,7 @@ impl DatasetEntry {
             heights: tp.polytope.heights().to_vec(),
             volume: tp.volume,
             capacity: tp.capacity,
+            capacity_unpruned: tp.capacity_unpruned,
             base_index: tp.base_index,
             transform: tp.transform.clone(),
         }
@@ -88,13 +107,14 @@ impl DatasetEntry {
             polytope,
             volume: self.volume,
             capacity: self.capacity,
+            capacity_unpruned: self.capacity_unpruned,
             base_index: self.base_index,
             transform: self.transform.clone(),
         }
     }
 }
 
-/// Save dataset to JSON fixture file.
+/// Save dataset to JSON fixture file (atomic: writes to temp file, then renames).
 #[cfg(test)]
 pub fn save_test_dataset(path: &std::path::Path, dataset: &[TestPolytope]) {
     let entries: Vec<DatasetEntry> = dataset.iter().map(DatasetEntry::from_test_polytope).collect();
@@ -102,7 +122,10 @@ pub fn save_test_dataset(path: &std::path::Path, dataset: &[TestPolytope]) {
     if let Some(parent) = path.parent() {
         std::fs::create_dir_all(parent).expect("create fixture directory");
     }
-    std::fs::write(path, json).expect("write fixture file");
+    // Atomic write: temp file in same directory, then rename.
+    let tmp_path = path.with_extension("json.tmp");
+    std::fs::write(&tmp_path, json).expect("write temp fixture file");
+    std::fs::rename(&tmp_path, path).expect("rename temp fixture to final path");
 }
 
 /// Load dataset from JSON fixture file.
@@ -127,24 +150,24 @@ pub fn load_test_dataset(path: &std::path::Path) -> Vec<TestPolytope> {
     entries.iter().map(DatasetEntry::to_test_polytope).collect()
 }
 
-/// Generate test dataset in three phases (up to ~27 polytopes).
+/// Deterministically generate the test polytope catalog (~0ms, no capacity computation).
 ///
-/// Phase 1: Base dataset (~9 polytopes)
-///   - 3 known polytopes (simplex, hypercube, lagrangian_triangle_product)
-///   - 6 random polytopes (5-7 facets, 2 per facet count)
+/// This is the single source of truth for which polytopes exist in the test suite.
+/// Both the default suite (staleness check) and fixture generation call this function.
 ///
-/// Phase 2: Symplectomorphism variants (+~10)
-///   - For each base polytope K: compute c(MK+b) for random M ∈ Sp(4)
+/// ## Phases
 ///
-/// Phase 3: Conformality variants (+~10)
-///   - For each base polytope K: compute c(α·K) for random α
-pub fn generate_test_dataset() -> Vec<TestPolytope> {
+/// - Phase 1: 3 known polytopes + 6 random (5-7 facets, 2 each) = 9 base
+/// - Phase 2: 1 symplectomorphism variant per base = 9 variants
+/// - Phase 3: 1 conformality variant per base = 9 variants
+/// - Total: ~27 polytopes
+pub fn polytope_catalog() -> Vec<CatalogEntry> {
     let mut rng = ChaCha8Rng::seed_from_u64(42);
 
-    // ===== PHASE 1: Base dataset =====
-    let mut base_dataset = Vec::new();
+    // ===== PHASE 1: Base polytopes =====
+    let mut base_entries = Vec::new();
 
-    // Known polytopes — capacity and volume computed fresh (not hardcoded).
+    // Known polytopes.
     // Excluded: crosspolytope (16 facets, HK2017 is exponential → too slow).
     let known = vec![
         ("simplex", simplex()),
@@ -152,13 +175,9 @@ pub fn generate_test_dataset() -> Vec<TestPolytope> {
         ("lagrangian_triangle_product", lagrangian_triangle_product()),
     ];
     for (name, p) in known {
-        let vol = volume(&p).unwrap_or_else(|_| panic!("{} volume", name));
-        let cap = ehz_capacity(&p).unwrap_or_else(|| panic!("{} capacity", name)).capacity;
-        base_dataset.push(TestPolytope {
+        base_entries.push(CatalogEntry {
             name: name.to_string(),
             polytope: p,
-            volume: vol,
-            capacity: cap,
             base_index: None,
             transform: None,
         });
@@ -167,60 +186,148 @@ pub fn generate_test_dataset() -> Vec<TestPolytope> {
     // Small random polytopes (5-7 facets for speed)
     for facet_count in 5..=7 {
         for i in 0..2 {
-            // 2 polytopes per facet count = 6 total
             let p = generate_random_bounded_polytope(facet_count, &mut rng);
-            if let (Ok(vol), Some(cap_result)) = (volume(&p), ehz_capacity(&p)) {
-                base_dataset.push(TestPolytope {
-                    name: format!("random_f{}_n{}", facet_count, i),
-                    polytope: p,
-                    volume: vol,
-                    capacity: cap_result.capacity,
-                    base_index: None,
-                    transform: None,
-                });
-            }
+            base_entries.push(CatalogEntry {
+                name: format!("random_f{}_n{}", facet_count, i),
+                polytope: p,
+                base_index: None,
+                transform: None,
+            });
         }
     }
 
     // ===== PHASE 2: Symplectomorphism variants =====
-    let mut full_dataset = base_dataset.clone();
+    let mut full_catalog = base_entries.clone();
 
-    for (i, entry) in base_dataset.iter().enumerate() {
-        // Generate random M ∈ Sp(4) and translation b
+    for (i, entry) in base_entries.iter().enumerate() {
         let (m, b) = random_symplectomorphism(&mut rng);
         let transformed = apply_symplectomorphism(&entry.polytope, &m, &b);
-
-        if let (Ok(vol), Some(cap_result)) = (volume(&transformed), ehz_capacity(&transformed)) {
-            full_dataset.push(TestPolytope {
-                name: format!("{}_sympl", entry.name),
-                polytope: transformed,
-                volume: vol,
-                capacity: cap_result.capacity,
-                base_index: Some(i),
-                transform: Some("sympl".to_string()),
-            });
-        }
+        full_catalog.push(CatalogEntry {
+            name: format!("{}_sympl", entry.name),
+            polytope: transformed,
+            base_index: Some(i),
+            transform: Some("sympl".to_string()),
+        });
     }
 
     // ===== PHASE 3: Conformality variants =====
-    for (i, entry) in base_dataset.iter().enumerate() {
-        // Random scale factor between 0.5 and 2.0
+    for (i, entry) in base_entries.iter().enumerate() {
         let alpha: f64 = rng.gen_range(0.5..2.0);
         let scaled = scale_polytope(&entry.polytope, alpha);
-
-        if let (Ok(vol), Some(cap_result)) = (volume(&scaled), ehz_capacity(&scaled)) {
-            full_dataset.push(TestPolytope {
-                name: format!("{}_scale_{:.2}", entry.name, alpha),
-                polytope: scaled,
-                volume: vol,
-                capacity: cap_result.capacity,
-                base_index: Some(i),
-                transform: Some(format!("conform:{}", alpha)),
-            });
-        }
+        full_catalog.push(CatalogEntry {
+            name: format!("{}_scale_{:.2}", entry.name, alpha),
+            polytope: scaled,
+            base_index: Some(i),
+            transform: Some(format!("conform:{}", alpha)),
+        });
     }
 
-    full_dataset
+    full_catalog
+}
+
+/// Known literature capacity values for validation.
+pub const LITERATURE_VALUES: &[(&str, f64)] = &[
+    ("simplex", 0.25),
+    ("hypercube", 4.0),
+    ("lagrangian_triangle_product", 1.5),
+];
+
+/// Generate test dataset with fail-fast inline validation.
+///
+/// Calls `polytope_catalog()`, then computes capacities:
+/// - Base polytopes: both `ehz_capacity_pruned()` and `ehz_capacity()`, assert agreement.
+/// - Variants: `ehz_capacity_pruned()` only.
+/// - Inline checks: literature values, conformality, symplectomorphism invariance.
+///
+/// Fails fast on any validation error — no point computing remaining polytopes
+/// if a bug is already detected.
+pub fn generate_test_dataset() -> Vec<TestPolytope> {
+    use crate::{ehz_capacity, ehz_capacity_pruned};
+    use geom::volume::volume;
+
+    let catalog = polytope_catalog();
+    let mut dataset: Vec<TestPolytope> = Vec::with_capacity(catalog.len());
+
+    for entry in &catalog {
+        let vol = volume(&entry.polytope)
+            .unwrap_or_else(|e| panic!("'{}': volume computation failed: {}", entry.name, e));
+
+        let cap_pruned = ehz_capacity_pruned(&entry.polytope)
+            .unwrap_or_else(|| panic!("'{}': ehz_capacity_pruned() returned None", entry.name))
+            .capacity;
+
+        let cap_unpruned = if entry.base_index.is_none() {
+            // Base polytope: also compute unpruned, verify agreement
+            let unpruned = ehz_capacity(&entry.polytope)
+                .unwrap_or_else(|| panic!("'{}': ehz_capacity() returned None", entry.name))
+                .capacity;
+
+            let rel_err = (cap_pruned - unpruned).abs() / unpruned;
+            assert!(
+                rel_err < 1e-6,
+                "FAIL-FAST '{}': pruned ({}) ≠ unpruned ({}) capacity, rel_error = {:.2e}",
+                entry.name, cap_pruned, unpruned, rel_err
+            );
+
+            Some(unpruned)
+        } else {
+            None
+        };
+
+        // Fail-fast: literature values
+        for &(lit_name, lit_cap) in LITERATURE_VALUES {
+            if entry.name == lit_name {
+                let rel_err = (cap_pruned - lit_cap).abs() / lit_cap;
+                assert!(
+                    rel_err < 1e-6,
+                    "FAIL-FAST '{}': capacity {} disagrees with literature value {}, rel_error = {:.2e}",
+                    entry.name, cap_pruned, lit_cap, rel_err
+                );
+            }
+        }
+
+        // Fail-fast: symplectomorphism invariance
+        if entry.transform.as_deref() == Some("sympl") {
+            let base_idx = entry.base_index.unwrap();
+            let base_cap = dataset[base_idx].capacity;
+            let rel_err = (cap_pruned - base_cap).abs() / base_cap;
+            assert!(
+                rel_err < 1e-6,
+                "FAIL-FAST '{}': c(MK) = {} ≠ c(K) = {} for base '{}', rel_error = {:.2e}",
+                entry.name, cap_pruned, base_cap, dataset[base_idx].name, rel_err
+            );
+        }
+
+        // Fail-fast: conformality c(αK) = α²·c(K)
+        if let Some(transform) = &entry.transform {
+            if let Some(alpha_str) = transform.strip_prefix("conform:") {
+                let alpha: f64 = alpha_str.parse().expect("valid scale factor");
+                let base_idx = entry.base_index.unwrap();
+                let expected = alpha * alpha * dataset[base_idx].capacity;
+                let rel_err = (cap_pruned - expected).abs() / expected;
+                assert!(
+                    rel_err < 1e-6,
+                    "FAIL-FAST '{}': c({:.2}·K) = {} ≠ {:.2}²·c(K) = {} for base '{}', rel_error = {:.2e}",
+                    entry.name, alpha, cap_pruned, alpha, expected, dataset[base_idx].name, rel_err
+                );
+            }
+        }
+
+        dataset.push(TestPolytope {
+            name: entry.name.clone(),
+            polytope: entry.polytope.clone(),
+            volume: vol,
+            capacity: cap_pruned,
+            capacity_unpruned: cap_unpruned,
+            base_index: entry.base_index,
+            transform: entry.transform.clone(),
+        });
+
+        eprintln!("  {} — cap={:.6}, vol={:.6}{}", entry.name, cap_pruned, vol,
+            if cap_unpruned.is_some() { " (unpruned verified)" } else { "" });
+    }
+
+    dataset
 }
 
 /// Scale polytope: heights → α·heights (normals unchanged)
@@ -318,14 +425,11 @@ fn apply_symplectomorphism(polytope: &Polytope4D, m: &Matrix4<f64>, b: &Vector4<
 }
 
 /// Generate a random bounded polytope for testing.
-/// Retries if the polytope is unbounded.
+/// Retries if the polytope is unbounded (~5% acceptance rate, so 100 attempts is plenty).
 fn generate_random_bounded_polytope(facet_count: usize, rng: &mut impl Rng) -> Polytope4D {
-    // Retry loop: sometimes random configurations are unbounded
-    for _attempt in 0..10 {
-        // Generate random unit vectors on S³
+    for _attempt in 0..100 {
         let normals: Vec<Vector4<f64>> = (0..facet_count)
             .map(|_| {
-                // Sample from 4D standard normal, normalize
                 let v = Vector4::new(
                     rng.sample(StandardNormal),
                     rng.sample(StandardNormal),
@@ -346,8 +450,11 @@ fn generate_random_bounded_polytope(facet_count: usize, rng: &mut impl Rng) -> P
         }
     }
 
-    // Fallback: use hypercube if random generation fails repeatedly
-    hypercube()
+    panic!(
+        "Failed to generate bounded {}-facet polytope in 100 attempts. \
+         If this triggers with a fixed seed, increase the retry count or change the seed.",
+        facet_count
+    );
 }
 
 // Helper: hypercube fixture (used in tests)
@@ -377,12 +484,12 @@ mod test_dataset_tests {
 
     /// Regenerate the cached capacity dataset fixture.
     ///
-    /// Run after changes to `ehz_capacity()` or the dataset generation logic:
+    /// Run after changes to `ehz_capacity_pruned()` or the catalog generation logic:
     /// ```
     /// cargo test -p hk2017 regenerate_test_dataset -- --ignored --nocapture
     /// ```
     #[test]
-    #[ignore] // Expensive: ~27 ehz_capacity() calls, ~2-3 min
+    #[ignore] // Expensive: ~27 capacity computations, ~2-3 min
     fn regenerate_test_dataset() {
         let dataset = generate_test_dataset();
         let path = fixture_path();
@@ -404,6 +511,17 @@ mod test_dataset_tests {
                 (orig.volume - loaded.volume).abs() < 1e-12,
                 "{}: volume drift: {} vs {}", orig.name, orig.volume, loaded.volume
             );
+            assert_eq!(
+                orig.capacity_unpruned.is_some(),
+                loaded.capacity_unpruned.is_some(),
+                "{}: capacity_unpruned presence mismatch", orig.name
+            );
+            if let (Some(orig_unp), Some(loaded_unp)) = (orig.capacity_unpruned, loaded.capacity_unpruned) {
+                assert!(
+                    (orig_unp - loaded_unp).abs() < 1e-12,
+                    "{}: capacity_unpruned drift: {} vs {}", orig.name, orig_unp, loaded_unp
+                );
+            }
         }
         println!("Round-trip verification passed");
     }
