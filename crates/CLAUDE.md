@@ -4,7 +4,7 @@
 
 - Colocated tests: `foo.rs` has `foo_test.rs` in the same directory. Submodule tests use `#[path = "foo_test.rs"]`.
 - A source file may have multiple test files (e.g. `foo_math_test.rs`, `foo_test.rs`)
-- Functional programming style
+- Prefer iterator chains over `for` loops. Minimize mutable state. Use `map`, `filter`, `flat_map` for transformations.
 - Types encode mathematical invariants, validated at construction
 - nalgebra for linear algebra, proptest for property-based testing
 
@@ -62,4 +62,4 @@ Before final report:
 - [ ] Zero clippy warnings (`cargo clippy`)
 - [ ] Critical paths have tests
 - [ ] Performance claims have benchmarks
-- [ ] All changes committed
+- [ ] Working tree clean (no uncommitted changes)

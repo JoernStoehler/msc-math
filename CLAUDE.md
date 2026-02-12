@@ -158,7 +158,7 @@ Sessions follow this pattern: **scope → plan → implement → review → Jör
 - Jörn does not monitor agent actions or intermediate status updates. Therefore, the end-of-turn message must recap the context, so Jörn can jump back in without needing to read the full history.
 - Claude Code decides autonomously when to transition between stages.
 - Claude Code MAY return to earlier stages — e.g. planning a new approach after a dead end, or fixing bugs found during review.
-- Claude Code SHOULD focus on one stage at a time (e.g. by using the Todos tool to track the stage) to avoid splitting its attention unnecessarily.
+- Claude Code SHOULD focus on one stage at a time (e.g. by using the TodoWrite tool to track the stage) to avoid splitting its attention unnecessarily.
 
 **Merge phase** (Jörn + Claude Code together):
 - When Claude Code is satisfied with its deliverable OR wants to give up, it messages Jörn.
