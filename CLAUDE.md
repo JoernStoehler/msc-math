@@ -245,7 +245,7 @@ These are true about the repo right now and must remain true:
 
 - `cargo test` passes from `crates/` with zero failures
 
-**Long-term periodic checks:** See [`MONITORING.md`](MONITORING.md) for validation tasks that run weekly or on-demand (e.g., algorithm agreement rates, issue board health). These complement repo invariants with checks that don't need to run every session.
+**Long-term periodic checks:** Use `/monitoring` to run periodic health checks (algorithm agreement, build performance, issue board health). Check definitions live in `.claude/skills/monitoring/SKILL.md`; reports go to `docs/monitoring/`.
 
 ## Environment
 
@@ -262,6 +262,10 @@ These are true about the repo right now and must remain true:
 cd crates/ && cargo build
 cd crates/ && cargo test
 cd crates/ && cargo clippy
+
+# Long-running commands: always wrap with timeout to prevent zombie processes
+timeout 5m cargo test              # routine tests
+timeout 30m cargo test -- --ignored  # slow property/monitoring tests
 
 # Python
 ruff check experiments/
