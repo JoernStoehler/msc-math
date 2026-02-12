@@ -127,6 +127,7 @@ $\eta^\top \beta = 1$, and $\beta_i > 0$.
 % --- Smooth setting ---
 
 \begin{definition}[Standard symplectic structure]\label{def:symplectic-form}
+% Jörn: text approved (1aac085)
 % QC: J_0^2 = -I. omega_0 antisymmetric, nondegenerate.
 %   omega_0(e_{q_i}, e_{p_i}) = +1 for i=1,2; all other basis pairs give 0.
 % Downstream: J_0 is the 4x4 matrix [[0,-I_2],[I_2,0]].
@@ -150,6 +151,7 @@ equivalently $\omega_0 = dq_1 \wedge dp_1 + dq_2 \wedge dp_2$.
 \end{definition}
 
 \begin{remark}[Properties of $J_0$ and $\omega_0$]\label{rem:j0-properties}
+% Jörn: text approved (1aac085)
 % Downstream: all testable via proptest on random vectors.
 \begin{enumerate}
 \item $J_0^2 = -I_4$, \quad $J_0^{-1} = J_0^\top = -J_0$.
@@ -160,6 +162,7 @@ equivalently $\omega_0 = dq_1 \wedge dp_1 + dq_2 \wedge dp_2$.
 \end{remark}
 
 \begin{definition}[Liouville form]\label{def:liouville-form}
+% Jörn: text approved (1aac085)
 % QC: d(lambda_0) = omega_0.
 %   lambda_0 at x applied to v equals (1/2) omega_0(x, v) = (1/2) <J_0 x, v>.
 % Downstream: lambda_0(v) at point x = 0.5 * dot(J_0*x, v).
@@ -175,18 +178,16 @@ At a point $x = (q, p) \in \mathbb{R}^4$, applied to a tangent vector $v$:
 It satisfies $d\lambda_0 = \omega_0$.
 \end{definition}
 
-% [TODO: JÖRN - review definitions below, drafted from standard textbooks
-%   (Hofer--Zehnder, McDuff--Salamon).]
 
 \begin{definition}[Convex body]\label{def:convex-body}
 % QC: K compact, convex, nonempty interior, 0 in int(K).
 % Downstream: the input to all algorithms. Always centered at origin.
 A \emph{convex body} is a compact convex subset $K \subset \mathbb{R}^4$
-with nonempty interior.
-Throughout this chapter, every convex body satisfies $0 \in \operatorname{int}(K)$.
+with $0 \in \operatorname{int}(K)$.
 \end{definition}
 
 \begin{definition}[Support function]\label{def:support-function}
+% Jörn: text approved (1aac085)
 % QC: h_K positively 1-homogeneous, convex, h_K(v) > 0 for v != 0 (since 0 in int(K)).
 % Downstream: h_K(v) = max_{x in K} dot(x, v).
 %   For polytopes: h_K(n_i) = h_i. Test: h_K(alpha*v) = alpha * h_K(v) for alpha > 0.
@@ -198,6 +199,7 @@ Since $0 \in \operatorname{int}(K)$, we have $h_K(v) > 0$ for all $v \neq 0$.
 \end{definition}
 
 \begin{definition}[Gauge function]\label{def:gauge-function}
+% Jörn: text approved (1aac085)
 % QC: g_K positively 1-homogeneous, convex, {g_K = 1} = bdry(K),
 %   g_K < 1 on int(K), g_K > 1 outside K.
 % Downstream: g_K(x) = inf { t > 0 : x in t*K }.
@@ -219,7 +221,7 @@ The boundary is the level set: $\partial K = \{x : g_K(x) = 1\}$.
 % QC: H = g_K^2 per correspondence.tex. {H = 1} = bdry(K).
 % Downstream: H(x) = g_K(x)^2. On interior of facet F_i of a polytope:
 %   grad(H)(x) = 2 n_i / h_i, so J_0 grad(H) = R_i = (2/h_i) J_0 n_i.
-The \emph{Hamiltonian} for a convex body $K$ is
+We associate to each convex body $K$ the \emph{Hamiltonian}
 \[
   H \coloneqq g_K^2.
 \]
@@ -240,7 +242,7 @@ $\dot{x}(t) = J_0 \nabla H(x(t))$.
 %   The condition lambda_0(gamma_dot) > 0 ensures: (a) gamma_dot != 0,
 %   (b) gamma traverses bdry(K) in the Reeb direction (not reversed).
 %   Speed is free (any positive rescaling preserves lambda_0 > 0), so any
-%   orientation-preserving reparametrization is again a closed characteristic.
+%   reparametrization by a diffeomorphism with phi' > 0 is again a closed characteristic.
 %   Ref: HKO2024 says "positive multiple of J nabla H"; our lambda_0 > 0
 %   condition is equivalent (both pick the same half-line of ell_x).
 % Downstream: a closed curve on bdry(K) with velocity in the positive
@@ -264,13 +266,14 @@ whose velocity lies in the positive characteristic direction:
 \]
 The positivity condition orients the characteristic line and
 ensures $\dot{\gamma}(t) \neq 0$.
-Any orientation-preserving reparametrization of a closed characteristic
-is again a closed characteristic.
+Any reparametrization by a diffeomorphism $\varphi$ with $\varphi' > 0$
+of a closed characteristic is again a closed characteristic.
 The action $A(\gamma)$ is reparametrization-invariant
 (it is a line integral of $\lambda_0$).
 \end{definition}
 
 \begin{definition}[Reeb orbit --- smooth]\label{def:reeb-orbit-smooth}
+% Jörn: text approved (1aac085)
 % QC: Reeb vector field R defined by contact normalization lambda_0(R) = 1
 %   and characteristic direction omega_0(R, .) = 0 on T(bdry(K)).
 %   A Reeb orbit is a periodic integral curve of R.
@@ -303,6 +306,7 @@ $\lambda_0(\dot{\gamma}) = 1$.
 \end{definition}
 
 \begin{definition}[Action]\label{def:action}
+% Jörn: text approved (1aac085)
 % QC: A(gamma) = integral of lambda_0 along gamma = (1/2) integral <J_0 gamma, gamma_dot>.
 %   A > 0 for orbits traversed in the correct (Reeb) direction.
 %   A is reparametrization-invariant (as a line integral of a 1-form).
@@ -317,6 +321,7 @@ with $\gamma(0) = \gamma(T)$ is
 \end{definition}
 
 \begin{remark}[Geometric meaning of action]\label{rem:action-geometric}
+% Jörn: text approved (1aac085)
 % Downstream: action = symplectic area of any disc bounded by gamma
 %   (when gamma bounds a disc). By Stokes: integral of lambda_0 = integral of omega_0
 %   over any filling disc.
@@ -326,6 +331,7 @@ The action is the symplectic area enclosed by $\gamma$.
 \end{remark}
 
 \begin{lemma}[Action minima coincide]\label{lem:action-minima-coincide}
+% Jörn: text approved (1aac085)
 % QC: proof uses (1) every Reeb orbit is a closed characteristic,
 %   (2) every closed characteristic can be reparametrized into a Reeb orbit,
 %   (3) action is reparametrization-invariant (line integral of lambda_0).
@@ -357,6 +363,7 @@ Hence the two minima coincide.
 \end{proof}
 
 \begin{definition}[EHZ capacity]\label{def:ehz-capacity}
+% Jörn: text approved (1aac085)
 % QC: c_EHZ(K) > 0 (positive, by thm:orbit-existence).
 %   c_EHZ(K) = min (not just inf) by thm:orbit-existence.
 %   Defined via closed characteristics (smooth case), extends to all convex bodies.
@@ -378,6 +385,7 @@ for polytopes, the minimum is attained by a generalized Reeb orbit
 \end{definition}
 
 \begin{lemma}[Symplectic capacity axioms]\label{lem:capacity-axioms}
+% Jörn: text approved (1aac085)
 % QC: standard axioms from Hofer--Zehnder. Each testable.
 %   No 0-in-int(K) assumption needed: these hold for all convex bodies.
 % Downstream: each axiom is a proptest. Especially (ii) and (iii).
@@ -412,10 +420,10 @@ $K \subset \mathbb{R}^4$ that contains $0$ in its interior and is an
 intersection of finitely many closed half-spaces.
 
 An \emph{irredundant $H$-representation} of $K$ is an unordered
-finite set $\{(\hat{n}_i, \hat{h}_i)\}_{i=1}^{F}$ with
-$\hat{n}_i \in S^3$, $\hat{h}_i > 0$, such that
+finite set $\{(n_i, h_i)\}_{i=1}^{F}$ with
+$n_i \in S^3$, $h_i > 0$, such that
 \[
-  K = \bigcap_{i=1}^{F} \{ x \in \mathbb{R}^4 : \langle x, \hat{n}_i \rangle \leq \hat{h}_i \},
+  K = \bigcap_{i=1}^{F} \{ x \in \mathbb{R}^4 : \langle x, n_i \rangle \leq h_i \},
 \]
 and removing any single inequality strictly enlarges the intersection.
 \end{definition}
@@ -429,7 +437,18 @@ Every polytope has a unique irredundant $H$-representation,
 and every irredundant $H$-representation corresponds to a polytope.
 \end{lemma}
 
+\begin{proof}
+Each facet $F$ of $K$ determines a unique outward unit normal $n_F$
+and height $h_F = \max_{x \in K} \langle x, n_F \rangle > 0$.
+The half-space $\{x : \langle x, n_F \rangle \leq h_F\}$ is irredundant
+(removing it exposes $F$).
+Conversely, every irredundant inequality defines a facet.
+Hence the irredundant $H$-representation consists of exactly the
+facet data $\{(n_F, h_F)\}_F$, which is determined by $K$.
+\end{proof}
+
 \begin{definition}[Facets, normals, heights]\label{def:facets}
+% Jörn: text approved (1aac085)
 % QC: F_i is the set of points where inequality i is tight.
 %   F_i is a 3-dimensional polytope (a facet = maximal proper face).
 %   Irredundancy guarantees each F_i is genuinely 3-dimensional (not
@@ -453,6 +472,7 @@ and $F$ is the \emph{facet count}.
 \end{definition}
 
 \begin{definition}[Facet Reeb vectors]\label{def:reeb-vectors}
+% Jörn: text approved (1aac085)
 % QC: R_i = (2/h_i) J_0 n_i per correspondence.tex (our R_i = HK2017's p_i).
 %   Derivation: R_i is the Reeb vector of the contact form lambda_0|_{F_i},
 %   normalized so that lambda_0(R_i) = 1 on F_i.
@@ -472,7 +492,9 @@ $\lambda_0|_x(R_i) = 1$ for all $x \in F_i$.
 \end{definition}
 
 \begin{remark}[Reeb vector properties]\label{rem:reeb-properties}
+% Jörn: text approved (1aac085) — sign of item 4 not yet verified
 % Downstream: all testable.
+The following properties hold:
 \begin{enumerate}
 \item $\langle R_i, n_i \rangle = 0$ (tangent to $\partial K$).
 \item $|R_i| = 2/h_i$.
@@ -491,7 +513,7 @@ $\lambda_0|_x(R_i) = 1$ for all $x \in F_i$.
 % Downstream: gamma: [0,T] -> bdry(K), W^{1,2}, gamma(0) = gamma(T).
 %   gamma_dot(t) in convex hull of { R_i : gamma(t) in F_i } for a.e. t.
 %   For simple orbits: gamma_dot = R_{sigma(k)} on each segment (pure Reeb vector).
-A \emph{generalized Reeb orbit} on a polytope $K$ is a curve
+A \emph{generalized Reeb orbit} on a polytope $K$ is a continuous curve
 $\gamma \in W^{1,2}([0, T], \mathbb{R}^4)$ with $T > 0$,
 $\gamma(0) = \gamma(T)$, $\operatorname{Im}(\gamma) \subset \partial K$,
 such that
@@ -502,6 +524,7 @@ such that
 \end{definition}
 
 \begin{remark}[Contact normalization]\label{rem:contact-normalization}
+% Jörn: text approved (1aac085)
 % Downstream: useful sanity check in tests.
 Since $\lambda_0|_x(R_i) = 1$ for every $x \in F_i$ and every
 $i$, the convex combination preserves the normalization:
@@ -626,7 +649,7 @@ Section~\ref{sec:main-result} correctly computes
 $c_{\mathrm{EHZ}}(K)$.
 
 \begin{lemma}[Symplectic shoelace formula]\label{lem:shoelace}
-% Approval: proof structure approved by Jörn. Text not yet reviewed.
+% Jörn: structure approved (1aac085)
 % QC: direct computation, no external results needed.
 %   Key steps: (a) closure kills z(0) term, (b) self-pairing vanishes
 %   by omega_0 antisymmetry, (c) cross terms give the double sum.
@@ -718,7 +741,7 @@ where
 \end{theorem*}
 
 \begin{proof}[Proof of Theorem~\ref{thm:main}]
-% Approval: proof structure approved by Jörn. Text not yet reviewed.
+% Jörn: structure approved (1aac085)
 % QC: combines thm:simple-minimizer, lem:shoelace, and a variable
 %   substitution. Each step cites specific results and states which
 %   properties are used. The critical calculation is beta^T H beta = 1/T.
@@ -895,7 +918,7 @@ Return $c_{\mathrm{EHZ}}(K) = (\max_{S,\sigma} \beta^\top H \beta)^{-1}$.
 \medskip
 
 \begin{lemma}[Double sum as quadratic form]\label{lem:H-quadratic}
-% Approval: proof structure approved by Jörn. Text not yet reviewed.
+% Jörn: structure approved (1aac085)
 % QC: for i > j, H_{ij} = omega_0(n_{sigma(i)}, n_{sigma(j)}),
 %   which matches the summand in the double sum. Expanding
 %   beta^T H beta using symmetry + zero diagonal gives the sum.
@@ -925,7 +948,7 @@ $\sum_{j < i} \tilde{\beta}_i \tilde{\beta}_j H_{ij}
 
 \begin{lemma}[KKT conditions and the algorithm's linear system]%
 \label{lem:kkt}
-% Approval: proof structure approved by Jörn. Text not yet reviewed.
+% Jörn: structure approved (1aac085)
 % QC: connects the abstract optimization (max beta^T H beta on M(K))
 %   to the algorithm's concrete linear system (eq:linear-system).
 %   With the new H sign convention, no sign flip is needed:
@@ -959,7 +982,7 @@ system~\eqref{eq:linear-system}.
 \end{proof}
 
 \begin{theorem}[Algorithm correctness]\label{thm:algorithm-correct}
-% Approval: proof structure approved by Jörn. Text not yet reviewed.
+% Jörn: structure approved (1aac085)
 % QC: the proof only uses completeness (the maximizer is found),
 %   not soundness (every candidate is valid). This is intentional:
 %   non-maximizing critical points need not correspond to
@@ -1013,7 +1036,7 @@ $(V^*)^{-1} = c_{\mathrm{EHZ}}(K)$.
 \end{proof}
 
 \begin{remark}\label{rem:non-maximizer-warning}
-% Approval: proof structure approved by Jörn. Text not yet reviewed.
+% Jörn: structure approved (1aac085)
 % QC: important for agents/readers who might assume all critical
 %   points correspond to Reeb orbits.
 The proof uses only that the global maximizer
