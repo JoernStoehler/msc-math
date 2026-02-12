@@ -26,6 +26,23 @@ Two classes of tests, both applied excessively:
 
 Use proptest for universal quantification: "∀ λ > 0: vol(λK) = λ⁴·vol(K)" → proptest. Not for single examples.
 
+## Test suites
+
+Property tests load from a cached JSON fixture so they run fast (<1s) while still verifying mathematical properties. Non-default suites accept staleness risk in exchange for CPU savings — agents decide which to run based on what code they changed.
+
+| Suite | Command | When to run | Time (2026-02-12) |
+|-------|---------|-------------|-------------------|
+| **Default** | `cargo test --lib` | Every iteration | ~54s wall, ~98s CPU |
+| Regenerate capacity fixture | `cargo test -p hk2017 regenerate_test_dataset -- --ignored` | After changes to `ehz_capacity()` | ~2-3 min |
+| Pruned vs unpruned agreement | `cargo test -p hk2017 pruned_matches_unpruned -- --ignored` | After changes to adjacency pruning | ~30s |
+| Boundedness cross-check | `cargo test -p geom -- --ignored` | Monitoring, or after qhull/boundedness changes | ~3s |
+| Expensive capacity (pentagon, crosspolytope) | `cargo test -p hk2017 pentagon_capacity -- --ignored` | Rare, specific investigations | 2-5 min |
+| All ignored tests | `cargo test -- --ignored` | Full validation | ~10 min |
+
+Target: default suite <3 min single-threaded. Times measured 2026-02-12 — may drift as codebase grows.
+
+**Fixture location:** `hk2017/tests/fixtures/capacity_dataset.json` (committed, 27 polytopes with precomputed capacities).
+
 ## Performance claims require measurement
 
 Never state performance without benchmark. "~1ms" is claim. "Benchmark shows 1.5-2.0ms for 5-16 facets" is measured. Add benchmark if claim exists without measurement.
