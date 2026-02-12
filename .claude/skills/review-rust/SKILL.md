@@ -46,7 +46,7 @@ Use proptest for universal quantification: "∀ λ > 0: vol(λK) = λ⁴·vol(K)
 
 **Always compare against local `main`, never `origin/main`.** Jörn merges locally and pushes later, so `origin/main` is frequently stale. Comparing against `origin/main` inflates the diff with already-merged commits.
 
-**State the base explicitly in the report.** Example: "Compared against local `main` at `abc1234`." If a discrepancy appears (e.g. unexpected files in diff), investigate — it likely means the branch needs rebasing onto local `main`.
+**State the base explicitly in the report.** Example: "Compared against local `main` at `abc1234`." If a discrepancy appears (e.g. unexpected files in diff), investigate — it likely means the branch needs rebasing onto local `main`. See `/rebase` for the rebase checklist.
 
 ## Common pitfalls
 
