@@ -84,23 +84,22 @@ with $n_\ell \cdot d \le 0$ for all~$\ell$. We produce a triple~$(i,j,k)$
 whose kernel direction~$r$ satisfies $n_\ell \cdot r \le 0$ for all~$\ell$
 (so no normal blocks~$r$).
 
-\emph{Case~1: $\operatorname{rec}(K)$ is pointed} (contains no line). Then it
-has an extreme ray~$r$. An extreme ray is a 1-dimensional face, and a
-$k$-dimensional face of a polyhedral cone in~$\mathbb{R}^4$ lies on at least
-$4 - k$ linearly independent tight constraints. For $k = 1$, this gives three
-linearly independent normals~$n_i, n_j, n_k$ with $n_i \cdot r = n_j \cdot r
-= n_k \cdot r = 0$, so $r \in \ker(n_i, n_j, n_k)$. Since $r \in
-\operatorname{rec}(K)$, we have $n_\ell \cdot r \le 0$ for all~$\ell$, and no
-normal has positive inner product with~$r$. Triple~$(i,j,k)$ fails.
+Among all unit vectors in~$\operatorname{rec}(K)$, pick~$d$ maximizing the
+number of orthogonal normals $S_0 = \{\ell : n_\ell \cdot d = 0\}$.  We claim
+that~$S_0$ contains three linearly independent normals.  If not,
+$(\operatorname{span} S_0)^\perp$ has dimension~$\ge 2$ and contains~$d$, so
+there exists $v \in (\operatorname{span} S_0)^\perp$ not parallel to~$d$.  The
+path $d + tv$ stays in~$\operatorname{rec}(K)$ for small~$|t|$: the~$S_0$
+constraints remain tight (since $v \perp n_\ell$ for $\ell \in S_0$) and the
+strict inequalities $n_\ell \cdot d < 0$ remain negative by continuity.
+Increasing~$|t|$, eventually some new constraint $n_{\ell^*} \cdot (d + t^* v)
+= 0$ becomes tight, giving a direction in~$\operatorname{rec}(K)$ with
+strictly more orthogonal normals---contradicting maximality.
 
-\emph{Case~2: $\operatorname{rec}(K)$ contains a line.} There exists a nonzero
-$v$ with $n_\ell \cdot v = 0$ for all~$\ell$ (both $v$ and $-v$ lie in
-$\operatorname{rec}(K)$, forcing all inner products to zero). All normals lie
-in~$v^\perp$, a 3-dimensional subspace. Take three linearly independent
-normals~$n_i, n_j, n_k$; they span~$v^\perp$, so $\ker(n_i, n_j, n_k) =
-(v^\perp)^\perp = \operatorname{span}(v)$. The kernel direction $w = v$
-satisfies $n_\ell \cdot w = 0$ for all~$\ell$, so no normal has positive inner
-product with~$w$. Triple~$(i,j,k)$ fails.
+So~$d$ is orthogonal to three linearly independent normals~$n_i, n_j, n_k$,
+hence $d \in \ker(n_i, n_j, n_k)$.  Since $d \in \operatorname{rec}(K)$,
+$n_\ell \cdot d \le 0$ for all~$\ell$, and no normal has positive inner
+product with~$d$.  Triple~$(i,j,k)$ fails.
 \end{proof}
 
 \subsubsection*{Acceptance rate sweep}
