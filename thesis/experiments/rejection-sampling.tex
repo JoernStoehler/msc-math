@@ -50,10 +50,11 @@ sample attempt proceeds as follows:
 \begin{proposition}[Boundedness check]\label{prop:boundedness-iff}
 Write $K = \{x : Ax \le h\}$ where~$A$ has rows~$n_1, \ldots, n_F$ and
 $h_\ell > 0$ for all~$\ell$ (so $0 \in \operatorname{int} K$). Then $K$ is
-bounded if and only if the normals span~$\mathbb{R}^4$ and, for every
-triple~$(i,j,k)$ whose normals have a 1-dimensional kernel direction~$d$,
-some normal has positive inner product with~$d$ and some normal has negative
-inner product with~$d$.
+bounded if and only if
+\textup{(i)}~the normals span~$\mathbb{R}^4$, and
+\textup{(ii)}~for every triple~$(i,j,k)$ whose normals have a 1-dimensional
+kernel direction~$d$, some normal has positive inner product with~$d$ and some
+has negative inner product with~$d$.
 % When rank(A) <= 2, no triple has a 1D kernel, so the triple check is
 % vacuously true but K is unbounded. The "span R^4" clause handles this.
 \end{proposition}
@@ -61,17 +62,20 @@ inner product with~$d$.
 \begin{proof}
 The recession cone $\operatorname{rec}(K) = \{d : Ad \le 0\}$ satisfies
 $\operatorname{rec}(K) \subset K$ (since $0 \in K$, any $d \in
-\operatorname{rec}(K)$ gives a ray $\{td : t \ge 0\} \subset K$). Hence
+\operatorname{rec}(K)$ gives a ray $\{td : t \ge 0\} \subset K$).
+Conversely, if~$K$ is unbounded it contains a ray $\{x_0 + td : t \ge 0\}$
+for some nonzero~$d$; substituting into $A(x_0 + td) \le h$ and letting
+$t \to \infty$ forces $Ad \le 0$, so $d \in \operatorname{rec}(K)$.  Hence
 \[
   K \text{ bounded}
   \;\Longleftrightarrow\;
-  \operatorname{rec}(K) = \{0\}
-  \;\Longleftrightarrow\;
-  \text{the normals positively span } \mathbb{R}^4,
+  \operatorname{rec}(K) = \{0\}.
 \]
-where \emph{positively span} means: for every nonzero~$d$, some~$n_\ell \cdot
-d > 0$. It remains to show that positive span is equivalent to the
-conjunction: the normals span~$\mathbb{R}^4$ and all triples pass.
+Now $\operatorname{rec}(K) = \{0\}$ means there is no nonzero~$d$ with
+$n_\ell \cdot d \le 0$ for all~$\ell$; equivalently, for every nonzero~$d$,
+some $n_\ell \cdot d > 0$.  This is exactly the condition that the normals
+\emph{positively span}~$\mathbb{R}^4$.  It remains to show that positive span
+is equivalent to the conjunction of~\textup{(i)} and~\textup{(ii)}.
 
 \medskip\noindent\emph{($\Rightarrow$) Positive span implies both conditions.}
 Positive span implies span~$\mathbb{R}^4$ (a fortiori). For the triple check:
@@ -80,6 +84,9 @@ let~$d$ be a kernel direction of triple~$(i,j,k)$, so $n_i \cdot d = n_j
 d > 0$; since the triple's own normals have zero dot product with~$d$, this
 $n_\ell$ lies outside the triple. Applying the same argument to~$-d$ gives a
 normal with negative inner product.
+% QC: The kernel is 1-dimensional by hypothesis, so d is determined up to
+% sign. The condition "some positive, some negative" is sign-symmetric,
+% hence independent of the choice of generator.
 
 \medskip\noindent\emph{($\Leftarrow$) Span~$\mathbb{R}^4$ and all triples
 pass implies positive span.}
@@ -88,28 +95,58 @@ span~$\mathbb{R}^4$, some triple fails.
 
 Suppose $\operatorname{rec}(K) \neq \{0\}$, i.e., there exists a nonzero~$d$
 with $n_\ell \cdot d \le 0$ for all~$\ell$. We produce a triple~$(i,j,k)$
-whose kernel direction~$r$ satisfies $n_\ell \cdot r \le 0$ for all~$\ell$
-(so no normal blocks~$r$).
+whose kernel direction satisfies $n_\ell \cdot d \le 0$ for all~$\ell$
+(so no normal blocks it).
 
 Among all unit vectors in~$\operatorname{rec}(K)$, pick~$d$ maximizing the
 number of orthogonal normals $S_0 = \{\ell : n_\ell \cdot d = 0\}$.  We claim
 that~$\{n_\ell : \ell \in S_0\}$ contains three linearly independent normals.
-If not, $(\operatorname{span}\{n_\ell : \ell \in S_0\})^\perp$ has
-dimension~$\ge 2$ and contains~$d$, so there exists~$v$ in this orthogonal
-complement, not parallel to~$d$.  The path $d + tv$ stays
-in~$\operatorname{rec}(K)$ for small~$|t|$: the~$S_0$ constraints remain tight
-(since $v \perp n_\ell$ for $\ell \in S_0$) and the strict inequalities
-$n_\ell \cdot d < 0$ remain negative by continuity. (Such strict inequalities
-exist: since the normals span~$\mathbb{R}^4$, $d$ cannot be orthogonal to all
-normals, so $S_0 \neq \{1, \ldots, F\}$.)
-Increasing~$|t|$, eventually some new constraint $n_{\ell^*} \cdot (d + t^* v)
-= 0$ becomes tight, giving a direction in~$\operatorname{rec}(K)$ with
-strictly more orthogonal normals---contradicting maximality.
+If not, $\{n_\ell : \ell \in S_0\}$ spans a subspace of dimension~$\le 2$,
+so its orthogonal complement~$W$ has $\dim W \ge 4 - 2 = 2$.  Since
+$n_\ell \cdot d = 0$ for every $\ell \in S_0$, we have $d \in W$.  Because
+$\dim W \ge 2$ and $d \ne 0$, there exists $v \in W$ not parallel to~$d$.
+Since $v \perp n_\ell$ for all $\ell \in S_0$, we have
+\[
+  n_\ell \cdot (d + tv) = n_\ell \cdot d + t\,(n_\ell \cdot v)
+  = \begin{cases}
+    0 + t \cdot 0 = 0 & \text{if } \ell \in S_0, \\
+    \underbrace{n_\ell \cdot d}_{<\,0} + t\,(n_\ell \cdot v) < 0
+    & \text{if } \ell \notin S_0, \text{ for small } |t|.
+  \end{cases}
+\]
+% QC: ℓ ∉ S₀ is non-empty because normals span R^4 ⟹ rank(A) = 4
+% ⟹ ker(A) = {0}, so the nonzero vector d cannot satisfy n_ℓ · d = 0 for all ℓ.
+(The case $\ell \notin S_0$ is non-empty: since the normals span~$\mathbb{R}^4$,
+the matrix~$A$ has trivial kernel, so~$d \ne 0$ cannot be orthogonal to all
+normals.)
+So $d + tv \in \operatorname{rec}(K)$ for small~$|t|$.
 
-So~$d$ is orthogonal to three linearly independent normals~$n_i, n_j, n_k$,
-hence $d \in \ker(n_i, n_j, n_k)$.  Since $d \in \operatorname{rec}(K)$,
-$n_\ell \cdot d \le 0$ for all~$\ell$, and no normal has positive inner
-product with~$d$.  Triple~$(i,j,k)$ fails.
+Consider increasing~$|t|$ from zero.  The set
+$T = \{t \in \mathbb{R} : n_\ell \cdot (d + tv) \le 0 \;\forall \ell\}$ is
+a closed interval containing~$0$ (the intersection of half-lines
+$\{t : n_\ell \cdot d + t\,n_\ell \cdot v \le 0\}$).  This interval is
+bounded: if $d + tv \in \operatorname{rec}(K)$ for all~$t$, then
+$n_\ell \cdot v = 0$ for every~$\ell$ with $n_\ell \cdot d < 0$; combined
+with $n_\ell \cdot v = 0$ for $\ell \in S_0$, this gives $n_\ell \cdot v = 0$
+for all~$\ell$, contradicting $\operatorname{rank}(A) = 4$.
+
+So $T = [t^-, t^+]$ is a bounded closed interval, and at least one
+endpoint~$t^*$ is nonzero.  At $t = t^*$, some new index
+$\ell^* \notin S_0$ satisfies $n_{\ell^*} \cdot (d + t^* v) = 0$.  Set
+$d' = d + t^* v$; this is nonzero because $d$ and~$v$ are not parallel.
+Since $v \in W$, we still have $n_\ell \cdot d' = n_\ell \cdot d = 0$
+for every $\ell \in S_0$.  Thus
+$\{\ell : n_\ell \cdot d' = 0\} \supseteq S_0 \cup \{\ell^*\}$,
+a strict superset of~$S_0$.  Since $d' \in \operatorname{rec}(K)$, the unit
+vector $d' / \|d'\|$ contradicts the choice of~$d$ as maximizing~$|S_0|$.
+
+So~$\{n_\ell : \ell \in S_0\}$ contains three linearly independent normals;
+pick such a triple~$(i,j,k)$ from~$S_0$.  Since $n_i, n_j, n_k$ are linearly
+independent in~$\mathbb{R}^4$, their common kernel $\ker(n_i, n_j, n_k)$ is
+$(4 - 3)$-dimensional, so the triple falls under condition~\textup{(ii)}.
+The direction~$d$ spans this kernel, and $d \in \operatorname{rec}(K)$ gives
+$n_\ell \cdot d \le 0$ for all~$\ell$.  In particular, no normal has positive
+inner product with~$d$, so triple~$(i,j,k)$ fails condition~\textup{(ii)}.
 \end{proof}
 
 \subsubsection*{Acceptance rate sweep}
