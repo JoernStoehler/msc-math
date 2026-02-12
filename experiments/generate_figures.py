@@ -1,15 +1,24 @@
 #!/usr/bin/env python3
-"""Generate figures from polytopes.jsonl dataset."""
+"""
+Generate all figures for the Kai demo experiments.
+
+Goal: Produce publication-ready plots of systolic ratios, capacity vs facet count,
+      and acceptance rates from the polytope dataset.
+Input: experiments/data/polytopes.jsonl, experiments/data/acceptance.jsonl
+Output: experiments/figures/sys_histogram.png,
+        experiments/figures/facet_vs_capacity.png,
+        experiments/figures/acceptance_rates.png
+"""
 
 import json
-import sys
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-DATA_DIR = Path(__file__).parent / "data"
-FIG_DIR = Path(__file__).parent / "figures"
+REPO_ROOT = Path(__file__).resolve().parent.parent
+DATA_DIR = REPO_ROOT / "experiments" / "data"
+FIG_DIR = REPO_ROOT / "experiments" / "figures"
 
 
 def load_polytopes():
