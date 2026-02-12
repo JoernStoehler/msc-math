@@ -311,33 +311,32 @@ mod proptests {
             }
         }
 
-        /// Property: capacity scales quadratically with polytope scaling.
-        ///
-        /// c_EHZ(λK) = λ²·c_EHZ(K) — follows from action functional definition.
-        ///
-        /// NOTE: Limited to 5 cases to keep runtime <10min.
-        /// Each case computes capacity twice (unit + scaled).
-        #[test]
-        fn capacity_scales_quadratically(scale in 0.5f64..3.0) {
-            let unit_cube = make_hypercube();
-            let unit_cap = ehz_capacity(&unit_cube).unwrap().capacity;
-
-            // Scale the polytope: multiply all heights by scale
-            let normals = unit_cube.normals().to_vec();
-            let heights: Vec<f64> = unit_cube.heights().iter().map(|&h| h * scale).collect();
-            let scaled_cube = Polytope4D::new(normals, heights).expect("scaled hypercube");
-
-            let scaled_cap = ehz_capacity(&scaled_cube).unwrap().capacity;
-
-            // c_EHZ(λK) = λ²·c_EHZ(K)
-            let expected = unit_cap * scale * scale;
-            let relative_error = ((scaled_cap - expected) / expected).abs();
-
-            prop_assert!(
-                relative_error < 1e-4,
-                "capacity scaling failed: scale={}, unit_cap={}, scaled_cap={}, expected={}, relative_error={}",
-                scale, unit_cap, scaled_cap, expected, relative_error
-            );
-        }
     }
+}
+
+/// Capacity scales quadratically: c_EHZ(λK) = λ²·c_EHZ(K).
+///
+/// Uses λ = e (transcendental) — cannot be the root of any polynomial with
+/// integer coefficients, making numerical coincidences impossible.
+#[test]
+fn capacity_scales_quadratically() {
+    let scale = std::f64::consts::E;
+
+    let unit_cube = make_hypercube();
+    let unit_cap = ehz_capacity(&unit_cube).unwrap().capacity;
+
+    let normals = unit_cube.normals().to_vec();
+    let heights: Vec<f64> = unit_cube.heights().iter().map(|&h| h * scale).collect();
+    let scaled_cube = Polytope4D::new(normals, heights).expect("scaled hypercube");
+
+    let scaled_cap = ehz_capacity(&scaled_cube).unwrap().capacity;
+
+    let expected = unit_cap * scale * scale;
+    let relative_error = ((scaled_cap - expected) / expected).abs();
+
+    assert!(
+        relative_error < 1e-4,
+        "capacity scaling failed: scale={scale}, unit_cap={unit_cap}, \
+         scaled_cap={scaled_cap}, expected={expected}, relative_error={relative_error}"
+    );
 }
