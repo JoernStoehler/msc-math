@@ -33,12 +33,12 @@ Each check defines: purpose, commands, expected results, and alert thresholds.
 
 **Command:**
 ```bash
-cd /workspaces/msc-math/crates && cargo test --package geom monitoring::boundedness_agreement -- --ignored --nocapture 2>&1 | tail -50
+cd /workspaces/msc-math/crates && cargo test --package geom qhull_boundedness_test::investigation::cross_check_boundedness_detection -- --ignored --nocapture 2>&1 | tail -50
 ```
 
 **Expected result:**
-- Test passes: "test monitoring::boundedness_agreement ... ok"
-- 100% agreement on all tested polytopes
+- Test passes: "test qhull_boundedness_test::investigation::cross_check_boundedness_detection ... ok"
+- 100% agreement on all tested polytopes (875/875 or similar)
 
 **Alert threshold:**
 - ANY disagreement between qhull and check_bounded()
