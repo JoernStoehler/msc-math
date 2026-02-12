@@ -214,49 +214,76 @@ $\gamma(t) \in \partial(\tfrac{1}{4}h_K^2)(-J_0\dot{\gamma}/\nu)$ a.e.
 By Fenchel duality, this is equivalent to
 $-J_0\dot{\gamma}/\nu \in \partial g_K^2(\gamma)$ a.e.
 
-% [AGENT-WRITTEN SKELETON, UNREVIEWED BY JÖRN]
-% [AGENT CONFIDENCE 75%: Structure follows talk notes (lines 500-510), bullet points
-%  correctly extract key identities from Fenchel duality and homogeneity. However,
-%  the connection between these identities and the conclusion "ν=1 at minimizer"
-%  requires a competing-curve construction that agent cannot verify. The skeleton
-%  is structurally sound but the argument is incomplete.]
-\textbf{Skeleton of the argument:}
-\begin{itemize}
-\item Since $g_K^2$ is $2$-homogeneous and $-J_0$ is antisymmetric,
-  $g_K^2(\gamma(t))$ is constant along the orbit: $g_K^2(\gamma) \equiv c^2$.
-\item Euler's identity for $2$-homogeneous $g_K^2$ gives
-  $\langle y, x \rangle = 2 g_K^2(x)$ for $y \in \partial g_K^2(x)$.
-  Applied to $y = -J_0\dot{\gamma}/\nu$, $x = \gamma$:
-  \[
-    \frac{1}{\nu} \langle -J_0\dot{\gamma}, \gamma \rangle = 2c^2,
-    \quad\text{i.e.,}\quad
-    \frac{2A(\gamma)}{\nu} = 2c^2 T.
-  \]
-\item The integrated Fenchel equality (integrating
-  $g_K^2(\gamma) + \tfrac{1}{4}h_K^2(-J_0\dot{\gamma})
-  = \langle \gamma, -J_0\dot{\gamma} \rangle$ over $[0,T]$)
-  gives $c^2 T + I_K(\gamma) = \frac{2}{\nu}\,A(\gamma)$.
-\item Combining these: $I_K(z) = T \nu$ and $c^2 = A(\gamma)/(\nu T)$.
-\item Define $\tilde{\gamma} = \gamma/c$ (lies on $\partial K$).
-  The $2$-homogeneity gives $-J_0\dot{\tilde{\gamma}} \in (c/\nu)\,\partial g_K^2(\tilde{\gamma})$.
-  Reparametrize to make $\tilde{\gamma}$ a Hamiltonian orbit.
-  This gives $c_{\mathrm{EHZ}} \leq A(\tilde{\gamma})$.
-\item At a dual minimizer $z$, minimality forces $\nu = 1$ and $c = 1$,
-  so $\gamma = z + b$ lies on $\partial K$ and $I_K(z) = T = A(\gamma)$.
-\end{itemize}
+% [AGENT-WRITTEN PROOF, UNREVIEWED BY JÖRN]
+% [AGENT CONFIDENCE: 70%. This is an agent-designed proof, not a transcription
+%  of a known argument. The three numbered equations are individually
+%  straightforward, but the combination producing ν=1 should be verified by Jörn.
+%  Replaces a previous incomplete skeleton (also agent-written, also unverified).]
+We show $\nu = 1$ at any dual minimizer via three identities.
 
-\textbf{[JÖRN: complete the $\nu = 1$ argument here.
-The Lagrange multiplier $\nu$ for the action constraint $A(z) = T$ equals~$1$
-at the minimizer. This follows from minimality, but the algebra is intricate:
-one must show that if $\nu \neq 1$, then $I_K(z)$ is not minimal, by
-constructing a competing curve with smaller $I_K$ value using the
-rescaled orbit $\tilde{\gamma}$. The key is the $2$-homogeneity of $g_K^2$
-and the fact that $c_{\mathrm{EHZ}}$ is the global minimum of the
-primal problem. See above skeleton for the structure.]}
+\emph{(a) Constancy of $g_K^2(\gamma)$.}
+Since $-J_0\dot{\gamma}/\nu \in \partial g_K^2(\gamma)$ a.e.,
+\[
+  \frac{d}{dt} g_K^2(\gamma)
+  = \bigl\langle \tfrac{-J_0\dot{\gamma}}{\nu},\, \dot{\gamma} \bigr\rangle
+  = -\frac{1}{\nu}\, \omega_0(\dot{\gamma}, \dot{\gamma}) = 0
+\]
+(since $\omega_0$ is antisymmetric).
+So $g_K^2(\gamma) \equiv c^2$ for some constant $c \geq 0$.
 
-Assuming $\nu = 1$ at the minimizer, we have $\gamma = z + b$ with
-$-J_0\dot{\gamma} \in \partial g_K^2(\gamma)$ a.e.\ and $g_K^2(\gamma) \equiv 1$
-(i.e., $\gamma$ lies on $\partial K$). By Step~1, $I_K(z) = T = A(\gamma)$.
+\emph{(b) Action of $\gamma$ via Euler's identity.}
+For $2$-homogeneous convex $g_K^2$,
+Euler's identity gives
+$\langle y, x \rangle = 2\, g_K^2(x)$ for $y \in \partial g_K^2(x)$.
+Applied with $y = -J_0\dot{\gamma}/\nu$ and $x = \gamma$:
+\begin{equation}\label{eq:euler-identity-action}
+  \frac{1}{\nu}\langle -J_0\dot{\gamma},\, \gamma \rangle = 2c^2,
+  \quad\text{so}\quad
+  A(\gamma) = \nu c^2 T.
+\end{equation}
+
+\emph{(c) Action of $\gamma$ computed directly.}
+Since $\gamma = \nu z + b$ and $\dot{\gamma} = \nu \dot{z}$:
+\[
+  A(\gamma)
+  = \tfrac{1}{2}\!\int_0^T \langle -J_0 \dot{\gamma},\, \gamma \rangle\, dt
+  = \tfrac{1}{2}\!\int_0^T
+    \bigl\langle -\nu J_0 \dot{z},\, \nu z + b \bigr\rangle\, dt
+  = \nu^2 A(z) + \tfrac{\nu}{2}
+    \bigl\langle b,\, \underbrace{-J_0[z(T) - z(0)]}_{= 0} \bigr\rangle
+  = \nu^2 T.
+\]
+
+\emph{(d) Integrated Fenchel equality.}
+The Fenchel equality at $x = \gamma$,
+$y = -J_0\dot{\gamma}/\nu = -J_0\dot{z}$ gives
+(using $\dot{\gamma} = \nu\dot{z}$ and
+$2$-homogeneity $h_K^2(-J_0\dot{\gamma}/\nu) = h_K^2(-J_0\dot{z})$):
+\[
+  g_K^2(\gamma) + \tfrac{1}{4} h_K^2(-J_0\dot{z})
+  = \langle \gamma,\, -J_0\dot{z} \rangle.
+\]
+Integrating over $[0,T]$:
+\begin{equation}\label{eq:fenchel-integrated-nu}
+  c^2 T + I_K(z)
+  = \int_0^T \langle \nu z + b,\, -J_0\dot{z} \rangle\, dt
+  = 2\nu T,
+\end{equation}
+where the cross term $\langle b, -J_0[z(T)-z(0)]\rangle = 0$ by closure.
+Since $z$ is a dual minimizer, $I_K(z) = T$
+(Step~1), so $c^2 = 2\nu - 1$.
+
+\emph{(e) Conclusion.}
+Equating (b) and (c): $\nu c^2 T = \nu^2 T$, so $c^2 = \nu$
+(valid since $\nu > 0$: from $c^2 = 2\nu - 1 \geq 0$ we get
+$\nu \geq 1/2$, and $c^2 = \nu$ then forces $\nu > 0$).
+Substituting into $c^2 = 2\nu - 1$: $\nu = 2\nu - 1$, hence $\nu = 1$.
+
+Therefore $c = 1$, so $g_K^2(\gamma) \equiv 1$
+(i.e., $\gamma$ lies on $\partial K$), and
+$-J_0\dot{\gamma} \in \partial g_K^2(\gamma)$ a.e.\
+(i.e., $\gamma$ is a Hamiltonian orbit).
+By Step~1, $I_K(z) = T = A(\gamma)$.
 The centering condition $\int_0^T z = 0$ determines
 $b = \frac{1}{T}\int_0^T \gamma$, so $z = \gamma - \mathrm{center}(\gamma)$.
 The correspondence is bijective.
