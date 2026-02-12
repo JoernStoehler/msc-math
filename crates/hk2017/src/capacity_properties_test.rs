@@ -7,7 +7,7 @@
 //! - Monotonicity: K₁ ⊆ K₂ ⟹ c_EHZ(K₁) ≤ c_EHZ(K₂)
 
 use crate::test_dataset::{
-    load_test_dataset, polytope_catalog, TestPolytope, FIXTURE_PATH, LITERATURE_VALUES,
+    load_test_dataset, literature_values, polytope_catalog, TestPolytope, FIXTURE_PATH,
 };
 use geom::polytope::Polytope4D;
 use nalgebra::Vector4;
@@ -87,7 +87,8 @@ fn fixture_staleness_check() {
 fn literature_capacity_values() {
     let dataset = &*DATASET;
 
-    for &(name, expected) in LITERATURE_VALUES {
+    let lit_values = literature_values();
+    for &(name, expected) in &lit_values {
         if let Some(tp) = dataset.iter().find(|tp| tp.name == name) {
             let rel_err = (tp.capacity - expected).abs() / expected;
             assert!(
@@ -102,7 +103,7 @@ fn literature_capacity_values() {
 
     eprintln!(
         "Verified {} literature values from fixture",
-        LITERATURE_VALUES.len()
+        lit_values.len()
     );
 }
 

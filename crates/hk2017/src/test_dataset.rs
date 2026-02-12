@@ -28,8 +28,8 @@
 //!   to verify pruned ≈ unpruned agreement. Variants skip the expensive
 //!   unpruned computation.
 
+use geom::known_polytopes;
 use geom::polytope::Polytope4D;
-use geom::test_utils::{simplex, lagrangian_triangle_product};
 use nalgebra::{Matrix4, Vector4};
 use rand::Rng;
 use rand_distr::StandardNormal;
@@ -167,17 +167,17 @@ pub fn polytope_catalog() -> Vec<CatalogEntry> {
     // ===== PHASE 1: Base polytopes =====
     let mut base_entries = Vec::new();
 
-    // Known polytopes.
+    // Known polytopes (from geom::known_polytopes, single source of truth).
     // Excluded: crosspolytope (16 facets, HK2017 is exponential → too slow).
     let known = vec![
-        ("simplex", simplex()),
-        ("hypercube", hypercube()),
-        ("lagrangian_triangle_product", lagrangian_triangle_product()),
+        known_polytopes::simplex(),
+        known_polytopes::hypercube(),
+        known_polytopes::lagrangian_triangle_product(),
     ];
-    for (name, p) in known {
+    for kp in known {
         base_entries.push(CatalogEntry {
-            name: name.to_string(),
-            polytope: p,
+            name: kp.name.to_string(),
+            polytope: kp.polytope,
             base_index: None,
             transform: None,
         });
@@ -186,7 +186,7 @@ pub fn polytope_catalog() -> Vec<CatalogEntry> {
     // Small random polytopes (5-7 facets for speed)
     for facet_count in 5..=7 {
         for i in 0..2 {
-            let p = generate_random_bounded_polytope(facet_count, &mut rng);
+            let p = geom::test_utils::random_bounded_polytope(facet_count, &mut rng);
             base_entries.push(CatalogEntry {
                 name: format!("random_f{}_n{}", facet_count, i),
                 polytope: p,
@@ -226,11 +226,12 @@ pub fn polytope_catalog() -> Vec<CatalogEntry> {
 }
 
 /// Known literature capacity values for validation.
-pub const LITERATURE_VALUES: &[(&str, f64)] = &[
-    ("simplex", 0.25),
-    ("hypercube", 4.0),
-    ("lagrangian_triangle_product", 1.5),
-];
+///
+/// Derived from `geom::known_polytopes` — single source of truth.
+/// Excludes polytopes with placeholder capacities (e.g. crosspolytope).
+pub fn literature_values() -> Vec<(&'static str, f64)> {
+    geom::known_polytopes::literature_values()
+}
 
 /// Generate test dataset with fail-fast inline validation.
 ///
@@ -275,7 +276,7 @@ pub fn generate_test_dataset() -> Vec<TestPolytope> {
         };
 
         // Fail-fast: literature values
-        for &(lit_name, lit_cap) in LITERATURE_VALUES {
+        for (lit_name, lit_cap) in literature_values() {
             if entry.name == lit_name {
                 let rel_err = (cap_pruned - lit_cap).abs() / lit_cap;
                 assert!(
@@ -422,55 +423,6 @@ fn apply_symplectomorphism(polytope: &Polytope4D, m: &Matrix4<f64>, b: &Vector4<
     }
 
     Polytope4D::new(normals, heights).expect("transformed polytope")
-}
-
-/// Generate a random bounded polytope for testing.
-/// Retries if the polytope is unbounded (~5% acceptance rate, so 100 attempts is plenty).
-fn generate_random_bounded_polytope(facet_count: usize, rng: &mut impl Rng) -> Polytope4D {
-    for _attempt in 0..100 {
-        let normals: Vec<Vector4<f64>> = (0..facet_count)
-            .map(|_| {
-                let v = Vector4::new(
-                    rng.sample(StandardNormal),
-                    rng.sample(StandardNormal),
-                    rng.sample(StandardNormal),
-                    rng.sample(StandardNormal),
-                );
-                v.normalize()
-            })
-            .collect();
-
-        // Random heights ensuring 0 ∈ int(K)
-        let heights: Vec<f64> = (0..facet_count)
-            .map(|_| rng.gen_range(0.5..2.0))
-            .collect();
-
-        if let Ok(polytope) = Polytope4D::new(normals, heights) {
-            return polytope;
-        }
-    }
-
-    panic!(
-        "Failed to generate bounded {}-facet polytope in 100 attempts. \
-         If this triggers with a fixed seed, increase the retry count or change the seed.",
-        facet_count
-    );
-}
-
-// Helper: hypercube fixture (used in tests)
-fn hypercube() -> Polytope4D {
-    let normals = vec![
-        Vector4::x(),
-        -Vector4::x(),
-        Vector4::y(),
-        -Vector4::y(),
-        Vector4::z(),
-        -Vector4::z(),
-        Vector4::w(),
-        -Vector4::w(),
-    ];
-    let heights = vec![1.0; 8];
-    Polytope4D::new(normals, heights).expect("hypercube")
 }
 
 #[cfg(test)]

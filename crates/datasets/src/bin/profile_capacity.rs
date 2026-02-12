@@ -1,4 +1,4 @@
-use datasets::known_polytopes::{hypercube, crosspolytope};
+use geom::known_polytopes::{hypercube, crosspolytope};
 use hk2017::ehz_capacity_pruned;
 
 fn main() {
