@@ -97,32 +97,61 @@ pub fn crosspolytope() -> Polytope4D {
     Polytope4D::new(normals, heights).expect("crosspolytope")
 }
 
-/// Triangle ×_L triangle (Lagrangian product).
+/// Equilateral triangle ×_L triangle (Lagrangian product, 6 facets).
 ///
-/// Product of two equilateral triangles in symplectic coordinates.
-/// 6 facets, each corresponding to a side of one of the triangles.
+/// Two equilateral triangles (circumradius 1, inradius 0.5) in Lagrangian subspaces:
+/// q-space (q₁, q₂) and p-space (p₁, p₂). Coordinates are (q₁, q₂, p₁, p₂).
 ///
 /// Expected properties:
 /// - EHZ capacity: 1.5
-pub fn triangle_product() -> Polytope4D {
+pub fn lagrangian_triangle_product() -> Polytope4D {
     let mut normals = Vec::with_capacity(6);
     let mut heights = Vec::with_capacity(6);
 
-    // First triangle in (q1, p1) plane
+    // First triangle in q-space (q₁, q₂) — components [0,1]
     for k in 0..3 {
         let angle = PI / 2.0 + 2.0 * PI * (k as f64) / 3.0;
         normals.push(Vector4::new(angle.cos(), angle.sin(), 0.0, 0.0));
         heights.push(0.5);
     }
 
-    // Second triangle in (q2, p2) plane
+    // Second triangle in p-space (p₁, p₂) — components [2,3]
     for k in 0..3 {
         let angle = PI / 2.0 + 2.0 * PI * (k as f64) / 3.0;
         normals.push(Vector4::new(0.0, 0.0, angle.cos(), angle.sin()));
         heights.push(0.5);
     }
 
-    Polytope4D::new(normals, heights).expect("triangle product")
+    Polytope4D::new(normals, heights).expect("lagrangian triangle product")
+}
+
+/// Equilateral triangle ×_S triangle (symplectic product, 6 facets).
+///
+/// Two equilateral triangles (circumradius 1, inradius 0.5) in symplectic planes:
+/// (q₁, p₁) = components [0,2] and (q₂, p₂) = components [1,3].
+/// Coordinates are (q₁, q₂, p₁, p₂).
+///
+/// Expected properties:
+/// - EHZ capacity: 3√3/4 ≈ 1.299 (Moser: min(area, area) = area)
+pub fn symplectic_triangle_product() -> Polytope4D {
+    let mut normals = Vec::with_capacity(6);
+    let mut heights = Vec::with_capacity(6);
+
+    // First triangle in (q₁, p₁) plane — normals (cos θ, 0, sin θ, 0)
+    for k in 0..3 {
+        let angle = PI / 2.0 + 2.0 * PI * (k as f64) / 3.0;
+        normals.push(Vector4::new(angle.cos(), 0.0, angle.sin(), 0.0));
+        heights.push(0.5);
+    }
+
+    // Second triangle in (q₂, p₂) plane — normals (0, cos θ, 0, sin θ)
+    for k in 0..3 {
+        let angle = PI / 2.0 + 2.0 * PI * (k as f64) / 3.0;
+        normals.push(Vector4::new(0.0, angle.cos(), 0.0, angle.sin()));
+        heights.push(0.5);
+    }
+
+    Polytope4D::new(normals, heights).expect("symplectic triangle product")
 }
 
 /// Generate a random bounded polytope with specified number of facets.

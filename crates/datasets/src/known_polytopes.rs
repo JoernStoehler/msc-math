@@ -23,7 +23,8 @@ pub fn all_known() -> Vec<KnownPolytope> {
         hypercube(),
         crosspolytope(),
         hko_pentagon(),
-        triangle_product(),
+        lagrangian_triangle_product(),
+        symplectic_triangle_product(),
         lagrangian_triangle_square(),
         symplectic_triangle_square(),
     ]
@@ -158,9 +159,10 @@ pub fn hko_pentagon() -> KnownPolytope {
 
 /// Equilateral triangle ×_L triangle, Lagrangian product (6 facets).
 ///
-/// Regular triangle with circumradius 1 in both q-space and p-space.
+/// Regular triangle with circumradius 1 in both q-space (q₁, q₂) and p-space (p₁, p₂).
+/// Coordinates are (q₁, q₂, p₁, p₂).
 /// Known capacity: 1.5.
-pub fn triangle_product() -> KnownPolytope {
+pub fn lagrangian_triangle_product() -> KnownPolytope {
     // Regular triangle: outward normals at angles π/2 + 2πk/3, inradius = cos(π/3) = 0.5
     let triangle_angles: Vec<f64> = (0..3)
         .map(|k| PI / 2.0 + 2.0 * PI * (k as f64) / 3.0)
@@ -178,10 +180,52 @@ pub fn triangle_product() -> KnownPolytope {
         .unzip();
 
     KnownPolytope {
-        polytope: Polytope4D::new(normals, heights).expect("triangle product construction"),
+        polytope: Polytope4D::new(normals, heights).expect("lagrangian triangle product construction"),
         capacity: 1.5,
-        name: "triangle_product",
+        name: "lagrangian_triangle_product",
         source: "LP verification (HK2017 algorithm + billiard)",
+    }
+}
+
+/// Equilateral triangle ×_S triangle, symplectic product (6 facets).
+///
+/// Two equilateral triangles (circumradius 1, inradius 0.5) in symplectic planes:
+/// (q₁, p₁) = components [0,2] and (q₂, p₂) = components [1,3].
+/// Coordinates are (q₁, q₂, p₁, p₂).
+///
+/// Known capacity: 3√3/4 ≈ 1.299 (Moser's theorem: c(A ×_S B) = min(c(A), c(B)),
+/// both triangles have equal area 3√3/4).
+///
+/// Source: Moser's theorem (symplectic product formula).
+pub fn symplectic_triangle_product() -> KnownPolytope {
+    // Regular triangle: outward normals at angles π/2 + 2πk/3, inradius = cos(π/3) = 0.5
+    let triangle_angles: Vec<f64> = (0..3)
+        .map(|k| PI / 2.0 + 2.0 * PI * (k as f64) / 3.0)
+        .collect();
+
+    // First triangle in (q₁, p₁) plane — normals (cos θ, 0, sin θ, 0)
+    // Second triangle in (q₂, p₂) plane — normals (0, cos θ, 0, sin θ)
+    let (normals, heights): (Vec<_>, Vec<_>) = triangle_angles
+        .iter()
+        .map(|a| (Vector4::new(a.cos(), 0.0, a.sin(), 0.0), 0.5))
+        .chain(
+            triangle_angles
+                .iter()
+                .map(|a| (Vector4::new(0.0, a.cos(), 0.0, a.sin()), 0.5)),
+        )
+        .unzip();
+
+    // Moser's theorem: c(A ×_S B) = min(c(A), c(B))
+    // area(equilateral triangle, inradius 0.5) = 3√3/4
+    let area_tri = 3.0 * 3.0_f64.sqrt() / 4.0;
+    let capacity = area_tri; // min(area, area) = area
+
+    KnownPolytope {
+        polytope: Polytope4D::new(normals, heights)
+            .expect("symplectic triangle product construction"),
+        capacity,
+        name: "symplectic_triangle_product",
+        source: "Moser's theorem (symplectic product formula)",
     }
 }
 

@@ -25,7 +25,7 @@
 //! Used by capacity and sys property tests.
 
 use geom::polytope::Polytope4D;
-use geom::test_utils::{simplex, triangle_product};
+use geom::test_utils::{simplex, lagrangian_triangle_product};
 use geom::volume::volume;
 use nalgebra::{Matrix4, Vector4};
 use rand::Rng;
@@ -130,7 +130,7 @@ pub fn load_test_dataset(path: &std::path::Path) -> Vec<TestPolytope> {
 /// Generate test dataset in three phases (up to ~27 polytopes).
 ///
 /// Phase 1: Base dataset (~9 polytopes)
-///   - 3 known polytopes (simplex, hypercube, triangle_product)
+///   - 3 known polytopes (simplex, hypercube, lagrangian_triangle_product)
 ///   - 6 random polytopes (5-7 facets, 2 per facet count)
 ///
 /// Phase 2: Symplectomorphism variants (+~10)
@@ -149,7 +149,7 @@ pub fn generate_test_dataset() -> Vec<TestPolytope> {
     let known = vec![
         ("simplex", simplex()),
         ("hypercube", hypercube()),
-        ("triangle_product", triangle_product()),
+        ("lagrangian_triangle_product", lagrangian_triangle_product()),
     ];
     for (name, p) in known {
         let vol = volume(&p).unwrap_or_else(|_| panic!("{} volume", name));

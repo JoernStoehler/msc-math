@@ -1,5 +1,5 @@
 use super::*;
-use geom::test_utils::{hypercube, simplex, triangle_product};
+use geom::test_utils::{hypercube, lagrangian_triangle_product, simplex};
 use nalgebra::Vector4;
 
 #[test]
@@ -29,13 +29,13 @@ fn hypercube_capacity() {
 }
 
 #[test]
-fn triangle_product_capacity() {
-    let tri = triangle_product();
-    let result = ehz_capacity(&tri).expect("triangle product should have capacity");
+fn lagrangian_triangle_product_capacity() {
+    let tri = lagrangian_triangle_product();
+    let result = ehz_capacity(&tri).expect("lagrangian triangle product should have capacity");
     let expected = 1.5;
     assert!(
         (result.capacity - expected).abs() < 1e-6,
-        "triangle product capacity: got {}, expected {}",
+        "lagrangian triangle product capacity: got {}, expected {}",
         result.capacity,
         expected
     );

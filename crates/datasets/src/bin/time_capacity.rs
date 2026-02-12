@@ -5,7 +5,7 @@ use std::time::Instant;
 fn main() {
     let polytopes = vec![
         ("simplex", simplex().polytope, 5),
-        ("triangle_product", triangle_product().polytope, 6),
+        ("lagrangian_triangle_product", lagrangian_triangle_product().polytope, 6),
         ("symplectic_tri_sq", symplectic_triangle_square().polytope, 7),
         ("hypercube", hypercube().polytope, 8),
         ("hko_pentagon", hko_pentagon().polytope, 10),

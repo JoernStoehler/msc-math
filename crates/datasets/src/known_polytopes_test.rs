@@ -35,8 +35,13 @@ fn hko_pentagon_has_10_facets() {
 }
 
 #[test]
-fn triangle_product_has_6_facets() {
-    assert_eq!(triangle_product().polytope.facet_count(), 6);
+fn lagrangian_triangle_product_has_6_facets() {
+    assert_eq!(lagrangian_triangle_product().polytope.facet_count(), 6);
+}
+
+#[test]
+fn symplectic_triangle_product_has_6_facets() {
+    assert_eq!(symplectic_triangle_product().polytope.facet_count(), 6);
 }
 
 #[test]
