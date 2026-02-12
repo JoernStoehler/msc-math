@@ -84,13 +84,18 @@ pub fn validate_polytope(
 /// - Check that some normal outside {i,j,k} has n_ℓ · d > ε (blocks +d direction)
 /// - Check that some normal outside {i,j,k} has n_ℓ · d < -ε (blocks -d direction)
 ///
-/// **Correctness (iff):** Positive span → all triples pass is immediate. For the
-/// converse: if positive span fails, rec(K) = {d : n_ℓ · d ≤ 0 ∀ℓ} ≠ {0}. If rec(K)
-/// is pointed, an extreme ray r lies in ker(n_i, n_j, n_k) for some triple (a 1D face
-/// of a cone in ℝ⁴ needs ≥ 3 tight constraints), and n_ℓ · r ≤ 0 for all ℓ. If rec(K)
-/// contains a line, all normals lie in a 3D subspace v⊥, and ker of any spanning triple
-/// is span(v) with n_ℓ · v = 0 for all ℓ. Either way, some triple fails.
-/// See thesis Proposition (Boundedness check) for full proof.
+/// **Correctness (iff):** Positive span → all triples pass is immediate (kernel
+/// directions are nonzero, so positive span provides a blocking normal outside the
+/// triple). For the converse (contrapositive): if positive span fails, the recession
+/// cone rec(K) = {d : n_ℓ · d ≤ 0 ∀ℓ} ≠ {0}.
+///
+/// - *Pointed case:* rec(K) has an extreme ray r. A 1-dimensional face of a polyhedral
+///   cone in ℝ⁴ lies on ≥ 3 linearly independent tight constraints (face-dimension
+///   formula), so r ∈ ker(n_i, n_j, n_k) for some triple. Since r ∈ rec(K), all dot
+///   products n_ℓ · r ≤ 0, so no normal blocks r. Triple (i,j,k) fails.
+/// - *Non-pointed case:* rec(K) contains a line, so ∃ nonzero v with n_ℓ · v = 0 ∀ℓ.
+///   All normals lie in v⊥ (3D). Any 3 linearly independent normals span v⊥, so their
+///   kernel is span(v). The kernel direction v has n_ℓ · v = 0 ∀ℓ — unblocked.
 ///
 /// **Complexity:** O(F³) for F facets (all triples), with O(1) kernel computation per triple.
 fn check_bounded(normals: &[Vector4<f64>]) -> Result<(), ValidationError> {
