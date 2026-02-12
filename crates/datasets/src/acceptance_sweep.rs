@@ -22,10 +22,10 @@ pub fn run_sweep(n_attempts: usize, seed: u64) -> Vec<AcceptanceRow> {
 
             for _ in 0..n_attempts {
                 let start = Instant::now();
-                let ok = sample_random_polytope(f, h_min, h_max, &mut rng).is_ok();
+                let accepted = sample_random_polytope(f, h_min, h_max, &mut rng).is_ok();
                 let elapsed_us = start.elapsed().as_micros();
 
-                if ok {
+                if accepted {
                     n_accepted += 1;
                     total_accepted_us += elapsed_us;
                 } else {
@@ -35,12 +35,12 @@ pub fn run_sweep(n_attempts: usize, seed: u64) -> Vec<AcceptanceRow> {
 
             let n_rejected = n_attempts - n_accepted;
             let avg_accepted_ms = if n_accepted > 0 {
-                total_accepted_us as f64 / n_accepted as f64 / 1000.0
+                total_accepted_us as f64 / n_accepted as f64 / 1000.0 // μs → ms
             } else {
                 0.0
             };
             let avg_rejected_ms = if n_rejected > 0 {
-                total_rejected_us as f64 / n_rejected as f64 / 1000.0
+                total_rejected_us as f64 / n_rejected as f64 / 1000.0 // μs → ms
             } else {
                 0.0
             };

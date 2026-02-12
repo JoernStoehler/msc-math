@@ -5,6 +5,10 @@ use nalgebra::Vector4;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal, Uniform};
 
+/// Reject near-zero vectors when sampling unit vectors on S³.
+/// Probability of ||v|| < 1e-10 for 4D standard normal is astronomically small.
+const EPS_NEAR_ZERO: f64 = 1e-10;
+
 /// Sample a single random unit vector on S^3 (uniform distribution).
 fn random_unit_s3(rng: &mut ChaCha8Rng) -> Vector4<f64> {
     loop {
@@ -14,7 +18,7 @@ fn random_unit_s3(rng: &mut ChaCha8Rng) -> Vector4<f64> {
         let w: f64 = StandardNormal.sample(rng);
         let v = Vector4::new(x, y, z, w);
         let norm = v.norm();
-        if norm > 1e-10 {
+        if norm > EPS_NEAR_ZERO {
             return v / norm;
         }
     }
@@ -24,6 +28,11 @@ fn random_unit_s3(rng: &mut ChaCha8Rng) -> Vector4<f64> {
 ///
 /// Returns `Ok(polytope)` if the sample passes full validation,
 /// or `Err(error)` if it fails any check.
+///
+/// # Arguments
+/// * `facet_count` - Number of halfspaces (must be ≥ 5)
+/// * `h_min`, `h_max` - Height range (0 < h_min ≤ h_max)
+/// * `rng` - Random number generator (deterministic with ChaCha8Rng)
 pub fn sample_random_polytope(
     facet_count: usize,
     h_min: f64,
@@ -43,14 +52,14 @@ pub fn sample_random_polytope(
 /// Keeps sampling until `n` valid polytopes are found.
 /// Returns the accepted polytopes.
 pub fn generate_random_polytopes(
-    n: usize,
+    count: usize,
     facet_count: usize,
     h_min: f64,
     h_max: f64,
     rng: &mut ChaCha8Rng,
 ) -> Vec<Polytope4D> {
-    let mut accepted = Vec::with_capacity(n);
-    while accepted.len() < n {
+    let mut accepted = Vec::with_capacity(count);
+    while accepted.len() < count {
         if let Ok(p) = sample_random_polytope(facet_count, h_min, h_max, rng) {
             accepted.push(p);
         }
