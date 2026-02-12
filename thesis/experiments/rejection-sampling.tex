@@ -49,9 +49,12 @@ sample attempt proceeds as follows:
 \begin{proposition}[Boundedness check]\label{prop:boundedness-iff}
 Write $K = \{x : Ax \le h\}$ where~$A$ has rows~$n_1, \ldots, n_F$ and
 $h_\ell > 0$ for all~$\ell$ (so $0 \in \operatorname{int} K$). Then $K$ is
-bounded if and only if, for every triple~$(i,j,k)$ whose normals have a
-1-dimensional kernel direction~$d$, some normal has positive inner product
-with~$d$ and some normal has negative inner product with~$d$.
+bounded if and only if the normals span~$\mathbb{R}^4$ and, for every
+triple~$(i,j,k)$ whose normals have a 1-dimensional kernel direction~$d$,
+some normal has positive inner product with~$d$ and some normal has negative
+inner product with~$d$.
+% When rank(A) <= 2, no triple has a 1D kernel, so the triple check is
+% vacuously true but K is unbounded. The "span R^4" clause handles this.
 \end{proposition}
 
 \begin{proof}

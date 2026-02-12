@@ -61,45 +61,48 @@ pub fn validate_polytope(
 ///
 /// # Mathematical Background
 ///
-/// **Theorem:** A polytope K = {x : n_i · x ≤ h_i} with h_i > 0 is bounded
-/// if and only if the normals {n_1, ..., n_F} positively span ℝ⁴.
+/// **Proposition.** Let K = {x : Ax ≤ h} where A has rows n_1, …, n_F and h_ℓ > 0
+/// for all ℓ (so 0 ∈ int K). Then K is bounded if and only if the normals span ℝ⁴
+/// and, for every triple (i,j,k) whose normals have a 1-dimensional kernel
+/// direction d, some normal has positive inner product with d and some has negative.
 ///
-/// **Definition (Positive span):** Vectors {v_1, ..., v_k} positively span ℝⁿ
-/// if for every nonzero direction d ∈ ℝⁿ, there exist indices i, j such that
-/// v_i · d > 0 and v_j · d < 0. Equivalently: no nonzero direction d satisfies
-/// v_ℓ · d ≤ 0 for all ℓ (or all ≥ 0).
+/// *Proof.* The recession cone rec(K) = {d : Ad ≤ 0} satisfies rec(K) ⊂ K (since
+/// 0 ∈ K). So K bounded ⟺ rec(K) = {0} ⟺ normals positively span ℝ⁴, where
+/// "positively span" means: no nonzero d has n_ℓ · d ≤ 0 for all ℓ.
 ///
-/// **Proof sketch:**
-/// - (⇐) If normals positively span, then for any direction d, some n_i · d > 0.
-///   Moving in direction d increases n_i · x, eventually violating n_i · x ≤ h_i.
-///   So K is bounded.
-/// - (⇒) If normals don't positively span, there exists d with n_i · d ≤ 0 for all i.
-///   Then x + t·d ∈ K for all t ≥ 0 (since n_i · (x + t·d) = n_i · x + t·(n_i · d) ≤ h_i).
-///   So K is unbounded.
+/// (⇒) Positive span → all triples pass: immediate, since kernel directions are
+/// nonzero and positive span gives a blocking normal outside the triple.
+///
+/// (⇐) Contrapositive: if rec(K) ≠ {0}, some triple fails. Pick d ∈ rec(K) (unit)
+/// maximizing |S₀| where S₀ = {ℓ : n_ℓ · d = 0}. If S₀ has < 3 independent
+/// normals, (span S₀)⊥ has dim ≥ 2, contains d, so ∃ v ∈ (span S₀)⊥ not ∥ d.
+/// Perturbing d → d + tv stays in rec(K) for small |t| (S₀ stays tight, strict
+/// inequalities stay negative). Increasing |t|, a new constraint becomes tight,
+/// contradicting maximality of |S₀|. So d ⊥ three independent normals n_i, n_j, n_k,
+/// d ∈ ker(n_i, n_j, n_k), and n_ℓ · d ≤ 0 ∀ℓ — triple (i,j,k) fails. ∎
 ///
 /// # Algorithm
 ///
-/// Enumerate all triples of normals (i, j, k) and compute their 1D kernel d
-/// (the direction orthogonal to all three). For each kernel direction d:
-/// - Check that some normal outside {i,j,k} has n_ℓ · d > ε (blocks +d direction)
-/// - Check that some normal outside {i,j,k} has n_ℓ · d < -ε (blocks -d direction)
-///
-/// **Correctness (iff):** Positive span → all triples pass is immediate (kernel
-/// directions are nonzero, so positive span provides a blocking normal outside the
-/// triple). For the converse (contrapositive): if positive span fails, the recession
-/// cone rec(K) = {d : n_ℓ · d ≤ 0 ∀ℓ} ≠ {0}.
-///
-/// - *Pointed case:* rec(K) has an extreme ray r. A 1-dimensional face of a polyhedral
-///   cone in ℝ⁴ lies on ≥ 3 linearly independent tight constraints (face-dimension
-///   formula), so r ∈ ker(n_i, n_j, n_k) for some triple. Since r ∈ rec(K), all dot
-///   products n_ℓ · r ≤ 0, so no normal blocks r. Triple (i,j,k) fails.
-/// - *Non-pointed case:* rec(K) contains a line, so ∃ nonzero v with n_ℓ · v = 0 ∀ℓ.
-///   All normals lie in v⊥ (3D). Any 3 linearly independent normals span v⊥, so their
-///   kernel is span(v). The kernel direction v has n_ℓ · v = 0 ∀ℓ — unblocked.
+/// 1. Check rank(A) = 4 (normals span ℝ⁴). Without this, the triple check below
+///    is vacuously true when rank ≤ 2, yet K is unbounded.
+/// 2. Enumerate all triples (i, j, k) and compute their 1D kernel d (via 4D cross
+///    product). For each kernel direction d, check that some normal has n_ℓ · d > ε
+///    and some has n_ℓ · d < −ε.
 ///
 /// **Complexity:** O(F³) for F facets (all triples), with O(1) kernel computation per triple.
 fn check_bounded(normals: &[Vector4<f64>]) -> Result<(), ValidationError> {
     let f = normals.len();
+
+    // Quick rank check: normals must span R^4.
+    // Without this, the triple check below is vacuously true when rank ≤ 2
+    // (no triple has a 1D kernel), yet K is unbounded.
+    // Probability zero for random normals on S^3, but checked for correctness.
+    let mat = nalgebra::DMatrix::from_fn(f, 4, |r, c| normals[r][c]);
+    let svd = mat.svd(false, false);
+    let rank = svd.singular_values.iter().filter(|&&s| s > 1e-8).count();
+    if rank < 4 {
+        return Err(ValidationError::Unbounded);
+    }
 
     // For each triple, compute the kernel of the 3×4 matrix.
     // The kernel is the intersection of 3 hyperplanes through the origin,
