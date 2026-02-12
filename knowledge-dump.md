@@ -403,7 +403,9 @@ The polytope must have 0 ∈ int(K) for heights to be positive. The MATLAB imple
 
 Outer loop: Σ_{j=2}^{F} C(F,j) subsets.
 Inner loop: (j-1)! cyclic orderings per subset.
-Total: Σ_{j=2}^{F} C(F,j) · (j-1)! = Σ_{j=2}^{F} F!/(j·(F-j)!) = O(F!/F).
+Total: Σ_{j=2}^{F} C(F,j) · (j-1)!
+Since C(F,j) · (j-1)! = [F!/(j!(F-j)!)] · (j-1)! = F!/(j·(F-j)!):
+      = Σ_{j=2}^{F} F!/(j·(F-j)!) = O(F!/F).
 
 Exponential in F (number of facets).
 
