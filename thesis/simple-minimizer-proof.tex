@@ -341,12 +341,9 @@ $\mathrm{conv}\{R_1,\ldots,R_F\}$ (the convex hull of facet Reeb vectors).
 By the correspondence $z = \gamma - \mathrm{center}(\gamma)$, we have
 $\dot{z}(t) \in \mathrm{conv}\{R_1,\ldots,R_F\}$ a.e.
 
-% [AGENT-WRITTEN CLAIM, UNREVIEWED BY JÖRN]
-% [AGENT CONFIDENCE 90%: Claim statement verified against HK2017 Lemma 4.2 (lines 275-293
-%  in HK2017 Lean formalization). The approximation properties (closure, Sobolev norm,
-%  velocity constraint, continuity of functionals) match HK2017 exactly. Agent verified
-%  this is a standard density result. NEEDS PROOF: either inline proof or citation to
-%  HK2017 Lemma 4.2 with the lemma stated separately.]
+% [AGENT-WRITTEN, UNREVIEWED BY JÖRN]
+% QC: translates HK2017 Lemma 4.2 (lines 275-293). The velocity-in-convex-hull
+%   argument uses the integral mean value in a convex set, which is standard.
 \textbf{Claim (Piecewise affine approximation):}
 For any $\varepsilon > 0$, there exists a piecewise affine curve $z' : [0,T] \to \mathbb{R}^4$ such that:
 \begin{itemize}
@@ -358,30 +355,94 @@ For any $\varepsilon > 0$, there exists a piecewise affine curve $z' : [0,T] \to
 \end{itemize}
 The centering condition $\frac{1}{T}\int_0^T z' = 0$ is ensured by translating $z'$.
 
-This is a standard density result for Sobolev spaces (HK2017 Lemma 4.2 gives the construction with the cone constraint).
+\emph{Proof of Claim.}
+Choose a partition $0 = t_0 < t_1 < \cdots < t_m = T$
+fine enough that the piecewise affine interpolant $z'$
+defined by $z'(t_i) = z(t_i)$ (affine on each $(t_i, t_{i+1})$)
+satisfies $\|z - z'\|_{W^{1,2}} < \varepsilon$.
+(This is a standard density result for $W^{1,2}$.)
+On each subinterval, the velocity is the integral mean of~$\dot{z}$:
+\[
+  \dot{z}'(t)
+  = \frac{z(t_{i+1}) - z(t_i)}{t_{i+1} - t_i}
+  = \frac{1}{t_{i+1} - t_i}\int_{t_i}^{t_{i+1}} \dot{z}(s)\, ds.
+\]
+Since $\dot{z}(s) \in \mathrm{conv}\{R_1,\ldots,R_F\}$ a.e.\
+and the convex hull is closed and convex, the integral mean
+also lies in $\mathrm{conv}\{R_1,\ldots,R_F\}$.
+Closure and action/functional estimates follow from
+$z'(0) = z(0) = z(T) = z'(T)$ and
+the continuity of $A$ and $I_K$ in the $W^{1,2}$ norm.
+\hfill$\diamond$
 
 \paragraph{Step 2: Split into pure Reeb vectors.}
 After Step~1, each velocity segment $\dot{z}'(t)$ is a convex combination
 of facet Reeb vectors. We replace each such segment by a concatenation
 of segments with \emph{pure} facet Reeb vectors (not convex combinations).
 
-% [AGENT-WRITTEN CLAIM, UNREVIEWED BY JÖRN]
-% [AGENT CONFIDENCE 85%: Claim structure matches HK2017 Lemma 4.4 (lines 317-355) and
-%  references Proposition 4.3 (lines 301-315) for action identity. Agent verified the
-%  splitting mechanism (convex combination → pure velocities), time preservation, and
-%  action ordering control. The sign-flip property under reversal is correctly stated.
-%  NEEDS PROOF: either inline proof or separate lemmas stating HK2017 Lemma 4.4 and
-%  Proposition 4.3.]
+% [AGENT-WRITTEN, UNREVIEWED BY JÖRN]
+% QC: action identity translates HK2017 Proposition 4.3 (lines 301-315).
+%   Splitting translates HK2017 Lemma 4.4 (lines 317-354).
+%   The sign-flip argument for choosing ordering is the core of Lemma 4.4's proof.
+We first establish an action identity for piecewise constant velocities.
+
+\textbf{Claim (Action identity):}
+Let $z$ be a closed piecewise affine curve with
+$\dot{z}(t) = \sum_{i=1}^m \mathbf{1}_{I_i}(t)\, w_i$,
+where $(I_i)_{i=1}^m$ partitions $[0,T]$. Then
+\begin{equation}\label{eq:action-identity}
+  2A(z)
+  = \int_0^T \langle -J_0 \dot{z},\, z \rangle\, dt
+  = \sum_{i=1}^m \sum_{j=1}^{i-1}
+    |I_i|\, |I_j|\, \omega_0(w_i, w_j).
+\end{equation}
+
+\emph{Proof of Claim.}
+Write $z(t) = z(0) + \int_0^t \dot{z}(s)\, ds$.
+The term $\langle -J_0 \dot{z}(t),\, z(0) \rangle$
+integrates to $\langle -J_0[z(T) - z(0)],\, z(0) \rangle = 0$
+by closure. So
+\[
+  \int_0^T \langle -J_0 \dot{z}(t),\, z(t) \rangle\, dt
+  = \int_0^T \Bigl\langle -J_0 \dot{z}(t),\,
+    \int_0^t \dot{z}(s)\, ds \Bigr\rangle dt.
+\]
+For $t \in I_i = (\tau_{i-1}, \tau_i)$, we have $\dot{z}(t) = w_i$ and
+$\int_0^t \dot{z}(s)\, ds
+  = \sum_{j=1}^{i-1} |I_j|\, w_j + (t - \tau_{i-1})\, w_i$.
+The $w_i$ self-pairing vanishes:
+$\omega_0(w_i, w_i) = 0$.
+Thus
+\[
+  \int_{I_i} \langle -J_0 w_i,\, \textstyle\sum_{j<i} |I_j|\, w_j \rangle\, dt
+  = |I_i| \sum_{j=1}^{i-1} |I_j|\, \omega_0(w_i, w_j).
+\]
+Summing over $i$ gives~\eqref{eq:action-identity}.
+\hfill$\diamond$
+
+\medskip
+
 \textbf{Claim (Splitting convex combinations):}
-If $\dot{z}'(t) = \sum_{i=1}^k a_i(t) R_i$ with $\sum a_i(t) = 1$ on interval $I$,
-replace $I$ by $k$ subintervals of lengths $\Delta t_i = \int_I a_i(t)\,dt$,
+If $\dot{z}'(t) = \sum_{i=1}^k a_i R_i$ with $a_i > 0$, $\sum a_i = 1$
+on an interval~$I$,
+replace $I$ by $k$ subintervals of lengths $\Delta t_i = a_i |I|$,
 each with pure velocity $R_i$.
-Total time preserved: $\sum \Delta t_i = \int_I 1\,dt = |I|$.
+Total time preserved: $\sum \Delta t_i = |I|$.
+The ordering can be chosen so that $A(z'') \geq A(z')$.
 
-The time ordering affects action. Reversing the order reverses the action change (sign flip).
-Choose the ordering that makes $A(z'') \geq A(z')$.
-
-(HK2017 Lemma 4.4 proves the splitting construction; Proposition 4.3 gives the action identity for piecewise constant velocities.)
+\emph{Proof of Claim.}
+The replacement preserves closure
+($\sum \Delta t_i\, R_i = |I| \sum a_i R_i = |I|\, \dot{z}'|_I$,
+same displacement).
+By the action identity~\eqref{eq:action-identity},
+the action change from splitting interval~$I$ depends on the
+internal ordering of the pure segments. Reversing the ordering
+of the $k$ pure segments within~$I$ flips the sign of
+$\sum_{r < s} a_r a_s |I|^2\, \omega_0(R_s, R_r)$
+(since $\omega_0(R_s, R_r) = -\omega_0(R_r, R_s)$).
+Hence one of the two orderings yields
+$\Delta A \geq 0$. Apply this to each affine piece.
+\hfill$\diamond$
 
 After splitting, the dual functional equals the period \emph{exactly}:
 
@@ -403,34 +464,40 @@ $\{R_1,\ldots,R_F\}$ (pure facet Reeb vectors).
 If the same Reeb vector $R_i$ appears in two disjoint time intervals,
 we merge them into a single contiguous segment.
 
-% [AGENT-WRITTEN CLAIM, UNREVIEWED BY JÖRN]
-% [AGENT CONFIDENCE 85%: Claim structure matches HK2017 Lemma 4.5 (lines 356-397). Agent
-%  verified the rearrangement mechanism (forward/backward merge), the action identity for
-%  piecewise constant velocities, and the sign-flip property. The conclusion (choose the
-%  merge that preserves or increases action) is correctly stated. NEEDS PROOF: either inline
-%  proof or separate lemma stating HK2017 Lemma 4.5.]
+% [AGENT-WRITTEN, UNREVIEWED BY JÖRN]
+% QC: translates HK2017 Lemma 4.5 (lines 356-397). The action difference
+%   formula follows from the action identity by tracking which terms change.
 \textbf{Claim (Merging repeated velocities):}
-Consider a pattern where $R_A$ appears in intervals $I_r$ and $I_s$ with $r < s$,
-separated by intervals $I_{r+1}, \ldots, I_{s-1}$ with different velocities.
-We can rearrange to move the two $R_A$ segments adjacent:
-\begin{itemize}
-\item \textbf{Forward merge:} Place both $R_A$ segments at position $r$,
-      then $I_{r+1}, \ldots, I_{s-1}$ afterward.
-\item \textbf{Backward merge:} Place $I_{r+1}, \ldots, I_{s-1}$ first,
-      then both $R_A$ segments.
-\end{itemize}
-These differ by a reversal of the intermediate portion. By the
-piecewise-constant velocity action identity
-\[
-  2A(z) = \sum_{j<i} |I_i| \, |I_j| \, \omega_0(\dot{z}|_{I_i}, \dot{z}|_{I_j}),
-\]
-reversing segments flips the sign of their contribution to action. Hence:
-\[
-  \Delta A_{\text{fwd}} = -\Delta A_{\text{bwd}}.
-\]
-One option has $\Delta A \geq 0$ (or both equal). Choose that one.
+Suppose $w_r = w_s = R_A$ for some $r < s$.
+We can merge the two $R_A$ segments into one contiguous segment
+with $A(z''') \geq A(z'')$.
 
-(HK2017 Lemma 4.5 proves this rearrangement preserves closure and allows action control.)
+\emph{Proof of Claim.}
+\textbf{Forward merge:} erase $I_s$ and extend $I_r$ by $|I_s|$,
+shifting $I_{r+1}, \ldots, I_{s-1}$ later.
+By the action identity~\eqref{eq:action-identity},
+the only terms that change involve pairs $(i,j)$ with
+$r < i < s$ and $j \in \{r, s\}$:
+the term $|I_s|\,|I_i|\,\omega_0(w_s, w_i)$ (with $i < s$)
+is replaced by $|I_s|\,|I_i|\,\omega_0(w_i, w_r)$ (with $i > r$).
+Since $w_r = w_s$, the action difference is
+\[
+  \Delta A_{\text{fwd}}
+  = \sum_{i=r+1}^{s-1} |I_s|\, |I_i|\, \omega_0(w_i, w_s).
+\]
+\textbf{Backward merge:} erase $I_r$ and extend $I_s$ by $|I_r|$.
+The same calculation gives
+$\Delta A_{\text{bwd}}
+  = \sum_{i=r+1}^{s-1} |I_r|\, |I_i|\, \omega_0(w_r, w_i)
+  = -\sum_{i=r+1}^{s-1} |I_r|\, |I_i|\, \omega_0(w_i, w_r)$.
+Since $w_r = w_s$, the two differences have opposite signs
+(up to the factor $|I_s|$ vs.\ $|I_r|$; when $|I_r| = |I_s|$
+they are exactly opposite). In either case,
+$\max(\Delta A_{\text{fwd}}, \Delta A_{\text{bwd}}) \geq 0$.
+Choose that option.
+Closure is preserved (total displacement unchanged).
+Iterate until each $R_i$ appears at most once.
+\hfill$\diamond$
 
 The dual functional $I_K$ is unchanged: it depends only on
 $h_K^2(-J_0\dot{z})$ integrated over time, which depends on the
