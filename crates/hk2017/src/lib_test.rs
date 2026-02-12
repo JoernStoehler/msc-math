@@ -281,7 +281,7 @@ mod proptests {
 
         /// Property: pruned and unpruned algorithms return the same capacity.
         ///
-        /// This tests Corollary 5.3 (adjacency pruning optimization).
+        /// This tests `cor:adjacency-pruning` (adjacency pruning optimization).
         ///
         /// Run with: `cargo test -p hk2017 pruned_matches_unpruned_random -- --ignored`
         #[test]

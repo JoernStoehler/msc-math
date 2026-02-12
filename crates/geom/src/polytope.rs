@@ -1,6 +1,6 @@
 /// Convex polytope in R^4 via halfspace representation.
 ///
-/// See Definition 3.2 (Polytope) in thesis/chapter-algorithm.tex:
+/// See `def:polytope` in thesis/chapter-algorithm.tex:
 ///   A polytope is a bounded convex subset K ⊂ ℝ⁴ that contains 0 in its
 ///   interior and is an intersection of finitely many closed half-spaces.
 ///
@@ -15,7 +15,7 @@
 /// - Vertices are precomputed via qhull from the H-representation
 ///
 /// Note: h_i > 0 ensures 0 ∈ int(K) but does NOT imply boundedness.
-/// Boundedness is part of the polytope definition itself (Definition 3.2).
+/// Boundedness is part of the polytope definition itself (`def:polytope`).
 /// Qhull checks boundedness during vertex enumeration.
 use nalgebra::Vector4;
 

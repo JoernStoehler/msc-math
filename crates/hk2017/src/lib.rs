@@ -3,7 +3,7 @@
 /// Computes c_EHZ(K) for a convex polytope K ⊂ R^4 by exhaustive search
 /// over all subsets S ⊆ {1,...,F} and cyclic permutations σ of S.
 ///
-/// # Algorithm (thesis §1, Algorithm 1)
+/// # Algorithm (chapter-algorithm.tex, `alg:ehz`)
 ///
 /// For each (S, σ):
 /// 1. Build normal matrix N, action matrix H, height vector η
@@ -122,8 +122,8 @@ pub fn ehz_capacity(polytope: &Polytope4D) -> Option<EhzResult> {
 ///
 /// Returns Some((β, Q(β))) if the system has a unique solution, None otherwise.
 ///
-/// Note: thesis eq 3 omits the ν multiplier, making the system overdetermined.
-/// We use the correct KKT system here.
+/// Note: chapter-algorithm.tex `eq:linear-system` omits the ν multiplier,
+/// making the system overdetermined. We use the correct KKT system here.
 fn solve_kkt(
     normals: &[nalgebra::Vector4<f64>],
     heights: &[f64],
@@ -271,7 +271,7 @@ fn is_adjacent_cycle(perm: &[usize], adj: &[Vec<bool>]) -> bool {
     (0..m).all(|k| adj[perm[k]][perm[(k + 1) % m]])
 }
 
-/// Compute c_EHZ(K) with adjacency pruning (thesis §5, Corollary 5.3).
+/// Compute c_EHZ(K) with adjacency pruning (chapter-algorithm.tex, `cor:adjacency-pruning`).
 ///
 /// Skips (S, σ) pairs where consecutive facets are not adjacent,
 /// significantly reducing search space for polytopes with sparse adjacency.
