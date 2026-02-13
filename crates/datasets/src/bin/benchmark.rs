@@ -3,7 +3,7 @@
 /// Generates random polytopes at each facet count and times
 /// ehz_capacity_pruned in release mode. Outputs CSV to stdout.
 ///
-/// Usage: benchmark [--timeout-per-sample SECS]
+/// Usage: benchmark
 use datasets::random::generate_random_polytopes;
 use hk2017::ehz_capacity_pruned;
 use rand::SeedableRng;
