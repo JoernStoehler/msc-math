@@ -38,9 +38,11 @@ $z \in W^{1,2}([0, T], \mathbb{R}^4)$
 % QC: W^{1,2} functions on a compact interval are absolutely continuous
 %   and continuous. No need for a separate C^0 assumption.
 
-We use the gauge function~$g_K$ (Definition~\ref{def:gauge-function}),
-the support function~$h_K$ (Definition~\ref{def:support-function}),
-and the Hamiltonian $H = g_K^2$ (Definition~\ref{def:hamiltonian}).
+Recall the gauge function $g_K(x) = \inf\{\lambda > 0 : x \in \lambda K\}$
+(Definition~\ref{def:gauge-function}) and the support function
+$h_K(v) = \max_{x \in K} \langle x, v \rangle$
+(Definition~\ref{def:support-function}).
+The Hamiltonian is $H = g_K^2$ (Definition~\ref{def:hamiltonian}).
 
 \begin{lemma}[Fenchel duality]\label{lem:fenchel-duality}
 % QC: Legendre-Fenchel conjugate of g_K^2 is (1/4)h_K^2.
@@ -64,13 +66,19 @@ $x \in \partial(\tfrac{1}{4} h_K^2)(y)$.
 The \emph{primal problem} is:
 \begin{equation}\label{eq:primal-problem}
   c_{\mathrm{EHZ}}(K) = \min \Bigl\{ A(\gamma) :
-  \gamma \text{ is a closed characteristic on } \partial K \Bigr\}.
+  \gamma \text{ is a Reeb orbit on } \partial K \Bigr\}.
 \end{equation}
-In the Hamiltonian formulation, a closed characteristic $\gamma$ on $\partial K$
+In the Hamiltonian formulation, a Reeb orbit $\gamma$ on $\partial K$
 satisfies $g_K^2(\gamma(t)) \equiv 1$ and
 $-J_0\dot{\gamma}(t) \in \partial g_K^2(\gamma(t))$ a.e.,
 and its action equals its period: $A(\gamma) = T$.
 \end{definition}
+
+We now introduce an equivalent dual problem.
+The dual functional and constraints below arise from Clarke's Dual Action
+Principle; we state them here following~\cite{HK2017} (in a slightly different
+but equivalent form) and prove the equivalence in
+Theorem~\ref{thm:primal-dual-equivalence}.
 
 \begin{definition}[Dual functional and dual problem]\label{def:dual-problem}
 % QC: I_K depends only on the velocity dz/dt, not on z itself.
@@ -98,7 +106,7 @@ ambiguity (since $I_K$ depends only on $\dot{z}$, not on~$z$).
 \begin{theorem}[Primal-dual equivalence (Clarke's Dual Action Principle)]%
 \label{thm:primal-dual-equivalence}
 % QC: the critical-point correspondence is the core content.
-%   Existence of minimizers is a separate fact (thm:orbit-existence
+%   Existence of minimizers is a separate fact (thm:orbit-existence-smooth/polytope
 %   for the primal; compactness + l.s.c. for the dual).
 %   The equivalence proof does not use existence of minimizers.
 % Downstream: allows us to work in the dual formulation, where the
@@ -308,9 +316,9 @@ that is simple} (piecewise constant velocity, pure facet Reeb vectors,
 each facet used at most once).
 
 \begin{proof}[Proof of Theorem~\ref{thm:simple-minimizer}]
-A minimum-action closed characteristic on~$\partial K$ exists
-(Theorem~\ref{thm:orbit-existence}): the infimum of the action over
-all closed characteristics is attained and positive.
+A minimum-action generalized Reeb orbit on~$\partial K$ exists
+(Theorem~\ref{thm:orbit-existence-polytope}): the minimum of the action over
+all generalized Reeb orbits is attained and positive.
 By the primal-dual equivalence (Theorem~\ref{thm:primal-dual-equivalence}),
 any such primal minimizer~$\gamma$ corresponds to a dual minimizer
 $z = \gamma - \mathrm{center}(\gamma)$ with $I_K(z) = T = A(\gamma)$.
@@ -335,7 +343,7 @@ $\frac{1}{T} \int_0^T z = 0$, and $A(z) = T = I_K(z)$.
 \paragraph{Step 1: Piecewise linear approximation.}
 By the primal-dual correspondence (Theorem~\ref{thm:primal-dual-equivalence}),
 $z$ corresponds to a primal minimizer $\gamma$ on $\partial K$.
-Since $\gamma$ is a closed characteristic on $\partial K$, we have
+Since $\gamma$ is a generalized Reeb orbit on $\partial K$, we have
 $\dot{\gamma}(t) \in J_0 N_K(\gamma(t))$ a.e., which for polytopes equals
 $\mathrm{conv}\{R_1,\ldots,R_F\}$ (the convex hull of facet Reeb vectors).
 By the correspondence $z = \gamma - \mathrm{center}(\gamma)$, we have

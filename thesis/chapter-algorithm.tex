@@ -180,6 +180,7 @@ It satisfies $d\lambda_0 = \omega_0$.
 
 
 \begin{definition}[Convex body]\label{def:convex-body}
+% Jörn: text approved (84db708)
 % QC: K compact, convex, nonempty interior, 0 in int(K).
 % Downstream: the input to all algorithms. Always centered at origin.
 A \emph{convex body} is a compact convex subset $K \subset \mathbb{R}^4$
@@ -218,6 +219,7 @@ The boundary is the level set: $\partial K = \{x : g_K(x) = 1\}$.
 % \end{proposition}
 
 \begin{definition}[Hamiltonian]\label{def:hamiltonian}
+% Jörn: text approved (84db708)
 % QC: H = g_K^2 per correspondence.tex. {H = 1} = bdry(K).
 % Downstream: H(x) = g_K(x)^2. On interior of facet F_i of a polytope:
 %   grad(H)(x) = 2 n_i / h_i, so J_0 grad(H) = R_i = (2/h_i) J_0 n_i.
@@ -231,6 +233,7 @@ $\dot{x}(t) = J_0 \nabla H(x(t))$.
 \end{definition}
 
 \begin{definition}[Closed characteristic]\label{def:closed-characteristic}
+% Jörn: text approved (84db708)
 % QC: geometric curve on bdry(K), velocity in characteristic line field.
 %   Characteristic line = kernel of omega_0 restricted to T_x(bdry(K)).
 %   One-dimensionality: standard fact from symplectic geometry lectures —
@@ -364,8 +367,8 @@ Hence the two minima coincide.
 
 \begin{definition}[EHZ capacity]\label{def:ehz-capacity}
 % Jörn: text approved (1aac085)
-% QC: c_EHZ(K) > 0 (positive, by thm:orbit-existence).
-%   c_EHZ(K) = min (not just inf) by thm:orbit-existence.
+% QC: c_EHZ(K) > 0 (positive, by thm:orbit-existence-smooth).
+%   c_EHZ(K) = min (not just inf) by thm:orbit-existence-smooth.
 %   Defined via closed characteristics (smooth case), extends to all convex bodies.
 % Downstream: c_EHZ(K) = minimum action over all closed characteristics on bdry(K).
 %   For polytopes: equivalent to minimum over generalized Reeb orbits
@@ -378,7 +381,7 @@ boundary is
   c_{\mathrm{EHZ}}(K) \coloneqq \min\bigl\{ A(\gamma) :
   \gamma \text{ is a closed characteristic on } \partial K \bigr\}.
 \]
-The minimum exists and is positive (Theorem~\ref{thm:orbit-existence}).
+The minimum exists and is positive (Theorem~\ref{thm:orbit-existence-smooth}).
 The definition extends to all convex bodies by approximation;
 for polytopes, the minimum is attained by a generalized Reeb orbit
 (Definition~\ref{def:reeb-orbit-polytope}).
@@ -410,6 +413,7 @@ The EHZ capacity satisfies, for all convex bodies $K, K'$:
 % --- Polytope setting ---
 
 \begin{definition}[Polytope]\label{def:polytope}
+% Jörn: text approved (84db708)
 % QC: K bounded, convex, 0 in int(K), intersection of half-spaces.
 %   Facet count F >= 5 (at least 5 facets needed in R^4 for bounded intersection).
 % Downstream: input is an h-representation {(n_i, h_i)}_{i=1}^F.
@@ -429,6 +433,7 @@ and removing any single inequality strictly enlarges the intersection.
 \end{definition}
 
 \begin{lemma}[Unique $H$-representation]\label{lem:h-rep-unique}
+% Jörn: text approved (84db708)
 % QC: the irredundant h-rep exists and is unique (as an unordered set).
 %   Each (n_i, h_i) corresponds to exactly one facet.
 % Downstream: polytope <-> h-rep is a bijection. Two polytopes are equal
@@ -492,7 +497,7 @@ $\lambda_0|_x(R_i) = 1$ for all $x \in F_i$.
 \end{definition}
 
 \begin{remark}[Reeb vector properties]\label{rem:reeb-properties}
-% Jörn: text approved (1aac085) — sign of item 4 not yet verified
+% Jörn: text approved (1aac085)
 % Downstream: all testable.
 The following properties hold:
 \begin{enumerate}
@@ -506,6 +511,7 @@ The following properties hold:
 \end{remark}
 
 \begin{definition}[Generalized Reeb orbit --- polytope]\label{def:reeb-orbit-polytope}
+% Jörn: text approved (84db708)
 % QC: gamma in W^{1,2}, closed, on bdry(K), velocity in conv{R_i incident}.
 %   "incident" means gamma(t) in F_i.
 %   conv{R_i} automatically gives lambda_0(gamma_dot) = 1 (contact normalization),
@@ -561,7 +567,8 @@ A generalized Reeb orbit $\gamma$ on a polytope $K$
   (not a nontrivial convex combination); and
 \item for each facet index $i$, the set
   $\{ t \in [0, T] : \dot{\gamma}(t) = R_i \}$
-  is a single interval (possibly empty).
+  is a single interval (possibly empty; in a non-simple orbit,
+  a facet may contribute multiple or infinitely many disjoint intervals).
 \end{enumerate}
 \end{definition}
 
@@ -574,8 +581,7 @@ A generalized Reeb orbit $\gamma$ on a polytope $K$
 %   sigma is a cyclic permutation of facet indices. tau[k] >= 0 is the time
 %   with velocity R_{sigma[k]}. Two (sigma, tau) are equivalent iff
 %   they differ by a cyclic shift. Period T = sum(tau). Action A = T.
-A simple Reeb orbit is (not necessarily uniquely) determined by a
-pair $(\sigma, \tau)$:
+A simple Reeb orbit can be described by a pair $(\sigma, \tau)$:
 \begin{itemize}
 \item a permutation $\sigma$ of $\{1, \ldots, F\}$
   (the cyclic order in which facet Reeb vectors appear as velocities), and
@@ -583,6 +589,8 @@ pair $(\sigma, \tau)$:
   (where $\tau_k$ is the time spent with velocity $R_{\sigma(k)}$;
   $\tau_k = 0$ means facet $\sigma(k)$ is not visited).
 \end{itemize}
+Not every pair $(\sigma, \tau)$ yields a valid orbit;
+feasibility depends on the geometry of $K$.
 The orbit depends only on the cyclic sequence of
 positive-duration entries: two pairs $(\sigma, \tau)$ and
 $(\sigma', \tau')$ represent the same orbit if and only if,
@@ -597,19 +605,29 @@ $F_i \cap F_j$ with velocity $R_i$, then switch to $R_j$ at a
 breakpoint in the interior of $F_i \cap F_j$.
 \end{remark}
 
-\begin{theorem}[Existence of closed characteristics]\label{thm:orbit-existence}
-% QC: for smooth convex bodies, this is classical
-%   (Rabinowitz 1978, Weinstein 1978 — verify exact citations).
-%   For general convex bodies: smooth approximation + compactness.
-%   The minimum (not just infimum) is attained.
-%   Positivity: A(gamma) > 0 for any closed characteristic
-%   (lambda_0(gamma_dot) > 0 implies A = integral > 0).
-% Downstream: justifies c_EHZ being a well-defined positive number.
-% TODO: Jörn to confirm citation(s).
-Let $K$ be a convex body in $\mathbb{R}^4$.
+\begin{theorem}[Existence of closed characteristics --- smooth case]\label{thm:orbit-existence-smooth}
+% QC: classical result, Rabinowitz 1978.
+% Downstream: foundation for the EHZ capacity on smooth convex bodies.
+% TODO: add \cite when bib entry exists.
+Let $K$ be a convex body in $\mathbb{R}^4$ with smooth boundary.
 There exists a closed characteristic on $\partial K$.
 The infimum of the action over all closed characteristics
 is attained and positive:
+\[
+  c_{\mathrm{EHZ}}(K) = \min_{\gamma} A(\gamma) > 0.
+\]
+\end{theorem}
+
+\begin{theorem}[Existence of closed characteristics --- polytope case]\label{thm:orbit-existence-polytope}
+% QC: Artstein-Avidan & Ostrover 2014 extend to general convex bodies
+%   (including polytopes) via generalized Reeb orbits.
+% Downstream: justifies c_EHZ being well-defined for polytopes.
+% TODO: add \cite when bib entry exists.
+Let $K$ be a polytope in $\mathbb{R}^4$.
+There exists a generalized Reeb orbit on $\partial K$
+(Definition~\ref{def:reeb-orbit-polytope}).
+The minimum action over all generalized Reeb orbits is attained
+and positive:
 \[
   c_{\mathrm{EHZ}}(K) = \min_{\gamma} A(\gamma) > 0.
 \]
