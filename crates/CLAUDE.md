@@ -15,6 +15,11 @@
 - The Rust crates are self-contained mathematically — no dependency on thesis/. The thesis is downstream
 - Quality bar: specific, correct, detailed, clearly written enough that (1) Jörn can verify with low effort and (2) agents can rely on them when implementing
 
+**Verification criteria for mathematical doc comments:**
+- Doc comment formulas must match code's actual computation (not aspirational, not approximate)
+- Invariants stated in doc comments must be enforced by types/constructors/assert!s/debug_assert!s
+- Properties stated in doc comments must have corresponding tests
+
 ## Testing philosophy
 
 Two classes of tests, both applied excessively:

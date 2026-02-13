@@ -325,6 +325,8 @@ geom -> tube
 geom, hk2017, billiard, tube -> datasets
 ```
 
+**When modifying public APIs or function semantics:** Check downstream crates (using the dependency graph above) for usage patterns that may depend on current behavior. Semantic changes can break downstream code even without compilation errors.
+
 ### Three capacity algorithms
 
 | Crate     | Applies to                        | Cost                    |
