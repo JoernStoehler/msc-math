@@ -32,6 +32,22 @@ papers/            arxiv .tex sources for reference (HK2017, CH2021, HK-O 2024, 
 archaeology/       Recovered files from abandoned predecessor repo (all of untrusted quality)
 ```
 
+### Multi-Language Codebase
+
+Branches often touch multiple languages simultaneously:
+- **Rust** (crates/) → **Python** (experiments/) → **LaTeX** (thesis/)
+
+Data flows across languages: Rust binaries generate CSVs → Python scripts process → JSON models → LaTeX writeups reference.
+
+**For reviews:** Check conventions per language CLAUDE.md files:
+- Rust: `crates/CLAUDE.md`
+- Python: `experiments/CLAUDE.md`
+- LaTeX: `thesis/CLAUDE.md`
+
+**For data pipelines:** Trace end-to-end flow, verify column names/parameter values/units consistent.
+
+Use `/review-branch` for systematic multi-language review.
+
 ## Mathematical context
 
 We compute the EHZ capacity (minimum action of generalized Reeb orbits) for convex polytopes in R^4. By a theorem of Haim-Kislev 2017, there exists a minimum-action orbit that is piecewise linear, uses pure facet Reeb vectors, and visits each facet on a contiguous time interval. This reduces the problem to a finite combinatorial search.
@@ -107,10 +123,13 @@ What Jörn requires before a Claude-scoped task can be merged:
 - For tasks not yet started: Claude Code should do a throwaway preliminary investigation to gauge how an agent would approach the task. This is a good-enough proxy for the later agent's behavior, even though unexpected findings during execution may change the later agent's plan.
 - For already-completed tasks: show Jörn the final executed plan.
 
-**6. Merge into `main`**
+**6. Code Review and Merge into `main`**
 
-- All merges into `main` must be done by Jörn himself.
-- This is a final defense layer, in case of misunderstandings or oversights on both Claude Code's and Jörn's side.
+- Claude Code reviews branches using `/review-branch` skill
+- Review output: thorough findings + calibrated recommendation
+- Jörn reads review and makes merge decision (often deviates ~50% from recommendation based on project context)
+- Jörn performs the actual merge
+- This workflow minimizes Jörn's time while preserving his decision authority where it matters
 
 The following types of work SHOULD be carried out by Claude Code, and SHOULD NOT be assigned to Jörn:
 
@@ -201,6 +220,18 @@ The deciding factors are rollback cost and verification cost:
 - Creating PRs or merging to `main` (Jörn does this)
 
 **When in doubt**, default to discuss-first. Jörn can always override with "just do it" — treat that as an ad-hoc exception, not a precedent for future sessions.
+
+### Git Comparison Base
+
+**Always use local `main`, never `origin/main`.**
+
+Jörn merges locally and pushes later, so `origin/main` is frequently stale. Comparing against `origin/main` inflates diffs with already-merged commits.
+
+**For code reviews:** Use three-dot diff (`git diff main...HEAD`) to show only what the branch changed. Two-dot diff (`main..HEAD`) includes divergence and creates false alarms.
+
+**State the base explicitly:** "Compared against local `main` at `abc1234`."
+
+If unexpected files appear in diff, investigate — likely means branch needs rebasing. See `/rebase` for checklist.
 
 ### Communication with Jörn
 

@@ -1,9 +1,16 @@
 ---
 name: review-rust
-description: Independent critical review of Rust code in worktree branches. Make merge decision (MERGE / MERGE WITH IMPROVEMENTS / NEEDS WORK) autonomously.
+description: "[DEPRECATED] Use /review-branch instead. This skill is kept for reference only."
+disable-model-invocation: true
 ---
 
-# Rust code review
+# [DEPRECATED] Rust code review
+
+**This skill is deprecated. Use `/review-branch` instead, which covers Rust + Python + LaTeX + data pipelines.**
+
+This file is kept for reference. Rust-specific content has been integrated into `/review-branch`.
+
+---
 
 ## Core principle
 
