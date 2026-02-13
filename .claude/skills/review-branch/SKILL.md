@@ -196,8 +196,10 @@ For branches modifying data pipelines, trace end-to-end flow:
 - Bayesian reasoning (assign probabilities to mathematical statements)
 
 **For thesis-specific math:**
-- Read thesis .tex to acquire domain knowledge
-- Trust levels: "Jörn-verified" > "speculative" > "in-progress" (marked in LaTeX comments)
+- Read relevant thesis .tex sections if they exist (thesis is growing, not complete)
+- Trust levels: Look for `% Jörn: [level] approved (hash)` markers in .tex files (see thesis/CLAUDE.md for format)
+  - Levels: text > math > structure
+  - Content without markers is agent-written and unreviewed
 - We form conjectures based on mathematical intuition + empirical evidence
 
 **Verification approach:**
