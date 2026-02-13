@@ -11,6 +11,12 @@ Your job: Find all problems, suggest solutions, make a calibrated recommendation
 
 Jörn reads your report and makes the final decision (he deviates ~50% of the time based on project context you lack).
 
+**Time costs:**
+- Jörn's time is the bottleneck (scarce, expensive)
+- Your time is cheap (practically unbounded)
+- **Goal: Save Jörn time**, even if review takes you much longer
+- High-latency thorough review > low-latency barely-usable report
+
 **Workflow:**
 1. **You:** Investigate thoroughly, find all issues
 2. **You:** For each issue: suggest solution(s) or note if solution unclear
@@ -38,16 +44,18 @@ For complex reviews, write a plan file before deep analysis.
 
 **Plan file structure:**
 
-1. **Executive Summary (for Jörn, at top):**
-   - What changed (3-5 bullet points)
-   - Key concerns to investigate
-   - Preliminary scope (which files/aspects to review in depth)
-
-2. **Detailed Plan (for agent execution):**
+1. **Detailed Plan (for agent execution, at top):**
    - Full checklist of items to verify
    - Methodology for each phase
    - Expected evidence to collect
    - Known unknowns to investigate
+   - Planned subagents/teams (what work to delegate, which phases to parallelize)
+
+2. **Executive Summary (for Jörn, at bottom):**
+   - What changed (3-5 bullet points)
+   - Key concerns to investigate
+   - Preliminary scope (which files/aspects to review in depth)
+   - Delegation strategy (how much work delegated to subagents/teams, estimated timeline)
 
 **Plan file location:** `~/.claude/plans/<branch-name>-review.md`
 
@@ -154,8 +162,7 @@ See `deletion-examples.md` for concrete examples.
 - Read `experiments/CLAUDE.md` for full conventions
 
 **LaTeX conventions:**
-- Read `thesis/CLAUDE.md` for full conventions (if file exists)
-- If `thesis/CLAUDE.md` missing, rely on CLAUDE.md main file for LaTeX guidance
+- Read `thesis/CLAUDE.md` for full conventions
 
 **Performance claims:**
 - Require measurement: "~1ms" is claim, "Benchmark shows 1.5ms for F=5-12" is measured
@@ -207,17 +214,17 @@ For branches modifying data pipelines, trace end-to-end flow:
 - Check tests validate mathematical properties (scaling laws, symmetries)
 - For statistical code: verify regression formulas (e.g., log-linear for exponential), R² calculation (1 - ss_res/ss_tot), median computation (even/odd handling)
 
-**DO NOT ask if R²=0.997 is "good enough"** — it obviously is. Trust domain knowledge.
+**DO NOT ask if R²=0.997 is "good enough"** — it obviously depends on what we use the result for in the project. Trust domain knowledge and common sense.
 
 **Bayesian mindset:**
 - R² is a tool, not a Frequentist religion
-- Interpolation vs extrapolation: claims within fitted domain are ~99% trustworthy
+- Interpolation vs extrapolation: claims within fitted domain are often ~99% trustworthy, with bugs overtaking spurious correlation as failure mode
 - Linear scaling (dataset cost = polytope cost × count): 99% prior
 
 #### Naming and Documentation Accuracy
 
 Check public symbols accurately describe behavior:
-- Function names match what code does (not aspirational)
+- Function names match specifically what code does (not aspirational, not ambiguous)
 - Doc comments describe actual behavior (not outdated)
 - Test names reflect what's tested (fallback paths can change semantics)
 
@@ -249,7 +256,7 @@ Your job: give Jörn the information he needs to make that call quickly.
 
 #### Report Structure
 
-**Executive Summary (for Jörn, at top):**
+**Header (at top):**
 
 ```markdown
 # Review: [one-line summary of branch]
@@ -257,18 +264,9 @@ Your job: give Jörn the information he needs to make that call quickly.
 **Branch:** <path>
 **Base:** local `main` at `<commit>`
 **Date:** YYYY-MM-DD
-
-**Summary of findings:**
-1. [Most significant finding with suggested solution]
-2. [Second most significant]
-3. [Third most significant]
-
-**Recommendation:** [Your recommended action based on findings]
-
-**Time investment:** Xmin review
 ```
 
-**Detailed Content (50-100 lines):**
+**Detailed Content (50-100 lines, below header):**
 
 Present findings organized by topic:
 
@@ -301,7 +299,20 @@ Present findings organized by topic:
 
 8. **Pre-existing Issues** (if any): Problems that exist on `main`, not introduced by branch (separate section, clearly marked)
 
-9. **Recommendation:** Final recommendation with rationale
+**Executive Summary (for Jörn, at bottom):**
+
+```markdown
+## Executive Summary
+
+**Summary of findings:**
+1. [Most significant finding with suggested solution]
+2. [Second most significant]
+3. [Third most significant]
+
+**Recommendation:** [Your recommended action based on findings]
+
+**Time investment:** Xmin review
+```
 
 **Report file location:** `docs/reports/YYYYMMDD-<topic>-review.md`
 
@@ -313,12 +324,12 @@ Avoid these failure modes from past reviews:
 
 - ✗ **Treating recommendation as final decision** — Jörn makes the actual call (deviates ~50%)
 - ✗ **Hiding findings to make recommendation look better** — Present ALL findings, Jörn needs full picture
-- ✗ **Asking if obvious things are "good enough"** — R²=0.997 is obviously excellent, trust domain knowledge
+- ✗ **Asking if obvious things are "good enough"** — R²=0.997 is obviously enough to declare a test result is a pass, and yet provides little evidence on its own that the test is bug-free. trust domain knowledge and common sense.
 - ✗ **Manual LaTeX cross-reference checking** — Compilation catches broken refs
 - ✗ **Comparing to failed attempts** — Compare to main, not to abandoned branches
 - ✗ **Overly generous when critical paths untested** — Untested error paths = flag for Jörn
 - ✗ **Performance claims without measurements** — Require benchmarks
-- ✗ **Academic tangents** — Thesis constraints: correctness > theoretical analysis
+- ✗ **Academic tangents** — Thesis constraints: correctness > readability > exhaustive theoretical analysis
 - ✗ **Using `origin/main` as comparison base** — Always local `main`
 - ✗ **Not stating git comparison base** — Always state: "Compared against local `main` at `abc1234`"
 - ✗ **Forgetting to commit report** — Report is part of branch history
@@ -332,8 +343,8 @@ Avoid these failure modes from past reviews:
 **Priority:** Correctness > performance.
 
 **Don't suggest:**
-- Theoretical numerical analysis (time cost > value)
-- O(n²) documentation when n ≤ 16 (overkill)
+- Theoretical numerical analysis (time cost > value) when empirical analysis gives even higher confidence anyway
+- O(n²) documentation when n ≤ 16 (asymptote has no decision relevance there)
 - Production features (auth, logging, deployment — not relevant)
 
 **Do suggest:**
