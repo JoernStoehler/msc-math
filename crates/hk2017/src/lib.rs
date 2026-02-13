@@ -185,11 +185,16 @@ fn solve_kkt(
     // RHS: [0, ..., 0, 0, ..., 0, 1]
     rhs[m + 4] = 1.0;
 
-    // Solve via SVD (handles rank-deficient systems where normals
-    // don't span R^4, e.g. hypercube's optimal 4-facet orbit uses
-    // normals in a 2D symplectic subplane, giving rank(N^T) = 2).
-    let svd = kkt.clone().svd(true, true);
-    let solution = svd.solve(&rhs, EPS_SVD_TOLERANCE).ok()?;
+    // Solve KKT system. Try LU first (fast), fall back to SVD for rank-deficient
+    // systems (e.g. hypercube's optimal 4-facet orbit uses normals in a 2D
+    // symplectic subplane, giving rank(N^T) = 2).
+    let lu = kkt.clone().full_piv_lu();
+    let solution = if lu.is_invertible() {
+        lu.solve(&rhs)?
+    } else {
+        let svd = kkt.clone().svd(true, true);
+        svd.solve(&rhs, EPS_SVD_TOLERANCE).ok()?
+    };
 
     // Verify the solution satisfies the constraints
     let residual = &kkt * &solution - &rhs;
