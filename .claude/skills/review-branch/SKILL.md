@@ -165,7 +165,7 @@ See `deletion-examples.md` for concrete examples.
 - Critical paths tested (error paths, math properties, degenerate cases)
 - Core cases covered (happy path, known-good inputs, basic errors)
 - Edge cases tested (property-based tests, boundaries, robustness)
-- **Test runtime**: `cargo test` should complete within 3-5 minutes. If slower, investigate. Proptest case counts should be tuned for <1s per test.
+- **Test runtime**: `cargo test` (default suite) should complete within 3 minutes single-threaded (per crates/CLAUDE.md target). If slower, investigate. Proptest case counts should be tuned for <1s per test.
 - **Assertion usage**: Expensive mathematical validation should use `debug_assert!` (not `assert!`). Critical safety invariants should use `assert!` (not `debug_assert!`).
 
 #### Data Pipeline Tracing (if branch touches experiments/)
