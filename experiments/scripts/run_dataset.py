@@ -93,13 +93,20 @@ def summarize_polytopes(rows):
     facet_counts = [r["facet_count"] for r in rows]
     print(f"Facet counts: min={min(facet_counts)}, max={max(facet_counts)}")
 
-    sys_vals = [r["sys"] for r in rows]
-    print(f"Systolic ratio: min={min(sys_vals):.4f}, max={max(sys_vals):.4f}")
+    sys_vals = [r["sys"] for r in rows if r["sys"] is not None]
+    skipped = len(rows) - len(sys_vals)
+    if sys_vals:
+        print(f"Systolic ratio: min={min(sys_vals):.4f}, max={max(sys_vals):.4f} ({len(sys_vals)} computed, {skipped} skipped)")
+    else:
+        print(f"Systolic ratio: all {skipped} skipped")
 
     vol_times = [r["time_volume_ms"] for r in rows]
-    cap_times = [r["time_capacity_ms"] for r in rows]
+    cap_times = [r["time_capacity_ms"] for r in rows if r["capacity"] is not None]
     print(f"Avg volume time: {sum(vol_times)/len(vol_times):.3f} ms")
-    print(f"Avg capacity time: {sum(cap_times)/len(cap_times):.3f} ms")
+    if cap_times:
+        print(f"Avg capacity time: {sum(cap_times)/len(cap_times):.3f} ms ({len(cap_times)} computed)")
+    else:
+        print("Avg capacity time: none computed")
 
 
 def summarize_sweep(rows):

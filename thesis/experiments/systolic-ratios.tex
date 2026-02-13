@@ -89,9 +89,12 @@ strongly skewed toward low values ($\mathrm{sys} < 0.3$ for most polytopes).
 \label{fig:sys-histogram}
 \end{figure}
 
-\textbf{Performance.} The exponential timing model $T(F) = 7.7 \times 10^{-8}
-\cdot 5.74^F$ seconds (R$^2 = 0.9999$) predicts that $F \le 10$ is feasible
-for large-scale studies, with $F = 10$ taking $\sim$3 seconds per polytope.
+\textbf{Performance.} A benchmark of 76 random polytopes across $F = 5, \ldots,
+12$ yields the exponential timing model $T(F) = 3.7 \times 10^{-7} \cdot
+4.73^F$ seconds (R$^2 = 0.996$). The growth rate of~$4.73\times$ per facet is
+lower than the~$5.74\times$ observed for known (symmetric) polytopes, because
+random adjacency graphs are sparser and admit more pruning. At $F = 10$, the
+median is~2.5 seconds; at $F = 12$, a single polytope takes~32 seconds.
 
 \subsubsection*{Confidence assessment}
 
@@ -119,8 +122,10 @@ for large-scale studies, with $F = 10$ taking $\sim$3 seconds per polytope.
 \paragraph{Low confidence (known limitations).}
 \begin{itemize}
   \item \textbf{Large facet counts}: the HK2017 algorithm has exponential cost
-    in the number of facets. We have not tested beyond~$F = 10$ due to
-    computational constraints. Extrapolation to higher~$F$ is speculative.
+    in the number of facets. We have benchmarked up to~$F = 12$ (32 seconds per
+    polytope), but the systolic ratio dataset covers only~$F \le 10$.
+    The 16-facet crosspolytope remains computationally infeasible
+    (estimated~$\sim$6 hours).
   \item \textbf{Non-Lagrangian polytopes}: our random sampling may under- or
     over-represent polytopes with Lagrangian structure (product polytopes or
     polytopes with Lagrangian 2-faces). The systolic ratio distribution may be
