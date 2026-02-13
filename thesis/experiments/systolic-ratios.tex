@@ -4,6 +4,9 @@
 %   Literature values: Nir 2013 (simplex), HK2019 (hypercube), HK-O 2024 (pentagon).
 % Structure: computational setup, validation, random exploration, findings.
 % Dataset: 345 polytopes (337 random, 8 known), F=5..14.
+% F=13-14 were a one-off run (commit aa3fca5). Routine pipeline caps at F=12
+% because F=13 takes ~44s/polytope and F=14 ~9min/polytope — too slow for
+% routine regeneration, and no new findings vs F<=12.
 
 \subsection{Systolic Ratios of 4D Polytopes}
 \label{sec:systolic-ratios}

@@ -14,9 +14,11 @@ use std::time::Instant;
 // ---- Hardcoded parameters ----
 
 /// (facet_count, n_samples) — width first: extend F range before increasing N.
+/// F=13-14 were tested once (aa3fca5) but excluded from routine runs:
+/// F=13 ~44s/polytope, F=14 ~9min/polytope. No new findings vs F≤12.
 const RANDOM_BATCHES: &[(usize, usize)] = &[
     (5, 50), (6, 50), (7, 50), (8, 50), (9, 50), (10, 50),
-    (11, 20), (12, 10), (13, 5), (14, 2),
+    (11, 20), (12, 10),
 ];
 const RANDOM_H_MIN: f64 = 0.5;
 const RANDOM_H_MAX: f64 = 2.0;
@@ -52,7 +54,7 @@ fn cmd_dataset(output: &Path) {
     // 1. Known polytopes
     let known = known_polytopes::all_known();
     eprintln!("Writing {} known polytopes...", known.len());
-    const MAX_FACETS_BRUTEFORCE: usize = 14;
+    const MAX_FACETS_BRUTEFORCE: usize = 12;
     for kp in &known {
         let start_vol = Instant::now();
         let vol = volume(&kp.polytope).expect("volume computation failed");
