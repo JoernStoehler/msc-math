@@ -19,10 +19,6 @@ path = "src/bin/time_capacity.rs"
 name = "benchmark"
 path = "src/bin/benchmark.rs"
 
-[[bin]]
-name = "crosspolytope-experiment"
-path = "src/bin/crosspolytope_experiment.rs"
-
 [dependencies]
 nalgebra = { workspace = true }
 serde = { workspace = true }
