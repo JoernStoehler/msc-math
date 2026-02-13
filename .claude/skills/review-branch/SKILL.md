@@ -27,15 +27,21 @@ Jörn reads your report and makes the final decision (he deviates ~50% of the ti
 
 ## Plan Phase (for multi-aspect reviews)
 
-For complex reviews (>1hr estimated), write a plan file before deep analysis.
+For complex reviews, write a plan file before deep analysis.
+
+**When to write a plan:**
+- Branch diff exceeds 300 LOC, OR
+- Branch touches >3 files or >2 languages, OR
+- Branch includes deletions requiring verification, OR
+- Branch modifies mathematical correctness code, OR
+- Branch changes data pipelines
 
 **Plan file structure:**
 
 1. **Executive Summary (for Jörn, at top):**
    - What changed (3-5 bullet points)
    - Key concerns to investigate
-   - Estimated review time
-   - Preliminary risk assessment
+   - Preliminary scope (which files/aspects to review in depth)
 
 2. **Detailed Plan (for agent execution):**
    - Full checklist of items to verify
@@ -43,17 +49,16 @@ For complex reviews (>1hr estimated), write a plan file before deep analysis.
    - Expected evidence to collect
    - Known unknowns to investigate
 
-**When to write a plan:**
-- Branch touches >3 files or >2 languages
-- Includes deletions requiring verification
-- Changes affect data pipelines or mathematical correctness
-- Estimated review time >1 hour
+**Plan file location:** `~/.claude/plans/<branch-name>-review.md`
 
-**Plan file location:** `~/.claude/plans/<session-id>.md`
-
-Write plan, discuss with Jörn if needed (via AskUserQuestion), then execute.
+Write plan, discuss with Jörn if needed (describe plan in chat and ask for feedback), then execute.
 
 ## Methodology
+
+**Review scope:**
+- Review the **final state** (git diff main...HEAD) for correctness
+- Review **individual commits** only for commit quality (messages, atomicity)
+- For branches >1000 LOC changed, prioritize: (1) mathematical correctness, (2) public API changes, (3) test changes, (4) documentation. Note in report which files were reviewed in depth vs. skimmed.
 
 ### Phase 0: Check for Existing Analysis (before exploration)
 
@@ -62,6 +67,12 @@ If found: read first, verify claims, explore gaps. Saves 20min vs redundant expl
 
 ### Phase 1: Fast Checks (5-10 min)
 
+**Agent infrastructure changes** (if branch touches `.claude/`, `CLAUDE.md`, skills/):
+- Verify no contradictions with existing CLAUDE.md content
+- Instructions are clear and actionable for agents
+- No stale references to removed files or tools
+- Test the skill/change yourself if feasible (e.g., invoke a modified skill)
+
 **Build verification:**
 - Rust: `cd crates && cargo test && cargo clippy`
 - Python: `ruff check experiments/ && pytest experiments/` (if applicable)
@@ -69,7 +80,7 @@ If found: read first, verify claims, explore gaps. Saves 20min vs redundant expl
 
 Run tests per CLAUDE.md "Commands" section for the repository.
 
-**If tests fail:** Stop and request fixes before continuing review.
+**If tests fail:** Note the failures, investigate root cause briefly (5-10 min), then include test failures as the top finding in your report. Recommend "fix tests before re-review" unless the failures are clearly pre-existing on `main` (check by running tests on `main`). If pre-existing, note this and continue the review.
 
 **Git comparison:**
 - ALWAYS compare against local `main`, never `origin/main`
@@ -85,6 +96,12 @@ Run tests per CLAUDE.md "Commands" section for the repository.
 **Working tree check:**
 - `git status` shows clean working tree
 - No uncommitted changes
+- No generated data files (experiments/data/, experiments/figures/) committed
+- Committed fixture files (e.g., tests/fixtures/) are intentional
+
+**Archaeology check:**
+- If any code appears sourced from `archaeology/`, flag prominently
+- CLAUDE.md marks all archaeology content as untrusted - needs extra scrutiny
 
 ### Phase 2: Deletion Verification (10-30 min, if applicable)
 
@@ -126,17 +143,19 @@ See `deletion-examples.md` for concrete examples.
 **Agent note:** Detect languages from git diff. Omit inapplicable checks.
 
 **Rust conventions:**
-- Check per: `crates/CLAUDE.md`
-- Key rules: iterators over for loops, minimal mutability, types encode invariants, colocated tests
-- Property tests for ∀ statements (proptest)
+- Read `crates/CLAUDE.md` for full conventions
+- **Mathematical doc comments**: Verify that doc comments defining mathematical objects match implementations:
+  - Doc comment formula matches code's computation
+  - Stated invariants enforced by type/constructor
+  - Stated properties are tested
+- **Cross-crate semantic changes**: If branch modifies public API or function semantics, check downstream crates for usage patterns that depend on old semantics (see crate dependency graph in CLAUDE.md)
 
 **Python conventions:**
-- Check per: `experiments/CLAUDE.md`
-- Key rules: header docstrings (Goal/Input/Output), path conventions (REPO_ROOT), self-contained scripts
+- Read `experiments/CLAUDE.md` for full conventions
 
 **LaTeX conventions:**
-- Check per: `thesis/CLAUDE.md`
-- Key rules: file headers (identity/sources/structure), no false `% Jörn:` markers, proof structure
+- Read `thesis/CLAUDE.md` for full conventions (if file exists)
+- If `thesis/CLAUDE.md` missing, rely on CLAUDE.md main file for LaTeX guidance
 
 **Performance claims:**
 - Require measurement: "~1ms" is claim, "Benchmark shows 1.5ms for F=5-12" is measured
@@ -146,6 +165,8 @@ See `deletion-examples.md` for concrete examples.
 - Critical paths tested (error paths, math properties, degenerate cases)
 - Core cases covered (happy path, known-good inputs, basic errors)
 - Edge cases tested (property-based tests, boundaries, robustness)
+- **Test runtime**: `cargo test` should complete within 3-5 minutes. If slower, investigate. Proptest case counts should be tuned for <1s per test.
+- **Assertion usage**: Expensive mathematical validation should use `debug_assert!` (not `assert!`). Critical safety invariants should use `assert!` (not `debug_assert!`).
 
 #### Data Pipeline Tracing (if branch touches experiments/)
 
@@ -272,15 +293,17 @@ Present findings organized by topic:
    - Formula verification
    - Test coverage of mathematical properties
 
-6. **Strengths:** What the branch does well
+6. **Strengths:** What the branch does well (be specific - what can Jörn trust without deep review?)
 
 7. **Issues:** All problems found, with suggested solutions for each
 
-8. **Recommendation:** Final recommendation with rationale
+8. **Pre-existing Issues** (if any): Problems that exist on `main`, not introduced by branch (separate section, clearly marked)
+
+9. **Recommendation:** Final recommendation with rationale
 
 **Report file location:** `docs/reports/YYYYMMDD-<topic>-review.md`
 
-**Commit report:** Add and commit the report file to the branch.
+**Commit report:** Add and commit the report file to the branch (not to `main`). This preserves the review in the branch history. Only Jörn merges to `main`, so your commit stays on the branch until he decides to merge.
 
 ## Common Pitfalls
 
@@ -320,6 +343,12 @@ Avoid these failure modes from past reviews:
 - Use proptest for ∀ statements: "∀ λ > 0: vol(λK) = λ⁴·vol(K)" → proptest
 - Not for single examples
 
+**Algorithm agreement (critical invariant):**
+- If branch modifies any capacity algorithm (hk2017, billiard, tube), verify cross-algorithm agreement
+- CLAUDE.md states: "Where domains overlap, algorithms must agree on computed capacity"
+- Run `cargo test` across all capacity crates, not just the modified one
+- Check for agreement tests in test suites
+
 ## File Location Decisions
 
 **Investigation code:** `*_test.rs` with `#[ignore]` tag
@@ -329,3 +358,5 @@ Avoid these failure modes from past reviews:
 **Deprecated code:** `#[cfg(test)] mod deprecated`
 
 **Review reports:** `docs/reports/YYYYMMDD-<topic>-review.md` (committed to branch)
+
+See `file-location-decisions.md` (colocated) for full decision framework and examples.
