@@ -10,44 +10,52 @@
 /// Returns a single empty permutation for empty input (consistent with 0! = 1).
 /// Returns `vec![vec![x]]` for single-element input.
 pub fn cyclic_permutations(elements: &[usize]) -> Vec<Vec<usize>> {
-    if elements.len() <= 1 {
-        return vec![elements.to_vec()];
-    }
-
-    let first = elements[0];
-    let rest: Vec<usize> = elements[1..].to_vec();
-
     let mut result = Vec::new();
-    let mut perm = rest;
-    let k = perm.len();
-    heap_permutations(&mut perm, k, &mut |p| {
-        let mut full = vec![first];
-        full.extend_from_slice(p);
-        result.push(full);
-    });
-
+    for_each_cyclic_permutation(elements, &mut |p| result.push(p.to_vec()));
     result
 }
 
-/// Heap's algorithm for generating all permutations of `arr[0..k]`.
+/// Call `callback` once for each cyclic permutation of `elements`.
 ///
-/// Mutates `arr` in place. Calls `callback` once for each permutation.
-/// `k` starts as `arr.len()` and decreases with recursion depth.
-fn heap_permutations(arr: &mut Vec<usize>, k: usize, callback: &mut impl FnMut(&[usize])) {
-    if k == 1 {
-        callback(arr);
+/// Uses a single buffer (no heap allocation per permutation).
+/// The callback receives a slice that is only valid during the call.
+pub fn for_each_cyclic_permutation(
+    elements: &[usize],
+    callback: &mut impl FnMut(&[usize]),
+) {
+    if elements.len() <= 1 {
+        callback(elements);
         return;
     }
-    heap_permutations(arr, k - 1, callback);
+
+    let mut buf = elements.to_vec();
+    let k = buf.len() - 1;
+    // Fix buf[0], permute buf[1..] via Heap's algorithm
+    heap_perms_buf(&mut buf, 1, k, callback);
+}
+
+/// Heap's algorithm on buf[offset..offset+k], calling callback with the full buf.
+fn heap_perms_buf(
+    buf: &mut [usize],
+    offset: usize,
+    k: usize,
+    callback: &mut impl FnMut(&[usize]),
+) {
+    if k == 1 {
+        callback(buf);
+        return;
+    }
+    heap_perms_buf(buf, offset, k - 1, callback);
     for i in 0..k - 1 {
         if k.is_multiple_of(2) {
-            arr.swap(i, k - 1);
+            buf.swap(offset + i, offset + k - 1);
         } else {
-            arr.swap(0, k - 1);
+            buf.swap(offset, offset + k - 1);
         }
-        heap_permutations(arr, k - 1, callback);
+        heap_perms_buf(buf, offset, k - 1, callback);
     }
 }
+
 
 #[cfg(test)]
 #[path = "permutations_test.rs"]

@@ -21,7 +21,7 @@ mod permutations;
 use geom::polytope::Polytope4D;
 use geom::symplectic::omega0;
 use nalgebra::{DMatrix, DVector};
-use permutations::cyclic_permutations;
+use permutations::{cyclic_permutations, for_each_cyclic_permutation};
 /// Minimum β_i value to consider a solution valid (filters numerical noise near zero).
 const EPS_BETA_POSITIVE: f64 = 1e-12;
 
@@ -130,20 +130,7 @@ fn solve_kkt(
 ) -> Option<(Vec<f64>, f64)> {
     let m = perm.len();
 
-    // Build H ∈ R^{m×m}: action matrix
-    // H_{ij} = ω₀(n_{σ(i)}, n_{σ(j)}) for i < j
-    // H_{ij} = ω₀(n_{σ(j)}, n_{σ(i)}) for i > j  (= H_{ji} by construction)
-    // H_{ii} = 0
-    let mut h_mat = DMatrix::zeros(m, m);
-    for i in 0..m {
-        for j in (i + 1)..m {
-            let val = omega0(&normals[perm[i]], &normals[perm[j]]);
-            h_mat[(i, j)] = val;
-            h_mat[(j, i)] = val;
-        }
-    }
-
-    // Build KKT system: (m+5) × (m+5) matrix
+    // Build KKT system directly (no separate H matrix):
     // [ H    | -N   | -η ] [ β ]   [ 0 ]
     // [ N^T  |  0   |  0 ] [ λ ] = [ 0 ]
     // [ η^T  |  0   |  0 ] [ ν ]   [ 1 ]
@@ -151,38 +138,32 @@ fn solve_kkt(
     let mut kkt = DMatrix::zeros(size, size);
     let mut rhs = DVector::zeros(size);
 
-    // Top-left: H (m×m)
+    // Top-left: H (m×m) — action matrix with ω₀ values
     for i in 0..m {
-        for j in 0..m {
-            kkt[(i, j)] = h_mat[(i, j)];
+        for j in (i + 1)..m {
+            let val = omega0(&normals[perm[i]], &normals[perm[j]]);
+            kkt[(i, j)] = val;
+            kkt[(j, i)] = val;
         }
     }
 
-    // Top block columns m..m+4: -N (m×4)
+    // Top block columns m..m+4: -N (m×4) and bottom block: N^T (4×m)
     for i in 0..m {
         for d in 0..4 {
-            kkt[(i, m + d)] = -normals[perm[i]][d];
+            let n = normals[perm[i]][d];
+            kkt[(i, m + d)] = -n;
+            kkt[(m + d, i)] = n;
         }
     }
 
-    // Top block column m+4: -η (m×1)
+    // Top block column m+4: -η and last row: η^T
     for i in 0..m {
-        kkt[(i, m + 4)] = -heights[perm[i]];
+        let h = heights[perm[i]];
+        kkt[(i, m + 4)] = -h;
+        kkt[(m + 4, i)] = h;
     }
 
-    // Bottom block: N^T (4×m) in rows m..m+4
-    for i in 0..m {
-        for d in 0..4 {
-            kkt[(m + d, i)] = normals[perm[i]][d];
-        }
-    }
-
-    // Last row: η^T (1×m) in row m+4
-    for i in 0..m {
-        kkt[(m + 4, i)] = heights[perm[i]];
-    }
-
-    // RHS: [0, ..., 0, 0, ..., 0, 1]
+    // RHS: [0, ..., 0, 1]
     rhs[m + 4] = 1.0;
 
     // Solve KKT system. Try LU first (fast), fall back to SVD for rank-deficient
@@ -197,8 +178,8 @@ fn solve_kkt(
     };
 
     // Verify the solution satisfies the constraints
-    let residual = &kkt * &solution - &rhs;
-    if residual.norm() > EPS_KKT_RESIDUAL {
+    let residual = (&kkt * &solution - &rhs).norm();
+    if residual > EPS_KKT_RESIDUAL {
         return None;
     }
 
@@ -292,16 +273,15 @@ pub fn ehz_capacity_pruned(polytope: &Polytope4D) -> Option<EhzResult> {
 
     for m in 2..=f {
         for subset in combinations(f, m) {
-            for perm in cyclic_permutations(&subset) {
+            for_each_cyclic_permutation(&subset, &mut |perm| {
                 // **ADJACENCY PRUNING**: skip non-adjacent cycles
-                if !is_adjacent_cycle(&perm, &adj) {
-                    continue;
+                if !is_adjacent_cycle(perm, &adj) {
+                    return;
                 }
 
                 iterations += 1;
 
-                // Rest is identical to ehz_capacity
-                if let Some((beta, q_val)) = solve_kkt(normals, heights, &perm) {
+                if let Some((beta, q_val)) = solve_kkt(normals, heights, perm) {
                     if beta.iter().all(|&b| b > EPS_BETA_POSITIVE) && q_val > EPS_Q_POSITIVE {
                         let action = 0.5 / q_val;
                         let update = match &best {
@@ -312,13 +292,13 @@ pub fn ehz_capacity_pruned(polytope: &Polytope4D) -> Option<EhzResult> {
                             best = Some((
                                 action,
                                 subset.clone(),
-                                perm.clone(),
+                                perm.to_vec(),
                                 beta,
                             ));
                         }
                     }
                 }
-            }
+            });
         }
     }
 
