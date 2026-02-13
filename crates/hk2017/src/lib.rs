@@ -22,7 +22,6 @@ use geom::polytope::Polytope4D;
 use geom::symplectic::omega0;
 use nalgebra::{DMatrix, DVector};
 use permutations::cyclic_permutations;
-
 /// Minimum β_i value to consider a solution valid (filters numerical noise near zero).
 const EPS_BETA_POSITIVE: f64 = 1e-12;
 

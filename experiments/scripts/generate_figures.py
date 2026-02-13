@@ -14,7 +14,6 @@ import json
 from pathlib import Path
 
 import matplotlib.pyplot as plt
-import numpy as np
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 DATA_DIR = REPO_ROOT / "experiments" / "data"

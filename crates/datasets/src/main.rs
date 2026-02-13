@@ -11,17 +11,12 @@ use std::io::{BufWriter, Write};
 use std::path::{Path, PathBuf};
 use std::time::Instant;
 
-// ---- Hardcoded parameters (KISS: refactor into CLI args later) ----
+// ---- Hardcoded parameters ----
 
-// Random polytopes by facet count
-const N_RANDOM_F5: usize = 50;
-const N_RANDOM_F6: usize = 50;
-const N_RANDOM_F7: usize = 50;
-const N_RANDOM_F8: usize = 50;
-const N_RANDOM_F9: usize = 50;
-const N_RANDOM_F10: usize = 20;
-
-// Shared parameters for random polytope generation and acceptance sweep
+/// (facet_count, n_samples)
+const RANDOM_BATCHES: &[(usize, usize)] = &[
+    (5, 50), (6, 50), (7, 50), (8, 50), (9, 50), (10, 20),
+];
 const RANDOM_H_MIN: f64 = 0.5;
 const RANDOM_H_MAX: f64 = 2.0;
 const SWEEP_N_ATTEMPTS: usize = 1000;
@@ -91,17 +86,9 @@ fn cmd_dataset(output: &Path) {
 
     // 2. Random polytopes (multiple facet counts)
     let mut rng = ChaCha8Rng::seed_from_u64(SEED);
-    let batches = [
-        (5, N_RANDOM_F5),
-        (6, N_RANDOM_F6),
-        (7, N_RANDOM_F7),
-        (8, N_RANDOM_F8),
-        (9, N_RANDOM_F9),
-        (10, N_RANDOM_F10),
-    ];
 
     let mut total_random = 0;
-    for &(facet_count, n_random) in &batches {
+    for &(facet_count, n_random) in RANDOM_BATCHES {
         eprintln!(
             "Generating {n_random} random polytopes (F={facet_count}, h in [{}, {}])...",
             RANDOM_H_MIN, RANDOM_H_MAX

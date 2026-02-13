@@ -89,9 +89,9 @@ strongly skewed toward low values ($\mathrm{sys} < 0.3$ for most polytopes).
 \label{fig:sys-histogram}
 \end{figure}
 
-\textbf{Performance.} The exponential timing model $T(F) = 7.7 \times 10^{-8}
-\cdot 5.74^F$ seconds (R$^2 = 0.9999$) predicts that $F \le 10$ is feasible
-for large-scale studies, with $F = 10$ taking $\sim$3 seconds per polytope.
+\textbf{Performance.} See Section~\ref{sec:benchmark} for a detailed benchmark.
+In brief: the cost grows exponentially at~$\sim$$4.8\times$ per facet, with
+$F = 10$ taking~$\sim$2.5 seconds per polytope.
 
 \subsubsection*{Confidence assessment}
 
@@ -119,8 +119,8 @@ for large-scale studies, with $F = 10$ taking $\sim$3 seconds per polytope.
 \paragraph{Low confidence (known limitations).}
 \begin{itemize}
   \item \textbf{Large facet counts}: the HK2017 algorithm has exponential cost
-    in the number of facets. We have not tested beyond~$F = 10$ due to
-    computational constraints. Extrapolation to higher~$F$ is speculative.
+    in the number of facets. The systolic ratio dataset covers only~$F \le 10$.
+    See Section~\ref{sec:benchmark} for benchmarks up to~$F = 12$.
   \item \textbf{Non-Lagrangian polytopes}: our random sampling may under- or
     over-represent polytopes with Lagrangian structure (product polytopes or
     polytopes with Lagrangian 2-faces). The systolic ratio distribution may be

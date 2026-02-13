@@ -1,6 +1,0 @@
-polytope,facets,iterations,total_ms,ms_per_run,capacity
-simplex,5,100,83.888,0.839,0.250000
-triangle_product,6,100,541.159,5.412,1.500000
-symplectic_tri_sq,7,100,2079.021,20.790,1.500000
-hypercube,8,100,8969.624,89.696,4.000000
-hko_pentagon,10,10,30034.602,3003.460,3.440955
