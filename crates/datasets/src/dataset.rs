@@ -19,6 +19,10 @@ pub struct PolytopeRow {
     pub time_capacity_ms: f64,
     /// Time to generate/validate the polytope (milliseconds).
     pub time_creation_ms: f64,
+    /// Number of (subset, permutation) pairs evaluated by the HK2017 algorithm.
+    /// 0 if capacity was skipped (e.g., too many facets).
+    #[serde(default)]
+    pub iterations: u64,
 }
 
 impl PolytopeRow {
@@ -28,6 +32,7 @@ impl PolytopeRow {
         source: String,
         volume: f64,
         capacity: f64,
+        iterations: u64,
         time_volume_ms: f64,
         time_capacity_ms: f64,
         time_creation_ms: f64,
@@ -49,6 +54,7 @@ impl PolytopeRow {
             time_volume_ms,
             time_capacity_ms,
             time_creation_ms,
+            iterations,
         }
     }
 }

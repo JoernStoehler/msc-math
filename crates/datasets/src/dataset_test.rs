@@ -18,7 +18,7 @@ fn dummy_polytope() -> Polytope4D {
 #[test]
 fn polytope_row_round_trip() {
     let p = dummy_polytope();
-    let row = PolytopeRow::from_polytope(&p, "test".into(), 2.0, 3.0, 1.0, 1.5, 0.1);
+    let row = PolytopeRow::from_polytope(&p, "test".into(), 2.0, 3.0, 0, 1.0, 1.5, 0.1);
 
     let json = serde_json::to_string(&row).unwrap();
     let parsed: PolytopeRow = serde_json::from_str(&json).unwrap();
@@ -32,7 +32,7 @@ fn polytope_row_round_trip() {
 #[test]
 fn sys_computation() {
     let p = dummy_polytope();
-    let row = PolytopeRow::from_polytope(&p, "test".into(), 2.0, 3.0, 0.0, 0.0, 0.0);
+    let row = PolytopeRow::from_polytope(&p, "test".into(), 2.0, 3.0, 0, 0.0, 0.0, 0.0);
     // sys = 3^2 / (2 * 2) = 9/4 = 2.25
     assert!((row.sys - 2.25).abs() < 1e-12);
 }
@@ -62,7 +62,7 @@ fn acceptance_row_round_trip() {
 #[test]
 fn jsonl_format_no_newlines() {
     let p = dummy_polytope();
-    let row = PolytopeRow::from_polytope(&p, "test".into(), 1.0, 1.0, 0.0, 0.0, 0.0);
+    let row = PolytopeRow::from_polytope(&p, "test".into(), 1.0, 1.0, 0, 0.0, 0.0, 0.0);
     let json = serde_json::to_string(&row).unwrap();
     assert!(!json.contains('\n'), "JSONL line must not contain newlines");
 }

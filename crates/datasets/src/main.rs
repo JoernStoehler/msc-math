@@ -13,9 +13,10 @@ use std::time::Instant;
 
 // ---- Hardcoded parameters ----
 
-/// (facet_count, n_samples)
+/// (facet_count, n_samples) — width first: extend F range before increasing N.
 const RANDOM_BATCHES: &[(usize, usize)] = &[
-    (5, 50), (6, 50), (7, 50), (8, 50), (9, 50), (10, 20),
+    (5, 50), (6, 50), (7, 50), (8, 50), (9, 50), (10, 50),
+    (11, 20), (12, 10), (13, 5), (14, 2),
 ];
 const RANDOM_H_MIN: f64 = 0.5;
 const RANDOM_H_MAX: f64 = 2.0;
@@ -51,24 +52,24 @@ fn cmd_dataset(output: &Path) {
     // 1. Known polytopes
     let known = known_polytopes::all_known();
     eprintln!("Writing {} known polytopes...", known.len());
-    const MAX_FACETS_BRUTEFORCE: usize = 10;
+    const MAX_FACETS_BRUTEFORCE: usize = 14;
     for kp in &known {
         let start_vol = Instant::now();
         let vol = volume(&kp.polytope).expect("volume computation failed");
         let vol_time = start_vol.elapsed();
 
-        let (cap, cap_time) = if kp.polytope.facet_count() <= MAX_FACETS_BRUTEFORCE {
+        let (cap, iters, cap_time) = if kp.polytope.facet_count() <= MAX_FACETS_BRUTEFORCE {
             let start_cap = Instant::now();
             let cap_result =
                 ehz_capacity_pruned(&kp.polytope).expect("capacity computation failed");
-            (cap_result.capacity, start_cap.elapsed())
+            (cap_result.capacity, cap_result.iterations, start_cap.elapsed())
         } else {
             eprintln!(
                 "  Skipping capacity for {} ({} facets > {MAX_FACETS_BRUTEFORCE})",
                 kp.name,
                 kp.polytope.facet_count()
             );
-            (f64::NAN, std::time::Duration::ZERO)
+            (f64::NAN, 0, std::time::Duration::ZERO)
         };
 
         let row = PolytopeRow::from_polytope(
@@ -76,6 +77,7 @@ fn cmd_dataset(output: &Path) {
             kp.name.to_string(),
             vol,
             cap,
+            iters,
             vol_time.as_secs_f64() * 1000.0,
             cap_time.as_secs_f64() * 1000.0,
             0.0, // creation time negligible for hardcoded polytopes
@@ -125,13 +127,13 @@ fn generate_and_write_batch(
             let start_cap = Instant::now();
             let cap_result = ehz_capacity_pruned(p).expect("capacity computation failed");
             let cap_time = start_cap.elapsed();
-            let cap = cap_result.capacity;
 
             let row = PolytopeRow::from_polytope(
                 p,
                 "random".to_string(),
                 vol,
-                cap,
+                cap_result.capacity,
+                cap_result.iterations,
                 vol_time.as_secs_f64() * 1000.0,
                 cap_time.as_secs_f64() * 1000.0,
                 creation_time.as_secs_f64() * 1000.0,
