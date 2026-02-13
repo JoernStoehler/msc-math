@@ -7,8 +7,7 @@
 % Sources:
 %   - Proposition and proof: standard convex geometry (recession cones,
 %     positive span). Proof written by Claude, reviewed by Jörn.
-%   - Acceptance rate data: real code execution (validation.rs), stub
-%     volume/capacity. See \color{red} note at end of file.
+%   - Acceptance rate data: real code execution (validation.rs).
 %
 % Structure:
 %   - Sampling procedure (halfspace representation, 4-step validation)
@@ -228,11 +227,3 @@ For building datasets with~$F \ge 7$ and moderate height ranges, rejection
 sampling is efficient (acceptance~$\ge 30\%$). Even the worst case ($F = 5$,
 5.7\% acceptance) requires only~${\sim}18$ attempts per accepted polytope,
 which is practical for datasets of a few thousand samples.
-
-{\color{red}%
-\textbf{Stub data.}
-The acceptance rates and counts in Table~\ref{tab:acceptance-rates} are from
-real code execution. Volume and capacity computations currently use stub
-implementations (return~$1.0$, busy-spin for~${\sim}1$\,ms); real
-implementations from the \texttt{hk2017} crate will be substituted for the
-systolic ratio experiment (Section~\ref{sec:systolic-ratios}, when written).}
