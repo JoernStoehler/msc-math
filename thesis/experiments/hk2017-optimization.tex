@@ -1,0 +1,80 @@
+% hk2017-optimization.tex — \input'd from experiments/experiments.tex
+%
+% Sources: experiments/hk2017_optimization.md (detailed learnings),
+%   crates/hk2017/examples/profile_ehz.rs (profiling binary).
+% Baseline: main at a47930b. Optimized: claude/hk2017-optimize at d018e99.
+
+\subsection{Implementation Optimization of the HK2017 Algorithm}
+\label{sec:hk2017-optimization}
+
+We profiled and optimized the implementation of \texttt{ehz\_capacity\_pruned}
+without changing the underlying algorithm. The goal: reduce wall-clock time
+to enable larger-scale experiments at higher facet counts.
+
+\subsubsection*{Profiling}
+
+Instruction-level profiling (Valgrind callgrind) on random $F = 8$ polytopes
+revealed that singular value decomposition (SVD) consumed over~75\% of all
+instructions. Every call to the KKT solver used SVD unconditionally, despite
+rank deficiency being rare in practice.
+
+\subsubsection*{Optimizations}
+
+Two changes were applied:
+
+\begin{enumerate}
+  \item \textbf{LU fast path.} Try full-pivoting LU decomposition first;
+    fall back to SVD only when LU reports singularity. LU is much cheaper
+    than SVD for small dense matrices ($7 \times 7$ to $15 \times 15$),
+    and rank deficiency occurs mainly in highly symmetric configurations
+    (e.g., the hypercube). This alone gives a 3--5$\times$ speedup.
+
+  \item \textbf{Lazy permutation generation.} Replace eager collection of
+    all $(m{-}1)!$ cyclic permutations with an in-place callback using
+    Heap's algorithm. For $m = 10$ this eliminates 362{,}880 vector
+    allocations. Combined with eliminating an intermediate matrix copy,
+    this adds a further 1.2--2.2$\times$ speedup.
+\end{enumerate}
+
+Two further candidates were tried and discarded: pre-allocated matrix buffers
+(no measurable benefit for small matrices) and skipping the residual check
+for LU solutions (broke correctness on rank-deficient systems).
+
+\subsubsection*{Results}
+
+Table~\ref{tab:hk2017-opt-timing} shows wall-clock times before and after
+optimization on representative polytopes.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{llrrrrr}
+\toprule
+Polytope & $F$ & Iters & Before (ms) & After (ms) & Speedup \\
+\midrule
+Simplex           &  5 &       84 &     0.6 &     0.4 & 1.6$\times$ \\
+Hypercube         &  8 &    5{,}556 &    63.8 &    41.8 & 1.5$\times$ \\
+Lag.\ $\triangle{\times}\triangle$ &  6 &      409 &     3.4 &     1.3 & 2.6$\times$ \\
+Sym.\ $\triangle{\times}\triangle$ &  6 &      409 &     3.1 &     1.4 & 2.2$\times$ \\
+Lag.\ $\triangle{\times}\square$   &  7 &    1{,}259 &    13.0 &     5.9 & 2.2$\times$ \\
+Sym.\ $\triangle{\times}\square$   &  7 &    1{,}259 &    12.4 &     4.8 & 2.6$\times$ \\
+HK-O pentagon     & 10 & 120{,}319 & 2{,}325 &      504 & 4.6$\times$ \\
+Random ($F{=}8$)  &  8 &      --- &  20--119 &    4--23 & 5--6$\times$ \\
+Random ($F{=}10$) & 10 &      --- & 493--1{,}622 &  79--253 & 6$\times$ \\
+\bottomrule
+\end{tabular}
+\caption{Wall-clock timing before and after implementation optimization
+  of \texttt{ehz\_capacity\_pruned}. Random polytope rows show
+  min--max across 3 (resp.\ 2) seeded samples.}
+\label{tab:hk2017-opt-timing}
+\end{table}
+
+Peak heap memory dropped from 573\,KB to 17\,KB (34$\times$ reduction),
+primarily from eliminating eager permutation collection.
+
+The speedup scales with facet count: random polytopes at $F = 10$ see
+6$\times$ improvement, while symmetric polytopes with many rank-deficient
+KKT systems (which still require SVD) benefit less.
+After optimization, instruction-level profiling shows LU at 31\%,
+SVD fallback at 29\%, and our algorithm code at only 3.5\%---further
+implementation-level gains would require changes inside the linear algebra
+library.

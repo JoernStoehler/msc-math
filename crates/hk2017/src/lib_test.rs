@@ -183,7 +183,6 @@ fn solve_kkt_degenerate() {
 }
 
 #[test]
-#[ignore] // Expensive: 10 facets → exponential runtime (~2-5 min)
 fn pentagon_capacity() {
     use geom::volume::volume;
 
@@ -259,17 +258,16 @@ mod proptests {
     use rand_chacha::ChaCha8Rng;
 
     proptest! {
-        #![proptest_config(ProptestConfig::with_cases(5))]
+        #![proptest_config(ProptestConfig::with_cases(10))]
 
         /// Property: pruned and unpruned algorithms return the same capacity.
         ///
         /// This tests `cor:adjacency-pruning` (adjacency pruning optimization).
         ///
-        /// Run with: `cargo test -p hk2017 pruned_matches_unpruned_random -- --ignored`
+        /// Budget: F=8 unpruned ≈ 40ms, pruned ≈ 14ms; 10 cases × 4 seeds = ~2s total.
         #[test]
-        #[ignore] // Expensive: capacity computation on random polytopes (~30s)
         fn pruned_matches_unpruned_random(
-            facet_count in 5usize..=6,
+            facet_count in 5usize..=8,
             seed in 0u64..4
         ) {
             let mut rng = ChaCha8Rng::seed_from_u64(seed);

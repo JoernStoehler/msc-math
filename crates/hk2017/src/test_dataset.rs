@@ -157,10 +157,10 @@ pub fn load_test_dataset(path: &std::path::Path) -> Vec<TestPolytope> {
 ///
 /// ## Phases
 ///
-/// - Phase 1: 3 known polytopes + 6 random (5-7 facets, 2 each) = 9 base
-/// - Phase 2: 1 symplectomorphism variant per base = 9 variants
-/// - Phase 3: 1 conformality variant per base = 9 variants
-/// - Total: ~27 polytopes
+/// - Phase 1: 3 known polytopes + 8 random (5-8 facets, 2 each) = 11 base
+/// - Phase 2: 1 symplectomorphism variant per base = 11 variants
+/// - Phase 3: 1 conformality variant per base = 11 variants
+/// - Total: ~33 polytopes
 pub fn polytope_catalog() -> Vec<CatalogEntry> {
     let mut rng = ChaCha8Rng::seed_from_u64(42);
 
@@ -183,8 +183,8 @@ pub fn polytope_catalog() -> Vec<CatalogEntry> {
         });
     }
 
-    // Small random polytopes (5-7 facets for speed)
-    for facet_count in 5..=7 {
+    // Small random polytopes (5-8 facets)
+    for facet_count in 5..=8 {
         for i in 0..2 {
             let p = geom::test_utils::random_bounded_polytope(facet_count, &mut rng);
             base_entries.push(CatalogEntry {
