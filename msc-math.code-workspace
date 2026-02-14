@@ -19,6 +19,9 @@
 			"Overfull \\\\hbox",
 			"Underfull \\\\hbox"
 		],
+		"texlab.experimental.ignoreFolders": [
+			"papers/"
+		],
 		"[markdown]": {
 			"editor.tabSize": 2
 		},
