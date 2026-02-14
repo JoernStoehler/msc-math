@@ -6,6 +6,7 @@ mod qhull;
 pub mod reeb_trajectory;
 pub mod skeleton;
 pub mod symplectic;
+pub mod validation;
 pub mod vertices;
 pub mod volume;
 
