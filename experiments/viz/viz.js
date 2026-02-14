@@ -29,8 +29,7 @@ let orthoBasis = buildOrthoBasis(northPole);
 let showEdges = true;
 let showRidges = false;
 let showVertices = true;
-let showTrajectories = true;
-let selectedTrajectory = -1; // -1 = all
+let visibleTrajectories = new Set(); // Set of trajectory indices to show
 
 // Scene groups (cleared and rebuilt when polytope or projection changes)
 let edgeGroup, ridgeGroup, vertexGroup, trajectoryGroup;
@@ -77,6 +76,11 @@ function init() {
     trajectoryGroup = new THREE.Group();
     scene.add(edgeGroup, ridgeGroup, vertexGroup, trajectoryGroup);
 
+    // Sync checkbox states with JS variables
+    document.getElementById('show-vertices').checked = showVertices;
+    document.getElementById('show-edges').checked = showEdges;
+    document.getElementById('show-ridges').checked = showRidges;
+
     window.addEventListener('resize', onResize);
     animate();
 }
@@ -103,8 +107,14 @@ function loadPolytope(name) {
     }
 
     polytopeData = window.POLYTOPE_DATA[name];
-    selectedTrajectory = -1;
-    updateTrajectorySlider();
+
+    // Initialize all trajectories as visible
+    visibleTrajectories.clear();
+    for (let i = 0; i < polytopeData.trajectories.length; i++) {
+        visibleTrajectories.add(i);
+    }
+
+    generateTrajectoryCheckboxes();
     rebuildScene();
     updateInfoPanel();
 }
@@ -374,10 +384,8 @@ function rebuildScene() {
     }
 
     // ---- Trajectories (batched by facet color) ----
-    if (showTrajectories && poly.trajectories.length > 0) {
-        const trajIndices = selectedTrajectory === -1
-            ? poly.trajectories.map((_, i) => i)
-            : [selectedTrajectory];
+    if (visibleTrajectories.size > 0 && poly.trajectories.length > 0) {
+        const trajIndices = Array.from(visibleTrajectories);
 
         const trajsByColor = new Map(); // color_key -> [segments...]
         const arrows = []; // arrows can't be batched easily, collect them separately
@@ -477,8 +485,14 @@ function updateInfoPanel() {
     info += `${poly.facet_count} facets\n`;
     info += `${poly.vertex_count} vertices\n`;
     info += `${poly.edge_count} edges\n`;
-    info += `${poly.ridge_count} ridges\n\n`;
-    info += `${poly.trajectories.length} trajectories\n`;
+    info += `${poly.ridge_count} ridges\n`;
+    if (poly.volume !== undefined) {
+        info += `volume: ${poly.volume.toFixed(6)}\n`;
+    }
+    if (poly.systolic_ratio !== undefined) {
+        info += `systolic ratio: ${poly.systolic_ratio.toFixed(6)}\n`;
+    }
+    info += `\n${poly.trajectories.length} trajectories\n`;
 
     const closedCount = poly.trajectories.filter(t => t.closed).length;
     if (closedCount > 0) {
@@ -488,44 +502,55 @@ function updateInfoPanel() {
     document.getElementById('info-text').textContent = info;
 }
 
-function updateTrajectorySlider() {
-    const slider = document.getElementById('traj-index');
-    if (!polytopeData) return;
-    slider.max = polytopeData.trajectories.length - 1;
-    slider.value = selectedTrajectory === -1 ? 0 : selectedTrajectory;
-    updateTrajLabel();
-}
+function generateTrajectoryCheckboxes() {
+    const container = document.getElementById('trajectory-checkboxes');
+    if (!container || !polytopeData) return;
 
-function updateTrajLabel() {
-    if (!polytopeData) return;
-    const label = document.getElementById('traj-label');
-    if (selectedTrajectory === -1) {
-        label.textContent = `all (${polytopeData.trajectories.length})`;
-    } else {
-        const t = polytopeData.trajectories[selectedTrajectory];
-        label.textContent = `${selectedTrajectory}/${polytopeData.trajectories.length - 1} (facet ${t.start_facet}, ${t.segments.length} segs${t.closed ? ', closed' : ''})`;
+    container.innerHTML = '';
+
+    for (let i = 0; i < polytopeData.trajectories.length; i++) {
+        const traj = polytopeData.trajectories[i];
+        const row = document.createElement('div');
+        row.className = 'toggle-row';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = `traj-${i}`;
+        checkbox.checked = visibleTrajectories.has(i);
+        checkbox.onchange = () => onTrajectoryToggle(i, checkbox.checked);
+
+        const label = document.createElement('span');
+        label.textContent = `Traj ${i} (facet ${traj.start_facet}, ${traj.segments.length} seg${traj.closed ? ', closed' : ''})`;
+
+        row.appendChild(checkbox);
+        row.appendChild(label);
+        container.appendChild(row);
     }
 }
 
-function updateNorthPole() {
-    const phi = parseFloat(document.getElementById('north-phi').value);
-    const theta = parseFloat(document.getElementById('north-theta').value);
-    const psi = parseFloat(document.getElementById('north-psi').value);
+function setNorthPoleFromText(text) {
+    try {
+        const parts = text.split(',').map(s => parseFloat(s.trim()));
+        if (parts.length !== 4 || parts.some(isNaN)) {
+            alert('Invalid input. Please enter four numbers separated by commas, e.g., "0, 0, 0, 1"');
+            return;
+        }
 
-    // Hopf-like parameterization of S³
-    northPole = normalize4([
-        Math.sin(phi) * Math.cos(theta),
-        Math.sin(phi) * Math.sin(theta),
-        Math.cos(phi) * Math.sin(psi),
-        Math.cos(phi) * Math.cos(psi),
-    ]);
+        const [x, y, z, w] = parts;
+        northPole = normalize4([x, y, z, w]);
+        orthoBasis = buildOrthoBasis(northPole);
 
-    orthoBasis = buildOrthoBasis(northPole);
+        updateNorthPoleDisplay();
+        rebuildScene();
+    } catch (e) {
+        alert('Error parsing north pole coordinates: ' + e.message);
+    }
+}
 
+function updateNorthPoleDisplay() {
     const poleStr = `(${northPole[0].toFixed(2)}, ${northPole[1].toFixed(2)}, ${northPole[2].toFixed(2)}, ${northPole[3].toFixed(2)})`;
     document.getElementById('pole-display').textContent = poleStr;
-
-    rebuildScene();
+    document.getElementById('north-pole-input').value = `${northPole[0].toFixed(4)}, ${northPole[1].toFixed(4)}, ${northPole[2].toFixed(4)}, ${northPole[3].toFixed(4)}`;
 }
 
 function setNorthPolePreset(preset) {
@@ -558,9 +583,7 @@ function setNorthPolePreset(preset) {
     }
 
     orthoBasis = buildOrthoBasis(northPole);
-    const poleStr = `(${northPole[0].toFixed(2)}, ${northPole[1].toFixed(2)}, ${northPole[2].toFixed(2)}, ${northPole[3].toFixed(2)})`;
-    document.getElementById('pole-display').textContent = poleStr;
-
+    updateNorthPoleDisplay();
     rebuildScene();
 }
 
@@ -568,19 +591,13 @@ function onPolytopeChange(name) {
     loadPolytope(name);
 }
 
-function onTrajectoryChange(value) {
-    selectedTrajectory = parseInt(value);
-    updateTrajLabel();
-    clearGroup(trajectoryGroup);
-    if (showTrajectories && polytopeData && polytopeData.trajectories.length > 0) {
-        const trajIndices = selectedTrajectory === -1
-            ? polytopeData.trajectories.map((_, i) => i)
-            : [selectedTrajectory];
-        for (const ti of trajIndices) {
-            if (ti >= polytopeData.trajectories.length) continue;
-            renderTrajectory(polytopeData.trajectories[ti]);
-        }
+function onTrajectoryToggle(index, checked) {
+    if (checked) {
+        visibleTrajectories.add(index);
+    } else {
+        visibleTrajectories.delete(index);
     }
+    rebuildScene();
 }
 
 function onToggle(which, checked) {
@@ -588,7 +605,6 @@ function onToggle(which, checked) {
         case 'edges': showEdges = checked; break;
         case 'ridges': showRidges = checked; break;
         case 'vertices': showVertices = checked; break;
-        case 'trajectories': showTrajectories = checked; break;
     }
     rebuildScene();
 }

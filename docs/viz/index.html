@@ -8,6 +8,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'SF Mono', 'Fira Code', 'Cascadia Mono', monospace;
+            font-size: 16px;
             background: #ffffff;
             color: #24292f;
             overflow: hidden;
@@ -25,35 +26,37 @@
             background: rgba(255, 255, 255, 0.94);
             border: 1px solid #d0d7de;
             border-radius: 8px;
-            padding: 14px;
-            width: 280px;
+            padding: 16px;
+            width: 300px;
             max-height: calc(100vh - 24px);
             overflow-y: auto;
             z-index: 10;
-            font-size: 12px;
+            font-size: 14px;
         }
         #controls h3 {
-            font-size: 14px;
-            margin-bottom: 10px;
+            font-size: 16px;
+            margin-bottom: 12px;
             color: #0550ae;
+            font-weight: 600;
         }
         #controls label {
             display: block;
-            margin: 6px 0 2px;
+            margin: 8px 0 4px;
             color: #57606a;
-            font-size: 11px;
+            font-size: 12px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            font-weight: 500;
         }
         #controls select, #controls button {
             width: 100%;
-            padding: 5px 8px;
+            padding: 6px 10px;
             background: #f6f8fa;
             border: 1px solid #d0d7de;
             border-radius: 4px;
             color: #24292f;
             font-family: inherit;
-            font-size: 12px;
+            font-size: 14px;
             cursor: pointer;
         }
         #controls select:hover, #controls button:hover {
@@ -82,7 +85,7 @@
         }
         .toggle-row span {
             color: #24292f;
-            font-size: 12px;
+            font-size: 14px;
         }
 
         .section {
@@ -93,8 +96,9 @@
 
         #pole-display {
             color: #1a7f37;
-            font-size: 11px;
-            margin: 2px 0 6px;
+            font-size: 13px;
+            margin: 4px 0 8px;
+            font-weight: 500;
         }
 
         .preset-row {
@@ -106,9 +110,9 @@
         .preset-row button {
             width: auto;
             flex: 1;
-            min-width: 40px;
-            padding: 3px 6px;
-            font-size: 10px;
+            min-width: 45px;
+            padding: 4px 8px;
+            font-size: 12px;
         }
 
         /* Info panel */
@@ -118,22 +122,24 @@
             background: rgba(255, 255, 255, 0.94);
             border: 1px solid #d0d7de;
             border-radius: 8px;
-            padding: 14px;
-            width: 220px;
+            padding: 16px;
+            width: 280px;
             z-index: 10;
         }
         #info pre {
             font-family: inherit;
-            font-size: 11px;
+            font-size: 13px;
             white-space: pre-wrap;
             color: #57606a;
-            line-height: 1.5;
+            line-height: 1.6;
+            font-weight: 400;
         }
 
         /* Trajectory info */
         #traj-label {
             color: #8250df;
-            font-size: 11px;
+            font-size: 13px;
+            margin-top: 4px;
         }
     </style>
 </head>
@@ -156,10 +162,15 @@
         </select>
 
         <div class="section">
-            <label for="north-phi">North Pole</label>
-            <div id="pole-display">(0.00, 0.00, 0.00, 1.00)</div>
+            <label for="north-pole-input">North Pole</label>
+            <input type="text" id="north-pole-input"
+                   placeholder="x, y, z, w"
+                   value="0, 0, 0, 1"
+                   onchange="setNorthPoleFromText(this.value)"
+                   style="width: 100%; padding: 6px 10px; background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 4px; font-family: inherit; font-size: 14px;">
+            <div id="pole-display" style="margin-top: 4px;">(0.00, 0.00, 0.00, 1.00)</div>
 
-            <label>Presets</label>
+            <label style="margin-top: 8px;">Presets</label>
             <div class="preset-row">
                 <button onclick="setNorthPolePreset('e4')">e₄</button>
                 <button onclick="setNorthPolePreset('e3')">e₃</button>
@@ -169,22 +180,6 @@
             <div class="preset-row">
                 <button onclick="setNorthPolePreset('vertex0')">vertex₀</button>
                 <button onclick="setNorthPolePreset('normal0')">normal₀</button>
-            </div>
-
-            <div class="slider-group">
-                <label for="north-phi">φ (polar)</label>
-                <input type="range" id="north-phi" min="0" max="3.14159" step="0.02"
-                       value="0" oninput="updateNorthPole()">
-            </div>
-            <div class="slider-group">
-                <label for="north-theta">θ (azimuth)</label>
-                <input type="range" id="north-theta" min="0" max="6.28318" step="0.02"
-                       value="0" oninput="updateNorthPole()">
-            </div>
-            <div class="slider-group">
-                <label for="north-psi">ψ (S³ rotation)</label>
-                <input type="range" id="north-psi" min="0" max="3.14159" step="0.02"
-                       value="0" oninput="updateNorthPole()">
             </div>
         </div>
 
@@ -205,22 +200,11 @@
                        onchange="onToggle('ridges', this.checked)">
                 <span>Ridges (2-faces)</span>
             </div>
-            <div class="toggle-row">
-                <input type="checkbox" id="show-traj" checked
-                       onchange="onToggle('trajectories', this.checked)">
-                <span>Reeb trajectories</span>
-            </div>
         </div>
 
         <div class="section">
-            <label for="traj-index">Trajectory</label>
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <button onclick="onTrajectoryChange(-1)" style="width: auto; padding: 3px 8px;">All</button>
-                <input type="range" id="traj-index" min="0" max="0" value="0"
-                       style="flex: 1;"
-                       oninput="onTrajectoryChange(parseInt(this.value))">
-            </div>
-            <div id="traj-label">all</div>
+            <label>Reeb Trajectories</label>
+            <div id="trajectory-checkboxes"></div>
         </div>
 
         <div class="section">
