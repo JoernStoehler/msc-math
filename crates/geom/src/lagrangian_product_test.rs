@@ -1,6 +1,8 @@
 use super::*;
 use crate::polygon::{polygon_area, regular_polygon_2d, rotate_polygon_2d};
+use crate::polytope::ConstructionError;
 use crate::volume::volume;
+use nalgebra::Vector2;
 use std::f64::consts::PI;
 
 #[test]
@@ -107,4 +109,28 @@ fn rotated_product_volume_independent_of_angle() {
             "θ={theta:.3}: vol={vol}, expected={expected_vol}, rel_err={rel_err}"
         );
     }
+}
+
+// ---- Error propagation: lagrangian_product must propagate Polytope4D::new errors ----
+
+#[test]
+fn rejects_too_few_total_facets() {
+    // Triangle (3 facets) in q-space, nothing in p-space: 3 < 5 minimum.
+    // Use a single line (1 normal) in p-space to get 4 total facets.
+    let (qn, qh) = regular_polygon_2d(3, 1.0);
+    let pn = vec![Vector2::new(1.0, 0.0)];
+    let ph = vec![1.0];
+    let err = lagrangian_product(&qn, &qh, &pn, &ph).unwrap_err();
+    assert_eq!(err, ConstructionError::TooFewFacets(4));
+}
+
+#[test]
+fn rejects_unbounded_single_factor() {
+    // Triangle in q-space (3 facets), 2 normals in p-space (not enough to bound p-space).
+    // Total = 5 facets, but q-space normals are all in [0,1] components — unbounded in p-space.
+    let (qn, qh) = regular_polygon_2d(3, 1.0);
+    let pn = vec![Vector2::new(1.0, 0.0), Vector2::new(0.0, 1.0)];
+    let ph = vec![1.0, 1.0];
+    let err = lagrangian_product(&qn, &qh, &pn, &ph).unwrap_err();
+    assert_eq!(err, ConstructionError::Unbounded);
 }

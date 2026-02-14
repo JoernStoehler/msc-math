@@ -229,3 +229,67 @@ fn regular_polygon_2_sides_panics() {
 fn regular_polygon_zero_radius_panics() {
     regular_polygon_2d(3, 0.0);
 }
+
+#[test]
+#[should_panic(expected = "positive")]
+fn regular_polygon_negative_radius_panics() {
+    regular_polygon_2d(4, -1.0);
+}
+
+// ---- random_polygon_2d panic paths ----
+
+#[test]
+#[should_panic(expected = "at least 3")]
+fn random_polygon_too_few_sides_panics() {
+    let mut rng = rand::thread_rng();
+    random_polygon_2d(2, 0.5, 2.0, &mut rng);
+}
+
+#[test]
+#[should_panic(expected = "positive")]
+fn random_polygon_zero_hmin_panics() {
+    let mut rng = rand::thread_rng();
+    random_polygon_2d(3, 0.0, 2.0, &mut rng);
+}
+
+#[test]
+#[should_panic(expected = "positive")]
+fn random_polygon_negative_hmin_panics() {
+    let mut rng = rand::thread_rng();
+    random_polygon_2d(3, -1.0, 2.0, &mut rng);
+}
+
+#[test]
+#[should_panic(expected = "h_max must exceed")]
+fn random_polygon_hmax_equals_hmin_panics() {
+    let mut rng = rand::thread_rng();
+    random_polygon_2d(3, 1.0, 1.0, &mut rng);
+}
+
+#[test]
+#[should_panic(expected = "h_max must exceed")]
+fn random_polygon_hmax_less_than_hmin_panics() {
+    let mut rng = rand::thread_rng();
+    random_polygon_2d(3, 2.0, 1.0, &mut rng);
+}
+
+// ---- polygon_area edge cases ----
+
+#[test]
+fn polygon_area_too_few_normals_returns_none() {
+    let normals = vec![Vector2::new(1.0, 0.0), Vector2::new(0.0, 1.0)];
+    let heights = vec![1.0, 1.0];
+    assert!(polygon_area(&normals, &heights).is_none());
+}
+
+#[test]
+fn polygon_area_parallel_normals_returns_none() {
+    // Three normals, two of them parallel — degenerate polygon.
+    let normals = vec![
+        Vector2::new(1.0, 0.0),
+        Vector2::new(1.0, 0.0), // parallel to first
+        Vector2::new(0.0, 1.0),
+    ];
+    let heights = vec![1.0, 2.0, 1.0];
+    assert!(polygon_area(&normals, &heights).is_none());
+}

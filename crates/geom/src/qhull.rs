@@ -663,6 +663,96 @@ mod test {
         );
     }
 
+    /// Test parsing: non-numeric dimension line
+    #[test]
+    fn parse_bad_dimension() {
+        let output = "four\n5\n";
+        let result = parse_fp_output(output);
+        assert!(
+            matches!(result, Err(QhullError::OutputParseFailed(_))),
+            "non-numeric dimension should fail: got {result:?}"
+        );
+    }
+
+    /// Test parsing: non-numeric vertex count
+    #[test]
+    fn parse_bad_count() {
+        let output = "4\nabc\n";
+        let result = parse_fp_output(output);
+        assert!(
+            matches!(result, Err(QhullError::OutputParseFailed(_))),
+            "non-numeric count should fail: got {result:?}"
+        );
+    }
+
+    /// Test parsing: non-numeric coordinate
+    #[test]
+    fn parse_bad_coordinate() {
+        let output = "4\n1\n1.0 2.0 xyz 4.0\n";
+        let result = parse_fp_output(output);
+        assert!(
+            matches!(result, Err(QhullError::OutputParseFailed(_))),
+            "non-numeric coordinate should fail: got {result:?}"
+        );
+    }
+
+    /// Test parsing: wrong number of coordinates per vertex
+    #[test]
+    fn parse_wrong_coord_count() {
+        let output = "4\n1\n1.0 2.0 3.0\n"; // only 3 coords, expected 4
+        let result = parse_fp_output(output);
+        assert!(
+            matches!(result, Err(QhullError::InvalidOutput(_))),
+            "wrong coordinate count should fail: got {result:?}"
+        );
+    }
+
+    /// Test parsing: valid output parses correctly
+    #[test]
+    fn parse_valid_output() {
+        let output = "4\n2\n1.0 2.0 3.0 4.0\n5.0 6.0 7.0 8.0\n";
+        let vertices = parse_fp_output(output).unwrap();
+        assert_eq!(vertices.len(), 2);
+        assert!((vertices[0] - Vector4::new(1.0, 2.0, 3.0, 4.0)).norm() < 1e-12);
+        assert!((vertices[1] - Vector4::new(5.0, 6.0, 7.0, 8.0)).norm() < 1e-12);
+    }
+
+    // ---- parse_fa_output (volume parsing) ----
+
+    #[test]
+    fn parse_fa_approximate_volume() {
+        let output = "some header\nApproximate volume:       16.5\nother stuff\n";
+        let vol = parse_fa_output(output).unwrap();
+        assert!((vol - 16.5).abs() < 1e-12);
+    }
+
+    #[test]
+    fn parse_fa_total_volume() {
+        let output = "some header\n  Total volume:       42.0\nother stuff\n";
+        let vol = parse_fa_output(output).unwrap();
+        assert!((vol - 42.0).abs() < 1e-12);
+    }
+
+    #[test]
+    fn parse_fa_no_volume_line() {
+        let output = "some header\nno volume here\n";
+        let result = parse_fa_output(output);
+        assert!(
+            matches!(result, Err(QhullError::InvalidOutput(_))),
+            "missing volume line should fail: got {result:?}"
+        );
+    }
+
+    #[test]
+    fn parse_fa_bad_volume_value() {
+        let output = "Approximate volume:       notanumber\n";
+        let result = parse_fa_output(output);
+        assert!(
+            matches!(result, Err(QhullError::OutputParseFailed(_))),
+            "non-numeric volume should fail: got {result:?}"
+        );
+    }
+
     /// Performance benchmark: measure qhull timing for different facet counts
     #[test]
     fn benchmark_qhull_performance() {
