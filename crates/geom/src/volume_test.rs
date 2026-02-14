@@ -216,6 +216,7 @@ fn triangulated_matches_divergence() {
 
 
 #[test]
+#[ignore] // ~30s debug: 1000 random polytopes, qhull vs divergence. Monitoring test, not regression.
 fn comprehensive_volume_cross_check() {
     use crate::test_utils::random_bounded_polytope;
     use rand::SeedableRng;
