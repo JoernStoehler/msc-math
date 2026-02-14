@@ -174,6 +174,61 @@ ps aux | grep -E 'target/debug/deps/' | grep -v grep
 
 ---
 
+### Check 7: Test Strategy Review
+
+**Purpose:** Detect tests that are slower than necessary in debug, tests doing multiple things without justification, and missing debug/release split annotations.
+
+**Background:** Debug tests run ~65x slower than release for linear-algebra-heavy code. Tests that only exercise f64 math (KKT solves, capacity checks on large polytopes) gain nothing from debug mode — Rust's debug-only checks (integer overflow, debug_assert!) don't apply to f64 paths. Meanwhile, tests that exercise index arithmetic, array construction, and error paths benefit from debug mode's overflow/panic checks.
+
+**Criteria for each test:**
+
+| Category | Debug value | Speed concern | Action |
+|----------|-----------|--------------|--------|
+| Fast in debug (<1s) | Any | None | Run in debug (default) |
+| Slow in debug, exercises usize/index logic | High | Yes | Keep in debug if unique coverage; else release-only |
+| Slow in debug, pure f64/capacity math | None | Yes | Mark `#[ignore]`, run release-only |
+| Tests multiple things at once | — | — | Document justification or split |
+
+**Procedure:**
+
+1. List all `#[test]` and `#[ignore]` functions across all crates:
+```bash
+cd /workspaces/msc-math/crates
+grep -rn '#\[test\]' --include='*.rs' | grep -v target/
+grep -rn '#\[ignore\]' --include='*.rs' | grep -v target/
+```
+
+2. For each crate, measure debug vs release test time:
+```bash
+for crate in geom hk2017 billiard tube datasets; do
+  echo "=== $crate debug ===" && time cargo test -p $crate 2>&1 | tail -3
+  echo "=== $crate release ===" && time cargo test -p $crate --release 2>&1 | tail -3
+done
+```
+
+3. For any test taking >2s in debug, classify:
+   - What code paths does it exercise? (f64 math? index logic? error paths?)
+   - Does debug mode catch anything release wouldn't? (debug_assert!, integer overflow on usize?)
+   - Is there a fast-polytope version that covers the same debug-relevant paths?
+
+4. For any test that checks multiple properties, verify:
+   - Is there a documented justification (comment) for combining them?
+   - Could splitting give better debug/release targeting?
+
+**Expected result:**
+- Every `#[ignore]` test has a comment explaining why
+- No un-ignored test takes >5s in debug
+- Tests checking multiple properties have justification comments
+- Debug suite exercises all code paths that benefit from overflow/bounds checks
+- Release-only suite covers large-polytope correctness
+
+**Alert threshold:**
+- Any un-ignored test >10s in debug with no debug-specific value
+- Any test doing 2+ things with no justification comment
+- Any crate's debug tests >30s total
+
+---
+
 ## Running a Monitoring Session
 
 ### Workflow
