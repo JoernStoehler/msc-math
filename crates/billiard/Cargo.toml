@@ -9,3 +9,4 @@ geom = { path = "../geom" }
 
 [dev-dependencies]
 proptest = { workspace = true }
+hk2017 = { path = "../hk2017" }

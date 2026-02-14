@@ -28,6 +28,7 @@ name = "billiard"
 version = "0.1.0"
 dependencies = [
  "geom",
+ "hk2017",
  "nalgebra",
  "proptest",
 ]
