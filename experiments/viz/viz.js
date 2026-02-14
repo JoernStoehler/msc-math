@@ -96,22 +96,17 @@ function animate() {
 // ---- Data loading ----
 
 function loadPolytope(name) {
-    const path = `data/${name}.json`;
-    fetch(path)
-        .then(r => {
-            if (!r.ok) throw new Error(`Failed to load ${path}: ${r.status}`);
-            return r.json();
-        })
-        .then(data => {
-            polytopeData = data;
-            selectedTrajectory = -1;
-            updateTrajectorySlider();
-            rebuildScene();
-            updateInfoPanel();
-        })
-        .catch(err => {
-            document.getElementById('info-text').textContent = `Error: ${err.message}`;
-        });
+    // Load from embedded data (window.POLYTOPE_DATA from data.js)
+    if (!window.POLYTOPE_DATA || !window.POLYTOPE_DATA[name]) {
+        document.getElementById('info-text').textContent = `Error: Polytope "${name}" not found`;
+        return;
+    }
+
+    polytopeData = window.POLYTOPE_DATA[name];
+    selectedTrajectory = -1;
+    updateTrajectorySlider();
+    rebuildScene();
+    updateInfoPanel();
 }
 
 // ---- Scene rebuild ----
