@@ -1,12 +1,16 @@
 //! Block enumeration for the billiard algorithm.
 //!
 //! Generates all (S, σ) matching the pattern ([Q|QQ][P|PP])^k for k ∈ {2, 3}.
+//! Fully lazy: no intermediate collections, constant memory per recursion depth.
+//!
+//! Cyclic symmetry removal: the first q-block position is fixed, reducing
+//! q-permutations from k! to (k-1)!. Total reduction factor: k.
 //!
 //! See chapter-billiard.tex, Lemma 6.5 (lem:sigma-structure) and the
 //! algorithm pseudocode in Section 6.4.
 
 /// A block in a k-bounce orbit: either a single facet or an ordered adjacent pair.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum Block {
     /// Single facet (edge interior).
     Single(usize),
@@ -16,17 +20,34 @@ pub enum Block {
 }
 
 impl Block {
-    /// Return the facet indices in this block, in order.
-    pub fn indices(&self) -> Vec<usize> {
+    /// Append this block's facet indices to `buf`.
+    #[inline]
+    fn push_to(&self, buf: &mut Vec<usize>) {
         match *self {
-            Block::Single(i) => vec![i],
-            Block::Pair(i, j) => vec![i, j],
+            Block::Single(i) => buf.push(i),
+            Block::Pair(i, j) => {
+                buf.push(i);
+                buf.push(j);
+            }
         }
     }
 
-    /// Return the set of facet indices used (for overlap checking).
-    pub fn facet_set(&self) -> Vec<usize> {
-        self.indices()
+    /// Check if this block uses facet index `idx`.
+    #[inline]
+    fn contains(&self, idx: usize) -> bool {
+        match *self {
+            Block::Single(i) => i == idx,
+            Block::Pair(i, j) => i == idx || j == idx,
+        }
+    }
+
+    /// Check if this block overlaps with `other`.
+    #[inline]
+    fn overlaps(&self, other: &Block) -> bool {
+        match *other {
+            Block::Single(i) => self.contains(i),
+            Block::Pair(i, j) => self.contains(i) || self.contains(j),
+        }
     }
 }
 
@@ -58,17 +79,14 @@ pub fn enumerate_blocks(facet_indices: &[usize], adj: &[Vec<bool>]) -> Vec<Block
     blocks
 }
 
-/// Check if two blocks share any facet index.
-fn blocks_overlap(a: &Block, b: &Block) -> bool {
-    let a_set = a.facet_set();
-    let b_set = b.facet_set();
-    a_set.iter().any(|i| b_set.contains(i))
-}
-
-/// Enumerate all σ sequences matching ([Q|QQ][P|PP])^k.
+/// Enumerate all σ sequences matching ([Q|QQ][P|PP])^k, lazily.
 ///
 /// For each valid selection of k non-overlapping q-blocks and k non-overlapping
 /// p-blocks, generates all interleavings into the alternating pattern.
+///
+/// **Cyclic symmetry removal**: the first q-block is fixed (iterated over but
+/// always placed at position 0), and only the remaining k-1 q-blocks are permuted.
+/// This divides the total count by k without missing any distinct cyclic orbits.
 ///
 /// The callback receives each σ as a slice of facet indices.
 pub fn enumerate_k_bounce_sigmas(
@@ -81,57 +99,68 @@ pub fn enumerate_k_bounce_sigmas(
         return;
     }
 
-    // Choose k non-overlapping q-blocks
-    let q_selections = select_non_overlapping(q_blocks, k);
-    let p_selections = select_non_overlapping(p_blocks, k);
-
-    // For each combination of q-selection and p-selection,
-    // generate all orderings and flatten into σ.
-    //
-    // Pattern: Q-block_1, P-block_1, Q-block_2, P-block_2, ..., Q-block_k, P-block_k
-    //
-    // We enumerate all permutations of q-blocks and p-blocks independently.
-    let mut q_perm_buf = vec![0usize; k];
+    let mut q_sel = Vec::with_capacity(k);
+    let mut p_sel = Vec::with_capacity(k);
+    let mut sigma = Vec::with_capacity(4 * k);
+    let mut q_perm_buf = vec![0usize; k.saturating_sub(1)]; // (k-1)! for remaining q-blocks
     let mut p_perm_buf = vec![0usize; k];
 
-    for q_sel in &q_selections {
-        for p_sel in &p_selections {
-            // Generate all permutations of q-blocks
-            for_each_permutation(k, &mut q_perm_buf, &mut |q_perm| {
-                // Generate all permutations of p-blocks
-                for_each_permutation(k, &mut p_perm_buf, &mut |p_perm| {
-                    // Flatten: Q[q_perm[0]], P[p_perm[0]], Q[q_perm[1]], P[p_perm[1]], ...
-                    let mut sigma = Vec::with_capacity(4 * k); // worst case: all pairs
-                    for round in 0..k {
-                        sigma.extend(q_sel[q_perm[round]].indices());
-                        sigma.extend(p_sel[p_perm[round]].indices());
-                    }
-                    callback(&sigma);
+    // Lazily enumerate non-overlapping q-block selections
+    for_each_non_overlapping(q_blocks, k, &mut q_sel, &mut |q_selection| {
+        // Lazily enumerate non-overlapping p-block selections
+        for_each_non_overlapping(p_blocks, k, &mut p_sel, &mut |p_selection| {
+            // Cyclic symmetry removal: q-block at index 0 is always first.
+            // Permute only q-blocks 1..k (the remaining k-1 blocks).
+            if k == 1 {
+                // Only one q-block, one p-block — no permutations needed.
+                sigma.clear();
+                q_selection[0].push_to(&mut sigma);
+                p_selection[0].push_to(&mut sigma);
+                callback(&sigma);
+            } else {
+                // Permute remaining q-blocks (indices 1..k of q_selection)
+                for_each_permutation(k - 1, &mut q_perm_buf, &mut |q_rest_perm| {
+                    // Permute all p-blocks
+                    for_each_permutation(k, &mut p_perm_buf, &mut |p_perm| {
+                        sigma.clear();
+                        // Round 0: fixed first q-block, then p-block at p_perm[0]
+                        q_selection[0].push_to(&mut sigma);
+                        p_selection[p_perm[0]].push_to(&mut sigma);
+                        // Rounds 1..k: permuted q-blocks, permuted p-blocks
+                        for round in 1..k {
+                            // q_rest_perm maps {0..k-2} -> {0..k-2}, representing indices 1..k
+                            q_selection[1 + q_rest_perm[round - 1]].push_to(&mut sigma);
+                            p_selection[p_perm[round]].push_to(&mut sigma);
+                        }
+                        callback(&sigma);
+                    });
                 });
-            });
-        }
-    }
+            }
+        });
+    });
 }
 
-/// Select `k` non-overlapping blocks from `blocks`.
-///
-/// Returns all combinations of k blocks where no two share a facet index.
-fn select_non_overlapping(blocks: &[Block], k: usize) -> Vec<Vec<Block>> {
-    let mut result = Vec::new();
-    let mut selection = Vec::with_capacity(k);
-    select_non_overlapping_rec(blocks, k, 0, &mut selection, &mut result);
-    result
+/// Lazily enumerate k non-overlapping blocks via callback.
+/// `selection` is a reusable buffer (passed in to avoid allocation).
+fn for_each_non_overlapping(
+    blocks: &[Block],
+    k: usize,
+    selection: &mut Vec<Block>,
+    callback: &mut impl FnMut(&[Block]),
+) {
+    selection.clear();
+    non_overlapping_rec(blocks, k, 0, selection, callback);
 }
 
-fn select_non_overlapping_rec(
+fn non_overlapping_rec(
     blocks: &[Block],
     k: usize,
     start: usize,
     selection: &mut Vec<Block>,
-    result: &mut Vec<Vec<Block>>,
+    callback: &mut impl FnMut(&[Block]),
 ) {
     if selection.len() == k {
-        result.push(selection.clone());
+        callback(selection);
         return;
     }
 
@@ -141,19 +170,17 @@ fn select_non_overlapping_rec(
     }
 
     for i in start..blocks.len() {
-        // Check no overlap with already-selected blocks
-        if selection.iter().any(|s| blocks_overlap(s, &blocks[i])) {
+        if selection.iter().any(|s| s.overlaps(&blocks[i])) {
             continue;
         }
-        selection.push(blocks[i].clone());
-        select_non_overlapping_rec(blocks, k, i + 1, selection, result);
+        selection.push(blocks[i]);
+        non_overlapping_rec(blocks, k, i + 1, selection, callback);
         selection.pop();
     }
 }
 
 /// Generate all permutations of {0, ..., n-1} by Heap's algorithm.
 fn for_each_permutation(n: usize, buf: &mut [usize], callback: &mut impl FnMut(&[usize])) {
-    // Initialize identity permutation
     for (i, slot) in buf.iter_mut().enumerate().take(n) {
         *slot = i;
     }
