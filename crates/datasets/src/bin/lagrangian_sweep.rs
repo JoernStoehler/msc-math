@@ -26,8 +26,8 @@ struct SweepRow {
     n1: usize,
     /// Number of sides of p-factor polygon
     n2: usize,
-    /// Rotation angle of p-factor (degrees)
-    angle_deg: f64,
+    /// Rotation angle of p-factor (degrees); None for random products
+    angle_deg: Option<f64>,
     facet_count: usize,
     volume: f64,
     capacity: f64,
@@ -121,7 +121,7 @@ fn cmd_pentagon_sweep(writer: &mut BufWriter<File>) {
             family: "pentagon_sweep".to_string(),
             n1: 5,
             n2: 5,
-            angle_deg,
+            angle_deg: Some(angle_deg),
             facet_count: 10,
             volume: vol,
             capacity: cap,
@@ -198,7 +198,7 @@ fn cmd_polygon_grid(writer: &mut BufWriter<File>) {
                     family: "polygon_grid".to_string(),
                     n1,
                     n2,
-                    angle_deg,
+                    angle_deg: Some(angle_deg),
                     facet_count: total_facets,
                     volume: vol,
                     capacity: cap,
@@ -275,7 +275,7 @@ fn cmd_random_products(writer: &mut BufWriter<File>) {
             family: "random_product".to_string(),
             n1,
             n2,
-            angle_deg: f64::NAN, // not applicable for random polygons
+            angle_deg: None,
             facet_count: n1 + n2,
             volume: vol,
             capacity: cap,

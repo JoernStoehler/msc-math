@@ -306,7 +306,7 @@ mod investigation {
         unbounded_disagree: usize,
         qhull_false_negative: usize, // qhull accepted unbounded
         qhull_false_positive: usize,  // qhull rejected bounded
-        check_bounded_bugs: usize,    // check_bounded() wrong
+        _check_bounded_bugs: usize,    // check_bounded() wrong
     }
 
     /// Cross-check qhull vs check_bounded() on random test cases.
@@ -327,7 +327,7 @@ mod investigation {
             unbounded_disagree: 0,
             qhull_false_negative: 0,
             qhull_false_positive: 0,
-            check_bounded_bugs: 0,
+            _check_bounded_bugs: 0,
         };
 
         // Test bounded polytopes (500 cases)
