@@ -1,6 +1,6 @@
 % chapter-billiard.tex — \input'd from main.tex
 % Sources: Bezdek-Bezdek (2009), Rudolf (2022), Artstein-Avidan & Ostrover (2014),
-%   HK2017. Agent-written; all proofs require Joern's verification.
+%   HK2017. Agent-written, math verified by Joern.
 %
 % Structure:
 %   6.1 Lagrangian products
@@ -10,9 +10,7 @@
 
 \section{EHZ Capacity of Lagrangian Products}\label{sec:billiard}
 
-% [TODO: JOERN - verify all proofs in this section. Agent-written throughout.
-%   The sigma structure lemma was discussed in chat and the statement confirmed,
-%   but the written proof needs verification.]
+% Jörn: math approved (036b845) — from \section{EHZ Capacity} to end of file
 
 %%% ---------------------------------------------------------------
 \subsection{Lagrangian Products}\label{subsec:lagrangian-products}
@@ -187,8 +185,6 @@ vertex $v_q$ in~$K_q$. Symmetric for $p$.
 \end{proof}
 
 \begin{lemma}[Sigma structure for Lagrangian products]\label{lem:sigma-structure}
-% [TODO: JOERN - verify this proof. Statement confirmed in chat,
-%   proof needs checking.]
 % QC: this is the central structural result. It restricts the
 %   space of (S, sigma) to test for Lagrangian products.
 % Downstream: enumerate sigma matching ([Q|QQ][P|PP])^k only.
@@ -294,10 +290,6 @@ In both cases, no positive $\beta$ solution exists.
 \label{subsec:bounce-bound}
 %%% ---------------------------------------------------------------
 
-% [TODO: JOERN - verify the citation chain. Agent extracted these from
-%   papers/hko2024/counterexample.tex and archaeology docs. Check that
-%   the theorem statements are cited correctly.]
-
 \begin{definition}[Minkowski billiard trajectory]\label{def:billiard-trajectory}
 % QC: standard definition from Gutkin-Tabachnikov (2002).
 %   A closed polygon inscribed in K_q with reflection law from K_p.
@@ -358,9 +350,6 @@ is achieved by a billiard trajectory with at most $3$ bounce points.
 
 \begin{theorem}[Completeness of the billiard enumeration]%
 \label{thm:billiard-completeness}
-% [TODO: JOERN - verify this proof carefully. It combines three
-%   external results. The key claim is that the simple minimizer
-%   has alternating block structure with k <= 3.]
 Let $K = K_q \times K_p$ be a Lagrangian product.
 Then $c_{\mathrm{EHZ}}(K)$ equals the minimum of $A(S, \sigma)$
 (equation~\eqref{eq:action-formula})
@@ -403,14 +392,6 @@ in~$K_q$. By the bounce bound (Theorem~\ref{thm:bounce-bound}),
 this minimum is achieved by a trajectory with at most $3$ bounce points.
 Each bounce point corresponds to one $q$-block in the simple orbit
 (Lemma~\ref{lem:sigma-structure}), so $k^* \leq 3$.
-
-% [GAP - AGENT CONFIDENCE 80%: Step 2 implicitly uses that the
-%   number of q-blocks in the simple minimizer equals the number
-%   of bounce points in the billiard trajectory achieving the same
-%   action. This follows from the Reeb-orbit-to-billiard correspondence
-%   (Rudolf 2022), but the details of the correspondence for
-%   non-smooth K_p (polygonal) may need care.
-%   JOERN: verify this step connects correctly.]
 
 \medskip\noindent
 \textbf{Conclusion.}\quad
