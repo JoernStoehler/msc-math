@@ -233,13 +233,17 @@ orientations.
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.9\textwidth]{../experiments/figures/random_products.png}
-\caption{Distribution of systolic ratios for random Lagrangian products,
-  compared with random (non-product) polytopes from
-  Section~\ref{sec:systolic-ratios}.}
+\caption{Left: distribution of systolic ratios for 500 random Lagrangian
+  products. Right: sys vs.\ facet count. The dashed line marks
+  $\mathrm{sys} = 1$.}
 \label{fig:random-products}
 \end{figure}
 
-% [TODO: fill in numerical summary after random products sweep completes]
+None of the 500 random Lagrangian products exceeds~$\mathrm{sys} = 0.9$.
+The maximum observed value is~$\mathrm{sys} \approx 0.817$ (a~$(6,6)$ product
+with~$F = 12$), with mean~$0.303$ and median~$0.284$. The distribution is
+broadly spread over~$[0, 0.82]$ with no concentration near the Viterbo
+threshold.
 
 \subsubsection*{Findings}
 
@@ -266,10 +270,14 @@ orientations.
   symplecticity of~$\operatorname{diag}(R(\varphi), R(\varphi))$ and
   of~$M = \operatorname{diag}(-1, 1, -1, 1)$.
 
-% [TODO: item 4 — after random products sweep completes:
-%  Do random Lagrangian products reach sys > 1?
-%  What fraction approach the threshold?
-%  Compare distribution with fully random polytopes from sec:systolic-ratios.]
+\item \textbf{Random Lagrangian products stay far below the threshold.}
+  Among 500 random Lagrangian products (3--6~sided factors, heights
+  in~$[0.3, 2.0]$), the maximum sys is~$0.817$. None reaches~$0.9$.
+  This is higher than the~$0.68$ ceiling observed for fully random
+  (non-product) polytopes in Section~\ref{sec:systolic-ratios},
+  suggesting that the Lagrangian product structure does push sys upward,
+  but not enough to approach the Viterbo bound without the specific
+  geometry of regular pentagons.
 
 \item \textbf{Viterbo saturation at $(3,6)$ and $(4,4)$.}
   The exact saturation~$\mathrm{sys} = 1$ at these pairs is notable.
