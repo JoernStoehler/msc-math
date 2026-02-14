@@ -27,6 +27,9 @@ experiments/figures/*
 !experiments/figures/.gitkeep
 experiments/viz/data/
 
+# Node (Playwright screenshots, dev tooling)
+node_modules/
+
 # Editor
 .vscode/
 *.swp

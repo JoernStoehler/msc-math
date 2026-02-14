@@ -1,4 +1,4 @@
-// viz.js — Three.js scene for 4D polytope visualization
+// viz.js — Three.js scene for 4D polytope visualization (light theme)
 
 // ---- State ----
 let scene, camera, renderer, controls;
@@ -7,8 +7,7 @@ let northPole = normalize4([0, 0, 0, 1]);
 let orthoBasis = buildOrthoBasis(northPole);
 const MAX_RADIUS = 30;
 const EDGE_SAMPLES = 96;
-const RIDGE_BOUNDARY_SAMPLES = 48;
-const RIDGE_INTERIOR_SUBDIVISIONS = 8; // grid subdivision per edge for interior sampling
+const RIDGE_INTERIOR_SUBDIVISIONS = 8;
 const TRAJ_SAMPLES = 96;
 
 // Display toggles
@@ -21,17 +20,18 @@ let selectedTrajectory = -1; // -1 = all
 // Scene groups
 let edgeGroup, ridgeGroup, vertexGroup, trajectoryGroup;
 
-// Color palette for facets
+// Color palette for facets — tuned for white background.
+// Medium saturation, moderate lightness for good contrast without harshness.
 function facetColor(facetIndex, totalFacets) {
     const hue = facetIndex / totalFacets;
-    return new THREE.Color().setHSL(hue, 0.7, 0.55);
+    return new THREE.Color().setHSL(hue, 0.65, 0.42);
 }
 
 // ---- Initialization ----
 
 function init() {
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x0d1117);
+    scene.background = new THREE.Color(0xffffff);
 
     camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.01, 500);
     camera.position.set(4, 3, 5);
@@ -45,20 +45,17 @@ function init() {
     controls.enableDamping = true;
     controls.dampingFactor = 0.08;
 
-    // Lighting — stronger for better surface shading
-    scene.add(new THREE.AmbientLight(0x404060, 1.0));
-    const dir1 = new THREE.DirectionalLight(0xffffff, 1.2);
+    // Lighting — tuned for white background, softer ambient
+    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+    const dir1 = new THREE.DirectionalLight(0xffffff, 0.8);
     dir1.position.set(5, 8, 5);
     scene.add(dir1);
-    const dir2 = new THREE.DirectionalLight(0x6688cc, 0.6);
+    const dir2 = new THREE.DirectionalLight(0x8899bb, 0.4);
     dir2.position.set(-3, -2, -5);
     scene.add(dir2);
-    const dir3 = new THREE.DirectionalLight(0xcc8866, 0.3);
+    const dir3 = new THREE.DirectionalLight(0xbb9988, 0.2);
     dir3.position.set(0, -5, 3);
     scene.add(dir3);
-
-    // No axes helper — the R³ axes have no geometric meaning
-    // (they are just the Gram-Schmidt orthobasis ⊥ north pole)
 
     // Groups
     edgeGroup = new THREE.Group();
@@ -94,7 +91,6 @@ function loadPolytope(name) {
         })
         .then(data => {
             polytopeData = data;
-            // Reset trajectory selector
             selectedTrajectory = -1;
             updateTrajectorySlider();
             rebuildScene();
@@ -137,12 +133,14 @@ function rebuildScene() {
 
     // ---- Vertices ----
     if (showVertices) {
-        const sphereGeom = new THREE.SphereGeometry(0.04, 12, 12);
+        const sphereGeom = new THREE.SphereGeometry(0.05, 14, 14);
         for (let i = 0; i < projVerts.length; i++) {
             const p = projVerts[i];
-            // Color by first incident facet
             const fc = d.vertex_facets[i][0] || 0;
-            const mat = new THREE.MeshPhongMaterial({ color: facetColor(fc, d.facet_count) });
+            const mat = new THREE.MeshPhongMaterial({
+                color: facetColor(fc, d.facet_count),
+                shininess: 40,
+            });
             const mesh = new THREE.Mesh(sphereGeom, mat);
             mesh.position.set(p[0], p[1], p[2]);
             vertexGroup.add(mesh);
@@ -162,7 +160,6 @@ function rebuildScene() {
             const geom = new THREE.BufferGeometry();
             geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
 
-            // Color by shared facets
             const sharedFacets = d.vertex_facets[vi].filter(f => d.vertex_facets[vj].includes(f));
             const color = facetColor(sharedFacets[0] || 0, d.facet_count);
 
@@ -170,13 +167,13 @@ function rebuildScene() {
                 color: color,
                 linewidth: 1,
                 transparent: true,
-                opacity: 0.6,
+                opacity: 0.7,
             });
             edgeGroup.add(new THREE.Line(geom, mat));
         }
     }
 
-    // ---- Ridges (2-faces as curved surfaces with interior sampling) ----
+    // ---- Ridges (2-faces) ----
     if (showRidges) {
         for (const ridge of d.ridges) {
             renderRidge(ridge, d);
@@ -198,9 +195,7 @@ function rebuildScene() {
 
 /**
  * Render a single ridge (2-face) as a curved surface.
- *
- * Sampling is done on S³ (via slerp) for uniform angular spacing,
- * then stereographically projected to R³.
+ * Sampling on S³ via slerp for uniform angular spacing.
  */
 function renderRidge(ridge, d) {
     const verts = ridge.vertices;
@@ -219,7 +214,6 @@ function renderRidge(ridge, d) {
             color, N
         );
     } else {
-        // General polygon: split into triangles from centroid in R⁴
         const centroid4 = [0, 0, 0, 0];
         for (const vi of verts) {
             for (let k = 0; k < 4; k++) centroid4[k] += d.vertices[vi][k];
@@ -233,9 +227,6 @@ function renderRidge(ridge, d) {
     }
 }
 
-/**
- * Render a triangular patch. Grid is sampled on S³ via slerp.
- */
 function renderTriangleRidge(a4, b4, c4, color, N) {
     const gridPoints = projectTriangleGrid(a4, b4, c4, N, northPole, orthoBasis, MAX_RADIUS);
 
@@ -267,33 +258,9 @@ function renderTriangleRidge(a4, b4, c4, color, N) {
     }
 
     if (positions.length === 0) return;
-
-    const geom = new THREE.BufferGeometry();
-    geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-    geom.computeVertexNormals();
-
-    const mat = new THREE.MeshPhongMaterial({
-        color: color,
-        transparent: true,
-        opacity: 0.25,
-        side: THREE.DoubleSide,
-        depthWrite: false,
-        shininess: 30,
-    });
-    ridgeGroup.add(new THREE.Mesh(geom, mat));
-
-    const wireMat = new THREE.MeshBasicMaterial({
-        color: color,
-        transparent: true,
-        opacity: 0.08,
-        wireframe: true,
-    });
-    ridgeGroup.add(new THREE.Mesh(geom.clone(), wireMat));
+    addRidgeMesh(positions, color);
 }
 
-/**
- * Render a quad patch. Grid is sampled on S³ via slerp.
- */
 function renderQuadRidge(a4, b4, c4, d4, color, N) {
     const gridPoints = projectQuadGrid(a4, b4, c4, d4, N, northPole, orthoBasis, MAX_RADIUS);
 
@@ -315,24 +282,30 @@ function renderQuadRidge(a4, b4, c4, d4, color, N) {
         }
     }
 
+    addRidgeMesh(positions, color);
+}
+
+function addRidgeMesh(positions, color) {
     const geom = new THREE.BufferGeometry();
     geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
     geom.computeVertexNormals();
 
+    // Tinted fill
     const mat = new THREE.MeshPhongMaterial({
         color: color,
         transparent: true,
-        opacity: 0.25,
+        opacity: 0.18,
         side: THREE.DoubleSide,
         depthWrite: false,
-        shininess: 30,
+        shininess: 20,
     });
     ridgeGroup.add(new THREE.Mesh(geom, mat));
 
+    // Wireframe overlay — subtle on white
     const wireMat = new THREE.MeshBasicMaterial({
         color: color,
         transparent: true,
-        opacity: 0.08,
+        opacity: 0.12,
         wireframe: true,
     });
     ridgeGroup.add(new THREE.Mesh(geom.clone(), wireMat));
@@ -352,7 +325,6 @@ function renderTrajectory(traj, trajIndex, totalTrajectories) {
         const geom = new THREE.BufferGeometry();
         geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
 
-        // Color by facet
         const color = facetColor(seg.facet, d.facet_count);
         const mat = new THREE.LineBasicMaterial({
             color: color,
@@ -361,7 +333,7 @@ function renderTrajectory(traj, trajIndex, totalTrajectories) {
         trajectoryGroup.add(new THREE.Line(geom, mat));
     }
 
-    // Add small arrow at the start to show direction
+    // Direction arrow — dark on white background
     if (traj.segments.length > 0) {
         const seg = traj.segments[0];
         const startPt = fullProject(seg.start, northPole, orthoBasis, MAX_RADIUS);
@@ -384,7 +356,7 @@ function renderTrajectory(traj, trajIndex, totalTrajectories) {
                 dir,
                 new THREE.Vector3(startPt[0], startPt[1], startPt[2]),
                 Math.min(len * 2, 0.3),
-                0xffffff,
+                0x24292f,
                 0.08,
                 0.04
             );
@@ -434,16 +406,11 @@ function updateTrajLabel() {
     }
 }
 
-function setProjectionMode(mode) {
-    // Currently only stereographic is supported
-}
-
 function updateNorthPole() {
     const phi = parseFloat(document.getElementById('north-phi').value);
     const theta = parseFloat(document.getElementById('north-theta').value);
     const psi = parseFloat(document.getElementById('north-psi').value);
 
-    // Hopf-like parameterization of S³
     northPole = normalize4([
         Math.sin(phi) * Math.cos(theta),
         Math.sin(phi) * Math.sin(theta),
@@ -453,7 +420,6 @@ function updateNorthPole() {
 
     orthoBasis = buildOrthoBasis(northPole);
 
-    // Update display
     const poleStr = `(${northPole[0].toFixed(2)}, ${northPole[1].toFixed(2)}, ${northPole[2].toFixed(2)}, ${northPole[3].toFixed(2)})`;
     document.getElementById('pole-display').textContent = poleStr;
 
@@ -503,7 +469,6 @@ function onPolytopeChange(name) {
 function onTrajectoryChange(value) {
     selectedTrajectory = parseInt(value);
     updateTrajLabel();
-    // Only rebuild trajectory group (not the whole scene)
     clearGroup(trajectoryGroup);
     if (showTrajectories && polytopeData && polytopeData.trajectories.length > 0) {
         const trajIndices = selectedTrajectory === -1
@@ -530,27 +495,4 @@ function resetCamera() {
     camera.position.set(4, 3, 5);
     camera.lookAt(0, 0, 0);
     controls.reset();
-}
-
-let darkMode = true;
-
-function toggleTheme() {
-    darkMode = !darkMode;
-    if (darkMode) {
-        scene.background = new THREE.Color(0x0d1117);
-        document.body.style.background = '#0d1117';
-        document.body.style.color = '#c9d1d9';
-        document.getElementById('controls').style.background = 'rgba(22, 27, 34, 0.92)';
-        document.getElementById('controls').style.borderColor = '#30363d';
-        document.getElementById('info').style.background = 'rgba(22, 27, 34, 0.92)';
-        document.getElementById('info').style.borderColor = '#30363d';
-    } else {
-        scene.background = new THREE.Color(0xffffff);
-        document.body.style.background = '#ffffff';
-        document.body.style.color = '#24292f';
-        document.getElementById('controls').style.background = 'rgba(255, 255, 255, 0.92)';
-        document.getElementById('controls').style.borderColor = '#d0d7de';
-        document.getElementById('info').style.background = 'rgba(255, 255, 255, 0.92)';
-        document.getElementById('info').style.borderColor = '#d0d7de';
-    }
 }
