@@ -1,0 +1,281 @@
+% lagrangian-products.tex — \input'd from experiments/experiments.tex
+%
+% Lagrangian products of rotated 2D polygons: systematic search for
+% Viterbo counterexamples in the space of Lagrangian products.
+%
+% Sources:
+%   - Generated data: experiments/data/{pentagon_sweep,polygon_grid,random_products}.jsonl
+%   - HK-O 2024 counterexample: Haim-Kislev & Ostrover, Annals 2024
+%   - Symmetry analysis: agent-written, Jörn-confirmed direction
+%
+% Structure:
+%   - Mathematical setup (Lagrangian products, rotation parameter)
+%   - Symmetry lemma (fundamental domain)
+%   - Pentagon rotation curve (Family 1)
+%   - Regular polygon grid (Family 2)
+%   - Random Lagrangian products (Family 3)
+%   - Findings
+
+\subsection{Lagrangian Products of Rotated Polygons}
+\label{sec:lagrangian-products}
+
+The only known 4D counterexample to Viterbo's conjecture is a Lagrangian
+product of two pentagons (Haim-Kislev \& Ostrover 2024). Random 4-polytopes
+(Section~\ref{sec:systolic-ratios}) never exceeded~$\mathrm{sys} = 0.68$, far
+below the Viterbo threshold. We probe the conjecture by searching
+systematically in the space of Lagrangian products, where counterexamples are
+known to exist.
+
+\subsubsection*{Mathematical setup}
+
+\begin{definition}[Lagrangian product]
+\label{def:lagrangian-product}
+Let~$P \subset \mathbb{R}^2_{q}$ and~$Q \subset \mathbb{R}^2_{p}$ be convex
+polygons containing the origin. Their \emph{Lagrangian product} is
+\[
+  P \times_L Q
+  \;=\; \bigl\{\, (q, p) \in \mathbb{R}^4 \;\big|\; q \in P,\; p \in Q \,\bigr\}
+  \;\subset\; \mathbb{R}^4.
+\]
+The subspaces~$\mathbb{R}^2_q = \{(q_1, q_2, 0, 0)\}$
+and~$\mathbb{R}^2_p = \{(0, 0, p_1, p_2)\}$ are both Lagrangian with respect
+to~$\omega_0$.
+\end{definition}
+
+The 4-volume satisfies~$\operatorname{vol}_4(P \times_L Q)
+= \operatorname{area}(P) \cdot \operatorname{area}(Q)$ (Fubini's theorem on
+complementary subspaces).
+
+\paragraph{Rotation parameter.}
+Fix a polygon~$P$ in $q$-space. For an angle~$\theta$, let~$R(\theta)$ denote
+the standard rotation in~$\mathbb{R}^2$ and
+define~$Q_\theta = R(\theta)\,Q$. We study the one-parameter family
+\[
+  K_\theta \;=\; P \times_L Q_\theta.
+\]
+Since rotating both factors by the same angle~$\varphi$ is a symplectic
+transformation~$\operatorname{diag}(R(\varphi), R(\varphi)) \in \mathrm{Sp}(4)$,
+only the \emph{relative} rotation between the factors affects~$\mathrm{sys}$.
+
+\begin{lemma}[Fundamental domain for rotation sweeps]
+\label{lem:rotation-fundamental-domain}
+Let~$P$ be a regular $n$-gon and~$Q$ a regular $m$-gon, both centered at the
+origin. Then~$\mathrm{sys}(P \times_L Q_\theta)$ depends on~$\theta$ only
+through its equivalence class in~$[0, \pi/\operatorname{lcm}(n,m)]$.
+\end{lemma}
+
+\begin{proof}
+\emph{Periodicity.}
+The block-diagonal matrix~$M_\varphi = \operatorname{diag}(R(\varphi),
+R(\varphi))$ is symplectic (direct verification:~$M_\varphi^T J_0 M_\varphi
+= J_0$). Applying~$M_{2\pi/n}$ to~$P \times_L Q_\theta$ maps~$P$ to itself
+(by $n$-fold rotational symmetry) and replaces~$Q_\theta$
+with~$Q_{\theta + 2\pi/n}$. Similarly, the $m$-fold symmetry of~$Q$ gives
+$Q_\theta = Q_{\theta + 2\pi/m}$. The combined periodicity
+is~$2\pi/\operatorname{lcm}(n,m)$.
+
+\emph{Mirror symmetry.}
+The matrix~$M = \operatorname{diag}(-1, 1, -1, 1)$ is symplectic
+(verification:~$M^T J_0 M = J_0$). It acts on~$\mathbb{R}^2_q$ as reflection
+across the~$q_2$-axis and on~$\mathbb{R}^2_p$ as reflection across
+the~$p_2$-axis. For our angle convention (normals starting at~$\pi/2$), both
+regular polygons are invariant under these reflections, and~$M$
+maps~$Q_\theta$ to~$Q_{-\theta}$.
+
+Together: $\mathrm{sys}(\theta)$ has period~$2\pi/\operatorname{lcm}(n,m)$ and
+satisfies~$\mathrm{sys}(\theta) = \mathrm{sys}(-\theta)$, so the fundamental
+domain is~$[0, \pi/\operatorname{lcm}(n,m)]$.
+\end{proof}
+
+\begin{remark}
+For pentagon~$\times$~pentagon:
+$\operatorname{lcm}(5,5)=5$, fundamental
+domain~$[0^\circ, 36^\circ]$. The HK-O counterexample at~$90^\circ$
+maps to~$90 \bmod 72 = 18^\circ$ in this domain.
+\end{remark}
+
+% Factor swap: N = -J_0 is symplectic, maps P x_L Q to Q x_L (-P).
+% For centrally symmetric polygons, swapping factors preserves sys.
+% For odd polygons, -P = R(π)P so the swap also rotates one factor by 180°.
+% (Jörn verified 2025-02-14.)
+
+\subsubsection*{Family 1: Pentagon rotation curve}
+
+We sweep~$\theta \in [0^\circ, 90^\circ]$ at~$0.25^\circ$ resolution (361
+points) for the family~$\mathrm{Pentagon} \times_L R(\theta)\,\mathrm{Pentagon}$,
+where each pentagon is regular with circumradius~1 (since~$\mathrm{sys}$ is
+scale-invariant---$c_{\mathrm{EHZ}}$ is 2-homogeneous and volume is
+4-homogeneous---the choice of circumradius does not affect~$\mathrm{sys}$).
+We compute~$c_{\mathrm{EHZ}}$ using the algorithm of
+Haim-Kislev~(2017).
+Each capacity computation takes approximately~2.5\,s (10 facets).
+
+Figure~\ref{fig:pentagon-sweep} shows the resulting curve. The systolic ratio
+oscillates between~$0.9472$ and~$1.0472$ with period~$72^\circ$, confirming the
+fundamental domain prediction of Lemma~\ref{lem:rotation-fundamental-domain}
+($\pi/\operatorname{lcm}(5,5) = 36^\circ$, period~$72^\circ$). The mirror
+symmetry~$\mathrm{sys}(\theta) = \mathrm{sys}(-\theta)$ holds to machine
+precision ($< 10^{-14}$), with the curve symmetric around~$\theta = 18^\circ$
+within each period.
+
+The maximum~$\mathrm{sys} \approx 1.0472$ occurs at~$\theta \equiv 18^\circ
+\pmod{72^\circ}$ (equivalently~$\theta = 90^\circ$, the HK-O
+angle). The minimum~$\mathrm{sys} \approx 0.9472$ occurs
+at~$\theta \equiv 0^\circ \pmod{72^\circ}$ (aligned pentagons). The violation
+region~$\mathrm{sys} > 1$ spans approximately~$\theta \in (13.5^\circ,
+22.5^\circ)$ within each fundamental domain---about~$25\%$ of the period.
+
+Since rotation preserves area,
+$\operatorname{area}(Q_\theta) = \operatorname{area}(Q)$ for
+all~$\theta$, and Fubini gives
+$\operatorname{vol}(K_\theta) = \operatorname{area}(P) \cdot
+\operatorname{area}(Q)$, all variation in~$\mathrm{sys}$ comes from the
+EHZ capacity.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{../experiments/figures/pentagon_sweep.png}
+\caption{Systolic ratio of $\mathrm{Pentagon} \times_L R(\theta)\,
+  \mathrm{Pentagon}$ as a function of rotation angle~$\theta$. The red
+  dashed line marks $\mathrm{sys} = 1$ (Viterbo threshold). Vertical grey
+  lines mark~$\pi/5$ and~$2\pi/5$, the period boundaries.}
+\label{fig:pentagon-sweep}
+\end{figure}
+
+\subsubsection*{Family 2: Regular polygon pairs}
+
+We sweep the rotation angle for all pairs~$(n, m)$ with~$3 \le n \le m$
+and~$n + m \le 12$, sweeping~$\theta$ over the fundamental domain
+$[0, \pi/\operatorname{lcm}(n,m)]$ at adaptive resolution (360 points for
+$F \le 8$, down to~30 for $F = 12$).
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{../experiments/figures/polygon_grid.png}
+\caption{Systolic ratio curves for regular $n$-gon $\times_L$ $R(\theta)$
+  $m$-gon, for all pairs with $n + m \le 12$.}
+\label{fig:polygon-grid}
+\end{figure}
+
+Table~\ref{tab:polygon-grid} summarizes the results. Three pairs reach or
+exceed the Viterbo threshold:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{cc c cc c}
+\hline
+$n$ & $m$ & $F$ & $\max\,\mathrm{sys}$ & $\theta_{\max}$ & status \\
+\hline
+3 & 3 &  6 & 0.667 & $60.0^\circ$ & below \\
+3 & 4 &  7 & 0.928 & $15.0^\circ$ & below \\
+3 & 5 &  8 & 0.797 &  $0.0^\circ$ & below \\
+3 & 6 &  9 & 1.000 &  $0.0^\circ$ & \textbf{saturates} \\
+4 & 4 &  8 & 1.000 & $45.0^\circ$ & \textbf{saturates} \\
+4 & 5 &  9 & 0.705 &  $9.0^\circ$ & below \\
+4 & 6 & 10 & 0.619 & $15.0^\circ$ & below \\
+5 & 5 & 10 & 1.047 & $18.0^\circ$ & \textbf{exceeds} \\
+5 & 6 & 11 & 0.803 &  $6.0^\circ$ & below \\
+6 & 6 & 12 & 0.889 & $30.0^\circ$ & below \\
+\hline
+\end{tabular}
+\caption{Maximum systolic ratio for each regular polygon pair $(n, m)$
+  with~$n + m \le 12$, optimized over the rotation angle~$\theta$.}
+\label{tab:polygon-grid}
+\end{table}
+
+\begin{itemize}
+\item \textbf{$(4,4)$ at $\theta = 45^\circ$}: Two squares with relative
+  rotation~$45^\circ$. The capacity satisfies~$c_{\mathrm{EHZ}} = 2\sqrt{2}$
+  with~$\operatorname{vol} = 4$, giving~$\mathrm{sys} = 8/8 = 1$ exactly.
+  This body has 8~facets and is distinct from both the cross-polytope
+  (16~facets) and the hypercube (which is the \emph{unrotated}
+  product~$(4,4)$ at~$\theta = 0^\circ$ with~$\mathrm{sys} = 0.5$).
+
+\item \textbf{$(3,6)$ at $\theta = 0^\circ$}: Triangle $\times_L$ hexagon
+  (aligned). The capacity satisfies~$c_{\mathrm{EHZ}} = \tfrac{3\sqrt{3}}{2}$
+  with~$\operatorname{vol} = \tfrac{27}{8}$,
+  giving~$\mathrm{sys} = \tfrac{27/4}{27/4} = 1$ exactly.
+  Balitskiy~(2020) characterizes which Lagrangian products
+  saturate~$\mathrm{sys} = 1$; Chaidez--Hutchings~(2021, \S1) cite the
+  triangle~$\times$~square as a previously known example (Schlenk,
+  Lem.~5.3.1).
+
+\item \textbf{$(5,5)$ at $\theta = 18^\circ$}: This reproduces the HK-O
+  counterexample ($\theta = 18^\circ \equiv 90^\circ \pmod{72^\circ}$)
+  with~$\mathrm{sys} \approx 1.0472$. It is the only pair that
+  exceeds~$\mathrm{sys} = 1$.
+\end{itemize}
+
+The remaining seven pairs all satisfy~$\mathrm{sys} < 1$ at every
+tested angle, with the highest non-saturating value
+being~$\mathrm{sys}((3,4)) \approx 0.928$.
+
+\subsubsection*{Family 3: Random Lagrangian products}
+
+We generate 500 random Lagrangian products by sampling random convex
+polygons (3--6 sides each, heights in~$[0.3, 2.0]$) and forming their
+Lagrangian product. The rotation between factors is implicit in the random
+orientations.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{../experiments/figures/random_products.png}
+\caption{Left: distribution of systolic ratios for 500 random Lagrangian
+  products. Right: sys vs.\ facet count. The dashed line marks
+  $\mathrm{sys} = 1$.}
+\label{fig:random-products}
+\end{figure}
+
+None of the 500 random Lagrangian products exceeds~$\mathrm{sys} = 0.9$.
+The maximum observed value is~$\mathrm{sys} \approx 0.817$ (a~$(6,6)$ product
+with~$F = 12$), with mean~$0.303$ and median~$0.284$. The distribution is
+broadly spread over~$[0, 0.82]$ with no concentration near the Viterbo
+threshold.
+
+\subsubsection*{Findings}
+
+\begin{enumerate}
+\item \textbf{Only pentagon $\times$ pentagon exceeds the Viterbo bound.}
+  Among all regular $(n,m)$-gon Lagrangian products with~$n + m \le 12$,
+  only the $(5,5)$ pair achieves~$\mathrm{sys} > 1$. The violation is
+  moderate:~$\mathrm{sys}_{\max} \approx 1.047$, about~$4.7\%$ above
+  the threshold. Two additional pairs---$(3,6)$ and~$(4,4)$---saturate
+  the bound at~$\mathrm{sys} = 1$ exactly (at specific angles), while
+  the remaining seven pairs satisfy~$\mathrm{sys} < 1$ at all angles.
+  We restricted to~$n + m \le 12$ due to the exponential cost of the
+  HK2017 algorithm; whether other polygon pairs violate the bound
+  remains open.
+
+\item \textbf{The violation region is narrow.}
+  For pentagon~$\times$~pentagon, the Viterbo-violating angles occupy only
+  about~$25\%$ of each fundamental domain ($9^\circ$ out of~$36^\circ$).
+  The curve has small amplitude ($\approx 0.10$) relative to its mean
+  ($\approx 0.997$), suggesting that the EHZ capacity varies only mildly
+  with rotation.
+
+\item \textbf{All predicted symmetries hold.}
+  The~$72^\circ$ periodicity and mirror symmetry predicted by
+  Lemma~\ref{lem:rotation-fundamental-domain} are confirmed to machine
+  precision ($< 10^{-14}$) in the pentagon sweep, validating both the
+  symplecticity of~$\operatorname{diag}(R(\varphi), R(\varphi))$ and
+  of~$M = \operatorname{diag}(-1, 1, -1, 1)$.
+
+\item \textbf{Random Lagrangian products stay far below the threshold.}
+  Among 500 random Lagrangian products (3--6~sided factors, heights
+  in~$[0.3, 2.0]$), the maximum sys is~$0.817$. None reaches~$0.9$.
+  This is higher than the~$0.68$ ceiling observed for fully random
+  (non-product) polytopes in Section~\ref{sec:systolic-ratios},
+  suggesting that the Lagrangian product structure does push sys upward,
+  but not enough to approach the Viterbo bound without the specific
+  geometry of regular pentagons.
+
+\item \textbf{Viterbo saturation at $(3,6)$ and $(4,4)$.}
+  The exact saturation~$\mathrm{sys} = 1$ at these pairs is notable.
+  For~$(4,4)$ at~$45^\circ$, the body is a square~$\times_L$~rotated square
+  with~$c = 2\sqrt{2}$ and~$\operatorname{vol} = 4$; it is not the
+  cross-polytope (16 facets vs.\ 8) nor symplectomorphic to the hypercube
+  (which is~$(4,4)$ at~$\theta = 0^\circ$ with~$\mathrm{sys} = 0.5$).
+  For~$(3,6)$ at~$0^\circ$, Lagrangian products with~$\mathrm{sys} = 1$ have
+  been characterized by Balitskiy~(2020); Chaidez--Hutchings~(2021) note
+  the triangle~$\times$~square as a previously known example.
+\end{enumerate}

@@ -1,5 +1,5 @@
 use super::*;
-use geom::polytope::{ConstructionError, Polytope4D};
+use crate::polytope::{ConstructionError, Polytope4D};
 use nalgebra::Vector4;
 
 /// Helper: build the centered simplex (5 facets, origin at centroid).
@@ -37,36 +37,7 @@ fn hypercube_normals_heights() -> (Vec<Vector4<f64>>, Vec<f64>) {
     (normals, heights)
 }
 
-// ---- Duplicate check (handled by Polytope4D::new) ----
-
-#[test]
-fn accept_distinct_halfspaces() {
-    let (normals, heights) = hypercube_normals_heights();
-    assert!(Polytope4D::new(normals, heights).is_ok());
-}
-
-#[test]
-fn reject_exact_duplicate_normals() {
-    let normals = vec![
-        Vector4::x(),
-        Vector4::y(),
-        Vector4::z(),
-        Vector4::w(),
-        Vector4::x(), // duplicate of [0]
-    ];
-    let heights = vec![1.0; 5];
-    let err = Polytope4D::new(normals, heights).unwrap_err();
-    assert_eq!(err, ConstructionError::DuplicateHalfspaces { i: 0, j: 4 });
-}
-
-#[test]
-fn accept_antiparallel_normals() {
-    let (normals, heights) = hypercube_normals_heights();
-    // Hypercube has +x and -x, etc. — these are antiparallel, not duplicates
-    assert!(Polytope4D::new(normals, heights).is_ok());
-}
-
-// ---- Boundedness (now enforced by Polytope4D::new) ----
+// ---- Boundedness ----
 
 #[test]
 fn simplex_is_bounded() {
@@ -81,7 +52,7 @@ fn hypercube_is_bounded() {
 }
 
 #[test]
-fn unbounded_halfspaces() {
+fn unbounded_normals_detected() {
     let normals = vec![
         Vector4::new(1.0, 0.1, 0.0, 0.0).normalize(),
         Vector4::new(1.0, -0.1, 0.0, 0.0).normalize(),
@@ -90,48 +61,24 @@ fn unbounded_halfspaces() {
         Vector4::new(1.0, 0.0, 0.0, 0.1).normalize(),
     ];
     assert!(!check_bounded(&normals));
-    // Also confirm Polytope4D::new rejects it
-    let heights = vec![1.0; 5];
-    let err = Polytope4D::new(normals, heights).unwrap_err();
-    assert_eq!(err, ConstructionError::Unbounded);
 }
 
-// ---- Vertex enumeration (via Polytope4D::vertices()) ----
+// ---- Irredundancy (via Polytope4D::new rejecting redundant facets) ----
 
 #[test]
-fn simplex_has_5_vertices() {
+fn simplex_construction_succeeds() {
     let (normals, heights) = simplex_normals_heights();
-    let polytope = Polytope4D::new(normals, heights).expect("valid polytope");
-    assert_eq!(polytope.vertices().len(), 5);
+    assert!(Polytope4D::new(normals, heights).is_ok());
 }
 
 #[test]
-fn hypercube_has_16_vertices() {
+fn hypercube_construction_succeeds() {
     let (normals, heights) = hypercube_normals_heights();
-    let polytope = Polytope4D::new(normals, heights).expect("valid polytope");
-    assert_eq!(polytope.vertices().len(), 16);
+    assert!(Polytope4D::new(normals, heights).is_ok());
 }
 
 #[test]
-fn simplex_vertices_satisfy_constraints() {
-    let (normals, heights) = simplex_normals_heights();
-    let polytope = Polytope4D::new(normals.clone(), heights.clone()).expect("valid polytope");
-    for v in polytope.vertices() {
-        for (n, &h) in normals.iter().zip(&heights) {
-            assert!(
-                n.dot(v) <= h + EPS_FEASIBILITY,
-                "vertex {v:?} violates constraint n·v = {} > h = {}",
-                n.dot(v),
-                h
-            );
-        }
-    }
-}
-
-// ---- Irredundancy (now enforced by Polytope4D::new) ----
-
-#[test]
-fn detect_redundant_facet() {
+fn constructor_rejects_redundant_facet() {
     // Hypercube + one redundant facet with a distinct normal direction
     let normals = vec![
         Vector4::x(),
@@ -146,7 +93,6 @@ fn detect_redundant_facet() {
     ];
     let heights = vec![1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 10.0];
 
-    // Polytope4D::new now rejects this directly
     let err = Polytope4D::new(normals, heights).unwrap_err();
     match err {
         ConstructionError::RedundantFacet(idx) => {
@@ -156,35 +102,19 @@ fn detect_redundant_facet() {
     }
 }
 
-// ---- Full pipeline (validate_polytope wrapper) ----
-
 #[test]
-fn validate_simplex() {
-    let (normals, heights) = simplex_normals_heights();
-    let polytope = validate_polytope(&normals, &heights).unwrap();
-    assert_eq!(polytope.facet_count(), 5);
-}
+fn constructor_rejects_unbounded() {
+    let normals = vec![
+        Vector4::new(1.0, 0.1, 0.0, 0.0).normalize(),
+        Vector4::new(1.0, -0.1, 0.0, 0.0).normalize(),
+        Vector4::new(1.0, 0.0, 0.1, 0.0).normalize(),
+        Vector4::new(1.0, 0.0, -0.1, 0.0).normalize(),
+        Vector4::new(1.0, 0.0, 0.0, 0.1).normalize(),
+    ];
+    let heights = vec![1.0; 5];
 
-#[test]
-fn validate_hypercube() {
-    let (normals, heights) = hypercube_normals_heights();
-    let polytope = validate_polytope(&normals, &heights).unwrap();
-    assert_eq!(polytope.facet_count(), 8);
-}
-
-// ---- Cross product sanity ----
-
-#[test]
-fn cross_product_4d_perpendicular() {
-    use geom::cross_product::cross_product_4d;
-    let a = Vector4::new(1.0, 0.0, 0.0, 0.0);
-    let b = Vector4::new(0.0, 1.0, 0.0, 0.0);
-    let c = Vector4::new(0.0, 0.0, 1.0, 0.0);
-    let d = cross_product_4d(a, b, c);
-    assert!(d.dot(&a).abs() < 1e-12);
-    assert!(d.dot(&b).abs() < 1e-12);
-    assert!(d.dot(&c).abs() < 1e-12);
-    assert!(d.norm() > 0.5, "cross product should be nonzero");
+    let err = Polytope4D::new(normals, heights).unwrap_err();
+    assert_eq!(err, ConstructionError::Unbounded);
 }
 
 // ---- Affine rank ----

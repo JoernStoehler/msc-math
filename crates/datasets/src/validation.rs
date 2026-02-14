@@ -1,16 +1,13 @@
-/// Polytope validation: checks whether (normals, heights) define a valid irredundant
-/// bounded convex polytope in R^4 with origin in its interior.
+/// Polytope validation: thin wrapper around `geom::validation` + `Polytope4D::new()`.
 ///
-/// # Validation pipeline
-///
-/// 1. Basic checks + duplicate detection: via `Polytope4D::new()`
-///    (lengths match, ≥5 facets, normals unit, heights > 0, no duplicate normals)
-/// 2. Boundedness: normals positively span R^4 (via triple kernel enumeration)
-/// 3. Irredundancy: each facet has incident vertices of affine rank 3
-///    (vertices already computed by `Polytope4D::new()`)
-use geom::cross_product::cross_product_4d;
+/// Since `Polytope4D::new()` now enforces all invariants (boundedness, irredundancy),
+/// `validate_polytope` is equivalent to constructing via `new()`. This module is
+/// retained for API compatibility and to re-export the error type.
 use geom::polytope::{ConstructionError, Polytope4D};
 use nalgebra::Vector4;
+
+// Re-export geom's validation utilities for tests that call them directly.
+pub use geom::validation::{affine_rank, check_bounded, find_redundant_facet, EPS_FEASIBILITY};
 
 /// Why validation failed.
 #[derive(Clone, Debug, PartialEq)]
@@ -32,195 +29,24 @@ impl std::fmt::Display for ValidationError {
 
 impl From<ConstructionError> for ValidationError {
     fn from(e: ConstructionError) -> Self {
-        Self::Construction(e)
+        match e {
+            ConstructionError::Unbounded => Self::Unbounded,
+            ConstructionError::RedundantFacet(i) => Self::RedundantFacet(i),
+            other => Self::Construction(other),
+        }
     }
 }
 
-/// Threshold for positive-span check: n_ℓ · d > EPS_UNIT means "has positive component."
-/// Matches the unit-normal tolerance in geom::polytope (1e-9).
-const EPS_UNIT: f64 = 1e-9;
-
-/// Tolerance for vertex-facet incidence: |n_i · v - h_i| < EPS_FEASIBILITY.
-/// Matches qhull's numerical precision for vertex coordinates.
-const EPS_FEASIBILITY: f64 = 1e-8;
-
 /// Full validation: returns a `Polytope4D` or an error explaining why the input
 /// does not define a valid irredundant bounded polytope.
+///
+/// Since `Polytope4D::new()` now enforces all invariants, this delegates directly.
 pub fn validate_polytope(
     normals: &[Vector4<f64>],
     heights: &[f64],
 ) -> Result<Polytope4D, ValidationError> {
-    // 1. Basic construction checks + duplicate detection + vertex enumeration
     let polytope = Polytope4D::new(normals.to_vec(), heights.to_vec())?;
-
-    // 2. Boundedness
-    check_bounded(normals)?;
-
-    // 3. Irredundancy (uses precomputed vertices)
-    check_irredundant(normals, heights, polytope.vertices())?;
-
     Ok(polytope)
-}
-
-/// Check that the normals positively span R^4, i.e., the polytope is bounded.
-///
-/// # Mathematical Background
-///
-/// **Proposition.** Let K = {x : Ax ≤ h} where A has rows n_1, …, n_F and h_ℓ > 0
-/// for all ℓ (so 0 ∈ int K). Then K is bounded if and only if the normals span ℝ⁴
-/// and, for every triple (i,j,k) whose normals have a 1-dimensional kernel
-/// direction d, some normal has positive inner product with d and some has negative.
-///
-/// *Proof.* The recession cone rec(K) = {d : Ad ≤ 0} satisfies rec(K) ⊂ K (since
-/// 0 ∈ K); conversely, if K is unbounded it contains a ray, forcing some nonzero
-/// d ∈ rec(K). So K bounded ⟺ rec(K) = {0} ⟺ normals positively span ℝ⁴, where
-/// "positively span" means: for every nonzero d, some n_ℓ · d > 0.
-///
-/// (⇒) Positive span → (i) and (ii): span ℝ⁴ is a fortiori. For (ii), kernel
-/// directions are nonzero, so positive span gives a blocking normal outside the triple.
-///
-/// (⇐) Contrapositive: if rec(K) ≠ {0} but normals span ℝ⁴, some triple fails.
-/// Pick d ∈ rec(K) (unit) maximizing |S₀| where S₀ = {ℓ : n_ℓ · d = 0}. If the
-/// normals in S₀ have < 3 independent, their span⊥ W has dim ≥ 2 and contains d.
-/// Pick v ∈ W not ∥ d. Then n_ℓ · (d+tv) = 0 for ℓ ∈ S₀ and n_ℓ · (d+tv) < 0
-/// for ℓ ∉ S₀ (small |t|). The interval T = {t : d+tv ∈ rec(K)} is bounded (else
-/// v ⊥ all normals, contradicting rank 4). At an endpoint t*, a new constraint
-/// becomes tight → |S₀| increases, contradicting maximality.
-/// So d ⊥ three independent normals n_i, n_j, n_k (whose kernel is 1D since they
-/// are independent in ℝ⁴). Triple (i,j,k) falls under (ii) and d ∈ rec(K) means
-/// no normal has positive inner product with d — triple fails. ∎
-///
-/// # Algorithm
-///
-/// 1. Check rank(A) = 4 (normals span ℝ⁴). Without this, the triple check below
-///    is vacuously true when rank ≤ 2, yet K is unbounded.
-/// 2. Enumerate all triples (i, j, k) and compute their 1D kernel d (via 4D cross
-///    product). For each kernel direction d, check that some normal has n_ℓ · d > ε
-///    and some has n_ℓ · d < −ε.
-///
-/// **Complexity:** O(F³) for F facets (all triples), with O(1) kernel computation per triple.
-fn check_bounded(normals: &[Vector4<f64>]) -> Result<(), ValidationError> {
-    let f = normals.len();
-
-    // Quick rank check: normals must span R^4.
-    // Without this, the triple check below is vacuously true when rank ≤ 2
-    // (no triple has a 1D kernel), yet K is unbounded.
-    // Probability zero for random normals on S^3, but checked for correctness.
-    let mat = nalgebra::DMatrix::from_fn(f, 4, |r, c| normals[r][c]);
-    let svd = mat.svd(false, false);
-    let rank = svd.singular_values.iter().filter(|&&s| s > 1e-8).count(); // rank threshold matches EPS_FEASIBILITY
-    if rank < 4 {
-        return Err(ValidationError::Unbounded);
-    }
-
-    // For each triple, compute the kernel of the 3×4 matrix.
-    // The kernel is the intersection of 3 hyperplanes through the origin,
-    // which is generically a 1D subspace in R^4.
-    for i in 0..f {
-        for j in (i + 1)..f {
-            for k in (j + 1)..f {
-                // Build 3×4 matrix and find its kernel (null space).
-                // We use a 4×4 system approach: find d such that n_i·d = n_j·d = n_k·d = 0.
-                // The kernel has dimension ≥ 4-3 = 1.
-                let kernel_dirs = kernel_of_three(normals[i], normals[j], normals[k]);
-
-                for d in &kernel_dirs {
-                    if d.norm() < 1e-12 { // near-zero cross product → normals are dependent
-                        continue;
-                    }
-                    // Check: is there any normal outside {i,j,k} with positive dot product with d?
-                    let has_pos = (0..f)
-                        .filter(|&l| l != i && l != j && l != k)
-                        .any(|l| normals[l].dot(d) > EPS_UNIT);
-                    // Check that some normal outside {i,j,k} has negative dot product with d
-                    let has_neg = (0..f)
-                        .filter(|&l| l != i && l != j && l != k)
-                        .any(|l| normals[l].dot(d) < -EPS_UNIT);
-
-                    if !has_pos || !has_neg {
-                        return Err(ValidationError::Unbounded);
-                    }
-                }
-            }
-        }
-    }
-    Ok(())
-}
-
-/// Compute kernel direction(s) of three vectors in R^4.
-///
-/// Given n1, n2, n3 ∈ R^4, finds vector(s) d such that n1·d = n2·d = n3·d = 0.
-/// Generically the kernel is 1D; returns up to 1 direction (both signs checked by caller).
-fn kernel_of_three(n1: Vector4<f64>, n2: Vector4<f64>, n3: Vector4<f64>) -> Vec<Vector4<f64>> {
-    // Construct a 4×4 matrix where the first 3 rows are n1, n2, n3
-    // and find the null space of the 3×4 submatrix.
-    //
-    // Approach: use the 4D cross product (determinant expansion).
-    // d = n1 × n2 × n3 (generalized cross product in R^4).
-    let d = cross_product_4d(n1, n2, n3);
-    if d.norm() < 1e-12 {
-        // Degenerate: normals are not linearly independent.
-        // Kernel is ≥2D; we'd need a more sophisticated approach.
-        // For our use case (random normals), this is extremely unlikely.
-        // Return empty — this triple doesn't constrain boundedness.
-        return vec![];
-    }
-    vec![d.normalize()]
-}
-
-/// Check that every facet is irredundant: its incident vertices affinely span
-/// a 3D subspace (the facet hyperplane).
-fn check_irredundant(
-    normals: &[Vector4<f64>],
-    heights: &[f64],
-    vertices: &[Vector4<f64>],
-) -> Result<(), ValidationError> {
-    let f = normals.len();
-
-    for i in 0..f {
-        // Collect vertices incident to facet i: n_i · v ≈ h_i
-        let incident: Vec<Vector4<f64>> = vertices
-            .iter()
-            .filter(|v| (normals[i].dot(v) - heights[i]).abs() < EPS_FEASIBILITY)
-            .cloned()
-            .collect();
-
-        if incident.is_empty() {
-            return Err(ValidationError::RedundantFacet(i));
-        }
-
-        // Check affine rank = 3 (i.e., the incident vertices span the facet hyperplane).
-        // Center the vertices and compute SVD to find rank.
-        let rank = affine_rank(&incident);
-        if rank < 3 {
-            return Err(ValidationError::RedundantFacet(i));
-        }
-    }
-    Ok(())
-}
-
-/// Compute the affine rank of a set of points.
-/// Affine rank = dimension of their affine span = rank of centered points matrix.
-fn affine_rank(points: &[Vector4<f64>]) -> usize {
-    if points.len() <= 1 {
-        return 0;
-    }
-
-    // Center around first point
-    let base = points[0];
-    let centered: Vec<Vector4<f64>> = points[1..].iter().map(|p| p - base).collect();
-
-    // Build matrix with centered points as rows
-    let n = centered.len();
-    let mat = nalgebra::DMatrix::from_fn(n, 4, |r, c| centered[r][c]);
-
-    // SVD and count significant singular values
-    let svd = mat.svd(false, false);
-    let threshold = 1e-8;
-    svd.singular_values
-        .iter()
-        .filter(|&&s| s > threshold)
-        .count()
 }
 
 #[cfg(test)]

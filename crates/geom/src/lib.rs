@@ -1,9 +1,12 @@
 pub mod cross_product;
+pub mod lagrangian_product;
+pub mod polygon;
 pub mod polytope;
 mod qhull;
 pub mod reeb_trajectory;
 pub mod skeleton;
 pub mod symplectic;
+pub mod validation;
 pub mod vertices;
 pub mod volume;
 

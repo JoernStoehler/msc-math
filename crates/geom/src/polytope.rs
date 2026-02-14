@@ -11,12 +11,10 @@
 /// - `normals.len() == heights.len() >= 5` (minimum facets for a bounded 4D polytope)
 /// - All normals are unit vectors: `‖n_i‖ = 1` (n_i ∈ S³)
 /// - All heights are strictly positive: `h_i > 0`
-/// - No two normals are (near-)identical: `‖n_i - n_j‖ > ε` for i ≠ j (irredundancy)
+/// - No two normals are (near-)identical: `‖n_i - n_j‖ > ε` for i ≠ j
+/// - **Bounded**: normals positively span R^4 (checked via O(F³) kernel enumeration)
+/// - **Irredundant**: every facet has incident vertices of affine rank 3
 /// - Vertices are precomputed via qhull from the H-representation
-///
-/// Note: h_i > 0 ensures 0 ∈ int(K) but does NOT imply boundedness.
-/// Boundedness is part of the polytope definition itself (`def:polytope`).
-/// Qhull checks boundedness during vertex enumeration.
 use nalgebra::Vector4;
 
 const EPS_UNIT: f64 = 1e-9;
@@ -37,7 +35,9 @@ pub enum ConstructionError {
     NonUnitNormal { index: usize, norm: f64 },
     NonPositiveHeight { index: usize, value: f64 },
     DuplicateHalfspaces { i: usize, j: usize },
+    Unbounded,
     VertexEnumerationFailed(String),
+    RedundantFacet(usize),
 }
 
 impl std::fmt::Display for ConstructionError {
@@ -56,9 +56,11 @@ impl std::fmt::Display for ConstructionError {
             Self::DuplicateHalfspaces { i, j } => {
                 write!(f, "normals[{i}] and normals[{j}] are duplicates")
             }
+            Self::Unbounded => write!(f, "polytope is unbounded (normals do not positively span R^4)"),
             Self::VertexEnumerationFailed(msg) => {
                 write!(f, "vertex enumeration failed: {msg}")
             }
+            Self::RedundantFacet(i) => write!(f, "facet {i} is redundant (incident vertices have affine rank < 3)"),
         }
     }
 }
@@ -102,8 +104,18 @@ impl Polytope4D {
             }
         }
 
+        // Boundedness: normals must positively span R^4
+        if !crate::validation::check_bounded(&normals) {
+            return Err(ConstructionError::Unbounded);
+        }
+
         let vertices = crate::vertices::compute_vertices(&normals, &heights)
             .map_err(|e| ConstructionError::VertexEnumerationFailed(e.to_string()))?;
+
+        // Irredundancy: every facet must have incident vertices of affine rank 3
+        if let Some(i) = crate::validation::find_redundant_facet(&normals, &heights, &vertices) {
+            return Err(ConstructionError::RedundantFacet(i));
+        }
 
         Ok(Self {
             normals,
