@@ -104,7 +104,6 @@ Run tests per CLAUDE.md "Commands" section for the repository.
 **Working tree check:**
 - `git status` shows clean working tree
 - No uncommitted changes
-- No generated data files (experiments/data/, experiments/figures/) committed
 - Committed fixture files (e.g., tests/fixtures/) are intentional
 
 **Archaeology check:**
@@ -178,6 +177,20 @@ See `deletion-examples.md` for concrete examples.
   - Verify tests have doc comments explaining what/why/mode (debug/release/fixture).
   - See monitoring Check 7 for detailed criteria.
 - **Assertion usage**: Expensive mathematical validation should use `debug_assert!` (not `assert!`). Critical safety invariants should use `assert!` (not `debug_assert!`).
+
+#### Data/Figures Changes
+
+If the branch touches algorithm code (`geom/`, `hk2017/`, `billiard/`, `tube/`):
+- Check if `experiments/data/` or `experiments/figures/` changed
+- If changed: verify changes are in separate commit from code
+- If NOT changed but should be: note "data needs regeneration before merge"
+- Convention: data regenerated on main after merge (not on branches)
+- Exception: New experiments may regenerate data on branch (must be separate commit with clear message)
+
+If the branch includes data/figures commits:
+- Verify data changes make sense given algorithm changes
+- Check commit messages explain what triggered regeneration
+- Verify data and code changes are in separate commits (good practice for review)
 
 #### Data Pipeline Tracing (if branch touches experiments/)
 

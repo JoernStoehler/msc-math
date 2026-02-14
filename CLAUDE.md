@@ -26,8 +26,8 @@ crates/            Rust workspace (cargo build/test from here)
   datasets/        Dataset generation orchestration
 experiments/       Python scripts consuming Rust-generated datasets
   scripts/         Independent .py scripts
-  data/            gitignored — populated by Rust pipeline and Python scripts
-  figures/         gitignored — populated by Python scripts
+  data/            Datasets (committed) — regenerated on main after algorithm changes
+  figures/         Figures (committed) — regenerated on main after algorithm changes
 papers/            arxiv .tex sources for reference (HK2017, CH2021, HK-O 2024, ...)
 archaeology/       Recovered files from abandoned predecessor repo (all of untrusted quality)
 ```
@@ -230,6 +230,29 @@ Jörn merges locally and pushes later, so `origin/main` is frequently stale. Com
 **State the base explicitly:** "Compared against local `main` at `abc1234`."
 
 If unexpected files appear in diff, investigate — likely means branch needs rebasing. See `/rebase` for checklist.
+
+### Data regeneration and commits
+
+`experiments/data/` and `experiments/figures/` are committed to git (not gitignored).
+
+**Why:**
+- Worktrees inherit data immediately (no regeneration wait)
+- Changes visible in git diffs (catch algorithm regressions)
+- Reproducibility (data versioned with code)
+
+**Convention:**
+- **Regenerate on main only** (after Jörn merges branches)
+- **Not on branches** (keeps branches clean, avoids merge conflicts)
+- **Separate commits**: Code changes committed separately from data regeneration
+
+**For agents:**
+- Don't regenerate data on branches unless explicitly instructed
+- If exploring new experiment: regenerate on branch, commit separately with clear message
+- If data looks stale on main: notify Jörn (he'll regenerate)
+
+**Merge conflicts:**
+- Should be rare (only main has data commits)
+- If occur: use `git merge -s ours` and regenerate on main after merge
 
 ### Communication with Jörn
 
