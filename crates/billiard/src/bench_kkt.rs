@@ -6,12 +6,11 @@ use nalgebra::{DMatrix, DVector};
 use std::time::Instant;
 
 use crate::enumerate::{enumerate_blocks, enumerate_k_bounce_sigmas};
+use crate::kkt::{EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
 use crate::lagrangian::classify_facets;
 
 const EPS_SVD_TOLERANCE: f64 = 1e-10;
 const EPS_KKT_RESIDUAL: f64 = 1e-6;
-const EPS_BETA_POSITIVE: f64 = 1e-12;
-const EPS_Q_POSITIVE: f64 = 1e-15;
 
 /// Solve KKT using LU with SVD fallback (current approach).
 fn solve_kkt_lu_svd(
@@ -116,25 +115,6 @@ fn solve_kkt_svd_only(
     Some((beta, q_val))
 }
 
-/// Build facet adjacency matrix.
-fn build_adjacency_matrix(polytope: &geom::polytope::Polytope4D) -> Vec<Vec<bool>> {
-    let f = polytope.facet_count();
-    let normals = polytope.normals();
-    let heights = polytope.heights();
-    let mut adj = vec![vec![false; f]; f];
-    for v in polytope.vertices() {
-        let incident: Vec<usize> = (0..f)
-            .filter(|&i| (normals[i].dot(v) - heights[i]).abs() < 1e-8)
-            .collect();
-        for &i in &incident {
-            for &j in &incident {
-                adj[i][j] = true;
-            }
-        }
-    }
-    adj
-}
-
 #[test]
 #[ignore] // profiling test, run manually
 fn bench_kkt_lu_vs_svd() {
@@ -144,7 +124,7 @@ fn bench_kkt_lu_vs_svd() {
     let heights = polytope.heights();
 
     let classification = classify_facets(polytope).unwrap();
-    let adj = build_adjacency_matrix(polytope);
+    let adj = crate::build_adjacency_matrix(polytope);
     let q_blocks = enumerate_blocks(&classification.q_indices, &adj);
     let p_blocks = enumerate_blocks(&classification.p_indices, &adj);
 

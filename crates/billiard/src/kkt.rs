@@ -90,6 +90,11 @@ pub fn solve_kkt(
     let beta: Vec<f64> = (0..m).map(|i| solution[i]).collect();
 
     // Compute Q(β) = Σ_{j<i} β_i β_j ω₀(n_{σ(i)}, n_{σ(j)})
+    //
+    // Note: we compute directly from ω₀, NOT from H_{ij}.
+    // H is symmetric by construction: H_{ij} = ω₀(n_{σ(min)}, n_{σ(max)}).
+    // But Q uses ω₀(n_{σ(i)}, n_{σ(j)}) with i > j, which equals -H_{ij}.
+    // Using H would give -Q.
     let q_val: f64 = (1..m)
         .flat_map(|i| (0..i).map(move |j| (i, j)))
         .map(|(i, j)| beta[i] * beta[j] * omega0(&normals[perm[i]], &normals[perm[j]]))
