@@ -28,6 +28,13 @@ for name in "${POLYTOPES[@]}"; do
     fi
 done
 
+# Kill any stale server on this port
+if lsof -ti:"$PORT" >/dev/null 2>&1; then
+    echo "Killing stale process on port $PORT..."
+    lsof -ti:"$PORT" | xargs kill 2>/dev/null
+    sleep 0.5
+fi
+
 echo ""
 echo "Serving at http://localhost:$PORT"
 echo "  (Ctrl-C to stop)"
