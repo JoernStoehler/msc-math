@@ -15,6 +15,10 @@
 		"editor.wordWrap": "on",
 		"texlab.chktex.onOpenAndSave": true,
 		"texlab.chktex.onEdit": false,
+		"texlab.diagnostics.ignoredPatterns": [
+			"Overfull \\\\hbox",
+			"Underfull \\\\hbox"
+		],
 		"[markdown]": {
 			"editor.tabSize": 2
 		},
