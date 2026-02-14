@@ -172,7 +172,7 @@ See `deletion-examples.md` for concrete examples.
 - Critical paths tested (error paths, math properties, degenerate cases)
 - Core cases covered (happy path, known-good inputs, basic errors)
 - Edge cases tested (property-based tests, boundaries, robustness)
-- **Test runtime**: `cargo test` (default suite) should complete within 3 minutes single-threaded (per crates/CLAUDE.md target). If slower, investigate. Proptest case counts should be tuned for <1s per test.
+- **Test runtime strategy**: Tests are split into debug (default) and release (`--ignored`). Debug suite should be fast (<30s per crate) and catch index/overflow bugs. Release suite covers large-polytope correctness and cross-algorithm agreement. Check that slow tests (>2s debug) are in the right tier — pure f64 math gains nothing from debug mode. See monitoring Check 7 for full criteria.
 - **Assertion usage**: Expensive mathematical validation should use `debug_assert!` (not `assert!`). Critical safety invariants should use `assert!` (not `debug_assert!`).
 
 #### Data Pipeline Tracing (if branch touches experiments/)

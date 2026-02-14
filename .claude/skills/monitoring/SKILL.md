@@ -187,7 +187,7 @@ ps aux | grep -E 'target/debug/deps/' | grep -v grep
 | Fast in debug (<1s) | Any | None | Run in debug (default) |
 | Slow in debug, exercises usize/index logic | High | Yes | Keep in debug if unique coverage; else release-only |
 | Slow in debug, pure f64/capacity math | None | Yes | Mark `#[ignore]`, run release-only |
-| Tests multiple things at once | — | — | Document justification or split |
+| Tests conceptually different concerns in one function | — | — | Split or document justification |
 
 **Procedure:**
 
@@ -211,9 +211,7 @@ done
    - Does debug mode catch anything release wouldn't? (debug_assert!, integer overflow on usize?)
    - Is there a fast-polytope version that covers the same debug-relevant paths?
 
-4. For any test that checks multiple properties, verify:
-   - Is there a documented justification (comment) for combining them?
-   - Could splitting give better debug/release targeting?
+4. For any test that bundles conceptually different concerns (e.g. known-value correctness AND large-scale random cross-check in one function), flag it. Multiple assertions about the same object's behavior (capacity value, iteration count, beta positivity) are fine — that's one concern ("is the result correct").
 
 **Expected result:**
 - Every `#[ignore]` test has a comment explaining why
@@ -224,7 +222,7 @@ done
 
 **Alert threshold:**
 - Any un-ignored test >10s in debug with no debug-specific value
-- Any test doing 2+ things with no justification comment
+- Any test bundling conceptually different concerns (e.g. known-value check + large random sweep)
 - Any crate's debug tests >30s total
 
 ---
