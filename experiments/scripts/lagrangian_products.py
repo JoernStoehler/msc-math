@@ -59,7 +59,7 @@ def plot_pentagon_sweep(data: list[dict], output: Path):
     if above_1.any():
         ax1.fill_between(
             angles, 1.0, sys_vals, where=above_1, alpha=0.2, color="red",
-            label=f"sys > 1 region"
+            label="sys > 1 region"
         )
         ax1.legend()
 
@@ -82,7 +82,7 @@ def plot_pentagon_sweep(data: list[dict], output: Path):
     print(f"Saved: {output}")
 
     # Print summary
-    print(f"\nPentagon sweep summary:")
+    print("\nPentagon sweep summary:")
     print(f"  Points: {len(data)}")
     print(f"  sys range: [{sys_vals.min():.6f}, {sys_vals.max():.6f}]")
     print(f"  Max sys at θ = {angles[i_max]:.2f}°")
@@ -134,7 +134,7 @@ def plot_polygon_grid(data: list[dict], output: Path):
     print(f"Saved: {output}")
 
     # Print summary table
-    print(f"\nPolygon grid summary:")
+    print("\nPolygon grid summary:")
     print(f"  {'Pair':>8} {'F':>3} {'max sys':>10} {'angle':>8} {'sys>1':>6}")
     print(f"  {'-'*8} {'-'*3} {'-'*10} {'-'*8} {'-'*6}")
     for (n1, n2), info in sorted(max_sys_per_pair.items()):
@@ -166,7 +166,8 @@ def plot_random_products(data: list[dict], output: Path):
     for fc in sorted(set(facet_counts)):
         mask = facet_counts == fc
         ax2.scatter(
-            np.full(mask.sum(), fc) + np.random.uniform(-0.15, 0.15, mask.sum()),
+            np.full(mask.sum(), fc)
+            + np.random.default_rng(42).uniform(-0.15, 0.15, mask.sum()),
             sys_vals[mask],
             s=10,
             alpha=0.5,
@@ -185,7 +186,7 @@ def plot_random_products(data: list[dict], output: Path):
 
     # Print summary
     above_1 = sys_vals > 1.0
-    print(f"\nRandom products summary:")
+    print("\nRandom products summary:")
     print(f"  Samples: {len(data)}")
     print(f"  sys range: [{sys_vals.min():.6f}, {sys_vals.max():.6f}]")
     print(f"  sys > 1: {above_1.sum()} / {len(data)} ({100*above_1.mean():.1f}%)")

@@ -37,6 +37,26 @@ struct SweepRow {
     area_p: f64,
 }
 
+// ---- Configuration constants ----
+
+/// Angular resolution for pentagon sweep: 360 steps = 0.25° over [0°, 90°].
+const PENTAGON_SWEEP_RESOLUTION: usize = 360;
+
+/// Maximum total facet count for polygon grid pairs.
+const MAX_FACETS: usize = 12;
+
+/// Number of random Lagrangian products to generate.
+const RANDOM_PRODUCT_COUNT: usize = 500;
+
+/// RNG seed for reproducible random product generation.
+const RANDOM_SEED: u64 = 42;
+
+/// Minimum support function value for random polygon heights.
+const RANDOM_H_MIN: f64 = 0.3;
+
+/// Maximum support function value for random polygon heights.
+const RANDOM_H_MAX: f64 = 2.0;
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     if args.len() < 3 {
@@ -72,7 +92,7 @@ fn main() {
 
 /// Pentagon × R(θ)Pentagon fine sweep.
 fn cmd_pentagon_sweep(writer: &mut BufWriter<File>) {
-    let resolution = 360; // 0.25° steps over [0°, 90°]
+    let resolution = PENTAGON_SWEEP_RESOLUTION;
     eprintln!("Pentagon sweep: {resolution} angles in [0°, 90°]");
 
     let (qn, qh) = regular_polygon_2d(5, 1.0);
@@ -125,7 +145,7 @@ fn cmd_pentagon_sweep(writer: &mut BufWriter<File>) {
 
 /// All regular (n, m) pairs with n + m ≤ max_facets.
 fn cmd_polygon_grid(writer: &mut BufWriter<File>) {
-    let max_facets = 12;
+    let max_facets = MAX_FACETS;
     eprintln!("Polygon grid: all (n,m) pairs with n+m ≤ {max_facets}");
 
     for n1 in 3..=6 {
@@ -197,10 +217,10 @@ fn cmd_polygon_grid(writer: &mut BufWriter<File>) {
 
 /// Random polygon Lagrangian products.
 fn cmd_random_products(writer: &mut BufWriter<File>) {
-    let count = 500;
-    let seed = 42u64;
-    let h_min = 0.3;
-    let h_max = 2.0;
+    let count = RANDOM_PRODUCT_COUNT;
+    let seed = RANDOM_SEED;
+    let h_min = RANDOM_H_MIN;
+    let h_max = RANDOM_H_MAX;
 
     eprintln!("Random products: {count} samples, seed={seed}");
 
@@ -246,8 +266,10 @@ fn cmd_random_products(writer: &mut BufWriter<File>) {
         let cap = cap_result.capacity;
         let sys = cap * cap / (2.0 * vol);
 
-        let area_q = polygon_area(&qn, &qh).unwrap_or(0.0);
-        let area_p = polygon_area(&pn, &ph).unwrap_or(0.0);
+        let area_q = polygon_area(&qn, &qh)
+            .expect("area computation must succeed for valid Lagrangian product factors");
+        let area_p = polygon_area(&pn, &ph)
+            .expect("area computation must succeed for valid Lagrangian product factors");
 
         let row = SweepRow {
             family: "random_product".to_string(),

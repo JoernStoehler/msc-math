@@ -57,19 +57,6 @@ Since rotating both factors by the same angle~$\varphi$ is a symplectic
 transformation~$\operatorname{diag}(R(\varphi), R(\varphi)) \in \mathrm{Sp}(4)$,
 only the \emph{relative} rotation between the factors affects~$\mathrm{sys}$.
 
-\begin{lemma}[Scale invariance of sys]
-\label{lem:sys-scale-invariant}
-For any convex body~$K \subset \mathbb{R}^4$ with~$0 \in \operatorname{int}(K)$
-and any~$\lambda > 0$:~$\mathrm{sys}(\lambda K) = \mathrm{sys}(K)$.
-\end{lemma}
-
-\begin{proof}
-The EHZ capacity is 2-homogeneous:~$c_{\mathrm{EHZ}}(\lambda K)
-= \lambda^2 \, c_{\mathrm{EHZ}}(K)$. The 4-volume is 4-homogeneous.
-Hence~$\mathrm{sys}(\lambda K) = (\lambda^2 c)^2 / (2 \lambda^4 v)
-= c^2 / (2v) = \mathrm{sys}(K)$.
-\end{proof}
-
 \begin{lemma}[Fundamental domain for rotation sweeps]
 \label{lem:rotation-fundamental-domain}
 Let~$P$ be a regular $n$-gon and~$Q$ a regular $m$-gon, both centered at the
@@ -116,8 +103,12 @@ maps to~$90 \bmod 72 = 18^\circ$ in this domain.
 
 We sweep~$\theta \in [0^\circ, 90^\circ]$ at~$0.25^\circ$ resolution (361
 points) for the family~$\mathrm{Pentagon} \times_L R(\theta)\,\mathrm{Pentagon}$,
-where each pentagon is regular with circumradius~1. Each EHZ capacity
-computation takes approximately~2.5\,s (10 facets).
+where each pentagon is regular with circumradius~1 (since~$\mathrm{sys}$ is
+scale-invariant---$c_{\mathrm{EHZ}}$ is 2-homogeneous and volume is
+4-homogeneous---the choice of circumradius does not affect~$\mathrm{sys}$).
+We compute~$c_{\mathrm{EHZ}}$ using the algorithm of
+Haim-Kislev~(2017).  % TODO: add \ref to algorithm section once it exists
+Each capacity computation takes approximately~2.5\,s (10 facets).
 
 Figure~\ref{fig:pentagon-sweep} shows the resulting curve. The systolic ratio
 oscillates between~$0.9472$ and~$1.0472$ with period~$72^\circ$, confirming the
@@ -134,9 +125,11 @@ at~$\theta \equiv 0^\circ \pmod{72^\circ}$ (aligned pentagons). The violation
 region~$\mathrm{sys} > 1$ spans approximately~$\theta \in (13.5^\circ,
 22.5^\circ)$ within each fundamental domain---about~$25\%$ of the period.
 
-Since volume is constant across~$\theta$
-(Fubini:~$\operatorname{vol} = \operatorname{area}(P)^2$ is independent
-of rotation), all variation in~$\mathrm{sys}$ comes from the
+Since rotation preserves area,
+$\operatorname{area}(Q_\theta) = \operatorname{area}(Q)$ for
+all~$\theta$, and Fubini gives
+$\operatorname{vol}(K_\theta) = \operatorname{area}(P) \cdot
+\operatorname{area}(Q)$, all variation in~$\mathrm{sys}$ comes from the
 EHZ capacity.
 
 \begin{figure}[h]
@@ -194,17 +187,18 @@ $n$ & $m$ & $F$ & $\max\,\mathrm{sys}$ & $\theta_{\max}$ & status \\
 \item \textbf{$(4,4)$ at $\theta = 45^\circ$}: Two squares with relative
   rotation~$45^\circ$. The capacity satisfies~$c_{\mathrm{EHZ}} = 2\sqrt{2}$
   with~$\operatorname{vol} = 4$, giving~$\mathrm{sys} = 8/8 = 1$ exactly.
-  % Not the cross-polytope (16 facets vs 8). Not symplectomorphic to the
-  % hypercube (which is (4,4) at θ=0° with sys=0.5). The unrotated product
-  % IS the hypercube; the 45° rotation changes the symplectic geometry.
+  This body has 8~facets and is distinct from both the cross-polytope
+  (16~facets) and the hypercube (which is the \emph{unrotated}
+  product~$(4,4)$ at~$\theta = 0^\circ$ with~$\mathrm{sys} = 0.5$).
 
 \item \textbf{$(3,6)$ at $\theta = 0^\circ$}: Triangle $\times_L$ hexagon
   (aligned). The capacity satisfies~$c_{\mathrm{EHZ}} = \tfrac{3\sqrt{3}}{2}$
   with~$\operatorname{vol} = \tfrac{27}{8}$,
   giving~$\mathrm{sys} = \tfrac{27/4}{27/4} = 1$ exactly.
-  % Balitskiy (2020) characterizes Lagrangian products with sys=1;
-  % CH2021 §1 notes triangle×square as a known sys=1 example (Schlenk
-  % Lem. 5.3.1) and cites Balitskiy for further examples.
+  Balitskiy~(2020) characterizes which Lagrangian products
+  saturate~$\mathrm{sys} = 1$; Chaidez--Hutchings~(2021, \S1) cite the
+  triangle~$\times$~square as a previously known example (Schlenk,
+  Lem.~5.3.1).
 
 \item \textbf{$(5,5)$ at $\theta = 18^\circ$}: This reproduces the HK-O
   counterexample ($\theta = 18^\circ \equiv 90^\circ \pmod{72^\circ}$)
@@ -248,6 +242,9 @@ threshold.
   the threshold. Two additional pairs---$(3,6)$ and~$(4,4)$---saturate
   the bound at~$\mathrm{sys} = 1$ exactly (at specific angles), while
   the remaining seven pairs satisfy~$\mathrm{sys} < 1$ at all angles.
+  We restricted to~$n + m \le 12$ due to the exponential cost of the
+  HK2017 algorithm; whether other polygon pairs violate the bound
+  remains open.
 
 \item \textbf{The violation region is narrow.}
   For pentagon~$\times$~pentagon, the Viterbo-violating angles occupy only
