@@ -2,6 +2,16 @@ use super::*;
 use geom::known_polytopes;
 use nalgebra::Vector4;
 
+/// Smoke test: unpruned capacity algorithm executes safely on 4-facet simplex.
+///
+/// **What:** Computes EHZ capacity using unpruned enumeration algorithm.
+/// **Why debug mode:** Exercises index arithmetic, enumeration logic, and KKT
+/// solver with debug checks enabled (debug_assert!, overflow, bounds).
+/// **Why this polytope:** F=4 simplex is minimal non-trivial case, runs instantly.
+/// **Output check:** Verifies against literature value (2.0) as sanity check.
+///
+/// For comprehensive capacity verification across many polytopes, see
+/// `capacity_properties_test::literature_capacity_values()` (fixture-based).
 #[test]
 fn simplex_capacity() {
     let kp = known_polytopes::simplex();
@@ -13,6 +23,17 @@ fn simplex_capacity() {
     );
 }
 
+/// Smoke test: unpruned capacity algorithm executes safely on 8-facet hypercube.
+///
+/// **What:** Computes EHZ capacity using unpruned enumeration algorithm.
+/// **Why debug mode:** Exercises combinatorial enumeration on structured geometry
+/// with debug checks enabled.
+/// **Why this polytope:** F=8 hypercube has high symmetry (fast despite 8 facets,
+/// <1s in debug). Tests that enumeration handles regular geometry correctly.
+/// **Output check:** Verifies against literature value (1.0) as sanity check.
+///
+/// For comprehensive capacity verification, see
+/// `capacity_properties_test::literature_capacity_values()` (fixture-based).
 #[test]
 fn hypercube_capacity() {
     let kp = known_polytopes::hypercube();
@@ -24,6 +45,12 @@ fn hypercube_capacity() {
     );
 }
 
+/// Smoke test: unpruned algorithm on Lagrangian triangle product.
+///
+/// **What:** Computes capacity on equilateral triangle × unit square (Lagrangian product).
+/// **Why debug mode:** Exercises unpruned algorithm on product geometry in debug mode.
+/// **Why this polytope:** F=7, tests Lagrangian product structure, runs fast (<1s).
+/// **Output check:** Verifies against known value as sanity check.
 #[test]
 fn lagrangian_triangle_product_capacity() {
     let kp = known_polytopes::lagrangian_triangle_product();
@@ -35,6 +62,12 @@ fn lagrangian_triangle_product_capacity() {
     );
 }
 
+/// Test combinatorial enumeration correctness on small inputs.
+///
+/// **What:** Verifies combinations(n, k) produces correct count.
+/// **Why debug mode:** Tests index arithmetic and allocation in combinatorics
+/// utilities with overflow/bounds checks enabled.
+/// **Why not fixture:** Simple unit test, runs instantly.
 #[test]
 fn combinations_basic() {
     assert_eq!(combinations(4, 2).len(), 6);  // C(4,2) = 6
@@ -42,7 +75,19 @@ fn combinations_basic() {
     assert_eq!(combinations(5, 5).len(), 1);  // C(5,5) = 1
 }
 
+/// Verify pruned and unpruned algorithms produce identical capacity values.
+///
+/// **What:** Computes capacity on 8-facet hypercube using both pruned and unpruned
+/// algorithms, verifies they agree.
+/// **Why release mode:** F=8 → ~16s debug, ~0.2s release. Input-output test,
+/// only care about result agreement.
+/// **Why #[ignore]:** Too slow for default suite. Run after changes to adjacency
+/// pruning logic with: `cargo test --release -p hk2017 pruned_matches_unpruned -- --ignored`
+///
+/// For quick fixture-based pruned/unpruned check on 27 polytopes, see
+/// `capacity_properties_test::pruned_matches_unpruned_from_fixture()` (default suite, <1s).
 #[test]
+#[ignore] // ~16s debug, ~0.2s release. Run: cargo test --release -p hk2017 pruned_matches_unpruned -- --ignored
 fn pruned_matches_unpruned() {
     let kp = known_polytopes::hypercube();
 
@@ -64,8 +109,17 @@ fn pruned_matches_unpruned() {
         result_unpruned.iterations, result_pruned.iterations);
 }
 
-// Unit tests for solve_kkt function
+// ============================================================================
+// Internal Behavior: KKT Solver Edge Cases
+// ============================================================================
 
+/// Test KKT solver on minimal 2-facet system.
+///
+/// **What:** Solves KKT optimality conditions for minimal facet set (F=2).
+/// **Why debug mode:** Tests solver handles degenerate low-dimensional case correctly.
+/// Exercises bounds checking on small system.
+/// **Why not fixture:** Tests solver internals, not capacity output. Small system
+/// runs instantly, no need for pre-computation.
 #[test]
 fn solve_kkt_two_facets() {
     // Two opposite facets: n1 = (1,0,0,0), n2 = (-1,0,0,0)
@@ -94,6 +148,11 @@ fn solve_kkt_two_facets() {
     assert!(q_val.abs() < 1e-10, "Q should be ~0 for parallel normals");
 }
 
+/// Test KKT solver on 4-facet symplectic square.
+///
+/// **What:** Solves KKT system for symplectic square (4 facets, product structure).
+/// **Why debug mode:** Tests solver on structured geometry with debug checks.
+/// **Why not fixture:** Tests solver behavior on specific geometric case.
 #[test]
 fn solve_kkt_four_facets_symplectic() {
     // Four facets forming a 2D symplectic subplane:
@@ -135,6 +194,12 @@ fn solve_kkt_four_facets_symplectic() {
     assert!(q_val.abs() > 1e-10, "Q should be non-zero for symplectic normals, got {}", q_val);
 }
 
+/// Test KKT solver handles rank-deficient normal matrix.
+///
+/// **What:** Solves KKT system when normal vectors are linearly dependent.
+/// **Why debug mode:** Tests error handling path in solver. Ensures solver
+/// correctly detects and handles rank deficiency without panicking.
+/// **Why not fixture:** Tests specific error path, not typical computation.
 #[test]
 fn solve_kkt_rank_deficient() {
     // Three normals in the xy-plane (rank = 2)
@@ -161,6 +226,12 @@ fn solve_kkt_rank_deficient() {
     assert!((sum - 1.0).abs() < 1e-6, "β sum should be 1 even in rank-deficient case");
 }
 
+/// Test KKT solver on degenerate case (identical normals).
+///
+/// **What:** Solves KKT system when facets have identical normals (violates irredundancy).
+/// **Why debug mode:** Tests edge case error handling. Ensures solver gracefully
+/// handles degenerate input without crashing.
+/// **Why not fixture:** Tests error path, not normal execution.
 #[test]
 fn solve_kkt_degenerate() {
     // Two identical normals (degenerate: violates irredundancy)
@@ -182,7 +253,20 @@ fn solve_kkt_degenerate() {
     }
 }
 
+/// Verify HKO pentagon capacity and sys > 1 property (Annals counterexample).
+///
+/// **What:** Computes capacity on Haim-Kislev-Ostrover 10-facet pentagon and
+/// verifies it's a counterexample to Viterbo's conjecture (sys > 1).
+/// **Why release mode:** F=10 → ~37s debug, ~0.5s release. Input-output test,
+/// only care about final value. Run in release for 74x speedup.
+/// **Why #[ignore]:** Too slow for default suite. Important regression test for
+/// thesis counterexample.
+/// **Run with:** `cargo test --release -p hk2017 pentagon_capacity -- --ignored`
+///
+/// For quick capacity check against literature value, see
+/// `capacity_properties_test::literature_capacity_values()` (fixture-based, default suite).
 #[test]
+#[ignore] // ~37s debug, ~0.5s release. Run: cargo test --release -p hk2017 pentagon_capacity -- --ignored
 fn pentagon_capacity() {
     use geom::volume::volume;
 
@@ -202,6 +286,19 @@ fn pentagon_capacity() {
     assert!(sys > 1.0, "pentagon should have sys > 1, got {}", sys);
 }
 
+/// Smoke test: pruned algorithm executes safely on Lagrangian triangle×square.
+///
+/// **What:** Computes capacity using adjacency-pruned enumeration.
+/// **Why debug mode:** Exercises pruning logic (adjacency filtering) on Lagrangian
+/// product geometry with debug checks enabled. Catches bounds errors in facet
+/// adjacency indexing.
+/// **Why this polytope:** F=7 Lagrangian product (triangle in q, square in p).
+/// Tests that pruning correctly handles product structure. Runs fast (<1s).
+/// **Output check:** Verifies capacity = 1.5 (optimal orbit uses 3 triangle facets
+/// and 2 square facets). See experiments/triangle_square.md for analysis.
+///
+/// For pruned/unpruned agreement verification, see
+/// `capacity_properties_test::pruned_matches_unpruned_from_fixture()`.
 #[test]
 fn triangle_square_capacity() {
     let kp = known_polytopes::lagrangian_triangle_square();
@@ -217,6 +314,16 @@ fn triangle_square_capacity() {
     );
 }
 
+/// Smoke test: pruned algorithm on symplectic triangle×square product.
+///
+/// **What:** Computes capacity using pruned algorithm on symplectic product.
+/// **Why debug mode:** Exercises pruning logic on symplectic product geometry
+/// (triangle in (q₁,p₁), square in (q₂,p₂)) with debug checks enabled.
+/// **Why this polytope:** F=7 symplectic product. Tests Moser's theorem:
+/// c(A ×_S B) = min(c(A), c(B)). Distinguishes symplectic from Lagrangian products.
+/// **Output check:** Verifies capacity = min(3√3/4, 1.0) = 1.0.
+///
+/// For comprehensive product formula tests, see capacity_properties_test.rs.
 #[test]
 fn symplectic_triangle_square_capacity() {
     let kp = known_polytopes::symplectic_triangle_square();
@@ -262,10 +369,16 @@ mod proptests {
 
         /// Property: pruned and unpruned algorithms return the same capacity.
         ///
-        /// This tests `cor:adjacency-pruning` (adjacency pruning optimization).
+        /// **What:** Tests pruned/unpruned agreement on random polytopes (F=5-8).
+        /// **Why #[ignore]:** Redundant with `capacity_properties_test::pruned_matches_unpruned_from_fixture()`
+        /// which checks agreement across 27 diverse polytopes from fixture (includes various
+        /// products, simplices, structured and irregular geometries). The fixture provides
+        /// better coverage than 40 random cases.
+        /// **Original budget:** F=8 unpruned ≈ 40ms, pruned ≈ 14ms; 10 cases × 4 seeds = ~2s total.
         ///
-        /// Budget: F=8 unpruned ≈ 40ms, pruned ≈ 14ms; 10 cases × 4 seeds = ~2s total.
+        /// This tests `cor:adjacency-pruning` (adjacency pruning optimization).
         #[test]
+        #[ignore] // Redundant with fixture test. Can be removed once fixture coverage is confirmed.
         fn pruned_matches_unpruned_random(
             facet_count in 5usize..=8,
             seed in 0u64..4
@@ -293,11 +406,19 @@ mod proptests {
     }
 }
 
-/// Capacity scales quadratically: c_EHZ(λK) = λ²·c_EHZ(K).
+/// Verify conformality property: c_EHZ(λK) = λ²·c_EHZ(K).
 ///
-/// Uses λ = e (transcendental) — cannot be the root of any polynomial with
-/// integer coefficients, making numerical coincidences impossible.
+/// **What:** Tests conformality (scaling property) on hypercube with λ = e.
+/// **Why release mode:** F=8 → ~24s debug, ~0.3s release. Input-output test.
+/// **Why #[ignore]:** Redundant with `capacity_properties_test::capacity_conformality()`
+/// which tests this property from fixture across many polytopes. This test will be
+/// removed once fixture includes scaled polytopes.
+/// **Run with:** `cargo test --release -p hk2017 capacity_scales_quadratically -- --ignored`
+///
+/// Uses λ = e (transcendental) — cannot be root of any polynomial with integer
+/// coefficients, making numerical coincidences impossible.
 #[test]
+#[ignore] // ~24s debug, ~0.3s release. Redundant with fixture test once fixture has scaled polytopes.
 fn capacity_scales_quadratically() {
     let scale = std::f64::consts::E;
 

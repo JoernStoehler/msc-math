@@ -1,6 +1,24 @@
 //! Property tests for EHZ capacity computation.
 //!
-//! Verifies mathematical properties:
+//! All tests in this file use a **pre-computed fixture** (generated in release mode)
+//! to verify mathematical properties quickly (<1s per test).
+//!
+//! ## Why fixture-based?
+//!
+//! Capacity computation is expensive (exponential in facet count). For input-output
+//! tests (verifying correct capacity values and mathematical properties), we don't
+//! need debug mode overhead. Instead:
+//!
+//! 1. **Fixture generation** (`regenerate_test_dataset()`): Computes capacities for
+//!    27 polytopes in release mode (~20s), saves to JSON.
+//! 2. **Property tests** (this file): Load fixture (<1ms), verify properties (<1s).
+//! 3. **Staleness detection** (`fixture_staleness_check()`): Warns if fixture is
+//!    out of sync with code.
+//!
+//! This pattern gives us comprehensive property testing in the default suite while
+//! keeping test times under 1 second.
+//!
+//! ## Mathematical properties verified:
 //! - Positivity: c_EHZ(K) > 0 for all valid polytopes
 //! - Conformality: c_EHZ(λK) = λ²·c_EHZ(K)
 //! - Symplectomorphism invariance: c_EHZ(MK+b) = c_EHZ(K)
@@ -26,6 +44,10 @@ static DATASET: LazyLock<Vec<TestPolytope>> = LazyLock::new(|| {
 // ===== Staleness and validation checks =====
 
 /// Verify that polytope_catalog() is deterministic (same seed → same polytopes).
+///
+/// **What:** Calls polytope_catalog() twice, verifies identical output.
+/// **Why fixture:** Not using fixture here - tests catalog generator directly.
+/// **Why default suite:** Fast (<1s), critical invariant for fixture generation.
 #[test]
 fn catalog_determinism() {
     let c1 = polytope_catalog();
@@ -42,10 +64,13 @@ fn catalog_determinism() {
 
 /// Check that the fixture covers the current polytope catalog.
 ///
-/// Compares by name: if the catalog and fixture have the same polytope names,
-/// they're in sync. Warns (does not fail) on mismatches.
+/// **What:** Compares polytope names in fixture vs. current catalog, warns on mismatch.
+/// **Why default suite:** Staleness detector. Runs every iteration to catch
+/// fixture/code desync early.
+/// **When to regenerate:** If this test warns, run:
+/// `cargo test --release -p hk2017 regenerate_test_dataset -- --ignored --nocapture`
 ///
-/// Why by name, not geometry? The catalog uses `Vector4::normalize()` which can
+/// Compares by name, not geometry: The catalog uses `Vector4::normalize()` which can
 /// produce slightly different results across recompilations (FMA, inlining
 /// differences). Name comparison avoids false staleness from benign recompilation.
 #[test]
