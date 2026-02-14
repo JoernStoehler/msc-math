@@ -27,6 +27,7 @@ pub struct PolytopeRow {
 
 impl PolytopeRow {
     /// Build a row from a polytope and its computed values.
+    #[allow(clippy::too_many_arguments)]
     pub fn from_polytope(
         polytope: &Polytope4D,
         source: String,
