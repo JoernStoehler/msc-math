@@ -25,6 +25,12 @@ experiments/data/*
 !experiments/data/.gitkeep
 experiments/figures/*
 !experiments/figures/.gitkeep
+experiments/viz/data/
+
+# Node (Playwright screenshots, dev tooling)
+node_modules/
+package.json
+package-lock.json
 
 # Editor
 .vscode/

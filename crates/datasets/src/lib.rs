@@ -8,6 +8,7 @@ pub mod dataset;
 pub mod known_polytopes;
 pub mod random;
 pub mod validation;
+pub mod viz_export;
 
 #[cfg(test)]
 mod lib_test;
