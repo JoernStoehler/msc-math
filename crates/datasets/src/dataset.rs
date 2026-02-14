@@ -19,7 +19,7 @@ pub struct PolytopeRow {
     pub time_capacity_ms: f64,
     /// Time to generate/validate the polytope (milliseconds).
     pub time_creation_ms: f64,
-    /// Number of (subset, permutation) pairs evaluated by the HK2017 algorithm.
+    /// Number of (subset, permutation) pairs where KKT was solved (after adjacency pruning).
     /// 0 if capacity was skipped (e.g., too many facets).
     #[serde(default)]
     pub iterations: u64,
