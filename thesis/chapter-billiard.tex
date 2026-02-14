@@ -1,0 +1,481 @@
+% chapter-billiard.tex — \input'd from main.tex
+% Sources: Bezdek-Bezdek (2009), Rudolf (2022), Artstein-Avidan & Ostrover (2014),
+%   HK2017. Agent-written; all proofs require Joern's verification.
+%
+% Structure:
+%   6.1 Lagrangian products
+%   6.2 Structure of simple orbits on Lagrangian products
+%   6.3 Billiard characterization and bounce bound
+%   6.4 Billiard algorithm
+
+\section{EHZ Capacity of Lagrangian Products}\label{sec:billiard}
+
+% [TODO: JOERN - verify all proofs in this section. Agent-written throughout.
+%   The sigma structure lemma was discussed in chat and the statement confirmed,
+%   but the written proof needs verification.]
+
+%%% ---------------------------------------------------------------
+\subsection{Lagrangian Products}\label{subsec:lagrangian-products}
+%%% ---------------------------------------------------------------
+
+\begin{definition}[Lagrangian subspaces]\label{def:lagrangian-subspaces}
+% QC: L_q, L_p are Lagrangian because omega_0 vanishes on each.
+%   dim L_q = dim L_p = 2, and R^4 = L_q + L_p (direct sum).
+% Downstream: L_q = components [0,1], L_p = components [2,3].
+%   is_q_type(n) = |n[2]| < eps && |n[3]| < eps.
+%   is_p_type(n) = |n[0]| < eps && |n[1]| < eps.
+The \emph{$q$-subspace} $L_q \coloneqq \{(q, 0) : q \in \mathbb{R}^2\}$
+and \emph{$p$-subspace} $L_p \coloneqq \{(0, p) : p \in \mathbb{R}^2\}$
+are Lagrangian subspaces of $(\mathbb{R}^4, \omega_0)$:
+\[
+  \omega_0|_{L_q} = 0, \qquad
+  \omega_0|_{L_p} = 0, \qquad
+  \mathbb{R}^4 = L_q \oplus L_p.
+\]
+\end{definition}
+
+\begin{definition}[Lagrangian product]\label{def:lagrangian-product}
+% QC: K_q subset L_q and K_p subset L_p, both 2D convex bodies
+%   with 0 in their interior.
+%   K = K_q x K_p is a 4D polytope with 0 in int(K).
+%   Facet count: F = F_q + F_p where F_q, F_p are edge counts
+%   of K_q, K_p respectively.
+% Downstream: construct by embedding 2D normals:
+%   q-facet (a,b) -> (a, b, 0, 0), p-facet (c,d) -> (0, 0, c, d).
+%   Heights preserved. Vertices: all (v_q, v_p) for v_q in vert(K_q), v_p in vert(K_p).
+Let $K_q \subset L_q$ and $K_p \subset L_p$ be convex polygons
+with $0 \in \operatorname{int}(K_q)$ and $0 \in \operatorname{int}(K_p)$.
+The \emph{Lagrangian product} is the polytope
+\[
+  K \coloneqq K_q \times K_p
+  = \{ (q, p) \in \mathbb{R}^4 : q \in K_q,\; p \in K_p \}.
+\]
+\end{definition}
+
+\begin{lemma}[Facet structure of Lagrangian products]\label{lem:lagrangian-facets}
+% QC: every facet is either q-type or p-type, never mixed.
+%   q-type: normal (n_q, 0), height h_q = h_{K_q}(n_q).
+%   p-type: normal (0, n_p), height h_p = h_{K_p}(n_p).
+%   Facet count F = F_q + F_p (edges of K_q + edges of K_p).
+% Downstream: classify_facets checks |n[2..3]| < eps or |n[0..1]| < eps.
+Let $K = K_q \times K_p$ be a Lagrangian product.
+Let $K_q$ have edges with outward unit normals
+$\hat{n}_1^q, \ldots, \hat{n}_{F_q}^q \in S^1 \subset L_q$
+and heights $h_1^q, \ldots, h_{F_q}^q > 0$,
+and similarly $\hat{n}_1^p, \ldots, \hat{n}_{F_p}^p$ and $h_j^p$ for~$K_p$.
+Then $K$ has $F = F_q + F_p$ facets, partitioned into:
+\begin{itemize}
+\item \emph{$q$-facets} with normals $n_i = (\hat{n}_i^q, 0)$
+  and heights $h_i = h_i^q$, for $i = 1, \ldots, F_q$;
+\item \emph{$p$-facets} with normals $n_j = (0, \hat{n}_j^p)$
+  and heights $h_j = h_j^p$, for $j = 1, \ldots, F_p$.
+\end{itemize}
+Every facet normal lies entirely in $L_q$ or entirely in $L_p$.
+\end{lemma}
+
+\begin{proof}
+A facet of $K_q \times K_p$ arises from a facet (edge) of
+one factor and the full other factor: either
+$\text{edge}_i(K_q) \times K_p$ or $K_q \times \text{edge}_j(K_p)$.
+The outward normal to $\text{edge}_i(K_q) \times K_p$ is
+$(\hat{n}_i^q, 0)$ with height $h_{K_q}(\hat{n}_i^q) = h_i^q$;
+similarly for $p$-facets.
+\end{proof}
+
+\begin{lemma}[Reeb vectors on Lagrangian products]\label{lem:lagrangian-reeb}
+% QC: R_i = (2/h_i) J_0 n_i per def:reeb-vectors.
+%   q-facet: n = (n_q, 0), so J_0 n = (0, n_q), so R = (2/h)(0, n_q) in L_p.
+%   p-facet: n = (0, n_p), so J_0 n = (-n_p, 0), so R = (2/h)(-n_p, 0) in L_q.
+% Downstream: on q-facets, only p-coordinates change.
+%   On p-facets, only q-coordinates change.
+On a Lagrangian product $K = K_q \times K_p$:
+\begin{enumerate}
+\item For a $q$-facet with normal $n = (\hat{n}^q, 0)$ and height~$h$:
+  \[
+    R = \frac{2}{h}\, J_0\, (\hat{n}^q, 0) = \frac{2}{h}\, (0, \hat{n}^q).
+  \]
+  The Reeb vector lies in $L_p$: the orbit moves in the $p$-direction,
+  and $q$ is constant.
+
+\item For a $p$-facet with normal $n = (0, \hat{n}^p)$ and height~$h$:
+  \[
+    R = \frac{2}{h}\, J_0\, (0, \hat{n}^p) = \frac{2}{h}\, (-\hat{n}^p, 0).
+  \]
+  The Reeb vector lies in $L_q$: the orbit moves in the $q$-direction,
+  and $p$ is constant.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+Apply Definition~\ref{def:reeb-vectors} with
+$J_0(q, p) = (-p, q)$
+(Definition~\ref{def:symplectic-form}).
+\end{proof}
+
+\begin{lemma}[Symplectic form vanishes on same-type pairs]\label{lem:omega-vanishes}
+% QC: omega_0(q, q) = 0 and omega_0(p, p) = 0 because L_q and L_p are Lagrangian.
+%   omega_0(q, p) = n_q1 * n_p1 + n_q2 * n_p2 (inner product of 2D normals)
+%   in general nonzero.
+% Downstream: in the H matrix, same-type entries are zero.
+%   Q(beta) only gets contributions from cross-type pairs.
+For normals of a Lagrangian product:
+\begin{enumerate}
+\item $\omega_0\bigl((\hat{n}^q, 0),\; (\hat{m}^q, 0)\bigr) = 0$
+  for any two $q$-facet normals.
+\item $\omega_0\bigl((0, \hat{n}^p),\; (0, \hat{m}^p)\bigr) = 0$
+  for any two $p$-facet normals.
+\item $\omega_0\bigl((\hat{n}^q, 0),\; (0, \hat{n}^p)\bigr)
+  = \langle \hat{n}^q, \hat{n}^p \rangle$,
+  which is generically nonzero.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+From Definition~\ref{def:symplectic-form}:
+$\omega_0(u, v) = u_{q_1} v_{p_1} - u_{p_1} v_{q_1} + u_{q_2} v_{p_2} - u_{p_2} v_{q_2}$.
+If both vectors lie in $L_q$ (zero $p$-components), every term vanishes.
+Similarly for $L_p$.
+For $u = (\hat{n}^q, 0)$ and $v = (0, \hat{n}^p)$:
+$\omega_0(u, v) = \hat{n}^q_1 \hat{n}^p_1 + \hat{n}^q_2 \hat{n}^p_2
+= \langle \hat{n}^q, \hat{n}^p \rangle$.
+\end{proof}
+
+%%% ---------------------------------------------------------------
+\subsection{Structure of Simple Orbits}\label{subsec:orbit-structure}
+%%% ---------------------------------------------------------------
+
+\begin{lemma}[Adjacency in Lagrangian products]\label{lem:lagrangian-adjacency}
+% QC: vertices of K_q x K_p are exactly (v_q, v_p) for v_q in vert(K_q),
+%   v_p in vert(K_p). Every q-facet contains all (v_q, *) where v_q is on
+%   the q-edge, so it shares vertices with every p-facet.
+% Downstream: in the adjacency matrix, adj[q-facet][p-facet] = true always.
+%   adj[q_i][q_j] = true iff q-edges i,j share a vertex in K_q.
+%   adj[p_i][p_j] = true iff p-edges i,j share a vertex in K_p.
+In the facet adjacency graph $G_K$
+(Definition~\ref{def:adjacency-graph}) of a Lagrangian product:
+\begin{enumerate}
+\item Every $q$-facet is adjacent to every $p$-facet.
+\item Two $q$-facets are adjacent if and only if
+  the corresponding edges of $K_q$ share a vertex.
+\item Two $p$-facets are adjacent if and only if
+  the corresponding edges of $K_p$ share a vertex.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+The vertices of $K_q \times K_p$ are exactly the pairs
+$(v_q, v_p)$ with $v_q \in \operatorname{vert}(K_q)$,
+$v_p \in \operatorname{vert}(K_p)$.
+The $q$-facet with normal $(\hat{n}_i^q, 0)$ contains
+$(v_q, v_p)$ whenever $v_q$ lies on edge~$i$ of~$K_q$;
+since edge~$i$ has at least two vertices, and $K_p$ has at
+least three vertices, every $q$-facet contains at least six
+4D vertices. Every $p$-facet likewise.
+Two facets are adjacent iff they share a vertex
+(Definition~\ref{def:adjacency-graph}).
+
+(i) Any $q$-facet (edge~$i$ of $K_q$) contains $(v_q, v_p)$
+for some vertex $v_q$ on edge~$i$. Any $p$-facet (edge~$j$
+of $K_p$) contains $(v_q', v_p)$ for some vertex $v_p$ on
+edge~$j$. Since both factors range over all partner vertices,
+$(v_q, v_p)$ lies on both facets for any $v_q$ on edge~$i$
+and $v_p$ on edge~$j$. Adjacent.
+
+(ii)--(iii) Two $q$-facets share a vertex $(v_q, v_p)$ iff
+$v_q$ lies on both $q$-edges, i.e.\ the edges share the
+vertex $v_q$ in~$K_q$. Symmetric for $p$.
+\end{proof}
+
+\begin{lemma}[Sigma structure for Lagrangian products]\label{lem:sigma-structure}
+% [TODO: JOERN - verify this proof. Statement confirmed in chat,
+%   proof needs checking.]
+% QC: this is the central structural result. It restricts the
+%   space of (S, sigma) to test for Lagrangian products.
+% Downstream: enumerate sigma matching ([Q|QQ][P|PP])^k only.
+%   Block size at most 2. Adjacent facets within each block.
+Let $K = K_q \times K_p$ be a Lagrangian product, and let
+$(\sigma, \tau)$ be a simple Reeb orbit on $\partial K$
+(Definition~\ref{def:simple-reeb-orbit}) with all $\tau_k > 0$.
+Write the cyclic sequence $\sigma$ as a word in the alphabet
+$\{Q, P\}$ by replacing each $q$-facet index with $Q$ and each
+$p$-facet index with $P$.
+Then:
+\begin{enumerate}
+\item[(i)] The word has the form
+  $\bigl([Q \mid QQ]\,[P \mid PP]\bigr)^k$ for some $k \geq 1$:
+  alternating blocks of $q$- and $p$-facets, each block of length
+  one or two.
+
+\item[(ii)] Within each block of length two, the two facets are
+  adjacent in $G_K$
+  (consecutive edges of $K_q$ or $K_p$ sharing a vertex).
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+\textbf{Claim: no three consecutive same-type facets.}\quad
+Suppose for contradiction that $\sigma$ contains three
+consecutive $q$-facets $q_1, q_2, q_3$ (all with $\tau > 0$).
+By Lemma~\ref{lem:lagrangian-reeb}(i), the Reeb vectors
+$R_{q_1}, R_{q_2}, R_{q_3}$ all lie in~$L_p$, so $q$ is
+constant throughout the three segments.
+By Lemma~\ref{lem:adjacency-constraint}, the orbit at the
+breakpoint between $q_1$ and $q_2$ lies on both facets,
+meaning $\langle q, \hat{n}_1^q \rangle = h_1^q$ and
+$\langle q, \hat{n}_2^q \rangle = h_2^q$: the point $q$
+lies on both edges $1$ and $2$ of~$K_q$, hence at their
+common vertex $v_{12}$.
+Similarly, the breakpoint between $q_2$ and $q_3$ forces $q$
+to lie at vertex $v_{23}$ (intersection of edges $2$ and $3$).
+Since $q$ is constant, $v_{12} = v_{23}$.
+But for a nondegenerate convex polygon, $v_{12}$ and $v_{23}$
+are the two distinct endpoints of edge~$2$: contradiction.
+
+The same argument applies to $p$-facets by symmetry
+(Lemma~\ref{lem:lagrangian-reeb}(ii), with $p$ constant).
+
+\medskip\noindent
+\textbf{Alternation and block structure.}\quad
+Since no three consecutive facets have the same type, each maximal
+run of same-type facets has length one or two.
+Consecutive runs must alternate between $q$ and $p$ (a $q$-run
+followed by another $q$-run would create three or more consecutive
+$q$-facets at their boundary, contradicting the above).
+% QC: the cyclic structure ensures equal counts: if there are
+%   k q-blocks and l p-blocks with k != l, the alternation
+%   would fail at the cyclic wraparound.
+In a cyclic sequence, alternation forces equal block counts:
+$k$ blocks of $q$-facets and $k$ blocks of $p$-facets.
+
+\medskip\noindent
+\textbf{Within-block adjacency.}\quad
+Follows directly from Lemma~\ref{lem:adjacency-constraint}:
+consecutive facets in $\sigma$ share a breakpoint, hence are
+adjacent in~$G_K$.
+By Lemma~\ref{lem:lagrangian-adjacency}(ii)--(iii),
+two same-type adjacent facets correspond to edges sharing a
+vertex in the 2D polygon.
+\end{proof}
+
+\begin{lemma}[Infeasibility of $k = 1$]\label{lem:k1-infeasible}
+% QC: closure condition for k=1 requires sum of at most 2 same-type
+%   normals to vanish, which needs antiparallel normals. Adjacent
+%   edges of a convex polygon have normals with angle < pi.
+% Downstream: skip k=1 in enumeration. Start at k=2.
+For a nondegenerate Lagrangian product, no simple Reeb orbit with
+the structure of Lemma~\ref{lem:sigma-structure} has $k = 1$.
+\end{lemma}
+
+\begin{proof}
+A $k = 1$ orbit has $\sigma = (Q\text{-block}, P\text{-block})$.
+The closure condition $\sum_i \beta_i n_{\sigma(i)} / h_{\sigma(i)} = 0$
+(Remark~\ref{rem:simple-orbit-data}, applied to
+the constraint set~\eqref{eq:constraint-set})
+decomposes into independent $q$- and $p$-components.
+
+The $q$-component is $\sum_{i \in Q\text{-block}}
+(\beta_i / h_i)\, \hat{n}_i^q = 0$.
+A $Q$-block contains one or two $q$-facets.
+\begin{itemize}
+\item One $q$-facet: $(\beta / h)\, \hat{n}^q = 0$ requires
+  $\beta = 0$, contradicting $\beta > 0$.
+\item Two adjacent $q$-facets: $(\beta_1 / h_1)\, \hat{n}_1^q
+  + (\beta_2 / h_2)\, \hat{n}_2^q = 0$ with $\beta_1, \beta_2 > 0$
+  requires $\hat{n}_1^q$ and $\hat{n}_2^q$ to be antiparallel.
+  But these are outward normals of adjacent edges of a convex polygon;
+  the angle between adjacent outward normals of a convex polygon
+  is strictly less than~$\pi$, so they cannot be antiparallel.
+\end{itemize}
+In both cases, no positive $\beta$ solution exists.
+\end{proof}
+
+%%% ---------------------------------------------------------------
+\subsection{Billiard Characterization and Bounce Bound}%
+\label{subsec:bounce-bound}
+%%% ---------------------------------------------------------------
+
+% [TODO: JOERN - verify the citation chain. Agent extracted these from
+%   papers/hko2024/counterexample.tex and archaeology docs. Check that
+%   the theorem statements are cited correctly.]
+
+\begin{definition}[Minkowski billiard trajectory]\label{def:billiard-trajectory}
+% QC: standard definition from Gutkin-Tabachnikov (2002).
+%   A closed polygon inscribed in K_q with reflection law from K_p.
+% Downstream: the billiard trajectory is the q-projection of a
+%   generalized Reeb orbit on bdry(K_q x K_p).
+Let $K_q, K_p \subset \mathbb{R}^2$ be convex bodies with
+$0 \in \operatorname{int}(K_q)$ and $0 \in \operatorname{int}(K_p)$.
+A \emph{closed $K_p$-billiard trajectory in $K_q$} is a closed
+polygon $\eta = (x_1, \ldots, x_k)$ with vertices
+$x_i \in \partial K_q$ (the \emph{bounce points})
+and edges $\Delta_i \coloneqq x_{i+1} - x_i$ (indices cyclic).
+
+The \emph{$K_p^\circ$-length} is
+\[
+  \ell_{K_p^\circ}(\eta) \coloneqq
+  \sum_{i=1}^{k} h_{K_p}(\Delta_i),
+\]
+where $h_{K_p}(v) = \max_{y \in K_p} \langle v, y \rangle$
+is the support function of~$K_p$
+(Definition~\ref{def:support-function}, restricted to $\mathbb{R}^2$).
+\end{definition}
+
+\begin{theorem}[Billiard characterization of EHZ capacity]%
+\label{thm:billiard-characterization}
+% QC: proved in Artstein-Avidan & Ostrover (2014) for smooth strictly
+%   convex bodies, extended by Rudolf (2022) to polytopes.
+%   See papers/hko2024/counterexample.tex Section 2, Theorem 2.13.
+% Downstream: this connects the Reeb orbit computation (Section 1)
+%   to the billiard enumeration below.
+\textup{(Artstein-Avidan \& Ostrover~\cite{AAO2014};
+Rudolf~\cite{Rudolf2022}.)}
+For a Lagrangian product $K = K_q \times K_p$:
+\[
+  c_{\mathrm{EHZ}}(K_q \times K_p)
+  = \min\bigl\{ \ell_{K_p^\circ}(\eta) :
+  \eta \text{ is a closed $K_p$-billiard trajectory in } K_q \bigr\}.
+\]
+\end{theorem}
+
+\begin{theorem}[Bounce bound]%
+\label{thm:bounce-bound}
+% QC: Bezdek & Bezdek (2009) Lemma 2.1 + 2.4: any closed convex curve
+%   that cannot be translated into int(K_q) can be reduced to at most
+%   n+1 = 3 vertices (for K_q in R^2). Rudolf (2022) Theorem 4
+%   applies this to billiard trajectories.
+%   See papers/hko2024/counterexample.tex line 426.
+% Downstream: k <= 3 in the enumeration. Total |sigma| <= 12.
+\textup{(Bezdek \& Bezdek~\cite{BezdekBezdek2009};
+Rudolf~\cite{Rudolf2022}.)}
+For convex polygons $K_q, K_p \subset \mathbb{R}^2$,
+the minimum in Theorem~\ref{thm:billiard-characterization}
+is achieved by a billiard trajectory with at most $3$ bounce points.
+\end{theorem}
+
+%%% ---------------------------------------------------------------
+\subsection{The Billiard Algorithm}\label{subsec:billiard-algorithm}
+%%% ---------------------------------------------------------------
+
+\begin{theorem}[Completeness of the billiard enumeration]%
+\label{thm:billiard-completeness}
+% [TODO: JOERN - verify this proof carefully. It combines three
+%   external results. The key claim is that the simple minimizer
+%   has alternating block structure with k <= 3.]
+Let $K = K_q \times K_p$ be a Lagrangian product.
+Then $c_{\mathrm{EHZ}}(K)$ equals the minimum of $A(S, \sigma)$
+(equation~\eqref{eq:action-formula})
+over all $(S, \sigma)$ with $\sigma$ matching the pattern
+$\bigl([Q \mid QQ]\,[P \mid PP]\bigr)^k$
+for $k \in \{2, 3\}$.
+\end{theorem}
+
+\begin{proof}
+\textbf{Overview.}\quad
+Every valid $(S, \sigma)$ from the restricted set is also a valid
+input to the algorithm of Section~\ref{sec:main-result}, so
+\begin{equation}\label{eq:billiard-lb}
+  \min_{\text{restricted}} A(S, \sigma)
+  \geq \min_{\text{all}} A(S, \sigma)
+  = c_{\mathrm{EHZ}}(K).
+\end{equation}
+It remains to show the reverse inequality.
+
+\medskip\noindent
+\textbf{Step 1: simple minimizer has alternating block structure.}\quad
+By Theorem~\ref{thm:simple-minimizer}, $c_{\mathrm{EHZ}}(K)$ is
+achieved by a simple Reeb orbit $\gamma^*$ with representation
+$(\sigma^*, \tau^*)$, all $\tau_i > 0$.
+By Lemma~\ref{lem:sigma-structure}, $\sigma^*$ has the form
+$\bigl([Q \mid QQ]\,[P \mid PP]\bigr)^{k^*}$ for some $k^* \geq 2$
+(Lemma~\ref{lem:k1-infeasible} excludes $k^* = 1$).
+Hence
+\begin{equation}\label{eq:billiard-ub1}
+  \min_{\text{alternating-block}} A(S, \sigma) \leq A(S^*, \sigma^*)
+  = c_{\mathrm{EHZ}}(K).
+\end{equation}
+
+\medskip\noindent
+\textbf{Step 2: bound $k^* \leq 3$.}\quad
+By the billiard characterization
+(Theorem~\ref{thm:billiard-characterization}), $c_{\mathrm{EHZ}}(K)$
+is also the minimum $K_p^\circ$-length over billiard trajectories
+in~$K_q$. By the bounce bound (Theorem~\ref{thm:bounce-bound}),
+this minimum is achieved by a trajectory with at most $3$ bounce points.
+Each bounce point corresponds to one $q$-block in the simple orbit
+(Lemma~\ref{lem:sigma-structure}), so $k^* \leq 3$.
+
+% [GAP - AGENT CONFIDENCE 80%: Step 2 implicitly uses that the
+%   number of q-blocks in the simple minimizer equals the number
+%   of bounce points in the billiard trajectory achieving the same
+%   action. This follows from the Reeb-orbit-to-billiard correspondence
+%   (Rudolf 2022), but the details of the correspondence for
+%   non-smooth K_p (polygonal) may need care.
+%   JOERN: verify this step connects correctly.]
+
+\medskip\noindent
+\textbf{Conclusion.}\quad
+Combining~\eqref{eq:billiard-lb} and~\eqref{eq:billiard-ub1}
+with the restriction $k \in \{2, 3\}$:
+\[
+  c_{\mathrm{EHZ}}(K)
+  \leq \min_{k \in \{2,3\}} A(S, \sigma)
+  \leq \min_{\text{alternating-block}} A(S, \sigma)
+  \leq c_{\mathrm{EHZ}}(K). \qedhere
+\]
+\end{proof}
+
+\begin{remark}[Complexity]\label{rem:billiard-complexity}
+% Downstream: total iterations for k=2,3 combined.
+%   For each k: choose k q-blocks from O(n_q) blocks, k p-blocks
+%   from O(n_p) blocks, then enumerate orderings.
+%   Dominated by k=3: O(n_q^3 * n_p^3) iterations.
+%   Each iteration: solve (|sigma|+5) x (|sigma|+5) system with
+%   |sigma| <= 12, so each solve is O(1).
+Let $n_q = F_q$ and $n_p = F_p$ denote the edge counts of $K_q$
+and $K_p$.
+The number of $(S, \sigma)$ to evaluate is
+$O(n_q^3 \, n_p^3)$, dominated by $k = 3$:
+\begin{itemize}
+\item Choose $3$ non-overlapping $q$-blocks: $O(n_q^3)$ choices.
+\item Choose $3$ non-overlapping $p$-blocks: $O(n_p^3)$ choices.
+\item Orderings per selection: at most $2! \times 3! = 12$
+  (fix first $q$-block to remove cyclic symmetry,
+  permute remaining $q$-blocks and all $p$-blocks).
+\item Within-block orderings: at most $2^6 = 64$
+  (each of 6 blocks can have reversed internal order).
+\end{itemize}
+Each evaluation solves a linear system of size at most
+$12 + 5 = 17$, which is $O(1)$.
+The total cost is polynomial in $n_q$ and $n_p$.
+\end{remark}
+
+\medskip
+\noindent\textbf{Algorithm}\label{alg:billiard}
+(computes $c_{\mathrm{EHZ}}(K_q \times K_p)$
+via Theorem~\ref{thm:billiard-completeness}).
+
+\smallskip\noindent
+\emph{Input:} Lagrangian product $K = K_q \times K_p$ in
+$H$-representation.
+\quad
+\emph{Output:} $c_{\mathrm{EHZ}}(K)$.
+
+\begin{enumerate}
+\item \textbf{Classify} facets into $q$-type and $p$-type
+  (Lemma~\ref{lem:lagrangian-facets}).
+\item \textbf{Build blocks.}
+  For each polygon ($K_q$ and $K_p$), enumerate all
+  \emph{single-facet blocks} (one edge) and
+  \emph{pair blocks} (two adjacent edges, both orderings).
+\item \textbf{Enumerate.}
+  For $k = 2, 3$: for each selection of $k$ non-overlapping
+  $q$-blocks and $k$ non-overlapping $p$-blocks, and each
+  interleaving into the pattern
+  $\bigl([Q \mid QQ]\,[P \mid PP]\bigr)^k$,
+  flatten the blocks into a facet sequence~$\sigma$.
+\item \textbf{Solve and filter.}
+  For each $\sigma$: solve the KKT system~\eqref{eq:linear-system},
+  filter by $\beta_i > 0$ and $Q(\beta) > 0$, compute
+  $A(S, \sigma) = \tfrac{1}{2}\, Q(\beta)^{-1}$.
+\item \textbf{Return} $\min A(S, \sigma)$.
+\end{enumerate}
