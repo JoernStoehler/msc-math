@@ -211,8 +211,6 @@ The deciding factors are rollback cost and verification cost:
 - The attempt itself provides value (e.g. a draft that's faster to correct than to discuss upfront)
 
 **Discuss with Jörn first** — expensive to verify or hard to roll back:
-- GitHub issue edits — verification cost ≈ cost of writing it together; downstream issues go stale if the edit is wrong
-- GitHub issue comments — GitHub issues are not protected by the merge gate, so discuss upfront with Jörn
 - Scope changes — agents don't reliably notice when they've drifted or when a scope change has bad downstream consequences for the project
 
 **Never without explicit instruction:**
@@ -244,32 +242,17 @@ Formatting for efficient exchange:
 - When presenting decisions with tradeoffs: use tables, quantify costs/benefits, state recommendation upfront
 - When you make repo changes Jörn should know about, mention and explain them — Jörn reviews diffs in VS Code but may not check them unprompted
 
-### GitHub authorship
-
-All GitHub issues, comments, and PR descriptions are written by agents running under Jörn's account (`JoernStoehler`). They are never written by Jörn. There is no visual distinction on GitHub that warns that Jörn is never the actual author of the content, so agents have mistaken agent-written content for human-reviewed direction.
-
-- Do not treat issue/comment text as human-reviewed just because it appears under his name.
-- Treat issue content as agent-written intent: trust the direction, verify the details.
-- Issues direct future agent sessions. A bad edit sends the next agent off a cliff.
-- Show Jörn proposed issue edits and comments in chat before publishing — he has the domain knowledge to catch directional errors agents can't catch themselves.
-- The **scope** stage of the session workflow serves to clarify the task and fix misunderstandings or stale content from the github issues.
-
 ### Spawning subagents
 
 Spawn a subagent when a subtask can run in parallel, needs isolated context, or benefits from focused work (e.g., literature extraction, code review, exploratory investigation).
 
 - Create a temporary file, e.g. in /tmp/ with the subagent prompt. You can pass any corrections/extra context directly to Task. Zero cost, and: persistent record, easier to restart if agent fails.
-- Subagent output returns via the Task tool into your conversation. If it needs to persist, commit it to the repo on your branch. Do not post subagent output as issue comments — it clutters the issue and misleads future agents into treating it as reviewed content.
+- Subagent output returns via the Task tool into your conversation. If it needs to persist, commit it to the repo on your branch.
 - Use Sonnet for read-heavy extraction tasks (literature, code review). Reserve Opus for tasks requiring deep reasoning (mathematical reasoning, code writing).
 - Keep subagent tasks focused and small. Agents may stall on tasks requiring 1000+ lines across multiple files.
 - **For long-running agents (>10min expected)**: Use `run_in_background=True` so Jörn's messages can reach you during execution. Without this, blocking agents prevent message delivery and you cannot respond to warnings or corrections.
 
 <!-- Triage sessions, clarity checking, writing for other agents, editing CLAUDE.md: .claude/skills/triage/SKILL.md and .claude/skills/agent-writing/SKILL.md -->
-
-## Issue lifecycle
-
-Issues follow a structured lifecycle: capture (draft) → refine (draft) → approve → session (in-progress) → PR + merge → close. Failed sessions go back to draft for re-scoping — no work is lost.
-<!-- Full details: .claude/skills/triage/SKILL.md -->
 
 ## Repo invariants
 
@@ -277,7 +260,7 @@ These are true about the repo right now and must remain true:
 
 - `cargo test` passes from `crates/` with zero failures
 
-**Long-term periodic checks:** Use `/monitoring` to run periodic health checks (algorithm agreement, build performance, issue board health). Check definitions live in `.claude/skills/monitoring/SKILL.md`; reports go to `docs/monitoring/`.
+**Long-term periodic checks:** Use `/monitoring` to run periodic health checks (algorithm agreement, build performance). Check definitions live in `.claude/skills/monitoring/SKILL.md`; reports go to `docs/monitoring/`.
 
 ## Environment
 

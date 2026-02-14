@@ -34,12 +34,6 @@
 **Key metric:** (N tests passed, clippy clean yes/no)
 **Notes:**
 
-### Check 4: Issue Board Health
-
-**Status:** (PASS / FAIL / SKIPPED)
-**Key metric:** (N in-progress issues, staleness)
-**Notes:**
-
 ### Check 5: Build & Test Performance
 
 **Status:** (PASS / FAIL / SKIPPED)

@@ -1,6 +1,6 @@
 ---
 name: monitoring
-description: Use when running periodic health checks on the repo (build performance, algorithm agreement, issue board health). Invoke with /monitoring to start a monitoring session.
+description: Use when running periodic health checks on the repo (build performance, algorithm agreement). Invoke with /monitoring to start a monitoring session.
 ---
 
 # Monitoring: Periodic Health Checks
@@ -92,28 +92,6 @@ cd /workspaces/msc-math/crates && cargo test --lib && cargo clippy --lib -- -D w
 
 ---
 
-### Check 4: Issue Board Health
-
-**Purpose:** Detect stale or inconsistent issues.
-
-**Background:** Issues labeled `in-progress` should have active work. Issues labeled `approved` should move to `in-progress` within a reasonable window.
-
-**Command:**
-```bash
-cd /workspaces/msc-math && gh issue list --state open --label in-progress --format "{{.Number}} {{.Title}} {{.UpdatedAt}}" 2>&1 | head -20
-```
-
-**Expected result:**
-- All in-progress issues updated within last 3 days (or have "paused" label)
-- Each in-progress issue has a corresponding git branch
-
-**Alert threshold:**
-- In-progress issue with no updates > 7 days and no "paused" label
-- In-progress issue with no corresponding branch
-- Approved issue > 14 days without moving to in-progress
-
----
-
 ### Check 5: Build & Test Performance
 
 **Purpose:** Track compilation and test execution times. Detect regressions, identify hotspots.
@@ -147,7 +125,10 @@ git -C /workspaces/msc-math worktree remove "$BENCH_WT"
 **Alert threshold:**
 - Hot test suite > 2x previous baseline
 - Cold build > 2x previous baseline
-- Any single crate consuming >60% of total test time
+- Single crate >75% of total test time: investigate (may be structural)
+- Single crate >90% of total test time: action required
+
+**Note:** Structural dominance (one compute-heavy crate, lightweight others) is expected in this workspace. hk2017 runs exponential-time capacity computation while other crates have fast tests. High percentage with reasonable absolute time is acceptable.
 
 ---
 
@@ -219,6 +200,8 @@ done
 - Tests checking multiple properties have justification comments
 - Debug suite exercises all code paths that benefit from overflow/bounds checks
 - Release-only suite covers large-polytope correctness
+
+**Note on optimization:** `nalgebra` has `opt-level = 3` in dev profile (since 2026-02-14, commit `6e2e2af`). This optimizes linear algebra ~2-3x in debug builds. Despite this, hk2017 capacity tests still show 50-80x debug/release ratios because combinatorial search, adjacency checking, and pruning run in debug mode (intentionally — these paths need overflow/bounds checks on index arithmetic). Large debug/release ratios are expected and correct for capacity-heavy tests.
 
 **Alert threshold:**
 - Any un-ignored test >10s in debug with no debug-specific value
