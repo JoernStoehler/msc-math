@@ -145,3 +145,65 @@ fn simplex_trajectory_produces_segments() {
         "simplex trajectory should have segments"
     );
 }
+
+/// Assert that every segment endpoint lies inside the polytope (all half-spaces).
+/// This catches the bug where trajectories escape through unchecked facets.
+#[test]
+fn trajectory_stays_inside_polytope() {
+    let polytopes: Vec<(&str, _)> = vec![
+        ("simplex", known_polytopes::simplex()),
+        ("hypercube", known_polytopes::hypercube()),
+        ("crosspolytope", known_polytopes::crosspolytope()),
+        ("hko_pentagon", known_polytopes::hko_pentagon()),
+        (
+            "lagrangian_triangle_product",
+            known_polytopes::lagrangian_triangle_product(),
+        ),
+        (
+            "symplectic_triangle_product",
+            known_polytopes::symplectic_triangle_product(),
+        ),
+    ];
+
+    for (name, kp) in &polytopes {
+        let normals = kp.polytope.normals();
+        let heights = kp.polytope.heights();
+        let skel = Skeleton::compute(&kp.polytope);
+
+        for facet in 0..normals.len() {
+            let start = facet_centroid(&kp.polytope, &skel, facet);
+            let traj = simulate(&kp.polytope, &skel, start, facet, 100, 1e-6);
+
+            for (si, seg) in traj.segments.iter().enumerate() {
+                // Segment endpoints must satisfy all half-space constraints
+                for (label, pt) in [("start", &seg.start), ("end", &seg.end)] {
+                    for (fk, (nk, hk)) in normals.iter().zip(heights.iter()).enumerate() {
+                        let violation = nk.dot(pt) - hk;
+                        assert!(
+                            violation < 1e-6,
+                            "{name} facet {facet} traj seg {si} {label}: \
+                             violates facet {fk} by {violation:.2e}, \
+                             point={pt:?}"
+                        );
+                    }
+                }
+
+                // Segment start/end must lie on claimed facet's hyperplane
+                let n_f = &normals[seg.facet];
+                let h_f = heights[seg.facet];
+                let res_start = (n_f.dot(&seg.start) - h_f).abs();
+                let res_end = (n_f.dot(&seg.end) - h_f).abs();
+                assert!(
+                    res_start < 1e-6,
+                    "{name} facet {facet} traj seg {si}: start not on facet {}, residual {res_start:.2e}",
+                    seg.facet
+                );
+                assert!(
+                    res_end < 1e-6,
+                    "{name} facet {facet} traj seg {si}: end not on facet {}, residual {res_end:.2e}",
+                    seg.facet
+                );
+            }
+        }
+    }
+}

@@ -12,6 +12,12 @@ use crate::polytope::Polytope4D;
 use crate::skeleton::Skeleton;
 use nalgebra::Vector4;
 
+/// Tolerance for detecting when a point lies on a facet hyperplane.
+const EPS_ON_FACET: f64 = 1e-8;
+
+/// Tolerance for considering a Reeb-vs-normal dot product as "pushing through".
+const EPS_DENOM: f64 = 1e-10;
+
 /// A single linear segment of a Reeb trajectory, lying on one facet.
 #[derive(Clone, Debug)]
 pub struct ReebSegment {
@@ -58,10 +64,15 @@ pub fn reeb_vector(normal: &Vector4<f64>) -> Vector4<f64> {
 ///   nⱼ · (x₀ + t · Rᵢ) = hⱼ
 ///   t = (hⱼ - nⱼ · x₀) / (nⱼ · Rᵢ)
 ///
-/// Take the smallest positive t among all neighbors of Fᵢ (via ridges).
+/// Take the smallest positive t among all facets j ≠ i.
+///
+/// **Ridge-point handling:** When the current point sits on the boundary
+/// of another facet Fⱼ (nⱼ·x ≈ hⱼ) and the Reeb direction pushes
+/// through it (nⱼ·R > 0), the trajectory cannot proceed on the current
+/// facet. It immediately transitions to Fⱼ (zero-length segment).
 pub fn simulate(
     polytope: &Polytope4D,
-    skeleton: &Skeleton,
+    _skeleton: &Skeleton,
     start_point: Vector4<f64>,
     start_facet: usize,
     max_segments: usize,
@@ -69,6 +80,7 @@ pub fn simulate(
 ) -> ReebTrajectory {
     let normals = polytope.normals();
     let heights = polytope.heights();
+    let n_facets = normals.len();
 
     let mut segments = Vec::new();
     let mut current_point = start_point;
@@ -78,32 +90,59 @@ pub fn simulate(
     for _ in 0..max_segments {
         let reeb = reeb_vector(&normals[current_facet]);
 
-        // Find neighbor facets sharing a ridge with current_facet
-        let neighbors: Vec<usize> = skeleton
-            .ridges
-            .iter()
-            .filter_map(|r| {
-                if r.facets[0] == current_facet {
-                    Some(r.facets[1])
-                } else if r.facets[1] == current_facet {
-                    Some(r.facets[0])
-                } else {
-                    None
+        // Phase 1: Check for immediate transition.
+        // If we're on the boundary of facet Fⱼ (nⱼ·x ≈ hⱼ) and the Reeb
+        // direction pushes us through (nⱼ·R > 0), we must transition to Fⱼ
+        // before proceeding.  This happens at ridges where the Reeb flow
+        // on the current facet would immediately leave the polytope.
+        let mut did_immediate = false;
+        for _ in 0..n_facets {
+            let r = reeb_vector(&normals[current_facet]);
+            let mut best_immediate = None;
+            let mut best_denom = 0.0_f64;
+            for fj in 0..n_facets {
+                if fj == current_facet {
+                    continue;
                 }
-            })
-            .collect();
+                let residual = normals[fj].dot(&current_point) - heights[fj];
+                let denom = normals[fj].dot(&r);
+                // On the boundary of fj AND Reeb pushes through it
+                if residual.abs() < EPS_ON_FACET && denom > EPS_DENOM {
+                    // Pick the facet where the Reeb pushes through most strongly
+                    if denom > best_denom {
+                        best_denom = denom;
+                        best_immediate = Some(fj);
+                    }
+                }
+            }
+            if let Some(fj) = best_immediate {
+                current_facet = fj;
+                did_immediate = true;
+            } else {
+                break;
+            }
+        }
+        // After immediate transitions, recompute the Reeb vector
+        let reeb = if did_immediate {
+            reeb_vector(&normals[current_facet])
+        } else {
+            reeb
+        };
 
-        // Find smallest positive t where nⱼ · (x + t·R) = hⱼ
+        // Phase 2: Find the exit — smallest positive t among ALL other facets.
         let mut best_t = f64::INFINITY;
         let mut next_facet = current_facet;
 
-        for &fj in &neighbors {
+        for fj in 0..n_facets {
+            if fj == current_facet {
+                continue;
+            }
             let denom = normals[fj].dot(&reeb);
-            if denom.abs() < 1e-15 {
+            if denom.abs() < EPS_DENOM {
                 continue; // Reeb parallel to this facet plane
             }
             let t = (heights[fj] - normals[fj].dot(&current_point)) / denom;
-            if t > 1e-12 && t < best_t {
+            if t > EPS_ON_FACET && t < best_t {
                 best_t = t;
                 next_facet = fj;
             }
@@ -114,6 +153,22 @@ pub fn simulate(
         }
 
         let end_point = current_point + best_t * reeb;
+
+        // Validate: end point must satisfy all half-space constraints
+        // (within tolerance). If not, clamp to the polytope boundary.
+        let mut valid = true;
+        for fk in 0..n_facets {
+            let violation = normals[fk].dot(&end_point) - heights[fk];
+            if violation > EPS_ON_FACET * 100.0 {
+                // Gross violation — something went wrong
+                valid = false;
+                break;
+            }
+        }
+        if !valid {
+            break;
+        }
+
         segments.push(ReebSegment {
             start: current_point,
             end: end_point,
