@@ -75,6 +75,44 @@ The simulation starts from the vertex centroid of each facet and
 runs for up to 100 segments or until the trajectory closes
 (returns within tolerance of its start).
 
+\begin{figure}[ht]
+\centering
+\begin{minipage}{0.48\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{../experiments/figures/viz-hypercube-edges.png}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{../experiments/figures/viz-hypercube-ridges.png}
+\end{minipage}
+\caption{Stereographic projection of the hypercube $[-1,1]^4$
+  from the north pole $n = e_4$.
+  Left: vertices and edges.
+  Right: ridges (2-faces), which appear as curved surfaces
+  since great-circle arcs on~$S^3$ map to circles in~$\mathbb{R}^3$.}
+\label{fig:viz-hypercube}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\begin{minipage}{0.48\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{../experiments/figures/viz-hypercube-traj.png}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{../experiments/figures/viz-simplex-traj.png}
+\end{minipage}
+\caption{Single Reeb trajectories after stereographic projection
+  from $n = e_4$.
+  Left: hypercube, trajectory starting from facet centroid of~$F_0$,
+  visiting 4 of 8 facets.
+  Right: simplex, trajectory starting from facet centroid of~$F_0$,
+  visiting all 5 facets.
+  See Table~\ref{tab:viz-trajectories} for trajectory parameters.}
+\label{fig:viz-trajectories}
+\end{figure}
+
 \subsubsection*{Observations}
 
 The interactive visualization renders the eight known polytopes
@@ -82,28 +120,53 @@ from the dataset library.
 For each polytope, the user can toggle display of vertices, edges,
 ridges (2-faces), and Reeb trajectories, select individual
 trajectories, and rotate the stereographic north pole.
+Figures~\ref{fig:viz-hypercube} and~\ref{fig:viz-trajectories}
+show representative screenshots.
 
 Several qualitative features are visible:
 
 \begin{itemize}
-  \item On the hypercube $[-1,1]^4$, trajectories exhibit a regular
-    structure reflecting the high symmetry of the polytope.
-    All trajectories close after visiting a small number of facets.
+  \item On the hypercube $[-1,1]^4$, trajectories visit a restricted
+    subset of facets (4 of~8), reflecting the high symmetry of the
+    polytope.
+    The projected trajectory in Figure~\ref{fig:viz-trajectories}~(left)
+    forms a compact, nearly elliptical curve.
 
-  \item On less symmetric polytopes (e.g., the HK-O pentagon with 10
-    facets), trajectories are longer and visit more facets before
-    closing. The asymmetry of the polytope is directly visible in the
-    projected geometry.
+  \item On less symmetric polytopes (e.g., the simplex with 5 facets
+    or the HK-O pentagon with~10), trajectories visit all facets
+    and trace more complex paths through the projected geometry.
 
   \item The choice of north pole affects the visual appearance
     substantially but not the underlying geometry.
-    Choosing the pole along a vertex or normal direction
-    of the polytope tends to produce more interpretable projections.
+    Choosing the pole along a coordinate axis direction
+    tends to produce more interpretable projections.
 
-  \item Ridges (2-faces) curve under the stereographic projection,
+  \item Ridges (2-faces) curve under the stereographic projection
+    (Figure~\ref{fig:viz-hypercube}, right),
     giving visual evidence that great-circle arcs on~$S^3$ map to
     circles in~$\mathbb{R}^3$.
 \end{itemize}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{lcccc}
+\toprule
+Polytope & Facets & Segments & Facets visited & Start \\
+\midrule
+Hypercube       & 8  & 100 & 4 of 8  & centroid of $F_0$ \\
+Simplex         & 5  & 100 & 5 of 5  & centroid of $F_0$ \\
+HK-O pentagon   & 10 & 100 & 10 of 10 & centroid of $F_0$ \\
+Crosspolytope   & 16 & 100 & 4 of 16 & centroid of $F_0$ \\
+Lag.\ $\triangle$-product & 6 & 30 & 4 of 6 & centroid of $F_0$ \\
+\bottomrule
+\end{tabular}
+\caption{Trajectory parameters for the Reeb trajectories shown in the
+  interactive visualization.
+  Each trajectory starts from the vertex centroid of facet~$F_0$
+  and is simulated for up to 100 segments.
+  None of the trajectories close within the simulation horizon.}
+\label{tab:viz-trajectories}
+\end{table}
 
 \subsubsection*{Implementation}
 

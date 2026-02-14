@@ -3,7 +3,7 @@
 // Depends on: projection.js (loaded first), Three.js r128 + OrbitControls
 
 // ---- Constants ----
-const MAX_RADIUS = 30;
+var MAX_RADIUS = 30; // var (not const) so screenshot scripts can override via page.evaluate
 const EDGE_SAMPLES = 96;
 const RIDGE_SUBDIVISIONS = 8;
 const TRAJ_SAMPLES = 96;
