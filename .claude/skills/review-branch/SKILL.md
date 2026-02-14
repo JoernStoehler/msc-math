@@ -172,7 +172,11 @@ See `deletion-examples.md` for concrete examples.
 - Critical paths tested (error paths, math properties, degenerate cases)
 - Core cases covered (happy path, known-good inputs, basic errors)
 - Edge cases tested (property-based tests, boundaries, robustness)
-- **Test runtime strategy**: Tests are split into debug (default) and release (`--ignored`). Debug suite should be fast (<30s per crate) and catch index/overflow bugs. Release suite covers large-polytope correctness and cross-algorithm agreement. Check that slow tests (>2s debug) are in the right tier — pure f64 math gains nothing from debug mode. See monitoring Check 7 for full criteria.
+- **Test runtime strategy**: For expensive functions (e.g., capacity), tests follow two-category pattern (see `crates/CLAUDE.md` "Testing expensive functions"):
+  - **Category A (Input-Output):** Test correctness of results. Use fixtures (preferred, fast) or #[ignore] + release mode. Examples: capacity values, mathematical properties (conformality, monotonicity).
+  - **Category B (Internal Behavior):** Test safe execution in debug mode with small inputs (F ≤ 6). Examples: smoke tests exercising enumeration/pruning logic, error path handling.
+  - Verify tests have doc comments explaining what/why/mode (debug/release/fixture).
+  - See monitoring Check 7 for detailed criteria.
 - **Assertion usage**: Expensive mathematical validation should use `debug_assert!` (not `assert!`). Critical safety invariants should use `assert!` (not `debug_assert!`).
 
 #### Data Pipeline Tracing (if branch touches experiments/)
