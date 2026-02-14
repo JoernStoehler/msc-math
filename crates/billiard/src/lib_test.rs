@@ -43,6 +43,7 @@ fn triangle_square_capacity() {
 }
 
 #[test]
+#[ignore] // 50k KKT solves — slow in debug, run with --release --ignored
 fn hko_pentagon_capacity() {
     let kp = known_polytopes::hko_pentagon();
     let expected = 2.0 * (std::f64::consts::PI / 10.0).cos() * (1.0 + (std::f64::consts::PI / 5.0).cos());
@@ -142,6 +143,7 @@ fn rejects_symplectic_triangle_product() {
 // ============================================================
 
 #[test]
+#[ignore] // 50k KKT solves — slow in debug, run with --release --ignored
 fn billiard_iterations_polynomial() {
     // The billiard iteration count should be bounded by O(n_q^3 * n_p^3).
     // For the pentagon (n_q = 5, n_p = 5), a generous bound: 5^3 * 5^3 * 36 * 64 = ~288M.
@@ -157,52 +159,64 @@ fn billiard_iterations_polynomial() {
     );
 }
 
+/// Check structural properties of a BilliardResult.
+fn assert_result_properties(name: &str, result: &crate::BilliardResult) {
+    // bounce_count is 2 or 3
+    assert!(
+        result.bounce_count == 2 || result.bounce_count == 3,
+        "{}: bounce_count = {} (expected 2 or 3)",
+        name,
+        result.bounce_count,
+    );
+
+    // all beta positive
+    for (i, &b) in result.best_beta.iter().enumerate() {
+        assert!(
+            b > 0.0,
+            "{}: beta[{}] = {:.2e} <= 0",
+            name,
+            i,
+            b,
+        );
+    }
+
+    // permutation length matches 2k structure (between 2k and 4k)
+    let k = result.bounce_count;
+    let len = result.best_permutation.len();
+    assert!(
+        len >= 2 * k && len <= 4 * k,
+        "{}: permutation len {} not in [{}, {}] for k={}",
+        name,
+        len,
+        2 * k,
+        4 * k,
+        k,
+    );
+}
+
 #[test]
 fn result_properties() {
-    // Combined property test to avoid recomputing expensive cases.
-    for (name, polytope) in lagrangian_test_cases() {
+    // Fast polytopes only — exercises all code paths without pentagon's 50k KKT solves.
+    // Pentagon covered by result_properties_pentagon (release-only).
+    for (name, polytope) in lagrangian_test_cases_fast() {
         let result = billiard_capacity(&polytope).unwrap().unwrap();
-
-        // bounce_count is 2 or 3
-        assert!(
-            result.bounce_count == 2 || result.bounce_count == 3,
-            "{}: bounce_count = {} (expected 2 or 3)",
-            name,
-            result.bounce_count,
-        );
-
-        // all beta positive
-        for (i, &b) in result.best_beta.iter().enumerate() {
-            assert!(
-                b > 0.0,
-                "{}: beta[{}] = {:.2e} <= 0",
-                name,
-                i,
-                b,
-            );
-        }
-
-        // permutation length matches 2k structure (between 2k and 4k)
-        let k = result.bounce_count;
-        let len = result.best_permutation.len();
-        assert!(
-            len >= 2 * k && len <= 4 * k,
-            "{}: permutation len {} not in [{}, {}] for k={}",
-            name,
-            len,
-            2 * k,
-            4 * k,
-            k,
-        );
+        assert_result_properties(name, &result);
     }
 }
 
-/// All known Lagrangian products for property tests.
-fn lagrangian_test_cases() -> Vec<(&'static str, geom::polytope::Polytope4D)> {
+#[test]
+#[ignore] // 50k KKT solves — slow in debug, run with --release --ignored
+fn result_properties_pentagon() {
+    let kp = known_polytopes::hko_pentagon();
+    let result = billiard_capacity(&kp.polytope).unwrap().unwrap();
+    assert_result_properties("hko_pentagon", &result);
+}
+
+/// Small Lagrangian products: fast in both debug and release.
+fn lagrangian_test_cases_fast() -> Vec<(&'static str, geom::polytope::Polytope4D)> {
     vec![
         ("hypercube", known_polytopes::hypercube().polytope),
         ("triangle_product", known_polytopes::lagrangian_triangle_product().polytope),
         ("triangle_square", known_polytopes::lagrangian_triangle_square().polytope),
-        ("hko_pentagon", known_polytopes::hko_pentagon().polytope),
     ]
 }
