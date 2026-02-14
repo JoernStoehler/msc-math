@@ -128,14 +128,17 @@ function rebuildScene() {
 
     const d = polytopeData;
 
-    // Project all vertices to R³
-    const projVerts = d.vertices.map(v => fullProject(v, northPole, orthoBasis, MAX_RADIUS));
-
     // ---- Vertices ----
     if (showVertices) {
+        // Dot product threshold matching projectSegment's pole clipping
+        const R2 = MAX_RADIUS * MAX_RADIUS;
+        const dotThreshold = (R2 - 1) / (R2 + 1);
+
         const sphereGeom = new THREE.SphereGeometry(0.05, 14, 14);
-        for (let i = 0; i < projVerts.length; i++) {
-            const p = projVerts[i];
+        for (let i = 0; i < d.vertices.length; i++) {
+            const onSphere = radialProject(d.vertices[i]);
+            if (dot4(onSphere, northPole) >= dotThreshold) continue; // near pole — skip
+            const p = stereographicProject(onSphere, northPole, orthoBasis, MAX_RADIUS);
             const fc = d.vertex_facets[i][0] || 0;
             const mat = new THREE.MeshPhongMaterial({
                 color: facetColor(fc, d.facet_count),
@@ -150,26 +153,29 @@ function rebuildScene() {
     // ---- Edges ----
     if (showEdges) {
         for (const [vi, vj] of d.edges) {
-            const pts = projectSegment(
+            const subSegments = projectSegment(
                 d.vertices[vi], d.vertices[vj],
                 northPole, orthoBasis, MAX_RADIUS, EDGE_SAMPLES
             );
-            const positions = [];
-            for (const p of pts) positions.push(p[0], p[1], p[2]);
-
-            const geom = new THREE.BufferGeometry();
-            geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
 
             const sharedFacets = d.vertex_facets[vi].filter(f => d.vertex_facets[vj].includes(f));
             const color = facetColor(sharedFacets[0] || 0, d.facet_count);
 
-            const mat = new THREE.LineBasicMaterial({
-                color: color,
-                linewidth: 1,
-                transparent: true,
-                opacity: 0.7,
-            });
-            edgeGroup.add(new THREE.Line(geom, mat));
+            for (const pts of subSegments) {
+                if (pts.length < 2) continue;
+                const positions = [];
+                for (const p of pts) positions.push(p[0], p[1], p[2]);
+
+                const geom = new THREE.BufferGeometry();
+                geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+                const mat = new THREE.LineBasicMaterial({
+                    color: color,
+                    linewidth: 1,
+                    transparent: true,
+                    opacity: 0.7,
+                });
+                edgeGroup.add(new THREE.Line(geom, mat));
+            }
         }
     }
 
@@ -315,22 +321,25 @@ function renderTrajectory(traj, trajIndex, totalTrajectories) {
     const d = polytopeData;
 
     for (const seg of traj.segments) {
-        const pts = projectSegment(
+        const subSegments = projectSegment(
             seg.start, seg.end,
             northPole, orthoBasis, MAX_RADIUS, TRAJ_SAMPLES
         );
-        const positions = [];
-        for (const p of pts) positions.push(p[0], p[1], p[2]);
-
-        const geom = new THREE.BufferGeometry();
-        geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
 
         const color = facetColor(seg.facet, d.facet_count);
-        const mat = new THREE.LineBasicMaterial({
-            color: color,
-            linewidth: 2,
-        });
-        trajectoryGroup.add(new THREE.Line(geom, mat));
+        for (const pts of subSegments) {
+            if (pts.length < 2) continue;
+            const positions = [];
+            for (const p of pts) positions.push(p[0], p[1], p[2]);
+
+            const geom = new THREE.BufferGeometry();
+            geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+            const mat = new THREE.LineBasicMaterial({
+                color: color,
+                linewidth: 2,
+            });
+            trajectoryGroup.add(new THREE.Line(geom, mat));
+        }
     }
 
     // Direction arrow — dark on white background

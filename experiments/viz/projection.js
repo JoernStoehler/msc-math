@@ -147,10 +147,8 @@ function fullProject(p, northPole, basis, maxRadius) {
 
 /**
  * Project a line segment in R⁴ to R³, sampling along the great-circle arc on S³.
- *
- * Instead of interpolating in R⁴ (which gives nonuniform R³ spacing),
- * we project both endpoints to S³, slerp between them, and stereographically
- * project each sample point.
+ * Clips near the stereographic north pole: splits the arc at the 0–2 points
+ * where it enters/exits the ε-ball around the pole, omitting the inside.
  *
  * @param {number[]} start - Start point in R⁴
  * @param {number[]} end - End point in R⁴
@@ -158,19 +156,76 @@ function fullProject(p, northPole, basis, maxRadius) {
  * @param {number[][]} basis
  * @param {number} maxRadius
  * @param {number} nSamples - Number of sample points (default 20)
- * @returns {number[][]} Array of R³ points tracing the projected curve
+ * @returns {number[][][]} Array of polyline sub-segments, each an array of R³ points.
+ *   Typically 1 sub-segment; 0 if entirely inside the pole ball; 2 if it crosses through.
  */
 function projectSegment(start, end, northPole, basis, maxRadius, nSamples) {
     nSamples = nSamples || 20;
     const a = radialProject(start);
     const b = radialProject(end);
-    const points = [];
+
+    // Dot product threshold: points with dot(y, pole) >= this project beyond maxRadius.
+    // From stereographic radius: r = sqrt((1+d)/(1-d)), setting r = R gives d = (R²-1)/(R²+1).
+    const R2 = maxRadius * maxRadius;
+    const dotThreshold = (R2 - 1) / (R2 + 1);
+
+    const segments = [];
+    let current = [];
+
     for (let i = 0; i <= nSamples; i++) {
         const t = i / nSamples;
         const onSphere = slerp4(a, b, t);
-        points.push(stereographicProject(onSphere, northPole, basis, maxRadius));
+        const d = dot4(onSphere, northPole);
+
+        if (d < dotThreshold) {
+            // Outside pole ball — include this point
+            if (current.length === 0 && i > 0) {
+                // Just exited pole ball — find boundary point
+                const tPrev = (i - 1) / nSamples;
+                const boundary = findPoleBoundary(a, b, tPrev, t, northPole, dotThreshold);
+                current.push(stereographicProject(boundary, northPole, basis, maxRadius));
+            }
+            current.push(stereographicProject(onSphere, northPole, basis, maxRadius));
+        } else {
+            // Inside pole ball — clip
+            if (current.length > 0) {
+                // Just entered pole ball — find boundary point
+                const tPrev = (i - 1) / nSamples;
+                const boundary = findPoleBoundary(a, b, tPrev, t, northPole, dotThreshold);
+                current.push(stereographicProject(boundary, northPole, basis, maxRadius));
+                segments.push(current);
+                current = [];
+            }
+        }
     }
-    return points;
+    if (current.length > 0) {
+        segments.push(current);
+    }
+
+    return segments;
+}
+
+/**
+ * Binary search for the slerp parameter where dot(slerp(a,b,t), pole) = threshold.
+ * Assumes dot changes monotonically between tLow and tHigh (valid for nearby samples).
+ */
+function findPoleBoundary(a, b, tLow, tHigh, pole, threshold) {
+    // Ensure tLow is the "outside" side (dot < threshold)
+    const dLow = dot4(slerp4(a, b, tLow), pole);
+    if (dLow >= threshold) {
+        const tmp = tLow; tLow = tHigh; tHigh = tmp;
+    }
+    for (let iter = 0; iter < 20; iter++) {
+        const tMid = (tLow + tHigh) / 2;
+        const d = dot4(slerp4(a, b, tMid), pole);
+        if (d < threshold) {
+            tLow = tMid;
+        } else {
+            tHigh = tMid;
+        }
+    }
+    // Return the point just outside the threshold
+    return slerp4(a, b, tLow);
 }
 
 /**
