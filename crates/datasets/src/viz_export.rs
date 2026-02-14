@@ -26,7 +26,9 @@ pub struct VizExport {
     pub normals: Vec<[f64; 4]>,
     /// Facet heights.
     pub heights: Vec<f64>,
-    /// Reeb vectors per facet: `reeb_vectors[i] = J₀ · normals[i]`.
+    /// Reeb flow directions per facet: `reeb_vectors[i] = J₀ · normals[i]`.
+    /// (The full Reeb vector is R_i = (2/h_i) J₀ n_i, but we export only
+    /// the direction for visualization, since the factor 2/h_i rescales time.)
     pub reeb_vectors: Vec<[f64; 4]>,
     /// Vertices, each `[x₁, x₂, x₃, x₄]`.
     pub vertices: Vec<[f64; 4]>,

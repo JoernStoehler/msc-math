@@ -6,7 +6,7 @@
 %
 % Math claims requiring Jörn's verification:
 %   - Stereographic projection formula (Eq. \ref{eq:stereo-proj})
-%   - Reeb vector formula R_i = J_0 n_i and tangency claim
+%   - Reeb vector formula R_i = (2/h_i) J_0 n_i and tangency of J_0 n_i
 %   - Conformality of stereographic projection (stated without proof)
 
 \subsection{Visualization of Reeb Dynamics}
@@ -59,12 +59,14 @@ which is expected and does not indicate missing geometry.
 
 \subsubsection*{Reeb trajectories}
 
-On each facet~$F_i$ with outward unit normal~$n_i$,
-the Reeb vector field is $R_i = J_0 \, n_i$,
+On each facet~$F_i$ with outward unit normal~$n_i$ and height~$h_i$,
+the Reeb vector field is $R_i = \frac{2}{h_i} J_0 \, n_i$,
 where $J_0$ is the standard complex structure on~$\mathbb{R}^4$.
-This vector is tangent to~$F_i$ since
+The direction $J_0 n_i$ is tangent to~$F_i$ since
 $\langle J_0 n_i, n_i \rangle = \omega_0(n_i, n_i) = 0$
 by antisymmetry of~$\omega_0$.
+For visualization, we use the direction~$J_0 n_i$ only,
+as the factor~$2/h_i$ rescales time but does not affect the trajectory shape.
 
 A Reeb trajectory is simulated by forward integration:
 starting at a point on a facet, follow the constant Reeb direction

@@ -6,6 +6,25 @@
 
 ---
 
+## Post-Review Correction (2026-02-14)
+
+**Issue found by Jörn:** Reeb vector formula was incorrect in documentation.
+
+**Correction:** The correct Reeb vector field on facet Fᵢ with normal nᵢ and height hᵢ is:
+- **R_i = (2/h_i) J₀ n_i** (correct)
+- Not R_i = J₀ n_i (as originally written)
+
+**Impact:** None on visualization output. The code computes J₀n (the *direction*), which is correct for trajectory visualization since the factor 2/h_i only rescales time parametrization. The visualization doesn't depend on time parametrization, only on trajectory shape.
+
+**Files corrected:**
+- `crates/geom/src/reeb_trajectory.rs` - Updated doc comments to clarify function computes direction J₀n, full Reeb vector is R = (2/h) J₀n
+- `crates/datasets/src/viz_export.rs` - Updated doc comment to clarify exported data is "Reeb flow directions"
+- `thesis/experiments/visualization.tex` - Updated formula to R_i = (2/h_i) J_0 n_i, clarified implementation uses direction only
+
+**Verification:** All tests still pass (unchanged, since only doc comments were corrected).
+
+---
+
 ## Build Verification
 
 **Rust tests:** ✓ Pass

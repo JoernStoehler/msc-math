@@ -1,12 +1,15 @@
 /// Forward-simulation of Reeb trajectories on a polytope boundary.
 ///
-/// On facet Fᵢ with outward unit normal nᵢ, the Reeb vector is J₀nᵢ.
-/// This is automatically tangent to Fᵢ since ω₀(nᵢ, nᵢ) = 0,
-/// i.e. ⟨J₀nᵢ, nᵢ⟩ = ω₀(nᵢ, nᵢ) = 0.
+/// On facet Fᵢ with outward unit normal nᵢ and height hᵢ, the Reeb vector
+/// field is R_i = (2/h_i) J₀ n_i. The direction J₀ n_i is automatically
+/// tangent to Fᵢ since ω₀(nᵢ, nᵢ) = 0, i.e. ⟨J₀nᵢ, nᵢ⟩ = 0.
+///
+/// For visualization purposes, we only need the *direction* J₀ n_i
+/// (the factor 2/h_i rescales time but does not change the trajectory shape).
 ///
 /// A trajectory starts at a point on a facet, follows the Reeb direction
 /// until hitting a ridge (shared 2-face with a neighboring facet), then
-/// switches to the new facet's Reeb vector. This produces a piecewise-linear
+/// switches to the new facet's Reeb direction. This produces a piecewise-linear
 /// curve on ∂K.
 use crate::polytope::Polytope4D;
 use crate::skeleton::Skeleton;
@@ -37,7 +40,11 @@ pub struct ReebTrajectory {
     pub closed: bool,
 }
 
-/// Compute the Reeb vector on facet with normal `n`: R = J₀ n.
+/// Compute the Reeb flow direction on a facet: J₀ n.
+///
+/// The full Reeb vector field on facet with normal n and height h is
+/// R = (2/h) J₀ n, but for trajectory visualization we only need the
+/// direction J₀ n (the factor 2/h rescales time parametrization).
 ///
 /// In coordinates (q₁, q₂, p₁, p₂) with J₀ = [[0, -I₂], [I₂, 0]]:
 ///   J₀ (a, b, c, d) = (-c, -d, a, b)
@@ -57,8 +64,8 @@ pub fn reeb_vector(normal: &Vector4<f64>) -> Vector4<f64> {
 ///
 /// # Algorithm
 ///
-/// On facet Fᵢ with Reeb vector Rᵢ = J₀nᵢ:
-///   x(t) = x₀ + t · Rᵢ
+/// On facet Fᵢ with Reeb direction dᵢ = J₀nᵢ:
+///   x(t) = x₀ + t · dᵢ
 ///
 /// The trajectory exits Fᵢ when it hits a neighboring facet Fⱼ:
 ///   nⱼ · (x₀ + t · Rᵢ) = hⱼ
