@@ -132,6 +132,104 @@ function clearGroup(group) {
     }
 }
 
+/**
+ * Collect ridge geometry (triangles) grouped by color.
+ * Mutates ridgesByColor map to add triangles for this ridge.
+ */
+function collectRidgeGeometry(ridge, poly, ridgesByColor) {
+    const verts = ridge.vertices;
+    const nv = verts.length;
+    if (nv < 3) return;
+
+    const N = RIDGE_SUBDIVISIONS;
+    const color = facetColor(ridge.facets[0], poly.facet_count);
+    const colorKey = color.getHex();
+
+    if (!ridgesByColor.has(colorKey)) {
+        ridgesByColor.set(colorKey, { color, solidTriangles: [], wireTriangles: [] });
+    }
+    const entry = ridgesByColor.get(colorKey);
+
+    if (nv === 3) {
+        collectTriangleRidgeGeometry(
+            poly.vertices[verts[0]], poly.vertices[verts[1]], poly.vertices[verts[2]],
+            N, entry
+        );
+    } else if (nv === 4) {
+        collectQuadRidgeGeometry(
+            poly.vertices[verts[0]], poly.vertices[verts[1]],
+            poly.vertices[verts[2]], poly.vertices[verts[3]],
+            N, entry
+        );
+    } else {
+        // General polygon: fan-triangulate from centroid
+        const centroid4 = [0, 0, 0, 0];
+        for (const vi of verts) {
+            for (let k = 0; k < 4; k++) centroid4[k] += poly.vertices[vi][k];
+        }
+        for (let k = 0; k < 4; k++) centroid4[k] /= nv;
+        for (let i = 0; i < nv; i++) {
+            const vi = verts[i];
+            const vj = verts[(i + 1) % nv];
+            collectTriangleRidgeGeometry(centroid4, poly.vertices[vi], poly.vertices[vj], N, entry);
+        }
+    }
+}
+
+function collectTriangleRidgeGeometry(a4, b4, c4, N, entry) {
+    const gridPoints = projectTriangleGrid(a4, b4, c4, N, northPole, orthoBasis, MAX_RADIUS);
+
+    const gridIndex = (i, j) => {
+        let idx = 0;
+        for (let row = 0; row < j; row++) idx += (N + 1 - row);
+        return idx + i;
+    };
+
+    for (let j = 0; j < N; j++) {
+        for (let i = 0; i < N - j; i++) {
+            const a = gridIndex(i, j);
+            const b = gridIndex(i + 1, j);
+            const c = gridIndex(i, j + 1);
+            const pa = gridPoints[a], pb = gridPoints[b], pc = gridPoints[c];
+            if (pa && pb && pc) {
+                entry.solidTriangles.push([pa[0], pa[1], pa[2], pb[0], pb[1], pb[2], pc[0], pc[1], pc[2]]);
+                entry.wireTriangles.push([pa[0], pa[1], pa[2], pb[0], pb[1], pb[2], pc[0], pc[1], pc[2]]);
+            }
+
+            if (i < N - j - 1) {
+                const d = gridIndex(i + 1, j + 1);
+                const pd = gridPoints[d];
+                if (pb && pc && pd) {
+                    entry.solidTriangles.push([pb[0], pb[1], pb[2], pd[0], pd[1], pd[2], pc[0], pc[1], pc[2]]);
+                    entry.wireTriangles.push([pb[0], pb[1], pb[2], pd[0], pd[1], pd[2], pc[0], pc[1], pc[2]]);
+                }
+            }
+        }
+    }
+}
+
+function collectQuadRidgeGeometry(a4, b4, c4, d4, N, entry) {
+    const grid = projectQuadGrid(a4, b4, c4, d4, N, northPole, orthoBasis, MAX_RADIUS);
+
+    for (let j = 0; j < N; j++) {
+        for (let i = 0; i < N; i++) {
+            const p00 = grid[j * (N + 1) + i];
+            const p10 = grid[j * (N + 1) + (i + 1)];
+            const p01 = grid[(j + 1) * (N + 1) + i];
+            const p11 = grid[(j + 1) * (N + 1) + (i + 1)];
+
+            if (p00 && p10 && p11) {
+                entry.solidTriangles.push([p00[0], p00[1], p00[2], p10[0], p10[1], p10[2], p11[0], p11[1], p11[2]]);
+                entry.wireTriangles.push([p00[0], p00[1], p00[2], p10[0], p10[1], p10[2], p11[0], p11[1], p11[2]]);
+            }
+            if (p00 && p11 && p01) {
+                entry.solidTriangles.push([p00[0], p00[1], p00[2], p11[0], p11[1], p11[2], p01[0], p01[1], p01[2]]);
+                entry.wireTriangles.push([p00[0], p00[1], p00[2], p11[0], p11[1], p11[2], p01[0], p01[1], p01[2]]);
+            }
+        }
+    }
+}
+
 /** Rebuild all scene geometry from polytopeData + current north pole. */
 function rebuildScene() {
     clearGroup(edgeGroup);
@@ -144,26 +242,46 @@ function rebuildScene() {
     const poly = polytopeData;
     const dotThreshold = poleCullingThreshold(MAX_RADIUS);
 
-    // ---- Vertices ----
+    // ---- Vertices (batched by color) ----
     if (showVertices) {
-        const sphereGeom = new THREE.SphereGeometry(VERTEX_RADIUS, VERTEX_SEGMENTS, VERTEX_SEGMENTS);
+        const verticesByColor = new Map(); // color_key -> [{pos, matrix}, ...]
+
         for (let i = 0; i < poly.vertices.length; i++) {
             const onSphere = radialProject(poly.vertices[i]);
-            if (dot4(onSphere, northPole) >= dotThreshold) continue; // near pole — skip
+            if (dot4(onSphere, northPole) >= dotThreshold) continue;
             const p = stereographicProject(onSphere, northPole, orthoBasis, MAX_RADIUS);
             const fc = poly.vertex_facets[i][0] || 0;
-            const mat = new THREE.MeshPhongMaterial({
-                color: facetColor(fc, poly.facet_count),
-                shininess: 40,
-            });
-            const mesh = new THREE.Mesh(sphereGeom, mat);
-            mesh.position.set(p[0], p[1], p[2]);
-            vertexGroup.add(mesh);
+            const color = facetColor(fc, poly.facet_count);
+            const colorKey = color.getHex();
+
+            if (!verticesByColor.has(colorKey)) {
+                verticesByColor.set(colorKey, { color, positions: [] });
+            }
+            verticesByColor.get(colorKey).positions.push(p);
+        }
+
+        // Create instanced meshes for each color
+        const sphereGeom = new THREE.SphereGeometry(VERTEX_RADIUS, VERTEX_SEGMENTS, VERTEX_SEGMENTS);
+        for (const [colorKey, { color, positions }] of verticesByColor) {
+            const instancedMesh = new THREE.InstancedMesh(
+                sphereGeom,
+                new THREE.MeshPhongMaterial({ color: color, shininess: 40 }),
+                positions.length
+            );
+            for (let i = 0; i < positions.length; i++) {
+                const matrix = new THREE.Matrix4();
+                matrix.setPosition(positions[i][0], positions[i][1], positions[i][2]);
+                instancedMesh.setMatrixAt(i, matrix);
+            }
+            instancedMesh.instanceMatrix.needsUpdate = true;
+            vertexGroup.add(instancedMesh);
         }
     }
 
-    // ---- Edges ----
+    // ---- Edges (batched by color) ----
     if (showEdges) {
+        const edgesByColor = new Map(); // color_key -> [positions...]
+
         for (const [vi, vj] of poly.edges) {
             const subSegments = projectSegment(
                 poly.vertices[vi], poly.vertices[vj],
@@ -172,12 +290,30 @@ function rebuildScene() {
 
             const sharedFacets = poly.vertex_facets[vi].filter(f => poly.vertex_facets[vj].includes(f));
             const color = facetColor(sharedFacets[0] || 0, poly.facet_count);
+            const colorKey = color.getHex();
+
+            if (!edgesByColor.has(colorKey)) {
+                edgesByColor.set(colorKey, { color, segments: [] });
+            }
 
             for (const pts of subSegments) {
                 if (pts.length < 2) continue;
-                const positions = [];
-                for (const p of pts) positions.push(p[0], p[1], p[2]);
+                edgesByColor.get(colorKey).segments.push(pts);
+            }
+        }
 
+        // Create one LineSegments per color
+        for (const [colorKey, { color, segments }] of edgesByColor) {
+            const positions = [];
+            for (const pts of segments) {
+                // Convert continuous line to line segments (pairs of points)
+                for (let i = 0; i < pts.length - 1; i++) {
+                    positions.push(pts[i][0], pts[i][1], pts[i][2]);
+                    positions.push(pts[i + 1][0], pts[i + 1][1], pts[i + 1][2]);
+                }
+            }
+
+            if (positions.length > 0) {
                 const geom = new THREE.BufferGeometry();
                 geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
                 const mat = new THREE.LineBasicMaterial({
@@ -186,205 +322,151 @@ function rebuildScene() {
                     transparent: true,
                     opacity: EDGE_OPACITY,
                 });
-                edgeGroup.add(new THREE.Line(geom, mat));
+                edgeGroup.add(new THREE.LineSegments(geom, mat));
             }
         }
     }
 
-    // ---- Ridges (2-faces) ----
+    // ---- Ridges (2-faces) (batched by color) ----
     if (showRidges) {
+        const ridgesByColor = new Map(); // color_key -> {solid: triangles, wire: triangles}
+
         for (const ridge of poly.ridges) {
-            renderRidge(ridge, poly);
+            collectRidgeGeometry(ridge, poly, ridgesByColor);
+        }
+
+        // Create merged meshes per color
+        for (const [colorKey, { color, solidTriangles, wireTriangles }] of ridgesByColor) {
+            // Solid fill
+            if (solidTriangles.length > 0) {
+                const positions = [];
+                for (const tri of solidTriangles) {
+                    positions.push(...tri);
+                }
+                const geom = new THREE.BufferGeometry();
+                geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+                geom.computeVertexNormals();
+                const mat = new THREE.MeshPhongMaterial({
+                    color: color,
+                    side: THREE.DoubleSide,
+                    transparent: true,
+                    opacity: RIDGE_FILL_OPACITY,
+                    depthWrite: false,
+                    shininess: 20,
+                });
+                ridgeGroup.add(new THREE.Mesh(geom, mat));
+            }
+
+            // Wireframe
+            if (wireTriangles.length > 0) {
+                const positions = [];
+                for (const tri of wireTriangles) {
+                    // Convert triangles to line segments (edges)
+                    positions.push(tri[0], tri[1], tri[2], tri[3], tri[4], tri[5]); // edge 0-1
+                    positions.push(tri[3], tri[4], tri[5], tri[6], tri[7], tri[8]); // edge 1-2
+                    positions.push(tri[6], tri[7], tri[8], tri[0], tri[1], tri[2]); // edge 2-0
+                }
+                const geom = new THREE.BufferGeometry();
+                geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+                const mat = new THREE.LineBasicMaterial({
+                    color: color,
+                    transparent: true,
+                    opacity: RIDGE_WIRE_OPACITY,
+                });
+                ridgeGroup.add(new THREE.LineSegments(geom, mat));
+            }
         }
     }
 
-    // ---- Trajectories ----
+    // ---- Trajectories (batched by facet color) ----
     if (showTrajectories && poly.trajectories.length > 0) {
         const trajIndices = selectedTrajectory === -1
             ? poly.trajectories.map((_, i) => i)
             : [selectedTrajectory];
 
+        const trajsByColor = new Map(); // color_key -> [segments...]
+        const arrows = []; // arrows can't be batched easily, collect them separately
+
         for (const ti of trajIndices) {
             if (ti >= poly.trajectories.length) continue;
-            renderTrajectory(poly.trajectories[ti]);
-        }
-    }
-}
+            const traj = poly.trajectories[ti];
 
-// ---- Ridge rendering ----
+            // Collect line segments by color
+            for (const seg of traj.segments) {
+                const subSegments = projectSegment(
+                    seg.start, seg.end,
+                    northPole, orthoBasis, MAX_RADIUS, TRAJ_SAMPLES
+                );
 
-/**
- * Render a single ridge (2-face) as a curved surface.
- * Sampling on S³ via slerp for uniform angular spacing.
- */
-function renderRidge(ridge, poly) {
-    const verts = ridge.vertices;
-    const nv = verts.length;
-    if (nv < 3) return;
+                const color = facetColor(seg.facet, poly.facet_count);
+                const colorKey = color.getHex();
 
-    const N = RIDGE_SUBDIVISIONS;
-    const color = facetColor(ridge.facets[0], poly.facet_count);
+                if (!trajsByColor.has(colorKey)) {
+                    trajsByColor.set(colorKey, { color, segments: [] });
+                }
 
-    if (nv === 3) {
-        renderTriangleRidge(poly.vertices[verts[0]], poly.vertices[verts[1]], poly.vertices[verts[2]], color, N);
-    } else if (nv === 4) {
-        renderQuadRidge(
-            poly.vertices[verts[0]], poly.vertices[verts[1]],
-            poly.vertices[verts[2]], poly.vertices[verts[3]],
-            color, N
-        );
-    } else {
-        // General polygon: fan-triangulate from centroid
-        const centroid4 = [0, 0, 0, 0];
-        for (const vi of verts) {
-            for (let k = 0; k < 4; k++) centroid4[k] += poly.vertices[vi][k];
-        }
-        for (let k = 0; k < 4; k++) centroid4[k] /= nv;
-        for (let i = 0; i < nv; i++) {
-            const vi = verts[i];
-            const vj = verts[(i + 1) % nv];
-            renderTriangleRidge(centroid4, poly.vertices[vi], poly.vertices[vj], color, N);
-        }
-    }
-}
+                for (const pts of subSegments) {
+                    if (pts.length < 2) continue;
+                    trajsByColor.get(colorKey).segments.push(pts);
+                }
+            }
 
-function renderTriangleRidge(a4, b4, c4, color, N) {
-    const gridPoints = projectTriangleGrid(a4, b4, c4, N, northPole, orthoBasis, MAX_RADIUS);
-
-    const gridIndex = (i, j) => {
-        let idx = 0;
-        for (let row = 0; row < j; row++) idx += (N + 1 - row);
-        return idx + i;
-    };
-
-    const positions = [];
-    for (let j = 0; j < N; j++) {
-        for (let i = 0; i < N - j; i++) {
-            const a = gridIndex(i, j);
-            const b = gridIndex(i + 1, j);
-            const c = gridIndex(i, j + 1);
-            const pa = gridPoints[a], pb = gridPoints[b], pc = gridPoints[c];
-            positions.push(pa[0], pa[1], pa[2]);
-            positions.push(pb[0], pb[1], pb[2]);
-            positions.push(pc[0], pc[1], pc[2]);
-
-            if (i + 1 <= N - j - 1) {
-                const idx = gridIndex(i + 1, j + 1);
-                const pd = gridPoints[idx];
-                positions.push(pb[0], pb[1], pb[2]);
-                positions.push(pd[0], pd[1], pd[2]);
-                positions.push(pc[0], pc[1], pc[2]);
+            // Collect direction arrow
+            if (traj.segments.length > 0) {
+                const seg = traj.segments[0];
+                const startPt = fullProject(seg.start, northPole, orthoBasis, MAX_RADIUS);
+                const midPt = fullProject(
+                    [seg.start[0]*0.8 + seg.end[0]*0.2,
+                     seg.start[1]*0.8 + seg.end[1]*0.2,
+                     seg.start[2]*0.8 + seg.end[2]*0.2,
+                     seg.start[3]*0.8 + seg.end[3]*0.2],
+                    northPole, orthoBasis, MAX_RADIUS
+                );
+                arrows.push({ startPt, midPt });
             }
         }
-    }
 
-    if (positions.length === 0) return;
-    addRidgeMesh(positions, color);
-}
-
-function renderQuadRidge(a4, b4, c4, d4, color, N) {
-    const gridPoints = projectQuadGrid(a4, b4, c4, d4, N, northPole, orthoBasis, MAX_RADIUS);
-
-    const positions = [];
-    for (let j = 0; j < N; j++) {
-        for (let i = 0; i < N; i++) {
-            const a = j * (N + 1) + i;
-            const b = a + 1;
-            const c = a + (N + 1);
-            const dd = c + 1;
-            const pa = gridPoints[a], pb = gridPoints[b], pc = gridPoints[c], pd = gridPoints[dd];
-            positions.push(pa[0], pa[1], pa[2]);
-            positions.push(pb[0], pb[1], pb[2]);
-            positions.push(pc[0], pc[1], pc[2]);
-
-            positions.push(pb[0], pb[1], pb[2]);
-            positions.push(pd[0], pd[1], pd[2]);
-            positions.push(pc[0], pc[1], pc[2]);
-        }
-    }
-
-    addRidgeMesh(positions, color);
-}
-
-/** Add a translucent mesh + wireframe overlay for a ridge surface. */
-function addRidgeMesh(positions, color) {
-    const geom = new THREE.BufferGeometry();
-    geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-    geom.computeVertexNormals();
-
-    const mat = new THREE.MeshPhongMaterial({
-        color: color,
-        transparent: true,
-        opacity: RIDGE_FILL_OPACITY,
-        side: THREE.DoubleSide,
-        depthWrite: false,
-        shininess: 20,
-    });
-    ridgeGroup.add(new THREE.Mesh(geom, mat));
-
-    const wireMat = new THREE.MeshBasicMaterial({
-        color: color,
-        transparent: true,
-        opacity: RIDGE_WIRE_OPACITY,
-        wireframe: true,
-    });
-    ridgeGroup.add(new THREE.Mesh(geom.clone(), wireMat));
-}
-
-// ---- Trajectory rendering ----
-
-/** Render a single Reeb trajectory as colored polyline segments with a direction arrow. */
-function renderTrajectory(traj) {
-    for (const seg of traj.segments) {
-        const subSegments = projectSegment(
-            seg.start, seg.end,
-            northPole, orthoBasis, MAX_RADIUS, TRAJ_SAMPLES
-        );
-
-        const color = facetColor(seg.facet, polytopeData.facet_count);
-        for (const pts of subSegments) {
-            if (pts.length < 2) continue;
+        // Create one LineSegments per color
+        for (const [colorKey, { color, segments }] of trajsByColor) {
             const positions = [];
-            for (const p of pts) positions.push(p[0], p[1], p[2]);
+            for (const pts of segments) {
+                for (let i = 0; i < pts.length - 1; i++) {
+                    positions.push(pts[i][0], pts[i][1], pts[i][2]);
+                    positions.push(pts[i + 1][0], pts[i + 1][1], pts[i + 1][2]);
+                }
+            }
 
-            const geom = new THREE.BufferGeometry();
-            geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-            const mat = new THREE.LineBasicMaterial({
-                color: color,
-                linewidth: 2,
-            });
-            trajectoryGroup.add(new THREE.Line(geom, mat));
+            if (positions.length > 0) {
+                const geom = new THREE.BufferGeometry();
+                geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+                const mat = new THREE.LineBasicMaterial({
+                    color: color,
+                    linewidth: 2,
+                });
+                trajectoryGroup.add(new THREE.LineSegments(geom, mat));
+            }
         }
-    }
 
-    // Direction arrow at trajectory start
-    if (traj.segments.length > 0) {
-        const seg = traj.segments[0];
-        const startPt = fullProject(seg.start, northPole, orthoBasis, MAX_RADIUS);
-        const midPt = fullProject(
-            [seg.start[0]*0.8 + seg.end[0]*0.2,
-             seg.start[1]*0.8 + seg.end[1]*0.2,
-             seg.start[2]*0.8 + seg.end[2]*0.2,
-             seg.start[3]*0.8 + seg.end[3]*0.2],
-            northPole, orthoBasis, MAX_RADIUS
-        );
-        const dir = new THREE.Vector3(
-            midPt[0] - startPt[0],
-            midPt[1] - startPt[1],
-            midPt[2] - startPt[2]
-        );
-        const len = dir.length();
-        if (len > 0.01) {
-            dir.normalize();
-            const arrow = new THREE.ArrowHelper(
-                dir,
-                new THREE.Vector3(startPt[0], startPt[1], startPt[2]),
-                Math.min(len * 2, 0.3),
-                ARROW_COLOR,
-                ARROW_HEAD_LENGTH,
-                ARROW_HEAD_WIDTH
+        // Add arrows (not batched)
+        for (const { startPt, midPt } of arrows) {
+            const dir = new THREE.Vector3(
+                midPt[0] - startPt[0],
+                midPt[1] - startPt[1],
+                midPt[2] - startPt[2]
             );
-            trajectoryGroup.add(arrow);
+            const len = dir.length();
+            if (len > 0.01) {
+                dir.normalize();
+                const arrow = new THREE.ArrowHelper(
+                    dir,
+                    new THREE.Vector3(startPt[0], startPt[1], startPt[2]),
+                    Math.min(len * 2, 0.3),
+                    ARROW_COLOR,
+                    ARROW_HEAD_LENGTH,
+                    ARROW_HEAD_WIDTH
+                );
+                trajectoryGroup.add(arrow);
+            }
         }
     }
 }
