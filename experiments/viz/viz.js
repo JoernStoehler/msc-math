@@ -199,9 +199,8 @@ function rebuildScene() {
 /**
  * Render a single ridge (2-face) as a curved surface.
  *
- * Instead of fan-triangulating from a projected centroid (which gives a flat surface),
- * we sample a grid of interior points in R⁴, project each to R³, and triangulate.
- * This captures the curvature introduced by radial+stereographic projection.
+ * Sampling is done on S³ (via slerp) for uniform angular spacing,
+ * then stereographically projected to R³.
  */
 function renderRidge(ridge, d) {
     const verts = ridge.vertices;
@@ -212,10 +211,8 @@ function renderRidge(ridge, d) {
     const color = facetColor(ridge.facets[0], d.facet_count);
 
     if (nv === 3) {
-        // Triangle: use barycentric grid
         renderTriangleRidge(d.vertices[verts[0]], d.vertices[verts[1]], d.vertices[verts[2]], color, N);
     } else if (nv === 4) {
-        // Quad: use bilinear grid
         renderQuadRidge(
             d.vertices[verts[0]], d.vertices[verts[1]],
             d.vertices[verts[2]], d.vertices[verts[3]],
@@ -237,49 +234,28 @@ function renderRidge(ridge, d) {
 }
 
 /**
- * Render a triangular patch by sampling a barycentric grid in R⁴ and projecting.
+ * Render a triangular patch. Grid is sampled on S³ via slerp.
  */
 function renderTriangleRidge(a4, b4, c4, color, N) {
-    // Build (N+1)(N+2)/2 grid points using barycentric coordinates
-    const gridPoints = []; // indexed by (i,j) where i+j <= N
+    const gridPoints = projectTriangleGrid(a4, b4, c4, N, northPole, orthoBasis, MAX_RADIUS);
+
     const gridIndex = (i, j) => {
-        // Map (i,j) with i+j<=N to flat index
         let idx = 0;
         for (let row = 0; row < j; row++) idx += (N + 1 - row);
         return idx + i;
     };
 
-    for (let j = 0; j <= N; j++) {
-        for (let i = 0; i <= N - j; i++) {
-            const u = i / N;
-            const v = j / N;
-            const w = 1 - u - v;
-            // Interpolate in R⁴
-            const p4 = [
-                w * a4[0] + u * b4[0] + v * c4[0],
-                w * a4[1] + u * b4[1] + v * c4[1],
-                w * a4[2] + u * b4[2] + v * c4[2],
-                w * a4[3] + u * b4[3] + v * c4[3],
-            ];
-            const p3 = fullProject(p4, northPole, orthoBasis, MAX_RADIUS);
-            gridPoints.push(p3);
-        }
-    }
-
-    // Triangulate: for each cell (i,j), two triangles
     const positions = [];
     for (let j = 0; j < N; j++) {
         for (let i = 0; i < N - j; i++) {
             const a = gridIndex(i, j);
             const b = gridIndex(i + 1, j);
             const c = gridIndex(i, j + 1);
-            // Triangle 1: a-b-c
             const pa = gridPoints[a], pb = gridPoints[b], pc = gridPoints[c];
             positions.push(pa[0], pa[1], pa[2]);
             positions.push(pb[0], pb[1], pb[2]);
             positions.push(pc[0], pc[1], pc[2]);
 
-            // Triangle 2 (if exists): b - b+1_next_row - c
             if (i + 1 <= N - j - 1) {
                 const d = gridIndex(i + 1, j + 1);
                 const pd = gridPoints[d];
@@ -306,37 +282,20 @@ function renderTriangleRidge(a4, b4, c4, color, N) {
     });
     ridgeGroup.add(new THREE.Mesh(geom, mat));
 
-    // Also add a wireframe overlay to emphasize curvature
     const wireMat = new THREE.MeshBasicMaterial({
         color: color,
         transparent: true,
         opacity: 0.08,
         wireframe: true,
     });
-    const wireGeom = geom.clone();
-    ridgeGroup.add(new THREE.Mesh(wireGeom, wireMat));
+    ridgeGroup.add(new THREE.Mesh(geom.clone(), wireMat));
 }
 
 /**
- * Render a quad patch by sampling a bilinear grid in R⁴ and projecting.
- * Vertices are in polygon order: a-b-c-d (so a-b, b-c, c-d, d-a are edges).
+ * Render a quad patch. Grid is sampled on S³ via slerp.
  */
 function renderQuadRidge(a4, b4, c4, d4, color, N) {
-    // Bilinear interpolation: P(u,v) = (1-u)(1-v)A + u(1-v)B + uv C + (1-u)v D
-    const gridPoints = [];
-    for (let j = 0; j <= N; j++) {
-        for (let i = 0; i <= N; i++) {
-            const u = i / N;
-            const v = j / N;
-            const p4 = [
-                (1 - u) * (1 - v) * a4[0] + u * (1 - v) * b4[0] + u * v * c4[0] + (1 - u) * v * d4[0],
-                (1 - u) * (1 - v) * a4[1] + u * (1 - v) * b4[1] + u * v * c4[1] + (1 - u) * v * d4[1],
-                (1 - u) * (1 - v) * a4[2] + u * (1 - v) * b4[2] + u * v * c4[2] + (1 - u) * v * d4[2],
-                (1 - u) * (1 - v) * a4[3] + u * (1 - v) * b4[3] + u * v * c4[3] + (1 - u) * v * d4[3],
-            ];
-            gridPoints.push(fullProject(p4, northPole, orthoBasis, MAX_RADIUS));
-        }
-    }
+    const gridPoints = projectQuadGrid(a4, b4, c4, d4, N, northPole, orthoBasis, MAX_RADIUS);
 
     const positions = [];
     for (let j = 0; j < N; j++) {
@@ -345,7 +304,6 @@ function renderQuadRidge(a4, b4, c4, d4, color, N) {
             const b = a + 1;
             const c = a + (N + 1);
             const dd = c + 1;
-            // Two triangles per cell
             const pa = gridPoints[a], pb = gridPoints[b], pc = gridPoints[c], pd = gridPoints[dd];
             positions.push(pa[0], pa[1], pa[2]);
             positions.push(pb[0], pb[1], pb[2]);
@@ -572,4 +530,27 @@ function resetCamera() {
     camera.position.set(4, 3, 5);
     camera.lookAt(0, 0, 0);
     controls.reset();
+}
+
+let darkMode = true;
+
+function toggleTheme() {
+    darkMode = !darkMode;
+    if (darkMode) {
+        scene.background = new THREE.Color(0x0d1117);
+        document.body.style.background = '#0d1117';
+        document.body.style.color = '#c9d1d9';
+        document.getElementById('controls').style.background = 'rgba(22, 27, 34, 0.92)';
+        document.getElementById('controls').style.borderColor = '#30363d';
+        document.getElementById('info').style.background = 'rgba(22, 27, 34, 0.92)';
+        document.getElementById('info').style.borderColor = '#30363d';
+    } else {
+        scene.background = new THREE.Color(0xffffff);
+        document.body.style.background = '#ffffff';
+        document.body.style.color = '#24292f';
+        document.getElementById('controls').style.background = 'rgba(255, 255, 255, 0.92)';
+        document.getElementById('controls').style.borderColor = '#d0d7de';
+        document.getElementById('info').style.background = 'rgba(255, 255, 255, 0.92)';
+        document.getElementById('info').style.borderColor = '#d0d7de';
+    }
 }

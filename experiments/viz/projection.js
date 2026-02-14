@@ -1,6 +1,9 @@
 // projection.js — 4D to 3D projection functions
 //
 // Pipeline: point in R⁴ → radial projection to S³ → stereographic to R³
+//
+// Sampling is done on S³ (via slerp) to get uniform angular spacing,
+// which stereographic projection maps to smooth R³ spacing.
 
 /**
  * Radial projection: x ↦ x / |x|, mapping ∂K → S³.
@@ -11,6 +14,39 @@ function radialProject(p) {
     const norm = Math.sqrt(p[0]*p[0] + p[1]*p[1] + p[2]*p[2] + p[3]*p[3]);
     if (norm < 1e-15) return [0, 0, 0, 0];
     return [p[0]/norm, p[1]/norm, p[2]/norm, p[3]/norm];
+}
+
+/**
+ * Spherical linear interpolation on S³.
+ * slerp(a, b, t) traces a great-circle arc from a to b.
+ * @param {number[]} a - Unit vector on S³
+ * @param {number[]} b - Unit vector on S³
+ * @param {number} t - Parameter in [0, 1]
+ * @returns {number[]} Unit vector on S³
+ */
+function slerp4(a, b, t) {
+    let d = dot4(a, b);
+    // Clamp for numerical safety
+    d = Math.max(-1, Math.min(1, d));
+    const omega = Math.acos(d);
+    if (omega < 1e-10) {
+        // Nearly identical: use lerp
+        return normalize4([
+            a[0] + t * (b[0] - a[0]),
+            a[1] + t * (b[1] - a[1]),
+            a[2] + t * (b[2] - a[2]),
+            a[3] + t * (b[3] - a[3]),
+        ]);
+    }
+    const sinOmega = Math.sin(omega);
+    const sa = Math.sin((1 - t) * omega) / sinOmega;
+    const sb = Math.sin(t * omega) / sinOmega;
+    return [
+        sa * a[0] + sb * b[0],
+        sa * a[1] + sb * b[1],
+        sa * a[2] + sb * b[2],
+        sa * a[3] + sb * b[3],
+    ];
 }
 
 /**
@@ -110,8 +146,12 @@ function fullProject(p, northPole, basis, maxRadius) {
 }
 
 /**
- * Project a line segment in R⁴ to R³, sampling intermediate points for smooth curves.
- * Under radial+stereographic, straight lines become circular arcs.
+ * Project a line segment in R⁴ to R³, sampling along the great-circle arc on S³.
+ *
+ * Instead of interpolating in R⁴ (which gives nonuniform R³ spacing),
+ * we project both endpoints to S³, slerp between them, and stereographically
+ * project each sample point.
+ *
  * @param {number[]} start - Start point in R⁴
  * @param {number[]} end - End point in R⁴
  * @param {number[]} northPole
@@ -122,18 +162,95 @@ function fullProject(p, northPole, basis, maxRadius) {
  */
 function projectSegment(start, end, northPole, basis, maxRadius, nSamples) {
     nSamples = nSamples || 20;
+    const a = radialProject(start);
+    const b = radialProject(end);
     const points = [];
     for (let i = 0; i <= nSamples; i++) {
         const t = i / nSamples;
-        const interp = [
-            start[0] + t * (end[0] - start[0]),
-            start[1] + t * (end[1] - start[1]),
-            start[2] + t * (end[2] - start[2]),
-            start[3] + t * (end[3] - start[3]),
-        ];
-        points.push(fullProject(interp, northPole, basis, maxRadius));
+        const onSphere = slerp4(a, b, t);
+        points.push(stereographicProject(onSphere, northPole, basis, maxRadius));
     }
     return points;
+}
+
+/**
+ * Project a triangle in R⁴ to a grid of R³ points, sampling on S³.
+ *
+ * Projects the three R⁴ vertices to S³, then uses spherical barycentric
+ * interpolation (slerp along edges, then slerp between edge points)
+ * for interior sampling.
+ *
+ * @param {number[]} a4 - First vertex in R⁴
+ * @param {number[]} b4 - Second vertex in R⁴
+ * @param {number[]} c4 - Third vertex in R⁴
+ * @param {number} N - Number of subdivisions per edge
+ * @param {number[]} northPole
+ * @param {number[][]} basis
+ * @param {number} maxRadius
+ * @returns {number[][]} Grid of R³ points, indexed by (i,j) with i+j<=N
+ */
+function projectTriangleGrid(a4, b4, c4, N, northPole, basis, maxRadius) {
+    const aS = radialProject(a4);
+    const bS = radialProject(b4);
+    const cS = radialProject(c4);
+
+    const gridPoints = [];
+    for (let j = 0; j <= N; j++) {
+        for (let i = 0; i <= N - j; i++) {
+            const u = i / N;
+            const v = j / N;
+            // Spherical barycentric: slerp along edges, then between
+            // p_ab = slerp(a, b, u/(1-v))  for the point on edge a-b at fraction u/(1-v)
+            // p    = slerp(p_ab, c, v)       interpolate toward c
+            let onSphere;
+            if (v > 1 - 1e-12) {
+                onSphere = cS;
+            } else {
+                const uNorm = u / (1 - v);
+                const pab = slerp4(aS, bS, uNorm);
+                onSphere = slerp4(pab, cS, v);
+            }
+            gridPoints.push(stereographicProject(onSphere, northPole, basis, maxRadius));
+        }
+    }
+    return gridPoints;
+}
+
+/**
+ * Project a quad in R⁴ to a grid of R³ points, sampling on S³.
+ *
+ * Projects the four R⁴ vertices to S³, then uses spherical bilinear
+ * interpolation for interior sampling.
+ *
+ * @param {number[]} a4 - Vertex 0 in R⁴ (polygon order: a-b-c-d)
+ * @param {number[]} b4 - Vertex 1 in R⁴
+ * @param {number[]} c4 - Vertex 2 in R⁴
+ * @param {number[]} d4 - Vertex 3 in R⁴
+ * @param {number} N - Number of subdivisions per edge
+ * @param {number[]} northPole
+ * @param {number[][]} basis
+ * @param {number} maxRadius
+ * @returns {number[][]} Grid of R³ points, row-major (N+1)*(N+1)
+ */
+function projectQuadGrid(a4, b4, c4, d4, N, northPole, basis, maxRadius) {
+    const aS = radialProject(a4);
+    const bS = radialProject(b4);
+    const cS = radialProject(c4);
+    const dS = radialProject(d4);
+
+    const gridPoints = [];
+    for (let j = 0; j <= N; j++) {
+        for (let i = 0; i <= N; i++) {
+            const u = i / N;
+            const v = j / N;
+            // Spherical bilinear: slerp edges, then slerp between
+            const pab = slerp4(aS, bS, u);
+            const pdc = slerp4(dS, cS, u);
+            const onSphere = slerp4(pab, pdc, v);
+            gridPoints.push(stereographicProject(onSphere, northPole, basis, maxRadius));
+        }
+    }
+    return gridPoints;
 }
 
 // ---- Utility functions ----
