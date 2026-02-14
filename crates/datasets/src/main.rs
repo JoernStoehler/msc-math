@@ -16,6 +16,8 @@ use std::time::Instant;
 /// (facet_count, n_samples) — width first: extend F range before increasing N.
 /// F=13-14 were tested once (aa3fca5) but excluded from routine runs:
 /// F=13 ~44s/polytope, F=14 ~9min/polytope. No new findings vs F≤12.
+/// Before adding higher F: time one polytope first (cost grows ~4.8x/facet),
+/// then decide with Jörn whether the runtime is worth the signal.
 const RANDOM_BATCHES: &[(usize, usize)] = &[
     (5, 50), (6, 50), (7, 50), (8, 50), (9, 50), (10, 50),
     (11, 20), (12, 10),
