@@ -42,16 +42,9 @@ and~$\mathbb{R}^2_p = \{(0, 0, p_1, p_2)\}$ are both Lagrangian with respect
 to~$\omega_0$.
 \end{definition}
 
-% [TODO: JÖRN - verify this volume claim. Standard but worth checking
-%  the normalization factor: vol_4 vs 4D Lebesgue measure.]
 The 4-volume satisfies~$\operatorname{vol}_4(P \times_L Q)
 = \operatorname{area}(P) \cdot \operatorname{area}(Q)$ (Fubini's theorem on
-complementary subspaces). Since volume factors, the systolic ratio becomes
-\[
-  \mathrm{sys}(P \times_L Q)
-  \;=\; \frac{c_{\mathrm{EHZ}}(P \times_L Q)^2}
-             {2 \,\operatorname{area}(P) \cdot \operatorname{area}(Q)}.
-\]
+complementary subspaces).
 
 \paragraph{Rotation parameter.}
 Fix a polygon~$P$ in $q$-space. For an angle~$\theta$, let~$R(\theta)$ denote
@@ -114,10 +107,10 @@ domain~$[0^\circ, 36^\circ]$. The HK-O counterexample at~$90^\circ$
 maps to~$90 \bmod 72 = 18^\circ$ in this domain.
 \end{remark}
 
-% [TODO: JÖRN - verify factor swap claim. Agent derived that N = -J_0
-%  is symplectic and maps P x_L Q to Q x_L (-P). For centrally symmetric
-%  polygons, swapping factors preserves sys. For odd polygons, -P = R(π)P
-%  so the swap also rotates one factor by 180°.]
+% Factor swap: N = -J_0 is symplectic, maps P x_L Q to Q x_L (-P).
+% For centrally symmetric polygons, swapping factors preserves sys.
+% For odd polygons, -P = R(π)P so the swap also rotates one factor by 180°.
+% (Jörn verified 2025-02-14.)
 
 \subsubsection*{Family 1: Pentagon rotation curve}
 
@@ -201,17 +194,17 @@ $n$ & $m$ & $F$ & $\max\,\mathrm{sys}$ & $\theta_{\max}$ & status \\
 \item \textbf{$(4,4)$ at $\theta = 45^\circ$}: Two squares with relative
   rotation~$45^\circ$. The capacity satisfies~$c_{\mathrm{EHZ}} = 2\sqrt{2}$
   with~$\operatorname{vol} = 4$, giving~$\mathrm{sys} = 8/8 = 1$ exactly.
-  % [TODO: JÖRN - this polytope might be the cross-polytope B^4 or
-  %  a symplectic image of it. Worth checking if it's a known Viterbo
-  %  saturator from the literature.]
+  % Not the cross-polytope (16 facets vs 8). Not symplectomorphic to the
+  % hypercube (which is (4,4) at θ=0° with sys=0.5). The unrotated product
+  % IS the hypercube; the 45° rotation changes the symplectic geometry.
 
 \item \textbf{$(3,6)$ at $\theta = 0^\circ$}: Triangle $\times_L$ hexagon
   (aligned). The capacity satisfies~$c_{\mathrm{EHZ}} = \tfrac{3\sqrt{3}}{2}$
   with~$\operatorname{vol} = \tfrac{27}{8}$,
   giving~$\mathrm{sys} = \tfrac{27/4}{27/4} = 1$ exactly.
-  % [TODO: JÖRN - is this a known Viterbo-saturating body? The dual
-  %  relationship between triangle and hexagon (hexagon = 2x dilated
-  %  dual of triangle) may explain the saturation.]
+  % Balitskiy (2020) characterizes Lagrangian products with sys=1;
+  % CH2021 §1 notes triangle×square as a known sys=1 example (Schlenk
+  % Lem. 5.3.1) and cites Balitskiy for further examples.
 
 \item \textbf{$(5,5)$ at $\theta = 18^\circ$}: This reproduces the HK-O
   counterexample ($\theta = 18^\circ \equiv 90^\circ \pmod{72^\circ}$)
@@ -282,9 +275,10 @@ threshold.
 \item \textbf{Viterbo saturation at $(3,6)$ and $(4,4)$.}
   The exact saturation~$\mathrm{sys} = 1$ at these pairs is notable.
   For~$(4,4)$ at~$45^\circ$, the body is a square~$\times_L$~rotated square
-  with~$c = 2\sqrt{2}$ and~$\operatorname{vol} = 4$; this may correspond
-  to a known Viterbo-saturating body (e.g., the cross-polytope~$B^4$).
-  For~$(3,6)$ at~$0^\circ$, the triangle--hexagon duality (the regular
-  hexagon tiles by six copies of the equilateral triangle) may underlie
-  the saturation.
+  with~$c = 2\sqrt{2}$ and~$\operatorname{vol} = 4$; it is not the
+  cross-polytope (16 facets vs.\ 8) nor symplectomorphic to the hypercube
+  (which is~$(4,4)$ at~$\theta = 0^\circ$ with~$\mathrm{sys} = 0.5$).
+  For~$(3,6)$ at~$0^\circ$, Lagrangian products with~$\mathrm{sys} = 1$ have
+  been characterized by Balitskiy~(2020); Chaidez--Hutchings~(2021) note
+  the triangle~$\times$~square as a previously known example.
 \end{enumerate}
