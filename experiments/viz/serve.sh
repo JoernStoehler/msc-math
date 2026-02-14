@@ -5,7 +5,7 @@ set -euo pipefail
 
 PORT="${1:-8080}"
 DIR="$(cd "$(dirname "$0")" && pwd)"
-DATA="$DIR/data"
+DATA="$DIR/../../docs/viz/data"
 CRATES="$DIR/../../crates"
 
 mkdir -p "$DATA"
