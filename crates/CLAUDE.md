@@ -27,26 +27,201 @@ Two classes of tests, both applied excessively:
 1. **Math proposition tests** (due diligence falsification): proptest generators approximate mathematical quantifiers ("∀ polytopes K", "∀ A ∈ Sp(4)", etc.). Properties under test are mathematical propositions (e.g. J^2 = -I, symplectomorphisms preserve capacity).
 2. **Standard correctness tests**: Rust best practices for correctness-critical code — edge cases, invariant checking, regression tests.
 
-## Property-based testing
+## Testing expensive functions
 
-Use proptest for universal quantification: "∀ λ > 0: vol(λK) = λ⁴·vol(K)" → proptest. Not for single examples.
+For expensive functions (e.g., `ehz_capacity()` with exponential cost), split tests into two categories:
+
+### Category A: Input-Output Behavior
+**What it tests:** Does `f(input)` return the correct output value? Mathematical properties (conformality, monotonicity, etc.).
+
+**Test strategy:**
+- **Preferred:** Use fixtures (pre-computed in release mode), run tests in debug suite (fast, <1s)
+- **Alternative:** Mark `#[ignore]`, run in release mode (slow but thorough)
+
+**Why this works:** We only care about the result, not how the code executes. No need for debug mode overhead (debug_assert!, bounds checking). Release mode gives 50-80x speedup for capacity tests.
+
+**Examples:**
+- Capacity values match literature (fixture-based)
+- Conformality: c(λK) = λ²c(K) (fixture-based)
+- Pentagon sys > 1 (#[ignore], release mode)
+
+### Category B: Internal Behavior
+**What it tests:** Does the code execute safely without crashes, bounds errors, overflow, or assertion failures?
+
+**Test strategy:**
+- Run in debug mode (enables debug_assert!, overflow checks, bounds checks)
+- Use small inputs (F ≤ 6 for capacity) to stay fast (<5s per test)
+
+**Why this works:** We're testing that code *runs correctly*, not that it *produces correct output*. Debug mode catches bugs via overflow/bounds checks. Small inputs exercise the same code paths as large inputs for internal behavior (index arithmetic, loop bounds, adjacency logic).
+
+**Examples:**
+- `simplex_capacity()` - unpruned algorithm on F=4, exercises enumeration in debug
+- `triangle_square_capacity()` - pruned algorithm on F=7, exercises adjacency filtering in debug
+- `solve_kkt_rank_deficient()` - error path handling
+- Error path tests (validation, parsing failures)
+
+## Test organization patterns
+
+### Pattern 1: Fixture-Based Property Tests
+**File:** `capacity_properties_test.rs` (and similar)
+**Suite:** Default (debug)
+**Speed:** <1s per test
+
+Load pre-computed fixture (generated in release mode), verify mathematical properties.
+
+**Structure:**
+```rust
+/// Verify [property] from pre-computed fixture.
+///
+/// Uses fixture (release-mode pre-computation) for speed.
+#[test]
+fn property_name() {
+    let dataset = &*DATASET;  // LazyLock, loads once
+    for item in dataset {
+        assert!(/* property holds */);
+    }
+}
+```
+
+**Examples:** `literature_capacity_values()`, `capacity_conformality()`, `capacity_monotonicity()`
+
+### Pattern 2: Internal Behavior Smoke Tests
+**File:** `lib_test.rs` or colocated test files
+**Suite:** Default (debug)
+**Speed:** <5s per test
+
+Exercise code paths in debug mode with small inputs.
+
+**Structure:**
+```rust
+/// Smoke test: [algorithm] executes safely on [small input].
+///
+/// **Why debug mode:** Exercises [code paths] with overflow/bounds checks.
+/// **Why this input:** F=[N], stays fast while covering [behavior].
+/// **Output check:** Verifies [property] as sanity check.
+#[test]
+fn algorithm_small_case() {
+    let input = make_small_input();  // F ≤ 6
+    let result = expensive_function(&input);
+    assert!(/* basic sanity check on output */);
+}
+```
+
+**Examples:** `simplex_capacity()`, `hypercube_capacity()`, `solve_kkt_degenerate()`
+
+### Pattern 3: Expensive Input-Output Tests
+**File:** `lib_test.rs` or dedicated files
+**Suite:** #[ignore], run in release mode
+**Speed:** >10s debug, ~1s release
+
+Verify correctness on complex examples where fixture isn't suitable.
+
+**Structure:**
+```rust
+/// Verify [property] on [complex polytope].
+///
+/// **Why release mode:** F=[N] → [X]s debug, [Y]s release. Input-output test, only care about result.
+/// **Why #[ignore]:** Too slow for default suite. Run after [specific changes].
+/// **Run with:** `cargo test --release -p [crate] [name] -- --ignored`
+#[test]
+#[ignore]  // Xmin debug, Ys release
+fn expensive_case() {
+    let input = make_complex_input();  // F > 8
+    let result = expensive_function(&input);
+    assert!(/* expected property */);
+}
+```
+
+**Examples:** `pentagon_capacity()`, `pruned_matches_unpruned()`
+
+### Pattern 4: Fixture Generator
+**File:** `test_dataset.rs` or similar
+**Suite:** #[ignore], run in release mode only
+**Speed:** Minutes in release
+
+Regenerate fixture after code changes.
+
+**Structure:**
+```rust
+/// Regenerate [fixture name].
+///
+/// **Why release mode:** [N] computations × [cost] = [time] in release vs. [time] in debug.
+/// **When to run:** After changes to [what triggers regeneration].
+/// **Run with:** `cargo test --release -p [crate] [name] -- --ignored --nocapture`
+#[test]
+#[ignore]
+fn regenerate_fixture() {
+    // Compute all values in release mode
+    // Save to JSON fixture
+}
+```
+
+**Example:** `regenerate_test_dataset()`
+
+### Pattern 5: Staleness Detector
+**File:** Same as fixture-based tests
+**Suite:** Default (debug)
+**Speed:** <1s
+
+Warn if fixture is out of sync with code.
+
+**Structure:**
+```rust
+/// Check that fixture covers current [catalog/schema/etc].
+///
+/// Warns if fixture is stale. Regenerate with: [command]
+#[test]
+fn fixture_staleness_check() {
+    let current = current_catalog();
+    let fixture = load_fixture();
+    // Warn on mismatches (don't fail)
+}
+```
+
+**Example:** `fixture_staleness_check()`
+
+## Test documentation requirements
+
+Every test MUST have a doc comment explaining:
+
+1. **What** it tests (algorithm, property, edge case)
+2. **Why** it uses its execution mode (debug/release/fixture)
+3. **Why** it uses its input (polytope size, specific case)
+4. **Relationship** to other tests (if any)
+
+**Bad (no doc comment):**
+```rust
+#[test]
+fn pruned_matches_unpruned() { ... }
+```
+
+**Good:**
+```rust
+/// Verify pruned and unpruned algorithms produce identical capacity.
+///
+/// **Why release mode:** F=8 → 16s debug, 0.2s release. Input-output test.
+/// **Why #[ignore]:** Too slow for default suite.
+/// **Run with:** `cargo test --release -p hk2017 pruned_matches_unpruned -- --ignored`
+///
+/// For quick fixture-based check, see `pruned_matches_unpruned_from_fixture()`.
+#[test]
+#[ignore]
+fn pruned_matches_unpruned() { ... }
+```
 
 ## Test suites
 
-Property tests load from a cached JSON fixture so they run fast (<1s) while still verifying mathematical properties. Non-default suites accept staleness risk in exchange for CPU savings — agents decide which to run based on what code they changed.
-
-| Suite | Command | When to run | Time (2026-02-12) |
+| Suite | Command | When to run | Time (2026-02-14) |
 |-------|---------|-------------|-------------------|
-| **Default** | `cargo test --lib` | Every iteration | ~54s wall, ~98s CPU |
+| **Default** | `cargo test --lib` | Every iteration | ~43s wall |
 | Regenerate capacity fixture | `cargo test --release -p hk2017 regenerate_test_dataset -- --ignored` | After changes to `ehz_capacity()` | ~20s |
-| Pruned vs unpruned agreement | `cargo test -p hk2017 pruned_matches_unpruned -- --ignored` | After changes to adjacency pruning | ~30s |
+| Expensive capacity tests | `cargo test --release -p hk2017 -- --ignored` | After capacity algorithm changes | ~2s |
 | Boundedness cross-check | `cargo test -p geom -- --ignored` | Monitoring, or after qhull/boundedness changes | ~3s |
-| Expensive capacity (pentagon, crosspolytope) | `cargo test -p hk2017 pentagon_capacity -- --ignored` | Rare, specific investigations | 2-5 min |
-| All ignored tests | `cargo test -- --ignored` | Full validation | ~10 min |
+| All ignored tests | `cargo test -- --ignored` | Full validation | ~5 min |
 
-Target: default suite <3 min single-threaded. Times measured 2026-02-12 — may drift as codebase grows.
+Target: default suite <3 min single-threaded (currently ~43s).
 
-**Fixture location:** `hk2017/tests/fixtures/capacity_dataset.json` (committed, 27 polytopes with precomputed capacities).
+**Fixture location:** `hk2017/tests/fixtures/capacity_dataset.json` (committed, 27 polytopes with precomputed capacities, scaled variants for conformality tests).
 
 ## Performance claims require measurement
 
