@@ -6,6 +6,7 @@
 use geom::known_polytopes::{self, KnownPolytope};
 use geom::reeb_trajectory;
 use geom::skeleton::Skeleton;
+use geom::volume;
 use nalgebra::Vector4;
 use serde::Serialize;
 use std::fs::File;
@@ -40,6 +41,10 @@ pub struct VizExport {
     pub vertex_facets: Vec<Vec<usize>>,
     /// Sample Reeb trajectories from different starting points.
     pub trajectories: Vec<VizTrajectory>,
+    /// Volume of the polytope.
+    pub volume: f64,
+    /// Systolic ratio: c_EHZ² / (2 · volume).
+    pub systolic_ratio: f64,
 }
 
 #[derive(Serialize)]
@@ -98,6 +103,14 @@ pub fn export(name: &str, output: &Path) -> Result<(), String> {
     // Trajectories: one per facet, starting from facet vertex centroid
     let trajectories = generate_trajectories(polytope, &skeleton);
 
+    // Compute volume and systolic ratio
+    let vol = volume::volume(polytope).unwrap_or(0.0);
+    let systolic_ratio = if vol > 0.0 {
+        kp.capacity * kp.capacity / (2.0 * vol)
+    } else {
+        0.0
+    };
+
     let export = VizExport {
         name: kp.name.to_string(),
         source: kp.source.to_string(),
@@ -121,6 +134,8 @@ pub fn export(name: &str, output: &Path) -> Result<(), String> {
             .collect(),
         vertex_facets: skeleton.vertex_facets.clone(),
         trajectories,
+        volume: vol,
+        systolic_ratio,
     };
 
     let file = File::create(output).map_err(|e| format!("Cannot create {}: {e}", output.display()))?;
@@ -145,31 +160,28 @@ fn generate_trajectories(
     polytope: &geom::polytope::Polytope4D,
     skeleton: &Skeleton,
 ) -> Vec<VizTrajectory> {
-    let mut trajectories = Vec::new();
-
+    // Generate only one sample trajectory (from facet 0).
+    // Phase 2 will replace this with interesting trajectories (min-action orbit, displaced).
     for fi in 0..polytope.facet_count() {
         let centroid = reeb_trajectory::facet_centroid(polytope, skeleton, fi);
-
         let traj = reeb_trajectory::simulate(polytope, centroid, fi, 100, 1e-6);
 
-        if traj.segments.is_empty() {
-            continue;
+        if !traj.segments.is_empty() {
+            return vec![VizTrajectory {
+                start_facet: fi,
+                closed: traj.closed,
+                segments: traj
+                    .segments
+                    .iter()
+                    .map(|s| VizSegment {
+                        start: v4_to_array(&s.start),
+                        end: v4_to_array(&s.end),
+                        facet: s.facet,
+                    })
+                    .collect(),
+            }];
         }
-
-        trajectories.push(VizTrajectory {
-            start_facet: fi,
-            closed: traj.closed,
-            segments: traj
-                .segments
-                .iter()
-                .map(|s| VizSegment {
-                    start: v4_to_array(&s.start),
-                    end: v4_to_array(&s.end),
-                    facet: s.facet,
-                })
-                .collect(),
-        });
     }
 
-    trajectories
+    vec![] // No valid trajectory found
 }
