@@ -55,6 +55,7 @@ fn hko_pentagon_capacity() {
 // ============================================================
 
 #[test]
+#[ignore] // runs hk2017 live — release-only cross-algorithm check
 fn agrees_with_hk2017_hypercube() {
     let kp = known_polytopes::hypercube();
     let billiard = billiard_capacity(&kp.polytope).unwrap().unwrap();
@@ -70,6 +71,7 @@ fn agrees_with_hk2017_hypercube() {
 }
 
 #[test]
+#[ignore] // runs hk2017 live — release-only cross-algorithm check
 fn agrees_with_hk2017_triangle_product() {
     let kp = known_polytopes::lagrangian_triangle_product();
     let billiard = billiard_capacity(&kp.polytope).unwrap().unwrap();
@@ -85,6 +87,7 @@ fn agrees_with_hk2017_triangle_product() {
 }
 
 #[test]
+#[ignore] // runs hk2017 live — release-only cross-algorithm check
 fn agrees_with_hk2017_triangle_square() {
     let kp = known_polytopes::lagrangian_triangle_square();
     let billiard = billiard_capacity(&kp.polytope).unwrap().unwrap();
