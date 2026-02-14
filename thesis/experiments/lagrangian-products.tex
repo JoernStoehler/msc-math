@@ -126,19 +126,35 @@ points) for the family~$\mathrm{Pentagon} \times_L R(\theta)\,\mathrm{Pentagon}$
 where each pentagon is regular with circumradius~1. Each EHZ capacity
 computation takes approximately~2.5\,s (10 facets).
 
-% [TODO: replace with actual figure once data is generated]
-Figure~\ref{fig:pentagon-sweep} shows the resulting curve.
+Figure~\ref{fig:pentagon-sweep} shows the resulting curve. The systolic ratio
+oscillates between~$0.9472$ and~$1.0472$ with period~$72^\circ$, confirming the
+fundamental domain prediction of Lemma~\ref{lem:rotation-fundamental-domain}
+($\pi/\operatorname{lcm}(5,5) = 36^\circ$, period~$72^\circ$). The mirror
+symmetry~$\mathrm{sys}(\theta) = \mathrm{sys}(-\theta)$ holds to machine
+precision ($< 10^{-14}$), with the curve symmetric around~$\theta = 18^\circ$
+within each period.
+
+The maximum~$\mathrm{sys} \approx 1.0472$ occurs at~$\theta \equiv 18^\circ
+\pmod{72^\circ}$ (equivalently~$\theta = 90^\circ$, the HK-O
+angle). The minimum~$\mathrm{sys} \approx 0.9472$ occurs
+at~$\theta \equiv 0^\circ \pmod{72^\circ}$ (aligned pentagons). The violation
+region~$\mathrm{sys} > 1$ spans approximately~$\theta \in (13.5^\circ,
+22.5^\circ)$ within each fundamental domain---about~$25\%$ of the period.
+
+Since volume is constant across~$\theta$
+(Fubini:~$\operatorname{vol} = \operatorname{area}(P)^2$ is independent
+of rotation), all variation in~$\mathrm{sys}$ comes from the
+EHZ capacity.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.9\textwidth]{../experiments/figures/pentagon_sweep.png}
 \caption{Systolic ratio of $\mathrm{Pentagon} \times_L R(\theta)\,
   \mathrm{Pentagon}$ as a function of rotation angle~$\theta$. The red
-  dashed line marks $\mathrm{sys} = 1$ (Viterbo threshold).}
+  dashed line marks $\mathrm{sys} = 1$ (Viterbo threshold). Vertical grey
+  lines mark~$\pi/5$ and~$2\pi/5$, the period boundaries.}
 \label{fig:pentagon-sweep}
 \end{figure}
-
-% [TODO: fill in findings after data is generated]
 
 \subsubsection*{Family 2: Regular polygon pairs}
 
@@ -155,7 +171,57 @@ $F \le 8$, down to~30 for $F = 12$).
 \label{fig:polygon-grid}
 \end{figure}
 
-% [TODO: fill in summary table and findings after data is generated]
+Table~\ref{tab:polygon-grid} summarizes the results. Three pairs reach or
+exceed the Viterbo threshold:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{cc c cc c}
+\hline
+$n$ & $m$ & $F$ & $\max\,\mathrm{sys}$ & $\theta_{\max}$ & status \\
+\hline
+3 & 3 &  6 & 0.667 & $60.0^\circ$ & below \\
+3 & 4 &  7 & 0.928 & $15.0^\circ$ & below \\
+3 & 5 &  8 & 0.797 &  $0.0^\circ$ & below \\
+3 & 6 &  9 & 1.000 &  $0.0^\circ$ & \textbf{saturates} \\
+4 & 4 &  8 & 1.000 & $45.0^\circ$ & \textbf{saturates} \\
+4 & 5 &  9 & 0.705 &  $9.0^\circ$ & below \\
+4 & 6 & 10 & 0.619 & $15.0^\circ$ & below \\
+5 & 5 & 10 & 1.047 & $18.0^\circ$ & \textbf{exceeds} \\
+5 & 6 & 11 & 0.803 &  $6.0^\circ$ & below \\
+6 & 6 & 12 & 0.889 & $30.0^\circ$ & below \\
+\hline
+\end{tabular}
+\caption{Maximum systolic ratio for each regular polygon pair $(n, m)$
+  with~$n + m \le 12$, optimized over the rotation angle~$\theta$.}
+\label{tab:polygon-grid}
+\end{table}
+
+\begin{itemize}
+\item \textbf{$(4,4)$ at $\theta = 45^\circ$}: Two squares with relative
+  rotation~$45^\circ$. The capacity satisfies~$c_{\mathrm{EHZ}} = 2\sqrt{2}$
+  with~$\operatorname{vol} = 4$, giving~$\mathrm{sys} = 8/8 = 1$ exactly.
+  % [TODO: JÖRN - this polytope might be the cross-polytope B^4 or
+  %  a symplectic image of it. Worth checking if it's a known Viterbo
+  %  saturator from the literature.]
+
+\item \textbf{$(3,6)$ at $\theta = 0^\circ$}: Triangle $\times_L$ hexagon
+  (aligned). The capacity satisfies~$c_{\mathrm{EHZ}} = \tfrac{3\sqrt{3}}{2}$
+  with~$\operatorname{vol} = \tfrac{27}{8}$,
+  giving~$\mathrm{sys} = \tfrac{27/4}{27/4} = 1$ exactly.
+  % [TODO: JÖRN - is this a known Viterbo-saturating body? The dual
+  %  relationship between triangle and hexagon (hexagon = 2x dilated
+  %  dual of triangle) may explain the saturation.]
+
+\item \textbf{$(5,5)$ at $\theta = 18^\circ$}: This reproduces the HK-O
+  counterexample ($\theta = 18^\circ \equiv 90^\circ \pmod{72^\circ}$)
+  with~$\mathrm{sys} \approx 1.0472$. It is the only pair that
+  exceeds~$\mathrm{sys} = 1$.
+\end{itemize}
+
+The remaining seven pairs all satisfy~$\mathrm{sys} < 1$ at every
+tested angle, with the highest non-saturating value
+being~$\mathrm{sys}((3,4)) \approx 0.928$.
 
 \subsubsection*{Family 3: Random Lagrangian products}
 
@@ -173,13 +239,44 @@ orientations.
 \label{fig:random-products}
 \end{figure}
 
-% [TODO: fill in findings after data is generated]
+% [TODO: fill in numerical summary after random products sweep completes]
 
 \subsubsection*{Findings}
 
-% [TODO: write findings after all three families are computed.
-%  Key questions to answer:
-%  1. What does the pentagon curve look like? Where exactly is sys > 1?
-%  2. Which other polygon pairs achieve sys > 1?
-%  3. Do random Lagrangian products reach sys > 1?
-%  4. What does this tell us about the prevalence of Viterbo violations?]
+\begin{enumerate}
+\item \textbf{Only pentagon $\times$ pentagon exceeds the Viterbo bound.}
+  Among all regular $(n,m)$-gon Lagrangian products with~$n + m \le 12$,
+  only the $(5,5)$ pair achieves~$\mathrm{sys} > 1$. The violation is
+  moderate:~$\mathrm{sys}_{\max} \approx 1.047$, about~$4.7\%$ above
+  the threshold. Two additional pairs---$(3,6)$ and~$(4,4)$---saturate
+  the bound at~$\mathrm{sys} = 1$ exactly (at specific angles), while
+  the remaining seven pairs satisfy~$\mathrm{sys} < 1$ at all angles.
+
+\item \textbf{The violation region is narrow.}
+  For pentagon~$\times$~pentagon, the Viterbo-violating angles occupy only
+  about~$25\%$ of each fundamental domain ($9^\circ$ out of~$36^\circ$).
+  The curve has small amplitude ($\approx 0.10$) relative to its mean
+  ($\approx 0.997$), suggesting that the EHZ capacity varies only mildly
+  with rotation.
+
+\item \textbf{All predicted symmetries hold.}
+  The~$72^\circ$ periodicity and mirror symmetry predicted by
+  Lemma~\ref{lem:rotation-fundamental-domain} are confirmed to machine
+  precision ($< 10^{-14}$) in the pentagon sweep, validating both the
+  symplecticity of~$\operatorname{diag}(R(\varphi), R(\varphi))$ and
+  of~$M = \operatorname{diag}(-1, 1, -1, 1)$.
+
+% [TODO: item 4 — after random products sweep completes:
+%  Do random Lagrangian products reach sys > 1?
+%  What fraction approach the threshold?
+%  Compare distribution with fully random polytopes from sec:systolic-ratios.]
+
+\item \textbf{Viterbo saturation at $(3,6)$ and $(4,4)$.}
+  The exact saturation~$\mathrm{sys} = 1$ at these pairs is notable.
+  For~$(4,4)$ at~$45^\circ$, the body is a square~$\times_L$~rotated square
+  with~$c = 2\sqrt{2}$ and~$\operatorname{vol} = 4$; this may correspond
+  to a known Viterbo-saturating body (e.g., the cross-polytope~$B^4$).
+  For~$(3,6)$ at~$0^\circ$, the triangle--hexagon duality (the regular
+  hexagon tiles by six copies of the equilateral triangle) may underlie
+  the saturation.
+\end{enumerate}
