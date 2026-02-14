@@ -6,7 +6,10 @@ let polytopeData = null;
 let northPole = normalize4([0, 0, 0, 1]);
 let orthoBasis = buildOrthoBasis(northPole);
 const MAX_RADIUS = 30;
-const EDGE_SAMPLES = 24;
+const EDGE_SAMPLES = 96;
+const RIDGE_BOUNDARY_SAMPLES = 48;
+const RIDGE_INTERIOR_SUBDIVISIONS = 8; // grid subdivision per edge for interior sampling
+const TRAJ_SAMPLES = 96;
 
 // Display toggles
 let showEdges = true;
@@ -42,17 +45,20 @@ function init() {
     controls.enableDamping = true;
     controls.dampingFactor = 0.08;
 
-    // Lighting
-    scene.add(new THREE.AmbientLight(0x404060, 1.5));
-    const dir1 = new THREE.DirectionalLight(0xffffff, 1.0);
+    // Lighting — stronger for better surface shading
+    scene.add(new THREE.AmbientLight(0x404060, 1.0));
+    const dir1 = new THREE.DirectionalLight(0xffffff, 1.2);
     dir1.position.set(5, 8, 5);
     scene.add(dir1);
-    const dir2 = new THREE.DirectionalLight(0x6688cc, 0.4);
+    const dir2 = new THREE.DirectionalLight(0x6688cc, 0.6);
     dir2.position.set(-3, -2, -5);
     scene.add(dir2);
+    const dir3 = new THREE.DirectionalLight(0xcc8866, 0.3);
+    dir3.position.set(0, -5, 3);
+    scene.add(dir3);
 
-    // Axes
-    scene.add(new THREE.AxesHelper(1.5));
+    // No axes helper — the R³ axes have no geometric meaning
+    // (they are just the Gram-Schmidt orthobasis ⊥ north pole)
 
     // Groups
     edgeGroup = new THREE.Group();
@@ -170,53 +176,10 @@ function rebuildScene() {
         }
     }
 
-    // ---- Ridges (2-faces as translucent surfaces) ----
+    // ---- Ridges (2-faces as curved surfaces with interior sampling) ----
     if (showRidges) {
         for (const ridge of d.ridges) {
-            const verts = ridge.vertices;
-            if (verts.length < 3) continue;
-
-            // Sample each edge of the polygon densely
-            const polygonPoints = [];
-            for (let i = 0; i < verts.length; i++) {
-                const vi = verts[i];
-                const vj = verts[(i + 1) % verts.length];
-                const pts = projectSegment(
-                    d.vertices[vi], d.vertices[vj],
-                    northPole, orthoBasis, MAX_RADIUS, 12
-                );
-                // Don't duplicate the endpoint (next segment starts there)
-                for (let k = 0; k < pts.length - 1; k++) {
-                    polygonPoints.push(new THREE.Vector3(pts[k][0], pts[k][1], pts[k][2]));
-                }
-            }
-
-            // Fan triangulation from centroid
-            const centroid = new THREE.Vector3(0, 0, 0);
-            for (const p of polygonPoints) centroid.add(p);
-            centroid.divideScalar(polygonPoints.length);
-
-            const geom = new THREE.BufferGeometry();
-            const positions = [];
-            for (let i = 0; i < polygonPoints.length; i++) {
-                const a = polygonPoints[i];
-                const b = polygonPoints[(i + 1) % polygonPoints.length];
-                positions.push(centroid.x, centroid.y, centroid.z);
-                positions.push(a.x, a.y, a.z);
-                positions.push(b.x, b.y, b.z);
-            }
-            geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-            geom.computeVertexNormals();
-
-            const color = facetColor(ridge.facets[0], d.facet_count);
-            const mat = new THREE.MeshPhongMaterial({
-                color: color,
-                transparent: true,
-                opacity: 0.12,
-                side: THREE.DoubleSide,
-                depthWrite: false,
-            });
-            ridgeGroup.add(new THREE.Mesh(geom, mat));
+            renderRidge(ridge, d);
         }
     }
 
@@ -233,16 +196,197 @@ function rebuildScene() {
     }
 }
 
+/**
+ * Render a single ridge (2-face) as a curved surface.
+ *
+ * Instead of fan-triangulating from a projected centroid (which gives a flat surface),
+ * we sample a grid of interior points in R⁴, project each to R³, and triangulate.
+ * This captures the curvature introduced by radial+stereographic projection.
+ */
+function renderRidge(ridge, d) {
+    const verts = ridge.vertices;
+    const nv = verts.length;
+    if (nv < 3) return;
+
+    const N = RIDGE_INTERIOR_SUBDIVISIONS;
+    const color = facetColor(ridge.facets[0], d.facet_count);
+
+    if (nv === 3) {
+        // Triangle: use barycentric grid
+        renderTriangleRidge(d.vertices[verts[0]], d.vertices[verts[1]], d.vertices[verts[2]], color, N);
+    } else if (nv === 4) {
+        // Quad: use bilinear grid
+        renderQuadRidge(
+            d.vertices[verts[0]], d.vertices[verts[1]],
+            d.vertices[verts[2]], d.vertices[verts[3]],
+            color, N
+        );
+    } else {
+        // General polygon: split into triangles from centroid in R⁴
+        const centroid4 = [0, 0, 0, 0];
+        for (const vi of verts) {
+            for (let k = 0; k < 4; k++) centroid4[k] += d.vertices[vi][k];
+        }
+        for (let k = 0; k < 4; k++) centroid4[k] /= nv;
+        for (let i = 0; i < nv; i++) {
+            const vi = verts[i];
+            const vj = verts[(i + 1) % nv];
+            renderTriangleRidge(centroid4, d.vertices[vi], d.vertices[vj], color, N);
+        }
+    }
+}
+
+/**
+ * Render a triangular patch by sampling a barycentric grid in R⁴ and projecting.
+ */
+function renderTriangleRidge(a4, b4, c4, color, N) {
+    // Build (N+1)(N+2)/2 grid points using barycentric coordinates
+    const gridPoints = []; // indexed by (i,j) where i+j <= N
+    const gridIndex = (i, j) => {
+        // Map (i,j) with i+j<=N to flat index
+        let idx = 0;
+        for (let row = 0; row < j; row++) idx += (N + 1 - row);
+        return idx + i;
+    };
+
+    for (let j = 0; j <= N; j++) {
+        for (let i = 0; i <= N - j; i++) {
+            const u = i / N;
+            const v = j / N;
+            const w = 1 - u - v;
+            // Interpolate in R⁴
+            const p4 = [
+                w * a4[0] + u * b4[0] + v * c4[0],
+                w * a4[1] + u * b4[1] + v * c4[1],
+                w * a4[2] + u * b4[2] + v * c4[2],
+                w * a4[3] + u * b4[3] + v * c4[3],
+            ];
+            const p3 = fullProject(p4, northPole, orthoBasis, MAX_RADIUS);
+            gridPoints.push(p3);
+        }
+    }
+
+    // Triangulate: for each cell (i,j), two triangles
+    const positions = [];
+    for (let j = 0; j < N; j++) {
+        for (let i = 0; i < N - j; i++) {
+            const a = gridIndex(i, j);
+            const b = gridIndex(i + 1, j);
+            const c = gridIndex(i, j + 1);
+            // Triangle 1: a-b-c
+            const pa = gridPoints[a], pb = gridPoints[b], pc = gridPoints[c];
+            positions.push(pa[0], pa[1], pa[2]);
+            positions.push(pb[0], pb[1], pb[2]);
+            positions.push(pc[0], pc[1], pc[2]);
+
+            // Triangle 2 (if exists): b - b+1_next_row - c
+            if (i + 1 <= N - j - 1) {
+                const d = gridIndex(i + 1, j + 1);
+                const pd = gridPoints[d];
+                positions.push(pb[0], pb[1], pb[2]);
+                positions.push(pd[0], pd[1], pd[2]);
+                positions.push(pc[0], pc[1], pc[2]);
+            }
+        }
+    }
+
+    if (positions.length === 0) return;
+
+    const geom = new THREE.BufferGeometry();
+    geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geom.computeVertexNormals();
+
+    const mat = new THREE.MeshPhongMaterial({
+        color: color,
+        transparent: true,
+        opacity: 0.25,
+        side: THREE.DoubleSide,
+        depthWrite: false,
+        shininess: 30,
+    });
+    ridgeGroup.add(new THREE.Mesh(geom, mat));
+
+    // Also add a wireframe overlay to emphasize curvature
+    const wireMat = new THREE.MeshBasicMaterial({
+        color: color,
+        transparent: true,
+        opacity: 0.08,
+        wireframe: true,
+    });
+    const wireGeom = geom.clone();
+    ridgeGroup.add(new THREE.Mesh(wireGeom, wireMat));
+}
+
+/**
+ * Render a quad patch by sampling a bilinear grid in R⁴ and projecting.
+ * Vertices are in polygon order: a-b-c-d (so a-b, b-c, c-d, d-a are edges).
+ */
+function renderQuadRidge(a4, b4, c4, d4, color, N) {
+    // Bilinear interpolation: P(u,v) = (1-u)(1-v)A + u(1-v)B + uv C + (1-u)v D
+    const gridPoints = [];
+    for (let j = 0; j <= N; j++) {
+        for (let i = 0; i <= N; i++) {
+            const u = i / N;
+            const v = j / N;
+            const p4 = [
+                (1 - u) * (1 - v) * a4[0] + u * (1 - v) * b4[0] + u * v * c4[0] + (1 - u) * v * d4[0],
+                (1 - u) * (1 - v) * a4[1] + u * (1 - v) * b4[1] + u * v * c4[1] + (1 - u) * v * d4[1],
+                (1 - u) * (1 - v) * a4[2] + u * (1 - v) * b4[2] + u * v * c4[2] + (1 - u) * v * d4[2],
+                (1 - u) * (1 - v) * a4[3] + u * (1 - v) * b4[3] + u * v * c4[3] + (1 - u) * v * d4[3],
+            ];
+            gridPoints.push(fullProject(p4, northPole, orthoBasis, MAX_RADIUS));
+        }
+    }
+
+    const positions = [];
+    for (let j = 0; j < N; j++) {
+        for (let i = 0; i < N; i++) {
+            const a = j * (N + 1) + i;
+            const b = a + 1;
+            const c = a + (N + 1);
+            const dd = c + 1;
+            // Two triangles per cell
+            const pa = gridPoints[a], pb = gridPoints[b], pc = gridPoints[c], pd = gridPoints[dd];
+            positions.push(pa[0], pa[1], pa[2]);
+            positions.push(pb[0], pb[1], pb[2]);
+            positions.push(pc[0], pc[1], pc[2]);
+
+            positions.push(pb[0], pb[1], pb[2]);
+            positions.push(pd[0], pd[1], pd[2]);
+            positions.push(pc[0], pc[1], pc[2]);
+        }
+    }
+
+    const geom = new THREE.BufferGeometry();
+    geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geom.computeVertexNormals();
+
+    const mat = new THREE.MeshPhongMaterial({
+        color: color,
+        transparent: true,
+        opacity: 0.25,
+        side: THREE.DoubleSide,
+        depthWrite: false,
+        shininess: 30,
+    });
+    ridgeGroup.add(new THREE.Mesh(geom, mat));
+
+    const wireMat = new THREE.MeshBasicMaterial({
+        color: color,
+        transparent: true,
+        opacity: 0.08,
+        wireframe: true,
+    });
+    ridgeGroup.add(new THREE.Mesh(geom.clone(), wireMat));
+}
+
 function renderTrajectory(traj, trajIndex, totalTrajectories) {
     const d = polytopeData;
-
-    // Give each trajectory a distinctive overall hue offset
-    const hueOffset = trajIndex / Math.max(totalTrajectories, 1);
 
     for (const seg of traj.segments) {
         const pts = projectSegment(
             seg.start, seg.end,
-            northPole, orthoBasis, MAX_RADIUS, EDGE_SAMPLES
+            northPole, orthoBasis, MAX_RADIUS, TRAJ_SAMPLES
         );
         const positions = [];
         for (const p of pts) positions.push(p[0], p[1], p[2]);
