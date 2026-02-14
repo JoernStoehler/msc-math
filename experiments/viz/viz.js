@@ -1,30 +1,44 @@
 // viz.js — Three.js scene for 4D polytope visualization (light theme)
+//
+// Depends on: projection.js (loaded first), Three.js r128 + OrbitControls
+
+// ---- Constants ----
+const MAX_RADIUS = 30;
+const EDGE_SAMPLES = 96;
+const RIDGE_SUBDIVISIONS = 8;
+const TRAJ_SAMPLES = 96;
+
+// Visual parameters (light theme, tuned for white background)
+const VERTEX_RADIUS = 0.05;
+const VERTEX_SEGMENTS = 14;
+const EDGE_OPACITY = 0.7;
+const RIDGE_FILL_OPACITY = 0.18;
+const RIDGE_WIRE_OPACITY = 0.12;
+const ARROW_COLOR = 0x24292f;
+const ARROW_HEAD_LENGTH = 0.08;
+const ARROW_HEAD_WIDTH = 0.04;
+const FACET_SATURATION = 0.65;
+const FACET_LIGHTNESS = 0.42;
 
 // ---- State ----
 let scene, camera, renderer, controls;
 let polytopeData = null;
 let northPole = normalize4([0, 0, 0, 1]);
 let orthoBasis = buildOrthoBasis(northPole);
-const MAX_RADIUS = 30;
-const EDGE_SAMPLES = 96;
-const RIDGE_INTERIOR_SUBDIVISIONS = 8;
-const TRAJ_SAMPLES = 96;
 
-// Display toggles
 let showEdges = true;
 let showRidges = false;
 let showVertices = true;
 let showTrajectories = true;
 let selectedTrajectory = -1; // -1 = all
 
-// Scene groups
+// Scene groups (cleared and rebuilt when polytope or projection changes)
 let edgeGroup, ridgeGroup, vertexGroup, trajectoryGroup;
 
-// Color palette for facets — tuned for white background.
-// Medium saturation, moderate lightness for good contrast without harshness.
+/** HSL color for a facet, evenly spaced around the hue wheel. */
 function facetColor(facetIndex, totalFacets) {
     const hue = facetIndex / totalFacets;
-    return new THREE.Color().setHSL(hue, 0.65, 0.42);
+    return new THREE.Color().setHSL(hue, FACET_SATURATION, FACET_LIGHTNESS);
 }
 
 // ---- Initialization ----
@@ -45,19 +59,18 @@ function init() {
     controls.enableDamping = true;
     controls.dampingFactor = 0.08;
 
-    // Lighting — tuned for white background, softer ambient
+    // Three-point lighting: key + fill + rim
     scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-    const dir1 = new THREE.DirectionalLight(0xffffff, 0.8);
-    dir1.position.set(5, 8, 5);
-    scene.add(dir1);
-    const dir2 = new THREE.DirectionalLight(0x8899bb, 0.4);
-    dir2.position.set(-3, -2, -5);
-    scene.add(dir2);
-    const dir3 = new THREE.DirectionalLight(0xbb9988, 0.2);
-    dir3.position.set(0, -5, 3);
-    scene.add(dir3);
+    const key = new THREE.DirectionalLight(0xffffff, 0.8);
+    key.position.set(5, 8, 5);
+    scene.add(key);
+    const fill = new THREE.DirectionalLight(0x8899bb, 0.4);
+    fill.position.set(-3, -2, -5);
+    scene.add(fill);
+    const rim = new THREE.DirectionalLight(0xbb9988, 0.2);
+    rim.position.set(0, -5, 3);
+    scene.add(rim);
 
-    // Groups
     edgeGroup = new THREE.Group();
     ridgeGroup = new THREE.Group();
     vertexGroup = new THREE.Group();
@@ -103,6 +116,7 @@ function loadPolytope(name) {
 
 // ---- Scene rebuild ----
 
+/** Dispose geometry and materials, then remove all children from a group. */
 function clearGroup(group) {
     while (group.children.length > 0) {
         const child = group.children[0];
@@ -118,6 +132,7 @@ function clearGroup(group) {
     }
 }
 
+/** Rebuild all scene geometry from polytopeData + current north pole. */
 function rebuildScene() {
     clearGroup(edgeGroup);
     clearGroup(ridgeGroup);
@@ -126,22 +141,19 @@ function rebuildScene() {
 
     if (!polytopeData) return;
 
-    const d = polytopeData;
+    const poly = polytopeData;
+    const dotThreshold = poleCullingThreshold(MAX_RADIUS);
 
     // ---- Vertices ----
     if (showVertices) {
-        // Dot product threshold matching projectSegment's pole clipping
-        const R2 = MAX_RADIUS * MAX_RADIUS;
-        const dotThreshold = (R2 - 1) / (R2 + 1);
-
-        const sphereGeom = new THREE.SphereGeometry(0.05, 14, 14);
-        for (let i = 0; i < d.vertices.length; i++) {
-            const onSphere = radialProject(d.vertices[i]);
+        const sphereGeom = new THREE.SphereGeometry(VERTEX_RADIUS, VERTEX_SEGMENTS, VERTEX_SEGMENTS);
+        for (let i = 0; i < poly.vertices.length; i++) {
+            const onSphere = radialProject(poly.vertices[i]);
             if (dot4(onSphere, northPole) >= dotThreshold) continue; // near pole — skip
             const p = stereographicProject(onSphere, northPole, orthoBasis, MAX_RADIUS);
-            const fc = d.vertex_facets[i][0] || 0;
+            const fc = poly.vertex_facets[i][0] || 0;
             const mat = new THREE.MeshPhongMaterial({
-                color: facetColor(fc, d.facet_count),
+                color: facetColor(fc, poly.facet_count),
                 shininess: 40,
             });
             const mesh = new THREE.Mesh(sphereGeom, mat);
@@ -152,14 +164,14 @@ function rebuildScene() {
 
     // ---- Edges ----
     if (showEdges) {
-        for (const [vi, vj] of d.edges) {
+        for (const [vi, vj] of poly.edges) {
             const subSegments = projectSegment(
-                d.vertices[vi], d.vertices[vj],
+                poly.vertices[vi], poly.vertices[vj],
                 northPole, orthoBasis, MAX_RADIUS, EDGE_SAMPLES
             );
 
-            const sharedFacets = d.vertex_facets[vi].filter(f => d.vertex_facets[vj].includes(f));
-            const color = facetColor(sharedFacets[0] || 0, d.facet_count);
+            const sharedFacets = poly.vertex_facets[vi].filter(f => poly.vertex_facets[vj].includes(f));
+            const color = facetColor(sharedFacets[0] || 0, poly.facet_count);
 
             for (const pts of subSegments) {
                 if (pts.length < 2) continue;
@@ -172,7 +184,7 @@ function rebuildScene() {
                     color: color,
                     linewidth: 1,
                     transparent: true,
-                    opacity: 0.7,
+                    opacity: EDGE_OPACITY,
                 });
                 edgeGroup.add(new THREE.Line(geom, mat));
             }
@@ -181,54 +193,57 @@ function rebuildScene() {
 
     // ---- Ridges (2-faces) ----
     if (showRidges) {
-        for (const ridge of d.ridges) {
-            renderRidge(ridge, d);
+        for (const ridge of poly.ridges) {
+            renderRidge(ridge, poly);
         }
     }
 
     // ---- Trajectories ----
-    if (showTrajectories && d.trajectories.length > 0) {
+    if (showTrajectories && poly.trajectories.length > 0) {
         const trajIndices = selectedTrajectory === -1
-            ? d.trajectories.map((_, i) => i)
+            ? poly.trajectories.map((_, i) => i)
             : [selectedTrajectory];
 
         for (const ti of trajIndices) {
-            if (ti >= d.trajectories.length) continue;
-            renderTrajectory(d.trajectories[ti], ti, d.trajectories.length);
+            if (ti >= poly.trajectories.length) continue;
+            renderTrajectory(poly.trajectories[ti]);
         }
     }
 }
+
+// ---- Ridge rendering ----
 
 /**
  * Render a single ridge (2-face) as a curved surface.
  * Sampling on S³ via slerp for uniform angular spacing.
  */
-function renderRidge(ridge, d) {
+function renderRidge(ridge, poly) {
     const verts = ridge.vertices;
     const nv = verts.length;
     if (nv < 3) return;
 
-    const N = RIDGE_INTERIOR_SUBDIVISIONS;
-    const color = facetColor(ridge.facets[0], d.facet_count);
+    const N = RIDGE_SUBDIVISIONS;
+    const color = facetColor(ridge.facets[0], poly.facet_count);
 
     if (nv === 3) {
-        renderTriangleRidge(d.vertices[verts[0]], d.vertices[verts[1]], d.vertices[verts[2]], color, N);
+        renderTriangleRidge(poly.vertices[verts[0]], poly.vertices[verts[1]], poly.vertices[verts[2]], color, N);
     } else if (nv === 4) {
         renderQuadRidge(
-            d.vertices[verts[0]], d.vertices[verts[1]],
-            d.vertices[verts[2]], d.vertices[verts[3]],
+            poly.vertices[verts[0]], poly.vertices[verts[1]],
+            poly.vertices[verts[2]], poly.vertices[verts[3]],
             color, N
         );
     } else {
+        // General polygon: fan-triangulate from centroid
         const centroid4 = [0, 0, 0, 0];
         for (const vi of verts) {
-            for (let k = 0; k < 4; k++) centroid4[k] += d.vertices[vi][k];
+            for (let k = 0; k < 4; k++) centroid4[k] += poly.vertices[vi][k];
         }
         for (let k = 0; k < 4; k++) centroid4[k] /= nv;
         for (let i = 0; i < nv; i++) {
             const vi = verts[i];
             const vj = verts[(i + 1) % nv];
-            renderTriangleRidge(centroid4, d.vertices[vi], d.vertices[vj], color, N);
+            renderTriangleRidge(centroid4, poly.vertices[vi], poly.vertices[vj], color, N);
         }
     }
 }
@@ -254,8 +269,8 @@ function renderTriangleRidge(a4, b4, c4, color, N) {
             positions.push(pc[0], pc[1], pc[2]);
 
             if (i + 1 <= N - j - 1) {
-                const d = gridIndex(i + 1, j + 1);
-                const pd = gridPoints[d];
+                const idx = gridIndex(i + 1, j + 1);
+                const pd = gridPoints[idx];
                 positions.push(pb[0], pb[1], pb[2]);
                 positions.push(pd[0], pd[1], pd[2]);
                 positions.push(pc[0], pc[1], pc[2]);
@@ -291,42 +306,42 @@ function renderQuadRidge(a4, b4, c4, d4, color, N) {
     addRidgeMesh(positions, color);
 }
 
+/** Add a translucent mesh + wireframe overlay for a ridge surface. */
 function addRidgeMesh(positions, color) {
     const geom = new THREE.BufferGeometry();
     geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
     geom.computeVertexNormals();
 
-    // Tinted fill
     const mat = new THREE.MeshPhongMaterial({
         color: color,
         transparent: true,
-        opacity: 0.18,
+        opacity: RIDGE_FILL_OPACITY,
         side: THREE.DoubleSide,
         depthWrite: false,
         shininess: 20,
     });
     ridgeGroup.add(new THREE.Mesh(geom, mat));
 
-    // Wireframe overlay — subtle on white
     const wireMat = new THREE.MeshBasicMaterial({
         color: color,
         transparent: true,
-        opacity: 0.12,
+        opacity: RIDGE_WIRE_OPACITY,
         wireframe: true,
     });
     ridgeGroup.add(new THREE.Mesh(geom.clone(), wireMat));
 }
 
-function renderTrajectory(traj, trajIndex, totalTrajectories) {
-    const d = polytopeData;
+// ---- Trajectory rendering ----
 
+/** Render a single Reeb trajectory as colored polyline segments with a direction arrow. */
+function renderTrajectory(traj) {
     for (const seg of traj.segments) {
         const subSegments = projectSegment(
             seg.start, seg.end,
             northPole, orthoBasis, MAX_RADIUS, TRAJ_SAMPLES
         );
 
-        const color = facetColor(seg.facet, d.facet_count);
+        const color = facetColor(seg.facet, polytopeData.facet_count);
         for (const pts of subSegments) {
             if (pts.length < 2) continue;
             const positions = [];
@@ -342,7 +357,7 @@ function renderTrajectory(traj, trajIndex, totalTrajectories) {
         }
     }
 
-    // Direction arrow — dark on white background
+    // Direction arrow at trajectory start
     if (traj.segments.length > 0) {
         const seg = traj.segments[0];
         const startPt = fullProject(seg.start, northPole, orthoBasis, MAX_RADIUS);
@@ -365,30 +380,30 @@ function renderTrajectory(traj, trajIndex, totalTrajectories) {
                 dir,
                 new THREE.Vector3(startPt[0], startPt[1], startPt[2]),
                 Math.min(len * 2, 0.3),
-                0x24292f,
-                0.08,
-                0.04
+                ARROW_COLOR,
+                ARROW_HEAD_LENGTH,
+                ARROW_HEAD_WIDTH
             );
             trajectoryGroup.add(arrow);
         }
     }
 }
 
-// ---- UI ----
+// ---- UI handlers ----
 
 function updateInfoPanel() {
     if (!polytopeData) return;
-    const d = polytopeData;
-    let info = `${d.name}\n`;
-    info += `source: ${d.source}\n`;
-    info += `capacity: ${d.capacity.toFixed(6)}\n\n`;
-    info += `${d.facet_count} facets\n`;
-    info += `${d.vertex_count} vertices\n`;
-    info += `${d.edge_count} edges\n`;
-    info += `${d.ridge_count} ridges\n\n`;
-    info += `${d.trajectories.length} trajectories\n`;
+    const poly = polytopeData;
+    let info = `${poly.name}\n`;
+    info += `source: ${poly.source}\n`;
+    info += `capacity: ${poly.capacity.toFixed(6)}\n\n`;
+    info += `${poly.facet_count} facets\n`;
+    info += `${poly.vertex_count} vertices\n`;
+    info += `${poly.edge_count} edges\n`;
+    info += `${poly.ridge_count} ridges\n\n`;
+    info += `${poly.trajectories.length} trajectories\n`;
 
-    const closedCount = d.trajectories.filter(t => t.closed).length;
+    const closedCount = poly.trajectories.filter(t => t.closed).length;
     if (closedCount > 0) {
         info += `(${closedCount} closed)\n`;
     }
@@ -420,6 +435,7 @@ function updateNorthPole() {
     const theta = parseFloat(document.getElementById('north-theta').value);
     const psi = parseFloat(document.getElementById('north-psi').value);
 
+    // Hopf-like parameterization of S³
     northPole = normalize4([
         Math.sin(phi) * Math.cos(theta),
         Math.sin(phi) * Math.sin(theta),
@@ -437,7 +453,7 @@ function updateNorthPole() {
 
 function setNorthPolePreset(preset) {
     if (!polytopeData) return;
-    const d = polytopeData;
+    const poly = polytopeData;
 
     switch (preset) {
         case 'e4':
@@ -450,13 +466,13 @@ function setNorthPolePreset(preset) {
             northPole = [1, 0, 0, 0];
             break;
         case 'vertex0':
-            if (d.vertices.length > 0) {
-                northPole = normalize4(d.vertices[0]);
+            if (poly.vertices.length > 0) {
+                northPole = normalize4(poly.vertices[0]);
             }
             break;
         case 'normal0':
-            if (d.normals.length > 0) {
-                northPole = normalize4(d.normals[0]);
+            if (poly.normals.length > 0) {
+                northPole = normalize4(poly.normals[0]);
             }
             break;
         case 'diagonal':
@@ -485,7 +501,7 @@ function onTrajectoryChange(value) {
             : [selectedTrajectory];
         for (const ti of trajIndices) {
             if (ti >= polytopeData.trajectories.length) continue;
-            renderTrajectory(polytopeData.trajectories[ti], ti, polytopeData.trajectories.length);
+            renderTrajectory(polytopeData.trajectories[ti]);
         }
     }
 }

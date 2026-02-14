@@ -148,7 +148,7 @@ fn generate_trajectories(
     for fi in 0..polytope.facet_count() {
         let centroid = reeb_trajectory::facet_centroid(polytope, skeleton, fi);
 
-        let traj = reeb_trajectory::simulate(polytope, skeleton, centroid, fi, 100, 1e-6);
+        let traj = reeb_trajectory::simulate(polytope, centroid, fi, 100, 1e-6);
 
         if traj.segments.is_empty() {
             continue;

@@ -39,7 +39,7 @@ pub struct ReebTrajectory {
 
 /// Compute the Reeb vector on facet with normal `n`: R = J₀ n.
 ///
-/// In coordinates (q₁, q₂, p₁, p₂) with J₀ = \[\[0, -I₂\], \[I₂, 0\]\]:
+/// In coordinates (q₁, q₂, p₁, p₂) with J₀ = [[0, -I₂], [I₂, 0]]:
 ///   J₀ (a, b, c, d) = (-c, -d, a, b)
 pub fn reeb_vector(normal: &Vector4<f64>) -> Vector4<f64> {
     // Direct computation avoids matrix multiply:
@@ -72,7 +72,6 @@ pub fn reeb_vector(normal: &Vector4<f64>) -> Vector4<f64> {
 /// facet. It immediately transitions to Fⱼ (zero-length segment).
 pub fn simulate(
     polytope: &Polytope4D,
-    _skeleton: &Skeleton,
     start_point: Vector4<f64>,
     start_facet: usize,
     max_segments: usize,
@@ -96,6 +95,7 @@ pub fn simulate(
         // before proceeding.  This happens at ridges where the Reeb flow
         // on the current facet would immediately leave the polytope.
         let mut did_immediate = false;
+        // Safety bound: at most n_facets immediate transitions (prevents infinite loop)
         for _ in 0..n_facets {
             let r = reeb_vector(&normals[current_facet]);
             let mut best_immediate = None;

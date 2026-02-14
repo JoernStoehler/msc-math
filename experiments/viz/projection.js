@@ -164,10 +164,7 @@ function projectSegment(start, end, northPole, basis, maxRadius, nSamples) {
     const a = radialProject(start);
     const b = radialProject(end);
 
-    // Dot product threshold: points with dot(y, pole) >= this project beyond maxRadius.
-    // From stereographic radius: r = sqrt((1+d)/(1-d)), setting r = R gives d = (R²-1)/(R²+1).
-    const R2 = maxRadius * maxRadius;
-    const dotThreshold = (R2 - 1) / (R2 + 1);
+    const dotThreshold = poleCullingThreshold(maxRadius);
 
     const segments = [];
     let current = [];
@@ -310,16 +307,32 @@ function projectQuadGrid(a4, b4, c4, d4, N, northPole, basis, maxRadius) {
 
 // ---- Utility functions ----
 
+/** Dot product in R⁴. */
 function dot4(a, b) {
     return a[0]*b[0] + a[1]*b[1] + a[2]*b[2] + a[3]*b[3];
 }
 
+/** Euclidean norm in R⁴. */
 function norm4(v) {
     return Math.sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2] + v[3]*v[3]);
 }
 
+/** Normalize a vector in R⁴ to unit length. Returns zero vector if input is near-zero. */
 function normalize4(v) {
     const n = norm4(v);
     if (n < 1e-15) return [0, 0, 0, 0];
     return [v[0]/n, v[1]/n, v[2]/n, v[3]/n];
+}
+
+/**
+ * Dot product threshold for pole culling: points on S³ with dot(y, pole) ≥ this
+ * value would project beyond maxRadius under stereographic projection.
+ *
+ * Derivation: stereographic radius r = √((1+d)/(1-d)), setting r = R gives d = (R²-1)/(R²+1).
+ * @param {number} maxRadius
+ * @returns {number} Threshold in [-1, 1]
+ */
+function poleCullingThreshold(maxRadius) {
+    const R2 = maxRadius * maxRadius;
+    return (R2 - 1) / (R2 + 1);
 }

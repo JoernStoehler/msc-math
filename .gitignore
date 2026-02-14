@@ -29,6 +29,8 @@ experiments/viz/data/
 
 # Node (Playwright screenshots, dev tooling)
 node_modules/
+package.json
+package-lock.json
 
 # Editor
 .vscode/

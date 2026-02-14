@@ -74,7 +74,7 @@ fn hypercube_trajectory_visits_multiple_facets() {
     let residual = (kp.polytope.normals()[0].dot(&start) - kp.polytope.heights()[0]).abs();
     assert!(residual < 1e-7, "start not on facet 0: residual {residual}");
 
-    let traj = simulate(&kp.polytope, &skel, start, 0, 50, 1e-6);
+    let traj = simulate(&kp.polytope, start, 0, 50, 1e-6);
 
     assert!(
         traj.segments.len() >= 2,
@@ -112,7 +112,7 @@ fn trajectory_segments_are_in_reeb_direction() {
     let kp = known_polytopes::hypercube();
     let skel = Skeleton::compute(&kp.polytope);
     let start = facet_centroid(&kp.polytope, &skel, 0);
-    let traj = simulate(&kp.polytope, &skel, start, 0, 20, 1e-6);
+    let traj = simulate(&kp.polytope, start, 0, 20, 1e-6);
 
     for seg in &traj.segments {
         let direction = seg.end - seg.start;
@@ -138,7 +138,7 @@ fn simplex_trajectory_produces_segments() {
     let kp = known_polytopes::simplex();
     let skel = Skeleton::compute(&kp.polytope);
     let start = facet_centroid(&kp.polytope, &skel, 0);
-    let traj = simulate(&kp.polytope, &skel, start, 0, 50, 1e-6);
+    let traj = simulate(&kp.polytope, start, 0, 50, 1e-6);
 
     assert!(
         !traj.segments.is_empty(),
@@ -172,7 +172,7 @@ fn trajectory_stays_inside_polytope() {
 
         for facet in 0..normals.len() {
             let start = facet_centroid(&kp.polytope, &skel, facet);
-            let traj = simulate(&kp.polytope, &skel, start, facet, 100, 1e-6);
+            let traj = simulate(&kp.polytope, start, facet, 100, 1e-6);
 
             for (si, seg) in traj.segments.iter().enumerate() {
                 // Segment endpoints must satisfy all half-space constraints
