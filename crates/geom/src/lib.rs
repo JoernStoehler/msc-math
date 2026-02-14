@@ -1,6 +1,8 @@
 pub mod cross_product;
 pub mod polytope;
 mod qhull;
+pub mod reeb_trajectory;
+pub mod skeleton;
 pub mod symplectic;
 pub mod vertices;
 pub mod volume;

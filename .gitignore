@@ -25,6 +25,7 @@ experiments/data/*
 !experiments/data/.gitkeep
 experiments/figures/*
 !experiments/figures/.gitkeep
+experiments/viz/data/
 
 # Editor
 .vscode/

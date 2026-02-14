@@ -41,9 +41,17 @@ fn main() {
     match subcommand.as_str() {
         "dataset" => cmd_dataset(&output_path),
         "sweep" => cmd_sweep(&output_path),
+        "export-viz" => {
+            let polytope_name = args.get(3).map(|s| s.as_str()).unwrap_or_else(|| {
+                eprintln!("Usage: datasets export-viz <output_path> <polytope_name>");
+                eprintln!("  polytope_name: simplex, hypercube, crosspolytope, hko_pentagon, ...");
+                std::process::exit(1);
+            });
+            cmd_export_viz(&output_path, polytope_name);
+        }
         other => {
             eprintln!("Unknown subcommand: {other}");
-            eprintln!("  subcommands: dataset, sweep");
+            eprintln!("  subcommands: dataset, sweep, export-viz");
             std::process::exit(1);
         }
     }
@@ -150,6 +158,13 @@ fn generate_and_write_batch(
         if count % 10 == 0 {
             eprintln!("  {count}/{n_random}");
         }
+    }
+}
+
+fn cmd_export_viz(output: &Path, polytope_name: &str) {
+    if let Err(e) = datasets::viz_export::export(polytope_name, output) {
+        eprintln!("Error: {e}");
+        std::process::exit(1);
     }
 }
 
