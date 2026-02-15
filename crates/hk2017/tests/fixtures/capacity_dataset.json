@@ -41,8 +41,8 @@
       0.09999999999999998
     ],
     "volume": 0.041666667,
-    "capacity": 0.24999999999999944,
-    "capacity_unpruned": 0.24999999999999944,
+    "capacity": 0.25,
+    "capacity_unpruned": 0.25,
     "capacity_billiard": null,
     "base_index": null,
     "transform": null
@@ -165,9 +165,9 @@
       0.5
     ],
     "volume": 1.6875,
-    "capacity": 1.4999999999999998,
-    "capacity_unpruned": 1.4999999999999998,
-    "capacity_billiard": 1.4999999999999998,
+    "capacity": 1.4999999999999996,
+    "capacity_unpruned": 1.4999999999999996,
+    "capacity_billiard": 1.4999999999999996,
     "base_index": null,
     "transform": null
   },
@@ -213,8 +213,8 @@
       0.6476885950385138
     ],
     "volume": 176.14148,
-    "capacity": 6.405060837923503,
-    "capacity_unpruned": 6.405060837923503,
+    "capacity": 6.405060837923527,
+    "capacity_unpruned": 6.405060837923527,
     "capacity_billiard": null,
     "base_index": null,
     "transform": null
@@ -261,8 +261,8 @@
       0.7078107701156704
     ],
     "volume": 2736.4563,
-    "capacity": 9.560224540552245,
-    "capacity_unpruned": 9.560224540552245,
+    "capacity": 9.56022454055224,
+    "capacity_unpruned": 9.56022454055224,
     "capacity_billiard": null,
     "base_index": null,
     "transform": null
@@ -316,8 +316,8 @@
       0.5666463158384485
     ],
     "volume": 161.12881,
-    "capacity": 9.080839002099836,
-    "capacity_unpruned": 9.080839002099836,
+    "capacity": 9.080839002099852,
+    "capacity_unpruned": 9.080839002099852,
     "capacity_billiard": null,
     "base_index": null,
     "transform": null
@@ -371,8 +371,8 @@
       1.7950297565954703
     ],
     "volume": 515.18196,
-    "capacity": 16.019847630367753,
-    "capacity_unpruned": 16.019847630367753,
+    "capacity": 16.019847630367774,
+    "capacity_unpruned": 16.019847630367774,
     "capacity_billiard": null,
     "base_index": null,
     "transform": null
@@ -433,8 +433,8 @@
       0.8602668516118952
     ],
     "volume": 110.84662,
-    "capacity": 8.267462003402759,
-    "capacity_unpruned": 8.267462003402759,
+    "capacity": 8.267462003402766,
+    "capacity_unpruned": 8.267462003402766,
     "capacity_billiard": null,
     "base_index": null,
     "transform": null
@@ -495,8 +495,8 @@
       1.837493151850325
     ],
     "volume": 1463.4128,
-    "capacity": 9.682680389424021,
-    "capacity_unpruned": 9.682680389424021,
+    "capacity": 9.682680389424023,
+    "capacity_unpruned": 9.682680389424023,
     "capacity_billiard": null,
     "base_index": null,
     "transform": null
@@ -564,8 +564,8 @@
       0.7697950017970451
     ],
     "volume": 1093.5232,
-    "capacity": 7.155525921981636,
-    "capacity_unpruned": 7.155525921981636,
+    "capacity": 7.155525921981623,
+    "capacity_unpruned": 7.155525921981623,
     "capacity_billiard": null,
     "base_index": null,
     "transform": null
@@ -633,8 +633,8 @@
       0.8963837263522979
     ],
     "volume": 19006.522,
-    "capacity": 64.74380367383965,
-    "capacity_unpruned": 64.74380367383965,
+    "capacity": 64.74380367383952,
+    "capacity_unpruned": 64.74380367383952,
     "capacity_billiard": null,
     "base_index": null,
     "transform": null
@@ -681,7 +681,7 @@
       0.11763048179786376
     ],
     "volume": 0.041666667,
-    "capacity": 0.24999999999999967,
+    "capacity": 0.25,
     "capacity_unpruned": null,
     "capacity_billiard": null,
     "base_index": 0,
@@ -805,7 +805,7 @@
       0.2523043466863858
     ],
     "volume": 1.6875,
-    "capacity": 1.4999999999999978,
+    "capacity": 1.4999999999999987,
     "capacity_unpruned": null,
     "capacity_billiard": null,
     "base_index": 2,
@@ -853,7 +853,7 @@
       0.7370647721432413
     ],
     "volume": 176.14148,
-    "capacity": 6.405060837923526,
+    "capacity": 6.405060837923523,
     "capacity_unpruned": null,
     "capacity_billiard": null,
     "base_index": 3,
@@ -901,7 +901,7 @@
       0.042947543520267466
     ],
     "volume": 2736.4563,
-    "capacity": 9.56022454055277,
+    "capacity": 9.560224540552648,
     "capacity_unpruned": null,
     "capacity_billiard": null,
     "base_index": 4,
@@ -956,7 +956,7 @@
       0.1400076772920915
     ],
     "volume": 161.12881,
-    "capacity": 9.080839002099856,
+    "capacity": 9.080839002099877,
     "capacity_unpruned": null,
     "capacity_billiard": null,
     "base_index": 5,
@@ -1011,7 +1011,7 @@
       0.7805398343759266
     ],
     "volume": 515.18196,
-    "capacity": 16.019847630367984,
+    "capacity": 16.01984763036765,
     "capacity_unpruned": null,
     "capacity_billiard": null,
     "base_index": 6,
@@ -1073,7 +1073,7 @@
       0.495429415235451
     ],
     "volume": 110.84662,
-    "capacity": 8.267462003402748,
+    "capacity": 8.26746200340277,
     "capacity_unpruned": null,
     "capacity_billiard": null,
     "base_index": 7,
@@ -1135,7 +1135,7 @@
       1.7376560158397054
     ],
     "volume": 1463.4128,
-    "capacity": 9.682680389424027,
+    "capacity": 9.68268038942403,
     "capacity_unpruned": null,
     "capacity_billiard": null,
     "base_index": 8,
@@ -1204,7 +1204,7 @@
       0.5096863888282862
     ],
     "volume": 1093.5232,
-    "capacity": 7.155525921981634,
+    "capacity": 7.155525921981627,
     "capacity_unpruned": null,
     "capacity_billiard": null,
     "base_index": 9,
@@ -1273,7 +1273,7 @@
       0.8037877951942481
     ],
     "volume": 19006.522,
-    "capacity": 64.74380367383868,
+    "capacity": 64.74380367383951,
     "capacity_unpruned": null,
     "capacity_billiard": null,
     "base_index": 10,
@@ -1321,7 +1321,7 @@
       0.11852275173079227
     ],
     "volume": 0.082223444,
-    "capacity": 0.35119106694597557,
+    "capacity": 0.3511910669459757,
     "capacity_unpruned": null,
     "capacity_billiard": null,
     "base_index": 0,
@@ -1445,9 +1445,9 @@
       0.4230617492532742
     ],
     "volume": 0.86492571,
-    "capacity": 1.073887462087439,
+    "capacity": 1.073887462087441,
     "capacity_unpruned": null,
-    "capacity_billiard": 1.073887462087439,
+    "capacity_billiard": 1.073887462087441,
     "base_index": 2,
     "transform": "conform:0.8461234985065484"
   },
@@ -1493,7 +1493,7 @@
       0.9445563465255935
     ],
     "volume": 796.7244,
-    "capacity": 13.622176420809048,
+    "capacity": 13.622176420809042,
     "capacity_unpruned": null,
     "capacity_billiard": null,
     "base_index": 3,
@@ -1541,7 +1541,7 @@
       1.0595870219773023
     ],
     "volume": 13742.52,
-    "capacity": 21.424318698666852,
+    "capacity": 21.42431869866686,
     "capacity_unpruned": null,
     "capacity_billiard": null,
     "base_index": 4,
@@ -1596,7 +1596,7 @@
       0.5303613776592165
     ],
     "volume": 123.65523,
-    "capacity": 7.955099520285631,
+    "capacity": 7.9550995202856365,
     "capacity_unpruned": null,
     "capacity_billiard": null,
     "base_index": 5,
@@ -1651,7 +1651,7 @@
       2.0981936427790955
     ],
     "volume": 961.73696,
-    "capacity": 21.88800655078029,
+    "capacity": 21.88800655078036,
     "capacity_unpruned": null,
     "capacity_billiard": null,
     "base_index": 6,
@@ -1713,7 +1713,7 @@
       0.6456801245014547
     ],
     "volume": 35.177045,
-    "capacity": 4.657369194875986,
+    "capacity": 4.6573691948759794,
     "capacity_unpruned": null,
     "capacity_billiard": null,
     "base_index": 7,
@@ -1775,7 +1775,7 @@
       1.0596292972099741
     ],
     "volume": 161.83773,
-    "capacity": 3.2199716879463236,
+    "capacity": 3.2199716879463254,
     "capacity_unpruned": null,
     "capacity_billiard": null,
     "base_index": 8,
@@ -1844,7 +1844,7 @@
       1.0756889299619918
     ],
     "volume": 4169.4085,
-    "capacity": 13.972199693397693,
+    "capacity": 13.97219969339766,
     "capacity_unpruned": null,
     "capacity_billiard": null,
     "base_index": 9,
@@ -1913,7 +1913,7 @@
       1.4596939523420083
     ],
     "volume": 133651.56,
-    "capacity": 171.6856120404613,
+    "capacity": 171.68561204046372,
     "capacity_unpruned": null,
     "capacity_billiard": null,
     "base_index": 10,
