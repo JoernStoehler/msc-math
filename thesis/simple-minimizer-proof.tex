@@ -439,8 +439,8 @@ Consequently,
 \end{theorem*}
 
 The proof constructs a simple dual minimizer from an arbitrary one
-via four operations, each captured by a standalone lemma.
-We state all four lemmas, then prove the theorem by chaining them,
+via five operations, each captured by a standalone lemma.
+We state all five lemmas, then prove the theorem by chaining them,
 and finally prove each lemma.
 
 % QC: translates HK2017 Lemma 4.2.
@@ -485,6 +485,22 @@ Iterating until each Reeb vector appears at most once preserves
 these bounds.
 \end{lemma}
 
+\begin{lemma}[Rescaling]\label{lem:rescaling}
+Let $z \colon [0,T] \to \mathbb{R}^4$ be a closed piecewise affine
+curve with pure Reeb velocities.
+For any $\beta > 0$, multiplying all durations by~$\beta$
+gives a curve~$z'$ with
+$A(z') = \beta^2 A(z)$ and $I_K(z') = \beta\, I_K(z)$.
+\end{lemma}
+
+\begin{lemma}[Compactness of simple curves]\label{lem:compactness}
+Let $(z_n)$ be a sequence of closed, centered, simple piecewise-Reeb
+curves with periods $T_n \to T > 0$.
+Then a subsequence converges to a closed, centered, simple
+piecewise-Reeb curve~$z_*$ with $A(z_*) = \lim A(z_n)$
+and $I_K(z_*) = T$.
+\end{lemma}
+
 %%% --- Proof of the theorem ---
 
 \begin{proof}[Proof of Theorem~\ref{thm:simple-minimizer}]
@@ -499,7 +515,7 @@ Since $\gamma$ is a generalized Reeb orbit on a polytope,
 $\dot{z}_0(t) = \dot{\gamma}(t)
   \in \mathrm{conv}\{R_1, \ldots, R_F\}$ a.e.
 
-For each $\varepsilon > 0$, apply the four lemmas in sequence:
+For each $\varepsilon > 0$, apply the first four lemmas in sequence:
 \begin{enumerate}
 \item \emph{Approximate}
   (Lemma~\ref{lem:pw-affine-approx}):
@@ -522,18 +538,11 @@ For each $\varepsilon > 0$, apply the four lemmas in sequence:
   $A(z_3) \geq A(z_2)$, and $I_K(z_3) = T$.
   Centering is again restored by translation.
 
-\item \emph{Rescale:}
-  multiply all durations by $\beta = T / A(z_3)$.
-  Velocities are unchanged (still pure Reeb vectors), so
-  \[
-    A(z_4) = \beta^2 A(z_3) = \frac{T^2}{A(z_3)},
-    \qquad
-    I_K(z_4) = \beta\, T = \frac{T^2}{A(z_3)}.
-  \]
-  Here $A$ scales quadratically
-  (by Lemma~\ref{lem:shoelace}, every term scales as
-  $|I_i|\,|I_j|$) and $I_K$ scales linearly in time
-  (since $h_K^2(-J_0\dot{z})$ is unchanged).
+\item \emph{Rescale}
+  (Lemma~\ref{lem:rescaling}):
+  set $\beta = T / A(z_3)$ and obtain $z_4$ with
+  $A(z_4) = \beta^2 A(z_3) = T^2 / A(z_3)$ and
+  $I_K(z_4) = \beta\, T = T^2 / A(z_3)$.
 \end{enumerate}
 
 \emph{Optimality bound.}
@@ -547,34 +556,10 @@ we get $A(z_3) \to T$ as $\varepsilon \to 0$,
 hence $\beta \to 1$ and $I_K(z_4) \to T$.
 
 \emph{Compactness.}
-Each $z_4$ is encoded by a permutation
-$\sigma \in S_F$ and durations
-$(t_1, \ldots, t_F) \in \mathbb{R}_{\geq 0}^F$
-with $\sum t_i = T^{(4)}$ (the period of~$z_4$).
-Normalizing: $(t_i / T^{(4)}) \in \Delta^{F-1}$
-(the standard simplex).
-Since $S_F \times \Delta^{F-1}$ is compact,
-a subsequence $\varepsilon_n \to 0$ gives
-a constant $\sigma$ (by pigeonhole) and
-convergent normalized durations
-$s_i^n \to s_i^\infty \in \Delta^{F-1}$.
-Since $T^{(4)}_n \to T$, the durations
-$t_i^n \to t_i^\infty = s_i^\infty T$.
-
-Define $z_*$ with ordering~$\sigma$, velocities
-$R_{\sigma(i)}$, and durations $t_i^\infty$;
-center it by translation.
-Closure holds by continuity:
-$\sum t_i^\infty R_{\sigma(i)}
-  = \lim_n \sum t_i^n R_{\sigma(i)} = 0$.
-By Lemma~\ref{lem:shoelace}, $A$ is a polynomial
-in the durations, so
-$A(z_*) = \lim_n A(z_{4,n}) = T$.
-Since all velocities are pure Reeb vectors,
-$I_K(z_*) = T$
-(by the same computation as in
-Lemma~\ref{lem:splitting}).
-Thus $z_*$ is a dual minimizer, and it is simple by construction.
+By Lemma~\ref{lem:compactness}, a subsequence of the~$z_4$
+converges to a closed, centered, simple piecewise-Reeb
+curve~$z_*$ with $A(z_*) = T$ and $I_K(z_*) = T$.
+Thus $z_*$ is a dual minimizer.
 
 By Theorem~\ref{thm:primal-dual-equivalence},
 $z_*$ corresponds to a primal minimizer
@@ -716,5 +701,42 @@ The dual functional $I_K$ is unchanged:
 $h_K^2(-J_0 \dot{z})$ depends only on the velocity
 at each time, not on its position in the sequence,
 so reordering segments preserves~$\int h_K^2$.
+\end{proof}
+
+\begin{proof}[Proof of Lemma~\ref{lem:rescaling}]
+By Lemma~\ref{lem:shoelace}, every term in $2A(z)$
+contains the product $|I_i|\,|I_j|$, so
+$A(z') = \beta^2 A(z)$.
+Since $h_K^2(-J_0 \dot{z})$ depends only on the velocity
+(unchanged by rescaling), $I_K$ scales linearly:
+$I_K(z') = \beta\, I_K(z)$.
+\end{proof}
+
+\begin{proof}[Proof of Lemma~\ref{lem:compactness}]
+Each $z_n$ is encoded by a permutation
+$\sigma_n \in S_F$ and durations
+$(t_1, \ldots, t_F) \in \mathbb{R}_{\geq 0}^F$
+with $\sum t_i = T_n$.
+Normalizing: $(t_i / T_n) \in \Delta^{F-1}$
+(the standard simplex).
+Since $S_F \times \Delta^{F-1}$ is compact,
+a subsequence gives
+a constant $\sigma$ (by pigeonhole) and
+convergent normalized durations
+$s_i \to s_i^\infty \in \Delta^{F-1}$.
+Since $T_n \to T$, the durations
+$t_i \to t_i^\infty = s_i^\infty T$.
+
+Define $z_*$ with ordering~$\sigma$, velocities
+$R_{\sigma(i)}$, and durations $t_i^\infty$;
+center it by translation.
+Closure holds by continuity:
+$\sum t_i^\infty R_{\sigma(i)}
+  = \lim \sum t_i^n R_{\sigma(i)} = 0$.
+By Lemma~\ref{lem:shoelace}, $A$ is a polynomial
+in the durations, so
+$A(z_*) = \lim A(z_n)$.
+Since all velocities are pure Reeb vectors,
+$I_K(z_*) = T$.
 \end{proof}
 
