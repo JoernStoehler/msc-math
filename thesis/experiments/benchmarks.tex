@@ -34,19 +34,22 @@ the underlying algorithm:
     detection (${<}0.5\%$), pseudoinverse (${\sim}1.7\%$), and residual
     check (${\sim}0.7\%$) together contribute~${\sim}3\%$.
 
-  \item \textbf{LU fast path (evaluated but unhelpful).} We implemented an
-    LU fast path: try full-pivoting LU before SVD, falling through on
-    failure. Phase profiling showed this \emph{increases} total time by
-    6--12\%, because most KKT systems yield $\beta \le 0$ even when LU
-    reports the system as invertible: LU decomposes and solves wastefully,
-    then SVD runs anyway. On the HK-O pentagon, LU reports 92\% of
-    systems invertible but only 3\% produce valid $\beta > 0$. On random
-    polytopes ($F = 7$--$8$), the success rate rises to~${\sim}9\%$ but
-    the overhead persists. The production solver retains the LU fast
-    path (falling through to SVD on failure). At $F = 7$, LU finds 26
-    additional valid orbits (out of 23{,}650) that SVD rejects due to
-    gap-based rank over-truncation, but none affect the computed capacity
-    (all are non-optimal).
+  \item \textbf{LU fast path.} The solver first attempts full-pivoting
+    LU, falling through to SVD with gap-based rank detection on failure.
+    Phase profiling showed the LU path adds 6--12\% wall-clock overhead:
+    most KKT systems yield $\beta \le 0$ even when LU reports the system
+    as invertible, so LU decomposes and solves wastefully before SVD runs
+    anyway. On the HK-O pentagon, LU reports 92\% of systems invertible
+    but only 3\% produce valid $\beta > 0$; on random polytopes
+    ($F = 7$--$8$), the valid rate rises to~${\sim}9\%$.
+
+    Despite the overhead, LU is retained because it catches cases where
+    the gap-based SVD rank detection over-truncates: at $F = 7$, LU
+    finds 26 valid orbits (out of 23{,}650) that SVD rejects. These do
+    not affect the computed capacity (all are non-optimal), but the
+    discrepancy indicates that the gap threshold ($100{\times}$) is too
+    aggressive for some well-conditioned systems. This is discussed
+    further in Section~\ref{sec:correctness}.
 \end{enumerate}
 
 Wall-clock improvement from lazy permutation: 4--6$\times$ on the HK-O
