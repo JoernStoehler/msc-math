@@ -130,6 +130,19 @@ $F$ & $N$ & Median sys & Min sys & Max sys \\
 \label{tab:sys-by-facet}
 \end{table}
 
+Figure~\ref{fig:facet-vs-capacity} shows EHZ capacity and systolic ratio
+as functions of the facet count, visualizing the per-facet trends from
+Table~\ref{tab:sys-by-facet}.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.75\textwidth]{../experiments/figures/facet_vs_capacity.png}
+\caption{EHZ capacity and systolic ratio vs.\ facet count for 337 random
+  4-polytopes. The systolic ratio increases with~$F$ but remains below~1
+  for all random polytopes tested.}
+\label{fig:facet-vs-capacity}
+\end{figure}
+
 \textbf{Performance.} See Section~\ref{sec:benchmark} for a detailed benchmark.
 In brief: the cost grows exponentially at~${\sim}5\times$ per facet, with
 $F = 10$ taking~$\sim$267\,ms and $F = 14$ taking~$\sim$9\,min per polytope.
