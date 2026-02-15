@@ -93,25 +93,39 @@ def plot_pentagon_sweep(data: list[dict], output: Path):
 
 
 def plot_polygon_grid(data: list[dict], output: Path):
-    """Plot sys vs angle for all (n,m) polygon pairs."""
+    """Plot sys vs angle for all (n,m) polygon pairs.
+
+    Pairs with algorithm discrepancies ((4,4) and (4,6)) are plotted with
+    dashed lines and reduced opacity to distinguish them from reliable pairs.
+    """
     # Group by (n1, n2)
     pairs: dict[tuple[int, int], list[dict]] = {}
     for d in data:
         key = (d["n1"], d["n2"])
         pairs.setdefault(key, []).append(d)
 
+    # Pairs with known algorithm reliability issues
+    unreliable_pairs = {(4, 4), (4, 6)}
+
     fig, ax = plt.subplots(figsize=(12, 7))
 
+    reliable_pairs_sorted = sorted(k for k in pairs if k not in unreliable_pairs)
+    unreliable_pairs_sorted = sorted(k for k in pairs if k in unreliable_pairs)
+
     colors = plt.cm.tab10(np.linspace(0, 1, len(pairs)))
+    color_map = {k: colors[i] for i, k in enumerate(sorted(pairs.keys()))}
     max_sys_per_pair = {}
 
-    for i, ((n1, n2), rows) in enumerate(sorted(pairs.items())):
+    # Plot reliable pairs first (solid lines)
+    for (n1, n2) in reliable_pairs_sorted:
+        rows = pairs[(n1, n2)]
         rows.sort(key=lambda r: r["angle_deg"])
         angles = np.array([r["angle_deg"] for r in rows])
         sys_vals = np.array([r["sys"] for r in rows])
 
         label = f"({n1},{n2}) F={n1+n2}"
-        ax.plot(angles, sys_vals, color=colors[i], linewidth=1.5, label=label)
+        ax.plot(angles, sys_vals, color=color_map[(n1, n2)],
+                linewidth=1.5, label=label)
 
         i_max = np.argmax(sys_vals)
         max_sys_per_pair[(n1, n2)] = {
@@ -119,13 +133,46 @@ def plot_polygon_grid(data: list[dict], output: Path):
             "angle": angles[i_max],
             "facets": n1 + n2,
             "above_1": bool(sys_vals[i_max] > 1.0),
+            "reliable": True,
         }
+
+    # Plot unreliable pairs (dashed, semi-transparent)
+    for (n1, n2) in unreliable_pairs_sorted:
+        rows = pairs[(n1, n2)]
+        rows.sort(key=lambda r: r["angle_deg"])
+        angles = np.array([r["angle_deg"] for r in rows])
+        sys_vals = np.array([r["sys"] for r in rows])
+
+        label = f"({n1},{n2}) F={n1+n2} [unreliable]"
+        ax.plot(angles, sys_vals, color=color_map[(n1, n2)],
+                linewidth=1.0, linestyle="--", alpha=0.4, label=label)
+
+        # Use agreement-only rows for summary
+        agree_rows = [r for r in rows if r.get("algorithms_agree", False)]
+        if agree_rows:
+            agree_sys = [r["sys"] for r in agree_rows]
+            i_max = np.argmax(agree_sys)
+            max_sys_per_pair[(n1, n2)] = {
+                "max_sys": agree_sys[i_max],
+                "angle": agree_rows[i_max]["angle_deg"],
+                "facets": n1 + n2,
+                "above_1": bool(agree_sys[i_max] > 1.0),
+                "reliable": False,
+            }
+        else:
+            max_sys_per_pair[(n1, n2)] = {
+                "max_sys": float("nan"),
+                "angle": 0,
+                "facets": n1 + n2,
+                "above_1": False,
+                "reliable": False,
+            }
 
     ax.axhline(y=1.0, color="r", linestyle="--", alpha=0.7, label="sys = 1")
     ax.set_xlabel("Rotation angle θ (degrees)")
     ax.set_ylabel("sys = c²/(2·vol)")
     ax.set_title("Regular n-gon × R(θ) m-gon: Systolic Ratio")
-    ax.legend(loc="upper right", fontsize=8)
+    ax.legend(loc="upper right", fontsize=8, ncol=2)
     ax.grid(True, alpha=0.3)
 
     plt.tight_layout()
@@ -135,13 +182,15 @@ def plot_polygon_grid(data: list[dict], output: Path):
 
     # Print summary table
     print("\nPolygon grid summary:")
-    print(f"  {'Pair':>8} {'F':>3} {'max sys':>10} {'angle':>8} {'sys>1':>6}")
-    print(f"  {'-'*8} {'-'*3} {'-'*10} {'-'*8} {'-'*6}")
+    print(f"  {'Pair':>8} {'F':>3} {'max sys':>10} {'angle':>8} {'reliable':>9} {'sys>1':>6}")
+    print(f"  {'-'*8} {'-'*3} {'-'*10} {'-'*8} {'-'*9} {'-'*6}")
     for (n1, n2), info in sorted(max_sys_per_pair.items()):
         marker = "  YES" if info["above_1"] else ""
+        rel = "yes" if info["reliable"] else "NO"
         print(
             f"  ({n1},{n2}){' '*(5-len(f'({n1},{n2})'))} "
-            f"{info['facets']:>3} {info['max_sys']:>10.6f} {info['angle']:>7.2f}° {marker}"
+            f"{info['facets']:>3} {info['max_sys']:>10.6f} {info['angle']:>7.2f}° "
+            f"{rel:>9} {marker}"
         )
 
     return max_sys_per_pair
