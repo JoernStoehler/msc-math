@@ -675,10 +675,13 @@ Write $M = \{r{+}1, \ldots, s{-}1\}$ for the middle segments.
 \emph{Forward merge} (merge to position~$r$):
 remove $I_s$ and extend $I_r$ by~$|I_s|$,
 placing the middle segments after the merged segment.
-By Lemma~\ref{lem:shoelace}, the only terms
-that change involve pairs between the middle segments
-and positions $r$, $s$.
-In the original ordering, these contribute
+By Lemma~\ref{lem:shoelace}, the action is a sum of
+pairwise terms $|I_i|\,|I_j|\,\omega_0(w_i, w_j)$
+weighted by position.
+The rearrangement only affects cross-terms
+between the middle segments~$M$ and the two
+segments with velocity~$v$ at positions $r$, $s$.
+In the original ordering, these cross-terms contribute
 $\sum_{i \in M}
   |I_i|\,(|I_r| - |I_s|)\, \omega_0(w_i, v)$;
 in the merged ordering, they contribute
