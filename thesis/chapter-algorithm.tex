@@ -660,28 +660,34 @@ A generalized Reeb orbit $\gamma$ on a polytope $K$
 %   sigma is a cyclic permutation of facet indices. tau[k] >= 0 is the time
 %   with velocity R_{sigma[k]}. Two (sigma, tau) are equivalent iff
 %   they differ by a cyclic shift. Period T = sum(tau). Action A = T.
-A simple Reeb orbit can be described by a pair $(\sigma, \tau)$:
+A simple Reeb orbit can be described by a triple $(\sigma, \tau, b)$:
 \begin{itemize}
 \item a permutation $\sigma$ of $\{1, \ldots, F\}$
-  (the cyclic order in which facet Reeb vectors appear as velocities), and
+  (the cyclic order in which facet Reeb vectors appear as velocities),
 \item durations $\tau_1, \ldots, \tau_F \geq 0$
   (where $\tau_k$ is the time spent with velocity $R_{\sigma(k)}$;
-  $\tau_k = 0$ means facet $\sigma(k)$ is not visited).
+  $\tau_k = 0$ means facet $\sigma(k)$ is not visited), and
+\item a base point $b = \gamma(0) \in \partial K$.
 \end{itemize}
-Not every pair $(\sigma, \tau)$ yields a valid orbit;
-feasibility depends on the geometry of $K$.
-The orbit depends only on the cyclic sequence of
-positive-duration entries: two pairs $(\sigma, \tau)$ and
-$(\sigma', \tau')$ represent the same orbit if and only if,
-after removing all entries with $\tau_k = 0$, the resulting
-subsequences of (facet, duration) pairs agree up to cyclic shift.
+Not every triple $(\sigma, \tau, b)$ yields a valid orbit;
+the orbit starting at~$b$ with the prescribed velocities must
+remain on~$\partial K$, and closure requires
+$\sum_k \tau_k R_{\sigma(k)} = 0$.
 The period is $T = \sum_k \tau_k$ and the action is $A(\gamma) = T$
 (Remark~\ref{rem:contact-normalization}).
+By Lemma~\ref{lem:shoelace}, the action depends only on
+$(\sigma, \tau)$, not on the base point~$b$.
+
+Two triples $(\sigma, \tau, b)$ and $(\sigma', \tau', b')$
+represent the same orbit if and only if, after removing all entries
+with $\tau_k = 0$, the resulting subsequences of (facet, duration)
+pairs agree up to cyclic shift and $b'$ is the corresponding
+point on the orbit.
 
 Breakpoints of $\dot{\gamma}$ are velocity changes, not necessarily
-facet transitions: for example, the orbit may travel along a lower-dimensional face
-$F_i \cap F_j$ with velocity $R_i$, then switch to $R_j$ at a
-breakpoint in the interior of $F_i \cap F_j$.
+facet transitions: for example, the orbit may travel along a
+lower-dimensional face $F_i \cap F_j$ with velocity $R_i$, then
+switch to $R_j$ at a breakpoint in the interior of $F_i \cap F_j$.
 \end{remark}
 
 \begin{theorem}[Existence of closed characteristics --- smooth case]\label{thm:orbit-existence-smooth}
@@ -791,13 +797,15 @@ where
 By Theorem~\ref{thm:simple-minimizer},
 $c_{\mathrm{EHZ}}(K) = \min\{ A(\gamma) :
 \gamma \text{ is a simple Reeb orbit on } \partial K \}$.
-A simple orbit is determined by a nonempty subset
-$S \subseteq \{1, \ldots, F\}$, a cyclic ordering~$\sigma$
-of~$S$, and positive durations
-$\tau_1, \ldots, \tau_{|S|} > 0$
+A simple orbit is described by a tuple
+$(S, \sigma, \tau, b)$ where $S \subseteq \{1, \ldots, F\}$ is
+nonempty, $\sigma$ is a cyclic ordering of~$S$,
+$\tau_1, \ldots, \tau_{|S|} > 0$ are positive durations, and
+$b = \gamma(0) \in \partial K$
 (Remark~\ref{rem:simple-orbit-data}).
-Its velocity on segment~$k$ is $R_{\sigma(k)}$, closure requires
-$\sum_{k=1}^{|S|} \tau_k R_{\sigma(k)} = 0$, and the action is
+By Lemma~\ref{lem:shoelace}, the action depends only on
+$(\sigma, \tau)$, not on~$b$: closure requires
+$\sum_{k=1}^{|S|} \tau_k R_{\sigma(k)} = 0$, and
 $A(\gamma) = T = \sum_k \tau_k$
 (Remark~\ref{rem:contact-normalization}).
 
