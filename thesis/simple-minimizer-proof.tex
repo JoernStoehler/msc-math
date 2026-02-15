@@ -425,6 +425,15 @@ minimizers correspond to minimizers:
 $\min_\gamma A(\gamma) = \min_z I_K(z) = c_{\mathrm{EHZ}}(K)$.
 \end{proof}
 
+\begin{remark}\label{rem:primal-dual-nonunique}
+The base point~$b$ in Part~3 need not be unique: for polytopes,
+translates of~$\gamma$ can remain on~$\partial K$, giving
+distinct primal orbits with the same~$z$.
+The minimum-equality is unaffected since all such orbits share the same action.
+\end{remark}
+
+% [TODO: JÖRN - derive an algorithm that computes b given z]
+
 %%% =================================================================
 %%% Subsection 5.2: Simplification Algorithm
 %%% =================================================================
