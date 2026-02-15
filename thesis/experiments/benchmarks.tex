@@ -42,8 +42,10 @@ the underlying algorithm:
     then SVD runs anyway. On the HK-O pentagon, LU reports 92\% of
     systems invertible but only 3\% produce valid $\beta > 0$. On random
     polytopes ($F = 7$--$8$), the success rate rises to~${\sim}9\%$ but
-    the overhead persists. We retain the LU path in code for future
-    evaluation but the production solver is SVD-only.
+    the overhead persists. The production solver retains the LU fast
+    path (falling through to SVD on failure), accepting the modest
+    overhead in exchange for handling edge cases where gap-based SVD
+    rank detection over-truncates legitimate small singular values.
 \end{enumerate}
 
 Wall-clock improvement from lazy permutation: 4--6$\times$ on the HK-O
@@ -93,8 +95,8 @@ algorithm enumerates only 2-bounce and 3-bounce orbit patterns, giving
 polynomial cost in the number of facets.
 
 On the \textsc{PentagonSweep} ($F = 10$, 361 points), the billiard algorithm
-computes each capacity in ${\sim}850$\,ms (median) using the SVD-only
-solver, compared to ${\sim}2{,}500$\,ms for HK2017.
+computes each capacity in ${\sim}850$\,ms (median),
+compared to ${\sim}2{,}500$\,ms for HK2017.
 Phase profiling on 50{,}400 pentagon KKT systems confirms that
 SVD decomposition accounts for~${\sim}96\%$ of per-solve time;
 the gap-based rank detection and pseudoinverse are negligible.
