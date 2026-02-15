@@ -675,19 +675,6 @@ Consequently,
 \]
 \end{theorem}
 
-\input{simple-minimizer-proof}
-
-%%% =================================================================
-%%% Section 5: Algorithm Correctness
-%%% =================================================================
-
-\section{Algorithm Correctness}\label{sec:algorithm-correctness}
-
-% Jörn: text approved (692c271) — section intro
-We prove Theorem~\ref{thm:main}: the algorithm in
-Section~\ref{sec:main-result} correctly computes
-$c_{\mathrm{EHZ}}(K)$.
-
 \begin{lemma}[Symplectic shoelace formula]\label{lem:shoelace}
 % Jörn: text approved (b7a8bc0) — from \begin{lemma} to \end{proof}
 % QC: direct computation, no external results needed.
@@ -752,6 +739,19 @@ In $\mathbb{R}^2$, $\omega_0$ reduces to the determinant and
 the formula recovers the shoelace formula for the signed area of a
 polygon, expressed in edge vectors rather than vertices.
 \end{remark}
+
+\input{simple-minimizer-proof}
+
+%%% =================================================================
+%%% Section 5: Algorithm Correctness
+%%% =================================================================
+
+\section{Algorithm Correctness}\label{sec:algorithm-correctness}
+
+% Jörn: text approved (692c271) — section intro
+We prove Theorem~\ref{thm:main}: the algorithm in
+Section~\ref{sec:main-result} correctly computes
+$c_{\mathrm{EHZ}}(K)$.
 
 % Jörn: text approved (692c271) — from \begin{theorem*} to \end{theorem*}
 \begin{theorem*}[Theorem~\ref{thm:main}, restated]
