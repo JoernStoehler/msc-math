@@ -48,10 +48,9 @@ where
 % Proof: Section~\ref{sec:simple-minimizer} (search space)
 % and Section~\ref{sec:algorithm-correctness} (algorithm correctness).
 
-% Jörn: text approved (06a976c) — from \textbf{Algorithm} to Return equation
-\medskip
-\noindent\textbf{Algorithm}\label{alg:ehz}
-(computes~\eqref{eq:ehz-main}).
+% Jörn: text approved (06a976c) — from \begin{algorithm} to \end{algorithm}
+\begin{algorithm}[EHZ capacity]\label{alg:ehz}
+Computes~\eqref{eq:ehz-main}.
 
 \smallskip\noindent
 \emph{Input:} $(n_1, h_1), \ldots, (n_F, h_F)$.
@@ -115,6 +114,7 @@ Return
 \begin{equation}\label{eq:action-formula}
   c_{\mathrm{EHZ}}(K) = \bigl(\max_{S,\sigma} \beta^\top H \beta\bigr)^{-1}.
 \end{equation}
+\end{algorithm}
 
 % Jörn: text approved (06a976c)
 \begin{remark}\label{rem:critical-point}
@@ -910,14 +910,13 @@ Since $T$ decreases as the double sum increases:
 \]
 \end{proof}
 
-% Jörn: text approved (692c271) — from "We now verify" to "Return" line
+% Jörn: text approved (692c271) — from "We now verify" to \end{algorithm*}
 We now verify that the algorithm in
 Section~\ref{sec:main-result} correctly implements this
 optimization. We restate the algorithm for convenience.
 
-\medskip
-\noindent\textbf{Algorithm} (restated from
-Section~\ref{sec:main-result}).
+\begin{algorithm*}[Algorithm~\ref{alg:ehz}, restated]
+Computes~\eqref{eq:ehz-main}.
 
 \smallskip\noindent
 \emph{Input:} $(n_1, h_1), \ldots, (n_F, h_F)$.
@@ -969,6 +968,7 @@ and each permutation $\sigma$ of $S$
 \noindent
 Return
 $c_{\mathrm{EHZ}}(K) = \bigl(\max_{S,\sigma} \beta^\top H \beta\bigr)^{-1}$.
+\end{algorithm*}
 
 \medskip
 
@@ -1171,6 +1171,7 @@ returned value since they are not the maximum
 
 \section{Optimizations}\label{sec:optimizations}
 
+% Jörn: text approved (0839595) — from \begin{definition} to \end{definition}
 \begin{definition}[Facet adjacency graph]\label{def:adjacency-graph}
 % QC: two facets are adjacent iff they share at least one point.
 %   In 4D, adjacent facets (3-faces) can share a 2-face (ridge),
@@ -1182,6 +1183,7 @@ vertex set $\{1, \ldots, F\}$ (one vertex per facet) and an edge
 $\{i, j\}$ whenever $F_i \cap F_j \neq \emptyset$.
 \end{definition}
 
+% Jörn: text approved (0839595) — from \begin{lemma} to \end{proof}
 \begin{lemma}[Adjacency constraint]\label{lem:adjacency-constraint}
 % QC: follows from the generalized Reeb orbit condition + continuity.
 %   Key step: velocity R_i requires the orbit to lie on F_i
@@ -1210,6 +1212,7 @@ By the same argument applied to interval~$k{+}1$,
 $\gamma(t^*) \in F_{\sigma(k+1)}$.
 \end{proof}
 
+% Jörn: text approved (0839595) — from \begin{corollary} to \end{corollary}
 \begin{corollary}[Adjacency pruning]\label{cor:adjacency-pruning}
 % QC: in the algorithm, all facets in S have beta_i > 0 (by the filter),
 %   so all are active. The adjacency constraint applies to all consecutive
