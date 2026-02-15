@@ -59,8 +59,11 @@ impl std::error::Error for BilliardError {}
 /// Result of the billiard capacity computation.
 #[derive(Clone, Debug)]
 pub struct BilliardResult {
-    /// The EHZ capacity c_EHZ(K).
+    /// The EHZ capacity c_EHZ(K) from strict check (β_i > +EPS).
     pub capacity: f64,
+    /// Capacity from lenient check (β_i > -EPS). Always ≤ capacity.
+    /// See `hk2017::EhzResult::capacity_lenient` for full documentation.
+    pub capacity_lenient: f64,
     /// The cyclic permutation σ achieving the minimum action.
     pub best_permutation: Vec<usize>,
     /// The β vector at the optimum.
@@ -90,7 +93,8 @@ pub fn billiard_capacity(polytope: &Polytope4D) -> Result<Option<BilliardResult>
     let p_blocks = enumerate_blocks(&classification.p_indices, &adj);
 
     // Step 4: for k = 2, 3, enumerate and solve
-    let mut best: Option<(f64, Vec<usize>, Vec<f64>, usize)> = None;
+    let mut best_strict: Option<(f64, Vec<usize>, Vec<f64>, usize)> = None;
+    let mut best_lenient: Option<(f64, Vec<usize>, Vec<f64>, usize)> = None;
     let mut iterations: u64 = 0;
 
     let normals = polytope.normals();
@@ -101,29 +105,43 @@ pub fn billiard_capacity(polytope: &Polytope4D) -> Result<Option<BilliardResult>
             iterations += 1;
 
             if let Some((beta, q_val)) = solve_kkt(normals, heights, sigma) {
-                if beta.iter().all(|&b| b > EPS_BETA_POSITIVE) && q_val > EPS_Q_POSITIVE {
-                    let action = 0.5 / q_val;
-                    let update = match &best {
-                        None => true,
-                        Some((best_a, _, _, _)) => action < *best_a,
-                    };
+                if q_val <= EPS_Q_POSITIVE {
+                    return;
+                }
+                let beta_min = beta.iter().cloned().fold(f64::INFINITY, f64::min);
+                let action = 0.5 / q_val;
+
+                if beta_min > EPS_BETA_POSITIVE {
+                    let update = best_strict.as_ref().is_none_or(|b| action < b.0);
                     if update {
-                        best = Some((action, sigma.to_vec(), beta, k));
+                        best_strict =
+                            Some((action, sigma.to_vec(), beta.clone(), k));
+                    }
+                }
+
+                if beta_min > -EPS_BETA_POSITIVE {
+                    let update = best_lenient.as_ref().is_none_or(|b| action < b.0);
+                    if update {
+                        best_lenient = Some((action, sigma.to_vec(), beta, k));
                     }
                 }
             }
         });
     }
 
-    Ok(best.map(|(capacity, best_permutation, best_beta, bounce_count)| {
-        BilliardResult {
-            capacity,
-            best_permutation,
-            best_beta,
-            bounce_count,
-            iterations,
-        }
-    }))
+    Ok(best_strict.map(
+        |(capacity, best_permutation, best_beta, bounce_count)| {
+            let lenient_cap = best_lenient.map_or(capacity, |b| b.0);
+            BilliardResult {
+                capacity,
+                capacity_lenient: lenient_cap,
+                best_permutation,
+                best_beta,
+                bounce_count,
+                iterations,
+            }
+        },
+    ))
 }
 
 /// Build facet adjacency matrix: adj[i][j] = true iff facets i and j share a vertex.

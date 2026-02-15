@@ -55,8 +55,15 @@ type Candidate = (
 /// Result of the EHZ capacity computation.
 #[derive(Clone, Debug)]
 pub struct EhzResult {
-    /// The EHZ capacity c_EHZ(K).
+    /// The EHZ capacity c_EHZ(K) from strict check (β_i > +EPS).
     pub capacity: f64,
+    /// Capacity from lenient check (β_i > -EPS). Always ≤ capacity.
+    ///
+    /// Includes orbits where some β_i is near zero (within ±EPS of zero),
+    /// which might be valid solutions with floating-point sign error.
+    /// If `capacity_lenient < capacity`, there exist borderline orbits
+    /// with lower action than any confident orbit.
+    pub capacity_lenient: f64,
     /// The subset S (facet indices) achieving the minimum action.
     pub best_subset: Vec<usize>,
     /// The cyclic permutation σ of S achieving the minimum action.
@@ -65,6 +72,14 @@ pub struct EhzResult {
     pub best_beta: Vec<f64>,
     /// Total number of (S, σ) pairs evaluated.
     pub iterations: u64,
+}
+
+impl EhzResult {
+    /// Gap between strict and lenient capacity. Zero means high confidence.
+    /// Positive means there exist borderline orbits with lower action.
+    pub fn numerical_gap(&self) -> f64 {
+        self.capacity - self.capacity_lenient
+    }
 }
 
 /// Compute c_EHZ(K) for a convex polytope K ⊂ R^4.
@@ -76,7 +91,8 @@ pub fn ehz_capacity(polytope: &Polytope4D) -> Option<EhzResult> {
     let normals = polytope.normals();
     let heights = polytope.heights();
 
-    let mut best: Option<Candidate> = None;
+    let mut best_strict: Option<Candidate> = None;
+    let mut best_lenient: Option<Candidate> = None;
     let mut iterations: u64 = 0;
 
     // Enumerate all subsets S ⊆ {0,...,F-1} with |S| ≥ 2.
@@ -87,15 +103,30 @@ pub fn ehz_capacity(polytope: &Polytope4D) -> Option<EhzResult> {
                 iterations += 1;
 
                 if let Some((beta, q_val)) = solve_kkt(normals, heights, &perm) {
-                    // All β_i > 0 filter
-                    if beta.iter().all(|&b| b > EPS_BETA_POSITIVE) && q_val > EPS_Q_POSITIVE {
-                        let action = 0.5 / q_val;
-                        let update = match &best {
-                            None => true,
-                            Some((best_a, _, _, _)) => action < *best_a,
-                        };
+                    if q_val <= EPS_Q_POSITIVE {
+                        continue;
+                    }
+                    let beta_min = beta.iter().cloned().fold(f64::INFINITY, f64::min);
+                    let action = 0.5 / q_val;
+
+                    // Strict: β_i > +EPS (confident — definitely valid)
+                    if beta_min > EPS_BETA_POSITIVE {
+                        let update = best_strict.as_ref().is_none_or(|b| action < b.0);
                         if update {
-                            best = Some((
+                            best_strict = Some((
+                                action,
+                                subset.clone(),
+                                perm.clone(),
+                                beta.clone(),
+                            ));
+                        }
+                    }
+
+                    // Lenient: β_i > -EPS (includes borderline — might be valid)
+                    if beta_min > -EPS_BETA_POSITIVE {
+                        let update = best_lenient.as_ref().is_none_or(|b| action < b.0);
+                        if update {
+                            best_lenient = Some((
                                 action,
                                 subset.clone(),
                                 perm.clone(),
@@ -108,11 +139,15 @@ pub fn ehz_capacity(polytope: &Polytope4D) -> Option<EhzResult> {
         }
     }
 
-    best.map(|(capacity, best_subset, best_permutation, best_beta)| EhzResult {
-        capacity,
-        best_subset,
-        best_permutation,
-        best_beta,
+    // Return based on strict candidate (primary). Lenient is supplementary.
+    let strict = best_strict?;
+    let lenient_cap = best_lenient.map_or(strict.0, |b| b.0);
+    Some(EhzResult {
+        capacity: strict.0,
+        capacity_lenient: lenient_cap,
+        best_subset: strict.1,
+        best_permutation: strict.2,
+        best_beta: strict.3,
         iterations,
     })
 }
@@ -461,7 +496,8 @@ pub fn ehz_capacity_pruned(polytope: &Polytope4D) -> Option<EhzResult> {
     // Precompute adjacency matrix once
     let adj = build_adjacency_matrix(polytope);
 
-    let mut best: Option<Candidate> = None;
+    let mut best_strict: Option<Candidate> = None;
+    let mut best_lenient: Option<Candidate> = None;
     let mut iterations: u64 = 0;
 
     for m in 2..=f {
@@ -475,14 +511,28 @@ pub fn ehz_capacity_pruned(polytope: &Polytope4D) -> Option<EhzResult> {
                 iterations += 1;
 
                 if let Some((beta, q_val)) = solve_kkt(normals, heights, perm) {
-                    if beta.iter().all(|&b| b > EPS_BETA_POSITIVE) && q_val > EPS_Q_POSITIVE {
-                        let action = 0.5 / q_val;
-                        let update = match &best {
-                            None => true,
-                            Some((best_a, _, _, _)) => action < *best_a,
-                        };
+                    if q_val <= EPS_Q_POSITIVE {
+                        return;
+                    }
+                    let beta_min = beta.iter().cloned().fold(f64::INFINITY, f64::min);
+                    let action = 0.5 / q_val;
+
+                    if beta_min > EPS_BETA_POSITIVE {
+                        let update = best_strict.as_ref().is_none_or(|b| action < b.0);
                         if update {
-                            best = Some((
+                            best_strict = Some((
+                                action,
+                                subset.clone(),
+                                perm.to_vec(),
+                                beta.clone(),
+                            ));
+                        }
+                    }
+
+                    if beta_min > -EPS_BETA_POSITIVE {
+                        let update = best_lenient.as_ref().is_none_or(|b| action < b.0);
+                        if update {
+                            best_lenient = Some((
                                 action,
                                 subset.clone(),
                                 perm.to_vec(),
@@ -495,11 +545,14 @@ pub fn ehz_capacity_pruned(polytope: &Polytope4D) -> Option<EhzResult> {
         }
     }
 
-    best.map(|(capacity, best_subset, best_permutation, best_beta)| EhzResult {
-        capacity,
-        best_subset,
-        best_permutation,
-        best_beta,
+    let strict = best_strict?;
+    let lenient_cap = best_lenient.map_or(strict.0, |b| b.0);
+    Some(EhzResult {
+        capacity: strict.0,
+        capacity_lenient: lenient_cap,
+        best_subset: strict.1,
+        best_permutation: strict.2,
+        best_beta: strict.3,
         iterations,
     })
 }

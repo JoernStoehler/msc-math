@@ -259,15 +259,24 @@ pub fn generate_test_dataset() -> Vec<TestPolytope> {
         let vol = volume(&entry.polytope)
             .unwrap_or_else(|e| panic!("'{}': volume computation failed: {}", entry.name, e));
 
-        let cap_pruned = ehz_capacity_pruned(&entry.polytope)
-            .unwrap_or_else(|| panic!("'{}': ehz_capacity_pruned() returned None", entry.name))
-            .capacity;
+        let pruned_result = ehz_capacity_pruned(&entry.polytope)
+            .unwrap_or_else(|| panic!("'{}': ehz_capacity_pruned() returned None", entry.name));
+        let cap_pruned = pruned_result.capacity;
+
+        // Log numerical gap if nonzero
+        let gap = pruned_result.numerical_gap();
+        if gap > 0.0 {
+            eprintln!(
+                "  {} — NUMERICAL GAP: strict={:.6} lenient={:.6} gap={:.2e}",
+                entry.name, pruned_result.capacity, pruned_result.capacity_lenient, gap
+            );
+        }
 
         let cap_unpruned = if entry.base_index.is_none() {
             // Base polytope: also compute unpruned, verify agreement
-            let unpruned = ehz_capacity(&entry.polytope)
-                .unwrap_or_else(|| panic!("'{}': ehz_capacity() returned None", entry.name))
-                .capacity;
+            let unpruned_result = ehz_capacity(&entry.polytope)
+                .unwrap_or_else(|| panic!("'{}': ehz_capacity() returned None", entry.name));
+            let unpruned = unpruned_result.capacity;
 
             let rel_err = (cap_pruned - unpruned).abs() / unpruned;
             assert!(
