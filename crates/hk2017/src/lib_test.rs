@@ -884,8 +884,9 @@ fn bench_kkt_random_polytopes() {
 
     let mut rng = ChaCha8Rng::seed_from_u64(42);
 
-    for &facet_count in &[7, 8] {
-        let polytopes = generate_random_polytopes(10, facet_count, 0.5, 2.0, &mut rng);
+    for &facet_count in &[7, 8, 9] {
+        let n_polytopes = if facet_count <= 8 { 10 } else { 5 };
+        let polytopes = generate_random_polytopes(n_polytopes, facet_count, 0.5, 2.0, &mut rng);
         let mut total_perms = 0u64;
         let _lu_invertible = 0u64;
         let mut lu_success = 0u64;  // LU gave valid β > 0
@@ -896,6 +897,13 @@ fn bench_kkt_random_polytopes() {
         let mut lu_only = 0u64;   // LU+SVD found valid, SVD-only didn't
         let mut svd_only_extra = 0u64;  // SVD-only found valid, LU+SVD didn't
         let mut q_disagree = 0u64;  // Both valid but different Q
+
+        // Compute capacity for each polytope to check if LU-only orbits could be optimal
+        let capacities: Vec<f64> = polytopes.iter().map(|p| {
+            super::ehz_capacity_pruned(p).map(|r| r.capacity).unwrap_or(f64::INFINITY)
+        }).collect();
+
+        let mut lu_only_optimal = 0u64;  // LU-only orbit that could be capacity-achieving
 
         for (pi, polytope) in polytopes.iter().enumerate() {
             let normals = polytope.normals();
@@ -928,6 +936,13 @@ fn bench_kkt_random_polytopes() {
 
                         if lu_valid && !svd_valid {
                             lu_only += 1;
+                            let (_, q_lu_check) = result_lu.as_ref().unwrap();
+                            let cap = capacities[pi];
+                            let rel_diff = (q_lu_check - cap).abs() / cap.max(1e-15);
+                            if rel_diff < 1e-6 {
+                                lu_only_optimal += 1;
+                                eprintln!("  *** LU-ONLY ORBIT IS CAPACITY-OPTIMAL: poly={pi} Q={q_lu_check:.10e} cap={cap:.10e}");
+                            }
                             if lu_only <= 10 {
                                 let (ref beta_lu, q_lu) = result_lu.as_ref().unwrap();
                                 let beta_lu_min = beta_lu.iter().cloned().fold(f64::INFINITY, f64::min);
@@ -988,7 +1003,7 @@ fn bench_kkt_random_polytopes() {
         }
 
         let speedup = t_svd_only / t_lu_svd;
-        eprintln!("\n=== Random Polytopes F={facet_count} (10 polytopes, {total_perms} perms) ===");
+        eprintln!("\n=== Random Polytopes F={facet_count} ({n_polytopes} polytopes, {total_perms} perms) ===");
         eprintln!("LU+SVD total:    {:>8.1}ms", t_lu_svd * 1000.0);
         eprintln!("SVD-only total:  {:>8.1}ms", t_svd_only * 1000.0);
         eprintln!("Speedup (LU+SVD vs SVD-only): {speedup:.2}x");
@@ -997,6 +1012,7 @@ fn bench_kkt_random_polytopes() {
         eprintln!("LU-only valid:   {lu_only}");
         eprintln!("SVD-only valid:  {svd_only_extra}");
         eprintln!("Q disagree:      {q_disagree}");
+        eprintln!("LU-only optimal: {lu_only_optimal}/{lu_only}");
         eprintln!("Per-perm: LU+SVD={:.3}µs, SVD-only={:.3}µs",
             t_lu_svd * 1e6 / total_perms as f64,
             t_svd_only * 1e6 / total_perms as f64);

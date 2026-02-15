@@ -118,6 +118,57 @@ On the 20 pairs with largest non-trivial $\alpha$, we verify
 $c(\alpha K_1) = \alpha^2 c(K_1) \le c(K_2)$, combining conformality with
 monotonicity. All pairs satisfy the inequality.
 
+\subsubsection*{SVD gap threshold over-truncation}
+
+The KKT solver uses a gap-based SVD rank detection: if the ratio of
+consecutive singular values exceeds a threshold ($100{\times}$), the
+smaller singular values are treated as null-space directions. As noted
+in Section~\ref{sec:benchmark}, an LU fast path catches some valid
+orbits that this gap truncation rejects.
+
+To quantify the impact, we compared LU+SVD against SVD-only on
+random polytopes at~$F = 7, 8, 9$ (10 polytopes each at~$F \le 8$,
+5~at~$F = 9$):
+
+\begin{center}
+\small
+\begin{tabular}{rrrrl}
+\toprule
+$F$ & Permutations & LU-only orbits & Rate & Capacity-optimal? \\
+\midrule
+7 &   23{,}650 & 26 & 0.11\%   & 0/26 \\
+8 &  160{,}640 &  1 & 0.0006\% & 0/1 \\
+9 &  628{,}320 &  1 & 0.0002\% & 0/1 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The ``LU-only orbits'' are permutations where LU finds a valid solution
+($\beta > 0$) but the SVD pseudoinverse (with gap-based rank truncation)
+does not. In all 28 cases across three facet counts:
+\begin{itemize}
+  \item The last singular value is~$10^{-3}$--$10^{-2}$, with a gap
+    ratio of~$100$--$600{\times}$ to the penultimate value---right at
+    the detection threshold.
+  \item The SVD pseudoinverse produces negative~$\beta$ components,
+    so the orbit is correctly rejected on the SVD path.
+  \item \textbf{None of the 28 LU-only orbits is capacity-optimal.}
+    Comparing the orbit action~$Q$ against the computed capacity
+    for each polytope, all LU-only orbits have strictly higher action.
+\end{itemize}
+
+The fraction of affected orbits \emph{decreases} with~$F$
+(from~$0.11\%$ to~$0.0002\%$), which is reassuring: the
+over-truncation does not accumulate at higher facet counts.
+
+The LU fast path adds~$6$--$11\%$ wall-clock overhead
+(Section~\ref{sec:benchmark}) but serves as a safety net:
+if a future polytope class produces LU-only orbits that \emph{are}
+capacity-optimal, LU would catch them while SVD-only would silently
+return a suboptimal value. Until the gap threshold is replaced by a
+more principled rank detection method, LU remains in the production
+solver.
+
 \subsubsection*{Debug-mode testing}
 
 The HK2017 implementation contains extensive \texttt{debug\_assert!}
