@@ -177,7 +177,7 @@ the equivalence proof
 % Downstream: allows us to work in the dual formulation, where the
 %   simplification algorithm (subsec:simplification) is natural.
 Let $K$ be a convex body. Critical points of the primal and
-dual problems correspond bijectively via translation:
+dual problems correspond via translation:
 if $\gamma$ is a primal critical point (Hamiltonian orbit on
 $\partial K$), then
 $z = \gamma - \frac{1}{T} \int_0^T \gamma(t) \, dt$
@@ -415,7 +415,13 @@ Since $A(\gamma) = T$ (the action equals the period for any Hamiltonian orbit),
 we have $I_K(\gamma) = T$. Since $\dot{z} = \dot{\gamma}$, we get $I_K(z) = I_K(\gamma) = T$.
 Therefore $I_K(z) = T = A(\gamma)$.
 
-The correspondence is bijective, so minimizers correspond to minimizers:
+% QC note: the proof shows the correspondence is surjective in both
+%   directions and value-preserving (Parts 2--4).  Bijectivity is not
+%   claimed: for polytopes, translates of gamma can remain on dK,
+%   giving multiple primal orbits for one dual curve z.  This does not
+%   affect the min-equality below (all such orbits share the same action).
+Since the correspondence exists in both directions and preserves values,
+minimizers correspond to minimizers:
 $\min_\gamma A(\gamma) = \min_z I_K(z) = c_{\mathrm{EHZ}}(K)$.
 \end{proof}
 
