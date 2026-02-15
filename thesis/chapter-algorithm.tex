@@ -554,6 +554,71 @@ In particular, the action simplifies to $A(\gamma) = T$
 (the period equals the action).
 \end{remark}
 
+\begin{lemma}[Symplectic shoelace formula]\label{lem:shoelace}
+% Jörn: text approved (b7a8bc0) — from \begin{lemma} to \end{proof}
+% QC: direct computation, no external results needed.
+%   Key steps: (a) closure kills z(0) term, (b) self-pairing vanishes
+%   by omega_0 antisymmetry, (c) cross terms give the double sum.
+% Downstream: used in the proof of thm:main (this section) and in
+%   the simple-minimizer proof (Step~3). Corresponds to HK2017
+%   Proposition~3.2.
+%   Test: for a square orbit in the q_1-p_1 plane with vertices
+%   (0,0), (a,0), (a,a), (0,a), the formula gives
+%   2A = a^2 * omega_0(e_{p_1}, e_{q_1}) = a^2 * (-1) ... hmm,
+%   need to check orientation. Better test: action = symplectic area
+%   of the enclosed region.
+Let $z \colon [0, T] \to \mathbb{R}^4$ be a closed curve with
+piecewise-constant velocity:
+$\dot{z}(t) = w_k$ on $I_k = (\tau_{k-1}, \tau_k)$ for
+$k = 1, \ldots, m$, where $0 = \tau_0 < \cdots < \tau_m = T$.
+Then
+\begin{equation}\label{eq:shoelace}
+  \int_0^T \langle -J_0\, \dot{z}(t),\, z(t) \rangle \, dt
+  = \sum_{1 \leq j < i \leq m}
+    |I_j|\, |I_i|\, \omega_0(w_j, w_i).
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Since $z$ is closed, $\sum_{k=1}^m |I_k|\, w_k = 0$.
+For $t \in I_i$:
+\[
+  z(t) = z(0) + \sum_{j=1}^{i-1} |I_j|\, w_j
+    + (t - \tau_{i-1})\, w_i.
+\]
+Substitute into
+$\langle -J_0 w_i, z(t) \rangle$ and integrate over $[0, T]$:
+\begin{align*}
+\int_0^T \!\langle{-}J_0 \dot{z}, z \rangle \, dt
+  &= \sum_{i=1}^m \int_{I_i}
+    \!\langle -J_0 w_i,\;
+      z(0) + \textstyle\sum_{j < i} |I_j| w_j
+      + (t{-}\tau_{i-1}) w_i
+    \rangle\, dt \\
+  &= \underbrace{
+      \bigl\langle -J_0 \bigl(\textstyle\sum_i |I_i| w_i\bigr),\,
+      z(0) \bigr\rangle
+    }_{= \, 0 \;\text{(closure)}}
+  + \sum_{i=1}^m \sum_{j=1}^{i-1}
+      |I_i|\, |I_j|\, \omega_0(w_j, w_i) \\
+  &\quad
+  + \sum_{i=1}^m
+      \underbrace{\omega_0(w_i, w_i)}_{= \, 0}\;
+      \cdot \tfrac{|I_i|^2}{2}.
+\end{align*}
+The first term vanishes because
+$\sum |I_k| w_k = 0$ (closure of~$z$).
+The third term vanishes because
+$\omega_0$ is antisymmetric.
+\end{proof}
+
+\begin{remark}\label{rem:shoelace-name}
+% Jörn: text approved (b7a8bc0)
+In $\mathbb{R}^2$, $\omega_0$ reduces to the determinant and
+the formula recovers the shoelace formula for the signed area of a
+polygon, expressed in edge vectors rather than vertices.
+\end{remark}
+
 %%% =================================================================
 %%% Section: Simple Minimizer Existence
 %%% =================================================================
@@ -670,71 +735,6 @@ Consequently,
   \gamma \text{ is a simple Reeb orbit on } \partial K \bigr\}.
 \]
 \end{theorem}
-
-\begin{lemma}[Symplectic shoelace formula]\label{lem:shoelace}
-% Jörn: text approved (b7a8bc0) — from \begin{lemma} to \end{proof}
-% QC: direct computation, no external results needed.
-%   Key steps: (a) closure kills z(0) term, (b) self-pairing vanishes
-%   by omega_0 antisymmetry, (c) cross terms give the double sum.
-% Downstream: used in the proof of thm:main (this section) and in
-%   the simple-minimizer proof (Step~3). Corresponds to HK2017
-%   Proposition~3.2.
-%   Test: for a square orbit in the q_1-p_1 plane with vertices
-%   (0,0), (a,0), (a,a), (0,a), the formula gives
-%   2A = a^2 * omega_0(e_{p_1}, e_{q_1}) = a^2 * (-1) ... hmm,
-%   need to check orientation. Better test: action = symplectic area
-%   of the enclosed region.
-Let $z \colon [0, T] \to \mathbb{R}^4$ be a closed curve with
-piecewise-constant velocity:
-$\dot{z}(t) = w_k$ on $I_k = (\tau_{k-1}, \tau_k)$ for
-$k = 1, \ldots, m$, where $0 = \tau_0 < \cdots < \tau_m = T$.
-Then
-\begin{equation}\label{eq:shoelace}
-  \int_0^T \langle -J_0\, \dot{z}(t),\, z(t) \rangle \, dt
-  = \sum_{1 \leq j < i \leq m}
-    |I_j|\, |I_i|\, \omega_0(w_j, w_i).
-\end{equation}
-\end{lemma}
-
-\begin{proof}
-Since $z$ is closed, $\sum_{k=1}^m |I_k|\, w_k = 0$.
-For $t \in I_i$:
-\[
-  z(t) = z(0) + \sum_{j=1}^{i-1} |I_j|\, w_j
-    + (t - \tau_{i-1})\, w_i.
-\]
-Substitute into
-$\langle -J_0 w_i, z(t) \rangle$ and integrate over $[0, T]$:
-\begin{align*}
-\int_0^T \!\langle{-}J_0 \dot{z}, z \rangle \, dt
-  &= \sum_{i=1}^m \int_{I_i}
-    \!\langle -J_0 w_i,\;
-      z(0) + \textstyle\sum_{j < i} |I_j| w_j
-      + (t{-}\tau_{i-1}) w_i
-    \rangle\, dt \\
-  &= \underbrace{
-      \bigl\langle -J_0 \bigl(\textstyle\sum_i |I_i| w_i\bigr),\,
-      z(0) \bigr\rangle
-    }_{= \, 0 \;\text{(closure)}}
-  + \sum_{i=1}^m \sum_{j=1}^{i-1}
-      |I_i|\, |I_j|\, \omega_0(w_j, w_i) \\
-  &\quad
-  + \sum_{i=1}^m
-      \underbrace{\omega_0(w_i, w_i)}_{= \, 0}\;
-      \cdot \tfrac{|I_i|^2}{2}.
-\end{align*}
-The first term vanishes because
-$\sum |I_k| w_k = 0$ (closure of~$z$).
-The third term vanishes because
-$\omega_0$ is antisymmetric.
-\end{proof}
-
-\begin{remark}\label{rem:shoelace-name}
-% Jörn: text approved (b7a8bc0)
-In $\mathbb{R}^2$, $\omega_0$ reduces to the determinant and
-the formula recovers the shoelace formula for the signed area of a
-polygon, expressed in edge vectors rather than vertices.
-\end{remark}
 
 \input{simple-minimizer-proof}
 
