@@ -865,16 +865,18 @@ We verify $\beta \in M(K)$
 \end{enumerate}
 
 \emph{Step~5: Derive the action formula.}
-Substitute $\tau_k = T h_{\sigma(k)} \beta_{\sigma(k)}$
+Write $\tilde{\beta}_k \coloneqq \beta_{\sigma(k)}$ for $k = 1, \ldots, |S|$
+(the durations in position order).
+Substitute $\tau_k = T h_{\sigma(k)} \tilde{\beta}_k$
 into~\eqref{eq:shoelace-normals}:
 \begin{align*}
   2T &= 4 \sum_{j < i}
-    \frac{(T h_{\sigma(j)} \beta_{\sigma(j)})\,
-          (T h_{\sigma(i)} \beta_{\sigma(i)})}
+    \frac{(T h_{\sigma(j)} \tilde{\beta}_j)\,
+          (T h_{\sigma(i)} \tilde{\beta}_i)}
          {h_{\sigma(j)}\, h_{\sigma(i)}}\,
     \omega_0(n_{\sigma(j)},\, n_{\sigma(i)}) \\
   &= 4T^2 \sum_{1 \leq j < i \leq |S|}
-    \beta_{\sigma(i)}\, \beta_{\sigma(j)}\,
+    \tilde{\beta}_i\, \tilde{\beta}_j\,
     \omega_0(n_{\sigma(j)},\, n_{\sigma(i)}).
 \end{align*}
 The sum on the right is the expression
@@ -882,7 +884,7 @@ in~\eqref{eq:ehz-main} evaluated at $(\sigma, \beta)$.
 Dividing by~$4T^2$:
 \begin{equation}\label{eq:action-sum}
   \sum_{1 \leq j < i \leq |S|}
-    \beta_{\sigma(i)}\, \beta_{\sigma(j)}\,
+    \tilde{\beta}_i\, \tilde{\beta}_j\,
     \omega_0(n_{\sigma(j)},\, n_{\sigma(i)})
   = \frac{1}{2T}.
 \end{equation}
@@ -891,7 +893,7 @@ Dividing by~$4T^2$:
 Steps~4--5 establish a bijection between simple Reeb orbits
 $(S, \sigma, \tau)$ with $\tau_k > 0$ and pairs
 $(\sigma, \beta)$ with $\beta \in M(K)$,
-$\beta_{\sigma(k)} > 0$ for all $k \in S$.
+$\tilde{\beta}_k > 0$ for all $k \in S$.
 Under this bijection, the action is
 $A(\gamma) = T = \frac{1}{2} \bigl[
   \text{double sum in~\eqref{eq:action-sum}}
@@ -903,7 +905,7 @@ Since $T$ decreases as the double sum increases:
   = \frac{1}{2} \left[
     \max_{\substack{\sigma \in S_F \\ \beta \in M(K)}}
     \sum_{1 \leq j < i \leq |S|}
-      \beta_{\sigma(i)}\, \beta_{\sigma(j)}\,
+      \tilde{\beta}_i\, \tilde{\beta}_j\,
       \omega_0(n_{\sigma(j)},\, n_{\sigma(i)})
   \right]^{-1}.
   \qedhere
@@ -981,13 +983,13 @@ $c_{\mathrm{EHZ}}(K) = \bigl(\max_{S,\sigma} \beta^\top H \beta\bigr)^{-1}$.
 %   to the matrix form beta^T H beta. Gradient is nabla(beta^T H beta) = 2H beta.
 \[
   \sum_{1 \leq j < i \leq |S|}
-    \beta_{\sigma(i)}\, \beta_{\sigma(j)}\,
+    \tilde{\beta}_i\, \tilde{\beta}_j\,
     \omega_0(n_{\sigma(j)},\, n_{\sigma(i)})
-  = \tfrac{1}{2}\, \beta^\top H\, \beta.
+  = \tfrac{1}{2}\, \tilde{\beta}^\top H\, \tilde{\beta}.
 \]
 In particular,
-$\nabla_{\beta}
-  (\beta^\top H\, \beta) = 2H \beta$.
+$\nabla_{\tilde{\beta}}
+  (\tilde{\beta}^\top H\, \tilde{\beta}) = 2H \tilde{\beta}$.
 \end{lemma}
 
 \begin{proof}
@@ -995,10 +997,10 @@ For $i > j$,
 $H_{ij} = \omega_0(n_{\sigma(j)}, n_{\sigma(i)})$
 by definition of~$H$.
 Hence the double sum equals
-$\sum_{j < i} \beta_{\sigma(i)}\, \beta_{\sigma(j)}\, H_{ij}$.
+$\sum_{j < i} \tilde{\beta}_i\, \tilde{\beta}_j\, H_{ij}$.
 Since $H$ is symmetric with zero diagonal,
-$\sum_{j < i} \beta_{\sigma(i)} \beta_{\sigma(j)} H_{ij}
-= \tfrac{1}{2}\, \beta^\top H\, \beta$.
+$\sum_{j < i} \tilde{\beta}_i \tilde{\beta}_j H_{ij}
+= \tfrac{1}{2}\, \tilde{\beta}^\top H\, \tilde{\beta}$.
 \end{proof}
 
 \begin{lemma}[KKT conditions and the algorithm's linear system]%
@@ -1011,28 +1013,28 @@ $\sum_{j < i} \beta_{\sigma(i)} \beta_{\sigma(j)} H_{ij}
 For fixed $(S, \sigma)$, the linear
 system~\eqref{eq:linear-system} is the Lagrange system for
 critical points of
-$\beta^\top H\, \beta$ on the constraint
+$\tilde{\beta}^\top H\, \tilde{\beta}$ on the constraint
 manifold
-$\{N^\top \beta = 0,\; \eta^\top \beta = 1\}$.
+$\{N^\top \tilde{\beta} = 0,\; \eta^\top \tilde{\beta} = 1\}$.
 \end{lemma}
 
 \begin{proof}
 The gradient is
-$\nabla_{\beta}
-  (\beta^\top H \beta) = 2H \beta$
+$\nabla_{\tilde{\beta}}
+  (\tilde{\beta}^\top H \tilde{\beta}) = 2H \tilde{\beta}$
 (Lemma~\ref{lem:H-quadratic}).
 The Lagrange conditions
-$\nabla(\beta^\top H \beta)
+$\nabla(\tilde{\beta}^\top H \tilde{\beta})
 = N\lambda + \eta\nu$
 give
-$2H\beta = N\lambda + \eta\nu$.
+$2H\tilde{\beta} = N\lambda + \eta\nu$.
 Absorbing the factor~$2$ into the multipliers
 ($\lambda' = \lambda/2$, $\nu' = \nu/2$):
 \[
-  H \beta - N \lambda' - \eta \nu' = 0,
+  H \tilde{\beta} - N \lambda' - \eta \nu' = 0,
 \]
-which, together with $N^\top \beta = 0$ and
-$\eta^\top \beta = 1$, is exactly
+which, together with $N^\top \tilde{\beta} = 0$ and
+$\eta^\top \tilde{\beta} = 1$, is exactly
 system~\eqref{eq:linear-system}.
 \end{proof}
 
@@ -1106,23 +1108,23 @@ $c_{\mathrm{EHZ}}(K)$.
 \begin{proof}
 By Theorem~\ref{thm:main},
 $c_{\mathrm{EHZ}}(K)
-= [\max \beta^\top H\, \beta]^{-1}$,
+= [\max \tilde{\beta}^\top H\, \tilde{\beta}]^{-1}$,
 where the maximum is over all $\sigma \in S_F$ and
 $\beta \in M(K)$.
 
 \emph{Step~1: Existence.}
 $M(K)$ is compact (closed and bounded in~$\mathbb{R}^F$),
-$\beta^\top H\, \beta$ is continuous,
+$\tilde{\beta}^\top H\, \tilde{\beta}$ is continuous,
 and the set of cyclic orderings~$\sigma$
 is finite. Hence the maximum is attained at
 some~$(\sigma^*, \beta^*)$ with value
-$V^* = \beta^{*\top} H\, \beta^* > 0$
+$V^* = \tilde{\beta}^{*\top} H\, \tilde{\beta}^* > 0$
 (since $c_{\mathrm{EHZ}}(K) > 0$).
 
 \emph{Step~2: The maximizer is a candidate.}
 Define $S = \{i : \beta^*_i > 0\}$.
 Since $\beta^*$ maximizes
-$\beta^\top H\, \beta$
+$\tilde{\beta}^\top H\, \tilde{\beta}$
 over all of~$M(K)$, it also
 maximizes it over the face
 $\{\beta \in M(K) : \beta_i = 0 \;\forall\, i \notin S\}$.
@@ -1140,7 +1142,7 @@ solution is chosen.
 
 \emph{Step~3: The algorithm returns it.}
 For any other candidate~$(S', \sigma')$,
-$\beta'^\top H\, \beta' \leq V^*$
+$\tilde{\beta}'^\top H\, \tilde{\beta}' \leq V^*$
 by maximality. Hence
 $\max_{S,\sigma} \beta^\top H\, \beta = V^*$,
 and the algorithm returns
@@ -1152,7 +1154,7 @@ $(V^*)^{-1} = c_{\mathrm{EHZ}}(K)$.
 % QC: important for agents/readers who might assume all critical
 %   points correspond to Reeb orbits.
 The proof uses only that the global maximizer
-of~$\beta^\top H\, \beta$
+of~$\tilde{\beta}^\top H\, \tilde{\beta}$
 corresponds to a minimum-action Reeb orbit
 (Theorem~\ref{thm:main}, Step~6).
 Non-maximizing critical points with $\beta > 0$
