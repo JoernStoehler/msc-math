@@ -453,7 +453,7 @@ Then
 \begin{equation}\label{eq:action-identity}
   2A(z)
   = \sum_{1 \leq j < i \leq m}
-    |I_i|\, |I_j|\, \omega_0(w_i, w_j).
+    |I_i|\, |I_j|\, \omega_0(w_j, w_i).
 \end{equation}
 \end{lemma}
 
@@ -615,7 +615,7 @@ last term, giving
 \[
   \int_{I_i} \langle -J_0 w_i,\,
     \textstyle\sum_{j<i} |I_j|\, w_j \rangle\, dt
-  = |I_i| \sum_{j=1}^{i-1} |I_j|\, \omega_0(w_i, w_j).
+  = |I_i| \sum_{j=1}^{i-1} |I_j|\, \omega_0(w_j, w_i).
 \]
 Summing over $i$ gives~\eqref{eq:action-identity}.
 \end{proof}
@@ -705,7 +705,7 @@ $w_r = w_s = v$ for some $r < s$.
 Define
 \[
   S = \sum_{i=r+1}^{s-1}
-    |I_i|\, \omega_0(w_i, v).
+    |I_i|\, \omega_0(v, w_i).
 \]
 
 \emph{Forward merge} (merge to position~$r$):
@@ -718,11 +718,11 @@ and positions $r$, $s$.
 In the original ordering, these contribute
 \[
   \sum_{i \in M}
-    |I_i|\,(|I_r| - |I_s|)\, \omega_0(w_i, v),
+    |I_i|\,(|I_r| - |I_s|)\, \omega_0(v, w_i),
 \]
 where $M = \{r{+}1, \ldots, s{-}1\}$;
 in the merged ordering, they contribute
-$\sum_{i \in M} |I_i|\,(|I_r| + |I_s|)\, \omega_0(w_i, v)$.
+$\sum_{i \in M} |I_i|\,(|I_r| + |I_s|)\, \omega_0(v, w_i)$.
 The action change is
 \[
   \Delta A_{\mathrm{fwd}} = |I_s| \cdot S.
