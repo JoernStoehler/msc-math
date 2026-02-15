@@ -4,23 +4,46 @@
 %
 % Structure: one \input per experiment. Each experiment is a self-contained
 %   subsection in its own .tex file under thesis/experiments/.
+%
+% Narrative arc:
+%   1. Dataset — what polytopes and algorithms we use
+%   2. Correctness — why we trust the computed values
+%   3. Benchmarks — practical cost limits and algorithm selection
+%   4. Rejection sampling — how we generate random polytopes
+%   5. Systolic ratios — probing Viterbo on random polytopes
+%   6. Lagrangian products — systematic search where counterexamples live
+%   7. Visualization — geometric intuition via stereographic projection
 
 \section{Computational experiments}
 \label{sec:experiments}
 
+We probe Viterbo's conjecture computationally by evaluating the systolic
+ratio~$\mathrm{sys}(K) = c_{\mathrm{EHZ}}(K)^2 / (2\operatorname{vol}(K))$
+across large datasets of 4-polytopes.
+The experiments proceed in three stages:
+first, we establish the computational infrastructure (the dataset, its
+correctness guarantees, and the performance envelope of our algorithms);
+then, we explore the conjecture on random polytopes and on Lagrangian
+products, where the only known counterexample lives;
+finally, we visualize Reeb dynamics to build geometric intuition.
+
+% Section 1: The dataset — polytope groups, algorithms, data files
+\input{experiments/dataset}
+
+% Section 2: Correctness tests — mathematical properties verified on the dataset
+\input{experiments/correctness}
+
+% Section 3: Benchmarks and algorithm selection
+\input{experiments/benchmarks}
+
+% Section 4: Rejection sampling — random polytope generation
 \input{experiments/rejection-sampling}
 
-% Systolic ratio experiment:
+% Section 5: Systolic ratios — probing Viterbo on random polytopes
 \input{experiments/systolic-ratios}
 
-% Lagrangian products experiment:
+% Section 6: Lagrangian products — systematic search for counterexamples
 \input{experiments/lagrangian-products}
 
-% Performance benchmark:
-\input{experiments/benchmark}
-
-% Implementation optimization:
-\input{experiments/hk2017-optimization}
-
-% Visualization of Reeb dynamics:
+% Section 7: Visualization of Reeb dynamics
 \input{experiments/visualization}

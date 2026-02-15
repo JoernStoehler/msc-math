@@ -39,8 +39,9 @@ We compute systolic ratios using:
 
 \subsubsection*{Literature validation}
 
-To establish confidence in our implementation, we first reproduced known
-results from the literature.
+To establish confidence in our implementation, we reproduced known results
+from the literature (see also Section~\ref{sec:correctness} for a systematic
+treatment of all correctness tests).
 
 Table~\ref{tab:validation-results} shows our computed values compared to
 literature. All test cases match with relative error~$< 0.001\%$.
@@ -70,7 +71,7 @@ Symplectic $\triangle \times \square$ & 7 & 1.0 & 1.000000 & 0.385 \\
 
 \textbf{Pentagon verification.} The pentagon counterexample achieves
 $\mathrm{sys}(K) = 1.047 > 1$, confirming the violation of Viterbo's
-conjecture. After the optimizations in Section~\ref{sec:hk2017-optimization}, this
+conjecture. After the implementation optimizations (Section~\ref{sec:benchmark}), this
 computation takes~504\,ms (10 facets).
 
 \subsubsection*{Random polytope exploration}
@@ -187,7 +188,7 @@ $F = 10$ taking~$\sim$267\,ms and $F = 14$ taking~$\sim$9\,min per polytope.
     continues at higher~$F$ and whether it can reach~1 is an open question.
 
   \item \textbf{Extended range}: By optimizing the HK2017 implementation
-    (Section~\ref{sec:hk2017-optimization}), we extended the search from~$F \le 10$
+    (Section~\ref{sec:benchmark}), we extended the search from~$F \le 10$
     to~$F \le 14$, covering a wider range of polytope complexity without
     discovering new counterexamples.
 \end{enumerate}

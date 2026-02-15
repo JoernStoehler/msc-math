@@ -1,0 +1,132 @@
+% correctness.tex — \input'd from experiments/experiments.tex
+%
+% Sources: crates/hk2017/tests/fixtures/capacity_dataset.json (27+ polytopes),
+%   crates/hk2017/src/capacity_properties_test.rs (fixture-based property tests),
+%   crates/billiard/src/lib_test.rs (billiard cross-validation).
+%
+% This section documents which mathematical propositions are verified on the
+% dataset, and which dataset expansions each proposition motivated.
+
+\subsection{Correctness Verification}
+\label{sec:correctness}
+
+Before using the computed capacities for experimental conclusions, we verify
+that the implementations are correct. This section documents the mathematical
+properties tested, the polytope subsets used, and the results.
+
+All tests are implemented as automated Rust tests and run as part of the
+continuous test suite. Capacities are pre-computed in release mode and cached
+as a JSON fixture; the property tests then verify the cached values
+in under one second.
+
+\subsubsection*{Propositions}
+
+Table~\ref{tab:correctness-propositions} lists the mathematical properties
+verified on the dataset. For each property, we state the formula, the
+polytope subset it is tested on, and whether it motivated the creation of
+new dataset entries.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lp{4.5cm}p{3.5cm}p{3cm}}
+\toprule
+Property & Formula & Tested on & Motivated \\
+\midrule
+Positivity & $c_{\mathrm{EHZ}}(K) > 0$ & All 33 fixture entries & --- \\
+Literature agreement & $c_{\mathrm{computed}} = c_{\mathrm{published}}$ & 7 known polytopes & \textsc{LiteratureKnown} \\
+Pruned = unpruned & $c_{\mathrm{pruned}} = c_{\mathrm{unpruned}}$ & 11 base polytopes ($F \le 8$) & Unpruned column \\
+Cross-algorithm & $c_{\mathrm{HK2017}} = c_{\mathrm{billiard}}$ & All Lagrangian products & Billiard column, \textsc{RandomProducts} \\
+Conformality & $c({\alpha K}) = \alpha^2 \cdot c({K})$ & 11 scaled variants & \textsc{Scaled} group \\
+Symplectic invariance & $c({MK{+}b}) = c({K})$ & 11 symplectomorphism variants & \textsc{Symplectomorphism} group \\
+Monotonicity & $K_1 \subseteq K_2 \Rightarrow c(K_1) \le c(K_2)$ & 20 containment pairs & --- (uses existing data) \\
+\bottomrule
+\end{tabular}
+\caption{Mathematical properties verified on the dataset. ``Motivated'' indicates
+  which dataset rows or columns exist because of this property.
+  Tolerance: $10^{-6}$ relative error for all comparisons.}
+\label{tab:correctness-propositions}
+\end{table}
+
+\subsubsection*{Literature agreement}
+
+The following polytopes have known capacity values from the literature:
+\begin{center}
+\small
+\begin{tabular}{llrl}
+\toprule
+Polytope & $F$ & $c_{\mathrm{EHZ}}$ & Source \\
+\midrule
+Simplex & 5 & 0.25 & Nir 2013 \\
+Hypercube $[-1,1]^4$ & 8 & 4.0 & HK2019 Ex~4.6 \\
+HK-O pentagon & 10 & $2\cos(\pi/10)(1 + \cos(\pi/5)) \approx 3.441$ & HK-O 2024 Prop~1.4 \\
+Lag.\ $\triangle \times \triangle$ & 6 & 1.5 & HK2017 + billiard \\
+Sym.\ $\triangle \times \triangle$ & 6 & $3\sqrt{3}/4 \approx 1.299$ & Moser's theorem \\
+Lag.\ $\triangle \times \square$ & 7 & 1.5 & HK2017 + billiard \\
+Sym.\ $\triangle \times \square$ & 7 & 1.0 & Moser's theorem \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+All computed values agree with literature to within $10^{-6}$ relative error.
+
+\subsubsection*{Cross-algorithm validation}
+
+On the overlapping domain (Lagrangian products), HK2017 and the billiard
+algorithm should produce the same capacity. We verify this on three
+datasets of increasing size:
+\begin{enumerate}
+  \item \textbf{Fixture} (3 Lagrangian products + scaled variants):
+    Agreement within $10^{-8}$ relative error.
+  \item \textbf{PentagonSweep} (361 points): Perfect agreement on all
+    361 data points (relative error~$< 10^{-12}$).
+  \item \textbf{PolygonGrid} (10 pairs, 2301 points): 8 of 10 pairs
+    have 100\% agreement. Two pairs---$(4,4)$ and~$(4,6)$---show
+    capacity \emph{discontinuities} where the computed capacity jumps
+    by a factor of~${\sim}2$ between adjacent angles (e.g., $c = 2.0$
+    at~$\theta = 0^\circ$ to $c = 3.99$ at~$\theta = 0.125^\circ$
+    for $(4,4)$). Both algorithms produce the same discontinuous
+    behavior, indicating a shared bug in polytope construction or
+    skeleton computation for near-degenerate square-based products,
+    rather than an algorithm-specific issue.
+\end{enumerate}
+
+The 8 reliable pairs (100\% cross-validation, smooth capacity curves)
+provide strong evidence that both implementations are correct on
+their shared domain. The~$(4,4)$ and~$(4,6)$ failures are
+geometry-specific and documented in Section~\ref{sec:lagrangian-products}.
+
+\subsubsection*{Conformality and invariance}
+
+% [TODO: JÖRN — verify: the conformality test currently uses random α ∈ [0.5, 2.0].
+% Is this range sufficient to test the property thoroughly?]
+
+For each base polytope in the fixture, we generate:
+\begin{itemize}
+  \item A scaled copy $\alpha K$ with random $\alpha \in [0.5, 2.0]$, verifying
+    $c(\alpha K) = \alpha^2 \cdot c(K)$ and $\mathrm{vol}(\alpha K) = \alpha^4 \cdot \mathrm{vol}(K)$.
+  \item A symplectomorphism image $MK + b$ with random $M \in \mathrm{Sp}(4)$,
+    verifying $c(MK+b) = c(K)$ and $\mathrm{vol}(MK+b) = \mathrm{vol}(K)$.
+\end{itemize}
+
+Both properties hold to within $10^{-6}$ relative error on all tested
+variants. The symplectomorphism matrices are generated via the Cayley
+transform $(I - A)(I + A)^{-1}$ where $A \in \mathfrak{sp}(4)$, ensuring
+the result lies in $\mathrm{Sp}(4)$ exactly.
+
+\subsubsection*{Monotonicity}
+
+For pairs of polytopes $(K_1, K_2)$ in the fixture, we compute the largest
+$\alpha$ such that $\alpha K_1 \subseteq K_2$ by checking vertex containment.
+On the 20 pairs with largest non-trivial $\alpha$, we verify
+$c(\alpha K_1) = \alpha^2 c(K_1) \le c(K_2)$, combining conformality with
+monotonicity. All pairs satisfy the inequality.
+
+\subsubsection*{Debug-mode testing}
+
+The HK2017 implementation contains extensive \texttt{debug\_assert!}
+checks for internal invariants (index bounds, matrix dimensions, KKT
+solution validity). These assertions are active in debug builds and
+exercised on polytopes with $F \le 8$, where the exponential cost
+remains manageable. For the rationale behind this facet-count limit,
+see Section~\ref{sec:benchmark}.
