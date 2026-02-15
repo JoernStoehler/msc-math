@@ -6,6 +6,7 @@
 /// - `random-products`: Random polygon Lagrangian products
 ///
 /// Output: JSONL rows, one per polytope.
+use billiard::billiard_capacity;
 use geom::lagrangian_product::lagrangian_product;
 use geom::polygon::{polygon_area, random_polygon_2d, regular_polygon_2d, rotate_polygon_2d};
 use geom::volume::volume;
@@ -17,6 +18,9 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::PathBuf;
 use std::time::Instant;
+
+/// Tolerance for cross-algorithm agreement (relative).
+const CROSS_VALIDATION_TOL: f64 = 1e-8;
 
 /// Output row for a Lagrangian product sweep point.
 #[derive(Debug, Serialize)]
@@ -30,11 +34,23 @@ struct SweepRow {
     angle_deg: Option<f64>,
     facet_count: usize,
     volume: f64,
+    /// EHZ capacity from HK2017 (pruned).
     capacity: f64,
     sys: f64,
+    /// HK2017 computation time (ms).
     time_capacity_ms: f64,
     area_q: f64,
     area_p: f64,
+    /// EHZ capacity from billiard algorithm.
+    capacity_billiard: Option<f64>,
+    /// Billiard computation time (ms).
+    time_billiard_ms: Option<f64>,
+    /// Number of KKT solves in billiard algorithm.
+    iterations_billiard: Option<u64>,
+    /// Bounce count (k) of billiard optimal orbit.
+    bounces: Option<usize>,
+    /// Whether HK2017 and billiard agree within tolerance.
+    algorithms_agree: Option<bool>,
 }
 
 // ---- Configuration constants ----
@@ -117,6 +133,8 @@ fn cmd_pentagon_sweep(writer: &mut BufWriter<File>) {
         let cap = cap_result.capacity;
         let sys = cap * cap / (2.0 * vol);
 
+        let (cap_bil, time_bil, iter_bil, bounces, agrees) = run_billiard(&polytope, cap);
+
         let row = SweepRow {
             family: "pentagon_sweep".to_string(),
             n1: 5,
@@ -129,6 +147,11 @@ fn cmd_pentagon_sweep(writer: &mut BufWriter<File>) {
             time_capacity_ms: cap_time.as_secs_f64() * 1000.0,
             area_q,
             area_p,
+            capacity_billiard: cap_bil,
+            time_billiard_ms: time_bil,
+            iterations_billiard: iter_bil,
+            bounces,
+            algorithms_agree: agrees,
         };
         let line = serde_json::to_string(&row).expect("serialize");
         writeln!(writer, "{line}").expect("write");
@@ -187,12 +210,21 @@ fn cmd_polygon_grid(writer: &mut BufWriter<File>) {
                 let vol = volume(&polytope).expect("volume computation failed");
 
                 let start = Instant::now();
-                let cap_result =
-                    ehz_capacity_pruned(&polytope).expect("capacity computation failed");
+                let cap_result = match ehz_capacity_pruned(&polytope) {
+                    Some(r) => r,
+                    None => {
+                        eprintln!(
+                            "    WARNING: ehz_capacity_pruned returned None for ({n1},{n2}) at θ={angle_deg:.2}°, skipping"
+                        );
+                        continue;
+                    }
+                };
                 let cap_time = start.elapsed();
 
                 let cap = cap_result.capacity;
                 let sys = cap * cap / (2.0 * vol);
+
+                let (cap_bil, time_bil, iter_bil, bounces, agrees) = run_billiard(&polytope, cap);
 
                 let row = SweepRow {
                     family: "polygon_grid".to_string(),
@@ -206,6 +238,11 @@ fn cmd_polygon_grid(writer: &mut BufWriter<File>) {
                     time_capacity_ms: cap_time.as_secs_f64() * 1000.0,
                     area_q,
                     area_p,
+                    capacity_billiard: cap_bil,
+                    time_billiard_ms: time_bil,
+                    iterations_billiard: iter_bil,
+                    bounces,
+                    algorithms_agree: agrees,
                 };
                 let line = serde_json::to_string(&row).expect("serialize");
                 writeln!(writer, "{line}").expect("write");
@@ -271,6 +308,8 @@ fn cmd_random_products(writer: &mut BufWriter<File>) {
         let area_p = polygon_area(&pn, &ph)
             .expect("area computation must succeed for valid Lagrangian product factors");
 
+        let (cap_bil, time_bil, iter_bil, bounces, agrees) = run_billiard(&polytope, cap);
+
         let row = SweepRow {
             family: "random_product".to_string(),
             n1,
@@ -283,6 +322,11 @@ fn cmd_random_products(writer: &mut BufWriter<File>) {
             time_capacity_ms: cap_time.as_secs_f64() * 1000.0,
             area_q,
             area_p,
+            capacity_billiard: cap_bil,
+            time_billiard_ms: time_bil,
+            iterations_billiard: iter_bil,
+            bounces,
+            algorithms_agree: agrees,
         };
         let line = serde_json::to_string(&row).expect("serialize");
         writeln!(writer, "{line}").expect("write");
@@ -293,6 +337,34 @@ fn cmd_random_products(writer: &mut BufWriter<File>) {
         }
     }
     eprintln!("Random products done: {generated} (from {attempts} attempts)");
+}
+
+/// Run billiard capacity on a polytope, returning (capacity, time_ms, iterations, bounces, agrees_with_hk2017).
+fn run_billiard(polytope: &geom::polytope::Polytope4D, hk2017_cap: f64) -> (Option<f64>, Option<f64>, Option<u64>, Option<usize>, Option<bool>) {
+    let start = Instant::now();
+    match billiard_capacity(polytope) {
+        Ok(Some(result)) => {
+            let time_ms = start.elapsed().as_secs_f64() * 1000.0;
+            let rel_err = (result.capacity - hk2017_cap).abs() / hk2017_cap.max(1e-15);
+            let agrees = rel_err < CROSS_VALIDATION_TOL;
+            if !agrees {
+                eprintln!(
+                    "  WARNING: billiard disagrees with HK2017: billiard={:.10} hk2017={:.10} rel_err={:.2e}",
+                    result.capacity, hk2017_cap, rel_err
+                );
+            }
+            (Some(result.capacity), Some(time_ms), Some(result.iterations), Some(result.bounce_count), Some(agrees))
+        }
+        Ok(None) => {
+            let time_ms = start.elapsed().as_secs_f64() * 1000.0;
+            eprintln!("  WARNING: billiard returned None");
+            (None, Some(time_ms), None, None, None)
+        }
+        Err(e) => {
+            eprintln!("  WARNING: billiard error: {e}");
+            (None, None, None, None, None)
+        }
+    }
 }
 
 /// Least common multiple.
