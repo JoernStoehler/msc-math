@@ -494,11 +494,11 @@ $A(z') = \beta^2 A(z)$ and $I_K(z') = \beta\, I_K(z)$.
 \end{lemma}
 
 \begin{lemma}[Compactness of simple curves]\label{lem:compactness}
-For any $T > 0$, the space of closed, centered, simple
-piecewise-Reeb curves with period~$T$ is compact
-in~$W^{1,2}([0,T], \mathbb{R}^4)$.
-The action~$A$ is continuous on this space,
-and $I_K \equiv T$.
+Let $(z_n)$ be a sequence of closed, centered, simple
+piecewise-Reeb curves with periods $T_n \to T > 0$.
+Then a subsequence converges to a closed, centered, simple
+piecewise-Reeb curve~$z_*$ with period~$T$,
+$A(z_*) = \lim A(z_n)$, and $I_K(z_*) = T$.
 \end{lemma}
 
 %%% --- Proof of the theorem ---
@@ -544,24 +544,27 @@ For each $\varepsilon > 0$, apply the first four lemmas in sequence:
 \end{enumerate}
 
 \emph{Optimality bound.}
-The curve $z_4$ is feasible for the dual problem (closed,
-centered by translation, $A(z_4) = I_K(z_4)$).
-Since $z_0$ was a dual minimizer with $I_K(z_0) = T$,
-any feasible curve satisfies $I_K \geq T$, so
-$T^2 / A(z_3) \geq T$, i.e., $A(z_3) \leq T$.
+The curve $z_4$ is feasible for the dual problem
+with period~$T_4$
+(closed, centered, $A(z_4) = T_4$).
+Since $z_0$ was a dual minimizer, the dual-feasible
+curve~$z_4$ satisfies
+$I_K(z_4) = T^2 / A(z_3) \geq I_K(z_0) = T$,
+i.e., $A(z_3) \leq T$.
 Combined with $A(z_3) \geq A(z_1) \geq T - \varepsilon$,
 we get $A(z_3) \to T$ as $\varepsilon \to 0$,
-hence $\beta \to 1$ and $I_K(z_4) \to T$.
+hence $\beta \to 1$, $I_K(z_4) \to T$, and $T_4 \to T$.
 
-\emph{Compactness.}
-Rescale each $z_4$ to period exactly~$T$
-(Lemma~\ref{lem:rescaling}; the rescaling factor
-$T / T^{(4)} \to 1$, so $A$ and $I_K$ change by a
-vanishing amount).
-By Lemma~\ref{lem:compactness}, a subsequence
-converges to a simple piecewise-Reeb curve~$z_*$
-with $A(z_*) = T$ and $I_K(z_*) = T$.
-Thus $z_*$ is a dual minimizer.
+\begin{enumerate}\setcounter{enumi}{4}
+\item \emph{Compactness}
+  (Lemma~\ref{lem:compactness}):
+  the sequence $(z_4)$ (indexed by $\varepsilon \to 0$)
+  has periods $T_4 \to T$, so a subsequence converges
+  to a closed, centered, simple piecewise-Reeb
+  curve~$z_*$ with
+  $A(z_*) = T$ and $I_K(z_*) = T$.
+  Thus $z_*$ is a dual minimizer.
+\end{enumerate}
 
 By Theorem~\ref{thm:primal-dual-equivalence},
 $z_*$ corresponds to a primal minimizer
@@ -715,14 +718,20 @@ $I_K(z') = \beta\, I_K(z)$.
 \end{proof}
 
 \begin{proof}[Proof of Lemma~\ref{lem:compactness}]
-Each curve is encoded by $(\sigma, s) \in S_F \times \Delta^{F-1}$,
-where $\sigma$ is the ordering and $s_i = t_i / T$ are normalized
-durations.
-The map $(\sigma, s) \mapsto z$ is injective (up to centering),
-and $A(\sigma, s) = T^2 \sum_{j<i} s_i\, s_j\,
-\omega_0(w_i, w_j)$ is a polynomial in~$s$
-(by Lemma~\ref{lem:shoelace}).
+Each $z_n$ is encoded by
+$(\sigma_n, s_n) \in S_F \times \Delta^{F-1}$,
+where $\sigma_n$ is the ordering and
+$s_{n,i} = t_{n,i} / T_n$ are normalized durations.
+Since $S_F \times \Delta^{F-1}$ is compact,
+a subsequence has
+$(\sigma_n, s_n) \to (\sigma_*, s_*)$.
+The curve~$z_*$ with parameters
+$(\sigma_*, s_*, T)$ is the limit.
+By Lemma~\ref{lem:shoelace},
+$A(\sigma, s, T) = T^2 \sum_{j<i} s_i\, s_j\,
+\omega_0(w_i, w_j)$ is continuous in $(\sigma, s, T)$,
+so $A(z_*) = \lim A(z_n)$.
 Since all velocities are pure Reeb vectors,
-$I_K = T$ is constant on this space.
+$I_K(z_*) = T$.
 \end{proof}
 
