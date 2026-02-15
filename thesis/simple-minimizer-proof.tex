@@ -582,12 +582,14 @@ Since $z_*$ is simple, so is~$\gamma_*$.
 
 \begin{proof}[Proof of Lemma~\ref{lem:pw-affine-approx}]
 % QC: standard density argument + integral mean value in a convex set.
-Choose a partition $0 = t_0 < t_1 < \cdots < t_m = T$
+Since $\dot{z}(t) \in \mathrm{conv}\{R_1, \ldots, R_F\}$ a.e.,
+the velocity~$\dot{z}$ is bounded a.e.
+Hence we can find a partition $0 = t_0 < t_1 < \cdots < t_m = T$
 fine enough that the piecewise affine interpolant~$z'$
 defined by $z'(t_k) = z(t_k)$ (affine on each
 $(t_k, t_{k+1})$) satisfies
-$\|z - z'\|_{W^{1,2}} < \varepsilon$.
-(Piecewise affine functions are dense in~$W^{1,2}$.)
+$\|z' - z\|_{L^\infty} < \varepsilon$ and
+$\|\dot{z}' - \dot{z}\|_{L^\infty} < \varepsilon$.
 
 On each subinterval $(t_k, t_{k+1})$, the velocity
 of~$z'$ is the integral mean of~$\dot{z}$:
