@@ -361,8 +361,10 @@ Since $\gamma = \nu z + b$, $\dot{\gamma} = \nu \dot{z}$, and $\int_0^T z = 0$:
   &= \tfrac{1}{2}\!\int_0^T \langle -J_0 \dot{\gamma},\, \gamma \rangle\, dt
    = \tfrac{1}{2}\!\int_0^T
     \bigl\langle -\nu J_0 \dot{z},\, \nu z + b \bigr\rangle\, dt \\
-  &= \nu^2 A(z) + \tfrac{\nu}{2}
-    \bigl\langle b,\, \underbrace{-J_0[z(T) - z(0)]}_{= 0} \bigr\rangle
+  &= \nu^2 A(z) + \tfrac{\nu}{2}\!\int_0^T
+    \langle -J_0 \dot{z},\, b \rangle\, dt
+   = \nu^2 A(z) + \tfrac{\nu}{2}
+    \bigl\langle -J_0\underbrace{[z(T) - z(0)]}_{= 0},\, b \bigr\rangle
    = \nu^2 A(z).
 \end{align*}
 Since $z$ is a dual critical point with $A(z) = T$, we have $A(\gamma) = \nu^2 T$.
@@ -652,6 +654,10 @@ the same as the original segment.
 \emph{Period preserved:}
 $\sum_i \Delta t_i = |I| \sum_i a_i = |I|$.
 
+\emph{Centering restored:}
+translate $z'$ by $-\frac{1}{T}\int_0^T z'\,dt$
+to restore centering; this preserves $\dot{z}'$, closure, $A(z')$, and $I_K(z')$.
+
 \emph{Action non-decrease:}
 by Lemma~\ref{lem:shoelace},
 splitting segment~$I$ introduces
@@ -721,8 +727,11 @@ Hence
 $\max(\Delta A_{\mathrm{fwd}},
   \Delta A_{\mathrm{bwd}}) \geq 0$.
 
-Closure and centering are preserved: the total displacement
+Closure is preserved: the total displacement
 $\sum |I_k| w_k$ is unchanged by rearrangement.
+Centering is restored by translating $z'$ by
+$-\frac{1}{T}\int_0^T z'\,dt$;
+this preserves $\dot{z}'$, closure, $A(z')$, and $I_K(z')$.
 The dual functional $I_K$ is unchanged:
 $h_K^2(-J_0 \dot{z})$ depends only on the velocity
 at each time, not on its position in the sequence,
