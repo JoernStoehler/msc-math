@@ -443,20 +443,6 @@ via four operations, each captured by a standalone lemma.
 We state all four lemmas, then prove the theorem by chaining them,
 and finally prove each lemma.
 
-% QC: action identity translates HK2017 Proposition 4.3.
-\begin{lemma}[Action identity]\label{lem:action-identity}
-Let $z \colon [0,T] \to \mathbb{R}^4$ be a closed piecewise affine
-curve with piecewise constant velocity
-$\dot{z}(t) = w_k$ on interval~$I_k$,
-where $(I_1, \ldots, I_m)$ partitions~$[0,T]$.
-Then
-\begin{equation}\label{eq:action-identity}
-  2A(z)
-  = \sum_{1 \leq j < i \leq m}
-    |I_i|\, |I_j|\, \omega_0(w_j, w_i).
-\end{equation}
-\end{lemma}
-
 % QC: translates HK2017 Lemma 4.2.
 \begin{lemma}[Piecewise affine approximation]\label{lem:pw-affine-approx}
 Let $z \in W^{1,2}([0,T], \mathbb{R}^4)$ be closed with
@@ -538,7 +524,7 @@ For each $\varepsilon > 0$, apply the four lemmas in sequence:
     I_K(z_4) = \beta\, T = \frac{T^2}{A(z_3)}.
   \]
   Here $A$ scales quadratically
-  (by Lemma~\ref{lem:action-identity}, every term scales as
+  (by Lemma~\ref{lem:shoelace}, every term scales as
   $|I_i|\,|I_j|$) and $I_K$ scales linearly in time
   (since $h_K^2(-J_0\dot{z})$ is unchanged).
 \end{enumerate}
@@ -574,7 +560,7 @@ center it by translation.
 Closure holds by continuity:
 $\sum t_i^\infty R_{\sigma(i)}
   = \lim_n \sum t_i^n R_{\sigma(i)} = 0$.
-By Lemma~\ref{lem:action-identity}, $A$ is a polynomial
+By Lemma~\ref{lem:shoelace}, $A$ is a polynomial
 in the durations, so
 $A(z_*) = \lim_n A(z_{4,n}) = T$.
 Since all velocities are pure Reeb vectors,
@@ -591,39 +577,6 @@ Since $z_*$ is simple, so is~$\gamma_*$.
 \end{proof}
 
 %%% --- Proofs of the lemmas ---
-
-\begin{proof}[Proof of Lemma~\ref{lem:action-identity}]
-% QC: direct computation. Key steps: (a) closure kills z(0) term,
-%   (b) self-pairing vanishes by omega_0 antisymmetry,
-%   (c) cross terms give the double sum.
-Write $z(t) = z(0) + \int_0^t \dot{z}(s)\, ds$.
-Since $z(0) = z(T)$,
-\[
-  \int_0^T \langle -J_0 \dot{z}(t),\, z(0) \rangle\, dt
-  = \langle -J_0[z(T) - z(0)],\, z(0) \rangle = 0,
-\]
-so
-\[
-  2A(z)
-  = \int_0^T \langle -J_0 \dot{z}(t),\, z(t) \rangle\, dt
-  = \int_0^T \Bigl\langle -J_0 \dot{z}(t),\,
-    \int_0^t \dot{z}(s)\, ds \Bigr\rangle dt.
-\]
-For $t \in I_i$, the velocity is $\dot{z}(t) = w_i$ and
-\[
-  \int_0^t \dot{z}(s)\, ds
-  = \sum_{j=1}^{i-1} |I_j|\, w_j + (t - \tau_{i-1})\, w_i,
-\]
-where $\tau_{i-1}$ is the left endpoint of~$I_i$.
-The self-pairing $\omega_0(w_i, w_i) = 0$ eliminates the
-last term, giving
-\[
-  \int_{I_i} \langle -J_0 w_i,\,
-    \textstyle\sum_{j<i} |I_j|\, w_j \rangle\, dt
-  = |I_i| \sum_{j=1}^{i-1} |I_j|\, \omega_0(w_j, w_i).
-\]
-Summing over $i$ gives~\eqref{eq:action-identity}.
-\end{proof}
 
 \begin{proof}[Proof of Lemma~\ref{lem:pw-affine-approx}]
 % QC: standard density argument + integral mean value in a convex set.
@@ -677,7 +630,7 @@ the same as the original segment.
 $\sum_i \Delta t_i = |I| \sum_i a_i = |I|$.
 
 \emph{Action non-decrease:}
-by Lemma~\ref{lem:action-identity},
+by Lemma~\ref{lem:shoelace},
 splitting segment~$I$ introduces
 new internal cross-terms
 $\sum_{r < s} \Delta t_r\, \Delta t_s\,
@@ -713,24 +666,24 @@ $w_r = w_s = v$ for some $r < s$.
 Define
 \[
   S = \sum_{i=r+1}^{s-1}
-    |I_i|\, \omega_0(v, w_i).
+    |I_i|\, \omega_0(w_i, v).
 \]
 
 \emph{Forward merge} (merge to position~$r$):
 remove $I_s$ and extend $I_r$ by~$|I_s|$,
 placing the middle segments $I_{r+1}, \ldots, I_{s-1}$
 after the merged segment.
-By Lemma~\ref{lem:action-identity}, the only terms
+By Lemma~\ref{lem:shoelace}, the only terms
 that change involve pairs between the middle segments
 and positions $r$, $s$.
 In the original ordering, these contribute
 \[
   \sum_{i \in M}
-    |I_i|\,(|I_r| - |I_s|)\, \omega_0(v, w_i),
+    |I_i|\,(|I_r| - |I_s|)\, \omega_0(w_i, v),
 \]
 where $M = \{r{+}1, \ldots, s{-}1\}$;
 in the merged ordering, they contribute
-$\sum_{i \in M} |I_i|\,(|I_r| + |I_s|)\, \omega_0(v, w_i)$.
+$\sum_{i \in M} |I_i|\,(|I_r| + |I_s|)\, \omega_0(w_i, v)$.
 The action change is
 \[
   \Delta A_{\mathrm{fwd}} = |I_s| \cdot S.
