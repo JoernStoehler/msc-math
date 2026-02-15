@@ -28,8 +28,15 @@ const EPS_BETA_POSITIVE: f64 = 1e-12;
 /// Minimum Q(β) value to consider a solution valid (avoids division-by-near-zero in action).
 const EPS_Q_POSITIVE: f64 = 1e-15;
 
-/// SVD tolerance for solving the KKT system (singular values below this are treated as zero).
-const EPS_SVD_TOLERANCE: f64 = 1e-10;
+/// Floor for SVD: singular values below max_sv * EPS_SVD_FLOOR are treated as exactly zero.
+const EPS_SVD_FLOOR: f64 = 1e-12;
+
+/// Gap ratio threshold for rank detection: if sv[i-1]/sv[i] > this, sv[i..] are
+/// treated as part of the null space. Catches near-degenerate KKT systems where a
+/// singular value ~1e-4 is separated from genuine nonzero values ~0.5 by a gap of
+/// ~600x. Without gap detection, the pseudoinverse amplifies this sv by ~1/sv ≈ 1000,
+/// producing garbage β₀ and breaking cyclic invariance.
+const SVD_GAP_THRESHOLD: f64 = 100.0;
 
 /// Maximum acceptable residual norm for the KKT solution (rejects numerically poor solutions).
 const EPS_KKT_RESIDUAL: f64 = 1e-6;
@@ -288,39 +295,51 @@ pub(crate) fn solve_kkt(
     // RHS: [0, ..., 0, 1]
     rhs[m + 4] = 1.0;
 
-    // --- Fast path: LU decomposition ---
-    // If the system is full-rank and the solution has β > 0, return immediately.
-    let lu = kkt.clone().full_piv_lu();
-    if lu.is_invertible() {
-        if let Some(solution) = lu.solve(&rhs) {
-            let residual = (&kkt * &solution - &rhs).norm();
-            if residual <= EPS_KKT_RESIDUAL {
-                let beta: Vec<f64> = (0..m).map(|i| solution[i]).collect();
-                if beta.iter().all(|&b| b > EPS_BETA_POSITIVE) {
-                    let q_val = q_from_beta(normals, perm, &beta);
-                    return Some((beta, q_val));
-                }
-                // LU says invertible but β ≤ 0. Could be:
-                // (a) genuinely infeasible (full-rank, unique solution with β ≤ 0), or
-                // (b) LU failed to detect rank deficiency (near-singular system).
-                // Fall through to SVD to distinguish these cases.
-            }
-        }
-    }
-
-    // --- SVD path: handles rank-deficient systems ---
+    // --- SVD with gap-based rank detection ---
+    //
+    // We use SVD (not LU) because SVD reveals the rank structure. For near-
+    // degenerate KKT systems (e.g. Lagrangian products near special angles),
+    // a singular value ~1e-4 can be separated from genuine values ~0.5 by a
+    // gap of ~600x. A fixed tolerance either misses this (too tight → garbage
+    // pseudoinverse, broken cyclic invariance) or over-truncates for well-
+    // conditioned systems (too loose → conformality violations).
+    //
+    // Gap-based detection: walk from the smallest sv upward, treating sv[i]
+    // as zero if sv[i-1]/sv[i] > SVD_GAP_THRESHOLD. This adapts to each
+    // system's spectrum.
     let svd = kkt.clone().svd(true, true);
     let sv = &svd.singular_values;
     let max_sv = sv.iter().cloned().fold(0.0f64, f64::max);
-    if max_sv < EPS_SVD_TOLERANCE {
+    if max_sv < EPS_SVD_FLOOR {
         return None;
     }
 
-    let rank_tol = max_sv * EPS_SVD_TOLERANCE;
-    let rank = sv.iter().filter(|&&s| s > rank_tol).count();
+    let u = svd.u.as_ref()?;
+    let v_t = svd.v_t.as_ref()?;
 
-    // Particular solution (minimum-norm for rank-deficient systems)
-    let x0 = svd.solve(&rhs, EPS_SVD_TOLERANCE).ok()?;
+    // Determine numerical rank via gap detection.
+    // sv is sorted descending. First count values above the noise floor,
+    // then walk upward looking for a large gap.
+    let floor = max_sv * EPS_SVD_FLOOR;
+    let nonzero = sv.iter().filter(|&&s| s > floor).count();
+    let mut rank = nonzero;
+    for i in (1..nonzero).rev() {
+        if sv[i - 1] / sv[i] > SVD_GAP_THRESHOLD {
+            rank = i;
+            break;
+        }
+    }
+
+    // Compute pseudoinverse solution manually using only the top `rank` SVs.
+    // This avoids relying on nalgebra's solve() tolerance interpretation.
+    let mut x0 = DVector::zeros(size);
+    for i in 0..rank {
+        let coeff = u.column(i).dot(&rhs) / sv[i];
+        for j in 0..size {
+            x0[j] += coeff * v_t[(i, j)];
+        }
+    }
+
     let residual = (&kkt * &x0 - &rhs).norm();
     if residual > EPS_KKT_RESIDUAL {
         return None;
@@ -340,10 +359,7 @@ pub(crate) fn solve_kkt(
     }
 
     // Rank-deficient: search null space for β > 0.
-    // The null space vectors are right singular vectors with small singular values.
-    let v_t = svd.v_t.as_ref()?;
-
-    // Extract null space basis (β part = first m components)
+    // Null space = right singular vectors for sv's below rank threshold.
     let null_beta: Vec<Vec<f64>> = (rank..size)
         .map(|i| (0..m).map(|j| v_t[(i, j)]).collect())
         .collect();
@@ -353,6 +369,25 @@ pub(crate) fn solve_kkt(
     } else {
         find_positive_beta_nd(&beta0, &null_beta)?
     };
+
+    // Constraint verification: reject if β from null space search violates
+    // N^T β ≈ 0 or η^T β ≈ 1 (catches noise amplification in degenerate cases).
+    let constraint_residual: f64 = (0..4)
+        .map(|d| {
+            (0..m)
+                .map(|i| beta_opt[i] * normals[perm[i]][d])
+                .sum::<f64>()
+        })
+        .map(|x: f64| x * x)
+        .sum::<f64>()
+        + ((0..m)
+            .map(|i| beta_opt[i] * heights[perm[i]])
+            .sum::<f64>()
+            - 1.0)
+            .powi(2);
+    if constraint_residual.sqrt() > EPS_KKT_RESIDUAL {
+        return None;
+    }
 
     let q_val = q_from_beta(normals, perm, &beta_opt);
     Some((beta_opt, q_val))

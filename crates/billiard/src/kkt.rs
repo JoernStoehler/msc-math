@@ -12,8 +12,11 @@ pub const EPS_BETA_POSITIVE: f64 = 1e-12;
 /// Minimum Q(β) value to consider a solution valid (avoids division-by-near-zero in action).
 pub const EPS_Q_POSITIVE: f64 = 1e-15;
 
-/// SVD tolerance for solving the KKT system (singular values below this are treated as zero).
-const EPS_SVD_TOLERANCE: f64 = 1e-10;
+/// Floor for SVD: singular values below max_sv * EPS_SVD_FLOOR are treated as exactly zero.
+const EPS_SVD_FLOOR: f64 = 1e-12;
+
+/// Gap ratio threshold for rank detection. See hk2017/src/lib.rs for full explanation.
+const SVD_GAP_THRESHOLD: f64 = 100.0;
 
 /// Maximum acceptable residual norm for the KKT solution (rejects numerically poor solutions).
 const EPS_KKT_RESIDUAL: f64 = 1e-6;
@@ -114,8 +117,7 @@ fn find_positive_beta_nd(beta0: &[f64], null_vecs: &[Vec<f64>]) -> Option<Vec<f6
 
 /// Solve the KKT system for max Q(β) subject to N^T β = 0, η^T β = 1.
 ///
-/// When the KKT system is rank-deficient, searches the null space for
-/// a solution with β > 0. Q(β) is constant along the null space.
+/// Uses SVD with gap-based rank detection. See hk2017/src/lib.rs for full explanation.
 pub fn solve_kkt(
     normals: &[Vector4<f64>],
     heights: &[f64],
@@ -153,33 +155,36 @@ pub fn solve_kkt(
     }
     rhs[m + 4] = 1.0;
 
-    // --- Fast path: LU ---
-    let lu = kkt.clone().full_piv_lu();
-    if lu.is_invertible() {
-        if let Some(solution) = lu.solve(&rhs) {
-            let residual = (&kkt * &solution - &rhs).norm();
-            if residual <= EPS_KKT_RESIDUAL {
-                let beta: Vec<f64> = (0..m).map(|i| solution[i]).collect();
-                if beta.iter().all(|&b| b > EPS_BETA_POSITIVE) {
-                    let q_val = q_from_beta(normals, perm, &beta);
-                    return Some((beta, q_val));
-                }
-            }
-        }
-    }
-
-    // --- SVD path: handles rank-deficient systems ---
+    // SVD with gap-based rank detection
     let svd = kkt.clone().svd(true, true);
     let sv = &svd.singular_values;
     let max_sv = sv.iter().cloned().fold(0.0f64, f64::max);
-    if max_sv < EPS_SVD_TOLERANCE {
+    if max_sv < EPS_SVD_FLOOR {
         return None;
     }
 
-    let rank_tol = max_sv * EPS_SVD_TOLERANCE;
-    let rank = sv.iter().filter(|&&s| s > rank_tol).count();
+    let u = svd.u.as_ref()?;
+    let v_t = svd.v_t.as_ref()?;
 
-    let x0 = svd.solve(&rhs, EPS_SVD_TOLERANCE).ok()?;
+    let floor = max_sv * EPS_SVD_FLOOR;
+    let nonzero = sv.iter().filter(|&&s| s > floor).count();
+    let mut rank = nonzero;
+    for i in (1..nonzero).rev() {
+        if sv[i - 1] / sv[i] > SVD_GAP_THRESHOLD {
+            rank = i;
+            break;
+        }
+    }
+
+    // Manual pseudoinverse using only top `rank` SVs
+    let mut x0 = DVector::zeros(size);
+    for i in 0..rank {
+        let coeff = u.column(i).dot(&rhs) / sv[i];
+        for j in 0..size {
+            x0[j] += coeff * v_t[(i, j)];
+        }
+    }
+
     let residual = (&kkt * &x0 - &rhs).norm();
     if residual > EPS_KKT_RESIDUAL {
         return None;
@@ -196,7 +201,6 @@ pub fn solve_kkt(
         return None;
     }
 
-    let v_t = svd.v_t.as_ref()?;
     let null_beta: Vec<Vec<f64>> = (rank..size)
         .map(|i| (0..m).map(|j| v_t[(i, j)]).collect())
         .collect();
@@ -206,6 +210,24 @@ pub fn solve_kkt(
     } else {
         find_positive_beta_nd(&beta0, &null_beta)?
     };
+
+    // Constraint verification
+    let constraint_residual: f64 = (0..4)
+        .map(|d| {
+            (0..m)
+                .map(|i| beta_opt[i] * normals[perm[i]][d])
+                .sum::<f64>()
+        })
+        .map(|x: f64| x * x)
+        .sum::<f64>()
+        + ((0..m)
+            .map(|i| beta_opt[i] * heights[perm[i]])
+            .sum::<f64>()
+            - 1.0)
+            .powi(2);
+    if constraint_residual.sqrt() > EPS_KKT_RESIDUAL {
+        return None;
+    }
 
     let q_val = q_from_beta(normals, perm, &beta_opt);
     Some((beta_opt, q_val))
