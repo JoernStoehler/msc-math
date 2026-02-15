@@ -31,7 +31,7 @@ Then
     }}
     \sum_{1 \leq j < i \leq F}
       \beta_{\sigma(i)} \beta_{\sigma(j)} \,
-      \omega_0(n_{\sigma(i)}, n_{\sigma(j)})
+      \omega_0(n_{\sigma(j)}, n_{\sigma(i)})
   \right]^{-1},
 \end{equation}
 where
@@ -71,9 +71,9 @@ and each permutation $\sigma$ of $S$
     N_{id} &= n_{\sigma(i),d},
       & i &= 1, \ldots, |S|, \quad d = 1, \ldots, 4, \\
     H_{ij} &= \begin{cases}
-      \omega_0(n_{\sigma(j)}, n_{\sigma(i)}) & \text{if } i < j, \\
+      \omega_0(n_{\sigma(i)}, n_{\sigma(j)}) & \text{if } i < j, \\
       0 & \text{if } i = j, \\
-      \omega_0(n_{\sigma(i)}, n_{\sigma(j)}) & \text{if } i > j,
+      \omega_0(n_{\sigma(j)}, n_{\sigma(i)}) & \text{if } i > j,
     \end{cases} \\
     \eta_i &= h_{\sigma(i)},
       & i &= 1, \ldots, |S|.
@@ -709,7 +709,7 @@ Then
 \begin{equation}\label{eq:shoelace}
   \int_0^T \langle -J_0\, \dot{z}(t),\, z(t) \rangle \, dt
   = \sum_{1 \leq j < i \leq m}
-    |I_j|\, |I_i|\, \omega_0(w_i, w_j).
+    |I_j|\, |I_i|\, \omega_0(w_j, w_i).
 \end{equation}
 \end{lemma}
 
@@ -734,7 +734,7 @@ $\langle -J_0 w_i, z(t) \rangle$ and integrate over $[0, T]$:
       z(0) \bigr\rangle
     }_{= \, 0 \;\text{(closure)}}
   + \sum_{i=1}^m \sum_{j=1}^{i-1}
-      |I_i|\, |I_j|\, \omega_0(w_i, w_j) \\
+      |I_i|\, |I_j|\, \omega_0(w_j, w_i) \\
   &\quad
   + \sum_{i=1}^m
       \underbrace{\omega_0(w_i, w_i)}_{= \, 0}\;
@@ -768,7 +768,7 @@ Then
     }}
     \sum_{1 \leq j < i \leq F}
       \beta_{\sigma(i)} \beta_{\sigma(j)} \,
-      \omega_0(n_{\sigma(i)}, n_{\sigma(j)})
+      \omega_0(n_{\sigma(j)}, n_{\sigma(i)})
   \right]^{-1},
 \end{equation}
 where
@@ -814,7 +814,7 @@ By Lemma~\ref{lem:shoelace}:
 \begin{equation}\label{eq:shoelace-orbit}
   2T = \sum_{1 \leq j < i \leq |S|}
     \tau_j\, \tau_i\,
-    \omega_0(R_{\sigma(i)},\, R_{\sigma(j)}).
+    \omega_0(R_{\sigma(j)},\, R_{\sigma(i)}).
 \end{equation}
 
 \emph{Step~3: Expand Reeb vectors.}
@@ -832,7 +832,7 @@ Substituting into~\eqref{eq:shoelace-orbit}:
   2T = 4 \sum_{1 \leq j < i \leq |S|}
     \frac{\tau_j\, \tau_i}
          {h_{\sigma(j)}\, h_{\sigma(i)}}\,
-    \omega_0(n_{\sigma(i)},\, n_{\sigma(j)}).
+    \omega_0(n_{\sigma(j)},\, n_{\sigma(i)}).
 \end{equation}
 
 \emph{Step~4: Variable substitution $\tau \to \beta$.}
@@ -872,10 +872,10 @@ into~\eqref{eq:shoelace-normals}:
     \frac{(T h_{\sigma(j)} \tilde{\beta}_j)\,
           (T h_{\sigma(i)} \tilde{\beta}_i)}
          {h_{\sigma(j)}\, h_{\sigma(i)}}\,
-    \omega_0(n_{\sigma(i)},\, n_{\sigma(j)}) \\
+    \omega_0(n_{\sigma(j)},\, n_{\sigma(i)}) \\
   &= 4T^2 \sum_{1 \leq j < i \leq |S|}
     \tilde{\beta}_i\, \tilde{\beta}_j\,
-    \omega_0(n_{\sigma(i)},\, n_{\sigma(j)}).
+    \omega_0(n_{\sigma(j)},\, n_{\sigma(i)}).
 \end{align*}
 The sum on the right is the expression
 in~\eqref{eq:ehz-main} evaluated at $(\sigma, \beta)$.
@@ -883,7 +883,7 @@ Dividing by~$4T^2$:
 \begin{equation}\label{eq:action-sum}
   \sum_{1 \leq j < i \leq |S|}
     \tilde{\beta}_i\, \tilde{\beta}_j\,
-    \omega_0(n_{\sigma(i)},\, n_{\sigma(j)})
+    \omega_0(n_{\sigma(j)},\, n_{\sigma(i)})
   = \frac{1}{2T}.
 \end{equation}
 
@@ -904,7 +904,7 @@ Since $T$ decreases as the double sum increases:
     \max_{\substack{\sigma \in S_F \\ \beta \in M(K)}}
     \sum_{1 \leq j < i \leq |S|}
       \tilde{\beta}_i\, \tilde{\beta}_j\,
-      \omega_0(n_{\sigma(i)},\, n_{\sigma(j)})
+      \omega_0(n_{\sigma(j)},\, n_{\sigma(i)})
   \right]^{-1}.
   \qedhere
 \]
@@ -937,9 +937,9 @@ and each permutation $\sigma$ of $S$
     N_{id} &= n_{\sigma(i),d},
       & i &= 1, \ldots, |S|, \quad d = 1, \ldots, 4, \\
     H_{ij} &= \begin{cases}
-      \omega_0(n_{\sigma(j)}, n_{\sigma(i)}) & \text{if } i < j, \\
+      \omega_0(n_{\sigma(i)}, n_{\sigma(j)}) & \text{if } i < j, \\
       0 & \text{if } i = j, \\
-      \omega_0(n_{\sigma(i)}, n_{\sigma(j)}) & \text{if } i > j,
+      \omega_0(n_{\sigma(j)}, n_{\sigma(i)}) & \text{if } i > j,
     \end{cases} \\
     \eta_i &= h_{\sigma(i)},
       & i &= 1, \ldots, |S|.
@@ -982,7 +982,7 @@ $c_{\mathrm{EHZ}}(K) = \bigl(\max_{S,\sigma} \beta^\top H \beta\bigr)^{-1}$.
 \[
   \sum_{1 \leq j < i \leq |S|}
     \tilde{\beta}_i\, \tilde{\beta}_j\,
-    \omega_0(n_{\sigma(i)},\, n_{\sigma(j)})
+    \omega_0(n_{\sigma(j)},\, n_{\sigma(i)})
   = \tfrac{1}{2}\, \tilde{\beta}^\top H\, \tilde{\beta}.
 \]
 In particular,
@@ -992,7 +992,7 @@ $\nabla_{\tilde{\beta}}
 
 \begin{proof}
 For $i > j$,
-$H_{ij} = \omega_0(n_{\sigma(i)}, n_{\sigma(j)})$
+$H_{ij} = \omega_0(n_{\sigma(j)}, n_{\sigma(i)})$
 by definition of~$H$.
 Hence the double sum equals
 $\sum_{j < i} \tilde{\beta}_i\, \tilde{\beta}_j\, H_{ij}$.

@@ -680,7 +680,7 @@ placing the middle segments after the merged segment.
 By Lemma~\ref{lem:shoelace}:
 \[
   2A(z) = \sum_{1 \leq j < i \leq m}
-    |I_j|\,|I_i|\,\omega_0(w_i, w_j).
+    |I_j|\,|I_i|\,\omega_0(w_j, w_i).
 \]
 The rearrangement only affects cross-terms
 between the middle segments~$M$ and the two
@@ -689,7 +689,7 @@ The action difference between the merged and
 original curves is:
 \[
   \Delta A_{\mathrm{fwd}}
-  = |I_s| \sum_{i \in M} |I_i|\, \omega_0(w_i, v).
+  = |I_s| \sum_{i \in M} |I_i|\, \omega_0(v, w_i).
 \]
 
 \emph{Backward merge} (merge to position~$s$):
@@ -697,7 +697,7 @@ extend $I_s$ and place the middle segments before it.
 The same cross-term calculation gives:
 \[
   \Delta A_{\mathrm{bwd}}
-  = -|I_r| \sum_{i \in M} |I_i|\, \omega_0(w_i, v).
+  = -|I_r| \sum_{i \in M} |I_i|\, \omega_0(v, w_i).
 \]
 
 Since $|I_r|, |I_s| > 0$, the two action changes have
@@ -738,7 +738,7 @@ The curve~$z_*$ with parameters
 $(\sigma_*, s_*, T)$ is the limit.
 By Lemma~\ref{lem:shoelace},
 $A(\sigma, s, T) = T^2 \sum_{j<i} s_i\, s_j\,
-\omega_0(w_i, w_j)$ is continuous in $(\sigma, s, T)$,
+\omega_0(w_j, w_i)$ is continuous in $(\sigma, s, T)$,
 so $A(z_*) = \lim A(z_n)$.
 Since all velocities are pure Reeb vectors,
 $I_K(z_*) = T$.
