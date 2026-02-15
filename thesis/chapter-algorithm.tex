@@ -16,6 +16,7 @@
 % QC: polytope per Definition~\ref{def:polytope}, facet data per Definition~\ref{def:facets},
 % capacity per Definition~\ref{def:ehz-capacity}.
 
+% Jörn: text approved (06a976c) — from \begin{theorem} to \end{theorem}
 \begin{theorem}[EHZ capacity formula {\cite{HK2017}}]\label{thm:main}
 Let $K \subset \mathbb{R}^4$ be a polytope
 with $F$ facets, outward unit normals $n_1, \ldots, n_F \in S^3$,
@@ -47,6 +48,7 @@ where
 % Proof: Section~\ref{sec:simple-minimizer} (search space)
 % and Section~\ref{sec:algorithm-correctness} (algorithm correctness).
 
+% Jörn: text approved (06a976c) — from \textbf{Algorithm} to Return equation
 \medskip
 \noindent\textbf{Algorithm}\label{alg:ehz}
 (computes~\eqref{eq:ehz-main}).
@@ -114,6 +116,7 @@ Return
   c_{\mathrm{EHZ}}(K) = \bigl(\max_{S,\sigma} \beta^\top H \beta\bigr)^{-1}.
 \end{equation}
 
+% Jörn: text approved (06a976c)
 \begin{remark}\label{rem:critical-point}
 The solution $\beta$ with $\beta_i > 0$
 is the critical point of $\beta^\top H \beta$
@@ -121,6 +124,7 @@ subject to $N^\top \beta = 0$,
 $\eta^\top \beta = 1$, and $\beta_i > 0$.
 \end{remark}
 
+% Jörn: text approved (06a976c) — from \begin{lemma} to \end{lemma}
 \begin{lemma}[Well-definedness]\label{lem:well-defined}
 % QC: proves that beta^T H beta = nu for any solution, so the value
 %   recorded in Step~4 is independent of which solution the solver returns.
