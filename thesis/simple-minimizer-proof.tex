@@ -445,16 +445,17 @@ and finally prove each lemma.
 
 % QC: translates HK2017 Lemma 4.2.
 \begin{lemma}[Piecewise affine approximation]\label{lem:pw-affine-approx}
-Let $z \in W^{1,2}([0,T], \mathbb{R}^4)$ be closed with
-$\dot{z}(t) \in \mathrm{conv}\{R_1, \ldots, R_F\}$ a.e.
-For any $\varepsilon > 0$, there exists a closed piecewise affine
-curve~$z'$ with
-$\dot{z}'(t) \in \mathrm{conv}\{R_1, \ldots, R_F\}$ on each piece,
-$|A(z') - A(z)| < \varepsilon$, and
-$|I_K(z') - I_K(z)| < \varepsilon$.
-The centering condition $\frac{1}{T}\int_0^T z' = 0$ can be
-restored by translating~$z'$
-(which preserves $\dot{z}'$, $A(z')$, and~$I_K(z')$).
+Let $z \in W^{1,2}([0,T], \mathbb{R}^4)$ be closed and centered
+with $\dot{z}(t) \in \mathrm{conv}\{R_1, \ldots, R_F\}$ a.e.
+For any $\varepsilon > 0$, there exists a closed, centered,
+piecewise affine curve~$z'$ with
+$\dot{z}'(t) \in \mathrm{conv}\{R_1, \ldots, R_F\}$ on each piece
+and $\|z' - z\|_{W^{1,2}} < \varepsilon$.
+
+In particular,
+$|A(z') - A(z)| < C\varepsilon$ and
+$|I_K(z') - I_K(z)| < C\varepsilon$
+for a constant~$C$ depending only on~$z$.
 \end{lemma}
 
 % QC: translates HK2017 Lemma 4.4.
@@ -464,7 +465,10 @@ curve with velocities in $\mathrm{conv}\{R_1, \ldots, R_F\}$.
 There exists a closed piecewise affine curve~$z'$
 with the same period~$T$, whose velocity on each segment is a single
 Reeb vector~$R_i$, such that
-$A(z') \geq A(z)$ and $I_K(z') = T$.
+$A(z') \geq A(z)$.
+
+Since each velocity is a pure Reeb vector, $I_K(z') = T$
+(Remark~\ref{rem:reeb-properties}).
 \end{lemma}
 
 % QC: translates HK2017 Lemma 4.5.
@@ -600,9 +604,11 @@ a.e.\ and the convex hull is closed, the integral mean
 lies in $\mathrm{conv}\{R_1, \ldots, R_F\}$.
 
 Closure: $z'(0) = z(0) = z(T) = z'(T)$.
+Centering is restored by translating~$z'$
+(which preserves $\dot{z}'$, $A(z')$, and $I_K(z')$).
 
-Action and $I_K$ estimates follow from
-continuity in the $W^{1,2}$ norm:
+The ``in particular'' clause follows from
+continuity of $A$ and $I_K$ in the $W^{1,2}$ norm:
 $A$ is bilinear in $(z, \dot{z})$, and
 $I_K$ is continuous in~$\dot{z}$ since $h_K^2$ is
 locally Lipschitz.
