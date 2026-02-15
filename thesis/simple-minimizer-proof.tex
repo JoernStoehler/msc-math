@@ -670,37 +670,30 @@ $I_K(z') = \frac{1}{4} \int_0^T 4\, dt = T$.
 %   so one is always non-negative.
 Let $w_1, \ldots, w_m$ be the velocity sequence with
 $w_r = w_s = v$ for some $r < s$.
-Define
-\[
-  S = \sum_{i=r+1}^{s-1}
-    |I_i|\, \omega_0(w_i, v).
-\]
+Write $M = \{r{+}1, \ldots, s{-}1\}$ for the middle segments.
 
 \emph{Forward merge} (merge to position~$r$):
 remove $I_s$ and extend $I_r$ by~$|I_s|$,
-placing the middle segments $I_{r+1}, \ldots, I_{s-1}$
-after the merged segment.
+placing the middle segments after the merged segment.
 By Lemma~\ref{lem:shoelace}, the only terms
 that change involve pairs between the middle segments
 and positions $r$, $s$.
 In the original ordering, these contribute
-\[
-  \sum_{i \in M}
-    |I_i|\,(|I_r| - |I_s|)\, \omega_0(w_i, v),
-\]
-where $M = \{r{+}1, \ldots, s{-}1\}$;
+$\sum_{i \in M}
+  |I_i|\,(|I_r| - |I_s|)\, \omega_0(w_i, v)$;
 in the merged ordering, they contribute
 $\sum_{i \in M} |I_i|\,(|I_r| + |I_s|)\, \omega_0(w_i, v)$.
-The action change is
+Writing $S = \sum_{i \in M} |I_i|\, \omega_0(w_i, v)$
+for the weighted symplectic interaction between
+the middle segments and the repeated velocity~$v$,
+the action change is
 \[
   \Delta A_{\mathrm{fwd}} = |I_s| \cdot S.
 \]
 
 \emph{Backward merge} (merge to position~$s$):
 by the same calculation,
-\[
-  \Delta A_{\mathrm{bwd}} = -|I_r| \cdot S.
-\]
+$\Delta A_{\mathrm{bwd}} = -|I_r| \cdot S$.
 
 Since $|I_r|, |I_s| > 0$, the two action changes have
 opposite signs (or both vanish when $S = 0$).
