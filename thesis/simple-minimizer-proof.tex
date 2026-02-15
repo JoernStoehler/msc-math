@@ -425,12 +425,6 @@ $\min_\gamma A(\gamma) = \min_z I_K(z) = c_{\mathrm{EHZ}}(K)$.
 
 \subsection{Simplification Algorithm}\label{subsec:simplification}
 
-% QC: the heart of the proof. Takes an arbitrary dual minimizer z_0
-%   and constructs a simple dual minimizer z_* via 5 steps. Each step
-%   is designed to preserve or improve the optimality while adding
-%   structure. The final compactness argument (step 5) ensures we
-%   can take a limit that is both simple and optimal.
-
 % Jörn: text approved (4d6f7a6) — 1:1 restatement of thm:simple-minimizer
 \begin{theorem*}[Theorem~\ref{thm:simple-minimizer} restated]
 Let $K$ be a polytope.
@@ -444,300 +438,313 @@ Consequently,
 \]
 \end{theorem*}
 
-\begin{proof}[Proof of Theorem~\ref{thm:simple-minimizer}]
-A minimum-action generalized Reeb orbit on~$\partial K$ exists
-(Theorem~\ref{thm:orbit-existence-polytope}): the minimum of the action over
-all generalized Reeb orbits is attained and positive.
-By the primal-dual equivalence (Theorem~\ref{thm:primal-dual-equivalence}),
-any such primal minimizer~$\gamma$ corresponds to a dual minimizer
-$z_0 = \gamma - \mathrm{center}(\gamma)$ with $I_K(z_0) = T = A(\gamma)$.
-We will construct a simple dual minimizer~$z_*$, which then gives a
-simple primal minimizer via $\gamma_* = z_* + b$.
+The proof constructs a simple dual minimizer from an arbitrary one
+via four operations, each captured by a standalone lemma.
+We state all four lemmas, then prove the theorem by chaining them,
+and finally prove each lemma.
 
-Let $z_0$ be an arbitrary dual minimizer with period~$T > 0$. By the
-primal-dual equivalence, $A(z_0) = T = I_K(z_0)$. We construct a sequence
-of curves $z_0 \to z_1 \to z_2 \to z_3 \to z_4 \to z_*$, where each
-arrow represents one simplification step. The final curve~$z_*$ is
-simple (piecewise linear with pure Reeb vectors as velocities, each
-Reeb vector used at most once) and satisfies $A(z_*) = T = I_K(z_*)$,
-hence is also a minimizer.
-
-\paragraph{Step 0: Setup.}
-% QC: z_0 is any dual minimizer. We know A(z_0) = T = I_K(z_0) from the
-%   primal-dual equivalence. The goal is to perturb z_0 into a simple
-%   curve while preserving optimality.
-We have $z_0 \in W^{1,2} \cap C^0$ with $z_0(0) = z_0(T)$,
-$\frac{1}{T} \int_0^T z_0 = 0$, and $A(z_0) = T = I_K(z_0)$.
-
-\paragraph{Step 1: Piecewise linear approximation.}
-By the primal-dual correspondence (Theorem~\ref{thm:primal-dual-equivalence}),
-$z_0$ corresponds to a primal minimizer $\gamma$ on $\partial K$.
-Since $\gamma$ is a generalized Reeb orbit on $\partial K$, we have
-$\dot{\gamma}(t) \in J_0 N_K(\gamma(t))$ a.e., which for polytopes equals
-$\mathrm{conv}\{R_1,\ldots,R_F\}$ (the convex hull of facet Reeb vectors).
-By the correspondence $z_0 = \gamma - \mathrm{center}(\gamma)$, we have
-$\dot{z}_0(t) \in \mathrm{conv}\{R_1,\ldots,R_F\}$ a.e.
-
-% [AGENT-WRITTEN, UNREVIEWED BY JÖRN]
-% QC: translates HK2017 Lemma 4.2 (lines 275-293). The velocity-in-convex-hull
-%   argument uses the integral mean value in a convex set, which is standard.
-\textbf{Claim (Piecewise affine approximation):}
-For any $\varepsilon > 0$, there exists a piecewise affine curve $z_1 : [0,T] \to \mathbb{R}^4$ such that:
-\begin{itemize}
-\item $z_1(0) = z_1(T)$ (closed),
-\item $\|z - z_1\|_{W^{1,2}} < \varepsilon$ (approximation in Sobolev norm),
-\item $\dot{z}'(t) \in \mathrm{conv}\{R_1,\ldots,R_F\}$ on each affine piece,
-\item $|A(z_1) - A(z)| < \varepsilon$ and $|I_K(z_1) - I_K(z)| < \varepsilon$
-      (by continuity of $A$ and $I_K$ in $W^{1,2}$).
-\end{itemize}
-The centering condition $\frac{1}{T}\int_0^T z_1 = 0$ is ensured by translating $z_1$.
-
-\emph{Proof of Claim.}
-Choose a partition $0 = t_0 < t_1 < \cdots < t_m = T$
-fine enough that the piecewise affine interpolant $z_1$
-defined by $z_1(t_i) = z(t_i)$ (affine on each $(t_i, t_{i+1})$)
-satisfies $\|z - z_1\|_{W^{1,2}} < \varepsilon$.
-(This is a standard density result for $W^{1,2}$.)
-On each subinterval, the velocity is the integral mean of~$\dot{z}$:
-\[
-  \dot{z}'(t)
-  = \frac{z(t_{i+1}) - z(t_i)}{t_{i+1} - t_i}
-  = \frac{1}{t_{i+1} - t_i}\int_{t_i}^{t_{i+1}} \dot{z}(s)\, ds.
-\]
-Since $\dot{z}(s) \in \mathrm{conv}\{R_1,\ldots,R_F\}$ a.e.\
-and the convex hull is closed and convex, the integral mean
-also lies in $\mathrm{conv}\{R_1,\ldots,R_F\}$.
-Closure and action/functional estimates follow from
-$z_1(0) = z(0) = z(T) = z_1(T)$ and
-the continuity of $A$ and $I_K$ in the $W^{1,2}$ norm.
-\hfill$\diamond$
-
-\paragraph{Step 2: Split into pure Reeb vectors.}
-After Step~1, each velocity segment $\dot{z}'(t)$ is a convex combination
-of facet Reeb vectors. We replace each such segment by a concatenation
-of segments with \emph{pure} facet Reeb vectors (not convex combinations).
-
-% [AGENT-WRITTEN, UNREVIEWED BY JÖRN]
-% QC: action identity translates HK2017 Proposition 4.3 (lines 301-315).
-%   Splitting translates HK2017 Lemma 4.4 (lines 317-354).
-%   The sign-flip argument for choosing ordering is the core of Lemma 4.4's proof.
-We first establish an action identity for piecewise constant velocities.
-
-\textbf{Claim (Action identity):}
-Let $z$ be a closed piecewise affine curve with
-$\dot{z}(t) = \sum_{i=1}^m \mathbf{1}_{I_i}(t)\, w_i$,
-where $(I_i)_{i=1}^m$ partitions $[0,T]$. Then
+% QC: action identity translates HK2017 Proposition 4.3.
+\begin{lemma}[Action identity]\label{lem:action-identity}
+Let $z \colon [0,T] \to \mathbb{R}^4$ be a closed piecewise affine
+curve with piecewise constant velocity
+$\dot{z}(t) = w_k$ on interval~$I_k$,
+where $(I_1, \ldots, I_m)$ partitions~$[0,T]$.
+Then
 \begin{equation}\label{eq:action-identity}
   2A(z)
-  = \int_0^T \langle -J_0 \dot{z},\, z \rangle\, dt
-  = \sum_{i=1}^m \sum_{j=1}^{i-1}
+  = \sum_{1 \leq j < i \leq m}
     |I_i|\, |I_j|\, \omega_0(w_i, w_j).
 \end{equation}
+\end{lemma}
 
-\emph{Proof of Claim.}
+% QC: translates HK2017 Lemma 4.2.
+\begin{lemma}[Piecewise affine approximation]\label{lem:pw-affine-approx}
+Let $z \in W^{1,2}([0,T], \mathbb{R}^4)$ be closed with
+$\dot{z}(t) \in \mathrm{conv}\{R_1, \ldots, R_F\}$ a.e.
+For any $\varepsilon > 0$, there exists a closed piecewise affine
+curve~$z'$ with
+$\dot{z}'(t) \in \mathrm{conv}\{R_1, \ldots, R_F\}$ on each piece,
+$|A(z') - A(z)| < \varepsilon$, and
+$|I_K(z') - I_K(z)| < \varepsilon$.
+The centering condition $\frac{1}{T}\int_0^T z' = 0$ can be
+restored by translating~$z'$
+(which preserves $\dot{z}'$, $A(z')$, and~$I_K(z')$).
+\end{lemma}
+
+% QC: translates HK2017 Lemma 4.4.
+\begin{lemma}[Splitting mixed velocities]\label{lem:splitting}
+Let $z \colon [0,T] \to \mathbb{R}^4$ be a closed piecewise affine
+curve with velocities in $\mathrm{conv}\{R_1, \ldots, R_F\}$.
+There exists a closed piecewise affine curve~$z'$
+with the same period~$T$, whose velocity on each segment is a single
+Reeb vector~$R_i$, such that
+$A(z') \geq A(z)$ and $I_K(z') = T$.
+\end{lemma}
+
+% QC: translates HK2017 Lemma 4.5.
+\begin{lemma}[Merging repeated velocities]\label{lem:merging}
+Let $z \colon [0,T] \to \mathbb{R}^4$ be a closed piecewise affine
+curve whose velocity on each segment is a single Reeb vector~$R_i$.
+If some~$R_k$ appears in two non-contiguous segments, there
+exists a rearrangement~$z'$ that merges them into one contiguous
+segment with $A(z') \geq A(z)$ and $I_K(z') = I_K(z)$.
+Iterating until each Reeb vector appears at most once preserves
+these bounds.
+\end{lemma}
+
+%%% --- Proof of the theorem ---
+
+\begin{proof}[Proof of Theorem~\ref{thm:simple-minimizer}]
+A minimum-action generalized Reeb orbit on~$\partial K$ exists
+(Theorem~\ref{thm:orbit-existence-polytope}).
+By the primal-dual equivalence
+(Theorem~\ref{thm:primal-dual-equivalence}),
+any primal minimizer~$\gamma$ corresponds to a dual minimizer
+$z_0 = \gamma - \mathrm{center}(\gamma)$ with
+$I_K(z_0) = T = A(\gamma)$.
+Since $\gamma$ is a generalized Reeb orbit on a polytope,
+$\dot{z}_0(t) = \dot{\gamma}(t)
+  \in \mathrm{conv}\{R_1, \ldots, R_F\}$ a.e.
+
+For each $\varepsilon > 0$, apply the four lemmas in sequence:
+\begin{enumerate}
+\item \emph{Approximate}
+  (Lemma~\ref{lem:pw-affine-approx}):
+  obtain a closed, centered, piecewise affine $z_1$
+  with velocities in $\mathrm{conv}\{R_i\}$,
+  $|A(z_1) - T| < \varepsilon$, and
+  $|I_K(z_1) - T| < \varepsilon$.
+
+\item \emph{Split}
+  (Lemma~\ref{lem:splitting}):
+  obtain $z_2$ with pure Reeb velocities,
+  $A(z_2) \geq A(z_1)$, and $I_K(z_2) = T$.
+
+\item \emph{Merge}
+  (Lemma~\ref{lem:merging}):
+  obtain $z_3$ with each Reeb vector used at most once,
+  $A(z_3) \geq A(z_2)$, and $I_K(z_3) = T$.
+
+\item \emph{Rescale:}
+  multiply all durations by $\beta = T / A(z_3)$.
+  Velocities are unchanged (still pure Reeb vectors), so
+  \[
+    A(z_4) = \beta^2 A(z_3) = \frac{T^2}{A(z_3)},
+    \qquad
+    I_K(z_4) = \beta\, T = \frac{T^2}{A(z_3)}.
+  \]
+  Here $A$ scales quadratically
+  (by Lemma~\ref{lem:action-identity}, every term scales as
+  $|I_i|\,|I_j|$) and $I_K$ scales linearly in time
+  (since $h_K^2(-J_0\dot{z})$ is unchanged).
+\end{enumerate}
+
+\emph{Optimality bound.}
+The curve $z_4$ is feasible for the dual problem (closed,
+centered by translation, $A(z_4) = I_K(z_4)$).
+Since $z_0$ was a dual minimizer with $I_K(z_0) = T$,
+any feasible curve satisfies $I_K \geq T$, so
+$T^2 / A(z_3) \geq T$, i.e., $A(z_3) \leq T$.
+Combined with $A(z_3) \geq A(z_1) \geq T - \varepsilon$,
+we get $A(z_3) \to T$ as $\varepsilon \to 0$,
+hence $\beta \to 1$ and $I_K(z_4) \to T$.
+
+\emph{Compactness.}
+Each $z_4$ is encoded by a permutation
+$\sigma \in S_F$ and durations
+$(t_1, \ldots, t_F) \in \mathbb{R}_{\geq 0}^F$
+with $\sum t_i = T^{(4)}$ (the period of~$z_4$).
+Normalizing: $(t_i / T^{(4)}) \in \Delta^{F-1}$
+(the standard simplex).
+Since $S_F \times \Delta^{F-1}$ is compact,
+a subsequence $\varepsilon_n \to 0$ gives
+a constant $\sigma$ (by pigeonhole) and
+convergent normalized durations
+$s_i^n \to s_i^\infty \in \Delta^{F-1}$.
+Since $T^{(4)}_n \to T$, the durations
+$t_i^n \to t_i^\infty = s_i^\infty T$.
+
+Define $z_*$ with ordering~$\sigma$, velocities
+$R_{\sigma(i)}$, and durations $t_i^\infty$.
+Closure holds by continuity:
+$\sum t_i^\infty R_{\sigma(i)}
+  = \lim_n \sum t_i^n R_{\sigma(i)} = 0$.
+By Lemma~\ref{lem:action-identity}, $A$ is a polynomial
+in the durations, so
+$A(z_*) = \lim_n A(z_{4,n}) = T$.
+Since all velocities are pure Reeb vectors,
+$I_K(z_*) = T$
+(by the same computation as in
+Lemma~\ref{lem:splitting}).
+Thus $z_*$ is a dual minimizer, and it is simple by construction.
+
+By Theorem~\ref{thm:primal-dual-equivalence},
+$z_*$ corresponds to a primal minimizer
+$\gamma_* = z_* + b$ for some constant
+$b \in \mathbb{R}^4$.
+Since $z_*$ is simple, so is~$\gamma_*$.
+\end{proof}
+
+%%% --- Proofs of the lemmas ---
+
+\begin{proof}[Proof of Lemma~\ref{lem:action-identity}]
+% QC: direct computation. Key steps: (a) closure kills z(0) term,
+%   (b) self-pairing vanishes by omega_0 antisymmetry,
+%   (c) cross terms give the double sum.
 Write $z(t) = z(0) + \int_0^t \dot{z}(s)\, ds$.
-The term $\langle -J_0 \dot{z}(t),\, z(0) \rangle$
-integrates to $\langle -J_0[z(T) - z(0)],\, z(0) \rangle = 0$
-by closure. So
+Since $z(0) = z(T)$,
 \[
-  \int_0^T \langle -J_0 \dot{z}(t),\, z(t) \rangle\, dt
+  \int_0^T \langle -J_0 \dot{z}(t),\, z(0) \rangle\, dt
+  = \langle -J_0[z(T) - z(0)],\, z(0) \rangle = 0,
+\]
+so
+\[
+  2A(z)
+  = \int_0^T \langle -J_0 \dot{z}(t),\, z(t) \rangle\, dt
   = \int_0^T \Bigl\langle -J_0 \dot{z}(t),\,
     \int_0^t \dot{z}(s)\, ds \Bigr\rangle dt.
 \]
-For $t \in I_i = (\tau_{i-1}, \tau_i)$, we have $\dot{z}(t) = w_i$ and
-$\int_0^t \dot{z}(s)\, ds
-  = \sum_{j=1}^{i-1} |I_j|\, w_j + (t - \tau_{i-1})\, w_i$.
-The $w_i$ self-pairing vanishes:
-$\omega_0(w_i, w_i) = 0$.
-Thus
+For $t \in I_i$, the velocity is $\dot{z}(t) = w_i$ and
 \[
-  \int_{I_i} \langle -J_0 w_i,\, \textstyle\sum_{j<i} |I_j|\, w_j \rangle\, dt
+  \int_0^t \dot{z}(s)\, ds
+  = \sum_{j=1}^{i-1} |I_j|\, w_j + (t - \tau_{i-1})\, w_i,
+\]
+where $\tau_{i-1}$ is the left endpoint of~$I_i$.
+The self-pairing $\omega_0(w_i, w_i) = 0$ eliminates the
+last term, giving
+\[
+  \int_{I_i} \langle -J_0 w_i,\,
+    \textstyle\sum_{j<i} |I_j|\, w_j \rangle\, dt
   = |I_i| \sum_{j=1}^{i-1} |I_j|\, \omega_0(w_i, w_j).
 \]
 Summing over $i$ gives~\eqref{eq:action-identity}.
-\hfill$\diamond$
+\end{proof}
 
-\medskip
+\begin{proof}[Proof of Lemma~\ref{lem:pw-affine-approx}]
+% QC: standard density argument + integral mean value in a convex set.
+Choose a partition $0 = t_0 < t_1 < \cdots < t_m = T$
+fine enough that the piecewise affine interpolant~$z'$
+defined by $z'(t_k) = z(t_k)$ (affine on each
+$(t_k, t_{k+1})$) satisfies
+$\|z - z'\|_{W^{1,2}} < \varepsilon$.
+(Piecewise affine functions are dense in~$W^{1,2}$.)
 
-\textbf{Claim (Splitting convex combinations):}
-If $\dot{z}'(t) = \sum_{i=1}^k a_i R_i$ with $a_i > 0$, $\sum a_i = 1$
-on an interval~$I$,
-replace $I$ by $k$ subintervals of lengths $\Delta t_i = a_i |I|$,
-each with pure velocity $R_i$.
-Total time preserved: $\sum \Delta t_i = |I|$.
-The ordering can be chosen so that $A(z_2) \geq A(z_1)$.
+On each subinterval $(t_k, t_{k+1})$, the velocity
+of~$z'$ is the integral mean of~$\dot{z}$:
+\[
+  \dot{z}'(t)
+  = \frac{z(t_{k+1}) - z(t_k)}{t_{k+1} - t_k}
+  = \frac{1}{t_{k+1} - t_k}
+    \int_{t_k}^{t_{k+1}} \dot{z}(s)\, ds.
+\]
+Since $\dot{z}(s) \in \mathrm{conv}\{R_1, \ldots, R_F\}$
+a.e.\ and the convex hull is closed, the integral mean
+lies in $\mathrm{conv}\{R_1, \ldots, R_F\}$.
 
-\emph{Proof of Claim.}
-The replacement preserves closure
-($\sum \Delta t_i\, R_i = |I| \sum a_i R_i = |I|\, \dot{z}'|_I$,
-same displacement).
-By the action identity~\eqref{eq:action-identity},
-the action change from splitting interval~$I$ depends on the
-internal ordering of the pure segments. Reversing the ordering
-of the $k$ pure segments within~$I$ flips the sign of
-$\sum_{r < s} a_r a_s |I|^2\, \omega_0(R_s, R_r)$
-(since $\omega_0(R_s, R_r) = -\omega_0(R_r, R_s)$).
+Closure: $z'(0) = z(0) = z(T) = z'(T)$.
+
+Action and $I_K$ estimates follow from
+continuity of $A$ and $I_K$ in the $W^{1,2}$ norm.
+\end{proof}
+
+\begin{proof}[Proof of Lemma~\ref{lem:splitting}]
+% QC: core idea: split each mixed-velocity segment into pure segments,
+%   choosing the ordering to preserve or increase action.
+%   Then show I_K = T by direct computation from Reeb normalization.
+Process each segment independently.
+If segment~$I$ has velocity
+$v = \sum_{i=1}^k a_i R_i$ with $a_i > 0$,
+$\sum a_i = 1$,
+replace~$I$ by $k$ consecutive subsegments of
+lengths $\Delta t_i = a_i |I|$, each with pure
+velocity~$R_i$.
+
+\emph{Closure preserved:}
+the total displacement is
+$\sum_i \Delta t_i R_i
+  = |I| \sum_i a_i R_i = |I|\, v$,
+the same as the original segment.
+
+\emph{Period preserved:}
+$\sum_i \Delta t_i = |I| \sum_i a_i = |I|$.
+
+\emph{Action non-decrease:}
+by Lemma~\ref{lem:action-identity},
+splitting segment~$I$ introduces
+new internal cross-terms
+$\sum_{r < s} \Delta t_r\, \Delta t_s\,
+  \omega_0(R_r, R_s)$.
+Reversing the ordering of the $k$ subsegments
+flips the sign of this sum
+(since $\omega_0(R_r, R_s) = -\omega_0(R_s, R_r)$).
 Hence one of the two orderings yields
-$\Delta A \geq 0$. Apply this to each affine piece.
-\hfill$\diamond$
+$\Delta A \geq 0$.
 
-After splitting, the dual functional equals the period \emph{exactly}:
-
-The identity $I_K(z_2) = T$ follows from the Reeb normalization:
-for $\dot{z}(t) = R_i = \frac{2}{h_i} J_0 n_i$, we have
-\begin{align*}
-  h_K^2(-J_0 \dot{z}(t))
-  &= h_K^2\Bigl( -J_0 \cdot \frac{2}{h_i} J_0 n_i \Bigr)
-  = h_K^2\Bigl( \frac{2}{h_i} n_i \Bigr) \\
-  &= \Bigl( \frac{2}{h_i} \Bigr)^2 h_K^2(n_i)
+\emph{Dual functional:}
+for a pure Reeb velocity
+$R_i = \frac{2}{h_i} J_0 n_i$,
+\[
+  h_K^2(-J_0 R_i)
+  = h_K^2\Bigl(\frac{2}{h_i} n_i\Bigr)
+  = \frac{4}{h_i^2}\, h_K^2(n_i)
   = \frac{4}{h_i^2} \cdot h_i^2
   = 4,
-\end{align*}
-hence $I_K(z_2) = \frac{1}{4} \int_0^T 4 \, dt = T$.
-
-\paragraph{Step 3: Merge repeated Reeb vectors.}
-After Step~2, the velocity $\dot{z}''$ takes values in the finite set
-$\{R_1,\ldots,R_F\}$ (pure facet Reeb vectors).
-If the same Reeb vector $R_i$ appears in two disjoint time intervals,
-we merge them into a single contiguous segment.
-
-% [AGENT-WRITTEN, UNREVIEWED BY JÖRN]
-% QC: translates HK2017 Lemma 4.5 (lines 356-397). The action difference
-%   formula follows from the action identity by tracking which terms change.
-\textbf{Claim (Merging repeated velocities):}
-Suppose $w_r = w_s = R_A$ for some $r < s$.
-We can merge the two $R_A$ segments into one contiguous segment
-with $A(z_3) \geq A(z_2)$.
-
-\emph{Proof of Claim.}
-\textbf{Forward merge:} erase $I_s$ and extend $I_r$ by $|I_s|$,
-shifting $I_{r+1}, \ldots, I_{s-1}$ later.
-By the action identity~\eqref{eq:action-identity},
-the only terms that change involve pairs $(i,j)$ with
-$r < i < s$ and $j \in \{r, s\}$:
-the term $|I_s|\,|I_i|\,\omega_0(w_s, w_i)$ (with $i < s$)
-is replaced by $|I_s|\,|I_i|\,\omega_0(w_i, w_r)$ (with $i > r$).
-Since $w_r = w_s$, the action difference is
-\[
-  \Delta A_{\text{fwd}}
-  = \sum_{i=r+1}^{s-1} |I_s|\, |I_i|\, \omega_0(w_i, w_s).
 \]
-\textbf{Backward merge:} erase $I_r$ and extend $I_s$ by $|I_r|$.
-The same calculation gives
-$\Delta A_{\text{bwd}}
-  = \sum_{i=r+1}^{s-1} |I_r|\, |I_i|\, \omega_0(w_r, w_i)
-  = -\sum_{i=r+1}^{s-1} |I_r|\, |I_i|\, \omega_0(w_i, w_r)$.
-Since $w_r = w_s$, the two differences have opposite signs
-(up to the factor $|I_s|$ vs.\ $|I_r|$; when $|I_r| = |I_s|$
-they are exactly opposite). In either case,
-$\max(\Delta A_{\text{fwd}}, \Delta A_{\text{bwd}}) \geq 0$.
-Choose that option.
-Closure is preserved (total displacement unchanged).
-Iterate until each $R_i$ appears at most once.
-\hfill$\diamond$
+using $h_K(n_i) = h_i$
+(Definition~\ref{def:facets}).
+Hence
+$I_K(z') = \frac{1}{4} \int_0^T 4\, dt = T$.
+\end{proof}
 
-The dual functional $I_K$ is unchanged: it depends only on
-$h_K^2(-J_0\dot{z})$ integrated over time, which depends on the
-multiset of velocities and their durations, not their ordering.
-
-Iterating for all repeated Reeb vectors yields $z_3$ with:
-\begin{itemize}
-\item $A(z_3) \geq A(z_2)$ (each merge preserves or increases action),
-\item $I_K(z_3) = I_K(z_2) = T$ (rearrangement preserves $I_K$),
-\item each Reeb vector appears in at most one contiguous time interval.
-\end{itemize}
-
-\paragraph{Step 4: Rescale to restore normalization.}
-After Steps 2--3, the action may have changed slightly:
-$A(z_3) \geq A(z_2) \geq A(z_1) \geq T - \varepsilon$.
-We restore the normalization $A(z) = T$ by scaling all time intervals
-proportionally.
-
-Define the scaling factor
+\begin{proof}[Proof of Lemma~\ref{lem:merging}]
+% QC: the forward/backward merge argument uses the action identity.
+%   Key: the two action differences have opposite signs,
+%   so one is always non-negative.
+Let $w_1, \ldots, w_m$ be the velocity sequence with
+$w_r = w_s = v$ for some $r < s$.
+Define
 \[
-  \beta = \frac{T}{A(z_3)} \in (0, 1 + O(\varepsilon/T)].
+  S = \sum_{i=r+1}^{s-1}
+    |I_i|\, \omega_0(w_i, v).
 \]
-Construct $z_4$ by \emph{multiplying each time interval by $\beta$}:
-\begin{itemize}
-\item Original: velocity $R_i$ on interval of length $\Delta t_i$
-\item Scaled: velocity $R_i$ on interval of length $\beta \cdot \Delta t_i$
-\end{itemize}
-The velocities remain unchanged (still pure Reeb vectors in direction and magnitude).
 
-\textbf{Consequences:}
-\begin{align*}
-  T^{(4)} &= \beta \sum \Delta t_i = \beta \cdot T = \frac{T^2}{A(z_3)}, \\
-  A(z_4) &= \beta^2 \cdot A(z_3)
-    \quad\text{(action scales as [time]$^2$ when velocities constant)} \\
-  &= \left(\frac{T}{A(z_3)}\right)^2 \cdot A(z_3) = \frac{T^2}{A(z_3)} = T^{(4)}, \\
-  I_K(z_4) &= \beta \cdot I_K(z_3)
-    \quad\text{($I_K = \frac{1}{4}\int h_K^2(-J_0\dot{z})\,dt$ is linear in time)} \\
-  &= \frac{T}{A(z_3)} \cdot T = \frac{T^2}{A(z_3)}.
-\end{align*}
-Hence $A(z_4) = T^{(4)}$ (normalization restored) and
-$I_K(z_4) = T^{(4)}$.
-
-Since $z$ was a dual minimizer with $I_K(z) = T$, feasibility gives
-$I_K(z_4) \geq T$, hence $T^2/A(z_3) \geq T$, so $A(z_3) \leq T$.
-Combined with $A(z_3) \geq T - \varepsilon$, as $\varepsilon \to 0$
-we have $A(z_3) \to T$, so $\beta \to 1$ and $T^{(4)} \to T$.
-
-\paragraph{Step 5: Compactness and limit.}
-A simple curve is encoded by finite data:
-\begin{itemize}
-\item A permutation $\sigma \in S_F$ (facet visit order),
-\item Time durations $(t_1,\ldots,t_F) \in \mathbb{R}^F$ with $t_i \geq 0$,
-      $\sum t_i = T^{(4)}$, $\sum t_i R_{\sigma(i)} = 0$ (closure).
-\end{itemize}
-
-% [AGENT-WRITTEN ARGUMENT, UNREVIEWED BY JÖRN]
-% QC: uses finite-dimensional compactness (S_F × simplex) and the action
-%   identity to bypass W^{1,2} convergence. A and I_K are computed
-%   directly from finite data (σ, durations), so convergence of durations
-%   gives convergence of A and I_K without functional analysis.
-Each curve $z_{4,n}$ (from Step~4 with $\varepsilon_n \to 0$)
-is determined by a permutation $\sigma^n \in S_F$
-and durations $(t^n_1, \ldots, t^n_F) \in \mathbb{R}_{\geq 0}^F$
-with $\sum t^n_i = T^{(4)}_n$ and $\sum t^n_i R_{\sigma^n(i)} = 0$.
-
-The normalized durations
-$(t^n_1/T^{(4)}_n, \ldots, t^n_F/T^{(4)}_n)$
-lie in the $(F{-}1)$-simplex
-$\Delta^{F-1} = \{s \in \mathbb{R}_{\geq 0}^F : \sum s_i = 1\}$.
-Since $S_F \times \Delta^{F-1}$ is compact (finite $\times$ compact),
-a subsequence converges:
-\begin{itemize}
-\item $\sigma^n = \sigma$ (constant, by pigeonhole),
-\item $(t^n_1/T^{(4)}_n, \ldots, t^n_F/T^{(4)}_n)
-      \to (s^\infty_1, \ldots, s^\infty_F) \in \Delta^{F-1}$,
-\item $T^{(4)}_n \to T$ (from Step~4).
-\end{itemize}
-Define $z_*$ as the piecewise affine curve with ordering $\sigma$,
-velocities $R_{\sigma(i)}$, and durations $t^\infty_i = s^\infty_i \cdot T$.
-The closure condition
-$\sum t^\infty_i R_{\sigma(i)}
-  = \lim_n \sum t^n_i R_{\sigma(i)} = 0$
-holds by continuity.
-By the action identity~\eqref{eq:action-identity},
-$A$ is a polynomial in the durations (for fixed $\sigma$), so
+\emph{Forward merge} (merge to position~$r$):
+remove $I_s$ and extend $I_r$ by~$|I_s|$,
+placing the middle segments $I_{r+1}, \ldots, I_{s-1}$
+after the merged segment.
+By Lemma~\ref{lem:action-identity}, the only terms
+that change involve pairs between the middle segments
+and positions $r$, $s$.
+In the original ordering, these contribute
 \[
-  A(z_*) = \lim_{n\to\infty} A(z_{4,n})
-  = \lim_{n\to\infty} T^{(4)}_n = T.
+  \sum_{i \in M}
+    |I_i|\,(|I_r| - |I_s|)\, \omega_0(w_i, v),
 \]
-Since all velocities are pure Reeb vectors,
-$I_K(z_*) = T$ (same computation as Step~2).
-As $z$ was a dual minimizer with $I_K(z) = T$,
-and $z_*$ is feasible (closed, $A(z_*) = T$, centered
-by translation) with $I_K(z_*) = T$,
-the curve $z_*$ is also a dual minimizer.
-It is simple by construction
-(piecewise affine, pure Reeb velocities, each facet used at most once).
+where $M = \{r{+}1, \ldots, s{-}1\}$;
+in the merged ordering, they contribute
+$\sum_{i \in M} |I_i|\,(|I_r| + |I_s|)\, \omega_0(w_i, v)$.
+The action change is
+\[
+  \Delta A_{\mathrm{fwd}} = |I_s| \cdot S.
+\]
 
-\paragraph{Wrapup.}
-By Theorem~\ref{thm:primal-dual-equivalence}, the dual minimizer~$z_*$
-corresponds to a primal minimizer $\gamma = z_* + b$ for some constant
-$b \in \mathbb{R}^4$. Since $z_*$ is simple (piecewise linear with pure
-Reeb vectors, each used at most once), $\gamma$ is also simple
-(Definition~\ref{def:simple-reeb-orbit}). This completes the proof.
+\emph{Backward merge} (merge to position~$s$):
+by the same calculation,
+\[
+  \Delta A_{\mathrm{bwd}} = -|I_r| \cdot S.
+\]
+
+Since $|I_r|, |I_s| > 0$, the two action changes have
+opposite signs (or both vanish when $S = 0$).
+Hence
+$\max(\Delta A_{\mathrm{fwd}},
+  \Delta A_{\mathrm{bwd}}) \geq 0$.
+
+Closure is preserved: the total displacement
+$\sum |I_k| w_k$ is unchanged by rearrangement.
+The dual functional $I_K$ is unchanged:
+$h_K^2(-J_0 \dot{z})$ depends only on the velocity
+at each time, not on its position in the sequence,
+so reordering segments preserves~$\int h_K^2$.
 \end{proof}
 
