@@ -15,7 +15,9 @@ pub const EPS_Q_POSITIVE: f64 = 1e-15;
 /// Floor for SVD: singular values below max_sv * EPS_SVD_FLOOR are treated as exactly zero.
 const EPS_SVD_FLOOR: f64 = 1e-12;
 
-/// Gap ratio threshold for rank detection. See hk2017/src/lib.rs for full explanation.
+/// Gap ratio threshold for rank detection: if sv[i-1]/sv[i] > this, sv[i..] are
+/// treated as part of the null space. Must stay in sync with hk2017/src/lib.rs.
+/// See that file for full rationale, known limitations, and validation requirements.
 const SVD_GAP_THRESHOLD: f64 = 100.0;
 
 /// Maximum acceptable residual norm for the KKT solution (rejects numerically poor solutions).
@@ -115,16 +117,15 @@ fn find_positive_beta_nd(beta0: &[f64], null_vecs: &[Vec<f64>]) -> Option<Vec<f6
     }
 }
 
-/// Solve the KKT system for max Q(β) subject to N^T β = 0, η^T β = 1.
+/// Build the KKT matrix and RHS vector for the constrained optimization.
 ///
-/// Uses SVD with gap-based rank detection. See hk2017/src/lib.rs for full explanation.
-pub fn solve_kkt(
+/// See hk2017/src/lib.rs for the full system description.
+fn build_kkt_system(
     normals: &[Vector4<f64>],
     heights: &[f64],
     perm: &[usize],
-) -> Option<(Vec<f64>, f64)> {
+) -> (DMatrix<f64>, DVector<f64>) {
     let m = perm.len();
-
     let size = m + 5;
     let mut kkt = DMatrix::zeros(size, size);
     let mut rhs = DVector::zeros(size);
@@ -155,7 +156,22 @@ pub fn solve_kkt(
     }
     rhs[m + 4] = 1.0;
 
-    // SVD with gap-based rank detection
+    (kkt, rhs)
+}
+
+/// SVD path with gap-based rank detection.
+///
+/// See hk2017/src/lib.rs for full explanation of the gap-based approach.
+fn solve_kkt_svd_path(
+    kkt: &DMatrix<f64>,
+    rhs: &DVector<f64>,
+    normals: &[Vector4<f64>],
+    heights: &[f64],
+    perm: &[usize],
+) -> Option<(Vec<f64>, f64)> {
+    let m = perm.len();
+    let size = m + 5;
+
     let svd = kkt.clone().svd(true, true);
     let sv = &svd.singular_values;
     let max_sv = sv.iter().cloned().fold(0.0f64, f64::max);
@@ -179,13 +195,13 @@ pub fn solve_kkt(
     // Manual pseudoinverse using only top `rank` SVs
     let mut x0 = DVector::zeros(size);
     for i in 0..rank {
-        let coeff = u.column(i).dot(&rhs) / sv[i];
+        let coeff = u.column(i).dot(rhs) / sv[i];
         for j in 0..size {
             x0[j] += coeff * v_t[(i, j)];
         }
     }
 
-    let residual = (&kkt * &x0 - &rhs).norm();
+    let residual = (kkt * &x0 - rhs).norm();
     if residual > EPS_KKT_RESIDUAL {
         return None;
     }
@@ -231,4 +247,47 @@ pub fn solve_kkt(
 
     let q_val = q_from_beta(normals, perm, &beta_opt);
     Some((beta_opt, q_val))
+}
+
+/// Solve the KKT system for max Q(β) subject to N^T β = 0, η^T β = 1.
+///
+/// Production variant: LU fast path + SVD fallback with gap-based rank detection.
+/// See hk2017/src/lib.rs for full explanation.
+pub fn solve_kkt(
+    normals: &[Vector4<f64>],
+    heights: &[f64],
+    perm: &[usize],
+) -> Option<(Vec<f64>, f64)> {
+    let m = perm.len();
+    let (kkt, rhs) = build_kkt_system(normals, heights, perm);
+
+    // --- LU fast path ---
+    let lu = kkt.clone().full_piv_lu();
+    if lu.is_invertible() {
+        if let Some(solution) = lu.solve(&rhs) {
+            let residual = (&kkt * &solution - &rhs).norm();
+            if residual <= EPS_KKT_RESIDUAL {
+                let beta: Vec<f64> = (0..m).map(|i| solution[i]).collect();
+                if beta.iter().all(|&b| b > EPS_BETA_POSITIVE) {
+                    let q_val = q_from_beta(normals, perm, &beta);
+                    return Some((beta, q_val));
+                }
+            }
+        }
+    }
+
+    // --- SVD fallback ---
+    solve_kkt_svd_path(&kkt, &rhs, normals, heights, perm)
+}
+
+/// Solve the KKT system using SVD only (no LU fast path).
+///
+/// Ablation variant for benchmarking and testing.
+pub fn solve_kkt_svd_only(
+    normals: &[Vector4<f64>],
+    heights: &[f64],
+    perm: &[usize],
+) -> Option<(Vec<f64>, f64)> {
+    let (kkt, rhs) = build_kkt_system(normals, heights, perm);
+    solve_kkt_svd_path(&kkt, &rhs, normals, heights, perm)
 }

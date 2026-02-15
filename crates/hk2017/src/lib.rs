@@ -32,10 +32,31 @@ const EPS_Q_POSITIVE: f64 = 1e-15;
 const EPS_SVD_FLOOR: f64 = 1e-12;
 
 /// Gap ratio threshold for rank detection: if sv[i-1]/sv[i] > this, sv[i..] are
-/// treated as part of the null space. Catches near-degenerate KKT systems where a
-/// singular value ~1e-4 is separated from genuine nonzero values ~0.5 by a gap of
-/// ~600x. Without gap detection, the pseudoinverse amplifies this sv by ~1/sv ≈ 1000,
-/// producing garbage β₀ and breaking cyclic invariance.
+/// treated as part of the null space.
+///
+/// **Why 100:** Chosen ad-hoc from one data point (commit dd87a8a). The degenerate
+/// (4,4) Lagrangian product at θ≈0° has sv[8]=0.51, sv[9]=8.6e-4 → gap ratio ≈594.
+/// Well-conditioned random polytopes typically have gap ratios <10. The threshold 100
+/// sits between these two regimes.
+///
+/// **What it catches:** Near-degenerate KKT systems where a singular value ~1e-4 is
+/// separated from genuine nonzero values ~0.5. Without gap detection, the pseudoinverse
+/// amplifies this sv by ~1/sv ≈ 1000, producing garbage β₀.
+///
+/// **Known limitation:** Random polytopes can have legitimate small singular values with
+/// gap ratios 100–300x. The threshold over-truncates these (26/23,650 cases at F=7).
+/// The residual check (`EPS_KKT_RESIDUAL`) catches the over-truncation and rejects the
+/// bad pseudoinverse, so these orbits are dropped. No capacity impact observed (dropped
+/// orbits are non-optimal). But this is a correctness gap in principle.
+///
+/// **Options for improvement** (not yet implemented):
+/// 1. Raise to ~1000 (but would miss the 594x degenerate case)
+/// 2. Two-pass: try full rank first, fall back to gap-based if residual fails
+/// 3. Condition-number-based: use cond(KKT) instead of gap ratio
+///
+/// **Validation required if changed:** (a) (4,4)/(4,5)/(4,6) degenerate cases,
+/// (b) all fixture polytopes, (c) cross-validation on polygon_grid sweep.
+/// Regression tests: `svd_gap_ratio_44_degenerate`, `svd_gap_ratio_44_theta43`.
 const SVD_GAP_THRESHOLD: f64 = 100.0;
 
 /// Maximum acceptable residual norm for the KKT solution (rejects numerically poor solutions).
@@ -269,35 +290,22 @@ fn find_positive_beta_nd(beta0: &[f64], null_vecs: &[Vec<f64>]) -> Option<Vec<f6
     }
 }
 
-/// Solve the KKT system for max Q(β) subject to N^T β = 0, η^T β = 1.
+/// Build the KKT matrix and RHS vector for the constrained optimization.
 ///
-/// The KKT conditions are:
-///   H β = N λ + ν η      (m equations)
-///   N^T β = 0             (4 equations)
-///   η^T β = 1             (1 equation)
+/// The KKT system is:
+/// ```text
+/// [ H    | -N   | -η ] [ β ]   [ 0 ]
+/// [ N^T  |  0   |  0 ] [ λ ] = [ 0 ]
+/// [ η^T  |  0   |  0 ] [ ν ]   [ 1 ]
+/// ```
 ///
-/// This is an (m+5) × (m+5) linear system in (β, λ, ν).
-///
-/// Returns Some((β, Q(β))) if a solution with β > 0 exists, None otherwise.
-///
-/// When the KKT system is rank-deficient (common for polytopes with
-/// axis-aligned normals in symplectic subplanes), there is a family of
-/// solutions parameterized by the null space. Q(β) is constant along
-/// the null space, so we search for any member with β > 0.
-///
-/// Note: chapter-algorithm.tex `eq:linear-system` omits the ν multiplier,
-/// making the system overdetermined. We use the correct KKT system here.
-pub(crate) fn solve_kkt(
+/// Returns `(kkt, rhs)` where `kkt` is `(m+5) × (m+5)`.
+fn build_kkt_system(
     normals: &[nalgebra::Vector4<f64>],
     heights: &[f64],
     perm: &[usize],
-) -> Option<(Vec<f64>, f64)> {
+) -> (DMatrix<f64>, DVector<f64>) {
     let m = perm.len();
-
-    // Build KKT system directly (no separate H matrix):
-    // [ H    | -N   | -η ] [ β ]   [ 0 ]
-    // [ N^T  |  0   |  0 ] [ λ ] = [ 0 ]
-    // [ η^T  |  0   |  0 ] [ ν ]   [ 1 ]
     let size = m + 5;
     let mut kkt = DMatrix::zeros(size, size);
     let mut rhs = DVector::zeros(size);
@@ -330,18 +338,31 @@ pub(crate) fn solve_kkt(
     // RHS: [0, ..., 0, 1]
     rhs[m + 4] = 1.0;
 
-    // --- SVD with gap-based rank detection ---
-    //
-    // We use SVD (not LU) because SVD reveals the rank structure. For near-
-    // degenerate KKT systems (e.g. Lagrangian products near special angles),
-    // a singular value ~1e-4 can be separated from genuine values ~0.5 by a
-    // gap of ~600x. A fixed tolerance either misses this (too tight → garbage
-    // pseudoinverse, broken cyclic invariance) or over-truncates for well-
-    // conditioned systems (too loose → conformality violations).
-    //
-    // Gap-based detection: walk from the smallest sv upward, treating sv[i]
-    // as zero if sv[i-1]/sv[i] > SVD_GAP_THRESHOLD. This adapts to each
-    // system's spectrum.
+    (kkt, rhs)
+}
+
+/// SVD path with gap-based rank detection.
+///
+/// Operates on a pre-built KKT matrix. Used by both `solve_kkt` (as fallback
+/// after LU fails) and `solve_kkt_svd_only` (directly).
+///
+/// Gap-based detection: walk from the smallest singular value upward, treating
+/// sv[i] as zero if sv[i-1]/sv[i] > SVD_GAP_THRESHOLD. This adapts to each
+/// system's spectrum — catches near-degenerate systems (e.g. Lagrangian products
+/// near special angles) where a singular value ~1e-4 is separated from genuine
+/// values ~0.5 by a gap of ~600x. A fixed tolerance either misses this
+/// (too tight → garbage pseudoinverse) or over-truncates (too loose →
+/// conformality violations).
+fn solve_kkt_svd_path(
+    kkt: &DMatrix<f64>,
+    rhs: &DVector<f64>,
+    normals: &[nalgebra::Vector4<f64>],
+    heights: &[f64],
+    perm: &[usize],
+) -> Option<(Vec<f64>, f64)> {
+    let m = perm.len();
+    let size = m + 5;
+
     let svd = kkt.clone().svd(true, true);
     let sv = &svd.singular_values;
     let max_sv = sv.iter().cloned().fold(0.0f64, f64::max);
@@ -369,13 +390,13 @@ pub(crate) fn solve_kkt(
     // This avoids relying on nalgebra's solve() tolerance interpretation.
     let mut x0 = DVector::zeros(size);
     for i in 0..rank {
-        let coeff = u.column(i).dot(&rhs) / sv[i];
+        let coeff = u.column(i).dot(rhs) / sv[i];
         for j in 0..size {
             x0[j] += coeff * v_t[(i, j)];
         }
     }
 
-    let residual = (&kkt * &x0 - &rhs).norm();
+    let residual = (kkt * &x0 - rhs).norm();
     if residual > EPS_KKT_RESIDUAL {
         return None;
     }
@@ -426,6 +447,69 @@ pub(crate) fn solve_kkt(
 
     let q_val = q_from_beta(normals, perm, &beta_opt);
     Some((beta_opt, q_val))
+}
+
+/// Solve the KKT system for max Q(β) subject to N^T β = 0, η^T β = 1.
+///
+/// Production variant: tries LU decomposition first, falls back to SVD with
+/// gap-based rank detection for rank-deficient systems.
+///
+/// Note: profiling showed the LU fast path adds 6-12% overhead in practice
+/// because most permutations yield β ≤ 0 even when LU reports invertible.
+/// The SVD-only variant (`solve_kkt_svd_only`) is faster. LU is retained
+/// for evaluation but not used in the production capacity algorithms.
+///
+/// Returns Some((β, Q(β))) if a solution with β > 0 exists, None otherwise.
+///
+/// When the KKT system is rank-deficient (common for polytopes with
+/// axis-aligned normals in symplectic subplanes), there is a family of
+/// solutions parameterized by the null space. Q(β) is constant along
+/// the null space, so we search for any member with β > 0.
+///
+/// Note: chapter-algorithm.tex `eq:linear-system` omits the ν multiplier,
+/// making the system overdetermined. We use the correct KKT system here.
+pub(crate) fn solve_kkt(
+    normals: &[nalgebra::Vector4<f64>],
+    heights: &[f64],
+    perm: &[usize],
+) -> Option<(Vec<f64>, f64)> {
+    let m = perm.len();
+    let (kkt, rhs) = build_kkt_system(normals, heights, perm);
+
+    // --- LU fast path ---
+    // Full-pivoting LU handles the common case (full-rank, well-conditioned).
+    // Falls through to SVD when: not invertible, bad residual, or β ≤ 0.
+    let lu = kkt.clone().full_piv_lu();
+    if lu.is_invertible() {
+        if let Some(solution) = lu.solve(&rhs) {
+            let residual = (&kkt * &solution - &rhs).norm();
+            if residual <= EPS_KKT_RESIDUAL {
+                let beta: Vec<f64> = (0..m).map(|i| solution[i]).collect();
+                if beta.iter().all(|&b| b > EPS_BETA_POSITIVE) {
+                    let q_val = q_from_beta(normals, perm, &beta);
+                    return Some((beta, q_val));
+                }
+            }
+        }
+    }
+
+    // --- SVD fallback with gap-based rank detection ---
+    solve_kkt_svd_path(&kkt, &rhs, normals, heights, perm)
+}
+
+/// Solve the KKT system using SVD only (no LU fast path).
+///
+/// Ablation variant for benchmarking and testing. Uses the same gap-based
+/// rank detection as the SVD fallback in `solve_kkt`, but skips the LU
+/// fast path. Comparing `solve_kkt` vs `solve_kkt_svd_only` isolates
+/// the LU fast path's contribution to performance and correctness.
+pub(crate) fn solve_kkt_svd_only(
+    normals: &[nalgebra::Vector4<f64>],
+    heights: &[f64],
+    perm: &[usize],
+) -> Option<(Vec<f64>, f64)> {
+    let (kkt, rhs) = build_kkt_system(normals, heights, perm);
+    solve_kkt_svd_path(&kkt, &rhs, normals, heights, perm)
 }
 
 /// Generate all combinations of `k` elements from `{0, ..., n-1}` in lexicographic order.
