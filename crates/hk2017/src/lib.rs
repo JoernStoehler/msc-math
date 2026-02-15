@@ -110,6 +110,123 @@ pub fn ehz_capacity(polytope: &Polytope4D) -> Option<EhzResult> {
     })
 }
 
+/// Compute Q(β) = Σ_{i>j} β_i β_j ω₀(n_{σ(i)}, n_{σ(j)}).
+///
+/// Note: uses ω₀(n_{σ(i)}, n_{σ(j)}) with i > j directly, NOT from H_{ij}.
+/// H is symmetric by construction, but Q needs the antisymmetric ω₀ values.
+fn q_from_beta(
+    normals: &[nalgebra::Vector4<f64>],
+    perm: &[usize],
+    beta: &[f64],
+) -> f64 {
+    let m = beta.len();
+    (1..m)
+        .flat_map(|i| (0..i).map(move |j| (i, j)))
+        .map(|(i, j)| beta[i] * beta[j] * omega0(&normals[perm[i]], &normals[perm[j]]))
+        .sum()
+}
+
+/// Search null space for a β > 0 solution (1D null space case).
+///
+/// Given particular solution β₀ and null space vector v, find α such that
+/// β₀ + α·v > 0 componentwise. Returns the midpoint of the feasible interval
+/// for numerical stability.
+///
+/// Q(β) is constant along the null space (the null space directions satisfy
+/// the KKT stationarity conditions, so the objective doesn't change).
+fn find_positive_beta_1d(beta0: &[f64], v: &[f64]) -> Option<Vec<f64>> {
+    let m = beta0.len();
+    let (mut lo, mut hi) = (f64::NEG_INFINITY, f64::INFINITY);
+
+    for j in 0..m {
+        if v[j].abs() < 1e-15 {
+            // This component doesn't change with α
+            if beta0[j] <= EPS_BETA_POSITIVE {
+                return None; // Can't make this component positive
+            }
+        } else {
+            let bound = -beta0[j] / v[j];
+            if v[j] > 0.0 {
+                lo = lo.max(bound);
+            } else {
+                hi = hi.min(bound);
+            }
+        }
+    }
+
+    if lo >= hi {
+        return None; // No feasible α
+    }
+
+    // Pick midpoint for maximum margin
+    let alpha = if lo.is_finite() && hi.is_finite() {
+        (lo + hi) / 2.0
+    } else if lo.is_finite() {
+        lo + 1.0
+    } else if hi.is_finite() {
+        hi - 1.0
+    } else {
+        0.0
+    };
+
+    let beta: Vec<f64> = (0..m).map(|j| beta0[j] + alpha * v[j]).collect();
+    if beta.iter().all(|&b| b > EPS_BETA_POSITIVE) {
+        Some(beta)
+    } else {
+        None
+    }
+}
+
+/// Search null space for a β > 0 solution (multi-dimensional null space).
+///
+/// Uses iterative coordinate ascent on the most-violated constraint.
+fn find_positive_beta_nd(beta0: &[f64], null_vecs: &[Vec<f64>]) -> Option<Vec<f64>> {
+    let m = beta0.len();
+    let k = null_vecs.len();
+    let mut alpha = vec![0.0; k];
+
+    for _iter in 0..100 {
+        // Current β
+        let beta: Vec<f64> = (0..m)
+            .map(|j| beta0[j] + (0..k).map(|i| alpha[i] * null_vecs[i][j]).sum::<f64>())
+            .collect();
+
+        // Find most-violated component
+        let (worst_j, worst_val) = beta
+            .iter()
+            .enumerate()
+            .min_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
+            .unwrap();
+
+        if *worst_val > EPS_BETA_POSITIVE {
+            return Some(beta);
+        }
+
+        // Gradient of β[worst_j] w.r.t. α: g_i = null_vecs[i][worst_j]
+        let grad_sq: f64 = (0..k).map(|i| null_vecs[i][worst_j].powi(2)).sum();
+        if grad_sq < 1e-30 {
+            return None; // Can't improve this component
+        }
+
+        // Step to push β[worst_j] to a small positive value
+        let target = EPS_BETA_POSITIVE * 100.0;
+        let step = (target - worst_val) / grad_sq;
+        for i in 0..k {
+            alpha[i] += step * null_vecs[i][worst_j];
+        }
+    }
+
+    // Final feasibility check
+    let beta: Vec<f64> = (0..m)
+        .map(|j| beta0[j] + (0..k).map(|i| alpha[i] * null_vecs[i][j]).sum::<f64>())
+        .collect();
+    if beta.iter().all(|&b| b > EPS_BETA_POSITIVE) {
+        Some(beta)
+    } else {
+        None
+    }
+}
+
 /// Solve the KKT system for max Q(β) subject to N^T β = 0, η^T β = 1.
 ///
 /// The KKT conditions are:
@@ -119,11 +236,16 @@ pub fn ehz_capacity(polytope: &Polytope4D) -> Option<EhzResult> {
 ///
 /// This is an (m+5) × (m+5) linear system in (β, λ, ν).
 ///
-/// Returns Some((β, Q(β))) if the system has a unique solution, None otherwise.
+/// Returns Some((β, Q(β))) if a solution with β > 0 exists, None otherwise.
+///
+/// When the KKT system is rank-deficient (common for polytopes with
+/// axis-aligned normals in symplectic subplanes), there is a family of
+/// solutions parameterized by the null space. Q(β) is constant along
+/// the null space, so we search for any member with β > 0.
 ///
 /// Note: chapter-algorithm.tex `eq:linear-system` omits the ν multiplier,
 /// making the system overdetermined. We use the correct KKT system here.
-fn solve_kkt(
+pub(crate) fn solve_kkt(
     normals: &[nalgebra::Vector4<f64>],
     heights: &[f64],
     perm: &[usize],
@@ -166,38 +288,74 @@ fn solve_kkt(
     // RHS: [0, ..., 0, 1]
     rhs[m + 4] = 1.0;
 
-    // Solve KKT system. Try LU first (fast), fall back to SVD for rank-deficient
-    // systems (e.g. hypercube's optimal 4-facet orbit uses normals in a 2D
-    // symplectic subplane, giving rank(N^T) = 2).
+    // --- Fast path: LU decomposition ---
+    // If the system is full-rank and the solution has β > 0, return immediately.
     let lu = kkt.clone().full_piv_lu();
-    let solution = if lu.is_invertible() {
-        lu.solve(&rhs)?
-    } else {
-        let svd = kkt.clone().svd(true, true);
-        svd.solve(&rhs, EPS_SVD_TOLERANCE).ok()?
-    };
+    if lu.is_invertible() {
+        if let Some(solution) = lu.solve(&rhs) {
+            let residual = (&kkt * &solution - &rhs).norm();
+            if residual <= EPS_KKT_RESIDUAL {
+                let beta: Vec<f64> = (0..m).map(|i| solution[i]).collect();
+                if beta.iter().all(|&b| b > EPS_BETA_POSITIVE) {
+                    let q_val = q_from_beta(normals, perm, &beta);
+                    return Some((beta, q_val));
+                }
+                // LU says invertible but β ≤ 0. Could be:
+                // (a) genuinely infeasible (full-rank, unique solution with β ≤ 0), or
+                // (b) LU failed to detect rank deficiency (near-singular system).
+                // Fall through to SVD to distinguish these cases.
+            }
+        }
+    }
 
-    // Verify the solution satisfies the constraints
-    let residual = (&kkt * &solution - &rhs).norm();
+    // --- SVD path: handles rank-deficient systems ---
+    let svd = kkt.clone().svd(true, true);
+    let sv = &svd.singular_values;
+    let max_sv = sv.iter().cloned().fold(0.0f64, f64::max);
+    if max_sv < EPS_SVD_TOLERANCE {
+        return None;
+    }
+
+    let rank_tol = max_sv * EPS_SVD_TOLERANCE;
+    let rank = sv.iter().filter(|&&s| s > rank_tol).count();
+
+    // Particular solution (minimum-norm for rank-deficient systems)
+    let x0 = svd.solve(&rhs, EPS_SVD_TOLERANCE).ok()?;
+    let residual = (&kkt * &x0 - &rhs).norm();
     if residual > EPS_KKT_RESIDUAL {
         return None;
     }
 
-    // Extract β (first m components)
-    let beta: Vec<f64> = (0..m).map(|i| solution[i]).collect();
+    let beta0: Vec<f64> = (0..m).map(|i| x0[i]).collect();
 
-    // Compute Q(β) = Σ_{j<i} β_i β_j ω₀(n_{σ(i)}, n_{σ(j)})
-    //
-    // Note: we compute directly from ω₀, NOT from H_{ij}.
-    // H is symmetric by construction: H_{ij} = ω₀(n_{σ(min)}, n_{σ(max)}).
-    // But Q uses ω₀(n_{σ(i)}, n_{σ(j)}) with i > j, which equals -H_{ij}.
-    // Using H would give -Q.
-    let q_val: f64 = (1..m)
-        .flat_map(|i| (0..i).map(move |j| (i, j)))
-        .map(|(i, j)| beta[i] * beta[j] * omega0(&normals[perm[i]], &normals[perm[j]]))
-        .sum();
+    // If already feasible, return
+    if beta0.iter().all(|&b| b > EPS_BETA_POSITIVE) {
+        let q_val = q_from_beta(normals, perm, &beta0);
+        return Some((beta0, q_val));
+    }
 
-    Some((beta, q_val))
+    // Full rank: unique solution with β ≤ 0, orbit is genuinely infeasible
+    if rank == size {
+        return None;
+    }
+
+    // Rank-deficient: search null space for β > 0.
+    // The null space vectors are right singular vectors with small singular values.
+    let v_t = svd.v_t.as_ref()?;
+
+    // Extract null space basis (β part = first m components)
+    let null_beta: Vec<Vec<f64>> = (rank..size)
+        .map(|i| (0..m).map(|j| v_t[(i, j)]).collect())
+        .collect();
+
+    let beta_opt = if null_beta.len() == 1 {
+        find_positive_beta_1d(&beta0, &null_beta[0])?
+    } else {
+        find_positive_beta_nd(&beta0, &null_beta)?
+    };
+
+    let q_val = q_from_beta(normals, perm, &beta_opt);
+    Some((beta_opt, q_val))
 }
 
 /// Generate all combinations of `k` elements from `{0, ..., n-1}` in lexicographic order.
@@ -228,7 +386,7 @@ fn combinations_rec(
 
 /// Build facet adjacency matrix: adj[i][j] = true iff F_i ∩ F_j ≠ ∅.
 /// Two facets are adjacent if they share at least one vertex.
-fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
+pub(crate) fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let f = polytope.facet_count();
     let normals = polytope.normals();
     let heights = polytope.heights();
@@ -320,3 +478,7 @@ mod capacity_properties_test;
 
 #[cfg(test)]
 mod lib_test;
+
+#[cfg(test)]
+#[path = "square_product_diagnostic.rs"]
+mod square_product_diagnostic;

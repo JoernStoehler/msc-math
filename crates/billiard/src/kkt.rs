@@ -18,16 +18,104 @@ const EPS_SVD_TOLERANCE: f64 = 1e-10;
 /// Maximum acceptable residual norm for the KKT solution (rejects numerically poor solutions).
 const EPS_KKT_RESIDUAL: f64 = 1e-6;
 
+/// Compute Q(β) = Σ_{i>j} β_i β_j ω₀(n_{σ(i)}, n_{σ(j)}).
+fn q_from_beta(normals: &[Vector4<f64>], perm: &[usize], beta: &[f64]) -> f64 {
+    let m = beta.len();
+    (1..m)
+        .flat_map(|i| (0..i).map(move |j| (i, j)))
+        .map(|(i, j)| beta[i] * beta[j] * omega0(&normals[perm[i]], &normals[perm[j]]))
+        .sum()
+}
+
+/// Search null space for a β > 0 solution (1D null space case).
+fn find_positive_beta_1d(beta0: &[f64], v: &[f64]) -> Option<Vec<f64>> {
+    let m = beta0.len();
+    let (mut lo, mut hi) = (f64::NEG_INFINITY, f64::INFINITY);
+
+    for j in 0..m {
+        if v[j].abs() < 1e-15 {
+            if beta0[j] <= EPS_BETA_POSITIVE {
+                return None;
+            }
+        } else {
+            let bound = -beta0[j] / v[j];
+            if v[j] > 0.0 {
+                lo = lo.max(bound);
+            } else {
+                hi = hi.min(bound);
+            }
+        }
+    }
+
+    if lo >= hi {
+        return None;
+    }
+
+    let alpha = if lo.is_finite() && hi.is_finite() {
+        (lo + hi) / 2.0
+    } else if lo.is_finite() {
+        lo + 1.0
+    } else if hi.is_finite() {
+        hi - 1.0
+    } else {
+        0.0
+    };
+
+    let beta: Vec<f64> = (0..m).map(|j| beta0[j] + alpha * v[j]).collect();
+    if beta.iter().all(|&b| b > EPS_BETA_POSITIVE) {
+        Some(beta)
+    } else {
+        None
+    }
+}
+
+/// Search null space for a β > 0 solution (multi-dimensional null space).
+fn find_positive_beta_nd(beta0: &[f64], null_vecs: &[Vec<f64>]) -> Option<Vec<f64>> {
+    let m = beta0.len();
+    let k = null_vecs.len();
+    let mut alpha = vec![0.0; k];
+
+    for _iter in 0..100 {
+        let beta: Vec<f64> = (0..m)
+            .map(|j| beta0[j] + (0..k).map(|i| alpha[i] * null_vecs[i][j]).sum::<f64>())
+            .collect();
+
+        let (worst_j, worst_val) = beta
+            .iter()
+            .enumerate()
+            .min_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
+            .unwrap();
+
+        if *worst_val > EPS_BETA_POSITIVE {
+            return Some(beta);
+        }
+
+        let grad_sq: f64 = (0..k).map(|i| null_vecs[i][worst_j].powi(2)).sum();
+        if grad_sq < 1e-30 {
+            return None;
+        }
+
+        let target = EPS_BETA_POSITIVE * 100.0;
+        let step = (target - worst_val) / grad_sq;
+        for i in 0..k {
+            alpha[i] += step * null_vecs[i][worst_j];
+        }
+    }
+
+    let beta: Vec<f64> = (0..m)
+        .map(|j| beta0[j] + (0..k).map(|i| alpha[i] * null_vecs[i][j]).sum::<f64>())
+        .collect();
+    if beta.iter().all(|&b| b > EPS_BETA_POSITIVE) {
+        Some(beta)
+    } else {
+        None
+    }
+}
+
 /// Solve the KKT system for max Q(β) subject to N^T β = 0, η^T β = 1.
 ///
-/// The KKT conditions are:
-///   H β = N λ + ν η      (m equations)
-///   N^T β = 0             (4 equations)
-///   η^T β = 1             (1 equation)
-///
-/// This is an (m+5) × (m+5) linear system in (β, λ, ν).
-///
-/// Returns Some((β, Q(β))) if the system has a unique solution, None otherwise.
+/// When the KKT system is rank-deficient, searches the null space for
+/// a solution with β > 0. Q(β) is constant along the null space.
 pub fn solve_kkt(
     normals: &[Vector4<f64>],
     heights: &[f64],
@@ -35,15 +123,11 @@ pub fn solve_kkt(
 ) -> Option<(Vec<f64>, f64)> {
     let m = perm.len();
 
-    // Build KKT system directly:
-    // [ H    | -N   | -η ] [ β ]   [ 0 ]
-    // [ N^T  |  0   |  0 ] [ λ ] = [ 0 ]
-    // [ η^T  |  0   |  0 ] [ ν ]   [ 1 ]
     let size = m + 5;
     let mut kkt = DMatrix::zeros(size, size);
     let mut rhs = DVector::zeros(size);
 
-    // Top-left: H (m×m) — action matrix with ω₀ values
+    // H block (m×m)
     for i in 0..m {
         for j in (i + 1)..m {
             let val = omega0(&normals[perm[i]], &normals[perm[j]]);
@@ -52,7 +136,7 @@ pub fn solve_kkt(
         }
     }
 
-    // Top block columns m..m+4: -N (m×4) and bottom block: N^T (4×m)
+    // -N block (m×4) and N^T block (4×m)
     for i in 0..m {
         for d in 0..4 {
             let n = normals[perm[i]][d];
@@ -61,44 +145,68 @@ pub fn solve_kkt(
         }
     }
 
-    // Top block column m+4: -η and last row: η^T
+    // -η block (m×1) and η^T block (1×m)
     for i in 0..m {
         let h = heights[perm[i]];
         kkt[(i, m + 4)] = -h;
         kkt[(m + 4, i)] = h;
     }
-
-    // RHS: [0, ..., 0, 1]
     rhs[m + 4] = 1.0;
 
-    // Solve KKT system. Try LU first (fast), fall back to SVD for rank-deficient systems.
+    // --- Fast path: LU ---
     let lu = kkt.clone().full_piv_lu();
-    let solution = if lu.is_invertible() {
-        lu.solve(&rhs)?
-    } else {
-        let svd = kkt.clone().svd(true, true);
-        svd.solve(&rhs, EPS_SVD_TOLERANCE).ok()?
-    };
+    if lu.is_invertible() {
+        if let Some(solution) = lu.solve(&rhs) {
+            let residual = (&kkt * &solution - &rhs).norm();
+            if residual <= EPS_KKT_RESIDUAL {
+                let beta: Vec<f64> = (0..m).map(|i| solution[i]).collect();
+                if beta.iter().all(|&b| b > EPS_BETA_POSITIVE) {
+                    let q_val = q_from_beta(normals, perm, &beta);
+                    return Some((beta, q_val));
+                }
+            }
+        }
+    }
 
-    // Verify the solution satisfies the constraints
-    let residual = (&kkt * &solution - &rhs).norm();
+    // --- SVD path: handles rank-deficient systems ---
+    let svd = kkt.clone().svd(true, true);
+    let sv = &svd.singular_values;
+    let max_sv = sv.iter().cloned().fold(0.0f64, f64::max);
+    if max_sv < EPS_SVD_TOLERANCE {
+        return None;
+    }
+
+    let rank_tol = max_sv * EPS_SVD_TOLERANCE;
+    let rank = sv.iter().filter(|&&s| s > rank_tol).count();
+
+    let x0 = svd.solve(&rhs, EPS_SVD_TOLERANCE).ok()?;
+    let residual = (&kkt * &x0 - &rhs).norm();
     if residual > EPS_KKT_RESIDUAL {
         return None;
     }
 
-    // Extract β (first m components)
-    let beta: Vec<f64> = (0..m).map(|i| solution[i]).collect();
+    let beta0: Vec<f64> = (0..m).map(|i| x0[i]).collect();
 
-    // Compute Q(β) = Σ_{j<i} β_i β_j ω₀(n_{σ(i)}, n_{σ(j)})
-    //
-    // Note: we compute directly from ω₀, NOT from H_{ij}.
-    // H is symmetric by construction: H_{ij} = ω₀(n_{σ(min)}, n_{σ(max)}).
-    // But Q uses ω₀(n_{σ(i)}, n_{σ(j)}) with i > j, which equals -H_{ij}.
-    // Using H would give -Q.
-    let q_val: f64 = (1..m)
-        .flat_map(|i| (0..i).map(move |j| (i, j)))
-        .map(|(i, j)| beta[i] * beta[j] * omega0(&normals[perm[i]], &normals[perm[j]]))
-        .sum();
+    if beta0.iter().all(|&b| b > EPS_BETA_POSITIVE) {
+        let q_val = q_from_beta(normals, perm, &beta0);
+        return Some((beta0, q_val));
+    }
 
-    Some((beta, q_val))
+    if rank == size {
+        return None;
+    }
+
+    let v_t = svd.v_t.as_ref()?;
+    let null_beta: Vec<Vec<f64>> = (rank..size)
+        .map(|i| (0..m).map(|j| v_t[(i, j)]).collect())
+        .collect();
+
+    let beta_opt = if null_beta.len() == 1 {
+        find_positive_beta_1d(&beta0, &null_beta[0])?
+    } else {
+        find_positive_beta_nd(&beta0, &null_beta)?
+    };
+
+    let q_val = q_from_beta(normals, perm, &beta_opt);
+    Some((beta_opt, q_val))
 }

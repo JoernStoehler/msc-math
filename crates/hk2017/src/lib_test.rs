@@ -200,11 +200,17 @@ fn solve_kkt_four_facets_symplectic() {
 /// **Why debug mode:** Tests error handling path in solver. Ensures solver
 /// correctly detects and handles rank deficiency without panicking.
 /// **Why not fixture:** Tests specific error path, not typical computation.
+///
+/// This system has all normals in q-space, so ω₀(nᵢ, nⱼ) = 0 for all pairs.
+/// The unique β satisfying N^T β = 0, η^T β = 1 has β₂ ≈ -2.414 < 0.
+/// No null space search can fix this (the null space is in the λ variables,
+/// not β). So solve_kkt correctly returns None.
 #[test]
 fn solve_kkt_rank_deficient() {
-    // Three normals in the xy-plane (rank = 2)
-    // N^T has rank 2, not 4, so the system is rank-deficient
-    // SVD should still solve it
+    // Three normals in the q-plane (rank 2 normal matrix)
+    // N^T has rank 2, not 4, so the KKT system is rank-deficient.
+    // The constraints N^T β = 0, η^T β = 1 uniquely determine β,
+    // and the solution has β₂ < 0.
 
     let normals = vec![
         Vector4::new(1.0, 0.0, 0.0, 0.0),
@@ -216,14 +222,9 @@ fn solve_kkt_rank_deficient() {
 
     let result = solve_kkt(&normals, &heights, &perm);
 
-    // Should solve (SVD handles rank-deficient systems)
-    assert!(result.is_some(), "rank-deficient system should solve via SVD");
-
-    let (beta, _q_val) = result.unwrap();
-
-    // Verify η^T β = 1
-    let sum: f64 = beta.iter().sum();
-    assert!((sum - 1.0).abs() < 1e-6, "β sum should be 1 even in rank-deficient case");
+    // Returns None: the unique β has β₂ ≈ -2.414 < 0 (genuinely infeasible).
+    // The null space is in (λ₂, λ₃), not β, so no null space search helps.
+    assert!(result.is_none(), "rank-deficient system with β < 0 should return None");
 }
 
 /// Test KKT solver on degenerate case (identical normals).
@@ -404,6 +405,123 @@ mod proptests {
         }
 
     }
+}
+
+// ============================================================================
+// Regression tests: KKT null space fix
+// ============================================================================
+// These tests verify that the KKT solver correctly handles rank-deficient
+// systems by searching the null space for β > 0 solutions. Before the fix,
+// SVD returned minimum-norm solutions that often had β ≤ 0 for degenerate
+// polytopes (axis-aligned normals in symplectic subplanes).
+
+/// Regression: (4,4) Lagrangian product at θ=0° (square × square, axis-aligned).
+///
+/// Before fix: cap=2.0 (correct). After fix: cap=2.0 (unchanged).
+/// This is the hypercube [-1/√2, 1/√2]⁴ which already worked pre-fix.
+/// Included to verify the fix doesn't break the working case.
+#[test]
+fn kkt_nullspace_square_square_zero() {
+    use geom::lagrangian_product::lagrangian_product;
+    use geom::polygon::regular_polygon_2d;
+
+    let (qn, qh) = regular_polygon_2d(4, 1.0);
+    let (pn, ph) = regular_polygon_2d(4, 1.0);
+    let polytope = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
+
+    let result = ehz_capacity(&polytope).expect("(4,4) at θ=0° should have capacity");
+    assert!(
+        (result.capacity - 2.0).abs() < 1e-6,
+        "(4,4) at θ=0°: got {}, expected 2.0",
+        result.capacity
+    );
+}
+
+/// Regression: (4,4) at θ=0.125° — the smallest angle in the polygon_grid.
+///
+/// Before fix: cap=3.991 (WRONG, 2× too high due to 8-facet spurious orbit).
+/// After fix: cap≈2.000 (continuous from θ=0°).
+/// All three algorithms agree.
+#[test]
+fn kkt_nullspace_square_square_near_zero() {
+    use geom::lagrangian_product::lagrangian_product;
+    use geom::polygon::{regular_polygon_2d, rotate_polygon_2d};
+
+    let theta = 0.125_f64.to_radians();
+    let (qn, qh) = regular_polygon_2d(4, 1.0);
+    let (pn_base, ph_base) = regular_polygon_2d(4, 1.0);
+    let (pn, ph) = rotate_polygon_2d(&pn_base, &ph_base, theta);
+    let polytope = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
+
+    let result = ehz_capacity(&polytope).expect("(4,4) at θ=0.125° should have capacity");
+    // Capacity should be continuous near θ=0° → close to 2.0
+    assert!(
+        (result.capacity - 2.0).abs() < 0.01,
+        "(4,4) at θ=0.125°: got {}, expected ~2.0 (was 3.991 before fix)",
+        result.capacity
+    );
+}
+
+/// Regression: (4,4) at θ=45° — billiard previously gave 2× wrong answer.
+///
+/// Before fix: HK2017=2.828, billiard=5.657.
+/// After fix: all agree on cap=2√2≈2.828.
+#[test]
+fn kkt_nullspace_square_square_45deg() {
+    use geom::lagrangian_product::lagrangian_product;
+    use geom::polygon::{regular_polygon_2d, rotate_polygon_2d};
+
+    let theta = 45.0_f64.to_radians();
+    let (qn, qh) = regular_polygon_2d(4, 1.0);
+    let (pn_base, ph_base) = regular_polygon_2d(4, 1.0);
+    let (pn, ph) = rotate_polygon_2d(&pn_base, &ph_base, theta);
+    let polytope = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
+
+    let result_hk = ehz_capacity(&polytope).expect("(4,4) at θ=45°: HK2017 should have capacity");
+    let result_bil = billiard::billiard_capacity(&polytope)
+        .expect("billiard should not error")
+        .expect("billiard should find capacity");
+
+    let sqrt2_times2 = 2.0 * std::f64::consts::SQRT_2;
+    assert!(
+        (result_hk.capacity - sqrt2_times2).abs() < 1e-6,
+        "(4,4) at θ=45° HK2017: got {}, expected 2√2≈{}",
+        result_hk.capacity, sqrt2_times2
+    );
+    assert!(
+        (result_bil.capacity - sqrt2_times2).abs() < 1e-6,
+        "(4,4) at θ=45° billiard: got {} (was 5.657 before fix), expected 2√2≈{}",
+        result_bil.capacity, sqrt2_times2
+    );
+}
+
+/// Regression: (3,4) at θ=0° — previously returned None for all algorithms.
+///
+/// Before fix: None (all three algorithms). No valid orbit found.
+/// After fix: cap≈2.121 via 5-facet orbit. All three agree.
+///
+/// Note: The expected capacity for this specific polytope (triangle circumradius=1,
+/// square circumradius=1) is 3√2/2 ≈ 2.121, NOT 1.5. The value 1.5 was from
+/// `lagrangian_triangle_square()` which uses different dimensions.
+#[test]
+fn kkt_nullspace_triangle_square_zero() {
+    use geom::lagrangian_product::lagrangian_product;
+    use geom::polygon::regular_polygon_2d;
+
+    let (qn, qh) = regular_polygon_2d(3, 1.0);
+    let (pn, ph) = regular_polygon_2d(4, 1.0);
+    let polytope = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
+
+    let result = ehz_capacity(&polytope)
+        .expect("(3,4) at θ=0° should now return Some after null space fix");
+
+    // Test output shows cap = 2.1213203436 = 3√2/2
+    let expected = 3.0 * std::f64::consts::SQRT_2 / 2.0; // 3√2/2 ≈ 2.121
+    assert!(
+        (result.capacity - expected).abs() < 1e-6,
+        "(3,4) at θ=0°: got {}, expected 3√2/2≈{} (was None before fix)",
+        result.capacity, expected
+    );
 }
 
 /// Verify conformality property: c_EHZ(λK) = λ²·c_EHZ(K).
