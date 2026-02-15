@@ -503,6 +503,7 @@ pub(crate) fn solve_kkt(
 /// rank detection as the SVD fallback in `solve_kkt`, but skips the LU
 /// fast path. Comparing `solve_kkt` vs `solve_kkt_svd_only` isolates
 /// the LU fast path's contribution to performance and correctness.
+#[cfg(test)]
 pub(crate) fn solve_kkt_svd_only(
     normals: &[nalgebra::Vector4<f64>],
     heights: &[f64],

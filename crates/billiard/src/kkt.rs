@@ -283,6 +283,7 @@ pub fn solve_kkt(
 /// Solve the KKT system using SVD only (no LU fast path).
 ///
 /// Ablation variant for benchmarking and testing.
+#[cfg(test)]
 pub fn solve_kkt_svd_only(
     normals: &[Vector4<f64>],
     heights: &[f64],
