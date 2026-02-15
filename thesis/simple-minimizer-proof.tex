@@ -518,12 +518,16 @@ For each $\varepsilon > 0$, apply the four lemmas in sequence:
 \item \emph{Split}
   (Lemma~\ref{lem:splitting}):
   obtain $z_2$ with pure Reeb velocities,
-  $A(z_2) \geq A(z_1)$, and $I_K(z_2) = T$.
+  $A(z_2) \geq A(z_1)$, and $I_K(z_2) = T$
+  (exactly, since each velocity is a Reeb vector).
+  Restore centering by translation
+  (which preserves $\dot{z}$, $A$, and $I_K$).
 
 \item \emph{Merge}
   (Lemma~\ref{lem:merging}):
   obtain $z_3$ with each Reeb vector used at most once,
   $A(z_3) \geq A(z_2)$, and $I_K(z_3) = T$.
+  Centering is again restored by translation.
 
 \item \emph{Rescale:}
   multiply all durations by $\beta = T / A(z_3)$.
@@ -565,7 +569,8 @@ Since $T^{(4)}_n \to T$, the durations
 $t_i^n \to t_i^\infty = s_i^\infty T$.
 
 Define $z_*$ with ordering~$\sigma$, velocities
-$R_{\sigma(i)}$, and durations $t_i^\infty$.
+$R_{\sigma(i)}$, and durations $t_i^\infty$;
+center it by translation.
 Closure holds by continuity:
 $\sum t_i^\infty R_{\sigma(i)}
   = \lim_n \sum t_i^n R_{\sigma(i)} = 0$.
@@ -644,7 +649,10 @@ lies in $\mathrm{conv}\{R_1, \ldots, R_F\}$.
 Closure: $z'(0) = z(0) = z(T) = z'(T)$.
 
 Action and $I_K$ estimates follow from
-continuity of $A$ and $I_K$ in the $W^{1,2}$ norm.
+continuity in the $W^{1,2}$ norm:
+$A$ is bilinear in $(z, \dot{z})$, and
+$I_K$ is continuous in~$\dot{z}$ since $h_K^2$ is
+locally Lipschitz.
 \end{proof}
 
 \begin{proof}[Proof of Lemma~\ref{lem:splitting}]
