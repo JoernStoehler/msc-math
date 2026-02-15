@@ -724,12 +724,13 @@ $I_K(z') = \beta\, I_K(z)$.
 
 \begin{proof}[Proof of Lemma~\ref{lem:compactness}]
 Each $z_n$ is encoded by
-$(\sigma_n, s_n) \in S_F \times \Delta^{F-1}$,
+$(\sigma_n, s_n, T_n) \in S_F \times \Delta^{F-1} \times (0,\infty)$,
 where $\sigma_n$ is the ordering and
 $s_{n,i} = t_{n,i} / T_n$ are normalized durations.
-Since $S_F \times \Delta^{F-1}$ is compact,
+Since $S_F \times \Delta^{F-1}$ is compact
+and $T_n \to T > 0$,
 a subsequence has
-$(\sigma_n, s_n) \to (\sigma_*, s_*)$.
+$(\sigma_n, s_n, T_n) \to (\sigma_*, s_*, T)$.
 The curve~$z_*$ with parameters
 $(\sigma_*, s_*, T)$ is the limit.
 By Lemma~\ref{lem:shoelace},
