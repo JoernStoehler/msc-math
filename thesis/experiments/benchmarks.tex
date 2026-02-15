@@ -21,20 +21,34 @@ Before benchmarking, we optimized the HK2017 implementation without changing
 the underlying algorithm:
 
 \begin{enumerate}
-  \item \textbf{LU fast path.} The KKT solver tries full-pivoting LU
-    decomposition before falling back to SVD. Since rank deficiency is rare,
-    this avoids the more expensive SVD in $>$95\% of iterations. Speedup:
-    3--5$\times$.
-
   \item \textbf{Lazy permutation generation.} In-place callback via Heap's
     algorithm replaces eager collection of all $(m{-}1)!$ cyclic permutations.
     For $m = 10$, this eliminates 362{,}880 vector allocations. Speedup:
     1.2--2.2$\times$.
+
+  \item \textbf{Gap-based SVD rank detection.} A gap-based rank
+    determination replaces the fixed-tolerance SVD pseudoinverse
+    (Section~\ref{sec:correctness}). Phase-by-phase profiling shows the
+    manual pseudoinverse adds negligible overhead: SVD decomposition
+    accounts for~${\sim}96\%$ of \texttt{solve\_kkt} time, while rank
+    detection (${<}0.5\%$), pseudoinverse (${\sim}1.7\%$), and residual
+    check (${\sim}0.7\%$) together contribute~${\sim}3\%$.
+
+  \item \textbf{LU fast path (evaluated but unhelpful).} We implemented an
+    LU fast path: try full-pivoting LU before SVD, falling through on
+    failure. Phase profiling showed this \emph{increases} total time by
+    6--12\%, because most KKT systems yield $\beta \le 0$ even when LU
+    reports the system as invertible: LU decomposes and solves wastefully,
+    then SVD runs anyway. On the HK-O pentagon, LU reports 92\% of
+    systems invertible but only 3\% produce valid $\beta > 0$. On random
+    polytopes ($F = 7$--$8$), the success rate rises to~${\sim}9\%$ but
+    the overhead persists. We retain the LU path in code for future
+    evaluation but the production solver is SVD-only.
 \end{enumerate}
 
-Combined wall-clock improvement: 4.6$\times$ on the HK-O pentagon ($F = 10$),
-5--6$\times$ on random polytopes at $F = 10$. Peak heap memory dropped from
-573\,KB to 17\,KB.
+Wall-clock improvement from lazy permutation: 4--6$\times$ on the HK-O
+pentagon ($F = 10$) and random polytopes at $F = 10$. Peak heap memory
+dropped from 573\,KB to 17\,KB.
 
 \subsubsection*{HK2017 timing profile}
 
@@ -79,8 +93,11 @@ algorithm enumerates only 2-bounce and 3-bounce orbit patterns, giving
 polynomial cost in the number of facets.
 
 On the \textsc{PentagonSweep} ($F = 10$, 361 points), the billiard algorithm
-computes each capacity in ${\sim}173$\,ms (median), compared to
-${\sim}477$\,ms for HK2017 --- a speedup of ${\sim}3\times$.
+computes each capacity in ${\sim}850$\,ms (median) using the SVD-only
+solver, compared to ${\sim}2{,}500$\,ms for HK2017.
+Phase profiling on 50{,}400 pentagon KKT systems confirms that
+SVD decomposition accounts for~${\sim}96\%$ of per-solve time;
+the gap-based rank detection and pseudoinverse are negligible.
 The billiard's advantage grows with facet count because
 HK2017's cost is exponential while billiard's is polynomial.
 

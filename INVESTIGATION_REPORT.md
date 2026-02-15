@@ -3,7 +3,7 @@
 **Date**: 2026-02-15
 **Branch**: `claude/experiments-for-kai` in worktree `/workspaces/worktrees/experiments`
 **Investigator**: Claude Code (Opus)
-**Status**: Raw findings only. No fixes applied. No conclusions trusted.
+**Status**: All bugs fixed. Datasets regenerated. Regression tests added. LU fast path restored.
 
 ## Summary of Bug
 
@@ -229,24 +229,37 @@ The capacity jumps from 2.0 to ≈4.0.
 Some orbits at specific angles have β components at exactly 0 or very near 0.
 Example: (4,4) at θ=44.99° has a 5-facet orbit with one β = 0.000000.
 
-## Fix Applied: KKT Null Space Search
+## Fixes Applied
 
-**Root cause**: When the KKT system is rank-deficient (common for axis-aligned normals),
-SVD returns the minimum-norm solution x₀ = V Σ⁻¹ Uᵀ b. This minimum-norm solution
-often has β ≤ 0 for some components. But the null space of the KKT matrix is
-non-trivial, and Q(β) is constant along the null space (because null space directions
-satisfy the KKT stationarity conditions). So there may exist β = β₀ + Σ αᵢ vᵢ
-with β > 0 and the SAME Q(β) — we just need to search for it.
+### Fix 1: Gap-based SVD rank detection (commit `dd87a8a`)
 
-**Fix** (applied to both `hk2017/src/lib.rs` and `billiard/src/kkt.rs`):
-1. LU fast path: if invertible and β > 0, return immediately
-2. SVD: compute particular solution β₀ and determine rank
-3. If rank-deficient: extract null space from right singular vectors V^T
-4. Search null space for β > 0:
-   - 1D null space: find feasible interval for scalar α, pick midpoint
-   - Multi-dimensional: iterative coordinate ascent on most-violated constraint
+**Root cause**: Fixed-tolerance SVD (threshold 1e-10) misidentified rank for
+near-degenerate KKT matrices from axis-aligned square normals. Singular values
+near zero were treated as nonzero, corrupting the pseudoinverse.
 
-**Functions added**: `q_from_beta()`, `find_positive_beta_1d()`, `find_positive_beta_nd()`
+**Fix**: Walk singular values bottom-up; if sv[i-1]/sv[i] > 100, treat sv[i..]
+as null space. Constants: `EPS_SVD_FLOOR=1e-12`, `SVD_GAP_THRESHOLD=100.0`.
+
+### Fix 2: Null space search for β > 0 (commit `4a6f574`)
+
+**Root cause**: When the KKT system is rank-deficient, SVD returns the
+minimum-norm solution x₀ = V Σ⁻¹ Uᵀ b, which often has β ≤ 0. But the null
+space is non-trivial and Q(β) is constant along it, so β = β₀ + Σ αᵢ vᵢ with
+β > 0 may exist.
+
+**Fix**: Extract null space from right singular vectors V^T, search for β > 0:
+- 1D null space: find feasible interval for scalar α, pick midpoint
+- Multi-dimensional: iterative coordinate ascent on most-violated constraint
+- Constraint verification after null space search (rejects numerical noise)
+
+### Fix 3: LU fast path restoration (this session)
+
+The LU fast path (try `full_piv_lu()` before SVD) was unnecessarily removed
+during Fix 1. Restored in both crates. Both `solve_kkt` (LU+SVD) and
+`solve_kkt_svd_only` (SVD-only) variants now exposed for benchmarking.
+
+**Functions added**: `build_kkt_system()`, `solve_kkt_svd_path()`,
+`find_positive_beta_1d()`, `find_positive_beta_nd()`, `q_from_beta()`
 
 ## Post-Fix Results
 

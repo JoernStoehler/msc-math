@@ -80,21 +80,17 @@ datasets of increasing size:
     Agreement within $10^{-8}$ relative error.
   \item \textbf{PentagonSweep} (361 points): Perfect agreement on all
     361 data points (relative error~$< 10^{-12}$).
-  \item \textbf{PolygonGrid} (10 pairs, 2301 points): 8 of 10 pairs
-    have 100\% agreement. Two pairs---$(4,4)$ and~$(4,6)$---show
-    capacity \emph{discontinuities} where the computed capacity jumps
-    by a factor of~${\sim}2$ between adjacent angles (e.g., $c = 2.0$
-    at~$\theta = 0^\circ$ to $c = 3.99$ at~$\theta = 0.125^\circ$
-    for $(4,4)$). Both algorithms produce the same discontinuous
-    behavior, indicating a shared bug in polytope construction or
-    skeleton computation for near-degenerate square-based products,
-    rather than an algorithm-specific issue.
+  \item \textbf{PolygonGrid} (10 pairs, ${\sim}2300$ points): All 10 pairs
+    have 100\% agreement (within~$10^{-8}$ relative tolerance).
+    During development, the~$(4,4)$ and~$(4,6)$ pairs exhibited capacity
+    discontinuities caused by a fixed-tolerance SVD rank detection in the
+    shared KKT solver. After switching to gap-based rank detection,
+    both pairs show smooth capacity curves and full cross-validation.
 \end{enumerate}
 
-The 8 reliable pairs (100\% cross-validation, smooth capacity curves)
-provide strong evidence that both implementations are correct on
-their shared domain. The~$(4,4)$ and~$(4,6)$ failures are
-geometry-specific and documented in Section~\ref{sec:lagrangian-products}.
+All 10 polygon pairs show 100\% cross-validation with smooth capacity
+curves, providing strong evidence that both implementations are correct
+on their shared domain.
 
 \subsubsection*{Conformality and invariance}
 

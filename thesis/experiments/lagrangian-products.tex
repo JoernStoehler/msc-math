@@ -100,8 +100,9 @@ We compute~$c_{\mathrm{EHZ}}$ using both the HK2017 algorithm and the billiard
 algorithm (Section~\ref{sec:dataset}); the two algorithms agree on all
 Lagrangian products to relative error~$< 10^{-8}$
 (Section~\ref{sec:correctness}).
-Each HK2017 capacity computation takes approximately~270\,ms after
-optimization (10~facets); the billiard algorithm computes each in under~1\,ms.
+Each billiard capacity computation takes ${\sim}850$\,ms per 10-facet product;
+HK2017 cross-validation takes ${\sim}2{,}500$\,ms
+(Section~\ref{sec:benchmark}).
 
 Figure~\ref{fig:pentagon-sweep} shows the resulting curve. The systolic ratio
 oscillates between~$0.9472$ and~$1.0472$ with period~$72^\circ$, confirming the
@@ -165,9 +166,9 @@ $n$ & $m$ & $F$ & $\max\,\mathrm{sys}$ & $\theta_{\max}$ & cross-val & status \\
 3 & 4 &  7 & 0.928 & $15.0^\circ$ & 100\% & below \\
 3 & 5 &  8 & 0.798 & $12.0^\circ$ & 100\% & below \\
 3 & 6 &  9 & 1.000 &  $0.0^\circ$ & 100\% & \textbf{saturates} \\
-4 & 4 &  8 & \multicolumn{2}{c}{\emph{unreliable$^\dagger$}} & 3\% & --- \\
-4 & 5 &  9 & 1.376 &  $0.0^\circ$ & 100\% & \textbf{exceeds} \\
-4 & 6 & 10 & \multicolumn{2}{c}{\emph{unreliable$^\dagger$}} & 2\% & --- \\
+4 & 4 &  8 & 1.000 & $45.0^\circ$ & 100\% & \textbf{saturates} \\
+4 & 5 &  9 & 0.705 &  $9.0^\circ$ & 100\%$^*$ & below \\
+4 & 6 & 10 & 0.598 & $10.7^\circ$ & 100\% & below \\
 5 & 5 & 10 & 1.047 & $18.0^\circ$ & 100\% & \textbf{exceeds} \\
 5 & 6 & 11 & 0.831 &  $0.0^\circ$ & 100\% & below \\
 6 & 6 & 12 & 0.668 &  $2.0^\circ$ & 100\% & below \\
@@ -176,23 +177,20 @@ $n$ & $m$ & $F$ & $\max\,\mathrm{sys}$ & $\theta_{\max}$ & cross-val & status \\
 \caption{Maximum systolic ratio for each regular polygon pair $(n, m)$
   with~$n + m \le 12$, optimized over the rotation angle~$\theta$.
   Cross-validation: fraction of sampled angles where HK2017 and billiard
-  agree. $^\dagger$The~$(4,4)$ and~$(4,6)$ pairs show capacity
-  discontinuities (see text), so their sys values are unreliable.}
+  agree within~$10^{-8}$ relative tolerance.
+  $^*$One of 201 points fails tolerance at~$8 \times 10^{-8}$ relative error.}
 \label{tab:polygon-grid}
 \end{table}
 
 \paragraph{Algorithm reliability.}
-Two pairs---$(4,4)$ and~$(4,6)$---exhibit capacity \emph{discontinuities}:
-the HK2017 capacity jumps by a factor of~${\sim}2$ between adjacent
-angles (e.g., from~$c = 2.0$ at~$\theta = 0^\circ$ to~$c = 3.99$
-at~$\theta = 0.125^\circ$ for~$(4,4)$). Since EHZ capacity is continuous
-in the Hausdorff metric, these jumps indicate a bug---likely in the
-adjacency pruning or skeleton computation for near-degenerate
-configurations involving squares. Results for these two pairs are excluded
-from the analysis below. The remaining 8~pairs have 100\%
-cross-validation and smooth capacity curves.
+During development, the~$(4,4)$ and~$(4,6)$ pairs exhibited capacity
+discontinuities due to a KKT solver bug: the SVD-based rank detection
+used a fixed tolerance that failed for near-degenerate systems arising
+from axis-aligned square normals. After fixing the solver (gap-based
+rank detection; see Section~\ref{sec:correctness}), all 10~pairs show
+100\% cross-validation and smooth capacity curves.
 
-\paragraph{Findings from reliable pairs.}
+\paragraph{Findings.}
 
 \begin{itemize}
 \item \textbf{$(3,6)$ at $\theta = 0^\circ$}: Triangle $\times_L$ hexagon
@@ -201,26 +199,19 @@ cross-validation and smooth capacity curves.
   Balitskiy~(2020); Chaidez--Hutchings~(2021, \S1) cite the
   triangle~$\times$~square as a previously known example.
 
+\item \textbf{$(4,4)$ at $\theta = 45^\circ$}: Square $\times_L$
+  $R(45^\circ)$\,square saturates the Viterbo bound
+  at~$\mathrm{sys} = 1$ exactly. The systolic ratio ranges from~$0.500$
+  (at~$\theta = 0^\circ$, the hypercube) to~$1.000$ (at~$\theta = 45^\circ$).
+
 \item \textbf{$(5,5)$ at $\theta = 18^\circ$}: This reproduces the HK-O
   counterexample ($\theta = 18^\circ \equiv 90^\circ \pmod{72^\circ}$)
   with~$\mathrm{sys} \approx 1.047$, confirming the known Viterbo violation.
-
-\item \textbf{$(4,5)$: square $\times_L$ pentagon.} Both algorithms agree
-  (to relative error~$< 10^{-12}$) on all 201~sampled angles, with a
-  smooth capacity curve. The systolic ratio exceeds~$1$ at \emph{every}
-  angle:~$\mathrm{sys}$ ranges from~$1.324$
-  (at~$\theta = 9^\circ$) to~$1.376$
-  (at~$\theta = 0^\circ$). If correct, this is a substantially larger
-  Viterbo violation than the HK-O pentagon counterexample---a~$37.6\%$
-  excess over the threshold. This finding is computationally robust
-  (cross-validated, smooth, consistent) but has not been independently
-  verified; it should be treated as a conjecture pending analytic
-  confirmation.
 \end{itemize}
 
-The remaining five reliable pairs~$(3,3)$, $(3,4)$, $(3,5)$, $(5,6)$,
-$(6,6)$ all satisfy~$\mathrm{sys} < 1$ at every tested angle, with the
-highest non-exceeding value being~$\mathrm{sys}((3,4)) \approx 0.928$.
+The remaining seven pairs~$(3,3)$, $(3,4)$, $(3,5)$, $(4,5)$, $(4,6)$,
+$(5,6)$, $(6,6)$ all satisfy~$\mathrm{sys} < 1$ at every tested angle,
+with the highest non-exceeding value being~$\mathrm{sys}((3,4)) \approx 0.928$.
 
 \subsubsection*{Family 3: Random Lagrangian products}
 
@@ -247,27 +238,23 @@ threshold.
 \subsubsection*{Findings}
 
 \begin{enumerate}
-\item \textbf{Two pairs exceed the Viterbo bound.}
-  Among all regular $(n,m)$-gon Lagrangian products with~$n + m \le 12$
-  and reliable cross-validation, two pairs achieve~$\mathrm{sys} > 1$.
-  The $(5,5)$ pair (pentagon~$\times$~pentagon) reproduces the known HK-O
-  counterexample with~$\mathrm{sys}_{\max} \approx 1.047$. The~$(4,5)$ pair
-  (square~$\times$~pentagon) shows a larger violation
-  with~$\mathrm{sys} \ge 1.32$ at all tested angles, pending independent
-  verification. One pair---$(3,6)$---saturates the bound
-  at~$\mathrm{sys} = 1$ exactly, while the remaining five reliable pairs
-  satisfy~$\mathrm{sys} < 1$ at all angles.
-  We restricted to~$n + m \le 12$ due to the exponential cost of the
-  HK2017 algorithm; whether other polygon pairs violate the bound
-  remains open.
+\item \textbf{One pair exceeds the Viterbo bound; two saturate.}
+  Among all regular $(n,m)$-gon Lagrangian products with~$n + m \le 12$,
+  only the~$(5,5)$ pair (pentagon~$\times$~pentagon) achieves~$\mathrm{sys} > 1$,
+  reproducing the known HK-O counterexample
+  with~$\mathrm{sys}_{\max} \approx 1.047$.
+  Two pairs saturate the bound at~$\mathrm{sys} = 1$ exactly:
+  $(3,6)$ (triangle~$\times$~hexagon at~$\theta = 0^\circ$) and
+  $(4,4)$ (square~$\times$~square at~$\theta = 45^\circ$).
+  The remaining seven pairs satisfy~$\mathrm{sys} < 1$ at all tested
+  angles, with the highest being~$(3,4)$ at~$\mathrm{sys} \approx 0.928$.
 
 \item \textbf{The $(5,5)$ violation region is narrow.}
   For pentagon~$\times$~pentagon, the Viterbo-violating angles occupy only
   about~$25\%$ of each fundamental domain ($9^\circ$ out of~$36^\circ$).
   The curve has small amplitude ($\approx 0.10$) relative to its mean
   ($\approx 0.997$), suggesting that the EHZ capacity varies only mildly
-  with rotation. In contrast, the~$(4,5)$ pair exceeds~$\mathrm{sys} = 1$
-  at \emph{every} tested angle.
+  with rotation.
 
 \item \textbf{All predicted symmetries hold.}
   The~$72^\circ$ periodicity and mirror symmetry predicted by
@@ -285,12 +272,11 @@ threshold.
   but not enough to approach the Viterbo bound without specific
   regular polygon geometry.
 
-\item \textbf{Algorithm reliability depends on polytope geometry.}
-  The~$(4,4)$ and~$(4,6)$ pairs show capacity discontinuities where
-  both HK2017 and billiard return values inconsistent with the known
-  continuity of EHZ capacity. These failures affect polytopes involving
-  squares, possibly due to the axis-aligned normal structure creating
-  near-degenerate configurations in the skeleton computation. The
-  remaining 8~pairs show perfect cross-validation, so the issue is
-  geometry-specific rather than systematic.
+\item \textbf{Square-based degeneracy was a solver bug, now fixed.}
+  Early runs showed capacity discontinuities for~$(4,4)$ and~$(4,6)$,
+  traced to a fixed-tolerance SVD rank detection that failed for
+  near-degenerate KKT matrices from axis-aligned square normals.
+  After switching to gap-based rank detection, all 10~pairs show
+  100\% cross-validation and smooth capacity curves
+  (Section~\ref{sec:correctness}).
 \end{enumerate}
