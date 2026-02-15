@@ -10,6 +10,13 @@ cd thesis/ && latexmk
 
 Available: TeX Live 2023, pdflatex, xelatex, lualatex, latexmk, biber, chktex.
 
+## Theorem/Section Numbers
+
+Never guess — read from `thesis/build/main.aux` after building:
+```bash
+grep -E 'newlabel\{(sec:|thm:|lem:|def:|rem:|cor:)' thesis/build/main.aux
+```
+
 ## Four Audiences
 
 Every line of LaTeX must work for all four audiences simultaneously:
