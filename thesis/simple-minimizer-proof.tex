@@ -335,118 +335,33 @@ Consequently, $\min_\gamma A(\gamma) = \min_z I_K(z) = c_{\mathrm{EHZ}}(K)$.
 \end{theorem}
 
 \begin{proof}
-% Jörn: text approved (3202a68)
-\emph{Part 1: Euler--Lagrange characterization of dual critical points.}
-We characterize critical points of the dual functional
-$I_K(z) = \frac{1}{4}\int_0^T h_K^2(-J_0\dot{z}) \, dt$
-under the constraints:
+\emph{Forward direction: primal critical point implies symmetry class of dual critical points.}
+Let $\gamma$ be a primal critical point (Hamiltonian orbit on $\partial K$)
+with period~$T$. Then:
 \begin{itemize}
-\item closure: $z(0) = z(T)$,
-\item action: $A(z) = T$,
-\item centering: $\int_0^T z(t) \, dt = 0$.
+\item $\gamma$ is closed: $\gamma(0) = \gamma(T)$,
+\item $\gamma$ lies on $\partial K$: $g_K^2(\gamma(t)) \equiv 1$,
+\item $\gamma$ satisfies the Hamiltonian condition:
+  $-J_0\dot{\gamma} \in \partial g_K^2(\gamma)$ a.e.,
+\item the action equals the period: $A(\gamma) = T$.
 \end{itemize}
 
-We use the calculus of variations with Lagrange multipliers.
-Form the Lagrangian incorporating the constraints:
-\[
-  L(z, \dot{z}) = \tfrac{1}{4}h_K^2(-J_0\dot{z}) + \alpha\langle -J_0\dot{z}, z\rangle + \langle \mu, z\rangle,
-\]
-where $\alpha \in \mathbb{R}$ is the multiplier for the action constraint
-and $\mu \in \mathbb{R}^4$ for the centering constraint.
-
-The Lagrangian is convex (but not differentiable) in $\dot{z}$
-and smooth (linear) in~$z$.
-For such Lagrangians, a critical point $z$ satisfies the
-\emph{Euler--Lagrange inclusion}: there exists an absolutely continuous
-$\xi(t) \in \partial_{\dot{z}} L(z(t), \dot{z}(t))$ a.e.\ such that
-\begin{equation}\label{eq:euler-lagrange-inclusion}
-  \dot{\xi}(t) = \nabla_z L(z(t), \dot{z}(t)) \quad\text{a.e.}
-\end{equation}
-(see Clarke, \emph{Optimization and Nonsmooth Analysis}, Ch.~5).
-
-\emph{Right-hand side of~\eqref{eq:euler-lagrange-inclusion}.}
-Since $\tfrac{1}{4}h_K^2(-J_0\dot{z})$ is independent of~$z$,
-only the multiplier terms contribute:
-\[
-  \nabla_z L = -\alpha J_0 \dot{z} + \mu.
-\]
-
-\emph{Left-hand side of~\eqref{eq:euler-lagrange-inclusion}.}
-The subdifferential of $L$ in $\dot{z}$ is
-% chain rule: ∂_ż[f(Aż)] = Aᵀ ∂f(Aż) with A = -J₀, so Aᵀ = J₀
-\[
-  \partial_{\dot{z}} L
-  = J_0\, \partial\bigl(\tfrac{1}{4}h_K^2\bigr)(-J_0\dot{z})
-    + \alpha J_0 z,
-\]
-using $(-J_0)^\top = J_0$ in the chain rule for $f \circ (-J_0)$.
-So the Euler-Lagrange inclusion says: there exists $p(t) \in \partial(\tfrac{1}{4}h_K^2)(-J_0\dot{z}(t))$
-a.e.\ such that $\xi(t) = J_0 p(t) + \alpha J_0 z(t)$ is absolutely continuous and
-\[
-  J_0 \dot{p} + \alpha J_0 \dot{z}
-  = -\alpha J_0 \dot{z} + \mu,
-  \qquad\text{i.e.,}\qquad
-  J_0 \dot{p} = -2\alpha J_0 \dot{z} + \mu.
-\]
-
-Integrating over $[0,T]$ and using periodicity of~$p$ and~$z$:
-\[
-  J_0\underbrace{[p(T) - p(0)]}_{= 0}
-  = -2\alpha J_0 \underbrace{[z(T) - z(0)]}_{= 0} + T\mu,
-\]
-hence $\mu = 0$. The equation $\dot{p} = -2\alpha \dot{z}$ a.e.\ integrates to
-\[
-  p(t) = c - 2\alpha\, z(t)
-\]
-for a constant $c \in \mathbb{R}^4$.
-Since $p(t) \in \partial(\tfrac{1}{4}h_K^2)(-J_0\dot{z}(t))$:
-\[
-  c - 2\alpha\, z(t)
-  \in \partial\bigl(\tfrac{1}{4}h_K^2\bigr)\bigl(-J_0\dot{z}(t)\bigr)
-  \quad \text{a.e.}
-\]
-Writing $\nu = -2\alpha$ and $b = c$, this is exactly the Euler-Lagrange
-condition~\eqref{eq:dual-euler-lagrange} from Lemma~\ref{lem:dual-euler-lagrange}.
-
-\medskip
-\emph{Part 2: Primal critical point $\Rightarrow$ dual critical point.}
-Let $\gamma$ be a primal critical point (Hamiltonian orbit on $\partial K$),
-so $g_K^2(\gamma) \equiv 1$ and $-J_0\dot{\gamma} \in \partial g_K^2(\gamma)$ a.e.
-Define
-\[
-  z(t) := \gamma(t) - \tfrac{1}{T}\!\int_0^T \gamma(s)\, ds.
-\]
-We show $z$ is a dual critical point.
-
-\emph{Closure.}
-Since $\gamma(0) = \gamma(T)$, we have $z(0) = z(T)$.
-
-\emph{Centering.}
-By definition, $\int_0^T z = 0$.
-
-\emph{Action.}
-Since $\dot{z} = \dot{\gamma}$ and $\int_0^T z = 0$:
-\[
-  A(z) = \tfrac{1}{2}\!\int_0^T \langle -J_0\dot{z},\, z \rangle\, dt
-       = \tfrac{1}{2}\!\int_0^T \langle -J_0\dot{\gamma},\, \gamma \rangle\, dt
-       = A(\gamma) = T.
-\]
-
-\emph{Euler--Lagrange equation.}
-The primal differential inclusion $-J_0\dot{\gamma} \in \partial g_K^2(\gamma)$ a.e.\
-is the equality case of Fenchel duality (Lemma~\ref{lem:fenchel-duality}),
-which is equivalent to
+We show that $\gamma$ is a dual critical point.
+By Fenchel duality (Lemma~\ref{lem:fenchel-duality}),
+the inclusion $-J_0\dot{\gamma} \in \partial g_K^2(\gamma)$ a.e.\ is equivalent to
 \[
   \gamma \in \partial\bigl(\tfrac{1}{4}h_K^2\bigr)(-J_0\dot{\gamma})
   \quad\text{a.e.}
 \]
-Since $\dot{z} = \dot{\gamma}$, this gives
-\[
-  \gamma \in \partial\bigl(\tfrac{1}{4}h_K^2\bigr)(-J_0\dot{z})
-  \quad\text{a.e.}
-\]
-Write $\gamma = z + b$ where $b = \frac{1}{T}\int_0^T \gamma$ is constant.
-This is exactly the Euler-Lagrange condition~\eqref{eq:dual-euler-lagrange} with $\nu = 1$.
+This is exactly the Euler-Lagrange condition~\eqref{eq:dual-euler-lagrange}
+from Lemma~\ref{lem:dual-euler-lagrange} with $\nu = 1$ and $b = 0$.
+Since $\gamma$ is closed and $A(\gamma) = T$, the curve~$\gamma$ satisfies
+all constraints of the dual problem (Definition~\ref{def:dual-problem})
+and is a critical point.
+
+By Lemma~\ref{lem:dual-scaling-family}, all orbits in the symmetry class of~$\gamma$,
+namely $z(t) = \alpha\gamma(t/\alpha^2) + b$ for $\alpha > 0$ and $b \in \mathbb{R}^4$,
+are dual critical points.
 
 \medskip
 \emph{Part 3: Dual critical point $\Rightarrow$ primal critical point.}
