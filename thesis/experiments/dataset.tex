@@ -35,47 +35,7 @@ Billiard & Lagrangian products only & Polynomial & Lagrangian products \\
 \label{tab:algorithm-variants}
 \end{table}
 
-\subsection{Correctness Verification}
-\label{sec:dataset-correctness}
-
-We verify algorithm correctness through:
-
-\begin{enumerate}
-  \item \textbf{Literature agreement}: 8 polytopes with published capacity values
-    (Table~\ref{tab:literature-polytopes}). HK2017 pruned reproduces all published
-    values within $10^{-8}$ relative error. For Lagrangian products, billiard also
-    agrees within $10^{-8}$ relative error.
-
-\begin{table}[h]
-\centering
-\small
-\begin{tabular}{llr}
-\toprule
-Polytope & Source & Published $c_{\text{EHZ}}$ \\
-\midrule
-Simplex & Y. Nir thesis 2013 & $0.250$ \\
-Hypercube & HK2019 Ex 4.6 & $4.000$ \\
-HKO Pentagon & Haim-Kislev-Ostrover 2024 & $3.441$ \\
-Lagrangian $\triangle \times_L \triangle$ & HK2017 + billiard & $1.500$ \\
-Lagrangian $\triangle \times_L \square$ & HK2017 + billiard & $1.500$ \\
-Symplectic $\triangle \times \triangle$ & Moser's theorem & $1.299$ \\
-Symplectic $\triangle \times \square$ & Moser's theorem & $1.000$ \\
-\bottomrule
-\end{tabular}
-\caption{Literature polytopes with published EHZ capacity values used for verification.}
-\label{tab:literature-polytopes}
-\end{table}
-
-  \item \textbf{Algorithm agreement}: All applicable algorithm variants (HK2017 pruned,
-    HK2017 unpruned, billiard) are run on 5 random generic polytopes + 5 random
-    Lagrangian products. Results agree within $10^{-8}$ relative error.
-
-  \item \textbf{Conformality}: 10 scaled polytopes (from test 1 base set) verify $c(\alpha K) = \alpha^2 c(K)$
-    within $10^{-8}$ relative error.
-
-  \item \textbf{Symplectic invariance}: 10 transformed polytopes (from test 1 base set) verify
-    $c(MK) = c(K)$ for $M \in \mathrm{Sp}(4)$ within $10^{-8}$ relative error.
-\end{enumerate}
+% Correctness verification details in Section~\ref{sec:correctness}
 
 % \subsection{The Dataset}
 % \label{sec:dataset}
