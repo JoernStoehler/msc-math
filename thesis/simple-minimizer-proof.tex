@@ -166,74 +166,31 @@ the equivalence proof
 \begin{lemma}[Scaling and translation symmetry of dual critical points]%
 \label{lem:dual-scaling-family}
 % QC: The dual Euler-Lagrange equation is invariant under scaling + translation.
-%   Since I_K depends only on velocity, I_K(z_{\alpha,b}) = I_K(z).
+%   Since I_K depends only on velocity, I_K(z') = I_K(z).
 %   The family parameterized by (\alpha, b) \in \mathbb{R}_{>0} \times \mathbb{R}^4
-%   has constant I_K, but varying period and action.
+%   has constant I_K, so does not affect the minimum value of the dual problem.
 % Downstream: explains why I_K(z) = T fails for general dual critical points.
 %   Only the special representative z = \gamma - center(\gamma) from a Reeb
 %   orbit \gamma satisfies I_K(z) = T.
-Let $z \in W^{1,2}([0,T_z], \mathbb{R}^4)$ be a closed curve that is a
+Let $z \in W^{1,2}([0,T], \mathbb{R}^4)$ be a closed curve that is a
 critical point of the dual problem (Definition~\ref{def:dual-problem}).
 For any $\alpha > 0$ and $b \in \mathbb{R}^4$, define
 \begin{equation}\label{eq:scaling-family}
-  z_{\alpha,b}(t) := \alpha\, z\bigl(t/\alpha^2\bigr) + b,
-  \quad t \in [0, \alpha^2 T_z],
+  z'(t) := \alpha\, z\bigl(t/\alpha^2\bigr) + b,
+  \quad t \in [0, \alpha^2 T] =: [0, T'].
 \end{equation}
-with period $T_{\alpha,b} := \alpha^2 T_z$.
-
-Then:
-\begin{enumerate}
-\item[(a)] $z_{\alpha,b}$ is closed and is a critical point of the dual problem.
-\item[(b)] $I_K(z_{\alpha,b}) = I_K(z)$ (independent of $\alpha$ and $b$).
-\item[(c)] The action scales as $A(z_{\alpha,b}) = \alpha^2\, A(z)$.
-\item[(d)] If $A(z) = T_z$, then $A(z_{\alpha,b}) = T_{\alpha,b}$
-  (the dual constraint is preserved).
-\end{enumerate}
+Then $z'$ is a closed curve that is a critical point of the dual problem.
+In particular, $A(z') = T'$ is satisfied. Moreover, $I_K(z') = I_K(z)$,
+so this family does not affect the minimum value of the dual problem.
 \end{lemma}
 
 \begin{proof}
-\emph{Claim (a):} Closure follows from $z_{\alpha,b}(\alpha^2 T_z) = \alpha z(T_z) + b = \alpha z(0) + b = z_{\alpha,b}(0)$.
-
-For the critical point property: $z$ is a critical point of $I_K$ subject to
-$A(z) = T_z$. Both $I_K$ and $A$ are functionals depending only on the velocity
-$\dot{z}$. Under the rescaling $z(t) \mapsto \alpha z(t/\alpha^2)$, the velocity
-transforms as $\dot{z}(t) \mapsto (1/\alpha) \dot{z}(t/\alpha^2)$. Since $I_K$
-is 2-homogeneous in velocity (via $h_K^2$) and $A$ is also 2-homogeneous in
-velocity, the criticality condition (vanishing of the variation of the Lagrangian
-$I_K - \lambda A$) is preserved under this rescaling. Translation by constant~$b$
-is trivial since both functionals depend only on $\dot{z}$.
-
-\emph{Claim (b):} Since $I_K(z) = \frac{1}{4}\int_0^T h_K^2(-J_0\dot{z})\, dt$
-depends only on the velocity, $I_K(z + b) = I_K(z)$ for any constant~$b$.
-For the scaling:
-\[
-  I_K(z_{\alpha,b})
-  = \frac{1}{4} \int_0^{\alpha^2 T_z} h_K^2(-J_0 \dot{z}_{\alpha,b}(t))\, dt
-  = \frac{1}{4} \int_0^{\alpha^2 T_z} h_K^2\bigl( -J_0 (1/\alpha) \dot{z}(t/\alpha^2) \bigr)\, dt.
-\]
-Since $h_K$ is 1-homogeneous:
-\[
-  = \frac{1}{4} \int_0^{\alpha^2 T_z} (1/\alpha)^2 h_K^2(-J_0\dot{z}(t/\alpha^2))\, dt
-  = \frac{1}{\alpha^2} \cdot \frac{\alpha^2}{4} \int_0^{T_z} h_K^2(-J_0\dot{z}(s))\, ds
-  = \frac{1}{4} \int_0^{T_z} h_K^2(-J_0\dot{z}(s))\, ds = I_K(z),
-\]
-using substitution $s = t/\alpha^2$ with $dt = \alpha^2\, ds$.
-
-\emph{Claim (c):} Similarly, $A(z) = \frac{1}{2}\int_0^T \langle -J_0\dot{z}, z\rangle\, dt$
-gives
-\[
-  A(z_{\alpha,b})
-  = \frac{1}{2} \int_0^{\alpha^2 T_z} \langle -J_0(1/\alpha)\dot{z}(t/\alpha^2),\, \alpha z(t/\alpha^2) + b \rangle\, dt.
-\]
-Since $\int_0^{\alpha^2 T_z} \langle -J_0\dot{z}(t/\alpha^2), b\rangle\, dt = 0$ (using $J_0$ skew-symmetry
-and closure of $z$), we get
-\[
-  = \alpha \cdot \frac{1}{2} \int_0^{\alpha^2 T_z} \langle -J_0\dot{z}(t/\alpha^2), z(t/\alpha^2)\rangle\, dt
-  = \alpha^2 \cdot \frac{1}{2} \int_0^{T_z} \langle -J_0\dot{z}(s), z(s)\rangle\, ds
-  = \alpha^2\, A(z).
-\]
-
-\emph{Claim (d):} If $A(z) = T_z$, then $A(z_{\alpha,b}) = \alpha^2 A(z) = \alpha^2 T_z = T_{\alpha,b}$.
+Closure: $z'(T') = \alpha z(T) + b = \alpha z(0) + b = z'(0)$.
+Since $I_K$ and $A$ are 2-homogeneous in velocity and $I_K$ is translation-invariant,
+the Euler-Lagrange equation for $I_K - \lambda A$ is invariant under
+$z(t) \mapsto \alpha z(t/\alpha^2) + b$, so $z'$ is a critical point.
+By 2-homogeneity, $A(z') = \alpha^2 A(z) = \alpha^2 T = T'$ and
+$I_K(z') = I_K(z)$ (using translation-invariance and the substitution $s = t/\alpha^2$).
 \end{proof}
 
 \begin{theorem}[Primal-dual equivalence (Clarke's Dual Action Principle)]%
