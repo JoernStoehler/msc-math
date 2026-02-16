@@ -39,7 +39,10 @@ with growth rate~${\sim}4\text{--}5\times$ per facet. Extrapolating to the
 4D crosspolytope ($F = 16$), the model predicts ${\sim}19{,}600$~seconds
 (5.4~hours) per capacity computation.
 
-For $F \le 7$, we compare pruned vs unpruned (Table~\ref{tab:pruned-vs-unpruned}).
+For $F \le 7$, we compare pruned vs unpruned on random polytopes
+(Table~\ref{tab:pruned-vs-unpruned}). On Lagrangian products, the billiard
+algorithm is consistently 2--3$\times$ faster than HK2017 pruned
+(Table~\ref{tab:billiard-vs-hk2017}).
 
 \begin{table}[h]
 \centering
@@ -52,25 +55,9 @@ $F$ & Pruned (ms) & Unpruned (ms) & Speedup \\
  7 &  16.9 &  26.6 & 1.6$\times$ \\
 \bottomrule
 \end{tabular}
-\caption{Pruned vs unpruned timing for small polytopes.}
+\caption{Pruned vs unpruned timing for small random polytopes.}
 \label{tab:pruned-vs-unpruned}
 \end{table}
-
-Figure~\ref{fig:benchmark-timing-random} shows HK2017 timing on random polytopes,
-with the fitted model extrapolated to $F = 16$.
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.9\textwidth]{../experiments/figures/benchmark_timing_random.png}
-\caption{HK2017 on random polytopes. Pruned (blue) with fitted exponential model
-  $T(F) = 2.3 \times 10^{-7} \cdot 4.8^F$, extrapolated to crosspolytope ($F = 16$).
-  Unpruned (orange) for $F \le 7$.}
-\label{fig:benchmark-timing-random}
-\end{figure}
-
-On Lagrangian products, the billiard algorithm is consistently 2--3$\times$
-faster than HK2017 pruned (Table~\ref{tab:billiard-vs-hk2017},
-Figure~\ref{fig:benchmark-timing-lagrangian}), with polynomial vs exponential scaling.
 
 \begin{table}[h]
 \centering
@@ -89,14 +76,6 @@ $F$ & Billiard (ms) & HK2017 pruned (ms) & Speedup \\
 \label{tab:billiard-vs-hk2017}
 \end{table}
 
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.9\textwidth]{../experiments/figures/benchmark_timing_lagrangian.png}
-\caption{HK2017 vs Billiard on random Lagrangian products. Billiard (green) is
-  2--3$\times$ faster than HK2017 pruned (blue) with polynomial vs exponential scaling.}
-\label{fig:benchmark-timing-lagrangian}
-\end{figure}
-
 Based on these benchmarks, we adopt the following algorithm selection:
 
 \begin{itemize}
@@ -106,3 +85,17 @@ Based on these benchmarks, we adopt the following algorithm selection:
   \item \textbf{Debug testing}: Use HK2017 unpruned on $F \le 7$ to exercise
     all code paths with internal assertions.
 \end{itemize}
+
+Figure~\ref{fig:benchmark-timing} shows all timing data with fitted exponential
+models for each algorithm and polytope class.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.95\textwidth]{../experiments/figures/benchmark_timing.png}
+\caption{EHZ capacity benchmarks. Each algorithm and polytope class shows
+  individual samples and a fitted exponential model. HK2017 pruned on random
+  polytopes (fitted model extrapolated to crosspolytope, $F = 16$) shows the
+  steepest growth. Billiard on Lagrangian products is consistently faster than
+  HK2017 on the same polytope class.}
+\label{fig:benchmark-timing}
+\end{figure}
