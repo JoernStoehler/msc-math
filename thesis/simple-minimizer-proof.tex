@@ -788,17 +788,19 @@ $I_K(z') = \beta\, I_K(z)$.
 %   (Contrast Remark~\ref{rem:simple-orbit-data}, where primal orbits gamma
 %   need a base point b = gamma(0) in addition to (sigma, tau).)
 Each $z_n$ is encoded by
-$(\sigma_n, s_n, T_n) \in S_F \times \Delta^{F-1} \times (0,\infty)$,
-where $\sigma_n$ is the ordering and
-$s_{n,i} = t_{n,i} / T_n$ are normalized durations.
+$(\sigma_n, s_n, T_n, z_n(0)) \in S_F \times \Delta^{F-1} \times (0,\infty) \times \mathbb{R}^4$,
+where $\sigma_n$ is the ordering,
+$s_{n,i} = t_{n,i} / T_n$ are normalized durations,
+and $z_n(0)$ is the start point needed to trace the piecewise affine path.
 Since $T_n \to T > 0$, eventually
 $T_n \in [T/2,\, 2T]$.
+We only want convergence up to translations, so we drop the $z_n(0)$.
 The space
 $S_F \times \Delta^{F-1} \times [T/2,\, 2T]$
 is compact, so a subsequence has
 $(\sigma_n, s_n, T_n) \to (\sigma_*, s_*, T)$.
 The curve~$z_*$ with parameters
-$(\sigma_*, s_*, T)$ is the limit.
+$(\sigma_*, s_*, T)$ is the limit (up to choice of starting point).
 By Lemma~\ref{lem:shoelace},
 $A(\sigma, s, T) = T^2 \sum_{j<i} s_i\, s_j\,
 \omega_0(w_j, w_i)$ is continuous in $(\sigma, s, T)$,
