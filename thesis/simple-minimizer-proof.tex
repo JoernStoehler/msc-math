@@ -413,14 +413,16 @@ Then $\gamma$ has period $T_\gamma = \nu T$ and
   &= g_K\bigl(\tfrac{1}{c}(\nu z(t/\nu) + b)\bigr)
    = \tfrac{1}{c}\, g_K(\nu z(t/\nu) + b) = \tfrac{c}{c} = 1, \\
   \dot{\gamma}(t)
-  &= \tfrac{1}{c}\dot{z}(t/\nu), \\
+  &= \tfrac{\nu}{c} \cdot \tfrac{1}{\nu} \dot{z}(t/\nu)
+   = \tfrac{1}{c}\dot{z}(t/\nu), \\
   -J_0\dot{\gamma}(t)
   &= -\tfrac{1}{c} J_0\dot{z}(t/\nu)
    \in \tfrac{1}{c}\, \partial g_K^2(\nu z(t/\nu) + b)
    = \partial g_K^2(\gamma(t))
   \quad\text{a.e.}
 \end{align*}
-Thus $\gamma$ is a primal critical point (Hamiltonian orbit on $\partial K$).
+We have $g_K(\gamma) \equiv 1$ and $-J_0\dot{\gamma} \in \partial g_K^2(\gamma)$ a.e.,
+so $\gamma$ is a Reeb orbit (primal critical point on $\partial K$).
 
 \emph{Step 4: Determining $\nu = c^2$ and symmetry class membership.}
 For any Reeb orbit, $A(\gamma) = T_\gamma = \nu T$.
@@ -446,13 +448,24 @@ Therefore $\gamma$ lies in the symmetry class of~$z$.
 
 \medskip
 \emph{Minimum equality.}
-Since the forward and reverse directions establish a correspondence between
-primal and dual critical points via symmetry classes, and since
-primal critical points $\gamma$ and dual critical points $z$ in the same
-symmetry class have $A(\gamma) = I_K(z)$ (both equal the period),
-minimizers correspond to minimizers:
+For any Reeb orbit~$\gamma$, the Fenchel equality (Lemma~\ref{lem:fenchel-duality})
+at $-J_0\dot{\gamma} \in \partial g_K^2(\gamma)$ gives pointwise:
 \[
-  \min_\gamma A(\gamma) = \min_z I_K(z) = c_{\mathrm{EHZ}}(K).
+  g_K^2(\gamma) + \tfrac{1}{4}h_K^2(-J_0\dot{\gamma})
+  = \langle \gamma, -J_0\dot{\gamma} \rangle.
+\]
+Integrating over $[0,T]$ and using $g_K^2(\gamma) \equiv 1$:
+\[
+  T + I_K(\gamma) = 2A(\gamma) = 2T,
+\]
+hence $I_K(\gamma) = T = A(\gamma)$.
+
+By Lemma~\ref{lem:dual-scaling-family}, $I_K$ is constant on symmetry classes.
+We have established that every primal critical point is also a dual critical point (forward direction),
+and that every dual critical point has a primal critical point in its symmetry class (reverse direction).
+Therefore:
+\[
+  \min_z I_K(z) = \min_\gamma I_K(\gamma) = \min_\gamma A(\gamma) = c_{\mathrm{EHZ}}(K).
 \]
 \end{proof}
 
