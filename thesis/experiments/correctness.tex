@@ -1,30 +1,35 @@
 % correctness.tex — \input'd from experiments/experiments.tex
 %
-% Sources: crates/hk2017/tests/fixtures/capacity_dataset.json (27+ polytopes),
-%   crates/hk2017/src/capacity_properties_test.rs (fixture-based property tests),
-%   crates/billiard/src/lib_test.rs (billiard cross-validation).
+% Sources: crates/datasets/src/bin/verification.rs (verification binary),
+%   experiments/data/verification.jsonl (generated dataset).
 %
-% This section documents which mathematical propositions are verified on the
-% dataset, and which dataset expansions each proposition motivated.
+% This section documents the mathematical propositions verified to establish
+% correctness of the capacity computation implementation.
 
 \subsection{Correctness Verification}
 \label{sec:correctness}
 
-Before using the computed capacities for experimental conclusions, we verify
-that the implementations are correct. This section documents the mathematical
-properties tested, the polytope subsets used, and the results.
+We test our implementation on several propositions that must hold for any
+algorithm that computes the correct capacity.
+Table~\ref{tab:correctness-algorithms} lists the algorithm variants we use.
+Table~\ref{tab:verification-capacity-counts} shows the 6 tests we run, and
+how many new capacity computations each test required. Tests reuse capacity
+computations from other tests for development efficiency.
 
-All tests are implemented as automated Rust tests and run as part of the
-continuous test suite. Capacities are pre-computed in release mode and cached
-as a JSON fixture; the property tests then verify the cached values
-in under one second.
-
-\subsubsection*{Required capacity computations}
-
-Table~\ref{tab:verification-capacity-counts} shows the exact algorithm~$\times$~polytope
-pairs that must be computed. The verification binary generates 47~polytopes and
-computes exactly 71~capacity values (47~pruned, 10~unpruned, 14~billiard)---no
-redundant computations.
+\begin{table}[h]
+\centering
+\begin{tabular}{ll}
+\toprule
+Algorithm & Description \\
+\midrule
+Pruned & HK2017 with adjacency-based orbit pruning (production) \\
+Unpruned & HK2017 without pruning (validation only) \\
+Billiard & Billiard algorithm (Lagrangian products only) \\
+\bottomrule
+\end{tabular}
+\caption{Algorithm variants used for correctness verification.}
+\label{tab:correctness-algorithms}
+\end{table}
 
 \begin{table}[h]
 \centering
@@ -50,161 +55,46 @@ Test 6: Monotonicity & 0 & 0 & 0 \\
 \label{tab:verification-capacity-counts}
 \end{table}
 
-\subsubsection*{Propositions}
+The 6 test propositions are:
+\begin{enumerate}
+  \item \textbf{Direct comparison} between all applicable algorithms on
+    5~random polytopes and 5~random Lagrangian product polytopes.
 
-Table~\ref{tab:correctness-propositions} lists the mathematical properties
-verified on the dataset. For each property, we state the formula, the
-polytope subset it is tested on, and whether it motivated the creation of
-new dataset entries.
+  \item \textbf{Literature agreement} for all efficient (Pruned, Billiard)
+    algorithms on the known published polytopes from
+    Table~\ref{tab:literature-polytopes}.
+
+  \item \textbf{Conformality}: $c(\alpha K) = \alpha^2 c(K)$ holds for the
+    10~polytopes from test~1, with a random scaling~$\alpha$ each.
+
+  \item \textbf{Symplectic invariance}: $c(MK) = c(K)$ holds for the
+    10~polytopes from test~1, with a random~$M \in \mathrm{Sp}(4)$ each.
+
+  \item \textbf{Continuity}: For the 10~polytopes from test~1, a small
+    random perturbation of the facet normals produces a small change in
+    capacity.
+
+  \item \textbf{Monotonicity}: $\alpha^2 c(K_1) \le c(K_2)$ where we pick
+    $\alpha$ maximal such that~$\alpha K_1 \subseteq K_2$, for all
+    polytopes~$K_1, K_2$ in the dataset.
+\end{enumerate}
 
 \begin{table}[h]
 \centering
 \small
-\begin{tabular}{lp{4.5cm}p{3.5cm}p{3cm}}
+\begin{tabular}{llrrrr}
 \toprule
-Property & Formula & Tested on & Motivated \\
+Polytope & $F$ & $c_{\mathrm{EHZ}}$ & $\mathrm{vol}(K)$ & $\mathrm{sys}(K)$ & Source \\
 \midrule
-Positivity & $c_{\mathrm{EHZ}}(K) > 0$ & All 33 fixture entries & --- \\
-Literature agreement & $c_{\mathrm{computed}} = c_{\mathrm{published}}$ & 7 known polytopes & \textsc{LiteratureKnown} \\
-Pruned = unpruned & $c_{\mathrm{pruned}} = c_{\mathrm{unpruned}}$ & 11 base polytopes ($F \le 8$) & Unpruned column \\
-Cross-algorithm & $c_{\mathrm{HK2017}} = c_{\mathrm{billiard}}$ & All Lagrangian products & Billiard column, \textsc{RandomProducts} \\
-Conformality & $c({\alpha K}) = \alpha^2 \cdot c({K})$ & 11 scaled variants & \textsc{Scaled} group \\
-Symplectic invariance & $c({MK{+}b}) = c({K})$ & 11 symplectomorphism variants & \textsc{Symplectomorphism} group \\
-Monotonicity & $K_1 \subseteq K_2 \Rightarrow c(K_1) \le c(K_2)$ & 20 containment pairs & --- (uses existing data) \\
+Simplex & 5 & 0.25 & 0.0417 & 0.750 & Nir 2013 \\
+Hypercube $[-1,1]^4$ & 8 & 4.0 & 16.0 & 0.500 & HK2019 Ex~4.6 \\
+HK-O pentagon & 10 & 3.441 & 5.657 & 1.047 & HK-O 2024 Prop~1.4 \\
+Lag.\ $\triangle \times \triangle$ & 6 & 1.5 & 1.6875 & 0.667 & HK2017 + billiard \\
+Sym.\ $\triangle \times \triangle$ & 6 & 1.299 & 1.6875 & 0.500 & Moser's theorem \\
+Lag.\ $\triangle \times \square$ & 7 & 1.5 & 1.2990 & 0.866 & HK2017 + billiard \\
+Sym.\ $\triangle \times \square$ & 7 & 1.0 & 1.2990 & 0.385 & Moser's theorem \\
 \bottomrule
 \end{tabular}
-\caption{Mathematical properties verified on the dataset. ``Motivated'' indicates
-  which dataset rows or columns exist because of this property.
-  Tolerance: $10^{-6}$ relative error for all comparisons.}
-\label{tab:correctness-propositions}
+\caption{Known polytopes from the literature used in test~2.}
+\label{tab:literature-polytopes}
 \end{table}
-
-\subsubsection*{Literature agreement}
-
-The following polytopes have known capacity values from the literature:
-\begin{center}
-\small
-\begin{tabular}{llrl}
-\toprule
-Polytope & $F$ & $c_{\mathrm{EHZ}}$ & Source \\
-\midrule
-Simplex & 5 & 0.25 & Nir 2013 \\
-Hypercube $[-1,1]^4$ & 8 & 4.0 & HK2019 Ex~4.6 \\
-HK-O pentagon & 10 & $2\cos(\pi/10)(1 + \cos(\pi/5)) \approx 3.441$ & HK-O 2024 Prop~1.4 \\
-Lag.\ $\triangle \times \triangle$ & 6 & 1.5 & HK2017 + billiard \\
-Sym.\ $\triangle \times \triangle$ & 6 & $3\sqrt{3}/4 \approx 1.299$ & Moser's theorem \\
-Lag.\ $\triangle \times \square$ & 7 & 1.5 & HK2017 + billiard \\
-Sym.\ $\triangle \times \square$ & 7 & 1.0 & Moser's theorem \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-All computed values agree with literature to within $10^{-6}$ relative error.
-
-\subsubsection*{Cross-algorithm validation}
-
-On the overlapping domain (Lagrangian products), HK2017 and the billiard
-algorithm should produce the same capacity. We verify this on three
-datasets of increasing size:
-\begin{enumerate}
-  \item \textbf{Fixture} (3 Lagrangian products + scaled variants):
-    Agreement within $10^{-8}$ relative error.
-  \item \textbf{PentagonSweep} (361 points): Perfect agreement on all
-    361 data points (relative error~$< 10^{-12}$).
-  \item \textbf{PolygonGrid} (10 pairs, ${\sim}2300$ points): All 10 pairs
-    have 100\% agreement (within~$10^{-8}$ relative tolerance).
-    During development, the~$(4,4)$ and~$(4,6)$ pairs exhibited capacity
-    discontinuities caused by a fixed-tolerance SVD rank detection in the
-    shared KKT solver. After switching to gap-based rank detection,
-    both pairs show smooth capacity curves and full cross-validation.
-\end{enumerate}
-
-All 10 polygon pairs show 100\% cross-validation with smooth capacity
-curves, providing strong evidence that both implementations are correct
-on their shared domain.
-
-\subsubsection*{Conformality and invariance}
-
-% [TODO: JÖRN — verify: the conformality test currently uses random α ∈ [0.5, 2.0].
-% Is this range sufficient to test the property thoroughly?]
-
-For each base polytope in the fixture, we generate:
-\begin{itemize}
-  \item A scaled copy $\alpha K$ with random $\alpha \in [0.5, 2.0]$, verifying
-    $c(\alpha K) = \alpha^2 \cdot c(K)$ and $\mathrm{vol}(\alpha K) = \alpha^4 \cdot \mathrm{vol}(K)$.
-  \item A symplectomorphism image $MK + b$ with random $M \in \mathrm{Sp}(4)$,
-    verifying $c(MK+b) = c(K)$ and $\mathrm{vol}(MK+b) = \mathrm{vol}(K)$.
-\end{itemize}
-
-Both properties hold to within $10^{-6}$ relative error on all tested
-variants. The symplectomorphism matrices are generated via the Cayley
-transform $(I - A)(I + A)^{-1}$ where $A \in \mathfrak{sp}(4)$, ensuring
-the result lies in $\mathrm{Sp}(4)$ exactly.
-
-\subsubsection*{Monotonicity}
-
-For pairs of polytopes $(K_1, K_2)$ in the fixture, we compute the largest
-$\alpha$ such that $\alpha K_1 \subseteq K_2$ by checking vertex containment.
-On the 20 pairs with largest non-trivial $\alpha$, we verify
-$c(\alpha K_1) = \alpha^2 c(K_1) \le c(K_2)$, combining conformality with
-monotonicity. All pairs satisfy the inequality.
-
-\subsubsection*{SVD gap threshold over-truncation}
-
-The KKT solver uses a gap-based SVD rank detection: if the ratio of
-consecutive singular values exceeds a threshold ($100{\times}$), the
-smaller singular values are treated as null-space directions. As noted
-in Section~\ref{sec:benchmark}, an LU fast path catches some valid
-orbits that this gap truncation rejects.
-
-To quantify the impact, we compared LU+SVD against SVD-only on
-random polytopes at~$F = 7, 8, 9$ (10 polytopes each at~$F \le 8$,
-5~at~$F = 9$):
-
-\begin{center}
-\small
-\begin{tabular}{rrrrl}
-\toprule
-$F$ & Permutations & LU-only orbits & Rate & Capacity-optimal? \\
-\midrule
-7 &   23{,}650 & 26 & 0.11\%   & 0/26 \\
-8 &  160{,}640 &  1 & 0.0006\% & 0/1 \\
-9 &  628{,}320 &  1 & 0.0002\% & 0/1 \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-The ``LU-only orbits'' are permutations where LU finds a valid solution
-($\beta > 0$) but the SVD pseudoinverse (with gap-based rank truncation)
-does not. In all 28 cases across three facet counts:
-\begin{itemize}
-  \item The last singular value is~$10^{-3}$--$10^{-2}$, with a gap
-    ratio of~$100$--$600{\times}$ to the penultimate value---right at
-    the detection threshold.
-  \item The SVD pseudoinverse produces negative~$\beta$ components,
-    so the orbit is correctly rejected on the SVD path.
-  \item \textbf{None of the 28 LU-only orbits is capacity-optimal.}
-    Comparing the orbit action~$Q$ against the computed capacity
-    for each polytope, all LU-only orbits have strictly higher action.
-\end{itemize}
-
-The fraction of affected orbits \emph{decreases} with~$F$
-(from~$0.11\%$ to~$0.0002\%$), which is reassuring: the
-over-truncation does not accumulate at higher facet counts.
-
-The LU fast path adds~$6$--$11\%$ wall-clock overhead
-(Section~\ref{sec:benchmark}) but serves as a safety net:
-if a future polytope class produces LU-only orbits that \emph{are}
-capacity-optimal, LU would catch them while SVD-only would silently
-return a suboptimal value. Until the gap threshold is replaced by a
-more principled rank detection method, LU remains in the production
-solver.
-
-\subsubsection*{Debug-mode testing}
-
-The HK2017 implementation contains extensive \texttt{debug\_assert!}
-checks for internal invariants (index bounds, matrix dimensions, KKT
-solution validity). These assertions are active in debug builds and
-exercised on polytopes with $F \le 8$, where the exponential cost
-remains manageable. For the rationale behind this facet-count limit,
-see Section~\ref{sec:benchmark}.
