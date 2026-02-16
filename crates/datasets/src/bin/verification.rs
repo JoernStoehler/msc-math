@@ -301,8 +301,9 @@ mod tests {
     fn test_1_direct_comparison() {
         let dataset = load_dataset();
         let base: Vec<_> = dataset.iter().filter(|e| e.test_group == "base").collect();
-        assert_eq!(base.len(), 10);
+        assert_eq!(base.len(), 10, "Expected 10 base polytopes");
 
+        let mut billiard_count = 0;
         for entry in base {
             let pruned = entry.capacity_pruned;
             let unpruned = entry.capacity_unpruned.expect("unpruned missing");
@@ -312,21 +313,31 @@ mod tests {
             if let Some(bil) = entry.capacity_billiard {
                 assert!((pruned - bil).abs() / pruned < TOL,
                     "{}: pruned≠billiard", entry.name);
+                billiard_count += 1;
             }
         }
+        assert_eq!(billiard_count, 5, "Expected exactly 5 Lagrangian products with billiard values");
     }
 
     #[test]
     fn test_2_literature() {
         let dataset = load_dataset();
         let lit: Vec<_> = dataset.iter().filter(|e| e.test_group == "literature").collect();
-        assert_eq!(lit.len(), 7);
+        assert_eq!(lit.len(), 7, "Expected 7 literature polytopes");
 
+        let mut billiard_count = 0;
         for entry in lit {
             let expected = entry.expected_capacity.expect("expected missing");
             assert!((entry.capacity_pruned - expected).abs() / expected < TOL,
                 "{}: computed≠published", entry.name);
+
+            if let Some(bil) = entry.capacity_billiard {
+                assert!((bil - expected).abs() / expected < TOL,
+                    "{}: billiard≠published", entry.name);
+                billiard_count += 1;
+            }
         }
+        assert_eq!(billiard_count, 4, "Expected exactly 4 Lagrangian products with billiard values");
     }
 
     #[test]
@@ -334,15 +345,26 @@ mod tests {
         let dataset = load_dataset();
         let base: Vec<_> = dataset.iter().filter(|e| e.test_group == "base").collect();
         let scaled: Vec<_> = dataset.iter().filter(|e| e.test_group == "scaled").collect();
-        assert_eq!(scaled.len(), 10);
+        assert_eq!(scaled.len(), 10, "Expected 10 scaled polytopes");
 
+        let mut billiard_count = 0;
         for entry in scaled {
             let base_entry = &base[entry.base_index.unwrap()];
             let alpha = entry.alpha.unwrap();
             let expected = alpha * alpha * base_entry.capacity_pruned;
             assert!((entry.capacity_pruned - expected).abs() / expected < TOL,
                 "{}: c(αK)≠α²c(K)", entry.name);
+
+            // If base has billiard, scaled should too (and satisfy conformality)
+            if base_entry.capacity_billiard.is_some() {
+                let bil = entry.capacity_billiard.expect("scaled Lagrangian missing billiard");
+                let expected_bil = alpha * alpha * base_entry.capacity_billiard.unwrap();
+                assert!((bil - expected_bil).abs() / expected_bil < TOL,
+                    "{}: billiard c(αK)≠α²c(K)", entry.name);
+                billiard_count += 1;
+            }
         }
+        assert_eq!(billiard_count, 5, "Expected exactly 5 scaled Lagrangian products with billiard");
     }
 
     #[test]
