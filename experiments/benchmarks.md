@@ -83,13 +83,14 @@ cd experiments/
 python3 scripts/benchmark.py
 ```
 
-Reads `benchmark.jsonl`, fits exponential model T(F) = a · b^F via log-linear regression.
+Reads `benchmark.jsonl`, fits exponential models T(F) = a · b^F for each algorithm
+and polytope class via log-linear regression.
 
 Outputs:
-- `profiling/timing_model.json` (model parameters, R² fit quality)
-- `figures/benchmark_timing.png` (scatter plot + fitted curve)
+- `profiling/timing_model.json` (model parameters for pruned on random polytopes)
+- `figures/benchmark_timing.png` (unified figure with all algorithms, polytope classes, and fitted models)
 
-Prints summary table to stdout (for manual .tex update).
+Prints summary tables and all fit parameters to stdout.
 
 ## HK2017 Implementation Optimization
 
@@ -128,12 +129,14 @@ Before benchmarking, we optimized the HK2017 implementation without changing the
 
 ## Results Summary
 
-**Timing model** (fitted to F=5..12 random polytopes):
-```
-T(F) = 1.5×10⁻⁷ · 4.32^F seconds  (R² = 0.994)
-```
+**Timing models** (fitted exponential models for each algorithm/polytope class):
 
-**Growth rate:** ~4-5× per additional facet (exponential)
+- **HK2017 pruned (random):** T(F) = 2.3×10⁻⁷ · 4.8^F seconds (R² = 0.998)
+- **HK2017 pruned (Lagrangian):** T(F) = 1.2×10⁻⁷ · 5.3^F seconds (R² = 0.997)
+- **HK2017 unpruned (random, F≤7):** T(F) = 1.4×10⁻⁸ · 7.9^F seconds (R² = 1.000)
+- **Billiard (Lagrangian):** T(F) = 5.8×10⁻⁸ · 5.3^F seconds (R² = 0.998)
+
+**Growth rates:** ~5× per facet (pruned/billiard), ~8× per facet (unpruned)
 
 **Practical limits:**
 - F≤10: routine use (<300ms median)
@@ -148,12 +151,16 @@ T(F) = 1.5×10⁻⁷ · 4.32^F seconds  (R² = 0.994)
 ## Data Flow to Thesis
 
 The thesis section (`benchmarks.tex`) includes:
-1. **Timing table** by facet count (median, mean, min, max)
-2. **Exponential model** with fitted parameters and R²
-3. **Figure** showing scatter plot + fitted curve
-4. **Algorithm comparison** (billiard vs HK2017 on Lagrangian products)
+1. **Timing table** (HK2017 pruned on random polytopes, F=5..12)
+2. **Fitted model** for pruned on random: T(F) = 2.3×10⁻⁷ · 4.8^F
+3. **Comparison tables:**
+   - Pruned vs unpruned (random polytopes, F≤7)
+   - Billiard vs HK2017 pruned (Lagrangian products)
+4. **Unified figure** showing all algorithms, polytope classes, and fitted models
+5. **Algorithm selection** guidelines based on benchmarks
 
-The writeup focuses on performance characteristics and practical limits, not implementation details.
+The writeup focuses on performance characteristics and practical limits.
+Implementation optimization details are documented in this .md file only.
 
 ## Regeneration
 
