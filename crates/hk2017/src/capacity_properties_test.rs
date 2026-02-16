@@ -319,6 +319,40 @@ fn capacity_monotonicity() {
     );
 }
 
+/// Verify HK2017 and billiard agree on all Lagrangian products in the fixture.
+///
+/// The billiard algorithm is polynomial-time but restricted to Lagrangian products.
+/// On the overlapping domain, both algorithms must produce the same capacity.
+/// Entries without `capacity_billiard` (non-Lagrangian) are skipped.
+#[test]
+fn billiard_cross_validation() {
+    let dataset = &*DATASET;
+
+    let mut checked = 0;
+    for tp in dataset.iter() {
+        if let Some(cap_billiard) = tp.capacity_billiard {
+            let rel_err = (tp.capacity - cap_billiard).abs() / cap_billiard;
+            assert!(
+                rel_err < 1e-6,
+                "'{}': HK2017 ({}) ≠ billiard ({}) capacity, rel_error = {:.2e}",
+                tp.name, tp.capacity, cap_billiard, rel_err
+            );
+            checked += 1;
+        }
+    }
+
+    assert!(
+        checked > 0,
+        "expected at least one Lagrangian product in fixture for cross-validation"
+    );
+
+    println!(
+        "✓ Verified HK2017 == billiard for {}/{} fixture entries",
+        checked,
+        dataset.len()
+    );
+}
+
 #[test]
 fn sys_distribution_sanity_checks() {
     let dataset = &*DATASET;

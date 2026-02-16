@@ -23,6 +23,24 @@ pub struct PolytopeRow {
     /// 0 if capacity was skipped (e.g., too many facets).
     #[serde(default)]
     pub iterations: u64,
+
+    // ---- Billiard algorithm fields (present only for Lagrangian products) ----
+
+    /// EHZ capacity from the billiard algorithm.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub capacity_billiard: Option<f64>,
+    /// Time to compute billiard capacity (milliseconds).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub time_billiard_ms: Option<f64>,
+    /// Number of KKT solves in the billiard algorithm.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub iterations_billiard: Option<u64>,
+    /// Bounce count (k) of the billiard optimal orbit.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub bounces: Option<usize>,
+    /// Whether HK2017 and billiard agree within tolerance.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub algorithms_agree: Option<bool>,
 }
 
 impl PolytopeRow {
@@ -56,6 +74,11 @@ impl PolytopeRow {
             time_capacity_ms,
             time_creation_ms,
             iterations,
+            capacity_billiard: None,
+            time_billiard_ms: None,
+            iterations_billiard: None,
+            bounces: None,
+            algorithms_agree: None,
         }
     }
 }

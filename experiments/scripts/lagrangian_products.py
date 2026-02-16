@@ -103,15 +103,18 @@ def plot_polygon_grid(data: list[dict], output: Path):
     fig, ax = plt.subplots(figsize=(12, 7))
 
     colors = plt.cm.tab10(np.linspace(0, 1, len(pairs)))
+    color_map = {k: colors[i] for i, k in enumerate(sorted(pairs.keys()))}
     max_sys_per_pair = {}
 
-    for i, ((n1, n2), rows) in enumerate(sorted(pairs.items())):
+    for (n1, n2) in sorted(pairs.keys()):
+        rows = pairs[(n1, n2)]
         rows.sort(key=lambda r: r["angle_deg"])
         angles = np.array([r["angle_deg"] for r in rows])
         sys_vals = np.array([r["sys"] for r in rows])
 
         label = f"({n1},{n2}) F={n1+n2}"
-        ax.plot(angles, sys_vals, color=colors[i], linewidth=1.5, label=label)
+        ax.plot(angles, sys_vals, color=color_map[(n1, n2)],
+                linewidth=1.5, label=label)
 
         i_max = np.argmax(sys_vals)
         max_sys_per_pair[(n1, n2)] = {
@@ -125,7 +128,7 @@ def plot_polygon_grid(data: list[dict], output: Path):
     ax.set_xlabel("Rotation angle θ (degrees)")
     ax.set_ylabel("sys = c²/(2·vol)")
     ax.set_title("Regular n-gon × R(θ) m-gon: Systolic Ratio")
-    ax.legend(loc="upper right", fontsize=8)
+    ax.legend(loc="upper right", fontsize=8, ncol=2)
     ax.grid(True, alpha=0.3)
 
     plt.tight_layout()
@@ -141,7 +144,8 @@ def plot_polygon_grid(data: list[dict], output: Path):
         marker = "  YES" if info["above_1"] else ""
         print(
             f"  ({n1},{n2}){' '*(5-len(f'({n1},{n2})'))} "
-            f"{info['facets']:>3} {info['max_sys']:>10.6f} {info['angle']:>7.2f}° {marker}"
+            f"{info['facets']:>3} {info['max_sys']:>10.6f} {info['angle']:>7.2f}° "
+            f"{marker}"
         )
 
     return max_sys_per_pair

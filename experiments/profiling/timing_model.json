@@ -3,18 +3,18 @@
     "type": "exponential",
     "formula": "T(F) = a * b^F",
     "parameters": {
-      "a": 7.332727526862644e-08,
-      "b": 4.758746573390564
+      "a": 2.3402839698942383e-07,
+      "b": 4.816257754963632
     },
     "units": "seconds",
-    "source": "benchmark.py (random polytopes from polytopes.jsonl)"
+    "source": "benchmark.py (random polytopes from benchmark.jsonl)"
   },
   "fit_quality": {
-    "r_squared": 0.9900224683723589,
-    "data_points": 337,
+    "r_squared": 0.997543084070666,
+    "data_points": 83,
     "facet_range": [
       5,
-      14
+      12
     ]
   }
 }

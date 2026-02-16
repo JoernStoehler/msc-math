@@ -1,7 +1,8 @@
+use billiard::billiard_capacity;
 use datasets::acceptance_sweep;
 use datasets::dataset::PolytopeRow;
-use geom::known_polytopes;
 use datasets::random::generate_random_polytopes;
+use geom::known_polytopes;
 use geom::volume::volume;
 use hk2017::ehz_capacity_pruned;
 use rand::SeedableRng;
@@ -10,6 +11,9 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::{Path, PathBuf};
 use std::time::Instant;
+
+/// Tolerance for cross-algorithm agreement (relative).
+const CROSS_VALIDATION_TOL: f64 = 1e-8;
 
 // ---- Hardcoded parameters ----
 
@@ -84,7 +88,7 @@ fn cmd_dataset(output: &Path) {
             (f64::NAN, 0, std::time::Duration::ZERO)
         };
 
-        let row = PolytopeRow::from_polytope(
+        let mut row = PolytopeRow::from_polytope(
             &kp.polytope,
             kp.name.to_string(),
             vol,
@@ -94,6 +98,28 @@ fn cmd_dataset(output: &Path) {
             cap_time.as_secs_f64() * 1000.0,
             0.0, // creation time negligible for hardcoded polytopes
         );
+
+        // Try billiard algorithm (succeeds only for Lagrangian products)
+        let start_bil = Instant::now();
+        if let Ok(Some(bil_result)) = billiard_capacity(&kp.polytope) {
+            let bil_time = start_bil.elapsed();
+            let agrees = if cap.is_finite() {
+                let rel_err = (bil_result.capacity - cap).abs() / cap.max(1e-15);
+                Some(rel_err < CROSS_VALIDATION_TOL)
+            } else {
+                None
+            };
+            row.capacity_billiard = Some(bil_result.capacity);
+            row.time_billiard_ms = Some(bil_time.as_secs_f64() * 1000.0);
+            row.iterations_billiard = Some(bil_result.iterations);
+            row.bounces = Some(bil_result.bounce_count);
+            row.algorithms_agree = agrees;
+            eprintln!(
+                "  {} billiard: cap={:.6} ({:.1}ms) agree={:?}",
+                kp.name, bil_result.capacity, bil_time.as_secs_f64() * 1000.0, agrees
+            );
+        }
+
         let line = serde_json::to_string(&row).expect("serialize row");
         writeln!(writer, "{line}").expect("write line");
     }

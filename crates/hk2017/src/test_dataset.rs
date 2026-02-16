@@ -57,6 +57,8 @@ pub struct TestPolytope {
     pub capacity: f64,
     /// EHZ capacity from `ehz_capacity()` (unpruned). Only set for base polytopes.
     pub capacity_unpruned: Option<f64>,
+    /// EHZ capacity from `billiard_capacity()`. Only set for Lagrangian products.
+    pub capacity_billiard: Option<f64>,
     /// Index of the base polytope this was derived from.
     pub base_index: Option<usize>,
     /// Transformation type: None (base), "sympl", or "conform:1.50".
@@ -77,6 +79,8 @@ struct DatasetEntry {
     capacity: f64,
     #[serde(default)]
     capacity_unpruned: Option<f64>,
+    #[serde(default)]
+    capacity_billiard: Option<f64>,
     base_index: Option<usize>,
     transform: Option<String>,
 }
@@ -91,6 +95,7 @@ impl DatasetEntry {
             volume: tp.volume,
             capacity: tp.capacity,
             capacity_unpruned: tp.capacity_unpruned,
+            capacity_billiard: tp.capacity_billiard,
             base_index: tp.base_index,
             transform: tp.transform.clone(),
         }
@@ -108,6 +113,7 @@ impl DatasetEntry {
             volume: self.volume,
             capacity: self.capacity,
             capacity_unpruned: self.capacity_unpruned,
+            capacity_billiard: self.capacity_billiard,
             base_index: self.base_index,
             transform: self.transform.clone(),
         }
@@ -253,15 +259,24 @@ pub fn generate_test_dataset() -> Vec<TestPolytope> {
         let vol = volume(&entry.polytope)
             .unwrap_or_else(|e| panic!("'{}': volume computation failed: {}", entry.name, e));
 
-        let cap_pruned = ehz_capacity_pruned(&entry.polytope)
-            .unwrap_or_else(|| panic!("'{}': ehz_capacity_pruned() returned None", entry.name))
-            .capacity;
+        let pruned_result = ehz_capacity_pruned(&entry.polytope)
+            .unwrap_or_else(|| panic!("'{}': ehz_capacity_pruned() returned None", entry.name));
+        let cap_pruned = pruned_result.capacity;
+
+        // Log numerical gap if nonzero
+        let gap = pruned_result.numerical_gap();
+        if gap > 0.0 {
+            eprintln!(
+                "  {} — NUMERICAL GAP: strict={:.6} lenient={:.6} gap={:.2e}",
+                entry.name, pruned_result.capacity, pruned_result.capacity_lenient, gap
+            );
+        }
 
         let cap_unpruned = if entry.base_index.is_none() {
             // Base polytope: also compute unpruned, verify agreement
-            let unpruned = ehz_capacity(&entry.polytope)
-                .unwrap_or_else(|| panic!("'{}': ehz_capacity() returned None", entry.name))
-                .capacity;
+            let unpruned_result = ehz_capacity(&entry.polytope)
+                .unwrap_or_else(|| panic!("'{}': ehz_capacity() returned None", entry.name));
+            let unpruned = unpruned_result.capacity;
 
             let rel_err = (cap_pruned - unpruned).abs() / unpruned;
             assert!(
@@ -273,6 +288,25 @@ pub fn generate_test_dataset() -> Vec<TestPolytope> {
             Some(unpruned)
         } else {
             None
+        };
+
+        // Try billiard algorithm (succeeds only for Lagrangian products)
+        let cap_billiard = match billiard::billiard_capacity(&entry.polytope) {
+            Ok(Some(result)) => {
+                let rel_err = (result.capacity - cap_pruned).abs() / cap_pruned;
+                assert!(
+                    rel_err < 1e-6,
+                    "FAIL-FAST '{}': billiard ({}) ≠ HK2017 ({}) capacity, rel_error = {:.2e}",
+                    entry.name, result.capacity, cap_pruned, rel_err
+                );
+                eprintln!("  {} — billiard={:.6} (agrees with HK2017)", entry.name, result.capacity);
+                Some(result.capacity)
+            }
+            Ok(None) => {
+                eprintln!("  {} — billiard returned None", entry.name);
+                None
+            }
+            Err(_) => None, // Not a Lagrangian product
         };
 
         // Fail-fast: literature values
@@ -320,6 +354,7 @@ pub fn generate_test_dataset() -> Vec<TestPolytope> {
             volume: vol,
             capacity: cap_pruned,
             capacity_unpruned: cap_unpruned,
+            capacity_billiard: cap_billiard,
             base_index: entry.base_index,
             transform: entry.transform.clone(),
         });
@@ -472,6 +507,17 @@ mod test_dataset_tests {
                 assert!(
                     (orig_unp - loaded_unp).abs() < 1e-12,
                     "{}: capacity_unpruned drift: {} vs {}", orig.name, orig_unp, loaded_unp
+                );
+            }
+            assert_eq!(
+                orig.capacity_billiard.is_some(),
+                loaded.capacity_billiard.is_some(),
+                "{}: capacity_billiard presence mismatch", orig.name
+            );
+            if let (Some(orig_bil), Some(loaded_bil)) = (orig.capacity_billiard, loaded.capacity_billiard) {
+                assert!(
+                    (orig_bil - loaded_bil).abs() < 1e-12,
+                    "{}: capacity_billiard drift: {} vs {}", orig.name, orig_bil, loaded_bil
                 );
             }
         }

@@ -223,6 +223,10 @@ Target: default suite <3 min single-threaded (currently ~43s).
 
 **Fixture location:** `hk2017/tests/fixtures/capacity_dataset.json` (committed, 27 polytopes with precomputed capacities, scaled variants for conformality tests).
 
+## Magic numbers
+
+Empirically chosen constants (tolerances, thresholds, cutoffs) must have their rationale documented in code comments on the constant definition itself. Include: why that value, what data point motivated it, known limitations, and what must be re-validated if changed.
+
 ## Performance claims require measurement
 
 Never state performance without benchmark. "~1ms" is claim. "Benchmark shows 1.5-2.0ms for 5-16 facets" is measured. Add benchmark if claim exists without measurement.

@@ -6,6 +6,7 @@ edition = "2021"
 [dependencies]
 nalgebra = { workspace = true }
 geom = { path = "../geom" }
+billiard = { path = "../billiard" }
 rand = { workspace = true }
 rand_chacha = { workspace = true }
 rand_distr = { workspace = true }
