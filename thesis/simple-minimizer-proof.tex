@@ -194,14 +194,16 @@ Then:
 \end{lemma}
 
 \begin{proof}
-% [JÖRN: proof to be written based on your derivation]
 \emph{Claim (a):} Closure follows from $z_{\alpha,b}(\beta T_z) = \alpha z(T_z) + b = \alpha z(0) + b = z_{\alpha,b}(0)$.
-For the Euler--Lagrange equation: since the equation is obtained via
-Lagrange multipliers for the constraint $A(z) = T$, and since both
-$I_K$ and $A$ are homogeneous functionals in the velocity,
-the rescaling $z \mapsto \alpha z(t/\beta)$ preserves the
-subgradient relation. Translation by $b$ is harmless since
-$I_K$ depends only on $\dot{z}$.
+
+For the critical point property: $z$ is a critical point of $I_K$ subject to
+$A(z) = T_z$. Both $I_K$ and $A$ are functionals depending only on the velocity
+$\dot{z}$. Under the rescaling $z(t) \mapsto \alpha z(t/\beta)$, the velocity
+transforms as $\dot{z}(t) \mapsto (\alpha/\beta) \dot{z}(t/\beta)$. Since $I_K$
+is 2-homogeneous in velocity (via $h_K^2$) and $A$ is also 2-homogeneous in
+velocity, the criticality condition (vanishing of the variation of the Lagrangian
+$I_K - \lambda A$) is preserved under this rescaling. Translation by constant~$b$
+is trivial since both functionals depend only on $\dot{z}$.
 
 \emph{Claim (b):} Since $I_K(z) = \frac{1}{4}\int_0^T h_K^2(-J_0\dot{z})\, dt$
 depends only on the velocity, $I_K(z + b) = I_K(z)$ for any constant~$b$.
