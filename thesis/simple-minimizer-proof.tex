@@ -172,8 +172,8 @@ the equivalence proof
 % Downstream: explains why I_K(z) = T fails for general dual critical points.
 %   Only the special representative z = \gamma - center(\gamma) from a Reeb
 %   orbit \gamma satisfies I_K(z) = T.
-Let $z \in W^{1,2}([0,T_z], \mathbb{R}^4)$ be a closed curve satisfying
-the dual Euler--Lagrange equation~\eqref{eq:dual-euler-lagrange}.
+Let $z \in W^{1,2}([0,T_z], \mathbb{R}^4)$ be a closed curve that is a
+critical point of the dual problem (Definition~\ref{def:dual-problem}).
 For any $\alpha > 0$ and $b \in \mathbb{R}^4$, define
 \begin{equation}\label{eq:scaling-family}
   z_{\alpha,b}(t) := \alpha\, z(t/\beta) + b,
@@ -185,8 +185,7 @@ with period $T_{\alpha,b} := \beta T_z$.
 
 Then:
 \begin{enumerate}[label=(\alph*)]
-\item $z_{\alpha,b}$ is closed and satisfies the dual Euler--Lagrange
-  equation~\eqref{eq:dual-euler-lagrange}.
+\item $z_{\alpha,b}$ is closed and is a critical point of the dual problem.
 \item $I_K(z_{\alpha,b}) = I_K(z)$ (independent of $\alpha$ and $b$).
 \item The action scales as $A(z_{\alpha,b}) = \beta\, A(z)$.
 \item If $A(z) = T_z$, then $A(z_{\alpha,b}) = T_{\alpha,b}$
