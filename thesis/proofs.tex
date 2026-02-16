@@ -13,6 +13,9 @@
 
 \section{Proofs}\label{sec:proofs}
 
+While the previous definitions of the algorithms are sufficient for a reimplementation, and empirical tests can provide some signal on correctness, we also want to have a rigorous understanding of why the algorithms work, and high confidence that they are correct also for out-of-distribution polytopes that may exhibit behavior not covered by any empirical tests. This is in particular motivated since we search for new counterexamples to Viterbo's conjecture, which are, see \ref{sec:random-sweep} and \ref{sec:random-product-sweep}, low probability among random polytopes, and thus likely to be out-of-distribution for any finite test set.
+The deeper understanding of the capacity algorithms developed by \cite{HK2017} also allows us to refine them, and develop a new algorithm variant that also incorporates ideas from \cite{CH2021}, see \ref{subsec:generic-case-algorithm}.
+
 \subsection{Basic Definitions}\label{subsec:basic-definitions}
 \input{basic-definitions}
 
