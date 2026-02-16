@@ -5,11 +5,12 @@
 %   sketch in Haim-Kislev 2017.
 %
 % Structure:
-%   6.1 Primal-Dual Equivalence (Clarke's Dual Action Principle for polytopes)
-%   6.2 Simplification Algorithm (5 steps: piecewise linear, pure Reeb,
+%   5.1 Primal-Dual Equivalence (Clarke's Dual Action Principle for polytopes)
+%   5.2 Simplification Algorithm (5 steps: piecewise linear, pure Reeb,
 %       coalesce, rescale, compactness)
 
-\section{Proof of the Simple Minimizer Theorem}\label{sec:simple-minimizer-proof}
+% No \section here: this file is \input'd inside Section "Simple Minimizer
+% Existence" in chapter-algorithm.tex, so its subsections become 5.x.
 
 The proof follows \cite{HK2017} but with complete details. We first
 establish a primal-dual equivalence (Clarke's Dual Action Principle
@@ -17,7 +18,7 @@ adapted to polytopes), then construct a simple minimizer via a
 five-step simplification algorithm.
 
 %%% =================================================================
-%%% Subsection 6.1: Primal-Dual Equivalence
+%%% Subsection 5.1: Primal-Dual Equivalence
 %%% =================================================================
 
 \subsection{Primal-Dual Equivalence}\label{subsec:primal-dual}
@@ -28,7 +29,7 @@ five-step simplification algorithm.
 %   Literature on this is sparse and often omits details. This writeup
 %   is self-contained for a master's thesis audience.
 % Downstream: establishes that minimizing action over Reeb orbits is
-%   equivalent to minimizing I_K over centered curves. The dual problem
+%   equivalent to minimizing I_K over closed curves. The dual problem
 %   is easier to work with for the simplification algorithm.
 
 We work with absolutely continuous curves
@@ -37,9 +38,11 @@ $z \in W^{1,2}([0, T], \mathbb{R}^4)$
 % QC: W^{1,2} functions on a compact interval are absolutely continuous
 %   and continuous. No need for a separate C^0 assumption.
 
-We use the gauge function~$g_K$ (Definition~\ref{def:gauge-function}),
-the support function~$h_K$ (Definition~\ref{def:support-function}),
-and the Hamiltonian $H = g_K^2$ (Definition~\ref{def:hamiltonian}).
+Recall the gauge function $g_K(x) = \inf\{\lambda > 0 : x \in \lambda K\}$
+(Definition~\ref{def:gauge-function}) and the support function
+$h_K(v) = \max_{x \in K} \langle x, v \rangle$
+(Definition~\ref{def:support-function}).
+The Hamiltonian is $H = g_K^2$ (Definition~\ref{def:hamiltonian}).
 
 \begin{lemma}[Fenchel duality]\label{lem:fenchel-duality}
 % QC: Legendre-Fenchel conjugate of g_K^2 is (1/4)h_K^2.
@@ -47,7 +50,13 @@ and the Hamiltonian $H = g_K^2$ (Definition~\ref{def:hamiltonian}).
 %   Equality characterizes the subgradient relation.
 % Downstream: integrated along curves, this links the primal
 %   (action + gauge constraint) to the dual (I_K functional).
-For any $x, y \in \mathbb{R}^4$:
+The functions $g_K^2$ and $\tfrac{1}{4}h_K^2$ are Legendre-Fenchel conjugates:
+\begin{equation}\label{eq:conjugacy}
+  g_K^2(x) = \sup_y \bigl\{\langle x, y \rangle - \tfrac{1}{4} h_K^2(y)\bigr\},
+  \qquad
+  \tfrac{1}{4}h_K^2(y) = \sup_x \bigl\{\langle x, y \rangle - g_K^2(x)\bigr\}.
+\end{equation}
+Consequently, for any $x, y \in \mathbb{R}^4$:
 \begin{equation}\label{eq:fenchel-inequality}
   g_K^2(x) + \tfrac{1}{4} h_K^2(y) \geq \langle x, y \rangle,
 \end{equation}
@@ -56,464 +65,749 @@ $y \in \partial g_K^2(x)$ if and only if
 $x \in \partial(\tfrac{1}{4} h_K^2)(y)$.
 \end{lemma}
 
+\begin{proof}
+% Jörn: text approved (2f2ab3d)
+\emph{Conjugacy.}
+We compute the Legendre-Fenchel conjugate of~$g_K^2$ directly.
+Parametrize $x = \lambda u$ with $\lambda \geq 0$ and $g_K(u) = 1$,
+so $g_K^2(x) = \lambda^2$.
+Then:
+\[
+  (g_K^2)^*(y)
+  = \sup_x \bigl\{\langle x, y \rangle - g_K^2(x)\bigr\}
+  = \sup_{\lambda \geq 0}\;
+    \sup_{g_K(u) = 1}
+    \bigl\{\lambda \langle u, y \rangle - \lambda^2\bigr\}
+  = \sup_{\lambda \geq 0}
+    \bigl\{\lambda\, h_K(y) - \lambda^2\bigr\},
+\]
+where we used $\sup_{g_K(u) = 1} \langle u, y \rangle = h_K(y)$
+(the supremum of a linear functional over a convex body
+is attained on its boundary).
+The quadratic $\lambda h_K(y) - \lambda^2$ is maximized
+at $\lambda = h_K(y)/2$, giving
+\[
+  (g_K^2)^*(y) = \tfrac{1}{4} h_K^2(y).
+\]
+This is the second relation in~\eqref{eq:conjugacy}.
+The first follows by the same computation with $K$ replaced by its
+polar body $K^\circ$ (whose gauge function is $h_K$ and
+support function is $g_K$).
+
+\emph{Inequality.}
+By definition of the conjugate,
+$(g_K^2)^*(y) \geq \langle x, y \rangle - g_K^2(x)$ for any~$x$.
+Substituting $(g_K^2)^* = \tfrac{1}{4}h_K^2$ and rearranging
+gives~\eqref{eq:fenchel-inequality}.
+
+\emph{Equality condition.}
+Equality holds iff $x$ attains the supremum in $(g_K^2)^*(y) = \sup_z \{\langle z, y \rangle - g_K^2(z)\}$,
+i.e., $x$ maximizes $z \mapsto \langle z, y \rangle - g_K^2(z)$.
+By the first-order optimality condition, this is equivalent to
+$y \in \partial g_K^2(x)$.
+By the same argument applied to the first relation in~\eqref{eq:conjugacy},
+it is equivalent to $x \in \partial(\tfrac{1}{4}h_K^2)(y)$.
+\end{proof}
+
 \begin{definition}[Primal problem]\label{def:primal-problem}
+% Jörn: text approved (05aa8b3)
 % QC: restatement of the EHZ capacity minimization, using H = g_K^2.
 %   The Hamiltonian formulation (differential inclusion with subdifferential)
 %   is equivalent to the Reeb orbit formulation on polytopes.
+The \emph{primal functional} is the action
+\[
+  A(\gamma) = \tfrac{1}{2}\int_0^T
+  \langle -J_0\dot{\gamma},\, \gamma \rangle\, dt.
+\]
 The \emph{primal problem} is:
-\begin{equation}\label{eq:primal-problem}
+\begin{multline}\label{eq:primal-problem}
   c_{\mathrm{EHZ}}(K) = \min \Bigl\{ A(\gamma) :
-  \gamma \text{ is a closed characteristic on } \partial K \Bigr\}.
-\end{equation}
-In the Hamiltonian formulation, a closed characteristic $\gamma$ on $\partial K$
-satisfies $g_K^2(\gamma(t)) \equiv 1$ and
-$-J_0\dot{\gamma}(t) \in \partial g_K^2(\gamma(t))$ a.e.,
-and its action equals its period: $A(\gamma) = T$.
+  \gamma \in W^{1,2}([0,T], \mathbb{R}^4),\;
+  \gamma(0) = \gamma(T),\;
+  T > 0, \\
+  g_K^2(\gamma) \equiv 1,\;
+  -J_0\dot{\gamma} \in \partial g_K^2(\gamma) \text{ a.e.} \Bigr\}.
+\end{multline}
+The constraints say: $\gamma$ lies on $\partial K$
+(the level set $\{g_K^2 = 1\}$) and its velocity satisfies the
+Hamiltonian differential inclusion, which equals the Reeb orbit
+differential inclusion (Definition~\ref{def:simple-reeb-orbit}).
+The action equals the period: $A(\gamma) = T$.
 \end{definition}
 
+We now introduce an equivalent dual problem without motivation.
+
 \begin{definition}[Dual functional and dual problem]\label{def:dual-problem}
+% Jörn: text approved (05aa8b3) [revised: centering removed]
 % QC: I_K depends only on the velocity dz/dt, not on z itself.
 %   This is the key advantage of the dual formulation: no position constraint
 %   (gamma on boundary K) and no differential inclusion constraint.
-%   The centering condition removes the translation ambiguity in going
-%   from gamma to z = gamma - center(gamma).
+%   Translation ambiguity is harmless: I_K(z + b) = I_K(z) for any constant b.
 The \emph{dual functional} is
 \[
   I_K(z) = \frac{1}{4} \int_0^T h_K^2\bigl( -J_0 \dot{z}(t) \bigr) \, dt.
 \]
 The \emph{dual problem} is:
 \begin{equation}\label{eq:dual-problem}
-  \min \Bigl\{ I_K(z) : z \in W^{1,2}([0,T], \mathbb{R}^4),\;
+  \min \Bigl\{ I_K(z) :
+  z \in W^{1,2}([0,T], \mathbb{R}^4),\;
   z(0) = z(T),\;
-  A(z) = T,\;
-  \frac{1}{T} \int_0^T z(t) \, dt = 0,\;
-  T > 0 \Bigr\}.
+  T > 0,\;
+  A(z) = T \Bigr\}.
 \end{equation}
-The constraint $\frac{1}{T} \int z = 0$ is the
-\emph{centering condition}; it removes the translation
-ambiguity (since $I_K$ depends only on $\dot{z}$, not on~$z$).
 \end{definition}
+
+\cite{HK2017} also states the dual problem without motivation
+(in a slightly different form).
+The dual functional and constraints can be motivated by working
+the equivalence proof
+(Theorem~\ref{thm:primal-dual-equivalence}) in reverse.
+
+\begin{lemma}[Euler-Lagrange condition for dual critical points]\label{lem:dual-euler-lagrange}
+% QC: Characterizes critical points via subdifferential inclusion.
+%   The Lagrange multiplier is nu, the additive constant is b.
+%   This is the variational condition for the constrained problem.
+% Jörn: text approved (2c6faf9)
+A closed curve $z \in W^{1,2}([0,T], \mathbb{R}^4)$ with $A(z) = T$ is a
+critical point of the dual problem \eqref{eq:dual-problem} if and only if
+there exist $\nu \in \mathbb{R}$ and $b \in \mathbb{R}^4$ such that
+\begin{equation}\label{eq:dual-euler-lagrange}
+  \nu z(t) + b \in \partial\bigl(\tfrac{1}{4} h_K^2\bigr)\bigl(-J_0\dot{z}(t)\bigr)
+  \quad \text{a.e.,}
+\end{equation}
+or equivalently (by Fenchel duality),
+\begin{equation}\label{eq:dual-euler-lagrange-primal}
+  -J_0\dot{z}(t) \in \partial g_K^2\bigl(\nu z(t) + b\bigr)
+  \quad \text{a.e.}
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+We characterize critical points of the dual functional
+$I_K(z) = \frac{1}{4}\int_0^T h_K^2(-J_0\dot{z}) \, dt$
+under the constraints:
+\begin{itemize}
+\item closure: $z(0) = z(T)$,
+\item action: $A(z) = T$.
+\end{itemize}
+
+We use the calculus of variations with Lagrange multipliers.
+Form the Lagrangian incorporating the constraints:
+\[
+  L(z, \dot{z}) = \tfrac{1}{4}h_K^2(-J_0\dot{z}) + \alpha\langle -J_0\dot{z}, z\rangle,
+\]
+where $\alpha \in \mathbb{R}$ is the multiplier for the action constraint.
+
+The Lagrangian is convex (but not differentiable) in $\dot{z}$
+and smooth (linear) in~$z$.
+For such Lagrangians, a critical point $z$ satisfies the
+\emph{Euler--Lagrange inclusion}: there exists an absolutely continuous
+$\xi(t) \in \partial_{\dot{z}} L(z(t), \dot{z}(t))$ a.e.\ such that
+\begin{equation}\label{eq:euler-lagrange-inclusion-lemma}
+  \dot{\xi}(t) = \nabla_z L(z(t), \dot{z}(t)) \quad\text{a.e.}
+\end{equation}
+(see Clarke, \emph{Optimization and Nonsmooth Analysis}, Ch.~5).
+
+\emph{Right-hand side of~\eqref{eq:euler-lagrange-inclusion-lemma}.}
+Since $\tfrac{1}{4}h_K^2(-J_0\dot{z})$ is independent of~$z$,
+only the multiplier term contributes:
+\[
+  \nabla_z L = -\alpha J_0 \dot{z}.
+\]
+
+\emph{Left-hand side of~\eqref{eq:euler-lagrange-inclusion-lemma}.}
+The subdifferential of $L$ in $\dot{z}$ is
+% chain rule: ∂_ż[f(Aż)] = Aᵀ ∂f(Aż) with A = -J₀, so Aᵀ = J₀
+\[
+  \partial_{\dot{z}} L
+  = J_0\, \partial\bigl(\tfrac{1}{4}h_K^2\bigr)(-J_0\dot{z})
+    + \alpha J_0 z,
+\]
+using $(-J_0)^\top = J_0$ in the chain rule for $f \circ (-J_0)$.
+So the Euler-Lagrange inclusion says: there exists $p(t) \in \partial(\tfrac{1}{4}h_K^2)(-J_0\dot{z}(t))$
+a.e.\ such that $\xi(t) = J_0 p(t) + \alpha J_0 z(t)$ is absolutely continuous and
+\[
+  J_0 \dot{p} + \alpha J_0 \dot{z}
+  = -\alpha J_0 \dot{z},
+  \qquad\text{i.e.,}\qquad
+  J_0 \dot{p} = -2\alpha J_0 \dot{z}.
+\]
+
+The equation $\dot{p} = -2\alpha \dot{z}$ a.e.\ integrates to
+\[
+  p(t) = c - 2\alpha\, z(t)
+\]
+for a constant $c \in \mathbb{R}^4$.
+Since $p(t) \in \partial(\tfrac{1}{4}h_K^2)(-J_0\dot{z}(t))$:
+\[
+  c - 2\alpha\, z(t)
+  \in \partial\bigl(\tfrac{1}{4}h_K^2\bigr)\bigl(-J_0\dot{z}(t)\bigr)
+  \quad \text{a.e.}
+\]
+Writing $\nu = -2\alpha$ and $b = c$ gives~\eqref{eq:dual-euler-lagrange}.
+\end{proof}
+
+\begin{lemma}[Scaling and translation symmetry of dual critical points]%
+\label{lem:dual-scaling-family}
+% QC: The dual Euler-Lagrange equation is invariant under scaling + translation.
+%   Since I_K depends only on velocity, I_K(z') = I_K(z).
+%   The family parameterized by (\alpha, b) \in \mathbb{R}_{>0} \times \mathbb{R}^4
+%   has constant I_K, so does not affect the minimum value of the dual problem.
+% Downstream: explains why I_K(z) = T fails for general dual critical points.
+%   For any Reeb orbit \gamma, we have I_K(\gamma) = T (shown in the minimum
+%   equality part of Theorem 5.11).
+% Jörn: text approved (9ea4716)
+Let $z \in W^{1,2}([0,T], \mathbb{R}^4)$ be a closed curve that is a
+critical point of the dual problem (Definition~\ref{def:dual-problem}).
+For any $\alpha > 0$ and $b \in \mathbb{R}^4$, define
+\begin{equation}\label{eq:scaling-family}
+  z'(t) := \alpha\, z\bigl(t/\alpha^2\bigr) + b,
+  \quad t \in [0, \alpha^2 T] =: [0, T'].
+\end{equation}
+Then $z'$ is a closed curve that is a critical point of the dual problem.
+In particular, $A(z') = T'$ is satisfied. Moreover, $I_K(z') = I_K(z)$,
+so this family does not affect the minimum value of the dual problem.
+\end{lemma}
+
+\begin{proof}
+Closure: $z'(T') = \alpha z(T) + b = \alpha z(0) + b = z'(0)$.
+
+Action:
+\begin{align*}
+  A(z')
+  &= \frac{1}{2}\int_0^{T'} \langle -J_0 \dot{z}'(t), z'(t) \rangle\, dt \\
+  &= \frac{1}{2}\int_0^{\alpha^2 T} \left\langle -J_0 \frac{1}{\alpha}\dot{z}(t/\alpha^2), \alpha z(t/\alpha^2) + b \right\rangle\, dt \\
+  &= \frac{\alpha^2}{2}\int_0^{T} \langle -J_0 \dot{z}(s), z(s) \rangle\, ds
+  \quad \text{(subst.\ $s = t/\alpha^2$, $b$ term vanishes)} \\
+  &= \alpha^2 A(z) = \alpha^2 T = T'.
+\end{align*}
+
+Dual action:
+\begin{align*}
+  I_K(z')
+  &= \frac{1}{4}\int_0^{T'} h_K^2(-J_0\dot{z}'(t))\, dt \\
+  &= \frac{1}{4}\int_0^{\alpha^2 T} h_K^2\left(-J_0 \frac{1}{\alpha}\dot{z}(t/\alpha^2)\right)\, dt \\
+  &= \frac{1}{4}\int_0^{\alpha^2 T} \frac{1}{\alpha^2} h_K^2(-J_0\dot{z}(t/\alpha^2))\, dt
+  \quad \text{(1-homog.\ of $h_K$)} \\
+  &= \frac{1}{4}\int_0^{T} h_K^2(-J_0\dot{z}(s))\, ds
+  \quad \text{(subst.\ $s = t/\alpha^2$)} \\
+  &= I_K(z).
+\end{align*}
+
+Critical point: By Lemma~\ref{lem:dual-euler-lagrange}, $z$ satisfies
+$\nu z(s) + b_0 \in \partial(\tfrac{1}{4}h_K^2)(-J_0\dot{z}(s))$ a.e.\ for some
+$\nu, b_0$. At $t$ with $s = t/\alpha^2$:
+\begin{align*}
+  \nu z(s) + b_0
+  &\in \partial\bigl(\tfrac{1}{4}h_K^2\bigr)(-J_0\dot{z}(s)) \\
+  &\Rightarrow \quad
+  \frac{1}{\alpha}[\nu z(s) + b_0]
+  \in \partial\bigl(\tfrac{1}{4}h_K^2\bigr)\bigl(-\tfrac{1}{\alpha}J_0\dot{z}(s)\bigr)
+  \quad \text{(1-homog.\ $\partial h_K^2$)} \\
+  &\Rightarrow \quad
+  \frac{1}{\alpha}\left[\frac{\nu}{\alpha}(z'(t) - b) + b_0\right]
+  \in \partial\bigl(\tfrac{1}{4}h_K^2\bigr)(-J_0\dot{z}'(t))
+  \quad \text{(subst.\ $z(s) = (z'(t) - b)/\alpha$)} \\
+  &\Rightarrow \quad
+  \frac{\nu}{\alpha^2} z'(t) + \biggl(\frac{b_0}{\alpha} - \frac{\nu b}{\alpha^2}\biggr)
+  \in \partial\bigl(\tfrac{1}{4}h_K^2\bigr)(-J_0\dot{z}'(t)).
+\end{align*}
+Thus $z'$ satisfies~\eqref{eq:dual-euler-lagrange} with $\nu' = \nu/\alpha^2$
+and $b' = b_0/\alpha - \nu b/\alpha^2$.
+\end{proof}
+% Jörn: proof accepted as good enough (not polished)
 
 \begin{theorem}[Primal-dual equivalence (Clarke's Dual Action Principle)]%
 \label{thm:primal-dual-equivalence}
-% QC: the critical-point correspondence is the core content.
-%   Existence of minimizers is a separate fact (thm:orbit-existence
-%   for the primal; compactness + l.s.c. for the dual).
-%   The equivalence proof does not use existence of minimizers.
+% QC: Critical points of primal and dual problems correspond via symmetry
+%   classes (Lemma~\ref{lem:dual-scaling-family}). The correspondence is
+%   surjective in both directions and preserves minimum values.
 % Downstream: allows us to work in the dual formulation, where the
 %   simplification algorithm (subsec:simplification) is natural.
-Let $K$ be a convex body. Critical points of the primal and
-dual problems correspond bijectively via translation:
-if $\gamma$ is a primal critical point (Hamiltonian orbit on
-$\partial K$), then
-$z = \gamma - \frac{1}{T} \int_0^T \gamma(t) \, dt$
-is a dual critical point, and conversely.
-At every corresponding pair, the values are equal:
-\begin{equation}\label{eq:primal-dual-values}
-  I_K(z) = T = A(\gamma).
-\end{equation}
+% Jörn: text approved (bb06c42)
+Let $K$ be a convex body. The critical points of the primal problem and of the
+dual problem correspond: for a primal critical point~$\gamma$, all orbits~$z$
+that are symmetry-equivalent (Lemma~\ref{lem:dual-scaling-family}) to~$\gamma$
+are dual critical points. For a dual critical point~$z$, at least one
+symmetry-equivalent orbit~$\gamma$ is a primal critical point.
+
 Consequently, $\min_\gamma A(\gamma) = \min_z I_K(z) = c_{\mathrm{EHZ}}(K)$.
 \end{theorem}
 
 \begin{proof}
-% [AGENT-WRITTEN PROOF, UNREVIEWED BY JÖRN]
-% [DEFAULT STATUS: All mathematical content (reader-facing and developer-facing) in this
-%  proof is agent-written and unreviewed by Jörn, unless explicitly marked otherwise.
-%  Agent performed QC verification (see /tmp/qc-report-simple-minimizer.md): all formulas
-%  verified correct, all references to HK2017 verified correct, mid-proof citations removed.
-%  Specific sections with detailed confidence levels are marked inline with % [AGENT CONFIDENCE X%:...]
-%  or % [GAP - AGENT CONFIDENCE X%:...] tags.]
-\emph{Step~1: Fenchel equality for Hamiltonian orbits.}
-Let $\gamma$ be a Hamiltonian orbit on $\partial K$ with period~$T$,
-so $g_K^2(\gamma) \equiv 1$ and
-$-J_0\dot{\gamma} \in \partial g_K^2(\gamma)$ a.e.
-The subgradient condition
-$-J_0\dot{\gamma} \in \partial g_K^2(\gamma)$
-is exactly the equality case of the Fenchel
-inequality~\eqref{eq:fenchel-inequality}, so pointwise:
-\[
-  g_K^2(\gamma(t)) + \tfrac{1}{4} h_K^2(-J_0\dot{\gamma}(t))
-  = \langle \gamma(t), -J_0\dot{\gamma}(t) \rangle.
-\]
-Integrate over $[0, T]$:
-\begin{equation}\label{eq:fenchel-integrated}
-  \underbrace{\int_0^T g_K^2(\gamma) \, dt}_{= T}
-  + \underbrace{\frac{1}{4}\int_0^T h_K^2(-J_0\dot{\gamma}) \, dt}_{= I_K(\gamma)}
-  = \underbrace{\int_0^T \langle \gamma, -J_0\dot{\gamma} \rangle \, dt}_{= 2A(\gamma) = 2T}.
-\end{equation}
-Hence $I_K(\gamma) = T = A(\gamma)$.
-
-\emph{Step~2: Euler--Lagrange equation for the dual problem.}
-The dual functional $I_K(z) = \frac{1}{4}\int_0^T h_K^2(-J_0\dot{z}) \, dt$
-depends only on $\dot{z}$, not on~$z$ directly.
-We seek critical points of $I_K$ under the constraints:
+\emph{Forward direction: primal critical point implies symmetry class of dual critical points.}
+Let $\gamma$ be a primal critical point (Hamiltonian orbit on $\partial K$)
+with period~$T$. Then:
 \begin{itemize}
-\item closure: $z(0) = z(T)$,
-\item action: $\int_0^T \langle -J_0\dot{z}, z \rangle \, dt = 2T$
-      (equivalently, $A(z) = T$),
-\item centering: $\int_0^T z(t) \, dt = 0$.
+\item $\gamma$ is closed: $\gamma(0) = \gamma(T)$,
+\item $\gamma$ lies on $\partial K$: $g_K^2(\gamma(t)) \equiv 1$,
+\item $\gamma$ satisfies the Hamiltonian condition:
+  $-J_0\dot{\gamma} \in \partial g_K^2(\gamma)$ a.e.,
+\item the action equals the period: $A(\gamma) = T$.
 \end{itemize}
 
-% [AGENT-WRITTEN, UNREVIEWED BY JÖRN]
-% [AGENT CONFIDENCE 80%: The algebraic steps (lines 156-183) are verified correct.
-%  However, agent cannot verify the correctness of the overall variational calculus
-%  setup with subdifferentials. The calculation follows standard E-L machinery,
-%  but may have errors in how subdifferentials interact with Lagrange multipliers.
-%  JÖRN: verify the E-L derivation is correct, especially the subdifferential handling.]
-We compute the critical points using the calculus of variations with Lagrange multipliers.
-Form the Lagrangian incorporating the constraints:
+We show that $\gamma$ is a dual critical point.
+By Fenchel duality (Lemma~\ref{lem:fenchel-duality}),
+the inclusion $-J_0\dot{\gamma} \in \partial g_K^2(\gamma)$ a.e.\ is equivalent to
 \[
-  L(z, \dot{z}, t) = \tfrac{1}{4}h_K^2(-J_0\dot{z}) + \nu\langle -J_0\dot{z}, z\rangle + \langle \mu, z\rangle,
+  \gamma \in \partial\bigl(\tfrac{1}{4}h_K^2\bigr)(-J_0\dot{\gamma})
+  \quad\text{a.e.}
 \]
-where $\nu \in \mathbb{R}$ is the multiplier for the action constraint $\int_0^T \langle -J_0\dot{z}, z \rangle \, dt = 2T$,
-and $\mu \in \mathbb{R}^4$ is the multiplier for the centering constraint $\int_0^T z \, dt = 0$.
+This is exactly the Euler-Lagrange condition~\eqref{eq:dual-euler-lagrange}
+from Lemma~\ref{lem:dual-euler-lagrange} with $\nu = 1$ and $b = 0$.
+Since $\gamma$ is closed and $A(\gamma) = T$, the curve~$\gamma$ satisfies
+all constraints of the dual problem (Definition~\ref{def:dual-problem})
+and is a critical point.
 
-The Euler--Lagrange equation for this constrained variational problem is
-\[
-  \frac{d}{dt}\left[\frac{\partial L}{\partial \dot{z}}\right] = \frac{\partial L}{\partial z}.
-\]
-Since $I_K$ depends only on $\dot{z}$, the right-hand side comes solely from the multiplier terms:
-$\frac{\partial L}{\partial z} = -\nu J_0 \dot{z} + \mu$.
-For the left-hand side, let $p(t) \in \partial(\tfrac{1}{4}h_K^2)(-J_0\dot{z}(t))$ (the subdifferential).
-Then $\frac{\partial L}{\partial \dot{z}} = -J_0 p(t) - \nu J_0 z(t)$, and by periodicity of $z$,
-\[
-  \frac{d}{dt}[-J_0 p(t) - \nu J_0 z(t)] = -J_0 \dot{p}(t) - \nu J_0 \dot{z}(t).
-\]
-Equating left and right sides: $-J_0 \dot{p}(t) - \nu J_0 \dot{z}(t) = -\nu J_0 \dot{z}(t) + \mu$.
-This simplifies to $-J_0 \dot{p}(t) = \mu$.
+By Lemma~\ref{lem:dual-scaling-family}, all orbits in the symmetry class of~$\gamma$,
+namely $z(t) = \alpha\gamma(t/\alpha^2) + b$ for $\alpha > 0$ and $b \in \mathbb{R}^4$,
+are dual critical points.
 
-Integrating over $[0,T]$ and using periodicity $p(0) = p(T)$:
-\[
-  0 = -J_0[p(T) - p(0)] = \int_0^T \mu \, dt = T \mu,
-\]
-hence $\mu = 0$. Thus $\dot{p}(t) = 0$ a.e., so $p(t) = b$ is constant.
-This gives $b \in \partial(\tfrac{1}{4}h_K^2)(-J_0\dot{z}(t))$ a.e.
-
-% [GAP - AGENT CONFIDENCE 70%: The derivation above shows b ∈ ∂(¼h_K²)(-J₀ż),
-%  but the equation below claims νz + b ∈ ∂(¼h_K²)(-J₀ż). The jump from line 179
-%  to line 186 is not justified. EITHER there's a missing step in the variational
-%  calculus (relating the E-L equation back to the original formulation), OR the
-%  final form should just be "b ∈ ∂(...)" without the νz term. Talk notes (line
-%  500-501) say "z(t) + const ∈ ∂(...)" which doesn't match either form here.
-%  Agent verified lines 150-179 are correct, but cannot connect them to lines
-%  186-189. Possible agent misunderstands subdifferential calculus for constrained
-%  problems, but cannot find the connection. JÖRN: verify if gap is real, fix if
-%  so, or explain the connection if agent missed it.]
-Returning to the Lagrangian structure and using $J_0^T = -J_0$, the critical point condition becomes:
-\begin{equation}\label{eq:dual-euler-lagrange}
-  \nu z(t) + b \in
-  \partial\bigl(\tfrac{1}{4} h_K^2\bigr)\bigl(-J_0\dot{z}(t)\bigr)
-  \quad \text{a.e.}
+\medskip
+\emph{Reverse direction: dual critical point implies symmetry class contains primal critical point.}
+Let $z$ be a dual critical point with period~$T$. By Lemma~\ref{lem:dual-euler-lagrange},
+there exist $\nu \in \mathbb{R}$ and $b \in \mathbb{R}^4$ such that
+\begin{equation}\label{eq:dual-el-for-z}
+  \nu z(t) + b \in \partial\bigl(\tfrac{1}{4}h_K^2\bigr)(-J_0\dot{z}(t))
+  \quad\text{a.e.}
 \end{equation}
-for Lagrange multiplier $\nu \in \mathbb{R}$ (for the action constraint)
-and constant $b \in \mathbb{R}^4$ (from the centering constraint).
+By Fenchel duality (Lemma~\ref{lem:fenchel-duality}), this is equivalent to
+\[
+  -J_0\dot{z}(t) \in \partial g_K^2(\nu z(t) + b) \quad\text{a.e.}
+\]
 
-\emph{Step~3: The $\nu = 1$ argument and correspondence.}
-Define $\gamma(t) = \nu z(t) + b$. The Euler--Lagrange
-condition~\eqref{eq:dual-euler-lagrange} gives
-$\gamma(t) \in \partial(\tfrac{1}{4}h_K^2)(-J_0\dot{\gamma}/\nu)$ a.e.
-By Fenchel duality, this is equivalent to
-$-J_0\dot{\gamma}/\nu \in \partial g_K^2(\gamma)$ a.e.
+\emph{Step 1: $\nu \neq 0$.}
+Assume $\nu = 0$. Then $-J_0\dot{z}(t) \in \partial g_K^2(b)$ a.e.,
+i.e., $\dot{z}(t) \in J_0\partial g_K^2(b)$ a.e.
+Since $z$ is closed, $\int_0^T \dot{z} = 0$.
+Since $\partial g_K^2(b)$ is convex, this implies $0 \in J_0\partial g_K^2(b)$,
+hence $0 \in \partial g_K^2(b)$.
+This only happens at $b = 0$.
+Thus $0 \in \partial(\tfrac{1}{4}h_K^2)(\dot{z}(t))$ a.e., which implies $\dot{z} \equiv 0$,
+contradicting the fact that $z$ is not constant.
+Therefore $\nu \neq 0$.
 
-% [AGENT-WRITTEN SKELETON, UNREVIEWED BY JÖRN]
-% [AGENT CONFIDENCE 75%: Structure follows talk notes (lines 500-510), bullet points
-%  correctly extract key identities from Fenchel duality and homogeneity. However,
-%  the connection between these identities and the conclusion "ν=1 at minimizer"
-%  requires a competing-curve construction that agent cannot verify. The skeleton
-%  is structurally sound but the argument is incomplete.]
-\textbf{Skeleton of the argument:}
-\begin{itemize}
-\item Since $g_K^2$ is $2$-homogeneous and $-J_0$ is antisymmetric,
-  $g_K^2(\gamma(t))$ is constant along the orbit: $g_K^2(\gamma) \equiv c^2$.
-\item Euler's identity for $2$-homogeneous $g_K^2$ gives
-  $\langle y, x \rangle = 2 g_K^2(x)$ for $y \in \partial g_K^2(x)$.
-  Applied to $y = -J_0\dot{\gamma}/\nu$, $x = \gamma$:
-  \[
-    \frac{1}{\nu} \langle -J_0\dot{\gamma}, \gamma \rangle = 2c^2,
-    \quad\text{i.e.,}\quad
-    \frac{2A(\gamma)}{\nu} = 2c^2 T.
-  \]
-\item The integrated Fenchel equality (integrating
-  $g_K^2(\gamma) + \tfrac{1}{4}h_K^2(-J_0\dot{\gamma})
-  = \langle \gamma, -J_0\dot{\gamma} \rangle$ over $[0,T]$)
-  gives $c^2 T + I_K(\gamma) = \frac{2}{\nu}\,A(\gamma)$.
-\item Combining these: $I_K(z) = T \nu$ and $c^2 = A(\gamma)/(\nu T)$.
-\item Define $\tilde{\gamma} = \gamma/c$ (lies on $\partial K$).
-  The $2$-homogeneity gives $-J_0\dot{\tilde{\gamma}} \in (c/\nu)\,\partial g_K^2(\tilde{\gamma})$.
-  Reparametrize to make $\tilde{\gamma}$ a Hamiltonian orbit.
-  This gives $c_{\mathrm{EHZ}} \leq A(\tilde{\gamma})$.
-\item At a dual minimizer $z$, minimality forces $\nu = 1$ and $c = 1$,
-  so $\gamma = z + b$ lies on $\partial K$ and $I_K(z) = T = A(\gamma)$.
-\end{itemize}
+\emph{Step 2: Constancy of $g_K^2(\nu z + b)$.}
+The subgradient inequality gives
+\[
+  \frac{d}{dt} g_K^2(\nu z(t) + b)
+  \geq \langle -J_0\dot{z}(t),\, \nu\dot{z}(t) \rangle
+  = \nu\, \omega_0(\dot{z}(t), \dot{z}(t)) = 0
+  \quad\text{a.e.}
+\]
+So $t \mapsto g_K^2(\nu z(t) + b)$ is non-decreasing.
+Since $z$ is periodic, a non-decreasing periodic function is constant:
+$g_K^2(\nu z(t) + b) \equiv c^2$ for some $c \geq 0$.
+Since $\nu z + b$ is not identically zero (as $\nu \neq 0$ and $z$ is not constant),
+we have $c > 0$.
 
-\textbf{[JÖRN: complete the $\nu = 1$ argument here.
-The Lagrange multiplier $\nu$ for the action constraint $A(z) = T$ equals~$1$
-at the minimizer. This follows from minimality, but the algebra is intricate:
-one must show that if $\nu \neq 1$, then $I_K(z)$ is not minimal, by
-constructing a competing curve with smaller $I_K$ value using the
-rescaled orbit $\tilde{\gamma}$. The key is the $2$-homogeneity of $g_K^2$
-and the fact that $c_{\mathrm{EHZ}}$ is the global minimum of the
-primal problem. See above skeleton for the structure.]}
+\emph{Step 3: Constructing the primal critical point.}
+Define
+\[
+  \gamma(t) := \frac{\nu z(t/\nu)}{c} + \frac{b}{c},
+  \quad t \in [0, \nu T].
+\]
+Then $\gamma$ has period $T_\gamma = \nu T$ and
+\begin{align*}
+  g_K(\gamma(t))
+  &= g_K\bigl(\tfrac{1}{c}(\nu z(t/\nu) + b)\bigr)
+   = \tfrac{1}{c}\, g_K(\nu z(t/\nu) + b) = \tfrac{c}{c} = 1, \\
+  \dot{\gamma}(t)
+  &= \tfrac{\nu}{c} \cdot \tfrac{1}{\nu} \dot{z}(t/\nu)
+   = \tfrac{1}{c}\dot{z}(t/\nu), \\
+  -J_0\dot{\gamma}(t)
+  &= -\tfrac{1}{c} J_0\dot{z}(t/\nu)
+   \in \tfrac{1}{c}\, \partial g_K^2(\nu z(t/\nu) + b)
+   = \partial g_K^2(\gamma(t))
+  \quad\text{a.e.}
+\end{align*}
+We have $g_K(\gamma) \equiv 1$ and $-J_0\dot{\gamma} \in \partial g_K^2(\gamma)$ a.e.,
+so $\gamma$ is a Reeb orbit (primal critical point on $\partial K$).
 
-Assuming $\nu = 1$ at the minimizer, we have $\gamma = z + b$ with
-$-J_0\dot{\gamma} \in \partial g_K^2(\gamma)$ a.e.\ and $g_K^2(\gamma) \equiv 1$
-(i.e., $\gamma$ lies on $\partial K$). By Step~1, $I_K(z) = T = A(\gamma)$.
-The centering condition $\int_0^T z = 0$ determines
-$b = \frac{1}{T}\int_0^T \gamma$, so $z = \gamma - \mathrm{center}(\gamma)$.
-The correspondence is bijective.
+\emph{Step 4: Determining $\nu = c^2$ and symmetry class membership.}
+For any Reeb orbit, $A(\gamma) = T_\gamma = \nu T$.
+On the other hand, by direct computation with $s = t/\nu$:
+\begin{align*}
+  A(\gamma)
+  &= \tfrac{1}{2}\!\int_0^{\nu T} \langle -J_0\dot{\gamma}(t),\, \gamma(t) \rangle\, dt
+   = \tfrac{1}{2}\!\int_0^{T} \langle -\tfrac{1}{c} J_0\dot{z}(s),\,
+     \tfrac{\nu z(s)}{c} + \tfrac{b}{c} \rangle\, \nu\, ds \\
+  &= \tfrac{\nu}{2c^2}\!\int_0^{T} \langle -J_0\dot{z}(s),\, \nu z(s) + b \rangle\, ds
+   = \tfrac{\nu^2}{c^2} A(z)
+   = \tfrac{\nu^2}{c^2} T.
+\end{align*}
+Thus $\nu T = \nu^2 T / c^2$, hence $\nu = c^2$.
+
+With $\nu = c^2$, we have
+\[
+  \gamma(t) = c\, z(t/c^2) + \frac{b}{c},
+\]
+which is exactly of the form $\alpha z(t/\alpha^2) + b'$ from
+Lemma~\ref{lem:dual-scaling-family} with $\alpha = c > 0$ and $b' = b/c$.
+Therefore $\gamma$ lies in the symmetry class of~$z$.
+
+\medskip
+\emph{Minimum equality.}
+For any Reeb orbit~$\gamma$, the Fenchel equality (Lemma~\ref{lem:fenchel-duality})
+at $-J_0\dot{\gamma} \in \partial g_K^2(\gamma)$ gives pointwise:
+\[
+  g_K^2(\gamma) + \tfrac{1}{4}h_K^2(-J_0\dot{\gamma})
+  = \langle \gamma, -J_0\dot{\gamma} \rangle.
+\]
+Integrating over $[0,T]$ and using $g_K^2(\gamma) \equiv 1$:
+\[
+  T + I_K(\gamma) = 2A(\gamma) = 2T,
+\]
+hence $I_K(\gamma) = T = A(\gamma)$.
+
+By Lemma~\ref{lem:dual-scaling-family}, $I_K$ is constant on symmetry classes.
+We have established that every primal critical point is also a dual critical point (forward direction),
+and that every dual critical point has a primal critical point in its symmetry class (reverse direction).
+Therefore:
+\[
+  \min_z I_K(z) = \min_\gamma I_K(\gamma) = \min_\gamma A(\gamma) = c_{\mathrm{EHZ}}(K).
+\]
 \end{proof}
 
+\begin{remark}\label{rem:symmetry-class-uniqueness}
+% Jörn: text approved (bb06c42)
+For strictly convex bodies, and for generic polytopes, exactly one Reeb orbit
+lies in the symmetry class (Lemma~\ref{lem:dual-scaling-family}).
+Only in degenerate cases can there be two Reeb orbits that differ by a
+translation and/or spatial-temporal scaling.
+\end{remark}
+
+% [TODO: JÖRN - derive an algorithm that computes b given z]
+
 %%% =================================================================
-%%% Subsection 6.2: Simplification Algorithm
+%%% Subsection 5.2: Simplification Algorithm
 %%% =================================================================
 
 \subsection{Simplification Algorithm}\label{subsec:simplification}
 
-% QC: the heart of the proof. Takes an arbitrary dual minimizer z
-%   and constructs a simple dual minimizer z^* via 5 steps. Each step
-%   is designed to preserve or improve the optimality while adding
-%   structure. The final compactness argument (step 5) ensures we
-%   can take a limit that is both simple and optimal.
+% Jörn: text approved (4d6f7a6) — 1:1 restatement of thm:simple-minimizer
+\begin{theorem*}[Theorem~\ref{thm:simple-minimizer} restated]
+Let $K$ be a polytope.
+Among all generalized Reeb orbits on $\partial K$, there exists one
+with minimum action that is simple
+(Definition~\ref{def:simple-reeb-orbit}).
+Consequently,
+\[
+  c_{\mathrm{EHZ}}(K) = \min\bigl\{ A(\gamma) :
+  \gamma \text{ is a simple Reeb orbit on } \partial K \bigr\}.
+\]
+\end{theorem*}
 
-We now prove the simple minimizer theorem
-(Theorem~\ref{thm:simple-minimizer}):
-\emph{for every polytope~$K$, there exists a minimum-action Reeb orbit
-that is simple} (piecewise constant velocity, pure facet Reeb vectors,
-each facet used at most once).
+The proof constructs a simple dual minimizer from an arbitrary one
+via five operations, each captured by a standalone lemma.
+We state all five lemmas, then prove the theorem by chaining them,
+and finally prove each lemma.
+
+% Jörn: text approved (6f31407) — lemma statements 5.10–5.14 and theorem proof
+
+% QC: translates HK2017 Lemma 4.2.
+%   Core: W^{1,2} approximation preserving closure and velocity constraint.
+%   Corollary: A and I_K estimates by continuity.
+\begin{lemma}[Piecewise affine approximation]\label{lem:pw-affine-approx}
+Let $z \in W^{1,2}([0,T], \mathbb{R}^4)$ be closed
+with $\dot{z}(t) \in \mathrm{conv}\{R_1, \ldots, R_F\}$ a.e.
+For any $\varepsilon > 0$, there exists a closed
+piecewise affine curve~$z'$ with
+$\dot{z}'(t) \in \mathrm{conv}\{R_1, \ldots, R_F\}$ on each piece
+and $\|z' - z\|_{W^{1,2}} < \varepsilon$.
+
+In particular,
+$|A(z') - A(z)| < C\varepsilon$ and
+$|I_K(z') - I_K(z)| < C\varepsilon$
+for a constant~$C$ depending only on~$z$.
+\end{lemma}
+
+% QC: translates HK2017 Lemma 4.4.
+%   Core: split convex-combination velocities into pure Reeb, A non-decreasing.
+%   I_K = T is an immediate consequence, not the core difficulty.
+\begin{lemma}[Splitting mixed velocities]\label{lem:splitting}
+Let $z \colon [0,T] \to \mathbb{R}^4$ be a closed
+piecewise affine curve with velocities in
+$\mathrm{conv}\{R_1, \ldots, R_F\}$.
+There exists a closed piecewise affine curve~$z'$
+with the same period~$T$, whose velocity on each segment is a single
+Reeb vector~$R_i$, such that
+$A(z') \geq A(z)$.
+In particular, $I_K(z') = T$.
+\end{lemma}
+
+% QC: translates HK2017 Lemma 4.5.
+\begin{lemma}[Merging repeated velocities]\label{lem:merging}
+Let $z \colon [0,T] \to \mathbb{R}^4$ be a closed piecewise affine
+curve whose velocity on each segment is a single Reeb vector~$R_i$.
+If some~$R_k$ appears in two non-contiguous segments, there
+exists a rearrangement~$z'$ that merges them into one contiguous
+segment with $A(z') \geq A(z)$ and $I_K(z') = I_K(z)$.
+Iterating until each Reeb vector appears at most once preserves
+these bounds.
+\end{lemma}
+
+% QC: immediate from shoelace (A quadratic in durations) and h_K^2 normalization (I_K linear).
+\begin{lemma}[Rescaling]\label{lem:rescaling}
+Let $z \colon [0,T] \to \mathbb{R}^4$ be a closed piecewise affine
+curve with pure Reeb velocities.
+For any $\beta > 0$, multiplying all durations by~$\beta$
+gives a curve~$z'$ with
+$A(z') = \beta^2 A(z)$ and $I_K(z') = \beta\, I_K(z)$.
+\end{lemma}
+
+% QC: compactness of S_F × Δ^{F-1} + continuity of A in (σ, s, T).
+%   Handles varying periods T_n → T.
+% Jörn: text approved (6f31407)
+\begin{lemma}[Compactness of simple curves]\label{lem:compactness}
+Let $(z_n)$ be a sequence of closed simple
+piecewise-Reeb curves with periods $T_n \to T > 0$.
+Then there are translation vectors $b_n$ such that a subsequence of
+$(z_n + b_n)$ converges to a closed simple piecewise-Reeb curve~$z_*$
+with period~$T$, $A(z_*) = \lim A(z_n)$, and $I_K(z_*) = T$.
+\end{lemma}
+
+%%% --- Proof of the theorem ---
 
 \begin{proof}[Proof of Theorem~\ref{thm:simple-minimizer}]
-A minimum-action closed characteristic on~$\partial K$ exists
-(Theorem~\ref{thm:orbit-existence}): the infimum of the action over
-all closed characteristics is attained and positive.
-By the primal-dual equivalence (Theorem~\ref{thm:primal-dual-equivalence}),
-any such primal minimizer~$\gamma$ corresponds to a dual minimizer
-$z = \gamma - \mathrm{center}(\gamma)$ with $I_K(z) = T = A(\gamma)$.
-We will construct a simple dual minimizer~$z^*$, which then gives a
-simple primal minimizer via $\gamma^* = z^* + b$.
+A minimum-action generalized Reeb orbit on~$\partial K$ exists
+(Theorem~\ref{thm:orbit-existence-polytope}).
+By the primal-dual equivalence
+(Theorem~\ref{thm:primal-dual-equivalence}),
+any primal minimizer~$\gamma$ is also a dual minimizer,
+say $z_0 := \gamma$, with
+$I_K(z_0) = T = A(\gamma)$.
+Since $\gamma$ is a generalized Reeb orbit on a polytope,
+$\dot{z}_0(t) = \dot{\gamma}(t)
+  \in \mathrm{conv}\{R_1, \ldots, R_F\}$ a.e.
 
-Let $z$ be an arbitrary dual minimizer with period~$T > 0$. By the
-primal-dual equivalence, $A(z) = T = I_K(z)$. We construct a sequence
-of curves $z \to z' \to z'' \to z''' \to z^{(4)} \to z^*$, where each
-arrow represents one simplification step. The final curve~$z^*$ is
-simple (piecewise linear with pure Reeb vectors as velocities, each
-Reeb vector used at most once) and satisfies $A(z^*) = T = I_K(z^*)$,
-hence is also a minimizer.
+For each $\varepsilon > 0$, apply the first four lemmas in sequence:
+\begin{enumerate}
+\item \emph{Approximate}
+  (Lemma~\ref{lem:pw-affine-approx}):
+  obtain a closed piecewise affine $z_1$
+  with velocities in $\mathrm{conv}\{R_i\}$,
+  $|A(z_1) - T| < \varepsilon$, and
+  $|I_K(z_1) - T| < \varepsilon$.
 
-\paragraph{Step 0: Setup.}
-% QC: z is any dual minimizer. We know A(z) = T = I_K(z) from the
-%   primal-dual equivalence. The goal is to perturb z into a simple
-%   curve while preserving optimality.
-We have $z \in W^{1,2} \cap C^0$ with $z(0) = z(T)$,
-$\frac{1}{T} \int_0^T z = 0$, and $A(z) = T = I_K(z)$.
+\item \emph{Split}
+  (Lemma~\ref{lem:splitting}):
+  obtain a closed $z_2$ with pure Reeb velocities,
+  $A(z_2) \geq A(z_1)$, and $I_K(z_2) = T$.
 
-\paragraph{Step 1: Piecewise linear approximation.}
-By the primal-dual correspondence (Theorem~\ref{thm:primal-dual-equivalence}),
-$z$ corresponds to a primal minimizer $\gamma$ on $\partial K$.
-Since $\gamma$ is a closed characteristic on $\partial K$, we have
-$\dot{\gamma}(t) \in J_0 N_K(\gamma(t))$ a.e., which for polytopes equals
-$\mathrm{conv}\{R_1,\ldots,R_F\}$ (the convex hull of facet Reeb vectors).
-By the correspondence $z = \gamma - \mathrm{center}(\gamma)$, we have
-$\dot{z}(t) \in \mathrm{conv}\{R_1,\ldots,R_F\}$ a.e.
+\item \emph{Merge}
+  (Lemma~\ref{lem:merging}):
+  obtain a closed $z_3$ with each Reeb vector
+  used at most once,
+  $A(z_3) \geq A(z_2)$, and $I_K(z_3) = T$.
 
-% [AGENT-WRITTEN CLAIM, UNREVIEWED BY JÖRN]
-% [AGENT CONFIDENCE 90%: Claim statement verified against HK2017 Lemma 4.2 (lines 275-293
-%  in HK2017 Lean formalization). The approximation properties (closure, Sobolev norm,
-%  velocity constraint, continuity of functionals) match HK2017 exactly. Agent verified
-%  this is a standard density result. NEEDS PROOF: either inline proof or citation to
-%  HK2017 Lemma 4.2 with the lemma stated separately.]
-\textbf{Claim (Piecewise affine approximation):}
-For any $\varepsilon > 0$, there exists a piecewise affine curve $z' : [0,T] \to \mathbb{R}^4$ such that:
-\begin{itemize}
-\item $z'(0) = z'(T)$ (closed),
-\item $\|z - z'\|_{W^{1,2}} < \varepsilon$ (approximation in Sobolev norm),
-\item $\dot{z}'(t) \in \mathrm{conv}\{R_1,\ldots,R_F\}$ on each affine piece,
-\item $|A(z') - A(z)| < \varepsilon$ and $|I_K(z') - I_K(z)| < \varepsilon$
-      (by continuity of $A$ and $I_K$ in $W^{1,2}$).
-\end{itemize}
-The centering condition $\frac{1}{T}\int_0^T z' = 0$ is ensured by translating $z'$.
+\item \emph{Rescale}
+  (Lemma~\ref{lem:rescaling}):
+  set $\beta = T / A(z_3)$ and obtain $z_4$ with
+  period $T_4 = \beta\, T = T^2 / A(z_3)$,
+  $A(z_4) = \beta^2 A(z_3) = T_4$, and
+  $I_K(z_4) = \beta\, T = T_4$.
+\end{enumerate}
 
-This is a standard density result for Sobolev spaces (HK2017 Lemma 4.2 gives the construction with the cone constraint).
+\emph{Optimality bound.}
+The curve $z_4$ is feasible for the dual problem
+with period~$T_4$
+(closed, $A(z_4) = T_4$).
+Since $z_0$ was a dual minimizer, the dual-feasible
+curve~$z_4$ satisfies
+$I_K(z_4) = T^2 / A(z_3) \geq I_K(z_0) = T$,
+i.e., $A(z_3) \leq T$.
+Combined with $A(z_3) \geq A(z_1) \geq T - \varepsilon$,
+we get $A(z_3) \to T$ as $\varepsilon \to 0$,
+hence $\beta \to 1$, $I_K(z_4) \to T$, and $T_4 \to T$.
 
-\paragraph{Step 2: Split into pure Reeb vectors.}
-After Step~1, each velocity segment $\dot{z}'(t)$ is a convex combination
-of facet Reeb vectors. We replace each such segment by a concatenation
-of segments with \emph{pure} facet Reeb vectors (not convex combinations).
+\begin{enumerate}\setcounter{enumi}{4}
+\item \emph{Compactness}
+  (Lemma~\ref{lem:compactness}):
+  the sequence $(z_4)$ (indexed by $\varepsilon \to 0$)
+  has periods $T_4 \to T$, so a subsequence converges up to translation
+  to a closed simple piecewise-Reeb
+  curve~$z_*$ with
+  $A(z_*) = T$ and $I_K(z_*) = T$.
+  Thus $z_*$ is a dual minimizer.
+\end{enumerate}
 
-% [AGENT-WRITTEN CLAIM, UNREVIEWED BY JÖRN]
-% [AGENT CONFIDENCE 85%: Claim structure matches HK2017 Lemma 4.4 (lines 317-355) and
-%  references Proposition 4.3 (lines 301-315) for action identity. Agent verified the
-%  splitting mechanism (convex combination → pure velocities), time preservation, and
-%  action ordering control. The sign-flip property under reversal is correctly stated.
-%  NEEDS PROOF: either inline proof or separate lemmas stating HK2017 Lemma 4.4 and
-%  Proposition 4.3.]
-\textbf{Claim (Splitting convex combinations):}
-If $\dot{z}'(t) = \sum_{i=1}^k a_i(t) R_i$ with $\sum a_i(t) = 1$ on interval $I$,
-replace $I$ by $k$ subintervals of lengths $\Delta t_i = \int_I a_i(t)\,dt$,
-each with pure velocity $R_i$.
-Total time preserved: $\sum \Delta t_i = \int_I 1\,dt = |I|$.
+By Theorem~\ref{thm:primal-dual-equivalence},
+$z_*$ corresponds to a primal minimizer
+$\gamma_* = \nu z_* + b$ for some constant
+$\nu > 0$, $b \in \mathbb{R}^4$.
+Since $z_*$ is simple, so is~$\gamma_*$.
+\end{proof}
 
-The time ordering affects action. Reversing the order reverses the action change (sign flip).
-Choose the ordering that makes $A(z'') \geq A(z')$.
+%%% --- Proofs of the lemmas ---
+% Jörn: text approved (6f31407) — proofs of lemmas 5.10–5.14
 
-(HK2017 Lemma 4.4 proves the splitting construction; Proposition 4.3 gives the action identity for piecewise constant velocities.)
+\begin{proof}[Proof of Lemma~\ref{lem:pw-affine-approx}]
+% QC: standard density argument + integral mean value in a convex set.
+Since $\dot{z}(t) \in \mathrm{conv}\{R_1, \ldots, R_F\}$ a.e.,
+the velocity~$\dot{z}$ is bounded a.e.
+Hence we can find a partition $0 = t_0 < t_1 < \cdots < t_m = T$
+fine enough that the piecewise affine interpolant~$z'$
+defined by $z'(t_k) = z(t_k)$ (affine on each
+$(t_k, t_{k+1})$) satisfies
+$\|z' - z\|_{L^\infty} < \varepsilon$ and
+$\|\dot{z}' - \dot{z}\|_{L^\infty} < \varepsilon$.
 
-After splitting, the dual functional equals the period \emph{exactly}:
+On each subinterval $(t_k, t_{k+1})$, the velocity
+of~$z'$ is the integral mean of~$\dot{z}$:
+\[
+  \dot{z}'(t)
+  = \frac{z(t_{k+1}) - z(t_k)}{t_{k+1} - t_k}
+  = \frac{1}{t_{k+1} - t_k}
+    \int_{t_k}^{t_{k+1}} \dot{z}(s)\, ds.
+\]
+Since $\dot{z}(s) \in \mathrm{conv}\{R_1, \ldots, R_F\}$
+a.e.\ and the convex hull is closed, the integral mean
+lies in $\mathrm{conv}\{R_1, \ldots, R_F\}$.
 
-The identity $I_K(z'') = T$ follows from the Reeb normalization:
-for $\dot{z}(t) = R_i = \frac{2}{h_i} J_0 n_i$, we have
-\begin{align*}
-  h_K^2(-J_0 \dot{z}(t))
-  &= h_K^2\Bigl( -J_0 \cdot \frac{2}{h_i} J_0 n_i \Bigr)
-  = h_K^2\Bigl( \frac{2}{h_i} n_i \Bigr) \\
-  &= \Bigl( \frac{2}{h_i} \Bigr)^2 h_K^2(n_i)
+Closure: $z'(0) = z(0) = z(T) = z'(T)$.
+
+The ``in particular'' clause follows from
+continuity of $A$ and $I_K$ in the $W^{1,2}$ norm:
+$A$ is bilinear in $(z, \dot{z})$, and
+$I_K$ is continuous in~$\dot{z}$ since $h_K^2$ is
+locally Lipschitz.
+\end{proof}
+
+\begin{proof}[Proof of Lemma~\ref{lem:splitting}]
+% QC: core idea: split each mixed-velocity segment into pure segments,
+%   choosing the ordering to preserve or increase action.
+%   Then show I_K = T by direct computation from Reeb normalization.
+Process each segment independently.
+If segment~$I$ has velocity
+$v = \sum_{i=1}^k a_i R_i$ with $a_i > 0$,
+$\sum a_i = 1$,
+replace~$I$ by $k$ consecutive subsegments of
+lengths $\Delta t_i = a_i |I|$, each with pure
+velocity~$R_i$.
+
+\emph{Closure preserved:}
+the total displacement is
+$\sum_i \Delta t_i R_i
+  = |I| \sum_i a_i R_i = |I|\, v$,
+the same as the original segment.
+
+\emph{Period preserved:}
+$\sum_i \Delta t_i = |I| \sum_i a_i = |I|$.
+
+\emph{Action non-decrease:}
+by Lemma~\ref{lem:shoelace},
+splitting segment~$I$ introduces
+new internal cross-terms
+$\sum_{r < s} \Delta t_r\, \Delta t_s\,
+  \omega_0(R_r, R_s)$.
+Reversing the ordering of the $k$ subsegments
+flips the sign of this sum
+(since $\omega_0(R_r, R_s) = -\omega_0(R_s, R_r)$).
+Hence one of the two orderings yields
+$\Delta A \geq 0$.
+
+\emph{Dual functional:}
+for a pure Reeb velocity
+$R_i = \frac{2}{h_i} J_0 n_i$,
+\[
+  h_K^2(-J_0 R_i)
+  = h_K^2\Bigl(\frac{2}{h_i} n_i\Bigr)
+  = \frac{4}{h_i^2}\, h_K^2(n_i)
   = \frac{4}{h_i^2} \cdot h_i^2
   = 4,
-\end{align*}
-hence $I_K(z'') = \frac{1}{4} \int_0^T 4 \, dt = T$.
-
-\paragraph{Step 3: Merge repeated Reeb vectors.}
-After Step~2, the velocity $\dot{z}''$ takes values in the finite set
-$\{R_1,\ldots,R_F\}$ (pure facet Reeb vectors).
-If the same Reeb vector $R_i$ appears in two disjoint time intervals,
-we merge them into a single contiguous segment.
-
-% [AGENT-WRITTEN CLAIM, UNREVIEWED BY JÖRN]
-% [AGENT CONFIDENCE 85%: Claim structure matches HK2017 Lemma 4.5 (lines 356-397). Agent
-%  verified the rearrangement mechanism (forward/backward merge), the action identity for
-%  piecewise constant velocities, and the sign-flip property. The conclusion (choose the
-%  merge that preserves or increases action) is correctly stated. NEEDS PROOF: either inline
-%  proof or separate lemma stating HK2017 Lemma 4.5.]
-\textbf{Claim (Merging repeated velocities):}
-Consider a pattern where $R_A$ appears in intervals $I_r$ and $I_s$ with $r < s$,
-separated by intervals $I_{r+1}, \ldots, I_{s-1}$ with different velocities.
-We can rearrange to move the two $R_A$ segments adjacent:
-\begin{itemize}
-\item \textbf{Forward merge:} Place both $R_A$ segments at position $r$,
-      then $I_{r+1}, \ldots, I_{s-1}$ afterward.
-\item \textbf{Backward merge:} Place $I_{r+1}, \ldots, I_{s-1}$ first,
-      then both $R_A$ segments.
-\end{itemize}
-These differ by a reversal of the intermediate portion. By the
-piecewise-constant velocity action identity
-\[
-  2A(z) = \sum_{j<i} |I_i| \, |I_j| \, \omega_0(\dot{z}|_{I_i}, \dot{z}|_{I_j}),
 \]
-reversing segments flips the sign of their contribution to action. Hence:
+using $h_K(n_i) = h_i$
+(Definition~\ref{def:facets}).
+Hence
+$I_K(z') = \frac{1}{4} \int_0^T 4\, dt = T$.
+\end{proof}
+
+\begin{proof}[Proof of Lemma~\ref{lem:merging}]
+% QC: the forward/backward merge argument uses the action identity.
+%   Key: the two action differences have opposite signs,
+%   so one is always non-negative.
+Let $w_1, \ldots, w_m$ be the velocity sequence with
+$w_r = w_s = v$ for some $r < s$.
+Write $M = \{r{+}1, \ldots, s{-}1\}$ for the middle segments.
+
+\emph{Forward merge} (merge to position~$r$):
+remove segment~$I_s$ and extend the duration of~$I_r$
+by~$|I_s|$,
+placing the middle segments after the merged segment.
+By Lemma~\ref{lem:shoelace}:
 \[
-  \Delta A_{\text{fwd}} = -\Delta A_{\text{bwd}}.
+  2A(z) = \sum_{1 \leq j < i \leq m}
+    |I_j|\,|I_i|\,\omega_0(w_j, w_i).
 \]
-One option has $\Delta A \geq 0$ (or both equal). Choose that one.
-
-(HK2017 Lemma 4.5 proves this rearrangement preserves closure and allows action control.)
-
-The dual functional $I_K$ is unchanged: it depends only on
-$h_K^2(-J_0\dot{z})$ integrated over time, which depends on the
-multiset of velocities and their durations, not their ordering.
-
-Iterating for all repeated Reeb vectors yields $z'''$ with:
-\begin{itemize}
-\item $A(z''') \geq A(z'')$ (each merge preserves or increases action),
-\item $I_K(z''') = I_K(z'') = T$ (rearrangement preserves $I_K$),
-\item each Reeb vector appears in at most one contiguous time interval.
-\end{itemize}
-
-\paragraph{Step 4: Rescale to restore normalization.}
-After Steps 2--3, the action may have changed slightly:
-$A(z''') \geq A(z'') \geq A(z') \geq T - \varepsilon$.
-We restore the normalization $A(z) = T$ by scaling all time intervals
-proportionally.
-
-Define the scaling factor
+The rearrangement only affects cross-terms
+between the middle segments~$M$ and the two
+segments with velocity~$v$ at positions $r$, $s$.
+The action difference between the merged and
+original curves is:
 \[
-  \beta = \frac{T}{A(z''')} \in (0, 1 + O(\varepsilon/T)].
+  \Delta A_{\mathrm{fwd}}
+  = |I_s| \sum_{i \in M} |I_i|\, \omega_0(v, w_i).
 \]
-Construct $z^{(4)}$ by \emph{multiplying each time interval by $\beta$}:
-\begin{itemize}
-\item Original: velocity $R_i$ on interval of length $\Delta t_i$
-\item Scaled: velocity $R_i$ on interval of length $\beta \cdot \Delta t_i$
-\end{itemize}
-The velocities remain unchanged (still pure Reeb vectors in direction and magnitude).
 
-\textbf{Consequences:}
-\begin{align*}
-  T^{(4)} &= \beta \sum \Delta t_i = \beta \cdot T = \frac{T^2}{A(z''')}, \\
-  A(z^{(4)}) &= \beta^2 \cdot A(z''')
-    \quad\text{(action scales as [time]$^2$ when velocities constant)} \\
-  &= \left(\frac{T}{A(z''')}\right)^2 \cdot A(z''') = \frac{T^2}{A(z''')} = T^{(4)}, \\
-  I_K(z^{(4)}) &= \beta \cdot I_K(z''')
-    \quad\text{($I_K = \frac{1}{4}\int h_K^2(-J_0\dot{z})\,dt$ is linear in time)} \\
-  &= \frac{T}{A(z''')} \cdot T = \frac{T^2}{A(z''')}.
-\end{align*}
-Hence $A(z^{(4)}) = T^{(4)}$ (normalization restored) and
-$I_K(z^{(4)}) = T^{(4)}$.
-
-Since $z$ was a dual minimizer with $I_K(z) = T$, feasibility gives
-$I_K(z^{(4)}) \geq T$, hence $T^2/A(z''') \geq T$, so $A(z''') \leq T$.
-Combined with $A(z''') \geq T - \varepsilon$, as $\varepsilon \to 0$
-we have $A(z''') \to T$, so $\beta \to 1$ and $T^{(4)} \to T$.
-
-\paragraph{Step 5: Compactness and limit.}
-A simple curve is encoded by finite data:
-\begin{itemize}
-\item A permutation $\sigma \in S_F$ (facet visit order),
-\item Time durations $(t_1,\ldots,t_F) \in \mathbb{R}^F$ with $t_i \geq 0$,
-      $\sum t_i = T^{(4)}$, $\sum t_i R_{\sigma(i)} = 0$ (closure).
-\end{itemize}
-
-% [AGENT-WRITTEN ARGUMENT, UNREVIEWED BY JÖRN]
-% [AGENT CONFIDENCE 70%: Structure matches HK2017 proof (lines 436-449). Agent verified:
-%  (1) space ℰ¹ definition matches, (2) map Φ: ℰ¹ → S_F × Δ^(F-1) matches,
-%  (3) compactness of image (finite × compact), (4) subsequence convergence structure.
-%  CONCERN: The argument may be missing details about why Φ is well-defined and why
-%  convergence in S_F × Δ^(F-1) implies W^{1,2} convergence of the curves. The connection
-%  between finite-dimensional convergence and functional convergence needs verification.
-%  JÖRN: verify completeness of compactness argument or expand with missing steps.]
-Consider the space $\mathcal{E}^1$ of piecewise affine curves
-on $[0,T^{(4)}]$ with velocities in $\{R_1,\ldots,R_F\}$
-(each $R_i$ appearing at most once).
-Define a map
+\emph{Backward merge} (merge to position~$s$):
+extend $I_s$ and place the middle segments before it.
+The same cross-term calculation gives:
 \[
-  \Phi : \mathcal{E}^1 \to S_F \times \Delta^{F-1},
-  \quad z' \mapsto \left(\sigma, \left(\frac{t_1}{T^{(4)}},\ldots,\frac{t_F}{T^{(4)}}\right)\right),
+  \Delta A_{\mathrm{bwd}}
+  = -|I_r| \sum_{i \in M} |I_i|\, \omega_0(v, w_i).
 \]
-where $\Delta^{F-1} = \{(s_1,\ldots,s_F) : s_i \geq 0, \sum s_i = 1\}$
-is the standard $(F-1)$-simplex.
 
-The image $\mathrm{Im}(\Phi) \subset S_F \times \Delta^{F-1}$ is compact
-(finite set times a compact set).
-The sequence $\{z^{(4)}_n\}$ (from Step~4 with $\varepsilon_n \to 0$) lies in $\mathcal{E}^1$.
+Since $|I_r|, |I_s| > 0$, the two action changes have
+opposite signs (or both vanish).
+Hence
+$\max(\Delta A_{\mathrm{fwd}},
+  \Delta A_{\mathrm{bwd}}) \geq 0$.
 
-After passing to a subsequence:
-\begin{itemize}
-\item The permutation $\sigma^n = \sigma$ is constant,
-\item The normalized durations converge:
-      $(t^n_1/T^{(4)}_n,\ldots,t^n_F/T^{(4)}_n) \to (s^{\infty}_1,\ldots,s^{\infty}_F)$ in $\Delta^{F-1}$,
-\item The periods $T^{(4)}_n \to T$ (from Step~4 analysis).
-\end{itemize}
+Closure is preserved: the total displacement
+$\sum |I_k| w_k$ is unchanged by rearrangement.
+The dual functional $I_K$ is unchanged:
+$h_K^2(-J_0 \dot{z})$ depends only on the velocity
+at each time, not on its position in the sequence,
+so reordering segments preserves~$\int h_K^2$.
+\end{proof}
 
-Define $z^*$ as the piecewise affine curve with ordering $\sigma$,
-velocities $\{R_{\sigma(i)}\}$, and time durations $t^{\infty}_i = s^{\infty}_i \cdot T$.
+\begin{proof}[Proof of Lemma~\ref{lem:rescaling}]
+By Lemma~\ref{lem:shoelace}, every term in $2A(z)$
+contains the product $|I_i|\,|I_j|$, so
+$A(z') = \beta^2 A(z)$.
+Since $h_K^2(-J_0 \dot{z})$ depends only on the velocity
+(unchanged by rescaling), $I_K$ scales linearly:
+$I_K(z') = \beta\, I_K(z)$.
+\end{proof}
 
-Then $\|z^{(4)}_n - z^*\|_{W^{1,2}} \to 0$ (convergence in $W^{1,2}$):
-The velocity $\dot{z}^{(4)}_n$ matches $\dot{z}^*$ on most of $[0,T]$,
-with the measure of mismatch tending to zero as
-$T^{(4)}_n \to T$ and $t^n_i/T^{(4)}_n \to s^{\infty}_i$.
-
-By continuity of $A$ and $I_K$ in $W^{1,2}$:
-\[
-  A(z^*) = \lim_{n\to\infty} A(z^{(4)}_n) = T,
-  \qquad
-  I_K(z^*) = \lim_{n\to\infty} I_K(z^{(4)}_n) = T.
-\]
-Since $z$ was a dual minimizer with $I_K(z) = T$, and $I_K(z^*) = T$,
-the curve $z^*$ is also a dual minimizer. It is simple by construction
-(piecewise affine, pure Reeb velocities, each facet used at most once).
-
-\paragraph{Conclusion.}
-By Theorem~\ref{thm:primal-dual-equivalence}, the dual minimizer~$z^*$
-corresponds to a primal minimizer $\gamma = z^* + b$ for some constant
-$b \in \mathbb{R}^4$. Since $z^*$ is simple (piecewise linear with pure
-Reeb vectors, each used at most once), $\gamma$ is also simple
-(Definition~\ref{def:simple-reeb-orbit}). This completes the proof.
+\begin{proof}[Proof of Lemma~\ref{lem:compactness}]
+% Jörn: text approved (6f31407)
+% QC note: the encoding (sigma, s, T) determines a piecewise-Reeb curve
+%   up to translation. Translation is a free parameter for dual curves.
+%   Compactness requires choosing appropriate translations b_n to ensure
+%   the sequence stays bounded.
+%   (Contrast Remark~\ref{rem:simple-orbit-data}, where primal orbits gamma
+%   need a base point b = gamma(0) in addition to (sigma, tau).)
+Each $z_n$ is encoded by
+$(\sigma_n, s_n, T_n, z_n(0)) \in S_F \times \Delta^{F-1} \times (0,\infty) \times \mathbb{R}^4$,
+where $\sigma_n$ is the ordering,
+$s_{n,i} = t_{n,i} / T_n$ are normalized durations,
+and $z_n(0)$ is the start point needed to trace the piecewise affine path.
+Since $T_n \to T > 0$, eventually
+$T_n \in [T/2,\, 2T]$.
+We only want convergence up to translations, so we drop the $z_n(0)$.
+The space
+$S_F \times \Delta^{F-1} \times [T/2,\, 2T]$
+is compact, so a subsequence has
+$(\sigma_n, s_n, T_n) \to (\sigma_*, s_*, T)$.
+The curve~$z_*$ with parameters
+$(\sigma_*, s_*, T)$ is the limit (up to choice of starting point).
+By Lemma~\ref{lem:shoelace},
+$A(\sigma, s, T) = T^2 \sum_{j<i} s_i\, s_j\,
+\omega_0(w_j, w_i)$ is continuous in $(\sigma, s, T)$,
+so $A(z_*) = \lim A(z_n)$.
+Since all velocities are pure Reeb vectors,
+$I_K(z_*) = T$.
 \end{proof}
 

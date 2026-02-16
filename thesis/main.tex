@@ -12,6 +12,8 @@
 \usepackage{graphicx}
 \usepackage{xcolor}
 \usepackage{hyperref}
+\usepackage[style=alphabetic,backend=biber]{biblatex}
+\addbibresource{bibliography.bib}
 
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{lemma}[theorem]{Lemma}
@@ -21,6 +23,10 @@
 \newtheorem{remark}[theorem]{Remark}
 \newtheorem{example}[theorem]{Example}
 \newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{algorithm}[theorem]{Algorithm}
+\newtheorem*{theorem*}{Theorem}
+\newtheorem*{lemma*}{Lemma}
+\newtheorem*{algorithm*}{Algorithm}
 
 \title{Probing Viterbo's Conjecture}
 \author{J\"orn St\"ohler}
@@ -49,5 +55,7 @@
 \input{chapter-billiard}
 
 \input{experiments/experiments}
+
+\printbibliography
 
 \end{document}
