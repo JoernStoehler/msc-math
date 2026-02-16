@@ -1,20 +1,12 @@
-% chapter-billiard.tex — \input'd from main.tex
+% lagrangian-product-algorithm-proof.tex — \input'd from proofs.tex
+% Conventions: thesis/CLAUDE.md
+%
 % Sources: Bezdek-Bezdek (2009), Rudolf (2022), Artstein-Avidan & Ostrover (2014),
 %   HK2017. Agent-written, math verified by Joern.
 %
-% Structure:
-%   6.1 Lagrangian products
-%   6.2 Structure of simple orbits on Lagrangian products
-%   6.3 Billiard characterization and bounce bound
-%   6.4 Billiard algorithm
+% Structure: Lagrangian products, orbit structure, billiard characterization
 
-\section{EHZ Capacity of Lagrangian Products}\label{sec:billiard}
-
-% Jörn: math approved (e1345bb) — from \section{EHZ Capacity} to end of file
-
-%%% ---------------------------------------------------------------
-\subsection{Lagrangian Products}\label{subsec:lagrangian-products}
-%%% ---------------------------------------------------------------
+% Jörn: math approved (e1345bb) — from \subsection{Lagrangian Products} to end of subsection
 
 \begin{definition}[Lagrangian subspaces]\label{def:lagrangian-subspaces}
 % QC: L_q, L_p are Lagrangian because omega_0 vanishes on each.
@@ -138,9 +130,6 @@ $\omega_0(u, v) = \hat{n}^q_1 \hat{n}^p_1 + \hat{n}^q_2 \hat{n}^p_2
 = \langle \hat{n}^q, \hat{n}^p \rangle$.
 \end{proof}
 
-%%% ---------------------------------------------------------------
-\subsection{Structure of Simple Orbits}\label{subsec:orbit-structure}
-%%% ---------------------------------------------------------------
 
 \begin{lemma}[Adjacency in Lagrangian products]\label{lem:lagrangian-adjacency}
 % QC: vertices of K_q x K_p are exactly (v_q, v_p) for v_q in vert(K_q),
@@ -285,10 +274,7 @@ A $Q$-block contains one or two $q$-facets.
 In both cases, no positive $\beta$ solution exists.
 \end{proof}
 
-%%% ---------------------------------------------------------------
-\subsection{Billiard Characterization and Bounce Bound}%
 \label{subsec:bounce-bound}
-%%% ---------------------------------------------------------------
 
 \begin{definition}[Minkowski billiard trajectory]\label{def:billiard-trajectory}
 % QC: standard definition from Gutkin-Tabachnikov (2002).
@@ -344,24 +330,22 @@ the minimum in Theorem~\ref{thm:billiard-characterization}
 is achieved by a billiard trajectory with at most $3$ bounce points.
 \end{theorem}
 
-%%% ---------------------------------------------------------------
-\subsection{The Billiard Algorithm}\label{subsec:billiard-algorithm}
-%%% ---------------------------------------------------------------
 
-\begin{theorem}[Completeness of the billiard enumeration]%
-\label{thm:billiard-completeness}
+%%% Proof of billiard algorithm completeness
+
+\begin{theorem*}[Theorem~\ref{thm:billiard-completeness}, restated]
 Let $K = K_q \times K_p$ be a Lagrangian product.
 Then $c_{\mathrm{EHZ}}(K)$ equals the minimum of $A(S, \sigma)$
 (equation~\eqref{eq:action-formula})
 over all $(S, \sigma)$ with $\sigma$ matching the pattern
 $\bigl([Q \mid QQ]\,[P \mid PP]\bigr)^k$
 for $k \in \{2, 3\}$.
-\end{theorem}
+\end{theorem*}
 
 \begin{proof}
 \textbf{Overview.}\quad
 Every valid $(S, \sigma)$ from the restricted set is also a valid
-input to the algorithm of Section~\ref{sec:main-result}, so
+input to the algorithm of Section~\ref{subsec:general-case-algorithm}, so
 \begin{equation}\label{eq:billiard-lb}
   \min_{\text{restricted}} A(S, \sigma)
   \geq \min_{\text{all}} A(S, \sigma)
@@ -429,34 +413,3 @@ Each evaluation solves a linear system of size at most
 $12 + 5 = 17$, which is $O(1)$.
 The total cost is polynomial in $n_q$ and $n_p$.
 \end{remark}
-
-\medskip
-\noindent\textbf{Algorithm}\label{alg:billiard}
-(computes $c_{\mathrm{EHZ}}(K_q \times K_p)$
-via Theorem~\ref{thm:billiard-completeness}).
-
-\smallskip\noindent
-\emph{Input:} Lagrangian product $K = K_q \times K_p$ in
-$H$-representation.
-\quad
-\emph{Output:} $c_{\mathrm{EHZ}}(K)$.
-
-\begin{enumerate}
-\item \textbf{Classify} facets into $q$-type and $p$-type
-  (Lemma~\ref{lem:lagrangian-facets}).
-\item \textbf{Build blocks.}
-  For each polygon ($K_q$ and $K_p$), enumerate all
-  \emph{single-facet blocks} (one edge) and
-  \emph{pair blocks} (two adjacent edges, both orderings).
-\item \textbf{Enumerate.}
-  For $k = 2, 3$: for each selection of $k$ non-overlapping
-  $q$-blocks and $k$ non-overlapping $p$-blocks, and each
-  interleaving into the pattern
-  $\bigl([Q \mid QQ]\,[P \mid PP]\bigr)^k$,
-  flatten the blocks into a facet sequence~$\sigma$.
-\item \textbf{Solve and filter.}
-  For each $\sigma$: solve the KKT system~\eqref{eq:linear-system},
-  filter by $\beta_i > 0$ and $Q(\beta) > 0$, compute
-  $A(S, \sigma) = \tfrac{1}{2}\, Q(\beta)^{-1}$.
-\item \textbf{Return} $\min A(S, \sigma)$.
-\end{enumerate}
