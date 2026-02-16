@@ -176,18 +176,16 @@ Let $z \in W^{1,2}([0,T_z], \mathbb{R}^4)$ be a closed curve that is a
 critical point of the dual problem (Definition~\ref{def:dual-problem}).
 For any $\alpha > 0$ and $b \in \mathbb{R}^4$, define
 \begin{equation}\label{eq:scaling-family}
-  z_{\alpha,b}(t) := \alpha\, z(t/\beta) + b,
-  \quad\text{where}\quad
-  \beta := \alpha^2,
-  \quad t \in [0, T_{\alpha,b}],
+  z_{\alpha,b}(t) := \alpha\, z\bigl(t/\alpha^2\bigr) + b,
+  \quad t \in [0, \alpha^2 T_z],
 \end{equation}
-with period $T_{\alpha,b} := \beta T_z$.
+with period $T_{\alpha,b} := \alpha^2 T_z$.
 
 Then:
-\begin{enumerate}[label=(\alph*)]
+\begin{enumerate}[(a)]
 \item $z_{\alpha,b}$ is closed and is a critical point of the dual problem.
 \item $I_K(z_{\alpha,b}) = I_K(z)$ (independent of $\alpha$ and $b$).
-\item The action scales as $A(z_{\alpha,b}) = \beta\, A(z)$.
+\item The action scales as $A(z_{\alpha,b}) = \alpha^2\, A(z)$.
 \item If $A(z) = T_z$, then $A(z_{\alpha,b}) = T_{\alpha,b}$
   (the dual constraint is preserved).
 \end{enumerate}
