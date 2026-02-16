@@ -187,11 +187,31 @@ so this family does not affect the minimum value of the dual problem.
 
 \begin{proof}
 Closure: $z'(T') = \alpha z(T) + b = \alpha z(0) + b = z'(0)$.
-Since $I_K$ and $A$ are 2-homogeneous in velocity and $I_K$ is translation-invariant,
-the Euler-Lagrange equation for $I_K - \lambda A$ is invariant under
-$z(t) \mapsto \alpha z(t/\alpha^2) + b$, so $z'$ is a critical point.
-By 2-homogeneity, $A(z') = \alpha^2 A(z) = \alpha^2 T = T'$ and
-$I_K(z') = I_K(z)$ (using translation-invariance and the substitution $s = t/\alpha^2$).
+
+Critical point: The Euler-Lagrange equation is invariant under scaling and translation
+since $I_K$ and $A$ are 2-homogeneous in velocity and $I_K$ is translation-invariant.
+
+Action:
+\begin{align*}
+  A(z')
+  &= \frac{1}{2}\int_0^{T'} \langle -J_0 \dot{z}'(t), z'(t) \rangle\, dt \\
+  &= \frac{1}{2}\int_0^{\alpha^2 T} \left\langle -J_0 \frac{1}{\alpha}\dot{z}(t/\alpha^2), \alpha z(t/\alpha^2) + b \right\rangle\, dt \\
+  &= \frac{\alpha^2}{2}\int_0^{T} \langle -J_0 \dot{z}(s), z(s) \rangle\, ds
+  \quad \text{(subst.\ $s = t/\alpha^2$, $b$ term vanishes)} \\
+  &= \alpha^2 A(z) = \alpha^2 T = T'.
+\end{align*}
+
+Dual action:
+\begin{align*}
+  I_K(z')
+  &= \frac{1}{4}\int_0^{T'} h_K^2(-J_0\dot{z}'(t))\, dt \\
+  &= \frac{1}{4}\int_0^{\alpha^2 T} h_K^2\left(-J_0 \frac{1}{\alpha}\dot{z}(t/\alpha^2)\right)\, dt \\
+  &= \frac{1}{4}\int_0^{\alpha^2 T} \frac{1}{\alpha^2} h_K^2(-J_0\dot{z}(t/\alpha^2))\, dt
+  \quad \text{(1-homog.\ of $h_K$)} \\
+  &= \frac{1}{4}\int_0^{T} h_K^2(-J_0\dot{z}(s))\, ds
+  \quad \text{(subst.\ $s = t/\alpha^2$)} \\
+  &= I_K(z). \qedhere
+\end{align*}
 \end{proof}
 
 \begin{theorem}[Primal-dual equivalence (Clarke's Dual Action Principle)]%
