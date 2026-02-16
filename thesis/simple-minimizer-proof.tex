@@ -163,6 +163,25 @@ The dual functional and constraints can be motivated by working
 the equivalence proof
 (Theorem~\ref{thm:primal-dual-equivalence}) in reverse.
 
+\begin{lemma}[Euler-Lagrange condition for dual critical points]\label{lem:dual-euler-lagrange}
+% QC: Characterizes critical points via subdifferential inclusion.
+%   The Lagrange multiplier is nu, the additive constant is b.
+%   This is the variational condition for the constrained problem.
+A closed curve $z \in W^{1,2}([0,T], \mathbb{R}^4)$ with $A(z) = T$ is a
+critical point of the dual problem \eqref{eq:dual-problem} if and only if
+there exist $\nu \in \mathbb{R}$ and $b \in \mathbb{R}^4$ such that
+\begin{equation}\label{eq:dual-euler-lagrange}
+  \nu z(t) + b \in \partial\bigl(\tfrac{1}{4} h_K^2\bigr)\bigl(-J_0\dot{z}(t)\bigr)
+  \quad \text{a.e.}
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Standard calculus of variations for constrained problems in Sobolev spaces.
+The Lagrange multiplier $\nu$ enforces the constraint $A(z) = T$, and the
+constant $b$ arises from the translation invariance of $I_K$.
+\end{proof}
+
 \begin{lemma}[Scaling and translation symmetry of dual critical points]%
 \label{lem:dual-scaling-family}
 % QC: The dual Euler-Lagrange equation is invariant under scaling + translation.
@@ -188,9 +207,6 @@ so this family does not affect the minimum value of the dual problem.
 \begin{proof}
 Closure: $z'(T') = \alpha z(T) + b = \alpha z(0) + b = z'(0)$.
 
-Critical point: The Euler-Lagrange equation is invariant under scaling and translation
-since $I_K$ and $A$ are 2-homogeneous in velocity and $I_K$ is translation-invariant.
-
 Action:
 \begin{align*}
   A(z')
@@ -210,8 +226,25 @@ Dual action:
   \quad \text{(1-homog.\ of $h_K$)} \\
   &= \frac{1}{4}\int_0^{T} h_K^2(-J_0\dot{z}(s))\, ds
   \quad \text{(subst.\ $s = t/\alpha^2$)} \\
-  &= I_K(z). \qedhere
+  &= I_K(z).
 \end{align*}
+
+Critical point: By Lemma~\ref{lem:dual-euler-lagrange}, $z$ satisfies
+$\nu z(s) + b_0 \in \partial(\tfrac{1}{4}h_K^2)(-J_0\dot{z}(s))$ a.e.\ for some
+$\nu, b_0$. At $t$ with $s = t/\alpha^2$:
+\begin{align*}
+  \nu z(s) + b_0
+  &\in \partial\bigl(\tfrac{1}{4}h_K^2\bigr)(-J_0\dot{z}(s)) \\
+  &\Rightarrow \quad
+  \frac{1}{\alpha^2}[\nu z(s) + b_0]
+  \in \partial\bigl(\tfrac{1}{4}h_K^2\bigr)\bigl(-\tfrac{1}{\alpha}J_0\dot{z}(s)\bigr)
+  \quad \text{(2-homog.)} \\
+  &\Rightarrow \quad
+  \frac{\nu}{\alpha^3} z'(t) + \biggl(\frac{b_0}{\alpha^2} - \frac{\nu b}{\alpha^3}\biggr)
+  \in \partial\bigl(\tfrac{1}{4}h_K^2\bigr)(-J_0\dot{z}'(t)).
+\end{align*}
+Thus $z'$ satisfies~\eqref{eq:dual-euler-lagrange} with $\nu' = \nu/\alpha^3$
+and $b' = b_0/\alpha^2 - \nu b/\alpha^3$.
 \end{proof}
 
 \begin{theorem}[Primal-dual equivalence (Clarke's Dual Action Principle)]%
@@ -317,13 +350,8 @@ Since $p(t) \in \partial(\tfrac{1}{4}h_K^2)(-J_0\dot{z}(t))$:
   \in \partial\bigl(\tfrac{1}{4}h_K^2\bigr)\bigl(-J_0\dot{z}(t)\bigr)
   \quad \text{a.e.}
 \]
-Writing $\nu = -2\alpha$ and $b = c$:
-\begin{equation}\label{eq:dual-euler-lagrange}
-  \nu z(t) + b \in
-  \partial\bigl(\tfrac{1}{4} h_K^2\bigr)\bigl(-J_0\dot{z}(t)\bigr)
-  \quad \text{a.e.}
-\end{equation}
-for some $\nu \in \mathbb{R}$ and constant $b \in \mathbb{R}^4$.
+Writing $\nu = -2\alpha$ and $b = c$, this is exactly the Euler-Lagrange
+condition~\eqref{eq:dual-euler-lagrange} from Lemma~\ref{lem:dual-euler-lagrange}.
 
 \medskip
 \emph{Part 2: Primal critical point $\Rightarrow$ dual critical point.}
