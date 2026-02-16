@@ -79,6 +79,13 @@ fn main() {
     let t0 = Instant::now();
     let mut rng = ChaCha8Rng::seed_from_u64(SEED);
     let mut entries = Vec::new();
+    
+    // Construct output path relative to repo root (works from any cwd)
+    let output_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .and_then(|p| p.parent())
+        .map(|p| p.join("experiments/data/benchmark.jsonl"))
+        .expect("failed to construct output path");
 
     println!("Generating benchmark dataset...\n");
 
@@ -172,8 +179,7 @@ fn main() {
     }
 
     // Write to JSONL
-    let output_path = "experiments/data/benchmark.jsonl";
-    let file = File::create(output_path).expect("failed to create output file");
+    let file = File::create(&output_path).expect("failed to create output file");
     let mut writer = BufWriter::new(file);
 
     for entry in &entries {
@@ -184,7 +190,7 @@ fn main() {
     println!(
         "\nWrote {} entries to {}",
         entries.len(),
-        output_path
+        output_path.display()
     );
     println!("Total time: {:.1}s", t0.elapsed().as_secs_f64());
     println!("\nDataset breakdown:");

@@ -31,13 +31,13 @@ use geom::lagrangian_product::lagrangian_product;
 use geom::polygon::random_polygon_2d;
 use geom::polytope::Polytope4D;
 use hk2017::{ehz_capacity, ehz_capacity_pruned};
-use nalgebra::{Matrix4, Vector4};
+use nalgebra::Matrix4;
 use rand::{Rng, SeedableRng};
 use rand_chacha::ChaCha8Rng;
 use rand_distr::StandardNormal;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
-use std::io::{BufRead, BufReader, BufWriter, Write};
+use std::io::{BufWriter, Write};
 
 #[derive(Debug, Serialize, Deserialize)]
 struct VerificationEntry {
@@ -58,6 +58,13 @@ fn main() {
     println!("Generating correctness dataset (47 polytopes, 71 capacity values)...\n");
     let mut rng = ChaCha8Rng::seed_from_u64(42);
     let mut entries = Vec::new();
+    
+    // Construct output path relative to repo root (works from any cwd)
+    let output_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .and_then(|p| p.parent())
+        .map(|p| p.join("experiments/data/correctness.jsonl"))
+        .expect("failed to construct output path");
 
     // Test 1: Generate 10 base polytopes (5 random generic + 5 Lagrangian products)
     println!("Test 1: Generating 10 base polytopes (5 generic + 5 Lagrangian)...");
@@ -219,8 +226,7 @@ fn main() {
     println!("  → 10 pruned = 10 capacity values\n");
 
     // Write to JSONL
-    let output_path = "experiments/data/correctness.jsonl";
-    println!("Writing {} entries to {}...", entries.len(), output_path);
+    println!("Writing {} entries to {}...", entries.len(), output_path.display());
     let file = File::create(output_path).expect("create file");
     let mut writer = BufWriter::new(file);
     for entry in &entries {

@@ -562,7 +562,6 @@ fn svd_gap_ratio_44_degenerate() {
     // Find the gap: walk from smallest SV upward looking for the biggest ratio
     let floor = 1e-15;
     let mut max_gap_ratio = 0.0f64;
-    let mut gap_index = 0;
     for i in (1..size).rev() {
         if sv[i] < floor {
             continue;
@@ -570,7 +569,6 @@ fn svd_gap_ratio_44_degenerate() {
         let ratio = sv[i - 1] / sv[i];
         if ratio > max_gap_ratio {
             max_gap_ratio = ratio;
-            gap_index = i;
         }
     }
 
