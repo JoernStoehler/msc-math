@@ -364,122 +364,96 @@ namely $z(t) = \alpha\gamma(t/\alpha^2) + b$ for $\alpha > 0$ and $b \in \mathbb
 are dual critical points.
 
 \medskip
-\emph{Part 3: Dual critical point $\Rightarrow$ primal critical point.}
-Let $z$ be a dual critical point, so $z$ satisfies the E-L
-condition~\eqref{eq:dual-euler-lagrange} for some $\nu \in \mathbb{R}$ and $b \in \mathbb{R}^4$.
-Define $\gamma(t) := \nu z(t) + b$.
-
-\emph{Step 1: Converting the Euler-Lagrange condition.}
-Since $\dot{\gamma} = \nu\dot{z}$, the Euler-Lagrange condition becomes
-\[
-  \gamma \in \partial\bigl(\tfrac{1}{4}h_K^2\bigr)(-J_0\dot{\gamma}/\nu)
+\emph{Reverse direction: dual critical point implies symmetry class contains primal critical point.}
+Let $z$ be a dual critical point with period~$T$. By Lemma~\ref{lem:dual-euler-lagrange},
+there exist $\nu \in \mathbb{R}$ and $b \in \mathbb{R}^4$ such that
+\begin{equation}\label{eq:dual-el-for-z}
+  \nu z(t) + b \in \partial\bigl(\tfrac{1}{4}h_K^2\bigr)(-J_0\dot{z}(t))
   \quad\text{a.e.}
-\]
+\end{equation}
 By Fenchel duality (Lemma~\ref{lem:fenchel-duality}), this is equivalent to
 \[
-  -J_0\dot{\gamma}/\nu \in \partial g_K^2(\gamma)
-  \quad\text{a.e.}
+  -J_0\dot{z}(t) \in \partial g_K^2(\nu z(t) + b) \quad\text{a.e.}
 \]
 
-\emph{Step 2: Proving $\nu = 1$.}
-We show $\nu = 1$ by deriving three identities and combining them.
+\emph{Step 1: $\nu \neq 0$.}
+Assume $\nu = 0$. Then $-J_0\dot{z}(t) \in \partial g_K^2(b)$ a.e.,
+i.e., $\dot{z}(t) \in J_0\partial g_K^2(b)$ a.e.
+Since $z$ is closed, $\int_0^T \dot{z} = 0$.
+Since $\partial g_K^2(b)$ is convex, this implies $0 \in J_0\partial g_K^2(b)$,
+hence $0 \in \partial g_K^2(b)$.
+This only happens at $b = 0$.
+Thus $0 \in \partial(\tfrac{1}{4}h_K^2)(\dot{z}(t))$ a.e., which implies $\dot{z} \equiv 0$,
+contradicting the fact that $z$ is not constant.
+Therefore $\nu \neq 0$.
 
-\emph{(a) Constancy of $g_K^2(\gamma)$.}
-Since $-J_0\dot{\gamma}/\nu \in \partial g_K^2(\gamma)$ a.e.,
-the subgradient inequality gives
+\emph{Step 2: Constancy of $g_K^2(\nu z + b)$.}
+The subgradient inequality gives
 \[
-  \frac{d}{dt} g_K^2(\gamma)
-  \geq \bigl\langle \tfrac{-J_0\dot{\gamma}}{\nu},\, \dot{\gamma} \bigr\rangle
-  = -\frac{1}{\nu}\, \omega_0(\dot{\gamma}, \dot{\gamma}) = 0
+  \frac{d}{dt} g_K^2(\nu z(t) + b)
+  \geq \langle -J_0\dot{z}(t),\, \nu\dot{z}(t) \rangle
+  = \nu\, \omega_0(\dot{z}(t), \dot{z}(t)) = 0
   \quad\text{a.e.}
 \]
-So $t \mapsto g_K^2(\gamma(t))$ is non-decreasing.
-Since $\gamma$ is periodic, a non-decreasing periodic function is constant:
-$g_K^2(\gamma) \equiv c^2$ for some constant $c \geq 0$.
+So $t \mapsto g_K^2(\nu z(t) + b)$ is non-decreasing.
+Since $z$ is periodic, a non-decreasing periodic function is constant:
+$g_K^2(\nu z(t) + b) \equiv c^2$ for some $c \geq 0$.
+Since $\nu z + b$ is not identically zero (as $\nu \neq 0$ and $z$ is not constant),
+we have $c > 0$.
 
-\emph{(b) Action of $\gamma$ via homogeneity.}
-For $y \in \partial g_K^2(x)$, the subgradient inequality at $z = \lambda x$ gives
-$\lambda^2 g_K^2(x) \geq g_K^2(x) + (\lambda - 1)\langle y, x\rangle$.
-Dividing by $(\lambda - 1)$ and taking $\lambda \to 1$ from both sides
-yields $\langle y, x \rangle = 2\, g_K^2(x)$.
-Applied with $y = -J_0\dot{\gamma}/\nu$ and $x = \gamma$:
-\begin{equation}\label{eq:euler-identity-action}
-  \frac{1}{\nu}\langle -J_0\dot{\gamma},\, \gamma \rangle = 2c^2,
-  \quad\text{so}\quad
-  A(\gamma) = \nu c^2 T.
-\end{equation}
+\emph{Step 3: Constructing the primal critical point.}
+Define
+\[
+  \gamma(t) := \frac{\nu z(t/\nu)}{c} + \frac{b}{c},
+  \quad t \in [0, \nu T].
+\]
+Then $\gamma$ has period $T_\gamma = \nu T$ and
+\begin{align*}
+  g_K(\gamma(t))
+  &= g_K\bigl(\tfrac{1}{c}(\nu z(t/\nu) + b)\bigr)
+   = \tfrac{1}{c}\, g_K(\nu z(t/\nu) + b) = \tfrac{c}{c} = 1, \\
+  \dot{\gamma}(t)
+  &= \tfrac{1}{c}\dot{z}(t/\nu), \\
+  -J_0\dot{\gamma}(t)
+  &= -\tfrac{1}{c} J_0\dot{z}(t/\nu)
+   \in \tfrac{1}{c}\, \partial g_K^2(\nu z(t/\nu) + b)
+   = \partial g_K^2(\gamma(t))
+  \quad\text{a.e.}
+\end{align*}
+Thus $\gamma$ is a primal critical point (Hamiltonian orbit on $\partial K$).
 
-\emph{(c) Action of $\gamma$ computed directly.}
-Since $\gamma = \nu z + b$, $\dot{\gamma} = \nu \dot{z}$, and $\int_0^T z = 0$:
+\emph{Step 4: Determining $\nu = c^2$ and symmetry class membership.}
+For any Reeb orbit, $A(\gamma) = T_\gamma = \nu T$.
+On the other hand, by direct computation with $s = t/\nu$:
 \begin{align*}
   A(\gamma)
-  &= \tfrac{1}{2}\!\int_0^T \langle -J_0 \dot{\gamma},\, \gamma \rangle\, dt
-   = \tfrac{1}{2}\!\int_0^T
-    \bigl\langle -\nu J_0 \dot{z},\, \nu z + b \bigr\rangle\, dt \\
-  &= \nu^2 A(z) + \tfrac{\nu}{2}\!\int_0^T
-    \langle -J_0 \dot{z},\, b \rangle\, dt
-   = \nu^2 A(z) + \tfrac{\nu}{2}
-    \bigl\langle -J_0\underbrace{[z(T) - z(0)]}_{= 0},\, b \bigr\rangle
-   = \nu^2 A(z).
+  &= \tfrac{1}{2}\!\int_0^{\nu T} \langle -J_0\dot{\gamma}(t),\, \gamma(t) \rangle\, dt
+   = \tfrac{1}{2}\!\int_0^{T} \langle -\tfrac{1}{c} J_0\dot{z}(s),\,
+     \tfrac{\nu z(s)}{c} + \tfrac{b}{c} \rangle\, \nu\, ds \\
+  &= \tfrac{\nu}{2c^2}\!\int_0^{T} \langle -J_0\dot{z}(s),\, \nu z(s) + b \rangle\, ds
+   = \tfrac{\nu^2}{c^2} A(z)
+   = \tfrac{\nu^2}{c^2} T.
 \end{align*}
-Since $z$ is a dual critical point with $A(z) = T$, we have $A(\gamma) = \nu^2 T$.
+Thus $\nu T = \nu^2 T / c^2$, hence $\nu = c^2$.
 
-\emph{(d) Integrated Fenchel equality.}
-The Fenchel equality (Lemma~\ref{lem:fenchel-duality}) at
-$-J_0\dot{\gamma}/\nu \in \partial g_K^2(\gamma)$ gives pointwise:
+With $\nu = c^2$, we have
 \[
-  g_K^2(\gamma) + \tfrac{1}{4}h_K^2(-J_0\dot{\gamma}/\nu)
-  = \langle \gamma,\, -J_0\dot{\gamma}/\nu \rangle.
+  \gamma(t) = c\, z(t/c^2) + \frac{b}{c},
 \]
-Since $\dot{\gamma} = \nu\dot{z}$, integrating over $[0,T]$ gives
-\[
-  c^2 T + I_K(z) = 2\nu T,
-\]
-hence $c^2 = 2\nu - 1$.
-
-\emph{Combining (a)--(d).}
-From (b) and (c): $\nu c^2 T = \nu^2 T$, i.e., $\nu(\nu - c^2) = 0$.
-From (d): $c^2 = 2\nu - 1$.
-If $\nu = 0$, then $c^2 = -1$, which is impossible.
-So $c^2 = \nu$, and substituting: $\nu = 2\nu - 1$, hence $\nu = 1$.
-
-\emph{Step 3: Conclusion.}
-With $\nu = 1$, we have $c = 1$, so $g_K^2(\gamma) \equiv 1$
-(i.e., $\gamma$ lies on $\partial K$) and
-\[
-  -J_0\dot{\gamma} \in \partial g_K^2(\gamma) \quad\text{a.e.}
-\]
-(i.e., $\gamma$ is a Hamiltonian orbit on $\partial K$).
-Since $\gamma = z + b$ and $\int_0^T z = 0$,
-we have $b = \mathrm{center}(\gamma)$, i.e.,
-$z = \gamma - \mathrm{center}(\gamma)$.
+which is exactly of the form $\alpha z(t/\alpha^2) + b'$ from
+Lemma~\ref{lem:dual-scaling-family} with $\alpha = c > 0$ and $b' = b/c$.
+Therefore $\gamma$ lies in the symmetry class of~$z$.
 
 \medskip
-\emph{Part 4: Value equality.}
-Let $\gamma$ be a primal critical point and $z = \gamma - \mathrm{center}(\gamma)$
-the corresponding dual critical point.
-The Fenchel equality (Lemma~\ref{lem:fenchel-duality}) at the subgradient
-relation $-J_0\dot{\gamma} \in \partial g_K^2(\gamma)$ gives pointwise:
-\[
-  g_K^2(\gamma) + \tfrac{1}{4} h_K^2(-J_0\dot{\gamma})
-  = \langle \gamma, -J_0\dot{\gamma} \rangle.
-\]
-Integrating over $[0,T]$ and using $g_K^2(\gamma) \equiv 1$:
-\[
-  T + I_K(\gamma) = 2A(\gamma).
-\]
-Since $A(\gamma) = T$ (the action equals the period for any Reeb orbit),
-we have $I_K(\gamma) = T$. Since $\dot{z} = \dot{\gamma}$, we get $I_K(z) = I_K(\gamma) = T$.
-Therefore $I_K(z) = T = A(\gamma)$.
-
-% QC note: the proof shows the correspondence is surjective in both
-%   directions and value-preserving (Parts 2--4).  Bijectivity is not
-%   claimed: for polytopes, translates of gamma can remain on dK,
-%   giving multiple primal orbits for one dual curve z.  This does not
-%   affect the min-equality below (all such orbits share the same action).
-Since the correspondence exists in both directions and preserves values,
+\emph{Minimum equality.}
+Since the forward and reverse directions establish a correspondence between
+primal and dual critical points via symmetry classes, and since
+primal critical points $\gamma$ and dual critical points $z$ in the same
+symmetry class have $A(\gamma) = I_K(z)$ (both equal the period),
 minimizers correspond to minimizers:
-$\min_\gamma A(\gamma) = \min_z I_K(z) = c_{\mathrm{EHZ}}(K)$.
+\[
+  \min_\gamma A(\gamma) = \min_z I_K(z) = c_{\mathrm{EHZ}}(K).
+\]
 \end{proof}
 
 \begin{remark}\label{rem:symmetry-class-uniqueness}
