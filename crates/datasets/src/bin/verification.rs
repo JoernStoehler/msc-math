@@ -37,7 +37,7 @@ use rand_chacha::ChaCha8Rng;
 use rand_distr::StandardNormal;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
-use std::io::{BufReader, BufWriter, Write};
+use std::io::{BufRead, BufReader, BufWriter, Write};
 
 #[derive(Debug, Serialize, Deserialize)]
 struct VerificationEntry {
@@ -119,7 +119,7 @@ fn main() {
         let billiard = billiard_capacity(&kp.polytope).ok().flatten().map(|r| r.capacity);
 
         entries.push(VerificationEntry {
-            name: kp.name,
+            name: kp.name.to_string(),
             test_group: "literature".to_string(),
             base_index: None,
             facet_count: kp.polytope.facet_count(),
@@ -284,11 +284,16 @@ mod tests {
     const TOL: f64 = 1e-6;
 
     fn load_dataset() -> Vec<VerificationEntry> {
-        let file = File::open("experiments/data/verification.jsonl")
+        let manifest_dir = env!("CARGO_MANIFEST_DIR");
+        let path = format!("{}/../experiments/data/verification.jsonl", manifest_dir);
+        let file = File::open(&path)
             .expect("Run `cargo run --bin verification --release` first");
         let reader = BufReader::new(file);
         reader.lines()
-            .map(|line| serde_json::from_str(&line.expect("read line")).expect("parse"))
+            .map(|line| {
+                let line_str = line.expect("read line");
+                serde_json::from_str::<VerificationEntry>(&line_str).expect("parse")
+            })
             .collect()
     }
 
