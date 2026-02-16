@@ -53,10 +53,6 @@ ${\\sim}19{,}600$~seconds (5.4~hours) per capacity computation.
 
 \subsubsection*{HK2017 unpruned vs pruned}
 
-The adjacency pruning optimization (which restricts enumeration to facet
-subsets whose normals lie in a common half-space) dramatically reduces the
-search space. For $F \le 7$, we compare pruned vs unpruned on the same polytopes:
-
 \begin{table}[h]
 \centering
 \begin{tabular}{rrrr}
@@ -68,24 +64,13 @@ $F$ & Pruned (ms) & Unpruned (ms) & Speedup \\
  7 &  16.9 &  26.6 & 1.6$\times$ \\
 \bottomrule
 \end{tabular}
-\caption{Adjacency pruning speedup for small polytopes. At $F = 5$--$6$, pruning
+\caption{Pruned vs unpruned timing for small polytopes. At $F = 5$--$6$, pruning
 overhead outweighs savings; at $F = 7$, pruning becomes beneficial. Beyond $F = 7$,
 unpruned becomes infeasible (hours per polytope).}
 \label{tab:pruned-vs-unpruned}
 \end{table}
 
-At $F = 5$--$6$, the pruning overhead (computing half-space containment for
-every subset) exceeds the work saved. By $F = 7$, pruning wins, and beyond $F = 7$,
-unpruned enumeration is infeasible.
-
 \subsubsection*{Billiard algorithm on Lagrangian products}
-
-On Lagrangian products (polytopes of the form $K_q \times K_p$ where $K_q, K_p$
-are 2D polygons), the billiard algorithm is dramatically faster. The algorithm
-enumerates only 2-bounce and 3-bounce orbit patterns, giving polynomial cost
-in the number of facets.
-
-Median timing on random Lagrangian products:
 
 \begin{table}[h]
 \centering
