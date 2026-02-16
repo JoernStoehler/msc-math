@@ -56,9 +56,21 @@ $F$ & Pruned (ms) & Unpruned (ms) & Speedup \\
 \label{tab:pruned-vs-unpruned}
 \end{table}
 
+Figure~\ref{fig:benchmark-timing-random} shows HK2017 timing on random polytopes,
+with the fitted model extrapolated to $F = 16$.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{../experiments/figures/benchmark_timing_random.png}
+\caption{HK2017 on random polytopes. Pruned (blue) with fitted exponential model
+  $T(F) = 2.3 \times 10^{-7} \cdot 4.8^F$, extrapolated to crosspolytope ($F = 16$).
+  Unpruned (orange) for $F \le 7$.}
+\label{fig:benchmark-timing-random}
+\end{figure}
+
 On Lagrangian products, the billiard algorithm is consistently 2--3$\times$
-faster than HK2017 pruned (Table~\ref{tab:billiard-vs-hk2017}), with polynomial
-vs exponential scaling.
+faster than HK2017 pruned (Table~\ref{tab:billiard-vs-hk2017},
+Figure~\ref{fig:benchmark-timing-lagrangian}), with polynomial vs exponential scaling.
 
 \begin{table}[h]
 \centering
@@ -77,9 +89,15 @@ $F$ & Billiard (ms) & HK2017 pruned (ms) & Speedup \\
 \label{tab:billiard-vs-hk2017}
 \end{table}
 
-Figure~\ref{fig:benchmark-timing} shows all timing data with the fitted model
-extrapolated to $F = 16$. Based on these benchmarks, we adopt the following
-algorithm selection:
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{../experiments/figures/benchmark_timing_lagrangian.png}
+\caption{HK2017 vs Billiard on random Lagrangian products. Billiard (green) is
+  2--3$\times$ faster than HK2017 pruned (blue) with polynomial vs exponential scaling.}
+\label{fig:benchmark-timing-lagrangian}
+\end{figure}
+
+Based on these benchmarks, we adopt the following algorithm selection:
 
 \begin{itemize}
   \item \textbf{Lagrangian products}: Use billiard (polynomial cost).
@@ -88,14 +106,3 @@ algorithm selection:
   \item \textbf{Debug testing}: Use HK2017 unpruned on $F \le 7$ to exercise
     all code paths with internal assertions.
 \end{itemize}
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.9\textwidth]{../experiments/figures/benchmark_timing.png}
-\caption{EHZ capacity computation time vs facet count. HK2017 pruned (blue):
-  exponential model $T(F) = 2.3 \times 10^{-7} \cdot 4.8^F$ fitted to random
-  polytopes, extrapolated to crosspolytope ($F = 16$). HK2017 unpruned (orange):
-  overhead from adjacency pruning visible at $F \le 7$. Billiard (green):
-  polynomial cost on Lagrangian products, 2--3$\times$ faster than HK2017.}
-\label{fig:benchmark-timing}
-\end{figure}
