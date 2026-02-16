@@ -1,0 +1,37 @@
+% random-product-sweep.tex — \input'd from experiments/experiments.tex
+%
+% Random Lagrangian products from random polygon pairs.
+%
+% Sources:
+%   - Generated data: experiments/data/random-product-sweep.jsonl
+%   - Plot script: experiments/scripts/random_product_sweep.py
+%   - Experiment notes: experiments/scripts/random_product_sweep.md
+%
+% Structure:
+%   - Sampling setup
+%   - Summary plot
+
+\subsection{Random Lagrangian Product Sweep}
+\label{sec:random-product-sweep}
+
+We generate random Lagrangian products $P \times_L Q$ by sampling two random
+2D polygons with facet counts $(k,m)$ and taking all pairs with
+$3 \le k \le m \le 6$. For each of the 10 pairs, we draw 10 samples, using
+heights uniform in $[0.8, 1.2]$. We compute $c_{\mathrm{EHZ}}$ using the
+billiard algorithm, which is the fast method specialized to Lagrangian
+products.
+
+Figure~\ref{fig:random-product-sweep-sys} summarizes the systolic ratio
+$\mathrm{sys} = c_{\mathrm{EHZ}}^2/(2\,\mathrm{vol})$ across the 10 polygon
+pairs. Points show the individual samples, with the median and one standard
+deviation shown as an error bar per pair.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{../experiments/figures/random_product_sweep_sys_vs_pair.png}
+\caption{Random Lagrangian products: systolic ratio by polygon pair. Each
+  bucket corresponds to a polygon pair $(k,m)$ with $3 \le k \le m \le 6$.
+  Points show individual samples, and markers with error bars show the median
+  and one standard deviation. The dashed line marks $\mathrm{sys}=1$.}
+\label{fig:random-product-sweep-sys}
+\end{figure}

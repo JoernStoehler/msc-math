@@ -20,6 +20,10 @@ name = "random_sweep"
 path = "src/bin/random_sweep.rs"
 
 [[bin]]
+name = "random_product_sweep"
+path = "src/bin/random_product_sweep.rs"
+
+[[bin]]
 name = "correctness"
 path = "src/bin/correctness.rs"
 
