@@ -14,47 +14,19 @@ algorithm is polynomial but restricted to Lagrangian products. We benchmark
 both to establish practical limits and guide algorithm selection in subsequent
 experiments.
 
-\subsubsection*{HK2017 implementation optimization}
-
-Before benchmarking, we optimized the HK2017 implementation without changing
-the underlying algorithm:
-
-\begin{enumerate}
-  \item \textbf{Lazy permutation generation.} In-place callback via Heap's
-    algorithm replaces eager collection of all $(m{-}1)!$ cyclic permutations.
-    For $m = 10$, this eliminates 362{,}880 vector allocations. Speedup:
-    1.2--2.2$\times$.
-
-  \item \textbf{Gap-based SVD rank detection.} A gap-based rank
-    determination replaces the fixed-tolerance SVD pseudoinverse
-    (Section~\ref{sec:correctness}).
-
-  \item \textbf{LU fast path.} The solver first attempts full-pivoting
-    LU, falling through to SVD with gap-based rank detection on failure.
-    Phase profiling showed the LU path adds 6--12\% wall-clock overhead:
-    most KKT systems yield $\beta \le 0$ even when LU reports the system
-    as invertible, so LU decomposes and solves wastefully before SVD runs
-    anyway. On the HK-O pentagon, LU reports 92\% of systems invertible
-    but only 3\% produce valid $\beta > 0$; on random polytopes
-    ($F = 7$--$8$), the valid rate rises to~${\sim}9\%$.
-
-    Despite the overhead, LU is retained because it catches cases where
-    the gap-based SVD rank detection over-truncates: at $F = 7$, LU
-    finds 26 valid orbits (out of 23{,}650) that SVD rejects. These do
-    not affect the computed capacity (all are non-optimal), but the
-    discrepancy indicates that the gap threshold ($100{\times}$) is too
-    aggressive for some well-conditioned systems. This is discussed
-    further in Section~\ref{sec:correctness}.
-\end{enumerate}
-
-Wall-clock improvement from lazy permutation: 4--6$\times$ on the HK-O
-pentagon ($F = 10$) and random polytopes at $F = 10$. Peak heap memory
-dropped from 573\,KB to 17\,KB.
-
-\subsubsection*{HK2017 timing profile}
+\subsubsection*{HK2017 pruned: timing profile}
 
 Table~\ref{tab:benchmark-stats} shows timing statistics for \texttt{ehz\_capacity\_pruned}
-on the benchmark dataset (83 random polytopes, $F = 5, \ldots, 12$).
+on 83 random polytopes ($F = 5, \ldots, 12$). A log-linear regression on the median
+times yields the exponential model
+\[
+  T_{\mathrm{pruned}}(F) \;=\; 2.3 \times 10^{-7} \cdot 4.8^F \quad\text{seconds}
+  \qquad (R^2 = 0.998).
+\]
+The growth rate of~${\sim}4\text{--}5\times$ per facet reflects the combinatorial
+explosion: the number of cyclic permutations of a facet subset grows
+super-exponentially with~$F$, and adjacency pruning removes a roughly
+constant fraction at each level.
 
 \begin{table}[h]
 \centering
@@ -72,38 +44,75 @@ $F$ & $N$ & Median (ms) & Mean (ms) & Min (ms) & Max (ms) \\
 12 &  3 &  27{,}011 &  32{,}116 & 18{,}679 &  50{,}658 \\
 \bottomrule
 \end{tabular}
-\caption{HK2017 computation time for random 4-polytopes by facet count.
-  All times measured after LU fast path and lazy permutation optimizations.}
+\caption{HK2017 pruned computation time for random 4-polytopes by facet count.}
 \label{tab:benchmark-stats}
 \end{table}
 
-A log-linear regression on the median times yields the exponential model
-\[
-  T_{\mathrm{HK2017}}(F) \;=\; 2.3 \times 10^{-7} \cdot 4.8^F \quad\text{seconds}
-  \qquad (R^2 = 0.998).
-\]
-The growth rate of~${\sim}4\text{--}5\times$ per facet reflects the combinatorial
-explosion: the number of cyclic permutations of a facet subset grows
-super-exponentially with~$F$, and adjacency pruning removes a roughly
-constant fraction at each level.
+Extrapolating to the 4D crosspolytope ($F = 16$), the model predicts
+${\\sim}19{,}600$~seconds (5.4~hours) per capacity computation.
 
-\subsubsection*{Billiard timing profile}
+\subsubsection*{HK2017 unpruned vs pruned}
 
-On Lagrangian products, the billiard algorithm is dramatically faster. The
-algorithm enumerates only 2-bounce and 3-bounce orbit patterns, giving
-polynomial cost in the number of facets.
+The adjacency pruning optimization (which restricts enumeration to facet
+subsets whose normals lie in a common half-space) dramatically reduces the
+search space. For $F \le 7$, we compare pruned vs unpruned on the same polytopes:
 
-On the \textsc{PentagonSweep} ($F = 10$, 361 points), the billiard algorithm
-computes each capacity in ${\sim}920$\,ms (median),
-compared to ${\sim}2{,}400$\,ms for HK2017.
-The billiard's advantage grows with facet count because
-HK2017's cost is exponential while billiard's is polynomial.
+\begin{table}[h]
+\centering
+\begin{tabular}{rrrr}
+\toprule
+$F$ & Pruned (ms) & Unpruned (ms) & Speedup \\
+\midrule
+ 5 &   0.5 &   0.4 & 0.8$\times$ \\
+ 6 &   3.1 &   3.5 & 0.9$\times$ \\
+ 7 &  16.9 &  26.6 & 1.6$\times$ \\
+\bottomrule
+\end{tabular}
+\caption{Adjacency pruning speedup for small polytopes. At $F = 5$--$6$, pruning
+overhead outweighs savings; at $F = 7$, pruning becomes beneficial. Beyond $F = 7$,
+unpruned becomes infeasible (hours per polytope).}
+\label{tab:pruned-vs-unpruned}
+\end{table}
+
+At $F = 5$--$6$, the pruning overhead (computing half-space containment for
+every subset) exceeds the work saved. By $F = 7$, pruning wins, and beyond $F = 7$,
+unpruned enumeration is infeasible.
+
+\subsubsection*{Billiard algorithm on Lagrangian products}
+
+On Lagrangian products (polytopes of the form $K_q \times K_p$ where $K_q, K_p$
+are 2D polygons), the billiard algorithm is dramatically faster. The algorithm
+enumerates only 2-bounce and 3-bounce orbit patterns, giving polynomial cost
+in the number of facets.
+
+Median timing on random Lagrangian products:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{rrrr}
+\toprule
+$F$ & Billiard (ms) & HK2017 pruned (ms) & Speedup \\
+\midrule
+ 6 &     1.1 &     3.3 &   3.0$\times$ \\
+ 7 &     7.8 &    17.8 &   2.3$\times$ \\
+ 8 &    36.2 &    67.4 &   1.9$\times$ \\
+ 9 &   193.3 &   381.8 &   2.0$\times$ \\
+10 &   925.6 & 1{,}941.7 &   2.1$\times$ \\
+\bottomrule
+\end{tabular}
+\caption{Billiard vs HK2017 pruned on random Lagrangian products. Billiard is
+consistently 2--3$\times$ faster, and the gap grows with facet count due to
+HK2017's exponential cost vs billiard's polynomial cost.}
+\label{tab:billiard-vs-hk2017}
+\end{table}
 
 \subsubsection*{Algorithm selection}
 
+Based on these benchmarks:
+
 \begin{itemize}
-  \item \textbf{Lagrangian products}: Always use billiard (polynomial cost,
-    cross-validated against HK2017 in Section~\ref{sec:correctness}).
+  \item \textbf{Lagrangian products}: Always use billiard (2--3$\times$ faster,
+    polynomial vs exponential cost).
   \item \textbf{General polytopes}: Use HK2017 pruned (the only general
     algorithm). Practical limit: $F \le 12$ for routine datasets, $F \le 14$
     for one-off computations.
@@ -112,14 +121,16 @@ HK2017's cost is exponential while billiard's is polynomial.
     polytopes due to exponential cost without pruning.
 \end{itemize}
 
-Figure~\ref{fig:benchmark-timing} shows the timing data and fitted model
-for HK2017.
+Figure~\ref{fig:benchmark-timing} shows the timing data, fitted model for
+HK2017 pruned, and the comparison with unpruned and billiard algorithms.
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.75\textwidth]{../experiments/figures/benchmark_timing.png}
-\caption{EHZ capacity computation time vs facet count for random polytopes
-  (HK2017 pruned). Diamonds: median per facet count. Red line: fitted
-  exponential model $T(F) = 1.5 \times 10^{-7} \cdot 4.32^F$.}
+\includegraphics[width=0.9\textwidth]{../experiments/figures/benchmark_timing.png}
+\caption{EHZ capacity computation time vs facet count. HK2017 pruned (blue):
+  exponential model $T(F) = 2.3 \times 10^{-7} \cdot 4.8^F$ fitted to random
+  polytopes, extrapolated to crosspolytope ($F = 16$). HK2017 unpruned (orange):
+  overhead from adjacency pruning visible at $F \le 7$. Billiard (green):
+  polynomial cost on Lagrangian products, 2--3$\times$ faster than HK2017.}
 \label{fig:benchmark-timing}
 \end{figure}

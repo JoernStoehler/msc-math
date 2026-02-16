@@ -91,6 +91,41 @@ Outputs:
 
 Prints summary table to stdout (for manual .tex update).
 
+## HK2017 Implementation Optimization
+
+Before benchmarking, we optimized the HK2017 implementation without changing the underlying algorithm:
+
+### 1. Lazy permutation generation
+
+**Optimization:** In-place callback via Heap's algorithm replaces eager collection of all (m-1)! cyclic permutations. For m=10, this eliminates 362,880 vector allocations.
+
+**Speedup:** 1.2–2.2× on individual operations.
+
+### 2. Gap-based SVD rank detection
+
+**Optimization:** A gap-based rank determination replaces the fixed-tolerance SVD pseudoinverse (see Section on correctness in thesis).
+
+### 3. LU fast path
+
+**Optimization:** The solver first attempts full-pivoting LU, falling through to SVD with gap-based rank detection on failure.
+
+**Performance characteristics:** Phase profiling showed the LU path adds 6–12% wall-clock overhead: most KKT systems yield β ≤ 0 even when LU reports the system as invertible, so LU decomposes and solves wastefully before SVD runs anyway.
+
+**Why retained despite overhead:** LU catches cases where the gap-based SVD rank detection over-truncates. On the HK-O pentagon:
+- LU reports 92% of systems invertible but only 3% produce valid β > 0
+- On random polytopes (F=7-8), the valid rate rises to ~9%
+- At F=7, LU finds 26 valid orbits (out of 23,650) that SVD rejects
+- These don't affect the computed capacity (all are non-optimal), but the discrepancy indicates that the gap threshold (100×) is too aggressive for some well-conditioned systems
+- This is discussed further in the correctness section of the thesis
+
+### Overall improvement
+
+**Wall-clock speedup from lazy permutation:** 4–6× on the HK-O pentagon (F=10) and random polytopes at F=10.
+
+**Memory reduction:** Peak heap memory dropped from 573 KB to 17 KB.
+
+**Reference:** See `experiments/hk2017_optimization.md` for full profiling methodology (Valgrind callgrind, massif heap profiling, phase-by-phase wall-clock timing).
+
 ## Results Summary
 
 **Timing model** (fitted to F=5..12 random polytopes):
