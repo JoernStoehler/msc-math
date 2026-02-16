@@ -4,7 +4,8 @@
 % Viterbo counterexamples in the space of Lagrangian products.
 %
 % Sources:
-%   - Generated data: experiments/data/{pentagon_sweep,polygon_grid,random_products}.jsonl
+%   - Generated data: experiments/data/lagrangian-products-5x5.jsonl
+%     and experiments/data/lagrangian-products-<n>x<m>-6deg.jsonl
 %   - HK-O 2024 counterexample: Haim-Kislev & Ostrover, Annals 2024
 %   - Symmetry analysis: agent-written, Jörn-confirmed direction
 %
@@ -75,13 +76,6 @@ satisfies~$\mathrm{sys}(\theta) = \mathrm{sys}(-\theta)$, so the fundamental
 domain is~$[0, \pi/\operatorname{lcm}(n,m)]$.
 \end{proof}
 
-\begin{remark}
-For pentagon~$\times$~pentagon:
-$\operatorname{lcm}(5,5)=5$, fundamental
-domain~$[0^\circ, 36^\circ]$. The HK-O counterexample at~$90^\circ$
-maps to~$90 \bmod 72 = 18^\circ$ in this domain.
-\end{remark}
-
 % Factor swap: N = -J_0 is symplectic, maps P x_L Q to Q x_L (-P).
 % For centrally symmetric polygons, swapping factors preserves sys.
 % For odd polygons, -P = R(π)P so the swap also rotates one factor by 180°.
@@ -89,189 +83,52 @@ maps to~$90 \bmod 72 = 18^\circ$ in this domain.
 
 \subsubsection*{Family 1: Pentagon rotation curve}
 
-We sweep~$\theta \in [0^\circ, 90^\circ]$ at~$0.25^\circ$ resolution (361
-points) for the family~$\mathrm{Pentagon} \times_L R(\theta)\,\mathrm{Pentagon}$,
-where each pentagon is regular with circumradius~1 (since~$\mathrm{sys}$ is
-scale-invariant---$c_{\mathrm{EHZ}}$ is 2-homogeneous and volume is
-4-homogeneous---the choice of circumradius does not affect~$\mathrm{sys}$).
-We compute~$c_{\mathrm{EHZ}}$ using both the HK2017 algorithm and the billiard
-algorithm (Section~\ref{sec:dataset}); the two algorithms agree on all
-Lagrangian products to relative error~$< 10^{-8}$
-(Section~\ref{sec:correctness}).
-Each billiard capacity computation takes ${\sim}920$\,ms per 10-facet product;
-HK2017 cross-validation takes ${\sim}2{,}400$\,ms
-(Section~\ref{sec:benchmark}).
+We sweep the fundamental domain~$\theta \in [0^\circ, 36^\circ]$ at~$1^\circ$ resolution (37 points)
+for the family~$\mathrm{Pentagon} \times_L R(\theta)\,\mathrm{Pentagon}$,
+where each pentagon is regular with circumradius~1.
+We compute~$c_{\mathrm{EHZ}}$ using the billiard algorithm, which is the production-fast method for Lagrangian
+products.
 
-Figure~\ref{fig:pentagon-sweep} shows the resulting curve. The systolic ratio
-oscillates between~$0.9472$ and~$1.0472$ with period~$72^\circ$, confirming the
-fundamental domain prediction of Lemma~\ref{lem:rotation-fundamental-domain}
-($\pi/\operatorname{lcm}(5,5) = 36^\circ$, period~$72^\circ$). The mirror
-symmetry~$\mathrm{sys}(\theta) = \mathrm{sys}(-\theta)$ holds to machine
-precision ($< 10^{-14}$), with the curve symmetric around~$\theta = 18^\circ$
-within each period.
+Figure~\ref{fig:pentagon-sweep} shows the resulting curve.
 
 The maximum~$\mathrm{sys} \approx 1.0472$ occurs at~$\theta \equiv 18^\circ
-\pmod{72^\circ}$ (equivalently~$\theta = 90^\circ$, the HK-O
+\pmod{36^\circ}$ (equivalently~$\theta = 90^\circ$, the HK-O
 angle). The minimum~$\mathrm{sys} \approx 0.9472$ occurs
-at~$\theta \equiv 0^\circ \pmod{72^\circ}$ (aligned pentagons). The violation
+at~$\theta \equiv 0^\circ \pmod{36^\circ}$ (aligned or maximally rotated pentagons). The violation
 region~$\mathrm{sys} > 1$ spans approximately~$\theta \in (13.5^\circ,
 22.5^\circ)$ within each fundamental domain---about~$25\%$ of the period.
 
-Since rotation preserves area,
-$\operatorname{area}(Q_\theta) = \operatorname{area}(Q)$ for
-all~$\theta$, and Fubini gives
-$\operatorname{vol}(K_\theta) = \operatorname{area}(P) \cdot
-\operatorname{area}(Q)$, all variation in~$\mathrm{sys}$ comes from the
-EHZ capacity.
-
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.9\textwidth]{../experiments/figures/pentagon_sweep.png}
+\includegraphics[width=0.9\textwidth]{../experiments/figures/lagrangian_products_5x5.png}
 \caption{Systolic ratio of $\mathrm{Pentagon} \times_L R(\theta)\,
-  \mathrm{Pentagon}$ as a function of rotation angle~$\theta$. The red
-  dashed line marks $\mathrm{sys} = 1$ (Viterbo threshold). Vertical grey
-  lines mark~$\pi/5$ and~$2\pi/5$, the period boundaries.}
+  \mathrm{Pentagon}$ as a function of rotation angle~$\theta$ on the
+  fundamental domain $[0^\circ, 36^\circ]$. The red dashed line marks
+  $\mathrm{sys} = 1$ (Viterbo threshold).}
 \label{fig:pentagon-sweep}
 \end{figure}
 
 \subsubsection*{Family 2: Regular polygon pairs}
 
-We sweep the rotation angle for all pairs~$(n, m)$ with~$3 \le n \le m$
-and~$n + m \le 12$, sweeping~$\theta$ over the fundamental domain
-$[0, \pi/\operatorname{lcm}(n,m)]$ at adaptive resolution (360 points for
-$F \le 8$, down to~30 for $F = 12$).
+We sweep the rotation angle for the regular pairs
+$(3,3)$, $(3,4)$, $(3,5)$, $(3,6)$, $(4,4)$, $(4,5)$, $(4,6)$, $(5,5)$,
+$(5,6)$, and $(6,6)$. For each pair, we sample the fundamental domain
+$[0^\circ, 180^\circ/\operatorname{lcm}(n,m)]$ at~$6^\circ$ steps.
+Each pair is stored in its own JSONL file
+\texttt{lagrangian-products-\emph{n}x\emph{m}-6deg.jsonl} and computed using
+the billiard algorithm only.
+
+Figure~\ref{fig:polygon-pairs} shows the resulting curves.
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.9\textwidth]{../experiments/figures/polygon_grid.png}
+\includegraphics[width=0.95\textwidth]{../experiments/figures/lagrangian_products_polygon_pairs.png}
 \caption{Systolic ratio curves for regular $n$-gon $\times_L$ $R(\theta)$
-  $m$-gon, for all pairs with $n + m \le 12$.}
-\label{fig:polygon-grid}
+  $m$-gon, for the 10 selected pairs. The dashed line marks $\mathrm{sys} = 1$.}
+\label{fig:polygon-pairs}
 \end{figure}
-
-Table~\ref{tab:polygon-grid} summarizes the results. For each pair, we
-report the maximum systolic ratio over all sampled angles and the
-cross-validation status (percentage of angles where both algorithms agree
-within relative tolerance~$10^{-8}$).
-
-\begin{table}[h]
-\centering
-\begin{tabular}{cc c cc cc}
-\hline
-$n$ & $m$ & $F$ & $\max\,\mathrm{sys}$ & $\theta_{\max}$ & cross-val & status \\
-\hline
-3 & 3 &  6 & 0.667 &  $0.0^\circ$ & 100\% & below \\
-3 & 4 &  7 & 0.928 & $15.0^\circ$ & 100\% & below \\
-3 & 5 &  8 & 0.797 & $12.0^\circ$ & 100\% & below \\
-3 & 6 &  9 & 1.000 &  $0.0^\circ$ & 100\% & \textbf{saturates} \\
-4 & 4 &  8 & 1.000 & $45.0^\circ$ & 100\% & \textbf{saturates} \\
-4 & 5 &  9 & 0.705 &  $9.0^\circ$ & 100\%$^*$ & below \\
-4 & 6 & 10 & 0.619 & $15.0^\circ$ & 100\% & below \\
-5 & 5 & 10 & 1.047 & $18.0^\circ$ & 100\% & \textbf{exceeds} \\
-5 & 6 & 11 & 0.831 &  $0.0^\circ$ & 100\% & below \\
-6 & 6 & 12 & 0.668 &  $2.0^\circ$ & 100\% & below \\
-\hline
-\end{tabular}
-\caption{Maximum systolic ratio for each regular polygon pair $(n, m)$
-  with~$n + m \le 12$, optimized over the rotation angle~$\theta$.
-  Cross-validation: fraction of sampled angles where HK2017 and billiard
-  agree within~$10^{-8}$ relative tolerance.
-  $^*$One of 201 points fails tolerance at~$8 \times 10^{-8}$ relative error.}
-\label{tab:polygon-grid}
-\end{table}
-
-\paragraph{Algorithm reliability.}
-The~$(4,4)$ and~$(4,6)$ pairs require gap-based SVD rank detection in
-the KKT solver; a simpler fixed-tolerance approach produces capacity
-discontinuities for these axis-aligned square normals
-(Section~\ref{sec:correctness}). With the gap-based method, all 10~pairs
-show 100\% cross-validation and smooth capacity curves.
-
-\paragraph{Findings.}
-
-\begin{itemize}
-\item \textbf{$(3,6)$ at $\theta = 0^\circ$}: Triangle $\times_L$ hexagon
-  (aligned) saturates the Viterbo bound at~$\mathrm{sys} = 1$ exactly.
-  Lagrangian products with~$\mathrm{sys} = 1$ have been characterized by
-  Balitskiy~(2020); Chaidez--Hutchings~(2021, \S1) cite the
-  triangle~$\times$~square as a previously known example.
-
-\item \textbf{$(4,4)$ at $\theta = 45^\circ$}: Square $\times_L$
-  $R(45^\circ)$\,square saturates the Viterbo bound
-  at~$\mathrm{sys} = 1$ exactly. The systolic ratio ranges from~$0.500$
-  (at~$\theta = 0^\circ$, the hypercube) to~$1.000$ (at~$\theta = 45^\circ$).
-
-\item \textbf{$(5,5)$ at $\theta = 18^\circ$}: This reproduces the HK-O
-  counterexample ($\theta = 18^\circ \equiv 90^\circ \pmod{72^\circ}$)
-  with~$\mathrm{sys} \approx 1.047$, confirming the known Viterbo violation.
-\end{itemize}
-
-The remaining seven pairs~$(3,3)$, $(3,4)$, $(3,5)$, $(4,5)$, $(4,6)$,
-$(5,6)$, $(6,6)$ all satisfy~$\mathrm{sys} < 1$ at every tested angle,
-with the highest non-exceeding value being~$\mathrm{sys}((3,4)) \approx 0.928$.
-
-\subsubsection*{Family 3: Random Lagrangian products}
-
-We generate 234 random Lagrangian products by sampling random convex
-polygons (3--6 sides each, heights in~$[0.3, 2.0]$) and forming their
-Lagrangian product. The rotation between factors is implicit in the random
-orientations.
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.9\textwidth]{../experiments/figures/random_products.png}
-\caption{Left: distribution of systolic ratios for 234 random Lagrangian
-  products. Right: sys vs.\ facet count. The dashed line marks
-  $\mathrm{sys} = 1$.}
-\label{fig:random-products}
-\end{figure}
-
-None of the 234 random Lagrangian products exceeds~$\mathrm{sys} = 0.9$.
-The maximum observed value is~$\mathrm{sys} \approx 0.772$,
-with mean~$0.296$ and median~$0.280$. The distribution is
-broadly spread over~$[0, 0.77]$ with no concentration near the Viterbo
-threshold.
-
-\subsubsection*{Findings}
-
-\begin{enumerate}
-\item \textbf{One pair exceeds the Viterbo bound; two saturate.}
-  Among all regular $(n,m)$-gon Lagrangian products with~$n + m \le 12$,
-  only the~$(5,5)$ pair (pentagon~$\times$~pentagon) achieves~$\mathrm{sys} > 1$,
-  reproducing the known HK-O counterexample
-  with~$\mathrm{sys}_{\max} \approx 1.047$.
-  Two pairs saturate the bound at~$\mathrm{sys} = 1$ exactly:
-  $(3,6)$ (triangle~$\times$~hexagon at~$\theta = 0^\circ$) and
-  $(4,4)$ (square~$\times$~square at~$\theta = 45^\circ$).
-  The remaining seven pairs satisfy~$\mathrm{sys} < 1$ at all tested
-  angles, with the highest being~$(3,4)$ at~$\mathrm{sys} \approx 0.928$.
-
-\item \textbf{The $(5,5)$ violation region is narrow.}
-  For pentagon~$\times$~pentagon, the Viterbo-violating angles occupy only
-  about~$25\%$ of each fundamental domain ($9^\circ$ out of~$36^\circ$).
-  The curve has small amplitude ($\approx 0.10$) relative to its mean
-  ($\approx 0.997$), suggesting that the EHZ capacity varies only mildly
-  with rotation.
-
-\item \textbf{All predicted symmetries hold.}
-  The~$72^\circ$ periodicity and mirror symmetry predicted by
-  Lemma~\ref{lem:rotation-fundamental-domain} are confirmed to machine
-  precision ($< 10^{-14}$) in the pentagon sweep, validating both the
-  symplecticity of~$\operatorname{diag}(R(\varphi), R(\varphi))$ and
-  of~$M = \operatorname{diag}(-1, 1, -1, 1)$.
-
-\item \textbf{Random Lagrangian products stay far below the threshold.}
-  Among 234 random Lagrangian products (3--6~sided factors, heights
-  in~$[0.3, 2.0]$), the maximum sys is~$0.772$. None reaches~$0.9$.
-  This is higher than the~$0.72$ ceiling observed for fully random
-  (non-product) polytopes in Section~\ref{sec:systolic-ratios},
-  suggesting that the Lagrangian product structure does push sys upward,
-  but not enough to approach the Viterbo bound without specific
-  regular polygon geometry.
-
-\item \textbf{Square-based pairs require careful rank detection.}
-  The~$(4,4)$ and~$(4,6)$ pairs produce near-degenerate KKT matrices
-  from axis-aligned square normals, requiring gap-based SVD rank
-  detection. With this method, all 10~pairs show 100\% cross-validation
-  and smooth capacity curves (Section~\ref{sec:correctness}).
-\end{enumerate}
+%
+% Legacy experiment sections (commented out for now):
+% - Family 3: Random Lagrangian products
+% - Aggregate findings list
+%

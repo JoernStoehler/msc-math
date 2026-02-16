@@ -6,10 +6,14 @@
 %
 % Structure: Primal-Dual Equivalence (Clarke's Dual Action Principle for polytopes)
 
+In order to show the main result \ref{thm:main} from \cite{HK2017} we need to
+switch from the minimum action optimization problem to a different, dual, optimization problem,
+which has several properties that make it easier to prove combinatorial properties of the minimizers.
+
 The proof follows \cite{HK2017} but with complete details. We first
 establish a primal-dual equivalence (Clarke's Dual Action Principle
-adapted to polytopes), then construct a simple minimizer via a
-five-step simplification algorithm.
+adapted to polytopes), later we will construct a combinatorically simple minimizer via a
+five-step simplification proof.
 
 %%% =================================================================
 %%% =================================================================
@@ -149,7 +153,7 @@ The \emph{dual problem} is:
 \end{equation}
 \end{definition}
 
-\cite{HK2017} also states the dual problem without motivation
+\cite{HK2017} also states the dual problem
 (in a slightly different form).
 The dual functional and constraints can be motivated by working
 the equivalence proof
@@ -308,6 +312,16 @@ Thus $z'$ satisfies~\eqref{eq:dual-euler-lagrange} with $\nu' = \nu/\alpha^2$
 and $b' = b_0/\alpha - \nu b/\alpha^2$.
 \end{proof}
 % Jörn: proof accepted as good enough (not polished)
+
+
+The main properties we want to highlight here that differ between the primal and dual problems are:
+\begin{itemize}
+\item The primal problem has a differential inclusion constraint, while the dual problem searches over curves with a fixed integral constraint on the action.
+\item The primal problem has a surface constraint ($\gamma$ lies on $\partial K$), while the dual problem has no position constraint.
+\item The dual functional $I_K$ depends only on the velocity $\dot{z}$, not on the position $z$.
+\end{itemize}
+These properties give us significantly more freedom to construct new minimizers from old ones in the dual problem.
+To go from primal to dual, and from dual to primal, we need to prove the following equivalence result.
 
 \begin{theorem}[Primal-dual equivalence (Clarke's Dual Action Principle)]%
 \label{thm:primal-dual-equivalence}

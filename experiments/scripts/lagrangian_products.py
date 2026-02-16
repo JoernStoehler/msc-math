@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """
-Analyze Lagrangian products of rotated polygons.
+Plot systolic ratio curves for pentagon 5x5 and regular polygon pairs.
 
-Goal: Identify which Lagrangian products have sys > 1, map the sys landscape.
-Input: experiments/data/pentagon_sweep.jsonl, polygon_grid.jsonl, random_products.jsonl
-Output: experiments/figures/pentagon_sweep.png, polygon_grid.png, random_products.png,
-        experiments/figures/summary_table.txt
+Goal: Visualize sys(theta) for the 5x5 pentagon sweep and selected n-gon x m-gon pairs.
+Input: experiments/data/lagrangian-products-5x5.jsonl,
+       experiments/data/lagrangian-products-<n>x<m>-6deg.jsonl
+Output: experiments/figures/lagrangian_products_5x5.png,
+        experiments/figures/lagrangian_products_polygon_pairs.png
 """
 import json
 import sys
@@ -18,217 +19,125 @@ REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 DATA_DIR = REPO_ROOT / "experiments" / "data"
 FIGURES_DIR = REPO_ROOT / "experiments" / "figures"
 
+PAIR_FILES = {
+    (3, 3): "lagrangian-products-3x3-6deg.jsonl",
+    (3, 4): "lagrangian-products-3x4-6deg.jsonl",
+    (3, 5): "lagrangian-products-3x5-6deg.jsonl",
+    (3, 6): "lagrangian-products-3x6-6deg.jsonl",
+    (4, 4): "lagrangian-products-4x4-6deg.jsonl",
+    (4, 5): "lagrangian-products-4x5-6deg.jsonl",
+    (4, 6): "lagrangian-products-4x6-6deg.jsonl",
+    (5, 5): "lagrangian-products-5x5-6deg.jsonl",
+    (5, 6): "lagrangian-products-5x6-6deg.jsonl",
+    (6, 6): "lagrangian-products-6x6-6deg.jsonl",
+}
+
 
 def load_jsonl(path: Path) -> list[dict]:
     """Load JSONL file into list of dicts."""
     if not path.exists():
-        print(f"WARNING: {path} not found, skipping", file=sys.stderr)
-        return []
+        print(f"ERROR: data file not found: {path}", file=sys.stderr)
+        print("Run: cargo run --bin lagrangian_sweep --release", file=sys.stderr)
+        sys.exit(1)
     with open(path) as f:
         return [json.loads(line) for line in f if line.strip()]
 
 
-def plot_pentagon_sweep(data: list[dict], output: Path):
-    """Plot sys vs rotation angle for pentagon × R(θ)pentagon."""
-    angles = np.array([d["angle_deg"] for d in data])
-    sys_vals = np.array([d["sys"] for d in data])
-    cap_vals = np.array([d["capacity"] for d in data])
+def plot_sweep(data: list[dict], output: Path):
+    """Plot sys vs rotation angle for pentagon x R(theta) pentagon."""
+    rows = sorted(data, key=lambda d: d["angle_deg"])
+    angles = np.array([d["angle_deg"] for d in rows])
+    sys_vals = np.array([d["sys"] for d in rows])
 
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 8), sharex=True)
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.plot(angles, sys_vals, color="#2f5aa6", linewidth=2.0, label="sys(theta)")
+    ax.axhline(y=1.0, color="#c0392b", linestyle="--", alpha=0.7, label="sys = 1")
 
-    # Top: sys vs angle
-    ax1.plot(angles, sys_vals, "b-", linewidth=1.5, label="sys(θ)")
-    ax1.axhline(y=1.0, color="r", linestyle="--", alpha=0.7, label="sys = 1 (Viterbo)")
-    ax1.set_ylabel("sys = c²/(2·vol)")
-    ax1.set_title("Pentagon × R(θ)Pentagon: Systolic Ratio")
-    ax1.legend()
-    ax1.grid(True, alpha=0.3)
-
-    # Mark maximum
-    i_max = np.argmax(sys_vals)
-    ax1.annotate(
-        f"max sys = {sys_vals[i_max]:.4f}\nθ = {angles[i_max]:.2f}°",
-        xy=(angles[i_max], sys_vals[i_max]),
-        xytext=(angles[i_max] + 5, sys_vals[i_max] - 0.02),
-        arrowprops=dict(arrowstyle="->", color="black"),
-        fontsize=9,
-    )
-
-    # Shade region where sys > 1
-    above_1 = sys_vals > 1.0
-    if above_1.any():
-        ax1.fill_between(
-            angles, 1.0, sys_vals, where=above_1, alpha=0.2, color="red",
-            label="sys > 1 region"
-        )
-        ax1.legend()
-
-    # Mark symmetry lines
-    for deg in [36, 72]:
-        ax1.axvline(x=deg, color="gray", linestyle=":", alpha=0.5)
-    ax1.text(36, ax1.get_ylim()[0], " π/5", fontsize=8, color="gray", va="bottom")
-    ax1.text(72, ax1.get_ylim()[0], " 2π/5", fontsize=8, color="gray", va="bottom")
-
-    # Bottom: capacity vs angle
-    ax2.plot(angles, cap_vals, "g-", linewidth=1.5)
-    ax2.set_xlabel("Rotation angle θ (degrees)")
-    ax2.set_ylabel("c_EHZ")
-    ax2.set_title("EHZ Capacity")
-    ax2.grid(True, alpha=0.3)
-
-    plt.tight_layout()
-    plt.savefig(output, dpi=150)
-    plt.close()
-    print(f"Saved: {output}")
-
-    # Print summary
-    print("\nPentagon sweep summary:")
-    print(f"  Points: {len(data)}")
-    print(f"  sys range: [{sys_vals.min():.6f}, {sys_vals.max():.6f}]")
-    print(f"  Max sys at θ = {angles[i_max]:.2f}°")
-    print(f"  sys > 1 count: {above_1.sum()} / {len(data)}")
-    if above_1.any():
-        angles_above = angles[above_1]
-        print(f"  sys > 1 angle range: [{angles_above.min():.2f}°, {angles_above.max():.2f}°]")
-
-
-def plot_polygon_grid(data: list[dict], output: Path):
-    """Plot sys vs angle for all (n,m) polygon pairs."""
-    # Group by (n1, n2)
-    pairs: dict[tuple[int, int], list[dict]] = {}
-    for d in data:
-        key = (d["n1"], d["n2"])
-        pairs.setdefault(key, []).append(d)
-
-    fig, ax = plt.subplots(figsize=(12, 7))
-
-    colors = plt.cm.tab10(np.linspace(0, 1, len(pairs)))
-    color_map = {k: colors[i] for i, k in enumerate(sorted(pairs.keys()))}
-    max_sys_per_pair = {}
-
-    for (n1, n2) in sorted(pairs.keys()):
-        rows = pairs[(n1, n2)]
-        rows.sort(key=lambda r: r["angle_deg"])
-        angles = np.array([r["angle_deg"] for r in rows])
-        sys_vals = np.array([r["sys"] for r in rows])
-
-        label = f"({n1},{n2}) F={n1+n2}"
-        ax.plot(angles, sys_vals, color=color_map[(n1, n2)],
-                linewidth=1.5, label=label)
-
-        i_max = np.argmax(sys_vals)
-        max_sys_per_pair[(n1, n2)] = {
-            "max_sys": sys_vals[i_max],
-            "angle": angles[i_max],
-            "facets": n1 + n2,
-            "above_1": bool(sys_vals[i_max] > 1.0),
-        }
-
-    ax.axhline(y=1.0, color="r", linestyle="--", alpha=0.7, label="sys = 1")
-    ax.set_xlabel("Rotation angle θ (degrees)")
-    ax.set_ylabel("sys = c²/(2·vol)")
-    ax.set_title("Regular n-gon × R(θ) m-gon: Systolic Ratio")
-    ax.legend(loc="upper right", fontsize=8, ncol=2)
+    ax.set_xlabel("Rotation angle theta (degrees)")
+    ax.set_ylabel("sys = c^2 / (2 * vol)")
+    ax.set_title("Pentagon x R(theta) Pentagon (0-36 degrees)")
     ax.grid(True, alpha=0.3)
 
-    plt.tight_layout()
-    plt.savefig(output, dpi=150)
-    plt.close()
+    ax.axvline(x=18.0, color="#7f8c8d", linestyle=":", alpha=0.7)
+    ax.text(18.2, ax.get_ylim()[0], "18 deg", fontsize=8, color="#7f8c8d", va="bottom")
+
+    ax.legend(loc="best")
+    fig.tight_layout()
+    fig.savefig(output, dpi=150)
+    plt.close(fig)
     print(f"Saved: {output}")
 
-    # Print summary table
-    print("\nPolygon grid summary:")
-    print(f"  {'Pair':>8} {'F':>3} {'max sys':>10} {'angle':>8} {'sys>1':>6}")
-    print(f"  {'-'*8} {'-'*3} {'-'*10} {'-'*8} {'-'*6}")
-    for (n1, n2), info in sorted(max_sys_per_pair.items()):
-        marker = "  YES" if info["above_1"] else ""
-        print(
-            f"  ({n1},{n2}){' '*(5-len(f'({n1},{n2})'))} "
-            f"{info['facets']:>3} {info['max_sys']:>10.6f} {info['angle']:>7.2f}° "
-            f"{marker}"
-        )
-
-    return max_sys_per_pair
-
-
-def plot_random_products(data: list[dict], output: Path):
-    """Histogram of sys for random polygon Lagrangian products."""
-    sys_vals = np.array([d["sys"] for d in data])
-    facet_counts = np.array([d["facet_count"] for d in data])
-
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
-
-    # Left: histogram of sys
-    ax1.hist(sys_vals, bins=50, edgecolor="black", alpha=0.7, color="steelblue")
-    ax1.axvline(x=1.0, color="r", linestyle="--", alpha=0.7, label="sys = 1")
-    ax1.set_xlabel("sys = c²/(2·vol)")
-    ax1.set_ylabel("Count")
-    ax1.set_title("Random Lagrangian Products: sys Distribution")
-    ax1.legend()
-
-    # Right: sys vs facet count
-    for fc in sorted(set(facet_counts)):
-        mask = facet_counts == fc
-        ax2.scatter(
-            np.full(mask.sum(), fc)
-            + np.random.default_rng(42).uniform(-0.15, 0.15, mask.sum()),
-            sys_vals[mask],
-            s=10,
-            alpha=0.5,
-            label=f"F={fc}",
-        )
-    ax2.axhline(y=1.0, color="r", linestyle="--", alpha=0.7)
-    ax2.set_xlabel("Facet count")
-    ax2.set_ylabel("sys")
-    ax2.set_title("sys vs Facet Count")
-    ax2.legend(fontsize=8)
-
-    plt.tight_layout()
-    plt.savefig(output, dpi=150)
-    plt.close()
-    print(f"Saved: {output}")
-
-    # Print summary
-    above_1 = sys_vals > 1.0
-    print("\nRandom products summary:")
-    print(f"  Samples: {len(data)}")
+    i_max = int(np.argmax(sys_vals))
+    print("\nSweep summary:")
+    print(f"  Points: {len(rows)}")
     print(f"  sys range: [{sys_vals.min():.6f}, {sys_vals.max():.6f}]")
-    print(f"  sys > 1: {above_1.sum()} / {len(data)} ({100*above_1.mean():.1f}%)")
-    print(f"  Mean sys: {sys_vals.mean():.4f}")
-    print(f"  Median sys: {np.median(sys_vals):.4f}")
+    print(f"  Max sys at theta = {angles[i_max]:.1f} deg")
+
+
+def load_pair_data(data_dir: Path) -> dict[tuple[int, int], list[dict]]:
+    data = {}
+    for pair, filename in PAIR_FILES.items():
+        data[pair] = load_jsonl(data_dir / filename)
+    return data
+
+
+def plot_polygon_pairs(data: dict[tuple[int, int], list[dict]], output: Path):
+    pairs = list(PAIR_FILES.keys())
+    fig, axes = plt.subplots(2, 5, figsize=(15, 6), sharey=True)
+    axes = axes.flatten()
+
+    all_sys = []
+    for pair in pairs:
+        rows = sorted(data[pair], key=lambda d: d["angle_deg"])
+        sys_vals = [d["sys"] for d in rows]
+        all_sys.extend(sys_vals)
+
+    if not all_sys:
+        print("ERROR: no pair data found", file=sys.stderr)
+        sys.exit(1)
+
+    y_min = min(all_sys)
+    y_max = max(all_sys)
+    pad = 0.03 * (y_max - y_min) if y_max > y_min else 0.01
+
+    for ax, pair in zip(axes, pairs):
+        rows = sorted(data[pair], key=lambda d: d["angle_deg"])
+        angles = np.array([d["angle_deg"] for d in rows])
+        sys_vals = np.array([d["sys"] for d in rows])
+
+        ax.plot(angles, sys_vals, color="#2f5aa6", linewidth=1.8)
+        ax.axhline(y=1.0, color="#c0392b", linestyle="--", alpha=0.6)
+        ax.set_title(f"{pair[0]}x{pair[1]}", fontsize=10)
+        ax.grid(True, alpha=0.3)
+        ax.set_ylim(y_min - pad, y_max + pad)
+        ax.set_xlabel("theta (deg)", fontsize=9)
+        if ax is axes[0] or ax is axes[5]:
+            ax.set_ylabel("sys", fontsize=9)
+
+    fig.suptitle("Regular n-gon x R(theta) m-gon (6-degree steps)")
+    fig.tight_layout(rect=[0, 0, 1, 0.95])
+    fig.savefig(output, dpi=150)
+    plt.close(fig)
+    print(f"Saved: {output}")
 
 
 def main():
     FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+    data = load_jsonl(DATA_DIR / "lagrangian-products-5x5.jsonl")
+    plot_sweep(data, FIGURES_DIR / "lagrangian_products_5x5.png")
 
-    # Pentagon sweep
-    pentagon_data = load_jsonl(DATA_DIR / "pentagon_sweep.jsonl")
-    if pentagon_data:
-        plot_pentagon_sweep(pentagon_data, FIGURES_DIR / "pentagon_sweep.png")
-
-    # Polygon grid
-    grid_data = load_jsonl(DATA_DIR / "polygon_grid.jsonl")
-    if grid_data:
-        plot_polygon_grid(grid_data, FIGURES_DIR / "polygon_grid.png")
-
-    # Random products
-    random_data = load_jsonl(DATA_DIR / "random_products.jsonl")
-    if random_data:
-        plot_random_products(random_data, FIGURES_DIR / "random_products.png")
-
-    # Combined "all" file
-    all_data = load_jsonl(DATA_DIR / "lagrangian_all.jsonl")
-    if all_data:
-        pentagon = [d for d in all_data if d["family"] == "pentagon_sweep"]
-        grid = [d for d in all_data if d["family"] == "polygon_grid"]
-        random = [d for d in all_data if d["family"] == "random_product"]
-        if pentagon:
-            plot_pentagon_sweep(pentagon, FIGURES_DIR / "pentagon_sweep.png")
-        if grid:
-            plot_polygon_grid(grid, FIGURES_DIR / "polygon_grid.png")
-        if random:
-            plot_random_products(random, FIGURES_DIR / "random_products.png")
+    pair_data = load_pair_data(DATA_DIR)
+    plot_polygon_pairs(pair_data, FIGURES_DIR / "lagrangian_products_polygon_pairs.png")
 
 
 if __name__ == "__main__":
     main()
+
+"""
+Legacy experiment (commented out for now):
+- Polygon grid sweep
+- Random Lagrangian products
+- Multi-figure plotting pipeline
+
+See git history for the full script.
+"""
