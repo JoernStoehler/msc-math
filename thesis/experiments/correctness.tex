@@ -19,6 +19,37 @@ continuous test suite. Capacities are pre-computed in release mode and cached
 as a JSON fixture; the property tests then verify the cached values
 in under one second.
 
+\subsubsection*{Required capacity computations}
+
+Table~\ref{tab:verification-capacity-counts} shows the exact algorithm~$\times$~polytope
+pairs that must be computed. The verification binary generates 47~polytopes and
+computes exactly 71~capacity values (47~pruned, 10~unpruned, 14~billiard)---no
+redundant computations.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lrrr}
+\toprule
+Test & Pruned & Unpruned & Billiard \\
+\midrule
+Test 1: Direct comparison & 10 & 10 & 5 \\
+Test 2: Literature & 7 & 0 & 4 \\
+Test 3: Conformality & 10 & 0 & 5 \\
+Test 4: Symplectic invariance & 10 & 0 & 0 \\
+Test 5: Continuity & 10 & 0 & 0 \\
+Test 6: Monotonicity & 0 & 0 & 0 \\
+\midrule
+\textbf{Total} & \textbf{47} & \textbf{10} & \textbf{14} \\
+\bottomrule
+\end{tabular}
+\caption{Required capacity computations for verification. Test~1 generates
+  10~base polytopes (5~random generic, 5~Lagrangian products). Tests~3--5
+  reuse these base polytopes (scaled, transformed, perturbed). Test~6 uses
+  existing capacities from tests~1--5. Total: 71~capacity values.}
+\label{tab:verification-capacity-counts}
+\end{table}
+
 \subsubsection*{Propositions}
 
 Table~\ref{tab:correctness-propositions} lists the mathematical properties
