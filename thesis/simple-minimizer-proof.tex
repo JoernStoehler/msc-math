@@ -198,7 +198,7 @@ The subdifferential in $\dot{z}$ is
   = J_0\, \partial\bigl(\tfrac{1}{4}h_K^2\bigr)(-J_0\dot{z}) + \alpha J_0 z,
 \]
 so $\xi(t) = J_0 p(t) + \alpha J_0 z(t)$ for some $p(t) \in \partial(\tfrac{1}{4}h_K^2)(-J_0\dot{z}(t))$.
-The E-L inclusion gives:
+The Euler-Lagrange inclusion gives:
 \[
   J_0 \dot{p} + \alpha J_0 \dot{z} = -\alpha J_0 \dot{z}
   \quad\Rightarrow\quad
@@ -351,7 +351,7 @@ The subdifferential of $L$ in $\dot{z}$ is
     + \alpha J_0 z,
 \]
 using $(-J_0)^\top = J_0$ in the chain rule for $f \circ (-J_0)$.
-So the E-L inclusion says: there exists $p(t) \in \partial(\tfrac{1}{4}h_K^2)(-J_0\dot{z}(t))$
+So the Euler-Lagrange inclusion says: there exists $p(t) \in \partial(\tfrac{1}{4}h_K^2)(-J_0\dot{z}(t))$
 a.e.\ such that $\xi(t) = J_0 p(t) + \alpha J_0 z(t)$ is absolutely continuous and
 \[
   J_0 \dot{p} + \alpha J_0 \dot{z}
@@ -417,7 +417,7 @@ Since $\dot{z} = \dot{\gamma}$, this gives
   \quad\text{a.e.}
 \]
 Write $\gamma = z + b$ where $b = \frac{1}{T}\int_0^T \gamma$ is constant.
-This is exactly the E-L condition~\eqref{eq:dual-euler-lagrange} with $\nu = 1$.
+This is exactly the Euler-Lagrange condition~\eqref{eq:dual-euler-lagrange} with $\nu = 1$.
 
 \medskip
 \emph{Part 3: Dual critical point $\Rightarrow$ primal critical point.}
@@ -425,8 +425,8 @@ Let $z$ be a dual critical point, so $z$ satisfies the E-L
 condition~\eqref{eq:dual-euler-lagrange} for some $\nu \in \mathbb{R}$ and $b \in \mathbb{R}^4$.
 Define $\gamma(t) := \nu z(t) + b$.
 
-\emph{Step 1: Converting the E-L condition.}
-Since $\dot{\gamma} = \nu\dot{z}$, the E-L condition becomes
+\emph{Step 1: Converting the Euler-Lagrange condition.}
+Since $\dot{\gamma} = \nu\dot{z}$, the Euler-Lagrange condition becomes
 \[
   \gamma \in \partial\bigl(\tfrac{1}{4}h_K^2\bigr)(-J_0\dot{\gamma}/\nu)
   \quad\text{a.e.}
