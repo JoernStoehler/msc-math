@@ -138,28 +138,23 @@ The action equals the period: $A(\gamma) = T$.
 We now introduce an equivalent dual problem without motivation.
 
 \begin{definition}[Dual functional and dual problem]\label{def:dual-problem}
-% Jörn: text approved (05aa8b3)
+% Jörn: text approved (05aa8b3) [revised: centering removed]
 % QC: I_K depends only on the velocity dz/dt, not on z itself.
 %   This is the key advantage of the dual formulation: no position constraint
 %   (gamma on boundary K) and no differential inclusion constraint.
-%   The centering condition removes the translation ambiguity in going
-%   from gamma to z = gamma - center(gamma).
+%   Translation ambiguity is harmless: I_K(z + b) = I_K(z) for any constant b.
 The \emph{dual functional} is
 \[
   I_K(z) = \frac{1}{4} \int_0^T h_K^2\bigl( -J_0 \dot{z}(t) \bigr) \, dt.
 \]
 The \emph{dual problem} is:
-\begin{multline}\label{eq:dual-problem}
+\begin{equation}\label{eq:dual-problem}
   \min \Bigl\{ I_K(z) :
   z \in W^{1,2}([0,T], \mathbb{R}^4),\;
   z(0) = z(T),\;
-  T > 0, \\
-  A(z) = T,\;
-  \textstyle\frac{1}{T} \int_0^T z = 0 \Bigr\}.
-\end{multline}
-The constraint $\frac{1}{T} \int z = 0$ is the
-\emph{centering condition}; it removes the translation
-ambiguity (since $I_K$ depends only on $\dot{z}$, not on~$z$).
+  T > 0,\;
+  A(z) = T \Bigr\}.
+\end{equation}
 \end{definition}
 
 \cite{HK2017} also states the dual problem without motivation
@@ -168,24 +163,109 @@ The dual functional and constraints can be motivated by working
 the equivalence proof
 (Theorem~\ref{thm:primal-dual-equivalence}) in reverse.
 
+\begin{lemma}[Scaling and translation symmetry of dual critical points]%
+\label{lem:dual-scaling-family}
+% QC: The dual Euler-Lagrange equation is invariant under scaling + translation.
+%   Since I_K depends only on velocity, I_K(z_{\alpha,b}) = I_K(z).
+%   The family parameterized by (\alpha, b) \in \mathbb{R}_{>0} \times \mathbb{R}^4
+%   has constant I_K, but varying period and action.
+% Downstream: explains why I_K(z) = T fails for general dual critical points.
+%   Only the special representative z = \gamma - center(\gamma) from a Reeb
+%   orbit \gamma satisfies I_K(z) = T.
+Let $z \in W^{1,2}([0,T_z], \mathbb{R}^4)$ be a closed curve satisfying
+the dual Euler--Lagrange equation~\eqref{eq:dual-euler-lagrange}.
+For any $\alpha > 0$ and $b \in \mathbb{R}^4$, define
+\begin{equation}\label{eq:scaling-family}
+  z_{\alpha,b}(t) := \alpha\, z(t/\beta) + b,
+  \quad\text{where}\quad
+  \beta := \alpha^2,
+  \quad t \in [0, T_{\alpha,b}],
+\end{equation}
+with period $T_{\alpha,b} := \beta T_z$.
+
+Then:
+\begin{enumerate}[label=(\alph*)]
+\item $z_{\alpha,b}$ is closed and satisfies the dual Euler--Lagrange
+  equation~\eqref{eq:dual-euler-lagrange}.
+\item $I_K(z_{\alpha,b}) = I_K(z)$ (independent of $\alpha$ and $b$).
+\item The action scales as $A(z_{\alpha,b}) = \beta\, A(z)$.
+\item If $A(z) = T_z$, then $A(z_{\alpha,b}) = T_{\alpha,b}$
+  (the dual constraint is preserved).
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+% [JÖRN: proof to be written based on your derivation]
+\emph{Claim (a):} Closure follows from $z_{\alpha,b}(\beta T_z) = \alpha z(T_z) + b = \alpha z(0) + b = z_{\alpha,b}(0)$.
+For the Euler--Lagrange equation: since the equation is obtained via
+Lagrange multipliers for the constraint $A(z) = T$, and since both
+$I_K$ and $A$ are homogeneous functionals in the velocity,
+the rescaling $z \mapsto \alpha z(t/\beta)$ preserves the
+subgradient relation. Translation by $b$ is harmless since
+$I_K$ depends only on $\dot{z}$.
+
+\emph{Claim (b):} Since $I_K(z) = \frac{1}{4}\int_0^T h_K^2(-J_0\dot{z})\, dt$
+depends only on the velocity, $I_K(z + b) = I_K(z)$ for any constant~$b$.
+For the scaling:
+\[
+  I_K(z_{\alpha,b})
+  = \frac{1}{4} \int_0^{\beta T_z} h_K^2(-J_0 \dot{z}_{\alpha,b}(t))\, dt
+  = \frac{1}{4} \int_0^{\beta T_z} h_K^2\bigl( -J_0 (\alpha/\beta) \dot{z}(t/\beta) \bigr)\, dt.
+\]
+Since $h_K$ is 1-homogeneous:
+\[
+  = \frac{1}{4} \int_0^{\beta T_z} (\alpha/\beta)^2 h_K^2(-J_0\dot{z}(t/\beta))\, dt
+  = \frac{\alpha^2}{\beta^2} \cdot \frac{\beta}{4} \int_0^{T_z} h_K^2(-J_0\dot{z}(s))\, ds
+  = \frac{1}{4} \int_0^{T_z} h_K^2(-J_0\dot{z}(s))\, ds = I_K(z),
+\]
+using $\beta = \alpha^2$ and substitution $s = t/\beta$ with $dt = \beta\, ds$.
+
+\emph{Claim (c):} Similarly, $A(z) = \frac{1}{2}\int_0^T \langle -J_0\dot{z}, z\rangle\, dt$
+gives
+\[
+  A(z_{\alpha,b})
+  = \frac{1}{2} \int_0^{\beta T_z} \langle -J_0(\alpha/\beta)\dot{z}(t/\beta),\, \alpha z(t/\beta) + b \rangle\, dt.
+\]
+Since $\int_0^{\beta T_z} \langle -J_0\dot{z}(t/\beta), b\rangle\, dt = 0$ (using $J_0$ skew-symmetry
+and closure of $z$), we get
+\[
+  = \frac{\alpha^2}{\beta} \cdot \frac{1}{2} \int_0^{\beta T_z} \langle -J_0\dot{z}(t/\beta), z(t/\beta)\rangle\, dt
+  = \beta \cdot \frac{1}{2} \int_0^{T_z} \langle -J_0\dot{z}(s), z(s)\rangle\, ds
+  = \beta\, A(z).
+\]
+
+\emph{Claim (d):} If $A(z) = T_z$, then $A(z_{\alpha,b}) = \beta A(z) = \beta T_z = T_{\alpha,b}$.
+\end{proof}
+
 \begin{theorem}[Primal-dual equivalence (Clarke's Dual Action Principle)]%
 \label{thm:primal-dual-equivalence}
-% QC: the critical-point correspondence is the core content.
-%   Existence of minimizers is a separate fact (thm:orbit-existence-smooth/polytope
-%   for the primal; compactness + l.s.c. for the dual).
-%   The equivalence proof does not use existence of minimizers.
+% QC: Correspondence via z = gamma - center(gamma) (forward direction).
+%   By Lemma~\ref{lem:dual-scaling-family}, dual critical points form
+%   scaling families with constant I_K, so I_K(z) = T only for the special
+%   representative z from a Reeb orbit. Minimum equality still holds.
 % Downstream: allows us to work in the dual formulation, where the
 %   simplification algorithm (subsec:simplification) is natural.
-Let $K$ be a convex body. Critical points of the primal and
-dual problems correspond via translation:
-if $\gamma$ is a primal critical point (Hamiltonian orbit on
-$\partial K$), then
-$z = \gamma - \frac{1}{T} \int_0^T \gamma(t) \, dt$
-is a dual critical point, and conversely.
-At every corresponding pair, the values are equal:
+Let $K$ be a convex body.
+
+\emph{(a) Forward correspondence.}
+If $\gamma$ is a primal critical point (Hamiltonian orbit on $\partial K$)
+with period~$T$, then
+\[
+  z := \gamma - \frac{1}{T} \int_0^T \gamma(t) \, dt
+\]
+is a dual critical point with period~$T$, and
 \begin{equation}\label{eq:primal-dual-values}
   I_K(z) = T = A(\gamma).
 \end{equation}
+
+\emph{(b) Scaling families.}
+By Lemma~\ref{lem:dual-scaling-family}, dual critical points form
+families $\{z_{\alpha,b}\}_{\alpha > 0, b \in \mathbb{R}^4}$ with
+$I_K(z_{\alpha,b}) = I_K(z)$ constant.
+The equality $I_K(z) = T_z$ holds only for representatives arising
+from~(a).
+
+\emph{(c) Minimum equality.}
 Consequently, $\min_\gamma A(\gamma) = \min_z I_K(z) = c_{\mathrm{EHZ}}(K)$.
 \end{theorem}
 
