@@ -192,12 +192,12 @@ Then:
 \end{lemma}
 
 \begin{proof}
-\emph{Claim (a):} Closure follows from $z_{\alpha,b}(\beta T_z) = \alpha z(T_z) + b = \alpha z(0) + b = z_{\alpha,b}(0)$.
+\emph{Claim (a):} Closure follows from $z_{\alpha,b}(\alpha^2 T_z) = \alpha z(T_z) + b = \alpha z(0) + b = z_{\alpha,b}(0)$.
 
 For the critical point property: $z$ is a critical point of $I_K$ subject to
 $A(z) = T_z$. Both $I_K$ and $A$ are functionals depending only on the velocity
-$\dot{z}$. Under the rescaling $z(t) \mapsto \alpha z(t/\beta)$, the velocity
-transforms as $\dot{z}(t) \mapsto (\alpha/\beta) \dot{z}(t/\beta)$. Since $I_K$
+$\dot{z}$. Under the rescaling $z(t) \mapsto \alpha z(t/\alpha^2)$, the velocity
+transforms as $\dot{z}(t) \mapsto (1/\alpha) \dot{z}(t/\alpha^2)$. Since $I_K$
 is 2-homogeneous in velocity (via $h_K^2$) and $A$ is also 2-homogeneous in
 velocity, the criticality condition (vanishing of the variation of the Lagrangian
 $I_K - \lambda A$) is preserved under this rescaling. Translation by constant~$b$
@@ -208,32 +208,32 @@ depends only on the velocity, $I_K(z + b) = I_K(z)$ for any constant~$b$.
 For the scaling:
 \[
   I_K(z_{\alpha,b})
-  = \frac{1}{4} \int_0^{\beta T_z} h_K^2(-J_0 \dot{z}_{\alpha,b}(t))\, dt
-  = \frac{1}{4} \int_0^{\beta T_z} h_K^2\bigl( -J_0 (\alpha/\beta) \dot{z}(t/\beta) \bigr)\, dt.
+  = \frac{1}{4} \int_0^{\alpha^2 T_z} h_K^2(-J_0 \dot{z}_{\alpha,b}(t))\, dt
+  = \frac{1}{4} \int_0^{\alpha^2 T_z} h_K^2\bigl( -J_0 (1/\alpha) \dot{z}(t/\alpha^2) \bigr)\, dt.
 \]
 Since $h_K$ is 1-homogeneous:
 \[
-  = \frac{1}{4} \int_0^{\beta T_z} (\alpha/\beta)^2 h_K^2(-J_0\dot{z}(t/\beta))\, dt
-  = \frac{\alpha^2}{\beta^2} \cdot \frac{\beta}{4} \int_0^{T_z} h_K^2(-J_0\dot{z}(s))\, ds
+  = \frac{1}{4} \int_0^{\alpha^2 T_z} (1/\alpha)^2 h_K^2(-J_0\dot{z}(t/\alpha^2))\, dt
+  = \frac{1}{\alpha^2} \cdot \frac{\alpha^2}{4} \int_0^{T_z} h_K^2(-J_0\dot{z}(s))\, ds
   = \frac{1}{4} \int_0^{T_z} h_K^2(-J_0\dot{z}(s))\, ds = I_K(z),
 \]
-using $\beta = \alpha^2$ and substitution $s = t/\beta$ with $dt = \beta\, ds$.
+using substitution $s = t/\alpha^2$ with $dt = \alpha^2\, ds$.
 
 \emph{Claim (c):} Similarly, $A(z) = \frac{1}{2}\int_0^T \langle -J_0\dot{z}, z\rangle\, dt$
 gives
 \[
   A(z_{\alpha,b})
-  = \frac{1}{2} \int_0^{\beta T_z} \langle -J_0(\alpha/\beta)\dot{z}(t/\beta),\, \alpha z(t/\beta) + b \rangle\, dt.
+  = \frac{1}{2} \int_0^{\alpha^2 T_z} \langle -J_0(1/\alpha)\dot{z}(t/\alpha^2),\, \alpha z(t/\alpha^2) + b \rangle\, dt.
 \]
-Since $\int_0^{\beta T_z} \langle -J_0\dot{z}(t/\beta), b\rangle\, dt = 0$ (using $J_0$ skew-symmetry
+Since $\int_0^{\alpha^2 T_z} \langle -J_0\dot{z}(t/\alpha^2), b\rangle\, dt = 0$ (using $J_0$ skew-symmetry
 and closure of $z$), we get
 \[
-  = \frac{\alpha^2}{\beta} \cdot \frac{1}{2} \int_0^{\beta T_z} \langle -J_0\dot{z}(t/\beta), z(t/\beta)\rangle\, dt
-  = \beta \cdot \frac{1}{2} \int_0^{T_z} \langle -J_0\dot{z}(s), z(s)\rangle\, ds
-  = \beta\, A(z).
+  = \alpha \cdot \frac{1}{2} \int_0^{\alpha^2 T_z} \langle -J_0\dot{z}(t/\alpha^2), z(t/\alpha^2)\rangle\, dt
+  = \alpha^2 \cdot \frac{1}{2} \int_0^{T_z} \langle -J_0\dot{z}(s), z(s)\rangle\, ds
+  = \alpha^2\, A(z).
 \]
 
-\emph{Claim (d):} If $A(z) = T_z$, then $A(z_{\alpha,b}) = \beta A(z) = \beta T_z = T_{\alpha,b}$.
+\emph{Claim (d):} If $A(z) = T_z$, then $A(z_{\alpha,b}) = \alpha^2 A(z) = \alpha^2 T_z = T_{\alpha,b}$.
 \end{proof}
 
 \begin{theorem}[Primal-dual equivalence (Clarke's Dual Action Principle)]%
