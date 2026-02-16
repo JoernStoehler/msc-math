@@ -319,33 +319,18 @@ and $b' = b_0/\alpha - \nu b/\alpha^2$.
 
 \begin{theorem}[Primal-dual equivalence (Clarke's Dual Action Principle)]%
 \label{thm:primal-dual-equivalence}
-% QC: Correspondence via z = gamma - center(gamma) (forward direction).
-%   By Lemma~\ref{lem:dual-scaling-family}, dual critical points form
-%   scaling families with constant I_K, so I_K(z) = T only for the special
-%   representative z from a Reeb orbit. Minimum equality still holds.
+% QC: Critical points of primal and dual problems correspond via symmetry
+%   classes (Lemma~\ref{lem:dual-scaling-family}). The correspondence is
+%   surjective in both directions and preserves minimum values.
 % Downstream: allows us to work in the dual formulation, where the
 %   simplification algorithm (subsec:simplification) is natural.
-Let $K$ be a convex body.
+% Jörn: text approved (bb06c42)
+Let $K$ be a convex body. The critical points of the primal problem and of the
+dual problem correspond: for a primal critical point~$\gamma$, all orbits~$z$
+that are symmetry-equivalent (Lemma~\ref{lem:dual-scaling-family}) to~$\gamma$
+are dual critical points. For a dual critical point~$z$, at least one
+symmetry-equivalent orbit~$\gamma$ is a primal critical point.
 
-\emph{(a) Forward correspondence.}
-If $\gamma$ is a primal critical point (Hamiltonian orbit on $\partial K$)
-with period~$T$, then
-\[
-  z := \gamma - \frac{1}{T} \int_0^T \gamma(t) \, dt
-\]
-is a dual critical point with period~$T$, and
-\begin{equation}\label{eq:primal-dual-values}
-  I_K(z) = T = A(\gamma).
-\end{equation}
-
-\emph{(b) Scaling families.}
-By Lemma~\ref{lem:dual-scaling-family}, dual critical points form
-families $\{z_{\alpha,b}\}_{\alpha > 0, b \in \mathbb{R}^4}$ with
-$I_K(z_{\alpha,b}) = I_K(z)$ constant.
-The equality $I_K(z) = T_z$ holds only for representatives arising
-from~(a).
-
-\emph{(c) Minimum equality.}
 Consequently, $\min_\gamma A(\gamma) = \min_z I_K(z) = c_{\mathrm{EHZ}}(K)$.
 \end{theorem}
 
@@ -582,11 +567,12 @@ minimizers correspond to minimizers:
 $\min_\gamma A(\gamma) = \min_z I_K(z) = c_{\mathrm{EHZ}}(K)$.
 \end{proof}
 
-\begin{remark}\label{rem:primal-dual-nonunique}
-The base point~$b$ in Part~3 need not be unique: for polytopes,
-translates of~$\gamma$ can remain on~$\partial K$, giving
-distinct primal orbits with the same~$z$.
-The minimum-equality is unaffected since all such orbits share the same action.
+\begin{remark}\label{rem:symmetry-class-uniqueness}
+% Jörn: text approved (bb06c42)
+For strictly convex bodies, and for generic polytopes, exactly one Reeb orbit
+lies in the symmetry class (Lemma~\ref{lem:dual-scaling-family}).
+Only in degenerate cases can there be two Reeb orbits that differ by a
+translation and/or spatial-temporal scaling.
 \end{remark}
 
 % [TODO: JÖRN - derive an algorithm that computes b given z]
