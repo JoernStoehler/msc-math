@@ -182,30 +182,68 @@ or equivalently (by Fenchel duality),
 \end{lemma}
 
 \begin{proof}
-Form the Lagrangian with multiplier $\alpha$ for the action constraint:
+We characterize critical points of the dual functional
+$I_K(z) = \frac{1}{4}\int_0^T h_K^2(-J_0\dot{z}) \, dt$
+under the constraints:
+\begin{itemize}
+\item closure: $z(0) = z(T)$,
+\item action: $A(z) = T$.
+\end{itemize}
+
+We use the calculus of variations with Lagrange multipliers.
+Form the Lagrangian incorporating the constraints:
 \[
-  L(z, \dot{z}) = \tfrac{1}{4}h_K^2(-J_0\dot{z}) + \alpha\langle -J_0\dot{z}, z\rangle.
+  L(z, \dot{z}) = \tfrac{1}{4}h_K^2(-J_0\dot{z}) + \alpha\langle -J_0\dot{z}, z\rangle,
 \]
-For such Lagrangians (convex in $\dot{z}$, linear in $z$), the Euler-Lagrange
-inclusion states: there exists $\xi(t) \in \partial_{\dot{z}} L$ a.e.\ such that
+where $\alpha \in \mathbb{R}$ is the multiplier for the action constraint.
+
+The Lagrangian is convex (but not differentiable) in $\dot{z}$
+and smooth (linear) in~$z$.
+For such Lagrangians, a critical point $z$ satisfies the
+\emph{Euler--Lagrange inclusion}: there exists an absolutely continuous
+$\xi(t) \in \partial_{\dot{z}} L(z(t), \dot{z}(t))$ a.e.\ such that
+\begin{equation}\label{eq:euler-lagrange-inclusion-lemma}
+  \dot{\xi}(t) = \nabla_z L(z(t), \dot{z}(t)) \quad\text{a.e.}
+\end{equation}
+(see Clarke, \emph{Optimization and Nonsmooth Analysis}, Ch.~5).
+
+\emph{Right-hand side of~\eqref{eq:euler-lagrange-inclusion-lemma}.}
+Since $\tfrac{1}{4}h_K^2(-J_0\dot{z})$ is independent of~$z$,
+only the multiplier term contributes:
 \[
-  \dot{\xi}(t) = \nabla_z L(z(t), \dot{z}(t)) = -\alpha J_0 \dot{z}
-  \quad\text{a.e.}
+  \nabla_z L = -\alpha J_0 \dot{z}.
 \]
-The subdifferential in $\dot{z}$ is
+
+\emph{Left-hand side of~\eqref{eq:euler-lagrange-inclusion-lemma}.}
+The subdifferential of $L$ in $\dot{z}$ is
+% chain rule: ∂_ż[f(Aż)] = Aᵀ ∂f(Aż) with A = -J₀, so Aᵀ = J₀
 \[
   \partial_{\dot{z}} L
-  = J_0\, \partial\bigl(\tfrac{1}{4}h_K^2\bigr)(-J_0\dot{z}) + \alpha J_0 z,
+  = J_0\, \partial\bigl(\tfrac{1}{4}h_K^2\bigr)(-J_0\dot{z})
+    + \alpha J_0 z,
 \]
-so $\xi(t) = J_0 p(t) + \alpha J_0 z(t)$ for some $p(t) \in \partial(\tfrac{1}{4}h_K^2)(-J_0\dot{z}(t))$.
-The Euler-Lagrange inclusion gives:
+using $(-J_0)^\top = J_0$ in the chain rule for $f \circ (-J_0)$.
+So the Euler-Lagrange inclusion says: there exists $p(t) \in \partial(\tfrac{1}{4}h_K^2)(-J_0\dot{z}(t))$
+a.e.\ such that $\xi(t) = J_0 p(t) + \alpha J_0 z(t)$ is absolutely continuous and
 \[
-  J_0 \dot{p} + \alpha J_0 \dot{z} = -\alpha J_0 \dot{z}
-  \quad\Rightarrow\quad
-  \dot{p} = -2\alpha \dot{z} \quad\text{a.e.}
+  J_0 \dot{p} + \alpha J_0 \dot{z}
+  = -\alpha J_0 \dot{z},
+  \qquad\text{i.e.,}\qquad
+  J_0 \dot{p} = -2\alpha J_0 \dot{z}.
 \]
-Integrating: $p(t) = c - 2\alpha z(t)$ for constant $c \in \mathbb{R}^4$.
-Setting $\nu = -2\alpha$ and $b = c$ gives~\eqref{eq:dual-euler-lagrange}.
+
+The equation $\dot{p} = -2\alpha \dot{z}$ a.e.\ integrates to
+\[
+  p(t) = c - 2\alpha\, z(t)
+\]
+for a constant $c \in \mathbb{R}^4$.
+Since $p(t) \in \partial(\tfrac{1}{4}h_K^2)(-J_0\dot{z}(t))$:
+\[
+  c - 2\alpha\, z(t)
+  \in \partial\bigl(\tfrac{1}{4}h_K^2\bigr)\bigl(-J_0\dot{z}(t)\bigr)
+  \quad \text{a.e.}
+\]
+Writing $\nu = -2\alpha$ and $b = c$ gives~\eqref{eq:dual-euler-lagrange}.
 \end{proof}
 
 \begin{lemma}[Scaling and translation symmetry of dual critical points]%
