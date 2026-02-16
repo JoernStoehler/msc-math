@@ -29,7 +29,7 @@ five-step simplification algorithm.
 %   Literature on this is sparse and often omits details. This writeup
 %   is self-contained for a master's thesis audience.
 % Downstream: establishes that minimizing action over Reeb orbits is
-%   equivalent to minimizing I_K over centered curves. The dual problem
+%   equivalent to minimizing I_K over closed curves. The dual problem
 %   is easier to work with for the simplification algorithm.
 
 We work with absolutely continuous curves
@@ -254,8 +254,8 @@ Writing $\nu = -2\alpha$ and $b = c$ gives~\eqref{eq:dual-euler-lagrange}.
 %   The family parameterized by (\alpha, b) \in \mathbb{R}_{>0} \times \mathbb{R}^4
 %   has constant I_K, so does not affect the minimum value of the dual problem.
 % Downstream: explains why I_K(z) = T fails for general dual critical points.
-%   Only the special representative z = \gamma - center(\gamma) from a Reeb
-%   orbit \gamma satisfies I_K(z) = T.
+%   For any Reeb orbit \gamma, we have I_K(\gamma) = T (shown in the minimum
+%   equality part of Theorem 5.11).
 % Jörn: text approved (9ea4716)
 Let $z \in W^{1,2}([0,T], \mathbb{R}^4)$ be a closed curve that is a
 critical point of the dual problem (Definition~\ref{def:dual-problem}).
@@ -787,9 +787,10 @@ $I_K(z') = \beta\, I_K(z)$.
 \end{proof}
 
 \begin{proof}[Proof of Lemma~\ref{lem:compactness}]
-% QC note: the encoding (sigma, s, T) uniquely determines a centered
-%   piecewise-Reeb curve. The centering constraint (int z = 0) pins the
-%   translational degree of freedom, so no base point ambiguity arises here.
+% QC note: the encoding (sigma, s, T) determines a piecewise-Reeb curve
+%   up to translation. Translation is a free parameter for dual curves.
+%   Compactness requires choosing appropriate translations b_n to ensure
+%   the sequence stays bounded.
 %   (Contrast Remark~\ref{rem:simple-orbit-data}, where primal orbits gamma
 %   need a base point b = gamma(0) in addition to (sigma, tau).)
 Each $z_n$ is encoded by
