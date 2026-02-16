@@ -330,3 +330,61 @@ the minimum in Theorem~\ref{thm:billiard-characterization}
 is achieved by a billiard trajectory with at most $3$ bounce points.
 \end{theorem}
 
+
+%%% Proof of billiard algorithm completeness
+
+\begin{theorem*}[Theorem~\ref{thm:billiard-completeness}, restated]
+Let $K = K_q \times K_p$ be a Lagrangian product.
+Then $c_{\mathrm{EHZ}}(K)$ equals the minimum of $A(S, \sigma)$
+(equation~\eqref{eq:action-formula})
+over all $(S, \sigma)$ with $\sigma$ matching the pattern
+$\bigl([Q \mid QQ]\,[P \mid PP]\bigr)^k$
+for $k \in \{2, 3\}$.
+\end{theorem*}
+
+\begin{proof}
+\textbf{Overview.}\quad
+Every valid $(S, \sigma)$ from the restricted set is also a valid
+input to the algorithm of Section~\ref{sec:main-result}, so
+\begin{equation}\label{eq:billiard-lb}
+  \min_{\text{restricted}} A(S, \sigma)
+  \geq \min_{\text{all}} A(S, \sigma)
+  = c_{\mathrm{EHZ}}(K).
+\end{equation}
+It remains to show the reverse inequality.
+
+\medskip\noindent
+\textbf{Step 1: simple minimizer has alternating block structure.}\quad
+By Theorem~\ref{thm:simple-minimizer}, $c_{\mathrm{EHZ}}(K)$ is
+achieved by a simple Reeb orbit $\gamma^*$ with representation
+$(\sigma^*, \tau^*)$, all $\tau_i > 0$.
+By Lemma~\ref{lem:sigma-structure}, $\sigma^*$ has the form
+$\bigl([Q \mid QQ]\,[P \mid PP]\bigr)^{k^*}$ for some $k^* \geq 2$
+(Lemma~\ref{lem:k1-infeasible} excludes $k^* = 1$).
+Hence
+\begin{equation}\label{eq:billiard-ub1}
+  \min_{\text{alternating-block}} A(S, \sigma) \leq A(S^*, \sigma^*)
+  = c_{\mathrm{EHZ}}(K).
+\end{equation}
+
+\medskip\noindent
+\textbf{Step 2: bound $k^* \leq 3$.}\quad
+By the billiard characterization
+(Theorem~\ref{thm:billiard-characterization}), $c_{\mathrm{EHZ}}(K)$
+is also the minimum $K_p^\circ$-length over billiard trajectories
+in~$K_q$. By the bounce bound (Theorem~\ref{thm:bounce-bound}),
+this minimum is achieved by a trajectory with at most $3$ bounce points.
+Each bounce point corresponds to one $q$-block in the simple orbit
+(Lemma~\ref{lem:sigma-structure}), so $k^* \leq 3$.
+
+\medskip\noindent
+\textbf{Conclusion.}\quad
+Combining~\eqref{eq:billiard-lb} and~\eqref{eq:billiard-ub1}
+with the restriction $k \in \{2, 3\}$:
+\[
+  c_{\mathrm{EHZ}}(K)
+  \leq \min_{k \in \{2,3\}} A(S, \sigma)
+  \leq \min_{\text{alternating-block}} A(S, \sigma)
+  \leq c_{\mathrm{EHZ}}(K). \qedhere
+\]
+\end{proof}
