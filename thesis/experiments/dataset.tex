@@ -11,32 +11,6 @@
 % This section describes the dataset of polytopes and capacity computations
 % that all subsequent experiments use.
 
-\subsection{Algorithm Variants}
-\label{sec:dataset-algorithms}
-
-We implement four algorithm variants for computing EHZ capacity:
-
-\begin{table}[h]
-\centering
-\small
-\begin{tabular}{llll}
-\toprule
-Variant & Input polytopes & Cost & Fastest on \\
-\midrule
-HK2017 pruned & Any convex 4-polytope & Exponential in $F$ & Generic, $F \le 12$ \\
-HK2017 unpruned & Any convex 4-polytope & 10--100$\times$ slower & (Tests only) \\
-HK2017 SVD-only & Any convex 4-polytope & ${\sim}1.5\times$ slower & (Tests only) \\
-Billiard & Lagrangian products only & Polynomial & Lagrangian products \\
-& ($K_q \times_L K_p$, polygons) & & (100--1000$\times$ vs HK2017) \\
-\bottomrule
-\end{tabular}
-\caption{Algorithm variants. HK2017 unpruned and SVD-only are used only for
-  correctness and ablation tests, not production datasets.}
-\label{tab:algorithm-variants}
-\end{table}
-
-% Correctness verification details in Section~\ref{sec:correctness}
-
 % \subsection{The Dataset}
 % \label{sec:dataset}
 %
