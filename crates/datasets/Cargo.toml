@@ -15,6 +15,10 @@ path = "src/bin/benchmark.rs"
 name = "lagrangian_sweep"
 path = "src/bin/lagrangian_sweep.rs"
 
+[[bin]]
+name = "verification"
+path = "src/bin/verification.rs"
+
 [dependencies]
 nalgebra = { workspace = true }
 serde = { workspace = true }

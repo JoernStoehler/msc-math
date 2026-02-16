@@ -21,7 +21,7 @@
 
 The only known 4D counterexample to Viterbo's conjecture is a Lagrangian
 product of two pentagons (Haim-Kislev \& Ostrover 2024). Random 4-polytopes
-(Section~\ref{sec:systolic-ratios}) never exceeded~$\mathrm{sys} = 0.68$, far
+(Section~\ref{sec:systolic-ratios}) never exceeded~$\mathrm{sys} = 0.72$, far
 below the Viterbo threshold. We probe the conjecture by searching
 systematically in the space of Lagrangian products, where counterexamples are
 known to exist.
@@ -100,8 +100,8 @@ We compute~$c_{\mathrm{EHZ}}$ using both the HK2017 algorithm and the billiard
 algorithm (Section~\ref{sec:dataset}); the two algorithms agree on all
 Lagrangian products to relative error~$< 10^{-8}$
 (Section~\ref{sec:correctness}).
-Each billiard capacity computation takes ${\sim}850$\,ms per 10-facet product;
-HK2017 cross-validation takes ${\sim}2{,}500$\,ms
+Each billiard capacity computation takes ${\sim}920$\,ms per 10-facet product;
+HK2017 cross-validation takes ${\sim}2{,}400$\,ms
 (Section~\ref{sec:benchmark}).
 
 Figure~\ref{fig:pentagon-sweep} shows the resulting curve. The systolic ratio
@@ -164,11 +164,11 @@ $n$ & $m$ & $F$ & $\max\,\mathrm{sys}$ & $\theta_{\max}$ & cross-val & status \\
 \hline
 3 & 3 &  6 & 0.667 &  $0.0^\circ$ & 100\% & below \\
 3 & 4 &  7 & 0.928 & $15.0^\circ$ & 100\% & below \\
-3 & 5 &  8 & 0.798 & $12.0^\circ$ & 100\% & below \\
+3 & 5 &  8 & 0.797 & $12.0^\circ$ & 100\% & below \\
 3 & 6 &  9 & 1.000 &  $0.0^\circ$ & 100\% & \textbf{saturates} \\
 4 & 4 &  8 & 1.000 & $45.0^\circ$ & 100\% & \textbf{saturates} \\
 4 & 5 &  9 & 0.705 &  $9.0^\circ$ & 100\%$^*$ & below \\
-4 & 6 & 10 & 0.598 & $10.7^\circ$ & 100\% & below \\
+4 & 6 & 10 & 0.619 & $15.0^\circ$ & 100\% & below \\
 5 & 5 & 10 & 1.047 & $18.0^\circ$ & 100\% & \textbf{exceeds} \\
 5 & 6 & 11 & 0.831 &  $0.0^\circ$ & 100\% & below \\
 6 & 6 & 12 & 0.668 &  $2.0^\circ$ & 100\% & below \\
@@ -183,12 +183,11 @@ $n$ & $m$ & $F$ & $\max\,\mathrm{sys}$ & $\theta_{\max}$ & cross-val & status \\
 \end{table}
 
 \paragraph{Algorithm reliability.}
-During development, the~$(4,4)$ and~$(4,6)$ pairs exhibited capacity
-discontinuities due to a KKT solver bug: the SVD-based rank detection
-used a fixed tolerance that failed for near-degenerate systems arising
-from axis-aligned square normals. After fixing the solver (gap-based
-rank detection; see Section~\ref{sec:correctness}), all 10~pairs show
-100\% cross-validation and smooth capacity curves.
+The~$(4,4)$ and~$(4,6)$ pairs require gap-based SVD rank detection in
+the KKT solver; a simpler fixed-tolerance approach produces capacity
+discontinuities for these axis-aligned square normals
+(Section~\ref{sec:correctness}). With the gap-based method, all 10~pairs
+show 100\% cross-validation and smooth capacity curves.
 
 \paragraph{Findings.}
 
@@ -266,17 +265,15 @@ threshold.
 \item \textbf{Random Lagrangian products stay far below the threshold.}
   Among 234 random Lagrangian products (3--6~sided factors, heights
   in~$[0.3, 2.0]$), the maximum sys is~$0.772$. None reaches~$0.9$.
-  This is higher than the~$0.68$ ceiling observed for fully random
+  This is higher than the~$0.72$ ceiling observed for fully random
   (non-product) polytopes in Section~\ref{sec:systolic-ratios},
   suggesting that the Lagrangian product structure does push sys upward,
   but not enough to approach the Viterbo bound without specific
   regular polygon geometry.
 
-\item \textbf{Square-based degeneracy was a solver bug, now fixed.}
-  Early runs showed capacity discontinuities for~$(4,4)$ and~$(4,6)$,
-  traced to a fixed-tolerance SVD rank detection that failed for
-  near-degenerate KKT matrices from axis-aligned square normals.
-  After switching to gap-based rank detection, all 10~pairs show
-  100\% cross-validation and smooth capacity curves
-  (Section~\ref{sec:correctness}).
+\item \textbf{Square-based pairs require careful rank detection.}
+  The~$(4,4)$ and~$(4,6)$ pairs produce near-degenerate KKT matrices
+  from axis-aligned square normals, requiring gap-based SVD rank
+  detection. With this method, all 10~pairs show 100\% cross-validation
+  and smooth capacity curves (Section~\ref{sec:correctness}).
 \end{enumerate}

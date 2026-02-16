@@ -87,7 +87,16 @@ fn main() {
     let subcommand = &args[1];
     let output_path = PathBuf::from(&args[2]);
 
-    let file = File::create(&output_path).expect("cannot create output file");
+    let append = std::env::var("APPEND").is_ok();
+    let file = if append {
+        File::options()
+            .append(true)
+            .create(true)
+            .open(&output_path)
+            .expect("cannot open output file for append")
+    } else {
+        File::create(&output_path).expect("cannot create output file")
+    };
     let mut writer = BufWriter::new(file);
 
     match subcommand.as_str() {
@@ -133,10 +142,14 @@ fn compute_billiard(
 
 /// Run HK2017 pruned as cross-validation against the billiard capacity.
 /// Returns (capacity_hk2017, time_ms, agrees).
+/// Set SKIP_CROSSVAL=1 to skip (returns None for all fields).
 fn run_hk2017_crossval(
     polytope: &geom::polytope::Polytope4D,
     billiard_cap: f64,
 ) -> (Option<f64>, Option<f64>, Option<bool>) {
+    if std::env::var("SKIP_CROSSVAL").is_ok() {
+        return (None, None, None);
+    }
     let start = Instant::now();
     match ehz_capacity_pruned(polytope) {
         Some(result) => {
@@ -218,11 +231,23 @@ fn cmd_pentagon_sweep(writer: &mut BufWriter<File>) {
 /// All regular (n, m) pairs with n + m ≤ max_facets.
 fn cmd_polygon_grid(writer: &mut BufWriter<File>) {
     let max_facets = MAX_FACETS;
+    // Support resuming from a specific pair via env var (e.g. MIN_N1=5 MIN_N2=6)
+    let min_n1: usize = std::env::var("MIN_N1")
+        .ok()
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(3);
+    let min_n2: usize = std::env::var("MIN_N2")
+        .ok()
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(3);
     eprintln!("Polygon grid: all (n,m) pairs with n+m ≤ {max_facets}");
 
     for n1 in 3..=6 {
         for n2 in n1..=6 {
             if n1 + n2 > max_facets {
+                continue;
+            }
+            if n1 < min_n1 || (n1 == min_n1 && n2 < min_n2) {
                 continue;
             }
 
