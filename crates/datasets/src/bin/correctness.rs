@@ -1,9 +1,9 @@
-//! Verification dataset generator and tests.
+//! Correctness verification: dataset generator and tests.
 //!
 //! Architecture:
-//! 1. `cargo run --bin verification --release` generates 47 polytopes, computes 71 capacities
-//! 2. Writes to experiments/data/verification.jsonl
-//! 3. `cargo test --bin verification --release` reads dataset and verifies properties
+//! 1. `cargo run --bin correctness --release` generates 47 polytopes, computes 71 capacities
+//! 2. Writes to experiments/data/correctness.jsonl
+//! 3. `cargo test --bin correctness --release` reads dataset and verifies properties
 //!
 //! Polytope breakdown:
 //! - 10 base polytopes (5 random generic + 5 Lagrangian products)
@@ -55,7 +55,7 @@ struct VerificationEntry {
 }
 
 fn main() {
-    println!("Generating verification dataset (47 polytopes, 71 capacity values)...\n");
+    println!("Generating correctness dataset (47 polytopes, 71 capacity values)...\n");
     let mut rng = ChaCha8Rng::seed_from_u64(42);
     let mut entries = Vec::new();
 
@@ -219,7 +219,7 @@ fn main() {
     println!("  → 10 pruned = 10 capacity values\n");
 
     // Write to JSONL
-    let output_path = "experiments/data/verification.jsonl";
+    let output_path = "experiments/data/correctness.jsonl";
     println!("Writing {} entries to {}...", entries.len(), output_path);
     let file = File::create(output_path).expect("create file");
     let mut writer = BufWriter::new(file);
@@ -285,9 +285,9 @@ mod tests {
 
     fn load_dataset() -> Vec<VerificationEntry> {
         let manifest_dir = env!("CARGO_MANIFEST_DIR");
-        let path = format!("{}/../experiments/data/verification.jsonl", manifest_dir);
+        let path = format!("{}/../experiments/data/correctness.jsonl", manifest_dir);
         let file = File::open(&path)
-            .expect("Run `cargo run --bin verification --release` first");
+            .expect("Run `cargo run --bin correctness --release` first");
         let reader = BufReader::new(file);
         reader.lines()
             .map(|line| {

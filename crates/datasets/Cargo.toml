@@ -16,8 +16,8 @@ name = "lagrangian_sweep"
 path = "src/bin/lagrangian_sweep.rs"
 
 [[bin]]
-name = "verification"
-path = "src/bin/verification.rs"
+name = "correctness"
+path = "src/bin/correctness.rs"
 
 [dependencies]
 nalgebra = { workspace = true }
