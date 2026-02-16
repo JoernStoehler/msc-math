@@ -388,3 +388,28 @@ with the restriction $k \in \{2, 3\}$:
   \leq c_{\mathrm{EHZ}}(K). \qedhere
 \]
 \end{proof}
+
+\begin{remark}[Complexity]\label{rem:billiard-complexity}
+% Downstream: total iterations for k=2,3 combined.
+%   For each k: choose k q-blocks from O(n_q) blocks, k p-blocks
+%   from O(n_p) blocks, then enumerate orderings.
+%   Dominated by k=3: O(n_q^3 * n_p^3) iterations.
+%   Each iteration: solve (|sigma|+5) x (|sigma|+5) system with
+%   |sigma| <= 12, so each solve is O(1).
+Let $n_q = F_q$ and $n_p = F_p$ denote the edge counts of $K_q$
+and $K_p$.
+The number of $(S, \sigma)$ to evaluate is
+$O(n_q^3 \, n_p^3)$, dominated by $k = 3$:
+\begin{itemize}
+\item Choose $3$ non-overlapping $q$-blocks: $O(n_q^3)$ choices.
+\item Choose $3$ non-overlapping $p$-blocks: $O(n_p^3)$ choices.
+\item Orderings per selection: at most $2! \times 3! = 12$
+  (fix first $q$-block to remove cyclic symmetry,
+  permute remaining $q$-blocks and all $p$-blocks).
+\item Within-block orderings: at most $2^6 = 64$
+  (each of 6 blocks can have reversed internal order).
+\end{itemize}
+Each evaluation solves a linear system of size at most
+$12 + 5 = 17$, which is $O(1)$.
+The total cost is polynomial in $n_q$ and $n_p$.
+\end{remark}
