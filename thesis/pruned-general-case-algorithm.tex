@@ -1,0 +1,65 @@
+% pruned-general-case-algorithm.tex — \input'd from proofs.tex
+% Conventions: thesis/CLAUDE.md
+%
+% Sources: Jörn's dictation + HK2017 paper. Notation per correspondence.tex.
+%
+% Structure: Facet adjacency graph, adjacency constraint, adjacency pruning
+
+% Jörn: text approved (0839595) — from \begin{definition} to \end{definition}
+\begin{definition}[Facet adjacency graph]\label{def:adjacency-graph}
+% QC: two facets are adjacent iff they share at least one point.
+%   In 4D, adjacent facets (3-faces) can share a 2-face (ridge),
+%   1-face (edge), or 0-face (vertex). This uses the weakest condition.
+% Downstream: Rust: precompute adjacency matrix once per polytope.
+%   Test: for the 4-simplex (5 facets), all pairs are adjacent (K_5).
+The \emph{facet adjacency graph} $G_K$ of a polytope $K$ has
+vertex set $\{1, \ldots, F\}$ (one vertex per facet) and an edge
+$\{i, j\}$ whenever $F_i \cap F_j \neq \emptyset$.
+\end{definition}
+
+% Jörn: text approved (0839595) — from \begin{lemma} to \end{proof}
+\begin{lemma}[Adjacency constraint]\label{lem:adjacency-constraint}
+% QC: follows from the generalized Reeb orbit condition + continuity.
+%   Key step: velocity R_i requires the orbit to lie on F_i
+%   (otherwise R_i is not available in the convex hull).
+%   At the breakpoint, the orbit lies on both adjacent facets.
+% Downstream: prune (S, sigma) where consecutive facets in sigma
+%   are not adjacent in G_K. Significant speedup for polytopes
+%   with sparse adjacency graphs.
+Let $\gamma$ be a simple Reeb orbit on a polytope $K$ with
+representation $(\sigma, \tau)$
+(Remark~\ref{rem:simple-orbit-data}).
+If $\tau_k > 0$ and $\tau_{k+1} > 0$ (indices cyclic), then
+$\sigma(k)$ and $\sigma(k+1)$ are adjacent in~$G_K$:
+the breakpoint $\gamma(t^*)$ lies in
+$F_{\sigma(k)} \cap F_{\sigma(k+1)}$.
+\end{lemma}
+
+\begin{proof}
+During interval~$k$, the orbit has velocity
+$\dot{\gamma}(t) = R_{\sigma(k)}$ and therefore lies on~$F_{\sigma(k)}$
+(Definition~\ref{def:reeb-orbit-polytope}: for $R_i$ to appear
+in the velocity, $\gamma(t) \in F_i$ is required).
+Since $F_{\sigma(k)}$ is closed and $\gamma$ is continuous,
+$\gamma(t^*) \in F_{\sigma(k)}$ at the breakpoint~$t^*$.
+By the same argument applied to interval~$k{+}1$,
+$\gamma(t^*) \in F_{\sigma(k+1)}$.
+\end{proof}
+
+% Jörn: text approved (0839595) — from \begin{corollary} to \end{corollary}
+\begin{corollary}[Adjacency pruning]\label{cor:adjacency-pruning}
+% QC: in the algorithm, all facets in S have beta_i > 0 (by the filter),
+%   so all are active. The adjacency constraint applies to all consecutive
+%   pairs in sigma (cyclically). Equivalently: sigma must trace a
+%   Hamiltonian cycle in G_K[S].
+% Downstream: before solving the linear system, check adjacency of all
+%   consecutive pairs in sigma. Skip (S, sigma) if any pair is non-adjacent.
+%   Further: skip S entirely if G_K[S] has no Hamiltonian cycle.
+In the algorithm (Section~\ref{sec:main-result}), discard any
+$(S, \sigma)$ for which some consecutive pair
+$\sigma(k), \sigma(k{+}1)$ (cyclically) satisfies
+$F_{\sigma(k)} \cap F_{\sigma(k+1)} = \emptyset$.
+Equivalently, restrict to cyclic orderings~$\sigma$ of~$S$ that
+form a Hamiltonian cycle in the induced subgraph~$G_K[S]$.
+\end{corollary}
+

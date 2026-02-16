@@ -1,0 +1,122 @@
+% lagrangian-product-algorithm.tex — \input'd from algorithms.tex
+% Conventions: thesis/CLAUDE.md
+%
+% Sources: Bezdek-Bezdek (2009), Rudolf (2022), Artstein-Avidan & Ostrover (2014),
+%   HK2017. Agent-written, math verified by Joern.
+%
+% Structure: The Billiard Algorithm
+
+% Jörn: math approved (e1345bb) — from \subsection{The Billiard Algorithm} to end of subsection
+
+\begin{theorem}[Completeness of the billiard enumeration]%
+\label{thm:billiard-completeness}
+Let $K = K_q \times K_p$ be a Lagrangian product.
+Then $c_{\mathrm{EHZ}}(K)$ equals the minimum of $A(S, \sigma)$
+(equation~\eqref{eq:action-formula})
+over all $(S, \sigma)$ with $\sigma$ matching the pattern
+$\bigl([Q \mid QQ]\,[P \mid PP]\bigr)^k$
+for $k \in \{2, 3\}$.
+\end{theorem}
+
+\begin{proof}
+\textbf{Overview.}\quad
+Every valid $(S, \sigma)$ from the restricted set is also a valid
+input to the algorithm of Section~\ref{sec:main-result}, so
+\begin{equation}\label{eq:billiard-lb}
+  \min_{\text{restricted}} A(S, \sigma)
+  \geq \min_{\text{all}} A(S, \sigma)
+  = c_{\mathrm{EHZ}}(K).
+\end{equation}
+It remains to show the reverse inequality.
+
+\medskip\noindent
+\textbf{Step 1: simple minimizer has alternating block structure.}\quad
+By Theorem~\ref{thm:simple-minimizer}, $c_{\mathrm{EHZ}}(K)$ is
+achieved by a simple Reeb orbit $\gamma^*$ with representation
+$(\sigma^*, \tau^*)$, all $\tau_i > 0$.
+By Lemma~\ref{lem:sigma-structure}, $\sigma^*$ has the form
+$\bigl([Q \mid QQ]\,[P \mid PP]\bigr)^{k^*}$ for some $k^* \geq 2$
+(Lemma~\ref{lem:k1-infeasible} excludes $k^* = 1$).
+Hence
+\begin{equation}\label{eq:billiard-ub1}
+  \min_{\text{alternating-block}} A(S, \sigma) \leq A(S^*, \sigma^*)
+  = c_{\mathrm{EHZ}}(K).
+\end{equation}
+
+\medskip\noindent
+\textbf{Step 2: bound $k^* \leq 3$.}\quad
+By the billiard characterization
+(Theorem~\ref{thm:billiard-characterization}), $c_{\mathrm{EHZ}}(K)$
+is also the minimum $K_p^\circ$-length over billiard trajectories
+in~$K_q$. By the bounce bound (Theorem~\ref{thm:bounce-bound}),
+this minimum is achieved by a trajectory with at most $3$ bounce points.
+Each bounce point corresponds to one $q$-block in the simple orbit
+(Lemma~\ref{lem:sigma-structure}), so $k^* \leq 3$.
+
+\medskip\noindent
+\textbf{Conclusion.}\quad
+Combining~\eqref{eq:billiard-lb} and~\eqref{eq:billiard-ub1}
+with the restriction $k \in \{2, 3\}$:
+\[
+  c_{\mathrm{EHZ}}(K)
+  \leq \min_{k \in \{2,3\}} A(S, \sigma)
+  \leq \min_{\text{alternating-block}} A(S, \sigma)
+  \leq c_{\mathrm{EHZ}}(K). \qedhere
+\]
+\end{proof}
+
+\begin{remark}[Complexity]\label{rem:billiard-complexity}
+% Downstream: total iterations for k=2,3 combined.
+%   For each k: choose k q-blocks from O(n_q) blocks, k p-blocks
+%   from O(n_p) blocks, then enumerate orderings.
+%   Dominated by k=3: O(n_q^3 * n_p^3) iterations.
+%   Each iteration: solve (|sigma|+5) x (|sigma|+5) system with
+%   |sigma| <= 12, so each solve is O(1).
+Let $n_q = F_q$ and $n_p = F_p$ denote the edge counts of $K_q$
+and $K_p$.
+The number of $(S, \sigma)$ to evaluate is
+$O(n_q^3 \, n_p^3)$, dominated by $k = 3$:
+\begin{itemize}
+\item Choose $3$ non-overlapping $q$-blocks: $O(n_q^3)$ choices.
+\item Choose $3$ non-overlapping $p$-blocks: $O(n_p^3)$ choices.
+\item Orderings per selection: at most $2! \times 3! = 12$
+  (fix first $q$-block to remove cyclic symmetry,
+  permute remaining $q$-blocks and all $p$-blocks).
+\item Within-block orderings: at most $2^6 = 64$
+  (each of 6 blocks can have reversed internal order).
+\end{itemize}
+Each evaluation solves a linear system of size at most
+$12 + 5 = 17$, which is $O(1)$.
+The total cost is polynomial in $n_q$ and $n_p$.
+\end{remark}
+
+\medskip
+\noindent\textbf{Algorithm}\label{alg:billiard}
+(computes $c_{\mathrm{EHZ}}(K_q \times K_p)$
+via Theorem~\ref{thm:billiard-completeness}).
+
+\smallskip\noindent
+\emph{Input:} Lagrangian product $K = K_q \times K_p$ in
+$H$-representation.
+\quad
+\emph{Output:} $c_{\mathrm{EHZ}}(K)$.
+
+\begin{enumerate}
+\item \textbf{Classify} facets into $q$-type and $p$-type
+  (Lemma~\ref{lem:lagrangian-facets}).
+\item \textbf{Build blocks.}
+  For each polygon ($K_q$ and $K_p$), enumerate all
+  \emph{single-facet blocks} (one edge) and
+  \emph{pair blocks} (two adjacent edges, both orderings).
+\item \textbf{Enumerate.}
+  For $k = 2, 3$: for each selection of $k$ non-overlapping
+  $q$-blocks and $k$ non-overlapping $p$-blocks, and each
+  interleaving into the pattern
+  $\bigl([Q \mid QQ]\,[P \mid PP]\bigr)^k$,
+  flatten the blocks into a facet sequence~$\sigma$.
+\item \textbf{Solve and filter.}
+  For each $\sigma$: solve the KKT system~\eqref{eq:linear-system},
+  filter by $\beta_i > 0$ and $Q(\beta) > 0$, compute
+  $A(S, \sigma) = \tfrac{1}{2}\, Q(\beta)^{-1}$.
+\item \textbf{Return} $\min A(S, \sigma)$.
+\end{enumerate}

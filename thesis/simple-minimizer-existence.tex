@@ -1,0 +1,452 @@
+% simple-minimizer-existence.tex — \input'd from proofs.tex
+% Conventions: thesis/CLAUDE.md
+%
+% Sources: Jörn's dictation + Jörn's 120-minute talk (January 2025) expanding
+%   HK2017 proof. Notation per correspondence.tex.
+%
+% Structure: Simple orbit definitions, existence theorems, proof via primal-dual
+%   and simplification algorithm
+
+\begin{definition}[Simple Reeb orbit]\label{def:simple-reeb-orbit}
+% Jörn: text approved (05aa8b3)
+% QC: "simple" is HK2017's terminology ("simple closed characteristic").
+%   Our definition uses the Reeb parametrization (gamma_dot = R_i exactly,
+%   not gamma_dot = C J n_i with varying C > 0 as in HK2017). Equivalent
+%   up to reparametrization; our gamma_dot is Reeb-normalized (lambda_0 = 1).
+%   Key properties: (1) piecewise constant velocity, (2) pure facet Reeb
+%   vectors (not convex combinations), (3) each facet used at most once.
+%   Contrast def:reeb-orbit-polytope which allows convex combinations.
+% Downstream: simple orbits are the computational objects. The algorithm
+%   searches over all simple orbits by enumerating (sigma, beta).
+%   Rust: struct SimpleOrbit { sigma: Vec<FacetIdx>, tau: Vec<f64> }.
+A generalized Reeb orbit $\gamma$ on a polytope $K$
+(Definition~\ref{def:reeb-orbit-polytope}) is \emph{simple} if:
+\begin{enumerate}
+\item $\dot{\gamma}$ is piecewise constant;
+\item each constant value is a facet Reeb vector $R_i$
+  (not a nontrivial convex combination); and
+\item for each facet index $i$, the set
+  $\{ t \in [0, T] : \dot{\gamma}(t) = R_i \}$
+  is a single interval (possibly empty; in a non-simple orbit,
+  a facet may contribute multiple or infinitely many disjoint intervals).
+\end{enumerate}
+\end{definition}
+
+\begin{remark}[Finite representation of simple orbits]\label{rem:simple-orbit-data}
+% Jörn: text approved (05aa8b3)
+% QC: breakpoints are velocity changes, not facet transitions.
+%   Example (Jörn): orbit on a Lagrangian 2-face F_1 cap F_2,
+%   traveling first with R_1, breakpoint in int(F_1 cap F_2),
+%   then R_2. Facet incidence {F_1, F_2} is constant across the breakpoint.
+% Downstream: Rust representation: (sigma: Vec<FacetIdx>, tau: Vec<f64>).
+%   sigma is a cyclic permutation of facet indices. tau[k] >= 0 is the time
+%   with velocity R_{sigma[k]}. Two (sigma, tau) are equivalent iff
+%   they differ by a cyclic shift. Period T = sum(tau). Action A = T.
+A simple Reeb orbit can be described by a triple $(\sigma, \tau, b)$:
+\begin{itemize}
+\item a permutation $\sigma$ of $\{1, \ldots, F\}$
+  (the cyclic order in which facet Reeb vectors appear as velocities),
+\item durations $\tau_1, \ldots, \tau_F \geq 0$
+  (where $\tau_k$ is the time spent with velocity $R_{\sigma(k)}$;
+  $\tau_k = 0$ means facet $\sigma(k)$ is not visited), and
+\item a base point $b = \gamma(0) \in \partial K$.
+\end{itemize}
+Not every triple $(\sigma, \tau, b)$ yields a valid orbit;
+the orbit starting at~$b$ with the prescribed velocities must
+remain on~$\partial K$, and closure requires
+$\sum_k \tau_k R_{\sigma(k)} = 0$.
+The period is $T = \sum_k \tau_k$ and the action is $A(\gamma) = T$
+(Remark~\ref{rem:contact-normalization}).
+By Lemma~\ref{lem:shoelace}, the action depends only on
+$(\sigma, \tau)$, not on the base point~$b$.
+
+Two triples $(\sigma, \tau, b)$ and $(\sigma', \tau', b')$
+represent the same orbit if and only if, after removing all entries
+with $\tau_k = 0$, the resulting subsequences of (facet, duration)
+pairs agree up to cyclic shift and $b'$ is the corresponding
+point on the orbit.
+
+Breakpoints of $\dot{\gamma}$ are velocity changes, not necessarily
+facet transitions: for example, the orbit may travel along a
+lower-dimensional face $F_i \cap F_j$ with velocity $R_i$, then
+switch to $R_j$ at a breakpoint in the interior of $F_i \cap F_j$.
+\end{remark}
+
+\begin{theorem}[Existence of closed characteristics --- smooth case]\label{thm:orbit-existence-smooth}
+% Jörn: text approved (05aa8b3)
+% QC: classical result, Rabinowitz 1978.
+% Downstream: foundation for the EHZ capacity on smooth convex bodies.
+Let $K$ be a convex body in $\mathbb{R}^4$ with smooth boundary~\cite{Rabinowitz1978}.
+There exists a closed characteristic on $\partial K$.
+The infimum of the action over all closed characteristics
+is attained and positive:
+\[
+  c_{\mathrm{EHZ}}(K) = \min_{\gamma} A(\gamma) > 0.
+\]
+\end{theorem}
+
+\begin{theorem}[Existence of closed characteristics --- polytope case]\label{thm:orbit-existence-polytope}
+% Jörn: text approved (05aa8b3)
+% QC: Artstein-Avidan & Ostrover 2014 extend to general convex bodies
+%   (including polytopes) via generalized Reeb orbits.
+% Downstream: justifies c_EHZ being well-defined for polytopes.
+Let $K$ be a polytope in $\mathbb{R}^4$~\cite{AAO2014}.
+There exists a generalized Reeb orbit on $\partial K$
+(Definition~\ref{def:reeb-orbit-polytope}).
+The minimum action over all generalized Reeb orbits is attained
+and positive:
+\[
+  c_{\mathrm{EHZ}}(K) = \min_{\gamma} A(\gamma) > 0.
+\]
+\end{theorem}
+
+\begin{theorem}[Simple minimizer {\cite{HK2017}}]\label{thm:simple-minimizer}
+% Jörn: text approved (05aa8b3)
+% QC: main theorem of Haim-Kislev 2017. Deep result; we cite, not prove.
+%   The proof constructs a minimizing sequence and shows it can be
+%   "simplified" (breaking convex combinations into pure Reeb vectors,
+%   merging repeated facets into contiguous intervals).
+%   Jörn gave a 120-minute talk on this proof.
+% Downstream: reduces the infinite-dimensional optimization (min over all
+%   generalized Reeb orbits) to a finite search (over simple orbits).
+%   Combined with the finite representation (rem:simple-orbit-data),
+%   this makes the problem computationally tractable.
+Let $K$ be a polytope.
+Among all generalized Reeb orbits on $\partial K$, there exists one
+with minimum action that is simple
+(Definition~\ref{def:simple-reeb-orbit}).
+Consequently,
+\[
+  c_{\mathrm{EHZ}}(K) = \min\bigl\{ A(\gamma) :
+  \gamma \text{ is a simple Reeb orbit on } \partial K \bigr\}.
+\]
+\end{theorem}
+
+
+
+% Jörn: text approved (4d6f7a6) — 1:1 restatement of thm:simple-minimizer
+\begin{theorem*}[Theorem~\ref{thm:simple-minimizer} restated]
+Let $K$ be a polytope.
+Among all generalized Reeb orbits on $\partial K$, there exists one
+with minimum action that is simple
+(Definition~\ref{def:simple-reeb-orbit}).
+Consequently,
+\[
+  c_{\mathrm{EHZ}}(K) = \min\bigl\{ A(\gamma) :
+  \gamma \text{ is a simple Reeb orbit on } \partial K \bigr\}.
+\]
+\end{theorem*}
+
+The proof constructs a simple dual minimizer from an arbitrary one
+via five operations, each captured by a standalone lemma.
+We state all five lemmas, then prove the theorem by chaining them,
+and finally prove each lemma.
+
+% Jörn: text approved (6f31407) — lemma statements 5.10–5.14 and theorem proof
+
+% QC: translates HK2017 Lemma 4.2.
+%   Core: W^{1,2} approximation preserving closure and velocity constraint.
+%   Corollary: A and I_K estimates by continuity.
+\begin{lemma}[Piecewise affine approximation]\label{lem:pw-affine-approx}
+Let $z \in W^{1,2}([0,T], \mathbb{R}^4)$ be closed
+with $\dot{z}(t) \in \mathrm{conv}\{R_1, \ldots, R_F\}$ a.e.
+For any $\varepsilon > 0$, there exists a closed
+piecewise affine curve~$z'$ with
+$\dot{z}'(t) \in \mathrm{conv}\{R_1, \ldots, R_F\}$ on each piece
+and $\|z' - z\|_{W^{1,2}} < \varepsilon$.
+
+In particular,
+$|A(z') - A(z)| < C\varepsilon$ and
+$|I_K(z') - I_K(z)| < C\varepsilon$
+for a constant~$C$ depending only on~$z$.
+\end{lemma}
+
+% QC: translates HK2017 Lemma 4.4.
+%   Core: split convex-combination velocities into pure Reeb, A non-decreasing.
+%   I_K = T is an immediate consequence, not the core difficulty.
+\begin{lemma}[Splitting mixed velocities]\label{lem:splitting}
+Let $z \colon [0,T] \to \mathbb{R}^4$ be a closed
+piecewise affine curve with velocities in
+$\mathrm{conv}\{R_1, \ldots, R_F\}$.
+There exists a closed piecewise affine curve~$z'$
+with the same period~$T$, whose velocity on each segment is a single
+Reeb vector~$R_i$, such that
+$A(z') \geq A(z)$.
+In particular, $I_K(z') = T$.
+\end{lemma}
+
+% QC: translates HK2017 Lemma 4.5.
+\begin{lemma}[Merging repeated velocities]\label{lem:merging}
+Let $z \colon [0,T] \to \mathbb{R}^4$ be a closed piecewise affine
+curve whose velocity on each segment is a single Reeb vector~$R_i$.
+If some~$R_k$ appears in two non-contiguous segments, there
+exists a rearrangement~$z'$ that merges them into one contiguous
+segment with $A(z') \geq A(z)$ and $I_K(z') = I_K(z)$.
+Iterating until each Reeb vector appears at most once preserves
+these bounds.
+\end{lemma}
+
+% QC: immediate from shoelace (A quadratic in durations) and h_K^2 normalization (I_K linear).
+\begin{lemma}[Rescaling]\label{lem:rescaling}
+Let $z \colon [0,T] \to \mathbb{R}^4$ be a closed piecewise affine
+curve with pure Reeb velocities.
+For any $\beta > 0$, multiplying all durations by~$\beta$
+gives a curve~$z'$ with
+$A(z') = \beta^2 A(z)$ and $I_K(z') = \beta\, I_K(z)$.
+\end{lemma}
+
+% QC: compactness of S_F × Δ^{F-1} + continuity of A in (σ, s, T).
+%   Handles varying periods T_n → T.
+% Jörn: text approved (6f31407)
+\begin{lemma}[Compactness of simple curves]\label{lem:compactness}
+Let $(z_n)$ be a sequence of closed simple
+piecewise-Reeb curves with periods $T_n \to T > 0$.
+Then there are translation vectors $b_n$ such that a subsequence of
+$(z_n + b_n)$ converges to a closed simple piecewise-Reeb curve~$z_*$
+with period~$T$, $A(z_*) = \lim A(z_n)$, and $I_K(z_*) = T$.
+\end{lemma}
+
+%%% --- Proof of the theorem ---
+
+\begin{proof}[Proof of Theorem~\ref{thm:simple-minimizer}]
+A minimum-action generalized Reeb orbit on~$\partial K$ exists
+(Theorem~\ref{thm:orbit-existence-polytope}).
+By the primal-dual equivalence
+(Theorem~\ref{thm:primal-dual-equivalence}),
+any primal minimizer~$\gamma$ is also a dual minimizer,
+say $z_0 := \gamma$, with
+$I_K(z_0) = T = A(\gamma)$.
+Since $\gamma$ is a generalized Reeb orbit on a polytope,
+$\dot{z}_0(t) = \dot{\gamma}(t)
+  \in \mathrm{conv}\{R_1, \ldots, R_F\}$ a.e.
+
+For each $\varepsilon > 0$, apply the first four lemmas in sequence:
+\begin{enumerate}
+\item \emph{Approximate}
+  (Lemma~\ref{lem:pw-affine-approx}):
+  obtain a closed piecewise affine $z_1$
+  with velocities in $\mathrm{conv}\{R_i\}$,
+  $|A(z_1) - T| < \varepsilon$, and
+  $|I_K(z_1) - T| < \varepsilon$.
+
+\item \emph{Split}
+  (Lemma~\ref{lem:splitting}):
+  obtain a closed $z_2$ with pure Reeb velocities,
+  $A(z_2) \geq A(z_1)$, and $I_K(z_2) = T$.
+
+\item \emph{Merge}
+  (Lemma~\ref{lem:merging}):
+  obtain a closed $z_3$ with each Reeb vector
+  used at most once,
+  $A(z_3) \geq A(z_2)$, and $I_K(z_3) = T$.
+
+\item \emph{Rescale}
+  (Lemma~\ref{lem:rescaling}):
+  set $\beta = T / A(z_3)$ and obtain $z_4$ with
+  period $T_4 = \beta\, T = T^2 / A(z_3)$,
+  $A(z_4) = \beta^2 A(z_3) = T_4$, and
+  $I_K(z_4) = \beta\, T = T_4$.
+\end{enumerate}
+
+\emph{Optimality bound.}
+The curve $z_4$ is feasible for the dual problem
+with period~$T_4$
+(closed, $A(z_4) = T_4$).
+Since $z_0$ was a dual minimizer, the dual-feasible
+curve~$z_4$ satisfies
+$I_K(z_4) = T^2 / A(z_3) \geq I_K(z_0) = T$,
+i.e., $A(z_3) \leq T$.
+Combined with $A(z_3) \geq A(z_1) \geq T - \varepsilon$,
+we get $A(z_3) \to T$ as $\varepsilon \to 0$,
+hence $\beta \to 1$, $I_K(z_4) \to T$, and $T_4 \to T$.
+
+\begin{enumerate}\setcounter{enumi}{4}
+\item \emph{Compactness}
+  (Lemma~\ref{lem:compactness}):
+  the sequence $(z_4)$ (indexed by $\varepsilon \to 0$)
+  has periods $T_4 \to T$, so a subsequence converges up to translation
+  to a closed simple piecewise-Reeb
+  curve~$z_*$ with
+  $A(z_*) = T$ and $I_K(z_*) = T$.
+  Thus $z_*$ is a dual minimizer.
+\end{enumerate}
+
+By Theorem~\ref{thm:primal-dual-equivalence},
+$z_*$ corresponds to a primal minimizer
+$\gamma_* = \nu z_* + b$ for some constant
+$\nu > 0$, $b \in \mathbb{R}^4$.
+Since $z_*$ is simple, so is~$\gamma_*$.
+\end{proof}
+
+%%% --- Proofs of the lemmas ---
+% Jörn: text approved (6f31407) — proofs of lemmas 5.10–5.14
+
+\begin{proof}[Proof of Lemma~\ref{lem:pw-affine-approx}]
+% QC: standard density argument + integral mean value in a convex set.
+Since $\dot{z}(t) \in \mathrm{conv}\{R_1, \ldots, R_F\}$ a.e.,
+the velocity~$\dot{z}$ is bounded a.e.
+Hence we can find a partition $0 = t_0 < t_1 < \cdots < t_m = T$
+fine enough that the piecewise affine interpolant~$z'$
+defined by $z'(t_k) = z(t_k)$ (affine on each
+$(t_k, t_{k+1})$) satisfies
+$\|z' - z\|_{L^\infty} < \varepsilon$ and
+$\|\dot{z}' - \dot{z}\|_{L^\infty} < \varepsilon$.
+
+On each subinterval $(t_k, t_{k+1})$, the velocity
+of~$z'$ is the integral mean of~$\dot{z}$:
+\[
+  \dot{z}'(t)
+  = \frac{z(t_{k+1}) - z(t_k)}{t_{k+1} - t_k}
+  = \frac{1}{t_{k+1} - t_k}
+    \int_{t_k}^{t_{k+1}} \dot{z}(s)\, ds.
+\]
+Since $\dot{z}(s) \in \mathrm{conv}\{R_1, \ldots, R_F\}$
+a.e.\ and the convex hull is closed, the integral mean
+lies in $\mathrm{conv}\{R_1, \ldots, R_F\}$.
+
+Closure: $z'(0) = z(0) = z(T) = z'(T)$.
+
+The ``in particular'' clause follows from
+continuity of $A$ and $I_K$ in the $W^{1,2}$ norm:
+$A$ is bilinear in $(z, \dot{z})$, and
+$I_K$ is continuous in~$\dot{z}$ since $h_K^2$ is
+locally Lipschitz.
+\end{proof}
+
+\begin{proof}[Proof of Lemma~\ref{lem:splitting}]
+% QC: core idea: split each mixed-velocity segment into pure segments,
+%   choosing the ordering to preserve or increase action.
+%   Then show I_K = T by direct computation from Reeb normalization.
+Process each segment independently.
+If segment~$I$ has velocity
+$v = \sum_{i=1}^k a_i R_i$ with $a_i > 0$,
+$\sum a_i = 1$,
+replace~$I$ by $k$ consecutive subsegments of
+lengths $\Delta t_i = a_i |I|$, each with pure
+velocity~$R_i$.
+
+\emph{Closure preserved:}
+the total displacement is
+$\sum_i \Delta t_i R_i
+  = |I| \sum_i a_i R_i = |I|\, v$,
+the same as the original segment.
+
+\emph{Period preserved:}
+$\sum_i \Delta t_i = |I| \sum_i a_i = |I|$.
+
+\emph{Action non-decrease:}
+by Lemma~\ref{lem:shoelace},
+splitting segment~$I$ introduces
+new internal cross-terms
+$\sum_{r < s} \Delta t_r\, \Delta t_s\,
+  \omega_0(R_r, R_s)$.
+Reversing the ordering of the $k$ subsegments
+flips the sign of this sum
+(since $\omega_0(R_r, R_s) = -\omega_0(R_s, R_r)$).
+Hence one of the two orderings yields
+$\Delta A \geq 0$.
+
+\emph{Dual functional:}
+for a pure Reeb velocity
+$R_i = \frac{2}{h_i} J_0 n_i$,
+\[
+  h_K^2(-J_0 R_i)
+  = h_K^2\Bigl(\frac{2}{h_i} n_i\Bigr)
+  = \frac{4}{h_i^2}\, h_K^2(n_i)
+  = \frac{4}{h_i^2} \cdot h_i^2
+  = 4,
+\]
+using $h_K(n_i) = h_i$
+(Definition~\ref{def:facets}).
+Hence
+$I_K(z') = \frac{1}{4} \int_0^T 4\, dt = T$.
+\end{proof}
+
+\begin{proof}[Proof of Lemma~\ref{lem:merging}]
+% QC: the forward/backward merge argument uses the action identity.
+%   Key: the two action differences have opposite signs,
+%   so one is always non-negative.
+Let $w_1, \ldots, w_m$ be the velocity sequence with
+$w_r = w_s = v$ for some $r < s$.
+Write $M = \{r{+}1, \ldots, s{-}1\}$ for the middle segments.
+
+\emph{Forward merge} (merge to position~$r$):
+remove segment~$I_s$ and extend the duration of~$I_r$
+by~$|I_s|$,
+placing the middle segments after the merged segment.
+By Lemma~\ref{lem:shoelace}:
+\[
+  2A(z) = \sum_{1 \leq j < i \leq m}
+    |I_j|\,|I_i|\,\omega_0(w_j, w_i).
+\]
+The rearrangement only affects cross-terms
+between the middle segments~$M$ and the two
+segments with velocity~$v$ at positions $r$, $s$.
+The action difference between the merged and
+original curves is:
+\[
+  \Delta A_{\mathrm{fwd}}
+  = |I_s| \sum_{i \in M} |I_i|\, \omega_0(v, w_i).
+\]
+
+\emph{Backward merge} (merge to position~$s$):
+extend $I_s$ and place the middle segments before it.
+The same cross-term calculation gives:
+\[
+  \Delta A_{\mathrm{bwd}}
+  = -|I_r| \sum_{i \in M} |I_i|\, \omega_0(v, w_i).
+\]
+
+Since $|I_r|, |I_s| > 0$, the two action changes have
+opposite signs (or both vanish).
+Hence
+$\max(\Delta A_{\mathrm{fwd}},
+  \Delta A_{\mathrm{bwd}}) \geq 0$.
+
+Closure is preserved: the total displacement
+$\sum |I_k| w_k$ is unchanged by rearrangement.
+The dual functional $I_K$ is unchanged:
+$h_K^2(-J_0 \dot{z})$ depends only on the velocity
+at each time, not on its position in the sequence,
+so reordering segments preserves~$\int h_K^2$.
+\end{proof}
+
+\begin{proof}[Proof of Lemma~\ref{lem:rescaling}]
+By Lemma~\ref{lem:shoelace}, every term in $2A(z)$
+contains the product $|I_i|\,|I_j|$, so
+$A(z') = \beta^2 A(z)$.
+Since $h_K^2(-J_0 \dot{z})$ depends only on the velocity
+(unchanged by rescaling), $I_K$ scales linearly:
+$I_K(z') = \beta\, I_K(z)$.
+\end{proof}
+
+\begin{proof}[Proof of Lemma~\ref{lem:compactness}]
+% Jörn: text approved (6f31407)
+% QC note: the encoding (sigma, s, T) determines a piecewise-Reeb curve
+%   up to translation. Translation is a free parameter for dual curves.
+%   Compactness requires choosing appropriate translations b_n to ensure
+%   the sequence stays bounded.
+%   (Contrast Remark~\ref{rem:simple-orbit-data}, where primal orbits gamma
+%   need a base point b = gamma(0) in addition to (sigma, tau).)
+Each $z_n$ is encoded by
+$(\sigma_n, s_n, T_n, z_n(0)) \in S_F \times \Delta^{F-1} \times (0,\infty) \times \mathbb{R}^4$,
+where $\sigma_n$ is the ordering,
+$s_{n,i} = t_{n,i} / T_n$ are normalized durations,
+and $z_n(0)$ is the start point needed to trace the piecewise affine path.
+Since $T_n \to T > 0$, eventually
+$T_n \in [T/2,\, 2T]$.
+We only want convergence up to translations, so we drop the $z_n(0)$.
+The space
+$S_F \times \Delta^{F-1} \times [T/2,\, 2T]$
+is compact, so a subsequence has
+$(\sigma_n, s_n, T_n) \to (\sigma_*, s_*, T)$.
+The curve~$z_*$ with parameters
+$(\sigma_*, s_*, T)$ is the limit (up to choice of starting point).
+By Lemma~\ref{lem:shoelace},
+$A(\sigma, s, T) = T^2 \sum_{j<i} s_i\, s_j\,
+\omega_0(w_j, w_i)$ is continuous in $(\sigma, s, T)$,
+so $A(z_*) = \lim A(z_n)$.
+Since all velocities are pure Reeb vectors,
+$I_K(z_*) = T$.
+\end{proof}
+
