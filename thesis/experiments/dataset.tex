@@ -3,95 +3,101 @@
 % Sources: experiments/data/polytopes.jsonl, pentagon_sweep.jsonl,
 %   polygon_grid.jsonl, random_products.jsonl.
 %
-% This section describes the unified dataset of polytopes and capacity
-% computations that all subsequent experiments consume.
+% This section describes the dataset of polytopes and capacity computations
+% that all subsequent experiments use.
 
 \subsection{The Dataset}
 \label{sec:dataset}
 
-We maintain a unified dataset of convex 4-polytopes with EHZ capacity values
-computed by all applicable algorithms. This avoids redundant computation:
-each polytope is processed once, and different experiments read different
-columns of the same data.
+We compute the EHZ capacity (the minimum symplectic action over all generalized
+Reeb orbits, see Section~\ref{sec:ehz-capacity}) for 3,206 convex 4-polytopes
+using two algorithms:
 
-\subsubsection*{Algorithms}
+\begin{itemize}
+  \item \textbf{HK2017}: Exhaustive search over cyclic orderings of facets.
+    Works on any convex polytope. Exponential cost in facet count. Applied to
+    all 3,206 polytopes. (Details: Section~\ref{sec:main-result})
 
-Two algorithms are implemented and tested:
+  \item \textbf{Billiard}: Exploits the product structure $K_q \times_L K_p$
+    (Cartesian product with Lagrangian embedding). Works only when both $K_q$
+    and $K_p$ are convex polygons. Polynomial cost. Applied to 2,874 Lagrangian
+    products. (Details: Section~\ref{sec:billiard})
+\end{itemize}
 
-\begin{enumerate}
-  \item \textbf{HK2017} (Section~\ref{sec:main-result}): Applies to all convex
-    4-polytopes. Exhaustive search over cyclic permutations of facet subsets,
-    with adjacency-based pruning. Cost is exponential in the facet count~$F$.
-    Two variants: \emph{pruned} (production) and \emph{unpruned} (reference,
-    for cross-validation).
+For the 2,874 Lagrangian products, we run both algorithms and verify they agree
+within $10^{-8}$ relative error (chosen to exceed double-precision roundoff).
 
-  \item \textbf{Billiard} (Section~\ref{sec:billiard}): Applies only to
-    Lagrangian products $K_q \times_L K_p$ where both factors are convex
-    polygons. Exploits the sigma structure lemma and a 3-bounce bound to
-    restrict enumeration to polynomial cost.
-\end{enumerate}
+\subsubsection*{Polytope groups and algorithm application}
 
-A third algorithm (tube) is planned but not yet implemented.
-
-\subsubsection*{Polytope groups}
-
-The dataset consists of overlapping groups. A polytope may belong to multiple
-groups. Each group's existence is motivated by a specific experiment or
-verification need.
+The 3,206 polytopes are organized into groups by experimental purpose. Some
+polytopes appear in multiple groups (e.g., a known pentagon appears in both
+\textsc{LiteratureKnown} and \textsc{PentagonSweep}), so group sizes sum to
+more than 3,206.
 
 \begin{table}[h]
 \centering
 \small
-\begin{tabular}{llrl}
+\begin{tabular}{lrlll}
 \toprule
-Group & Description & Count & Motivated by \\
+Group & Count & Purpose & HK2017 & Billiard \\
 \midrule
-\textsc{LiteratureKnown} & Published capacity values & 7 & Literature agreement \\
-\textsc{RandomGeneric} & Random polytopes, $F = 5, \ldots, 12$ & 330 & Systolic ratios survey \\
-\textsc{RandomProducts} & Random Lagrangian products & 234 & Cross-algorithm validation \\
-\textsc{PentagonSweep} & Pentagon $\times R(\theta)$Pentagon & 361 & Lagrangian product analysis \\
-\textsc{PolygonGrid} & Regular $(n,m)$-gon pairs, $n{+}m \le 12$ & ${\sim}2500$ & Lagrangian product analysis \\
-\textsc{Scaled} & Polytopes scaled by random $\alpha$ & 11 & Conformality verification \\
-\textsc{Symplectomorphism} & Polytopes under random $M \in \mathrm{Sp}(4)$ & 11 & Invariance verification \\
+\textsc{LiteratureKnown} & 9 & Verify published values & 9 & 4 \\
+\textsc{RandomGeneric} & 330 & Systolic ratio survey & 330 & --- \\
+\textsc{RandomProducts} & 234 & Algorithm validation & 234 & 234 \\
+\textsc{PentagonSweep} & 361 & Product analysis & 361 & 361 \\
+\textsc{PolygonGrid} & 2272 & Product parameter sweep & 2272 & 2272 \\
+\textsc{TestFixture} & 33 & Correctness tests & 33 & 3 \\
 \bottomrule
 \end{tabular}
-\caption{Polytope groups in the dataset. Group sizes are approximate;
-  some groups overlap (e.g., \textsc{LiteratureKnown} contains Lagrangian
-  products that also appear in algorithm cross-validation).}
+\caption{Polytope groups and algorithm application. Algorithm columns show how
+  many polytopes in each group were computed with that algorithm. Billiard applies
+  only to Lagrangian products; other polytopes are marked ``---''.}
 \label{tab:dataset-groups}
 \end{table}
 
-\subsubsection*{Algorithm columns}
+\textbf{Details by group:}
 
-For each polytope, the dataset records:
 \begin{itemize}
-  \item Geometry: facet normals and heights (H-representation).
-  \item Volume (computed via convex hull).
-  \item \textbf{HK2017 pruned}: capacity, computation time, iteration count.
-    Present for all polytopes with $F \le 14$.
-  \item \textbf{Billiard}: capacity, computation time, iteration count, bounce
-    count. Present only for Lagrangian products.
-  \item \textbf{Agreement flag}: whether HK2017 and billiard agree within
-    relative tolerance $10^{-8}$.
+  \item \textsc{LiteratureKnown}: 9 polytopes with published capacity values
+    (simplex, hypercube, crosspolytope, HKO pentagon (Haim-Kislev-Ostrover
+    counterexample), two Lagrangian triangle products, two Lagrangian
+    triangle-square products, one symplectic triangle product (embedded via
+    symplectic rather than Lagrangian map)). File:
+    \texttt{experiments/data/polytopes.jsonl} (first 9 entries).
+
+  \item \textsc{RandomGeneric}: 330 random convex 4-polytopes with facet counts
+    $F = 5, \ldots, 12$ (generated via random halfspace sampling). Not Lagrangian
+    products, so billiard does not apply. File: \texttt{experiments/data/polytopes.jsonl}
+    (remaining 330 entries).
+
+  \item \textsc{RandomProducts}: 234 random Lagrangian products $K_q \times_L K_p$
+    where $K_q$ and $K_p$ are random convex polygons with 3--12 sides. Used to
+    verify HK2017 and billiard produce identical results across diverse polytopes.
+    File: \texttt{experiments/data/random\_products.jsonl}.
+
+  \item \textsc{PentagonSweep}: 361 polytopes of the form $P_5 \times_L R(\theta) P_5$,
+    where $P_5$ is a regular pentagon and $\theta \in [0°, 90°]$ with 0.25° steps.
+    Detailed analysis of one Lagrangian product family. File:
+    \texttt{experiments/data/pentagon\_sweep.jsonl}.
+
+  \item \textsc{PolygonGrid}: 2,272 polytopes $P_n \times_L R(\theta) P_m$ for
+    all pairs of regular polygons $(n, m)$ with $n + m \le 12$, swept over rotation
+    angles $\theta$ in the fundamental domain $[0°, 180°/\mathrm{lcm}(n,m)]$.
+    Parameter sweep across Lagrangian product families. File:
+    \texttt{experiments/data/polygon\_grid.jsonl}.
+
+  \item \textsc{TestFixture}: 33 polytopes used for algorithm correctness tests.
+    Includes 11 base polytopes ($F \le 8$: simplex, hypercube, triangle product,
+    and 8 small random polytopes), plus 11 scaled variants (testing $c(\alpha K) = \alpha^2 c(K)$),
+    plus 11 symplectomorphic variants (testing $c(MK) = c(K)$ for random $M \in \mathrm{Sp}(4)$).
+    File: \texttt{crates/hk2017/tests/fixtures/capacity\_dataset.json} (stored
+    with test code, not experimental data, because it is regenerated by
+    \texttt{cargo test}).
 \end{itemize}
 
-The HK2017 unpruned variant is additionally computed for a small subset of
-base polytopes with $F \le 8$ during fixture generation
-(Section~\ref{sec:correctness}). Its exponential cost without pruning makes
-it infeasible for larger polytopes (see Section~\ref{sec:benchmark} for
-timing data).
-
-\subsubsection*{Data files}
-
-The dataset is stored as JSONL files (one JSON object per line):
-\begin{itemize}
-  \item \texttt{polytopes.jsonl} --- \textsc{LiteratureKnown} + \textsc{RandomGeneric}
-  \item \texttt{pentagon\_sweep.jsonl} --- \textsc{PentagonSweep}
-  \item \texttt{polygon\_grid.jsonl} --- \textsc{PolygonGrid}
-  \item \texttt{random\_products.jsonl} --- \textsc{RandomProducts}
-  \item \texttt{acceptance.jsonl} --- Rejection sampling statistics
-    (Section~\ref{sec:rejection-sampling})
-\end{itemize}
-
-All files are committed to the repository and regenerated after algorithm
-changes.
+For HK2017, we use an adjacency-pruned search that skips cyclic orderings where
+non-adjacent facets appear consecutively (see Section~\ref{sec:main-result} for
+pruning correctness). To verify pruning does not introduce errors, we additionally
+compute the unpruned HK2017 variant (no adjacency check, exponential blowup) for
+the 11 base polytopes in \textsc{TestFixture}. Pruned and unpruned results agree
+to machine precision.
