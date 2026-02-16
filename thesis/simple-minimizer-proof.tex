@@ -506,12 +506,12 @@ and finally prove each lemma.
 % Jörn: text approved (0d73d2e) — lemma statements 5.10–5.14 and theorem proof
 
 % QC: translates HK2017 Lemma 4.2.
-%   Core: W^{1,2} approximation preserving closure, centering, velocity constraint.
+%   Core: W^{1,2} approximation preserving closure and velocity constraint.
 %   Corollary: A and I_K estimates by continuity.
 \begin{lemma}[Piecewise affine approximation]\label{lem:pw-affine-approx}
-Let $z \in W^{1,2}([0,T], \mathbb{R}^4)$ be closed and centered
+Let $z \in W^{1,2}([0,T], \mathbb{R}^4)$ be closed
 with $\dot{z}(t) \in \mathrm{conv}\{R_1, \ldots, R_F\}$ a.e.
-For any $\varepsilon > 0$, there exists a closed, centered,
+For any $\varepsilon > 0$, there exists a closed
 piecewise affine curve~$z'$ with
 $\dot{z}'(t) \in \mathrm{conv}\{R_1, \ldots, R_F\}$ on each piece
 and $\|z' - z\|_{W^{1,2}} < \varepsilon$.
@@ -526,10 +526,10 @@ for a constant~$C$ depending only on~$z$.
 %   Core: split convex-combination velocities into pure Reeb, A non-decreasing.
 %   I_K = T is an immediate consequence, not the core difficulty.
 \begin{lemma}[Splitting mixed velocities]\label{lem:splitting}
-Let $z \colon [0,T] \to \mathbb{R}^4$ be a closed, centered,
+Let $z \colon [0,T] \to \mathbb{R}^4$ be a closed
 piecewise affine curve with velocities in
 $\mathrm{conv}\{R_1, \ldots, R_F\}$.
-There exists a closed, centered, piecewise affine curve~$z'$
+There exists a closed piecewise affine curve~$z'$
 with the same period~$T$, whose velocity on each segment is a single
 Reeb vector~$R_i$, such that
 $A(z') \geq A(z)$.
@@ -559,9 +559,9 @@ $A(z') = \beta^2 A(z)$ and $I_K(z') = \beta\, I_K(z)$.
 % QC: compactness of S_F × Δ^{F-1} + continuity of A in (σ, s, T).
 %   Handles varying periods T_n → T.
 \begin{lemma}[Compactness of simple curves]\label{lem:compactness}
-Let $(z_n)$ be a sequence of closed, centered, simple
+Let $(z_n)$ be a sequence of closed simple
 piecewise-Reeb curves with periods $T_n \to T > 0$.
-Then a subsequence converges to a closed, centered, simple
+Then a subsequence converges to a closed simple
 piecewise-Reeb curve~$z_*$ with period~$T$,
 $A(z_*) = \lim A(z_n)$, and $I_K(z_*) = T$.
 \end{lemma}
@@ -573,8 +573,8 @@ A minimum-action generalized Reeb orbit on~$\partial K$ exists
 (Theorem~\ref{thm:orbit-existence-polytope}).
 By the primal-dual equivalence
 (Theorem~\ref{thm:primal-dual-equivalence}),
-any primal minimizer~$\gamma$ corresponds to a dual minimizer
-$z_0 = \gamma - \mathrm{center}(\gamma)$ with
+any primal minimizer~$\gamma$ is also a dual minimizer,
+say $z_0 := \gamma$, with
 $I_K(z_0) = T = A(\gamma)$.
 Since $\gamma$ is a generalized Reeb orbit on a polytope,
 $\dot{z}_0(t) = \dot{\gamma}(t)
@@ -584,19 +584,19 @@ For each $\varepsilon > 0$, apply the first four lemmas in sequence:
 \begin{enumerate}
 \item \emph{Approximate}
   (Lemma~\ref{lem:pw-affine-approx}):
-  obtain a closed, centered, piecewise affine $z_1$
+  obtain a closed piecewise affine $z_1$
   with velocities in $\mathrm{conv}\{R_i\}$,
   $|A(z_1) - T| < \varepsilon$, and
   $|I_K(z_1) - T| < \varepsilon$.
 
 \item \emph{Split}
   (Lemma~\ref{lem:splitting}):
-  obtain a closed, centered $z_2$ with pure Reeb velocities,
+  obtain a closed $z_2$ with pure Reeb velocities,
   $A(z_2) \geq A(z_1)$, and $I_K(z_2) = T$.
 
 \item \emph{Merge}
   (Lemma~\ref{lem:merging}):
-  obtain a closed, centered $z_3$ with each Reeb vector
+  obtain a closed $z_3$ with each Reeb vector
   used at most once,
   $A(z_3) \geq A(z_2)$, and $I_K(z_3) = T$.
 
@@ -611,7 +611,7 @@ For each $\varepsilon > 0$, apply the first four lemmas in sequence:
 \emph{Optimality bound.}
 The curve $z_4$ is feasible for the dual problem
 with period~$T_4$
-(closed, centered, $A(z_4) = T_4$).
+(closed, $A(z_4) = T_4$).
 Since $z_0$ was a dual minimizer, the dual-feasible
 curve~$z_4$ satisfies
 $I_K(z_4) = T^2 / A(z_3) \geq I_K(z_0) = T$,
@@ -625,7 +625,7 @@ hence $\beta \to 1$, $I_K(z_4) \to T$, and $T_4 \to T$.
   (Lemma~\ref{lem:compactness}):
   the sequence $(z_4)$ (indexed by $\varepsilon \to 0$)
   has periods $T_4 \to T$, so a subsequence converges
-  to a closed, centered, simple piecewise-Reeb
+  to a closed simple piecewise-Reeb
   curve~$z_*$ with
   $A(z_*) = T$ and $I_K(z_*) = T$.
   Thus $z_*$ is a dual minimizer.
@@ -696,10 +696,6 @@ the same as the original segment.
 
 \emph{Period preserved:}
 $\sum_i \Delta t_i = |I| \sum_i a_i = |I|$.
-
-\emph{Centering restored:}
-translate $z'$ by $-\frac{1}{T}\int_0^T z'\,dt$
-to restore centering; this preserves $\dot{z}'$, closure, $A(z')$, and $I_K(z')$.
 
 \emph{Action non-decrease:}
 by Lemma~\ref{lem:shoelace},
