@@ -7,7 +7,7 @@
 // Usage:
 //   cd experiments/viz && node screenshot-figures.mjs
 //
-// Output: experiments/figures/viz-*.png
+// Output: experiments/visualization/viz-*.png
 
 import { chromium } from 'playwright';
 import { mkdirSync } from 'fs';
@@ -15,7 +15,7 @@ import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const FIGURES_DIR = resolve(__dirname, '..', 'figures');
+const FIGURES_DIR = resolve(__dirname, '..');
 
 // Viewport matches a thesis-friendly aspect ratio (4:3, 800x600)
 const VIEWPORT = { width: 800, height: 600 };
