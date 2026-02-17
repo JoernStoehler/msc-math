@@ -359,6 +359,8 @@ Per-experiment folders under `experiments/`, each containing: Rust binary (.rs),
 
 Pipeline: Rust binary → .jsonl data → Python script → .png figures → .tex writeup → thesis
 
+**`experiments/reproduce.sh`** documents the full pipeline from zero data to compiled thesis. It is the single source of truth for reproduction. When adding, removing, or changing an experiment, update `reproduce.sh` to match. The script is meant to be runnable, but is not expected to be run end-to-end in practice.
+
 <!-- Full conventions: experiments/CLAUDE.md -->
 
 ## Thesis (LaTeX)
