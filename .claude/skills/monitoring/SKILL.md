@@ -106,8 +106,8 @@ cd /workspaces/msc-math/crates && time cargo build 2>&1
 # 2. Full test suite (compile + run)
 cd /workspaces/msc-math/crates && time cargo test --lib 2>&1
 
-# 3. Test time (single crate)
-cd /workspaces/msc-math/crates && time cargo test --lib 2>&1
+# 3. Test time (release, for comparison)
+cd /workspaces/msc-math/crates && time cargo test --lib --release 2>&1
 
 # 4. Clippy
 cd /workspaces/msc-math/crates && time cargo clippy --lib -- -D warnings 2>&1
@@ -166,7 +166,7 @@ ps aux | grep -E 'target/debug/deps/' | grep -v grep
 
 **Procedure:**
 
-1. List all `#[test]` and `#[ignore]` functions across all crates:
+1. List all `#[test]` and `#[ignore]` functions in the `symplectic` crate:
 ```bash
 cd /workspaces/msc-math/crates
 grep -rn '#\[test\]' --include='*.rs' | grep -v target/
@@ -199,7 +199,7 @@ echo "=== release ===" && time cargo test --lib --release 2>&1 | tail -3
 **Alert threshold:**
 - Any un-ignored test >10s in debug with no debug-specific value
 - Any test bundling conceptually different concerns (e.g. known-value check + large random sweep)
-- Any crate's debug tests >30s total
+- Debug test suite total >30s
 
 ---
 

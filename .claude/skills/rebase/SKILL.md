@@ -29,7 +29,7 @@ Never `git rebase origin/main`. Never `git fetch origin main && git rebase origi
 ## After rebase
 
 4. **Verify commit count.** `git log main..HEAD --oneline | wc -l` — must equal the number from step 2, or less (if some commits were already on main). If it's MORE, you rebased onto a stale base.
-5. **Spot-check the diff.** `git diff main..HEAD --stat` — every file listed must belong to your branch's work. If you see unexpected files (CLAUDE.md moves, monitoring additions, etc.), the rebase picked up stale commits.
+5. **Spot-check the diff.** `git diff main...HEAD --stat` — every file listed must belong to your branch's work. If you see unexpected files (CLAUDE.md moves, monitoring additions, etc.), the rebase picked up stale commits.
 6. **Run tests.** `cd crates/ && cargo test --lib`
 
 ## If something looks wrong
