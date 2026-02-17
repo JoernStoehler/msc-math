@@ -2,10 +2,14 @@
 // screenshot-figures.mjs — Generate thesis figures from the 4D polytope viewer.
 //
 // Reproducible: deterministic camera position, north pole, trajectory selection.
-// Requires: serve.sh running on localhost:8080, Playwright installed.
+// Requires: a local HTTP server on localhost:8080 serving this directory,
+//           and Playwright installed (npm install playwright).
 //
 // Usage:
-//   cd experiments/viz && node screenshot-figures.mjs
+//   cd experiments/visualization/viz
+//   python3 -m http.server 8080 &
+//   node screenshot-figures.mjs
+//   kill %1
 //
 // Output: experiments/visualization/viz-*.png
 
@@ -26,6 +30,8 @@ const BASE_URL = 'http://localhost:8080';
 // Camera and north pole are chosen per-polytope for balanced framing.
 // The diagonal pole (1,1,1,1)/2 avoids aligning with any axis, giving
 // a more balanced stereographic projection where no edges go to infinity.
+//
+// trajectoryIndex: which single trajectory to show (null = hide all)
 const FIGURES = [
   // ---- Polytope structure (edges only, no trajectories) ----
   //
@@ -34,11 +40,10 @@ const FIGURES = [
   {
     name: 'viz-hypercube-edges',
     polytope: 'hypercube',
-    trajectory: -2,          // -2 = hide trajectories entirely
     showEdges: true,
     showRidges: false,
     showVertices: true,
-    showTrajectories: false,
+    trajectoryIndex: null,
     northPole: 'e4',
     maxRadius: 6,
     camera: { x: 4, y: 3, z: 5 },
@@ -46,11 +51,10 @@ const FIGURES = [
   {
     name: 'viz-hko-pentagon-edges',
     polytope: 'hko_pentagon',
-    trajectory: -2,
     showEdges: true,
     showRidges: false,
     showVertices: true,
-    showTrajectories: false,
+    trajectoryIndex: null,
     northPole: 'e4',
     maxRadius: 6,
     camera: { x: 4, y: 3, z: 5 },
@@ -59,11 +63,10 @@ const FIGURES = [
   {
     name: 'viz-hypercube-traj',
     polytope: 'hypercube',
-    trajectory: 0,
     showEdges: false,
     showRidges: false,
     showVertices: true,
-    showTrajectories: true,
+    trajectoryIndex: 0,
     northPole: 'e4',
     maxRadius: 6,
     camera: { x: 4, y: 3, z: 5 },
@@ -71,11 +74,10 @@ const FIGURES = [
   {
     name: 'viz-simplex-traj',
     polytope: 'simplex',
-    trajectory: 0,
     showEdges: false,
     showRidges: false,
     showVertices: true,
-    showTrajectories: true,
+    trajectoryIndex: 0,
     northPole: 'e4',
     maxRadius: 6,
     camera: { x: 4, y: 3, z: 5 },
@@ -83,11 +85,10 @@ const FIGURES = [
   {
     name: 'viz-hko-pentagon-traj',
     polytope: 'hko_pentagon',
-    trajectory: 0,
     showEdges: false,
     showRidges: false,
     showVertices: true,
-    showTrajectories: true,
+    trajectoryIndex: 0,
     northPole: 'e4',
     maxRadius: 6,
     camera: { x: 4, y: 3, z: 5 },
@@ -95,11 +96,10 @@ const FIGURES = [
   {
     name: 'viz-lagrangian-tri-product-traj',
     polytope: 'lagrangian_triangle_product',
-    trajectory: 0,
     showEdges: false,
     showRidges: false,
     showVertices: true,
-    showTrajectories: true,
+    trajectoryIndex: 0,
     northPole: 'e4',
     maxRadius: 6,
     camera: { x: 4, y: 3, z: 5 },
@@ -108,11 +108,10 @@ const FIGURES = [
   {
     name: 'viz-hypercube-ridges',
     polytope: 'hypercube',
-    trajectory: -2,
     showEdges: true,
     showRidges: true,
     showVertices: false,
-    showTrajectories: false,
+    trajectoryIndex: null,
     northPole: 'e4',
     maxRadius: 6,
     camera: { x: 4, y: 3, z: 5 },
@@ -133,55 +132,41 @@ async function main() {
     // Wait for Three.js to initialize
     await page.waitForFunction(() => typeof loadPolytope === 'function');
 
-    // Load polytope and wait for data
+    // Load polytope (this also initializes all trajectories as visible)
     await page.evaluate((name) => {
-      return new Promise((resolve, reject) => {
-        const origLoad = loadPolytope;
-        // Patch to detect completion
-        window._figReady = false;
-        const origRebuild = rebuildScene;
-        rebuildScene = function() {
-          origRebuild();
-          window._figReady = true;
-        };
-        origLoad(name);
-        // Poll for completion
-        const check = setInterval(() => {
-          if (window._figReady) {
-            clearInterval(check);
-            rebuildScene = origRebuild;
-            resolve();
-          }
-        }, 50);
-        setTimeout(() => { clearInterval(check); reject(new Error('timeout')); }, 10000);
-      });
+      loadPolytope(name);
     }, fig.polytope);
+
+    // Wait for scene to build
+    await page.waitForTimeout(300);
 
     // Override MAX_RADIUS for tighter framing (default 30 is too large for screenshots)
     if (fig.maxRadius) {
       await page.evaluate((r) => { MAX_RADIUS = r; }, fig.maxRadius);
     }
 
-    // Set north pole preset (also calls rebuildScene, picking up the new MAX_RADIUS)
+    // Set north pole preset (calls rebuildScene with new MAX_RADIUS)
     await page.evaluate((preset) => setNorthPolePreset(preset), fig.northPole);
 
-    // Set display toggles
-    const showTraj = fig.showTrajectories !== false;
-    await page.evaluate(({ showEdges, showRidges, showVertices, showTraj }) => {
-      document.getElementById('show-edges').checked = showEdges;
-      document.getElementById('show-ridges').checked = showRidges;
-      document.getElementById('show-vertices').checked = showVertices;
-      document.getElementById('show-traj').checked = showTraj;
-      onToggle('edges', showEdges);
-      onToggle('ridges', showRidges);
-      onToggle('vertices', showVertices);
-      onToggle('trajectories', showTraj);
-    }, { showEdges: fig.showEdges, showRidges: fig.showRidges, showVertices: fig.showVertices, showTraj });
+    // Set display toggles via the global variables + onToggle (which calls rebuildScene)
+    await page.evaluate(({ edges, ridges, vertices }) => {
+      onToggle('edges', edges);
+      onToggle('ridges', ridges);
+      onToggle('vertices', vertices);
+    }, { edges: fig.showEdges, ridges: fig.showRidges, vertices: fig.showVertices });
 
-    // Select trajectory
-    if (showTraj && fig.trajectory >= -1) {
-      await page.evaluate((trajIdx) => onTrajectoryChange(trajIdx), fig.trajectory);
-    }
+    // Set trajectory visibility: show only the specified trajectory, or none
+    await page.evaluate((trajIdx) => {
+      // Hide all trajectories first
+      const indices = Array.from(visibleTrajectories);
+      for (const i of indices) {
+        onTrajectoryToggle(i, false);
+      }
+      // Show the single requested trajectory (if any)
+      if (trajIdx !== null && polytopeData && trajIdx < polytopeData.trajectories.length) {
+        onTrajectoryToggle(trajIdx, true);
+      }
+    }, fig.trajectoryIndex);
 
     // Set camera position
     await page.evaluate(({ x, y, z }) => {
@@ -190,7 +175,7 @@ async function main() {
       controls.update();
     }, fig.camera);
 
-    // Wait a frame for render
+    // Wait for render
     await page.waitForTimeout(200);
 
     // Hide the control panels for clean screenshot
