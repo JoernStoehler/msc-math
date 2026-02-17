@@ -3,10 +3,9 @@
 /// Exports the full combinatorial skeleton (vertices, edges, ridges),
 /// Reeb vectors, and sample Reeb trajectories as a single JSON file
 /// consumed by the Three.js viewer in `experiments/viz/`.
-use geom::known_polytopes::{self, KnownPolytope};
-use geom::reeb_trajectory;
-use geom::skeleton::Skeleton;
-use geom::volume;
+use symplectic::known_polytopes::{self, KnownPolytope};
+use symplectic::geom::reeb_trajectory;
+use symplectic::Skeleton;
 use nalgebra::Vector4;
 use serde::Serialize;
 use std::fs::File;
@@ -104,7 +103,7 @@ pub fn export(name: &str, output: &Path) -> Result<(), String> {
     let trajectories = generate_trajectories(polytope, &skeleton);
 
     // Compute volume and systolic ratio
-    let vol = volume::volume(polytope).unwrap_or(0.0);
+    let vol = symplectic::volume(polytope).unwrap_or(0.0);
     let systolic_ratio = if vol > 0.0 {
         kp.capacity * kp.capacity / (2.0 * vol)
     } else {
@@ -157,7 +156,7 @@ pub fn export(name: &str, output: &Path) -> Result<(), String> {
 }
 
 fn generate_trajectories(
-    polytope: &geom::polytope::Polytope4D,
+    polytope: &symplectic::Polytope4D,
     skeleton: &Skeleton,
 ) -> Vec<VizTrajectory> {
     // Generate only one sample trajectory (from facet 0).
@@ -184,4 +183,27 @@ fn generate_trajectories(
     }
 
     vec![] // No valid trajectory found
+}
+
+fn main() {
+    let args: Vec<String> = std::env::args().collect();
+    if args.len() != 3 {
+        eprintln!("Usage: {} <polytope-name> <output-path>", args[0]);
+        eprintln!("Available polytopes:");
+        for kp in known_polytopes::all_known() {
+            eprintln!("  - {}", kp.name);
+        }
+        std::process::exit(1);
+    }
+
+    let name = &args[1];
+    let output_path = Path::new(&args[2]);
+
+    match export(name, output_path) {
+        Ok(()) => {}
+        Err(e) => {
+            eprintln!("Error: {e}");
+            std::process::exit(1);
+        }
+    }
 }

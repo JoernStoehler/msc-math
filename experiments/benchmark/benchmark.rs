@@ -2,8 +2,8 @@
 //!
 //! Architecture:
 //! 1. `cargo run --bin benchmark --release` generates benchmark dataset
-//! 2. Writes to experiments/data/benchmark.jsonl
-//! 3. Python script (experiments/scripts/benchmark.py) reads JSONL and fits timing model
+//! 2. Writes to benchmark/benchmark.jsonl
+//! 3. Python script reads JSONL and fits timing model
 //!
 //! Dataset design:
 //! - Random polytopes for HK2017 timing model (F=5..12)
@@ -12,11 +12,11 @@
 //!
 //! Total: ~85 polytopes, ~100 capacity computations
 
-use billiard::billiard_capacity;
-use datasets::random::generate_random_polytopes;
-use geom::lagrangian_product::lagrangian_product;
-use geom::polygon::random_polygon_2d;
-use hk2017::{ehz_capacity, ehz_capacity_pruned};
+use symplectic::billiard_capacity;
+use symplectic::random::generate_random_polytopes;
+use symplectic::lagrangian_product;
+use symplectic::geom::polygon::random_polygon_2d;
+use symplectic::{ehz_capacity, ehz_capacity_pruned};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use serde::{Deserialize, Serialize};
@@ -82,10 +82,7 @@ fn main() {
     
     // Construct output path relative to repo root (works from any cwd)
     let output_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .and_then(|p| p.parent())
-        .map(|p| p.join("experiments/data/benchmark.jsonl"))
-        .expect("failed to construct output path");
+        .join("benchmark/benchmark.jsonl");
 
     println!("Generating benchmark dataset...\n");
 

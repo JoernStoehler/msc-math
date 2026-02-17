@@ -2,8 +2,8 @@
 //!
 //! Architecture:
 //! 1. `cargo run --bin random_product_sweep --release` generates dataset
-//! 2. Writes to experiments/data/random-product-sweep.jsonl
-//! 3. Python script (experiments/scripts/random_product_sweep.py) plots sys vs (k,m)
+//! 2. Writes to random-product-sweep/random-product-sweep.jsonl
+//! 3. Python script plots sys vs (k,m)
 //!
 //! Dataset design:
 //! - Random 2D polygons with k, m in {3,4,5,6}
@@ -12,10 +12,10 @@
 //! - Height range h in [0.8, 1.2]
 //! - Billiard algorithm only (Lagrangian products)
 
-use billiard::billiard_capacity;
-use geom::lagrangian_product::lagrangian_product;
-use geom::polygon::random_polygon_2d;
-use geom::volume::volume;
+use symplectic::billiard_capacity;
+use symplectic::lagrangian_product;
+use symplectic::geom::polygon::random_polygon_2d;
+use symplectic::volume;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use serde::Serialize;
@@ -65,10 +65,7 @@ fn main() {
     let mut rng = ChaCha8Rng::seed_from_u64(SEED);
 
     let output_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .and_then(|p| p.parent())
-        .map(|p| p.join("experiments/data/random-product-sweep.jsonl"))
-        .expect("failed to construct output path");
+        .join("random-product-sweep/random-product-sweep.jsonl");
 
     println!("Generating random Lagrangian product sweep...\n");
 

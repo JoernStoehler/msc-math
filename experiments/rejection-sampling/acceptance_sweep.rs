@@ -1,8 +1,11 @@
 /// Acceptance rate sweep: measure rejection sampling statistics across parameter configs.
-use crate::dataset::AcceptanceRow;
-use crate::random::sample_random_polytope;
+use symplectic::dataset::AcceptanceRow;
+use symplectic::random::sample_random_polytope;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
+use serde_json;
+use std::fs::File;
+use std::io::{BufWriter, Write};
 use std::time::Instant;
 
 /// Hardcoded sweep grid.
@@ -59,6 +62,43 @@ pub fn run_sweep(n_attempts: usize, seed: u64) -> Vec<AcceptanceRow> {
     }
 
     rows
+}
+
+fn main() {
+    const N_ATTEMPTS: usize = 1000;
+    const SEED: u64 = 42;
+
+    let output_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("rejection-sampling/acceptance.jsonl");
+
+    println!("Running acceptance rate sweep...");
+    println!("  n_attempts = {N_ATTEMPTS}");
+    println!("  seed = {SEED}");
+    println!();
+
+    let rows = run_sweep(N_ATTEMPTS, SEED);
+
+    let file = File::create(&output_path).expect("failed to create output file");
+    let mut writer = BufWriter::new(file);
+
+    for row in &rows {
+        serde_json::to_writer(&mut writer, row).expect("failed to serialize row");
+        writeln!(writer).expect("failed to write newline");
+        println!(
+            "F={:2} h∈[{:.1},{:.1}]: acceptance={:.1}% (accepted={:4}/{:4}, avg_time={:.2}ms)",
+            row.facet_count,
+            row.h_min,
+            row.h_max,
+            row.acceptance_ratio * 100.0,
+            row.n_accepted,
+            row.n_total,
+            row.avg_time_accepted_ms
+        );
+    }
+
+    writer.flush().expect("failed to flush output");
+    println!();
+    println!("Wrote {} rows to {}", rows.len(), output_path.display());
 }
 
 #[cfg(test)]

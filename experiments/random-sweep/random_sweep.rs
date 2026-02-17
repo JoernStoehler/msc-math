@@ -2,17 +2,17 @@
 //!
 //! Architecture:
 //! 1. `cargo run --bin random_sweep --release` generates dataset
-//! 2. Writes to experiments/data/random-sweep.jsonl
-//! 3. Python script (experiments/scripts/random_sweep.py) plots sys vs F
+//! 2. Writes to random-sweep/random-sweep.jsonl
+//! 3. Python script plots sys vs F
 //!
 //! Dataset design:
 //! - Random polytopes with facet counts F=5..12
 //! - Height range h in [0.8, 1.2]
 //! - HK2017 pruned only (production algorithm)
 
-use datasets::random::generate_random_polytopes;
-use geom::volume::volume;
-use hk2017::ehz_capacity_pruned;
+use symplectic::random::generate_random_polytopes;
+use symplectic::volume;
+use symplectic::ehz_capacity_pruned;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use serde::Serialize;
@@ -57,10 +57,7 @@ fn main() {
     let mut rng = ChaCha8Rng::seed_from_u64(SEED);
 
     let output_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .and_then(|p| p.parent())
-        .map(|p| p.join("experiments/data/random-sweep.jsonl"))
-        .expect("failed to construct output path");
+        .join("random-sweep/random-sweep.jsonl");
 
     println!("Generating random sweep dataset...\n");
 

@@ -2,8 +2,8 @@
 //!
 //! Architecture:
 //! 1. `cargo run --bin pentagon_perturb --release` generates dataset
-//! 2. Writes to experiments/data/pentagon-perturb.jsonl
-//! 3. Python script (experiments/scripts/pentagon_perturb.py) analyzes and plots
+//! 2. Writes to pentagon-perturb/pentagon-perturb.jsonl
+//! 3. Python script analyzes and plots
 //!
 //! Dataset design:
 //! - Start from the HK-O 2024 pentagon product (10 facets)
@@ -11,10 +11,10 @@
 //! - 100 perturbed samples + 1 unperturbed baseline
 //! - HK2017 pruned algorithm only
 
-use geom::known_polytopes;
-use geom::polytope::Polytope4D;
-use geom::volume::volume;
-use hk2017::ehz_capacity_pruned;
+use symplectic::known_polytopes;
+use symplectic::Polytope4D;
+use symplectic::volume;
+use symplectic::ehz_capacity_pruned;
 use nalgebra::Vector4;
 use rand::Rng;
 use rand::SeedableRng;
@@ -129,10 +129,7 @@ fn main() {
     let mut rng = ChaCha8Rng::seed_from_u64(SEED);
 
     let output_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .and_then(|p| p.parent())
-        .map(|p| p.join("experiments/data/pentagon-perturb.jsonl"))
-        .expect("failed to construct output path");
+        .join("pentagon-perturb/pentagon-perturb.jsonl");
 
     println!("Generating HK-O pentagon perturbation dataset...\n");
     println!(

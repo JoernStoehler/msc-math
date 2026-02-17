@@ -3,18 +3,17 @@
 //! Architecture:
 //! 1. `cargo run --bin lagrangian_sweep --release` generates pentagon 5x5 sweep
 //!    and regular polygon pair sweeps.
-//! 2. Writes to experiments/data/lagrangian-products-5x5.jsonl and
-//!    experiments/data/lagrangian-products-<n>x<m>-6deg.jsonl
+//! 2. Writes to lagrangian-products/lagrangian-products-5x5.jsonl and
+//!    lagrangian-products/lagrangian-products-<n>x<m>-6deg.jsonl
 //!
 //! Capacity algorithm: billiard (fast, production default for Lagrangian products).
-use billiard::billiard_capacity;
-use geom::lagrangian_product::lagrangian_product;
-use geom::polygon::{polygon_area, regular_polygon_2d, rotate_polygon_2d};
-use geom::volume::volume;
+use symplectic::billiard_capacity;
+use symplectic::lagrangian_product;
+use symplectic::geom::polygon::{polygon_area, regular_polygon_2d, rotate_polygon_2d};
+use symplectic::volume;
 use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
-use std::path::Path;
 use std::time::Instant;
 
 const PENTAGON_START_DEG: f64 = 0.0;
@@ -54,13 +53,13 @@ struct SweepRow {
 }
 
 fn main() {
-    let repo_root = repo_root();
-    generate_pentagon_5x5(&repo_root);
-    generate_polygon_pairs(&repo_root);
+    generate_pentagon_5x5();
+    generate_polygon_pairs();
 }
 
-fn generate_pentagon_5x5(repo_root: &Path) {
-    let output_path = repo_root.join("experiments/data/lagrangian-products-5x5.jsonl");
+fn generate_pentagon_5x5() {
+    let output_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("lagrangian-products/lagrangian-products-5x5.jsonl");
     let file = File::create(&output_path).expect("cannot create output file");
     let mut writer = BufWriter::new(file);
 
@@ -123,12 +122,13 @@ fn generate_pentagon_5x5(repo_root: &Path) {
     eprintln!("Done. Output: {}", output_path.display());
 }
 
-fn generate_polygon_pairs(repo_root: &Path) {
+fn generate_polygon_pairs() {
     for &(n1, n2) in PAIRS {
-        let output_path = repo_root.join(format!(
-            "experiments/data/lagrangian-products-{}x{}-6deg.jsonl",
-            n1, n2
-        ));
+        let output_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join(format!(
+                "lagrangian-products/lagrangian-products-{}x{}-6deg.jsonl",
+                n1, n2
+            ));
         let file = File::create(&output_path).expect("cannot create output file");
         let mut writer = BufWriter::new(file);
 
@@ -204,14 +204,6 @@ fn sweep_angles(start_deg: f64, end_deg: f64, step_deg: f64) -> Vec<f64> {
         angles.push(end_deg);
     }
     angles
-}
-
-fn repo_root() -> std::path::PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .and_then(|p| p.parent())
-        .map(|p| p.to_path_buf())
-        .expect("failed to construct repo root")
 }
 
 fn lcm(a: usize, b: usize) -> usize {

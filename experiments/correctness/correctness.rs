@@ -2,7 +2,7 @@
 //!
 //! Architecture:
 //! 1. `cargo run --bin correctness --release` generates 47 polytopes, computes 71 capacities
-//! 2. Writes to experiments/data/correctness.jsonl
+//! 2. Writes to correctness/correctness.jsonl
 //! 3. `cargo test --bin correctness --release` reads dataset and verifies properties
 //!
 //! Polytope breakdown:
@@ -21,16 +21,16 @@
 //! - Perturbed: 10 pruned
 //! Total: 47 pruned + 10 unpruned + 14 billiard = 71 capacity values
 
-use billiard::billiard_capacity;
-use datasets::random::generate_random_polytopes;
-use geom::known_polytopes::{
+use symplectic::billiard_capacity;
+use symplectic::random::generate_random_polytopes;
+use symplectic::known_polytopes::{
     hko_pentagon, hypercube, lagrangian_triangle_product, lagrangian_triangle_square,
     simplex, symplectic_triangle_product, symplectic_triangle_square,
 };
-use geom::lagrangian_product::lagrangian_product;
-use geom::polygon::random_polygon_2d;
-use geom::polytope::Polytope4D;
-use hk2017::{ehz_capacity, ehz_capacity_pruned};
+use symplectic::lagrangian_product;
+use symplectic::geom::polygon::random_polygon_2d;
+use symplectic::Polytope4D;
+use symplectic::{ehz_capacity, ehz_capacity_pruned};
 use nalgebra::Matrix4;
 use rand::{Rng, SeedableRng};
 use rand_chacha::ChaCha8Rng;
@@ -61,10 +61,7 @@ fn main() {
     
     // Construct output path relative to repo root (works from any cwd)
     let output_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .and_then(|p| p.parent())
-        .map(|p| p.join("experiments/data/correctness.jsonl"))
-        .expect("failed to construct output path");
+        .join("correctness/correctness.jsonl");
 
     // Test 1: Generate 10 base polytopes (5 random generic + 5 Lagrangian products)
     println!("Test 1: Generating 10 base polytopes (5 generic + 5 Lagrangian)...");
@@ -287,11 +284,13 @@ fn random_sp4_matrix(rng: &mut impl Rng) -> Matrix4<f64> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use nalgebra::Vector4;
+    use std::io::{BufRead, BufReader};
     const TOL: f64 = 1e-6;
 
     fn load_dataset() -> Vec<VerificationEntry> {
-        let manifest_dir = env!("CARGO_MANIFEST_DIR");
-        let path = format!("{}/../experiments/data/correctness.jsonl", manifest_dir);
+        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("correctness/correctness.jsonl");
         let file = File::open(&path)
             .expect("Run `cargo run --bin correctness --release` first");
         let reader = BufReader::new(file);
