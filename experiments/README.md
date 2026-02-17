@@ -1,5 +1,5 @@
 # Experiments
 
-Python scripts for data science exploration of Viterbo's conjecture.
+Per-experiment folders, each containing a Rust binary, Python script, LaTeX writeup, data (.jsonl), and figures (.png). See `experiments/CLAUDE.md` for conventions.
 
-Each script is independent and consumes datasets produced by the Rust crates.
+Pipeline: Rust binary → .jsonl → Python script → .png → .tex → thesis

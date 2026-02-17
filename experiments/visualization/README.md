@@ -46,3 +46,15 @@ Generated figures:
 | viz/screenshot-figures.mjs | Playwright screenshot automation |
 | viz-*.png | Generated thesis figures |
 | visualization.tex | Thesis writeup |
+
+## Future work
+
+Two planned extensions, both blocked on mathematical theory:
+
+### Interesting Reeb trajectories
+
+Replace current placeholder trajectories with minimum-action orbits from HK2017. **Blocked on primal-dual reconstruction**: the algorithm outputs dual solution (S, sigma, beta), not the primal trajectory gamma(t). Requires a reconstruction theorem (thesis) and `reconstruct_trajectory()` implementation before this can proceed.
+
+### Displaced trajectory visualization
+
+Show rotation/twisting of nearby Reeb trajectories to motivate the tube algorithm. Given a Reeb orbit gamma, compute displaced trajectory gamma_tilde(t) = gamma(t) + v(t) starting from gamma(0) + epsilon*v_0. The displacement v(t) rotates around 0, making gamma_tilde twist around gamma. Challenges: combinatorics mismatch for large epsilon, non-closure of displaced trajectory, visibility in stereographic projection.
