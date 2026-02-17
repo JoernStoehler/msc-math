@@ -3,8 +3,8 @@
 Plot systolic ratio summary for random Lagrangian products by polygon pair.
 
 Goal: Visualize how sys varies across (k,m) polygon pairs.
-Input: experiments/data/random-product-sweep.jsonl
-Output: experiments/figures/random_product_sweep_sys_vs_pair.png
+Input: experiments/random-product-sweep/random-product-sweep.jsonl
+Output: experiments/random-product-sweep/random_product_sweep_sys_vs_pair.png
 """
 
 import json
@@ -16,8 +16,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-DATA_PATH = REPO_ROOT / "experiments" / "data" / "random-product-sweep.jsonl"
-FIGURES_DIR = REPO_ROOT / "experiments" / "figures"
+EXPERIMENT_DIR = Path(__file__).resolve().parent
+DATA_PATH = EXPERIMENT_DIR / "random-product-sweep.jsonl"
+FIGURES_DIR = EXPERIMENT_DIR
 
 PAIRS = [
     (3, 3),

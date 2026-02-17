@@ -3,8 +3,8 @@
 Plot systolic ratio summary for random 4D polytopes by facet count.
 
 Goal: Visualize how sys varies with F using random polytopes and the pruned algorithm.
-Input: experiments/data/random-sweep.jsonl
-Output: experiments/figures/random_sweep_sys_vs_f.png
+Input: experiments/random-sweep/random-sweep.jsonl
+Output: experiments/random-sweep/random_sweep_sys_vs_f.png
 """
 
 import json
@@ -16,8 +16,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-DATA_PATH = REPO_ROOT / "experiments" / "data" / "random-sweep.jsonl"
-FIGURES_DIR = REPO_ROOT / "experiments" / "figures"
+EXPERIMENT_DIR = Path(__file__).resolve().parent
+DATA_PATH = EXPERIMENT_DIR / "random-sweep.jsonl"
+FIGURES_DIR = EXPERIMENT_DIR
 
 
 def load_jsonl(path: Path) -> list[dict]:

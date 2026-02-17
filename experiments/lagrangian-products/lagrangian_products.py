@@ -3,10 +3,10 @@
 Plot systolic ratio curves for pentagon 5x5 and regular polygon pairs.
 
 Goal: Visualize sys(theta) for the 5x5 pentagon sweep and selected n-gon x m-gon pairs.
-Input: experiments/data/lagrangian-products-5x5.jsonl,
-       experiments/data/lagrangian-products-<n>x<m>-6deg.jsonl
-Output: experiments/figures/lagrangian_products_5x5.png,
-        experiments/figures/lagrangian_products_polygon_pairs.png
+Input: experiments/lagrangian-products/lagrangian-products-5x5.jsonl,
+       experiments/lagrangian-products/lagrangian-products-<n>x<m>-6deg.jsonl
+Output: experiments/lagrangian-products/lagrangian_products_5x5.png,
+        experiments/lagrangian-products/lagrangian_products_polygon_pairs.png
 """
 import json
 import sys
@@ -16,8 +16,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-DATA_DIR = REPO_ROOT / "experiments" / "data"
-FIGURES_DIR = REPO_ROOT / "experiments" / "figures"
+EXPERIMENT_DIR = Path(__file__).resolve().parent
+DATA_DIR = EXPERIMENT_DIR
+FIGURES_DIR = EXPERIMENT_DIR
 
 PAIR_FILES = {
     (3, 3): "lagrangian-products-3x3-6deg.jsonl",

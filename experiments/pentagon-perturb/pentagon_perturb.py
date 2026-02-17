@@ -4,12 +4,12 @@ Analyze perturbations of the HK-O pentagon counterexample.
 
 Goal: Plot histogram of systolic ratios under small facet perturbations,
       summarize stats, and compute PCA directions of the perturbation space.
-Input: experiments/data/pentagon-perturb.jsonl
-Output: experiments/figures/pentagon_perturb_sys_hist.png
-    experiments/figures/pentagon_perturb_stats.md
-    experiments/figures/pentagon_perturb_stats.tex
-    experiments/figures/pentagon_perturb_pca.md
-    experiments/figures/pentagon_perturb_pca.tex
+Input: experiments/pentagon-perturb/pentagon-perturb.jsonl
+Output: experiments/pentagon-perturb/pentagon_perturb_sys_hist.png
+    experiments/pentagon-perturb/pentagon_perturb_stats.md
+    experiments/pentagon-perturb/pentagon_perturb_stats.tex
+    experiments/pentagon-perturb/pentagon_perturb_pca.md
+    experiments/pentagon-perturb/pentagon_perturb_pca.tex
 """
 
 import json
@@ -20,8 +20,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-DATA_PATH = REPO_ROOT / "experiments" / "data" / "pentagon-perturb.jsonl"
-FIGURES_DIR = REPO_ROOT / "experiments" / "figures"
+EXPERIMENT_DIR = Path(__file__).resolve().parent
+DATA_PATH = EXPERIMENT_DIR / "pentagon-perturb.jsonl"
+FIGURES_DIR = EXPERIMENT_DIR
 N_PCA_COMPONENTS = 5
 
 
