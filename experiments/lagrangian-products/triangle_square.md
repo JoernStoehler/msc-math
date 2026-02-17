@@ -130,10 +130,10 @@ The test in `lib_test.rs` already uses the correct computed value (1.5) rather t
 
 ## Changes Made
 
-Investigation binaries created (throwaway, to be removed):
-- `crates/datasets/src/bin/investigate_tri_sq.rs`
-- `crates/datasets/src/bin/investigate_tri_sq_v2.rs`
-- `crates/datasets/src/bin/investigate_tri_sq_v3.rs`
+Investigation binaries created (throwaway; removed during repo restructure):
+- `investigate_tri_sq.rs`
+- `investigate_tri_sq_v2.rs`
+- `investigate_tri_sq_v3.rs`
 
 No production code was modified. The recommended fixes should be implemented in a follow-up.
 

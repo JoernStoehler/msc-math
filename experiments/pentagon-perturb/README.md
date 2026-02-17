@@ -4,8 +4,8 @@ Goal: perturb the standard HK-O pentagon counterexample and study the distributi
 
 ## Dataset
 
-- Generator: `crates/datasets/src/bin/pentagon_perturb.rs`
-- Output JSONL: `experiments/data/pentagon-perturb.jsonl`
+- Generator: `experiments/pentagon-perturb/pentagon_perturb.rs`
+- Output JSONL: `experiments/pentagon-perturb/pentagon-perturb.jsonl`
 - Base polytope: `known_polytopes::hko_pentagon()` (10 facets)
 - Perturbation: uniform noise per component
   - Normals: each component in [-0.01, 0.01], then renormalized to unit length
@@ -15,12 +15,12 @@ Goal: perturb the standard HK-O pentagon counterexample and study the distributi
 
 ## Outputs
 
-- Script: `experiments/scripts/pentagon_perturb.py`
-- Histogram: `experiments/figures/pentagon_perturb_sys_hist.png`
-- Stats table (markdown): `experiments/figures/pentagon_perturb_stats.md`
-- Stats table (LaTeX): `experiments/figures/pentagon_perturb_stats.tex`
-- PCA table (markdown): `experiments/figures/pentagon_perturb_pca.md`
-- PCA table (LaTeX): `experiments/figures/pentagon_perturb_pca.tex`
+- Script: `experiments/pentagon-perturb/pentagon_perturb.py`
+- Histogram: `experiments/pentagon-perturb/pentagon_perturb_sys_hist.png`
+- Stats table (markdown): `experiments/pentagon-perturb/pentagon_perturb_stats.md`
+- Stats table (LaTeX): `experiments/pentagon-perturb/pentagon_perturb_stats.tex`
+- PCA table (markdown): `experiments/pentagon-perturb/pentagon_perturb_pca.md`
+- PCA table (LaTeX): `experiments/pentagon-perturb/pentagon_perturb_pca.tex`
 
 The script prints the stats and PCA tables to stdout for quick copy into notes or LaTeX.
 
@@ -34,6 +34,6 @@ variance ratio as the strength column.
 ## Run
 
 ```bash
-cargo run --bin pentagon_perturb --release
-python experiments/scripts/pentagon_perturb.py
+cd experiments/ && cargo run --bin pentagon_perturb --release
+python experiments/pentagon-perturb/pentagon_perturb.py
 ```

@@ -15,8 +15,8 @@ memory reduction. Two optimizations kept, two discarded.
   polytopes (F=10 too slow under instrumentation). Callgrind counts every
   instruction — no sampling noise.
 - **Wall-clock timing**: Deterministic profiling binary
-  (`crates/hk2017/examples/profile_ehz.rs`) with seeded RNG, 6 known + 6 random
-  polytopes (F=5..10), correctness assertions against literature values.
+  (profiling binary from old crate structure; no longer exists as a separate example)
+  with seeded RNG, 6 known + 6 random polytopes (F=5..10), correctness assertions against literature values.
 - **Heap profiling**: Valgrind massif, heap-only (no stack tracking — massif
   crashes with `--stacks=yes` on this binary).
 

@@ -5,9 +5,9 @@
 **Status:** Complete. Dataset generated, all 6 tests pass.
 
 **Files:**
-- Rust: `crates/datasets/src/bin/correctness.rs` (dataset generator + tests)
-- Dataset: `experiments/data/correctness.jsonl` (47 polytopes, 71 capacity values)
-- Writeup: `thesis/experiments/correctness.tex`
+- Rust: `experiments/correctness/correctness.rs` (dataset generator + tests)
+- Dataset: `experiments/correctness/correctness.jsonl` (47 polytopes, 71 capacity values)
+- Writeup: `experiments/correctness/correctness.tex`
 
 ## Design
 
@@ -56,7 +56,7 @@ Billiard is only computed for Lagrangian products:
 
 ## Tests
 
-All 6 tests read from `experiments/data/correctness.jsonl` (dataset must be regenerated if algorithm changes).
+All 6 tests read from `experiments/correctness/correctness.jsonl` (dataset must be regenerated if algorithm changes).
 
 ### Test 1: Direct Comparison
 
@@ -152,8 +152,8 @@ The writeup is mathematical, not implementation-focused. It describes WHAT prope
 To regenerate after algorithm changes:
 
 ```bash
-cd crates/
-cargo run --bin correctness --release   # Generates experiments/data/correctness.jsonl
+cd experiments/
+cargo run --bin correctness --release   # Generates correctness/correctness.jsonl
 cargo test --bin correctness --release  # Verifies all 6 properties
 ```
 

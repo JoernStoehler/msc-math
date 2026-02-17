@@ -4,8 +4,8 @@ Goal: sample random 4D polytopes with facet counts $F=5..12$, compute systolic r
 
 ## Dataset
 
-- Generator: `crates/datasets/src/bin/random_sweep.rs`
-- Output JSONL: `experiments/data/random-sweep.jsonl`
+- Generator: `experiments/random-sweep/random_sweep.rs`
+- Output JSONL: `experiments/random-sweep/random-sweep.jsonl`
 - Heights: uniform in [0.8, 1.2]
 - Sample plan:
   - F=5..10: 10 samples each
@@ -14,8 +14,8 @@ Goal: sample random 4D polytopes with facet counts $F=5..12$, compute systolic r
 
 ## Plot
 
-- Script: `experiments/scripts/random_sweep.py`
-- Output: `experiments/figures/random_sweep_sys_vs_f.png`
+- Script: `experiments/random-sweep/random_sweep.py`
+- Output: `experiments/random-sweep/random_sweep_sys_vs_f.png`
 - Plot details:
   - Scatter all samples
   - Median with standard deviation error bars per F
@@ -24,6 +24,6 @@ Goal: sample random 4D polytopes with facet counts $F=5..12$, compute systolic r
 ## Run
 
 ```bash
-cargo run --bin random_sweep --release
-python experiments/scripts/random_sweep.py
+cd experiments/ && cargo run --bin random_sweep --release
+python experiments/random-sweep/random_sweep.py
 ```

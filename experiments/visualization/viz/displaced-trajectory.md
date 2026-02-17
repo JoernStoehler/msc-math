@@ -112,7 +112,7 @@ Given a Reeb orbit γ: [0, T] → K (where γ is a closed or periodic generalize
 
 ### Thesis Integration
 
-Location: `thesis/experiments/displaced-trajectory.tex`
+Location: `experiments/visualization/displaced-trajectory.tex` (does not exist yet)
 
 - [ ] Section 1: Mathematical setup (Reeb flow, displacement, rotation)
 - [ ] Section 2: Visualization methodology (stereographic projection, color coding)
@@ -157,7 +157,7 @@ Location: `thesis/experiments/displaced-trajectory.tex`
    - Toggle on "displaced trajectory" (orange)
    - Rotate view to show twisting clearly
 
-2. **Static figures** (thesis/experiments/):
+2. **Static figures** (experiments/visualization/):
    - Figure 1: Hypercube orbit + displaced trajectory (two views)
    - Figure 2: Displacement vector magnitude ‖v(t)‖ vs time
    - Figure 3: Comparison across polytopes (simplex, hypercube, pentagon)

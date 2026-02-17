@@ -32,7 +32,7 @@ The viz webapp currently shows:
 
 **Required deliverable before this task can proceed:**
 - Theorem in `thesis/` proving how to reconstruct γ from (S, σ, β)
-- Implementation in `crates/hk2017/src/lib.rs`: `pub fn reconstruct_trajectory(...) -> Trajectory`
+- Implementation in `crates/src/algorithms/hk2017.rs`: `pub fn reconstruct_trajectory(...) -> Trajectory`
 - Tests verifying primal-dual correspondence
 
 ## Phase 2 Tasks (Once Math Exists)
@@ -43,7 +43,7 @@ The viz webapp currently shows:
 **Output:** Actual trajectory γ(t) as VizTrajectory
 
 **Files to modify:**
-- `crates/datasets/src/viz_export.rs`: Call `hk2017::reconstruct_trajectory()`
+- `experiments/visualization/viz_export.rs`: Call `hk2017::reconstruct_trajectory()`
 - `experiments/viz/viz.js`: Render with distinctive styling (gold, thicker line)
 
 **Acceptance criteria:**
@@ -100,10 +100,10 @@ Thesis advisors (Kai & Elizabeth) can:
 
 ## References
 
-- HK2017 algorithm: `crates/hk2017/src/lib.rs`
-- Current viz export: `crates/datasets/src/viz_export.rs`
+- HK2017 algorithm: `crates/src/algorithms/hk2017.rs`
+- Current viz export: `experiments/visualization/viz_export.rs`
 - Detailed experiment design: `experiments/viz/displaced-trajectory.md`
-- Tube algorithm (uses rotation): `crates/tube/src/lib.rs`
+- Tube algorithm (uses rotation): `crates/src/algorithms/tube.rs`
 
 ## Notes for Next Agent
 
