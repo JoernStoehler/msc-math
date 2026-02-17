@@ -1,6 +1,6 @@
 # Experiments
 
-Python scripts for exploring Viterbo's conjecture through computational data science.
+Per-experiment folders combining Rust data generators, Python analysis scripts, LaTeX writeups, and all generated artifacts.
 
 ## Philosophy
 
@@ -32,6 +32,8 @@ No clear cutoff for "when to archive". It's continuous prioritization:
 ```
 experiments/
   CLAUDE.md              This file
+  Cargo.toml             Builds all experiment Rust binaries (depends on symplectic crate)
+  reproduce.sh           Source of truth for full pipeline (zero data → thesis PDF)
   IDEAS.md               Ongoing thoughts, ideas, edge cases, preliminary findings
   <name>/                Per-experiment folder
     <name>.rs            Rust binary source
@@ -97,7 +99,7 @@ Make them actionable. Bad: "File not found". Good: "File not found: data.jsonl. 
 
 ## Pipeline direction
 
-Rust → datasets → Python → figures/tables → thesis
+Rust binary → .jsonl → Python script → figures/tables → thesis
 
 **Data flow:**
 1. Rust binaries generate JSONL datasets → `experiments/<name>/`
@@ -106,8 +108,12 @@ Rust → datasets → Python → figures/tables → thesis
 
 **No circular dependencies:**
 - Python never calls Rust directly
-- Rust binaries are standalone (built from experiment directory)
+- Rust binaries are built from `experiments/Cargo.toml` (`cd experiments/ && cargo build --release`)
 - If Rust API changes, only experiment binaries need updates
+- To add a new experiment: create `<name>/` folder, add `[[bin]]` entry to `Cargo.toml`, update `reproduce.sh`
+
+**Pipeline documentation:**
+`experiments/reproduce.sh` is the single source of truth for the full pipeline from zero data to compiled thesis. When adding, removing, or changing an experiment, update `reproduce.sh` to match.
 
 ## Data and figures in git
 
@@ -140,7 +146,7 @@ Rust → datasets → Python → figures/tables → thesis
 
 **Document assumptions:**
 - If script assumes file exists, document it in header and error message
-- Example: "Assumes data/polytopes.jsonl exists. Run run_dataset.py first."
+- Example: "Assumes benchmark.jsonl exists. Run: cd experiments/ && cargo run --bin benchmark --release"
 
 **Verification:**
 - Results checked by Jörn before inclusion in thesis
