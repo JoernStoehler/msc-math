@@ -33,7 +33,7 @@ Each check defines: purpose, commands, expected results, and alert thresholds.
 
 **Command:**
 ```bash
-cd /workspaces/msc-math/crates && cargo test --package geom qhull_boundedness_test::investigation::cross_check_boundedness_detection -- --ignored --nocapture 2>&1 | tail -50
+cd /workspaces/msc-math/crates && cargo test qhull_boundedness_test::investigation::cross_check_boundedness_detection -- --ignored --nocapture 2>&1 | tail -50
 ```
 
 **Expected result:**
@@ -44,7 +44,7 @@ cd /workspaces/msc-math/crates && cargo test --package geom qhull_boundedness_te
 - ANY disagreement between qhull and check_bounded()
 - Test failure or panic
 
-**Test location:** `crates/geom/src/qhull_boundedness_test.rs`
+**Test location:** `crates/src/geom/qhull_boundedness_test.rs`
 
 ---
 
@@ -70,7 +70,7 @@ cd /workspaces/msc-math/crates && cargo test --lib volume::volume_test::comprehe
 - Max relative error > 1e-7
 - Test failure or panic
 
-**Test location:** `crates/geom/src/volume_test.rs`
+**Test location:** `crates/src/geom/volume_test.rs`
 
 ---
 
@@ -106,11 +106,8 @@ cd /workspaces/msc-math/crates && time cargo build 2>&1
 # 2. Full test suite (compile + run)
 cd /workspaces/msc-math/crates && time cargo test --lib 2>&1
 
-# 3. Per-crate test times
-cd /workspaces/msc-math/crates
-for crate in geom hk2017 billiard tube datasets; do
-  echo "=== $crate ===" && time cargo test --lib -p $crate 2>&1
-done
+# 3. Test time (single crate)
+cd /workspaces/msc-math/crates && time cargo test --lib 2>&1
 
 # 4. Clippy
 cd /workspaces/msc-math/crates && time cargo clippy --lib -- -D warnings 2>&1
@@ -125,10 +122,7 @@ git -C /workspaces/msc-math worktree remove "$BENCH_WT"
 **Alert threshold:**
 - Hot test suite > 2x previous baseline
 - Cold build > 2x previous baseline
-- Single crate >75% of total test time: investigate (may be structural)
-- Single crate >90% of total test time: action required
-
-**Note:** Structural dominance (one compute-heavy crate, lightweight others) is expected in this workspace. hk2017 runs exponential-time capacity computation while other crates have fast tests. High percentage with reasonable absolute time is acceptable.
+- Regression from previous baseline: investigate
 
 ---
 
@@ -179,12 +173,11 @@ grep -rn '#\[test\]' --include='*.rs' | grep -v target/
 grep -rn '#\[ignore\]' --include='*.rs' | grep -v target/
 ```
 
-2. For each crate, measure debug vs release test time:
+2. Measure debug vs release test time:
 ```bash
-for crate in geom hk2017 billiard tube datasets; do
-  echo "=== $crate debug ===" && time cargo test -p $crate 2>&1 | tail -3
-  echo "=== $crate release ===" && time cargo test -p $crate --release 2>&1 | tail -3
-done
+cd /workspaces/msc-math/crates
+echo "=== debug ===" && time cargo test --lib 2>&1 | tail -3
+echo "=== release ===" && time cargo test --lib --release 2>&1 | tail -3
 ```
 
 3. For any test taking >2s in debug, classify:

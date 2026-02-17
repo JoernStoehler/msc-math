@@ -48,7 +48,7 @@ Examples from past reviews to calibrate judgment.
 
 **Deleted:** `timing_model.md`, `crosspolytope_experiment.md` (experiment writeups)
 
-**Replacement:** `thesis/experiments/benchmark.tex` (LaTeX section)
+**Replacement:** `experiments/benchmark/benchmark.tex` (LaTeX section)
 
 **Verdict:** ✓ Content migrated
 - Writeups moved from .md to .tex

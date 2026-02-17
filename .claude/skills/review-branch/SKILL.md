@@ -180,8 +180,8 @@ See `deletion-examples.md` for concrete examples.
 
 #### Data/Figures Changes
 
-If the branch touches algorithm code (`geom/`, `hk2017/`, `billiard/`, `tube/`):
-- Check if `experiments/data/` or `experiments/figures/` changed
+If the branch touches algorithm code (`crates/src/geom/`, `crates/src/algorithms/`):
+- Check if experiment data or figures changed (colocated in `experiments/<name>/`)
 - If changed: verify changes are in separate commit from code
 - If NOT changed but should be: note "data needs regeneration before merge"
 - Convention: data regenerated on main after merge (not on branches)
