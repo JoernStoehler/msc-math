@@ -190,7 +190,7 @@ fn random_polygon_heights_in_range() {
     for _ in 0..10 {
         let (_, heights) = random_polygon_2d(5, 0.5, 2.0, &mut rng);
         for &h in &heights {
-            assert!(h >= 0.5 && h <= 2.0, "height {h} out of range [0.5, 2.0]");
+            assert!((0.5..=2.0).contains(&h), "height {h} out of range [0.5, 2.0]");
         }
     }
 }

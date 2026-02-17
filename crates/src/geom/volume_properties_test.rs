@@ -18,6 +18,7 @@ fn volume_positive_on_known_polytopes() {
     ];
 
     for (name, polytope, expected) in cases {
+        #[allow(clippy::expect_fun_call)]
         let vol = volume(&polytope).expect(&format!("{} volume computation", name));
 
         assert!(

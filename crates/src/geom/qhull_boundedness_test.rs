@@ -51,11 +51,8 @@ mod investigation {
             Err(e) => {
                 println!("✓ FAILED AS EXPECTED");
                 println!("  Error: {}", e);
-                match e {
-                    QhullError::ComputationFailed(stderr) => {
-                        println!("  Stderr: {}", stderr);
-                    }
-                    _ => {}
+                if let QhullError::ComputationFailed(stderr) = e {
+                    println!("  Stderr: {}", stderr);
                 }
             }
         }
@@ -87,11 +84,8 @@ mod investigation {
             Err(e) => {
                 println!("✓ FAILED AS EXPECTED");
                 println!("  Error: {}", e);
-                match e {
-                    QhullError::ComputationFailed(stderr) => {
-                        println!("  Stderr: {}", stderr);
-                    }
-                    _ => {}
+                if let QhullError::ComputationFailed(stderr) = e {
+                    println!("  Stderr: {}", stderr);
                 }
             }
         }

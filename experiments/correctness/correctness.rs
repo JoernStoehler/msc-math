@@ -11,6 +11,7 @@
 //! - 10 scaled (from base, with random α ∈ [0.5, 2.0])
 //! - 10 transformed (from base, with random M ∈ Sp(4))
 //! - 10 perturbed (from base, with 1% height perturbation)
+//!
 //! Total: 47 polytopes
 //!
 //! Capacity breakdown:
@@ -19,6 +20,7 @@
 //! - Scaled: 10 pruned + 5 billiard (Lagrangian only)
 //! - Transformed: 10 pruned
 //! - Perturbed: 10 pruned
+//!
 //! Total: 47 pruned + 10 unpruned + 14 billiard = 71 capacity values
 
 use symplectic::billiard_capacity;
@@ -276,8 +278,8 @@ fn random_sp4_matrix(rng: &mut impl Rng) -> Matrix4<f64> {
     );
 
     let i = Matrix4::identity();
-    let i_minus_a = &i - &a;
-    let i_plus_a = &i + &a;
+    let i_minus_a = i - a;
+    let i_plus_a = i + a;
     i_minus_a * i_plus_a.try_inverse().expect("invertible")
 }
 
@@ -361,9 +363,9 @@ mod tests {
                 "{}: c(αK)≠α²c(K)", entry.name);
 
             // If base has billiard, scaled should too (and satisfy conformality)
-            if base_entry.capacity_billiard.is_some() {
+            if let Some(base_bil) = base_entry.capacity_billiard {
                 let bil = entry.capacity_billiard.expect("scaled Lagrangian missing billiard");
-                let expected_bil = alpha * alpha * base_entry.capacity_billiard.unwrap();
+                let expected_bil = alpha * alpha * base_bil;
                 assert!((bil - expected_bil).abs() / expected_bil < TOL,
                     "{}: billiard c(αK)≠α²c(K)", entry.name);
                 billiard_count += 1;

@@ -125,6 +125,7 @@ fn print_adjacency(n1: usize, n2: usize, angle_deg: f64) {
         );
     }
     eprintln!("  Adjacent pairs:");
+    #[allow(clippy::needless_range_loop)]
     for i in 0..f {
         for j in (i + 1)..f {
             if adj[i][j] {

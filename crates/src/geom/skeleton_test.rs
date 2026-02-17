@@ -72,8 +72,8 @@ fn lagrangian_triangle_product_skeleton() {
     // Each ridge is a pair of facets sharing vertices.
     // For a product P1 ×_L P2: ridges are either (fi, fj) within P1 or P2,
     // or (fi from P1, fj from P2). We just check totals are reasonable.
-    assert!(skel.edges.len() > 0, "has edges");
-    assert!(skel.ridges.len() > 0, "has ridges");
+    assert!(!skel.edges.is_empty(), "has edges");
+    assert!(!skel.ridges.is_empty(), "has ridges");
 
     // Every ridge has ≥3 vertices (polygon)
     for ridge in &skel.ridges {

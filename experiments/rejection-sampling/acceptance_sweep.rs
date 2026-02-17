@@ -3,7 +3,6 @@ use symplectic::dataset::AcceptanceRow;
 use symplectic::random::sample_random_polytope;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
-use serde_json;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
