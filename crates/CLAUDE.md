@@ -122,7 +122,7 @@ Verify correctness on complex examples where fixture isn't suitable.
 ///
 /// **Why release mode:** F=[N] → [X]s debug, [Y]s release. Input-output test, only care about result.
 /// **Why #[ignore]:** Too slow for default suite. Run after [specific changes].
-/// **Run with:** `cargo test --release -p [crate] [name] -- --ignored`
+/// **Run with:** `cargo test --release [name] -- --ignored`
 #[test]
 #[ignore]  // Xmin debug, Ys release
 fn expensive_case() {
@@ -147,7 +147,7 @@ Regenerate fixture after code changes.
 ///
 /// **Why release mode:** [N] computations × [cost] = [time] in release vs. [time] in debug.
 /// **When to run:** After changes to [what triggers regeneration].
-/// **Run with:** `cargo test --release -p [crate] [name] -- --ignored --nocapture`
+/// **Run with:** `cargo test --release [name] -- --ignored --nocapture`
 #[test]
 #[ignore]
 fn regenerate_fixture() {
@@ -201,7 +201,7 @@ fn pruned_matches_unpruned() { ... }
 ///
 /// **Why release mode:** F=8 → 16s debug, 0.2s release. Input-output test.
 /// **Why #[ignore]:** Too slow for default suite.
-/// **Run with:** `cargo test --release -p hk2017 pruned_matches_unpruned -- --ignored`
+/// **Run with:** `cargo test --release pruned_matches_unpruned -- --ignored`
 ///
 /// For quick fixture-based check, see `pruned_matches_unpruned_from_fixture()`.
 #[test]
@@ -213,15 +213,15 @@ fn pruned_matches_unpruned() { ... }
 
 | Suite | Command | When to run | Time (2026-02-14) |
 |-------|---------|-------------|-------------------|
-| **Default** | `cargo test --lib` | Every iteration | ~43s wall |
-| Regenerate capacity fixture | `cargo test --release -p hk2017 regenerate_test_dataset -- --ignored` | After changes to `ehz_capacity()` | ~20s |
-| Expensive capacity tests | `cargo test --release -p hk2017 -- --ignored` | After capacity algorithm changes | ~2s |
-| Boundedness cross-check | `cargo test -p geom -- --ignored` | Monitoring, or after qhull/boundedness changes | ~3s |
+| **Default** | `cargo test --lib` | Every iteration | ~22s wall |
+| Regenerate capacity fixture | `cargo test --release regenerate_test_dataset -- --ignored` | After changes to `ehz_capacity()` | ~20s |
+| Expensive capacity tests | `cargo test --release -- --ignored` | After capacity algorithm changes | ~2s |
+| Boundedness cross-check | `cargo test -- --ignored` | Monitoring, or after qhull/boundedness changes | ~3s |
 | All ignored tests | `cargo test -- --ignored` | Full validation | ~5 min |
 
-Target: default suite <3 min single-threaded (currently ~43s).
+Target: default suite <3 min single-threaded (currently ~22s).
 
-**Fixture location:** `hk2017/tests/fixtures/capacity_dataset.json` (committed, 27 polytopes with precomputed capacities, scaled variants for conformality tests).
+**Fixture location:** `tests/fixtures/capacity_dataset.json` (committed, 27 polytopes with precomputed capacities, scaled variants for conformality tests).
 
 ## Magic numbers
 

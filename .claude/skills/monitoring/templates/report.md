@@ -41,16 +41,12 @@
 | Measurement | Time | Notes |
 |---|---|---|
 | Hot build (no-op) | | |
-| Full test suite | | |
-| geom | | |
-| hk2017 | | |
-| billiard | | |
-| tube | | |
-| datasets | | |
+| Full test suite (debug) | | |
+| Full test suite (release) | | |
 | Clippy | | |
 | Cold build | | (if measured) |
 
-**Hotspot analysis:** (which crate/test dominates, what % of total)
+**Hotspot analysis:** (which module/test dominates, what % of total)
 **Comparison to previous:** (faster/slower/same, by how much)
 
 ### Check 6: Stale Processes
@@ -75,7 +71,7 @@
 
 ## Suggested Actions
 
-(Concrete next steps, if any — e.g., "investigate why hk2017 tests are 5x slower", "add #[ignore] to slow property tests")
+(Concrete next steps, if any — e.g., "investigate why capacity tests are 5x slower", "add #[ignore] to slow property tests")
 
 ## Suggested Skill Changes
 

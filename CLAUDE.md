@@ -18,16 +18,21 @@ This repo is a completed master thesis with:
 ```
 CLAUDE.md          This file (all agents read this)
 thesis/            LaTeX thesis document
-crates/            Rust workspace (cargo build/test from here)
-  geom/            2D and 4D symplectic geometry primitives
-  hk2017/          Haim-Kislev 2017 algorithm (all polytopes, exponential cost)
-  billiard/        Billiard algorithm (Lagrangian products only, fast)
-  tube/            Tube algorithm (no Lagrangian 2-faces, moderate cost)
-  datasets/        Dataset generation orchestration
-experiments/       Python scripts consuming Rust-generated datasets
-  scripts/         Independent .py scripts
-  data/            Datasets (committed) — regenerated on main after algorithm changes
-  figures/         Figures (committed) — regenerated on main after algorithm changes
+crates/            Single Rust crate "symplectic" (cargo build/test from here)
+  src/
+    lib.rs         Crate root with re-exports
+    constants.rs   Shared tolerance constants (EPS_FACET_INCIDENCE)
+    kkt.rs         KKT solver (shared by hk2017 and billiard)
+    random.rs      Random polytope generation
+    dataset.rs     Dataset serialization
+    geom/          2D and 4D symplectic geometry primitives
+    algorithms/
+      hk2017/      Haim-Kislev 2017 algorithm (all polytopes, exponential cost)
+      billiard/    Billiard algorithm (Lagrangian products only, fast)
+      tube/        Tube algorithm (placeholder)
+  tests/fixtures/  Precomputed test data
+experiments/       Per-experiment folders with all artifacts
+  <name>/          Each experiment: .rs binary, .py script, .tex writeup, data, figures
 papers/            arxiv .tex sources for reference (HK2017, CH2021, HK-O 2024, ...)
 archaeology/       Recovered files from abandoned predecessor repo (all of untrusted quality)
 ```
@@ -37,7 +42,7 @@ archaeology/       Recovered files from abandoned predecessor repo (all of untru
 Branches often touch multiple languages simultaneously:
 - **Rust** (crates/) → **Python** (experiments/) → **LaTeX** (thesis/)
 
-Data flows across languages: Rust binaries generate CSVs → Python scripts process → JSON models → LaTeX writeups reference.
+Data flows across languages: Rust binaries generate JSONL → Python scripts process → figures → LaTeX writeups reference.
 
 **For reviews:** Check conventions per language CLAUDE.md files:
 - Rust: `crates/CLAUDE.md`
@@ -233,7 +238,7 @@ If unexpected files appear in diff, investigate — likely means branch needs re
 
 ### Data regeneration and commits
 
-`experiments/data/` and `experiments/figures/` are committed to git (not gitignored).
+Data and figures are colocated with their experiment under `experiments/<name>/`, not in separate top-level directories. Datasets and figures are committed to git (not gitignored).
 
 **Why:**
 - Worktrees inherit data immediately (no regeneration wait)
@@ -305,8 +310,8 @@ These are true about the repo right now and must remain true:
 ```bash
 # Rust
 cd crates/ && cargo build
-cd crates/ && cargo test
-cd crates/ && cargo clippy
+cd crates/ && cargo test --lib
+cd crates/ && cargo clippy --lib -- -D warnings
 
 # Long-running commands: always wrap with timeout to prevent zombie processes
 timeout 5m cargo test              # routine tests
@@ -322,32 +327,40 @@ cd thesis/ && latexmk
 
 ## Rust crates
 
-### Crate dependency graph
+### Module structure
 
-```
-geom -> hk2017
-geom -> billiard
-geom -> tube
-geom, hk2017, billiard, tube -> datasets
-```
+Single crate `symplectic` with modules:
+- `geom::*` — polytope types, geometry primitives
+- `algorithms::hk2017` — general capacity (exponential)
+- `algorithms::billiard` — Lagrangian product capacity (fast)
+- `algorithms::tube` — tube algorithm (placeholder)
+- `kkt` — shared KKT solver (used by hk2017 and billiard)
+- `constants` — shared tolerance constants
+- `random` — random polytope generation
+- `dataset` — dataset serialization
 
-**When modifying public APIs or function semantics:** Check downstream crates (using the dependency graph above) for usage patterns that may depend on current behavior. Semantic changes can break downstream code even without compilation errors.
+**When modifying shared modules** (kkt, constants): Check all callers. Use `cargo test --lib` to verify.
 
 ### Three capacity algorithms
 
-| Crate     | Applies to                        | Cost                    |
-|-----------|-----------------------------------|-------------------------|
-| hk2017    | All polytopes                     | Exponential in #facets  |
-| billiard  | Lagrangian products only          | Fast                    |
-| tube      | No Lagrangian 2-faces             | Polynomial–exponential  |
+| Module            | Applies to                        | Cost                    |
+|-------------------|-----------------------------------|-------------------------|
+| algorithms::hk2017| All polytopes                     | Exponential in #facets  |
+| algorithms::billiard| Lagrangian products only         | Fast                    |
+| algorithms::tube  | No Lagrangian 2-faces             | Polynomial–exponential  |
 
 Where domains overlap, algorithms must agree on the computed capacity.
 
 <!-- Full conventions: crates/CLAUDE.md -->
 
-## Experiments (Python)
+## Experiments
 
-[aspirational] A reproducible pipeline: starting from zero data, produce all figures and tables for the thesis. Pipeline direction: Rust → datasets → Python → figures/tables → thesis.
+Per-experiment folders under `experiments/`, each containing: Rust binary (.rs), Python script (.py), LaTeX writeup (.tex), data (.jsonl), figures (.png), and README (.md).
+
+Pipeline: Rust binary → .jsonl data → Python script → .png figures → .tex writeup → thesis
+
+**`experiments/reproduce.sh`** documents the full pipeline from zero data to compiled thesis. It is the single source of truth for reproduction. When adding, removing, or changing an experiment, update `reproduce.sh` to match. The script is meant to be runnable, but is not expected to be run end-to-end in practice.
+
 <!-- Full conventions: experiments/CLAUDE.md -->
 
 ## Thesis (LaTeX)

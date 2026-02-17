@@ -82,9 +82,11 @@ If found: read first, verify claims, explore gaps. Saves 20min vs redundant expl
 - Test the skill/change yourself if feasible (e.g., invoke a modified skill)
 
 **Build verification:**
-- Rust: `cd crates && cargo test && cargo clippy`
+- Rust library: `cd crates && cargo test && cargo clippy`
+- Experiment binaries: `cd experiments && cargo build` (if branch touches experiment .rs files)
 - Python: `ruff check experiments/ && pytest experiments/` (if applicable)
 - LaTeX: `cd thesis && latexmk` (if applicable)
+- Pipeline source of truth: `experiments/reproduce.sh` documents the full end-to-end pipeline
 
 Run tests per CLAUDE.md "Commands" section for the repository.
 
@@ -155,7 +157,7 @@ See `deletion-examples.md` for concrete examples.
   - Doc comment formula matches code's computation
   - Stated invariants enforced by type/constructor
   - Stated properties are tested
-- **Cross-crate semantic changes**: If branch modifies public API or function semantics, check downstream crates for usage patterns that depend on old semantics (see crate dependency graph in CLAUDE.md)
+- **Semantic changes**: If branch modifies public API or function semantics in `symplectic`, check experiment binaries (`experiments/Cargo.toml`) and other modules (geom, algorithms, kkt, dataset) for usage patterns that depend on old semantics
 
 **Python conventions:**
 - Read `experiments/CLAUDE.md` for full conventions
@@ -180,8 +182,8 @@ See `deletion-examples.md` for concrete examples.
 
 #### Data/Figures Changes
 
-If the branch touches algorithm code (`geom/`, `hk2017/`, `billiard/`, `tube/`):
-- Check if `experiments/data/` or `experiments/figures/` changed
+If the branch touches algorithm code (`crates/src/geom/`, `crates/src/algorithms/`):
+- Check if experiment data or figures changed (colocated in `experiments/<name>/`)
 - If changed: verify changes are in separate commit from code
 - If NOT changed but should be: note "data needs regeneration before merge"
 - Convention: data regenerated on main after merge (not on branches)
@@ -194,11 +196,11 @@ If the branch includes data/figures commits:
 
 #### Data Pipeline Tracing (if branch touches experiments/)
 
-For branches modifying data pipelines, trace end-to-end flow:
+For branches modifying data pipelines, trace end-to-end flow. Rust binaries are built from `experiments/Cargo.toml`; their source and all artifacts live colocated in `experiments/<name>/`. See `experiments/reproduce.sh` for the canonical pipeline.
 
-**Example: Rust → CSV → Python → JSON → LaTeX**
+**Example: Rust → JSONL → Python → PNG/LaTeX table**
 
-1. Identify source (Rust binary output, Python script, manual data)
+1. Identify source (Rust binary in `experiments/<name>/`, Python script, manual data)
 2. Follow transformations (parse, compute, write)
 3. Verify consistency:
    - CSV columns match Python parser expectations
@@ -376,7 +378,7 @@ Avoid these failure modes from past reviews:
 **Algorithm agreement (critical invariant):**
 - If branch modifies any capacity algorithm (hk2017, billiard, tube), verify cross-algorithm agreement
 - CLAUDE.md states: "Where domains overlap, algorithms must agree on computed capacity"
-- Run `cargo test` across all capacity crates, not just the modified one
+- Run `cargo test` for the full `symplectic` crate to verify cross-algorithm agreement, not just the modified module
 - Check for agreement tests in test suites
 
 ## File Location Decisions

@@ -1,21 +1,20 @@
-[workspace]
-resolver = "2"
-members = [
-    "geom",
-    "hk2017",
-    "billiard",
-    "tube",
-    "datasets",
-]
+[package]
+name = "symplectic"
+version = "0.1.0"
+edition = "2021"
 
-[workspace.dependencies]
+[dependencies]
 nalgebra = { version = "0.33", features = ["serde-serialize"] }
-proptest = "1"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 rand = "0.8"
 rand_chacha = "0.3"
 rand_distr = "0.4"
+tempfile = "3"
+wait-timeout = "0.2"
+
+[dev-dependencies]
+proptest = "1"
 
 [profile.release]
 debug = true

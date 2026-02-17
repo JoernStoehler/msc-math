@@ -1,0 +1,45 @@
+[package]
+name = "experiments"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "benchmark"
+path = "benchmark/benchmark.rs"
+
+[[bin]]
+name = "correctness"
+path = "correctness/correctness.rs"
+
+[[bin]]
+name = "random_sweep"
+path = "random-sweep/random_sweep.rs"
+
+[[bin]]
+name = "random_product_sweep"
+path = "random-product-sweep/random_product_sweep.rs"
+
+[[bin]]
+name = "pentagon_perturb"
+path = "pentagon-perturb/pentagon_perturb.rs"
+
+[[bin]]
+name = "lagrangian_sweep"
+path = "lagrangian-products/lagrangian_sweep.rs"
+
+[[bin]]
+name = "acceptance_sweep"
+path = "rejection-sampling/acceptance_sweep.rs"
+
+[[bin]]
+name = "viz_export"
+path = "visualization/viz_export.rs"
+
+[dependencies]
+symplectic = { path = "../crates" }
+nalgebra = "0.33"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+rand = "0.8"
+rand_chacha = "0.3"
+rand_distr = "0.4"

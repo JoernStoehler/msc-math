@@ -6,7 +6,7 @@ Use this template when deciding where files should live in the repo.
 
 | File Type | Location | Reason |
 |-----------|----------|--------|
-| Investigation code | `crates/*/src/*_test.rs` with `#[ignore]` | Optional reading, high debug value |
+| Investigation code | `crates/src/**/*_test.rs` with `#[ignore]` | Optional reading, high debug value |
 | Session reports | `docs/reports/<timestamp>-<topic>.md` | Archived context, not in main tree |
 | Decision rationale | Code doc comments (module-level `//!`) | Permanent context at usage site |
 | Deprecated code | `#[cfg(test)] mod deprecated` | Test-only usage, clear signal |
@@ -28,7 +28,7 @@ Use this template when deciding where files should live in the repo.
 ## Examples from Complexity Review Session (2026-02-11)
 
 1. **Investigation test file (qhull_boundedness_test.rs)**
-   - Decision: Keep in `crates/geom/src/` as `*_test.rs`
+   - Decision: Keep in `crates/src/geom/` as `*_test.rs`
    - Rationale: Saves 1-2hr debugging (HIGH) > 508 LOC cost (LOW for test module)
 
 2. **Session reports (BOUNDEDNESS_INVESTIGATION.md, COMPLEXITY_REVIEW_REPORT.md)**
