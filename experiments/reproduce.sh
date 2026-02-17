@@ -73,6 +73,7 @@ experiments/target/release/lagrangian_sweep
 # Benchmark: timing model fit + unified figure
 python3 experiments/benchmark/benchmark.py
 # → experiments/benchmark/benchmark_timing.png
+# → experiments/benchmark/profiling/timing_model.json
 
 # Random sweep: systolic ratio vs facet count
 python3 experiments/random-sweep/random_sweep.py

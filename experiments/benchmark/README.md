@@ -5,12 +5,12 @@
 **Status:** Complete. Dataset generated, timing model fitted, .tex writeup updated.
 
 **Files:**
-- Rust: `crates/datasets/src/bin/benchmark.rs` (dataset generator)
-- Dataset: `experiments/data/benchmark.jsonl` (~85 polytopes, ~100 capacity computations)
-- Python: `experiments/scripts/benchmark.py` (timing model fitting + figure)
-- Figure: `experiments/figures/benchmark_timing.png`
-- Model: `experiments/profiling/timing_model.json`
-- Writeup: `thesis/experiments/benchmarks.tex`
+- Rust: `experiments/benchmark/benchmark.rs` (dataset generator)
+- Dataset: `experiments/benchmark/benchmark.jsonl` (~85 polytopes, ~100 capacity computations)
+- Python: `experiments/benchmark/benchmark.py` (timing model fitting + figure)
+- Figure: `experiments/benchmark/benchmark_timing.png`
+- Model: `experiments/benchmark/profiling/timing_model.json`
+- Writeup: `experiments/benchmark/benchmark.tex`
 
 ## Design
 
@@ -56,17 +56,17 @@ Key differences from other experiments:
 ## Pipeline
 
 ```
-benchmark.rs → benchmark.jsonl → benchmark.py → {timing_model.json, benchmark_timing.png}
+benchmark.rs → benchmark.jsonl → benchmark.py → {profiling/timing_model.json, benchmark_timing.png}
 ```
 
 ### Step 1: Generate dataset
 
 ```bash
-cd crates/
+cd experiments/
 cargo run --bin benchmark --release
 ```
 
-Outputs: `experiments/data/benchmark.jsonl` (~85 entries)
+Outputs: `experiments/benchmark/benchmark.jsonl` (~85 entries)
 
 Each entry contains:
 - Polytope geometry (normals, heights)
@@ -79,8 +79,7 @@ Each entry contains:
 ### Step 2: Fit timing model
 
 ```bash
-cd experiments/
-python3 scripts/benchmark.py
+python3 experiments/benchmark/benchmark.py
 ```
 
 Reads `benchmark.jsonl`, fits exponential models T(F) = a · b^F for each algorithm
@@ -88,7 +87,7 @@ and polytope class via log-linear regression.
 
 Outputs:
 - `profiling/timing_model.json` (model parameters for pruned on random polytopes)
-- `figures/benchmark_timing.png` (unified figure with all algorithms, polytope classes, and fitted models)
+- `benchmark_timing.png` (unified figure with all algorithms, polytope classes, and fitted models)
 
 Prints summary tables and all fit parameters to stdout.
 
@@ -125,7 +124,7 @@ Before benchmarking, we optimized the HK2017 implementation without changing the
 
 **Memory reduction:** Peak heap memory dropped from 573 KB to 17 KB.
 
-**Reference:** See `experiments/hk2017_optimization.md` for full profiling methodology (Valgrind callgrind, massif heap profiling, phase-by-phase wall-clock timing).
+**Reference:** See `hk2017_optimization.md` for full profiling methodology (Valgrind callgrind, massif heap profiling, phase-by-phase wall-clock timing).
 
 ## Results Summary
 
@@ -167,10 +166,9 @@ Implementation optimization details are documented in this .md file only.
 To regenerate after algorithm changes:
 
 ```bash
-cd crates/
-cargo run --bin benchmark --release   # Generates experiments/data/benchmark.jsonl (~5-10 min)
-cd ../experiments/
-python3 scripts/benchmark.py          # Fits model, generates figure
+cd experiments/
+cargo run --bin benchmark --release   # Generates benchmark/benchmark.jsonl (~5-10 min)
+python3 benchmark/benchmark.py        # Fits model, generates figure
 ```
 
 Then manually update `benchmarks.tex` table if numbers changed significantly.
