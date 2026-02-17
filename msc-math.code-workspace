@@ -13,15 +13,19 @@
 		"git.ignoreLimitWarning": true,
 		"files.autoSave": "off",
 		"editor.wordWrap": "on",
-		"texlab.chktex.onOpenAndSave": true,
-		"texlab.chktex.onEdit": false,
-		"texlab.diagnostics.ignoredPatterns": [
-			"Overfull \\\\hbox",
-			"Underfull \\\\hbox"
-		],
-		"texlab.experimental.ignoreFolders": [
-			"papers/"
-		],
+		// texlab + chktex: disabled 2026-02-17.
+		// chktex warnings are noise during active development — agents use
+		// latexmk on the command line. Re-enable for a final style pass
+		// before thesis submission.
+		// "texlab.chktex.onOpenAndSave": true,
+		// "texlab.chktex.onEdit": false,
+		// "texlab.diagnostics.ignoredPatterns": [
+		// 	"Overfull \\\\hbox",
+		// 	"Underfull \\\\hbox"
+		// ],
+		// "texlab.experimental.ignoreFolders": [
+		// 	"papers/"
+		// ],
 		"[markdown]": {
 			"editor.tabSize": 2
 		},
@@ -35,7 +39,7 @@
 	"extensions": {
 		"recommendations": [
 			"anthropic.claude-code",
-			"efoerster.texlab",
+			// "efoerster.texlab",  // disabled with chktex settings above
 			"mathematic.vscode-pdf",
 			"github.github-vscode-theme",
 			"miguelsolorio.symbols"
