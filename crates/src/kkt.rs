@@ -32,8 +32,19 @@ const EPS_SVD_FLOOR: f64 = 1e-12;
 /// **Known limitation:** Random polytopes can have legitimate small singular values with
 /// gap ratios 100–300x. The threshold over-truncates these (26/23,650 cases at F=7).
 /// The residual check (`EPS_KKT_RESIDUAL`) catches the over-truncation and rejects the
-/// bad pseudoinverse, so these orbits are dropped. No capacity impact observed (dropped
-/// orbits are non-optimal). But this is a correctness gap in principle.
+/// bad pseudoinverse, so these orbits are dropped.
+///
+/// **Why dropping is safe (conjecture, not yet proved in thesis):** If the KKT system
+/// for (S, σ) is rank-deficient, then by `[lem:well-defined]` all solutions have the
+/// same Q-value V. Moreover, any nontrivial null direction δβ satisfies η^T δβ = 0,
+/// so δβ has mixed signs, so walking along δβ from any solution β₀ hits a boundary
+/// component β_k = 0 at finite α. That β* ∈ M(S\{k}, σ|_{S\{k}}) achieves the same V.
+/// Therefore the smaller pair (S\{k}, σ|_{S\{k}}) finds V independently, and (S, σ)
+/// can be dropped without losing the maximum.
+///
+/// // todo: jörn — formalise the above as a lemma between lem:well-defined and
+/// // thm:algorithm-correct in general-case-algorithm-proof.tex, then replace this
+/// // comment with a cross-reference to that lemma.
 ///
 /// **Options for improvement** (not yet implemented):
 /// 1. Raise to ~1000 (but would miss the 594x degenerate case)
