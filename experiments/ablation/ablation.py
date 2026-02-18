@@ -144,20 +144,22 @@ def print_timing_table(entries):
         group_f_pairs.add((group, f))
 
     print("\n=== Timing Comparison: V0 (unpruned) vs V1 (pruned) ===")
-    print(f"{'Group':<20} {'F':>3} {'V0 median':>12} {'V1 median':>12} {'Speedup':>8} {'N':>4}")
-    print("-" * 70)
+    print(f"{'Group':<20} {'F':>3} {'V0 mean':>10} {'V0 std':>8} {'V1 mean':>10} {'V1 std':>8} {'Speedup':>8} {'N':>4}")
+    print("-" * 80)
 
     for group, f in sorted(group_f_pairs):
-        t0 = sorted(by_group_f_variant[(group, f, "v0_unpruned")])
-        t1 = sorted(by_group_f_variant[(group, f, "v1_pruned")])
+        t0 = by_group_f_variant[(group, f, "v0_unpruned")]
+        t1 = by_group_f_variant[(group, f, "v1_pruned")]
         n = min(len(t0), len(t1))
         if n == 0:
             continue
-        med0 = float(np.median(t0))
-        med1 = float(np.median(t1))
-        speedup = med0 / med1 if med1 > 0 else float("inf")
+        mean0 = float(np.mean(t0))
+        std0  = float(np.std(t0, ddof=1))
+        mean1 = float(np.mean(t1))
+        std1  = float(np.std(t1, ddof=1))
+        speedup = mean0 / mean1 if mean1 > 0 else float("inf")
         print(
-            f"{group:<20} {f:>3} {med0:>12.1f} {med1:>12.1f} {speedup:>7.2f}x {n:>4}"
+            f"{group:<20} {f:>3} {mean0:>10.1f} {std0:>8.1f} {mean1:>10.1f} {std1:>8.1f} {speedup:>7.2f}x {n:>4}"
         )
 
     print()
@@ -212,27 +214,23 @@ def plot_timing(entries):
             if not f_vals:
                 continue
 
-            medians = [float(np.median(by_variant_f[variant][f])) for f in f_vals]
-            mins = [min(by_variant_f[variant][f]) for f in f_vals]
-            maxs = [max(by_variant_f[variant][f]) for f in f_vals]
+            means = [float(np.mean(by_variant_f[variant][f])) for f in f_vals]
+            stds  = [float(np.std(by_variant_f[variant][f], ddof=1)) for f in f_vals]
 
-            ax.plot(
+            ax.errorbar(
                 f_vals,
-                medians,
+                means,
+                yerr=stds,
                 marker=markers[variant],
                 color=colors[variant],
                 linewidth=2,
                 markersize=6,
-                label=f"{VARIANT_LABELS[variant]} (median)",
+                capsize=4,
+                capthick=1.5,
+                elinewidth=1.5,
+                alpha=0.9,
+                label=f"{VARIANT_LABELS[variant]} (mean ± std)",
             )
-            # Error bars: min/max range
-            for f, med, mn, mx in zip(f_vals, medians, mins, maxs):
-                ax.plot(
-                    [f, f], [mn, mx],
-                    color=colors[variant],
-                    linewidth=1.5,
-                    alpha=0.4,
-                )
 
         ax.set_yscale("log")
         ax.set_xlabel("Facet count $F$", fontsize=11)
@@ -242,7 +240,7 @@ def plot_timing(entries):
         ax.grid(True, alpha=0.3, which="both")
 
     fig.suptitle(
-        "Ablation Phase A: V0 (unpruned) vs V1 (pruned) timing comparison",
+        "V0 (unpruned) vs V1 (pruned): timing by facet count (mean ± std, $n=5$)",
         fontsize=12,
     )
     fig.tight_layout()
