@@ -29,22 +29,26 @@ const EPS_SVD_FLOOR: f64 = 1e-12;
 /// separated from genuine nonzero values ~0.5. Without gap detection, the pseudoinverse
 /// amplifies this sv by ~1/sv ≈ 1000, producing garbage β₀.
 ///
-/// **Known limitation:** Random polytopes can have legitimate small singular values with
-/// gap ratios 100–300x. The threshold over-truncates these (26/23,650 cases at F=7).
-/// The residual check (`EPS_KKT_RESIDUAL`) catches the over-truncation and rejects the
-/// bad pseudoinverse, so these orbits are dropped.
+/// **Two distinct cases — do not conflate:**
 ///
-/// **Why dropping is safe (conjecture, not yet proved in thesis):** If the KKT system
-/// for (S, σ) is rank-deficient, then by `[lem:well-defined]` all solutions have the
-/// same Q-value V. Moreover, any nontrivial null direction δβ satisfies η^T δβ = 0,
-/// so δβ has mixed signs, so walking along δβ from any solution β₀ hits a boundary
-/// component β_k = 0 at finite α. That β* ∈ M(S\{k}, σ|_{S\{k}}) achieves the same V.
-/// Therefore the smaller pair (S\{k}, σ|_{S\{k}}) finds V independently, and (S, σ)
-/// can be dropped without losing the maximum.
+/// Case 1 — *Genuinely rank-deficient* (gap >>100×, e.g. the 594× degenerate case):
+/// Dropping is provably safe (conjecture, not yet in thesis): any nontrivial null
+/// direction δβ satisfies η^T δβ = 0 (mixed signs), so walking from any solution β₀
+/// along δβ hits β_k = 0 at finite α. That boundary point achieves the same Q-value
+/// (by `[lem:well-defined]`) and belongs to M(S\{k}, σ|_{S\{k}}), so the smaller
+/// pair finds V independently. Genuinely rank-deficient (S, σ) can be dropped.
 ///
-/// // todo: jörn — formalise the above as a lemma between lem:well-defined and
-/// // thm:algorithm-correct in general-case-algorithm-proof.tex, then replace this
-/// // comment with a cross-reference to that lemma.
+/// // todo: jörn — formalise Case 1 as a lemma between lem:well-defined and
+/// // thm:algorithm-correct in general-case-algorithm-proof.tex.
+///
+/// Case 2 — *Near-rank-deficient* (gap 100–300×, the 26/23,650 F=7 cases):
+/// These are NOT genuinely rank-deficient — the small singular value (~1e-4) is real,
+/// not numerical noise. The threshold over-truncates them. The correct full-rank
+/// pseudoinverse might find a valid β* with all β_i > 0 and a Q-value *slightly
+/// higher* than any (S\{k}, σ'). However, because the system is near-rank-deficient,
+/// there is an almost-null direction, so Q(S,σ) ≈ Q(S\{k},σ') — the gap is small.
+/// Empirically: no capacity impact observed across all tested polytopes. Theoretically:
+/// a small error is possible. The "two-pass" option below would fix this correctly.
 ///
 /// **Options for improvement** (not yet implemented):
 /// 1. Raise to ~1000 (but would miss the 594x degenerate case)
