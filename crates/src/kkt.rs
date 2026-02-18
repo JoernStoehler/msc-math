@@ -50,8 +50,17 @@ const EPS_KKT_RESIDUAL: f64 = 1e-6;
 
 /// Compute Q(β) = Σ_{i>j} β_i β_j ω₀(n_{σ(i)}, n_{σ(j)}).
 ///
-/// Note: uses ω₀(n_{σ(i)}, n_{σ(j)}) with i > j directly, NOT from H_{ij}.
-/// H is symmetric by construction, but Q needs the antisymmetric ω₀ values.
+/// See `[lem:H-quadratic]` (thesis): Q(β) equals the symplectic action sum.
+///
+/// **Sign convention:** The thesis writes the sum with j < i in
+/// ω₀(n_{σ(j)}, n_{σ(i)}); this code uses i > j (higher index first).
+/// Since ω₀ is antisymmetric the two differ by sign: the code maximises
+/// Q > 0, which finds the reverse-traversal representative of the orbit.
+/// The capacity A = 1/(2Q) is unchanged. See `appendix-notation.tex`
+/// ("Permutation orientation") for the full discussion.
+///
+/// Note: uses ω₀ directly, NOT from H_{ij}. H is symmetric by construction,
+/// but Q needs the antisymmetric ω₀ values.
 pub(crate) fn q_from_beta(
     normals: &[Vector4<f64>],
     perm: &[usize],
@@ -175,6 +184,8 @@ fn find_positive_beta_nd(beta0: &[f64], null_vecs: &[Vec<f64>]) -> Option<Vec<f6
 /// ```
 ///
 /// Returns `(kkt, rhs)` where `kkt` is `(m+5) × (m+5)`.
+///
+/// Uses **period normalization** (γ on [0,T]); see `appendix-notation.tex`.
 pub(crate) fn build_kkt_system(
     normals: &[Vector4<f64>],
     heights: &[f64],
@@ -341,8 +352,8 @@ fn solve_kkt_svd_path(
 /// solutions parameterized by the null space. Q(β) is constant along
 /// the null space, so we search for any member with β > 0.
 ///
-/// Note: chapter-algorithm.tex `eq:linear-system` omits the ν multiplier,
-/// making the system overdetermined. We use the correct KKT system here.
+/// See `[lem:kkt]` (thesis): the KKT conditions characterise the constrained
+/// maximum of Q(β); the system is (m+5)×(m+5) with ν for η^Tβ = 1.
 pub(crate) fn solve_kkt(
     normals: &[Vector4<f64>],
     heights: &[f64],

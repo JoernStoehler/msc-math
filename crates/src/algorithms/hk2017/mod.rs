@@ -63,6 +63,11 @@ impl EhzResult {
 
 /// Compute c_EHZ(K) for a convex polytope K ⊂ R^4.
 ///
+/// Reference (unpruned) implementation of `[alg:ehz]` (thesis): exhaustive
+/// search over all (S, σ) pairs. For production use, prefer
+/// `ehz_capacity_pruned` which applies `[cor:adjacency-pruning]` and is
+/// used in all experiments.
+///
 /// Returns `None` if no valid (S, σ) pair yields β > 0 (should not happen
 /// for valid polytopes, but guards against degenerate input).
 pub fn ehz_capacity(polytope: &Polytope4D) -> Option<EhzResult> {
@@ -187,10 +192,12 @@ fn is_adjacent_cycle(perm: &[usize], adj: &[Vec<bool>]) -> bool {
     (0..m).all(|k| adj[perm[k]][perm[(k + 1) % m]])
 }
 
-/// Compute c_EHZ(K) with adjacency pruning (chapter-algorithm.tex, `cor:adjacency-pruning`).
+/// Compute c_EHZ(K) with adjacency pruning; see `[cor:adjacency-pruning]` (thesis).
 ///
-/// Skips (S, σ) pairs where consecutive facets are not adjacent,
-/// significantly reducing search space for polytopes with sparse adjacency.
+/// **Production variant used in all experiments.**
+/// Skips (S, σ) pairs where consecutive facets are not adjacent in the
+/// adjacency graph `[def:adjacency-graph]`, significantly reducing the
+/// search space while returning the same capacity as `ehz_capacity`.
 pub fn ehz_capacity_pruned(polytope: &Polytope4D) -> Option<EhzResult> {
     let f = polytope.facet_count();
     let normals = polytope.normals();

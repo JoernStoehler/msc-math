@@ -22,7 +22,8 @@ There is a-priori no reason to expect that for the rigid Reeb orbits, which can 
 %   Contrast def:reeb-orbit-polytope which allows convex combinations.
 % Downstream: simple orbits are the computational objects. The algorithm
 %   searches over all simple orbits by enumerating (sigma, beta).
-%   Rust: struct SimpleOrbit { sigma: Vec<FacetIdx>, tau: Vec<f64> }.
+%   Rust: stored in EhzResult::best_permutation (Vec<usize>) for σ.
+%   Dwell times τ are implicit in best_beta; no SimpleOrbit struct exists.
 A generalized Reeb orbit $\gamma$ on a polytope $K$
 (Definition~\ref{def:reeb-orbit-polytope}) is \emph{simple} if:
 \begin{enumerate}
@@ -42,10 +43,10 @@ A generalized Reeb orbit $\gamma$ on a polytope $K$
 %   Example (Jörn): orbit on a Lagrangian 2-face F_1 cap F_2,
 %   traveling first with R_1, breakpoint in int(F_1 cap F_2),
 %   then R_2. Facet incidence {F_1, F_2} is constant across the breakpoint.
-% Downstream: Rust representation: (sigma: Vec<FacetIdx>, tau: Vec<f64>).
-%   sigma is a cyclic permutation of facet indices. tau[k] >= 0 is the time
-%   with velocity R_{sigma[k]}. Two (sigma, tau) are equivalent iff
-%   they differ by a cyclic shift. Period T = sum(tau). Action A = T.
+% Downstream: Rust stores σ in EhzResult::best_permutation: Vec<usize>
+%   (0-based cyclic permutation of facet indices). Dwell times τ are not
+%   stored separately; they are encoded in best_beta: Vec<f64> (β_k ∝ τ_k,
+%   normalised via η^Tβ = 1). No standalone SimpleOrbit struct exists.
 A simple Reeb orbit can be described by a triple $(\sigma, \tau, b)$:
 \begin{itemize}
 \item a permutation $\sigma$ of $\{1, \ldots, F\}$

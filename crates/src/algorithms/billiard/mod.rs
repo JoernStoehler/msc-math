@@ -1,10 +1,13 @@
 /// EHZ capacity computation for Lagrangian products via the billiard algorithm.
 ///
 /// Computes c_EHZ(K_q ×_L K_p) for Lagrangian products where K_q, K_p are
-/// convex polygons in R². Exploits the sigma structure lemma and 3-bounce
-/// bound to restrict enumeration to polynomial cost.
+/// convex polygons in R².
 ///
-/// See chapter-billiard.tex, Section 6.
+/// See `[thm:billiard-characterization]` (thesis): c_EHZ equals the minimum
+/// K_p°-length billiard trajectory in K_q, and `[thm:bounce-bound]`: the
+/// minimiser has at most 3 bounces. This module enumerates block-structured
+/// permutations σ = (Q₁P₁···QₖPₖ) for k ∈ {2, 3}, the computational
+/// realisation of those two theorems.
 mod enumerate;
 mod lagrangian;
 

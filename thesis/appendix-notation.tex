@@ -58,4 +58,15 @@ A dash (---) indicates the concept is not explicitly named in that source.
 \item[MATLAB sign convention.]
   HK2017's MATLAB implementation minimizes~$-Q(\sigma,\beta)$; our Rust code maximizes~$Q$ directly. The optima coincide.
 
+\item[Permutation orientation.]
+  Lemma~\ref{lem:H-quadratic} writes the action sum with $j < i$ in
+  $\omega_0(n_{\sigma(j)}, n_{\sigma(i)})$.
+  The Rust function \texttt{q\_from\_beta} uses $i > j$ (higher index first),
+  which negates $Q(\beta)$ by antisymmetry of $\omega_0$.
+  Since the code maximises $Q > 0$, it finds the reverse-traversal
+  representative of the orbit.
+  The action $A = 1/(2Q)$ is unchanged, but
+  \texttt{EhzResult::best\_permutation} is the cyclic reverse of the orbit
+  described in the thesis.
+
 \end{description}
