@@ -32,14 +32,11 @@ const EPS_SVD_FLOOR: f64 = 1e-12;
 /// **Two distinct cases — do not conflate:**
 ///
 /// Case 1 — *Genuinely rank-deficient* (gap >>100×, e.g. the 594× degenerate case):
-/// Dropping is provably safe (conjecture, not yet in thesis): any nontrivial null
+/// Dropping is provably safe by `[lem:rank-deficiency-dismissal]`: any nontrivial null
 /// direction δβ satisfies η^T δβ = 0 (mixed signs), so walking from any solution β₀
 /// along δβ hits β_k = 0 at finite α. That boundary point achieves the same Q-value
 /// (by `[lem:well-defined]`) and belongs to M(S\{k}, σ|_{S\{k}}), so the smaller
 /// pair finds V independently. Genuinely rank-deficient (S, σ) can be dropped.
-///
-/// // todo: jörn — formalise Case 1 as a lemma between lem:well-defined and
-/// // thm:algorithm-correct in general-case-algorithm-proof.tex.
 ///
 /// Case 2 — *Near-rank-deficient* (gap 100–300×, the 26/23,650 F=7 cases):
 /// These are NOT genuinely rank-deficient — the small singular value (~1e-4) is real,
