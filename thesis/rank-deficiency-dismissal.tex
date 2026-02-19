@@ -156,3 +156,196 @@ The algorithm does not need this characterisation: it suffices
 to inspect the null-space vectors from the SVD and check whether
 $\delta\beta \neq 0$.
 \end{remark}
+
+% Status: NOT YET Jörn-approved.
+\begin{proposition}[Approximate dismissal of near-singular systems]%
+\label{prop:approximate-dismissal}
+Let $(S, \sigma)$ be a pair for which the linear
+system~\eqref{eq:linear-system} has a solution
+$(\beta_0, \lambda_0, \nu_0)$ with $\beta_{0,i} > 0$ for all
+$i \in S$.
+Let $(\delta\beta, \delta\lambda, \delta\nu)$ be a unit vector
+($\|(\delta\beta, \delta\lambda, \delta\nu)\|_2 = 1$) with
+\emph{approximate} residual
+\[
+  A\begin{pmatrix}\delta\beta\\\delta\lambda\\\delta\nu\end{pmatrix}
+  = \begin{pmatrix}r_1\\r_2\\r_3\end{pmatrix},
+  \qquad
+  \varepsilon
+  := \bigl\|(r_1, r_2, r_3)\bigr\|_2,
+\]
+where $A$ is the system matrix
+of~\eqref{eq:linear-system},
+and suppose $\delta\beta$ has at least one strictly positive and
+one strictly negative component.
+
+Define $\alpha^*$, $k$, and $S' = S \setminus \{k\}$ as in
+Lemma~\ref{lem:rank-deficiency-dismissal} (walk to boundary).
+Let $\sigma_C > 0$ denote the smallest singular value of the
+constraint matrix $C' = [N' \mid \eta'] \in \mathbb{R}^{|S'|\times 5}$
+for the smaller pair~$(S', \sigma|_{S'})$.
+Then:
+\begin{enumerate}
+\item
+  $\beta^* := \beta_0 + \alpha^*\,\delta\beta$ satisfies
+  $\beta^*_k = 0$ and $\beta^*_j \geq 0$ for all $j \in S$.
+\item
+  The action-value perturbation along the walk satisfies
+  \[
+    \bigl|\beta^{*\top} H\,\beta^* - \nu_0\bigr|
+    \leq \varepsilon\,\alpha^*
+       \bigl[
+         2\bigl(\|\lambda_0\|_2 + |\nu_0|\bigr) + 3\,\alpha^*
+       \bigr]
+    =: \Delta_{\mathrm{walk}}.
+  \]
+\item
+  The constraint violations of $\beta^*|_{S'}$ are bounded by
+  \[
+    \bigl\|{N'}^\top \beta^*|_{S'}\bigr\|_2 \leq \alpha^*\varepsilon,
+    \qquad
+    \bigl|{\eta'}^\top \beta^*|_{S'} - 1\bigr| \leq \alpha^*\varepsilon.
+  \]
+\item
+  If\/ $\varepsilon$ is small enough that the minimum-norm
+  feasibility correction $\Delta\beta$
+  satisfies $\|\Delta\beta\|_\infty < \min_{j \in S'} \beta^*_j$
+  (so that the corrected point remains non-negative),
+  then there exists $\beta' \in M(K)|_{S'}$ with
+  \[
+    {\beta'}^\top H'\,\beta'
+    \geq \nu_0 - \Delta_{\mathrm{walk}} - \Delta_{\mathrm{proj}},
+  \]
+  where
+  $\Delta_{\mathrm{proj}}
+     = 2\bigl(\|\beta_0\|_2 + \alpha^*\bigr)
+       \,\|H\|_2\,\alpha^*\varepsilon\,/\,\sigma_C$.
+\end{enumerate}
+Consequently, the maximum of $\beta^\top H'\,\beta$ over
+$M(K)|_{S'}$ falls short of $\nu_0$ by at most
+$\Delta_{\mathrm{walk}} + \Delta_{\mathrm{proj}}
+ = O(\varepsilon)$.
+\end{proposition}
+
+\begin{proof}
+Conclusion~(1) is identical to
+Steps~1--4 of Lemma~\ref{lem:rank-deficiency-dismissal}:
+the walk-to-boundary construction and non-negativity argument
+are purely algebraic and do not use the exactness of the
+null-space relation.
+
+\emph{Step~5${}'$: Action-value perturbation (conclusion~2).}
+Expanding the quadratic form at $\beta^*
+= \beta_0 + \alpha^*\,\delta\beta$:
+\[
+  \beta^{*\top} H\,\beta^*
+  = \nu_0
+    + 2\alpha^*\,\delta\beta^\top H\,\beta_0
+    + (\alpha^*)^2\,\delta\beta^\top H\,\delta\beta.
+\]
+We bound the two inner products using the residual
+$(r_1, r_2, r_3)$ in place of the exact null-space
+relations of Lemma~\ref{lem:rank-deficiency-dismissal}.
+
+For the cross term: the first-order condition
+$H\,\beta_0 = N\,\lambda_0 + \eta\,\nu_0$ gives
+\[
+  \delta\beta^\top H\,\beta_0
+  = (N^\top\delta\beta)^\top \lambda_0
+    + (\eta^\top\delta\beta)\,\nu_0
+  = r_1^\top \lambda_0 + r_3\,\nu_0.
+\]
+Hence
+$|\delta\beta^\top H\,\beta_0|
+  \leq \|r_1\|\,\|\lambda_0\| + |r_3|\,|\nu_0|
+  \leq \varepsilon\bigl(\|\lambda_0\| + |\nu_0|\bigr)$.
+
+For the quadratic term: the approximate second block row
+$H\,\delta\beta = N\,\delta\lambda + \eta\,\delta\nu + r_2$ gives
+\[
+  \delta\beta^\top H\,\delta\beta
+  = r_1^\top \delta\lambda + r_3\,\delta\nu
+    + \delta\beta^\top r_2.
+\]
+Since $\|\delta\beta\|, \|\delta\lambda\|, |\delta\nu| \leq 1$
+(unit vector) and $\|r_1\|, \|r_2\|, |r_3| \leq \varepsilon$:
+$|\delta\beta^\top H\,\delta\beta| \leq 3\varepsilon$.
+
+Combining:
+$|\beta^{*\top}H\,\beta^* - \nu_0|
+  \leq 2\alpha^*\varepsilon(\|\lambda_0\|+|\nu_0|)
+     + 3(\alpha^*)^2\varepsilon
+  = \Delta_{\mathrm{walk}}$.
+
+\emph{Step~6${}'$: Constraint violation (conclusion~3).}
+Since $N^\top\beta_0 = 0$ and $\eta^\top\beta_0 = 1$:
+\begin{align*}
+  {N'}^\top \beta^*|_{S'}
+  &= N^\top\beta^*
+   = \alpha^*\,N^\top\delta\beta
+   = \alpha^*\,r_1, \\
+  {\eta'}^\top \beta^*|_{S'}
+  &= \eta^\top\beta^*
+   = 1 + \alpha^*\,\eta^\top\delta\beta
+   = 1 + \alpha^*\,r_3,
+\end{align*}
+using $\beta^*_k = 0$ in the restriction.
+Hence $\|{N'}^\top\beta^*|_{S'}\| \leq \alpha^*\varepsilon$
+and $|{\eta'}^\top\beta^*|_{S'} - 1| \leq \alpha^*\varepsilon$.
+
+\emph{Step~7${}'$: Feasibility correction (conclusion~4).}
+The minimum-norm correction
+$\Delta\beta$ satisfying
+${C'}^\top\Delta\beta = (\alpha^*r_1,\;\alpha^*r_3)^\top$
+has
+\[
+  \|\Delta\beta\|_2
+  \leq \frac{\|(\alpha^*r_1,\;\alpha^*r_3)\|_2}{\sigma_C}
+  \leq \frac{\alpha^*\varepsilon}{\sigma_C}.
+\]
+Set $\beta' = \beta^*|_{S'} - \Delta\beta$.
+By hypothesis, $\|\Delta\beta\|_\infty < \min_{j \in S'}\beta^*_j$,
+so $\beta'_j > 0$ for all $j \in S'$.
+By construction, ${N'}^\top\beta' = 0$ and ${\eta'}^\top\beta' = 1$,
+so $\beta' \in M(K)|_{S'}$.
+
+The action-value change from the correction is
+\begin{align*}
+  \bigl|{\beta'}^\top H'\,\beta'
+    - (\beta^*|_{S'})^\top H'\,(\beta^*|_{S'})\bigr|
+  &\leq 2\,\|\beta^*|_{S'}\|_2\,\|H'\|_2\,\|\Delta\beta\|_2
+       + \|H'\|_2\,\|\Delta\beta\|_2^2 \\
+  &\leq 2\bigl(\|\beta_0\|_2 + \alpha^*\bigr)
+        \|H\|_2\,
+        \frac{\alpha^*\varepsilon}{\sigma_C}
+       + O(\varepsilon^2)
+  = \Delta_{\mathrm{proj}} + O(\varepsilon^2),
+\end{align*}
+using $\|\beta^*|_{S'}\| \leq \|\beta_0\| + \alpha^*$
+and $\|H'\| \leq \|H\|$.
+Since the $(S', \sigma|_{S'})$ algorithm maximises over
+all of $M(K)|_{S'}$, it finds
+value $\geq {\beta'}^\top H'\beta'
+       \geq \nu_0 - \Delta_{\mathrm{walk}} - \Delta_{\mathrm{proj}}$.
+\end{proof}
+
+\begin{remark}[Algorithmic application]%
+\label{rem:approximate-dismissal-algorithm}
+In the SVD-based solver, the near-singular direction
+$(\delta\beta, \delta\lambda, \delta\nu)$ is the right singular
+vector for the smallest singular value~$\sigma_{\min}$,
+and $\varepsilon = \sigma_{\min}$.
+The condition ``$\delta\beta$ has mixed signs'' holds
+whenever $\|\delta\beta\|_2 > \varepsilon / h_{\min}$,
+since otherwise
+$\sum \eta_i\,\delta\beta_i \geq h_{\min}\|\delta\beta\|_1$
+would contradict $|\eta^\top\delta\beta| \leq \varepsilon$.
+If $\|\delta\beta\|_2 \leq \varepsilon / h_{\min}$,
+the near-singular direction is effectively confined to
+the multiplier block and $\beta$ is approximately unique:
+the algorithm handles this case without special treatment.
+
+The bound $\Delta_{\mathrm{walk}} + \Delta_{\mathrm{proj}}$
+is proportional to $\varepsilon = \sigma_{\min}$ and can be
+evaluated numerically for each dropped pair.
+\end{remark}
