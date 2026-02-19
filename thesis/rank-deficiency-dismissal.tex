@@ -168,84 +168,62 @@ Let $(\delta\beta, \delta\lambda, \delta\nu)$ be a unit vector
 ($\|(\delta\beta, \delta\lambda, \delta\nu)\|_2 = 1$) with
 \emph{approximate} residual
 \[
-  A\begin{pmatrix}\delta\beta\\\delta\lambda\\\delta\nu\end{pmatrix}
-  = \begin{pmatrix}r_1\\r_2\\r_3\end{pmatrix},
+  \begin{pmatrix}
+    N^\top & 0 & 0 \\
+    H & -N & -\eta \\
+    \eta^\top & 0 & 0
+  \end{pmatrix}
+  \begin{pmatrix}\delta\beta\\\delta\lambda\\\delta\nu\end{pmatrix}
+  = \begin{pmatrix}r_\beta\\r_\lambda\\r_\nu\end{pmatrix},
   \qquad
   \varepsilon
-  := \bigl\|(r_1, r_2, r_3)\bigr\|_2,
+  := \bigl\|(r_\beta, r_\lambda, r_\nu)\bigr\|_2,
 \]
-where $A$ is the system matrix
-of~\eqref{eq:linear-system},
 and suppose $\delta\beta$ has at least one strictly positive and
 one strictly negative component.
 
-Define $\alpha^*$, $k$, and $S' = S \setminus \{k\}$ as in
-Lemma~\ref{lem:rank-deficiency-dismissal} (walk to boundary).
-Let $\sigma_C > 0$ denote the smallest singular value of the
-constraint matrix $C' = [N' \mid \eta'] \in \mathbb{R}^{|S'|\times 5}$
-for the smaller pair~$(S', \sigma|_{S'})$.
-Then:
-\begin{enumerate}
-\item
-  $\beta^* := \beta_0 + \alpha^*\,\delta\beta$ satisfies
-  $\beta^*_k = 0$ and $\beta^*_j \geq 0$ for all $j \in S$.
-\item
-  The action-value perturbation along the walk satisfies
-  \[
-    \bigl|\beta^{*\top} H\,\beta^* - \nu_0\bigr|
-    \leq \varepsilon\,\alpha^*
-       \bigl[
-         2\bigl(\|\lambda_0\|_2 + |\nu_0|\bigr) + 3\,\alpha^*
-       \bigr]
-    =: \Delta_{\mathrm{walk}}.
-  \]
-\item
-  The constraint violations of $\beta^*|_{S'}$ are bounded by
-  \[
-    \bigl\|{N'}^\top \beta^*|_{S'}\bigr\|_2 \leq \alpha^*\varepsilon,
-    \qquad
-    \bigl|{\eta'}^\top \beta^*|_{S'} - 1\bigr| \leq \alpha^*\varepsilon.
-  \]
-\item
-  If\/ $\varepsilon$ is small enough that the minimum-norm
-  feasibility correction $\Delta\beta$
-  satisfies $\|\Delta\beta\|_\infty < \min_{j \in S'} \beta^*_j$
-  (so that the corrected point remains non-negative),
-  then there exists $\beta' \in M(K)|_{S'}$ with
-  \[
-    {\beta'}^\top H'\,\beta'
-    \geq \nu_0 - \Delta_{\mathrm{walk}} - \Delta_{\mathrm{proj}},
-  \]
-  where
-  $\Delta_{\mathrm{proj}}
-     = 2\bigl(\|\beta_0\|_2 + \alpha^*\bigr)
-       \,\|H\|_2\,\alpha^*\varepsilon\,/\,\sigma_C$.
-\end{enumerate}
-Consequently, the maximum of $\beta^\top H'\,\beta$ over
-$M(K)|_{S'}$ falls short of $\nu_0$ by at most
-$\Delta_{\mathrm{walk}} + \Delta_{\mathrm{proj}}
- = O(\varepsilon)$.
+As in Lemma~\ref{lem:rank-deficiency-dismissal}, define the
+walk-to-boundary quantities:
+for each $i$ with $\delta\beta_i < 0$, set
+$\alpha_i = \beta_{0,i}/|\delta\beta_i|$; then
+$\alpha^* = \min\{\alpha_i : \delta\beta_i < 0\}$,
+$k$ is an index achieving this minimum,
+$\beta^* = \beta_0 + \alpha^*\,\delta\beta$,
+and $S' = S \setminus \{k\}$.
+
+Then $\beta^*_k = 0$, $\beta^*_j \geq 0$ for all $j \in S$
+(the walk-to-boundary and non-negativity arguments of
+Lemma~\ref{lem:rank-deficiency-dismissal} are purely algebraic),
+and—provided the feasibility correction below keeps
+$\beta' \geq 0$—there exists $\beta' \in M(K)|_{S'}$ such that
+the $(S', \sigma|_{S'})$ algorithm finds value at least
+$\nu_0 - O(\varepsilon)$.
+The explicit bound is derived in the proof.
 \end{proposition}
 
 \begin{proof}
-Conclusion~(1) is identical to
-Steps~1--4 of Lemma~\ref{lem:rank-deficiency-dismissal}:
-the walk-to-boundary construction and non-negativity argument
-are purely algebraic and do not use the exactness of the
-null-space relation.
+The walk-to-boundary construction (Steps~1--4 of
+Lemma~\ref{lem:rank-deficiency-dismissal}) carries over
+unchanged: it uses only $\beta_0 > 0$, $\delta\beta$ having
+mixed signs, and the definition of~$\alpha^*$.
+The boundary point $\beta^* = \beta_0 + \alpha^*\delta\beta$
+satisfies $\beta^*_k = 0$ and $\beta^*_j \geq 0$.
+What changes is that $\beta^*$ is no longer an exact solution,
+so we track the error.
 
-\emph{Step~5${}'$: Action-value perturbation (conclusion~2).}
-Expanding the quadratic form at $\beta^*
-= \beta_0 + \alpha^*\,\delta\beta$:
+\emph{Step~5${}'$: Action-value perturbation along the walk.}
+Expanding the quadratic form:
 \[
   \beta^{*\top} H\,\beta^*
   = \nu_0
     + 2\alpha^*\,\delta\beta^\top H\,\beta_0
     + (\alpha^*)^2\,\delta\beta^\top H\,\delta\beta.
 \]
-We bound the two inner products using the residual
-$(r_1, r_2, r_3)$ in place of the exact null-space
-relations of Lemma~\ref{lem:rank-deficiency-dismissal}.
+In the exact case
+(Lemma~\ref{lem:rank-deficiency-dismissal}),
+$\delta\beta^\top H\,\beta_0 = 0$ and
+$\delta\beta^\top H\,\delta\beta = 0$.
+Here both are $O(\varepsilon)$ instead.
 
 For the cross term: the first-order condition
 $H\,\beta_0 = N\,\lambda_0 + \eta\,\nu_0$ gives
@@ -253,60 +231,72 @@ $H\,\beta_0 = N\,\lambda_0 + \eta\,\nu_0$ gives
   \delta\beta^\top H\,\beta_0
   = (N^\top\delta\beta)^\top \lambda_0
     + (\eta^\top\delta\beta)\,\nu_0
-  = r_1^\top \lambda_0 + r_3\,\nu_0.
+  = r_\beta^\top \lambda_0 + r_\nu\,\nu_0,
 \]
-Hence
+so
 $|\delta\beta^\top H\,\beta_0|
-  \leq \|r_1\|\,\|\lambda_0\| + |r_3|\,|\nu_0|
+  \leq \|r_\beta\|\,\|\lambda_0\| + |r_\nu|\,|\nu_0|
   \leq \varepsilon\bigl(\|\lambda_0\| + |\nu_0|\bigr)$.
 
 For the quadratic term: the approximate second block row
-$H\,\delta\beta = N\,\delta\lambda + \eta\,\delta\nu + r_2$ gives
+$H\,\delta\beta = N\,\delta\lambda + \eta\,\delta\nu + r_\lambda$
+gives
 \[
   \delta\beta^\top H\,\delta\beta
-  = r_1^\top \delta\lambda + r_3\,\delta\nu
-    + \delta\beta^\top r_2.
+  = (N^\top\delta\beta)^\top \delta\lambda
+    + (\eta^\top\delta\beta)\,\delta\nu
+    + \delta\beta^\top r_\lambda
+  = r_\beta^\top \delta\lambda + r_\nu\,\delta\nu
+    + \delta\beta^\top r_\lambda.
 \]
 Since $\|\delta\beta\|, \|\delta\lambda\|, |\delta\nu| \leq 1$
-(unit vector) and $\|r_1\|, \|r_2\|, |r_3| \leq \varepsilon$:
-$|\delta\beta^\top H\,\delta\beta| \leq 3\varepsilon$.
+(unit vector) and
+$\|r_\beta\|, \|r_\lambda\|, |r_\nu| \leq \varepsilon$:
+\[
+  |\delta\beta^\top H\,\delta\beta| \leq 3\varepsilon.
+\]
 
 Combining:
-$|\beta^{*\top}H\,\beta^* - \nu_0|
+\[
+  |\beta^{*\top}H\,\beta^* - \nu_0|
   \leq 2\alpha^*\varepsilon(\|\lambda_0\|+|\nu_0|)
      + 3(\alpha^*)^2\varepsilon
-  = \Delta_{\mathrm{walk}}$.
+  =: \Delta_{\mathrm{walk}}.
+\]
 
-\emph{Step~6${}'$: Constraint violation (conclusion~3).}
-Since $N^\top\beta_0 = 0$ and $\eta^\top\beta_0 = 1$:
+\emph{Step~6${}'$: Constraint violation of $\beta^*|_{S'}$.}
+Since $N^\top\beta_0 = 0$, $\eta^\top\beta_0 = 1$,
+and $\beta^*_k = 0$:
 \begin{align*}
   {N'}^\top \beta^*|_{S'}
   &= N^\top\beta^*
    = \alpha^*\,N^\top\delta\beta
-   = \alpha^*\,r_1, \\
+   = \alpha^*\,r_\beta, \\
   {\eta'}^\top \beta^*|_{S'}
   &= \eta^\top\beta^*
    = 1 + \alpha^*\,\eta^\top\delta\beta
-   = 1 + \alpha^*\,r_3,
+   = 1 + \alpha^*\,r_\nu.
 \end{align*}
-using $\beta^*_k = 0$ in the restriction.
-Hence $\|{N'}^\top\beta^*|_{S'}\| \leq \alpha^*\varepsilon$
-and $|{\eta'}^\top\beta^*|_{S'} - 1| \leq \alpha^*\varepsilon$.
+Both violations are bounded by $\alpha^*\varepsilon$.
 
-\emph{Step~7${}'$: Feasibility correction (conclusion~4).}
+\emph{Step~7${}'$: Feasibility correction.}
+Let $C' = [N' \mid \eta'] \in \mathbb{R}^{|S'|\times 5}$
+be the constraint matrix for $(S', \sigma|_{S'})$,
+with smallest singular value $\sigma_C > 0$.
 The minimum-norm correction
 $\Delta\beta$ satisfying
-${C'}^\top\Delta\beta = (\alpha^*r_1,\;\alpha^*r_3)^\top$
+${C'}^\top\Delta\beta
+  = (\alpha^*r_\beta,\;\alpha^*r_\nu)^\top$
 has
 \[
   \|\Delta\beta\|_2
-  \leq \frac{\|(\alpha^*r_1,\;\alpha^*r_3)\|_2}{\sigma_C}
   \leq \frac{\alpha^*\varepsilon}{\sigma_C}.
 \]
 Set $\beta' = \beta^*|_{S'} - \Delta\beta$.
-By hypothesis, $\|\Delta\beta\|_\infty < \min_{j \in S'}\beta^*_j$,
-so $\beta'_j > 0$ for all $j \in S'$.
-By construction, ${N'}^\top\beta' = 0$ and ${\eta'}^\top\beta' = 1$,
+If $\|\Delta\beta\|_\infty < \min_{j \in S'}\beta^*_j$
+(which holds for $\varepsilon$ small enough),
+then $\beta'_j > 0$ for all $j \in S'$,
+and ${N'}^\top\beta' = 0$, ${\eta'}^\top\beta' = 1$,
 so $\beta' \in M(K)|_{S'}$.
 
 The action-value change from the correction is
@@ -316,17 +306,30 @@ The action-value change from the correction is
   &\leq 2\,\|\beta^*|_{S'}\|_2\,\|H'\|_2\,\|\Delta\beta\|_2
        + \|H'\|_2\,\|\Delta\beta\|_2^2 \\
   &\leq 2\bigl(\|\beta_0\|_2 + \alpha^*\bigr)
-        \|H\|_2\,
+        \,\|H\|_2\,
         \frac{\alpha^*\varepsilon}{\sigma_C}
        + O(\varepsilon^2)
-  = \Delta_{\mathrm{proj}} + O(\varepsilon^2),
+  =: \Delta_{\mathrm{proj}} + O(\varepsilon^2),
 \end{align*}
 using $\|\beta^*|_{S'}\| \leq \|\beta_0\| + \alpha^*$
 and $\|H'\| \leq \|H\|$.
+
+\emph{Conclusion.}
 Since the $(S', \sigma|_{S'})$ algorithm maximises over
-all of $M(K)|_{S'}$, it finds
-value $\geq {\beta'}^\top H'\beta'
-       \geq \nu_0 - \Delta_{\mathrm{walk}} - \Delta_{\mathrm{proj}}$.
+all of $M(K)|_{S'}$, it finds value at least
+\[
+  {\beta'}^\top H'\,\beta'
+  \geq \nu_0
+    - \underbrace{
+        \varepsilon\,\alpha^*
+        \bigl[2(\|\lambda_0\| + |\nu_0|) + 3\alpha^*\bigr]
+      }_{\Delta_{\mathrm{walk}}}
+    - \underbrace{
+        \frac{2(\|\beta_0\| + \alpha^*)\,\|H\|\,
+              \alpha^*\varepsilon}{\sigma_C}
+      }_{\Delta_{\mathrm{proj}}}
+  = \nu_0 - O(\varepsilon).
+\]
 \end{proof}
 
 \begin{remark}[Algorithmic application]%
