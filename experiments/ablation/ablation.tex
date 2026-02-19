@@ -62,107 +62,108 @@ This is a linear feasibility problem on the 2-dimensional ridge,
 solved via Fourier--Motzkin elimination.
 The $O(F^4)$ precomputation cost is negligible compared to the exponential search.
 
-\paragraph{Ridge sufficiency.}
-The following lemma shows that A2 is already sufficient when
-the two facets share a ridge (2-dimensional face).
-In particular, A3 can only prune beyond A2 at non-simple vertices.
+\paragraph{Transition feasibility.}
+We now characterize exactly when a piecewise-linear orbit can
+transition from~$F_i$ to~$F_j$.
+Write $R_k = J_0 n_k$ for the characteristic direction on~$F_k$,
+so that $n_k \cdot R_\ell = \omega_0(n_\ell, n_k)$.
+A transition $F_i \to F_j$ requires a point $x \in F_i \cap F_j$
+and $\varepsilon > 0$ with
+$x + t\, R_i \in K$ for $t \in [-\varepsilon, 0]$
+and $x + t\, R_j \in K$ for $t \in [0, \varepsilon]$.
+The following lemma shows that the A3 feasibility check
+captures this condition exactly.
 
-\begin{lemma}[Ridge sufficiency for orbit transitions]
-\label{lem:ridge-sufficiency}
+\begin{lemma}[Transition feasibility]
+\label{lem:transition-feasibility}
 Let $K \subset \mathbb{R}^4$ be a convex polytope with facets
 $F_1, \ldots, F_N$, outward unit normals~$n_k$, and support values~$h_k$.
-Write $R_k = J_0 n_k$ for the characteristic direction on~$F_k$.
-If\/ $F_i \cap F_j$ is a 2-dimensional face (ridge) of~$K$ and
-$\omega_0(n_i, n_j) \ge 0$, then there exist $x \in F_i \cap F_j$
-and $\varepsilon > 0$ such that
-\[
-  x + t\, R_i \in K \;\;\text{for all } t \in [-\varepsilon, 0],
-  \qquad
-  x + t\, R_j \in K \;\;\text{for all } t \in [0, \varepsilon].
-\]
+Define the blocking set
+$B = \{k \notin \{i,j\} : \omega_0(n_i, n_k) < 0
+  \textup{ or } \omega_0(n_j, n_k) > 0\}$.
+A physical orbit transition $F_i \to F_j$ is feasible if and only if
+\begin{enumerate}
+  \item $\omega_0(n_i, n_j) \ge 0$, and
+  \item $\exists\, x \in F_i \cap F_j$ with
+    $n_k \cdot x < h_k$ for all $k \in B$.
+\end{enumerate}
 \end{lemma}
 
 \begin{proof}
-Since $F_i \cap F_j$ is a ridge, its relative interior is nonempty.
-Pick any $x_0 \in \operatorname{relint}(F_i \cap F_j)$.
-Then $n_i \cdot x_0 = h_i$, $n_j \cdot x_0 = h_j$, and
-$n_k \cdot x_0 < h_k$ for all $k \notin \{i, j\}$.
-Set $\delta = \min_{k \notin \{i,j\}} (h_k - n_k \cdot x_0) > 0$.
+Throughout, we use $n_k \cdot R_\ell = \omega_0(n_\ell, n_k)$.
 
-We check $n_k \cdot \gamma(t) \le h_k$ for all~$k$ on
-both trajectory segments, using
-$n_k \cdot R_\ell = \langle J_0 n_\ell, n_k \rangle = \omega_0(n_\ell, n_k)$.
+\emph{Necessity.}
+Let $\gamma(0) = x \in F_i \cap F_j$ realize the transition.
+For the approach ($\gamma(t) = x + t\, R_i$, $t < 0$),
+$n_j \cdot \gamma(t) = h_j + t\, \omega_0(n_i, n_j) \le h_j$
+forces $\omega_0(n_i, n_j) \ge 0$ (since $t < 0$),
+and the departure gives the same by antisymmetry. This is~(1).
+For~(2), suppose $k \in B$ with $\omega_0(n_i, n_k) < 0$.
+Then $n_k \cdot (x + t\, R_i) = n_k \cdot x + t\,\omega_0(n_i, n_k)$;
+since $\omega_0(n_i, n_k) < 0$ and $t < 0$, this equals
+$n_k \cdot x + |t|\,|\omega_0(n_i, n_k)| > n_k \cdot x$.
+If $n_k \cdot x = h_k$, this exceeds~$h_k$ for any $\varepsilon > 0$,
+violating $\gamma(t) \in K$.
+Hence $n_k \cdot x < h_k$.
+The argument for departure-blocking $k$ (with $\omega_0(n_j, n_k) > 0$)
+is analogous.
 
-\emph{Approach} ($\gamma(t) = x_0 + t\, R_i$, $t \in [-\varepsilon, 0]$):
-\begin{itemize}
-  \item $k = i$: \;
-    $n_i \cdot \gamma(t)
-      = h_i + t \,\omega_0(n_i, n_i) = h_i$,
-    since $\omega_0$ is antisymmetric.
-  \item $k = j$: \;
-    $n_j \cdot \gamma(t)
-      = h_j + t \,\omega_0(n_i, n_j) \le h_j$,
-    since $t \le 0$ and $\omega_0(n_i, n_j) \ge 0$.
-  \item $k \notin \{i,j\}$: \;
-    $n_k \cdot \gamma(t) \le (h_k - \delta) + \varepsilon \,|\omega_0(n_i, n_k)| < h_k$
-    for small~$\varepsilon$.
-\end{itemize}
-
-\emph{Departure} ($\gamma(t) = x_0 + t\, R_j$, $t \in [0, \varepsilon]$):
-\begin{itemize}
-  \item $k = j$: \; $n_j \cdot \gamma(t) = h_j$ (same argument).
-  \item $k = i$: \;
-    $n_i \cdot \gamma(t)
-      = h_i + t \,\omega_0(n_j, n_i)
-      = h_i - t \,\omega_0(n_i, n_j) \le h_i$,
-    since $t \ge 0$ and $\omega_0(n_i, n_j) \ge 0$.
-  \item $k \notin \{i,j\}$: \; same bound with $\omega_0(n_j, n_k)$ in place of $\omega_0(n_i, n_k)$.
-\end{itemize}
-Setting $\varepsilon = \delta\, / \bigl(1 + \max_k\, |\omega_0(n_i, n_k)|
-+ \max_k\, |\omega_0(n_j, n_k)|\bigr)$ completes the proof.
+\emph{Sufficiency.}
+Given $x \in F_i \cap F_j$ satisfying~(1) and~(2),
+set $\delta = \min_{k \in B} (h_k - n_k \cdot x) > 0$.
+For non-blocking $k \notin B \cup \{i,j\}$:
+the approach satisfies
+$n_k \cdot (x + t\, R_i) = n_k \cdot x + t\,\omega_0(n_i, n_k) \le n_k \cdot x \le h_k$
+since $t \le 0$ and $\omega_0(n_i, n_k) \ge 0$;
+the departure satisfies
+$n_k \cdot (x + t\, R_j) = n_k \cdot x + t\,\omega_0(n_j, n_k) \le n_k \cdot x \le h_k$
+since $t \ge 0$ and $\omega_0(n_j, n_k) \le 0$.
+For blocking $k \in B$, the slack~$\delta$ absorbs the perturbation:
+choosing $\varepsilon < \delta / \max_k(|\omega_0(n_i, n_k)| + |\omega_0(n_j, n_k)|)$
+ensures all constraints hold.
+The cases $k = i$ and $k = j$ follow from~(1) and
+the antisymmetry $\omega_0(n_i, n_i) = 0$.
 \end{proof}
 
-\begin{corollary}[A2 = A3 for simple polytopes]
-\label{cor:a2-equals-a3-simple}
-If every pair of adjacent facets of~$K$ shares a ridge,
-then the~A2 and~A3 pruning conditions are equivalent.
-In particular, this holds for all simple polytopes
-and for all Lagrangian products $P \times Q$ of convex polygons.
+\begin{corollary}[Ridge sufficiency]
+\label{cor:ridge-sufficiency}
+If\/ $F_i \cap F_j$ is a 2-dimensional face (ridge) of~$K$
+and $\omega_0(n_i, n_j) \ge 0$, then the transition $F_i \to F_j$
+is feasible.
+In particular, the A2 and~A3 conditions are equivalent
+for simple polytopes and for Lagrangian products of convex polygons.
 \end{corollary}
 
 \begin{proof}
-If $F_i \cap F_j$ is always a ridge whenever it is nonempty,
-Lemma~\ref{lem:ridge-sufficiency} shows that the A2 condition
-$\omega_0(n_i, n_j) \ge 0$ already implies A3 feasibility.
+If $F_i \cap F_j$ is a ridge, any $x$ in its relative interior satisfies
+$n_k \cdot x < h_k$ for all $k \notin \{i,j\}$ (hence for all $k \in B$),
+so condition~(2) of Lemma~\ref{lem:transition-feasibility} holds
+automatically.
 For simple 4-polytopes, each vertex lies on exactly four facets,
-so any two facets that share a vertex share a $4 - 2 = 2$ dimensional
-face.
+so any two adjacent facets share a ridge.
 For Lagrangian products $P \times Q$ of convex polygons,
-each pair of facets that intersects shares a 2-face:
-two facets from the same factor share a ``vertex $\times$ polygon''
-face, and two facets from different factors share an
-``edge $\times$ edge'' face.
+every pair of intersecting facets shares a 2-face
+(``vertex $\times$ polygon'' or ``edge $\times$ edge'').
 \end{proof}
 
 \begin{example}[Non-simple polytope where A3 prunes beyond A2]
 \label{ex:a3-prunes}
 Consider the ``shaved hypercube''
-\[
-  K = \{\, x \in \mathbb{R}^4 : -2 \le x_i \le 0 \;\forall\, i,
-  \quad x_2 \le x_1 \,\}.
-\]
+$K = \{\, x \in \mathbb{R}^4 : -2 \le x_i \le 0 \;\forall\, i,\;
+x_2 \le x_1 \,\}$.
 This polytope has $9$ facets and $12$ vertices, of which $8$
 are non-simple (lying on $5$ facets).
 The facets $F_1\colon (x_2 \le 0)$ and $F_2\colon (x_3 \le 0)$
 share only a 1-dimensional edge:
 the shaving constraint $x_2 \le x_1$ combined with $x_1 \le 0$
 forces $x_1 = x_2 = 0$ on $F_1 \cap F_2$.
-Since $\omega_0(n_1, n_2) = 0 \ge 0$, the A2 condition allows
-the transition $F_1 \to F_2$.
-However, the shaving facet $F_4$ (with normal $(-1, 1, 0, 0)/\sqrt{2}$)
-is tight on the entire edge and belongs to the A3 blocking set
-(since $\omega_0(n_2, n_4) = 1/\sqrt{2} > 0$),
-so the A3 feasibility check fails.
+Since $\omega_0(n_1, n_2) = 0 \ge 0$, condition~(1) holds.
+However, the shaving facet~$F_4$ has normal $(-1, 1, 0, 0)/\sqrt{2}$
+and belongs to the blocking set~$B$
+(since $\omega_0(n_2, n_4) = 1/\sqrt{2} > 0$).
+Since $F_4$ is tight on the entire edge $F_1 \cap F_2$,
+condition~(2) fails: A2 allows $F_1 \to F_2$, but A3 correctly blocks it.
+By Lemma~\ref{lem:transition-feasibility}, no orbit can make this transition.
 In total, A3 prunes 8 directed edges that A2 allows.
 \end{example}
 
