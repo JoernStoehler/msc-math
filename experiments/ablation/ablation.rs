@@ -540,6 +540,198 @@ fn ehz_capacity_a2(polytope: &Polytope4D) -> Option<EhzResult> {
 }
 
 // ============================================================================
+// A3: full Reeb-flow feasibility
+//
+// A3 strengthens A2 by checking that the physical orbit transition at a ridge
+// is not blocked by other facets' halfspace constraints.
+//
+// For physical transition F_src → F_dst at x ∈ F_src ∩ F_dst:
+//   (1) x − εR_src ∈ F_src  (backward on F_src: orbit was on F_src approaching x)
+//   (2) x + εR_dst ∈ F_dst  (forward on F_dst: orbit departs on F_dst)
+//
+// These reduce to: ∃x on the ridge with n_k·x < h_k for each "blocking" facet k,
+// where B = { k ∉ {src,dst} : ω₀(n_src, n_k) < 0 OR ω₀(n_dst, n_k) > 0 }.
+//
+// Implementation: reduce to 2D LP feasibility via SVD + Fourier-Motzkin elimination.
+// Precomputed once per polytope: O(F⁴) total, negligible vs the exponential search.
+//
+// Algebraic convention: alg_adj[i][j] = phys_feasible(j → i) (reversed direction).
+// ============================================================================
+
+/// Check 2D feasibility of half-plane constraints via Fourier-Motzkin elimination.
+///
+/// Each constraint is (a, b, c) meaning a·s + b·t ≤ c.
+/// Returns true iff ∃(s,t) satisfying all constraints.
+fn fourier_motzkin_2d_feasible(constraints: &[(f64, f64, f64)]) -> bool {
+    let eps = 1e-15;
+
+    // Partition by sign of b (coefficient of t)
+    let mut upper_t: Vec<(f64, f64)> = Vec::new(); // t ≤ slope·s + intercept
+    let mut lower_t: Vec<(f64, f64)> = Vec::new(); // t ≥ slope·s + intercept
+    let mut s_bounds: Vec<(f64, f64)> = Vec::new(); // coeff·s ≤ rhs
+
+    for &(a, b, c) in constraints {
+        if b.abs() < eps {
+            s_bounds.push((a, c));
+        } else if b > 0.0 {
+            upper_t.push((-a / b, c / b));
+        } else {
+            lower_t.push((-a / b, c / b));
+        }
+    }
+
+    // Eliminate t: for each (lower, upper) pair, derive s constraint
+    // lower: t ≥ sl·s + il,  upper: t ≤ su·s + iu
+    // → (sl - su)·s ≤ iu - il
+    for &(sl, il) in &lower_t {
+        for &(su, iu) in &upper_t {
+            s_bounds.push((sl - su, iu - il));
+        }
+    }
+
+    // Check 1D feasibility of s
+    let mut s_lo = f64::NEG_INFINITY;
+    let mut s_hi = f64::INFINITY;
+
+    for &(coeff, rhs) in &s_bounds {
+        if coeff.abs() < eps {
+            if rhs < -eps {
+                return false; // 0·s ≤ negative: infeasible
+            }
+        } else if coeff > 0.0 {
+            s_hi = s_hi.min(rhs / coeff);
+        } else {
+            s_lo = s_lo.max(rhs / coeff);
+        }
+    }
+
+    s_lo <= s_hi + eps
+}
+
+/// Check if a physical transition F_src → F_dst is feasible.
+///
+/// Parameterizes the ridge F_src ∩ F_dst as a 2D affine subspace (via SVD),
+/// projects all halfspace constraints to 2D, and checks feasibility.
+/// Blocking facets (where the Reeb flow would exit K) get strict inequality.
+fn is_physical_transition_feasible(
+    normals: &[Vector4<f64>],
+    heights: &[f64],
+    src: usize,
+    dst: usize,
+) -> bool {
+    let f = normals.len();
+
+    // Blocking set: k where backward flow on F_src or forward flow on F_dst exits K through F_k
+    let blocking: Vec<bool> = (0..f)
+        .map(|k| {
+            if k == src || k == dst {
+                return false;
+            }
+            let omega_src_k = omega0(&normals[src], &normals[k]);
+            let omega_dst_k = omega0(&normals[dst], &normals[k]);
+            omega_src_k < 0.0 || omega_dst_k > 0.0
+        })
+        .collect();
+
+    // If no blocking facets, any point on the ridge works (A1+A2 already ensure the ridge exists)
+    if !blocking.iter().any(|&b| b) {
+        return true;
+    }
+
+    // Parameterize the ridge: {x : n_src·x = h_src, n_dst·x = h_dst}
+    let n_src = &normals[src];
+    let n_dst = &normals[dst];
+
+    let a_mat = DMatrix::from_row_slice(
+        2,
+        4,
+        &[
+            n_src[0], n_src[1], n_src[2], n_src[3], n_dst[0], n_dst[1], n_dst[2], n_dst[3],
+        ],
+    );
+    let b_vec = DVector::from_row_slice(&[heights[src], heights[dst]]);
+
+    // Particular solution via least-norm: x₀ = Aᵀ(AAᵀ)⁻¹b
+    // AAᵀ is 2×2, always invertible for non-parallel normals
+    let aat = &a_mat * a_mat.transpose(); // 2×2
+    let aat_inv = match aat.try_inverse() {
+        Some(inv) => inv,
+        None => return false, // Degenerate: normals nearly parallel
+    };
+    let lambda = &aat_inv * &b_vec; // 2×1
+    let x0_dv = a_mat.transpose() * lambda; // 4×1
+    let x0 = Vector4::new(x0_dv[0], x0_dv[1], x0_dv[2], x0_dv[3]);
+
+    // Null space of A (2×4, rank 2): use eigendecomposition of AᵀA (4×4 symmetric)
+    // Eigenvectors with eigenvalue ≈ 0 span the null space
+    let ata = a_mat.transpose() * &a_mat; // 4×4
+    let eigen = ata.symmetric_eigen();
+    let mut null_vecs: Vec<Vector4<f64>> = Vec::new();
+    for col in 0..4 {
+        if eigen.eigenvalues[col].abs() < 1e-10 {
+            null_vecs.push(Vector4::new(
+                eigen.eigenvectors[(0, col)],
+                eigen.eigenvectors[(1, col)],
+                eigen.eigenvectors[(2, col)],
+                eigen.eigenvectors[(3, col)],
+            ));
+        }
+    }
+    if null_vecs.len() < 2 {
+        return false; // Unexpected: 2×4 rank-2 matrix should have 2D null space
+    }
+    let u1 = null_vecs[0];
+    let u2 = null_vecs[1];
+
+    // Project constraints to 2D: n_k · (x₀ + s·u₁ + t·u₂) ≤ rhs
+    let delta = EPS_FACET_INCIDENCE; // margin for strict inequality
+
+    let mut constraints: Vec<(f64, f64, f64)> = Vec::new();
+    for k in 0..f {
+        if k == src || k == dst {
+            continue;
+        }
+        let a_k = normals[k].dot(&u1);
+        let b_k = normals[k].dot(&u2);
+        let slack = heights[k] - normals[k].dot(&x0);
+        let c_k = if blocking[k] { slack - delta } else { slack };
+        constraints.push((a_k, b_k, c_k));
+    }
+
+    fourier_motzkin_2d_feasible(&constraints)
+}
+
+/// Build A3 adjacency matrix: A2 + Reeb-flow feasibility check.
+///
+/// Algebraic convention: a3_adj[i][j] = true iff physical transition j→i is feasible.
+fn build_a3_adjacency(
+    a2_adj: &[Vec<bool>],
+    normals: &[Vector4<f64>],
+    heights: &[f64],
+) -> Vec<Vec<bool>> {
+    let f = normals.len();
+    let mut a3_adj = vec![vec![false; f]; f];
+    for i in 0..f {
+        for j in 0..f {
+            if i == j || !a2_adj[i][j] {
+                continue;
+            }
+            // Algebraic edge i→j = physical transition j→i
+            a3_adj[i][j] = is_physical_transition_feasible(normals, heights, j, i);
+        }
+    }
+    a3_adj
+}
+
+/// A3: full Reeb-flow feasibility + standard LU/SVD solver.
+fn ehz_capacity_a3(polytope: &Polytope4D) -> Option<EhzResult> {
+    let vertex_adj = build_adjacency_matrix(polytope);
+    let a2_adj = build_directed_adjacency(&vertex_adj, polytope.normals());
+    let a3_adj = build_a3_adjacency(&a2_adj, polytope.normals(), polytope.heights());
+    ehz_capacity_with(polytope, &a3_adj, solve_kkt_full)
+}
+
+// ============================================================================
 // Variant definitions
 // ============================================================================
 
@@ -561,6 +753,10 @@ const VARIANTS: &[Variant] = &[
         name: "a2_omega_directed",
         run: ehz_capacity_a2,
     },
+    Variant {
+        name: "a3_reeb_feasible",
+        run: ehz_capacity_a3,
+    },
 ];
 
 // ============================================================================
@@ -575,7 +771,7 @@ fn main() {
         .join("ablation/ablation.jsonl");
 
     println!("Ablation study — A-axis (adjacency pruning)\n");
-    println!("Variants: A0 (unpruned), A1 (vertex adj), A2 (directed ω₀)");
+    println!("Variants: A0 (unpruned), A1 (vertex adj), A2 (directed ω₀), A3 (Reeb feasibility)");
     println!("Seed: {SEED}, h ∈ [{H_MIN}, {H_MAX}]\n");
 
     // =========================================================================
