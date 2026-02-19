@@ -1,10 +1,9 @@
-# Ablation Study: Algorithm Variant Comparison
+# Ablation Study: Adjacency Graph Pruning
 
-**Purpose:** Compare four variants of the HK2017 capacity algorithm — testing
-adjacency pruning strategies and solver alternatives — on a fixed 38-polytope
-dataset. Verify correctness (all variants agree) and measure speedup.
+**Purpose:** Iteratively refine the adjacency graph used to prune the search
+space of the HK2017 algorithm, measuring correctness and speedup at each step.
 
-**Status:** Phase A+B complete. All four variants agree on all 38 test polytopes.
+**Status:** A-axis complete. Four variants (A0–A3) agree on all 38 test polytopes.
 
 ## Files
 
@@ -26,41 +25,44 @@ dataset. Verify correctness (all variants agree) and measure speedup.
 | Random Lagrangian | 15 | 6–8 | 5 random products per pair: △×△ (F=6), △×□ (F=7), □×□ (F=8) |
 | Regression cases | 3 | 7–8 | Fixed polytopes with known degenerate behavior (see below) |
 
-## Algorithm Variants
+## Adjacency Graph Variants
 
-| Variant | Description |
-|---------|-------------|
-| V0 | Unpruned HK2017 — exhaustive search over all orderings |
-| V1 | Undirected adjacency pruning — skips non-adjacent cycles (production) |
-| V4 | Directed Reeb-flow pruning — requires vertex adjacency AND ω₀(n_i, n_j) ≤ 0 |
-| V5 | SVD-only solver — same pruning as V1, but skips LU fast path |
+Each variant adds a strictly stronger necessary condition for a valid orbit
+transition F_i → F_j (physical direction), building on all previous conditions:
 
-V0 and V1 are imported from the symplectic library. V4 and V5 are self-contained
+| Variant | Pruning condition for transition F_i → F_j |
+|---------|---------------------------------------------|
+| A0 | None (unpruned): exhaustive search over all (S, σ) |
+| A1 | Vertex adjacency: F_i ∩ F_j ≠ ∅ (Corollary `cor:adjacency-pruning`) |
+| A2 | Directed ω₀: A1 and ω₀(n_i, n_j) ≥ 0 (Reeb flow on F_i carries orbit toward F_j) |
+| A3 | Reeb-flow feasibility: A2 and ∃x ∈ F_i ∩ F_j with x−εR_i ∈ F_i, x+εR_j ∈ F_j |
+
+A0 and A1 are imported from the symplectic library. A2 and A3 are self-contained
 in the binary (library internals copied, not modified).
+
+**Sign convention:** The thesis and this README use the physical convention
+(ω₀(n_i, n_j) ≥ 0 for F_i → F_j). The code uses the reversed algebraic
+convention (ω₀ ≤ 0 for consecutive σ(k) → σ(k+1)) to match the Q-function.
 
 ## Key Findings
 
 **Agreement:** All four variants agree on all 38 polytopes (max absolute difference < 10⁻⁸).
 
-**Timing** (mean ms, n=5 per group per F):
+**Timing** (mean ms, random generic polytopes, n=5 per F):
 
-| F | V0 | V1 | V4 | V5 | V1/V0 | V4/V0 |
-|---|---:|---:|---:|---:|------:|------:|
-| 5 | 0.5 | 0.5 | 0.1 | 0.6 | 1.0× | 7.4× |
-| 6 | 3.4 | 2.7 | 0.2 | 2.8 | 1.3× | 15.6× |
-| 7 | 28.2 | 14.7 | 0.6 | 13.3 | 1.9× | 45.9× |
-| 8 | 250.4 | 78.4 | 1.8 | 67.7 | 3.2× | 142.4× |
+| F | A0 | A1 | A2 | A3 | A2/A0 speedup |
+|---|---:|---:|---:|---:|-------------:|
+| 5 | 0.5 | 0.5 | 0.1 | 0.1 | ~5× |
+| 6 | 3.2 | 2.5 | 0.2 | 0.2 | ~16× |
+| 7 | 26.9 | 13.7 | 0.6 | 0.6 | ~45× |
+| 8 | 234.5 | 74.0 | 1.8 | 1.7 | ~130× |
 
-(Random generic polytopes. Lagrangian products show similar but less dramatic V4 speedup: ~40× at F=8.)
+Lagrangian products show similar but less dramatic A2 speedup (~36× at F=8)
+due to structured normals having more ω₀ = 0 pairs.
 
-**Iteration counts** (V4 prunes ~99% of iterations at F=8):
-
-| F | V0 iters | V1 iters | V4 iters | V1/V0 | V4/V0 |
-|---|--------:|--------:|--------:|------:|------:|
-| 5 | 84 | 84 | 8 | 100% | 9.5% |
-| 6 | 409 | 332 | 26 | 81% | 6.5% |
-| 7 | 2,365 | 1,265 | 57 | 54% | 2.4% |
-| 8 | 16,064 | 5,347 | 136 | 33% | 0.8% |
+**A3 = A2 on this dataset:** A3 provides zero additional pruning beyond A2.
+This is expected for polytopes with F ≤ 8, where ridges are in sufficiently
+general position that the ω₀ condition alone captures all blocking.
 
 ## Regression Cases
 
