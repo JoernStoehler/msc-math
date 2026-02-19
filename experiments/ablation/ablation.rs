@@ -1,7 +1,7 @@
 //! Ablation study: compare HK2017 algorithm variants on a fixed dataset.
 //!
-//! Phase A: V0 (unpruned) and V1 (pruned) — imported from the symplectic crate.
-//! Phase B: V4 (directed Reeb adjacency) and V5 (SVD-only solver) — self-contained.
+//! A-axis variants: A0 (unpruned), A1 (vertex adjacency), A2 (directed ω₀).
+//! A3 (Reeb-flow feasibility) — self-contained.
 //!
 //! Convention: The library (crates/) is stable. New variants are implemented as
 //! self-contained code in this binary. Library internals needed by the new variants
@@ -47,7 +47,7 @@ const N_PER_GROUP: usize = 5;
 #[derive(Debug, Serialize, Deserialize)]
 struct AblationEntry {
     polytope_name: String,
-    variant: String, // "v0_unpruned" | "v1_pruned" | "v4_directed" | "v5_svd_only"
+    variant: String, // "a0_unpruned" | "a1_vertex_adj" | "a2_omega_directed" | "a3_reeb_feasible"
     group: String,   // "random_generic" | "random_lagrangian" | "regression"
     facet_count: usize,
     normals: Vec<[f64; 4]>,
@@ -295,7 +295,7 @@ fn solve_kkt_svd_path(
     Some((beta_opt, q_val))
 }
 
-/// LU fast path + SVD fallback. Used by V4 (directed adjacency).
+/// LU fast path + SVD fallback. Used by A2 and A3.
 /// Copied from crates/src/kkt.rs:346-373
 fn solve_kkt_full(
     normals: &[Vector4<f64>],
@@ -317,17 +317,6 @@ fn solve_kkt_full(
             }
         }
     }
-    solve_kkt_svd_path(&kkt, &rhs, normals, heights, perm)
-}
-
-/// SVD-only solver (no LU fast path). Used by V5.
-/// Copied from crates/src/kkt.rs:381-389
-fn solve_kkt_svd_only(
-    normals: &[Vector4<f64>],
-    heights: &[f64],
-    perm: &[usize],
-) -> Option<(Vec<f64>, f64)> {
-    let (kkt, rhs) = build_kkt_system(normals, heights, perm);
     solve_kkt_svd_path(&kkt, &rhs, normals, heights, perm)
 }
 
@@ -426,7 +415,7 @@ fn is_adjacent_cycle(perm: &[usize], adj: &[Vec<bool>]) -> bool {
 }
 
 // ============================================================================
-// New: V4 — directed Reeb-flow adjacency
+// A2: directed ω₀ adjacency (algebraic convention)
 //
 // The physical Reeb orbit traverses facets in a specific cyclic order. For a
 // transition from F_i to F_j, the Reeb flow on F_i must carry the orbit toward
@@ -477,8 +466,8 @@ type Candidate = (f64, Vec<usize>, Vec<usize>, Vec<f64>);
 /// Capacity computation with configurable adjacency and solver.
 ///
 /// Same algorithm as `ehz_capacity_pruned`, but parameterized:
-/// - `adj`: adjacency matrix (undirected for V5, directed for V4)
-/// - `solver`: KKT solver function (full for V4, SVD-only for V5)
+/// - `adj`: adjacency matrix (undirected for A1, directed for A2/A3)
+/// - `solver`: KKT solver function
 fn ehz_capacity_with(
     polytope: &Polytope4D,
     adj: &[Vec<bool>],
@@ -543,17 +532,11 @@ fn ehz_capacity_with(
     })
 }
 
-/// V4: directed Reeb-flow adjacency + standard LU/SVD solver.
-fn ehz_capacity_directed(polytope: &Polytope4D) -> Option<EhzResult> {
+/// A2: directed ω₀ adjacency + standard LU/SVD solver.
+fn ehz_capacity_a2(polytope: &Polytope4D) -> Option<EhzResult> {
     let vertex_adj = build_adjacency_matrix(polytope);
     let dir_adj = build_directed_adjacency(&vertex_adj, polytope.normals());
     ehz_capacity_with(polytope, &dir_adj, solve_kkt_full)
-}
-
-/// V5: undirected adjacency pruning + SVD-only solver (no LU fast path).
-fn ehz_capacity_svd_only_variant(polytope: &Polytope4D) -> Option<EhzResult> {
-    let adj = build_adjacency_matrix(polytope);
-    ehz_capacity_with(polytope, &adj, solve_kkt_svd_only)
 }
 
 // ============================================================================
@@ -567,20 +550,16 @@ struct Variant {
 
 const VARIANTS: &[Variant] = &[
     Variant {
-        name: "v0_unpruned",
+        name: "a0_unpruned",
         run: ehz_capacity,
     },
     Variant {
-        name: "v1_pruned",
+        name: "a1_vertex_adj",
         run: ehz_capacity_pruned,
     },
     Variant {
-        name: "v4_directed",
-        run: ehz_capacity_directed,
-    },
-    Variant {
-        name: "v5_svd_only",
-        run: ehz_capacity_svd_only_variant,
+        name: "a2_omega_directed",
+        run: ehz_capacity_a2,
     },
 ];
 
@@ -595,10 +574,8 @@ fn main() {
     let output_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("ablation/ablation.jsonl");
 
-    println!("Ablation study — Phase A+B\n");
-    println!(
-        "Variants: V0 (unpruned), V1 (pruned), V4 (directed), V5 (SVD-only)"
-    );
+    println!("Ablation study — A-axis (adjacency pruning)\n");
+    println!("Variants: A0 (unpruned), A1 (vertex adj), A2 (directed ω₀)");
     println!("Seed: {SEED}, h ∈ [{H_MIN}, {H_MAX}]\n");
 
     // =========================================================================
