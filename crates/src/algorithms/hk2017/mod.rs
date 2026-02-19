@@ -13,6 +13,14 @@
 ///
 /// Return c_EHZ(K) = min A(S,σ).
 ///
+/// # Permutation ordering convention
+///
+/// **TODO(refactor):** The σ ordering used in Q(β) = Σ_{i>j} β_i β_j ω₀(n_{σ(i)}, n_{σ(j)})
+/// is the *reverse* of the physical Reeb orbit direction. The i>j convention means the
+/// Q-maximizing permutation has ω₀(n_{σ(k)}, n_{σ(k+1)}) ≤ 0 for consecutive k, whereas
+/// the physical orbit traverses facets in the opposite cyclic order. This is confusing and
+/// should be refactored so that σ directly represents the physical orbit direction.
+///
 /// # Complexity
 ///
 /// Σ_{m=2}^{F} C(F,m) · (m-1)! — exponential in F.
