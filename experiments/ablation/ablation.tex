@@ -48,18 +48,22 @@ Random polytopes use a fixed seed (42) and height range $h \in [0.5, 2.0]$.
 
 \begin{table}[h]
 \centering
-\begin{tabular}{llrl}
+\begin{tabular}{llrp{5.5cm}}
 \toprule
 Group & $F$ & Count & Description \\
 \midrule
 Random generic    & 5--8 & 20 & 5 random 4-polytopes per facet count \\
-Random Lagrangian & 6--8 & 15 & 5 random products per pair: $\triangle{\times}\triangle$ ($F=6$), $\triangle{\times}\square$ ($F=7$), $\square{\times}\square$ ($F=8$) \\
-Regression cases  & 7--8 &  3 & Fixed polytopes known to trigger degenerate KKT systems \\
+Random Lagrangian & 6--8 & 15 & 5 random products per pair:
+  $\triangle{\times}\triangle$,
+  $\triangle{\times}\square$,
+  $\square{\times}\square$ \\
+Regression cases  & 7--8 &  3 & Fixed polytopes triggering degenerate KKT systems \\
 \bottomrule
 \end{tabular}
 \caption{Test polytope dataset. All random polytopes use seed~42, $h \in [0.5, 2.0]$.
-  Regression cases: $(3,4)$~at~$\theta{=}0°$ and $(4,4)$~at~$\theta{=}0°$ trigger
-  rank-deficient KKT systems; the hypercube exercises the LU fast path.}
+  Regression cases: $\triangle{\times}\square$ at $\theta{=}0^\circ$ and
+  $\square{\times}\square$ at $\theta{=}0^\circ$ trigger rank-deficient KKT systems;
+  the hypercube exercises the LU fast path.}
 \label{tab:ablation-dataset}
 \end{table}
 
@@ -71,8 +75,8 @@ consistent with Corollary~\ref{cor:adjacency-pruning}.
 
 The three regression cases additionally verify correct handling of degenerate
 KKT systems:
-$(3,4)$~at~$\theta{=}0°$ (expected $3\sqrt{2}/2 \approx 2.121$) and
-$(4,4)$~at~$\theta{=}0°$ (expected $2.0$) both require a null-space search
+$\triangle{\times}\square$ at $\theta{=}0^\circ$ (expected $3\sqrt{2}/2 \approx 2.121$) and
+$\square{\times}\square$ at $\theta{=}0^\circ$ (expected $2.0$) both require a null-space search
 when the LU factorization detects rank deficiency;
 the hypercube (expected $4.0$) is solved by the LU fast path without SVD.
 All three capacities match their expected values to within $10^{-6}$.

@@ -5,8 +5,10 @@ This directory contains the LaTeX source for Jörn's master thesis. All agents w
 ## Build
 
 ```bash
-cd thesis/ && latexmk
+cd thesis/ && latexmk && ./check-build.sh
 ```
+
+`check-build.sh` parses the build log for overfull hboxes (> 1pt) and undefined references. It exits non-zero if any are found. **Agents must run this after every compilation** and fix any new warnings they introduced.
 
 Available: TeX Live 2023, pdflatex, xelatex, lualatex, latexmk, biber, chktex.
 
