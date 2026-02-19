@@ -186,8 +186,9 @@ Then:
   (at least one positive and one negative component).
 \item $\beta^*_k = 0$, $\beta^*_j \geq 0$ for all $j \in S$,
   and $\beta^*|_{S'}$ is exactly feasible:
-  ${N'}^\top \beta^*|_{S'} = 0$ and
-  ${\eta'}^\top \beta^*|_{S'} = 1$.
+  $N^\top \beta^* = 0$ and $\eta^\top \beta^* = 1$
+  (which, since $\beta^*_k = 0$, are equivalent to
+  the constraints for~$(S', \sigma|_{S'})$).
 \item The action value satisfies
   \begin{equation}\label{eq:walk-q-formula}
     \beta^{*\top} H\, \beta^*
@@ -208,7 +209,7 @@ forces at least one positive and one negative component.
 
 \emph{Part~(2).}
 The walk-to-boundary construction and non-negativity argument
-are identical to Steps~2--4 of
+are identical to Steps~3--4 of
 Lemma~\ref{lem:rank-deficiency-dismissal}
 (they use only $\beta_0 > 0$, $\delta\beta$ having mixed signs,
 and the definition of~$\alpha^*$).
@@ -317,9 +318,12 @@ Apply Lemma~\ref{lem:constraint-direction-dismissal}
 with~$\delta\beta'$: the walk-to-boundary gives
 $\beta^*|_{S'} \in M(K)|_{S'}$ with $|S'| = |S| - 1$,
 and the $(S', \sigma|_{S'})$ algorithm finds value at least
-$\nu_0 - (\alpha^*)^2\,
-  |\delta\beta'^\top H\,\delta\beta'|$.
-The explicit bound is derived in the proof.
+\[
+  \nu_0
+    - (\alpha^*)^2\,\|\delta\beta'\|\,
+      \Bigl(1 + \frac{\|H\|}{\sigma_C}\Bigr)\,\varepsilon,
+\]
+where $\|\cdot\|$ denotes the spectral norm.
 \end{proposition}
 
 \begin{proof}
@@ -362,8 +366,10 @@ Therefore
   \leq \|\delta\beta'\|\,
        \bigl(\|r_\lambda\| + \|H\|\,\|\Delta\|\bigr)
   \leq \|\delta\beta'\|\,
-       \Bigl(1 + \frac{\|H\|}{\sigma_C}\Bigr)\,\varepsilon.
+       \Bigl(1 + \frac{\|H\|}{\sigma_C}\Bigr)\,\varepsilon,
 \]
+using $\|r_\lambda\| \leq \varepsilon$ and
+$\|\Delta\| \leq \varepsilon/\sigma_C$.
 
 \emph{Conclusion.}
 Since the $(S', \sigma|_{S'})$ algorithm maximises over
