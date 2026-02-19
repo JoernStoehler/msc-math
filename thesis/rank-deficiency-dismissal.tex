@@ -158,15 +158,96 @@ $\delta\beta \neq 0$.
 \end{remark}
 
 % Status: NOT YET Jörn-approved.
-\begin{proposition}[Approximate dismissal of near-singular systems]%
-\label{prop:approximate-dismissal}
+% Structure: Lemma (constraint-satisfying walk) + Lemma (constraint projection)
+%            + Proposition (combining both) + Remark (algorithmic application).
+
+\begin{lemma}[Dismissal via constraint-satisfying direction]%
+\label{lem:constraint-direction-dismissal}
 Let $(S, \sigma)$ be a pair for which the linear
 system~\eqref{eq:linear-system} has a solution
 $(\beta_0, \lambda_0, \nu_0)$ with $\beta_{0,i} > 0$ for all
 $i \in S$.
+Let $\delta\beta \in \mathbb{R}^{|S|} \setminus \{0\}$ satisfy
+the constraint equations
+\[
+  N^\top \delta\beta = 0, \qquad \eta^\top \delta\beta = 0.
+\]
+Define the walk-to-boundary quantities:
+for each~$i$ with $\delta\beta_i < 0$, set
+$\alpha_i = \beta_{0,i} / |\delta\beta_i|$; then
+$\alpha^* = \min\{\alpha_i : \delta\beta_i < 0\}$,
+$k$ is an index achieving this minimum,
+$\beta^* = \beta_0 + \alpha^*\,\delta\beta$,
+and $S' = S \setminus \{k\}$.
+
+Then:
+\begin{enumerate}
+\item $\delta\beta$ has mixed signs
+  (at least one positive and one negative component).
+\item $\beta^*_k = 0$, $\beta^*_j \geq 0$ for all $j \in S$,
+  and $\beta^*|_{S'}$ is exactly feasible:
+  ${N'}^\top \beta^*|_{S'} = 0$ and
+  ${\eta'}^\top \beta^*|_{S'} = 1$.
+\item The action value satisfies
+  \begin{equation}\label{eq:walk-q-formula}
+    \beta^{*\top} H\, \beta^*
+    = \nu_0 + (\alpha^*)^2\,
+      \delta\beta^\top H\, \delta\beta.
+  \end{equation}
+\end{enumerate}
+In particular, the $(S', \sigma|_{S'})$ algorithm finds value
+at least $\nu_0 - (\alpha^*)^2\,
+|\delta\beta^\top H\, \delta\beta|$.
+\end{lemma}
+
+\begin{proof}
+\emph{Part~(1).}
+Since $\eta_i = h_{\sigma(i)} > 0$ for all~$i$,
+$\sum \eta_i\,\delta\beta_i = 0$ with $\delta\beta \neq 0$
+forces at least one positive and one negative component.
+
+\emph{Part~(2).}
+The walk-to-boundary construction and non-negativity argument
+are identical to Steps~2--4 of
+Lemma~\ref{lem:rank-deficiency-dismissal}
+(they use only $\beta_0 > 0$, $\delta\beta$ having mixed signs,
+and the definition of~$\alpha^*$).
+Exact feasibility follows from the constraint equations:
+\[
+  N^\top\beta^*
+  = N^\top\beta_0 + \alpha^*\,N^\top\delta\beta
+  = 0 + 0 = 0, \qquad
+  \eta^\top\beta^*
+  = \eta^\top\beta_0 + \alpha^*\,\eta^\top\delta\beta
+  = 1 + 0 = 1.
+\]
+Since $\beta^*_k = 0$, these equalities pass to the
+restriction~$\beta^*|_{S'}$.
+
+\emph{Part~(3).}
+Expanding the quadratic form:
+\[
+  \beta^{*\top} H\,\beta^*
+  = \beta_0^\top H\,\beta_0
+    + 2\alpha^*\,\delta\beta^\top H\,\beta_0
+    + (\alpha^*)^2\,\delta\beta^\top H\,\delta\beta.
+\]
+The first term equals~$\nu_0$.
+For the cross term, the KKT condition
+$H\,\beta_0 = N\,\lambda_0 + \eta\,\nu_0$ gives
+\[
+  \delta\beta^\top H\,\beta_0
+  = (N^\top\delta\beta)^\top\lambda_0
+    + (\eta^\top\delta\beta)\,\nu_0
+  = 0 + 0 = 0. \qedhere
+\]
+\end{proof}
+
+\begin{lemma}[Constraint projection of approximate null directions]%
+\label{lem:constraint-projection}
 Let $(\delta\beta, \delta\lambda, \delta\nu)$ be a unit vector
 ($\|(\delta\beta, \delta\lambda, \delta\nu)\|_2 = 1$) with
-\emph{approximate} residual
+residual
 \[
   \begin{pmatrix}
     N^\top & 0 & 0 \\
@@ -177,178 +258,145 @@ Let $(\delta\beta, \delta\lambda, \delta\nu)$ be a unit vector
   = \begin{pmatrix}r_\beta\\r_\lambda\\r_\nu\end{pmatrix},
   \qquad
   \varepsilon
-  := \bigl\|(r_\beta, r_\lambda, r_\nu)\bigr\|_2,
+  := \bigl\|(r_\beta, r_\lambda, r_\nu)\bigr\|_2.
 \]
-and suppose $\delta\beta$ has at least one strictly positive and
-one strictly negative component.
+Let $C = [N \mid \eta] \in \mathbb{R}^{|S| \times 5}$
+and suppose $C$ has full column rank with smallest singular
+value $\sigma_C > 0$.
+Define the corrected direction
+\[
+  \delta\beta'
+  = \delta\beta
+    - C\,(C^\top C)^{-1}
+      \begin{pmatrix}r_\beta \\ r_\nu\end{pmatrix}.
+\]
+Then:
+\begin{enumerate}
+\item $N^\top\delta\beta' = 0$ and
+  $\eta^\top\delta\beta' = 0$.
+\item $\|\delta\beta - \delta\beta'\|_2
+  \leq \varepsilon / \sigma_C$.
+\item $\delta\beta' \neq 0$ whenever
+  $\|\delta\beta\|_2 > \varepsilon / \sigma_C$.
+\end{enumerate}
+\end{lemma}
 
-As in Lemma~\ref{lem:rank-deficiency-dismissal}, define the
-walk-to-boundary quantities:
-for each $i$ with $\delta\beta_i < 0$, set
-$\alpha_i = \beta_{0,i}/|\delta\beta_i|$; then
-$\alpha^* = \min\{\alpha_i : \delta\beta_i < 0\}$,
-$k$ is an index achieving this minimum,
-$\beta^* = \beta_0 + \alpha^*\,\delta\beta$,
-and $S' = S \setminus \{k\}$.
+\begin{proof}
+Write $\Delta = C\,(C^\top C)^{-1}(r_\beta, r_\nu)^\top$.
+Since $N^\top\delta\beta = r_\beta$ and
+$\eta^\top\delta\beta = r_\nu$, and
+$C^\top\Delta = (r_\beta, r_\nu)^\top$ by construction:
+\[
+  C^\top\delta\beta'
+  = C^\top\delta\beta - (r_\beta, r_\nu)^\top
+  = (r_\beta, r_\nu)^\top - (r_\beta, r_\nu)^\top = 0,
+\]
+giving~(1).
+For~(2):
+$\|\Delta\|
+= \|C\,(C^\top C)^{-1}(r_\beta, r_\nu)^\top\|
+\leq \sigma_C^{-1}\,\|(r_\beta, r_\nu)\|
+\leq \varepsilon / \sigma_C$.
+Part~(3) follows by the triangle inequality.
+\end{proof}
 
-Then $\beta^*_k = 0$, $\beta^*_j \geq 0$ for all $j \in S$
-(the walk-to-boundary and non-negativity arguments of
-Lemma~\ref{lem:rank-deficiency-dismissal} are purely algebraic),
-and—provided the feasibility correction below keeps
-$\beta' \geq 0$—there exists $\beta' \in M(K)|_{S'}$ such that
-the $(S', \sigma|_{S'})$ algorithm finds value at least
-$\nu_0 - O(\varepsilon)$.
+\begin{proposition}[Approximate dismissal of near-singular systems]%
+\label{prop:approximate-dismissal}
+Let $(S, \sigma)$ be a pair for which the linear
+system~\eqref{eq:linear-system} has a solution
+$(\beta_0, \lambda_0, \nu_0)$ with $\beta_{0,i} > 0$ for all
+$i \in S$.
+Let $(\delta\beta, \delta\lambda, \delta\nu)$ be a unit vector
+with residual~$\varepsilon$ as in
+Lemma~\ref{lem:constraint-projection},
+and suppose $\|\delta\beta\|_2 > \varepsilon / \sigma_C$
+(so that the corrected direction~$\delta\beta'$ from
+Lemma~\ref{lem:constraint-projection} is non-zero).
+
+Apply Lemma~\ref{lem:constraint-direction-dismissal}
+with~$\delta\beta'$: the walk-to-boundary gives
+$\beta^*|_{S'} \in M(K)|_{S'}$ with $|S'| = |S| - 1$,
+and the $(S', \sigma|_{S'})$ algorithm finds value at least
+$\nu_0 - (\alpha^*)^2\,
+  |\delta\beta'^\top H\,\delta\beta'|$.
 The explicit bound is derived in the proof.
 \end{proposition}
 
 \begin{proof}
-The walk-to-boundary construction (Steps~1--4 of
-Lemma~\ref{lem:rank-deficiency-dismissal}) carries over
-unchanged: it uses only $\beta_0 > 0$, $\delta\beta$ having
-mixed signs, and the definition of~$\alpha^*$.
-The boundary point $\beta^* = \beta_0 + \alpha^*\delta\beta$
-satisfies $\beta^*_k = 0$ and $\beta^*_j \geq 0$.
-What changes is that $\beta^*$ is no longer an exact solution,
-so we track the error.
-
-\emph{Step~5${}'$: Action-value perturbation along the walk.}
-Expanding the quadratic form:
+Lemma~\ref{lem:constraint-projection} gives $\delta\beta'$
+with $N^\top\delta\beta' = 0$,
+$\eta^\top\delta\beta' = 0$, and $\delta\beta' \neq 0$.
+Lemma~\ref{lem:constraint-direction-dismissal} then gives a
+feasible boundary point $\beta^*|_{S'}$ with
 \[
   \beta^{*\top} H\,\beta^*
   = \nu_0
-    + 2\alpha^*\,\delta\beta^\top H\,\beta_0
-    + (\alpha^*)^2\,\delta\beta^\top H\,\delta\beta.
+    + (\alpha^*)^2\,\delta\beta'^\top H\,\delta\beta'.
 \]
-In the exact case
-(Lemma~\ref{lem:rank-deficiency-dismissal}),
-$\delta\beta^\top H\,\beta_0 = 0$ and
-$\delta\beta^\top H\,\delta\beta = 0$.
-Here both are $O(\varepsilon)$ instead.
 
-For the cross term: the first-order condition
-$H\,\beta_0 = N\,\lambda_0 + \eta\,\nu_0$ gives
-\[
-  \delta\beta^\top H\,\beta_0
-  = (N^\top\delta\beta)^\top \lambda_0
-    + (\eta^\top\delta\beta)\,\nu_0
-  = r_\beta^\top \lambda_0 + r_\nu\,\nu_0,
-\]
+It remains to bound
+$|\delta\beta'^\top H\,\delta\beta'|$.
+
+Write $\Delta = \delta\beta - \delta\beta'$
+with $\|\Delta\| \leq \varepsilon/\sigma_C$
+(Lemma~\ref{lem:constraint-projection}).
+The second block row of the residual equation gives
+$H\,\delta\beta = N\,\delta\lambda + \eta\,\delta\nu + r_\lambda$,
 so
-$|\delta\beta^\top H\,\beta_0|
-  \leq \|r_\beta\|\,\|\lambda_0\| + |r_\nu|\,|\nu_0|
-  \leq \varepsilon\bigl(\|\lambda_0\| + |\nu_0|\bigr)$.
-
-For the quadratic term: the approximate second block row
-$H\,\delta\beta = N\,\delta\lambda + \eta\,\delta\nu + r_\lambda$
-gives
 \[
-  \delta\beta^\top H\,\delta\beta
-  = (N^\top\delta\beta)^\top \delta\lambda
-    + (\eta^\top\delta\beta)\,\delta\nu
-    + \delta\beta^\top r_\lambda
-  = r_\beta^\top \delta\lambda + r_\nu\,\delta\nu
-    + \delta\beta^\top r_\lambda.
+  H\,\delta\beta'
+  = H\,\delta\beta - H\,\Delta
+  = N\,\delta\lambda + \eta\,\delta\nu + r_\lambda - H\,\Delta.
 \]
-Since $\|\delta\beta\|, \|\delta\lambda\|, |\delta\nu| \leq 1$
-(unit vector) and
-$\|r_\beta\|, \|r_\lambda\|, |r_\nu| \leq \varepsilon$:
-\[
-  |\delta\beta^\top H\,\delta\beta| \leq 3\varepsilon.
-\]
-
-Combining:
-\[
-  |\beta^{*\top}H\,\beta^* - \nu_0|
-  \leq 2\alpha^*\varepsilon(\|\lambda_0\|+|\nu_0|)
-     + 3(\alpha^*)^2\varepsilon
-  =: \Delta_{\mathrm{walk}}.
-\]
-
-\emph{Step~6${}'$: Constraint violation of $\beta^*|_{S'}$.}
-Since $N^\top\beta_0 = 0$, $\eta^\top\beta_0 = 1$,
-and $\beta^*_k = 0$:
+Since $N^\top\delta\beta' = 0$ and $\eta^\top\delta\beta' = 0$:
 \begin{align*}
-  {N'}^\top \beta^*|_{S'}
-  &= N^\top\beta^*
-   = \alpha^*\,N^\top\delta\beta
-   = \alpha^*\,r_\beta, \\
-  {\eta'}^\top \beta^*|_{S'}
-  &= \eta^\top\beta^*
-   = 1 + \alpha^*\,\eta^\top\delta\beta
-   = 1 + \alpha^*\,r_\nu.
+  \delta\beta'^\top H\,\delta\beta'
+  &= \underbrace{(N^\top\delta\beta')^\top}_{=\,0}\delta\lambda
+    + \underbrace{(\eta^\top\delta\beta')}_{=\,0}\,\delta\nu
+    + \delta\beta'^\top(r_\lambda - H\,\Delta) \\
+  &= \delta\beta'^\top(r_\lambda - H\,\Delta).
 \end{align*}
-Both violations are bounded by $\alpha^*\varepsilon$.
-
-\emph{Step~7${}'$: Feasibility correction.}
-Let $C' = [N' \mid \eta'] \in \mathbb{R}^{|S'|\times 5}$
-be the constraint matrix for $(S', \sigma|_{S'})$,
-with smallest singular value $\sigma_C > 0$.
-The minimum-norm correction
-$\Delta\beta$ satisfying
-${C'}^\top\Delta\beta
-  = (\alpha^*r_\beta,\;\alpha^*r_\nu)^\top$
-has
+Therefore
 \[
-  \|\Delta\beta\|_2
-  \leq \frac{\alpha^*\varepsilon}{\sigma_C}.
+  |\delta\beta'^\top H\,\delta\beta'|
+  \leq \|\delta\beta'\|\,
+       \bigl(\|r_\lambda\| + \|H\|\,\|\Delta\|\bigr)
+  \leq \|\delta\beta'\|\,
+       \Bigl(1 + \frac{\|H\|}{\sigma_C}\Bigr)\,\varepsilon.
 \]
-Set $\beta' = \beta^*|_{S'} - \Delta\beta$.
-If $\|\Delta\beta\|_\infty < \min_{j \in S'}\beta^*_j$
-(which holds for $\varepsilon$ small enough),
-then $\beta'_j > 0$ for all $j \in S'$,
-and ${N'}^\top\beta' = 0$, ${\eta'}^\top\beta' = 1$,
-so $\beta' \in M(K)|_{S'}$.
-
-The action-value change from the correction is
-\begin{align*}
-  \bigl|{\beta'}^\top H'\,\beta'
-    - (\beta^*|_{S'})^\top H'\,(\beta^*|_{S'})\bigr|
-  &\leq 2\,\|\beta^*|_{S'}\|_2\,\|H'\|_2\,\|\Delta\beta\|_2
-       + \|H'\|_2\,\|\Delta\beta\|_2^2 \\
-  &\leq 2\bigl(\|\beta_0\|_2 + \alpha^*\bigr)
-        \,\|H\|_2\,
-        \frac{\alpha^*\varepsilon}{\sigma_C}
-       + O(\varepsilon^2)
-  =: \Delta_{\mathrm{proj}} + O(\varepsilon^2),
-\end{align*}
-using $\|\beta^*|_{S'}\| \leq \|\beta_0\| + \alpha^*$
-and $\|H'\| \leq \|H\|$.
 
 \emph{Conclusion.}
 Since the $(S', \sigma|_{S'})$ algorithm maximises over
 all of $M(K)|_{S'}$, it finds value at least
 \[
-  {\beta'}^\top H'\,\beta'
+  \beta^{*\top} H\,\beta^*
   \geq \nu_0
-    - \underbrace{
-        \varepsilon\,\alpha^*
-        \bigl[2(\|\lambda_0\| + |\nu_0|) + 3\alpha^*\bigr]
-      }_{\Delta_{\mathrm{walk}}}
-    - \underbrace{
-        \frac{2(\|\beta_0\| + \alpha^*)\,\|H\|\,
-              \alpha^*\varepsilon}{\sigma_C}
-      }_{\Delta_{\mathrm{proj}}}
-  = \nu_0 - O(\varepsilon).
+    - (\alpha^*)^2\,\|\delta\beta'\|\,
+      \Bigl(1 + \frac{\|H\|}{\sigma_C}\Bigr)\,\varepsilon.
 \]
 \end{proof}
 
 \begin{remark}[Algorithmic application]%
 \label{rem:approximate-dismissal-algorithm}
-In the SVD-based solver, the near-singular direction
+In the SVD-based solver,
 $(\delta\beta, \delta\lambda, \delta\nu)$ is the right singular
 vector for the smallest singular value~$\sigma_{\min}$,
 and $\varepsilon = \sigma_{\min}$.
-The condition ``$\delta\beta$ has mixed signs'' holds
-whenever $\|\delta\beta\|_2 > \varepsilon / h_{\min}$,
-since otherwise
-$\sum \eta_i\,\delta\beta_i \geq h_{\min}\|\delta\beta\|_1$
-would contradict $|\eta^\top\delta\beta| \leq \varepsilon$.
-If $\|\delta\beta\|_2 \leq \varepsilon / h_{\min}$,
-the near-singular direction is effectively confined to
-the multiplier block and $\beta$ is approximately unique:
-the algorithm handles this case without special treatment.
+The condition $\|\delta\beta\| > \varepsilon/\sigma_C$ says
+that the near-singular direction has a non-trivial
+$\beta$-component after constraint projection.
+If it fails, the direction is effectively confined to the
+multiplier block, $\beta$ is approximately unique, and no
+dismissal is needed.
 
-The bound $\Delta_{\mathrm{walk}} + \Delta_{\mathrm{proj}}$
-is proportional to $\varepsilon = \sigma_{\min}$ and can be
-evaluated numerically for each dropped pair.
+The bound is proportional to
+$(\alpha^*)^2\varepsilon$
+rather than $\alpha^*\varepsilon$:
+the constraint projection eliminates the linear cross-term
+$\delta\beta^\top H\,\beta_0$ that would appear without it
+(cf.~the proof of
+Lemma~\ref{lem:constraint-direction-dismissal},
+Part~(3)).
+The remaining error can be evaluated numerically for each
+near-singular pair.
 \end{remark}
