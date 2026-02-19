@@ -22,12 +22,11 @@ TMPFILE=$(mktemp)
 trap 'rm -f "$TMPFILE"' EXIT
 
 # Collect overfull hboxes exceeding threshold
-grep "Overfull.*hbox.*(.*pt too wide)" "$LOG" | sort -u | while IFS= read -r line; do
-    pt=$(echo "$line" | grep -oP '\(\K[\d.]+(?=pt)') || continue
-    if awk "BEGIN {exit !($pt > $THRESHOLD)}" 2>/dev/null; then
-        echo "$line"
-    fi
-done > "$TMPFILE"
+grep "Overfull.*hbox.*(.*pt too wide)" "$LOG" \
+    | sort -u \
+    | awk -v threshold="$THRESHOLD" \
+        'match($0, /\([0-9]+\.[0-9]+pt/) { pt = substr($0, RSTART+1, RLENGTH-3)+0; if (pt > threshold+0) print }' \
+    > "$TMPFILE"
 
 EXIT=0
 
