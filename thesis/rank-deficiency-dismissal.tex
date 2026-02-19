@@ -1,22 +1,21 @@
 % rank-deficiency-dismissal.tex
 %
-% Lemma: rank-deficient KKT systems can be skipped.
+% Lemma: KKT systems with a non-trivial null-space direction in the
+% beta-block can be skipped.
 % Intended location: between lem:well-defined and thm:algorithm-correct
 % in general-case-algorithm-proof.tex.
 %
 % Sources: conjecture from Jörn (2026-02-19), proof by session.
 % Status: NOT YET Jörn-approved.
 
-\begin{lemma}[Rank-deficient systems are redundant]%
+\begin{lemma}[Dismissal of redundant systems]%
 \label{lem:rank-deficiency-dismissal}
 Let $(S, \sigma)$ be a pair for which the linear
 system~\eqref{eq:linear-system} has a solution
-$(\beta_0, \lambda_0, \nu_0)$ with $\beta_{0,i} > 0$ for all
-$i \in S$, and suppose the system has a null-space element
+$(\beta_0, \lambda_0, \nu_0)$ with $\beta_0 \geq 0$,
+and suppose the null space of the system matrix contains an element
 $(\delta\beta, \delta\lambda, \delta\nu)$ with
-$\delta\beta \neq 0$
-(i.e.\ the null space is not confined to the multiplier
-components).
+$\delta\beta \neq 0$.
 
 Then there exist $k \in S$ and a solution
 $(\beta^*, \lambda^*, \nu^*)$ with
@@ -30,11 +29,16 @@ lies in the constraint set $M(K)$ restricted to~$S'$,
 so the algorithm for~$(S', \sigma|_{S'})$ maximises
 $\beta^\top H'\, \beta$ over at least the value~$\nu_0$.
 Consequently, the algorithm may discard any pair $(S, \sigma)$
-whose system is rank-deficient in the $\beta$-block
+whose system has such a null-space direction
 without missing the capacity-achieving pair.
 \end{lemma}
 
 \begin{proof}
+If $\beta_0$ already has $\beta_{0,k} = 0$ for some $k \in S$,
+take $\beta^* = \beta_0$: conclusions (1)--(3) hold immediately
+(with~(3) trivial), and the argument of Step~5 below gives the
+restriction to~$S'$. So assume $\beta_{0,i} > 0$ for all~$i$.
+
 Since $(\delta\beta, \delta\lambda, \delta\nu)$ is in the null space:
 \[
   \text{(I$'$)}\ N^\top \delta\beta = 0, \qquad
@@ -75,11 +79,11 @@ $\delta\beta^\top H\, \delta\beta = 0$
 \]
 Comparing the two expressions: $\delta\nu = 0$, so the
 multiplier~$\nu$ is the same for every solution.
-Since $\beta_{0,i} > 0$ for all~$i$ and $\alpha = 0$ is feasible,
-$\beta(\alpha)$ remains strictly positive for all
-$|\alpha|$ sufficiently small.
 
 \emph{Step~3: Identify the boundary point.}
+Since $\beta_{0,i} > 0$ for all~$i$,
+$\beta(\alpha)$ remains strictly positive for all
+$|\alpha|$ sufficiently small.
 For each $i$ with $\delta\beta_i < 0$, the component
 $\beta_i(\alpha)$ reaches zero at
 $\alpha_i = \beta_{0,i} / |\delta\beta_i|$.
@@ -135,3 +139,20 @@ The algorithm evaluates
 $\max\, \beta^\top H'\, \beta$ over this constraint set
 and therefore finds value $\geq \nu_0$.
 \end{proof}
+
+\begin{remark}[Geometric characterisation of the null space]%
+\label{rem:nullspace-geometry}
+The null space of the system matrix always contains the subspace
+$\{(0, \delta\lambda, 0) : N\,\delta\lambda = 0\}$, which has
+dimension $4 - \operatorname{rank}(N)$.
+In particular, a null-space element with $\delta\beta = 0$
+exists if and only if the visited normals
+$\{n_{\sigma(i)} : i \in S\}$ do not span~$\mathbb{R}^4$.
+(Proof: if $\delta\beta = 0$, the null-space equations reduce to
+$N\,\delta\lambda + \eta\,\delta\nu = 0$; multiplying by any
+$\beta_0 \geq 0$ with $\eta^\top\!\beta_0 = 1$ gives $\delta\nu = 0$,
+leaving $N\,\delta\lambda = 0$.)
+The algorithm does not need this characterisation: it suffices
+to inspect the null-space vectors from the SVD and check whether
+$\delta\beta \neq 0$.
+\end{remark}
