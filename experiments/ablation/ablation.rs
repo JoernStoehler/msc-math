@@ -1,10 +1,12 @@
 //! Ablation study: compare HK2017 algorithm variants on a fixed dataset.
 //!
-//! Phase A (this file): baseline variants imported from the symplectic crate.
-//! Phase B (next session): self-contained improvement variants.
+//! Phase A: V0 (unpruned) and V1 (pruned) — imported from the symplectic crate.
+//! Phase B: V4 (directed Reeb adjacency) and V5 (SVD-only solver) — self-contained.
 //!
-//! Goal: Verify V0 (unpruned) and V1 (pruned) agree on all test polytopes,
-//!       and measure the pruning speedup.
+//! Convention: The library (crates/) is stable. New variants are implemented as
+//! self-contained code in this binary. Library internals needed by the new variants
+//! are copied here (marked with source references). If a variant is later promoted
+//! to production, it enters the library then.
 //!
 //! Architecture:
 //! 1. `cargo run --bin ablation --release` generates the ablation dataset
@@ -20,6 +22,7 @@
 //! Each entry: {polytope_name, variant, group, facet_count, normals, heights,
 //!              capacity, capacity_lenient, iterations, time_ms}
 
+use nalgebra::{DMatrix, DVector, Vector4};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use serde::{Deserialize, Serialize};
@@ -44,8 +47,8 @@ const N_PER_GROUP: usize = 5;
 #[derive(Debug, Serialize, Deserialize)]
 struct AblationEntry {
     polytope_name: String,
-    variant: String,        // "v0_unpruned" | "v1_pruned"
-    group: String,          // "random_generic" | "random_lagrangian" | "regression"
+    variant: String, // "v0_unpruned" | "v1_pruned" | "v4_directed" | "v5_svd_only"
+    group: String,   // "random_generic" | "random_lagrangian" | "regression"
     facet_count: usize,
     normals: Vec<[f64; 4]>,
     heights: Vec<f64>,
@@ -53,6 +56,504 @@ struct AblationEntry {
     capacity_lenient: f64,
     iterations: u64,
     time_ms: f64,
+}
+
+// ============================================================================
+// Copied from library — KKT solver (crates/src/kkt.rs)
+//
+// These are exact copies of pub(crate) functions that can't be imported from
+// the experiment binary. Source commit: see crates/src/kkt.rs header.
+// ============================================================================
+
+/// Minimum β_i value to consider a solution valid.
+/// Copied from crates/src/kkt.rs:12
+const EPS_BETA_POSITIVE: f64 = 1e-12;
+
+/// Minimum Q(β) value to consider a solution valid.
+/// Copied from crates/src/kkt.rs:15
+const EPS_Q_POSITIVE: f64 = 1e-15;
+
+/// Floor for SVD singular values.
+/// Copied from crates/src/kkt.rs:18
+const EPS_SVD_FLOOR: f64 = 1e-12;
+
+/// Gap ratio threshold for rank detection.
+/// Copied from crates/src/kkt.rs:46
+const SVD_GAP_THRESHOLD: f64 = 100.0;
+
+/// Maximum acceptable residual norm.
+/// Copied from crates/src/kkt.rs:49
+const EPS_KKT_RESIDUAL: f64 = 1e-6;
+
+/// Facet incidence tolerance.
+/// Copied from crates/src/constants.rs
+const EPS_FACET_INCIDENCE: f64 = 1e-8;
+
+/// Tolerance for directed adjacency ω₀ check. Conservative: allow transitions
+/// where ω₀(n_i, n_j) ≥ -EPS_DIRECTED to avoid discarding valid orbits.
+const EPS_DIRECTED: f64 = 1e-8;
+
+/// ω₀(u, v) = u_q1·v_p1 - u_p1·v_q1 + u_q2·v_p2 - u_p2·v_q2
+/// Copied from crates/src/geom/symplectic.rs:28
+fn omega0(u: &Vector4<f64>, v: &Vector4<f64>) -> f64 {
+    u[0] * v[2] - u[2] * v[0] + u[1] * v[3] - u[3] * v[1]
+}
+
+/// Q(β) = Σ_{i>j} β_i β_j ω₀(n_{σ(i)}, n_{σ(j)})
+/// Copied from crates/src/kkt.rs:55-65
+fn q_from_beta(normals: &[Vector4<f64>], perm: &[usize], beta: &[f64]) -> f64 {
+    let m = beta.len();
+    (1..m)
+        .flat_map(|i| (0..i).map(move |j| (i, j)))
+        .map(|(i, j)| beta[i] * beta[j] * omega0(&normals[perm[i]], &normals[perm[j]]))
+        .sum()
+}
+
+/// Search 1D null space for β > 0 solution.
+/// Copied from crates/src/kkt.rs:75-116
+fn find_positive_beta_1d(beta0: &[f64], v: &[f64]) -> Option<Vec<f64>> {
+    let m = beta0.len();
+    let (mut lo, mut hi) = (f64::NEG_INFINITY, f64::INFINITY);
+    for j in 0..m {
+        if v[j].abs() < 1e-15 {
+            if beta0[j] <= EPS_BETA_POSITIVE {
+                return None;
+            }
+        } else {
+            let bound = -beta0[j] / v[j];
+            if v[j] > 0.0 {
+                lo = lo.max(bound);
+            } else {
+                hi = hi.min(bound);
+            }
+        }
+    }
+    if lo >= hi {
+        return None;
+    }
+    let alpha = if lo.is_finite() && hi.is_finite() {
+        (lo + hi) / 2.0
+    } else if lo.is_finite() {
+        lo + 1.0
+    } else if hi.is_finite() {
+        hi - 1.0
+    } else {
+        0.0
+    };
+    let beta: Vec<f64> = (0..m).map(|j| beta0[j] + alpha * v[j]).collect();
+    if beta.iter().all(|&b| b > EPS_BETA_POSITIVE) {
+        Some(beta)
+    } else {
+        None
+    }
+}
+
+/// Search multi-dimensional null space for β > 0 solution.
+/// Copied from crates/src/kkt.rs:121-166
+fn find_positive_beta_nd(beta0: &[f64], null_vecs: &[Vec<f64>]) -> Option<Vec<f64>> {
+    let m = beta0.len();
+    let k = null_vecs.len();
+    let mut alpha = vec![0.0; k];
+    for _iter in 0..100 {
+        let beta: Vec<f64> = (0..m)
+            .map(|j| beta0[j] + (0..k).map(|i| alpha[i] * null_vecs[i][j]).sum::<f64>())
+            .collect();
+        let (worst_j, worst_val) = beta
+            .iter()
+            .enumerate()
+            .min_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
+            .unwrap();
+        if *worst_val > EPS_BETA_POSITIVE {
+            return Some(beta);
+        }
+        let grad_sq: f64 = (0..k).map(|i| null_vecs[i][worst_j].powi(2)).sum();
+        if grad_sq < 1e-30 {
+            return None;
+        }
+        let target = EPS_BETA_POSITIVE * 100.0;
+        let step = (target - worst_val) / grad_sq;
+        for i in 0..k {
+            alpha[i] += step * null_vecs[i][worst_j];
+        }
+    }
+    let beta: Vec<f64> = (0..m)
+        .map(|j| beta0[j] + (0..k).map(|i| alpha[i] * null_vecs[i][j]).sum::<f64>())
+        .collect();
+    if beta.iter().all(|&b| b > EPS_BETA_POSITIVE) {
+        Some(beta)
+    } else {
+        None
+    }
+}
+
+/// Build KKT matrix and RHS vector.
+/// Copied from crates/src/kkt.rs:178-217
+fn build_kkt_system(
+    normals: &[Vector4<f64>],
+    heights: &[f64],
+    perm: &[usize],
+) -> (DMatrix<f64>, DVector<f64>) {
+    let m = perm.len();
+    let size = m + 5;
+    let mut kkt = DMatrix::zeros(size, size);
+    let mut rhs = DVector::zeros(size);
+    for i in 0..m {
+        for j in (i + 1)..m {
+            let val = omega0(&normals[perm[i]], &normals[perm[j]]);
+            kkt[(i, j)] = val;
+            kkt[(j, i)] = val;
+        }
+    }
+    for i in 0..m {
+        for d in 0..4 {
+            let n = normals[perm[i]][d];
+            kkt[(i, m + d)] = -n;
+            kkt[(m + d, i)] = n;
+        }
+    }
+    for i in 0..m {
+        let h = heights[perm[i]];
+        kkt[(i, m + 4)] = -h;
+        kkt[(m + 4, i)] = h;
+    }
+    rhs[m + 4] = 1.0;
+    (kkt, rhs)
+}
+
+/// SVD path with gap-based rank detection.
+/// Copied from crates/src/kkt.rs:231-325
+fn solve_kkt_svd_path(
+    kkt: &DMatrix<f64>,
+    rhs: &DVector<f64>,
+    normals: &[Vector4<f64>],
+    heights: &[f64],
+    perm: &[usize],
+) -> Option<(Vec<f64>, f64)> {
+    let m = perm.len();
+    let size = m + 5;
+    let svd = kkt.clone().svd(true, true);
+    let sv = &svd.singular_values;
+    let max_sv = sv.iter().cloned().fold(0.0f64, f64::max);
+    if max_sv < EPS_SVD_FLOOR {
+        return None;
+    }
+    let u = svd.u.as_ref()?;
+    let v_t = svd.v_t.as_ref()?;
+    let floor = max_sv * EPS_SVD_FLOOR;
+    let nonzero = sv.iter().filter(|&&s| s > floor).count();
+    let mut rank = nonzero;
+    for i in (1..nonzero).rev() {
+        if sv[i - 1] / sv[i] > SVD_GAP_THRESHOLD {
+            rank = i;
+            break;
+        }
+    }
+    let mut x0 = DVector::zeros(size);
+    for i in 0..rank {
+        let coeff = u.column(i).dot(rhs) / sv[i];
+        for j in 0..size {
+            x0[j] += coeff * v_t[(i, j)];
+        }
+    }
+    let residual = (kkt * &x0 - rhs).norm();
+    if residual > EPS_KKT_RESIDUAL {
+        return None;
+    }
+    let beta0: Vec<f64> = (0..m).map(|i| x0[i]).collect();
+    if beta0.iter().all(|&b| b > EPS_BETA_POSITIVE) {
+        let q_val = q_from_beta(normals, perm, &beta0);
+        return Some((beta0, q_val));
+    }
+    if rank == size {
+        return None;
+    }
+    let null_beta: Vec<Vec<f64>> = (rank..size)
+        .map(|i| (0..m).map(|j| v_t[(i, j)]).collect())
+        .collect();
+    let beta_opt = if null_beta.len() == 1 {
+        find_positive_beta_1d(&beta0, &null_beta[0])?
+    } else {
+        find_positive_beta_nd(&beta0, &null_beta)?
+    };
+    let constraint_residual: f64 = (0..4)
+        .map(|d| {
+            (0..m)
+                .map(|i| beta_opt[i] * normals[perm[i]][d])
+                .sum::<f64>()
+        })
+        .map(|x: f64| x * x)
+        .sum::<f64>()
+        + ((0..m)
+            .map(|i| beta_opt[i] * heights[perm[i]])
+            .sum::<f64>()
+            - 1.0)
+            .powi(2);
+    if constraint_residual.sqrt() > EPS_KKT_RESIDUAL {
+        return None;
+    }
+    let q_val = q_from_beta(normals, perm, &beta_opt);
+    Some((beta_opt, q_val))
+}
+
+/// LU fast path + SVD fallback. Used by V4 (directed adjacency).
+/// Copied from crates/src/kkt.rs:346-373
+fn solve_kkt_full(
+    normals: &[Vector4<f64>],
+    heights: &[f64],
+    perm: &[usize],
+) -> Option<(Vec<f64>, f64)> {
+    let m = perm.len();
+    let (kkt, rhs) = build_kkt_system(normals, heights, perm);
+    let lu = kkt.clone().full_piv_lu();
+    if lu.is_invertible() {
+        if let Some(solution) = lu.solve(&rhs) {
+            let residual = (&kkt * &solution - &rhs).norm();
+            if residual <= EPS_KKT_RESIDUAL {
+                let beta: Vec<f64> = (0..m).map(|i| solution[i]).collect();
+                if beta.iter().all(|&b| b > EPS_BETA_POSITIVE) {
+                    let q_val = q_from_beta(normals, perm, &beta);
+                    return Some((beta, q_val));
+                }
+            }
+        }
+    }
+    solve_kkt_svd_path(&kkt, &rhs, normals, heights, perm)
+}
+
+/// SVD-only solver (no LU fast path). Used by V5.
+/// Copied from crates/src/kkt.rs:381-389
+fn solve_kkt_svd_only(
+    normals: &[Vector4<f64>],
+    heights: &[f64],
+    perm: &[usize],
+) -> Option<(Vec<f64>, f64)> {
+    let (kkt, rhs) = build_kkt_system(normals, heights, perm);
+    solve_kkt_svd_path(&kkt, &rhs, normals, heights, perm)
+}
+
+// ============================================================================
+// Copied from library — combinatorial infrastructure
+// (crates/src/algorithms/hk2017/mod.rs, permutations.rs)
+// ============================================================================
+
+/// Generate all C(n,k) combinations in lexicographic order.
+/// Copied from crates/src/algorithms/hk2017/mod.rs:135-158
+fn combinations(n: usize, k: usize) -> Vec<Vec<usize>> {
+    let mut result = Vec::new();
+    let mut combo = vec![0usize; k];
+    combinations_rec(n, k, 0, 0, &mut combo, &mut result);
+    result
+}
+
+fn combinations_rec(
+    n: usize,
+    k: usize,
+    start: usize,
+    depth: usize,
+    combo: &mut Vec<usize>,
+    result: &mut Vec<Vec<usize>>,
+) {
+    if depth == k {
+        result.push(combo.clone());
+        return;
+    }
+    for i in start..=(n - k + depth) {
+        combo[depth] = i;
+        combinations_rec(n, k, i + 1, depth + 1, combo, result);
+    }
+}
+
+/// Call callback once for each cyclic permutation of elements.
+/// Copied from crates/src/algorithms/hk2017/permutations.rs:22-35
+fn for_each_cyclic_permutation(elements: &[usize], callback: &mut impl FnMut(&[usize])) {
+    if elements.len() <= 1 {
+        callback(elements);
+        return;
+    }
+    let mut buf = elements.to_vec();
+    let k = buf.len() - 1;
+    heap_perms_buf(&mut buf, 1, k, callback);
+}
+
+/// Heap's algorithm on buf[offset..offset+k].
+/// Copied from crates/src/algorithms/hk2017/permutations.rs:38-57
+fn heap_perms_buf(
+    buf: &mut [usize],
+    offset: usize,
+    k: usize,
+    callback: &mut impl FnMut(&[usize]),
+) {
+    if k == 1 {
+        callback(buf);
+        return;
+    }
+    heap_perms_buf(buf, offset, k - 1, callback);
+    for i in 0..k - 1 {
+        if k.is_multiple_of(2) {
+            buf.swap(offset + i, offset + k - 1);
+        } else {
+            buf.swap(offset, offset + k - 1);
+        }
+        heap_perms_buf(buf, offset, k - 1, callback);
+    }
+}
+
+/// Build undirected facet adjacency matrix (vertex-sharing).
+/// Copied from crates/src/algorithms/hk2017/mod.rs:162-182
+fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
+    let f = polytope.facet_count();
+    let normals = polytope.normals();
+    let heights = polytope.heights();
+    let mut adj = vec![vec![false; f]; f];
+    for v in polytope.vertices() {
+        let incident: Vec<usize> = (0..f)
+            .filter(|&i| (normals[i].dot(v) - heights[i]).abs() < EPS_FACET_INCIDENCE)
+            .collect();
+        for &i in &incident {
+            for &j in &incident {
+                adj[i][j] = true;
+            }
+        }
+    }
+    adj
+}
+
+/// Check if a cyclic permutation forms an adjacent cycle in the given graph.
+/// Copied from crates/src/algorithms/hk2017/mod.rs:185-188
+fn is_adjacent_cycle(perm: &[usize], adj: &[Vec<bool>]) -> bool {
+    let m = perm.len();
+    (0..m).all(|k| adj[perm[k]][perm[(k + 1) % m]])
+}
+
+// ============================================================================
+// New: V4 — directed Reeb-flow adjacency
+//
+// The physical Reeb orbit traverses facets in a specific cyclic order. For a
+// transition from F_i to F_j, the Reeb flow on F_i must carry the orbit toward
+// the ridge F_i ∩ F_j, requiring ω₀(n_i, n_j) > 0.
+//
+// However, the HK2017 Q function uses Σ_{i>j} β_i β_j ω₀(n_{σ(i)}, n_{σ(j)}),
+// which picks the REVERSED cyclic orientation for Q > 0. So the Q-maximizing
+// permutation has ω₀(n_{σ(k)}, n_{σ(k+1)}) ≤ 0 for consecutive transitions.
+//
+// Verified: for the hypercube, perm [0,5,1,4] gives Q > 0 with all consecutive
+// ω₀ = -1. The physical orbit is F0→F4→F1→F5→F0 (the reverse cyclic order).
+//
+// Directed edge i→j in the ALGEBRAIC graph: ω₀(n_i, n_j) ≤ EPS (conservative).
+// Combined with vertex adjacency: dir_adj[i][j] = vertex_adj[i][j] AND ω₀ ≤ EPS.
+//
+// Key risk: the sign analysis is agent-written. The ablation empirically checks
+// that V4 agrees with V0 on all test polytopes.
+// ============================================================================
+
+/// Build directed adjacency for the algebraic (Q-maximizing) permutation order.
+/// Edge i→j allowed iff vertex-adjacent AND ω₀(n_i, n_j) ≤ EPS.
+fn build_directed_adjacency(
+    vertex_adj: &[Vec<bool>],
+    normals: &[Vector4<f64>],
+) -> Vec<Vec<bool>> {
+    let f = normals.len();
+    let mut dir_adj = vec![vec![false; f]; f];
+    for i in 0..f {
+        for j in 0..f {
+            if i == j {
+                continue;
+            }
+            if vertex_adj[i][j] {
+                dir_adj[i][j] = omega0(&normals[i], &normals[j]) <= EPS_DIRECTED;
+            }
+        }
+    }
+    dir_adj
+}
+
+// ============================================================================
+// Generic capacity loop for local variants
+// ============================================================================
+
+/// Intermediate best candidate: (action, subset, permutation, beta).
+type Candidate = (f64, Vec<usize>, Vec<usize>, Vec<f64>);
+
+/// Capacity computation with configurable adjacency and solver.
+///
+/// Same algorithm as `ehz_capacity_pruned`, but parameterized:
+/// - `adj`: adjacency matrix (undirected for V5, directed for V4)
+/// - `solver`: KKT solver function (full for V4, SVD-only for V5)
+fn ehz_capacity_with(
+    polytope: &Polytope4D,
+    adj: &[Vec<bool>],
+    solver: fn(&[Vector4<f64>], &[f64], &[usize]) -> Option<(Vec<f64>, f64)>,
+) -> Option<EhzResult> {
+    let f = polytope.facet_count();
+    let normals = polytope.normals();
+    let heights = polytope.heights();
+
+    let mut best_strict: Option<Candidate> = None;
+    let mut best_lenient: Option<Candidate> = None;
+    let mut iterations: u64 = 0;
+
+    for m in 2..=f {
+        for subset in combinations(f, m) {
+            for_each_cyclic_permutation(&subset, &mut |perm| {
+                if !is_adjacent_cycle(perm, adj) {
+                    return;
+                }
+                iterations += 1;
+
+                if let Some((beta, q_val)) = solver(normals, heights, perm) {
+                    if q_val <= EPS_Q_POSITIVE {
+                        return;
+                    }
+                    let beta_min = beta.iter().cloned().fold(f64::INFINITY, f64::min);
+                    let action = 0.5 / q_val;
+
+                    if beta_min > EPS_BETA_POSITIVE {
+                        let update = best_strict.as_ref().is_none_or(|b| action < b.0);
+                        if update {
+                            best_strict = Some((
+                                action,
+                                subset.clone(),
+                                perm.to_vec(),
+                                beta.clone(),
+                            ));
+                        }
+                    }
+
+                    if beta_min > -EPS_BETA_POSITIVE {
+                        let update = best_lenient.as_ref().is_none_or(|b| action < b.0);
+                        if update {
+                            best_lenient =
+                                Some((action, subset.clone(), perm.to_vec(), beta));
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    let strict = best_strict?;
+    let lenient_cap = best_lenient.map_or(strict.0, |b| b.0);
+    Some(EhzResult {
+        capacity: strict.0,
+        capacity_lenient: lenient_cap,
+        best_subset: strict.1,
+        best_permutation: strict.2,
+        best_beta: strict.3,
+        iterations,
+    })
+}
+
+/// V4: directed Reeb-flow adjacency + standard LU/SVD solver.
+fn ehz_capacity_directed(polytope: &Polytope4D) -> Option<EhzResult> {
+    let vertex_adj = build_adjacency_matrix(polytope);
+    let dir_adj = build_directed_adjacency(&vertex_adj, polytope.normals());
+    ehz_capacity_with(polytope, &dir_adj, solve_kkt_full)
+}
+
+/// V5: undirected adjacency pruning + SVD-only solver (no LU fast path).
+fn ehz_capacity_svd_only_variant(polytope: &Polytope4D) -> Option<EhzResult> {
+    let adj = build_adjacency_matrix(polytope);
+    ehz_capacity_with(polytope, &adj, solve_kkt_svd_only)
 }
 
 // ============================================================================
@@ -73,6 +574,14 @@ const VARIANTS: &[Variant] = &[
         name: "v1_pruned",
         run: ehz_capacity_pruned,
     },
+    Variant {
+        name: "v4_directed",
+        run: ehz_capacity_directed,
+    },
+    Variant {
+        name: "v5_svd_only",
+        run: ehz_capacity_svd_only_variant,
+    },
 ];
 
 // ============================================================================
@@ -86,8 +595,10 @@ fn main() {
     let output_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("ablation/ablation.jsonl");
 
-    println!("Ablation study — Phase A: baselines\n");
-    println!("Variants: V0 (unpruned), V1 (pruned)");
+    println!("Ablation study — Phase A+B\n");
+    println!(
+        "Variants: V0 (unpruned), V1 (pruned), V4 (directed), V5 (SVD-only)"
+    );
     println!("Seed: {SEED}, h ∈ [{H_MIN}, {H_MAX}]\n");
 
     // =========================================================================
@@ -186,7 +697,10 @@ fn main() {
 
     let n_polytopes = polytopes.len();
     let n_entries = n_polytopes * VARIANTS.len();
-    println!("\nTotal: {n_polytopes} polytopes × {} variants = {n_entries} entries\n", VARIANTS.len());
+    println!(
+        "\nTotal: {n_polytopes} polytopes × {} variants = {n_entries} entries\n",
+        VARIANTS.len()
+    );
 
     // =========================================================================
     // Run ablation variants
@@ -215,7 +729,10 @@ fn main() {
 
             match result {
                 None => {
-                    eprintln!("  FAILURE: {} / {} returned None", polytope_name, variant.name);
+                    eprintln!(
+                        "  FAILURE: {} / {} returned None",
+                        polytope_name, variant.name
+                    );
                     n_failures += 1;
                 }
                 Some(r) => {
@@ -252,19 +769,23 @@ fn main() {
             }
         }
 
-        // Check V0 vs V1 agreement
-        if capacities.len() == 2 {
-            let (_, c0) = &capacities[0];
-            let (_, c1) = &capacities[1];
-            if (c0 - c1).abs() > 1e-5 {
-                eprintln!(
-                    "  DISAGREE: {} V0={:.8} V1={:.8} (diff={:.2e})",
-                    polytope_name,
-                    c0,
-                    c1,
-                    (c0 - c1).abs()
-                );
-                n_disagreements += 1;
+        // Check all-variant agreement (all pairs)
+        for i in 0..capacities.len() {
+            for j in (i + 1)..capacities.len() {
+                let (ref name_i, c_i) = capacities[i];
+                let (ref name_j, c_j) = capacities[j];
+                if (c_i - c_j).abs() > 1e-5 {
+                    eprintln!(
+                        "  DISAGREE: {} {}={:.8} {}={:.8} (diff={:.2e})",
+                        polytope_name,
+                        name_i,
+                        c_i,
+                        name_j,
+                        c_j,
+                        (c_i - c_j).abs()
+                    );
+                    n_disagreements += 1;
+                }
             }
         }
     }
@@ -297,7 +818,9 @@ fn main() {
     println!("Output: {}", output_path.display());
 
     if n_disagreements > 0 || n_failures > 0 {
-        eprintln!("\nABLATION ISSUES FOUND: {n_disagreements} disagreements, {n_failures} failures");
+        eprintln!(
+            "\nABLATION ISSUES FOUND: {n_disagreements} disagreements, {n_failures} failures"
+        );
         std::process::exit(1);
     } else {
         println!("\nAll variants agree. Ready for Python analysis.");
