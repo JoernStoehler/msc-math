@@ -10,6 +10,30 @@ cd thesis/ && latexmk
 
 Available: TeX Live 2023, pdflatex, xelatex, lualatex, latexmk, biber, chktex.
 
+## Jörn Reviews PDF, Not .tex
+
+Jörn reads the compiled PDF. He does not read `.tex` source files for review.
+
+**When presenting content for Jörn's review:**
+1. Compile the thesis (`cd thesis/ && latexmk`)
+2. Look up the rendered number from `thesis/build/main.aux`
+3. Tell Jörn: "Lemma 3.43 on page 25" — not "see rank-deficiency-dismissal.tex"
+
+**When reporting edits:**
+- Describe by rendered location: "the proof conclusion of Theorem 5.1"
+- Not by source location: "line 418 of simple-minimizer-proof.tex"
+
+**When referring to theorems/sections/equations in chat:**
+- Use rendered numbers: "Theorem 5.3", "Section 2.1", "equation (3.7)"
+- Not label names: `thm:simple-minimizer`, `sec:algorithm`
+- How to get rendered numbers:
+  ```bash
+  grep 'label-name' thesis/build/main.aux
+  ```
+  Extract the number from `\newlabel{label-name}{{number}{page}...}`.
+
+Note: In `.tex` source, always use `\ref{label}` — never hardcode numbers. This rule is about **chat messages to Jörn**, not about LaTeX source.
+
 ## Theorem/Section Numbers
 
 Never guess — read from `thesis/build/main.aux` after building:
