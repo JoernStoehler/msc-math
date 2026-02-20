@@ -227,30 +227,90 @@ all of $M(K)|_{S'}$, it finds value at least
 \]
 \end{proof}
 
-\begin{remark}[Dismissal of near-singular systems in the algorithm]%
+\begin{algorithm}[Near-singular system handling]%
+\label{alg:near-singular-handling}
+For each pair $(S, \sigma)$, the numerical algorithm solves
+the KKT system~\eqref{eq:linear-system} via SVD.
+Let $\sigma_1 \geq \cdots \geq \sigma_m$ be the singular
+values of the system matrix, and let
+$(\delta\beta, \delta\lambda, \delta\nu)$ denote the right
+singular vector for~$\sigma_m$.
+Let $C = [N \mid \eta]$ with smallest singular
+value~$\sigma_C$.
+
+\smallskip\noindent
+Three cases arise:
+\begin{description}
+\item[Well-conditioned] ($\sigma_m / \sigma_{m-1} > \tau$
+  for a threshold~$\tau$):
+  The system has a unique solution with negligible
+  numerical error.
+  The algorithm uses the computed $\beta_0$ directly.
+\item[Near-singular, non-trivial $\delta\beta$]
+  ($\sigma_m / \sigma_{m-1} \leq \tau$ and
+  $\|\delta\beta\| > \sigma_m / \sigma_C$):
+  The near-singular direction has a significant
+  $\beta$-component, so the system is approximately
+  rank-deficient in $\beta$.
+  The algorithm \emph{dismisses} the pair:
+  it records the error bound from
+  Lemma~\ref{lem:dismissal-error-bound} and
+  skips to the next pair.
+\item[Near-singular, trivial $\delta\beta$]
+  ($\sigma_m / \sigma_{m-1} \leq \tau$ and
+  $\|\delta\beta\| \leq \sigma_m / \sigma_C$):
+  The near-singular direction is confined to the
+  multiplier block $(\delta\lambda, \delta\nu)$.
+  The $\beta$-component of the solution is approximately
+  unique.
+  The algorithm uses $\beta_0$ directly, flagging the
+  candidate as uncertain
+  (Section~\ref{app:error-tracking}).
+\end{description}
+\end{algorithm}
+
+\begin{lemma}[Error bound for near-singular dismissal]%
+\label{lem:dismissal-error-bound}
+Suppose Algorithm~\ref{alg:near-singular-handling}
+dismisses a pair $(S, \sigma)$ (the second case).
+Let $(\beta_0, \lambda_0, \nu_0)$ be the computed solution
+with $\beta_{0,i} > 0$ for all~$i$, and let
+$\delta\beta'$ be the corrected direction from
+Lemma~\ref{lem:constraint-projection}.
+Then there exists a pair $(S', \sigma|_{S'})$ with
+$|S'| = |S| - 1$ whose algorithm finds value at least
+\begin{equation}\label{eq:dismissal-error-bound}
+  \nu_0
+    - (\alpha^*)^2\,\|\delta\beta'\|\,
+      \Bigl(1 + \frac{\|H\|}{\sigma_C}\Bigr)\,\sigma_m,
+\end{equation}
+where $\alpha^* = \min\{\beta_{0,i}/|\delta\beta'_i|
+: \delta\beta'_i < 0\}$.
+In particular, the maximum over all non-dismissed pairs
+is at least~\eqref{eq:dismissal-error-bound}.
+\end{lemma}
+
+\begin{proof}
+The right singular vector for~$\sigma_m$ satisfies
+the residual equation with $\varepsilon = \sigma_m$
+(by definition of the SVD).
+Since $\|\delta\beta\| > \sigma_m / \sigma_C$,
+Lemma~\ref{lem:constraint-projection}(3) gives
+$\delta\beta' \neq 0$.
+The bound then follows from
+Proposition~\ref{prop:approximate-dismissal} with
+$\varepsilon = \sigma_m$.
+\end{proof}
+
+\begin{remark}[Practical aspects of near-singular handling]%
 \label{rem:approximate-dismissal-algorithm}
-The algorithm solves each KKT system via SVD.
-When the smallest singular value~$\sigma_{\min}$ is much smaller
-than the next-smallest, the system is near-singular and the
-computed solution~$\beta_0$ may be unreliable.
-Proposition~\ref{prop:approximate-dismissal} justifies
-skipping such systems:
-a smaller pair $(S', \sigma|_{S'})$ achieves value within
-$O(\sigma_{\min})$ of~$\nu_0$, so the capacity is not missed.
-
-In practice, the algorithm inspects the right singular vector
-$(\delta\beta, \delta\lambda, \delta\nu)$ for~$\sigma_{\min}$
-and checks whether the $\delta\beta$-component is non-trivial
-($\|\delta\beta\| > \sigma_{\min}/\sigma_C$).
-If so, the proposition applies and the system is safely dropped.
-If not, the near-singular direction is confined to the
-multiplier block~$(\delta\lambda, \delta\nu)$:
-the multipliers are ambiguous, but~$\beta_0$ is approximately
-unique and the algorithm uses it directly.
-
-The error bound
-$(\alpha^*)^2\,\|\delta\beta'\|\,(1 + \|H\|/\sigma_C)\,
-\sigma_{\min}$
-can be evaluated numerically for each dropped system
-to confirm that the loss is negligible.
+The bound~\eqref{eq:dismissal-error-bound} can be evaluated
+numerically for each dismissed system to confirm the value
+loss is negligible.
+In the third case of
+Algorithm~\ref{alg:near-singular-handling}
+(trivial~$\delta\beta$), the multipliers $(\lambda, \nu)$ are
+ambiguous but $\beta_0$ is approximately unique, so the
+computed $\beta_0^\top H\,\beta_0$ is reliable despite the
+near-singularity.
 \end{remark}
