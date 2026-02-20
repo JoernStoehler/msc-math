@@ -231,63 +231,84 @@ all of $M(K)|_{S'}$, it finds value at least
 \label{alg:near-singular-handling}
 For each pair $(S, \sigma)$, the numerical algorithm solves
 the KKT system~\eqref{eq:linear-system} via SVD.
-Let $\sigma_1 \geq \cdots \geq \sigma_m$ be the singular
-values of the system matrix, and let
-$(\delta\beta, \delta\lambda, \delta\nu)$ denote the right
-singular vector for~$\sigma_m$.
-Let $C = [N \mid \eta]$ with smallest singular
-value~$\sigma_C$.
 
 \smallskip\noindent
-Three cases arise:
-\begin{description}
-\item[Dismiss]
-  ($\sigma_m$ is small and
-  $\|\delta\beta\| > \sigma_m / \sigma_C$):
-  The near-null direction has a significant
-  $\beta$-component, so the system is approximately
-  rank-deficient in~$\beta$.
-  The algorithm \emph{dismisses} the pair:
-  it records the error bound from
-  Lemma~\ref{lem:dismissal-error-bound} and
-  skips to the next pair.
-\item[Uncertain]
-  ($\sigma_m$ is small and
-  $\|\delta\beta\| \leq \sigma_m / \sigma_C$):
-  The near-null direction is confined to the
-  multiplier block $(\delta\lambda, \delta\nu)$.
-  The $\beta$-component of the solution is approximately
-  unique.
-  The algorithm uses $\beta_0$ directly, flagging the
-  candidate as uncertain
-  (Section~\ref{app:error-tracking}).
-\item[Normal]
-  ($\sigma_m$ is not small):
-  The system is well-conditioned.
-  The algorithm uses the computed $\beta_0$ directly.
-\end{description}
-The threshold for ``$\sigma_m$ is small'' is an implementation
-choice; the Rust code uses a gap ratio
-$\sigma_{m-1}/\sigma_m > \tau$ as a heuristic.
+\emph{Setup.}
+Let $C = [N \mid \eta] \in \mathbb{R}^{|S| \times 5}$
+be the constraint matrix, with smallest singular
+value~$\sigma_C$.
+Let $\sigma_1 \geq \cdots \geq \sigma_{m+5}$ be the singular
+values of the KKT system matrix.
+We call the tail singular values
+$\sigma_j$ ($j \geq I$) \emph{small} if
+$\sigma_j < \sigma_1 \cdot \tau$ for a tolerance~$\tau$;
+the corresponding right singular vectors
+$v_j = (\delta\beta^{(j)}, \delta\lambda^{(j)},
+\delta\nu^{(j)})$ span the \emph{near-null space}.
+We say that a near-null direction~$v_j$ has
+\emph{significant $\beta$-component} if
+$\|\delta\beta^{(j)}\| > \sigma_j / \sigma_C$.
+
+\smallskip\noindent
+\emph{Normal.}
+If no singular value is small, the system is
+well-conditioned and the algorithm uses $\beta_0$ directly.
+
+\smallskip\noindent
+\emph{Dismiss.}
+If $C$ has full column rank ($\sigma_C > 0$) and some
+near-null direction~$v_j$ has significant
+$\beta$-component,
+the system is approximately rank-deficient in~$\beta$.
+Proposition~\ref{prop:approximate-dismissal} applies:
+the value is covered (up to a bounded error) by a pair
+$(S', \sigma|_{S'})$ with $|S'| = |S| - 1$.
+The algorithm records the error bound
+(Lemma~\ref{lem:dismissal-error-bound}) and skips to the
+next pair.
+
+\smallskip\noindent
+\emph{Otherwise}, the algorithm uses $\beta_0$ directly.
+This covers two sub-cases:
+(a)~$C$ is rank-deficient, so the dismissal analysis
+does not apply (the constraint projection of
+Lemma~\ref{lem:constraint-projection} requires
+$\sigma_C > 0$);
+(b)~every near-null direction has
+$\|\delta\beta^{(j)}\| \leq \sigma_j / \sigma_C$,
+meaning the near-null space is confined to the
+multiplier block~$(\lambda, \nu)$ and $\beta_0$ is
+well-determined despite the near-singularity.
+
+\smallskip\noindent
+\emph{Implementation note.}
+The Rust code detects small singular values via a gap
+ratio $\sigma_{j-1}/\sigma_j > \tau_{\mathrm{gap}}$,
+which is a sufficient but not necessary condition.
+A condition-number threshold
+$\sigma_j < \sigma_1 \cdot \tau$ is more principled.
 The mathematical argument
 (Lemma~\ref{lem:dismissal-error-bound}) is valid whenever
-the dismiss condition holds, regardless of the threshold.
+the dismiss condition holds, regardless of the detection
+method.
 \end{algorithm}
 
 \begin{lemma}[Error bound for near-singular dismissal]%
 \label{lem:dismissal-error-bound}
 Suppose Algorithm~\ref{alg:near-singular-handling}
-dismisses a pair $(S, \sigma)$ (the second case).
+dismisses a pair $(S, \sigma)$ via a near-null direction
+$v_j = (\delta\beta^{(j)}, \delta\lambda^{(j)},
+\delta\nu^{(j)})$ with singular value~$\sigma_j$.
 Let $(\beta_0, \lambda_0, \nu_0)$ be the computed solution
 with $\beta_{0,i} > 0$ for all~$i$, and let
 $\delta\beta'$ be the corrected direction from
-Lemma~\ref{lem:constraint-projection}.
+Lemma~\ref{lem:constraint-projection} applied to~$v_j$.
 Then there exists a pair $(S', \sigma|_{S'})$ with
 $|S'| = |S| - 1$ whose algorithm finds value at least
 \begin{equation}\label{eq:dismissal-error-bound}
   \nu_0
     - (\alpha^*)^2\,\|\delta\beta'\|\,
-      \Bigl(1 + \frac{\|H\|}{\sigma_C}\Bigr)\,\sigma_m,
+      \Bigl(1 + \frac{\|H\|}{\sigma_C}\Bigr)\,\sigma_j,
 \end{equation}
 where $\alpha^* = \min\{\beta_{0,i}/|\delta\beta'_i|
 : \delta\beta'_i < 0\}$.
@@ -296,15 +317,15 @@ is at least~\eqref{eq:dismissal-error-bound}.
 \end{lemma}
 
 \begin{proof}
-The right singular vector for~$\sigma_m$ satisfies
-the residual equation with $\varepsilon = \sigma_m$
+The right singular vector for~$\sigma_j$ satisfies
+the residual equation with $\varepsilon = \sigma_j$
 (by definition of the SVD).
-Since $\|\delta\beta\| > \sigma_m / \sigma_C$,
+Since $\|\delta\beta^{(j)}\| > \sigma_j / \sigma_C$,
 Lemma~\ref{lem:constraint-projection}(3) gives
 $\delta\beta' \neq 0$.
 The bound then follows from
 Proposition~\ref{prop:approximate-dismissal} with
-$\varepsilon = \sigma_m$.
+$\varepsilon = \sigma_j$.
 \end{proof}
 
 \begin{remark}[Practical aspects of near-singular handling]%
@@ -312,10 +333,13 @@ $\varepsilon = \sigma_m$.
 The bound~\eqref{eq:dismissal-error-bound} can be evaluated
 numerically for each dismissed system to confirm the value
 loss is negligible.
-In the third case of
-Algorithm~\ref{alg:near-singular-handling}
-(trivial~$\delta\beta$), the multipliers $(\lambda, \nu)$ are
-ambiguous but $\beta_0$ is approximately unique, so the
-computed $\beta_0^\top H\,\beta_0$ is reliable despite the
+In Case~3 of Algorithm~\ref{alg:near-singular-handling},
+the multipliers $(\lambda, \nu)$ are ambiguous but $\beta_0$
+is well-determined, so the computed
+$\beta_0^\top H\,\beta_0$ is reliable despite the
 near-singularity.
+The three-valued predicates
+(Section~\ref{app:three-valued}) then classify the
+candidate based on $\beta_0$ alone, with no additional
+uncertainty from the near-singular system.
 \end{remark}

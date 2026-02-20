@@ -1,83 +1,57 @@
 % appendix-numerical-error-tracking.tex — \input'd from appendix-numerical.tex
 %
 % How the numerical algorithm reports results: certified vs uncertain
-% candidates, error intervals, and when the answer is conclusive.
+% candidates, and when the answer is conclusive.
 %
 % Status: draft, not yet Jörn-reviewed.
 
 After evaluating all candidate pairs $(S, \sigma)$,
 the numerical algorithm must report a capacity value with
 appropriate certainty qualifiers.
-Each candidate is classified by two independent criteria:
-its \emph{predicate status} (whether all three-valued
-predicates returned $\textsc{true}$, or some returned
-$\textsc{unknown}$) and its \emph{numerical stability}
-(whether the KKT system was well-conditioned or
-near-singular).
+Near-singular systems have already been resolved by
+Algorithm~\ref{alg:near-singular-handling}: each pair is
+either dismissed (value covered by a smaller pair) or its
+computed~$\beta_0$ is used directly.
+The only remaining source of uncertainty is the
+three-valued predicates of
+Section~\ref{app:three-valued}.
 
 \paragraph{Candidate classification.}
-A candidate $(S, \sigma)$ with computed value~$\hat Q$ falls
-into one of three categories:
+A non-dismissed candidate $(S, \sigma)$ with computed
+value~$\hat Q$ falls into one of two categories:
 \begin{description}
 \item[Certified.]
-  All predicates are $\textsc{true}$
-  and the system is well-conditioned.
-  The computed~$\hat Q$ is the value of a genuinely
-  feasible critical point, with negligible rounding error.
-\item[Uncertain (predicate).]
+  All predicates returned $\textsc{true}$.
+  The candidate is genuinely admissible and~$\hat Q$ is
+  the value of a feasible critical point.
+\item[Uncertain.]
   Some predicate returned $\textsc{unknown}$
   (typically a $\beta_i$ near zero).
   The pair may or may not satisfy the exact constraints,
   so~$\hat Q$ may come from an inadmissible point.
-\item[Uncertain (numerical).]
-  All predicates are $\textsc{true}$ or $\textsc{unknown}$,
-  but the system is near-singular
-  (small $\sigma_{\min}$ but $\tilde P_{\text{dismiss}} \neq
-  \textsc{true}$, so the node was not dismissed).
-  The computed~$\hat Q$ carries an error interval
-  $[\hat Q - \delta, \hat Q + \delta]$
-  where $\delta$ reflects the amplified solve error
-  from the large condition number.
 \end{description}
-A candidate can be uncertain for both reasons simultaneously.
 
 \paragraph{Final answer.}
 Let $Q_{\text{cert}}$ be the largest value among certified
-candidates, and let $[Q_{\text{unc}}^-, Q_{\text{unc}}^+]$
-be the interval containing the largest uncertain candidate
-(accounting for both predicate and numerical uncertainty).
-If no certified candidate exists (all candidates are uncertain),
-the algorithm can only report the uncertain interval
-$[(2\, Q_{\text{unc}}^+)^{-1},\; \infty)$ and flag the result
-for investigation.
-Otherwise, three cases arise:
+candidates, and $Q_{\text{unc}}$ the largest value among
+uncertain candidates.
+If no certified candidate exists, the algorithm reports
+$Q_{\text{unc}}$ and flags the result for investigation.
+Otherwise, two cases arise:
 \begin{enumerate}
 \item
-  $Q_{\text{cert}} \geq Q_{\text{unc}}^+$:
+  $Q_{\text{cert}} \geq Q_{\text{unc}}$:
   the certified candidate dominates.
   The capacity is
   $c_{\mathrm{EHZ}}(K) = 1 / (2\, Q_{\text{cert}})$
   with high confidence.
 \item
-  $Q_{\text{cert}} < Q_{\text{unc}}^+$
-  but $Q_{\text{cert}} \geq Q_{\text{unc}}^-$:
-  the uncertain candidate \emph{might} beat the certified one.
-  The algorithm reports both values:
-  \[
-    c_{\mathrm{EHZ}}(K) \in
-    \bigl[
-      (2\, Q_{\text{unc}}^+)^{-1},\;
-      (2\, Q_{\text{cert}})^{-1}
-    \bigr]
-  \]
-  (the capacity lies in this interval, with the lower bound
-  from the uncertain candidate and the upper bound from the
-  certified one, since higher~$Q$ gives lower capacity).
-\item
-  $Q_{\text{cert}} < Q_{\text{unc}}^-$:
-  the uncertain candidate strictly dominates.
-  The capacity depends on whether the uncertain candidate is
-  truly admissible.
+  $Q_{\text{cert}} < Q_{\text{unc}}$:
+  an uncertain candidate has a higher~$Q$ value.
+  The certified value gives a reliable upper bound:
+  $c_{\mathrm{EHZ}}(K) \leq 1 / (2\, Q_{\text{cert}})$.
+  If the uncertain candidate is truly admissible, the
+  capacity is $1 / (2\, Q_{\text{unc}})$, which is lower.
   The algorithm flags this case for investigation.
 \end{enumerate}
 
@@ -86,15 +60,13 @@ In practice, we track error bounds empirically in the Rust
 implementation rather than deriving tight analytic bounds
 for every operation.
 The SVD decomposition accounts for roughly 80\% of the
-computation time; the numerical estimation and error
-propagation happen \emph{after} the SVD and do not
-require modifying the SVD computation itself.
-The implementation can accumulate error contributions through
-a dedicated data structure that tracks the best certified
-candidate and the best uncertain candidate separately,
-evaluating the error bound from
-Proposition~\ref{prop:approximate-dismissal} for each
-near-singular system encountered.
+computation time; the error tracking happens \emph{after}
+the SVD and does not require modifying the SVD computation
+itself.
+The implementation tracks the best certified and best
+uncertain candidates separately, evaluating the dismissal
+error bound (Lemma~\ref{lem:dismissal-error-bound})
+for each dismissed system.
 This makes the error tracking essentially free in terms of
 additional computational cost.
 \end{remark}
