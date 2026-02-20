@@ -239,8 +239,7 @@ be the constraint matrix, with smallest singular
 value~$\sigma_C$.
 Let $\sigma_1 \geq \cdots \geq \sigma_{m+5}$ be the singular
 values of the KKT system matrix.
-We call the tail singular values
-$\sigma_j$ ($j \geq I$) \emph{small} if
+A singular value~$\sigma_j$ is \emph{small} if
 $\sigma_j < \sigma_1 \cdot \tau$ for a tolerance~$\tau$;
 the corresponding right singular vectors
 $v_j = (\delta\beta^{(j)}, \delta\lambda^{(j)},
@@ -333,7 +332,9 @@ $\varepsilon = \sigma_j$.
 The bound~\eqref{eq:dismissal-error-bound} can be evaluated
 numerically for each dismissed system to confirm the value
 loss is negligible.
-In Case~3 of Algorithm~\ref{alg:near-singular-handling},
+In the ``otherwise'' case of
+Algorithm~\ref{alg:near-singular-handling} (near-null space
+confined to multipliers),
 the multipliers $(\lambda, \nu)$ are ambiguous but $\beta_0$
 is well-determined, so the computed
 $\beta_0^\top H\,\beta_0$ is reliable despite the
