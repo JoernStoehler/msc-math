@@ -176,8 +176,8 @@ is large enough to apply the proposition:
         \text{ (ensures } \delta\beta' \neq 0
         \text{ after projection; proposition applies),} \\
     \textsc{false}
-      & \text{if } \sigma_{\min}
-        \text{ is well-separated from zero (system is full-rank),} \\
+      & \text{if } \sigma_{m-1} / \sigma_m \leq \tau
+        \text{ (no large gap; no isolated near-null direction),} \\
     \textsc{unknown}
       & \text{if } \sigma_{\min} \text{ is small but }
         \|\delta\beta\| \leq \sigma_{\min} / \sigma_C.
