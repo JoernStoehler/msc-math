@@ -51,23 +51,27 @@ The exact algorithm has two kinds of decision points:
   (conservatively), since the exact~$P$ might be true.
   This means the numerical algorithm searches at least as
   broadly as the exact algorithm.
-\item[Value tracking] (``record $Q$ if admissible''):
+\item[Maximum tracking] (``find the largest admissible $Q$''):
   An admissibility predicate $A(\beta)$ (e.g.\ $\beta_i > 0$
   for all~$i$) becomes three-valued.
-  The algorithm tracks:
+  The algorithm returns:
   \begin{itemize}
-  \item the best~$Q$ where $\tilde A = \textsc{true}$
-    (certified value),
-  \item all~$Q$ values where $\tilde A = \textsc{unknown}$
-    (uncertain candidates),
-  \item nothing where $\tilde A = \textsc{false}$
-    (provably inadmissible, discarded).
+  \item the largest~$Q$ where $\tilde A = \textsc{true}$
+    (the \emph{certified value}, a lower bound on the
+    true maximum),
+  \item all~$Q$ values above the certified value where
+    $\tilde A = \textsc{unknown}$
+    (the true maximum may be among these).
   \end{itemize}
-  The certified value is a reliable lower bound on the exact
-  maximum.
-  The uncertain candidates may or may not be admissible;
-  they are passed to the error tracking
-  (Section~\ref{app:error-tracking}).
+  Candidates with $\tilde A = \textsc{false}$ are provably
+  inadmissible and discarded; uncertain candidates at or
+  below the certified value are irrelevant (the certified
+  value already dominates).
+  Downstream consumers
+  (Section~\ref{app:error-tracking}) decide how to handle
+  the remaining uncertainty---e.g.\ accept the certified
+  lower bound, or attempt more expensive tests to resolve
+  $\textsc{unknown}$ verdicts.
 \end{description}
 
 We now describe the three-valued version of each predicate
