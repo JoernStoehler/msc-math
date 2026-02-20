@@ -64,7 +64,8 @@ pub struct BilliardResult {
     /// Capacity from uncertain check (-EPS < β_i). Always ≤ capacity.
     /// See `hk2017::EhzResult::capacity_uncertain` for full documentation.
     pub capacity_uncertain: f64,
-    /// The cyclic permutation σ achieving the minimum action.
+    /// The cyclic permutation σ in **physical orbit direction**.
+    /// σ[k] → σ[k+1] is the direction of the Reeb orbit.
     pub best_permutation: Vec<usize>,
     /// The β vector at the optimum.
     pub best_beta: Vec<f64>,
@@ -132,11 +133,16 @@ pub fn billiard_capacity(polytope: &Polytope4D) -> Result<Option<BilliardResult>
     Ok(best_certified.map(
         |(capacity, best_permutation, best_beta, bounce_count)| {
             let uncertain_cap = best_uncertain.map_or(capacity, |b| b.0);
+            // Reverse σ from internal algebraic order to physical orbit direction
+            let mut phys_perm = best_permutation;
+            phys_perm.reverse();
+            let mut phys_beta = best_beta;
+            phys_beta.reverse();
             BilliardResult {
                 capacity,
                 capacity_uncertain: uncertain_cap,
-                best_permutation,
-                best_beta,
+                best_permutation: phys_perm,
+                best_beta: phys_beta,
                 bounce_count,
                 iterations,
             }
