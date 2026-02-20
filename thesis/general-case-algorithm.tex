@@ -126,3 +126,30 @@ $(\beta, \lambda, \nu)$, they all yield the same value
 $\beta^\top H \beta$.
 \end{lemma}
 
+\begin{remark}[Two optimization dimensions]\label{rem:two-knobs}
+The brute-force algorithm enumerates all $(S, \sigma)$ pairs,
+which is exponential in the number of facets~$F$.
+There are two independent ways to reduce this cost:
+\begin{description}
+\item[Search-space reduction:]
+  Discard pairs $(S, \sigma)$ that provably cannot contain the
+  capacity-achieving orbit.
+  The adjacency constraint
+  (Corollary~\ref{cor:adjacency-pruning})
+  is an example: it restricts the search to cyclic orderings that
+  form a Hamiltonian cycle in the facet adjacency graph.
+\item[Node dismissal:]
+  After solving the KKT system for a pair $(S, \sigma)$,
+  determine whether the value is already attained by a
+  strictly smaller pair $(S' \subset S, \sigma|_{S'})$.
+  Lemma~\ref{lem:rank-deficiency-dismissal} shows that
+  rank-deficient systems can always be dismissed this way.
+\end{description}
+The two dimensions are independent: search-space reduction
+decides \emph{which} pairs to examine, while node dismissal
+decides \emph{which examined pairs to skip}.
+The proofs in Section~\ref{sec:proofs} establish both.
+The numerical relaxations of these predicates are developed
+in Appendix~\ref{app:numerical}.
+\end{remark}
+

@@ -1,0 +1,151 @@
+% appendix-numerical-three-valued.tex — \input'd from appendix-numerical.tex
+%
+% Three-valued predicate relaxation for finite-precision arithmetic.
+% Translates each exact Boolean predicate in Algorithm~\ref{alg:ehz}
+% into a three-valued version (TRUE / FALSE / UNKNOWN).
+%
+% Status: draft, not yet Jörn-reviewed.
+
+The exact algorithm (Algorithm~\ref{alg:ehz}) makes several
+Boolean decisions that cannot be evaluated exactly in
+floating-point arithmetic.
+We replace each Boolean predicate~$P$ with a three-valued
+predicate~$\tilde P$ taking values in
+$\{\textsc{true}, \textsc{false}, \textsc{unknown}\}$,
+subject to the \emph{soundness requirement}: whenever $P$ is
+true in exact arithmetic, $\tilde P \neq \textsc{false}$.
+This ensures that the numerical algorithm searches at least as
+broadly as the exact algorithm: wherever the exact algorithm
+requires $P$ to hold, the numerical version accepts both
+$\textsc{true}$ and $\textsc{unknown}$.
+The cost is that $\textsc{unknown}$ may cause the numerical
+algorithm to examine pairs $(S, \sigma)$ that the exact
+algorithm would have discarded (false positives), but it never
+misses a pair that the exact algorithm would have kept.
+
+\paragraph{Adjacency (search-space reduction).}
+The adjacency pruning
+(Corollary~\ref{cor:adjacency-pruning})
+discards pairs where consecutive facets are non-adjacent.
+Adjacency is determined combinatorially from the polytope's
+vertex--facet incidence: two facets are adjacent if and only if
+they share at least one vertex.
+Vertex--facet incidence is tested by checking
+$\langle n_i, v \rangle = h_i$ (up to a tolerance), so the
+three-valued version is:
+\begin{align*}
+  \tilde P_{\text{adj}}(i,j) &=
+  \begin{cases}
+    \textsc{true}
+      & \text{if some vertex } v \text{ satisfies }
+        |\langle n_i, v \rangle - h_i| < \varepsilon
+        \text{ and }
+        |\langle n_j, v \rangle - h_j| < \varepsilon, \\
+    \textsc{false}
+      & \text{if no vertex } v \text{ comes close to both facets,} \\
+    \textsc{unknown}
+      & \text{otherwise (a vertex is near the boundary of incidence).}
+  \end{cases}
+\end{align*}
+In practice, for polytopes with vertices of moderate norm
+($\|v\| \lesssim 100$) and heights $h_i \in [0.1, 10]$,
+the inner products $\langle n_i, v \rangle$ are well-separated
+from~$h_i$ for non-incident vertices, so the $\textsc{unknown}$
+case rarely arises.
+
+\paragraph{Positivity filter.}
+The filter in Step~3 of Algorithm~\ref{alg:ehz} requires
+$\beta_i > 0$ for all $i \in S$.
+The computed~$\hat\beta$ differs from the true~$\beta^*$ by a
+rounding error that depends on the condition number of the
+KKT system.
+The three-valued version is:
+\[
+  \tilde P_{>0}(\hat\beta_i) =
+  \begin{cases}
+    \textsc{true}
+      & \text{if } \hat\beta_i > \varepsilon_\beta, \\
+    \textsc{false}
+      & \text{if } \hat\beta_i < -\varepsilon_\beta, \\
+    \textsc{unknown}
+      & \text{if } |\hat\beta_i| \leq \varepsilon_\beta,
+  \end{cases}
+\]
+where $\varepsilon_\beta$ is an error bound for the solve.
+The $\textsc{unknown}$ case arises when the true~$\beta^*_i$
+is near zero:
+\begin{itemize}
+\item If $0 < \beta^*_i < \varepsilon_\beta$:
+  the pair is genuinely needed but may be incorrectly
+  discarded ($\hat\beta_i$ could round negative).
+\item If $-\varepsilon_\beta < \beta^*_i < 0$:
+  the pair is genuinely unnecessary but may be incorrectly
+  kept ($\hat\beta_i$ could round positive).
+\item If $\beta^*_i = 0$:
+  the pair is covered by a smaller
+  pair $(S \setminus \{i\}, \sigma|_{S \setminus \{i\}})$,
+  which the algorithm also examines.
+\end{itemize}
+When $\tilde P_{>0}$ returns $\textsc{unknown}$ for some~$i$,
+the algorithm keeps the pair but flags it as uncertain
+(see Section~\ref{app:error-tracking}).
+
+\paragraph{Near-singular dismissal.}
+Lemma~\ref{lem:rank-deficiency-dismissal} allows dismissing
+rank-deficient systems, and
+Proposition~\ref{prop:approximate-dismissal} extends this to
+near-singular systems.
+The SVD of the KKT matrix provides the smallest singular
+value~$\sigma_{\min}$ and the associated right singular
+vector~$(\delta\beta, \delta\lambda, \delta\nu)$.
+The three-valued version checks whether $\|\delta\beta\|$
+is large enough to apply the proposition:
+\[
+  \tilde P_{\text{dismiss}} =
+  \begin{cases}
+    \textsc{true}
+      & \text{if } \|\delta\beta\| > \varepsilon / \sigma_C
+        \text{ (proposition applies, safe to skip),} \\
+    \textsc{false}
+      & \text{if } \sigma_{\min}
+        \text{ is well-separated from zero (system is full-rank),} \\
+    \textsc{unknown}
+      & \text{if } \sigma_{\min} \text{ is small but }
+        \|\delta\beta\| \leq \varepsilon / \sigma_C.
+  \end{cases}
+\]
+When $\tilde P_{\text{dismiss}} = \textsc{unknown}$,
+the near-singular direction is confined to the multiplier
+block~$(\delta\lambda, \delta\nu)$:
+the $\beta$-component of the solution is approximately unique,
+and the algorithm uses it directly
+(see Remark~\ref{rem:approximate-dismissal-algorithm}).
+
+\begin{remark}[Parameter scales in practice]\label{rem:parameter-scales}
+For polytopes generated by our random sampling
+(Section~\ref{sec:random-sweep}),
+the relevant quantities have the following typical magnitudes:
+the symplectic inner products
+$\omega_0(n_i, n_j) \in [-1, 1]$ (unit normals),
+with $\omega_0(n_i, n_j) \approx 0$ occurring primarily
+for near-Lagrangian 2-faces;
+heights $h_i \in [h_{\min}, h_{\max}]$ with typical range
+$[0.1, 10]$;
+vertex norms $\|v\| \lesssim 100$;
+and $\beta_i = O(\|v\|)$ (the $\beta$-components scale with
+the vertex coordinates since $\beta$ is determined by the
+constraint $N^\top \beta = 0$, $\eta^\top \beta = 1$).
+The period $T$ of the orbit is bounded below by the inradius
+(determined by $\min_k h_k$) and above by the circumradius
+(determined by $\max_k \|v_k\|$).
+
+These scales determine how aggressively the three-valued
+predicates can distinguish $\textsc{true}$ from
+$\textsc{unknown}$:
+tolerances that are small relative to these scales yield
+few $\textsc{unknown}$ verdicts.
+Note that bounds on $h_k$ alone do not give good bounds on
+vertex norms~$\|v_k\|$;
+the random polytope generator should be checked to confirm
+that extreme vertex norms are not generated.
+\end{remark}
