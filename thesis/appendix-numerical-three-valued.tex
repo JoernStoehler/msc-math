@@ -6,22 +6,72 @@
 %
 % Status: draft, not yet Jörn-reviewed.
 
-The exact algorithm (Algorithm~\ref{alg:ehz}) makes several
-Boolean decisions that cannot be evaluated exactly in
+The exact algorithm (Algorithm~\ref{alg:ehz}) relies on
+Boolean predicates---adjacency tests, positivity checks,
+rank conditions---that cannot be evaluated exactly in
 floating-point arithmetic.
 We replace each Boolean predicate~$P$ with a three-valued
 predicate~$\tilde P$ taking values in
 $\{\textsc{true}, \textsc{false}, \textsc{unknown}\}$,
-subject to the \emph{soundness requirement}: whenever $P$ is
-true in exact arithmetic, $\tilde P \neq \textsc{false}$.
-This ensures that the numerical algorithm searches at least as
-broadly as the exact algorithm: wherever the exact algorithm
-requires $P$ to hold, the numerical version accepts both
-$\textsc{true}$ and $\textsc{unknown}$.
-The cost is that $\textsc{unknown}$ may cause the numerical
-algorithm to examine pairs $(S, \sigma)$ that the exact
-algorithm would have discarded (false positives), but it never
-misses a pair that the exact algorithm would have kept.
+subject to the \emph{soundness requirement}:
+\[
+  P \text{ true in exact arithmetic}
+  \;\Longrightarrow\;
+  \tilde P \neq \textsc{false},
+  \qquad
+  P \text{ false in exact arithmetic}
+  \;\Longrightarrow\;
+  \tilde P \neq \textsc{true}.
+\]
+In other words, $\textsc{true}$ and $\textsc{false}$ are
+reliable verdicts; $\textsc{unknown}$ means the numerical
+evidence is inconclusive.
+
+\paragraph{Impact on implications.}
+The exact algorithm uses implications
+$P \Rightarrow Q$ (e.g.\ ``if adjacent, include'') and
+equivalences $P \Leftrightarrow Q$.
+Under three-valued evaluation, each such implication
+$\tilde P \Rightarrow \tilde Q$ has a $3 \times 3$ truth
+table.
+The key entries are:
+if $\tilde P = \textsc{true}$ then
+$\tilde Q \in \{\textsc{true}, \textsc{unknown}\}$
+(never $\textsc{false}$, by soundness);
+if $\tilde P = \textsc{false}$ then $\tilde Q$ can be anything;
+if $\tilde P = \textsc{unknown}$ then $\tilde Q$ can be anything.
+
+\paragraph{Impact on the algorithm's control flow.}
+The exact algorithm has two kinds of decision points:
+\begin{description}
+\item[Inclusion decisions] (``unless $P$, skip''):
+  The exact rule ``if $\lnot P$, skip $(S, \sigma)$''
+  becomes ``if $\tilde P = \textsc{false}$, skip.''
+  When $\tilde P = \textsc{unknown}$, the pair is kept
+  (conservatively), since the exact~$P$ might be true.
+  This means the numerical algorithm searches at least as
+  broadly as the exact algorithm.
+\item[Value tracking] (``record $Q$ if admissible''):
+  An admissibility predicate $A(\beta)$ (e.g.\ $\beta_i > 0$
+  for all~$i$) becomes three-valued.
+  The algorithm tracks:
+  \begin{itemize}
+  \item the best~$Q$ where $\tilde A = \textsc{true}$
+    (certified value),
+  \item all~$Q$ values where $\tilde A = \textsc{unknown}$
+    (uncertain candidates),
+  \item nothing where $\tilde A = \textsc{false}$
+    (provably inadmissible, discarded).
+  \end{itemize}
+  The certified value is a reliable lower bound on the exact
+  maximum.
+  The uncertain candidates may or may not be admissible;
+  they are passed to the error tracking
+  (Section~\ref{app:error-tracking}).
+\end{description}
+
+We now describe the three-valued version of each predicate
+in the algorithm.
 
 \paragraph{Adjacency (search-space reduction).}
 The adjacency pruning
@@ -51,13 +101,18 @@ three-valued version is:
         of incidence for at least one facet).}
   \end{cases}
 \end{align*}
+The algorithm skips $(S, \sigma)$ only if
+$\tilde P_{\text{adj}} = \textsc{false}$ for some
+consecutive pair.
+When $\tilde P_{\text{adj}} = \textsc{unknown}$, the pair
+is kept conservatively.
 In practice, for polytopes with vertices of moderate norm
 ($\|v\| \lesssim 100$) and heights $h_i \in [0.1, 10]$,
 the inner products $\langle n_i, v \rangle$ are well-separated
 from~$h_i$ for non-incident vertices, so the $\textsc{unknown}$
 case rarely arises.
 
-\paragraph{Positivity filter.}
+\paragraph{Positivity filter (admissibility).}
 The filter in Step~3 of Algorithm~\ref{alg:ehz} requires
 $\beta_i > 0$ for all $i \in S$.
 The computed~$\hat\beta$ differs from the true~$\beta^*$ by a
@@ -76,28 +131,34 @@ The three-valued version is:
   \end{cases}
 \]
 where $\varepsilon_\beta$ is an error bound for the solve.
-The $\textsc{unknown}$ case arises when the true~$\beta^*_i$
-is near zero:
+Three sub-cases explain the $\textsc{unknown}$ verdict:
 \begin{itemize}
 \item If $0 < \beta^*_i < \varepsilon_\beta$:
-  the pair is genuinely needed but may be incorrectly
+  the pair is genuinely admissible but may be incorrectly
   discarded ($\hat\beta_i$ could round negative).
 \item If $-\varepsilon_\beta < \beta^*_i < 0$:
-  the pair is genuinely unnecessary but may be incorrectly
+  the pair is genuinely inadmissible but may be incorrectly
   kept ($\hat\beta_i$ could round positive).
 \item If $\beta^*_i = 0$:
   the pair is covered by a smaller
   pair $(S \setminus \{i\}, \sigma|_{S \setminus \{i\}})$,
   which the algorithm also examines.
 \end{itemize}
-When $\tilde P_{>0}$ returns $\textsc{unknown}$ for some~$i$,
-the algorithm keeps the pair but flags it as uncertain
-(see Section~\ref{app:error-tracking}).
+\noindent
+If $\tilde P_{>0} = \textsc{true}$ for all~$i$, the candidate
+is certified admissible and its~$Q$ value is tracked as
+certified.
+If $\tilde P_{>0} = \textsc{false}$ for any~$i$, the
+candidate is discarded.
+If $\tilde P_{>0} = \textsc{unknown}$ for some~$i$ (and no
+$\textsc{false}$), the candidate is tracked as uncertain
+(Section~\ref{app:error-tracking}).
 
 \paragraph{Near-singular dismissal.}
-(Note: unlike the previous two predicates, where
-$\textsc{true}$ means ``keep the pair,''
-here $\textsc{true}$ means ``safe to dismiss.'')
+This predicate has opposite polarity: $\textsc{true}$ means
+``safe to dismiss'' (an exclusion of $(S,\sigma)$ from further
+consideration), while the previous predicates use
+$\textsc{true}$ to mean ``keep.''
 Lemma~\ref{lem:rank-deficiency-dismissal} allows dismissing
 rank-deficient systems, and
 Proposition~\ref{prop:approximate-dismissal} extends this to
@@ -111,7 +172,7 @@ is large enough to apply the proposition:
   \tilde P_{\text{dismiss}} =
   \begin{cases}
     \textsc{true}
-      & \text{if } \|\delta\beta\| > \varepsilon / \sigma_C
+      & \text{if } \|\delta\beta\| > \sigma_{\min} / \sigma_C
         \text{ (ensures } \delta\beta' \neq 0
         \text{ after projection; proposition applies),} \\
     \textsc{false}
@@ -119,15 +180,20 @@ is large enough to apply the proposition:
         \text{ is well-separated from zero (system is full-rank),} \\
     \textsc{unknown}
       & \text{if } \sigma_{\min} \text{ is small but }
-        \|\delta\beta\| \leq \varepsilon / \sigma_C.
+        \|\delta\beta\| \leq \sigma_{\min} / \sigma_C.
   \end{cases}
 \]
+The algorithm dismisses $(S,\sigma)$ only when
+$\tilde P_{\text{dismiss}} = \textsc{true}$
+(Lemma~\ref{lem:dismissal-error-bound} bounds the error).
 When $\tilde P_{\text{dismiss}} = \textsc{unknown}$,
 the near-singular direction is confined to the multiplier
 block~$(\delta\lambda, \delta\nu)$:
 the $\beta$-component of the solution is approximately unique,
-and the algorithm uses it directly
-(see Remark~\ref{rem:approximate-dismissal-algorithm}).
+and the algorithm uses it directly, flagging the candidate as
+uncertain (Section~\ref{app:error-tracking}).
+When $\tilde P_{\text{dismiss}} = \textsc{false}$,
+the system is well-conditioned and $\beta_0$ is used directly.
 
 \begin{remark}[Parameter scales in practice]\label{rem:parameter-scales}
 For polytopes generated by our random sampling
