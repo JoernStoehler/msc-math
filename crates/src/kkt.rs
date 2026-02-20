@@ -256,6 +256,45 @@ fn solve_kkt_svd_path(
     let threshold = max_sv * SVD_CONDITION_TAU;
     let rank = sv.iter().filter(|&&s| s > threshold).count();
 
+    // Early dismissal via δβ-component check.
+    // See `[alg:near-singular-handling]` (thesis): if a near-null direction has
+    // significant β-component, the pair's value is covered by a smaller pair
+    // (Prop `[prop:approximate-dismissal]`). Skip without computing β₀.
+    if rank < size && m >= 5 {
+        // Build constraint matrix C = [N | η] ∈ ℝ^{m×5} and compute σ_C.
+        let mut c_matrix = DMatrix::zeros(m, 5);
+        for i in 0..m {
+            let n = &normals[perm[i]];
+            for j in 0..4 {
+                c_matrix[(i, j)] = n[j];
+            }
+            c_matrix[(i, 4)] = heights[perm[i]];
+        }
+        let c_svd = c_matrix.svd(false, false);
+        let sigma_c = c_svd
+            .singular_values
+            .iter()
+            .cloned()
+            .fold(f64::INFINITY, f64::min);
+
+        if sigma_c > EPS_SVD_FLOOR {
+            // C has full column rank. Check each near-null direction.
+            for j in rank..size {
+                let delta_beta_norm: f64 =
+                    (0..m).map(|k| v_t[(j, k)].powi(2)).sum::<f64>().sqrt();
+                if delta_beta_norm > sv[j] / sigma_c {
+                    // Near-null direction has significant β-component → dismiss.
+                    // If β₀ > 0 existed, Prop A.3 guarantees a smaller pair covers
+                    // the value. If not, no admissible critical point anyway.
+                    return None;
+                }
+            }
+            // All near-null directions confined to multiplier block.
+            // β₀ is well-determined despite near-singularity. Fall through.
+        }
+        // If σ_C ≈ 0: degenerate constraints, cannot dismiss. Fall through.
+    }
+
     // Compute pseudoinverse solution manually using only the top `rank` SVs.
     // This avoids relying on nalgebra's solve() tolerance interpretation.
     let mut x0 = DVector::zeros(size);

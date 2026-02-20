@@ -733,7 +733,11 @@ fn solve_kkt_lu_vs_svd_wellconditioned() {
                 "triangle×triangle: Q differs: LU={q_lu}, SVD={q_svd}",
             );
         }
-        (None, None) => {}
+        (None, None) => {} // Both agree: infeasible
+        (Some((_, q_lu)), None) if q_lu <= EPS_Q_POSITIVE => {
+            // LU found a near-zero Q; SVD dismissed via early δβ check.
+            // Both are effectively infeasible — the Q value is too small to matter.
+        }
         (lu, svd) => panic!(
             "triangle×triangle: LU returned {:?}, SVD returned {:?}",
             lu.as_ref().map(|(_, q)| q),

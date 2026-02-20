@@ -59,11 +59,11 @@ impl std::error::Error for BilliardError {}
 /// Result of the billiard capacity computation.
 #[derive(Clone, Debug)]
 pub struct BilliardResult {
-    /// The EHZ capacity c_EHZ(K) from strict check (β_i > +EPS).
+    /// The EHZ capacity c_EHZ(K) from certified check (β_i > +EPS).
     pub capacity: f64,
-    /// Capacity from lenient check (β_i > -EPS). Always ≤ capacity.
-    /// See `hk2017::EhzResult::capacity_lenient` for full documentation.
-    pub capacity_lenient: f64,
+    /// Capacity from uncertain check (-EPS < β_i). Always ≤ capacity.
+    /// See `hk2017::EhzResult::capacity_uncertain` for full documentation.
+    pub capacity_uncertain: f64,
     /// The cyclic permutation σ achieving the minimum action.
     pub best_permutation: Vec<usize>,
     /// The β vector at the optimum.
@@ -93,8 +93,8 @@ pub fn billiard_capacity(polytope: &Polytope4D) -> Result<Option<BilliardResult>
     let p_blocks = enumerate_blocks(&classification.p_indices, &adj);
 
     // Step 4: for k = 2, 3, enumerate and solve
-    let mut best_strict: Option<(f64, Vec<usize>, Vec<f64>, usize)> = None;
-    let mut best_lenient: Option<(f64, Vec<usize>, Vec<f64>, usize)> = None;
+    let mut best_certified: Option<(f64, Vec<usize>, Vec<f64>, usize)> = None;
+    let mut best_uncertain: Option<(f64, Vec<usize>, Vec<f64>, usize)> = None;
     let mut iterations: u64 = 0;
 
     let normals = polytope.normals();
@@ -112,29 +112,29 @@ pub fn billiard_capacity(polytope: &Polytope4D) -> Result<Option<BilliardResult>
                 let action = 0.5 / q_val;
 
                 if beta_min > EPS_BETA_POSITIVE {
-                    let update = best_strict.as_ref().is_none_or(|b| action < b.0);
+                    let update = best_certified.as_ref().is_none_or(|b| action < b.0);
                     if update {
-                        best_strict =
+                        best_certified =
                             Some((action, sigma.to_vec(), beta.clone(), k));
                     }
                 }
 
                 if beta_min > -EPS_BETA_POSITIVE {
-                    let update = best_lenient.as_ref().is_none_or(|b| action < b.0);
+                    let update = best_uncertain.as_ref().is_none_or(|b| action < b.0);
                     if update {
-                        best_lenient = Some((action, sigma.to_vec(), beta, k));
+                        best_uncertain = Some((action, sigma.to_vec(), beta, k));
                     }
                 }
             }
         });
     }
 
-    Ok(best_strict.map(
+    Ok(best_certified.map(
         |(capacity, best_permutation, best_beta, bounce_count)| {
-            let lenient_cap = best_lenient.map_or(capacity, |b| b.0);
+            let uncertain_cap = best_uncertain.map_or(capacity, |b| b.0);
             BilliardResult {
                 capacity,
-                capacity_lenient: lenient_cap,
+                capacity_uncertain: uncertain_cap,
                 best_permutation,
                 best_beta,
                 bounce_count,
