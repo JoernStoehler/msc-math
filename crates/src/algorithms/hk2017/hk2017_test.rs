@@ -526,20 +526,20 @@ fn kkt_nullspace_triangle_square_zero() {
 }
 
 // ============================================================================
-// SVD gap threshold regression tests
+// SVD condition number threshold regression tests
 // ============================================================================
-// The gap threshold SVD_GAP_THRESHOLD=100 was chosen empirically from the (4,4)
+// The condition-number threshold SVD_CONDITION_TAU=1e-3 was chosen empirically from the (4,4)
 // degenerate case. These tests pin the observed SV spectrum so that changes to
 // the threshold can be validated against the cases that motivated it.
 
 /// Verify SV spectrum of the (4,4) θ=0° degenerate KKT system.
 ///
-/// **What:** Asserts the singular value gap that motivated SVD_GAP_THRESHOLD=100.
+/// **What:** Asserts the singular value spectrum that motivated SVD_CONDITION_TAU=1e-3.
 /// The optimal orbit permutation for (4,4) at θ=0° has sv[8]≈0.51, sv[9]≈8.6e-4,
-/// giving a gap ratio ≈594. This ratio must stay well above the threshold (100)
-/// for the gap-based rank detection to correctly identify the null space.
+/// giving a gap ratio ≈594. This spectrum must remain well-separated at the
+/// condition-number-based rank detection threshold for the null space search to work.
 ///
-/// **Why:** Regression test for SVD_GAP_THRESHOLD (see doc comment on the constant).
+/// **Why:** Regression test for SVD_CONDITION_TAU (see doc comment on the constant).
 /// Without this, a threshold change could silently break the degenerate case.
 /// **Why debug mode:** Only builds one KKT matrix and computes SVD. Fast.
 #[test]
@@ -574,18 +574,18 @@ fn svd_gap_ratio_44_degenerate() {
     }
 
     // If the smallest SV is ≈0, the system is exactly rank-deficient.
-    // This is fine — gap detection handles it via the floor check.
+    // This is fine — condition-number detection handles it via the floor check.
     // The important thing is that the rank deficiency exists.
     let smallest_nonzero = (0..size).rev().find(|&i| sv[i] > floor);
     if let Some(idx) = smallest_nonzero {
         if idx > 0 {
             let ratio = sv[idx - 1] / sv[idx];
             // If there's a near-zero SV with a large gap above it,
-            // the gap ratio must stay well above SVD_GAP_THRESHOLD (100)
+            // the gap ratio must stay well above SVD_CONDITION_TAU detection threshold
             if ratio > 50.0 {
                 assert!(
                     ratio > 200.0,
-                    "(4,4) θ=0° gap ratio should be >>100 (threshold), got {:.1} (sv[{}]={:.3e}, sv[{}]={:.3e})",
+                    "(4,4) θ=0° gap ratio should stay well above 1e-3 condition-number threshold, got {:.1} (sv[{}]={:.3e}, sv[{}]={:.3e})",
                     ratio, idx - 1, sv[idx - 1], idx, sv[idx]
                 );
             }
@@ -601,14 +601,14 @@ fn svd_gap_ratio_44_degenerate() {
     );
 }
 
-/// Verify SV gap ratio for the (4,4) θ=43° case that motivated SVD_GAP_THRESHOLD.
+/// Verify SV gap ratio for the (4,4) θ=43° case that motivated SVD_CONDITION_TAU.
 ///
 /// **What:** The KKT system for perm [1,0,6,3,2,4] on the (4,4) product at θ=43°
 /// has sv[8]≈0.51, sv[9]≈8.6e-4, giving gap ratio ≈594. This is the case from
-/// commit dd87a8a that motivated SVD_GAP_THRESHOLD=100. The gap ratio must stay
+/// commit dd87a8a that motivated SVD_CONDITION_TAU=1e-3. The gap ratio must stay
 /// well above the threshold for the fix to work.
 ///
-/// **Why:** Regression test for SVD_GAP_THRESHOLD (see doc comment on the constant).
+/// **Why:** Regression test for SVD_CONDITION_TAU (see doc comment on the constant).
 /// **Why debug mode:** One KKT matrix, fast.
 #[test]
 fn svd_gap_ratio_44_theta43() {
@@ -647,11 +647,11 @@ fn svd_gap_ratio_44_theta43() {
         }
     }
 
-    // The gap ratio must be well above SVD_GAP_THRESHOLD (100)
-    // Original observation: ~594x. Allow some variation but must stay >>100.
+    // The gap ratio must be well above the SVD_CONDITION_TAU=1e-3 condition-number threshold
+    // Original observation: ~594x. Allow some variation but must stay >>1e-3.
     assert!(
         max_gap_ratio > 300.0,
-        "(4,4) θ=43° gap ratio should be ~594 (>>100 threshold), got {:.1} at sv[{}]={:.3e}/sv[{}]={:.3e}",
+        "(4,4) θ=43° gap ratio should be ~594 (well above 1e-3 threshold), got {:.1} at sv[{}]={:.3e}/sv[{}]={:.3e}",
         max_gap_ratio, gap_idx - 1, sv[gap_idx - 1], gap_idx, sv[gap_idx]
     );
 }
@@ -957,6 +957,7 @@ fn bench_kkt_random_polytopes() {
                                 let mut gap_rank = nonzero;
                                 for idx in (1..nonzero).rev() {
                                     if sv[idx - 1] / sv[idx] > 100.0 {
+                                        // Heuristic gap detection (related to SVD_CONDITION_TAU threshold)
                                         gap_rank = idx;
                                         break;
                                     }

@@ -14,48 +14,31 @@ pub const EPS_BETA_POSITIVE: f64 = 1e-12;
 /// Minimum Q(β) value to consider a solution valid (avoids division-by-near-zero in action).
 pub const EPS_Q_POSITIVE: f64 = 1e-15;
 
-/// Floor for SVD: singular values below max_sv * EPS_SVD_FLOOR are treated as exactly zero.
+/// Absolute floor: if the largest singular value is below this, the entire matrix
+/// is treated as numerically zero (early return). The relative rank detection is
+/// handled by SVD_CONDITION_TAU.
 const EPS_SVD_FLOOR: f64 = 1e-12;
 
-/// Gap ratio threshold for rank detection: if sv[i-1]/sv[i] > this, sv[i..] are
-/// treated as part of the null space.
+/// Condition-number threshold for SVD rank detection: singular values below
+/// max_sv * SVD_CONDITION_TAU are treated as part of the null space.
 ///
-/// **Why 100:** Chosen ad-hoc from one data point (commit dd87a8a). The degenerate
-/// (4,4) Lagrangian product at θ≈0° has sv[8]=0.51, sv[9]=8.6e-4 → gap ratio ≈594.
-/// Well-conditioned random polytopes typically have gap ratios <10. The threshold 100
-/// sits between these two regimes.
+/// See `[alg:near-singular-handling]` (thesis): a singular value σ_j is "small"
+/// if σ_j < σ_1 · τ. This detects both isolated small singular values (the
+/// classic gap case) and gradual decay to small values (which a gap-ratio
+/// approach would miss).
 ///
-/// **What it catches:** Near-degenerate KKT systems where a singular value ~1e-4 is
-/// separated from genuine nonzero values ~0.5. Without gap detection, the pseudoinverse
-/// amplifies this sv by ~1/sv ≈ 1000, producing garbage β₀.
+/// **Why 1e-3:** The degenerate (4,4) Lagrangian product at θ≈0° has
+/// sv[8]≈0.51, sv[9]≈8.6e-4 with σ_1 ≈ 1–2, giving sv[9]/σ_1 ≈ 4e-4.
+/// The threshold 1e-3 catches this with margin. Well-conditioned random
+/// polytopes have smallest sv ≈ 0.01–0.1, well above 1e-3 · σ_1.
 ///
-/// **Two distinct cases — do not conflate:**
+/// **What it catches:** Near-degenerate KKT systems where a singular value
+/// ~1e-4 to ~1e-3 indicates approximate rank deficiency. The thesis Algorithm
+/// `[alg:near-singular-handling]` then checks whether the near-null direction
+/// has significant β-component (dismiss) or is confined to multipliers (use β₀).
 ///
-/// Case 1 — *Genuinely rank-deficient* (gap >>100×, e.g. the 594× degenerate case):
-/// Dropping is provably safe by `[lem:rank-deficiency-dismissal]`: any nontrivial null
-/// direction δβ satisfies η^T δβ = 0 (mixed signs), so walking from any solution β₀
-/// along δβ hits β_k = 0 at finite α. That boundary point achieves the same Q-value
-/// (by `[lem:well-defined]`) and belongs to M(S\{k}, σ|_{S\{k}}), so the smaller
-/// pair finds V independently. Genuinely rank-deficient (S, σ) can be dropped.
-///
-/// Case 2 — *Near-rank-deficient* (gap 100–300×, the 26/23,650 F=7 cases):
-/// These are NOT genuinely rank-deficient — the small singular value (~1e-4) is real,
-/// not numerical noise. The threshold over-truncates them. The correct full-rank
-/// pseudoinverse might find a valid β* with all β_i > 0 and a Q-value *slightly
-/// higher* than any (S\{k}, σ'). However, because the system is near-rank-deficient,
-/// there is an almost-null direction, so Q(S,σ) ≈ Q(S\{k},σ') — the gap is small.
-/// Empirically: no capacity impact observed across all tested polytopes. Theoretically:
-/// a small error is possible. The "two-pass" option below would fix this correctly.
-///
-/// **Options for improvement** (not yet implemented):
-/// 1. Raise to ~1000 (but would miss the 594x degenerate case)
-/// 2. Two-pass: try full rank first, fall back to gap-based if residual fails
-/// 3. Condition-number-based: use cond(KKT) instead of gap ratio
-///
-/// **Validation required if changed:** (a) (4,4)/(4,5)/(4,6) degenerate cases,
-/// (b) all fixture polytopes, (c) cross-validation on polygon_grid sweep.
 /// Regression tests: `svd_gap_ratio_44_degenerate`, `svd_gap_ratio_44_theta43`.
-const SVD_GAP_THRESHOLD: f64 = 100.0;
+const SVD_CONDITION_TAU: f64 = 1e-3;
 
 /// Maximum acceptable residual norm for the KKT solution (rejects numerically poor solutions).
 const EPS_KKT_RESIDUAL: f64 = 1e-6;
@@ -239,18 +222,14 @@ pub(crate) fn build_kkt_system(
     (kkt, rhs)
 }
 
-/// SVD path with gap-based rank detection.
+/// SVD path with condition-number-based rank detection.
 ///
 /// Operates on a pre-built KKT matrix. Used by both `solve_kkt` (as fallback
 /// after LU fails) and `solve_kkt_svd_only` (directly).
 ///
-/// Gap-based detection: walk from the smallest singular value upward, treating
-/// sv[i] as zero if sv[i-1]/sv[i] > SVD_GAP_THRESHOLD. This adapts to each
-/// system's spectrum — catches near-degenerate systems (e.g. Lagrangian products
-/// near special angles) where a singular value ~1e-4 is separated from genuine
-/// values ~0.5 by a gap of ~600x. A fixed tolerance either misses this
-/// (too tight → garbage pseudoinverse) or over-truncates (too loose →
-/// conformality violations).
+/// Condition-number detection: singular values below max_sv * SVD_CONDITION_TAU
+/// are treated as part of the null space. See `[alg:near-singular-handling]`
+/// (thesis) for the mathematical justification.
 fn solve_kkt_svd_path(
     kkt: &DMatrix<f64>,
     rhs: &DVector<f64>,
@@ -271,18 +250,11 @@ fn solve_kkt_svd_path(
     let u = svd.u.as_ref()?;
     let v_t = svd.v_t.as_ref()?;
 
-    // Determine numerical rank via gap detection.
-    // sv is sorted descending. First count values above the noise floor,
-    // then walk upward looking for a large gap.
-    let floor = max_sv * EPS_SVD_FLOOR;
-    let nonzero = sv.iter().filter(|&&s| s > floor).count();
-    let mut rank = nonzero;
-    for i in (1..nonzero).rev() {
-        if sv[i - 1] / sv[i] > SVD_GAP_THRESHOLD {
-            rank = i;
-            break;
-        }
-    }
+    // Determine numerical rank via condition-number threshold.
+    // sv is sorted descending. Singular values below max_sv * τ
+    // are treated as part of the near-null space.
+    let threshold = max_sv * SVD_CONDITION_TAU;
+    let rank = sv.iter().filter(|&&s| s > threshold).count();
 
     // Compute pseudoinverse solution manually using only the top `rank` SVs.
     // This avoids relying on nalgebra's solve() tolerance interpretation.

@@ -237,7 +237,7 @@ the KKT system~\eqref{eq:linear-system} via SVD.
 Let $C = [N \mid \eta] \in \mathbb{R}^{|S| \times 5}$
 be the constraint matrix, with smallest singular
 value~$\sigma_C$.
-Let $\sigma_1 \geq \cdots \geq \sigma_{m+5}$ be the singular
+Let $\sigma_1 \geq \cdots \geq \sigma_{|S|+5}$ be the singular
 values of the KKT system matrix.
 A singular value~$\sigma_j$ is \emph{small} if
 $\sigma_j < \sigma_1 \cdot \tau$ for a tolerance~$\tau$;
@@ -258,21 +258,25 @@ well-conditioned and the algorithm uses $\beta_0$ directly.
 If $C$ has full column rank ($\sigma_C > 0$) and some
 near-null direction~$v_j$ has significant
 $\beta$-component,
-the system is approximately rank-deficient in~$\beta$.
-Proposition~\ref{prop:approximate-dismissal} applies:
-the value is covered (up to a bounded error) by a pair
-$(S', \sigma|_{S'})$ with $|S'| = |S| - 1$.
-The algorithm records the error bound
-(Lemma~\ref{lem:dismissal-error-bound}) and skips to the
-next pair.
+the algorithm skips the pair without computing~$\beta_0$.
+This is justified because:
+if the system has a solution with $\beta_{0,i} > 0$ for
+all~$i$, then
+Proposition~\ref{prop:approximate-dismissal} guarantees
+the value is covered (up to the error bound of
+Remark~\ref{lem:dismissal-error-bound}) by a pair
+$(S', \sigma|_{S'})$ with $|S'| = |S| - 1$;
+if not, the pair has no admissible critical point and
+contributes nothing.
 
 \smallskip\noindent
 \emph{Otherwise}, the algorithm uses $\beta_0$ directly.
 This covers two sub-cases:
-(a)~$C$ is rank-deficient, so the dismissal analysis
-does not apply (the constraint projection of
-Lemma~\ref{lem:constraint-projection} requires
-$\sigma_C > 0$);
+(a)~$C$ is rank-deficient ($\sigma_C = 0$), so the
+constraint projection
+(Lemma~\ref{lem:constraint-projection}) is not available.
+The implementation flags this case for investigation,
+since it is unclear whether~$\beta_0$ is well-determined;
 (b)~every near-null direction has
 $\|\delta\beta^{(j)}\| \leq \sigma_j / \sigma_C$,
 meaning the near-null space is confined to the
@@ -281,51 +285,34 @@ well-determined despite the near-singularity.
 
 \smallskip\noindent
 \emph{Implementation note.}
-The Rust code detects small singular values via a gap
-ratio $\sigma_{j-1}/\sigma_j > \tau_{\mathrm{gap}}$,
-which is a sufficient but not necessary condition.
-A condition-number threshold
-$\sigma_j < \sigma_1 \cdot \tau$ is more principled.
+The choice of~$\tau$ is an implementation decision.
+The Rust code uses a condition-number threshold
+$\sigma_j < \sigma_1 \cdot \tau$.
 The mathematical argument
-(Lemma~\ref{lem:dismissal-error-bound}) is valid whenever
-the dismiss condition holds, regardless of the detection
-method.
+(Remark~\ref{lem:dismissal-error-bound}) is valid whenever
+the dismiss condition holds, regardless of the threshold.
 \end{algorithm}
 
-\begin{lemma}[Error bound for near-singular dismissal]%
+\begin{remark}[Error bound for dismissal]%
 \label{lem:dismissal-error-bound}
-Suppose Algorithm~\ref{alg:near-singular-handling}
-dismisses a pair $(S, \sigma)$ via a near-null direction
-$v_j = (\delta\beta^{(j)}, \delta\lambda^{(j)},
-\delta\nu^{(j)})$ with singular value~$\sigma_j$.
-Let $(\beta_0, \lambda_0, \nu_0)$ be the computed solution
-with $\beta_{0,i} > 0$ for all~$i$, and let
-$\delta\beta'$ be the corrected direction from
-Lemma~\ref{lem:constraint-projection} applied to~$v_j$.
-Then there exists a pair $(S', \sigma|_{S'})$ with
-$|S'| = |S| - 1$ whose algorithm finds value at least
+When Algorithm~\ref{alg:near-singular-handling}
+dismisses via a near-null direction~$v_j$ with singular
+value~$\sigma_j$, the error bound is given by
+Proposition~\ref{prop:approximate-dismissal} with
+$\varepsilon = \sigma_j$ (the SVD residual).
+The quantities in the bound are computable from the SVD
+output and the solution $(\beta_0, \lambda_0, \nu_0)$:
+the corrected direction~$\delta\beta'$ from
+Lemma~\ref{lem:constraint-projection},
+$\alpha^* = \min\{\beta_{0,i}/|\delta\beta'_i|
+: \delta\beta'_i < 0\}$,
+and the bound itself:
 \begin{equation}\label{eq:dismissal-error-bound}
   \nu_0
     - (\alpha^*)^2\,\|\delta\beta'\|\,
-      \Bigl(1 + \frac{\|H\|}{\sigma_C}\Bigr)\,\sigma_j,
+      \Bigl(1 + \frac{\|H\|}{\sigma_C}\Bigr)\,\sigma_j.
 \end{equation}
-where $\alpha^* = \min\{\beta_{0,i}/|\delta\beta'_i|
-: \delta\beta'_i < 0\}$.
-In particular, the maximum over all non-dismissed pairs
-is at least~\eqref{eq:dismissal-error-bound}.
-\end{lemma}
-
-\begin{proof}
-The right singular vector for~$\sigma_j$ satisfies
-the residual equation with $\varepsilon = \sigma_j$
-(by definition of the SVD).
-Since $\|\delta\beta^{(j)}\| > \sigma_j / \sigma_C$,
-Lemma~\ref{lem:constraint-projection}(3) gives
-$\delta\beta' \neq 0$.
-The bound then follows from
-Proposition~\ref{prop:approximate-dismissal} with
-$\varepsilon = \sigma_j$.
-\end{proof}
+\end{remark}
 
 \begin{remark}[Practical aspects of near-singular handling]%
 \label{rem:approximate-dismissal-algorithm}
