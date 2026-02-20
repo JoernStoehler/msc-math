@@ -246,18 +246,11 @@ Data and figures are colocated with their experiment under `experiments/<name>/`
 - Reproducibility (data versioned with code)
 
 **Convention:**
-- **Regenerate on main only** (after Jörn merges branches)
-- **Not on branches** (keeps branches clean, avoids merge conflicts)
+- **Regenerate on the branch that changes the code.** Data should match the code that produced it.
 - **Separate commits**: Code changes committed separately from data regeneration
 
-**For agents:**
-- Don't regenerate data on branches unless explicitly instructed
-- If exploring new experiment: regenerate on branch, commit separately with clear message
-- If data looks stale on main: notify Jörn (he'll regenerate)
-
-**Merge conflicts:**
-- Should be rare (only main has data commits)
-- If occur: use `git merge -s ours` and regenerate on main after merge
+**Merge conflicts (data/figures):**
+- Resolve by regenerating on the merged result
 
 ### Communication with Jörn
 
