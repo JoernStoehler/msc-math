@@ -172,22 +172,22 @@ is large enough to apply the proposition:
   \tilde P_{\text{dismiss}} =
   \begin{cases}
     \textsc{true}
-      & \text{if } \|\delta\beta\| > \sigma_{\min} / \sigma_C
-        \text{ (ensures } \delta\beta' \neq 0
-        \text{ after projection; proposition applies),} \\
+      & \text{if } \sigma_m \text{ is small and }
+        \|\delta\beta\| > \sigma_m / \sigma_C
+        \text{ (proposition applies),} \\
     \textsc{false}
-      & \text{if } \sigma_{m-1} / \sigma_m \leq \tau
-        \text{ (no large gap; no isolated near-null direction),} \\
+      & \text{if } \sigma_m \text{ is not small
+        (system well-conditioned),} \\
     \textsc{unknown}
-      & \text{if } \sigma_{\min} \text{ is small but }
-        \|\delta\beta\| \leq \sigma_{\min} / \sigma_C.
+      & \text{if } \sigma_m \text{ is small but }
+        \|\delta\beta\| \leq \sigma_m / \sigma_C.
   \end{cases}
 \]
 The algorithm dismisses $(S,\sigma)$ only when
 $\tilde P_{\text{dismiss}} = \textsc{true}$
 (Lemma~\ref{lem:dismissal-error-bound} bounds the error).
 When $\tilde P_{\text{dismiss}} = \textsc{unknown}$,
-the near-singular direction is confined to the multiplier
+the near-null direction is confined to the multiplier
 block~$(\delta\lambda, \delta\nu)$:
 the $\beta$-component of the solution is approximately unique,
 and the algorithm uses it directly, flagging the candidate as

@@ -239,43 +239,39 @@ Let $C = [N \mid \eta]$ with smallest singular
 value~$\sigma_C$.
 
 \smallskip\noindent
-The algorithm first checks whether $\sigma_m$ is
-separated from $\sigma_{m-1}$ by a large gap
-(ratio $\sigma_{m-1} / \sigma_m > \tau$ for a
-threshold~$\tau$), indicating an isolated
-near-null direction.
 Three cases arise:
 \begin{description}
-\item[No large gap] ($\sigma_{m-1} / \sigma_m \leq \tau$):
-  There is no isolated near-null direction.
-  If all singular values are large, the system is
-  well-conditioned;
-  if several are small, the system has a higher-dimensional
-  near-null space (not handled by our one-dimensional
-  dismissal lemma).
-  In either case, the algorithm uses the computed
-  $\beta_0$ directly.
-\item[Large gap, non-trivial $\delta\beta$]
-  ($\sigma_{m-1} / \sigma_m > \tau$ and
+\item[Dismiss]
+  ($\sigma_m$ is small and
   $\|\delta\beta\| > \sigma_m / \sigma_C$):
-  The isolated near-null direction has a significant
+  The near-null direction has a significant
   $\beta$-component, so the system is approximately
   rank-deficient in~$\beta$.
   The algorithm \emph{dismisses} the pair:
   it records the error bound from
   Lemma~\ref{lem:dismissal-error-bound} and
   skips to the next pair.
-\item[Large gap, trivial $\delta\beta$]
-  ($\sigma_{m-1} / \sigma_m > \tau$ and
+\item[Uncertain]
+  ($\sigma_m$ is small and
   $\|\delta\beta\| \leq \sigma_m / \sigma_C$):
-  The isolated near-null direction is confined to the
+  The near-null direction is confined to the
   multiplier block $(\delta\lambda, \delta\nu)$.
   The $\beta$-component of the solution is approximately
   unique.
   The algorithm uses $\beta_0$ directly, flagging the
   candidate as uncertain
   (Section~\ref{app:error-tracking}).
+\item[Normal]
+  ($\sigma_m$ is not small):
+  The system is well-conditioned.
+  The algorithm uses the computed $\beta_0$ directly.
 \end{description}
+The threshold for ``$\sigma_m$ is small'' is an implementation
+choice; the Rust code uses a gap ratio
+$\sigma_{m-1}/\sigma_m > \tau$ as a heuristic.
+The mathematical argument
+(Lemma~\ref{lem:dismissal-error-bound}) is valid whenever
+the dismiss condition holds, regardless of the threshold.
 \end{algorithm}
 
 \begin{lemma}[Error bound for near-singular dismissal]%
