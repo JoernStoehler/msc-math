@@ -17,8 +17,11 @@ three-valued predicates of
 Section~\ref{app:three-valued}.
 
 \paragraph{Candidate classification.}
-A non-dismissed candidate $(S, \sigma)$ with computed
-value~$\hat Q$ falls into one of two categories:
+For each non-dismissed pair $(S, \sigma)$, the algorithm
+stores the full candidate $(S, \sigma, \hat\beta, \hat Q)$:
+the pair, the computed coefficient vector, and the
+objective value $\hat Q = \hat\beta^\top H\,\hat\beta$.
+Each candidate is classified as:
 \begin{description}
 \item[Certified.]
   All predicates returned $\textsc{true}$.
@@ -26,33 +29,44 @@ value~$\hat Q$ falls into one of two categories:
   the value of a feasible critical point.
 \item[Uncertain.]
   Some predicate returned $\textsc{unknown}$
-  (typically a $\beta_i$ near zero).
+  (typically a $\hat\beta_i$ near zero).
   The pair may or may not satisfy the exact constraints,
   so~$\hat Q$ may come from an inadmissible point.
+  The stored~$\hat\beta$ enables downstream investigation
+  (e.g.\ more expensive tests to resolve the
+  $\textsc{unknown}$ verdicts).
 \end{description}
 
 \paragraph{Final answer.}
-Let $Q_{\text{cert}}$ be the largest value among certified
-candidates, and $Q_{\text{unc}}$ the largest value among
-uncertain candidates.
+Following the maximum tracking principle
+(Section~\ref{app:three-valued}):
+let $(S_{\text{cert}}, \sigma_{\text{cert}},
+\hat\beta_{\text{cert}}, Q_{\text{cert}})$ be the
+certified candidate with the largest~$Q$, and let
+$\mathcal{U} = \{(S, \sigma, \hat\beta, \hat Q) :
+\text{uncertain with } \hat Q > Q_{\text{cert}}\}$
+be the uncertain candidates above the certified value.
 If no certified candidate exists, the algorithm reports
-$Q_{\text{unc}}$ and flags the result for investigation.
-Otherwise, two cases arise:
+only the uncertain candidates and flags the result for
+investigation.
+Otherwise:
 \begin{enumerate}
 \item
-  $Q_{\text{cert}} \geq Q_{\text{unc}}$:
-  the certified candidate dominates.
+  $\mathcal{U} = \emptyset$:
+  the certified candidate dominates all uncertain ones.
   The capacity is
   $c_{\mathrm{EHZ}}(K) = 1 / (2\, Q_{\text{cert}})$
   with high confidence.
 \item
-  $Q_{\text{cert}} < Q_{\text{unc}}$:
-  an uncertain candidate has a higher~$Q$ value.
-  The certified value gives a reliable upper bound:
+  $\mathcal{U} \neq \emptyset$:
+  some uncertain candidate has a higher~$Q$ value.
+  The certified value gives a reliable lower bound on the
+  maximum~$Q$ (upper bound on capacity):
   $c_{\mathrm{EHZ}}(K) \leq 1 / (2\, Q_{\text{cert}})$.
-  If the uncertain candidate is truly admissible, the
-  capacity is $1 / (2\, Q_{\text{unc}})$, which is lower.
-  The algorithm flags this case for investigation.
+  If any uncertain candidate in~$\mathcal{U}$ is truly
+  admissible, the true capacity is lower.
+  The algorithm returns both $Q_{\text{cert}}$ and
+  $\mathcal{U}$ for downstream investigation.
 \end{enumerate}
 
 \begin{remark}[Empirical error tracking]\label{rem:empirical-errors}
