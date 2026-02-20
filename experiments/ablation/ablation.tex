@@ -48,8 +48,9 @@ Checking the half-space constraint for facet~$j$ gives
 $\omega_0(n_i, n_j) \ge 0$ as a necessary condition;
 the forward flow $x + \varepsilon R_j$ on~$F_j$ gives the same condition
 by antisymmetry of~$\omega_0$.
-% [TODO: JÖRN - verify this derivation. Agent derived and confirmed empirically
-%  on all 38 test polytopes. But the derivation needs mathematical verification.]
+This is condition~(1) of Lemma~\ref{lem:transition-feasibility} below,
+which proves the condition is both necessary and sufficient
+(together with an LP feasibility check on the blocking set).
 
 \paragraph{Reeb-flow feasibility (A3).}
 A3 strengthens A2 by also checking the half-space constraints of all \emph{other}
@@ -65,8 +66,11 @@ The $O(F^4)$ precomputation cost is negligible compared to the exponential searc
 \paragraph{Transition feasibility.}
 We now characterize exactly when a piecewise-linear orbit can
 transition from~$F_i$ to~$F_j$.
-Write $R_k = J_0 n_k$ for the characteristic direction on~$F_k$,
-so that $n_k \cdot R_\ell = \omega_0(n_\ell, n_k)$.
+Write $R_k = J_0 n_k$ for the characteristic direction on~$F_k$.
+In coordinates $(q_1, q_2, p_1, p_2)$ with
+$J_0 = \bigl[\begin{smallmatrix} 0 & -I_2 \\ I_2 & 0 \end{smallmatrix}\bigr]$,
+we have $R_k = (-n_k^{(3)}, -n_k^{(4)}, n_k^{(1)}, n_k^{(2)})$
+and $n_k \cdot R_\ell = \omega_0(n_\ell, n_k)$.
 A transition $F_i \to F_j$ requires a point $x \in F_i \cap F_j$
 and $\varepsilon > 0$ with
 $x + t\, R_i \in K$ for $t \in [-\varepsilon, 0]$
@@ -142,8 +146,10 @@ automatically.
 For simple 4-polytopes, each vertex lies on exactly four facets,
 so any two adjacent facets share a ridge.
 For Lagrangian products $P \times Q$ of convex polygons,
-every pair of intersecting facets shares a 2-face
-(``vertex $\times$ polygon'' or ``edge $\times$ edge'').
+each vertex $(v_P, v_Q)$ lies on exactly two edges of~$P$
+and two edges of~$Q$, hence on exactly four facets;
+thus $P \times Q$ is simple, and every pair of intersecting facets
+shares a 2-face (``vertex $\times$ polygon'' or ``edge $\times$ edge'').
 \end{proof}
 
 \begin{example}[Non-simple polytope where A3 prunes beyond A2]
@@ -212,9 +218,11 @@ ${\sim}99\%$ of candidate orderings at $F = 8$:
 ${\sim}130\times$ over A0 for generic polytopes, and
 ${\sim}36\times$ for Lagrangian products (whose structured normals have more
 $\omega_0 = 0$ pairs, limiting directed pruning effectiveness).
-A3 provides no additional pruning beyond A2 on this dataset; this is expected
-for polytopes with $F \le 8$, where ridges are in sufficiently general position
-that the $\omega_0$ condition alone captures all blocking.
+A3 provides no additional pruning beyond A2 on this dataset.
+All 38 test polytopes are simple (every vertex on exactly four facets),
+so every adjacent pair shares a ridge; by Corollary~\ref{cor:ridge-sufficiency},
+the $\omega_0$ condition alone guarantees feasibility at ridges,
+making the LP check redundant.
 Standard deviations are shown in Figure~\ref{fig:ablation-timing}.
 
 \begin{table}[h]

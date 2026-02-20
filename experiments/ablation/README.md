@@ -61,8 +61,12 @@ Lagrangian products show similar but less dramatic A2 speedup (~36× at F=8)
 due to structured normals having more ω₀ = 0 pairs.
 
 **A3 = A2 on this dataset:** A3 provides zero additional pruning beyond A2.
-This is expected for polytopes with F ≤ 8, where ridges are in sufficiently
-general position that the ω₀ condition alone captures all blocking.
+All 38 test polytopes are simple (every vertex lies on exactly 4 facets),
+so every pair of adjacent facets shares a ridge (2-face). By Corollary B.2
+(Ridge Sufficiency), ω₀ ≥ 0 alone guarantees transition feasibility at
+ridges, making the LP check redundant. A3 can prune beyond A2 only for
+non-simple polytopes, where facets may share only a 1-face or 0-face
+(see Example B.3: shaved hypercube).
 
 ## Regression Cases
 
