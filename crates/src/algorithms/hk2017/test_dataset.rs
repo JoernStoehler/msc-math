@@ -267,7 +267,7 @@ pub fn generate_test_dataset() -> Vec<TestPolytope> {
         let gap = pruned_result.numerical_gap();
         if gap > 0.0 {
             eprintln!(
-                "  {} — NUMERICAL GAP: strict={:.6} lenient={:.6} gap={:.2e}",
+                "  {} — NUMERICAL GAP: certified={:.6} uncertain={:.6} gap={:.2e}",
                 entry.name, pruned_result.capacity, pruned_result.capacity_uncertain, gap
             );
         }
