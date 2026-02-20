@@ -31,11 +31,13 @@ into one of three categories:
   so~$\hat Q$ may come from an inadmissible point.
 \item[Uncertain (numerical).]
   All predicates are $\textsc{true}$ or $\textsc{unknown}$,
-  but the system is near-singular.
+  but the system is near-singular
+  (small $\sigma_{\min}$ but $\tilde P_{\text{dismiss}} \neq
+  \textsc{true}$, so the node was not dismissed).
   The computed~$\hat Q$ carries an error interval
   $[\hat Q - \delta, \hat Q + \delta]$
-  from the error bound in
-  Proposition~\ref{prop:approximate-dismissal}.
+  where $\delta$ reflects the amplified solve error
+  from the large condition number.
 \end{description}
 A candidate can be uncertain for both reasons simultaneously.
 
@@ -44,7 +46,11 @@ Let $Q_{\text{cert}}$ be the largest value among certified
 candidates, and let $[Q_{\text{unc}}^-, Q_{\text{unc}}^+]$
 be the interval containing the largest uncertain candidate
 (accounting for both predicate and numerical uncertainty).
-Three cases arise:
+If no certified candidate exists (all candidates are uncertain),
+the algorithm can only report the uncertain interval
+$[(2\, Q_{\text{unc}}^+)^{-1},\; \infty)$ and flag the result
+for investigation.
+Otherwise, three cases arise:
 \begin{enumerate}
 \item
   $Q_{\text{cert}} \geq Q_{\text{unc}}^+$:
