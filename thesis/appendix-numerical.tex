@@ -1,0 +1,34 @@
+% appendix-numerical.tex — \input'd from main.tex (after \appendix)
+%
+% Numerical implementation details for the capacity algorithms.
+% The main chapter (Sections 2--3) states and proves the algorithms
+% under exact arithmetic. This appendix addresses finite-precision
+% concerns: near-singular linear systems, predicate relaxation,
+% and error tracking.
+
+\section{Numerical Implementation}\label{app:numerical}
+
+The algorithms in Section~\ref{sec:algorithms} are stated for
+exact arithmetic: predicates such as $\beta_i > 0$ and
+$N^\top \beta = 0$ are decided exactly, and the KKT system is
+solved without numerical error.
+In a floating-point implementation, each of these operations
+introduces rounding errors that must be controlled.
+
+This appendix develops the error analysis for the most
+delicate numerical issue: near-singular KKT systems
+whose solutions are sensitive to perturbations.
+% Future subsections will address:
+% - Three-valued predicate relaxation (true / false / unknown)
+% - Error tracking and uncertainty intervals in the final answer
+
+\subsection{Near-Singular KKT Systems}\label{app:near-singular}
+\input{appendix-numerical-dismissal}
+
+% TODO: \subsection{Three-Valued Predicate Relaxation}\label{app:three-valued}
+% How each exact predicate (beta > 0, adjacency, etc.) becomes
+% known-true / known-false / unknown in finite precision.
+
+% TODO: \subsection{Error Tracking and Final Answer}\label{app:error-tracking}
+% How the algorithm reports results with uncertainty intervals:
+% best known-true candidate, best unknown candidate, bounds.

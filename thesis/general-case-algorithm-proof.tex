@@ -350,7 +350,160 @@ Therefore
 \]
 \end{proof}
 
-\input{rank-deficiency-dismissal}
+% Jörn: math approved (8818fb8) — from \begin{lemma} to end of \begin{remark}
+
+\begin{lemma}[Dismissal of redundant systems]%
+\label{lem:rank-deficiency-dismissal}
+Let $(S, \sigma)$ be a pair for which the linear
+system~\eqref{eq:linear-system} has a solution
+$(\beta_0, \lambda_0, \nu_0)$ with $\beta_0 \geq 0$,
+and suppose the null space of the system matrix contains an element
+$(\delta\beta, \delta\lambda, \delta\nu)$ with
+$\delta\beta \neq 0$.
+
+Then there exist $k \in S$ and a solution
+$(\beta^*, \lambda^*, \nu^*)$ with
+\begin{enumerate}
+\item $\beta^*_k = 0$,
+\item $\beta^*_j \geq 0$ for all $j \in S$,
+\item $\beta^{*\top} H\, \beta^* = \beta_0^\top H\, \beta_0$.
+\end{enumerate}
+The restriction $\beta^*|_{S'}$ with $S' = S \setminus \{k\}$
+lies in the constraint set $M(K)$ restricted to~$S'$,
+so the algorithm for~$(S', \sigma|_{S'})$ maximises
+$\beta^\top H'\, \beta$ over at least the value~$\nu_0$.
+Consequently, the algorithm may discard any pair $(S, \sigma)$
+whose system has such a null-space direction
+without missing the capacity-achieving pair.
+\end{lemma}
+
+\begin{proof}
+If $\beta_0$ already has $\beta_{0,k} = 0$ for some $k \in S$,
+take $\beta^* = \beta_0$: conclusions (1)--(3) hold immediately
+(with~(3) trivial), and the argument of Step~5 below gives the
+restriction to~$S'$. So assume $\beta_{0,i} > 0$ for all~$i$.
+
+Since $(\delta\beta, \delta\lambda, \delta\nu)$ is in the null space:
+\[
+  \text{(I$'$)}\ N^\top \delta\beta = 0, \qquad
+  \text{(II$'$)}\ H\,\delta\beta
+    = N\,\delta\lambda + \eta\,\delta\nu, \qquad
+  \text{(III$'$)}\ \eta^\top \delta\beta = 0.
+\]
+
+\emph{Step~1: $\delta\beta$ has mixed signs.}
+Expanding~(III$'$):
+$\sum_{i \in S} \eta_i\, \delta\beta_i = 0$
+where $\eta_i = h_{\sigma(i)} > 0$ are the heights.
+Since $\delta\beta \neq 0$, at least one component is
+nonzero, and the vanishing weighted sum with positive weights
+forces $\delta\beta$ to have at least one strictly positive
+and at least one strictly negative component.
+
+\emph{Step~2: Walk along the null direction.}
+Define $\beta(\alpha) = \beta_0 + \alpha\,\delta\beta$.
+For every~$\alpha$, the triple
+$(\beta(\alpha),\, \lambda_0 + \alpha\,\delta\lambda,\,
+  \nu_0 + \alpha\,\delta\nu)$
+satisfies~\eqref{eq:linear-system} (linearity of the system).
+By Lemma~\ref{lem:well-defined}
+(all solutions yield the same value of
+$\beta^\top H\, \beta$),
+$\beta(\alpha)^\top H\, \beta(\alpha) = \nu_0 + \alpha\,\delta\nu$.
+On the other hand, expanding the quadratic form and using
+$\delta\beta^\top H\, \beta_0 = 0$ and
+$\delta\beta^\top H\, \delta\beta = 0$
+(both from the proof of Lemma~\ref{lem:well-defined}):
+\[
+  \beta(\alpha)^\top H\, \beta(\alpha)
+  = \beta_0^\top H\, \beta_0
+    + 2\alpha\,\delta\beta^\top H\,\beta_0
+    + \alpha^2\,\delta\beta^\top H\,\delta\beta
+  = \nu_0.
+\]
+Comparing the two expressions: $\delta\nu = 0$, so the
+multiplier~$\nu$ is the same for every solution.
+
+\emph{Step~3: Identify the boundary point.}
+Since $\beta_{0,i} > 0$ for all~$i$,
+$\beta(\alpha)$ remains strictly positive for all
+$|\alpha|$ sufficiently small.
+For each $i$ with $\delta\beta_i < 0$, the component
+$\beta_i(\alpha)$ reaches zero at
+$\alpha_i = \beta_{0,i} / |\delta\beta_i|$.
+Define
+\[
+  \alpha^*
+  = \min\bigl\{\,
+      \alpha_i : i \in S,\; \delta\beta_i < 0
+    \bigr\},
+\]
+and let $k$ be an index achieving this minimum.
+Such an index exists because $\delta\beta$ has at least one
+negative component (Step~1).
+Note $\alpha^* > 0$ since $\beta_{0,i} > 0$ and
+$|\delta\beta_i| > 0$ for each candidate~$i$.
+
+\emph{Step~4: Verify non-negativity.}
+Set $\beta^* = \beta(\alpha^*)$.
+Then $\beta^*_k = 0$ by construction.
+For $j \neq k$:
+\begin{itemize}
+\item If $\delta\beta_j \geq 0$:
+  $\beta^*_j = \beta_{0,j} + \alpha^*\,\delta\beta_j
+    \geq \beta_{0,j} > 0$.
+\item If $\delta\beta_j < 0$:
+  $\alpha^* \leq \alpha_j = \beta_{0,j}/|\delta\beta_j|$
+  (since $\alpha^*$ is the minimum), so
+  $\beta^*_j
+    = \beta_{0,j} - \alpha^*\,|\delta\beta_j|
+    \geq \beta_{0,j} - \alpha_j\,|\delta\beta_j| = 0$.
+\end{itemize}
+Hence $\beta^*_j \geq 0$ for all $j \in S$.
+
+\emph{Step~5: The smaller pair achieves the same value.}
+Since $\beta^*_k = 0$, the quadratic form
+$\beta^{*\top} H\, \beta^* = \nu_0$ (Step~2)
+receives no contribution from index~$k$.
+Let $H'$ denote the action matrix for
+$(S', \sigma|_{S'})$, where $S' = S \setminus \{k\}$.
+The sub-matrix of~$H$ at rows and columns~$S'$
+equals~$H'$ (both are defined by the same normals
+$n_{\sigma(j)}$, $j \in S'$), so
+$(\beta^*|_{S'})^\top H'\, (\beta^*|_{S'}) = \nu_0$.
+
+The restriction $\beta^*|_{S'}$ satisfies:
+$\sum_{j \in S'} \beta^*_j\, n_{\sigma(j)} = 0$
+(from $N^\top \beta^* = 0$ and $\beta^*_k = 0$),
+$\sum_{j \in S'} \beta^*_j\, h_{\sigma(j)} = 1$
+(from $\eta^\top \beta^* = 1$ and $\beta^*_k = 0$),
+and $\beta^*_j \geq 0$ for $j \in S'$ (Step~4).
+Hence $\beta^*|_{S'} \in M(K)$ restricted to~$S'$.
+The algorithm evaluates
+$\max\, \beta^\top H'\, \beta$ over this constraint set
+and therefore finds value $\geq \nu_0$.
+\end{proof}
+
+\begin{remark}[Geometric characterisation of the null space]%
+\label{rem:nullspace-geometry}
+The null space of the system matrix always contains the subspace
+$\{(0, \delta\lambda, 0) : N\,\delta\lambda = 0\}$, which has
+dimension $4 - \operatorname{rank}(N)$.
+In particular, a null-space element with $\delta\beta = 0$
+exists if and only if the visited normals
+$\{n_{\sigma(i)} : i \in S\}$ do not span~$\mathbb{R}^4$.
+(Proof: if $\delta\beta = 0$, the null-space equations reduce to
+$N\,\delta\lambda + \eta\,\delta\nu = 0$; multiplying by any
+$\beta_0 \geq 0$ with $\eta^\top\!\beta_0 = 1$ gives $\delta\nu = 0$,
+leaving $N\,\delta\lambda = 0$.)
+The algorithm does not need this characterisation: it suffices
+to inspect the null-space vectors from the SVD and check whether
+$\delta\beta \neq 0$.
+\end{remark}
+
+For the numerical treatment of near-singular systems
+(where the null space is only approximate),
+see Appendix~\ref{app:near-singular}.
 
 \begin{theorem}[Algorithm correctness]\label{thm:algorithm-correct}
 % Jörn: text approved (0bbc647) — from \begin{theorem} to \end{proof}
