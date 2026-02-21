@@ -98,7 +98,7 @@ def print_agreement_table(entries):
 
     active_variants = sorted(set(e["variant"] for e in entries))
     hdr_caps = " ".join(f"{VARIANT_LABELS.get(v, v):>12}" for v in active_variants)
-    print(f"\n=== Capacity Agreement: all variants ===")
+    print("\n=== Capacity Agreement: all variants ===")
     print(f"{'Polytope':<35} {'F':>3} {hdr_caps} {'max|diff|':>10} {'Status'}")
     print("-" * (55 + 13 * len(active_variants)))
 
@@ -144,7 +144,7 @@ def print_timing_table(entries):
         (g, f, v) in by_group_f_variant for g, f in group_f_pairs
     )]
 
-    print(f"\n=== Timing Comparison: all variants ===")
+    print("\n=== Timing Comparison: all variants ===")
     hdr = f"{'Group':<20} {'F':>3}"
     for v in active_variants:
         hdr += f" {VARIANT_LABELS.get(v, v) + ' (ms)':>14}"
@@ -194,7 +194,7 @@ def print_iteration_table(entries):
         (g, f, v) in by_group_f_variant for g, f in group_f_pairs
     )]
 
-    print(f"\n=== Iteration Counts: pruning effectiveness ===")
+    print("\n=== Iteration Counts: pruning effectiveness ===")
     hdr = f"{'Group':<20} {'F':>3}"
     for v in active_variants:
         hdr += f" {VARIANT_LABELS.get(v, v):>12}"
