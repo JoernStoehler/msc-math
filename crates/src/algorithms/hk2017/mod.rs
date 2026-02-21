@@ -3,7 +3,7 @@
 /// Computes c_EHZ(K) for a convex polytope K ⊂ R^4 by exhaustive search
 /// over all subsets S ⊆ {1,...,F} and cyclic permutations σ of S.
 ///
-/// # Algorithm (chapter-algorithm.tex, `alg:ehz`)
+/// # Algorithm (general-case-algorithm.tex, `[alg:ehz]`)
 ///
 /// For each (S, σ):
 /// 1. Build normal matrix N, action matrix H, height vector η
