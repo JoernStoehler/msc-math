@@ -20,7 +20,7 @@
 //!
 //! Output format: one JSONL entry per (polytope, variant).
 //! Each entry: {polytope_name, variant, group, facet_count, normals, heights,
-//!              capacity, capacity_lenient, iterations, time_ms}
+//!              capacity, capacity_uncertain, iterations, time_ms}
 
 use nalgebra::{DMatrix, DVector, Vector4};
 use rand::SeedableRng;
@@ -53,7 +53,7 @@ struct AblationEntry {
     normals: Vec<[f64; 4]>,
     heights: Vec<f64>,
     capacity: f64,
-    capacity_lenient: f64,
+    capacity_uncertain: f64,
     iterations: u64,
     time_ms: f64,
 }
@@ -477,8 +477,8 @@ fn ehz_capacity_with(
     let normals = polytope.normals();
     let heights = polytope.heights();
 
-    let mut best_strict: Option<Candidate> = None;
-    let mut best_lenient: Option<Candidate> = None;
+    let mut best_certified: Option<Candidate> = None;
+    let mut best_uncertain: Option<Candidate> = None;
     let mut iterations: u64 = 0;
 
     for m in 2..=f {
@@ -497,9 +497,9 @@ fn ehz_capacity_with(
                     let action = 0.5 / q_val;
 
                     if beta_min > EPS_BETA_POSITIVE {
-                        let update = best_strict.as_ref().is_none_or(|b| action < b.0);
+                        let update = best_certified.as_ref().is_none_or(|b| action < b.0);
                         if update {
-                            best_strict = Some((
+                            best_certified = Some((
                                 action,
                                 subset.clone(),
                                 perm.to_vec(),
@@ -509,9 +509,9 @@ fn ehz_capacity_with(
                     }
 
                     if beta_min > -EPS_BETA_POSITIVE {
-                        let update = best_lenient.as_ref().is_none_or(|b| action < b.0);
+                        let update = best_uncertain.as_ref().is_none_or(|b| action < b.0);
                         if update {
-                            best_lenient =
+                            best_uncertain =
                                 Some((action, subset.clone(), perm.to_vec(), beta));
                         }
                     }
@@ -520,14 +520,14 @@ fn ehz_capacity_with(
         }
     }
 
-    let strict = best_strict?;
-    let lenient_cap = best_lenient.map_or(strict.0, |b| b.0);
+    let certified = best_certified?;
+    let uncertain_cap = best_uncertain.map_or(certified.0, |b| b.0);
     Some(EhzResult {
-        capacity: strict.0,
-        capacity_lenient: lenient_cap,
-        best_subset: strict.1,
-        best_permutation: strict.2,
-        best_beta: strict.3,
+        capacity: certified.0,
+        capacity_uncertain: uncertain_cap,
+        best_subset: certified.1,
+        best_permutation: certified.2,
+        best_beta: certified.3,
         iterations,
     })
 }
@@ -934,7 +934,7 @@ fn main() {
                         normals: normals_raw.clone(),
                         heights: heights_raw.clone(),
                         capacity: r.capacity,
-                        capacity_lenient: r.capacity_lenient,
+                        capacity_uncertain: r.capacity_uncertain,
                         iterations: r.iterations,
                         time_ms,
                     });
