@@ -20,6 +20,20 @@
 - Invariants stated in doc comments must be enforced by types/constructors/assert!s/debug_assert!s
 - Properties stated in doc comments must have corresponding tests
 
+## Cross-references to thesis
+
+When a Rust function implements something proved in the thesis, reference the proof by its LaTeX `\label{}` name. Rules:
+
+1. **Format**: `[lem:label]`, `[thm:label]`, `[def:label]`, `[alg:label]` — matching the LaTeX `\label{}` name exactly.
+2. **Always include** a one-line English description of what the referenced result says. Example:
+   ```rust
+   /// Maximises Q(β) subject to the KKT constraints; see `[lem:kkt]` (thesis):
+   /// the unique maximum exists and equals 1/(2·action(orbit)).
+   ```
+3. **Never duplicate proofs** inline. The comment says *what* the code computes and *which lemma* justifies it. The thesis says *why*.
+4. **Never use rendered numbers** like "Lemma 3.2" — these change when sections renumber. Use the label.
+5. **Verification**: grep `crates/src/` for `[lem:...]`, `[thm:...]`, `[def:...]` occurrences, find the `.tex` `\label{...}`, and check the lemma statement matches what the comment claims.
+
 ## Testing philosophy
 
 Two classes of tests, both applied excessively:

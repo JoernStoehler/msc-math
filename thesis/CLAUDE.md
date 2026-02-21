@@ -41,6 +41,14 @@ Never guess — read from `thesis/build/main.aux` after building:
 grep -E 'newlabel\{(sec:|thm:|lem:|def:|rem:|cor:)' thesis/build/main.aux
 ```
 
+## Rust Cross-References
+
+Rust `///` doc comments reference thesis proofs using `[lem:label]`, `[thm:label]`, `[def:label]`, `[alg:label]` format — matching the LaTeX `\label{}` name exactly. When editing a theorem or lemma in the thesis, grep `crates/src/` for the label to find affected Rust comments:
+```bash
+grep -r '\[lem:label\]' crates/src/
+```
+The `\label{}` name is the stable identifier. Rendered numbers (e.g., "Lemma 3.2") appear only in the PDF and must never appear in Rust source.
+
 ## Four Audiences
 
 Every line of LaTeX must work for all four audiences simultaneously:
