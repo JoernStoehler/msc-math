@@ -1,6 +1,6 @@
 /// Convex polytope in R^4 via halfspace representation.
 ///
-/// See `def:polytope` in thesis/chapter-algorithm.tex:
+/// See `[def:polytope]` in thesis/general-case-algorithm.tex:
 ///   A polytope is a bounded convex subset K ⊂ ℝ⁴ that contains 0 in its
 ///   interior and is an intersection of finitely many closed half-spaces.
 ///

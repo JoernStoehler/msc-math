@@ -83,12 +83,12 @@ fn combinations_basic() {
 /// **Why release mode:** F=8 → ~16s debug, ~0.2s release. Input-output test,
 /// only care about result agreement.
 /// **Why #[ignore]:** Too slow for default suite. Run after changes to adjacency
-/// pruning logic with: `cargo test --release -p hk2017 pruned_matches_unpruned -- --ignored`
+/// pruning logic with: `cargo test --release pruned_matches_unpruned -- --ignored`
 ///
 /// For quick fixture-based pruned/unpruned check on 27 polytopes, see
 /// `capacity_properties_test::pruned_matches_unpruned_from_fixture()` (default suite, <1s).
 #[test]
-#[ignore] // ~16s debug, ~0.2s release. Run: cargo test --release -p hk2017 pruned_matches_unpruned -- --ignored
+#[ignore] // ~16s debug, ~0.2s release. Run: cargo test --release pruned_matches_unpruned -- --ignored
 fn pruned_matches_unpruned() {
     let kp = known_polytopes::hypercube();
 
@@ -263,12 +263,12 @@ fn solve_kkt_degenerate() {
 /// only care about final value. Run in release for 74x speedup.
 /// **Why #[ignore]:** Too slow for default suite. Important regression test for
 /// thesis counterexample.
-/// **Run with:** `cargo test --release -p hk2017 pentagon_capacity -- --ignored`
+/// **Run with:** `cargo test --release pentagon_capacity -- --ignored`
 ///
 /// For quick capacity check against literature value, see
 /// `capacity_properties_test::literature_capacity_values()` (fixture-based, default suite).
 #[test]
-#[ignore] // ~37s debug, ~0.5s release. Run: cargo test --release -p hk2017 pentagon_capacity -- --ignored
+#[ignore] // ~37s debug, ~0.5s release. Run: cargo test --release pentagon_capacity -- --ignored
 fn pentagon_capacity() {
     use crate::geom::volume::volume;
 
@@ -838,7 +838,7 @@ fn solve_kkt_lu_vs_svd_degenerate() {
 /// **Why #[ignore]:** Redundant with `capacity_properties_test::capacity_conformality()`
 /// which tests this property from fixture across many polytopes. This test will be
 /// removed once fixture includes scaled polytopes.
-/// **Run with:** `cargo test --release -p hk2017 capacity_scales_quadratically -- --ignored`
+/// **Run with:** `cargo test --release capacity_scales_quadratically -- --ignored`
 ///
 /// Uses λ = e (transcendental) — cannot be root of any polynomial with integer
 /// coefficients, making numerical coincidences impossible.
@@ -876,7 +876,7 @@ fn capacity_scales_quadratically() {
 ///
 /// **Why release mode:** Enumerates many permutations per polytope.
 /// **Why #[ignore]:** Profiling test, not correctness. Run manually.
-/// **Run with:** `cargo test --release -p hk2017 bench_kkt_random_polytopes -- --nocapture --ignored`
+/// **Run with:** `cargo test --release bench_kkt_random_polytopes -- --nocapture --ignored`
 #[test]
 #[ignore]
 fn bench_kkt_random_polytopes() {

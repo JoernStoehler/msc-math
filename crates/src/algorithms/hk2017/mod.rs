@@ -3,7 +3,7 @@
 /// Computes c_EHZ(K) for a convex polytope K ⊂ R^4 by exhaustive search
 /// over all subsets S ⊆ {1,...,F} and cyclic permutations σ of S.
 ///
-/// # Algorithm (chapter-algorithm.tex, `alg:ehz`)
+/// # Algorithm (general-case-algorithm.tex, `[alg:ehz]`)
 ///
 /// For each (S, σ):
 /// 1. Build normal matrix N, action matrix H, height vector η
@@ -13,6 +13,16 @@
 ///
 /// Return c_EHZ(K) = min A(S,σ).
 ///
+/// # Permutation ordering convention
+///
+/// The `best_permutation` in [`EhzResult`] is in **physical orbit direction**:
+/// σ = [a, b, c, ...] means the Reeb orbit visits F_a → F_b → F_c → ... → F_a.
+/// For consecutive facets, ω₀(n_{σ(k)}, n_{σ(k+1)}) ≥ 0.
+///
+/// Internally, the Q-function Q(β) = Σ_{i>j} β_i β_j ω₀(n_{σ(i)}, n_{σ(j)}) uses
+/// the reversed ("algebraic") ordering. The reversal happens at the output boundary:
+/// the best permutation is reversed before being stored in [`EhzResult`].
+///
 /// # Complexity
 ///
 /// Σ_{m=2}^{F} C(F,m) · (m-1)! — exponential in F.
@@ -20,6 +30,7 @@ mod permutations;
 
 use crate::constants::EPS_FACET_INCIDENCE;
 use crate::geom::polytope::Polytope4D;
+use crate::geom::symplectic::omega0;
 use crate::kkt::{solve_kkt, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
 use permutations::{cyclic_permutations, for_each_cyclic_permutation};
 
@@ -45,7 +56,8 @@ pub struct EhzResult {
     pub capacity_uncertain: f64,
     /// The subset S (facet indices) achieving the minimum action.
     pub best_subset: Vec<usize>,
-    /// The cyclic permutation σ of S achieving the minimum action.
+    /// The cyclic permutation σ of S in **physical orbit direction**.
+    /// σ[k] → σ[k+1] is the direction of the Reeb orbit.
     pub best_permutation: Vec<usize>,
     /// The β vector at the optimum.
     pub best_beta: Vec<f64>,
@@ -126,12 +138,17 @@ pub fn ehz_capacity(polytope: &Polytope4D) -> Option<EhzResult> {
     // Return based on certified candidate (primary). Uncertain is supplementary.
     let certified = best_certified?;
     let uncertain_cap = best_uncertain.map_or(certified.0, |b| b.0);
+    // Reverse σ from internal algebraic order to physical orbit direction
+    let mut phys_perm = certified.2;
+    phys_perm.reverse();
+    let mut phys_beta = certified.3;
+    phys_beta.reverse();
     Some(EhzResult {
         capacity: certified.0,
         capacity_uncertain: uncertain_cap,
         best_subset: certified.1,
-        best_permutation: certified.2,
-        best_beta: certified.3,
+        best_permutation: phys_perm,
+        best_beta: phys_beta,
         iterations,
     })
 }
@@ -186,25 +203,50 @@ pub(crate) fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     adj
 }
 
+/// Build directed facet adjacency matrix: adj[i][j] = true iff the algorithm's
+/// internal ordering can have i followed by j.
+///
+/// This combines vertex adjacency (F_i ∩ F_j ≠ ∅) with the directed ω₀ condition.
+/// In the algorithm's internal (algebraic) ordering, consecutive (i, j) corresponds
+/// to a physical Reeb transition F_j → F_i, so we require ω₀(n_j, n_i) ≥ 0.
+///
+/// [lem:transition-feasibility] Condition (1): ω₀(n_i, n_j) ≥ 0 is necessary for
+/// physical transition F_i → F_j. Here we check ω₀(n_j, n_i) ≥ 0 for the reversed
+/// direction matching the algebraic convention.
+pub(crate) fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
+    let f = polytope.facet_count();
+    let normals = polytope.normals();
+    let vertex_adj = build_adjacency_matrix(polytope);
+    let mut adj = vec![vec![false; f]; f];
+    for i in 0..f {
+        for j in 0..f {
+            // Algebraic convention: adj[i][j] = true iff consecutive (i,j) in σ is valid.
+            // Physical meaning: transition F_j → F_i, requiring ω₀(n_j, n_i) ≥ 0.
+            adj[i][j] = vertex_adj[i][j] && omega0(&normals[j], &normals[i]) >= 0.0;
+        }
+    }
+    adj
+}
+
 /// Check if a cyclic permutation forms an adjacent cycle.
 fn is_adjacent_cycle(perm: &[usize], adj: &[Vec<bool>]) -> bool {
     let m = perm.len();
     (0..m).all(|k| adj[perm[k]][perm[(k + 1) % m]])
 }
 
-/// Compute c_EHZ(K) with adjacency pruning; see `[cor:adjacency-pruning]` (thesis).
+/// Compute c_EHZ(K) with directed adjacency pruning; see `[cor:adjacency-pruning]` (thesis).
 ///
 /// **Production variant used in all experiments.**
-/// Skips (S, σ) pairs where consecutive facets are not adjacent in the
-/// adjacency graph `[def:adjacency-graph]`, significantly reducing the
-/// search space while returning the same capacity as `ehz_capacity`.
+/// Skips (S, σ) pairs where consecutive facets violate vertex adjacency
+/// or the directed ω₀ condition `[lem:transition-feasibility]` condition (1).
+/// This is the A2 pruning level from the ablation study.
 pub fn ehz_capacity_pruned(polytope: &Polytope4D) -> Option<EhzResult> {
     let f = polytope.facet_count();
     let normals = polytope.normals();
     let heights = polytope.heights();
 
-    // Precompute adjacency matrix once
-    let adj = build_adjacency_matrix(polytope);
+    // Precompute directed adjacency matrix (A2: vertex adj + ω₀ condition)
+    let adj = build_directed_adjacency_matrix(polytope);
 
     let mut best_certified: Option<Candidate> = None;
     let mut best_uncertain: Option<Candidate> = None;
@@ -257,12 +299,17 @@ pub fn ehz_capacity_pruned(polytope: &Polytope4D) -> Option<EhzResult> {
 
     let certified = best_certified?;
     let uncertain_cap = best_uncertain.map_or(certified.0, |b| b.0);
+    // Reverse σ from internal algebraic order to physical orbit direction
+    let mut phys_perm = certified.2;
+    phys_perm.reverse();
+    let mut phys_beta = certified.3;
+    phys_beta.reverse();
     Some(EhzResult {
         capacity: certified.0,
         capacity_uncertain: uncertain_cap,
         best_subset: certified.1,
-        best_permutation: certified.2,
-        best_beta: certified.3,
+        best_permutation: phys_perm,
+        best_beta: phys_beta,
         iterations,
     })
 }

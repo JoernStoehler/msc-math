@@ -36,6 +36,10 @@ cd "$REPO_ROOT"
 # Each binary writes data to its own experiment folder.
 # Order does not matter — experiments are independent.
 
+# Ablation study dataset (39 polytopes × 4 variants = 156 entries)
+experiments/target/release/ablation
+# → experiments/ablation/ablation.jsonl
+
 # Correctness verification dataset (47 polytopes, 71 capacity values)
 experiments/target/release/correctness
 # → experiments/correctness/correctness.jsonl
@@ -69,6 +73,10 @@ experiments/target/release/lagrangian_sweep
 # ── Step 2: Generate figures and tables ──────────────────────────────────────
 # Python scripts read .jsonl from their experiment folder, write figures/tables
 # to the same folder.
+
+# Ablation study: agreement check + timing comparison figure
+python3 experiments/ablation/ablation.py
+# → experiments/ablation/ablation_timing.png
 
 # Benchmark: timing model fit + unified figure
 python3 experiments/benchmark/benchmark.py

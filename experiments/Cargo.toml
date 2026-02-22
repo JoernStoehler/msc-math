@@ -4,6 +4,10 @@ version = "0.1.0"
 edition = "2021"
 
 [[bin]]
+name = "ablation"
+path = "ablation/ablation.rs"
+
+[[bin]]
 name = "benchmark"
 path = "benchmark/benchmark.rs"
 

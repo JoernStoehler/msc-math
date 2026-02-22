@@ -16,7 +16,7 @@ In a floating-point implementation, each of these operations
 introduces rounding errors that must be controlled.
 
 This appendix develops the numerical counterpart of the exact
-algorithm in three parts:
+algorithm in four parts.
 Section~\ref{app:near-singular} analyses the most delicate
 issue---near-singular KKT systems whose solutions are sensitive
 to perturbations---and proves that such systems can be safely
@@ -28,6 +28,9 @@ that accounts for finite-precision evaluation.
 Section~\ref{app:error-tracking} describes how the algorithm
 combines these verdicts to report a capacity value with
 appropriate certainty qualifiers.
+Section~\ref{sec:ablation-pruning} analyses how successive
+refinements of the adjacency graph reduce the combinatorial
+search space.
 
 \subsection{Near-Singular KKT Systems}\label{app:near-singular}
 \input{appendix-numerical-dismissal}
@@ -37,3 +40,5 @@ appropriate certainty qualifiers.
 
 \subsection{Error Tracking and Final Answer}\label{app:error-tracking}
 \input{appendix-numerical-error-tracking}
+
+\input{../experiments/ablation/ablation}

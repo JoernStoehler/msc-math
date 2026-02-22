@@ -27,9 +27,9 @@ The thesis describes the KKT linear system and its solution abstractly (a unique
 - **`find_positive_beta_1d` / `find_positive_beta_nd`.** When the SVD path is used and the null space has rank ≥ 1, a secondary search looks for a direction in null(N) with β > 0. No mention in the thesis.
 - **`solve_kkt_svd_only`.** Ablation variant that bypasses the LU path entirely. Test-only, not exported. Not in thesis.
 - **Numerical thresholds:** `EPS_BETA_POSITIVE` (β positivity guard), `EPS_Q_POSITIVE` (Q positivity guard), `EPS_KKT_RESIDUAL` (residual validation). None mentioned in thesis.
-- **Strict vs lenient β check.** `EhzResult` has both `capacity` (strict: β > +EPS) and `capacity_lenient` (lenient: β > −EPS). The `numerical_gap()` method measures the difference. This quality signal is computed in every run but the thesis never discusses numerical confidence monitoring.
+- **Certified vs uncertain β check.** `EhzResult` has both `capacity` (certified: β > +EPS) and `capacity_uncertain` (uncertain: β > −EPS). The `numerical_gap()` method measures the difference. This quality signal is computed in every run but the thesis never discusses numerical confidence monitoring.
 
-**Action:** `[add-thesis-note]` in `general-case-algorithm-proof.tex` or `correctness.tex`: note that the implementation uses LU/SVD for degenerate cases, with strict/lenient β checks for numerical confidence. The SVD correctness gap (§D1) needs a `[jörn-decision]` on whether to add a limitation note to the thesis.
+**Action:** `[add-thesis-note]` in `general-case-algorithm-proof.tex` or `correctness.tex`: note that the implementation uses LU/SVD for degenerate cases, with certified/uncertain β checks for numerical confidence. The SVD correctness gap (§D1) needs a `[jörn-decision]` on whether to add a limitation note to the thesis.
 
 ---
 

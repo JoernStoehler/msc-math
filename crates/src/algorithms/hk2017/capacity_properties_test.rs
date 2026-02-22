@@ -35,7 +35,7 @@ use std::sync::LazyLock;
 /// Shared dataset loaded from cached fixture (fast, <1ms).
 ///
 /// If the fixture is missing, panics with instructions to regenerate:
-/// `cargo test --release -p hk2017 regenerate_test_dataset -- --ignored --nocapture`
+/// `cargo test --release regenerate_test_dataset -- --ignored --nocapture`
 static DATASET: LazyLock<Vec<TestPolytope>> = LazyLock::new(|| {
     let path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(FIXTURE_PATH);
     load_test_dataset(&path)
@@ -68,7 +68,7 @@ fn catalog_determinism() {
 /// **Why default suite:** Staleness detector. Runs every iteration to catch
 /// fixture/code desync early.
 /// **When to regenerate:** If this test warns, run:
-/// `cargo test --release -p hk2017 regenerate_test_dataset -- --ignored --nocapture`
+/// `cargo test --release regenerate_test_dataset -- --ignored --nocapture`
 ///
 /// Compares by name, not geometry: The catalog uses `Vector4::normalize()` which can
 /// produce slightly different results across recompilations (FMA, inlining
@@ -96,7 +96,7 @@ fn fixture_staleness_check() {
     if !missing.is_empty() || !orphaned.is_empty() {
         eprintln!(
             "WARNING: fixture staleness detected ({} missing, {} orphaned). \
-             Regenerate with: cargo test --release -p hk2017 regenerate_test_dataset -- --ignored --nocapture",
+             Regenerate with: cargo test --release regenerate_test_dataset -- --ignored --nocapture",
             missing.len(), orphaned.len()
         );
     } else {

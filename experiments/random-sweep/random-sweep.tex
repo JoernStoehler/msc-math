@@ -3,9 +3,9 @@
 % Random sweep of systolic ratios on random 4D polytopes.
 %
 % Sources:
-%   - Generated data: experiments/data/random-sweep.jsonl
-%   - Plot script: experiments/scripts/random_sweep.py
-%   - Experiment notes: experiments/scripts/random_sweep.md
+%   - Generated data: experiments/random-sweep/random-sweep.jsonl
+%   - Plot script: experiments/random-sweep/random_sweep.py
+%   - Experiment notes: experiments/random-sweep/README.md
 %
 % Structure:
 %   - Sampling setup
@@ -33,3 +33,20 @@ one standard deviation error bars.
   one standard deviation for each $F$. The dashed line marks $\mathrm{sys}=1$.}
 \label{fig:random-sweep-sys}
 \end{figure}
+
+\subsubsection*{Observations}
+
+All 70 sampled polytopes satisfy~$\mathrm{sys} < 0.58$, well below the
+Viterbo threshold~$\mathrm{sys} = 1$.
+The median systolic ratio fluctuates between~$0.08$ ($F = 5$)
+and~$0.48$ ($F = 12$) without a clear upward trend, and the
+within-$F$ variance is large: at each facet count, the spread from
+minimum to maximum is comparable to the median itself.
+This suggests that polytope geometry (normal directions, height ratios)
+matters more than facet count alone for determining~$\mathrm{sys}$.
+
+For comparison, the only known counterexample ($\mathrm{sys} \approx
+1.047$, Haim-Kislev \& Ostrover 2024) is a Lagrangian product of two
+pentagons at a specific relative rotation angle.
+Random generic polytopes, which have no product structure, appear to
+stay far from the violation regime.
