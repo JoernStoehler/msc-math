@@ -225,7 +225,8 @@ $(S, \sigma)$ admitted by each adjacency filter.
 Without pruning (A0), every polytope with $F$ facets admits
 $\sum_{m=2}^{F} \binom{F}{m} \tfrac{(m-1)!}{2}$ candidates;
 for $F = 8$ this is $16\,064$ and for $F = 10$ it exceeds $10^6$.
-Vertex adjacency~(A1) prunes $59$--$94\%$ of candidates.
+Vertex adjacency~(A1) has no effect at $F \le 6$ (all facets share vertices)
+but prunes up to $94\%$ of candidates at $F = 10$.
 The directed $\omega_0$ condition~(A2) provides the dominant reduction,
 admitting less than $0.05\%$ of A0 candidates for generic polytopes at $F = 10$
 (531 out of $1\,112\,073$) and ${\sim}3.5\%$ for Lagrangian products at $F = 8$.
@@ -270,7 +271,7 @@ Polytope & A0 & A1 & A2 & A3 \\
 Random generic ($F = 8$, mean)       & 16\,064 & 5\,347 & 136 & 136 \\
 Random generic ($F = 9$, mean)       & 125\,664 & 31\,633 & 391 & 391 \\
 Random generic ($F = 10$, mean)      & 1\,112\,073 & 68\,985 & 531 & 531 \\
-Lagrangian $4 \times 4$ ($F = 8$)    & 16\,064 & 5\,556 & 497 & 497 \\
+Lagrangian $4 \times 4$ ($F = 8$)    & 16\,064 & 5\,556 & 569 & 569 \\
 Hypercube ($F = 8$)                  & 16\,064 & 5\,556 & 1\,970 & 1\,970 \\
 \bottomrule
 \end{tabular}
