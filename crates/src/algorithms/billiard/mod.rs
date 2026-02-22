@@ -133,6 +133,19 @@ pub fn billiard_capacity(polytope: &Polytope4D) -> Result<Option<BilliardResult>
     Ok(best_certified.map(
         |(capacity, best_permutation, best_beta, bounce_count)| {
             let uncertain_cap = best_uncertain.map_or(capacity, |b| b.0);
+
+            // Safety net: if an UNKNOWN orbit achieves lower action than the best
+            // certified orbit, the reported capacity might be wrong and we cannot
+            // resolve it at f64 precision. Fail loudly rather than publish a
+            // potentially false result.
+            assert!(
+                uncertain_cap >= capacity,
+                "Numerical gap: certified capacity {:.6e} > uncertain capacity {:.6e} \
+                 (gap = {:.6e}). An UNKNOWN orbit achieves lower action than the best \
+                 certified orbit. Cannot resolve at f64 precision.",
+                capacity, uncertain_cap, capacity - uncertain_cap,
+            );
+
             // Reverse σ from internal algebraic order to physical orbit direction
             let mut phys_perm = best_permutation;
             phys_perm.reverse();

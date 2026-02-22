@@ -1,0 +1,57 @@
+% unknown-predicates.tex — \input'd from thesis
+%
+% Status: Phase 1 complete. Negative result: zero UNKNOWNs found.
+%
+% Sources: experiments/unknown-predicates/unknown-predicates.jsonl
+%          experiments/unknown-predicates/unknown_predicates_beta_min.png
+
+\subsection{Numerical Precision of the Admissibility Check}
+\label{sec:unknown-predicates}
+
+The capacity algorithm uses a three-valued admissibility predicate for each
+candidate orbit $(S, \sigma)$: the KKT solution $\beta$ is classified as
+\emph{certified} ($\beta_i > \varepsilon$ for all~$i$),
+\emph{rejected} ($\beta_i < -\varepsilon$ for some~$i$), or
+\emph{uncertain} ($-\varepsilon < \beta_{\min} \le \varepsilon$),
+where $\varepsilon = 10^{-12}$.
+The certified capacity uses only certified orbits; the uncertain capacity
+additionally admits uncertain orbits.
+A gap between the two (numerical gap $> 0$) would indicate that an
+uncertain orbit achieves lower action than any certified orbit, meaning
+the algorithm's output depends on floating-point precision.
+
+\paragraph{Experiment.}
+We re-ran both the random-sweep dataset (70~polytopes, $F = 5, \ldots, 12$)
+and the Lagrangian-products dataset (92~polytopes: pentagon $5 \times 5$ sweep
+and 10 regular polygon pairs) through the production algorithms
+(\texttt{ehz\_capacity} and \texttt{billiard\_capacity} respectively),
+recording the certified capacity, uncertain capacity, numerical gap,
+and minimum $\beta$ component for each polytope.
+
+\paragraph{Results.}
+Across all 162~polytopes, the numerical gap was exactly zero:
+no uncertain orbit achieved lower action than the certified optimum.
+Phase~2 (high-precision re-solve) was therefore unnecessary.
+
+The minimum $\beta$ component $\beta_{\min}$ of the certified orbit measures
+the margin from the uncertain threshold.
+For random polytopes, $\beta_{\min}$ ranged from $6.7 \times 10^{-4}$
+to $1.2 \times 10^{-1}$ (median $4.5 \times 10^{-2}$), well above the
+threshold $\varepsilon = 10^{-12}$.
+For Lagrangian products, $\beta_{\min}$ ranged from $6.2 \times 10^{-12}$
+to $3.5 \times 10^{-1}$ (median $1.7 \times 10^{-1}$).
+The smallest value $\beta_{\min} = 6.2 \times 10^{-12}$ occurs for the
+square$\,\times\,$square product $(4,4)$ at $\theta = 18^\circ$, just
+$6\times$ above the threshold.
+This near-miss reflects the geometric near-degeneracy of Lagrangian products
+at special rotation angles, where one dwell-time component approaches zero
+as the orbit becomes tangent to a facet.
+
+\paragraph{Conclusion.}
+The algorithm is empirically exact at \texttt{f64} precision on our datasets:
+no UNKNOWN predicates influenced the capacity computation.
+The 8-order-of-magnitude gap between the closest Lagrangian-product margin
+($6.2 \times 10^{-12}$) and the closest random-polytope margin
+($6.7 \times 10^{-4}$) suggests that numerical precision concerns are
+concentrated in structured polytopes with geometric near-degeneracies,
+not in generic polytopes.

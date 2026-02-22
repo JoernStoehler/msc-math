@@ -70,6 +70,10 @@ experiments/target/release/lagrangian_sweep
 # → experiments/lagrangian-products/lagrangian-products-5x5.jsonl
 # → experiments/lagrangian-products/lagrangian-products-*-6deg.jsonl (9 files)
 
+# Unknown predicates: UNKNOWN admissibility predicate survey
+experiments/target/release/unknown_predicates
+# → experiments/unknown-predicates/unknown-predicates.jsonl
+
 # ── Step 2: Generate figures and tables ──────────────────────────────────────
 # Python scripts read .jsonl from their experiment folder, write figures/tables
 # to the same folder.
@@ -101,6 +105,10 @@ python3 experiments/pentagon-perturb/pentagon_perturb.py
 python3 experiments/lagrangian-products/lagrangian_products.py
 # → experiments/lagrangian-products/lagrangian_products_5x5.png
 # → experiments/lagrangian-products/lagrangian_products_polygon_pairs.png
+
+# Unknown predicates: beta_min histogram
+python3 experiments/unknown-predicates/unknown_predicates.py
+# → experiments/unknown-predicates/unknown_predicates_beta_min.png
 
 # ── Step 3: Visualization screenshots ────────────────────────────────────────
 # Automated via Playwright (headless Chrome). Requires: npm install playwright.
