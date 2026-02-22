@@ -91,7 +91,7 @@ The current `EhzResult` stores only the single best (S, sigma, beta). Phases 1-2
 
 3. **Top-N orbits:** At minimum, the best orbit plus all orbits within some tolerance of optimal (e.g., action < 1.01 * best_action). These are the orbits that matter for sensitivity.
 
-This instrumented version lives in the experiment binary (per repo convention: library stays stable, experiment binaries carry variants). It can copy and modify `ehz_capacity_pruned` to collect the extra data.
+This instrumented version lives in the experiment binary (per repo convention: library stays stable, experiment binaries carry variants). It can copy and modify `ehz_capacity` to collect the extra data.
 
 ## Estimated cost
 

@@ -12,7 +12,7 @@
 
 use symplectic::random::generate_random_polytopes;
 use symplectic::volume;
-use symplectic::ehz_capacity_pruned;
+use symplectic::ehz_capacity;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use serde::Serialize;
@@ -77,7 +77,7 @@ fn main() {
             let time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
 
             let start_cap = Instant::now();
-            let result = ehz_capacity_pruned(p).expect("capacity computation failed");
+            let result = ehz_capacity(p).expect("capacity computation failed");
             let time_capacity_ms = start_cap.elapsed().as_secs_f64() * 1000.0;
 
             let cap = result.capacity;

@@ -16,7 +16,7 @@ use nalgebra::Vector4;
 #[test]
 fn simplex_capacity() {
     let kp = known_polytopes::simplex();
-    let result = ehz_capacity(&kp.polytope).expect("simplex should have capacity");
+    let result = ehz_capacity_unpruned(&kp.polytope).expect("simplex should have capacity");
     assert!(
         (result.capacity - kp.capacity).abs() < 1e-6,
         "simplex capacity: got {}, expected {}",
@@ -38,7 +38,7 @@ fn simplex_capacity() {
 #[test]
 fn hypercube_capacity() {
     let kp = known_polytopes::hypercube();
-    let result = ehz_capacity(&kp.polytope).expect("hypercube should have capacity");
+    let result = ehz_capacity_unpruned(&kp.polytope).expect("hypercube should have capacity");
     assert!(
         (result.capacity - kp.capacity).abs() < 1e-6,
         "hypercube capacity: got {}, expected {}",
@@ -55,7 +55,7 @@ fn hypercube_capacity() {
 #[test]
 fn lagrangian_triangle_product_capacity() {
     let kp = known_polytopes::lagrangian_triangle_product();
-    let result = ehz_capacity(&kp.polytope).expect("lagrangian triangle product should have capacity");
+    let result = ehz_capacity_unpruned(&kp.polytope).expect("lagrangian triangle product should have capacity");
     assert!(
         (result.capacity - kp.capacity).abs() < 1e-6,
         "lagrangian triangle product capacity: got {}, expected {}",
@@ -92,8 +92,8 @@ fn combinations_basic() {
 fn pruned_matches_unpruned() {
     let kp = known_polytopes::hypercube();
 
-    let result_unpruned = ehz_capacity(&kp.polytope).expect("unpruned capacity");
-    let result_pruned = ehz_capacity_pruned(&kp.polytope).expect("pruned capacity");
+    let result_unpruned = ehz_capacity_unpruned(&kp.polytope).expect("unpruned capacity");
+    let result_pruned = ehz_capacity(&kp.polytope).expect("pruned capacity");
 
     assert!(
         (result_unpruned.capacity - result_pruned.capacity).abs() < 1e-6,
@@ -273,7 +273,7 @@ fn pentagon_capacity() {
     use crate::geom::volume::volume;
 
     let kp = known_polytopes::hko_pentagon();
-    let result = ehz_capacity_pruned(&kp.polytope).expect("pentagon capacity");
+    let result = ehz_capacity(&kp.polytope).expect("pentagon capacity");
 
     assert!(
         (result.capacity - kp.capacity).abs() < 1e-6,
@@ -304,7 +304,7 @@ fn pentagon_capacity() {
 #[test]
 fn triangle_square_capacity() {
     let kp = known_polytopes::lagrangian_triangle_square();
-    let result = ehz_capacity_pruned(&kp.polytope).expect("Lagrangian triangle×square capacity");
+    let result = ehz_capacity(&kp.polytope).expect("Lagrangian triangle×square capacity");
 
     // Investigation complete: This is a Lagrangian product (equilateral triangle in q-space,
     // unit square in p-space), not a symplectic product. The algorithm correctly computes
@@ -329,7 +329,7 @@ fn triangle_square_capacity() {
 #[test]
 fn symplectic_triangle_square_capacity() {
     let kp = known_polytopes::symplectic_triangle_square();
-    let result = ehz_capacity_pruned(&kp.polytope).expect("symplectic triangle×square capacity");
+    let result = ehz_capacity(&kp.polytope).expect("symplectic triangle×square capacity");
 
     // Symplectic product: triangle in (q₁, p₁) plane ×_S square in (q₂, p₂) plane.
     // Moser's theorem: c(A ×_S B) = min(c(A), c(B))
@@ -348,7 +348,7 @@ fn symplectic_triangle_square_capacity() {
 #[ignore] // Too expensive: 16 facets → exponential runtime (~hours)
 fn crosspolytope_capacity() {
     let kp = known_polytopes::crosspolytope();
-    let result = ehz_capacity_pruned(&kp.polytope).expect("crosspolytope capacity");
+    let result = ehz_capacity(&kp.polytope).expect("crosspolytope capacity");
 
     // No known literature value - just verify computation succeeds
     assert!(result.capacity > 0.0, "crosspolytope capacity positive");
@@ -389,8 +389,8 @@ mod proptests {
             let polytopes = generate_random_polytopes(1, facet_count, 0.5, 2.0, &mut rng);
 
             if let Some(p) = polytopes.first() {
-                let unpruned = ehz_capacity(p).unwrap();
-                let pruned = ehz_capacity_pruned(p).unwrap();
+                let unpruned = ehz_capacity_unpruned(p).unwrap();
+                let pruned = ehz_capacity(p).unwrap();
 
                 prop_assert!(
                     (unpruned.capacity - pruned.capacity).abs() < 1e-6,
@@ -430,7 +430,7 @@ fn kkt_nullspace_square_square_zero() {
     let (pn, ph) = regular_polygon_2d(4, 1.0);
     let polytope = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
 
-    let result = ehz_capacity(&polytope).expect("(4,4) at θ=0° should have capacity");
+    let result = ehz_capacity_unpruned(&polytope).expect("(4,4) at θ=0° should have capacity");
     assert!(
         (result.capacity - 2.0).abs() < 1e-6,
         "(4,4) at θ=0°: got {}, expected 2.0",
@@ -454,7 +454,7 @@ fn kkt_nullspace_square_square_near_zero() {
     let (pn, ph) = rotate_polygon_2d(&pn_base, &ph_base, theta);
     let polytope = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
 
-    let result = ehz_capacity(&polytope).expect("(4,4) at θ=0.125° should have capacity");
+    let result = ehz_capacity_unpruned(&polytope).expect("(4,4) at θ=0.125° should have capacity");
     // Capacity should be continuous near θ=0° → close to 2.0
     assert!(
         (result.capacity - 2.0).abs() < 0.01,
@@ -478,7 +478,7 @@ fn kkt_nullspace_square_square_45deg() {
     let (pn, ph) = rotate_polygon_2d(&pn_base, &ph_base, theta);
     let polytope = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
 
-    let result_hk = ehz_capacity(&polytope).expect("(4,4) at θ=45°: HK2017 should have capacity");
+    let result_hk = ehz_capacity_unpruned(&polytope).expect("(4,4) at θ=45°: HK2017 should have capacity");
     let result_bil = crate::algorithms::billiard::billiard_capacity(&polytope)
         .expect("billiard should not error")
         .expect("billiard should find capacity");
@@ -513,7 +513,7 @@ fn kkt_nullspace_triangle_square_zero() {
     let (pn, ph) = regular_polygon_2d(4, 1.0);
     let polytope = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
 
-    let result = ehz_capacity(&polytope)
+    let result = ehz_capacity_unpruned(&polytope)
         .expect("(3,4) at θ=0° should now return Some after null space fix");
 
     // Test output shows cap = 2.1213203436 = 3√2/2
@@ -848,10 +848,10 @@ fn capacity_scales_quadratically() {
     let scale = std::f64::consts::E;
 
     let kp = known_polytopes::hypercube();
-    let unit_cap = ehz_capacity(&kp.polytope).unwrap().capacity;
+    let unit_cap = ehz_capacity_unpruned(&kp.polytope).unwrap().capacity;
 
     let scaled_cube = crate::geom::test_utils::scaled_hypercube(scale);
-    let scaled_cap = ehz_capacity(&scaled_cube).unwrap().capacity;
+    let scaled_cap = ehz_capacity_unpruned(&scaled_cube).unwrap().capacity;
 
     let expected = unit_cap * scale * scale;
     let relative_error = ((scaled_cap - expected) / expected).abs();
@@ -903,7 +903,7 @@ fn bench_kkt_random_polytopes() {
 
         // Compute capacity for each polytope to check if LU-only orbits could be optimal
         let capacities: Vec<f64> = polytopes.iter().map(|p| {
-            super::ehz_capacity_pruned(p).map(|r| r.capacity).unwrap_or(f64::INFINITY)
+            super::ehz_capacity(p).map(|r| r.capacity).unwrap_or(f64::INFINITY)
         }).collect();
 
         let mut lu_only_optimal = 0u64;  // LU-only orbit that could be capacity-achieving

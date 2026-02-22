@@ -77,12 +77,12 @@ impl EhzResult {
 ///
 /// Reference (unpruned) implementation of `[alg:ehz]` (thesis): exhaustive
 /// search over all (S, σ) pairs. For production use, prefer
-/// `ehz_capacity_pruned` which applies `[cor:adjacency-pruning]` and is
+/// `ehz_capacity` which applies `[cor:adjacency-pruning]` and is
 /// used in all experiments.
 ///
 /// Returns `None` if no valid (S, σ) pair yields β > 0 (should not happen
 /// for valid polytopes, but guards against degenerate input).
-pub fn ehz_capacity(polytope: &Polytope4D) -> Option<EhzResult> {
+pub fn ehz_capacity_unpruned(polytope: &Polytope4D) -> Option<EhzResult> {
     let f = polytope.facet_count();
     let normals = polytope.normals();
     let heights = polytope.heights();
@@ -240,7 +240,7 @@ fn is_adjacent_cycle(perm: &[usize], adj: &[Vec<bool>]) -> bool {
 /// Skips (S, σ) pairs where consecutive facets violate vertex adjacency
 /// or the directed ω₀ condition `[lem:transition-feasibility]` condition (1).
 /// This is the A2 pruning level from the ablation study.
-pub fn ehz_capacity_pruned(polytope: &Polytope4D) -> Option<EhzResult> {
+pub fn ehz_capacity(polytope: &Polytope4D) -> Option<EhzResult> {
     let f = polytope.facet_count();
     let normals = polytope.normals();
     let heights = polytope.heights();

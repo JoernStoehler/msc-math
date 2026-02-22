@@ -410,7 +410,7 @@ mod tests {
     #[test]
     fn symplectic_triangle_product_capacity() {
         let kp = symplectic_triangle_product();
-        let result = crate::algorithms::hk2017::ehz_capacity(&kp.polytope)
+        let result = crate::algorithms::hk2017::ehz_capacity_unpruned(&kp.polytope)
             .expect("symplectic_triangle_product should have capacity");
         assert!(
             (result.capacity - kp.capacity).abs() < 1e-6,

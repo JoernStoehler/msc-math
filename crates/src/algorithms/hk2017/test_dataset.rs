@@ -11,7 +11,7 @@
 //!
 //! - **Default path:** Property tests load from `tests/fixtures/capacity_dataset.json`
 //! - **Regeneration:** Run `cargo test --release regenerate_test_dataset -- --ignored`
-//!   after changes to `ehz_capacity_pruned()` or the catalog generation logic.
+//!   after changes to `ehz_capacity()` or the catalog generation logic.
 //!
 //! The fixture is committed to the repo so all worktrees have it immediately.
 //!
@@ -23,8 +23,8 @@
 //!
 //! ## Capacity variants
 //!
-//! - `capacity`: from `ehz_capacity_pruned()` — the production code path.
-//! - `capacity_unpruned`: from `ehz_capacity()` — only for base polytopes,
+//! - `capacity`: from `ehz_capacity()` — the production code path.
+//! - `capacity_unpruned`: from `ehz_capacity_unpruned()` — only for base polytopes,
 //!   to verify pruned ≈ unpruned agreement. Variants skip the expensive
 //!   unpruned computation.
 
@@ -53,9 +53,9 @@ pub struct TestPolytope {
     pub name: String,
     pub polytope: Polytope4D,
     pub volume: f64,
-    /// EHZ capacity from `ehz_capacity_pruned()` (production code path).
+    /// EHZ capacity from `ehz_capacity()` (production code path).
     pub capacity: f64,
-    /// EHZ capacity from `ehz_capacity()` (unpruned). Only set for base polytopes.
+    /// EHZ capacity from `ehz_capacity_unpruned()` (unpruned). Only set for base polytopes.
     pub capacity_unpruned: Option<f64>,
     /// EHZ capacity from `billiard_capacity()`. Only set for Lagrangian products.
     pub capacity_billiard: Option<f64>,
@@ -242,14 +242,14 @@ pub fn literature_values() -> Vec<(&'static str, f64)> {
 /// Generate test dataset with fail-fast inline validation.
 ///
 /// Calls `polytope_catalog()`, then computes capacities:
-/// - Base polytopes: both `ehz_capacity_pruned()` and `ehz_capacity()`, assert agreement.
-/// - Variants: `ehz_capacity_pruned()` only.
+/// - Base polytopes: both `ehz_capacity()` and `ehz_capacity_unpruned()`, assert agreement.
+/// - Variants: `ehz_capacity()` only.
 /// - Inline checks: literature values, conformality, symplectomorphism invariance.
 ///
 /// Fails fast on any validation error — no point computing remaining polytopes
 /// if a bug is already detected.
 pub fn generate_test_dataset() -> Vec<TestPolytope> {
-    use crate::algorithms::hk2017::{ehz_capacity, ehz_capacity_pruned};
+    use crate::algorithms::hk2017::{ehz_capacity_unpruned, ehz_capacity};
     use crate::geom::volume::volume;
 
     let catalog = polytope_catalog();
@@ -259,8 +259,8 @@ pub fn generate_test_dataset() -> Vec<TestPolytope> {
         let vol = volume(&entry.polytope)
             .unwrap_or_else(|e| panic!("'{}': volume computation failed: {}", entry.name, e));
 
-        let pruned_result = ehz_capacity_pruned(&entry.polytope)
-            .unwrap_or_else(|| panic!("'{}': ehz_capacity_pruned() returned None", entry.name));
+        let pruned_result = ehz_capacity(&entry.polytope)
+            .unwrap_or_else(|| panic!("'{}': ehz_capacity() returned None", entry.name));
         let cap_pruned = pruned_result.capacity;
 
         // Log numerical gap if nonzero
@@ -274,8 +274,8 @@ pub fn generate_test_dataset() -> Vec<TestPolytope> {
 
         let cap_unpruned = if entry.base_index.is_none() {
             // Base polytope: also compute unpruned, verify agreement
-            let unpruned_result = ehz_capacity(&entry.polytope)
-                .unwrap_or_else(|| panic!("'{}': ehz_capacity() returned None", entry.name));
+            let unpruned_result = ehz_capacity_unpruned(&entry.polytope)
+                .unwrap_or_else(|| panic!("'{}': ehz_capacity_unpruned() returned None", entry.name));
             let unpruned = unpruned_result.capacity;
 
             let rel_err = (cap_pruned - unpruned).abs() / unpruned;
@@ -471,7 +471,7 @@ mod test_dataset_tests {
 
     /// Regenerate the cached capacity dataset fixture.
     ///
-    /// Run after changes to `ehz_capacity_pruned()` or the catalog generation logic:
+    /// Run after changes to `ehz_capacity()` or the catalog generation logic:
     /// ```
     /// cargo test --release regenerate_test_dataset -- --ignored --nocapture
     /// ```

@@ -5,7 +5,7 @@ Base: `main` at `a47930b`
 
 ## Summary
 
-Profiled `ehz_capacity_pruned` to find hotspots, then tried implementation-level
+Profiled `ehz_capacity` to find hotspots, then tried implementation-level
 optimizations (no algorithm changes). Result: 5-6x wall-clock speedup and 34x
 memory reduction. Two optimizations kept, two discarded.
 

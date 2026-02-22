@@ -16,7 +16,7 @@ use symplectic::billiard_capacity;
 use symplectic::random::generate_random_polytopes;
 use symplectic::lagrangian_product;
 use symplectic::geom::polygon::random_polygon_2d;
-use symplectic::{ehz_capacity, ehz_capacity_pruned};
+use symplectic::{ehz_capacity_unpruned, ehz_capacity};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use serde::{Deserialize, Serialize};
@@ -95,13 +95,13 @@ fn main() {
         for (i, p) in polytopes.iter().enumerate() {
             // Pruned (always)
             let t_start = Instant::now();
-            let result_pruned = ehz_capacity_pruned(p).expect("pruned failed");
+            let result_pruned = ehz_capacity(p).expect("pruned failed");
             let time_pruned_ms = t_start.elapsed().as_secs_f64() * 1000.0;
 
             // Unpruned (only if F <= 7)
             let (time_unpruned_ms, capacity_unpruned, iterations_unpruned) = if include_unpruned {
                 let t_start = Instant::now();
-                let result = ehz_capacity(p).expect("unpruned failed");
+                let result = ehz_capacity_unpruned(p).expect("unpruned failed");
                 let time_ms = t_start.elapsed().as_secs_f64() * 1000.0;
                 (Some(time_ms), Some(result.capacity), Some(result.iterations))
             } else {
@@ -145,7 +145,7 @@ fn main() {
 
             // Pruned
             let t_start = Instant::now();
-            let result_pruned = ehz_capacity_pruned(&p).expect("pruned failed");
+            let result_pruned = ehz_capacity(&p).expect("pruned failed");
             let time_pruned_ms = t_start.elapsed().as_secs_f64() * 1000.0;
 
             // Billiard

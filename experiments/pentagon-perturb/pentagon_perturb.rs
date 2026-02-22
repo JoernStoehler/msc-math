@@ -14,7 +14,7 @@
 use symplectic::known_polytopes;
 use symplectic::Polytope4D;
 use symplectic::volume;
-use symplectic::ehz_capacity_pruned;
+use symplectic::ehz_capacity;
 use nalgebra::Vector4;
 use rand::Rng;
 use rand::SeedableRng;
@@ -149,7 +149,7 @@ fn main() {
     let base_time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
 
     let start_cap = Instant::now();
-    let base_result = ehz_capacity_pruned(&base_polytope).expect("capacity computation failed");
+    let base_result = ehz_capacity(&base_polytope).expect("capacity computation failed");
     let base_time_capacity_ms = start_cap.elapsed().as_secs_f64() * 1000.0;
 
     let base_sys = base_result.capacity * base_result.capacity / (2.0 * base_vol);
@@ -198,7 +198,7 @@ fn main() {
         let time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
 
         let start_cap = Instant::now();
-        let result = ehz_capacity_pruned(&perturbed.polytope)
+        let result = ehz_capacity(&perturbed.polytope)
             .expect("capacity computation failed");
         let time_capacity_ms = start_cap.elapsed().as_secs_f64() * 1000.0;
 

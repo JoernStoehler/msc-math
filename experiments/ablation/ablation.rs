@@ -37,7 +37,7 @@ use std::time::Instant;
 use symplectic::geom::polygon::{random_polygon_2d, regular_polygon_2d};
 use symplectic::random::generate_random_polytopes;
 use symplectic::{
-    ehz_capacity, known_polytopes, lagrangian_product, EhzResult, Polytope4D,
+    ehz_capacity_unpruned, known_polytopes, lagrangian_product, EhzResult, Polytope4D,
 };
 
 const SEED: u64 = 42;
@@ -470,10 +470,10 @@ type Candidate = (f64, Vec<usize>, Vec<usize>, Vec<f64>);
 
 /// Capacity computation with configurable adjacency and solver.
 ///
-/// Same algorithm as `ehz_capacity_pruned`, but parameterized:
+/// Same algorithm as `ehz_capacity`, but parameterized:
 /// - `adj`: adjacency matrix (undirected for A1, directed for A2/A3)
 /// - `solver`: KKT solver function
-fn ehz_capacity_with(
+fn ehz_capacity_unpruned_with(
     polytope: &Polytope4D,
     adj: &[Vec<bool>],
     solver: fn(&[Vector4<f64>], &[f64], &[usize]) -> Option<(Vec<f64>, f64)>,
@@ -538,19 +538,19 @@ fn ehz_capacity_with(
 }
 
 /// A1: undirected vertex adjacency + standard LU/SVD solver.
-/// This is the ablation's own A1 — independent of the library's `ehz_capacity_pruned`,
+/// This is the ablation's own A1 — independent of the library's `ehz_capacity`,
 /// which was promoted to A2-level pruning. Uses `solve_kkt_full` for apples-to-apples
 /// comparison with A2 and A3.
-fn ehz_capacity_a1(polytope: &Polytope4D) -> Option<EhzResult> {
+fn ehz_capacity_unpruned_a1(polytope: &Polytope4D) -> Option<EhzResult> {
     let vertex_adj = build_adjacency_matrix(polytope);
-    ehz_capacity_with(polytope, &vertex_adj, solve_kkt_full)
+    ehz_capacity_unpruned_with(polytope, &vertex_adj, solve_kkt_full)
 }
 
 /// A2: directed ω₀ adjacency + standard LU/SVD solver.
-fn ehz_capacity_a2(polytope: &Polytope4D) -> Option<EhzResult> {
+fn ehz_capacity_unpruned_a2(polytope: &Polytope4D) -> Option<EhzResult> {
     let vertex_adj = build_adjacency_matrix(polytope);
     let dir_adj = build_directed_adjacency(&vertex_adj, polytope.normals());
-    ehz_capacity_with(polytope, &dir_adj, solve_kkt_full)
+    ehz_capacity_unpruned_with(polytope, &dir_adj, solve_kkt_full)
 }
 
 // ============================================================================
@@ -738,11 +738,11 @@ fn build_a3_adjacency(
 }
 
 /// A3: full Reeb-flow feasibility + standard LU/SVD solver.
-fn ehz_capacity_a3(polytope: &Polytope4D) -> Option<EhzResult> {
+fn ehz_capacity_unpruned_a3(polytope: &Polytope4D) -> Option<EhzResult> {
     let vertex_adj = build_adjacency_matrix(polytope);
     let a2_adj = build_directed_adjacency(&vertex_adj, polytope.normals());
     let a3_adj = build_a3_adjacency(&a2_adj, polytope.normals(), polytope.heights());
-    ehz_capacity_with(polytope, &a3_adj, solve_kkt_full)
+    ehz_capacity_unpruned_with(polytope, &a3_adj, solve_kkt_full)
 }
 
 // ============================================================================
@@ -757,19 +757,19 @@ struct Variant {
 const VARIANTS: &[Variant] = &[
     Variant {
         name: "a0_unpruned",
-        run: ehz_capacity,
+        run: ehz_capacity_unpruned,
     },
     Variant {
         name: "a1_vertex_adj",
-        run: ehz_capacity_a1,
+        run: ehz_capacity_unpruned_a1,
     },
     Variant {
         name: "a2_omega_directed",
-        run: ehz_capacity_a2,
+        run: ehz_capacity_unpruned_a2,
     },
     Variant {
         name: "a3_reeb_feasible",
-        run: ehz_capacity_a3,
+        run: ehz_capacity_unpruned_a3,
     },
 ];
 

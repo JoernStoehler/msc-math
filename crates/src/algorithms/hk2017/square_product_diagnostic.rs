@@ -1,10 +1,10 @@
 /// Diagnostic test for square-based Lagrangian products.
 ///
-/// Compares ehz_capacity (unpruned), ehz_capacity_pruned, and billiard_capacity
+/// Compares ehz_capacity_unpruned (unpruned), ehz_capacity, and billiard_capacity
 /// on (4,4), (4,5), (4,6), and (3,4) products at various angles.
 ///
 /// Prints raw data for investigation — does NOT assert correctness.
-use super::{ehz_capacity, ehz_capacity_pruned, build_adjacency_matrix};
+use super::{ehz_capacity_unpruned, ehz_capacity, build_adjacency_matrix};
 use crate::kkt::solve_kkt;
 use crate::algorithms::billiard::billiard_capacity;
 use crate::geom::lagrangian_product::lagrangian_product;
@@ -31,7 +31,7 @@ fn diagnose(n1: usize, n2: usize, angle_deg: f64) {
         .count();
 
     // Unpruned
-    let res_unpruned = ehz_capacity(&polytope);
+    let res_unpruned = ehz_capacity_unpruned(&polytope);
     let (cap_u, perm_u, beta_u, iter_u) = match &res_unpruned {
         Some(r) => (
             r.capacity,
@@ -43,7 +43,7 @@ fn diagnose(n1: usize, n2: usize, angle_deg: f64) {
     };
 
     // Pruned
-    let res_pruned = ehz_capacity_pruned(&polytope);
+    let res_pruned = ehz_capacity(&polytope);
     let (cap_p, perm_p, beta_p, iter_p) = match &res_pruned {
         Some(r) => (
             r.capacity,
@@ -370,7 +370,7 @@ fn cyclic_invariance_check() {
     let normals = polytope.normals();
     let heights = polytope.heights();
 
-    let result = ehz_capacity(&polytope).unwrap();
+    let result = ehz_capacity_unpruned(&polytope).unwrap();
     let perm = &result.best_permutation;
     let m = perm.len();
 
@@ -398,7 +398,7 @@ fn cyclic_invariance_check() {
     let polytope = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
     let normals = polytope.normals();
     let heights = polytope.heights();
-    let result = ehz_capacity(&polytope).unwrap();
+    let result = ehz_capacity_unpruned(&polytope).unwrap();
     let perm = &result.best_permutation;
     let m = perm.len();
     eprintln!("(4,4) θ=20°: best perm={:?} cap={:.10}", perm, result.capacity);
@@ -427,7 +427,7 @@ fn cyclic_invariance_check() {
     let normals = polytope.normals();
     let heights = polytope.heights();
 
-    let result = ehz_capacity(&polytope).unwrap();
+    let result = ehz_capacity_unpruned(&polytope).unwrap();
     let perm = &result.best_permutation;
     let m = perm.len();
 
@@ -645,8 +645,8 @@ fn disagreement_angles() {
         let (pn, ph) = rotate_polygon_2d(&pn_base, &ph_base, theta);
         let polytope = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
 
-        let hk = ehz_capacity(&polytope);
-        let hk_pruned = ehz_capacity_pruned(&polytope);
+        let hk = ehz_capacity_unpruned(&polytope);
+        let hk_pruned = ehz_capacity(&polytope);
         let bil = billiard_capacity(&polytope);
 
         let cap_hk = hk.as_ref().map(|r| r.capacity).unwrap_or(f64::NAN);

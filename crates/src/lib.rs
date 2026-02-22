@@ -11,7 +11,7 @@ pub mod random;
 pub mod dataset;
 
 // Re-exports for convenient access
-pub use algorithms::hk2017::{ehz_capacity, ehz_capacity_pruned, EhzResult};
+pub use algorithms::hk2017::{ehz_capacity_unpruned, ehz_capacity, EhzResult};
 pub use algorithms::billiard::{billiard_capacity, BilliardError, BilliardResult};
 pub use geom::polytope::{ConstructionError, Polytope4D};
 pub use geom::QhullError;
