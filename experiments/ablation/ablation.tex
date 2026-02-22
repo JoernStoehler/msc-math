@@ -16,7 +16,7 @@
 We iteratively refine the adjacency graph used to prune the search space
 of the HK2017 algorithm, starting from the unpruned baseline and adding
 strictly stronger conditions at each step. Each variant is tested on a
-fixed dataset of 39 polytopes to verify correctness and measure speedup.
+fixed dataset of 54 polytopes to verify correctness and measure speedup.
 
 \paragraph{Variants.}
 Table~\ref{tab:ablation-variants} lists the four adjacency-graph variants.
@@ -180,7 +180,7 @@ In total, A3 admits $33$ candidate orderings versus $39$ for~A2.
 \end{example}
 
 \paragraph{Test polytopes.}
-Table~\ref{tab:ablation-dataset} describes the 39 test polytopes.
+Table~\ref{tab:ablation-dataset} describes the 54 test polytopes.
 Random polytopes use a fixed seed (42) and height range $h \in [0.5, 2.0]$.
 
 \begin{table}[h]
@@ -189,7 +189,7 @@ Random polytopes use a fixed seed (42) and height range $h \in [0.5, 2.0]$.
 \toprule
 Group & $F$ & Count & Description \\
 \midrule
-Random generic    & 5--8 & 20 & 5 random 4-polytopes per facet count \\
+Random generic    & 5--10 & 30 & 5 random 4-polytopes per facet count \\
 Random Lagrangian & 6--8 & 15 & 5 random products per pair:
   $\triangle{\times}\triangle$,
   $\triangle{\times}\square$,
@@ -197,6 +197,8 @@ Random Lagrangian & 6--8 & 15 & 5 random products per pair:
 Regression cases  & 6--8 &  4 & Hypercube (LU fast path),
   $\triangle{\times}\square$ and $\square{\times}\square$ at $\theta{=}0^\circ$
   (rank-deficient KKT), cut simplex (non-simple, Example~\ref{ex:a3-prunes}) \\
+Non-simple        & 6, 10 &  5 & 2 bipyramids over 3-polytopes ($F{=}10$,
+  apex on 5 facets), 3 cut simplices at depths $c \in \{1.5,\, 2.5,\, 4.0\}$ \\
 \bottomrule
 \end{tabular}
 \caption{Test polytope dataset. All random polytopes use seed~42, $h \in [0.5, 2.0]$.}
@@ -204,7 +206,7 @@ Regression cases  & 6--8 &  4 & Hypercube (LU fast path),
 \end{table}
 
 \paragraph{Correctness.}
-All four variants return identical capacities on all 39 test polytopes (maximum
+All four variants return identical capacities on all 54 test polytopes (maximum
 absolute difference $< 10^{-8}$).
 This confirms that no pruning variant discards the optimal orbit on this dataset.
 
@@ -222,21 +224,41 @@ Table~\ref{tab:ablation-iterations} shows the number of candidate orderings
 $(S, \sigma)$ admitted by each adjacency filter.
 Without pruning (A0), every polytope with $F$ facets admits
 $\sum_{m=2}^{F} \binom{F}{m} \tfrac{(m-1)!}{2}$ candidates;
-for $F = 8$ this is $16\,064$.
-Vertex adjacency~(A1) prunes $59$--$65\%$ of candidates.
+for $F = 8$ this is $16\,064$ and for $F = 10$ it exceeds $10^6$.
+Vertex adjacency~(A1) prunes $59$--$94\%$ of candidates.
 The directed $\omega_0$ condition~(A2) provides the dominant reduction,
-admitting less than $1\%$ of A0 candidates for generic polytopes
-(146 out of $16\,064$) and ${\sim}3\%$ for Lagrangian products.
+admitting less than $0.05\%$ of A0 candidates for generic polytopes at $F = 10$
+(531 out of $1\,112\,073$) and ${\sim}3.5\%$ for Lagrangian products at $F = 8$.
 The hypercube, whose high symmetry produces many $\omega_0 = 0$ pairs,
 is the least prunable at $12\%$.
 
-On the 38 simple test polytopes, A3 agrees with A2 in every case:
+\paragraph{Scaling exponent.}
+The A2/A0 iteration ratio for random generic polytopes
+decreases exponentially with~$F$.
+A least-squares fit in log-space gives
+\[
+  \frac{\text{iterations}_{A2}}{\text{iterations}_{A0}} \approx 28.3 \cdot e^{-1.05\, F},
+  \qquad R^2 = 0.96,
+\]
+over $F \in \{5, \ldots, 10\}$.
+The exponent $b \approx -1.05$ means that each additional facet
+reduces the pruned search space by a factor of~$e^{1.05} \approx 2.9$.
+At $F = 10$, the A2-pruned algorithm evaluates only $531$ candidate orderings
+instead of $1\,112\,073$, a $2\,095{\times}$ reduction that makes
+the exponential search tractable for moderate facet counts.
+
+\paragraph{Non-simple polytopes.}
+On all 48 simple test polytopes, A3 agrees with A2:
 by Corollary~\ref{cor:ridge-sufficiency},
 vertex-adjacent facets of simple polytopes share ridges,
 so the LP check is automatically satisfied.
-The cut simplex (Example~\ref{ex:a3-prunes}) is the sole non-simple
-polytope in the dataset, and A3 prunes $6$ orderings that A2 admits
-($33$ versus~$39$).
+For the six non-simple polytopes (4 cut simplices and 2 bipyramids),
+A3 prunes beyond A2 in every case
+(Table~\ref{tab:ablation-nonsimple}).
+The bipyramids ($F = 10$) show the most dramatic effect:
+A3 reduces A2's $11$--$14\,\text{k}$ candidates to just $213$ ($98\%$ pruned),
+because the bipyramid apices lie on 5 facets, creating many
+vertex-adjacent but infeasible transitions.
 Figure~\ref{fig:ablation-timing} shows the corresponding computation times.
 
 \begin{table}[h]
@@ -245,20 +267,43 @@ Figure~\ref{fig:ablation-timing} shows the corresponding computation times.
 \toprule
 Polytope & A0 & A1 & A2 & A3 \\
 \midrule
-Random generic ($F = 8$)            & 16\,064 & 6\,543 & 146 & 146 \\
-Lagrangian $4 \times 4$ ($F = 8$)   & 16\,064 & 5\,556 & 497 & 497 \\
-Hypercube ($F = 8$)                 & 16\,064 & 5\,556 & 1\,970 & 1\,970 \\
-Cut simplex ($F = 6$, non-simple)   & 409 & 409 & 39 & 33 \\
+Random generic ($F = 8$, mean)       & 16\,064 & 5\,347 & 136 & 136 \\
+Random generic ($F = 9$, mean)       & 125\,664 & 31\,633 & 391 & 391 \\
+Random generic ($F = 10$, mean)      & 1\,112\,073 & 68\,985 & 531 & 531 \\
+Lagrangian $4 \times 4$ ($F = 8$)    & 16\,064 & 5\,556 & 497 & 497 \\
+Hypercube ($F = 8$)                  & 16\,064 & 5\,556 & 1\,970 & 1\,970 \\
 \bottomrule
 \end{tabular}
-\caption{Number of candidate orderings $(S, \sigma)$ admitted by each
-  adjacency filter.
+\caption{Mean candidate orderings $(S, \sigma)$ admitted by each
+  adjacency filter for simple polytopes.
   Vertex adjacency~(A1) provides moderate pruning;
-  the directed $\omega_0$ condition~(A2) eliminates $87$--$99\%$
+  the directed $\omega_0$ condition~(A2) eliminates $87$--$99.95\%$
   of remaining candidates.
-  A2 and A3 agree on all simple polytopes; on the non-simple cut simplex,
-  A3 prunes $6$ additional orderings ($15\%$ beyond A2).}
+  A2 and A3 agree on all simple polytopes.}
 \label{tab:ablation-iterations}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrrrrl}
+\toprule
+Polytope & $F$ & A2 & A3 & Pruned & \\
+\midrule
+Cut simplex ($c = 2.0$)        & 6  &  39 &  33 &  6 & ($15\%$) \\
+Cut simplex ($c = 1.5$)        & 6  &  39 &  33 &  6 & ($15\%$) \\
+Cut simplex ($c = 2.5$)        & 6  &  39 &  33 &  6 & ($15\%$) \\
+Cut simplex ($c = 4.0$)        & 6  &  44 &  38 &  6 & ($14\%$) \\
+Bipyramid (tri.\ prism)        & 10 & 11\,277 & 213 & 11\,064 & ($98\%$) \\
+Bipyramid (sq.\ pyramid)       & 10 & 13\,545 & 213 & 13\,332 & ($98\%$) \\
+\bottomrule
+\end{tabular}
+\caption{A2 vs.\ A3 candidate orderings for non-simple polytopes.
+  Cut simplices: A3 prunes $6$ transitions regardless of cut depth,
+  matching Example~\ref{ex:a3-prunes}.
+  Bipyramids: the apex vertices lie on 5 facets, creating many
+  vertex-adjacent pairs whose ridges are 0- or 1-dimensional.
+  A3 prunes $98\%$ of A2 candidates.}
+\label{tab:ablation-nonsimple}
 \end{table}
 
 \begin{figure}[h]
@@ -266,9 +311,10 @@ Cut simplex ($F = 6$, non-simple)   & 409 & 409 & 39 & 33 \\
 \includegraphics[width=0.95\textwidth]{../experiments/ablation/ablation_timing.png}
 \caption{Adjacency pruning: computation time by facet count,
   mean $\pm$ std ($n=5$).
-  Left: random generic polytopes. Right: random Lagrangian products.
-  A2~and~A3 overlap almost exactly,
+  Left: random generic polytopes ($F = 5$--$10$).
+  Right: random Lagrangian products ($F = 6$--$8$).
+  A2~and~A3 overlap on simple polytopes,
   confirming that the $\omega_0$ condition captures all prunable transitions
-  on this dataset.}
+  for this class.}
 \label{fig:ablation-timing}
 \end{figure}
