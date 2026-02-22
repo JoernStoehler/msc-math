@@ -28,7 +28,7 @@ VARIANT_LABELS = {
     "a2_omega_directed": "A2 directed ω₀",
     "a3_reeb_feasible": "A3 Reeb feasible",
 }
-GROUPS = ["random_generic", "random_lagrangian", "regression"]
+GROUPS = ["random_generic", "random_lagrangian", "regression", "non_simple"]
 
 
 # ============================================================================
@@ -244,6 +244,106 @@ def print_regression_table(entries):
 
 
 # ============================================================================
+# Non-simple polytopes: A2 vs A3 comparison
+# ============================================================================
+
+def print_nonsimple_table(entries):
+    """Print A2 vs A3 iteration comparison for non-simple polytopes."""
+    # Include both the "non_simple" group and the original regression cut simplex
+    nonsimple = [
+        e for e in entries
+        if e["group"] == "non_simple" or e["polytope_name"] == "regression_cut_simplex"
+    ]
+    if not nonsimple:
+        return
+
+    by_polytope = defaultdict(dict)
+    for e in nonsimple:
+        by_polytope[e["polytope_name"]][e["variant"]] = e
+
+    print("\n=== Non-Simple Polytopes: A2 vs A3 ===")
+    print(f"{'Polytope':<35} {'F':>3} {'A2 iters':>10} {'A3 iters':>10} {'Pruned':>8} {'%':>6}")
+    print("-" * 78)
+
+    for name in sorted(by_polytope.keys()):
+        variants = by_polytope[name]
+        f = next(iter(variants.values()))["facet_count"]
+        a2 = variants.get("a2_omega_directed", {}).get("iterations", 0)
+        a3 = variants.get("a3_reeb_feasible", {}).get("iterations", 0)
+        pruned = a2 - a3
+        pct = 100.0 * pruned / a2 if a2 > 0 else 0.0
+        marker = " *" if pruned > 0 else ""
+        print(f"{name:<35} {f:>3} {a2:>10} {a3:>10} {pruned:>8} {pct:>5.1f}%{marker}")
+
+    print()
+
+
+# ============================================================================
+# Scaling exponent fit
+# ============================================================================
+
+def fit_scaling_exponent(entries):
+    """Fit A2/A0 iteration ratio as exponential in F for random_generic polytopes.
+
+    Model: iterations_A2 / iterations_A0 = a * exp(b * F)
+    Equivalently: log(ratio) = log(a) + b * F  (linear fit in log space).
+
+    Returns (a, b, r_squared) or None if insufficient data.
+    """
+    generic = [e for e in entries if e["group"] == "random_generic"]
+    by_f_variant = defaultdict(lambda: defaultdict(list))
+    for e in generic:
+        by_f_variant[e["facet_count"]][e["variant"]].append(e["iterations"])
+
+    f_vals = sorted(by_f_variant.keys())
+    if len(f_vals) < 3:
+        print("\n=== Scaling Exponent: insufficient data (need ≥3 F values) ===")
+        return None
+
+    ratios = []
+    f_points = []
+    for f in f_vals:
+        a0_iters = by_f_variant[f].get("a0_unpruned", [])
+        a2_iters = by_f_variant[f].get("a2_omega_directed", [])
+        if a0_iters and a2_iters:
+            mean_a0 = float(np.mean(a0_iters))
+            mean_a2 = float(np.mean(a2_iters))
+            if mean_a0 > 0 and mean_a2 > 0:
+                ratios.append(mean_a2 / mean_a0)
+                f_points.append(f)
+
+    if len(f_points) < 3:
+        print("\n=== Scaling Exponent: insufficient valid ratios ===")
+        return None
+
+    f_arr = np.array(f_points, dtype=float)
+    log_ratios = np.log(np.array(ratios))
+
+    # Linear fit: log(ratio) = b * F + log(a)
+    coeffs = np.polyfit(f_arr, log_ratios, 1)
+    b = coeffs[0]
+    log_a = coeffs[1]
+    a = np.exp(log_a)
+
+    # R² for goodness of fit
+    predicted = np.polyval(coeffs, f_arr)
+    ss_res = np.sum((log_ratios - predicted) ** 2)
+    ss_tot = np.sum((log_ratios - np.mean(log_ratios)) ** 2)
+    r_squared = 1.0 - ss_res / ss_tot if ss_tot > 0 else 0.0
+
+    print("\n=== Scaling Exponent: A2/A0 iteration ratio vs F ===")
+    print(f"Model: ratio = a * exp(b * F)")
+    print(f"  a = {a:.4f}")
+    print(f"  b = {b:.4f}  (scaling exponent)")
+    print(f"  R² = {r_squared:.6f}")
+    print(f"  Data points: F = {f_points}")
+    print(f"  Ratios:      {[f'{r:.4f}' for r in ratios]}")
+    print()
+
+    return a, b, r_squared
+
+
+# ============================================================================
 # Figure
 # ============================================================================
 
@@ -306,6 +406,11 @@ def plot_timing(entries):
         ax.set_title(group_display[group], fontsize=11)
         ax.legend(fontsize=9)
         ax.grid(True, alpha=0.3, which="both")
+        # Integer x-ticks for facet count
+        all_f = sorted(set(
+            e["facet_count"] for e in entries if e["group"] == group
+        ))
+        ax.set_xticks(all_f)
 
     fig.suptitle(
         "Adjacency pruning: timing by facet count (mean $\\pm$ std, $n=5$)",
@@ -333,6 +438,8 @@ def main():
     n_disagree = print_agreement_table(entries)
     print_timing_table(entries)
     print_iteration_table(entries)
+    print_nonsimple_table(entries)
+    fit_scaling_exponent(entries)
     plot_timing(entries)
 
     if n_disagree > 0:
