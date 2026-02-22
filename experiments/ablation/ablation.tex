@@ -10,7 +10,7 @@
 %   lem:adjacency-constraint — consecutive facets with positive dwell time are adjacent
 %   cor:adjacency-pruning — discard (S,σ) with non-adjacent consecutive pairs
 
-\subsection{Adjacency Graph Pruning}
+\subsection{Pruning the Search Graph}
 \label{sec:ablation-pruning}
 
 We iteratively refine the adjacency graph used to prune the search space
@@ -32,7 +32,7 @@ Variant & Pruning condition for transition $F_i \to F_j$ \\
 A0 & None (unpruned): exhaustive search over all $(S, \sigma)$ \\
 A1 & Vertex adjacency: $F_i \cap F_j \neq \varnothing$, checked via shared polytope vertices (Corollary~\ref{cor:adjacency-pruning}) \\
 A2 & Directed $\omega_0$: A1 and $\omega_0(n_i, n_j) \ge 0$, ensuring the Reeb flow on $F_i$ carries the orbit toward~$F_j$ \\
-A3 & Reeb-flow feasibility: A2 and $\exists\, x \in F_i \cap F_j$ with $x - \varepsilon R_i \in F_i$ and $x + \varepsilon R_j \in F_j$, ensuring other halfspaces do not block the transition \\
+A3 & Reeb-flow feasibility: A2 and $\exists\, x \in F_i \cap F_j$ with $x - \varepsilon V_i \in F_i$ and $x + \varepsilon V_j \in F_j$, ensuring other halfspaces do not block the transition \\
 \bottomrule
 \end{tabular}
 \caption{Adjacency graph variants, each strictly stronger than the previous.
@@ -43,10 +43,10 @@ A3 & Reeb-flow feasibility: A2 and $\exists\, x \in F_i \cap F_j$ with $x - \var
 
 \paragraph{Directed symplectic condition (A2).}
 For a physical orbit transition $F_i \to F_j$ at a ridge point $x \in F_i \cap F_j$,
-the backward Reeb flow $x - \varepsilon R_i$ must remain in~$K$.
+the backward flow $x - \varepsilon V_i$ must remain in~$K$.
 Checking the half-space constraint for facet~$j$ gives
 $\omega_0(n_i, n_j) \ge 0$ as a necessary condition;
-the forward flow $x + \varepsilon R_j$ on~$F_j$ gives the same condition
+the forward flow $x + \varepsilon V_j$ on~$F_j$ gives the same condition
 by antisymmetry of~$\omega_0$.
 This is condition~(1) of Lemma~\ref{lem:transition-feasibility} below,
 which proves the condition is both necessary and sufficient
@@ -66,15 +66,17 @@ The $O(F^4)$ precomputation cost is negligible compared to the exponential searc
 \paragraph{Transition feasibility.}
 We now characterize exactly when a piecewise-linear orbit can
 transition from~$F_i$ to~$F_j$.
-Write $R_k = J_0 n_k$ for the characteristic direction on~$F_k$.
+Write $V_k = J_0 n_k$ for the characteristic direction on~$F_k$
+(proportional to the Reeb vector $R_k = \tfrac{2}{h_k}\, J_0 n_k$
+of Section~\ref{sec:algorithms}, but without the normalization factor).
 In coordinates $(q_1, q_2, p_1, p_2)$ with
 $J_0 = \bigl[\begin{smallmatrix} 0 & -I_2 \\ I_2 & 0 \end{smallmatrix}\bigr]$,
-we have $R_k = (-n_k^{(3)}, -n_k^{(4)}, n_k^{(1)}, n_k^{(2)})$
-and $n_k \cdot R_\ell = \omega_0(n_\ell, n_k)$.
+we have $V_k = (-n_k^{(3)}, -n_k^{(4)}, n_k^{(1)}, n_k^{(2)})$
+and $n_k \cdot V_\ell = \omega_0(n_\ell, n_k)$.
 A transition $F_i \to F_j$ requires a point $x \in F_i \cap F_j$
 and $\varepsilon > 0$ with
-$x + t\, R_i \in K$ for $t \in [-\varepsilon, 0]$
-and $x + t\, R_j \in K$ for $t \in [0, \varepsilon]$.
+$x + t\, V_i \in K$ for $t \in [-\varepsilon, 0]$
+and $x + t\, V_j \in K$ for $t \in [0, \varepsilon]$.
 The following lemma shows that the A3 feasibility check
 captures this condition exactly.
 
@@ -94,16 +96,16 @@ A physical orbit transition $F_i \to F_j$ is feasible if and only if
 \end{lemma}
 
 \begin{proof}
-Throughout, we use $n_k \cdot R_\ell = \omega_0(n_\ell, n_k)$.
+Throughout, we use $n_k \cdot V_\ell = \omega_0(n_\ell, n_k)$.
 
 \emph{Necessity.}
 Let $\gamma(0) = x \in F_i \cap F_j$ realize the transition.
-For the approach ($\gamma(t) = x + t\, R_i$, $t < 0$),
+For the approach ($\gamma(t) = x + t\, V_i$, $t < 0$),
 $n_j \cdot \gamma(t) = h_j + t\, \omega_0(n_i, n_j) \le h_j$
 forces $\omega_0(n_i, n_j) \ge 0$ (since $t < 0$),
 and the departure gives the same by antisymmetry. This is~(1).
 For~(2), suppose $k \in B$ with $\omega_0(n_i, n_k) < 0$.
-Then $n_k \cdot (x + t\, R_i) = n_k \cdot x + t\,\omega_0(n_i, n_k)$;
+Then $n_k \cdot (x + t\, V_i) = n_k \cdot x + t\,\omega_0(n_i, n_k)$;
 since $\omega_0(n_i, n_k) < 0$ and $t < 0$, this equals
 $n_k \cdot x + |t|\,|\omega_0(n_i, n_k)| > n_k \cdot x$.
 If $n_k \cdot x = h_k$, this exceeds~$h_k$ for any $\varepsilon > 0$,
@@ -117,10 +119,10 @@ Given $x \in F_i \cap F_j$ satisfying~(1) and~(2),
 set $\delta = \min_{k \in B} (h_k - n_k \cdot x) > 0$.
 For non-blocking $k \notin B \cup \{i,j\}$:
 the approach satisfies
-$n_k \cdot (x + t\, R_i) = n_k \cdot x + t\,\omega_0(n_i, n_k) \le n_k \cdot x \le h_k$
+$n_k \cdot (x + t\, V_i) = n_k \cdot x + t\,\omega_0(n_i, n_k) \le n_k \cdot x \le h_k$
 since $t \le 0$ and $\omega_0(n_i, n_k) \ge 0$;
 the departure satisfies
-$n_k \cdot (x + t\, R_j) = n_k \cdot x + t\,\omega_0(n_j, n_k) \le n_k \cdot x \le h_k$
+$n_k \cdot (x + t\, V_j) = n_k \cdot x + t\,\omega_0(n_j, n_k) \le n_k \cdot x \le h_k$
 since $t \ge 0$ and $\omega_0(n_j, n_k) \le 0$.
 For blocking $k \in B$, the slack~$\delta$ absorbs the perturbation:
 choosing $\varepsilon < \delta / \max_k(|\omega_0(n_i, n_k)| + |\omega_0(n_j, n_k)|)$
@@ -156,7 +158,12 @@ shares a 2-face (``vertex $\times$ polygon'' or ``edge $\times$ edge'').
 \label{ex:a3-prunes}
 Consider the ``shaved hypercube''
 $K = \{\, x \in \mathbb{R}^4 : -2 \le x_i \le 0 \;\forall\, i,\;
-x_2 \le x_1 \,\}$.
+x_2 \le x_1 \,\}$.%
+\footnote{As stated, $K$ has the origin on its boundary.
+  Translating by any $c \in \mathrm{int}\, K$
+  (e.g.\ $c = (-1, -\tfrac{3}{2}, -1, -1)$) gives an equivalent polytope
+  containing the origin in its interior, without changing the
+  combinatorial adjacency structure or pruning counts.}
 This polytope has $9$ facets and $12$ vertices, of which $8$
 are non-simple (lying on $5$ facets).
 The facets $F_1\colon (x_2 \le 0)$ and $F_2\colon (x_3 \le 0)$
