@@ -37,39 +37,14 @@ require_cmd() {
 }
 
 print_main_sync_diagnostics() {
-  # Why: help catch "I thought my local main was up to date" mistakes.
-  local main_dirty=false
-  local main_ahead="0"
-  local main_behind="0"
-
+  # Check for uncommitted changes in main worktree.
+  # NOTE: We do NOT compare main vs origin/main. Jörn merges locally and
+  # pushes later, so origin/main is frequently stale. Local main is truth.
   local status=""
   status="$(git status --porcelain=v1 --untracked-files=all || true)"
   if [[ -n "$status" ]]; then
-    main_dirty=true
-  fi
-
-  if git rev-parse --verify main >/dev/null 2>&1 && git rev-parse --verify origin/main >/dev/null 2>&1; then
-    local counts=""
-    counts="$(git rev-list --left-right --count main...origin/main 2>/dev/null || true)"
-    if [[ -n "$counts" ]]; then
-      main_ahead="$(awk '{print $1}' <<<"$counts")"
-      main_behind="$(awk '{print $2}' <<<"$counts")"
-    fi
-  fi
-
-  if $main_dirty || [[ "$main_ahead" != "0" ]] || [[ "$main_behind" != "0" ]]; then
-    if $main_dirty; then
-      echo "[worktree-remove][warn] main worktree has uncommitted changes" >&2
-      echo "[worktree-remove][hint] inspect: git status --short" >&2
-    fi
-    if [[ "$main_behind" != "0" ]]; then
-      echo "[worktree-remove][warn] main is behind origin/main by $main_behind commits" >&2
-      echo "[worktree-remove][hint] update: git fetch origin && git switch main && git pull --ff-only" >&2
-    fi
-    if [[ "$main_ahead" != "0" ]]; then
-      echo "[worktree-remove][warn] main is ahead of origin/main by $main_ahead commits" >&2
-      echo "[worktree-remove][hint] push: git push origin main" >&2
-    fi
+    echo "[worktree-remove][warn] main worktree has uncommitted changes" >&2
+    echo "[worktree-remove][hint] inspect: git status --short" >&2
   fi
 }
 
@@ -105,11 +80,11 @@ print_detached_head_diagnostics() { # $1=path, $2=force(true/false)
   echo "[worktree-remove][warn] removing anyway due to --force; this commit may become unreachable" >&2
 }
 
-print_branch_diagnostics() { # $1=branch, $2=have_origin(true/false)
+print_branch_diagnostics() { # $1=branch
   # Why: before removing a worktree, make it obvious if the branch still contains
-  # unique work (unmerged commits) or if it's not pushed anywhere.
+  # unique work (unmerged commits).
+  # NOTE: We only check against local main. origin/main is frequently stale.
   local branch="$1"
-  local have_origin="$2"
   if [[ -z "$branch" ]]; then
     return 0
   fi
@@ -117,9 +92,6 @@ print_branch_diagnostics() { # $1=branch, $2=have_origin(true/false)
 
   if git merge-base --is-ancestor "$branch_ref" main >/dev/null 2>&1; then
     echo "[worktree-remove][info] branch $branch is merged into main"
-  elif git rev-parse --verify origin/main >/dev/null 2>&1 && git merge-base --is-ancestor "$branch_ref" origin/main >/dev/null 2>&1; then
-    echo "[worktree-remove][warn] branch $branch is merged into origin/main, but local main is behind" >&2
-    echo "[worktree-remove][hint] update main: git fetch origin && git switch main && git pull --ff-only" >&2
   else
     local ahead=""
     ahead="$(git rev-list --count "main..$branch_ref" 2>/dev/null || true)"
@@ -128,29 +100,6 @@ print_branch_diagnostics() { # $1=branch, $2=have_origin(true/false)
       echo "[worktree-remove][hint] inspect: git log --oneline --decorate main..$(printf '%q' "$branch")" >&2
     else
       echo "[worktree-remove][warn] branch $branch is not merged into main" >&2
-    fi
-  fi
-
-  if git rev-parse --verify "refs/remotes/origin/$branch" >/dev/null 2>&1; then
-    local counts=""
-    counts="$(git rev-list --left-right --count "refs/remotes/origin/$branch...$branch_ref" 2>/dev/null || true)"
-    if [[ -n "$counts" ]]; then
-      local behind ahead
-      behind="$(awk '{print $1}' <<<"$counts")"
-      ahead="$(awk '{print $2}' <<<"$counts")"
-      if [[ "$ahead" != "0" ]]; then
-        echo "[worktree-remove][warn] branch $branch is ahead of origin/$branch by $ahead commits (not pushed)" >&2
-        echo "[worktree-remove][hint] push: git push -u origin $(printf '%q' "$branch")" >&2
-      fi
-      if [[ "$behind" != "0" ]]; then
-        echo "[worktree-remove][warn] branch $branch is behind origin/$branch by $behind commits" >&2
-        echo "[worktree-remove][hint] update: git fetch origin && git rebase origin/$(printf '%q' "$branch")" >&2
-      fi
-    fi
-  else
-    if [[ "$have_origin" == "true" ]]; then
-      echo "[worktree-remove][warn] branch $branch has no origin/$branch (likely not pushed)" >&2
-      echo "[worktree-remove][hint] push: git push -u origin $(printf '%q' "$branch")" >&2
     fi
   fi
 }
@@ -197,14 +146,6 @@ main() {
     die "worktree $path does not look like a git worktree"
   fi
 
-  local have_origin=false
-  if git remote get-url origin >/dev/null 2>&1; then
-    have_origin=true
-    # Why: comparisons against origin/* should reflect the current remote state.
-    if ! git fetch --prune origin --quiet; then
-      echo "[worktree-remove][warn] git fetch origin failed; origin/* diagnostics may be stale" >&2
-    fi
-  fi
   print_main_sync_diagnostics
 
   if ! $force; then
@@ -225,7 +166,7 @@ main() {
   local branch=""
   branch="$(git -C "$path" symbolic-ref --quiet --short HEAD 2>/dev/null || true)"
   if [[ -n "$branch" ]]; then
-    print_branch_diagnostics "$branch" "$have_origin"
+    print_branch_diagnostics "$branch"
   else
     print_detached_head_diagnostics "$path" "$force"
   fi

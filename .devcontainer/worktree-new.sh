@@ -54,11 +54,6 @@ require_dir() {
   fi
 }
 
-require_origin_remote() {
-  if ! git remote get-url origin >/dev/null 2>&1; then
-    die "expected git remote 'origin' to exist; this repo assumes origin is configured"
-  fi
-}
 
 usage() {
   cat <<'USAGE'
@@ -66,11 +61,13 @@ Usage: worktree-new.sh [--force] [--no-hydrate] <path> <branch>
 
 Creates a new worktree at <path> for <branch>.
 - If <branch> exists locally, checks it out in the new worktree.
-- If only origin/<branch> exists, creates a local <branch> from it.
-- Otherwise, creates <branch> from main.
+- Otherwise, creates <branch> from local main.
 
-Also fetches remotes, runs safety checks, and hydrates deps (python uv sync, cargo fetch/build).
+Runs safety checks and hydrates deps (python uv sync, cargo fetch/build).
 Pass --no-hydrate to skip the expensive dependency hydration step.
+
+NOTE: All branches are based on local main, never origin/main.
+Jörn merges locally and pushes later, so origin/main is frequently stale.
 USAGE
 }
 
@@ -139,10 +136,6 @@ main() {
   require_dir experiments
   require_dir crates
 
-  require_origin_remote
-
-  run git fetch --prune origin
-
   if ! $force; then
     local status
     status="$(git status --short)"
@@ -152,21 +145,10 @@ main() {
       printf '%s\n' "$status"
       return 1
     fi
-    if git rev-parse --verify main >/dev/null 2>&1 && git rev-parse --verify origin/main >/dev/null 2>&1; then
-      local behind
-      behind=$(git rev-list --count main..origin/main || echo 0)
-      if [[ "$behind" != "0" ]]; then
-        echo "[error] main is behind origin/main by ${behind} commits; pull or use --force" >&2
-        return 1
-      fi
-    fi
   fi
 
   if ! git rev-parse --verify main >/dev/null 2>&1; then
     die "expected branch 'main' to exist locally; checkout main and retry"
-  fi
-  if ! git rev-parse --verify origin/main >/dev/null 2>&1; then
-    die "expected remote-tracking branch 'origin/main' to exist after fetch; check your remotes and retry"
   fi
 
   # Check if worktree path already exists
@@ -187,18 +169,11 @@ main() {
     fi
   fi
 
-  # Why: `git worktree add <path> <branch>` requires <branch> to already exist.
-  # This script does the right thing for common workflows:
-  # - existing local branch -> reuse it
-  # - existing origin/<branch> -> create a local tracking branch
-  # - missing branch -> create it from main
+  # Create worktree: reuse existing local branch, or create from local main.
+  # Never branch from origin/main — it is frequently stale.
   if git show-ref --verify --quiet "refs/heads/$branch"; then
     log "using existing local branch $branch"
     run git worktree add "$path" "$branch"
-  elif git show-ref --verify --quiet "refs/remotes/origin/$branch"; then
-    log "using origin/$branch (creating local tracking branch $branch)"
-    run git worktree add -b "$branch" "$path" "origin/$branch"
-    run_in_dir "$path" git branch --set-upstream-to "origin/$branch" "$branch" || true
   else
     log "creating new branch $branch from main"
     run git worktree add -b "$branch" "$path" main
