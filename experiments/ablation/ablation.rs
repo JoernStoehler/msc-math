@@ -19,9 +19,10 @@
 //! 3. Python script reads JSONL, checks agreement, plots timing comparison
 //!
 //! Dataset:
-//! - Random generic polytopes: 5 per F ∈ {5, 6, 7, 8} (seed 42)
+//! - Random generic polytopes: 5 per F ∈ {5, 6, 7, 8, 9, 10} (seed 42)
 //! - Random Lagrangian products: 5 per pair (3×3), (3×4), (4×4) (same seed)
 //! - Regression cases: (3,4) θ=0°, (4,4) θ=0°, hypercube (always included)
+//! - Non-simple polytopes: bipyramids over 3-polytopes, cut simplices at 3 depths
 //!
 //! Output format: one JSONL entry per (polytope, variant).
 //! Each entry: {polytope_name, variant, group, facet_count, normals, heights,
@@ -774,6 +775,71 @@ const VARIANTS: &[Variant] = &[
 ];
 
 // ============================================================================
+// Non-simple polytope constructors
+// ============================================================================
+
+/// Construct a bipyramid over a 3-polytope P ⊂ R³ with apices at (0,0,0,±a).
+///
+/// P is given by its H-representation: {x ∈ R³ : nᵢ·x ≤ hᵢ} with unit normals.
+/// The bipyramid B ⊂ R⁴ has 2k facets (k = number of 3D faces). Each apex lies
+/// on k facets, so B is non-simple whenever k ≥ 5.
+///
+/// Derivation: B = {x ∈ R⁴ : nᵢ·x₁₂₃ + (hᵢ/a)x₄ ≤ hᵢ and nᵢ·x₁₂₃ − (hᵢ/a)x₄ ≤ hᵢ ∀i}.
+fn make_bipyramid(
+    normals_3d: &[[f64; 3]],
+    heights_3d: &[f64],
+    apex_height: f64,
+) -> Polytope4D {
+    let k = normals_3d.len();
+    let mut normals = Vec::with_capacity(2 * k);
+    let mut heights = Vec::with_capacity(2 * k);
+
+    for i in 0..k {
+        let [nx, ny, nz] = normals_3d[i];
+        let h = heights_3d[i];
+        let c = h / apex_height;
+        let norm4 = (nx * nx + ny * ny + nz * nz + c * c).sqrt();
+
+        // Upper facet: outward normal (nᵢ, +c), tight at upper apex (0,0,0,a)
+        normals.push(Vector4::new(nx / norm4, ny / norm4, nz / norm4, c / norm4));
+        heights.push(h / norm4);
+
+        // Lower facet: outward normal (nᵢ, −c), tight at lower apex (0,0,0,−a)
+        normals.push(Vector4::new(nx / norm4, ny / norm4, nz / norm4, -c / norm4));
+        heights.push(h / norm4);
+    }
+
+    Polytope4D::new(normals, heights).expect("bipyramid construction")
+}
+
+/// Construct a cut 4-simplex: standard simplex intersected with x₁ + c·x₂ ≤ 2.
+///
+/// The cutting plane always passes through v₀=(2,0,0,0), making v₀ lie on 5 facets
+/// (non-simple). Parameter `cut_slope` controls the cut depth: larger values remove
+/// more material near v₁=(0,2,0,0).
+fn make_cut_simplex(cut_slope: f64) -> Polytope4D {
+    let s19 = 19.0_f64.sqrt();
+    let norm = (1.0 + cut_slope * cut_slope).sqrt();
+    let normals = vec![
+        Vector4::new(-4.0, 1.0, 1.0, 1.0) / s19, // F₀: opposite v₀
+        Vector4::new(1.0, -4.0, 1.0, 1.0) / s19,  // F₁: opposite v₁
+        Vector4::new(1.0, 1.0, -4.0, 1.0) / s19,  // F₂: opposite v₂
+        Vector4::new(1.0, 1.0, 1.0, -4.0) / s19,  // F₃: opposite v₃
+        Vector4::new(1.0, 1.0, 1.0, 1.0) / 2.0,   // F₄: opposite v₄
+        Vector4::new(1.0, cut_slope, 0.0, 0.0) / norm, // F₅: cutting plane
+    ];
+    let heights = vec![
+        2.0 / s19,
+        2.0 / s19,
+        2.0 / s19,
+        2.0 / s19,
+        1.0,
+        2.0 / norm,
+    ];
+    Polytope4D::new(normals, heights).expect("cut simplex construction")
+}
+
+// ============================================================================
 // Main
 // ============================================================================
 
@@ -795,9 +861,9 @@ fn main() {
     // (name, group, polytope, expected_capacity)
     let mut polytopes: Vec<(String, String, Polytope4D, Option<f64>)> = Vec::new();
 
-    // --- Part 1: Random generic polytopes, F=5..8 ---
-    println!("Part 1: Random generic polytopes (F=5..8, {N_PER_GROUP} each)...");
-    for f in [5usize, 6, 7, 8] {
+    // --- Part 1: Random generic polytopes, F=5..10 ---
+    println!("Part 1: Random generic polytopes (F=5..10, {N_PER_GROUP} each)...");
+    for f in [5usize, 6, 7, 8, 9, 10] {
         let ps = generate_random_polytopes(N_PER_GROUP, f, H_MIN, H_MAX, &mut rng);
         for (i, p) in ps.into_iter().enumerate() {
             polytopes.push((
@@ -890,25 +956,7 @@ fn main() {
     // intersected with the halfspace x₁ + 2x₂ ≤ 2 (passes through v₀,
     // cuts off v₁). Result: 6 facets, 7 vertices, v₀ on 5 facets (non-simple).
     {
-        let s19 = 19.0_f64.sqrt();
-        let s5 = 5.0_f64.sqrt();
-        let normals = vec![
-            Vector4::new(-4.0, 1.0, 1.0, 1.0) / s19, // F₀: opposite v₀
-            Vector4::new(1.0, -4.0, 1.0, 1.0) / s19,  // F₁: opposite v₁
-            Vector4::new(1.0, 1.0, -4.0, 1.0) / s19,  // F₂: opposite v₂
-            Vector4::new(1.0, 1.0, 1.0, -4.0) / s19,  // F₃: opposite v₃
-            Vector4::new(1.0, 1.0, 1.0, 1.0) / 2.0,   // F₄: opposite v₄
-            Vector4::new(1.0, 2.0, 0.0, 0.0) / s5,    // F₅: cutting plane
-        ];
-        let heights = vec![
-            2.0 / s19, // h₀
-            2.0 / s19, // h₁
-            2.0 / s19, // h₂
-            2.0 / s19, // h₃
-            1.0,       // h₄
-            2.0 / s5,  // h₅
-        ];
-        let p = Polytope4D::new(normals, heights).expect("cut simplex construction");
+        let p = make_cut_simplex(2.0);
         println!(
             "  cut simplex: F={}, non-simple (v₀ on 5 facets)",
             p.facet_count()
@@ -918,6 +966,83 @@ fn main() {
             "regression".to_string(),
             p,
             None, // capacity not known analytically
+        ));
+    }
+
+    // --- Part 4: Non-simple polytopes (A2≠A3 regime) ---
+    println!("\nPart 4: Non-simple polytopes (bipyramids + cut simplices)...");
+
+    // Bipyramid over triangular prism (5 faces in R³ → 10 facets in R⁴).
+    // Each apex lies on 5 facets → non-simple.
+    //
+    // Triangular prism centered at origin, height ±1 along z-axis,
+    // equilateral triangle cross-section with circumradius 1.
+    {
+        let s3_2 = 3.0_f64.sqrt() / 2.0;
+        let normals_3d: &[[f64; 3]] = &[
+            [0.0, 0.0, -1.0],   // bottom
+            [0.0, 0.0, 1.0],    // top
+            [0.5, s3_2, 0.0],   // side 1 (unit: √(0.25 + 0.75) = 1)
+            [-1.0, 0.0, 0.0],   // side 2
+            [0.5, -s3_2, 0.0],  // side 3
+        ];
+        let heights_3d: &[f64] = &[1.0, 1.0, 0.5, 0.5, 0.5];
+        let p = make_bipyramid(normals_3d, heights_3d, 1.5);
+        println!(
+            "  bipyramid (triangular prism): F={}, non-simple (apices on 5 facets)",
+            p.facet_count()
+        );
+        polytopes.push((
+            "nonsimple_bipyramid_triprism".to_string(),
+            "non_simple".to_string(),
+            p,
+            None,
+        ));
+    }
+
+    // Bipyramid over square pyramid (5 faces in R³ → 10 facets in R⁴).
+    //
+    // Square pyramid: base at z = -0.4 with vertices (±1, ±1, -0.4),
+    // apex at (0, 0, 1.6). Centroid at origin.
+    {
+        let s5 = 5.0_f64.sqrt();
+        let normals_3d: &[[f64; 3]] = &[
+            [0.0, 0.0, -1.0],       // base
+            [2.0 / s5, 0.0, 1.0 / s5],   // side 1
+            [0.0, -2.0 / s5, 1.0 / s5],  // side 2
+            [-2.0 / s5, 0.0, 1.0 / s5],  // side 3
+            [0.0, 2.0 / s5, 1.0 / s5],   // side 4
+        ];
+        let heights_3d: &[f64] = &[0.4, 1.6 / s5, 1.6 / s5, 1.6 / s5, 1.6 / s5];
+        let p = make_bipyramid(normals_3d, heights_3d, 1.5);
+        println!(
+            "  bipyramid (square pyramid): F={}, non-simple (apices on 5 facets)",
+            p.facet_count()
+        );
+        polytopes.push((
+            "nonsimple_bipyramid_sqpyr".to_string(),
+            "non_simple".to_string(),
+            p,
+            None,
+        ));
+    }
+
+    // Cut simplices at 3 depths: x₁ + c·x₂ ≤ 2 through v₀=(2,0,0,0).
+    // Larger c removes more material near v₁=(0,2,0,0).
+    // Each produces F=6, v₀ on 5 facets (non-simple).
+    // Different c values change the ω₀ pattern of the cutting facet,
+    // giving different A2/A3 blocking sets.
+    for (label, slope) in [("shallow", 1.5), ("medium", 2.5), ("deep", 4.0)] {
+        let p = make_cut_simplex(slope);
+        println!(
+            "  cut simplex ({label}, c={slope}): F={}, non-simple",
+            p.facet_count()
+        );
+        polytopes.push((
+            format!("nonsimple_cut_simplex_{label}"),
+            "non_simple".to_string(),
+            p,
+            None,
         ));
     }
 
