@@ -3,7 +3,7 @@
 **Purpose:** Iteratively refine the adjacency graph used to prune the search
 space of the HK2017 algorithm, measuring correctness and speedup at each step.
 
-**Status:** A-axis complete. Four variants (A0–A3) agree on all 38 test polytopes.
+**Status:** A-axis complete. Four variants (A0–A3) agree on all 39 test polytopes.
 
 ## Files
 
@@ -12,18 +12,18 @@ space of the HK2017 algorithm, measuring correctness and speedup at each step.
 | `ablation.rs` | Rust binary: generates dataset, runs all variants, checks agreement |
 | `ablation.py` | Python analysis: agreement/timing/iteration tables, timing figure |
 | `ablation.tex` | Thesis subsection (LaTeX) |
-| `ablation.jsonl` | Generated dataset: 152 entries (38 polytopes × 4 variants) |
+| `ablation.jsonl` | Generated dataset: 156 entries (39 polytopes × 4 variants) |
 | `ablation_timing.png` | Figure: all variants timing per group and facet count |
 
 ## Dataset
 
-38 polytopes across 3 groups, seeded at 42, h ∈ [0.5, 2.0]:
+39 polytopes across 3 groups, seeded at 42, h ∈ [0.5, 2.0]:
 
 | Group | Count | F | Description |
 |-------|-------|---|-------------|
 | Random generic | 20 | 5–8 | 5 random 4-polytopes per facet count |
 | Random Lagrangian | 15 | 6–8 | 5 random products per pair: △×△ (F=6), △×□ (F=7), □×□ (F=8) |
-| Regression cases | 3 | 7–8 | Fixed polytopes with known degenerate behavior (see below) |
+| Regression cases | 4 | 6–8 | Fixed polytopes: degenerate KKT, LU fast path, non-simple (see below) |
 
 ## Adjacency Graph Variants
 
@@ -35,7 +35,7 @@ transition F_i → F_j (physical direction), building on all previous conditions
 | A0 | None (unpruned): exhaustive search over all (S, σ) |
 | A1 | Vertex adjacency: F_i ∩ F_j ≠ ∅ (Corollary `cor:adjacency-pruning`) |
 | A2 | Directed ω₀: A1 and ω₀(n_i, n_j) ≥ 0 (Reeb flow on F_i carries orbit toward F_j) |
-| A3 | Reeb-flow feasibility: A2 and ∃x ∈ F_i ∩ F_j with x−εR_i ∈ F_i, x+εR_j ∈ F_j |
+| A3 | Reeb-flow feasibility: A2 and ∃x ∈ F_i ∩ F_j with x−εV_i ∈ F_i, x+εV_j ∈ F_j |
 
 A0 is imported from the symplectic library. A1, A2, and A3 are self-contained
 in the binary (library internals copied where needed).
@@ -46,27 +46,29 @@ convention (ω₀ ≤ 0 for consecutive σ(k) → σ(k+1)) to match the Q-functi
 
 ## Key Findings
 
-**Agreement:** All four variants agree on all 38 polytopes (max absolute difference < 10⁻⁸).
+**Agreement:** All four variants agree on all 39 polytopes (max absolute difference < 10⁻⁸).
 
 **Timing** (mean ms, random generic polytopes, n=5 per F):
 
 | F | A0 | A1 | A2 | A3 | A2/A0 speedup |
 |---|---:|---:|---:|---:|-------------:|
-| 5 | 0.5 | 0.5 | 0.1 | 0.1 | ~5× |
-| 6 | 3.2 | 2.5 | 0.2 | 0.2 | ~16× |
-| 7 | 26.9 | 13.7 | 0.6 | 0.6 | ~45× |
-| 8 | 234.5 | 74.0 | 1.8 | 1.7 | ~130× |
+| 5 | 0.8 | 0.8 | 0.1 | 0.1 | ~7× |
+| 6 | 4.0 | 3.2 | 0.2 | 0.3 | ~16× |
+| 7 | 27.0 | 13.2 | 0.6 | 0.6 | ~44× |
+| 8 | 239.2 | 70.6 | 1.7 | 1.7 | ~137× |
 
-Lagrangian products show similar but less dramatic A2 speedup (~36× at F=8)
+Lagrangian products show similar but less dramatic A2 speedup (~38× at F=8)
 due to structured normals having more ω₀ = 0 pairs.
 
-**A3 = A2 on this dataset:** A3 provides zero additional pruning beyond A2.
-All 38 test polytopes are simple (every vertex lies on exactly 4 facets),
-so every pair of adjacent facets shares a ridge (2-face). By Corollary B.2
-(Ridge Sufficiency), ω₀ ≥ 0 alone guarantees transition feasibility at
-ridges, making the LP check redundant. A3 can prune beyond A2 only for
-non-simple polytopes, where facets may share only a 1-face or 0-face
-(see Example B.3: shaved hypercube).
+**A3 = A2 on simple polytopes:** On all 38 simple test polytopes, A3 provides
+zero additional pruning beyond A2. Every vertex lies on exactly 4 facets,
+so adjacent facets share ridges. By Ridge Sufficiency (`[cor:ridge-sufficiency]`),
+ω₀ ≥ 0 alone guarantees feasibility at ridges, making the LP check redundant.
+
+**A3 ≠ A2 on the cut simplex:** The cut simplex (non-simple, F=6) has A2=39
+vs A3=33 candidates — A3 prunes 6 orderings (15% beyond A2). The sole
+non-ridge pair (F₁,F₅) shares only one vertex; a blocking facet closes off
+the transition. See `[ex:a3-prunes]` in ablation.tex.
 
 ## Regression Cases
 
@@ -75,13 +77,14 @@ non-simple polytopes, where facets may share only a 1-face or 0-face
 | △×□ θ=0° | 7 | 3√2/2 ≈ 2.121320 | ✓ | Degenerate KKT: null-space search |
 | □×□ θ=0° | 8 | 2.000000 | ✓ | Degenerate KKT: SVD gap detection |
 | Hypercube | 8 | 4.000000 | ✓ | Non-degenerate: LU fast path |
+| Cut simplex | 6 | 1.650485 | ✓ | Non-simple polytope: A2≠A3 |
 
 ## Regeneration
 
 ```bash
 cd experiments/
 cargo run --bin ablation --release
-# → ablation/ablation.jsonl (152 entries)
+# → ablation/ablation.jsonl (156 entries)
 
 python3 ablation/ablation.py
 # → ablation/ablation_timing.png
