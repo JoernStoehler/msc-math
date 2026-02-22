@@ -1,0 +1,148 @@
+% sys-optimization.tex — \input'd from experiments/experiments.tex
+%
+% Sensitivity analysis and gradient-based improvement of the systolic ratio.
+%
+% Sources:
+%   - Generated data: experiments/sys-optimization/sys-optimization-sensitivity.jsonl
+%   - Generated data: experiments/sys-optimization/sys-optimization-steps.jsonl
+%   - Plot script: experiments/sys-optimization/sys_optimization.py
+%   - Experiment notes: experiments/sys-optimization/README.md
+%
+% Structure:
+%   - Motivation and approach
+%   - Sensitivity analysis (Phase 1)
+%   - Finite gradient steps (Phase 2)
+%   - Discussion
+
+\subsection{Sensitivity Analysis and Gradient Optimization of sys}
+\label{sec:sys-optimization}
+
+Random sampling has not found $\mathrm{sys} > 1$ (see
+Sections~\ref{sec:random-sweep} and~\ref{sec:random-product-sweep}).
+Instead of relying on random exploration, we compute the gradient
+$\nabla_h\,\mathrm{sys}$ of the systolic ratio with respect to the
+facet heights $h = (h_1,\dots,h_F)$ and take directed steps to increase
+$\mathrm{sys}$.
+
+\subsubsection*{Method}
+
+For a polytope $K = \{x \mid n_k \cdot x \le h_k\}$ with $F$ facets, the
+systolic ratio decomposes as
+$\mathrm{sys} = c_{\mathrm{EHZ}}^2 / (2\,\mathrm{vol})$.
+We compute the sensitivity of each factor to individual height changes
+using central finite differences with step size $\varepsilon = 10^{-7}$:
+\[
+  \frac{\partial\,\mathrm{vol}}{\partial h_k}
+  \approx \frac{\mathrm{vol}(h_k + \varepsilon) - \mathrm{vol}(h_k - \varepsilon)}{2\varepsilon},
+  \qquad
+  \frac{\partial\,c_{\mathrm{EHZ}}}{\partial h_k}
+  \approx \frac{c_{\mathrm{EHZ}}(h_k + \varepsilon) - c_{\mathrm{EHZ}}(h_k - \varepsilon)}{2\varepsilon},
+\]
+where $c_{\mathrm{EHZ}}(h_k \pm \varepsilon)$ is computed by re-solving
+the KKT system for the top orbits from an instrumented HK2017 run (which
+stores all valid orbits, not just the best).
+The chain rule then gives
+\[
+  \frac{\partial\,\mathrm{sys}}{\partial h_k}
+  = \frac{1}{\mathrm{vol}}
+    \left[
+      c_{\mathrm{EHZ}} \cdot \frac{\partial\,c_{\mathrm{EHZ}}}{\partial h_k}
+      - \mathrm{sys} \cdot \frac{\partial\,\mathrm{vol}}{\partial h_k}
+    \right].
+\]
+
+To determine how far we can step, we compute the maximum step size
+$t_{\max}$ along the gradient direction $g = \nabla_h\,\mathrm{sys}$
+such that the combinatorial type of the polytope is preserved: no vertex
+hits a new facet, no vertex disappears, and all heights remain positive.
+We then evaluate $\mathrm{sys}$ at step fractions
+$\{0.1, 0.25, 0.5, 0.75, 0.95\} \cdot t_{\max}$.
+
+The starting polytopes are the 140 polytopes from the random-sweep and
+random-product-sweep experiments with $F \le 10$.
+
+\subsubsection*{Phase 1: Gradient Structure}
+
+Figure~\ref{fig:sys-opt-gradient} shows the distribution of gradient
+magnitudes $|{\partial\,\mathrm{sys}}/{\partial h_k}|$ across all
+polytopes and facets.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{../experiments/sys-optimization/sys_optimization_gradient_hist.png}
+\caption{Distribution of gradient magnitudes $|{\partial\,\mathrm{sys}}/{\partial h_k}|$
+  across 1120 facets from 140 polytopes.
+  Left: linear scale. Right: log scale.}
+\label{fig:sys-opt-gradient}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.75\textwidth]{../experiments/sys-optimization/sys_optimization_favorable.png}
+\caption{Fraction of facets per polytope with $|{\partial\,\mathrm{sys}}/{\partial h_k}| > 0$,
+  grouped by facet count.}
+\label{fig:sys-opt-favorable}
+\end{figure}
+
+Every polytope in our dataset has a non-zero gradient:
+$\|\nabla_h\,\mathrm{sys}\| > 0$ for all 140 polytopes.
+Over 94\% of individual facets provide a direction that changes
+$\mathrm{sys}$, meaning that almost every facet height can be adjusted
+to either increase or decrease the systolic ratio.
+
+\subsubsection*{Phase 2: Finite Gradient Steps}
+
+Figure~\ref{fig:sys-opt-improvement} shows the result of taking the best
+single gradient step for each polytope.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.65\textwidth]{../experiments/sys-optimization/sys_optimization_improvement.png}
+\caption{Systolic ratio before vs.\ after the best gradient step.
+  Points above the diagonal represent improvement.
+  The dashed lines mark $\mathrm{sys} = 1$.}
+\label{fig:sys-opt-improvement}
+\end{figure}
+
+\begin{table}[h]
+\centering
+\input{../experiments/sys-optimization/sys_optimization_stats.tex}
+\caption{Summary statistics for the sys-optimization experiment.}
+\label{tab:sys-opt-stats}
+\end{table}
+
+Of the 140 starting polytopes, 128 (91\%) show an improved $\mathrm{sys}$
+after a single gradient step.
+The mean improvement is $\Delta\,\mathrm{sys} = 0.033$ and the median is~$0.014$.
+The best $\mathrm{sys}$ achieved is~$0.837$, starting from a polytope
+with $\mathrm{sys} = 0.735$ (a random $4 \times 5$ Lagrangian product).
+
+\subsubsection*{Discussion}
+
+No single gradient step pushes $\mathrm{sys}$ past~$1$.
+The best result ($\mathrm{sys} \approx 0.84$) remains well below the
+Viterbo threshold, though it substantially exceeds the maximum
+$\mathrm{sys} \approx 0.76$ found by random sampling alone.
+
+Two structural observations:
+\begin{enumerate}
+\item \emph{The gradient is never zero.}
+  None of the 140 polytopes is a local optimum of $\mathrm{sys}$ under
+  height changes. Every polytope admits a direction of improvement.
+  This suggests that $\mathrm{sys}$ does not have local maxima in
+  height space (at least not in the explored region), consistent with a
+  picture where $\mathrm{sys}$ increases monotonically toward a
+  global optimum or toward a boundary of the feasible region.
+
+\item \emph{The step bound limits improvement.}
+  For higher facet counts ($F \ge 8$), the maximum step
+  $t_{\max}$ before a combinatorial type change is typically small
+  ($t_{\max} < 1$), limiting the per-step improvement.
+  Iterating the gradient step across combinatorial type changes
+  (Phase~3) would require re-instrumenting HK2017 after each type
+  change.
+\end{enumerate}
+
+These results motivate Phase~3 (iterative optimization) and Phase~1c
+(adding facets), which could potentially reach higher $\mathrm{sys}$
+values by exploring beyond single gradient steps.
