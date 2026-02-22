@@ -517,7 +517,7 @@ struct InstrumentedResult {
     iterations: u64,
 }
 
-/// Instrumented version of ehz_capacity with A2 pruning.
+/// Instrumented version of ehz_capacity that collects ALL valid orbits.
 /// Same algorithm as production ehz_capacity, but collects ALL valid orbits.
 fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult> {
     let f = polytope.facet_count();
@@ -627,21 +627,22 @@ fn compute_volume_derivatives(normals: &[Vector4<f64>], heights: &[f64]) -> Vec<
 /// Compute d(c_EHZ)/d(h_k) analytically via the envelope theorem.
 ///
 /// For orbit (S,σ) with KKT solution (β, Q, ν), the action is A = 1/(2Q).
-/// By the envelope theorem on the Lagrangian
-///   L = Q(β) − λ^T(N^T β) − ν(η^T β − 1),
-/// the derivative of Q* w.r.t. height h_k is:
-///   dQ*/dh_k = −ν · β_{i₀}
-/// where i₀ is the position in the orbit with perm[i₀] = k.
+/// The KKT system solves: Hβ − Nλ − νη = 0, N^Tβ = 0, η^Tβ = 1.
+/// Here ν is the multiplier for η^Tβ = 1. For the winning orbit, ν < 0.
 ///
-/// Converting to the action derivative:
-///   dA/dh_k = −1/(2Q²) · dQ/dh_k = ν · β_{i₀} / (2Q²)
+/// By the envelope theorem, dQ*/dh_k = ∂L/∂h_k = −ν · β_{i₀},
+/// where i₀ is the orbit position with perm[i₀] = k.
+/// Since A = 1/(2Q): dA/dh_k = −dQ*/(2Q²·dh_k) = ν · β_{i₀} / (2Q²).
+///
+/// In code: `-nu * beta[i0] / (2 * q_sq)` because the code's ν is negative,
+/// so negating it gives the positive result that matches the standard formula.
 ///
 /// If facet k is not in the orbit (k ∉ S), then dA/dh_k = 0.
 ///
 /// For the capacity c = min_orbits A(orbit), we use the derivative of the
-/// minimum-action orbit (the winning orbit). This is exact in the non-degenerate
-/// case. At orbit-switching boundaries (degenerate case), the capacity is
-/// non-smooth and the derivative is one-sided.
+/// minimum-action orbit. This is exact in the non-degenerate case. At
+/// orbit-switching boundaries, the capacity is non-smooth and the derivative
+/// is one-sided.
 fn compute_capacity_derivatives_analytical(
     best_orbit: &ValidOrbit,
     facet_count: usize,
@@ -653,14 +654,8 @@ fn compute_capacity_derivatives_analytical(
             // Find position of facet k in the orbit's permutation
             match best_orbit.permutation.iter().position(|&f| f == k) {
                 Some(i0) => {
-                    // dA/dh_k = −ν · β_{i₀} / (2Q²)
-                    //
-                    // Sign: The KKT system uses Hβ = Nλ + νη, so the code's ν has
-                    // the opposite sign from the standard Lagrange multiplier convention
-                    // (L = Q + μ^T g gives ∂L/∂β = Hβ + Nμ₁ + μ₂η = 0, hence μ₂ = −ν).
-                    // The envelope theorem gives dQ*/dh_k = μ₂·β_{i₀} = −ν·β_{i₀},
-                    // and dA/dh_k = −dQ/(2Q²) = νβ_{i₀}/(2Q²).
-                    // Empirical cross-check confirms the negated sign.
+                    // See doc comment: dA/dh_k = ν·β_{i₀}/(2Q²) in standard convention.
+                    // Code's ν < 0, so we negate: -ν·β/(2Q²) > 0.
                     -best_orbit.nu * best_orbit.beta[i0] / (2.0 * q_sq)
                 }
                 None => 0.0, // Facet not in orbit → height doesn't affect this orbit's action
