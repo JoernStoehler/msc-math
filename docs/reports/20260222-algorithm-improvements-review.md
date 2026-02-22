@@ -134,3 +134,15 @@ These are mathematically equivalent modulo tolerance (omega0 is antisymmetric). 
 **Recommendation:** Fix the MEDIUM issues (appendix intro, R_k notation, shaved hypercube — 10 min each). The A1 mislabeling requires Jörn's decision on approach before fixing. Do NOT merge until the A1 issue is resolved and timing table/narrative match the data.
 
 **Time investment:** ~90min review
+
+---
+
+## Resolution (post-review fixes, 2026-02-22)
+
+All five findings have been addressed:
+
+1. **A1 mislabeling (CRITICAL):** Fixed. Added true `ehz_capacity_a1` using undirected vertex adjacency + same `solve_kkt_full` solver. Replaced timing table with iteration count table (Jörn's direction). Data regenerated.
+2. **Appendix intro:** Fixed. "three parts" → "four parts", added §A.4 mention.
+3. **R_k notation:** Fixed. Renamed to V_k = J₀n_k throughout ablation.tex, with clarifying note distinguishing from thesis R_k = (2/h_k)J₀n_k.
+4. **Shaved hypercube:** Replaced entirely. The original was broken (improper facets made it simple). New "cut simplex" construction: 4-simplex ∩ {x₁+2x₂≤2}, producing 6-facet non-simple polytope with empirically confirmed A2≠A3 (39 vs 33 orderings).
+5. **Unreviewed math:** Lemma A.9, Corollary A.10 unchanged (still need Jörn's verification). Example A.11 rewritten with cut simplex — computationally verified but proof argument needs Jörn's check.
