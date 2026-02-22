@@ -29,19 +29,37 @@ $\mathrm{sys}$.
 For a polytope $K = \{x \mid n_k \cdot x \le h_k\}$ with $F$ facets, the
 systolic ratio decomposes as
 $\mathrm{sys} = c_{\mathrm{EHZ}}^2 / (2\,\mathrm{vol})$.
-We compute the sensitivity of each factor to individual height changes
-using central finite differences with step size $\varepsilon = 10^{-7}$:
+We compute the sensitivity of each factor to individual height changes.
+
+\emph{Volume derivative.}
+Central finite differences with step size $\varepsilon = 10^{-7}$:
 \[
   \frac{\partial\,\mathrm{vol}}{\partial h_k}
-  \approx \frac{\mathrm{vol}(h_k + \varepsilon) - \mathrm{vol}(h_k - \varepsilon)}{2\varepsilon},
-  \qquad
-  \frac{\partial\,c_{\mathrm{EHZ}}}{\partial h_k}
-  \approx \frac{c_{\mathrm{EHZ}}(h_k + \varepsilon) - c_{\mathrm{EHZ}}(h_k - \varepsilon)}{2\varepsilon},
+  \approx \frac{\mathrm{vol}(h_k + \varepsilon) - \mathrm{vol}(h_k - \varepsilon)}{2\varepsilon}.
 \]
-where $c_{\mathrm{EHZ}}(h_k \pm \varepsilon)$ is computed by re-solving
-the KKT system for the top orbits from an instrumented HK2017 run (which
-stores all valid orbits, not just the best).
-The chain rule then gives
+
+\emph{Capacity derivative (envelope theorem).}
+The EHZ capacity equals $c_{\mathrm{EHZ}} = \min_{(S,\sigma)} A(S,\sigma)$,
+where the action of an orbit $(S,\sigma)$ is $A = 1/(2Q^*)$ and $Q^*$ is the
+maximum of the KKT problem
+$Q(\beta) = \tfrac{1}{2}\beta^T H\beta$ subject to $N^T\beta = 0$, $\eta^T\beta = 1$.
+The heights enter only through the constraint vector $\eta$, with
+$\eta_i = h_{\sigma(i)}$.
+By the envelope theorem, $\partial Q^*/\partial h_k = -\nu\,\beta_{i_0}$,
+where $\nu$ is the Lagrange multiplier for the normalization constraint
+$\eta^T\beta = 1$ and $i_0$ is the orbit position with $\sigma(i_0) = k$.
+Since $A = 1/(2Q)$:
+\[
+  \frac{\partial A}{\partial h_k}
+  = \frac{\nu\,\beta_{i_0}}{2\,(Q^*)^2}.
+\]
+If facet $k$ is not visited by the orbit ($k \notin S$), then
+$\partial A / \partial h_k = 0$.
+The capacity derivative uses the minimum-action orbit (the unique minimizer
+in the non-degenerate case).
+
+\emph{Systolic ratio derivative.}
+The chain rule gives
 \[
   \frac{\partial\,\mathrm{sys}}{\partial h_k}
   = \frac{1}{\mathrm{vol}}
@@ -111,11 +129,11 @@ single gradient step for each polytope.
 \label{tab:sys-opt-stats}
 \end{table}
 
-Of the 140 starting polytopes, 128 (91\%) show an improved $\mathrm{sys}$
+Of the 140 starting polytopes, 127 (91\%) show an improved $\mathrm{sys}$
 after a single gradient step.
 The mean improvement is $\Delta\,\mathrm{sys} = 0.033$ and the median is~$0.014$.
 The best $\mathrm{sys}$ achieved is~$0.837$, starting from a polytope
-with $\mathrm{sys} = 0.735$ (a random $4 \times 5$ Lagrangian product).
+with $\mathrm{sys} = 0.758$ (a random $4 \times 5$ Lagrangian product).
 
 \subsubsection*{Discussion}
 
