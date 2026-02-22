@@ -1,8 +1,9 @@
 # Review: algorithm-improvements branch (ablation study + A2 promotion + polish)
 
-**Branch:** `algorithm-improvements` (20 commits)
+**Branch:** `algorithm-improvements` (29 commits, merged into main 2026-02-22)
 **Base:** local `main` at `18ab808`
 **Date:** 2026-02-22
+**Status:** All findings resolved. See "Resolution" section at end of file.
 
 ---
 
