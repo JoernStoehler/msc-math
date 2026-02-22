@@ -1,12 +1,17 @@
 //! Ablation study: compare HK2017 algorithm variants on a fixed dataset.
 //!
-//! A-axis variants: A0 (unpruned), A1 (vertex adjacency), A2 (directed ω₀).
-//! A3 (Reeb-flow feasibility) — self-contained.
+//! A-axis variants: A0 (unpruned), A1 (vertex adjacency),
+//! A2 (directed ω₀), A3 (Reeb-flow feasibility).
 //!
 //! Convention: The library (crates/) is stable. New variants are implemented as
 //! self-contained code in this binary. Library internals needed by the new variants
 //! are copied here (marked with source references). If a variant is later promoted
 //! to production, it enters the library then.
+//!
+//! KKT solver note: The copied `solve_kkt_svd_path` uses the old gap-ratio approach
+//! (`SVD_GAP_THRESHOLD = 100.0`), not the library's current condition-number approach
+//! (`SVD_CONDITION_TAU = 1e-3`). This is intentional: all variants use the same solver
+//! for apples-to-apples comparison. Correctness is validated by agreement with A0.
 //!
 //! Architecture:
 //! 1. `cargo run --bin ablation --release` generates the ablation dataset
@@ -432,7 +437,7 @@ fn is_adjacent_cycle(perm: &[usize], adj: &[Vec<bool>]) -> bool {
 // Combined with vertex adjacency: dir_adj[i][j] = vertex_adj[i][j] AND ω₀ ≤ EPS.
 //
 // Key risk: the sign analysis is agent-written. The ablation empirically checks
-// that V4 agrees with V0 on all test polytopes.
+// that A2 agrees with A0 on all test polytopes.
 // ============================================================================
 
 /// Build directed adjacency for the algebraic (Q-maximizing) permutation order.

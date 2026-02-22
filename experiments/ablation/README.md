@@ -37,8 +37,8 @@ transition F_i → F_j (physical direction), building on all previous conditions
 | A2 | Directed ω₀: A1 and ω₀(n_i, n_j) ≥ 0 (Reeb flow on F_i carries orbit toward F_j) |
 | A3 | Reeb-flow feasibility: A2 and ∃x ∈ F_i ∩ F_j with x−εR_i ∈ F_i, x+εR_j ∈ F_j |
 
-A0 and A1 are imported from the symplectic library. A2 and A3 are self-contained
-in the binary (library internals copied, not modified).
+A0 is imported from the symplectic library. A1, A2, and A3 are self-contained
+in the binary (library internals copied where needed).
 
 **Sign convention:** The thesis and this README use the physical convention
 (ω₀(n_i, n_j) ≥ 0 for F_i → F_j). The code uses the reversed algebraic
