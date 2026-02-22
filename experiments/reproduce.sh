@@ -70,6 +70,12 @@ experiments/target/release/lagrangian_sweep
 # → experiments/lagrangian-products/lagrangian-products-5x5.jsonl
 # → experiments/lagrangian-products/lagrangian-products-*-6deg.jsonl (9 files)
 
+# Sys-optimization: sensitivity analysis + gradient steps (F≤10, ~30s)
+# Depends on: random-sweep and random-product-sweep JSONL (must run those first)
+experiments/target/release/sys_optimization
+# → experiments/sys-optimization/sys-optimization-sensitivity.jsonl
+# → experiments/sys-optimization/sys-optimization-steps.jsonl
+
 # ── Step 2: Generate figures and tables ──────────────────────────────────────
 # Python scripts read .jsonl from their experiment folder, write figures/tables
 # to the same folder.
@@ -101,6 +107,13 @@ python3 experiments/pentagon-perturb/pentagon_perturb.py
 python3 experiments/lagrangian-products/lagrangian_products.py
 # → experiments/lagrangian-products/lagrangian_products_5x5.png
 # → experiments/lagrangian-products/lagrangian_products_polygon_pairs.png
+
+# Sys-optimization: gradient histograms + improvement scatter + stats table
+python3 experiments/sys-optimization/sys_optimization.py
+# → experiments/sys-optimization/sys_optimization_gradient_hist.png
+# → experiments/sys-optimization/sys_optimization_favorable.png
+# → experiments/sys-optimization/sys_optimization_improvement.png
+# → experiments/sys-optimization/sys_optimization_stats.tex
 
 # ── Step 3: Visualization screenshots ────────────────────────────────────────
 # Automated via Playwright (headless Chrome). Requires: npm install playwright.
