@@ -32,7 +32,7 @@ use std::time::Instant;
 use symplectic::geom::polygon::{random_polygon_2d, regular_polygon_2d};
 use symplectic::random::generate_random_polytopes;
 use symplectic::{
-    ehz_capacity, ehz_capacity_pruned, known_polytopes, lagrangian_product, EhzResult, Polytope4D,
+    ehz_capacity, known_polytopes, lagrangian_product, EhzResult, Polytope4D,
 };
 
 const SEED: u64 = 42;
@@ -532,6 +532,15 @@ fn ehz_capacity_with(
     })
 }
 
+/// A1: undirected vertex adjacency + standard LU/SVD solver.
+/// This is the ablation's own A1 — independent of the library's `ehz_capacity_pruned`,
+/// which was promoted to A2-level pruning. Uses `solve_kkt_full` for apples-to-apples
+/// comparison with A2 and A3.
+fn ehz_capacity_a1(polytope: &Polytope4D) -> Option<EhzResult> {
+    let vertex_adj = build_adjacency_matrix(polytope);
+    ehz_capacity_with(polytope, &vertex_adj, solve_kkt_full)
+}
+
 /// A2: directed ω₀ adjacency + standard LU/SVD solver.
 fn ehz_capacity_a2(polytope: &Polytope4D) -> Option<EhzResult> {
     let vertex_adj = build_adjacency_matrix(polytope);
@@ -747,7 +756,7 @@ const VARIANTS: &[Variant] = &[
     },
     Variant {
         name: "a1_vertex_adj",
-        run: ehz_capacity_pruned,
+        run: ehz_capacity_a1,
     },
     Variant {
         name: "a2_omega_directed",

@@ -211,51 +211,53 @@ when the LU factorization detects rank deficiency;
 the hypercube (expected $4.0$) is solved by the LU fast path without SVD.
 All three capacities match their expected values to within $10^{-6}$.
 
-\paragraph{Speedup.}
-Table~\ref{tab:ablation-speedup} shows mean computation times.
-The main speedup comes from the directed $\omega_0$ condition~(A2), which prunes
-${\sim}99\%$ of candidate orderings at $F = 8$:
-${\sim}130\times$ over A0 for generic polytopes, and
-${\sim}36\times$ for Lagrangian products (whose structured normals have more
-$\omega_0 = 0$ pairs, limiting directed pruning effectiveness).
-A3 provides no additional pruning beyond A2 on this dataset.
-All 38 test polytopes are simple (every vertex on exactly four facets),
+\paragraph{Pruning effectiveness.}
+Table~\ref{tab:ablation-iterations} shows the number of candidate orderings
+$(S, \sigma)$ admitted by each adjacency filter for three $F = 8$ polytopes.
+Without pruning (A0), every polytope with $F$ facets admits
+$\sum_{m=2}^{F} \binom{F}{m} \tfrac{(m-1)!}{2}$ candidates;
+for $F = 8$ this is $16\,064$.
+Vertex adjacency~(A1) prunes $59$--$65\%$ of candidates.
+The directed $\omega_0$ condition~(A2) provides the dominant reduction,
+admitting less than $1\%$ of A0 candidates for generic polytopes
+(146 out of $16\,064$) and ${\sim}3\%$ for Lagrangian products.
+The hypercube, whose high symmetry produces many $\omega_0 = 0$ pairs,
+is the least prunable at $12\%$.
+
+A3 admits exactly the same candidates as A2 on all 38 test polytopes.
+All test polytopes are simple (every vertex on exactly four facets),
 so every adjacent pair shares a ridge; by Corollary~\ref{cor:ridge-sufficiency},
 the $\omega_0$ condition alone guarantees feasibility at ridges,
-making the LP check redundant.
-Standard deviations are shown in Figure~\ref{fig:ablation-timing}.
+making the LP check~(A3) redundant.
+Figure~\ref{fig:ablation-timing} shows the corresponding computation times.
 
 \begin{table}[h]
 \centering
-\begin{tabular}{llrrrr}
+\begin{tabular}{lrrrr}
 \toprule
-Group & $F$ & A0 (ms) & A1 (ms) & A2 (ms) & A3 (ms) \\
+Polytope & A0 & A1 & A2 & A3 \\
 \midrule
-Generic    & 5 &   0.5 &   0.5 &  0.1 &  0.1 \\
-           & 6 &   3.2 &   2.5 &  0.2 &  0.2 \\
-           & 7 &  26.9 &  13.7 &  0.6 &  0.6 \\
-           & 8 & 234.5 &  74.0 &  1.8 &  1.7 \\
-\midrule
-Lagrangian & 6 &   3.0 &   2.9 &  0.7 &  0.7 \\
-           & 7 &  27.3 &  14.6 &  2.1 &  2.1 \\
-           & 8 & 239.4 &  79.4 &  6.8 &  6.6 \\
+Random generic ($F = 8$)     & 16\,064 & 6\,543 & 146   & 146   \\
+Lagrangian $4 \times 4$ ($F = 8$) & 16\,064 & 5\,556 & 497   & 497   \\
+Hypercube ($F = 8$)          & 16\,064 & 5\,556 & 1\,970 & 1\,970 \\
 \bottomrule
 \end{tabular}
-\caption{Mean computation time (ms) by adjacency variant,
-  $n = 5$ samples per group per facet count.
-  The directed $\omega_0$ condition (A2) provides the dominant speedup:
-  ${\sim}130\times$ over A0 at $F = 8$ (generic).
-  A3 adds no further pruning on this dataset.}
-\label{tab:ablation-speedup}
+\caption{Number of candidate orderings $(S, \sigma)$ admitted by each
+  adjacency filter, for three polytopes with $F = 8$ facets.
+  Vertex adjacency~(A1) provides moderate pruning;
+  the directed $\omega_0$ condition~(A2) eliminates $87$--$99\%$
+  of remaining candidates.
+  A2 and A3 agree on all test polytopes (all simple).}
+\label{tab:ablation-iterations}
 \end{table}
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.95\textwidth]{../experiments/ablation/ablation_timing.png}
-\caption{Adjacency pruning: timing by facet count,
+\caption{Adjacency pruning: computation time by facet count,
   mean $\pm$ std ($n=5$).
   Left: random generic polytopes. Right: random Lagrangian products.
-  A2~and~A3 (green squares and purple diamonds) overlap almost exactly,
+  A2~and~A3 overlap almost exactly,
   confirming that the $\omega_0$ condition captures all prunable transitions
   on this dataset.}
 \label{fig:ablation-timing}
