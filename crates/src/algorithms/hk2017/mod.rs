@@ -138,6 +138,18 @@ pub fn ehz_capacity_unpruned(polytope: &Polytope4D) -> Option<EhzResult> {
     // Return based on certified candidate (primary). Uncertain is supplementary.
     let certified = best_certified?;
     let uncertain_cap = best_uncertain.map_or(certified.0, |b| b.0);
+
+    // Safety net: if an UNKNOWN orbit achieves lower action than the best certified
+    // orbit, the reported capacity might be wrong and we cannot resolve it at f64
+    // precision. Fail loudly rather than publish a potentially false result.
+    assert!(
+        uncertain_cap >= certified.0,
+        "Numerical gap: certified capacity {:.6e} > uncertain capacity {:.6e} (gap = {:.6e}). \
+         An UNKNOWN orbit achieves lower action than the best certified orbit. \
+         Cannot resolve at f64 precision.",
+        certified.0, uncertain_cap, certified.0 - uncertain_cap,
+    );
+
     // Reverse σ from internal algebraic order to physical orbit direction
     let mut phys_perm = certified.2;
     phys_perm.reverse();
@@ -299,6 +311,18 @@ pub fn ehz_capacity(polytope: &Polytope4D) -> Option<EhzResult> {
 
     let certified = best_certified?;
     let uncertain_cap = best_uncertain.map_or(certified.0, |b| b.0);
+
+    // Safety net: if an UNKNOWN orbit achieves lower action than the best certified
+    // orbit, the reported capacity might be wrong and we cannot resolve it at f64
+    // precision. Fail loudly rather than publish a potentially false result.
+    assert!(
+        uncertain_cap >= certified.0,
+        "Numerical gap: certified capacity {:.6e} > uncertain capacity {:.6e} (gap = {:.6e}). \
+         An UNKNOWN orbit achieves lower action than the best certified orbit. \
+         Cannot resolve at f64 precision.",
+        certified.0, uncertain_cap, certified.0 - uncertain_cap,
+    );
+
     // Reverse σ from internal algebraic order to physical orbit direction
     let mut phys_perm = certified.2;
     phys_perm.reverse();
