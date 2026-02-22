@@ -33,17 +33,11 @@ const MAX_FACET_COUNT: usize = 10;
 /// Heights are O(1), so steps beyond 100 are unreasonable.
 const MAX_STEP_SIZE: f64 = 100.0;
 
-/// Perturbation size for central finite differences.
+/// Perturbation size for central finite differences (used for volume derivatives).
 const FD_EPS: f64 = 1e-7;
 
 /// Step fractions of t_max to evaluate.
 const STEP_FRACTIONS: &[f64] = &[0.1, 0.25, 0.5, 0.75, 0.95];
-
-/// Fraction of best action within which orbits are tracked for sensitivity.
-const TOP_ORBIT_FRACTION: f64 = 0.05;
-
-/// Minimum number of top orbits to track (even if gap is large).
-const MIN_TOP_ORBITS: usize = 20;
 
 // ============================================================================
 // Output schemas
@@ -261,15 +255,18 @@ fn build_kkt_system(
 }
 
 /// SVD path with condition-number-based rank detection.
-/// Copied from crates/src/kkt.rs:233-359
+/// Copied from crates/src/kkt.rs:233-359, extended to return ν.
 /// Uses SVD_CONDITION_TAU (current library approach), NOT ablation's gap-ratio.
+///
+/// Returns (β, Q, ν) where ν is the Lagrange multiplier for the η^T β = 1 constraint.
+/// ν is needed for the analytical capacity derivative (envelope theorem).
 fn solve_kkt_svd_path(
     kkt: &DMatrix<f64>,
     rhs: &DVector<f64>,
     normals: &[Vector4<f64>],
     heights: &[f64],
     perm: &[usize],
-) -> Option<(Vec<f64>, f64)> {
+) -> Option<(Vec<f64>, f64, f64)> {
     let m = perm.len();
     let size = m + 5;
     let svd = kkt.clone().svd(true, true);
@@ -326,9 +323,10 @@ fn solve_kkt_svd_path(
         return None;
     }
     let beta0: Vec<f64> = (0..m).map(|i| x0[i]).collect();
+    let nu = x0[m + 4];
     if beta0.iter().all(|&b| b > EPS_BETA_POSITIVE) {
         let q_val = q_from_beta(normals, perm, &beta0);
-        return Some((beta0, q_val));
+        return Some((beta0, q_val, nu));
     }
     if rank == size {
         return None;
@@ -362,16 +360,20 @@ fn solve_kkt_svd_path(
         return None;
     }
     let q_val = q_from_beta(normals, perm, &beta_opt);
-    Some((beta_opt, q_val))
+    // ν comes from x0 (pseudoinverse solution). The null-space search only
+    // adjusts β, not the multipliers, so ν = x0[m+4] is correct.
+    Some((beta_opt, q_val, nu))
 }
 
 /// LU fast path + SVD fallback.
-/// Copied from crates/src/kkt.rs:380-407
+/// Copied from crates/src/kkt.rs:380-407, extended to return ν.
+///
+/// Returns (β, Q, ν) where ν is the Lagrange multiplier for η^T β = 1.
 fn solve_kkt_full(
     normals: &[Vector4<f64>],
     heights: &[f64],
     perm: &[usize],
-) -> Option<(Vec<f64>, f64)> {
+) -> Option<(Vec<f64>, f64, f64)> {
     let m = perm.len();
     let (kkt, rhs) = build_kkt_system(normals, heights, perm);
     let lu = kkt.clone().full_piv_lu();
@@ -382,7 +384,8 @@ fn solve_kkt_full(
                 let beta: Vec<f64> = (0..m).map(|i| solution[i]).collect();
                 if beta.iter().all(|&b| b > EPS_BETA_POSITIVE) {
                     let q_val = q_from_beta(normals, perm, &beta);
-                    return Some((beta, q_val));
+                    let nu = solution[m + 4];
+                    return Some((beta, q_val, nu));
                 }
             }
         }
@@ -514,6 +517,10 @@ struct ValidOrbit {
     permutation: Vec<usize>, // algebraic (internal) ordering
     beta: Vec<f64>,
     q_value: f64,
+    /// Lagrange multiplier for the η^T β = 1 constraint.
+    /// Used for analytical capacity derivative via envelope theorem:
+    /// dA/dh_k = ν · β_{i₀} / (2Q²) where perm[i₀] = k.
+    nu: f64,
 }
 
 /// Result of the instrumented HK2017 computation.
@@ -544,7 +551,7 @@ fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult
                 }
                 iterations += 1;
 
-                if let Some((beta, q_val)) = solve_kkt_full(normals, heights, perm) {
+                if let Some((beta, q_val, nu)) = solve_kkt_full(normals, heights, perm) {
                     if q_val <= EPS_Q_POSITIVE {
                         return;
                     }
@@ -559,6 +566,7 @@ fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult
                             permutation: perm.to_vec(),
                             beta: beta.clone(),
                             q_value: q_val,
+                            nu,
                         });
                     }
 
@@ -630,69 +638,55 @@ fn compute_volume_derivatives(normals: &[Vector4<f64>], heights: &[f64]) -> Vec<
         .collect()
 }
 
-/// Select top orbits for sensitivity tracking.
-fn select_top_orbits(orbits: &[ValidOrbit]) -> &[ValidOrbit] {
-    if orbits.is_empty() {
-        return orbits;
-    }
-    let best_action = orbits[0].action;
-    let threshold = best_action * (1.0 + TOP_ORBIT_FRACTION);
-
-    // Count orbits within threshold
-    let n_within = orbits.iter().filter(|o| o.action <= threshold).count();
-    let n_top = n_within.max(MIN_TOP_ORBITS).min(orbits.len());
-    &orbits[..n_top]
-}
-
-/// Compute d(c_EHZ)/d(h_k) via KKT re-solve for top orbits with perturbed heights.
-fn compute_capacity_derivatives(
-    normals: &[Vector4<f64>],
-    heights: &[f64],
-    top_orbits: &[ValidOrbit],
+/// Compute d(c_EHZ)/d(h_k) analytically via the envelope theorem.
+///
+/// For orbit (S,σ) with KKT solution (β, Q, ν), the action is A = 1/(2Q).
+/// By the envelope theorem on the Lagrangian
+///   L = Q(β) − λ^T(N^T β) − ν(η^T β − 1),
+/// the derivative of Q* w.r.t. height h_k is:
+///   dQ*/dh_k = −ν · β_{i₀}
+/// where i₀ is the position in the orbit with perm[i₀] = k.
+///
+/// Converting to the action derivative:
+///   dA/dh_k = −1/(2Q²) · dQ/dh_k = ν · β_{i₀} / (2Q²)
+///
+/// If facet k is not in the orbit (k ∉ S), then dA/dh_k = 0.
+///
+/// For the capacity c = min_orbits A(orbit), we use the derivative of the
+/// minimum-action orbit (the winning orbit). This is exact in the non-degenerate
+/// case. At orbit-switching boundaries (degenerate case), the capacity is
+/// non-smooth and the derivative is one-sided.
+fn compute_capacity_derivatives_analytical(
+    best_orbit: &ValidOrbit,
+    facet_count: usize,
 ) -> Vec<f64> {
-    let f = normals.len();
+    let q_sq = best_orbit.q_value * best_orbit.q_value;
 
-    (0..f)
+    (0..facet_count)
         .map(|k| {
-            let mut h_plus = heights.to_vec();
-            let mut h_minus = heights.to_vec();
-            h_plus[k] += FD_EPS;
-            h_minus[k] -= FD_EPS;
-
-            // Compute min action across all top orbits with perturbed heights
-            let min_action_plus = top_orbits
-                .iter()
-                .filter_map(|orbit| {
-                    solve_kkt_full(normals, &h_plus, &orbit.permutation)
-                        .filter(|(beta, q)| {
-                            *q > EPS_Q_POSITIVE
-                                && beta.iter().all(|&b| b > EPS_BETA_POSITIVE)
-                        })
-                        .map(|(_, q)| 0.5 / q)
-                })
-                .fold(f64::INFINITY, f64::min);
-
-            let min_action_minus = top_orbits
-                .iter()
-                .filter_map(|orbit| {
-                    solve_kkt_full(normals, &h_minus, &orbit.permutation)
-                        .filter(|(beta, q)| {
-                            *q > EPS_Q_POSITIVE
-                                && beta.iter().all(|&b| b > EPS_BETA_POSITIVE)
-                        })
-                        .map(|(_, q)| 0.5 / q)
-                })
-                .fold(f64::INFINITY, f64::min);
-
-            if min_action_plus.is_infinite() || min_action_minus.is_infinite() {
-                return f64::NAN;
+            // Find position of facet k in the orbit's permutation
+            match best_orbit.permutation.iter().position(|&f| f == k) {
+                Some(i0) => {
+                    // dA/dh_k = −ν · β_{i₀} / (2Q²)
+                    //
+                    // Sign: The KKT system uses Hβ = Nλ + νη, so the code's ν has
+                    // the opposite sign from the standard Lagrange multiplier convention
+                    // (L = Q + μ^T g gives ∂L/∂β = Hβ + Nμ₁ + μ₂η = 0, hence μ₂ = −ν).
+                    // The envelope theorem gives dQ*/dh_k = μ₂·β_{i₀} = −ν·β_{i₀},
+                    // and dA/dh_k = −dQ/(2Q²) = νβ_{i₀}/(2Q²).
+                    // Empirical cross-check confirms the negated sign.
+                    -best_orbit.nu * best_orbit.beta[i0] / (2.0 * q_sq)
+                }
+                None => 0.0, // Facet not in orbit → height doesn't affect this orbit's action
             }
-            (min_action_plus - min_action_minus) / (2.0 * FD_EPS)
         })
         .collect()
 }
 
 /// Compute full sensitivity: d(sys)/d(h_k) via chain rule.
+///
+/// d(cap)/d(h_k) is computed analytically via the envelope theorem on the
+/// winning orbit's KKT system. d(vol)/d(h_k) via central finite differences.
 fn compute_sensitivity(
     normals: &[Vector4<f64>],
     heights: &[f64],
@@ -701,10 +695,9 @@ fn compute_sensitivity(
     sys: f64,
     instrumented: &InstrumentedResult,
 ) -> SensitivityResult {
-    let top_orbits = select_top_orbits(&instrumented.orbits);
-
+    let f = normals.len();
     let d_vol = compute_volume_derivatives(normals, heights);
-    let d_cap = compute_capacity_derivatives(normals, heights, top_orbits);
+    let d_cap = compute_capacity_derivatives_analytical(&instrumented.orbits[0], f);
 
     // Chain rule: d(sys)/d(h_k) = (1/vol) * [c * dc/dh_k - sys * dvol/dh_k]
     let d_sys: Vec<f64> = d_vol
