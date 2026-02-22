@@ -882,6 +882,45 @@ fn main() {
         ));
     }
 
+    // Cut simplex — non-simple polytope where A3 may prune beyond A2.
+    // See Example [ex:a3-prunes] in ablation.tex.
+    //
+    // Construction: 4-simplex with vertices v₀=(2,0,0,0), v₁=(0,2,0,0),
+    // v₂=(0,0,2,0), v₃=(0,0,0,2), v₄=(-2,-2,-2,-2) (centroid at origin),
+    // intersected with the halfspace x₁ + 2x₂ ≤ 2 (passes through v₀,
+    // cuts off v₁). Result: 6 facets, 7 vertices, v₀ on 5 facets (non-simple).
+    {
+        let s19 = 19.0_f64.sqrt();
+        let s5 = 5.0_f64.sqrt();
+        let normals = vec![
+            Vector4::new(-4.0, 1.0, 1.0, 1.0) / s19, // F₀: opposite v₀
+            Vector4::new(1.0, -4.0, 1.0, 1.0) / s19,  // F₁: opposite v₁
+            Vector4::new(1.0, 1.0, -4.0, 1.0) / s19,  // F₂: opposite v₂
+            Vector4::new(1.0, 1.0, 1.0, -4.0) / s19,  // F₃: opposite v₃
+            Vector4::new(1.0, 1.0, 1.0, 1.0) / 2.0,   // F₄: opposite v₄
+            Vector4::new(1.0, 2.0, 0.0, 0.0) / s5,    // F₅: cutting plane
+        ];
+        let heights = vec![
+            2.0 / s19, // h₀
+            2.0 / s19, // h₁
+            2.0 / s19, // h₂
+            2.0 / s19, // h₃
+            1.0,       // h₄
+            2.0 / s5,  // h₅
+        ];
+        let p = Polytope4D::new(normals, heights).expect("cut simplex construction");
+        println!(
+            "  cut simplex: F={}, non-simple (v₀ on 5 facets)",
+            p.facet_count()
+        );
+        polytopes.push((
+            "regression_cut_simplex".to_string(),
+            "regression".to_string(),
+            p,
+            None, // capacity not known analytically
+        ));
+    }
+
     let n_polytopes = polytopes.len();
     let n_entries = n_polytopes * VARIANTS.len();
     println!(

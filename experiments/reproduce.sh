@@ -36,7 +36,7 @@ cd "$REPO_ROOT"
 # Each binary writes data to its own experiment folder.
 # Order does not matter — experiments are independent.
 
-# Ablation study dataset (38 polytopes × 4 variants = 152 entries)
+# Ablation study dataset (39 polytopes × 4 variants = 156 entries)
 experiments/target/release/ablation
 # → experiments/ablation/ablation.jsonl
 

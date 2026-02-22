@@ -156,32 +156,31 @@ shares a 2-face (``vertex $\times$ polygon'' or ``edge $\times$ edge'').
 
 \begin{example}[Non-simple polytope where A3 prunes beyond A2]
 \label{ex:a3-prunes}
-Consider the ``shaved hypercube''
-$K = \{\, x \in \mathbb{R}^4 : -2 \le x_i \le 0 \;\forall\, i,\;
-x_2 \le x_1 \,\}$.%
-\footnote{As stated, $K$ has the origin on its boundary.
-  Translating by any $c \in \mathrm{int}\, K$
-  (e.g.\ $c = (-1, -\tfrac{3}{2}, -1, -1)$) gives an equivalent polytope
-  containing the origin in its interior, without changing the
-  combinatorial adjacency structure or pruning counts.}
-This polytope has $9$ facets and $12$ vertices, of which $8$
-are non-simple (lying on $5$ facets).
-The facets $F_1\colon (x_2 \le 0)$ and $F_2\colon (x_3 \le 0)$
-share only a 1-dimensional edge:
-the shaving constraint $x_2 \le x_1$ combined with $x_1 \le 0$
-forces $x_1 = x_2 = 0$ on $F_1 \cap F_2$.
-Since $\omega_0(n_1, n_2) = 0 \ge 0$, condition~(1) holds.
-However, the shaving facet~$F_4$ has normal $(-1, 1, 0, 0)/\sqrt{2}$
-and belongs to the blocking set~$B$
-(since $\omega_0(n_2, n_4) = 1/\sqrt{2} > 0$).
-Since $F_4$ is tight on the entire edge $F_1 \cap F_2$,
-condition~(2) fails: A2 allows $F_1 \to F_2$, but A3 correctly blocks it.
-By Lemma~\ref{lem:transition-feasibility}, no orbit can make this transition.
-In total, A3 prunes 8 directed edges that A2 allows.
+Let $S$ be the 4-simplex with vertices
+$v_0 = (2,0,0,0)$,\; $v_1 = (0,2,0,0)$,\; $v_2 = (0,0,2,0)$,\;
+$v_3 = (0,0,0,2)$,\; $v_4 = (-2,-2,-2,-2)$
+(centroid at the origin), and set
+$K = S \cap \{\, x_1 + 2\, x_2 \le 2 \,\}$.
+The cutting hyperplane passes through~$v_0$ and removes~$v_1$,
+producing a polytope with $6$~facets and $7$~vertices.
+The vertex~$v_0$ lies on $5$~facets ($F_1,\ldots,F_4$ from the simplex
+plus the cutting facet~$F_5$), so $K$ is non-simple.
+Every facet pair shares a ridge \emph{except} $(F_1, F_5)$,
+whose intersection is the single vertex~$v_0$.
+
+Since $\omega_0(n_5, n_1) > 0$, condition~(1) of
+Lemma~\ref{lem:transition-feasibility} holds and A2 allows
+the directed transition $F_5 \to F_1$.
+However, $F_2$ belongs to the blocking set~$B$
+(since $\omega_0(n_5, n_2) < 0$), and $v_0 \in F_2$
+gives $n_2 \cdot v_0 = h_2$:
+the only point of $F_1 \cap F_5$ is tight on the blocking facet.
+Condition~(2) fails, and A3 correctly prunes this transition.
+In total, A3 admits $33$ candidate orderings versus $39$ for~A2.
 \end{example}
 
 \paragraph{Test polytopes.}
-Table~\ref{tab:ablation-dataset} describes the 38 test polytopes.
+Table~\ref{tab:ablation-dataset} describes the 39 test polytopes.
 Random polytopes use a fixed seed (42) and height range $h \in [0.5, 2.0]$.
 
 \begin{table}[h]
@@ -195,32 +194,32 @@ Random Lagrangian & 6--8 & 15 & 5 random products per pair:
   $\triangle{\times}\triangle$,
   $\triangle{\times}\square$,
   $\square{\times}\square$ \\
-Regression cases  & 7--8 &  3 & Fixed polytopes triggering degenerate KKT systems \\
+Regression cases  & 6--8 &  4 & Hypercube (LU fast path),
+  $\triangle{\times}\square$ and $\square{\times}\square$ at $\theta{=}0^\circ$
+  (rank-deficient KKT), cut simplex (non-simple, Example~\ref{ex:a3-prunes}) \\
 \bottomrule
 \end{tabular}
-\caption{Test polytope dataset. All random polytopes use seed~42, $h \in [0.5, 2.0]$.
-  Regression cases: $\triangle{\times}\square$ at $\theta{=}0^\circ$ and
-  $\square{\times}\square$ at $\theta{=}0^\circ$ trigger rank-deficient KKT systems;
-  the hypercube exercises the LU fast path.}
+\caption{Test polytope dataset. All random polytopes use seed~42, $h \in [0.5, 2.0]$.}
 \label{tab:ablation-dataset}
 \end{table}
 
 \paragraph{Correctness.}
-All four variants return identical capacities on all 38 test polytopes (maximum
+All four variants return identical capacities on all 39 test polytopes (maximum
 absolute difference $< 10^{-8}$).
 This confirms that no pruning variant discards the optimal orbit on this dataset.
 
-The three regression cases additionally verify correct handling of degenerate
-KKT systems:
+The regression cases verify specific solver paths:
 $\triangle{\times}\square$ at $\theta{=}0^\circ$ (expected $3\sqrt{2}/2 \approx 2.121$) and
 $\square{\times}\square$ at $\theta{=}0^\circ$ (expected $2.0$) both require a null-space search
 when the LU factorization detects rank deficiency;
 the hypercube (expected $4.0$) is solved by the LU fast path without SVD.
 All three capacities match their expected values to within $10^{-6}$.
+The cut simplex (Example~\ref{ex:a3-prunes}) confirms correct handling of
+non-simple polytopes with $\mathrm{A2} \neq \mathrm{A3}$.
 
 \paragraph{Pruning effectiveness.}
 Table~\ref{tab:ablation-iterations} shows the number of candidate orderings
-$(S, \sigma)$ admitted by each adjacency filter for three $F = 8$ polytopes.
+$(S, \sigma)$ admitted by each adjacency filter.
 Without pruning (A0), every polytope with $F$ facets admits
 $\sum_{m=2}^{F} \binom{F}{m} \tfrac{(m-1)!}{2}$ candidates;
 for $F = 8$ this is $16\,064$.
@@ -231,11 +230,13 @@ admitting less than $1\%$ of A0 candidates for generic polytopes
 The hypercube, whose high symmetry produces many $\omega_0 = 0$ pairs,
 is the least prunable at $12\%$.
 
-A3 admits exactly the same candidates as A2 on all 38 test polytopes.
-All test polytopes are simple (every vertex on exactly four facets),
-so every adjacent pair shares a ridge; by Corollary~\ref{cor:ridge-sufficiency},
-the $\omega_0$ condition alone guarantees feasibility at ridges,
-making the LP check~(A3) redundant.
+On the 38 simple test polytopes, A3 agrees with A2 in every case:
+by Corollary~\ref{cor:ridge-sufficiency},
+vertex-adjacent facets of simple polytopes share ridges,
+so the LP check is automatically satisfied.
+The cut simplex (Example~\ref{ex:a3-prunes}) is the sole non-simple
+polytope in the dataset, and A3 prunes $6$ orderings that A2 admits
+($33$ versus~$39$).
 Figure~\ref{fig:ablation-timing} shows the corresponding computation times.
 
 \begin{table}[h]
@@ -244,17 +245,19 @@ Figure~\ref{fig:ablation-timing} shows the corresponding computation times.
 \toprule
 Polytope & A0 & A1 & A2 & A3 \\
 \midrule
-Random generic ($F = 8$)     & 16\,064 & 6\,543 & 146   & 146   \\
-Lagrangian $4 \times 4$ ($F = 8$) & 16\,064 & 5\,556 & 497   & 497   \\
-Hypercube ($F = 8$)          & 16\,064 & 5\,556 & 1\,970 & 1\,970 \\
+Random generic ($F = 8$)            & 16\,064 & 6\,543 & 146 & 146 \\
+Lagrangian $4 \times 4$ ($F = 8$)   & 16\,064 & 5\,556 & 497 & 497 \\
+Hypercube ($F = 8$)                 & 16\,064 & 5\,556 & 1\,970 & 1\,970 \\
+Cut simplex ($F = 6$, non-simple)   & 409 & 409 & 39 & 33 \\
 \bottomrule
 \end{tabular}
 \caption{Number of candidate orderings $(S, \sigma)$ admitted by each
-  adjacency filter, for three polytopes with $F = 8$ facets.
+  adjacency filter.
   Vertex adjacency~(A1) provides moderate pruning;
   the directed $\omega_0$ condition~(A2) eliminates $87$--$99\%$
   of remaining candidates.
-  A2 and A3 agree on all test polytopes (all simple).}
+  A2 and A3 agree on all simple polytopes; on the non-simple cut simplex,
+  A3 prunes $6$ additional orderings ($15\%$ beyond A2).}
 \label{tab:ablation-iterations}
 \end{table}
 
