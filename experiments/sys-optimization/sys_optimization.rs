@@ -365,8 +365,9 @@ fn solve_kkt_svd_path(
     Some((beta_opt, q_val, nu))
 }
 
-/// LU fast path + SVD fallback.
-/// Copied from crates/src/kkt.rs:380-407, extended to return ν.
+/// SVD-only KKT solver, extended to return ν.
+/// Copied from crates/src/kkt.rs:solve_kkt_svd_only, which is the production
+/// path (profiling showed LU+SVD is slower than SVD-only; see kkt.rs docs).
 ///
 /// Returns (β, Q, ν) where ν is the Lagrange multiplier for η^T β = 1.
 fn solve_kkt_full(
@@ -374,22 +375,7 @@ fn solve_kkt_full(
     heights: &[f64],
     perm: &[usize],
 ) -> Option<(Vec<f64>, f64, f64)> {
-    let m = perm.len();
     let (kkt, rhs) = build_kkt_system(normals, heights, perm);
-    let lu = kkt.clone().full_piv_lu();
-    if lu.is_invertible() {
-        if let Some(solution) = lu.solve(&rhs) {
-            let residual = (&kkt * &solution - &rhs).norm();
-            if residual <= EPS_KKT_RESIDUAL {
-                let beta: Vec<f64> = (0..m).map(|i| solution[i]).collect();
-                if beta.iter().all(|&b| b > EPS_BETA_POSITIVE) {
-                    let q_val = q_from_beta(normals, perm, &beta);
-                    let nu = solution[m + 4];
-                    return Some((beta, q_val, nu));
-                }
-            }
-        }
-    }
     solve_kkt_svd_path(&kkt, &rhs, normals, heights, perm)
 }
 
