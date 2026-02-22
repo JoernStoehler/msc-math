@@ -1,6 +1,6 @@
-# Experiment idea: UNKNOWN predicate states
+# Experiment: UNKNOWN predicate survey
 
-Status: **idea only** (no code yet, YAGNI until Phase 1 shows a problem)
+Status: **Phase 1 complete** — negative result, zero UNKNOWNs found across 162 polytopes.
 
 ## Motivation
 
@@ -14,21 +14,29 @@ UNKNOWN candidates above it represent unresolved uncertainty.
 practice on our polytope datasets? If not, the certified value *is*
 the answer and no further work is needed.
 
-## Phase 1: Empirical check (do UNKNOWNs appear at all?)
+## Phase 1 results
 
-Run the existing `random-sweep` and `lagrangian-products` datasets
-through the algorithm with logging that reports, for each polytope:
+Ran the random-sweep (70 polytopes, F=5..12) and lagrangian-products
+(92 polytopes, 10 regular polygon pairs) through the production
+algorithms, tracking certified vs uncertain capacity and β_min.
 
-1. How many adjacency predicates returned UNKNOWN (vs TRUE/FALSE).
-2. How many positivity predicates returned UNKNOWN (vs TRUE/FALSE).
-3. Whether the final answer is certified or has uncertain candidates
-   above the certified value.
+**Finding: zero UNKNOWNs.** Numerical gap = 0 for all 162 polytopes.
 
-If no UNKNOWNs appear across the full dataset, stop here.
-The algorithm is empirically exact-precision on our data.
+β_min distribution:
+- Random polytopes: 6.7e-4 to 1.2e-1 (well above ε = 1e-12)
+- Lagrangian products: 6.2e-12 to 3.5e-1
+- Near-miss: `pair_4x4_18deg` has β_min = 6.2e-12 (6× above threshold)
 
-If UNKNOWNs appear, record which predicate type and where
-(adjacency vs positivity, which polytope, which pair (S, sigma)).
+Conclusion: algorithm is empirically exact at f64 precision.
+Phase 2 is not needed.
+
+## Pipeline
+
+```bash
+cd experiments/
+cargo run --bin unknown_predicates --release    # → unknown-predicates.jsonl
+python3 unknown-predicates/unknown_predicates.py  # → beta_min histogram
+```
 
 ## Phase 2: Resolution strategies (only if Phase 1 finds UNKNOWNs)
 

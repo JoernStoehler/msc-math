@@ -132,7 +132,7 @@ def main():
             continue
         log_bm = np.log10(bm[bm > 0])
         ax.hist(log_bm, bins=30, edgecolor="black", alpha=0.7)
-        ax.set_xlabel("log₁₀(beta_min)")
+        ax.set_xlabel("log₁₀(β_min)")
         ax.set_ylabel("Count")
         ax.set_title(f"{label} (n={len(subset)})")
         ax.axvline(
@@ -142,6 +142,18 @@ def main():
             label="EPS_BETA_POSITIVE (1e-12)",
         )
         ax.legend(fontsize=8)
+
+        # Annotate the near-miss outlier if present
+        if log_bm.min() < -8:
+            nearest = subset[int(np.argmin(bm))]
+            ax.annotate(
+                f"{nearest['name']}\nβ_min = {bm.min():.1e}",
+                xy=(log_bm.min(), 1),
+                xytext=(log_bm.min() + 1.5, max(ax.get_ylim()[1] * 0.6, 3)),
+                fontsize=7,
+                arrowprops=dict(arrowstyle="->", color="black", lw=0.8),
+                bbox=dict(boxstyle="round,pad=0.3", fc="lightyellow", ec="gray", lw=0.5),
+            )
 
     fig.suptitle("Minimum β component of certified orbits", fontsize=13)
     fig.tight_layout()
