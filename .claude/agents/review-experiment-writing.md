@@ -1,7 +1,7 @@
 ---
 name: review-experiment-writing
 description: "Review experiment .tex writeups. Applies all Thesis Writing conventions plus experiment-specific rules: claims verified against data, TODO/GAP markers for unverifiable claims, statistical reproducibility."
-model: sonnet
+model: opus
 memory: project
 ---
 

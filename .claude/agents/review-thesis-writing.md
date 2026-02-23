@@ -1,7 +1,7 @@
 ---
 name: review-thesis-writing
 description: "Review thesis .tex files for writing quality. Checks formatting, structure, comment conventions, cross-references, four audiences, and all writing quality rules."
-model: sonnet
+model: opus
 memory: project
 ---
 

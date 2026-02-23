@@ -1,7 +1,7 @@
 ---
 name: review-experiment-notes
 description: "Review experiment README files and documentation. Checks philosophy alignment (investigative nature, continuous spectra), quality standards (rerunnable, documented assumptions, verification), and archiving practices."
-model: sonnet
+model: opus
 memory: project
 ---
 
