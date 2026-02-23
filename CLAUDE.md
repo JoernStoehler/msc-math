@@ -68,14 +68,14 @@ We use several approaches together to ensure correctness:
 - We write mathematics, code, and documentation in a clear, detailed, explicit, structured, verifiable way.
   - "clear" = easy to understand, not vague or ambiguous
   - "explicit" = relevant implications are already spelled out for the reader, not left for them to derive
-  - "detailed" = all steps are included for verification or derived tasks, the only omitted steps are both not relevant for most readers, and are straightforward to fill in if needed
+  - "detailed" = all steps are included for verification or derived tasks, the only omitted steps are both not relevant for most readers, and are straightforward to fill in by the reader themselves if needed
   - "structured" = the knowledge is organized into modular chunks, so that the reader can choose to keep in mind the details only for relevant chunks and for other chunks just keep the high-level takeaways
   - "verifiable" = the reader can check the correctness by doing the local validity check for every step in every chunk, and for every cross-chunk reference.
 - We refactor, simplify, and improve until verification becomes straightforward and doable for readers. Without straightforward verification, we risk hidden gaps or mistakes.
 - Rust types, function signatures, and function bodies 1:1 correspond to mathematical definitions. "1:1" means literal structural correspondence, not just "inspired by."
 - We use `debug_assert!`, `assert!`, and `proptest` to empirically validate mathematical lemmas and intermediate propositions extracted from proofs.
 
-The following types of work MUST NOT be carried out by Claude Code, and MUST be assigned to Jörn instead:
+There are several types of work that MUST NOT be carried out by Claude Code, and MUST be assigned to Jörn instead.
 
 **3. Verification of written proofs**
 
@@ -232,15 +232,15 @@ Spawn a subagent when a subtask can run in parallel, needs isolated context, or 
 
 ### Meta-rules
 
-**The core rule:** Never write a factual claim without verifying it against evidence in the same session. "The code cross-checks X" requires reading the code and confirming the cross-check exists. "The data shows Y" requires reading the data. When verification is impossible, mark with `% [TODO: JÖRN -` or `% [GAP -`. Violating this rule is the single most damaging failure mode — it wastes Jörn's time and erodes trust.
+**The core rule:** Never write a factual claim without verifying it against evidence in the same session. "The code cross-checks X" requires reading the code and confirming the cross-check exists. "The data shows Y" requires reading the data. When verification is impossible, mark with `% [TODO: JÖRN -` or `% [GAP -`. Violating this rule is the single most damaging failure mode — it spreads across the whole thesis when others rely on a false claim, and then wastes a lot of Jörn's time that's needed to identify other downstream issues and to redo work based on the false claim.
 
 **Why rules get ignored:**
-1. Too many rules active at once — agent working memory overflows, rules silently drop
-2. Contradictions between rules — agent picks one arbitrarily
-3. Rules conflict with agent defaults — defaults win silently
-4. Rules not actionable — agent interprets loosely
+1. Too many rules active at once — agents cannot apply them all at once, so only the rules that stand out get applied, and not the rules that would be relevant for the current task
+2. Contradictions between rules — agents ignore both and fall back to default behavior
+3. Rules conflict with agent defaults — defaults win silently sometimes, instead different rules should be chosen to adapt to the agent's strengths and weaknesses
+4. Rules not actionable — agents do not apply too abstract rules during execution stages, so either the agents or the CLAUDE.md authors need to turn the abstract rules into actionable cognitive and behavioral patterns which the agents can follow even when focused on execution
 
-**Mitigation: subagent-based rule enforcement.** We cannot use progressive disclosure (one CLAUDE.md, no rule hierarchy). Instead, outsource rule checking to subagents:
+**Mitigation: subagent-based rule enforcement.** We cannot use progressive disclosure to reduce the number of active rules. So instead we use subagents that focus on one cluster of conventions at a time, and the main agent will be told about violations and thereby focus on the rules that measurably matter for the current task.
 
 - **Pre-delivery verification:** Before presenting a deliverable to Jörn, spawn a Sonnet subagent with (a) the relevant CLAUDE.md convention sections and (b) the deliverable. The subagent checks every factual claim against evidence and every applicable convention. Fix all issues before presenting to Jörn. This is mandatory for .tex deliverables and recommended for all deliverables.
 - **Plan subagent conventions:** Conventions about up-front planning, scope discipline, and minimizing Jörn's time (e.g., Roles sections 1 and 5, Session workflow, Decision authority) should be injected into Plan subagent prompts. The planning agent is a natural enforcement point for these rules since it runs before implementation begins.
@@ -250,19 +250,30 @@ Spawn a subagent when a subtask can run in parallel, needs isolated context, or 
 
 ### Plan workflow
 
-Conventions for the Plan subagent (overrides default `/plan`):
-- Prefer forgiveness over permission — worktrees are cheap, previous commits can be cherry-picked, worktrees can be abandoned
-- Present findings in skimmable progressive-disclosure format
-- Don't force Jörn to investigate or switch context for follow-ups the agent could answer itself
+Conventions for planning together with Jörn (subagent overrides default `/plan`):
+
+Save Jörn's time:
+- Obtain findings upfront -- Jörn can decide faster if he has access to e.g. the data produced by a refined and carried out experiment, instead of just the experiment's initial armchair design.
+- Present findings in a skimmable progressive-disclosure format -- Jörn can skip details and focus on what he judges relevant to his assigned task, e.g. to a question the agent asked Jörn
+- Pre-empt follow-up investigations -- Jörn has some overhead from frequent context switching, so ideally the agent does not do a slow back-and-forth with minute-long interruptions, but instead moves work forward to be able to react to Jörn's requests and questions immediately
+- Provide session context after pauses in the discussion -- Jörn is switching between multiple agent sessions, and does not monitor what agents do or say, or what their task assignment was, until he enters an active discussion again.
 - Check scope against Roles §1 and §5 before finalizing
+
+Track where task scope comes from:
+- The root terminal goal is thesis success
+- Convergent instrumental goals like rule adherence, best practices, and minimizing Jörn's time are omnipresent
+- There are usually open-scope ideas that are floated during planning, which can expand the session scope
+- Some goals are closed-scoped and concretize how to achieve some other closed-scoped or open-scoped goal
+- Keeping track of why some plan element was picked over what alternatives is necessary to later adapt the plan once empirical or process-related feedback comes in
 
 ### Review workflow
 
 Orchestrates review subagents based on changed files:
-1. Pick relevant subagents from `git diff main...HEAD --name-only`
+1. Pick relevant subagents, e.g. based on `git diff main...HEAD --name-only`
 2. Run them in parallel
 3. Merge findings into one report
-4. Address findings before presenting to Jörn
+4. Address findings and carry out follow up investigations
+5. Present to Jörn
 
 ## Git
 
@@ -848,7 +859,6 @@ No clear cutoff for "when to archive". It's continuous prioritization:
 
 ```
 experiments/
-  CLAUDE.md              This file
   Cargo.toml             Builds all experiment Rust binaries (depends on symplectic crate)
   reproduce.sh           Source of truth for full pipeline (zero data → thesis PDF)
   IDEAS.md               Ongoing thoughts, ideas, edge cases, preliminary findings
@@ -940,9 +950,8 @@ Rust binary → .jsonl → Python script → figures/tables → thesis
 
 **Why:** Worktrees inherit data immediately, changes are visible in diffs.
 
-<!-- CONTRADICTION: The root "Data regeneration and commits" section says "Regenerate on the branch
-     that changes the code." The experiments convention below says "On branches: Do NOT regenerate
-     data." Jörn: which is correct? -->
+<!-- TODO JÖRN: CONTRADICTION between Git section ("Regenerate on the branch that changes the code",
+     line ~300) and here ("On branches: Do NOT regenerate data"). Which is correct? -->
 
 **Regeneration convention:**
 - **On branches:** Do NOT regenerate data (avoid merge conflicts)
@@ -982,9 +991,8 @@ Rust binary → .jsonl → Python script → figures/tables → thesis
 
 ## Environment
 
-- Sessions run in a devcontainer with the repo at `/workspaces/msc-math` and worktrees at `/workspaces/worktrees/<name>`.
-  - Create: `.devcontainer/worktree-new.sh <path> <branch>` (fetches, hydrates deps)
-  - Remove: `.devcontainer/worktree-remove.sh <path>` (safe removal with diagnostics)
+- Sessions run in a devcontainer with the repo at `/workspaces/msc-math`.
+  - Worktrees: use `--worktree` flag or `EnterWorktree` tool. Hooks in `.claude/hooks/` override defaults to branch from local `main`. Worktrees land at `.claude/worktrees/<name>/`.
 - Pre-installed: Rust 1.93 (cargo, clippy), Python 3.11 (pytest, ruff, mypy, black), gh CLI (via post-create hook)
 - LaTeX: TeX Live 2023 (pdflatex, xelatex, lualatex), latexmk, biber, chktex
 
