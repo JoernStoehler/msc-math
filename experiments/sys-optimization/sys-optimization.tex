@@ -5,6 +5,7 @@
 % Sources:
 %   - Generated data: experiments/sys-optimization/sys-optimization-sensitivity.jsonl
 %   - Generated data: experiments/sys-optimization/sys-optimization-steps.jsonl
+%   - Generated data: experiments/sys-optimization/sys-optimization-iterations.jsonl
 %   - Plot script: experiments/sys-optimization/sys_optimization.py
 %   - Experiment notes: experiments/sys-optimization/README.md
 %
@@ -14,6 +15,7 @@
 %   - Step bound algorithm
 %   - Sensitivity analysis (Phase 1)
 %   - Finite gradient steps (Phase 2)
+%   - Iterative gradient ascent (Phase 3)
 %   - Discussion
 
 \subsection{Sensitivity Analysis and Gradient Optimization of sys}
@@ -393,51 +395,95 @@ Overall, 129/140 polytopes improve under $(h,n)$ steps, compared to
 The best $\mathrm{sys}$ achieved is~$0.805$, starting from a polytope
 with $\mathrm{sys} = 0.758$ (a random $4 \times 5$ Lagrangian product).
 
+\subsubsection*{Phase 3: Iterative Gradient Ascent}
+
+Phases~1--2 evaluated single gradient steps from fixed starting polytopes.
+Phase~3 iterates: after each gradient step, we recompute HK2017 on the
+resulting polytope, compute the new gradient, and take another step.
+This allows the procedure to navigate across orbit switches and exploit
+the piecewise-smooth structure of $\mathrm{sys}$.
+
+At each iteration, we evaluate all 5 step fractions
+$\{0.1, 0.25, 0.5, 0.75, 0.95\} \cdot t_{\max}$ for both the $h$-only
+and $(h,n)$ directions, and select the step with the highest resulting
+$\mathrm{sys}$.
+Iteration stops when the improvement drops below $10^{-6}$, no step
+improves $\mathrm{sys}$, or 20 iterations are reached.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{../experiments/sys-optimization/sys_optimization_convergence.png}
+\caption{Left: convergence trajectories of $\mathrm{sys}$ under iterative
+  gradient ascent, colored by final $\mathrm{sys}$.
+  Right: per-step improvement $\Delta\mathrm{sys}$ (symlog scale).
+  Most polytopes converge within 5--10 iterations.}
+\label{fig:sys-opt-convergence}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{../experiments/sys-optimization/sys_optimization_iteration_summary.png}
+\caption{Left: distribution of iteration counts (mean 6.3).
+  Center: starting vs.\ final $\mathrm{sys}$ (most polytopes improve substantially).
+  Right: step type usage across all 868 iterations --- $(h,n)$ steps are
+  selected 58\% of the time.}
+\label{fig:sys-opt-iteration-summary}
+\end{figure}
+
+Iteration produces a substantial cumulative improvement:
+the mean cumulative $\Delta\mathrm{sys}$ is $0.149$, roughly $3\times$
+the single-step improvement of Phase~2.
+The best $\mathrm{sys}$ after iteration reaches~$0.878$
+(up from $0.758$ before optimization and $0.805$ after a single step).
+All 138 iterated polytopes converge (2 polytopes admit no improving step
+from their starting point).
+
+Across all iterations, $(h,n)$ steps are selected 58\% of the time
+(506 out of 868 steps).
+The preference for $(h,n)$ steps is strongest in early iterations when
+normal perturbations provide large improvements, and shifts toward
+$h$-only steps near convergence as the $\omega_0$ sign constraints
+become more binding.
+
 \subsubsection*{Discussion}
 
-No single gradient step pushes $\mathrm{sys}$ past~$1$.
-The best result ($\mathrm{sys} \approx 0.80$) remains well below the
-Viterbo threshold, though it exceeds the maximum
+Iterative gradient ascent does not push $\mathrm{sys}$ past~$1$.
+The best result ($\mathrm{sys} \approx 0.88$) remains below the
+Viterbo threshold, though it substantially exceeds the maximum
 $\mathrm{sys} \approx 0.76$ found by random sampling alone.
 
 Three structural observations:
 \begin{enumerate}
 \item \emph{The gradient is never zero.}
-  None of the 140 polytopes is a critical point of $\mathrm{sys}$ under
-  $(h,n)$ changes. Every polytope admits a direction of improvement.
-  This is the expected outcome for generic polytopes: local maxima of
-  $\mathrm{sys}$ form a measure-zero subset of the parameter space,
-  since $\mathrm{sys}$ depends analytically on $(h,n)$ (within each
-  combinatorial type) and is not locally constant.
-  The interesting question is not whether the gradient is zero, but
-  how far directed steps can push $\mathrm{sys}$.
+  None of the 140 starting polytopes is a critical point of $\mathrm{sys}$
+  under $(h,n)$ changes. Every polytope admits a direction of improvement.
+  After iteration, 138/140 polytopes converge to points where no
+  further gradient step (within the combinatorial type) improves
+  $\mathrm{sys}$ by more than~$10^{-6}$, but this reflects convergence
+  of the greedy method, not stationarity of~$\mathrm{sys}$.
 
 \item \emph{Normal perturbations provide additional improvement.}
-  The $(h,n)$ step is better than height-only for 68\% of polytopes,
-  with 59\% larger mean improvement.
+  In both single-step (Phase~2) and iterative (Phase~3) settings,
+  $(h,n)$ steps outperform height-only.
+  In Phase~3, $(h,n)$ steps are selected 58\% of the time.
   The normal gradient is large (reflecting the direct influence of
   facet normals on the Reeb dynamics), but the allowable step size
   is small (constrained by $\omega_0$ sign preservation).
   The net effect is a moderate but consistent advantage over
   height-only steps.
 
-\item \emph{Orbit switching limits finite steps.}
-  As shown in Proposition~\ref{prop:capacity-piecewise-smooth}(d),
-  a different orbit may become the minimizer after a finite step.
-  For higher facet counts ($F \ge 8$), the step bound
-  $t_{\max}$ is typically small ($< 1$), further limiting per-step
-  improvement.
+\item \emph{Iteration produces substantial cumulative improvement.}
+  The mean cumulative $\Delta\mathrm{sys}$ of $0.149$ is ${\sim}3\times$
+  the single-step improvement ($0.054$), showing that the iterative
+  procedure successfully navigates across orbit switches.
+  However, the improvement rate decreases rapidly: most of the gain
+  occurs in the first 3--5 iterations.
 \end{enumerate}
 
 \emph{Limitations and extensions.}
-The single-step gradient heuristic used here is deliberately simple:
-it uses the local gradient with a step size bounded by combinatorial
-type preservation. Several extensions could push $\mathrm{sys}$ further:
+The greedy gradient ascent used here preserves the combinatorial type at
+each step. Several extensions could push $\mathrm{sys}$ further:
 \begin{itemize}
-\item \emph{Iterative steps.}
-  After each gradient step, recompute HK2017 on the new polytope and
-  take another step. This would navigate across orbit switches and
-  exploit the piecewise-smooth structure of $\mathrm{sys}$.
 \item \emph{Large steps beyond the gradient regime.}
   Taking steps larger than $t_{\max}$ (accepting a combinatorial type
   change) and recomputing $\mathrm{sys}$ from scratch.
@@ -448,4 +494,9 @@ type preservation. Several extensions could push $\mathrm{sys}$ further:
   so small height changes affect only $\mathrm{vol}$.
   However, large decreases in $h_k$ could trigger an orbit switch to a
   better orbit, combining volume reduction with capacity improvement.
+\item \emph{Gradient validity testing.}
+  Empirically characterizing the radius within which the computed
+  gradient accurately predicts $\mathrm{sys}$ changes under random
+  perturbations, and how frequently the combinatorial-type-preserving
+  conditions are met.
 \end{itemize}
