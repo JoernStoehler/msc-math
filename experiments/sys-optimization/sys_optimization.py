@@ -75,7 +75,9 @@ def plot_gradient_histogram(sens_rows: list[dict], output_path: Path) -> None:
 
     # Signed histogram (linear scale), bins centered on zero
     extent = max(abs(all_grads.min()), abs(all_grads.max()))
-    bin_edges = np.linspace(-extent, extent, 51)
+    n_bins = 50
+    bin_width = 2 * extent / n_bins
+    bin_edges = np.arange(-extent - bin_width / 2, extent + bin_width, bin_width)
     ax1.hist(all_grads, bins=bin_edges, color="#3b6ea8", alpha=0.75, edgecolor="white")
     ax1.axvline(x=0, color="black", linewidth=0.8, alpha=0.5)
     ax1.set_xlabel(r"$\partial\,\mathrm{sys}\,/\,\partial\log h_k$")
