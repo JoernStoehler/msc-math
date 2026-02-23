@@ -74,6 +74,12 @@ experiments/target/release/lagrangian_sweep
 experiments/target/release/unknown_predicates
 # → experiments/unknown-predicates/unknown-predicates.jsonl
 
+# Sys-optimization: sensitivity analysis + gradient steps (F≤10, ~30s)
+# Depends on: random-sweep and random-product-sweep JSONL (must run those first)
+experiments/target/release/sys_optimization
+# → experiments/sys-optimization/sys-optimization-sensitivity.jsonl
+# → experiments/sys-optimization/sys-optimization-steps.jsonl
+
 # ── Step 2: Generate figures and tables ──────────────────────────────────────
 # Python scripts read .jsonl from their experiment folder, write figures/tables
 # to the same folder.
@@ -109,6 +115,13 @@ python3 experiments/lagrangian-products/lagrangian_products.py
 # Unknown predicates: beta_min histogram
 python3 experiments/unknown-predicates/unknown_predicates.py
 # → experiments/unknown-predicates/unknown_predicates_beta_min.png
+
+# Sys-optimization: gradient histograms + improvement scatter + stats table
+python3 experiments/sys-optimization/sys_optimization.py
+# → experiments/sys-optimization/sys_optimization_gradient_hist.png
+# → experiments/sys-optimization/sys_optimization_favorable.png
+# → experiments/sys-optimization/sys_optimization_improvement.png
+# → experiments/sys-optimization/sys_optimization_stats.tex
 
 # ── Step 3: Visualization screenshots ────────────────────────────────────────
 # Automated via Playwright (headless Chrome). Requires: npm install playwright.

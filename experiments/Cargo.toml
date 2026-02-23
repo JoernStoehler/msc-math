@@ -43,6 +43,10 @@ path = "visualization/viz_export.rs"
 name = "unknown_predicates"
 path = "unknown-predicates/unknown_predicates.rs"
 
+[[bin]]
+name = "sys_optimization"
+path = "sys-optimization/sys_optimization.rs"
+
 [dependencies]
 symplectic = { path = "../crates" }
 nalgebra = "0.33"
