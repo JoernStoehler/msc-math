@@ -113,23 +113,79 @@ Since $A = 1/(2Q)$, the chain rule gives
 $\partial A/\partial h_k = -(\partial Q^*/\partial h_k) / (2\,(Q^*)^2) = \nu\,\beta_{i_0}^* / (2\,(Q^*)^2)$.
 \end{proof}
 
-\begin{remark}[Degeneracy and orbit switching]
-\label{rem:orbit-switching}
-The EHZ capacity is $c_{\mathrm{EHZ}}(h) = \min_{(S,\sigma)} A(S,\sigma;h)$.
-Each orbit's action $A(S,\sigma;\cdot)$ is a smooth function of $h$
-(by the envelope theorem, as long as the KKT problem for that orbit is
-non-degenerate). The capacity, being a minimum of smooth functions, is
-continuous but generally only piecewise smooth: it is smooth on regions
-where the minimizing orbit is unique, and non-smooth at boundaries where
-two orbits achieve the same minimum action.
+\begin{proposition}[Capacity as piecewise-smooth function of heights]
+\label{prop:capacity-piecewise-smooth}
+Let $K(h)$ be a polytope with fixed normals and variable heights~$h$.
+\begin{enumerate}
+\item[\textup{(a)}]
+  \emph{Combinatorial type stability.}
+  For each $h_0$ such that $K(h_0)$ is a polytope, the vertex-facet
+  incidence graph is locally constant: there exists $\varepsilon > 0$ such that
+  $K(h)$ has the same combinatorial type for all $\|h - h_0\| < \varepsilon$.
+  In particular, the set of valid orbit nodes $(S,\sigma)$ surviving
+  the HK2017 pruning is constant in this neighborhood.
 
-At such boundaries the capacity derivative has a one-sided discontinuity:
-the gradient computed from the current minimizer may not predict the
-behavior of $c_{\mathrm{EHZ}}$ after a finite step, because a different
-orbit may become the new minimizer. This \emph{orbit switching} is
-structural to the piecewise-smooth optimization problem and is observed
-in our dataset (some polytopes worsen despite a favorable gradient).
-\end{remark}
+\item[\textup{(b)}]
+  \emph{Per-orbit smoothness.}
+  Fix an orbit $(S,\sigma)$ whose KKT problem has a unique non-degenerate
+  maximum. Then the action $A(S,\sigma;\cdot)$ is smooth in~$h$,
+  with derivative given by Lemma~\ref{lem:cap-derivative}.
+
+\item[\textup{(c)}]
+  \emph{Capacity at generic heights.}
+  The capacity $c_{\mathrm{EHZ}}(h) = \min_{(S,\sigma)} A(S,\sigma;h)$
+  is continuous.
+  At heights where the minimizing orbit is unique, $c_{\mathrm{EHZ}}$ is
+  differentiable with gradient given by that orbit's envelope theorem
+  formula. This is the generic case: having two orbits with equal action
+  is a codimension-$1$ condition in height space.
+
+\item[\textup{(d)}]
+  \emph{Capacity at orbit-switching boundaries.}
+  When $r \ge 2$ orbits $(S_1,\sigma_1),\dots,(S_r,\sigma_r)$ achieve
+  the minimum action simultaneously, the capacity is non-smooth.
+  The directional derivative in direction~$d$ is
+  \[
+    D_d\,c_{\mathrm{EHZ}}(h)
+    = \min_{i=1,\dots,r} \nabla_h A(S_i,\sigma_i;h) \cdot d,
+  \]
+  i.e.\ the most pessimistic rate of change among the tied orbits.
+  Stepping in a direction where a \emph{different} orbit gives the
+  minimum rate can cause the actual capacity to deviate from the
+  prediction based on the current minimizer (\emph{orbit switching}).
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}[Proof sketch]
+(a) The vertices of $K(h)$ depend continuously on~$h$ (they are solutions
+of $4 \times 4$ linear systems in the normals and heights). Vertex-on-facet
+incidence $n_j \cdot v = h_j$ is an open condition to violate, so it
+persists under small perturbations.
+(b) Follows from the envelope theorem applied to the KKT problem, whose
+optimum is locally unique and smooth by the implicit function theorem.
+(c) Continuity: $\min$ of continuous functions.
+Differentiability: when the minimizer is unique, $c_{\mathrm{EHZ}} =
+A(S^*,\sigma^*;\cdot)$ locally, hence smooth by~(b).
+The codimension-$1$ claim follows because $A(S_1,\sigma_1;h) = A(S_2,\sigma_2;h)$
+is generically a single equation in $F$ unknowns.
+(d) Standard result for the directional derivative of a pointwise minimum
+of smooth functions.
+\end{proof}
+
+\emph{Validity of the single-orbit gradient.}
+In our experiment, we compute $\nabla_h\,c_{\mathrm{EHZ}}$ using only
+the current minimizing orbit. By Proposition~\ref{prop:capacity-piecewise-smooth}(c),
+this is exact whenever the minimizer is unique.
+When the runner-up gap $\Delta = A_{\mathrm{runner\text{-}up}} - A_{\mathrm{best}}$
+is positive, the gradient remains valid for step sizes~$t$ small enough
+that no orbit switch occurs, roughly $t \lesssim \Delta / |\text{rate difference}|$.
+In our dataset, 73 of 132 multi-orbit polytopes (55\%) have a relative gap
+$\Delta/A > 10^{-3}$, and 126 of 140 polytopes improve after a finite step,
+suggesting that the single-orbit gradient is a reliable heuristic for
+moderate step sizes.
+Among the 14 polytopes that do not improve, most either sit at an
+orbit-switching boundary ($\Delta \approx 0$) or have improvements
+below numerical noise ($|\Delta\,\mathrm{sys}| < 10^{-9}$).
 
 \emph{Systolic ratio derivative.}
 The chain rule gives
@@ -237,9 +293,10 @@ Two structural observations:
   global optimum or toward a boundary of the feasible region.
 
 \item \emph{Orbit switching limits finite steps.}
-  As noted in Remark~\ref{rem:orbit-switching}, a different orbit may
-  become the minimizer after a finite step, causing the actual
-  $\mathrm{sys}$ change to differ from the gradient's prediction.
+  As shown in Proposition~\ref{prop:capacity-piecewise-smooth}(d),
+  a different orbit may become the minimizer after a finite step,
+  causing the actual $\mathrm{sys}$ change to differ from the
+  gradient's prediction.
   For higher facet counts ($F \ge 8$), the step bound
   $t_{\max}$ before a combinatorial type change is typically small
   ($t_{\max} < 1$), further limiting per-step improvement.
