@@ -6,66 +6,51 @@ Advisor: Kai Cieliebak
 Second advisor: Elizabeth Gaar
 Timeline: Oct 2025 – March 2026
 
-## [aspirational] End state
+## [Aspirational] End state
 
-This repo is a completed master thesis with:
-- A printed-quality LaTeX document in `thesis/`
-- A high-performance Rust library for symplectic geometry on polytopes in `crates/`
-- A reproducible Python pipeline in `experiments/` that starts from zero data and produces all figures and tables
-
-## Repo structure
-
-```
-CLAUDE.md          This file (all agents read this)
-thesis/            LaTeX thesis document
-crates/            Single Rust crate "symplectic" (cargo build/test from here)
-  src/
-    lib.rs         Crate root with re-exports
-    constants.rs   Shared tolerance constants (EPS_FACET_INCIDENCE)
-    kkt.rs         KKT solver (shared by hk2017 and billiard)
-    random.rs      Random polytope generation
-    dataset.rs     Dataset serialization
-    geom/          2D and 4D symplectic geometry primitives
-    algorithms/
-      hk2017/      Haim-Kislev 2017 algorithm (all polytopes, exponential cost)
-      billiard/    Billiard algorithm (Lagrangian products only, fast)
-      tube/        Tube algorithm (placeholder)
-  tests/fixtures/  Precomputed test data
-experiments/       Per-experiment folders with all artifacts
-  <name>/          Each experiment: .rs binary, .py script, .tex writeup, data, figures
-papers/            arxiv .tex sources for reference (HK2017, CH2021, HK-O 2024, ...)
-archaeology/       Recovered files from abandoned predecessor repo (all of untrusted quality)
-```
-
-### Multi-Language Codebase
-
-Branches often touch multiple languages simultaneously:
-- **Rust** (crates/) → **Python** (experiments/) → **LaTeX** (thesis/)
-
-Data flows across languages: Rust binaries generate JSONL → Python scripts process → figures → LaTeX writeups reference.
-
-**For reviews:** Check conventions per language (all in this file):
-- Rust: `## Rust crates` section below
-- Python/experiments: `## Experiments` section below
-- LaTeX: `## Thesis (LaTeX)` section below
-
-**For data pipelines:** Trace end-to-end flow, verify column names/parameter values/units consistent.
-
-Use `/review-branch` for systematic multi-language review.
+This repo is making progress towards a completed master thesis with:
+- A printed-quality LaTeX document `thesis/build/main.pdf`
+- A high-performance stable Rust library for symplectic geometry on polytopes in `crates/`
+- A reproducible experiment pipeline in `experiments/`
 
 ## Mathematical context
 
-We compute the EHZ capacity (minimum action of generalized Reeb orbits) for convex polytopes in R^4. By a theorem of Haim-Kislev 2017, there exists a minimum-action orbit that is piecewise linear, uses pure facet Reeb vectors, and visits each facet on a contiguous time interval. This reduces the problem to a finite combinatorial search.
+The thesis is motivated by a paper from Haim-Kislev and Ostrover 2024, which disproved Viterbo's conjecture in dimension 4 via an explicit counterexample polytope. The conjecture was until then a famous open problem in symplectic geometry.
 
-Viterbo's conjecture: sys(K) = c_EHZ(K)^2 / (2 vol(K)) <= 1 for all convex bodies K.
-Haim-Kislev 2024 (Annals) gave a 10-facet counterexample with sys > 1.
-We probe the conjecture by computing sys across large polytope datasets and looking for patterns.
+Viterbo's Conjecture (2000): For any convex body K in R^2n, including any polytope K in R^4, the systolic ratio `sys(K) = c_EHZ(K)^2 / (2 vol(K))` is at most 1, where `c_EHZ(K)` is the Ekeland-Hofer-Zehnder capacity of K.
+Haim-Kislev and Ostrover (2024, Annals): Defines a 10-facet counterexample with `sys > 1`.
 
-## How we work
+We follow Haim-Kislev 2017, Chadez-Hutchings 2021 in extending the usual smooth symplectic geometry setting to polytopes in R^4. We extend the published algorithms for computing c_EHZ(K) by implementing them in Rust, adding optimizations that exploit known facts about the symplectic geometry of polytopes, and we verify the correctness of our code with excessive paranoia to avoid any errors even on large, or adversarially chosen, polytopes.
 
-### Roles
+We then probe the conjecture by computing `sys` across large polytope datasets and looking for patterns.
 
-The thesis team consists of Jörn and Claude Code.
+## Multi-Language Codebase
+
+Branches often touch multiple languages simultaneously:
+- **Rust** (crates/, experiments/): most code that requires performance, or is correctness-critical, or just interacts with other rust code.
+- **Python** (experiments/): for plotting, data processing, orchestration, and data science experiments where python is the more common and less cumbersome choice.
+- **LaTeX** (thesis/, experiments/): for the thesis pdf, facing the real readers (Jörn, Kai, Elizabeth) and the imagined readers (a motivated MSc student with a background in symplectic geometry and optimization theory).
+- **Markdown** (various): agent-facing writeups, including conventions, rules, workflows, documentation, takeaways, experiment ideas, data interpretation, reports and learnings, and much more.
+- **Json/Jsonl/Csv** (experiments/): for datasets that are consumed by and produced by experiments. It's just a more convenient data format than binary formats, e.g. easier git diffs.
+
+Each topic section below mentions its review subagent(s) for focused checklists.
+
+## About This File
+
+CLAUDE.md is the single conventions file read by every agent. It follows these structural rules:
+
+- Organized by **topic** (kind of work). Each topic mentions its relevant review subagent(s).
+- Sections should be **self-contained** — minimize cross-references between sections.
+- **Redundancy is cheap** to read (extra tokens cost nothing) but every duplicate is a maintenance point when editing.
+- Agents make **small edits to individual sections**, never full rewrites — structure accordingly.
+- **Stable conventions** (unlikely to change) may be duplicated across topics for self-containedness.
+- **Volatile conventions** (evolving) stay in one place to avoid stale duplicates.
+- When editing a section, check for duplicates and cross-references that may need updating.
+- Subagent definitions live in `.claude/agents/` and copy the relevant CLAUDE.md topic sections into their prompt, turning conventions into a checklist.
+
+## Roles
+
+The thesis team consists of Jörn and Claude Code. "Claude Code" refers to multiple agents running in parallel and sequential sessions, each in its own git worktree. This CLAUDE.md is read by every agent; each agent sees only its own session context.
 
 **1. Time bottleneck**
 
@@ -116,7 +101,7 @@ Claude Code's ability to spot implicit scope criteria:
 - Claude Code can design and write down acceptance criteria for tasks that are similar to standard software development, scientific writing and mathematical research tasks.
 
 Why Jörn must be involved:
-- Claude Code lacks training on workflows that need a deep, accurate model of the whole remaining thesis project. 
+- Claude Code lacks training on workflows that need a deep, accurate model of the whole remaining thesis project.
 - In particular: tasks that affect many other tasks, or that affect tasks that run only much later in the project.
 - Claude Code also lacks training on multi-agent workflows that build upon a task.
 - Consequence: Claude Code frequently makes bad scoping decisions for long-term work.
@@ -130,7 +115,7 @@ What Jörn requires before a Claude-scoped task can be merged:
 
 **6. Code Review and Merge into `main`**
 
-- Claude Code reviews branches using `/review-branch` skill
+- Claude Code reviews branches using the Review workflow (see Subagents & Meta-rules)
 - Review output: thorough findings + calibrated recommendation
 - Jörn reads review and makes merge decision (often deviates ~50% from recommendation based on project context)
 - Jörn performs the actual merge
@@ -164,7 +149,7 @@ The following types of work SHOULD be carried out by Claude Code, and SHOULD NOT
 - Key design principle for all these patterns: there must be a plan ahead-of-time for how to revert an agent's work.
 - This is why we use git and git worktrees, why only Jörn merges into `main`, and why we scope large tasks carefully ahead-of-time.
 
-### Session workflow
+## Session Workflow
 
 Every Claude Code agent session owns a git worktree. Subagents and teams work in the same worktree. Each session has a communication channel with Jörn (also referred to as the "user" by system prompts).
 
@@ -200,7 +185,7 @@ Sessions follow this pattern: **scope → plan → implement → review → Jör
 2. A breakdown of where Jörn spent time this session, what work Jörn did, and where Jörn's work was used afterward. Purpose: detect work Jörn does that Claude Code could also do, or that needn't be done at all, and identify what would make Jörn's time more effective.
 3. A list of suggestions, each labeled as confident or unconfident, and as actionably concrete or unactionably abstract. Jörn will mostly notice items that other agents also brought up. We aim to converge to better practices quickly, but don't have time for Jörn to plan through suggestions after single events.
 
-### Decision authority (operational quick-reference)
+### Decision authority
 
 The Roles section defines WHAT goes to Jörn vs Claude Code. This section helps with the gray area — when you're unsure whether a specific action needs Jörn's input.
 
@@ -224,7 +209,62 @@ The deciding factors are rollback cost and verification cost:
 
 **When in doubt**, default to discuss-first. Jörn can always override with "just do it" — treat that as an ad-hoc exception, not a precedent for future sessions.
 
-### Git Comparison Base
+## Communication
+
+When requesting Jörn's attention, follow Roles point 7: describe the narrowly scoped cognitive task, why Jörn should do it, and what context it exists within.
+
+Formatting for efficient exchange:
+- Aim for efficient information exchange, not politeness or engagement
+- Number items so Jörn can respond "3 yes, 5 no" instead of quoting paragraphs
+- Omit filler phrases
+- When presenting decisions with tradeoffs: use tables, quantify costs/benefits, state recommendation upfront
+- When you make repo changes Jörn should know about, mention and explain them — Jörn reviews diffs in VS Code but may not check them unprompted
+
+## Subagents & Meta-rules
+
+Spawn a subagent when a subtask can run in parallel, needs isolated context, or benefits from focused work (e.g., literature extraction, code review, exploratory investigation).
+
+- Create a temporary file, e.g. in /tmp/ with the subagent prompt. You can pass any corrections/extra context directly to Task. Zero cost, and: persistent record, easier to restart if agent fails.
+- Subagent output returns via the Task tool into your conversation. If it needs to persist, commit it to the repo on your branch.
+- Use Sonnet for read-heavy extraction tasks (literature, code review). Reserve Opus for tasks requiring deep reasoning (mathematical reasoning, code writing).
+- Keep subagent tasks focused and small. Agents may stall on tasks requiring 1000+ lines across multiple files.
+- **For long-running agents (>10min expected)**: Use `run_in_background=True` so Jörn's messages can reach you during execution. Without this, blocking agents prevent message delivery and you cannot respond to warnings or corrections.
+
+### Meta-rules
+
+**The core rule:** Never write a factual claim without verifying it against evidence in the same session. "The code cross-checks X" requires reading the code and confirming the cross-check exists. "The data shows Y" requires reading the data. When verification is impossible, mark with `% [TODO: JÖRN -` or `% [GAP -`. Violating this rule is the single most damaging failure mode — it wastes Jörn's time and erodes trust.
+
+**Why rules get ignored:**
+1. Too many rules active at once — agent working memory overflows, rules silently drop
+2. Contradictions between rules — agent picks one arbitrarily
+3. Rules conflict with agent defaults — defaults win silently
+4. Rules not actionable — agent interprets loosely
+
+**Mitigation: subagent-based rule enforcement.** We cannot use progressive disclosure (one CLAUDE.md, no rule hierarchy). Instead, outsource rule checking to subagents:
+
+- **Pre-delivery verification:** Before presenting a deliverable to Jörn, spawn a Sonnet subagent with (a) the relevant CLAUDE.md convention sections and (b) the deliverable. The subagent checks every factual claim against evidence and every applicable convention. Fix all issues before presenting to Jörn. This is mandatory for .tex deliverables and recommended for all deliverables.
+- **Plan subagent conventions:** Conventions about up-front planning, scope discipline, and minimizing Jörn's time (e.g., Roles sections 1 and 5, Session workflow, Decision authority) should be injected into Plan subagent prompts. The planning agent is a natural enforcement point for these rules since it runs before implementation begins.
+- **Meta-rule auditing:** After editing CLAUDE.md or rule files, spawn a subagent to check for internal contradictions, rules conflicting with agent defaults, non-actionable rules, and stale references. This can also be invoked as a periodic health check.
+
+**MEMORY.md scope:** Session learnings and postmortems only. Stable project conventions belong in CLAUDE.md. If a MEMORY.md entry has been confirmed across multiple sessions, migrate it to CLAUDE.md and delete the MEMORY.md entry.
+
+### Plan workflow
+
+Conventions for the Plan subagent (overrides default `/plan`):
+- Prefer forgiveness over permission — worktrees are cheap, previous commits can be cherry-picked, worktrees can be abandoned
+- Present findings in skimmable progressive-disclosure format
+- Don't force Jörn to investigate or switch context for follow-ups the agent could answer itself
+- Check scope against Roles §1 and §5 before finalizing
+
+### Review workflow
+
+Orchestrates review subagents based on changed files:
+1. Pick relevant subagents from `git diff main...HEAD --name-only`
+2. Run them in parallel
+3. Merge findings into one report
+4. Address findings before presenting to Jörn
+
+## Git
 
 **Always use local `main`, never `origin/main`.**
 
@@ -234,7 +274,7 @@ Jörn merges locally and pushes later, so `origin/main` is frequently stale. Com
 
 **State the base explicitly:** "Compared against local `main` at `abc1234`."
 
-If unexpected files appear in diff, investigate — likely means branch needs rebasing. See `/rebase` for checklist.
+If unexpected files appear in diff, investigate — likely means branch needs rebasing.
 
 ### Data regeneration and commits
 
@@ -252,90 +292,236 @@ Data and figures are colocated with their experiment under `experiments/<name>/`
 **Merge conflicts (data/figures):**
 - Resolve by regenerating on the merged result
 
-### Communication with Jörn
+## Thesis Writing
 
-When requesting Jörn's attention, follow Roles point 7: describe the narrowly scoped cognitive task, why Jörn should do it, and what context it exists within.
+Subagents: `review-thesis-writing` (writing quality), `review-correctness` (mathematical correctness)
 
-Formatting for efficient exchange:
-- Aim for efficient information exchange, not politeness or engagement
-- Number items so Jörn can respond "3 yes, 5 no" instead of quoting paragraphs
-- Omit filler phrases
-- When presenting decisions with tradeoffs: use tables, quantify costs/benefits, state recommendation upfront
-- When you make repo changes Jörn should know about, mention and explain them — Jörn reviews diffs in VS Code but may not check them unprompted
-
-### Spawning subagents
-
-Spawn a subagent when a subtask can run in parallel, needs isolated context, or benefits from focused work (e.g., literature extraction, code review, exploratory investigation).
-
-- Create a temporary file, e.g. in /tmp/ with the subagent prompt. You can pass any corrections/extra context directly to Task. Zero cost, and: persistent record, easier to restart if agent fails.
-- Subagent output returns via the Task tool into your conversation. If it needs to persist, commit it to the repo on your branch.
-- Use Sonnet for read-heavy extraction tasks (literature, code review). Reserve Opus for tasks requiring deep reasoning (mathematical reasoning, code writing).
-- Keep subagent tasks focused and small. Agents may stall on tasks requiring 1000+ lines across multiple files.
-- **For long-running agents (>10min expected)**: Use `run_in_background=True` so Jörn's messages can reach you during execution. Without this, blocking agents prevent message delivery and you cannot respond to warnings or corrections.
-
-<!-- Triage sessions, clarity checking, writing for other agents, editing CLAUDE.md: .claude/skills/triage/SKILL.md and .claude/skills/agent-writing/SKILL.md -->
-
-### Meta-rules: how rules are managed
-
-**The core rule:** Never write a factual claim without verifying it against evidence in the same session. "The code cross-checks X" requires reading the code and confirming the cross-check exists. "The data shows Y" requires reading the data. When verification is impossible, mark with `% [TODO: JÖRN -` or `% [GAP -`. Violating this rule is the single most damaging failure mode — it wastes Jörn's time and erodes trust.
-
-**Why rules get ignored:**
-1. Too many rules active at once — agent working memory overflows, rules silently drop
-2. Contradictions between rules — agent picks one arbitrarily
-3. Rules conflict with agent defaults — defaults win silently
-4. Rules not actionable — agent interprets loosely
-
-**Mitigation: subagent-based rule enforcement.** We cannot use progressive disclosure (one CLAUDE.md, no rule hierarchy). Instead, outsource rule checking to subagents:
-
-- **Pre-delivery verification:** Before presenting a deliverable to Jörn, spawn a Sonnet subagent with (a) the relevant CLAUDE.md convention sections and (b) the deliverable. The subagent checks every factual claim against evidence and every applicable convention. Fix all issues before presenting to Jörn. This is mandatory for .tex deliverables and recommended for all deliverables.
-- **Meta-rule auditing:** After editing CLAUDE.md or rule files, spawn a subagent to check for internal contradictions, rules conflicting with agent defaults, non-actionable rules, and stale references. This can also be invoked as a periodic health check.
-
-**MEMORY.md scope:** Session learnings and postmortems only. Stable project conventions belong in CLAUDE.md. If a MEMORY.md entry has been confirmed across multiple sessions, migrate it to CLAUDE.md and delete the MEMORY.md entry.
-
-## Repo invariants
-
-These are true about the repo right now and must remain true:
-
-- `cargo test` passes from `crates/` with zero failures
-
-**Long-term periodic checks:** Use `/monitoring` to run periodic health checks (algorithm agreement, build performance). Check definitions live in `.claude/skills/monitoring/SKILL.md`; reports go to `docs/monitoring/`.
-
-## Environment
-
-- Sessions run in a devcontainer with the repo at `/workspaces/msc-math` and worktrees at `/workspaces/worktrees/<name>`.
-  - Create: `.devcontainer/worktree-new.sh <path> <branch>` (fetches, hydrates deps)
-  - Remove: `.devcontainer/worktree-remove.sh <path>` (safe removal with diagnostics)
-- Pre-installed: Rust 1.93 (cargo, clippy), Python 3.11 (pytest, ruff, mypy, black), gh CLI (via post-create hook)
-- LaTeX: TeX Live 2023 (pdflatex, xelatex, lualatex), latexmk, biber, chktex
-
-**Runtime limits:**
-- Repeated standard commands (tests, builds, lints) **must complete in ≤10 minutes**
-- This prevents triggering the CPU monitor, which kills sessions after 20min of sustained high CPU
-- Exceptions: one-off tasks like finished experiments, final dataset generation, or thesis compilation
-- For tests: tune proptest parameters, mark slow tests with `#[ignore]`, or split into fast/slow suites
-- If a command needs >10min repeatedly, it's a signal to optimize or redesign
-
-## Commands
+### Build
 
 ```bash
-# Rust
-cd crates/ && cargo build
-cd crates/ && cargo test --lib
-cd crates/ && cargo clippy --lib -- -D warnings
-
-# Long-running commands: always wrap with timeout to prevent zombie processes
-timeout 5m cargo test              # routine tests
-timeout 30m cargo test -- --ignored  # slow property/monitoring tests
-
-# Python
-ruff check experiments/
-pytest experiments/
-
-# LaTeX
-cd thesis/ && latexmk
+cd thesis/ && latexmk && ./check-build.sh
 ```
 
-## Rust crates
+`check-build.sh` parses the build log for overfull hboxes (> 1pt) and undefined references. It exits non-zero if any are found. **Agents must run this after every compilation** and fix any new warnings they introduced.
+
+Available: TeX Live 2023, pdflatex, xelatex, lualatex, latexmk, biber, chktex.
+
+### Jörn Reviews PDF, Not .tex
+
+Jörn reads the compiled PDF. He does not read `.tex` source files for review.
+
+**When presenting content for Jörn's review:**
+1. Compile the thesis (`cd thesis/ && latexmk`)
+2. Look up the rendered number from `thesis/build/main.aux`
+3. Tell Jörn: "Lemma 3.43 on page 25" — not "see rank-deficiency-dismissal.tex"
+
+**When reporting edits:**
+- Describe by rendered location: "the proof conclusion of Theorem 5.1"
+- Not by source location: "line 418 of simple-minimizer-proof.tex"
+
+**When referring to theorems/sections/equations in chat:**
+- Use rendered numbers: "Theorem 5.3", "Section 2.1", "equation (3.7)"
+- Not label names: `thm:simple-minimizer`, `sec:algorithm`
+- How to get rendered numbers:
+  ```bash
+  grep 'label-name' thesis/build/main.aux
+  ```
+  Extract the number from `\newlabel{label-name}{{number}{page}...}`.
+
+Note: In `.tex` source, always use `\ref{label}` — never hardcode numbers. This rule is about **chat messages to Jörn**, not about LaTeX source.
+
+### Theorem/Section Numbers
+
+Never guess — read from `thesis/build/main.aux` after building:
+```bash
+grep -E 'newlabel\{(sec:|thm:|lem:|def:|rem:|cor:)' thesis/build/main.aux
+```
+
+### Rust Cross-References
+
+Rust `///` doc comments reference thesis proofs using `[lem:label]`, `[thm:label]`, `[def:label]`, `[alg:label]` format — matching the LaTeX `\label{}` name exactly. When editing a theorem or lemma in the thesis, grep `crates/src/` for the label to find affected Rust comments:
+```bash
+grep -r '\[lem:label\]' crates/src/
+```
+The `\label{}` name is the stable identifier. Rendered numbers (e.g., "Lemma 3.2") appear only in the PDF and must never appear in Rust source.
+
+### Four Audiences
+
+Every line of LaTeX must work for all four audiences simultaneously:
+
+1. **Human readers** (Jörn, Kai, Elizabeth)
+   - Want the main result upfront
+   - Will skim definitions, revisit if confused
+   - All proofs are skippable
+   - Value: algorithm, proof ideas, geometric intuition
+
+2. **Imaginary master student** (nominal target)
+   - Typical math master background: linear algebra, analysis, basic topology, intro symplectic geometry, intro optimization
+   - Every definition stated in full, not deferred to literature
+   - Must follow the chapter linearly without external references
+
+3. **QC agents** (verification)
+   - Verify one chunk at a time, trusting previously verified chunks
+   - For every proof step: must immediately confirm "yes, that follows directly"
+   - Words must have clear, specific meanings
+   - Never state anything incorrect, even if non-fatal
+
+4. **Downstream agents** (Rust implementers, test writers)
+   - Need full detail in all definitions, lemmas, proofs
+   - Need ALL properties listed (including unused ones) for generating tests
+   - Need concrete values and example calculations
+
+### Default Status
+
+All content is **agent-written and unreviewed** unless explicitly marked otherwise. When a `.tex` file has no review markers, assume nothing has been verified by Jörn.
+
+### Comment Conventions
+
+Use prefixed comments to separate meta information by audience:
+
+#### Jörn's review status (`% Jörn:`)
+
+Three levels, strictly ordered: **text > math > structure**. Only record the highest approved level — higher implies all lower levels.
+
+1. **Structure**: proof approach/strategy is correct, section organization is right
+2. **Math**: mathematical content is correct (but writing may need polish)
+3. **Text**: the written prose is correct (final quality)
+
+```latex
+% Jörn: structure approved (abc1234) — from \subsection{Sampling procedure} to \end{proof}
+% Jörn: text approved (abc1234) — from \subsection{Sampling procedure} to "Acceptance rate sweep"
+```
+
+The commit hash is from `git rev-parse HEAD` after committing the approved version — it's the commit the agent is already making.
+
+Only one marker per scope. When a higher level is approved, replace the lower marker (e.g., `structure` → `text`). Scope must be explicit (section names or line ranges). Content outside any `% Jörn:` marker is unreviewed.
+
+**Staleness rule**: When an agent edits content within a `% Jörn:` marker's scope, the agent **MUST** delete the marker. The edited content reverts to the default status (agent-written, unreviewed). The commit hash serves as a backup: if a marker survived an edit, anyone can diff the file since that commit to detect staleness.
+
+Jörn reviews the **PDF-visible text** (rendered output), not the `%` comments. The `% Jörn:` markers record what he approved in the PDF; they do not mean he reviewed the LaTeX source comments.
+
+#### QC agent findings (`% QC:`)
+```latex
+% QC: polytope per Definition~\ref{def:polytope}, facet data per Definition~\ref{def:facets}
+```
+→ Instructions for QC agent on what to verify, or resolved QC findings that only a pedantic verifier would want spelled out. If a QC finding matters to human readers, expand it in the text instead.
+
+#### Developer agents (`% Downstream:`)
+```latex
+% Downstream: R_i = (2.0 / h_i) * J_0 * n_i
+% Downstream: Test: |R_i| = 2/h_i for all i
+```
+→ How to implement in Rust, what tests to write
+
+#### Writing agents (`% [TODO: JÖRN -`)
+```latex
+% [TODO: JÖRN - verify this E-L derivation. Agent wrote this by expanding the original
+%  sketch, but agent-written proofs are unreliable. Check for errors in the calculation.]
+```
+→ Marks content needing Jörn's attention
+
+#### Gap tracking (`% [GAP -`)
+```latex
+% [GAP - AGENT CONFIDENCE 70%: The derivation above shows X, but the equation below
+%  claims Y. Agent verified lines A-B are correct, but cannot connect them to lines C-D.
+%  JÖRN: verify if gap is real, fix if so, or explain the connection if agent missed it.]
+```
+→ Known mathematical gaps with epistemic confidence
+
+#### Human readers (plain `%`)
+```latex
+% Use J_0^2 = -I here
+```
+→ Regular LaTeX comments for humans reading the source
+
+### File Headers
+
+Every `.tex` file starts with a `%` header block containing:
+
+1. **Identity**: `% filename.tex — \input'd from parent.tex`
+2. **Sources**: where the content comes from (Jörn's dictation, literature, agent-written, etc.)
+3. **Structure**: outline of sections/subsections
+
+Do NOT put review status in the header. Review status lives inline via `% Jörn:` markers (see above).
+
+### Content Rules
+
+1. **Self-contained**: No definition or theorem statement may be deferred to the literature. Every definition is stated in full. Every theorem is stated in full.
+
+2. **Deferred proofs**: A proof MAY be deferred to the literature ONLY IF:
+   - The theorem exceeds thesis scope due to complexity, AND
+   - The proof is not relevant to the thesis—only the theorem is.
+
+3. **Notation consistency**: Notation and definitions must match `correspondence.tex` exactly. If correspondence.tex uses symbol X, this file uses symbol X. No synonyms, no alternative forms, no "equivalent" restatements unless a lemma proving equivalence is included.
+
+4. **Writing rule**: Proofs cannot cite external sources mid-proof. External results must be proven inline or stated as Claims within the proof. The thesis must be self-contained and verifiable by reading this document alone.
+
+### Proof Writing
+
+**Structure**: Assumptions → Claim → Overview → Steps → Conclusion
+
+**Level of detail**:
+- Detailed enough for Jörn to verify by skimming
+- Annotate non-obvious steps: cite the specific theorem/lemma used, state why hypotheses are satisfied
+- Never gloss over gaps or handwave — if a step is non-trivial, say so explicitly
+
+**Agent limitations**:
+- Agents cannot reliably verify mathematical proofs
+- Agent-written proofs are drafts until Jörn reviews them
+- Never claim Jörn "approved" content unless he explicitly verified the math
+
+**What agents CAN do**:
+- Turn natural language descriptions into proofs
+- Improve proof writing
+- Fix errors in proofs
+- Detect spots in proofs (but not with high reliability)
+- Report unclear or suspicious proof steps
+
+**What agents CANNOT do**:
+- Provide final high-reliability verification (that must come from Jörn)
+
+### Emphasis and Structure
+
+- **Emphasis proportional to importance**: Don't dedicate a full section to a trivial identity
+- **Geometric definitions first, formulas derived**: E.g., action = integral of Liouville form, not the coordinate expression
+- **Standard definitions**: Use them exactly as in the literature. If you use a different form, state a lemma proving equivalence
+
+### Format Rules
+
+- Use `\definition`, `\lemma`, `\theorem`, `\proposition`, `\proof` environments
+- Use `\remark` and `\example` for context/intuition/illustrations
+- No prose paragraphs outside environments (except minimal connective text)
+- All calculations displayed as formulas, never described in English sentences
+
+### Workflow: dictation.md → LaTeX
+
+See `thesis/dictation.md` for the workflow:
+- Jörn writes natural language content, marks `[ready]`
+- Agents read `[ready]` items, translate to LaTeX, run QC, update thesis
+- Agents mark items `[question]` if something is unclear
+- Jörn answers questions, re-marks `[ready]`
+
+Statuses: `[draft]` (Jörn working) | `[ready]` (translate now) | `[question]` (agent needs input) | `[done]` (in thesis, QC passed)
+
+## Experiment Writing
+
+Subagent: `review-experiment-writing`
+
+Builds upon **Thesis Writing** — all Thesis Writing conventions apply to experiment `.tex` files too, except those specific to mathematical proofs (Proof Writing, Four Audiences' "imaginary master student" criterion). This section adds experiment-specific conventions.
+
+- Experiment writeups live in `experiments/<name>/<name>.tex`, wired into the thesis via `\input`
+- Every factual claim must be verified against the actual data (JSONL) in the same session
+- When verification is impossible, mark with `% [TODO: JÖRN -` or `% [GAP -`
+- Agent-generated figures and writeups are drafts until Jörn reviews
+- Results checked by Jörn before inclusion in thesis
+- Statistical claims require reproducible computation
+- Plots visually inspected for sanity
+
+## Rust Library
+
+Subagent: `review-library`
+
+**Invariant:** `cargo test` passes from `crates/` with zero failures.
 
 ### Module structure
 
@@ -631,6 +817,8 @@ Pipeline: Rust binary → .jsonl data → Python script → .png figures → .te
 
 **`experiments/reproduce.sh`** documents the full pipeline from zero data to compiled thesis. It is the single source of truth for reproduction. When adding, removing, or changing an experiment, update `reproduce.sh` to match. The script is meant to be runnable, but is not expected to be run end-to-end in practice.
 
+Subagents: `review-experiment-code` (Rust/Python code), `review-experiment-notes` (README/notes quality), `review-pipeline` (end-to-end data flow)
+
 ### Philosophy
 
 Experiments are **always investigative**, never "stable" or "finished".
@@ -792,219 +980,41 @@ Rust binary → .jsonl → Python script → figures/tables → thesis
 - But must be reproducible
 - Focus on clarity and correctness over performance
 
-## Thesis (LaTeX)
+## Environment
 
-[aspirational] A complete master thesis PDF. Currently: skeleton only (`main.tex` with title, author, and section stubs). Build with `cd thesis/ && latexmk`.
+- Sessions run in a devcontainer with the repo at `/workspaces/msc-math` and worktrees at `/workspaces/worktrees/<name>`.
+  - Create: `.devcontainer/worktree-new.sh <path> <branch>` (fetches, hydrates deps)
+  - Remove: `.devcontainer/worktree-remove.sh <path>` (safe removal with diagnostics)
+- Pre-installed: Rust 1.93 (cargo, clippy), Python 3.11 (pytest, ruff, mypy, black), gh CLI (via post-create hook)
+- LaTeX: TeX Live 2023 (pdflatex, xelatex, lualatex), latexmk, biber, chktex
 
-### Build
+**Runtime limits:**
+- Repeated standard commands (tests, builds, lints) **must complete in ≤10 minutes**
+- This prevents triggering the CPU monitor, which kills sessions after 20min of sustained high CPU
+- Exceptions: one-off tasks like finished experiments, final dataset generation, or thesis compilation
+- For tests: tune proptest parameters, mark slow tests with `#[ignore]`, or split into fast/slow suites
+- If a command needs >10min repeatedly, it's a signal to optimize or redesign
+
+## Quick Commands
 
 ```bash
-cd thesis/ && latexmk && ./check-build.sh
+# Rust
+cd crates/ && cargo build
+cd crates/ && cargo test --lib
+cd crates/ && cargo clippy --lib -- -D warnings
+
+# Long-running commands: always wrap with timeout to prevent zombie processes
+timeout 5m cargo test              # routine tests
+timeout 30m cargo test -- --ignored  # slow property/monitoring tests
+
+# Python
+ruff check experiments/
+pytest experiments/
+
+# LaTeX
+cd thesis/ && latexmk
 ```
-
-`check-build.sh` parses the build log for overfull hboxes (> 1pt) and undefined references. It exits non-zero if any are found. **Agents must run this after every compilation** and fix any new warnings they introduced.
-
-Available: TeX Live 2023, pdflatex, xelatex, lualatex, latexmk, biber, chktex.
-
-### Jörn Reviews PDF, Not .tex
-
-Jörn reads the compiled PDF. He does not read `.tex` source files for review.
-
-**When presenting content for Jörn's review:**
-1. Compile the thesis (`cd thesis/ && latexmk`)
-2. Look up the rendered number from `thesis/build/main.aux`
-3. Tell Jörn: "Lemma 3.43 on page 25" — not "see rank-deficiency-dismissal.tex"
-
-**When reporting edits:**
-- Describe by rendered location: "the proof conclusion of Theorem 5.1"
-- Not by source location: "line 418 of simple-minimizer-proof.tex"
-
-**When referring to theorems/sections/equations in chat:**
-- Use rendered numbers: "Theorem 5.3", "Section 2.1", "equation (3.7)"
-- Not label names: `thm:simple-minimizer`, `sec:algorithm`
-- How to get rendered numbers:
-  ```bash
-  grep 'label-name' thesis/build/main.aux
-  ```
-  Extract the number from `\newlabel{label-name}{{number}{page}...}`.
-
-Note: In `.tex` source, always use `\ref{label}` — never hardcode numbers. This rule is about **chat messages to Jörn**, not about LaTeX source.
-
-### Theorem/Section Numbers
-
-Never guess — read from `thesis/build/main.aux` after building:
-```bash
-grep -E 'newlabel\{(sec:|thm:|lem:|def:|rem:|cor:)' thesis/build/main.aux
-```
-
-### Rust Cross-References
-
-Rust `///` doc comments reference thesis proofs using `[lem:label]`, `[thm:label]`, `[def:label]`, `[alg:label]` format — matching the LaTeX `\label{}` name exactly. When editing a theorem or lemma in the thesis, grep `crates/src/` for the label to find affected Rust comments:
-```bash
-grep -r '\[lem:label\]' crates/src/
-```
-The `\label{}` name is the stable identifier. Rendered numbers (e.g., "Lemma 3.2") appear only in the PDF and must never appear in Rust source.
-
-### Four Audiences
-
-Every line of LaTeX must work for all four audiences simultaneously:
-
-1. **Human readers** (Jörn, Kai, Elizabeth)
-   - Want the main result upfront
-   - Will skim definitions, revisit if confused
-   - All proofs are skippable
-   - Value: algorithm, proof ideas, geometric intuition
-
-2. **Imaginary master student** (nominal target)
-   - Typical math master background: linear algebra, analysis, basic topology, intro symplectic geometry, intro optimization
-   - Every definition stated in full, not deferred to literature
-   - Must follow the chapter linearly without external references
-
-3. **QC agents** (verification)
-   - Verify one chunk at a time, trusting previously verified chunks
-   - For every proof step: must immediately confirm "yes, that follows directly"
-   - Words must have clear, specific meanings
-   - Never state anything incorrect, even if non-fatal
-
-4. **Downstream agents** (Rust implementers, test writers)
-   - Need full detail in all definitions, lemmas, proofs
-   - Need ALL properties listed (including unused ones) for generating tests
-   - Need concrete values and example calculations
-
-### Default Status
-
-All content is **agent-written and unreviewed** unless explicitly marked otherwise. When a `.tex` file has no review markers, assume nothing has been verified by Jörn.
-
-### Comment Conventions
-
-Use prefixed comments to separate meta information by audience:
-
-#### Jörn's review status (`% Jörn:`)
-
-Three levels, strictly ordered: **text > math > structure**. Only record the highest approved level — higher implies all lower levels.
-
-1. **Structure**: proof approach/strategy is correct, section organization is right
-2. **Math**: mathematical content is correct (but writing may need polish)
-3. **Text**: the written prose is correct (final quality)
-
-```latex
-% Jörn: structure approved (abc1234) — from \subsection{Sampling procedure} to \end{proof}
-% Jörn: text approved (abc1234) — from \subsection{Sampling procedure} to "Acceptance rate sweep"
-```
-
-The commit hash is from `git rev-parse HEAD` after committing the approved version — it's the commit the agent is already making.
-
-Only one marker per scope. When a higher level is approved, replace the lower marker (e.g., `structure` → `text`). Scope must be explicit (section names or line ranges). Content outside any `% Jörn:` marker is unreviewed.
-
-**Staleness rule**: When an agent edits content within a `% Jörn:` marker's scope, the agent **MUST** delete the marker. The edited content reverts to the default status (agent-written, unreviewed). The commit hash serves as a backup: if a marker survived an edit, anyone can diff the file since that commit to detect staleness.
-
-Jörn reviews the **PDF-visible text** (rendered output), not the `%` comments. The `% Jörn:` markers record what he approved in the PDF; they do not mean he reviewed the LaTeX source comments.
-
-#### QC agent findings (`% QC:`)
-```latex
-% QC: polytope per Definition~\ref{def:polytope}, facet data per Definition~\ref{def:facets}
-```
-→ Instructions for QC agent on what to verify, or resolved QC findings that only a pedantic verifier would want spelled out. If a QC finding matters to human readers, expand it in the text instead.
-
-#### Developer agents (`% Downstream:`)
-```latex
-% Downstream: R_i = (2.0 / h_i) * J_0 * n_i
-% Downstream: Test: |R_i| = 2/h_i for all i
-```
-→ How to implement in Rust, what tests to write
-
-#### Writing agents (`% [TODO: JÖRN -`)
-```latex
-% [TODO: JÖRN - verify this E-L derivation. Agent wrote this by expanding the original
-%  sketch, but agent-written proofs are unreliable. Check for errors in the calculation.]
-```
-→ Marks content needing Jörn's attention
-
-#### Gap tracking (`% [GAP -`)
-```latex
-% [GAP - AGENT CONFIDENCE 70%: The derivation above shows X, but the equation below
-%  claims Y. Agent verified lines A-B are correct, but cannot connect them to lines C-D.
-%  JÖRN: verify if gap is real, fix if so, or explain the connection if agent missed it.]
-```
-→ Known mathematical gaps with epistemic confidence
-
-#### Human readers (plain `%`)
-```latex
-% Use J_0^2 = -I here
-```
-→ Regular LaTeX comments for humans reading the source
-
-### File Headers
-
-Every `.tex` file starts with a `%` header block containing:
-
-1. **Identity**: `% filename.tex — \input'd from parent.tex`
-2. **Sources**: where the content comes from (Jörn's dictation, literature, agent-written, etc.)
-3. **Structure**: outline of sections/subsections
-
-Do NOT put review status in the header. Review status lives inline via `% Jörn:` markers (see above).
-
-### Content Rules
-
-1. **Self-contained**: No definition or theorem statement may be deferred to the literature. Every definition is stated in full. Every theorem is stated in full.
-
-2. **Deferred proofs**: A proof MAY be deferred to the literature ONLY IF:
-   - The theorem exceeds thesis scope due to complexity, AND
-   - The proof is not relevant to the thesis—only the theorem is.
-
-3. **Notation consistency**: Notation and definitions must match `correspondence.tex` exactly. If correspondence.tex uses symbol X, this file uses symbol X. No synonyms, no alternative forms, no "equivalent" restatements unless a lemma proving equivalence is included.
-
-4. **Writing rule**: Proofs cannot cite external sources mid-proof. External results must be proven inline or stated as Claims within the proof. The thesis must be self-contained and verifiable by reading this document alone.
-
-### Proof Writing
-
-**Structure**: Assumptions → Claim → Overview → Steps → Conclusion
-
-**Level of detail**:
-- Detailed enough for Jörn to verify by skimming
-- Annotate non-obvious steps: cite the specific theorem/lemma used, state why hypotheses are satisfied
-- Never gloss over gaps or handwave — if a step is non-trivial, say so explicitly
-
-**Agent limitations**:
-- Agents cannot reliably verify mathematical proofs
-- Agent-written proofs are drafts until Jörn reviews them
-- Never claim Jörn "approved" content unless he explicitly verified the math
-
-**What agents CAN do**:
-- Turn natural language descriptions into proofs
-- Improve proof writing
-- Fix errors in proofs
-- Detect spots in proofs (but not with high reliability)
-- Report unclear or suspicious proof steps
-
-**What agents CANNOT do**:
-- Provide final high-reliability verification (that must come from Jörn)
-
-### Emphasis and Structure
-
-- **Emphasis proportional to importance**: Don't dedicate a full section to a trivial identity
-- **Geometric definitions first, formulas derived**: E.g., action = integral of Liouville form, not the coordinate expression
-- **Standard definitions**: Use them exactly as in the literature. If you use a different form, state a lemma proving equivalence
-
-### Format Rules
-
-- Use `\definition`, `\lemma`, `\theorem`, `\proposition`, `\proof` environments
-- Use `\remark` and `\example` for context/intuition/illustrations
-- No prose paragraphs outside environments (except minimal connective text)
-- All calculations displayed as formulas, never described in English sentences
-
-### Workflow: dictation.md → LaTeX
-
-See `thesis/dictation.md` for the workflow:
-- Jörn writes natural language content, marks `[ready]`
-- Agents read `[ready]` items, translate to LaTeX, run QC, update thesis
-- Agents mark items `[question]` if something is unclear
-- Jörn answers questions, re-marks `[ready]`
-
-Statuses: `[draft]` (Jörn working) | `[ready]` (translate now) | `[question]` (agent needs input) | `[done]` (in thesis, QC passed)
 
 ## Archaeology
 
 The `archaeology/` directory contains files recovered from `msc-viterbo`, an abandoned predecessor repo. **Everything here is untrusted.** Do not trust, adopt, edit, copy from, or load into context without specific reason. Read for ideas and warnings only.
-<!-- Full trust rules and known-broken items: .claude/skills/archaeology/SKILL.md -->
-
