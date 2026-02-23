@@ -5,12 +5,10 @@
   // Features:
   // - Bind mounts for cache persistence (uv, TeX)
   // - Bind mounts for OAuth persistence (gh, claude)
-  // - Manual git worktrees via /workspaces/worktrees/
   // - Full TexLive installation for PDF builds
   //
   // Prerequisites on host:
   // - /srv/devhome/ directories exist
-  // - /srv/devworktrees/msc-math/worktrees/ exists
   // - devcontainer CLI: npm i -g @devcontainers/cli
   //
   // Usage from host:
@@ -46,7 +44,6 @@
     "source=/srv/devhome/.texmf-var,target=/home/vscode/.texmf-var,type=bind,consistency=cached",
     "source=/srv/devhome/.texmf-config,target=/home/vscode/.texmf-config,type=bind,consistency=cached",
     "source=/srv/devhome/.bash_history_dir,target=/home/vscode/.bash_history_dir,type=bind,consistency=cached",
-    "source=/srv/devworktrees/msc-math/worktrees,target=/workspaces/worktrees,type=bind,consistency=cached",
     "source=/srv/devhome/.vscode-cli,target=/home/vscode/.vscode-cli,type=bind,consistency=cached"
   ]
 }

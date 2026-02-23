@@ -43,15 +43,6 @@ sudo chown -R "${USER}:${USER}" \
   "${HOME}/.texmf-config"
 mkdir -p "${HOME}/.cache/LaTeXML"
 
-# Verify worktrees mount exists (required for local env)
-WORKTREES_DIR="/workspaces/worktrees"
-if ! mountpoint -q "${WORKTREES_DIR}"; then
-  echo "ERROR: ${WORKTREES_DIR} is not mounted." >&2
-  echo "Local devcontainer requires bind mount configured in devcontainer.json." >&2
-  echo "Check that /srv/devworktrees/msc-math/worktrees/ exists on host." >&2
-  exit 1
-fi
-
 # Verify tools
 echo "code-tunnel: $(code-tunnel --version 2>/dev/null || echo 'not found')"
 if command -v latexmk >/dev/null 2>&1; then
