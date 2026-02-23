@@ -2,20 +2,25 @@
 
 Gradient-based optimization of the systolic ratio sys = c_EHZ^2 / (2 vol).
 
+## Motivation
+
+Random polytope sampling (random-sweep, random-product-sweep) has not found sys > 1. Instead of hoping to get lucky, we compute ∇_{(h,n)} sys and take directed steps. The H-representation P = {x : n_k · x ≤ h_k} gives us knobs: heights h_k and normals n_k.
+
 ## Files
 
 | File | Purpose |
 |------|---------|
-| `sys_optimization.rs` | Rust binary: sensitivity analysis, single steps, iterative ascent |
+| `sys_optimization.rs` | Rust binary: sensitivity, single steps, iteration, validity testing |
 | `sys_optimization.py` | Python: figures and stats table |
 | `sys-optimization.tex` | LaTeX writeup for thesis |
 | `sys-optimization-sensitivity.jsonl` | Phase 1 output: per-polytope gradients |
 | `sys-optimization-steps.jsonl` | Phase 2 output: single gradient step evaluations |
 | `sys-optimization-iterations.jsonl` | Phase 3 output: iterative gradient ascent trajectories |
+| `sys-optimization-validity.jsonl` | Phase 4 output: gradient prediction accuracy |
 
 ## Architecture
 
-Three phases, all in one binary:
+Four phases, all in one binary:
 
 1. **Phase 1 (sensitivity):** Compute analytical ∂sys/∂h and ∂sys/∂n for 140 polytopes.
    Uses envelope theorem for capacity derivatives, swept-volume argument for volume derivatives.
@@ -25,6 +30,8 @@ Three phases, all in one binary:
    Step bound preserves combinatorial type (height positivity, vertex-facet incidence, ω₀ signs).
 
 3. **Phase 3 (iteration):** Iteratively recompute HK2017 + gradient + step. Pick best of 10 candidates per iteration. Converges in ~6 iterations on average.
+
+4. **Phase 4 (validity testing):** Test gradient prediction accuracy along gradient and random directions, at step sizes from 0.01×t_max to 10×t_max. Answers: is our gradient trustworthy? How far? How conservative are the step bounds?
 
 ## Key design decisions
 
@@ -37,12 +44,6 @@ Three phases, all in one binary:
 - **Best-of-10 step selection in Phase 3**: at each iteration, try all 5 fractions × 2 types. This avoids committing to one step type and naturally adapts (early iterations prefer (h,n), later iterations shift to h-only).
 
 ## Known issues / future work
-
-### Gradient validity testing (Jörn's idea, 2026-02-23)
-- Test that gradient accurately predicts sys under random perturbations (not just along gradient direction)
-- Test how frequently the small-step criteria (combinatorial type preservation) are met
-- Test how conservative the criteria are — can we go beyond t_max safely?
-- Empirically characterize the validity radius: spherical (uniform in all directions) or non-spherical (depends on whether k ∈ (S,σ))?
 
 ### Large steps beyond gradient regime
 - Accept combinatorial type change, recompute sys from scratch
@@ -57,6 +58,11 @@ Three phases, all in one binary:
 - 2 polytopes (random_3x5_0, random_4x5_6) admit no improving step from start — why?
 - Is the converged sys a function of the combinatorial type? Of facet count?
 - What's the relationship between initial sys and improvement magnitude?
+
+### Adding facets (from original ideation)
+- Instead of changing existing h_k/n_k, introduce new half-spaces that clip vertices
+- Changes combinatorial type (more facets = exponentially more expensive HK2017)
+- Deferred until h/n changes alone show their limits
 
 ## Learnings from past data
 
