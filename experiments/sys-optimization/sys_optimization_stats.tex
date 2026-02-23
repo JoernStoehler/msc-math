@@ -3,12 +3,18 @@
 Statistic & Value \\
 \midrule
 Polytopes analyzed & 140 \\
-Polytopes with $\|\nabla \mathrm{sys}\| > 0$ & 140 \\
-Polytopes improved by gradient step & 126 \\
+Polytopes with $\|\nabla_{(h,n)} \mathrm{sys}\| > 0$ & 140 \\
+\midrule
+Mean $\|\nabla_h \mathrm{sys}\|$ & 0.1923 \\
+Mean $\|\nabla_n \mathrm{sys}\|$ & 1.7529 \\
+Mean $\|\nabla_{(h,n)} \mathrm{sys}\|$ & 1.7853 \\
+\midrule
+Improved by $h$-only step & 126/140 \\
+Improved by $(h,n)$ step & 129/140 \\
+Mean $\Delta\mathrm{sys}$ ($h$-only) & 0.0341 \\
+Mean $\Delta\mathrm{sys}$ ($(h,n)$) & 0.0541 \\
+\midrule
 Best sys (before) & 0.7579 \\
-Best sys (after step) & 0.8049 \\
-Mean $\Delta$sys (best step) & 0.0341 \\
-Median $\Delta$sys (best step) & 0.0138 \\
-Mean $\|\nabla \mathrm{sys}\|$ & 0.1923 \\
+Best sys (after any step) & 0.8049 \\
 \bottomrule
 \end{tabular}
