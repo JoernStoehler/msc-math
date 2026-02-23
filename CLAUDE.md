@@ -565,6 +565,8 @@ Where domains overlap, algorithms must agree on the computed capacity.
 - Prefer iterator chains over `for` loops. Minimize mutable state. Use `map`, `filter`, `flat_map` for transformations.
 - Types encode mathematical invariants, validated at construction
 - nalgebra for linear algebra, proptest for property-based testing
+- **Coordinate convention**: (q₁, q₂, p₁, p₂) — components [0,1] = q-space (Lagrangian), [2,3] = p-space (Lagrangian), [0,2] = (q₁, p₁) symplectic plane, [1,3] = (q₂, p₂) symplectic plane. Defined in `geom/symplectic.rs`. Common mistake: assuming (q₁, p₁, q₂, p₂) ordering.
+- **No rayon inside algorithms**: Parallelism is at the dataset level (multiple polytopes in parallel), not inside capacity algorithms like HK2017.
 
 ### Mathematical documentation
 
@@ -829,6 +831,8 @@ Pipeline: Rust binary → .jsonl data → Python script → .png figures → .te
 **`experiments/reproduce.sh`** documents the full pipeline from zero data to compiled thesis. It is the single source of truth for reproduction. When adding, removing, or changing an experiment, update `reproduce.sh` to match. The script is meant to be runnable, but is not expected to be run end-to-end in practice.
 
 Subagents: `review-experiment-code` (Rust/Python code), `review-experiment-notes` (README/notes quality), `review-pipeline` (end-to-end data flow)
+
+**Library stability boundary:** Only stable, proven code goes into `crates/` library. New algorithm variants are self-contained in experiment binaries (e.g. `ablation.rs`). Copy library internals into the binary where needed. If a variant is later promoted to production, it enters the library then.
 
 ### Philosophy
 
