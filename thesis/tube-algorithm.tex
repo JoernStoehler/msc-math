@@ -37,8 +37,9 @@ We recall the face structure of the polytopes we work with
 and introduce the directed flow structure that the algorithm exploits.
 
 \begin{definition}[Faces of a polytope]\label{def:faces}
-% QC: face = standard face of convex geometry (maximal convex subset of bdry meeting
-%   a supporting hyperplane). k-face = affine dimension k. Closed set, open relative interior.
+% QC: face = standard convex geometry definition (extremal subset).
+%   Equivalently: F = K ∩ H for a supporting hyperplane H, but different H can give the same F.
+%   k-face = affine dimension k. Closed set, open relative interior.
 %   For a polytope in irredundant H-rep, faces at every dimension 0-3 exist.
 %   Facets (3-faces) are F_i per Definition~\ref{def:facets}.
 %   2-faces: by Lemma~\ref{lem:2-face-structure}, exactly one pair {i,j} per 2-face.
@@ -47,16 +48,29 @@ and introduce the directed flow structure that the algorithm exploits.
 Let $K \subset \mathbb{R}^4$ be a polytope
 with irredundant $H$-representation
 $\{(n_i, h_i)\}_{i=1}^{F}$ (Definition~\ref{def:facets}).
-A \emph{face} of $K$ is a maximal subset $F \subset \partial K$
-such that $F = K \cap \{x : \langle x, n \rangle = h_K(n)\}$
-for some $n \in S^3$.
+A \emph{face} of $K$ is a convex subset $G \subset K$
+such that for any line segment $[x, y] \subset K$
+whose relative interior meets $G$,
+the entire segment lies in $G$.
 A \emph{$k$-face} is a face of affine dimension $k$.
-The \emph{3-faces} (facets) are $F_1, \ldots, F_F$.
-A \emph{2-face} $F_{ij}$ is a 2-dimensional face equal to $F_i \cap F_j$
-for some pair $i \neq j$; by Lemma~\ref{lem:2-face-structure},
-each 2-face determines a unique such pair.
-\emph{1-faces} (edges) and \emph{0-faces} (vertices) are
-1- and 0-dimensional faces, respectively.
+For polytopes, every face is an intersection of facets:
+\begin{itemize}
+\item \emph{3-faces} (facets) are $F_1, \ldots, F_F$
+  (Definition~\ref{def:facets}).
+\item A \emph{2-face} is an intersection $F_i \cap F_j$
+  that is $2$-dimensional.
+  By Lemma~\ref{lem:2-face-structure},
+  each $2$-face arises from exactly one pair $\{i,j\}$;
+  we write $F_{ij}$ for this face.
+\item A \emph{1-face} (edge) is an intersection
+  $F_{i_1} \cap \cdots \cap F_{i_m}$ that is $1$-dimensional,
+  for some $m \geq 3$.
+  A \emph{0-face} (vertex) is such an intersection
+  that is $0$-dimensional, for some $m \geq 4$.
+  Unlike $2$-faces, there is no canonical minimal
+  set of generating facets
+  (Remark~\ref{rem:lower-faces}).
+\end{itemize}
 Every face is closed; $\operatorname{int}(F)$ denotes its relative interior.
 \end{definition}
 
