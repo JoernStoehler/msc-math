@@ -10,6 +10,8 @@
 %
 % Structure:
 %   - Motivation and approach
+%   - Derivative computation (formal lemmas)
+%   - Step bound algorithm
 %   - Sensitivity analysis (Phase 1)
 %   - Finite gradient steps (Phase 2)
 %   - Discussion
@@ -26,40 +28,108 @@ $\mathrm{sys}$.
 
 \subsubsection*{Method}
 
-For a polytope $K = \{x \mid n_k \cdot x \le h_k\}$ with $F$ facets, the
-systolic ratio decomposes as
+For a polytope $K = \{x \in \mathbb{R}^4 \mid n_k \cdot x \le h_k,\; k=1,\dots,F\}$
+with unit outward normals $n_k$, the systolic ratio decomposes as
 $\mathrm{sys} = c_{\mathrm{EHZ}}^2 / (2\,\mathrm{vol})$.
 We compute the sensitivity of each factor to individual height changes.
 
-\emph{Volume derivative.}
-For a convex polytope in $H$-representation with unit normals,
-$\partial\,\mathrm{vol}/\partial h_k = S_k$,
-where $S_k$ is the 3-dimensional volume of facet $F_k$.
-This is the standard first variation of volume:
-moving facet $k$ outward by $\delta$ adds a slab of thickness $\delta$ and
-cross-section $F_k$, so the volume increases by $\delta\,S_k$ to first order.
-Facet volumes are computed via ridge-based tetrahedralization
-(centroid + ridge fan triangulation, 3D volume via the 4D cross product).
+All quantities needed for the gradient ($\beta^*$, $\nu$, $Q^*$, facet
+volumes $S_k$) are either already computed by the HK2017 algorithm's
+KKT solve or can be extracted from the polytope data at negligible
+additional cost. A single pass of HK2017 thus provides the full
+sensitivity analysis.
 
-\emph{Capacity derivative (envelope theorem).}
-The EHZ capacity equals $c_{\mathrm{EHZ}} = \min_{(S,\sigma)} A(S,\sigma)$,
-where the action of an orbit $(S,\sigma)$ is $A = 1/(2Q^*)$ and $Q^*$ is the
-maximum of the KKT problem
-$Q(\beta) = \tfrac{1}{2}\beta^T H\beta$ subject to $N^T\beta = 0$, $\eta^T\beta = 1$.
-The heights enter only through the constraint vector $\eta$, with
-$\eta_i = h_{\sigma(i)}$.
-By the envelope theorem, $\partial Q^*/\partial h_k = -\nu\,\beta_{i_0}$,
-where $\nu$ is the Lagrange multiplier for the normalization constraint
-$\eta^T\beta = 1$ and $i_0$ is the orbit position with $\sigma(i_0) = k$.
-Since $A = 1/(2Q)$:
+We first state the general principle, then apply it to our setting.
+
+\begin{theorem*}[Envelope theorem for constrained optimization]
+Let $f(x;\theta)$ be a smooth objective and $g_i(x;\theta) = 0$,
+$i = 1,\dots,m$, smooth equality constraints, with parameter $\theta$.
+Let $x^*(\theta)$ be a non-degenerate KKT point with multipliers
+$\lambda^*(\theta)$, and let
+$\mathcal{L}(x,\lambda;\theta) = f(x;\theta) - \sum_i \lambda_i g_i(x;\theta)$
+be the Lagrangian.
+Then the optimal value $f^*(\theta) = f(x^*(\theta);\theta)$ satisfies
+\[
+  \frac{\partial f^*}{\partial \theta}
+  = \frac{\partial \mathcal{L}}{\partial \theta}\bigg|_{x=x^*,\,\lambda=\lambda^*}
+  = \frac{\partial f}{\partial \theta}\bigg|_{x^*}
+    - \sum_i \lambda_i^* \frac{\partial g_i}{\partial \theta}\bigg|_{x^*}.
+\]
+\end{theorem*}
+
+\begin{lemma}[Volume derivative]
+\label{lem:vol-derivative}
+For a convex polytope $K$ in $H$-representation with unit normals,
+\[
+  \frac{\partial\,\mathrm{vol}(K)}{\partial h_k} = S_k,
+\]
+where $S_k = \mathrm{vol}_{3}(F_k)$ is the $3$-dimensional volume of facet $F_k$.
+\end{lemma}
+
+\begin{proof}
+Moving facet $k$ outward by $\delta$ enlarges $K$ to
+$K' = K \cup \{x : h_k < n_k \cdot x \le h_k + \delta,\; n_j \cdot x \le h_j \;\forall j \ne k\}$.
+The cross-section at $n_k \cdot x = h_k + t$ equals the facet $F_k$ at $t = 0$
+and varies continuously.
+Thus $\mathrm{vol}(K') - \mathrm{vol}(K) = \delta \cdot S_k + O(\delta^2)$.
+\end{proof}
+
+Facet volumes are computed via ridge-based tetrahedralization:
+for each facet, pick the centroid of its vertices as apex, fan-triangulate
+each ridge (a 2-face shared with another facet), and sum the 3D tetrahedron
+volumes via the 4D cross product.
+This is cross-checked against the divergence theorem
+$\mathrm{vol}(K) = \frac{1}{4}\sum_k h_k\,S_k$ (agreement to $< 5 \times 10^{-8}$ relative error)
+and against central finite differences with step size $10^{-3}$
+(agreement to $< 5\%$; smaller step sizes suffer from qhull volume noise).
+
+\begin{lemma}[Capacity derivative via envelope theorem]
+\label{lem:cap-derivative}
+Fix an orbit $(S,\sigma)$ with $|S| = m$ facets. The orbit's action is
+$A(S,\sigma;h) = 1/(2\,Q^*)$, where $Q^*$ is the maximum of the KKT problem
+\[
+  Q(\beta) = \tfrac{1}{2}\beta^T H \beta
+  \quad\text{subject to}\quad
+  N^T\beta = 0,\; \eta^T\beta = 1,
+\]
+with $\eta_i = h_{\sigma(i)}$, $i = 1,\dots,m$.
+Let $\nu$ be the Lagrange multiplier for the normalization constraint
+$\eta^T\beta = 1$ at the optimum.
+If facet $k$ appears in the orbit at position $i_0$ (i.e.\ $\sigma(i_0) = k$), then
 \[
   \frac{\partial A}{\partial h_k}
-  = \frac{\nu\,\beta_{i_0}}{2\,(Q^*)^2}.
+  = \frac{\nu\,\beta_{i_0}^*}{2\,(Q^*)^2}.
 \]
-If facet $k$ is not visited by the orbit ($k \notin S$), then
-$\partial A / \partial h_k = 0$.
-The capacity derivative uses the minimum-action orbit (the unique minimizer
-in the non-degenerate case).
+If $k \notin S$, then $\partial A / \partial h_k = 0$.
+\end{lemma}
+
+\begin{proof}
+The Lagrangian is
+$\mathcal{L}(\beta,\lambda,\nu) = \tfrac{1}{2}\beta^T H\beta - \lambda^T N^T\beta - \nu(\eta^T\beta - 1)$.
+The heights enter only through $\eta$, and $\partial\eta_i/\partial h_k = \delta_{\sigma(i),k}$.
+By the envelope theorem,
+$\partial Q^*/\partial h_k = \partial\mathcal{L}/\partial h_k = -\nu\,\beta_{i_0}^*$.
+Since $A = 1/(2Q)$, the chain rule gives
+$\partial A/\partial h_k = -(\partial Q^*/\partial h_k) / (2\,(Q^*)^2) = \nu\,\beta_{i_0}^* / (2\,(Q^*)^2)$.
+\end{proof}
+
+\begin{remark}[Degeneracy and orbit switching]
+\label{rem:orbit-switching}
+The EHZ capacity is $c_{\mathrm{EHZ}}(h) = \min_{(S,\sigma)} A(S,\sigma;h)$.
+Each orbit's action $A(S,\sigma;\cdot)$ is a smooth function of $h$
+(by the envelope theorem, as long as the KKT problem for that orbit is
+non-degenerate). The capacity, being a minimum of smooth functions, is
+continuous but generally only piecewise smooth: it is smooth on regions
+where the minimizing orbit is unique, and non-smooth at boundaries where
+two orbits achieve the same minimum action.
+
+At such boundaries the capacity derivative has a one-sided discontinuity:
+the gradient computed from the current minimizer may not predict the
+behavior of $c_{\mathrm{EHZ}}$ after a finite step, because a different
+orbit may become the new minimizer. This \emph{orbit switching} is
+structural to the piecewise-smooth optimization problem and is observed
+in our dataset (some polytopes worsen despite a favorable gradient).
+\end{remark}
 
 \emph{Systolic ratio derivative.}
 The chain rule gives
@@ -72,11 +142,22 @@ The chain rule gives
     \right].
 \]
 
-To determine how far we can step, we compute the maximum step size
-$t_{\max}$ along the gradient direction $g = \nabla_h\,\mathrm{sys}$
-such that the combinatorial type of the polytope is preserved: no vertex
-hits a new facet, no vertex disappears, and all heights remain positive.
-We then evaluate $\mathrm{sys}$ at step fractions
+\emph{Step bound.}
+We step along $g = \nabla_h\,\mathrm{sys}$, setting $h' = h + t\,g$.
+To preserve the combinatorial type, we require:
+(i)~all heights remain positive ($h_k + t\,g_k > 0$), and
+(ii)~no vertex crosses a new facet.
+For a simple vertex $v$ (exactly 4 determining facets with normals
+forming an invertible matrix $N_v$), the vertex moves as
+$v(t) = v + t\,N_v^{-1}g_{\mathrm{det}}$.
+For each non-incident facet $j$, the slack $s_j(t) = h_j + t\,g_j - n_j \cdot v(t)$
+must remain positive; this gives $t < s_j(0)/(-\dot{s}_j)$ when the slack is
+decreasing.
+For non-simple vertices (more than 4 incident facets, common in
+Lagrangian products), a conservative bound $t < s_j / \max_k |g_k|$ is used.
+The step bound is $t_{\max} = \min$ over all such critical times, capped at~$100$.
+
+We evaluate $\mathrm{sys}$ at step fractions
 $\{0.1, 0.25, 0.5, 0.75, 0.95\} \cdot t_{\max}$.
 
 The starting polytopes are the 140 polytopes from the random-sweep and
@@ -155,10 +236,13 @@ Two structural observations:
   picture where $\mathrm{sys}$ increases monotonically toward a
   global optimum or toward a boundary of the feasible region.
 
-\item \emph{The step bound limits improvement.}
-  For higher facet counts ($F \ge 8$), the maximum step
+\item \emph{Orbit switching limits finite steps.}
+  As noted in Remark~\ref{rem:orbit-switching}, a different orbit may
+  become the minimizer after a finite step, causing the actual
+  $\mathrm{sys}$ change to differ from the gradient's prediction.
+  For higher facet counts ($F \ge 8$), the step bound
   $t_{\max}$ before a combinatorial type change is typically small
-  ($t_{\max} < 1$), limiting the per-step improvement.
+  ($t_{\max} < 1$), further limiting per-step improvement.
   Iterating the gradient step across combinatorial type changes
   (Phase~3) would require re-instrumenting HK2017 after each type
   change.
