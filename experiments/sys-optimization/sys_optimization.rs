@@ -1,4 +1,4 @@
-//! Sys-optimization Phase 1–3: sensitivity analysis, finite gradient steps, iterative ascent.
+//! Sys-optimization Phase 1–4: sensitivity, gradient steps, iteration, validity testing.
 //!
 //! Computes d(sys)/d(h_k) and d(sys)/d(n_k) for polytopes from random-sweep and
 //! random-product-sweep, then takes finite gradient steps bounded by combinatorial type
@@ -13,13 +13,16 @@
 //!
 //! Architecture:
 //! 1. `cargo run --bin sys_optimization --release` generates datasets
-//! 2. Writes to sys-optimization/sys-optimization-{sensitivity,steps,iterations}.jsonl
+//! 2. Writes to sys-optimization/sys-optimization-{sensitivity,steps,iterations,validity}.jsonl
 //! 3. Python script reads JSONL, produces figures and stats
 //!
 //! Input: random-sweep/random-sweep.jsonl, random-product-sweep/random-product-sweep.jsonl
 //! Filter: F ≤ 10 (HK2017 is exponential in F)
 
 use nalgebra::{DMatrix, DVector, Matrix4, Vector4};
+use rand::SeedableRng;
+use rand_chacha::ChaCha8Rng;
+use rand_distr::{Distribution, StandardNormal};
 use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::{BufRead, BufReader, BufWriter, Write};
@@ -41,6 +44,12 @@ const MAX_ITERATIONS: usize = 20;
 
 /// Minimum improvement per iteration to continue (convergence threshold).
 const CONVERGENCE_THRESHOLD: f64 = 1e-6;
+
+/// Number of random directions to test per polytope in Phase 4.
+const N_RANDOM_DIRECTIONS: usize = 10;
+
+/// Step fractions of t_max to test in Phase 4 (includes beyond-t_max values).
+const VALIDITY_STEP_FRACTIONS: &[f64] = &[0.01, 0.1, 0.25, 0.5, 1.0, 2.0, 5.0, 10.0];
 
 // ============================================================================
 // Output schemas
@@ -116,6 +125,26 @@ struct IterationRow {
     gradient_norm_hn: f64,
     vertex_count: usize,
     time_ms: f64,
+}
+
+#[derive(Debug, Serialize)]
+struct ValidityRow {
+    name: String,
+    facet_count: usize,
+    starting_sys: f64,
+    direction_type: String,  // "gradient_h", "gradient_hn", "random"
+    direction_index: usize,  // 0 for gradient, 0..N-1 for random
+    t_fraction: f64,         // fraction of t_max
+    t_actual: f64,
+    t_max: f64,
+    predicted_delta_sys: f64,
+    actual_delta_sys: f64,
+    prediction_error: f64,
+    relative_error: f64,
+    directional_derivative: f64,
+    construction_ok: bool,
+    vertex_count_changed: bool,
+    beyond_t_max: bool,
 }
 
 // ============================================================================
@@ -2014,6 +2043,243 @@ fn main() {
     iter_writer.flush().expect("flush iterations");
 
     // =========================================================================
+    // Phase 4: Gradient validity testing
+    // =========================================================================
+
+    println!("\nPhase 4: Gradient validity testing...\n");
+
+    let validity_path = base_dir.join("sys-optimization/sys-optimization-validity.jsonl");
+    let validity_file = File::create(&validity_path).expect("create validity JSONL");
+    let mut validity_writer = BufWriter::new(validity_file);
+
+    let mut rng = ChaCha8Rng::seed_from_u64(42);
+    let mut total_validity_evals = 0usize;
+    let mut total_ok_within = 0usize;
+    let mut total_ok_beyond = 0usize;
+    let mut total_within = 0usize;
+    let mut total_beyond = 0usize;
+
+    for (idx, (name, _source, polytope)) in polytopes.iter().enumerate() {
+        let f = polytope.facet_count();
+        let normals = polytope.normals();
+        let heights = polytope.heights();
+        let vertex_count_orig = polytope.vertices().len();
+
+        print!("[{}/{}] {} (F={}): ", idx + 1, n_polytopes, name, f);
+
+        // Recompute sensitivity (same as Phase 1)
+        let instrumented = match ehz_capacity_instrumented(polytope) {
+            Some(r) => r,
+            None => {
+                println!("SKIP");
+                continue;
+            }
+        };
+        let cap = instrumented.capacity;
+        let vol = volume(polytope).expect("volume failed");
+        let sys = cap * cap / (2.0 * vol);
+
+        let sens = compute_sensitivity(polytope, vol, cap, sys, &instrumented);
+
+        // --- Build directions to test ---
+        struct Direction {
+            g_h: Vec<f64>,
+            g_n: Vec<Vector4<f64>>,
+            dir_type: String,
+            dir_index: usize,
+            directional_deriv: f64,
+        }
+
+        let mut directions: Vec<Direction> = Vec::new();
+
+        // Direction 1: gradient h-only (normalize d_sys_h, zero normal component)
+        if sens.gradient_norm_h > 1e-15 {
+            let scale = 1.0 / sens.gradient_norm_h;
+            let g_h: Vec<f64> = sens.d_sys_h.iter().map(|x| x * scale).collect();
+            let g_n: Vec<Vector4<f64>> = vec![Vector4::zeros(); f];
+            let dd = sens.gradient_norm_h; // ∇sys · (∇_h sys / |∇_h sys|) = |∇_h sys|
+            directions.push(Direction {
+                g_h,
+                g_n,
+                dir_type: "gradient_h".to_string(),
+                dir_index: 0,
+                directional_deriv: dd,
+            });
+        }
+
+        // Direction 2: gradient (h,n) (normalize combined)
+        if sens.gradient_norm_hn > 1e-15 {
+            let scale = 1.0 / sens.gradient_norm_hn;
+            let g_h: Vec<f64> = sens.d_sys_h.iter().map(|x| x * scale).collect();
+            let g_n: Vec<Vector4<f64>> = sens.d_sys_n.iter().map(|v| v * scale).collect();
+            let dd = sens.gradient_norm_hn; // ∇sys · (∇sys / |∇sys|) = |∇sys|
+            directions.push(Direction {
+                g_h,
+                g_n,
+                dir_type: "gradient_hn".to_string(),
+                dir_index: 0,
+                directional_deriv: dd,
+            });
+        }
+
+        // Directions 3..12: random (h,n) directions
+        for dir_idx in 0..N_RANDOM_DIRECTIONS {
+            // Random h-component: Gaussian in R^F
+            let raw_h: Vec<f64> = (0..f)
+                .map(|_| StandardNormal.sample(&mut rng))
+                .collect();
+
+            // Random n-component: Gaussian in R^4, projected to T_{n_k}S³
+            let raw_n: Vec<Vector4<f64>> = (0..f)
+                .map(|k| {
+                    let v = Vector4::new(
+                        StandardNormal.sample(&mut rng),
+                        StandardNormal.sample(&mut rng),
+                        StandardNormal.sample(&mut rng),
+                        StandardNormal.sample(&mut rng),
+                    );
+                    // Project to tangent space: v - (v·n_k) n_k
+                    v - normals[k] * v.dot(&normals[k])
+                })
+                .collect();
+
+            // Normalize the combined (h, n) direction to unit norm
+            let norm_sq: f64 = raw_h.iter().map(|x| x * x).sum::<f64>()
+                + raw_n.iter().map(|v| v.norm_squared()).sum::<f64>();
+            let norm = norm_sq.sqrt();
+            if norm < 1e-15 {
+                continue;
+            }
+            let scale = 1.0 / norm;
+            let g_h: Vec<f64> = raw_h.iter().map(|x| x * scale).collect();
+            let g_n: Vec<Vector4<f64>> = raw_n.iter().map(|v| v * scale).collect();
+
+            // Directional derivative: ∇sys · δ
+            let dd: f64 = sens
+                .d_sys_h
+                .iter()
+                .zip(g_h.iter())
+                .map(|(ds, d)| ds * d)
+                .sum::<f64>()
+                + sens
+                    .d_sys_n
+                    .iter()
+                    .zip(g_n.iter())
+                    .map(|(ds, d)| ds.dot(d))
+                    .sum::<f64>();
+
+            directions.push(Direction {
+                g_h,
+                g_n,
+                dir_type: "random".to_string(),
+                dir_index: dir_idx,
+                directional_deriv: dd,
+            });
+        }
+
+        let mut n_evals = 0usize;
+
+        // For each direction, compute t_max and test at multiple fractions
+        for dir in &directions {
+            // Compute step bound for this direction
+            let t_max = if dir.g_n.iter().all(|v| v.norm() < 1e-15) {
+                // Pure height direction
+                compute_step_bound(polytope, &dir.g_h)
+            } else {
+                compute_step_bound_hn(polytope, &dir.g_h, &dir.g_n)
+            };
+
+            if t_max < 1e-15 {
+                continue; // Degenerate direction
+            }
+
+            for &frac in VALIDITY_STEP_FRACTIONS {
+                let t = frac * t_max;
+                let beyond = frac > 1.0;
+
+                // Predicted delta_sys from linear approximation
+                let predicted_delta = t * dir.directional_deriv;
+
+                // Actual: construct perturbed polytope, compute sys
+                let (actual_delta, construction_ok, vertex_count_changed) =
+                    if dir.g_n.iter().all(|v| v.norm() < 1e-15) {
+                        // h-only step
+                        match try_step_h_polytope(normals, heights, &dir.g_h, t) {
+                            Some((new_poly, new_sys)) => {
+                                let vc = new_poly.vertices().len();
+                                (new_sys - sys, true, vc != vertex_count_orig)
+                            }
+                            None => (f64::NAN, false, false),
+                        }
+                    } else {
+                        // (h,n) step
+                        match try_step_hn_polytope(normals, heights, &dir.g_h, &dir.g_n, t) {
+                            Some((new_poly, new_sys)) => {
+                                let vc = new_poly.vertices().len();
+                                (new_sys - sys, true, vc != vertex_count_orig)
+                            }
+                            None => (f64::NAN, false, false),
+                        }
+                    };
+
+                let prediction_error = if actual_delta.is_finite() {
+                    (actual_delta - predicted_delta).abs()
+                } else {
+                    f64::NAN
+                };
+
+                let relative_error = if actual_delta.is_finite() {
+                    let denom = actual_delta.abs().max(1e-10);
+                    (actual_delta - predicted_delta).abs() / denom
+                } else {
+                    f64::NAN
+                };
+
+                if beyond {
+                    total_beyond += 1;
+                    if construction_ok {
+                        total_ok_beyond += 1;
+                    }
+                } else {
+                    total_within += 1;
+                    if construction_ok {
+                        total_ok_within += 1;
+                    }
+                }
+
+                let row = ValidityRow {
+                    name: name.clone(),
+                    facet_count: f,
+                    starting_sys: sys,
+                    direction_type: dir.dir_type.clone(),
+                    direction_index: dir.dir_index,
+                    t_fraction: frac,
+                    t_actual: t,
+                    t_max,
+                    predicted_delta_sys: predicted_delta,
+                    actual_delta_sys: actual_delta,
+                    prediction_error,
+                    relative_error,
+                    directional_derivative: dir.directional_deriv,
+                    construction_ok,
+                    vertex_count_changed,
+                    beyond_t_max: beyond,
+                };
+
+                serde_json::to_writer(&mut validity_writer, &row)
+                    .expect("write validity row");
+                validity_writer.write_all(b"\n").expect("write newline");
+                n_evals += 1;
+                total_validity_evals += 1;
+            }
+        }
+
+        println!("{} directions × {} steps = {} evaluations", directions.len(), VALIDITY_STEP_FRACTIONS.len(), n_evals);
+    }
+
+    validity_writer.flush().expect("flush validity");
+
+    // =========================================================================
     // Summary
     // =========================================================================
 
@@ -2052,10 +2318,24 @@ fn main() {
         );
     }
 
+    println!("\n═══════════════════════════════════════════════");
+    println!("Summary (Phase 4 — validity testing)");
+    println!("═══════════════════════════════════════════════");
+    println!("Total evaluations:   {total_validity_evals}");
+    println!(
+        "Within t_max:        {total_ok_within}/{total_within} OK ({:.0}%)",
+        100.0 * total_ok_within as f64 / total_within.max(1) as f64
+    );
+    println!(
+        "Beyond t_max:        {total_ok_beyond}/{total_beyond} OK ({:.0}%)",
+        100.0 * total_ok_beyond as f64 / total_beyond.max(1) as f64
+    );
+
     println!("\nTotal time:          {total_time:.1}s");
     println!();
     println!("Output:");
     println!("  {}", sensitivity_path.display());
     println!("  {}", steps_path.display());
     println!("  {}", iterations_path.display());
+    println!("  {}", validity_path.display());
 }
