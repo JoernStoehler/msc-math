@@ -478,10 +478,10 @@ All 138 iterated polytopes terminate with improvement below $10^{-6}$
 
 Across all iterations, $(h,n)$ steps are selected 58\% of the time
 (506 out of 868 steps).
-The preference for $(h,n)$ steps is strongest in early iterations when
-normal perturbations provide large improvements, and shifts toward
-$h$-only steps near termination as the $\omega_0$ sign constraints
-become more binding.
+The algorithm selects $(h,n)$ steps most frequently at the first
+iteration (67\% of polytopes). $h$-only steps are most prevalent
+at iterations~1--2 (45--53\%), after which $(h,n)$ steps regain
+dominance (60--63\%) through the remainder of the run.
 
 \subsubsection*{Phase 4: Gradient Validity Testing}
 
@@ -534,9 +534,12 @@ Three findings:
 \item \emph{Combined $(h,n)$ predictions have outliers.}
   The $\nabla_{(h,n)}$ direction shows good prediction for most polytopes
   (125/140 predict the correct sign of $\Delta\mathrm{sys}$),
-  but ${\sim}15$ polytopes have prediction ratios exceeding 25:1.
-  These outliers are near orbit-switching boundaries where the
-  minimizing orbit changes under perturbation.
+  but 15 polytopes have wrong-sign predictions
+  (the gradient predicts the opposite direction of actual change),
+  and 6 polytopes have prediction ratios exceeding 25:1.
+  % [TODO: JÖRN - orbit-switching is a plausible mechanism for these outliers
+  %  but is not directly recorded in the data. runner_up_gap provides a partial
+  %  proxy at the starting point only.]
   The median prediction-to-actual ratio is~$1.55$, indicating
   systematic overprediction from the normal renormalization
   $n_k \to (n_k + t\,g_{n,k})/\|n_k + t\,g_{n,k}\|$.
@@ -604,7 +607,7 @@ Phase~4 (Figure~\ref{fig:sys-opt-validity}) addresses the question of
 gradient validity: the height gradient accurately predicts $\mathrm{sys}$
 within the step bound, and beyond the step bound, polytope construction
 succeeds far more often than the conservative bounds require.
-The combined $(h,n)$ gradient has higher variance due to orbit-switching
-near the step boundary, suggesting that the large-step extension above
+The combined $(h,n)$ gradient has higher variance (15 wrong-sign
+predictions out of 140), suggesting that the large-step extension above
 should recompute $\mathrm{sys}$ from scratch rather than relying on
 gradient predictions.
