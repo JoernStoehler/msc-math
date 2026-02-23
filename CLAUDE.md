@@ -950,22 +950,12 @@ Rust binary → .jsonl → Python script → figures/tables → thesis
 
 **Why:** Worktrees inherit data immediately, changes are visible in diffs.
 
-<!-- TODO JÖRN: CONTRADICTION between Git section ("Regenerate on the branch that changes the code",
-     line ~300) and here ("On branches: Do NOT regenerate data"). Which is correct? -->
-
 **Regeneration convention:**
-- **On branches:** Do NOT regenerate data (avoid merge conflicts)
-- **On main:** Regenerate after merging branches (Jörn does this)
-- **Exception:** Regenerate on branch only if exploring new experiment; commit separately from code
+- **Regenerate on the branch that changes the code.** Data should match the code that produced it.
+- **Separate commits**: Code changes committed separately from data regeneration
 
-**When data is stale:**
-- If algorithm changed on main: Jörn regenerates + commits after merge
-- If new worktree from main: data already present, no action needed
-- If branch needs fresh data: ask Jörn, or regenerate locally (don't commit)
-
-**Merge conflicts:**
-- If data files conflict: use `git merge -s ours`, then regenerate on main
-- Conflicts should be rare (data commits only on main)
+**Merge conflicts (data/figures):**
+- Resolve by regenerating on the merged result
 
 ### Quality standards
 
