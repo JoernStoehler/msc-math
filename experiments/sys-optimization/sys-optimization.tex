@@ -339,34 +339,36 @@ logarithmic height sensitivity $\partial\,\mathrm{sys}/\partial\log h_k
 \label{fig:sys-opt-gradient}
 \end{figure}
 
-Figure~\ref{fig:sys-opt-gradient-comparison} compares the height and normal
-gradient contributions.
+Figure~\ref{fig:sys-opt-gradient-comparison} compares the two step types.
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\textwidth]{../experiments/sys-optimization/sys_optimization_gradient_comparison.png}
-\caption{Left: height gradient magnitude $\|\nabla_h\,\mathrm{sys}\|$
-  vs.\ normal gradient magnitude $\|\nabla_n\,\mathrm{sys}\|$ per polytope
-  (log--log scale, colored by facet count). All points lie well above the
-  diagonal: the normal component dominates by $1$--$2$ orders of magnitude.
+\caption{Left: predicted maximum $\Delta\mathrm{sys}$ from a single step
+  ($t_{\max} \cdot \|\nabla\,\mathrm{sys}\|$, dimensionless) for
+  height-only vs.\ $(h,n)$ steps.
+  Points scatter around the diagonal: neither step type consistently
+  dominates in the linear prediction.
   Right: maximum step size $t_{\max}$ for height-only vs.\ $(h,n)$ steps.
   The $(h,n)$ step bound is $1$--$3$ orders of magnitude smaller due to
   $\omega_0$ sign constraints.}
 \label{fig:sys-opt-gradient-comparison}
 \end{figure}
 
-The normal gradient dominates the height gradient: on average,
-$\|\nabla_n\,\mathrm{sys}\| \approx 1.75$ while
-$\|\nabla_h\,\mathrm{sys}\| \approx 0.19$.
-This reflects the different roles of the two parameter types.
-Changing a height translates the facet without affecting symplectic
-geometry; changing a normal rotates the Reeb vector, which directly
-affects the action functional.
-
-However, the step bound for $(h,n)$ perturbations is typically much smaller
-(median $t_{\max}^{(h,n)} \approx 0.07$ vs.\ $t_{\max}^{(h)} \approx 2.6$)
-because tilting normals can quickly flip the sign of $\omega_0(n_i, n_j)$
-for ridge-adjacent facets.
+Since $\nabla_h\,\mathrm{sys}$ and $\nabla_n\,\mathrm{sys}$ have different
+units (the heights carry a length scale, the normals do not), their
+magnitudes are not directly comparable.
+The dimensionless quantity
+$t_{\max} \cdot \|\nabla\,\mathrm{sys}\|$ --- the predicted maximum
+$\Delta\mathrm{sys}$ from a single linear step --- combines gradient
+magnitude and step bound into a comparable measure.
+On average, it is similar for both step types
+(mean $0.34$ for $h$-only, $0.15$ for $(h,n)$),
+with $h$-only slightly higher because the $(h,n)$ step bound is much
+smaller (median $t_{\max}^{(h,n)} \approx 0.07$ vs.\
+$t_{\max}^{(h)} \approx 2.6$).
+The $(h,n)$ bound is tight because tilting normals can quickly flip the
+sign of $\omega_0(n_i, n_j)$ for ridge-adjacent facets.
 
 \subsubsection*{Phase 2: Finite Gradient Steps}
 
@@ -523,10 +525,10 @@ $\mathrm{sys} \approx 0.76$ found by random sampling alone.
 
 Three structural observations:
 \begin{enumerate}
-\item \emph{The gradient is never zero.}
+\item \emph{All 140 starting polytopes have nonzero gradient.}
   None of the 140 starting polytopes is a critical point of $\mathrm{sys}$
-  under $(h,n)$ changes. Every polytope admits a direction of improvement.
-  After iteration, 138/140 polytopes converge to points where no
+  under $(h,n)$ changes; every one admits a direction of improvement.
+  After iteration, 138/140 converge to points where no
   further gradient step (within the combinatorial type) improves
   $\mathrm{sys}$ by more than~$10^{-6}$, but this reflects convergence
   of the greedy method, not stationarity of~$\mathrm{sys}$.
@@ -535,11 +537,10 @@ Three structural observations:
   In both single-step (Phase~2) and iterative (Phase~3) settings,
   $(h,n)$ steps outperform height-only.
   In Phase~3, $(h,n)$ steps are selected 58\% of the time.
-  The normal gradient is large (reflecting the direct influence of
-  facet normals on the Reeb dynamics), but the allowable step size
-  is small (constrained by $\omega_0$ sign preservation).
-  The net effect is a moderate but consistent advantage over
-  height-only steps.
+  The allowable step size for $(h,n)$ is much smaller than for $h$-only
+  (constrained by $\omega_0$ sign preservation), yet the
+  actual improvement is larger, indicating that the optimization landscape
+  is more curved in normal directions than the linear prediction suggests.
 
 \item \emph{Iteration produces substantial cumulative improvement.}
   The mean cumulative $\Delta\mathrm{sys}$ of $0.149$ is ${\sim}3\times$

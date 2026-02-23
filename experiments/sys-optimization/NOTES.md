@@ -66,8 +66,10 @@ Four phases, all in one binary:
 
 ## Learnings from past data
 
-- Normal gradient dominates height gradient by 1-2 orders of magnitude
-- But (h,n) step bound is 1-3 orders of magnitude smaller (ω₀ sign constraint)
+- ∇_h sys and ∇_n sys have different units (h has length scale, n dimensionless) — norms not comparable
+- Predicted max Δsys (t_max × ‖∇sys‖): similar for both types (mean 0.34 h-only, 0.15 (h,n))
+- (h,n) step bound is 1-3 orders of magnitude smaller (ω₀ sign constraint)
+- Yet actual (h,n) improvement is larger — landscape more curved in n-directions than linear prediction suggests
 - Net effect: (h,n) steps give ~59% more improvement per single step
 - Iterative improvement is ~3× single-step improvement (0.149 vs 0.054 mean Δsys)
 - Best sys achieved: 0.878 (from 0.351 start, random_5x5_1)

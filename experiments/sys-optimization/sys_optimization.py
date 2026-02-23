@@ -105,48 +105,52 @@ def plot_gradient_histogram(sens_rows: list[dict], output_path: Path) -> None:
 # =============================================================================
 
 def plot_gradient_comparison(sens_rows: list[dict], output_path: Path) -> None:
-    """Scatter: |∇_h sys| vs |∇_n sys| per polytope, colored by facet count."""
+    """Predicted max improvement and step bounds: h-only vs (h,n)."""
     grad_h = np.array([r["gradient_norm_h"] for r in sens_rows])
-    grad_n = np.array([r["gradient_norm_n"] for r in sens_rows])
+    grad_hn = np.array([r["gradient_norm_hn"] for r in sens_rows])
+    t_h = np.array([r["t_max_h"] for r in sens_rows])
+    t_hn = np.array([r["t_max_hn"] for r in sens_rows])
     facet_counts = np.array([r["facet_count"] for r in sens_rows])
 
-    # Filter out zero gradients for log scale
-    valid = (grad_h > 1e-15) & (grad_n > 1e-15)
+    # Predicted max Δsys = t_max * ||∇sys|| (dimensionless)
+    pred_h = t_h * grad_h
+    pred_hn = t_hn * grad_hn
+
+    # Filter to polytopes with nonzero predictions
+    valid = (pred_h > 1e-15) & (pred_hn > 1e-15)
     if valid.sum() == 0:
         print("WARNING: no gradient comparison data", file=sys.stderr)
         return
 
-    gh = grad_h[valid]
-    gn = grad_n[valid]
     fc = facet_counts[valid]
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(13, 5.5))
 
-    # Left: log-log scatter of |∇_h| vs |∇_n|
-    scatter = ax1.scatter(gh, gn, c=fc, cmap="viridis", alpha=0.7, s=30, zorder=3)
+    # Left: predicted max Δsys comparison
+    scatter = ax1.scatter(
+        pred_h[valid], pred_hn[valid],
+        c=fc, cmap="viridis", alpha=0.7, s=30, zorder=3,
+    )
     cbar = fig.colorbar(scatter, ax=ax1)
     cbar.set_label("Facet count")
 
-    # Diagonal reference
-    lo = min(gh.min(), gn.min()) * 0.5
-    hi = max(gh.max(), gn.max()) * 2
-    ax1.plot([lo, hi], [lo, hi], "k--", alpha=0.3, label=r"$|\nabla_n| = |\nabla_h|$")
+    lo = min(pred_h[valid].min(), pred_hn[valid].min()) * 0.5
+    hi = max(pred_h[valid].max(), pred_hn[valid].max()) * 2
+    ax1.plot([lo, hi], [lo, hi], "k--", alpha=0.3, label="Equal")
     ax1.set_xscale("log")
     ax1.set_yscale("log")
-    ax1.set_xlabel(r"$\|\nabla_h\,\mathrm{sys}\|$")
-    ax1.set_ylabel(r"$\|\nabla_n\,\mathrm{sys}\|$")
-    ax1.set_title(r"Height vs normal gradient magnitudes")
+    ax1.set_xlabel(r"$t_{\max}^{(h)} \cdot \|\nabla_h\,\mathrm{sys}\|$")
+    ax1.set_ylabel(r"$t_{\max}^{(h,n)} \cdot \|\nabla_{(h,n)}\,\mathrm{sys}\|$")
+    ax1.set_title(r"Predicted max $\Delta\mathrm{sys}$")
     ax1.legend(loc="lower right")
     ax1.grid(True, alpha=0.3, which="both")
 
     # Right: t_max comparison
-    t_h = np.array([r["t_max_h"] for r in sens_rows])[valid]
-    t_hn = np.array([r["t_max_hn"] for r in sens_rows])[valid]
-    t_valid = (t_h > 1e-15) & (t_hn > 1e-15)
+    t_valid = valid & (t_h > 1e-15) & (t_hn > 1e-15)
     if t_valid.sum() > 0:
         scatter2 = ax2.scatter(
             t_h[t_valid], t_hn[t_valid],
-            c=fc[t_valid], cmap="viridis", alpha=0.7, s=30, zorder=3,
+            c=facet_counts[t_valid], cmap="viridis", alpha=0.7, s=30, zorder=3,
         )
         lo2 = min(t_hn[t_valid].min(), 1e-4) * 0.5
         hi2 = max(t_h[t_valid].max(), 1) * 2
@@ -547,11 +551,10 @@ def write_stats_table(
     """Write summary statistics as a LaTeX table."""
     n_polytopes = len(sens_rows)
 
-    # Gradient norms
-    gradient_h = [r["gradient_norm_h"] for r in sens_rows]
-    gradient_n = [r["gradient_norm_n"] for r in sens_rows]
-    gradient_hn = [r["gradient_norm_hn"] for r in sens_rows]
-    n_with_gradient = sum(1 for g in gradient_hn if g > 1e-10)
+    # Predicted max Δsys per step type (dimensionless: t_max * ||∇sys||)
+    pred_h = [r["t_max_h"] * r["gradient_norm_h"] for r in sens_rows]
+    pred_hn = [r["t_max_hn"] * r["gradient_norm_hn"] for r in sens_rows]
+    n_with_gradient = sum(1 for p in pred_hn if p > 1e-10)
 
     # Sys values
     sys_before = [r["sys"] for r in sens_rows]
@@ -643,9 +646,8 @@ def write_stats_table(
         rf"Polytopes analyzed & {n_polytopes} \\",
         rf"Polytopes with $\|\nabla_{{(h,n)}} \mathrm{{sys}}\| > 0$ & {n_with_gradient} \\",
         r"\midrule",
-        rf"Mean $\|\nabla_h \mathrm{{sys}}\|$ & {np.mean(gradient_h):.4f} \\",
-        rf"Mean $\|\nabla_n \mathrm{{sys}}\|$ & {np.mean(gradient_n):.4f} \\",
-        rf"Mean $\|\nabla_{{(h,n)}} \mathrm{{sys}}\|$ & {np.mean(gradient_hn):.4f} \\",
+        rf"Mean predicted max $\Delta\mathrm{{sys}}$ ($h$-only) & {np.mean(pred_h):.4f} \\",
+        rf"Mean predicted max $\Delta\mathrm{{sys}}$ ($(h,n)$) & {np.mean(pred_hn):.4f} \\",
         r"\midrule",
         rf"Improved by $h$-only step & {n_improved_h}/{len(h_steps)} \\",
         rf"Improved by $(h,n)$ step & {n_improved_hn}/{len(hn_steps)} \\",
