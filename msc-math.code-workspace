@@ -35,6 +35,8 @@
 		"claudeCode.preferredLocation": "panel",
 		"claudeCode.respectGitIgnore": false,
 		"claudeCode.useCtrlEnterToSend": true,
+		"workbench.editor.wrapTabs": true,
+		"workbench.editor.showTabs": "multiple",
 	},
 	"extensions": {
 		"recommendations": [
