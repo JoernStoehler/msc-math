@@ -6,6 +6,7 @@
 %   - Generated data: experiments/sys-optimization/sys-optimization-sensitivity.jsonl
 %   - Generated data: experiments/sys-optimization/sys-optimization-steps.jsonl
 %   - Generated data: experiments/sys-optimization/sys-optimization-iterations.jsonl
+%   - Generated data: experiments/sys-optimization/sys-optimization-validity.jsonl
 %   - Plot script: experiments/sys-optimization/sys_optimization.py
 %   - Developer notes: experiments/sys-optimization/NOTES.md
 %
@@ -16,6 +17,7 @@
 %   - Sensitivity analysis (Phase 1)
 %   - Finite gradient steps (Phase 2)
 %   - Iterative gradient ascent (Phase 3)
+%   - Gradient validity testing (Phase 4)
 %   - Discussion
 
 \subsection{Sensitivity Analysis and Gradient Optimization of sys}
@@ -445,6 +447,73 @@ normal perturbations provide large improvements, and shifts toward
 $h$-only steps near convergence as the $\omega_0$ sign constraints
 become more binding.
 
+\subsubsection*{Phase 4: Gradient Validity Testing}
+
+Phases~1--3 treat the analytical gradient as correct and use it
+for optimization. Phase~4 tests this assumption empirically:
+does the linear prediction
+$\mathrm{sys}(h + t\delta_h,\, n + t\delta_n) \approx
+\mathrm{sys}_0 + t\,(\nabla_{(h,n)}\mathrm{sys} \cdot \delta)$
+hold in practice?
+
+For each of the 140 polytopes, we test along 12 directions:
+the $\nabla_h$ gradient direction (heights only),
+the $\nabla_{(h,n)}$ gradient direction (heights + normals),
+and 10 random $(h,n)$ directions (Gaussian, projected to $T_{n_k}S^3$
+for each normal component, then normalized).
+For each direction, we evaluate at 8 step fractions
+$t/t_{\max} \in \{0.01, 0.1, 0.25, 0.5, 1.0, 2.0, 5.0, 10.0\}$,
+where $t_{\max}$ is the combinatorial-type-preserving step bound.
+Each evaluation constructs the perturbed polytope, runs HK2017, and
+compares the actual $\Delta\mathrm{sys}$ against the linear prediction.
+This produces 13{,}440 evaluations total.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{../experiments/sys-optimization/sys_optimization_validity.png}
+\caption{Left: median relative prediction error vs.\ step fraction,
+  by direction type (shading: interquartile range).
+  The height gradient (red) tracks the linear prediction closely
+  ($<5\%$ error at $0.25\,t_{\max}$).
+  Random directions (blue) have ${\sim}90\%$ error at all scales
+  (the gradient is nearly orthogonal to random perturbations in the
+  high-dimensional parameter space).
+  Center: construction success rate beyond the step bound.
+  85\% of evaluations at $2\times t_{\max}$ produce a valid polytope.
+  Right: distribution of the largest step fraction with
+  $<20\%$ relative error, by direction type.}
+\label{fig:sys-opt-validity}
+\end{figure}
+
+Three findings:
+\begin{enumerate}
+\item \emph{Height gradient predictions are accurate.}
+  Along $\nabla_h\,\mathrm{sys}$, the median relative error is $0.2\%$
+  at $0.01\,t_{\max}$, $2.2\%$ at $0.1\,t_{\max}$, and $4.5\%$ at
+  $0.25\,t_{\max}$.
+  This is consistent with $O(t)$ truncation error from the first-order
+  approximation and validates the analytical height derivatives
+  (Lemmas~\ref{lem:vol-derivative} and~\ref{lem:cap-derivative}).
+
+\item \emph{Combined $(h,n)$ predictions have outliers.}
+  The $\nabla_{(h,n)}$ direction shows good prediction for most polytopes
+  (125/140 predict the correct sign of $\Delta\mathrm{sys}$),
+  but ${\sim}15$ polytopes have prediction ratios exceeding 25:1.
+  These outliers are near orbit-switching boundaries where the
+  minimizing orbit changes under perturbation.
+  The median prediction-to-actual ratio is~$1.55$, indicating
+  systematic overprediction from the normal renormalization
+  $n_k \to (n_k + t\,g_{n,k})/\|n_k + t\,g_{n,k}\|$.
+
+\item \emph{Step bounds are conservative.}
+  At $2\times t_{\max}$, 85\% of evaluations succeed (valid polytope
+  constructed), and 35\% also preserve the combinatorial type.
+  Even at $10\times t_{\max}$, 60\% of evaluations succeed.
+  The bounds are thus safe but overly cautious for polytope
+  construction; the binding constraint in practice is
+  combinatorial type preservation, not polytope validity.
+\end{enumerate}
+
 \subsubsection*{Discussion}
 
 Iterative gradient ascent does not push $\mathrm{sys}$ past~$1$.
@@ -494,9 +563,13 @@ each step. Several extensions could push $\mathrm{sys}$ further:
   so small height changes affect only $\mathrm{vol}$.
   However, large decreases in $h_k$ could trigger an orbit switch to a
   better orbit, combining volume reduction with capacity improvement.
-\item \emph{Gradient validity testing.}
-  Empirically characterizing the radius within which the computed
-  gradient accurately predicts $\mathrm{sys}$ changes under random
-  perturbations, and how frequently the combinatorial-type-preserving
-  conditions are met.
 \end{itemize}
+
+Phase~4 (Figure~\ref{fig:sys-opt-validity}) addresses the question of
+gradient validity: the height gradient accurately predicts $\mathrm{sys}$
+within the step bound, and beyond the step bound, polytope construction
+succeeds far more often than the conservative bounds require.
+The combined $(h,n)$ gradient has higher variance due to orbit-switching
+near the step boundary, suggesting that the large-step extension above
+should recompute $\mathrm{sys}$ from scratch rather than relying on
+gradient predictions.
