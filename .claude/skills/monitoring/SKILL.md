@@ -130,7 +130,7 @@ git -C /workspaces/msc-math worktree remove "$BENCH_WT"
 
 **Purpose:** Detect zombie cargo/test processes left behind by ended sessions.
 
-**Background:** When agent sessions end or background tasks are cancelled, child processes (test binaries, qhull subprocesses) can survive and consume CPU indefinitely. The `timeout` convention (CLAUDE.md) and worktree-remove.sh cleanup help prevent this, but detection catches what prevention misses.
+**Background:** When agent sessions end or background tasks are cancelled, child processes (test binaries, qhull subprocesses) can survive and consume CPU indefinitely. The `timeout` convention (CLAUDE.md) and the `WorktreeRemove` hook (`.claude/hooks/worktree-remove.sh`) help prevent this, but detection catches what prevention misses.
 
 **Command:**
 ```bash

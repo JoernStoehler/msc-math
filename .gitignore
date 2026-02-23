@@ -29,6 +29,9 @@ node_modules/
 package.json
 package-lock.json
 
+# Claude Code worktrees (created by --worktree / EnterWorktree)
+.claude/worktrees/
+
 # Editor
 .vscode/
 *.swp

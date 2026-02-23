@@ -285,9 +285,8 @@ These are true about the repo right now and must remain true:
 
 ## Environment
 
-- Sessions run in a devcontainer with the repo at `/workspaces/msc-math` and worktrees at `/workspaces/worktrees/<name>`.
-  - Create: `.devcontainer/worktree-new.sh <path> <branch>` (fetches, hydrates deps)
-  - Remove: `.devcontainer/worktree-remove.sh <path>` (safe removal with diagnostics)
+- Sessions run in a devcontainer with the repo at `/workspaces/msc-math`.
+- Worktrees: use `--worktree` flag or `EnterWorktree` tool. Hooks in `.claude/hooks/` override defaults to branch from local `main` and kill stale processes on removal. Worktrees land at `.claude/worktrees/<name>/`.
 - Pre-installed: Rust 1.93 (cargo, clippy), Python 3.11 (pytest, ruff, mypy, black), gh CLI (via post-create hook)
 - LaTeX: TeX Live 2023 (pdflatex, xelatex, lualatex), latexmk, biber, chktex
 
