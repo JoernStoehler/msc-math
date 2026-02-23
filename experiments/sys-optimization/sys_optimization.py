@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
 """
-Analyze sys-optimization results: sensitivity analysis and gradient steps.
+Analyze sys-optimization results: sensitivity analysis, gradient steps, iteration.
 
 Compares height-only (h) vs joint height-normal (h,n) gradient steps.
 
 Input:
   - experiments/sys-optimization/sys-optimization-sensitivity.jsonl
   - experiments/sys-optimization/sys-optimization-steps.jsonl
+  - experiments/sys-optimization/sys-optimization-iterations.jsonl
 Output:
   - experiments/sys-optimization/sys_optimization_gradient_hist.png
   - experiments/sys-optimization/sys_optimization_gradient_comparison.png
   - experiments/sys-optimization/sys_optimization_improvement.png
+  - experiments/sys-optimization/sys_optimization_convergence.png
+  - experiments/sys-optimization/sys_optimization_iteration_summary.png
   - experiments/sys-optimization/sys_optimization_stats.tex
 """
 
@@ -25,6 +28,7 @@ import numpy as np
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 SENSITIVITY_PATH = EXPERIMENT_DIR / "sys-optimization-sensitivity.jsonl"
 STEPS_PATH = EXPERIMENT_DIR / "sys-optimization-steps.jsonl"
+ITERATIONS_PATH = EXPERIMENT_DIR / "sys-optimization-iterations.jsonl"
 
 
 def load_jsonl(path: Path) -> list[dict]:
@@ -239,12 +243,158 @@ def plot_improvement(steps_rows: list[dict], output_path: Path) -> None:
 
 
 # =============================================================================
+# Figure 4: Convergence trajectories (Phase 3)
+# =============================================================================
+
+def plot_convergence(iter_rows: list[dict], output_path: Path) -> None:
+    """Line plots of sys vs iteration for each polytope, colored by final sys."""
+    # Group by polytope name
+    by_name: dict[str, list[dict]] = defaultdict(list)
+    for r in iter_rows:
+        by_name[r["name"]].append(r)
+
+    if not by_name:
+        print("WARNING: no iteration data to plot", file=sys.stderr)
+        return
+
+    # Sort each trajectory by iteration
+    for name in by_name:
+        by_name[name].sort(key=lambda r: r["iteration"])
+
+    # Compute final sys for coloring
+    final_sys = {}
+    for name, rows in by_name.items():
+        final_sys[name] = rows[-1]["sys_after"]
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(13, 5.5))
+
+    # Left: sys trajectories colored by final sys
+    names_sorted = sorted(by_name.keys(), key=lambda n: final_sys[n])
+    cmap = plt.cm.viridis
+    vmin = min(final_sys.values())
+    vmax = max(final_sys.values())
+    norm = plt.Normalize(vmin=vmin, vmax=vmax)
+
+    for name in names_sorted:
+        rows = by_name[name]
+        iters = [0] + [r["iteration"] + 1 for r in rows]
+        sys_vals = [rows[0]["sys_before"]] + [r["sys_after"] for r in rows]
+        color = cmap(norm(final_sys[name]))
+        ax1.plot(iters, sys_vals, alpha=0.4, linewidth=0.8, color=color)
+
+    sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
+    cbar = fig.colorbar(sm, ax=ax1)
+    cbar.set_label("Final sys")
+    ax1.set_xlabel("Iteration")
+    ax1.set_ylabel("sys")
+    ax1.set_title("Convergence trajectories")
+    ax1.axhline(y=1.0, color="#c0392b", linestyle="--", alpha=0.4, label="sys = 1")
+    ax1.legend(loc="lower right")
+    ax1.grid(True, alpha=0.3)
+
+    # Right: delta_sys per iteration (all polytopes overlaid)
+    for name in names_sorted:
+        rows = by_name[name]
+        iters = [r["iteration"] + 1 for r in rows]
+        deltas = [r["delta_sys"] for r in rows]
+        color = cmap(norm(final_sys[name]))
+        ax2.plot(iters, deltas, alpha=0.4, linewidth=0.8, color=color)
+
+    ax2.set_xlabel("Iteration")
+    ax2.set_ylabel(r"$\Delta\mathrm{sys}$ per step")
+    ax2.set_title("Per-step improvement")
+    ax2.set_yscale("symlog", linthresh=1e-6)
+    ax2.axhline(y=0, color="black", linewidth=0.5, alpha=0.5)
+    ax2.grid(True, alpha=0.3)
+
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=150)
+    plt.close(fig)
+    print(f"Saved: {output_path}")
+
+
+# =============================================================================
+# Figure 5: Iteration summary (Phase 3)
+# =============================================================================
+
+def plot_iteration_summary(iter_rows: list[dict], output_path: Path) -> None:
+    """Iteration count histogram + starting vs final sys scatter."""
+    by_name: dict[str, list[dict]] = defaultdict(list)
+    for r in iter_rows:
+        by_name[r["name"]].append(r)
+
+    if not by_name:
+        print("WARNING: no iteration data to plot", file=sys.stderr)
+        return
+
+    for name in by_name:
+        by_name[name].sort(key=lambda r: r["iteration"])
+
+    # Per-polytope summary
+    names = sorted(by_name.keys())
+    n_iters = np.array([len(by_name[n]) for n in names])
+    starting = np.array([by_name[n][0]["starting_sys"] for n in names])
+    final = np.array([by_name[n][-1]["sys_after"] for n in names])
+    cumulative = final - starting
+
+    # Step type counts
+    h_count = sum(1 for r in iter_rows if r["step_type"] == "h_only")
+    hn_count = sum(1 for r in iter_rows if r["step_type"] == "h_n")
+
+    fig, axes = plt.subplots(1, 3, figsize=(16, 4.5))
+
+    # Left: iteration count histogram
+    ax = axes[0]
+    max_iter = n_iters.max()
+    bins = np.arange(0.5, max_iter + 1.5, 1)
+    ax.hist(n_iters, bins=bins, color="#3b6ea8", alpha=0.75, edgecolor="white")
+    ax.set_xlabel("Iterations to convergence")
+    ax.set_ylabel("Count")
+    ax.set_title(f"Iteration counts (mean {n_iters.mean():.1f})")
+    ax.grid(True, alpha=0.3)
+
+    # Middle: starting vs final sys
+    ax = axes[1]
+    ax.scatter(starting, final, alpha=0.6, s=25, color="#3b6ea8", zorder=3)
+    lim = max(starting.max(), final.max()) * 1.1
+    ax.plot([0, lim], [0, lim], "k--", alpha=0.3, label="No improvement")
+    ax.axhline(y=1.0, color="#c0392b", linestyle="--", alpha=0.4, label="sys = 1")
+    ax.set_xlabel("sys (initial)")
+    ax.set_ylabel("sys (after iteration)")
+    ax.set_title("Iterative improvement")
+    ax.set_xlim(0, lim)
+    ax.set_ylim(0, lim)
+    ax.set_aspect("equal")
+    ax.legend(loc="upper left", fontsize=8)
+    ax.grid(True, alpha=0.3)
+
+    # Right: step type pie chart
+    ax = axes[2]
+    ax.bar(
+        ["$h$-only", "$(h,n)$"],
+        [h_count, hn_count],
+        color=["#3b6ea8", "#27ae60"],
+        alpha=0.75,
+        edgecolor="white",
+    )
+    ax.set_ylabel("Steps taken")
+    ax.set_title(f"Step type usage ({h_count + hn_count} total)")
+    ax.grid(True, alpha=0.3, axis="y")
+
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=150)
+    plt.close(fig)
+    print(f"Saved: {output_path}")
+
+
+# =============================================================================
 # Stats table (LaTeX)
 # =============================================================================
 
 def write_stats_table(
     sens_rows: list[dict],
     steps_rows: list[dict],
+    iter_rows: list[dict],
     output_path: Path,
 ) -> None:
     """Write summary statistics as a LaTeX table."""
@@ -281,9 +431,37 @@ def write_stats_table(
     delta_hn = [r["delta_sys"] for r in hn_steps]
     new_sys_hn = [r["new_sys"] for r in hn_steps]
 
-    # Best overall
+    # Best overall (single step)
     all_new = new_sys_h + new_sys_hn
-    max_sys_after = max(all_new) if all_new else 0
+    max_sys_single = max(all_new) if all_new else 0
+
+    # Phase 3: iteration stats
+    by_name: dict[str, list[dict]] = defaultdict(list)
+    for r in iter_rows:
+        by_name[r["name"]].append(r)
+    for name in by_name:
+        by_name[name].sort(key=lambda r: r["iteration"])
+
+    n_iterated = len(by_name)
+    iter_counts = [len(rows) for rows in by_name.values()]
+    mean_iters = np.mean(iter_counts) if iter_counts else 0
+    max_iters_used = max(iter_counts) if iter_counts else 0
+
+    # Convergence: last step had delta < threshold
+    n_converged = sum(
+        1 for rows in by_name.values()
+        if rows[-1]["delta_sys"] < 1e-6 or len(rows) < 20
+    )
+
+    # Final sys values after iteration
+    final_sys = [rows[-1]["sys_after"] for rows in by_name.values()]
+    max_sys_iterated = max(final_sys) if final_sys else 0
+    cumulative_deltas = [rows[-1]["cumulative_delta"] for rows in by_name.values()]
+    mean_cumulative = np.mean(cumulative_deltas) if cumulative_deltas else 0
+
+    # Step type breakdown
+    h_steps_iter = sum(1 for r in iter_rows if r["step_type"] == "h_only")
+    hn_steps_iter = sum(1 for r in iter_rows if r["step_type"] == "h_n")
 
     lines = [
         r"\begin{tabular}{lr}",
@@ -301,9 +479,16 @@ def write_stats_table(
         rf"Improved by $(h,n)$ step & {n_improved_hn}/{len(hn_steps)} \\",
         rf"Mean $\Delta\mathrm{{sys}}$ ($h$-only) & {np.mean(delta_h):.4f} \\",
         rf"Mean $\Delta\mathrm{{sys}}$ ($(h,n)$) & {np.mean(delta_hn):.4f} \\",
+        rf"Best sys (single step) & {max_sys_single:.4f} \\",
+        r"\midrule",
+        rf"Polytopes iterated & {n_iterated} \\",
+        rf"Mean iterations & {mean_iters:.1f} \\",
+        rf"Converged & {n_converged}/{n_iterated} \\",
+        rf"Steps: $h$-only / $(h,n)$ & {h_steps_iter} / {hn_steps_iter} \\",
+        rf"Mean cumulative $\Delta\mathrm{{sys}}$ & {mean_cumulative:.4f} \\",
         r"\midrule",
         rf"Best sys (before) & {max_sys_before:.4f} \\",
-        rf"Best sys (after any step) & {max_sys_after:.4f} \\",
+        rf"Best sys (after iteration) & {max_sys_iterated:.4f} \\",
         r"\bottomrule",
         r"\end{tabular}",
     ]
@@ -319,8 +504,13 @@ def write_stats_table(
 def main() -> None:
     sens_rows = load_jsonl(SENSITIVITY_PATH)
     steps_rows = load_jsonl(STEPS_PATH)
+    iter_rows = load_jsonl(ITERATIONS_PATH)
 
-    print(f"Loaded {len(sens_rows)} sensitivity rows, {len(steps_rows)} step rows\n")
+    print(
+        f"Loaded {len(sens_rows)} sensitivity rows, "
+        f"{len(steps_rows)} step rows, "
+        f"{len(iter_rows)} iteration rows\n"
+    )
 
     plot_gradient_histogram(
         sens_rows, EXPERIMENT_DIR / "sys_optimization_gradient_hist.png"
@@ -331,8 +521,15 @@ def main() -> None:
     plot_improvement(
         steps_rows, EXPERIMENT_DIR / "sys_optimization_improvement.png"
     )
+    plot_convergence(
+        iter_rows, EXPERIMENT_DIR / "sys_optimization_convergence.png"
+    )
+    plot_iteration_summary(
+        iter_rows, EXPERIMENT_DIR / "sys_optimization_iteration_summary.png"
+    )
     write_stats_table(
-        sens_rows, steps_rows, EXPERIMENT_DIR / "sys_optimization_stats.tex"
+        sens_rows, steps_rows, iter_rows,
+        EXPERIMENT_DIR / "sys_optimization_stats.tex",
     )
 
 
