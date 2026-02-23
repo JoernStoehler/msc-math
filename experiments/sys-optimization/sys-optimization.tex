@@ -68,6 +68,7 @@ Then the optimal value $f^*(\theta) = f(x^*(\theta);\theta)$ satisfies
 
 \paragraph{Height derivatives.}
 
+% [TODO: JÖRN - verify proof. Agent-written, not from a specific reference.]
 \begin{lemma}[Volume derivative w.r.t.\ heights]
 \label{lem:vol-derivative}
 For a convex polytope $K$ in $H$-representation with unit normals,
@@ -85,6 +86,7 @@ and varies continuously.
 Thus $\mathrm{vol}(K') - \mathrm{vol}(K) = \delta \cdot S_k + O(\delta^2)$.
 \end{proof}
 
+% [TODO: JÖRN - verify proof. Agent-written envelope theorem application.]
 \begin{lemma}[Capacity derivative w.r.t.\ heights]
 \label{lem:cap-derivative}
 Fix an orbit $(S,\sigma)$ with $|S| = m$ facets. The orbit's action is
@@ -122,6 +124,7 @@ Perturbing a normal $n_k \to n_k + \varepsilon\delta$ (with $\delta \in T_{n_k}S
 tilts the facet while keeping its distance from the origin.
 Both the volume and the capacity depend on the normals, but through different mechanisms.
 
+% [TODO: JÖRN - verify proof. Agent-written. Listed in NOTES.md as needing verification.]
 \begin{lemma}[Volume derivative w.r.t.\ normals]
 \label{lem:vol-derivative-normal}
 For a tangent perturbation $\delta \in T_{n_k}S^3$,
@@ -154,6 +157,12 @@ full gradient $-S_k\,\bar{x}_k$ is $-S_k\,(\bar{x}_k - (n_k \cdot \bar{x}_k)\,n_
 = -S_k\,(\bar{x}_k - h_k\,n_k)$.
 \end{proof}
 
+% [TODO: JÖRN - verify proof. Agent-written. Listed in NOTES.md as needing verification.
+%  The sign chain (line "Combining yields...") is flagged as uncertain.]
+% [GAP - AGENT CONFIDENCE 60%: The sign chain in the H-term derivation involves
+%  multiple antisymmetry flips and the closing constraint simplification. Agent cannot
+%  reliably verify the signs are all correct. JÖRN: verify the derivation from
+%  "For the H-term" through "Combining yields the stated formula."]
 \begin{lemma}[Capacity derivative w.r.t.\ normals]
 \label{lem:cap-derivative-normal}
 Using the same notation as Lemma~\ref{lem:cap-derivative}, let
@@ -197,8 +206,7 @@ $\sum_i \beta_i^* n_{\sigma(i)} = 0$ to simplify yields
 $\frac{1}{2}\partial(\beta^T H\beta)/\partial n_k \cdot \delta
 = \beta_{i_0}^*\,J_0(2P_{i_0} + \beta_{i_0}^* n_k) \cdot \delta$.
 (The detailed sign chain involves the antisymmetry of $\omega_0$ and the
-bilinear identity $\omega_0(u,v) = (J_0 u) \cdot v$; it is verified
-numerically by finite-difference cross-checks.)
+bilinear identity $\omega_0(u,v) = (J_0 u) \cdot v$.)
 Combining yields the stated formula.
 \end{proof}
 
@@ -214,6 +222,8 @@ and on the Phase~4 validity tests, which show that the gradient accurately
 predicts $\Delta\mathrm{sys}$ at small step sizes
 (Section~\ref{sec:gradient-validity}).
 
+% [TODO: JÖRN - verify proof sketch. Agent-written. Part (a) was corrected after
+%  Jörn flagged non-simple vertex issue. Parts (b)-(d) not yet reviewed.]
 \begin{proposition}[Capacity as piecewise-smooth function of $(h,n)$]
 \label{prop:capacity-piecewise-smooth}
 Let $K(h,n)$ be a \emph{simple} polytope (every vertex determined by exactly~$4$
@@ -413,7 +423,7 @@ with mean improvement $\Delta\mathrm{sys} = 0.054$ vs.\ $0.034$.
 Overall, 129/140 polytopes improve under $(h,n)$ steps, compared to
 126/140 for height-only.
 The best $\mathrm{sys}$ achieved is~$0.805$, starting from a polytope
-with $\mathrm{sys} = 0.758$ (a random $4 \times 5$ Lagrangian product).
+with $\mathrm{sys} = 0.735$ (a random $4 \times 5$ Lagrangian product).
 
 \subsubsection*{Phase 3: Iterative Gradient Ascent}
 
@@ -459,7 +469,10 @@ Iteration produces a substantial cumulative improvement:
 the mean cumulative $\Delta\mathrm{sys}$ is $0.149$, roughly $3\times$
 the single-step improvement of Phase~2.
 The best $\mathrm{sys}$ after iteration reaches~$0.878$
-(up from $0.758$ before optimization and $0.805$ after a single step).
+(polytope \texttt{random\_5x5\_1}, starting from $\mathrm{sys} = 0.351$).
+Note: this is a different polytope from the single-step best ($0.805$);
+the highest starting $\mathrm{sys}$ in the dataset is~$0.758$, but that
+polytope admits no improving step.
 All 138 iterated polytopes terminate with improvement below $10^{-6}$
 (2 polytopes admit no improving step from their starting point).
 
@@ -511,8 +524,8 @@ This produces 13{,}440 evaluations total.
 Three findings:
 \begin{enumerate}
 \item \emph{Height gradient predictions are accurate.}
-  Along $\nabla_h\,\mathrm{sys}$, the median relative error is $0.2\%$
-  at $0.01\,t_{\max}$, $2.2\%$ at $0.1\,t_{\max}$, and $4.5\%$ at
+  Along $\nabla_h\,\mathrm{sys}$, the median relative error is $0.3\%$
+  at $0.01\,t_{\max}$, $2.8\%$ at $0.1\,t_{\max}$, and $7.3\%$ at
   $0.25\,t_{\max}$.
   This is consistent with $O(t)$ truncation error from the first-order
   approximation and validates the analytical height derivatives
