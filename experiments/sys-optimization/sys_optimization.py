@@ -40,12 +40,13 @@ def load_jsonl(path: Path) -> list[dict]:
 # =============================================================================
 
 def plot_gradient_histogram(sens_rows: list[dict], output_path: Path) -> None:
-    """Histogram of |d(sys)/d(h_k)| across all polytopes and facets."""
+    """Histogram of d(sys)/d(log h_k) = h_k * d(sys)/d(h_k), signed."""
     all_grads = []
     for r in sens_rows:
-        for ds in r["d_sys"]:
+        heights = r["heights"]
+        for k, ds in enumerate(r["d_sys"]):
             if ds is not None and np.isfinite(ds) and abs(ds) > 1e-15:
-                all_grads.append(abs(ds))
+                all_grads.append(heights[k] * ds)
 
     if not all_grads:
         print("WARNING: no gradient data to plot", file=sys.stderr)
@@ -55,19 +56,21 @@ def plot_gradient_histogram(sens_rows: list[dict], output_path: Path) -> None:
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4.5))
 
-    # Linear scale
+    # Signed histogram (linear scale)
     ax1.hist(all_grads, bins=50, color="#3b6ea8", alpha=0.75, edgecolor="white")
-    ax1.set_xlabel("|d(sys)/d(h_k)|")
+    ax1.axvline(x=0, color="black", linewidth=0.8, alpha=0.5)
+    ax1.set_xlabel(r"$\partial\,\mathrm{sys}\,/\,\partial\log h_k$")
     ax1.set_ylabel("Count")
-    ax1.set_title("Gradient magnitudes (linear)")
+    ax1.set_title("Logarithmic sensitivity (linear)")
     ax1.grid(True, alpha=0.3)
 
-    # Log scale
-    log_grads = np.log10(all_grads)
+    # Magnitude on log scale
+    abs_grads = np.abs(all_grads)
+    log_grads = np.log10(abs_grads)
     ax2.hist(log_grads, bins=50, color="#3b6ea8", alpha=0.75, edgecolor="white")
-    ax2.set_xlabel("log₁₀ |d(sys)/d(h_k)|")
+    ax2.set_xlabel(r"$\log_{10}\,|\partial\,\mathrm{sys}\,/\,\partial\log h_k|$")
     ax2.set_ylabel("Count")
-    ax2.set_title("Gradient magnitudes (log scale)")
+    ax2.set_title("Logarithmic sensitivity (log magnitude)")
     ax2.grid(True, alpha=0.3)
 
     fig.tight_layout()

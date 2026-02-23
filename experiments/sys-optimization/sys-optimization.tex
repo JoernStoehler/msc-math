@@ -221,16 +221,18 @@ random-product-sweep experiments with $F \le 10$.
 
 \subsubsection*{Phase 1: Gradient Structure}
 
-Figure~\ref{fig:sys-opt-gradient} shows the distribution of gradient
-magnitudes $|{\partial\,\mathrm{sys}}/{\partial h_k}|$ across all
-polytopes and facets.
+Figure~\ref{fig:sys-opt-gradient} shows the distribution of the
+logarithmic sensitivity $\partial\,\mathrm{sys}/\partial\log h_k
+= h_k \cdot \partial\,\mathrm{sys}/\partial h_k$ across all polytopes and facets.
+The logarithmic derivative is the natural quantity: it measures the response
+of $\mathrm{sys}$ to a relative (scale-invariant) change in facet height.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{../experiments/sys-optimization/sys_optimization_gradient_hist.png}
-\caption{Distribution of gradient magnitudes $|{\partial\,\mathrm{sys}}/{\partial h_k}|$
+\caption{Distribution of $\partial\,\mathrm{sys}/\partial\log h_k$
   across 1120 facets from 140 polytopes.
-  Left: linear scale. Right: log scale.}
+  Left: signed values on linear scale. Right: magnitudes on log scale.}
 \label{fig:sys-opt-gradient}
 \end{figure}
 
