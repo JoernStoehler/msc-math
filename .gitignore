@@ -33,5 +33,4 @@ package-lock.json
 .claude/worktrees/
 
 # Editor
-.vscode/
 *.swp

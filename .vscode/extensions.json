@@ -1,0 +1,9 @@
+{
+	"recommendations": [
+		"anthropic.claude-code",
+		// "efoerster.texlab",  // disabled with chktex settings above
+		"mathematic.vscode-pdf",
+		"github.github-vscode-theme",
+		"miguelsolorio.symbols"
+	]
+}
