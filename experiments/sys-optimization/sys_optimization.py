@@ -14,6 +14,7 @@ Output:
   - experiments/sys-optimization/sys_optimization_improvement.png
   - experiments/sys-optimization/sys_optimization_convergence.png
   - experiments/sys-optimization/sys_optimization_iteration_summary.png
+  - experiments/sys-optimization/sys_optimization_validity.png
   - experiments/sys-optimization/sys_optimization_stats.tex
 """
 
@@ -29,6 +30,7 @@ EXPERIMENT_DIR = Path(__file__).resolve().parent
 SENSITIVITY_PATH = EXPERIMENT_DIR / "sys-optimization-sensitivity.jsonl"
 STEPS_PATH = EXPERIMENT_DIR / "sys-optimization-steps.jsonl"
 ITERATIONS_PATH = EXPERIMENT_DIR / "sys-optimization-iterations.jsonl"
+VALIDITY_PATH = EXPERIMENT_DIR / "sys-optimization-validity.jsonl"
 
 
 def load_jsonl(path: Path) -> list[dict]:
@@ -388,6 +390,148 @@ def plot_iteration_summary(iter_rows: list[dict], output_path: Path) -> None:
 
 
 # =============================================================================
+# Figure 6: Gradient validity testing (Phase 4)
+# =============================================================================
+
+def plot_validity(val_rows: list[dict], output_path: Path) -> None:
+    """Prediction error vs step fraction, step bound conservativeness."""
+    if not val_rows:
+        print("WARNING: no validity data to plot", file=sys.stderr)
+        return
+
+    ok_rows = [r for r in val_rows if r["construction_ok"]]
+    if not ok_rows:
+        print("WARNING: no successful validity evaluations", file=sys.stderr)
+        return
+
+    fig, axes = plt.subplots(1, 3, figsize=(16, 4.5))
+
+    # --- Left: prediction error vs t/t_max by direction type ---
+    ax = axes[0]
+    fracs = sorted(set(r["t_fraction"] for r in ok_rows))
+    colors = {"gradient_h": "#c0392b", "gradient_hn": "#8e44ad", "random": "#3b6ea8"}
+    labels = {"gradient_h": r"$\nabla_h$", "gradient_hn": r"$\nabla_{(h,n)}$", "random": "Random"}
+
+    for dtype in ["gradient_h", "gradient_hn", "random"]:
+        subset = [r for r in ok_rows if r["direction_type"] == dtype]
+        if not subset:
+            continue
+        medians = []
+        q25s = []
+        q75s = []
+        valid_fracs = []
+        for frac in fracs:
+            errs = [
+                r["relative_error"]
+                for r in subset
+                if r["t_fraction"] == frac and np.isfinite(r["relative_error"])
+            ]
+            if len(errs) < 3:
+                continue
+            earr = np.array(errs)
+            valid_fracs.append(frac)
+            medians.append(np.median(earr))
+            q25s.append(np.percentile(earr, 25))
+            q75s.append(np.percentile(earr, 75))
+
+        if valid_fracs:
+            vf = np.array(valid_fracs)
+            med = np.array(medians)
+            ax.plot(vf, med, color=colors[dtype], label=labels[dtype], linewidth=1.5)
+            ax.fill_between(
+                vf, q25s, q75s, color=colors[dtype], alpha=0.15,
+            )
+
+    ax.axvline(x=1.0, color="black", linestyle="--", alpha=0.4, label=r"$t = t_{\max}$")
+    ax.set_xscale("log")
+    ax.set_yscale("log")
+    ax.set_xlabel(r"$t\,/\,t_{\max}$")
+    ax.set_ylabel("Relative prediction error")
+    ax.set_title("Gradient prediction accuracy")
+    ax.legend(fontsize=7, loc="upper left")
+    ax.grid(True, alpha=0.3, which="both")
+
+    # --- Middle: construction success rate beyond t_max ---
+    ax = axes[1]
+    beyond_fracs = sorted(set(r["t_fraction"] for r in val_rows if r["beyond_t_max"]))
+    if beyond_fracs:
+        success_rates = []
+        type_preserved_rates = []
+        for frac in beyond_fracs:
+            subset = [r for r in val_rows if r["t_fraction"] == frac and r["beyond_t_max"]]
+            n_total = len(subset)
+            n_ok = sum(1 for r in subset if r["construction_ok"])
+            n_type_ok = sum(
+                1 for r in subset if r["construction_ok"] and not r["vertex_count_changed"]
+            )
+            success_rates.append(100 * n_ok / max(n_total, 1))
+            type_preserved_rates.append(100 * n_type_ok / max(n_total, 1))
+
+        x = np.arange(len(beyond_fracs))
+        width = 0.35
+        ax.bar(
+            x - width / 2, success_rates, width,
+            label="Construction OK", color="#3b6ea8", alpha=0.75,
+        )
+        ax.bar(
+            x + width / 2, type_preserved_rates, width,
+            label="Type preserved", color="#27ae60", alpha=0.75,
+        )
+        ax.set_xticks(x)
+        ax.set_xticklabels([f"{f:.0f}×" for f in beyond_fracs])
+        ax.set_xlabel(r"Step size ($\times\,t_{\max}$)")
+        ax.set_ylabel("Success rate (%)")
+        ax.set_title("Step bound conservativeness")
+        ax.legend(fontsize=8)
+        ax.grid(True, alpha=0.3, axis="y")
+
+    # --- Right: validity radius distribution ---
+    ax = axes[2]
+    # For each (polytope, direction), find largest t_fraction with rel error < 20%
+    by_key: dict[tuple[str, str, int], list[dict]] = defaultdict(list)
+    for r in ok_rows:
+        key = (r["name"], r["direction_type"], r["direction_index"])
+        by_key[key].append(r)
+
+    validity_radii = {"gradient_h": [], "gradient_hn": [], "random": []}
+    for key, rows in by_key.items():
+        rows_sorted = sorted(rows, key=lambda r: r["t_fraction"])
+        max_valid_frac = 0.0
+        for r in rows_sorted:
+            if np.isfinite(r["relative_error"]) and r["relative_error"] < 0.2:
+                max_valid_frac = r["t_fraction"]
+        dtype = key[1]
+        if dtype in validity_radii:
+            validity_radii[dtype].append(max_valid_frac)
+
+    all_radii = []
+    all_labels = []
+    all_colors = []
+    for dtype in ["gradient_h", "gradient_hn", "random"]:
+        if validity_radii[dtype]:
+            all_radii.append(np.array(validity_radii[dtype]))
+            all_labels.append(labels[dtype])
+            all_colors.append(colors[dtype])
+
+    if all_radii:
+        ax.hist(
+            all_radii, bins=15, label=all_labels, color=all_colors,
+            alpha=0.6, edgecolor="white",
+        )
+        ax.axvline(x=1.0, color="black", linestyle="--", alpha=0.4)
+        ax.set_xlabel(r"Validity radius ($t\,/\,t_{\max}$)")
+        ax.set_ylabel("Count")
+        ax.set_title("Where gradient breaks down")
+        ax.legend(fontsize=7)
+        ax.grid(True, alpha=0.3)
+
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=150)
+    plt.close(fig)
+    print(f"Saved: {output_path}")
+
+
+# =============================================================================
 # Stats table (LaTeX)
 # =============================================================================
 
@@ -395,6 +539,7 @@ def write_stats_table(
     sens_rows: list[dict],
     steps_rows: list[dict],
     iter_rows: list[dict],
+    val_rows: list[dict],
     output_path: Path,
 ) -> None:
     """Write summary statistics as a LaTeX table."""
@@ -463,6 +608,31 @@ def write_stats_table(
     h_steps_iter = sum(1 for r in iter_rows if r["step_type"] == "h_only")
     hn_steps_iter = sum(1 for r in iter_rows if r["step_type"] == "h_n")
 
+    # Phase 4: validity stats
+    val_ok = [r for r in val_rows if r["construction_ok"]]
+    n_val_total = len(val_rows)
+    n_val_ok = len(val_ok)
+
+    # Median relative error at t/t_max = 0.25 (within step bound)
+    small_step_errs = [
+        r["relative_error"] for r in val_ok
+        if abs(r["t_fraction"] - 0.25) < 0.01 and np.isfinite(r["relative_error"])
+    ]
+    median_err_025 = np.median(small_step_errs) if small_step_errs else float("nan")
+
+    # Median relative error at t/t_max = 1.0 (at step bound)
+    bound_errs = [
+        r["relative_error"] for r in val_ok
+        if abs(r["t_fraction"] - 1.0) < 0.01 and np.isfinite(r["relative_error"])
+    ]
+    median_err_10 = np.median(bound_errs) if bound_errs else float("nan")
+
+    # Beyond-t_max success rate at 2× and 5×
+    beyond_2x = [r for r in val_rows if abs(r["t_fraction"] - 2.0) < 0.01]
+    beyond_5x = [r for r in val_rows if abs(r["t_fraction"] - 5.0) < 0.01]
+    rate_2x = 100 * sum(1 for r in beyond_2x if r["construction_ok"]) / max(len(beyond_2x), 1)
+    rate_5x = 100 * sum(1 for r in beyond_5x if r["construction_ok"]) / max(len(beyond_5x), 1)
+
     lines = [
         r"\begin{tabular}{lr}",
         r"\toprule",
@@ -487,6 +657,12 @@ def write_stats_table(
         rf"Steps: $h$-only / $(h,n)$ & {h_steps_iter} / {hn_steps_iter} \\",
         rf"Mean cumulative $\Delta\mathrm{{sys}}$ & {mean_cumulative:.4f} \\",
         r"\midrule",
+        rf"Validity evaluations & {n_val_ok}/{n_val_total} OK \\",
+        rf"Median rel.\ error at $0.25\,t_{{\max}}$ & {median_err_025:.4f} \\",
+        rf"Median rel.\ error at $t_{{\max}}$ & {median_err_10:.4f} \\",
+        rf"Construction OK at $2\times t_{{\max}}$ & {rate_2x:.0f}\% \\",
+        rf"Construction OK at $5\times t_{{\max}}$ & {rate_5x:.0f}\% \\",
+        r"\midrule",
         rf"Best sys (before) & {max_sys_before:.4f} \\",
         rf"Best sys (after iteration) & {max_sys_iterated:.4f} \\",
         r"\bottomrule",
@@ -505,11 +681,13 @@ def main() -> None:
     sens_rows = load_jsonl(SENSITIVITY_PATH)
     steps_rows = load_jsonl(STEPS_PATH)
     iter_rows = load_jsonl(ITERATIONS_PATH)
+    val_rows = load_jsonl(VALIDITY_PATH)
 
     print(
         f"Loaded {len(sens_rows)} sensitivity rows, "
         f"{len(steps_rows)} step rows, "
-        f"{len(iter_rows)} iteration rows\n"
+        f"{len(iter_rows)} iteration rows, "
+        f"{len(val_rows)} validity rows\n"
     )
 
     plot_gradient_histogram(
@@ -527,8 +705,11 @@ def main() -> None:
     plot_iteration_summary(
         iter_rows, EXPERIMENT_DIR / "sys_optimization_iteration_summary.png"
     )
+    plot_validity(
+        val_rows, EXPERIMENT_DIR / "sys_optimization_validity.png"
+    )
     write_stats_table(
-        sens_rows, steps_rows, iter_rows,
+        sens_rows, steps_rows, iter_rows, val_rows,
         EXPERIMENT_DIR / "sys_optimization_stats.tex",
     )
 
