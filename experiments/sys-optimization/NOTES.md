@@ -73,6 +73,15 @@ Four phases, all in one binary:
 - Best sys achieved: 0.878 (from 0.351 start, random_5x5_1)
 - No polytope reaches sys > 1
 
+### Phase 4 validity findings
+- Height gradient: excellent predictor (<5% error at 0.25×t_max, O(t) growth)
+- (h,n) gradient: bimodal — good for ~125/140 polytopes, ~15 outliers near orbit boundaries
+  - Median pred/actual ratio 1.55 (systematic overprediction from normal renormalization)
+- Random directions: ~90% relative error at all scales (expected: random ⊥ gradient in high dim)
+- Step bounds are conservative: 85% construction success at 2×t_max, 60% at 10×t_max
+- Type preservation drops fast: 35% at 2×t_max, 19% at 10×t_max
+- Validity is strongly non-spherical (direction-dependent, not radius-dependent)
+
 ## Jörn verification required
 
 - Lemma [lem:vol-derivative-normal]: ∂vol/∂n_k · δ = -S_k(x̄_k · δ)
