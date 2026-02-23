@@ -203,13 +203,16 @@ Combining yields the stated formula.
 \end{proof}
 
 \emph{Derivative cross-checks.}
-All analytical derivatives (both height and normal) are verified against
-central finite differences with step size $\varepsilon = 10^{-4}$.
-For volume derivatives, agreement is to within $5 \times 10^{-5}$ relative
-error ($< 5\%$ for the coarser height differences due to qhull volume noise).
-For capacity normal derivatives, a full HK2017 recomputation on the perturbed
-polytope is used; agreement holds to within $10^{-3}$ relative error, which is
-consistent with the $O(\varepsilon)$ truncation of finite differences.
+The analytical volume height derivatives $\partial\mathrm{vol}/\partial h_k$
+are verified against central finite differences ($\varepsilon = 10^{-3}$,
+chosen above qhull's volume noise floor) with a tolerance of~$5\%$.
+The remaining derivatives (volume normal, capacity height and normal) are
+not independently cross-checked in the code; their correctness rests on
+the proofs of
+Lemmas~\ref{lem:vol-derivative}--\ref{lem:cap-derivative-normal}
+and on the Phase~4 validity tests, which show that the gradient accurately
+predicts $\Delta\mathrm{sys}$ at small step sizes
+(Section~\ref{sec:gradient-validity}).
 
 \begin{proposition}[Capacity as piecewise-smooth function of $(h,n)$]
 \label{prop:capacity-piecewise-smooth}
