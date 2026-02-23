@@ -33,9 +33,6 @@ const MAX_FACET_COUNT: usize = 10;
 /// Heights are O(1), so steps beyond 100 are unreasonable.
 const MAX_STEP_SIZE: f64 = 100.0;
 
-/// Perturbation size for central finite differences (used for volume derivatives).
-const FD_EPS: f64 = 1e-7;
-
 /// Step fractions of t_max to evaluate.
 const STEP_FRACTIONS: &[f64] = &[0.1, 0.25, 0.5, 0.75, 0.95];
 
@@ -598,8 +595,142 @@ struct SensitivityResult {
     runner_up_gap: f64,
 }
 
-/// Compute d(vol)/d(h_k) via central finite differences.
-fn compute_volume_derivatives(normals: &[Vector4<f64>], heights: &[f64]) -> Vec<f64> {
+// ----------------------------------------------------------------------------
+// Facet volume helpers (copied from crates/src/geom/volume.rs deprecated module
+// and crates/src/geom/cross_product.rs). Needed for analytical volume derivatives.
+// ----------------------------------------------------------------------------
+
+/// Threshold for detecting degenerate (collinear) polygon vertices.
+const EPS_DEGENERATE: f64 = 1e-10;
+
+/// 4D cross product: vector perpendicular to three vectors in R⁴.
+///
+/// Source: crates/src/geom/cross_product.rs
+fn cross_product_4d(a: Vector4<f64>, b: Vector4<f64>, c: Vector4<f64>) -> Vector4<f64> {
+    let bc_01 = b[0] * c[1] - b[1] * c[0];
+    let bc_02 = b[0] * c[2] - b[2] * c[0];
+    let bc_03 = b[0] * c[3] - b[3] * c[0];
+    let bc_12 = b[1] * c[2] - b[2] * c[1];
+    let bc_13 = b[1] * c[3] - b[3] * c[1];
+    let bc_23 = b[2] * c[3] - b[3] * c[2];
+
+    let d0 =   a[1] * bc_23 - a[2] * bc_13 + a[3] * bc_12;
+    let d1 = -(a[0] * bc_23 - a[2] * bc_03 + a[3] * bc_02);
+    let d2 =   a[0] * bc_13 - a[1] * bc_03 + a[3] * bc_01;
+    let d3 = -(a[0] * bc_12 - a[1] * bc_02 + a[2] * bc_01);
+
+    Vector4::new(d0, d1, d2, d3)
+}
+
+/// Sort vertices of a convex polygon in R^4 by angle around their centroid.
+///
+/// Source: crates/src/geom/volume.rs (deprecated module)
+fn sort_polygon_vertices(vertices: &[Vector4<f64>]) -> Vec<Vector4<f64>> {
+    if vertices.len() <= 3 {
+        return vertices.to_vec();
+    }
+
+    let n = vertices.len() as f64;
+    let centroid = vertices.iter().copied().sum::<Vector4<f64>>() / n;
+
+    let d1 = (vertices[0] - centroid).normalize();
+
+    let d2 = match vertices.iter().skip(1).find_map(|v| {
+        let rel = *v - centroid;
+        let proj = rel - d1 * rel.dot(&d1);
+        (proj.norm() > EPS_DEGENERATE).then(|| proj.normalize())
+    }) {
+        Some(d) => d,
+        None => return vertices.to_vec(),
+    };
+
+    let mut indexed: Vec<(f64, Vector4<f64>)> = vertices
+        .iter()
+        .map(|v| {
+            let rel = *v - centroid;
+            let angle = rel.dot(&d2).atan2(rel.dot(&d1));
+            (angle, *v)
+        })
+        .collect();
+
+    indexed.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
+    indexed.into_iter().map(|(_, v)| v).collect()
+}
+
+/// Compute the 3D volume of facet `fi` by decomposing into tetrahedra.
+///
+/// Source: crates/src/geom/volume.rs (deprecated module)
+fn facet_volume_3d(
+    normals: &[Vector4<f64>],
+    heights: &[f64],
+    vertices: &[Vector4<f64>],
+    fi: usize,
+    f: usize,
+) -> f64 {
+    let facet_verts: Vec<Vector4<f64>> = vertices
+        .iter()
+        .filter(|v| (normals[fi].dot(v) - heights[fi]).abs() < EPS_FACET_INCIDENCE)
+        .cloned()
+        .collect();
+
+    if facet_verts.len() < 4 {
+        return 0.0;
+    }
+
+    let centroid = facet_verts.iter().copied().sum::<Vector4<f64>>() / facet_verts.len() as f64;
+
+    (0..f)
+        .filter(|&fj| fj != fi)
+        .flat_map(|fj| {
+            let ridge_verts: Vec<Vector4<f64>> = facet_verts
+                .iter()
+                .filter(|v| (normals[fj].dot(v) - heights[fj]).abs() < EPS_FACET_INCIDENCE)
+                .cloned()
+                .collect();
+
+            if ridge_verts.len() < 3 {
+                return Vec::new();
+            }
+
+            let sorted = sort_polygon_vertices(&ridge_verts);
+            (1..sorted.len() - 1)
+                .map(|k| {
+                    let a = sorted[0] - centroid;
+                    let b = sorted[k] - centroid;
+                    let c = sorted[k + 1] - centroid;
+                    cross_product_4d(a, b, c).norm() / 6.0
+                })
+                .collect::<Vec<_>>()
+        })
+        .sum()
+}
+
+/// Compute d(vol)/d(h_k) analytically: ∂vol/∂h_k = S_k (3D volume of facet k).
+///
+/// Standard result for convex bodies in H-representation.
+/// Uses the divergence theorem: vol(K) = (1/4) Σ h_i · S_i,
+/// so ∂vol/∂h_k = S_k / 4... NO: the full derivative is S_k because
+/// moving facet k outward by dh adds a slab of thickness dh and cross-section S_k.
+///
+/// More precisely: for K = {x : n_i · x ≤ h_i}, ∂vol(K)/∂h_k = vol_3D(F_k)
+/// where F_k is the k-th facet (a 3D polytope).
+fn compute_volume_derivatives_analytical(polytope: &Polytope4D) -> Vec<f64> {
+    let normals = polytope.normals();
+    let heights = polytope.heights();
+    let vertices = polytope.vertices();
+    let f = normals.len();
+    (0..f)
+        .map(|k| facet_volume_3d(normals, heights, vertices, k, f))
+        .collect()
+}
+
+/// Compute d(vol)/d(h_k) via central finite differences (validation only).
+///
+/// Kept as a cross-check for the analytical version. Used in debug_assert.
+/// Uses eps=1e-3 (not 1e-7) because qhull volume precision is ~1e-8 relative,
+/// so eps=1e-7 puts the volume change at the numerical noise floor.
+fn compute_volume_derivatives_fd(normals: &[Vector4<f64>], heights: &[f64]) -> Vec<f64> {
+    const FD_EPS: f64 = 1e-3;
     let f = normals.len();
     (0..f)
         .map(|k| {
@@ -666,18 +797,39 @@ fn compute_capacity_derivatives_analytical(
 
 /// Compute full sensitivity: d(sys)/d(h_k) via chain rule.
 ///
-/// d(cap)/d(h_k) is computed analytically via the envelope theorem on the
-/// winning orbit's KKT system. d(vol)/d(h_k) via central finite differences.
+/// Both d(cap)/d(h_k) and d(vol)/d(h_k) are computed analytically.
+/// Capacity: envelope theorem on the winning orbit's KKT system.
+/// Volume: ∂vol/∂h_k = S_k (3D volume of facet k).
 fn compute_sensitivity(
-    normals: &[Vector4<f64>],
-    heights: &[f64],
+    polytope: &Polytope4D,
     vol: f64,
     cap: f64,
     sys: f64,
     instrumented: &InstrumentedResult,
 ) -> SensitivityResult {
+    let normals = polytope.normals();
+    let heights = polytope.heights();
     let f = normals.len();
-    let d_vol = compute_volume_derivatives(normals, heights);
+    let d_vol = compute_volume_derivatives_analytical(polytope);
+
+    // Cross-check: analytical volume derivatives vs finite differences.
+    // NOTE: FD uses eps=1e-3 because qhull volume precision is ~1e-8 relative,
+    // so the old eps=1e-7 put the volume change at the numerical noise floor.
+    // The analytical formula ∂vol/∂h_k = S_k (facet 3D volume) is exact.
+    // Tolerance: 5% relative or 0.1 absolute (whichever is larger), because
+    // FD noise ≈ vol × qhull_precision / eps can dominate for small facets.
+    debug_assert!({
+        let d_vol_fd = compute_volume_derivatives_fd(normals, heights);
+        let ok = d_vol.iter().zip(d_vol_fd.iter()).all(|(a, fd)| {
+            if fd.is_nan() { return true; }
+            let tol = (0.05 * a.abs()).max(0.1);
+            (a - fd).abs() < tol
+        });
+        if !ok {
+            eprintln!("volume derivative mismatch: analytical={:?} fd={:?}", d_vol, d_vol_fd);
+        }
+        ok
+    }, "volume derivative: analytical vs FD mismatch");
     let d_cap = compute_capacity_derivatives_analytical(&instrumented.orbits[0], f);
 
     // Chain rule: d(sys)/d(h_k) = (1/vol) * [c * dc/dh_k - sys * dvol/dh_k]
@@ -1045,7 +1197,7 @@ fn main() {
 
         // --- Sensitivity ---
         let t_sens = Instant::now();
-        let sensitivity = compute_sensitivity(normals, heights, vol, cap, sys, &instrumented);
+        let sensitivity = compute_sensitivity(polytope, vol, cap, sys, &instrumented);
         let time_sensitivity_ms = t_sens.elapsed().as_secs_f64() * 1000.0;
 
         // Count favorable facets: d_sys > 0 means increasing h_k improves sys,

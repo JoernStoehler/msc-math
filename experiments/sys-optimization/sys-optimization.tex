@@ -32,11 +32,14 @@ $\mathrm{sys} = c_{\mathrm{EHZ}}^2 / (2\,\mathrm{vol})$.
 We compute the sensitivity of each factor to individual height changes.
 
 \emph{Volume derivative.}
-Central finite differences with step size $\varepsilon = 10^{-7}$:
-\[
-  \frac{\partial\,\mathrm{vol}}{\partial h_k}
-  \approx \frac{\mathrm{vol}(h_k + \varepsilon) - \mathrm{vol}(h_k - \varepsilon)}{2\varepsilon}.
-\]
+For a convex polytope in $H$-representation with unit normals,
+$\partial\,\mathrm{vol}/\partial h_k = S_k$,
+where $S_k$ is the 3-dimensional volume of facet $F_k$.
+This is the standard first variation of volume:
+moving facet $k$ outward by $\delta$ adds a slab of thickness $\delta$ and
+cross-section $F_k$, so the volume increases by $\delta\,S_k$ to first order.
+Facet volumes are computed via ridge-based tetrahedralization
+(centroid + ridge fan triangulation, 3D volume via the 4D cross product).
 
 \emph{Capacity derivative (envelope theorem).}
 The EHZ capacity equals $c_{\mathrm{EHZ}} = \min_{(S,\sigma)} A(S,\sigma)$,
@@ -104,7 +107,7 @@ polytopes and facets.
 
 Every polytope in our dataset has a non-zero gradient:
 $\|\nabla_h\,\mathrm{sys}\| > 0$ for all 140 polytopes.
-Over 94\% of individual facets provide a direction that changes
+Over 96\% of individual facets provide a direction that changes
 $\mathrm{sys}$, meaning that almost every facet height can be adjusted
 to either increase or decrease the systolic ratio.
 
@@ -129,17 +132,17 @@ single gradient step for each polytope.
 \label{tab:sys-opt-stats}
 \end{table}
 
-Of the 140 starting polytopes, 127 (91\%) show an improved $\mathrm{sys}$
+Of the 140 starting polytopes, 126 (90\%) show an improved $\mathrm{sys}$
 after a single gradient step.
-The mean improvement is $\Delta\,\mathrm{sys} = 0.033$ and the median is~$0.014$.
-The best $\mathrm{sys}$ achieved is~$0.837$, starting from a polytope
-with $\mathrm{sys} = 0.735$ (a random $4 \times 5$ Lagrangian product).
+The mean improvement is $\Delta\,\mathrm{sys} = 0.034$ and the median is~$0.014$.
+The best $\mathrm{sys}$ achieved is~$0.805$, starting from a polytope
+with $\mathrm{sys} = 0.758$ (a random $4 \times 5$ Lagrangian product).
 
 \subsubsection*{Discussion}
 
 No single gradient step pushes $\mathrm{sys}$ past~$1$.
-The best result ($\mathrm{sys} \approx 0.84$) remains well below the
-Viterbo threshold, though it substantially exceeds the maximum
+The best result ($\mathrm{sys} \approx 0.80$) remains well below the
+Viterbo threshold, though it exceeds the maximum
 $\mathrm{sys} \approx 0.76$ found by random sampling alone.
 
 Two structural observations:
