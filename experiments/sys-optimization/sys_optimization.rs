@@ -1,7 +1,8 @@
-//! Sys-optimization Phase 1–2: sensitivity analysis and finite gradient steps.
+//! Sys-optimization Phase 1–3: sensitivity analysis, finite gradient steps, iterative ascent.
 //!
-//! Computes d(sys)/d(h_k) for polytopes from random-sweep and random-product-sweep,
-//! then takes finite gradient steps bounded by combinatorial type preservation.
+//! Computes d(sys)/d(h_k) and d(sys)/d(n_k) for polytopes from random-sweep and
+//! random-product-sweep, then takes finite gradient steps bounded by combinatorial type
+//! preservation (Phase 2) and iterates to convergence (Phase 3).
 //!
 //! Convention: The library (crates/) is stable. Experiment-specific variants
 //! (instrumented HK2017) are self-contained in this binary. Library internals
@@ -12,8 +13,7 @@
 //!
 //! Architecture:
 //! 1. `cargo run --bin sys_optimization --release` generates datasets
-//! 2. Writes to sys-optimization/sys-optimization-sensitivity.jsonl
-//!    and sys-optimization/sys-optimization-steps.jsonl
+//! 2. Writes to sys-optimization/sys-optimization-{sensitivity,steps,iterations}.jsonl
 //! 3. Python script reads JSONL, produces figures and stats
 //!
 //! Input: random-sweep/random-sweep.jsonl, random-product-sweep/random-product-sweep.jsonl
@@ -35,6 +35,12 @@ const MAX_STEP_SIZE: f64 = 100.0;
 
 /// Step fractions of t_max to evaluate.
 const STEP_FRACTIONS: &[f64] = &[0.1, 0.25, 0.5, 0.75, 0.95];
+
+/// Maximum number of gradient ascent iterations in Phase 3.
+const MAX_ITERATIONS: usize = 20;
+
+/// Minimum improvement per iteration to continue (convergence threshold).
+const CONVERGENCE_THRESHOLD: f64 = 1e-6;
 
 // ============================================================================
 // Output schemas
@@ -89,6 +95,27 @@ struct StepRow {
     vertex_count_old: usize,
     vertex_count_new: usize,
     construction_ok: bool,
+}
+
+#[derive(Debug, Serialize)]
+struct IterationRow {
+    name: String,
+    source_dataset: String,
+    facet_count: usize,
+    iteration: usize,
+    step_type: String,       // "h_only" or "h_n"
+    t_fraction: f64,
+    t_actual: f64,
+    sys_before: f64,
+    sys_after: f64,
+    delta_sys: f64,
+    starting_sys: f64,
+    cumulative_delta: f64,
+    gradient_norm_h: f64,
+    gradient_norm_n: f64,
+    gradient_norm_hn: f64,
+    vertex_count: usize,
+    time_ms: f64,
 }
 
 // ============================================================================
@@ -1439,6 +1466,81 @@ fn evaluate_gradient_step(
 }
 
 // ============================================================================
+// Phase 3 helpers: gradient steps that return the new polytope
+// ============================================================================
+
+/// Try a height-only gradient step, returning the new polytope and its sys value.
+fn try_step_h_polytope(
+    normals: &[Vector4<f64>],
+    heights: &[f64],
+    direction: &[f64],
+    t: f64,
+) -> Option<(Polytope4D, f64)> {
+    let f = normals.len();
+    let new_heights: Vec<f64> = (0..f).map(|k| heights[k] + t * direction[k]).collect();
+
+    let new_polytope = match Polytope4D::new(normals.to_vec(), new_heights) {
+        Ok(p) => p,
+        Err(_) => return None,
+    };
+    let vol = volume(&new_polytope).unwrap_or(0.0);
+    if vol <= 0.0 {
+        return None;
+    }
+    let cap = ehz_capacity(&new_polytope)
+        .map(|r| r.capacity)
+        .unwrap_or(f64::NAN);
+    if !cap.is_finite() {
+        return None;
+    }
+    let sys = cap * cap / (2.0 * vol);
+    if sys.is_finite() {
+        Some((new_polytope, sys))
+    } else {
+        None
+    }
+}
+
+/// Try a (h,n) gradient step, returning the new polytope and its sys value.
+fn try_step_hn_polytope(
+    normals: &[Vector4<f64>],
+    heights: &[f64],
+    g_h: &[f64],
+    g_n: &[Vector4<f64>],
+    t: f64,
+) -> Option<(Polytope4D, f64)> {
+    let f = normals.len();
+    let new_heights: Vec<f64> = (0..f).map(|k| heights[k] + t * g_h[k]).collect();
+    let new_normals: Vec<Vector4<f64>> = (0..f)
+        .map(|k| {
+            let n = normals[k] + t * g_n[k];
+            n / n.norm()
+        })
+        .collect();
+
+    let new_polytope = match Polytope4D::new(new_normals, new_heights) {
+        Ok(p) => p,
+        Err(_) => return None,
+    };
+    let vol = volume(&new_polytope).unwrap_or(0.0);
+    if vol <= 0.0 {
+        return None;
+    }
+    let cap = ehz_capacity(&new_polytope)
+        .map(|r| r.capacity)
+        .unwrap_or(f64::NAN);
+    if !cap.is_finite() {
+        return None;
+    }
+    let sys = cap * cap / (2.0 * vol);
+    if sys.is_finite() {
+        Some((new_polytope, sys))
+    } else {
+        None
+    }
+}
+
+// ============================================================================
 // Data loading
 // ============================================================================
 
@@ -1503,7 +1605,7 @@ fn main() {
     let t0 = Instant::now();
     let base_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
 
-    println!("Sys-optimization Phase 1–2: sensitivity analysis + finite gradient steps\n");
+    println!("Sys-optimization Phase 1–3: sensitivity + steps + iterative ascent\n");
 
     // =========================================================================
     // Load starting polytopes
@@ -1735,12 +1837,189 @@ fn main() {
     steps_writer.flush().expect("flush steps");
 
     // =========================================================================
+    // Phase 3: Iterative gradient ascent
+    // =========================================================================
+
+    println!("\nPhase 3: Iterative gradient ascent (max {MAX_ITERATIONS} iterations)...\n");
+
+    let iterations_path = base_dir.join("sys-optimization/sys-optimization-iterations.jsonl");
+    let iter_file = File::create(&iterations_path).expect("create iterations JSONL");
+    let mut iter_writer = BufWriter::new(iter_file);
+
+    let mut total_iterations = 0usize;
+    let mut max_sys_achieved = f64::NEG_INFINITY;
+    let mut max_sys_name = String::new();
+    let mut n_converged = 0usize;
+
+    for (idx, (name, source, start_polytope)) in polytopes.iter().enumerate() {
+        let f = start_polytope.facet_count();
+        print!("[{}/{}] {} (F={}): ", idx + 1, n_polytopes, name, f);
+
+        let t_poly = Instant::now();
+
+        // Reconstruct to get an owned polytope we can replace each iteration
+        let mut current = match Polytope4D::new(
+            start_polytope.normals().to_vec(),
+            start_polytope.heights().to_vec(),
+        ) {
+            Ok(p) => p,
+            Err(e) => {
+                println!("SKIP (reconstruct failed: {e})");
+                continue;
+            }
+        };
+
+        let mut starting_sys = 0.0f64;
+        let mut current_sys = 0.0f64;
+        let mut n_iter = 0usize;
+        let mut converged = false;
+        let mut n_h_only = 0usize;
+        let mut n_h_n = 0usize;
+
+        for iter in 0..MAX_ITERATIONS {
+            let t_iter = Instant::now();
+
+            // 1. Instrumented HK2017
+            let instrumented = match ehz_capacity_instrumented(&current) {
+                Some(r) => r,
+                None => break,
+            };
+            let cap = instrumented.capacity;
+            let vol = volume(&current).expect("volume");
+            let sys = cap * cap / (2.0 * vol);
+
+            if iter == 0 {
+                starting_sys = sys;
+                current_sys = sys;
+            }
+
+            // 2. Sensitivity
+            let sensitivity = compute_sensitivity(&current, vol, cap, sys, &instrumented);
+
+            // 3. Step bounds
+            let normals = current.normals();
+            let heights = current.heights();
+
+            let t_max_h = if sensitivity.gradient_norm_h > 1e-15 {
+                compute_step_bound(&current, &sensitivity.d_sys_h)
+            } else {
+                0.0
+            };
+            let t_max_hn = if sensitivity.gradient_norm_hn > 1e-15 {
+                compute_step_bound_hn(&current, &sensitivity.d_sys_h, &sensitivity.d_sys_n)
+            } else {
+                0.0
+            };
+
+            // 4. Try all step fractions for both types, pick best
+            let mut best: Option<(Polytope4D, f64, String, f64, f64)> = None;
+
+            if t_max_h > 0.0 && sensitivity.gradient_norm_h > 1e-15 {
+                for &frac in STEP_FRACTIONS {
+                    let t = frac * t_max_h;
+                    if let Some((p, new_sys)) = try_step_h_polytope(
+                        normals, heights, &sensitivity.d_sys_h, t,
+                    ) {
+                        if new_sys > sys && best.as_ref().map_or(true, |b| new_sys > b.1) {
+                            best = Some((p, new_sys, "h_only".to_string(), frac, t));
+                        }
+                    }
+                }
+            }
+
+            if t_max_hn > 0.0 && sensitivity.gradient_norm_hn > 1e-15 {
+                for &frac in STEP_FRACTIONS {
+                    let t = frac * t_max_hn;
+                    if let Some((p, new_sys)) = try_step_hn_polytope(
+                        normals, heights, &sensitivity.d_sys_h, &sensitivity.d_sys_n, t,
+                    ) {
+                        if new_sys > sys && best.as_ref().map_or(true, |b| new_sys > b.1) {
+                            best = Some((p, new_sys, "h_n".to_string(), frac, t));
+                        }
+                    }
+                }
+            }
+
+            let time_ms = t_iter.elapsed().as_secs_f64() * 1000.0;
+
+            // 5. Take best step or stop
+            match best {
+                Some((new_polytope, new_sys, step_type, frac, t)) => {
+                    let delta = new_sys - sys;
+                    let cumulative = new_sys - starting_sys;
+
+                    let row = IterationRow {
+                        name: name.clone(),
+                        source_dataset: source.clone(),
+                        facet_count: f,
+                        iteration: iter,
+                        step_type: step_type.clone(),
+                        t_fraction: frac,
+                        t_actual: t,
+                        sys_before: sys,
+                        sys_after: new_sys,
+                        delta_sys: delta,
+                        starting_sys,
+                        cumulative_delta: cumulative,
+                        gradient_norm_h: sensitivity.gradient_norm_h,
+                        gradient_norm_n: sensitivity.gradient_norm_n,
+                        gradient_norm_hn: sensitivity.gradient_norm_hn,
+                        vertex_count: new_polytope.vertices().len(),
+                        time_ms,
+                    };
+                    serde_json::to_writer(&mut iter_writer, &row).expect("write iteration");
+                    writeln!(iter_writer).expect("newline");
+
+                    if step_type == "h_only" {
+                        n_h_only += 1;
+                    } else {
+                        n_h_n += 1;
+                    }
+
+                    current = new_polytope;
+                    current_sys = new_sys;
+                    n_iter = iter + 1;
+
+                    if delta < CONVERGENCE_THRESHOLD {
+                        converged = true;
+                        break;
+                    }
+                }
+                None => break,
+            }
+        }
+
+        let total_delta = current_sys - starting_sys;
+        let poly_time = t_poly.elapsed().as_secs_f64();
+        total_iterations += n_iter;
+
+        if current_sys > max_sys_achieved {
+            max_sys_achieved = current_sys;
+            max_sys_name = name.clone();
+        }
+        if converged {
+            n_converged += 1;
+        }
+
+        println!(
+            "iter={n_iter} (h:{n_h_only} n:{n_h_n}), sys: {:.6}→{:.6} (Δ={:.6}), {}{:.1}s",
+            starting_sys,
+            current_sys,
+            total_delta,
+            if converged { "converged, " } else { "" },
+            poly_time,
+        );
+    }
+
+    iter_writer.flush().expect("flush iterations");
+
+    // =========================================================================
     // Summary
     // =========================================================================
 
     let total_time = t0.elapsed().as_secs_f64();
     println!("\n═══════════════════════════════════════════════");
-    println!("Summary");
+    println!("Summary (Phase 1–2)");
     println!("═══════════════════════════════════════════════");
     println!("Polytopes processed: {n_polytopes}");
     println!(
@@ -1750,15 +2029,33 @@ fn main() {
     println!("Steps that improved sys: {n_improved}");
     if best_sys_after > f64::NEG_INFINITY {
         println!(
-            "Best sys achieved:   {:.6} (from {:.6}, Δ={:.6})",
+            "Best sys (single step): {:.6} (from {:.6}, Δ={:.6})",
             best_sys_after,
             best_sys_before,
             best_sys_after - best_sys_before
         );
     }
-    println!("Total time:          {total_time:.1}s");
+
+    println!("\n═══════════════════════════════════════════════");
+    println!("Summary (Phase 3 — iterative)");
+    println!("═══════════════════════════════════════════════");
+    println!("Total iterations:    {total_iterations}");
+    println!(
+        "Mean iterations:     {:.1}",
+        total_iterations as f64 / n_polytopes.max(1) as f64
+    );
+    println!("Converged:           {n_converged}/{n_polytopes}");
+    if max_sys_achieved > f64::NEG_INFINITY {
+        println!(
+            "Best sys (iterative): {:.6} ({})",
+            max_sys_achieved, max_sys_name
+        );
+    }
+
+    println!("\nTotal time:          {total_time:.1}s");
     println!();
     println!("Output:");
     println!("  {}", sensitivity_path.display());
     println!("  {}", steps_path.display());
+    println!("  {}", iterations_path.display());
 }
