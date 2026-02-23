@@ -213,11 +213,12 @@ consistent with the $O(\varepsilon)$ truncation of finite differences.
 
 \begin{proposition}[Capacity as piecewise-smooth function of $(h,n)$]
 \label{prop:capacity-piecewise-smooth}
-Let $K(h,n)$ be a polytope with variable heights~$h$ and normals~$n$.
+Let $K(h,n)$ be a \emph{simple} polytope (every vertex determined by exactly~$4$
+facets) with variable heights~$h$ and normals~$n$.
 \begin{enumerate}
 \item[\textup{(a)}]
   \emph{Combinatorial type stability.}
-  For each $(h_0,n_0)$ such that $K(h_0,n_0)$ is a polytope, the vertex-facet
+  For each $(h_0,n_0)$ such that $K(h_0,n_0)$ is a simple polytope, the vertex-facet
   incidence graph is locally constant: there exists $\varepsilon > 0$ such that
   $K(h,n)$ has the same combinatorial type for all $\|(h,n) - (h_0,n_0)\| < \varepsilon$.
   In particular, the set of valid orbit nodes $(S,\sigma)$ surviving
@@ -236,8 +237,10 @@ Let $K(h,n)$ be a polytope with variable heights~$h$ and normals~$n$.
   is continuous.
   At parameters where the minimizing orbit is unique, $c_{\mathrm{EHZ}}$ is
   differentiable with gradient given by that orbit's envelope theorem
-  formulae. This is the generic case: having two orbits with equal action
-  is a codimension-$1$ condition in parameter space.
+  formulae. The unique-minimizer case is generic: for any two orbits,
+  the equation $A(S_1,\sigma_1) = A(S_2,\sigma_2)$ cuts out a hypersurface
+  in the $4F$-dimensional parameter space, so the set of parameters where
+  any two orbits tie has measure zero.
 
 \item[\textup{(d)}]
   \emph{Capacity at orbit-switching boundaries.}
@@ -253,8 +256,10 @@ Let $K(h,n)$ be a polytope with variable heights~$h$ and normals~$n$.
 \end{proposition}
 
 \begin{proof}[Proof sketch]
-(a) The vertices of $K(h,n)$ depend continuously on~$(h,n)$ (they are solutions
-of $4 \times 4$ linear systems). For each vertex, the strict inequalities
+(a) Each vertex of a simple polytope is the unique solution of a $4 \times 4$
+linear system $N_v\,x = h_v$ where $N_v$ is invertible, so vertices move
+continuously (indeed smoothly) in~$(h,n)$.
+For each vertex, the strict inequalities
 $n_j \cdot v < h_j$ for non-determining facets are open conditions, so they
 persist under small perturbations of~$(h,n)$.
 Similarly, for ridge-adjacent facets, $\omega_0(n_i, n_j) \neq 0$ is an open
@@ -266,12 +271,20 @@ optimum is locally unique and smooth by the implicit function theorem
 (c) Continuity: $\min$ of continuous functions.
 Differentiability: when the minimizer is unique, $c_{\mathrm{EHZ}} =
 A(S^*,\sigma^*;\cdot)$ locally, hence smooth by~(b).
-The codimension-$1$ claim follows because $A(S_1,\sigma_1) = A(S_2,\sigma_2)$
-is generically a single equation in the $4F$-dimensional parameter space
-($3$ normal components plus $1$ height per facet).
+Genericity: $A(S_1,\sigma_1;h,n) = A(S_2,\sigma_2;h,n)$ is one equation in~$4F$
+unknowns, so the tie locus is a hypersurface; finitely many orbit pairs, so
+the union has measure zero.
 (d) Standard result for the directional derivative of a pointwise minimum
 of smooth functions.
 \end{proof}
+
+\emph{Simplicity assumption.}
+The simplicity hypothesis in Proposition~\ref{prop:capacity-piecewise-smooth}
+is generic: a random polytope is almost surely simple.
+All~$140$ polytopes in our dataset are simple at the start, and the step bound
+preserves simplicity (it is a special case of preserving the combinatorial type).
+For non-simple polytopes, vertices can split discontinuously under normal
+perturbations, so the combinatorial type need not be locally constant.
 
 \emph{Validity of the single-orbit gradient.}
 In our experiment, we compute $\nabla_{(h,n)}\,c_{\mathrm{EHZ}}$ using only
