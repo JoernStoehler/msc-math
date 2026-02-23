@@ -54,12 +54,21 @@ struct SensitivityRow {
     best_action: f64,
     runner_up_action: f64,
     runner_up_gap: f64,
-    d_vol: Vec<f64>,
-    d_cap: Vec<f64>,
-    d_sys: Vec<f64>,
-    gradient_norm: f64,
+    // Height derivatives
+    d_vol_h: Vec<f64>,
+    d_cap_h: Vec<f64>,
+    d_sys_h: Vec<f64>,
+    gradient_norm_h: f64,
+    // Normal derivatives (tangent vectors, 4 components each)
+    d_vol_n: Vec<[f64; 4]>,
+    d_cap_n: Vec<[f64; 4]>,
+    d_sys_n: Vec<[f64; 4]>,
+    gradient_norm_n: f64,
+    // Combined
+    gradient_norm_hn: f64,
     n_favorable: usize,
-    t_max: f64,
+    t_max_h: f64,
+    t_max_hn: f64,
     time_instrumented_ms: f64,
     time_sensitivity_ms: f64,
 }
@@ -69,6 +78,7 @@ struct StepRow {
     name: String,
     source_dataset: String,
     facet_count: usize,
+    step_type: String, // "h_only" or "h_n"
     t_fraction: f64,
     t_actual: f64,
     old_sys: f64,
@@ -263,7 +273,7 @@ fn solve_kkt_svd_path(
     normals: &[Vector4<f64>],
     heights: &[f64],
     perm: &[usize],
-) -> Option<(Vec<f64>, f64, f64)> {
+) -> Option<(Vec<f64>, f64, f64, Vec<f64>)> {
     let m = perm.len();
     let size = m + 5;
     let svd = kkt.clone().svd(true, true);
@@ -320,10 +330,11 @@ fn solve_kkt_svd_path(
         return None;
     }
     let beta0: Vec<f64> = (0..m).map(|i| x0[i]).collect();
+    let lambda: Vec<f64> = (m..m + 4).map(|i| x0[i]).collect();
     let nu = x0[m + 4];
     if beta0.iter().all(|&b| b > EPS_BETA_POSITIVE) {
         let q_val = q_from_beta(normals, perm, &beta0);
-        return Some((beta0, q_val, nu));
+        return Some((beta0, q_val, nu, lambda));
     }
     if rank == size {
         return None;
@@ -357,21 +368,22 @@ fn solve_kkt_svd_path(
         return None;
     }
     let q_val = q_from_beta(normals, perm, &beta_opt);
-    // ν comes from x0 (pseudoinverse solution). The null-space search only
-    // adjusts β, not the multipliers, so ν = x0[m+4] is correct.
-    Some((beta_opt, q_val, nu))
+    // ν and λ come from x0 (pseudoinverse solution). The null-space search only
+    // adjusts β, not the multipliers, so ν = x0[m+4] and λ = x0[m..m+4] are correct.
+    Some((beta_opt, q_val, nu, lambda))
 }
 
-/// SVD-only KKT solver, extended to return ν.
+/// SVD-only KKT solver, extended to return ν and λ.
 /// Copied from crates/src/kkt.rs:solve_kkt_svd_only, which is the production
 /// path (profiling showed LU+SVD is slower than SVD-only; see kkt.rs docs).
 ///
-/// Returns (β, Q, ν) where ν is the Lagrange multiplier for η^T β = 1.
+/// Returns (β, Q, ν, λ) where ν is the Lagrange multiplier for η^T β = 1
+/// and λ ∈ R⁴ is the Lagrange multiplier vector for N^T β = 0.
 fn solve_kkt_full(
     normals: &[Vector4<f64>],
     heights: &[f64],
     perm: &[usize],
-) -> Option<(Vec<f64>, f64, f64)> {
+) -> Option<(Vec<f64>, f64, f64, Vec<f64>)> {
     let (kkt, rhs) = build_kkt_system(normals, heights, perm);
     solve_kkt_svd_path(&kkt, &rhs, normals, heights, perm)
 }
@@ -504,6 +516,9 @@ struct ValidOrbit {
     /// Used for analytical capacity derivative via envelope theorem:
     /// dA/dh_k = ν · β_{i₀} / (2Q²) where perm[i₀] = k.
     nu: f64,
+    /// Lagrange multiplier vector (4 components) for the N^T β = 0 constraint.
+    /// Used for analytical capacity derivative w.r.t. normals via envelope theorem.
+    lambda: Vec<f64>,
 }
 
 /// Result of the instrumented HK2017 computation.
@@ -534,7 +549,7 @@ fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult
                 }
                 iterations += 1;
 
-                if let Some((beta, q_val, nu)) = solve_kkt_full(normals, heights, perm) {
+                if let Some((beta, q_val, nu, lambda)) = solve_kkt_full(normals, heights, perm) {
                     if q_val <= EPS_Q_POSITIVE {
                         return;
                     }
@@ -550,6 +565,7 @@ fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult
                             beta: beta.clone(),
                             q_value: q_val,
                             nu,
+                            lambda,
                         });
                     }
 
@@ -588,10 +604,19 @@ fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult
 // ============================================================================
 
 struct SensitivityResult {
-    d_vol: Vec<f64>,
-    d_cap: Vec<f64>,
-    d_sys: Vec<f64>,
-    gradient_norm: f64,
+    // Height derivatives
+    d_vol_h: Vec<f64>,
+    d_cap_h: Vec<f64>,
+    d_sys_h: Vec<f64>,
+    gradient_norm_h: f64,
+    // Normal derivatives (tangent vectors in T_{n_k}S³)
+    d_vol_n: Vec<Vector4<f64>>,
+    d_cap_n: Vec<Vector4<f64>>,
+    d_sys_n: Vec<Vector4<f64>>,
+    gradient_norm_n: f64,
+    // Combined gradient norm
+    gradient_norm_hn: f64,
+    // Gap info
     runner_up_gap: f64,
 }
 
@@ -705,6 +730,70 @@ fn facet_volume_3d(
         .sum()
 }
 
+/// Compute the 3D volume and area-weighted centroid of facet `fi`.
+///
+/// Returns (S_k, x̄_k) where S_k is the 3D volume of the facet and
+/// x̄_k = (1/S_k) ∫_{F_k} x dσ_k is the area-weighted centroid.
+///
+/// Same tetrahedralization as `facet_volume_3d`, but also accumulates
+/// volume-weighted simplex centroids: x̄ = Σ τ_j c_j / Σ τ_j
+/// where c_j = (apex + v0 + vk + vk+1) / 4 for each fan triangle.
+fn facet_volume_and_centroid_3d(
+    normals: &[Vector4<f64>],
+    heights: &[f64],
+    vertices: &[Vector4<f64>],
+    fi: usize,
+    f: usize,
+) -> (f64, Vector4<f64>) {
+    let facet_verts: Vec<Vector4<f64>> = vertices
+        .iter()
+        .filter(|v| (normals[fi].dot(v) - heights[fi]).abs() < EPS_FACET_INCIDENCE)
+        .cloned()
+        .collect();
+
+    if facet_verts.len() < 4 {
+        return (0.0, Vector4::zeros());
+    }
+
+    let apex = facet_verts.iter().copied().sum::<Vector4<f64>>() / facet_verts.len() as f64;
+
+    let mut total_vol = 0.0;
+    let mut weighted_centroid = Vector4::zeros();
+
+    for fj in 0..f {
+        if fj == fi {
+            continue;
+        }
+        let ridge_verts: Vec<Vector4<f64>> = facet_verts
+            .iter()
+            .filter(|v| (normals[fj].dot(v) - heights[fj]).abs() < EPS_FACET_INCIDENCE)
+            .cloned()
+            .collect();
+
+        if ridge_verts.len() < 3 {
+            continue;
+        }
+
+        let sorted = sort_polygon_vertices(&ridge_verts);
+        for k in 1..sorted.len() - 1 {
+            let a = sorted[0] - apex;
+            let b = sorted[k] - apex;
+            let c = sorted[k + 1] - apex;
+            let tet_vol = cross_product_4d(a, b, c).norm() / 6.0;
+            // Centroid of the tetrahedron (apex, sorted[0], sorted[k], sorted[k+1])
+            let tet_centroid = (apex + sorted[0] + sorted[k] + sorted[k + 1]) / 4.0;
+            total_vol += tet_vol;
+            weighted_centroid += tet_vol * tet_centroid;
+        }
+    }
+
+    if total_vol > 1e-30 {
+        (total_vol, weighted_centroid / total_vol)
+    } else {
+        (0.0, Vector4::zeros())
+    }
+}
+
 /// Compute d(vol)/d(h_k) analytically: ∂vol/∂h_k = S_k (3D volume of facet k).
 ///
 /// Standard result for convex bodies in H-representation.
@@ -795,11 +884,101 @@ fn compute_capacity_derivatives_analytical(
         .collect()
 }
 
-/// Compute full sensitivity: d(sys)/d(h_k) via chain rule.
+/// Compute d(vol)/d(n_k) analytically, projected onto T_{n_k}S³.
 ///
-/// Both d(cap)/d(h_k) and d(vol)/d(h_k) are computed analytically.
-/// Capacity: envelope theorem on the winning orbit's KKT system.
-/// Volume: ∂vol/∂h_k = S_k (3D volume of facet k).
+/// For δ ⊥ n_k: ∂vol/∂n_k · δ = −∫_{F_k} (δ · x) dσ_k = −S_k (x̄_k · δ)
+/// where S_k = 3D volume of facet k, x̄_k = area-weighted centroid of facet k.
+///
+/// Since n_k · x̄_k = h_k (centroid lies on facet plane), the tangent gradient is:
+///   (∇_{n_k} vol)_tangent = −S_k (x̄_k − h_k n_k)
+///
+/// Returns one tangent vector per facet (already projected to T_{n_k}S³).
+fn compute_volume_derivatives_normal(polytope: &Polytope4D) -> Vec<Vector4<f64>> {
+    let normals = polytope.normals();
+    let heights = polytope.heights();
+    let vertices = polytope.vertices();
+    let f = normals.len();
+
+    (0..f)
+        .map(|k| {
+            let (s_k, centroid_k) = facet_volume_and_centroid_3d(normals, heights, vertices, k, f);
+            if s_k < 1e-30 {
+                return Vector4::zeros();
+            }
+            // Tangent part of centroid: x̄_k − (x̄_k · n_k) n_k = x̄_k − h_k n_k
+            let tangent_centroid = centroid_k - heights[k] * normals[k];
+            -s_k * tangent_centroid
+        })
+        .collect()
+}
+
+/// Compute d(c_EHZ)/d(n_k) analytically via the envelope theorem, projected onto T_{n_k}S³.
+///
+/// For orbit (S,σ) with KKT solution (β*, Q*, ν*, λ*), the action A = 1/(2Q*).
+/// The KKT system: H_{ij} = ω₀(n_{σ(i)}, n_{σ(j)}), N = [n_{σ(1)}|⋯|n_{σ(m)}], η_i = h_{σ(i)}.
+///
+/// H depends on normals only; η depends on heights only. By the envelope theorem:
+///   ∂Q*/∂n_k = ½ β*^T (∂H/∂n_k) β* − λ*^T (∂N/∂n_k)^T β*
+///            = β*_{i₀} [J₀(2P_{i₀} + β*_{i₀} n_k) − λ*]
+/// where P_{i₀} = Σ_{i<i₀} β*_i n_{σ(i)} and σ(i₀) = k.
+///
+/// Then ∂A/∂n_k = −∂Q*/∂n_k / (2Q*²), projected onto T_{n_k}S³.
+///
+/// If facet k is not in the orbit, the derivative is zero.
+fn compute_capacity_derivatives_normal(
+    best_orbit: &ValidOrbit,
+    normals: &[Vector4<f64>],
+    facet_count: usize,
+) -> Vec<Vector4<f64>> {
+    let q_sq = best_orbit.q_value * best_orbit.q_value;
+    let perm = &best_orbit.permutation;
+    let beta = &best_orbit.beta;
+    let lambda = Vector4::new(
+        best_orbit.lambda[0],
+        best_orbit.lambda[1],
+        best_orbit.lambda[2],
+        best_orbit.lambda[3],
+    );
+
+    (0..facet_count)
+        .map(|k| {
+            // Find position of facet k in the orbit's permutation
+            let i0 = match perm.iter().position(|&f| f == k) {
+                Some(pos) => pos,
+                None => return Vector4::zeros(), // facet not in orbit
+            };
+
+            // P_{i₀} = Σ_{i < i₀} β_i · n_{σ(i)}
+            let mut p = Vector4::zeros();
+            for i in 0..i0 {
+                p += beta[i] * normals[perm[i]];
+            }
+
+            // ∂Q*/∂n_k = β_{i₀} · [J₀(2P + β_{i₀} n_k) − λ]
+            let inner = 2.0 * p + beta[i0] * normals[k];
+            let j0_inner = j0_apply(&inner);
+            let dq_dn = beta[i0] * (j0_inner - lambda);
+
+            // Project onto T_{n_k}S³: remove normal component
+            let dq_dn_tangent = dq_dn - dq_dn.dot(&normals[k]) * normals[k];
+
+            // ∂A/∂n_k = −∂Q*/∂n_k / (2Q²)
+            -dq_dn_tangent / (2.0 * q_sq)
+        })
+        .collect()
+}
+
+/// Apply J₀ to a vector: J₀(a,b,c,d) = (-c,-d,a,b).
+///
+/// J₀ = [[0, -I₂], [I₂, 0]] in (q₁, q₂, p₁, p₂) coordinates.
+fn j0_apply(v: &Vector4<f64>) -> Vector4<f64> {
+    Vector4::new(-v[2], -v[3], v[0], v[1])
+}
+
+/// Compute full sensitivity: d(sys)/d(h_k) and d(sys)/d(n_k) via chain rule.
+///
+/// Height derivatives: analytical (envelope theorem + facet volumes).
+/// Normal derivatives: analytical (envelope theorem with ∂H/∂n_k, ∂N/∂n_k + centroid formula).
 fn compute_sensitivity(
     polytope: &Polytope4D,
     vol: f64,
@@ -810,32 +989,30 @@ fn compute_sensitivity(
     let normals = polytope.normals();
     let heights = polytope.heights();
     let f = normals.len();
-    let d_vol = compute_volume_derivatives_analytical(polytope);
+    let best_orbit = &instrumented.orbits[0];
 
-    // Cross-check: analytical volume derivatives vs finite differences.
-    // NOTE: FD uses eps=1e-3 because qhull volume precision is ~1e-8 relative,
-    // so the old eps=1e-7 put the volume change at the numerical noise floor.
-    // The analytical formula ∂vol/∂h_k = S_k (facet 3D volume) is exact.
-    // Tolerance: 5% relative or 0.1 absolute (whichever is larger), because
-    // FD noise ≈ vol × qhull_precision / eps can dominate for small facets.
+    // --- Height derivatives (existing) ---
+    let d_vol_h = compute_volume_derivatives_analytical(polytope);
+
+    // Cross-check: analytical volume derivatives (h) vs finite differences
     debug_assert!({
         let d_vol_fd = compute_volume_derivatives_fd(normals, heights);
-        let ok = d_vol.iter().zip(d_vol_fd.iter()).all(|(a, fd)| {
+        let ok = d_vol_h.iter().zip(d_vol_fd.iter()).all(|(a, fd)| {
             if fd.is_nan() { return true; }
             let tol = (0.05 * a.abs()).max(0.1);
             (a - fd).abs() < tol
         });
         if !ok {
-            eprintln!("volume derivative mismatch: analytical={:?} fd={:?}", d_vol, d_vol_fd);
+            eprintln!("volume h-derivative mismatch: analytical={:?} fd={:?}", d_vol_h, d_vol_fd);
         }
         ok
-    }, "volume derivative: analytical vs FD mismatch");
-    let d_cap = compute_capacity_derivatives_analytical(&instrumented.orbits[0], f);
+    }, "volume h-derivative: analytical vs FD mismatch");
 
-    // Chain rule: d(sys)/d(h_k) = (1/vol) * [c * dc/dh_k - sys * dvol/dh_k]
-    let d_sys: Vec<f64> = d_vol
+    let d_cap_h = compute_capacity_derivatives_analytical(best_orbit, f);
+
+    let d_sys_h: Vec<f64> = d_vol_h
         .iter()
-        .zip(d_cap.iter())
+        .zip(d_cap_h.iter())
         .map(|(&dv, &dc)| {
             if dv.is_nan() || dc.is_nan() {
                 f64::NAN
@@ -845,12 +1022,31 @@ fn compute_sensitivity(
         })
         .collect();
 
-    let gradient_norm = d_sys
+    let gradient_norm_h = d_sys_h
         .iter()
         .filter(|x| !x.is_nan())
         .map(|x| x * x)
         .sum::<f64>()
         .sqrt();
+
+    // --- Normal derivatives (new) ---
+    let d_vol_n = compute_volume_derivatives_normal(polytope);
+    let d_cap_n = compute_capacity_derivatives_normal(best_orbit, normals, f);
+
+    // Chain rule: d(sys)/d(n_k) = (1/vol) * [c * dc/dn_k - sys * dvol/dn_k]
+    let d_sys_n: Vec<Vector4<f64>> = d_vol_n
+        .iter()
+        .zip(d_cap_n.iter())
+        .map(|(dv, dc)| (cap * dc - sys * dv) / vol)
+        .collect();
+
+    let gradient_norm_n = d_sys_n
+        .iter()
+        .map(|v| v.norm_squared())
+        .sum::<f64>()
+        .sqrt();
+
+    let gradient_norm_hn = (gradient_norm_h * gradient_norm_h + gradient_norm_n * gradient_norm_n).sqrt();
 
     let runner_up_gap = if instrumented.orbits.len() >= 2 {
         instrumented.orbits[1].action - instrumented.orbits[0].action
@@ -859,10 +1055,15 @@ fn compute_sensitivity(
     };
 
     SensitivityResult {
-        d_vol,
-        d_cap,
-        d_sys,
-        gradient_norm,
+        d_vol_h,
+        d_cap_h,
+        d_sys_h,
+        gradient_norm_h,
+        d_vol_n,
+        d_cap_n,
+        d_sys_n,
+        gradient_norm_n,
+        gradient_norm_hn,
         runner_up_gap,
     }
 }
@@ -980,9 +1181,198 @@ fn compute_step_bound(
     t_max.min(MAX_STEP_SIZE)
 }
 
+/// Compute maximum step t > 0 along combined (g_h, g_n) direction.
+///
+/// Extends `compute_step_bound` to handle both height and normal perturbations.
+/// At step t: h'_k = h_k + t·g_{h,k}, n'_k = normalize(n_k + t·g_{n,k}).
+///
+/// Additional constraint: ω₀(n_i, n_j) must not change sign for ridge-adjacent pairs.
+fn compute_step_bound_hn(
+    polytope: &Polytope4D,
+    g_h: &[f64],
+    g_n: &[Vector4<f64>],
+) -> f64 {
+    let normals = polytope.normals();
+    let heights = polytope.heights();
+    let vertices = polytope.vertices();
+    let f = polytope.facet_count();
+    let skeleton = Skeleton::compute(polytope);
+
+    let mut t_max = f64::INFINITY;
+
+    // --- Vertex-crossing checks ---
+    for (vi, vertex_facets) in skeleton.vertex_facets.iter().enumerate() {
+        let v = &vertices[vi];
+
+        if vertex_facets.len() == 4 {
+            // Simple vertex: v = N_v⁻¹ h_v
+            // When both normals and heights change:
+            // N_v(t) · v(t) = h_v(t) differentiate:
+            // N_v · dv/dt + dN_v/dt · v = dh_v/dt
+            // dv/dt = N_v⁻¹ (dh_v/dt - dN_v/dt · v)
+            // where dN_v/dt has rows g_{n,det[r]} and dh_v/dt has entries g_{h,det[r]}
+            let det_facets = vertex_facets;
+            let n_mat = Matrix4::from_rows(&[
+                normals[det_facets[0]].transpose(),
+                normals[det_facets[1]].transpose(),
+                normals[det_facets[2]].transpose(),
+                normals[det_facets[3]].transpose(),
+            ]);
+
+            let n_inv = match n_mat.try_inverse() {
+                Some(inv) => inv,
+                None => continue,
+            };
+
+            // RHS: dh_v/dt - dN_v/dt · v
+            let rhs = Vector4::new(
+                g_h[det_facets[0]] - g_n[det_facets[0]].dot(v),
+                g_h[det_facets[1]] - g_n[det_facets[1]].dot(v),
+                g_h[det_facets[2]] - g_n[det_facets[2]].dot(v),
+                g_h[det_facets[3]] - g_n[det_facets[3]].dot(v),
+            );
+            let dv_dt = n_inv * rhs;
+
+            // Check each non-determining facet
+            for j in 0..f {
+                if vertex_facets.contains(&j) {
+                    continue;
+                }
+                // Slack: s_j(t) = h_j(t) - n_j(t) · v(t)
+                // ds_j/dt = g_{h,j} - g_{n,j} · v - n_j · dv/dt
+                let slack = heights[j] - normals[j].dot(v);
+                let rate = g_h[j] - g_n[j].dot(v) - normals[j].dot(&dv_dt);
+                if rate < -1e-15 {
+                    let t_crit = slack / (-rate);
+                    if t_crit > 0.0 && t_crit < t_max {
+                        t_max = t_crit;
+                    }
+                }
+            }
+        } else {
+            // Non-simple vertex: conservative bound
+            for j in 0..f {
+                if vertex_facets.contains(&j) {
+                    continue;
+                }
+                let slack = heights[j] - normals[j].dot(v);
+                // Conservative: max rate from all sources
+                let max_g_h = g_h.iter().map(|x| x.abs()).fold(0.0f64, f64::max);
+                let max_g_n = g_n.iter().map(|g| g.norm()).fold(0.0f64, f64::max);
+                let max_rate = max_g_h + max_g_n * v.norm();
+                if max_rate > 1e-15 {
+                    let t_crit = slack / max_rate;
+                    if t_crit > 0.0 && t_crit < t_max {
+                        t_max = t_crit;
+                    }
+                }
+            }
+        }
+    }
+
+    // --- Height positivity ---
+    for k in 0..f {
+        if g_h[k] < -1e-15 {
+            let t_crit = heights[k] / (-g_h[k]);
+            if t_crit > 0.0 && t_crit < t_max {
+                t_max = t_crit;
+            }
+        }
+    }
+
+    // --- ω₀ sign preservation for ridge-adjacent pairs ---
+    for ridge in &skeleton.ridges {
+        let i = ridge.facets[0];
+        let j = ridge.facets[1];
+        let omega_ij = omega0_local(&normals[i], &normals[j]);
+        // d(ω₀(n_i(t), n_j(t)))/dt = ω₀(g_{n,i}, n_j) + ω₀(n_i, g_{n,j})
+        let d_omega = omega0_local(&g_n[i], &normals[j]) + omega0_local(&normals[i], &g_n[j]);
+        // Sign flips when omega_ij + t * d_omega = 0 → t = -omega_ij / d_omega
+        // Only relevant if the sign would flip (omega_ij and d_omega have opposite signs)
+        if omega_ij.abs() > 1e-15 && d_omega.abs() > 1e-15 {
+            let t_flip = -omega_ij / d_omega;
+            if t_flip > 0.0 && t_flip < t_max {
+                t_max = t_flip;
+            }
+        }
+    }
+
+    t_max.min(MAX_STEP_SIZE)
+}
+
 // ============================================================================
 // Gradient step evaluation
 // ============================================================================
+
+/// Take a gradient step in (h,n) space and evaluate the result.
+fn evaluate_gradient_step_hn(
+    normals: &[Vector4<f64>],
+    heights: &[f64],
+    g_h: &[f64],
+    g_n: &[Vector4<f64>],
+    t: f64,
+    old_sys: f64,
+    old_vertex_count: usize,
+) -> StepRow {
+    let f = normals.len();
+    let new_heights: Vec<f64> = (0..f).map(|k| heights[k] + t * g_h[k]).collect();
+    let new_normals: Vec<Vector4<f64>> = (0..f)
+        .map(|k| {
+            let n = normals[k] + t * g_n[k];
+            n / n.norm() // renormalize to unit length
+        })
+        .collect();
+
+    match Polytope4D::new(new_normals, new_heights) {
+        Ok(new_polytope) => {
+            let new_vol = volume(&new_polytope).unwrap_or(f64::NAN);
+            let new_cap = ehz_capacity(&new_polytope)
+                .map(|r| r.capacity)
+                .unwrap_or(f64::NAN);
+            let new_sys = if new_vol > 0.0 && new_cap.is_finite() {
+                new_cap * new_cap / (2.0 * new_vol)
+            } else {
+                f64::NAN
+            };
+
+            StepRow {
+                name: String::new(),
+                source_dataset: String::new(),
+                facet_count: f,
+                step_type: "h_n".to_string(),
+                t_fraction: 0.0,
+                t_actual: t,
+                old_sys,
+                new_sys,
+                delta_sys: new_sys - old_sys,
+                new_volume: new_vol,
+                new_capacity: new_cap,
+                vertex_count_old: old_vertex_count,
+                vertex_count_new: new_polytope.vertices().len(),
+                construction_ok: true,
+            }
+        }
+        Err(e) => {
+            eprintln!("    (h,n) step t={t:.6} failed: {e}");
+            StepRow {
+                name: String::new(),
+                source_dataset: String::new(),
+                facet_count: f,
+                step_type: "h_n".to_string(),
+                t_fraction: 0.0,
+                t_actual: t,
+                old_sys,
+                new_sys: f64::NAN,
+                delta_sys: f64::NAN,
+                new_volume: f64::NAN,
+                new_capacity: f64::NAN,
+                vertex_count_old: old_vertex_count,
+                vertex_count_new: 0,
+                construction_ok: false,
+            }
+        }
+    }
+}
 
 /// Take a gradient step and evaluate the result.
 fn evaluate_gradient_step(
@@ -1013,6 +1403,7 @@ fn evaluate_gradient_step(
                 name: String::new(), // filled in by caller
                 source_dataset: String::new(),
                 facet_count: f,
+                step_type: "h_only".to_string(),
                 t_fraction: 0.0, // filled in by caller
                 t_actual: t,
                 old_sys,
@@ -1031,6 +1422,7 @@ fn evaluate_gradient_step(
                 name: String::new(),
                 source_dataset: String::new(),
                 facet_count: f,
+                step_type: "h_only".to_string(),
                 t_fraction: 0.0,
                 t_actual: t,
                 old_sys,
@@ -1200,10 +1592,10 @@ fn main() {
         let sensitivity = compute_sensitivity(polytope, vol, cap, sys, &instrumented);
         let time_sensitivity_ms = t_sens.elapsed().as_secs_f64() * 1000.0;
 
-        // Count favorable facets: d_sys > 0 means increasing h_k improves sys,
-        // d_sys < 0 means decreasing h_k improves sys. Either is "favorable".
+        // Count favorable facets: d_sys_h > 0 means increasing h_k improves sys,
+        // d_sys_h < 0 means decreasing h_k improves sys. Either is "favorable".
         let n_favorable = sensitivity
-            .d_sys
+            .d_sys_h
             .iter()
             .filter(|&&ds| !ds.is_nan() && ds.abs() > 1e-10)
             .count();
@@ -1217,24 +1609,37 @@ fn main() {
         };
 
         // --- Step bounds ---
-        // Direction: steepest ascent = d_sys itself
-        let t_max = if sensitivity.gradient_norm > 1e-15 {
-            compute_step_bound(polytope, &sensitivity.d_sys)
+        // h-only direction: steepest ascent = d_sys_h
+        let t_max_h = if sensitivity.gradient_norm_h > 1e-15 {
+            compute_step_bound(polytope, &sensitivity.d_sys_h)
+        } else {
+            0.0
+        };
+
+        // (h,n) direction: steepest ascent = (d_sys_h, d_sys_n)
+        let t_max_hn = if sensitivity.gradient_norm_hn > 1e-15 {
+            compute_step_bound_hn(polytope, &sensitivity.d_sys_h, &sensitivity.d_sys_n)
         } else {
             0.0
         };
 
         println!(
-            "orbits={}, sys={:.6}, |∇sys|={:.4e}, t_max={:.4e}, {:.0}ms",
+            "orbits={}, sys={:.6}, |∇h|={:.4e}, |∇n|={:.4e}, |∇hn|={:.4e}, t_h={:.4e}, t_hn={:.4e}, {:.0}ms",
             instrumented.orbits.len(),
             sys,
-            sensitivity.gradient_norm,
-            t_max,
+            sensitivity.gradient_norm_h,
+            sensitivity.gradient_norm_n,
+            sensitivity.gradient_norm_hn,
+            t_max_h,
+            t_max_hn,
             time_instrumented_ms + time_sensitivity_ms
         );
 
         // Write sensitivity row
         let normals_raw: Vec<[f64; 4]> = normals.iter().map(|n| [n[0], n[1], n[2], n[3]]).collect();
+        let d_vol_n_raw: Vec<[f64; 4]> = sensitivity.d_vol_n.iter().map(|v| [v[0], v[1], v[2], v[3]]).collect();
+        let d_cap_n_raw: Vec<[f64; 4]> = sensitivity.d_cap_n.iter().map(|v| [v[0], v[1], v[2], v[3]]).collect();
+        let d_sys_n_raw: Vec<[f64; 4]> = sensitivity.d_sys_n.iter().map(|v| [v[0], v[1], v[2], v[3]]).collect();
         let sens_row = SensitivityRow {
             name: name.clone(),
             source_dataset: source.clone(),
@@ -1248,12 +1653,18 @@ fn main() {
             best_action: instrumented.orbits[0].action,
             runner_up_action,
             runner_up_gap: sensitivity.runner_up_gap,
-            d_vol: sensitivity.d_vol,
-            d_cap: sensitivity.d_cap,
-            d_sys: sensitivity.d_sys.clone(),
-            gradient_norm: sensitivity.gradient_norm,
+            d_vol_h: sensitivity.d_vol_h,
+            d_cap_h: sensitivity.d_cap_h,
+            d_sys_h: sensitivity.d_sys_h.clone(),
+            gradient_norm_h: sensitivity.gradient_norm_h,
+            d_vol_n: d_vol_n_raw,
+            d_cap_n: d_cap_n_raw,
+            d_sys_n: d_sys_n_raw,
+            gradient_norm_n: sensitivity.gradient_norm_n,
+            gradient_norm_hn: sensitivity.gradient_norm_hn,
             n_favorable,
-            t_max,
+            t_max_h,
+            t_max_hn,
             time_instrumented_ms,
             time_sensitivity_ms,
         };
@@ -1261,39 +1672,62 @@ fn main() {
         writeln!(sens_writer).expect("newline");
 
         // =========================================================================
-        // Phase 2: Gradient steps
+        // Phase 2: Gradient steps (h-only)
         // =========================================================================
-
-        if t_max <= 0.0 || sensitivity.gradient_norm < 1e-15 {
-            continue;
-        }
 
         let vertex_count_old = polytope.vertices().len();
 
-        for &frac in STEP_FRACTIONS {
-            let t = frac * t_max;
-            let mut step_row = evaluate_gradient_step(
-                normals,
-                heights,
-                &sensitivity.d_sys,
-                t,
-                sys,
-                vertex_count_old,
-            );
-            step_row.name = name.clone();
-            step_row.source_dataset = source.clone();
-            step_row.t_fraction = frac;
+        if t_max_h > 0.0 && sensitivity.gradient_norm_h > 1e-15 {
+            for &frac in STEP_FRACTIONS {
+                let t = frac * t_max_h;
+                let mut step_row = evaluate_gradient_step(
+                    normals,
+                    heights,
+                    &sensitivity.d_sys_h,
+                    t,
+                    sys,
+                    vertex_count_old,
+                );
+                step_row.name = name.clone();
+                step_row.source_dataset = source.clone();
+                step_row.t_fraction = frac;
 
-            if step_row.construction_ok && step_row.new_sys > best_sys_after {
-                best_sys_after = step_row.new_sys;
-                best_sys_before = sys;
-            }
-            if step_row.construction_ok && step_row.delta_sys > 1e-10 {
-                n_improved += 1;
-            }
+                if step_row.construction_ok && step_row.new_sys > best_sys_after {
+                    best_sys_after = step_row.new_sys;
+                    best_sys_before = sys;
+                }
+                if step_row.construction_ok && step_row.delta_sys > 1e-10 {
+                    n_improved += 1;
+                }
 
-            serde_json::to_writer(&mut steps_writer, &step_row).expect("write step");
-            writeln!(steps_writer).expect("newline");
+                serde_json::to_writer(&mut steps_writer, &step_row).expect("write step");
+                writeln!(steps_writer).expect("newline");
+            }
+        }
+
+        // =========================================================================
+        // Phase 2b: Gradient steps (h+n combined)
+        // =========================================================================
+
+        if t_max_hn > 0.0 && sensitivity.gradient_norm_hn > 1e-15 {
+            for &frac in STEP_FRACTIONS {
+                let t = frac * t_max_hn;
+                let mut step_row = evaluate_gradient_step_hn(
+                    normals,
+                    heights,
+                    &sensitivity.d_sys_h,
+                    &sensitivity.d_sys_n,
+                    t,
+                    sys,
+                    vertex_count_old,
+                );
+                step_row.name = name.clone();
+                step_row.source_dataset = source.clone();
+                step_row.t_fraction = frac;
+
+                serde_json::to_writer(&mut steps_writer, &step_row).expect("write step");
+                writeln!(steps_writer).expect("newline");
+            }
         }
     }
 
