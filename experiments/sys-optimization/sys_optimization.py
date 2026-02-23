@@ -26,6 +26,19 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
+# Consistent figure style for thesis embedding.
+# Body text is ~11pt; figures are scaled to \textwidth (~5.5in),
+# so axis labels at 9pt and titles at 10pt are readable.
+plt.rcParams.update({
+    "font.size": 9,
+    "axes.titlesize": 10,
+    "axes.labelsize": 9,
+    "xtick.labelsize": 8,
+    "ytick.labelsize": 8,
+    "legend.fontsize": 8,
+    "figure.titlesize": 10,
+})
+
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 SENSITIVITY_PATH = EXPERIMENT_DIR / "sys-optimization-sensitivity.jsonl"
 STEPS_PATH = EXPERIMENT_DIR / "sys-optimization-steps.jsonl"
@@ -255,7 +268,7 @@ def plot_improvement(steps_rows: list[dict], output_path: Path) -> None:
 # =============================================================================
 
 def plot_convergence(iter_rows: list[dict], output_path: Path) -> None:
-    """Line plots of sys vs iteration for each polytope, colored by final sys."""
+    """Line plots of sys vs iteration for each polytope, colored by facet count."""
     # Group by polytope name
     by_name: dict[str, list[dict]] = defaultdict(list)
     for r in iter_rows:
@@ -269,30 +282,31 @@ def plot_convergence(iter_rows: list[dict], output_path: Path) -> None:
     for name in by_name:
         by_name[name].sort(key=lambda r: r["iteration"])
 
-    # Compute final sys for coloring
-    final_sys = {}
+    # Get facet count per polytope for coloring
+    facet_count = {}
     for name, rows in by_name.items():
-        final_sys[name] = rows[-1]["sys_after"]
+        facet_count[name] = rows[0]["facet_count"]
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(13, 5.5))
 
-    # Left: sys trajectories colored by final sys
-    names_sorted = sorted(by_name.keys(), key=lambda n: final_sys[n])
+    # Left: sys trajectories colored by facet count
+    names_sorted = sorted(by_name.keys(), key=lambda n: facet_count[n])
     cmap = plt.cm.viridis
-    vmin = min(final_sys.values())
-    vmax = max(final_sys.values())
+    fc_values = sorted(set(facet_count.values()))
+    vmin = min(fc_values)
+    vmax = max(fc_values)
     norm = plt.Normalize(vmin=vmin, vmax=vmax)
 
     for name in names_sorted:
         rows = by_name[name]
         iters = [0] + [r["iteration"] + 1 for r in rows]
         sys_vals = [rows[0]["sys_before"]] + [r["sys_after"] for r in rows]
-        color = cmap(norm(final_sys[name]))
+        color = cmap(norm(facet_count[name]))
         ax1.plot(iters, sys_vals, alpha=0.4, linewidth=0.8, color=color)
 
     sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
     cbar = fig.colorbar(sm, ax=ax1)
-    cbar.set_label("Final sys")
+    cbar.set_label("Facet count")
     ax1.set_xlabel("Iteration")
     ax1.set_ylabel("sys")
     ax1.set_title("Convergence trajectories")
@@ -305,7 +319,7 @@ def plot_convergence(iter_rows: list[dict], output_path: Path) -> None:
         rows = by_name[name]
         iters = [r["iteration"] + 1 for r in rows]
         deltas = [r["delta_sys"] for r in rows]
-        color = cmap(norm(final_sys[name]))
+        color = cmap(norm(facet_count[name]))
         ax2.plot(iters, deltas, alpha=0.4, linewidth=0.8, color=color)
 
     ax2.set_xlabel("Iteration")
@@ -373,7 +387,7 @@ def plot_iteration_summary(iter_rows: list[dict], output_path: Path) -> None:
     ax.set_xlim(0, lim)
     ax.set_ylim(0, lim)
     ax.set_aspect("equal")
-    ax.legend(loc="upper left", fontsize=8)
+    ax.legend(loc="upper left")
     ax.grid(True, alpha=0.3)
 
     # Right: step type pie chart
@@ -454,7 +468,7 @@ def plot_validity(val_rows: list[dict], output_path: Path) -> None:
     ax.set_xlabel(r"$t\,/\,t_{\max}$")
     ax.set_ylabel("Relative prediction error")
     ax.set_title("Gradient prediction accuracy")
-    ax.legend(fontsize=7, loc="upper left")
+    ax.legend(loc="upper left")
     ax.grid(True, alpha=0.3, which="both")
 
     # --- Middle: construction success rate beyond t_max ---
@@ -488,7 +502,7 @@ def plot_validity(val_rows: list[dict], output_path: Path) -> None:
         ax.set_xlabel(r"Step size ($\times\,t_{\max}$)")
         ax.set_ylabel("Success rate (%)")
         ax.set_title("Step bound conservativeness")
-        ax.legend(fontsize=8)
+        ax.legend()
         ax.grid(True, alpha=0.3, axis="y")
 
     # --- Right: validity radius distribution ---
@@ -528,7 +542,7 @@ def plot_validity(val_rows: list[dict], output_path: Path) -> None:
         ax.set_xlabel(r"Validity radius ($t\,/\,t_{\max}$)")
         ax.set_ylabel("Count")
         ax.set_title("Where gradient breaks down")
-        ax.legend(fontsize=7)
+        ax.legend()
         ax.grid(True, alpha=0.3)
 
     fig.tight_layout()
@@ -597,8 +611,8 @@ def write_stats_table(
     mean_iters = np.mean(iter_counts) if iter_counts else 0
     max_iters_used = max(iter_counts) if iter_counts else 0
 
-    # Convergence: last step had delta < threshold
-    n_converged = sum(
+    # Terminated: last step had delta < threshold or hit max iterations
+    n_terminated = sum(
         1 for rows in by_name.values()
         if rows[-1]["delta_sys"] < 1e-6 or len(rows) < 20
     )
@@ -657,7 +671,7 @@ def write_stats_table(
         r"\midrule",
         rf"Polytopes iterated & {n_iterated} \\",
         rf"Mean iterations & {mean_iters:.1f} \\",
-        rf"Converged & {n_converged}/{n_iterated} \\",
+        rf"Terminated ($\Delta < 10^{{-6}}$) & {n_terminated}/{n_iterated} \\",
         rf"Steps: $h$-only / $(h,n)$ & {h_steps_iter} / {hn_steps_iter} \\",
         rf"Mean cumulative $\Delta\mathrm{{sys}}$ & {mean_cumulative:.4f} \\",
         r"\midrule",

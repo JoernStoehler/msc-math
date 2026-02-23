@@ -411,16 +411,21 @@ At each iteration, we evaluate all 5 step fractions
 $\{0.1, 0.25, 0.5, 0.75, 0.95\} \cdot t_{\max}$ for both the $h$-only
 and $(h,n)$ directions, and select the step with the highest resulting
 $\mathrm{sys}$.
-Iteration stops when the improvement drops below $10^{-6}$, no step
-improves $\mathrm{sys}$, or 20 iterations are reached.
+Iteration terminates when the best candidate step improves
+$\mathrm{sys}$ by less than $10^{-6}$, when no candidate step
+succeeds (all constructions fail), or after 20 iterations.
+Note that termination does not imply stationarity of $\mathrm{sys}$:
+the gradient may still be large, but the type-preserving step bound
+may be too tight for any candidate step to produce a measurable
+improvement.
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\textwidth]{../experiments/sys-optimization/sys_optimization_convergence.png}
-\caption{Left: convergence trajectories of $\mathrm{sys}$ under iterative
-  gradient ascent, colored by final $\mathrm{sys}$.
+\caption{Left: $\mathrm{sys}$ trajectories under iterative gradient
+  ascent, colored by facet count.
   Right: per-step improvement $\Delta\mathrm{sys}$ (symlog scale).
-  Most polytopes converge within 5--10 iterations.}
+  Most trajectories terminate within 5--10 iterations.}
 \label{fig:sys-opt-convergence}
 \end{figure}
 
@@ -439,14 +444,14 @@ the mean cumulative $\Delta\mathrm{sys}$ is $0.149$, roughly $3\times$
 the single-step improvement of Phase~2.
 The best $\mathrm{sys}$ after iteration reaches~$0.878$
 (up from $0.758$ before optimization and $0.805$ after a single step).
-All 138 iterated polytopes converge (2 polytopes admit no improving step
-from their starting point).
+All 138 iterated polytopes terminate with improvement below $10^{-6}$
+(2 polytopes admit no improving step from their starting point).
 
 Across all iterations, $(h,n)$ steps are selected 58\% of the time
 (506 out of 868 steps).
 The preference for $(h,n)$ steps is strongest in early iterations when
 normal perturbations provide large improvements, and shifts toward
-$h$-only steps near convergence as the $\omega_0$ sign constraints
+$h$-only steps near termination as the $\omega_0$ sign constraints
 become more binding.
 
 \subsubsection*{Phase 4: Gradient Validity Testing}
@@ -528,10 +533,10 @@ Three structural observations:
 \item \emph{All 140 starting polytopes have nonzero gradient.}
   None of the 140 starting polytopes is a critical point of $\mathrm{sys}$
   under $(h,n)$ changes; every one admits a direction of improvement.
-  After iteration, 138/140 converge to points where no
-  further gradient step (within the combinatorial type) improves
-  $\mathrm{sys}$ by more than~$10^{-6}$, but this reflects convergence
-  of the greedy method, not stationarity of~$\mathrm{sys}$.
+  After iteration, 138/140 terminate with the best candidate step
+  improving $\mathrm{sys}$ by less than~$10^{-6}$.
+  This reflects the greedy procedure running out of type-preserving
+  steps, not stationarity of~$\mathrm{sys}$.
 
 \item \emph{Normal perturbations provide additional improvement.}
   In both single-step (Phase~2) and iterative (Phase~3) settings,
