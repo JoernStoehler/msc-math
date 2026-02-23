@@ -275,6 +275,23 @@ Spawn a subagent when a subtask can run in parallel, needs isolated context, or 
 
 <!-- Triage sessions, clarity checking, writing for other agents, editing CLAUDE.md: .claude/skills/triage/SKILL.md and .claude/skills/agent-writing/SKILL.md -->
 
+### Meta-rules: how rules are managed
+
+**The core rule:** Never write a factual claim without verifying it against evidence in the same session. "The code cross-checks X" requires reading the code and confirming the cross-check exists. "The data shows Y" requires reading the data. When verification is impossible, mark with `% [TODO: JÖRN -` or `% [GAP -`. Violating this rule is the single most damaging failure mode — it wastes Jörn's time and erodes trust.
+
+**Why rules get ignored:**
+1. Too many rules active at once — agent working memory overflows, rules silently drop
+2. Contradictions between rules — agent picks one arbitrarily
+3. Rules conflict with agent defaults — defaults win silently
+4. Rules not actionable — agent interprets loosely
+
+**Mitigation: subagent-based rule enforcement.** We cannot use progressive disclosure (one CLAUDE.md, no rule hierarchy). Instead, outsource rule checking to subagents:
+
+- **Pre-delivery verification:** Before presenting a deliverable to Jörn, spawn a Sonnet subagent with (a) the relevant CLAUDE.md convention sections and (b) the deliverable. The subagent checks every factual claim against evidence and every applicable convention. Fix all issues before presenting to Jörn. This is mandatory for .tex deliverables and recommended for all deliverables.
+- **Meta-rule auditing:** After editing CLAUDE.md or rule files, spawn a subagent to check for internal contradictions, rules conflicting with agent defaults, non-actionable rules, and stale references. This can also be invoked as a periodic health check.
+
+**MEMORY.md scope:** Session learnings and postmortems only. Stable project conventions belong in CLAUDE.md. If a MEMORY.md entry has been confirmed across multiple sessions, migrate it to CLAUDE.md and delete the MEMORY.md entry.
+
 ## Repo invariants
 
 These are true about the repo right now and must remain true:
