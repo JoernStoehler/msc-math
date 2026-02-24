@@ -74,6 +74,10 @@ experiments/target/release/lagrangian_sweep
 experiments/target/release/unknown_predicates
 # → experiments/unknown-predicates/unknown-predicates.jsonl
 
+# Orbit recovery: base point recovery validation (known + random polytopes)
+experiments/target/release/orbit_recovery
+# → experiments/orbit-recovery/orbit-recovery.jsonl
+
 # Sys-optimization: sensitivity analysis + gradient steps (F≤10, ~30s)
 # Depends on: random-sweep and random-product-sweep JSONL (must run those first)
 experiments/target/release/sys_optimization
@@ -115,6 +119,10 @@ python3 experiments/lagrangian-products/lagrangian_products.py
 # Unknown predicates: beta_min histogram
 python3 experiments/unknown-predicates/unknown_predicates.py
 # → experiments/unknown-predicates/unknown_predicates_beta_min.png
+
+# Orbit recovery: validation summary
+python3 experiments/orbit-recovery/orbit_recovery.py
+# → (stdout summary only, no figures)
 
 # Sys-optimization: gradient histograms + improvement scatter + stats table
 python3 experiments/sys-optimization/sys_optimization.py
