@@ -1,9 +1,8 @@
 % appendix-numerical-combinatorics.tex — \input'd from appendix-numerical.tex
 %
-% Exact realization of polytope combinatorial types from approximate data.
-% Establishes the conceptual framework: fp64 coordinates approximate a
-% Platonic exact polytope with fully determined combinatorial structure.
-% This wires into algorithm soundness via the three-valued predicates.
+% Stability of polytope combinatorial types under coordinate perturbation.
+% Shows that combinatorial type is an open condition (Theorems A.5–A.6)
+% and that Lagrangian ω₀=0 constraints can be realized exactly nearby (A.7).
 %
 % Sources: agent-written based on discussion with Jörn (2026-02-24).
 %   Simplicity lemma and openness proof developed during planning.
@@ -41,16 +40,20 @@ positive or zero), but the operations involved---solving
 linear systems, computing vertices, checking
 incidence---introduce rounding errors.
 
-This section establishes that if the \texttt{f64}
-coordinates are consistent with a target combinatorial
-type~$C$ (all three-valued verdicts are
-$\textsc{true}$ or~$\textsc{false}$, none
-$\textsc{unknown}$), then nearby exact coordinates
-realizing~$C$ exist.
-The result provides the conceptual foundation for the numerical
-appendix: there is a ``Platonic'' exact polytope with fully
-determined combinatorial structure, and our \texttt{f64}
-polytope is a controlled approximation of it.
+This section shows that polytope combinatorial types
+are stable under small perturbations of the coordinates.
+The \texttt{f64} polytope~$\hat K = K(\hat n, \hat h)$
+has a definite combinatorial type---determined by its
+geometry, regardless of whether our floating-point
+predicates can fully determine it.
+Theorems~\ref{thm:openness-realization-space}
+and~\ref{thm:quantitative-stability} show that any
+sufficiently close coordinates define a polytope with the
+same combinatorial type.
+When some facet pairs satisfy $\omega_0 = 0$
+(as in Lagrangian products),
+Theorem~\ref{thm:exact-realization} shows that nearby
+exact coordinates with $\omega_0 = 0$ exist.
 
 \begin{definition}[Simple combinatorial type]%
 \label{def:simple-combinatorial-type}
@@ -342,12 +345,7 @@ Non-singularity: $\sigma_{\min}(N_{S_j})
 %  especially the interaction between ω₀ = 0 projection
 %  and the unit-normal constraint n_i ∈ S³.]
 Let $(\hat n, \hat h)$ define a simple polytope~$\hat K$
-with face-lattice type~$C$
-(verified via the three-valued predicates of
-Section~\ref{app:general-approach}:
-all face-lattice verdicts are
-$\textsc{true}$ or~$\textsc{false}$,
-none $\textsc{unknown}$).
+with face-lattice type~$C$.
 Let $D$ be a sign pattern for~$C$, and suppose:
 \begin{enumerate}
 \item For each adjacent pair $(i, k)$ with $D(i,k) \neq 0$:

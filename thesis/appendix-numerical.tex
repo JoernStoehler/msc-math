@@ -8,7 +8,7 @@
 %
 % Structure (top-down):
 %   A.1 General Approach — three-valued framework, information flow
-%   A.2 Polytope Combinatorics — exact realization theorem
+%   A.2 Polytope Combinatorics — stability of combinatorial type
 %   A.3 SVD Step — near-singular handling, positivity predicate
 %   A.4 Accumulated Q Maximum — certified/uncertain tracking, final answer
 
@@ -27,11 +27,11 @@ Section~\ref{app:general-approach} states the soundness goal
 and introduces the three-valued predicate framework
 for the predicates whose evaluation involves numerical
 error.
-Section~\ref{app:polytope-combinatorics} establishes that
-our floating-point coordinates approximate an exact polytope
-with fully determined combinatorial structure,
-providing the conceptual foundation for the three-valued
-predicates' soundness.
+Section~\ref{app:polytope-combinatorics} shows that
+polytope combinatorial types are stable under small
+perturbations of the coordinates, so that a floating-point
+polytope and its nearby exact counterpart share the same
+combinatorial structure.
 Section~\ref{app:svd-step} analyses the SVD-based solution of
 each KKT system, including near-singular detection
 and dismissal, and the three-valued positivity filter.
