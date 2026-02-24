@@ -180,7 +180,9 @@ or equivalently (by Fenchel duality),
 
 \begin{proof}
 We characterize critical points of the dual functional
-$I_K(z) = \frac{1}{4}\int_0^T h_K^2(-J_0\dot{z}) \, dt$
+\[
+  I_K(z) = \tfrac{1}{4}\int_0^T h_K^2(-J_0\dot{z}) \, dt
+\]
 under the constraints:
 \begin{itemize}
 \item closure: $z(0) = z(T)$,
@@ -305,7 +307,7 @@ $\nu, b_0$. At $t$ with $s = t/\alpha^2$:
   \in \partial\bigl(\tfrac{1}{4}h_K^2\bigr)(-J_0\dot{z}'(t))
   \quad \text{(subst.\ $z(s) = (z'(t) - b)/\alpha$)} \\
   &\Rightarrow \quad
-  \frac{\nu}{\alpha^2} z'(t) + \biggl(\frac{b_0}{\alpha} - \frac{\nu b}{\alpha^2}\biggr)
+  \frac{\nu}{\alpha^2} z'(t) + \Bigl(\tfrac{b_0}{\alpha} - \tfrac{\nu b}{\alpha^2}\Bigr)
   \in \partial\bigl(\tfrac{1}{4}h_K^2\bigr)(-J_0\dot{z}'(t)).
 \end{align*}
 Thus $z'$ satisfies~\eqref{eq:dual-euler-lagrange} with $\nu' = \nu/\alpha^2$
@@ -454,8 +456,9 @@ Therefore $\gamma$ lies in the symmetry class of~$z$.
 
 \medskip
 \emph{Minimum equality.}
-For any Reeb orbit~$\gamma$, the Fenchel equality (Lemma~\ref{lem:fenchel-duality})
-at $-J_0\dot{\gamma} \in \partial g_K^2(\gamma)$ gives pointwise:
+For any Reeb orbit~$\gamma$, the Fenchel equality
+(Lemma~\ref{lem:fenchel-duality}) at $-J_0\dot{\gamma} \in \partial g_K^2(\gamma)$
+gives pointwise:
 \[
   g_K^2(\gamma) + \tfrac{1}{4}h_K^2(-J_0\dot{\gamma})
   = \langle \gamma, -J_0\dot{\gamma} \rangle.

@@ -143,12 +143,9 @@ that has no Lagrangian $2$-face:
 % Downstream: directed edge i->j exists iff omega_0(n_i,n_j) > 0 AND F_i ∩ F_j is 2-dimensional.
 %   Precompute this adjacency relation for the algorithm.
 Let $K$ be a symplectic polytope and $F_{ij}$ a $2$-face.
-Since $\omega_0(n_i, n_j) \neq 0$,
-we define the \emph{direction} of $F_{ij}$:
-write $F_i \to F_j$ if $\omega_0(n_i, n_j) > 0$,
-and $F_j \to F_i$ if $\omega_0(n_i, n_j) < 0$.
-By \cite{CH2021}, Lemma~{lem:EinEout},
-a Reeb trajectory with velocity $R_i$
+Since $\omega_0(n_i, n_j) \neq 0$, we define the \emph{direction}:
+\[ F_i \to F_j \iff \omega_0(n_i, n_j) > 0. \]
+By \cite{CH2021}, Lemma~{lem:EinEout}, a Reeb trajectory with velocity $R_i$
 exits the interior of $F_i$ through $\operatorname{int}(F_{ij})$
 if and only if $F_i \to F_j$.
 Equivalently, the Reeb flow at $F_i$ transitions to $F_j$
@@ -334,11 +331,10 @@ at the $j \to l$ breakpoint is defined in Definition~\ref{def:rotation-increment
 % Downstream: intersection End' = Phi(End) ∩ F_{sigma(k)} ∩ F_{sigma(k+1)} is a polygon
 %   intersection in 2D (Phi(End) is a polygon in H_{sigma(k)} ∩ H_{sigma(k+1)},
 %   intersect with the closed face F_{sigma(k)} ∩ F_{sigma(k+1)} via H-rep constraints).
-Let $T(\sigma(1), \ldots, \sigma(k))$ have data
-$(\operatorname{Start}, \operatorname{End}, \varphi, a, \rho)$,
-and let $\sigma(k+1)$ satisfy $F_{\sigma(k)} \to F_{\sigma(k+1)}$.
-Write $\Phi \coloneqq \Phi_{\sigma(k-1),\sigma(k),\sigma(k+1)}$ for the step map
-(Definition~\ref{def:step-data}).
+Let $T_k = T(\sigma(1), \ldots, \sigma(k))$ be a tube
+and $\sigma(k+1)$ satisfy $F_{\sigma(k)} \to F_{\sigma(k+1)}$.
+Write $\Phi \coloneqq \Phi_{\sigma(k-1),\sigma(k),\sigma(k+1)}$
+for the step map (Definition~\ref{def:step-data}).
 The extended tube $T(\sigma(1), \ldots, \sigma(k+1))$ has data:
 \begin{align}
   \operatorname{End}' &\coloneqq
@@ -458,9 +454,9 @@ the sum of rotation increments at each inner breakpoint.
 %   For subsequent increments, rho accumulates. The claim is rho' > rho always.
 %   Since Delta_rho_{jl} > 0, this is immediate. Verify that Delta_rho > 0 (not just mod-Z > 0)
 %   for every extension step, not just the first.]
-Each tube extension strictly increases the rotation number:
-if $T(\sigma(1), \ldots, \sigma(k))$ has rotation $\rho$,
-then its extension to $T(\sigma(1), \ldots, \sigma(k+1))$ has rotation
+Each tube extension increases rotation:
+writing $T_k = T(\sigma(1), \ldots, \sigma(k))$, if $T_k$
+has rotation~$\rho$ then its extension $T_{k+1}$ has rotation
 \[
   \rho' = \rho + \Delta\rho_{\sigma(k),\sigma(k+1)} > \rho.
 \]
@@ -652,12 +648,11 @@ Then recurse: given a tube $T(\sigma(1), \ldots, \sigma(k))$:
   For each fixed point $x$, update $c^* \leftarrow \min(c^*, a''(x))$.
 
 \item \textbf{Extend.}
-  For each $l$ with $F_{\sigma(k)} \to F_l$
-  and $l \notin \{\sigma(1), \ldots, \sigma(k)\}$
+  For each $l \notin \{\sigma(1), \ldots, \sigma(k)\}$
+  with $F_{\sigma(k)} \to F_l$
   (Lemma~\ref{lem:prune-simple}):
-  compute the extended tube $T(\sigma(1), \ldots, \sigma(k), l)$
-  (Definition~\ref{def:tube-extension})
-  and recurse.
+  compute $T(\sigma(1), \ldots, \sigma(k), l)$
+  (Definition~\ref{def:tube-extension}) and recurse.
 \end{enumerate}
 
 \smallskip\noindent
