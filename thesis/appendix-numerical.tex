@@ -13,7 +13,7 @@ exact arithmetic: predicates such as $\beta_i > 0$ and
 $N^\top \beta = 0$ are decided exactly, and the KKT system is
 solved without numerical error.
 In a floating-point implementation, each of these operations
-introduces rounding errors that must be controlled.
+introduces numerical errors that must be controlled.
 
 This appendix develops the numerical counterpart of the exact
 algorithm in five parts.
@@ -21,10 +21,12 @@ Section~\ref{app:near-singular} analyses the most delicate
 issue---near-singular KKT systems whose solutions are sensitive
 to perturbations---and proves that such systems can be safely
 dismissed.
-Section~\ref{app:three-valued} replaces each Boolean predicate
-in the algorithm with a three-valued version
+Section~\ref{app:three-valued} analyses each Boolean predicate
+in the algorithm using three-valued logic
 (\textsc{true} / \textsc{false} / \textsc{unknown})
-that accounts for finite-precision evaluation.
+to account for finite-precision evaluation;
+selected predicates are replaced by three-valued versions
+in the implementation.
 Section~\ref{app:error-tracking} describes how the algorithm
 combines these verdicts to report a capacity value with
 appropriate certainty qualifiers.

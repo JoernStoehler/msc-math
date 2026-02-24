@@ -14,15 +14,14 @@ We replace each Boolean predicate~$P$ with a three-valued
 predicate~$\tilde P$ taking values in
 $\{\textsc{true}, \textsc{false}, \textsc{unknown}\}$,
 subject to the \emph{soundness requirement}:
-\[
+\begin{align*}
   P \text{ true in exact arithmetic}
-  \;\Longrightarrow\;
-  \tilde P \neq \textsc{false},
-  \qquad
+  &\;\Longrightarrow\;
+  \tilde P \neq \textsc{false}, \\
   P \text{ false in exact arithmetic}
-  \;\Longrightarrow\;
+  &\;\Longrightarrow\;
   \tilde P \neq \textsc{true}.
-\]
+\end{align*}
 In other words, $\textsc{true}$ and $\textsc{false}$ are
 reliable verdicts; $\textsc{unknown}$ means the numerical
 evidence is inconclusive.
@@ -64,14 +63,11 @@ The exact algorithm has two kinds of decision points:
     (the true maximum may be among these).
   \end{itemize}
   Candidates with $\tilde A = \textsc{false}$ are provably
-  inadmissible and discarded; uncertain candidates at or
-  below the certified value are irrelevant (the certified
-  value already dominates).
-  Downstream consumers
-  (Section~\ref{app:error-tracking}) decide how to handle
-  the remaining uncertainty---e.g.\ accept the certified
-  lower bound, or attempt more expensive tests to resolve
-  $\textsc{unknown}$ verdicts.
+  inadmissible and discarded; uncertain candidates at or below
+  the certified value are irrelevant (the certified value already
+  dominates). Downstream consumers decide how to handle the
+  remaining uncertainty (Section~\ref{app:error-tracking})---e.g.\
+  accept the certified lower bound, or attempt more expensive tests.
 \end{description}
 
 We now describe the three-valued version of each predicate
@@ -87,24 +83,20 @@ they share at least one vertex.
 Vertex--facet incidence is tested by checking
 $\langle n_i, v \rangle = h_i$ (up to a tolerance), so the
 three-valued version is:
-\begin{align*}
-  \tilde P_{\text{adj}}(i,j) &=
+Letting $\delta(v,i) \coloneqq |\langle n_i, v \rangle - h_i|$:
+\[
+  \tilde P_{\text{adj}}(i,j) =
   \begin{cases}
     \textsc{true}
-      & \text{if some vertex } v \text{ satisfies }
-        |\langle n_i, v \rangle - h_i| < \varepsilon
-        \text{ and }
-        |\langle n_j, v \rangle - h_j| < \varepsilon, \\
+      & \text{if } \exists\, v : \delta(v,i) < \varepsilon
+        \text{ and } \delta(v,j) < \varepsilon, \\
     \textsc{false}
-      & \text{if } \min_v \max\bigl(
-        |\langle n_i, v \rangle - h_i|,\;
-        |\langle n_j, v \rangle - h_j|\bigr)
+      & \text{if } \min_v \max(\delta(v,i),\, \delta(v,j))
         > \varepsilon', \\
     \textsc{unknown}
-      & \text{otherwise (some vertex is near the boundary
-        of incidence for at least one facet).}
+      & \text{otherwise.}
   \end{cases}
-\end{align*}
+\]
 The algorithm skips $(S, \sigma)$ only if
 $\tilde P_{\text{adj}} = \textsc{false}$ for some
 consecutive pair.
@@ -159,18 +151,18 @@ $\textsc{false}$), the candidate is tracked as uncertain
 (Section~\ref{app:error-tracking}).
 
 \paragraph{Near-singular dismissal.}
-Unlike the previous two predicates, near-singular
-dismissal (Algorithm~\ref{alg:near-singular-handling})
-is not a three-valued predicate but a binary decision:
+The near-singular dismissal
+(Algorithm~\ref{alg:near-singular-handling})
+differs from the previous two predicates:
+it is not three-valued but a binary decision:
 the algorithm either dismisses the pair (provably covered
 by a smaller pair, up to a bounded error from
 Remark~\ref{lem:dismissal-error-bound}) or uses the
 computed~$\beta_0$ directly.
-In the latter case---whether the system is well-conditioned
-or the near-null space is confined to the multiplier
-block---$\beta_0$ is well-determined and the
-three-valued predicates above apply to it as usual, with
-no additional uncertainty from the near-singularity
+In the latter case (well-conditioned system, or near-null
+space confined to the multiplier block), $\beta_0$ is
+well-determined and the three-valued predicates above
+apply to it as usual, with no additional uncertainty
 (Remark~\ref{rem:approximate-dismissal-algorithm}).
 Dismissal acts as a search-space reduction analogous to
 adjacency pruning: it skips pairs that are provably

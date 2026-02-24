@@ -79,14 +79,15 @@ $F$ & Billiard (ms) & HK2017 pruned (ms) & Speedup \\
 Based on these benchmarks, we adopt the following algorithm selection:
 
 \begin{itemize}
-  \item \textbf{Lagrangian products}: Use billiard (polynomial cost).
+  \item \textbf{Lagrangian products}: Use billiard (polynomial cost).\\
     Rust: \texttt{billiard\_capacity}.
-  \item \textbf{General polytopes}: Use HK2017 pruned. Practical limit:
-    $F \le 12$ for routine datasets, $F \le 14$ for one-off computations.
-    Rust: \texttt{ehz\_capacity\_pruned}.
+  \item \textbf{General polytopes}: Use HK2017 pruned.
+    Practical limit: $F \le 12$ for routine datasets,
+    $F \le 14$ for one-off computations.
+    Rust: \texttt{ehz\_\allowbreak capacity\_\allowbreak pruned}.
   \item \textbf{Debug testing}: Use HK2017 unpruned on $F \le 7$ to exercise
     all code paths with internal assertions.
-    Rust: \texttt{ehz\_capacity}.
+    Rust: \texttt{ehz\_\allowbreak capacity}.
 \end{itemize}
 
 Figure~\ref{fig:benchmark-timing} shows all timing data with fitted exponential

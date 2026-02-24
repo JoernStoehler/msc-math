@@ -344,13 +344,25 @@ fn symplectic_triangle_square_capacity() {
     );
 }
 
+/// Compute capacity of the 4D crosspolytope (16 facets, non-simple).
+///
+/// **Why #[ignore]:** F=16, estimated ~4 hours pruned (A3) in release mode.
+/// Extrapolated from benchmark data (F=5..12, 4.59x growth per facet).
+/// Unpruned (A0) is completely infeasible (~800 days).
+/// Non-simplicity (8 facets/vertex) may help pruning, but effect is uncertain.
+///
+/// **Estimate basis (2026-02-24):** benchmark.jsonl F=8..12 exponential fit,
+/// ablation.jsonl A0 counts. Range: 1–13 hours depending on pruning effectiveness
+/// for this highly symmetric non-simple polytope.
+///
+/// **Run with:** `cargo test --release crosspolytope_capacity -- --ignored --nocapture`
 #[test]
-#[ignore] // Too expensive: 16 facets → exponential runtime (~hours)
+#[ignore]
 fn crosspolytope_capacity() {
     let kp = known_polytopes::crosspolytope();
     let result = ehz_capacity(&kp.polytope).expect("crosspolytope capacity");
 
-    // No known literature value - just verify computation succeeds
+    // No known literature value — just verify computation succeeds and record the result.
     assert!(result.capacity > 0.0, "crosspolytope capacity positive");
     eprintln!("Crosspolytope (16 facets): capacity={:.6}", result.capacity);
     eprintln!("  Iterations: {}", result.iterations);

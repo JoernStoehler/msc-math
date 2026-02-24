@@ -19,6 +19,8 @@ Be thorough and specific. Flag potential issues rather than miss real ones. Dist
 
 **Core rule:** Every factual claim in the content must be verified against evidence. Claims about experiment results must match actual data. Documentation must accurately describe the experiment's current state.
 
+**Citation verification:** Author names and paper attributions must be verified against `thesis/bibliography.bib` or the paper files in `papers/`. Never produce author names from memory. Common agent failure: producing plausible-sounding but wrong author names (e.g., "Cieliebak-Hutchings" instead of the correct "Chaidez-Hutchings").
+
 ## Conventions
 
 ### Philosophy

@@ -20,7 +20,7 @@ The thesis is motivated by a paper from Haim-Kislev and Ostrover 2024, which dis
 Viterbo's Conjecture (2000): For any convex body K in R^2n, including any polytope K in R^4, the systolic ratio `sys(K) = c_EHZ(K)^2 / (2 vol(K))` is at most 1, where `c_EHZ(K)` is the Ekeland-Hofer-Zehnder capacity of K.
 Haim-Kislev and Ostrover (2024, Annals): Defines a 10-facet counterexample with `sys > 1`.
 
-We follow Haim-Kislev 2017, Chadez-Hutchings 2021 in extending the usual smooth symplectic geometry setting to polytopes in R^4. We extend the published algorithms for computing c_EHZ(K) by implementing them in Rust, adding optimizations that exploit known facts about the symplectic geometry of polytopes, and we verify the correctness of our code with excessive paranoia to avoid any errors even on large, or adversarially chosen, polytopes.
+We follow Haim-Kislev 2017, Chaidez-Hutchings 2021 in extending the usual smooth symplectic geometry setting to polytopes in R^4. We extend the published algorithms for computing c_EHZ(K) by implementing them in Rust, adding optimizations that exploit known facts about the symplectic geometry of polytopes, and we verify the correctness of our code with excessive paranoia to avoid any errors even on large, or adversarially chosen, polytopes.
 
 We then probe the conjecture by computing `sys` across large polytope datasets and looking for patterns.
 
@@ -233,6 +233,11 @@ Spawn a subagent when a subtask can run in parallel, needs isolated context, or 
 ### Meta-rules
 
 **The core rule:** Never write a factual claim without verifying it against evidence in the same session. "The code cross-checks X" requires reading the code and confirming the cross-check exists. "The data shows Y" requires reading the data. When verification is impossible, mark with `% [TODO: JÖRN -` or `% [GAP -`. Violating this rule is the single most damaging failure mode — it spreads across the whole thesis when others rely on a false claim, and then wastes a lot of Jörn's time that's needed to identify other downstream issues and to redo work based on the false claim.
+
+**Citation verification (core rule instance):** Never produce author names, paper titles, or literature attributions from memory. Always verify against `thesis/bibliography.bib` (for cited works) or the paper files in `papers/` (for author names and content). Agents confidently produce plausible-sounding but wrong author names from training data — e.g., "Cieliebak-Hutchings" or "Chadez-Hutchings" instead of the correct "Chaidez-Hutchings" (CH2021). This error propagates silently across files and is hard to detect later. The authoritative sources are:
+- `thesis/bibliography.bib` — all cited works with correct author fields
+- `papers/<key>/` — local copies of referenced papers
+- The papers' own title pages and acknowledgment sections
 
 **Why rules get ignored:**
 1. Too many rules active at once — agents cannot apply them all at once, so only the rules that stand out get applied, and not the rules that would be relevant for the current task
@@ -503,16 +508,6 @@ Do NOT put review status in the header. Review status lives inline via `% Jörn:
 - Use `\remark` and `\example` for context/intuition/illustrations
 - No prose paragraphs outside environments (except minimal connective text)
 - All calculations displayed as formulas, never described in English sentences
-
-### Workflow: dictation.md → LaTeX
-
-See `thesis/dictation.md` for the workflow:
-- Jörn writes natural language content, marks `[ready]`
-- Agents read `[ready]` items, translate to LaTeX, run QC, update thesis
-- Agents mark items `[question]` if something is unclear
-- Jörn answers questions, re-marks `[ready]`
-
-Statuses: `[draft]` (Jörn working) | `[ready]` (translate now) | `[question]` (agent needs input) | `[done]` (in thesis, QC passed)
 
 ## Experiment Writing
 

@@ -211,13 +211,12 @@ Combining yields the stated formula.
 \end{proof}
 
 \emph{Derivative cross-checks.}
-The analytical volume height derivatives $\partial\mathrm{vol}/\partial h_k$
-are verified against central finite differences ($\varepsilon = 10^{-3}$,
-chosen above qhull's volume noise floor) with a tolerance of~$5\%$.
+The volume height derivatives are cross-checked against
+central finite differences ($\varepsilon = 10^{-3}$,
+above qhull's noise floor) with tolerance~$5\%$.
 The remaining derivatives (volume normal, capacity height and normal) are
 not independently cross-checked in the code; their correctness rests on
-the proofs of
-Lemmas~\ref{lem:vol-derivative}--\ref{lem:cap-derivative-normal}
+the proofs of Lemmas~\ref{lem:vol-derivative}--\ref{lem:cap-derivative-normal}
 and on the Phase~4 validity tests, which show that the gradient accurately
 predicts $\Delta\mathrm{sys}$ at small step sizes
 (Section~\ref{sec:gradient-validity}).
@@ -246,7 +245,8 @@ facets) with variable heights~$h$ and normals~$n$.
 
 \item[\textup{(c)}]
   \emph{Capacity at generic parameters.}
-  The capacity $c_{\mathrm{EHZ}}(h,n) = \min_{(S,\sigma)} A(S,\sigma;h,n)$
+  The capacity
+  \[ c_{\mathrm{EHZ}}(h,n) = \min_{(S,\sigma)} A(S,\sigma;h,n) \]
   is continuous.
   At parameters where the minimizing orbit is unique, $c_{\mathrm{EHZ}}$ is
   differentiable with gradient given by that orbit's envelope theorem
@@ -256,9 +256,9 @@ facets) with variable heights~$h$ and normals~$n$.
   any two orbits tie has measure zero.
 
 \item[\textup{(d)}]
-  \emph{Capacity at orbit-switching boundaries.}
-  When $r \ge 2$ orbits $(S_1,\sigma_1),\dots,(S_r,\sigma_r)$ achieve
-  the minimum action simultaneously, the capacity is non-smooth.
+  \emph{Capacity at switching boundaries.}
+  When $r \ge 2$ orbits achieve minimum action simultaneously,
+  the capacity is non-smooth.
   The directional derivative in direction~$d = (d_h, d_n)$ is
   \[
     D_d\,c_{\mathrm{EHZ}}
@@ -321,8 +321,10 @@ We compare two stepping strategies:
 \item \emph{Height-only}: step along $g_h = \nabla_h\,\mathrm{sys}$,
   setting $h' = h + t\,g_h$ with normals fixed.
 \item \emph{Height + normal}: step along the full gradient
-  $g = (g_h, g_n)$ with $g_n = (\nabla_{n_1}\mathrm{sys},\dots,\nabla_{n_F}\mathrm{sys})$,
-  setting $h'_k = h_k + t\,g_{h,k}$ and $n'_k = (n_k + t\,g_{n,k}) / \|n_k + t\,g_{n,k}\|$.
+  $g = (g_h, g_n)$ where
+  $g_n = (\nabla_{n_1}\mathrm{sys},\dots,\nabla_{n_F}\mathrm{sys})$;
+  set $h'_k = h_k + t\,g_{h,k}$ and
+  $n'_k = (n_k + t\,g_{n,k}) / \|n_k + t\,g_{n,k}\|$.
 \end{itemize}
 
 Both strategies require a step bound $t_{\max}$ to preserve the combinatorial type.
@@ -336,9 +338,9 @@ For each non-incident facet $j$, the slack $s_j(t) = h_j + t\,g_{h,j} - n_j \cdo
 must remain positive.
 For non-simple vertices, a conservative bound $t < s_j / \max_k |g_{h,k}|$ is used.
 
-For the $(h,n)$ case, an additional constraint preserves $\omega_0$ signs:
-for each pair of ridge-adjacent facets $(i,j)$,
-the signed symplectic area $\omega_0(n_i + t\,g_{n,i},\, n_j + t\,g_{n,j})$
+For the $(h,n)$ case, an additional constraint preserves $\omega_0$
+signs: for each ridge-adjacent pair $(i,j)$, the signed area
+$\omega_0(n_i + t\,g_{n,i},\, n_j + t\,g_{n,j})$
 must not change sign (a sign flip would change the orbit structure).
 This is linear in~$t$, giving
 $t < \omega_0(n_i,n_j)\,/\,\max(0,\;-[\omega_0(g_{n,i},n_j) + \omega_0(n_i,g_{n,j})])$.
@@ -353,8 +355,9 @@ random-product-sweep experiments with $F \le 10$.
 \subsubsection*{Phase 1: Gradient Structure}
 
 Figure~\ref{fig:sys-opt-gradient} shows the distribution of the
-logarithmic height sensitivity $\partial\,\mathrm{sys}/\partial\log h_k
-= h_k \cdot \partial\,\mathrm{sys}/\partial h_k$ across all polytopes and facets.
+logarithmic height sensitivity
+$h_k \cdot \partial\,\mathrm{sys}/\partial h_k$
+across all polytopes and facets.
 
 \begin{figure}[ht]
 \centering
@@ -433,10 +436,10 @@ resulting polytope, compute the new gradient, and take another step.
 This allows the procedure to navigate across orbit switches and exploit
 the piecewise-smooth structure of $\mathrm{sys}$.
 
-At each iteration, we evaluate all 5 step fractions
-$\{0.1, 0.25, 0.5, 0.75, 0.95\} \cdot t_{\max}$ for both the $h$-only
-and $(h,n)$ directions, and select the step with the highest resulting
-$\mathrm{sys}$.
+At each iteration, we evaluate 5 step fractions
+$\{0.1, 0.25, 0.5, 0.75, 0.95\} \cdot t_{\max}$
+for both the $h$-only and $(h,n)$ directions,
+and select the step with the highest resulting $\mathrm{sys}$.
 Iteration terminates when the best candidate step improves
 $\mathrm{sys}$ by less than $10^{-6}$, when no candidate step
 succeeds (all constructions fail), or after 20 iterations.

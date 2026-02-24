@@ -51,6 +51,8 @@ at least $\nu_0 - (\alpha^*)^2\,
 Since $\eta_i = h_{\sigma(i)} > 0$ for all~$i$,
 $\sum \eta_i\,\delta\beta_i = 0$ with $\delta\beta \neq 0$
 forces at least one positive and one negative component.
+In particular, $k$ and~$\alpha^*$ are well-defined
+(the set $\{i : \delta\beta_i < 0\}$ is non-empty).
 
 \emph{Part~(2).}
 The walk-to-boundary construction and non-negativity argument
@@ -59,14 +61,14 @@ Lemma~\ref{lem:rank-deficiency-dismissal}
 (they use only $\beta_0 > 0$, $\delta\beta$ having mixed signs,
 and the definition of~$\alpha^*$).
 Exact feasibility follows from the constraint equations:
-\[
+\begin{align*}
   N^\top\beta^*
-  = N^\top\beta_0 + \alpha^*\,N^\top\delta\beta
-  = 0 + 0 = 0, \qquad
+  &= N^\top\beta_0 + \alpha^*\,N^\top\delta\beta
+  = 0 + 0 = 0, \\
   \eta^\top\beta^*
-  = \eta^\top\beta_0 + \alpha^*\,\eta^\top\delta\beta
+  &= \eta^\top\beta_0 + \alpha^*\,\eta^\top\delta\beta
   = 1 + 0 = 1.
-\]
+\end{align*}
 Since $\beta^*_k = 0$, these equalities pass to the
 restriction~$\beta^*|_{S'}$.
 
@@ -232,65 +234,63 @@ all of $M(K)|_{S'}$, it finds value at least
 For each pair $(S, \sigma)$, the numerical algorithm solves
 the KKT system~\eqref{eq:linear-system} via SVD.
 
-\smallskip\noindent
-\emph{Setup.}
-Let $C = [N \mid \eta] \in \mathbb{R}^{|S| \times 5}$
-be the constraint matrix, with smallest singular
-value~$\sigma_C$.
-Let $\sigma_1 \geq \cdots \geq \sigma_{|S|+5}$ be the singular
-values of the KKT system matrix.
-A singular value~$\sigma_j$ is \emph{small} if
-$\sigma_j < \sigma_1 \cdot \tau$ for a tolerance~$\tau$;
-the corresponding right singular vectors
-$v_j = (\delta\beta^{(j)}, \delta\lambda^{(j)},
-\delta\nu^{(j)})$ span the \emph{near-null space}.
-We say that a near-null direction~$v_j$ has
-\emph{significant $\beta$-component} if
-$\|\delta\beta^{(j)}\| > \sigma_j / \sigma_C$.
+\begin{description}
+\item[Setup.]
+  Let $C = [N \mid \eta] \in \mathbb{R}^{|S| \times 5}$
+  be the constraint matrix, with smallest singular
+  value~$\sigma_C$.
+  Let $\sigma_1 \geq \cdots \geq \sigma_{|S|+5}$ be the singular
+  values of the KKT system matrix.
+  A singular value~$\sigma_j$ is \emph{small} if
+  $\sigma_j < \sigma_1 \cdot \tau$ for a tolerance~$\tau$;
+  the corresponding right singular vectors
+  $v_j = (\delta\beta^{(j)}, \delta\lambda^{(j)},
+  \delta\nu^{(j)})$ span the \emph{near-null space}.
+  We say that a near-null direction~$v_j$ has
+  \emph{significant $\beta$-component} if
+  $\|\delta\beta^{(j)}\| > \sigma_j / \sigma_C$.
 
-\smallskip\noindent
-\emph{Normal.}
-If no singular value is small, the system is
-well-conditioned and the algorithm uses $\beta_0$ directly.
+\item[Normal.]
+  If no singular value is small, the system is
+  well-conditioned and the algorithm uses $\beta_0$ directly.
 
-\smallskip\noindent
-\emph{Dismiss.}
-If $C$ has full column rank ($\sigma_C > 0$) and some
-near-null direction~$v_j$ has significant
-$\beta$-component,
-the algorithm skips the pair without computing~$\beta_0$.
-This is justified because:
-if the system has a solution with $\beta_{0,i} > 0$ for
-all~$i$, then
-Proposition~\ref{prop:approximate-dismissal} guarantees
-the value is covered (up to the error bound of
-Remark~\ref{lem:dismissal-error-bound}) by a pair
-$(S', \sigma|_{S'})$ with $|S'| = |S| - 1$;
-if not, the pair has no admissible critical point and
-contributes nothing.
+\item[Dismiss.]
+  If $C$ has full column rank ($\sigma_C > 0$) and some
+  near-null direction~$v_j$ has significant
+  $\beta$-component,
+  the algorithm skips the pair without computing~$\beta_0$.
+  This is justified because:
+  if the system has a solution with $\beta_{0,i} > 0$ for
+  all~$i$, then
+  Proposition~\ref{prop:approximate-dismissal} guarantees
+  the value is covered (up to the error bound of
+  Remark~\ref{lem:dismissal-error-bound}) by a pair
+  $(S', \sigma|_{S'})$ with $|S'| = |S| - 1$;
+  if not, the pair has no admissible critical point and
+  contributes nothing.
 
-\smallskip\noindent
-\emph{Otherwise}, the algorithm uses $\beta_0$ directly.
-This covers two sub-cases:
-(a)~$C$ is rank-deficient ($\sigma_C = 0$), so the
-constraint projection
-(Lemma~\ref{lem:constraint-projection}) is not available.
-The implementation flags this case for investigation,
-since it is unclear whether~$\beta_0$ is well-determined;
-(b)~every near-null direction has
-$\|\delta\beta^{(j)}\| \leq \sigma_j / \sigma_C$,
-meaning the near-null space is confined to the
-multiplier block~$(\lambda, \nu)$ and $\beta_0$ is
-well-determined despite the near-singularity.
+\item[Otherwise.]
+  The algorithm uses $\beta_0$ directly,
+  covering two sub-cases:
+  (a)~$C$ is rank-deficient ($\sigma_C = 0$), so the
+  constraint projection
+  (Lemma~\ref{lem:constraint-projection}) is not available.
+  The implementation flags this case for investigation,
+  since it is unclear whether~$\beta_0$ is well-determined;
+  (b)~every near-null direction has
+  $\|\delta\beta^{(j)}\| \leq \sigma_j / \sigma_C$,
+  meaning the near-null space is confined to the
+  multiplier block~$(\lambda, \nu)$ and $\beta_0$ is
+  well-determined despite the near-singularity.
 
-\smallskip\noindent
-\emph{Implementation note.}
-The choice of~$\tau$ is an implementation decision.
-The Rust code uses a condition-number threshold
-$\sigma_j < \sigma_1 \cdot \tau$.
-The mathematical argument
-(Remark~\ref{lem:dismissal-error-bound}) is valid whenever
-the dismiss condition holds, regardless of the threshold.
+\item[Implementation note.]
+  The choice of~$\tau$ is an implementation decision.
+  The Rust code uses a condition-number threshold
+  $\sigma_j < \sigma_1 \cdot \tau$.
+  The mathematical argument
+  (Remark~\ref{lem:dismissal-error-bound}) is valid whenever
+  the dismiss condition holds, regardless of the threshold.
+\end{description}
 \end{algorithm}
 
 \begin{remark}[Error bound for dismissal]%
@@ -319,6 +319,9 @@ and the bound itself:
 The bound~\eqref{eq:dismissal-error-bound} can be evaluated
 numerically for each dismissed system to confirm the value
 loss is negligible.
+% [TODO: JÖRN - the dismissal-error experiment
+%  (experiments/dismissal-error/) should confirm this empirically
+%  across the test dataset. See README.md there for the plan.]
 In the ``otherwise'' case of
 Algorithm~\ref{alg:near-singular-handling} (near-null space
 confined to multipliers),

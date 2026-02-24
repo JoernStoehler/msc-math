@@ -7,7 +7,7 @@
 % ---------- 1. Notation table ----------
 
 
-\begin{longtable}{p{5.5cm} p{3.5cm} p{3.5cm}}
+\begin{longtable}{p{5.3cm} p{3.4cm} p{3.4cm}}
 \toprule
 \textbf{Concept} & \textbf{This thesis} & \textbf{HK2017} \\
 \midrule
@@ -53,7 +53,8 @@ A dash (---) indicates the concept is not explicitly named in that source.
 \begin{description}
 
 \item[Two normalizations.]
-  We call ours \emph{period normalization} and theirs \emph{HK2017 normalization}.
+  Ours is \emph{period normalization};
+  theirs is \emph{HK2017 normalization}.
 
 \item[MATLAB sign convention.]
   HK2017's MATLAB implementation minimizes~$-Q(\sigma,\beta)$; our Rust code maximizes~$Q$ directly. The optima coincide.
@@ -66,7 +67,7 @@ A dash (---) indicates the concept is not explicitly named in that source.
   Since the code maximises $Q > 0$, it finds the reverse-traversal
   representative of the orbit.
   The action $A = 1/(2Q)$ is unchanged, but
-  \texttt{EhzResult::best\_permutation} is the cyclic reverse of the orbit
-  described in the thesis.
+  \texttt{EhzResult::\allowbreak best\_\allowbreak permutation}
+  is the cyclic reverse of the orbit described in the thesis.
 
 \end{description}

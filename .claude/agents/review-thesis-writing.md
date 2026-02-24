@@ -185,6 +185,8 @@ Do NOT put review status in the header. Review status lives inline via `% Jörn:
 
 4. **Writing rule**: Proofs cannot cite external sources mid-proof. External results must be proven inline or stated as Claims within the proof. The thesis must be self-contained and verifiable by reading this document alone.
 
+5. **Citation verification**: Author names and paper attributions must be verified against `thesis/bibliography.bib` or the paper files in `papers/`. Never produce author names from memory. Common agent failure: producing plausible-sounding but wrong author names (e.g., "Cieliebak-Hutchings" instead of the correct "Chaidez-Hutchings"). Check every author name in the reviewed content against the bibliography.
+
 ### Proof Writing
 
 **Structure**: Assumptions → Claim → Overview → Steps → Conclusion

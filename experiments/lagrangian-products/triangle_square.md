@@ -77,7 +77,7 @@ This is scale- and ratio-invariant: sys = sqrt(3)/2 for ANY equilateral triangle
 
 ## Literature Review
 
-### CH2021 (Cieliebak-Hutchings) reference
+### CH2021 (Chaidez-Hutchings) reference
 
 > "Apparently the previous minimum number of vertices of a known example with systolic ratio 1 was 12, given by the Lagrangian product of a triangle and a square [Lem. 5.3.1]{Schlenk}."
 

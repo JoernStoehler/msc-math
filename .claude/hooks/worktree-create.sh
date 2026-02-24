@@ -9,7 +9,7 @@ set -euo pipefail
 # Output: absolute path to created worktree on stdout (nothing else).
 # All diagnostics go to stderr.
 
-NAME=$(jq -r '.name' < /dev/stdin)
+NAME=$(jq -r '.name')
 
 if [[ -z "$NAME" || "$NAME" == "null" ]]; then
   echo "[worktree-create] error: no name in stdin JSON" >&2
