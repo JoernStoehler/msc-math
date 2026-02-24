@@ -17,28 +17,31 @@
 \subsection{Dismissal Error Bound Validation}
 \label{sec:dismissal-error}
 
-Remark~\ref{lem:dismissal-error-bound} gives a computable error bound
-for each dismissed near-singular system:
-the value covered by the smaller pair~$(S', \sigma|_{S'})$ is at least
-\[
-  \nu_0
-    - (\alpha^*)^2\,\|\delta\beta'\|\,
-      \Bigl(1 + \frac{\|H\|}{\sigma_C}\Bigr)\,\sigma_j.
-\]
-We evaluate this bound empirically on the capacity test dataset
-(33~polytopes, $F = 5$--$8$) to confirm that the value loss from
-dismissal is negligible in practice.
+Algorithm~\ref{alg:near-singular-handling} dismisses near-singular
+$(S, \sigma)$ pairs without computing~$\beta_0$, relying on
+Proposition~\ref{prop:approximate-dismissal} to guarantee that a
+smaller pair covers the value up to the error
+bound~\eqref{eq:dismissal-error-bound}.
+This experiment evaluates that bound numerically to confirm the
+value loss is negligible.
 
 \subsubsection*{Methodology}
-For each polytope, we enumerate all $(S, \sigma)$ pairs (with the
-production A2 adjacency pruning) and apply the instrumented SVD path.
-When a pair would be dismissed by
-Algorithm~\ref{alg:near-singular-handling}, we instead continue to
-compute~$\beta_0$ via the pseudoinverse and evaluate the error bound.
-Pairs where~$\beta_0 \leq 0$ are \emph{trivial dismissals}: no
-admissible critical point exists, so dismissal loses nothing.
-Pairs where~$\beta_0 > 0$ contribute a non-trivial error bound, which
-we compare to the production capacity.
+For each polytope in the test dataset (33~polytopes, $F = 5$--$8$),
+we enumerate all $(S, \sigma)$ pairs that the capacity algorithm
+would process.
+Whenever a pair triggers the dismiss condition of
+Algorithm~\ref{alg:near-singular-handling}, we do \emph{not} skip
+it; instead we compute~$\beta_0$ via the pseudoinverse and
+distinguish two cases:
+\begin{itemize}
+\item If no $\beta_0 > 0$ exists, the pair has no admissible
+  critical point, so dismissal loses nothing
+  (\emph{trivial dismissal}).
+\item If $\beta_0 > 0$ exists, the pair would have contributed a
+  value~$\nu_0 = \beta_0^\top H\,\beta_0$.
+  We evaluate the error bound~\eqref{eq:dismissal-error-bound}
+  and report the ratio $\text{bound}/c_{\mathrm{EHZ}}(K)$.
+\end{itemize}
 
 \subsubsection*{Results}
 Across 5\,662 evaluated pairs, the experiment found
