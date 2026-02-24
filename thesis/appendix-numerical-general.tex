@@ -19,13 +19,21 @@ solved without numerical error.
 In a floating-point implementation, each of these operations
 introduces errors that must be controlled.
 
+\paragraph{Soundness goal.}
+The numerical algorithm must never report a capacity value
+that is provably wrong: if the algorithm certifies a value,
+that value must correspond to a genuine critical point of the
+exact problem.
+When the floating-point evidence is insufficient to determine
+a predicate's truth value, the algorithm must acknowledge
+the uncertainty rather than guess.
+
 \paragraph{Three-valued predicates.}
-We replace each Boolean predicate~$P$ in the algorithm with a
-three-valued predicate~$\tilde P$ taking values in
-$\{\textsc{true},$
-$\textsc{false},$
-$\textsc{unknown}\}$,
-subject to the \emph{soundness requirement}:
+We formalise this by allowing predicates to return
+$\textsc{unknown}$ in addition to $\textsc{true}$ and
+$\textsc{false}$.
+A predicate~$\tilde P$ computed from floating-point data
+is \emph{sound} if it satisfies:
 \begin{align*}
   P \text{ true in exact arithmetic}
   &\;\Longrightarrow\;
@@ -37,6 +45,13 @@ subject to the \emph{soundness requirement}:
 In other words, $\textsc{true}$ and $\textsc{false}$ are
 reliable verdicts; $\textsc{unknown}$ means the numerical
 evidence is inconclusive.
+Not every predicate in the implementation needs this
+treatment---many decisions (e.g.\ index comparisons,
+loop bounds) are exact in floating-point arithmetic.
+The three-valued framework applies to the predicates
+whose evaluation involves numerical error, principally
+the positivity predicate $\beta_i > 0$ and the symplectic
+form sign $\omega_0(n_i, n_k) \gtrless 0$.
 Section~\ref{app:polytope-combinatorics} establishes that an
 exact polytope with fully determined combinatorial structure
 exists near the \texttt{f64} data, so that the soundness
