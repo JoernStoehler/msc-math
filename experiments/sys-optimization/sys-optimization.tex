@@ -68,7 +68,7 @@ Then the optimal value $f^*(\theta) = f(x^*(\theta);\theta)$ satisfies
 
 \paragraph{Height derivatives.}
 
-% [TODO: JÖRN - verify proof. Agent-written, not from a specific reference.]
+% Jörn: math approved (59ddc2c) — Lemma and proof
 \begin{lemma}[Volume derivative w.r.t.\ heights]
 \label{lem:vol-derivative}
 For a convex polytope $K$ in $H$-representation with unit normals,
@@ -86,7 +86,7 @@ and varies continuously.
 Thus $\mathrm{vol}(K') - \mathrm{vol}(K) = \delta \cdot S_k + O(\delta^2)$.
 \end{proof}
 
-% [TODO: JÖRN - verify proof. Agent-written envelope theorem application.]
+% Jörn: math approved (59ddc2c) — Lemma and proof
 \begin{lemma}[Capacity derivative w.r.t.\ heights]
 \label{lem:cap-derivative}
 Fix an orbit $(S,\sigma)$ with $|S| = m$ facets. The orbit's action is
@@ -124,7 +124,7 @@ Perturbing a normal $n_k \to n_k + \varepsilon\delta$ (with $\delta \in T_{n_k}S
 tilts the facet while keeping its distance from the origin.
 Both the volume and the capacity depend on the normals, but through different mechanisms.
 
-% [TODO: JÖRN - verify proof. Agent-written. Listed in NOTES.md as needing verification.]
+% Jörn: math approved (59ddc2c) — Lemma and proof
 \begin{lemma}[Volume derivative w.r.t.\ normals]
 \label{lem:vol-derivative-normal}
 For a tangent perturbation $\delta \in T_{n_k}S^3$,
@@ -157,12 +157,7 @@ full gradient $-S_k\,\bar{x}_k$ is $-S_k\,(\bar{x}_k - (n_k \cdot \bar{x}_k)\,n_
 = -S_k\,(\bar{x}_k - h_k\,n_k)$.
 \end{proof}
 
-% [TODO: JÖRN - verify proof. Agent-written. Listed in NOTES.md as needing verification.
-%  The sign chain (line "Combining yields...") is flagged as uncertain.]
-% [GAP - AGENT CONFIDENCE 60%: The sign chain in the H-term derivation involves
-%  multiple antisymmetry flips and the closing constraint simplification. Agent cannot
-%  reliably verify the signs are all correct. JÖRN: verify the derivation from
-%  "For the H-term" through "Combining yields the stated formula."]
+% Jörn: math approved (59ddc2c) — Lemma and proof (including H-term sign chain)
 \begin{lemma}[Capacity derivative w.r.t.\ normals]
 \label{lem:cap-derivative-normal}
 Using the same notation as Lemma~\ref{lem:cap-derivative}, let
