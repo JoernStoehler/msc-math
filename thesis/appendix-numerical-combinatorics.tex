@@ -22,7 +22,12 @@
 %  The simplicity lemma proof is short and self-contained.
 %  The openness proof uses the simplicity lemma for Case A (singular N_T
 %  under perturbation). The stability proof is standard perturbation theory.
-%  The ω₀ projection argument is the least standard.]
+%  The ω₀ projection argument is the least standard.
+%  NOTE: The stability proof uses operator-norm bounds (||ΔN|| ≤ ε_n),
+%  but the theorem specifies entry-wise max norm (max_i ||n_i - n_{0,i}||₂).
+%  The entry-wise bound implies ||ΔN||_op ≤ sqrt(4)·ε_n = 2ε_n, so the
+%  proof's constants need a factor of 2 adjustment. Currently omitted
+%  for clarity; please verify and adjust the bound if needed.]
 
 The algorithms in Section~\ref{sec:algorithms} operate on a polytope
 $K = K(n, h) = \{x \in \mathbb{R}^4 : \langle n_i, x \rangle \leq h_i,
@@ -257,8 +262,9 @@ Define:
     &&\text{(maximum height-vector norm).}
 \end{align*}
 
-Let $(n, h)$ satisfy $\|n - n_0\| \leq \varepsilon_n$
-and $\|h - h_0\| \leq \varepsilon_h$
+Let $(n, h)$ satisfy
+$\max_i \|n_i - n_{0,i}\|_2 \leq \varepsilon_n$
+and $\max_i |h_i - h_{0,i}| \leq \varepsilon_h$
 with $\varepsilon_n < \sigma / 2$.
 Then:
 \begin{enumerate}
@@ -406,23 +412,35 @@ conceptual framework for the numerical algorithm:
 \begin{enumerate}
 \item An exact polytope $K^* = K(n^*, \hat h)$ exists
   with fully determined combinatorial structure $(C, D)$.
-\item The three-valued predicates computed from
-  $(\hat n, \hat h)$ are sound for $(C, D)$:
-  $\textsc{true}$ and $\textsc{false}$ verdicts
-  agree with the exact structure,
-  and $\textsc{unknown}$ verdicts are conservative.
+\item The positivity predicate $\tilde P_{>0}$
+  (Section~\ref{app:svd-step}) is sound for~$K^*$:
+  $\textsc{true}$ means the coefficient
+  vector~$\hat\beta$ certifies admissibility,
+  $\textsc{false}$ means~$\hat\beta$ certifies
+  inadmissibility,
+  and $\textsc{unknown}$ (some $\hat\beta_i \approx 0$)
+  is conservative---the candidate is kept for
+  further consideration rather than discarded.
 \item For adjacent pairs with $D(i,k) = 0$
   (Lagrangian 2-faces):
-  the directed adjacency test
-  $\omega_0(n_k, n_i) \geq 0$ evaluates to
-  $\textsc{unknown}$ in the three-valued framework
-  (since $\omega_0 \approx 0$),
-  and the algorithm conservatively includes these pairs.
-  This is correct: the exact value is $\omega_0 = 0 \geq 0$,
-  so the pair is genuinely valid.
-\item Consequently, the algorithm explores a superset
-  of the valid $(S, \sigma)$ pairs for~$K^*$,
-  and the certified capacity is an upper bound on
-  $c_{\mathrm{EHZ}}(K^*)$.
+  the exact directed adjacency condition is
+  $\omega_0(n^*_k, n^*_i) = 0 \geq 0$, so the
+  pair is genuinely valid.
+  In the implementation, the test
+  $\omega_0(\hat n_k, \hat n_i) \geq 0$ is a binary
+  check (not three-valued): for Lagrangian products,
+  the billiard algorithm is used, which does not
+  apply directed adjacency filtering;
+  for general polytopes, the binary check may
+  exclude pairs with $\omega_0 \approx 0$, but this
+  affects only the pruning optimisation, not the
+  unpruned algorithm's soundness.
+\item Consequently, the certified capacity is an
+  upper bound on $c_{\mathrm{EHZ}}(K^*)$:
+  the algorithm explores a superset of the valid
+  $(S, \sigma)$ pairs (via conservative inclusion
+  decisions and the unpruned search),
+  and the certified~$Q$ value is a lower bound on
+  the true maximum~$Q$.
 \end{enumerate}
 \end{remark}

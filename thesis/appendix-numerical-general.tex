@@ -7,10 +7,10 @@
 %   with new information flow section based on Jörn's design (2026-02-24).
 %
 % Structure:
-%   - Soundness requirement (from old A.2)
-%   - Impact on implications (from old A.2)
-%   - Impact on control flow (from old A.2)
-%   - Information flow architecture (new)
+%   - Soundness goal
+%   - Three-valued predicates (scoped to β>0)
+%   - Impact on control flow (inclusion decisions, maximum tracking)
+%   - Information flow architecture
 
 \paragraph{Soundness goal.}
 The numerical algorithm must never report a capacity value
@@ -98,9 +98,9 @@ of producers and consumers:
   or uncertain ($\textsc{unknown}$).
   Adjacency and directed adjacency
   (Section~\ref{app:polytope-combinatorics})
-  filter the search space.
-  $\textsc{unknown}$ verdicts from any predicate propagate
-  downstream as uncertainty.
+  filter the search space as binary decisions.
+  $\textsc{unknown}$ verdicts from the positivity predicate
+  propagate downstream as uncertainty.
 \item \textbf{Downstream: accumulated $Q$ maximum}
   (Section~\ref{app:accumulated-q-max}).
   The algorithm tracks the best certified

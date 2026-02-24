@@ -78,6 +78,14 @@ Otherwise:
   $\mathcal{U}$ for downstream investigation.
 \end{enumerate}
 
+% [TODO: JÖRN - two claims in this remark need verification:
+%  1. "SVD accounts for roughly 80% of computation time" — agent could not
+%     find benchmark data supporting this number. True or stale?
+%  2. "evaluating the dismissal error bound for each dismissed system" —
+%     the code at kkt.rs:289 returns None on dismissal without computing
+%     the error bound. The error bound is stated in Remark lem:dismissal-error-bound
+%     but is not evaluated at runtime. Is this aspirational (not yet implemented)
+%     or does it happen elsewhere?]
 \begin{remark}[Empirical error tracking]\label{rem:empirical-errors}
 In practice, we track error bounds empirically in the Rust
 implementation rather than deriving tight analytic bounds
