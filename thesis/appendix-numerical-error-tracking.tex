@@ -1,9 +1,18 @@
 % appendix-numerical-error-tracking.tex — \input'd from appendix-numerical.tex
 %
-% How the numerical algorithm reports results: certified vs uncertain
-% candidates, and when the answer is conclusive.
+% Accumulated Q maximum and final capacity report: certified vs uncertain
+% candidates, late resolution of UNKNOWN verdicts, and the unimplemented
+% second pass.
 %
-% Status: Jörn-approved.
+% Sources:
+%   - Original content: Jörn-approved (old A.3)
+%   - Second-pass description: new, based on Jörn's notes (2026-02-24)
+%
+% Structure:
+%   - Candidate classification (certified vs uncertain)
+%   - Final answer (two cases)
+%   - Remark: empirical error tracking
+%   - Paragraph: second-pass verification (unimplemented)
 
 After evaluating all candidate pairs $(S, \sigma)$,
 the numerical algorithm must report a capacity value with
@@ -14,7 +23,7 @@ either dismissed (value covered by a smaller pair) or its
 computed~$\beta_0$ is used directly.
 The only remaining source of uncertainty is the
 three-valued predicates of
-Section~\ref{app:three-valued}.
+Section~\ref{app:general-approach}.
 
 \paragraph{Candidate classification.}
 For each non-dismissed pair $(S, \sigma)$, the algorithm
@@ -39,7 +48,7 @@ Each candidate is classified as:
 
 \paragraph{Final answer.}
 Following the maximum tracking principle
-(Section~\ref{app:three-valued}):
+(Section~\ref{app:general-approach}):
 let $(S_{\text{cert}}, \sigma_{\text{cert}},
 \hat\beta_{\text{cert}}, Q_{\text{cert}})$ be the
 certified candidate with the largest~$Q$, and let
@@ -84,3 +93,39 @@ for each dismissed system.
 This makes the error tracking essentially free in terms of
 additional computational cost.
 \end{remark}
+
+\paragraph{Second-pass verification (not yet implemented).}
+When $\mathcal{U} \neq \emptyset$---some uncertain candidate
+dominates the certified maximum---the \texttt{f64} precision
+is insufficient to determine the true capacity.
+A second pass could resolve the remaining
+$\textsc{unknown}$ verdicts by re-evaluating only the
+uncertain candidates in~$\mathcal{U}$ at higher precision:
+\begin{itemize}
+\item \emph{Exact rationals:}
+  Re-solve the KKT system for each $(S, \sigma) \in \mathcal{U}$
+  using exact rational arithmetic.
+  The positivity predicate $\beta_i > 0$ becomes exact,
+  resolving the $\textsc{unknown}$ to $\textsc{true}$
+  or~$\textsc{false}$.
+\item \emph{Extended-precision floats:}
+  Re-solve using 128-bit or arbitrary-precision floats.
+  The three-valued predicate's tolerance~$\varepsilon_\beta$
+  shrinks with precision, potentially resolving the
+  $\textsc{unknown}$.
+\end{itemize}
+In either case, the second pass operates only on the
+small set~$\mathcal{U}$ (not on all pairs), making it
+affordable even for expensive arithmetic.
+
+The current implementation does not perform a second pass.
+Instead, it asserts that no uncertain candidate dominates
+the certified maximum: if $\mathcal{U} \neq \emptyset$,
+the implementation panics with an error message reporting
+the certified and uncertain capacities.
+% [TODO: JÖRN - decide whether to implement the second pass
+%  or leave it as future work. The code panics at
+%  hk2017/mod.rs:142-151.]
+In all experiments to date, this assertion has never fired:
+the certified maximum has always dominated all uncertain
+candidates.
