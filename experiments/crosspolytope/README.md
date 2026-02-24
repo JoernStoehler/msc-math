@@ -12,14 +12,13 @@ placeholder value in `crates/src/geom/known_polytopes.rs:127`.
 | c_EHZ(crosspolytope) | 4.0 |
 | Volume | 32/3 ≈ 10.667 |
 | sys = c²/(2·vol) | 0.75 |
-| Viterbo conjecture | Satisfied (sys ≤ 1) |
 | Minimising orbit | m=4, subset {0, 3, 12, 15}, β = (0.25, 0.25, 0.25, 0.25) |
 | Symmetry group order | |Aut ∩ Sp(4)| = 32 (of 384 hyperoctahedral) |
 | Search completeness | Exhaustive through m=12 (of 16) |
 
-The capacity equals the hypercube's (its dual polytope): c_EHZ = 4.0 for both. The
-crosspolytope has lower sys (0.75 vs 0.50 for the hypercube) because its volume is
-smaller (32/3 vs 16).
+The capacity equals the hypercube's (its dual polytope): c_EHZ = 4.0 for both.
+Whether this is a coincidence or duality preserves capacity is an open question.
+The systolic ratios differ (0.75 vs 0.50) because the volumes differ (32/3 vs 16).
 
 ## Background
 
@@ -94,7 +93,7 @@ After obtaining the capacity value:
 
 ### Phase 3: Cross-checks — DONE (inline with Phase 1)
 
-- sys = c²/(2·vol) = 16/21.33 = 0.75: Viterbo satisfied
+- sys = c²/(2·vol) = 16/21.33 = 0.75
 - Dual polytope comparison: hypercube has c_EHZ = 4.0, sys = 0.50
 - Minimising orbit visits m=4 facets with equal weights β = 0.25
 
