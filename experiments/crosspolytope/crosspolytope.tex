@@ -15,21 +15,20 @@
 \subsection{Crosspolytope Capacity}
 \label{sec:crosspolytope}
 
-The 4D crosspolytope~$K^{\diamond} = \operatorname{conv}\{\pm e_1, \pm e_2,
+The 4D crosspolytope~$K = \operatorname{conv}\{\pm e_1, \pm e_2,
 \pm e_3, \pm e_4\}$ is the dual of the hypercube~$[-1,1]^4$.
 It has~$16$ facets (one per sign vector in~$\{\pm 1\}^4$), $8$~vertices,
 and is non-simple: each vertex lies on~$8$ facets.
-No literature value for~$c_{\mathrm{EHZ}}(K^{\diamond})$ is known to us.
+No literature value for~$c_{\mathrm{EHZ}}(K)$ is known to us.
 
-% [TODO: JÖRN - verify the symmetry group computation below. Agent computed
-%  analytically and by Rust enumeration (both give 32). Check the argument.]
+% Jörn: math approved (pending commit) — from \subsubsection{Symmetry reduction} to end of symmetry argument
 
 \subsubsection*{Symmetry reduction}
 
-The hyperoctahedral group~$\operatorname{Aut}(K^{\diamond})$ has order~$384 =
+The hyperoctahedral group~$\operatorname{Aut}(K)$ has order~$384 =
 2^4 \cdot 4!$ (signed permutations of coordinates).
 For the capacity computation, only the symplectic subgroup
-$G = \operatorname{Aut}(K^{\diamond}) \cap \mathrm{Sp}(4,\mathbb{R})$
+$G = \operatorname{Aut}(K) \cap \mathrm{Sp}(4,\mathbb{R})$
 acts on Reeb orbits. We computed~$|G| = 32$ both by enumeration over
 all~$384$ signed permutation matrices and analytically:
 a coordinate permutation~$\pi$ preserves~$\omega_0$ if and only if it maps
@@ -53,9 +52,9 @@ counts grow factorially, and the minimum-action orbit appears at~$m = 4$.
 \centering
 \begin{tabular}{ll}
 \toprule
-$c_{\mathrm{EHZ}}(K^{\diamond})$ & $4.0$ \\
-$\operatorname{vol}_4(K^{\diamond})$ & $\tfrac{32}{3} \approx 10.667$ \\
-$\mathrm{sys}(K^{\diamond})$ & $\tfrac{3}{4} = 0.75$ \\
+$c_{\mathrm{EHZ}}(K)$ & $4.0$ \\
+$\operatorname{vol}_4(K)$ & $\tfrac{32}{3} \approx 10.667$ \\
+$\mathrm{sys}(K)$ & $\tfrac{3}{4} = 0.75$ \\
 Minimising orbit & $m = 4$, $\beta_i = \tfrac{1}{4}$ for all~$i$ \\
 \bottomrule
 \end{tabular}
@@ -65,11 +64,7 @@ Minimising orbit & $m = 4$, $\beta_i = \tfrac{1}{4}$ for all~$i$ \\
 
 The crosspolytope satisfies Viterbo's conjecture with~$\mathrm{sys} =
 \tfrac{3}{4}$.
-Its capacity~$c_{\mathrm{EHZ}}(K^{\diamond}) = 4.0$ equals that of its dual,
-the hypercube~$[-1,1]^4$.
+Coincidentally, $c_{\mathrm{EHZ}}(K) = 4.0 = c_{\mathrm{EHZ}}([-1,1]^4)$:
+the crosspolytope and its dual hypercube share the same capacity.
 The systolic ratios differ ($\tfrac{3}{4}$ vs.\ $\tfrac{1}{2}$) because
 the volumes differ ($\tfrac{32}{3}$ vs.\ $16$).
-
-% [TODO: JÖRN - is c_EHZ(K) = c_EHZ(K°) expected for dual polytopes?
-%  We have one data point (hypercube/crosspolytope). If this is a known
-%  result or has a simple explanation, cite it. If not, note as observation.]
