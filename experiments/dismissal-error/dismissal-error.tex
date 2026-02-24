@@ -1,8 +1,7 @@
 % dismissal-error.tex — \input'd from appendix-numerical.tex
 %
 % Empirical validation that the dismissal error bound
-% (Remark lem:dismissal-error-bound, eq:dismissal-error-bound)
-% is negligible across the test dataset.
+% (eq:dismissal-error-bound) is negligible across the test dataset.
 %
 % Sources:
 %   - Generated data: experiments/dismissal-error/dismissal-error.jsonl
@@ -17,13 +16,14 @@
 \subsection{Dismissal Error Bound Validation}
 \label{sec:dismissal-error}
 
-Algorithm~\ref{alg:near-singular-handling} dismisses near-singular
+Section~\ref{app:near-singular} showed that
+Algorithm~\ref{alg:near-singular-handling} may dismiss near-singular
 $(S, \sigma)$ pairs without computing~$\beta_0$, relying on
 Proposition~\ref{prop:approximate-dismissal} to guarantee that a
 smaller pair covers the value up to the error
 bound~\eqref{eq:dismissal-error-bound}.
 This experiment evaluates that bound numerically to confirm the
-value loss is negligible.
+value loss is negligible in practice.
 
 \subsubsection*{Methodology}
 For each polytope in the test dataset (33~polytopes, $F = 5$--$8$),
@@ -38,9 +38,10 @@ distinguish two cases:
   critical point, so dismissal loses nothing
   (\emph{trivial dismissal}).
 \item If $\beta_0 > 0$ exists, the pair would have contributed a
-  value~$\nu_0 = \beta_0^\top H\,\beta_0$.
+  candidate action value~$\nu_0 = \beta_0^\top H\,\beta_0$
+  (cf.\ Lemma~\ref{lem:kkt}).
   We evaluate the error bound~\eqref{eq:dismissal-error-bound}
-  and report the ratio $\text{bound}/c_{\mathrm{EHZ}}(K)$.
+  and report it as a fraction of~$c_{\mathrm{EHZ}}(K)$.
 \end{itemize}
 
 \subsubsection*{Results}
@@ -51,22 +52,24 @@ The non-trivial dismissals occur exclusively in the Lagrangian
 products (hypercube and triangle product) and their transformed
 variants.
 
-\begin{figure}[h]
+\begin{figure}[ht]
 \centering
 \includegraphics[width=0.95\textwidth]{../experiments/dismissal-error/dismissal-error.png}
 \caption{Dismissal error bounds across the test dataset.
-  Left: distribution of $\log_{10}(\text{error bound}/\text{capacity})$
+  Left: distribution of
+  $\log_{10}(\text{error bound}\,/\,c_{\mathrm{EHZ}})$
   for all non-trivial dismissals.
-  Right: error bound vs.\ the singular value~$\sigma_j$ that triggered
-  dismissal.
-  The dashed red line marks machine epsilon ($\approx 2.2 \times 10^{-16}$).
+  Right: error bound$/\,c_{\mathrm{EHZ}}$ vs.\ the singular
+  value~$\sigma_j$ that triggered dismissal.
+  The dashed red line marks
+  $\varepsilon_{\mathrm{mach}} \approx 2.2 \times 10^{-16}$.
   All error bounds lie well below machine precision.}
 \label{fig:dismissal-error}
 \end{figure}
 
 The maximum relative error across all dismissed pairs is
-$2.3 \times 10^{-17}$, approximately $0.1 \times$ machine epsilon.
+$2.3 \times 10^{-17} \approx 0.1\,\varepsilon_{\mathrm{mach}}$.
 Figure~\ref{fig:dismissal-error} shows that all 68~non-trivial
 error bounds cluster at or below machine precision, confirming that
-the value loss from dismissal is not merely small but numerically
-indistinguishable from zero.
+the value loss from dismissal is numerically indistinguishable
+from zero.
