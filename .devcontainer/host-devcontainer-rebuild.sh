@@ -22,14 +22,14 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CONFIG_FILE="${REPO_ROOT}/.devcontainer/devcontainer.json"
 
 if ! command -v devcontainer >/dev/null 2>&1; then
-  echo "devcontainer CLI not found. Install with 'npm i -g @devcontainers/cli' or via VS Code Dev Containers extension." >&2
+  echo "[host-devcontainer-rebuild] devcontainer CLI not found. Install with 'npm i -g @devcontainers/cli' or via VS Code Dev Containers extension." >&2
   exit 1
 fi
 
-echo "Building devcontainer image for ${REPO_ROOT}..."
+echo "[host-devcontainer-rebuild] Building devcontainer image for ${REPO_ROOT}..."
 devcontainer build --workspace-folder "${REPO_ROOT}" --config "${CONFIG_FILE}" "$@"
 
-echo "Starting devcontainer (replacing existing container if present)..."
+echo "[host-devcontainer-rebuild] Starting devcontainer (replacing existing container if present)..."
 devcontainer up --workspace-folder "${REPO_ROOT}" --config "${CONFIG_FILE}" --remove-existing-container
 
-echo "Devcontainer rebuild complete."
+echo "[host-devcontainer-rebuild] Devcontainer rebuild complete."

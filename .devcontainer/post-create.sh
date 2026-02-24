@@ -3,7 +3,7 @@
 
 set -euo pipefail
 
-echo "Local devcontainer post-create..."
+echo "[post-create] Local devcontainer post-create..."
 
 # Ensure user directories exist
 sudo mkdir -p \
@@ -44,17 +44,17 @@ sudo chown -R "${USER}:${USER}" \
 mkdir -p "${HOME}/.cache/LaTeXML"
 
 # Verify tools
-echo "code-tunnel: $(code-tunnel --version 2>/dev/null || echo 'not found')"
+echo "[post-create] code-tunnel: $(code-tunnel --version 2>/dev/null || echo 'not found')"
 if command -v latexmk >/dev/null 2>&1; then
-  echo "latexmk: $(latexmk --version 2>/dev/null | head -1 || echo 'available')"
+  echo "[post-create] latexmk: $(latexmk --version 2>/dev/null | head -1 || echo 'available')"
 else
-  echo "WARNING: latexmk not found (TexLive may not be installed)" >&2
+  echo "[post-create] WARNING: latexmk not found (TexLive may not be installed)" >&2
 fi
 
 # Pre-warm TeX formats in user tree if missing
 if [ ! -d "${HOME}/.texlive2023/texmf-var/web2c" ]; then
-  echo "Pre-warming TeX formats..."
+  echo "[post-create] Pre-warming TeX formats..."
   TEXMFVAR="${HOME}/.texlive2023/texmf-var" fmtutil-user --all >/dev/null 2>&1 || true
 fi
 
-echo "Local post-create complete."
+echo "[post-create] Local post-create complete."
