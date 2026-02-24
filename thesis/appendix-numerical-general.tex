@@ -80,12 +80,15 @@ of producers and consumers:
 \begin{enumerate}
 \item \textbf{Upstream: SVD and KKT solving}
   (Section~\ref{app:svd-step}).
-  For each pair $(S, \sigma)$, the SVD detects near-singular
-  systems and either dismisses them
-  (Algorithm~\ref{alg:near-singular-handling})
-  or produces a computed coefficient vector~$\hat\beta$.
-  Near-singular dismissal is a binary decision
-  (dismiss or proceed), not three-valued.
+  For each pair $(S, \sigma)$, the SVD solves the KKT system
+  and detects near-singular systems.
+  If a near-null direction has significant
+  $\beta$-component, the pair is dismissed: its value
+  is provably covered by a smaller pair
+  (Algorithm~\ref{alg:near-singular-handling}).
+  Otherwise, the SVD produces a computed coefficient
+  vector~$\hat\beta$.
+  Dismissal is a binary decision (not three-valued).
 \item \textbf{Midstream: three-valued predicates.}
   The computed~$\hat\beta$ is classified by the positivity
   predicate $\tilde P_{>0}$
