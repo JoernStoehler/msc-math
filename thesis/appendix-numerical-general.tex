@@ -12,13 +12,6 @@
 %   - Impact on control flow (from old A.2)
 %   - Information flow architecture (new)
 
-The algorithms in Section~\ref{sec:algorithms} are stated for
-exact arithmetic: predicates such as $\beta_i > 0$ and
-$N^\top \beta = 0$ are decided exactly, and the KKT system is
-solved without numerical error.
-In a floating-point implementation, each of these operations
-introduces errors that must be controlled.
-
 \paragraph{Soundness goal.}
 The numerical algorithm must never report a capacity value
 that is provably wrong: if the algorithm certifies a value,
