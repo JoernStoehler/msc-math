@@ -74,6 +74,10 @@ experiments/target/release/lagrangian_sweep
 experiments/target/release/unknown_predicates
 # → experiments/unknown-predicates/unknown-predicates.jsonl
 
+# Crosspolytope capacity computation (F=16, ~4 hours in release mode)
+experiments/target/release/crosspolytope
+# → experiments/crosspolytope/crosspolytope.jsonl
+
 # Sys-optimization: sensitivity analysis + gradient steps (F≤10, ~30s)
 # Depends on: random-sweep and random-product-sweep JSONL (must run those first)
 experiments/target/release/sys_optimization
