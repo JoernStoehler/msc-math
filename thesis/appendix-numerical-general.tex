@@ -78,7 +78,7 @@ The exact algorithm has two kinds of decision points:
 The three-valued predicates interact through a pipeline
 of producers and consumers:
 \begin{enumerate}
-\item \textbf{Upstream: SVD and KKT solving}
+\item \textbf{KKT solving and near-singular dismissal}
   (Section~\ref{app:svd-step}).
   For each pair $(S, \sigma)$, the SVD solves the KKT system
   and detects near-singular systems.
@@ -89,7 +89,7 @@ of producers and consumers:
   Otherwise, the SVD produces a computed coefficient
   vector~$\hat\beta$.
   Dismissal is a binary decision (not three-valued).
-\item \textbf{Midstream: three-valued predicates.}
+\item \textbf{Positivity classification.}
   The computed~$\hat\beta$ is classified by the positivity
   predicate $\tilde P_{>0}$
   (Section~\ref{app:svd-step}) into certified
@@ -98,9 +98,7 @@ of producers and consumers:
   Adjacency and directed adjacency
   (Section~\ref{app:polytope-combinatorics})
   filter the search space as binary decisions.
-  $\textsc{unknown}$ verdicts from the positivity predicate
-  propagate downstream as uncertainty.
-\item \textbf{Downstream: accumulated $Q$ maximum}
+\item \textbf{Accumulated $Q$ maximum}
   (Section~\ref{app:accumulated-q-max}).
   The algorithm tracks the best certified
   and best uncertain candidates separately.
