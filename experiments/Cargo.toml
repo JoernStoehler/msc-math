@@ -51,6 +51,10 @@ path = "sys-optimization/sys_optimization.rs"
 name = "orbit_recovery"
 path = "orbit-recovery/orbit_recovery.rs"
 
+[[bin]]
+name = "dismissal_error"
+path = "dismissal-error/dismissal_error.rs"
+
 [dependencies]
 symplectic = { path = "../crates" }
 nalgebra = "0.33"
