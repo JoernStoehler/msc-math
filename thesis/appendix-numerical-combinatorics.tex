@@ -211,18 +211,24 @@ By Lemma~\ref{lem:no-degenerate-vertices},
 $L_T \cap K(n_0, h_0) = \emptyset$.
 Since $K(n_0, h_0)$ is compact and $L_T$~is closed,
 $\operatorname{dist}(L_T, K(n_0, h_0)) \eqqcolon \rho > 0$.
-Under a perturbation of magnitude~$\varepsilon$:
-the polytope $K(n, h)$ moves by $O(\varepsilon)$
-in the Hausdorff metric (since the halfspaces move
-continuously);
-the affine subspace~$L_T$ moves by $O(\varepsilon)$
-(it depends continuously on $(n, h)$).
-If $N_T$ becomes non-singular,
-the intersection point $w_T = N_T^{-1} h_T$ lies on
-the perturbed~$L_T$.
-For $\varepsilon$ small enough that the Hausdorff
-perturbation of both~$K$ and~$L_T$ is less
-than~$\rho / 3$:
+If $N_T$ becomes non-singular under a perturbation
+of magnitude~$\varepsilon$,
+the point $w_T = N_T^{-1} h_T$ satisfies
+$\|N_T^{(0)}\, w_T - h_{0,T}\| \leq
+\varepsilon_h + \varepsilon_n\,\|w_T\|$.
+Two sub-cases:
+if $\|w_T\| > R$ for $R$ large enough that
+$K(n, h) \subset B(0, R)$
+(which holds for $\varepsilon$ small, since $K$ is bounded),
+then $w_T \notin K(n, h)$ trivially;
+otherwise $\|w_T\| \leq R$, so
+$\operatorname{dist}(w_T, L_T^{(0)})
+\leq (\varepsilon_h + \varepsilon_n\, R)\,/\,\sigma_3$
+where $\sigma_3 > 0$ is the smallest non-zero singular
+value of~$N_T^{(0)}$, and
+$K(n, h)$ moves by $O(\varepsilon)$ in the Hausdorff
+metric.
+For $\varepsilon$ small enough:
 \[
   \operatorname{dist}(w_T, K(n, h))
   \geq \rho - O(\varepsilon)
