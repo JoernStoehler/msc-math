@@ -10,7 +10,7 @@ set -euo pipefail
 # Output: none expected. All output goes to stderr.
 # Failures are logged in debug mode only (Claude Code convention).
 
-WORKTREE_PATH=$(jq -r '.worktree_path' < /dev/stdin)
+WORKTREE_PATH=$(jq -r '.worktree_path')
 
 if [[ -z "$WORKTREE_PATH" || "$WORKTREE_PATH" == "null" ]]; then
   echo "[worktree-remove] error: no worktree_path in stdin JSON" >&2
