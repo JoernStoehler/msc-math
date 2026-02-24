@@ -509,16 +509,6 @@ Do NOT put review status in the header. Review status lives inline via `% Jörn:
 - No prose paragraphs outside environments (except minimal connective text)
 - All calculations displayed as formulas, never described in English sentences
 
-### Workflow: dictation.md → LaTeX
-
-See `thesis/dictation.md` for the workflow:
-- Jörn writes natural language content, marks `[ready]`
-- Agents read `[ready]` items, translate to LaTeX, run QC, update thesis
-- Agents mark items `[question]` if something is unclear
-- Jörn answers questions, re-marks `[ready]`
-
-Statuses: `[draft]` (Jörn working) | `[ready]` (translate now) | `[question]` (agent needs input) | `[done]` (in thesis, QC passed)
-
 ## Experiment Writing
 
 Subagent: `review-experiment-writing`

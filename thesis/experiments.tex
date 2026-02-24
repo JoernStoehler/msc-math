@@ -6,13 +6,12 @@
 %   subsection in its own .tex file under thesis/experiments/.
 %
 % Narrative arc:
-%   1. Dataset — what polytopes and algorithms we use
-%   2. Correctness — why we trust the computed values
-%   3. Benchmarks — practical cost limits and algorithm selection
-%   4. Rejection sampling — how we generate random polytopes
-%   5. Systolic ratios — probing Viterbo on random polytopes
-%   6. Lagrangian products — systematic search where counterexamples live
-%   7. Visualization — geometric intuition via stereographic projection
+%   1. Correctness — why we trust the computed values
+%   2. Benchmarks — practical cost limits and algorithm selection
+%   3. Rejection sampling — how we generate random polytopes
+%   4. Systolic ratios — probing Viterbo on random polytopes
+%   5. Lagrangian products — systematic search where counterexamples live
+%   6. Visualization — geometric intuition via stereographic projection
 
 \section{Computational experiments}
 \label{sec:experiments}
@@ -22,9 +21,6 @@ pruned HK2017 algorithm (Corollary~\ref{cor:adjacency-pruning}) for general
 polytopes, and the billiard algorithm
 (Theorem~\ref{thm:billiard-characterization}) for Lagrangian products.
 Section~\ref{sec:benchmark} documents the algorithm selection rationale.
-
-%% Section 1: The dataset — polytope groups, algorithms, data files
-%\input{experiments/dataset}
 
 % Section 2: Correctness tests — mathematical properties verified on the dataset
 \input{../experiments/correctness/correctness}
