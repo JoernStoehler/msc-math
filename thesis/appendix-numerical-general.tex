@@ -10,7 +10,6 @@
 %   - Soundness goal
 %   - Three-valued predicates (scoped to β>0)
 %   - Impact on control flow (inclusion decisions, maximum tracking)
-%   - Information flow architecture
 
 \paragraph{Soundness goal.}
 The numerical algorithm must never report a capacity value
@@ -74,51 +73,3 @@ The exact algorithm has two kinds of decision points:
   dominates).
 \end{description}
 
-\paragraph{Information flow.}
-The three-valued predicates interact through a pipeline
-of producers and consumers:
-\begin{enumerate}
-\item \textbf{KKT solving}
-  (Section~\ref{app:svd-step}).
-  For each pair $(S, \sigma)$, the SVD solves the KKT
-  system and produces a computed coefficient
-  vector~$\hat\beta$.
-\item \textbf{Near-singular dismissal}
-  (Algorithm~\ref{alg:near-singular-handling}).
-  If the KKT system is near-singular and a near-null
-  direction has significant $\beta$-component,
-  the pair is dismissed: its value is provably covered
-  by a smaller pair.
-  This is a binary decision (not three-valued).
-\item \textbf{Positivity classification.}
-  The computed~$\hat\beta$ is classified by the positivity
-  predicate $\tilde P_{>0}$
-  (Section~\ref{app:svd-step}) into certified
-  ($\textsc{true}$), inadmissible ($\textsc{false}$),
-  or uncertain ($\textsc{unknown}$).
-  Adjacency and directed adjacency
-  (Section~\ref{app:polytope-combinatorics})
-  filter the search space as binary decisions.
-\item \textbf{Accumulated $Q$ maximum}
-  (Section~\ref{app:accumulated-q-max}).
-  The algorithm tracks the best certified
-  and best uncertain candidates separately.
-  Some $\textsc{unknown}$ verdicts are resolved
-  \emph{late}: an uncertain candidate whose $Q$~value
-  falls below the certified maximum is irrelevant
-  regardless of its true admissibility.
-  Only uncertain candidates \emph{above} the certified
-  maximum require further attention.
-\item \textbf{Unresolvable cases.}
-  If an uncertain candidate dominates the certified maximum,
-  \texttt{f64} precision is insufficient to determine the
-  true capacity.
-  The implementation currently reports an error in this case.
-  A second pass with higher precision (exact rationals or
-  extended-precision floats) could resolve the remaining
-  $\textsc{unknown}$ verdicts, but this is not yet implemented.
-  % [TODO: JÖRN - the code panics at hk2017/mod.rs:142-151
-  %  when uncertain_cap < certified_cap. The second pass is
-  %  described here as unimplemented. Decide whether to
-  %  implement it or leave as future work.]
-\end{enumerate}
