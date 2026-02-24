@@ -47,6 +47,10 @@ path = "unknown-predicates/unknown_predicates.rs"
 name = "sys_optimization"
 path = "sys-optimization/sys_optimization.rs"
 
+[[bin]]
+name = "orbit_recovery"
+path = "orbit-recovery/orbit_recovery.rs"
+
 [dependencies]
 symplectic = { path = "../crates" }
 nalgebra = "0.33"
