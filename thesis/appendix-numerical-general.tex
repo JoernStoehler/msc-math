@@ -78,17 +78,18 @@ The exact algorithm has two kinds of decision points:
 The three-valued predicates interact through a pipeline
 of producers and consumers:
 \begin{enumerate}
-\item \textbf{KKT solving and near-singular dismissal}
+\item \textbf{KKT solving}
   (Section~\ref{app:svd-step}).
-  For each pair $(S, \sigma)$, the SVD solves the KKT system
-  and detects near-singular systems.
-  If a near-null direction has significant
-  $\beta$-component, the pair is dismissed: its value
-  is provably covered by a smaller pair
-  (Algorithm~\ref{alg:near-singular-handling}).
-  Otherwise, the SVD produces a computed coefficient
+  For each pair $(S, \sigma)$, the SVD solves the KKT
+  system and produces a computed coefficient
   vector~$\hat\beta$.
-  Dismissal is a binary decision (not three-valued).
+\item \textbf{Near-singular dismissal}
+  (Algorithm~\ref{alg:near-singular-handling}).
+  If the KKT system is near-singular and a near-null
+  direction has significant $\beta$-component,
+  the pair is dismissed: its value is provably covered
+  by a smaller pair.
+  This is a binary decision (not three-valued).
 \item \textbf{Positivity classification.}
   The computed~$\hat\beta$ is classified by the positivity
   predicate $\tilde P_{>0}$
