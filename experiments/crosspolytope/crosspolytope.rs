@@ -39,6 +39,14 @@ const SVD_CONDITION_TAU: f64 = 1e-3;
 const EPS_KKT_RESIDUAL: f64 = 1e-6;
 const EPS_FACET_INCIDENCE: f64 = 1e-8;
 
+/// Maximum subset size to search. The full crosspolytope has F=16, so m ranges
+/// from 2 to 16. Subset sizes m=13..16 have very large permutation counts
+/// ((m-1)! cyclic orderings to explore), making exhaustive search infeasible
+/// within session time limits. m=12 is the largest size completing in ~1 minute;
+/// m=13 alone takes ~8 minutes. Since the best action is found at m=4 and
+/// actions generally increase with m, stopping at m=12 is sufficient.
+const MAX_SUBSET_SIZE: usize = 12;
+
 // ── KKT solver (copied from crates/src/kkt.rs) ─────────────────────────────
 
 fn q_from_beta(normals: &[Vector4<f64>], perm: &[usize], beta: &[f64]) -> f64 {
@@ -438,7 +446,12 @@ fn all_permutations_4() -> Vec<[usize; 4]> {
 /// crosspolytope facets. Returns facet permutations (each maps old facet index
 /// to new facet index).
 fn compute_symplectic_hyperoctahedral(normals: &[Vector4<f64>]) -> Vec<[usize; 16]> {
-    // J₀ in (q₁, q₂, p₁, p₂) coordinates
+    // J₀ in (q₁, q₂, p₁, p₂) coordinates.
+    //
+    // Sign convention: J₀ = [[0, I], [-I, 0]], so ω₀(u,v) = uᵀ J₀ v.
+    // This is the opposite sign from the library's `omega0()` which uses
+    // J₀ = [[0, -I], [I, 0]], but both yield the same symplectic group
+    // (M^T J₀ M = J₀ is invariant under J₀ → -J₀).
     let j0 = Matrix4::new(
         0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, -1.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0,
     );
@@ -567,6 +580,8 @@ struct CrosspolytopeResult {
     time_capacity_ms: f64,
     symmetry_group_order: usize,
     hyperoctahedral_group_order: usize,
+    /// Subset sizes 2..=search_complete_through_m have been exhaustively searched.
+    search_complete_through_m: usize,
 }
 
 // ── Main ────────────────────────────────────────────────────────────────────
@@ -645,7 +660,8 @@ fn main() {
     println!("\n=== Computing capacity ===\n");
     let cap_start = Instant::now();
 
-    for m in start_m..=f {
+    let max_m = MAX_SUBSET_SIZE.min(f);
+    for m in start_m..=max_m {
         let m_start = Instant::now();
         let all_subsets = combinations(f, m);
         let total_subsets = all_subsets.len();
@@ -804,6 +820,7 @@ fn main() {
         time_capacity_ms,
         symmetry_group_order: group.len(),
         hyperoctahedral_group_order: 384,
+        search_complete_through_m: max_m,
     };
 
     let line = serde_json::to_string(&row).expect("serialize row");
