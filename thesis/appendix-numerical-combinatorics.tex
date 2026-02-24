@@ -56,43 +56,53 @@ Theorem~\ref{thm:exact-realization} shows that nearby
 exact coordinates with $\omega_0 = 0$ exist.
 
 A polytope $K \subset \mathbb{R}^4$ is \emph{simple}
-if every vertex lies on exactly four facets, and the
-outward normals of those four facets are linearly
-independent.
+if every vertex lies on exactly four facets.
 
-\begin{definition}[Simple combinatorial type]%
+\begin{definition}[Combinatorial type of a simple polytope]%
 \label{def:simple-combinatorial-type}
-A \emph{simple combinatorial type} $C = (\mathcal{V}, D)$
-with $F$~facets in~$\mathbb{R}^4$ consists of:
+Let $K = K(n, h)$ be a simple polytope with
+$F$~facets in~$\mathbb{R}^4$.
+Its \emph{combinatorial type} is $C(K) = (\mathcal{V}, D)$
+where:
 \begin{enumerate}
-% FIXME(hbox): 10pt — inline math in enumerate item; try display math or \allowbreak
-\item A set of \emph{vertex descriptors}
+\item \emph{Vertex descriptors.}
   $\mathcal{V} = \{S_1, \ldots, S_V\}$
-  where each~$S_j \subset \{1, \ldots, F\}$,
-  $|S_j| = 4$, and $S_j \neq S_k$ for $j \neq k$.
-  Each~$S_j$ records which four facets meet at
-  a vertex.
-\item \emph{Facet adjacency}: facets $i$ and~$k$ are
+  where $S_j = \{i : v_j \in F_i\}$ is the set of
+  facets through vertex~$v_j$.
+  By simplicity, $|S_j| = 4$ for each~$j$.
+\item \emph{Facet adjacency.}
+  Facets $i$ and~$k$ are
   \emph{adjacent} if $\{i, k\} \subset S_j$ for some~$j$,
   i.e.\ they share a vertex.
   In a simple polytope, adjacent facets share a
-  $2$-face: the set $F_i \cap F_k$ is a face of
+  $2$-face: $F_i \cap F_k$ has
   dimension~$4 - 2 = 2$, because simplicity forces
   each face of codimension~$c$ to lie on exactly
   $c$~facets.
-\item A \emph{sign pattern}
-  $D \colon \{(i, k) : i, k \text{ adjacent}\} \to
-  \{+, -, 0\}$
-  assigning to each adjacent pair the sign of
-  $\omega_0(n_i, n_k)$.
+\item \emph{Sign pattern.}
+  $D(i, k) = \operatorname{sign}\bigl(
+  \omega_0(n_i, n_k)\bigr) \in \{+, -, 0\}$
+  for each adjacent pair $(i, k)$.
 \end{enumerate}
 \end{definition}
 
-\begin{definition}[Realization]%
+We say that coordinates
+$(n, h) \in (S^3)^F \times \mathbb{R}_{>0}^F$
+\emph{realize} a combinatorial type
+$C = (\mathcal{V}, D)$
+if $C\bigl(K(n, h)\bigr) = C$.
+
+\begin{definition}[Realization space]%
 \label{def:realization}
-Coordinates $(n, h) \in (S^3)^F \times \mathbb{R}_{>0}^F$
-\emph{realize} a simple combinatorial type $C = (\mathcal{V}, D)$
-if:
+For a combinatorial type $C = (\mathcal{V}, D)$,
+the \emph{face-lattice realization space} is
+\[
+\mathcal{R}(C) = \bigl\{(n, h) :
+\text{the vertex descriptors of } K(n,h)
+\text{ equal } \mathcal{V}\bigr\},
+\]
+ignoring the sign pattern.
+Explicitly, $(n, h) \in \mathcal{R}(C)$ means:
 \begin{enumerate}
 \item \textbf{Vertices exist and are interior.}
   For each $S_j \in \mathcal{V}$, the $4 \times 4$~matrix
@@ -112,28 +122,11 @@ if:
   or the point $w_T = N_T^{-1}\, h_T$ violates some
   constraint ($\exists\, k \notin T :
   \langle n_k, w_T \rangle > h_k$).
-\item \textbf{Sign pattern.}
-  For each adjacent pair $(i, k)$:
-  \begin{itemize}
-  \item if $D(i,k) = +$ then
-    $\omega_0(n_i, n_k) > 0$,
-  \item if $D(i,k) = -$ then
-    $\omega_0(n_i, n_k) < 0$,
-  \item if $D(i,k) = 0$ then
-    $\omega_0(n_i, n_k) = 0$.
-  \end{itemize}
 \end{enumerate}
-The \emph{face-lattice realization space} is
-\[
-\mathcal{R}(C) = \{(n, h) :
-\text{conditions (1) and (2) hold}\},
-\]
-ignoring the sign pattern.
 The \emph{full realization space} is
-\[
-\mathcal{R}(C, D) = \{(n, h) :
-\text{conditions (1), (2), and (3) hold}\}.
-\]
+$\mathcal{R}(C, D) = \{(n, h) \in \mathcal{R}(C) :
+\operatorname{sign}(\omega_0(n_i, n_k)) = D(i,k)
+\text{ for all adjacent } (i,k)\}$.
 \end{definition}
 
 \begin{remark}[Scope: simple polytopes]%
