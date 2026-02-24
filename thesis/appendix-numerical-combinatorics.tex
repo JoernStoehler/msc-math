@@ -1,0 +1,422 @@
+% appendix-numerical-combinatorics.tex — \input'd from appendix-numerical.tex
+%
+% Exact realization of polytope combinatorial types from approximate data.
+% Establishes the conceptual framework: fp64 coordinates approximate a
+% Platonic exact polytope with fully determined combinatorial structure.
+% This wires into algorithm soundness via the three-valued predicates.
+%
+% Sources: agent-written based on discussion with Jörn (2026-02-24).
+%   Simplicity lemma and openness proof developed during planning.
+%   Stability bound is standard matrix perturbation theory.
+%   Theorem 3 (ω₀ projection) is new.
+%
+% Structure:
+%   - Definition: simple combinatorial type (face lattice + ω₀ signs)
+%   - Definition: realization
+%   - Simplicity lemma (key technical tool)
+%   - Theorem: openness of realization space
+%   - Theorem: quantitative stability
+%   - Theorem: exact realization with ω₀ = 0
+
+% [TODO: JÖRN - all three proofs are agent-written and need verification.
+%  The simplicity lemma proof is short and self-contained.
+%  The openness proof uses the simplicity lemma for Case A (singular N_T
+%  under perturbation). The stability proof is standard perturbation theory.
+%  The ω₀ projection argument is the least standard.]
+
+The algorithms in Section~\ref{sec:algorithms} operate on a polytope
+$K = K(n, h) = \{x \in \mathbb{R}^4 : \langle n_i, x \rangle \leq h_i,
+\; i = 1, \ldots, F\}$
+with unit outward normals $n_i \in S^3$ and heights $h_i > 0$.
+In practice, the coordinates $(n, h)$ are represented in
+\texttt{f64} (IEEE~754 double precision).
+Since \texttt{f64} values are exact rational numbers,
+$K(n, h)$ is an exact polytope with a well-defined
+combinatorial type---but verifying this type numerically
+requires the three-valued framework of
+Section~\ref{app:general-approach}.
+
+This section establishes that approximate coordinates consistent
+with a target combinatorial type~$C$ imply the existence of
+nearby exact coordinates realizing~$C$.
+The result provides the conceptual foundation for the numerical
+appendix: there is a ``Platonic'' exact polytope with fully
+determined combinatorial structure, and our \texttt{f64}
+polytope is a controlled approximation of it.
+
+\begin{definition}[Simple combinatorial type]%
+\label{def:simple-combinatorial-type}
+A \emph{simple combinatorial type} $C = (\mathcal{V}, D)$
+with $F$~facets in~$\mathbb{R}^4$ consists of:
+\begin{enumerate}
+% FIXME(hbox): 10pt — inline math in enumerate item; try display math or \allowbreak
+\item A set of \emph{vertex descriptors}
+  $\mathcal{V} = \{S_1, \ldots, S_V\}$
+  where each~$S_j \subset \{1, \ldots, F\}$,
+  $|S_j| = 4$, and $S_j \neq S_k$ for $j \neq k$.
+  Each~$S_j$ records which four facets meet at
+  a vertex.
+\item \emph{Facet adjacency}: facets $i$ and~$k$ are
+  \emph{adjacent} if $\{i, k\} \subset S_j$ for some~$j$,
+  i.e.\ they share a vertex.
+\item A \emph{sign pattern}
+  $D \colon \{(i, k) : i, k \text{ adjacent}\} \to
+  \{+, -, 0\}$
+  specifying, for each adjacent pair,
+  the sign of the symplectic inner product
+  $\omega_0(n_i, n_k)$.
+  The value $D(i,k) = 0$ corresponds to a
+  \emph{Lagrangian 2-face} (the two normals span a
+  Lagrangian subspace of~$(\mathbb{R}^4, \omega_0)$).
+\end{enumerate}
+\end{definition}
+
+\begin{definition}[Realization]%
+\label{def:realization}
+Coordinates $(n, h) \in (S^3)^F \times \mathbb{R}_{>0}^F$
+\emph{realize} a simple combinatorial type $C = (\mathcal{V}, D)$
+if:
+\begin{enumerate}
+\item \textbf{Vertices exist and are interior.}
+  For each $S_j \in \mathcal{V}$, the $4 \times 4$~matrix
+  $N_{S_j}$ (rows~$= n_i^\top$ for $i \in S_j$) is
+  non-singular, and the vertex
+  $v_j = N_{S_j}^{-1}\, h_{S_j}$
+  satisfies
+  $h_i - \langle n_i, v_j \rangle > 0$
+  for all $i \notin S_j$.
+  We call
+  $g_j^i = h_i - \langle n_i, v_j \rangle$
+  the \emph{non-incidence gap}.
+\item \textbf{No spurious vertices.}
+  For each 4-element subset $T \subset \{1, \ldots, F\}$
+  with $T \notin \mathcal{V}$:
+  either $N_T$~is singular,
+  or the point $w_T = N_T^{-1}\, h_T$ violates some
+  constraint ($\exists\, k \notin T :
+  \langle n_k, w_T \rangle > h_k$).
+\item \textbf{Sign pattern.}
+  For each adjacent pair $(i, k)$:
+  \begin{itemize}
+  \item if $D(i,k) = +$ then
+    $\omega_0(n_i, n_k) > 0$,
+  \item if $D(i,k) = -$ then
+    $\omega_0(n_i, n_k) < 0$,
+  \item if $D(i,k) = 0$ then
+    $\omega_0(n_i, n_k) = 0$.
+  \end{itemize}
+\end{enumerate}
+The \emph{face-lattice realization space} is
+\[
+\mathcal{R}(C) = \{(n, h) :
+\text{conditions (1) and (2) hold}\},
+\]
+ignoring the sign pattern.
+The \emph{full realization space} is
+\[
+\mathcal{R}(C, D) = \{(n, h) :
+\text{conditions (1), (2), and (3) hold}\}.
+\]
+\end{definition}
+
+\begin{remark}[Scope: simple polytopes]%
+\label{rem:simple-scope}
+We restrict to simple combinatorial types throughout.
+This covers all polytopes arising in our experiments:
+random polytopes are almost surely simple,
+Lagrangian products are always simple,
+and polytopes from future optimization procedures
+(e.g.\ gradient descent on the systolic ratio)
+can be perturbed to simple ones if needed.
+\end{remark}
+
+The following lemma is the key technical tool for the
+openness proof.
+
+\begin{lemma}[No degenerate vertices in simple polytopes]%
+\label{lem:no-degenerate-vertices}
+% [TODO: JÖRN - verify this proof. Short and self-contained.]
+Let $K = K(n, h)$ be a simple polytope in~$\mathbb{R}^4$.
+Let $T \subset \{1, \ldots, F\}$ with $|T| = 4$ and
+$\operatorname{rank}(N_T) < 4$.
+Then the affine subspace
+$L_T = \{x \in \mathbb{R}^4 :
+\langle n_i, x \rangle = h_i \;\forall\, i \in T\}$
+does not intersect~$K$.
+\end{lemma}
+
+\begin{proof}
+Suppose $x \in L_T \cap K$.
+Then $x$ lies on the boundary of~$K$
+(it satisfies $|T| = 4$ facet equalities)
+and satisfies all remaining facet inequalities
+(since $x \in K$).
+Let $F(x) = \{i : \langle n_i, x \rangle = h_i\}$
+be the set of facets through~$x$.
+Then $T \subseteq F(x)$, so $|F(x)| \geq 4$.
+
+In a simple polytope in~$\mathbb{R}^4$,
+every boundary point~$x$ lies in the relative interior
+of a unique face of dimension~$4 - |F(x)|$.
+Since $|F(x)| \geq 4$, the face has dimension~$\leq 0$,
+so $x$~is a vertex.
+
+At a vertex of a simple polytope,
+exactly four facets meet and their normals are
+linearly independent: $\operatorname{rank}(N_{F(x)}) = 4$.
+If $|F(x)| = 4$, then $F(x) = T$
+(since $T \subseteq F(x)$ and both have four elements),
+giving $\operatorname{rank}(N_T) = 4$---a contradiction.
+If $|F(x)| > 4$, this contradicts simplicity
+(vertices of a simple polytope lie on exactly~$d = 4$ facets).
+\end{proof}
+
+\begin{theorem}[Openness of the realization space]%
+\label{thm:realization-open}
+% [TODO: JÖRN - verify the Case A argument (singular N_T
+%  becoming non-singular under perturbation).]
+For any simple combinatorial type~$C$,
+the face-lattice realization space $\mathcal{R}(C)$ is open
+in $(S^3)^F \times \mathbb{R}_{>0}^F$.
+\end{theorem}
+
+\begin{proof}
+Fix $(n_0, h_0) \in \mathcal{R}(C)$.
+We show that a neighbourhood of $(n_0, h_0)$ lies
+in~$\mathcal{R}(C)$.
+
+\emph{Condition~(1) persists.}
+Non-singularity of~$N_{S_j}$ is an open condition
+(the determinant is continuous and non-zero).
+The vertex $v_j = N_{S_j}^{-1} h_{S_j}$ depends
+continuously on $(n, h)$
+(on the open set where $N_{S_j}$ is non-singular).
+Each non-incidence gap $g_j^i = h_i - \langle n_i, v_j \rangle$
+is therefore continuous, and $g_j^i(n_0, h_0) > 0$
+implies $g_j^i(n, h) > 0$ for $(n, h)$ sufficiently close.
+
+\emph{Condition~(2) persists.}
+Fix $T \notin \mathcal{V}$ with $|T| = 4$.
+At $(n_0, h_0)$, two cases arise:
+
+\emph{Case~B:} $N_T^{(0)}$ is non-singular.
+Then some gap is violated: $\langle n_{0,k}, w_{0,T} \rangle > h_{0,k}$
+for some $k \notin T$.
+By continuity, this strict inequality persists under
+small perturbation.
+
+\emph{Case~A:} $N_T^{(0)}$ is singular
+($\operatorname{rank} < 4$).
+By Lemma~\ref{lem:no-degenerate-vertices},
+$L_T \cap K(n_0, h_0) = \emptyset$.
+Since $K(n_0, h_0)$ is compact and $L_T$~is closed,
+$\operatorname{dist}(L_T, K(n_0, h_0)) \eqqcolon \rho > 0$.
+Under a perturbation of magnitude~$\varepsilon$:
+the polytope $K(n, h)$ moves by $O(\varepsilon)$
+in the Hausdorff metric (since the halfspaces move
+continuously);
+the affine subspace~$L_T$ moves by $O(\varepsilon)$
+(it depends continuously on $(n, h)$).
+If $N_T$ becomes non-singular,
+the intersection point $w_T = N_T^{-1} h_T$ lies on
+the perturbed~$L_T$.
+For $\varepsilon$ small enough that the Hausdorff
+perturbation of both~$K$ and~$L_T$ is less
+than~$\rho / 3$:
+\[
+  \operatorname{dist}(w_T, K(n, h))
+  \geq \rho - O(\varepsilon)
+  > 0,
+\]
+so $w_T \notin K(n, h)$ and condition~(2) holds.
+
+Both cases cover an open neighbourhood.
+Since $T$ ranges over finitely many subsets,
+$\mathcal{R}(C)$ is a finite intersection of open sets,
+hence open.
+\end{proof}
+
+\begin{theorem}[Quantitative stability]%
+\label{thm:quantitative-stability}
+Let $(n_0, h_0) \in \mathcal{R}(C)$.
+Define:
+\begin{align*}
+  \gamma &= \min_{j,\, i \notin S_j} g_j^i(n_0, h_0) > 0
+    &&\text{(minimum non-incidence gap),} \\
+  \sigma &= \min_j \sigma_{\min}(N_{S_j}^{(0)}) > 0
+    &&\text{(minimum singular value),} \\
+  V &= \max_j \|v_{0,j}\|
+    &&\text{(maximum vertex norm),} \\
+  H &= \max_j \|h_{0, S_j}\|
+    &&\text{(maximum height-vector norm).}
+\end{align*}
+
+Let $(n, h)$ satisfy $\|n - n_0\| \leq \varepsilon_n$
+and $\|h - h_0\| \leq \varepsilon_h$
+with $\varepsilon_n < \sigma / 2$.
+Then:
+\begin{enumerate}
+\item Each vertex satisfies
+  $\|v_j - v_{0,j}\| \leq \Delta v$,
+  where
+  \[
+    \Delta v
+    = \frac{\varepsilon_h\, \sigma + \varepsilon_n\, H}
+           {\sigma\,(\sigma - \varepsilon_n)}.
+  \]
+\item Each non-incidence gap satisfies
+  $|g_j^i(n, h) - g_j^i(n_0, h_0)|
+  \leq \varepsilon_h + \varepsilon_n\,(V + \Delta v)
+  + \Delta v$.
+\item If additionally the right-hand side
+  of~(2) is less than~$\gamma$,
+  then all gaps remain positive and $(n, h)$ satisfies
+  condition~(1) of Definition~\ref{def:realization}.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+\emph{Part~(1).}
+Write
+$v_j - v_{0,j} = N_{S_j}^{-1} h_{S_j}
+- N_{S_j}^{(0),-1} h_{0,S_j}$.
+Adding and subtracting $N_{S_j}^{-1} h_{0,S_j}$:
+\begin{align*}
+  v_j - v_{0,j}
+  &= N_{S_j}^{-1}(h_{S_j} - h_{0,S_j})
+     + (N_{S_j}^{-1} - N_{S_j}^{(0),-1})\, h_{0,S_j}.
+\end{align*}
+For the first term:
+$\|N_{S_j}^{-1}\| \leq 1/(\sigma - \varepsilon_n)$
+by Weyl's inequality, so
+$\|N_{S_j}^{-1}(h_{S_j} - h_{0,S_j})\|
+\leq \varepsilon_h / (\sigma - \varepsilon_n)$.
+For the second term, the resolvent identity
+$A^{-1} - B^{-1} = A^{-1}(B - A) B^{-1}$ gives
+\[
+  \|N_{S_j}^{-1} - N_{S_j}^{(0),-1}\|
+  \leq \frac{\varepsilon_n}{\sigma\,(\sigma - \varepsilon_n)},
+\]
+so the second term is bounded by
+$\varepsilon_n\, H / (\sigma\,(\sigma - \varepsilon_n))$.
+Combining yields the stated bound~$\Delta v$.
+
+\emph{Part~(2).}
+\begin{align*}
+  g_j^i(n, h) - g_j^i(n_0, h_0)
+  &= (h_i - h_{0,i})
+     - \langle n_i - n_{0,i},\, v_j \rangle
+     - \langle n_{0,i},\, v_j - v_{0,j} \rangle.
+\end{align*}
+The three terms are bounded by
+$\varepsilon_h$,
+$\varepsilon_n \|v_j\| \leq \varepsilon_n(V + \Delta v)$,
+and $\|v_j - v_{0,j}\| \leq \Delta v$
+(using $\|n_{0,i}\| = 1$), respectively.
+
+\emph{Part~(3).}
+If the bound in~(2) is less than~$\gamma$,
+then $g_j^i(n, h) > g_j^i(n_0, h_0) - \gamma \geq 0$.
+Non-singularity: $\sigma_{\min}(N_{S_j})
+\geq \sigma - \varepsilon_n > \sigma/2 > 0$.
+\end{proof}
+
+\begin{theorem}[Exact realization with Lagrangian 2-faces]%
+\label{thm:exact-realization}
+% [TODO: JÖRN - verify the projection argument,
+%  especially the interaction between ω₀ = 0 projection
+%  and the unit-normal constraint n_i ∈ S³.]
+Let $(\hat n, \hat h)$ define a simple polytope~$\hat K$
+with face-lattice type~$C$
+(verified via the three-valued predicates of
+Section~\ref{app:general-approach}:
+all face-lattice verdicts are
+$\textsc{true}$ or~$\textsc{false}$,
+none $\textsc{unknown}$).
+Let $D$ be a sign pattern for~$C$, and suppose:
+\begin{enumerate}
+\item For each adjacent pair $(i, k)$ with $D(i,k) \neq 0$:
+  \[
+    \operatorname{sign}\bigl(\omega_0(\hat n_i, \hat n_k)\bigr)
+    = D(i,k),
+    \qquad
+    |\omega_0(\hat n_i, \hat n_k)| \geq \delta_\omega > 0.
+  \]
+\item For each adjacent pair $(i, k)$ with $D(i,k) = 0$:
+  \[
+    |\omega_0(\hat n_i, \hat n_k)| \leq \varepsilon_\omega.
+  \]
+\item The perturbation budget from
+  Theorem~\ref{thm:quantitative-stability} satisfies
+  $\varepsilon_\omega < \delta(\gamma, \sigma, V, H)$,
+  so that a normal perturbation of
+  magnitude~$O(\varepsilon_\omega)$ preserves the
+  face lattice.
+\end{enumerate}
+Then there exist unit normals
+$n^* \in (S^3)^F$ with
+$\|\hat n - n^*\| \leq O(\varepsilon_\omega)$
+such that $(n^*, \hat h)$ realizes~$(C, D)$ exactly:
+the face lattice matches~$C$,
+and $\omega_0(n^*_i, n^*_k) = 0$ for all pairs
+with $D(i,k) = 0$.
+\end{theorem}
+
+\begin{proof}
+% FIXME(hbox): 10pt — inline math with subscripts; try display math for the constraint
+For each adjacent pair $(i, k)$ with $D(i,k) = 0$,
+the constraint $\omega_0(n_i, n_k) = 0$ defines a
+smooth codimension-1 submanifold of~$(S^3)^F$
+at any point where the gradient
+$\nabla_{(n_i, n_k)} \omega_0$ is non-zero
+(which holds since $\omega_0$ is a non-degenerate
+bilinear form on~$\mathbb{R}^4$).
+The closest point on this submanifold to $(\hat n_i, \hat n_k)$
+is at distance $O(|\omega_0(\hat n_i, \hat n_k)|) \leq O(\varepsilon_\omega)$.
+
+% [TODO: JÖRN - the projection needs to preserve n_i ∈ S³ (unit normals).
+%  Projecting onto {ω₀ = 0} ∩ (S³)^F is well-defined since both constraints
+%  are smooth and transversal for generic normals. The bound O(ε_ω) holds
+%  because the projection onto the intersection of two smooth manifolds has
+%  distance bounded by the maximum of the individual distances, up to a
+%  constant depending on the angle between the tangent spaces.]
+
+Taking $n^*$ as the projection of $\hat n$ onto the
+intersection of all $\omega_0 = 0$ constraints with $(S^3)^F$:
+$\|\hat n - n^*\| \leq O(\varepsilon_\omega)$.
+By hypothesis~(3), this perturbation is within the stability
+budget of Theorem~\ref{thm:quantitative-stability},
+so the face lattice is preserved.
+The non-zero $\omega_0$ signs are preserved since
+$|\omega_0(\hat n_i, \hat n_k)| \geq \delta_\omega$
+and the perturbation changes $\omega_0$ by at most
+$O(\varepsilon_\omega) \ll \delta_\omega$.
+\end{proof}
+
+\begin{remark}[Application to algorithm soundness]%
+\label{rem:exact-realization-soundness}
+Theorem~\ref{thm:exact-realization} provides the
+conceptual framework for the numerical algorithm:
+\begin{enumerate}
+\item An exact polytope $K^* = K(n^*, \hat h)$ exists
+  with fully determined combinatorial structure $(C, D)$.
+\item The three-valued predicates computed from
+  $(\hat n, \hat h)$ are sound for $(C, D)$:
+  $\textsc{true}$ and $\textsc{false}$ verdicts
+  agree with the exact structure,
+  and $\textsc{unknown}$ verdicts are conservative.
+\item For adjacent pairs with $D(i,k) = 0$
+  (Lagrangian 2-faces):
+  the directed adjacency test
+  $\omega_0(n_k, n_i) \geq 0$ evaluates to
+  $\textsc{unknown}$ in the three-valued framework
+  (since $\omega_0 \approx 0$),
+  and the algorithm conservatively includes these pairs.
+  This is correct: the exact value is $\omega_0 = 0 \geq 0$,
+  so the pair is genuinely valid.
+\item Consequently, the algorithm explores a superset
+  of the valid $(S, \sigma)$ pairs for~$K^*$,
+  and the certified capacity is a lower bound on
+  $c_{\mathrm{EHZ}}(K^*)$.
+\end{enumerate}
+\end{remark}

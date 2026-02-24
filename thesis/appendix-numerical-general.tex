@@ -1,0 +1,132 @@
+% appendix-numerical-general.tex — \input'd from appendix-numerical.tex
+%
+% General approach to numerical implementation:
+% three-valued predicate framework and information flow architecture.
+%
+% Sources: restructured from appendix-numerical-three-valued.tex (lines 9-71),
+%   with new information flow section based on Jörn's design (2026-02-24).
+%
+% Structure:
+%   - Soundness requirement (from old A.2)
+%   - Impact on implications (from old A.2)
+%   - Impact on control flow (from old A.2)
+%   - Information flow architecture (new)
+
+The algorithms in Section~\ref{sec:algorithms} are stated for
+exact arithmetic: predicates such as $\beta_i > 0$ and
+$N^\top \beta = 0$ are decided exactly, and the KKT system is
+solved without numerical error.
+In a floating-point implementation, each of these operations
+introduces errors that must be controlled.
+
+\paragraph{Three-valued predicates.}
+We replace each Boolean predicate~$P$ in the algorithm with a
+three-valued predicate~$\tilde P$ taking values in
+$\{\textsc{true},$
+$\textsc{false},$
+$\textsc{unknown}\}$,
+subject to the \emph{soundness requirement}:
+\begin{align*}
+  P \text{ true in exact arithmetic}
+  &\;\Longrightarrow\;
+  \tilde P \neq \textsc{false}, \\
+  P \text{ false in exact arithmetic}
+  &\;\Longrightarrow\;
+  \tilde P \neq \textsc{true}.
+\end{align*}
+In other words, $\textsc{true}$ and $\textsc{false}$ are
+reliable verdicts; $\textsc{unknown}$ means the numerical
+evidence is inconclusive.
+Section~\ref{app:polytope-combinatorics} establishes that an
+exact polytope with fully determined combinatorial structure
+exists near the \texttt{f64} data, so that the soundness
+requirement is well-defined.
+
+\paragraph{Impact on implications.}
+The exact algorithm uses implications
+$P \Rightarrow Q$ (e.g.\ ``if adjacent, include'') and
+equivalences $P \Leftrightarrow Q$.
+Under three-valued evaluation, each such implication
+$\tilde P \Rightarrow \tilde Q$ has a $3 \times 3$ truth
+table.
+The key entries are:
+if $\tilde P = \textsc{true}$ then
+$\tilde Q \in \{\textsc{true}, \textsc{unknown}\}$
+(never $\textsc{false}$, by soundness);
+if $\tilde P = \textsc{false}$ then $\tilde Q$ can be anything;
+if $\tilde P = \textsc{unknown}$ then $\tilde Q$ can be anything.
+
+\paragraph{Impact on the algorithm's control flow.}
+The exact algorithm has two kinds of decision points:
+\begin{description}
+\item[Inclusion decisions] (``unless $P$, skip''):
+  The exact rule ``if $\lnot P$, skip $(S, \sigma)$''
+  becomes ``if $\tilde P = \textsc{false}$, skip.''
+  When $\tilde P = \textsc{unknown}$, the pair is kept
+  (conservatively), since the exact~$P$ might be true.
+  This means the numerical algorithm searches at least as
+  broadly as the exact algorithm.
+\item[Maximum tracking] (``find the largest admissible $Q$''):
+  An admissibility predicate $A(\beta)$ (e.g.\ $\beta_i > 0$
+  for all~$i$) becomes three-valued.
+  The algorithm returns:
+  \begin{itemize}
+  \item the largest~$Q$ where $\tilde A = \textsc{true}$
+    (the \emph{certified value}, a lower bound on the
+    true maximum),
+  \item all~$Q$ values above the certified value where
+    $\tilde A = \textsc{unknown}$
+    (the true maximum may be among these).
+  \end{itemize}
+  Candidates with $\tilde A = \textsc{false}$ are provably
+  inadmissible and discarded; uncertain candidates at or below
+  the certified value are irrelevant (the certified value already
+  dominates).
+\end{description}
+
+\paragraph{Information flow.}
+The three-valued predicates interact through a pipeline
+of producers and consumers:
+\begin{enumerate}
+\item \textbf{Upstream: SVD and KKT solving}
+  (Section~\ref{app:svd-step}).
+  For each pair $(S, \sigma)$, the SVD detects near-singular
+  systems and either dismisses them
+  (Algorithm~\ref{alg:near-singular-handling})
+  or produces a computed coefficient vector~$\hat\beta$.
+  Near-singular dismissal is a binary decision
+  (dismiss or proceed), not three-valued.
+\item \textbf{Midstream: three-valued predicates.}
+  The computed~$\hat\beta$ is classified by the positivity
+  predicate $\tilde P_{>0}$
+  (Section~\ref{app:svd-step}) into certified
+  ($\textsc{true}$), inadmissible ($\textsc{false}$),
+  or uncertain ($\textsc{unknown}$).
+  Adjacency and directed adjacency
+  (Section~\ref{app:polytope-combinatorics})
+  filter the search space.
+  $\textsc{unknown}$ verdicts from any predicate propagate
+  downstream as uncertainty.
+\item \textbf{Downstream: accumulated $Q$ maximum}
+  (Section~\ref{app:accumulated-q-max}).
+  The algorithm tracks the best certified
+  and best uncertain candidates separately.
+  Some $\textsc{unknown}$ verdicts are resolved
+  \emph{late}: an uncertain candidate whose $Q$~value
+  falls below the certified maximum is irrelevant
+  regardless of its true admissibility.
+  Only uncertain candidates \emph{above} the certified
+  maximum require further attention.
+\item \textbf{Unresolvable cases.}
+  If an uncertain candidate dominates the certified maximum,
+  \texttt{f64} precision is insufficient to determine the
+  true capacity.
+  The implementation currently reports an error in this case.
+  A second pass with higher precision (exact rationals or
+  extended-precision floats) could resolve the remaining
+  $\textsc{unknown}$ verdicts, but this is not yet implemented.
+  % [TODO: JÖRN - the code panics at hk2017/mod.rs:142-151
+  %  when uncertain_cap < certified_cap. The second pass is
+  %  described here as unimplemented. Decide whether to
+  %  implement it or leave as future work.]
+\end{enumerate}
