@@ -35,15 +35,18 @@ $K = K(n, h) = \{x \in \mathbb{R}^4 : \langle n_i, x \rangle \leq h_i,
 with unit outward normals $n_i \in S^3$ and heights $h_i > 0$.
 In practice, the coordinates $(n, h)$ are represented in
 \texttt{f64} (IEEE~754 double precision).
-Since \texttt{f64} values are exact rational numbers,
-$K(n, h)$ is an exact polytope with a well-defined
-combinatorial type---but verifying this type numerically
-requires the three-valued framework of
-Section~\ref{app:general-approach}.
+The algorithm must determine the combinatorial type of~$K$
+(which facets share vertices, which $\omega_0$~signs are
+positive or zero), but the operations involved---solving
+linear systems, computing vertices, checking
+incidence---introduce rounding errors.
 
-This section establishes that approximate coordinates consistent
-with a target combinatorial type~$C$ imply the existence of
-nearby exact coordinates realizing~$C$.
+This section establishes that if the \texttt{f64}
+coordinates are consistent with a target combinatorial
+type~$C$ (all three-valued verdicts are
+$\textsc{true}$ or~$\textsc{false}$, none
+$\textsc{unknown}$), then nearby exact coordinates
+realizing~$C$ exist.
 The result provides the conceptual foundation for the numerical
 appendix: there is a ``Platonic'' exact polytope with fully
 determined combinatorial structure, and our \texttt{f64}
