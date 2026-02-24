@@ -3,8 +3,14 @@
 % Numerical implementation details for the capacity algorithms.
 % The main chapter (Sections 2--3) states and proves the algorithms
 % under exact arithmetic. This appendix addresses finite-precision
-% concerns: near-singular linear systems, predicate relaxation,
-% and error tracking.
+% concerns: combinatorial structure, predicate relaxation,
+% near-singular systems, and error tracking.
+%
+% Structure (top-down):
+%   A.1 General Approach — three-valued framework, information flow
+%   A.2 Polytope Combinatorics — exact realization theorem
+%   A.3 SVD Step — near-singular handling, positivity predicate
+%   A.4 Accumulated Q Maximum — certified/uncertain tracking, final answer
 
 \section{Numerical Implementation}\label{app:numerical}
 
@@ -16,36 +22,34 @@ In a floating-point implementation, each of these operations
 introduces numerical errors that must be controlled.
 
 This appendix develops the numerical counterpart of the exact
-algorithm in five parts.
-Section~\ref{app:near-singular} analyses the most delicate
-issue---near-singular KKT systems whose solutions are sensitive
-to perturbations---and proves that such systems can be safely
-dismissed.
-Section~\ref{app:three-valued} analyses each Boolean predicate
-in the algorithm using three-valued logic
+algorithm in four parts.
+Section~\ref{app:general-approach} introduces the three-valued
+predicate framework
 (\textsc{true} / \textsc{false} / \textsc{unknown})
-to account for finite-precision evaluation;
-selected predicates are replaced by three-valued versions
-in the implementation.
-Section~\ref{app:error-tracking} describes how the algorithm
+that replaces each Boolean predicate in the algorithm,
+and describes how the three-valued verdicts flow through
+the computation.
+Section~\ref{app:polytope-combinatorics} establishes that
+our floating-point coordinates approximate an exact polytope
+with fully determined combinatorial structure,
+providing the conceptual foundation for the three-valued
+predicates' soundness.
+Section~\ref{app:svd-step} analyses the SVD-based solution of
+each KKT system, including near-singular detection
+and dismissal, and the three-valued positivity filter.
+Section~\ref{app:accumulated-q-max} describes how the algorithm
 combines these verdicts to report a capacity value with
 appropriate certainty qualifiers.
-Section~\ref{sec:unknown-predicates} empirically validates the
-three-valued predicate on a diverse sample of polytopes, checking
-whether \textsc{unknown} verdicts ever affect the reported capacity.
-Section~\ref{sec:ablation-pruning} analyses how successive
-refinements of the adjacency graph reduce the combinatorial
-search space.
 
-\subsection{Near-Singular KKT Systems}\label{app:near-singular}
+\subsection{General Approach}\label{app:general-approach}
+\input{appendix-numerical-general}
+
+\subsection{Polytope Combinatorics}\label{app:polytope-combinatorics}
+\input{appendix-numerical-combinatorics}
+
+\subsection{SVD Step}\label{app:svd-step}
 \input{appendix-numerical-dismissal}
 
-\subsection{Three-Valued Predicate Relaxation}\label{app:three-valued}
-\input{appendix-numerical-three-valued}
-
-\subsection{Error Tracking and Final Answer}\label{app:error-tracking}
+\subsection{Accumulated $Q$ Maximum and Final Answer}%
+\label{app:accumulated-q-max}
 \input{appendix-numerical-error-tracking}
-
-\input{../experiments/unknown-predicates/unknown-predicates}
-
-\input{../experiments/ablation/ablation}
