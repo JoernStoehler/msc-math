@@ -1,0 +1,70 @@
+% crosspolytope.tex — \input'd from experiments.tex
+%
+% EHZ capacity of the 4D crosspolytope (hyperoctahedron, 16 facets).
+%
+% Sources:
+%   - Computed data: experiments/crosspolytope/crosspolytope.jsonl
+%   - Binary: experiments/crosspolytope/crosspolytope.rs
+%   - Symmetry group: analytical + Rust enumeration (match confirmed)
+%
+% Structure:
+%   - Setup and motivation
+%   - Symmetry reduction
+%   - Result and comparison with hypercube
+
+\subsection{Crosspolytope Capacity}
+\label{sec:crosspolytope}
+
+The 4D crosspolytope~$K = \operatorname{conv}\{\pm e_1, \pm e_2,
+\pm e_3, \pm e_4\}$ is the dual of the hypercube~$[-1,1]^4$.
+It has~$16$ facets (one per sign vector in~$\{\pm 1\}^4$), $8$~vertices,
+and is non-simple: each vertex lies on~$8$ facets.
+No literature value for~$c_{\mathrm{EHZ}}(K)$ is known to us.
+
+% Jörn: math approved (pending commit) — from \subsubsection{Symmetry reduction} to end of symmetry argument
+
+\subsubsection*{Symmetry reduction}
+
+The hyperoctahedral group~$\operatorname{Aut}(K)$ has order~$384 =
+2^4 \cdot 4!$ (signed permutations of coordinates).
+For the capacity computation, only the symplectic subgroup
+$G = \operatorname{Aut}(K) \cap \mathrm{Sp}(4,\mathbb{R})$
+acts on Reeb orbits. We computed~$|G| = 32$ both by enumeration over
+all~$384$ signed permutation matrices and analytically:
+a coordinate permutation~$\pi$ preserves~$\omega_0$ if and only if it maps
+the symplectic planes~$\{(q_1,p_1)\}$ and~$\{(q_2,p_2)\}$ to symplectic
+planes, giving~$8$ valid permutations. For each, symplecticity constrains
+the signs to~$2$ free choices, for a total of~$8 \times 4 = 32$.
+
+Using~$G$, we replace each subset~$S$ of facets by its canonical
+representative, reducing the number of subsets to examine by a factor
+of~${\sim}28\times$ across subset sizes.
+
+\subsubsection*{Result}
+
+We searched all subset sizes~$m = 2, \ldots, 12$ exhaustively
+($12.2 \times 10^6$ adjacent cyclic permutations evaluated,
+approximately~$6$~minutes in release mode).
+Subset sizes~$m = 13, \ldots, 16$ were not computed: the permutation
+counts grow factorially, and the minimum-action orbit appears at~$m = 4$.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ll}
+\toprule
+$c_{\mathrm{EHZ}}(K)$ & $4.0$ \\
+$\operatorname{vol}_4(K)$ & $\tfrac{32}{3} \approx 10.667$ \\
+$\mathrm{sys}(K)$ & $\tfrac{3}{4} = 0.75$ \\
+Minimising orbit & $m = 4$, $\beta_i = \tfrac{1}{4}$ for all~$i$ \\
+\bottomrule
+\end{tabular}
+\caption{EHZ capacity and systolic ratio of the 4D crosspolytope.}
+\label{tab:crosspolytope}
+\end{table}
+
+The crosspolytope satisfies Viterbo's conjecture with~$\mathrm{sys} =
+\tfrac{3}{4}$.
+Coincidentally, $c_{\mathrm{EHZ}}(K) = 4.0 = c_{\mathrm{EHZ}}([-1,1]^4)$:
+the crosspolytope and its dual hypercube share the same capacity.
+The systolic ratios differ ($\tfrac{3}{4}$ vs.\ $\tfrac{1}{2}$) because
+the volumes differ ($\tfrac{32}{3}$ vs.\ $16$).

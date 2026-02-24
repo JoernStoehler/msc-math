@@ -78,6 +78,10 @@ experiments/target/release/unknown_predicates
 experiments/target/release/orbit_recovery
 # → experiments/orbit-recovery/orbit-recovery.jsonl
 
+# Crosspolytope capacity computation (F=16, ~6 minutes in release mode, backtracking + symmetry)
+experiments/target/release/crosspolytope
+# → experiments/crosspolytope/crosspolytope.jsonl
+
 # Sys-optimization: sensitivity analysis + gradient steps (F≤10, ~30s)
 # Depends on: random-sweep and random-product-sweep JSONL (must run those first)
 experiments/target/release/sys_optimization
