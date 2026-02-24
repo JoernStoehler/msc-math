@@ -77,6 +77,148 @@ lower-dimensional face $F_i \cap F_j$ with velocity $R_i$, then
 switch to $R_j$ at a breakpoint in the interior of $F_i \cap F_j$.
 \end{remark}
 
+% [TODO: JÖRN - verify the base point recovery lemma, proof, and algorithm below.
+%  Agent-written derivation based on tangency of Reeb vectors. The linear system
+%  is straightforward but the inequality constraints and non-uniqueness discussion
+%  should be checked carefully.]
+
+\begin{lemma}[Base point recovery]\label{lem:base-point-recovery}
+% QC: the tangency condition ⟨n_i, R_i⟩ = 0 (Remark~\ref{rem:reeb-properties})
+%   eliminates time-dependence from the on-facet constraint, reducing it to a
+%   linear system in b. The proof is a direct consequence of this tangency.
+% Downstream: algorithm for computing b from (σ, β) output of Algorithm~\ref{alg:ehz}.
+%   Rust: recover_base_point() in algorithms/hk2017/recover.rs.
+Let $K$ be a polytope and $(\sigma, \tau, b)$ a simple orbit
+(Definition~\ref{def:simple-reeb-orbit}) with $m$ active facets
+$S = \{\sigma(k) : \tau_k > 0\}$.
+Define the accumulated displacements
+\[
+  v_0 = 0, \qquad
+  v_k = \sum_{j=1}^{k-1} \tau_j\, R_{\sigma(j)}
+  \quad \text{for } k = 1, \ldots, m.
+\]
+A point $b \in \mathbb{R}^4$ is a valid base point
+(i.e., the orbit $\gamma$ with $\gamma(0) = b$ and
+velocity $R_{\sigma(k)}$ on the $k$-th segment
+is a generalized Reeb orbit on~$\partial K$) if and only if:
+\begin{enumerate}
+\item \emph{On-facet (equality):}
+  for each active $k$,
+  \begin{equation}\label{eq:base-point-equality}
+    \langle n_{\sigma(k)},\, b \rangle
+    = h_{\sigma(k)} - \langle n_{\sigma(k)},\, v_k \rangle;
+  \end{equation}
+\item \emph{Inside $K$ (inequality):}
+  for each active segment $k$ and all $s \in [0, \tau_k]$,
+  \begin{equation}\label{eq:base-point-inequality}
+    \langle n_j,\, b + v_k + s\, R_{\sigma(k)} \rangle
+    \leq h_j
+    \quad \text{for all } j = 1, \ldots, F.
+  \end{equation}
+\end{enumerate}
+The equality constraints~\eqref{eq:base-point-equality} form
+a linear system $N_S\, b = r$ with $m$ equations and $4$~unknowns,
+where $N_S$ is the $m \times 4$ matrix with rows $n_{\sigma(k)}^\top$
+and $r_k = h_{\sigma(k)} - \langle n_{\sigma(k)}, v_k \rangle$.
+The set of valid base points is a convex polytope of
+dimension at most $4 - \operatorname{rank}(N_S)$.
+\end{lemma}
+
+\begin{proof}
+\emph{Equality constraints.}
+During the $k$-th segment, the orbit position is
+\[
+  \gamma(t) = b + v_k + (t - t_k)\, R_{\sigma(k)},
+  \quad t \in [t_k,\, t_k + \tau_k],
+\]
+where $t_k = \sum_{j=1}^{k-1} \tau_j$.
+For $\gamma$ to lie on facet $F_{\sigma(k)}$,
+we require $\langle n_{\sigma(k)},\, \gamma(t) \rangle
+= h_{\sigma(k)}$ throughout the segment.
+Since $R_{\sigma(k)}$ is tangent to $F_{\sigma(k)}$
+($\langle n_{\sigma(k)}, R_{\sigma(k)} \rangle = 0$
+by Remark~\ref{rem:reeb-properties}),
+the time-dependent term vanishes:
+\begin{align*}
+  \langle n_{\sigma(k)},\, \gamma(t) \rangle
+  &= \langle n_{\sigma(k)},\, b + v_k \rangle
+  + (t - t_k)\,
+    \langle n_{\sigma(k)},\, R_{\sigma(k)} \rangle \\
+  &= \langle n_{\sigma(k)},\, b + v_k \rangle.
+\end{align*}
+Hence the on-facet condition for the entire segment
+reduces to the single
+equation~\eqref{eq:base-point-equality}.
+
+\emph{Inequality constraints.}
+The orbit must remain inside~$K$:
+$\langle n_j, \gamma(t) \rangle \leq h_j$
+for all $j$ and all~$t$.
+Since $\gamma(t)$ is affine in~$t$ on each segment,
+each inequality $\langle n_j, b + v_k + s\, R_{\sigma(k)} \rangle
+\leq h_j$ is linear in~$s$.
+A linear function on $[0, \tau_k]$ attains its
+maximum at an endpoint, so it suffices to
+check~\eqref{eq:base-point-inequality}
+at $s = 0$ and $s = \tau_k$ only.
+These are precisely the breakpoints
+$b + v_k$ and $b + v_{k+1}$.
+
+\emph{Solution structure.}
+The equality constraints are a linear system
+$N_S\, b = r$ in~$b \in \mathbb{R}^4$.
+Its solution set is an affine subspace of
+dimension $4 - \operatorname{rank}(N_S)$.
+The inequality constraints at the $2m$ breakpoints
+(with $s \in \{0, \tau_k\}$) are linear in~$b$,
+so their feasible set is a polyhedron.
+The intersection of the affine subspace with
+the polyhedron is a convex polytope (bounded,
+since $K$ is bounded).
+\end{proof}
+
+\begin{remark}[Non-uniqueness and computation]\label{rem:base-point-computation}
+% Downstream: implementation uses SVD least-norm solution.
+%   When rank(N_S) < 4, picks the minimum-norm b in the affine subspace.
+%   Inequality constraints are checked post-hoc.
+The number of active facets $m = |S|$ determines
+the dimension of the solution space:
+\begin{itemize}
+\item $m \geq 4$ with linearly independent normals:
+  $b$ is uniquely determined (generically the case
+  for orbits visiting $\geq 4$ facets).
+\item $m < 4$:
+  the affine subspace has dimension $4 - m$,
+  and the inequality constraints select a
+  convex subset.
+\item $m > 4$:
+  the system is overdetermined but consistent
+  (a valid base point exists by
+  Theorem~\ref{thm:primal-dual-equivalence}).
+\end{itemize}
+The capacity does not depend on~$b$
+(Lemma~\ref{lem:shoelace}).
+In practice, we compute the least-norm solution
+of $N_S\, b = r$ via SVD and verify the
+inequality constraints.\end{remark}
+
+\begin{remark}[Conversion from algorithm output]\label{rem:beta-to-tau}
+% QC: connects the KKT output (σ, β) to the dwell times τ used above.
+%   The formula τ_k = T h_{σ(k)} β_{σ(k)} comes from the variable
+%   substitution in the proof of Theorem~\ref{thm:main}.
+Algorithm~\ref{alg:ehz} outputs a permutation~$\sigma$ and
+a vector~$\beta$ with $\beta_i \geq 0$ and
+$\sum_i \beta_i h_i = 1$.
+The dwell times are
+\begin{equation}\label{eq:beta-to-tau}
+  \tau_k = T\, h_{\sigma(k)}\, \beta_{\sigma(k)},
+\end{equation}
+where $T = c_{\mathrm{EHZ}}(K)$ is the capacity
+(the period of the orbit).
+Substituting into Lemma~\ref{lem:base-point-recovery}
+recovers a base point from the algorithm output.
+\end{remark}
+
 \begin{theorem}[Existence of closed characteristics --- smooth case]\label{thm:orbit-existence-smooth}
 % Jörn: text approved (05aa8b3)
 % QC: classical result, Rabinowitz 1978.
