@@ -46,7 +46,7 @@ The \texttt{f64} polytope~$\hat K = K(\hat n, \hat h)$
 has a definite combinatorial type---determined by its
 geometry, regardless of whether our floating-point
 predicates can fully determine it.
-Theorems~\ref{thm:openness-realization-space}
+Theorems~\ref{thm:realization-open}
 and~\ref{thm:quantitative-stability} show that any
 sufficiently close coordinates define a polytope with the
 same combinatorial type.
@@ -54,6 +54,11 @@ When some facet pairs satisfy $\omega_0 = 0$
 (as in Lagrangian products),
 Theorem~\ref{thm:exact-realization} shows that nearby
 exact coordinates with $\omega_0 = 0$ exist.
+
+A polytope $K \subset \mathbb{R}^4$ is \emph{simple}
+if every vertex lies on exactly four facets, and the
+outward normals of those four facets are linearly
+independent.
 
 \begin{definition}[Simple combinatorial type]%
 \label{def:simple-combinatorial-type}
@@ -70,15 +75,16 @@ with $F$~facets in~$\mathbb{R}^4$ consists of:
 \item \emph{Facet adjacency}: facets $i$ and~$k$ are
   \emph{adjacent} if $\{i, k\} \subset S_j$ for some~$j$,
   i.e.\ they share a vertex.
+  In a simple polytope, adjacent facets share a
+  $2$-face: the set $F_i \cap F_k$ is a face of
+  dimension~$4 - 2 = 2$, because simplicity forces
+  each face of codimension~$c$ to lie on exactly
+  $c$~facets.
 \item A \emph{sign pattern}
   $D \colon \{(i, k) : i, k \text{ adjacent}\} \to
   \{+, -, 0\}$
-  specifying, for each adjacent pair,
-  the sign of the symplectic inner product
+  assigning to each adjacent pair the sign of
   $\omega_0(n_i, n_k)$.
-  The value $D(i,k) = 0$ corresponds to a
-  \emph{Lagrangian 2-face} (the two normals span a
-  Lagrangian subspace of~$(\mathbb{R}^4, \omega_0)$).
 \end{enumerate}
 \end{definition}
 
@@ -291,6 +297,9 @@ Then:
   then all gaps remain positive and $(n, h)$ satisfies
   condition~(1) of Definition~\ref{def:realization}.
 \end{enumerate}
+Condition~(2) (no spurious vertices) is not quantified
+here; it persists by the qualitative argument in
+Theorem~\ref{thm:realization-open}.
 \end{theorem}
 
 \begin{proof}
@@ -359,12 +368,13 @@ Let $D$ be a sign pattern for~$C$, and suppose:
   \[
     |\omega_0(\hat n_i, \hat n_k)| \leq \varepsilon_\omega.
   \]
-\item The perturbation budget from
-  Theorem~\ref{thm:quantitative-stability} satisfies
-  $\varepsilon_\omega < \delta(\gamma, \sigma, V, H)$,
-  so that a normal perturbation of
+\item A normal perturbation of
   magnitude~$O(\varepsilon_\omega)$ preserves the
-  face lattice.
+  face lattice of~$\hat K$
+  (this holds when $\varepsilon_\omega$ is small
+  enough that Theorem~\ref{thm:quantitative-stability}(3)
+  applies with $\varepsilon_n = O(\varepsilon_\omega)$,
+  $\varepsilon_h = 0$).
 \end{enumerate}
 Then there exist unit normals
 $n^* \in (S^3)^F$ with
