@@ -338,6 +338,8 @@ pub fn ehz_capacity(polytope: &Polytope4D) -> Option<EhzResult> {
     })
 }
 
+pub mod recover;
+
 /// Test dataset infrastructure for property tests.
 /// Only used in tests, but declared as a public module to allow cross-crate test imports.
 pub mod test_dataset;
@@ -348,6 +350,10 @@ mod capacity_properties_test;
 #[cfg(test)]
 #[path = "hk2017_test.rs"]
 mod hk2017_test;
+
+#[cfg(test)]
+#[path = "recover_test.rs"]
+mod recover_test;
 
 #[cfg(test)]
 #[path = "square_product_diagnostic.rs"]
