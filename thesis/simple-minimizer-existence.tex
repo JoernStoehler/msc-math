@@ -181,21 +181,14 @@ since $K$ is bounded).
 % Downstream: implementation uses SVD least-norm solution.
 %   When rank(N_S) < 4, picks the minimum-norm b in the affine subspace.
 %   Inequality constraints are checked post-hoc.
-The number of active facets $m = |S|$ determines
-the dimension of the solution space:
-\begin{itemize}
-\item $m \geq 4$ with linearly independent normals:
-  $b$ is uniquely determined (generically the case
-  for orbits visiting $\geq 4$ facets).
-\item $m < 4$:
-  the affine subspace has dimension $4 - m$,
-  and the inequality constraints select a
-  convex subset.
-\item $m > 4$:
-  the system is overdetermined but consistent
-  (a valid base point exists by
-  Theorem~\ref{thm:primal-dual-equivalence}).
-\end{itemize}
+The solution space has dimension $4 - \operatorname{rank}(N_S)$.
+If $\operatorname{rank}(N_S) = 4$, then $b$ is unique;
+otherwise the inequality constraints select a
+convex subset of the affine solution space.
+Generically, orbits visiting $\geq 4$ facets have
+$\operatorname{rank}(N_S) = 4$; rank deficiency occurs
+when active normals are linearly dependent
+(e.g., product polytopes with parallel normal pairs).
 The capacity does not depend on~$b$
 (Lemma~\ref{lem:shoelace}).
 In practice, we compute the least-norm solution
