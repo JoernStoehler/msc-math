@@ -216,8 +216,7 @@ and on the Phase~4 validity tests, which show that the gradient accurately
 predicts $\Delta\mathrm{sys}$ at small step sizes
 (Section~\ref{sec:gradient-validity}).
 
-% [TODO: JÖRN - verify proof sketch. Agent-written. Part (a) was corrected after
-%  Jörn flagged non-simple vertex issue. Parts (b)-(d) not yet reviewed.]
+% Jörn: math approved (59ddc2c) — Proposition and proof sketch, parts (a)–(d)
 \begin{proposition}[Capacity as piecewise-smooth function of $(h,n)$]
 \label{prop:capacity-piecewise-smooth}
 Let $K(h,n)$ be a \emph{simple} polytope (every vertex determined by exactly~$4$
@@ -286,29 +285,39 @@ the union has measure zero.
 of smooth functions.
 \end{proof}
 
-\emph{Simplicity assumption.}
-The simplicity hypothesis in Proposition~\ref{prop:capacity-piecewise-smooth}
-is generic: a random polytope is almost surely simple.
+\begin{remark}[Simplicity is generic]
+\label{rem:simplicity-generic}
+A polytope in $H$-representation is non-simple when $5$ or more facet
+hyperplanes meet at a single point, which imposes one additional equation
+beyond the $4$ needed to determine a vertex.
+This is a codimension-$1$ condition in the space of heights, so non-simple
+polytopes form a measure-zero subset: a random polytope is almost surely simple.
 All~$140$ polytopes in our dataset are simple at the start, and the step bound
 preserves simplicity (it is a special case of preserving the combinatorial type).
 For non-simple polytopes, vertices can split discontinuously under normal
 perturbations, so the combinatorial type need not be locally constant.
+\end{remark}
 
 \emph{Validity of the single-orbit gradient.}
 In our experiment, we compute $\nabla_{(h,n)}\,c_{\mathrm{EHZ}}$ using only
 the current minimizing orbit. By Proposition~\ref{prop:capacity-piecewise-smooth}(c),
 this is exact whenever the minimizer is unique.
 
-\emph{Systolic ratio derivative.}
-The chain rule gives, for $\theta \in \{h_k, n_k\}$:
+\begin{corollary}[Systolic ratio derivative]
+\label{cor:sys-derivative}
+For $\theta \in \{h_k, n_k\}$, the chain rule applied to
+$\mathrm{sys} = c_{\mathrm{EHZ}}^2 / (2\,\mathrm{vol})$ gives
 \[
   \frac{\partial\,\mathrm{sys}}{\partial \theta}
   = \frac{1}{\mathrm{vol}}
     \left[
       c_{\mathrm{EHZ}} \cdot \frac{\partial\,c_{\mathrm{EHZ}}}{\partial \theta}
       - \mathrm{sys} \cdot \frac{\partial\,\mathrm{vol}}{\partial \theta}
-    \right].
+    \right],
 \]
+where the partial derivatives of $\mathrm{vol}$ and $c_{\mathrm{EHZ}}$ are
+given by Lemmas~\ref{lem:vol-derivative}--\ref{lem:cap-derivative-normal}.
+\end{corollary}
 
 \paragraph{Step bound.}
 We compare two stepping strategies:
