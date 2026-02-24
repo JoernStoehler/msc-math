@@ -50,20 +50,6 @@ exact polytope with fully determined combinatorial structure
 exists near the \texttt{f64} data, so that the soundness
 requirement is well-defined.
 
-\paragraph{Impact on implications.}
-The exact algorithm uses implications
-$P \Rightarrow Q$ (e.g.\ ``if adjacent, include'') and
-equivalences $P \Leftrightarrow Q$.
-Under three-valued evaluation, each such implication
-$\tilde P \Rightarrow \tilde Q$ has a $3 \times 3$ truth
-table.
-The key entries are:
-if $\tilde P = \textsc{true}$ then
-$\tilde Q \in \{\textsc{true}, \textsc{unknown}\}$
-(never $\textsc{false}$, by soundness);
-if $\tilde P = \textsc{false}$ then $\tilde Q$ can be anything;
-if $\tilde P = \textsc{unknown}$ then $\tilde Q$ can be anything.
-
 \paragraph{Impact on the algorithm's control flow.}
 The exact algorithm has two kinds of decision points:
 \begin{description}
