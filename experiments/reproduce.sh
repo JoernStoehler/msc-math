@@ -74,7 +74,7 @@ experiments/target/release/lagrangian_sweep
 experiments/target/release/unknown_predicates
 # → experiments/unknown-predicates/unknown-predicates.jsonl
 
-# Crosspolytope capacity computation (F=16, ~4 hours in release mode)
+# Crosspolytope capacity computation (F=16, ~6 minutes in release mode, backtracking + symmetry)
 experiments/target/release/crosspolytope
 # → experiments/crosspolytope/crosspolytope.jsonl
 

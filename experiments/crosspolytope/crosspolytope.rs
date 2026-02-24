@@ -44,7 +44,7 @@ const EPS_FACET_INCIDENCE: f64 = 1e-8;
 /// ((m-1)! cyclic orderings to explore), making exhaustive search infeasible
 /// within session time limits. m=12 is the largest size completing in ~1 minute;
 /// m=13 alone takes ~8 minutes. Since the best action is found at m=4 and
-/// actions generally increase with m, stopping at m=12 is sufficient.
+/// actions generally increase with m, stopping at m=12 is likely sufficient (unproven).
 const MAX_SUBSET_SIZE: usize = 12;
 
 // ── KKT solver (copied from crates/src/kkt.rs) ─────────────────────────────
@@ -754,7 +754,7 @@ fn main() {
         save_checkpoint(&cp);
     }
 
-    let time_capacity_ms = cap_start.elapsed().as_secs_f64() * 1000.0;
+    let time_capacity_ms = (prior_elapsed + cap_start.elapsed().as_secs_f64()) * 1000.0;
 
     // 7. Extract result
     let certified = best_certified
@@ -762,10 +762,10 @@ fn main() {
     let uncertain_cap = best_uncertain.map_or(certified.0, |b| b.0);
 
     assert!(
-        uncertain_cap >= certified.0,
-        "Numerical gap: certified {:.6e} > uncertain {:.6e}",
-        certified.0,
+        uncertain_cap <= certified.0,
+        "Unexpected: uncertain capacity {:.6e} > certified {:.6e}",
         uncertain_cap,
+        certified.0,
     );
 
     // Reverse permutation from algebraic to physical orbit direction

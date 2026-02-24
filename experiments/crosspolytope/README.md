@@ -93,7 +93,7 @@ After obtaining the capacity value:
 
 ### Phase 3: Cross-checks — DONE (inline with Phase 1)
 
-- sys = c²/(2·vol) = 16/21.33 = 0.75
+- sys = c²/(2·vol) = 16/(64/3) = 3/4 = 0.75
 - Dual polytope comparison: hypercube has c_EHZ = 4.0, sys = 0.50
 - Minimising orbit visits m=4 facets with equal weights β = 0.25
 
@@ -110,6 +110,14 @@ Rust enumeration (match confirmed). The group has 8 valid coordinate permutation
 | `crosspolytope.rs` | Rust binary: compute capacity with backtracking + symmetry |
 | `crosspolytope.jsonl` | Output: computed capacity and metadata |
 | `README.md` | This file |
+
+## Running
+
+```bash
+cd experiments/ && cargo run --release --bin crosspolytope
+```
+
+Resumes from checkpoint if one exists. Writes `crosspolytope/crosspolytope.jsonl` on completion.
 
 ## Dependencies
 
