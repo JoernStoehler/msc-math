@@ -16,7 +16,7 @@ In a floating-point implementation, each of these operations
 introduces numerical errors that must be controlled.
 
 This appendix develops the numerical counterpart of the exact
-algorithm in five parts.
+algorithm in six parts.
 Section~\ref{app:near-singular} analyses the most delicate
 issue---near-singular KKT systems whose solutions are sensitive
 to perturbations---and proves that such systems can be safely
@@ -30,6 +30,8 @@ in the implementation.
 Section~\ref{app:error-tracking} describes how the algorithm
 combines these verdicts to report a capacity value with
 appropriate certainty qualifiers.
+Section~\ref{sec:dismissal-error} empirically validates that
+the error bound from the dismissal step is negligible in practice.
 Section~\ref{sec:unknown-predicates} empirically validates the
 three-valued predicate on a diverse sample of polytopes, checking
 whether \textsc{unknown} verdicts ever affect the reported capacity.
@@ -45,6 +47,8 @@ search space.
 
 \subsection{Error Tracking and Final Answer}\label{app:error-tracking}
 \input{appendix-numerical-error-tracking}
+
+\input{../experiments/dismissal-error/dismissal-error}
 
 \input{../experiments/unknown-predicates/unknown-predicates}
 

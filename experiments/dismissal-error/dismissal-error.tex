@@ -1,10 +1,72 @@
-% dismissal-error.tex — \input'd from appendix-numerical.tex (planned)
+% dismissal-error.tex — \input'd from appendix-numerical.tex
 %
-% TODO: empirical validation that the dismissal error bound
-% (eq:dismissal-error-bound) is negligible across the test dataset.
-% See experiments/dismissal-error/README.md for the experiment plan.
+% Empirical validation that the dismissal error bound
+% (Remark lem:dismissal-error-bound, eq:dismissal-error-bound)
+% is negligible across the test dataset.
+%
+% Sources:
+%   - Generated data: experiments/dismissal-error/dismissal-error.jsonl
+%   - Plot script: experiments/dismissal-error/dismissal_error.py
+%   - Experiment binary: experiments/dismissal-error/dismissal_error.rs
+%
+% Structure:
+%   - Methodology
+%   - Results figure and summary
+%   - Conclusion
 
-% [TODO: JÖRN - implement and write up this experiment.
-%  The experiment should evaluate the error bound from eq:dismissal-error-bound
-%  for every dismissed system across the test dataset and confirm that
-%  the value loss is negligible compared to the final capacity.]
+\subsection{Dismissal Error Bound Validation}
+\label{sec:dismissal-error}
+
+Remark~\ref{lem:dismissal-error-bound} gives a computable error bound
+for each dismissed near-singular system:
+the value covered by the smaller pair~$(S', \sigma|_{S'})$ is at least
+\[
+  \nu_0
+    - (\alpha^*)^2\,\|\delta\beta'\|\,
+      \Bigl(1 + \frac{\|H\|}{\sigma_C}\Bigr)\,\sigma_j.
+\]
+We evaluate this bound empirically on the capacity test dataset
+(33~polytopes, $F = 5$--$8$) to confirm that the value loss from
+dismissal is negligible in practice.
+
+\subsubsection*{Methodology}
+For each polytope, we enumerate all $(S, \sigma)$ pairs (with the
+production A2 adjacency pruning) and apply the instrumented SVD path.
+When a pair would be dismissed by
+Algorithm~\ref{alg:near-singular-handling}, we instead continue to
+compute~$\beta_0$ via the pseudoinverse and evaluate the error bound.
+Pairs where~$\beta_0 \leq 0$ are \emph{trivial dismissals}: no
+admissible critical point exists, so dismissal loses nothing.
+Pairs where~$\beta_0 > 0$ contribute a non-trivial error bound, which
+we compare to the production capacity.
+
+\subsubsection*{Results}
+Across 5\,662 evaluated pairs, the experiment found
+68~non-trivial dismissals (with computed error bounds) and
+1\,675~trivial dismissals.
+The non-trivial dismissals occur exclusively in the hypercube,
+Lagrangian triangle product, and their transformed variants---polytopes
+whose axis-aligned normals create near-degenerate KKT systems.
+
+% [TODO: JÖRN - verify these numbers against the JSONL data.
+%  The numbers are agent-extracted from the experiment output.]
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.95\textwidth]{../experiments/dismissal-error/dismissal-error.png}
+\caption{Dismissal error bounds across the test dataset.
+  Left: distribution of $\log_{10}(\text{error bound}/\text{capacity})$
+  for all non-trivial dismissals.
+  Right: error bound vs.\ the singular value~$\sigma_j$ that triggered
+  dismissal.
+  The dashed red line marks machine epsilon ($\approx 2.2 \times 10^{-16}$).
+  All error bounds lie well below machine precision.}
+\label{fig:dismissal-error}
+\end{figure}
+
+The maximum relative error across all dismissed pairs is
+$2.3 \times 10^{-17}$, approximately $0.1 \times$ machine epsilon.
+Figure~\ref{fig:dismissal-error} shows that all 68~non-trivial
+error bounds cluster at or below machine precision, confirming that
+the value loss from dismissal is not merely small but numerically
+indistinguishable from zero.

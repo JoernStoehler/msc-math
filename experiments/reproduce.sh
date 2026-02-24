@@ -80,6 +80,10 @@ experiments/target/release/sys_optimization
 # → experiments/sys-optimization/sys-optimization-sensitivity.jsonl
 # → experiments/sys-optimization/sys-optimization-steps.jsonl
 
+# Dismissal error bound validation (33 polytopes from capacity_dataset.json)
+experiments/target/release/dismissal_error
+# → experiments/dismissal-error/dismissal-error.jsonl
+
 # ── Step 2: Generate figures and tables ──────────────────────────────────────
 # Python scripts read .jsonl from their experiment folder, write figures/tables
 # to the same folder.
@@ -122,6 +126,10 @@ python3 experiments/sys-optimization/sys_optimization.py
 # → experiments/sys-optimization/sys_optimization_favorable.png
 # → experiments/sys-optimization/sys_optimization_improvement.png
 # → experiments/sys-optimization/sys_optimization_stats.tex
+
+# Dismissal error bound: distribution of error bounds
+python3 experiments/dismissal-error/dismissal_error.py
+# → experiments/dismissal-error/dismissal-error.png
 
 # ── Step 3: Visualization screenshots ────────────────────────────────────────
 # Automated via Playwright (headless Chrome). Requires: npm install playwright.
