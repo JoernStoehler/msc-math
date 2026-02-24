@@ -501,10 +501,9 @@ translation and/or spatial-temporal scaling.
 %   linear system in b. The proof is a direct consequence of this tangency.
 % Downstream: algorithm for computing b from (σ, β) output of Algorithm~\ref{alg:ehz}.
 %   Rust: recover_base_point() in algorithms/hk2017/recover.rs.
-Let $K$ be a polytope with $F$ facets.
-Let $\sigma = (\sigma(1), \ldots, \sigma(m))$ be a cyclic
-permutation of a subset of $\{1, \ldots, F\}$, and let
-$\tau_1, \ldots, \tau_m > 0$ be positive dwell times.
+Let $K$ be a polytope and $(\sigma, \tau, b)$ a simple orbit
+(Definition~\ref{def:simple-reeb-orbit} below) with $m$ active facets
+$S = \{\sigma(k) : \tau_k > 0\}$.
 Define the accumulated displacements
 \[
   v_0 = 0, \qquad
