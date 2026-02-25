@@ -10,7 +10,8 @@
 %   - Remark: simple polytopes
 %   - Definition: rational polytope
 %   - Definition: margins
-%   - Lemma: self-consistency
+%   - Lemma: margins positive
+%   - Remark: conversion to f64
 %   - Proposition: f64 combinatorial preservation
 %   - Remark: Lagrangian products
 %   - Remark: application to algorithm soundness
@@ -34,8 +35,13 @@ under this representation.
 The key idea is to avoid numerical predicates entirely
 for discrete combinatorial decisions.
 We represent polytopes with exact rational coordinates
-($n_i \in \mathbb{Q}^4$, $h_i \in \mathbb{Q}_{>0}$),
-compute combinatorial data exactly over~$\mathbb{Q}$,
+($n_i \in \mathbb{Q}^4 \setminus \{0\}$,
+$h_i \in \mathbb{Q}_{>0}$),
+where the normals $n_i$ are \emph{not} required
+to be unit vectors
+(unlike the unit normals $n_i \in S^3$ used
+in Section~\ref{sec:algorithms}).
+We compute combinatorial data exactly over~$\mathbb{Q}$
 and convert to \texttt{f64} only for continuous computation
 (e.g.\ the SVD step of the KKT solver).
 The exact rational polytope is the source of truth
@@ -60,6 +66,8 @@ where:
   Facets $i$ and~$k$ are
   \emph{adjacent} if $\{i, k\} \subset S_j$ for some~$j$,
   i.e.\ they share a vertex.
+  Write $\operatorname{adj}(\mathcal{V})$ for the set of
+  adjacent pairs $(i, k)$ with $i < k$.
 \item \emph{Sign pattern.}
   $D(i, k) = \operatorname{sign}\bigl(
   \omega_0(n_i, n_k)\bigr) \in \{+, -, 0\}$
@@ -124,24 +132,29 @@ If all adjacent pairs have $D(i,k) = 0$,
 then $\omega_{\min}$ is undefined (vacuously satisfied).
 \end{definition}
 
-\begin{lemma}[Self-consistency]%
-\label{lem:self-consistency}
-Every simple rational polytope $K$ is consistent with
-its own combinatorial data~$C(K)$.
-The margins $\gamma_{\min}$, $\delta_{\min}$, and
-$\omega_{\min}$ (when defined) are strictly positive.
+\begin{lemma}[Margins are positive]%
+\label{lem:margins-positive}
+Let $K = K(n, h)$ be a simple rational polytope with
+margins $\gamma_{\min}$, $\delta_{\min}$, $\omega_{\min}$
+as in Definition~\ref{def:margins}.
+Then $\gamma_{\min} > 0$, $\delta_{\min} > 0$, and
+$\omega_{\min} > 0$ (when defined).
 \end{lemma}
 
 \begin{proof}
-$C(K)$ is defined as the data extracted from~$K$,
-so $C(K) = C(K)$.
-The margins are positive by the definitions:
-$\gamma_{\min} > 0$ because non-incidence gaps define
-vertex descriptors,
-$\delta_{\min} > 0$ because vertices arise only from
-non-singular subsystems,
-and $\omega_{\min} > 0$ because the minimum is taken
-over pairs with $D(i,k) \neq 0$.
+Each claim follows from the corresponding definition.
+$\gamma_{\min} > 0$:
+vertex descriptors are defined by the condition that
+all non-incidence gaps are strictly positive
+(Definition~\ref{def:rational-polytope}),
+so each gap $g^i_{S_j} > 0$, and the minimum
+of finitely many positive rationals is positive.
+$\delta_{\min} > 0$:
+a vertex descriptor $S_j$ requires $\det(N_{S_j}) \neq 0$,
+so $|\!\det(N_{S_j})| > 0$ for every $j$.
+$\omega_{\min} > 0$:
+the minimum is taken over pairs with $D(i,k) \neq 0$,
+i.e.\ $|\omega_0(n_i, n_k)| > 0$ for each such pair.
 \end{proof}
 
 \begin{remark}[Conversion to \texttt{f64}]%
@@ -160,11 +173,13 @@ conversion each introduce $O(\varepsilon_{\mathrm{mach}})$
 rounding error per coordinate.
 \end{remark}
 
-% [TODO: JÖRN - verify this proposition.
-%  It's a standard continuity argument:
-%  if all predicates have margin > 0 and the perturbation
-%  is smaller than the margin, the predicates don't change.
-%  The quantitative bound may need refinement.]
+% [GAP - AGENT CONFIDENCE 85%: The proposition below is a standard
+%  continuity/perturbation argument: if all predicates (gap > 0, det ≠ 0,
+%  sign(ω₀) ≠ 0) have positive margin, then sufficiently small perturbation
+%  preserves them. The statement is believed correct but has no proof.
+%  The quantitative bound ("ε small enough relative to margins") is informal.
+%  JÖRN: (1) verify the statement is correct, (2) decide whether a proof
+%  is needed or whether a citation to a standard perturbation result suffices.]
 \begin{proposition}[Combinatorial preservation under rounding]%
 \label{prop:f64-preservation}
 Let $K = K(n, h)$ be a simple rational polytope with

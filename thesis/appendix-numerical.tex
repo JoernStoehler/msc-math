@@ -8,7 +8,7 @@
 %
 % Structure (top-down):
 %   A.1 General Approach — three-valued framework, information flow
-%   A.2 Polytope Combinatorics — stability of combinatorial type
+%   A.2 Polytope Combinatorics — exact rational representation, combinatorial preservation
 %   A.3 SVD Step — near-singular handling, positivity predicate
 %   A.4 Accumulated Q Maximum — certified/uncertain tracking, final answer
 
@@ -28,9 +28,10 @@ and introduces the three-valued predicate framework
 for the predicates whose evaluation involves numerical
 error.
 Section~\ref{app:polytope-combinatorics} defines
-the exact rational polytope representation and shows that
-the combinatorial data computed over~$\mathbb{Q}$ is
-preserved when converting to floating-point coordinates.
+the exact rational polytope representation and states
+conditions under which the combinatorial data computed
+over~$\mathbb{Q}$ is preserved when converting to
+floating-point coordinates.
 Section~\ref{app:svd-step} analyses the SVD-based solution of
 each KKT system, including near-singular detection
 and dismissal, and the three-valued positivity filter.
