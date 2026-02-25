@@ -37,8 +37,8 @@ We recall the face structure of the polytopes we work with
 and introduce the directed flow structure that the algorithm exploits.
 
 \begin{definition}[Faces of a polytope]\label{def:faces}
-% QC: face = standard convex geometry definition (extremal subset).
-%   Equivalently: F = K ∩ H for a supporting hyperplane H, but different H can give the same F.
+% QC: face = exposed face (optimizer definition): F_u = argmax_{x in K} <u,x>.
+%   Every face of a polytope is exposed, so this captures all faces.
 %   k-face = affine dimension k. Closed set, open relative interior.
 %   For a polytope in irredundant H-rep, faces at every dimension 0-3 exist.
 %   Facets (3-faces) are F_i per Definition~\ref{def:facets}.
@@ -48,30 +48,30 @@ and introduce the directed flow structure that the algorithm exploits.
 Let $K \subset \mathbb{R}^4$ be a polytope
 with irredundant $H$-representation
 $\{(n_i, h_i)\}_{i=1}^{F}$ (Definition~\ref{def:facets}).
-A \emph{face} of $K$ is a convex subset $G \subset K$
-such that for any line segment $[x, y] \subset K$
-whose relative interior meets $G$,
-the entire segment lies in $G$.
+For $u \in \mathbb{R}^4 \setminus \{0\}$,
+the \emph{face of $K$ in direction $u$} is
+\[
+  F_u \coloneqq \operatorname*{argmax}_{x \in K}\, \langle u, x \rangle.
+\]
+A \emph{face} of $K$ is any set of this form.
 A \emph{$k$-face} is a face of affine dimension $k$.
-For polytopes, every face is an intersection of facets:
+Each face $G$ is described by two lists:
+the \emph{containing facets} $\{i : G \subset F_i\}$
+and the \emph{vertices of $G$}
+(the $0$-faces of $K$ that lie in $G$;
+a $k$-face has at least $k+1$ vertices).
+The number of containing facets depends on the dimension:
 \begin{itemize}
-\item \emph{3-faces} (facets) are $F_1, \ldots, F_F$
-  (Definition~\ref{def:facets}).
-\item A \emph{2-face} is an intersection $F_i \cap F_j$
-  that is $2$-dimensional.
-  By Lemma~\ref{lem:2-face-structure},
-  each $2$-face arises from exactly one pair $\{i,j\}$;
-  we write $F_{ij}$ for this face.
-\item A \emph{1-face} (edge) is an intersection
-  $F_{i_1} \cap \cdots \cap F_{i_m}$ that is $1$-dimensional,
-  for some $m \geq 3$.
-  A \emph{0-face} (vertex) is such an intersection
-  that is $0$-dimensional, for some $m \geq 4$.
-  Unlike $2$-faces, there is no canonical minimal
-  set of generating facets
+\item $K$ itself ($4$-dimensional): $0$ containing facets.
+\item A \emph{$3$-face} (facet) $F_i$: $1$ containing facet.
+\item A \emph{$2$-face}: $2$ containing facets
+  (Lemma~\ref{lem:2-face-structure}).
+  We write $F_{ij}$ for the $2$-face contained in $F_i$ and $F_j$.
+\item A \emph{$1$-face} (edge): $\geq 3$ containing facets.
+\item A \emph{$0$-face} (vertex): $\geq 4$ containing facets
   (Remark~\ref{rem:lower-faces}).
 \end{itemize}
-Every face is closed; $\operatorname{int}(F)$ denotes its relative interior.
+Every face is closed; $\operatorname{int}(G)$ denotes its relative interior.
 \end{definition}
 
 \begin{lemma}[2-face uniqueness]\label{lem:2-face-structure}
@@ -83,6 +83,8 @@ Every face is closed; $\operatorname{int}(F)$ denotes its relative interior.
 Every $2$-face of $K$ is contained in exactly two facets.
 \end{lemma}
 
+% [GAP - agent addition. Notes line 26 say "follows from a dimension argument" but don't
+%   give the proof. The normal cone proof below is agent-written. Jörn: verify or simplify.]
 \begin{proof}
 Let $F$ be a $2$-face and let $x \in \operatorname{int}(F)$.
 The outward normal cone
@@ -124,8 +126,10 @@ and can have arbitrarily many extreme rays.
 %   Skip pairs where F_i ∩ F_j is lower-dimensional (empty, 0D, or 1D).
 A \emph{Lagrangian $2$-face} is a $2$-face $F_{ij}$ on which
 $\omega_0|_{T F_{ij}} = 0$, equivalently $\omega_0(n_i, n_j) = 0$.
-% [TODO: JÖRN - verify the equivalence: TF_{ij} subset n_i^perp ∩ n_j^perp,
-%   and ω_0 restricted to this 2D space is zero iff ω_0(n_i,n_j) = 0.]
+% [JÖRN Q2: verify the equivalence: TF_{ij} ⊂ n_i^perp ∩ n_j^perp (2D space),
+%   and ω_0 restricted to this 2D space is zero iff ω_0(n_i,n_j) = 0.
+%   CH2021 Def.~1.4 uses "ω_0 restricts to nonzero 2-form on each 2-face"
+%   but does not state the n_i,n_j equivalence explicitly.]
 A \emph{symplectic polytope} is a polytope $K \subset \mathbb{R}^4$
 that has no Lagrangian $2$-face:
 \[
@@ -145,7 +149,7 @@ that has no Lagrangian $2$-face:
 Let $K$ be a symplectic polytope and $F_{ij}$ a $2$-face.
 Since $\omega_0(n_i, n_j) \neq 0$, we define the \emph{direction}:
 \[ F_i \to F_j \iff \omega_0(n_i, n_j) > 0. \]
-By \cite{CH2021}, Lemma~{lem:EinEout}, a Reeb trajectory with velocity $R_i$
+By \cite[Lem.~3.9]{CH2021}, a Reeb trajectory with velocity $R_i$
 exits the interior of $F_i$ through $\operatorname{int}(F_{ij})$
 if and only if $F_i \to F_j$.
 Equivalently, the Reeb flow at $F_i$ transitions to $F_j$
@@ -163,65 +167,67 @@ sets of pure Reeb trajectories sharing a facet-visit sequence.
 % QC: a special case of Definition~\ref{def:reeb-orbit-polytope}: velocity is a pure Reeb
 %   vector R_{sigma(i)}, not a convex mixture, on each interval (t_{i-1},t_i).
 %   gamma(t) in F_{sigma(i)} for t in [t_{i-1}, t_i] (by R_i tangent to bdry(K) along F_i).
-%   t_1 = 0 is a normalisation (free to choose by translation).
-% Downstream: trajectory determined by starting point gamma(0) in F_{sigma(1)} ∩ F_{sigma(2)}.
-%   All other positions computable by integrating R_{sigma(i)} forward.
-Let $\sigma = (\sigma(1), \ldots, \sigma(k))$ be a sequence of facet indices with $k \geq 2$.
+% Downstream: trajectory determined by starting point gamma(t_1) in F_{sigma(1)} ∩ F_{sigma(2)}.
+%   All other positions computable by integrating R_{sigma(i)} forward/backward.
+Let $K$ be a symplectic polytope and
+$\sigma = (\sigma(1), \ldots, \sigma(k))$ a sequence of facet indices with $k \geq 2$,
+where $F_{\sigma(i)} \to F_{\sigma(i+1)}$ is a directed $2$-face
+(Definition~\ref{def:directed-2-face}) for each $i = 1, \ldots, k-1$.
 A \emph{pure Reeb trajectory of type $\sigma$} is a curve
-$\gamma \colon [t_0, t_k] \to \partial K$ with
-$t_0 < t_1 < \cdots < t_k$, $t_1 = 0$, and
+$\gamma \colon \mathbb{R} \to \partial K$
+with times $t_0 < t_1 < \cdots < t_k$ such that
 \[
   \dot{\gamma}(t) = R_{\sigma(i)}
   \qquad \text{for } t \in (t_{i-1}, t_i),
   \quad i = 1, \ldots, k.
 \]
-The times $t_2, \ldots, t_k$ are determined by the trajectory:
-$t_i$ is the first time after $t_{i-1}$ that $\gamma$ exits $F_{\sigma(i)}$.
 \end{definition}
 
+\begin{remark}[Determinedness]\label{rem:pure-reeb-determined}
+A pure Reeb trajectory of type $\sigma$ is determined by its
+starting point $\gamma(t_1) \in F_{\sigma(1)} \cap F_{\sigma(2)}$:
+the constant velocity $R_{\sigma(i)}$ fixes $\gamma$ on each segment,
+and $\langle R_{\sigma(i)}, n_{\sigma(i+1)} \rangle
+= \tfrac{2}{h_{\sigma(i)}}\,\omega_0(n_{\sigma(i)}, n_{\sigma(i+1)}) \neq 0$
+implies that each $2$-face crossing takes finite time,
+so the breakpoints $t_0, \ldots, t_k$ are determined.
+
+For a non-symplectic polytope, a Lagrangian $2$-face
+$F_{ij}$ with $\omega_0(n_i, n_j) = 0$
+has $\langle R_i, n_j \rangle = 0$,
+so $R_i$ is tangent to $F_{ij}$ and a trajectory may slide along
+$F_{ij}$ indefinitely instead of crossing it.
+\end{remark}
+
 \begin{definition}[Tube]\label{def:tube}
-% QC: the tube T(sigma) is a convex family (Lemma~\ref{lem:tube-convex}).
+% QC: Start and End of T(sigma) are convex polygons (Lemma~\ref{lem:tube-convex}).
 %   T(sigma) may be empty (no valid trajectory exists).
 %   The tube is parameterized by its starting point gamma(0) ∈ Start(sigma) ⊂ F_{sigma(1)} ∩ F_{sigma(2)}.
 The \emph{tube} $T(\sigma)$ of a type $\sigma = (\sigma(1), \ldots, \sigma(k))$
 is the set of all pure Reeb trajectories of type $\sigma$:
 \[
   T(\sigma) \coloneqq \bigl\{
-    \gamma \colon [t_0, t_k] \to \partial K
+    \gamma \colon \mathbb{R} \to \partial K
     : \gamma \text{ is a pure Reeb trajectory of type } \sigma
   \bigr\}.
 \]
 \end{definition}
 
-\begin{lemma}[Convexity of a tube]\label{lem:tube-convex}
-% QC: the key is that once we fix sigma, the dynamics are globally affine:
-%   gamma_lambda = lambda * gamma_1 + (1-lambda) * gamma_2 has velocity
-%   lambda R_i + (1-lambda) R_i = R_i on each interval. Valid: velocities match,
-%   and affine combination stays on boundary because F_i is affine and gamma_1,gamma_2 in F_i.
-% [TODO: JÖRN - the argument uses that affine combinations of points on F_i stay on F_i;
-%   F_i is closed and convex so lambda x + (1-lambda)y in F_i if x,y in F_i. Correct.]
-If $\gamma_1, \gamma_2 \in T(\sigma)$ and $\lambda \in [0,1]$, then
-$\lambda \gamma_1 + (1-\lambda)\gamma_2 \in T(\sigma)$.
-\end{lemma}
-
-\begin{proof}
-On each interval $(t_{i-1}(\gamma_1), t_i(\gamma_1))$,
-the velocity $\dot{\gamma}_1(t) = R_{\sigma(i)}$ is constant,
-and similarly for $\gamma_2$.
-Since $F_{\sigma(i)}$ is a convex set,
-the affine combination $\gamma_\lambda(t) \coloneqq \lambda\gamma_1(t) + (1-\lambda)\gamma_2(t)$
-remains in $F_{\sigma(i)}$ wherever $\gamma_1$ and $\gamma_2$ do.
-The velocity $\dot{\gamma}_\lambda(t) = R_{\sigma(i)}$ on each interval.
-The breakpoints may shift, but $\gamma_\lambda$ is still a pure Reeb trajectory of type $\sigma$.
-Hence $\gamma_\lambda \in T(\sigma)$.
-\end{proof}
+\begin{remark}[Why ``tube'']\label{rem:tube-name}
+All trajectories in $T(\sigma)$ share the same velocity sequence
+$(R_{\sigma(1)}, \ldots, R_{\sigma(k)})$
+and differ only in their starting point on the $2$-face
+$F_{\sigma(1)} \cap F_{\sigma(2)}$.
+As the starting point varies over a convex polygon,
+the trajectories sweep out a tube-shaped region in $\partial K$.
+\end{remark}
 
 \begin{definition}[Start and End of a tube]\label{def:tube-endpoints}
-% QC: Start = gamma(t_1 = 0) in F_{sigma(1)} ∩ F_{sigma(2)}: the 2-face entered at t_1=0.
+% QC: Start = gamma(t_1) in F_{sigma(1)} ∩ F_{sigma(2)}: the 2-face entered at t_1.
 %   End = gamma(t_{k-1}) in F_{sigma(k-1)} ∩ F_{sigma(k)}: the LAST INNER breakpoint.
 %   Note: t_0 and t_k (= outer breakpoints) are gamma-dependent; t_1,...,t_{k-1} are
-%   the inner breakpoints. Start and End are convex sets (by tube convexity).
-%   The map gamma <-> gamma(0) is a bijection: gamma is determined by its start.
+%   the inner breakpoints. Start and End are convex polygons (Lemma lem:tube-convex).
+%   The map gamma <-> gamma(t_1) is a bijection: gamma is determined by its start.
 % Downstream: Start and End are convex polygons in 2D local coordinates of F_{sigma(1)} ∩ F_{sigma(2)}
 %   (resp. F_{sigma(k-1)} ∩ F_{sigma(k)}). Stored as vertex lists.
 For a tube $T(\sigma)$ with $k \geq 3$:
@@ -233,9 +239,33 @@ For a tube $T(\sigma)$ with $k \geq 3$:
     \{ \gamma(t_{k-1}) : \gamma \in T(\sigma) \}
     \subset F_{\sigma(k-1)} \cap F_{\sigma(k)}.
 \end{align*}
-Both sets are closed convex polygons,
-by Lemma~\ref{lem:tube-convex} and compactness of $K$.
 \end{definition}
+
+\begin{lemma}[Convexity of Start and End]\label{lem:tube-convex}
+The sets $\operatorname{Start}(\sigma)$ and $\operatorname{End}(\sigma)$
+are closed convex polygons.
+\end{lemma}
+
+\begin{proof}
+By Remark~\ref{rem:pure-reeb-determined},
+a trajectory $\gamma \in T(\sigma)$ is determined by
+$x = \gamma(t_1) \in F_{\sigma(1)} \cap F_{\sigma(2)}$.
+Each step map $\Phi_{\sigma(i-1),\sigma(i),\sigma(i+1)}$
+is affine (Definition~\ref{def:step-data}),
+so the position $\gamma(t_i)$ is an affine function of $x$.
+The constraint $\gamma(t_i) \in F_{\sigma(i)} \cap F_{\sigma(i+1)}$
+is the intersection of finitely many half-spaces
+$\langle \gamma(t_i), n_m \rangle \leq h_m$;
+since $\gamma(t_i)$ is affine in $x$,
+these become linear inequalities on $x$.
+Therefore $\operatorname{Start}(\sigma)$ is an intersection of
+finitely many half-spaces within $F_{\sigma(1)\sigma(2)}$,
+hence a closed convex polygon.
+The map $\varphi \colon x \mapsto \gamma(t_{k-1})$
+is a composition of affine step maps,
+so $\operatorname{End}(\sigma) = \varphi(\operatorname{Start}(\sigma))$
+is also a closed convex polygon.
+\end{proof}
 
 \begin{definition}[Tube data structure]\label{def:tube-data}
 % QC: (Start, End, phi, a, rho) encode all information needed for extension and closing.
@@ -254,7 +284,7 @@ A tube $T(\sigma)$ is represented by the following data:
 \item $\operatorname{End} \subset F_{\sigma(k-1)} \cap F_{\sigma(k)}$:
   closed convex polygon (in local $2$-dimensional coordinates).
 \item $\varphi \colon \operatorname{Start} \to \operatorname{End}$:
-  the affine map sending $\gamma(0)$ to $\gamma(t_{k-1})$.
+  the affine map sending $\gamma(t_1)$ to $\gamma(t_{k-1})$.
 \item $a \colon \operatorname{End} \to \mathbb{R}$:
   the affine function $a(y) = t_{k-1}$,
   the total elapsed time (= action) of $\gamma|_{[t_1, t_{k-1}]}$
@@ -284,6 +314,8 @@ $\varphi = \operatorname{id}$, $a \equiv 0$, and $\rho = 0$.
 We now describe how to extend a tube by one facet
 and derive the update formulas for the data structure.
 
+% [GAP - agent addition. Notes line 74-75 say "precomputed affine maps for [F_{k-1}, F_k, F_{k+1}]"
+%   but don't give the explicit formula. The formula below is agent-derived. Jörn: verify.]
 \begin{definition}[Step map for a triple]\label{def:step-data}
 % QC: Phi_{ijl} maps x in H_i ∩ H_j to gamma(t_k) in H_j ∩ H_l under flow by R_j.
 %   Explicit formula: Phi_{ijl}(x) = x + t(x) R_j where t(x) = (h_l - <x,n_l>) / <R_j,n_l>.
@@ -325,9 +357,9 @@ at the $j \to l$ breakpoint is defined in Definition~\ref{def:rotation-increment
 %   a'(y') = a(phi^{-1}(Phi^{-1}(y'))) + DeltaA(Phi^{-1}(y'))  [accumulated action]
 %   rho' = rho + DeltaRho_{sigma(k), sigma(k+1)}          [accumulated rotation]
 %   Here Phi = Phi_{sigma(k-1), sigma(k), sigma(k+1)}.
-% [TODO: JÖRN - verify the formula for Start': Start' = phi'^{-1}(End') means we
-%   pull back the End constraint to the Start face. Since phi' is affine and bijective,
-%   this gives a polygon in F_{sigma(1)} ∩ F_{sigma(2)}. Correct?]
+% QC: Start' = (phi')^{-1}(End') pulls back the End' constraint to Start.
+%   This follows from CH2021 Def.~2.8 (linear_flow_composition): domain of Psi∘Phi = phi^{-1}(E).
+%   Since phi' = Phi∘phi is affine and bijective, Start' is a polygon in F_{sigma(1)} ∩ F_{sigma(2)}.
 % Downstream: intersection End' = Phi(End) ∩ F_{sigma(k)} ∩ F_{sigma(k+1)} is a polygon
 %   intersection in 2D (Phi(End) is a polygon in H_{sigma(k)} ∩ H_{sigma(k+1)},
 %   intersect with the closed face F_{sigma(k)} ∩ F_{sigma(k+1)} via H-rep constraints).
@@ -345,7 +377,7 @@ The extended tube $T(\sigma(1), \ldots, \sigma(k+1))$ has data:
   \operatorname{Start}' &\coloneqq (\varphi')^{-1}(\operatorname{End}'),
     \label{eq:start-prime}\\
   a'(y') &\coloneqq
-    a\bigl(\varphi^{-1}(\Phi^{-1}(y'))\bigr)
+    a\bigl(\Phi^{-1}(y')\bigr)
     + \Delta a_{\sigma(k-1),\sigma(k),\sigma(k+1)}\bigl(\Phi^{-1}(y')\bigr),
     \label{eq:a-prime}\\
   \rho' &\coloneqq \rho + \Delta\rho_{\sigma(k),\sigma(k+1)}.
@@ -361,7 +393,7 @@ $\Phi$ might overflow the actual face).
 Equation~\eqref{eq:start-prime} propagates this constraint back to the start:
 a trajectory can reach $\operatorname{End}'$ only if it started in $\operatorname{Start}'$.
 The action formula~\eqref{eq:a-prime} accumulates the time
-from $t_1 = 0$ to $t_k$ as a function of the new End point.
+from $t_1$ to $t_k$ as a function of the new End point.
 \end{remark}
 
 % -------------------------------------------------------------------------
@@ -371,6 +403,9 @@ from $t_1 = 0$ to $t_k$ as a function of the new End point.
 The rotation number is the key pruning tool for the search.
 We follow \cite{CH2021}, \S 2.
 
+% [GAP - agent addition. Notes line 63 mention "rotation number" without defining it.
+%   The entire formal definition below (Sp(2), universal cover, lift) is agent-written.
+%   Jörn: is this the right definition? Or should it use the quaternionic trivialization from CH2021?]
 \begin{definition}[Rotation number in the universal cover]\label{def:rotation-number}
 % QC: Sp(2) = group of 2x2 symplectic matrices. Universal cover Sp~(2) is a connected
 %   simply-connected Lie group. The universal cover fibres over S^1 (via the rotation
@@ -378,9 +413,14 @@ We follow \cite{CH2021}, \S 2.
 %   with f(0)=I is the R-valued lift rho(f) = rho~(f~(1)) where f~ is the lift to Sp~(2).
 %   This rho is independent of the choice of path within its homotopy class rel endpoints.
 %   Additivity: rho(f1 * f2) = rho(f1) + rho(f2) for composable paths in Sp~(2).
-% [TODO: JÖRN - verify this is the exact same rotation number used in CH2021 §2.
-%   CH2021 uses a "quaternionic trivialization" to define a canonical rotation number for
-%   Reeb orbits on symplectic polytopes in R^4. Check that our description matches.]
+% [JÖRN Q3: The thesis defines rotation number abstractly (path in Sp(2), lift to
+%   universal cover, project to R). CH2021 §2 defines it concretely via the quaternionic
+%   trivialization (Def.~2.22, def:qtfg): for each edge, lift τ_{F2}∘Tφ_e∘τ_{F1}^{-1}
+%   to Sp~(2) with rotation in (-1/2,1/2], then ρ_comb = ρ of the product of lifts.
+%   Question: Is the abstract definition (Def.~3.X below) sufficient for the thesis,
+%   or should it reference the quaternionic trivialization explicitly?
+%   The algorithm only needs: (1) each Δρ_{jl} ∈ (0,1/2), (2) total ρ = sum of Δρ.
+%   Both are stated. But the abstract definition doesn't specify WHICH trivialization.]
 The \emph{symplectic group} $\operatorname{Sp}(2)$ is the group of
 $2 \times 2$ symplectic matrices over $\mathbb{R}$.
 The \emph{universal cover} $\widetilde{\operatorname{Sp}}(2)$ is the unique
@@ -416,17 +456,22 @@ it accumulates continuously and does not reduce modulo~$\mathbb{Z}$.
 %   By CH2021 Lemma~lem:transitionmatrix: psi is positive elliptic (trace in (-2,2), a2>0).
 %   By CH2021 Corollary~cor:rotrange: rot_mod_Z(psi) in (0,1/2).
 %   Since we work in the universal cover and start from rot=0 at t_1, each increment in (0,1/2).
-% [TODO: JÖRN - state the exact formula for psi_{F_{jl}} from CH2021 (the explicit 2x2 matrix)
-%   so the implementation can compute it. We need a reference to the precise formula.]
+% Source: CH2021 Def.~2.20 (def:transitionmatrix): psi_F = tau_F o (tau'_F)^{-1} in Sp(2).
+%   CH2021 Lem.~2.21: explicit 2x2 matrix in quaternionic notation (a1,a2,a3,a4).
+%   CH2021 Cor.~2.22: rotation number of psi_F is in (0,1/2).
+% [JÖRN Q1: The explicit formula for psi_{F_{jl}} in CH2021 Lem.~2.21 uses quaternionic
+%   notation (nu, nu' = unit normals; i,j,k = quaternionic units). Translation to our
+%   notation (n_i, h_i, J_0) is needed for the Rust implementation. Should the thesis
+%   state the translated formula, or just cite CH2021?]
 Let $F_j \to F_l$ be a directed $2$-face.
 The \emph{rotation increment} $\Delta\rho_{jl} \in \mathbb{R}$
 is the contribution to the rotation number at the breakpoint
 where a Reeb trajectory transitions from velocity $R_j$ to $R_l$.
-It is computed from the \emph{transition matrix} $\psi_{F_{jl}}$
-of \cite{CH2021}, a $2 \times 2$ positive-elliptic symplectic matrix
-associated with the $2$-face $F_{jl}$;
-see \cite[Lem.~lem:transitionmatrix, Cor.~cor:rotrange]{CH2021}.
-By those results, $\Delta\rho_{jl} \in (0, \tfrac{1}{2})$.
+It is computed from the \emph{transition matrix}
+$\psi_{F_{jl}} \coloneqq \tau_{F_{jl}} \circ (\tau'_{F_{jl}})^{-1} \in \operatorname{Sp}(2)$
+of \cite[Def.~2.20]{CH2021}.
+By \cite[Lem.~2.21]{CH2021}, $\psi_{F_{jl}}$ is positive elliptic;
+by \cite[Cor.~2.22]{CH2021}, $\Delta\rho_{jl} \in (0, \tfrac{1}{2})$.
 \end{definition}
 
 \begin{remark}[Rotation on a polytope]\label{rem:rotation-polytope}
@@ -446,14 +491,10 @@ the sum of rotation increments at each inner breakpoint.
 \end{remark}
 
 \begin{lemma}[Rotation monotonicity]\label{lem:rotation-monotone}
-% [TODO: JÖRN - this lemma claims each extension adds positive rotation.
-%   The proof should follow from Delta_rho_{jl} > 0 (from the positive-elliptic character
-%   of the transition matrix, CH2021 Corollary~cor:rotrange). But the increment Delta_rho
-%   depends on the LIFT to the universal cover, not just the transition matrix value mod Z.
-%   For the first increment, the lift starts at 0 so rho_1 = Delta_rho_{12} in (0,1/2).
-%   For subsequent increments, rho accumulates. The claim is rho' > rho always.
-%   Since Delta_rho_{jl} > 0, this is immediate. Verify that Delta_rho > 0 (not just mod-Z > 0)
-%   for every extension step, not just the first.]
+% QC: Delta_rho_{jl} ∈ (0, 1/2) as a real number (not mod Z). Source: CH2021 Cor.~2.22
+%   (cor:rotrange) + Def.~2.22 (def:qtfg) lift convention: rotation in (-1/2, 1/2].
+%   Positive elliptic (Lem.~2.21) forces the interval to (0, 1/2).
+%   Since each increment is strictly positive in R, rho' = rho + Delta_rho > rho always.
 Each tube extension increases rotation:
 writing $T_k = T(\sigma(1), \ldots, \sigma(k))$, if $T_k$
 has rotation~$\rho$ then its extension $T_{k+1}$ has rotation
@@ -480,7 +521,7 @@ then $T(\sigma) = \emptyset$.
 
 \begin{proof}
 A trajectory $\gamma \in T(\sigma)$ satisfies
-$\gamma(0) \in \operatorname{Start}(\sigma)$ and
+$\gamma(t_1) \in \operatorname{Start}(\sigma)$ and
 $\gamma(t_{k-1}) \in \operatorname{End}(\sigma)$ by definition.
 \end{proof}
 
@@ -491,9 +532,9 @@ $\gamma(t_{k-1}) \in \operatorname{End}(\sigma)$ by definition.
 %   can improve the current best.
 %   IMPORTANT: this compares the partial action (t_1 to t_{k-1}), not the full closed orbit action.
 %   The pruning is still valid: the full closed orbit action = partial action + closing step time >= partial action.
-%   [TODO: JÖRN - verify: can we prune on partial action < c* even before closing?
-%   For tubes not yet closed, the partial action is a lower bound on the full action.
-%   Yes: the full action = partial + closing time > partial. So if partial > c*, full > c* too.]
+%   QC: Pruning on partial action is valid before closing: the full closed-orbit action
+%   = partial action (t_1 to t_{k-1}) + closing action increments (two steps, each > 0).
+%   So full action > partial action >= min_End a > c*.
 Let $c^* > 0$ be the action of the current best candidate orbit.
 If $\min_{y \in \operatorname{End}} a(y) > c^*$,
 then $T(\sigma)$ contains no minimum-action orbit.
@@ -506,23 +547,23 @@ Since the minimum-action orbit has action $\leq c^*$, it is not in $T(\sigma)$.
 \end{proof}
 
 \begin{lemma}[Pruning: rotation upper bound]\label{lem:prune-rotation}
-% QC: the minimum-action orbit has rotation number strictly less than 2 (CH2021).
-%   By rotation monotonicity (Lem~\ref{lem:rotation-monotone}), any further extensions
-%   or closings only increase rho. So if rho >= 2 already, no closed orbit from this
-%   tube can have rho < 2.
-% [TODO: JÖRN - state and cite the exact result from CH2021 that the minimum-action
-%   orbit has rho < 2. The relevant statement may be in CH2021 Corollary~cor:computecehz
-%   or the paragraph at line~320 in s1. Verify the exact bound is < 2 (not ≤ 2 or ≤ 1).]
+% QC: CH2021 Cor.~1.15 (cor:computecehz): minimum-action orbit has rho_comb <= 2 (non-strict).
+%   The closing step adds >= 2 rotation increments (each in (0,1/2)), so closed orbit rho > tube rho.
+%   If tube rho >= 2, closed orbit rho > 2 > bound. Pruning is valid.
+% Source: CH2021 s1 line 313, cor:computecehz: "rho_comb(gamma) <= 2".
+%   Also Prop.~1.10 (prop:ehwz): "rho(gamma) <= 2" (strict iff nondegenerate).
 Let $\rho$ be the rotation number of tube $T(\sigma)$.
 If $\rho \geq 2$, then $T(\sigma)$ contains no minimum-action orbit.
 \end{lemma}
 
 \begin{proof}
-By \cite{CH2021}, the minimum-action combinatorial Reeb orbit
-satisfies $\rho_{\mathrm{comb}} < 2$.
-By Lemma~\ref{lem:rotation-monotone},
-each extension and each closing step adds $\Delta\rho > 0$,
-so the rotation of any closed orbit produced from $T(\sigma)$ exceeds $\rho \geq 2$.
+By \cite[Cor.~1.15]{CH2021}, the minimum-action combinatorial Reeb orbit
+satisfies $\rho_{\mathrm{comb}} \leq 2$.
+The closing step (Definition~\ref{def:tube-close}) adds at least two
+rotation increments, each in $(0, \tfrac{1}{2})$,
+so any closed orbit from $T(\sigma)$ has total rotation
+$> \rho \geq 2$.
+Hence no closed orbit from $T(\sigma)$ satisfies $\rho_{\mathrm{comb}} \leq 2$.
 \end{proof}
 
 \begin{lemma}[Pruning: simple orbit]\label{lem:prune-simple}
@@ -536,7 +577,7 @@ then $T(\sigma)$ contains no minimum-action orbit.
 \end{lemma}
 
 \begin{proof}
-By \cite{HK2017}, the minimum-action generalized Reeb orbit is simple:
+By Theorem~\ref{thm:simple-minimizer} (\cite{HK2017}), the minimum-action generalized Reeb orbit is simple:
 it visits each facet on a connected time interval and does not repeat facets.
 A pure Reeb trajectory of type $\sigma$, when closed,
 visits $F_{\sigma(i)}$ twice if $\sigma(i) = \sigma(j)$.
@@ -549,12 +590,15 @@ Hence no closed orbit from $T(\sigma)$ can be the minimum-action orbit.
 %   After closing: phi'' maps Start subset F_{sigma(1)} ∩ F_{sigma(2)} to F_{sigma(1)} ∩ F_{sigma(2)}.
 %   A closed orbit in the tube satisfies gamma(t_1) = gamma(t_{k+1}), i.e. phi''(x) = x.
 %   Action of the closed orbit through x: a''(phi''(x)) = a''(x) (since x is a fixed point).
-% [TODO: JÖRN - the two extension steps append sigma(1) and sigma(2).
-%   For the first extension: triple is (sigma(k-1), sigma(k), sigma(1)).
-%   For the second: triple is (sigma(k), sigma(1), sigma(2)).
-%   Need: F_{sigma(k)} -> F_{sigma(1)} and F_{sigma(1)} -> F_{sigma(2)} (directed edges exist).
-%   These are the same directed edges as sigma(1)->sigma(2) and sigma(1) already in the tube.
-%   Are these edges always valid? Yes, because sigma(1)->sigma(2) is the first edge of the tube.]
+% [JÖRN Q4: Closing requires two extension steps with triples:
+%   (1) (σ(k-1), σ(k), σ(1)): requires directed edge F_{σ(k)} → F_{σ(1)}.
+%   (2) (σ(k), σ(1), σ(2)): requires directed edge F_{σ(1)} → F_{σ(2)}.
+%   Edge F_{σ(1)} → F_{σ(2)} exists (it's the tube's first edge).
+%   Edge F_{σ(k)} → F_{σ(1)} is NOT guaranteed — it depends on the polytope.
+%   GAP: The algorithm box (Alg. 3.X) doesn't check F_{σ(k)} → F_{σ(1)} before closing.
+%   Should the "Try closing" step include: "if F_{σ(k)} → F_{σ(1)} is not a directed edge, skip"?
+%   (If the edge doesn't exist, the step map denominator ⟨R_{σ(k)}, n_{σ(1)}⟩ ≤ 0 and
+%   the step map is undefined, so the closing fails implicitly. But this should be explicit.)]
 Given a tube $T(\sigma(1), \ldots, \sigma(k))$,
 its \emph{closure} is obtained by performing two extension steps:
 appending $\sigma(k+1) = \sigma(1)$ and then $\sigma(k+2) = \sigma(2)$.
@@ -576,9 +620,9 @@ fixed points of $\varphi'' \colon \operatorname{Start}' \to F_{\sigma(1)} \cap F
 \[
   \gamma \text{ is a closed orbit in } T(\sigma)
   \;\Longleftrightarrow\;
-  \varphi''(\gamma(0)) = \gamma(0)
+  \varphi''(\gamma(t_1)) = \gamma(t_1)
   \;\text{ and }\;
-  \gamma(0) \in \operatorname{Start}'.
+  \gamma(t_1) \in \operatorname{Start}'.
 \]
 The action of the closed orbit through the fixed point $x$ is $a''(x)$.
 \end{lemma}
@@ -586,9 +630,9 @@ The action of the closed orbit through the fixed point $x$ is $a''(x)$.
 \begin{proof}
 A pure Reeb trajectory $\gamma \in T(\sigma(1), \ldots, \sigma(k))$ is closed
 iff $\gamma(t_{k+1}) = \gamma(t_1)$.
-After closure, $\gamma(t_{k+1}) = \varphi''(\gamma(0))$,
-so the periodicity condition is $\varphi''(\gamma(0)) = \gamma(0)$.
-The action is $a''(\varphi''(\gamma(0))) = a''(\gamma(0))$.
+After closure, $\gamma(t_{k+1}) = \varphi''(\gamma(t_1))$,
+so the periodicity condition is $\varphi''(\gamma(t_1)) = \gamma(t_1)$.
+The action is $a''(\varphi''(\gamma(t_1))) = a''(\gamma(t_1))$.
 \end{proof}
 
 \begin{algorithm}[Tube algorithm]\label{alg:tube}
@@ -656,33 +700,34 @@ Then recurse: given a tube $T(\sigma(1), \ldots, \sigma(k))$:
 \end{enumerate}
 
 \smallskip\noindent
-\textbf{Return} $(c^*)^{-1/2}$...
-% [TODO: JÖRN - check: is c_EHZ = c* directly, or is there a factor?
-%   In alg:ehz, the output is (max beta^T H beta)^{-1}. Here a(y) is the action (period)
-%   of the Reeb orbit, i.e. A(gamma) = T. The EHZ capacity is the minimum action.
-%   So c_EHZ = c* directly (no extra factor). But verify against Theorem~\ref{thm:main}.]
-$c^*$.
+\textbf{Return} $c^*$.
+% Source: CH2021 Cor.~1.15 (cor:computecehz): c_EHZ(X) = min A_comb(gamma).
+%   a(y) = action of the orbit, so c* = min action = c_EHZ directly.
 \end{algorithm}
 
 % -------------------------------------------------------------------------
 \subsection{Correctness}\label{subsec:tube-correctness}
 % -------------------------------------------------------------------------
 
+% [GAP - agent addition. Notes lines 88-92 ("Correctness argument (sketch)") are blank.
+%   The entire proposition, proof sketch, and Type 2 remark below are agent-written.
+%   Jörn: review or rewrite.]
 \begin{proposition}[Tube algorithm correctness]\label{prop:tube-correctness}
-% [TODO: JÖRN - this is a proof sketch. Full proof deferred to a separate section.
-%   Key claims:
+% [JÖRN Q5: This is a proof sketch. Claims:
 %   (1) HK2017 guarantees a minimum-action simple pure Reeb orbit exists.
-%   (2) Such an orbit corresponds to some combinatorial type sigma and lies in T(sigma).
-%   (3) The search tree is exhaustive: every T(sigma) is visited (up to pruning).
-%   (4) Each pruning lemma is correct: it never discards a tube containing a min-action orbit.
-%   Claim (4) needs verification for each lemma; claims (1-3) are standard.]
+%   (2) Such an orbit corresponds to some combinatorial type σ and lies in T(σ).
+%   (3) The search tree is exhaustive: every T(σ) is visited (up to pruning).
+%   (4) Each pruning lemma is correct (never discards a tube containing min-action orbit).
+%   Question: Is this proof sketch sufficient for the thesis, or should a full proof
+%   be written? If sketch is sufficient, are claims (1)-(4) correctly stated?
+%   Note: claim (1) uses HK2017 Thm~1.1 (simple orbit); claim (4) verified per lemma above.]
 Let $K$ be a symplectic polytope with no Type~$2$ minimum-action orbit
-(see Remark~\ref{rem:type-2} and \cite{CH2021}, Conjecture~conj:genericity).
+(see Remark~\ref{rem:type-2} and \cite[Conj.~1.26]{CH2021}).
 Then Algorithm~\ref{alg:tube} computes $c_{\mathrm{EHZ}}(K)$ correctly.
 \end{proposition}
 
 \begin{proof}[Proof sketch]
-By \cite{HK2017} (Theorem~\ref{thm:main}),
+By \cite{HK2017} (Theorem~\ref{thm:simple-minimizer}),
 there exists a minimum-action generalized Reeb orbit $\gamma^*$
 that is a simple pure Reeb orbit visiting each facet at most once.
 Since $K$ has no Type~$2$ orbit by hypothesis,
@@ -697,7 +742,7 @@ Each pruning lemma is sound:
 Lemmas~\ref{lem:prune-empty} and~\ref{lem:prune-action} discard only empty
 or suboptimal tubes;
 Lemma~\ref{lem:prune-rotation} uses the bound
-$\rho_{\mathrm{comb}}(\gamma^*) < 2$ from \cite{CH2021},
+$\rho_{\mathrm{comb}}(\gamma^*) \leq 2$ from \cite[Cor.~1.15]{CH2021},
 which $\gamma^*$'s tube does not violate;
 Lemma~\ref{lem:prune-simple} uses simplicity of $\gamma^*$.
 Hence $T(\sigma^*)$ survives all pruning steps.
@@ -734,7 +779,7 @@ A Type~2 orbit would involve a transition $F_i \to F_l$ where
 $F_i \cap F_l$ is a $1$-face (or $0$-face)
 rather than a $2$-face.
 
-By \cite[Conj.~conj:genericity]{CH2021},
+By \cite[Conj.~1.26]{CH2021},
 generic symplectic polytopes have no Type~2 minimum-action orbit,
 so Algorithm~\ref{alg:tube} is correct for generic polytopes.
 Handling Type~2 orbits for non-generic polytopes is left as future work.
