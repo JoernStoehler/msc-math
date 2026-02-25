@@ -18,6 +18,7 @@ pub mod volume;
 pub use qhull::QhullError;
 
 pub mod known_polytopes;
+pub mod rational;
 pub mod test_utils;
 
 #[cfg(test)]
