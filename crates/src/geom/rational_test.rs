@@ -289,14 +289,16 @@ fn lagrangian_cross_type_omega() {
 
     let check = |i: usize, k: usize, expected: Sign| {
         let (lo, hi) = (i.min(k), i.max(k));
-        if data.adjacency.contains(&(lo, hi)) {
-            let omega = omega0_rational(&normals[lo], &normals[hi]);
-            let sign = Sign::of(&omega);
-            assert_eq!(
-                sign, expected,
-                "pair ({lo}, {hi}): ω₀ = {omega}, expected sign {expected:?}"
-            );
-        }
+        assert!(
+            data.adjacency.contains(&(lo, hi)),
+            "pair ({lo}, {hi}) should be adjacent"
+        );
+        let omega = omega0_rational(&normals[lo], &normals[hi]);
+        let sign = Sign::of(&omega);
+        assert_eq!(
+            sign, expected,
+            "pair ({lo}, {hi}): ω₀ = {omega}, expected sign {expected:?}"
+        );
     };
 
     // (q₁ facets) × (p₁ facets): paired by symplectic plane (q₁, p₁)
@@ -376,45 +378,30 @@ fn margins_positive() {
             "{name}: min_abs_det should be positive, got {}",
             m.min_abs_det
         );
-        // min_omega_nonzero may be None if all ω₀ = 0 (pure Lagrangian),
-        // but for our polytopes it should be Some and positive
-        if let Some(ref mow) = m.min_omega_nonzero {
-            assert!(
-                mow.is_positive(),
-                "{name}: min_omega_nonzero should be positive, got {mow}"
-            );
-        }
+        // For simplex and hypercube, min_omega_nonzero must be Some (they have
+        // nonzero ω₀ pairs). For triangle×square, cross-type pairs also give nonzero ω₀.
+        let mow = m
+            .min_omega_nonzero
+            .as_ref()
+            .unwrap_or_else(|| panic!("{name}: min_omega_nonzero should be Some"));
+        assert!(
+            mow.is_positive(),
+            "{name}: min_omega_nonzero should be positive, got {mow}"
+        );
     }
 }
 
-/// Proposition: for the simplex, min_gap = 1/5.
+/// Proposition: for the simplex, min_gap = 9/5.
 ///
-/// The simplex has vertices at (-1/5,...,-1/5) and (4/5, -1/5, -1/5, -1/5) etc.
-/// The tightest non-incidence gap is 1/5: the origin vertex (-1/5,...,-1/5)
-/// has gap 1/5 from the sum constraint (facet 4).
-/// Actually: gap = h₄ - ⟨n₄, v⟩ = 1 - ((-1/5)×4) = 1 + 4/5 = 9/5.
-/// Let me verify with the vertex omitting facet 0: v has x₁ = -1/5+1 = 4/5
-/// (no wait, let me just trust the code and test a known value).
+/// By symmetry all non-incidence gaps are equal. For vertex {0,1,2,3}
+/// (v = (-1/5,...,-1/5)), the gap from facet 4 is:
+///   h₄ - ⟨(1,1,1,1), (-1/5,...,-1/5)⟩ = 1 - (-4/5) = 9/5.
+/// Every other vertex-facet pair gives the same value by the simplex's
+/// permutation symmetry.
 #[test]
 fn simplex_min_gap() {
     let s = rational_simplex();
     let m = &s.combinatorial_data().margins;
-
-    // The minimum gap should be positive; let's compute what it is.
-    // For vertex {0,1,2,3} (v = (-1/5,...,-1/5)):
-    //   gap from facet 4: h₄ - ⟨(1,1,1,1), (-1/5,...,-1/5)⟩ = 1 - (-4/5) = 9/5
-    // For vertex {1,2,3,4} (omitting facet 0, so -x₁ > 1/5 at all other facets):
-    //   v₁ is determined by facets 1,2,3,4: -x₂=1/5, -x₃=1/5, -x₄=1/5, x₁+x₂+x₃+x₄=1
-    //   → x₂=-1/5, x₃=-1/5, x₄=-1/5, x₁ = 1+1/5+1/5+1/5 = 8/5
-    //   gap from facet 0: h₀ - ⟨(-1,0,0,0), (8/5,-1/5,-1/5,-1/5)⟩ = 1/5 - (-8/5) = 1/5+8/5 = 9/5
-    // Hmm, all gaps are 9/5? Let me think more carefully.
-    //
-    // Actually vertex {0,1,2,4} omits facet 3 (-x₄ ≤ 1/5):
-    //   -x₁ = 1/5, -x₂ = 1/5, -x₃ = 1/5, x₁+x₂+x₃+x₄ = 1
-    //   → x₁=-1/5, x₂=-1/5, x₃=-1/5, x₄ = 1+3/5 = 8/5
-    //   gap from facet 3: h₃ - ⟨(0,0,0,-1), (-1/5,-1/5,-1/5,8/5)⟩ = 1/5 - (-8/5) = 9/5
-    //
-    // All gaps are 9/5 by symmetry. So min_gap = 9/5.
     assert_eq!(m.min_gap, frac(9, 5));
 }
 
@@ -614,6 +601,87 @@ fn reject_nonpositive_height() {
     assert!(
         matches!(err, RationalConstructionError::NonPositiveHeight { index: 1 }),
         "expected NonPositiveHeight at index 1, got {err}"
+    );
+}
+
+/// Redundant facet should fail: 6 facets defining a simplex plus a
+/// far-away facet that no vertex touches.
+#[test]
+fn reject_redundant_facet() {
+    // Start with simplex (5 facets), add a 6th facet far away.
+    let normals = vec![
+        [rat(-1), rat(0), rat(0), rat(0)],
+        [rat(0), rat(-1), rat(0), rat(0)],
+        [rat(0), rat(0), rat(-1), rat(0)],
+        [rat(0), rat(0), rat(0), rat(-1)],
+        [rat(1), rat(1), rat(1), rat(1)],
+        [rat(1), rat(0), rat(0), rat(0)], // redundant: x₁ ≤ 100
+    ];
+    let heights = vec![frac(1, 5), frac(1, 5), frac(1, 5), frac(1, 5), rat(1), rat(100)];
+    let err = RationalPolytope4D::new(normals, heights).unwrap_err();
+    assert!(
+        matches!(err, RationalConstructionError::RedundantFacet(5)),
+        "expected RedundantFacet(5), got {err}"
+    );
+}
+
+/// Non-simple polytope should fail: a polytope where a vertex lies on >4 facets.
+///
+/// Construction: take the simplex (5 facets, vertex (-1/5,...,-1/5) on facets
+/// {0,1,2,3}) and add a 6th facet x₁ - x₂ ≤ 0 that also passes through
+/// this vertex (since x₁ = x₂ = -1/5 there). This creates a vertex on 5 facets.
+/// The 6th facet is not redundant (it cuts through the interior of the simplex).
+#[test]
+fn reject_not_simple() {
+    let normals = vec![
+        [rat(-1), rat(0), rat(0), rat(0)],   // facet 0: -x₁ ≤ 1/5
+        [rat(0), rat(-1), rat(0), rat(0)],    // facet 1: -x₂ ≤ 1/5
+        [rat(0), rat(0), rat(-1), rat(0)],    // facet 2: -x₃ ≤ 1/5
+        [rat(0), rat(0), rat(0), rat(-1)],    // facet 3: -x₄ ≤ 1/5
+        [rat(1), rat(1), rat(1), rat(1)],     // facet 4: sum ≤ 1
+        [rat(1), rat(-1), rat(0), rat(0)],    // facet 5: x₁ - x₂ ≤ 0
+    ];
+    // At vertex (-1/5,-1/5,-1/5,-1/5): facet 5 gives (-1/5)-(-1/5) = 0 ≤ 0. Tight!
+    // So this vertex lies on facets {0,1,2,3,5} → 5 facets → not simple.
+    // Height for facet 5 must be positive: ⟨(1,-1,0,0), x⟩ ≤ h.
+    // We need h > 0, and the facet must also be satisfied by all simplex vertices.
+    // Simplex vertex omitting facet 0: (8/5, -1/5, -1/5, -1/5).
+    //   (8/5) - (-1/5) = 9/5. So h ≥ 9/5 to keep this vertex.
+    // Simplex vertex omitting facet 1: (-1/5, 8/5, -1/5, -1/5).
+    //   (-1/5) - (8/5) = -9/5 ≤ h. Always satisfied.
+    // Use h = 9/5 to make the facet non-redundant (tight at one vertex).
+    // Actually at vertex omitting facet 0: gap = 9/5 - 9/5 = 0 → also tight!
+    // So vertex (8/5,-1/5,-1/5,-1/5) lies on facets {1,2,3,4,5} → also 5 facets.
+    // Either way, not simple.
+    let heights = vec![
+        frac(1, 5), frac(1, 5), frac(1, 5), frac(1, 5),
+        rat(1),
+        frac(9, 5),
+    ];
+    let err = RationalPolytope4D::new(normals, heights).unwrap_err();
+    assert!(
+        matches!(err, RationalConstructionError::NotSimple { .. }),
+        "expected NotSimple, got {err}"
+    );
+}
+
+/// No vertices should fail: halfspaces that don't enclose a bounded region.
+#[test]
+fn reject_no_vertices() {
+    // Five parallel halfspaces: all normals point in the same direction.
+    // No 4-subset forms a non-singular system, so no vertices.
+    let normals = vec![
+        [rat(1), rat(0), rat(0), rat(0)],
+        [rat(2), rat(0), rat(0), rat(0)],
+        [rat(3), rat(0), rat(0), rat(0)],
+        [rat(4), rat(0), rat(0), rat(0)],
+        [rat(5), rat(0), rat(0), rat(0)],
+    ];
+    let heights = vec![rat(1), rat(2), rat(3), rat(4), rat(5)];
+    let err = RationalPolytope4D::new(normals, heights).unwrap_err();
+    assert!(
+        matches!(err, RationalConstructionError::NoVertices),
+        "expected NoVertices, got {err}"
     );
 }
 

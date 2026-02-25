@@ -33,7 +33,7 @@
 
 use num_bigint::BigInt;
 use num_rational::BigRational;
-use num_traits::{One, Signed, Zero};
+use num_traits::{One, Signed, ToPrimitive, Zero};
 use std::collections::{BTreeMap, BTreeSet};
 
 use super::polytope::Polytope4D;
@@ -304,32 +304,6 @@ impl RationalPolytope4D {
         let (vertex_descriptors, vertices, all_dets, all_gaps) =
             Self::enumerate_vertices_exact(&normals, &heights)?;
 
-        // Check simplicity: look for points on >4 facets.
-        // For each candidate 5-subset, if the intersection point (if unique)
-        // lies inside K, then it's on ≥5 facets → not simple.
-        // But simpler: we already enumerated all 4-subsets. A vertex on >4 facets
-        // would appear as multiple 4-subsets sharing the same point.
-        // We check by looking for duplicate vertices among the enumerated ones.
-        for (idx, vd) in vertex_descriptors.iter().enumerate() {
-            // Count how many facets are incident (gap = 0)
-            let mut incident_facets = vd.clone();
-            for i in 0..f {
-                if vd.contains(&i) {
-                    continue;
-                }
-                let gap = &heights[i] - dot4(&normals[i], &vertices[idx]);
-                if gap.is_zero() {
-                    incident_facets.insert(i);
-                }
-            }
-            if incident_facets.len() > 4 {
-                return Err(RationalConstructionError::NotSimple {
-                    vertex_index: idx,
-                    facets: incident_facets,
-                });
-            }
-        }
-
         // Check irredundancy: every facet has at least one vertex
         for i in 0..f {
             if !vertex_descriptors.iter().any(|vd| vd.contains(&i)) {
@@ -439,22 +413,39 @@ impl RationalPolytope4D {
             // Solve exactly
             let v = solve4(&rows, &rhs).unwrap(); // safe: det ≠ 0
 
-            // Check all gaps
-            let mut all_positive = true;
+            // Check all gaps. gap > 0 means the facet is non-incident.
+            // gap = 0 means the vertex lies on >4 facets (not simple).
+            // gap < 0 means the point is outside K (not a vertex).
+            let mut all_nonnegative = true;
+            let mut has_zero_gap = false;
+            let mut zero_gap_facets = BTreeSet::from(subset);
             let mut subset_gaps = Vec::new();
             for i in 0..f {
                 if subset.contains(&i) {
                     continue;
                 }
                 let gap = &heights[i] - dot4(&normals[i], &v);
-                if !gap.is_positive() {
-                    all_positive = false;
+                if gap.is_negative() {
+                    all_nonnegative = false;
                     break;
                 }
-                subset_gaps.push(gap);
+                if gap.is_zero() {
+                    has_zero_gap = true;
+                    zero_gap_facets.insert(i);
+                } else {
+                    subset_gaps.push(gap);
+                }
             }
 
-            if all_positive {
+            if all_nonnegative && has_zero_gap {
+                // Point is inside K but on >4 facets → not simple
+                return Err(RationalConstructionError::NotSimple {
+                    vertex_index: vertex_descriptors.len(),
+                    facets: zero_gap_facets,
+                });
+            }
+
+            if all_nonnegative && !has_zero_gap {
                 vertex_descriptors.push(BTreeSet::from(subset));
                 vertices.push(v);
                 dets.push(d);
@@ -582,10 +573,10 @@ impl RationalPolytope4D {
 
 /// Convert a BigRational to f64 (best approximation).
 fn rational_to_f64(r: &BigRational) -> f64 {
-    // num-rational doesn't have a direct to_f64, so we use
-    // numer/denom conversion via string parsing or big integer division.
-    let numer: f64 = r.numer().to_string().parse().unwrap_or(f64::NAN);
-    let denom: f64 = r.denom().to_string().parse().unwrap_or(f64::NAN);
+    // BigInt implements ToPrimitive, giving a direct f64 conversion
+    // that handles large values better than string parsing.
+    let numer: f64 = r.numer().to_f64().unwrap_or(f64::NAN);
+    let denom: f64 = r.denom().to_f64().unwrap_or(f64::NAN);
     numer / denom
 }
 
