@@ -1,68 +1,54 @@
 % appendix-numerical-combinatorics.tex — \input'd from appendix-numerical.tex
 %
-% Stability of polytope combinatorial types under coordinate perturbation.
-% Shows that combinatorial type is an open condition (Theorems A.5–A.6)
-% and that Lagrangian ω₀=0 constraints can be realized exactly nearby (A.7).
+% Exact combinatorial data of polytopes via rational arithmetic,
+% and preservation under f64 rounding.
 %
-% Sources: agent-written based on discussion with Jörn (2026-02-24).
-%   Simplicity lemma and openness proof developed during planning.
-%   Stability bound is standard matrix perturbation theory.
-%   Theorem 3 (ω₀ projection) is new.
+% Sources: agent-written from geom/rational.rs code and doc comments.
 %
 % Structure:
-%   - Definition: simple combinatorial type (face lattice + ω₀ signs)
-%   - Definition: realization
-%   - Simplicity lemma (key technical tool)
-%   - Theorem: openness of realization space
-%   - Theorem: quantitative stability
-%   - Theorem: exact realization with ω₀ = 0
+%   - Definition: combinatorial data C(K)
+%   - Remark: simple polytopes
+%   - Definition: rational polytope
+%   - Definition: margins
+%   - Lemma: self-consistency
+%   - Proposition: f64 combinatorial preservation
+%   - Remark: Lagrangian products
+%   - Remark: application to algorithm soundness
 
-% [TODO: JÖRN - all three proofs are agent-written and need verification.
-%  The simplicity lemma proof is short and self-contained.
-%  The openness proof uses the simplicity lemma for Case A (singular N_T
-%  under perturbation). The stability proof is standard perturbation theory.
-%  The ω₀ projection argument is the least standard.
-%  NOTE: The stability proof uses operator-norm bounds (||ΔN|| ≤ ε_n),
-%  but the theorem specifies entry-wise max norm (max_i ||n_i - n_{0,i}||₂).
-%  The entry-wise bound implies ||ΔN||_op ≤ sqrt(4)·ε_n = 2ε_n, so the
-%  proof's constants need a factor of 2 adjustment. Currently omitted
-%  for clarity; please verify and adjust the bound if needed.]
+% [TODO: JÖRN - STATEMENTS ONLY, no proofs yet.
+%  The definitions and propositions are derived from
+%  the code in geom/rational.rs (exact rational arithmetic).
+%  Please review whether the mathematical framing is correct.
+%  Key question: is Proposition~\ref{prop:f64-preservation}
+%  stated correctly? It's a standard continuity argument
+%  but needs your sign-off.]
 
 The algorithms in Section~\ref{sec:algorithms} operate on a polytope
 $K = K(n, h) = \{x \in \mathbb{R}^4 : \langle n_i, x \rangle \leq h_i,
-\; i = 1, \ldots, F\}$
-with unit outward normals $n_i \in S^3$ and heights $h_i > 0$.
-In practice, the coordinates $(n, h)$ are represented in
+\; i = 1, \ldots, F\}$.
+In practice, the coordinates are represented in
 \texttt{f64} (IEEE~754 double precision).
-The algorithm must determine the combinatorial type of~$K$
-(which facets share vertices, which $\omega_0$~signs are
-positive or zero), but the operations involved---solving
-linear systems, computing vertices, checking
-incidence---introduce rounding errors.
+This section addresses the combinatorial structure of polytopes
+under this representation.
 
-This section shows that polytope combinatorial types
-are stable under small perturbations of the coordinates.
-The \texttt{f64} polytope~$\hat K = K(\hat n, \hat h)$
-has a definite combinatorial type---determined by its
-geometry, regardless of whether our floating-point
-predicates can fully determine it.
-Theorems~\ref{thm:realization-open}
-and~\ref{thm:quantitative-stability} show that any
-sufficiently close coordinates define a polytope with the
-same combinatorial type.
-When some facet pairs satisfy $\omega_0 = 0$
-(as in Lagrangian products),
-Theorem~\ref{thm:exact-realization} shows that nearby
-exact coordinates with $\omega_0 = 0$ exist.
+The key idea is to avoid numerical predicates entirely
+for discrete combinatorial decisions.
+We represent polytopes with exact rational coordinates
+($n_i \in \mathbb{Q}^4$, $h_i \in \mathbb{Q}_{>0}$),
+compute combinatorial data exactly over~$\mathbb{Q}$,
+and convert to \texttt{f64} only for continuous computation
+(e.g.\ the SVD step of the KKT solver).
+The exact rational polytope is the source of truth
+for all combinatorial decisions;
+the \texttt{f64} polytope is a derived quantity
+for fast numerical computation.
 
-A polytope $K \subset \mathbb{R}^4$ is \emph{simple}
-if every vertex lies on exactly four facets.
-
-\begin{definition}[Combinatorial type of a simple polytope]%
-\label{def:simple-combinatorial-type}
+\begin{definition}[Combinatorial data]%
+\label{def:combinatorial-data}
 Let $K = K(n, h)$ be a simple polytope with
-$F$~facets in~$\mathbb{R}^4$.
-Its \emph{combinatorial type} is $C(K) = (\mathcal{V}, D)$
+$F$~facets in~$\mathbb{R}^4$,
+where the normals $n_i$ are nonzero (not necessarily unit).
+Its \emph{combinatorial data} is $C(K) = (\mathcal{V}, D)$
 where:
 \begin{enumerate}
 \item \emph{Vertex descriptors.}
@@ -74,11 +60,6 @@ where:
   Facets $i$ and~$k$ are
   \emph{adjacent} if $\{i, k\} \subset S_j$ for some~$j$,
   i.e.\ they share a vertex.
-  In a simple polytope, adjacent facets share a
-  $2$-face: $F_i \cap F_k$ has
-  dimension~$4 - 2 = 2$, because simplicity forces
-  each face of codimension~$c$ to lie on exactly
-  $c$~facets.
 \item \emph{Sign pattern.}
   $D(i, k) = \operatorname{sign}\bigl(
   \omega_0(n_i, n_k)\bigr) \in \{+, -, 0\}$
@@ -86,365 +67,170 @@ where:
 \end{enumerate}
 \end{definition}
 
-We say that coordinates
-$(n, h) \in (S^3)^F \times \mathbb{R}_{>0}^F$
-\emph{realize} a combinatorial type
-$C = (\mathcal{V}, D)$
-if $C\bigl(K(n, h)\bigr) = C$.
-
-\begin{definition}[Realization space]%
-\label{def:realization}
-For a combinatorial type $C = (\mathcal{V}, D)$,
-the \emph{face-lattice realization space} is
-\[
-\mathcal{R}(C) = \bigl\{(n, h) :
-\text{the vertex descriptors of } K(n,h)
-\text{ equal } \mathcal{V}\bigr\},
-\]
-ignoring the sign pattern.
-Explicitly, $(n, h) \in \mathcal{R}(C)$ means:
-\begin{enumerate}
-\item \textbf{Vertices exist and are interior.}
-  For each $S_j \in \mathcal{V}$, the $4 \times 4$~matrix
-  $N_{S_j}$ (rows~$= n_i^\top$ for $i \in S_j$) is
-  non-singular, and the vertex
-  $v_j = N_{S_j}^{-1}\, h_{S_j}$
-  satisfies
-  $h_i - \langle n_i, v_j \rangle > 0$
-  for all $i \notin S_j$.
-  We call
-  $g_j^i = h_i - \langle n_i, v_j \rangle$
-  the \emph{non-incidence gap}.
-\item \textbf{No spurious vertices.}
-  For each 4-element subset $T \subset \{1, \ldots, F\}$
-  with $T \notin \mathcal{V}$:
-  either $N_T$~is singular,
-  or the point $w_T = N_T^{-1}\, h_T$ violates some
-  constraint ($\exists\, k \notin T :
-  \langle n_k, w_T \rangle > h_k$).
-\end{enumerate}
-The \emph{full realization space} is
-$\mathcal{R}(C, D) = \{(n, h) \in \mathcal{R}(C) :
-\operatorname{sign}(\omega_0(n_i, n_k)) = D(i,k)
-\text{ for all adjacent } (i,k)\}$.
-\end{definition}
-
 \begin{remark}[Scope: simple polytopes]%
 \label{rem:simple-scope}
-We restrict to simple combinatorial types throughout.
+We restrict to simple polytopes throughout.
 This covers all polytopes arising in our experiments:
 random polytopes are almost surely simple,
 Lagrangian products are always simple,
-and polytopes from future optimization procedures
+and polytopes from future optimisation procedures
 (e.g.\ gradient descent on the systolic ratio)
 can be perturbed to simple ones if needed.
 \end{remark}
 
-The following lemma is the key technical tool for the
-openness proof.
+\begin{definition}[Rational polytope]%
+\label{def:rational-polytope}
+A \emph{rational polytope} is $K = K(n, h)$ with
+normals $n_i \in \mathbb{Q}^4 \setminus \{0\}$
+and heights $h_i \in \mathbb{Q}_{>0}$.
+The normals are \emph{not} required to be unit vectors.
 
-\begin{lemma}[No degenerate vertices in simple polytopes]%
-\label{lem:no-degenerate-vertices}
-% [TODO: JÖRN - verify this proof. Short and self-contained.]
-Let $K = K(n, h)$ be a simple polytope in~$\mathbb{R}^4$.
-Let $T \subset \{1, \ldots, F\}$ with $|T| = 4$ and
-$\operatorname{rank}(N_T) < 4$.
-Then the affine subspace
-$L_T = \{x \in \mathbb{R}^4 :
-\langle n_i, x \rangle = h_i \;\forall\, i \in T\}$
-does not intersect~$K$.
+Given a 4-element subset $S \subset \{1, \ldots, F\}$,
+let $N_S$ denote the $4 \times 4$ matrix whose rows
+are $n_i^\top$ for $i \in S$.
+The \emph{vertex at~$S$} is $v_S = N_S^{-1}\, h_S$
+(computed via Cramer's rule, exact over~$\mathbb{Q}$)
+when $\det(N_S) \neq 0$.
+The subset $S$ is a \emph{vertex descriptor}
+of~$K$ if $\det(N_S) \neq 0$ and all
+\emph{non-incidence gaps}
+$g^i_S \coloneqq h_i - \langle n_i, v_S \rangle > 0$
+for $i \notin S$ are strictly positive.
+\end{definition}
+
+\begin{definition}[Margins]%
+\label{def:margins}
+Let $K = K(n, h)$ be a simple rational polytope
+with combinatorial data
+$C(K) = (\mathcal{V}, D)$.
+The \emph{margins} of~$K$ are:
+\begin{enumerate}
+\item $\gamma_{\min} \coloneqq
+  \min_{S_j \in \mathcal{V}} \;\min_{i \notin S_j}\;
+  g^i_{S_j}$
+  \quad (smallest non-incidence gap),
+\item $\delta_{\min} \coloneqq
+  \min_{S_j \in \mathcal{V}} \;|\!\det(N_{S_j})|$
+  \quad (smallest vertex-matrix determinant),
+\item $\omega_{\min} \coloneqq
+  \min_{\substack{(i,k) \in \operatorname{adj}(\mathcal{V})
+  \\ D(i,k) \neq 0}} |\omega_0(n_i, n_k)|$
+  \quad (smallest nonzero $|\omega_0|$ value).
+\end{enumerate}
+All three quantities are computed exactly over~$\mathbb{Q}$.
+By construction, $\gamma_{\min} > 0$ and
+$\delta_{\min} > 0$.
+If all adjacent pairs have $D(i,k) = 0$,
+then $\omega_{\min}$ is undefined (vacuously satisfied).
+\end{definition}
+
+\begin{lemma}[Self-consistency]%
+\label{lem:self-consistency}
+Every simple rational polytope $K$ is consistent with
+its own combinatorial data~$C(K)$.
+The margins $\gamma_{\min}$, $\delta_{\min}$, and
+$\omega_{\min}$ (when defined) are strictly positive.
 \end{lemma}
 
 \begin{proof}
-Suppose $x \in L_T \cap K$.
-Then $x$ lies on the boundary of~$K$
-(it satisfies $|T| = 4$ facet equalities)
-and satisfies all remaining facet inequalities
-(since $x \in K$).
-Let $F(x) = \{i : \langle n_i, x \rangle = h_i\}$
-be the set of facets through~$x$.
-Then $T \subseteq F(x)$, so $|F(x)| \geq 4$.
-
-In a simple polytope in~$\mathbb{R}^4$,
-every boundary point~$x$ lies in the relative interior
-of a unique face of dimension~$4 - |F(x)|$.
-Since $|F(x)| \geq 4$, the face has dimension~$\leq 0$,
-so $x$~is a vertex.
-
-At a vertex of a simple polytope,
-exactly four facets meet and their normals are
-linearly independent: $\operatorname{rank}(N_{F(x)}) = 4$.
-If $|F(x)| = 4$, then $F(x) = T$
-(since $T \subseteq F(x)$ and both have four elements),
-giving $\operatorname{rank}(N_T) = 4$---a contradiction.
-If $|F(x)| > 4$, this contradicts simplicity
-(vertices of a simple polytope lie on exactly~$d = 4$ facets).
+$C(K)$ is defined as the data extracted from~$K$,
+so $C(K) = C(K)$.
+The margins are positive by the definitions:
+$\gamma_{\min} > 0$ because non-incidence gaps define
+vertex descriptors,
+$\delta_{\min} > 0$ because vertices arise only from
+non-singular subsystems,
+and $\omega_{\min} > 0$ because the minimum is taken
+over pairs with $D(i,k) \neq 0$.
 \end{proof}
 
-\begin{theorem}[Openness of the realization space]%
-\label{thm:realization-open}
-% [TODO: JÖRN - verify the Case A argument (singular N_T
-%  becoming non-singular under perturbation).]
-For any simple combinatorial type~$C$,
-the face-lattice realization space $\mathcal{R}(C)$ is open
-in $(S^3)^F \times \mathbb{R}_{>0}^F$.
-\end{theorem}
-
-\begin{proof}
-Fix $(n_0, h_0) \in \mathcal{R}(C)$.
-We show that a neighbourhood of $(n_0, h_0)$ lies
-in~$\mathcal{R}(C)$.
-
-\emph{Condition~(1) persists.}
-Non-singularity of~$N_{S_j}$ is an open condition
-(the determinant is continuous and non-zero).
-The vertex $v_j = N_{S_j}^{-1} h_{S_j}$ depends
-continuously on $(n, h)$
-(on the open set where $N_{S_j}$ is non-singular).
-Each non-incidence gap $g_j^i = h_i - \langle n_i, v_j \rangle$
-is therefore continuous, and $g_j^i(n_0, h_0) > 0$
-implies $g_j^i(n, h) > 0$ for $(n, h)$ sufficiently close.
-
-\emph{Condition~(2) persists.}
-Fix $T \notin \mathcal{V}$ with $|T| = 4$.
-At $(n_0, h_0)$, two cases arise:
-
-\emph{Case~B:} $N_T^{(0)}$ is non-singular.
-Then some gap is violated: $\langle n_{0,k}, w_{0,T} \rangle > h_{0,k}$
-for some $k \notin T$.
-By continuity, this strict inequality persists under
-small perturbation.
-
-\emph{Case~A:} $N_T^{(0)}$ is singular
-($\operatorname{rank} < 4$).
-By Lemma~\ref{lem:no-degenerate-vertices},
-$L_T \cap K(n_0, h_0) = \emptyset$.
-Since $K(n_0, h_0)$ is compact and $L_T$~is closed,
-$\operatorname{dist}(L_T, K(n_0, h_0)) \eqqcolon \rho > 0$.
-If $N_T$ becomes non-singular under a perturbation
-of magnitude~$\varepsilon$,
-the point $w_T = N_T^{-1} h_T$ satisfies
-$\|N_T^{(0)}\, w_T - h_{0,T}\| \leq
-\varepsilon_h + \varepsilon_n\,\|w_T\|$.
-Two sub-cases:
-if $\|w_T\| > R$ for $R$ large enough that
-$K(n, h) \subset B(0, R)$
-(which holds for $\varepsilon$ small, since $K$ is bounded),
-then $w_T \notin K(n, h)$ trivially;
-otherwise $\|w_T\| \leq R$, so
-$\operatorname{dist}(w_T, L_T^{(0)})
-\leq (\varepsilon_h + \varepsilon_n\, R)\,/\,\sigma_3$
-where $\sigma_3 > 0$ is the smallest non-zero singular
-value of~$N_T^{(0)}$, and
-$K(n, h)$ moves by $O(\varepsilon)$ in the Hausdorff
-metric.
-For $\varepsilon$ small enough:
+\begin{remark}[Conversion to \texttt{f64}]%
+\label{rem:f64-conversion}
+A rational polytope $K = K(n, h)$ is converted to
+\texttt{f64} by normalizing each normal to a unit vector:
 \[
-  \operatorname{dist}(w_T, K(n, h))
-  \geq \rho - O(\varepsilon)
-  > 0,
+  \hat n_i = \frac{n_i}{\|n_i\|}, \qquad
+  \hat h_i = \frac{h_i}{\|n_i\|}.
 \]
-so $w_T \notin K(n, h)$ and condition~(2) holds.
+The halfspace $\langle n_i, x \rangle \leq h_i$ is
+equivalent to
+$\langle \hat n_i, x \rangle \leq \hat h_i$.
+The normalization and the rational-to-\texttt{f64}
+conversion each introduce $O(\varepsilon_{\mathrm{mach}})$
+rounding error per coordinate.
+\end{remark}
 
-Both cases cover an open neighbourhood.
-Since $T$ ranges over finitely many subsets,
-$\mathcal{R}(C)$ is a finite intersection of open sets,
-hence open.
-\end{proof}
-
-\begin{theorem}[Quantitative stability]%
-\label{thm:quantitative-stability}
-Let $(n_0, h_0) \in \mathcal{R}(C)$.
-Define:
-\begin{align*}
-  \gamma &= \min_{j,\, i \notin S_j} g_j^i(n_0, h_0) > 0
-    &&\text{(minimum non-incidence gap),} \\
-  \sigma &= \min_j \sigma_{\min}(N_{S_j}^{(0)}) > 0
-    &&\text{(minimum singular value),} \\
-  V &= \max_j \|v_{0,j}\|
-    &&\text{(maximum vertex norm),} \\
-  H &= \max_j \|h_{0, S_j}\|
-    &&\text{(maximum height-vector norm).}
-\end{align*}
-
-Let $(n, h)$ satisfy
-$\max_i \|n_i - n_{0,i}\|_2 \leq \varepsilon_n$
-and $\max_i |h_i - h_{0,i}| \leq \varepsilon_h$
-with $\varepsilon_n < \sigma / 2$.
-Then:
+% [TODO: JÖRN - verify this proposition.
+%  It's a standard continuity argument:
+%  if all predicates have margin > 0 and the perturbation
+%  is smaller than the margin, the predicates don't change.
+%  The quantitative bound may need refinement.]
+\begin{proposition}[Combinatorial preservation under rounding]%
+\label{prop:f64-preservation}
+Let $K = K(n, h)$ be a simple rational polytope with
+margins $\gamma_{\min}$, $\delta_{\min}$, $\omega_{\min}$.
+Let $\hat K = K(\hat n, \hat h)$ be the \texttt{f64}
+polytope obtained by normalizing and rounding
+(Remark~\ref{rem:f64-conversion}).
+If the coordinate-wise rounding error satisfies
+$\|n_i / \|n_i\| - \hat n_i\| \leq \varepsilon$
+and $|h_i / \|n_i\| - \hat h_i| \leq \varepsilon$
+for all~$i$, and $\varepsilon$ is small enough relative
+to the margins, then the \texttt{f64} polytope~$\hat K$
+has the same combinatorial data as~$K$:
 \begin{enumerate}
-\item Each vertex satisfies
-  $\|v_j - v_{0,j}\| \leq \Delta v$,
-  where
-  \[
-    \Delta v
-    = \frac{\varepsilon_h\, \sigma + \varepsilon_n\, H}
-           {\sigma\,(\sigma - \varepsilon_n)}.
-  \]
-\item Each non-incidence gap satisfies
-  $|g_j^i(n, h) - g_j^i(n_0, h_0)|
-  \leq \varepsilon_h + \varepsilon_n\,(V + \Delta v)
-  + \Delta v$.
-\item If additionally the right-hand side
-  of~(2) is less than~$\gamma$,
-  then all gaps remain positive and $(n, h)$ satisfies
-  condition~(1) of Definition~\ref{def:realization}.
+\item Same vertex descriptors: every vertex of~$K$
+  corresponds to a vertex of~$\hat K$ and vice versa.
+\item Same adjacency: the facet adjacency graph is identical.
+\item Same sign pattern: for every adjacent pair $(i,k)$,
+  $\operatorname{sign}(\omega_0(\hat n_i, \hat n_k))
+  = D(i,k)$.
 \end{enumerate}
-Condition~(2) (no spurious vertices) is not quantified
-here; it persists by the qualitative argument in
-Theorem~\ref{thm:realization-open}.
-\end{theorem}
+\end{proposition}
 
-\begin{proof}
-\emph{Part~(1).}
-Write
-$v_j - v_{0,j} = N_{S_j}^{-1} h_{S_j}
-- N_{S_j}^{(0),-1} h_{0,S_j}$.
-Adding and subtracting $N_{S_j}^{-1} h_{0,S_j}$:
-\begin{align*}
-  v_j - v_{0,j}
-  &= N_{S_j}^{-1}(h_{S_j} - h_{0,S_j})
-     + (N_{S_j}^{-1} - N_{S_j}^{(0),-1})\, h_{0,S_j}.
-\end{align*}
-For the first term:
-$\|N_{S_j}^{-1}\| \leq 1/(\sigma - \varepsilon_n)$
-by Weyl's inequality, so
-$\|N_{S_j}^{-1}(h_{S_j} - h_{0,S_j})\|
-\leq \varepsilon_h / (\sigma - \varepsilon_n)$.
-For the second term, the resolvent identity
-$A^{-1} - B^{-1} = A^{-1}(B - A) B^{-1}$ gives
-\[
-  \|N_{S_j}^{-1} - N_{S_j}^{(0),-1}\|
-  \leq \frac{\varepsilon_n}{\sigma\,(\sigma - \varepsilon_n)},
-\]
-so the second term is bounded by
-$\varepsilon_n\, H / (\sigma\,(\sigma - \varepsilon_n))$.
-Combining yields the stated bound~$\Delta v$.
-
-\emph{Part~(2).}
-\begin{align*}
-  g_j^i(n, h) - g_j^i(n_0, h_0)
-  &= (h_i - h_{0,i})
-     - \langle n_i - n_{0,i},\, v_j \rangle
-     - \langle n_{0,i},\, v_j - v_{0,j} \rangle.
-\end{align*}
-The three terms are bounded by
-$\varepsilon_h$,
-$\varepsilon_n \|v_j\| \leq \varepsilon_n(V + \Delta v)$,
-and $\|v_j - v_{0,j}\| \leq \Delta v$
-(using $\|n_{0,i}\| = 1$), respectively.
-
-\emph{Part~(3).}
-If the bound in~(2) is less than~$\gamma$,
-then $g_j^i(n, h) > g_j^i(n_0, h_0) - \gamma \geq 0$.
-Non-singularity: $\sigma_{\min}(N_{S_j})
-\geq \sigma - \varepsilon_n > \sigma/2 > 0$.
-\end{proof}
-
-\begin{theorem}[Exact realization with Lagrangian 2-faces]%
-\label{thm:exact-realization}
-% [TODO: JÖRN - verify the projection argument,
-%  especially the interaction between ω₀ = 0 projection
-%  and the unit-normal constraint n_i ∈ S³.]
-Let $(\hat n, \hat h)$ define a simple polytope~$\hat K$
-with face-lattice type~$C$.
-Let $D$ be a sign pattern for~$C$, and suppose:
-\begin{enumerate}
-\item For each adjacent pair $(i, k)$ with $D(i,k) \neq 0$:
-  \[
-    \operatorname{sign}\bigl(\omega_0(\hat n_i, \hat n_k)\bigr)
-    = D(i,k),
-    \qquad
-    |\omega_0(\hat n_i, \hat n_k)| \geq \delta_\omega > 0.
-  \]
-\item For each adjacent pair $(i, k)$ with $D(i,k) = 0$:
-  \[
-    |\omega_0(\hat n_i, \hat n_k)| \leq \varepsilon_\omega.
-  \]
-\item A normal perturbation of
-  magnitude~$O(\varepsilon_\omega)$ preserves the
-  face lattice of~$\hat K$
-  (this holds when $\varepsilon_\omega$ is small
-  enough that Theorem~\ref{thm:quantitative-stability}(3)
-  applies with $\varepsilon_n = O(\varepsilon_\omega)$,
-  $\varepsilon_h = 0$).
-\end{enumerate}
-Then there exist unit normals
-$n^* \in (S^3)^F$ with
-$\|\hat n - n^*\| \leq O(\varepsilon_\omega)$
-such that $(n^*, \hat h)$ realizes~$(C, D)$ exactly:
-the face lattice matches~$C$,
-and $\omega_0(n^*_i, n^*_k) = 0$ for all pairs
-with $D(i,k) = 0$.
-\end{theorem}
-
-\begin{proof}
-% FIXME(hbox): 10pt — inline math with subscripts; try display math for the constraint
-For each adjacent pair $(i, k)$ with $D(i,k) = 0$,
-the constraint $\omega_0(n_i, n_k) = 0$ defines a
-smooth codimension-1 submanifold of~$(S^3)^F$
-at any point where the gradient
-$\nabla_{(n_i, n_k)} \omega_0$ is non-zero
-(which holds since $\omega_0$ is a non-degenerate
-bilinear form on~$\mathbb{R}^4$).
-The closest point on this submanifold to $(\hat n_i, \hat n_k)$
-is at distance $O(|\omega_0(\hat n_i, \hat n_k)|) \leq O(\varepsilon_\omega)$.
-
-% [TODO: JÖRN - the projection needs to preserve n_i ∈ S³ (unit normals).
-%  Projecting onto {ω₀ = 0} ∩ (S³)^F is well-defined since both constraints
-%  are smooth and transversal for generic normals. The bound O(ε_ω) holds
-%  because the projection onto the intersection of two smooth manifolds has
-%  distance bounded by the maximum of the individual distances, up to a
-%  constant depending on the angle between the tangent spaces.]
-
-Taking $n^*$ as the projection of $\hat n$ onto the
-intersection of all $\omega_0 = 0$ constraints with $(S^3)^F$:
-$\|\hat n - n^*\| \leq O(\varepsilon_\omega)$.
-By hypothesis~(3), this perturbation is within the stability
-budget of Theorem~\ref{thm:quantitative-stability},
-so the face lattice is preserved.
-The non-zero $\omega_0$ signs are preserved since
-$|\omega_0(\hat n_i, \hat n_k)| \geq \delta_\omega$
-and the perturbation changes $\omega_0$ by at most
-$O(\varepsilon_\omega) \ll \delta_\omega$.
-\end{proof}
+\begin{remark}[Lagrangian products]%
+\label{rem:lagrangian-preservation}
+For a Lagrangian product $K = K_q \times_L K_p$,
+the normals of~$K_q$ lie in the $q$-plane
+$\{(n_1, n_2, 0, 0)\}$ and those of~$K_p$ in the
+$p$-plane $\{(0, 0, n_3, n_4)\}$.
+For same-type adjacent pairs (both $q$-facets or
+both $p$-facets), $\omega_0(n_i, n_k) = 0$ exactly,
+because $\omega_0$ vanishes on each Lagrangian plane.
+This holds for both the rational and the \texttt{f64}
+polytope (the zero is structural, not approximate).
+The sign pattern of a Lagrangian product therefore has
+$D(i,k) = 0$ for all same-type pairs, and
+$D(i,k) \neq 0$ only for cross-type pairs
+(one $q$-facet and one $p$-facet).
+\end{remark}
 
 \begin{remark}[Application to algorithm soundness]%
-\label{rem:exact-realization-soundness}
-Theorem~\ref{thm:exact-realization} provides the
-conceptual framework for the numerical algorithm:
+\label{rem:interpretation}
+The implementation follows this two-level architecture:
 \begin{enumerate}
-\item An exact polytope $K^* = K(n^*, \hat h)$ exists
-  with fully determined combinatorial structure $(C, D)$.
-\item The positivity predicate $\tilde P_{>0}$
-  (Section~\ref{app:svd-step}) is sound for~$K^*$:
-  $\textsc{true}$ means the coefficient
-  vector~$\hat\beta$ certifies admissibility,
-  $\textsc{false}$ means~$\hat\beta$ certifies
-  inadmissibility,
-  and $\textsc{unknown}$ (some $\hat\beta_i \approx 0$)
-  is conservative---the candidate is kept for
-  further consideration rather than discarded.
-\item For adjacent pairs with $D(i,k) = 0$
-  (Lagrangian 2-faces):
-  the exact directed adjacency condition is
-  $\omega_0(n^*_k, n^*_i) = 0 \geq 0$, so the
-  pair is genuinely valid.
-  In the implementation, the test
-  $\omega_0(\hat n_k, \hat n_i) \geq 0$ is a binary
-  check (not three-valued): for Lagrangian products,
-  the billiard algorithm is used, which does not
-  apply directed adjacency filtering;
-  for general polytopes, the binary check may
-  exclude pairs with $\omega_0 \approx 0$, but this
-  affects only the pruning optimisation, not the
-  unpruned algorithm's soundness.
-\item Consequently, the certified capacity is an
-  upper bound on $c_{\mathrm{EHZ}}(K^*)$:
-  the algorithm explores a superset of the valid
-  $(S, \sigma)$ pairs (via conservative inclusion
-  decisions and the unpruned search),
-  and the certified~$Q$ value is a lower bound on
-  the true maximum~$Q$.
+\item \emph{Exact level.}
+  The polytope is stored with rational coordinates.
+  Combinatorial data~$C = (\mathcal{V}, D)$ and
+  margins are computed exactly over~$\mathbb{Q}$
+  at construction time.
+\item \emph{Rounded level.}
+  The \texttt{f64} polytope (unit normals, adjusted heights)
+  is derived from the rational polytope.
+  The capacity algorithm uses:
+  \begin{itemize}
+  \item the \emph{exact} combinatorial data for discrete
+    decisions (the $(S, \sigma)$ filter:
+    which facet subsets to enumerate, and which
+    $\omega_0$ sign assignments to consider),
+  \item the \emph{rounded} \texttt{f64} coordinates
+    for continuous computation
+    (the SVD-based KKT solver for~$\beta$, $\eta$, $\nu$).
+  \end{itemize}
 \end{enumerate}
+This separation eliminates numerical predicates
+from all combinatorial decisions.
+The only remaining source of numerical error is the
+continuous KKT computation, which is addressed
+in Section~\ref{app:svd-step}.
 \end{remark}
