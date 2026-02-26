@@ -92,12 +92,6 @@ A transition $F_i \to F_j$ exists if and only if
 \end{lemma}
 
 \begin{proof}
-We check each direction by tracking which
-halfspace constraints $\langle n_k, \cdot \rangle \leq h_k$
-the approach and departure can violate.
-Call $k \notin \{i,j\}$ \emph{blocking} if
-$\omega_0(n_i, n_k) < 0$ or $\omega_0(n_j, n_k) > 0$.
-
 \emph{Necessity.}
 Let $x \in F_i \cap F_j$ realize the transition.
 For the approach ($t < 0$) to satisfy
@@ -112,7 +106,7 @@ $\langle n_i, x + t\, J_0 n_j \rangle
 again requiring $\omega_0(n_i, n_j) \geq 0$.
 This proves~(1).
 
-For~(2), suppose $k$ is blocking with
+For~(2), suppose $k \notin \{i,j\}$ satisfies
 $\omega_0(n_i, n_k) < 0$.
 Then
 $\langle n_k, x + t\, J_0 n_i \rangle
@@ -131,20 +125,25 @@ for the departure.
 Given $x \in F_i \cap F_j$ satisfying~(1) and~(2),
 we construct $\varepsilon > 0$ witnessing
 the transition.
-For non-blocking $k \notin \{i,j\}$:
-$\omega_0(n_i, n_k) \geq 0$, so
+For $k \notin \{i,j\}$ with
+$\omega_0(n_i, n_k) \geq 0$ and
+$\omega_0(n_j, n_k) \leq 0$:
 $\langle n_k, x + t\, J_0 n_i \rangle
 \leq \langle n_k, x \rangle \leq h_k$
-for $t \leq 0$;
-similarly $\omega_0(n_j, n_k) \leq 0$, so
+for $t \leq 0$,
+and
 $\langle n_k, x + t\, J_0 n_j \rangle
 \leq \langle n_k, x \rangle \leq h_k$
 for $t \geq 0$.
-If no blocking facets exist, any $\varepsilon > 0$
-suffices.
+For the remaining $k \notin \{i,j\}$
+(those with $\omega_0(n_i, n_k) < 0$ or
+$\omega_0(n_j, n_k) > 0$),
+condition~(2) gives
+$\langle n_k, x \rangle < h_k$.
+If no such~$k$ exist, any $\varepsilon > 0$ suffices.
 Otherwise, let $\delta$ be the minimum of
 $h_k - \langle n_k, x \rangle > 0$
-over all blocking~$k$, and choose
+over these~$k$, and choose
 $\varepsilon < \delta / \max_k(
 |\omega_0(n_i, n_k)| + |\omega_0(n_j, n_k)|)$.
 Then all halfspace constraints hold for the
