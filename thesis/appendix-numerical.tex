@@ -41,12 +41,13 @@ We address these as follows.
   Rounding errors in continuous quantities are controlled
   by the strategies below.
 
-\item \emph{Tolerances absorb rounding.}
-  Some predicates involve a threshold~$\varepsilon$ that is
-  already a modelling choice (e.g.\ the robustness margins
-  in Definition~\ref{def:numerically-robust}).
-  Since the exact value of~$\varepsilon$ does not matter,
-  rounding errors in these checks are harmless.
+\item \emph{Loose cutoffs.}
+  Some predicates test ``$x > \varepsilon$'' where
+  the threshold~$\varepsilon$ separates clearly positive
+  values from near-zero values.
+  If rounding flips the verdict for~$x$ near~$\varepsilon$,
+  the consequence is negligible: such~$x$ are already
+  in the near-zero regime where either outcome is acceptable.
 
 \item \emph{Three-valued predicates for sharp cutoffs.}
   A sharp predicate such as $\beta_i > 0$ cannot be decided
