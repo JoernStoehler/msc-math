@@ -69,31 +69,19 @@ the following quantities are computed exactly:
 \end{enumerate}
 \end{remark}
 
-We now characterize when a Reeb orbit can transition
-between two facets.
-Write $V_k = J_0 n_k$ for the characteristic direction
-on~$F_k$, where $J_0 = \bigl[\begin{smallmatrix}
-0 & -I_2 \\ I_2 & 0 \end{smallmatrix}\bigr]$.
-This is proportional to the Reeb vector
-$R_k = \tfrac{2}{h_k}\, J_0 n_k$
-of Section~\ref{sec:algorithms}, but without the
-normalization factor.
-The key identity is
-$n_k \cdot V_\ell = \omega_0(n_\ell, n_k)$.
-A transition $F_i \to F_j$ requires a point
-$x \in F_i \cap F_j$ and $\varepsilon > 0$ such that
-the approach $x + t\, V_i \in K$ for
-$t \in [-\varepsilon, 0]$ and the departure
-$x + t\, V_j \in K$ for $t \in [0, \varepsilon]$.
-
 \begin{lemma}[Transition feasibility]%
 \label{lem:transition-feasibility-appendix}
-% [TODO: JÖRN - This is restated from the ablation experiment
+% [TODO: JÖRN - Restated from ablation experiment
 %  (Lemma~\ref{lem:transition-feasibility}).
 %  Canonical location TBD during final polish.]
 Let $K \subset \mathbb{R}^4$ be a convex polytope with
 facets $F_1, \ldots, F_F$ and outward normals~$n_k$
 (not necessarily unit).
+A \emph{transition} $F_i \to F_j$ is a point
+$x \in F_i \cap F_j$ and $\varepsilon > 0$ such that
+$x + t\, J_0 n_i \in K$ for $t \in [-\varepsilon, 0]$
+and $x + t\, J_0 n_j \in K$ for $t \in [0, \varepsilon]$.
+
 Define the \emph{blocking set}
 \[
   B_{i \to j}
@@ -102,7 +90,7 @@ Define the \emph{blocking set}
   \textup{ or }
   \omega_0(n_j, n_k) > 0\}.
 \]
-A transition $F_i \to F_j$ is feasible if and only if
+A transition $F_i \to F_j$ exists if and only if
 \begin{enumerate}
 \item $\omega_0(n_i, n_j) \ge 0$, and
 \item $\exists\, x \in F_i \cap F_j$ with
@@ -112,36 +100,36 @@ A transition $F_i \to F_j$ is feasible if and only if
 \end{lemma}
 
 \begin{proof}
-Throughout, we use the identity
-$n_k \cdot V_\ell = \omega_0(n_\ell, n_k)$.
+Throughout, we use
+$\langle n_k, J_0 n_\ell \rangle
+= \omega_0(n_\ell, n_k)$.
 
 \emph{Necessity.}
-Let $x \in F_i \cap F_j$ realize the transition
-with approach $x + t\, V_i$ ($t < 0$) and
-departure $x + t\, V_j$ ($t > 0$).
-For the approach to satisfy the~$F_j$ constraint:
-$\langle n_j, x + t\, V_i \rangle
+Let $x \in F_i \cap F_j$ realize the transition.
+For the approach ($t < 0$) to satisfy
+the~$F_j$ constraint:
+$\langle n_j, x + t\, J_0 n_i \rangle
 = h_j + t\,\omega_0(n_i, n_j) \leq h_j$,
 which forces $\omega_0(n_i, n_j) \geq 0$
 (since $t < 0$).
-The departure gives the same condition by
+The departure gives the same by
 antisymmetry of~$\omega_0$.
 This proves~(1).
 
 For~(2), suppose $k \in B_{i \to j}$ with
 $\omega_0(n_i, n_k) < 0$.
 Then
-$\langle n_k, x + t V_i \rangle
+$\langle n_k, x + t\, J_0 n_i \rangle
 = \langle n_k, x \rangle + t\,\omega_0(n_i, n_k)$.
-Since $\omega_0(n_i, n_k) < 0$ and $t < 0$,
-we get $t\,\omega_0(n_i, n_k) > 0$, so
-$\langle n_k, x + t V_i \rangle
+Since both factors are negative, the product is
+positive, so
+$\langle n_k, x + t\, J_0 n_i \rangle
 > \langle n_k, x \rangle$.
-If $\langle n_k, x \rangle = h_k$, this exceeds~$h_k$
-for any $t < 0$, violating $x + t V_i \in K$.
+If $\langle n_k, x \rangle = h_k$, this
+exceeds~$h_k$, violating $x + t\, J_0 n_i \in K$.
 Hence $\langle n_k, x \rangle < h_k$.
-The argument for departure-blocking~$k$
-(with $\omega_0(n_j, n_k) > 0$) is analogous.
+The case $\omega_0(n_j, n_k) > 0$ is analogous
+for the departure.
 
 \emph{Sufficiency.}
 Given $x \in F_i \cap F_j$ satisfying~(1)
@@ -151,22 +139,20 @@ $\delta = \min_{k \in B_{i \to j}}
 For non-blocking
 $k \notin B_{i \to j} \cup \{i,j\}$:
 $\omega_0(n_i, n_k) \geq 0$, so
-$\langle n_k, x + t V_i \rangle
+$\langle n_k, x + t\, J_0 n_i \rangle
 \leq \langle n_k, x \rangle \leq h_k$
 for $t \leq 0$;
 similarly $\omega_0(n_j, n_k) \leq 0$, so
-$\langle n_k, x + t V_j \rangle
+$\langle n_k, x + t\, J_0 n_j \rangle
 \leq \langle n_k, x \rangle \leq h_k$
 for $t \geq 0$.
-For blocking~$k$, the slack~$\delta$ absorbs
-the perturbation: choosing
+For blocking~$k$, choosing
 \[
   \varepsilon
   < \frac{\delta}{\max_k\bigl(
   |\omega_0(n_i, n_k)| + |\omega_0(n_j, n_k)|\bigr)}
 \]
-ensures all halfspace constraints hold on
-$[-\varepsilon, 0]$ and $[0, \varepsilon]$.
+ensures all constraints hold.
 \end{proof}
 
 \begin{remark}[Numerical pruning of transitions]%
