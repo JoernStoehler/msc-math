@@ -8,10 +8,10 @@ use std::collections::BTreeSet;
 
 // ── Test helpers ────────────────────────────────────────────────────────
 
-/// Build a rational 4-simplex with exact integer coordinates.
+/// Build a rational 4-simplex with exact rational coordinates.
 ///
-/// Standard simplex conv{0, e₁, e₂, e₃, e₄} translated so that
-/// centroid (1/5, 1/5, 1/5, 1/5) is interior. Uses non-unit normals.
+/// Simplex with vertices at (-1/5)·1 + (9/5)·eᵢ for i=1..4, plus (-1/5)·1.
+/// The origin is interior (all gaps = 1/5 > 0). Uses non-unit normals.
 ///
 /// Facets:
 ///   0: -x₁ ≤ 1/5   (n = (-1,0,0,0), h = 1/5)
@@ -141,20 +141,15 @@ fn exact_simplex_vertices() {
 
 /// Proposition: the 4-simplex vertices have exact rational coordinates.
 ///
-/// Vertex omitting facet 4 (the sum constraint) is the origin (0,0,0,0).
-/// Vertex omitting facet i (for i<4) has coordinate 1 in dimension i and 0 elsewhere,
-/// but shifted by the simplex translation.
+/// Vertex omitting facet 4 (the sum constraint) has all coordinate constraints tight:
+/// -xᵢ = 1/5 for all i, giving v = (-1/5, -1/5, -1/5, -1/5).
+/// Vertex omitting facet j (for j<4) has xⱼ = 8/5 and xᵢ = -1/5 for i≠j.
 #[test]
 fn exact_simplex_vertex_coordinates() {
     let s = rational_simplex();
 
-    // Vertex omitting facet 4 (sum constraint): intersection of
-    // -x₁ = -1/5, -x₂ = -1/5, -x₃ = -1/5, -x₄ = -1/5
-    // → v = (-1/5, -1/5, -1/5, -1/5)
-    // Wait, that's wrong. Let's check: ⟨n₀, v⟩ = h₀ means -v₁ = 1/5 → v₁ = -1/5.
-    // Actually the simplex is {x : -xᵢ ≤ 1/5, Σxᵢ ≤ 1}, so origin is interior
-    // (all gaps positive). The vertex omitting facet 4 is where all 4 coordinate
-    // constraints are tight: -xᵢ = 1/5 for all i, so v = (-1/5, ..., -1/5).
+    // Vertex omitting facet 4: all coordinate constraints tight,
+    // -xᵢ = 1/5 for all i, so v = (-1/5, -1/5, -1/5, -1/5).
 
     // Find the vertex descriptor {0,1,2,3} (omitting facet 4)
     let target_vd: BTreeSet<usize> = [0, 1, 2, 3].into_iter().collect();

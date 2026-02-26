@@ -3,7 +3,7 @@
 //! A [`RationalPolytope4D`] stores polytope coordinates as exact rationals
 //! (not unit normals — just halfspace directions). The following quantities
 //! are computed exactly over Q at construction time
-//! (see [rem:exact-quantities] in the thesis):
+//! (thesis Remark A.3, exact quantities from rational coordinates):
 //!
 //! - **Vertex–facet incidence** E ∈ {0,1}^{V×F}: stored as vertex descriptors
 //!   Sⱼ = {i : E_{j,i} = 1}, the set of facets through each vertex.
@@ -24,7 +24,7 @@
 
 use num_bigint::BigInt;
 use num_rational::BigRational;
-use num_traits::{One, Signed, ToPrimitive, Zero};
+use num_traits::{Signed, ToPrimitive, Zero};
 use std::collections::{BTreeMap, BTreeSet};
 
 use super::polytope::Polytope4D;
@@ -50,8 +50,8 @@ impl Sign {
     }
 }
 
-/// Exact quantities computed over Q from rational polytope coordinates.
-/// See [rem:exact-quantities] in the thesis.
+/// Exact quantities computed over Q from rational polytope coordinates
+/// (thesis Remark A.3).
 ///
 /// Every field is determined exactly from rational coordinates.
 /// No numerical predicates, no tolerances.
@@ -333,19 +333,18 @@ impl RationalPolytope4D {
         let min_gap = all_gaps
             .into_iter()
             .min()
-            .unwrap_or_else(BigRational::one);
+            .expect("valid polytope has at least one vertex gap");
 
         let min_abs_det = all_dets
             .into_iter()
             .map(|d| d.abs())
             .min()
-            .unwrap_or_else(BigRational::one);
+            .expect("valid polytope has at least one vertex determinant");
 
         let min_omega_nonzero = sign_pattern
-            .values()
-            .zip(adjacency.iter())
-            .filter(|(s, _)| **s != Sign::Zero)
-            .map(|(_, &(i, k))| omega0_rational(&normals[i], &normals[k]).abs())
+            .iter()
+            .filter(|(_, s)| **s != Sign::Zero)
+            .map(|(&(i, k), _)| omega0_rational(&normals[i], &normals[k]).abs())
             .min();
 
         let margins = Margins {
@@ -465,7 +464,10 @@ impl RationalPolytope4D {
     /// rational normals (not unit) and rational heights.
     ///
     /// The denominator D controls precision: larger D = closer to f64 values,
-    /// but larger rational numerators. D ≤ 100_000 is recommended.
+    /// but larger rational numerators. D ≤ 100_000 is recommended:
+    /// for unit normals (|n[i]| ≤ 1), round(n[i] × D) fits i64 trivially.
+    /// Beyond D ≈ 2^53 ≈ 9e15, f64 cannot distinguish 1/D from 0,
+    /// so larger D gives no precision benefit. PRNG polytopes use D = 1000.
     pub fn from_f64_rounded(
         normals: &[nalgebra::Vector4<f64>],
         heights: &[f64],
