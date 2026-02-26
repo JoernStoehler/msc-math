@@ -174,11 +174,9 @@ are evaluated as follows:
   pairs with $\textsc{true}$ or $\textsc{unknown}$
   are retained in the search space.
 \end{itemize}
-This combines exact and numerical pruning:
-$\omega_0(n_i, n_j) < 0$ is an exact,
-irrevocable prune;
-the LP verdict is a sound but potentially
-conservative three-valued prune.
+Condition~(1) is decided exactly;
+condition~(2) is decided numerically
+with the three-valued framework.
 \end{remark}
 
 \begin{definition}[Simple polytope]%
