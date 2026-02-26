@@ -7,10 +7,9 @@
 //!
 //! - **Vertex–facet incidence** E ∈ {0,1}^{V×F}: stored as vertex descriptors
 //!   Sⱼ = {i : E_{j,i} = 1}, the set of facets through each vertex.
-//! - **Symplectic sign matrix** D(i,k) = sign(ω₀(nᵢ, nₖ)) ∈ {+, -, 0}.
-//!   The thesis defines D for all pairs; the code stores it only for
-//!   vertex-adjacent pairs as an optimization (non-adjacent pairs are pruned
-//!   earlier by the search algorithm).
+//! - **Symplectic signs** sign(ω₀(nᵢ, nₖ)) ∈ {+, -, 0} for each facet pair.
+//!   Stored only for vertex-adjacent pairs as an optimization (non-adjacent
+//!   pairs are pruned earlier by the search algorithm).
 //!
 //! The f64 representation (unit normals, heights) is a derived quantity
 //! for fast numerical computation (KKT/SVD). The rational polytope is the
@@ -20,7 +19,7 @@
 //!
 //! [`Margins`] records how far each exact predicate is from its decision
 //! boundary. When margins ≫ f64 rounding error, the rounded f64 polytope
-//! preserves vertex–facet incidence and nonzero sign entries of D.
+//! preserves vertex–facet incidence and nonzero symplectic signs.
 
 use num_bigint::BigInt;
 use num_rational::BigRational;
@@ -66,9 +65,9 @@ pub struct CombinatorialData {
     /// Vertex-adjacent facet pairs (i, k) with i < k.
     /// Derived from incidence: {i,k} ⊂ Sⱼ for some vertex j.
     pub adjacency: BTreeSet<(usize, usize)>,
-    /// Symplectic sign matrix D(i,k) = sign(ω₀(nᵢ, nₖ)) for adjacent pairs.
-    /// The thesis defines D for all pairs; stored here only for adjacent pairs
-    /// (non-adjacent pairs are pruned by the search algorithm before D is needed).
+    /// sign(ω₀(nᵢ, nₖ)) for each vertex-adjacent pair (i, k) with i < k.
+    /// Stored only for adjacent pairs (non-adjacent pairs are pruned by the
+    /// search algorithm before symplectic signs are needed).
     pub sign_pattern: BTreeMap<(usize, usize), Sign>,
     /// Exact rational margins; see [def:numerically-robust].
     pub margins: Margins,
@@ -79,7 +78,7 @@ pub struct CombinatorialData {
 ///
 /// When all margins ≫ f64 rounding error (~1e-15 × scale),
 /// the rounded f64 polytope preserves vertex–facet incidence and
-/// nonzero sign entries of D.
+/// nonzero symplectic signs.
 #[derive(Clone, Debug)]
 pub struct Margins {
     /// Smallest non-incidence gap: min over all vertices j and non-incident facets i
