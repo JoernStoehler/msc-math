@@ -11,21 +11,20 @@
 %   - Three-valued predicates (scoped to β>0)
 %   - Impact on control flow (inclusion decisions, maximum tracking)
 
-\paragraph{Soundness goal.}
 The numerical algorithm must never report a capacity value
 that is provably wrong: if the algorithm certifies a value,
 that value must correspond to a genuine critical point of the
 exact problem.
-When the floating-point evidence is insufficient to determine
-a predicate's truth value, the algorithm must acknowledge
-the uncertainty rather than guess.
+We formalise this using three-valued predicates.
 
-\paragraph{Three-valued predicates.}
-We formalise this by allowing predicates to return
-$\textsc{unknown}$ in addition to $\textsc{true}$ and
-$\textsc{false}$.
+\begin{definition}[Sound predicate]%
+\label{def:sound-predicate}
 A predicate~$\tilde P$ computed from floating-point data
-is \emph{sound} if it satisfies:
+is \emph{sound} if its definite verdicts are reliable:
+$\textsc{true}$ and $\textsc{false}$ agree with exact
+arithmetic, and $\textsc{unknown}$ means the numerical
+evidence is inconclusive.
+Formally:
 \begin{align*}
   P \text{ true in exact arithmetic}
   &\;\Longrightarrow\;
@@ -34,18 +33,18 @@ is \emph{sound} if it satisfies:
   &\;\Longrightarrow\;
   \tilde P \neq \textsc{true}.
 \end{align*}
-In other words, $\textsc{true}$ and $\textsc{false}$ are
-reliable verdicts; $\textsc{unknown}$ means the numerical
-evidence is inconclusive.
+\end{definition}
+
 Not every predicate in the implementation needs this
 treatment---many decisions (e.g.\ index comparisons,
 loop bounds) are exact in floating-point arithmetic.
-The three-valued framework applies to the predicates
+The three-valued framework applies to predicates
 whose evaluation involves numerical error, principally
 the positivity predicate $\beta_i > 0$
 (Section~\ref{app:svd-step}).
 
-\paragraph{Impact on the algorithm's control flow.}
+\begin{remark}[Impact on control flow]%
+\label{rem:three-valued-control-flow}
 The exact algorithm has two kinds of decision points:
 \begin{description}
 \item[Inclusion decisions] (``unless $P$, skip''):
@@ -72,4 +71,5 @@ The exact algorithm has two kinds of decision points:
   the certified value are irrelevant (the certified value already
   dominates).
 \end{description}
+\end{remark}
 

@@ -5,8 +5,8 @@
 % second pass.
 %
 % Sources:
-%   - Original content: Jörn-approved (old A.3)
-%   - Second-pass description: new, based on Jörn's notes (2026-02-24)
+%   - Original content: old A.3 (pre-restructure)
+%   - Second-pass description: based on Jörn's notes (2026-02-24)
 %
 % Structure:
 %   - Candidate classification (certified vs uncertain)
@@ -78,28 +78,14 @@ Otherwise:
   $\mathcal{U}$ for downstream investigation.
 \end{enumerate}
 
-% [TODO: JÖRN - two claims in this remark need verification:
-%  1. "SVD accounts for roughly 80% of computation time" — agent could not
-%     find benchmark data supporting this number. True or stale?
-%  2. "evaluating the dismissal error bound for each dismissed system" —
-%     the code at kkt.rs:289 returns None on dismissal without computing
-%     the error bound. The error bound is stated in Remark lem:dismissal-error-bound
-%     but is not evaluated at runtime. Is this aspirational (not yet implemented)
-%     or does it happen elsewhere?]
 \begin{remark}[Empirical error tracking]\label{rem:empirical-errors}
 In practice, we track error bounds empirically in the Rust
 implementation rather than deriving tight analytic bounds
 for every operation.
-The SVD decomposition accounts for roughly 80\% of the
-computation time; the error tracking happens \emph{after}
-the SVD and does not require modifying the SVD computation
-itself.
 The implementation tracks the best certified and best
-uncertain candidates separately, evaluating the dismissal
-error bound (Remark~\ref{lem:dismissal-error-bound})
-for each dismissed system.
-This makes the error tracking essentially free in terms of
-additional computational cost.
+uncertain candidates separately.
+The error tracking happens after the SVD step and does not
+require modifying the SVD computation itself.
 \end{remark}
 
 \paragraph{Second-pass verification (not yet implemented).}
