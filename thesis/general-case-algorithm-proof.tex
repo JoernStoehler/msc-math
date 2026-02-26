@@ -552,14 +552,12 @@ By Lemma~\ref{lem:well-defined}, the recorded value
 $\beta^\top H\, \beta = V^*$ regardless of which
 solution is chosen.
 
-% FIXME(hbox): 11.92pt — "$\max_{S,\sigma} \beta^\top H\, \beta = V^*$" and "$(V^*)^{-1} = c_{\mathrm{EHZ}}(K)$" on one line; try \linebreak before "and the algorithm" or split into two sentences
+\begin{sloppypar}
 \emph{Step~3: The algorithm returns it.}
-For any other candidate~$(S', \sigma')$,
-$\beta'^\top H\, \beta' \leq V^*$
-by maximality. Hence
-$\max_{S,\sigma} \beta^\top H\, \beta = V^*$,
-and the algorithm returns
-$(V^*)^{-1} = c_{\mathrm{EHZ}}(K)$.
+For any other candidate~$(S', \sigma')$, $\beta'^\top H\, \beta' \leq V^*$
+by maximality; hence $\max_{S,\sigma} \beta^\top H\, \beta = V^*$,
+and the algorithm returns $(V^*)^{-1} = c_{\mathrm{EHZ}}(K)$.
+\end{sloppypar}
 \end{proof}
 
 \begin{remark}\label{rem:non-maximizer-warning}

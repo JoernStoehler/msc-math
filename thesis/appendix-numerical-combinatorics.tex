@@ -200,20 +200,17 @@ if the following conditions hold:
   of Remark~\ref{rem:exact-quantities}.
 \item \emph{Symplectic condition:}
   $|\omega_0(n_i, n_k)| > \varepsilon$
-  for all pairs $i \neq k$ with
-  $\omega_0(n_i, n_k) \neq 0$.
+  for all $i \neq k$
+  with $\omega_0(n_i, n_k) \neq 0$.
 \end{enumerate}
 \end{definition}
 
 \begin{remark}[Numerical preservation]%
 \label{rem:numerical-preservation}
-When $\varepsilon$ is large relative to
-floating-point rounding error,
-the rounded floating-point polytope preserves:
-the vertex--facet incidence (via conditions~(1)
-and~(2) of Definition~\ref{def:numerically-robust}),
-and the nonzero signs of~$\omega_0(n_i, n_k)$
-(via condition~(3)).
+When $\varepsilon$ is large relative to floating-point rounding error,
+the rounded polytope preserves the vertex--facet incidence
+(via conditions~(1) and~(2) of Definition~\ref{def:numerically-robust})
+and the nonzero signs of~$\omega_0(n_i, n_k)$ (via condition~(3)).
 Our implementation does not rely on this:
 the vertex--facet incidence and symplectic signs
 are computed exactly from the rational halfspace data
