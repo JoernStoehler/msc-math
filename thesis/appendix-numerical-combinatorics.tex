@@ -220,9 +220,6 @@ if the following conditions hold:
 
 \begin{remark}[Numerical preservation]%
 \label{rem:numerical-preservation}
-% [GAP - AGENT CONFIDENCE 85%: The following preservation claim is a standard
-%  perturbation argument. No proof provided.
-%  JÖRN: decide whether a proof or citation is needed.]
 When $\varepsilon$ is large relative to
 floating-point rounding error,
 the rounded floating-point polytope preserves:
@@ -230,6 +227,13 @@ the vertex--facet incidence (via conditions~(1)
 and~(2) of Definition~\ref{def:numerically-robust}),
 and the nonzero signs of~$\omega_0(n_i, n_k)$
 (via condition~(3)).
+Our implementation does not rely on this:
+the vertex--facet incidence and symplectic signs
+are computed exactly from the rational halfspace data
+(Remark~\ref{rem:exact-quantities}) and stored
+alongside the floating-point polytope,
+so that rounding errors cannot affect
+discrete decisions even for non-robust polytopes.
 \end{remark}
 
 \begin{remark}[Conversion to floating-point]%
