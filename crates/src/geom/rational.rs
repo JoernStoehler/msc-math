@@ -1,35 +1,26 @@
 //! Exact rational arithmetic for polytope combinatorial data.
 //!
 //! A [`RationalPolytope4D`] stores polytope coordinates as exact rationals
-//! (not unit normals — just halfspace directions). Its combinatorial data
-//! (vertex descriptors, adjacency, ω₀ signs) is computed exactly over Q
-//! at construction time.
+//! (not unit normals — just halfspace directions). The following quantities
+//! are computed exactly over Q at construction time
+//! (see [rem:exact-quantities] in the thesis):
+//!
+//! - **Vertex–facet incidence** E ∈ {0,1}^{V×F}: stored as vertex descriptors
+//!   Sⱼ = {i : E_{j,i} = 1}, the set of facets through each vertex.
+//! - **Symplectic sign matrix** D(i,k) = sign(ω₀(nᵢ, nₖ)) ∈ {+, -, 0}.
+//!   The thesis defines D for all pairs; the code stores it only for
+//!   vertex-adjacent pairs as an optimization (non-adjacent pairs are pruned
+//!   earlier by the search algorithm).
 //!
 //! The f64 representation (unit normals, heights) is a derived quantity
 //! for fast numerical computation (KKT/SVD). The rational polytope is the
 //! source of truth for all discrete/combinatorial decisions.
 //!
-//! # Mathematical framework
+//! # Margins ([def:numerically-robust])
 //!
-//! A polytope K ⊂ R⁴ is given by halfspaces ⟨nᵢ, x⟩ ≤ hᵢ, where nᵢ ∈ Q⁴
-//! (not necessarily unit) and hᵢ ∈ Q₊. The combinatorial data is:
-//!
-//! - **Vertex descriptors** V = {S₁, …, S_V}: for each vertex vⱼ,
-//!   Sⱼ = {i : vⱼ ∈ Fᵢ} is the set of 4 facets through vⱼ.
-//! - **Adjacency**: facets i, k are adjacent iff {i,k} ⊂ Sⱼ for some j.
-//! - **Sign pattern** D(i,k) = sign(ω₀(nᵢ, nₖ)) ∈ {+, -, 0} for adjacent pairs.
-//!
-//! All computed exactly over Q — no numerical predicates, no tolerances.
-//!
-//! # Margins
-//!
-//! [`Margins`] records the minimum values of key quantities:
-//! - `min_gap`: smallest non-incidence gap gⱼⁱ = hᵢ - ⟨nᵢ, vⱼ⟩ > 0
-//! - `min_abs_det`: smallest |det(N_S)| for vertex subsets S
-//! - `min_omega_nonzero`: smallest |ω₀(nᵢ, nₖ)| for non-zero sign entries
-//!
-//! These are exact rational values. When margins ≫ f64 rounding error,
-//! the f64 polytope has the same combinatorial type.
+//! [`Margins`] records how far each exact predicate is from its decision
+//! boundary. When margins ≫ f64 rounding error, the rounded f64 polytope
+//! preserves vertex–facet incidence and nonzero sign entries of D.
 
 use num_bigint::BigInt;
 use num_rational::BigRational;
@@ -59,7 +50,8 @@ impl Sign {
     }
 }
 
-/// Exact combinatorial data computed over Q.
+/// Exact quantities computed over Q from rational polytope coordinates.
+/// See [rem:exact-quantities] in the thesis.
 ///
 /// Every field is determined exactly from rational coordinates.
 /// No numerical predicates, no tolerances.
@@ -67,21 +59,27 @@ impl Sign {
 pub struct CombinatorialData {
     /// Number of facets.
     pub num_facets: usize,
-    /// Vertex descriptors: each vertex is the intersection of exactly 4 facets.
+    /// Vertex–facet incidence, stored as vertex descriptors: Sⱼ = {i : E_{j,i} = 1}.
+    /// Each vertex is the intersection of exactly 4 facets (simple polytope).
     /// Sorted lexicographically.
     pub vertex_descriptors: Vec<BTreeSet<usize>>,
-    /// Adjacent facet pairs (i, k) with i < k.
+    /// Vertex-adjacent facet pairs (i, k) with i < k.
+    /// Derived from incidence: {i,k} ⊂ Sⱼ for some vertex j.
     pub adjacency: BTreeSet<(usize, usize)>,
-    /// Sign of ω₀(nᵢ, nₖ) for each adjacent pair (i, k) with i < k.
+    /// Symplectic sign matrix D(i,k) = sign(ω₀(nᵢ, nₖ)) for adjacent pairs.
+    /// The thesis defines D for all pairs; stored here only for adjacent pairs
+    /// (non-adjacent pairs are pruned by the search algorithm before D is needed).
     pub sign_pattern: BTreeMap<(usize, usize), Sign>,
-    /// Exact rational margins.
+    /// Exact rational margins; see [def:numerically-robust].
     pub margins: Margins,
 }
 
-/// Exact rational margins — the "safety buffer" for each combinatorial predicate.
+/// Exact rational margins — how far each exact predicate is from its
+/// decision boundary. See [def:numerically-robust] in the thesis.
 ///
-/// If all margins are much larger than f64 rounding error (~1e-15 × scale),
-/// then the f64 polytope has the same combinatorial data.
+/// When all margins ≫ f64 rounding error (~1e-15 × scale),
+/// the rounded f64 polytope preserves vertex–facet incidence and
+/// nonzero sign entries of D.
 #[derive(Clone, Debug)]
 pub struct Margins {
     /// Smallest non-incidence gap: min over all vertices j and non-incident facets i

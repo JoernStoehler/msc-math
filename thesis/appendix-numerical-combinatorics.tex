@@ -1,78 +1,212 @@
 % appendix-numerical-combinatorics.tex — \input'd from appendix-numerical.tex
 %
-% Exact combinatorial data of polytopes via rational arithmetic,
-% and preservation under f64 rounding.
+% Exact rational polytope data and transition feasibility.
 %
-% Sources: agent-written from geom/rational.rs code and doc comments.
+% Sources: agent-written from geom/rational.rs code and ablation experiment
+%   (lem:transition-feasibility).
 %
 % Structure:
-%   - Definition: combinatorial data C(K)
-%   - Remark: simple polytopes
-%   - Definition: rational polytope
-%   - Definition: margins
-%   - Lemma: margins positive
-%   - Remark: conversion to f64
-%   - Proposition: f64 combinatorial preservation
-%   - Remark: Lagrangian products
-%   - Remark: application to algorithm soundness
+%   - Intro: rational coordinates, exact computation
+%   - Remark: exact quantities from rational halfspaces
+%   - Lemma: transition feasibility (restated from ablation, self-contained)
+%   - Remark: numerical pruning via three-valued predicates
+%   - Definition: simple polytope
+%   - Definition: numerically robust simple polytope
 
-% [TODO: JÖRN - STATEMENTS ONLY, no proofs yet.
-%  The definitions and propositions are derived from
-%  the code in geom/rational.rs (exact rational arithmetic).
-%  Please review whether the mathematical framing is correct.
-%  Key question: is Proposition~\ref{prop:f64-preservation}
-%  stated correctly? It's a standard continuity argument
-%  but needs your sign-off.]
+% [TODO: JÖRN - Full rewrite of A.2 per discussion.
+%  Key changes from previous version:
+%  (1) No "combinatorial data" wrapper — just the quantities directly.
+%  (2) Transition feasibility lemma restated here (duplicate of ablation.tex,
+%      canonical location TBD during final polish).
+%  (3) Simple polytope defined later, not assumed upfront.
+%  (4) Numerically robust = singular value condition on vertex matrices.
+%  Please review: lemma statement, proof, and the two definitions.]
 
 The algorithms in Section~\ref{sec:algorithms} operate on a polytope
 $K = K(n, h) = \{x \in \mathbb{R}^4 : \langle n_i, x \rangle \leq h_i,
 \; i = 1, \ldots, F\}$.
-In practice, the coordinates are represented in
-\texttt{f64} (IEEE~754 double precision).
-This section addresses the combinatorial structure of polytopes
-under this representation.
+Our input polytopes have rational halfspace data:
+normals $n_i \in \mathbb{Q}^4 \setminus \{0\}$
+(not necessarily unit vectors, unlike the unit normals
+in Section~\ref{sec:algorithms})
+and heights $h_i \in \mathbb{Q}_{>0}$.
+This allows several combinatorial quantities to be
+computed exactly over~$\mathbb{Q}$, eliminating
+numerical predicates from all discrete decisions.
 
-The key idea is to avoid numerical predicates entirely
-for discrete combinatorial decisions.
-We represent polytopes with exact rational coordinates
-($n_i \in \mathbb{Q}^4 \setminus \{0\}$,
-$h_i \in \mathbb{Q}_{>0}$),
-where the normals $n_i$ are \emph{not} required
-to be unit vectors
-(unlike the unit normals $n_i \in S^3$ used
-in Section~\ref{sec:algorithms}).
-We compute combinatorial data exactly over~$\mathbb{Q}$
-and convert to \texttt{f64} only for continuous computation
-(e.g.\ the SVD step of the KKT solver).
-The exact rational polytope is the source of truth
-for all combinatorial decisions;
-the \texttt{f64} polytope is a derived quantity
-for fast numerical computation.
-
-\begin{definition}[Combinatorial data]%
-\label{def:combinatorial-data}
-Let $K = K(n, h)$ be a simple polytope with
-$F$~facets in~$\mathbb{R}^4$,
-where the normals $n_i$ are nonzero (not necessarily unit).
-Its \emph{combinatorial data} is $C(K) = (\mathcal{V}, D)$
-where:
+\begin{remark}[Exact quantities from rational coordinates]%
+\label{rem:exact-quantities}
+Given a polytope $K = K(n, h)$ with rational halfspace data,
+the following quantities are computed exactly:
 \begin{enumerate}
-\item \emph{Vertex descriptors.}
-  $\mathcal{V} = \{S_1, \ldots, S_V\}$
-  where $S_j = \{i : v_j \in F_i\}$ is the set of
-  facets through vertex~$v_j$.
-  By simplicity, $|S_j| = 4$ for each~$j$.
-\item \emph{Facet adjacency.}
-  Facets $i$ and~$k$ are
-  \emph{adjacent} if $\{i, k\} \subset S_j$ for some~$j$,
-  i.e.\ they share a vertex.
-  Write $\operatorname{adj}(\mathcal{V})$ for the set of
-  adjacent pairs $(i, k)$ with $i < k$.
-\item \emph{Sign pattern.}
-  $D(i, k) = \operatorname{sign}\bigl(
-  \omega_0(n_i, n_k)\bigr) \in \{+, -, 0\}$
-  for each adjacent pair $(i, k)$.
+\item \emph{Vertices.}
+  For each 4-element subset $S \subset \{1, \ldots, F\}$
+  with $\det(N_S) \neq 0$ (where $N_S$ is the $4 \times 4$
+  matrix with rows~$n_i^\top$, $i \in S$),
+  the candidate vertex $v_S = N_S^{-1} h_S$ is computed
+  via Cramer's rule over~$\mathbb{Q}$.
+  The subset~$S$ defines a vertex of~$K$ if
+  $\langle n_i, v_S \rangle \leq h_i$ for all $i \notin S$.
+\item \emph{Vertex--facet incidence.}
+  The incidence matrix $E \in \{0, 1\}^{V \times F}$
+  has $E_{j,i} = 1$ if and only if vertex~$v_j$
+  lies on facet~$F_i$, i.e.\ $\langle n_i, v_j \rangle = h_i$.
+  % Downstream: Rust stores this as vertex descriptors S_j = {i : E_{j,i} = 1}.
+\item \emph{Symplectic sign matrix.}
+  For each pair of facets $i, k$ with $1 \leq i < k \leq F$,
+  \[
+    D(i, k) = \operatorname{sign}\bigl(
+    \omega_0(n_i, n_k)\bigr) \in \{+, -, 0\},
+  \]
+  where $\omega_0(u, v) = u_1 v_3 - u_3 v_1
+  + u_2 v_4 - u_4 v_2$ is the standard symplectic form
+  in coordinates $(q_1, q_2, p_1, p_2)$.
+  Since $n_i \in \mathbb{Q}^4$, the value
+  $\omega_0(n_i, n_k) \in \mathbb{Q}$ is exact and
+  its sign is determined without numerical error.
+  % Downstream: Rust computes D(i,k) only for vertex-adjacent pairs
+  % as an optimization. Non-adjacent pairs are pruned earlier.
 \end{enumerate}
+\end{remark}
+
+We now characterize when a Reeb orbit can transition
+between two facets.
+Write $V_k = J_0 n_k$ for the characteristic direction
+on~$F_k$, where $J_0 = \bigl[\begin{smallmatrix}
+0 & -I_2 \\ I_2 & 0 \end{smallmatrix}\bigr]$.
+This is proportional to the Reeb vector
+$R_k = \tfrac{2}{h_k}\, J_0 n_k$
+of Section~\ref{sec:algorithms}, but without the
+normalization factor.
+The key identity is
+$n_k \cdot V_\ell = \omega_0(n_\ell, n_k)$.
+A transition $F_i \to F_j$ requires a point
+$x \in F_i \cap F_j$ and $\varepsilon > 0$ such that
+the approach $x + t\, V_i \in K$ for
+$t \in [-\varepsilon, 0]$ and the departure
+$x + t\, V_j \in K$ for $t \in [0, \varepsilon]$.
+
+\begin{lemma}[Transition feasibility]%
+\label{lem:transition-feasibility-appendix}
+% [TODO: JÖRN - This is restated from the ablation experiment
+%  (Lemma~\ref{lem:transition-feasibility}).
+%  Canonical location TBD during final polish.]
+Let $K \subset \mathbb{R}^4$ be a convex polytope with
+facets $F_1, \ldots, F_F$ and outward normals~$n_k$
+(not necessarily unit).
+Define the \emph{blocking set}
+\[
+  B_{i \to j}
+  = \{k \notin \{i,j\} :
+  \omega_0(n_i, n_k) < 0
+  \textup{ or }
+  \omega_0(n_j, n_k) > 0\}.
+\]
+A transition $F_i \to F_j$ is feasible if and only if
+\begin{enumerate}
+\item $\omega_0(n_i, n_j) \ge 0$, and
+\item $\exists\, x \in F_i \cap F_j$ with
+  $\langle n_k, x \rangle < h_k$
+  for all $k \in B_{i \to j}$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+Throughout, we use the identity
+$n_k \cdot V_\ell = \omega_0(n_\ell, n_k)$.
+
+\emph{Necessity.}
+Let $x \in F_i \cap F_j$ realize the transition
+with approach $x + t\, V_i$ ($t < 0$) and
+departure $x + t\, V_j$ ($t > 0$).
+For the approach to satisfy the~$F_j$ constraint:
+$\langle n_j, x + t\, V_i \rangle
+= h_j + t\,\omega_0(n_i, n_j) \leq h_j$,
+which forces $\omega_0(n_i, n_j) \geq 0$
+(since $t < 0$).
+The departure gives the same condition by
+antisymmetry of~$\omega_0$.
+This proves~(1).
+
+For~(2), suppose $k \in B_{i \to j}$ with
+$\omega_0(n_i, n_k) < 0$.
+Then
+$\langle n_k, x + t V_i \rangle
+= \langle n_k, x \rangle + t\,\omega_0(n_i, n_k)$.
+Since $\omega_0(n_i, n_k) < 0$ and $t < 0$,
+we get $t\,\omega_0(n_i, n_k) > 0$, so
+$\langle n_k, x + t V_i \rangle
+> \langle n_k, x \rangle$.
+If $\langle n_k, x \rangle = h_k$, this exceeds~$h_k$
+for any $t < 0$, violating $x + t V_i \in K$.
+Hence $\langle n_k, x \rangle < h_k$.
+The argument for departure-blocking~$k$
+(with $\omega_0(n_j, n_k) > 0$) is analogous.
+
+\emph{Sufficiency.}
+Given $x \in F_i \cap F_j$ satisfying~(1)
+and~(2), set
+$\delta = \min_{k \in B_{i \to j}}
+(h_k - \langle n_k, x \rangle) > 0$.
+For non-blocking
+$k \notin B_{i \to j} \cup \{i,j\}$:
+$\omega_0(n_i, n_k) \geq 0$, so
+$\langle n_k, x + t V_i \rangle
+\leq \langle n_k, x \rangle \leq h_k$
+for $t \leq 0$;
+similarly $\omega_0(n_j, n_k) \leq 0$, so
+$\langle n_k, x + t V_j \rangle
+\leq \langle n_k, x \rangle \leq h_k$
+for $t \geq 0$.
+For blocking~$k$, the slack~$\delta$ absorbs
+the perturbation: choosing
+\[
+  \varepsilon
+  < \frac{\delta}{\max_k\bigl(
+  |\omega_0(n_i, n_k)| + |\omega_0(n_j, n_k)|\bigr)}
+\]
+ensures all halfspace constraints hold on
+$[-\varepsilon, 0]$ and $[0, \varepsilon]$.
+\end{proof}
+
+\begin{remark}[Numerical pruning of transitions]%
+\label{rem:numerical-pruning}
+The transition feasibility conditions in
+Lemma~\ref{lem:transition-feasibility-appendix}
+are evaluated as follows:
+\begin{itemize}
+\item \emph{Condition~(1): $\omega_0(n_i, n_j) \geq 0$.}
+  This is decided exactly from the symplectic sign
+  matrix~$D$ (Remark~\ref{rem:exact-quantities}).
+  If $D(i, j) = {-}$, no transition
+  $F_i \to F_j$ exists and the pair is pruned.
+\item \emph{Condition~(2): LP feasibility on the
+  blocking set.}
+  This is a linear feasibility problem on
+  the $(F{-}2)$-dimensional face $F_i \cap F_j$,
+  solved numerically in \texttt{f64}.
+  Following the three-valued framework of
+  Section~\ref{app:general-approach},
+  the numerical solver returns
+  $\textsc{true}$ (feasible),
+  $\textsc{unknown}$ (inconclusive), or
+  $\textsc{false}$ (infeasible).
+  Pairs with $\textsc{false}$ are pruned;
+  pairs with $\textsc{true}$ or $\textsc{unknown}$
+  are retained in the search space.
+\end{itemize}
+This combines exact and numerical pruning:
+$D(i, j) = {-}$ is an exact, irrevocable prune;
+the LP verdict is a sound but potentially
+conservative three-valued prune.
+\end{remark}
+
+\begin{definition}[Simple polytope]%
+\label{def:simple-polytope}
+A polytope $K \subset \mathbb{R}^4$ is \emph{simple}
+if every vertex lies on exactly $4$~facets,
+i.e.\ every row of the incidence matrix~$E$
+has exactly $4$ ones.
 \end{definition}
 
 \begin{remark}[Scope: simple polytopes]%
@@ -86,76 +220,41 @@ and polytopes from future optimisation procedures
 can be perturbed to simple ones if needed.
 \end{remark}
 
-\begin{definition}[Rational polytope]%
-\label{def:rational-polytope}
-A \emph{rational polytope} is $K = K(n, h)$ with
-normals $n_i \in \mathbb{Q}^4 \setminus \{0\}$
-and heights $h_i \in \mathbb{Q}_{>0}$.
-The normals are \emph{not} required to be unit vectors.
-
-Given a 4-element subset $S \subset \{1, \ldots, F\}$,
-let $N_S$ denote the $4 \times 4$ matrix whose rows
-are $n_i^\top$ for $i \in S$.
-The \emph{vertex at~$S$} is $v_S = N_S^{-1}\, h_S$
-(computed via Cramer's rule, exact over~$\mathbb{Q}$)
-when $\det(N_S) \neq 0$.
-The subset $S$ is a \emph{vertex descriptor}
-of~$K$ if $\det(N_S) \neq 0$ and all
-\emph{non-incidence gaps}
-$g^i_S \coloneqq h_i - \langle n_i, v_S \rangle > 0$
-for $i \notin S$ are strictly positive.
-\end{definition}
-
-\begin{definition}[Margins]%
-\label{def:margins}
-Let $K = K(n, h)$ be a simple rational polytope
-with combinatorial data
-$C(K) = (\mathcal{V}, D)$.
-The \emph{margins} of~$K$ are:
+\begin{definition}[Numerically robust polytope]%
+\label{def:numerically-robust}
+A simple polytope $K = K(n, h)$ with rational
+coordinates is \emph{numerically robust}
+if the following quantities, computed exactly
+over~$\mathbb{Q}$, are bounded away from zero:
 \begin{enumerate}
-\item $\gamma_{\min} \coloneqq
-  \min_{S_j \in \mathcal{V}} \;\min_{i \notin S_j}\;
-  g^i_{S_j}$
-  \quad (smallest non-incidence gap),
-\item $\delta_{\min} \coloneqq
-  \min_{S_j \in \mathcal{V}} \;|\!\det(N_{S_j})|$
-  \quad (smallest vertex-matrix determinant),
-\item $\omega_{\min} \coloneqq
-  \min_{\substack{(i,k) \in \operatorname{adj}(\mathcal{V})
-  \\ D(i,k) \neq 0}} |\omega_0(n_i, n_k)|$
-  \quad (smallest nonzero $|\omega_0|$ value).
+\item \emph{Gap margin:}
+  $\gamma_{\min} \coloneqq
+  \min_{j,\, i \notin S_j}
+  (h_i - \langle n_i, v_j \rangle) > 0$,
+  where $S_j$ is the set of facets through
+  vertex~$v_j$.
+\item \emph{Determinant margin:}
+  $\delta_{\min} \coloneqq
+  \min_j |\!\det(N_{S_j})| > 0$.
+\item \emph{Symplectic margin} (when applicable):
+  $\omega_{\min} \coloneqq
+  \min_{\substack{i < k \\[1pt]
+  D(i,k) \neq 0}}
+  |\omega_0(n_i, n_k)| > 0$.
 \end{enumerate}
-All three quantities are computed exactly over~$\mathbb{Q}$.
-By construction, $\gamma_{\min} > 0$ and
-$\delta_{\min} > 0$.
-If all adjacent pairs have $D(i,k) = 0$,
-then $\omega_{\min}$ is undefined (vacuously satisfied).
+These margins quantify how far each exact predicate
+is from its decision boundary.
+When all margins are large relative to
+\texttt{f64} rounding error,
+the rounded \texttt{f64} polytope preserves:
+the vertex--facet incidence (via $\gamma_{\min}$
+and $\delta_{\min}$),
+and the nonzero entries of~$D$
+(via $\omega_{\min}$).
+% [GAP - AGENT CONFIDENCE 85%: The preservation claim is a standard
+%  perturbation argument. No proof provided.
+%  JÖRN: decide whether a proof or citation is needed.]
 \end{definition}
-
-\begin{lemma}[Margins are positive]%
-\label{lem:margins-positive}
-Let $K = K(n, h)$ be a simple rational polytope with
-margins $\gamma_{\min}$, $\delta_{\min}$, $\omega_{\min}$
-as in Definition~\ref{def:margins}.
-Then $\gamma_{\min} > 0$, $\delta_{\min} > 0$, and
-$\omega_{\min} > 0$ (when defined).
-\end{lemma}
-
-\begin{proof}
-Each claim follows from the corresponding definition.
-$\gamma_{\min} > 0$:
-vertex descriptors are defined by the condition that
-all non-incidence gaps are strictly positive
-(Definition~\ref{def:rational-polytope}),
-so each gap $g^i_{S_j} > 0$, and the minimum
-of finitely many positive rationals is positive.
-$\delta_{\min} > 0$:
-a vertex descriptor $S_j$ requires $\det(N_{S_j}) \neq 0$,
-so $|\!\det(N_{S_j})| > 0$ for every $j$.
-$\omega_{\min} > 0$:
-the minimum is taken over pairs with $D(i,k) \neq 0$,
-i.e.\ $|\omega_0(n_i, n_k)| > 0$ for each such pair.
-\end{proof}
 
 \begin{remark}[Conversion to \texttt{f64}]%
 \label{rem:f64-conversion}
@@ -171,81 +270,15 @@ $\langle \hat n_i, x \rangle \leq \hat h_i$.
 The normalization and the rational-to-\texttt{f64}
 conversion each introduce $O(\varepsilon_{\mathrm{mach}})$
 rounding error per coordinate.
-\end{remark}
-
-% [GAP - AGENT CONFIDENCE 85%: The proposition below is a standard
-%  continuity/perturbation argument: if all predicates (gap > 0, det ≠ 0,
-%  sign(ω₀) ≠ 0) have positive margin, then sufficiently small perturbation
-%  preserves them. The statement is believed correct but has no proof.
-%  The quantitative bound ("ε small enough relative to margins") is informal.
-%  JÖRN: (1) verify the statement is correct, (2) decide whether a proof
-%  is needed or whether a citation to a standard perturbation result suffices.]
-\begin{proposition}[Combinatorial preservation under rounding]%
-\label{prop:f64-preservation}
-Let $K = K(n, h)$ be a simple rational polytope with
-margins $\gamma_{\min}$, $\delta_{\min}$, $\omega_{\min}$.
-Let $\hat K = K(\hat n, \hat h)$ be the \texttt{f64}
-polytope obtained by normalizing and rounding
-(Remark~\ref{rem:f64-conversion}).
-If the coordinate-wise rounding error satisfies
-$\|n_i / \|n_i\| - \hat n_i\| \leq \varepsilon$
-and $|h_i / \|n_i\| - \hat h_i| \leq \varepsilon$
-for all~$i$, and $\varepsilon$ is small enough relative
-to the margins, then the \texttt{f64} polytope~$\hat K$
-has the same combinatorial data as~$K$:
-\begin{enumerate}
-\item Same vertex descriptors: every vertex of~$K$
-  corresponds to a vertex of~$\hat K$ and vice versa.
-\item Same adjacency: the facet adjacency graph is identical.
-\item Same sign pattern: for every adjacent pair $(i,k)$,
-  $\operatorname{sign}(\omega_0(\hat n_i, \hat n_k))
-  = D(i,k)$.
-\end{enumerate}
-\end{proposition}
-
-\begin{remark}[Lagrangian products]%
-\label{rem:lagrangian-preservation}
-For a Lagrangian product $K = K_q \times_L K_p$,
-the normals of~$K_q$ lie in the $q$-plane
-$\{(n_1, n_2, 0, 0)\}$ and those of~$K_p$ in the
-$p$-plane $\{(0, 0, n_3, n_4)\}$.
-For same-type adjacent pairs (both $q$-facets or
-both $p$-facets), $\omega_0(n_i, n_k) = 0$ exactly,
-because $\omega_0$ vanishes on each Lagrangian plane.
-This holds for both the rational and the \texttt{f64}
-polytope (the zero is structural, not approximate).
-The sign pattern of a Lagrangian product therefore has
-$D(i,k) = 0$ for all same-type pairs, and
-$D(i,k) \neq 0$ only for cross-type pairs
-(one $q$-facet and one $p$-facet).
-\end{remark}
-
-\begin{remark}[Application to algorithm soundness]%
-\label{rem:interpretation}
-The implementation follows this two-level architecture:
-\begin{enumerate}
-\item \emph{Exact level.}
-  The polytope is stored with rational coordinates.
-  Combinatorial data~$C = (\mathcal{V}, D)$ and
-  margins are computed exactly over~$\mathbb{Q}$
-  at construction time.
-\item \emph{Rounded level.}
-  The \texttt{f64} polytope (unit normals, adjusted heights)
-  is derived from the rational polytope.
-  The capacity algorithm uses:
-  \begin{itemize}
-  \item the \emph{exact} combinatorial data for discrete
-    decisions (the $(S, \sigma)$ filter:
-    which facet subsets to enumerate, and which
-    $\omega_0$ sign assignments to consider),
-  \item the \emph{rounded} \texttt{f64} coordinates
-    for continuous computation
-    (the SVD-based KKT solver for~$\beta$, $\eta$, $\nu$).
-  \end{itemize}
-\end{enumerate}
-This separation eliminates numerical predicates
-from all combinatorial decisions.
-The only remaining source of numerical error is the
-continuous KKT computation, which is addressed
-in Section~\ref{app:svd-step}.
+The capacity algorithm uses:
+\begin{itemize}
+\item the \emph{exact} rational data for discrete
+  decisions (which facet subsets to enumerate,
+  the symplectic sign matrix~$D$,
+  and the exact part of transition pruning),
+\item the \emph{rounded} \texttt{f64} coordinates
+  for continuous computation (the SVD-based
+  KKT solver, and the LP feasibility check
+  in Remark~\ref{rem:numerical-pruning}).
+\end{itemize}
 \end{remark}
