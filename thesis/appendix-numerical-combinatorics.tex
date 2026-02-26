@@ -56,20 +56,16 @@ the following quantities are computed exactly:
   lies on facet~$F_i$, i.e.\ $\langle n_i, v_j \rangle = h_i$.
   Write $S_j \coloneqq \{i : E_{j,i} = 1\}$
   for the set of facets through vertex~$v_j$.
-\item \emph{Symplectic sign matrix.}
-  For each pair of facets $i, k$ with $1 \leq i < k \leq F$,
-  \[
-    D(i, k) = \operatorname{sign}\bigl(
-    \omega_0(n_i, n_k)\bigr) \in \{+, -, 0\},
-  \]
-  where $\omega_0(u, v) = u_1 v_3 - u_3 v_1
-  + u_2 v_4 - u_4 v_2$ is the standard symplectic form
-  in coordinates $(q_1, q_2, p_1, p_2)$.
-  Since $n_i \in \mathbb{Q}^4$, the value
-  $\omega_0(n_i, n_k) \in \mathbb{Q}$ is exact and
-  its sign is determined without numerical error.
-  % Downstream: Rust computes D(i,k) only for vertex-adjacent pairs
-  % as an optimization. Non-adjacent pairs are pruned earlier.
+\item \emph{Symplectic signs.}
+  For each pair of facets $i, k$,
+  the value $\omega_0(n_i, n_k) \in \mathbb{Q}$
+  is exact (since $n_i \in \mathbb{Q}^4$),
+  so $\operatorname{sign}(\omega_0(n_i, n_k))
+  \in \{+, -, 0\}$ is determined without
+  numerical error.
+  Here $\omega_0(u, v) = u_1 v_3 - u_3 v_1
+  + u_2 v_4 - u_4 v_2$ is the standard symplectic
+  form in coordinates $(q_1, q_2, p_1, p_2)$.
 \end{enumerate}
 \end{remark}
 
@@ -160,14 +156,14 @@ Lemma~\ref{lem:transition-feasibility-appendix}
 are evaluated as follows:
 \begin{itemize}
 \item \emph{Condition~(1): $\omega_0(n_i, n_j) \geq 0$.}
-  This is decided exactly from the symplectic sign
-  matrix~$D$ (Remark~\ref{rem:exact-quantities}).
-  If $D(i, j) = {-}$, no transition
+  This is decided exactly from the rational normals
+  (Remark~\ref{rem:exact-quantities}).
+  If $\omega_0(n_i, n_j) < 0$, no transition
   $F_i \to F_j$ exists and the pair is pruned.
 \item \emph{Condition~(2): LP feasibility.}
   This is a linear feasibility problem on
   the face $F_i \cap F_j$,
-  solved numerically in \texttt{f64}.
+  solved numerically in floating-point.
   Following the three-valued framework of
   Section~\ref{app:general-approach},
   the numerical solver returns
@@ -179,7 +175,8 @@ are evaluated as follows:
   are retained in the search space.
 \end{itemize}
 This combines exact and numerical pruning:
-$D(i, j) = {-}$ is an exact, irrevocable prune;
+$\omega_0(n_i, n_j) < 0$ is an exact,
+irrevocable prune;
 the LP verdict is a sound but potentially
 conservative three-valued prune.
 \end{remark}
@@ -220,30 +217,31 @@ over~$\mathbb{Q}$, are bounded away from zero:
   $\delta_{\min} \coloneqq
   \min_j |\!\det(N_{S_j})| > 0$.
 \item \emph{Symplectic margin}
-  (defined when some $D(i,k) \neq 0$):
+  (defined when some $\omega_0(n_i, n_k) \neq 0$):
   $\omega_{\min} \coloneqq
   \min_{\substack{i < k \\[1pt]
-  D(i,k) \neq 0}}
+  \omega_0(n_i, n_k) \neq 0}}
   |\omega_0(n_i, n_k)| > 0$.
 \end{enumerate}
 These margins quantify how far each exact predicate
 is from its decision boundary.
 When all margins are large relative to
-\texttt{f64} rounding error,
-the rounded \texttt{f64} polytope preserves:
+floating-point rounding error,
+the rounded floating-point polytope preserves:
 the vertex--facet incidence (via $\gamma_{\min}$
 and $\delta_{\min}$),
-and the nonzero entries of~$D$
+and the nonzero signs of~$\omega_0(n_i, n_k)$
 (via $\omega_{\min}$).
 % [GAP - AGENT CONFIDENCE 85%: The preservation claim is a standard
 %  perturbation argument. No proof provided.
 %  JÖRN: decide whether a proof or citation is needed.]
 \end{definition}
 
-\begin{remark}[Conversion to \texttt{f64}]%
+\begin{remark}[Conversion to floating-point]%
 \label{rem:f64-conversion}
 A rational polytope $K = K(n, h)$ is converted to
-\texttt{f64} by normalizing each normal to a unit vector:
+floating-point arithmetic by normalizing each normal
+to a unit vector:
 \[
   \hat n_i = \frac{n_i}{\|n_i\|}, \qquad
   \hat h_i = \frac{h_i}{\|n_i\|}.
@@ -251,16 +249,16 @@ A rational polytope $K = K(n, h)$ is converted to
 The halfspace $\langle n_i, x \rangle \leq h_i$ is
 equivalent to
 $\langle \hat n_i, x \rangle \leq \hat h_i$.
-The normalization and the rational-to-\texttt{f64}
+The normalization and the rational-to-floating-point
 conversion each introduce $O(\varepsilon_{\mathrm{mach}})$
 rounding error per coordinate.
 The capacity algorithm uses:
 \begin{itemize}
 \item the \emph{exact} rational data for discrete
   decisions (which facet subsets to enumerate,
-  the symplectic sign matrix~$D$,
+  the signs of~$\omega_0(n_i, n_k)$,
   and the exact part of transition pruning),
-\item the \emph{rounded} \texttt{f64} coordinates
+\item the \emph{rounded} floating-point coordinates
   for continuous computation (the SVD-based
   KKT solver, and the LP feasibility check
   in Remark~\ref{rem:numerical-pruning}).
