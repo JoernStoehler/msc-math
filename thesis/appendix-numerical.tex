@@ -42,12 +42,14 @@ We address these as follows.
   by the strategies below.
 
 \item \emph{Loose cutoffs.}
-  Some predicates test ``$x > \varepsilon$'' where
-  the threshold~$\varepsilon$ separates clearly positive
-  values from near-zero values.
-  If rounding flips the verdict for~$x$ near~$\varepsilon$,
-  the consequence is negligible: such~$x$ are already
-  in the near-zero regime where either outcome is acceptable.
+  Some predicates of the form ``$x > \varepsilon$'' are used
+  to bound downstream numerical errors loosely, such that the
+  guarantee holds even for false positives due to numerical
+  errors in~$x$.
+  False negatives have only performance consequences
+  (fallback to more expensive algorithms) or empirical
+  usability consequences (missing results), but not
+  incorrectness.
 
 \item \emph{Three-valued predicates for sharp cutoffs.}
   A sharp predicate such as $\beta_i > 0$ cannot be decided
@@ -73,9 +75,10 @@ We address these as follows.
   the implementation can either signal an error (for manual
   investigation) or re-solve only the uncertain candidates
   using exact rational arithmetic, informed by the
-  floating-point $(S, \sigma)$ and approximate~$\hat\beta$.
-  No exact~$Q$ computation is needed---only the admissibility
-  predicate $\beta_i > 0$ must be resolved exactly.
+  exact $(S, \sigma)$ and approximate~$\hat\beta$.
+  Only the admissibility predicate $\beta_i > 0$ must be
+  resolved exactly; downstream, we use the
+  approximate~$(\hat\beta, \hat Q)$.
 \end{enumerate}
 
 The following definition makes the soundness requirement precise.
