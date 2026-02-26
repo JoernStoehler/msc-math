@@ -11,7 +11,9 @@
 %   - Lemma: transition feasibility (restated from ablation, self-contained)
 %   - Remark: numerical pruning via three-valued predicates
 %   - Definition: simple polytope
-%   - Definition: numerically robust simple polytope
+%   - Remark: scope (simple polytopes)
+%   - Definition: numerically robust polytope
+%   - Remark: conversion to f64
 
 % [TODO: JÖRN - Full rewrite of A.2 per discussion.
 %  Key changes from previous version:
@@ -43,7 +45,8 @@ the following quantities are computed exactly:
   For each 4-element subset $S \subset \{1, \ldots, F\}$
   with $\det(N_S) \neq 0$ (where $N_S$ is the $4 \times 4$
   matrix with rows~$n_i^\top$, $i \in S$),
-  the candidate vertex $v_S = N_S^{-1} h_S$ is computed
+  the candidate vertex $v_S = N_S^{-1} h_S$
+  (where $h_S = (h_i)_{i \in S}$) is computed
   via Cramer's rule over~$\mathbb{Q}$.
   The subset~$S$ defines a vertex of~$K$ if
   $\langle n_i, v_S \rangle \leq h_i$ for all $i \notin S$.
@@ -51,7 +54,8 @@ the following quantities are computed exactly:
   The incidence matrix $E \in \{0, 1\}^{V \times F}$
   has $E_{j,i} = 1$ if and only if vertex~$v_j$
   lies on facet~$F_i$, i.e.\ $\langle n_i, v_j \rangle = h_i$.
-  % Downstream: Rust stores this as vertex descriptors S_j = {i : E_{j,i} = 1}.
+  Write $S_j \coloneqq \{i : E_{j,i} = 1\}$
+  for the set of facets through vertex~$v_j$.
 \item \emph{Symplectic sign matrix.}
   For each pair of facets $i, k$ with $1 \leq i < k \leq F$,
   \[
@@ -93,6 +97,9 @@ A transition $F_i \to F_j$ exists if and only if
 \end{lemma}
 
 \begin{proof}
+We check each direction by tracking which
+halfspace constraints $\langle n_k, \cdot \rangle \leq h_k$
+the approach and departure can violate.
 Throughout, we use
 $\langle n_k, J_0 n_\ell \rangle
 = \omega_0(n_\ell, n_k)$.
@@ -212,7 +219,8 @@ over~$\mathbb{Q}$, are bounded away from zero:
 \item \emph{Determinant margin:}
   $\delta_{\min} \coloneqq
   \min_j |\!\det(N_{S_j})| > 0$.
-\item \emph{Symplectic margin} (when applicable):
+\item \emph{Symplectic margin}
+  (defined when some $D(i,k) \neq 0$):
   $\omega_{\min} \coloneqq
   \min_{\substack{i < k \\[1pt]
   D(i,k) \neq 0}}
