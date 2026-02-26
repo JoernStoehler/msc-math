@@ -21,9 +21,10 @@
 %  (2) Transition feasibility lemma restated here (duplicate of ablation.tex,
 %      canonical location TBD during final polish).
 %  (3) Simple polytope defined later, not assumed upfront.
-%  (4) Numerically robust = singular value condition on vertex matrices.
+%  (4) Numerically ε-robust = gap, determinant, symplectic conditions.
 %  Please review: lemma statement, proof, and the two definitions.]
 
+\paragraph{Rational halfspace data.}
 The algorithms in Section~\ref{sec:algorithms} operate on a polytope
 $K = K(n, h) = \{x \in \mathbb{R}^4 : \langle n_i, x \rangle \leq h_i,
 \; i = 1, \ldots, F\}$.
@@ -51,11 +52,9 @@ the following quantities are computed exactly:
   The subset~$S$ defines a vertex of~$K$ if
   $\langle n_i, v_S \rangle \leq h_i$ for all $i \notin S$.
 \item \emph{Vertex--facet incidence.}
-  The incidence matrix $E \in \{0, 1\}^{V \times F}$
-  has $E_{j,i} = 1$ if and only if vertex~$v_j$
-  lies on facet~$F_i$, i.e.\ $\langle n_i, v_j \rangle = h_i$.
-  Write $S_j \coloneqq \{i : E_{j,i} = 1\}$
-  for the set of facets through vertex~$v_j$.
+  Write $S_j \coloneqq \{i : \langle n_i, v_j \rangle = h_i\}$
+  for the set of facets through vertex~$v_j$
+  (decided exactly over~$\mathbb{Q}$).
 \item \emph{Symplectic signs.}
   For each pair of facets $i, k$,
   the value $\omega_0(n_i, n_k) \in \mathbb{Q}$
@@ -75,7 +74,7 @@ the following quantities are computed exactly:
 %  (Lemma~\ref{lem:transition-feasibility}).
 %  Canonical location TBD during final polish.]
 Let $K \subset \mathbb{R}^4$ be a convex polytope with
-facets $F_1, \ldots, F_F$ and outward normals~$n_k$
+facets $F_1, \ldots, F_m$ and outward normals~$n_k$
 (not necessarily unit).
 A \emph{transition} $F_i \to F_j$ is a point
 $x \in F_i \cap F_j$ and $\varepsilon > 0$ such that
@@ -110,8 +109,10 @@ $\langle n_j, x + t\, J_0 n_i \rangle
 = h_j + t\,\omega_0(n_i, n_j) \leq h_j$,
 which forces $\omega_0(n_i, n_j) \geq 0$
 (since $t < 0$).
-The departure gives the same by
-antisymmetry of~$\omega_0$.
+For the departure ($t > 0$), the~$F_i$ constraint gives
+$\langle n_i, x + t\, J_0 n_j \rangle
+= h_i - t\,\omega_0(n_i, n_j) \leq h_i$,
+again requiring $\omega_0(n_i, n_j) \geq 0$.
 This proves~(1).
 
 For~(2), suppose $k$ is blocking with
@@ -119,8 +120,8 @@ $\omega_0(n_i, n_k) < 0$.
 Then
 $\langle n_k, x + t\, J_0 n_i \rangle
 = \langle n_k, x \rangle + t\,\omega_0(n_i, n_k)$.
-Since both factors are negative, the product is
-positive, so
+Since $t < 0$ and $\omega_0(n_i, n_k) < 0$,
+their product $t\,\omega_0(n_i, n_k) > 0$, so
 $\langle n_k, x + t\, J_0 n_i \rangle
 > \langle n_k, x \rangle$.
 If $\langle n_k, x \rangle = h_k$, this
@@ -131,9 +132,8 @@ for the departure.
 
 \emph{Sufficiency.}
 Given $x \in F_i \cap F_j$ satisfying~(1) and~(2),
-let $\delta$ be the minimum of
-$h_k - \langle n_k, x \rangle > 0$
-over all blocking~$k$.
+we construct $\varepsilon > 0$ witnessing
+the transition.
 For non-blocking $k \notin \{i,j\}$:
 $\omega_0(n_i, n_k) \geq 0$, so
 $\langle n_k, x + t\, J_0 n_i \rangle
@@ -143,10 +143,17 @@ similarly $\omega_0(n_j, n_k) \leq 0$, so
 $\langle n_k, x + t\, J_0 n_j \rangle
 \leq \langle n_k, x \rangle \leq h_k$
 for $t \geq 0$.
-For blocking~$k$, choosing
+If no blocking facets exist, any $\varepsilon > 0$
+suffices.
+Otherwise, let $\delta$ be the minimum of
+$h_k - \langle n_k, x \rangle > 0$
+over all blocking~$k$, and choose
 $\varepsilon < \delta / \max_k(
-|\omega_0(n_i, n_k)| + |\omega_0(n_j, n_k)|)$
-ensures all constraints hold.
+|\omega_0(n_i, n_k)| + |\omega_0(n_j, n_k)|)$.
+Then all halfspace constraints hold for the
+approach and departure, so $x$ together
+with~$\varepsilon$ witnesses the transition
+$F_i \to F_j$.
 \end{proof}
 
 \begin{remark}[Numerical pruning of transitions]%
@@ -174,9 +181,6 @@ are evaluated as follows:
   pairs with $\textsc{true}$ or $\textsc{unknown}$
   are retained in the search space.
 \end{itemize}
-Condition~(1) is decided exactly;
-condition~(2) is decided numerically
-with the three-valued framework.
 \end{remark}
 
 \begin{definition}[Simple polytope]%
@@ -190,48 +194,50 @@ if every vertex lies on exactly $4$~facets.
 We restrict to simple polytopes throughout.
 This covers all polytopes arising in our experiments:
 random polytopes are almost surely simple,
-Lagrangian products are always simple,
-and polytopes from future optimisation procedures
-(e.g.\ gradient descent on the systolic ratio)
-can be perturbed to simple ones if needed.
+and Lagrangian products are always simple.
+% [TODO: JÖRN - cite or prove the two claims above.
+%  "random polytopes almost surely simple" = genericity argument.
+%  "Lagrangian products always simple" = follows from product structure.]
 \end{remark}
 
 \begin{definition}[Numerically robust polytope]%
 \label{def:numerically-robust}
+Let $\varepsilon > 0$.
 A simple polytope $K = K(n, h)$ with rational
-coordinates is \emph{numerically robust}
-if the following quantities, computed exactly
-over~$\mathbb{Q}$, are bounded away from zero:
+coordinates is \emph{numerically $\varepsilon$-robust}
+if the following conditions hold,
+where all quantities are computed exactly
+over~$\mathbb{Q}$:
 \begin{enumerate}
-\item \emph{Gap margin:}
-  $\gamma_{\min} \coloneqq
-  \min_{j,\, i \notin S_j}
-  (h_i - \langle n_i, v_j \rangle) > 0$,
+\item \emph{Gap condition:}
+  $h_i - \langle n_i, v_j \rangle > \varepsilon$
+  for all vertices~$v_j$ and all facets
+  $i \notin S_j$,
   where $S_j$ is the set of facets through
   vertex~$v_j$.
-\item \emph{Determinant margin:}
-  $\delta_{\min} \coloneqq
-  \min_j |\!\det(N_{S_j})| > 0$.
-\item \emph{Symplectic margin}
-  (defined when some $\omega_0(n_i, n_k) \neq 0$):
-  $\omega_{\min} \coloneqq
-  \min_{\substack{i < k \\[1pt]
-  \omega_0(n_i, n_k) \neq 0}}
-  |\omega_0(n_i, n_k)| > 0$.
+\item \emph{Determinant condition:}
+  $|\!\det(N_{S_j})| > \varepsilon$
+  for all vertices~$v_j$.
+\item \emph{Symplectic condition:}
+  $|\omega_0(n_i, n_k)| > \varepsilon$
+  for all pairs $i < k$ with
+  $\omega_0(n_i, n_k) \neq 0$.
 \end{enumerate}
-These margins quantify how far each exact predicate
-is from its decision boundary.
-When all margins are large relative to
-floating-point rounding error,
-the rounded floating-point polytope preserves:
-the vertex--facet incidence (via $\gamma_{\min}$
-and $\delta_{\min}$),
-and the nonzero signs of~$\omega_0(n_i, n_k)$
-(via $\omega_{\min}$).
-% [GAP - AGENT CONFIDENCE 85%: The preservation claim is a standard
+\end{definition}
+
+\begin{remark}[Numerical preservation]%
+\label{rem:numerical-preservation}
+% [GAP - AGENT CONFIDENCE 85%: The following preservation claim is a standard
 %  perturbation argument. No proof provided.
 %  JÖRN: decide whether a proof or citation is needed.]
-\end{definition}
+When $\varepsilon$ is large relative to
+floating-point rounding error,
+the rounded floating-point polytope preserves:
+the vertex--facet incidence (via conditions~(1)
+and~(2) of Definition~\ref{def:numerically-robust}),
+and the nonzero signs of~$\omega_0(n_i, n_k)$
+(via condition~(3)).
+\end{remark}
 
 \begin{remark}[Conversion to floating-point]%
 \label{rem:f64-conversion}
@@ -245,9 +251,13 @@ to a unit vector:
 The halfspace $\langle n_i, x \rangle \leq h_i$ is
 equivalent to
 $\langle \hat n_i, x \rangle \leq \hat h_i$.
-The normalization and the rational-to-floating-point
-conversion each introduce $O(\varepsilon_{\mathrm{mach}})$
-rounding error per coordinate.
+Both the rational-to-floating-point conversion
+and the normalization introduce rounding errors.
+% [GAP - AGENT CONFIDENCE 50%: The previous version claimed O(ε_mach)
+%  rounding error per coordinate. This requires careful analysis of
+%  IEEE 754 rounding guarantees for division and square root.
+%  JÖRN: decide whether to state a precise bound, cite the IEEE standard,
+%  or leave the qualitative statement.]
 The capacity algorithm uses:
 \begin{itemize}
 \item the \emph{exact} rational data for discrete

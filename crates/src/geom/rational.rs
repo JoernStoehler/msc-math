@@ -17,9 +17,10 @@
 //!
 //! # Margins ([def:numerically-robust])
 //!
-//! [`Margins`] records how far each exact predicate is from its decision
-//! boundary. When margins ≫ f64 rounding error, the rounded f64 polytope
-//! preserves vertex–facet incidence and nonzero symplectic signs.
+//! [`Margins`] records each exact predicate's distance from its decision
+//! boundary. A polytope is numerically ε-robust when all margins exceed ε.
+//! When ε ≫ f64 rounding error, the rounded f64 polytope preserves
+//! vertex–facet incidence and nonzero symplectic signs.
 
 use num_bigint::BigInt;
 use num_rational::BigRational;
@@ -73,10 +74,11 @@ pub struct CombinatorialData {
     pub margins: Margins,
 }
 
-/// Exact rational margins — how far each exact predicate is from its
-/// decision boundary. See [def:numerically-robust] in the thesis.
+/// Exact rational margins for the ε-robustness conditions.
+/// See [def:numerically-robust] in the thesis.
 ///
-/// When all margins ≫ f64 rounding error (~1e-15 × scale),
+/// A polytope is numerically ε-robust when all three margins exceed ε.
+/// When ε ≫ f64 rounding error (~1e-15 × scale),
 /// the rounded f64 polytope preserves vertex–facet incidence and
 /// nonzero symplectic signs.
 #[derive(Clone, Debug)]
@@ -87,7 +89,7 @@ pub struct Margins {
     /// Smallest absolute determinant |det(N_S)| over vertex subsets S.
     /// Positive iff all vertex matrices are non-singular (which they are).
     pub min_abs_det: BigRational,
-    /// Smallest |ω₀(nᵢ, nₖ)| over adjacent pairs with D(i,k) ≠ 0.
+    /// Smallest |ω₀(nᵢ, nₖ)| over adjacent pairs with ω₀(nᵢ, nₖ) ≠ 0.
     /// None if all adjacent pairs have ω₀ = 0.
     pub min_omega_nonzero: Option<BigRational>,
 }
