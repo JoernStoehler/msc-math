@@ -81,21 +81,14 @@ A \emph{transition} $F_i \to F_j$ is a point
 $x \in F_i \cap F_j$ and $\varepsilon > 0$ such that
 $x + t\, J_0 n_i \in K$ for $t \in [-\varepsilon, 0]$
 and $x + t\, J_0 n_j \in K$ for $t \in [0, \varepsilon]$.
-
-Define the \emph{blocking set}
-\[
-  B_{i \to j}
-  = \{k \notin \{i,j\} :
-  \omega_0(n_i, n_k) < 0
-  \textup{ or }
-  \omega_0(n_j, n_k) > 0\}.
-\]
 A transition $F_i \to F_j$ exists if and only if
 \begin{enumerate}
 \item $\omega_0(n_i, n_j) \ge 0$, and
 \item $\exists\, x \in F_i \cap F_j$ with
   $\langle n_k, x \rangle < h_k$
-  for all $k \in B_{i \to j}$.
+  for all $k \notin \{i,j\}$ satisfying
+  $\omega_0(n_i, n_k) < 0$ or
+  $\omega_0(n_j, n_k) > 0$.
 \end{enumerate}
 \end{lemma}
 
@@ -103,6 +96,8 @@ A transition $F_i \to F_j$ exists if and only if
 Throughout, we use
 $\langle n_k, J_0 n_\ell \rangle
 = \omega_0(n_\ell, n_k)$.
+Call $k \notin \{i,j\}$ \emph{blocking} if
+$\omega_0(n_i, n_k) < 0$ or $\omega_0(n_j, n_k) > 0$.
 
 \emph{Necessity.}
 Let $x \in F_i \cap F_j$ realize the transition.
@@ -116,7 +111,7 @@ The departure gives the same by
 antisymmetry of~$\omega_0$.
 This proves~(1).
 
-For~(2), suppose $k \in B_{i \to j}$ with
+For~(2), suppose $k$ is blocking with
 $\omega_0(n_i, n_k) < 0$.
 Then
 $\langle n_k, x + t\, J_0 n_i \rangle
@@ -132,12 +127,11 @@ The case $\omega_0(n_j, n_k) > 0$ is analogous
 for the departure.
 
 \emph{Sufficiency.}
-Given $x \in F_i \cap F_j$ satisfying~(1)
-and~(2), set
-$\delta = \min_{k \in B_{i \to j}}
-(h_k - \langle n_k, x \rangle) > 0$.
-For non-blocking
-$k \notin B_{i \to j} \cup \{i,j\}$:
+Given $x \in F_i \cap F_j$ satisfying~(1) and~(2),
+let $\delta$ be the minimum of
+$h_k - \langle n_k, x \rangle > 0$
+over all blocking~$k$.
+For non-blocking $k \notin \{i,j\}$:
 $\omega_0(n_i, n_k) \geq 0$, so
 $\langle n_k, x + t\, J_0 n_i \rangle
 \leq \langle n_k, x \rangle \leq h_k$
@@ -147,11 +141,8 @@ $\langle n_k, x + t\, J_0 n_j \rangle
 \leq \langle n_k, x \rangle \leq h_k$
 for $t \geq 0$.
 For blocking~$k$, choosing
-\[
-  \varepsilon
-  < \frac{\delta}{\max_k\bigl(
-  |\omega_0(n_i, n_k)| + |\omega_0(n_j, n_k)|\bigr)}
-\]
+$\varepsilon < \delta / \max_k(
+|\omega_0(n_i, n_k)| + |\omega_0(n_j, n_k)|)$
 ensures all constraints hold.
 \end{proof}
 
@@ -166,10 +157,9 @@ are evaluated as follows:
   matrix~$D$ (Remark~\ref{rem:exact-quantities}).
   If $D(i, j) = {-}$, no transition
   $F_i \to F_j$ exists and the pair is pruned.
-\item \emph{Condition~(2): LP feasibility on the
-  blocking set.}
+\item \emph{Condition~(2): LP feasibility.}
   This is a linear feasibility problem on
-  the $(F{-}2)$-dimensional face $F_i \cap F_j$,
+  the face $F_i \cap F_j$,
   solved numerically in \texttt{f64}.
   Following the three-valued framework of
   Section~\ref{app:general-approach},
