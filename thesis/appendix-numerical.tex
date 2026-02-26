@@ -1,45 +1,134 @@
 % appendix-numerical.tex — \input'd from main.tex (after \appendix)
 %
 % Numerical implementation details for the capacity algorithms.
-% The main chapter (Sections 2--3) states and proves the algorithms
-% under exact arithmetic. This appendix addresses finite-precision
-% concerns: combinatorial structure, predicate relaxation,
-% near-singular systems, and error tracking.
+% The main chapter states and proves the algorithms under exact arithmetic.
+% This appendix addresses finite-precision concerns.
 %
-% Structure (top-down):
-%   A.1 General Approach — three-valued framework, information flow
-%   A.2 Polytope Combinatorics — exact rational data, transition feasibility, robustness
-%   A.3 SVD Step — near-singular handling, positivity predicate
-%   A.4 Accumulated Q Maximum — certified/uncertain tracking, final answer
+% Structure:
+%   Overview — strategies for handling numerical error
+%   A.1 Polytope Combinatorics — exact rational data, transition feasibility, robustness
+%   A.2 SVD Step — near-singular handling, positivity predicate
+%   A.3 Accumulated Q Maximum — certified/uncertain tracking, final answer
 
 \section{Numerical Implementation}\label{app:numerical}
+\label{app:general-approach}
 
 The algorithms in Section~\ref{sec:algorithms} are stated for
-exact arithmetic: predicates such as $\beta_i > 0$ and
+exact real arithmetic: predicates such as $\beta_i > 0$ and
 $N^\top \beta = 0$ are decided exactly, and the KKT system is
 solved without numerical error.
-In a floating-point implementation, each of these operations
-introduces numerical errors that must be controlled.
+A floating-point implementation must control two kinds of error:
+discrete decisions (combinatorial data, predicate evaluations)
+may give wrong answers, and continuous quantities (KKT solutions)
+accumulate rounding error.
+We address these as follows.
 
-This appendix develops the numerical counterpart of the exact
-algorithm in four parts.
-Section~\ref{app:general-approach} states the soundness goal
-and introduces the three-valued predicate framework
-for the predicates whose evaluation involves numerical
-error.
-Section~\ref{app:polytope-combinatorics} identifies
-the quantities computed exactly from rational coordinates,
-characterizes transition feasibility between facets,
-and defines numerical robustness conditions.
-Section~\ref{app:svd-step} analyses the SVD-based solution of
-each KKT system, including near-singular detection
-and dismissal, and the three-valued positivity filter.
-Section~\ref{app:accumulated-q-max} describes how the algorithm
-combines these verdicts to report a capacity value with
-appropriate certainty qualifiers.
+\begin{enumerate}
+\item \emph{Rational input polytopes.}
+  We restrict to polytopes with rational halfspace data
+  $n_i \in \mathbb{Q}^4$, $h_i \in \mathbb{Q}$.
+  This makes vertex enumeration, vertex--facet incidence,
+  and symplectic signs $\operatorname{sign}(\omega_0(n_i, n_k))$
+  exactly computable over~$\mathbb{Q}$
+  (Section~\ref{app:polytope-combinatorics}).
+  These exact quantities are stored alongside the
+  floating-point polytope, so that rounding errors
+  cannot affect discrete decisions.
 
-\subsection{General Approach}\label{app:general-approach}
-\input{appendix-numerical-general}
+\item \emph{Double-precision floating-point for continuous computation.}
+  The KKT system and SVD decomposition are solved in
+  \texttt{f64} arithmetic for performance.
+  Rounding errors in continuous quantities are controlled
+  by the strategies below.
+
+\item \emph{Loose cutoffs ignore rounding.}
+  Checks of the form ``$x > \varepsilon$'' with a
+  tolerance~$\varepsilon$ much larger than machine precision
+  are unaffected by rounding: the gap between the exact
+  and rounded values is negligible compared to~$\varepsilon$.
+  The numerical robustness conditions
+  (Definition~\ref{def:numerically-robust}) formalise this.
+
+\item \emph{Three-valued predicates for sharp cutoffs.}
+  A sharp predicate such as $\beta_i > 0$ cannot be decided
+  reliably from floating-point data alone.
+  Instead of guessing, the implementation returns one of three
+  verdicts: $\textsc{true}$, $\textsc{false}$, or
+  $\textsc{unknown}$, deferring the uncertain cases to
+  downstream logic.
+
+\item \emph{Accumulation resolves most uncertain cases.}
+  The algorithm tracks all candidates
+  $(S, \sigma, \hat\beta, \hat Q)$ with their certainty
+  status.
+  Since we seek the \emph{maximum}~$Q$ over admissible
+  candidates, uncertain candidates below the highest
+  certified~$Q$ are irrelevant regardless of their true
+  admissibility.
+  In practice, this resolves all uncertain cases in our
+  experiments (Section~\ref{app:accumulated-q-max}).
+
+\item \emph{Fallback for unresolved cases.}
+  If uncertain candidates remain above the certified maximum,
+  the implementation can either signal an error (for manual
+  investigation) or re-solve only the uncertain candidates
+  using exact rational arithmetic, informed by the
+  floating-point $(S, \sigma)$ and approximate~$\hat\beta$.
+  No exact~$Q$ computation is needed---only the admissibility
+  predicate $\beta_i > 0$ must be resolved exactly.
+\end{enumerate}
+
+The following definition makes the soundness requirement precise.
+
+\begin{definition}[Sound predicate]%
+\label{def:sound-predicate}
+A predicate~$\tilde P$ computed from floating-point data
+is \emph{sound} if its definite verdicts are reliable:
+$\textsc{true}$ and $\textsc{false}$ agree with exact
+arithmetic, and $\textsc{unknown}$ means the numerical
+evidence is inconclusive.
+Formally:
+\begin{align*}
+  P \text{ true in exact arithmetic}
+  &\;\Longrightarrow\;
+  \tilde P \neq \textsc{false}, \\
+  P \text{ false in exact arithmetic}
+  &\;\Longrightarrow\;
+  \tilde P \neq \textsc{true}.
+\end{align*}
+\end{definition}
+
+\begin{remark}[Impact on control flow]%
+\label{rem:three-valued-control-flow}
+The exact algorithm has two kinds of decision points:
+\begin{description}
+\item[Inclusion decisions] (``unless $P$, skip''):
+  The exact rule ``if $\lnot P$, skip $(S, \sigma)$''
+  becomes ``if $\tilde P = \textsc{false}$, skip.''
+  When $\tilde P = \textsc{unknown}$, the pair is kept
+  (conservatively), since the exact~$P$ might be true.
+  This means the numerical algorithm searches at least as
+  broadly as the exact algorithm.
+\item[Maximum tracking] (``find the largest admissible $Q$''):
+  An admissibility predicate $A(\beta)$ (e.g.\ $\beta_i > 0$
+  for all~$i$) becomes three-valued.
+  The algorithm returns:
+  \begin{itemize}
+  \item the largest~$Q$ where $\tilde A = \textsc{true}$
+    (the \emph{certified value}, a lower bound on the
+    true maximum),
+  \item all~$Q$ values above the certified value where
+    $\tilde A = \textsc{unknown}$
+    (the true maximum may be among these).
+  \end{itemize}
+  Candidates with $\tilde A = \textsc{false}$ are provably
+  inadmissible and discarded; uncertain candidates at or below
+  the certified value are irrelevant (the certified value already
+  dominates).
+\end{description}
+\end{remark}
+
+The remainder of this appendix develops these strategies in detail.
 
 \subsection{Polytope Combinatorics}\label{app:polytope-combinatorics}
 \input{appendix-numerical-combinatorics}
