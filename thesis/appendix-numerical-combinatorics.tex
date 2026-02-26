@@ -15,14 +15,7 @@
 %   - Definition: numerically robust polytope
 %   - Remark: conversion to f64
 
-% [TODO: JÖRN - Full rewrite of A.2 per discussion.
-%  Key changes from previous version:
-%  (1) No "combinatorial data" wrapper — just the quantities directly.
-%  (2) Transition feasibility lemma restated here (duplicate of ablation.tex,
-%      canonical location TBD during final polish).
-%  (3) Simple polytope defined later, not assumed upfront.
-%  (4) Numerically ε-robust = gap, determinant, symplectic conditions.
-%  Please review: lemma statement, proof, and the two definitions.]
+% Jörn: math approved (f5a0d24) — entire file
 
 \paragraph{Rational halfspace data.}
 The algorithms in Section~\ref{sec:algorithms} operate on a polytope
@@ -67,9 +60,6 @@ the following quantities are computed exactly:
 
 \begin{lemma}[Transition feasibility]%
 \label{lem:transition-feasibility-appendix}
-% [TODO: JÖRN - Restated from ablation experiment
-%  (Lemma~\ref{lem:transition-feasibility}).
-%  Canonical location TBD during final polish.]
 Let $K \subset \mathbb{R}^4$ be a convex polytope with
 facets $F_1, \ldots, F_m$ and outward normals~$n_k$
 (not necessarily unit).
@@ -188,9 +178,6 @@ We restrict to simple polytopes throughout.
 This covers all polytopes arising in our experiments:
 random polytopes are almost surely simple,
 and Lagrangian products are always simple.
-% [TODO: JÖRN - cite or prove the two claims above.
-%  "random polytopes almost surely simple" = genericity argument.
-%  "Lagrangian products always simple" = follows from product structure.]
 \end{remark}
 
 \begin{definition}[Numerically robust polytope]%
@@ -250,11 +237,6 @@ equivalent to
 $\langle \hat n_i, x \rangle \leq \hat h_i$.
 Both the rational-to-floating-point conversion
 and the normalization introduce rounding errors.
-% [GAP - AGENT CONFIDENCE 50%: The previous version claimed O(ε_mach)
-%  rounding error per coordinate. This requires careful analysis of
-%  IEEE 754 rounding guarantees for division and square root.
-%  JÖRN: decide whether to state a precise bound, cite the IEEE standard,
-%  or leave the qualitative statement.]
 The capacity algorithm uses:
 \begin{itemize}
 \item the \emph{exact} rational data for discrete
