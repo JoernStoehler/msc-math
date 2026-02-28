@@ -15,7 +15,8 @@
 %   - Definition: numerically robust polytope
 %   - Remark: conversion to f64
 
-% Jörn: math approved (f5a0d24) — entire file
+% Jörn: math approved (f5a0d24) — from \begin{lemma}[Transition feasibility] to end of file
+% (Remark A.3 edited post-approval: removed S_j notation per Jörn's feedback)
 
 \paragraph{Rational halfspace data.}
 The algorithms in Section~\ref{sec:algorithms} operate on a polytope
@@ -45,9 +46,8 @@ the following quantities are computed exactly:
   The subset~$S$ defines a vertex of~$K$ if
   $\langle n_i, v_S \rangle \leq h_i$ for all $i \notin S$.
 \item \emph{Vertex--facet incidence.}
-  Write $S_j \coloneqq \{i : \langle n_i, v_j \rangle = h_i\}$
-  for the set of facets through vertex~$v_j$
-  (decided exactly over~$\mathbb{Q}$).
+  The equality $\langle n_i, v_j \rangle = h_i$
+  is exactly decidable over~$\mathbb{Q}$.
 \item \emph{Symplectic signs.}
   For each pair of facets $i, k$,
   the value $\omega_0(n_i, n_k) \in \mathbb{Q}$
