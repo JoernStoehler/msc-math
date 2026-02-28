@@ -15,8 +15,9 @@
 %   - Definition: numerically robust polytope
 %   - Remark: conversion to f64
 
-% Jörn: math approved (f5a0d24) — from \begin{lemma}[Transition feasibility] to end of file
+% Jörn: math approved (f5a0d24) — from \begin{remark}[Numerical pruning] to end of file
 % (Remark A.3 edited post-approval: removed S_j notation per Jörn's feedback)
+% (Lemma A.4 edited post-approval: definition uses Reeb velocities, proof translates to J_0 n_i)
 
 \paragraph{Rational halfspace data.}
 The algorithms in Section~\ref{sec:algorithms} operate on a polytope
@@ -63,10 +64,10 @@ the following quantities are computed exactly:
 Let $K \subset \mathbb{R}^4$ be a convex polytope with
 facets $F_1, \ldots, F_m$ and outward normals~$n_k$
 (not necessarily unit).
-A \emph{transition} $F_i \to F_j$ is a point
-$x \in F_i \cap F_j$ and $\varepsilon > 0$ such that
-$x + t\, J_0 n_i \in K$ for $t \in [-\varepsilon, 0]$
-and $x + t\, J_0 n_j \in K$ for $t \in [0, \varepsilon]$.
+A \emph{transition} $F_i \to F_j$ is a segment of a
+Reeb orbit that travels with velocity~$R_i$
+(Definition~\ref{def:reeb-vectors}) for positive time,
+then immediately with velocity~$R_j$ for positive time.
 A transition $F_i \to F_j$ exists if and only if
 \begin{enumerate}
 \item $\omega_0(n_i, n_j) \ge 0$, and
@@ -79,6 +80,15 @@ A transition $F_i \to F_j$ exists if and only if
 \end{lemma}
 
 \begin{proof}
+A transition $F_i \to F_j$ exists if and only if
+there is a point $x \in F_i \cap F_j$ and
+$\varepsilon > 0$ such that
+$x + t\, J_0 n_i \in K$ for $t \in [-\varepsilon, 0]$
+and $x + t\, J_0 n_j \in K$ for $t \in [0, \varepsilon]$:
+since $R_i = (2/h_i)\, J_0\, n_i$ with $h_i > 0$,
+traveling with velocity~$R_i$ is equivalent to
+moving in direction~$J_0 n_i$.
+
 \emph{Necessity.}
 Let $x \in F_i \cap F_j$ realize the transition.
 For the approach ($t < 0$) to satisfy
