@@ -199,15 +199,12 @@ if the following conditions hold:
 \begin{enumerate}
 \item \emph{Gap condition:}
   $h_i - \langle n_i, v_j \rangle > \varepsilon$
-  for all vertices~$v_j$ and all facets
-  $i \notin S_j$,
-  where $S_j$ is the set of facets through
-  vertex~$v_j$.
+  for all vertices~$v_j$ and all facets~$F_i$
+  not containing~$v_j$.
 \item \emph{Determinant condition:}
-  $|\!\det(N_{S_j})| > \varepsilon$
-  for all vertices~$v_j$,
-  where $N_{S_j}$ is the $4 \times 4$ matrix
-  of Remark~\ref{rem:exact-quantities}.
+  for all vertices~$v_j$, the $4 \times 4$ matrix
+  of normals of the facets through~$v_j$ has
+  determinant exceeding~$\varepsilon$ in absolute value.
 \item \emph{Symplectic condition:}
   $|\omega_0(n_i, n_k)| > \varepsilon$
   for all $i \neq k$
