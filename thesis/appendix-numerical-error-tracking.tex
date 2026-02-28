@@ -1,60 +1,63 @@
 % appendix-numerical-error-tracking.tex — \input'd from appendix-numerical.tex
 %
-% Accumulated Q maximum and final capacity report: certified vs uncertain
-% candidates, late resolution of UNKNOWN verdicts, and the unimplemented
-% second pass.
+% Accumulated Q maximum and final capacity answer.
+% Classifies all (S,σ) pairs by their fate in the algorithm.
 %
 % Sources:
-%   - Original content: old A.3 (pre-restructure)
+%   - Restructured per Jörn's feedback (2026-02-28)
 %   - Second-pass description: based on Jörn's notes (2026-02-24)
 %
 % Structure:
-%   - Candidate classification (certified vs uncertain)
+%   - Classification of (S,σ) pairs (5 categories)
 %   - Final answer (two cases)
 %   - Remark: empirical error tracking
 %   - Paragraph: second-pass verification (unimplemented)
 
-After evaluating all candidate pairs $(S, \sigma)$,
-the numerical algorithm must report a capacity value with
-appropriate certainty qualifiers.
-Near-singular systems have already been resolved by
-Algorithm~\ref{alg:near-singular-handling}: each pair is
-either dismissed (value covered by a smaller pair) or its
-computed~$\beta_0$ is used directly.
-The only remaining source of uncertainty is the
-three-valued predicates of
-Section~\ref{app:general-approach}.
-
-\paragraph{Candidate classification.}
-For each non-dismissed pair $(S, \sigma)$, the algorithm
-stores the full candidate $(S, \sigma, \hat\beta, \hat Q)$:
-the pair, the computed coefficient vector, and the
-objective value $\hat Q = \hat\beta^\top H\,\hat\beta$.
-Each candidate is classified as:
+The algorithm enumerates all candidate pairs $(S, \sigma)$
+and classifies each into one of five categories:
 \begin{description}
+\item[Skipped.]
+  Adjacency filtering
+  (Lemma~\ref{lem:transition-feasibility-appendix},
+  Remark~\ref{rem:numerical-pruning})
+  determines that no minimum-action Reeb orbit has
+  the combinatorics~$(S, \sigma)$.
+  The pair is not processed further.
+\item[Dismissed.]
+  The KKT system is near-singular and
+  Algorithm~\ref{alg:near-singular-handling} certifies
+  that its value is covered by a smaller pair.
+  The pair contributes no candidate.
 \item[Certified.]
-  All predicates returned $\textsc{true}$.
-  The candidate is genuinely admissible and~$\hat Q$ is
-  the value of a feasible critical point.
-\item[Uncertain.]
-  Some predicate returned $\textsc{unknown}$
-  (typically a $\hat\beta_i$ near zero).
-  The pair may or may not satisfy the exact constraints,
-  so~$\hat Q$ may come from an inadmissible point.
-  The stored~$\hat\beta$ enables downstream investigation
-  (e.g.\ more expensive tests to resolve the
-  $\textsc{unknown}$ verdicts).
+  The KKT system is solved and all admissibility
+  predicates return $\textsc{true}$
+  (in particular, $\hat\beta_i > 0$ for all $i \in S$
+  is decided with certainty).
+  The objective value
+  $\hat Q = \hat\beta^\top H\,\hat\beta$
+  is the value of a genuinely feasible critical point.
+\item[Dropped.]
+  The pair is solved but its~$\hat Q$ is below
+  the current best certified value.
+  Whether the candidate is admissible or not,
+  it cannot improve the capacity bound,
+  so it is discarded.
+\item[Uncertain above certified.]
+  The pair is solved, $\hat Q$ exceeds the best
+  certified value, and at least one admissibility
+  predicate returned $\textsc{unknown}$
+  (typically $\hat\beta_i \approx 0$).
+  The candidate may or may not satisfy the exact
+  constraints, so its~$\hat Q$ may come from
+  an inadmissible point.
+  The stored~$(S, \sigma, \hat\beta, \hat Q)$ enables
+  downstream investigation.
 \end{description}
 
 \paragraph{Final answer.}
-Following the maximum tracking principle
-(Section~\ref{app:general-approach}):
-let $(S_{\text{cert}}, \sigma_{\text{cert}},
-\hat\beta_{\text{cert}}, Q_{\text{cert}})$ be the
-certified candidate with the largest~$Q$, and let
-$\mathcal{U} = \{(S, \sigma, \hat\beta, \hat Q) :
-\text{uncertain with } \hat Q > Q_{\text{cert}}\}$
-be the uncertain candidates above the certified value.
+Let $Q_{\text{cert}}$ be the largest certified~$\hat Q$
+and let~$\mathcal{U}$ be the set of uncertain candidates
+above~$Q_{\text{cert}}$.
 If no certified candidate exists, the algorithm reports
 only the uncertain candidates and flags the result for
 investigation.
