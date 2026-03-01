@@ -404,20 +404,24 @@ In particular:
   individual vectors, but their joint invariant subspace
   remains accurate.
 \item \emph{Solve step.}
-  The pseudoinverse
-  $\hat x = \sum_{|\lambda_j| > \tau}
-    (v_j^\top b / \lambda_j)\, v_j$
-  amplifies the error in~$b$ by~$1/|\lambda_j|$
-  along each retained eigendirection,
-  giving overall relative error
+  For non-singular~$M$, the solution~$x$ is unique and
+  the relative error satisfies
   $\|\hat x - x\| / \|x\|
-    = O(\kappa_\tau\,\varepsilon_{\mathrm{mach}})$,
-  where
-  $\kappa_\tau = |\lambda_{\max}|
-    / \min_{|\lambda_j|>\tau} |\lambda_j|$
+    = O(\kappa(M)\,\varepsilon_{\mathrm{mach}})$,
+  where $\kappa(M) = |\lambda_{\max}| / |\lambda_{\min}|$
   \cite[Ch.~5]{Higham2002}.
-  Near-singular systems ($\kappa_\tau \gg 1$) amplify
-  rounding errors proportionally.
+  \textbf{This bound does not apply to our KKT systems.}
+  When $M$ is singular, $x$~is non-unique and
+  $\|\hat x - x\|$ can be arbitrarily large
+  (any null-space component is lost).
+  When $M$ is near-singular,
+  $\kappa(M) \gg 1$ and the bound is vacuous.
+  We therefore analyse the error in~$Q$ directly
+  (Remarks~\ref{rem:v2-null-q-constant}--\ref{rem:v2-near-null-q}),
+  obtaining a tight bound
+  (Lemma~\ref{lem:v2-q-interval})
+  that exploits the insensitivity of~$Q$
+  to near-null directions.
 \end{enumerate}
 For our matrices ($m + 5 \leq 21$, since $|S| \leq 16$),
 the polynomial factor~$p(m)$ is negligible.
