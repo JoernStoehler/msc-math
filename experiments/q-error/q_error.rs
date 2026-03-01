@@ -637,6 +637,79 @@ fn main() {
             name, f, total, n_beta_pos, n_q_pos,
             n_trivial, n_pd, n_nd, n_indef, n_nearzero);
 
+        // Show ND+β>0 nodes detail
+        if n_nd > 0 {
+            // Collect ND subsets for monotonicity check
+            let mut nd_subsets: Vec<(Vec<usize>, Vec<usize>)> = Vec::new(); // (subset, perm)
+            for m_check in 2..=f {
+                for subset in combinations(f, m_check) {
+                    for perm in cyclic_permutations(&subset) {
+                        if let Some(info) = node_hessian_check(normals, heights, &perm) {
+                            if info.beta_min > eps_beta && info.q > eps_q
+                                && info.definiteness == Definiteness::ND
+                            {
+                                nd_subsets.push((subset.clone(), perm));
+                            }
+                        }
+                    }
+                }
+            }
+            let nd_sizes: std::collections::BTreeMap<usize, usize> = nd_subsets.iter()
+                .fold(std::collections::BTreeMap::new(), |mut acc, (s, _)| {
+                    *acc.entry(s.len()).or_insert(0) += 1;
+                    acc
+                });
+            let nd_dist: String = nd_sizes.iter()
+                .map(|(m, c)| format!("m={}:{}", m, c))
+                .collect::<Vec<_>>()
+                .join(" ");
+            println!("  ND+β>0: {} nodes, by size: {}", n_nd, nd_dist);
+
+            // Check upward monotonicity: for each ND subset S, check if all S' ⊃ S also have
+            // a negative direction (ND or indefinite or trivial-but-from-larger-set)
+            // Note: we check definiteness of the H block, not filtered by β>0
+            let nd_sets: Vec<std::collections::BTreeSet<usize>> = nd_subsets.iter()
+                .map(|(s, _)| s.iter().cloned().collect::<std::collections::BTreeSet<usize>>())
+                .collect();
+            // Deduplicate ND sets
+            let mut unique_nd: Vec<std::collections::BTreeSet<usize>> = nd_sets.clone();
+            unique_nd.sort();
+            unique_nd.dedup();
+
+            // For each unique ND set, check if any superset has PD Hessian
+            let mut violations = 0u32;
+            for nd_set in &unique_nd {
+                // Check all supersets of nd_set that were evaluated
+                for m_sup in (nd_set.len() + 1)..=f {
+                    for superset in combinations(f, m_sup) {
+                        let sup_set: std::collections::BTreeSet<usize> =
+                            superset.iter().cloned().collect();
+                        if !nd_set.is_subset(&sup_set) {
+                            continue;
+                        }
+                        // Check at least one perm of superset
+                        let mut found_pd = false;
+                        for perm in cyclic_permutations(&superset) {
+                            if let Some(info) = node_hessian_check(normals, heights, &perm) {
+                                if info.definiteness == Definiteness::PD {
+                                    found_pd = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if found_pd {
+                            violations += 1;
+                            println!("  VIOLATION: ND set {:?} has PD superset {:?}",
+                                nd_set, sup_set);
+                        }
+                    }
+                }
+            }
+            if violations == 0 {
+                println!("  Upward monotonicity: CONFIRMED (no PD supersets of ND sets)");
+            }
+        }
+
         // Show PD+β>0 nodes detail
         if !pd_beta_pos.is_empty() {
             let q_max = pd_beta_pos.iter().map(|&(_, q)| q).fold(f64::NEG_INFINITY, f64::max);
