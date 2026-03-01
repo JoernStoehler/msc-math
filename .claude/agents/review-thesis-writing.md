@@ -187,6 +187,8 @@ Do NOT put review status in the header. Review status lives inline via `% Jörn:
 
 5. **Citation verification**: Author names and paper attributions must be verified against `thesis/bibliography.bib` or the paper files in `papers/`. Never produce author names from memory. Common agent failure: producing plausible-sounding but wrong author names (e.g., "Cieliebak-Hutchings" instead of the correct "Chaidez-Hutchings"). Check every author name in the reviewed content against the bibliography.
 
+6. **Local vs global property tracking**: Track which properties are local (hold for a segment) vs global (require the full structure). Key instance: "Reeb orbit" means a *closed* Reeb trajectory. A transition F_i → F_j is a segment of a Reeb *trajectory*, not an orbit — closedness is a global property established only when the full cycle (S, σ) is verified. In sections about transitions, KKT solving, or pruning, the word "orbit" is almost always wrong; use "trajectory" or "candidate pair (S, σ)" instead. Detection: grep for `\borbit\b` in these sections and verify each usage is justified.
+
 ### Proof Writing
 
 **Structure**: Assumptions → Claim → Overview → Steps → Conclusion
