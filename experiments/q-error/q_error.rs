@@ -10,13 +10,13 @@ use symplectic::geom::known_polytopes;
 use symplectic::geom::symplectic::omega0;
 use symplectic::geom::polytope::Polytope4D;
 
-/// Build KKT matrix and RHS (copied from crate-internal build_kkt_system).
+/// Build symmetric KKT matrix and RHS (copied from crate-internal build_kkt_system).
 ///
-/// Block structure (code ordering):
+/// Uses negated multipliers (μ = −λ, ξ = −ν) for a symmetric saddle-point matrix:
 /// ```text
-/// [ H    | -N   | -η ] [ β ]   [ 0 ]   rows 0..m
-/// [ N^T  |  0   |  0 ] [ λ ] = [ 0 ]   rows m..m+4
-/// [ η^T  |  0   |  0 ] [ ν ]   [ 1 ]   row  m+4
+/// [ H   |  N   |  η ] [ β ]   [ 0 ]   rows 0..m
+/// [ N^T |  0   |  0 ] [ μ ] = [ 0 ]   rows m..m+4
+/// [ η^T |  0   |  0 ] [ ξ ]   [ 1 ]   row  m+4
 /// ```
 fn build_kkt(
     normals: &[Vector4<f64>],
@@ -38,13 +38,13 @@ fn build_kkt(
     for i in 0..m {
         for d in 0..4 {
             let n = normals[perm[i]][d];
-            kkt[(i, m + d)] = -n;
+            kkt[(i, m + d)] = n;
             kkt[(m + d, i)] = n;
         }
     }
     for i in 0..m {
         let h = heights[perm[i]];
-        kkt[(i, m + 4)] = -h;
+        kkt[(i, m + 4)] = h;
         kkt[(m + 4, i)] = h;
     }
     rhs[m + 4] = 1.0;
@@ -294,12 +294,14 @@ fn run_diagnostics(
     let q_raw = q_from_beta(normals, perm, &beta_full);
 
     // Residual blocks from full SVD (code ordering: rows m..m+4 = constraint, m+4 = normalization)
+    // Solution vector is [β̂; μ̂; ξ̂] with negated multipliers.
     let r1_full: DVector<f64> = DVector::from_iterator(4, (m..m + 4).map(|i| r_full[i]));
     let r3_full = r_full[m + 4];
-    let lambda_hat: DVector<f64> = DVector::from_iterator(4, (m..m + 4).map(|i| x_full[i]));
-    let nu_hat = x_full[m + 4];
+    let mu_hat: DVector<f64> = DVector::from_iterator(4, (m..m + 4).map(|i| x_full[i]));
+    let xi_hat = x_full[m + 4];
 
-    let q_first_order = q_raw - 2.0 * (r1_full.dot(&lambda_hat) + r3_full * nu_hat);
+    // Q̃ = Q(β̂) + 2(r₁ᵀμ̂ + r₃ξ̂)  [+ sign from negated multipliers]
+    let q_first_order = q_raw + 2.0 * (r1_full.dot(&mu_hat) + r3_full * xi_hat);
 
     // Analytical bounds
     let r_sq_full = r_full_norm * r_full_norm;
@@ -317,7 +319,8 @@ fn run_diagnostics(
     let delta_x_trunc = svd_solve(u, sv, v_t, &r_trunc, size, rank);
     let (cross_trunc, quad_trunc) = compute_remainder(normals, perm, m, &r_trunc, &delta_x_trunc);
 
-    let q_fully_corrected = q_first_order + 2.0 * cross_full - quad_full;
+    // cross_new = r₁ᵀδμ + r₃δξ = -(r₁ᵀδλ + r₃δν), so sign flips vs old convention.
+    let q_fully_corrected = q_first_order - 2.0 * cross_full - quad_full;
 
     // Restricted Hessian: H|_T where T = ker([N^T; η^T])
     // Build constraint matrix C (5 × m): rows = N^T rows + η^T row
@@ -839,6 +842,152 @@ fn main() {
                 .join(" ");
             println!("  PD+β>0: {} nodes, Q∈[{:.6e}, {:.6e}], by size: {}",
                 pd_beta_pos.len(), q_min, q_max, m_dist);
+        }
+    }
+
+    println!();
+
+    // Table 7: Q interval framework — per-node classification and majorization
+    //
+    // For each (S, σ):
+    //   SVD → β̂, residual r, σ_min(retained), Q̃, E
+    //   δβ_bound = ‖r‖ / σ_min  (perturbation bound on β)
+    //   Admissibility:
+    //     decided-admissible:   β̂_min > δβ_bound  (true β_i > 0 for all i)
+    //     decided-inadmissible: β̂_min < -δβ_bound (true β_i < 0 for some i)
+    //     uncertain:            |β̂_min| ≤ δβ_bound
+    //   Q interval:
+    //     decided-admissible:   [Q̃ - E, Q̃ + E]
+    //     decided-inadmissible: skip (sub-faces handle this)
+    //     uncertain:            [-∞, Q̃ + E]  (might not be admissible)
+    //
+    // Aggregation: Q*_low = max of decided-admissible (Q̃ - E) values.
+    // Majorize: node with Q̃ + E < Q*_low is dominated (even if uncertain).
+    // Remaining uncertain nodes need rational admissibility check.
+    println!("--- Table 7: Q interval framework and majorization ---");
+    println!("  Per (S,σ): SVD → Q̃ ± E, β̂_min vs δβ_bound = ‖r‖/σ_min");
+    println!("  Admissible: [Q̃-E, Q̃+E].  Uncertain: [-∞, Q̃+E].  Inadmissible: skip.");
+    println!("  Majorize: Q̃+E < best admissible (Q̃-E) → pruned.");
+    println!();
+    println!("{:<14} {:>6} {:>6} {:>6} {:>6} {:>6} {:>12} {:>12} {:>6}",
+        "polytope", "total", "admis", "inadm", "uncrt", "Q>0", "Q*_low", "Q*_high", "surv");
+    println!("{}", "-".repeat(88));
+
+    for (name, polytope) in &polytopes {
+        let f = polytope.facet_count();
+        let normals = polytope.normals();
+        let heights = polytope.heights();
+
+        let mut total = 0u64;
+        let mut n_admissible = 0u64;
+        let mut n_inadmissible = 0u64;
+        let mut n_uncertain = 0u64;
+
+        // Best known admissible Q lower bound
+        let mut best_admissible_q_low: f64 = f64::NEG_INFINITY;
+        let mut best_admissible_q_high: f64 = f64::NEG_INFINITY;
+
+        // All nodes' Q_high values (for majorization check)
+        struct NodeInterval {
+            q_low: f64,    // -∞ for uncertain
+            q_high: f64,
+            admissibility: u8, // 0=admissible, 1=inadmissible, 2=uncertain
+            q_positive: bool,
+        }
+        let mut all_nodes: Vec<NodeInterval> = Vec::new();
+
+        for m in 2..=f {
+            for subset in combinations(f, m) {
+                for perm in cyclic_permutations(&subset) {
+                    total += 1;
+                    let size = m + 5;
+                    let (kkt, rhs) = build_kkt(normals, heights, &perm);
+
+                    let svd = kkt.clone().svd(true, true);
+                    let sv = &svd.singular_values;
+                    let u = svd.u.as_ref().unwrap();
+                    let v_t = svd.v_t.as_ref().unwrap();
+
+                    let sigma_max = sv[0];
+                    let threshold = sigma_max * SVD_CONDITION_TAU;
+                    let rank = sv.iter().filter(|&&s| s > threshold).count();
+                    let sigma_min_ret = sv.iter().take(rank).cloned()
+                        .fold(f64::INFINITY, f64::min).max(f64::MIN_POSITIVE);
+
+                    let x = svd_solve(u, sv, v_t, &rhs, size, rank);
+                    let beta: Vec<f64> = (0..m).map(|i| x[i]).collect();
+                    let beta_min = beta.iter().cloned().fold(f64::INFINITY, f64::min);
+
+                    let r = &kkt * &x - &rhs;
+                    let r_norm = r.norm();
+
+                    let q_raw = q_from_beta(normals, &perm, &beta);
+
+                    // First-order Q correction (symmetric KKT: + sign from negated multipliers)
+                    let r1: DVector<f64> = DVector::from_iterator(4, (m..m+4).map(|i| r[i]));
+                    let r3 = r[m + 4];
+                    let mu_hat: DVector<f64> = DVector::from_iterator(4, (m..m+4).map(|i| x[i]));
+                    let xi_hat = x[m + 4];
+                    let q_tilde = q_raw + 2.0 * (r1.dot(&mu_hat) + r3 * xi_hat);
+
+                    // Error bound E
+                    let r_sq = r_norm * r_norm;
+                    let e = r_sq * (4.0 / sigma_min_ret
+                        + sigma_max / (sigma_min_ret * sigma_min_ret));
+
+                    // Admissibility: β̂_min vs δβ_bound = ‖r‖ / σ_min
+                    let delta_beta_bound = r_norm / sigma_min_ret;
+
+                    let (admissibility, q_low, q_high) = if beta_min > delta_beta_bound {
+                        // Decided admissible
+                        n_admissible += 1;
+                        (0u8, q_tilde - e, q_tilde + e)
+                    } else if beta_min < -delta_beta_bound {
+                        // Decided inadmissible
+                        n_inadmissible += 1;
+                        (1u8, f64::NEG_INFINITY, q_tilde + e)
+                    } else {
+                        // Uncertain
+                        n_uncertain += 1;
+                        (2u8, f64::NEG_INFINITY, q_tilde + e)
+                    };
+
+                    let q_positive = q_tilde > 1e-12;
+
+                    if admissibility == 0 && q_positive {
+                        if q_low > best_admissible_q_low {
+                            best_admissible_q_low = q_low;
+                        }
+                        if q_high > best_admissible_q_high {
+                            best_admissible_q_high = q_high;
+                        }
+                    }
+
+                    all_nodes.push(NodeInterval { q_low, q_high, admissibility, q_positive });
+                }
+            }
+        }
+
+        // Count surviving uncertain nodes (Q_high ≥ best_admissible_q_low, Q > 0)
+        let n_q_positive: u64 = all_nodes.iter().filter(|n| n.q_positive).count() as u64;
+        let surviving_uncertain: u64 = all_nodes.iter()
+            .filter(|n| n.admissibility == 2 && n.q_positive
+                && n.q_high >= best_admissible_q_low)
+            .count() as u64;
+
+        println!("{:<14} {:>6} {:>6} {:>6} {:>6} {:>6} {:>12.6e} {:>12.6e} {:>6}",
+            name, total, n_admissible, n_inadmissible, n_uncertain, n_q_positive,
+            best_admissible_q_low, best_admissible_q_high, surviving_uncertain);
+
+        // Show detail for uncertain survivors
+        if surviving_uncertain > 0 && surviving_uncertain <= 10 {
+            for (i, node) in all_nodes.iter().enumerate() {
+                if node.admissibility == 2 && node.q_positive
+                    && node.q_high >= best_admissible_q_low {
+                    println!("  uncertain survivor #{}: Q_high={:.6e} vs Q*_low={:.6e}",
+                        i, node.q_high, best_admissible_q_low);
+                }
+            }
         }
     }
 }

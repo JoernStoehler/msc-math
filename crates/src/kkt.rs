@@ -201,16 +201,23 @@ fn find_positive_beta_nd(beta0: &[f64], null_vecs: &[Vec<f64>]) -> Option<Vec<f6
     }
 }
 
-/// Build the KKT matrix and RHS vector for the constrained optimization.
+/// Build the symmetric KKT matrix and RHS vector for the constrained optimization.
 ///
-/// The KKT system is:
+/// The KKT system uses negated multipliers (μ = −λ, ξ = −ν) to obtain a
+/// **symmetric** saddle-point matrix:
 /// ```text
-/// [ H    | -N   | -η ] [ β ]   [ 0 ]
-/// [ N^T  |  0   |  0 ] [ λ ] = [ 0 ]
-/// [ η^T  |  0   |  0 ] [ ν ]   [ 1 ]
+/// [ H   |  N   |  η ] [ β ]   [ 0 ]
+/// [ N^T |  0   |  0 ] [ μ ] = [ 0 ]
+/// [ η^T |  0   |  0 ] [ ξ ]   [ 1 ]
 /// ```
 ///
-/// Returns `(kkt, rhs)` where `kkt` is `(m+5) × (m+5)`.
+/// The stationarity condition is Hβ + Nμ + ηξ = 0 (equivalently Hβ = Nλ + ην
+/// with the original multipliers λ = −μ, ν = −ξ).
+///
+/// Symmetry enables eigendecomposition-based solvers and gives signed
+/// eigenvalues (vs unsigned singular values from SVD).
+///
+/// Returns `(kkt, rhs)` where `kkt` is `(m+5) × (m+5)` symmetric.
 ///
 /// Uses **period normalization** (γ on [0,T]); see `appendix-notation.tex`.
 pub(crate) fn build_kkt_system(
@@ -232,19 +239,19 @@ pub(crate) fn build_kkt_system(
         }
     }
 
-    // Top block columns m..m+4: -N (m×4) and bottom block: N^T (4×m)
+    // Off-diagonal blocks: N (m×4) and N^T (4×m) — symmetric
     for i in 0..m {
         for d in 0..4 {
             let n = normals[perm[i]][d];
-            kkt[(i, m + d)] = -n;
+            kkt[(i, m + d)] = n;
             kkt[(m + d, i)] = n;
         }
     }
 
-    // Top block column m+4: -η and last row: η^T
+    // Off-diagonal blocks: η (m×1) and η^T (1×m) — symmetric
     for i in 0..m {
         let h = heights[perm[i]];
-        kkt[(i, m + 4)] = -h;
+        kkt[(i, m + 4)] = h;
         kkt[(m + 4, i)] = h;
     }
 
@@ -308,9 +315,11 @@ fn solve_kkt_svd_path(
 
     // --- Q interval computation (Algorithm [alg:v2-q-interval]) ---
     // Extract residual blocks: r₁ = N^T β̂ (rows m..m+4), r₃ = η^T β̂ - 1 (row m+4).
-    let r1_dot_lambda: f64 = (m..m + 4).map(|i| residual_vec[i] * x0[i]).sum();
+    // The solution vector is [β̂; μ̂; ξ̂] with negated multipliers (μ = -λ, ξ = -ν).
+    // Q̃ = Q(β̂) + 2(r₁ᵀμ̂ + r₃ξ̂)  [the + sign comes from the multiplier negation].
+    let r1_dot_mu: f64 = (m..m + 4).map(|i| residual_vec[i] * x0[i]).sum();
     let r3 = residual_vec[m + 4];
-    let nu_hat = x0[m + 4];
+    let xi_hat = x0[m + 4];
 
     // σ_min of RETAINED singular values (those above the rank threshold).
     // Using full-matrix σ_min is catastrophically wrong for rank-deficient systems:
@@ -331,7 +340,7 @@ fn solve_kkt_svd_path(
     // If already feasible, compute interval and return.
     if beta0.iter().all(|&b| b > EPS_BETA_POSITIVE) {
         let q_raw = q_from_beta(normals, perm, &beta0);
-        let q_corrected = q_raw - 2.0 * (r1_dot_lambda + r3 * nu_hat);
+        let q_corrected = q_raw + 2.0 * (r1_dot_mu + r3 * xi_hat);
         let r_sq = residual_norm * residual_norm;
         let q_error_bound = r_sq * (4.0 / sigma_min + h_norm_bound / (sigma_min * sigma_min));
         return Some(KktResult {
@@ -381,7 +390,7 @@ fn solve_kkt_svd_path(
     // Q is constant along the null space, so Q(β_opt) = Q(β₀).
     // The interval [Q̃ - E, Q̃ + E] bounds the true Q for the whole family.
     let q_raw = q_from_beta(normals, perm, &beta_opt);
-    let q_corrected = q_raw - 2.0 * (r1_dot_lambda + r3 * nu_hat);
+    let q_corrected = q_raw + 2.0 * (r1_dot_mu + r3 * xi_hat);
     let r_sq = residual_norm * residual_norm;
     let q_error_bound = r_sq * (4.0 / sigma_min + h_norm_bound / (sigma_min * sigma_min));
 
