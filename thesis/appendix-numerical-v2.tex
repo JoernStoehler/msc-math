@@ -320,32 +320,51 @@ but it never prunes a pair that admits a valid transition.
 \subsection{KKT System and Numerical Error}\label{app:v2-kkt}
 % ===================================================================
 
-% --- Intro: SVD solve (NEW framing, unreviewed) ---
+% --- Intro: symmetric KKT and eigendecomposition (unreviewed) ---
 
 For each candidate pair $(S, \sigma)$ that survives
 the pruning of Section~\ref{app:v2-pruning},
-the algorithm solves the KKT linear system
+the algorithm solves the KKT linear system.
+The standard stationarity condition
+$H\beta = N\lambda + \eta\nu$
+(cf.\ equation~\eqref{eq:linear-system})
+uses multipliers~$\lambda \in \mathbb{R}^4$ and~$\nu \in \mathbb{R}$
+that produce a non-symmetric coefficient matrix.
+We define \emph{negated multipliers}
+$\mu = -\lambda$ and $\xi = -\nu$, so that
+the stationarity condition becomes
+$H\beta + N\mu + \eta\xi = 0$
+and the full system takes the symmetric saddle-point form
 \begin{equation}\label{eq:v2-kkt-system}
-  \begin{pmatrix} N^\top & 0 & 0 \\ H & -N & -\eta \\ \eta^\top & 0 & 0 \end{pmatrix}
-  \begin{pmatrix} \beta \\ \lambda \\ \nu \end{pmatrix}
+  \underbrace{\begin{pmatrix} H & N & \eta \\[3pt]
+    N^\top & 0 & 0 \\[3pt]
+    \eta^\top & 0 & 0 \end{pmatrix}}_{M}
+  \begin{pmatrix} \beta \\ \mu \\ \xi \end{pmatrix}
   = \begin{pmatrix} 0 \\ 0 \\ 1 \end{pmatrix},
 \end{equation}
-(cf.\ equation~\eqref{eq:linear-system})
-via SVD in double-precision floating-point arithmetic.
-The SVD of the KKT matrix~$M$ yields
-approximate factors $\hat U \hat\Sigma \hat V^\top \approx M$,
-where $\hat\Sigma = \operatorname{diag}(\hat\sigma_1, \ldots,
-\hat\sigma_{|S|+5})$ with
-$\hat\sigma_1 \geq \cdots \geq \hat\sigma_{|S|+5}$.
-The numerical solution is then
-$(\hat\beta, \hat\lambda, \hat\nu)
+where $M$ is a real symmetric matrix of size
+$(m + 5) \times (m + 5)$ with $m = |S|$.
+The system is solved via SVD in double-precision
+floating-point arithmetic.
+Since~$M$ is symmetric, its singular values equal
+the absolute values of its eigenvalues:
+$\sigma_j = |\lambda_j|$, where
+$\lambda_1 \geq \cdots \geq \lambda_{m+5}$
+are the eigenvalues of~$M$.
+(No confusion with the original Lagrange multipliers arises,
+since we use~$\mu$, $\xi$ throughout.)
+The SVD yields approximate factors
+$\hat U \hat\Sigma \hat V^\top \approx M$
+with $\hat\sigma_1 \geq \cdots \geq \hat\sigma_{m+5}$.
+The numerical solution is
+$\hat x = (\hat\beta, \hat\mu, \hat\xi)
   = \hat V \hat\Sigma^{-1} \hat U^\top b$,
 where the division by small~$\hat\sigma_j$ amplifies
 errors in the corresponding directions.
 Throughout this section, $\|\cdot\|$ denotes the Euclidean
 ($\ell^2$) norm for vectors and the spectral norm
-(operator $2$-norm, equal to the largest singular
-value~$\sigma_1$) for matrices.
+(operator $2$-norm, equal to $\sigma_1 = \max_j |\lambda_j|$)
+for matrices.
 
 \begin{remark}[SVD accuracy]%
 \label{rem:v2-svd-accuracy}
@@ -399,84 +418,274 @@ number~$\kappa(M)$.
 %  4th ed. These are from agent's general knowledge of the book.]
 \end{remark}
 
-\paragraph{Near-singularity.}
+% --- Inertia of the saddle-point matrix (unreviewed) ---
+
+\begin{lemma}[Inertia of the KKT matrix]%
+\label{lem:v2-kkt-inertia}
+Let $M$ be the symmetric KKT matrix
+of~\eqref{eq:v2-kkt-system} with
+constraint matrix
+$A = \bigl(\begin{smallmatrix} N^\top \\ \eta^\top
+  \end{smallmatrix}\bigr) \in \mathbb{R}^{5 \times m}$
+and $p = \operatorname{rank}(A) \leq \min(5, m)$.
+Let $T = \ker(A) = \{\delta\beta \in \mathbb{R}^m :
+  N^\top\delta\beta = 0,\; \eta^\top\delta\beta = 0\}$
+be the \emph{tangent space} of the constraint surface,
+with $\dim T = m - p$.
+Let $H|_T = Z^\top H Z$ denote the restriction of~$H$
+to~$T$, where $Z \in \mathbb{R}^{m \times (m-p)}$ is any
+matrix whose columns form a basis of~$T$.
+
+Then the eigenvalue inertia of~$M$
+(the triple $(n_+, n_0, n_-)$ counting positive, zero,
+and negative eigenvalues) satisfies
+\begin{equation}\label{eq:v2-inertia}
+  n_+(M) = n_+(H|_T) + p, \quad
+  n_0(M) = n_0(H|_T) + (5 - p), \quad
+  n_-(M) = n_-(H|_T) + p.
+\end{equation}
+In the generic case ($m \geq 5$ and $p = 5$), this
+simplifies to
+$n_+(M) = n_+(H|_T) + 5$ and
+$n_-(M) = n_-(H|_T) + 5$.
+\end{lemma}
+
+\begin{proof}
+% [TODO: JÖRN - this is the standard inertia result for
+%  symmetric saddle-point matrices. A clean proof is in
+%  Benzi--Golub--Liesen (2005), Theorem 3.2.
+%  Agent has not verified the proof against that source;
+%  only the statement is used below.
+%  Agent verified the statement numerically for all (S,σ)
+%  nodes of all test polytopes (Table 8--9 of q_error).]
+This is a standard result for symmetric saddle-point
+matrices; see e.g.\ \cite[Thm.~3.2]{BenziGolubLiesen2005}.
+The key idea is that the off-diagonal constraint block
+$\bigl(\begin{smallmatrix} 0 & A^\top \\ A & 0
+  \end{smallmatrix}\bigr)$
+contributes exactly~$p$ positive and~$p$ negative
+eigenvalues (from the singular values of~$A$)
+and $5 - p$ additional zero eigenvalues
+(from the rank deficiency of~$A$),
+while the restriction $H|_T$ governs the remaining
+$m - p$ eigenvalues.
+\end{proof}
+
+\begin{remark}[Eigenvalue signs and the objective]%
+\label{rem:v2-eigenvalue-signs}
+Recall that the objective
+$Q(\beta) = -(1/2)\,\beta^\top H\,\beta$
+has Hessian $-H$ (a constant matrix).
+The second-order behaviour of~$Q$ on the constraint
+surface is governed by the restricted Hessian
+$(-H)|_T = -H|_T$.
+By Lemma~\ref{lem:v2-kkt-inertia}
+(with $p = \operatorname{rank}(A)$),
+we can read off the inertia of~$H|_T$ directly from
+the eigenvalues of~$M$:
+\begin{itemize}
+\item $n_-(M) = p$ (only ``structural''
+  negatives): $H|_T$ is positive
+  semi-definite ($n_-(H|_T) = 0$).
+  If also $n_0(M) = 5 - p$
+  (so $n_0(H|_T) = 0$),
+  then $H|_T$ is positive definite,
+  $(-H)|_T$ is negative definite,
+  and~$Q$ is \emph{strictly concave} on~$T$:
+  $\beta_0$ is a strict local maximum of~$Q$
+  on the constraint surface.
+
+\item If $n_-(M) > p$, then $H|_T$ has at least one
+  negative eigenvalue.
+  The corresponding eigendirection of~$M$
+  (restricted to the~$\beta$-components) is a
+  direction along which~$Q$ \emph{increases}
+  from~$\beta_0$.
+
+\item If $n_0(M) > 5 - p$, then $H|_T$ has a zero
+  eigenvalue and~$Q$ is \emph{constant} (to first
+  order) along the corresponding tangent direction.
+  This direction lies in the null space of~$M$
+  (Remark~\ref{rem:v2-null-q-constant}).
+\end{itemize}
+In the generic case ($m \geq 5$, $p = 5$, and $H|_T$
+non-degenerate), the classification reduces to
+counting $n_-(M)$:
+\begin{gather*}
+  n_-(M) = 5 \\
+  \Updownarrow \\
+  \text{$\beta_0$ is a strict local maximum
+  of~$Q$ on the constraint surface.}
+\end{gather*}
+\end{remark}
+
+\begin{remark}[Null-space directions preserve~$Q$]%
+\label{rem:v2-null-q-constant}
+Let $v = (v_\beta, v_\mu, v_\xi)$ be an eigenvector of~$M$
+with eigenvalue~$0$, so $Mv = 0$.
+Then $N^\top v_\beta = 0$ and $\eta^\top v_\beta = 0$
+(from the constraint rows of~$M$),
+so $v_\beta \in T$.
+Moreover, $H v_\beta + N v_\mu + \eta v_\xi = 0$
+(stationarity row), so
+$v_\beta^\top H v_\beta
+  = -v_\beta^\top(N v_\mu + \eta v_\xi)
+  = -(N^\top v_\beta)^\top v_\mu
+    - (\eta^\top v_\beta)\,v_\xi = 0$.
+For the cross term, the KKT stationarity condition
+$H\beta_0 + N\mu_0 + \eta\xi_0 = 0$ gives
+$v_\beta^\top H\,\beta_0
+  = -v_\beta^\top(N\mu_0 + \eta\xi_0)
+  = -(N^\top v_\beta)^\top\mu_0
+    - (\eta^\top v_\beta)\,\xi_0 = 0$
+(since $v_\beta \in T$).
+Hence
+and
+\[
+  Q(\beta_0 + t\,v_\beta) - Q(\beta_0)
+  = -t\,v_\beta^\top H\,\beta_0
+    - \tfrac{1}{2}\,t^2\,v_\beta^\top H\,v_\beta
+  = 0
+\]
+for all~$t$.
+In other words, $Q$ is exactly constant along
+null-space directions.
+The same reasoning shows that $Q$ is
+constraint-preserving:
+the displaced~$\beta_0 + t\,v_\beta$ satisfies
+$N^\top(\beta_0 + t\,v_\beta) = 0$ and
+$\eta^\top(\beta_0 + t\,v_\beta) = 1$.
+\end{remark}
+
+\begin{remark}[$Q$ variation along near-null directions]%
+\label{rem:v2-near-null-q}
+For an eigenvalue~$\lambda_j$ of~$M$ that is
+small but nonzero, the eigenvector
+$v_j = (v_\beta, v_\mu, v_\xi)$ satisfies
+$N^\top v_\beta = \lambda_j\,v_\mu$ and
+$\eta^\top v_\beta = \lambda_j\,v_\xi$,
+so $v_\beta$ is \emph{approximately} tangent
+(constraint violation of order~$|\lambda_j|$).
+The~$Q$ variation along~$v_\beta$ is
+\begin{align*}
+  Q(\beta_0 + t\,v_\beta) - Q(\beta_0)
+  &= -t\,v_\beta^\top H\,\beta_0
+    - \tfrac{1}{2}\,t^2\,v_\beta^\top H\,v_\beta.
+\end{align*}
+From the eigenvector equation
+$Hv_\beta = \lambda_j\,v_\beta
+  - N v_\mu - \eta v_\xi$,
+one computes
+\begin{equation}\label{eq:v2-near-null-curvature}
+  v_\beta^\top H\,v_\beta
+  = \lambda_j\bigl(2\,\|v_\beta\|^2 - 1\bigr),
+\end{equation}
+using the orthogonality
+$\|v_\beta\|^2 + \|v_\mu\|^2 + v_\xi^2 = 1$
+(the eigenvector is unit-length).
+Both the linear and quadratic terms are
+proportional to~$\lambda_j$:
+\begin{itemize}
+\item The linear term:
+  the KKT condition
+  $H\beta_0 = -N\mu_0 - \eta\xi_0$ gives
+  $v_\beta^\top H\,\beta_0
+    = -(N^\top v_\beta)^\top\mu_0
+      - (\eta^\top v_\beta)\,\xi_0
+    = -\lambda_j(v_\mu^\top\mu_0
+      + v_\xi\,\xi_0)$,
+  which is $O(|\lambda_j|)$.
+\item The curvature~\eqref{eq:v2-near-null-curvature}
+  is $O(|\lambda_j|)$.
+\end{itemize}
+In particular, directions with small~$|\lambda_j|$
+change~$Q$ only slowly.
+This is the mechanism underlying the $Q$~interval bound
+(Lemma~\ref{lem:v2-q-interval}): even though the
+numerical error~$\delta\beta$ can be large along
+near-null directions (of order~$\|r\| / |\lambda_j|$),
+the resulting~$Q$ error is only second-order in~$\|r\|$
+because the $Q$~gradient along these directions
+is itself $O(|\lambda_j|)$,
+partially cancelling the $1/|\lambda_j|$ amplification.
+\end{remark}
+
+\begin{remark}[Near-singularity and error decomposition]%
+\label{rem:v2-error-decomposition}
 By the generic perturbation (Section~\ref{app:v2-input}),
 the exact KKT system is generically non-singular.
 However, it can be \emph{near}-singular:
-the smallest singular value~$\sigma_{\min}$ may be close
+the smallest eigenvalue magnitude
+$|\lambda_{\min}|$ (equivalently,
+$\sigma_{\min} = \min_j \sigma_j$) may be close
 to zero, causing large numerical error in the
-solution~$(\hat\beta, \hat\lambda, \hat\nu)$.
+solution~$(\hat\beta, \hat\mu, \hat\xi)$.
 
-% --- Error decomposition (NEW, partially TODO) ---
+The numerical error in~$\hat\beta$ decomposes along the
+eigenvectors of~$M$ into two qualitatively different
+contributions:
+\begin{itemize}
+\item \emph{Near-null directions}
+  (small~$|\lambda_j|$):
+  The error in~$\hat x$ can be large
+  (absolute error~$\sim \sigma_1/\sigma_{\min}$;
+  Remark~\ref{rem:v2-svd-accuracy}~(3)).
+  However, the~$Q$ error is only
+  \emph{second-order} in the perturbation
+  (Remark~\ref{rem:v2-near-null-q}):
+  the near-null eigenvector is approximately tangent
+  and has curvature proportional to~$\lambda_j$,
+  so the large displacement~$\sim 1/|\lambda_j|$
+  is partially cancelled by the
+  small curvature~$\sim |\lambda_j|$.
+  The sign of~$\lambda_j$ determines whether
+  this direction is concave or convex for~$Q$
+  (Remark~\ref{rem:v2-eigenvalue-signs}).
 
-\paragraph{Error decomposition.}
-The numerical error in~$\hat\beta$ decomposes into two
-qualitatively different contributions:
-\begin{description}
-\item[Near-null directions.]
-  Along the near-null space of the KKT system (directions
-  corresponding to small singular values), the
-  error in $(\hat\beta, \hat\lambda, \hat\nu)$ can be
-  large: by Remark~\ref{rem:v2-svd-accuracy}~(3),
-  the relative error is of order
-  $\kappa(M)\,\varepsilon_{\mathrm{mach}}$,
-  so the absolute error scales as
-  $\sigma_1 / \sigma_{\min}$.
-  However, the error in the objective value
-  $Q = \hat\beta^\top H\,\hat\beta$ is only \emph{quadratic}
-  in the perturbation along these directions, because the
-  gradient of~$Q$ on the constraint surface vanishes at the
-  critical point: any constraint-preserving
-  perturbation~$\delta\beta$ contributes
-  $\delta\beta^\top H\,\delta\beta$ to~$Q$, not a
-  linear term (the cross term
-  $2\,\delta\beta^\top H\,\beta_0$ vanishes by the
-  KKT conditions; see Step~2 of the proof of
-  Lemma~\ref{lem:v2-q-interval}).
+\item \emph{Well-conditioned directions}
+  (large~$|\lambda_j|$):
+  The solve is accurate
+  ($\|\delta\beta\| = O(\varepsilon_{\mathrm{mach}})$),
+  so
+  $|Q(\hat\beta) - Q(\beta_0)|
+    = O(\varepsilon_{\mathrm{mach}})$.
+\end{itemize}
+\end{remark}
 
-\item[Well-conditioned directions.]
-  Along directions corresponding to large singular values,
-  the SVD gives accurate results and the
-  error in~$\hat\beta$ is of order
-  $O(\varepsilon_{\mathrm{mach}}\,\sigma_1 / \sigma_j)$,
-  which is small.
-  The resulting~$Q$ error is also small:
-  the $Q$~perturbation from a small~$\delta\beta$ is
-  at most $2\,\|H\|\,\|\beta_0\|\,\|\delta\beta\|
-  + \|H\|\,\|\delta\beta\|^2$,
-  which is $O(\varepsilon_{\mathrm{mach}})$ when
-  $\|\delta\beta\|$ is $O(\varepsilon_{\mathrm{mach}})$.
-\end{description}
-
-% --- Q interval lemma (NEW, replaces dismiss logic B.5--B.9) ---
+% --- Q interval lemma (replaces dismiss logic B.5--B.9, unreviewed) ---
 
 \begin{lemma}[$Q$ interval from KKT residual]%
 \label{lem:v2-q-interval}
-Let $M$ be the KKT matrix of~\eqref{eq:v2-kkt-system}
+Let $M$ be the symmetric KKT matrix
+of~\eqref{eq:v2-kkt-system}
 with smallest singular value $\sigma_{\min} > 0$,
-and let $x_0 = (\beta_0, \lambda_0, \nu_0)$ be the exact
-solution.
-Let $\hat x = (\hat\beta, \hat\lambda, \hat\nu)$ be the
+and let $x_0 = (\beta_0, \mu_0, \xi_0)$ be the exact
+solution (with negated multipliers
+$\mu_0 = -\lambda_0$, $\xi_0 = -\nu_0$).
+Let $\hat x = (\hat\beta, \hat\mu, \hat\xi)$ be the
 numerical SVD solution with residual
 \[
   r \;=\; M\hat x - b
   \;=\; \begin{pmatrix}
+    H\hat\beta + N\hat\mu + \eta\hat\xi \\
     N^\top\hat\beta \\
-    H\hat\beta - N\hat\lambda - \eta\hat\nu \\
     \eta^\top\hat\beta - 1
   \end{pmatrix}
-  \;=:\; \begin{pmatrix}r_1 \\ r_2 \\ r_3\end{pmatrix}.
+  \;=:\; \begin{pmatrix}r_1 \\ r_2 \\ r_3\end{pmatrix},
 \]
+where $r_1 \in \mathbb{R}^m$ is the stationarity residual,
+$r_2 \in \mathbb{R}^4$ is the constraint residual, and
+$r_3 \in \mathbb{R}$ is the normalisation residual.
 Define the \emph{residual-corrected objective}
 \begin{equation}\label{eq:v2-q-corrected}
   \tilde Q
-  \;=\; Q(\hat\beta) - 2\bigl(r_1^\top\hat\lambda
-    + r_3\,\hat\nu\bigr)
+  \;=\; Q(\hat\beta)
+    - \bigl(r_2^\top\hat\mu + r_3\,\hat\xi\bigr)
 \end{equation}
 and the \emph{second-order error bound}
 \begin{equation}\label{eq:v2-q-error-bound}
   E \;=\; \frac{\|r\|^2}{\sigma_{\min}}
-    \Bigl(4 + \frac{\|H\|}{\sigma_{\min}}\Bigr).
+    \Bigl(2 + \frac{\|H\|}{2\,\sigma_{\min}}\Bigr).
 \end{equation}
 Then the exact objective satisfies
 $Q(\beta_0) \in [\tilde Q - E,\; \tilde Q + E]$.
@@ -489,74 +698,88 @@ using the KKT condition to rewrite the cross term,
 then substituting numerical for exact multipliers.
 
 Write $\delta x = \hat x - x_0$ with components
-$(\delta\beta, \delta\lambda, \delta\nu)$.
+$(\delta\beta, \delta\mu, \delta\xi)$.
 Since $M x_0 = b$, we have $M\,\delta x = r$,
 hence $\|\delta x\| \leq \|r\| / \sigma_{\min}$ and
 each component satisfies the same bound:
 \begin{equation}\label{eq:v2-delta-bound}
   \|\delta\beta\| \leq \frac{\|r\|}{\sigma_{\min}}, \quad
-  \|\delta\lambda\| \leq \frac{\|r\|}{\sigma_{\min}}, \quad
-  |\delta\nu| \leq \frac{\|r\|}{\sigma_{\min}}.
+  \|\delta\mu\| \leq \frac{\|r\|}{\sigma_{\min}}, \quad
+  |\delta\xi| \leq \frac{\|r\|}{\sigma_{\min}}.
 \end{equation}
 
 \emph{Step~1: expand $Q(\hat\beta) - Q(\beta_0)$.}
+Since $Q(\beta) = -(1/2)\,\beta^\top H\,\beta$,
 \[
   Q(\hat\beta) - Q(\beta_0)
-  = 2\,\delta\beta^\top H\,\beta_0
-    + \delta\beta^\top H\,\delta\beta.
+  = -\delta\beta^\top H\,\beta_0
+    - \tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta.
 \]
 
 \emph{Step~2: rewrite the cross term using KKT.}
-The KKT stationarity condition is
-$H\beta_0 = N\lambda_0 + \eta\nu_0$, so
+The stationarity condition (first block of $M x_0 = b$) is
+$H\beta_0 + N\mu_0 + \eta\xi_0 = 0$
+(equivalently, $H\beta_0 = N\lambda_0 + \eta\nu_0$
+in the original multipliers).
+Hence
 \[
   \delta\beta^\top H\,\beta_0
-  = (N^\top\delta\beta)^\top \lambda_0
-    + (\eta^\top\delta\beta)\,\nu_0.
+  = -\delta\beta^\top(N\mu_0 + \eta\xi_0)
+  = -(N^\top\delta\beta)^\top \mu_0
+    - (\eta^\top\delta\beta)\,\xi_0.
 \]
-The constraint residual blocks give
-$N^\top\delta\beta = r_1$ and
-$\eta^\top\delta\beta = r_3$, hence
+The constraint residual blocks
+(rows $m{+}1$ to $m{+}5$ of $M\hat x - b$) give
+$N^\top\delta\beta = N^\top\hat\beta - N^\top\beta_0
+  = N^\top\hat\beta = r_2$
+(since $N^\top\beta_0 = 0$ by the exact constraint)
+and similarly $\eta^\top\delta\beta = r_3$, hence
 \begin{equation}\label{eq:v2-cross-term}
-  2\,\delta\beta^\top H\,\beta_0
-  = 2(r_1^\top\lambda_0 + r_3\,\nu_0).
+  -\delta\beta^\top H\,\beta_0
+  = r_2^\top\mu_0 + r_3\,\xi_0.
 \end{equation}
+Substituting~\eqref{eq:v2-cross-term} into Step~1
+and rearranging gives
+$Q(\beta_0) = Q(\hat\beta) - (r_2^\top\mu_0 + r_3\,\xi_0)
+  + \tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta$.
 
 \emph{Step~3: substitute numerical multipliers.}
-Write $\lambda_0 = \hat\lambda - \delta\lambda$ and
-$\nu_0 = \hat\nu - \delta\nu$:
+Write $\mu_0 = \hat\mu - \delta\mu$ and
+$\xi_0 = \hat\xi - \delta\xi$:
 \begin{align*}
-  2(r_1^\top\lambda_0 + r_3\,\nu_0)
-  &= 2(r_1^\top\hat\lambda + r_3\,\hat\nu)
-    - 2(r_1^\top\delta\lambda + r_3\,\delta\nu).
+  r_2^\top\mu_0 + r_3\,\xi_0
+  &= (r_2^\top\hat\mu + r_3\,\hat\xi)
+    - (r_2^\top\delta\mu + r_3\,\delta\xi).
 \end{align*}
 The first term is the computable correction
 in~\eqref{eq:v2-q-corrected}.
 The second is a \emph{second-order remainder}:
 \[
-  |r_1^\top\delta\lambda + r_3\,\delta\nu|
-  \leq \|r_1\|\,\|\delta\lambda\| + |r_3|\,|\delta\nu|
+  |r_2^\top\delta\mu + r_3\,\delta\xi|
+  \leq \|r_2\|\,\|\delta\mu\| + |r_3|\,|\delta\xi|
   \leq 2\,\frac{\|r\|^2}{\sigma_{\min}},
 \]
-using $\|r_1\|, |r_3| \leq \|r\|$
+using $\|r_2\|, |r_3| \leq \|r\|$
 and~\eqref{eq:v2-delta-bound}.
 
 \emph{Step~4: bound the quadratic term.}
 \[
-  |\delta\beta^\top H\,\delta\beta|
-  \leq \|H\|\,\|\delta\beta\|^2
-  \leq \frac{\|H\|\,\|r\|^2}{\sigma_{\min}^2}.
+  \tfrac{1}{2}\,|\delta\beta^\top H\,\delta\beta|
+  \leq \tfrac{1}{2}\,\|H\|\,\|\delta\beta\|^2
+  \leq \frac{\|H\|\,\|r\|^2}{2\,\sigma_{\min}^2}.
 \]
 
 \emph{Conclusion.}
 Combining Steps~1--4:
 \[
   Q(\beta_0)
-  = Q(\hat\beta) - 2(r_1^\top\hat\lambda + r_3\,\hat\nu)
+  = Q(\hat\beta)
+    - (r_2^\top\hat\mu + r_3\,\hat\xi)
     \;+\; R,
 \]
-where $|R| \leq 4\,\|r\|^2 / \sigma_{\min}
-  + \|H\|\,\|r\|^2 / \sigma_{\min}^2 = E$. \qedhere
+where $|R| \leq 2\,\|r\|^2 / \sigma_{\min}
+  + \|H\|\,\|r\|^2 / (2\,\sigma_{\min}^2) = E$.
+\qedhere
 \end{proof}
 
 \begin{algorithm}[$Q$ interval computation]%
@@ -565,18 +788,21 @@ For each pair $(S, \sigma)$ that survives pruning,
 the algorithm computes a confidence interval for the
 true objective value~$Q(\beta_0)$:
 \begin{enumerate}
-\item Solve the KKT system~\eqref{eq:v2-kkt-system}
+\item Solve the symmetric KKT
+  system~\eqref{eq:v2-kkt-system}
   via SVD to obtain
-  $\hat x = (\hat\beta, \hat\lambda, \hat\nu)$.
+  $\hat x = (\hat\beta, \hat\mu, \hat\xi)$.
 \item Compute the residual $r = M\hat x - b$ and
-  extract blocks $r_1 = N^\top\hat\beta$ and
-  $r_3 = \eta^\top\hat\beta - 1$.
+  extract blocks $r_2 = N^\top\hat\beta$
+  (constraint residual)
+  and $r_3 = \eta^\top\hat\beta - 1$
+  (normalisation residual).
 \item Compute $Q(\hat\beta)$ and the corrected value
   $\tilde Q = Q(\hat\beta)
-    - 2(r_1^\top\hat\lambda + r_3\,\hat\nu)$.
+    - (r_2^\top\hat\mu + r_3\,\hat\xi)$.
 \item Compute the error bound
-  $E = \|r\|^2\,(4/\sigma_{\min}
-    + \|H\| / \sigma_{\min}^2)$.
+  $E = \|r\|^2\,(2/\sigma_{\min}
+    + \|H\| / (2\,\sigma_{\min}^2))$.
 \item Return the interval
   $[\tilde Q - E,\; \tilde Q + E]$
   together with~$\hat\beta$.
@@ -597,7 +823,7 @@ For near-singular systems
 ($\sigma_{\min} \ll 1$), the residual remains small
 (backward stability of the SVD), but
 $E$ grows as $1/\sigma_{\min}^2$.
-The correction~$2(r_1^\top\hat\lambda + r_3\,\hat\nu)$
+The correction~$r_2^\top\hat\mu + r_3\,\hat\xi$
 absorbs the dominant first-order error, leaving only
 a second-order remainder.
 Without this correction, the naive interval

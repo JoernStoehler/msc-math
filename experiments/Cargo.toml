@@ -47,6 +47,10 @@ path = "unknown-predicates/unknown_predicates.rs"
 name = "sys_optimization"
 path = "sys-optimization/sys_optimization.rs"
 
+[[bin]]
+name = "q_error"
+path = "q-error/q_error.rs"
+
 [dependencies]
 symplectic = { path = "../crates" }
 nalgebra = "0.33"

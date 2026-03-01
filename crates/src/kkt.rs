@@ -314,10 +314,10 @@ fn solve_kkt_svd_path(
     }
 
     // --- Q interval computation (Algorithm [alg:v2-q-interval]) ---
-    // Extract residual blocks: r₁ = N^T β̂ (rows m..m+4), r₃ = η^T β̂ - 1 (row m+4).
+    // Extract residual blocks: r₂ = N^T β̂ (rows m..m+4), r₃ = η^T β̂ - 1 (row m+4).
     // The solution vector is [β̂; μ̂; ξ̂] with negated multipliers (μ = -λ, ξ = -ν).
-    // Q̃ = Q(β̂) + 2(r₁ᵀμ̂ + r₃ξ̂)  [the + sign comes from the multiplier negation].
-    let r1_dot_mu: f64 = (m..m + 4).map(|i| residual_vec[i] * x0[i]).sum();
+    // Q̃ = Q(β̂) - (r₂ᵀμ̂ + r₃ξ̂)  [Lemma [lem:v2-q-interval], Step 2-3].
+    let r2_dot_mu: f64 = (m..m + 4).map(|i| residual_vec[i] * x0[i]).sum();
     let r3 = residual_vec[m + 4];
     let xi_hat = x0[m + 4];
 
@@ -340,9 +340,10 @@ fn solve_kkt_svd_path(
     // If already feasible, compute interval and return.
     if beta0.iter().all(|&b| b > EPS_BETA_POSITIVE) {
         let q_raw = q_from_beta(normals, perm, &beta0);
-        let q_corrected = q_raw + 2.0 * (r1_dot_mu + r3 * xi_hat);
+        let q_corrected = q_raw - (r2_dot_mu + r3 * xi_hat);
         let r_sq = residual_norm * residual_norm;
-        let q_error_bound = r_sq * (4.0 / sigma_min + h_norm_bound / (sigma_min * sigma_min));
+        let q_error_bound =
+            r_sq * (2.0 / sigma_min + h_norm_bound / (2.0 * sigma_min * sigma_min));
         return Some(KktResult {
             beta: beta0,
             q_corrected,
@@ -390,9 +391,10 @@ fn solve_kkt_svd_path(
     // Q is constant along the null space, so Q(β_opt) = Q(β₀).
     // The interval [Q̃ - E, Q̃ + E] bounds the true Q for the whole family.
     let q_raw = q_from_beta(normals, perm, &beta_opt);
-    let q_corrected = q_raw + 2.0 * (r1_dot_mu + r3 * xi_hat);
+    let q_corrected = q_raw - (r2_dot_mu + r3 * xi_hat);
     let r_sq = residual_norm * residual_norm;
-    let q_error_bound = r_sq * (4.0 / sigma_min + h_norm_bound / (sigma_min * sigma_min));
+    let q_error_bound =
+        r_sq * (2.0 / sigma_min + h_norm_bound / (2.0 * sigma_min * sigma_min));
 
     Some(KktResult {
         beta: beta_opt,

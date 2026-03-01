@@ -1,3 +1,5 @@
+#![allow(clippy::collapsible_if, clippy::op_ref, clippy::bool_comparison, dead_code)]
+
 /// Measure empirical Q error bounds from the KKT SVD solve.
 ///
 /// Goal: Check whether the analytical error bound E from Lemma B.5
@@ -74,7 +76,7 @@ fn q_from_hessian(kkt: &DMatrix<f64>, beta: &[f64]) -> f64 {
     let m = beta.len();
     let beta_vec = DVector::from_iterator(m, beta.iter().cloned());
     let h_block = kkt.view((0, 0), (m, m));
-    let hb = &h_block * &beta_vec;
+    let hb = h_block * &beta_vec;
     -0.5 * beta_vec.dot(&hb)
 }
 
@@ -300,16 +302,16 @@ fn run_diagnostics(
     let mu_hat: DVector<f64> = DVector::from_iterator(4, (m..m + 4).map(|i| x_full[i]));
     let xi_hat = x_full[m + 4];
 
-    // Q̃ = Q(β̂) + 2(r₁ᵀμ̂ + r₃ξ̂)  [+ sign from negated multipliers]
-    let q_first_order = q_raw + 2.0 * (r1_full.dot(&mu_hat) + r3_full * xi_hat);
+    // Q̃ = Q(β̂) - (r₂ᵀμ̂ + r₃ξ̂)  [Lemma [lem:v2-q-interval], Step 2-3]
+    let q_first_order = q_raw - (r1_full.dot(&mu_hat) + r3_full * xi_hat);
 
     // Analytical bounds
     let r_sq_full = r_full_norm * r_full_norm;
-    let e_full = r_sq_full * (4.0 / sigma_min_full.max(f64::MIN_POSITIVE)
-        + sigma_max / (sigma_min_full.max(f64::MIN_POSITIVE).powi(2)));
+    let e_full = r_sq_full * (2.0 / sigma_min_full.max(f64::MIN_POSITIVE)
+        + sigma_max / (2.0 * sigma_min_full.max(f64::MIN_POSITIVE).powi(2)));
     let r_sq_trunc = r_trunc_norm * r_trunc_norm;
-    let e_retained = r_sq_trunc * (4.0 / sigma_min_retained
-        + sigma_max / (sigma_min_retained * sigma_min_retained));
+    let e_retained = r_sq_trunc * (2.0 / sigma_min_retained
+        + sigma_max / (2.0 * sigma_min_retained * sigma_min_retained));
 
     // Direction-aware: δx = V Σ⁻¹ Uᵀ r (using full SVD)
     let delta_x_full = svd_solve(u, sv, v_t, &r_full, size, size);
@@ -923,17 +925,17 @@ fn main() {
 
                     let q_raw = q_from_beta(normals, &perm, &beta);
 
-                    // First-order Q correction (symmetric KKT: + sign from negated multipliers)
-                    let r1: DVector<f64> = DVector::from_iterator(4, (m..m+4).map(|i| r[i]));
+                    // First-order Q correction [lem:v2-q-interval]
+                    let r2: DVector<f64> = DVector::from_iterator(4, (m..m+4).map(|i| r[i]));
                     let r3 = r[m + 4];
                     let mu_hat: DVector<f64> = DVector::from_iterator(4, (m..m+4).map(|i| x[i]));
                     let xi_hat = x[m + 4];
-                    let q_tilde = q_raw + 2.0 * (r1.dot(&mu_hat) + r3 * xi_hat);
+                    let q_tilde = q_raw - (r2.dot(&mu_hat) + r3 * xi_hat);
 
                     // Error bound E
                     let r_sq = r_norm * r_norm;
-                    let e = r_sq * (4.0 / sigma_min_ret
-                        + sigma_max / (sigma_min_ret * sigma_min_ret));
+                    let e = r_sq * (2.0 / sigma_min_ret
+                        + sigma_max / (2.0 * sigma_min_ret * sigma_min_ret));
 
                     // Admissibility: β̂_min vs δβ_bound = ‖r‖ / σ_min
                     let delta_beta_bound = r_norm / sigma_min_ret;
@@ -989,5 +991,153 @@ fn main() {
                 }
             }
         }
+    }
+
+    println!();
+
+    // Table 8: Inertia theorem validation
+    // Eigenvalues of M vs restricted Hessian H|_T
+    // The saddle-point inertia theorem says:
+    //   n_+(M) = n_+(H|_T), n_-(M) = n_-(H|_T) + 5, n_0(M) = n_0(H|_T)
+    // We validate this on the BEST (S, σ) for each polytope.
+    println!("--- Table 8: Inertia theorem validation (Lemma B.?) ---");
+    println!("  For the optimal (S, σ), compare eigenvalue counts of M vs H|_T.");
+    println!("  Inertia theorem: n+(M) = n+(H|T)+p, n-(M) = n-(H|T)+p, n0(M) = n0(H|T)+(5-p)");
+    println!("  where p = rank(A), A = [N^T; η^T]");
+    println!("{:<14} {:>3} {:>3} {:>2} {:>5} {:>5} {:>5}  {:>5} {:>5} {:>5}  {:>5}",
+        "polytope", "m", "dimT", "p", "n+(M)", "n0(M)", "n-(M)",
+        "n+(HT)", "n0(HT)", "n-(HT)", "pass?");
+    println!("{}", "-".repeat(84));
+
+    let eig_eps = 1e-10;
+
+    for (name, polytope) in &polytopes {
+        let result = match ehz_capacity(polytope) {
+            Some(r) => r,
+            None => continue,
+        };
+
+        let mut alg_perm = result.best_permutation.clone();
+        alg_perm.reverse();
+        let m = alg_perm.len();
+        let size = m + 5;
+
+        let (kkt, _rhs) = build_kkt(polytope.normals(), polytope.heights(), &alg_perm);
+
+        // Eigenvalues of M (symmetric eigendecomposition)
+        let eig_m = kkt.symmetric_eigen();
+        let n_pos_m = eig_m.eigenvalues.iter().filter(|&&e| e > eig_eps).count();
+        let n_neg_m = eig_m.eigenvalues.iter().filter(|&&e| e < -eig_eps).count();
+        let n_zero_m = size - n_pos_m - n_neg_m;
+
+        // Restricted Hessian H|_T (from the existing approach)
+        let d = run_diagnostics(polytope.normals(), polytope.heights(), &alg_perm);
+        let tangent_dim = d.tangent_dim;
+        let p = m - tangent_dim; // rank(A) = m - dim(ker(A))
+
+        let (n_pos_ht, n_neg_ht, n_zero_ht) = if d.restricted_eigs.is_empty() {
+            (0, 0, 0)
+        } else {
+            let np = d.restricted_eigs.iter().filter(|&&e| e > eig_eps).count();
+            let nn = d.restricted_eigs.iter().filter(|&&e| e < -eig_eps).count();
+            let nz = tangent_dim - np - nn;
+            (np, nn, nz)
+        };
+
+        // Corrected inertia theorem: n+(M) = n+(H|T) + p, n-(M) = n-(H|T) + p,
+        // n0(M) = n0(H|T) + (5 - p)
+        let pass = n_pos_m == n_pos_ht + p
+            && n_neg_m == n_neg_ht + p
+            && n_zero_m == n_zero_ht + (5 - p);
+
+        println!("{:<14} {:>3} {:>3} {:>2} {:>5} {:>5} {:>5}  {:>5} {:>5} {:>5}  {:>5}",
+            name, m, tangent_dim, p,
+            n_pos_m, n_zero_m, n_neg_m,
+            n_pos_ht, n_zero_ht, n_neg_ht,
+            if pass { "✓" } else { "FAIL" });
+
+        // Print eigenvalue spectra for comparison
+        let mut eigs_m: Vec<f64> = eig_m.eigenvalues.iter().cloned().collect();
+        eigs_m.sort_by(|a, b| b.partial_cmp(a).unwrap()); // descending
+        println!("  M eigenvalues:  [{}]",
+            eigs_m.iter().map(|e| format!("{:+.3e}", e)).collect::<Vec<_>>().join(", "));
+        if !d.restricted_eigs.is_empty() {
+            let mut eigs_ht = d.restricted_eigs.clone();
+            eigs_ht.sort_by(|a, b| b.partial_cmp(a).unwrap());
+            println!("  H|T eigenvalues: [{}]",
+                eigs_ht.iter().map(|e| format!("{:+.3e}", e)).collect::<Vec<_>>().join(", "));
+        }
+    }
+
+    // Table 9: Inertia across ALL (S, σ) nodes — check n-(M) = p ↔ H|_T non-negative definite
+    println!();
+    println!("--- Table 9: Inertia check across all (S,σ) nodes ---");
+    println!("  For each node: compute eigenvalues of M, check n-(M)=p matches H|_T PD/NSD");
+    println!("  p = rank(A) = m - dim_T. H|_T PD ↔ n-(M)=p and n0(M)=5-p.");
+    println!("{:<14} {:>6} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7}",
+        "polytope", "total", "n-=p", "n->p", "PD", "ND", "indef", "match?");
+    println!("{}", "-".repeat(74));
+
+    for (name, polytope) in &polytopes {
+        let f = polytope.facet_count();
+        let mut total = 0u64;
+        let mut n_negp = 0u64;    // n-(M) = p (predicts H|_T NSD)
+        let mut n_neggtp = 0u64;  // n-(M) > p (predicts H|_T has negative eigenvalue)
+        let mut n_pd = 0u64;
+        let mut n_nd = 0u64;
+        let mut n_indef = 0u64;
+        let mut mismatches = 0u64;
+
+        for m in 2..=f {
+            for subset in combinations(f, m) {
+                for perm in cyclic_permutations(&subset) {
+                    total += 1;
+
+                    let mm = perm.len();
+                    let (kkt_mat, _) = build_kkt(polytope.normals(), polytope.heights(), &perm);
+
+                    // Eigenvalues of M
+                    let eig = kkt_mat.symmetric_eigen();
+                    let n_neg = eig.eigenvalues.iter().filter(|&&e| e < -eig_eps).count();
+                    let n_zero = eig.eigenvalues.iter().filter(|&&e| e.abs() <= eig_eps).count();
+
+                    // Restricted Hessian approach
+                    let info = node_hessian_check(polytope.normals(), polytope.heights(), &perm);
+                    let (def, tangent_dim) = match info {
+                        Some(n) => (n.definiteness, n.tangent_dim),
+                        None => (Definiteness::Trivial, 0),
+                    };
+                    let p = mm - tangent_dim; // rank(A)
+
+                    // H|_T PD ↔ n-(M)=p and n0(M)=5-p (no near-zero in H|_T)
+                    let inertia_says_pd = n_neg == p && n_zero == (5 - p);
+                    let inertia_says_nsd = n_neg == p; // n-(H|T) = 0
+                    if inertia_says_nsd { n_negp += 1; } else { n_neggtp += 1; }
+
+                    match def {
+                        Definiteness::PD => {
+                            n_pd += 1;
+                            if !inertia_says_pd { mismatches += 1; }
+                        },
+                        Definiteness::ND => {
+                            n_nd += 1;
+                            if inertia_says_nsd { mismatches += 1; }
+                        },
+                        Definiteness::Indefinite => {
+                            n_indef += 1;
+                            if inertia_says_nsd { mismatches += 1; }
+                        },
+                        Definiteness::NearZero | Definiteness::Trivial => {
+                            // Skip comparison for degenerate cases
+                        },
+                    }
+                }
+            }
+        }
+
+        let ok = mismatches == 0;
+        println!("{:<14} {:>6} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7}",
+            name, total, n_negp, n_neggtp, n_pd, n_nd, n_indef,
+            if ok { "✓".to_string() } else { format!("{} FAIL", mismatches) });
     }
 }
