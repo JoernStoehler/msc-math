@@ -71,7 +71,7 @@ in Section~\ref{sec:algorithms})
 and heights $h_i \in \mathbb{Q}_{>0}$.
 This allows several combinatorial quantities to be
 computed exactly over~$\mathbb{Q}$, eliminating
-numerical error from all discrete decisions.
+numerical predicates from all discrete decisions.
 
 % --- Exact quantities (from approved A.1, simplified per Jörn) ---
 
@@ -134,8 +134,7 @@ $\omega_0(n_i, n_k) \neq 0$ for all pairs $i \neq k$.
 
 Since $\operatorname{vol}$ and $c_{\mathrm{EHZ}}$ are continuous
 functions of the halfspace data, the perturbation changes
-the systolic ratio by at most $O(2^{-64})$, which is
-negligible for all practical purposes.
+the systolic ratio by a negligible amount.
 The sign pattern
 $\operatorname{sign}(\omega_0(n_i, n_k)) \in \{+1, -1\}$
 (with no zeros) is now fully determined from the rational
@@ -330,8 +329,8 @@ the algorithm solves the KKT linear system
   \begin{pmatrix} \beta \\ \lambda \\ \nu \end{pmatrix}
   = \begin{pmatrix} 0 \\ 0 \\ 1 \end{pmatrix},
 \end{equation}
-(equation~\eqref{eq:linear-system}) via SVD decomposition
-in \texttt{f64} arithmetic.
+(cf.\ equation~\eqref{eq:linear-system})
+via SVD in double-precision floating-point arithmetic.
 The SVD provides:
 \begin{itemize}
 \item a numerical solution
@@ -708,17 +707,23 @@ value~$\sigma_j$, the error bound is given by
 Proposition~\ref{prop:v2-approximate-dismissal} with
 $\varepsilon = \sigma_j$ (the SVD residual).
 The quantities in the bound are computable from the SVD
-output and the solution $(\hat\beta, \hat\lambda, \hat\nu)$:
+output and the exact solution $(\beta_0, \lambda_0, \nu_0)$:
 the corrected direction~$\delta\beta'$ from
 Lemma~\ref{lem:v2-constraint-projection},
-$\alpha^* = \min\{\hat\beta_i/|\delta\beta'_i|
+$\alpha^* = \min\{\beta_{0,i}/|\delta\beta'_i|
 : \delta\beta'_i < 0\}$,
 and the bound itself:
 \begin{equation}\label{eq:v2-dismissal-error-bound}
-  \hat\nu
+  \nu_0
     - (\alpha^*)^2\,\|\delta\beta'\|\,
       \Bigl(1 + \frac{\|H\|}{\sigma_C}\Bigr)\,\sigma_j.
 \end{equation}
+% [TODO: JÖRN - in practice we only have the numerical
+%  solution (β̂,λ̂,ν̂), not the exact (β₀,λ₀,ν₀). The bound
+%  formula uses exact values. Need to either: (a) derive a
+%  version using numerical values with an additional error term,
+%  or (b) justify that the error from substituting β̂ for β₀
+%  is negligible compared to the bound itself.]
 % [TODO: JÖRN - the dismissal-error experiment
 %  (experiments/dismissal-error/) should confirm this empirically
 %  across the test dataset.]
@@ -753,7 +758,19 @@ is certified admissible.
 If any component returns $\textsc{false}$, the candidate
 is inadmissible and discarded.
 Otherwise, some component is $\textsc{unknown}$ and
-the candidate's admissibility is uncertain.
+the candidate's admissibility is uncertain:
+\begin{itemize}
+\item If $0 < \beta^*_i < \varepsilon_\beta$:
+  the pair is genuinely admissible but may be incorrectly
+  discarded ($\hat\beta_i$ could round negative).
+\item If $-\varepsilon_\beta < \beta^*_i < 0$:
+  the pair is genuinely inadmissible but may be incorrectly
+  kept ($\hat\beta_i$ could round positive).
+\item If $\beta^*_i = 0$:
+  the pair is covered by a smaller
+  pair $(S \setminus \{i\}, \sigma|_{S \setminus \{i\}})$,
+  which the algorithm also examines.
+\end{itemize}
 
 % [TODO: JÖRN - in the new framework, the three-valued
 %  verdict feeds into the Q interval: TRUE admissibility
