@@ -14,7 +14,7 @@ pub const EPS_BETA_POSITIVE: f64 = 1e-12;
 /// Minimum Q(β) value to consider a solution valid (avoids division-by-near-zero in action).
 pub const EPS_Q_POSITIVE: f64 = 1e-15;
 
-/// Result of KKT solve with Q error bound.
+/// Result of KKT solve with eigendecomposition diagnostics.
 ///
 /// See `[lem:v2-q-interval]` (thesis): |Q(β₀) - q_corrected| ≤ q_error_bound.
 ///
@@ -29,34 +29,33 @@ pub struct KktResult {
     pub q_corrected: f64,
     /// Error bound E on Q̃: |Q(β₀) - Q̃| ≤ E.
     /// See `[eq:v2-q-error-bound]` (thesis).
-    /// Used by the accumulator for majorization.
+    /// Used by debug_assert! in solver; will be used by accumulator and experiment code.
     #[allow(dead_code)]
     pub q_error_bound: f64,
+    /// Inertia of M: number of positive eigenvalues.
+    /// Used by experiment q_error.rs for inertia validation.
+    #[allow(dead_code)]
+    pub n_positive: usize,
+    /// Inertia of M: number of negative eigenvalues.
+    /// Used by experiment q_error.rs for inertia validation.
+    #[allow(dead_code)]
+    pub n_negative: usize,
+    /// Inertia of M: number of near-zero eigenvalues.
+    /// Used by experiment q_error.rs for inertia validation.
+    #[allow(dead_code)]
+    pub n_zero: usize,
 }
 
-impl KktResult {
-    /// Lower bound on true Q (conservative for capacity upper bound).
-    #[allow(dead_code)]
-    pub fn q_min(&self) -> f64 {
-        self.q_corrected - self.q_error_bound
-    }
-    /// Upper bound on true Q (optimistic for capacity lower bound).
-    #[allow(dead_code)]
-    pub fn q_max(&self) -> f64 {
-        self.q_corrected + self.q_error_bound
-    }
-}
+/// Absolute floor: if the largest eigenvalue magnitude is below this, the entire
+/// matrix is treated as numerically zero (early return). The relative rank
+/// detection is handled by EIGEN_CONDITION_TAU.
+const EPS_EIGEN_FLOOR: f64 = 1e-12;
 
-/// Absolute floor: if the largest singular value is below this, the entire matrix
-/// is treated as numerically zero (early return). The relative rank detection is
-/// handled by SVD_CONDITION_TAU.
-const EPS_SVD_FLOOR: f64 = 1e-12;
-
-/// Condition-number threshold for SVD rank detection: singular values below
-/// max_sv * SVD_CONDITION_TAU are treated as part of the null space.
+/// Condition-number threshold for eigenvalue rank detection: eigenvalues with
+/// |λ_i| < max_abs * EIGEN_CONDITION_TAU are treated as part of the null space.
 ///
-/// A singular value σ_j is "small" if σ_j < σ_1 · τ. This detects both
-/// isolated small singular values (the classic gap case) and gradual decay
+/// An eigenvalue λ_j is "small" if |λ_j| < |λ|_max · τ. This detects both
+/// isolated small eigenvalues (the classic gap case) and gradual decay
 /// to small values (which a gap-ratio approach would miss).
 ///
 /// For near-singular systems, the null space directions are used to search
@@ -64,12 +63,13 @@ const EPS_SVD_FLOOR: f64 = 1e-12;
 /// the resulting objective uncertainty.
 ///
 /// **Why 1e-3:** The degenerate (4,4) Lagrangian product at θ≈0° has
-/// sv[8]≈0.51, sv[9]≈8.6e-4 with σ_1 ≈ 1–2, giving sv[9]/σ_1 ≈ 4e-4.
-/// The threshold 1e-3 catches this with margin. Well-conditioned random
-/// polytopes have smallest sv ≈ 0.01–0.1, well above 1e-3 · σ_1.
+/// eigenvalue magnitudes around 8.6e-4 with |λ|_max ≈ 1–2, giving
+/// |λ|/|λ|_max ≈ 4e-4. The threshold 1e-3 catches this with margin.
+/// Well-conditioned random polytopes have smallest |λ| ≈ 0.01–0.1,
+/// well above 1e-3 · |λ|_max.
 ///
 /// Regression tests: `svd_gap_ratio_44_degenerate`, `svd_gap_ratio_44_theta43`.
-const SVD_CONDITION_TAU: f64 = 1e-3;
+const EIGEN_CONDITION_TAU: f64 = 1e-3;
 
 /// Maximum acceptable residual norm for the KKT solution (rejects numerically poor solutions).
 const EPS_KKT_RESIDUAL: f64 = 1e-6;
@@ -213,8 +213,8 @@ fn find_positive_beta_nd(beta0: &[f64], null_vecs: &[Vec<f64>]) -> Option<Vec<f6
 /// The stationarity condition is Hβ + Nμ + ηξ = 0 (equivalently Hβ = Nλ + ην
 /// with the original multipliers λ = −μ, ν = −ξ).
 ///
-/// Symmetry enables eigendecomposition-based solvers and gives signed
-/// eigenvalues (vs unsigned singular values from SVD).
+/// Symmetry enables eigendecomposition M = VΛV^T, giving eigenvalues with
+/// signs (inertia) and orthogonal eigenvectors in one factorization.
 ///
 /// Returns `(kkt, rhs)` where `kkt` is `(m+5) × (m+5)` symmetric.
 ///
@@ -260,17 +260,20 @@ pub(crate) fn build_kkt_system(
     (kkt, rhs)
 }
 
-/// SVD path with condition-number-based rank detection and Q error bounding.
+/// Eigendecomposition path with condition-number-based rank detection, inertia,
+/// and Q error bounding.
 ///
-/// Operates on a pre-built KKT matrix. Used by both `solve_kkt` (as fallback
-/// after LU fails) and `solve_kkt_svd_only` (directly).
+/// Since M is symmetric, M = VΛV^T with real eigenvalues and orthogonal
+/// eigenvectors. The pseudoinverse solution is x̂ = Σ_i (v_i · b / λ_i) v_i
+/// for retained eigenvalues (|λ_i| above threshold).
 ///
-/// Returns a `KktResult` with the β vector, corrected Q̃, and error bound E
-/// satisfying |Q(β₀) - Q̃| ≤ E. See `[lem:v2-q-interval]` (thesis).
+/// Returns a `KktResult` with the β vector, corrected Q̃, error bound E
+/// satisfying |Q(β₀) - Q̃| ≤ E, and the inertia of M.
+/// See `[lem:v2-q-interval]` (thesis).
 ///
-/// Condition-number detection: singular values below max_sv * SVD_CONDITION_TAU
-/// are treated as part of the null space (for the β > 0 search).
-fn solve_kkt_svd_path(
+/// Rank detection: eigenvalues with |λ_i| < |λ|_max * EIGEN_CONDITION_TAU
+/// are treated as null space.
+fn solve_kkt_eigen_path(
     kkt: &DMatrix<f64>,
     rhs: &DVector<f64>,
     normals: &[Vector4<f64>],
@@ -280,29 +283,31 @@ fn solve_kkt_svd_path(
     let m = perm.len();
     let size = m + 5;
 
-    let svd = kkt.clone().svd(true, true);
-    let sv = &svd.singular_values;
-    let max_sv = sv.iter().cloned().fold(0.0f64, f64::max);
-    if max_sv < EPS_SVD_FLOOR {
+    let eig = kkt.clone().symmetric_eigen();
+    let eigenvalues = &eig.eigenvalues;
+    let eigenvectors = &eig.eigenvectors;
+
+    let max_abs_ev = eigenvalues.iter().map(|e| e.abs()).fold(0.0f64, f64::max);
+    if max_abs_ev < EPS_EIGEN_FLOOR {
         return None;
     }
 
-    let u = svd.u.as_ref()?;
-    let v_t = svd.v_t.as_ref()?;
+    let threshold = max_abs_ev * EIGEN_CONDITION_TAU;
 
-    // Determine numerical rank via condition-number threshold.
-    // sv is sorted descending. Singular values below max_sv * τ
-    // are treated as part of the near-null space.
-    let threshold = max_sv * SVD_CONDITION_TAU;
-    let rank = sv.iter().filter(|&&s| s > threshold).count();
+    // Inertia: count eigenvalue signs (using threshold for near-zero detection).
+    let n_positive = eigenvalues.iter().filter(|&&e| e > threshold).count();
+    let n_negative = eigenvalues.iter().filter(|&&e| e < -threshold).count();
+    let n_zero = size - n_positive - n_negative;
 
-    // Compute pseudoinverse solution manually using only the top `rank` SVs.
-    // This avoids relying on nalgebra's solve() tolerance interpretation.
+    // Pseudoinverse solution: x̂ = Σ_i (v_i · b / λ_i) v_i for retained eigenvalues.
+    // Note: eigenvalues from nalgebra's symmetric_eigen() are NOT necessarily sorted.
     let mut x0 = DVector::zeros(size);
-    for i in 0..rank {
-        let coeff = u.column(i).dot(rhs) / sv[i];
-        for j in 0..size {
-            x0[j] += coeff * v_t[(i, j)];
+    for i in 0..size {
+        if eigenvalues[i].abs() > threshold {
+            let coeff = eigenvectors.column(i).dot(rhs) / eigenvalues[i];
+            for j in 0..size {
+                x0[j] += coeff * eigenvectors[(j, i)];
+            }
         }
     }
 
@@ -319,47 +324,67 @@ fn solve_kkt_svd_path(
     let r2_dot_mu: f64 = (m..m + 4).map(|i| residual_vec[i] * x0[i]).sum();
     let r3 = residual_vec[m + 4];
     let xi_hat = x0[m + 4];
+    let q_correction = r2_dot_mu + r3 * xi_hat;
 
-    // σ_min of RETAINED singular values (those above the rank threshold).
-    // Using full-matrix σ_min is catastrophically wrong for rank-deficient systems:
-    // near-zero SVs give E = O(1/σ_min²) → 10^66 or NaN.
-    // The retained σ_min bounds errors in the directions the SVD actually resolves.
-    let sigma_min = sv
+    // |λ_min| of RETAINED eigenvalues (those above the rank threshold).
+    // Using full-matrix |λ_min| is catastrophically wrong for rank-deficient systems:
+    // near-zero eigenvalues give E = O(1/|λ_min|²) → huge or NaN.
+    // The retained |λ_min| bounds errors in the directions the eigendecomposition resolves.
+    let abs_lambda_min = eigenvalues
         .iter()
-        .take(rank)
-        .cloned()
+        .filter(|&&e| e.abs() > threshold)
+        .map(|e| e.abs())
         .fold(f64::INFINITY, f64::min)
         .max(f64::MIN_POSITIVE);
 
-    // ‖H‖ ≤ σ₁ = max_sv (H is a submatrix of M, so ‖H‖ ≤ ‖M‖).
-    let h_norm_bound = max_sv;
+    // ‖H‖ ≤ |λ|_max (H is a submatrix of M, so ‖H‖ ≤ ‖M‖ = |λ|_max for symmetric M).
+    let h_norm_bound = max_abs_ev;
 
     let beta0: Vec<f64> = (0..m).map(|i| x0[i]).collect();
 
     // If already feasible, compute error bound and return.
     if beta0.iter().all(|&b| b > EPS_BETA_POSITIVE) {
         let q_raw = q_from_beta(normals, perm, &beta0);
-        let q_corrected = q_raw - (r2_dot_mu + r3 * xi_hat);
+        let q_corrected = q_raw - q_correction;
         let r_sq = residual_norm * residual_norm;
         let q_error_bound =
-            r_sq * (2.0 / sigma_min + h_norm_bound / (2.0 * sigma_min * sigma_min));
+            r_sq * (2.0 / abs_lambda_min + h_norm_bound / (2.0 * abs_lambda_min * abs_lambda_min));
+
+        // Instrumentation: verify Q correction and error bound are negligible.
+        debug_assert!(
+            q_error_bound < 1e-6,
+            "Q error bound unexpectedly large: E={:.2e}, |r|={:.2e}, |λ_min|={:.2e}",
+            q_error_bound, residual_norm, abs_lambda_min
+        );
+        debug_assert!(
+            q_correction.abs() < 1e-6 || q_correction.abs() < 1e-6 * q_raw.abs(),
+            "Q correction unexpectedly large: correction={:.2e}, Q_raw={:.2e}, ratio={:.2e}",
+            q_correction, q_raw, q_correction.abs() / q_raw.abs().max(1e-30)
+        );
+
         return Some(KktResult {
             beta: beta0,
             q_corrected,
             q_error_bound,
+            n_positive,
+            n_negative,
+            n_zero,
         });
     }
 
-    // Full rank: unique solution with β ≤ 0, candidate pair is genuinely infeasible.
+    // Full rank (all eigenvalues retained): unique solution with β ≤ 0,
+    // candidate pair is genuinely infeasible.
+    let rank = n_positive + n_negative;
     if rank == size {
         return None;
     }
 
     // Rank-deficient: search null space for β > 0.
-    // Null space = right singular vectors for sv's below rank threshold.
+    // Null space = eigenvectors for eigenvalues below rank threshold.
     // Q(β) is constant along the null space (constraint-preserving directions).
-    let null_beta: Vec<Vec<f64>> = (rank..size)
-        .map(|i| (0..m).map(|j| v_t[(i, j)]).collect())
+    let null_beta: Vec<Vec<f64>> = (0..size)
+        .filter(|&i| eigenvalues[i].abs() <= threshold)
+        .map(|i| (0..m).map(|j| eigenvectors[(j, i)]).collect())
         .collect();
 
     let beta_opt = if null_beta.len() == 1 {
@@ -390,30 +415,40 @@ fn solve_kkt_svd_path(
     // Q is constant along the null space, so Q(β_opt) = Q(β₀).
     // |Q(β₀) - Q̃| ≤ E bounds the true Q for the whole family.
     let q_raw = q_from_beta(normals, perm, &beta_opt);
-    let q_corrected = q_raw - (r2_dot_mu + r3 * xi_hat);
+    let q_corrected = q_raw - q_correction;
     let r_sq = residual_norm * residual_norm;
     let q_error_bound =
-        r_sq * (2.0 / sigma_min + h_norm_bound / (2.0 * sigma_min * sigma_min));
+        r_sq * (2.0 / abs_lambda_min + h_norm_bound / (2.0 * abs_lambda_min * abs_lambda_min));
+
+    debug_assert!(
+        q_error_bound < 1e-6,
+        "Q error bound unexpectedly large (null space path): E={:.2e}, |r|={:.2e}, |λ_min|={:.2e}",
+        q_error_bound, residual_norm, abs_lambda_min
+    );
+    debug_assert!(
+        q_correction.abs() < 1e-6 || q_correction.abs() < 1e-6 * q_raw.abs(),
+        "Q correction unexpectedly large (null space path): correction={:.2e}, Q_raw={:.2e}",
+        q_correction, q_raw
+    );
 
     Some(KktResult {
         beta: beta_opt,
         q_corrected,
         q_error_bound,
+        n_positive,
+        n_negative,
+        n_zero,
     })
 }
 
 /// Solve the KKT system for max Q(β) subject to N^T β = 0, η^T β = 1.
 ///
-/// Production variant: tries LU decomposition first, falls back to SVD with
-/// gap-based rank detection for rank-deficient systems.
+/// Uses eigendecomposition of the symmetric KKT matrix M = VΛV^T.
+/// This gives solution, rank detection, null space, and inertia in one
+/// factorization.
 ///
-/// Note: profiling showed the LU fast path adds 6-12% overhead in practice
-/// because most permutations yield β ≤ 0 even when LU reports invertible.
-/// The SVD-only variant (`solve_kkt_svd_only`) is faster. LU is retained
-/// for evaluation but not used in the production capacity algorithms.
-///
-/// Returns `Some(KktResult)` with β > 0 and a Q error bound, or `None` if no
-/// admissible solution exists.
+/// Returns `Some(KktResult)` with β > 0, corrected Q̃, error bound E,
+/// and inertia of M, or `None` if no admissible solution exists.
 ///
 /// When the KKT system is rank-deficient (common for polytopes with
 /// axis-aligned normals in symplectic subplanes), there is a family of
@@ -427,48 +462,7 @@ pub(crate) fn solve_kkt(
     heights: &[f64],
     perm: &[usize],
 ) -> Option<KktResult> {
-    let m = perm.len();
     let (kkt, rhs) = build_kkt_system(normals, heights, perm);
-
-    // --- LU fast path ---
-    // Full-pivoting LU handles the common case (full-rank, well-conditioned).
-    // Falls through to SVD when: not invertible, bad residual, or β ≤ 0.
-    let lu = kkt.clone().full_piv_lu();
-    if lu.is_invertible() {
-        if let Some(solution) = lu.solve(&rhs) {
-            let residual = (&kkt * &solution - &rhs).norm();
-            if residual <= EPS_KKT_RESIDUAL {
-                let beta: Vec<f64> = (0..m).map(|i| solution[i]).collect();
-                if beta.iter().all(|&b| b > EPS_BETA_POSITIVE) {
-                    let q_val = q_from_beta(normals, perm, &beta);
-                    // LU fast path: well-conditioned solution with tiny residual.
-                    // Q̃ = Q(β̂) with E = 0 (correction negligible for LU).
-                    return Some(KktResult {
-                        beta,
-                        q_corrected: q_val,
-                        q_error_bound: 0.0,
-                    });
-                }
-            }
-        }
-    }
-
-    // --- SVD fallback with gap-based rank detection ---
-    solve_kkt_svd_path(&kkt, &rhs, normals, heights, perm)
+    solve_kkt_eigen_path(&kkt, &rhs, normals, heights, perm)
 }
 
-/// Solve the KKT system using SVD only (no LU fast path).
-///
-/// Ablation variant for benchmarking and testing. Uses the same gap-based
-/// rank detection as the SVD fallback in `solve_kkt`, but skips the LU
-/// fast path. Comparing `solve_kkt` vs `solve_kkt_svd_only` isolates
-/// the LU fast path's contribution to performance and correctness.
-#[cfg(test)]
-pub(crate) fn solve_kkt_svd_only(
-    normals: &[Vector4<f64>],
-    heights: &[f64],
-    perm: &[usize],
-) -> Option<KktResult> {
-    let (kkt, rhs) = build_kkt_system(normals, heights, perm);
-    solve_kkt_svd_path(&kkt, &rhs, normals, heights, perm)
-}

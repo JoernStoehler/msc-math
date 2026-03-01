@@ -1,6 +1,5 @@
 use super::*;
 use crate::geom::known_polytopes;
-use crate::kkt::solve_kkt_svd_only;
 use nalgebra::Vector4;
 
 /// Smoke test: unpruned capacity algorithm executes safely on 4-facet simplex.
@@ -538,24 +537,24 @@ fn kkt_nullspace_triangle_square_zero() {
 }
 
 // ============================================================================
-// SVD condition number threshold regression tests
+// Eigenvalue condition number threshold regression tests
 // ============================================================================
-// The condition-number threshold SVD_CONDITION_TAU=1e-3 was chosen empirically from the (4,4)
-// degenerate case. These tests pin the observed SV spectrum so that changes to
+// The condition-number threshold EIGEN_CONDITION_TAU=1e-3 was chosen empirically from the (4,4)
+// degenerate case. These tests pin the observed eigenvalue spectrum so that changes to
 // the threshold can be validated against the cases that motivated it.
 
-/// Verify SV spectrum of the (4,4) θ=0° degenerate KKT system.
+/// Verify eigenvalue spectrum of the (4,4) θ=0° degenerate KKT system.
 ///
-/// **What:** Asserts the singular value spectrum that motivated SVD_CONDITION_TAU=1e-3.
-/// The optimal orbit permutation for (4,4) at θ=0° has sv[8]≈0.51, sv[9]≈8.6e-4,
-/// giving a gap ratio ≈594. This spectrum must remain well-separated at the
-/// condition-number-based rank detection threshold for the null space search to work.
+/// **What:** Asserts the eigenvalue spectrum that motivated EIGEN_CONDITION_TAU=1e-3.
+/// The optimal orbit permutation for (4,4) at θ=0° has a gap in the sorted |λ_i|
+/// spectrum. This spectrum must remain well-separated at the condition-number-based
+/// rank detection threshold for the null space search to work.
 ///
-/// **Why:** Regression test for SVD_CONDITION_TAU (see doc comment on the constant).
+/// **Why:** Regression test for EIGEN_CONDITION_TAU (see doc comment on the constant).
 /// Without this, a threshold change could silently break the degenerate case.
-/// **Why debug mode:** Only builds one KKT matrix and computes SVD. Fast.
+/// **Why debug mode:** Only builds one KKT matrix and computes eigendecomposition. Fast.
 #[test]
-fn svd_gap_ratio_44_degenerate() {
+fn eigen_gap_ratio_44_degenerate() {
     use crate::geom::lagrangian_product::lagrangian_product;
     use crate::geom::polygon::regular_polygon_2d;
 
@@ -568,37 +567,40 @@ fn svd_gap_ratio_44_degenerate() {
     // The optimal orbit at θ=0° uses facets [0,4,2,6] (alternating q/p)
     let perm = vec![0, 4, 2, 6];
     let (kkt, _rhs) = crate::kkt::build_kkt_system(normals, heights, &perm);
-    let svd = kkt.svd(true, true);
-    let sv = &svd.singular_values;
+    let eigen = kkt.symmetric_eigen();
     let size = perm.len() + 5; // 9
 
-    // Find the gap: walk from smallest SV upward looking for the biggest ratio
+    // Collect |λ_i| and sort descending (symmetric_eigen returns unspecified order)
+    let mut abs_eigenvalues: Vec<f64> = eigen.eigenvalues.iter().map(|&ev| ev.abs()).collect();
+    abs_eigenvalues.sort_by(|a, b| b.partial_cmp(a).unwrap());
+
+    // Find the gap: walk from smallest |λ_i| upward looking for the biggest ratio
     let floor = 1e-15;
     let mut max_gap_ratio = 0.0f64;
     for i in (1..size).rev() {
-        if sv[i] < floor {
+        if abs_eigenvalues[i] < floor {
             continue;
         }
-        let ratio = sv[i - 1] / sv[i];
+        let ratio = abs_eigenvalues[i - 1] / abs_eigenvalues[i];
         if ratio > max_gap_ratio {
             max_gap_ratio = ratio;
         }
     }
 
-    // If the smallest SV is ≈0, the system is exactly rank-deficient.
+    // If the smallest |λ_i| is ≈0, the system is exactly rank-deficient.
     // This is fine — condition-number detection handles it via the floor check.
     // The important thing is that the rank deficiency exists.
-    let smallest_nonzero = (0..size).rev().find(|&i| sv[i] > floor);
+    let smallest_nonzero = (0..size).rev().find(|&i| abs_eigenvalues[i] > floor);
     if let Some(idx) = smallest_nonzero {
         if idx > 0 {
-            let ratio = sv[idx - 1] / sv[idx];
-            // If there's a near-zero SV with a large gap above it,
-            // the gap ratio must stay well above SVD_CONDITION_TAU detection threshold
+            let ratio = abs_eigenvalues[idx - 1] / abs_eigenvalues[idx];
+            // If there's a near-zero |λ_i| with a large gap above it,
+            // the gap ratio must stay well above EIGEN_CONDITION_TAU detection threshold
             if ratio > 50.0 {
                 assert!(
                     ratio > 200.0,
-                    "(4,4) θ=0° gap ratio should stay well above 1e-3 condition-number threshold, got {:.1} (sv[{}]={:.3e}, sv[{}]={:.3e})",
-                    ratio, idx - 1, sv[idx - 1], idx, sv[idx]
+                    "(4,4) θ=0° gap ratio should stay well above 1e-3 condition-number threshold, got {:.1} (|λ[{}]|={:.3e}, |λ[{}]|={:.3e})",
+                    ratio, idx - 1, abs_eigenvalues[idx - 1], idx, abs_eigenvalues[idx]
                 );
             }
         }
@@ -606,24 +608,24 @@ fn svd_gap_ratio_44_degenerate() {
 
     // The KKT system for this permutation must be rank-deficient
     // (axis-aligned normals in the (4,4) product create linear dependence)
-    let numerical_rank = sv.iter().filter(|&&s| s > 1e-6).count();
+    let numerical_rank = abs_eigenvalues.iter().filter(|&&ev| ev > 1e-6).count();
     assert!(
         numerical_rank < size,
         "(4,4) θ=0° should be rank-deficient: rank={numerical_rank}, size={size}"
     );
 }
 
-/// Verify SV gap ratio for the (4,4) θ=43° case that motivated SVD_CONDITION_TAU.
+/// Verify eigenvalue gap ratio for the (4,4) θ=43° case that motivated EIGEN_CONDITION_TAU.
 ///
 /// **What:** The KKT system for perm [1,0,6,3,2,4] on the (4,4) product at θ=43°
-/// has sv[8]≈0.51, sv[9]≈8.6e-4, giving gap ratio ≈594. This is the case from
-/// commit dd87a8a that motivated SVD_CONDITION_TAU=1e-3. The gap ratio must stay
+/// has a gap in the sorted |λ_i| spectrum with ratio ≈594. This is the case from
+/// commit dd87a8a that motivated EIGEN_CONDITION_TAU=1e-3. The gap ratio must stay
 /// well above the threshold for the fix to work.
 ///
-/// **Why:** Regression test for SVD_CONDITION_TAU (see doc comment on the constant).
+/// **Why:** Regression test for EIGEN_CONDITION_TAU (see doc comment on the constant).
 /// **Why debug mode:** One KKT matrix, fast.
 #[test]
-fn svd_gap_ratio_44_theta43() {
+fn eigen_gap_ratio_44_theta43() {
     use crate::geom::lagrangian_product::lagrangian_product;
     use crate::geom::polygon::{regular_polygon_2d, rotate_polygon_2d};
 
@@ -641,207 +643,34 @@ fn svd_gap_ratio_44_theta43() {
     let size = m + 5; // 11
 
     let (kkt, _rhs) = crate::kkt::build_kkt_system(normals, heights, &perm);
-    let svd = kkt.svd(true, true);
-    let sv = &svd.singular_values;
+    let eigen = kkt.symmetric_eigen();
 
-    // Find the largest gap ratio in the SV spectrum
+    // Collect |λ_i| and sort descending (symmetric_eigen returns unspecified order)
+    let mut abs_eigenvalues: Vec<f64> = eigen.eigenvalues.iter().map(|&ev| ev.abs()).collect();
+    abs_eigenvalues.sort_by(|a, b| b.partial_cmp(a).unwrap());
+
+    // Find the largest gap ratio in the |λ_i| spectrum
     let floor = 1e-15;
     let mut max_gap_ratio = 0.0f64;
     let mut gap_idx = 0;
     for i in (1..size).rev() {
-        if sv[i] < floor {
+        if abs_eigenvalues[i] < floor {
             continue;
         }
-        let ratio = sv[i - 1] / sv[i];
+        let ratio = abs_eigenvalues[i - 1] / abs_eigenvalues[i];
         if ratio > max_gap_ratio {
             max_gap_ratio = ratio;
             gap_idx = i;
         }
     }
 
-    // The gap ratio must be well above the SVD_CONDITION_TAU=1e-3 condition-number threshold
+    // The gap ratio must be well above the EIGEN_CONDITION_TAU=1e-3 condition-number threshold
     // Original observation: ~594x. Allow some variation but must stay >>1e-3.
     assert!(
         max_gap_ratio > 300.0,
-        "(4,4) θ=43° gap ratio should be ~594 (well above 1e-3 threshold), got {:.1} at sv[{}]={:.3e}/sv[{}]={:.3e}",
-        max_gap_ratio, gap_idx - 1, sv[gap_idx - 1], gap_idx, sv[gap_idx]
+        "(4,4) θ=43° gap ratio should be ~594 (well above 1e-3 threshold), got {:.1} at |λ[{}]|={:.3e}/|λ[{}]|={:.3e}",
+        max_gap_ratio, gap_idx - 1, abs_eigenvalues[gap_idx - 1], gap_idx, abs_eigenvalues[gap_idx]
     );
-}
-
-// ============================================================================
-// Ablation tests: LU fast path vs SVD-only
-// ============================================================================
-// These tests verify that solve_kkt (LU+SVD) and solve_kkt_svd_only produce
-// identical results. Catches divergence between code paths.
-
-/// Verify LU+SVD and SVD-only produce identical results on well-conditioned polytopes.
-///
-/// **What:** Calls both solve_kkt and solve_kkt_svd_only on the same permutations
-/// from known polytopes (simplex, triangle products). Asserts identical (β, Q).
-/// **Why debug mode:** Tests both code paths with debug checks enabled.
-/// Well-conditioned systems where LU handles the call (never falls through to SVD).
-/// **Why these polytopes:** Full-rank KKT systems — LU succeeds, so this tests
-/// that the LU fast path gives the same answer as SVD.
-/// **Relationship:** Complements `solve_kkt_lu_svd_degenerate` which tests
-/// rank-deficient systems where LU falls through.
-#[test]
-fn solve_kkt_lu_vs_svd_wellconditioned() {
-    // Simplex: 5 facets, full-rank KKT, LU will handle this
-    let kp = known_polytopes::simplex();
-    let normals = kp.polytope.normals();
-    let heights = kp.polytope.heights();
-
-    // Test a few permutations
-    let perms: Vec<Vec<usize>> = vec![
-        vec![0, 1],
-        vec![0, 1, 2],
-        vec![0, 1, 2, 3],
-        vec![0, 1, 2, 3, 4],
-    ];
-
-    for perm in &perms {
-        let result_lu = solve_kkt(normals, heights, perm);
-        let result_svd = solve_kkt_svd_only(normals, heights, perm);
-
-        match (result_lu, result_svd) {
-            (Some(r_lu), Some(r_svd)) => {
-                assert!(
-                    (r_lu.q_corrected - r_svd.q_corrected).abs() < 1e-10,
-                    "simplex perm {:?}: Q differs: LU={}, SVD={}",
-                    perm, r_lu.q_corrected, r_svd.q_corrected
-                );
-                for (i, (bl, bs)) in r_lu.beta.iter().zip(r_svd.beta.iter()).enumerate() {
-                    assert!(
-                        (bl - bs).abs() < 1e-10,
-                        "simplex perm {:?}: β[{i}] differs: LU={bl}, SVD={bs}",
-                        perm
-                    );
-                }
-            }
-            (None, None) => {} // Both agree: infeasible
-            (lu, svd) => panic!(
-                "simplex perm {:?}: LU returned {:?}, SVD returned {:?}",
-                perm,
-                lu.as_ref().map(|r| r.q_corrected),
-                svd.as_ref().map(|r| r.q_corrected)
-            ),
-        }
-    }
-
-    // Triangle × Triangle: 6 facets, product structure, LU should handle
-    let kp_tt = known_polytopes::lagrangian_triangle_product();
-    let normals = kp_tt.polytope.normals();
-    let heights = kp_tt.polytope.heights();
-
-    // Known optimal orbit for triangle × triangle is a 6-facet orbit
-    let perm_all: Vec<usize> = (0..6).collect();
-    let result_lu = solve_kkt(normals, heights, &perm_all);
-    let result_svd = solve_kkt_svd_only(normals, heights, &perm_all);
-
-    match (result_lu, result_svd) {
-        (Some(r_lu), Some(r_svd)) => {
-            assert!(
-                (r_lu.q_corrected - r_svd.q_corrected).abs() < 1e-10,
-                "triangle×triangle: Q differs: LU={}, SVD={}",
-                r_lu.q_corrected, r_svd.q_corrected
-            );
-        }
-        (None, None) => {} // Both agree: infeasible
-        (Some(r_lu), None) if r_lu.q_corrected <= EPS_Q_POSITIVE => {
-            // LU found a near-zero Q; SVD dismissed via early δβ check.
-            // Both are effectively infeasible — the Q value is too small to matter.
-        }
-        (lu, svd) => panic!(
-            "triangle×triangle: LU returned {:?}, SVD returned {:?}",
-            lu.as_ref().map(|r| r.q_corrected),
-            svd.as_ref().map(|r| r.q_corrected)
-        ),
-    }
-}
-
-/// Verify LU+SVD and SVD-only agree on rank-deficient systems.
-///
-/// **What:** Tests both solver variants on degenerate Lagrangian products where
-/// the KKT system is rank-deficient (axis-aligned normals → zero ω₀ pairs).
-/// LU declares these invertible but the solution is wrong, so LU falls through
-/// to SVD. Both variants should then use the same SVD path and agree.
-/// **Why debug mode:** Exercises the null space search with debug checks.
-/// **Why these polytopes:** (4,4) and (3,4) at θ=0° are the canonical
-/// rank-deficient cases from the KKT bug investigation.
-/// **Relationship:** Complements `solve_kkt_lu_vs_svd_wellconditioned`.
-#[test]
-fn solve_kkt_lu_vs_svd_degenerate() {
-    use crate::geom::lagrangian_product::lagrangian_product;
-    use crate::geom::polygon::regular_polygon_2d;
-
-    // (4,4) at θ=0° — rank-deficient KKT, LU falls through to SVD
-    let (qn, qh) = regular_polygon_2d(4, 1.0);
-    let (pn, ph) = regular_polygon_2d(4, 1.0);
-    let polytope = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
-    let normals = polytope.normals();
-    let heights = polytope.heights();
-
-    // Test several permutations including the known optimal one
-    let perms: Vec<Vec<usize>> = vec![
-        vec![0, 4, 2, 6],     // 4-facet, known optimal at θ=0°
-        vec![1, 5, 3, 7],     // another 4-facet
-        (0..8).collect(),       // all 8 facets
-        vec![0, 1, 4, 5],     // mixed q/p
-    ];
-
-    for perm in &perms {
-        let result_lu = solve_kkt(normals, heights, perm);
-        let result_svd = solve_kkt_svd_only(normals, heights, perm);
-
-        match (&result_lu, &result_svd) {
-            (Some(r_lu), Some(r_svd)) => {
-                assert!(
-                    (r_lu.q_corrected - r_svd.q_corrected).abs() < 1e-10,
-                    "(4,4) perm {:?}: Q differs: LU={}, SVD={}",
-                    perm, r_lu.q_corrected, r_svd.q_corrected
-                );
-            }
-            (None, None) => {} // Both agree: infeasible
-            _ => panic!(
-                "(4,4) perm {:?}: LU returned {:?}, SVD returned {:?}",
-                perm,
-                result_lu.as_ref().map(|r| r.q_corrected),
-                result_svd.as_ref().map(|r| r.q_corrected)
-            ),
-        }
-    }
-
-    // (3,4) at θ=0° — previously returned None for all algorithms
-    let (qn, qh) = regular_polygon_2d(3, 1.0);
-    let (pn, ph) = regular_polygon_2d(4, 1.0);
-    let polytope = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
-    let normals = polytope.normals();
-    let heights = polytope.heights();
-
-    for m in 2..=7 {
-        let perms: Vec<Vec<usize>> = super::combinations(7, m);
-        for perm in &perms {
-            let result_lu = solve_kkt(normals, heights, perm);
-            let result_svd = solve_kkt_svd_only(normals, heights, perm);
-
-            match (&result_lu, &result_svd) {
-                (Some(r_lu), Some(r_svd)) => {
-                    assert!(
-                        (r_lu.q_corrected - r_svd.q_corrected).abs() < 1e-10,
-                        "(3,4) perm {:?}: Q differs: LU={}, SVD={}",
-                        perm, r_lu.q_corrected, r_svd.q_corrected
-                    );
-                }
-                (None, None) => {}
-                _ => panic!(
-                    "(3,4) perm {:?}: LU returned {:?}, SVD returned {:?}",
-                    perm,
-                    result_lu.as_ref().map(|r| r.q_corrected),
-                    result_svd.as_ref().map(|r| r.q_corrected)
-                ),
-            }
-        }
-    }
 }
 
 /// Verify conformality property: c_EHZ(λK) = λ²·c_EHZ(K).
@@ -874,165 +703,4 @@ fn capacity_scales_quadratically() {
         "capacity scaling failed: scale={scale}, unit_cap={unit_cap}, \
          scaled_cap={scaled_cap}, expected={expected}, relative_error={relative_error}"
     );
-}
-
-// ============================================================================
-// KKT solver profiling on random polytopes
-// ============================================================================
-
-/// Profile LU fast path effectiveness on random (well-conditioned) polytopes.
-///
-/// **What:** Generates random polytopes at F=7 and F=8, enumerates all cyclic
-/// permutations, and measures LU success rate and speedup vs SVD-only.
-/// Random polytopes have generic normals → well-conditioned KKT systems →
-/// LU should succeed much more often than on Lagrangian products.
-///
-/// **Why release mode:** Enumerates many permutations per polytope.
-/// **Why #[ignore]:** Profiling test, not correctness. Run manually.
-/// **Run with:** `cargo test --release bench_kkt_random_polytopes -- --nocapture --ignored`
-#[test]
-#[ignore]
-fn bench_kkt_random_polytopes() {
-    use crate::random::generate_random_polytopes;
-    use rand_chacha::ChaCha8Rng;
-    use rand::SeedableRng;
-    use std::time::Instant;
-
-    let mut rng = ChaCha8Rng::seed_from_u64(42);
-
-    for &facet_count in &[7, 8, 9] {
-        let n_polytopes = if facet_count <= 8 { 10 } else { 5 };
-        let polytopes = generate_random_polytopes(n_polytopes, facet_count, 0.5, 2.0, &mut rng);
-        let mut total_perms = 0u64;
-        let _lu_invertible = 0u64;
-        let mut lu_success = 0u64;  // LU gave valid β > 0
-        let mut svd_success = 0u64;  // SVD-only gave valid β > 0
-        let mut t_lu_svd = 0.0f64;
-        let mut t_svd_only = 0.0f64;
-
-        let mut lu_only = 0u64;   // LU+SVD found valid, SVD-only didn't
-        let mut svd_only_extra = 0u64;  // SVD-only found valid, LU+SVD didn't
-        let mut q_disagree = 0u64;  // Both valid but different Q
-
-        // Compute capacity for each polytope to check if LU-only orbits could be optimal
-        let capacities: Vec<f64> = polytopes.iter().map(|p| {
-            super::ehz_capacity(p).map(|r| r.capacity).unwrap_or(f64::INFINITY)
-        }).collect();
-
-        let mut lu_only_optimal = 0u64;  // LU-only orbit that could be capacity-achieving
-
-        for (pi, polytope) in polytopes.iter().enumerate() {
-            let normals = polytope.normals();
-            let heights = polytope.heights();
-            let f = polytope.facet_count();
-
-            // Enumerate all subsets of size 2..=f, all cyclic permutations
-            for m in 2..=f {
-                for subset in super::combinations(f, m) {
-                    for perm in super::cyclic_permutations(&subset) {
-                        total_perms += 1;
-
-                        // LU+SVD
-                        let t0 = Instant::now();
-                        let result_lu = solve_kkt(normals, heights, &perm);
-                        t_lu_svd += t0.elapsed().as_secs_f64();
-
-                        // SVD-only
-                        let t0 = Instant::now();
-                        let result_svd = solve_kkt_svd_only(normals, heights, &perm);
-                        t_svd_only += t0.elapsed().as_secs_f64();
-
-                        let lu_valid = result_lu.as_ref()
-                            .is_some_and(|r| r.beta.iter().all(|&b| b > EPS_BETA_POSITIVE));
-                        let svd_valid = result_svd.as_ref()
-                            .is_some_and(|r| r.beta.iter().all(|&b| b > EPS_BETA_POSITIVE));
-
-                        if lu_valid { lu_success += 1; }
-                        if svd_valid { svd_success += 1; }
-
-                        if lu_valid && !svd_valid {
-                            lu_only += 1;
-                            let r_lu_check = result_lu.as_ref().unwrap();
-                            let cap = capacities[pi];
-                            let rel_diff = (r_lu_check.q_corrected - cap).abs() / cap.max(1e-15);
-                            if rel_diff < 1e-6 {
-                                lu_only_optimal += 1;
-                                eprintln!("  *** LU-ONLY ORBIT IS CAPACITY-OPTIMAL: poly={pi} Q={:.10e} cap={cap:.10e}", r_lu_check.q_corrected);
-                            }
-                            if lu_only <= 10 {
-                                let r_lu_detail = result_lu.as_ref().unwrap();
-                                let (beta_lu, q_lu) = (&r_lu_detail.beta, r_lu_detail.q_corrected);
-                                let beta_lu_min = beta_lu.iter().cloned().fold(f64::INFINITY, f64::min);
-                                // Diagnose: what did SVD path do differently?
-                                let m = perm.len();
-                                let size = m + 5;
-                                let (kkt, rhs) = crate::kkt::build_kkt_system(normals, heights, &perm);
-                                let svd_d = kkt.clone().svd(true, true);
-                                let sv = &svd_d.singular_values;
-                                let max_sv = sv.iter().cloned().fold(0.0f64, f64::max);
-                                let floor = max_sv * 1e-12;
-                                let nonzero = sv.iter().filter(|&&s| s > floor).count();
-                                let mut gap_rank = nonzero;
-                                for idx in (1..nonzero).rev() {
-                                    if sv[idx - 1] / sv[idx] > 100.0 {
-                                        // Heuristic gap detection (related to SVD_CONDITION_TAU threshold)
-                                        gap_rank = idx;
-                                        break;
-                                    }
-                                }
-                                let fixed_rank = sv.iter().filter(|&&s| s > max_sv * 1e-10).count();
-                                // Also compute SVD particular solution
-                                let u = svd_d.u.as_ref().unwrap();
-                                let v_t = svd_d.v_t.as_ref().unwrap();
-                                let mut x0 = nalgebra::DVector::zeros(size);
-                                for idx in 0..gap_rank {
-                                    let coeff = u.column(idx).dot(&rhs) / sv[idx];
-                                    for j in 0..size { x0[j] += coeff * v_t[(idx, j)]; }
-                                }
-                                let beta_svd: Vec<f64> = (0..m).map(|i| x0[i]).collect();
-                                let beta_svd_min = beta_svd.iter().cloned().fold(f64::INFINITY, f64::min);
-                                let residual = (&kkt * &x0 - &rhs).norm();
-                                let sv_tail: Vec<String> = (0..size.min(sv.len())).rev().take(5).rev()
-                                    .map(|i| format!("sv[{}]={:.3e}", i, sv[i])).collect();
-                                eprintln!("  LU-only: poly={pi} m={m} Q_lu={q_lu:.6e} β_lu_min={beta_lu_min:.3e} β_svd_min={beta_svd_min:.3e} resid={residual:.2e} gap_rank={gap_rank} fixed_rank={fixed_rank} size={size} [{}]", sv_tail.join(", "));
-                            }
-                        }
-                        if svd_valid && !lu_valid {
-                            svd_only_extra += 1;
-                            if svd_only_extra <= 5 {
-                                let r_svd_detail = result_svd.as_ref().unwrap();
-                                let beta_min = r_svd_detail.beta.iter().cloned().fold(f64::INFINITY, f64::min);
-                                eprintln!("  SVD-only valid: poly={pi} perm={perm:?} Q={:.6e} β_min={beta_min:.3e}", r_svd_detail.q_corrected);
-                            }
-                        }
-                        if lu_valid && svd_valid {
-                            let q_lu = result_lu.as_ref().unwrap().q_corrected;
-                            let q_svd = result_svd.as_ref().unwrap().q_corrected;
-                            if (q_lu - q_svd).abs() > 1e-8 * q_lu.abs().max(q_svd.abs()) {
-                                q_disagree += 1;
-                                if q_disagree <= 5 {
-                                    eprintln!("  Q disagree: poly={pi} perm={perm:?} Q_lu={q_lu:.6e} Q_svd={q_svd:.6e}");
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        let speedup = t_svd_only / t_lu_svd;
-        eprintln!("\n=== Random Polytopes F={facet_count} ({n_polytopes} polytopes, {total_perms} perms) ===");
-        eprintln!("LU+SVD total:    {:>8.1}ms", t_lu_svd * 1000.0);
-        eprintln!("SVD-only total:  {:>8.1}ms", t_svd_only * 1000.0);
-        eprintln!("Speedup (LU+SVD vs SVD-only): {speedup:.2}x");
-        eprintln!("LU valid β>0:    {lu_success}/{total_perms} ({:.1}%)", 100.0 * lu_success as f64 / total_perms as f64);
-        eprintln!("SVD valid β>0:   {svd_success}/{total_perms} ({:.1}%)", 100.0 * svd_success as f64 / total_perms as f64);
-        eprintln!("LU-only valid:   {lu_only}");
-        eprintln!("SVD-only valid:  {svd_only_extra}");
-        eprintln!("Q disagree:      {q_disagree}");
-        eprintln!("LU-only optimal: {lu_only_optimal}/{lu_only}");
-        eprintln!("Per-perm: LU+SVD={:.3}µs, SVD-only={:.3}µs",
-            t_lu_svd * 1e6 / total_perms as f64,
-            t_svd_only * 1e6 / total_perms as f64);
-    }
 }
