@@ -637,76 +637,126 @@ fn main() {
             name, f, total, n_beta_pos, n_q_pos,
             n_trivial, n_pd, n_nd, n_indef, n_nearzero);
 
-        // Show ND+β>0 nodes detail
-        if n_nd > 0 {
-            // Collect ND subsets for monotonicity check
-            let mut nd_subsets: Vec<(Vec<usize>, Vec<usize>)> = Vec::new(); // (subset, perm)
-            for m_check in 2..=f {
-                for subset in combinations(f, m_check) {
-                    for perm in cyclic_permutations(&subset) {
-                        if let Some(info) = node_hessian_check(normals, heights, &perm) {
-                            if info.beta_min > eps_beta && info.q > eps_q
-                                && info.definiteness == Definiteness::ND
-                            {
-                                nd_subsets.push((subset.clone(), perm));
+        // Collect ALL node info for lattice checks (keyed by subset as BTreeSet)
+        use std::collections::{BTreeSet, BTreeMap};
+        struct SubsetInfo {
+            has_neg_dir: bool,  // ND or indefinite (any negative eigenvalue)
+            is_pd: bool,        // all-positive (PD)
+            max_q: f64,         // max Q across all σ for this subset
+        }
+        let mut subset_info: BTreeMap<BTreeSet<usize>, SubsetInfo> = BTreeMap::new();
+
+        for m_check in 2..=f {
+            for subset in combinations(f, m_check) {
+                let key: BTreeSet<usize> = subset.iter().cloned().collect();
+                let mut has_neg = false;
+                let mut all_pd = true;
+                let mut any_nontrivial = false;
+                let mut max_q = f64::NEG_INFINITY;
+
+                for perm in cyclic_permutations(&subset) {
+                    if let Some(info) = node_hessian_check(normals, heights, &perm) {
+                        if info.beta_min > eps_beta && info.q > eps_q {
+                            max_q = max_q.max(info.q);
+                            match info.definiteness {
+                                Definiteness::ND => { has_neg = true; any_nontrivial = true; }
+                                Definiteness::Indefinite => { has_neg = true; all_pd = false; any_nontrivial = true; }
+                                Definiteness::PD => { any_nontrivial = true; }
+                                Definiteness::NearZero => { all_pd = false; any_nontrivial = true; }
+                                Definiteness::Trivial => { /* doesn't affect PD/ND classification */ }
                             }
                         }
                     }
                 }
+
+                if max_q > f64::NEG_INFINITY {
+                    subset_info.insert(key, SubsetInfo {
+                        has_neg_dir: has_neg,
+                        is_pd: all_pd && any_nontrivial,
+                        max_q,
+                    });
+                }
             }
-            let nd_sizes: std::collections::BTreeMap<usize, usize> = nd_subsets.iter()
-                .fold(std::collections::BTreeMap::new(), |mut acc, (s, _)| {
-                    *acc.entry(s.len()).or_insert(0) += 1;
-                    acc
-                });
-            let nd_dist: String = nd_sizes.iter()
-                .map(|(m, c)| format!("m={}:{}", m, c))
-                .collect::<Vec<_>>()
-                .join(" ");
-            println!("  ND+β>0: {} nodes, by size: {}", n_nd, nd_dist);
+        }
 
-            // Check upward monotonicity: for each ND subset S, check if all S' ⊃ S also have
-            // a negative direction (ND or indefinite or trivial-but-from-larger-set)
-            // Note: we check definiteness of the H block, not filtered by β>0
-            let nd_sets: Vec<std::collections::BTreeSet<usize>> = nd_subsets.iter()
-                .map(|(s, _)| s.iter().cloned().collect::<std::collections::BTreeSet<usize>>())
-                .collect();
-            // Deduplicate ND sets
-            let mut unique_nd: Vec<std::collections::BTreeSet<usize>> = nd_sets.clone();
-            unique_nd.sort();
-            unique_nd.dedup();
+        // Check 1: Upward monotonicity — negative direction propagates to supersets
+        // If S has negative direction, all S' ⊃ S with β>0,Q>0 should also have neg dir
+        let mut up_violations = 0u32;
+        let neg_subsets: Vec<&BTreeSet<usize>> = subset_info.iter()
+            .filter(|(_, info)| info.has_neg_dir)
+            .map(|(k, _)| k)
+            .collect();
+        for neg_set in &neg_subsets {
+            for (sup_set, sup_info) in &subset_info {
+                if sup_set.len() > neg_set.len() && neg_set.is_subset(sup_set) {
+                    if sup_info.is_pd {
+                        up_violations += 1;
+                        println!("  UP-VIOLATION: neg-dir set {:?} has PD superset {:?}",
+                            neg_set, sup_set);
+                    }
+                }
+            }
+        }
+        if !neg_subsets.is_empty() {
+            if up_violations == 0 {
+                println!("  Upward (neg→supersets): CONFIRMED ({} neg-dir sets, no PD supersets)",
+                    neg_subsets.len());
+            }
+        }
 
-            // For each unique ND set, check if any superset has PD Hessian
-            let mut violations = 0u32;
-            for nd_set in &unique_nd {
-                // Check all supersets of nd_set that were evaluated
-                for m_sup in (nd_set.len() + 1)..=f {
-                    for superset in combinations(f, m_sup) {
-                        let sup_set: std::collections::BTreeSet<usize> =
-                            superset.iter().cloned().collect();
-                        if !nd_set.is_subset(&sup_set) {
-                            continue;
-                        }
-                        // Check at least one perm of superset
-                        let mut found_pd = false;
-                        for perm in cyclic_permutations(&superset) {
-                            if let Some(info) = node_hessian_check(normals, heights, &perm) {
-                                if info.definiteness == Definiteness::PD {
-                                    found_pd = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if found_pd {
-                            violations += 1;
-                            println!("  VIOLATION: ND set {:?} has PD superset {:?}",
-                                nd_set, sup_set);
+        // Check 2a: Downward (PD→subsets): PD node's Q ≥ all subsets' Q?
+        let mut down_pd_violations = 0u32;
+        let pd_sets: Vec<(&BTreeSet<usize>, &SubsetInfo)> = subset_info.iter()
+            .filter(|(_, info)| info.is_pd)
+            .collect();
+        for (pd_set, pd_info) in &pd_sets {
+            for (sub_set, sub_info) in &subset_info {
+                if sub_set.len() < pd_set.len() && sub_set.is_subset(pd_set) {
+                    if sub_info.max_q > pd_info.max_q + 1e-12 {
+                        down_pd_violations += 1;
+                        println!("  DOWN-PD-VIOLATION: PD {:?} Q={:.6e} < subset {:?} Q={:.6e}",
+                            pd_set, pd_info.max_q, sub_set, sub_info.max_q);
+                    }
+                }
+            }
+        }
+        if !pd_sets.is_empty() {
+            if down_pd_violations == 0 {
+                println!("  Downward (PD→subsets): CONFIRMED ({} PD sets)", pd_sets.len());
+            } else {
+                println!("  Downward (PD→subsets): FAILED ({} violations — PD is a MINIMUM, children can be larger)",
+                    down_pd_violations);
+            }
+        }
+
+        // Check 2b: Downward (ND→subsets): ND node's Q ≥ all subsets' Q?
+        let mut down_nd_violations = 0u32;
+        let nd_sets: Vec<(&BTreeSet<usize>, &SubsetInfo)> = subset_info.iter()
+            .filter(|(_, info)| info.has_neg_dir && !info.is_pd) // ND or indefinite
+            .collect();
+        // More precisely, check nodes where ALL nontrivial perms are ND
+        let pure_nd_sets: Vec<(&BTreeSet<usize>, &SubsetInfo)> = subset_info.iter()
+            .filter(|(_, info)| info.has_neg_dir && info.is_pd == false)
+            .collect();
+        for (nd_set, nd_info) in &pure_nd_sets {
+            for (sub_set, sub_info) in &subset_info {
+                if sub_set.len() < nd_set.len() && sub_set.is_subset(nd_set) {
+                    if sub_info.max_q > nd_info.max_q + 1e-12 {
+                        down_nd_violations += 1;
+                        if down_nd_violations <= 5 {
+                            println!("  DOWN-ND-VIOLATION: neg-dir {:?} Q={:.6e} < subset {:?} Q={:.6e}",
+                                nd_set, nd_info.max_q, sub_set, sub_info.max_q);
                         }
                     }
                 }
             }
-            if violations == 0 {
-                println!("  Upward monotonicity: CONFIRMED (no PD supersets of ND sets)");
+        }
+        if !pure_nd_sets.is_empty() {
+            if down_nd_violations == 0 {
+                println!("  Downward (ND→subsets): CONFIRMED ({} neg-dir sets, all subsets Q ≤ parent Q)",
+                    pure_nd_sets.len());
+            } else {
+                println!("  Downward (ND→subsets): FAILED ({} violations)", down_nd_violations);
             }
         }
 
