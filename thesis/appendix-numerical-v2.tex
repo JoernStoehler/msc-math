@@ -28,7 +28,7 @@ An exact implementation over~$\mathbb{Q}$ is possible
 (Section~\ref{app:v2-input}), but prohibitively slow for the
 exponential enumeration in Algorithm~\ref{alg:ehz}.
 We therefore use \texttt{f64} floating-point arithmetic for the
-continuous computations (SVD, KKT solve) and reserve exact
+continuous computations (eigendecomposition, KKT solve) and reserve exact
 arithmetic for discrete decisions (combinatorial data,
 sign predicates).
 
@@ -38,9 +38,9 @@ First, \emph{branching decisions} based on numerical values
 value is near the threshold; the algorithm must handle
 the resulting uncertainty.
 Second, \emph{numerically unstable steps}---in particular,
-the SVD solve of near-singular KKT systems---can produce
-large errors in the solution vector~$\hat\beta$, though we
-show that the error in the objective value~$\hat Q$ remains
+the eigendecomposition solve of near-singular KKT systems---can
+produce large errors in the solution vector~$\hat\beta$, though
+we show that the error in the objective value~$\hat Q$ remains
 controlled.
 Since we seek only an approximate minimum action
 $A_{\min} = 1/(2\,Q_{\max})$, controlled~$Q$ error suffices.
@@ -170,7 +170,7 @@ The capacity algorithm uses:
   the signs of~$\omega_0(n_i, n_k)$,
   and the exact part of transition pruning),
 \item the \emph{rounded} floating-point coordinates
-  for continuous computation (the SVD-based
+  for continuous computation (the eigendecomposition-based
   KKT solver and the LP feasibility check below).
 \end{itemize}
 \end{remark}
@@ -344,78 +344,88 @@ and the full system takes the symmetric saddle-point form
 \end{equation}
 where $M$ is a real symmetric matrix of size
 $(m + 5) \times (m + 5)$ with $m = |S|$.
-The system is solved via SVD in double-precision
-floating-point arithmetic.
-Since~$M$ is symmetric, its singular values equal
-the absolute values of its eigenvalues:
-$\sigma_j = |\lambda_j|$, where
+Since~$M$ is real symmetric, it admits an eigendecomposition
+$M = V \Lambda V^\top$ with real eigenvalues
 $\lambda_1 \geq \cdots \geq \lambda_{m+5}$
-are the eigenvalues of~$M$.
+and orthogonal eigenvectors $V = (v_1, \ldots, v_{m+5})$.
 (No confusion with the original Lagrange multipliers arises,
 since we use~$\mu$, $\xi$ throughout.)
-The SVD yields approximate factors
-$\hat U \hat\Sigma \hat V^\top \approx M$
-with $\hat\sigma_1 \geq \cdots \geq \hat\sigma_{m+5}$.
+The system is solved via eigendecomposition in double-precision
+floating-point arithmetic.
 The numerical solution is
 $\hat x = (\hat\beta, \hat\mu, \hat\xi)
-  = \hat V \hat\Sigma^{-1} \hat U^\top b$,
-where the division by small~$\hat\sigma_j$ amplifies
-errors in the corresponding directions.
+  = \sum_{|\lambda_j| > \tau}
+    \frac{v_j^\top b}{\lambda_j}\, v_j$,
+where the sum retains eigenvalues with magnitude above a
+rank-detection threshold~$\tau$, and division by
+small~$|\lambda_j|$ amplifies errors in the corresponding
+directions.
+This single factorisation simultaneously yields the
+solution, the rank ($|\lambda_j| > \tau$ count),
+the null space (eigenvectors for $|\lambda_j| \leq \tau$),
+and the inertia (counts of positive, zero, and negative
+eigenvalues; Lemma~\ref{lem:v2-kkt-inertia}).
 Throughout this section, $\|\cdot\|$ denotes the Euclidean
 ($\ell^2$) norm for vectors and the spectral norm
-(operator $2$-norm, equal to $\sigma_1 = \max_j |\lambda_j|$)
+(operator $2$-norm, equal to $\max_j |\lambda_j|$)
 for matrices.
 
-\begin{remark}[SVD accuracy]%
-\label{rem:v2-svd-accuracy}
-The computed SVD is backward stable: the factors
-$\hat U$, $\hat\Sigma$, $\hat V$ are the exact SVD
+\begin{remark}[Eigendecomposition accuracy]%
+\label{rem:v2-eigen-accuracy}
+The computed eigendecomposition of a real symmetric matrix
+is backward stable: the computed eigenvectors~$\hat V$ and
+eigenvalues~$\hat\Lambda$ are the exact eigendecomposition
 of a nearby matrix $M + E$ with
 $\|E\| \leq p(m)\,\varepsilon_{\mathrm{mach}}\,\|M\|$,
 where $p(m)$ is a modest polynomial in the matrix
-dimension~$m = |S| + 5$
-\cite[Thm.~8.6.1]{GolubVanLoan2013}.
+dimension~$m + 5$
+\cite[Ch.~8]{GolubVanLoan2013}.
 In particular:
 \begin{enumerate}
-\item \emph{Singular values.}
-  $|\hat\sigma_j - \sigma_j|
-    \leq p(m)\,\varepsilon_{\mathrm{mach}}\,\sigma_1$.
-  Large singular values have high relative accuracy;
-  small ones ($\sigma_j \ll \sigma_1$) may have large
+\item \emph{Eigenvalues.}
+  By Weyl's theorem,
+  $|\hat\lambda_j - \lambda_j| \leq \|E\|
+    \leq p(m)\,\varepsilon_{\mathrm{mach}}\,\|M\|$.
+  Large eigenvalues have high relative accuracy;
+  small ones ($|\lambda_j| \ll \|M\|$) may have large
   relative error but are correctly identified as small.
-\item \emph{Singular vectors.}
-  The angular error of the $j$-th singular vector satisfies
-  $\theta(\hat v_j, v_j)
-    \leq p(m)\,\varepsilon_{\mathrm{mach}}\,\|M\|\, / \,
-    \operatorname{gap}_j$,
-  where $\operatorname{gap}_j
-    = \min_{k \neq j} |\sigma_j - \sigma_k|$
-  is the singular value gap
-  \cite{Wedin1972}.
-  Clustered singular values yield poorly determined
-  individual vectors, but their joint span remains
-  accurate \cite[Thm.~8.6.5]{GolubVanLoan2013}.
+\item \emph{Eigenvectors.}
+  By the Davis--Kahan $\sin\theta$ theorem
+  \cite[Ch.~8]{GolubVanLoan2013},
+  the angular error of the $j$-th eigenvector satisfies
+  \[
+    \sin\theta(\hat v_j, v_j)
+      \leq \frac{\|E\|}{\operatorname{gap}_j},
+    \qquad
+    \operatorname{gap}_j
+      = \min_{k \neq j} |\lambda_j - \lambda_k|.
+  \]
+  Clustered eigenvalues yield poorly determined
+  individual vectors, but their joint invariant subspace
+  remains accurate.
 \item \emph{Solve step.}
-  The back-substitution
-  $\hat x = \hat V \hat\Sigma^{-1} \hat U^\top b$
+  The pseudoinverse solution
+  $\hat x = \sum_j (v_j^\top b / \lambda_j)\, v_j$
   satisfies
   \[
     \frac{\|\hat x - x\|}{\|x\|}
       \leq p(m)\,\kappa(M)\,\varepsilon_{\mathrm{mach}},
   \]
-  where $\kappa(M) = \sigma_1 / \sigma_{\min}$
+  where $\kappa(M) = |\lambda_{\max}| / |\lambda_{\min}|$
   is the condition number
   \cite[Ch.~5]{Higham2002}.
   Near-singular systems ($\kappa \gg 1$) amplify
   rounding errors proportionally.
 \end{enumerate}
-For our matrices ($m \leq 21$, since $|S| \leq 16$),
+For our matrices ($m + 5 \leq 21$, since $|S| \leq 16$),
 the polynomial factor~$p(m)$ is negligible.
 The dominant error source is the condition
 number~$\kappa(M)$.
-% [TODO: JÖRN - verify the theorem numbers (Thm.~8.6.1,
-%  Thm.~8.6.5) against the physical copy of Golub--Van Loan,
-%  4th ed. These are from agent's general knowledge of the book.]
+% [TODO: JÖRN - verify chapter references for Golub--Van Loan
+%  eigenvalue perturbation theory (Weyl's theorem and
+%  Davis--Kahan, both in Ch.~8 of 4th ed per agent's
+%  general knowledge). The results are standard but the
+%  exact section numbers should be checked.]
 \end{remark}
 
 % --- Inertia of the saddle-point matrix (unreviewed) ---
@@ -616,8 +626,7 @@ By the generic perturbation (Section~\ref{app:v2-input}),
 the exact KKT system is generically non-singular.
 However, it can be \emph{near}-singular:
 the smallest eigenvalue magnitude
-$|\lambda_{\min}|$ (equivalently,
-$\sigma_{\min} = \min_j \sigma_j$) may be close
+$|\lambda_{\min}| = \min_j |\lambda_j|$ may be close
 to zero, causing large numerical error in the
 solution~$(\hat\beta, \hat\mu, \hat\xi)$.
 
@@ -628,8 +637,8 @@ contributions:
 \item \emph{Near-null directions}
   (small~$|\lambda_j|$):
   The error in~$\hat x$ can be large
-  (absolute error~$\sim \sigma_1/\sigma_{\min}$;
-  Remark~\ref{rem:v2-svd-accuracy}~(3)).
+  (absolute error~$\sim |\lambda_{\max}|/|\lambda_{\min}|$;
+  Remark~\ref{rem:v2-eigen-accuracy}~(3)).
   However, the~$Q$ error is only
   \emph{second-order} in the perturbation
   (Remark~\ref{rem:v2-near-null-q}):
@@ -658,12 +667,13 @@ contributions:
 \label{lem:v2-q-interval}
 Let $M$ be the symmetric KKT matrix
 of~\eqref{eq:v2-kkt-system}
-with smallest singular value $\sigma_{\min} > 0$,
+with smallest eigenvalue magnitude
+$|\lambda_{\min}| = \min_j |\lambda_j| > 0$,
 and let $x_0 = (\beta_0, \mu_0, \xi_0)$ be the exact
 solution (with negated multipliers
 $\mu_0 = -\lambda_0$, $\xi_0 = -\nu_0$).
 Let $\hat x = (\hat\beta, \hat\mu, \hat\xi)$ be the
-numerical SVD solution with residual
+numerical solution with residual
 \[
   r \;=\; M\hat x - b
   \;=\; \begin{pmatrix}
@@ -684,8 +694,8 @@ Define the \emph{residual-corrected objective}
 \end{equation}
 and the \emph{second-order error bound}
 \begin{equation}\label{eq:v2-q-error-bound}
-  E \;=\; \frac{\|r\|^2}{\sigma_{\min}}
-    \Bigl(2 + \frac{\|H\|}{2\,\sigma_{\min}}\Bigr).
+  E \;=\; \frac{\|r\|^2}{|\lambda_{\min}|}
+    \Bigl(2 + \frac{\|H\|}{2\,|\lambda_{\min}|}\Bigr).
 \end{equation}
 Then $|Q(\beta_0) - \tilde Q| \leq E$.
 \end{lemma}
@@ -699,12 +709,12 @@ then substituting numerical for exact multipliers.
 Write $\delta x = \hat x - x_0$ with components
 $(\delta\beta, \delta\mu, \delta\xi)$.
 Since $M x_0 = b$, we have $M\,\delta x = r$,
-hence $\|\delta x\| \leq \|r\| / \sigma_{\min}$ and
+hence $\|\delta x\| \leq \|r\| / |\lambda_{\min}|$ and
 each component satisfies the same bound:
 \begin{equation}\label{eq:v2-delta-bound}
-  \|\delta\beta\| \leq \frac{\|r\|}{\sigma_{\min}}, \quad
-  \|\delta\mu\| \leq \frac{\|r\|}{\sigma_{\min}}, \quad
-  |\delta\xi| \leq \frac{\|r\|}{\sigma_{\min}}.
+  \|\delta\beta\| \leq \frac{\|r\|}{|\lambda_{\min}|}, \quad
+  \|\delta\mu\| \leq \frac{\|r\|}{|\lambda_{\min}|}, \quad
+  |\delta\xi| \leq \frac{\|r\|}{|\lambda_{\min}|}.
 \end{equation}
 
 \emph{Step~1: expand $Q(\hat\beta) - Q(\beta_0)$.}
@@ -756,7 +766,7 @@ The second is a \emph{second-order remainder}:
 \[
   |r_2^\top\delta\mu + r_3\,\delta\xi|
   \leq \|r_2\|\,\|\delta\mu\| + |r_3|\,|\delta\xi|
-  \leq 2\,\frac{\|r\|^2}{\sigma_{\min}},
+  \leq 2\,\frac{\|r\|^2}{|\lambda_{\min}|},
 \]
 using $\|r_2\|, |r_3| \leq \|r\|$
 and~\eqref{eq:v2-delta-bound}.
@@ -765,7 +775,7 @@ and~\eqref{eq:v2-delta-bound}.
 \[
   \tfrac{1}{2}\,|\delta\beta^\top H\,\delta\beta|
   \leq \tfrac{1}{2}\,\|H\|\,\|\delta\beta\|^2
-  \leq \frac{\|H\|\,\|r\|^2}{2\,\sigma_{\min}^2}.
+  \leq \frac{\|H\|\,\|r\|^2}{2\,|\lambda_{\min}|^2}.
 \]
 
 \emph{Conclusion.}
@@ -776,8 +786,8 @@ Combining Steps~1--4:
     - (r_2^\top\hat\mu + r_3\,\hat\xi)
     \;+\; R,
 \]
-where $|R| \leq 2\,\|r\|^2 / \sigma_{\min}
-  + \|H\|\,\|r\|^2 / (2\,\sigma_{\min}^2) = E$.
+where $|R| \leq 2\,\|r\|^2 / |\lambda_{\min}|
+  + \|H\|\,\|r\|^2 / (2\,|\lambda_{\min}|^2) = E$.
 \qedhere
 \end{proof}
 
@@ -788,10 +798,14 @@ the algorithm computes a corrected objective
 value~$\tilde Q$ with error bound~$E$
 satisfying $|Q(\beta_0) - \tilde Q| \leq E$:
 \begin{enumerate}
-\item Solve the symmetric KKT
-  system~\eqref{eq:v2-kkt-system}
-  via SVD to obtain
-  $\hat x = (\hat\beta, \hat\mu, \hat\xi)$.
+\item Compute the eigendecomposition
+  $M = V \Lambda V^\top$ of the symmetric KKT
+  matrix~\eqref{eq:v2-kkt-system}.
+\item Compute the pseudoinverse solution
+  $\hat x = (\hat\beta, \hat\mu, \hat\xi)
+    = \sum_{|\lambda_j| > \tau}
+      (v_j^\top b / \lambda_j)\, v_j$,
+  retaining eigenvalues above a threshold~$\tau$.
 \item Compute the residual $r = M\hat x - b$ and
   extract blocks $r_2 = N^\top\hat\beta$
   (constraint residual)
@@ -801,8 +815,10 @@ satisfying $|Q(\beta_0) - \tilde Q| \leq E$:
   $\tilde Q = Q(\hat\beta)
     - (r_2^\top\hat\mu + r_3\,\hat\xi)$.
 \item Compute the error bound
-  $E = \|r\|^2\,(2/\sigma_{\min}
-    + \|H\| / (2\,\sigma_{\min}^2))$.
+  $E = \|r\|^2\,(2/|\lambda_{\min}|
+    + \|H\| / (2\,|\lambda_{\min}|^2))$,
+  where $|\lambda_{\min}|$ is the smallest
+  retained eigenvalue magnitude.
 \item Return the corrected value~$\tilde Q$,
   the error bound~$E$, and~$\hat\beta$.
 \end{enumerate}
@@ -810,24 +826,24 @@ satisfying $|Q(\beta_0) - \tilde Q| \leq E$:
 
 \begin{remark}[Error bound in practice]%
 \label{rem:v2-interval-width}
-For well-conditioned systems
-($\sigma_{\min}$ bounded away from zero), the residual satisfies
-$\|r\| = O(\varepsilon_{\mathrm{mach}}\,\|M\|)$ by
-Remark~\ref{rem:v2-svd-accuracy}, so
+If $|\lambda_{\min}|$ is bounded away from zero,
+the residual is
+$\|r\| = O(\varepsilon_{\mathrm{mach}}\,\|M\|)$
+(Remark~\ref{rem:v2-eigen-accuracy}), so
 $E = O(\varepsilon_{\mathrm{mach}}^2)$ and
 $\tilde Q \approx Q(\hat\beta)$.
 The error bound is tight and the correction negligible.
 
 For near-singular systems
-($\sigma_{\min} \ll 1$), the residual remains small
-(backward stability of the SVD), but
-$E$ grows as $1/\sigma_{\min}^2$.
+($|\lambda_{\min}| \ll 1$), the residual remains small
+(backward stability of the eigendecomposition), but
+$E$ grows as $1/|\lambda_{\min}|^2$.
 The correction~$r_2^\top\hat\mu + r_3\,\hat\xi$
 absorbs the dominant first-order error, leaving only
 a second-order remainder.
 Without this correction, a naive bound
 $|Q(\hat\beta) - Q(\beta_0)| \leq \Delta$ would require
-$\Delta = O(\|r\| / \sigma_{\min})$ (first-order),
+$\Delta = O(\|r\| / |\lambda_{\min}|)$ (first-order),
 which is much larger.
 \end{remark}
 
@@ -971,8 +987,8 @@ implementation rather than deriving tight analytic bounds
 for every operation.
 The implementation tracks the best certified and best
 uncertain candidates separately.
-The error tracking happens after the SVD step and does not
-require modifying the SVD computation itself.
+The error tracking happens after the eigendecomposition step
+and does not require modifying the eigendecomposition itself.
 \end{remark}
 
 \begin{remark}[Parameter scales in practice]\label{rem:v2-parameter-scales}
