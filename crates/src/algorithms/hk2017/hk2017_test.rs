@@ -704,3 +704,4 @@ fn capacity_scales_quadratically() {
          scaled_cap={scaled_cap}, expected={expected}, relative_error={relative_error}"
     );
 }
+

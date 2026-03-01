@@ -260,19 +260,30 @@ pub(crate) fn build_kkt_system(
     (kkt, rhs)
 }
 
-/// Eigendecomposition path with condition-number-based rank detection, inertia,
-/// and Q error bounding.
+/// Eigendecomposition path with two-tier rank detection, inertia, and Q error bounding.
 ///
 /// Since M is symmetric, M = VΛV^T with real eigenvalues and orthogonal
 /// eigenvectors. The pseudoinverse solution is x̂ = Σ_i (v_i · b / λ_i) v_i
 /// for retained eigenvalues (|λ_i| above threshold).
 ///
+/// **Two-tier rank detection:** The eigendecomposition is computed once, then
+/// the pseudoinverse is tried with two thresholds:
+///
+/// 1. **Permissive** (EPS_EIGEN_FLOOR = 1e-12): retains all but numerically zero
+///    eigenvalues. This handles well-conditioned and mildly ill-conditioned systems
+///    where the "small" eigenvalues are real, not noise.
+///
+/// 2. **Strict** (EIGEN_CONDITION_TAU = 1e-3): treats small eigenvalues as null space.
+///    This handles genuinely rank-deficient systems (e.g. degenerate Lagrangian
+///    products at θ≈0°) where including tiny eigenvalues amplifies noise.
+///
+/// The permissive tier runs first. If its residual exceeds EPS_KKT_RESIDUAL,
+/// the system is near-singular and the strict tier takes over. This replaces
+/// the old LU + SVD fallback pattern with a single factorization.
+///
 /// Returns a `KktResult` with the β vector, corrected Q̃, error bound E
 /// satisfying |Q(β₀) - Q̃| ≤ E, and the inertia of M.
 /// See `[lem:v2-q-interval]` (thesis).
-///
-/// Rank detection: eigenvalues with |λ_i| < |λ|_max * EIGEN_CONDITION_TAU
-/// are treated as null space.
 fn solve_kkt_eigen_path(
     kkt: &DMatrix<f64>,
     rhs: &DVector<f64>,
@@ -292,18 +303,65 @@ fn solve_kkt_eigen_path(
         return None;
     }
 
-    let threshold = max_abs_ev * EIGEN_CONDITION_TAU;
-
-    // Inertia: count eigenvalue signs (using threshold for near-zero detection).
-    let n_positive = eigenvalues.iter().filter(|&&e| e > threshold).count();
-    let n_negative = eigenvalues.iter().filter(|&&e| e < -threshold).count();
+    // Inertia uses the strict threshold (for saddle-point structure analysis).
+    let strict_threshold = max_abs_ev * EIGEN_CONDITION_TAU;
+    let n_positive = eigenvalues.iter().filter(|&&e| e > strict_threshold).count();
+    let n_negative = eigenvalues.iter().filter(|&&e| e < -strict_threshold).count();
     let n_zero = size - n_positive - n_negative;
 
+    // Tier 1: Permissive — retain all eigenvalues above machine-epsilon floor.
+    // This handles well-conditioned systems and mildly ill-conditioned systems
+    // (e.g. symplectomorphism-transformed polytopes with small but real eigenvalues).
+    let permissive_threshold = EPS_EIGEN_FLOOR;
+    let result = try_pseudoinverse_with_threshold(
+        kkt, rhs, normals, heights, perm, eigenvalues, eigenvectors,
+        permissive_threshold, max_abs_ev, n_positive, n_negative, n_zero,
+    );
+    if result.is_some() {
+        return result;
+    }
+
+    // Tier 2: Strict — treat small eigenvalues as null space.
+    // Triggered when tier 1's residual is too large (system is near-singular).
+    // Examples: degenerate (4,4) product at θ≈0° with eigenvalues at ~8.6e-4.
+    try_pseudoinverse_with_threshold(
+        kkt, rhs, normals, heights, perm, eigenvalues, eigenvectors,
+        strict_threshold, max_abs_ev, n_positive, n_negative, n_zero,
+    )
+}
+
+/// Try to find an admissible β > 0 solution using a specific eigenvalue threshold.
+///
+/// Computes the pseudoinverse retaining eigenvalues with |λ_i| > threshold,
+/// checks the residual, searches the null space if rank-deficient, and computes
+/// the Q error bound.
+///
+/// Returns None if: residual too large, β ≤ 0 with full rank, or null space
+/// search fails.
+#[allow(clippy::too_many_arguments)]
+fn try_pseudoinverse_with_threshold(
+    kkt: &DMatrix<f64>,
+    rhs: &DVector<f64>,
+    normals: &[Vector4<f64>],
+    heights: &[f64],
+    perm: &[usize],
+    eigenvalues: &DVector<f64>,
+    eigenvectors: &DMatrix<f64>,
+    threshold: f64,
+    max_abs_ev: f64,
+    n_positive: usize,
+    n_negative: usize,
+    n_zero: usize,
+) -> Option<KktResult> {
+    let m = perm.len();
+    let size = m + 5;
+
     // Pseudoinverse solution: x̂ = Σ_i (v_i · b / λ_i) v_i for retained eigenvalues.
-    // Note: eigenvalues from nalgebra's symmetric_eigen() are NOT necessarily sorted.
     let mut x0 = DVector::zeros(size);
+    let mut rank = 0usize;
     for i in 0..size {
         if eigenvalues[i].abs() > threshold {
+            rank += 1;
             let coeff = eigenvectors.column(i).dot(rhs) / eigenvalues[i];
             for j in 0..size {
                 x0[j] += coeff * eigenvectors[(j, i)];
@@ -318,7 +376,6 @@ fn solve_kkt_eigen_path(
     }
 
     // --- Q error bound computation (Algorithm [alg:v2-q-interval]) ---
-    // Extract residual blocks: r₂ = N^T β̂ (rows m..m+4), r₃ = η^T β̂ - 1 (row m+4).
     // The solution vector is [β̂; μ̂; ξ̂] with negated multipliers (μ = -λ, ξ = -ν).
     // Q̃ = Q(β̂) - (r₂ᵀμ̂ + r₃ξ̂)  [Lemma [lem:v2-q-interval], Step 2-3].
     let r2_dot_mu: f64 = (m..m + 4).map(|i| residual_vec[i] * x0[i]).sum();
@@ -326,10 +383,7 @@ fn solve_kkt_eigen_path(
     let xi_hat = x0[m + 4];
     let q_correction = r2_dot_mu + r3 * xi_hat;
 
-    // |λ_min| of RETAINED eigenvalues (those above the rank threshold).
-    // Using full-matrix |λ_min| is catastrophically wrong for rank-deficient systems:
-    // near-zero eigenvalues give E = O(1/|λ_min|²) → huge or NaN.
-    // The retained |λ_min| bounds errors in the directions the eigendecomposition resolves.
+    // |λ_min| of RETAINED eigenvalues (those above the threshold).
     let abs_lambda_min = eigenvalues
         .iter()
         .filter(|&&e| e.abs() > threshold)
@@ -350,7 +404,6 @@ fn solve_kkt_eigen_path(
         let q_error_bound =
             r_sq * (2.0 / abs_lambda_min + h_norm_bound / (2.0 * abs_lambda_min * abs_lambda_min));
 
-        // Instrumentation: verify Q correction and error bound are negligible.
         debug_assert!(
             q_error_bound < 1e-6,
             "Q error bound unexpectedly large: E={:.2e}, |r|={:.2e}, |λ_min|={:.2e}",
@@ -372,15 +425,14 @@ fn solve_kkt_eigen_path(
         });
     }
 
-    // Full rank (all eigenvalues retained): unique solution with β ≤ 0,
+    // Full rank at this threshold: unique solution with β ≤ 0,
     // candidate pair is genuinely infeasible.
-    let rank = n_positive + n_negative;
     if rank == size {
         return None;
     }
 
     // Rank-deficient: search null space for β > 0.
-    // Null space = eigenvectors for eigenvalues below rank threshold.
+    // Null space = eigenvectors for eigenvalues below the threshold.
     // Q(β) is constant along the null space (constraint-preserving directions).
     let null_beta: Vec<Vec<f64>> = (0..size)
         .filter(|&i| eigenvalues[i].abs() <= threshold)
@@ -413,7 +465,6 @@ fn solve_kkt_eigen_path(
     }
 
     // Q is constant along the null space, so Q(β_opt) = Q(β₀).
-    // |Q(β₀) - Q̃| ≤ E bounds the true Q for the whole family.
     let q_raw = q_from_beta(normals, perm, &beta_opt);
     let q_corrected = q_raw - q_correction;
     let r_sq = residual_norm * residual_norm;
