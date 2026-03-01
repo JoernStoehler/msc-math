@@ -283,35 +283,34 @@ and the pair is skipped.
 Condition~(1) is checked exactly using the rational
 symplectic signs (Remark~\ref{rem:v2-exact-quantities}).
 After the generic perturbation, $\omega_0(n_i, n_j) \neq 0$
-for all pairs, so condition~(1) reduces to the strict
-check $\omega_0(n_i, n_j) > 0$, which is exact.
+for all pairs, so every edge in the adjacency graph is
+unidirectional: for each pair $i \neq j$, exactly one of
+the directions $F_i \to F_j$ or $F_j \to F_i$ satisfies
+condition~(1).
+This cuts down the number of candidate
+cycles~$\sigma$ to enumerate.
 
 Condition~(2) is an LP feasibility problem:
 does there exist $x \in F_i \cap F_j$ strictly inside
 the halfspaces indexed by the critical~$k$?
 The numerical LP uses floating-point arithmetic and
-checks feasibility with a slack
-$\langle n_k, x \rangle \leq h_k - \varepsilon_{\mathrm{LP}}$
+checks feasibility with a relaxed constraint
+$\langle n_k, x \rangle \leq h_k + \varepsilon_{\mathrm{LP}}$
 for a small tolerance~$\varepsilon_{\mathrm{LP}} > 0$.
-% [TODO: JÖRN - double check direction of the tolerance.
-%  The intent is: if the LP is infeasible even with tolerance,
-%  we are confident the exact LP is also infeasible, so
-%  pruning is safe. If the LP is feasible, we keep the pair
-%  (conservative). The tolerance makes the pruning less
-%  aggressive but never incorrect.]
+Since the relaxed feasible region contains the exact one,
+infeasibility of the relaxed LP implies infeasibility
+of the exact LP, so pruning is safe.
 This makes the heuristic conservative:
 it may keep pairs that a more precise check would prune,
 but it never prunes a pair that admits a valid transition.
 \begin{itemize}
 \item Pruned transitions are correctly pruned
-  (the heuristic is \emph{sound}).
+  (the heuristic provides a sufficient condition for infeasibility).
 \item Transitions not pruned may still be infeasible in
-  exact arithmetic; these pairs are processed anyway,
-  and the KKT solve in Section~\ref{app:v2-kkt} will
-  find that no admissible critical point exists
-  (equivalently, $\hat\beta$ will have negative components).
+  exact arithmetic; these pairs are processed anyway.
   The extra work is a performance cost, not a
-  correctness issue.
+  correctness issue, since the algorithm's correctness
+  does not depend on the pruning step.
 \end{itemize}
 
 
@@ -331,16 +330,61 @@ the algorithm solves the KKT linear system
 \end{equation}
 (cf.\ equation~\eqref{eq:linear-system})
 via SVD in double-precision floating-point arithmetic.
-The SVD provides:
-\begin{itemize}
-\item a numerical solution
-  $(\hat\beta, \hat\lambda, \hat\nu)$,
-\item the singular values
-  $\sigma_1 \geq \cdots \geq \sigma_{|S|+5}$
-  of the KKT matrix, and
-\item the right singular vectors, whose span for small
-  $\sigma_j$ approximates the null space of the system.
-\end{itemize}
+The SVD of the KKT matrix~$M$ yields
+approximate factors $\hat U \hat\Sigma \hat V^\top \approx M$,
+where $\hat\Sigma = \operatorname{diag}(\hat\sigma_1, \ldots,
+\hat\sigma_{|S|+5})$ with
+$\hat\sigma_1 \geq \cdots \geq \hat\sigma_{|S|+5}$.
+The numerical solution is then
+$(\hat\beta, \hat\lambda, \hat\nu)
+  = \hat V \hat\Sigma^{-1} \hat U^\top b$,
+where the division by small~$\hat\sigma_j$ amplifies
+errors in the corresponding directions.
+
+\begin{remark}[SVD accuracy]%
+\label{rem:v2-svd-accuracy}
+The computed SVD is backward stable: the factors
+$\hat U$, $\hat\Sigma$, $\hat V$ are the exact SVD
+of a nearby matrix $M + E$ with
+$\|E\| \leq p(m)\,\varepsilon_{\mathrm{mach}}\,\|M\|$,
+where $p(m)$ is a modest polynomial in the matrix
+dimension~$m = |S| + 5$
+\cite[Thm.~8.6.1]{GolubVanLoan2013}.
+In particular:
+\begin{enumerate}
+\item \emph{Singular values.}
+  $|\hat\sigma_j - \sigma_j|
+    \leq p(m)\,\varepsilon_{\mathrm{mach}}\,\sigma_1$.
+  Large singular values have high relative accuracy;
+  small ones ($\sigma_j \ll \sigma_1$) may have large
+  relative error but are correctly identified as small.
+\item \emph{Singular vectors.}
+  The angular error of the $j$-th singular vector satisfies
+  $\theta(\hat v_j, v_j)
+    \lesssim \varepsilon_{\mathrm{mach}}\,\|M\|\, / \,
+    \operatorname{gap}_j$,
+  where $\operatorname{gap}_j
+    = \min_{k \neq j} |\sigma_j - \sigma_k|$
+  is the singular value gap
+  \cite{Wedin1972}.
+  Clustered singular values yield poorly determined
+  individual vectors, but their joint span remains accurate.
+\item \emph{Solve step.}
+  The back-substitution
+  $\hat x = \hat V \hat\Sigma^{-1} \hat U^\top b$ satisfies
+  $\|\hat x - x\| / \|x\|
+    \lesssim \kappa(M)\,\varepsilon_{\mathrm{mach}}$,
+  where $\kappa(M) = \sigma_1 / \sigma_{\min}$
+  is the condition number
+  \cite[Ch.~5]{Higham2002}.
+  Near-singular systems ($\kappa \gg 1$) amplify
+  rounding errors proportionally.
+\end{enumerate}
+For our matrices ($m \leq 21$, since $|S| \leq 16$),
+the polynomial factor~$p(m)$ is negligible.
+The dominant error source is the condition
+number~$\kappa(M)$.
+\end{remark}
 
 \paragraph{Near-singularity.}
 By the generic perturbation (Section~\ref{app:v2-input}),
