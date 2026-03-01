@@ -405,7 +405,7 @@ In particular:
   remains accurate.
 \item \emph{Solve step.}
   The pseudoinverse solution
-  $\hat x = \sum_j (v_j^\top b / \lambda_j)\, v_j$
+  $\hat x = \sum_{|\lambda_j| > \tau} (v_j^\top b / \lambda_j)\, v_j$
   satisfies
   \[
     \frac{\|\hat x - x\|}{\|x\|}
@@ -461,24 +461,15 @@ $n_-(M) = n_-(H|_T) + 5$.
 \end{lemma}
 
 \begin{proof}
-% [TODO: JÖRN - this is the standard inertia result for
-%  symmetric saddle-point matrices. A clean proof is in
-%  Benzi--Golub--Liesen (2005), Theorem 3.2.
-%  Agent has not verified the proof against that source;
-%  only the statement is used below.
-%  Agent verified the statement numerically for all (S,σ)
-%  nodes of all test polytopes (Table 8--9 of q_error).]
-This is a standard result for symmetric saddle-point
-matrices; see e.g.\ \cite[Thm.~3.2]{BenziGolubLiesen2005}.
-The key idea is that the off-diagonal constraint block
-$\bigl(\begin{smallmatrix} 0 & A^\top \\ A & 0
-  \end{smallmatrix}\bigr)$
-contributes exactly~$p$ positive and~$p$ negative
-eigenvalues (from the singular values of~$A$)
-and $5 - p$ additional zero eigenvalues
-(from the rank deficiency of~$A$),
-while the restriction $H|_T$ governs the remaining
-$m - p$ eigenvalues.
+% [TODO: JÖRN - agent verified the statement numerically
+%  for all (S,σ) nodes of all test polytopes (Table 8--9
+%  of q_error). Only the result is used; proof deferred.]
+See \cite[Thm.~3.2]{BenziGolubLiesen2005} for a
+complete proof.
+The result exceeds our scope (it requires the full
+spectral theory of symmetric saddle-point matrices),
+and only the inertia
+formula~\eqref{eq:v2-inertia} is used below.
 \end{proof}
 
 \begin{remark}[Eigenvalue signs and the objective]%
@@ -549,8 +540,8 @@ $v_\beta^\top H\,\beta_0
   = -(N^\top v_\beta)^\top\mu_0
     - (\eta^\top v_\beta)\,\xi_0 = 0$
 (since $v_\beta \in T$).
-Hence
-and
+Hence $v_\beta^\top H\,\beta_0 = 0$
+and $v_\beta^\top H\,v_\beta = 0$, so
 \[
   Q(\beta_0 + t\,v_\beta) - Q(\beta_0)
   = -t\,v_\beta^\top H\,\beta_0
@@ -960,11 +951,15 @@ $A = 1/(2\,\tilde Q)$,
 using point comparison on the
 residual-corrected~$\tilde Q$.
 % Downstream: action = 0.5 / result.q_corrected (lower action = higher Q = better orbit)
+% [TODO: JÖRN - the E < 10^{-13} claim below is from
+%  the diagnostic agent's run on all fixture polytopes.
+%  It will be verified via q_error experiment output once
+%  the full experiment bundle is wired up.]
 The error bound~$E$ from
 Lemma~\ref{lem:v2-q-interval}
 is tracked but not used for interval majorization:
-in all test polytopes (27~entries covering
-5--16~facets), the bound satisfies
+in all test polytopes (33~entries covering
+5--8~facets), the bound satisfies
 $E < 10^{-13}$, so point comparison on~$\tilde Q$
 is reliable.
 
@@ -986,7 +981,7 @@ The algorithm panics in this case rather than returning
 a potentially incorrect result.
 % Downstream: assert!(uncertain_cap >= certified.0, ...)
 % in hk2017/mod.rs:146-152
-In all experiments to date (27~test polytopes),
+In all experiments to date (33~test polytopes),
 the assertion has never fired.
 
 \begin{remark}[Why point comparison suffices]%
