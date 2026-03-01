@@ -337,7 +337,7 @@ fn solve_kkt_svd_path(
         });
     }
 
-    // Full rank: unique solution with β ≤ 0, orbit is genuinely infeasible.
+    // Full rank: unique solution with β ≤ 0, candidate pair is genuinely infeasible.
     if rank == size {
         return None;
     }
