@@ -124,8 +124,10 @@ on the original and perturbed polytopes.
 The condition $\omega_0(n_i, n_k) = 0$ defines an algebraic
 hypersurface of codimension~$\geq 1$ in the space of normal
 vectors.
-A random rational perturbation avoids this hypersurface with
-probability~$1$, so after perturbation
+Since this hypersurface has Lebesgue measure zero
+in~$\mathbb{R}^{4F}$, there is no a~priori reason for
+a pseudorandom rational perturbation to land on it;
+in practice, all perturbations we generate satisfy
 $\omega_0(n_i, n_k) \neq 0$ for all pairs $i \neq k$.
 % [TODO: JÖRN - do we also want simplicity (each vertex on
 %  exactly 4 facets) from the perturbation? If so, the
@@ -395,7 +397,7 @@ number~$\kappa(M)$.
 
 \paragraph{Near-singularity.}
 By the generic perturbation (Section~\ref{app:v2-input}),
-the exact KKT system is non-singular with probability~$1$.
+the exact KKT system is generically non-singular.
 However, it can be \emph{near}-singular:
 the smallest singular value~$\sigma_{\min}$ may be close
 to zero, causing large numerical error in the
