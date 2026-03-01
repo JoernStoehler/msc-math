@@ -52,12 +52,30 @@ fn build_kkt(
 }
 
 /// Q(β) = Σ_{i>j} β_i β_j ω₀(n_{σ(i)}, n_{σ(j)}).
+///
+/// Sign convention: q_from_beta = -(1/2) β^T H β, where H is the KKT matrix
+/// upper-left block. Since ω₀ is antisymmetric and H_{ij} = ω₀(n_{min}, n_{max}),
+/// the i>j sum uses the OPPOSITE argument order from H, giving the minus sign.
+///
+/// Consequence for second-order conditions:
+/// - Hessian of q w.r.t. β is -H (constant)
+/// - H|_T PD ↔ -H|_T ND ↔ q locally MAXIMIZED (this is the desired case)
+/// - H|_T ND ↔ -H|_T PD ↔ q locally MINIMIZED (can improve by moving)
 fn q_from_beta(normals: &[Vector4<f64>], perm: &[usize], beta: &[f64]) -> f64 {
     let m = beta.len();
     (1..m)
         .flat_map(|i| (0..i).map(move |j| (i, j)))
         .map(|(i, j)| beta[i] * beta[j] * omega0(&normals[perm[i]], &normals[perm[j]]))
         .sum()
+}
+
+/// Compute -(1/2) β^T H β directly from the KKT matrix, for cross-checking q_from_beta.
+fn q_from_hessian(kkt: &DMatrix<f64>, beta: &[f64]) -> f64 {
+    let m = beta.len();
+    let beta_vec = DVector::from_iterator(m, beta.iter().cloned());
+    let h_block = kkt.view((0, 0), (m, m));
+    let hb = &h_block * &beta_vec;
+    -0.5 * beta_vec.dot(&hb)
 }
 
 /// SVD_CONDITION_TAU from the library (threshold for rank truncation).
@@ -202,6 +220,7 @@ struct NodeInfo {
     q: f64,
     beta_min: f64,
     definiteness: Definiteness,
+    #[allow(dead_code)]
     tangent_dim: usize,
     m: usize,
 }
@@ -420,6 +439,42 @@ fn main() {
 
     println!("=== Q Error Bound Diagnostic ===\n");
 
+    // Table 0: Verify sign convention q_from_beta = -(1/2) β^T H β
+    println!("--- Table 0: Sign convention verification ---");
+    println!("  q_from_beta computes Σ_{{i>j}} β_i β_j ω₀(n_i, n_j)");
+    println!("  H_{{ij}} = ω₀(n_{{min}}, n_{{max}}) (symmetric)");
+    println!("  Since ω₀ is antisymmetric: q_from_beta = -(1/2) β^T H β");
+    println!();
+    println!("{:<14} {:>16} {:>16} {:>12}", "polytope", "q_from_beta", "-(1/2)β^T·H·β", "rel_diff");
+    println!("{}", "-".repeat(60));
+
+    for (name, polytope) in &polytopes {
+        let result = match ehz_capacity(polytope) {
+            Some(r) => r,
+            None => continue,
+        };
+        let mut alg_perm = result.best_permutation.clone();
+        alg_perm.reverse();
+        let m = alg_perm.len();
+        let (kkt, rhs) = build_kkt(polytope.normals(), polytope.heights(), &alg_perm);
+        let svd = kkt.clone().svd(true, true);
+        let sv = &svd.singular_values;
+        let u = svd.u.as_ref().unwrap();
+        let v_t = svd.v_t.as_ref().unwrap();
+        let sigma_max = sv[0];
+        let threshold = sigma_max * SVD_CONDITION_TAU;
+        let rank = sv.iter().filter(|&&s| s > threshold).count();
+        let size = m + 5;
+        let x = svd_solve(u, sv, v_t, &rhs, size, rank);
+        let beta: Vec<f64> = (0..m).map(|i| x[i]).collect();
+
+        let q1 = q_from_beta(polytope.normals(), &alg_perm, &beta);
+        let q2 = q_from_hessian(&kkt, &beta);
+        let rel = if q1.abs() > 1e-15 { (q1 - q2).abs() / q1.abs() } else { (q1 - q2).abs() };
+        println!("{:<14} {:>16.12} {:>16.12} {:>12.3e}", name, q1, q2, rel);
+    }
+    println!();
+
     // Table 1: Condition numbers and rank
     println!("--- Table 1: SVD condition and rank ---");
     println!("{:<14} {:>3} {:>5} {:>12} {:>12} {:>12} {:>12} {:>12}",
@@ -553,13 +608,13 @@ fn main() {
             let lam_max = d.restricted_eigs.last().unwrap();
             let eps = 1e-10;
             let definiteness = if *lam_min > eps {
-                "PD"      // positive definite → Q is minimized → subtree NOT prunable
+                "PD"      // H|_T PD → Hess(q) = -H|_T is ND → q is MAXIMIZED (local max)
             } else if *lam_max < -eps {
-                "ND"      // negative definite → Q is maximized → subtree prunable!
+                "ND"      // H|_T ND → Hess(q) = -H|_T is PD → q is MINIMIZED (not a max)
             } else if *lam_min < -eps && *lam_max > eps {
-                "indef"   // saddle point
+                "indef"   // saddle point of q — some directions increase, some decrease
             } else {
-                "~zero"   // near-degenerate
+                "~zero"   // near-degenerate — numerically undecided
             };
 
             println!("{:<14} {:>3} {:>6} {:>8.3e} {:>12.3e} {:>12.3e} {:>12} {:>10}",
@@ -601,7 +656,7 @@ fn main() {
         let mut n_indef = 0u64;
         let mut n_nearzero = 0u64;
 
-        // Track PD+β>0 nodes (the prunable ones per Jörn's idea)
+        // Track PD+β>0 nodes: admissible local maxima of q (the "keeper" nodes)
         let mut pd_beta_pos: Vec<(usize, f64)> = Vec::new(); // (m, Q)
 
         for m in 2..=f {
@@ -659,7 +714,7 @@ fn main() {
                         if info.beta_min > eps_beta && info.q > eps_q {
                             max_q = max_q.max(info.q);
                             match info.definiteness {
-                                Definiteness::ND => { has_neg = true; any_nontrivial = true; }
+                                Definiteness::ND => { has_neg = true; all_pd = false; any_nontrivial = true; }
                                 Definiteness::Indefinite => { has_neg = true; all_pd = false; any_nontrivial = true; }
                                 Definiteness::PD => { any_nontrivial = true; }
                                 Definiteness::NearZero => { all_pd = false; any_nontrivial = true; }
@@ -705,6 +760,15 @@ fn main() {
         }
 
         // Check 2a: Downward (PD→subsets): PD node's Q ≥ all subsets' Q?
+        // Rationale: PD means q is locally maximized. If also β>0 (admissible),
+        // the critical point IS the constrained max for this face set S.
+        // But the max for S includes boundary points (child nodes with some β_i=0).
+        // So the PD interior max should dominate all child maxima.
+        //
+        // NOTE: this check compares across different permutations σ, which live
+        // on different face sets with different H matrices. The monotonicity
+        // argument only applies within a FIXED permutation ordering (same H).
+        // Cross-σ violations may therefore not be real violations.
         let mut down_pd_violations = 0u32;
         let pd_sets: Vec<(&BTreeSet<usize>, &SubsetInfo)> = subset_info.iter()
             .filter(|(_, info)| info.is_pd)
@@ -722,16 +786,16 @@ fn main() {
         }
         if !pd_sets.is_empty() {
             if down_pd_violations == 0 {
-                println!("  Downward (PD→subsets): CONFIRMED ({} PD sets)", pd_sets.len());
+                println!("  Downward (PD→subsets): CONFIRMED ({} PD sets, Q ≥ all child Q)", pd_sets.len());
             } else {
-                println!("  Downward (PD→subsets): FAILED ({} violations — PD is a MINIMUM, children can be larger)",
+                println!("  Downward (PD→subsets): {} violations (may be cross-σ artifacts)",
                     down_pd_violations);
             }
         }
 
         // Check 2b: Downward (ND→subsets): ND node's Q ≥ all subsets' Q?
         let mut down_nd_violations = 0u32;
-        let nd_sets: Vec<(&BTreeSet<usize>, &SubsetInfo)> = subset_info.iter()
+        let _nd_sets: Vec<(&BTreeSet<usize>, &SubsetInfo)> = subset_info.iter()
             .filter(|(_, info)| info.has_neg_dir && !info.is_pd) // ND or indefinite
             .collect();
         // More precisely, check nodes where ALL nontrivial perms are ND
