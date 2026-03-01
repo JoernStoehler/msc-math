@@ -1,17 +1,20 @@
 #![allow(clippy::collapsible_if, clippy::op_ref, clippy::bool_comparison, dead_code)]
 
-/// Measure empirical Q error bounds from the KKT SVD solve.
+/// Measure empirical Q error bounds from the KKT eigendecomposition solve.
 ///
-/// Goal: Check whether the analytical error bound E from Lemma B.5
-///       is tight or uselessly loose, and measure direction-aware errors.
+/// Goal: Check whether the analytical error bound E from the analytical error bound
+///       from the Q~error lemma is tight or uselessly loose, and measure direction-aware errors.
 /// Input: Known polytopes from the library (small, F ≤ 8).
-/// Output: Tables to stdout with σ_min, ‖r‖, Q values, E, actual error.
+/// Output: Tables to stdout with |λ_min|, ‖r‖, Q values, E, actual error.
 use nalgebra::{DMatrix, DVector, Vector4};
 use symplectic::algorithms::hk2017::ehz_capacity;
 use symplectic::geom::known_polytopes;
 use symplectic::geom::symplectic::omega0;
 use symplectic::geom::polytope::Polytope4D;
 
+// WARNING: This is a copy of kkt::build_kkt_system (which is pub(crate)).
+// If the KKT matrix construction changes in the library, update this copy.
+// Last synced: 2026-03-01 (symmetric KKT with negated multipliers).
 /// Build symmetric KKT matrix and RHS (copied from crate-internal build_kkt_system).
 ///
 /// Uses negated multipliers (μ = −λ, ξ = −ν) for a symmetric saddle-point matrix:
@@ -80,7 +83,8 @@ fn q_from_hessian(kkt: &DMatrix<f64>, beta: &[f64]) -> f64 {
     -0.5 * beta_vec.dot(&hb)
 }
 
-/// SVD_CONDITION_TAU from the library (threshold for rank truncation).
+/// SVD_CONDITION_TAU from the library (threshold for rank truncation via condition number ratio).
+/// Used as: |λ_i| > lambda_max * SVD_CONDITION_TAU → retain eigenvalue i.
 const SVD_CONDITION_TAU: f64 = 1e-3;
 
 /// Threshold for eigenvalue definiteness classification.
@@ -154,17 +158,16 @@ fn node_hessian_check(
     let size = m + 5;
     let (kkt, rhs) = build_kkt(normals, heights, perm);
 
-    let svd = kkt.clone().svd(true, true);
-    let sv = &svd.singular_values;
-    let u = svd.u.as_ref().unwrap();
-    let v_t = svd.v_t.as_ref().unwrap();
+    let eig = kkt.clone().symmetric_eigen();
+    let eigenvalues = &eig.eigenvalues;
+    let eigenvectors = &eig.eigenvectors;
 
-    let sigma_max = sv[0];
-    let threshold = sigma_max * SVD_CONDITION_TAU;
-    let rank = sv.iter().filter(|&&s| s > threshold).count();
+    let lambda_max_abs = eigenvalues.iter().cloned().map(f64::abs).fold(0.0_f64, f64::max);
+    let threshold = lambda_max_abs * SVD_CONDITION_TAU;
+    let rank = eigenvalues.iter().filter(|&&e| e.abs() > threshold).count();
 
-    // Truncated SVD solve
-    let x = svd_solve(u, sv, v_t, &rhs, size, rank);
+    // Truncated eigendecomposition solve
+    let x = eigen_solve(eigenvectors, eigenvalues, &rhs, size, rank);
     let beta: Vec<f64> = (0..m).map(|i| x[i]).collect();
     let beta_min = beta.iter().cloned().fold(f64::INFINITY, f64::min);
     let q = q_from_beta(normals, perm, &beta);
@@ -228,30 +231,33 @@ struct NodeInfo {
 }
 
 struct Diagnostics {
-    sigma_max: f64,
-    /// Smallest SV of full matrix
-    sigma_min_full: f64,
-    /// Smallest RETAINED SV (after truncation)
-    sigma_min_retained: f64,
+    lambda_max_abs: f64,
+    /// Smallest |λ_i| of full matrix
+    lambda_min_abs_full: f64,
+    /// Smallest |λ_i| among retained eigenvalues (after truncation)
+    lambda_min_abs_retained: f64,
     numerical_rank: usize,
     full_size: usize,
     residual_norm_full: f64,
     residual_norm_truncated: f64,
     q_raw: f64,
     q_first_order: f64,
-    /// E using σ_min of full matrix (current code)
+    /// E using |λ_min| of full matrix (current code)
     e_full: f64,
-    /// E using σ_min of retained SVs
+    /// E using |λ_min| of retained eigenvalues
     e_retained: f64,
-    /// |2(r₁ᵀδλ + r₃δν)| computed from full SVD δx
+    /// |2(r₁ᵀδλ + r₃δν)| computed from full eigendecomposition δx
     cross_abs_full: f64,
-    /// |δβᵀHδβ| computed from full SVD δx
+    /// |δβᵀHδβ| computed from full eigendecomposition δx
     quad_abs_full: f64,
-    /// Same but using truncated SVD
+    /// Same but using truncated eigendecomposition
     cross_abs_trunc: f64,
     quad_abs_trunc: f64,
     q_fully_corrected: f64,
-    singular_values: Vec<f64>,
+    /// Eigenvalues with signs (for inertia checks)
+    eigenvalues_signed: Vec<f64>,
+    /// Absolute values of eigenvalues
+    eigenvalues_abs: Vec<f64>,
     /// Eigenvalues of H restricted to T = ker([N^T; η^T])
     restricted_eigs: Vec<f64>,
     /// dim T = m - rank([N^T; η^T])
@@ -269,33 +275,38 @@ fn run_diagnostics(
     let size = m + 5;
     let (kkt, rhs) = build_kkt(normals, heights, perm);
 
-    let svd = kkt.clone().svd(true, true);
-    let sv = &svd.singular_values;
-    let u = svd.u.as_ref().unwrap();
-    let v_t = svd.v_t.as_ref().unwrap();
+    let eig = kkt.clone().symmetric_eigen();
+    let eigenvalues = &eig.eigenvalues;
+    let eigenvectors = &eig.eigenvectors;
 
-    let sigma_max = sv[0];
-    let sigma_min_full = sv.iter().cloned().fold(f64::INFINITY, f64::min);
+    let lambda_max_abs = eigenvalues.iter().cloned().map(f64::abs).fold(0.0_f64, f64::max);
+    let lambda_min_abs_full = eigenvalues.iter().cloned().map(f64::abs)
+        .fold(f64::INFINITY, f64::min);
 
-    // Truncated rank (matching library)
-    let threshold = sigma_max * SVD_CONDITION_TAU;
-    let rank = sv.iter().filter(|&&s| s > threshold).count();
-    let sigma_min_retained = sv.iter().take(rank).cloned().fold(f64::INFINITY, f64::min);
+    // Truncated rank (matching library): sort by |λ|, keep top `rank`
+    let threshold = lambda_max_abs * SVD_CONDITION_TAU;
+    let rank = eigenvalues.iter().filter(|&&e| e.abs() > threshold).count();
 
-    // Full SVD solve (all SVs)
-    let x_full = svd_solve(u, sv, v_t, &rhs, size, size);
+    // |λ_min| among retained eigenvalues (top `rank` by |λ|)
+    let mut sorted_abs: Vec<f64> = eigenvalues.iter().cloned().map(f64::abs).collect();
+    sorted_abs.sort_by(|a, b| b.partial_cmp(a).unwrap()); // descending
+    let lambda_min_abs_retained = sorted_abs.iter().take(rank).cloned()
+        .fold(f64::INFINITY, f64::min);
+
+    // Full eigendecomposition solve (all eigenvalues)
+    let x_full = eigen_solve(eigenvectors, eigenvalues, &rhs, size, size);
     let r_full = &kkt * &x_full - &rhs;
     let r_full_norm = r_full.norm();
 
-    // Truncated SVD solve (only top `rank` SVs)
-    let x_trunc = svd_solve(u, sv, v_t, &rhs, size, rank);
+    // Truncated eigendecomposition solve (only top `rank` eigenvalues by |λ|)
+    let x_trunc = eigen_solve(eigenvectors, eigenvalues, &rhs, size, rank);
     let r_trunc = &kkt * &x_trunc - &rhs;
     let r_trunc_norm = r_trunc.norm();
 
     let beta_full: Vec<f64> = (0..m).map(|i| x_full[i]).collect();
     let q_raw = q_from_beta(normals, perm, &beta_full);
 
-    // Residual blocks from full SVD (code ordering: rows m..m+4 = constraint, m+4 = normalization)
+    // Residual blocks from full eigendecomposition (code ordering: rows m..m+4 = constraint, m+4 = normalization)
     // Solution vector is [β̂; μ̂; ξ̂] with negated multipliers.
     let r1_full: DVector<f64> = DVector::from_iterator(4, (m..m + 4).map(|i| r_full[i]));
     let r3_full = r_full[m + 4];
@@ -307,18 +318,18 @@ fn run_diagnostics(
 
     // Analytical bounds
     let r_sq_full = r_full_norm * r_full_norm;
-    let e_full = r_sq_full * (2.0 / sigma_min_full.max(f64::MIN_POSITIVE)
-        + sigma_max / (2.0 * sigma_min_full.max(f64::MIN_POSITIVE).powi(2)));
+    let e_full = r_sq_full * (2.0 / lambda_min_abs_full.max(f64::MIN_POSITIVE)
+        + lambda_max_abs / (2.0 * lambda_min_abs_full.max(f64::MIN_POSITIVE).powi(2)));
     let r_sq_trunc = r_trunc_norm * r_trunc_norm;
-    let e_retained = r_sq_trunc * (2.0 / sigma_min_retained
-        + sigma_max / (2.0 * sigma_min_retained * sigma_min_retained));
+    let e_retained = r_sq_trunc * (2.0 / lambda_min_abs_retained
+        + lambda_max_abs / (2.0 * lambda_min_abs_retained * lambda_min_abs_retained));
 
-    // Direction-aware: δx = V Σ⁻¹ Uᵀ r (using full SVD)
-    let delta_x_full = svd_solve(u, sv, v_t, &r_full, size, size);
+    // Direction-aware: δx = Q Λ⁻¹ Qᵀ r (using full eigendecomposition)
+    let delta_x_full = eigen_solve(eigenvectors, eigenvalues, &r_full, size, size);
     let (cross_full, quad_full) = compute_remainder(normals, perm, m, &r_full, &delta_x_full);
 
-    // Direction-aware: δx using truncated SVD
-    let delta_x_trunc = svd_solve(u, sv, v_t, &r_trunc, size, rank);
+    // Direction-aware: δx using truncated eigendecomposition
+    let delta_x_trunc = eigen_solve(eigenvectors, eigenvalues, &r_trunc, size, rank);
     let (cross_trunc, quad_trunc) = compute_remainder(normals, perm, m, &r_trunc, &delta_x_trunc);
 
     // cross_new = r₁ᵀδμ + r₃δξ = -(r₁ᵀδλ + r₃δν), so sign flips vs old convention.
@@ -367,14 +378,14 @@ fn run_diagnostics(
         vec![]
     };
 
-    // Use truncated SVD beta for β > 0 check (full SVD garbage on singular systems)
+    // Use truncated eigendecomposition beta for β > 0 check (full solve garbage on singular systems)
     let beta_trunc: Vec<f64> = (0..m).map(|i| x_trunc[i]).collect();
     let beta_min = beta_trunc.iter().cloned().fold(f64::INFINITY, f64::min);
 
     Diagnostics {
-        sigma_max,
-        sigma_min_full,
-        sigma_min_retained,
+        lambda_max_abs,
+        lambda_min_abs_full,
+        lambda_min_abs_retained,
         numerical_rank: rank,
         full_size: size,
         residual_norm_full: r_full_norm,
@@ -388,27 +399,29 @@ fn run_diagnostics(
         cross_abs_trunc: (2.0 * cross_trunc).abs(),
         quad_abs_trunc: quad_trunc.abs(),
         q_fully_corrected,
-        singular_values: sv.iter().cloned().collect(),
+        eigenvalues_signed: eigenvalues.iter().cloned().collect(),
+        eigenvalues_abs: eigenvalues.iter().cloned().map(f64::abs).collect(),
         restricted_eigs,
         tangent_dim,
         beta_min,
     }
 }
 
-fn svd_solve(
-    u: &DMatrix<f64>,
-    sv: &DVector<f64>,
-    v_t: &DMatrix<f64>,
+fn eigen_solve(
+    eigenvectors: &DMatrix<f64>,
+    eigenvalues: &DVector<f64>,
     rhs: &DVector<f64>,
     size: usize,
     rank: usize,
 ) -> DVector<f64> {
+    // Sort eigenvalues by descending |λ|, use top `rank`
+    let mut indices: Vec<usize> = (0..size).collect();
+    indices.sort_by(|&a, &b| eigenvalues[b].abs().partial_cmp(&eigenvalues[a].abs()).unwrap());
+
     let mut x = DVector::zeros(size);
-    for i in 0..rank {
-        let coeff = u.column(i).dot(rhs) / sv[i];
-        for j in 0..size {
-            x[j] += coeff * v_t[(i, j)];
-        }
+    for &i in indices.iter().take(rank) {
+        let coeff = eigenvectors.column(i).dot(rhs) / eigenvalues[i];
+        x += coeff * eigenvectors.column(i);
     }
     x
 }
@@ -462,15 +475,14 @@ fn main() {
         alg_perm.reverse();
         let m = alg_perm.len();
         let (kkt, rhs) = build_kkt(polytope.normals(), polytope.heights(), &alg_perm);
-        let svd = kkt.clone().svd(true, true);
-        let sv = &svd.singular_values;
-        let u = svd.u.as_ref().unwrap();
-        let v_t = svd.v_t.as_ref().unwrap();
-        let sigma_max = sv[0];
-        let threshold = sigma_max * SVD_CONDITION_TAU;
-        let rank = sv.iter().filter(|&&s| s > threshold).count();
+        let eig = kkt.clone().symmetric_eigen();
+        let eigenvalues = &eig.eigenvalues;
+        let eigenvectors = &eig.eigenvectors;
+        let lambda_max_abs = eigenvalues.iter().cloned().map(f64::abs).fold(0.0_f64, f64::max);
+        let threshold = lambda_max_abs * SVD_CONDITION_TAU;
+        let rank = eigenvalues.iter().filter(|&&e| e.abs() > threshold).count();
         let size = m + 5;
-        let x = svd_solve(u, sv, v_t, &rhs, size, rank);
+        let x = eigen_solve(eigenvectors, eigenvalues, &rhs, size, rank);
         let beta: Vec<f64> = (0..m).map(|i| x[i]).collect();
 
         let q1 = q_from_beta(polytope.normals(), &alg_perm, &beta);
@@ -481,9 +493,9 @@ fn main() {
     println!();
 
     // Table 1: Condition numbers and rank
-    println!("--- Table 1: SVD condition and rank ---");
+    println!("--- Table 1: Eigendecomposition condition and rank ---");
     println!("{:<14} {:>3} {:>5} {:>12} {:>12} {:>12} {:>12} {:>12}",
-        "polytope", "m", "rank", "σ_min_full", "σ_min_ret", "κ_full", "‖r‖_full", "‖r‖_trunc");
+        "polytope", "m", "rank", "|λ_min|_full", "|λ_min|_ret", "κ_full", "‖r‖_full", "‖r‖_trunc");
     println!("{}", "-".repeat(88));
 
     for (name, polytope) in &polytopes {
@@ -503,8 +515,8 @@ fn main() {
 
         println!("{:<14} {:>3} {:>2}/{:>2} {:>12.3e} {:>12.3e} {:>12.3e} {:>12.3e} {:>12.3e}",
             name, m, d.numerical_rank, d.full_size,
-            d.sigma_min_full, d.sigma_min_retained,
-            d.sigma_max / d.sigma_min_full.max(f64::MIN_POSITIVE),
+            d.lambda_min_abs_full, d.lambda_min_abs_retained,
+            d.lambda_max_abs / d.lambda_min_abs_full.max(f64::MIN_POSITIVE),
             d.residual_norm_full, d.residual_norm_truncated);
     }
 
@@ -565,8 +577,8 @@ fn main() {
 
     println!();
 
-    // Table 4: SV spectra
-    println!("--- Table 4: Singular value spectra ---");
+    // Table 4: Eigenvalue spectra
+    println!("--- Table 4: Eigenvalue spectra ---");
     for (name, polytope) in &polytopes {
         let result = match ehz_capacity(polytope) {
             Some(r) => r,
@@ -578,9 +590,19 @@ fn main() {
 
         let d = run_diagnostics(polytope.normals(), polytope.heights(), &alg_perm);
 
-        println!("{}: [{}]", name,
-            d.singular_values.iter()
-                .map(|s| format!("{:.3e}", s))
+        // Show signed eigenvalues (sorted descending by absolute value) and absolute values
+        let mut signed_sorted = d.eigenvalues_signed.clone();
+        signed_sorted.sort_by(|a, b| b.abs().partial_cmp(&a.abs()).unwrap());
+        println!("{} (signed): [{}]", name,
+            signed_sorted.iter()
+                .map(|e| format!("{:+.3e}", e))
+                .collect::<Vec<_>>()
+                .join(", "));
+        let mut abs_sorted = d.eigenvalues_abs.clone();
+        abs_sorted.sort_by(|a, b| b.partial_cmp(a).unwrap());
+        println!("{} (|λ|):    [{}]", name,
+            abs_sorted.iter()
+                .map(|e| format!("{:.3e}", e))
                 .collect::<Vec<_>>()
                 .join(", "));
     }
@@ -851,9 +873,14 @@ fn main() {
 
     // Table 7: Q interval framework — per-node classification and majorization
     //
+    // Note: This table prototypes interval majorization Q̃ ± E.
+    // After investigation, point comparison on Q̃ was adopted instead
+    // (E < 1e-13 across all test polytopes, making intervals unnecessary).
+    // Table kept for documentation of the exploratory analysis.
+    //
     // For each (S, σ):
-    //   SVD → β̂, residual r, σ_min(retained), Q̃, E
-    //   δβ_bound = ‖r‖ / σ_min  (perturbation bound on β)
+    //   eigen → β̂, residual r, |λ_min|(retained), Q̃, E
+    //   δβ_bound = ‖r‖ / |λ_min|  (perturbation bound on β)
     //   Admissibility:
     //     decided-admissible:   β̂_min > δβ_bound  (true β_i > 0 for all i)
     //     decided-inadmissible: β̂_min < -δβ_bound (true β_i < 0 for some i)
@@ -867,7 +894,7 @@ fn main() {
     // Majorize: node with Q̃ + E < Q*_low is dominated (even if uncertain).
     // Remaining uncertain nodes need rational admissibility check.
     println!("--- Table 7: Q interval framework and majorization ---");
-    println!("  Per (S,σ): SVD → Q̃ ± E, β̂_min vs δβ_bound = ‖r‖/σ_min");
+    println!("  Per (S,σ): eigen → Q̃ ± E, β̂_min vs δβ_bound = ‖r‖/|λ_min|");
     println!("  Admissible: [Q̃-E, Q̃+E].  Uncertain: [-∞, Q̃+E].  Inadmissible: skip.");
     println!("  Majorize: Q̃+E < best admissible (Q̃-E) → pruned.");
     println!();
@@ -905,18 +932,22 @@ fn main() {
                     let size = m + 5;
                     let (kkt, rhs) = build_kkt(normals, heights, &perm);
 
-                    let svd = kkt.clone().svd(true, true);
-                    let sv = &svd.singular_values;
-                    let u = svd.u.as_ref().unwrap();
-                    let v_t = svd.v_t.as_ref().unwrap();
+                    let eig = kkt.clone().symmetric_eigen();
+                    let eigenvalues = &eig.eigenvalues;
+                    let eigenvectors = &eig.eigenvectors;
 
-                    let sigma_max = sv[0];
-                    let threshold = sigma_max * SVD_CONDITION_TAU;
-                    let rank = sv.iter().filter(|&&s| s > threshold).count();
-                    let sigma_min_ret = sv.iter().take(rank).cloned()
+                    let lambda_max_abs = eigenvalues.iter().cloned().map(f64::abs)
+                        .fold(0.0_f64, f64::max);
+                    let threshold = lambda_max_abs * SVD_CONDITION_TAU;
+                    let rank = eigenvalues.iter().filter(|&&e| e.abs() > threshold).count();
+
+                    // |λ_min| among retained eigenvalues (top `rank` by |λ|)
+                    let mut sorted_abs: Vec<f64> = eigenvalues.iter().cloned().map(f64::abs).collect();
+                    sorted_abs.sort_by(|a, b| b.partial_cmp(a).unwrap());
+                    let lambda_min_abs_ret = sorted_abs.iter().take(rank).cloned()
                         .fold(f64::INFINITY, f64::min).max(f64::MIN_POSITIVE);
 
-                    let x = svd_solve(u, sv, v_t, &rhs, size, rank);
+                    let x = eigen_solve(eigenvectors, eigenvalues, &rhs, size, rank);
                     let beta: Vec<f64> = (0..m).map(|i| x[i]).collect();
                     let beta_min = beta.iter().cloned().fold(f64::INFINITY, f64::min);
 
@@ -934,11 +965,11 @@ fn main() {
 
                     // Error bound E
                     let r_sq = r_norm * r_norm;
-                    let e = r_sq * (2.0 / sigma_min_ret
-                        + sigma_max / (2.0 * sigma_min_ret * sigma_min_ret));
+                    let e = r_sq * (2.0 / lambda_min_abs_ret
+                        + lambda_max_abs / (2.0 * lambda_min_abs_ret * lambda_min_abs_ret));
 
-                    // Admissibility: β̂_min vs δβ_bound = ‖r‖ / σ_min
-                    let delta_beta_bound = r_norm / sigma_min_ret;
+                    // Admissibility: β̂_min vs δβ_bound = ‖r‖ / |λ_min|
+                    let delta_beta_bound = r_norm / lambda_min_abs_ret;
 
                     let (admissibility, q_low, q_high) = if beta_min > delta_beta_bound {
                         // Decided admissible
@@ -1000,7 +1031,7 @@ fn main() {
     // The saddle-point inertia theorem says:
     //   n_+(M) = n_+(H|_T), n_-(M) = n_-(H|_T) + 5, n_0(M) = n_0(H|_T)
     // We validate this on the BEST (S, σ) for each polytope.
-    println!("--- Table 8: Inertia theorem validation (Lemma B.?) ---");
+    println!("--- Table 8: Inertia theorem validation ([lem:v2-kkt-inertia]) ---");
     println!("  For the optimal (S, σ), compare eigenvalue counts of M vs H|_T.");
     println!("  Inertia theorem: n+(M) = n+(H|T)+p, n-(M) = n-(H|T)+p, n0(M) = n0(H|T)+(5-p)");
     println!("  where p = rank(A), A = [N^T; η^T]");
