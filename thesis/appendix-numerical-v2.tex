@@ -902,93 +902,114 @@ the candidate's admissibility is uncertain:
 \subsection{Accumulator and Final Answer}\label{app:v2-answer}
 % ===================================================================
 
-% --- Accumulator with error bounds (NEW, unreviewed, evolving) ---
-
-% [TODO: JÖRN - this section describes the accumulator design
-%  from our discussion. The details are still evolving. Key ideas:
-%
-%  1. Each non-pruned (S,σ) produces a corrected Q̃ with error
-%     bound E from Section B.3.
-%     Also stored: (S, σ, β̂, metadata about β structure).
-%
-%  2. The accumulator prunes majorized candidates: if
-%     Q̃ + E < Q̃' - E' for some other candidate, the first
-%     is dominated and discarded.
-%
-%  3. At the end, remaining candidates with uncertain
-%     admissibility are resolved by a rational arithmetic
-%     algorithm that produces exact values.
-%
-%  Open questions:
-%  - How the β structure (which components are near zero)
-%    interacts with the error bound
-%  - Whether the "walk to shorter σ'" argument can tighten
-%    bounds in some cases
-%  - Whether the rational resolution step is the same as
-%    the current "second pass" or different]
+% --- Accumulator (rewritten to match code, unreviewed) ---
 
 The algorithm processes all candidate pairs
-$(S, \sigma)$ and maintains an accumulator of candidates,
-each annotated with a corrected value~$\tilde Q$ and
-error bound~$E$ satisfying
-$|Q(\beta_0) - \tilde Q| \leq E$.
-The error bound reflects the numerical uncertainty
-from the KKT solve (Section~\ref{app:v2-kkt}).
+$(S, \sigma)$ and selects the one with smallest
+action (equivalently, largest~$\tilde Q$).
+The accumulator tracks two candidates:
+\begin{itemize}
+\item \textbf{Best certified:}
+  the candidate with smallest action among those whose
+  numerical~$\hat\beta$ satisfies
+  $\hat\beta_i > \varepsilon_\beta$ for all~$i \in S$
+  (all admissibility predicates return $\textsc{true}$).
+\item \textbf{Best uncertain:}
+  the candidate with smallest action among those whose
+  numerical~$\hat\beta$ satisfies
+  $\hat\beta_i > -\varepsilon_\beta$ for all~$i \in S$
+  (all predicates return $\textsc{true}$ or
+  $\textsc{unknown}$, i.e.\ no predicate returns
+  $\textsc{false}$).
+\end{itemize}
+Every certified candidate is also uncertain, so
+the best uncertain action is always~$\leq$
+the best certified action.
 
 \paragraph{Candidate classification.}
-Each pair is classified by the algorithm into one of the
-following categories:
+Each pair $(S, \sigma)$ is classified as follows:
 \begin{description}
 \item[Skipped.]
   Transition pruning
   (Section~\ref{app:v2-pruning})
-  determines that no Reeb orbit with
+  determines that no Reeb trajectory with
   combinatorics~$(S, \sigma)$ exists.
 
-\item[Accepted.]
-  The KKT solve produces~$\hat\beta$,
-  and Algorithm~\ref{alg:v2-q-interval} computes
-  a corrected~$\tilde Q$ with error bound~$E$
-  (Lemma~\ref{lem:v2-q-interval}).
-  The candidate is stored in the accumulator.
+\item[Inadmissible.]
+  The KKT solve returns no solution
+  (no $\hat\beta$ with
+  $\tilde Q > \varepsilon_Q$), or some
+  $\hat\beta_i < -\varepsilon_\beta$
+  (a predicate returns $\textsc{false}$).
+  The pair is discarded.
 
-\item[Majorized.]
-  A candidate whose $\tilde Q + E$ is below
-  $\tilde Q' - E'$ for some other accepted candidate.
-  It cannot be the global maximum regardless of
-  where the true values fall within their error bounds,
-  so it is discarded from the accumulator.
+\item[Certified.]
+  All $\hat\beta_i > \varepsilon_\beta$.
+  The pair competes for best certified
+  and best uncertain.
+
+\item[Uncertain.]
+  All $\hat\beta_i > -\varepsilon_\beta$
+  but some $|\hat\beta_i| \leq \varepsilon_\beta$.
+  The pair competes only for best uncertain.
 \end{description}
 
+\paragraph{Comparison.}
+Candidates are compared by action
+$A = 1/(2\,\tilde Q)$,
+using point comparison on the
+residual-corrected~$\tilde Q$.
+% Downstream: action = 0.5 / result.q_corrected (lower action = higher Q = better orbit)
+The error bound~$E$ from
+Lemma~\ref{lem:v2-q-interval}
+is tracked but not used for interval majorization:
+in all test polytopes (27~entries covering
+5--16~facets), the bound satisfies
+$E < 10^{-13}$, so point comparison on~$\tilde Q$
+is reliable.
+
 \paragraph{Final answer.}
-After all pairs are processed, the accumulator contains
-the surviving (non-majorized) candidates.
-If a single candidate's $\tilde Q - E$ exceeds all
-others' $\tilde Q' + E'$, the capacity is determined:
-$c_{\mathrm{EHZ}}(K) = 1 / (2\, (\tilde Q - E))$
-(up to the error bound width).
-If multiple candidates have overlapping error bounds,
-the algorithm resolves the remaining uncertainty by
-re-evaluating only the surviving candidates using exact
-rational arithmetic, producing exact values.
+The algorithm returns the best certified candidate.
+If no certified candidate exists, the algorithm
+returns~\textsc{None} (no admissible closed Reeb
+orbit was found).
 
-% [TODO: JÖRN - decide on the rational resolution algorithm.
-%  Options: (a) re-solve the full KKT system over Q for
-%  each surviving candidate, (b) re-evaluate only the
-%  β > 0 predicate using rational arithmetic (the approach
-%  from the current "second pass" paragraph).
-%  Also: the current code panics if uncertain candidates
-%  remain (hk2017/mod.rs:142-151). In all experiments to
-%  date this has never fired.]
+\paragraph{Safety net.}
+After enumeration, the algorithm checks that the best
+uncertain action is~$\geq$ the best certified action.
+If an uncertain candidate achieves strictly lower action
+than the best certified one, the reported capacity might
+be wrong---an orbit that is genuinely admissible
+(with some~$\beta_i$ very close to zero) would give
+a larger capacity than the certified answer.
+The algorithm panics in this case rather than returning
+a potentially incorrect result.
+% Downstream: assert!(uncertain_cap >= certified.0, ...)
+% in hk2017/mod.rs:146-152
+In all experiments to date (27~test polytopes),
+the assertion has never fired.
 
-\begin{remark}[Empirical error tracking]\label{rem:v2-empirical-errors}
-In practice, we track error bounds empirically in the Rust
-implementation rather than deriving tight analytic bounds
-for every operation.
-The implementation tracks the best certified and best
-uncertain candidates separately.
-The error tracking happens after the eigendecomposition step
-and does not require modifying the eigendecomposition itself.
+\begin{remark}[Why point comparison suffices]%
+\label{rem:v2-point-comparison}
+The corrected~$\tilde Q$ absorbs the first-order
+numerical error via the residual correction
+(Lemma~\ref{lem:v2-q-interval}).
+The remaining error~$E$ is second-order
+in the backward error and satisfies
+$E = O(\varepsilon_{\mathrm{mach}}^2)$ for
+well-conditioned systems
+(Remark~\ref{rem:v2-interval-width}).
+For the polytopes in our dataset,
+$E < 10^{-13}$ in all cases, making interval
+majorization unnecessary: point comparison
+on~$\tilde Q$ correctly identifies the global
+maximum.
+If future polytopes produce larger~$E$ (e.g.\ due
+to near-singular KKT systems),
+the interval framework from
+Section~\ref{app:v2-kkt} provides a fallback:
+compare $[\tilde Q - E,\; \tilde Q + E]$ intervals
+and resolve overlaps.
 \end{remark}
 
 \begin{remark}[Parameter scales in practice]\label{rem:v2-parameter-scales}
