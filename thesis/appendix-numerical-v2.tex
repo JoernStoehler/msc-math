@@ -361,19 +361,23 @@ In particular:
 \item \emph{Singular vectors.}
   The angular error of the $j$-th singular vector satisfies
   $\theta(\hat v_j, v_j)
-    \lesssim \varepsilon_{\mathrm{mach}}\,\|M\|\, / \,
+    \leq p(m)\,\varepsilon_{\mathrm{mach}}\,\|M\|\, / \,
     \operatorname{gap}_j$,
   where $\operatorname{gap}_j
     = \min_{k \neq j} |\sigma_j - \sigma_k|$
   is the singular value gap
   \cite{Wedin1972}.
   Clustered singular values yield poorly determined
-  individual vectors, but their joint span remains accurate.
+  individual vectors, but their joint span remains
+  accurate \cite[Thm.~8.6.5]{GolubVanLoan2013}.
 \item \emph{Solve step.}
   The back-substitution
-  $\hat x = \hat V \hat\Sigma^{-1} \hat U^\top b$ satisfies
-  $\|\hat x - x\| / \|x\|
-    \lesssim \kappa(M)\,\varepsilon_{\mathrm{mach}}$,
+  $\hat x = \hat V \hat\Sigma^{-1} \hat U^\top b$
+  satisfies
+  \[
+    \frac{\|\hat x - x\|}{\|x\|}
+      \leq p(m)\,\kappa(M)\,\varepsilon_{\mathrm{mach}},
+  \]
   where $\kappa(M) = \sigma_1 / \sigma_{\min}$
   is the condition number
   \cite[Ch.~5]{Higham2002}.
@@ -384,6 +388,9 @@ For our matrices ($m \leq 21$, since $|S| \leq 16$),
 the polynomial factor~$p(m)$ is negligible.
 The dominant error source is the condition
 number~$\kappa(M)$.
+% [TODO: JÖRN - verify the theorem numbers (Thm.~8.6.1,
+%  Thm.~8.6.5) against the physical copy of Golub--Van Loan,
+%  4th ed. These are from agent's general knowledge of the book.]
 \end{remark}
 
 \paragraph{Near-singularity.}
@@ -404,7 +411,11 @@ qualitatively different contributions:
   Along the near-null space of the KKT system (directions
   corresponding to small singular values), the
   error in $(\hat\beta, \hat\lambda, \hat\nu)$ can be
-  large---of order $O(1/\sigma_{\min})$.
+  large: by Remark~\ref{rem:v2-svd-accuracy}~(3),
+  the relative error is of order
+  $\kappa(M)\,\varepsilon_{\mathrm{mach}}$,
+  so the absolute error scales as
+  $\sigma_1 / \sigma_{\min}$.
   However, the error in the objective value
   $Q = \hat\beta^\top H\,\hat\beta$ is only \emph{quadratic}
   in the perturbation along these directions, because the
@@ -424,8 +435,12 @@ qualitatively different contributions:
   error in~$\hat\beta$ is of order
   $O(\varepsilon_{\mathrm{mach}}\,\sigma_1 / \sigma_j)$,
   which is small.
-  The resulting~$Q$ error is also small
-  (bounded by standard perturbation theory).
+  The resulting~$Q$ error is also small:
+  the $Q$~perturbation from a small~$\delta\beta$ is
+  at most $2\,\|H\|\,\|\beta_0\|\,\|\delta\beta\|
+  + \|H\|\,\|\delta\beta\|^2$,
+  which is $O(\varepsilon_{\mathrm{mach}})$ when
+  $\|\delta\beta\|$ is $O(\varepsilon_{\mathrm{mach}})$.
 \end{description}
 
 % [TODO: JÖRN - work out a concrete Q error formula.
