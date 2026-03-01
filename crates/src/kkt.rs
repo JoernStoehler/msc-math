@@ -14,10 +14,9 @@ pub const EPS_BETA_POSITIVE: f64 = 1e-12;
 /// Minimum Q(β) value to consider a solution valid (avoids division-by-near-zero in action).
 pub const EPS_Q_POSITIVE: f64 = 1e-15;
 
-/// Result of KKT solve with Q interval bounding.
+/// Result of KKT solve with Q error bound.
 ///
-/// See `[lem:v2-q-interval]` (thesis): the true objective Q(β₀) lies in
-/// [q_corrected - q_error_bound, q_corrected + q_error_bound].
+/// See `[lem:v2-q-interval]` (thesis): |Q(β₀) - q_corrected| ≤ q_error_bound.
 ///
 /// The corrected Q absorbs the first-order error from the KKT residual,
 /// leaving only a second-order remainder bounded by q_error_bound.
@@ -25,12 +24,12 @@ pub const EPS_Q_POSITIVE: f64 = 1e-15;
 pub struct KktResult {
     /// Optimal β vector (numerical approximation, all components > 0).
     pub beta: Vec<f64>,
-    /// Residual-corrected Q value: Q̃ = Q(β̂) - 2(r₁ᵀλ̂ + r₃ν̂).
+    /// Residual-corrected Q value: Q̃ = Q(β̂) - (r₂ᵀμ̂ + r₃ξ̂).
     /// See `[eq:v2-q-corrected]` (thesis).
     pub q_corrected: f64,
     /// Error bound E on Q̃: |Q(β₀) - Q̃| ≤ E.
     /// See `[eq:v2-q-error-bound]` (thesis).
-    /// Used by the accumulator for interval-based majorization.
+    /// Used by the accumulator for majorization.
     #[allow(dead_code)]
     pub q_error_bound: f64,
 }
@@ -61,7 +60,7 @@ const EPS_SVD_FLOOR: f64 = 1e-12;
 /// to small values (which a gap-ratio approach would miss).
 ///
 /// For near-singular systems, the null space directions are used to search
-/// for β > 0, and the Q interval (see `[lem:v2-q-interval]`) quantifies
+/// for β > 0, and the Q error bound (see `[lem:v2-q-interval]`) quantifies
 /// the resulting objective uncertainty.
 ///
 /// **Why 1e-3:** The degenerate (4,4) Lagrangian product at θ≈0° has
@@ -261,13 +260,13 @@ pub(crate) fn build_kkt_system(
     (kkt, rhs)
 }
 
-/// SVD path with condition-number-based rank detection and Q interval bounding.
+/// SVD path with condition-number-based rank detection and Q error bounding.
 ///
 /// Operates on a pre-built KKT matrix. Used by both `solve_kkt` (as fallback
 /// after LU fails) and `solve_kkt_svd_only` (directly).
 ///
-/// Returns a `KktResult` with the β vector and a Q interval [Q̃ - E, Q̃ + E]
-/// that contains the true objective value. See `[lem:v2-q-interval]` (thesis).
+/// Returns a `KktResult` with the β vector, corrected Q̃, and error bound E
+/// satisfying |Q(β₀) - Q̃| ≤ E. See `[lem:v2-q-interval]` (thesis).
 ///
 /// Condition-number detection: singular values below max_sv * SVD_CONDITION_TAU
 /// are treated as part of the null space (for the β > 0 search).
@@ -313,7 +312,7 @@ fn solve_kkt_svd_path(
         return None;
     }
 
-    // --- Q interval computation (Algorithm [alg:v2-q-interval]) ---
+    // --- Q error bound computation (Algorithm [alg:v2-q-interval]) ---
     // Extract residual blocks: r₂ = N^T β̂ (rows m..m+4), r₃ = η^T β̂ - 1 (row m+4).
     // The solution vector is [β̂; μ̂; ξ̂] with negated multipliers (μ = -λ, ξ = -ν).
     // Q̃ = Q(β̂) - (r₂ᵀμ̂ + r₃ξ̂)  [Lemma [lem:v2-q-interval], Step 2-3].
@@ -337,7 +336,7 @@ fn solve_kkt_svd_path(
 
     let beta0: Vec<f64> = (0..m).map(|i| x0[i]).collect();
 
-    // If already feasible, compute interval and return.
+    // If already feasible, compute error bound and return.
     if beta0.iter().all(|&b| b > EPS_BETA_POSITIVE) {
         let q_raw = q_from_beta(normals, perm, &beta0);
         let q_corrected = q_raw - (r2_dot_mu + r3 * xi_hat);
@@ -389,7 +388,7 @@ fn solve_kkt_svd_path(
     }
 
     // Q is constant along the null space, so Q(β_opt) = Q(β₀).
-    // The interval [Q̃ - E, Q̃ + E] bounds the true Q for the whole family.
+    // |Q(β₀) - Q̃| ≤ E bounds the true Q for the whole family.
     let q_raw = q_from_beta(normals, perm, &beta_opt);
     let q_corrected = q_raw - (r2_dot_mu + r3 * xi_hat);
     let r_sq = residual_norm * residual_norm;
@@ -413,7 +412,7 @@ fn solve_kkt_svd_path(
 /// The SVD-only variant (`solve_kkt_svd_only`) is faster. LU is retained
 /// for evaluation but not used in the production capacity algorithms.
 ///
-/// Returns `Some(KktResult)` with β > 0 and a Q interval, or `None` if no
+/// Returns `Some(KktResult)` with β > 0 and a Q error bound, or `None` if no
 /// admissible solution exists.
 ///
 /// When the KKT system is rank-deficient (common for polytopes with

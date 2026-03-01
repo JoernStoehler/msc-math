@@ -7,8 +7,8 @@
 %   - Approved content from appendix-numerical-combinatorics.tex (A.1)
 %   - Approved content from appendix-numerical-dismissal.tex (A.2)
 %   - Rewritten A.3 (reads well but evolving)
-%   - New: intro paragraph, perturbation trick, Q error framing,
-%     interval-based accumulator (all unreviewed)
+%   - New: intro paragraph, perturbation trick, Q error bound,
+%     accumulator with error bounds (all unreviewed)
 %
 % Structure:
 %   Intro paragraph
@@ -600,7 +600,7 @@ proportional to~$\lambda_j$:
 \end{itemize}
 In particular, directions with small~$|\lambda_j|$
 change~$Q$ only slowly.
-This is the mechanism underlying the $Q$~interval bound
+This is the mechanism underlying the $Q$~error bound
 (Lemma~\ref{lem:v2-q-interval}): even though the
 numerical error~$\delta\beta$ can be large along
 near-null directions (of order~$\|r\| / |\lambda_j|$),
@@ -652,9 +652,9 @@ contributions:
 \end{itemize}
 \end{remark}
 
-% --- Q interval lemma (replaces dismiss logic B.5--B.9, unreviewed) ---
+% --- Q error bound lemma (replaces dismiss logic B.5--B.9, unreviewed) ---
 
-\begin{lemma}[$Q$ interval from KKT residual]%
+\begin{lemma}[$Q$ error bound from KKT residual]%
 \label{lem:v2-q-interval}
 Let $M$ be the symmetric KKT matrix
 of~\eqref{eq:v2-kkt-system}
@@ -687,8 +687,7 @@ and the \emph{second-order error bound}
   E \;=\; \frac{\|r\|^2}{\sigma_{\min}}
     \Bigl(2 + \frac{\|H\|}{2\,\sigma_{\min}}\Bigr).
 \end{equation}
-Then the exact objective satisfies
-$Q(\beta_0) \in [\tilde Q - E,\; \tilde Q + E]$.
+Then $|Q(\beta_0) - \tilde Q| \leq E$.
 \end{lemma}
 
 \begin{proof}
@@ -782,11 +781,12 @@ where $|R| \leq 2\,\|r\|^2 / \sigma_{\min}
 \qedhere
 \end{proof}
 
-\begin{algorithm}[$Q$ interval computation]%
+\begin{algorithm}[$Q$ value with error bound]%
 \label{alg:v2-q-interval}
 For each pair $(S, \sigma)$ that survives pruning,
-the algorithm computes a confidence interval for the
-true objective value~$Q(\beta_0)$:
+the algorithm computes a corrected objective
+value~$\tilde Q$ with error bound~$E$
+satisfying $|Q(\beta_0) - \tilde Q| \leq E$:
 \begin{enumerate}
 \item Solve the symmetric KKT
   system~\eqref{eq:v2-kkt-system}
@@ -803,13 +803,12 @@ true objective value~$Q(\beta_0)$:
 \item Compute the error bound
   $E = \|r\|^2\,(2/\sigma_{\min}
     + \|H\| / (2\,\sigma_{\min}^2))$.
-\item Return the interval
-  $[\tilde Q - E,\; \tilde Q + E]$
-  together with~$\hat\beta$.
+\item Return the corrected value~$\tilde Q$,
+  the error bound~$E$, and~$\hat\beta$.
 \end{enumerate}
 \end{algorithm}
 
-\begin{remark}[Interval width in practice]%
+\begin{remark}[Error bound in practice]%
 \label{rem:v2-interval-width}
 For well-conditioned systems
 ($\sigma_{\min}$ bounded away from zero), the residual satisfies
@@ -817,7 +816,7 @@ $\|r\| = O(\varepsilon_{\mathrm{mach}}\,\|M\|)$ by
 Remark~\ref{rem:v2-svd-accuracy}, so
 $E = O(\varepsilon_{\mathrm{mach}}^2)$ and
 $\tilde Q \approx Q(\hat\beta)$.
-The interval is tight and the correction negligible.
+The error bound is tight and the correction negligible.
 
 For near-singular systems
 ($\sigma_{\min} \ll 1$), the residual remains small
@@ -826,16 +825,16 @@ $E$ grows as $1/\sigma_{\min}^2$.
 The correction~$r_2^\top\hat\mu + r_3\,\hat\xi$
 absorbs the dominant first-order error, leaving only
 a second-order remainder.
-Without this correction, the naive interval
-$Q(\hat\beta) \pm \Delta$ would require
-$\Delta = O(\|r\| / \sigma_{\min})$ (first-order width),
-which is much wider.
+Without this correction, a naive bound
+$|Q(\hat\beta) - Q(\beta_0)| \leq \Delta$ would require
+$\Delta = O(\|r\| / \sigma_{\min})$ (first-order),
+which is much larger.
 \end{remark}
 
 % --- Positivity check (from approved A.2, ad-hoc framing) ---
 
 \paragraph{Admissibility check.}
-In addition to the $Q$~interval,
+In addition to the $Q$~value with error bound,
 Algorithm~\ref{alg:ehz} requires
 $\beta_i > 0$ for all $i \in S$.
 Since~$\hat\beta$ differs from the true~$\beta^*$ by
@@ -876,50 +875,48 @@ the candidate's admissibility is uncertain:
 \end{itemize}
 
 % [TODO: JÖRN - in the new framework, the three-valued
-%  verdict feeds into the Q interval: TRUE admissibility
-%  gives a tight interval [Q-eps, Q+eps] from numerical
-%  error alone. UNKNOWN admissibility gives a wider interval
-%  or flags the node for special handling. The exact
-%  interaction needs to be worked out.]
+%  verdict feeds into the Q error bound: TRUE admissibility
+%  gives a tight bound from numerical error alone. UNKNOWN
+%  admissibility gives a wider bound or flags the node for
+%  special handling. The exact interaction needs to be
+%  worked out.]
 
 
 % ===================================================================
 \subsection{Accumulator and Final Answer}\label{app:v2-answer}
 % ===================================================================
 
-% --- Interval-based accumulator (NEW, unreviewed, evolving) ---
+% --- Accumulator with error bounds (NEW, unreviewed, evolving) ---
 
-% [TODO: JÖRN - this section describes the interval-based
-%  accumulator design from our discussion. The details are
-%  still evolving. Key ideas:
+% [TODO: JÖRN - this section describes the accumulator design
+%  from our discussion. The details are still evolving. Key ideas:
 %
-%  1. Each non-pruned, non-dismissed (S,σ) produces an interval
-%     [Q_min, Q_max] for its contribution, where the interval
-%     width comes from the Q error estimate of Section B.3.
+%  1. Each non-pruned (S,σ) produces a corrected Q̃ with error
+%     bound E from Section B.3.
 %     Also stored: (S, σ, β̂, metadata about β structure).
 %
-%  2. The accumulator maintains a set of intervals and prunes
-%     majorized ones: if Q_max < Q_min' for some other
-%     candidate, the interval is dominated and discarded.
+%  2. The accumulator prunes majorized candidates: if
+%     Q̃ + E < Q̃' - E' for some other candidate, the first
+%     is dominated and discarded.
 %
-%  3. At the end, remaining intervals with uncertain
+%  3. At the end, remaining candidates with uncertain
 %     admissibility are resolved by a rational arithmetic
-%     algorithm that turns intervals into exact values.
+%     algorithm that produces exact values.
 %
 %  Open questions:
-%  - Exact formula for [Q_min, Q_max] from SVD output
 %  - How the β structure (which components are near zero)
-%    interacts with the interval
+%    interacts with the error bound
 %  - Whether the "walk to shorter σ'" argument can tighten
-%    intervals in some cases
+%    bounds in some cases
 %  - Whether the rational resolution step is the same as
 %    the current "second pass" or different]
 
 The algorithm processes all candidate pairs
 $(S, \sigma)$ and maintains an accumulator of candidates,
-each annotated with an interval $[Q_{\min}, Q_{\max}]$
-that contains the true objective value.
-The interval width reflects the numerical uncertainty
+each annotated with a corrected value~$\tilde Q$ and
+error bound~$E$ satisfying
+$|Q(\beta_0) - \tilde Q| \leq E$.
+The error bound reflects the numerical uncertainty
 from the KKT solve (Section~\ref{app:v2-kkt}).
 
 \paragraph{Candidate classification.}
@@ -932,33 +929,32 @@ following categories:
   determines that no Reeb orbit with
   combinatorics~$(S, \sigma)$ exists.
 
-\item[Accepted with interval.]
-  The KKT solve produces~$\hat\beta$ and
-  Algorithm~\ref{alg:v2-q-interval} computes an interval
-  $[Q_{\min}, Q_{\max}] \ni Q(\beta_0)$
+\item[Accepted.]
+  The KKT solve produces~$\hat\beta$,
+  and Algorithm~\ref{alg:v2-q-interval} computes
+  a corrected~$\tilde Q$ with error bound~$E$
   (Lemma~\ref{lem:v2-q-interval}).
   The candidate is stored in the accumulator.
 
 \item[Majorized.]
-  A candidate whose $Q_{\max}$ is below the $Q_{\min}$
-  of some other accepted candidate.
+  A candidate whose $\tilde Q + E$ is below
+  $\tilde Q' - E'$ for some other accepted candidate.
   It cannot be the global maximum regardless of
-  where the true values fall within their intervals,
+  where the true values fall within their error bounds,
   so it is discarded from the accumulator.
 \end{description}
 
 \paragraph{Final answer.}
 After all pairs are processed, the accumulator contains
 the surviving (non-majorized) candidates.
-If a single candidate's $Q_{\min}$ exceeds all others'
-$Q_{\max}$, the capacity is determined:
-$c_{\mathrm{EHZ}}(K) = 1 / (2\, Q_{\min})$
-(up to the interval width).
-If multiple candidates have overlapping intervals,
+If a single candidate's $\tilde Q - E$ exceeds all
+others' $\tilde Q' + E'$, the capacity is determined:
+$c_{\mathrm{EHZ}}(K) = 1 / (2\, (\tilde Q - E))$
+(up to the error bound width).
+If multiple candidates have overlapping error bounds,
 the algorithm resolves the remaining uncertainty by
 re-evaluating only the surviving candidates using exact
-rational arithmetic, turning each interval into an
-exact value.
+rational arithmetic, producing exact values.
 
 % [TODO: JÖRN - decide on the rational resolution algorithm.
 %  Options: (a) re-solve the full KKT system over Q for
