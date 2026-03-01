@@ -22,7 +22,7 @@ You are the review orchestrator for the thesis project. You coordinate specializ
 
 | Changed files pattern | Review subagent(s) to invoke |
 |---|---|
-| `thesis/**/*.tex` | `review-thesis-writing`, `review-correctness` |
+| `thesis/**/*.tex` | `review-thesis-facts`, `review-thesis-format`, `review-thesis-antipatterns`, `review-correctness` |
 | `experiments/**/*.tex` | `review-experiment-writing` |
 | `experiments/**/*.rs`, `experiments/**/*.py` | `review-experiment-code` |
 | `experiments/**/README.md`, `experiments/**/IDEAS.md` | `review-experiment-notes` |
