@@ -408,19 +408,16 @@ In particular:
   $\hat x = \sum_{|\lambda_j| > \tau}
     (v_j^\top b / \lambda_j)\, v_j$
   amplifies the error in~$b$ by~$1/|\lambda_j|$
-  along each retained eigendirection.
-  For small~$|\lambda_j|$, the error in~$\hat x$
-  can be large---but $Q$~changes only by
-  $O(|\lambda_j|)$ along the $j$-th direction
-  (Remark~\ref{rem:v2-near-null-q},
-  including the limit $\lambda_j = 0$).
-  The $1/|\lambda_j|$ amplification in~$x$
-  and the $O(|\lambda_j|)$ insensitivity of~$Q$ cancel,
-  so each eigendirection contributes
-  $O(\varepsilon_{\mathrm{mach}}\,\|M\|)$
-  to the $Q$~error, regardless of~$|\lambda_j|$.
-  Lemma~\ref{lem:v2-q-interval} makes this
-  cancellation precise.
+  along each retained eigendirection,
+  giving overall relative error
+  $\|\hat x - x\| / \|x\|
+    = O(\kappa_\tau\,\varepsilon_{\mathrm{mach}})$,
+  where
+  $\kappa_\tau = |\lambda_{\max}|
+    / \min_{|\lambda_j|>\tau} |\lambda_j|$
+  \cite[Ch.~5]{Higham2002}.
+  Near-singular systems ($\kappa_\tau \gg 1$) amplify
+  rounding errors proportionally.
 \end{enumerate}
 For our matrices ($m + 5 \leq 21$, since $|S| \leq 16$),
 the polynomial factor~$p(m)$ is negligible.
