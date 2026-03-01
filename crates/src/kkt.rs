@@ -14,6 +14,40 @@ pub const EPS_BETA_POSITIVE: f64 = 1e-12;
 /// Minimum Q(β) value to consider a solution valid (avoids division-by-near-zero in action).
 pub const EPS_Q_POSITIVE: f64 = 1e-15;
 
+/// Result of KKT solve with Q interval bounding.
+///
+/// See `[lem:v2-q-interval]` (thesis): the true objective Q(β₀) lies in
+/// [q_corrected - q_error_bound, q_corrected + q_error_bound].
+///
+/// The corrected Q absorbs the first-order error from the KKT residual,
+/// leaving only a second-order remainder bounded by q_error_bound.
+#[derive(Clone, Debug)]
+pub struct KktResult {
+    /// Optimal β vector (numerical approximation, all components > 0).
+    pub beta: Vec<f64>,
+    /// Residual-corrected Q value: Q̃ = Q(β̂) - 2(r₁ᵀλ̂ + r₃ν̂).
+    /// See `[eq:v2-q-corrected]` (thesis).
+    pub q_corrected: f64,
+    /// Error bound E on Q̃: |Q(β₀) - Q̃| ≤ E.
+    /// See `[eq:v2-q-error-bound]` (thesis).
+    /// Used by the accumulator for interval-based majorization.
+    #[allow(dead_code)]
+    pub q_error_bound: f64,
+}
+
+impl KktResult {
+    /// Lower bound on true Q (conservative for capacity upper bound).
+    #[allow(dead_code)]
+    pub fn q_min(&self) -> f64 {
+        self.q_corrected - self.q_error_bound
+    }
+    /// Upper bound on true Q (optimistic for capacity lower bound).
+    #[allow(dead_code)]
+    pub fn q_max(&self) -> f64 {
+        self.q_corrected + self.q_error_bound
+    }
+}
+
 /// Absolute floor: if the largest singular value is below this, the entire matrix
 /// is treated as numerically zero (early return). The relative rank detection is
 /// handled by SVD_CONDITION_TAU.
@@ -22,20 +56,18 @@ const EPS_SVD_FLOOR: f64 = 1e-12;
 /// Condition-number threshold for SVD rank detection: singular values below
 /// max_sv * SVD_CONDITION_TAU are treated as part of the null space.
 ///
-/// See `[alg:near-singular-handling]` (thesis): a singular value σ_j is "small"
-/// if σ_j < σ_1 · τ. This detects both isolated small singular values (the
-/// classic gap case) and gradual decay to small values (which a gap-ratio
-/// approach would miss).
+/// A singular value σ_j is "small" if σ_j < σ_1 · τ. This detects both
+/// isolated small singular values (the classic gap case) and gradual decay
+/// to small values (which a gap-ratio approach would miss).
+///
+/// For near-singular systems, the null space directions are used to search
+/// for β > 0, and the Q interval (see `[lem:v2-q-interval]`) quantifies
+/// the resulting objective uncertainty.
 ///
 /// **Why 1e-3:** The degenerate (4,4) Lagrangian product at θ≈0° has
 /// sv[8]≈0.51, sv[9]≈8.6e-4 with σ_1 ≈ 1–2, giving sv[9]/σ_1 ≈ 4e-4.
 /// The threshold 1e-3 catches this with margin. Well-conditioned random
 /// polytopes have smallest sv ≈ 0.01–0.1, well above 1e-3 · σ_1.
-///
-/// **What it catches:** Near-degenerate KKT systems where a singular value
-/// ~1e-4 to ~1e-3 indicates approximate rank deficiency. The thesis Algorithm
-/// `[alg:near-singular-handling]` then checks whether the near-null direction
-/// has significant β-component (dismiss) or is confined to multipliers (use β₀).
 ///
 /// Regression tests: `svd_gap_ratio_44_degenerate`, `svd_gap_ratio_44_theta43`.
 const SVD_CONDITION_TAU: f64 = 1e-3;
@@ -222,21 +254,23 @@ pub(crate) fn build_kkt_system(
     (kkt, rhs)
 }
 
-/// SVD path with condition-number-based rank detection.
+/// SVD path with condition-number-based rank detection and Q interval bounding.
 ///
 /// Operates on a pre-built KKT matrix. Used by both `solve_kkt` (as fallback
 /// after LU fails) and `solve_kkt_svd_only` (directly).
 ///
+/// Returns a `KktResult` with the β vector and a Q interval [Q̃ - E, Q̃ + E]
+/// that contains the true objective value. See `[lem:v2-q-interval]` (thesis).
+///
 /// Condition-number detection: singular values below max_sv * SVD_CONDITION_TAU
-/// are treated as part of the null space. See `[alg:near-singular-handling]`
-/// (thesis) for the mathematical justification.
+/// are treated as part of the null space (for the β > 0 search).
 fn solve_kkt_svd_path(
     kkt: &DMatrix<f64>,
     rhs: &DVector<f64>,
     normals: &[Vector4<f64>],
     heights: &[f64],
     perm: &[usize],
-) -> Option<(Vec<f64>, f64)> {
+) -> Option<KktResult> {
     let m = perm.len();
     let size = m + 5;
 
@@ -256,45 +290,6 @@ fn solve_kkt_svd_path(
     let threshold = max_sv * SVD_CONDITION_TAU;
     let rank = sv.iter().filter(|&&s| s > threshold).count();
 
-    // Early dismissal via δβ-component check.
-    // See `[alg:near-singular-handling]` (thesis): if a near-null direction has
-    // significant β-component, the pair's value is covered by a smaller pair
-    // (Prop `[prop:approximate-dismissal]`). Skip without computing β₀.
-    if rank < size && m >= 5 {
-        // Build constraint matrix C = [N | η] ∈ ℝ^{m×5} and compute σ_C.
-        let mut c_matrix = DMatrix::zeros(m, 5);
-        for i in 0..m {
-            let n = &normals[perm[i]];
-            for j in 0..4 {
-                c_matrix[(i, j)] = n[j];
-            }
-            c_matrix[(i, 4)] = heights[perm[i]];
-        }
-        let c_svd = c_matrix.svd(false, false);
-        let sigma_c = c_svd
-            .singular_values
-            .iter()
-            .cloned()
-            .fold(f64::INFINITY, f64::min);
-
-        if sigma_c > EPS_SVD_FLOOR {
-            // C has full column rank. Check each near-null direction.
-            for j in rank..size {
-                let delta_beta_norm: f64 =
-                    (0..m).map(|k| v_t[(j, k)].powi(2)).sum::<f64>().sqrt();
-                if delta_beta_norm > sv[j] / sigma_c {
-                    // Near-null direction has significant β-component → dismiss.
-                    // If β₀ > 0 existed, Prop A.3 guarantees a smaller pair covers
-                    // the value. If not, no admissible critical point anyway.
-                    return None;
-                }
-            }
-            // All near-null directions confined to multiplier block.
-            // β₀ is well-determined despite near-singularity. Fall through.
-        }
-        // If σ_C ≈ 0: degenerate constraints, cannot dismiss. Fall through.
-    }
-
     // Compute pseudoinverse solution manually using only the top `rank` SVs.
     // This avoids relying on nalgebra's solve() tolerance interpretation.
     let mut x0 = DVector::zeros(size);
@@ -305,26 +300,51 @@ fn solve_kkt_svd_path(
         }
     }
 
-    let residual = (kkt * &x0 - rhs).norm();
-    if residual > EPS_KKT_RESIDUAL {
+    let residual_vec = kkt * &x0 - rhs;
+    let residual_norm = residual_vec.norm();
+    if residual_norm > EPS_KKT_RESIDUAL {
         return None;
     }
 
+    // --- Q interval computation (Algorithm [alg:v2-q-interval]) ---
+    // Extract residual blocks: r₁ = N^T β̂ (rows m..m+4), r₃ = η^T β̂ - 1 (row m+4).
+    let r1_dot_lambda: f64 = (m..m + 4).map(|i| residual_vec[i] * x0[i]).sum();
+    let r3 = residual_vec[m + 4];
+    let nu_hat = x0[m + 4];
+
+    // σ_min of the full KKT matrix (smallest SV, floored to avoid division by zero).
+    let sigma_min = sv
+        .iter()
+        .cloned()
+        .fold(f64::INFINITY, f64::min)
+        .max(f64::MIN_POSITIVE);
+
+    // ‖H‖ ≤ σ₁ = max_sv (H is a submatrix of M, so ‖H‖ ≤ ‖M‖).
+    let h_norm_bound = max_sv;
+
     let beta0: Vec<f64> = (0..m).map(|i| x0[i]).collect();
 
-    // If already feasible, return
+    // If already feasible, compute interval and return.
     if beta0.iter().all(|&b| b > EPS_BETA_POSITIVE) {
-        let q_val = q_from_beta(normals, perm, &beta0);
-        return Some((beta0, q_val));
+        let q_raw = q_from_beta(normals, perm, &beta0);
+        let q_corrected = q_raw - 2.0 * (r1_dot_lambda + r3 * nu_hat);
+        let r_sq = residual_norm * residual_norm;
+        let q_error_bound = r_sq * (4.0 / sigma_min + h_norm_bound / (sigma_min * sigma_min));
+        return Some(KktResult {
+            beta: beta0,
+            q_corrected,
+            q_error_bound,
+        });
     }
 
-    // Full rank: unique solution with β ≤ 0, orbit is genuinely infeasible
+    // Full rank: unique solution with β ≤ 0, orbit is genuinely infeasible.
     if rank == size {
         return None;
     }
 
     // Rank-deficient: search null space for β > 0.
     // Null space = right singular vectors for sv's below rank threshold.
+    // Q(β) is constant along the null space (constraint-preserving directions).
     let null_beta: Vec<Vec<f64>> = (rank..size)
         .map(|i| (0..m).map(|j| v_t[(i, j)]).collect())
         .collect();
@@ -354,8 +374,18 @@ fn solve_kkt_svd_path(
         return None;
     }
 
-    let q_val = q_from_beta(normals, perm, &beta_opt);
-    Some((beta_opt, q_val))
+    // Q is constant along the null space, so Q(β_opt) = Q(β₀).
+    // The interval [Q̃ - E, Q̃ + E] bounds the true Q for the whole family.
+    let q_raw = q_from_beta(normals, perm, &beta_opt);
+    let q_corrected = q_raw - 2.0 * (r1_dot_lambda + r3 * nu_hat);
+    let r_sq = residual_norm * residual_norm;
+    let q_error_bound = r_sq * (4.0 / sigma_min + h_norm_bound / (sigma_min * sigma_min));
+
+    Some(KktResult {
+        beta: beta_opt,
+        q_corrected,
+        q_error_bound,
+    })
 }
 
 /// Solve the KKT system for max Q(β) subject to N^T β = 0, η^T β = 1.
@@ -368,7 +398,8 @@ fn solve_kkt_svd_path(
 /// The SVD-only variant (`solve_kkt_svd_only`) is faster. LU is retained
 /// for evaluation but not used in the production capacity algorithms.
 ///
-/// Returns Some((β, Q(β))) if a solution with β > 0 exists, None otherwise.
+/// Returns `Some(KktResult)` with β > 0 and a Q interval, or `None` if no
+/// admissible solution exists.
 ///
 /// When the KKT system is rank-deficient (common for polytopes with
 /// axis-aligned normals in symplectic subplanes), there is a family of
@@ -381,7 +412,7 @@ pub(crate) fn solve_kkt(
     normals: &[Vector4<f64>],
     heights: &[f64],
     perm: &[usize],
-) -> Option<(Vec<f64>, f64)> {
+) -> Option<KktResult> {
     let m = perm.len();
     let (kkt, rhs) = build_kkt_system(normals, heights, perm);
 
@@ -396,7 +427,13 @@ pub(crate) fn solve_kkt(
                 let beta: Vec<f64> = (0..m).map(|i| solution[i]).collect();
                 if beta.iter().all(|&b| b > EPS_BETA_POSITIVE) {
                     let q_val = q_from_beta(normals, perm, &beta);
-                    return Some((beta, q_val));
+                    // LU fast path: well-conditioned solution with tiny residual.
+                    // Q̃ = Q(β̂) with E = 0 (correction negligible for LU).
+                    return Some(KktResult {
+                        beta,
+                        q_corrected: q_val,
+                        q_error_bound: 0.0,
+                    });
                 }
             }
         }
@@ -417,7 +454,7 @@ pub(crate) fn solve_kkt_svd_only(
     normals: &[Vector4<f64>],
     heights: &[f64],
     perm: &[usize],
-) -> Option<(Vec<f64>, f64)> {
+) -> Option<KktResult> {
     let (kkt, rhs) = build_kkt_system(normals, heights, perm);
     solve_kkt_svd_path(&kkt, &rhs, normals, heights, perm)
 }

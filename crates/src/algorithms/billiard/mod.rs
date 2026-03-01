@@ -105,25 +105,26 @@ pub fn billiard_capacity(polytope: &Polytope4D) -> Result<Option<BilliardResult>
         enumerate_k_bounce_sigmas(k, &q_blocks, &p_blocks, |sigma| {
             iterations += 1;
 
-            if let Some((beta, q_val)) = solve_kkt(normals, heights, sigma) {
+            if let Some(result) = solve_kkt(normals, heights, sigma) {
+                let q_val = result.q_corrected;
                 if q_val <= EPS_Q_POSITIVE {
                     return;
                 }
-                let beta_min = beta.iter().cloned().fold(f64::INFINITY, f64::min);
+                let beta_min = result.beta.iter().cloned().fold(f64::INFINITY, f64::min);
                 let action = 0.5 / q_val;
 
                 if beta_min > EPS_BETA_POSITIVE {
                     let update = best_certified.as_ref().is_none_or(|b| action < b.0);
                     if update {
                         best_certified =
-                            Some((action, sigma.to_vec(), beta.clone(), k));
+                            Some((action, sigma.to_vec(), result.beta.clone(), k));
                     }
                 }
 
                 if beta_min > -EPS_BETA_POSITIVE {
                     let update = best_uncertain.as_ref().is_none_or(|b| action < b.0);
                     if update {
-                        best_uncertain = Some((action, sigma.to_vec(), beta, k));
+                        best_uncertain = Some((action, sigma.to_vec(), result.beta, k));
                     }
                 }
             }

@@ -85,10 +85,10 @@ fn bench_kkt_lu_vs_svd() {
     let mut lu_svd_count = 0u64;
     let mut lu_svd_best = f64::INFINITY;
     for sigma in &sigmas {
-        if let Some((beta, q_val)) = solve_kkt(&normals, &heights, sigma) {
-            if beta.iter().all(|&b| b > EPS_BETA_POSITIVE) && q_val > EPS_Q_POSITIVE {
+        if let Some(result) = solve_kkt(&normals, &heights, sigma) {
+            if result.beta.iter().all(|&b| b > EPS_BETA_POSITIVE) && result.q_corrected > EPS_Q_POSITIVE {
                 lu_svd_count += 1;
-                lu_svd_best = lu_svd_best.min(0.5 / q_val);
+                lu_svd_best = lu_svd_best.min(0.5 / result.q_corrected);
             }
         }
     }
@@ -99,10 +99,10 @@ fn bench_kkt_lu_vs_svd() {
     let mut svd_count = 0u64;
     let mut svd_best = f64::INFINITY;
     for sigma in &sigmas {
-        if let Some((beta, q_val)) = solve_kkt_svd_only(&normals, &heights, sigma) {
-            if beta.iter().all(|&b| b > EPS_BETA_POSITIVE) && q_val > EPS_Q_POSITIVE {
+        if let Some(result) = solve_kkt_svd_only(&normals, &heights, sigma) {
+            if result.beta.iter().all(|&b| b > EPS_BETA_POSITIVE) && result.q_corrected > EPS_Q_POSITIVE {
                 svd_count += 1;
-                svd_best = svd_best.min(0.5 / q_val);
+                svd_best = svd_best.min(0.5 / result.q_corrected);
             }
         }
     }

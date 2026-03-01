@@ -98,11 +98,12 @@ pub fn ehz_capacity_unpruned(polytope: &Polytope4D) -> Option<EhzResult> {
             for perm in cyclic_permutations(&subset) {
                 iterations += 1;
 
-                if let Some((beta, q_val)) = solve_kkt(normals, heights, &perm) {
+                if let Some(result) = solve_kkt(normals, heights, &perm) {
+                    let q_val = result.q_corrected;
                     if q_val <= EPS_Q_POSITIVE {
                         continue;
                     }
-                    let beta_min = beta.iter().cloned().fold(f64::INFINITY, f64::min);
+                    let beta_min = result.beta.iter().cloned().fold(f64::INFINITY, f64::min);
                     let action = 0.5 / q_val;
 
                     // Certified: β_i > +EPS (all predicates TRUE)
@@ -113,7 +114,7 @@ pub fn ehz_capacity_unpruned(polytope: &Polytope4D) -> Option<EhzResult> {
                                 action,
                                 subset.clone(),
                                 perm.clone(),
-                                beta.clone(),
+                                result.beta.clone(),
                             ));
                         }
                     }
@@ -126,7 +127,7 @@ pub fn ehz_capacity_unpruned(polytope: &Polytope4D) -> Option<EhzResult> {
                                 action,
                                 subset.clone(),
                                 perm.clone(),
-                                beta,
+                                result.beta,
                             ));
                         }
                     }
@@ -274,11 +275,12 @@ pub fn ehz_capacity(polytope: &Polytope4D) -> Option<EhzResult> {
 
                 iterations += 1;
 
-                if let Some((beta, q_val)) = solve_kkt(normals, heights, perm) {
+                if let Some(result) = solve_kkt(normals, heights, perm) {
+                    let q_val = result.q_corrected;
                     if q_val <= EPS_Q_POSITIVE {
                         return;
                     }
-                    let beta_min = beta.iter().cloned().fold(f64::INFINITY, f64::min);
+                    let beta_min = result.beta.iter().cloned().fold(f64::INFINITY, f64::min);
                     let action = 0.5 / q_val;
 
                     if beta_min > EPS_BETA_POSITIVE {
@@ -288,7 +290,7 @@ pub fn ehz_capacity(polytope: &Polytope4D) -> Option<EhzResult> {
                                 action,
                                 subset.clone(),
                                 perm.to_vec(),
-                                beta.clone(),
+                                result.beta.clone(),
                             ));
                         }
                     }
@@ -300,7 +302,7 @@ pub fn ehz_capacity(polytope: &Polytope4D) -> Option<EhzResult> {
                                 action,
                                 subset.clone(),
                                 perm.to_vec(),
-                                beta,
+                                result.beta,
                             ));
                         }
                     }

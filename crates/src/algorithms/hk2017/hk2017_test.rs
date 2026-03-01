@@ -138,15 +138,15 @@ fn solve_kkt_two_facets() {
     // Should return Some (system is solvable)
     assert!(result.is_some(), "two-facet system should solve");
 
-    let (beta, q_val) = result.unwrap();
-    assert_eq!(beta.len(), 2);
+    let result = result.unwrap();
+    assert_eq!(result.beta.len(), 2);
 
     // β1 ≈ β2 ≈ 0.5
-    assert!((beta[0] - 0.5).abs() < 1e-6, "β1 should be ~0.5");
-    assert!((beta[1] - 0.5).abs() < 1e-6, "β2 should be ~0.5");
+    assert!((result.beta[0] - 0.5).abs() < 1e-6, "β1 should be ~0.5");
+    assert!((result.beta[1] - 0.5).abs() < 1e-6, "β2 should be ~0.5");
 
     // Q = 0 (parallel normals have ω₀ = 0)
-    assert!(q_val.abs() < 1e-10, "Q should be ~0 for parallel normals");
+    assert!(result.q_corrected.abs() < 1e-10, "Q should be ~0 for parallel normals");
 }
 
 /// Test KKT solver on 4-facet symplectic square.
@@ -178,21 +178,21 @@ fn solve_kkt_four_facets_symplectic() {
 
     assert!(result.is_some(), "4-facet symplectic system should solve");
 
-    let (beta, q_val) = result.unwrap();
-    assert_eq!(beta.len(), 4);
+    let result = result.unwrap();
+    assert_eq!(result.beta.len(), 4);
 
     // Verify constraints
     // N^T β = 0: β1 - β3 = 0, β2 - β4 = 0
-    assert!((beta[0] - beta[2]).abs() < 1e-6, "β1 should equal β3");
-    assert!((beta[1] - beta[3]).abs() < 1e-6, "β2 should equal β4");
+    assert!((result.beta[0] - result.beta[2]).abs() < 1e-6, "β1 should equal β3");
+    assert!((result.beta[1] - result.beta[3]).abs() < 1e-6, "β2 should equal β4");
 
     // η^T β = 1: β1 + β2 + β3 + β4 = 1
-    let sum: f64 = beta.iter().sum();
+    let sum: f64 = result.beta.iter().sum();
     assert!((sum - 1.0).abs() < 1e-6, "β sum should be 1");
 
     // Q ≠ 0 (non-degenerate symplectic system)
     // Note: Q can be positive or negative depending on the cyclic order
-    assert!(q_val.abs() > 1e-10, "Q should be non-zero for symplectic normals, got {}", q_val);
+    assert!(result.q_corrected.abs() > 1e-10, "Q should be non-zero for symplectic normals, got {}", result.q_corrected);
 }
 
 /// Test KKT solver handles rank-deficient normal matrix.
@@ -248,7 +248,7 @@ fn solve_kkt_degenerate() {
     // Should return None (degenerate system)
     // OR return Some with high residual (caught by residual check)
     // Either outcome is acceptable
-    if let Some((_beta, _q)) = result {
+    if result.is_some() {
         // If it returns Some, it means the residual check didn't catch it
         // This is fine — the outer algorithm will filter via β > 0 or other checks
         eprintln!("Note: degenerate system returned Some (acceptable)");
@@ -704,13 +704,13 @@ fn solve_kkt_lu_vs_svd_wellconditioned() {
         let result_svd = solve_kkt_svd_only(normals, heights, perm);
 
         match (result_lu, result_svd) {
-            (Some((beta_lu, q_lu)), Some((beta_svd, q_svd))) => {
+            (Some(r_lu), Some(r_svd)) => {
                 assert!(
-                    (q_lu - q_svd).abs() < 1e-10,
-                    "simplex perm {:?}: Q differs: LU={q_lu}, SVD={q_svd}",
-                    perm
+                    (r_lu.q_corrected - r_svd.q_corrected).abs() < 1e-10,
+                    "simplex perm {:?}: Q differs: LU={}, SVD={}",
+                    perm, r_lu.q_corrected, r_svd.q_corrected
                 );
-                for (i, (bl, bs)) in beta_lu.iter().zip(beta_svd.iter()).enumerate() {
+                for (i, (bl, bs)) in r_lu.beta.iter().zip(r_svd.beta.iter()).enumerate() {
                     assert!(
                         (bl - bs).abs() < 1e-10,
                         "simplex perm {:?}: β[{i}] differs: LU={bl}, SVD={bs}",
@@ -722,8 +722,8 @@ fn solve_kkt_lu_vs_svd_wellconditioned() {
             (lu, svd) => panic!(
                 "simplex perm {:?}: LU returned {:?}, SVD returned {:?}",
                 perm,
-                lu.as_ref().map(|(_, q)| q),
-                svd.as_ref().map(|(_, q)| q)
+                lu.as_ref().map(|r| r.q_corrected),
+                svd.as_ref().map(|r| r.q_corrected)
             ),
         }
     }
@@ -739,21 +739,22 @@ fn solve_kkt_lu_vs_svd_wellconditioned() {
     let result_svd = solve_kkt_svd_only(normals, heights, &perm_all);
 
     match (result_lu, result_svd) {
-        (Some((_, q_lu)), Some((_, q_svd))) => {
+        (Some(r_lu), Some(r_svd)) => {
             assert!(
-                (q_lu - q_svd).abs() < 1e-10,
-                "triangle×triangle: Q differs: LU={q_lu}, SVD={q_svd}",
+                (r_lu.q_corrected - r_svd.q_corrected).abs() < 1e-10,
+                "triangle×triangle: Q differs: LU={}, SVD={}",
+                r_lu.q_corrected, r_svd.q_corrected
             );
         }
         (None, None) => {} // Both agree: infeasible
-        (Some((_, q_lu)), None) if q_lu <= EPS_Q_POSITIVE => {
+        (Some(r_lu), None) if r_lu.q_corrected <= EPS_Q_POSITIVE => {
             // LU found a near-zero Q; SVD dismissed via early δβ check.
             // Both are effectively infeasible — the Q value is too small to matter.
         }
         (lu, svd) => panic!(
             "triangle×triangle: LU returned {:?}, SVD returned {:?}",
-            lu.as_ref().map(|(_, q)| q),
-            svd.as_ref().map(|(_, q)| q)
+            lu.as_ref().map(|r| r.q_corrected),
+            svd.as_ref().map(|r| r.q_corrected)
         ),
     }
 }
@@ -793,19 +794,19 @@ fn solve_kkt_lu_vs_svd_degenerate() {
         let result_svd = solve_kkt_svd_only(normals, heights, perm);
 
         match (&result_lu, &result_svd) {
-            (Some((_, q_lu)), Some((_, q_svd))) => {
+            (Some(r_lu), Some(r_svd)) => {
                 assert!(
-                    (q_lu - q_svd).abs() < 1e-10,
-                    "(4,4) perm {:?}: Q differs: LU={q_lu}, SVD={q_svd}",
-                    perm
+                    (r_lu.q_corrected - r_svd.q_corrected).abs() < 1e-10,
+                    "(4,4) perm {:?}: Q differs: LU={}, SVD={}",
+                    perm, r_lu.q_corrected, r_svd.q_corrected
                 );
             }
             (None, None) => {} // Both agree: infeasible
             _ => panic!(
                 "(4,4) perm {:?}: LU returned {:?}, SVD returned {:?}",
                 perm,
-                result_lu.as_ref().map(|(_, q)| q),
-                result_svd.as_ref().map(|(_, q)| q)
+                result_lu.as_ref().map(|r| r.q_corrected),
+                result_svd.as_ref().map(|r| r.q_corrected)
             ),
         }
     }
@@ -824,19 +825,19 @@ fn solve_kkt_lu_vs_svd_degenerate() {
             let result_svd = solve_kkt_svd_only(normals, heights, perm);
 
             match (&result_lu, &result_svd) {
-                (Some((_, q_lu)), Some((_, q_svd))) => {
+                (Some(r_lu), Some(r_svd)) => {
                     assert!(
-                        (q_lu - q_svd).abs() < 1e-10,
-                        "(3,4) perm {:?}: Q differs: LU={q_lu}, SVD={q_svd}",
-                        perm
+                        (r_lu.q_corrected - r_svd.q_corrected).abs() < 1e-10,
+                        "(3,4) perm {:?}: Q differs: LU={}, SVD={}",
+                        perm, r_lu.q_corrected, r_svd.q_corrected
                     );
                 }
                 (None, None) => {}
                 _ => panic!(
                     "(3,4) perm {:?}: LU returned {:?}, SVD returned {:?}",
                     perm,
-                    result_lu.as_ref().map(|(_, q)| q),
-                    result_svd.as_ref().map(|(_, q)| q)
+                    result_lu.as_ref().map(|r| r.q_corrected),
+                    result_svd.as_ref().map(|r| r.q_corrected)
                 ),
             }
         }
@@ -942,24 +943,25 @@ fn bench_kkt_random_polytopes() {
                         t_svd_only += t0.elapsed().as_secs_f64();
 
                         let lu_valid = result_lu.as_ref()
-                            .is_some_and(|(beta, _)| beta.iter().all(|&b| b > EPS_BETA_POSITIVE));
+                            .is_some_and(|r| r.beta.iter().all(|&b| b > EPS_BETA_POSITIVE));
                         let svd_valid = result_svd.as_ref()
-                            .is_some_and(|(beta, _)| beta.iter().all(|&b| b > EPS_BETA_POSITIVE));
+                            .is_some_and(|r| r.beta.iter().all(|&b| b > EPS_BETA_POSITIVE));
 
                         if lu_valid { lu_success += 1; }
                         if svd_valid { svd_success += 1; }
 
                         if lu_valid && !svd_valid {
                             lu_only += 1;
-                            let (_, q_lu_check) = result_lu.as_ref().unwrap();
+                            let r_lu_check = result_lu.as_ref().unwrap();
                             let cap = capacities[pi];
-                            let rel_diff = (q_lu_check - cap).abs() / cap.max(1e-15);
+                            let rel_diff = (r_lu_check.q_corrected - cap).abs() / cap.max(1e-15);
                             if rel_diff < 1e-6 {
                                 lu_only_optimal += 1;
-                                eprintln!("  *** LU-ONLY ORBIT IS CAPACITY-OPTIMAL: poly={pi} Q={q_lu_check:.10e} cap={cap:.10e}");
+                                eprintln!("  *** LU-ONLY ORBIT IS CAPACITY-OPTIMAL: poly={pi} Q={:.10e} cap={cap:.10e}", r_lu_check.q_corrected);
                             }
                             if lu_only <= 10 {
-                                let (ref beta_lu, q_lu) = result_lu.as_ref().unwrap();
+                                let r_lu_detail = result_lu.as_ref().unwrap();
+                                let (beta_lu, q_lu) = (&r_lu_detail.beta, r_lu_detail.q_corrected);
                                 let beta_lu_min = beta_lu.iter().cloned().fold(f64::INFINITY, f64::min);
                                 // Diagnose: what did SVD path do differently?
                                 let m = perm.len();
@@ -998,14 +1000,14 @@ fn bench_kkt_random_polytopes() {
                         if svd_valid && !lu_valid {
                             svd_only_extra += 1;
                             if svd_only_extra <= 5 {
-                                let (ref beta, q) = result_svd.as_ref().unwrap();
-                                let beta_min = beta.iter().cloned().fold(f64::INFINITY, f64::min);
-                                eprintln!("  SVD-only valid: poly={pi} perm={perm:?} Q={q:.6e} β_min={beta_min:.3e}");
+                                let r_svd_detail = result_svd.as_ref().unwrap();
+                                let beta_min = r_svd_detail.beta.iter().cloned().fold(f64::INFINITY, f64::min);
+                                eprintln!("  SVD-only valid: poly={pi} perm={perm:?} Q={:.6e} β_min={beta_min:.3e}", r_svd_detail.q_corrected);
                             }
                         }
                         if lu_valid && svd_valid {
-                            let (_, q_lu) = result_lu.as_ref().unwrap();
-                            let (_, q_svd) = result_svd.as_ref().unwrap();
+                            let q_lu = result_lu.as_ref().unwrap().q_corrected;
+                            let q_svd = result_svd.as_ref().unwrap().q_corrected;
                             if (q_lu - q_svd).abs() > 1e-8 * q_lu.abs().max(q_svd.abs()) {
                                 q_disagree += 1;
                                 if q_disagree <= 5 {
