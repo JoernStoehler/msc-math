@@ -312,9 +312,13 @@ fn solve_kkt_svd_path(
     let r3 = residual_vec[m + 4];
     let nu_hat = x0[m + 4];
 
-    // σ_min of the full KKT matrix (smallest SV, floored to avoid division by zero).
+    // σ_min of RETAINED singular values (those above the rank threshold).
+    // Using full-matrix σ_min is catastrophically wrong for rank-deficient systems:
+    // near-zero SVs give E = O(1/σ_min²) → 10^66 or NaN.
+    // The retained σ_min bounds errors in the directions the SVD actually resolves.
     let sigma_min = sv
         .iter()
+        .take(rank)
         .cloned()
         .fold(f64::INFINITY, f64::min)
         .max(f64::MIN_POSITIVE);
