@@ -700,20 +700,14 @@ Define the \emph{residual-corrected objective}
   \;=\; Q(\hat\beta)
     - \bigl(r_2^\top\hat\mu + r_3\,\hat\xi\bigr)
 \end{equation}
-and the \emph{second-order error bound}
+and the \emph{error bound}
 \begin{equation}\label{eq:v2-q-error-bound}
-  E \;=\; \frac{\|r\|^2}{|\lambda_{\min}|}
-    \Bigl(2 + \frac{\|H\|}{2\,|\lambda_{\min}|}\Bigr).
+  E \;=\; \frac{9}{2}\,\frac{\|r\|^2}{|\lambda_{\min}|}.
 \end{equation}
 Then $|Q(\beta_0) - \tilde Q| \leq E$.
 \end{lemma}
 
 \begin{proof}
-We show $Q(\beta_0) = \tilde Q + R$ with $|R| \leq E$
-by expanding the difference $Q(\hat\beta) - Q(\beta_0)$,
-using the KKT condition to rewrite the cross term,
-then substituting numerical for exact multipliers.
-
 Write $\delta x = \hat x - x_0$ with components
 $(\delta\beta, \delta\mu, \delta\xi)$.
 Since $M x_0 = b$, we have $M\,\delta x = r$,
@@ -735,9 +729,7 @@ Since $Q(\beta) = -(1/2)\,\beta^\top H\,\beta$,
 
 \emph{Step~2: rewrite the cross term using KKT.}
 The stationarity condition (first block of $M x_0 = b$) is
-$H\beta_0 + N\mu_0 + \eta\xi_0 = 0$
-(equivalently, $H\beta_0 = N\lambda_0 + \eta\nu_0$
-in the original multipliers).
+$H\beta_0 + N\mu_0 + \eta\xi_0 = 0$.
 Hence
 \[
   \delta\beta^\top H\,\beta_0
@@ -747,56 +739,93 @@ Hence
 \]
 The constraint residual blocks
 (rows $m{+}1$ to $m{+}5$ of $M\hat x - b$) give
-$N^\top\delta\beta = N^\top\hat\beta - N^\top\beta_0
-  = N^\top\hat\beta = r_2$
+$N^\top\delta\beta = N^\top\hat\beta = r_2$
 (since $N^\top\beta_0 = 0$ by the exact constraint)
 and similarly $\eta^\top\delta\beta = r_3$, hence
 \begin{equation}\label{eq:v2-cross-term}
   -\delta\beta^\top H\,\beta_0
   = r_2^\top\mu_0 + r_3\,\xi_0.
 \end{equation}
-Substituting~\eqref{eq:v2-cross-term} into Step~1
-and rearranging gives
-$Q(\beta_0) = Q(\hat\beta) - (r_2^\top\mu_0 + r_3\,\xi_0)
-  + \tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta$.
+Substituting into Step~1 and rearranging:
+\begin{equation}\label{eq:v2-q-expansion}
+  Q(\beta_0) = Q(\hat\beta) - (r_2^\top\mu_0 + r_3\,\xi_0)
+    + \tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta.
+\end{equation}
 
 \emph{Step~3: substitute numerical multipliers.}
 Write $\mu_0 = \hat\mu - \delta\mu$ and
 $\xi_0 = \hat\xi - \delta\xi$:
-\begin{align*}
+\[
   r_2^\top\mu_0 + r_3\,\xi_0
-  &= (r_2^\top\hat\mu + r_3\,\hat\xi)
+  = (r_2^\top\hat\mu + r_3\,\hat\xi)
     - (r_2^\top\delta\mu + r_3\,\delta\xi).
-\end{align*}
+\]
 The first term is the computable correction
 in~\eqref{eq:v2-q-corrected}.
-The second is a \emph{second-order remainder}:
-\[
+The second is a second-order remainder:
+\begin{equation}\label{eq:v2-substitution-remainder}
   |r_2^\top\delta\mu + r_3\,\delta\xi|
   \leq \|r_2\|\,\|\delta\mu\| + |r_3|\,|\delta\xi|
   \leq 2\,\frac{\|r\|^2}{|\lambda_{\min}|},
-\]
+\end{equation}
 using $\|r_2\|, |r_3| \leq \|r\|$
 and~\eqref{eq:v2-delta-bound}.
 
-\emph{Step~4: bound the quadratic term.}
+\emph{Step~4: bound the quadratic term
+  using the KKT block structure.}
+Expanding $\delta x^\top M\,\delta x$
+via the block structure
+$M = \bigl[\begin{smallmatrix}
+  H & N & \eta \\
+  N^\top & 0 & 0 \\
+  \eta^\top & 0 & 0
+\end{smallmatrix}\bigr]$
+gives
+\begin{equation}\label{eq:v2-block-identity}
+  \delta\beta^\top H\,\delta\beta
+  = \delta x^\top M\,\delta x
+    - 2\,r_2^\top\delta\mu
+    - 2\,r_3\,\delta\xi,
+\end{equation}
+where we used $N^\top\delta\beta = r_2$
+and $\eta^\top\delta\beta = r_3$ from Step~2.
+For the first term,
 \[
-  \tfrac{1}{2}\,|\delta\beta^\top H\,\delta\beta|
-  \leq \tfrac{1}{2}\,\|H\|\,\|\delta\beta\|^2
-  \leq \frac{\|H\|\,\|r\|^2}{2\,|\lambda_{\min}|^2}.
+  |\delta x^\top M\,\delta x|
+  = |r^\top M^{-1} r|
+  = \Bigl|\sum_j \frac{(v_j^\top r)^2}{\lambda_j}\Bigr|
+  \leq \frac{\|r\|^2}{|\lambda_{\min}|}.
+\]
+Combining with~\eqref{eq:v2-delta-bound}
+for $\|\delta\mu\|$ and $|\delta\xi|$:
+\[
+  |\delta\beta^\top H\,\delta\beta|
+  \leq \frac{\|r\|^2}{|\lambda_{\min}|}
+    + 4\,\frac{\|r\|^2}{|\lambda_{\min}|}
+  = \frac{5\,\|r\|^2}{|\lambda_{\min}|}.
 \]
 
+% QC: The key improvement over the naive bound
+%   |δβ^T H δβ| ≤ ||H|| · ||δβ||² ≤ ||H|| · ||r||²/|λ_min|²
+%   is replacing ||H||/|λ_min|² with 5/|λ_min|.
+%   This uses the structural identity (eq:v2-block-identity):
+%   since M's off-diagonal blocks connect β to (μ,ξ), the
+%   quadratic form δβ^T H δβ equals δx^T M δx minus cross
+%   terms, and δx^T M δx = r^T M^{-1} r has spectral bound
+%   ||r||²/|λ_min| (not ||H||·||r||²/|λ_min|²).
+
 \emph{Conclusion.}
-Combining Steps~1--4:
+From~\eqref{eq:v2-q-expansion},
+\eqref{eq:v2-substitution-remainder},
+and Step~4:
 \[
-  Q(\beta_0)
-  = Q(\hat\beta)
-    - (r_2^\top\hat\mu + r_3\,\hat\xi)
-    \;+\; R,
+  |Q(\beta_0) - \tilde Q|
+  \leq 2\,\frac{\|r\|^2}{|\lambda_{\min}|}
+    + \frac{5}{2}\,\frac{\|r\|^2}{|\lambda_{\min}|}
+  = \frac{9}{2}\,\frac{\|r\|^2}{|\lambda_{\min}|}
+  = E.
+  \qedhere
 \]
-where $|R| \leq 2\,\|r\|^2 / |\lambda_{\min}|
-  + \|H\|\,\|r\|^2 / (2\,|\lambda_{\min}|^2) = E$.
-\qedhere
 \end{proof}
 
 \begin{algorithm}[$Q$ value with error bound]%
@@ -823,8 +852,7 @@ satisfying $|Q(\beta_0) - \tilde Q| \leq E$:
   $\tilde Q = Q(\hat\beta)
     - (r_2^\top\hat\mu + r_3\,\hat\xi)$.
 \item Compute the error bound
-  $E = \|r\|^2\,(2/|\lambda_{\min}|
-    + \|H\| / (2\,|\lambda_{\min}|^2))$,
+  $E = (9/2)\,\|r\|^2 / |\lambda_{\min}|$,
   where $|\lambda_{\min}|$ is the smallest
   retained eigenvalue magnitude.
 \item Return the corrected value~$\tilde Q$,
@@ -834,25 +862,40 @@ satisfying $|Q(\beta_0) - \tilde Q| \leq E$:
 
 \begin{remark}[Error bound in practice]%
 \label{rem:v2-interval-width}
-If $|\lambda_{\min}|$ is bounded away from zero,
-the residual is
-$\|r\| = O(\varepsilon_{\mathrm{mach}}\,\|M\|)$
-(Remark~\ref{rem:v2-eigen-accuracy}), so
-$E = O(\varepsilon_{\mathrm{mach}}^2)$ and
-$\tilde Q \approx Q(\hat\beta)$.
-The error bound is tight and the correction negligible.
+By backward stability of the eigendecomposition
+(Remark~\ref{rem:v2-eigen-accuracy}),
+$\|r\| = O(\varepsilon_{\mathrm{mach}}\,\|M\|)$.
+The error bound is therefore
+\[
+  E
+  = \frac{9}{2}\,
+    \frac{\|r\|^2}{|\lambda_{\min}|}
+  = O\!\left(
+    \frac{\varepsilon_{\mathrm{mach}}^2\,\|M\|^2}
+         {|\lambda_{\min}|}
+  \right).
+\]
+For well-conditioned systems
+($|\lambda_{\min}| \approx \|M\|$),
+this gives $E = O(\varepsilon_{\mathrm{mach}}^2\,\|M\|)$.
+Even for severely ill-conditioned systems
+($|\lambda_{\min}| = 10^{-15}$),
+$E \approx 10^{-17}$ --- the bound remains useful
+because it scales as $1/|\lambda_{\min}|$,
+not $\|H\|/|\lambda_{\min}|^2$.
 
-For near-singular systems
-($|\lambda_{\min}| \ll 1$), the residual remains small
-(backward stability of the eigendecomposition), but
-$E$ grows as $1/|\lambda_{\min}|^2$.
-The correction~$r_2^\top\hat\mu + r_3\,\hat\xi$
-absorbs the dominant first-order error, leaving only
-a second-order remainder.
-Without this correction, a naive bound
-$|Q(\hat\beta) - Q(\beta_0)| \leq \Delta$ would require
-$\Delta = O(\|r\| / |\lambda_{\min}|)$ (first-order),
-which is much larger.
+The key structural reason is that the quadratic
+error $\delta\beta^\top H\,\delta\beta$ decomposes
+via the KKT block structure
+(identity~\eqref{eq:v2-block-identity})
+into $\delta x^\top M\,\delta x$ minus cross terms.
+The spectral bound
+$|\delta x^\top M\,\delta x| \leq \|r\|^2/|\lambda_{\min}|$
+is tight: each eigendirection~$j$ contributes
+$(v_j^\top r)^2/|\lambda_j|$,
+and directions with small~$|\lambda_j|$
+have large $x$-error but proportionally small
+$Q$-sensitivity (the $\lambda_j$ cancels).
 \end{remark}
 
 % --- Positivity check (from approved A.2, ad-hoc framing) ---
@@ -968,17 +1011,14 @@ $A = 1/(2\,\tilde Q)$,
 using point comparison on the
 residual-corrected~$\tilde Q$.
 % Downstream: action = 0.5 / result.q_corrected (lower action = higher Q = better orbit)
-% [TODO: JÖRN - the E < 10^{-13} claim below is from
-%  the diagnostic agent's run on all fixture polytopes.
-%  It will be verified via q_error experiment output once
-%  the full experiment bundle is wired up.]
 The error bound~$E$ from
-Lemma~\ref{lem:v2-q-interval}
-is tracked but not used for interval majorization:
-in all test polytopes (33~entries covering
-5--8~facets), the bound satisfies
-$E < 10^{-13}$, so point comparison on~$\tilde Q$
-is reliable.
+Lemma~\ref{lem:v2-q-interval} satisfies
+$E = O(\varepsilon_{\mathrm{mach}}^2\,\|M\|^2
+  / |\lambda_{\min}|)$
+(Remark~\ref{rem:v2-interval-width}),
+which is negligible for any
+$|\lambda_{\min}|$ above machine epsilon.
+Point comparison on~$\tilde Q$ is therefore reliable.
 
 \paragraph{Final answer.}
 The algorithm returns the best certified candidate.
