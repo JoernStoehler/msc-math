@@ -83,7 +83,8 @@ fn q_from_hessian(kkt: &DMatrix<f64>, beta: &[f64]) -> f64 {
     -0.5 * beta_vec.dot(&hb)
 }
 
-/// SVD_CONDITION_TAU from the library (threshold for rank truncation via condition number ratio).
+/// Condition-number threshold for rank truncation (matches EIGEN_CONDITION_TAU
+/// in crates/src/kkt.rs). Retains old SVD_CONDITION_TAU name for local consistency.
 /// Used as: |λ_i| > lambda_max * SVD_CONDITION_TAU → retain eigenvalue i.
 const SVD_CONDITION_TAU: f64 = 1e-3;
 

@@ -8,8 +8,9 @@
 //! (instrumented HK2017) are self-contained in this binary. Library internals
 //! needed by the variants are copied here with source references.
 //!
-//! KKT solver note: Uses the CURRENT library condition-number approach
-//! (SVD_CONDITION_TAU = 1e-3), not the old gap-ratio approach from ablation.rs.
+//! KKT solver note: Uses a local copy of the library's condition-number approach
+//! (EIGEN_CONDITION_TAU = 1e-3 in crates/src/kkt.rs). The local constant retains
+//! the old SVD_CONDITION_TAU name.
 //!
 //! Architecture:
 //! 1. `cargo run --bin sys_optimization --release` generates datasets
@@ -430,8 +431,9 @@ fn solve_kkt_svd_path(
 }
 
 /// SVD-only KKT solver, extended to return ν and λ.
-/// Copied from crates/src/kkt.rs:solve_kkt_svd_only, which is the production
-/// path (profiling showed LU+SVD is slower than SVD-only; see kkt.rs docs).
+/// Local SVD-based KKT solver. The library has since migrated to eigendecomposition
+/// (solve_kkt_eigen_path in kkt.rs), but this experiment retains its own SVD copy
+/// for self-containedness.
 ///
 /// Returns (β, Q, ν, λ) where ν is the Lagrange multiplier for η^T β = 1
 /// and λ ∈ R⁴ is the Lagrange multiplier vector for N^T β = 0.
