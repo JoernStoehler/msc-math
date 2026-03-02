@@ -198,7 +198,7 @@ fn combinations_rec(
 
 /// Build facet adjacency matrix: adj[i][j] = true iff F_i ∩ F_j ≠ ∅.
 /// Two facets are adjacent if they share at least one vertex.
-pub(crate) fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
+pub fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let f = polytope.facet_count();
     let normals = polytope.normals();
     let heights = polytope.heights();
@@ -230,7 +230,7 @@ pub(crate) fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
 /// [lem:transition-feasibility] Condition (1): ω₀(n_i, n_j) ≥ 0 is necessary for
 /// physical transition F_i → F_j. Here we check ω₀(n_j, n_i) ≥ 0 for the reversed
 /// direction matching the algebraic convention.
-pub(crate) fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
+pub fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let f = polytope.facet_count();
     let normals = polytope.normals();
     let vertex_adj = build_adjacency_matrix(polytope);
