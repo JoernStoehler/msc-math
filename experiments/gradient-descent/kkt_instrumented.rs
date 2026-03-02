@@ -705,7 +705,8 @@ pub fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedRe
 /// billiard algorithm, but returns full KKT data (ν, λ) for gradient computation.
 pub fn billiard_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult> {
     let classification = classify_facets(polytope)?;
-    let adj = build_adjacency_matrix(polytope);
+    let adj = build_adjacency_matrix(polytope); // undirected: for block building (same-type pairs)
+    let directed_adj = build_directed_adjacency_matrix(polytope); // directed: for cycle pruning (ω₀ condition)
     let normals = polytope.normals();
     let heights = polytope.heights();
 
@@ -718,6 +719,11 @@ pub fn billiard_capacity_instrumented(polytope: &Polytope4D) -> Option<Instrumen
 
     for k in 2..=3 {
         enumerate_k_bounce_sigmas(k, &q_blocks, &p_blocks, |sigma| {
+            // Directed adjacency pruning: skip cycles where consecutive facets
+            // violate the ω₀ transition feasibility condition.
+            if !is_adjacent_cycle(sigma, &directed_adj) {
+                return;
+            }
             iterations += 1;
 
             if let Some((beta, q_val, nu, lambda)) = solve_kkt_full(normals, heights, sigma) {

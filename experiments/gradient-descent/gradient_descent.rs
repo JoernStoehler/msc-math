@@ -2,7 +2,7 @@
 //!
 //! Two modes:
 //! 1. General random F=10 polytopes — uses instrumented HK2017 (exponential enumeration)
-//! 2. F=10 Lagrangian products — uses instrumented HK2017 with Lagrangian-constrained gradient
+//! 2. F=10 Lagrangian products — uses instrumented billiard with Lagrangian-constrained gradient
 //!
 //! For Lagrangian products, the gradient step preserves the product structure:
 //! q-facet normals stay in the q-plane, p-facet normals stay in the p-plane.
@@ -971,7 +971,7 @@ fn main() {
 
     let n_skip_lp = lagrangian.iter().filter(|(n, _, _)| completed.contains(n)).count();
     println!(
-        "Running gradient ascent on Lagrangian products (HK2017, Lagrangian-constrained gradient)... ({} to skip)\n",
+        "Running gradient ascent on Lagrangian products (billiard, Lagrangian-constrained gradient)... ({} to skip)\n",
         n_skip_lp
     );
     for (idx, (name, bucket, polytope)) in lagrangian.iter().enumerate() {
@@ -992,7 +992,7 @@ fn main() {
             name,
             bucket,
             polytope,
-            &CapacityBackend::Hk2017,
+            &CapacityBackend::Billiard,
             Some(&class),
         );
 

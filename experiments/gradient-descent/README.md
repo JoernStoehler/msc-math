@@ -12,15 +12,18 @@ Two classes of starting polytopes, both with F=10 facets:
 
 1. **General random polytopes** (N=500): Random normals on S^3, heights in [0.8, 1.2]. Gradient ascent uses instrumented HK2017 (exponential enumeration with adjacency pruning).
 
-2. **Lagrangian products** (N=500): Random polygon pairs (K_q x_L K_p) with splits (3,7), (4,6), (5,5). Gradient ascent uses instrumented HK2017 (same as general polytopes) with Lagrangian-constrained normal projection.
+2. **Lagrangian products** (N=500): Random polygon pairs (K_q x_L K_p) with splits (3,7), (4,6), (5,5). Gradient ascent uses instrumented billiard (block-structured enumeration with directed adjacency pruning) with Lagrangian-constrained normal projection. Trial steps evaluated via library billiard.
 
-### Why HK2017, not billiard?
+### Capacity backends
 
-Initially we planned to use the billiard algorithm for Lagrangian products (since it restricts to block-structured σ with k∈{2,3}). However, the benchmark data shows billiard is ~7x **slower** than HK2017 pruned at F=10 — the block enumeration generates ~10x more candidates (50,400 vs 4,819) than HK2017's adjacency pruning eliminates. Since HK2017 works correctly on Lagrangian products, we use it for everything.
+- **General polytopes**: Instrumented HK2017 (exponential enumeration with adjacency pruning) for KKT data; library `ehz_capacity` for trial steps.
+- **Lagrangian products**: Instrumented billiard (block-structured σ for k∈{2,3} with directed ω₀ pruning) for KKT data; library `billiard_capacity` for trial steps.
 
-### Instrumented HK2017
+Both instrumented backends use the same asymmetric KKT solver (`solve_kkt_full`) that returns (β, Q, ν, λ).
 
-The instrumented HK2017 extracts the full KKT multipliers (nu, lambda) needed for analytical gradient computation via the envelope theorem:
+### Instrumented capacity
+
+The instrumented capacity backends extract the full KKT multipliers (nu, lambda) needed for analytical gradient computation via the envelope theorem:
 
 - `d(sys)/d(h_k)` uses nu (multiplier for eta^T beta = 1)
 - `d(sys)/d(n_k)` uses lambda (multiplier for N^T beta = 0)
