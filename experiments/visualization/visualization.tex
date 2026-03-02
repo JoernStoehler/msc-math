@@ -97,11 +97,14 @@ per polytope.
 \emph{Displaced trajectories.}
 To illustrate how nearby Reeb trajectories twist relative
 to a minimum-action orbit, we perturb the recovered base
-point~$b = \gamma(0)$ by $\varepsilon \cdot v$, where $v$ is
-a unit vector tangent to the starting facet~$F_{\sigma(0)}$
-and perpendicular to the Reeb flow direction
-(Definition~\ref{def:reeb-vectors}).
-The displaced trajectory is then forward-simulated for the
+point~$b = \gamma(0)$ within the ridge
+$F_{\sigma(0)} \cap F_{\sigma(|S|-1)}$ where it lies.
+The ridge tangent space is two-dimensional
+(perpendicular to both facet normals $n_{\sigma(0)}$
+and~$n_{\sigma(|S|-1)}$); we displace by
+$\varepsilon \cdot v_k$ ($\varepsilon = 0.02$, $k = 1, 2$)
+along an orthonormal basis $\{v_1, v_2\}$ of this tangent space.
+Each displaced trajectory is then forward-simulated for the
 same number of facet segments as the original orbit.
 These displaced trajectories generally do not close:
 the combinatorial facet sequence can diverge from the
@@ -177,11 +180,11 @@ Several qualitative features are visible:
     recover reliably.
 
   \item Displaced trajectories visibly twist around the
-    minimum-action orbit, with larger displacement~$\varepsilon$
-    producing greater deviation.
-    On the hypercube, displaced trajectories happen to close
+    minimum-action orbit.
+    On the hypercube, both displaced trajectories close
     (the orbit family is stable under small perturbations),
-    while on less symmetric polytopes they diverge.
+    while on less symmetric polytopes (simplex, HK-O pentagon)
+    they diverge.
 
   \item Ridges (2-faces) curve under the stereographic projection
     (Figure~\ref{fig:viz-hypercube}, right),

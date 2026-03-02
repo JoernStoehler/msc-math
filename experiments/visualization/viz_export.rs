@@ -25,8 +25,8 @@ use symplectic::Skeleton;
 /// Maximum number of orbits to export per polytope (keeps data.js manageable).
 const MAX_ORBITS: usize = 20;
 
-/// Displacement magnitudes for displaced orbit visualization.
-const DISPLACEMENT_EPSILONS: &[f64] = &[0.02, 0.08];
+/// Displacement magnitude for displaced orbit visualization.
+const DISPLACEMENT_EPS: f64 = 0.02;
 
 /// Max facet count for orbit computation (skip crosspolytope F=16).
 const MAX_FACETS_FOR_ORBIT: usize = 12;
@@ -234,22 +234,23 @@ fn orbit_to_viz_trajectory(
 // Displaced orbit generation
 // ============================================================================
 
-/// Compute a displacement direction tangent to a facet and perpendicular to its Reeb vector.
+/// Compute two displacement directions spanning the tangent space of the ridge
+/// where the orbit's base point γ(0) lies.
 ///
-/// Returns a unit vector in the tangent space of facet `facet_idx` that is
-/// perpendicular to the Reeb direction on that facet.
-fn displacement_direction(
+/// For a closed orbit with permutation σ = [σ(0), ..., σ(m-1)], the base point
+/// γ(0) lies on the ridge F_σ(0) ∩ F_σ(m-1) (transition from the last facet
+/// back to the first). The ridge tangent space is 2D (perpendicular to both
+/// normals n_σ(0) and n_σ(m-1)). We return an orthonormal basis for it.
+fn ridge_displacement_directions(
     polytope: &symplectic::Polytope4D,
-    facet_idx: usize,
-) -> Option<Vector4<f64>> {
-    let n = &polytope.normals()[facet_idx];
-    let reeb = reeb_trajectory::reeb_vector(n);
+    first_facet: usize,
+    last_facet: usize,
+) -> Vec<Vector4<f64>> {
+    let n0 = polytope.normals()[first_facet].normalize();
+    let n1 = polytope.normals()[last_facet].normalize();
 
-    // Find a vector perpendicular to both n (facet normal) and reeb (flow direction).
-    // The facet tangent space is 3D (perpendicular to n). Within it, perpendicular
-    // to the Reeb direction gives a 2D subspace. We pick one vector from it.
-    //
-    // Strategy: try standard basis vectors, project out n and reeb components.
+    // Find two vectors perpendicular to both n0 and n1 via Gram-Schmidt
+    // on standard basis candidates.
     let candidates = [
         Vector4::new(1.0, 0.0, 0.0, 0.0),
         Vector4::new(0.0, 1.0, 0.0, 0.0),
@@ -257,23 +258,31 @@ fn displacement_direction(
         Vector4::new(0.0, 0.0, 0.0, 1.0),
     ];
 
-    let n_unit = n.normalize();
-    let reeb_unit = reeb.normalize();
-
+    let mut basis: Vec<Vector4<f64>> = Vec::new();
     for e in &candidates {
-        // Project out n component
-        let mut v = e - n_unit.dot(e) * n_unit;
-        // Project out reeb component
-        v -= reeb_unit.dot(&v) * reeb_unit;
+        // Project out both normal components
+        let mut v: Vector4<f64> = e - n0.dot(e) * n0;
+        v -= n1.dot(&v) * n1;
+        // Project out already-found basis vectors (Gram-Schmidt)
+        for b in &basis {
+            v -= b.dot(&v) * b;
+        }
         let norm = v.norm();
         if norm > 1e-8 {
-            return Some(v / norm);
+            basis.push(v / norm);
+            if basis.len() == 2 {
+                break;
+            }
         }
     }
-    None
+    basis
 }
 
 /// Generate displaced trajectories by perturbing the base point of an orbit.
+///
+/// For a closed orbit σ = [σ(0), ..., σ(m-1)], γ(0) lies on the ridge
+/// F_σ(0) ∩ F_σ(m-1). We displace along both directions spanning the
+/// ridge's 2D tangent space.
 fn generate_displaced_trajectories(
     polytope: &symplectic::Polytope4D,
     orbit: &CollectedOrbit,
@@ -285,28 +294,34 @@ fn generate_displaced_trajectories(
         None => return vec![],
     };
 
-    let start_facet = result.best_permutation[0];
-    let disp = match displacement_direction(polytope, start_facet) {
-        Some(d) => d,
-        None => return vec![],
-    };
+    let perm = &result.best_permutation;
+    let start_facet = perm[0];
+    let last_facet = perm[perm.len() - 1];
+    let directions = ridge_displacement_directions(polytope, start_facet, last_facet);
+    eprintln!(
+        "  Ridge F_{} ∩ F_{}: {} displacement direction(s)",
+        start_facet, last_facet, directions.len()
+    );
 
     let _ = skeleton; // skeleton available if needed for facet_centroid, unused here
 
+    let max_segments = orbit.permutation.len();
     let mut trajectories = Vec::new();
-    for &eps in DISPLACEMENT_EPSILONS {
-        let displaced_start = recovery.base_point + eps * disp;
-
-        // Run displaced trajectory for the same number of facet segments as the original orbit,
-        // so it covers roughly one period and doesn't trail on indefinitely.
-        let max_segments = orbit.permutation.len();
-        let traj = reeb_trajectory::simulate(polytope, displaced_start, start_facet, max_segments, 1e-6);
+    for (i, disp) in directions.iter().enumerate() {
+        // Try +ε first; if that pushes outside K, try -ε (the other side of the ridge).
+        let mut displaced_start = recovery.base_point + DISPLACEMENT_EPS * disp;
+        let mut traj = reeb_trajectory::simulate(polytope, displaced_start, start_facet, max_segments, 1e-6);
         if traj.segments.is_empty() {
+            displaced_start = recovery.base_point - DISPLACEMENT_EPS * disp;
+            traj = reeb_trajectory::simulate(polytope, displaced_start, start_facet, max_segments, 1e-6);
+        }
+        if traj.segments.is_empty() {
+            eprintln!("  displaced v{}: simulation returned 0 segments in both directions", i + 1);
             continue;
         }
 
         trajectories.push(VizTrajectory {
-            label: format!("displaced (ε={eps})"),
+            label: format!("displaced v{} (ε={})", i + 1, DISPLACEMENT_EPS),
             start_facet,
             closed: traj.closed,
             segments: traj
