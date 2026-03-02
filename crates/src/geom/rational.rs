@@ -138,6 +138,8 @@ pub enum RationalConstructionError {
         vertex_index: usize,
         facets: BTreeSet<usize>,
     },
+    /// Perturbation failed to break all ω₀ = 0 (astronomically unlikely).
+    PerturbationFailed,
     /// Conversion to f64 failed.
     F64Conversion(String),
 }
@@ -167,6 +169,10 @@ impl std::fmt::Display for RationalConstructionError {
                     facets
                 )
             }
+            Self::PerturbationFailed => write!(
+                f,
+                "perturbation failed to break all ω₀ = 0 (astronomically unlikely)"
+            ),
             Self::F64Conversion(msg) => write!(f, "f64 conversion failed: {msg}"),
         }
     }
@@ -665,6 +671,42 @@ impl RationalPolytope4D {
         Self::new(rational_normals, rational_heights)
     }
 
+    /// Perturb normals to break ω₀ = 0 degeneracies.
+    ///
+    /// Returns a NEW `RationalPolytope4D` whose normals are randomly perturbed
+    /// by magnitude ~2^{-perturbation_bits}. Heights are unchanged. The
+    /// perturbed polytope is re-enumerated from scratch (new vertices, incidence,
+    /// signs).
+    ///
+    /// Typical usage: `perturbation_bits = 64` gives perturbations ~2^{-64},
+    /// far below f64 epsilon (2^{-52}), so the f64 representation is unchanged.
+    ///
+    /// Post-condition: all ω₀(nᵢ, nₖ) ≠ 0 (returns `PerturbationFailed` if
+    /// not, which is astronomically unlikely for random perturbations).
+    pub fn perturbed(
+        &self,
+        rng: &mut impl rand::Rng,
+        perturbation_bits: u32,
+    ) -> Result<Self, RationalConstructionError> {
+        let perturbed_normals: Vec<[BigRational; 4]> = self.normals
+            .iter()
+            .map(|n| {
+                std::array::from_fn(|i| {
+                    &n[i] + random_small_rational(rng, perturbation_bits)
+                })
+            })
+            .collect();
+
+        let result = Self::new(perturbed_normals, self.heights.clone())?;
+
+        // Verify post-condition: no ω₀ = 0
+        if result.data.sign_pattern.values().any(|s| *s == Sign::Zero) {
+            return Err(RationalConstructionError::PerturbationFailed);
+        }
+
+        Ok(result)
+    }
+
     /// Convert to f64 Polytope4D.
     ///
     /// Normalizes each rational normal to a unit vector:
@@ -787,6 +829,17 @@ pub fn f64_to_rational(x: f64) -> BigRational {
         let scale = BigInt::from(1u64) << ((-e) as u64);
         BigRational::new(numer, scale)
     }
+}
+
+/// Generate a random rational number with magnitude < 2^{-bits}.
+///
+/// Uses uniform random numerator in [-2^32, 2^32) and denominator 2^{bits+32}.
+/// This gives numbers like k / 2^{bits+32} for random k, which are exact
+/// rationals with bounded denominator size.
+fn random_small_rational(rng: &mut impl rand::Rng, bits: u32) -> BigRational {
+    let numer: i64 = rng.gen_range(-(1i64 << 32)..(1i64 << 32));
+    let denom = BigInt::from(1u64) << (bits as u64 + 32);
+    BigRational::new(BigInt::from(numer), denom)
 }
 
 /// Helper: create a BigRational from an integer.

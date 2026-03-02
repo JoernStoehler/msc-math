@@ -868,6 +868,91 @@ fn from_f64_simplex() {
     assert_eq!(rp.num_vertices(), 5);
 }
 
+// ── Phase 4: Perturbation ────────────────────────────────────────────────
+
+/// Proposition: perturbing a simplex produces no ω₀ = 0 entries.
+///
+/// The simplex already has no ω₀ = 0 (all signs are nonzero).
+/// After perturbation, the signs should remain nonzero.
+#[test]
+fn perturbation_preserves_nonzero_signs() {
+    use rand::SeedableRng;
+    let p = rational_simplex();
+    let mut rng = rand_chacha::ChaCha8Rng::seed_from_u64(42);
+    let perturbed = p.perturbed(&mut rng, 64).expect("perturbation should succeed");
+
+    // Same vertex count
+    assert_eq!(perturbed.num_vertices(), p.num_vertices());
+    assert_eq!(perturbed.num_facets(), p.num_facets());
+
+    // No ω₀ = 0 in sign pattern
+    assert!(
+        !perturbed.combinatorial_data().sign_pattern.values().any(|s| *s == Sign::Zero),
+        "perturbed polytope should have no ω₀ = 0"
+    );
+}
+
+/// Proposition: perturbing a Lagrangian product (which has ω₀ = 0 pairs)
+/// breaks all the zeros.
+///
+/// The Lagrangian triangle product has same-type facet pairs with ω₀ = 0.
+/// After perturbation, all ω₀ should be nonzero.
+#[test]
+fn perturbation_breaks_omega_zeros() {
+    use rand::SeedableRng;
+    let p = rational_lagrangian_triangle_square();
+    let mut rng = rand_chacha::ChaCha8Rng::seed_from_u64(123);
+
+    // Before perturbation: some ω₀ = 0
+    let has_zeros = p.combinatorial_data().sign_pattern.values().any(|s| *s == Sign::Zero);
+    assert!(has_zeros, "Lagrangian product should have ω₀ = 0 pairs before perturbation");
+
+    // After perturbation: no ω₀ = 0
+    let perturbed = p.perturbed(&mut rng, 64).expect("perturbation should succeed");
+    let has_zeros_after = perturbed.combinatorial_data().sign_pattern.values().any(|s| *s == Sign::Zero);
+    assert!(!has_zeros_after, "perturbed polytope should have no ω₀ = 0");
+}
+
+/// Proposition: perturbation at 2^{-64} barely changes the f64 representation.
+///
+/// For components of magnitude ~1, the perturbation (~2^{-64} ≈ 5e-20)
+/// is far below f64 relative epsilon (2^{-52} ≈ 2e-16), so those components
+/// are unchanged in f64. Components that were exactly 0 become ~5e-20
+/// (nonzero but tiny). Heights are unchanged (not perturbed).
+#[test]
+fn perturbation_preserves_f64() {
+    use rand::SeedableRng;
+    let p = rational_simplex();
+    let f64_before = p.to_f64().expect("to_f64 should succeed");
+
+    let mut rng = rand_chacha::ChaCha8Rng::seed_from_u64(99);
+    let perturbed = p.perturbed(&mut rng, 64).expect("perturbation should succeed");
+    let f64_after = perturbed.to_f64().expect("to_f64 should succeed");
+
+    // Unit normal components should agree within ~2^{-64} ≈ 6e-20
+    let tol = 1e-18; // generous bound (actual perturbation ~5e-20)
+    for (n_before, n_after) in f64_before.normals().iter().zip(f64_after.normals().iter()) {
+        for c in 0..4 {
+            assert!(
+                (n_before[c] - n_after[c]).abs() < tol,
+                "f64 normal component changed by {} (tol={tol})",
+                (n_before[c] - n_after[c]).abs()
+            );
+        }
+    }
+
+    // Heights are unchanged (perturbation only affects normals)
+    for (h_before, h_after) in f64_before.heights().iter().zip(f64_after.heights().iter()) {
+        assert!(
+            (h_before - h_after).abs() < tol,
+            "f64 height changed by {} after perturbation",
+            (h_before - h_after).abs()
+        );
+    }
+}
+
+// ── Phase 5: ω₀ agreement ──────────────────────────────────────────────
+
 /// Proposition: the exact ω₀ formula agrees with the f64 formula
 /// on integer inputs.
 #[test]
