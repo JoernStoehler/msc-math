@@ -246,7 +246,7 @@ pub fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> 
 }
 
 /// Check if a cyclic permutation forms an adjacent cycle.
-fn is_adjacent_cycle(perm: &[usize], adj: &[Vec<bool>]) -> bool {
+pub fn is_adjacent_cycle(perm: &[usize], adj: &[Vec<bool>]) -> bool {
     let m = perm.len();
     (0..m).all(|k| adj[perm[k]][perm[(k + 1) % m]])
 }
