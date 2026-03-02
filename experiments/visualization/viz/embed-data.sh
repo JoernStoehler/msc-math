@@ -3,7 +3,7 @@
 set -euo pipefail
 
 DIR="$(cd "$(dirname "$0")" && pwd)"
-DATA_DIR="$DIR/../../docs/viz/data"
+DATA_DIR="$DIR/data"
 
 echo "// Auto-generated polytope data - DO NOT EDIT"
 echo "// Generated from JSON files in data/"

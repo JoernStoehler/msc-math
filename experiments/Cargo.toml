@@ -52,16 +52,16 @@ name = "orbit_recovery"
 path = "orbit-recovery/orbit_recovery.rs"
 
 [[bin]]
-name = "dismissal_error"
-path = "dismissal-error/dismissal_error.rs"
-
-[[bin]]
 name = "crosspolytope"
 path = "crosspolytope/crosspolytope.rs"
 
 [[bin]]
 name = "q_error"
 path = "q-error/q_error.rs"
+
+[[bin]]
+name = "omega_obstacle"
+path = "omega-obstacle/omega_obstacle.rs"
 
 [[bin]]
 name = "gradient_descent"

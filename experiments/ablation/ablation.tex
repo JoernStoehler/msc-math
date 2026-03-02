@@ -223,10 +223,11 @@ non-simple polytopes with $\mathrm{A2} \neq \mathrm{A3}$.
 Table~\ref{tab:ablation-iterations} shows the number of candidate orderings
 $(S, \sigma)$ admitted by each adjacency filter.
 Without pruning (A0), every polytope with $F$ facets admits
-$\sum_{m=2}^{F} \binom{F}{m} \tfrac{(m-1)!}{2}$ candidates;
+$\sum_{m=2}^{F} \binom{F}{m} (m-1)!$ candidates;
 for $F = 8$ this is $16\,064$ and for $F = 10$ it exceeds $10^6$.
-Vertex adjacency~(A1) has no effect at $F \le 6$ (all facets share vertices)
-but prunes up to $94\%$ of candidates at $F = 10$.
+Vertex adjacency~(A1) has no effect at $F \le 5$ (all facets share vertices in
+the random generic polytopes used here) but prunes up to $94\%$ of candidates
+at $F = 10$.
 The directed $\omega_0$ condition~(A2) provides the dominant reduction,
 admitting less than $0.05\%$ of A0 candidates for generic polytopes at $F = 10$
 (531 out of $1\,112\,073$) and ${\sim}3.5\%$ for Lagrangian products at $F = 8$.

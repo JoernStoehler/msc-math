@@ -11,7 +11,7 @@
 mod enumerate;
 mod lagrangian;
 
-use crate::algorithms::hk2017::build_adjacency_matrix;
+use crate::algorithms::hk2017::{build_adjacency_matrix, build_directed_adjacency_matrix, is_adjacent_cycle};
 use crate::geom::polytope::Polytope4D;
 use crate::kkt::{solve_kkt, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
 use enumerate::{enumerate_blocks, enumerate_k_bounce_sigmas};
@@ -86,8 +86,9 @@ pub fn billiard_capacity(polytope: &Polytope4D) -> Result<Option<BilliardResult>
     // Step 1: classify facets
     let classification = classify_facets(polytope)?;
 
-    // Step 2: build adjacency matrix
-    let adj = build_adjacency_matrix(polytope);
+    // Step 2: build adjacency matrices
+    let adj = build_adjacency_matrix(polytope); // undirected: for block building (same-type pairs)
+    let directed_adj = build_directed_adjacency_matrix(polytope); // directed: for cycle pruning (ω₀ condition)
 
     // Step 3: enumerate blocks
     let q_blocks = enumerate_blocks(&classification.q_indices, &adj);
@@ -103,6 +104,11 @@ pub fn billiard_capacity(polytope: &Polytope4D) -> Result<Option<BilliardResult>
 
     for k in 2..=3 {
         enumerate_k_bounce_sigmas(k, &q_blocks, &p_blocks, |sigma| {
+            // Directed adjacency pruning: skip cycles where consecutive facets
+            // violate the ω₀ transition feasibility condition [cor:adjacency-pruning].
+            if !is_adjacent_cycle(sigma, &directed_adj) {
+                return;
+            }
             iterations += 1;
 
             if let Some(result) = solve_kkt(normals, heights, sigma) {

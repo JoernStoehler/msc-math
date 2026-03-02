@@ -520,7 +520,7 @@ This produces 13{,}440 evaluations total.
 \caption{Left: median relative prediction error vs.\ step fraction,
   by direction type (shading: interquartile range).
   The height gradient (red) tracks the linear prediction closely
-  ($<5\%$ error at $0.25\,t_{\max}$).
+  ($7.3\%$ error at $0.25\,t_{\max}$).
   Random directions (blue) have ${\sim}90\%$ error at all scales
   (the gradient is nearly orthogonal to random perturbations in the
   high-dimensional parameter space).
@@ -547,9 +547,17 @@ Three findings:
   but 15 polytopes have wrong-sign predictions
   (the gradient predicts the opposite direction of actual change),
   and 6 polytopes have prediction ratios exceeding 25:1.
-  % [TODO: JÖRN - orbit-switching is a plausible mechanism for these outliers
-  %  but is not directly recorded in the data. runner_up_gap provides a partial
-  %  proxy at the starting point only.]
+  % Investigation of 4990 validity records found two mechanisms for
+  % wrong-sign gradient predictions:
+  % (1) At large step sizes (t ≥ 1.0×t_max), polytope combinatorics change
+  %     (vertex_count_changed=True in 32 records) — the gradient is meaningless
+  %     because the objective function's domain has changed.
+  % (2) At moderate step sizes without combinatorial change, Reeb orbit
+  %     switching: a different (S,σ) candidate becomes the capacity-achieving
+  %     orbit, invalidating the gradient computed for the original orbit.
+  % The iterative optimizer (Phase 3) avoids both: its line search stays
+  % in the linear regime (t_fraction ≤ 0.95) and recomputes HK2017 after
+  % each step, detecting orbit switches immediately.
   The median prediction-to-actual ratio is~$1.55$, indicating
   systematic overprediction from the normal renormalization
   $n_k \to (n_k + t\,g_{n,k})/\|n_k + t\,g_{n,k}\|$.

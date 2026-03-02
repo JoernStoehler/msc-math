@@ -1,6 +1,6 @@
 # Experiment: UNKNOWN predicate survey
 
-Status: **Phase 1 complete** — negative result, zero UNKNOWNs found across 162 polytopes.
+Status: **Phase 1 complete** — 29 UNKNOWNs found (all in Lagrangian products, all f64 rounding noise). Phase 2 not yet confirmed unnecessary.
 
 ## Motivation
 
@@ -20,15 +20,19 @@ Ran the random-sweep (70 polytopes, F=5..12) and lagrangian-products
 (92 polytopes, 10 regular polygon pairs) through the production
 algorithms, tracking certified vs uncertain capacity and β_min.
 
-**Finding: zero UNKNOWNs.** Numerical gap = 0 for all 162 polytopes.
+**Finding: 29 UNKNOWNs, all in Lagrangian products, all f64 noise.**
+Numerical gap > 0 for 29 of 162 polytopes (all lagrangian-products dataset;
+random-sweep: zero UNKNOWNs). Gaps range from 4.44e-16 to 4.93e-12, all
+below 1e-10, consistent with f64 arithmetic rounding.
 
 β_min distribution:
-- Random polytopes: 6.7e-4 to 1.2e-1 (well above ε = 1e-12)
-- Lagrangian products: 6.2e-12 to 3.5e-1
-- Near-miss: `pair_4x4_18deg` has β_min = 6.2e-12 (6× above threshold)
+- Random polytopes: 6.7e-4 to 1.2e-1 (median 4.5e-2, well above ε = 1e-12)
+- Lagrangian products: 5.5e-2 to 3.5e-1 (median 1.7e-1, well above ε = 1e-12)
 
-Conclusion: algorithm is empirically exact at f64 precision.
-Phase 2 is not needed.
+Conclusion: algorithm is empirically exact up to machine-precision rounding
+at f64 on current datasets. The 29 UNKNOWN cases appear benign (f64 noise),
+but individual confirmation would require Phase 2 re-solve for each.
+Phase 2 is likely not needed in practice.
 
 ## Pipeline
 

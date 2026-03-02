@@ -24,7 +24,7 @@ No Python script or figure — the .tex writeup uses a table directly.
 
 - Narrow height range gives highest acceptance (>70% at F=10)
 - Wide height range penalized by irredundancy failures (~28% at F=10)
-- Acceptance drops with facet count but remains practical up to F=10
+- Acceptance increases with facet count for narrow and medium height ranges; wide range peaks around F=8-9 then dips slightly
 - Used to calibrate random-sweep and random-product-sweep experiments
 
 ## Files

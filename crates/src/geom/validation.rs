@@ -5,14 +5,17 @@
 /// - **Irredundant**: each facet has incident vertices of affine rank 3
 ///
 /// Both checks are called from `Polytope4D::new()` to enforce invariants at construction.
+use crate::constants::EPS_FACET_INCIDENCE;
 use crate::geom::cross_product::cross_product_4d;
 use nalgebra::Vector4;
 
 /// Threshold for positive-span check: n_ℓ · d > EPS means "has positive component."
+///
+/// **Why 1e-9:** Same as polytope.rs EPS_UNIT. The cross-product direction d is
+/// computed from 3 unit normals, so ‖d‖ = O(1). Inner products n_ℓ · d near
+/// zero indicate the normal is nearly orthogonal to d; 1e-9 distinguishes
+/// genuine positive components from floating-point noise.
 const EPS_UNIT: f64 = 1e-9;
-
-/// Tolerance for vertex-facet incidence: |n_i · v - h_i| < EPS_FEASIBILITY.
-pub const EPS_FEASIBILITY: f64 = 1e-8;
 
 /// Check that the normals positively span R^4, i.e., the polytope is bounded.
 ///
@@ -80,7 +83,7 @@ pub fn find_redundant_facet(
         // Collect vertices incident to facet i: n_i · v ≈ h_i
         let incident: Vec<Vector4<f64>> = vertices
             .iter()
-            .filter(|v| (normals[i].dot(v) - heights[i]).abs() < EPS_FEASIBILITY)
+            .filter(|v| (normals[i].dot(v) - heights[i]).abs() < EPS_FACET_INCIDENCE)
             .cloned()
             .collect();
 

@@ -1,4 +1,10 @@
-/// Acceptance rate sweep: measure rejection sampling statistics across parameter configs.
+//! Acceptance rate sweep: measure rejection sampling statistics across parameter configs.
+//!
+//! Goal: Measure rejection sampling acceptance rates across a grid of facet counts
+//!   and height ranges, to characterize the efficiency of random polytope generation.
+//! Input: None (generates candidates from hardcoded parameter grid and seed).
+//! Output: experiments/rejection-sampling/acceptance.jsonl (acceptance rates per config).
+
 use symplectic::dataset::AcceptanceRow;
 use symplectic::random::sample_random_polytope;
 use rand::SeedableRng;

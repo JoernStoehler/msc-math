@@ -84,8 +84,21 @@ Four phases, all in one binary:
 - Type preservation drops fast: 35% at 2×t_max, 19% at 10×t_max
 - Validity is strongly non-spherical (direction-dependent, not radius-dependent)
 
-## Jörn verification required
+### Wrong-sign gradient predictions (investigated 2026-03-02)
+Of 4990 validity records, 1977 (39.6%) have negative actual_delta_sys (gradient direction decreases sys). Two mechanisms identified:
 
-- Lemma [lem:vol-derivative-normal]: ∂vol/∂n_k · δ = -S_k(x̄_k · δ)
-- Lemma [lem:cap-derivative-normal]: envelope theorem for ∂Q*/∂n_k with H and N dependence
-- Sign chain in capacity normal derivative proof (noted by pre-reviewer)
+1. **Combinatorial type change** (32 records, all at t ≥ 1.0×t_max): `vertex_count_changed=True` — the polytope's vertex structure changes, so the gradient computed at the original polytope is meaningless for the perturbed one.
+
+2. **Reeb orbit switching** (remaining cases at moderate t, no vertex change): a different (S,σ) candidate becomes the capacity-achieving orbit after the step. The gradient was computed for the original orbit, which is no longer the minimizer.
+
+The 39.6% aggregate is dominated by random-direction records (~90% error rate at all scales, which is expected since random directions are nearly orthogonal to the gradient in high dimension) and large-step records. For the (h,n) gradient at small steps, only 15/140 polytopes show wrong-sign predictions — consistent with the .tex writeup.
+
+The iterative optimizer (Phase 3) avoids both failure modes: its line search stays in the linear regime (t_fraction ≤ 0.95) and recomputes HK2017 after each step, detecting orbit switches immediately. Phase 3 has zero negative-delta-sys steps.
+
+## Jörn verification status
+
+All three items previously flagged as requiring verification are resolved:
+
+- Lemma [lem:vol-derivative-normal]: math approved (59ddc2c) — `% Jörn: math approved` marker in sys-optimization.tex
+- Lemma [lem:cap-derivative-normal]: math approved (59ddc2c) — marker explicitly covers "H-term sign chain"
+- Sign chain in capacity normal derivative proof: covered by the [lem:cap-derivative-normal] approval above

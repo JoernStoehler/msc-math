@@ -17,7 +17,7 @@ E < 1e-6 on every `solve_kkt` call (not just in this experiment).
 
 ## Results (2026-03-02)
 
-- **Part 1:** 1,134,369 total nodes across 7 polytopes, 1,113,987
+- **Part 1:** 1,133,769 total nodes across 7 polytopes, 1,111,987
   solvable. Worst E = 2.9×10⁻¹¹ (hko_pentagon). All assertions pass.
 - **Part 2:** Exact comparison for 3/7 polytopes (others have
   rank-deficient winning nodes). Actual errors at machine epsilon

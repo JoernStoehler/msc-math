@@ -32,5 +32,8 @@ package-lock.json
 # Claude Code worktrees (created by --worktree / EnterWorktree)
 .claude/worktrees/
 
+# Claude Code agent memory (auto-generated, session-specific)
+**/.claude/agent-memory/
+
 # Editor
 *.swp
