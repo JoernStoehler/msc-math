@@ -68,7 +68,7 @@ const EPS_EIGEN_FLOOR: f64 = 1e-12;
 /// Well-conditioned random polytopes have smallest |λ| ≈ 0.01–0.1,
 /// well above 1e-3 · |λ|_max.
 ///
-/// Regression tests: `svd_gap_ratio_44_degenerate`, `svd_gap_ratio_44_theta43`.
+/// Regression tests: `eigen_gap_ratio_44_degenerate`, `eigen_gap_ratio_44_theta43`.
 const EIGEN_CONDITION_TAU: f64 = 1e-3;
 
 /// Maximum acceptable residual norm for the KKT solution (rejects numerically poor solutions).
