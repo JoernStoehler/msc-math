@@ -29,7 +29,8 @@ def load_data():
                 rows.append(json.loads(line))
 
     if not rows:
-        print("No data found.")
+        print(f"No data found in {DATA_PATH}. File exists but is empty or corrupt.")
+        print("Rerun: cd experiments/ && cargo run --release --bin gradient_descent")
         return None
 
     # Group by polytope name
