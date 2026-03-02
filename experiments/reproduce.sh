@@ -68,7 +68,7 @@ experiments/target/release/pentagon_perturb
 # NOTE: This is the slowest step — may take tens of minutes.
 experiments/target/release/lagrangian_sweep
 # → experiments/lagrangian-products/lagrangian-products-5x5.jsonl
-# → experiments/lagrangian-products/lagrangian-products-*-6deg.jsonl (9 files)
+# → experiments/lagrangian-products/lagrangian-products-*-6deg.jsonl (10 files)
 
 # Unknown predicates: UNKNOWN admissibility predicate survey
 experiments/target/release/unknown_predicates
@@ -82,7 +82,7 @@ experiments/target/release/orbit_recovery
 experiments/target/release/crosspolytope
 # → experiments/crosspolytope/crosspolytope.jsonl
 
-# Sys-optimization: sensitivity analysis + gradient steps (F≤10, ~30s)
+# Sys-optimization: sensitivity analysis + gradient steps (F≤10, ~5-10 min)
 # Depends on: random-sweep and random-product-sweep JSONL (must run those first)
 experiments/target/release/sys_optimization
 # → experiments/sys-optimization/sys-optimization-sensitivity.jsonl
@@ -92,8 +92,8 @@ experiments/target/release/sys_optimization
 
 # q_error: Numerical accuracy verification of the KKT solver (~5s)
 # Stdout-only (no .jsonl output). Asserts error bounds and exact comparison.
-experiments/target/release/q_error
-# → stdout: summary tables (Part 1: error bound sweep, Part 2: exact comparison)
+experiments/target/release/q_error 2>&1 | tee experiments/q-error/q_error_output.txt
+# → experiments/q-error/q_error_output.txt (summary tables)
 
 # Dismissal error bound validation (33 polytopes from capacity_dataset.json)
 experiments/target/release/dismissal_error
@@ -142,8 +142,11 @@ python3 experiments/orbit-recovery/orbit_recovery.py
 # Sys-optimization: gradient histograms + improvement scatter + stats table
 python3 experiments/sys-optimization/sys_optimization.py
 # → experiments/sys-optimization/sys_optimization_gradient_hist.png
-# → experiments/sys-optimization/sys_optimization_favorable.png
+# → experiments/sys-optimization/sys_optimization_gradient_comparison.png
 # → experiments/sys-optimization/sys_optimization_improvement.png
+# → experiments/sys-optimization/sys_optimization_convergence.png
+# → experiments/sys-optimization/sys_optimization_iteration_summary.png
+# → experiments/sys-optimization/sys_optimization_validity.png
 # → experiments/sys-optimization/sys_optimization_stats.tex
 
 # Dismissal error bound: distribution of error bounds
@@ -151,9 +154,18 @@ python3 experiments/dismissal-error/dismissal_error.py
 # → experiments/dismissal-error/dismissal-error.png
 
 # ── Step 3: Visualization screenshots ────────────────────────────────────────
-# Automated via Playwright (headless Chrome). Requires: npm install playwright.
-# The script starts a local server, loads each polytope, and takes screenshots.
+# First generate polytope data, then embed into the web viewer, then screenshot.
+# Requires: npm install playwright.
 
+# Generate polytope JSON data for the web viewer
+experiments/target/release/viz_export
+# → experiments/visualization/viz/*.json (per-polytope data files)
+
+# Embed generated data into the viewer's data.js
+(cd experiments/visualization/viz && bash embed-data.sh)
+# → experiments/visualization/viz/data.js
+
+# Start local server, take screenshots, stop server
 (cd experiments/visualization/viz && npx serve -l 8080 &)
 sleep 2  # wait for server
 (cd experiments/visualization/viz && node screenshot-figures.mjs)

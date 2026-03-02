@@ -5,28 +5,16 @@ set -euo pipefail
 
 PORT="${1:-8080}"
 DIR="$(cd "$(dirname "$0")" && pwd)"
-DATA="$DIR/../../docs/viz/data"
-CRATES="$DIR/../../crates"
+EXPERIMENTS="$DIR/../.."
 
-mkdir -p "$DATA"
+echo "Building viz_export binary..."
+cargo build --release --manifest-path "$EXPERIMENTS/Cargo.toml" --bin viz_export -q
 
-echo "Building datasets binary..."
-cargo build --release --manifest-path "$CRATES/Cargo.toml" -p datasets --bin datasets -q
+echo "Generating polytope data..."
+"$EXPERIMENTS/target/release/viz_export"
 
-BIN="$CRATES/target/release/datasets"
-
-POLYTOPES=(simplex hypercube crosspolytope hko_pentagon
-           lagrangian_triangle_product symplectic_triangle_product
-           lagrangian_tri_sq symplectic_tri_sq)
-
-for name in "${POLYTOPES[@]}"; do
-    out="$DATA/${name}.json"
-    if [ -f "$out" ]; then
-        echo "  $name — cached"
-    else
-        "$BIN" export-viz "$out" "$name" 2>&1
-    fi
-done
+echo "Embedding data into viewer..."
+bash "$DIR/embed-data.sh"
 
 # Kill any stale server on this port
 if lsof -ti:"$PORT" >/dev/null 2>&1; then
