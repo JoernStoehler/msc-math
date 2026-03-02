@@ -74,7 +74,7 @@ Each entry contains:
 - Timing for unpruned (F≤7 only)
 - Timing for billiard (Lagrangian products only)
 
-**Runtime:** ~5-10 minutes (dominated by F=11,12 samples)
+**Runtime:** ~8 seconds total (F=11 samples ~150-175ms each, F=12 samples ~1.3-1.8s each)
 
 ### Step 2: Fit timing model
 
@@ -167,7 +167,7 @@ To regenerate after algorithm changes:
 
 ```bash
 cd experiments/
-cargo run --bin benchmark --release   # Generates benchmark/benchmark.jsonl (~5-10 min)
+cargo run --bin benchmark --release   # Generates benchmark/benchmark.jsonl (~8 seconds)
 python3 benchmark/benchmark.py        # Fits model, generates figure
 ```
 

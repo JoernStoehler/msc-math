@@ -84,8 +84,10 @@ Four phases, all in one binary:
 - Type preservation drops fast: 35% at 2×t_max, 19% at 10×t_max
 - Validity is strongly non-spherical (direction-dependent, not radius-dependent)
 
-## Jörn verification required
+## Jörn verification status
 
-- Lemma [lem:vol-derivative-normal]: ∂vol/∂n_k · δ = -S_k(x̄_k · δ)
-- Lemma [lem:cap-derivative-normal]: envelope theorem for ∂Q*/∂n_k with H and N dependence
-- Sign chain in capacity normal derivative proof (noted by pre-reviewer)
+All three items previously flagged as requiring verification are resolved:
+
+- Lemma [lem:vol-derivative-normal]: math approved (59ddc2c) — `% Jörn: math approved` marker in sys-optimization.tex
+- Lemma [lem:cap-derivative-normal]: math approved (59ddc2c) — marker explicitly covers "H-term sign chain"
+- Sign chain in capacity normal derivative proof: covered by the [lem:cap-derivative-normal] approval above

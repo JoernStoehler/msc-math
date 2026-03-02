@@ -3,7 +3,7 @@
 **Purpose:** Iteratively refine the adjacency graph used to prune the search
 space of the HK2017 algorithm, measuring correctness and speedup at each step.
 
-**Status:** A-axis complete. Four variants (A0–A3) agree on all 39 test polytopes.
+**Status:** A-axis complete. Four variants (A0–A3) agree on all 54 test polytopes.
 
 ## Files
 
@@ -12,18 +12,19 @@ space of the HK2017 algorithm, measuring correctness and speedup at each step.
 | `ablation.rs` | Rust binary: generates dataset, runs all variants, checks agreement |
 | `ablation.py` | Python analysis: agreement/timing/iteration tables, timing figure |
 | `ablation.tex` | Thesis subsection (LaTeX) |
-| `ablation.jsonl` | Generated dataset: 156 entries (39 polytopes × 4 variants) |
+| `ablation.jsonl` | Generated dataset: 216 entries (54 polytopes × 4 variants) |
 | `ablation_timing.png` | Figure: all variants timing per group and facet count |
 
 ## Dataset
 
-39 polytopes across 3 groups, seeded at 42, h ∈ [0.5, 2.0]:
+54 polytopes across 4 groups, seeded at 42, h ∈ [0.5, 2.0]:
 
 | Group | Count | F | Description |
 |-------|-------|---|-------------|
-| Random generic | 20 | 5–8 | 5 random 4-polytopes per facet count |
+| Random generic | 30 | 5–10 | 5 random 4-polytopes per facet count |
 | Random Lagrangian | 15 | 6–8 | 5 random products per pair: △×△ (F=6), △×□ (F=7), □×□ (F=8) |
-| Regression cases | 4 | 6–8 | Fixed polytopes: degenerate KKT, LU fast path, non-simple (see below) |
+| Non-simple | 5 | 6–9 | Bipyramids (F=6,7) and cut simplices (c=1.5,2.5,4.0) |
+| Regression cases | 4 | 6–8 | Fixed polytopes: degenerate KKT, LU fast path, cut simplex (c=2.0) |
 
 ## Adjacency Graph Variants
 
@@ -46,21 +47,23 @@ convention (ω₀ ≤ 0 for consecutive σ(k) → σ(k+1)) to match the Q-functi
 
 ## Key Findings
 
-**Agreement:** All four variants agree on all 39 polytopes (max absolute difference < 10⁻⁸).
+**Agreement:** All four variants agree on all 54 polytopes (max absolute difference < 10⁻⁸).
 
 **Timing** (mean ms, random generic polytopes, n=5 per F):
 
 | F | A0 | A1 | A2 | A3 | A2/A0 speedup |
 |---|---:|---:|---:|---:|-------------:|
-| 5 | 0.8 | 0.8 | 0.1 | 0.1 | ~7× |
-| 6 | 4.0 | 3.2 | 0.2 | 0.3 | ~16× |
-| 7 | 27.0 | 13.2 | 0.6 | 0.6 | ~44× |
-| 8 | 239.2 | 70.6 | 1.7 | 1.7 | ~137× |
+| 5 | 0.8 | 0.7 | 0.1 | 0.1 | ~8× |
+| 6 | 4.2 | 3.1 | 0.3 | 0.3 | ~16× |
+| 7 | 25.6 | 13.3 | 0.6 | 0.6 | ~44× |
+| 8 | 227.4 | 71.7 | 1.7 | 1.7 | ~133× |
+| 9 | 2100.1 | 507.7 | 6.6 | 6.6 | ~317× |
+| 10 | 22210.7 | 1298.6 | 20.6 | 20.8 | ~1078× |
 
-Lagrangian products show similar but less dramatic A2 speedup (~38× at F=8)
+Lagrangian products show similar but less dramatic A2 speedup (~33× at F=8)
 due to structured normals having more ω₀ = 0 pairs.
 
-**A3 = A2 on simple polytopes:** On all 38 simple test polytopes, A3 provides
+**A3 = A2 on simple polytopes:** On all 48 simple test polytopes, A3 provides
 zero additional pruning beyond A2. Every vertex lies on exactly 4 facets,
 so adjacent facets share ridges. By Ridge Sufficiency (`[cor:ridge-sufficiency]`),
 ω₀ ≥ 0 alone guarantees feasibility at ridges, making the LP check redundant.

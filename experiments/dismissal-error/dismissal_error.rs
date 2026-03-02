@@ -33,19 +33,19 @@ use symplectic::{ehz_capacity, omega0, Polytope4D};
 // ============================================================================
 
 /// Minimum β_i value to consider a solution valid.
-/// Copied from crates/src/kkt.rs:12
+/// Copied from crates/src/kkt.rs (EPS_BETA_POSITIVE).
 const EPS_BETA_POSITIVE: f64 = 1e-12;
 
-/// Floor for SVD singular values.
-/// Copied from crates/src/kkt.rs:20
+/// Floor for singular values (used here in place of the library's EPS_EIGEN_FLOOR).
+/// Copied from crates/src/kkt.rs (EPS_EIGEN_FLOOR).
 const EPS_SVD_FLOOR: f64 = 1e-12;
 
-/// Condition-number threshold for SVD rank detection.
-/// Copied from crates/src/kkt.rs:41
+/// Condition-number threshold for rank detection.
+/// Copied from crates/src/kkt.rs (EIGEN_CONDITION_TAU).
 const SVD_CONDITION_TAU: f64 = 1e-3;
 
 /// Maximum acceptable residual norm.
-/// Copied from crates/src/kkt.rs:44
+/// Copied from crates/src/kkt.rs (EPS_KKT_RESIDUAL).
 const EPS_KKT_RESIDUAL: f64 = 1e-6;
 
 /// Facet incidence tolerance.
@@ -131,11 +131,18 @@ enum DismissalResult {
 }
 
 // ============================================================================
-// Copied from library — KKT system building (crates/src/kkt.rs:184-223)
+// KKT system building — thesis (asymmetric) sign convention
+//
+// NOTE: This uses the ASYMMETRIC sign convention from the thesis, NOT the
+// library's symmetric convention (crates/src/kkt.rs build_kkt_system).
+// The library uses +N/+η in both off-diagonal blocks to obtain a symmetric
+// matrix. This experiment uses -N/-η in the upper block, matching the thesis
+// presentation.
 // ============================================================================
 
-/// Build the KKT matrix and RHS vector.
+/// Build the KKT matrix and RHS vector (thesis asymmetric convention).
 /// Layout: [H | -N | -η; N^T | 0 | 0; η^T | 0 | 0], RHS = [0,...,0,1].
+/// Off-diagonal signs differ from crates/src/kkt.rs which uses +N/+η throughout.
 fn build_kkt_system(
     normals: &[Vector4<f64>],
     heights: &[f64],
@@ -377,7 +384,7 @@ fn is_adjacent_cycle(perm: &[usize], adj: &[Vec<bool>]) -> bool {
 
 /// Analyse a single (S, σ) pair for dismissal diagnostics.
 ///
-/// Replicates the SVD path of `solve_kkt_svd_path` (crates/src/kkt.rs:233-359)
+/// Replicates the near-singular handling of `solve_kkt_eigen_path` (crates/src/kkt.rs)
 /// but instead of returning None on dismissal, computes the error bound from
 /// Remark `[lem:dismissal-error-bound]` (thesis appendix eq. A.3).
 fn solve_kkt_dismissal_diagnostics(
