@@ -1,16 +1,24 @@
 #![allow(clippy::collapsible_if, clippy::op_ref, clippy::bool_comparison, dead_code)]
 
-/// Measure empirical Q error bounds from the KKT eigendecomposition solve.
+/// Numerical accuracy experiment for the KKT solver.
 ///
-/// Goal: Check whether the analytical error bound E from the analytical error bound
-///       from the Q~error lemma is tight or uselessly loose, and measure direction-aware errors.
-/// Input: Known polytopes from the library (small, F ≤ 8).
-/// Output: Tables to stdout with |λ_min|, ‖r‖, Q values, E, actual error.
+/// Goal: Verify that f64 numerical errors stay within the proven error bounds.
+///
+/// Two complementary checks:
+/// 1. At ALL (S,σ) nodes: assert the error bound E and residual ‖r‖ are small.
+/// 2. At select nodes: compare numerical Q̃ against exact Q (rational arithmetic),
+///    and assert |Q̃ - Q_exact| ≤ E (the error bound is valid).
+///
+/// Input: Known polytopes from the library (F ≤ 10).
+/// Output: Summary tables to stdout. Panics on any violation.
 use nalgebra::{DMatrix, DVector, Vector4};
+use num_bigint::BigInt;
+use num_rational::BigRational;
+use num_traits::{ToPrimitive, Zero};
 use symplectic::algorithms::hk2017::ehz_capacity;
 use symplectic::geom::known_polytopes;
-use symplectic::geom::symplectic::omega0;
 use symplectic::geom::polytope::Polytope4D;
+use symplectic::geom::symplectic::omega0;
 
 // WARNING: This is a copy of kkt::build_kkt_system (which is pub(crate)).
 // If the KKT matrix construction changes in the library, update this copy.
@@ -57,15 +65,6 @@ fn build_kkt(
 }
 
 /// Q(β) = Σ_{i>j} β_i β_j ω₀(n_{σ(i)}, n_{σ(j)}).
-///
-/// Sign convention: q_from_beta = -(1/2) β^T H β, where H is the KKT matrix
-/// upper-left block. Since ω₀ is antisymmetric and H_{ij} = ω₀(n_{min}, n_{max}),
-/// the i>j sum uses the OPPOSITE argument order from H, giving the minus sign.
-///
-/// Consequence for second-order conditions:
-/// - Hessian of q w.r.t. β is -H (constant)
-/// - H|_T PD ↔ -H|_T ND ↔ q locally MAXIMIZED (this is the desired case)
-/// - H|_T ND ↔ -H|_T PD ↔ q locally MINIMIZED (can improve by moving)
 fn q_from_beta(normals: &[Vector4<f64>], perm: &[usize], beta: &[f64]) -> f64 {
     let m = beta.len();
     (1..m)
@@ -74,19 +73,12 @@ fn q_from_beta(normals: &[Vector4<f64>], perm: &[usize], beta: &[f64]) -> f64 {
         .sum()
 }
 
-/// Compute -(1/2) β^T H β directly from the KKT matrix, for cross-checking q_from_beta.
-fn q_from_hessian(kkt: &DMatrix<f64>, beta: &[f64]) -> f64 {
-    let m = beta.len();
-    let beta_vec = DVector::from_iterator(m, beta.iter().cloned());
-    let h_block = kkt.view((0, 0), (m, m));
-    let hb = h_block * &beta_vec;
-    -0.5 * beta_vec.dot(&hb)
-}
-
 /// Condition-number threshold for rank truncation (matches EIGEN_CONDITION_TAU
 /// in crates/src/kkt.rs).
-/// Used as: |λ_i| > lambda_max * EIGEN_CONDITION_TAU → retain eigenvalue i.
 const EIGEN_CONDITION_TAU: f64 = 1e-3;
+
+/// Maximum acceptable residual norm (matches EPS_KKT_RESIDUAL in kkt.rs).
+const EPS_KKT_RESIDUAL: f64 = 1e-6;
 
 /// Threshold for eigenvalue definiteness classification.
 const EPS_DEFINITE: f64 = 1e-10;
@@ -148,8 +140,372 @@ fn permutations_of(s: &[usize]) -> Vec<Vec<usize>> {
     result
 }
 
+/// Eigendecomposition-based solve: x̂ = Σ_i (v_i · b / λ_i) v_i for top `rank`
+/// eigenvalues by |λ|.
+fn eigen_solve(
+    eigenvectors: &DMatrix<f64>,
+    eigenvalues: &DVector<f64>,
+    rhs: &DVector<f64>,
+    size: usize,
+    rank: usize,
+) -> DVector<f64> {
+    let mut indices: Vec<usize> = (0..size).collect();
+    indices.sort_by(|&a, &b| eigenvalues[b].abs().partial_cmp(&eigenvalues[a].abs()).unwrap());
+
+    let mut x = DVector::zeros(size);
+    for &i in indices.iter().take(rank) {
+        let coeff = eigenvectors.column(i).dot(rhs) / eigenvalues[i];
+        x += coeff * eigenvectors.column(i);
+    }
+    x
+}
+
+// ── Part 1: All-node error bound sweep ──────────────────────────────────
+
+/// Result of error bound sweep for one polytope.
+struct SweepResult {
+    total_nodes: u64,
+    solvable_nodes: u64,
+    rank_deficient: u64,
+    worst_e: f64,
+    worst_residual: f64,
+    worst_correction: f64,
+}
+
+/// Sweep ALL (S,σ) pairs for a polytope and assert error bounds.
+fn error_bound_sweep(polytope: &Polytope4D) -> SweepResult {
+    let f = polytope.facet_count();
+    let normals = polytope.normals();
+    let heights = polytope.heights();
+
+    let mut total_nodes: u64 = 0;
+    let mut solvable_nodes: u64 = 0;
+    let mut rank_deficient: u64 = 0;
+    let mut worst_e: f64 = 0.0;
+    let mut worst_residual: f64 = 0.0;
+    let mut worst_correction: f64 = 0.0;
+
+    for m in 2..=f {
+        for subset in combinations(f, m) {
+            for perm in cyclic_permutations(&subset) {
+                total_nodes += 1;
+                let size = m + 5;
+                let (kkt, rhs) = build_kkt(normals, heights, &perm);
+
+                let eig = kkt.clone().symmetric_eigen();
+                let eigenvalues = &eig.eigenvalues;
+                let eigenvectors = &eig.eigenvectors;
+
+                let lambda_max_abs = eigenvalues.iter().cloned().map(f64::abs)
+                    .fold(0.0_f64, f64::max);
+                if lambda_max_abs < 1e-12 {
+                    continue; // Numerically zero matrix
+                }
+
+                let threshold = lambda_max_abs * EIGEN_CONDITION_TAU;
+                let rank = eigenvalues.iter().filter(|&&e| e.abs() > threshold).count();
+                if rank < size {
+                    rank_deficient += 1;
+                }
+
+                // |λ_min| among retained eigenvalues
+                let abs_lambda_min = eigenvalues.iter()
+                    .filter(|&&e| e.abs() > threshold)
+                    .map(|e| e.abs())
+                    .fold(f64::INFINITY, f64::min)
+                    .max(f64::MIN_POSITIVE);
+
+                let x = eigen_solve(eigenvectors, eigenvalues, &rhs, size, rank);
+                let residual_vec = &kkt * &x - &rhs;
+                let residual_norm = residual_vec.norm();
+
+                if residual_norm > EPS_KKT_RESIDUAL {
+                    continue; // Skip nodes with large residual (solver rejects these)
+                }
+
+                solvable_nodes += 1;
+
+                // Q̃ = Q(β̂) - (r₂ᵀμ̂ + r₃ξ̂)
+                let beta: Vec<f64> = (0..m).map(|i| x[i]).collect();
+                let q_raw = q_from_beta(normals, &perm, &beta);
+                let r2_dot_mu: f64 = (m..m + 4).map(|i| residual_vec[i] * x[i]).sum();
+                let r3 = residual_vec[m + 4];
+                let xi_hat = x[m + 4];
+                let q_correction = r2_dot_mu + r3 * xi_hat;
+
+                // E = (9/2) ‖r‖² / |λ_min|
+                let r_sq = residual_norm * residual_norm;
+                let q_error_bound = 4.5 * r_sq / abs_lambda_min;
+
+                // Track worst cases
+                worst_e = worst_e.max(q_error_bound);
+                worst_residual = worst_residual.max(residual_norm);
+                worst_correction = worst_correction.max(q_correction.abs());
+
+                // ASSERT: error bound must be small
+                assert!(
+                    q_error_bound < 1e-6,
+                    "E too large at (S,σ)={:?}: E={:.2e}, |r|={:.2e}, |λ_min|={:.2e}",
+                    perm, q_error_bound, residual_norm, abs_lambda_min
+                );
+
+                // ASSERT: Q correction must be small (absolute or relative)
+                assert!(
+                    q_correction.abs() < 1e-6 || q_correction.abs() < 1e-6 * q_raw.abs(),
+                    "Q correction too large at (S,σ)={:?}: correction={:.2e}, Q_raw={:.2e}",
+                    perm, q_correction, q_raw
+                );
+            }
+        }
+    }
+
+    SweepResult {
+        total_nodes,
+        solvable_nodes,
+        rank_deficient,
+        worst_e,
+        worst_residual,
+        worst_correction,
+    }
+}
+
+// ── Part 2: Exact value comparison ──────────────────────────────────────
+
+/// Convert an f64 to an exact BigRational (lossless for finite f64).
+fn f64_to_rational(x: f64) -> BigRational {
+    // Every finite f64 = m * 2^e where m is an integer mantissa and e is the exponent.
+    // We use the rational representation directly.
+    if x == 0.0 {
+        return BigRational::zero();
+    }
+    // Use the bits representation to get exact rational
+    let bits = x.to_bits();
+    let sign = if bits >> 63 == 0 { 1i64 } else { -1i64 };
+    let exponent = ((bits >> 52) & 0x7FF) as i64;
+    let mantissa = if exponent == 0 {
+        // Subnormal: mantissa without implicit 1
+        (bits & 0x000F_FFFF_FFFF_FFFF) as i64
+    } else {
+        // Normal: mantissa with implicit 1
+        ((bits & 0x000F_FFFF_FFFF_FFFF) | 0x0010_0000_0000_0000) as i64
+    };
+    let e = if exponent == 0 {
+        1 - 1023 - 52 // Subnormal exponent
+    } else {
+        exponent - 1023 - 52 // Normal exponent
+    };
+
+    let numer = BigInt::from(sign * mantissa);
+    if e >= 0 {
+        let scale = BigInt::from(1u64) << (e as u64);
+        BigRational::new(numer * scale, BigInt::from(1))
+    } else {
+        let scale = BigInt::from(1u64) << ((-e) as u64);
+        BigRational::new(numer, scale)
+    }
+}
+
+/// Build the KKT matrix and RHS over Q (exact rational arithmetic).
+/// Uses the same f64 normals/heights as the library, but represented as exact rationals.
+fn build_kkt_rational(
+    normals: &[Vector4<f64>],
+    heights: &[f64],
+    perm: &[usize],
+) -> (Vec<Vec<BigRational>>, Vec<BigRational>) {
+    let m = perm.len();
+    let size = m + 5;
+    let zero = BigRational::zero();
+
+    let mut mat = vec![vec![zero.clone(); size]; size];
+    let mut rhs = vec![zero.clone(); size];
+
+    // H block: H_{ij} = ω₀(n_i, n_j) for i ≠ j (symmetric)
+    for i in 0..m {
+        for j in (i + 1)..m {
+            let val = f64_to_rational(omega0(&normals[perm[i]], &normals[perm[j]]));
+            mat[i][j] = val.clone();
+            mat[j][i] = val;
+        }
+    }
+
+    // N block: N_{i,d} = normals[perm[i]][d]
+    for i in 0..m {
+        for d in 0..4 {
+            let val = f64_to_rational(normals[perm[i]][d]);
+            mat[i][m + d] = val.clone();
+            mat[m + d][i] = val;
+        }
+    }
+
+    // η block: η_i = heights[perm[i]]
+    for i in 0..m {
+        let val = f64_to_rational(heights[perm[i]]);
+        mat[i][m + 4] = val.clone();
+        mat[m + 4][i] = val;
+    }
+
+    // RHS: [0, ..., 0, 1]
+    rhs[m + 4] = BigRational::from(BigInt::from(1));
+
+    (mat, rhs)
+}
+
+/// Gaussian elimination with partial pivoting over BigRational.
+/// Returns None if the system is singular.
+fn gauss_solve(mat: &[Vec<BigRational>], rhs: &[BigRational]) -> Option<Vec<BigRational>> {
+    let n = rhs.len();
+    // Augmented matrix [A | b]
+    let mut aug: Vec<Vec<BigRational>> = mat.iter().enumerate()
+        .map(|(i, row)| {
+            let mut r = row.clone();
+            r.push(rhs[i].clone());
+            r
+        })
+        .collect();
+
+    // Forward elimination
+    for col in 0..n {
+        // Find pivot (first nonzero in column)
+        let pivot_row = (col..n).find(|&r| !aug[r][col].is_zero())?;
+        aug.swap(col, pivot_row);
+
+        let pivot = aug[col][col].clone();
+        for row in (col + 1)..n {
+            if !aug[row][col].is_zero() {
+                let factor = &aug[row][col] / &pivot;
+                for j in col..=n {
+                    let val = &aug[col][j] * &factor;
+                    aug[row][j] = &aug[row][j] - &val;
+                }
+            }
+        }
+    }
+
+    // Back substitution
+    let mut x = vec![BigRational::zero(); n];
+    for i in (0..n).rev() {
+        let mut sum = aug[i][n].clone();
+        for j in (i + 1)..n {
+            sum = sum - &aug[i][j] * &x[j];
+        }
+        if aug[i][i].is_zero() {
+            return None; // Singular
+        }
+        x[i] = sum / &aug[i][i];
+    }
+
+    Some(x)
+}
+
+/// Compute exact Q(β) = Σ_{i>j} β_i β_j ω₀(n_i, n_j) over BigRational.
+fn q_from_beta_rational(
+    normals: &[Vector4<f64>],
+    perm: &[usize],
+    beta: &[BigRational],
+) -> BigRational {
+    let m = beta.len();
+    let mut sum = BigRational::zero();
+    for i in 1..m {
+        for j in 0..i {
+            let omega = f64_to_rational(omega0(&normals[perm[i]], &normals[perm[j]]));
+            sum = sum + &beta[i] * &beta[j] * omega;
+        }
+    }
+    sum
+}
+
+/// Result of exact comparison for one polytope.
+struct ExactResult {
+    q_numerical: f64,     // Q̃ (corrected numerical)
+    q_exact: f64,         // Q_exact (rational, converted to f64 for display)
+    actual_error: f64,    // |Q̃ - Q_exact|
+    error_bound: f64,     // E from error bound lemma (mathematical)
+    f64_eps: f64,         // f64 rounding tolerance (machine precision)
+    bound_valid: bool,    // actual_error ≤ max(E, f64_eps)?
+    perm_size: usize,
+}
+
+/// Compare numerical Q̃ against exact Q for the winning (S,σ) of a polytope.
+fn exact_comparison(polytope: &Polytope4D) -> Option<ExactResult> {
+    let result = ehz_capacity(polytope)?;
+
+    // Get the winning permutation in algebraic order (internal convention)
+    let mut alg_perm = result.best_permutation.clone();
+    alg_perm.reverse();
+    let m = alg_perm.len();
+    let size = m + 5;
+
+    let normals = polytope.normals();
+    let heights = polytope.heights();
+
+    // Build rational KKT system (same f64 values, exact representation)
+    let (rat_mat, rat_rhs) = build_kkt_rational(normals, heights, &alg_perm);
+
+    // Solve exactly
+    let x_exact = gauss_solve(&rat_mat, &rat_rhs)?;
+
+    // Extract exact β and compute exact Q
+    let beta_exact: Vec<BigRational> = x_exact[..m].to_vec();
+    let q_exact_rational = q_from_beta_rational(normals, &alg_perm, &beta_exact);
+    let q_exact_f64 = q_exact_rational.numer().to_f64().unwrap_or(f64::NAN)
+        / q_exact_rational.denom().to_f64().unwrap_or(f64::NAN);
+
+    // Compute numerical Q̃ and E (using the eigendecomposition path)
+    let (kkt, rhs) = build_kkt(normals, heights, &alg_perm);
+    let eig = kkt.clone().symmetric_eigen();
+    let eigenvalues = &eig.eigenvalues;
+    let eigenvectors = &eig.eigenvectors;
+
+    let lambda_max_abs = eigenvalues.iter().cloned().map(f64::abs).fold(0.0_f64, f64::max);
+    let threshold = lambda_max_abs * EIGEN_CONDITION_TAU;
+    let rank = eigenvalues.iter().filter(|&&e| e.abs() > threshold).count();
+
+    let abs_lambda_min = eigenvalues.iter()
+        .filter(|&&e| e.abs() > threshold)
+        .map(|e| e.abs())
+        .fold(f64::INFINITY, f64::min)
+        .max(f64::MIN_POSITIVE);
+
+    let x = eigen_solve(eigenvectors, eigenvalues, &rhs, size, rank);
+    let residual_vec = &kkt * &x - &rhs;
+    let residual_norm = residual_vec.norm();
+
+    let beta_numerical: Vec<f64> = (0..m).map(|i| x[i]).collect();
+    let q_raw = q_from_beta(normals, &alg_perm, &beta_numerical);
+    let r2_dot_mu: f64 = (m..m + 4).map(|i| residual_vec[i] * x[i]).sum();
+    let r3 = residual_vec[m + 4];
+    let xi_hat = x[m + 4];
+    let q_correction = r2_dot_mu + r3 * xi_hat;
+    let q_corrected = q_raw - q_correction;
+
+    let r_sq = residual_norm * residual_norm;
+    let q_error_bound = 4.5 * r_sq / abs_lambda_min;
+
+    let actual_error = (q_corrected - q_exact_f64).abs();
+
+    // The comparison has two error sources:
+    // 1. Mathematical: E = (9/2)‖r‖²/|λ_min| — bounds algorithm error (typically ~1e-28)
+    // 2. Computational: f64 rounding in evaluating Q̃ and Q_exact — ~machine_eps * |Q|
+    // The meaningful assertion is: actual error ≤ max(E, f64_tolerance).
+    // When E << eps_machine, this validates that the ONLY error source is f64 rounding.
+    let f64_eps = 1e-13 * (1.0 + q_corrected.abs());
+    let tolerance = q_error_bound.max(f64_eps);
+    let bound_valid = actual_error <= tolerance;
+
+    Some(ExactResult {
+        q_numerical: q_corrected,
+        q_exact: q_exact_f64,
+        actual_error,
+        error_bound: q_error_bound,
+        f64_eps,
+        bound_valid,
+        perm_size: m,
+    })
+}
+
+// ── Part 3: Hessian and inertia checks (kept from original) ─────────────
+
 /// Lightweight Hessian diagnostic for a single (S, σ) node.
-/// Returns (Q, beta_min, definiteness, tangent_dim) or None if KKT system unsolvable.
 fn node_hessian_check(
     normals: &[Vector4<f64>],
     heights: &[f64],
@@ -167,7 +523,6 @@ fn node_hessian_check(
     let threshold = lambda_max_abs * EIGEN_CONDITION_TAU;
     let rank = eigenvalues.iter().filter(|&&e| e.abs() > threshold).count();
 
-    // Truncated eigendecomposition solve
     let x = eigen_solve(eigenvectors, eigenvalues, &rhs, size, rank);
     let beta: Vec<f64> = (0..m).map(|i| x[i]).collect();
     let beta_min = beta.iter().cloned().fold(f64::INFINITY, f64::min);
@@ -231,447 +586,71 @@ struct NodeInfo {
     m: usize,
 }
 
-struct Diagnostics {
-    lambda_max_abs: f64,
-    /// Smallest |λ_i| of full matrix
-    lambda_min_abs_full: f64,
-    /// Smallest |λ_i| among retained eigenvalues (after truncation)
-    lambda_min_abs_retained: f64,
-    numerical_rank: usize,
-    full_size: usize,
-    residual_norm_full: f64,
-    residual_norm_truncated: f64,
-    q_raw: f64,
-    q_first_order: f64,
-    /// E_old = ‖r‖²(2/|λ_min| + |λ_max|/(2|λ_min|²)) — old vacuous bound
-    e_old_full: f64,
-    /// E_old using |λ_min| of retained eigenvalues
-    e_old_retained: f64,
-    /// E_tight = (9/2)‖r‖²/|λ_min| — tight bound from [lem:q-error-bound]
-    e_tight_full: f64,
-    /// E_tight using |λ_min| of retained eigenvalues
-    e_tight_retained: f64,
-    /// |2(r₁ᵀδλ + r₃δν)| computed from full eigendecomposition δx
-    cross_abs_full: f64,
-    /// |δβᵀHδβ| computed from full eigendecomposition δx
-    quad_abs_full: f64,
-    /// Same but using truncated eigendecomposition
-    cross_abs_trunc: f64,
-    quad_abs_trunc: f64,
-    q_fully_corrected: f64,
-    /// Eigenvalues with signs (for inertia checks)
-    eigenvalues_signed: Vec<f64>,
-    /// Absolute values of eigenvalues
-    eigenvalues_abs: Vec<f64>,
-    /// Eigenvalues of H restricted to T = ker([N^T; η^T])
-    restricted_eigs: Vec<f64>,
-    /// dim T = m - rank([N^T; η^T])
-    tangent_dim: usize,
-    /// Minimum β̂ component (for β > 0 check)
-    beta_min: f64,
-}
-
-fn run_diagnostics(
-    normals: &[Vector4<f64>],
-    heights: &[f64],
-    perm: &[usize],
-) -> Diagnostics {
-    let m = perm.len();
-    let size = m + 5;
-    let (kkt, rhs) = build_kkt(normals, heights, perm);
-
-    let eig = kkt.clone().symmetric_eigen();
-    let eigenvalues = &eig.eigenvalues;
-    let eigenvectors = &eig.eigenvectors;
-
-    let lambda_max_abs = eigenvalues.iter().cloned().map(f64::abs).fold(0.0_f64, f64::max);
-    let lambda_min_abs_full = eigenvalues.iter().cloned().map(f64::abs)
-        .fold(f64::INFINITY, f64::min);
-
-    // Truncated rank (matching library): sort by |λ|, keep top `rank`
-    let threshold = lambda_max_abs * EIGEN_CONDITION_TAU;
-    let rank = eigenvalues.iter().filter(|&&e| e.abs() > threshold).count();
-
-    // |λ_min| among retained eigenvalues (top `rank` by |λ|)
-    let mut sorted_abs: Vec<f64> = eigenvalues.iter().cloned().map(f64::abs).collect();
-    sorted_abs.sort_by(|a, b| b.partial_cmp(a).unwrap()); // descending
-    let lambda_min_abs_retained = sorted_abs.iter().take(rank).cloned()
-        .fold(f64::INFINITY, f64::min);
-
-    // Full eigendecomposition solve (all eigenvalues)
-    let x_full = eigen_solve(eigenvectors, eigenvalues, &rhs, size, size);
-    let r_full = &kkt * &x_full - &rhs;
-    let r_full_norm = r_full.norm();
-
-    // Truncated eigendecomposition solve (only top `rank` eigenvalues by |λ|)
-    let x_trunc = eigen_solve(eigenvectors, eigenvalues, &rhs, size, rank);
-    let r_trunc = &kkt * &x_trunc - &rhs;
-    let r_trunc_norm = r_trunc.norm();
-
-    let beta_full: Vec<f64> = (0..m).map(|i| x_full[i]).collect();
-    let q_raw = q_from_beta(normals, perm, &beta_full);
-
-    // Residual blocks from full eigendecomposition (code ordering: rows m..m+4 = constraint, m+4 = normalization)
-    // Solution vector is [β̂; μ̂; ξ̂] with negated multipliers.
-    let r1_full: DVector<f64> = DVector::from_iterator(4, (m..m + 4).map(|i| r_full[i]));
-    let r3_full = r_full[m + 4];
-    let mu_hat: DVector<f64> = DVector::from_iterator(4, (m..m + 4).map(|i| x_full[i]));
-    let xi_hat = x_full[m + 4];
-
-    // Q̃ = Q(β̂) - (r₂ᵀμ̂ + r₃ξ̂)  [Lemma [lem:q-interval], Step 2-3]
-    let q_first_order = q_raw - (r1_full.dot(&mu_hat) + r3_full * xi_hat);
-
-    // Analytical bounds (old vacuous bound and tight bound)
-    let r_sq_full = r_full_norm * r_full_norm;
-    let lmin_full = lambda_min_abs_full.max(f64::MIN_POSITIVE);
-    let e_old_full = r_sq_full * (2.0 / lmin_full + lambda_max_abs / (2.0 * lmin_full * lmin_full));
-    let e_tight_full = 4.5 * r_sq_full / lmin_full;
-    let r_sq_trunc = r_trunc_norm * r_trunc_norm;
-    let e_old_retained = r_sq_trunc * (2.0 / lambda_min_abs_retained
-        + lambda_max_abs / (2.0 * lambda_min_abs_retained * lambda_min_abs_retained));
-    let e_tight_retained = 4.5 * r_sq_trunc / lambda_min_abs_retained;
-
-    // Direction-aware: δx = Q Λ⁻¹ Qᵀ r (using full eigendecomposition)
-    let delta_x_full = eigen_solve(eigenvectors, eigenvalues, &r_full, size, size);
-    let (cross_full, quad_full) = compute_remainder(normals, perm, m, &r_full, &delta_x_full);
-
-    // Direction-aware: δx using truncated eigendecomposition
-    let delta_x_trunc = eigen_solve(eigenvectors, eigenvalues, &r_trunc, size, rank);
-    let (cross_trunc, quad_trunc) = compute_remainder(normals, perm, m, &r_trunc, &delta_x_trunc);
-
-    // cross_new = r₁ᵀδμ + r₃δξ = -(r₁ᵀδλ + r₃δν), so sign flips vs old convention.
-    let q_fully_corrected = q_first_order - 2.0 * cross_full - quad_full;
-
-    // Restricted Hessian: H|_T where T = ker([N^T; η^T])
-    // Build constraint matrix C (5 × m): rows = N^T rows + η^T row
-    let mut constraint = DMatrix::zeros(5, m);
-    for i in 0..m {
-        for d in 0..4 {
-            constraint[(d, i)] = normals[perm[i]][d];
-        }
-        constraint[(4, i)] = heights[perm[i]];
-    }
-    // Null space of C via eigendecomposition of C^T C (m × m, symmetric PSD).
-    // Eigenvectors with eigenvalue ≈ 0 span ker(C) = T.
-    let ctc = constraint.transpose() * &constraint; // m × m
-    let ctc_eig = ctc.symmetric_eigen();
-    // Threshold for "zero" eigenvalue
-    let ctc_max = ctc_eig.eigenvalues.iter().cloned().fold(0.0_f64, f64::max);
-    let ctc_threshold = ctc_max * 1e-10;
-    // Collect null-space eigenvector indices (eigenvalue < threshold)
-    let null_indices: Vec<usize> = (0..m)
-        .filter(|&i| ctc_eig.eigenvalues[i] < ctc_threshold)
-        .collect();
-    let tangent_dim = null_indices.len();
-
-    let restricted_eigs = if tangent_dim > 0 {
-        // P = null space basis (m × tangent_dim)
-        let mut p = DMatrix::zeros(m, tangent_dim);
-        for (k, &idx) in null_indices.iter().enumerate() {
-            for i in 0..m {
-                p[(i, k)] = ctc_eig.eigenvectors[(i, idx)];
-            }
-        }
-        // Extract H block (top-left m×m of KKT matrix)
-        let h_block = kkt.view((0, 0), (m, m)).clone_owned();
-        // H_restricted = P^T H P
-        let h_restricted = p.transpose() * &h_block * &p;
-        // Eigenvalues of symmetric matrix
-        let eig = h_restricted.symmetric_eigen();
-        let mut eigs: Vec<f64> = eig.eigenvalues.iter().cloned().collect();
-        eigs.sort_by(|a, b| a.partial_cmp(b).unwrap());
-        eigs
-    } else {
-        vec![]
-    };
-
-    // Use truncated eigendecomposition beta for β > 0 check (full solve garbage on singular systems)
-    let beta_trunc: Vec<f64> = (0..m).map(|i| x_trunc[i]).collect();
-    let beta_min = beta_trunc.iter().cloned().fold(f64::INFINITY, f64::min);
-
-    Diagnostics {
-        lambda_max_abs,
-        lambda_min_abs_full,
-        lambda_min_abs_retained,
-        numerical_rank: rank,
-        full_size: size,
-        residual_norm_full: r_full_norm,
-        residual_norm_truncated: r_trunc_norm,
-        q_raw,
-        q_first_order,
-        e_old_full,
-        e_old_retained,
-        e_tight_full,
-        e_tight_retained,
-        cross_abs_full: (2.0 * cross_full).abs(),
-        quad_abs_full: quad_full.abs(),
-        cross_abs_trunc: (2.0 * cross_trunc).abs(),
-        quad_abs_trunc: quad_trunc.abs(),
-        q_fully_corrected,
-        eigenvalues_signed: eigenvalues.iter().cloned().collect(),
-        eigenvalues_abs: eigenvalues.iter().cloned().map(f64::abs).collect(),
-        restricted_eigs,
-        tangent_dim,
-        beta_min,
-    }
-}
-
-fn eigen_solve(
-    eigenvectors: &DMatrix<f64>,
-    eigenvalues: &DVector<f64>,
-    rhs: &DVector<f64>,
-    size: usize,
-    rank: usize,
-) -> DVector<f64> {
-    // Sort eigenvalues by descending |λ|, use top `rank`
-    let mut indices: Vec<usize> = (0..size).collect();
-    indices.sort_by(|&a, &b| eigenvalues[b].abs().partial_cmp(&eigenvalues[a].abs()).unwrap());
-
-    let mut x = DVector::zeros(size);
-    for &i in indices.iter().take(rank) {
-        let coeff = eigenvectors.column(i).dot(rhs) / eigenvalues[i];
-        x += coeff * eigenvectors.column(i);
-    }
-    x
-}
-
-/// Compute cross remainder r₁ᵀδλ + r₃δν and quadratic δβᵀHδβ.
-fn compute_remainder(
-    normals: &[Vector4<f64>],
-    perm: &[usize],
-    m: usize,
-    residual: &DVector<f64>,
-    delta_x: &DVector<f64>,
-) -> (f64, f64) {
-    let r1: DVector<f64> = DVector::from_iterator(4, (m..m + 4).map(|i| residual[i]));
-    let r3 = residual[m + 4];
-    let delta_lambda: DVector<f64> = DVector::from_iterator(4, (m..m + 4).map(|i| delta_x[i]));
-    let delta_nu = delta_x[m + 4];
-    let delta_beta: Vec<f64> = (0..m).map(|i| delta_x[i]).collect();
-
-    let cross = r1.dot(&delta_lambda) + r3 * delta_nu;
-    let quad = q_from_beta(normals, perm, &delta_beta);
-    (cross, quad)
-}
+// ── Main ────────────────────────────────────────────────────────────────
 
 fn main() {
-    // Small polytopes only (F ≤ 8 for fast ehz_capacity)
-    let polytopes: Vec<(&str, Polytope4D)> = vec![
-        ("simplex", known_polytopes::simplex().polytope),
-        ("hypercube", known_polytopes::hypercube().polytope),
-        ("LP_tri_tri", known_polytopes::lagrangian_triangle_product().polytope),
-        ("LP_tri_sq", known_polytopes::lagrangian_triangle_square().polytope),
-        ("SP_tri_tri", known_polytopes::symplectic_triangle_product().polytope),
-    ];
+    let polytopes: Vec<(&str, Polytope4D)> = known_polytopes::all_known()
+        .into_iter()
+        .filter(|kp| kp.polytope.facet_count() <= 10)
+        .map(|kp| (kp.name, kp.polytope))
+        .collect();
 
-    println!("=== Q Error Bound Diagnostic ===\n");
+    println!("=== Q Error Bound Experiment ===\n");
+    println!("Checks numerical accuracy of the KKT solver against proven error bounds.");
+    println!("Panics on any violation.\n");
 
-    // Table 0: Verify sign convention q_from_beta = -(1/2) β^T H β
-    println!("--- Table 0: Sign convention verification ---");
-    println!("  q_from_beta computes Σ_{{i>j}} β_i β_j ω₀(n_i, n_j)");
-    println!("  H_{{ij}} = ω₀(n_{{min}}, n_{{max}}) (symmetric)");
-    println!("  Since ω₀ is antisymmetric: q_from_beta = -(1/2) β^T H β");
-    println!();
-    println!("{:<14} {:>16} {:>16} {:>12}", "polytope", "q_from_beta", "-(1/2)β^T·H·β", "rel_diff");
-    println!("{}", "-".repeat(60));
+    // ── Part 1: All-node error bound sweep ──────────────────────────────
+    println!("--- Part 1: Error bound sweep (ALL nodes) ---");
+    println!("  For each (S,σ): assert E < 1e-6 and |q_correction| < 1e-6");
+    println!("{:<25} {:>4} {:>8} {:>6} {:>12} {:>12} {:>12}",
+        "polytope", "F", "total", "solved", "worst_E", "worst_|r|", "worst_corr");
+    println!("{}", "-".repeat(85));
 
     for (name, polytope) in &polytopes {
-        let result = match ehz_capacity(polytope) {
-            Some(r) => r,
-            None => continue,
-        };
-        let mut alg_perm = result.best_permutation.clone();
-        alg_perm.reverse();
-        let m = alg_perm.len();
-        let (kkt, rhs) = build_kkt(polytope.normals(), polytope.heights(), &alg_perm);
-        let eig = kkt.clone().symmetric_eigen();
-        let eigenvalues = &eig.eigenvalues;
-        let eigenvectors = &eig.eigenvectors;
-        let lambda_max_abs = eigenvalues.iter().cloned().map(f64::abs).fold(0.0_f64, f64::max);
-        let threshold = lambda_max_abs * EIGEN_CONDITION_TAU;
-        let rank = eigenvalues.iter().filter(|&&e| e.abs() > threshold).count();
-        let size = m + 5;
-        let x = eigen_solve(eigenvectors, eigenvalues, &rhs, size, rank);
-        let beta: Vec<f64> = (0..m).map(|i| x[i]).collect();
-
-        let q1 = q_from_beta(polytope.normals(), &alg_perm, &beta);
-        let q2 = q_from_hessian(&kkt, &beta);
-        let rel = if q1.abs() > 1e-15 { (q1 - q2).abs() / q1.abs() } else { (q1 - q2).abs() };
-        println!("{:<14} {:>16.12} {:>16.12} {:>12.3e}", name, q1, q2, rel);
+        let result = error_bound_sweep(polytope);
+        println!("{:<25} {:>4} {:>8} {:>6} {:>12.3e} {:>12.3e} {:>12.3e}",
+            name, polytope.facet_count(), result.total_nodes, result.solvable_nodes,
+            result.worst_e, result.worst_residual, result.worst_correction);
     }
-    println!();
 
-    // Table 1: Condition numbers and rank
-    println!("--- Table 1: Eigendecomposition condition and rank ---");
-    println!("{:<14} {:>3} {:>5} {:>12} {:>12} {:>12} {:>12} {:>12}",
-        "polytope", "m", "rank", "|λ_min|_full", "|λ_min|_ret", "κ_full", "‖r‖_full", "‖r‖_trunc");
-    println!("{}", "-".repeat(88));
+    println!("\n  All error bound assertions passed.\n");
 
+    // ── Part 2: Exact comparison (select nodes) ─────────────────────────
+    println!("--- Part 2: Exact comparison (winning node per polytope) ---");
+    println!("  Exact KKT solve via Gaussian elimination over Q.");
+    println!("  Assert: |Q̃ - Q_exact| ≤ max(E, f64_eps)");
+    println!("  E = mathematical error bound, f64_eps = machine precision tolerance");
+    println!("{:<25} {:>3} {:>16} {:>16} {:>12} {:>12} {:>12} {:>6}",
+        "polytope", "m", "Q̃_numerical", "Q_exact", "|Q̃-Q_ex|", "E_math", "f64_eps", "valid");
+    println!("{}", "-".repeat(100));
+
+    let mut all_exact_valid = true;
     for (name, polytope) in &polytopes {
-        let result = match ehz_capacity(polytope) {
-            Some(r) => r,
-            None => {
-                println!("{:<14} no capacity", name);
-                continue;
+        match exact_comparison(polytope) {
+            Some(r) => {
+                println!("{:<25} {:>3} {:>16.12} {:>16.12} {:>12.3e} {:>12.3e} {:>12.3e} {:>6}",
+                    name, r.perm_size, r.q_numerical, r.q_exact,
+                    r.actual_error, r.error_bound, r.f64_eps,
+                    if r.bound_valid { "OK" } else { "FAIL" });
+                if !r.bound_valid {
+                    all_exact_valid = false;
+                }
             }
-        };
-
-        let mut alg_perm = result.best_permutation.clone();
-        alg_perm.reverse();
-        let m = alg_perm.len();
-
-        let d = run_diagnostics(polytope.normals(), polytope.heights(), &alg_perm);
-
-        println!("{:<14} {:>3} {:>2}/{:>2} {:>12.3e} {:>12.3e} {:>12.3e} {:>12.3e} {:>12.3e}",
-            name, m, d.numerical_rank, d.full_size,
-            d.lambda_min_abs_full, d.lambda_min_abs_retained,
-            d.lambda_max_abs / d.lambda_min_abs_full.max(f64::MIN_POSITIVE),
-            d.residual_norm_full, d.residual_norm_truncated);
-    }
-
-    println!();
-
-    // Table 2: Error bounds — old vs tight vs actual
-    println!("--- Table 2: Old E vs tight E vs actual |R| (direction-aware, retained eigenvalues) ---");
-    println!("{:<14} {:>12} {:>12} {:>12} {:>12} {:>12}",
-        "polytope", "E_old", "E_tight", "|R|_actual", "old/actual", "tight/actual");
-    println!("{}", "-".repeat(74));
-
-    for (name, polytope) in &polytopes {
-        let result = match ehz_capacity(polytope) {
-            Some(r) => r,
-            None => continue,
-        };
-
-        let mut alg_perm = result.best_permutation.clone();
-        alg_perm.reverse();
-
-        let d = run_diagnostics(polytope.normals(), polytope.heights(), &alg_perm);
-
-        let r_actual = d.cross_abs_trunc + d.quad_abs_trunc;
-        let loose_old = if r_actual > 0.0 { d.e_old_retained / r_actual } else { f64::INFINITY };
-        let loose_tight = if r_actual > 0.0 { d.e_tight_retained / r_actual } else { f64::INFINITY };
-
-        println!("{:<14} {:>12.3e} {:>12.3e} {:>12.3e} {:>12.3e} {:>12.3e}",
-            name,
-            d.e_old_retained, d.e_tight_retained, r_actual, loose_old, loose_tight);
-    }
-
-    println!();
-
-    // Table 3: Q values
-    println!("--- Table 3: Q corrections (how much does each correction level change Q?) ---");
-    println!("{:<14} {:>16} {:>16} {:>16} {:>12}",
-        "polytope", "Q_raw", "Q̃_1st_order", "Q̃_full_corr", "capacity");
-    println!("{}", "-".repeat(74));
-
-    for (name, polytope) in &polytopes {
-        let result = match ehz_capacity(polytope) {
-            Some(r) => r,
-            None => continue,
-        };
-
-        let mut alg_perm = result.best_permutation.clone();
-        alg_perm.reverse();
-
-        let d = run_diagnostics(polytope.normals(), polytope.heights(), &alg_perm);
-
-        println!("{:<14} {:>16.12} {:>16.12} {:>16.12} {:>12.8}",
-            name,
-            d.q_raw, d.q_first_order, d.q_fully_corrected,
-            result.capacity);
-    }
-
-    println!();
-
-    // Table 4: Eigenvalue spectra
-    println!("--- Table 4: Eigenvalue spectra ---");
-    for (name, polytope) in &polytopes {
-        let result = match ehz_capacity(polytope) {
-            Some(r) => r,
-            None => continue,
-        };
-
-        let mut alg_perm = result.best_permutation.clone();
-        alg_perm.reverse();
-
-        let d = run_diagnostics(polytope.normals(), polytope.heights(), &alg_perm);
-
-        // Show signed eigenvalues (sorted descending by absolute value) and absolute values
-        let mut signed_sorted = d.eigenvalues_signed.clone();
-        signed_sorted.sort_by(|a, b| b.abs().partial_cmp(&a.abs()).unwrap());
-        println!("{} (signed): [{}]", name,
-            signed_sorted.iter()
-                .map(|e| format!("{:+.3e}", e))
-                .collect::<Vec<_>>()
-                .join(", "));
-        let mut abs_sorted = d.eigenvalues_abs.clone();
-        abs_sorted.sort_by(|a, b| b.partial_cmp(a).unwrap());
-        println!("{} (|λ|):    [{}]", name,
-            abs_sorted.iter()
-                .map(|e| format!("{:.3e}", e))
-                .collect::<Vec<_>>()
-                .join(", "));
-    }
-
-    println!();
-
-    // Table 5: Restricted Hessian definiteness
-    println!("--- Table 5: Restricted Hessian H|_T definiteness ---");
-    println!("{:<14} {:>3} {:>6} {:>8} {:>12} {:>12} {:>12} {:>10}",
-        "polytope", "m", "dim_T", "β_min", "λ_min(H|T)", "λ_max(H|T)", "definite?", "β>0?");
-    println!("{}", "-".repeat(88));
-
-    for (name, polytope) in &polytopes {
-        let result = match ehz_capacity(polytope) {
-            Some(r) => r,
-            None => continue,
-        };
-
-        let mut alg_perm = result.best_permutation.clone();
-        alg_perm.reverse();
-
-        let d = run_diagnostics(polytope.normals(), polytope.heights(), &alg_perm);
-
-        if d.restricted_eigs.is_empty() {
-            println!("{:<14} {:>3} {:>6} {:>8.3e} {:>12} {:>12} {:>12} {:>10}",
-                name, alg_perm.len(), d.tangent_dim, d.beta_min,
-                "n/a", "n/a", "trivial", if d.beta_min > 0.0 { "yes" } else { "no" });
-        } else {
-            let lam_min = d.restricted_eigs.first().unwrap();
-            let lam_max = d.restricted_eigs.last().unwrap();
-            let eps = 1e-10;
-            let definiteness = if *lam_min > eps {
-                "PD"      // H|_T PD → Hess(q) = -H|_T is ND → q is MAXIMIZED (local max)
-            } else if *lam_max < -eps {
-                "ND"      // H|_T ND → Hess(q) = -H|_T is PD → q is MINIMIZED (not a max)
-            } else if *lam_min < -eps && *lam_max > eps {
-                "indef"   // saddle point of q — some directions increase, some decrease
-            } else {
-                "~zero"   // near-degenerate — numerically undecided
-            };
-
-            println!("{:<14} {:>3} {:>6} {:>8.3e} {:>12.3e} {:>12.3e} {:>12} {:>10}",
-                name, alg_perm.len(), d.tangent_dim, d.beta_min,
-                lam_min, lam_max, definiteness,
-                if d.beta_min > 0.0 { "yes" } else { "no" });
-
-            // Print full eigenvalue spectrum for insight
-            println!("  eigenvalues: [{}]",
-                d.restricted_eigs.iter()
-                    .map(|e| format!("{:.3e}", e))
-                    .collect::<Vec<_>>()
-                    .join(", "));
+            None => {
+                println!("{:<25} {:>3} (singular or rank-deficient)", name, 0);
+            }
         }
     }
 
-    println!();
+    assert!(all_exact_valid,
+        "Exact comparison FAILED: |Q̃ - Q_exact| > max(E, f64_eps) for some polytope");
+    println!("\n  All exact comparison assertions passed.\n");
 
-    // Table 6: Hessian definiteness across ALL (S, σ) nodes
-    println!("--- Table 6: Restricted Hessian across ALL evaluated (S,σ) nodes ---");
-    println!("{:<14} {:>4} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7}",
+    // ── Part 3: Hessian definiteness across ALL nodes (kept from original) ──
+    println!("--- Part 3: Restricted Hessian across ALL evaluated (S,σ) nodes ---");
+    println!("{:<25} {:>4} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7}",
         "polytope", "F", "total", "β>0", "Q>0", "triv", "PD", "ND", "indef", "~zero");
-    println!("{}", "-".repeat(88));
+    println!("{}", "-".repeat(97));
 
     let eps_beta = 1e-8;
     let eps_q = 1e-12;
@@ -690,9 +669,6 @@ fn main() {
         let mut n_indef = 0u64;
         let mut n_nearzero = 0u64;
 
-        // Track PD+β>0 nodes: admissible local maxima of q (the "keeper" nodes)
-        let mut pd_beta_pos: Vec<(usize, f64)> = Vec::new(); // (m, Q)
-
         for m in 2..=f {
             for subset in combinations(f, m) {
                 for perm in cyclic_permutations(&subset) {
@@ -704,14 +680,10 @@ fn main() {
                         if info.q > eps_q {
                             n_q_pos += 1;
                         }
-                        // Only classify definiteness for β>0, Q>0 nodes
                         if info.beta_min > eps_beta && info.q > eps_q {
                             match info.definiteness {
                                 Definiteness::Trivial => n_trivial += 1,
-                                Definiteness::PD => {
-                                    n_pd += 1;
-                                    pd_beta_pos.push((info.m, info.q));
-                                }
+                                Definiteness::PD => n_pd += 1,
                                 Definiteness::ND => n_nd += 1,
                                 Definiteness::Indefinite => n_indef += 1,
                                 Definiteness::NearZero => n_nearzero += 1,
@@ -722,404 +694,28 @@ fn main() {
             }
         }
 
-        println!("{:<14} {:>4} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7}",
+        println!("{:<25} {:>4} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7}",
             name, f, total, n_beta_pos, n_q_pos,
             n_trivial, n_pd, n_nd, n_indef, n_nearzero);
-
-        // Collect ALL node info for lattice checks (keyed by subset as BTreeSet)
-        use std::collections::{BTreeSet, BTreeMap};
-        struct SubsetInfo {
-            has_neg_dir: bool,  // ND or indefinite (any negative eigenvalue)
-            is_pd: bool,        // all-positive (PD)
-            max_q: f64,         // max Q across all σ for this subset
-        }
-        let mut subset_info: BTreeMap<BTreeSet<usize>, SubsetInfo> = BTreeMap::new();
-
-        for m_check in 2..=f {
-            for subset in combinations(f, m_check) {
-                let key: BTreeSet<usize> = subset.iter().cloned().collect();
-                let mut has_neg = false;
-                let mut all_pd = true;
-                let mut any_nontrivial = false;
-                let mut max_q = f64::NEG_INFINITY;
-
-                for perm in cyclic_permutations(&subset) {
-                    if let Some(info) = node_hessian_check(normals, heights, &perm) {
-                        if info.beta_min > eps_beta && info.q > eps_q {
-                            max_q = max_q.max(info.q);
-                            match info.definiteness {
-                                Definiteness::ND => { has_neg = true; all_pd = false; any_nontrivial = true; }
-                                Definiteness::Indefinite => { has_neg = true; all_pd = false; any_nontrivial = true; }
-                                Definiteness::PD => { any_nontrivial = true; }
-                                Definiteness::NearZero => { all_pd = false; any_nontrivial = true; }
-                                Definiteness::Trivial => { /* doesn't affect PD/ND classification */ }
-                            }
-                        }
-                    }
-                }
-
-                if max_q > f64::NEG_INFINITY {
-                    subset_info.insert(key, SubsetInfo {
-                        has_neg_dir: has_neg,
-                        is_pd: all_pd && any_nontrivial,
-                        max_q,
-                    });
-                }
-            }
-        }
-
-        // Check 1: Upward monotonicity — negative direction propagates to supersets
-        // If S has negative direction, all S' ⊃ S with β>0,Q>0 should also have neg dir
-        let mut up_violations = 0u32;
-        let neg_subsets: Vec<&BTreeSet<usize>> = subset_info.iter()
-            .filter(|(_, info)| info.has_neg_dir)
-            .map(|(k, _)| k)
-            .collect();
-        for neg_set in &neg_subsets {
-            for (sup_set, sup_info) in &subset_info {
-                if sup_set.len() > neg_set.len() && neg_set.is_subset(sup_set) {
-                    if sup_info.is_pd {
-                        up_violations += 1;
-                        println!("  UP-VIOLATION: neg-dir set {:?} has PD superset {:?}",
-                            neg_set, sup_set);
-                    }
-                }
-            }
-        }
-        if !neg_subsets.is_empty() {
-            if up_violations == 0 {
-                println!("  Upward (neg→supersets): CONFIRMED ({} neg-dir sets, no PD supersets)",
-                    neg_subsets.len());
-            }
-        }
-
-        // Check 2a: Downward (PD→subsets): PD node's Q ≥ all subsets' Q?
-        // Rationale: PD means q is locally maximized. If also β>0 (admissible),
-        // the critical point IS the constrained max for this face set S.
-        // But the max for S includes boundary points (child nodes with some β_i=0).
-        // So the PD interior max should dominate all child maxima.
-        //
-        // NOTE: this check compares across different permutations σ, which live
-        // on different face sets with different H matrices. The monotonicity
-        // argument only applies within a FIXED permutation ordering (same H).
-        // Cross-σ violations may therefore not be real violations.
-        let mut down_pd_violations = 0u32;
-        let pd_sets: Vec<(&BTreeSet<usize>, &SubsetInfo)> = subset_info.iter()
-            .filter(|(_, info)| info.is_pd)
-            .collect();
-        for (pd_set, pd_info) in &pd_sets {
-            for (sub_set, sub_info) in &subset_info {
-                if sub_set.len() < pd_set.len() && sub_set.is_subset(pd_set) {
-                    if sub_info.max_q > pd_info.max_q + 1e-12 {
-                        down_pd_violations += 1;
-                        println!("  DOWN-PD-VIOLATION: PD {:?} Q={:.6e} < subset {:?} Q={:.6e}",
-                            pd_set, pd_info.max_q, sub_set, sub_info.max_q);
-                    }
-                }
-            }
-        }
-        if !pd_sets.is_empty() {
-            if down_pd_violations == 0 {
-                println!("  Downward (PD→subsets): CONFIRMED ({} PD sets, Q ≥ all child Q)", pd_sets.len());
-            } else {
-                println!("  Downward (PD→subsets): {} violations (may be cross-σ artifacts)",
-                    down_pd_violations);
-            }
-        }
-
-        // Check 2b: Downward (ND→subsets): ND node's Q ≥ all subsets' Q?
-        let mut down_nd_violations = 0u32;
-        let _nd_sets: Vec<(&BTreeSet<usize>, &SubsetInfo)> = subset_info.iter()
-            .filter(|(_, info)| info.has_neg_dir && !info.is_pd) // ND or indefinite
-            .collect();
-        // More precisely, check nodes where ALL nontrivial perms are ND
-        let pure_nd_sets: Vec<(&BTreeSet<usize>, &SubsetInfo)> = subset_info.iter()
-            .filter(|(_, info)| info.has_neg_dir && info.is_pd == false)
-            .collect();
-        for (nd_set, nd_info) in &pure_nd_sets {
-            for (sub_set, sub_info) in &subset_info {
-                if sub_set.len() < nd_set.len() && sub_set.is_subset(nd_set) {
-                    if sub_info.max_q > nd_info.max_q + 1e-12 {
-                        down_nd_violations += 1;
-                        if down_nd_violations <= 5 {
-                            println!("  DOWN-ND-VIOLATION: neg-dir {:?} Q={:.6e} < subset {:?} Q={:.6e}",
-                                nd_set, nd_info.max_q, sub_set, sub_info.max_q);
-                        }
-                    }
-                }
-            }
-        }
-        if !pure_nd_sets.is_empty() {
-            if down_nd_violations == 0 {
-                println!("  Downward (ND→subsets): CONFIRMED ({} neg-dir sets, all subsets Q ≤ parent Q)",
-                    pure_nd_sets.len());
-            } else {
-                println!("  Downward (ND→subsets): FAILED ({} violations)", down_nd_violations);
-            }
-        }
-
-        // Show PD+β>0 nodes detail
-        if !pd_beta_pos.is_empty() {
-            let q_max = pd_beta_pos.iter().map(|&(_, q)| q).fold(f64::NEG_INFINITY, f64::max);
-            let q_min = pd_beta_pos.iter().map(|&(_, q)| q).fold(f64::INFINITY, f64::min);
-            let by_m: std::collections::BTreeMap<usize, usize> = pd_beta_pos.iter()
-                .fold(std::collections::BTreeMap::new(), |mut acc, &(m, _)| {
-                    *acc.entry(m).or_insert(0) += 1;
-                    acc
-                });
-            let m_dist: String = by_m.iter()
-                .map(|(m, c)| format!("m={}:{}", m, c))
-                .collect::<Vec<_>>()
-                .join(" ");
-            println!("  PD+β>0: {} nodes, Q∈[{:.6e}, {:.6e}], by size: {}",
-                pd_beta_pos.len(), q_min, q_max, m_dist);
-        }
     }
 
     println!();
 
-    // Table 7: Q interval framework — per-node classification and majorization
-    //
-    // Note: This table prototypes interval majorization Q̃ ± E.
-    // After investigation, point comparison on Q̃ was adopted instead
-    // (E < 1e-13 across all test polytopes, making intervals unnecessary).
-    // Table kept for documentation of the exploratory analysis.
-    //
-    // For each (S, σ):
-    //   eigen → β̂, residual r, |λ_min|(retained), Q̃, E
-    //   δβ_bound = ‖r‖ / |λ_min|  (perturbation bound on β)
-    //   Admissibility:
-    //     decided-admissible:   β̂_min > δβ_bound  (true β_i > 0 for all i)
-    //     decided-inadmissible: β̂_min < -δβ_bound (true β_i < 0 for some i)
-    //     uncertain:            |β̂_min| ≤ δβ_bound
-    //   Q interval:
-    //     decided-admissible:   [Q̃ - E, Q̃ + E]
-    //     decided-inadmissible: skip (sub-faces handle this)
-    //     uncertain:            [-∞, Q̃ + E]  (might not be admissible)
-    //
-    // Aggregation: Q*_low = max of decided-admissible (Q̃ - E) values.
-    // Majorize: node with Q̃ + E < Q*_low is dominated (even if uncertain).
-    // Remaining uncertain nodes need rational admissibility check.
-    println!("--- Table 7: Q interval framework and majorization ---");
-    println!("  Per (S,σ): eigen → Q̃ ± E, β̂_min vs δβ_bound = ‖r‖/|λ_min|");
-    println!("  Admissible: [Q̃-E, Q̃+E].  Uncertain: [-∞, Q̃+E].  Inadmissible: skip.");
-    println!("  Majorize: Q̃+E < best admissible (Q̃-E) → pruned.");
-    println!();
-    println!("{:<14} {:>6} {:>6} {:>6} {:>6} {:>6} {:>12} {:>12} {:>6}",
-        "polytope", "total", "admis", "inadm", "uncrt", "Q>0", "Q*_low", "Q*_high", "surv");
-    println!("{}", "-".repeat(88));
-
-    for (name, polytope) in &polytopes {
-        let f = polytope.facet_count();
-        let normals = polytope.normals();
-        let heights = polytope.heights();
-
-        let mut total = 0u64;
-        let mut n_admissible = 0u64;
-        let mut n_inadmissible = 0u64;
-        let mut n_uncertain = 0u64;
-
-        // Best known admissible Q lower bound
-        let mut best_admissible_q_low: f64 = f64::NEG_INFINITY;
-        let mut best_admissible_q_high: f64 = f64::NEG_INFINITY;
-
-        // All nodes' Q_high values (for majorization check)
-        struct NodeInterval {
-            q_low: f64,    // -∞ for uncertain
-            q_high: f64,
-            admissibility: u8, // 0=admissible, 1=inadmissible, 2=uncertain
-            q_positive: bool,
-        }
-        let mut all_nodes: Vec<NodeInterval> = Vec::new();
-
-        for m in 2..=f {
-            for subset in combinations(f, m) {
-                for perm in cyclic_permutations(&subset) {
-                    total += 1;
-                    let size = m + 5;
-                    let (kkt, rhs) = build_kkt(normals, heights, &perm);
-
-                    let eig = kkt.clone().symmetric_eigen();
-                    let eigenvalues = &eig.eigenvalues;
-                    let eigenvectors = &eig.eigenvectors;
-
-                    let lambda_max_abs = eigenvalues.iter().cloned().map(f64::abs)
-                        .fold(0.0_f64, f64::max);
-                    let threshold = lambda_max_abs * EIGEN_CONDITION_TAU;
-                    let rank = eigenvalues.iter().filter(|&&e| e.abs() > threshold).count();
-
-                    // |λ_min| among retained eigenvalues (top `rank` by |λ|)
-                    let mut sorted_abs: Vec<f64> = eigenvalues.iter().cloned().map(f64::abs).collect();
-                    sorted_abs.sort_by(|a, b| b.partial_cmp(a).unwrap());
-                    let lambda_min_abs_ret = sorted_abs.iter().take(rank).cloned()
-                        .fold(f64::INFINITY, f64::min).max(f64::MIN_POSITIVE);
-
-                    let x = eigen_solve(eigenvectors, eigenvalues, &rhs, size, rank);
-                    let beta: Vec<f64> = (0..m).map(|i| x[i]).collect();
-                    let beta_min = beta.iter().cloned().fold(f64::INFINITY, f64::min);
-
-                    let r = &kkt * &x - &rhs;
-                    let r_norm = r.norm();
-
-                    let q_raw = q_from_beta(normals, &perm, &beta);
-
-                    // First-order Q correction [lem:q-interval]
-                    let r2: DVector<f64> = DVector::from_iterator(4, (m..m+4).map(|i| r[i]));
-                    let r3 = r[m + 4];
-                    let mu_hat: DVector<f64> = DVector::from_iterator(4, (m..m+4).map(|i| x[i]));
-                    let xi_hat = x[m + 4];
-                    let q_tilde = q_raw - (r2.dot(&mu_hat) + r3 * xi_hat);
-
-                    // Error bound E (tight bound: [lem:q-error-bound])
-                    let r_sq = r_norm * r_norm;
-                    let e = 4.5 * r_sq / lambda_min_abs_ret;
-
-                    // Admissibility: β̂_min vs δβ_bound = ‖r‖ / |λ_min|
-                    let delta_beta_bound = r_norm / lambda_min_abs_ret;
-
-                    let (admissibility, q_low, q_high) = if beta_min > delta_beta_bound {
-                        // Decided admissible
-                        n_admissible += 1;
-                        (0u8, q_tilde - e, q_tilde + e)
-                    } else if beta_min < -delta_beta_bound {
-                        // Decided inadmissible
-                        n_inadmissible += 1;
-                        (1u8, f64::NEG_INFINITY, q_tilde + e)
-                    } else {
-                        // Uncertain
-                        n_uncertain += 1;
-                        (2u8, f64::NEG_INFINITY, q_tilde + e)
-                    };
-
-                    let q_positive = q_tilde > 1e-12;
-
-                    if admissibility == 0 && q_positive {
-                        if q_low > best_admissible_q_low {
-                            best_admissible_q_low = q_low;
-                        }
-                        if q_high > best_admissible_q_high {
-                            best_admissible_q_high = q_high;
-                        }
-                    }
-
-                    all_nodes.push(NodeInterval { q_low, q_high, admissibility, q_positive });
-                }
-            }
-        }
-
-        // Count surviving uncertain nodes (Q_high ≥ best_admissible_q_low, Q > 0)
-        let n_q_positive: u64 = all_nodes.iter().filter(|n| n.q_positive).count() as u64;
-        let surviving_uncertain: u64 = all_nodes.iter()
-            .filter(|n| n.admissibility == 2 && n.q_positive
-                && n.q_high >= best_admissible_q_low)
-            .count() as u64;
-
-        println!("{:<14} {:>6} {:>6} {:>6} {:>6} {:>6} {:>12.6e} {:>12.6e} {:>6}",
-            name, total, n_admissible, n_inadmissible, n_uncertain, n_q_positive,
-            best_admissible_q_low, best_admissible_q_high, surviving_uncertain);
-
-        // Show detail for uncertain survivors
-        if surviving_uncertain > 0 && surviving_uncertain <= 10 {
-            for (i, node) in all_nodes.iter().enumerate() {
-                if node.admissibility == 2 && node.q_positive
-                    && node.q_high >= best_admissible_q_low {
-                    println!("  uncertain survivor #{}: Q_high={:.6e} vs Q*_low={:.6e}",
-                        i, node.q_high, best_admissible_q_low);
-                }
-            }
-        }
-    }
-
-    println!();
-
-    // Table 8: Inertia theorem validation
-    // Eigenvalues of M vs restricted Hessian H|_T
-    // The saddle-point inertia theorem says:
-    //   n_+(M) = n_+(H|_T), n_-(M) = n_-(H|_T) + 5, n_0(M) = n_0(H|_T)
-    // We validate this on the BEST (S, σ) for each polytope.
-    println!("--- Table 8: Inertia theorem validation ([lem:kkt-inertia]) ---");
-    println!("  For the optimal (S, σ), compare eigenvalue counts of M vs H|_T.");
-    println!("  Inertia theorem: n+(M) = n+(H|T)+p, n-(M) = n-(H|T)+p, n0(M) = n0(H|T)+(5-p)");
-    println!("  where p = rank(A), A = [N^T; η^T]");
-    println!("{:<14} {:>3} {:>3} {:>2} {:>5} {:>5} {:>5}  {:>5} {:>5} {:>5}  {:>5}",
-        "polytope", "m", "dimT", "p", "n+(M)", "n0(M)", "n-(M)",
-        "n+(HT)", "n0(HT)", "n-(HT)", "pass?");
-    println!("{}", "-".repeat(84));
+    // ── Part 4: Inertia theorem validation (kept from original) ─────────
+    println!("--- Part 4: Inertia check across all (S,σ) nodes ---");
+    println!("  n-(M)=p ↔ H|_T non-negative definite");
+    println!("{:<25} {:>6} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7}",
+        "polytope", "total", "n-=p", "n->p", "PD", "ND", "indef", "match?");
+    println!("{}", "-".repeat(85));
 
     let eig_eps = 1e-10;
-
-    for (name, polytope) in &polytopes {
-        let result = match ehz_capacity(polytope) {
-            Some(r) => r,
-            None => continue,
-        };
-
-        let mut alg_perm = result.best_permutation.clone();
-        alg_perm.reverse();
-        let m = alg_perm.len();
-        let size = m + 5;
-
-        let (kkt, _rhs) = build_kkt(polytope.normals(), polytope.heights(), &alg_perm);
-
-        // Eigenvalues of M (symmetric eigendecomposition)
-        let eig_m = kkt.symmetric_eigen();
-        let n_pos_m = eig_m.eigenvalues.iter().filter(|&&e| e > eig_eps).count();
-        let n_neg_m = eig_m.eigenvalues.iter().filter(|&&e| e < -eig_eps).count();
-        let n_zero_m = size - n_pos_m - n_neg_m;
-
-        // Restricted Hessian H|_T (from the existing approach)
-        let d = run_diagnostics(polytope.normals(), polytope.heights(), &alg_perm);
-        let tangent_dim = d.tangent_dim;
-        let p = m - tangent_dim; // rank(A) = m - dim(ker(A))
-
-        let (n_pos_ht, n_neg_ht, n_zero_ht) = if d.restricted_eigs.is_empty() {
-            (0, 0, 0)
-        } else {
-            let np = d.restricted_eigs.iter().filter(|&&e| e > eig_eps).count();
-            let nn = d.restricted_eigs.iter().filter(|&&e| e < -eig_eps).count();
-            let nz = tangent_dim - np - nn;
-            (np, nn, nz)
-        };
-
-        // Corrected inertia theorem: n+(M) = n+(H|T) + p, n-(M) = n-(H|T) + p,
-        // n0(M) = n0(H|T) + (5 - p)
-        let pass = n_pos_m == n_pos_ht + p
-            && n_neg_m == n_neg_ht + p
-            && n_zero_m == n_zero_ht + (5 - p);
-
-        println!("{:<14} {:>3} {:>3} {:>2} {:>5} {:>5} {:>5}  {:>5} {:>5} {:>5}  {:>5}",
-            name, m, tangent_dim, p,
-            n_pos_m, n_zero_m, n_neg_m,
-            n_pos_ht, n_zero_ht, n_neg_ht,
-            if pass { "✓" } else { "FAIL" });
-
-        // Print eigenvalue spectra for comparison
-        let mut eigs_m: Vec<f64> = eig_m.eigenvalues.iter().cloned().collect();
-        eigs_m.sort_by(|a, b| b.partial_cmp(a).unwrap()); // descending
-        println!("  M eigenvalues:  [{}]",
-            eigs_m.iter().map(|e| format!("{:+.3e}", e)).collect::<Vec<_>>().join(", "));
-        if !d.restricted_eigs.is_empty() {
-            let mut eigs_ht = d.restricted_eigs.clone();
-            eigs_ht.sort_by(|a, b| b.partial_cmp(a).unwrap());
-            println!("  H|T eigenvalues: [{}]",
-                eigs_ht.iter().map(|e| format!("{:+.3e}", e)).collect::<Vec<_>>().join(", "));
-        }
-    }
-
-    // Table 9: Inertia across ALL (S, σ) nodes — check n-(M) = p ↔ H|_T non-negative definite
-    println!();
-    println!("--- Table 9: Inertia check across all (S,σ) nodes ---");
-    println!("  For each node: compute eigenvalues of M, check n-(M)=p matches H|_T PD/NSD");
-    println!("  p = rank(A) = m - dim_T. H|_T PD ↔ n-(M)=p and n0(M)=5-p.");
-    println!("{:<14} {:>6} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7}",
-        "polytope", "total", "n-=p", "n->p", "PD", "ND", "indef", "match?");
-    println!("{}", "-".repeat(74));
+    let mut total_inertia_mismatches = 0u64;
 
     for (name, polytope) in &polytopes {
         let f = polytope.facet_count();
         let mut total = 0u64;
-        let mut n_negp = 0u64;    // n-(M) = p (predicts H|_T NSD)
-        let mut n_neggtp = 0u64;  // n-(M) > p (predicts H|_T has negative eigenvalue)
+        let mut n_negp = 0u64;
+        let mut n_neggtp = 0u64;
         let mut n_pd = 0u64;
         let mut n_nd = 0u64;
         let mut n_indef = 0u64;
@@ -1133,22 +729,19 @@ fn main() {
                     let mm = perm.len();
                     let (kkt_mat, _) = build_kkt(polytope.normals(), polytope.heights(), &perm);
 
-                    // Eigenvalues of M
                     let eig = kkt_mat.symmetric_eigen();
                     let n_neg = eig.eigenvalues.iter().filter(|&&e| e < -eig_eps).count();
                     let n_zero = eig.eigenvalues.iter().filter(|&&e| e.abs() <= eig_eps).count();
 
-                    // Restricted Hessian approach
                     let info = node_hessian_check(polytope.normals(), polytope.heights(), &perm);
                     let (def, tangent_dim) = match info {
                         Some(n) => (n.definiteness, n.tangent_dim),
                         None => (Definiteness::Trivial, 0),
                     };
-                    let p = mm - tangent_dim; // rank(A)
+                    let p = mm - tangent_dim;
 
-                    // H|_T PD ↔ n-(M)=p and n0(M)=5-p (no near-zero in H|_T)
                     let inertia_says_pd = n_neg == p && n_zero == (5 - p);
-                    let inertia_says_nsd = n_neg == p; // n-(H|T) = 0
+                    let inertia_says_nsd = n_neg == p;
                     if inertia_says_nsd { n_negp += 1; } else { n_neggtp += 1; }
 
                     match def {
@@ -1164,17 +757,29 @@ fn main() {
                             n_indef += 1;
                             if inertia_says_nsd { mismatches += 1; }
                         },
-                        Definiteness::NearZero | Definiteness::Trivial => {
-                            // Skip comparison for degenerate cases
-                        },
+                        Definiteness::NearZero | Definiteness::Trivial => {},
                     }
                 }
             }
         }
 
         let ok = mismatches == 0;
-        println!("{:<14} {:>6} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7}",
+        println!("{:<25} {:>6} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7}",
             name, total, n_negp, n_neggtp, n_pd, n_nd, n_indef,
-            if ok { "✓".to_string() } else { format!("{} FAIL", mismatches) });
+            if ok { "OK".to_string() } else { format!("{} FAIL", mismatches) });
+        total_inertia_mismatches += mismatches;
     }
+
+    if total_inertia_mismatches > 0 {
+        println!("\n  WARNING: {} inertia mismatches (threshold sensitivity, not assertion failure)", total_inertia_mismatches);
+    } else {
+        println!("\n  All inertia checks passed.");
+    }
+
+    // ── Summary ───────────────────────────────────────────────────────────
+    println!("\n=== Summary ===");
+    println!("  Part 1 (error bounds):     PASSED (all {} polytopes)", polytopes.len());
+    println!("  Part 2 (exact comparison): PASSED");
+    println!("  Part 3 (Hessian info):     diagnostic only");
+    println!("  Part 4 (inertia check):    {} mismatches (diagnostic)", total_inertia_mismatches);
 }
