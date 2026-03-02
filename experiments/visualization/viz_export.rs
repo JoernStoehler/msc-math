@@ -14,7 +14,7 @@ use std::io::BufWriter;
 use std::path::Path;
 use symplectic::algorithms::hk2017::recover::{recover_base_point, verify_orbit};
 use symplectic::algorithms::hk2017::{
-    build_directed_adjacency_matrix, combinations, ehz_capacity, EhzResult,
+    build_directed_adjacency_matrix, combinations, EhzResult,
 };
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
 use symplectic::geom::reeb_trajectory;
@@ -328,24 +328,28 @@ fn generate_displaced_trajectories(
 /// Generate all trajectories for a polytope:
 /// 1. All closed Reeb orbits from HK2017 (min-action and others)
 /// 2. Displaced variants of the min-action orbit
+///
+/// Returns (trajectories, computed_capacity). The capacity comes from the
+/// minimum-action orbit found during enumeration, avoiding a redundant
+/// `ehz_capacity()` call.
 fn generate_trajectories(
     polytope: &symplectic::Polytope4D,
     skeleton: &Skeleton,
-) -> Vec<VizTrajectory> {
+) -> (Vec<VizTrajectory>, Option<f64>) {
     // Skip polytopes with too many facets (exponential cost)
     if polytope.facet_count() > MAX_FACETS_FOR_ORBIT {
         eprintln!(
             "  Skipping orbit computation (F={}, too many facets). Using placeholder.",
             polytope.facet_count()
         );
-        return generate_placeholder_trajectory(polytope, skeleton);
+        return (generate_placeholder_trajectory(polytope, skeleton), None);
     }
 
     // Collect all valid orbits
     let all_orbits = collect_all_orbits(polytope);
     if all_orbits.is_empty() {
         eprintln!("  No valid orbits found. Using placeholder.");
-        return generate_placeholder_trajectory(polytope, skeleton);
+        return (generate_placeholder_trajectory(polytope, skeleton), None);
     }
 
     let min_action = all_orbits[0].action;
@@ -414,10 +418,10 @@ fn generate_trajectories(
 
     if trajectories.is_empty() {
         eprintln!("  All orbit recoveries failed. Using placeholder.");
-        return generate_placeholder_trajectory(polytope, skeleton);
+        return (generate_placeholder_trajectory(polytope, skeleton), Some(min_action));
     }
 
-    trajectories
+    (trajectories, Some(min_action))
 }
 
 /// Fallback: generate a single forward-simulated trajectory (the old behavior).
@@ -485,14 +489,10 @@ pub fn export(name: &str, output: &Path) -> Result<(), String> {
 
     // Trajectories: real Reeb orbits + displaced variants
     eprintln!("Computing orbits for {}...", kp.name);
-    let trajectories = generate_trajectories(polytope, &skeleton);
+    let (trajectories, computed_capacity) = generate_trajectories(polytope, &skeleton);
 
-    // Compute capacity from the orbit data (use ehz_capacity for consistency)
-    let capacity = if polytope.facet_count() <= MAX_FACETS_FOR_ORBIT {
-        ehz_capacity(polytope).map_or(kp.capacity, |r| r.capacity)
-    } else {
-        kp.capacity
-    };
+    // Use capacity from orbit enumeration if available, else fall back to known value
+    let capacity = computed_capacity.unwrap_or(kp.capacity);
 
     // Compute volume and systolic ratio
     let vol = symplectic::volume(polytope).unwrap_or(0.0);

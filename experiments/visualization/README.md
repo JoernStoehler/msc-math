@@ -16,7 +16,7 @@ The viz export generates three types of trajectories per polytope:
 
 1. **Minimum-action Reeb orbits** — recovered from the HK2017 algorithm's dual solution (S, σ, β) via `recover_base_point()`. These are the closed orbits achieving c_EHZ(K). Multiple orbits may share the same minimum action.
 
-2. **Higher-action Reeb orbits** — other valid closed orbits found during exhaustive enumeration. Capped at 20 total orbits per polytope. Some higher-action orbits fail recovery (high max_violation from underdetermined base point systems) and are skipped.
+2. **Higher-action Reeb orbits** — other valid closed orbits found during exhaustive enumeration. Some higher-action orbits fail recovery (high max_violation from underdetermined base point systems) and are skipped. Total orbits per polytope capped at 20 (including min-action orbits).
 
 3. **Displaced orbits** — perturbations of the min-action orbit's base point by ε in a direction tangent to the starting facet and perpendicular to the Reeb vector. Shows how nearby trajectories twist relative to the minimum-action orbit. These may not close (combinatorics can diverge for the displaced starting point).
 
@@ -54,7 +54,7 @@ Generated figures:
 
 ```bash
 cd experiments/
-# Export all polytopes (except crosspolytope which uses placeholder)
+# Export all polytopes (crosspolytope gets placeholder trajectory automatically)
 for name in simplex hypercube hko_pentagon lagrangian_triangle_product symplectic_triangle_product lagrangian_tri_sq symplectic_tri_sq crosspolytope; do
   cargo run --release --bin viz_export -- "$name" "visualization/viz/data/$name.json"
 done
@@ -75,6 +75,8 @@ cd visualization/viz && bash embed-data.sh > data.js
 | visualization.tex | Thesis writeup |
 
 ## Orbit statistics (as of last regeneration)
+
+"Total orbits" = certified (S,σ,β) solutions found by exhaustive enumeration before capping.
 
 | Polytope | Facets | Total orbits | Min-action orbits | Action value |
 |----------|--------|-------------|-------------------|-------------|
