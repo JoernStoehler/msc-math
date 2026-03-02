@@ -24,24 +24,30 @@ fn assert_capacity(name: &str, polytope: &crate::geom::polytope::Polytope4D, exp
 // Agreement tests: billiard vs known values
 // ============================================================
 
+/// Verify billiard capacity of the hypercube matches the known value (4.0).
 #[test]
 fn hypercube_capacity() {
     let kp = known_polytopes::hypercube();
     assert_capacity("hypercube", &kp.polytope, 4.0, 1e-8);
 }
 
+/// Verify billiard capacity of the Lagrangian triangle product matches the known value (1.5).
 #[test]
 fn triangle_product_capacity() {
     let kp = known_polytopes::lagrangian_triangle_product();
     assert_capacity("triangle_product", &kp.polytope, 1.5, 1e-8);
 }
 
+/// Verify billiard capacity of the Lagrangian triangle-square product matches the known value (1.5).
 #[test]
 fn triangle_square_capacity() {
     let kp = known_polytopes::lagrangian_triangle_square();
     assert_capacity("triangle_square", &kp.polytope, 1.5, 1e-8);
 }
 
+/// Verify billiard capacity of the HK-O pentagon counterexample matches the analytic formula.
+///
+/// **Why release mode:** ~50k KKT solves, too slow for debug suite.
 #[test]
 #[ignore] // 50k KKT solves — slow in debug, run with --release --ignored
 fn hko_pentagon_capacity() {
@@ -54,6 +60,7 @@ fn hko_pentagon_capacity() {
 // Agreement tests: billiard vs hk2017
 // ============================================================
 
+/// Cross-algorithm check: billiard and hk2017 agree on hypercube capacity.
 #[test]
 #[ignore] // runs hk2017 live — release-only cross-algorithm check
 fn agrees_with_hk2017_hypercube() {
@@ -70,6 +77,7 @@ fn agrees_with_hk2017_hypercube() {
     );
 }
 
+/// Cross-algorithm check: billiard and hk2017 agree on triangle product capacity.
 #[test]
 #[ignore] // runs hk2017 live — release-only cross-algorithm check
 fn agrees_with_hk2017_triangle_product() {
@@ -86,6 +94,7 @@ fn agrees_with_hk2017_triangle_product() {
     );
 }
 
+/// Cross-algorithm check: billiard and hk2017 agree on triangle-square product capacity.
 #[test]
 #[ignore] // runs hk2017 live — release-only cross-algorithm check
 fn agrees_with_hk2017_triangle_square() {
@@ -102,6 +111,9 @@ fn agrees_with_hk2017_triangle_square() {
     );
 }
 
+/// Cross-algorithm check: billiard and hk2017 agree on HK-O pentagon capacity.
+///
+/// **Why release mode:** hk2017 on 10-facet pentagon is exponential (~60s even in release).
 #[test]
 #[ignore] // hk2017 on 10-facet pentagon takes ~60s; capacity verified against known value instead
 fn agrees_with_hk2017_hko_pentagon() {
@@ -122,6 +134,7 @@ fn agrees_with_hk2017_hko_pentagon() {
 // Error handling tests
 // ============================================================
 
+/// Verify billiard algorithm rejects the simplex (not a Lagrangian product).
 #[test]
 fn rejects_non_lagrangian_product() {
     // Simplex has mixed normals — not a Lagrangian product.
@@ -130,6 +143,8 @@ fn rejects_non_lagrangian_product() {
     assert!(result.is_err(), "simplex should not be a Lagrangian product");
 }
 
+/// Verify billiard algorithm rejects the symplectic triangle product
+/// (normals in symplectic planes, not Lagrangian subspaces).
 #[test]
 fn rejects_symplectic_triangle_product() {
     // Symplectic product has normals in symplectic planes, not Lagrangian subspaces.
@@ -145,6 +160,9 @@ fn rejects_symplectic_triangle_product() {
 // Property tests
 // ============================================================
 
+/// Verify the billiard iteration count stays within a polynomial bound (O(n_q^3 * n_p^3)).
+///
+/// **Why release mode:** ~50k KKT solves on the 10-facet pentagon.
 #[test]
 #[ignore] // 50k KKT solves — slow in debug, run with --release --ignored
 fn billiard_iterations_polynomial() {
@@ -197,6 +215,8 @@ fn assert_result_properties(name: &str, result: &super::BilliardResult) {
     );
 }
 
+/// Verify structural properties of BilliardResult on small Lagrangian products:
+/// bounce count is 2 or 3, all beta positive, permutation length in [2k, 4k].
 #[test]
 fn result_properties() {
     // Fast polytopes only — exercises all code paths without pentagon's 50k KKT solves.
@@ -207,6 +227,9 @@ fn result_properties() {
     }
 }
 
+/// Verify structural properties of BilliardResult on the HK-O pentagon.
+///
+/// **Why release mode:** ~50k KKT solves, too slow for debug suite.
 #[test]
 #[ignore] // 50k KKT solves — slow in debug, run with --release --ignored
 fn result_properties_pentagon() {

@@ -9,10 +9,12 @@ use nalgebra::Vector4;
 use rand::Rng;
 use rand_distr::StandardNormal;
 
+/// 4-simplex (5 facets). Delegates to `known_polytopes::simplex()`.
 pub fn simplex() -> Polytope4D {
     crate::geom::known_polytopes::simplex().polytope
 }
 
+/// Hypercube [-1,1]^4 (8 facets). Delegates to `known_polytopes::hypercube()`.
 pub fn hypercube() -> Polytope4D {
     crate::geom::known_polytopes::hypercube().polytope
 }
@@ -36,14 +38,17 @@ pub fn scaled_hypercube(s: f64) -> Polytope4D {
     Polytope4D::new(normals, heights).expect("scaled hypercube")
 }
 
+/// 4D crosspolytope (16 facets). Delegates to `known_polytopes::crosspolytope()`.
 pub fn crosspolytope() -> Polytope4D {
     crate::geom::known_polytopes::crosspolytope().polytope
 }
 
+/// Lagrangian triangle product (6 facets). Delegates to `known_polytopes::lagrangian_triangle_product()`.
 pub fn lagrangian_triangle_product() -> Polytope4D {
     crate::geom::known_polytopes::lagrangian_triangle_product().polytope
 }
 
+/// Symplectic triangle product (6 facets). Delegates to `known_polytopes::symplectic_triangle_product()`.
 pub fn symplectic_triangle_product() -> Polytope4D {
     crate::geom::known_polytopes::symplectic_triangle_product().polytope
 }

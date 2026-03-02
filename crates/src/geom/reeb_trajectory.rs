@@ -16,7 +16,13 @@ use crate::geom::polytope::Polytope4D;
 use crate::geom::skeleton::Skeleton;
 use nalgebra::Vector4;
 
-/// Tolerance for considering a Reeb-vs-normal dot product as "pushing through".
+/// Tolerance for ray-facet intersection denominator: ⟨Reeb direction, normal⟩.
+///
+/// When the Reeb direction is nearly parallel to a facet (dot product near zero),
+/// the intersection time t = distance / dot becomes numerically unstable.
+/// **Why 1e-10:** The Reeb direction and normals are both O(1), so genuine
+/// "pushing through" transitions have dot products well above 1e-10. Near-parallel
+/// facets (dot < 1e-10) are skipped to avoid spurious intersections.
 const EPS_DENOM: f64 = 1e-10;
 
 /// A single linear segment of a Reeb trajectory, lying on one facet.

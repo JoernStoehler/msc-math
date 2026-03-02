@@ -348,6 +348,7 @@ pub fn symplectic_triangle_square() -> KnownPolytope {
 mod tests {
     use super::*;
 
+    /// Verify all known polytopes pass construction and have at least 5 facets.
     #[test]
     fn all_known_polytopes_valid() {
         for kp in all_known() {
@@ -360,46 +361,55 @@ mod tests {
         }
     }
 
+    /// Verify simplex facet count matches the expected 5 (4D simplex = 5 halfspaces).
     #[test]
     fn simplex_has_5_facets() {
         assert_eq!(simplex().polytope.facet_count(), 5);
     }
 
+    /// Verify hypercube facet count matches the expected 8 ([-1,1]^4 = 8 halfspaces).
     #[test]
     fn hypercube_has_8_facets() {
         assert_eq!(hypercube().polytope.facet_count(), 8);
     }
 
+    /// Verify crosspolytope facet count matches the expected 16 (dual of tesseract).
     #[test]
     fn crosspolytope_has_16_facets() {
         assert_eq!(crosspolytope().polytope.facet_count(), 16);
     }
 
+    /// Verify HK-O pentagon facet count matches the expected 10 (5 q-facets + 5 p-facets).
     #[test]
     fn hko_pentagon_has_10_facets() {
         assert_eq!(hko_pentagon().polytope.facet_count(), 10);
     }
 
+    /// Verify Lagrangian triangle product facet count matches the expected 6 (3 q + 3 p).
     #[test]
     fn lagrangian_triangle_product_has_6_facets() {
         assert_eq!(lagrangian_triangle_product().polytope.facet_count(), 6);
     }
 
+    /// Verify symplectic triangle product facet count matches the expected 6 (3 + 3).
     #[test]
     fn symplectic_triangle_product_has_6_facets() {
         assert_eq!(symplectic_triangle_product().polytope.facet_count(), 6);
     }
 
+    /// Verify Lagrangian triangle-square product facet count matches the expected 7 (3 + 4).
     #[test]
     fn lagrangian_tri_sq_has_7_facets() {
         assert_eq!(lagrangian_triangle_square().polytope.facet_count(), 7);
     }
 
+    /// Verify symplectic triangle-square product facet count matches the expected 7 (3 + 4).
     #[test]
     fn symplectic_tri_sq_has_7_facets() {
         assert_eq!(symplectic_triangle_square().polytope.facet_count(), 7);
     }
 
+    /// Verify all known polytopes have strictly positive capacity values.
     #[test]
     fn all_known_capacities_positive() {
         for kp in all_known() {
@@ -420,6 +430,8 @@ mod tests {
         );
     }
 
+    /// Verify `literature_values()` excludes polytopes without a literature cross-check
+    /// (e.g. crosspolytope, which has only a computed value).
     #[test]
     fn literature_values_excludes_placeholder() {
         let lit = literature_values();
