@@ -28,7 +28,7 @@ pub const EPS_Q_POSITIVE: f64 = 1e-15;
 
 /// Result of KKT solve with eigendecomposition diagnostics.
 ///
-/// See `[lem:q-interval]` (thesis): |Q(β₀) - q_corrected| ≤ q_error_bound.
+/// See `[lem:q-error-bound]` (thesis): |Q(β₀) - q_corrected| ≤ q_error_bound.
 ///
 /// The corrected Q absorbs the first-order error from the KKT residual,
 /// leaving only a second-order remainder bounded by q_error_bound.
@@ -68,7 +68,7 @@ const EPS_EIGEN_FLOOR: f64 = 1e-12;
 /// to small values (which a gap-ratio approach would miss).
 ///
 /// For near-singular systems, the null space directions are used to search
-/// for β > 0, and the Q error bound (see `[lem:q-interval]`) quantifies
+/// for β > 0, and the Q error bound (see `[lem:q-error-bound]`) quantifies
 /// the resulting objective uncertainty.
 ///
 /// **Why 1e-3:** The degenerate (4,4) Lagrangian product at θ≈0° has
@@ -303,7 +303,7 @@ pub fn build_kkt_system(
 ///
 /// Returns a `KktResult` with the β vector, corrected Q̃, error bound E
 /// satisfying |Q(β₀) - Q̃| ≤ E, and the inertia of M.
-/// See `[lem:q-interval]` (thesis).
+/// See `[lem:q-error-bound]` (thesis).
 fn solve_kkt_eigen_path(
     kkt: &DMatrix<f64>,
     rhs: &DVector<f64>,
@@ -397,9 +397,9 @@ fn try_pseudoinverse_with_threshold(
         return None;
     }
 
-    // --- Q error bound computation (Algorithm [alg:q-interval]) ---
+    // --- Q error bound computation (Algorithm [alg:q-error-bound]) ---
     // The solution vector is [β̂; μ̂; ξ̂] with negated multipliers (μ = -λ, ξ = -ν).
-    // Q̃ = Q(β̂) - (r₂ᵀμ̂ + r₃ξ̂)  [Lemma [lem:q-interval], Step 2-3].
+    // Q̃ = Q(β̂) - (r₂ᵀμ̂ + r₃ξ̂)  [Lemma [lem:q-error-bound], Step 2-3].
     let r2_dot_mu: f64 = (m..m + 4).map(|i| residual_vec[i] * x0[i]).sum();
     let r3 = residual_vec[m + 4];
     let xi_hat = x0[m + 4];
@@ -420,7 +420,7 @@ fn try_pseudoinverse_with_threshold(
         let q_raw = q_from_beta(normals, perm, &beta0);
         let q_corrected = q_raw - q_correction;
         // Tight bound: E = (9/2) ‖r‖² / |λ_min|.
-        // See [lem:q-interval] (thesis): uses KKT block structure identity
+        // See [lem:q-error-bound] (thesis): uses KKT block structure identity
         // δβᵀHδβ = δxᵀMδx − 2r₂ᵀδμ − 2r₃δξ to avoid ‖H‖/|λ_min|² term.
         let r_sq = residual_norm * residual_norm;
         let q_error_bound = 4.5 * r_sq / abs_lambda_min;
@@ -540,7 +540,7 @@ fn try_pseudoinverse_with_threshold(
     }
     let q_corrected = q_raw - q_correction;
     // Tight bound: E = (9/2) ‖r‖² / |λ_min|.
-    // See [lem:q-interval] (thesis): uses KKT block structure identity.
+    // See [lem:q-error-bound] (thesis): uses KKT block structure identity.
     let r_sq = residual_norm * residual_norm;
     let q_error_bound = 4.5 * r_sq / abs_lambda_min;
 

@@ -38,11 +38,12 @@ pub fn all_known() -> Vec<KnownPolytope> {
 /// Literature capacity values: (name, capacity) pairs.
 ///
 /// Only polytopes with verified literature values — excludes crosspolytope
-/// (placeholder) and polytopes verified only computationally.
+/// (computed value, no literature cross-check) and any other polytopes without
+/// a verified literature source.
 pub fn literature_values() -> Vec<(&'static str, f64)> {
     all_known()
         .into_iter()
-        .filter(|kp| kp.source != "placeholder (capacity unknown)")
+        .filter(|kp| kp.source != "computed (no literature value)")
         .map(|kp| (kp.name, kp.capacity))
         .collect()
 }
@@ -106,7 +107,7 @@ pub fn hypercube() -> KnownPolytope {
 /// 4D crosspolytope (hyperoctahedron, dual of tesseract). 16 facets.
 ///
 /// Normals: all (±1, ±1, ±1, ±1)/2, heights 1.0.
-/// Capacity not yet computed from literature — will use stub (1.0) for now.
+/// Capacity: 4.0 (computed by ehz_capacity; no literature value for cross-check).
 pub fn crosspolytope() -> KnownPolytope {
     let normals: Vec<Vector4<f64>> = [-1.0_f64, 1.0]
         .into_iter()
@@ -124,9 +125,9 @@ pub fn crosspolytope() -> KnownPolytope {
 
     KnownPolytope {
         polytope: Polytope4D::new(normals, heights).expect("crosspolytope construction"),
-        capacity: 1.0, // placeholder — no literature value yet
+        capacity: 4.0, // computed by ehz_capacity; no literature value for cross-check
         name: "crosspolytope",
-        source: "placeholder (capacity unknown)",
+        source: "computed (no literature value)",
     }
 }
 
@@ -347,6 +348,7 @@ pub fn symplectic_triangle_square() -> KnownPolytope {
 mod tests {
     use super::*;
 
+    /// Verify all known polytopes pass construction and have at least 5 facets.
     #[test]
     fn all_known_polytopes_valid() {
         for kp in all_known() {
@@ -359,46 +361,55 @@ mod tests {
         }
     }
 
+    /// Verify simplex facet count matches the expected 5 (4D simplex = 5 halfspaces).
     #[test]
     fn simplex_has_5_facets() {
         assert_eq!(simplex().polytope.facet_count(), 5);
     }
 
+    /// Verify hypercube facet count matches the expected 8 ([-1,1]^4 = 8 halfspaces).
     #[test]
     fn hypercube_has_8_facets() {
         assert_eq!(hypercube().polytope.facet_count(), 8);
     }
 
+    /// Verify crosspolytope facet count matches the expected 16 (dual of tesseract).
     #[test]
     fn crosspolytope_has_16_facets() {
         assert_eq!(crosspolytope().polytope.facet_count(), 16);
     }
 
+    /// Verify HK-O pentagon facet count matches the expected 10 (5 q-facets + 5 p-facets).
     #[test]
     fn hko_pentagon_has_10_facets() {
         assert_eq!(hko_pentagon().polytope.facet_count(), 10);
     }
 
+    /// Verify Lagrangian triangle product facet count matches the expected 6 (3 q + 3 p).
     #[test]
     fn lagrangian_triangle_product_has_6_facets() {
         assert_eq!(lagrangian_triangle_product().polytope.facet_count(), 6);
     }
 
+    /// Verify symplectic triangle product facet count matches the expected 6 (3 + 3).
     #[test]
     fn symplectic_triangle_product_has_6_facets() {
         assert_eq!(symplectic_triangle_product().polytope.facet_count(), 6);
     }
 
+    /// Verify Lagrangian triangle-square product facet count matches the expected 7 (3 + 4).
     #[test]
     fn lagrangian_tri_sq_has_7_facets() {
         assert_eq!(lagrangian_triangle_square().polytope.facet_count(), 7);
     }
 
+    /// Verify symplectic triangle-square product facet count matches the expected 7 (3 + 4).
     #[test]
     fn symplectic_tri_sq_has_7_facets() {
         assert_eq!(symplectic_triangle_square().polytope.facet_count(), 7);
     }
 
+    /// Verify all known polytopes have strictly positive capacity values.
     #[test]
     fn all_known_capacities_positive() {
         for kp in all_known() {
@@ -419,6 +430,8 @@ mod tests {
         );
     }
 
+    /// Verify `literature_values()` excludes polytopes without a literature cross-check
+    /// (e.g. crosspolytope, which has only a computed value).
     #[test]
     fn literature_values_excludes_placeholder() {
         let lit = literature_values();

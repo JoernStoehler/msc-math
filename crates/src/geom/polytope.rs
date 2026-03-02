@@ -17,7 +17,19 @@
 /// - Vertices are precomputed via qhull from the H-representation
 use nalgebra::Vector4;
 
+/// Tolerance for unit-normal check: |(‖n‖ - 1)| < EPS_UNIT.
+///
+/// **Why 1e-9:** nalgebra's `normalize()` achieves ~1e-15 relative error on f64.
+/// The 1e-9 threshold is conservative (6 orders above typical error), catching
+/// genuinely un-normalized inputs while allowing standard numerical noise.
 const EPS_UNIT: f64 = 1e-9;
+
+/// Tolerance for duplicate-normal detection: ‖n_i - n_j‖ < EPS_DUPLICATE_NORMAL.
+///
+/// **Why 1e-8:** Slightly looser than EPS_UNIT (1e-9) because two normals from
+/// different constructions may accumulate rounding independently. Tight enough
+/// to catch copy-paste duplicates, loose enough to avoid false positives on
+/// normals that differ by O(1e-10) from separate trigonometric computations.
 const EPS_DUPLICATE_NORMAL: f64 = 1e-8;
 
 #[derive(Clone, Debug)]

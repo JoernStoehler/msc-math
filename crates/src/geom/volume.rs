@@ -46,8 +46,13 @@ pub(crate) mod deprecated {
     use crate::geom::polytope::Polytope4D;
     use nalgebra::Vector4;
 
+    /// Vertex-on-facet incidence tolerance (matches constants::EPS_FACET_INCIDENCE).
     const EPS_ON_FACET: f64 = 1e-8;
     /// Threshold for detecting degenerate (collinear) polygon vertices.
+    ///
+    /// **Why 1e-10:** Tighter than EPS_ON_FACET (1e-8) because cross-product magnitudes
+    /// for nearly-collinear vertices are second-order in the deviation angle, so
+    /// a tighter threshold avoids treating slightly non-collinear vertices as degenerate.
     const EPS_DEGENERATE: f64 = 1e-10;
 
     /// Compute volume via divergence theorem (legacy implementation).

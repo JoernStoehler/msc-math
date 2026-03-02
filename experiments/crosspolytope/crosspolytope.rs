@@ -42,7 +42,7 @@ const EPS_FACET_INCIDENCE: f64 = 1e-8;
 /// Maximum subset size to search. The full crosspolytope has F=16, so m ranges
 /// from 2 to 16. Subset sizes m=13..16 have very large permutation counts
 /// ((m-1)! cyclic orderings to explore), making exhaustive search infeasible
-/// within session time limits. m=12 is the largest size completing in ~1 minute;
+/// within session time limits. m=12 is the largest size completing in ~4.6 minutes;
 /// m=13 alone takes ~8 minutes. Since the best action is found at m=4 and
 /// actions generally increase with m, stopping at m=12 is likely sufficient (unproven).
 const MAX_SUBSET_SIZE: usize = 12;

@@ -30,7 +30,7 @@ fn simplex_capacity() {
 /// with debug checks enabled.
 /// **Why this polytope:** F=8 hypercube has high symmetry (fast despite 8 facets,
 /// <1s in debug). Tests that enumeration handles regular geometry correctly.
-/// **Output check:** Verifies against literature value (1.0) as sanity check.
+/// **Output check:** Verifies against literature value (4.0) as sanity check.
 ///
 /// For comprehensive capacity verification, see
 /// `capacity_properties_test::literature_capacity_values()` (fixture-based).

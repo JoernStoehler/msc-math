@@ -1,5 +1,10 @@
 //! Random systolic ratio sweep over random 4D polytopes.
 //!
+//! Goal: Compute systolic ratios for random 4D polytopes across facet counts F=5..12,
+//!   to probe whether random generic polytopes approach the Viterbo threshold.
+//! Input: None (generates random polytopes from hardcoded seed and parameters).
+//! Output: experiments/random-sweep/random-sweep.jsonl (70 polytopes with capacity, volume, sys).
+//!
 //! Architecture:
 //! 1. `cargo run --bin random_sweep --release` generates dataset
 //! 2. Writes to random-sweep/random-sweep.jsonl

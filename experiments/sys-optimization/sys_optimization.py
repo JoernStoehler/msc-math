@@ -611,10 +611,12 @@ def write_stats_table(
     mean_iters = np.mean(iter_counts) if iter_counts else 0
     max_iters_used = max(iter_counts) if iter_counts else 0
 
-    # Terminated: last step had delta < threshold or hit max iterations
+    # Terminated: last step had delta < threshold (converged)
+    # Note: len(rows) < 20 was removed — max iterations is 15, so len(rows) < 20
+    # is always true and would make n_terminated always equal n_iterated.
     n_terminated = sum(
         1 for rows in by_name.values()
-        if rows[-1]["delta_sys"] < 1e-6 or len(rows) < 20
+        if rows[-1]["delta_sys"] < 1e-6
     )
 
     # Final sys values after iteration

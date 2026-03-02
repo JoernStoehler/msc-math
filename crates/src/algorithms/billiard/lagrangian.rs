@@ -4,12 +4,17 @@
 /// - q-facets: normal = (n_q, 0), n_q ∈ R² (components [0,1])
 /// - p-facets: normal = (0, n_p), n_p ∈ R² (components [2,3])
 ///
-/// See chapter-billiard.tex, Lemma 6.1 (lem:lagrangian-facets).
+/// See chapter-billiard.tex, `[lem:lagrangian-facets]`.
 use crate::geom::polytope::Polytope4D;
 
 use crate::BilliardError;
 
 /// Tolerance for classifying facet normals as q-type or p-type.
+///
+/// A facet is q-type if ‖(n[2], n[3])‖² < EPS, p-type if ‖(n[0], n[1])‖² < EPS.
+/// **Why 1e-10:** Normals are unit vectors, so the "other" component pair squared
+/// is O(eps_machine²) for exact Lagrangian products. The 1e-10 threshold is well
+/// above machine epsilon squared (~1e-32) but far below any genuine mixed normal.
 const EPS_LAGRANGIAN_NORMAL: f64 = 1e-10;
 
 /// Classification of facets into q-type and p-type.

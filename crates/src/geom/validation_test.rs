@@ -1,4 +1,5 @@
 use super::*;
+use crate::constants::EPS_FACET_INCIDENCE;
 use crate::geom::polytope::{ConstructionError, Polytope4D};
 use nalgebra::Vector4;
 
@@ -156,7 +157,7 @@ fn simplex_vertices_satisfy_constraints() {
     for v in polytope.vertices() {
         for (n, &h) in normals.iter().zip(&heights) {
             assert!(
-                n.dot(v) <= h + EPS_FEASIBILITY,
+                n.dot(v) <= h + EPS_FACET_INCIDENCE,
                 "vertex {v:?} violates constraint n·v = {} > h = {}",
                 n.dot(v),
                 h

@@ -434,7 +434,7 @@ and both cases break the bound:
 We therefore analyse the error in~$Q$ directly
 (Remarks~\ref{rem:null-q-constant}--\ref{rem:near-null-q}),
 obtaining a tight bound
-(Lemma~\ref{lem:q-interval})
+(Lemma~\ref{lem:q-error-bound})
 that exploits the insensitivity of~$Q$
 to near-null directions.
 \end{remark}
@@ -613,7 +613,7 @@ proportional to~$\lambda_j$:
 In particular, directions with small~$|\lambda_j|$
 change~$Q$ only slowly.
 This is the mechanism underlying the $Q$~error bound
-(Lemma~\ref{lem:q-interval}): even though the
+(Lemma~\ref{lem:q-error-bound}): even though the
 numerical error~$\delta\beta$ can be large along
 near-null directions (of order~$\|r\| / |\lambda_j|$),
 the resulting~$Q$ error is only second-order in~$\|r\|$
@@ -663,10 +663,10 @@ contributions:
 \end{itemize}
 \end{remark}
 
-% --- Q error bound lemma (replaces dismiss logic B.5--B.9, unreviewed) ---
+% --- Q error bound lemma (unreviewed) ---
 
 \begin{lemma}[$Q$ error bound from KKT residual]%
-\label{lem:q-interval}
+\label{lem:q-error-bound}
 Let $M$ be the symmetric KKT matrix
 of~\eqref{eq:kkt-system}
 with smallest eigenvalue magnitude
@@ -823,7 +823,7 @@ and Step~4:
 \end{proof}
 
 \begin{algorithm}[$Q$ value with error bound]%
-\label{alg:q-interval}
+\label{alg:q-error-bound}
 For each pair $(S, \sigma)$ that survives pruning,
 the algorithm computes a corrected objective
 value~$\tilde Q$ with error bound~$E$
@@ -855,7 +855,7 @@ satisfying $|Q(\beta_0) - \tilde Q| \leq E$:
 \end{algorithm}
 
 \begin{remark}[Error bound in practice]%
-\label{rem:interval-width}
+\label{rem:error-bound-magnitude}
 By backward stability of the eigendecomposition
 (Remark~\ref{rem:eigen-accuracy}),
 $\|r\| = O(\varepsilon_{\mathrm{mach}}\,\|M\|)$.
@@ -1008,10 +1008,10 @@ using point comparison on the
 residual-corrected~$\tilde Q$.
 % Downstream: action = 0.5 / result.q_corrected (lower action = higher Q = better orbit)
 The error bound~$E$ from
-Lemma~\ref{lem:q-interval} satisfies
+Lemma~\ref{lem:q-error-bound} satisfies
 $E = O(\varepsilon_{\mathrm{mach}}^2\,\|M\|^2
   / |\lambda_{\min}|)$
-(Remark~\ref{rem:interval-width}),
+(Remark~\ref{rem:error-bound-magnitude}),
 which is negligible for any
 $|\lambda_{\min}|$ above machine epsilon.
 Point comparison on~$\tilde Q$ is therefore reliable.
@@ -1041,23 +1041,16 @@ the assertion has never fired.
 \label{rem:point-comparison}
 The corrected~$\tilde Q$ absorbs the first-order
 numerical error via the residual correction
-(Lemma~\ref{lem:q-interval}).
+(Lemma~\ref{lem:q-error-bound}).
 The remaining error~$E$ is second-order
 in the backward error and satisfies
 $E = O(\varepsilon_{\mathrm{mach}}^2)$ for
 well-conditioned systems
-(Remark~\ref{rem:interval-width}).
+(Remark~\ref{rem:error-bound-magnitude}).
 For the polytopes in our dataset,
-$E < 10^{-13}$ in all cases, making interval
-majorization unnecessary: point comparison
+$E < 10^{-13}$ in all cases, so point comparison
 on~$\tilde Q$ correctly identifies the global
 maximum.
-If future polytopes produce larger~$E$ (e.g.\ due
-to near-singular KKT systems),
-the interval framework from
-Section~\ref{app:kkt} provides a fallback:
-compare $[\tilde Q - E,\; \tilde Q + E]$ intervals
-and resolve overlaps.
 \end{remark}
 
 \begin{remark}[Parameter scales in practice]\label{rem:parameter-scales}

@@ -135,7 +135,13 @@ Investigation binaries created (throwaway; removed during repo restructure):
 - `investigate_tri_sq_v2.rs`
 - `investigate_tri_sq_v3.rs`
 
-No production code was modified. The recommended fixes should be implemented in a follow-up.
+All three mandatory recommended fixes were applied to `crates/src/geom/known_polytopes.rs`:
+
+1. **Rename**: `lagrangian_triangle_square()` added as the renamed, correctly-labelled function (capacity 1.5)
+2. **Fix expected capacity**: capacity set to 1.5 in `lagrangian_triangle_square()`
+3. **True symplectic product added**: `symplectic_triangle_square()` added with capacity 1.0 (formula min(c_A, c_B))
+
+The optional fix (adding right isosceles triangle ×_L square with sys=1 matching Schlenk Lem. 5.3.1) was not applied.
 
 ## Appendix: Key Numerical Results
 
