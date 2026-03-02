@@ -96,11 +96,14 @@ pub(crate) fn q_from_beta(
         .sum()
 }
 
-/// Search null space for a β > 0 solution (1D null space case).
+/// Search null space for β with maximum margin (1D null space case).
 ///
 /// Given particular solution β₀ and null space vector v, find α such that
-/// β₀ + α·v > 0 componentwise. Returns the midpoint of the feasible interval
+/// β₀ + α·v has maximum min(β_j). Returns the midpoint of the feasible interval
 /// for numerical stability.
+///
+/// Accepts results with all β > -EPS (uncertain candidates). The caller classifies
+/// β > +EPS as certified vs β ∈ (-EPS, +EPS] as uncertain.
 ///
 /// Q(β) is constant along the null space (the null space directions satisfy
 /// the KKT stationarity conditions, so the objective doesn't change).
@@ -110,9 +113,10 @@ fn find_positive_beta_1d(beta0: &[f64], v: &[f64]) -> Option<Vec<f64>> {
 
     for j in 0..m {
         if v[j].abs() < 1e-15 {
-            // This component doesn't change with α
-            if beta0[j] <= EPS_BETA_POSITIVE {
-                return None; // Can't make this component positive
+            // This component doesn't change with α — reject only if genuinely
+            // infeasible (not a floating-point sign ambiguity).
+            if beta0[j] <= -EPS_BETA_POSITIVE {
+                return None;
             }
         } else {
             let bound = -beta0[j] / v[j];
@@ -140,16 +144,18 @@ fn find_positive_beta_1d(beta0: &[f64], v: &[f64]) -> Option<Vec<f64>> {
     };
 
     let beta: Vec<f64> = (0..m).map(|j| beta0[j] + alpha * v[j]).collect();
-    if beta.iter().all(|&b| b > EPS_BETA_POSITIVE) {
+    if beta.iter().all(|&b| b > -EPS_BETA_POSITIVE) {
         Some(beta)
     } else {
         None
     }
 }
 
-/// Search null space for a β > 0 solution (multi-dimensional null space).
+/// Search null space for β with maximum margin (multi-dimensional null space).
 ///
 /// Uses iterative coordinate ascent on the most-violated constraint.
+/// Optimization targets β > +EPS (certified), but accepts β > -EPS (uncertain).
+/// The caller classifies the result.
 fn find_positive_beta_nd(beta0: &[f64], null_vecs: &[Vec<f64>]) -> Option<Vec<f64>> {
     let m = beta0.len();
     let k = null_vecs.len();
@@ -169,13 +175,18 @@ fn find_positive_beta_nd(beta0: &[f64], null_vecs: &[Vec<f64>]) -> Option<Vec<f6
             .unwrap();
 
         if *worst_val > EPS_BETA_POSITIVE {
-            return Some(beta);
+            return Some(beta); // All β > +EPS (certified)
         }
 
         // Gradient of β[worst_j] w.r.t. α: g_i = null_vecs[i][worst_j]
         let grad_sq: f64 = (0..k).map(|i| null_vecs[i][worst_j].powi(2)).sum();
         if grad_sq < 1e-30 {
-            return None; // Can't improve this component
+            // Can't improve this component. Accept if above -EPS (uncertain).
+            return if *worst_val > -EPS_BETA_POSITIVE {
+                Some(beta)
+            } else {
+                None
+            };
         }
 
         // Step to push β[worst_j] to a small positive value
@@ -186,11 +197,11 @@ fn find_positive_beta_nd(beta0: &[f64], null_vecs: &[Vec<f64>]) -> Option<Vec<f6
         }
     }
 
-    // Final feasibility check
+    // Final feasibility check: accept if all β > -EPS (uncertain candidate)
     let beta: Vec<f64> = (0..m)
         .map(|j| beta0[j] + (0..k).map(|i| alpha[i] * null_vecs[i][j]).sum::<f64>())
         .collect();
-    if beta.iter().all(|&b| b > EPS_BETA_POSITIVE) {
+    if beta.iter().all(|&b| b > -EPS_BETA_POSITIVE) {
         Some(beta)
     } else {
         None
@@ -301,6 +312,9 @@ fn solve_kkt_eigen_path(
     }
 
     // Inertia uses the strict threshold (for saddle-point structure analysis).
+    // The KKT matrix M is (m+5)×(m+5). The constraint block contributes at most 5
+    // negative eigenvalues, but H (the action matrix) can also have negative eigenvalues,
+    // so n_negative can exceed 5. Empirically validated by q_error experiment (Tables 8-9).
     let strict_threshold = max_abs_ev * EIGEN_CONDITION_TAU;
     let n_positive = eigenvalues.iter().filter(|&&e| e > strict_threshold).count();
     let n_negative = eigenvalues.iter().filter(|&&e| e < -strict_threshold).count();
@@ -399,12 +413,12 @@ fn try_pseudoinverse_with_threshold(
         let r_sq = residual_norm * residual_norm;
         let q_error_bound = 4.5 * r_sq / abs_lambda_min;
 
-        debug_assert!(
+        assert!(
             q_error_bound < 1e-6,
             "Q error bound unexpectedly large: E={:.2e}, |r|={:.2e}, |λ_min|={:.2e}",
             q_error_bound, residual_norm, abs_lambda_min
         );
-        debug_assert!(
+        assert!(
             q_correction.abs() < 1e-6 || q_correction.abs() < 1e-6 * q_raw.abs(),
             "Q correction unexpectedly large: correction={:.2e}, Q_raw={:.2e}, ratio={:.2e}",
             q_correction, q_raw, q_correction.abs() / q_raw.abs().max(1e-30)
@@ -420,9 +434,32 @@ fn try_pseudoinverse_with_threshold(
         });
     }
 
-    // Full rank at this threshold: unique solution with β ≤ 0,
-    // candidate pair is genuinely infeasible.
+    // Full rank at this threshold: unique solution. If any β_i ≤ -EPS,
+    // the candidate is genuinely infeasible (not a sign error). If all
+    // β_i > -EPS but some β_i ≤ +EPS, this is an UNKNOWN candidate:
+    // the caller's uncertain track will handle it.
     if rank == size {
+        if beta0.iter().all(|&b| b > -EPS_BETA_POSITIVE) {
+            let q_raw = q_from_beta(normals, perm, &beta0);
+            let q_corrected = q_raw - q_correction;
+            let r_sq = residual_norm * residual_norm;
+            let q_error_bound = 4.5 * r_sq / abs_lambda_min;
+
+            assert!(
+                q_error_bound < 1e-6,
+                "Q error bound unexpectedly large (full-rank uncertain): E={:.2e}, |r|={:.2e}, |λ_min|={:.2e}",
+                q_error_bound, residual_norm, abs_lambda_min
+            );
+
+            return Some(KktResult {
+                beta: beta0,
+                q_corrected,
+                q_error_bound,
+                n_positive,
+                n_negative,
+                n_zero,
+            });
+        }
         return None;
     }
 
@@ -435,9 +472,24 @@ fn try_pseudoinverse_with_threshold(
         .collect();
 
     let beta_opt = if null_beta.len() == 1 {
-        find_positive_beta_1d(&beta0, &null_beta[0])?
+        find_positive_beta_1d(&beta0, &null_beta[0])
     } else {
-        find_positive_beta_nd(&beta0, &null_beta)?
+        find_positive_beta_nd(&beta0, &null_beta)
+    };
+
+    // If null-space search found β > +EPS, use it. Otherwise fall back to β₀
+    // if all β₀ > -EPS (UNKNOWN candidate for the caller's uncertain track).
+    // Q is constant along the null space (rem:null-q-constant), so Q(β₀) is
+    // correct regardless of which null-space point we use.
+    let (beta_final, null_shifted) = match beta_opt {
+        Some(beta) => (beta, true),
+        None => {
+            if beta0.iter().all(|&b| b > -EPS_BETA_POSITIVE) {
+                (beta0, false)
+            } else {
+                return None;
+            }
+        }
     };
 
     // Constraint verification: reject if β from null space search violates
@@ -445,13 +497,13 @@ fn try_pseudoinverse_with_threshold(
     let constraint_residual: f64 = (0..4)
         .map(|d| {
             (0..m)
-                .map(|i| beta_opt[i] * normals[perm[i]][d])
+                .map(|i| beta_final[i] * normals[perm[i]][d])
                 .sum::<f64>()
         })
         .map(|x: f64| x * x)
         .sum::<f64>()
         + ((0..m)
-            .map(|i| beta_opt[i] * heights[perm[i]])
+            .map(|i| beta_final[i] * heights[perm[i]])
             .sum::<f64>()
             - 1.0)
             .powi(2);
@@ -459,17 +511,17 @@ fn try_pseudoinverse_with_threshold(
         return None;
     }
 
-    // Q is constant along the null space, so Q(β_opt) = Q(β₀).
+    // Q is constant along the null space, so Q(β_final) = Q(β₀).
     // See [lem:well-defined] (thesis): null-space directions preserve constraints,
     // so the KKT objective value is invariant.
-    let q_raw = q_from_beta(normals, perm, &beta_opt);
-    // Only check constancy when Q is significantly positive (capacity-relevant).
-    // Near-zero Q is noise-dominated and the constancy signal is invisible.
-    if q_raw.abs() > 1e-6 {
-        let q_raw_beta0 = q_from_beta(normals, perm, &beta0);
+    let q_raw = q_from_beta(normals, perm, &beta_final);
+    // Only check constancy when null-space search shifted β (otherwise β_final IS β₀)
+    // and when Q is significantly positive (near-zero Q is noise-dominated).
+    if null_shifted && q_raw.abs() > 1e-6 {
+        let q_raw_beta0 = q_from_beta(normals, perm, &(0..m).map(|i| x0[i]).collect::<Vec<_>>());
         debug_assert!(
             (q_raw - q_raw_beta0).abs() < 1e-3 * q_raw.abs(),
-            "Null-space Q constancy violated: Q(β_opt)={:.2e}, Q(β₀)={:.2e}, diff={:.2e}, rel={:.2e}",
+            "Null-space Q constancy violated: Q(β_final)={:.2e}, Q(β₀)={:.2e}, diff={:.2e}, rel={:.2e}",
             q_raw, q_raw_beta0, (q_raw - q_raw_beta0).abs(),
             (q_raw - q_raw_beta0).abs() / q_raw.abs()
         );
@@ -480,19 +532,19 @@ fn try_pseudoinverse_with_threshold(
     let r_sq = residual_norm * residual_norm;
     let q_error_bound = 4.5 * r_sq / abs_lambda_min;
 
-    debug_assert!(
+    assert!(
         q_error_bound < 1e-6,
         "Q error bound unexpectedly large (null space path): E={:.2e}, |r|={:.2e}, |λ_min|={:.2e}",
         q_error_bound, residual_norm, abs_lambda_min
     );
-    debug_assert!(
+    assert!(
         q_correction.abs() < 1e-6 || q_correction.abs() < 1e-6 * q_raw.abs(),
         "Q correction unexpectedly large (null space path): correction={:.2e}, Q_raw={:.2e}",
         q_correction, q_raw
     );
 
     Some(KktResult {
-        beta: beta_opt,
+        beta: beta_final,
         q_corrected,
         q_error_bound,
         n_positive,
