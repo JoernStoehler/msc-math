@@ -460,7 +460,20 @@ fn try_pseudoinverse_with_threshold(
     }
 
     // Q is constant along the null space, so Q(β_opt) = Q(β₀).
+    // See [lem:well-defined] (thesis): null-space directions preserve constraints,
+    // so the KKT objective value is invariant.
     let q_raw = q_from_beta(normals, perm, &beta_opt);
+    // Only check constancy when Q is significantly positive (capacity-relevant).
+    // Near-zero Q is noise-dominated and the constancy signal is invisible.
+    if q_raw.abs() > 1e-6 {
+        let q_raw_beta0 = q_from_beta(normals, perm, &beta0);
+        debug_assert!(
+            (q_raw - q_raw_beta0).abs() < 1e-3 * q_raw.abs(),
+            "Null-space Q constancy violated: Q(β_opt)={:.2e}, Q(β₀)={:.2e}, diff={:.2e}, rel={:.2e}",
+            q_raw, q_raw_beta0, (q_raw - q_raw_beta0).abs(),
+            (q_raw - q_raw_beta0).abs() / q_raw.abs()
+        );
+    }
     let q_corrected = q_raw - q_correction;
     // Tight bound: E = (9/2) ‖r‖² / |λ_min|.
     // See [lem:q-interval] (thesis): uses KKT block structure identity.
