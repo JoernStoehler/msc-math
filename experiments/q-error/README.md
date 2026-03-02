@@ -1,66 +1,40 @@
-# q_error: Numerical vs exact accuracy for the KKT solver
+# q_error: Numerical accuracy of the KKT solver
 
-## Original idea (Jörn)
+## Goal
 
-We have an algorithm that is proven in theory to work for real numbers (and
-rationals). But we use f64. So the idea is to have an experiment that:
+Verify that f64 numerical errors in the KKT solver stay within the
+proven error bounds (Lemma A.11, appendix-numerical.tex). Two
+complementary checks:
 
-1. At select nodes: compare numerical to the exact values.
-2. At other nodes: look at the numerical error bounds we computed and that we
-   RELY ON TO BE SMALL.
+1. **All-node sweep:** For every (S,σ) pair across all polytopes with
+   F ≤ 10, assert the error bound E < 1e-6 and |q_correction| < 1e-6.
+2. **Exact comparison:** For winning nodes, solve the KKT system
+   exactly over Q (Gaussian elimination with BigRational) and assert
+   |Q̃ - Q_exact| ≤ max(E, f64_eps).
 
-## Current state: broken
+Additionally, library-level `assert!` checks in `kkt.rs` enforce
+E < 1e-6 on every `solve_kkt` call (not just in this experiment).
 
-The experiment does neither of these things. It:
-- Only looks at the winning (S, σ, β) per polytope (1 node per polytope)
-- Prints diagnostic tables but asserts nothing
-- Does not compare against exact values
-- Does not verify error bounds across all nodes
+## Results (2026-03-02)
 
-### Problems identified (2026-03-02, Jörn)
-
-The experiment's purpose is checking INTERNAL NUMERICAL ACCURACY. Jörn relied
-on it asserting ALL we know about internal numerical accuracy as a way to be
-confident in the lemmas. If it never asserted anything then the math is LESS
-TRUSTWORTHY THAN WE THOUGHT SO FAR.
-
-Specific problems:
-
-1. **Only examines the winner** — calls `ehz_capacity()` and takes the single
-   best (S, σ, β). The numerically interesting cases (rank-deficient, near-zero
-   β, ill-conditioned) are typically NOT the winner.
-
-2. **Does not assert anything.** Prints tables only. The `debug_assert!`s in
-   `kkt.rs` check that E is small in absolute terms, but no test verifies that
-   E is a valid upper bound on the actual error.
-
-3. **Polytope selection not designed for diversity.** The selection criterion
-   should be (runtime feasibility AND diversity of numerical conditions).
-
-4. A lot of error bound assertions can be done in `assert!` in the library as
-   well — doesn't all have to live in the experiment.
-
-### What would fix this
-
-- Loop over ALL (S, σ) pairs for small polytopes (F ≤ 8)
-- For each KKT solve that returns Some, assert the error bounds are small
-- At select nodes, compare against exact values
-- Make it a `#[test]` or at minimum assert in the binary so violations fail
-  loudly
-- Move applicable assertions into `assert!` in the library code itself
-
-### Local copy of build_kkt_system
-
-Lines 26-57 contain a copy of `kkt::build_kkt_system` (which is `pub(crate)`).
-Last synced: 2026-03-01. Maintenance risk.
+- **Part 1:** 1,134,369 total nodes across 7 polytopes, 1,113,987
+  solvable. Worst E = 2.9×10⁻¹¹ (hko_pentagon). All assertions pass.
+- **Part 2:** Exact comparison for 3/7 polytopes (others have
+  rank-deficient winning nodes). Actual errors at machine epsilon
+  (~10⁻¹⁶), confirming the solver introduces no algorithmic error
+  beyond f64 precision.
+- **Parts 3-4:** Hessian definiteness and inertia diagnostics
+  (informational, not assertions). 5 threshold-sensitivity mismatches
+  in hko_pentagon inertia check.
 
 ## Input
 
-Known polytopes filtered to F ≤ 10 (ehz_capacity is exponential). Currently 7.
+Known polytopes from the library (`known_polytopes::all_known()`),
+filtered to F ≤ 10. Currently 7 polytopes.
 
 ## Output
 
-Tables to stdout (no assertions).
+Summary tables to stdout. Panics on any violation.
 
 ## Run
 

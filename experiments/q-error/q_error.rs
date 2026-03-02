@@ -15,20 +15,12 @@ use nalgebra::{DMatrix, DVector, Vector4};
 use num_bigint::BigInt;
 use num_rational::BigRational;
 use num_traits::{ToPrimitive, Zero};
-use symplectic::algorithms::hk2017::ehz_capacity;
+use symplectic::algorithms::hk2017::{ehz_capacity, combinations};
+use symplectic::algorithms::hk2017::permutations::cyclic_permutations;
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::symplectic::omega0;
-use symplectic::kkt::build_kkt_system as build_kkt;
-
-/// Q(β) = Σ_{i>j} β_i β_j ω₀(n_{σ(i)}, n_{σ(j)}).
-fn q_from_beta(normals: &[Vector4<f64>], perm: &[usize], beta: &[f64]) -> f64 {
-    let m = beta.len();
-    (1..m)
-        .flat_map(|i| (0..i).map(move |j| (i, j)))
-        .map(|(i, j)| beta[i] * beta[j] * omega0(&normals[perm[i]], &normals[perm[j]]))
-        .sum()
-}
+use symplectic::kkt::{build_kkt_system as build_kkt, q_from_beta};
 
 /// Condition-number threshold for rank truncation (matches EIGEN_CONDITION_TAU
 /// in crates/src/kkt.rs).
@@ -39,63 +31,6 @@ const EPS_KKT_RESIDUAL: f64 = 1e-6;
 
 /// Threshold for eigenvalue definiteness classification.
 const EPS_DEFINITE: f64 = 1e-10;
-
-/// Generate all combinations of `k` elements from `{0, ..., n-1}`.
-fn combinations(n: usize, k: usize) -> Vec<Vec<usize>> {
-    let mut result = Vec::new();
-    let mut combo = vec![0usize; k];
-    combinations_rec(n, k, 0, 0, &mut combo, &mut result);
-    result
-}
-
-fn combinations_rec(
-    n: usize, k: usize, start: usize, depth: usize,
-    combo: &mut Vec<usize>, result: &mut Vec<Vec<usize>>,
-) {
-    if depth == k {
-        result.push(combo.clone());
-        return;
-    }
-    for i in start..=(n - k + depth) {
-        combo[depth] = i;
-        combinations_rec(n, k, i + 1, depth + 1, combo, result);
-    }
-}
-
-/// Generate all cyclic permutations of a slice (fix first element, permute rest).
-fn cyclic_permutations(s: &[usize]) -> Vec<Vec<usize>> {
-    if s.len() <= 1 {
-        return vec![s.to_vec()];
-    }
-    let mut result = Vec::new();
-    let first = s[0];
-    let rest: Vec<usize> = s[1..].to_vec();
-    for perm in permutations_of(&rest) {
-        let mut p = vec![first];
-        p.extend(perm);
-        result.push(p);
-    }
-    result
-}
-
-fn permutations_of(s: &[usize]) -> Vec<Vec<usize>> {
-    if s.len() <= 1 {
-        return vec![s.to_vec()];
-    }
-    let mut result = Vec::new();
-    for i in 0..s.len() {
-        let elem = s[i];
-        let rest: Vec<usize> = s.iter().enumerate()
-            .filter(|&(j, _)| j != i)
-            .map(|(_, &v)| v)
-            .collect();
-        for mut perm in permutations_of(&rest) {
-            perm.insert(0, elem);
-            result.push(perm);
-        }
-    }
-    result
-}
 
 /// Eigendecomposition-based solve: x̂ = Σ_i (v_i · b / λ_i) v_i for top `rank`
 /// eigenvalues by |λ|.
@@ -386,7 +321,10 @@ struct ExactResult {
 fn exact_comparison(polytope: &Polytope4D) -> Option<ExactResult> {
     let result = ehz_capacity(polytope)?;
 
-    // Get the winning permutation in algebraic order (internal convention)
+    // Get the winning permutation in algebraic (KKT input) order.
+    // EhzResult.best_permutation is in physical orbit direction (reversed from
+    // algebraic order); see hk2017/mod.rs "Permutation ordering convention".
+    // We reverse to recover the algebraic order used by build_kkt_system.
     let mut alg_perm = result.best_permutation.clone();
     alg_perm.reverse();
     let m = alg_perm.len();
