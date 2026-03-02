@@ -150,8 +150,15 @@ python3 experiments/sys-optimization/sys_optimization.py
 python3 experiments/dismissal-error/dismissal_error.py
 # → experiments/dismissal-error/dismissal-error.png
 
-# ── Step 3: Visualization screenshots ────────────────────────────────────────
-# Automated via Playwright (headless Chrome). Requires: npm install playwright.
+# ── Step 3: Visualization ────────────────────────────────────────────────────
+
+# 3a. Export polytope data (real Reeb orbits + displaced variants)
+for name in simplex hypercube hko_pentagon lagrangian_triangle_product symplectic_triangle_product lagrangian_tri_sq symplectic_tri_sq crosspolytope; do
+  (cd experiments && cargo run --release --bin viz_export -- "$name" "visualization/viz/data/$name.json")
+done
+(cd experiments/visualization/viz && bash embed-data.sh > data.js)
+
+# 3b. Automated screenshots via Playwright (headless Chrome). Requires: npm install playwright.
 # The script starts a local server, loads each polytope, and takes screenshots.
 
 (cd experiments/visualization/viz && npx serve -l 8080 &)
