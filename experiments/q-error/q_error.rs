@@ -19,50 +19,7 @@ use symplectic::algorithms::hk2017::ehz_capacity;
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::symplectic::omega0;
-
-// WARNING: This is a copy of kkt::build_kkt_system (which is pub(crate)).
-// If the KKT matrix construction changes in the library, update this copy.
-// Last synced: 2026-03-01 (symmetric KKT with negated multipliers).
-/// Build symmetric KKT matrix and RHS (copied from crate-internal build_kkt_system).
-///
-/// Uses negated multipliers (μ = −λ, ξ = −ν) for a symmetric saddle-point matrix:
-/// ```text
-/// [ H   |  N   |  η ] [ β ]   [ 0 ]   rows 0..m
-/// [ N^T |  0   |  0 ] [ μ ] = [ 0 ]   rows m..m+4
-/// [ η^T |  0   |  0 ] [ ξ ]   [ 1 ]   row  m+4
-/// ```
-fn build_kkt(
-    normals: &[Vector4<f64>],
-    heights: &[f64],
-    perm: &[usize],
-) -> (DMatrix<f64>, DVector<f64>) {
-    let m = perm.len();
-    let size = m + 5;
-    let mut kkt = DMatrix::zeros(size, size);
-    let mut rhs = DVector::zeros(size);
-
-    for i in 0..m {
-        for j in (i + 1)..m {
-            let val = omega0(&normals[perm[i]], &normals[perm[j]]);
-            kkt[(i, j)] = val;
-            kkt[(j, i)] = val;
-        }
-    }
-    for i in 0..m {
-        for d in 0..4 {
-            let n = normals[perm[i]][d];
-            kkt[(i, m + d)] = n;
-            kkt[(m + d, i)] = n;
-        }
-    }
-    for i in 0..m {
-        let h = heights[perm[i]];
-        kkt[(i, m + 4)] = h;
-        kkt[(m + 4, i)] = h;
-    }
-    rhs[m + 4] = 1.0;
-    (kkt, rhs)
-}
+use symplectic::kkt::build_kkt_system as build_kkt;
 
 /// Q(β) = Σ_{i>j} β_i β_j ω₀(n_{σ(i)}, n_{σ(j)}).
 fn q_from_beta(normals: &[Vector4<f64>], perm: &[usize], beta: &[f64]) -> f64 {

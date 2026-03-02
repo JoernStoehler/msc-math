@@ -227,7 +227,7 @@ fn find_positive_beta_nd(beta0: &[f64], null_vecs: &[Vec<f64>]) -> Option<Vec<f6
 /// Returns `(kkt, rhs)` where `kkt` is `(m+5) × (m+5)` symmetric.
 ///
 /// Uses **period normalization** (γ on [0,T]); see `appendix-notation.tex`.
-pub(crate) fn build_kkt_system(
+pub fn build_kkt_system(
     normals: &[Vector4<f64>],
     heights: &[f64],
     perm: &[usize],
