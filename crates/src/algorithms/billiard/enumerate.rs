@@ -6,8 +6,8 @@
 //! Cyclic symmetry removal: the first q-block position is fixed, reducing
 //! q-permutations from k! to (k-1)!. Total reduction factor: k.
 //!
-//! See chapter-billiard.tex, `[lem:sigma-structure]` and the
-//! algorithm pseudocode in the billiard algorithm section.
+//! See `[lem:sigma-structure]` (lagrangian-product-algorithm-proof.tex) and
+//! the algorithm pseudocode `[alg:billiard]` (lagrangian-product-algorithm.tex).
 
 /// A block in a k-bounce orbit: either a single facet or an ordered adjacent pair.
 #[derive(Debug, Clone, Copy)]

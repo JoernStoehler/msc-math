@@ -150,11 +150,19 @@ python3 experiments/sys-optimization/sys_optimization.py
 # Requires: npm install playwright.
 
 # Generate polytope JSON data for the web viewer
-experiments/target/release/viz_export
-# → experiments/visualization/viz/*.json (per-polytope data files)
+# viz_export takes (name, output-path) and must be called once per polytope.
+VIZ_DATA="docs/viz/data"
+mkdir -p "$VIZ_DATA"
+for name in simplex hypercube crosspolytope hko_pentagon \
+            lagrangian_triangle_product symplectic_triangle_product \
+            lagrangian_tri_sq symplectic_tri_sq; do
+    experiments/target/release/viz_export "$name" "$VIZ_DATA/$name.json"
+done
+# → docs/viz/data/*.json (8 per-polytope data files)
 
 # Embed generated data into the viewer's data.js
-(cd experiments/visualization/viz && bash embed-data.sh)
+# Note: embed-data.sh reads from docs/viz/data/ (not experiments/visualization/)
+(cd experiments/visualization/viz && bash embed-data.sh > data.js)
 # → experiments/visualization/viz/data.js
 
 # Start local server, take screenshots, stop server
