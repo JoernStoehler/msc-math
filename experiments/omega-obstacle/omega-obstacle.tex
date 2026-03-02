@@ -155,11 +155,11 @@ For each facet~$k$ and each ridge-neighbor~$i$, we compute:
 \item $\nabla_{n_k}\omega_0(n_k, n_i)\big|_{T_{n_k}S^3}$ ---
   the tangential gradient of $\omega_0(n_k, n_i)$ with respect
   to~$n_k$.
-  Since $\omega_0(v, w) = (J_0\,v) \cdot w$,
-  the full gradient is $J_0\,n_i$.
+  Since $\omega_0(u, v) = u^T M\,v$ where $M = J_0^T = -J_0$,
+  the full gradient is $-J_0\,n_i$.
   Projected to $T_{n_k}S^3$:
   \[
-    \nabla_{n_k}\omega_0(n_k, n_i) = J_0\,n_i - (J_0\,n_i \cdot n_k)\,n_k.
+    \nabla_{n_k}\omega_0(n_k, n_i) = -J_0\,n_i + (J_0\,n_i \cdot n_k)\,n_k.
   \]
 
 \item The dot product
@@ -174,7 +174,7 @@ If $d$ is centered on zero, there is no directional relationship.
 Figure~\ref{fig:omega-gradient} shows the distribution of~$d$
 restricted to orbit facets (where the capacity gradient is nonzero).
 The distribution is centered on zero:
-median $d = -0.0006$, fraction negative $= 50.5\%$.
+median $d = +0.0006$, fraction negative $= 49.5\%$.
 There is no evidence that the $\mathrm{sys}$-increasing direction
 coincides with the $\omega_0$-decreasing direction.
 

@@ -781,14 +781,14 @@ fn compute_omega_features(
 ///            = u^T M v where M has the right entries.
 /// ∂ω₀(n_k, n_i)/∂n_k = M n_i where M is the matrix of ω₀.
 ///
-/// M = [[0,0,1,0],[0,0,0,1],[-1,0,0,0],[0,-1,0,0]] = -J₀^T = J₀
+/// M = [[0,0,1,0],[0,0,0,1],[-1,0,0,0],[0,-1,0,0]] = J₀^T = -J₀
 /// (since J₀ is skew-symmetric: J₀^T = -J₀)
 ///
-/// So ∂ω₀(n_k, n_i)/∂n_k = J₀ n_i. Projected to T_{n_k}S³.
+/// So ∂ω₀(n_k, n_i)/∂n_k = -J₀ n_i. Projected to T_{n_k}S³.
 fn omega_gradient_on_tangent(n_k: &Vector4<f64>, n_i: &Vector4<f64>) -> Vector4<f64> {
-    let j0_ni = j0_apply(n_i);
+    let neg_j0_ni = -j0_apply(n_i);
     // Project to T_{n_k}S³: remove component along n_k
-    j0_ni - j0_ni.dot(n_k) * n_k
+    neg_j0_ni - neg_j0_ni.dot(n_k) * n_k
 }
 
 /// Compute gradient dot products for all (facet, ridge-neighbor) pairs.

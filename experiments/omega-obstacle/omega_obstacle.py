@@ -32,6 +32,11 @@ KNOWN_MARKER = "D"  # diamond for known polytopes
 
 def load_data():
     """Load JSONL dataset."""
+    if not DATA_PATH.exists():
+        raise FileNotFoundError(
+            f"Data not found: {DATA_PATH}\n"
+            "Run: cd experiments/ && cargo run --bin omega_obstacle --release"
+        )
     rows = []
     with open(DATA_PATH) as f:
         for line in f:

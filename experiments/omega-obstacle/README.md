@@ -36,7 +36,7 @@ The orbit preferentially uses facet transitions with LARGE |ω|. This makes sens
 ### 4. Gradient analysis: no directional signal
 
 ⟨∇_{n_k} sys, ∇_{n_k} ω(n_k, n_i)⟩ for orbit facets:
-- Median = -0.0006, fraction negative = 50.5%
+- Median = +0.0006, fraction negative = 49.5%
 - Essentially symmetric around zero — no evidence that sys-increasing directions coincide with ω-decreasing directions
 
 The |ω| vs dot product scatter shows a "trumpet" shape: variance increases at small |ω|, but the distribution remains centered on zero.
