@@ -532,15 +532,16 @@ fn try_pseudoinverse_with_threshold(
     let r_sq = residual_norm * residual_norm;
     let q_error_bound = 4.5 * r_sq / abs_lambda_min;
 
-    // Reject orbits where the error bound or correction overwhelms the Q value.
-    // Near-zero Q means very high action — these orbits can't be capacity-achieving,
-    // so dropping them is safe and avoids propagating unreliable estimates.
-    if q_error_bound >= 1e-6 {
-        return None;
-    }
-    if q_correction.abs() >= 1e-6 && q_correction.abs() >= 1e-6 * q_raw.abs() {
-        return None;
-    }
+    assert!(
+        q_error_bound < 1e-6,
+        "Q error bound unexpectedly large (null space path): E={:.2e}, |r|={:.2e}, |λ_min|={:.2e}",
+        q_error_bound, residual_norm, abs_lambda_min
+    );
+    assert!(
+        q_correction.abs() < 1e-6 || q_correction.abs() < 1e-6 * q_raw.abs(),
+        "Q correction unexpectedly large (null space path): correction={:.2e}, Q_raw={:.2e}",
+        q_correction, q_raw
+    );
 
     Some(KktResult {
         beta: beta_final,
