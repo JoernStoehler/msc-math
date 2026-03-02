@@ -6,6 +6,12 @@
 %   experiments/correctness/correctness.jsonl (generated dataset),
 %   experiments/correctness/README.md (experiment design documentation).
 %
+% Structure:
+%   - Algorithm variants table
+%   - Verification capacity counts table
+%   - Six test propositions (enumerated)
+%   - Literature polytopes table
+%
 % This section documents the mathematical propositions verified to establish
 % correctness of the capacity computation implementation.
 
@@ -91,12 +97,12 @@ The 6 test propositions are:
 \toprule
 Polytope & $F$ & $c_{\mathrm{EHZ}}$ & $\mathrm{vol}(K)$ & $\mathrm{sys}(K)$ & Source \\
 \midrule
-Simplex & 5 & 0.25 & 0.0417 & 0.750 & Nir 2013 \\
-Hypercube $[-1,1]^4$ & 8 & 4.0 & 16.0 & 0.500 & HK2019 Ex~4.6 \\
-HK-O pentagon & 10 & 3.441 & 5.6532 & 1.047 & HK-O 2024 Prop~1.4 \\
-Lag.\ $\triangle \times \triangle$ & 6 & 1.5 & 1.6875 & 0.667 & HK2017 + billiard \\
+Simplex & 5 & 0.25 & 0.0417 & 0.750 & \cite{Nir2013} \\
+Hypercube $[-1,1]^4$ & 8 & 4.0 & 16.0 & 0.500 & \cite{HK2019} Ex~4.6 \\
+HK-O pentagon & 10 & 3.441 & 5.6532 & 1.047 & \cite{HaimKislevOstrover2024} Prop~1.4 \\
+Lag.\ $\triangle \times \triangle$ & 6 & 1.5 & 1.6875 & 0.667 & \cite{HK2017} + billiard \\
 Sym.\ $\triangle \times \triangle$ & 6 & 1.299 & 1.6875 & 0.500 & Moser's theorem \\
-Lag.\ $\triangle \times \square$ & 7 & 1.5 & 1.2990 & 0.866 & HK2017 + billiard \\
+Lag.\ $\triangle \times \square$ & 7 & 1.5 & 1.2990 & 0.866 & \cite{HK2017} + billiard \\
 Sym.\ $\triangle \times \square$ & 7 & 1.0 & 1.2990 & 0.385 & Moser's theorem \\
 \bottomrule
 \end{tabular}

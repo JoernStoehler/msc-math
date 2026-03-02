@@ -1,5 +1,11 @@
 //! Correctness verification: dataset generator and tests.
 //!
+//! Goal: Verify correctness of capacity algorithms via 6 mathematical propositions
+//!   (direct comparison, literature agreement, conformality, symplectic invariance,
+//!   continuity, monotonicity).
+//! Input: None (generates polytopes from hardcoded seeds and literature definitions).
+//! Output: experiments/correctness/correctness.jsonl (47 polytopes, 71 capacity values).
+//!
 //! Architecture:
 //! 1. `cargo run --bin correctness --release` generates 47 polytopes, computes 71 capacities
 //! 2. Writes to correctness/correctness.jsonl
