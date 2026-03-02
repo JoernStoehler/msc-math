@@ -149,8 +149,6 @@ python3 experiments/sys-optimization/sys_optimization.py
 # → experiments/sys-optimization/sys_optimization_validity.png
 # → experiments/sys-optimization/sys_optimization_stats.tex
 
-# ── Step 3: Visualization ────────────────────────────────────────────────────
-
 # Omega-obstacle: ridge ω vs sys, orbit ω analysis, gradient dot products
 python3 experiments/omega-obstacle/omega_obstacle.py
 # → experiments/omega-obstacle/omega_obstacle_ridge_min_vs_sys.png
