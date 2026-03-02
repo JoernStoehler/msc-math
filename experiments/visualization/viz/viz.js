@@ -600,6 +600,18 @@ function onTrajectoryToggle(index, checked) {
     rebuildScene();
 }
 
+function toggleAllTrajectories(on) {
+    if (!polytopeData) return;
+    visibleTrajectories.clear();
+    if (on) {
+        for (let i = 0; i < polytopeData.trajectories.length; i++) {
+            visibleTrajectories.add(i);
+        }
+    }
+    generateTrajectoryCheckboxes();
+    rebuildScene();
+}
+
 function onToggle(which, checked) {
     switch (which) {
         case 'edges': showEdges = checked; break;
