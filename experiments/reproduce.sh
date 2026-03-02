@@ -99,7 +99,7 @@ experiments/target/release/q_error 2>&1 | tee experiments/q-error/q_error_output
 experiments/target/release/omega_obstacle
 # → experiments/omega-obstacle/omega-obstacle.jsonl
 
-# Gradient descent: gradient ascent on 500 general + 500 Lagrangian F=10 polytopes (~100 min)
+# Gradient ascent on ~1000 F=10 polytopes (500 general + 167×3 Lagrangian splits) (~35 min)
 experiments/target/release/gradient_descent
 # → experiments/gradient-descent/gradient-descent.jsonl
 

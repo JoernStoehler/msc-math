@@ -420,7 +420,7 @@ fn heap_perms_buf(
     }
     heap_perms_buf(buf, offset, k - 1, callback);
     for i in 0..k - 1 {
-        if k % 2 == 0 {
+        if k.is_multiple_of(2) {
             buf.swap(offset + i, offset + k - 1);
         } else {
             buf.swap(offset, offset + k - 1);
@@ -578,7 +578,7 @@ fn heap_permute(k: usize, buf: &mut [usize], callback: &mut impl FnMut(&[usize])
     }
     heap_permute(k - 1, buf, callback);
     for i in 0..k - 1 {
-        if k % 2 == 0 {
+        if k.is_multiple_of(2) {
             buf.swap(i, k - 1);
         } else {
             buf.swap(0, k - 1);

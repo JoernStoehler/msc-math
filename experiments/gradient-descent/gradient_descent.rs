@@ -462,10 +462,8 @@ fn compute_step_bound_hn(
 
 /// Which capacity algorithm to use for evaluation after a step.
 ///
-/// Note: Billiard variant is kept for potential future use but currently
-/// HK2017 is used for all polytopes (including Lagrangian products) because
-/// benchmark data shows HK2017 pruned is ~7x faster than billiard at F=10.
-#[allow(dead_code)]
+/// - `Hk2017`: General polytopes (only algorithm available for non-Lagrangian products).
+/// - `Billiard`: Lagrangian products (block-structured enumeration with directed ω₀ pruning).
 enum CapacityBackend {
     Hk2017,
     Billiard,
@@ -645,7 +643,7 @@ fn run_gradient_ascent(
                 if let Some((p, new_sys)) =
                     try_step_h(normals, heights, &sensitivity.d_sys_h, t, backend)
                 {
-                    if new_sys > sys && best.as_ref().map_or(true, |b| new_sys > b.1) {
+                    if new_sys > sys && best.as_ref().is_none_or(|b| new_sys > b.1) {
                         best = Some((p, new_sys, "h_only".to_string(), frac, t));
                     }
                 }
@@ -664,7 +662,7 @@ fn run_gradient_ascent(
                     backend,
                     lagrangian_class,
                 ) {
-                    if new_sys > sys && best.as_ref().map_or(true, |b| new_sys > b.1) {
+                    if new_sys > sys && best.as_ref().is_none_or(|b| new_sys > b.1) {
                         best = Some((p, new_sys, "h_n".to_string(), frac, t));
                     }
                 }
@@ -807,17 +805,15 @@ fn load_completed_names(path: &std::path::Path) -> HashSet<String> {
     let mut names = HashSet::new();
     if let Ok(file) = File::open(path) {
         let reader = BufReader::new(file);
-        for line in reader.lines() {
-            if let Ok(line) = line {
-                let line = line.trim().to_string();
-                if line.is_empty() {
-                    continue;
-                }
-                // Parse just the name field
-                if let Ok(v) = serde_json::from_str::<serde_json::Value>(&line) {
-                    if let Some(name) = v.get("name").and_then(|n| n.as_str()) {
-                        names.insert(name.to_string());
-                    }
+        for line in reader.lines().map_while(Result::ok) {
+            let line = line.trim().to_string();
+            if line.is_empty() {
+                continue;
+            }
+            // Parse just the name field
+            if let Ok(v) = serde_json::from_str::<serde_json::Value>(&line) {
+                if let Some(name) = v.get("name").and_then(|n| n.as_str()) {
+                    names.insert(name.to_string());
                 }
             }
         }
@@ -830,7 +826,7 @@ fn main() {
     let base_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
     let output_path = base_dir.join("gradient-descent/gradient-descent.jsonl");
 
-    println!("Gradient descent experiment: F={FACET_COUNT} polytopes\n");
+    println!("Gradient ascent experiment: F={FACET_COUNT} polytopes\n");
 
     // Resume support: load already-completed polytope names from existing JSONL.
     // On a fresh run (no file or --fresh flag), starts from scratch.
@@ -939,12 +935,8 @@ fn main() {
     let lagrangian = generate_lagrangian_polytopes(&mut rng);
     println!("Generated {} Lagrangian products.\n", lagrangian.len());
 
-    // Cross-check: instrumented HK2017 vs library billiard on first 5 products
+    // Cross-check: instrumented HK2017 vs library billiard on first 5 products.
     // Both algorithms should agree on capacity for Lagrangian products.
-    // We use HK2017 (not billiard) as the gradient descent backend because
-    // the benchmark shows HK2017 pruned is ~7x faster than billiard at F=10
-    // (billiard's block enumeration generates ~10x more candidates than
-    // HK2017's adjacency pruning eliminates).
     println!("Cross-checking instrumented HK2017 vs library billiard...");
     for (name, _, polytope) in lagrangian.iter().take(5) {
         let lib_cap = billiard_capacity(polytope)
@@ -1011,7 +1003,7 @@ fn main() {
         }
 
         println!(
-            "iter={}, sys: {:.6}→{:.6} (Δ={:.6}){}, {:.1}ms",
+            "iter={}, sys: {:.6}→{:.6} (Δ={:.6}){}, {:.1}s",
             s.iterations,
             s.starting_sys,
             s.final_sys,

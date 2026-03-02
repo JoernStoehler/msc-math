@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Analyze gradient descent results on F=10 polytopes.
+Analyze gradient ascent results on F=10 polytopes.
 
 Goal: Visualize the distribution of final sys values, compare general vs Lagrangian products.
 Input: experiments/gradient-descent/gradient-descent.jsonl
