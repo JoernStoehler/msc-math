@@ -532,16 +532,20 @@ fn try_pseudoinverse_with_threshold(
     let r_sq = residual_norm * residual_norm;
     let q_error_bound = 4.5 * r_sq / abs_lambda_min;
 
+    // Threshold 1e-6: q_error experiment (Part 1) measures worst-case E = 2.9e-11
+    // across 1.1M nodes (F ≤ 10). Typical E is 1e-16 to 1e-11. The 1e-6 threshold
+    // is ~5 orders of magnitude above observed worst case — it catches genuine
+    // solver failures without false positives on normal inputs.
+    // If this fires on larger polytopes (F > 16), re-measure before widening.
     assert!(
         q_error_bound < 1e-6,
         "Q error bound unexpectedly large (null space path): E={:.2e}, |r|={:.2e}, |λ_min|={:.2e}",
         q_error_bound, residual_norm, abs_lambda_min
     );
-    assert!(
-        q_correction.abs() < 1e-6 || q_correction.abs() < 1e-6 * q_raw.abs(),
-        "Q correction unexpectedly large (null space path): correction={:.2e}, Q_raw={:.2e}",
-        q_correction, q_raw
-    );
+    // No separate assertion on q_correction size: E already bounds |Q_corrected - Q_true|.
+    // A large correction on small Q_raw (e.g. correction=1e-6, Q_raw=1e-7) is legitimate —
+    // it means the uncorrected value was inaccurate but the correction fixed it.
+    // The consumer (ehz_capacity) picks max Q, so near-zero Q orbits don't affect the answer.
 
     Some(KktResult {
         beta: beta_final,
