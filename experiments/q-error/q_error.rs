@@ -84,9 +84,9 @@ fn q_from_hessian(kkt: &DMatrix<f64>, beta: &[f64]) -> f64 {
 }
 
 /// Condition-number threshold for rank truncation (matches EIGEN_CONDITION_TAU
-/// in crates/src/kkt.rs). Retains old SVD_CONDITION_TAU name for local consistency.
-/// Used as: |λ_i| > lambda_max * SVD_CONDITION_TAU → retain eigenvalue i.
-const SVD_CONDITION_TAU: f64 = 1e-3;
+/// in crates/src/kkt.rs).
+/// Used as: |λ_i| > lambda_max * EIGEN_CONDITION_TAU → retain eigenvalue i.
+const EIGEN_CONDITION_TAU: f64 = 1e-3;
 
 /// Threshold for eigenvalue definiteness classification.
 const EPS_DEFINITE: f64 = 1e-10;
@@ -164,7 +164,7 @@ fn node_hessian_check(
     let eigenvectors = &eig.eigenvectors;
 
     let lambda_max_abs = eigenvalues.iter().cloned().map(f64::abs).fold(0.0_f64, f64::max);
-    let threshold = lambda_max_abs * SVD_CONDITION_TAU;
+    let threshold = lambda_max_abs * EIGEN_CONDITION_TAU;
     let rank = eigenvalues.iter().filter(|&&e| e.abs() > threshold).count();
 
     // Truncated eigendecomposition solve
@@ -243,10 +243,14 @@ struct Diagnostics {
     residual_norm_truncated: f64,
     q_raw: f64,
     q_first_order: f64,
-    /// E using |λ_min| of full matrix (current code)
-    e_full: f64,
-    /// E using |λ_min| of retained eigenvalues
-    e_retained: f64,
+    /// E_old = ‖r‖²(2/|λ_min| + |λ_max|/(2|λ_min|²)) — old vacuous bound
+    e_old_full: f64,
+    /// E_old using |λ_min| of retained eigenvalues
+    e_old_retained: f64,
+    /// E_tight = (9/2)‖r‖²/|λ_min| — tight bound from [lem:q-error-bound]
+    e_tight_full: f64,
+    /// E_tight using |λ_min| of retained eigenvalues
+    e_tight_retained: f64,
     /// |2(r₁ᵀδλ + r₃δν)| computed from full eigendecomposition δx
     cross_abs_full: f64,
     /// |δβᵀHδβ| computed from full eigendecomposition δx
@@ -285,7 +289,7 @@ fn run_diagnostics(
         .fold(f64::INFINITY, f64::min);
 
     // Truncated rank (matching library): sort by |λ|, keep top `rank`
-    let threshold = lambda_max_abs * SVD_CONDITION_TAU;
+    let threshold = lambda_max_abs * EIGEN_CONDITION_TAU;
     let rank = eigenvalues.iter().filter(|&&e| e.abs() > threshold).count();
 
     // |λ_min| among retained eigenvalues (top `rank` by |λ|)
@@ -314,16 +318,18 @@ fn run_diagnostics(
     let mu_hat: DVector<f64> = DVector::from_iterator(4, (m..m + 4).map(|i| x_full[i]));
     let xi_hat = x_full[m + 4];
 
-    // Q̃ = Q(β̂) - (r₂ᵀμ̂ + r₃ξ̂)  [Lemma [lem:v2-q-interval], Step 2-3]
+    // Q̃ = Q(β̂) - (r₂ᵀμ̂ + r₃ξ̂)  [Lemma [lem:q-interval], Step 2-3]
     let q_first_order = q_raw - (r1_full.dot(&mu_hat) + r3_full * xi_hat);
 
-    // Analytical bounds
+    // Analytical bounds (old vacuous bound and tight bound)
     let r_sq_full = r_full_norm * r_full_norm;
-    let e_full = r_sq_full * (2.0 / lambda_min_abs_full.max(f64::MIN_POSITIVE)
-        + lambda_max_abs / (2.0 * lambda_min_abs_full.max(f64::MIN_POSITIVE).powi(2)));
+    let lmin_full = lambda_min_abs_full.max(f64::MIN_POSITIVE);
+    let e_old_full = r_sq_full * (2.0 / lmin_full + lambda_max_abs / (2.0 * lmin_full * lmin_full));
+    let e_tight_full = 4.5 * r_sq_full / lmin_full;
     let r_sq_trunc = r_trunc_norm * r_trunc_norm;
-    let e_retained = r_sq_trunc * (2.0 / lambda_min_abs_retained
+    let e_old_retained = r_sq_trunc * (2.0 / lambda_min_abs_retained
         + lambda_max_abs / (2.0 * lambda_min_abs_retained * lambda_min_abs_retained));
+    let e_tight_retained = 4.5 * r_sq_trunc / lambda_min_abs_retained;
 
     // Direction-aware: δx = Q Λ⁻¹ Qᵀ r (using full eigendecomposition)
     let delta_x_full = eigen_solve(eigenvectors, eigenvalues, &r_full, size, size);
@@ -393,8 +399,10 @@ fn run_diagnostics(
         residual_norm_truncated: r_trunc_norm,
         q_raw,
         q_first_order,
-        e_full,
-        e_retained,
+        e_old_full,
+        e_old_retained,
+        e_tight_full,
+        e_tight_retained,
         cross_abs_full: (2.0 * cross_full).abs(),
         quad_abs_full: quad_full.abs(),
         cross_abs_trunc: (2.0 * cross_trunc).abs(),
@@ -480,7 +488,7 @@ fn main() {
         let eigenvalues = &eig.eigenvalues;
         let eigenvectors = &eig.eigenvectors;
         let lambda_max_abs = eigenvalues.iter().cloned().map(f64::abs).fold(0.0_f64, f64::max);
-        let threshold = lambda_max_abs * SVD_CONDITION_TAU;
+        let threshold = lambda_max_abs * EIGEN_CONDITION_TAU;
         let rank = eigenvalues.iter().filter(|&&e| e.abs() > threshold).count();
         let size = m + 5;
         let x = eigen_solve(eigenvectors, eigenvalues, &rhs, size, rank);
@@ -523,11 +531,11 @@ fn main() {
 
     println!();
 
-    // Table 2: Error bounds — analytical vs direction-aware
-    println!("--- Table 2: Analytical E vs actual |R| (direction-aware) ---");
-    println!("{:<14} {:>12} {:>12} {:>12} {:>12} {:>12} {:>12}",
-        "polytope", "E_full", "|R|_full", "loose_full", "E_retained", "|R|_trunc", "loose_ret");
-    println!("{}", "-".repeat(88));
+    // Table 2: Error bounds — old vs tight vs actual
+    println!("--- Table 2: Old E vs tight E vs actual |R| (direction-aware, retained eigenvalues) ---");
+    println!("{:<14} {:>12} {:>12} {:>12} {:>12} {:>12}",
+        "polytope", "E_old", "E_tight", "|R|_actual", "old/actual", "tight/actual");
+    println!("{}", "-".repeat(74));
 
     for (name, polytope) in &polytopes {
         let result = match ehz_capacity(polytope) {
@@ -540,15 +548,13 @@ fn main() {
 
         let d = run_diagnostics(polytope.normals(), polytope.heights(), &alg_perm);
 
-        let r_actual_full = d.cross_abs_full + d.quad_abs_full;
-        let r_actual_trunc = d.cross_abs_trunc + d.quad_abs_trunc;
-        let loose_full = if r_actual_full > 0.0 { d.e_full / r_actual_full } else { f64::INFINITY };
-        let loose_ret = if r_actual_trunc > 0.0 { d.e_retained / r_actual_trunc } else { f64::INFINITY };
+        let r_actual = d.cross_abs_trunc + d.quad_abs_trunc;
+        let loose_old = if r_actual > 0.0 { d.e_old_retained / r_actual } else { f64::INFINITY };
+        let loose_tight = if r_actual > 0.0 { d.e_tight_retained / r_actual } else { f64::INFINITY };
 
-        println!("{:<14} {:>12.3e} {:>12.3e} {:>12.3e} {:>12.3e} {:>12.3e} {:>12.3e}",
+        println!("{:<14} {:>12.3e} {:>12.3e} {:>12.3e} {:>12.3e} {:>12.3e}",
             name,
-            d.e_full, r_actual_full, loose_full,
-            d.e_retained, r_actual_trunc, loose_ret);
+            d.e_old_retained, d.e_tight_retained, r_actual, loose_old, loose_tight);
     }
 
     println!();
@@ -939,7 +945,7 @@ fn main() {
 
                     let lambda_max_abs = eigenvalues.iter().cloned().map(f64::abs)
                         .fold(0.0_f64, f64::max);
-                    let threshold = lambda_max_abs * SVD_CONDITION_TAU;
+                    let threshold = lambda_max_abs * EIGEN_CONDITION_TAU;
                     let rank = eigenvalues.iter().filter(|&&e| e.abs() > threshold).count();
 
                     // |λ_min| among retained eigenvalues (top `rank` by |λ|)
@@ -957,17 +963,16 @@ fn main() {
 
                     let q_raw = q_from_beta(normals, &perm, &beta);
 
-                    // First-order Q correction [lem:v2-q-interval]
+                    // First-order Q correction [lem:q-interval]
                     let r2: DVector<f64> = DVector::from_iterator(4, (m..m+4).map(|i| r[i]));
                     let r3 = r[m + 4];
                     let mu_hat: DVector<f64> = DVector::from_iterator(4, (m..m+4).map(|i| x[i]));
                     let xi_hat = x[m + 4];
                     let q_tilde = q_raw - (r2.dot(&mu_hat) + r3 * xi_hat);
 
-                    // Error bound E
+                    // Error bound E (tight bound: [lem:q-error-bound])
                     let r_sq = r_norm * r_norm;
-                    let e = r_sq * (2.0 / lambda_min_abs_ret
-                        + lambda_max_abs / (2.0 * lambda_min_abs_ret * lambda_min_abs_ret));
+                    let e = 4.5 * r_sq / lambda_min_abs_ret;
 
                     // Admissibility: β̂_min vs δβ_bound = ‖r‖ / |λ_min|
                     let delta_beta_bound = r_norm / lambda_min_abs_ret;
@@ -1032,7 +1037,7 @@ fn main() {
     // The saddle-point inertia theorem says:
     //   n_+(M) = n_+(H|_T), n_-(M) = n_-(H|_T) + 5, n_0(M) = n_0(H|_T)
     // We validate this on the BEST (S, σ) for each polytope.
-    println!("--- Table 8: Inertia theorem validation ([lem:v2-kkt-inertia]) ---");
+    println!("--- Table 8: Inertia theorem validation ([lem:kkt-inertia]) ---");
     println!("  For the optimal (S, σ), compare eigenvalue counts of M vs H|_T.");
     println!("  Inertia theorem: n+(M) = n+(H|T)+p, n-(M) = n-(H|T)+p, n0(M) = n0(H|T)+(5-p)");
     println!("  where p = rank(A), A = [N^T; η^T]");
