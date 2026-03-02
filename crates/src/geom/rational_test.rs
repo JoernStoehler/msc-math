@@ -1163,6 +1163,10 @@ fn directed_adjacency_agreement_hypercube() {
 /// survive adjacency pruning. If exact and f64 adjacency disagree, different
 /// candidates survive and the capacity changes. Agreement here confirms that
 /// the rational pipeline doesn't alter the result for well-conditioned inputs.
+///
+/// **Why debug mode:** F=5 simplex, ehz_capacity ~0.1s debug. Input-output test
+/// but fast enough for default suite.
+/// **Why this input:** Simplest polytope; well-conditioned f64 → rational round-trip.
 #[test]
 fn capacity_agreement_simplex() {
     use crate::algorithms::hk2017::ehz_capacity;
@@ -1186,6 +1190,11 @@ fn capacity_agreement_simplex() {
 }
 
 /// Proposition: EHZ capacity is unchanged through rational pipeline for hypercube.
+///
+/// **Why debug mode:** F=8 hypercube, ehz_capacity ~2s debug. Borderline but
+/// under 5s threshold; exercises the exact path on a polytope with many facets.
+/// **Why this input:** Largest "standard" polytope in the catalog; tests that
+/// exact adjacency agrees with f64 on a non-trivial graph.
 #[test]
 fn capacity_agreement_hypercube() {
     use crate::algorithms::hk2017::ehz_capacity;

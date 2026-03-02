@@ -245,9 +245,9 @@ pub fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
 /// In the algorithm's internal (algebraic) ordering, consecutive (i, j) corresponds
 /// to a physical Reeb transition F_j → F_i, so we require ω₀(n_j, n_i) ≥ 0.
 ///
-/// [lem:numerical-transition-feasibility] Condition (1): ω₀(n_i, n_j) ≥ 0 is necessary for
-/// physical transition F_i → F_j. Here we check ω₀(n_j, n_i) ≥ 0 for the reversed
-/// direction matching the algebraic convention.
+/// Uses [lem:numerical-transition-feasibility]: a physical transition F_i → F_j
+/// exists only if ω₀(n_i, n_j) ≥ 0. In the algorithm's algebraic ordering,
+/// (i, j)_alg = (j, i)_phys, so the condition becomes ω₀(n_j, n_i) ≥ 0.
 ///
 /// When exact combinatorial data is available, uses the exact sign pattern
 /// (no f64 tolerance ambiguity near ω₀ = 0).

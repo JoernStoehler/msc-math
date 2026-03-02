@@ -157,7 +157,7 @@ impl std::fmt::Display for RationalConstructionError {
             }
             Self::Unbounded => write!(f, "normals do not positively span R^4 (unbounded)"),
             Self::NoVertices => write!(f, "no vertices found (inconsistent halfspaces)"),
-            Self::RedundantFacet(i) => write!(f, "facet {i} has no incident vertices"),
+            Self::RedundantFacet(i) => write!(f, "facet {i} is redundant (no incident vertices, or affine rank < 3)"),
             Self::NotSimple {
                 vertex_index,
                 facets,
@@ -467,10 +467,9 @@ impl RationalPolytope4D {
         let mut adjacency = BTreeSet::new();
         for vd in &vertex_descriptors {
             let facets: Vec<_> = vd.iter().copied().collect();
-            for a in 0..facets.len() {
-                for b in (a + 1)..facets.len() {
-                    let (i, k) = (facets[a], facets[b]);
-                    adjacency.insert((i.min(k), i.max(k)));
+            for (a, &fi) in facets.iter().enumerate() {
+                for &fj in &facets[(a + 1)..] {
+                    adjacency.insert((fi.min(fj), fi.max(fj)));
                 }
             }
         }
@@ -643,11 +642,20 @@ impl RationalPolytope4D {
     /// Prefer [`from_f64`](Self::from_f64) for lossless conversion.
     /// Use this only when you want smaller denominators (e.g. for readable
     /// output or faster exact arithmetic on very large polytopes).
+    ///
+    /// # Panics
+    ///
+    /// `denominator` must be ≤ 2^52 (otherwise `round() as i64` overflows
+    /// for unit-magnitude coordinates).
     pub fn from_f64_rounded(
         normals: &[nalgebra::Vector4<f64>],
         heights: &[f64],
         denominator: u64,
     ) -> Result<Self, RationalConstructionError> {
+        debug_assert!(
+            denominator <= 1u64 << 52,
+            "denominator {denominator} exceeds 2^52; round() as i64 may overflow"
+        );
         let d = BigInt::from(denominator);
 
         let rational_normals: Vec<[BigRational; 4]> = normals
@@ -780,9 +788,10 @@ impl RationalPolytope4D {
 
 /// Convert a BigRational to f64 (best approximation).
 ///
-/// For rationals that originated from [`f64_to_rational`], this is the
-/// inverse operation and recovers the original f64 exactly (round-trip).
-/// For general BigRationals, this produces the nearest f64.
+/// For rationals with power-of-2 denominators (the common case from
+/// [`f64_to_rational`]), the division is exact in f64 arithmetic and
+/// recovers the original value. For general BigRationals with large
+/// numerators/denominators, this produces the nearest f64 approximation.
 fn rational_to_f64(r: &BigRational) -> f64 {
     // For rationals with power-of-2 denominators (common case: from f64_to_rational),
     // numer / denom is exact when both fit in f64 mantissa.
