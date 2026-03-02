@@ -871,8 +871,10 @@ For well-conditioned systems
 ($|\lambda_{\min}| \approx \|M\|$),
 this gives $E = O(\varepsilon_{\mathrm{mach}}^2\,\|M\|)$.
 Even for severely ill-conditioned systems
-($|\lambda_{\min}| = 10^{-15}$),
-$E \approx 10^{-17}$ --- the bound remains useful
+($|\lambda_{\min}| = 10^{-15}$, $\|M\| \approx 1$),
+$E \approx \frac{9}{2} \cdot \frac{(2.2 \cdot 10^{-16})^2}{10^{-15}}
+\approx 2 \cdot 10^{-16}$
+--- the bound remains useful
 because it scales as $1/|\lambda_{\min}|$,
 not $\|H\|/|\lambda_{\min}|^2$.
 
