@@ -13,17 +13,17 @@
 
 ## Findings
 
-### 1. Ridge min|ω| vs sys: weak negative correlation (rho=-0.21)
+### 1. Ridge min|ω| vs sys: weak negative correlation (rho=-0.22)
 
-Spearman rho = -0.21, p = 4e-11. Polytopes with a smaller global min|ω| tend to have higher sys. BUT:
+Spearman rho = -0.22, p = 8e-12. Polytopes with a smaller global min|ω| tend to have higher sys. BUT:
 - The scatter is very wide — many polytopes with min|ω| ≈ 0 also have low sys
-- Likely confounded by facet count: more facets → more ridge pairs → more chances for a small |ω| by chance, AND more facets → higher sys (rho=+0.46)
+- Likely confounded by facet count: more facets → more ridge pairs → more chances for a small |ω| by chance, AND more facets → higher sys (rho=+0.37)
 - All three known polytopes sit at min|ω| = 0 (all have at least one Lagrangian ridge)
 
 ### 2. Orbit-specific ω features: NO correlation with sys
 
-- orbit_omega_min vs sys: rho = -0.01, p = 0.69 (not significant)
-- orbit_omega_mean vs sys: rho = +0.00, p = 0.97 (not significant)
+- orbit_omega_min vs sys: rho = -0.02, p = 0.61 (not significant)
+- orbit_omega_mean vs sys: rho = +0.00, p = 0.99 (not significant)
 - The ω values on the optimal orbit do NOT predict sys
 
 ### 3. Orbit prefers LARGE ω transitions (opposite of hypothesis)
@@ -55,7 +55,7 @@ All three have ridge_omega_abs_min = 0 (at least one Lagrangian ridge). But the 
 
 The hypothesis "small ω between adjacent facets → high sys" is **not confirmed** by this data:
 
-1. The weak global correlation (rho = -0.21) is likely a confound with facet count
+1. The weak global correlation (rho = -0.22) is likely a confound with facet count
 2. Orbit-specific omega features show zero correlation
 3. The orbit actually prefers LARGE omega transitions (to maximize Q)
 4. The gradient analysis shows no directional relationship
