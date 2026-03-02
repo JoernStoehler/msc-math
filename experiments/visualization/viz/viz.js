@@ -520,7 +520,7 @@ function generateTrajectoryCheckboxes() {
         checkbox.onchange = () => onTrajectoryToggle(i, checkbox.checked);
 
         const label = document.createElement('span');
-        label.textContent = `Traj ${i} (facet ${traj.start_facet}, ${traj.segments.length} seg${traj.closed ? ', closed' : ''})`;
+        label.textContent = traj.label || `Traj ${i} (facet ${traj.start_facet}, ${traj.segments.length} seg${traj.closed ? ', closed' : ''})`;
 
         row.appendChild(checkbox);
         row.appendChild(label);
@@ -597,6 +597,18 @@ function onTrajectoryToggle(index, checked) {
     } else {
         visibleTrajectories.delete(index);
     }
+    rebuildScene();
+}
+
+function toggleAllTrajectories(on) {
+    if (!polytopeData) return;
+    visibleTrajectories.clear();
+    if (on) {
+        for (let i = 0; i < polytopeData.trajectories.length; i++) {
+            visibleTrajectories.add(i);
+        }
+    }
+    generateTrajectoryCheckboxes();
     rebuildScene();
 }
 

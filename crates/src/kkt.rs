@@ -585,7 +585,7 @@ fn try_pseudoinverse_with_threshold(
 ///
 /// See `[lem:kkt]` (thesis): the KKT conditions characterise the constrained
 /// maximum of Q(β); the system is (m+5)×(m+5) with ν for η^Tβ = 1.
-pub(crate) fn solve_kkt(
+pub fn solve_kkt(
     normals: &[Vector4<f64>],
     heights: &[f64],
     perm: &[usize],
