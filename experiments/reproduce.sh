@@ -99,6 +99,10 @@ experiments/target/release/q_error
 experiments/target/release/dismissal_error
 # → experiments/dismissal-error/dismissal-error.jsonl
 
+# Omega-obstacle: symplectic area analysis + gradient dots (~8s)
+experiments/target/release/omega_obstacle
+# → experiments/omega-obstacle/omega-obstacle.jsonl
+
 # ── Step 2: Generate figures and tables ──────────────────────────────────────
 # Python scripts read .jsonl from their experiment folder, write figures/tables
 # to the same folder.
@@ -149,6 +153,16 @@ python3 experiments/sys-optimization/sys_optimization.py
 # Dismissal error bound: distribution of error bounds
 python3 experiments/dismissal-error/dismissal_error.py
 # → experiments/dismissal-error/dismissal-error.png
+
+# Omega-obstacle: ridge ω vs sys, orbit ω analysis, gradient dot products
+python3 experiments/omega-obstacle/omega_obstacle.py
+# → experiments/omega-obstacle/omega_obstacle_ridge_min_vs_sys.png
+# → experiments/omega-obstacle/omega_obstacle_orbit_min_vs_sys.png
+# → experiments/omega-obstacle/omega_obstacle_orbit_vs_nonorbit.png
+# → experiments/omega-obstacle/omega_obstacle_orbit_mean_vs_sys.png
+# → experiments/omega-obstacle/omega_obstacle_gradient_dots.png
+# → experiments/omega-obstacle/omega_obstacle_gradient_neighbor_split.png
+# → experiments/omega-obstacle/omega_obstacle_omega_vs_dot.png
 
 # ── Step 3: Visualization screenshots ────────────────────────────────────────
 # Automated via Playwright (headless Chrome). Requires: npm install playwright.
