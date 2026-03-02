@@ -26,7 +26,7 @@
 /// # Complexity
 ///
 /// Σ_{m=2}^{F} C(F,m) · (m-1)! — exponential in F.
-mod permutations;
+pub mod permutations;
 
 use crate::constants::EPS_FACET_INCIDENCE;
 use crate::geom::polytope::Polytope4D;
@@ -171,7 +171,7 @@ pub fn ehz_capacity_unpruned(polytope: &Polytope4D) -> Option<EhzResult> {
 
 
 /// Generate all combinations of `k` elements from `{0, ..., n-1}` in lexicographic order.
-fn combinations(n: usize, k: usize) -> Vec<Vec<usize>> {
+pub fn combinations(n: usize, k: usize) -> Vec<Vec<usize>> {
     let mut result = Vec::new();
     let mut combo = vec![0usize; k];
     combinations_rec(n, k, 0, 0, &mut combo, &mut result);

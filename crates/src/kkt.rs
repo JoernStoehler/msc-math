@@ -84,7 +84,7 @@ const EPS_KKT_RESIDUAL: f64 = 1e-6;
 ///
 /// Note: uses ω₀ directly, NOT from H_{ij}. H is symmetric by construction,
 /// but Q needs the antisymmetric ω₀ values.
-pub(crate) fn q_from_beta(
+pub fn q_from_beta(
     normals: &[Vector4<f64>],
     perm: &[usize],
     beta: &[f64],
