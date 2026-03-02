@@ -297,7 +297,10 @@ fn generate_displaced_trajectories(
     for &eps in DISPLACEMENT_EPSILONS {
         let displaced_start = recovery.base_point + eps * disp;
 
-        let traj = reeb_trajectory::simulate(polytope, displaced_start, start_facet, 200, 1e-6);
+        // Run displaced trajectory for the same number of facet segments as the original orbit,
+        // so it covers roughly one period and doesn't trail on indefinitely.
+        let max_segments = orbit.permutation.len();
+        let traj = reeb_trajectory::simulate(polytope, displaced_start, start_facet, max_segments, 1e-6);
         if traj.segments.is_empty() {
             continue;
         }
