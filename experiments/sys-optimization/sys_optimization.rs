@@ -285,7 +285,12 @@ fn find_positive_beta_nd(beta0: &[f64], null_vecs: &[Vec<f64>]) -> Option<Vec<f6
 }
 
 /// Build KKT matrix and RHS vector.
-/// Copied from crates/src/kkt.rs:184-223
+/// Based on crates/src/kkt.rs build_kkt_system, but uses the ASYMMETRIC sign
+/// convention (upper-right = -n/-h, lower-left = +n/+h). The current library
+/// uses the SYMMETRIC convention (+n/+h in both blocks, negated multipliers).
+/// This file retains the asymmetric convention because the gradient formulas
+/// (compute_capacity_derivatives_analytical/normal) extract standard (non-negated)
+/// multipliers directly from the solution vector.
 fn build_kkt_system(
     normals: &[Vector4<f64>],
     heights: &[f64],

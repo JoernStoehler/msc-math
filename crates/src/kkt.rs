@@ -5,6 +5,18 @@
 ///
 /// Used by both the hk2017 (general) and billiard (Lagrangian product) algorithms.
 /// Previously duplicated across both crates (294 LOC each); now unified here.
+///
+/// # Known edge cases
+///
+/// **Near-zero Q orbits:** Some (S,σ) pairs yield Q ≈ 0 (very high action). The error
+/// bound E is valid but may exceed |Q| itself (relative error > 100%). This is harmless:
+/// the capacity algorithm picks max Q, so near-zero Q orbits never win. The absolute
+/// threshold `E < 1e-6` is chosen relative to Q_max ≈ O(1), not relative to each orbit's Q.
+///
+/// **Sign convention:** This module uses the SYMMETRIC KKT matrix convention (both
+/// off-diagonal blocks have +n/+h). Solution components for multipliers are NEGATED
+/// (μ = -λ, ξ = -ν). Experiments that copy the KKT construction (e.g. sys_optimization.rs)
+/// may use the old ASYMMETRIC convention — check their comments.
 use crate::geom::symplectic::omega0;
 use nalgebra::{DMatrix, DVector, Vector4};
 

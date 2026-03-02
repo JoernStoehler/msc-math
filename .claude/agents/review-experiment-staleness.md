@@ -38,13 +38,19 @@ For each binary, report:
 - **TIMEOUT**: Took > 3 minutes (except lagrangian_sweep which may legitimately take longer — use 10m)
 - **SKIP**: Binary not found (report as a finding)
 
-### Step 4: Check for data drift (optional, if time permits)
+### Step 4: Check for data drift
 
 For binaries that write `.jsonl`, compare the new output against the committed version:
 ```bash
 diff <(jq -S . old.jsonl) <(jq -S . new.jsonl) | head -20
 ```
 Report whether output changed. Data drift after library changes is expected and may need regeneration.
+
+For binaries whose deliverable is stdout (e.g. q_error), compare against `experiments/<name>/<name>_output.txt`:
+```bash
+diff <(timeout 2m experiments/target/release/<name> 2>&1) experiments/<name>/<name>_output.txt | head -20
+```
+Report whether stdout changed.
 
 ## Output Format
 
