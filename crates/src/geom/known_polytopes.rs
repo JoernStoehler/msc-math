@@ -38,11 +38,12 @@ pub fn all_known() -> Vec<KnownPolytope> {
 /// Literature capacity values: (name, capacity) pairs.
 ///
 /// Only polytopes with verified literature values — excludes crosspolytope
-/// (placeholder) and polytopes verified only computationally.
+/// (computed value, no literature cross-check) and any other polytopes without
+/// a verified literature source.
 pub fn literature_values() -> Vec<(&'static str, f64)> {
     all_known()
         .into_iter()
-        .filter(|kp| kp.source != "placeholder (capacity unknown)")
+        .filter(|kp| kp.source != "computed (no literature value)")
         .map(|kp| (kp.name, kp.capacity))
         .collect()
 }
@@ -106,7 +107,7 @@ pub fn hypercube() -> KnownPolytope {
 /// 4D crosspolytope (hyperoctahedron, dual of tesseract). 16 facets.
 ///
 /// Normals: all (±1, ±1, ±1, ±1)/2, heights 1.0.
-/// Capacity not yet computed from literature — will use stub (1.0) for now.
+/// Capacity: 4.0 (computed by ehz_capacity; no literature value for cross-check).
 pub fn crosspolytope() -> KnownPolytope {
     let normals: Vec<Vector4<f64>> = [-1.0_f64, 1.0]
         .into_iter()
@@ -124,9 +125,9 @@ pub fn crosspolytope() -> KnownPolytope {
 
     KnownPolytope {
         polytope: Polytope4D::new(normals, heights).expect("crosspolytope construction"),
-        capacity: 1.0, // placeholder — no literature value yet
+        capacity: 4.0, // computed by ehz_capacity; no literature value for cross-check
         name: "crosspolytope",
-        source: "placeholder (capacity unknown)",
+        source: "computed (no literature value)",
     }
 }
 

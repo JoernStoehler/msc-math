@@ -255,7 +255,7 @@ fn is_adjacent_cycle(perm: &[usize], adj: &[Vec<bool>]) -> bool {
 ///
 /// **Production variant used in all experiments.**
 /// Skips (S, σ) pairs where consecutive facets violate vertex adjacency
-/// or the directed ω₀ condition `[lem:transition-feasibility]` condition (1).
+/// or the directed ω₀ condition `[lem:numerical-transition-feasibility]` condition (1).
 /// This is the A2 pruning level from the ablation study.
 pub fn ehz_capacity(polytope: &Polytope4D) -> Option<EhzResult> {
     let f = polytope.facet_count();

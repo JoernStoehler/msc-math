@@ -4,7 +4,7 @@
 /// - q-facets: normal = (n_q, 0), n_q ∈ R² (components [0,1])
 /// - p-facets: normal = (0, n_p), n_p ∈ R² (components [2,3])
 ///
-/// See chapter-billiard.tex, Lemma 6.1 (lem:lagrangian-facets).
+/// See chapter-billiard.tex, `[lem:lagrangian-facets]`.
 use crate::geom::polytope::Polytope4D;
 
 use crate::BilliardError;
