@@ -315,7 +315,7 @@ fn solve_kkt_eigen_path(
     let permissive_threshold = EPS_EIGEN_FLOOR;
     let result = try_pseudoinverse_with_threshold(
         kkt, rhs, normals, heights, perm, eigenvalues, eigenvectors,
-        permissive_threshold, max_abs_ev, n_positive, n_negative, n_zero,
+        permissive_threshold, n_positive, n_negative, n_zero,
     );
     if result.is_some() {
         return result;
@@ -326,7 +326,7 @@ fn solve_kkt_eigen_path(
     // Examples: degenerate (4,4) product at θ≈0° with eigenvalues at ~8.6e-4.
     try_pseudoinverse_with_threshold(
         kkt, rhs, normals, heights, perm, eigenvalues, eigenvectors,
-        strict_threshold, max_abs_ev, n_positive, n_negative, n_zero,
+        strict_threshold, n_positive, n_negative, n_zero,
     )
 }
 
@@ -348,7 +348,6 @@ fn try_pseudoinverse_with_threshold(
     eigenvalues: &DVector<f64>,
     eigenvectors: &DMatrix<f64>,
     threshold: f64,
-    max_abs_ev: f64,
     n_positive: usize,
     n_negative: usize,
     n_zero: usize,
@@ -392,17 +391,17 @@ fn try_pseudoinverse_with_threshold(
         .max(f64::MIN_POSITIVE);
 
     // ‖H‖ ≤ |λ|_max (H is a submatrix of M, so ‖H‖ ≤ ‖M‖ = |λ|_max for symmetric M).
-    let h_norm_bound = max_abs_ev;
-
     let beta0: Vec<f64> = (0..m).map(|i| x0[i]).collect();
 
     // If already feasible, compute error bound and return.
     if beta0.iter().all(|&b| b > EPS_BETA_POSITIVE) {
         let q_raw = q_from_beta(normals, perm, &beta0);
         let q_corrected = q_raw - q_correction;
+        // Tight bound: E = (9/2) ‖r‖² / |λ_min|.
+        // See [lem:v2-q-interval] (thesis): uses KKT block structure identity
+        // δβᵀHδβ = δxᵀMδx − 2r₂ᵀδμ − 2r₃δξ to avoid ‖H‖/|λ_min|² term.
         let r_sq = residual_norm * residual_norm;
-        let q_error_bound =
-            r_sq * (2.0 / abs_lambda_min + h_norm_bound / (2.0 * abs_lambda_min * abs_lambda_min));
+        let q_error_bound = 4.5 * r_sq / abs_lambda_min;
 
         debug_assert!(
             q_error_bound < 1e-6,
@@ -467,9 +466,10 @@ fn try_pseudoinverse_with_threshold(
     // Q is constant along the null space, so Q(β_opt) = Q(β₀).
     let q_raw = q_from_beta(normals, perm, &beta_opt);
     let q_corrected = q_raw - q_correction;
+    // Tight bound: E = (9/2) ‖r‖² / |λ_min|.
+    // See [lem:v2-q-interval] (thesis): uses KKT block structure identity.
     let r_sq = residual_norm * residual_norm;
-    let q_error_bound =
-        r_sq * (2.0 / abs_lambda_min + h_norm_bound / (2.0 * abs_lambda_min * abs_lambda_min));
+    let q_error_bound = 4.5 * r_sq / abs_lambda_min;
 
     debug_assert!(
         q_error_bound < 1e-6,
