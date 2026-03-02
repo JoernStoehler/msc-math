@@ -68,16 +68,15 @@ We compute the Legendre-Fenchel conjugate of~$g_K^2$ directly.
 Parametrize $x = \lambda u$ with $\lambda \geq 0$ and $g_K(u) = 1$,
 so $g_K^2(x) = \lambda^2$.
 Then:
-% FIXME(hbox): 19.40pt — wide displayed equation with nested \sup; try breaking into align* with = signs aligned, or use \allowdisplaybreaks
-\[
+\begin{align*}
   (g_K^2)^*(y)
-  = \sup_x \bigl\{\langle x, y \rangle - g_K^2(x)\bigr\}
-  = \sup_{\lambda \geq 0}\;
+  &= \sup_x \bigl\{\langle x, y \rangle - g_K^2(x)\bigr\} \\
+  &= \sup_{\lambda \geq 0}\;
     \sup_{g_K(u) = 1}
-    \bigl\{\lambda \langle u, y \rangle - \lambda^2\bigr\}
-  = \sup_{\lambda \geq 0}
+    \bigl\{\lambda \langle u, y \rangle - \lambda^2\bigr\} \\
+  &= \sup_{\lambda \geq 0}
     \bigl\{\lambda\, h_K(y) - \lambda^2\bigr\},
-\]
+\end{align*}
 where we used $\sup_{g_K(u) = 1} \langle u, y \rangle = h_K(y)$
 (the supremum of a linear functional over a convex body
 is attained on its boundary).
@@ -97,9 +96,8 @@ $(g_K^2)^*(y) \geq \langle x, y \rangle - g_K^2(x)$ for any~$x$.
 Substituting $(g_K^2)^* = \tfrac{1}{4}h_K^2$ and rearranging
 gives~\eqref{eq:fenchel-inequality}.
 
-% FIXME(hbox): 6.26pt — long inline formula "$(g_K^2)^*(y) = \sup_z \{\langle z, y \rangle - g_K^2(z)\}$"; try moving the definition to a displayed equation or use \allowbreak before "i.e."
 \emph{Equality condition.}
-Equality holds iff $x$ attains the supremum in $(g_K^2)^*(y) = \sup_z \{\langle z, y \rangle - g_K^2(z)\}$,
+Equality holds iff $x$ attains the supremum defining $(g_K^2)^*(y)$,
 i.e., $x$ maximizes $z \mapsto \langle z, y \rangle - g_K^2(z)$.
 By the first-order optimality condition, this is equivalent to
 $y \in \partial g_K^2(x)$.
@@ -297,20 +295,21 @@ Dual action:
 Critical point: By Lemma~\ref{lem:dual-euler-lagrange}, $z$ satisfies
 $\nu z(s) + b_0 \in \partial(\tfrac{1}{4}h_K^2)(-J_0\dot{z}(s))$ a.e.\ for some
 $\nu, b_0$. At $t$ with $s = t/\alpha^2$:
-% FIXME(hbox): 62.20pt — line "\frac{\nu}{\alpha^2} z'(t) + \Bigl(...\Bigr) \in \partial(...)" too wide; break align* line after \Bigr) with \\ \quad\quad\in or use multline for that step
 \begin{align*}
   \nu z(s) + b_0
   &\in \partial\bigl(\tfrac{1}{4}h_K^2\bigr)(-J_0\dot{z}(s)) \\
   &\Rightarrow \quad
-  \frac{1}{\alpha}[\nu z(s) + b_0]
-  \in \partial\bigl(\tfrac{1}{4}h_K^2\bigr)\bigl(-\tfrac{1}{\alpha}J_0\dot{z}(s)\bigr)
-  \quad \text{(1-homog.\ $\partial h_K^2$)} \\
+  \tfrac{1}{\alpha}[\nu z(s) + b_0]
+  \in \partial\bigl(\tfrac{1}{4}h_K^2\bigr)
+    \bigl(-\tfrac{1}{\alpha}J_0\dot{z}(s)\bigr)
+  && \text{(1-homog.\ $\partial h_K^2$)} \\
   &\Rightarrow \quad
-  \frac{1}{\alpha}\left[\frac{\nu}{\alpha}(z'(t) - b) + b_0\right]
+  \tfrac{1}{\alpha}\left[\tfrac{\nu}{\alpha}(z'(t) - b) + b_0\right]
   \in \partial\bigl(\tfrac{1}{4}h_K^2\bigr)(-J_0\dot{z}'(t))
-  \quad \text{(subst.\ $z(s) = (z'(t) - b)/\alpha$)} \\
+  && \text{(subst.)} \\
   &\Rightarrow \quad
-  \frac{\nu}{\alpha^2} z'(t) + \Bigl(\tfrac{b_0}{\alpha} - \tfrac{\nu b}{\alpha^2}\Bigr)
+  \tfrac{\nu}{\alpha^2} z'(t)
+    + \bigl(\tfrac{b_0}{\alpha} - \tfrac{\nu b}{\alpha^2}\bigr)
   \in \partial\bigl(\tfrac{1}{4}h_K^2\bigr)(-J_0\dot{z}'(t)).
 \end{align*}
 Thus $z'$ satisfies~\eqref{eq:dual-euler-lagrange} with $\nu' = \nu/\alpha^2$
@@ -457,12 +456,10 @@ which is exactly of the form $\alpha z(t/\alpha^2) + b'$ from
 Lemma~\ref{lem:dual-scaling-family} with $\alpha = c > 0$ and $b' = b/c$.
 Therefore $\gamma$ lies in the symmetry class of~$z$.
 
-% FIXME(hbox): 10.65pt — inline formula "$-J_0\dot{\gamma} \in \partial g_K^2(\gamma)$" causes overflow; try \allowbreak before "at" or move the formula to a separate displayed equation
 \medskip
 \emph{Minimum equality.}
-For any Reeb orbit~$\gamma$, the Fenchel equality
-(Lemma~\ref{lem:fenchel-duality}) at $-J_0\dot{\gamma} \in \partial g_K^2(\gamma)$
-gives pointwise:
+For any Reeb orbit~$\gamma$, since $-J_0\dot{\gamma} \in \partial g_K^2(\gamma)$,
+the Fenchel equality (Lemma~\ref{lem:fenchel-duality}) gives pointwise:
 \[
   g_K^2(\gamma) + \tfrac{1}{4}h_K^2(-J_0\dot{\gamma})
   = \langle \gamma, -J_0\dot{\gamma} \rangle.

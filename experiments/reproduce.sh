@@ -87,6 +87,13 @@ experiments/target/release/crosspolytope
 experiments/target/release/sys_optimization
 # → experiments/sys-optimization/sys-optimization-sensitivity.jsonl
 # → experiments/sys-optimization/sys-optimization-steps.jsonl
+# → experiments/sys-optimization/sys-optimization-iterations.jsonl
+# → experiments/sys-optimization/sys-optimization-validity.jsonl
+
+# q_error: Numerical accuracy verification of the KKT solver (~5s)
+# Stdout-only (no .jsonl output). Asserts error bounds and exact comparison.
+experiments/target/release/q_error
+# → stdout: summary tables (Part 1: error bound sweep, Part 2: exact comparison)
 
 # Dismissal error bound validation (33 polytopes from capacity_dataset.json)
 experiments/target/release/dismissal_error

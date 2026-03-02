@@ -8,8 +8,9 @@
 //! (instrumented HK2017) are self-contained in this binary. Library internals
 //! needed by the variants are copied here with source references.
 //!
-//! KKT solver note: Uses the CURRENT library condition-number approach
-//! (SVD_CONDITION_TAU = 1e-3), not the old gap-ratio approach from ablation.rs.
+//! KKT solver note: Uses a local copy of the library's condition-number approach
+//! (EIGEN_CONDITION_TAU = 1e-3 in crates/src/kkt.rs). The local constant retains
+//! the old SVD_CONDITION_TAU name.
 //!
 //! Architecture:
 //! 1. `cargo run --bin sys_optimization --release` generates datasets
@@ -284,7 +285,12 @@ fn find_positive_beta_nd(beta0: &[f64], null_vecs: &[Vec<f64>]) -> Option<Vec<f6
 }
 
 /// Build KKT matrix and RHS vector.
-/// Copied from crates/src/kkt.rs:184-223
+/// Based on crates/src/kkt.rs build_kkt_system, but uses the ASYMMETRIC sign
+/// convention (upper-right = -n/-h, lower-left = +n/+h). The current library
+/// uses the SYMMETRIC convention (+n/+h in both blocks, negated multipliers).
+/// This file retains the asymmetric convention because the gradient formulas
+/// (compute_capacity_derivatives_analytical/normal) extract standard (non-negated)
+/// multipliers directly from the solution vector.
 fn build_kkt_system(
     normals: &[Vector4<f64>],
     heights: &[f64],
@@ -430,8 +436,9 @@ fn solve_kkt_svd_path(
 }
 
 /// SVD-only KKT solver, extended to return ν and λ.
-/// Copied from crates/src/kkt.rs:solve_kkt_svd_only, which is the production
-/// path (profiling showed LU+SVD is slower than SVD-only; see kkt.rs docs).
+/// Local SVD-based KKT solver. The library has since migrated to eigendecomposition
+/// (solve_kkt_eigen_path in kkt.rs), but this experiment retains its own SVD copy
+/// for self-containedness.
 ///
 /// Returns (β, Q, ν, λ) where ν is the Lagrange multiplier for η^T β = 1
 /// and λ ∈ R⁴ is the Lagrange multiplier vector for N^T β = 0.

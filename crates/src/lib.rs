@@ -6,7 +6,7 @@
 pub mod geom;
 pub mod algorithms;
 pub mod constants;
-pub(crate) mod kkt;
+pub mod kkt;
 pub mod random;
 pub mod dataset;
 

@@ -26,7 +26,7 @@
 /// # Complexity
 ///
 /// Σ_{m=2}^{F} C(F,m) · (m-1)! — exponential in F.
-mod permutations;
+pub mod permutations;
 
 use crate::constants::EPS_FACET_INCIDENCE;
 use crate::geom::polytope::Polytope4D;
@@ -98,11 +98,12 @@ pub fn ehz_capacity_unpruned(polytope: &Polytope4D) -> Option<EhzResult> {
             for perm in cyclic_permutations(&subset) {
                 iterations += 1;
 
-                if let Some((beta, q_val)) = solve_kkt(normals, heights, &perm) {
+                if let Some(result) = solve_kkt(normals, heights, &perm) {
+                    let q_val = result.q_corrected;
                     if q_val <= EPS_Q_POSITIVE {
                         continue;
                     }
-                    let beta_min = beta.iter().cloned().fold(f64::INFINITY, f64::min);
+                    let beta_min = result.beta.iter().cloned().fold(f64::INFINITY, f64::min);
                     let action = 0.5 / q_val;
 
                     // Certified: β_i > +EPS (all predicates TRUE)
@@ -113,7 +114,7 @@ pub fn ehz_capacity_unpruned(polytope: &Polytope4D) -> Option<EhzResult> {
                                 action,
                                 subset.clone(),
                                 perm.clone(),
-                                beta.clone(),
+                                result.beta.clone(),
                             ));
                         }
                     }
@@ -126,7 +127,7 @@ pub fn ehz_capacity_unpruned(polytope: &Polytope4D) -> Option<EhzResult> {
                                 action,
                                 subset.clone(),
                                 perm.clone(),
-                                beta,
+                                result.beta,
                             ));
                         }
                     }
@@ -139,15 +140,18 @@ pub fn ehz_capacity_unpruned(polytope: &Polytope4D) -> Option<EhzResult> {
     let certified = best_certified?;
     let uncertain_cap = best_uncertain.map_or(certified.0, |b| b.0);
 
-    // Safety net: if an UNKNOWN orbit achieves lower action than the best certified
-    // orbit, the reported capacity might be wrong and we cannot resolve it at f64
-    // precision. Fail loudly rather than publish a potentially false result.
+    // Safety net: if an UNKNOWN orbit achieves significantly lower action than the
+    // best certified orbit, the reported capacity might be wrong and we cannot
+    // resolve it at f64 precision. Fail loudly rather than publish a potentially
+    // false result. Tolerance 1e-12 allows machine-epsilon arithmetic noise
+    // (typical gap ~1e-15 for capacity ~1) without masking real discrepancies.
+    let gap = certified.0 - uncertain_cap;
     assert!(
-        uncertain_cap >= certified.0,
+        gap <= 1e-12,
         "Numerical gap: certified capacity {:.6e} > uncertain capacity {:.6e} (gap = {:.6e}). \
          An UNKNOWN orbit achieves lower action than the best certified orbit. \
          Cannot resolve at f64 precision.",
-        certified.0, uncertain_cap, certified.0 - uncertain_cap,
+        certified.0, uncertain_cap, gap,
     );
 
     // Reverse σ from internal algebraic order to physical orbit direction
@@ -165,8 +169,9 @@ pub fn ehz_capacity_unpruned(polytope: &Polytope4D) -> Option<EhzResult> {
     })
 }
 
+
 /// Generate all combinations of `k` elements from `{0, ..., n-1}` in lexicographic order.
-fn combinations(n: usize, k: usize) -> Vec<Vec<usize>> {
+pub fn combinations(n: usize, k: usize) -> Vec<Vec<usize>> {
     let mut result = Vec::new();
     let mut combo = vec![0usize; k];
     combinations_rec(n, k, 0, 0, &mut combo, &mut result);
@@ -274,11 +279,12 @@ pub fn ehz_capacity(polytope: &Polytope4D) -> Option<EhzResult> {
 
                 iterations += 1;
 
-                if let Some((beta, q_val)) = solve_kkt(normals, heights, perm) {
+                if let Some(result) = solve_kkt(normals, heights, perm) {
+                    let q_val = result.q_corrected;
                     if q_val <= EPS_Q_POSITIVE {
                         return;
                     }
-                    let beta_min = beta.iter().cloned().fold(f64::INFINITY, f64::min);
+                    let beta_min = result.beta.iter().cloned().fold(f64::INFINITY, f64::min);
                     let action = 0.5 / q_val;
 
                     if beta_min > EPS_BETA_POSITIVE {
@@ -288,7 +294,7 @@ pub fn ehz_capacity(polytope: &Polytope4D) -> Option<EhzResult> {
                                 action,
                                 subset.clone(),
                                 perm.to_vec(),
-                                beta.clone(),
+                                result.beta.clone(),
                             ));
                         }
                     }
@@ -300,7 +306,7 @@ pub fn ehz_capacity(polytope: &Polytope4D) -> Option<EhzResult> {
                                 action,
                                 subset.clone(),
                                 perm.to_vec(),
-                                beta,
+                                result.beta,
                             ));
                         }
                     }
@@ -312,15 +318,17 @@ pub fn ehz_capacity(polytope: &Polytope4D) -> Option<EhzResult> {
     let certified = best_certified?;
     let uncertain_cap = best_uncertain.map_or(certified.0, |b| b.0);
 
-    // Safety net: if an UNKNOWN orbit achieves lower action than the best certified
-    // orbit, the reported capacity might be wrong and we cannot resolve it at f64
-    // precision. Fail loudly rather than publish a potentially false result.
+    // Safety net: if an UNKNOWN orbit achieves significantly lower action than the
+    // best certified orbit, the reported capacity might be wrong and we cannot
+    // resolve it at f64 precision. Fail loudly rather than publish a potentially
+    // false result. Tolerance 1e-12 allows machine-epsilon arithmetic noise.
+    let gap = certified.0 - uncertain_cap;
     assert!(
-        uncertain_cap >= certified.0,
+        gap <= 1e-12,
         "Numerical gap: certified capacity {:.6e} > uncertain capacity {:.6e} (gap = {:.6e}). \
          An UNKNOWN orbit achieves lower action than the best certified orbit. \
          Cannot resolve at f64 precision.",
-        certified.0, uncertain_cap, certified.0 - uncertain_cap,
+        certified.0, uncertain_cap, gap,
     );
 
     // Reverse σ from internal algebraic order to physical orbit direction

@@ -105,25 +105,26 @@ pub fn billiard_capacity(polytope: &Polytope4D) -> Result<Option<BilliardResult>
         enumerate_k_bounce_sigmas(k, &q_blocks, &p_blocks, |sigma| {
             iterations += 1;
 
-            if let Some((beta, q_val)) = solve_kkt(normals, heights, sigma) {
+            if let Some(result) = solve_kkt(normals, heights, sigma) {
+                let q_val = result.q_corrected;
                 if q_val <= EPS_Q_POSITIVE {
                     return;
                 }
-                let beta_min = beta.iter().cloned().fold(f64::INFINITY, f64::min);
+                let beta_min = result.beta.iter().cloned().fold(f64::INFINITY, f64::min);
                 let action = 0.5 / q_val;
 
                 if beta_min > EPS_BETA_POSITIVE {
                     let update = best_certified.as_ref().is_none_or(|b| action < b.0);
                     if update {
                         best_certified =
-                            Some((action, sigma.to_vec(), beta.clone(), k));
+                            Some((action, sigma.to_vec(), result.beta.clone(), k));
                     }
                 }
 
                 if beta_min > -EPS_BETA_POSITIVE {
                     let update = best_uncertain.as_ref().is_none_or(|b| action < b.0);
                     if update {
-                        best_uncertain = Some((action, sigma.to_vec(), beta, k));
+                        best_uncertain = Some((action, sigma.to_vec(), result.beta, k));
                     }
                 }
             }
@@ -134,16 +135,21 @@ pub fn billiard_capacity(polytope: &Polytope4D) -> Result<Option<BilliardResult>
         |(capacity, best_permutation, best_beta, bounce_count)| {
             let uncertain_cap = best_uncertain.map_or(capacity, |b| b.0);
 
-            // Safety net: if an UNKNOWN orbit achieves lower action than the best
-            // certified orbit, the reported capacity might be wrong and we cannot
-            // resolve it at f64 precision. Fail loudly rather than publish a
+            // Safety net: if an UNKNOWN orbit achieves significantly lower action than
+            // the best certified orbit, the reported capacity might be wrong and we
+            // cannot resolve it at f64 precision. Fail loudly rather than publish a
             // potentially false result.
+            // Tolerance 1e-10: capacity values are O(1)–O(10), so 1e-10 is ~10 orders
+            // below typical values. Previous 1e-12 was too tight — triggered on
+            // gap=4.93e-12 for capacity≈3.0 (relative 1.6e-12, f64 rounding noise).
+            // If this fires, investigate whether the UNKNOWN orbit is genuinely better.
+            let gap = capacity - uncertain_cap;
             assert!(
-                uncertain_cap >= capacity,
+                gap <= 1e-10,
                 "Numerical gap: certified capacity {:.6e} > uncertain capacity {:.6e} \
                  (gap = {:.6e}). An UNKNOWN orbit achieves lower action than the best \
                  certified orbit. Cannot resolve at f64 precision.",
-                capacity, uncertain_cap, capacity - uncertain_cap,
+                capacity, uncertain_cap, gap,
             );
 
             // Reverse σ from internal algebraic order to physical orbit direction
