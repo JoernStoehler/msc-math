@@ -82,10 +82,6 @@ The 6 test propositions are:
     polytopes~$K_1, K_2$ in the dataset.
 \end{enumerate}
 
-\noindent
-Volumes are computed via convex hull triangulation
-(\texttt{qhull}), implemented in \texttt{geom::volume}.
-
 % [TODO: JÖRN - "Moser's theorem" on lines 100, 102: which Moser paper?
 %  Agent cannot verify the reference. Needs a bib entry.]
 \begin{table}[h]
@@ -97,7 +93,7 @@ Polytope & $F$ & $c_{\mathrm{EHZ}}$ & $\mathrm{vol}(K)$ & $\mathrm{sys}(K)$ & So
 \midrule
 Simplex & 5 & 0.25 & 0.0417 & 0.750 & Nir 2013 \\
 Hypercube $[-1,1]^4$ & 8 & 4.0 & 16.0 & 0.500 & HK2019 Ex~4.6 \\
-HK-O pentagon & 10 & 3.441 & 5.657 & 1.047 & HK-O 2024 Prop~1.4 \\
+HK-O pentagon & 10 & 3.441 & 5.6532 & 1.047 & HK-O 2024 Prop~1.4 \\
 Lag.\ $\triangle \times \triangle$ & 6 & 1.5 & 1.6875 & 0.667 & HK2017 + billiard \\
 Sym.\ $\triangle \times \triangle$ & 6 & 1.299 & 1.6875 & 0.500 & Moser's theorem \\
 Lag.\ $\triangle \times \square$ & 7 & 1.5 & 1.2990 & 0.866 & HK2017 + billiard \\
