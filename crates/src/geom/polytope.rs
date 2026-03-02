@@ -37,6 +37,14 @@ pub struct Polytope4D {
     normals: Vec<Vector4<f64>>,
     heights: Vec<f64>,
     vertices: Vec<Vector4<f64>>,
+    /// Exact combinatorial data from the rational pipeline.
+    ///
+    /// When present, this is the authoritative source for discrete decisions
+    /// (vertex-facet incidence, ω₀ signs, adjacency). Algorithms should prefer
+    /// this over recomputing from f64 with tolerances.
+    ///
+    /// `None` for polytopes constructed from f64 without the rational pipeline.
+    exact_data: Option<super::rational::CombinatorialData>,
 }
 
 /// Errors from [`Polytope4D::new()`] when invariants are violated.
@@ -133,6 +141,7 @@ impl Polytope4D {
             normals,
             heights,
             vertices,
+            exact_data: None,
         })
     }
 
@@ -154,6 +163,30 @@ impl Polytope4D {
     /// Number of facets F = number of halfspaces in the H-representation.
     pub fn facet_count(&self) -> usize {
         self.normals.len()
+    }
+
+    /// Exact combinatorial data from the rational pipeline, if available.
+    ///
+    /// Returns `Some` for polytopes constructed via [`from_rational()`](Self::from_rational).
+    /// Returns `None` for polytopes constructed from f64 without the rational pipeline.
+    pub fn exact_data(&self) -> Option<&super::rational::CombinatorialData> {
+        self.exact_data.as_ref()
+    }
+
+    /// Construct from a [`RationalPolytope4D`](super::rational::RationalPolytope4D).
+    ///
+    /// Normalizes the rational normals to f64 unit vectors (via `to_f64()`),
+    /// then attaches the exact combinatorial data. The result carries both:
+    /// - f64 unit normals, heights, vertices (for KKT solver, numerics)
+    /// - Exact incidence, adjacency, ω₀ signs (for discrete decisions)
+    pub fn from_rational(
+        rp: &super::rational::RationalPolytope4D,
+    ) -> Result<Self, ConstructionError> {
+        let mut polytope = rp.to_f64().map_err(|e| {
+            ConstructionError::VertexEnumerationFailed(format!("rational→f64 failed: {e}"))
+        })?;
+        polytope.exact_data = Some(rp.combinatorial_data().clone());
+        Ok(polytope)
     }
 }
 
