@@ -1059,3 +1059,150 @@ fn solve4_exact() {
     ];
     assert!(solve4(&singular, &[rat(1), rat(1), rat(1), rat(1)]).is_none());
 }
+
+// ── Phase 6: Rational↔f64 pipeline consistency ─────────────────────────
+
+/// Proposition: Polytope4D::from_rational carries exact data.
+#[test]
+fn from_rational_carries_exact_data() {
+    let rp = rational_simplex();
+    let p = super::super::polytope::Polytope4D::from_rational(&rp)
+        .expect("from_rational should succeed for simplex");
+
+    assert!(p.exact_data().is_some(), "from_rational should set exact_data");
+    let data = p.exact_data().unwrap();
+    assert_eq!(data.num_facets, 5);
+    assert_eq!(data.vertex_descriptors.len(), 5);
+}
+
+/// Proposition: adjacency matrix from exact data agrees with f64 computation
+/// for the simplex (same polytope, two paths).
+#[test]
+fn adjacency_agreement_simplex() {
+    use crate::algorithms::hk2017::build_adjacency_matrix;
+
+    let kp = super::super::known_polytopes::simplex();
+    let f64_adj = build_adjacency_matrix(&kp.polytope);
+
+    let rp = RationalPolytope4D::from_f64(kp.polytope.normals(), kp.polytope.heights())
+        .expect("from_f64 should succeed for simplex");
+    let rational_p = super::super::polytope::Polytope4D::from_rational(&rp)
+        .expect("from_rational should succeed for simplex");
+    let exact_adj = build_adjacency_matrix(&rational_p);
+
+    assert_eq!(f64_adj, exact_adj, "adjacency matrices disagree for simplex");
+}
+
+/// Proposition: adjacency matrix from exact data agrees with f64 computation
+/// for the hypercube.
+#[test]
+fn adjacency_agreement_hypercube() {
+    use crate::algorithms::hk2017::build_adjacency_matrix;
+
+    let kp = super::super::known_polytopes::hypercube();
+    let f64_adj = build_adjacency_matrix(&kp.polytope);
+
+    let rp = RationalPolytope4D::from_f64(kp.polytope.normals(), kp.polytope.heights())
+        .expect("from_f64 should succeed for hypercube");
+    let rational_p = super::super::polytope::Polytope4D::from_rational(&rp)
+        .expect("from_rational should succeed for hypercube");
+    let exact_adj = build_adjacency_matrix(&rational_p);
+
+    assert_eq!(f64_adj, exact_adj, "adjacency matrices disagree for hypercube");
+}
+
+/// Proposition: directed adjacency matrix from exact data agrees with f64
+/// for the simplex.
+#[test]
+fn directed_adjacency_agreement_simplex() {
+    use crate::algorithms::hk2017::build_directed_adjacency_matrix;
+
+    let kp = super::super::known_polytopes::simplex();
+    let f64_dadj = build_directed_adjacency_matrix(&kp.polytope);
+
+    let rp = RationalPolytope4D::from_f64(kp.polytope.normals(), kp.polytope.heights())
+        .expect("from_f64 should succeed for simplex");
+    let rational_p = super::super::polytope::Polytope4D::from_rational(&rp)
+        .expect("from_rational should succeed for simplex");
+    let exact_dadj = build_directed_adjacency_matrix(&rational_p);
+
+    assert_eq!(
+        f64_dadj, exact_dadj,
+        "directed adjacency matrices disagree for simplex"
+    );
+}
+
+/// Proposition: directed adjacency matrix from exact data agrees with f64
+/// for the hypercube.
+#[test]
+fn directed_adjacency_agreement_hypercube() {
+    use crate::algorithms::hk2017::build_directed_adjacency_matrix;
+
+    let kp = super::super::known_polytopes::hypercube();
+    let f64_dadj = build_directed_adjacency_matrix(&kp.polytope);
+
+    let rp = RationalPolytope4D::from_f64(kp.polytope.normals(), kp.polytope.heights())
+        .expect("from_f64 should succeed for hypercube");
+    let rational_p = super::super::polytope::Polytope4D::from_rational(&rp)
+        .expect("from_rational should succeed for hypercube");
+    let exact_dadj = build_directed_adjacency_matrix(&rational_p);
+
+    assert_eq!(
+        f64_dadj, exact_dadj,
+        "directed adjacency matrices disagree for hypercube"
+    );
+}
+
+/// Proposition: EHZ capacity is unchanged when routed through the rational pipeline.
+///
+/// Pipeline: f64 polytope → from_f64 (lossless) → from_rational → ehz_capacity.
+/// The rational pipeline adds exact combinatorial data; the f64 numerics
+/// (KKT solver) see the same unit normals and heights.
+///
+/// **Why this is important**: The capacity value depends on which (S, σ) pairs
+/// survive adjacency pruning. If exact and f64 adjacency disagree, different
+/// candidates survive and the capacity changes. Agreement here confirms that
+/// the rational pipeline doesn't alter the result for well-conditioned inputs.
+#[test]
+fn capacity_agreement_simplex() {
+    use crate::algorithms::hk2017::ehz_capacity;
+
+    let kp = super::super::known_polytopes::simplex();
+    let f64_result = ehz_capacity(&kp.polytope).expect("simplex should have capacity");
+
+    // Same polytope through rational pipeline
+    let rp = RationalPolytope4D::from_f64(kp.polytope.normals(), kp.polytope.heights())
+        .expect("from_f64 should succeed for simplex");
+    let rational_p = super::super::polytope::Polytope4D::from_rational(&rp)
+        .expect("from_rational should succeed for simplex");
+    let exact_result = ehz_capacity(&rational_p).expect("simplex should have capacity");
+
+    assert!(
+        (f64_result.capacity - exact_result.capacity).abs() < 1e-10,
+        "capacity disagrees: f64={}, exact={}",
+        f64_result.capacity,
+        exact_result.capacity
+    );
+}
+
+/// Proposition: EHZ capacity is unchanged through rational pipeline for hypercube.
+#[test]
+fn capacity_agreement_hypercube() {
+    use crate::algorithms::hk2017::ehz_capacity;
+
+    let kp = super::super::known_polytopes::hypercube();
+    let f64_result = ehz_capacity(&kp.polytope).expect("hypercube should have capacity");
+
+    let rp = RationalPolytope4D::from_f64(kp.polytope.normals(), kp.polytope.heights())
+        .expect("from_f64 should succeed for hypercube");
+    let rational_p = super::super::polytope::Polytope4D::from_rational(&rp)
+        .expect("from_rational should succeed for hypercube");
+    let exact_result = ehz_capacity(&rational_p).expect("hypercube should have capacity");
+
+    assert!(
+        (f64_result.capacity - exact_result.capacity).abs() < 1e-10,
+        "capacity disagrees: f64={}, exact={}",
+        f64_result.capacity,
+        exact_result.capacity
+    );
+}
