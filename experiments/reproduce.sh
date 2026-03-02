@@ -99,6 +99,10 @@ experiments/target/release/q_error
 experiments/target/release/dismissal_error
 # → experiments/dismissal-error/dismissal-error.jsonl
 
+# Gradient descent: gradient ascent on 500 general + 500 Lagrangian F=10 polytopes (~100 min)
+experiments/target/release/gradient_descent
+# → experiments/gradient-descent/gradient-descent.jsonl
+
 # ── Step 2: Generate figures and tables ──────────────────────────────────────
 # Python scripts read .jsonl from their experiment folder, write figures/tables
 # to the same folder.
@@ -149,6 +153,11 @@ python3 experiments/sys-optimization/sys_optimization.py
 # Dismissal error bound: distribution of error bounds
 python3 experiments/dismissal-error/dismissal_error.py
 # → experiments/dismissal-error/dismissal-error.png
+
+# Gradient descent: histogram and scatter of final sys values
+python3 experiments/gradient-descent/gradient_descent.py
+# → experiments/gradient-descent/gradient_descent_results.png
+# → experiments/gradient-descent/gradient_descent_scatter.png
 
 # ── Step 3: Visualization screenshots ────────────────────────────────────────
 # Automated via Playwright (headless Chrome). Requires: npm install playwright.
