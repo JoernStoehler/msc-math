@@ -91,7 +91,7 @@ This section covers solving the KKT system numerically for a specific (S, σ) pa
 - Error bound for dismissed systems (Remark with the bound formula)
 - The β > 0 positivity predicate (currently in A.2, moves here per Jörn)
 
-The dismissal-error experiment (`experiments/dismissal-error/`, created this session) provides empirical validation that dismissal value loss is negligible. Should be referenced from this section.
+*[Deleted: the dismissal-error experiment was removed (commit 72cf05c) — it validated the old dismiss logic (Lemmas B.5-B.9) which was replaced by the Q error bound framework (lem:q-error-bound). The q-error experiment validates the current error bound.]*
 
 ### A.4 Accumulated Q Maximum and Final A_min
 
@@ -152,7 +152,7 @@ The exploration agent (`a5fe055ee1e528c3e`) searched all thesis .tex files, all 
 | NEW file | — | A.2 polytope combinatorics (new math: the consistency theorem) |
 | `crates/src/geom/skeleton.rs` | Skeleton computation | May need updates if the combinatorics theorem changes assumptions |
 | `crates/src/algorithms/hk2017/mod.rs:237` | ω₀ hard cutoff | May need three-valued treatment |
-| `experiments/dismissal-error/README.md` | Experiment TODO | Reference from new A.3 |
+| ~~`experiments/dismissal-error/`~~ | ~~Deleted~~ | ~~Replaced by q-error experiment~~ |
 | `experiments/ablation/ideas-future.md:45-54` | Jörn's perturbation idea | Related prior thinking, should inform A.2 |
 
 ## Scope and effort estimate
