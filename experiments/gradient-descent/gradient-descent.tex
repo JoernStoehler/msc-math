@@ -6,7 +6,8 @@
 %   - Generated data: experiments/gradient-descent/gradient-descent.jsonl
 %   - Plot script: experiments/gradient-descent/gradient_descent.py
 %   - Developer notes: experiments/gradient-descent/README.md
-%   - Builds on: Section~\ref{sec:sys-optimization} (method, derivative formulae)
+%   - Builds on: sec:sys-optimization (method, derivative formulae)
+%   - Prose: agent-written, unreviewed
 %
 % Structure:
 %   - Motivation (scaling up sys-optimization)
@@ -129,7 +130,7 @@ and~\ref{fig:gd-scatter}):
 \item \emph{Gradient ascent substantially improves $\mathrm{sys}$}:
   mean improvement $+0.10$ for general polytopes
   and $+0.18$--$0.22$ for Lagrangian products.
-  After optimization, 56\% of polytopes converge
+  After optimization, 69\% of polytopes converge
   (improvement $< 10^{-6}$) within 20~iterations.
 \end{enumerate}
 
@@ -142,7 +143,7 @@ the same: gradient ascent does not push $\mathrm{sys}$ past~$1$.
 The maximum increases slightly ($0.905$ vs.~$0.878$), but remains
 well below the Viterbo threshold.
 
-The clear gap between the observed maximum (${\approx}0.91$) and the
+The clear gap between the observed maximum (${\approx}0.905$) and the
 threshold~$1$ suggests that local gradient ascent from random starting
 points is insufficient to find counterexamples, even at scale.
 Three factors may contribute:
@@ -154,7 +155,7 @@ Three factors may contribute:
 \item The basin of attraction for $\mathrm{sys} > 1$ (if it exists at
   $F = 10$) may have small measure, so random starting points are
   unlikely to land in it.
-\item The counterexample of~\cite{HaimKislevOstrover2024} has specific algebraic
-  structure (a regular pentagon with rational slopes) that random
+\item The counterexample of~\cite{HaimKislevOstrover2024} uses a regular
+  pentagon with specific geometric structure that random
   polygon pairs do not approximate.
 \end{itemize}
