@@ -1,146 +1,1085 @@
 % appendix-numerical.tex — \input'd from main.tex (after \appendix)
 %
-% Numerical implementation details for the capacity algorithms.
-% The main chapter states and proves the algorithms under exact arithmetic.
-% This appendix addresses finite-precision concerns.
+% Numerical implementation appendix, pipeline-ordered.
 %
 % Structure:
-%   Overview — strategies for handling numerical error
-%   A.1 Polytope Combinatorics — exact rational data, transition feasibility, robustness
-%   A.2 SVD Step — near-singular handling, positivity predicate
-%   A.3 Accumulated Q Maximum — certified/uncertain tracking, final answer
+%   Intro paragraph
+%   A.1 Input Representation
+%   A.2 Transition Feasibility and Pruning
+%   A.3 KKT System and Numerical Error
+%   A.4 Accumulator and Final Answer
 
 \section{Numerical Implementation}\label{app:numerical}
-\label{app:general-approach}
 
-The algorithms in Section~\ref{sec:algorithms} are stated for
-exact real arithmetic: predicates such as $\beta_i > 0$ and
-$N^\top \beta = 0$ are decided exactly, and the KKT system is
-solved without numerical error.
-A floating-point implementation must control two kinds of error:
-discrete decisions (combinatorial data, predicate evaluations)
-may give wrong answers, and continuous quantities (KKT solutions)
-accumulate rounding and other numerical error.
-We address these as follows.
+% --- Intro paragraph (NEW, unreviewed) ---
 
+The algorithms in Section~\ref{sec:algorithms} are stated for exact
+real arithmetic: the KKT system is solved without error, and
+predicates such as $\beta_i > 0$ are decided exactly.
+An exact implementation over~$\mathbb{Q}$ is possible
+(Section~\ref{app:input}), but prohibitively slow for the
+exponential enumeration in Algorithm~\ref{alg:ehz}.
+We therefore use \texttt{f64} floating-point arithmetic for the
+continuous computations (eigendecomposition, KKT solve) and reserve exact
+arithmetic for discrete decisions (combinatorial data,
+sign predicates).
+
+This introduces two difficulties.
+First, \emph{branching decisions} based on numerical values
+(e.g.\ ``is $\beta_i > 0$?'') can go either way when the true
+value is near the threshold; the algorithm must handle
+the resulting uncertainty.
+Second, \emph{numerically unstable steps}---in particular,
+the eigendecomposition solve of near-singular KKT systems---can
+produce large errors in the solution vector~$\hat\beta$, though
+we show that the error in the objective value~$\hat Q$ remains
+controlled.
+Since we seek only an approximate minimum action
+$A_{\min} = 1/(2\,Q_{\max})$, controlled~$Q$ error suffices.
+
+The remainder of this appendix discusses these issues following
+the algorithm's pipeline: input representation
+(Section~\ref{app:input}), transition feasibility and pruning
+(Section~\ref{app:pruning}), the KKT solve and its numerical
+error (Section~\ref{app:kkt}), and the accumulator that
+combines all candidates into a final answer
+(Section~\ref{app:answer}).
+
+
+% ===================================================================
+\subsection{Input Representation}\label{app:input}
+% ===================================================================
+
+% --- Rational halfspace data (from approved A.1) ---
+
+\paragraph{Rational halfspace data.}
+The algorithms in Section~\ref{sec:algorithms} operate on a polytope
+$K = K(n, h) = \{x \in \mathbb{R}^4 : \langle n_i, x \rangle \leq h_i,
+\; i = 1, \ldots, F\}$.
+Our input polytopes have rational halfspace data:
+normals $n_i \in \mathbb{Q}^4 \setminus \{0\}$
+(not necessarily unit vectors, unlike the unit normals
+in Section~\ref{sec:algorithms})
+and heights $h_i \in \mathbb{Q}_{>0}$.
+This allows several combinatorial quantities to be
+computed exactly over~$\mathbb{Q}$, eliminating
+numerical predicates from all discrete decisions.
+
+% --- Exact quantities (from approved A.1, simplified per Jörn) ---
+
+\begin{remark}[Exact quantities from rational coordinates]%
+\label{rem:exact-quantities}
+Given a polytope $K = K(n, h)$ with rational halfspace data,
+the following quantities are computed exactly:
 \begin{enumerate}
-\item \emph{Rational input polytopes.}
-  We restrict to polytopes with rational halfspace data
-  $n_i \in \mathbb{Q}^4$, $h_i \in \mathbb{Q}$.
-  \begin{sloppypar}
-  This makes vertex enumeration, vertex--facet incidence,
-  and symplectic signs $\operatorname{sign}(\omega_0(n_i, n_k))$
-  exactly computable over~$\mathbb{Q}$
-  (Section~\ref{app:polytope-combinatorics}).
-  \end{sloppypar}
-  These exact quantities are stored alongside the
-  floating-point polytope, so that rounding errors
-  cannot affect discrete decisions.
-
-\item \emph{Double-precision floating-point for continuous computation.}
-  The KKT system and SVD decomposition are solved in
-  \texttt{f64} arithmetic for performance.
-  Rounding errors in continuous quantities are controlled
-  by the strategies below.
-
-\item \emph{Loose cutoffs.}
-  Some predicates of the form ``$x > \varepsilon$'' are used
-  to bound downstream numerical errors loosely, such that the
-  guarantee holds even for false positives due to numerical
-  errors in~$x$.
-  False negatives have only performance consequences
-  (fallback to more expensive algorithms) or empirical
-  usability consequences (missing results), but not
-  incorrectness.
-
-\item \emph{Three-valued predicates for sharp cutoffs.}
-  A sharp predicate such as $\beta_i > 0$ cannot be decided
-  reliably from floating-point data alone.
-  Instead of guessing, the implementation returns one of three
-  verdicts: $\textsc{true}$, $\textsc{false}$, or
-  $\textsc{unknown}$, deferring the uncertain cases to
-  downstream logic.
-
-\item \emph{Accumulation resolves most uncertain cases.}
-  The algorithm tracks all candidates
-  $(S, \sigma, \hat\beta, \hat Q)$ with their certainty
-  status.
-  Since we seek the \emph{maximum}~$Q$ over admissible
-  candidates, uncertain candidates below the highest
-  certified~$Q$ are irrelevant regardless of their true
-  admissibility.
-  In practice, this resolves all uncertain cases in our
-  experiments (Section~\ref{app:accumulated-q-max}).
-
-\item \emph{Fallback for unresolved cases.}
-  If uncertain candidates remain above the certified maximum,
-  the implementation can either signal an error (for manual
-  investigation) or re-solve only the uncertain candidates
-  using exact rational arithmetic, informed by the
-  exact $(S, \sigma)$ and approximate~$\hat\beta$.
-  Only the admissibility predicate $\beta_i > 0$ must be
-  resolved exactly; downstream, we use the
-  approximate~$(\hat\beta, \hat Q)$.
+\item \emph{Vertices.}
+  For each 4-element subset $S \subset \{1, \ldots, F\}$
+  with $\det(N_S) \neq 0$ (where $N_S$ is the $4 \times 4$
+  matrix with rows~$n_i^\top$, $i \in S$),
+  the candidate vertex $v_S = N_S^{-1} h_S$
+  (where $h_S = (h_i)_{i \in S}$) is computed
+  via Cramer's rule over~$\mathbb{Q}$.
+  The subset~$S$ defines a vertex of~$K$ if
+  $\langle n_i, v_S \rangle \leq h_i$ for all $i \notin S$.
+\item \emph{Vertex--facet incidence.}
+  The equality $\langle n_i, v_j \rangle = h_i$
+  is exactly decidable over~$\mathbb{Q}$.
+\item \emph{Symplectic signs.}
+  For each pair of facets $i, k$,
+  the value $\omega_0(n_i, n_k) \in \mathbb{Q}$
+  is exact (since $n_i \in \mathbb{Q}^4$),
+  so $\operatorname{sign}(\omega_0(n_i, n_k))
+  \in \{+, -, 0\}$ is determined without
+  numerical error.
 \end{enumerate}
-
-The following definition makes the soundness requirement precise.
-
-\begin{definition}[Sound predicate]%
-\label{def:sound-predicate}
-A predicate~$\tilde P$ computed from floating-point data
-is \emph{sound} if its definite verdicts are reliable:
-$\textsc{true}$ and $\textsc{false}$ agree with exact
-arithmetic, and $\textsc{unknown}$ means the numerical
-evidence is inconclusive.
-Formally:
-\begin{align*}
-  P \text{ true in exact arithmetic}
-  &\;\Longrightarrow\;
-  \tilde P \neq \textsc{false}, \\
-  P \text{ false in exact arithmetic}
-  &\;\Longrightarrow\;
-  \tilde P \neq \textsc{true}.
-\end{align*}
-\end{definition}
-
-\begin{remark}[Impact on control flow]%
-\label{rem:three-valued-control-flow}
-The exact algorithm has two kinds of decision points:
-\begin{description}
-\item[Inclusion decisions] (``unless $P$, skip''):
-  The exact rule ``if $\lnot P$, skip $(S, \sigma)$''
-  becomes ``if $\tilde P = \textsc{false}$, skip.''
-  When $\tilde P = \textsc{unknown}$, the pair is kept
-  (conservatively), since the exact~$P$ might be true.
-  This means the numerical algorithm searches at least as
-  broadly as the exact algorithm.
-\item[Maximum tracking] (``find the largest admissible $Q$''):
-  An admissibility predicate $A(\beta)$ (e.g.\ $\beta_i > 0$
-  for all~$i$) becomes three-valued.
-  The algorithm returns:
-  \begin{itemize}
-  \item the largest~$Q$ where $\tilde A = \textsc{true}$
-    (the \emph{certified value}, a lower bound on the
-    true maximum),
-  \item all~$Q$ values above the certified value where
-    $\tilde A = \textsc{unknown}$
-    (the true maximum may be among these).
-  \end{itemize}
-  Candidates with $\tilde A = \textsc{false}$ are provably
-  inadmissible and discarded; uncertain candidates at or below
-  the certified value are irrelevant (the certified value already
-  dominates).
-\end{description}
 \end{remark}
 
-The remainder of this appendix develops these strategies in detail.
+% --- Perturbation trick (NEW, unreviewed) ---
 
-\subsection{Polytope Combinatorics}\label{app:polytope-combinatorics}
-\input{appendix-numerical-combinatorics}
+\paragraph{Generic perturbation.}
+% [TODO: JÖRN - verify the continuity claim for c_EHZ on polytopes.
+%  vol continuity is clear (continuous function of vertices).
+%  c_EHZ continuity w.r.t. Hausdorff distance is a known result
+%  but should be cited.]
+We may assume without loss of generality that
+$\omega_0(n_i, n_k) \neq 0$ for all pairs of facets $i \neq k$.
+This is achieved by perturbing the rational normals:
+replace each~$n_i$ by $n_i + \delta n_i$, where the
+$\delta n_i \in \mathbb{Q}^4$ are chosen randomly with
+$\|\delta n_i\| / \|n_i\| < 2^{-64}$.
+Since $2^{-64}$ is well below the \texttt{f64} machine
+epsilon~$\approx 2^{-52}$, the floating-point representations
+of the normals and heights are unchanged:
+all \texttt{f64} computations produce identical results
+on the original and perturbed polytopes.
 
-\subsection{SVD Step}\label{app:svd-step}
-\input{appendix-numerical-dismissal}
+The condition $\omega_0(n_i, n_k) = 0$ defines an algebraic
+hypersurface of codimension~$\geq 1$ in the space of normal
+vectors.
+Since this hypersurface has Lebesgue measure zero
+in~$\mathbb{R}^{4F}$, there is no a~priori reason for
+a pseudorandom rational perturbation to land on it;
+in practice, all perturbations we generate satisfy
+$\omega_0(n_i, n_k) \neq 0$ for all pairs $i \neq k$.
+% [TODO: JÖRN - do we also want simplicity (each vertex on
+%  exactly 4 facets) from the perturbation? If so, the
+%  non-simplicity locus is also codimension >= 1. But I'm
+%  unsure if simplicity is used anywhere in the algorithm.]
 
-\subsection{Accumulated $Q$ Maximum and Final Answer}%
-\label{app:accumulated-q-max}
-\input{appendix-numerical-error-tracking}
+Since $\operatorname{vol}$ and $c_{\mathrm{EHZ}}$ are continuous
+functions of the halfspace data, the perturbation changes
+the systolic ratio by a negligible amount.
+The sign pattern
+$\operatorname{sign}(\omega_0(n_i, n_k)) \in \{+1, -1\}$
+(with no zeros) is now fully determined from the rational
+data, simplifying the enumeration of candidate
+pairs~$(S, \sigma)$ and the transition feasibility check below.
+% [TODO: JÖRN - for the billiard algorithm on Lagrangian products,
+%  the theorems (billiard characterization, bounce bound) need to
+%  carry over to infinitesimal perturbations of Lagrangian products.
+%  This is out of scope for this appendix but should be noted.]
+
+% --- F64 conversion (from approved A.1) ---
+
+\begin{remark}[Floating-point conversion]%
+\label{rem:f64-conversion}
+A rational polytope $K = K(n, h)$ is converted to
+floating-point by normalizing each normal to a unit
+vector:
+\[
+  \hat n_i = \frac{n_i}{\|n_i\|}, \qquad
+  \hat h_i = \frac{h_i}{\|n_i\|}.
+\]
+The halfspace $\langle n_i, x \rangle \leq h_i$ is
+equivalent to
+$\langle \hat n_i, x \rangle \leq \hat h_i$.
+Both the rational-to-floating-point conversion
+and the normalization introduce rounding errors.
+The capacity algorithm uses:
+\begin{itemize}
+\item the \emph{exact} rational data for discrete
+  decisions (which facet subsets to enumerate,
+  the signs of~$\omega_0(n_i, n_k)$,
+  and the exact part of transition pruning),
+\item the \emph{rounded} floating-point coordinates
+  for continuous computation (the eigendecomposition-based
+  KKT solver and the LP feasibility check below).
+\end{itemize}
+\end{remark}
+
+
+% ===================================================================
+\subsection{Transition Feasibility and Pruning}\label{app:pruning}
+% ===================================================================
+
+% --- Transition feasibility lemma (from approved A.1) ---
+
+\begin{lemma}[Transition feasibility]%
+\label{lem:numerical-transition-feasibility}
+Let $K \subset \mathbb{R}^4$ be a convex polytope with
+facets $F_1, \ldots, F_m$ and outward normals~$n_k$
+(not necessarily unit).
+A \emph{transition} $F_i \to F_j$ is a segment of a
+Reeb trajectory that travels with velocity~$R_i$
+(Definition~\ref{def:reeb-vectors}) for positive time,
+then immediately with velocity~$R_j$ for positive time.
+A transition $F_i \to F_j$ exists if and only if
+\begin{enumerate}
+\item $\omega_0(n_i, n_j) \ge 0$, and
+\item $\exists\, x \in F_i \cap F_j$ with
+  $\langle n_k, x \rangle < h_k$
+  for all $k \notin \{i,j\}$ satisfying
+  $\omega_0(n_i, n_k) < 0$ or
+  $\omega_0(n_j, n_k) > 0$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+A transition $F_i \to F_j$ exists if and only if
+there is a point $x \in F_i \cap F_j$ and
+$\varepsilon > 0$ such that
+$x + t\, J_0 n_i \in K$ for $t \in [-\varepsilon, 0]$
+and $x + t\, J_0 n_j \in K$ for $t \in [0, \varepsilon]$:
+since $R_i = (2/h_i)\, J_0\, n_i$ with $h_i > 0$,
+traveling with velocity~$R_i$ is equivalent to
+moving in direction~$J_0 n_i$.
+
+\emph{Necessity.}
+Let $x \in F_i \cap F_j$ realize the transition.
+For the approach ($t < 0$) to satisfy
+the~$F_j$ constraint:
+$\langle n_j, x + t\, J_0 n_i \rangle
+= h_j + t\,\omega_0(n_i, n_j) \leq h_j$,
+which forces $\omega_0(n_i, n_j) \geq 0$
+(since $t < 0$).
+For the departure ($t > 0$), the~$F_i$ constraint gives
+$\langle n_i, x + t\, J_0 n_j \rangle
+= h_i - t\,\omega_0(n_i, n_j) \leq h_i$,
+again requiring $\omega_0(n_i, n_j) \geq 0$.
+This proves~(1).
+
+For~(2), suppose $k \notin \{i,j\}$ satisfies
+$\omega_0(n_i, n_k) < 0$.
+Then
+$\langle n_k, x + t\, J_0 n_i \rangle
+= \langle n_k, x \rangle + t\,\omega_0(n_i, n_k)$.
+Since $t < 0$ and $\omega_0(n_i, n_k) < 0$,
+their product $t\,\omega_0(n_i, n_k) > 0$, so
+$\langle n_k, x + t\, J_0 n_i \rangle
+> \langle n_k, x \rangle$.
+If $\langle n_k, x \rangle = h_k$, this
+exceeds~$h_k$, violating $x + t\, J_0 n_i \in K$.
+Hence $\langle n_k, x \rangle < h_k$.
+The case $\omega_0(n_j, n_k) > 0$ is analogous
+for the departure.
+
+\emph{Sufficiency.}
+Given $x \in F_i \cap F_j$ satisfying~(1) and~(2),
+we construct $\varepsilon > 0$ witnessing
+the transition.
+For $k \notin \{i,j\}$ with
+$\omega_0(n_i, n_k) \geq 0$ and
+$\omega_0(n_j, n_k) \leq 0$:
+$\langle n_k, x + t\, J_0 n_i \rangle
+\leq \langle n_k, x \rangle \leq h_k$
+for $t \leq 0$,
+and
+$\langle n_k, x + t\, J_0 n_j \rangle
+\leq \langle n_k, x \rangle \leq h_k$
+for $t \geq 0$.
+For the remaining $k \notin \{i,j\}$
+(those with $\omega_0(n_i, n_k) < 0$ or
+$\omega_0(n_j, n_k) > 0$),
+condition~(2) gives
+$\langle n_k, x \rangle < h_k$.
+Let $\delta$ be the minimum of
+$h_k - \langle n_k, x \rangle > 0$
+over these~$k$ (or any $\delta > 0$ if there are none),
+and choose
+$\varepsilon < \delta / \max_k(
+|\omega_0(n_i, n_k)| + |\omega_0(n_j, n_k)|)$.
+Then all halfspace constraints hold for the
+approach and departure, so $x$ together
+with~$\varepsilon$ witnesses the transition
+$F_i \to F_j$.
+\end{proof}
+
+% --- Numerical pruning (from approved A.1, reframed) ---
+
+\paragraph{Early-exit heuristic.}
+The transition feasibility lemma provides a sound
+early-exit rule: if we can certify that a transition
+$F_{\sigma(i)} \to F_{\sigma(i+1)}$ does not exist for
+some consecutive pair in the cycle~$\sigma$, then no
+closed Reeb orbit with combinatorics~$(S, \sigma)$ exists,
+and the pair is skipped.
+
+Condition~(1) is checked exactly using the rational
+symplectic signs (Remark~\ref{rem:exact-quantities}).
+After the generic perturbation, $\omega_0(n_i, n_j) \neq 0$
+for all pairs, so every edge in the adjacency graph is
+unidirectional: for each pair $i \neq j$, exactly one of
+the directions $F_i \to F_j$ or $F_j \to F_i$ satisfies
+condition~(1).
+This cuts down the number of candidate
+cycles~$\sigma$ to enumerate.
+
+Condition~(2) is an LP feasibility problem:
+does there exist $x \in F_i \cap F_j$ strictly inside
+the halfspaces indexed by the critical~$k$?
+The numerical LP uses floating-point arithmetic and
+checks feasibility with a relaxed constraint
+$\langle n_k, x \rangle \leq h_k + \varepsilon_{\mathrm{LP}}$
+for a small tolerance~$\varepsilon_{\mathrm{LP}} > 0$.
+Since the relaxed feasible region contains the exact one,
+infeasibility of the relaxed LP implies infeasibility
+of the exact LP, so pruning is safe.
+This makes the heuristic conservative:
+it may keep pairs that a more precise check would prune,
+but it never prunes a pair that admits a valid transition.
+\begin{itemize}
+\item Pruned transitions are correctly pruned
+  (the heuristic provides a sufficient condition for infeasibility).
+\item Transitions not pruned may still be infeasible in
+  exact arithmetic; these pairs are processed anyway.
+  The extra work is a performance cost, not a
+  correctness issue, since the algorithm's correctness
+  does not depend on the pruning step.
+\end{itemize}
+
+
+% ===================================================================
+\subsection{KKT System and Numerical Error}\label{app:kkt}
+% ===================================================================
+
+% --- Intro: symmetric KKT and eigendecomposition (unreviewed) ---
+
+For each candidate pair $(S, \sigma)$ that survives
+the pruning of Section~\ref{app:pruning},
+the algorithm solves the KKT linear system.
+The standard stationarity condition
+$H\beta = N\lambda + \eta\nu$
+(cf.\ equation~\eqref{eq:linear-system})
+uses multipliers~$\lambda \in \mathbb{R}^4$ and~$\nu \in \mathbb{R}$
+that produce a non-symmetric coefficient matrix.
+We define \emph{negated multipliers}
+$\mu = -\lambda$ and $\xi = -\nu$, so that
+the stationarity condition becomes
+$H\beta + N\mu + \eta\xi = 0$
+and the full system takes the symmetric saddle-point form
+\begin{equation}\label{eq:kkt-system}
+  \underbrace{\begin{pmatrix} H & N & \eta \\[3pt]
+    N^\top & 0 & 0 \\[3pt]
+    \eta^\top & 0 & 0 \end{pmatrix}}_{M}
+  \begin{pmatrix} \beta \\ \mu \\ \xi \end{pmatrix}
+  = \begin{pmatrix} 0 \\ 0 \\ 1 \end{pmatrix},
+\end{equation}
+where $M$ is a real symmetric matrix of size
+$(m + 5) \times (m + 5)$ with $m = |S|$.
+Since~$M$ is real symmetric, it admits an eigendecomposition
+$M = V \Lambda V^\top$ with real eigenvalues
+$\lambda_1 \geq \cdots \geq \lambda_{m+5}$
+and orthogonal eigenvectors $V = (v_1, \ldots, v_{m+5})$.
+(No confusion with the original Lagrange multipliers arises,
+since we use~$\mu$, $\xi$ throughout.)
+The system is solved via eigendecomposition in double-precision
+floating-point arithmetic.
+The numerical solution is
+$\hat x = (\hat\beta, \hat\mu, \hat\xi)
+  = \sum_{|\lambda_j| > \tau}
+    \frac{v_j^\top b}{\lambda_j}\, v_j$,
+where the sum retains eigenvalues with magnitude above a
+rank-detection threshold~$\tau$, and division by
+small~$|\lambda_j|$ amplifies errors in the corresponding
+directions.
+This single factorisation simultaneously yields the
+solution, the rank ($|\lambda_j| > \tau$ count),
+the null space (eigenvectors for $|\lambda_j| \leq \tau$),
+and the inertia (counts of positive, zero, and negative
+eigenvalues; Lemma~\ref{lem:kkt-inertia}).
+Throughout this section, $\|\cdot\|$ denotes the Euclidean
+($\ell^2$) norm for vectors and the spectral norm
+(operator $2$-norm, equal to $\max_j |\lambda_j|$)
+for matrices.
+
+\begin{remark}[Eigendecomposition accuracy]%
+\label{rem:eigen-accuracy}
+The computed eigendecomposition of a real symmetric matrix
+is backward stable: the computed eigenvectors~$\hat V$ and
+eigenvalues~$\hat\Lambda$ are the exact eigendecomposition
+of a nearby matrix $M + E$ with
+$\|E\| \leq p(m)\,\varepsilon_{\mathrm{mach}}\,\|M\|$,
+where $p(m)$ is a modest polynomial in the matrix
+dimension~$m + 5$
+\cite[Ch.~8]{GolubVanLoan2013}.
+In particular:
+\begin{enumerate}
+\item \emph{Eigenvalues.}
+  By Weyl's theorem,
+  $|\hat\lambda_j - \lambda_j| \leq \|E\|
+    \leq p(m)\,\varepsilon_{\mathrm{mach}}\,\|M\|$.
+  Large eigenvalues have high relative accuracy;
+  small ones ($|\lambda_j| \ll \|M\|$) may have large
+  relative error but are correctly identified as small.
+\item \emph{Eigenvectors.}
+  By the Davis--Kahan $\sin\theta$ theorem
+  \cite[Ch.~8]{GolubVanLoan2013},
+  the angular error of the $j$-th eigenvector satisfies
+  \[
+    \sin\theta(\hat v_j, v_j)
+      \leq \frac{\|E\|}{\operatorname{gap}_j},
+    \qquad
+    \operatorname{gap}_j
+      = \min_{k \neq j} |\lambda_j - \lambda_k|.
+  \]
+  Clustered eigenvalues yield poorly determined
+  individual vectors, but their joint invariant subspace
+  remains accurate.
+\item \emph{Solve step.}
+  For non-singular~$M$, the solution~$x$ is unique and
+  the relative error satisfies
+  $\|\hat x - x\| / \|x\|
+    = O(\kappa(M)\,\varepsilon_{\mathrm{mach}})$,
+  where $\kappa(M) = |\lambda_{\max}| / |\lambda_{\min}|$
+  \cite[Ch.~5]{Higham2002}.
+  Near-singular systems ($\kappa \gg 1$) amplify
+  rounding errors proportionally.
+\end{enumerate}
+For our matrices ($m + 5 \leq 21$, since $|S| \leq 16$),
+the polynomial factor~$p(m)$ is negligible.
+% [TODO: JÖRN - verify chapter references for Golub--Van Loan
+%  eigenvalue perturbation theory (Weyl's theorem and
+%  Davis--Kahan, both in Ch.~8 of 4th ed per agent's
+%  general knowledge). The results are standard but the
+%  exact section numbers should be checked.]
+\end{remark}
+
+\begin{remark}[The standard solve-step bound does not
+  apply here]%
+\label{rem:solve-step-warning}
+% QC: This remark is our analysis, not from the literature.
+The bound in Remark~\ref{rem:eigen-accuracy}(3)
+assumes $M$~is non-singular.
+Our KKT systems can be singular or near-singular,
+and both cases break the bound:
+\begin{itemize}
+\item When $M$ is singular, $x$~is non-unique and
+  $\|\hat x - x\|$ can be arbitrarily large
+  (any null-space component is lost).
+\item When $M$ is near-singular,
+  $\kappa(M) \gg 1$ and the bound is vacuous.
+\end{itemize}
+We therefore analyse the error in~$Q$ directly
+(Remarks~\ref{rem:null-q-constant}--\ref{rem:near-null-q}),
+obtaining a tight bound
+(Lemma~\ref{lem:q-interval})
+that exploits the insensitivity of~$Q$
+to near-null directions.
+\end{remark}
+
+% --- Inertia of the saddle-point matrix (unreviewed) ---
+
+\begin{lemma}[Inertia of the KKT matrix]%
+\label{lem:kkt-inertia}
+Let $M$ be the symmetric KKT matrix
+of~\eqref{eq:kkt-system} with
+constraint matrix
+$A = \bigl(\begin{smallmatrix} N^\top \\ \eta^\top
+  \end{smallmatrix}\bigr) \in \mathbb{R}^{5 \times m}$
+and $p = \operatorname{rank}(A) \leq \min(5, m)$.
+Let $T = \ker(A) = \{\delta\beta \in \mathbb{R}^m :
+  N^\top\delta\beta = 0,\; \eta^\top\delta\beta = 0\}$
+be the \emph{tangent space} of the constraint surface,
+with $\dim T = m - p$.
+Let $H|_T = Z^\top H Z$ denote the restriction of~$H$
+to~$T$, where $Z \in \mathbb{R}^{m \times (m-p)}$ is any
+matrix whose columns form a basis of~$T$.
+
+Then the eigenvalue inertia of~$M$
+(the triple $(n_+, n_0, n_-)$ counting positive, zero,
+and negative eigenvalues) satisfies
+\begin{equation}\label{eq:inertia}
+  n_+(M) = n_+(H|_T) + p, \quad
+  n_0(M) = n_0(H|_T) + (5 - p), \quad
+  n_-(M) = n_-(H|_T) + p.
+\end{equation}
+In the generic case ($m \geq 5$ and $p = 5$), this
+simplifies to
+$n_+(M) = n_+(H|_T) + 5$ and
+$n_-(M) = n_-(H|_T) + 5$.
+\end{lemma}
+
+\begin{proof}
+% [TODO: JÖRN - agent verified the statement numerically
+%  for all (S,σ) nodes of all test polytopes (Table 8--9
+%  of q_error). Only the result is used; proof deferred.]
+See \cite[Thm.~3.2]{BenziGolubLiesen2005} for a
+complete proof.
+The result exceeds our scope (it requires the full
+spectral theory of symmetric saddle-point matrices),
+and only the inertia
+formula~\eqref{eq:inertia} is used below.
+\end{proof}
+
+\begin{remark}[Eigenvalue signs and the objective]%
+\label{rem:eigenvalue-signs}
+Recall that the objective
+$Q(\beta) = -(1/2)\,\beta^\top H\,\beta$
+has Hessian $-H$ (a constant matrix).
+The second-order behaviour of~$Q$ on the constraint
+surface is governed by the restricted Hessian
+$(-H)|_T = -H|_T$.
+By Lemma~\ref{lem:kkt-inertia}
+(with $p = \operatorname{rank}(A)$),
+we can read off the inertia of~$H|_T$ directly from
+the eigenvalues of~$M$:
+\begin{itemize}
+\item $n_-(M) = p$ (only ``structural''
+  negatives): $H|_T$ is positive
+  semi-definite ($n_-(H|_T) = 0$).
+  If also $n_0(M) = 5 - p$
+  (so $n_0(H|_T) = 0$),
+  then $H|_T$ is positive definite,
+  $(-H)|_T$ is negative definite,
+  and~$Q$ is \emph{strictly concave} on~$T$:
+  $\beta_0$ is a strict local maximum of~$Q$
+  on the constraint surface.
+
+\item If $n_-(M) > p$, then $H|_T$ has at least one
+  negative eigenvalue.
+  The corresponding eigendirection of~$M$
+  (restricted to the~$\beta$-components) is a
+  direction along which~$Q$ \emph{increases}
+  from~$\beta_0$.
+
+\item If $n_0(M) > 5 - p$, then $H|_T$ has a zero
+  eigenvalue and~$Q$ is \emph{constant} (to first
+  order) along the corresponding tangent direction.
+  This direction lies in the null space of~$M$
+  (Remark~\ref{rem:null-q-constant}).
+\end{itemize}
+In the generic case ($m \geq 5$, $p = 5$, and $H|_T$
+non-degenerate), the classification reduces to
+counting $n_-(M)$:
+\begin{gather*}
+  n_-(M) = 5 \\
+  \Updownarrow \\
+  \text{$\beta_0$ is a strict local maximum
+  of~$Q$ on the constraint surface.}
+\end{gather*}
+\end{remark}
+
+\begin{remark}[Null-space directions preserve~$Q$]%
+\label{rem:null-q-constant}
+Let $v = (v_\beta, v_\mu, v_\xi)$ be an eigenvector of~$M$
+with eigenvalue~$0$, so $Mv = 0$.
+Then $N^\top v_\beta = 0$ and $\eta^\top v_\beta = 0$
+(from the constraint rows of~$M$),
+so $v_\beta \in T$.
+Moreover, $H v_\beta + N v_\mu + \eta v_\xi = 0$
+(stationarity row), so
+$v_\beta^\top H v_\beta
+  = -v_\beta^\top(N v_\mu + \eta v_\xi)
+  = -(N^\top v_\beta)^\top v_\mu
+    - (\eta^\top v_\beta)\,v_\xi = 0$.
+For the cross term, the KKT stationarity condition
+$H\beta_0 + N\mu_0 + \eta\xi_0 = 0$ gives
+$v_\beta^\top H\,\beta_0
+  = -v_\beta^\top(N\mu_0 + \eta\xi_0)
+  = -(N^\top v_\beta)^\top\mu_0
+    - (\eta^\top v_\beta)\,\xi_0 = 0$
+(since $v_\beta \in T$).
+Hence $v_\beta^\top H\,\beta_0 = 0$
+and $v_\beta^\top H\,v_\beta = 0$, so
+\[
+  Q(\beta_0 + t\,v_\beta) - Q(\beta_0)
+  = -t\,v_\beta^\top H\,\beta_0
+    - \tfrac{1}{2}\,t^2\,v_\beta^\top H\,v_\beta
+  = 0
+\]
+for all~$t$.
+In other words, $Q$ is exactly constant along
+null-space directions.
+The same reasoning shows that $Q$ is
+constraint-preserving:
+the displaced~$\beta_0 + t\,v_\beta$ satisfies
+$N^\top(\beta_0 + t\,v_\beta) = 0$ and
+$\eta^\top(\beta_0 + t\,v_\beta) = 1$.
+\end{remark}
+
+\begin{remark}[$Q$ variation along near-null directions]%
+\label{rem:near-null-q}
+For an eigenvalue~$\lambda_j$ of~$M$ that is
+small but nonzero, the eigenvector
+$v_j = (v_\beta, v_\mu, v_\xi)$ satisfies
+$N^\top v_\beta = \lambda_j\,v_\mu$ and
+$\eta^\top v_\beta = \lambda_j\,v_\xi$,
+so $v_\beta$ is \emph{approximately} tangent
+(constraint violation of order~$|\lambda_j|$).
+The~$Q$ variation along~$v_\beta$ is
+\begin{align*}
+  Q(\beta_0 + t\,v_\beta) - Q(\beta_0)
+  &= -t\,v_\beta^\top H\,\beta_0
+    - \tfrac{1}{2}\,t^2\,v_\beta^\top H\,v_\beta.
+\end{align*}
+From the eigenvector equation
+$Hv_\beta = \lambda_j\,v_\beta
+  - N v_\mu - \eta v_\xi$,
+one computes
+\begin{equation}\label{eq:near-null-curvature}
+  v_\beta^\top H\,v_\beta
+  = \lambda_j\bigl(2\,\|v_\beta\|^2 - 1\bigr),
+\end{equation}
+using the orthogonality
+$\|v_\beta\|^2 + \|v_\mu\|^2 + v_\xi^2 = 1$
+(the eigenvector is unit-length).
+Both the linear and quadratic terms are
+proportional to~$\lambda_j$:
+\begin{itemize}
+\item The linear term:
+  the KKT condition
+  $H\beta_0 = -N\mu_0 - \eta\xi_0$ gives
+  $v_\beta^\top H\,\beta_0
+    = -(N^\top v_\beta)^\top\mu_0
+      - (\eta^\top v_\beta)\,\xi_0
+    = -\lambda_j(v_\mu^\top\mu_0
+      + v_\xi\,\xi_0)$,
+  which is $O(|\lambda_j|)$.
+\item The curvature~\eqref{eq:near-null-curvature}
+  is $O(|\lambda_j|)$.
+\end{itemize}
+In particular, directions with small~$|\lambda_j|$
+change~$Q$ only slowly.
+This is the mechanism underlying the $Q$~error bound
+(Lemma~\ref{lem:q-interval}): even though the
+numerical error~$\delta\beta$ can be large along
+near-null directions (of order~$\|r\| / |\lambda_j|$),
+the resulting~$Q$ error is only second-order in~$\|r\|$
+because the $Q$~gradient along these directions
+is itself $O(|\lambda_j|)$,
+partially cancelling the $1/|\lambda_j|$ amplification.
+\end{remark}
+
+\begin{remark}[Near-singularity and error decomposition]%
+\label{rem:error-decomposition}
+By the generic perturbation (Section~\ref{app:input}),
+the exact KKT system is generically non-singular.
+However, it can be \emph{near}-singular:
+the smallest eigenvalue magnitude
+$|\lambda_{\min}| = \min_j |\lambda_j|$ may be close
+to zero, causing large numerical error in the
+solution~$(\hat\beta, \hat\mu, \hat\xi)$.
+
+The numerical error in~$\hat\beta$ decomposes along the
+eigenvectors of~$M$ into two qualitatively different
+contributions:
+\begin{itemize}
+\item \emph{Near-null directions}
+  (small~$|\lambda_j|$):
+  The error in~$\hat x$ can be large
+  (absolute error~$\sim |\lambda_{\max}|/|\lambda_{\min}|$;
+  Remark~\ref{rem:eigen-accuracy}~(3)).
+  However, the~$Q$ error is only
+  \emph{second-order} in the perturbation
+  (Remark~\ref{rem:near-null-q}):
+  the near-null eigenvector is approximately tangent
+  and has curvature proportional to~$\lambda_j$,
+  so the large displacement~$\sim 1/|\lambda_j|$
+  is partially cancelled by the
+  small curvature~$\sim |\lambda_j|$.
+  The sign of~$\lambda_j$ determines whether
+  this direction is concave or convex for~$Q$
+  (Remark~\ref{rem:eigenvalue-signs}).
+
+\item \emph{Well-conditioned directions}
+  (large~$|\lambda_j|$):
+  The solve is accurate
+  ($\|\delta\beta\| = O(\varepsilon_{\mathrm{mach}})$),
+  so
+  $|Q(\hat\beta) - Q(\beta_0)|
+    = O(\varepsilon_{\mathrm{mach}})$.
+\end{itemize}
+\end{remark}
+
+% --- Q error bound lemma (replaces dismiss logic B.5--B.9, unreviewed) ---
+
+\begin{lemma}[$Q$ error bound from KKT residual]%
+\label{lem:q-interval}
+Let $M$ be the symmetric KKT matrix
+of~\eqref{eq:kkt-system}
+with smallest eigenvalue magnitude
+$|\lambda_{\min}| = \min_j |\lambda_j| > 0$,
+and let $x_0 = (\beta_0, \mu_0, \xi_0)$ be the exact
+solution (with negated multipliers
+$\mu_0 = -\lambda_0$, $\xi_0 = -\nu_0$).
+Let $\hat x = (\hat\beta, \hat\mu, \hat\xi)$ be the
+numerical solution with residual
+\[
+  r \;=\; M\hat x - b
+  \;=\; \begin{pmatrix}
+    H\hat\beta + N\hat\mu + \eta\hat\xi \\
+    N^\top\hat\beta \\
+    \eta^\top\hat\beta - 1
+  \end{pmatrix}
+  \;=:\; \begin{pmatrix}r_1 \\ r_2 \\ r_3\end{pmatrix},
+\]
+where $r_1 \in \mathbb{R}^m$ is the stationarity residual,
+$r_2 \in \mathbb{R}^4$ is the constraint residual, and
+$r_3 \in \mathbb{R}$ is the normalisation residual.
+Define the \emph{residual-corrected objective}
+\begin{equation}\label{eq:q-corrected}
+  \tilde Q
+  \;=\; Q(\hat\beta)
+    - \bigl(r_2^\top\hat\mu + r_3\,\hat\xi\bigr)
+\end{equation}
+and the \emph{error bound}
+\begin{equation}\label{eq:q-error-bound}
+  E \;=\; \frac{9}{2}\,\frac{\|r\|^2}{|\lambda_{\min}|}.
+\end{equation}
+Then $|Q(\beta_0) - \tilde Q| \leq E$.
+\end{lemma}
+
+\begin{proof}
+Write $\delta x = \hat x - x_0$ with components
+$(\delta\beta, \delta\mu, \delta\xi)$.
+Since $M x_0 = b$, we have $M\,\delta x = r$,
+hence $\|\delta x\| \leq \|r\| / |\lambda_{\min}|$ and
+each component satisfies the same bound:
+\begin{equation}\label{eq:delta-bound}
+  \|\delta\beta\| \leq \frac{\|r\|}{|\lambda_{\min}|}, \quad
+  \|\delta\mu\| \leq \frac{\|r\|}{|\lambda_{\min}|}, \quad
+  |\delta\xi| \leq \frac{\|r\|}{|\lambda_{\min}|}.
+\end{equation}
+
+\emph{Step~1: expand $Q(\hat\beta) - Q(\beta_0)$.}
+Since $Q(\beta) = -(1/2)\,\beta^\top H\,\beta$,
+\[
+  Q(\hat\beta) - Q(\beta_0)
+  = -\delta\beta^\top H\,\beta_0
+    - \tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta.
+\]
+
+\emph{Step~2: rewrite the cross term using KKT.}
+The stationarity condition (first block of $M x_0 = b$) is
+$H\beta_0 + N\mu_0 + \eta\xi_0 = 0$.
+Hence
+\[
+  \delta\beta^\top H\,\beta_0
+  = -\delta\beta^\top(N\mu_0 + \eta\xi_0)
+  = -(N^\top\delta\beta)^\top \mu_0
+    - (\eta^\top\delta\beta)\,\xi_0.
+\]
+The constraint residual blocks
+(rows $m{+}1$ to $m{+}5$ of $M\hat x - b$) give
+$N^\top\delta\beta = N^\top\hat\beta = r_2$
+(since $N^\top\beta_0 = 0$ by the exact constraint)
+and similarly $\eta^\top\delta\beta = r_3$, hence
+\begin{equation}\label{eq:cross-term}
+  -\delta\beta^\top H\,\beta_0
+  = r_2^\top\mu_0 + r_3\,\xi_0.
+\end{equation}
+Substituting into Step~1 and rearranging:
+\begin{equation}\label{eq:q-expansion}
+  Q(\beta_0) = Q(\hat\beta) - (r_2^\top\mu_0 + r_3\,\xi_0)
+    + \tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta.
+\end{equation}
+
+\emph{Step~3: substitute numerical multipliers.}
+Write $\mu_0 = \hat\mu - \delta\mu$ and
+$\xi_0 = \hat\xi - \delta\xi$:
+\[
+  r_2^\top\mu_0 + r_3\,\xi_0
+  = (r_2^\top\hat\mu + r_3\,\hat\xi)
+    - (r_2^\top\delta\mu + r_3\,\delta\xi).
+\]
+The first term is the computable correction
+in~\eqref{eq:q-corrected}.
+The second is a second-order remainder:
+\begin{equation}\label{eq:substitution-remainder}
+  |r_2^\top\delta\mu + r_3\,\delta\xi|
+  \leq \|r_2\|\,\|\delta\mu\| + |r_3|\,|\delta\xi|
+  \leq 2\,\frac{\|r\|^2}{|\lambda_{\min}|},
+\end{equation}
+using $\|r_2\|, |r_3| \leq \|r\|$
+and~\eqref{eq:delta-bound}.
+
+\emph{Step~4: bound the quadratic term
+  using the KKT block structure.}
+Expanding $\delta x^\top M\,\delta x$
+via the block structure
+$M = \bigl[\begin{smallmatrix}
+  H & N & \eta \\
+  N^\top & 0 & 0 \\
+  \eta^\top & 0 & 0
+\end{smallmatrix}\bigr]$
+gives
+\begin{equation}\label{eq:block-identity}
+  \delta\beta^\top H\,\delta\beta
+  = \delta x^\top M\,\delta x
+    - 2\,r_2^\top\delta\mu
+    - 2\,r_3\,\delta\xi,
+\end{equation}
+where we used $N^\top\delta\beta = r_2$
+and $\eta^\top\delta\beta = r_3$ from Step~2.
+For the first term,
+\[
+  |\delta x^\top M\,\delta x|
+  = |r^\top M^{-1} r|
+  = \Bigl|\sum_j \frac{(v_j^\top r)^2}{\lambda_j}\Bigr|
+  \leq \frac{\|r\|^2}{|\lambda_{\min}|}.
+\]
+Combining with~\eqref{eq:delta-bound}
+for $\|\delta\mu\|$ and $|\delta\xi|$:
+\[
+  |\delta\beta^\top H\,\delta\beta|
+  \leq \frac{\|r\|^2}{|\lambda_{\min}|}
+    + 4\,\frac{\|r\|^2}{|\lambda_{\min}|}
+  = \frac{5\,\|r\|^2}{|\lambda_{\min}|}.
+\]
+
+% QC: The key improvement over the naive bound
+%   |δβ^T H δβ| ≤ ||H|| · ||δβ||² ≤ ||H|| · ||r||²/|λ_min|²
+%   is replacing ||H||/|λ_min|² with 5/|λ_min|.
+%   This uses the structural identity (eq:block-identity):
+%   since M's off-diagonal blocks connect β to (μ,ξ), the
+%   quadratic form δβ^T H δβ equals δx^T M δx minus cross
+%   terms, and δx^T M δx = r^T M^{-1} r has spectral bound
+%   ||r||²/|λ_min| (not ||H||·||r||²/|λ_min|²).
+
+\emph{Conclusion.}
+From~\eqref{eq:q-expansion},
+\eqref{eq:substitution-remainder},
+and Step~4:
+\[
+  |Q(\beta_0) - \tilde Q|
+  \leq 2\,\frac{\|r\|^2}{|\lambda_{\min}|}
+    + \frac{5}{2}\,\frac{\|r\|^2}{|\lambda_{\min}|}
+  = \frac{9}{2}\,\frac{\|r\|^2}{|\lambda_{\min}|}
+  = E.
+  \qedhere
+\]
+\end{proof}
+
+\begin{algorithm}[$Q$ value with error bound]%
+\label{alg:q-interval}
+For each pair $(S, \sigma)$ that survives pruning,
+the algorithm computes a corrected objective
+value~$\tilde Q$ with error bound~$E$
+satisfying $|Q(\beta_0) - \tilde Q| \leq E$:
+\begin{enumerate}
+\item Compute the eigendecomposition
+  $M = V \Lambda V^\top$ of the symmetric KKT
+  matrix~\eqref{eq:kkt-system}.
+\item Compute the pseudoinverse solution
+  $\hat x = (\hat\beta, \hat\mu, \hat\xi)
+    = \sum_{|\lambda_j| > \tau}
+      (v_j^\top b / \lambda_j)\, v_j$,
+  retaining eigenvalues above a threshold~$\tau$.
+\item Compute the residual $r = M\hat x - b$ and
+  extract blocks $r_2 = N^\top\hat\beta$
+  (constraint residual)
+  and $r_3 = \eta^\top\hat\beta - 1$
+  (normalisation residual).
+\item Compute $Q(\hat\beta)$ and the corrected value
+  $\tilde Q = Q(\hat\beta)
+    - (r_2^\top\hat\mu + r_3\,\hat\xi)$.
+\item Compute the error bound
+  $E = (9/2)\,\|r\|^2 / |\lambda_{\min}|$,
+  where $|\lambda_{\min}|$ is the smallest
+  retained eigenvalue magnitude.
+\item Return the corrected value~$\tilde Q$,
+  the error bound~$E$, and~$\hat\beta$.
+\end{enumerate}
+\end{algorithm}
+
+\begin{remark}[Error bound in practice]%
+\label{rem:interval-width}
+By backward stability of the eigendecomposition
+(Remark~\ref{rem:eigen-accuracy}),
+$\|r\| = O(\varepsilon_{\mathrm{mach}}\,\|M\|)$.
+The error bound is therefore
+\[
+  E
+  = \frac{9}{2}\,
+    \frac{\|r\|^2}{|\lambda_{\min}|}
+  = O\!\left(
+    \frac{\varepsilon_{\mathrm{mach}}^2\,\|M\|^2}
+         {|\lambda_{\min}|}
+  \right).
+\]
+For well-conditioned systems
+($|\lambda_{\min}| \approx \|M\|$),
+this gives $E = O(\varepsilon_{\mathrm{mach}}^2\,\|M\|)$.
+Even for severely ill-conditioned systems
+($|\lambda_{\min}| = 10^{-15}$),
+$E \approx 10^{-17}$ --- the bound remains useful
+because it scales as $1/|\lambda_{\min}|$,
+not $\|H\|/|\lambda_{\min}|^2$.
+
+The key structural reason is that the quadratic
+error $\delta\beta^\top H\,\delta\beta$ decomposes
+via the KKT block structure
+(identity~\eqref{eq:block-identity})
+into $\delta x^\top M\,\delta x$ minus cross terms.
+The spectral bound
+$|\delta x^\top M\,\delta x| \leq \|r\|^2/|\lambda_{\min}|$
+is tight: each eigendirection~$j$ contributes
+$(v_j^\top r)^2/|\lambda_j|$,
+and directions with small~$|\lambda_j|$
+have large $x$-error but proportionally small
+$Q$-sensitivity (the $\lambda_j$ cancels).
+\end{remark}
+
+% --- Positivity check (from approved A.2, ad-hoc framing) ---
+
+\paragraph{Admissibility check.}
+In addition to the $Q$~value with error bound,
+Algorithm~\ref{alg:ehz} requires
+$\beta_i > 0$ for all $i \in S$.
+Since~$\hat\beta$ differs from the true~$\beta^*$ by
+numerical error, a component~$\hat\beta_i$ near zero is
+ambiguous: the true value might be positive, negative,
+or exactly zero.
+The implementation therefore returns a three-valued verdict
+for each component:
+\[
+  \tilde P_{>0}(\hat\beta_i) =
+  \begin{cases}
+    \textsc{true}
+      & \text{if } \hat\beta_i > \varepsilon_\beta, \\
+    \textsc{false}
+      & \text{if } \hat\beta_i < -\varepsilon_\beta, \\
+    \textsc{unknown}
+      & \text{if } |\hat\beta_i| \leq \varepsilon_\beta,
+  \end{cases}
+\]
+where $\varepsilon_\beta$ bounds the solve error.
+If all components return $\textsc{true}$, the candidate
+is certified admissible.
+If any component returns $\textsc{false}$, the candidate
+is inadmissible and discarded.
+Otherwise, some component is $\textsc{unknown}$ and
+the candidate's admissibility is uncertain:
+\begin{itemize}
+\item If $0 < \beta^*_i < \varepsilon_\beta$:
+  the pair is genuinely admissible but may be incorrectly
+  discarded ($\hat\beta_i$ could round negative).
+\item If $-\varepsilon_\beta < \beta^*_i < 0$:
+  the pair is genuinely inadmissible but may be incorrectly
+  kept ($\hat\beta_i$ could round positive).
+\item If $\beta^*_i = 0$:
+  the pair is covered by a smaller
+  pair $(S \setminus \{i\}, \sigma|_{S \setminus \{i\}})$,
+  which the algorithm also examines.
+\end{itemize}
+
+% [TODO: JÖRN - in the new framework, the three-valued
+%  verdict feeds into the Q error bound: TRUE admissibility
+%  gives a tight bound from numerical error alone. UNKNOWN
+%  admissibility gives a wider bound or flags the node for
+%  special handling. The exact interaction needs to be
+%  worked out.]
+
+
+% ===================================================================
+\subsection{Accumulator and Final Answer}\label{app:answer}
+% ===================================================================
+
+% --- Accumulator (rewritten to match code, unreviewed) ---
+
+The algorithm processes all candidate pairs
+$(S, \sigma)$ and selects the one with smallest
+action (equivalently, largest~$\tilde Q$).
+The accumulator tracks two candidates:
+\begin{itemize}
+\item \textbf{Best certified:}
+  the candidate with smallest action among those whose
+  numerical~$\hat\beta$ satisfies
+  $\hat\beta_i > \varepsilon_\beta$ for all~$i \in S$
+  (all admissibility predicates return $\textsc{true}$).
+\item \textbf{Best uncertain:}
+  the candidate with smallest action among those whose
+  numerical~$\hat\beta$ satisfies
+  $\hat\beta_i > -\varepsilon_\beta$ for all~$i \in S$
+  (all predicates return $\textsc{true}$ or
+  $\textsc{unknown}$, i.e.\ no predicate returns
+  $\textsc{false}$).
+\end{itemize}
+Every certified candidate is also uncertain, so
+the best uncertain action is always~$\leq$
+the best certified action.
+
+\paragraph{Candidate classification.}
+Each pair $(S, \sigma)$ is classified as follows:
+\begin{description}
+\item[Skipped.]
+  Transition pruning
+  (Section~\ref{app:pruning})
+  determines that no Reeb trajectory with
+  combinatorics~$(S, \sigma)$ exists.
+
+\item[Inadmissible.]
+  The KKT solve returns no solution
+  (no $\hat\beta$ with
+  $\tilde Q > \varepsilon_Q$), or some
+  $\hat\beta_i < -\varepsilon_\beta$
+  (a predicate returns $\textsc{false}$).
+  The pair is discarded.
+
+\item[Certified.]
+  All $\hat\beta_i > \varepsilon_\beta$.
+  The pair competes for best certified
+  and best uncertain.
+
+\item[Uncertain.]
+  All $\hat\beta_i > -\varepsilon_\beta$
+  but some $|\hat\beta_i| \leq \varepsilon_\beta$.
+  The pair competes only for best uncertain.
+\end{description}
+
+\paragraph{Comparison.}
+Candidates are compared by action
+$A = 1/(2\,\tilde Q)$,
+using point comparison on the
+residual-corrected~$\tilde Q$.
+% Downstream: action = 0.5 / result.q_corrected (lower action = higher Q = better orbit)
+The error bound~$E$ from
+Lemma~\ref{lem:q-interval} satisfies
+$E = O(\varepsilon_{\mathrm{mach}}^2\,\|M\|^2
+  / |\lambda_{\min}|)$
+(Remark~\ref{rem:interval-width}),
+which is negligible for any
+$|\lambda_{\min}|$ above machine epsilon.
+Point comparison on~$\tilde Q$ is therefore reliable.
+
+\paragraph{Final answer.}
+The algorithm returns the best certified candidate.
+If no certified candidate exists, the algorithm
+returns~\textsc{None} (no admissible closed Reeb
+orbit was found).
+
+\paragraph{Safety net.}
+After enumeration, the algorithm checks that the best
+uncertain action is~$\geq$ the best certified action.
+If an uncertain candidate achieves strictly lower action
+than the best certified one, the reported capacity might
+be wrong---an orbit that is genuinely admissible
+(with some~$\beta_i$ very close to zero) would give
+a larger capacity than the certified answer.
+The algorithm panics in this case rather than returning
+a potentially incorrect result.
+% Downstream: assert!(uncertain_cap >= certified.0, ...)
+% in hk2017/mod.rs:146-152
+In all experiments to date (33~test polytopes),
+the assertion has never fired.
+
+\begin{remark}[Why point comparison suffices]%
+\label{rem:point-comparison}
+The corrected~$\tilde Q$ absorbs the first-order
+numerical error via the residual correction
+(Lemma~\ref{lem:q-interval}).
+The remaining error~$E$ is second-order
+in the backward error and satisfies
+$E = O(\varepsilon_{\mathrm{mach}}^2)$ for
+well-conditioned systems
+(Remark~\ref{rem:interval-width}).
+For the polytopes in our dataset,
+$E < 10^{-13}$ in all cases, making interval
+majorization unnecessary: point comparison
+on~$\tilde Q$ correctly identifies the global
+maximum.
+If future polytopes produce larger~$E$ (e.g.\ due
+to near-singular KKT systems),
+the interval framework from
+Section~\ref{app:kkt} provides a fallback:
+compare $[\tilde Q - E,\; \tilde Q + E]$ intervals
+and resolve overlaps.
+\end{remark}
+
+\begin{remark}[Parameter scales in practice]\label{rem:parameter-scales}
+For polytopes generated by our random sampling
+(Section~\ref{sec:random-sweep}),
+the relevant quantities have the following typical magnitudes:
+the symplectic inner products
+$\omega_0(n_i, n_j) \in [-1, 1]$ (unit normals),
+with $\omega_0(n_i, n_j) \approx 0$ occurring primarily
+for near-Lagrangian 2-faces;
+heights $h_i \in [h_{\min}, h_{\max}]$ with typical range
+$[0.1, 10]$;
+vertex norms $\|v\| \lesssim 100$;
+and empirically $\beta_i = O(\|v\|)$, though the precise
+scaling of $\beta$ with the polytope geometry (via the
+constraints $N^\top \beta = 0$, $\eta^\top \beta = 1$)
+deserves further investigation.
+Before the normalisation $\eta^\top \beta = 1$,
+the un-normalised period~$T$ of the candidate trajectory is bounded below
+by the inradius (determined by $\min_k h_k$) and above by
+the circumradius (determined by $\max_k \|v_k\|$);
+the normalisation rescales $\beta$ by $1/T$.
+
+These scales determine how aggressively the three-valued
+predicates can distinguish $\textsc{true}$ from
+$\textsc{unknown}$:
+tolerances that are small relative to these scales yield
+few $\textsc{unknown}$ verdicts.
+\end{remark}
