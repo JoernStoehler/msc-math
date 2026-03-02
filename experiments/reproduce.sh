@@ -95,10 +95,6 @@ experiments/target/release/sys_optimization
 experiments/target/release/q_error 2>&1 | tee experiments/q-error/q_error_output.txt
 # → experiments/q-error/q_error_output.txt (summary tables)
 
-# Dismissal error bound validation (33 polytopes from capacity_dataset.json)
-experiments/target/release/dismissal_error
-# → experiments/dismissal-error/dismissal-error.jsonl
-
 # ── Step 2: Generate figures and tables ──────────────────────────────────────
 # Python scripts read .jsonl from their experiment folder, write figures/tables
 # to the same folder.
@@ -148,10 +144,6 @@ python3 experiments/sys-optimization/sys_optimization.py
 # → experiments/sys-optimization/sys_optimization_iteration_summary.png
 # → experiments/sys-optimization/sys_optimization_validity.png
 # → experiments/sys-optimization/sys_optimization_stats.tex
-
-# Dismissal error bound: distribution of error bounds
-python3 experiments/dismissal-error/dismissal_error.py
-# → experiments/dismissal-error/dismissal-error.png
 
 # ── Step 3: Visualization screenshots ────────────────────────────────────────
 # First generate polytope data, then embed into the web viewer, then screenshot.
