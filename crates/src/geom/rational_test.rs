@@ -620,44 +620,44 @@ fn reject_redundant_facet() {
     );
 }
 
-/// Non-simple polytope should fail: a polytope where a vertex lies on >4 facets.
+/// Non-simple polytope is supported: hypercube [-1,1]^4 + diagonal cut x₁+x₂+x₃+x₄ ≤ 2.
 ///
-/// Construction: take the simplex (5 facets, vertex (-1/5,...,-1/5) on facets
-/// {0,1,2,3}) and add a 6th facet x₁ - x₂ ≤ 0 that also passes through
-/// this vertex (since x₁ = x₂ = -1/5 there). This creates a vertex on 5 facets.
-/// The 6th facet is not redundant (it cuts through the interior of the simplex).
+/// The cut removes vertex (1,1,1,1) and makes 4 vertices non-simple: each of
+/// (1,1,1,-1), (1,1,-1,1), (1,-1,1,1), (-1,1,1,1) lies on 5 facets (4 original + cut).
+///
+/// **Why this input:** Smallest non-simple polytope we can easily construct.
+/// F=9 → C(9,4)=126 systems, fast over Q.
 #[test]
-fn reject_not_simple() {
+fn non_simple_polytope_accepted() {
+    // Hypercube: ±xᵢ ≤ 1 for i=1..4 (8 facets)
+    // + diagonal cut: x₁+x₂+x₃+x₄ ≤ 2 (9th facet)
     let normals = vec![
-        [rat(-1), rat(0), rat(0), rat(0)],   // facet 0: -x₁ ≤ 1/5
-        [rat(0), rat(-1), rat(0), rat(0)],    // facet 1: -x₂ ≤ 1/5
-        [rat(0), rat(0), rat(-1), rat(0)],    // facet 2: -x₃ ≤ 1/5
-        [rat(0), rat(0), rat(0), rat(-1)],    // facet 3: -x₄ ≤ 1/5
-        [rat(1), rat(1), rat(1), rat(1)],     // facet 4: sum ≤ 1
-        [rat(1), rat(-1), rat(0), rat(0)],    // facet 5: x₁ - x₂ ≤ 0
+        [rat(1), rat(0), rat(0), rat(0)],
+        [rat(-1), rat(0), rat(0), rat(0)],
+        [rat(0), rat(1), rat(0), rat(0)],
+        [rat(0), rat(-1), rat(0), rat(0)],
+        [rat(0), rat(0), rat(1), rat(0)],
+        [rat(0), rat(0), rat(-1), rat(0)],
+        [rat(0), rat(0), rat(0), rat(1)],
+        [rat(0), rat(0), rat(0), rat(-1)],
+        [rat(1), rat(1), rat(1), rat(1)],  // diagonal cut
     ];
-    // At vertex (-1/5,-1/5,-1/5,-1/5): facet 5 gives (-1/5)-(-1/5) = 0 ≤ 0. Tight!
-    // So this vertex lies on facets {0,1,2,3,5} → 5 facets → not simple.
-    // Height for facet 5 must be positive: ⟨(1,-1,0,0), x⟩ ≤ h.
-    // We need h > 0, and the facet must also be satisfied by all simplex vertices.
-    // Simplex vertex omitting facet 0: (8/5, -1/5, -1/5, -1/5).
-    //   (8/5) - (-1/5) = 9/5. So h ≥ 9/5 to keep this vertex.
-    // Simplex vertex omitting facet 1: (-1/5, 8/5, -1/5, -1/5).
-    //   (-1/5) - (8/5) = -9/5 ≤ h. Always satisfied.
-    // Use h = 9/5 to make the facet non-redundant (tight at one vertex).
-    // Actually at vertex omitting facet 0: gap = 9/5 - 9/5 = 0 → also tight!
-    // So vertex (8/5,-1/5,-1/5,-1/5) lies on facets {1,2,3,4,5} → also 5 facets.
-    // Either way, not simple.
     let heights = vec![
-        frac(1, 5), frac(1, 5), frac(1, 5), frac(1, 5),
-        rat(1),
-        frac(9, 5),
+        rat(1), rat(1), rat(1), rat(1),
+        rat(1), rat(1), rat(1), rat(1),
+        rat(2),  // sum ≤ 2: tight at (1,1,1,-1) etc.
     ];
-    let err = RationalPolytope4D::new(normals, heights).unwrap_err();
-    assert!(
-        matches!(err, RationalConstructionError::NotSimple { .. }),
-        "expected NotSimple, got {err}"
-    );
+    let rp = RationalPolytope4D::new(normals, heights)
+        .expect("non-simple polytope should be accepted");
+
+    let data = rp.combinatorial_data();
+    // Should have 15 vertices (16 hypercube vertices minus (1,1,1,1))
+    assert_eq!(data.vertex_descriptors.len(), 15);
+    // 4 vertices lie on 5 facets each
+    let non_simple_count = data.vertex_descriptors.iter()
+        .filter(|vd| vd.len() > 4)
+        .count();
+    assert_eq!(non_simple_count, 4, "expected 4 non-simple vertices");
 }
 
 /// Parallel halfspaces are unbounded (normals have rank 1).
@@ -1069,8 +1069,7 @@ fn from_rational_carries_exact_data() {
     let p = super::super::polytope::Polytope4D::from_rational(&rp)
         .expect("from_rational should succeed for simplex");
 
-    assert!(p.exact_data().is_some(), "from_rational should set exact_data");
-    let data = p.exact_data().unwrap();
+    let data = p.exact_data();
     assert_eq!(data.num_facets, 5);
     assert_eq!(data.vertex_descriptors.len(), 5);
 }

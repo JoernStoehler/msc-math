@@ -39,12 +39,12 @@ pub struct Polytope4D {
     vertices: Vec<Vector4<f64>>,
     /// Exact combinatorial data from the rational pipeline.
     ///
-    /// When present, this is the authoritative source for discrete decisions
-    /// (vertex-facet incidence, ω₀ signs, adjacency). Algorithms should prefer
-    /// this over recomputing from f64 with tolerances.
+    /// This is the authoritative source for discrete decisions (vertex-facet
+    /// incidence, ω₀ signs, adjacency). Algorithms use this instead of
+    /// recomputing from f64 with tolerances.
     ///
-    /// `None` for polytopes constructed from f64 without the rational pipeline.
-    exact_data: Option<super::rational::CombinatorialData>,
+    /// Computed at construction time via [`RationalPolytope4D::from_f64`].
+    exact_data: super::rational::CombinatorialData,
 }
 
 /// Errors from [`Polytope4D::new()`] when invariants are violated.
@@ -137,11 +137,19 @@ impl Polytope4D {
             return Err(ConstructionError::RedundantFacet(i));
         }
 
+        // Compute exact combinatorial data via rational pipeline.
+        // from_f64 reinterprets the f64 normals/heights as exact rationals (lossless),
+        // then computes exact vertices, incidence, adjacency, and ω₀ signs over Q.
+        let rp = super::rational::RationalPolytope4D::from_f64(&normals, &heights)
+            .map_err(|e| ConstructionError::VertexEnumerationFailed(
+                format!("rational pipeline failed: {e}")
+            ))?;
+
         Ok(Self {
             normals,
             heights,
             vertices,
-            exact_data: None,
+            exact_data: rp.combinatorial_data().clone(),
         })
     }
 
@@ -165,27 +173,35 @@ impl Polytope4D {
         self.normals.len()
     }
 
-    /// Exact combinatorial data from the rational pipeline, if available.
+    /// Exact combinatorial data from the rational pipeline.
     ///
-    /// Returns `Some` for polytopes constructed via [`from_rational()`](Self::from_rational).
-    /// Returns `None` for polytopes constructed from f64 without the rational pipeline.
-    pub fn exact_data(&self) -> Option<&super::rational::CombinatorialData> {
-        self.exact_data.as_ref()
+    /// Always available — computed at construction time for every `Polytope4D`.
+    /// This is the authoritative source for vertex-facet incidence, facet
+    /// adjacency, and ω₀ sign decisions.
+    pub fn exact_data(&self) -> &super::rational::CombinatorialData {
+        &self.exact_data
     }
 
     /// Construct from a [`RationalPolytope4D`](super::rational::RationalPolytope4D).
     ///
     /// Normalizes the rational normals to f64 unit vectors (via `to_f64()`),
-    /// then attaches the exact combinatorial data. The result carries both:
+    /// then attaches the exact combinatorial data from `rp`. The result carries:
     /// - f64 unit normals, heights, vertices (for KKT solver, numerics)
     /// - Exact incidence, adjacency, ω₀ signs (for discrete decisions)
+    ///
+    /// Prefer this over `new()` when you already have a `RationalPolytope4D`,
+    /// since `new()` would redundantly recompute the rational representation.
     pub fn from_rational(
         rp: &super::rational::RationalPolytope4D,
     ) -> Result<Self, ConstructionError> {
+        // to_f64() → Polytope4D::new() → computes exact_data via from_f64()
+        // (redundant since we already have rp's combinatorial data).
+        // Override with the source's data which may differ (e.g. if rp was
+        // constructed directly from exact rationals, not from f64 round-trip).
         let mut polytope = rp.to_f64().map_err(|e| {
             ConstructionError::VertexEnumerationFailed(format!("rational→f64 failed: {e}"))
         })?;
-        polytope.exact_data = Some(rp.combinatorial_data().clone());
+        polytope.exact_data = rp.combinatorial_data().clone();
         Ok(polytope)
     }
 }

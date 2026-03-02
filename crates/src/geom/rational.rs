@@ -133,11 +133,6 @@ pub enum RationalConstructionError {
     /// Facet is redundant: no incident vertices, or incident vertices
     /// have affine rank < 3 (don't span the facet hyperplane).
     RedundantFacet(usize),
-    /// Polytope is not simple: some vertex lies on more than 4 facets.
-    NotSimple {
-        vertex_index: usize,
-        facets: BTreeSet<usize>,
-    },
     /// Perturbation failed to break all ω₀ = 0 (astronomically unlikely).
     PerturbationFailed,
     /// Conversion to f64 failed.
@@ -158,17 +153,6 @@ impl std::fmt::Display for RationalConstructionError {
             Self::Unbounded => write!(f, "normals do not positively span R^4 (unbounded)"),
             Self::NoVertices => write!(f, "no vertices found (inconsistent halfspaces)"),
             Self::RedundantFacet(i) => write!(f, "facet {i} is redundant (no incident vertices, or affine rank < 3)"),
-            Self::NotSimple {
-                vertex_index,
-                facets,
-            } => {
-                write!(
-                    f,
-                    "not simple: vertex {vertex_index} on {} facets ({:?})",
-                    facets.len(),
-                    facets
-                )
-            }
             Self::PerturbationFailed => write!(
                 f,
                 "perturbation failed to break all ω₀ = 0 (astronomically unlikely)"
@@ -409,9 +393,12 @@ impl RationalPolytope4D {
     /// Fails if:
     /// - Fewer than 5 facets
     /// - Any normal is zero or any height is non-positive
-    /// - No vertices found (unbounded or inconsistent)
-    /// - Any facet is redundant (no incident vertices)
-    /// - Not simple (some vertex on more than 4 facets)
+    /// - Normals do not positively span R^4 (unbounded)
+    /// - No vertices found (inconsistent halfspaces)
+    /// - Any facet is redundant (no incident vertices or affine rank < 3)
+    ///
+    /// Non-simple polytopes (vertices on >4 facets) are supported: the vertex
+    /// descriptor records ALL incident facets, not just the defining 4-subset.
     pub fn new(
         normals: Vec<[BigRational; 4]>,
         heights: Vec<BigRational>,
@@ -526,8 +513,13 @@ impl RationalPolytope4D {
     /// For each 4-element subset S:
     /// 1. Compute det(N_S) exactly. If zero, skip (singular).
     /// 2. Solve N_S · v = h_S exactly via Cramer's rule.
-    /// 3. Check all gaps gⱼⁱ = hᵢ - ⟨nᵢ, v⟩ > 0 for i ∉ S (exact).
-    /// 4. If all positive → S is a vertex descriptor, v is the vertex.
+    /// 3. Check all gaps gⱼⁱ = hᵢ - ⟨nᵢ, v⟩ ≥ 0 for i ∉ S (exact).
+    /// 4. If all non-negative → v is a vertex; its descriptor is the set of
+    ///    ALL facets with gap = 0 (including the defining subset S).
+    ///
+    /// Non-simple vertices (on >4 facets) are handled by merging: the first
+    /// 4-subset that discovers a vertex records ALL incident facets. Later
+    /// subsets that yield the same vertex are skipped (already discovered).
     ///
     /// Returns (vertex_descriptors, vertices, dets_of_vertices, all_positive_gaps).
     fn enumerate_vertices_exact(
@@ -564,11 +556,10 @@ impl RationalPolytope4D {
             let v = solve4(&rows, &rhs).unwrap(); // safe: det ≠ 0
 
             // Check all gaps. gap > 0 means the facet is non-incident.
-            // gap = 0 means the vertex lies on >4 facets (not simple).
+            // gap = 0 means the vertex lies on this facet too (non-simple).
             // gap < 0 means the point is outside K (not a vertex).
             let mut all_nonnegative = true;
-            let mut has_zero_gap = false;
-            let mut zero_gap_facets = BTreeSet::from(subset);
+            let mut incident_facets = BTreeSet::from(subset);
             let mut subset_gaps = Vec::new();
             for i in 0..f {
                 if subset.contains(&i) {
@@ -580,27 +571,30 @@ impl RationalPolytope4D {
                     break;
                 }
                 if gap.is_zero() {
-                    has_zero_gap = true;
-                    zero_gap_facets.insert(i);
+                    incident_facets.insert(i);
                 } else {
                     subset_gaps.push(gap);
                 }
             }
 
-            if all_nonnegative && has_zero_gap {
-                // Point is inside K but on >4 facets → not simple
-                return Err(RationalConstructionError::NotSimple {
-                    vertex_index: vertex_descriptors.len(),
-                    facets: zero_gap_facets,
-                });
+            if !all_nonnegative {
+                continue; // Point is outside K
             }
 
-            if all_nonnegative && !has_zero_gap {
-                vertex_descriptors.push(BTreeSet::from(subset));
-                vertices.push(v);
-                dets.push(d);
-                gaps.extend(subset_gaps);
+            // Check if this vertex was already discovered by an earlier subset
+            // (happens for non-simple polytopes where multiple 4-subsets of the
+            // incident facets yield the same vertex).
+            let already_found = vertices.iter().any(|existing: &[BigRational; 4]| {
+                (0..4).all(|i| existing[i] == v[i])
+            });
+            if already_found {
+                continue;
             }
+
+            vertex_descriptors.push(incident_facets);
+            vertices.push(v);
+            dets.push(d);
+            gaps.extend(subset_gaps);
         }
 
         if vertex_descriptors.is_empty() {

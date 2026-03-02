@@ -28,9 +28,7 @@
 /// Σ_{m=2}^{F} C(F,m) · (m-1)! — exponential in F.
 pub mod permutations;
 
-use crate::constants::EPS_FACET_INCIDENCE;
 use crate::geom::polytope::Polytope4D;
-use crate::geom::symplectic::omega0;
 use crate::kkt::{solve_kkt, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
 use permutations::{cyclic_permutations, for_each_cyclic_permutation};
 
@@ -199,42 +197,21 @@ fn combinations_rec(
 /// Build facet adjacency matrix: adj[i][j] = true iff F_i ∩ F_j ≠ ∅.
 /// Two facets are adjacent if they share at least one vertex.
 ///
-/// When exact combinatorial data is available (from the rational pipeline),
-/// uses the precomputed exact adjacency set. Otherwise falls back to
-/// f64 tolerance-based incidence detection.
+/// Uses the exact adjacency set from the rational pipeline (always available
+/// on every `Polytope4D`).
 pub fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let f = polytope.facet_count();
+    let data = polytope.exact_data();
 
-    // Exact path: use precomputed adjacency from rational pipeline
-    if let Some(data) = polytope.exact_data() {
-        let mut adj = vec![vec![false; f]; f];
-        for &(i, j) in &data.adjacency {
-            adj[i][j] = true;
-            adj[j][i] = true;
-        }
-        // Diagonal: every facet is adjacent to itself
-        for (i, row) in adj.iter_mut().enumerate() {
-            row[i] = true;
-        }
-        return adj;
-    }
-
-    // Fallback: f64 tolerance-based incidence
-    let normals = polytope.normals();
-    let heights = polytope.heights();
     let mut adj = vec![vec![false; f]; f];
-
-    for v in polytope.vertices() {
-        let incident: Vec<usize> = (0..f)
-            .filter(|&i| (normals[i].dot(v) - heights[i]).abs() < EPS_FACET_INCIDENCE)
-            .collect();
-        for &i in &incident {
-            for &j in &incident {
-                adj[i][j] = true;
-            }
-        }
+    for &(i, j) in &data.adjacency {
+        adj[i][j] = true;
+        adj[j][i] = true;
     }
-
+    // Diagonal: every facet is adjacent to itself
+    for (i, row) in adj.iter_mut().enumerate() {
+        row[i] = true;
+    }
     adj
 }
 
@@ -249,54 +226,44 @@ pub fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
 /// exists only if ω₀(n_i, n_j) ≥ 0. In the algorithm's algebraic ordering,
 /// (i, j)_alg = (j, i)_phys, so the condition becomes ω₀(n_j, n_i) ≥ 0.
 ///
-/// When exact combinatorial data is available, uses the exact sign pattern
-/// (no f64 tolerance ambiguity near ω₀ = 0).
+/// Uses the exact sign pattern from the rational pipeline (always available),
+/// so there is no f64 tolerance ambiguity near ω₀ = 0.
 pub fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     use crate::geom::rational::Sign;
 
     let f = polytope.facet_count();
     let vertex_adj = build_adjacency_matrix(polytope);
+    let data = polytope.exact_data();
     let mut adj = vec![vec![false; f]; f];
 
-    if let Some(data) = polytope.exact_data() {
-        // Exact path: use precomputed sign pattern
-        for i in 0..f {
-            for j in 0..f {
-                if !vertex_adj[i][j] {
-                    continue;
+    for i in 0..f {
+        for j in 0..f {
+            if !vertex_adj[i][j] {
+                continue;
+            }
+            // Algebraic convention: adj[i][j] needs ω₀(n_j, n_i) ≥ 0.
+            // sign_pattern stores (min, max) pairs with min < max.
+            // ω₀ is antisymmetric: ω₀(n_j, n_i) = -ω₀(n_i, n_j).
+            let (lo, hi) = (j.min(i), j.max(i));
+            let sign = data.sign_pattern.get(&(lo, hi)).copied();
+            adj[i][j] = match sign {
+                Some(s) => {
+                    // sign_pattern stores sign of ω₀(n_lo, n_hi).
+                    // We need sign of ω₀(n_j, n_i).
+                    // If (lo, hi) = (j, i), sign is ω₀(n_j, n_i) — use directly.
+                    // If (lo, hi) = (i, j), sign is ω₀(n_i, n_j) — negate.
+                    let effective = if lo == j { s } else {
+                        match s {
+                            Sign::Plus => Sign::Minus,
+                            Sign::Minus => Sign::Plus,
+                            Sign::Zero => Sign::Zero,
+                        }
+                    };
+                    matches!(effective, Sign::Plus | Sign::Zero)
                 }
-                // Algebraic convention: adj[i][j] needs ω₀(n_j, n_i) ≥ 0.
-                // sign_pattern stores (min, max) pairs with min < max.
-                // ω₀ is antisymmetric: ω₀(n_j, n_i) = -ω₀(n_i, n_j).
-                let (lo, hi) = (j.min(i), j.max(i));
-                let sign = data.sign_pattern.get(&(lo, hi)).copied();
-                adj[i][j] = match sign {
-                    Some(s) => {
-                        // sign_pattern stores sign of ω₀(n_lo, n_hi).
-                        // We need sign of ω₀(n_j, n_i).
-                        // If (lo, hi) = (j, i), sign is ω₀(n_j, n_i) — use directly.
-                        // If (lo, hi) = (i, j), sign is ω₀(n_i, n_j) — negate.
-                        let effective = if lo == j { s } else {
-                            match s {
-                                Sign::Plus => Sign::Minus,
-                                Sign::Minus => Sign::Plus,
-                                Sign::Zero => Sign::Zero,
-                            }
-                        };
-                        matches!(effective, Sign::Plus | Sign::Zero)
-                    }
-                    // Not in sign pattern (e.g. i==j) — treat as allowed
-                    None => true,
-                };
-            }
-        }
-    } else {
-        // Fallback: f64 computation
-        let normals = polytope.normals();
-        for i in 0..f {
-            for j in 0..f {
-                adj[i][j] = vertex_adj[i][j] && omega0(&normals[j], &normals[i]) >= 0.0;
-            }
+                // Not in sign pattern (e.g. i==j) — treat as allowed
+                None => true,
+            };
         }
     }
 
