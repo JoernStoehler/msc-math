@@ -424,7 +424,7 @@ mod proptests {
 // ============================================================================
 // These tests verify that the KKT solver correctly handles rank-deficient
 // systems by searching the null space for β > 0 solutions. Before the fix,
-// SVD returned minimum-norm solutions that often had β ≤ 0 for degenerate
+// the minimum-norm pseudoinverse solution often had β ≤ 0 for degenerate
 // polytopes (axis-aligned normals in symplectic subplanes).
 
 /// Regression: (4,4) Lagrangian product at θ=0° (square × square, axis-aligned).

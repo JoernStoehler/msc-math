@@ -12,7 +12,7 @@
 //!   pairs are pruned earlier by the search algorithm).
 //!
 //! The f64 representation (unit normals, heights) is a derived quantity
-//! for fast numerical computation (KKT/SVD). The rational polytope is the
+//! for fast numerical computation (KKT solver). The rational polytope is the
 //! source of truth for all discrete/combinatorial decisions.
 //!
 //! # Margins ([def:numerically-robust])

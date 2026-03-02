@@ -822,7 +822,7 @@ fn solve_kkt_trace() {
     let max_sv = sv.iter().cloned().fold(0.0f64, f64::max);
 
     eprintln!("Step 2: SVD computed. max_sv={:.6e}", max_sv);
-    eprintln!("  max_sv < EPS_SVD_TOLERANCE(1e-10)? {}", max_sv < 1e-10);
+    eprintln!("  max_sv < EPS_EIGEN_FLOOR(1e-12)? {}", max_sv < 1e-12);
 
     let rank_tol = max_sv * 1e-10;
     let rank = sv.iter().filter(|&&s| s > rank_tol).count();

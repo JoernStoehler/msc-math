@@ -16,7 +16,7 @@ pub const EPS_Q_POSITIVE: f64 = 1e-15;
 
 /// Result of KKT solve with eigendecomposition diagnostics.
 ///
-/// See `[lem:v2-q-interval]` (thesis): |Q(β₀) - q_corrected| ≤ q_error_bound.
+/// See `[lem:q-interval]` (thesis): |Q(β₀) - q_corrected| ≤ q_error_bound.
 ///
 /// The corrected Q absorbs the first-order error from the KKT residual,
 /// leaving only a second-order remainder bounded by q_error_bound.
@@ -25,23 +25,20 @@ pub struct KktResult {
     /// Optimal β vector (numerical approximation, all components > 0).
     pub beta: Vec<f64>,
     /// Residual-corrected Q value: Q̃ = Q(β̂) - (r₂ᵀμ̂ + r₃ξ̂).
-    /// See `[eq:v2-q-corrected]` (thesis).
+    /// See `[eq:q-corrected]` (thesis).
     pub q_corrected: f64,
     /// Error bound E on Q̃: |Q(β₀) - Q̃| ≤ E.
-    /// See `[eq:v2-q-error-bound]` (thesis).
-    /// Used by debug_assert! in solver; will be used by accumulator and experiment code.
+    /// See `[eq:q-error-bound]` (thesis).
+    /// Checked by debug_assert! in solver; available for experiment/accumulator use.
     #[allow(dead_code)]
     pub q_error_bound: f64,
     /// Inertia of M: number of positive eigenvalues.
-    /// Used by experiment q_error.rs for inertia validation.
     #[allow(dead_code)]
     pub n_positive: usize,
     /// Inertia of M: number of negative eigenvalues.
-    /// Used by experiment q_error.rs for inertia validation.
     #[allow(dead_code)]
     pub n_negative: usize,
     /// Inertia of M: number of near-zero eigenvalues.
-    /// Used by experiment q_error.rs for inertia validation.
     #[allow(dead_code)]
     pub n_zero: usize,
 }
@@ -59,7 +56,7 @@ const EPS_EIGEN_FLOOR: f64 = 1e-12;
 /// to small values (which a gap-ratio approach would miss).
 ///
 /// For near-singular systems, the null space directions are used to search
-/// for β > 0, and the Q error bound (see `[lem:v2-q-interval]`) quantifies
+/// for β > 0, and the Q error bound (see `[lem:q-interval]`) quantifies
 /// the resulting objective uncertainty.
 ///
 /// **Why 1e-3:** The degenerate (4,4) Lagrangian product at θ≈0° has
@@ -283,7 +280,7 @@ pub(crate) fn build_kkt_system(
 ///
 /// Returns a `KktResult` with the β vector, corrected Q̃, error bound E
 /// satisfying |Q(β₀) - Q̃| ≤ E, and the inertia of M.
-/// See `[lem:v2-q-interval]` (thesis).
+/// See `[lem:q-interval]` (thesis).
 fn solve_kkt_eigen_path(
     kkt: &DMatrix<f64>,
     rhs: &DVector<f64>,
@@ -374,9 +371,9 @@ fn try_pseudoinverse_with_threshold(
         return None;
     }
 
-    // --- Q error bound computation (Algorithm [alg:v2-q-interval]) ---
+    // --- Q error bound computation (Algorithm [alg:q-interval]) ---
     // The solution vector is [β̂; μ̂; ξ̂] with negated multipliers (μ = -λ, ξ = -ν).
-    // Q̃ = Q(β̂) - (r₂ᵀμ̂ + r₃ξ̂)  [Lemma [lem:v2-q-interval], Step 2-3].
+    // Q̃ = Q(β̂) - (r₂ᵀμ̂ + r₃ξ̂)  [Lemma [lem:q-interval], Step 2-3].
     let r2_dot_mu: f64 = (m..m + 4).map(|i| residual_vec[i] * x0[i]).sum();
     let r3 = residual_vec[m + 4];
     let xi_hat = x0[m + 4];
@@ -390,7 +387,6 @@ fn try_pseudoinverse_with_threshold(
         .fold(f64::INFINITY, f64::min)
         .max(f64::MIN_POSITIVE);
 
-    // ‖H‖ ≤ |λ|_max (H is a submatrix of M, so ‖H‖ ≤ ‖M‖ = |λ|_max for symmetric M).
     let beta0: Vec<f64> = (0..m).map(|i| x0[i]).collect();
 
     // If already feasible, compute error bound and return.
@@ -398,7 +394,7 @@ fn try_pseudoinverse_with_threshold(
         let q_raw = q_from_beta(normals, perm, &beta0);
         let q_corrected = q_raw - q_correction;
         // Tight bound: E = (9/2) ‖r‖² / |λ_min|.
-        // See [lem:v2-q-interval] (thesis): uses KKT block structure identity
+        // See [lem:q-interval] (thesis): uses KKT block structure identity
         // δβᵀHδβ = δxᵀMδx − 2r₂ᵀδμ − 2r₃δξ to avoid ‖H‖/|λ_min|² term.
         let r_sq = residual_norm * residual_norm;
         let q_error_bound = 4.5 * r_sq / abs_lambda_min;
@@ -467,7 +463,7 @@ fn try_pseudoinverse_with_threshold(
     let q_raw = q_from_beta(normals, perm, &beta_opt);
     let q_corrected = q_raw - q_correction;
     // Tight bound: E = (9/2) ‖r‖² / |λ_min|.
-    // See [lem:v2-q-interval] (thesis): uses KKT block structure identity.
+    // See [lem:q-interval] (thesis): uses KKT block structure identity.
     let r_sq = residual_norm * residual_norm;
     let q_error_bound = 4.5 * r_sq / abs_lambda_min;
 
