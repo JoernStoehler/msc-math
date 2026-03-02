@@ -61,4 +61,19 @@ python3 gradient-descent/gradient_descent.py
 
 ## Findings
 
-(To be filled after experiment completes)
+995 polytopes completed (499 general, 166 × 3x7, 166 × 4x6, 164 × 5x5).
+
+**No polytope achieved sys > 1.** Best overall: sys = 0.905 (lagrangian_5x5_143).
+
+| Type | N | Mean sys | Max sys | P90 sys | Mean Δ |
+|------|---|----------|---------|---------|--------|
+| general | 499 | 0.453 | 0.870 | 0.687 | 0.100 |
+| lagrangian_3x7 | 166 | 0.493 | 0.862 | 0.781 | 0.182 |
+| lagrangian_4x6 | 166 | 0.566 | 0.881 | 0.784 | 0.222 |
+| lagrangian_5x5 | 164 | 0.628 | 0.905 | 0.806 | 0.217 |
+
+Key observations:
+- Lagrangian products reach higher sys than general polytopes (mean 0.56 vs 0.45)
+- More balanced splits (5x5) achieve higher sys than asymmetric splits (3x7)
+- Gradient ascent substantially improves sys: mean improvement +0.10 (general) to +0.22 (Lagrangian)
+- The sys = 1 barrier was not approached — highest value 0.905 with a clear gap
