@@ -63,7 +63,7 @@ by less than~$10^{-6}$, or after 20~iterations.
 Of the 1001 starting polytopes, 995 produce at least one valid gradient
 step (6~fail due to degenerate initial capacity or volume).
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{../experiments/gradient-descent/gradient_descent_results.png}
 \caption{Distribution of final $\mathrm{sys}$ after gradient ascent
@@ -74,7 +74,7 @@ step (6~fail due to degenerate initial capacity or volume).
 \label{fig:gd-histogram}
 \end{figure}
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{../experiments/gradient-descent/gradient_descent_scatter.png}
 \caption{Starting vs.\ final $\mathrm{sys}$ under gradient ascent.
@@ -85,7 +85,7 @@ step (6~fail due to degenerate initial capacity or volume).
 \label{fig:gd-scatter}
 \end{figure}
 
-\begin{table}[ht]
+\begin{table}[htbp]
 \centering
 \begin{tabular}{lrrrrr}
 \toprule
@@ -141,6 +141,11 @@ well below the Viterbo threshold.
 
 The empirical distributions of $\mathrm{sys}$ are well described
 by Beta distributions (Figure~\ref{fig:gd-density}).
+Recall that $\mathrm{Beta}(a,b)$ has density
+$f(x) \propto x^{a-1}(1-x)^{b-1}$ on~$[0,1]$;
+for $a, b > 1$ the density is unimodal and vanishes at both
+endpoints, with mean $a/(a+b)$ and the mode
+shifted right as $a/b$ increases.
 For general polytopes, the fit is excellent:
 starting values follow $\mathrm{Beta}(1.7,\, 2.2)$
 (KS test $p = 0.40$),
@@ -161,7 +166,7 @@ with $p = 0.55$),
 but the $3 \times 7$ and $5 \times 5$ splits show
 deviations from Beta.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{../experiments/gradient-descent/gradient_descent_density.png}
 \caption{Beta distribution fits to $\mathrm{sys}$ before and after
@@ -185,7 +190,7 @@ and~$1.2$, respectively (Figure~\ref{fig:gd-convergence}).
 These are $O(1)$ values---far from the near-zero gradients
 expected at a local maximum.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{../experiments/gradient-descent/gradient_descent_convergence.png}
 \caption{Gradient norms at termination vs.\ final $\mathrm{sys}$.
@@ -209,7 +214,7 @@ This means the algorithm always wants to step as far as possible,
 but the combinatorial type boundary closes in,
 leaving less and less room for improvement.
 
-\begin{figure}[ht]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{../experiments/gradient-descent/gradient_descent_stepsize.png}
 \caption{Step size dynamics.
