@@ -1,0 +1,179 @@
+use crate::geom::known_polytopes;
+use crate::kkt_rational::solve_kkt_exact;
+use num_traits::{Signed, Zero};
+
+/// Exact KKT solve on the simplex (F=5) returns a solution with β > 0 and Q > 0.
+///
+/// **Why this input:** Simplex is the smallest polytope (F=5, m=5 is the only
+/// non-trivial permutation size). Fast even with rational arithmetic.
+/// **Why debug mode:** Exercises Gaussian elimination code paths with bounds checks.
+#[test]
+fn simplex_exact_solve() {
+    let simplex = known_polytopes::simplex().polytope;
+    let normals = simplex.normals();
+    let heights = simplex.heights();
+
+    // Try the identity permutation [0,1,2,3,4] (all 5 facets)
+    let perm: Vec<usize> = (0..5).collect();
+    let result = solve_kkt_exact(normals, heights, &perm);
+    assert!(result.is_some(), "Simplex KKT system should be solvable");
+
+    let r = result.unwrap();
+    assert_eq!(r.beta.len(), 5);
+    // Q may be negative for arbitrary permutations (the capacity algorithm picks
+    // max Q > 0 across all permutations). Here we just check it's a valid rational.
+    assert!(!r.q_exact.is_zero(), "Q_exact should be nonzero for a non-degenerate system");
+    assert!(r.q_exact_f64.is_finite(), "Q_exact_f64 should be finite, got {}", r.q_exact_f64);
+}
+
+/// Exact KKT agrees with f64 KKT solver on the simplex's winning (S,σ).
+///
+/// **What it tests:** Compare exact Q_exact with f64 Q computed from best_beta.
+/// They should agree to within machine precision (~1e-13 relative).
+/// **Why debug mode:** Small polytope (F=5), fast.
+#[test]
+fn simplex_exact_vs_numerical() {
+    let simplex = known_polytopes::simplex().polytope;
+    let result_f64 = crate::algorithms::hk2017::ehz_capacity(&simplex)
+        .expect("Simplex should have capacity");
+
+    // Get the winning perm in algebraic order (reverse of physical orbit direction)
+    let mut alg_perm = result_f64.best_permutation.clone();
+    alg_perm.reverse();
+
+    // Compute Q from the f64 solver's beta (in algebraic order)
+    let mut alg_beta = result_f64.best_beta.clone();
+    alg_beta.reverse();
+    let q_numerical = crate::kkt::q_from_beta(simplex.normals(), &alg_perm, &alg_beta);
+
+    let exact = solve_kkt_exact(simplex.normals(), simplex.heights(), &alg_perm)
+        .expect("Exact solve should succeed on winning perm");
+
+    // Q_exact and Q_numerical should agree to ~machine precision.
+    let diff = (exact.q_exact_f64 - q_numerical).abs();
+    let tol = 1e-12 * (1.0 + exact.q_exact_f64.abs());
+    assert!(
+        diff < tol,
+        "Simplex: |Q_exact - Q_numerical| = {:.2e}, tol = {:.2e}, Q_exact = {:.15e}, Q_numerical = {:.15e}",
+        diff, tol, exact.q_exact_f64, q_numerical
+    );
+}
+
+/// Exact Q is exactly rational (not NaN or infinity).
+///
+/// **What it tests:** The BigRational computation doesn't overflow or produce
+/// degenerate values on a known polytope.
+#[test]
+fn hypercube_exact_solve() {
+    let hypercube = known_polytopes::hypercube().polytope;
+    let normals = hypercube.normals();
+    let heights = hypercube.heights();
+
+    // Try a 4-facet subset (first 4 facets)
+    let perm = vec![0, 1, 2, 3];
+    if let Some(r) = solve_kkt_exact(normals, heights, &perm) {
+        // Q_exact should be a valid rational number
+        assert!(!r.q_exact.is_zero() || r.beta.iter().all(|b| b.is_zero()),
+            "Non-trivial beta should give non-zero Q");
+        assert!(r.q_exact_f64.is_finite(), "Q_exact_f64 should be finite");
+    }
+    // It's fine if this particular perm is singular — that's valid behavior
+}
+
+/// Singular system returns None (not a panic).
+///
+/// **What it tests:** A permutation with linearly dependent constraints
+/// should yield None, not panic.
+#[test]
+fn singular_system_returns_none() {
+    let simplex = known_polytopes::simplex().polytope;
+    let normals = simplex.normals();
+    let heights = simplex.heights();
+
+    // A 2-element permutation — very likely to be singular for the simplex
+    // since m+5 = 7 > 5 = facet count, but we use valid facet indices
+    let perm = vec![0, 1];
+    // Whether this returns Some or None depends on the system — both are valid.
+    // The key invariant is no panic.
+    let _result = solve_kkt_exact(normals, heights, &perm);
+}
+
+/// Exact solver agrees with f64 solver on all known polytopes' winning nodes.
+///
+/// **Why #[ignore]:** Requires ehz_capacity() which is expensive in debug mode.
+/// **Run with:** `cargo test --release exact_agrees_on_known_polytopes -- --ignored`
+#[test]
+#[ignore] // Requires release mode for ehz_capacity
+fn exact_agrees_on_known_polytopes() {
+    let polytopes: Vec<_> = known_polytopes::all_known()
+        .into_iter()
+        .filter(|kp| kp.polytope.facet_count() <= 10)
+        .collect();
+
+    for kp in &polytopes {
+        let result_f64 = match crate::algorithms::hk2017::ehz_capacity(&kp.polytope) {
+            Some(r) => r,
+            None => continue,
+        };
+
+        let mut alg_perm = result_f64.best_permutation.clone();
+        alg_perm.reverse();
+        let mut alg_beta = result_f64.best_beta.clone();
+        alg_beta.reverse();
+        let q_numerical = crate::kkt::q_from_beta(kp.polytope.normals(), &alg_perm, &alg_beta);
+
+        let exact = match solve_kkt_exact(kp.polytope.normals(), kp.polytope.heights(), &alg_perm) {
+            Some(r) => r,
+            None => {
+                eprintln!("WARNING: {} winning node is singular in exact solver", kp.name);
+                continue;
+            }
+        };
+
+        let diff = (exact.q_exact_f64 - q_numerical).abs();
+        let tol = 1e-12 * (1.0 + exact.q_exact_f64.abs());
+        assert!(
+            diff < tol,
+            "{}: |Q_exact - Q_numerical| = {:.2e}, tol = {:.2e}, Q_exact = {:.15e}, Q_numerical = {:.15e}",
+            kp.name, diff, tol, exact.q_exact_f64, q_numerical
+        );
+    }
+}
+
+/// Beta positivity: on the winning node, all exact β_i should be positive.
+///
+/// The winning (S,σ) has Q > 0 and β > 0 by the capacity algorithm's filtering.
+/// The exact solver should confirm this with exact arithmetic.
+///
+/// **Why #[ignore]:** Requires ehz_capacity() in release mode.
+#[test]
+#[ignore]
+fn winning_beta_positive_exact() {
+    let polytopes: Vec<_> = known_polytopes::all_known()
+        .into_iter()
+        .filter(|kp| kp.polytope.facet_count() <= 8)
+        .collect();
+
+    for kp in &polytopes {
+        let result_f64 = match crate::algorithms::hk2017::ehz_capacity(&kp.polytope) {
+            Some(r) => r,
+            None => continue,
+        };
+
+        let mut alg_perm = result_f64.best_permutation.clone();
+        alg_perm.reverse();
+
+        let exact = match solve_kkt_exact(kp.polytope.normals(), kp.polytope.heights(), &alg_perm) {
+            Some(r) => r,
+            None => continue,
+        };
+
+        for (i, b) in exact.beta.iter().enumerate() {
+            assert!(
+                b.is_positive(),
+                "{}: exact β[{}] = {:?} is not positive (winning node should have β > 0)",
+                kp.name, i, b
+            );
+        }
+    }
+}

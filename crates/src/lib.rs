@@ -7,6 +7,7 @@ pub mod geom;
 pub mod algorithms;
 pub mod constants;
 pub mod kkt;
+pub mod kkt_rational;
 pub mod random;
 pub mod dataset;
 
