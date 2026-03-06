@@ -23,20 +23,14 @@ Be thorough and specific. Flag potential issues rather than miss real ones. Dist
 
 ## Conventions
 
-### Confidence Calibration
+### Report what's there, don't editorialize
 
-Agent-written prose drifts toward miscalibrated confidence — both overconfident and underconfident. For every interpretive or causal claim, check whether the confidence in the prose matches the evidence.
+Experiment writeups should report what the data shows. Don't invent interpretations, don't hedge facts. For every sentence, ask: is this directly supported by the data, or is the agent making something up?
 
-**Overconfidence** (conclusion language without sufficient evidence):
-1. **Quantifier inflation**: "always" when data shows 87%, "strongest" when data shows a correlation, "do not approximate" when this wasn't tested.
-2. **Causal language without causal evidence**: "the cause is visible in..." when only a correlation was shown. Prefer "the data is consistent with..." or "one explanation is...".
-3. **Unverified speculative claims**: statements about what *would* happen under untested conditions, presented without hedging.
-
-**Underconfidence** (hedging language when evidence is strong):
-4. **Unnecessary hedging on established facts**: "appears to", "seems to", "may" when the data clearly shows the pattern (e.g., "all 995 polytopes appear to have sys < 1" — no, they DO have sys < 1, it's computed).
-5. **Weakening reproducible results**: "suggests" or "is consistent with" for claims that are directly computable from the data (e.g., "the correlation suggests r ≈ 0.80" — no, the correlation IS 0.80).
-
-Detection: grep for "always", "never", "the cause", "shows that", "because", "\emph{" for overconfidence. Grep for "appears to", "seems to", "may" on factual/computable claims for underconfidence. Check each against the supporting evidence.
+- **Facts are facts**: if sys = 0.905 is computed, say "sys = 0.905", not "sys appears to be approximately 0.905"
+- **Correlations are correlations**: if r = 0.80, say "r = 0.80", not "the cause is..." or "this suggests..."
+- **Unknowns are unknowns**: if we didn't test whether random polygons approximate regular pentagons, don't claim they do or don't
+- **Speculation must be labeled**: if a paragraph is interpretation beyond the data, it must read as interpretation, not as a finding
 
 ### Experiment-Specific Conventions
 
