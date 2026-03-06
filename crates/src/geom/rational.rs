@@ -66,20 +66,21 @@ impl Sign {
 #[derive(Clone, Debug)]
 pub struct CombinatorialData {
     /// Number of facets.
-    pub num_facets: usize,
+    pub(crate) num_facets: usize,
     /// Vertex–facet incidence, stored as vertex descriptors: Sⱼ = {i : E_{j,i} = 1}.
-    /// Each vertex is the intersection of exactly 4 facets (simple polytope).
-    /// Sorted lexicographically.
-    pub vertex_descriptors: Vec<BTreeSet<usize>>,
+    /// Each vertex is the intersection of ≥4 facets (exactly 4 for simple polytopes,
+    /// more for non-simple). Sorted lexicographically.
+    pub(crate) vertex_descriptors: Vec<BTreeSet<usize>>,
     /// Vertex-adjacent facet pairs (i, k) with i < k.
     /// Derived from incidence: {i,k} ⊂ Sⱼ for some vertex j.
-    pub adjacency: BTreeSet<(usize, usize)>,
+    pub(crate) adjacency: BTreeSet<(usize, usize)>,
     /// sign(ω₀(nᵢ, nₖ)) for each vertex-adjacent pair (i, k) with i < k.
     /// Stored only for adjacent pairs (non-adjacent pairs are pruned by the
     /// search algorithm before symplectic signs are needed).
-    pub sign_pattern: BTreeMap<(usize, usize), Sign>,
+    pub(crate) sign_pattern: BTreeMap<(usize, usize), Sign>,
     /// Exact rational margins.
-    pub margins: Margins,
+    #[allow(dead_code)]
+    pub(crate) margins: Margins,
 }
 
 /// Exact rational margins for the ε-robustness conditions.
@@ -89,16 +90,17 @@ pub struct CombinatorialData {
 /// the rounded f64 polytope preserves vertex–facet incidence and
 /// nonzero symplectic signs.
 #[derive(Clone, Debug)]
+#[allow(dead_code)]
 pub struct Margins {
     /// Smallest non-incidence gap: min over all vertices j and non-incident facets i
     /// of gⱼⁱ = hᵢ - ⟨nᵢ, vⱼ⟩. Always positive for valid polytopes.
-    pub min_gap: BigRational,
+    pub(crate) min_gap: BigRational,
     /// Smallest absolute determinant |det(N_S)| over vertex subsets S.
     /// Positive iff all vertex matrices are non-singular (which they are).
-    pub min_abs_det: BigRational,
+    pub(crate) min_abs_det: BigRational,
     /// Smallest |ω₀(nᵢ, nₖ)| over adjacent pairs with ω₀(nᵢ, nₖ) ≠ 0.
     /// None if all adjacent pairs have ω₀ = 0.
-    pub min_omega_nonzero: Option<BigRational>,
+    pub(crate) min_omega_nonzero: Option<BigRational>,
 }
 
 /// Polytope with exact rational coordinates and precomputed combinatorial data.

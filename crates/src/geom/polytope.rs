@@ -145,6 +145,13 @@ impl Polytope4D {
                 format!("rational pipeline failed: {e}")
             ))?;
 
+        // Cross-check: rational and f64 pipelines must find the same number of vertices
+        debug_assert_eq!(
+            rp.combinatorial_data().vertex_descriptors.len(), vertices.len(),
+            "Polytope4D::new: vertex count mismatch: rational={}, qhull={}",
+            rp.combinatorial_data().vertex_descriptors.len(), vertices.len()
+        );
+
         Ok(Self {
             normals,
             heights,
@@ -201,6 +208,17 @@ impl Polytope4D {
         let mut polytope = rp.to_f64().map_err(|e| {
             ConstructionError::VertexEnumerationFailed(format!("rational→f64 failed: {e}"))
         })?;
+        // Consistency: exact and f64 pipelines must agree on combinatorial structure
+        debug_assert_eq!(
+            rp.combinatorial_data().num_facets, polytope.facet_count(),
+            "from_rational: facet count mismatch between rational ({}) and f64 ({})",
+            rp.combinatorial_data().num_facets, polytope.facet_count()
+        );
+        debug_assert_eq!(
+            rp.combinatorial_data().vertex_descriptors.len(), polytope.vertices.len(),
+            "from_rational: vertex count mismatch between rational ({}) and f64 ({})",
+            rp.combinatorial_data().vertex_descriptors.len(), polytope.vertices.len()
+        );
         polytope.exact_data = rp.combinatorial_data().clone();
         Ok(polytope)
     }
