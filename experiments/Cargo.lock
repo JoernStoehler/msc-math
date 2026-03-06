@@ -62,9 +62,6 @@ name = "experiments"
 version = "0.1.0"
 dependencies = [
  "nalgebra",
- "num-bigint",
- "num-rational",
- "num-traits",
  "rand",
  "rand_chacha",
  "rand_distr",
@@ -468,6 +465,9 @@ name = "symplectic"
 version = "0.1.0"
 dependencies = [
  "nalgebra",
+ "num-bigint",
+ "num-rational",
+ "num-traits",
  "rand",
  "rand_chacha",
  "rand_distr",

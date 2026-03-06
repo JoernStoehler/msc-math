@@ -28,9 +28,7 @@
 /// Σ_{m=2}^{F} C(F,m) · (m-1)! — exponential in F.
 pub mod permutations;
 
-use crate::constants::EPS_FACET_INCIDENCE;
 use crate::geom::polytope::Polytope4D;
-use crate::geom::symplectic::omega0;
 use crate::kkt::{solve_kkt, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
 use permutations::{cyclic_permutations, for_each_cyclic_permutation};
 
@@ -198,25 +196,22 @@ fn combinations_rec(
 
 /// Build facet adjacency matrix: adj[i][j] = true iff F_i ∩ F_j ≠ ∅.
 /// Two facets are adjacent if they share at least one vertex.
+///
+/// Uses the exact adjacency set from the rational pipeline (always available
+/// on every `Polytope4D`).
 pub fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let f = polytope.facet_count();
-    let normals = polytope.normals();
-    let heights = polytope.heights();
+    let data = polytope.exact_data();
+
     let mut adj = vec![vec![false; f]; f];
-
-    // Facet i is adjacent to facet j if some vertex lies on both
-    for v in polytope.vertices() {
-        let incident: Vec<usize> = (0..f)
-            .filter(|&i| (normals[i].dot(v) - heights[i]).abs() < EPS_FACET_INCIDENCE)
-            .collect();
-        // All pairs in incident are adjacent
-        for &i in &incident {
-            for &j in &incident {
-                adj[i][j] = true;
-            }
-        }
+    for &(i, j) in &data.adjacency {
+        adj[i][j] = true;
+        adj[j][i] = true;
     }
-
+    // Diagonal: every facet is adjacent to itself
+    for (i, row) in adj.iter_mut().enumerate() {
+        row[i] = true;
+    }
     adj
 }
 
@@ -227,21 +222,51 @@ pub fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
 /// In the algorithm's internal (algebraic) ordering, consecutive (i, j) corresponds
 /// to a physical Reeb transition F_j → F_i, so we require ω₀(n_j, n_i) ≥ 0.
 ///
-/// [lem:numerical-transition-feasibility] Condition (1): ω₀(n_i, n_j) ≥ 0 is necessary for
-/// physical transition F_i → F_j. Here we check ω₀(n_j, n_i) ≥ 0 for the reversed
-/// direction matching the algebraic convention.
+/// Uses [lem:numerical-transition-feasibility]: a physical transition F_i → F_j
+/// exists only if ω₀(n_i, n_j) ≥ 0. In the algorithm's algebraic ordering,
+/// (i, j)_alg = (j, i)_phys, so the condition becomes ω₀(n_j, n_i) ≥ 0.
+///
+/// Uses the exact sign pattern from the rational pipeline (always available),
+/// so there is no f64 tolerance ambiguity near ω₀ = 0.
 pub fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
+    use crate::geom::rational::Sign;
+
     let f = polytope.facet_count();
-    let normals = polytope.normals();
     let vertex_adj = build_adjacency_matrix(polytope);
+    let data = polytope.exact_data();
     let mut adj = vec![vec![false; f]; f];
+
     for i in 0..f {
         for j in 0..f {
-            // Algebraic convention: adj[i][j] = true iff consecutive (i,j) in σ is valid.
-            // Physical meaning: transition F_j → F_i, requiring ω₀(n_j, n_i) ≥ 0.
-            adj[i][j] = vertex_adj[i][j] && omega0(&normals[j], &normals[i]) >= 0.0;
+            if !vertex_adj[i][j] {
+                continue;
+            }
+            // Algebraic convention: adj[i][j] needs ω₀(n_j, n_i) ≥ 0.
+            // sign_pattern stores (min, max) pairs with min < max.
+            // ω₀ is antisymmetric: ω₀(n_j, n_i) = -ω₀(n_i, n_j).
+            let (lo, hi) = (j.min(i), j.max(i));
+            let sign = data.sign_pattern.get(&(lo, hi)).copied();
+            adj[i][j] = match sign {
+                Some(s) => {
+                    // sign_pattern stores sign of ω₀(n_lo, n_hi).
+                    // We need sign of ω₀(n_j, n_i).
+                    // If (lo, hi) = (j, i), sign is ω₀(n_j, n_i) — use directly.
+                    // If (lo, hi) = (i, j), sign is ω₀(n_i, n_j) — negate.
+                    let effective = if lo == j { s } else {
+                        match s {
+                            Sign::Plus => Sign::Minus,
+                            Sign::Minus => Sign::Plus,
+                            Sign::Zero => Sign::Zero,
+                        }
+                    };
+                    matches!(effective, Sign::Plus | Sign::Zero)
+                }
+                // Not in sign pattern (e.g. i==j) — treat as allowed
+                None => true,
+            };
         }
     }
+
     adj
 }
 

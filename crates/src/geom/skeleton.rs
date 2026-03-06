@@ -8,7 +8,6 @@
 ///
 /// The skeleton is NOT stored on `Polytope4D` to keep that struct lightweight.
 /// Compute on demand via `Skeleton::compute()`.
-use crate::constants::EPS_FACET_INCIDENCE;
 use crate::geom::polytope::Polytope4D;
 use nalgebra::Vector4;
 
@@ -41,22 +40,18 @@ impl Skeleton {
     /// Complexity: O(V² · F) for edges, O(F² · V) for ridges.
     /// Fine for our polytopes (V ≤ 200, F ≤ 16).
     pub fn compute(polytope: &Polytope4D) -> Self {
-        let normals = polytope.normals();
-        let heights = polytope.heights();
         let vertices = polytope.vertices();
-        let f = normals.len();
-        let v_count = vertices.len();
+        let f = polytope.facet_count();
 
-        // Step 1: vertex-facet incidence
-        let vertex_facets: Vec<Vec<usize>> = (0..v_count)
-            .map(|vi| {
-                (0..f)
-                    .filter(|&fi| {
-                        (normals[fi].dot(&vertices[vi]) - heights[fi]).abs() < EPS_FACET_INCIDENCE
-                    })
-                    .collect()
-            })
+        // Step 1: vertex-facet incidence (exact, from rational pipeline).
+        // Uses exact combinatorial data instead of f64 tolerance checks.
+        let exact = polytope.exact_data();
+        let vertex_facets: Vec<Vec<usize>> = exact
+            .vertex_descriptors
+            .iter()
+            .map(|btree| btree.iter().copied().collect())
             .collect();
+        let v_count = vertex_facets.len();
 
         // Step 2: edges — vertex pairs sharing ≥3 common facets
         let mut edges = Vec::new();
