@@ -2,10 +2,11 @@
 """
 Analyze gradient ascent results on F=10 polytopes.
 
-Goal: Visualize the distribution of final sys values, compare general vs Lagrangian products.
+Goal: Visualize gradient ascent outcomes and diagnose convergence behavior.
 Input: experiments/gradient-descent/gradient-descent.jsonl
-Output: experiments/gradient-descent/gradient_descent_results.png
-        experiments/gradient-descent/gradient_descent_scatter.png
+Output:
+  - gradient_descent_scatter.png      (starting vs final sys, by class)
+  - gradient_descent_convergence.png  (gradient norms + step size dynamics)
 """
 
 import json
@@ -20,7 +21,7 @@ DATA_PATH = EXPERIMENT_DIR / "gradient-descent.jsonl"
 
 
 def load_data():
-    """Load JSONL and compute per-polytope summaries."""
+    """Load JSONL, group by polytope name, compute per-polytope summaries."""
     rows = []
     with open(DATA_PATH) as f:
         for line in f:
@@ -29,66 +30,34 @@ def load_data():
                 rows.append(json.loads(line))
 
     if not rows:
-        print(f"No data found in {DATA_PATH}. File exists but is empty or corrupt.")
-        print("Rerun: cd experiments/ && cargo run --release --bin gradient_descent")
-        return None
+        print(f"No data in {DATA_PATH}. Run: cd experiments/ && cargo run --release --bin gradient_descent")
+        return None, None, None
 
-    # Group by polytope name
     by_name = defaultdict(list)
     for row in rows:
         by_name[row["name"]].append(row)
 
+    for name in by_name:
+        by_name[name].sort(key=lambda r: r["iteration"])
+
     summaries = []
     for name, iterations in by_name.items():
-        iterations.sort(key=lambda r: r["iteration"])
         first = iterations[0]
         last = iterations[-1]
-        summaries.append(
-            {
-                "name": name,
-                "polytope_type": first["polytope_type"],
-                "starting_sys": first["starting_sys"],
-                "final_sys": last["sys_after"],
-                "total_delta": last["sys_after"] - first["starting_sys"],
-                "iterations": len(iterations),
-            }
-        )
+        summaries.append({
+            "name": name,
+            "polytope_type": first["polytope_type"],
+            "starting_sys": first["starting_sys"],
+            "final_sys": last["sys_after"],
+            "total_delta": last["sys_after"] - first["starting_sys"],
+            "iterations": len(iterations),
+        })
 
-    return summaries
-
-
-def plot_histogram(summaries):
-    """Histogram of final sys values, colored by polytope type."""
-    fig, ax = plt.subplots(1, 1, figsize=(10, 6))
-
-    # Separate by type
-    general = [s for s in summaries if s["polytope_type"] == "general"]
-    lagrangian = [s for s in summaries if s["polytope_type"] != "general"]
-
-    gen_sys = [s["final_sys"] for s in general if np.isfinite(s["final_sys"])]
-    lag_sys = [s["final_sys"] for s in lagrangian if np.isfinite(s["final_sys"])]
-
-    bins = np.linspace(0, max(max(gen_sys, default=0), max(lag_sys, default=0)) * 1.05, 40)
-
-    ax.hist(gen_sys, bins=bins, alpha=0.6, label=f"General (n={len(gen_sys)})", color="steelblue")
-    ax.hist(
-        lag_sys, bins=bins, alpha=0.6, label=f"Lagrangian (n={len(lag_sys)})", color="coral"
-    )
-
-    ax.axvline(x=1.0, color="red", linestyle="--", linewidth=1.5, label="sys = 1")
-    ax.set_xlabel("Final sys after gradient ascent")
-    ax.set_ylabel("Count")
-    ax.set_title("Distribution of final systolic ratios (F=10)")
-    ax.legend()
-
-    out = EXPERIMENT_DIR / "gradient_descent_results.png"
-    fig.savefig(out, dpi=150, bbox_inches="tight")
-    plt.close(fig)
-    print(f"Saved {out}")
+    return rows, by_name, summaries
 
 
 def plot_scatter(summaries):
-    """Scatter: starting sys vs final sys."""
+    """Scatter: starting sys vs final sys, colored by polytope class."""
     fig, ax = plt.subplots(1, 1, figsize=(8, 8))
 
     general = [s for s in summaries if s["polytope_type"] == "general"]
@@ -102,18 +71,117 @@ def plot_scatter(summaries):
         y = [s["final_sys"] for s in group if np.isfinite(s["final_sys"])]
         ax.scatter(x, y, alpha=0.4, label=label, color=color, marker=marker, s=15)
 
-    # Diagonal
     lims = [0, max(ax.get_xlim()[1], ax.get_ylim()[1])]
     ax.plot(lims, lims, "k--", alpha=0.3, linewidth=0.5)
     ax.axhline(y=1.0, color="red", linestyle="--", linewidth=1, alpha=0.5, label="sys = 1")
 
     ax.set_xlabel("Starting sys")
     ax.set_ylabel("Final sys (after gradient ascent)")
-    ax.set_title("Gradient ascent improvement (F=10)")
+    ax.set_title("Gradient ascent improvement (F = 10)")
     ax.legend()
     ax.set_aspect("equal")
 
     out = EXPERIMENT_DIR / "gradient_descent_scatter.png"
+    fig.savefig(out, dpi=150, bbox_inches="tight")
+    plt.close(fig)
+    print(f"Saved {out}")
+
+
+def plot_convergence(rows, by_name):
+    """Combined figure: gradient norms at termination + step size dynamics."""
+    fig, axes = plt.subplots(1, 3, figsize=(16, 5))
+
+    # Panel 1: height gradient norm vs final sys
+    ax = axes[0]
+    for ptype, color, marker in [
+        ("general", "steelblue", "o"),
+        ("lagrangian", "coral", "^"),
+    ]:
+        final_sys = []
+        final_grad = []
+        hit_maxiter = []
+
+        for name, iters in by_name.items():
+            if ptype == "general" and iters[0]["polytope_type"] != "general":
+                continue
+            if ptype == "lagrangian" and iters[0]["polytope_type"] == "general":
+                continue
+            last = iters[-1]
+            final_sys.append(last["sys_after"])
+            final_grad.append(last["gradient_norm_h"])
+            hit_maxiter.append(len(iters) >= 20)
+
+        final_sys = np.array(final_sys)
+        final_grad = np.array(final_grad)
+        hit_maxiter = np.array(hit_maxiter)
+
+        conv = ~hit_maxiter
+        ax.scatter(final_sys[conv], final_grad[conv],
+                   alpha=0.3, color=color, marker=marker, s=12,
+                   label=f"{ptype} (conv.)")
+        if hit_maxiter.any():
+            ax.scatter(final_sys[hit_maxiter], final_grad[hit_maxiter],
+                       alpha=0.7, color=color, marker="x", s=30,
+                       label=f"{ptype} (max iter)")
+
+    ax.set_xlabel("Final sys")
+    ax.set_ylabel(r"$\|\nabla_h\,\mathrm{sys}\|$ at termination")
+    ax.set_yscale("log")
+    ax.set_title(r"Residual gradient $\|\nabla_h\,\mathrm{sys}\|$")
+    ax.legend(fontsize=7)
+
+    # Panel 2: step size evolution (median with IQR)
+    ax = axes[1]
+    for ptype, color in [("general", "steelblue"), ("lagrangian", "coral")]:
+        by_iter = defaultdict(list)
+        for name, iters in by_name.items():
+            if ptype == "general" and iters[0]["polytope_type"] != "general":
+                continue
+            if ptype == "lagrangian" and iters[0]["polytope_type"] == "general":
+                continue
+            for row in iters:
+                by_iter[row["iteration"]].append(row["t_actual"])
+
+        iters_sorted = sorted(by_iter.keys())
+        medians = [np.median(by_iter[i]) for i in iters_sorted]
+        p25 = [np.percentile(by_iter[i], 25) for i in iters_sorted]
+        p75 = [np.percentile(by_iter[i], 75) for i in iters_sorted]
+
+        ax.plot(iters_sorted, medians, color=color, marker=".", markersize=4,
+                label=f"{ptype} median")
+        ax.fill_between(iters_sorted, p25, p75, color=color, alpha=0.15)
+
+    ax.set_yscale("log")
+    ax.set_xlabel("Iteration")
+    ax.set_ylabel("Step size $t$")
+    ax.set_title("Step size shrinks exponentially")
+    ax.legend(fontsize=8)
+
+    # Panel 3: survival curve (active polytopes per iteration)
+    ax = axes[2]
+    for ptype, color in [("general", "steelblue"), ("lagrangian", "coral")]:
+        by_iter = defaultdict(int)
+        for name, iters in by_name.items():
+            if ptype == "general" and iters[0]["polytope_type"] != "general":
+                continue
+            if ptype == "lagrangian" and iters[0]["polytope_type"] == "general":
+                continue
+            for row in iters:
+                by_iter[row["iteration"]] += 1
+
+        iters_sorted = sorted(by_iter.keys())
+        counts = [by_iter[i] for i in iters_sorted]
+        ax.plot(iters_sorted, counts, color=color, marker=".", markersize=4, label=ptype)
+
+    ax.set_xlabel("Iteration")
+    ax.set_ylabel("Active polytopes")
+    ax.set_title("Convergence survival curve")
+    ax.legend(fontsize=8)
+
+    fig.suptitle("Convergence diagnostics (F = 10)", fontsize=13, y=1.02)
+    fig.tight_layout()
+
+    out = EXPERIMENT_DIR / "gradient_descent_convergence.png"
     fig.savefig(out, dpi=150, bbox_inches="tight")
     plt.close(fig)
     print(f"Saved {out}")
@@ -134,33 +202,33 @@ def print_summary_table(summaries):
         finals = [s["final_sys"] for s in group]
         deltas = [s["total_delta"] for s in group]
         print(
-            f"{t:<20} {len(group):>5} {np.mean(finals):>10.6f} {np.max(finals):>10.6f} "
-            f"{np.percentile(finals, 90):>10.6f} {np.mean(deltas):>10.6f}"
+            f"{t:<20} {len(group):>5} {np.mean(finals):>10.3f} {np.max(finals):>10.3f} "
+            f"{np.percentile(finals, 90):>10.3f} {np.mean(deltas):>10.3f}"
         )
 
     print("=" * 80)
-
-    # Highlight any sys > 0.9
-    high = [s for s in summaries if np.isfinite(s["final_sys"]) and s["final_sys"] > 0.9]
-    if high:
-        print(f"\nPolytopes with final sys > 0.9 ({len(high)}):")
-        for s in sorted(high, key=lambda x: -x["final_sys"])[:10]:
-            print(
-                f"  {s['name']:<30} type={s['polytope_type']:<15} "
-                f"sys: {s['starting_sys']:.6f} → {s['final_sys']:.6f}"
-            )
 
     # Any sys > 1?
     above_one = [s for s in summaries if np.isfinite(s["final_sys"]) and s["final_sys"] > 1.0]
     if above_one:
         print(f"\n*** COUNTEREXAMPLES FOUND: {len(above_one)} polytopes with sys > 1 ***")
         for s in sorted(above_one, key=lambda x: -x["final_sys"]):
-            print(
-                f"  {s['name']:<30} type={s['polytope_type']:<15} "
-                f"sys = {s['final_sys']:.10f}"
-            )
+            print(f"  {s['name']:<30} type={s['polytope_type']:<15} sys = {s['final_sys']:.10f}")
     else:
         print("\nNo polytopes achieved sys > 1.")
+
+    # Convergence quality
+    print("\nConvergence quality:")
+    for ptype in ["general", "lagrangian"]:
+        n_maxiter = 0
+        n_total = 0
+        for s in summaries:
+            if ptype == "general" and s["polytope_type"] != "general":
+                continue
+            if ptype == "lagrangian" and s["polytope_type"] == "general":
+                continue
+            n_total += 1
+        print(f"  {ptype}: {n_total} polytopes")
 
 
 def main():
@@ -169,13 +237,13 @@ def main():
         print("Run: cd experiments/ && cargo run --release --bin gradient_descent")
         return
 
-    summaries = load_data()
-    if summaries is None:
+    rows, by_name, summaries = load_data()
+    if rows is None:
         return
 
-    print(f"Loaded {len(summaries)} polytope trajectories.")
-    plot_histogram(summaries)
+    print(f"Loaded {len(summaries)} polytope trajectories, {len(rows)} iteration rows.")
     plot_scatter(summaries)
+    plot_convergence(rows, by_name)
     print_summary_table(summaries)
 
 

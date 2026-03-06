@@ -163,16 +163,10 @@ python3 experiments/omega-obstacle/omega_obstacle.py
 # → experiments/omega-obstacle/omega_obstacle_gradient_neighbor_split.png
 # → experiments/omega-obstacle/omega_obstacle_omega_vs_dot.png
 
-# Gradient descent: histogram and scatter of final sys values
+# Gradient descent: scatter and convergence diagnostics
 python3 experiments/gradient-descent/gradient_descent.py
-# → experiments/gradient-descent/gradient_descent_results.png
 # → experiments/gradient-descent/gradient_descent_scatter.png
-
-# Gradient descent: extended analysis (density, convergence, step size)
-python3 experiments/gradient-descent/gradient_descent_analysis.py
-# → experiments/gradient-descent/gradient_descent_density.png
 # → experiments/gradient-descent/gradient_descent_convergence.png
-# → experiments/gradient-descent/gradient_descent_stepsize.png
 
 # ── Step 3: Visualization ────────────────────────────────────────────────────
 

@@ -1,55 +1,6 @@
 # gradient-descent
 
-Gradient ascent on the systolic ratio `sys = c_EHZ^2 / (2 vol)` for F=10 polytopes.
-
-## Goal
-
-Scale up the sys-optimization experiment: run gradient ascent on a much larger starting set of polytopes, including both general random polytopes and Lagrangian products. The objective is to find polytopes with high sys values, ideally approaching or exceeding sys = 1 (Viterbo's conjecture bound).
-
-## Design
-
-Two classes of starting polytopes, both with F=10 facets:
-
-1. **General random polytopes** (N=500): Random normals on S^3, heights in [0.8, 1.2]. Gradient ascent uses instrumented HK2017 (exponential enumeration with adjacency pruning).
-
-2. **Lagrangian products** (N=500): Random polygon pairs (K_q x_L K_p) with splits (3,7), (4,6), (5,5). Gradient ascent uses instrumented billiard (block-structured enumeration with directed adjacency pruning) with Lagrangian-constrained normal projection. Trial steps evaluated via library billiard.
-
-### Capacity backends
-
-- **General polytopes**: Instrumented HK2017 (exponential enumeration with adjacency pruning) for KKT data; library `ehz_capacity` for trial steps.
-- **Lagrangian products**: Instrumented billiard (block-structured σ for k∈{2,3} with directed ω₀ pruning) for KKT data; library `billiard_capacity` for trial steps.
-
-Both instrumented backends use the same asymmetric KKT solver (`solve_kkt_full`) that returns (β, Q, ν, λ).
-
-### Instrumented capacity
-
-The instrumented capacity backends extract the full KKT multipliers (nu, lambda) needed for analytical gradient computation via the envelope theorem:
-
-- `d(sys)/d(h_k)` uses nu (multiplier for eta^T beta = 1)
-- `d(sys)/d(n_k)` uses lambda (multiplier for N^T beta = 0)
-
-### Lagrangian-constrained gradient
-
-For Lagrangian products, the normal gradient is projected to preserve the product structure:
-- Q-facet normals: zero out p-components [2,3], renormalize in q-plane
-- P-facet normals: zero out q-components [0,1], renormalize in p-plane
-- Heights: unconstrained
-
-### Step bounds
-
-Same conservative step bounds as sys-optimization:
-- Vertex-crossing checks (no facet hits a non-incident vertex)
-- Height positivity (all h_k > 0)
-- omega_0 sign preservation for ridge-adjacent pairs
-
-## Files
-
-| File | Purpose |
-|------|---------|
-| `gradient_descent.rs` | Rust binary: polytope generation + gradient ascent |
-| `kkt_instrumented.rs` | Shared instrumented KKT solver and orbit enumeration |
-| `gradient_descent.py` | Python: histogram and scatter figures |
-| `gradient-descent.jsonl` | Output: per-iteration trajectory data |
+Gradient ascent on `sys = c_EHZ^2 / (2 vol)` for 1001 random F=10 polytopes (500 general, 501 Lagrangian products). Scales up the sys-optimization experiment.
 
 ## Running
 
@@ -59,21 +10,27 @@ cargo run --release --bin gradient_descent
 python3 gradient-descent/gradient_descent.py
 ```
 
-## Findings
+## Key findings
 
-995 polytopes completed (499 general, 166 × 3x7, 166 × 4x6, 164 × 5x5).
+**No polytope achieved sys > 1.** Best: sys = 0.905 (5x5 Lagrangian product).
 
-**No polytope achieved sys > 1.** Best overall: sys = 0.905 (lagrangian_5x5_143).
+| Type | N | Mean sys | Max sys | Mean improvement |
+|------|---|----------|---------|------------------|
+| General | 499 | 0.453 | 0.870 | +0.100 |
+| Lagrangian 3x7 | 166 | 0.493 | 0.862 | +0.182 |
+| Lagrangian 4x6 | 166 | 0.566 | 0.881 | +0.222 |
+| Lagrangian 5x5 | 164 | 0.628 | 0.905 | +0.217 |
 
-| Type | N | Mean sys | Max sys | P90 sys | Mean Δ |
-|------|---|----------|---------|---------|--------|
-| general | 499 | 0.453 | 0.870 | 0.687 | 0.100 |
-| lagrangian_3x7 | 166 | 0.493 | 0.862 | 0.781 | 0.182 |
-| lagrangian_4x6 | 166 | 0.566 | 0.881 | 0.784 | 0.222 |
-| lagrangian_5x5 | 164 | 0.628 | 0.905 | 0.806 | 0.217 |
+- Lagrangian products reach higher sys than general polytopes
+- Balanced splits (5x5) outperform asymmetric splits (3x7)
+- **Step-bound barrier**: the algorithm terminates because t_max shrinks (combinatorial type boundary), not because gradients vanish. Residual gradients are O(1) at termination, and positively correlated with final sys (r ≈ 0.80).
 
-Key observations:
-- Lagrangian products reach higher sys than general polytopes (mean 0.56 vs 0.45)
-- More balanced splits (5x5) achieve higher sys than asymmetric splits (3x7)
-- Gradient ascent substantially improves sys: mean improvement +0.10 (general) to +0.22 (Lagrangian)
-- The sys = 1 barrier was not approached — highest value 0.905 with a clear gap
+## Files
+
+| File | Purpose |
+|------|---------|
+| `gradient_descent.rs` | Rust binary: polytope generation + gradient ascent |
+| `kkt_instrumented.rs` | Shared instrumented KKT solver and orbit enumeration |
+| `gradient_descent.py` | Python: scatter and convergence figures + summary stats |
+| `gradient-descent.jsonl` | Per-iteration trajectory data (7631 rows, 995 polytopes) |
+| `gradient-descent.tex` | Thesis writeup |
