@@ -23,14 +23,14 @@ Be thorough and specific. Flag potential issues rather than miss real ones. Dist
 
 ## Conventions
 
-### Report what's there, don't editorialize
+### Write up what's there — nothing more, nothing less
 
-Experiment writeups should report what the data shows. Don't invent interpretations, don't hedge facts. For every sentence, ask: is this directly supported by the data, or is the agent making something up?
+When writing up results, focus on knowledge transfer: report what the data shows. Don't make things up, don't omit things, don't editorialize.
 
-- **Facts are facts**: if sys = 0.905 is computed, say "sys = 0.905", not "sys appears to be approximately 0.905"
-- **Correlations are correlations**: if r = 0.80, say "r = 0.80", not "the cause is..." or "this suggests..."
-- **Unknowns are unknowns**: if we didn't test whether random polygons approximate regular pentagons, don't claim they do or don't
-- **Speculation must be labeled**: if a paragraph is interpretation beyond the data, it must read as interpretation, not as a finding
+- **Don't make things up**: no invented interpretations, no causal claims from correlations, no speculation presented as findings
+- **Don't omit things**: if the data shows something, report it — don't skip inconvenient patterns or caveats
+- **Don't editorialize**: facts are facts ("sys = 0.905"), correlations are correlations ("r = 0.80"), unknowns are unknowns ("we did not test X")
+- **Speculation must be labeled**: if a paragraph goes beyond the data, it must read as interpretation, not as a finding
 
 ### Experiment-Specific Conventions
 
