@@ -109,11 +109,10 @@ polytopes closest to the Viterbo threshold have the
 \includegraphics[width=\textwidth]{../experiments/gradient-descent/gradient_descent_convergence.png}
 \caption{Convergence diagnostics.
   Left: residual height gradient $\|\nabla_h\,\mathrm{sys}\|$ vs.\
-  final $\mathrm{sys}$; the positive correlation ($r \approx 0.80$)
-  shows that polytopes near the threshold are gradient-constrained,
-  not gradient-satisfied.
-  Center: median step size drops exponentially as the polytope
-  approaches its combinatorial type boundary.
+  final $\mathrm{sys}$; higher final $\mathrm{sys}$ correlates with
+  larger residual gradients ($r \approx 0.80$).
+  Center: median step size (with IQR band) drops by 2--3 orders of
+  magnitude over the first 10~iterations.
   Right: survival curve (number of polytopes still improving
   at each iteration).}
 \label{fig:gd-convergence}

@@ -16,6 +16,16 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
+# Consistent font sizes for \includegraphics[width=\textwidth] figures
+plt.rcParams.update({
+    "axes.labelsize": 14,
+    "axes.titlesize": 14,
+    "xtick.labelsize": 11,
+    "ytick.labelsize": 11,
+    "legend.fontsize": 11,
+    "figure.titlesize": 15,
+})
+
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 DATA_PATH = EXPERIMENT_DIR / "gradient-descent.jsonl"
 
@@ -89,7 +99,7 @@ def plot_scatter(summaries):
 
 def plot_convergence(rows, by_name):
     """Combined figure: gradient norms at termination + step size dynamics."""
-    fig, axes = plt.subplots(1, 3, figsize=(16, 5))
+    fig, axes = plt.subplots(1, 3, figsize=(16, 5.5))
 
     # Panel 1: height gradient norm vs final sys
     ax = axes[0]
@@ -128,7 +138,7 @@ def plot_convergence(rows, by_name):
     ax.set_ylabel(r"$\|\nabla_h\,\mathrm{sys}\|$ at termination")
     ax.set_yscale("log")
     ax.set_title(r"Residual gradient $\|\nabla_h\,\mathrm{sys}\|$")
-    ax.legend(fontsize=7)
+    ax.legend()
 
     # Panel 2: step size evolution (median with IQR)
     ax = axes[1]
@@ -155,7 +165,7 @@ def plot_convergence(rows, by_name):
     ax.set_xlabel("Iteration")
     ax.set_ylabel("Step size $t$")
     ax.set_title("Step size shrinks exponentially")
-    ax.legend(fontsize=8)
+    ax.legend()
 
     # Panel 3: survival curve (active polytopes per iteration)
     ax = axes[2]
@@ -176,9 +186,9 @@ def plot_convergence(rows, by_name):
     ax.set_xlabel("Iteration")
     ax.set_ylabel("Active polytopes")
     ax.set_title("Convergence survival curve")
-    ax.legend(fontsize=8)
+    ax.legend()
 
-    fig.suptitle("Convergence diagnostics (F = 10)", fontsize=13, y=1.02)
+    fig.suptitle("Convergence diagnostics (F = 10)", y=1.02)
     fig.tight_layout()
 
     out = EXPERIMENT_DIR / "gradient_descent_convergence.png"
