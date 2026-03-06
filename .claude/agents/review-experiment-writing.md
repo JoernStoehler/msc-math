@@ -23,6 +23,17 @@ Be thorough and specific. Flag potential issues rather than miss real ones. Dist
 
 ## Conventions
 
+### Confidence Calibration
+
+Agent-written prose systematically drifts toward overconfident phrasing. For every interpretive or causal claim, check:
+
+1. **Is the confidence level in the prose matched by the evidence?** Flag statements presented as conclusions ("X is Y", "the cause is Z") when the evidence only supports "consistent with" or "suggests".
+2. **Quantifier inflation**: "always" when data shows 87%, "strongest" when data shows a correlation, "do not approximate" when this wasn't tested.
+3. **Causal language without causal evidence**: "the cause is visible in..." when only a correlation was shown. Prefer "the data is consistent with..." or "one explanation is...".
+4. **Unverified speculative claims**: statements about what *would* happen under untested conditions, presented without hedging. These need "may", "could", or "it is unclear whether".
+
+Detection: grep for "always", "never", "the cause", "shows that", "because", "\emph{" (emphasis on interpretive words), and check each against the supporting evidence.
+
 ### Experiment-Specific Conventions
 
 ## Experiment Writing
