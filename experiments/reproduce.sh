@@ -168,6 +168,12 @@ python3 experiments/gradient-descent/gradient_descent.py
 # → experiments/gradient-descent/gradient_descent_results.png
 # → experiments/gradient-descent/gradient_descent_scatter.png
 
+# Gradient descent: extended analysis (density, convergence, step size)
+python3 experiments/gradient-descent/gradient_descent_analysis.py
+# → experiments/gradient-descent/gradient_descent_density.png
+# → experiments/gradient-descent/gradient_descent_convergence.png
+# → experiments/gradient-descent/gradient_descent_stepsize.png
+
 # ── Step 3: Visualization ────────────────────────────────────────────────────
 
 # 3a. Export polytope data (real Reeb orbits + displaced variants)
