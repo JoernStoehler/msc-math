@@ -25,14 +25,18 @@ Be thorough and specific. Flag potential issues rather than miss real ones. Dist
 
 ### Confidence Calibration
 
-Agent-written prose systematically drifts toward overconfident phrasing. For every interpretive or causal claim, check:
+Agent-written prose drifts toward miscalibrated confidence — both overconfident and underconfident. For every interpretive or causal claim, check whether the confidence in the prose matches the evidence.
 
-1. **Is the confidence level in the prose matched by the evidence?** Flag statements presented as conclusions ("X is Y", "the cause is Z") when the evidence only supports "consistent with" or "suggests".
-2. **Quantifier inflation**: "always" when data shows 87%, "strongest" when data shows a correlation, "do not approximate" when this wasn't tested.
-3. **Causal language without causal evidence**: "the cause is visible in..." when only a correlation was shown. Prefer "the data is consistent with..." or "one explanation is...".
-4. **Unverified speculative claims**: statements about what *would* happen under untested conditions, presented without hedging. These need "may", "could", or "it is unclear whether".
+**Overconfidence** (conclusion language without sufficient evidence):
+1. **Quantifier inflation**: "always" when data shows 87%, "strongest" when data shows a correlation, "do not approximate" when this wasn't tested.
+2. **Causal language without causal evidence**: "the cause is visible in..." when only a correlation was shown. Prefer "the data is consistent with..." or "one explanation is...".
+3. **Unverified speculative claims**: statements about what *would* happen under untested conditions, presented without hedging.
 
-Detection: grep for "always", "never", "the cause", "shows that", "because", "\emph{" (emphasis on interpretive words), and check each against the supporting evidence.
+**Underconfidence** (hedging language when evidence is strong):
+4. **Unnecessary hedging on established facts**: "appears to", "seems to", "may" when the data clearly shows the pattern (e.g., "all 995 polytopes appear to have sys < 1" — no, they DO have sys < 1, it's computed).
+5. **Weakening reproducible results**: "suggests" or "is consistent with" for claims that are directly computable from the data (e.g., "the correlation suggests r ≈ 0.80" — no, the correlation IS 0.80).
+
+Detection: grep for "always", "never", "the cause", "shows that", "because", "\emph{" for overconfidence. Grep for "appears to", "seems to", "may" on factual/computable claims for underconfidence. Check each against the supporting evidence.
 
 ### Experiment-Specific Conventions
 
