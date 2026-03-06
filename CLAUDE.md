@@ -780,15 +780,15 @@ fn pruned_matches_unpruned() { ... }
 
 ### Test suites
 
-| Suite | Command | When to run | Time (2026-02-14) |
+| Suite | Command | When to run | Time (2026-03-06) |
 |-------|---------|-------------|-------------------|
-| **Default** | `cargo test --lib` | Every iteration | ~22s wall |
+| **Default** | `cargo test --lib` | Every iteration | ~145s wall |
 | Regenerate capacity fixture | `cargo test --release regenerate_test_dataset -- --ignored` | After changes to `ehz_capacity()` | ~20s |
 | Expensive capacity tests | `cargo test --release -- --ignored` | After capacity algorithm changes | ~2s |
 | Boundedness cross-check | `cargo test -- --ignored` | Monitoring, or after qhull/boundedness changes | ~3s |
 | All ignored tests | `cargo test -- --ignored` | Full validation | ~5 min |
 
-Target: default suite <3 min single-threaded (currently ~22s).
+Target: default suite <3 min single-threaded (currently ~145s due to rational pipeline in Polytope4D::new(); see TODO(perf) in polytope.rs).
 
 **Fixture location:** `tests/fixtures/capacity_dataset.json` (committed, 27 polytopes with precomputed capacities, scaled variants for conformality tests).
 
