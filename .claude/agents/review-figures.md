@@ -26,9 +26,10 @@ Figures are sized in Python to their final physical size. LaTeX includes them at
 
 **Python side:**
 - `figsize` = the desired physical size in the printed PDF
-- Full-width figures: `figsize=(6.3, ...)` (matching `\textwidth`)
-- Side-by-side figures: `figsize=(3.0, ...)`
+- Full-width figures: `figsize=(5.4, ...)` (matching `\textwidth` for A4 with default margins)
+- Side-by-side figures: `figsize=(2.6, ...)`
 - `dpi=150` ensures sufficient resolution at the physical size
+- Note: `bbox_inches='tight'` can expand the image beyond `figsize` — verify the output PNG dimensions
 
 **LaTeX side:**
 - `\includegraphics{file.png}` — NO `width=`, NO `height=`, NO `scale=`
@@ -36,10 +37,10 @@ Figures are sized in Python to their final physical size. LaTeX includes them at
 - Any `width=` or `scale=` parameter is a violation — it overrides the sizing that Python already handled
 
 **Detection (two checks):**
-1. Grep `.py` for `figsize=` — flag if width > 6.5" (won't fit at `\textwidth`)
+1. Grep `.py` for `figsize=` — flag if width > 5.5" (won't fit at `\textwidth` ≈ 5.4")
 2. Grep `.tex` for `\includegraphics` — flag any `width=`, `height=`, or `scale=` parameter
 
-**When panels don't fit:** If N panels at 6.3" total are too cramped, split into separate figures. Do not make the canvas wider.
+**When panels don't fit:** If N panels at 5.4" total are too cramped, split into separate figures. Do not make the canvas wider.
 
 **Symptom detection:** `fontsize=` values above 14pt on individual elements almost certainly compensate for a figsize mismatch. Flag the figsize as the root cause.
 

@@ -47,7 +47,7 @@ Builds upon **Thesis Writing** — all Thesis Writing conventions apply to exper
 - Results checked by Jörn before inclusion in thesis
 - Statistical claims require reproducible computation
 - Plots visually inspected for sanity
-- **Figure sizing convention**: all figure formatting (size, fonts, colors) is handled in Python. LaTeX includes images at 1:1 with plain `\includegraphics{file.png}` — no `width=`, `height=`, or `scale=` parameters. Any such parameter in the `.tex` is a violation. Check that the `.py` uses `figsize` width ≤ 6.5" (matching `\textwidth`).
+- **Figure sizing convention**: all figure formatting (size, fonts, colors) is handled in Python. LaTeX includes images at 1:1 with plain `\includegraphics{file.png}` — no `width=`, `height=`, or `scale=` parameters. Any such parameter in the `.tex` is a violation. Check that the `.py` uses `figsize` width ≤ 5.5" (matching `\textwidth` ≈ 5.4" for A4 with default margins).
 
 ### General Thesis Writing Conventions
 
