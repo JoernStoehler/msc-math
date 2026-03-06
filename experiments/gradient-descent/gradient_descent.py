@@ -217,10 +217,9 @@ def print_summary_table(summaries):
     else:
         print("\nNo polytopes achieved sys > 1.")
 
-    # Convergence quality
+    # Convergence quality (reproduces claims in .tex)
     print("\nConvergence quality:")
     for ptype in ["general", "lagrangian"]:
-        n_maxiter = 0
         n_total = 0
         for s in summaries:
             if ptype == "general" and s["polytope_type"] != "general":
@@ -229,6 +228,40 @@ def print_summary_table(summaries):
                 continue
             n_total += 1
         print(f"  {ptype}: {n_total} polytopes")
+
+
+def print_convergence_stats(by_name, rows):
+    """Print statistics cited in the .tex: correlation, gradient norms, fraction choice."""
+    # Collect final gradient norms and sys for correlation
+    final_sys_all = []
+    final_grad_h_all = []
+    for ptype in ["general", "lagrangian"]:
+        final_sys = []
+        final_gh = []
+        final_gn = []
+        for name, iters in by_name.items():
+            if ptype == "general" and iters[0]["polytope_type"] != "general":
+                continue
+            if ptype == "lagrangian" and iters[0]["polytope_type"] == "general":
+                continue
+            last = iters[-1]
+            final_sys.append(last["sys_after"])
+            final_gh.append(last["gradient_norm_h"])
+            final_gn.append(last["gradient_norm_n"])
+        final_sys_all.extend(final_sys)
+        final_grad_h_all.extend(final_gh)
+        gh = np.array(final_gh)
+        gn = np.array(final_gn)
+        print(f"\n  {ptype}:")
+        print(f"    median ||grad_h||: {np.median(gh):.2f}")
+        print(f"    median ||grad_n||: {np.median(gn):.1f}")
+
+    r = np.corrcoef(final_sys_all, final_grad_h_all)[0, 1]
+    print(f"\n  Correlation(final_sys, ||grad_h||): r = {r:.2f}")
+
+    # Fraction choosing 0.95 * t_max
+    n_095 = sum(1 for row in rows if row["t_fraction"] == 0.95)
+    print(f"  Fraction choosing 0.95*t_max: {n_095}/{len(rows)} = {100*n_095/len(rows):.1f}%")
 
 
 def main():
@@ -245,6 +278,7 @@ def main():
     plot_scatter(summaries)
     plot_convergence(rows, by_name)
     print_summary_table(summaries)
+    print_convergence_stats(by_name, rows)
 
 
 if __name__ == "__main__":

@@ -20,7 +20,7 @@
 
 Section~\ref{sec:sys-optimization} developed gradient ascent on
 $\mathrm{sys} = c_{\mathrm{EHZ}}^2 / (2\,\mathrm{vol})$ and
-demonstrated it on 140~polytopes with $F \le 10$.
+demonstrated it on the polytopes from that section.
 This section scales the procedure to ${\sim}1000$ starting polytopes,
 all with $F = 10$, and distinguishes two structural classes.
 
@@ -50,8 +50,8 @@ or after 20~iterations.
 
 \subsubsection*{Results}
 
-Of the 1001 starting polytopes, 995 produce at least one valid gradient
-step.
+Of the 995 polytopes that produce at least one valid gradient
+step (6~fail due to degenerate initial data):
 \textbf{No polytope achieves $\mathrm{sys} > 1$.}
 The overall maximum is $\mathrm{sys} \approx 0.905$,
 attained by a $5 \times 5$ Lagrangian product
@@ -122,13 +122,15 @@ polytopes closest to the Viterbo threshold have the
 The cause is visible in the step size dynamics
 (Figure~\ref{fig:gd-convergence}, center):
 the step bound~$t_{\max}$ shrinks exponentially,
-from~${\sim}0.1$ at iteration~$0$ to~${\sim}10^{-4}$ by iteration~$10$.
+dropping by 2--3 orders of magnitude over the first 10~iterations.
 The line search selects the most aggressive fraction
 ($0.95 \cdot t_{\max}$) in 87\% of iterations.
 The algorithm always wants to step further, but the combinatorial
 type boundary closes in, leaving less and less room for improvement.
 
 \subsubsection*{Interpretation}
+% [TODO: JÖRN - review interpretation below, especially the claims about
+%  basin-of-attraction measure and regular pentagon structure.]
 
 The $\mathrm{sys} < 1$ barrier in this experiment is a
 \emph{step-bound barrier}, not a gradient obstruction.
