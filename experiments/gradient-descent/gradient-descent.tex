@@ -137,15 +137,102 @@ the same: gradient ascent does not push $\mathrm{sys}$ past~$1$.
 The maximum increases slightly ($0.905$ vs.~$0.878$), but remains
 well below the Viterbo threshold.
 
+\subsubsection*{Distribution shift}
+
+Figure~\ref{fig:gd-density} overlays kernel density estimates
+of the starting and final $\mathrm{sys}$ distributions
+for both polytope classes.
+Gradient ascent shifts the Lagrangian distribution rightward
+into a concentrated peak near $\mathrm{sys} \approx 0.7$,
+while the general distribution shifts more modestly
+and remains spread across $[0.2, 0.85]$.
+Both final distributions drop sharply to zero
+well below $\mathrm{sys} = 1$, with no density near the
+Viterbo threshold.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{../experiments/gradient-descent/gradient_descent_density.png}
+\caption{Kernel density estimates of $\mathrm{sys}$ before (dashed)
+  and after (solid) gradient ascent.
+  Optimization concentrates the Lagrangian distribution around
+  $\mathrm{sys} \approx 0.7$;
+  the general distribution shifts modestly rightward.
+  Both vanish before $\mathrm{sys} = 1$.}
+\label{fig:gd-density}
+\end{figure}
+
+\subsubsection*{Convergence quality}
+
+The gradient norms at termination reveal that the algorithm does
+\emph{not} find approximate local maxima.
+The median height gradient $\|\nabla_h\,\mathrm{sys}\|$ at termination
+is~$0.36$ for general polytopes and~$0.53$ for Lagrangian products;
+the median normal gradient $\|\nabla_n\,\mathrm{sys}\|$ is~$1.4$
+and~$1.2$, respectively (Figure~\ref{fig:gd-convergence}).
+These are $O(1)$ values---far from the near-zero gradients
+expected at a local maximum.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{../experiments/gradient-descent/gradient_descent_convergence.png}
+\caption{Gradient norms at termination vs.\ final $\mathrm{sys}$.
+  Left: height gradient $\|\nabla_h\,\mathrm{sys}\|$
+  shows a positive correlation ($r \approx 0.79$)---polytopes
+  with higher $\mathrm{sys}$ have \emph{larger} residual gradients.
+  Right: normal gradient $\|\nabla_n\,\mathrm{sys}\|$ is uncorrelated.
+  Crosses mark polytopes that exhausted 20~iterations
+  (67~Lagrangian products, 0~general).}
+\label{fig:gd-convergence}
+\end{figure}
+
+The algorithm converges because the step bound~$t_{\max}$
+shrinks, not because the gradient vanishes.
+Figure~\ref{fig:gd-stepsize} shows the dynamics:
+the median step size~$t_{\mathrm{actual}}$ drops exponentially
+from~${\sim}0.1$ at iteration~$0$ to~${\sim}10^{-4}$ by iteration~$10$.
+Meanwhile, the line search consistently selects the most aggressive
+fraction ($0.95 \cdot t_{\max}$) in 87\% of all iterations.
+This means the algorithm always wants to step as far as possible,
+but the combinatorial type boundary closes in,
+leaving less and less room for improvement.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{../experiments/gradient-descent/gradient_descent_stepsize.png}
+\caption{Step size dynamics.
+  Left: median step size (with IQR shading) shrinks
+  exponentially as the polytope approaches its combinatorial
+  type boundary.
+  Center: the line search picks $0.95 \cdot t_{\max}$
+  in ${\sim}85$--$95\%$ of iterations.
+  Right: survival curve showing how many polytopes remain
+  active (have not yet converged) at each iteration.}
+\label{fig:gd-stepsize}
+\end{figure}
+
+The positive correlation between final $\mathrm{sys}$ and
+$\|\nabla_h\,\mathrm{sys}\|$ ($r \approx 0.79$;
+Figure~\ref{fig:gd-convergence}, left) is notable:
+the polytopes closest to the Viterbo threshold have the
+\emph{strongest} upward gradients, yet are the most
+constrained by the step bound.
+This suggests that the $\mathrm{sys} < 1$ barrier
+is not a gradient obstruction but a \emph{step-bound barrier}---the
+combinatorial type cell does not extend far enough in the
+direction of increasing $\mathrm{sys}$.
+
+\subsubsection*{Interpretation}
+
 The clear gap between the observed maximum (${\approx}0.905$) and the
-threshold~$1$ suggests that local gradient ascent from random starting
-points is insufficient to find counterexamples, even at scale.
-Three factors may contribute:
+threshold~$1$ thus reflects a limitation of the optimization
+method, not necessarily the absence of counterexamples at $F = 10$.
+Three factors contribute:
 \begin{itemize}
-\item The combinatorial-type-preserving step bound limits each step
-  to the current polytope type's cell in parameter space.
-  Crossing into a new cell requires the procedure to terminate
-  and restart---our greedy line search does not do this.
+\item The combinatorial-type-preserving step bound confines each step
+  to the current polytope's cell in parameter space.
+  Crossing into a new cell requires restarting---our
+  greedy line search does not do this.
 \item The basin of attraction for $\mathrm{sys} > 1$ (if it exists at
   $F = 10$) may have small measure, so random starting points are
   unlikely to land in it.
