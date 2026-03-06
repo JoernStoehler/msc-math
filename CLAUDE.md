@@ -46,7 +46,12 @@ CLAUDE.md is the single conventions file read by every agent. It follows these s
 - **Stable conventions** (unlikely to change) may be duplicated across topics for self-containedness.
 - **Volatile conventions** (evolving) stay in one place to avoid stale duplicates.
 - When editing a section, check for duplicates and cross-references that may need updating.
-- Subagent definitions live in `.claude/agents/` and copy the relevant CLAUDE.md topic sections into their prompt, turning conventions into a checklist.
+- **Subagent prompt architecture:** Subagent definitions live in `.claude/agents/`. Each agent's markdown body is its system prompt — the agent sees this prompt plus CLAUDE.md, so conventions appear twice. This is intentional: agents reliably follow inline instructions but unreliably follow "go read file X." Therefore:
+  - Agent prompts **1:1 copy** relevant CLAUDE.md sections (not summaries, not references)
+  - Agent-specific content (task description, output format, detection rules) goes at the top
+  - CLAUDE.md copies go below, clearly labeled with their source section name
+  - When editing a CLAUDE.md section, grep `.claude/agents/` for the same text and update all copies
+  - The maintenance cost of keeping copies in sync is accepted as the price of reliable rule-following
 
 ## Roles
 
