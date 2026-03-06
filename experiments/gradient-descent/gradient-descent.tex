@@ -103,8 +103,8 @@ is~$0.36$ for general polytopes and~$0.53$ for Lagrangian products.
 Moreover, $\|\nabla_h\,\mathrm{sys}\|$ is \emph{positively}
 correlated with final $\mathrm{sys}$ (Pearson $r \approx 0.80$;
 Figure~\ref{fig:gd-convergence}, left):
-polytopes closest to the Viterbo threshold have the
-\emph{strongest} residual gradients.
+polytopes with higher final $\mathrm{sys}$ tend to have
+larger residual gradients.
 
 \begin{figure}[htbp]
 \centering
@@ -126,25 +126,27 @@ the step bound~$t_{\max}$ shrinks exponentially,
 dropping by 2--3 orders of magnitude over the first 10~iterations.
 The line search selects the most aggressive fraction
 ($0.95 \cdot t_{\max}$) in 87\% of iterations.
-The algorithm always wants to step further, but the combinatorial
-type boundary closes in, leaving less and less room for improvement.
+In most iterations the algorithm would benefit from a larger step,
+but the combinatorial type boundary closes in,
+leaving less and less room for improvement.
 
 \subsubsection*{Interpretation}
 % [TODO: JÖRN - review interpretation below, especially the claims about
 %  basin-of-attraction measure and regular pentagon structure.]
 
-The $\mathrm{sys} < 1$ barrier in this experiment is a
-\emph{step-bound barrier}, not a gradient obstruction.
-The gap between $\mathrm{sys} \approx 0.905$ and the threshold~$1$
-reflects a limitation of the optimization method:
+The data is consistent with a \emph{step-bound barrier}
+rather than a gradient obstruction:
+the algorithm terminates because the step bound shrinks,
+not because gradients vanish.
+Several factors may contribute to the gap between
+$\mathrm{sys} \approx 0.905$ and the threshold~$1$:
 \begin{itemize}
 \item The combinatorial-type-preserving step bound confines each step
   to the current polytope's cell in parameter space.
   Crossing into a new combinatorial type requires restarting.
-\item The basin of attraction for $\mathrm{sys} > 1$ (if it exists at
-  $F = 10$) may have small measure, so random starting points are
-  unlikely to land in it.
+\item If a basin of attraction for $\mathrm{sys} > 1$ exists at
+  $F = 10$, it may have small measure among random starting points.
 \item The counterexample of~\cite{HaimKislevOstrover2024} uses a regular
-  pentagon with specific geometric structure that random
-  polygon pairs do not approximate.
+  pentagon with specific geometric structure; it is unclear whether
+  random polygon pairs can approximate this structure.
 \end{itemize}
