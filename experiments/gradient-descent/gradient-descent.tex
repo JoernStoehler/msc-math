@@ -137,28 +137,40 @@ the same: gradient ascent does not push $\mathrm{sys}$ past~$1$.
 The maximum increases slightly ($0.905$ vs.~$0.878$), but remains
 well below the Viterbo threshold.
 
-\subsubsection*{Distribution shift}
+\subsubsection*{Distribution of sys}
 
-Figure~\ref{fig:gd-density} overlays kernel density estimates
-of the starting and final $\mathrm{sys}$ distributions
-for both polytope classes.
-Gradient ascent shifts the Lagrangian distribution rightward
-into a concentrated peak near $\mathrm{sys} \approx 0.7$,
-while the general distribution shifts more modestly
-and remains spread across $[0.2, 0.85]$.
-Both final distributions drop sharply to zero
-well below $\mathrm{sys} = 1$, with no density near the
-Viterbo threshold.
+The empirical distributions of $\mathrm{sys}$ are well described
+by Beta distributions (Figure~\ref{fig:gd-density}).
+For general polytopes, the fit is excellent:
+starting values follow $\mathrm{Beta}(1.7,\, 2.2)$
+(KS test $p = 0.40$),
+and after optimization $\mathrm{Beta}(3.0,\, 2.7)$
+($p = 0.99$).
+Gradient ascent shifts the first parameter from
+$a \approx 1.7$ to $a \approx 3.0$
+while $b$ stays near~$2.5$:
+the left tail becomes lighter (fewer low-$\mathrm{sys}$ polytopes
+remain), but the right cutoff below~$1$ persists.
+
+For Lagrangian products, the aggregate distribution is a mixture
+of three splits with different shapes, so a single Beta
+fits poorly ($p = 0.01$).
+Per-split fits are better
+(e.g.\ the $4 \times 6$ split fits $\mathrm{Beta}(2.2,\, 1.3)$
+with $p = 0.55$),
+but the $3 \times 7$ and $5 \times 5$ splits show
+deviations from Beta.
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\textwidth]{../experiments/gradient-descent/gradient_descent_density.png}
-\caption{Kernel density estimates of $\mathrm{sys}$ before (dashed)
-  and after (solid) gradient ascent.
-  Optimization concentrates the Lagrangian distribution around
-  $\mathrm{sys} \approx 0.7$;
-  the general distribution shifts modestly rightward.
-  Both vanish before $\mathrm{sys} = 1$.}
+\caption{Beta distribution fits to $\mathrm{sys}$ before and after
+  gradient ascent.
+  Top: general polytopes, with excellent Beta fits
+  ($p = 0.40$ starting, $p = 0.99$ final).
+  Bottom: Lagrangian products (all splits aggregated),
+  where the mixture structure causes poor single-Beta fits
+  ($p = 0.01$).}
 \label{fig:gd-density}
 \end{figure}
 

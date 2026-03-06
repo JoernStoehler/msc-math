@@ -5,7 +5,7 @@ Extended analysis of gradient ascent trajectories.
 Goal: Understand convergence quality, density shifts, and step size dynamics.
 Input: experiments/gradient-descent/gradient-descent.jsonl
 Output:
-  - gradient_descent_density.png    (KDE: starting vs final, general vs lagrangian)
+  - gradient_descent_density.png    (Beta fits: starting vs final, general vs lagrangian)
   - gradient_descent_convergence.png (final gradient norms vs final sys)
   - gradient_descent_stepsize.png   (step size and fraction evolution by iteration)
 """
@@ -16,7 +16,7 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy.stats import gaussian_kde
+from scipy import stats
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 DATA_PATH = EXPERIMENT_DIR / "gradient-descent.jsonl"
@@ -47,49 +47,58 @@ def load_raw():
 
 
 def plot_density(by_name):
-    """KDE density: 4 overlaid curves for (general/lagrangian) x (starting/final)."""
-    fig, ax = plt.subplots(1, 1, figsize=(10, 6))
-
-    groups = {
-        "General starting": [],
-        "General final": [],
-        "Lagrangian starting": [],
-        "Lagrangian final": [],
-    }
-
+    """Beta distribution fits: 4-panel histogram + fitted Beta PDF."""
+    # Collect data by group
+    groups = {}
     for name, iters in by_name.items():
         ptype = iters[0]["polytope_type"]
         s = iters[0]["starting_sys"]
         f = iters[-1]["sys_after"]
         if not (np.isfinite(s) and np.isfinite(f)):
             continue
-        if ptype == "general":
-            groups["General starting"].append(s)
-            groups["General final"].append(f)
-        else:
-            groups["Lagrangian starting"].append(s)
-            groups["Lagrangian final"].append(f)
+        key = "general" if ptype == "general" else "lagrangian"
+        if key not in groups:
+            groups[key] = {"starting": [], "final": []}
+        groups[key]["starting"].append(s)
+        groups[key]["final"].append(f)
 
-    x = np.linspace(0, 1.05, 500)
-    styles = {
-        "General starting": ("steelblue", "--", 1.0),
-        "General final": ("steelblue", "-", 2.0),
-        "Lagrangian starting": ("coral", "--", 1.0),
-        "Lagrangian final": ("coral", "-", 2.0),
-    }
+    fig, axes = plt.subplots(2, 2, figsize=(12, 9))
 
-    for label, vals in groups.items():
-        color, ls, lw = styles[label]
-        kde = gaussian_kde(vals, bw_method=0.12)
-        kde_vals = kde(x)
-        ax.plot(x, kde_vals, color=color, linestyle=ls, linewidth=lw, label=label)
+    configs = [
+        (0, 0, "general", "starting", "General starting", "steelblue"),
+        (0, 1, "general", "final", "General final", "steelblue"),
+        (1, 0, "lagrangian", "starting", "Lagrangian starting (all splits)", "coral"),
+        (1, 1, "lagrangian", "final", "Lagrangian final (all splits)", "coral"),
+    ]
 
-    ax.axvline(x=1.0, color="red", linestyle=":", linewidth=1, alpha=0.5, label="sys = 1")
-    ax.set_xlabel("sys")
-    ax.set_ylabel("Density")
-    ax.set_title("Distribution shift under gradient ascent (F = 10)")
-    ax.legend()
-    ax.set_xlim(0, 1.05)
+    for r, c, gkey, phase, title, color in configs:
+        ax = axes[r, c]
+        vals = np.array(groups[gkey][phase])
+
+        # Histogram
+        ax.hist(vals, bins=30, density=True, alpha=0.5, color=color,
+                edgecolor="white", linewidth=0.5)
+
+        # Beta fit (with location and scale)
+        a, b, loc, scale = stats.beta.fit(vals)
+        ks_stat, ks_p = stats.kstest(vals, "beta", args=(a, b, loc, scale))
+
+        # Plot fitted Beta PDF
+        pdf_x = np.linspace(max(loc + 0.001, vals.min() - 0.02),
+                            min(loc + scale - 0.001, vals.max() + 0.02), 500)
+        pdf_y = stats.beta.pdf(pdf_x, a, b, loc=loc, scale=scale)
+        ax.plot(pdf_x, pdf_y, "k-", linewidth=2,
+                label=f"Beta({a:.1f}, {b:.1f})\nKS p = {ks_p:.2f}")
+
+        ax.axvline(x=1.0, color="red", linestyle=":", linewidth=1, alpha=0.4)
+        ax.set_title(title)
+        ax.set_xlabel("sys")
+        ax.set_ylabel("Density")
+        ax.legend(fontsize=9)
+        ax.set_xlim(0, 1.05)
+
+    fig.suptitle("Beta distribution fits to sys (F = 10)", fontsize=14)
+    fig.tight_layout()
 
     out = EXPERIMENT_DIR / "gradient_descent_density.png"
     fig.savefig(out, dpi=150, bbox_inches="tight")
