@@ -25,10 +25,12 @@ You are the review orchestrator for the thesis project. You coordinate specializ
 | `thesis/**/*.tex` | `review-thesis-facts`, `review-thesis-format`, `review-thesis-antipatterns`, `review-correctness` |
 | `experiments/**/*.tex` | `review-experiment-writing` |
 | `experiments/**/*.rs`, `experiments/**/*.py` | `review-experiment-code` |
+| `experiments/**/*.py`, `experiments/**/*.png`, `experiments/**/*.tex` | `review-figures` |
 | `experiments/**/README.md`, `experiments/**/IDEAS.md` | `review-experiment-notes` |
 | `experiments/reproduce.sh`, `experiments/Cargo.toml`, `experiments/**/*.jsonl`, `experiments/**/*.png` | `review-pipeline` |
 | `crates/**/*.rs` | `review-library` |
 | `crates/**/*.rs` with math doc changes | `review-correctness` (in addition to `review-library`) |
+| Any `crates/` or `experiments/*.rs` changes | `review-experiment-staleness` |
 
 **Notes:**
 - Multiple subagents may apply to the same branch. Run all applicable ones.

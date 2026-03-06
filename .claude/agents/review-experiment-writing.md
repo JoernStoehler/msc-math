@@ -47,7 +47,7 @@ Builds upon **Thesis Writing** — all Thesis Writing conventions apply to exper
 - Results checked by Jörn before inclusion in thesis
 - Statistical claims require reproducible computation
 - Plots visually inspected for sanity
-- **Figure sizing** (from CLAUDE.md § Figure sizing): all formatting in Python, LaTeX is 1:1 pass-through. Detection: flag `\includegraphics` with `width=`/`scale=`, flag `figsize` width > 5.5".
+- **Figure sizing** (from CLAUDE.md § Figure sizing): all formatting in Python, LaTeX is 1:1 pass-through. Detection: flag `\includegraphics` with `width=`/`scale=`, flag output PNG width > 5.4".
 
 ### General Thesis Writing Conventions
 

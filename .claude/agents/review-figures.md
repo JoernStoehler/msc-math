@@ -48,7 +48,7 @@ These turn the CLAUDE.md conventions above into mechanical checks.
 
 ### Figure sizing checks
 
-1. Grep `.py` for `figsize=` — flag if width > 5.5" (won't fit at `\textwidth` ≈ 5.4")
+1. Grep `.py` for `figsize=` — page width is ~5.4", and `bbox_inches='tight'` expands beyond figsize, so figsize must be smaller. Flag if figsize width ≥ 5.4".
 2. Grep `.tex` for `\includegraphics` — flag any `width=`, `height=`, or `scale=` parameter
 3. `fontsize=` values above 14pt on individual elements almost certainly compensate for a figsize mismatch. Flag the figsize as the root cause.
 
