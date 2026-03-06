@@ -12,15 +12,12 @@
 /// Input: Known polytopes from the library (F ≤ 10).
 /// Output: Summary tables to stdout. Panics on any violation.
 use nalgebra::{DMatrix, DVector, Vector4};
-use num_bigint::BigInt;
-use num_rational::BigRational;
-use num_traits::{ToPrimitive, Zero};
 use symplectic::algorithms::hk2017::{ehz_capacity, combinations};
 use symplectic::algorithms::hk2017::permutations::cyclic_permutations;
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::symplectic::omega0;
 use symplectic::kkt::{build_kkt_system as build_kkt, q_from_beta};
+use symplectic::kkt_rational;
 
 /// Condition-number threshold for rank truncation (matches EIGEN_CONDITION_TAU
 /// in crates/src/kkt.rs).
@@ -162,149 +159,10 @@ fn error_bound_sweep(polytope: &Polytope4D) -> SweepResult {
 }
 
 // ── Part 2: Exact value comparison ──────────────────────────────────────
-
-/// Convert an f64 to an exact BigRational (lossless for finite f64).
-fn f64_to_rational(x: f64) -> BigRational {
-    // Every finite f64 = m * 2^e where m is an integer mantissa and e is the exponent.
-    // We use the rational representation directly.
-    if x == 0.0 {
-        return BigRational::zero();
-    }
-    // Use the bits representation to get exact rational
-    let bits = x.to_bits();
-    let sign = if bits >> 63 == 0 { 1i64 } else { -1i64 };
-    let exponent = ((bits >> 52) & 0x7FF) as i64;
-    let mantissa = if exponent == 0 {
-        // Subnormal: mantissa without implicit 1
-        (bits & 0x000F_FFFF_FFFF_FFFF) as i64
-    } else {
-        // Normal: mantissa with implicit 1
-        ((bits & 0x000F_FFFF_FFFF_FFFF) | 0x0010_0000_0000_0000) as i64
-    };
-    let e = if exponent == 0 {
-        1 - 1023 - 52 // Subnormal exponent
-    } else {
-        exponent - 1023 - 52 // Normal exponent
-    };
-
-    let numer = BigInt::from(sign * mantissa);
-    if e >= 0 {
-        let scale = BigInt::from(1u64) << (e as u64);
-        BigRational::new(numer * scale, BigInt::from(1))
-    } else {
-        let scale = BigInt::from(1u64) << ((-e) as u64);
-        BigRational::new(numer, scale)
-    }
-}
-
-/// Build the KKT matrix and RHS over Q (exact rational arithmetic).
-/// Uses the same f64 normals/heights as the library, but represented as exact rationals.
-fn build_kkt_rational(
-    normals: &[Vector4<f64>],
-    heights: &[f64],
-    perm: &[usize],
-) -> (Vec<Vec<BigRational>>, Vec<BigRational>) {
-    let m = perm.len();
-    let size = m + 5;
-    let zero = BigRational::zero();
-
-    let mut mat = vec![vec![zero.clone(); size]; size];
-    let mut rhs = vec![zero.clone(); size];
-
-    // H block: H_{ij} = ω₀(n_i, n_j) for i ≠ j (symmetric)
-    for i in 0..m {
-        for j in (i + 1)..m {
-            let val = f64_to_rational(omega0(&normals[perm[i]], &normals[perm[j]]));
-            mat[i][j] = val.clone();
-            mat[j][i] = val;
-        }
-    }
-
-    // N block: N_{i,d} = normals[perm[i]][d]
-    for i in 0..m {
-        for d in 0..4 {
-            let val = f64_to_rational(normals[perm[i]][d]);
-            mat[i][m + d] = val.clone();
-            mat[m + d][i] = val;
-        }
-    }
-
-    // η block: η_i = heights[perm[i]]
-    for i in 0..m {
-        let val = f64_to_rational(heights[perm[i]]);
-        mat[i][m + 4] = val.clone();
-        mat[m + 4][i] = val;
-    }
-
-    // RHS: [0, ..., 0, 1]
-    rhs[m + 4] = BigRational::from(BigInt::from(1));
-
-    (mat, rhs)
-}
-
-/// Gaussian elimination with partial pivoting over BigRational.
-/// Returns None if the system is singular.
-fn gauss_solve(mat: &[Vec<BigRational>], rhs: &[BigRational]) -> Option<Vec<BigRational>> {
-    let n = rhs.len();
-    // Augmented matrix [A | b]
-    let mut aug: Vec<Vec<BigRational>> = mat.iter().enumerate()
-        .map(|(i, row)| {
-            let mut r = row.clone();
-            r.push(rhs[i].clone());
-            r
-        })
-        .collect();
-
-    // Forward elimination
-    for col in 0..n {
-        // Find pivot (first nonzero in column)
-        let pivot_row = (col..n).find(|&r| !aug[r][col].is_zero())?;
-        aug.swap(col, pivot_row);
-
-        let pivot = aug[col][col].clone();
-        for row in (col + 1)..n {
-            if !aug[row][col].is_zero() {
-                let factor = &aug[row][col] / &pivot;
-                for j in col..=n {
-                    let val = &aug[col][j] * &factor;
-                    aug[row][j] = &aug[row][j] - &val;
-                }
-            }
-        }
-    }
-
-    // Back substitution
-    let mut x = vec![BigRational::zero(); n];
-    for i in (0..n).rev() {
-        let mut sum = aug[i][n].clone();
-        for j in (i + 1)..n {
-            sum = sum - &aug[i][j] * &x[j];
-        }
-        if aug[i][i].is_zero() {
-            return None; // Singular
-        }
-        x[i] = sum / &aug[i][i];
-    }
-
-    Some(x)
-}
-
-/// Compute exact Q(β) = Σ_{i>j} β_i β_j ω₀(n_i, n_j) over BigRational.
-fn q_from_beta_rational(
-    normals: &[Vector4<f64>],
-    perm: &[usize],
-    beta: &[BigRational],
-) -> BigRational {
-    let m = beta.len();
-    let mut sum = BigRational::zero();
-    for i in 1..m {
-        for j in 0..i {
-            let omega = f64_to_rational(omega0(&normals[perm[i]], &normals[perm[j]]));
-            sum = sum + &beta[i] * &beta[j] * omega;
-        }
-    }
-    sum
-}
+//
+// Uses symplectic::kkt_rational::solve_kkt_exact for the rational solve.
+// The local duplicate code (f64_to_rational, build_kkt_rational, gauss_solve,
+// q_from_beta_rational) was removed in favor of the library implementation.
 
 /// Result of exact comparison for one polytope.
 struct ExactResult {
@@ -333,17 +191,9 @@ fn exact_comparison(polytope: &Polytope4D) -> Option<ExactResult> {
     let normals = polytope.normals();
     let heights = polytope.heights();
 
-    // Build rational KKT system (same f64 values, exact representation)
-    let (rat_mat, rat_rhs) = build_kkt_rational(normals, heights, &alg_perm);
-
-    // Solve exactly
-    let x_exact = gauss_solve(&rat_mat, &rat_rhs)?;
-
-    // Extract exact β and compute exact Q
-    let beta_exact: Vec<BigRational> = x_exact[..m].to_vec();
-    let q_exact_rational = q_from_beta_rational(normals, &alg_perm, &beta_exact);
-    let q_exact_f64 = q_exact_rational.numer().to_f64().unwrap_or(f64::NAN)
-        / q_exact_rational.denom().to_f64().unwrap_or(f64::NAN);
+    // Solve the KKT system exactly via the library's rational solver.
+    let exact_result = kkt_rational::solve_kkt_exact(normals, heights, &alg_perm)?;
+    let q_exact_f64 = exact_result.q_exact_f64;
 
     // Compute numerical Q̃ and E (using the eigendecomposition path)
     let (kkt, rhs) = build_kkt(normals, heights, &alg_perm);
