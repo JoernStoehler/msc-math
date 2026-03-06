@@ -57,14 +57,14 @@ These turn the CLAUDE.md conventions above into mechanical checks.
 - **Color consistency**: consistent colors for the same data categories across all figures in the experiment
 - **Marker usage**: scatter/line plots should use markers, not just color, for grayscale compatibility
 - **Colorblind-friendly palettes**: avoid red-green only distinctions
-- **DPI**: `savefig(dpi=150)` minimum for print quality
+- **DPI**: `savefig(dpi=150)` is a reasonable default for print quality
 - **`bbox_inches='tight'`**: should be used to avoid clipping labels
 - **Axis labels**: include quantity name (not just symbol) or be self-evident from context
 - **Legend placement**: inside plot if space permits, outside if it would occlude data
 
 ### Caption epistemology checks
 
-Captions must distinguish three epistemic levels:
+Captions should distinguish three epistemic levels (heuristic, not a hard rule):
 
 1. **Observation** (what the figure shows): "The histogram shows that 70% of values fall below 0.5."
 2. **Comparison** (relating to stated reference): "Lagrangian products cluster at higher values than general polytopes."
@@ -72,7 +72,7 @@ Captions must distinguish three epistemic levels:
 
 Rules:
 - Observations and comparisons go in captions
-- Comparisons require an explicit comparison target ("than general polytopes", "relative to the diagonal")
+- Comparisons should have an explicit comparison target ("than general polytopes", "relative to the diagonal")
 - Interpretations belong in body text, NOT captions
 - Detection: grep captions for "suggests", "indicates", "means that", "because", "implies", "consistent with", "due to" — each is a potential violation
 - Exception: a brief interpretive phrase is OK if it helps the reader parse the figure
@@ -88,14 +88,14 @@ If a figure tries both and neither works, recommend splitting. Multi-panel figur
 ### Table quality checks
 
 **Mechanical (grep the `.tex` file):**
-1. No `\scriptsize` or `\tiny` inside or near `\begin{table}`. Body text must not go below `\small`.
+1. No `\scriptsize` or `\tiny` inside or near `\begin{table}`. Prefer `\small` as the minimum.
 2. Use `booktabs` (`\toprule`/`\midrule`/`\bottomrule`), not `\hline`.
 
 **Heuristic (flag as warnings):**
 3. Tables with >6 columns at `\textwidth` are likely cramped.
 
 **Content:**
-- Column headers must have units or be self-explanatory
+- Column headers should have units or be self-explanatory
 - Numbers: consistent decimal places within each column
 - Most important column visually prominent or listed first/last
 

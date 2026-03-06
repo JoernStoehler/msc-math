@@ -48,8 +48,9 @@ Every `.tex` file starts with a `%` header block containing:
 - Rust cross-references: grep `crates/src/` for any labels used in the file; verify doc comments match
 
 ### Proof Structure
-- Required: Assumptions → Claim → Overview → Steps → Conclusion
+- Recommended structure: Assumptions → Claim → Overview → Steps → Conclusion
 - Check each proof has an Overview paragraph
+- Note: `review-correctness` also checks proof structure for mathematical soundness; this agent checks only whether the structural template is followed
 
 ## What NOT to Check
 - Factual accuracy of claims → that's review-thesis-facts
