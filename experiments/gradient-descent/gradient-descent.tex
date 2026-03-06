@@ -78,7 +78,7 @@ Lagrangian 5$\times$5 & 164 & 0.628 & 0.905 & 0.806 & 0.217 \\
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\textwidth]{../experiments/gradient-descent/gradient_descent_scatter.png}
+\includegraphics{../experiments/gradient-descent/gradient_descent_scatter.png}
 \caption{Starting vs.\ final $\mathrm{sys}$ under gradient ascent.
   Nearly all points lie above the diagonal.
   Lagrangian products (coral) cluster at higher values than
@@ -102,26 +102,39 @@ The median $\|\nabla_h\,\mathrm{sys}\|$ at termination
 is~$0.36$ for general polytopes and~$0.53$ for Lagrangian products.
 Moreover, $\|\nabla_h\,\mathrm{sys}\|$ is \emph{positively}
 correlated with final $\mathrm{sys}$ (Pearson $r \approx 0.80$;
-Figure~\ref{fig:gd-convergence}, left):
+Figure~\ref{fig:gd-gradient}):
 polytopes with higher final $\mathrm{sys}$ tend to have
 larger residual gradients.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\textwidth]{../experiments/gradient-descent/gradient_descent_convergence.png}
-\caption{Convergence diagnostics.
-  Left: residual height gradient $\|\nabla_h\,\mathrm{sys}\|$ vs.\
-  final $\mathrm{sys}$; higher final $\mathrm{sys}$ correlates with
-  larger residual gradients ($r \approx 0.80$).
-  Center: median step size (with IQR band) drops by 2--3 orders of
-  magnitude over the first 10~iterations.
-  Right: survival curve (number of polytopes still improving
-  at each iteration).}
-\label{fig:gd-convergence}
+\includegraphics{../experiments/gradient-descent/gradient_descent_gradient.png}
+\caption{Residual height gradient $\|\nabla_h\,\mathrm{sys}\|$ vs.\
+  final $\mathrm{sys}$ at termination.
+  Higher final $\mathrm{sys}$ correlates with
+  larger residual gradients ($r \approx 0.80$).}
+\label{fig:gd-gradient}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics{../experiments/gradient-descent/gradient_descent_stepsize.png}
+\caption{Median step size (with IQR band) per iteration.
+  The step bound drops by 2--3 orders of magnitude
+  over the first 10~iterations.}
+\label{fig:gd-stepsize}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics{../experiments/gradient-descent/gradient_descent_survival.png}
+\caption{Convergence survival curve: number of polytopes
+  still improving at each iteration.}
+\label{fig:gd-survival}
 \end{figure}
 
 The cause is visible in the step size dynamics
-(Figure~\ref{fig:gd-convergence}, center):
+(Figure~\ref{fig:gd-stepsize}):
 the step bound~$t_{\max}$ shrinks exponentially,
 dropping by 2--3 orders of magnitude over the first 10~iterations.
 The line search selects the most aggressive fraction

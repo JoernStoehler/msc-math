@@ -5,8 +5,10 @@ Analyze gradient ascent results on F=10 polytopes.
 Goal: Visualize gradient ascent outcomes and diagnose convergence behavior.
 Input: experiments/gradient-descent/gradient-descent.jsonl (7631 rows, 995 polytopes)
 Output:
-  - gradient_descent_scatter.png      (starting vs final sys, by class)
-  - gradient_descent_convergence.png  (gradient norms + step size dynamics)
+  - gradient_descent_scatter.png    (starting vs final sys, by class)
+  - gradient_descent_gradient.png   (residual gradient vs final sys)
+  - gradient_descent_stepsize.png   (step size evolution per iteration)
+  - gradient_descent_survival.png   (convergence survival curve)
   - stdout: summary table and convergence statistics cited in gradient-descent.tex
 """
 
@@ -70,7 +72,7 @@ def load_data():
 
 def plot_scatter(summaries):
     """Scatter: starting sys vs final sys, colored by polytope class."""
-    fig, ax = plt.subplots(1, 1, figsize=(6.5, 6.5))
+    fig, ax = plt.subplots(1, 1, figsize=(5.4, 5.4))
 
     general = [s for s in summaries if s["polytope_type"] == "general"]
     lagrangian = [s for s in summaries if s["polytope_type"] != "general"]
@@ -99,16 +101,10 @@ def plot_scatter(summaries):
     print(f"Saved {out}")
 
 
-def plot_convergence(rows, by_name):
-    """Combined figure: gradient norms at termination + step size dynamics.
+def plot_gradient_vs_sys(by_name):
+    """Scatter: residual height gradient vs final sys at termination."""
+    fig, ax = plt.subplots(1, 1, figsize=(5.4, 3.5))
 
-    3-panel figure at ~6.3" rendered width. At figsize=(13, 4.5) the ~2x
-    downscale requires boosted fonts to stay readable in print.
-    """
-    fig, axes = plt.subplots(1, 3, figsize=(13, 4.5))
-
-    # Panel 1: height gradient norm vs final sys
-    ax = axes[0]
     for ptype, color, marker in [
         ("general", "steelblue", "o"),
         ("lagrangian", "coral", "^"),
@@ -140,15 +136,22 @@ def plot_convergence(rows, by_name):
                        alpha=0.7, color=color, marker="x", s=35,
                        label=f"{ptype} (max iter)")
 
-    ax.set_xlabel("Final sys", fontsize=16)
-    ax.set_ylabel(r"$\|\nabla_h\,\mathrm{sys}\|$ at termination", fontsize=16)
+    ax.set_xlabel("Final sys")
+    ax.set_ylabel(r"$\|\nabla_h\,\mathrm{sys}\|$ at termination")
     ax.set_yscale("log")
-    ax.set_title("Residual height gradient", fontsize=17)
-    ax.tick_params(labelsize=14)
-    ax.legend(fontsize=12)
+    ax.set_title("Residual height gradient")
+    ax.legend()
 
-    # Panel 2: step size evolution (median with IQR)
-    ax = axes[1]
+    out = EXPERIMENT_DIR / "gradient_descent_gradient.png"
+    fig.savefig(out, dpi=150, bbox_inches="tight")
+    plt.close(fig)
+    print(f"Saved {out}")
+
+
+def plot_step_size(rows, by_name):
+    """Step size evolution: median with IQR band per iteration."""
+    fig, ax = plt.subplots(1, 1, figsize=(5.4, 3.5))
+
     for ptype, color in [("general", "steelblue"), ("lagrangian", "coral")]:
         by_iter = defaultdict(list)
         for name, iters in by_name.items():
@@ -169,14 +172,21 @@ def plot_convergence(rows, by_name):
         ax.fill_between(iters_sorted, p25, p75, color=color, alpha=0.15)
 
     ax.set_yscale("log")
-    ax.set_xlabel("Iteration", fontsize=16)
-    ax.set_ylabel("Step size $t$", fontsize=16)
-    ax.set_title("Step size shrinks exponentially", fontsize=17)
-    ax.tick_params(labelsize=14)
-    ax.legend(fontsize=12)
+    ax.set_xlabel("Iteration")
+    ax.set_ylabel("Step size $t$")
+    ax.set_title("Step size shrinks exponentially")
+    ax.legend()
 
-    # Panel 3: survival curve (active polytopes per iteration)
-    ax = axes[2]
+    out = EXPERIMENT_DIR / "gradient_descent_stepsize.png"
+    fig.savefig(out, dpi=150, bbox_inches="tight")
+    plt.close(fig)
+    print(f"Saved {out}")
+
+
+def plot_survival(by_name):
+    """Survival curve: active polytopes per iteration."""
+    fig, ax = plt.subplots(1, 1, figsize=(5.4, 3.5))
+
     for ptype, color in [("general", "steelblue"), ("lagrangian", "coral")]:
         by_iter = defaultdict(int)
         for name, iters in by_name.items():
@@ -191,16 +201,12 @@ def plot_convergence(rows, by_name):
         counts = [by_iter[i] for i in iters_sorted]
         ax.plot(iters_sorted, counts, color=color, marker=".", markersize=5, label=ptype)
 
-    ax.set_xlabel("Iteration", fontsize=16)
-    ax.set_ylabel("Active polytopes", fontsize=16)
-    ax.set_title("Convergence survival curve", fontsize=17)
-    ax.tick_params(labelsize=14)
-    ax.legend(fontsize=12)
+    ax.set_xlabel("Iteration")
+    ax.set_ylabel("Active polytopes")
+    ax.set_title("Convergence survival curve")
+    ax.legend()
 
-    fig.suptitle("Convergence diagnostics (F = 10)", fontsize=19, y=1.02)
-    fig.tight_layout()
-
-    out = EXPERIMENT_DIR / "gradient_descent_convergence.png"
+    out = EXPERIMENT_DIR / "gradient_descent_survival.png"
     fig.savefig(out, dpi=150, bbox_inches="tight")
     plt.close(fig)
     print(f"Saved {out}")
@@ -295,7 +301,9 @@ def main():
 
     print(f"Loaded {len(summaries)} polytope trajectories, {len(rows)} iteration rows.")
     plot_scatter(summaries)
-    plot_convergence(rows, by_name)
+    plot_gradient_vs_sys(by_name)
+    plot_step_size(rows, by_name)
+    plot_survival(by_name)
     print_summary_table(summaries)
     print_convergence_stats(by_name, rows)
 
