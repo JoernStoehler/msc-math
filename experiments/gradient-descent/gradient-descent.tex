@@ -49,6 +49,8 @@ Iteration terminates when improvement drops below~$10^{-6}$,
 or after 20~iterations.
 
 \subsubsection*{Results}
+% [TODO: JÖRN - verify data claims and table values match Python output.
+%  All numbers below were cross-checked by agent against gradient_descent.py output.]
 
 Of the 995 polytopes that produce at least one valid gradient
 step (6~fail due to degenerate initial data):
@@ -94,12 +96,12 @@ and balanced splits outperform asymmetric ones
 
 \subsubsection*{Convergence analysis}
 
-The algorithm terminates with $O(1)$ gradient norms---far from
-the near-zero gradients expected at a local maximum.
+The algorithm terminates with gradient norms bounded away from
+zero---far from the near-zero gradients expected at a local maximum.
 The median $\|\nabla_h\,\mathrm{sys}\|$ at termination
 is~$0.36$ for general polytopes and~$0.53$ for Lagrangian products.
 Moreover, $\|\nabla_h\,\mathrm{sys}\|$ is \emph{positively}
-correlated with final $\mathrm{sys}$ ($r \approx 0.80$;
+correlated with final $\mathrm{sys}$ (Pearson $r \approx 0.80$;
 Figure~\ref{fig:gd-convergence}, left):
 polytopes closest to the Viterbo threshold have the
 \emph{strongest} residual gradients.

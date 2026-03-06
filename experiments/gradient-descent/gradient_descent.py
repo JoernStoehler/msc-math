@@ -3,10 +3,11 @@
 Analyze gradient ascent results on F=10 polytopes.
 
 Goal: Visualize gradient ascent outcomes and diagnose convergence behavior.
-Input: experiments/gradient-descent/gradient-descent.jsonl
+Input: experiments/gradient-descent/gradient-descent.jsonl (7631 rows, 995 polytopes)
 Output:
   - gradient_descent_scatter.png      (starting vs final sys, by class)
   - gradient_descent_convergence.png  (gradient norms + step size dynamics)
+  - stdout: summary table and convergence statistics cited in gradient-descent.tex
 """
 
 import json
@@ -82,7 +83,7 @@ def plot_scatter(summaries):
         ax.scatter(x, y, alpha=0.4, label=label, color=color, marker=marker, s=15)
 
     lims = [0, max(ax.get_xlim()[1], ax.get_ylim()[1])]
-    ax.plot(lims, lims, "k--", alpha=0.3, linewidth=0.5)
+    ax.plot(lims, lims, "k--", alpha=0.4, linewidth=1.0, label="no improvement")
     ax.axhline(y=1.0, color="red", linestyle="--", linewidth=1, alpha=0.5, label="sys = 1")
 
     ax.set_xlabel("Starting sys")
@@ -98,7 +99,25 @@ def plot_scatter(summaries):
 
 
 def plot_convergence(rows, by_name):
-    """Combined figure: gradient norms at termination + step size dynamics."""
+    """Combined figure: gradient norms at termination + step size dynamics.
+
+    This 3-panel figure is 16" wide but rendered at ~6.3" (\\textwidth),
+    so a 2.5x downscale requires larger font sizes than the global rcParams.
+    """
+    conv_rc = {
+        "axes.labelsize": 18,
+        "axes.titlesize": 18,
+        "xtick.labelsize": 14,
+        "ytick.labelsize": 14,
+        "legend.fontsize": 13,
+        "figure.titlesize": 20,
+    }
+    with plt.rc_context(conv_rc):
+        _plot_convergence_impl(rows, by_name)
+
+
+def _plot_convergence_impl(rows, by_name):
+    """Inner implementation using caller's rc_context."""
     fig, axes = plt.subplots(1, 3, figsize=(16, 5.5))
 
     # Panel 1: height gradient norm vs final sys
