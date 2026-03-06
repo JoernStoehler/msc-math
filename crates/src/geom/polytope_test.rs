@@ -234,3 +234,124 @@ fn vertices_satisfy_halfspace_inequalities() {
         }
     }
 }
+
+// ---- Vertex ordering invariant ----
+
+/// Verify that vertices[i] is incident to exactly the facets in vertex_descriptors[i].
+///
+/// This is the core invariant of the vertex reordering logic: after construction,
+/// the f64 vertex at index i must lie on the facets listed in the exact
+/// combinatorial data at the same index. Tests the `new()` path which uses
+/// `reorder_vertices_to_match_rational`.
+///
+/// **Why debug mode:** Fast (F ≤ 10), exercises reorder logic with bounds checks.
+/// **Why these inputs:** All known polytopes cover simplex (F=5), hypercube (F=8),
+/// crosspolytope (F=16), pentagon (F=10), and Lagrangian/symplectic products (F=7-8).
+#[test]
+fn vertex_ordering_matches_exact_descriptors() {
+    use crate::constants::EPS_FACET_INCIDENCE;
+    use crate::geom::known_polytopes;
+
+    for kp in known_polytopes::all_known() {
+        let p = &kp.polytope;
+        let exact = p.exact_data();
+
+        assert_eq!(
+            p.vertices().len(),
+            exact.vertex_descriptors.len(),
+            "{}: vertex count mismatch",
+            kp.name
+        );
+
+        for (vi, (vertex, descriptor)) in p
+            .vertices()
+            .iter()
+            .zip(exact.vertex_descriptors.iter())
+            .enumerate()
+        {
+            // Vertex must lie ON each facet in its descriptor
+            for &fi in descriptor {
+                let residual = (p.normals()[fi].dot(vertex) - p.heights()[fi]).abs();
+                assert!(
+                    residual < EPS_FACET_INCIDENCE,
+                    "{}: vertex {} should be on facet {} but residual = {:.2e}",
+                    kp.name, vi, fi, residual
+                );
+            }
+
+            // Vertex must be strictly inside each facet NOT in its descriptor
+            for fi in 0..p.facet_count() {
+                if !descriptor.contains(&fi) {
+                    let slack = p.heights()[fi] - p.normals()[fi].dot(vertex);
+                    assert!(
+                        slack > EPS_FACET_INCIDENCE,
+                        "{}: vertex {} should be interior to facet {} but slack = {:.2e}",
+                        kp.name, vi, fi, slack
+                    );
+                }
+            }
+        }
+    }
+}
+
+/// Verify vertex ordering invariant for the `from_rational()` construction path.
+///
+/// `from_rational()` uses `new_with_exact_data()` → `reorder_vertices_by_descriptor()`,
+/// a different reorder strategy than `new()`. This test constructs a polytope via
+/// the rational path and checks the same invariant.
+///
+/// **Why debug mode:** Small polytopes (F=5, F=8), fast.
+/// **Why these inputs:** Simplex and hypercube exercise both simple (4 facets per
+/// vertex) and axis-aligned (4 facets per vertex) cases.
+#[test]
+fn vertex_ordering_via_from_rational() {
+    use crate::constants::EPS_FACET_INCIDENCE;
+    use crate::geom::rational::RationalPolytope4D;
+    use crate::geom::known_polytopes;
+
+    // Test with simplex (F=5) and hypercube (F=8)
+    for kp in [known_polytopes::simplex(), known_polytopes::hypercube()] {
+        let orig = &kp.polytope;
+
+        // Build rational representation from f64, then convert back via from_rational()
+        let rp = RationalPolytope4D::from_f64(orig.normals(), orig.heights())
+            .expect("rational construction should succeed");
+        let p = Polytope4D::from_rational(&rp)
+            .expect("from_rational should succeed");
+        let exact = p.exact_data();
+
+        assert_eq!(
+            p.vertices().len(),
+            exact.vertex_descriptors.len(),
+            "{} (from_rational): vertex count mismatch",
+            kp.name
+        );
+
+        for (vi, (vertex, descriptor)) in p
+            .vertices()
+            .iter()
+            .zip(exact.vertex_descriptors.iter())
+            .enumerate()
+        {
+            for &fi in descriptor {
+                let residual = (p.normals()[fi].dot(vertex) - p.heights()[fi]).abs();
+                assert!(
+                    residual < EPS_FACET_INCIDENCE,
+                    "{} (from_rational): vertex {} should be on facet {} but residual = {:.2e}",
+                    kp.name, vi, fi, residual
+                );
+            }
+
+            for fi in 0..p.facet_count() {
+                if !descriptor.contains(&fi) {
+                    let slack = p.heights()[fi] - p.normals()[fi].dot(vertex);
+                    assert!(
+                        slack > EPS_FACET_INCIDENCE,
+                        "{} (from_rational): vertex {} should be interior to facet {} but slack = {:.2e}",
+                        kp.name, vi, fi, slack
+                    );
+                }
+            }
+        }
+    }
+}
