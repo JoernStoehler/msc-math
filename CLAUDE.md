@@ -923,6 +923,14 @@ No hardcoded paths outside `REPO_ROOT`.
 **Error messages:**
 Make them actionable. Bad: "File not found". Good: "File not found: data.jsonl. Run Rust binary first."
 
+### Figure sizing
+
+All figure formatting is handled in Python. LaTeX is a 1:1 pass-through (`\includegraphics{file.png}`, no `width=`/`scale=`).
+
+- `figsize` = the physical size in the printed PDF. `\textwidth` ≈ 5.4" (A4, 12pt article, default margins).
+- `bbox_inches='tight'` expands the output beyond `figsize` to fit labels. Verify the output PNG width fits.
+- Multi-panel figures at 5.4" are often too cramped. Prefer separate figures over wider canvases.
+
 ### Pipeline direction
 
 Rust binary → .jsonl → Python script → figures/tables → thesis
