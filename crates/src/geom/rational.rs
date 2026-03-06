@@ -66,6 +66,7 @@ impl Sign {
 #[derive(Clone, Debug)]
 pub struct CombinatorialData {
     /// Number of facets.
+    #[allow(dead_code)]
     pub(crate) num_facets: usize,
     /// Vertex–facet incidence, stored as vertex descriptors: Sⱼ = {i : E_{j,i} = 1}.
     /// Each vertex is the intersection of ≥4 facets (exactly 4 for simple polytopes,
@@ -718,12 +719,37 @@ impl RationalPolytope4D {
     ///
     /// The halfspace ⟨nᵢ, x⟩ ≤ hᵢ is equivalent to ⟨n̂ᵢ, x⟩ ≤ ĥᵢ.
     /// ‖n‖² is computed exactly over Q, then converted to f64 for sqrt.
+    /// Convert to f64, running the rational pipeline again via `Polytope4D::new()`.
+    ///
+    /// This is the simple path: the returned `Polytope4D` recomputes its own
+    /// `CombinatorialData` from the f64 values. Use [`to_f64_with_data()`] to
+    /// attach this `RationalPolytope4D`'s pre-computed data instead.
     pub fn to_f64(&self) -> Result<Polytope4D, RationalConstructionError> {
+        let (f64_normals, f64_heights) = self.to_f64_normals_heights()?;
+        Polytope4D::new(f64_normals, f64_heights).map_err(|e| {
+            RationalConstructionError::F64Conversion(format!("{e}"))
+        })
+    }
+
+    /// Convert to f64, attaching this polytope's exact combinatorial data.
+    ///
+    /// Avoids the redundant `from_f64()` call that `to_f64()` → `Polytope4D::new()`
+    /// would trigger. Prefer this when you already have a `RationalPolytope4D`
+    /// and want to avoid recomputing the rational pipeline.
+    pub fn to_f64_with_data(&self) -> Result<Polytope4D, RationalConstructionError> {
+        let (f64_normals, f64_heights) = self.to_f64_normals_heights()?;
+        Polytope4D::new_with_exact_data(f64_normals, f64_heights, self.data.clone())
+            .map_err(|e| RationalConstructionError::F64Conversion(format!("{e}")))
+    }
+
+    /// Helper: convert rational normals/heights to f64 unit normals and heights.
+    fn to_f64_normals_heights(
+        &self,
+    ) -> Result<(Vec<nalgebra::Vector4<f64>>, Vec<f64>), RationalConstructionError> {
         let mut f64_normals = Vec::with_capacity(self.normals.len());
         let mut f64_heights = Vec::with_capacity(self.heights.len());
 
         for (n, h) in self.normals.iter().zip(self.heights.iter()) {
-            // Compute ‖n‖² exactly over Q, then convert to f64 for sqrt
             let norm_sq_exact = dot4(n, n);
             let norm = rational_to_f64(&norm_sq_exact).sqrt();
 
@@ -733,22 +759,19 @@ impl RationalPolytope4D {
                 )));
             }
 
-            let unit_n =
-                nalgebra::Vector4::new(
-                    rational_to_f64(&n[0]) / norm,
-                    rational_to_f64(&n[1]) / norm,
-                    rational_to_f64(&n[2]) / norm,
-                    rational_to_f64(&n[3]) / norm,
-                );
+            let unit_n = nalgebra::Vector4::new(
+                rational_to_f64(&n[0]) / norm,
+                rational_to_f64(&n[1]) / norm,
+                rational_to_f64(&n[2]) / norm,
+                rational_to_f64(&n[3]) / norm,
+            );
             let unit_h = rational_to_f64(h) / norm;
 
             f64_normals.push(unit_n);
             f64_heights.push(unit_h);
         }
 
-        Polytope4D::new(f64_normals, f64_heights).map_err(|e| {
-            RationalConstructionError::F64Conversion(format!("{e}"))
-        })
+        Ok((f64_normals, f64_heights))
     }
 
     /// The exact combinatorial data.
