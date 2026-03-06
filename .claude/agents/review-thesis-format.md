@@ -37,10 +37,9 @@ Every `.tex` file starts with a `%` header block containing:
 - `% [TODO: JÖRN -` for content needing Jörn's attention
 - `% [GAP -` for known mathematical gaps
 
-### Figure Inclusion
-- **1:1 pass-through rule**: all figure formatting (size, fonts, colors) is handled in Python. LaTeX just includes the image at its natural size.
-- `\includegraphics{file.png}` — NO `width=`, `height=`, or `scale=` parameters. Any such parameter is a violation.
-- Detection: grep for `\includegraphics\[` — every match with `width=`, `height=`, or `scale=` is a violation.
+### Figure Inclusion (from CLAUDE.md § Figure sizing)
+- All formatting in Python, LaTeX is 1:1 pass-through.
+- Detection: grep for `\includegraphics\[` — any `width=`, `height=`, or `scale=` parameter is a violation.
 - Tables: no `\scriptsize` or `\tiny` inside table environments. Use `booktabs` (`\toprule`/`\midrule`/`\bottomrule`), not `\hline`.
 
 ### Labels and Cross-References
