@@ -17,14 +17,15 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-# Consistent font sizes for \includegraphics[width=\textwidth] figures
+# Font sizes for figures rendered at \textwidth (~6.3").
+# Figures should use figsize close to rendered width to avoid downscaling.
 plt.rcParams.update({
-    "axes.labelsize": 14,
-    "axes.titlesize": 14,
-    "xtick.labelsize": 11,
-    "ytick.labelsize": 11,
-    "legend.fontsize": 11,
-    "figure.titlesize": 15,
+    "axes.labelsize": 11,
+    "axes.titlesize": 12,
+    "xtick.labelsize": 10,
+    "ytick.labelsize": 10,
+    "legend.fontsize": 10,
+    "figure.titlesize": 13,
 })
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
@@ -69,7 +70,7 @@ def load_data():
 
 def plot_scatter(summaries):
     """Scatter: starting sys vs final sys, colored by polytope class."""
-    fig, ax = plt.subplots(1, 1, figsize=(8, 8))
+    fig, ax = plt.subplots(1, 1, figsize=(6.5, 6.5))
 
     general = [s for s in summaries if s["polytope_type"] == "general"]
     lagrangian = [s for s in summaries if s["polytope_type"] != "general"]
@@ -101,24 +102,10 @@ def plot_scatter(summaries):
 def plot_convergence(rows, by_name):
     """Combined figure: gradient norms at termination + step size dynamics.
 
-    This 3-panel figure is 16" wide but rendered at ~6.3" (\\textwidth),
-    so a 2.5x downscale requires larger font sizes than the global rcParams.
+    3-panel figure at ~6.3" rendered width. At figsize=(13, 4.5) the ~2x
+    downscale requires boosted fonts to stay readable in print.
     """
-    conv_rc = {
-        "axes.labelsize": 18,
-        "axes.titlesize": 18,
-        "xtick.labelsize": 14,
-        "ytick.labelsize": 14,
-        "legend.fontsize": 13,
-        "figure.titlesize": 20,
-    }
-    with plt.rc_context(conv_rc):
-        _plot_convergence_impl(rows, by_name)
-
-
-def _plot_convergence_impl(rows, by_name):
-    """Inner implementation using caller's rc_context."""
-    fig, axes = plt.subplots(1, 3, figsize=(16, 5.5))
+    fig, axes = plt.subplots(1, 3, figsize=(13, 4.5))
 
     # Panel 1: height gradient norm vs final sys
     ax = axes[0]
@@ -146,18 +133,19 @@ def _plot_convergence_impl(rows, by_name):
 
         conv = ~hit_maxiter
         ax.scatter(final_sys[conv], final_grad[conv],
-                   alpha=0.3, color=color, marker=marker, s=12,
+                   alpha=0.3, color=color, marker=marker, s=15,
                    label=f"{ptype} (conv.)")
         if hit_maxiter.any():
             ax.scatter(final_sys[hit_maxiter], final_grad[hit_maxiter],
-                       alpha=0.7, color=color, marker="x", s=30,
+                       alpha=0.7, color=color, marker="x", s=35,
                        label=f"{ptype} (max iter)")
 
-    ax.set_xlabel("Final sys")
-    ax.set_ylabel(r"$\|\nabla_h\,\mathrm{sys}\|$ at termination")
+    ax.set_xlabel("Final sys", fontsize=16)
+    ax.set_ylabel(r"$\|\nabla_h\,\mathrm{sys}\|$ at termination", fontsize=16)
     ax.set_yscale("log")
-    ax.set_title("Residual height gradient")
-    ax.legend()
+    ax.set_title("Residual height gradient", fontsize=17)
+    ax.tick_params(labelsize=14)
+    ax.legend(fontsize=12)
 
     # Panel 2: step size evolution (median with IQR)
     ax = axes[1]
@@ -176,15 +164,16 @@ def _plot_convergence_impl(rows, by_name):
         p25 = [np.percentile(by_iter[i], 25) for i in iters_sorted]
         p75 = [np.percentile(by_iter[i], 75) for i in iters_sorted]
 
-        ax.plot(iters_sorted, medians, color=color, marker=".", markersize=4,
+        ax.plot(iters_sorted, medians, color=color, marker=".", markersize=5,
                 label=f"{ptype} median")
         ax.fill_between(iters_sorted, p25, p75, color=color, alpha=0.15)
 
     ax.set_yscale("log")
-    ax.set_xlabel("Iteration")
-    ax.set_ylabel("Step size $t$")
-    ax.set_title("Step size shrinks exponentially")
-    ax.legend()
+    ax.set_xlabel("Iteration", fontsize=16)
+    ax.set_ylabel("Step size $t$", fontsize=16)
+    ax.set_title("Step size shrinks exponentially", fontsize=17)
+    ax.tick_params(labelsize=14)
+    ax.legend(fontsize=12)
 
     # Panel 3: survival curve (active polytopes per iteration)
     ax = axes[2]
@@ -200,14 +189,15 @@ def _plot_convergence_impl(rows, by_name):
 
         iters_sorted = sorted(by_iter.keys())
         counts = [by_iter[i] for i in iters_sorted]
-        ax.plot(iters_sorted, counts, color=color, marker=".", markersize=4, label=ptype)
+        ax.plot(iters_sorted, counts, color=color, marker=".", markersize=5, label=ptype)
 
-    ax.set_xlabel("Iteration")
-    ax.set_ylabel("Active polytopes")
-    ax.set_title("Convergence survival curve")
-    ax.legend()
+    ax.set_xlabel("Iteration", fontsize=16)
+    ax.set_ylabel("Active polytopes", fontsize=16)
+    ax.set_title("Convergence survival curve", fontsize=17)
+    ax.tick_params(labelsize=14)
+    ax.legend(fontsize=12)
 
-    fig.suptitle("Convergence diagnostics (F = 10)", y=1.02)
+    fig.suptitle("Convergence diagnostics (F = 10)", fontsize=19, y=1.02)
     fig.tight_layout()
 
     out = EXPERIMENT_DIR / "gradient_descent_convergence.png"
