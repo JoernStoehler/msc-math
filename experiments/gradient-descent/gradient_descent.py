@@ -156,7 +156,7 @@ def _plot_convergence_impl(rows, by_name):
     ax.set_xlabel("Final sys")
     ax.set_ylabel(r"$\|\nabla_h\,\mathrm{sys}\|$ at termination")
     ax.set_yscale("log")
-    ax.set_title(r"Residual gradient $\|\nabla_h\,\mathrm{sys}\|$")
+    ax.set_title("Residual height gradient")
     ax.legend()
 
     # Panel 2: step size evolution (median with IQR)
