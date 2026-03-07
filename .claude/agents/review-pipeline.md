@@ -56,22 +56,6 @@ Rust binary → .jsonl → Python script → figures/tables → thesis
 **Merge conflicts (data/figures):**
 - Resolve by regenerating on the merged result
 
-### Data regeneration and commits (from Git)
-
-Data and figures are colocated with their experiment under `experiments/<name>/`, not in separate top-level directories. Datasets and figures are committed to git (not gitignored).
-
-**Why:**
-- Worktrees inherit data immediately (no regeneration wait)
-- Changes visible in git diffs (catch algorithm regressions)
-- Reproducibility (data versioned with code)
-
-**Convention:**
-- **Regenerate on the branch that changes the code.** Data should match the code that produced it.
-- **Separate commits**: Code changes committed separately from data regeneration
-
-**Merge conflicts (data/figures):**
-- Resolve by regenerating on the merged result
-
 ## Output Format
 
 ### Violations (high confidence)

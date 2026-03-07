@@ -63,6 +63,10 @@ path = "q-error/q_error.rs"
 name = "omega_obstacle"
 path = "omega-obstacle/omega_obstacle.rs"
 
+[[bin]]
+name = "gradient_descent"
+path = "gradient-descent/gradient_descent.rs"
+
 [dependencies]
 symplectic = { path = "../crates" }
 nalgebra = "0.33"

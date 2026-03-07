@@ -23,6 +23,15 @@ Be thorough and specific. Flag potential issues rather than miss real ones. Dist
 
 ## Conventions
 
+### Write up what's there — nothing more, nothing less
+
+When writing up results, focus on knowledge transfer: report what the data shows. Don't make things up, don't omit things, don't editorialize.
+
+- **Don't make things up**: no invented interpretations, no causal claims from correlations, no speculation presented as findings
+- **Don't omit things**: if the data shows something, report it — don't skip inconvenient patterns or caveats
+- **Don't editorialize**: facts are facts ("sys = 0.905"), correlations are correlations ("r = 0.80"), unknowns are unknowns ("we did not test X")
+- **Speculation must be labeled**: if a paragraph goes beyond the data, it must read as interpretation, not as a finding
+
 ### Experiment-Specific Conventions
 
 ## Experiment Writing
@@ -38,6 +47,7 @@ Builds upon **Thesis Writing** — all Thesis Writing conventions apply to exper
 - Results checked by Jörn before inclusion in thesis
 - Statistical claims require reproducible computation
 - Plots visually inspected for sanity
+- **Figure sizing** (from CLAUDE.md § Figure sizing): all formatting in Python, LaTeX is 1:1 pass-through. Detection: flag `\includegraphics` with `width=`/`scale=`, flag output PNG width > 5.4".
 
 ### General Thesis Writing Conventions
 

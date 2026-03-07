@@ -37,14 +37,20 @@ Every `.tex` file starts with a `%` header block containing:
 - `% [TODO: JÖRN -` for content needing Jörn's attention
 - `% [GAP -` for known mathematical gaps
 
+### Figure Inclusion (from CLAUDE.md § Figure sizing)
+- All formatting in Python, LaTeX is 1:1 pass-through.
+- Detection: grep for `\includegraphics\[` — any `width=`, `height=`, or `scale=` parameter is a violation.
+- Tables: no `\scriptsize` or `\tiny` inside table environments. Use `booktabs` (`\toprule`/`\midrule`/`\bottomrule`), not `\hline`.
+
 ### Labels and Cross-References
 - All `\ref{}` labels must be defined (check `thesis/build/main.aux`)
 - No hardcoded theorem/section numbers in `.tex` source (always `\ref{label}`)
 - Rust cross-references: grep `crates/src/` for any labels used in the file; verify doc comments match
 
 ### Proof Structure
-- Required: Assumptions → Claim → Overview → Steps → Conclusion
+- Recommended structure: Assumptions → Claim → Overview → Steps → Conclusion
 - Check each proof has an Overview paragraph
+- Note: `review-correctness` also checks proof structure for mathematical soundness; this agent checks only whether the structural template is followed
 
 ## What NOT to Check
 - Factual accuracy of claims → that's review-thesis-facts

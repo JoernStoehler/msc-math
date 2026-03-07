@@ -99,6 +99,10 @@ experiments/target/release/q_error 2>&1 | tee experiments/q-error/q_error_output
 experiments/target/release/omega_obstacle
 # → experiments/omega-obstacle/omega-obstacle.jsonl
 
+# Gradient ascent on ~1000 F=10 polytopes (500 general + 167×3 Lagrangian splits) (~35 min)
+experiments/target/release/gradient_descent
+# → experiments/gradient-descent/gradient-descent.jsonl
+
 # ── Step 2: Generate figures and tables ──────────────────────────────────────
 # Python scripts read .jsonl from their experiment folder, write figures/tables
 # to the same folder.
@@ -158,6 +162,11 @@ python3 experiments/omega-obstacle/omega_obstacle.py
 # → experiments/omega-obstacle/omega_obstacle_gradient_dots.png
 # → experiments/omega-obstacle/omega_obstacle_gradient_neighbor_split.png
 # → experiments/omega-obstacle/omega_obstacle_omega_vs_dot.png
+
+# Gradient descent: scatter and convergence diagnostics
+python3 experiments/gradient-descent/gradient_descent.py
+# → experiments/gradient-descent/gradient_descent_scatter.png
+# → experiments/gradient-descent/gradient_descent_convergence.png
 
 # ── Step 3: Visualization ────────────────────────────────────────────────────
 
