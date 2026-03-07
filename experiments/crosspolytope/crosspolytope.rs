@@ -53,7 +53,7 @@ fn q_from_beta(normals: &[Vector4<f64>], perm: &[usize], beta: &[f64]) -> f64 {
     let m = beta.len();
     (1..m)
         .flat_map(|i| (0..i).map(move |j| (i, j)))
-        .map(|(i, j)| beta[i] * beta[j] * omega0(&normals[perm[i]], &normals[perm[j]]))
+        .map(|(i, j)| beta[i] * beta[j] * omega0(&normals[perm[j]], &normals[perm[i]]))
         .sum()
 }
 
@@ -340,7 +340,7 @@ fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let mut adj = vec![vec![false; f]; f];
     for i in 0..f {
         for j in 0..f {
-            adj[i][j] = vertex_adj[i][j] && omega0(&normals[j], &normals[i]) >= 0.0;
+            adj[i][j] = vertex_adj[i][j] && omega0(&normals[i], &normals[j]) >= 0.0;
         }
     }
     adj
@@ -768,11 +768,8 @@ fn main() {
         certified.0,
     );
 
-    // Reverse permutation from algebraic to physical orbit direction
-    let mut phys_perm = certified.2;
-    phys_perm.reverse();
-    let mut phys_beta = certified.3;
-    phys_beta.reverse();
+    let phys_perm = certified.2;
+    let phys_beta = certified.3;
 
     let cap = certified.0;
     let sys = cap * cap / (2.0 * vol);

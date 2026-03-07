@@ -1,7 +1,7 @@
 /// Shared KKT solver for capacity algorithms.
 ///
 /// Solves the constrained optimization max Q(β) subject to N^T β = 0, η^T β = 1,
-/// where Q(β) = Σ_{i>j} β_i β_j ω₀(n_{σ(i)}, n_{σ(j)}).
+/// where Q(β) = Σ_{i>j} β_i β_j ω₀(n_{σ(j)}, n_{σ(i)}) = (1/2) β^T H β.
 ///
 /// Used by both the hk2017 (general) and billiard (Lagrangian product) algorithms.
 /// Previously duplicated across both crates (294 LOC each); now unified here.
@@ -13,10 +13,9 @@
 /// the capacity algorithm picks max Q, so near-zero Q orbits never win. The absolute
 /// threshold `E < 1e-6` is chosen relative to Q_max ≈ O(1), not relative to each orbit's Q.
 ///
-/// **Sign convention:** This module uses the SYMMETRIC KKT matrix convention (both
-/// off-diagonal blocks have +n/+h). Solution components for multipliers are NEGATED
-/// (μ = -λ, ξ = -ν). Experiments that copy the KKT construction (e.g. sys_optimization.rs)
-/// may use the old ASYMMETRIC convention — check their comments.
+/// **Sign convention:** The KKT system is the symmetric saddle-point form
+/// Hβ + Nμ + ηξ = 0, with Lagrange multipliers μ ∈ R^4 and ξ ∈ R.
+/// Both off-diagonal blocks have +N/+η, making M symmetric for the eigensolver.
 use crate::geom::symplectic::omega0;
 use nalgebra::{DMatrix, DVector, Vector4};
 
@@ -36,7 +35,7 @@ pub const EPS_Q_POSITIVE: f64 = 1e-15;
 pub struct KktResult {
     /// Optimal β vector (numerical approximation, all components > 0).
     pub beta: Vec<f64>,
-    /// Residual-corrected Q value: Q̃ = Q(β̂) - (r₂ᵀμ̂ + r₃ξ̂).
+    /// Residual-corrected Q value: Q̃ = Q(β̂) + (r₂ᵀμ̂ + r₃ξ̂).
     /// See `[eq:q-corrected]` (thesis).
     pub q_corrected: f64,
     /// Error bound E on Q̃: |Q(β₀) - Q̃| ≤ E.
@@ -83,16 +82,13 @@ const EIGEN_CONDITION_TAU: f64 = 1e-3;
 /// Maximum acceptable residual norm for the KKT solution (rejects numerically poor solutions).
 const EPS_KKT_RESIDUAL: f64 = 1e-6;
 
-/// Compute Q(β) = Σ_{i>j} β_i β_j ω₀(n_{σ(i)}, n_{σ(j)}).
+/// Compute Q(β) = Σ_{i>j} β_i β_j ω₀(n_{σ(j)}, n_{σ(i)}) = (1/2) β^T H β.
 ///
 /// See `[lem:H-quadratic]` (thesis): Q(β) equals the symplectic action sum.
 ///
-/// **Sign convention:** The thesis writes the sum with j < i in
-/// ω₀(n_{σ(j)}, n_{σ(i)}); this code uses i > j (higher index first).
-/// Since ω₀ is antisymmetric the two differ by sign: the code maximises
-/// Q > 0, which finds the reverse-traversal representative of the orbit.
-/// The capacity A = 1/(2Q) is unchanged. See `appendix-notation.tex`
-/// ("Permutation orientation") for the full discussion.
+/// **Convention:** Q > 0 when σ follows the positive Reeb direction (where
+/// consecutive facets satisfy ω₀(n_{σ(k)}, n_{σ(k+1)}) ≥ 0). Callers pass
+/// permutations in natural order directly — no reversal needed.
 ///
 /// Note: uses ω₀ directly, NOT from H_{ij}. H is symmetric by construction,
 /// but Q needs the antisymmetric ω₀ values.
@@ -104,7 +100,7 @@ pub fn q_from_beta(
     let m = beta.len();
     (1..m)
         .flat_map(|i| (0..i).map(move |j| (i, j)))
-        .map(|(i, j)| beta[i] * beta[j] * omega0(&normals[perm[i]], &normals[perm[j]]))
+        .map(|(i, j)| beta[i] * beta[j] * omega0(&normals[perm[j]], &normals[perm[i]]))
         .sum()
 }
 
@@ -222,16 +218,13 @@ fn find_positive_beta_nd(beta0: &[f64], null_vecs: &[Vec<f64>]) -> Option<Vec<f6
 
 /// Build the symmetric KKT matrix and RHS vector for the constrained optimization.
 ///
-/// The KKT system uses negated multipliers (μ = −λ, ξ = −ν) to obtain a
-/// **symmetric** saddle-point matrix:
 /// ```text
 /// [ H   |  N   |  η ] [ β ]   [ 0 ]
 /// [ N^T |  0   |  0 ] [ μ ] = [ 0 ]
 /// [ η^T |  0   |  0 ] [ ξ ]   [ 1 ]
 /// ```
 ///
-/// The stationarity condition is Hβ + Nμ + ηξ = 0 (equivalently Hβ = Nλ + ην
-/// with the original multipliers λ = −μ, ν = −ξ).
+/// Stationarity: Hβ + Nμ + ηξ = 0, with Lagrange multipliers μ ∈ R^4, ξ ∈ R.
 ///
 /// Symmetry enables eigendecomposition M = VΛV^T, giving eigenvalues with
 /// signs (inertia) and orthogonal eigenvectors in one factorization.
@@ -398,8 +391,8 @@ fn try_pseudoinverse_with_threshold(
     }
 
     // --- Q error bound computation (Algorithm [alg:q-error-bound]) ---
-    // The solution vector is [β̂; μ̂; ξ̂] with negated multipliers (μ = -λ, ξ = -ν).
-    // Q̃ = Q(β̂) - (r₂ᵀμ̂ + r₃ξ̂)  [Lemma [lem:q-error-bound], Step 2-3].
+    // The solution vector is [β̂; μ̂; ξ̂] from the symmetric KKT system M x = b.
+    // Q̃ = Q(β̂) + (r₂ᵀμ̂ + r₃ξ̂)  [Lemma [lem:q-error-bound], eq:q-corrected].
     let r2_dot_mu: f64 = (m..m + 4).map(|i| residual_vec[i] * x0[i]).sum();
     let r3 = residual_vec[m + 4];
     let xi_hat = x0[m + 4];
@@ -418,7 +411,7 @@ fn try_pseudoinverse_with_threshold(
     // If already feasible, compute error bound and return.
     if beta0.iter().all(|&b| b > EPS_BETA_POSITIVE) {
         let q_raw = q_from_beta(normals, perm, &beta0);
-        let q_corrected = q_raw - q_correction;
+        let q_corrected = q_raw + q_correction;
         // Tight bound: E = (9/2) ‖r‖² / |λ_min|.
         // See [lem:q-error-bound] (thesis): uses KKT block structure identity
         // δβᵀHδβ = δxᵀMδx − 2r₂ᵀδμ − 2r₃δξ to avoid ‖H‖/|λ_min|² term.
@@ -453,7 +446,7 @@ fn try_pseudoinverse_with_threshold(
     if rank == size {
         if beta0.iter().all(|&b| b > -EPS_BETA_POSITIVE) {
             let q_raw = q_from_beta(normals, perm, &beta0);
-            let q_corrected = q_raw - q_correction;
+            let q_corrected = q_raw + q_correction;
             let r_sq = residual_norm * residual_norm;
             let q_error_bound = 4.5 * r_sq / abs_lambda_min;
 
@@ -538,7 +531,7 @@ fn try_pseudoinverse_with_threshold(
             (q_raw - q_raw_beta0).abs() / q_raw.abs()
         );
     }
-    let q_corrected = q_raw - q_correction;
+    let q_corrected = q_raw + q_correction;
     // Tight bound: E = (9/2) ‖r‖² / |λ_min|.
     // See [lem:q-error-bound] (thesis): uses KKT block structure identity.
     let r_sq = residual_norm * residual_norm;

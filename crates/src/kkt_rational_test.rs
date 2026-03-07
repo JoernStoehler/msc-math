@@ -37,16 +37,10 @@ fn simplex_exact_vs_numerical() {
     let result_f64 = crate::algorithms::hk2017::ehz_capacity(&simplex)
         .expect("Simplex should have capacity");
 
-    // Get the winning perm in algebraic order (reverse of physical orbit direction)
-    let mut alg_perm = result_f64.best_permutation.clone();
-    alg_perm.reverse();
+    // Winning perm and beta are already in natural order — pass directly.
+    let q_numerical = crate::kkt::q_from_beta(simplex.normals(), &result_f64.best_permutation, &result_f64.best_beta);
 
-    // Compute Q from the f64 solver's beta (in algebraic order)
-    let mut alg_beta = result_f64.best_beta.clone();
-    alg_beta.reverse();
-    let q_numerical = crate::kkt::q_from_beta(simplex.normals(), &alg_perm, &alg_beta);
-
-    let exact = solve_kkt_exact(simplex.normals(), simplex.heights(), &alg_perm)
+    let exact = solve_kkt_exact(simplex.normals(), simplex.heights(), &result_f64.best_permutation)
         .expect("Exact solve should succeed on winning perm");
 
     // Q_exact and Q_numerical should agree to ~machine precision.
@@ -116,13 +110,9 @@ fn exact_agrees_on_known_polytopes() {
             None => continue,
         };
 
-        let mut alg_perm = result_f64.best_permutation.clone();
-        alg_perm.reverse();
-        let mut alg_beta = result_f64.best_beta.clone();
-        alg_beta.reverse();
-        let q_numerical = crate::kkt::q_from_beta(kp.polytope.normals(), &alg_perm, &alg_beta);
+        let q_numerical = crate::kkt::q_from_beta(kp.polytope.normals(), &result_f64.best_permutation, &result_f64.best_beta);
 
-        let exact = match solve_kkt_exact(kp.polytope.normals(), kp.polytope.heights(), &alg_perm) {
+        let exact = match solve_kkt_exact(kp.polytope.normals(), kp.polytope.heights(), &result_f64.best_permutation) {
             Some(r) => r,
             None => {
                 eprintln!("WARNING: {} winning node is singular in exact solver", kp.name);
@@ -160,10 +150,7 @@ fn winning_beta_positive_exact() {
             None => continue,
         };
 
-        let mut alg_perm = result_f64.best_permutation.clone();
-        alg_perm.reverse();
-
-        let exact = match solve_kkt_exact(kp.polytope.normals(), kp.polytope.heights(), &alg_perm) {
+        let exact = match solve_kkt_exact(kp.polytope.normals(), kp.polytope.heights(), &result_f64.best_permutation) {
             Some(r) => r,
             None => continue,
         };

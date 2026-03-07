@@ -105,7 +105,8 @@ pub fn billiard_capacity(polytope: &Polytope4D) -> Result<Option<BilliardResult>
     for k in 2..=3 {
         enumerate_k_bounce_sigmas(k, &q_blocks, &p_blocks, |sigma| {
             // Directed adjacency pruning: skip cycles where consecutive facets
-            // violate the ω₀ transition feasibility condition [cor:adjacency-pruning].
+            // violate the ω₀ transition feasibility condition `[cor:adjacency-pruning]`.
+            // directed_adj uses physical convention: adj[i][j] = transition F_i → F_j feasible.
             if !is_adjacent_cycle(sigma, &directed_adj) {
                 return;
             }
@@ -158,16 +159,16 @@ pub fn billiard_capacity(polytope: &Polytope4D) -> Result<Option<BilliardResult>
                 capacity, uncertain_cap, gap,
             );
 
-            // Reverse σ from internal algebraic order to physical orbit direction
-            let mut phys_perm = best_permutation;
-            phys_perm.reverse();
-            let mut phys_beta = best_beta;
-            phys_beta.reverse();
+            // Sanity: winning orbit has positive capacity.
+            assert!(capacity > 0.0, "capacity must be positive, got {:.2e}", capacity);
+            assert!(capacity.is_finite(), "capacity must be finite, got {:.2e}", capacity);
+
+            // Candidate already stores perm and β in natural (positive Reeb) order.
             BilliardResult {
                 capacity,
                 capacity_uncertain: uncertain_cap,
-                best_permutation: phys_perm,
-                best_beta: phys_beta,
+                best_permutation,
+                best_beta,
                 bounce_count,
                 iterations,
             }

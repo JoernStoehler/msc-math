@@ -5,7 +5,7 @@
 //! via the envelope theorem.
 //!
 //! Uses the ASYMMETRIC sign convention (upper-right = −n/−h, lower-left = +n/+h)
-//! so that solution components give un-negated multipliers directly.
+//! so that solution components give multipliers matching Hβ = Nλ + ην directly.
 //!
 //! Source: experiments/sys-optimization/sys_optimization.rs lines 164–663
 
@@ -57,12 +57,13 @@ pub fn j0_apply(v: &Vector4<f64>) -> Vector4<f64> {
 // KKT solver
 // ============================================================================
 
-/// Q(β) = Σ_{i>j} β_i β_j ω₀(n_{σ(i)}, n_{σ(j)})
+/// Q(β) = Σ_{i>j} β_i β_j ω₀(n_{σ(j)}, n_{σ(i)}) = (1/2) β^T H β.
+/// Q > 0 for permutations in positive Reeb direction.
 fn q_from_beta(normals: &[Vector4<f64>], perm: &[usize], beta: &[f64]) -> f64 {
     let m = beta.len();
     (1..m)
         .flat_map(|i| (0..i).map(move |j| (i, j)))
-        .map(|(i, j)| beta[i] * beta[j] * omega0_local(&normals[perm[i]], &normals[perm[j]]))
+        .map(|(i, j)| beta[i] * beta[j] * omega0_local(&normals[perm[j]], &normals[perm[i]]))
         .sum()
 }
 
@@ -144,7 +145,7 @@ fn find_positive_beta_nd(beta0: &[f64], null_vecs: &[Vec<f64>]) -> Option<Vec<f6
 /// Build KKT matrix and RHS vector (ASYMMETRIC sign convention).
 ///
 /// Layout: [H | −N | −η; N^T | 0 | 0; η^T | 0 | 0] x = [0; 0; 1]
-/// Solution components: x = [β, λ, ν] with un-negated multipliers.
+/// Solution components: x = [β, λ, ν] where Hβ = Nλ + ην.
 fn build_kkt_system(
     normals: &[Vector4<f64>],
     heights: &[f64],
@@ -304,7 +305,7 @@ pub fn solve_kkt_full(
 pub struct ValidOrbit {
     pub action: f64,
     pub subset: Vec<usize>,
-    pub permutation: Vec<usize>, // algebraic (internal) ordering
+    pub permutation: Vec<usize>, // positive Reeb direction
     pub beta: Vec<f64>,
     pub q_value: f64,
     /// Lagrange multiplier for the η^T β = 1 constraint.
@@ -345,8 +346,8 @@ pub fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     adj
 }
 
-/// Build directed adjacency for the algebraic (Q-maximizing) ordering.
-/// adj[i][j] = vertex_adj[i][j] AND ω₀(n_j, n_i) >= 0
+/// Build directed adjacency for positive Reeb direction.
+/// adj[i][j] = vertex_adj[i][j] AND ω₀(n_i, n_j) >= 0
 pub fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let f = polytope.facet_count();
     let normals = polytope.normals();
@@ -354,7 +355,7 @@ pub fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> 
     let mut adj = vec![vec![false; f]; f];
     for i in 0..f {
         for j in 0..f {
-            adj[i][j] = vertex_adj[i][j] && omega0_local(&normals[j], &normals[i]) >= 0.0;
+            adj[i][j] = vertex_adj[i][j] && omega0_local(&normals[i], &normals[j]) >= 0.0;
         }
     }
     adj

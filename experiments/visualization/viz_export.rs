@@ -98,7 +98,7 @@ fn v4_to_array(v: &Vector4<f64>) -> [f64; 4] {
 /// A valid orbit found by exhaustive enumeration.
 struct CollectedOrbit {
     action: f64,
-    permutation: Vec<usize>, // physical (reversed) ordering
+    permutation: Vec<usize>, // positive Reeb direction
     beta: Vec<f64>,          // matching permutation order
     subset: Vec<usize>,
 }
@@ -145,16 +145,10 @@ fn collect_all_orbits(polytope: &symplectic::Polytope4D) -> Vec<CollectedOrbit> 
                     }
                     let action = 0.5 / q_val;
 
-                    // Reverse from algebraic to physical ordering
-                    let mut phys_perm = perm.to_vec();
-                    phys_perm.reverse();
-                    let mut phys_beta = result.beta;
-                    phys_beta.reverse();
-
                     orbits.push(CollectedOrbit {
                         action,
-                        permutation: phys_perm,
-                        beta: phys_beta,
+                        permutation: perm.to_vec(),
+                        beta: result.beta,
                         subset: subset.clone(),
                     });
                 }

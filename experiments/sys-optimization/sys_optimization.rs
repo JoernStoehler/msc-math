@@ -197,13 +197,13 @@ fn omega0_local(u: &Vector4<f64>, v: &Vector4<f64>) -> f64 {
     u[0] * v[2] - u[2] * v[0] + u[1] * v[3] - u[3] * v[1]
 }
 
-/// Q(β) = Σ_{i>j} β_i β_j ω₀(n_{σ(i)}, n_{σ(j)})
-/// Copied from crates/src/kkt.rs:59-69
+/// Q(β) = Σ_{i>j} β_i β_j ω₀(n_{σ(j)}, n_{σ(i)}) = (1/2) β^T H β
+/// Copied from crates/src/kkt.rs — Q > 0 for permutations in positive Reeb direction.
 fn q_from_beta(normals: &[Vector4<f64>], perm: &[usize], beta: &[f64]) -> f64 {
     let m = beta.len();
     (1..m)
         .flat_map(|i| (0..i).map(move |j| (i, j)))
-        .map(|(i, j)| beta[i] * beta[j] * omega0_local(&normals[perm[i]], &normals[perm[j]]))
+        .map(|(i, j)| beta[i] * beta[j] * omega0_local(&normals[perm[j]], &normals[perm[i]]))
         .sum()
 }
 
@@ -286,11 +286,11 @@ fn find_positive_beta_nd(beta0: &[f64], null_vecs: &[Vec<f64>]) -> Option<Vec<f6
 
 /// Build KKT matrix and RHS vector.
 /// Based on crates/src/kkt.rs build_kkt_system, but uses the ASYMMETRIC sign
-/// convention (upper-right = -n/-h, lower-left = +n/+h). The current library
-/// uses the SYMMETRIC convention (+n/+h in both blocks, negated multipliers).
+/// convention (upper-right = -n/-h, lower-left = +n/+h). The library
+/// uses the SYMMETRIC convention (+n/+h in both blocks).
 /// This file retains the asymmetric convention because the gradient formulas
-/// (compute_capacity_derivatives_analytical/normal) extract standard (non-negated)
-/// multipliers directly from the solution vector.
+/// (compute_capacity_derivatives_analytical/normal) extract multipliers
+/// directly from the solution vector with the sign matching Hβ = Nλ + ην.
 fn build_kkt_system(
     normals: &[Vector4<f64>],
     heights: &[f64],
@@ -538,11 +538,10 @@ fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     adj
 }
 
-/// Build directed adjacency for the algebraic (Q-maximizing) ordering.
-/// Matches the library's build_directed_adjacency_matrix convention:
-/// adj[i][j] = vertex_adj[i][j] AND ω₀(n_j, n_i) >= 0
-/// (algebraic consecutive pair (i,j) corresponds to physical F_j → F_i)
-/// Copied from crates/src/algorithms/hk2017/mod.rs:216-229
+/// Build directed adjacency for positive Reeb direction.
+/// adj[i][j] = vertex_adj[i][j] AND ω₀(n_i, n_j) >= 0
+/// (transition F_i → F_j in positive Reeb direction)
+/// Copied from crates/src/algorithms/hk2017/mod.rs
 fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let f = polytope.facet_count();
     let normals = polytope.normals();
@@ -550,7 +549,7 @@ fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let mut adj = vec![vec![false; f]; f];
     for i in 0..f {
         for j in 0..f {
-            adj[i][j] = vertex_adj[i][j] && omega0_local(&normals[j], &normals[i]) >= 0.0;
+            adj[i][j] = vertex_adj[i][j] && omega0_local(&normals[i], &normals[j]) >= 0.0;
         }
     }
     adj
@@ -572,7 +571,7 @@ fn is_adjacent_cycle(perm: &[usize], adj: &[Vec<bool>]) -> bool {
 struct ValidOrbit {
     action: f64,
     subset: Vec<usize>,
-    permutation: Vec<usize>, // algebraic (internal) ordering
+    permutation: Vec<usize>, // positive Reeb direction
     beta: Vec<f64>,
     q_value: f64,
     /// Lagrange multiplier for the η^T β = 1 constraint.

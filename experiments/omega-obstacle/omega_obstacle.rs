@@ -116,7 +116,7 @@ fn q_from_beta(normals: &[Vector4<f64>], perm: &[usize], beta: &[f64]) -> f64 {
     let m = beta.len();
     (1..m)
         .flat_map(|i| (0..i).map(move |j| (i, j)))
-        .map(|(i, j)| beta[i] * beta[j] * omega0_local(&normals[perm[i]], &normals[perm[j]]))
+        .map(|(i, j)| beta[i] * beta[j] * omega0_local(&normals[perm[j]], &normals[perm[i]]))
         .sum()
 }
 
@@ -423,7 +423,7 @@ fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let mut adj = vec![vec![false; f]; f];
     for i in 0..f {
         for j in 0..f {
-            adj[i][j] = vertex_adj[i][j] && omega0_local(&normals[j], &normals[i]) >= 0.0;
+            adj[i][j] = vertex_adj[i][j] && omega0_local(&normals[i], &normals[j]) >= 0.0;
         }
     }
     adj
@@ -444,7 +444,7 @@ fn is_adjacent_cycle(perm: &[usize], adj: &[Vec<bool>]) -> bool {
 struct ValidOrbit {
     action: f64,
     subset: Vec<usize>,
-    permutation: Vec<usize>, // algebraic (internal) ordering
+    permutation: Vec<usize>, // positive Reeb direction
     beta: Vec<f64>,
     q_value: f64,
     nu: f64,
@@ -840,16 +840,11 @@ fn compute_gradient_dots(
 // Physical orbit extraction
 // ============================================================================
 
-/// Convert instrumented result's algebraic permutation to physical orbit direction.
+/// Extract orbit permutation and beta from instrumented result.
 ///
-/// The instrumented HK2017 uses algebraic ordering. The physical orbit is the reverse.
-/// Source: crates/src/algorithms/hk2017/mod.rs:157-161
+/// With the natural convention, permutations and beta are already in positive Reeb order.
 fn physical_orbit(orbit: &ValidOrbit) -> (Vec<usize>, Vec<f64>) {
-    let mut facets = orbit.permutation.clone();
-    let mut betas = orbit.beta.clone();
-    facets.reverse();
-    betas.reverse();
-    (facets, betas)
+    (orbit.permutation.clone(), orbit.beta.clone())
 }
 
 // ============================================================================

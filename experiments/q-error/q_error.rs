@@ -114,7 +114,7 @@ fn error_bound_sweep(polytope: &Polytope4D) -> SweepResult {
 
                 solvable_nodes += 1;
 
-                // Q̃ = Q(β̂) - (r₂ᵀμ̂ + r₃ξ̂)
+                // Q̃ = Q(β̂) + (r₂ᵀμ̂ + r₃ξ̂)
                 let beta: Vec<f64> = (0..m).map(|i| x[i]).collect();
                 let q_raw = q_from_beta(normals, &perm, &beta);
                 let r2_dot_mu: f64 = (m..m + 4).map(|i| residual_vec[i] * x[i]).sum();
@@ -179,24 +179,20 @@ struct ExactResult {
 fn exact_comparison(polytope: &Polytope4D) -> Option<ExactResult> {
     let result = ehz_capacity(polytope)?;
 
-    // Get the winning permutation in algebraic (KKT input) order.
-    // EhzResult.best_permutation is in physical orbit direction (reversed from
-    // algebraic order); see hk2017/mod.rs "Permutation ordering convention".
-    // We reverse to recover the algebraic order used by build_kkt_system.
-    let mut alg_perm = result.best_permutation.clone();
-    alg_perm.reverse();
-    let m = alg_perm.len();
+    // best_permutation follows positive Reeb direction — same order passed to solve_kkt/build_kkt.
+    let perm = &result.best_permutation;
+    let m = perm.len();
     let size = m + 5;
 
     let normals = polytope.normals();
     let heights = polytope.heights();
 
     // Solve the KKT system exactly via the library's rational solver.
-    let exact_result = kkt_rational::solve_kkt_exact(normals, heights, &alg_perm)?;
+    let exact_result = kkt_rational::solve_kkt_exact(normals, heights, perm)?;
     let q_exact_f64 = exact_result.q_exact_f64;
 
     // Compute numerical Q̃ and E (using the eigendecomposition path)
-    let (kkt, rhs) = build_kkt(normals, heights, &alg_perm);
+    let (kkt, rhs) = build_kkt(normals, heights, perm);
     let eig = kkt.clone().symmetric_eigen();
     let eigenvalues = &eig.eigenvalues;
     let eigenvectors = &eig.eigenvectors;
@@ -216,12 +212,12 @@ fn exact_comparison(polytope: &Polytope4D) -> Option<ExactResult> {
     let residual_norm = residual_vec.norm();
 
     let beta_numerical: Vec<f64> = (0..m).map(|i| x[i]).collect();
-    let q_raw = q_from_beta(normals, &alg_perm, &beta_numerical);
+    let q_raw = q_from_beta(normals, perm, &beta_numerical);
     let r2_dot_mu: f64 = (m..m + 4).map(|i| residual_vec[i] * x[i]).sum();
     let r3 = residual_vec[m + 4];
     let xi_hat = x[m + 4];
     let q_correction = r2_dot_mu + r3 * xi_hat;
-    let q_corrected = q_raw - q_correction;
+    let q_corrected = q_raw + q_correction;
 
     let r_sq = residual_norm * residual_norm;
     let q_error_bound = 4.5 * r_sq / abs_lambda_min;

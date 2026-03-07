@@ -319,16 +319,14 @@ but it never prunes a pair that admits a valid transition.
 For each candidate pair $(S, \sigma)$ that survives
 the pruning of Section~\ref{app:pruning},
 the algorithm solves the KKT linear system.
-The standard stationarity condition
-$H\beta = N\lambda + \eta\nu$
-(cf.\ equation~\eqref{eq:linear-system})
-uses multipliers~$\lambda \in \mathbb{R}^4$ and~$\nu \in \mathbb{R}$
-that produce a non-symmetric coefficient matrix.
-We define \emph{negated multipliers}
-$\mu = -\lambda$ and $\xi = -\nu$, so that
-the stationarity condition becomes
-$H\beta + N\mu + \eta\xi = 0$
-and the full system takes the symmetric saddle-point form
+With Lagrange multipliers $\mu \in \mathbb{R}^4$
+and $\xi \in \mathbb{R}$,
+the stationarity condition is
+$H\beta + N\mu + \eta\xi = 0$,
+where $\eta$ is the normalisation constraint vector
+(cf.\ equation~\eqref{eq:linear-system}).
+Together with the constraints,
+this takes the symmetric saddle-point form
 \begin{equation}\label{eq:kkt-system}
   \underbrace{\begin{pmatrix} H & N & \eta \\[3pt]
     N^\top & 0 & 0 \\[3pt]
@@ -486,11 +484,10 @@ formula~\eqref{eq:inertia} is used below.
 \begin{remark}[Eigenvalue signs and the objective]%
 \label{rem:eigenvalue-signs}
 Recall that the objective
-$Q(\beta) = -(1/2)\,\beta^\top H\,\beta$
-has Hessian $-H$ (a constant matrix).
+$Q(\beta) = \tfrac{1}{2}\,\beta^\top H\,\beta$
+has Hessian $H$ (a constant matrix).
 The second-order behaviour of~$Q$ on the constraint
-surface is governed by the restricted Hessian
-$(-H)|_T = -H|_T$.
+surface is governed by the restricted Hessian~$H|_T$.
 By Lemma~\ref{lem:kkt-inertia}
 (with $p = \operatorname{rank}(A)$),
 we can read off the inertia of~$H|_T$ directly from
@@ -501,17 +498,16 @@ the eigenvalues of~$M$:
   semi-definite ($n_-(H|_T) = 0$).
   If also $n_0(M) = 5 - p$
   (so $n_0(H|_T) = 0$),
-  then $H|_T$ is positive definite,
-  $(-H)|_T$ is negative definite,
-  and~$Q$ is \emph{strictly concave} on~$T$:
-  $\beta_0$ is a strict local maximum of~$Q$
+  then $H|_T$ is positive definite
+  and~$Q$ is \emph{strictly convex} on~$T$:
+  $\beta_0$ is a strict local minimum of~$Q$
   on the constraint surface.
 
 \item If $n_-(M) > p$, then $H|_T$ has at least one
   negative eigenvalue.
   The corresponding eigendirection of~$M$
   (restricted to the~$\beta$-components) is a
-  direction along which~$Q$ \emph{increases}
+  direction along which~$Q$ \emph{decreases}
   from~$\beta_0$.
 
 \item If $n_0(M) > 5 - p$, then $H|_T$ has a zero
@@ -520,13 +516,18 @@ the eigenvalues of~$M$:
   This direction lies in the null space of~$M$
   (Remark~\ref{rem:null-q-constant}).
 \end{itemize}
+Note: the algorithm globally maximizes~$Q$ across all
+candidate pairs~$(S, \sigma)$; the classification above
+concerns the local second-order behaviour of~$Q$
+at the unique KKT point for a \emph{fixed}~$(S, \sigma)$.
+
 In the generic case ($m \geq 5$, $p = 5$, and $H|_T$
 non-degenerate), the classification reduces to
 counting $n_-(M)$:
 \begin{gather*}
   n_-(M) = 5 \\
   \Updownarrow \\
-  \text{$\beta_0$ is a strict local maximum
+  \text{$\beta_0$ is a strict local minimum
   of~$Q$ on the constraint surface.}
 \end{gather*}
 \end{remark}
@@ -555,8 +556,8 @@ Hence $v_\beta^\top H\,\beta_0 = 0$
 and $v_\beta^\top H\,v_\beta = 0$, so
 \[
   Q(\beta_0 + t\,v_\beta) - Q(\beta_0)
-  = -t\,v_\beta^\top H\,\beta_0
-    - \tfrac{1}{2}\,t^2\,v_\beta^\top H\,v_\beta
+  = t\,v_\beta^\top H\,\beta_0
+    + \tfrac{1}{2}\,t^2\,v_\beta^\top H\,v_\beta
   = 0
 \]
 for all~$t$.
@@ -581,8 +582,8 @@ so $v_\beta$ is \emph{approximately} tangent
 The~$Q$ variation along~$v_\beta$ is
 \begin{align*}
   Q(\beta_0 + t\,v_\beta) - Q(\beta_0)
-  &= -t\,v_\beta^\top H\,\beta_0
-    - \tfrac{1}{2}\,t^2\,v_\beta^\top H\,v_\beta.
+  &= t\,v_\beta^\top H\,\beta_0
+    + \tfrac{1}{2}\,t^2\,v_\beta^\top H\,v_\beta.
 \end{align*}
 From the eigenvector equation
 $Hv_\beta = \lambda_j\,v_\beta
@@ -672,8 +673,7 @@ of~\eqref{eq:kkt-system}
 with smallest eigenvalue magnitude
 $|\lambda_{\min}| = \min_j |\lambda_j| > 0$,
 and let $x_0 = (\beta_0, \mu_0, \xi_0)$ be the exact
-solution (with negated multipliers
-$\mu_0 = -\lambda_0$, $\xi_0 = -\nu_0$).
+solution.
 Let $\hat x = (\hat\beta, \hat\mu, \hat\xi)$ be the
 numerical solution with residual
 \[
@@ -692,7 +692,7 @@ Define the \emph{residual-corrected objective}
 \begin{equation}\label{eq:q-corrected}
   \tilde Q
   \;=\; Q(\hat\beta)
-    - \bigl(r_2^\top\hat\mu + r_3\,\hat\xi\bigr)
+    + \bigl(r_2^\top\hat\mu + r_3\,\hat\xi\bigr)
 \end{equation}
 and the \emph{error bound}
 \begin{equation}\label{eq:q-error-bound}
@@ -714,11 +714,11 @@ each component satisfies the same bound:
 \end{equation}
 
 \emph{Step~1: expand $Q(\hat\beta) - Q(\beta_0)$.}
-Since $Q(\beta) = -(1/2)\,\beta^\top H\,\beta$,
+Since $Q(\beta) = \tfrac{1}{2}\,\beta^\top H\,\beta$,
 \[
   Q(\hat\beta) - Q(\beta_0)
-  = -\delta\beta^\top H\,\beta_0
-    - \tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta.
+  = \delta\beta^\top H\,\beta_0
+    + \tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta.
 \]
 
 \emph{Step~2: rewrite the cross term using KKT.}
@@ -742,8 +742,8 @@ and similarly $\eta^\top\delta\beta = r_3$, hence
 \end{equation}
 Substituting into Step~1 and rearranging:
 \begin{equation}\label{eq:q-expansion}
-  Q(\beta_0) = Q(\hat\beta) - (r_2^\top\mu_0 + r_3\,\xi_0)
-    + \tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta.
+  Q(\beta_0) = Q(\hat\beta) + (r_2^\top\mu_0 + r_3\,\xi_0)
+    - \tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta.
 \end{equation}
 
 \emph{Step~3: substitute numerical multipliers.}
@@ -844,7 +844,7 @@ satisfying $|Q(\beta_0) - \tilde Q| \leq E$:
   (normalisation residual).
 \item Compute $Q(\hat\beta)$ and the corrected value
   $\tilde Q = Q(\hat\beta)
-    - (r_2^\top\hat\mu + r_3\,\hat\xi)$.
+    + (r_2^\top\hat\mu + r_3\,\hat\xi)$.
 \item Compute the error bound
   $E = (9/2)\,\|r\|^2 / |\lambda_{\min}|$,
   where $|\lambda_{\min}|$ is the smallest

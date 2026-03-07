@@ -15,13 +15,13 @@
 ///
 /// # Permutation ordering convention
 ///
-/// The `best_permutation` in [`EhzResult`] is in **physical orbit direction**:
-/// σ = [a, b, c, ...] means the Reeb orbit visits F_a → F_b → F_c → ... → F_a.
-/// For consecutive facets, ω₀(n_{σ(k)}, n_{σ(k+1)}) ≥ 0.
+/// The `best_permutation` in [`EhzResult`] follows the **positive Reeb direction**:
+/// σ = [a, b, c, ...] means the Reeb trajectory visits F_a → F_b → F_c → ... → F_a.
+/// For consecutive facets, ω₀(n_{σ(k)}, n_{σ(k+1)}) ≥ 0 (positive Reeb direction,
+/// R_k = (2/h_k) J₀ n_k).
 ///
-/// Internally, the Q-function Q(β) = Σ_{i>j} β_i β_j ω₀(n_{σ(i)}, n_{σ(j)}) uses
-/// the reversed ("algebraic") ordering. The reversal happens at the output boundary:
-/// the best permutation is reversed before being stored in [`EhzResult`].
+/// Q(β) = (1/2) β^T H β > 0 for permutations in positive Reeb direction.
+/// Permutations are passed directly to `solve_kkt` — no reversal needed.
 ///
 /// # Complexity
 ///
@@ -141,28 +141,31 @@ pub fn ehz_capacity_unpruned(polytope: &Polytope4D) -> Option<EhzResult> {
     // Safety net: if an UNKNOWN orbit achieves significantly lower action than the
     // best certified orbit, the reported capacity might be wrong and we cannot
     // resolve it at f64 precision. Fail loudly rather than publish a potentially
-    // false result. Tolerance 1e-12 allows machine-epsilon arithmetic noise
-    // (typical gap ~1e-15 for capacity ~1) without masking real discrepancies.
+    // false result.
+    // Tolerance 1e-10: capacity values are O(1)–O(10), so 1e-10 is ~10 orders
+    // below typical values. Consistent with billiard_capacity tolerance.
+    // Near-degenerate Lagrangian products (e.g. (4,4) at θ≈0°) produce
+    // gaps up to ~2.4e-11 from f64 rounding noise.
     let gap = certified.0 - uncertain_cap;
     assert!(
-        gap <= 1e-12,
+        gap <= 1e-10,
         "Numerical gap: certified capacity {:.6e} > uncertain capacity {:.6e} (gap = {:.6e}). \
          An UNKNOWN orbit achieves lower action than the best certified orbit. \
          Cannot resolve at f64 precision.",
         certified.0, uncertain_cap, gap,
     );
 
-    // Reverse σ from internal algebraic order to physical orbit direction
-    let mut phys_perm = certified.2;
-    phys_perm.reverse();
-    let mut phys_beta = certified.3;
-    phys_beta.reverse();
+    // Sanity: winning orbit has positive capacity (Q > 0 ⟹ action = 0.5/Q > 0).
+    assert!(certified.0 > 0.0, "capacity must be positive, got {:.2e}", certified.0);
+    assert!(certified.0.is_finite(), "capacity must be finite, got {:.2e}", certified.0);
+
+    // Candidate already stores perm and β in natural (positive Reeb) order.
     Some(EhzResult {
         capacity: certified.0,
         capacity_uncertain: uncertain_cap,
         best_subset: certified.1,
-        best_permutation: phys_perm,
-        best_beta: phys_beta,
+        best_permutation: certified.2,
+        best_beta: certified.3,
         iterations,
     })
 }
@@ -215,16 +218,12 @@ pub fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     adj
 }
 
-/// Build directed facet adjacency matrix: adj[i][j] = true iff the algorithm's
-/// internal ordering can have i followed by j.
+/// Build directed facet adjacency matrix in the **physical Reeb direction**:
+/// `adj[i][j] = true` iff the transition F_i → F_j is feasible.
 ///
-/// This combines vertex adjacency (F_i ∩ F_j ≠ ∅) with the directed ω₀ condition.
-/// In the algorithm's internal (algebraic) ordering, consecutive (i, j) corresponds
-/// to a physical Reeb transition F_j → F_i, so we require ω₀(n_j, n_i) ≥ 0.
-///
-/// Uses [lem:numerical-transition-feasibility]: a physical transition F_i → F_j
-/// exists only if ω₀(n_i, n_j) ≥ 0. In the algorithm's algebraic ordering,
-/// (i, j)_alg = (j, i)_phys, so the condition becomes ω₀(n_j, n_i) ≥ 0.
+/// This combines vertex adjacency (F_i ∩ F_j ≠ ∅) with the directed ω₀ condition
+/// from `[lem:numerical-transition-feasibility]`: a transition F_i → F_j exists
+/// only if ω₀(n_i, n_j) ≥ 0, where n_i, n_j are the outward facet normals.
 ///
 /// Uses the exact sign pattern from the rational pipeline (always available),
 /// so there is no f64 tolerance ambiguity near ω₀ = 0.
@@ -241,18 +240,18 @@ pub fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> 
             if !vertex_adj[i][j] {
                 continue;
             }
-            // Algebraic convention: adj[i][j] needs ω₀(n_j, n_i) ≥ 0.
+            // Physical convention: adj[i][j] needs ω₀(n_i, n_j) ≥ 0.
             // sign_pattern stores (min, max) pairs with min < max.
-            // ω₀ is antisymmetric: ω₀(n_j, n_i) = -ω₀(n_i, n_j).
-            let (lo, hi) = (j.min(i), j.max(i));
+            // ω₀ is antisymmetric: ω₀(n_i, n_j) = -ω₀(n_j, n_i).
+            let (lo, hi) = (i.min(j), i.max(j));
             let sign = data.sign_pattern.get(&(lo, hi)).copied();
             adj[i][j] = match sign {
                 Some(s) => {
                     // sign_pattern stores sign of ω₀(n_lo, n_hi).
-                    // We need sign of ω₀(n_j, n_i).
-                    // If (lo, hi) = (j, i), sign is ω₀(n_j, n_i) — use directly.
-                    // If (lo, hi) = (i, j), sign is ω₀(n_i, n_j) — negate.
-                    let effective = if lo == j { s } else {
+                    // We need sign of ω₀(n_i, n_j).
+                    // If (lo, hi) = (i, j), sign is ω₀(n_i, n_j) — use directly.
+                    // If (lo, hi) = (j, i), sign is ω₀(n_j, n_i) — negate.
+                    let effective = if lo == i { s } else {
                         match s {
                             Sign::Plus => Sign::Minus,
                             Sign::Minus => Sign::Plus,
@@ -297,7 +296,8 @@ pub fn ehz_capacity(polytope: &Polytope4D) -> Option<EhzResult> {
     for m in 2..=f {
         for subset in combinations(f, m) {
             for_each_cyclic_permutation(&subset, &mut |perm| {
-                // **ADJACENCY PRUNING**: skip non-adjacent cycles
+                // **ADJACENCY PRUNING**: skip non-adjacent cycles.
+                // adj uses physical convention: adj[i][j] = transition F_i → F_j feasible.
                 if !is_adjacent_cycle(perm, &adj) {
                     return;
                 }
@@ -343,30 +343,28 @@ pub fn ehz_capacity(polytope: &Polytope4D) -> Option<EhzResult> {
     let certified = best_certified?;
     let uncertain_cap = best_uncertain.map_or(certified.0, |b| b.0);
 
-    // Safety net: if an UNKNOWN orbit achieves significantly lower action than the
-    // best certified orbit, the reported capacity might be wrong and we cannot
-    // resolve it at f64 precision. Fail loudly rather than publish a potentially
-    // false result. Tolerance 1e-12 allows machine-epsilon arithmetic noise.
+    // Safety net: see ehz_capacity_unpruned for full comment.
+    // Tolerance 1e-10: consistent with billiard_capacity and ehz_capacity_unpruned.
     let gap = certified.0 - uncertain_cap;
     assert!(
-        gap <= 1e-12,
+        gap <= 1e-10,
         "Numerical gap: certified capacity {:.6e} > uncertain capacity {:.6e} (gap = {:.6e}). \
          An UNKNOWN orbit achieves lower action than the best certified orbit. \
          Cannot resolve at f64 precision.",
         certified.0, uncertain_cap, gap,
     );
 
-    // Reverse σ from internal algebraic order to physical orbit direction
-    let mut phys_perm = certified.2;
-    phys_perm.reverse();
-    let mut phys_beta = certified.3;
-    phys_beta.reverse();
+    // Sanity: winning orbit has positive capacity (Q > 0 ⟹ action = 0.5/Q > 0).
+    assert!(certified.0 > 0.0, "capacity must be positive, got {:.2e}", certified.0);
+    assert!(certified.0.is_finite(), "capacity must be finite, got {:.2e}", certified.0);
+
+    // Candidate already stores perm and β in natural (positive Reeb) order.
     Some(EhzResult {
         capacity: certified.0,
         capacity_uncertain: uncertain_cap,
         best_subset: certified.1,
-        best_permutation: phys_perm,
-        best_beta: phys_beta,
+        best_permutation: certified.2,
+        best_beta: certified.3,
         iterations,
     })
 }

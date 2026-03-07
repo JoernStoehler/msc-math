@@ -42,7 +42,7 @@ use crate::geom::symplectic::omega0;
 pub struct ExactKktResult {
     /// Exact β vector (all components rational).
     pub beta: Vec<BigRational>,
-    /// Exact Q(β) = Σ_{i>j} β_i β_j ω₀(n_{σ(i)}, n_{σ(j)}) over Q.
+    /// Exact Q(β) = Σ_{i>j} β_i β_j ω₀(n_{σ(j)}, n_{σ(i)}) over Q.
     pub q_exact: BigRational,
     /// Q_exact converted to f64 (for convenient comparison with f64 solver).
     pub q_exact_f64: f64,
@@ -180,9 +180,10 @@ fn gauss_solve(mat: &[Vec<BigRational>], rhs: &[BigRational]) -> Option<Vec<BigR
     Some(x)
 }
 
-/// Compute exact Q(β) = Σ_{i>j} β_i β_j ω₀(n_{σ(i)}, n_{σ(j)}) over BigRational.
+/// Compute exact Q(β) = Σ_{i>j} β_i β_j ω₀(n_{σ(j)}, n_{σ(i)}) = (1/2) β^T H β over BigRational.
 ///
 /// Mirrors [`crate::kkt::q_from_beta`] exactly, but in exact arithmetic.
+/// Q > 0 for permutations in positive Reeb direction.
 fn q_from_beta_rational(
     normals: &[Vector4<f64>],
     perm: &[usize],
@@ -192,7 +193,7 @@ fn q_from_beta_rational(
     let mut sum = BigRational::zero();
     for i in 1..m {
         for j in 0..i {
-            let omega = f64_to_rational(omega0(&normals[perm[i]], &normals[perm[j]]));
+            let omega = f64_to_rational(omega0(&normals[perm[j]], &normals[perm[i]]));
             sum += &beta[i] * &beta[j] * omega;
         }
     }

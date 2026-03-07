@@ -105,13 +105,13 @@ fn omega0(u: &Vector4<f64>, v: &Vector4<f64>) -> f64 {
     u[0] * v[2] - u[2] * v[0] + u[1] * v[3] - u[3] * v[1]
 }
 
-/// Q(β) = Σ_{i>j} β_i β_j ω₀(n_{σ(i)}, n_{σ(j)})
-/// Copied from crates/src/kkt.rs:55-65
+/// Q(β) = Σ_{i>j} β_i β_j ω₀(n_{σ(j)}, n_{σ(i)}) = (1/2) β^T H β
+/// Copied from crates/src/kkt.rs — Q > 0 for permutations in positive Reeb direction.
 fn q_from_beta(normals: &[Vector4<f64>], perm: &[usize], beta: &[f64]) -> f64 {
     let m = beta.len();
     (1..m)
         .flat_map(|i| (0..i).map(move |j| (i, j)))
-        .map(|(i, j)| beta[i] * beta[j] * omega0(&normals[perm[i]], &normals[perm[j]]))
+        .map(|(i, j)| beta[i] * beta[j] * omega0(&normals[perm[j]], &normals[perm[i]]))
         .sum()
 }
 
@@ -421,28 +421,21 @@ fn is_adjacent_cycle(perm: &[usize], adj: &[Vec<bool>]) -> bool {
 }
 
 // ============================================================================
-// A2: directed ω₀ adjacency (algebraic convention)
+// A2: directed ω₀ adjacency (positive Reeb direction)
 //
 // The physical Reeb orbit traverses facets in a specific cyclic order. For a
 // transition from F_i to F_j, the Reeb flow on F_i must carry the orbit toward
-// the ridge F_i ∩ F_j, requiring ω₀(n_i, n_j) > 0.
+// the ridge F_i ∩ F_j, requiring ω₀(n_i, n_j) ≥ 0.
 //
-// However, the HK2017 Q function uses Σ_{i>j} β_i β_j ω₀(n_{σ(i)}, n_{σ(j)}),
-// which picks the REVERSED cyclic orientation for Q > 0. So the Q-maximizing
-// permutation has ω₀(n_{σ(k)}, n_{σ(k+1)}) ≤ 0 for consecutive transitions.
+// Directed edge i→j: ω₀(n_i, n_j) ≥ -EPS (conservative, avoids discarding
+// valid transitions near zero).
+// Combined with vertex adjacency: dir_adj[i][j] = vertex_adj[i][j] AND ω₀ ≥ -EPS.
 //
-// Verified: for the hypercube, perm [0,5,1,4] gives Q > 0 with all consecutive
-// ω₀ = -1. The physical orbit is F0→F4→F1→F5→F0 (the reverse cyclic order).
-//
-// Directed edge i→j in the ALGEBRAIC graph: ω₀(n_i, n_j) ≤ EPS (conservative).
-// Combined with vertex adjacency: dir_adj[i][j] = vertex_adj[i][j] AND ω₀ ≤ EPS.
-//
-// Key risk: the sign analysis is agent-written. The ablation empirically checks
-// that A2 agrees with A0 on all test polytopes.
+// The ablation empirically checks that A2 agrees with A0 on all test polytopes.
 // ============================================================================
 
-/// Build directed adjacency for the algebraic (Q-maximizing) permutation order.
-/// Edge i→j allowed iff vertex-adjacent AND ω₀(n_i, n_j) ≤ EPS.
+/// Build directed adjacency for positive Reeb direction.
+/// Edge i→j allowed iff vertex-adjacent AND ω₀(n_i, n_j) ≥ -EPS.
 fn build_directed_adjacency(
     vertex_adj: &[Vec<bool>],
     normals: &[Vector4<f64>],
@@ -455,7 +448,7 @@ fn build_directed_adjacency(
                 continue;
             }
             if vertex_adj[i][j] {
-                dir_adj[i][j] = omega0(&normals[i], &normals[j]) <= EPS_DIRECTED;
+                dir_adj[i][j] = omega0(&normals[i], &normals[j]) >= -EPS_DIRECTED;
             }
         }
     }
@@ -570,7 +563,7 @@ fn ehz_capacity_unpruned_a2(polytope: &Polytope4D) -> Option<EhzResult> {
 // Implementation: reduce to 2D LP feasibility via SVD + Fourier-Motzkin elimination.
 // Precomputed once per polytope: O(F⁴) total, negligible vs the exponential search.
 //
-// Algebraic convention: alg_adj[i][j] = phys_feasible(j → i) (reversed direction).
+// Convention: adj[i][j] = phys_feasible(i → j) (positive Reeb direction).
 // ============================================================================
 
 /// Check 2D feasibility of half-plane constraints via Fourier-Motzkin elimination.
@@ -718,7 +711,7 @@ fn is_physical_transition_feasible(
 
 /// Build A3 adjacency matrix: A2 + Reeb-flow feasibility check.
 ///
-/// Algebraic convention: a3_adj[i][j] = true iff physical transition j→i is feasible.
+/// adj[i][j] = true iff physical transition F_i → F_j is feasible.
 fn build_a3_adjacency(
     a2_adj: &[Vec<bool>],
     normals: &[Vector4<f64>],
@@ -731,8 +724,7 @@ fn build_a3_adjacency(
             if i == j || !a2_adj[i][j] {
                 continue;
             }
-            // Algebraic edge i→j = physical transition j→i
-            a3_adj[i][j] = is_physical_transition_feasible(normals, heights, j, i);
+            a3_adj[i][j] = is_physical_transition_feasible(normals, heights, i, j);
         }
     }
     a3_adj
