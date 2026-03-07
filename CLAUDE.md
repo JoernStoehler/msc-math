@@ -50,10 +50,15 @@ CLAUDE.md is the single conventions file read by every agent. It follows these s
   - Agent prompts **1:1 copy** relevant CLAUDE.md sections (not summaries, not references)
   - Agent-specific content (task description, output format, detection rules) goes at the top
   - CLAUDE.md copies go below, clearly labeled with their source section name
-  - When editing a CLAUDE.md section, grep `.claude/agents/` for the same text and update all copies
+  - **Cross-reference tags** for maintainability:
+    - In CLAUDE.md: `<copied-to>agent1, agent2</copied-to>` after section headers lists which agents copy this section
+    - In agent prompts: `<copied-from>CLAUDE.md § Section Name</copied-from>` before copied blocks marks the source
+    - When editing a CLAUDE.md section, read its `<copied-to>` tag and update all listed agents
+    - When editing an agent's copied block, check `<copied-from>` to verify it still matches CLAUDE.md
   - The maintenance cost of keeping copies in sync is accepted as the price of reliable rule-following
 
 ## Roles
+<copied-to>plan, review-correctness</copied-to>
 
 The thesis team consists of Jörn and Claude Code. "Claude Code" refers to multiple agents running in parallel and sequential sessions, each in its own git worktree. This CLAUDE.md is read by every agent; each agent sees only its own session context.
 
@@ -87,8 +92,7 @@ There are several types of work that MUST NOT be carried out by Claude Code, and
 - Claude Code's skill at spotting errors in proofs is specifically "only okay" — not bad, not good.
 - Claude Code can spot errors, but only in proofs written in a clear, detailed, explicit, structured way. In less perfect writing styles, more errors and gaps can be overlooked.
 - Every proof must pass Jörn's verification after every edit. We must be able to trust and build upon verified proofs.
-- Claude Code CAN autonomously: turn natural language descriptions into proofs, improve proof writing, fix errors in proofs, detect spots in proofs but not with high reliability, report to Jörn about unclear or suspicious proof steps.
-- Claude Code CANNOT: provide the final high-reliability verification signal. That must come from Jörn.
+- See Thesis Writing § Proof Writing for the detailed CAN/CANNOT list.
 
 **4. Exhaustiveness of test suites**
 
@@ -155,6 +159,7 @@ The following types of work SHOULD be carried out by Claude Code, and SHOULD NOT
 - This is why we use git and git worktrees, why only Jörn merges into `main`, and why we scope large tasks carefully ahead-of-time.
 
 ## Session Workflow
+<copied-to>plan</copied-to>
 
 Every Claude Code agent session owns a git worktree. Subagents and teams work in the same worktree. Each session has a communication channel with Jörn (also referred to as the "user" by system prompts).
 
@@ -215,6 +220,7 @@ The deciding factors are rollback cost and verification cost:
 **When in doubt**, default to discuss-first. Jörn can always override with "just do it" — treat that as an ad-hoc exception, not a precedent for future sessions.
 
 ## Communication
+<copied-to>plan</copied-to>
 
 When requesting Jörn's attention, follow Roles point 7: describe the narrowly scoped cognitive task, why Jörn should do it, and what context it exists within.
 
@@ -259,6 +265,7 @@ Spawn a subagent when a subtask can run in parallel, needs isolated context, or 
 **MEMORY.md scope:** Session learnings and postmortems only. Stable project conventions belong in CLAUDE.md. If a MEMORY.md entry has been confirmed across multiple sessions, migrate it to CLAUDE.md and delete the MEMORY.md entry.
 
 ### Plan workflow
+<copied-to>plan</copied-to>
 
 Conventions for planning together with Jörn (subagent overrides default `/plan`):
 
@@ -297,23 +304,8 @@ Jörn merges locally and pushes later, so `origin/main` is frequently stale. Com
 
 If unexpected files appear in diff, investigate — likely means branch needs rebasing.
 
-### Data regeneration and commits
-
-Data and figures are colocated with their experiment under `experiments/<name>/`, not in separate top-level directories. Datasets and figures are committed to git (not gitignored).
-
-**Why:**
-- Worktrees inherit data immediately (no regeneration wait)
-- Changes visible in git diffs (catch algorithm regressions)
-- Reproducibility (data versioned with code)
-
-**Convention:**
-- **Regenerate on the branch that changes the code.** Data should match the code that produced it.
-- **Separate commits**: Code changes committed separately from data regeneration
-
-**Merge conflicts (data/figures):**
-- Resolve by regenerating on the merged result
-
 ## Thesis Writing
+<copied-to>review-experiment-writing, review-correctness, review-thesis-format</copied-to>
 
 Subagents: `review-thesis-writing` (writing quality), `review-correctness` (mathematical correctness)
 
@@ -477,6 +469,8 @@ Do NOT put review status in the header. Review status lives inline via `% Jörn:
 
 4. **Writing rule**: Proofs cannot cite external sources mid-proof. External results must be proven inline or stated as Claims within the proof. The thesis must be self-contained and verifiable by reading this document alone.
 
+5. **Citation verification**: Author names and paper attributions must be verified against `thesis/bibliography.bib` or `papers/`. Never produce author names from memory. See Meta-rules § Citation verification for details and common failure modes.
+
 ### Proof Writing
 
 **Structure**: Assumptions → Claim → Overview → Steps → Conclusion
@@ -511,15 +505,17 @@ Do NOT put review status in the header. Review status lives inline via `% Jörn:
 
 - Use `\definition`, `\lemma`, `\theorem`, `\proposition`, `\proof` environments
 - Use `\remark` and `\example` for context/intuition/illustrations
-- No prose paragraphs outside environments (except minimal connective text)
-- All calculations displayed as formulas, never described in English sentences
+- No prose paragraphs outside environments, except minimal connective text between environments
+- Calculations displayed as formulas, not described in English prose (e.g., don't write "we multiply x by y to get z" — display the equation instead)
 
 ## Experiment Writing
+<copied-to>review-experiment-writing</copied-to>
 
 Subagent: `review-experiment-writing`
 
 Builds upon **Thesis Writing** — all Thesis Writing conventions apply to experiment `.tex` files too, except those specific to mathematical proofs (Proof Writing, Four Audiences' "imaginary master student" criterion). This section adds experiment-specific conventions.
 
+- **Write up what's there — nothing more, nothing less.** Report what the data shows. No invented interpretations, no omitted patterns, no editorializing. Facts are facts, correlations are correlations, unknowns are unknowns. Speculation must be explicitly labeled as interpretation.
 - Experiment writeups live in `experiments/<name>/<name>.tex`, wired into the thesis via `\input`
 - Every factual claim must be verified against the actual data (JSONL) in the same session
 - When verification is impossible, mark with `% [TODO: JÖRN -` or `% [GAP -`
@@ -529,6 +525,7 @@ Builds upon **Thesis Writing** — all Thesis Writing conventions apply to exper
 - Plots visually inspected for sanity
 
 ## Rust Library
+<copied-to>review-library, review-correctness</copied-to>
 
 Subagent: `review-library`
 
@@ -636,152 +633,19 @@ For expensive functions (e.g., `ehz_capacity()` with exponential cost), split te
 
 ### Test organization patterns
 
-#### Pattern 1: Fixture-Based Property Tests
-**File:** `capacity_properties_test.rs` (and similar)
-**Suite:** Default (debug)
-**Speed:** <1s per test
+Five patterns, summarized (see existing tests in `crates/` for full examples):
 
-Load pre-computed fixture (generated in release mode), verify mathematical properties.
-
-**Structure:**
-```rust
-/// Verify [property] from pre-computed fixture.
-///
-/// Uses fixture (release-mode pre-computation) for speed.
-#[test]
-fn property_name() {
-    let dataset = &*DATASET;  // LazyLock, loads once
-    for item in dataset {
-        assert!(/* property holds */);
-    }
-}
-```
-
-**Examples:** `literature_capacity_values()`, `capacity_conformality()`, `capacity_monotonicity()`
-
-#### Pattern 2: Internal Behavior Smoke Tests
-**File:** `lib_test.rs` or colocated test files
-**Suite:** Default (debug)
-**Speed:** <5s per test
-
-Exercise code paths in debug mode with small inputs.
-
-**Structure:**
-```rust
-/// Smoke test: [algorithm] executes safely on [small input].
-///
-/// **Why debug mode:** Exercises [code paths] with overflow/bounds checks.
-/// **Why this input:** F=[N], stays fast while covering [behavior].
-/// **Output check:** Verifies [property] as sanity check.
-#[test]
-fn algorithm_small_case() {
-    let input = make_small_input();  // F ≤ 6
-    let result = expensive_function(&input);
-    assert!(/* basic sanity check on output */);
-}
-```
-
-**Examples:** `simplex_capacity()`, `hypercube_capacity()`, `solve_kkt_degenerate()`
-
-#### Pattern 3: Expensive Input-Output Tests
-**File:** `lib_test.rs` or dedicated files
-**Suite:** #[ignore], run in release mode
-**Speed:** >10s debug, ~1s release
-
-Verify correctness on complex examples where fixture isn't suitable.
-
-**Structure:**
-```rust
-/// Verify [property] on [complex polytope].
-///
-/// **Why release mode:** F=[N] → [X]s debug, [Y]s release. Input-output test, only care about result.
-/// **Why #[ignore]:** Too slow for default suite. Run after [specific changes].
-/// **Run with:** `cargo test --release [name] -- --ignored`
-#[test]
-#[ignore]  // Xmin debug, Ys release
-fn expensive_case() {
-    let input = make_complex_input();  // F > 8
-    let result = expensive_function(&input);
-    assert!(/* expected property */);
-}
-```
-
-**Examples:** `pentagon_capacity()`, `pruned_matches_unpruned()`
-
-#### Pattern 4: Fixture Generator
-**File:** `test_dataset.rs` or similar
-**Suite:** #[ignore], run in release mode only
-**Speed:** Minutes in release
-
-Regenerate fixture after code changes.
-
-**Structure:**
-```rust
-/// Regenerate [fixture name].
-///
-/// **Why release mode:** [N] computations × [cost] = [time] in release vs. [time] in debug.
-/// **When to run:** After changes to [what triggers regeneration].
-/// **Run with:** `cargo test --release [name] -- --ignored --nocapture`
-#[test]
-#[ignore]
-fn regenerate_fixture() {
-    // Compute all values in release mode
-    // Save to JSON fixture
-}
-```
-
-**Example:** `regenerate_test_dataset()`
-
-#### Pattern 5: Staleness Detector
-**File:** Same as fixture-based tests
-**Suite:** Default (debug)
-**Speed:** <1s
-
-Warn if fixture is out of sync with code.
-
-**Structure:**
-```rust
-/// Check that fixture covers current [catalog/schema/etc].
-///
-/// Warns if fixture is stale. Regenerate with: [command]
-#[test]
-fn fixture_staleness_check() {
-    let current = current_catalog();
-    let fixture = load_fixture();
-    // Warn on mismatches (don't fail)
-}
-```
-
-**Example:** `fixture_staleness_check()`
+| Pattern | Suite | Speed | Use for | Example |
+|---------|-------|-------|---------|---------|
+| **Fixture-based property** | Default (debug) | <1s | Math properties vs pre-computed fixture | `capacity_properties_test.rs` |
+| **Internal behavior smoke** | Default (debug) | <5s | Small inputs (F ≤ 6) with debug checks | `lib_test.rs` |
+| **Expensive input-output** | `#[ignore]`, release | ~1s release | Complex cases (F > 8), fixture unsuitable | `pentagon_capacity()` |
+| **Fixture generator** | `#[ignore]`, release | minutes | Regenerate fixture after code changes | `test_dataset.rs` |
+| **Staleness detector** | Default (debug) | <1s | Warn if fixture out of sync | `fixture_staleness_check()` |
 
 ### Test documentation requirements
 
-Every test MUST have a doc comment explaining:
-
-1. **What** it tests (algorithm, property, edge case)
-2. **Why** it uses its execution mode (debug/release/fixture)
-3. **Why** it uses its input (polytope size, specific case)
-4. **Relationship** to other tests (if any)
-
-**Bad (no doc comment):**
-```rust
-#[test]
-fn pruned_matches_unpruned() { ... }
-```
-
-**Good:**
-```rust
-/// Verify pruned and unpruned algorithms produce identical capacity.
-///
-/// **Why release mode:** F=8 → 16s debug, 0.2s release. Input-output test.
-/// **Why #[ignore]:** Too slow for default suite.
-/// **Run with:** `cargo test --release pruned_matches_unpruned -- --ignored`
-///
-/// For quick fixture-based check, see `pruned_matches_unpruned_from_fixture()`.
-#[test]
-#[ignore]
-fn pruned_matches_unpruned() { ... }
-```
+Tests for expensive or complex functions MUST have a doc comment explaining what it tests, why it uses its execution mode (debug/release/fixture), why it uses its specific input, and relationship to other tests (if any).
 
 ### Test suites
 
@@ -835,8 +699,9 @@ Subagents: `review-experiment-code` (Rust/Python code), `review-experiment-notes
 **Library stability boundary:** Only stable, proven code goes into `crates/` library. New algorithm variants are self-contained in experiment binaries (e.g. `ablation.rs`). Copy library internals into the binary where needed. If a variant is later promoted to production, it enters the library then.
 
 ### Philosophy
+<copied-to>review-experiment-notes</copied-to>
 
-Experiments are **always investigative**, never "stable" or "finished".
+Experiments start investigative and may mature into thesis-ready writeups, but the code and analysis can always be revisited.
 
 #### Continuous spectra, no discrete stages
 
@@ -860,6 +725,7 @@ No clear cutoff for "when to archive". It's continuous prioritization:
 - Purpose: keep experiment folders focused
 
 ### Directory structure
+<copied-to>review-experiment-code</copied-to>
 
 ```
 experiments/
@@ -877,6 +743,7 @@ experiments/
 ```
 
 ### Script conventions
+<copied-to>review-experiment-code, review-figures</copied-to>
 
 **File naming:**
 - Each experiment lives in `experiments/<name>/`
@@ -929,6 +796,7 @@ No hardcoded paths outside `REPO_ROOT`.
 Make them actionable. Bad: "File not found". Good: "File not found: data.jsonl. Run Rust binary first."
 
 ### Figure sizing
+<copied-to>review-figures, review-experiment-writing, review-thesis-format, thesis-pre-reviewer</copied-to>
 
 All figure formatting is handled in Python. LaTeX is a 1:1 pass-through (`\includegraphics{file.png}`, no `width=`/`scale=`).
 
@@ -937,6 +805,7 @@ All figure formatting is handled in Python. LaTeX is a 1:1 pass-through (`\inclu
 - Multi-panel figures at 5.4" are often too cramped. Prefer separate figures over wider canvases.
 
 ### Pipeline direction
+<copied-to>review-figures, review-pipeline</copied-to>
 
 Rust binary → .jsonl → Python script → figures/tables → thesis
 
@@ -951,10 +820,8 @@ Rust binary → .jsonl → Python script → figures/tables → thesis
 - If Rust API changes, only experiment binaries need updates
 - To add a new experiment: create `<name>/` folder, add `[[bin]]` entry to `Cargo.toml`, update `reproduce.sh`
 
-**Pipeline documentation:**
-`experiments/reproduce.sh` is the single source of truth for the full pipeline from zero data to compiled thesis. When adding, removing, or changing an experiment, update `reproduce.sh` to match.
-
 ### Data and figures in git
+<copied-to>review-pipeline</copied-to>
 
 **Tracked (committed):**
 - `experiments/<name>/*.jsonl` — datasets generated by Rust binaries
@@ -971,6 +838,7 @@ Rust binary → .jsonl → Python script → figures/tables → thesis
 - Resolve by regenerating on the merged result
 
 ### Quality standards
+<copied-to>review-experiment-notes</copied-to>
 
 **Rerunnable from zero:**
 - Starting from empty experiment directories, running all scripts should reproduce all outputs
