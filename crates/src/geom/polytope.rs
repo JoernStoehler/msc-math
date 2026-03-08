@@ -1,5 +1,9 @@
 /// Convex polytope K ⊂ R^4 via dual representation.
 ///
+/// See `[def:polytope]` (thesis): a polytope is a bounded convex subset K ⊂ R^4
+/// containing the origin in its interior, defined as an intersection of half-spaces.
+///
+/// Internally uses the dual representation:
 /// K = { x ∈ R^4 | y_i · x ≤ 1 for all i = 1, ..., F }
 ///
 /// where y_i = n_i / h_i ∈ R^4 are the vertices of the polar body K°.

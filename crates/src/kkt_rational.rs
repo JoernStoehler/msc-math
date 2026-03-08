@@ -36,6 +36,10 @@
 /// [ η^T |  0   |  0 ] [ ξ ]   [ 1 ]
 /// ```
 /// Entries are exact rationals from `Polytope4D::dual_vertices()`.
+///
+/// The η block is all ones because dual vertices y_i = n_i/h_i absorb the heights.
+/// This is mathematically equivalent to the f64 system (which uses separate n_i and h_i
+/// with η_i = h_i): the change of variable β_rational_i = β_f64_i · h_i preserves Q(β).
 use num_bigint::BigInt;
 use num_rational::BigRational;
 use num_traits::{One, Signed, ToPrimitive, Zero};

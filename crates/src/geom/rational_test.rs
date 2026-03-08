@@ -10,6 +10,9 @@ use std::collections::BTreeSet;
 // ── Test helpers ────────────────────────────────────────────────────────
 
 /// Build a rational 4-simplex (5 facets, 5 vertices, origin interior).
+///
+/// Facets: n_i = -e_i (i=0..3) with h=1/5, plus n_4 = (1,1,1,1) with h=1.
+/// Origin is interior because all h_i > 0.
 fn rational_simplex() -> Polytope4D {
     let normals = vec![
         [rat(-1), rat(0), rat(0), rat(0)],
@@ -42,6 +45,10 @@ fn rational_hypercube() -> Polytope4D {
 fn rational_lagrangian_square_square() -> Polytope4D { rational_hypercube() }
 
 /// Build a rational Lagrangian product: triangle ×_L square.
+///
+/// 7 facets: 3 triangle normals in q-space (scaled integers, h=500),
+/// 4 axis-aligned square normals in p-space (h=1).
+/// This is a Lagrangian product because q-normals have zero p-components and vice versa.
 fn rational_lagrangian_triangle_square() -> Polytope4D {
     let normals = vec![
         [rat(0), rat(1000), rat(0), rat(0)],
