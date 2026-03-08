@@ -20,6 +20,7 @@
 /// numerical algorithms like the KKT solver.
 use nalgebra::{DMatrix, Vector4};
 use num_rational::BigRational;
+use std::collections::BTreeSet;
 
 /// Tolerance for unit-normal check: |(‖n‖ - 1)| < EPS_UNIT.
 ///
@@ -126,6 +127,9 @@ impl Polytope4D {
     /// Validates f64 inputs, converts to exact rational dual vertices
     /// y_i = n_i / h_i, then runs the rational pipeline to compute
     /// vertices, incidence, adjacency, and ω₀ signs.
+    ///
+    /// The original f64 normals and heights are kept directly — no round-trip
+    /// through rational conversion.
     pub fn new(
         normals: Vec<Vector4<f64>>,
         heights: Vec<f64>,
@@ -173,7 +177,22 @@ impl Polytope4D {
             })
             .collect();
 
-        Self::from_dual_vertices(dual_vertices)
+        // Run exact pipeline
+        let (vertices, vertex_descriptors) =
+            super::vertex_enumeration::construct_rational_pipeline(&dual_vertices)?;
+
+        // f64 vertices from exact rational coordinates
+        let vertices_f64 = rational_verts_to_f64(&vertices);
+
+        // Keep original f64 normals and heights — no round-trip
+        Ok(Self::assemble(
+            dual_vertices,
+            vertices,
+            &vertex_descriptors,
+            normals,
+            heights,
+            vertices_f64,
+        ))
     }
 
     /// Construct a polytope from exact rational normals and heights.
@@ -214,54 +233,43 @@ impl Polytope4D {
     /// Construct a polytope from exact rational dual vertices y_i ∈ K°.
     ///
     /// Each dual vertex defines a halfspace y_i · x ≤ 1.
+    /// f64 normals and heights are derived: n̂_i = y_i/‖y_i‖, ĥ_i = 1/‖y_i‖.
     pub fn from_dual_vertices(
         dual_vertices: Vec<[BigRational; 4]>,
     ) -> Result<Self, ConstructionError> {
         let (vertices, vertex_descriptors) =
-            super::rational::construct_rational_pipeline(&dual_vertices)?;
+            super::vertex_enumeration::construct_rational_pipeline(&dual_vertices)?;
 
-        let v_count = vertices.len();
-        let f_count = dual_vertices.len();
-
-        // Build incidence matrix V×F
-        let incidence = DMatrix::from_fn(v_count, f_count, |v, f| {
-            vertex_descriptors[v].contains(&f)
-        });
-
-        // Build adjacency matrix F×F
-        let adjacency = DMatrix::from_fn(f_count, f_count, |i, k| {
-            i != k && (0..v_count).any(|v| incidence[(v, i)] && incidence[(v, k)])
-        });
-
-        // Build omega signs matrix F×F (antisymmetric)
-        let omega_signs = DMatrix::from_fn(f_count, f_count, |i, k| {
-            if i == k {
-                return 0i8;
+        // Derive f64 normals and heights from dual vertices
+        let mut normals_f64 = Vec::with_capacity(dual_vertices.len());
+        let mut heights_f64 = Vec::with_capacity(dual_vertices.len());
+        for (i, y) in dual_vertices.iter().enumerate() {
+            let y_f64 = Vector4::new(
+                super::rational::rational_to_f64(&y[0]),
+                super::rational::rational_to_f64(&y[1]),
+                super::rational::rational_to_f64(&y[2]),
+                super::rational::rational_to_f64(&y[3]),
+            );
+            let norm = y_f64.norm();
+            if norm < 1e-15 {
+                return Err(ConstructionError::F64Conversion(format!(
+                    "dual vertex[{i}] has near-zero f64 norm: {norm}"
+                )));
             }
-            let omega =
-                super::rational::omega0_rational(&dual_vertices[i], &dual_vertices[k]);
-            match super::rational::Sign::of(&omega) {
-                super::rational::Sign::Plus => 1,
-                super::rational::Sign::Minus => -1,
-                super::rational::Sign::Zero => 0,
-            }
-        });
+            normals_f64.push(y_f64 / norm);
+            heights_f64.push(1.0 / norm);
+        }
 
-        // Compute f64 representation
-        let (normals_f64, heights_f64) =
-            super::rational::dual_vertices_to_f64(&dual_vertices)?;
-        let vertices_f64 = super::rational::rational_vertices_to_f64(&vertices);
+        let vertices_f64 = rational_verts_to_f64(&vertices);
 
-        Ok(Self {
+        Ok(Self::assemble(
             dual_vertices,
             vertices,
-            incidence,
-            adjacency,
-            omega_signs,
+            &vertex_descriptors,
             normals_f64,
             heights_f64,
             vertices_f64,
-        })
+        ))
     }
 
     /// Round f64 normals/heights to rational with the given denominator,
@@ -343,6 +351,57 @@ impl Polytope4D {
         Ok(result)
     }
 
+    /// Assemble a Polytope4D from pre-computed components.
+    ///
+    /// Builds the incidence, adjacency, and omega_signs matrices from
+    /// the rational data and packages everything with the provided f64 data.
+    fn assemble(
+        dual_vertices: Vec<[BigRational; 4]>,
+        vertices: Vec<[BigRational; 4]>,
+        vertex_descriptors: &[BTreeSet<usize>],
+        normals_f64: Vec<Vector4<f64>>,
+        heights_f64: Vec<f64>,
+        vertices_f64: Vec<Vector4<f64>>,
+    ) -> Self {
+        let v_count = vertices.len();
+        let f_count = dual_vertices.len();
+
+        // Build incidence matrix V×F
+        let incidence = DMatrix::from_fn(v_count, f_count, |v, f| {
+            vertex_descriptors[v].contains(&f)
+        });
+
+        // Build adjacency matrix F×F
+        let adjacency = DMatrix::from_fn(f_count, f_count, |i, k| {
+            i != k && (0..v_count).any(|v| incidence[(v, i)] && incidence[(v, k)])
+        });
+
+        // Build omega signs matrix F×F (antisymmetric)
+        let omega_signs = DMatrix::from_fn(f_count, f_count, |i, k| {
+            if i == k {
+                return 0i8;
+            }
+            let omega =
+                super::rational::omega0_rational(&dual_vertices[i], &dual_vertices[k]);
+            match super::rational::Sign::of(&omega) {
+                super::rational::Sign::Plus => 1,
+                super::rational::Sign::Minus => -1,
+                super::rational::Sign::Zero => 0,
+            }
+        });
+
+        Self {
+            dual_vertices,
+            vertices,
+            incidence,
+            adjacency,
+            omega_signs,
+            normals_f64,
+            heights_f64,
+            vertices_f64,
+        }
+    }
+
     // ── Exact rational accessors ──
 
     /// Dual vertices y_i = n_i / h_i, vertices of the polar body K°.
@@ -391,6 +450,21 @@ impl Polytope4D {
     pub fn facet_count(&self) -> usize {
         self.dual_vertices.len()
     }
+}
+
+/// Convert exact rational vertices to f64 vectors.
+fn rational_verts_to_f64(vertices: &[[BigRational; 4]]) -> Vec<Vector4<f64>> {
+    vertices
+        .iter()
+        .map(|rv| {
+            Vector4::new(
+                super::rational::rational_to_f64(&rv[0]),
+                super::rational::rational_to_f64(&rv[1]),
+                super::rational::rational_to_f64(&rv[2]),
+                super::rational::rational_to_f64(&rv[3]),
+            )
+        })
+        .collect()
 }
 
 #[cfg(test)]

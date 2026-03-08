@@ -56,7 +56,7 @@ mod proptests {
         /// invalid polytopes through.
         ///
         /// NOTE: Limited to 5-6 facets and 4 seeds to keep runtime <10min.
-        /// Random polytope generation involves qhull and can be slow.
+        /// Random polytope generation involves exact rational vertex enumeration and can be slow.
         #[test]
         fn random_polytopes_pass_validation(
             facet_count in 5usize..=6,

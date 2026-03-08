@@ -116,8 +116,9 @@ pub fn solve_kkt_exact(
 
 /// Build the KKT matrix and RHS over Q (exact rational arithmetic).
 ///
-/// Mirrors [`crate::kkt::build_kkt_system`] exactly, but all entries are BigRational.
-/// Uses dual vertices y_i with implicit heights h_i = 1.
+/// Same block structure as [`crate::kkt::build_kkt_system`], but uses dual vertices
+/// y_i = n_i/h_i instead of separate normals and heights. The η block is all ones
+/// (heights are absorbed into the dual vertices).
 fn build_kkt_rational(
     dual_vertices: &[[BigRational; 4]],
     perm: &[usize],

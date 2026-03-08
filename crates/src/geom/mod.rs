@@ -12,6 +12,7 @@ pub mod reeb_trajectory;
 pub mod skeleton;
 pub mod symplectic;
 pub mod rational;
+pub mod vertex_enumeration;
 pub mod validation;
 pub mod volume;
 
