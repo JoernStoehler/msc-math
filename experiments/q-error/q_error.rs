@@ -17,6 +17,7 @@ use symplectic::algorithms::hk2017::permutations::cyclic_permutations;
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::kkt::{build_kkt_system as build_kkt, q_from_beta};
+use symplectic::geom::rational::RationalPolytope4D;
 use symplectic::kkt_rational;
 
 /// Condition-number threshold for rank truncation (matches EIGEN_CONDITION_TAU
@@ -188,7 +189,10 @@ fn exact_comparison(polytope: &Polytope4D) -> Option<ExactResult> {
     let heights = polytope.heights();
 
     // Solve the KKT system exactly via the library's rational solver.
-    let exact_result = kkt_rational::solve_kkt_exact(normals, heights, perm)?;
+    // Construct RationalPolytope4D to get exact BigRational normals/heights.
+    let rational = RationalPolytope4D::from_f64(normals, heights)
+        .expect("f64→rational conversion should succeed for known polytopes");
+    let exact_result = kkt_rational::solve_kkt_exact(rational.normals(), rational.heights(), perm)?;
     let q_exact_f64 = exact_result.q_exact_f64;
 
     // Compute numerical Q̃ and E (using the eigendecomposition path)
