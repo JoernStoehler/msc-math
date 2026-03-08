@@ -397,10 +397,10 @@ fn heap_perms_buf(
 /// Copied from crates/src/algorithms/hk2017/mod.rs:162-182
 fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let f = polytope.facet_count();
-    let normals = polytope.normals();
-    let heights = polytope.heights();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
     let mut adj = vec![vec![false; f]; f];
-    for v in polytope.vertices() {
+    for v in polytope.vertices_f64() {
         let incident: Vec<usize> = (0..f)
             .filter(|&i| (normals[i].dot(v) - heights[i]).abs() < EPS_FACET_INCIDENCE)
             .collect();
@@ -473,8 +473,8 @@ fn ehz_capacity_unpruned_with(
     solver: fn(&[Vector4<f64>], &[f64], &[usize]) -> Option<(Vec<f64>, f64)>,
 ) -> Option<EhzResult> {
     let f = polytope.facet_count();
-    let normals = polytope.normals();
-    let heights = polytope.heights();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
 
     let mut best_certified: Option<Candidate> = None;
     let mut best_uncertain: Option<Candidate> = None;
@@ -543,7 +543,7 @@ fn ehz_capacity_unpruned_a1(polytope: &Polytope4D) -> Option<EhzResult> {
 /// A2: directed ω₀ adjacency + standard LU/SVD solver.
 fn ehz_capacity_unpruned_a2(polytope: &Polytope4D) -> Option<EhzResult> {
     let vertex_adj = build_adjacency_matrix(polytope);
-    let dir_adj = build_directed_adjacency(&vertex_adj, polytope.normals());
+    let dir_adj = build_directed_adjacency(&vertex_adj, polytope.normals_f64());
     ehz_capacity_unpruned_with(polytope, &dir_adj, solve_kkt_full)
 }
 
@@ -733,8 +733,8 @@ fn build_a3_adjacency(
 /// A3: full Reeb-flow feasibility + standard LU/SVD solver.
 fn ehz_capacity_unpruned_a3(polytope: &Polytope4D) -> Option<EhzResult> {
     let vertex_adj = build_adjacency_matrix(polytope);
-    let a2_adj = build_directed_adjacency(&vertex_adj, polytope.normals());
-    let a3_adj = build_a3_adjacency(&a2_adj, polytope.normals(), polytope.heights());
+    let a2_adj = build_directed_adjacency(&vertex_adj, polytope.normals_f64());
+    let a3_adj = build_a3_adjacency(&a2_adj, polytope.normals_f64(), polytope.heights_f64());
     ehz_capacity_unpruned_with(polytope, &a3_adj, solve_kkt_full)
 }
 
@@ -1055,11 +1055,11 @@ fn main() {
 
     for (polytope_name, group, polytope, expected) in &polytopes {
         let normals_raw: Vec<[f64; 4]> = polytope
-            .normals()
+            .normals_f64()
             .iter()
             .map(|n| [n[0], n[1], n[2], n[3]])
             .collect();
-        let heights_raw = polytope.heights().to_vec();
+        let heights_raw = polytope.heights_f64().to_vec();
         let f = polytope.facet_count();
 
         // Collect results for this polytope to check agreement

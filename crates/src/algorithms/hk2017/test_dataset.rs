@@ -90,8 +90,8 @@ impl DatasetEntry {
     fn from_test_polytope(tp: &TestPolytope) -> Self {
         Self {
             name: tp.name.clone(),
-            normals: tp.polytope.normals().iter().map(|n| [n[0], n[1], n[2], n[3]]).collect(),
-            heights: tp.polytope.heights().to_vec(),
+            normals: tp.polytope.normals_f64().iter().map(|n| [n[0], n[1], n[2], n[3]]).collect(),
+            heights: tp.polytope.heights_f64().to_vec(),
             volume: tp.volume,
             capacity: tp.capacity,
             capacity_unpruned: tp.capacity_unpruned,
@@ -368,9 +368,9 @@ pub fn generate_test_dataset() -> Vec<TestPolytope> {
 
 /// Scale polytope: heights → α·heights (normals unchanged)
 fn scale_polytope(polytope: &Polytope4D, alpha: f64) -> Polytope4D {
-    let normals = polytope.normals().to_vec();
+    let normals = polytope.normals_f64().to_vec();
     let heights: Vec<f64> = polytope
-        .heights()
+        .heights_f64()
         .iter()
         .map(|&h| alpha * h)
         .collect();
@@ -447,10 +447,10 @@ fn apply_symplectomorphism(polytope: &Polytope4D, m: &Matrix4<f64>, b: &Vector4<
         .try_inverse()
         .expect("M should be invertible");
 
-    let mut normals = Vec::with_capacity(polytope.normals().len());
-    let mut heights = Vec::with_capacity(polytope.heights().len());
+    let mut normals = Vec::with_capacity(polytope.normals_f64().len());
+    let mut heights = Vec::with_capacity(polytope.heights_f64().len());
 
-    for (n, &h) in polytope.normals().iter().zip(polytope.heights().iter()) {
+    for (n, &h) in polytope.normals_f64().iter().zip(polytope.heights_f64().iter()) {
         let n_raw = m_inv_t * n;
         let norm = n_raw.norm();
         normals.push(n_raw / norm);

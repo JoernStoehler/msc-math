@@ -400,10 +400,10 @@ fn heap_perms_buf(
 
 fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let f = polytope.facet_count();
-    let normals = polytope.normals();
-    let heights = polytope.heights();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
     let mut adj = vec![vec![false; f]; f];
-    for v in polytope.vertices() {
+    for v in polytope.vertices_f64() {
         let incident: Vec<usize> = (0..f)
             .filter(|&i| (normals[i].dot(v) - heights[i]).abs() < EPS_FACET_INCIDENCE)
             .collect();
@@ -418,7 +418,7 @@ fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
 
 fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let f = polytope.facet_count();
-    let normals = polytope.normals();
+    let normals = polytope.normals_f64();
     let vertex_adj = build_adjacency_matrix(polytope);
     let mut adj = vec![vec![false; f]; f];
     for i in 0..f {
@@ -459,8 +459,8 @@ struct InstrumentedResult {
 
 fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult> {
     let f = polytope.facet_count();
-    let normals = polytope.normals();
-    let heights = polytope.heights();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
     let adj = build_directed_adjacency_matrix(polytope);
 
     let mut orbits: Vec<ValidOrbit> = Vec::new();
@@ -619,9 +619,9 @@ fn facet_volume_and_centroid_3d(
 /// ∂vol/∂h_k = vol_3D(F_k).
 #[allow(dead_code)]
 fn compute_volume_derivatives_h(polytope: &Polytope4D) -> Vec<f64> {
-    let normals = polytope.normals();
-    let heights = polytope.heights();
-    let vertices = polytope.vertices();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
+    let vertices = polytope.vertices_f64();
     let f = normals.len();
     (0..f)
         .map(|k| {
@@ -634,9 +634,9 @@ fn compute_volume_derivatives_h(polytope: &Polytope4D) -> Vec<f64> {
 /// ∇_{n_k} vol projected to T_{n_k}S³.
 /// Source: sys-optimization/sys_optimization.rs:959-976
 fn compute_volume_derivatives_n(polytope: &Polytope4D) -> Vec<Vector4<f64>> {
-    let normals = polytope.normals();
-    let heights = polytope.heights();
-    let vertices = polytope.vertices();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
+    let vertices = polytope.vertices_f64();
     let f = normals.len();
     (0..f)
         .map(|k| {
@@ -713,7 +713,7 @@ fn compute_d_sys_n(
     sys: f64,
     instrumented: &InstrumentedResult,
 ) -> Vec<Vector4<f64>> {
-    let normals = polytope.normals();
+    let normals = polytope.normals_f64();
     let f = normals.len();
     let best_orbit = &instrumented.orbits[0];
 
@@ -737,7 +737,7 @@ fn compute_omega_features(
     skeleton: &Skeleton,
     orbit_facets: &[usize],  // physical direction (from EhzResult)
 ) -> (Vec<[f64; 3]>, Vec<f64>) {
-    let normals = polytope.normals();
+    let normals = polytope.normals_f64();
 
     // Ridge omegas: for each ridge (2-face shared by facets i, j with i < j)
     let ridge_omegas: Vec<[f64; 3]> = skeleton
@@ -798,7 +798,7 @@ fn compute_gradient_dots(
     d_sys_n: &[Vector4<f64>],
     orbit_facets: &[usize],
 ) -> Vec<GradientDot> {
-    let normals = polytope.normals();
+    let normals = polytope.normals_f64();
     let orbit_set: HashSet<usize> = orbit_facets.iter().copied().collect();
 
     // Build ridge-neighbor lookup: for each facet k, list of neighbors
@@ -856,8 +856,8 @@ fn process_polytope(
     source: &str,
 ) -> Option<OmegaRow> {
     let f = polytope.facet_count();
-    let normals = polytope.normals();
-    let heights = polytope.heights();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
 
     let t0 = Instant::now();
 

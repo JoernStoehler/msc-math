@@ -99,8 +99,8 @@ pub fn billiard_capacity(polytope: &Polytope4D) -> Result<Option<BilliardResult>
     let mut best_uncertain: Option<(f64, Vec<usize>, Vec<f64>, usize)> = None;
     let mut iterations: u64 = 0;
 
-    let normals = polytope.normals();
-    let heights = polytope.heights();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
 
     for k in 2..=3 {
         enumerate_k_bounce_sigmas(k, &q_blocks, &p_blocks, |sigma| {

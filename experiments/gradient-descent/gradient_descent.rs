@@ -135,9 +135,9 @@ struct SensitivityResult {
 
 /// d(vol)/d(h_k) = S_k (3D volume of facet k).
 fn compute_volume_derivatives_h(polytope: &Polytope4D) -> Vec<f64> {
-    let normals = polytope.normals();
-    let heights = polytope.heights();
-    let vertices = polytope.vertices();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
+    let vertices = polytope.vertices_f64();
     let f = normals.len();
     (0..f)
         .map(|k| facet_volume_3d(normals, heights, vertices, k, f))
@@ -161,9 +161,9 @@ fn compute_capacity_derivatives_h(best_orbit: &ValidOrbit, facet_count: usize) -
 /// d(vol)/d(n_k) projected onto T_{n_k}S³.
 /// Tangent gradient: −S_k(x̄_k − h_k n_k)
 fn compute_volume_derivatives_n(polytope: &Polytope4D) -> Vec<Vector4<f64>> {
-    let normals = polytope.normals();
-    let heights = polytope.heights();
-    let vertices = polytope.vertices();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
+    let vertices = polytope.vertices_f64();
     let f = normals.len();
 
     (0..f)
@@ -229,7 +229,7 @@ fn compute_sensitivity(
     sys: f64,
     instrumented: &InstrumentedResult,
 ) -> SensitivityResult {
-    let normals = polytope.normals();
+    let normals = polytope.normals_f64();
     let f = normals.len();
     let best_orbit = &instrumented.orbits[0];
 
@@ -291,9 +291,9 @@ fn compute_sensitivity(
 
 /// Maximum step t > 0 along height direction before combinatorial type changes.
 fn compute_step_bound_h(polytope: &Polytope4D, direction: &[f64]) -> f64 {
-    let normals = polytope.normals();
-    let heights = polytope.heights();
-    let vertices = polytope.vertices();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
+    let vertices = polytope.vertices_f64();
     let f = polytope.facet_count();
     let skeleton = Skeleton::compute(polytope);
 
@@ -374,9 +374,9 @@ fn compute_step_bound_hn(
     g_h: &[f64],
     g_n: &[Vector4<f64>],
 ) -> f64 {
-    let normals = polytope.normals();
-    let heights = polytope.heights();
-    let vertices = polytope.vertices();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
+    let vertices = polytope.vertices_f64();
     let f = polytope.facet_count();
     let skeleton = Skeleton::compute(polytope);
 
@@ -575,8 +575,8 @@ fn run_gradient_ascent(
     let t_start = Instant::now();
 
     let mut current = match Polytope4D::new(
-        start_polytope.normals().to_vec(),
-        start_polytope.heights().to_vec(),
+        start_polytope.normals_f64().to_vec(),
+        start_polytope.heights_f64().to_vec(),
     ) {
         Ok(p) => p,
         Err(e) => {
@@ -632,8 +632,8 @@ fn run_gradient_ascent(
         let sensitivity = compute_sensitivity(&current, vol, cap, sys, &instrumented);
 
         // 3. Step bounds
-        let normals = current.normals();
-        let heights = current.heights();
+        let normals = current.normals_f64();
+        let heights = current.heights_f64();
 
         let t_max_h = if sensitivity.gradient_norm_h > 1e-15 {
             compute_step_bound_h(&current, &sensitivity.d_sys_h)
@@ -711,7 +711,7 @@ fn run_gradient_ascent(
                     final_normals: if is_last {
                         Some(
                             new_polytope
-                                .normals()
+                                .normals_f64()
                                 .iter()
                                 .map(|n| [n[0], n[1], n[2], n[3]])
                                 .collect(),
@@ -720,7 +720,7 @@ fn run_gradient_ascent(
                         None
                     },
                     final_heights: if is_last {
-                        Some(new_polytope.heights().to_vec())
+                        Some(new_polytope.heights_f64().to_vec())
                     } else {
                         None
                     },

@@ -105,11 +105,11 @@ fn main() {
                 m,
                 facet_count: k + m,
                 normals: polytope
-                    .normals()
+                    .normals_f64()
                     .iter()
                     .map(|n| [n[0], n[1], n[2], n[3]])
                     .collect(),
-                heights: polytope.heights().to_vec(),
+                heights: polytope.heights_f64().to_vec(),
                 h_min: H_MIN,
                 h_max: H_MAX,
                 volume: vol,

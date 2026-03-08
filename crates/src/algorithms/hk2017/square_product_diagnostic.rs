@@ -21,7 +21,7 @@ fn diagnose(n1: usize, n2: usize, angle_deg: f64) {
         .expect("product construction failed");
 
     let f = polytope.facet_count();
-    let verts = polytope.vertices().len();
+    let verts = polytope.vertices_f64().len();
 
     // Adjacency
     let adj = build_adjacency_matrix(&polytope);
@@ -112,8 +112,8 @@ fn print_adjacency(n1: usize, n2: usize, angle_deg: f64) {
         .expect("product construction failed");
 
     let f = polytope.facet_count();
-    let normals = polytope.normals();
-    let heights = polytope.heights();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
     let adj = build_adjacency_matrix(&polytope);
 
     eprintln!("=== Adjacency ({},{}) θ={:.4}° ===", n1, n2, angle_deg);
@@ -150,8 +150,8 @@ fn manual_orbit_injection(n1: usize, n2: usize, orbit_perm: &[usize], test_angle
         let polytope = lagrangian_product(&qn, &qh, &pn, &ph)
             .expect("product construction failed");
 
-        let normals = polytope.normals();
-        let heights = polytope.heights();
+        let normals = polytope.normals_f64();
+        let heights = polytope.heights_f64();
 
         match solve_kkt(normals, heights, orbit_perm) {
             Some(result) => {
@@ -276,8 +276,8 @@ fn minimal_broken_cases() {
     let (qn, qh) = regular_polygon_2d(3, 1.0);
     let (pn, ph) = regular_polygon_2d(4, 1.0);
     let polytope = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
-    let normals = polytope.normals();
-    let heights = polytope.heights();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
     let f = polytope.facet_count();
 
     eprintln!("  Facet normals for (3,4) at θ=0°:");
@@ -367,8 +367,8 @@ fn cyclic_invariance_check() {
     let (pn, ph) = rotate_polygon_2d(&pn_base, &ph_base, theta);
     let polytope = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
 
-    let normals = polytope.normals();
-    let heights = polytope.heights();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
 
     let result = ehz_capacity_unpruned(&polytope).unwrap();
     let perm = &result.best_permutation;
@@ -396,8 +396,8 @@ fn cyclic_invariance_check() {
     let (pn_base, ph_base) = regular_polygon_2d(4, 1.0);
     let (pn, ph) = rotate_polygon_2d(&pn_base, &ph_base, theta);
     let polytope = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
-    let normals = polytope.normals();
-    let heights = polytope.heights();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
     let result = ehz_capacity_unpruned(&polytope).unwrap();
     let perm = &result.best_permutation;
     let m = perm.len();
@@ -424,8 +424,8 @@ fn cyclic_invariance_check() {
     let (pn_base, ph_base) = regular_polygon_2d(4, 1.0);
     let (pn, ph) = rotate_polygon_2d(&pn_base, &ph_base, theta);
     let polytope = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
-    let normals = polytope.normals();
-    let heights = polytope.heights();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
 
     let result = ehz_capacity_unpruned(&polytope).unwrap();
     let perm = &result.best_permutation;
@@ -460,8 +460,8 @@ fn svd_null_space_debug() {
     let (pn_base, ph_base) = regular_polygon_2d(4, 1.0);
     let (pn, ph) = rotate_polygon_2d(&pn_base, &ph_base, theta);
     let polytope = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
-    let normals = polytope.normals();
-    let heights = polytope.heights();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
 
     // Billiard's perm that gives the lowest action
     let perm = &[1usize, 0, 6, 3, 2, 4];
@@ -674,8 +674,8 @@ fn disagreement_angles() {
             eprintln!("  Bil iters:{}", r.iterations);
 
             // Cross-check: inject billiard's orbit into HK2017's solve_kkt
-            let normals = polytope.normals();
-            let heights = polytope.heights();
+            let normals = polytope.normals_f64();
+            let heights = polytope.heights_f64();
             eprintln!("  Cross-check: HK2017 solve_kkt on billiard's perm {:?}:", r.best_permutation);
             match solve_kkt(normals, heights, &r.best_permutation) {
                 Some(result) => {
@@ -689,8 +689,8 @@ fn disagreement_angles() {
         // Always show all rotations of HK's best permutation too
         if let Some(ref r) = hk {
             let perm = &r.best_permutation;
-            let normals = polytope.normals();
-            let heights = polytope.heights();
+            let normals = polytope.normals_f64();
+            let heights = polytope.heights_f64();
             let m = perm.len();
             eprintln!("  HK perm rotations:");
             for rot in 0..m {
@@ -744,8 +744,8 @@ fn disagreement_angles() {
             // Test all rotations of billiard's permutation through HK2017's solve_kkt
             if let Ok(Some(ref r)) = bil {
                 let perm = &r.best_permutation;
-                let normals = polytope.normals();
-                let heights = polytope.heights();
+                let normals = polytope.normals_f64();
+                let heights = polytope.heights_f64();
                 let m = perm.len();
                 eprintln!("  All rotations of billiard's perm:");
                 for rot in 0..m {
@@ -781,8 +781,8 @@ fn solve_kkt_trace() {
     let (pn_base, ph_base) = regular_polygon_2d(4, 1.0);
     let (pn, ph) = rotate_polygon_2d(&pn_base, &ph_base, theta);
     let polytope = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
-    let normals = polytope.normals();
-    let heights = polytope.heights();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
 
     let perm: &[usize] = &[1, 0, 6, 3, 2, 4];
     let m = perm.len();

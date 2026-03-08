@@ -1,11 +1,10 @@
-/// Polytope validation: boundedness and irredundancy checks for R^4 polytopes.
+/// Polytope validation: boundedness check for R^4 polytopes.
 ///
-/// These checks enforce the mathematical definition of a polytope in H-representation:
-/// - **Bounded**: normals positively span R^4 (recession cone = {0})
-/// - **Irredundant**: each facet has incident vertices of affine rank 3
+/// Enforces: **Bounded** — normals positively span R^4 (recession cone = {0}).
+/// Called from `Polytope4D::new()` as a fast-fail pre-filter before the
+/// expensive rational pipeline (which also checks boundedness exactly).
 ///
-/// Both checks are called from `Polytope4D::new()` to enforce invariants at construction.
-use crate::constants::EPS_FACET_INCIDENCE;
+/// Irredundancy is checked exactly by the rational pipeline in rational.rs.
 use crate::geom::cross_product::cross_product_4d;
 use nalgebra::Vector4;
 
@@ -66,57 +65,6 @@ pub fn check_bounded(normals: &[Vector4<f64>]) -> bool {
         }
     }
     true
-}
-
-/// Check that every facet is irredundant: its incident vertices affinely span
-/// a 3D subspace (the facet hyperplane).
-///
-/// Returns `Some(i)` if facet `i` is redundant, `None` if all are irredundant.
-pub fn find_redundant_facet(
-    normals: &[Vector4<f64>],
-    heights: &[f64],
-    vertices: &[Vector4<f64>],
-) -> Option<usize> {
-    let f = normals.len();
-
-    for i in 0..f {
-        // Collect vertices incident to facet i: n_i · v ≈ h_i
-        let incident: Vec<Vector4<f64>> = vertices
-            .iter()
-            .filter(|v| (normals[i].dot(v) - heights[i]).abs() < EPS_FACET_INCIDENCE)
-            .cloned()
-            .collect();
-
-        if incident.is_empty() {
-            return Some(i);
-        }
-
-        if affine_rank(&incident) < 3 {
-            return Some(i);
-        }
-    }
-    None
-}
-
-/// Compute the affine rank of a set of points.
-/// Affine rank = dimension of their affine span = rank of centered points matrix.
-pub fn affine_rank(points: &[Vector4<f64>]) -> usize {
-    if points.len() <= 1 {
-        return 0;
-    }
-
-    let base = points[0];
-    let centered: Vec<Vector4<f64>> = points[1..].iter().map(|p| p - base).collect();
-
-    let n = centered.len();
-    let mat = nalgebra::DMatrix::from_fn(n, 4, |r, c| centered[r][c]);
-
-    let svd = mat.svd(false, false);
-    let threshold = 1e-8;
-    svd.singular_values
-        .iter()
-        .filter(|&&s| s > threshold)
-        .count()
 }
 
 #[cfg(test)]

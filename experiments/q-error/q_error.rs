@@ -17,7 +17,6 @@ use symplectic::algorithms::hk2017::permutations::cyclic_permutations;
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::kkt::{build_kkt_system as build_kkt, q_from_beta};
-use symplectic::geom::rational::RationalPolytope4D;
 use symplectic::kkt_rational;
 
 /// Condition-number threshold for rank truncation (matches EIGEN_CONDITION_TAU
@@ -65,8 +64,8 @@ struct SweepResult {
 /// Sweep ALL (S,σ) pairs for a polytope and assert error bounds.
 fn error_bound_sweep(polytope: &Polytope4D) -> SweepResult {
     let f = polytope.facet_count();
-    let normals = polytope.normals();
-    let heights = polytope.heights();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
 
     let mut total_nodes: u64 = 0;
     let mut solvable_nodes: u64 = 0;
@@ -185,14 +184,11 @@ fn exact_comparison(polytope: &Polytope4D) -> Option<ExactResult> {
     let m = perm.len();
     let size = m + 5;
 
-    let normals = polytope.normals();
-    let heights = polytope.heights();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
 
     // Solve the KKT system exactly via the library's rational solver.
-    // Construct RationalPolytope4D to get exact BigRational normals/heights.
-    let rational = RationalPolytope4D::from_f64(normals, heights)
-        .expect("f64→rational conversion should succeed for known polytopes");
-    let exact_result = kkt_rational::solve_kkt_exact(rational.normals(), rational.heights(), perm)?;
+    let exact_result = kkt_rational::solve_kkt_exact(polytope.dual_vertices(), perm)?;
     let q_exact_f64 = exact_result.q_exact_f64;
 
     // Compute numerical Q̃ and E (using the eigendecomposition path)
@@ -402,8 +398,8 @@ fn main() {
 
     for (name, polytope) in &polytopes {
         let f = polytope.facet_count();
-        let normals = polytope.normals();
-        let heights = polytope.heights();
+        let normals = polytope.normals_f64();
+        let heights = polytope.heights_f64();
 
         let mut total = 0u64;
         let mut n_beta_pos = 0u64;
@@ -472,13 +468,13 @@ fn main() {
                     total += 1;
 
                     let mm = perm.len();
-                    let (kkt_mat, _) = build_kkt(polytope.normals(), polytope.heights(), &perm);
+                    let (kkt_mat, _) = build_kkt(polytope.normals_f64(), polytope.heights_f64(), &perm);
 
                     let eig = kkt_mat.symmetric_eigen();
                     let n_neg = eig.eigenvalues.iter().filter(|&&e| e < -eig_eps).count();
                     let n_zero = eig.eigenvalues.iter().filter(|&&e| e.abs() <= eig_eps).count();
 
-                    let info = node_hessian_check(polytope.normals(), polytope.heights(), &perm);
+                    let info = node_hessian_check(polytope.normals_f64(), polytope.heights_f64(), &perm);
                     let (def, tangent_dim) = match info {
                         Some(n) => (n.definiteness, n.tangent_dim),
                         None => (Definiteness::Trivial, 0),

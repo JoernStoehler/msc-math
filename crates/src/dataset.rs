@@ -57,7 +57,7 @@ impl PolytopeRow {
         time_creation_ms: f64,
     ) -> Self {
         let normals: Vec<[f64; 4]> = polytope
-            .normals()
+            .normals_f64()
             .iter()
             .map(|n| [n[0], n[1], n[2], n[3]])
             .collect();
@@ -66,7 +66,7 @@ impl PolytopeRow {
             source,
             facet_count: polytope.facet_count(),
             normals,
-            heights: polytope.heights().to_vec(),
+            heights: polytope.heights_f64().to_vec(),
             volume,
             capacity,
             sys,

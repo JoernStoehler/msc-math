@@ -522,10 +522,10 @@ fn heap_perms_buf(
 /// Copied from crates/src/algorithms/hk2017/mod.rs:184-204
 fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let f = polytope.facet_count();
-    let normals = polytope.normals();
-    let heights = polytope.heights();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
     let mut adj = vec![vec![false; f]; f];
-    for v in polytope.vertices() {
+    for v in polytope.vertices_f64() {
         let incident: Vec<usize> = (0..f)
             .filter(|&i| (normals[i].dot(v) - heights[i]).abs() < EPS_FACET_INCIDENCE)
             .collect();
@@ -544,7 +544,7 @@ fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
 /// Copied from crates/src/algorithms/hk2017/mod.rs
 fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let f = polytope.facet_count();
-    let normals = polytope.normals();
+    let normals = polytope.normals_f64();
     let vertex_adj = build_adjacency_matrix(polytope);
     let mut adj = vec![vec![false; f]; f];
     for i in 0..f {
@@ -595,8 +595,8 @@ struct InstrumentedResult {
 /// Same algorithm as production ehz_capacity, but collects ALL valid orbits.
 fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult> {
     let f = polytope.facet_count();
-    let normals = polytope.normals();
-    let heights = polytope.heights();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
     let adj = build_directed_adjacency_matrix(polytope);
 
     let mut orbits: Vec<ValidOrbit> = Vec::new();
@@ -866,9 +866,9 @@ fn facet_volume_and_centroid_3d(
 /// More precisely: for K = {x : n_i · x ≤ h_i}, ∂vol(K)/∂h_k = vol_3D(F_k)
 /// where F_k is the k-th facet (a 3D polytope).
 fn compute_volume_derivatives_analytical(polytope: &Polytope4D) -> Vec<f64> {
-    let normals = polytope.normals();
-    let heights = polytope.heights();
-    let vertices = polytope.vertices();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
+    let vertices = polytope.vertices_f64();
     let f = normals.len();
     (0..f)
         .map(|k| facet_volume_3d(normals, heights, vertices, k, f))
@@ -956,9 +956,9 @@ fn compute_capacity_derivatives_analytical(
 ///
 /// Returns one tangent vector per facet (already projected to T_{n_k}S³).
 fn compute_volume_derivatives_normal(polytope: &Polytope4D) -> Vec<Vector4<f64>> {
-    let normals = polytope.normals();
-    let heights = polytope.heights();
-    let vertices = polytope.vertices();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
+    let vertices = polytope.vertices_f64();
     let f = normals.len();
 
     (0..f)
@@ -1048,8 +1048,8 @@ fn compute_sensitivity(
     sys: f64,
     instrumented: &InstrumentedResult,
 ) -> SensitivityResult {
-    let normals = polytope.normals();
-    let heights = polytope.heights();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
     let f = normals.len();
     let best_orbit = &instrumented.orbits[0];
 
@@ -1142,9 +1142,9 @@ fn compute_step_bound(
     polytope: &Polytope4D,
     direction: &[f64],
 ) -> f64 {
-    let normals = polytope.normals();
-    let heights = polytope.heights();
-    let vertices = polytope.vertices();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
+    let vertices = polytope.vertices_f64();
     let f = polytope.facet_count();
     let skeleton = Skeleton::compute(polytope);
 
@@ -1254,9 +1254,9 @@ fn compute_step_bound_hn(
     g_h: &[f64],
     g_n: &[Vector4<f64>],
 ) -> f64 {
-    let normals = polytope.normals();
-    let heights = polytope.heights();
-    let vertices = polytope.vertices();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
+    let vertices = polytope.vertices_f64();
     let f = polytope.facet_count();
     let skeleton = Skeleton::compute(polytope);
 
@@ -1410,7 +1410,7 @@ fn evaluate_gradient_step_hn(
                 new_volume: new_vol,
                 new_capacity: new_cap,
                 vertex_count_old: old_vertex_count,
-                vertex_count_new: new_polytope.vertices().len(),
+                vertex_count_new: new_polytope.vertices_f64().len(),
                 construction_ok: true,
             }
         }
@@ -1474,7 +1474,7 @@ fn evaluate_gradient_step(
                 new_volume: new_vol,
                 new_capacity: new_cap,
                 vertex_count_old: old_vertex_count,
-                vertex_count_new: new_polytope.vertices().len(),
+                vertex_count_new: new_polytope.vertices_f64().len(),
                 construction_ok: true,
             }
         }
@@ -1692,8 +1692,8 @@ fn main() {
 
     for (idx, (name, source, polytope)) in polytopes.iter().enumerate() {
         let f = polytope.facet_count();
-        let normals = polytope.normals();
-        let heights = polytope.heights();
+        let normals = polytope.normals_f64();
+        let heights = polytope.heights_f64();
 
         print!("[{}/{}] {} (F={}): ", idx + 1, n_polytopes, name, f);
 
@@ -1812,7 +1812,7 @@ fn main() {
         // Phase 2: Gradient steps (h-only)
         // =========================================================================
 
-        let vertex_count_old = polytope.vertices().len();
+        let vertex_count_old = polytope.vertices_f64().len();
 
         if t_max_h > 0.0 && sensitivity.gradient_norm_h > 1e-15 {
             for &frac in STEP_FRACTIONS {
@@ -1894,8 +1894,8 @@ fn main() {
 
         // Reconstruct to get an owned polytope we can replace each iteration
         let mut current = match Polytope4D::new(
-            start_polytope.normals().to_vec(),
-            start_polytope.heights().to_vec(),
+            start_polytope.normals_f64().to_vec(),
+            start_polytope.heights_f64().to_vec(),
         ) {
             Ok(p) => p,
             Err(e) => {
@@ -1932,8 +1932,8 @@ fn main() {
             let sensitivity = compute_sensitivity(&current, vol, cap, sys, &instrumented);
 
             // 3. Step bounds
-            let normals = current.normals();
-            let heights = current.heights();
+            let normals = current.normals_f64();
+            let heights = current.heights_f64();
 
             let t_max_h = if sensitivity.gradient_norm_h > 1e-15 {
                 compute_step_bound(&current, &sensitivity.d_sys_h)
@@ -1999,7 +1999,7 @@ fn main() {
                         gradient_norm_h: sensitivity.gradient_norm_h,
                         gradient_norm_n: sensitivity.gradient_norm_n,
                         gradient_norm_hn: sensitivity.gradient_norm_hn,
-                        vertex_count: new_polytope.vertices().len(),
+                        vertex_count: new_polytope.vertices_f64().len(),
                         time_ms,
                     };
                     serde_json::to_writer(&mut iter_writer, &row).expect("write iteration");
@@ -2067,9 +2067,9 @@ fn main() {
 
     for (idx, (name, _source, polytope)) in polytopes.iter().enumerate() {
         let f = polytope.facet_count();
-        let normals = polytope.normals();
-        let heights = polytope.heights();
-        let vertex_count_orig = polytope.vertices().len();
+        let normals = polytope.normals_f64();
+        let heights = polytope.heights_f64();
+        let vertex_count_orig = polytope.vertices_f64().len();
 
         print!("[{}/{}] {} (F={}): ", idx + 1, n_polytopes, name, f);
 
@@ -2212,7 +2212,7 @@ fn main() {
                         // h-only step
                         match try_step_h_polytope(normals, heights, &dir.g_h, t) {
                             Some((new_poly, new_sys)) => {
-                                let vc = new_poly.vertices().len();
+                                let vc = new_poly.vertices_f64().len();
                                 (new_sys - sys, true, vc != vertex_count_orig)
                             }
                             None => (f64::NAN, false, false),
@@ -2221,7 +2221,7 @@ fn main() {
                         // (h,n) step
                         match try_step_hn_polytope(normals, heights, &dir.g_h, &dir.g_n, t) {
                             Some((new_poly, new_sys)) => {
-                                let vc = new_poly.vertices().len();
+                                let vc = new_poly.vertices_f64().len();
                                 (new_sys - sys, true, vc != vertex_count_orig)
                             }
                             None => (f64::NAN, false, false),

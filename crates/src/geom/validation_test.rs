@@ -140,21 +140,21 @@ fn reject_exact_duplicate_normals() {
 fn simplex_has_5_vertices() {
     let (normals, heights) = simplex_normals_heights();
     let polytope = Polytope4D::new(normals, heights).expect("valid polytope");
-    assert_eq!(polytope.vertices().len(), 5);
+    assert_eq!(polytope.vertices_f64().len(), 5);
 }
 
 #[test]
 fn hypercube_has_16_vertices() {
     let (normals, heights) = hypercube_normals_heights();
     let polytope = Polytope4D::new(normals, heights).expect("valid polytope");
-    assert_eq!(polytope.vertices().len(), 16);
+    assert_eq!(polytope.vertices_f64().len(), 16);
 }
 
 #[test]
 fn simplex_vertices_satisfy_constraints() {
     let (normals, heights) = simplex_normals_heights();
     let polytope = Polytope4D::new(normals.clone(), heights.clone()).expect("valid polytope");
-    for v in polytope.vertices() {
+    for v in polytope.vertices_f64() {
         for (n, &h) in normals.iter().zip(&heights) {
             assert!(
                 n.dot(v) <= h + EPS_FACET_INCIDENCE,
@@ -182,31 +182,3 @@ fn hypercube_construction_has_8_facets() {
     assert_eq!(polytope.facet_count(), 8);
 }
 
-// ---- Affine rank ----
-
-#[test]
-fn affine_rank_single_point() {
-    let points = vec![Vector4::new(1.0, 2.0, 3.0, 4.0)];
-    assert_eq!(affine_rank(&points), 0);
-}
-
-#[test]
-fn affine_rank_collinear() {
-    let points = vec![
-        Vector4::new(0.0, 0.0, 0.0, 0.0),
-        Vector4::new(1.0, 0.0, 0.0, 0.0),
-        Vector4::new(2.0, 0.0, 0.0, 0.0),
-    ];
-    assert_eq!(affine_rank(&points), 1);
-}
-
-#[test]
-fn affine_rank_3d() {
-    let points = vec![
-        Vector4::new(0.0, 0.0, 0.0, 0.0),
-        Vector4::new(1.0, 0.0, 0.0, 0.0),
-        Vector4::new(0.0, 1.0, 0.0, 0.0),
-        Vector4::new(0.0, 0.0, 1.0, 0.0),
-    ];
-    assert_eq!(affine_rank(&points), 3);
-}

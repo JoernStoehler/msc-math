@@ -55,9 +55,9 @@ fn catalog_determinism() {
     assert_eq!(c1.len(), c2.len());
     for (a, b) in c1.iter().zip(c2.iter()) {
         assert_eq!(a.name, b.name);
-        assert_eq!(a.polytope.normals(), b.polytope.normals(),
+        assert_eq!(a.polytope.normals_f64(), b.polytope.normals_f64(),
             "'{}': normals non-deterministic", a.name);
-        assert_eq!(a.polytope.heights(), b.polytope.heights(),
+        assert_eq!(a.polytope.heights_f64(), b.polytope.heights_f64(),
             "'{}': heights non-deterministic", a.name);
     }
 }
@@ -282,7 +282,7 @@ fn capacity_monotonicity() {
             }
 
             // Find max α such that α·K1 ⊆ K2
-            let vertices1 = k1.polytope.vertices();
+            let vertices1 = k1.polytope.vertices_f64();
             let max_alpha = compute_max_containment_scale(vertices1, &k2.polytope);
 
             if let Some(alpha) = max_alpha {
@@ -386,8 +386,8 @@ fn compute_max_containment_scale(
     vertices1: &[Vector4<f64>],
     polytope2: &Polytope4D,
 ) -> Option<f64> {
-    let normals2 = polytope2.normals();
-    let heights2 = polytope2.heights();
+    let normals2 = polytope2.normals_f64();
+    let heights2 = polytope2.heights_f64();
 
     let mut max_alpha = f64::INFINITY;
 

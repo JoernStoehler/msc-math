@@ -7,7 +7,7 @@ fn simplex_skeleton() {
     let kp = known_polytopes::simplex();
     let skel = Skeleton::compute(&kp.polytope);
 
-    assert_eq!(kp.polytope.vertices().len(), 5, "simplex vertex count");
+    assert_eq!(kp.polytope.vertices_f64().len(), 5, "simplex vertex count");
     assert_eq!(skel.edges.len(), 10, "simplex edge count");
     assert_eq!(skel.ridges.len(), 10, "simplex ridge count");
 
@@ -28,7 +28,7 @@ fn hypercube_skeleton() {
     let kp = known_polytopes::hypercube();
     let skel = Skeleton::compute(&kp.polytope);
 
-    assert_eq!(kp.polytope.vertices().len(), 16, "hypercube vertex count");
+    assert_eq!(kp.polytope.vertices_f64().len(), 16, "hypercube vertex count");
     assert_eq!(skel.edges.len(), 32, "hypercube edge count");
     assert_eq!(skel.ridges.len(), 24, "hypercube ridge count");
 
@@ -49,7 +49,7 @@ fn crosspolytope_skeleton() {
     let kp = known_polytopes::crosspolytope();
     let skel = Skeleton::compute(&kp.polytope);
 
-    assert_eq!(kp.polytope.vertices().len(), 8, "crosspolytope vertex count");
+    assert_eq!(kp.polytope.vertices_f64().len(), 8, "crosspolytope vertex count");
     assert_eq!(skel.edges.len(), 24, "crosspolytope edge count");
     assert_eq!(skel.ridges.len(), 32, "crosspolytope ridge count");
 
@@ -67,7 +67,7 @@ fn lagrangian_triangle_product_skeleton() {
     let skel = Skeleton::compute(&kp.polytope);
 
     // 3 vertices × 3 vertices = 9 vertices
-    assert_eq!(kp.polytope.vertices().len(), 9, "lag tri prod vertex count");
+    assert_eq!(kp.polytope.vertices_f64().len(), 9, "lag tri prod vertex count");
 
     // Each ridge is a pair of facets sharing vertices.
     // For a product P1 ×_L P2: ridges are either (fi, fj) within P1 or P2,
@@ -113,9 +113,9 @@ fn ridges_have_sorted_facets() {
 fn ridge_vertices_lie_on_both_facets() {
     let kp = known_polytopes::hypercube();
     let skel = Skeleton::compute(&kp.polytope);
-    let normals = kp.polytope.normals();
-    let heights = kp.polytope.heights();
-    let vertices = kp.polytope.vertices();
+    let normals = kp.polytope.normals_f64();
+    let heights = kp.polytope.heights_f64();
+    let vertices = kp.polytope.vertices_f64();
 
     for ridge in &skel.ridges {
         for &vi in &ridge.vertices {

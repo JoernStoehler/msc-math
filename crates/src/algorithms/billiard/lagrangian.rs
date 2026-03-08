@@ -30,7 +30,7 @@ pub struct FacetClassification {
 ///
 /// Returns error if any facet normal is neither purely q-type nor purely p-type.
 pub fn classify_facets(polytope: &Polytope4D) -> Result<FacetClassification, BilliardError> {
-    let normals = polytope.normals();
+    let normals = polytope.normals_f64();
     let mut q_indices = Vec::new();
     let mut p_indices = Vec::new();
 

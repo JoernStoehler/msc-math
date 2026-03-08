@@ -91,8 +91,8 @@ fn main() {
             let row = RandomSweepRow {
                 name: format!("random_F{facet_count}_{i}"),
                 facet_count,
-                normals: p.normals().iter().map(|n| [n[0], n[1], n[2], n[3]]).collect(),
-                heights: p.heights().to_vec(),
+                normals: p.normals_f64().iter().map(|n| [n[0], n[1], n[2], n[3]]).collect(),
+                heights: p.heights_f64().to_vec(),
                 h_min: H_MIN,
                 h_max: H_MAX,
                 volume: vol,

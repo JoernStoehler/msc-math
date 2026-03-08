@@ -82,8 +82,8 @@ impl EhzResult {
 /// for valid polytopes, but guards against degenerate input).
 pub fn ehz_capacity_unpruned(polytope: &Polytope4D) -> Option<EhzResult> {
     let f = polytope.facet_count();
-    let normals = polytope.normals();
-    let heights = polytope.heights();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
 
     let mut best_certified: Option<Candidate> = None;
     let mut best_uncertain: Option<Candidate> = None;
@@ -199,21 +199,19 @@ fn combinations_rec(
 
 /// Build facet adjacency matrix: adj[i][j] = true iff F_i ∩ F_j ≠ ∅.
 /// Two facets are adjacent if they share at least one vertex.
+/// Diagonal is false (a facet is not adjacent to itself); safe because
+/// `is_adjacent_cycle` iterates distinct-element permutations.
 ///
-/// Uses the exact adjacency set from the rational pipeline (always available
-/// on every `Polytope4D`).
+/// Uses the exact adjacency matrix from `Polytope4D`.
 pub fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let f = polytope.facet_count();
-    let data = polytope.exact_data();
+    let poly_adj = polytope.adjacency();
 
     let mut adj = vec![vec![false; f]; f];
-    for &(i, j) in &data.adjacency {
-        adj[i][j] = true;
-        adj[j][i] = true;
-    }
-    // Diagonal: every facet is adjacent to itself
-    for (i, row) in adj.iter_mut().enumerate() {
-        row[i] = true;
+    for i in 0..f {
+        for j in 0..f {
+            adj[i][j] = poly_adj[(i, j)];
+        }
     }
     adj
 }
@@ -225,14 +223,12 @@ pub fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
 /// from `[lem:numerical-transition-feasibility]`: a transition F_i → F_j exists
 /// only if ω₀(n_i, n_j) ≥ 0, where n_i, n_j are the outward facet normals.
 ///
-/// Uses the exact sign pattern from the rational pipeline (always available),
+/// Uses the exact omega_signs matrix from the rational pipeline (always available),
 /// so there is no f64 tolerance ambiguity near ω₀ = 0.
 pub fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
-    use crate::geom::rational::Sign;
-
     let f = polytope.facet_count();
     let vertex_adj = build_adjacency_matrix(polytope);
-    let data = polytope.exact_data();
+    let omega_signs = polytope.omega_signs();
     let mut adj = vec![vec![false; f]; f];
 
     for i in 0..f {
@@ -241,28 +237,10 @@ pub fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> 
                 continue;
             }
             // Physical convention: adj[i][j] needs ω₀(n_i, n_j) ≥ 0.
-            // sign_pattern stores (min, max) pairs with min < max.
-            // ω₀ is antisymmetric: ω₀(n_i, n_j) = -ω₀(n_j, n_i).
-            let (lo, hi) = (i.min(j), i.max(j));
-            let sign = data.sign_pattern.get(&(lo, hi)).copied();
-            adj[i][j] = match sign {
-                Some(s) => {
-                    // sign_pattern stores sign of ω₀(n_lo, n_hi).
-                    // We need sign of ω₀(n_i, n_j).
-                    // If (lo, hi) = (i, j), sign is ω₀(n_i, n_j) — use directly.
-                    // If (lo, hi) = (j, i), sign is ω₀(n_j, n_i) — negate.
-                    let effective = if lo == i { s } else {
-                        match s {
-                            Sign::Plus => Sign::Minus,
-                            Sign::Minus => Sign::Plus,
-                            Sign::Zero => Sign::Zero,
-                        }
-                    };
-                    matches!(effective, Sign::Plus | Sign::Zero)
-                }
-                // Not in sign pattern (e.g. i==j) — treat as allowed
-                None => true,
-            };
+            // omega_signs[(i,j)] directly stores sign(ω₀(y_i, y_j)),
+            // which has the same sign as ω₀(n_i, n_j) since h_i, h_j > 0.
+            // Values: +1, -1, or 0. Transition allowed when >= 0.
+            adj[i][j] = omega_signs[(i, j)] >= 0;
         }
     }
 
@@ -283,8 +261,8 @@ pub fn is_adjacent_cycle(perm: &[usize], adj: &[Vec<bool>]) -> bool {
 /// This is the A2 pruning level from the ablation study.
 pub fn ehz_capacity(polytope: &Polytope4D) -> Option<EhzResult> {
     let f = polytope.facet_count();
-    let normals = polytope.normals();
-    let heights = polytope.heights();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
 
     // Precompute directed adjacency matrix (A2: vertex adj + ω₀ condition)
     let adj = build_directed_adjacency_matrix(polytope);

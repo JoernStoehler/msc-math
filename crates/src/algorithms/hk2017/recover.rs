@@ -144,8 +144,8 @@ pub fn recover_base_point(
     polytope: &Polytope4D,
     result: &EhzResult,
 ) -> Option<BasePointRecovery> {
-    let normals = polytope.normals();
-    let heights = polytope.heights();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
     let sigma = &result.best_permutation;
     let beta = &result.best_beta;
     let capacity = result.capacity;
@@ -272,8 +272,8 @@ pub fn verify_orbit(
     result: &EhzResult,
     recovery: &BasePointRecovery,
 ) -> OrbitVerification {
-    let normals = polytope.normals();
-    let heights = polytope.heights();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
     let sigma = &result.best_permutation;
     let m = sigma.len();
 
