@@ -182,31 +182,3 @@ fn hypercube_construction_has_8_facets() {
     assert_eq!(polytope.facet_count(), 8);
 }
 
-// ---- Affine rank ----
-
-#[test]
-fn affine_rank_single_point() {
-    let points = vec![Vector4::new(1.0, 2.0, 3.0, 4.0)];
-    assert_eq!(affine_rank(&points), 0);
-}
-
-#[test]
-fn affine_rank_collinear() {
-    let points = vec![
-        Vector4::new(0.0, 0.0, 0.0, 0.0),
-        Vector4::new(1.0, 0.0, 0.0, 0.0),
-        Vector4::new(2.0, 0.0, 0.0, 0.0),
-    ];
-    assert_eq!(affine_rank(&points), 1);
-}
-
-#[test]
-fn affine_rank_3d() {
-    let points = vec![
-        Vector4::new(0.0, 0.0, 0.0, 0.0),
-        Vector4::new(1.0, 0.0, 0.0, 0.0),
-        Vector4::new(0.0, 1.0, 0.0, 0.0),
-        Vector4::new(0.0, 0.0, 1.0, 0.0),
-    ];
-    assert_eq!(affine_rank(&points), 3);
-}

@@ -807,9 +807,13 @@ impl RationalPolytope4D {
 
     /// Convert exact rational vertices to f64 vectors.
     ///
-    /// Each rational coordinate is converted via [`rational_to_f64`]. For vertices
-    /// originating from [`from_f64`](Self::from_f64), the conversion is lossless
-    /// (power-of-2 denominators). For general rationals, it's the nearest f64.
+    /// Each rational coordinate is converted via [`rational_to_f64`] to the
+    /// nearest f64 approximation. Rounding error is bounded by machine epsilon
+    /// times the coordinate magnitude (~1e-16 for O(1) coordinates).
+    ///
+    /// Note: even when normals/heights originate from `from_f64` (lossless),
+    /// vertex coordinates are computed by Cramer's rule and have arbitrary
+    /// rational denominators, so this conversion is not lossless in general.
     ///
     /// The returned vectors are in the same order as [`vertices()`](Self::vertices)
     /// and [`combinatorial_data().vertex_descriptors`](CombinatorialData::vertex_descriptors).

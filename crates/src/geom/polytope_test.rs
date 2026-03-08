@@ -186,9 +186,8 @@ fn reject_redundant_parallel_facet() {
 }
 
 // ---- VertexEnumerationFailed ----
-// Note: this error path requires qhull to fail on a bounded set of halfspaces,
-// which is hard to trigger deterministically without mocking. The path is tested
-// indirectly by the qhull module's own tests for malformed inputs.
+// Note: this error wraps rational pipeline failures (e.g. NoVertices from
+// inconsistent halfspaces). Deterministic tests exist in rational_test.rs.
 
 // ---- NaN/infinity rejection ----
 
