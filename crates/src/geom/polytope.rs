@@ -74,8 +74,17 @@ pub enum ConstructionError {
     NonPositiveHeight { index: usize, value: f64 },
     DuplicateHalfspaces { i: usize, j: usize },
     Unbounded,
-    VertexEnumerationFailed(String),
+    /// A dual vertex y_i = n_i / h_i is the zero vector.
+    ZeroDualVertex(usize),
+    /// No vertices found — the halfspaces are inconsistent.
+    NoVertices,
+    /// Facet is redundant: no incident vertices, or incident vertices
+    /// have affine rank < 3 (don't span the facet hyperplane).
     RedundantFacet(usize),
+    /// Conversion from exact rational to f64 failed.
+    F64Conversion(String),
+    /// Perturbation failed to break all ω₀ = 0 degeneracies.
+    PerturbationFailed,
 }
 
 impl std::fmt::Display for ConstructionError {
@@ -97,24 +106,19 @@ impl std::fmt::Display for ConstructionError {
             Self::Unbounded => {
                 write!(f, "polytope is unbounded (dual vertices do not positively span R^4)")
             }
-            Self::VertexEnumerationFailed(msg) => {
-                write!(f, "vertex enumeration failed: {msg}")
+            Self::ZeroDualVertex(i) => {
+                write!(f, "dual vertex[{i}] is the zero vector")
             }
+            Self::NoVertices => write!(f, "no vertices found (inconsistent halfspaces)"),
             Self::RedundantFacet(i) => write!(f, "facet {i} is redundant"),
+            Self::F64Conversion(msg) => write!(f, "f64 conversion failed: {msg}"),
+            Self::PerturbationFailed => {
+                write!(f, "perturbation failed to break all ω₀ = 0 (astronomically unlikely)")
+            }
         }
     }
 }
 
-/// Map rational pipeline errors to construction errors.
-fn map_rational_error(e: super::rational::RationalConstructionError) -> ConstructionError {
-    use super::rational::RationalConstructionError;
-    match e {
-        RationalConstructionError::RedundantFacet(i) => ConstructionError::RedundantFacet(i),
-        RationalConstructionError::Unbounded => ConstructionError::Unbounded,
-        RationalConstructionError::TooFewFacets(n) => ConstructionError::TooFewFacets(n),
-        other => ConstructionError::VertexEnumerationFailed(format!("{other}")),
-    }
-}
 
 impl Polytope4D {
     /// Construct a polytope from f64 outward unit normals and positive heights.
@@ -214,8 +218,7 @@ impl Polytope4D {
         dual_vertices: Vec<[BigRational; 4]>,
     ) -> Result<Self, ConstructionError> {
         let (vertices, vertex_descriptors) =
-            super::rational::construct_rational_pipeline(&dual_vertices)
-                .map_err(map_rational_error)?;
+            super::rational::construct_rational_pipeline(&dual_vertices)?;
 
         let v_count = vertices.len();
         let f_count = dual_vertices.len();
@@ -246,8 +249,7 @@ impl Polytope4D {
 
         // Compute f64 representation
         let (normals_f64, heights_f64) =
-            super::rational::dual_vertices_to_f64(&dual_vertices)
-                .map_err(|e| ConstructionError::VertexEnumerationFailed(format!("{e}")))?;
+            super::rational::dual_vertices_to_f64(&dual_vertices)?;
         let vertices_f64 = super::rational::rational_vertices_to_f64(&vertices);
 
         Ok(Self {
@@ -333,10 +335,7 @@ impl Polytope4D {
         for i in 0..f {
             for k in (i + 1)..f {
                 if result.adjacency[(i, k)] && result.omega_signs[(i, k)] == 0 {
-                    return Err(ConstructionError::VertexEnumerationFailed(
-                        "perturbation failed to break all ω₀ = 0 (astronomically unlikely)"
-                            .into(),
-                    ));
+                    return Err(ConstructionError::PerturbationFailed);
                 }
             }
         }

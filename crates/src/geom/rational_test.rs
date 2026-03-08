@@ -566,10 +566,10 @@ fn reject_zero_normal() {
     ];
     let heights = vec![rat(1); 5];
     let err = Polytope4D::from_rationals(normals, heights).unwrap_err();
-    // Zero normal / h = zero dual vertex → VertexEnumerationFailed wrapping ZeroDualVertex
+    // Zero normal / h = zero dual vertex → ZeroDualVertex
     assert!(
-        matches!(err, ConstructionError::VertexEnumerationFailed(_)),
-        "expected VertexEnumerationFailed (from ZeroDualVertex), got {err}"
+        matches!(err, ConstructionError::ZeroDualVertex(0)),
+        "expected ZeroDualVertex(0), got {err}"
     );
 }
 

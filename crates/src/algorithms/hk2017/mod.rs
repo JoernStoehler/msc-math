@@ -199,9 +199,9 @@ fn combinations_rec(
 
 /// Build facet adjacency matrix: adj[i][j] = true iff F_i ∩ F_j ≠ ∅.
 /// Two facets are adjacent if they share at least one vertex.
+/// Diagonal is false (a facet is not adjacent to itself).
 ///
-/// Uses the exact adjacency matrix from the rational pipeline (always available
-/// on every `Polytope4D`). Sets diagonal to true (every facet is adjacent to itself).
+/// Uses the exact adjacency matrix from `Polytope4D`.
 pub fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let f = polytope.facet_count();
     let poly_adj = polytope.adjacency();
@@ -211,9 +211,6 @@ pub fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
         for j in 0..f {
             adj[i][j] = poly_adj[(i, j)];
         }
-        // Diagonal: every facet is adjacent to itself
-        // (polytope.adjacency() has diagonal=false, but callers expect true)
-        adj[i][i] = true;
     }
     adj
 }

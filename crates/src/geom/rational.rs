@@ -19,6 +19,8 @@ use num_rational::BigRational;
 use num_traits::{Signed, Zero};
 use std::collections::BTreeSet;
 
+use super::polytope::ConstructionError;
+
 /// Sign of an exact rational value.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum Sign {
@@ -39,43 +41,6 @@ impl Sign {
         }
     }
 }
-
-/// Errors during rational polytope construction.
-#[derive(Clone, Debug)]
-pub enum RationalConstructionError {
-    /// Fewer than 5 facets (cannot form bounded 4D polytope).
-    TooFewFacets(usize),
-    /// A dual vertex is the zero vector.
-    ZeroDualVertex(usize),
-    /// Dual vertices do not positively span R^4 (polytope is unbounded).
-    Unbounded,
-    /// No vertices found — the halfspaces are inconsistent.
-    NoVertices,
-    /// Facet is redundant: no incident vertices, or incident vertices
-    /// have affine rank < 3 (don't span the facet hyperplane).
-    RedundantFacet(usize),
-    /// Conversion to f64 failed.
-    F64Conversion(String),
-}
-
-impl std::fmt::Display for RationalConstructionError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::TooFewFacets(n) => write!(f, "need ≥5 facets, got {n}"),
-            Self::ZeroDualVertex(i) => write!(f, "dual vertex[{i}] is the zero vector"),
-            Self::Unbounded => {
-                write!(f, "dual vertices do not positively span R^4 (unbounded)")
-            }
-            Self::NoVertices => write!(f, "no vertices found (inconsistent halfspaces)"),
-            Self::RedundantFacet(i) => {
-                write!(f, "facet {i} is redundant (no incident vertices, or affine rank < 3)")
-            }
-            Self::F64Conversion(msg) => write!(f, "f64 conversion failed: {msg}"),
-        }
-    }
-}
-
-impl std::error::Error for RationalConstructionError {}
 
 // ── Exact linear algebra over Q ──────────────────────────────────────────
 
@@ -318,22 +283,22 @@ fn combinations4(n: usize) -> Vec<[usize; 4]> {
 #[allow(clippy::type_complexity)]
 pub(super) fn construct_rational_pipeline(
     dual_vertices: &[[BigRational; 4]],
-) -> Result<(Vec<[BigRational; 4]>, Vec<BTreeSet<usize>>), RationalConstructionError> {
+) -> Result<(Vec<[BigRational; 4]>, Vec<BTreeSet<usize>>), ConstructionError> {
     let f = dual_vertices.len();
 
     // Basic validation
     if f < 5 {
-        return Err(RationalConstructionError::TooFewFacets(f));
+        return Err(ConstructionError::TooFewFacets(f));
     }
     for (i, y) in dual_vertices.iter().enumerate() {
         if y.iter().all(|c| c.is_zero()) {
-            return Err(RationalConstructionError::ZeroDualVertex(i));
+            return Err(ConstructionError::ZeroDualVertex(i));
         }
     }
 
     // Boundedness: dual vertices must positively span R^4
     if !check_bounded_rational(dual_vertices) {
-        return Err(RationalConstructionError::Unbounded);
+        return Err(ConstructionError::Unbounded);
     }
 
     // Enumerate vertices exactly (solves y_i · x = 1)
@@ -350,7 +315,7 @@ pub(super) fn construct_rational_pipeline(
             .collect();
 
         if incident.is_empty() || affine_rank_rational(&incident) < 3 {
-            return Err(RationalConstructionError::RedundantFacet(i));
+            return Err(ConstructionError::RedundantFacet(i));
         }
     }
 
@@ -373,7 +338,7 @@ pub(super) fn construct_rational_pipeline(
 #[allow(clippy::type_complexity)]
 fn enumerate_vertices_exact(
     dual_vertices: &[[BigRational; 4]],
-) -> Result<(Vec<BTreeSet<usize>>, Vec<[BigRational; 4]>), RationalConstructionError> {
+) -> Result<(Vec<BTreeSet<usize>>, Vec<[BigRational; 4]>), ConstructionError> {
     let f = dual_vertices.len();
     let one = BigRational::from(BigInt::from(1));
     let rhs: [BigRational; 4] = std::array::from_fn(|_| one.clone());
@@ -435,7 +400,7 @@ fn enumerate_vertices_exact(
     }
 
     if vertex_descriptors.is_empty() {
-        return Err(RationalConstructionError::NoVertices);
+        return Err(ConstructionError::NoVertices);
     }
 
     Ok((vertex_descriptors, vertices))
@@ -452,7 +417,7 @@ fn enumerate_vertices_exact(
 /// ‖y‖² is computed exactly over Q, then converted to f64 for sqrt.
 pub(super) fn dual_vertices_to_f64(
     dual_vertices: &[[BigRational; 4]],
-) -> Result<(Vec<nalgebra::Vector4<f64>>, Vec<f64>), RationalConstructionError> {
+) -> Result<(Vec<nalgebra::Vector4<f64>>, Vec<f64>), ConstructionError> {
     let mut normals = Vec::with_capacity(dual_vertices.len());
     let mut heights = Vec::with_capacity(dual_vertices.len());
 
@@ -461,7 +426,7 @@ pub(super) fn dual_vertices_to_f64(
         let norm = rational_to_f64(&norm_sq_exact).sqrt();
 
         if norm < 1e-15 {
-            return Err(RationalConstructionError::F64Conversion(format!(
+            return Err(ConstructionError::F64Conversion(format!(
                 "dual vertex[{i}] has near-zero f64 norm: {norm}"
             )));
         }

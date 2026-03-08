@@ -185,9 +185,8 @@ fn reject_redundant_parallel_facet() {
     }
 }
 
-// ---- VertexEnumerationFailed ----
-// Note: this error wraps rational pipeline failures (e.g. NoVertices from
-// inconsistent halfspaces). Deterministic tests exist in rational_test.rs.
+// ---- Rational pipeline errors (ZeroDualVertex, NoVertices, F64Conversion) ----
+// Tested directly in rational_test.rs via from_rationals() constructor.
 
 // ---- NaN/infinity rejection ----
 
