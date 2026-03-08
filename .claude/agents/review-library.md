@@ -276,15 +276,15 @@ fn pruned_matches_unpruned() { ... }
 
 ### Test suites
 
-| Suite | Command | When to run | Time (2026-02-14) |
+| Suite | Command | When to run | Time (2026-03-06) |
 |-------|---------|-------------|-------------------|
-| **Default** | `cargo test --lib` | Every iteration | ~22s wall |
+| **Default** | `cargo test --lib` | Every iteration | ~145s wall |
 | Regenerate capacity fixture | `cargo test --release regenerate_test_dataset -- --ignored` | After changes to `ehz_capacity()` | ~20s |
 | Expensive capacity tests | `cargo test --release -- --ignored` | After capacity algorithm changes | ~2s |
 | Boundedness cross-check | `cargo test -- --ignored` | Monitoring, or after qhull/boundedness changes | ~3s |
 | All ignored tests | `cargo test -- --ignored` | Full validation | ~5 min |
 
-Target: default suite <3 min single-threaded (currently ~22s).
+Target: default suite <3 min single-threaded (currently ~145s due to rational pipeline in Polytope4D::new()).
 
 **Fixture location:** `tests/fixtures/capacity_dataset.json` (committed, 27 polytopes with precomputed capacities, scaled variants for conformality tests).
 
@@ -303,6 +303,20 @@ Polytope4D: 5-16 facets typical. Research code, March 2026 deadline. Correctness
 Don't suggest: Theoretical numerical analysis, O(n²) documentation when n ≤ 16, production features unlikely to matter.
 
 Do suggest: Critical path tests, benchmarks for claims, robustness fixes (timeouts, limits).
+
+### Code quality
+
+Detection rules for code smells. Each has a concrete check the reviewer can perform.
+
+**Misleading names:** Function/variable name doesn't match what the code actually does. Check: read the function body, compare against name. Example: `dual_vertices_to_f64` that also normalizes and inverts.
+
+**Unnecessary round-trips:** Compute X from A, throw X away, recompute X from A via a different path. Check: trace data flow — does any intermediate value get discarded and then re-derived from the same source? Example: `new()` converting f64→rational→f64 when original f64 is available.
+
+**Stale doc comments:** Comment claims something about the code that is no longer true after refactoring. Check: for each factual claim in a doc comment (references to other functions, "mirrors X", "same as Y"), verify the referenced code still exists and the claim still holds.
+
+**Useless indirection:** Function with a single caller, ≤10 lines, that adds a function call boundary without providing abstraction value (no invariant enforcement, no reuse, no semantic clarity beyond what inline code would provide). Check: count callers (grep for the function name), check line count, assess whether the function adds value beyond moving code out of the caller.
+
+**Incomplete refactoring:** Types/functions were renamed or moved, but references in comments, doc strings, or error messages still use old names. Check: grep for old names in comments and strings after any rename/move operation.
 
 ### Commit checklist
 
