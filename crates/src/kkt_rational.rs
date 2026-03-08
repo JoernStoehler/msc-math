@@ -53,7 +53,8 @@ pub struct ExactKktResult {
 /// Given facet normals, heights, and a specific permutation `perm` (the σ in the
 /// thesis), builds the KKT matrix over Q and solves via Gaussian elimination.
 ///
-/// Returns `None` if the system is singular (no unique solution).
+/// Returns `None` if the system is singular (no unique solution) or near-singular
+/// (pivot condition number exceeds threshold, indicating f64→rational artifacts).
 ///
 /// # Arguments
 ///
@@ -128,9 +129,36 @@ fn build_kkt_rational(
     (mat, rhs)
 }
 
+/// Condition number threshold for detecting near-singular systems.
+///
+/// When the ratio of largest to smallest pivot magnitude exceeds this,
+/// the system is treated as rank-deficient. This catches the case where
+/// f64→rational conversion makes a mathematically zero eigenvalue into
+/// a tiny nonzero rational (e.g. ~10^-17), causing Gaussian elimination
+/// to produce O(10^17)-magnitude garbage solutions.
+///
+/// **Why 10^12:** f64 has ~15.9 decimal digits of precision. A pivot ratio
+/// of 10^12 means we've lost ~12 digits to cancellation, leaving ~4 digits
+/// of meaningful information. Systems beyond this are effectively singular
+/// when the input comes from f64 values.
+///
+/// **Calibration:** hko_pentagon's rank-deficient winning node (m=7 after
+/// sign convention change) has pivot ratio ~10^17. Well-conditioned systems
+/// (simplex, hypercube) have pivot ratios < 10^6.
+const RATIONAL_CONDITION_THRESHOLD: f64 = 1e12;
+
 /// Gaussian elimination with partial pivoting over BigRational.
 ///
-/// Solves Ax = b exactly. Returns `None` if the system is singular.
+/// Solves Ax = b exactly. Returns `None` if:
+/// - the system is exactly singular (zero pivot), or
+/// - the pivot ratio exceeds `RATIONAL_CONDITION_THRESHOLD`, indicating the
+///   system is near-singular due to f64→rational conversion artifacts.
+///
+/// The pivot ratio check is necessary because exact rational arithmetic
+/// does not have a natural notion of "near zero" — a pivot of 10^-17 is
+/// nonzero over Q but represents a mathematically zero eigenvalue corrupted
+/// by f64 representation. Without this check, the solver produces solutions
+/// with O(10^17) components that give meaningless Q values.
 fn gauss_solve(mat: &[Vec<BigRational>], rhs: &[BigRational]) -> Option<Vec<BigRational>> {
     let n = rhs.len();
     // Augmented matrix [A | b]
@@ -144,13 +172,28 @@ fn gauss_solve(mat: &[Vec<BigRational>], rhs: &[BigRational]) -> Option<Vec<BigR
         })
         .collect();
 
+    // Track pivot magnitudes for condition number check.
+    let mut max_pivot_abs: f64 = 0.0;
+    let mut min_pivot_abs: f64 = f64::INFINITY;
+
     // Forward elimination
     for col in 0..n {
-        // Find pivot (first nonzero in column)
-        let pivot_row = (col..n).find(|&r| !aug[r][col].is_zero())?;
+        // Partial pivoting: find the largest-magnitude pivot in the column.
+        // This improves numerical stability and gives a tighter condition estimate.
+        let pivot_row = (col..n)
+            .filter(|&r| !aug[r][col].is_zero())
+            .max_by(|&a, &b| {
+                let abs_a = rational_abs_f64(&aug[a][col]);
+                let abs_b = rational_abs_f64(&aug[b][col]);
+                abs_a.partial_cmp(&abs_b).unwrap_or(std::cmp::Ordering::Equal)
+            })?;
         aug.swap(col, pivot_row);
 
         let pivot = aug[col][col].clone();
+        let pivot_abs = rational_abs_f64(&pivot);
+        max_pivot_abs = max_pivot_abs.max(pivot_abs);
+        min_pivot_abs = min_pivot_abs.min(pivot_abs);
+
         for row in (col + 1)..n {
             if !aug[row][col].is_zero() {
                 let factor = &aug[row][col] / &pivot;
@@ -162,6 +205,11 @@ fn gauss_solve(mat: &[Vec<BigRational>], rhs: &[BigRational]) -> Option<Vec<BigR
                 }
             }
         }
+    }
+
+    // Reject near-singular systems: pivot ratio exceeds threshold.
+    if min_pivot_abs > 0.0 && max_pivot_abs / min_pivot_abs > RATIONAL_CONDITION_THRESHOLD {
+        return None;
     }
 
     // Back substitution
@@ -178,6 +226,14 @@ fn gauss_solve(mat: &[Vec<BigRational>], rhs: &[BigRational]) -> Option<Vec<BigR
     }
 
     Some(x)
+}
+
+/// Approximate absolute value of a BigRational as f64 (for pivot comparison only).
+fn rational_abs_f64(r: &BigRational) -> f64 {
+    use num_traits::ToPrimitive;
+    let n = r.numer().to_f64().unwrap_or(0.0);
+    let d = r.denom().to_f64().unwrap_or(1.0);
+    (n / d).abs()
 }
 
 /// Compute exact Q(β) = Σ_{i>j} β_i β_j ω₀(n_{σ(j)}, n_{σ(i)}) = (1/2) β^T H β over BigRational.

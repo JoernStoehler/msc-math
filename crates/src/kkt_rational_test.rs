@@ -92,6 +92,37 @@ fn singular_system_returns_none() {
     let _result = solve_kkt_exact(normals, heights, &perm);
 }
 
+/// Near-singular system (rank-deficient due to f64→rational artifacts) returns None.
+///
+/// **What it tests:** The hko_pentagon's winning permutation (m=7, after sign
+/// convention unification) produces a KKT system with one eigenvalue ≈ 2.8e-17.
+/// Over exact rationals this becomes a tiny nonzero pivot. Without the condition
+/// check, Gaussian elimination produces O(10^17)-magnitude β and Q_exact = 0.
+/// With the check, `solve_kkt_exact` returns None for this near-singular system.
+///
+/// **Regression:** This was the root cause of the q_error experiment panic.
+/// Before this fix, `gauss_solve` assumed full rank without checking, producing
+/// garbage that the q_error experiment then compared against the numerical solver.
+///
+/// **Why debug mode:** Only exercises Gaussian elimination, no capacity computation.
+#[test]
+fn near_singular_system_returns_none() {
+    let pentagon = known_polytopes::hko_pentagon().polytope;
+    let normals = pentagon.normals();
+    let heights = pentagon.heights();
+
+    // This m=7 permutation produces a near-singular KKT system.
+    // The numerical solver handles it via pseudoinverse + null-space search;
+    // the exact solver should detect the near-singularity and return None.
+    let perm = vec![1, 7, 2, 8, 4, 6, 5];
+    let result = solve_kkt_exact(normals, heights, &perm);
+    assert!(
+        result.is_none(),
+        "Near-singular system should return None, got Q_exact = {:?}",
+        result.map(|r| r.q_exact_f64)
+    );
+}
+
 /// Exact solver agrees with f64 solver on all known polytopes' winning nodes.
 ///
 /// **Why #[ignore]:** Requires ehz_capacity() which is expensive in debug mode.
