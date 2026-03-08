@@ -1,3 +1,5 @@
+    Finished `release` profile [optimized] target(s) in 0.06s
+     Running `target/release/q_error`
 === Q Error Bound Experiment ===
 
 Checks numerical accuracy of the KKT solver against proven error bounds.
@@ -23,26 +25,26 @@ symplectic_tri_sq            7     2365   2226    2.559e-20    5.171e-11    1.25
   E = mathematical error bound, f64_eps = machine precision tolerance
 polytope                    m     Q̃_numerical          Q_exact    |Q̃-Q_ex|       E_math      f64_eps  valid
 ----------------------------------------------------------------------------------------------------
-simplex                     5   2.000000000000   2.000000000000    4.441e-16    3.751e-28    3.000e-13     OK
-hypercube                   0 (singular or rank-deficient)
-hko_pentagon                6   0.145308505601   0.145308505601    5.551e-17    8.970e-30    1.145e-13     OK
-lagrangian_triangle_product   6   0.333333333333   0.333333333333    1.110e-16    8.906e-30    1.333e-13     OK
+simplex                     5   2.000000000000   2.000000000000      0.000e0    2.646e-28    3.000e-13     OK
+hypercube                   4   0.125000000000   0.125000000000      0.000e0    1.161e-29    1.125e-13     OK
+hko_pentagon                7   0.145308505601   0.145308505601    8.327e-17    1.093e-29    1.145e-13     OK
+lagrangian_triangle_product   6   0.333333333333   0.333333333333    5.551e-17    5.420e-30    1.333e-13     OK
 symplectic_triangle_product   0 (singular or rank-deficient)
-lagrangian_tri_sq           0 (singular or rank-deficient)
-symplectic_tri_sq           0 (singular or rank-deficient)
+lagrangian_tri_sq           5   0.333333333333   0.333333333333    5.551e-17    4.638e-30    1.333e-13     OK
+symplectic_tri_sq           4   0.500000000000   0.500000000000    1.110e-16    5.246e-30    1.500e-13     OK
 
   All exact comparison assertions passed.
 
 --- Part 3: Restricted Hessian across ALL evaluated (S,σ) nodes ---
 polytope                     F   total     β>0     Q>0    triv      PD      ND   indef   ~zero
 -------------------------------------------------------------------------------------------------
-simplex                      5      84      84      23      23       0       0       0       0
-hypercube                    8   16064    3344     398      60       2       0     140       0
-hko_pentagon                10 1112073  121897   61918     371     835       0   12583     940
-lagrangian_triangle_product    6     409     229      80      42      38       0       0       0
-symplectic_triangle_product    6     409     229     148      28       0      30       0       0
-lagrangian_tri_sq            7    2365     445     171      61      10       0       0       0
-symplectic_tri_sq            7    2365     269     301      48       1       0      60       0
+simplex                      5      84      84      38      38       0       0       0       0
+hypercube                    8   16064    3344     406      60       0       2     140       0
+hko_pentagon                10 1112073  121897   62142     369       0     835   12725     941
+lagrangian_triangle_product    6     409     229      86      48       0      38       0       0
+symplectic_triangle_product    6     409     229     165      45      30       0       0       0
+lagrangian_tri_sq            7    2365     445     171      61       0      10       0       0
+symplectic_tri_sq            7    2365     269     334      81       0       1      60       0
 
 --- Part 4: Inertia check across all (S,σ) nodes ---
   n-(M)=p ↔ H|_T non-negative definite
