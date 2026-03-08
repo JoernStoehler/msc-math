@@ -57,9 +57,9 @@ pub struct ExactKktResult {
 /// `perm` (the σ in the thesis), builds the KKT matrix over Q and solves via
 /// Gaussian elimination with null-space handling for rank-deficient systems.
 ///
-/// Returns `None` if:
+/// Returns `None` (certified) if:
 /// - the system is inconsistent, or
-/// - no β > 0 solution exists (neither unique nor in the null space).
+/// - no β > 0 solution exists (certified via Fourier-Motzkin elimination).
 ///
 /// # Arguments
 ///
@@ -95,12 +95,8 @@ pub fn solve_kkt_exact(
                 .map(|v| v[..m].to_vec())
                 .collect();
 
-            // Search null space for β > 0.
-            let beta = if null_beta.len() == 1 {
-                find_positive_beta_rational_1d(&beta0, &null_beta[0])
-            } else {
-                find_positive_beta_rational_nd(&beta0, &null_beta)
-            }?;
+            // Search null space for β > 0 (exact via Fourier-Motzkin).
+            let beta = find_positive_beta_rational(&beta0, &null_beta)?;
 
             // Q is constant along the null space ([lem:well-defined]).
             let q_exact = q_from_beta_rational(normals, perm, &beta);
@@ -360,140 +356,160 @@ fn back_substitute(
     Some(x)
 }
 
-// ── Null-space search for β > 0 ─────────────────────────────────────────
+// ── Null-space search for β > 0 (Fourier-Motzkin) ────────────────────────
 
-/// Search 1D null space for β > 0 (exact rational arithmetic).
+/// Exact feasibility search for β₀ + V·α > 0 over Q.
 ///
-/// Given particular solution β₀ and null-space vector v, finds α ∈ Q such that
-/// β₀ + α·v has all components strictly positive. Returns the midpoint of the
-/// feasible interval for maximum margin.
+/// Given particular solution β₀ and null-space basis vectors v₁,...,vₖ,
+/// decides whether there exist α₁,...,αₖ ∈ Q such that
+///   β₀[j] + α₁·v₁[j] + ... + αₖ·vₖ[j] > 0   for all j.
 ///
-/// Returns `None` if no α makes all β_i > 0.
-fn find_positive_beta_rational_1d(
-    beta0: &[BigRational],
-    v: &[BigRational],
-) -> Option<Vec<BigRational>> {
-    let m = beta0.len();
-    let mut lo: Option<BigRational> = None; // None = -∞
-    let mut hi: Option<BigRational> = None; // None = +∞
-
-    for j in 0..m {
-        if v[j].is_zero() {
-            // Component fixed — must already be positive.
-            if !beta0[j].is_positive() {
-                return None;
-            }
-        } else {
-            // β₀[j] + α·v[j] > 0  ⟺  α > -β₀[j]/v[j]  (if v[j] > 0)
-            //                        ⟺  α < -β₀[j]/v[j]  (if v[j] < 0)
-            let bound = -&beta0[j] / &v[j];
-            if v[j].is_positive() {
-                lo = Some(match lo {
-                    Some(l) => l.max(bound),
-                    None => bound,
-                });
-            } else {
-                hi = Some(match hi {
-                    Some(h) => h.min(bound),
-                    None => bound,
-                });
-            }
-        }
-    }
-
-    // Feasibility: lo < hi (strict for β > 0).
-    match (&lo, &hi) {
-        (Some(l), Some(h)) if l >= h => return None,
-        _ => {}
-    }
-
-    // Pick midpoint of [lo, hi] for maximum margin from both bounds.
-    let two = BigRational::from(BigInt::from(2));
-    let alpha = match (lo, hi) {
-        (Some(l), Some(h)) => (&l + &h) / &two,
-        (Some(l), None) => &l + BigRational::one(),
-        (None, Some(h)) => &h - BigRational::one(),
-        (None, None) => BigRational::zero(),
-    };
-
-    let beta: Vec<BigRational> = (0..m)
-        .map(|j| &beta0[j] + &alpha * &v[j])
-        .collect();
-
-    if beta.iter().all(|b| b.is_positive()) {
-        Some(beta)
-    } else {
-        None
-    }
-}
-
-/// Search multi-dimensional null space for β > 0 (exact rational arithmetic).
+/// Uses Fourier-Motzkin variable elimination: exact and certifying.
+/// - `Some(β)`: witness with all β[j] > 0.
+/// - `None`: no solution exists (certified).
 ///
-/// Uses iterative coordinate ascent on the most-violated constraint.
-/// For each iteration: find the worst β_j, pick the null-space direction with
-/// the largest component at index j, and step to push β_j positive.
-///
-/// Returns `None` if the heuristic fails to find β > 0 within the iteration limit.
-/// Note: `None` does NOT certify infeasibility — the heuristic may miss a valid solution.
-/// The 1D case ([`find_positive_beta_rational_1d`]) is certifying; this nD case is not.
-fn find_positive_beta_rational_nd(
+/// Complexity: O(m^{2^k}) constraints worst-case, where m = len(β₀),
+/// k = len(null_vecs). For KKT systems (m ≤ 16, k ≤ 3): ≤ ~1000 constraints.
+fn find_positive_beta_rational(
     beta0: &[BigRational],
     null_vecs: &[Vec<BigRational>],
 ) -> Option<Vec<BigRational>> {
     let m = beta0.len();
     let k = null_vecs.len();
-    let mut alpha = vec![BigRational::zero(); k];
 
-    // Iteration limit: coordinate ascent on k null-space directions over m components.
-    // In practice k ≤ 2 for f64-derived KKT systems (rank deficiency from symplectic
-    // degeneracies), so convergence is fast. 100 iterations is generous.
-    for _iter in 0..100 {
-        // Current β = β₀ + Σ αᵢ vᵢ
-        let beta: Vec<BigRational> = (0..m)
-            .map(|j| {
-                let mut val = beta0[j].clone();
-                for i in 0..k {
-                    val += &alpha[i] * &null_vecs[i][j];
-                }
-                val
-            })
-            .collect();
+    // Each constraint: coeffs · α > rhs  (strict inequality).
+    // coeffs.len() shrinks by 1 at each elimination step.
+    type Constraint = (Vec<BigRational>, BigRational);
 
-        // Find most-violated component (smallest β_j).
-        let (worst_j, worst_val) = beta
-            .iter()
-            .enumerate()
-            .min_by(|(_, a), (_, b)| a.cmp(b))
-            .unwrap();
+    // Initial system: v[i][j] · αᵢ > -β₀[j] for each component j.
+    let mut constraints: Vec<Constraint> = (0..m)
+        .map(|j| {
+            let coeffs: Vec<BigRational> =
+                (0..k).map(|i| null_vecs[i][j].clone()).collect();
+            (coeffs, -&beta0[j])
+        })
+        .collect();
 
-        if worst_val.is_positive() {
-            return Some(beta); // All β > 0
-        }
-
-        // Find the null-space direction with largest |v_i[worst_j]|.
-        let best_dir = (0..k)
-            .filter(|&i| !null_vecs[i][worst_j].is_zero())
-            .max_by(|&a, &b| {
-                null_vecs[a][worst_j]
-                    .abs()
-                    .cmp(&null_vecs[b][worst_j].abs())
-            });
-
-        let Some(dir) = best_dir else {
-            return None; // Can't improve worst component
-        };
-
-        // Step: push β[worst_j] to a small positive target.
-        // 1/1000 chosen to be safely above zero without overshooting into other
-        // components' negative territory. The exact value doesn't matter much —
-        // any small positive rational works; this just controls the step size.
-        let target =
-            BigRational::new(BigInt::from(1), BigInt::from(1000));
-        let step = (&target - worst_val) / &null_vecs[dir][worst_j];
-        alpha[dir] += step;
+    // A bound records: α[var] ≷ (rhs - remaining · α_remaining) / divisor.
+    // divisor > 0 → lower bound; divisor < 0 → upper bound.
+    struct Bound {
+        remaining_coeffs: Vec<BigRational>,
+        rhs: BigRational,
+        divisor: BigRational,
     }
 
-    // Final check after iterations.
+    // Forward pass: eliminate variables k-1, k-2, ..., 0 (always the last index
+    // in the current coefficient vector, so remove(idx) = pop).
+    let mut stages: Vec<Vec<Bound>> = Vec::with_capacity(k);
+
+    for elim_idx in (0..k).rev() {
+        let mut bounds = Vec::new();
+        let mut positive: Vec<&Constraint> = Vec::new(); // coeff[elim_idx] > 0
+        let mut negative: Vec<&Constraint> = Vec::new(); // coeff[elim_idx] < 0
+        let mut new_constraints: Vec<Constraint> = Vec::new();
+
+        for c in &constraints {
+            let coeff = &c.0[elim_idx];
+            if coeff.is_positive() {
+                positive.push(c);
+            } else if coeff.is_negative() {
+                negative.push(c);
+            } else {
+                // Pass through (remove the zero-coefficient column).
+                let mut new_coeffs = c.0.clone();
+                new_coeffs.remove(elim_idx);
+                new_constraints.push((new_coeffs, c.1.clone()));
+            }
+        }
+
+        // Record bounds for back-substitution.
+        for c in positive.iter().chain(negative.iter()) {
+            let mut remaining = c.0.clone();
+            let divisor = remaining.remove(elim_idx);
+            bounds.push(Bound {
+                remaining_coeffs: remaining,
+                rhs: c.1.clone(),
+                divisor,
+            });
+        }
+        stages.push(bounds);
+
+        // Combine each (positive, negative) pair to eliminate α[elim_idx].
+        // Lower: a_l · α + ... > r_l  →  α > (r_l - ...) / a_l
+        // Upper: a_u · α + ... > r_u  →  α < (r_u - ...) / a_u  (a_u < 0)
+        // Combined: Σ (a_l·c_u[i] - a_u·c_l[i]) α[i] > a_l·r_u - a_u·r_l
+        for (c_l, r_l) in &positive {
+            for (c_u, r_u) in &negative {
+                let a_l = &c_l[elim_idx];
+                let a_u = &c_u[elim_idx];
+                let mut new_coeffs = Vec::with_capacity(c_l.len() - 1);
+                for i in 0..c_l.len() {
+                    if i == elim_idx {
+                        continue;
+                    }
+                    new_coeffs.push(a_l * &c_u[i] - a_u * &c_l[i]);
+                }
+                let new_rhs = a_l * r_u - a_u * r_l;
+                new_constraints.push((new_coeffs, new_rhs));
+            }
+        }
+
+        constraints = new_constraints;
+    }
+
+    // After all eliminations: constraints have empty coefficients.
+    // Feasibility: 0 > rhs, i.e., rhs must be negative.
+    for (coeffs, rhs) in &constraints {
+        debug_assert!(coeffs.is_empty());
+        if !rhs.is_negative() {
+            return None; // Infeasible (certified)
+        }
+    }
+
+    // Back-substitution: assign α values from last-eliminated to first.
+    // stages[s] eliminated variable (k-1-s), with remaining_coeffs for vars [0..k-1-s).
+    // Process in reverse: assign var 0 (from stages[k-1]), then var 1, ..., var k-1.
+    let two = BigRational::from(BigInt::from(2));
+    let mut alpha = vec![BigRational::zero(); k];
+
+    for assign_var in 0..k {
+        let stage_idx = k - 1 - assign_var;
+        let mut lo: Option<BigRational> = None;
+        let mut hi: Option<BigRational> = None;
+
+        for bound in &stages[stage_idx] {
+            // Evaluate: (rhs - remaining · α_assigned) / divisor
+            let mut numerator = bound.rhs.clone();
+            for (i, c) in bound.remaining_coeffs.iter().enumerate() {
+                numerator -= c * &alpha[i];
+            }
+            let value = &numerator / &bound.divisor;
+
+            if bound.divisor.is_positive() {
+                lo = Some(match lo {
+                    Some(l) => l.max(value),
+                    None => value,
+                });
+            } else {
+                hi = Some(match hi {
+                    Some(h) => h.min(value),
+                    None => value,
+                });
+            }
+        }
+
+        alpha[assign_var] = match (&lo, &hi) {
+            (Some(l), Some(h)) => {
+                debug_assert!(l < h, "FM back-sub: lo >= hi (should be infeasible)");
+                (l + h) / &two
+            }
+            (Some(l), None) => l + BigRational::one(),
+            (None, Some(h)) => h - BigRational::one(),
+            (None, None) => BigRational::zero(),
+        };
+    }
+
+    // Compute β = β₀ + V · α.
     let beta: Vec<BigRational> = (0..m)
         .map(|j| {
             let mut val = beta0[j].clone();
@@ -504,11 +520,11 @@ fn find_positive_beta_rational_nd(
         })
         .collect();
 
-    if beta.iter().all(|b| b.is_positive()) {
-        Some(beta)
-    } else {
-        None
-    }
+    debug_assert!(
+        beta.iter().all(|b| b.is_positive()),
+        "FM back-substitution produced non-positive β"
+    );
+    Some(beta)
 }
 
 // ── Q computation ────────────────────────────────────────────────────────
