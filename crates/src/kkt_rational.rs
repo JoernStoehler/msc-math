@@ -149,6 +149,7 @@ fn build_kkt_rational(
 
     // η block: all ones (dual vertex representation has h_i = 1)
     let one = BigRational::one();
+    #[allow(clippy::needless_range_loop)]
     for i in 0..m {
         mat[i][m + 4] = one.clone();
         mat[m + 4][i] = one.clone();
