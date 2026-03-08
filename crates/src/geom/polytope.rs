@@ -14,7 +14,7 @@
 /// - No two normals are (near-)identical: `‖n_i - n_j‖ > ε` for i ≠ j
 /// - **Bounded**: normals positively span R^4 (checked via O(F³) kernel enumeration)
 /// - **Irredundant**: every facet has incident vertices of affine rank 3
-/// - Vertices are precomputed via qhull from the H-representation
+/// - Vertices are precomputed via exact rational arithmetic from the H-representation
 use nalgebra::Vector4;
 
 /// Tolerance for unit-normal check: |(‖n‖ - 1)| < EPS_UNIT.
@@ -129,17 +129,10 @@ impl Polytope4D {
             return Err(ConstructionError::Unbounded);
         }
 
-        let vertices = crate::geom::vertices::compute_vertices(&normals, &heights)
-            .map_err(|e| ConstructionError::VertexEnumerationFailed(e.to_string()))?;
-
-        // Irredundancy: every facet must have incident vertices of affine rank 3
-        if let Some(i) = crate::geom::validation::find_redundant_facet(&normals, &heights, &vertices) {
-            return Err(ConstructionError::RedundantFacet(i));
-        }
-
         // Compute exact combinatorial data via rational pipeline.
         // from_f64 reinterprets the f64 normals/heights as exact rationals (lossless),
         // then computes exact vertices, incidence, adjacency, and ω₀ signs over Q.
+        // Also checks irredundancy exactly.
         //
         // TODO(perf): This is the dominant cost of Polytope4D::new() — for F=16 it
         // solves C(16,4) = 1820 exact rational linear systems via Cramer's rule.
@@ -148,20 +141,19 @@ impl Polytope4D {
         // known to be infeasible via f64 pre-filter, (2) incremental determinant updates,
         // (3) exact integer arithmetic instead of BigRational.
         let rp = super::rational::RationalPolytope4D::from_f64(&normals, &heights)
-            .map_err(|e| ConstructionError::VertexEnumerationFailed(
-                format!("rational pipeline failed: {e}")
-            ))?;
+            .map_err(|e| match e {
+                super::rational::RationalConstructionError::RedundantFacet(i) => {
+                    ConstructionError::RedundantFacet(i)
+                }
+                other => ConstructionError::VertexEnumerationFailed(
+                    format!("rational pipeline failed: {other}")
+                ),
+            })?;
 
-        // Cross-check: rational and f64 pipelines must find the same number of vertices
-        debug_assert_eq!(
-            rp.combinatorial_data().vertex_descriptors.len(), vertices.len(),
-            "Polytope4D::new: vertex count mismatch: rational={}, qhull={}",
-            rp.combinatorial_data().vertex_descriptors.len(), vertices.len()
-        );
-
-        // Reorder qhull vertices to match the rational vertex ordering.
-        // exact_data.vertex_descriptors[i] must describe vertices[i].
-        let vertices = reorder_vertices_to_match_rational(&vertices, &rp);
+        // Vertices come from the rational pipeline, converted to f64.
+        // No reordering needed: vertices_to_f64() preserves the rational pipeline's
+        // lexicographic vertex descriptor ordering.
+        let vertices = rp.vertices_to_f64();
 
         Ok(Self {
             normals,
@@ -181,7 +173,7 @@ impl Polytope4D {
         &self.heights
     }
 
-    /// Vertices of the polytope, precomputed via qhull at construction time.
+    /// Vertices of the polytope, computed exactly via rational arithmetic at construction time.
     pub fn vertices(&self) -> &[Vector4<f64>] {
         &self.vertices
     }
@@ -222,9 +214,12 @@ impl Polytope4D {
     ///
     /// Used by `RationalPolytope4D::to_f64_with_data()` to avoid redundantly
     /// recomputing the rational pipeline that `new()` would trigger.
+    ///
+    /// `vertices` must be in the same order as `exact_data.vertex_descriptors`.
     pub(super) fn new_with_exact_data(
         normals: Vec<Vector4<f64>>,
         heights: Vec<f64>,
+        vertices: Vec<Vector4<f64>>,
         exact_data: super::rational::CombinatorialData,
     ) -> Result<Self, ConstructionError> {
         if normals.len() != heights.len() {
@@ -261,22 +256,11 @@ impl Polytope4D {
             return Err(ConstructionError::Unbounded);
         }
 
-        let vertices = crate::geom::vertices::compute_vertices(&normals, &heights)
-            .map_err(|e| ConstructionError::VertexEnumerationFailed(e.to_string()))?;
-
-        if let Some(i) = crate::geom::validation::find_redundant_facet(&normals, &heights, &vertices) {
-            return Err(ConstructionError::RedundantFacet(i));
-        }
-
-        // Cross-check: exact and f64 pipelines must agree on vertex count
         debug_assert_eq!(
             exact_data.vertex_descriptors.len(), vertices.len(),
-            "new_with_exact_data: vertex count mismatch: exact={}, qhull={}",
+            "new_with_exact_data: vertex count mismatch: exact_data={}, vertices={}",
             exact_data.vertex_descriptors.len(), vertices.len()
         );
-
-        // Reorder qhull vertices to match exact_data vertex descriptor ordering.
-        let vertices = reorder_vertices_by_descriptor(&vertices, &normals, &heights, &exact_data);
 
         Ok(Self {
             normals,
@@ -285,109 +269,6 @@ impl Polytope4D {
             exact_data,
         })
     }
-}
-
-/// Reorder qhull vertices to match the exact vertex descriptor ordering.
-///
-/// Computes each qhull vertex's facet-incidence set using f64 tolerance
-/// (for ordering only — the authoritative incidence is in `exact_data`),
-/// then matches to the corresponding exact vertex descriptor.
-fn reorder_vertices_by_descriptor(
-    qhull_verts: &[Vector4<f64>],
-    normals: &[Vector4<f64>],
-    heights: &[f64],
-    exact_data: &super::rational::CombinatorialData,
-) -> Vec<Vector4<f64>> {
-    use std::collections::BTreeSet;
-
-    let eps = crate::constants::EPS_FACET_INCIDENCE;
-    let n = qhull_verts.len();
-
-    // Compute f64-tolerance facet descriptor for each qhull vertex
-    let qhull_descriptors: Vec<BTreeSet<usize>> = qhull_verts
-        .iter()
-        .map(|v| {
-            (0..normals.len())
-                .filter(|&fi| (normals[fi].dot(v) - heights[fi]).abs() < eps)
-                .collect()
-        })
-        .collect();
-
-    // For each exact descriptor, find the matching qhull vertex
-    let mut used = vec![false; n];
-    let mut reordered = Vec::with_capacity(n);
-
-    for exact_desc in &exact_data.vertex_descriptors {
-        let matched = (0..n)
-            .find(|&i| !used[i] && &qhull_descriptors[i] == exact_desc)
-            .unwrap_or_else(|| {
-                // Fallback: find vertex whose descriptor is a superset
-                // (can happen with non-simple vertices where f64 tolerance
-                // detects slightly more/fewer incident facets)
-                (0..n)
-                    .find(|&i| !used[i] && qhull_descriptors[i].is_superset(exact_desc))
-                    .expect("reorder_vertices_by_descriptor: no matching qhull vertex")
-            });
-
-        used[matched] = true;
-        reordered.push(qhull_verts[matched]);
-    }
-
-    reordered
-}
-
-/// Reorder qhull vertices to match the rational pipeline's vertex ordering.
-///
-/// The rational pipeline enumerates vertices in lexicographic order of their
-/// vertex descriptors (facet-index sets). Qhull returns vertices in its own
-/// order. This function matches each rational vertex (converted to f64) to its
-/// nearest qhull vertex and returns the reordered array.
-///
-/// Panics if no bijective nearest-neighbor matching exists (should never
-/// happen when both pipelines agree on the vertex set).
-fn reorder_vertices_to_match_rational(
-    qhull_verts: &[Vector4<f64>],
-    rp: &super::rational::RationalPolytope4D,
-) -> Vec<Vector4<f64>> {
-    use num_traits::ToPrimitive;
-
-    let rational_verts = rp.vertices();
-    let n = qhull_verts.len();
-    debug_assert_eq!(n, rational_verts.len());
-
-    let mut used = vec![false; n];
-    let mut reordered = Vec::with_capacity(n);
-
-    for rv in rational_verts {
-        // Convert rational vertex to f64
-        let target = Vector4::new(
-            rv[0].to_f64().unwrap_or(0.0),
-            rv[1].to_f64().unwrap_or(0.0),
-            rv[2].to_f64().unwrap_or(0.0),
-            rv[3].to_f64().unwrap_or(0.0),
-        );
-
-        // Find nearest unused qhull vertex
-        let best = (0..n)
-            .filter(|&i| !used[i])
-            .min_by(|&a, &b| {
-                let da = (qhull_verts[a] - target).norm_squared();
-                let db = (qhull_verts[b] - target).norm_squared();
-                da.partial_cmp(&db).unwrap()
-            })
-            .expect("reorder_vertices: no unused qhull vertex found");
-
-        debug_assert!(
-            (qhull_verts[best] - target).norm() < 1e-8,
-            "reorder_vertices: nearest qhull vertex too far from rational vertex (dist={})",
-            (qhull_verts[best] - target).norm()
-        );
-
-        used[best] = true;
-        reordered.push(qhull_verts[best]);
-    }
-
-    reordered
 }
 
 #[cfg(test)]

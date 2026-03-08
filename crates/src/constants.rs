@@ -9,9 +9,9 @@
 /// Previously defined under 5 different names (EPS_FACET_INCIDENCE, EPS_FEASIBILITY,
 /// EPS_ON_FACET, EPS_INCIDENCE) — all 1e-8, all checking the same geometric property.
 ///
-/// **Why 1e-8:** Vertices from qhull satisfy n·v = h up to ~1e-10 for typical
-/// polytopes (5-16 facets, heights O(1)). The 1e-8 threshold provides ~100x
-/// margin above typical qhull precision while staying well below the geometric
-/// scale (heights are O(0.1)-O(1)). Empirically validated across 1000+ polytopes
-/// with zero false positives or negatives.
+/// **Why 1e-8:** Vertices are computed exactly via the rational pipeline and
+/// converted to f64. The f64 conversion introduces rounding of ~1e-15 per
+/// coordinate. The 1e-8 threshold provides ample margin while staying well
+/// below the geometric scale (heights are O(0.1)-O(1)). Empirically validated
+/// across 1000+ polytopes with zero false positives or negatives.
 pub const EPS_FACET_INCIDENCE: f64 = 1e-8;

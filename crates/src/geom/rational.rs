@@ -738,7 +738,8 @@ impl RationalPolytope4D {
     /// and want to avoid recomputing the rational pipeline.
     pub fn to_f64_with_data(&self) -> Result<Polytope4D, RationalConstructionError> {
         let (f64_normals, f64_heights) = self.to_f64_normals_heights()?;
-        Polytope4D::new_with_exact_data(f64_normals, f64_heights, self.data.clone())
+        let f64_vertices = self.vertices_to_f64();
+        Polytope4D::new_with_exact_data(f64_normals, f64_heights, f64_vertices, self.data.clone())
             .map_err(|e| RationalConstructionError::F64Conversion(format!("{e}")))
     }
 
@@ -802,6 +803,28 @@ impl RationalPolytope4D {
     /// Number of vertices.
     pub fn num_vertices(&self) -> usize {
         self.vertices.len()
+    }
+
+    /// Convert exact rational vertices to f64 vectors.
+    ///
+    /// Each rational coordinate is converted via [`rational_to_f64`]. For vertices
+    /// originating from [`from_f64`](Self::from_f64), the conversion is lossless
+    /// (power-of-2 denominators). For general rationals, it's the nearest f64.
+    ///
+    /// The returned vectors are in the same order as [`vertices()`](Self::vertices)
+    /// and [`combinatorial_data().vertex_descriptors`](CombinatorialData::vertex_descriptors).
+    pub fn vertices_to_f64(&self) -> Vec<nalgebra::Vector4<f64>> {
+        self.vertices
+            .iter()
+            .map(|rv| {
+                nalgebra::Vector4::new(
+                    rational_to_f64(&rv[0]),
+                    rational_to_f64(&rv[1]),
+                    rational_to_f64(&rv[2]),
+                    rational_to_f64(&rv[3]),
+                )
+            })
+            .collect()
     }
 }
 

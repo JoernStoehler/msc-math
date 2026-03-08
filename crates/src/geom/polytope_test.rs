@@ -239,12 +239,11 @@ fn vertices_satisfy_halfspace_inequalities() {
 
 /// Verify that vertices[i] is incident to exactly the facets in vertex_descriptors[i].
 ///
-/// This is the core invariant of the vertex reordering logic: after construction,
+/// This is the core invariant of vertex-descriptor alignment: after construction,
 /// the f64 vertex at index i must lie on the facets listed in the exact
-/// combinatorial data at the same index. Tests the `new()` path which uses
-/// `reorder_vertices_to_match_rational`.
+/// combinatorial data at the same index.
 ///
-/// **Why debug mode:** Fast (F ≤ 10), exercises reorder logic with bounds checks.
+/// **Why debug mode:** Fast (F ≤ 10), exercises vertex pipeline with bounds checks.
 /// **Why these inputs:** All known polytopes cover simplex (F=5), hypercube (F=8),
 /// crosspolytope (F=16), pentagon (F=10), and Lagrangian/symplectic products (F=7-8).
 #[test]
@@ -296,9 +295,9 @@ fn vertex_ordering_matches_exact_descriptors() {
 
 /// Verify vertex ordering invariant for the `from_rational()` construction path.
 ///
-/// `from_rational()` uses `new_with_exact_data()` → `reorder_vertices_by_descriptor()`,
-/// a different reorder strategy than `new()`. This test constructs a polytope via
-/// the rational path and checks the same invariant.
+/// `from_rational()` uses `new_with_exact_data()` with pre-computed rational
+/// vertices converted to f64. This test constructs a polytope via the rational
+/// path and checks the same vertex-descriptor alignment invariant.
 ///
 /// **Why debug mode:** Small polytopes (F=5, F=8), fast.
 /// **Why these inputs:** Simplex and hypercube exercise both simple (4 facets per
