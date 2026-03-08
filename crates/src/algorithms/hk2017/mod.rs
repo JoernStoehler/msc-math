@@ -199,7 +199,8 @@ fn combinations_rec(
 
 /// Build facet adjacency matrix: adj[i][j] = true iff F_i ∩ F_j ≠ ∅.
 /// Two facets are adjacent if they share at least one vertex.
-/// Diagonal is false (a facet is not adjacent to itself).
+/// Diagonal is false (a facet is not adjacent to itself); safe because
+/// `is_adjacent_cycle` iterates distinct-element permutations.
 ///
 /// Uses the exact adjacency matrix from `Polytope4D`.
 pub fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {

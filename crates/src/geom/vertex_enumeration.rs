@@ -165,6 +165,12 @@ fn rank_over_q(rows: &[[BigRational; 4]]) -> usize {
 ///    exact 4D cross product. If d = 0 (dependent triple), skip.
 ///    Check some y_l · d > 0 and some y_l · d < 0 among y_l ∉ {i,j,k}.
 ///
+/// Correctness: any direction d in R^4 can be written as a linear combination
+/// of cross-product directions from triples of y_i (since rank = 4). If y_i · d > 0
+/// and y_i · d < 0 both occur for every such kernel direction, then y_i positively
+/// spans R^4. The check is sufficient because any failure of positive spanning
+/// is witnessed by some kernel direction of a triple.
+///
 /// Complexity: O(F⁴) — F³ triples × F inner products each.
 pub(super) fn check_bounded_rational(dual_vertices: &[[BigRational; 4]]) -> bool {
     let f = dual_vertices.len();
