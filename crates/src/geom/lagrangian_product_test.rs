@@ -68,8 +68,8 @@ fn rotated_pentagon_product_has_same_volume_as_hko() {
     assert_eq!(our_polytope.facet_count(), hko.polytope.facet_count());
 
     // Same heights (both use circumradius 1 -> inradius = cos(π/5))
-    let our_h = our_polytope.heights();
-    let hko_h = hko.polytope.heights();
+    let our_h = our_polytope.heights_f64();
+    let hko_h = hko.polytope.heights_f64();
     for i in 0..10 {
         assert!(
             (our_h[i] - hko_h[i]).abs() < 1e-10,

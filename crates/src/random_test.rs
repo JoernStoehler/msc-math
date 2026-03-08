@@ -71,8 +71,8 @@ mod proptests {
 
             // If accepted, it must pass Polytope4D::new() revalidation
             if let Ok(polytope) = result {
-                let normals = polytope.normals().to_vec();
-                let heights = polytope.heights().to_vec();
+                let normals = polytope.normals_f64().to_vec();
+                let heights = polytope.heights_f64().to_vec();
 
                 // Validate should succeed (it already did in sample_random_polytope,
                 // but we verify the polytope is still valid after construction)

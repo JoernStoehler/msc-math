@@ -330,10 +330,10 @@ pub struct InstrumentedResult {
 /// Build undirected facet adjacency matrix (vertex-sharing).
 pub fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let f = polytope.facet_count();
-    let normals = polytope.normals();
-    let heights = polytope.heights();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
     let mut adj = vec![vec![false; f]; f];
-    for v in polytope.vertices() {
+    for v in polytope.vertices_f64() {
         let incident: Vec<usize> = (0..f)
             .filter(|&i| (normals[i].dot(v) - heights[i]).abs() < EPS_FACET_INCIDENCE)
             .collect();
@@ -350,7 +350,7 @@ pub fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
 /// adj[i][j] = vertex_adj[i][j] AND ω₀(n_i, n_j) >= 0
 pub fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let f = polytope.facet_count();
-    let normals = polytope.normals();
+    let normals = polytope.normals_f64();
     let vertex_adj = build_adjacency_matrix(polytope);
     let mut adj = vec![vec![false; f]; f];
     for i in 0..f {
@@ -605,7 +605,7 @@ pub struct FacetClassification {
 /// Classify facets into q-type (normal in q-plane) and p-type (normal in p-plane).
 /// Returns None if any facet is mixed (not a Lagrangian product).
 pub fn classify_facets(polytope: &Polytope4D) -> Option<FacetClassification> {
-    let normals = polytope.normals();
+    let normals = polytope.normals_f64();
     let mut q_indices = Vec::new();
     let mut p_indices = Vec::new();
 
@@ -640,8 +640,8 @@ pub fn classify_facets(polytope: &Polytope4D) -> Option<FacetClassification> {
 /// returns all certified orbits with full KKT data.
 pub fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult> {
     let f = polytope.facet_count();
-    let normals = polytope.normals();
-    let heights = polytope.heights();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
     let adj = build_directed_adjacency_matrix(polytope);
 
     let mut orbits: Vec<ValidOrbit> = Vec::new();
@@ -708,8 +708,8 @@ pub fn billiard_capacity_instrumented(polytope: &Polytope4D) -> Option<Instrumen
     let classification = classify_facets(polytope)?;
     let adj = build_adjacency_matrix(polytope); // undirected: for block building (same-type pairs)
     let directed_adj = build_directed_adjacency_matrix(polytope); // directed: for cycle pruning (ω₀ condition)
-    let normals = polytope.normals();
-    let heights = polytope.heights();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
 
     let q_blocks = enumerate_blocks(&classification.q_indices, &adj);
     let p_blocks = enumerate_blocks(&classification.p_indices, &adj);

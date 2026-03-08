@@ -35,7 +35,7 @@
 /// [ N^T |  0   |  0 ] [ μ ] = [ 0 ]
 /// [ η^T |  0   |  0 ] [ ξ ]   [ 1 ]
 /// ```
-/// Entries are exact rationals from `RationalPolytope4D`.
+/// Entries are exact rationals from `Polytope4D::dual_vertices()`.
 use num_bigint::BigInt;
 use num_rational::BigRational;
 use num_traits::{One, Signed, ToPrimitive, Zero};
@@ -45,7 +45,7 @@ use num_traits::{One, Signed, ToPrimitive, Zero};
 pub struct ExactKktResult {
     /// Exact β vector (all components rational).
     pub beta: Vec<BigRational>,
-    /// Exact Q(β) = Σ_{i>j} β_i β_j ω₀(n_{σ(j)}, n_{σ(i)}) over Q.
+    /// Exact Q(β) = Σ_{i>j} β_i β_j ω₀(y_{σ(j)}, y_{σ(i)}) over Q.
     pub q_exact: BigRational,
     /// Q_exact converted to f64 (for convenient comparison with f64 solver).
     pub q_exact_f64: f64,
@@ -53,9 +53,13 @@ pub struct ExactKktResult {
 
 /// Solve the KKT system exactly for a single (S,σ) combinatorics.
 ///
-/// Given facet normals (as exact BigRational), heights, and a specific permutation
-/// `perm` (the σ in the thesis), builds the KKT matrix over Q and solves via
-/// Gaussian elimination with null-space handling for rank-deficient systems.
+/// Given dual vertices y_i = n_i/h_i (from `Polytope4D::dual_vertices()`) and a
+/// specific permutation `perm` (the σ in the thesis), builds the KKT matrix over Q
+/// and solves via Gaussian elimination with null-space handling for rank-deficient
+/// systems.
+///
+/// The dual vertex representation {y_i · x ≤ 1} has implicit heights h_i = 1,
+/// so the η block of the KKT matrix is all ones.
 ///
 /// Returns `None` (certified) if:
 /// - the system is inconsistent, or
@@ -63,21 +67,19 @@ pub struct ExactKktResult {
 ///
 /// # Arguments
 ///
-/// - `normals`: exact rational normal vectors (from `RationalPolytope4D`).
-/// - `heights`: exact rational positive heights.
+/// - `dual_vertices`: exact rational dual vertices y_i = n_i/h_i ∈ Q^4.
 /// - `perm`: facet index sequence defining the (S,σ) node.
 pub fn solve_kkt_exact(
-    normals: &[[BigRational; 4]],
-    heights: &[BigRational],
+    dual_vertices: &[[BigRational; 4]],
     perm: &[usize],
 ) -> Option<ExactKktResult> {
     let m = perm.len();
-    let (mat, rhs) = build_kkt_rational(normals, heights, perm);
+    let (mat, rhs) = build_kkt_rational(dual_vertices, perm);
 
     match gauss_solve_with_null_space(&mat, &rhs)? {
         GaussResult::FullRank(x) => {
             let beta: Vec<BigRational> = x[..m].to_vec();
-            let q_exact = q_from_beta_rational(normals, perm, &beta);
+            let q_exact = q_from_beta_rational(dual_vertices, perm, &beta);
             let q_exact_f64 = rational_to_f64(&q_exact);
             Some(ExactKktResult {
                 beta,
@@ -99,7 +101,7 @@ pub fn solve_kkt_exact(
             let beta = find_positive_beta_rational(&beta0, &null_beta)?;
 
             // Q is constant along the null space ([lem:well-defined]).
-            let q_exact = q_from_beta_rational(normals, perm, &beta);
+            let q_exact = q_from_beta_rational(dual_vertices, perm, &beta);
             let q_exact_f64 = rational_to_f64(&q_exact);
             Some(ExactKktResult {
                 beta,
@@ -115,9 +117,9 @@ pub fn solve_kkt_exact(
 /// Build the KKT matrix and RHS over Q (exact rational arithmetic).
 ///
 /// Mirrors [`crate::kkt::build_kkt_system`] exactly, but all entries are BigRational.
+/// Uses dual vertices y_i with implicit heights h_i = 1.
 fn build_kkt_rational(
-    normals: &[[BigRational; 4]],
-    heights: &[BigRational],
+    dual_vertices: &[[BigRational; 4]],
     perm: &[usize],
 ) -> (Vec<Vec<BigRational>>, Vec<BigRational>) {
     let m = perm.len();
@@ -127,29 +129,29 @@ fn build_kkt_rational(
     let mut mat = vec![vec![zero.clone(); size]; size];
     let mut rhs = vec![zero.clone(); size];
 
-    // H block: H_{ij} = ω₀(n_i, n_j) for i ≠ j (symmetric)
+    // H block: H_{ij} = ω₀(y_i, y_j) for i ≠ j (symmetric)
     for i in 0..m {
         for j in (i + 1)..m {
-            let val = omega0_rational(&normals[perm[i]], &normals[perm[j]]);
+            let val = omega0_rational(&dual_vertices[perm[i]], &dual_vertices[perm[j]]);
             mat[i][j] = val.clone();
             mat[j][i] = val;
         }
     }
 
-    // N block: N_{i,d} = normals[perm[i]][d]
+    // N block: N_{i,d} = y_{perm[i]}[d]
     for i in 0..m {
         for d in 0..4 {
-            let val = normals[perm[i]][d].clone();
+            let val = dual_vertices[perm[i]][d].clone();
             mat[i][m + d] = val.clone();
             mat[m + d][i] = val;
         }
     }
 
-    // η block: η_i = heights[perm[i]]
+    // η block: all ones (dual vertex representation has h_i = 1)
+    let one = BigRational::one();
     for i in 0..m {
-        let val = heights[perm[i]].clone();
-        mat[i][m + 4] = val.clone();
-        mat[m + 4][i] = val;
+        mat[i][m + 4] = one.clone();
+        mat[m + 4][i] = one.clone();
     }
 
     // RHS: [0, ..., 0, 1]
@@ -534,7 +536,7 @@ fn find_positive_beta_rational(
 /// Mirrors [`crate::kkt::q_from_beta`] exactly, but in exact arithmetic.
 /// Q > 0 for permutations in positive Reeb direction.
 fn q_from_beta_rational(
-    normals: &[[BigRational; 4]],
+    dual_vertices: &[[BigRational; 4]],
     perm: &[usize],
     beta: &[BigRational],
 ) -> BigRational {
@@ -542,7 +544,7 @@ fn q_from_beta_rational(
     let mut sum = BigRational::zero();
     for i in 1..m {
         for j in 0..i {
-            let omega = omega0_rational(&normals[perm[j]], &normals[perm[i]]);
+            let omega = omega0_rational(&dual_vertices[perm[j]], &dual_vertices[perm[i]]);
             sum += &beta[i] * &beta[j] * omega;
         }
     }

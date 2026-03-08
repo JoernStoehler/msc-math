@@ -4,6 +4,7 @@
 //! The rational module computes everything exactly over Q — no tolerances.
 
 use super::*;
+use super::super::polytope::{Polytope4D, ConstructionError};
 use std::collections::BTreeSet;
 
 // ── Test helpers ────────────────────────────────────────────────────────
@@ -19,7 +20,7 @@ use std::collections::BTreeSet;
 ///   2: -x₃ ≤ 1/5   (n = (0,0,-1,0), h = 1/5)
 ///   3: -x₄ ≤ 1/5   (n = (0,0,0,-1), h = 1/5)
 ///   4: x₁+x₂+x₃+x₄ ≤ 1   (n = (1,1,1,1), h = 1)
-fn rational_simplex() -> RationalPolytope4D {
+fn rational_simplex() -> Polytope4D {
     let normals = vec![
         [rat(-1), rat(0), rat(0), rat(0)],
         [rat(0), rat(-1), rat(0), rat(0)],
@@ -34,13 +35,13 @@ fn rational_simplex() -> RationalPolytope4D {
         frac(1, 5),
         rat(1),
     ];
-    RationalPolytope4D::new(normals, heights).expect("simplex construction")
+    Polytope4D::from_rationals(normals, heights).expect("simplex construction")
 }
 
 /// Build a rational hypercube [-1, 1]⁴ with exact integer coordinates.
 ///
 /// 8 facets, 16 vertices.
-fn rational_hypercube() -> RationalPolytope4D {
+fn rational_hypercube() -> Polytope4D {
     let normals = vec![
         [rat(1), rat(0), rat(0), rat(0)],
         [rat(-1), rat(0), rat(0), rat(0)],
@@ -52,7 +53,7 @@ fn rational_hypercube() -> RationalPolytope4D {
         [rat(0), rat(0), rat(0), rat(-1)],
     ];
     let heights = vec![rat(1); 8];
-    RationalPolytope4D::new(normals, heights).expect("hypercube construction")
+    Polytope4D::from_rationals(normals, heights).expect("hypercube construction")
 }
 
 /// Build a rational Lagrangian product of two squares.
@@ -60,7 +61,7 @@ fn rational_hypercube() -> RationalPolytope4D {
 /// Q-space: [-1,1]² in (q₁, q₂), 4 facets
 /// P-space: [-1,1]² in (p₁, p₂), 4 facets
 /// Same as hypercube, but conceptually a Lagrangian product.
-fn rational_lagrangian_square_square() -> RationalPolytope4D {
+fn rational_lagrangian_square_square() -> Polytope4D {
     // Same as hypercube — the point is to test Lagrangian structure
     rational_hypercube()
 }
@@ -71,7 +72,7 @@ fn rational_lagrangian_square_square() -> RationalPolytope4D {
 /// P-space square: [-1,1]² with exact integer normals.
 ///
 /// Uses exact rational coordinates so ω₀ signs are computed exactly.
-fn rational_lagrangian_triangle_square() -> RationalPolytope4D {
+fn rational_lagrangian_triangle_square() -> Polytope4D {
     // Equilateral triangle in q-space with rational approximations of normals.
     // The true normals are at angles π/2 + 2πk/3.
     // n₀ = (cos(π/2), sin(π/2), 0, 0) = (0, 1, 0, 0)
@@ -100,7 +101,41 @@ fn rational_lagrangian_triangle_square() -> RationalPolytope4D {
         rat(1),
         rat(1),
     ];
-    RationalPolytope4D::new(normals, heights).expect("lagrangian triangle×square construction")
+    Polytope4D::from_rationals(normals, heights).expect("lagrangian triangle×square construction")
+}
+
+/// Helper: extract vertex descriptors from incidence matrix.
+///
+/// Returns a Vec<BTreeSet<usize>> where each entry is the set of facet indices
+/// incident to that vertex. This mirrors the old vertex_descriptors field.
+fn vertex_descriptors_from_incidence(p: &Polytope4D) -> Vec<BTreeSet<usize>> {
+    let inc = p.incidence();
+    let v_count = p.vertices().len();
+    let f_count = p.facet_count();
+    (0..v_count)
+        .map(|vi| {
+            (0..f_count)
+                .filter(|&fi| inc[(vi, fi)])
+                .collect::<BTreeSet<usize>>()
+        })
+        .collect()
+}
+
+/// Helper: extract adjacency pairs from adjacency matrix.
+///
+/// Returns a BTreeSet of (i, k) pairs where i < k and facets i, k are adjacent.
+fn adjacency_pairs(p: &Polytope4D) -> BTreeSet<(usize, usize)> {
+    let adj = p.adjacency();
+    let f = p.facet_count();
+    let mut pairs = BTreeSet::new();
+    for i in 0..f {
+        for k in (i + 1)..f {
+            if adj[(i, k)] {
+                pairs.insert((i, k));
+            }
+        }
+    }
+    pairs
 }
 
 // ── Phase 2a: Exact arithmetic correctness ─────────────────────────────
@@ -114,13 +149,13 @@ fn rational_lagrangian_triangle_square() -> RationalPolytope4D {
 #[test]
 fn exact_simplex_vertices() {
     let s = rational_simplex();
-    let data = s.combinatorial_data();
+    let vds = vertex_descriptors_from_incidence(&s);
 
     // 5 vertices
-    assert_eq!(data.vertex_descriptors.len(), 5);
+    assert_eq!(vds.len(), 5);
 
     // Each vertex descriptor is a 4-element subset of {0,...,4}
-    for vd in &data.vertex_descriptors {
+    for vd in &vds {
         assert_eq!(vd.len(), 4, "simplex vertex should be on exactly 4 facets");
         assert!(
             vd.iter().all(|&i| i < 5),
@@ -132,7 +167,7 @@ fn exact_simplex_vertices() {
     let expected: Vec<BTreeSet<usize>> = (0..5)
         .map(|omit| (0..5).filter(|&i| i != omit).collect())
         .collect();
-    let mut actual: Vec<BTreeSet<usize>> = data.vertex_descriptors.clone();
+    let mut actual: Vec<BTreeSet<usize>> = vds;
     actual.sort();
     let mut expected_sorted = expected;
     expected_sorted.sort();
@@ -152,10 +187,9 @@ fn exact_simplex_vertex_coordinates() {
     // -xᵢ = 1/5 for all i, so v = (-1/5, -1/5, -1/5, -1/5).
 
     // Find the vertex descriptor {0,1,2,3} (omitting facet 4)
+    let vds = vertex_descriptors_from_incidence(&s);
     let target_vd: BTreeSet<usize> = [0, 1, 2, 3].into_iter().collect();
-    let idx = s
-        .combinatorial_data()
-        .vertex_descriptors
+    let idx = vds
         .iter()
         .position(|vd| *vd == target_vd)
         .expect("vertex {0,1,2,3} should exist");
@@ -178,17 +212,17 @@ fn exact_simplex_vertex_coordinates() {
 #[test]
 fn exact_hypercube_vertices() {
     let h = rational_hypercube();
-    let data = h.combinatorial_data();
+    let vds = vertex_descriptors_from_incidence(&h);
 
-    assert_eq!(data.vertex_descriptors.len(), 16);
+    assert_eq!(vds.len(), 16);
 
     // Each vertex descriptor should have exactly 4 facets
-    for vd in &data.vertex_descriptors {
+    for vd in &vds {
         assert_eq!(vd.len(), 4);
     }
 
     // Each vertex descriptor picks exactly one from each pair {0,1}, {2,3}, {4,5}, {6,7}
-    for vd in &data.vertex_descriptors {
+    for vd in &vds {
         let pairs = [(0, 1), (2, 3), (4, 5), (6, 7)];
         for (a, b) in pairs {
             let has_a = vd.contains(&a);
@@ -220,43 +254,43 @@ fn exact_hypercube_vertex_coordinates() {
     }
 
     // All 16 sign combinations should appear
-    assert_eq!(h.num_vertices(), 16);
+    assert_eq!(h.vertices().len(), 16);
 }
 
 /// Proposition: for the hypercube [-1,1]⁴ (which is a Lagrangian product
 /// of [-1,1]² in q-space and [-1,1]² in p-space), all same-type adjacent
-/// pairs have ω₀(nᵢ, nₖ) = 0.
+/// pairs have ω₀(yᵢ, yₖ) = 0.
 ///
-/// "Same-type" means both normals are in q-space (components [0,1])
+/// "Same-type" means both dual vertices are in q-space (components [0,1])
 /// or both in p-space (components [2,3]).
 ///
-/// Reason: q-space normals have form (a, b, 0, 0) and p-space normals
+/// Reason: q-space dual vertices have form (a, b, 0, 0) and p-space dual vertices
 /// have form (0, 0, c, d). Within each group, ω₀(u, v) = u₀v₂ - u₂v₀ + u₁v₃ - u₃v₁ = 0
 /// since the cross-components vanish.
 #[test]
 fn lagrangian_same_type_omega_zero() {
     let h = rational_lagrangian_square_square();
-    let data = h.combinatorial_data();
-    let normals = h.normals();
+    let dual_verts = h.dual_vertices();
+    let adj_pairs = adjacency_pairs(&h);
 
     // Q-space facets: 0, 1 (±q₁), 2, 3 (±q₂)
     let q_facets: BTreeSet<usize> = [0, 1, 2, 3].into_iter().collect();
     // P-space facets: 4, 5 (±p₁), 6, 7 (±p₂)
     let p_facets: BTreeSet<usize> = [4, 5, 6, 7].into_iter().collect();
 
-    for &(i, k) in &data.adjacency {
+    for &(i, k) in &adj_pairs {
         let both_q = q_facets.contains(&i) && q_facets.contains(&k);
         let both_p = p_facets.contains(&i) && p_facets.contains(&k);
 
         if both_q || both_p {
-            let omega = omega0_rational(&normals[i], &normals[k]);
+            let omega = omega0_rational(&dual_verts[i], &dual_verts[k]);
             assert!(
                 omega.is_zero(),
                 "same-type pair ({i}, {k}) should have ω₀ = 0, got {omega}"
             );
             assert_eq!(
-                data.sign_pattern[&(i, k)],
-                Sign::Zero,
+                h.omega_signs()[(i, k)],
+                0i8,
                 "same-type pair ({i}, {k}) sign should be Zero"
             );
         }
@@ -267,14 +301,17 @@ fn lagrangian_same_type_omega_zero() {
 /// adjacent pairs (one q-facet, one p-facet) have ω₀ signs determined
 /// by the coordinate indices.
 ///
+/// For dual vertices y_i = n_i/h_i: sign(ω₀(y_i, y_k)) = sign(ω₀(n_i, n_k))
+/// since h_i, h_k > 0. So the sign analysis on normals carries over.
+///
 /// For normals (a, 0, 0, 0) and (0, 0, c, 0): ω₀ = a·c (from u₀v₂ term).
 /// For normals (0, b, 0, 0) and (0, 0, 0, d): ω₀ = b·d (from u₁v₃ term).
 /// Other cross combinations give ω₀ = 0.
 #[test]
 fn lagrangian_cross_type_omega() {
     let h = rational_lagrangian_square_square();
-    let data = h.combinatorial_data();
-    let normals = h.normals();
+    let dual_verts = h.dual_vertices();
+    let adj_pairs = adjacency_pairs(&h);
 
     // Check specific cross-type pairs
     // Facet 0: (+1,0,0,0), Facet 4: (0,0,+1,0) → ω₀ = 1·1 = 1 → Plus
@@ -282,64 +319,68 @@ fn lagrangian_cross_type_omega() {
     // Facet 0: (+1,0,0,0), Facet 6: (0,0,0,+1) → ω₀ = 0 → Zero
     // Facet 0: (+1,0,0,0), Facet 7: (0,0,0,-1) → ω₀ = 0 → Zero
 
-    let check = |i: usize, k: usize, expected: Sign| {
+    let check = |i: usize, k: usize, expected_sign: i8| {
         let (lo, hi) = (i.min(k), i.max(k));
         assert!(
-            data.adjacency.contains(&(lo, hi)),
+            adj_pairs.contains(&(lo, hi)),
             "pair ({lo}, {hi}) should be adjacent"
         );
-        let omega = omega0_rational(&normals[lo], &normals[hi]);
-        let sign = Sign::of(&omega);
+        let omega = omega0_rational(&dual_verts[lo], &dual_verts[hi]);
+        let actual_sign = match Sign::of(&omega) {
+            Sign::Plus => 1i8,
+            Sign::Minus => -1i8,
+            Sign::Zero => 0i8,
+        };
         assert_eq!(
-            sign, expected,
-            "pair ({lo}, {hi}): ω₀ = {omega}, expected sign {expected:?}"
+            actual_sign, expected_sign,
+            "pair ({lo}, {hi}): ω₀ = {omega}, expected sign {expected_sign}"
         );
     };
 
     // (q₁ facets) × (p₁ facets): paired by symplectic plane (q₁, p₁)
-    check(0, 4, Sign::Plus);  // (+1,0,0,0) vs (0,0,+1,0): ω₀ = +1
-    check(0, 5, Sign::Minus); // (+1,0,0,0) vs (0,0,-1,0): ω₀ = -1
-    check(1, 4, Sign::Minus); // (-1,0,0,0) vs (0,0,+1,0): ω₀ = -1
-    check(1, 5, Sign::Plus);  // (-1,0,0,0) vs (0,0,-1,0): ω₀ = +1
+    check(0, 4, 1);   // (+1,0,0,0) vs (0,0,+1,0): ω₀ = +1
+    check(0, 5, -1);  // (+1,0,0,0) vs (0,0,-1,0): ω₀ = -1
+    check(1, 4, -1);  // (-1,0,0,0) vs (0,0,+1,0): ω₀ = -1
+    check(1, 5, 1);   // (-1,0,0,0) vs (0,0,-1,0): ω₀ = +1
 
     // (q₂ facets) × (p₂ facets): paired by symplectic plane (q₂, p₂)
-    check(2, 6, Sign::Plus);  // (0,+1,0,0) vs (0,0,0,+1): ω₀ = +1
-    check(2, 7, Sign::Minus); // (0,+1,0,0) vs (0,0,0,-1): ω₀ = -1
-    check(3, 6, Sign::Minus); // (0,-1,0,0) vs (0,0,0,+1): ω₀ = -1
-    check(3, 7, Sign::Plus);  // (0,-1,0,0) vs (0,0,0,-1): ω₀ = +1
+    check(2, 6, 1);   // (0,+1,0,0) vs (0,0,0,+1): ω₀ = +1
+    check(2, 7, -1);  // (0,+1,0,0) vs (0,0,0,-1): ω₀ = -1
+    check(3, 6, -1);  // (0,-1,0,0) vs (0,0,0,+1): ω₀ = -1
+    check(3, 7, 1);   // (0,-1,0,0) vs (0,0,0,-1): ω₀ = +1
 
     // Cross-plane pairs: (q₁ facets) × (p₂ facets) → ω₀ = 0
-    check(0, 6, Sign::Zero); // (+1,0,0,0) vs (0,0,0,+1)
-    check(0, 7, Sign::Zero); // (+1,0,0,0) vs (0,0,0,-1)
-    check(1, 6, Sign::Zero); // (-1,0,0,0) vs (0,0,0,+1)
-    check(1, 7, Sign::Zero); // (-1,0,0,0) vs (0,0,0,-1)
+    check(0, 6, 0);  // (+1,0,0,0) vs (0,0,0,+1)
+    check(0, 7, 0);  // (+1,0,0,0) vs (0,0,0,-1)
+    check(1, 6, 0);  // (-1,0,0,0) vs (0,0,0,+1)
+    check(1, 7, 0);  // (-1,0,0,0) vs (0,0,0,-1)
 
     // Cross-plane pairs: (q₂ facets) × (p₁ facets) → ω₀ = 0
-    check(2, 4, Sign::Zero); // (0,+1,0,0) vs (0,0,+1,0)
-    check(2, 5, Sign::Zero); // (0,+1,0,0) vs (0,0,-1,0)
-    check(3, 4, Sign::Zero); // (0,-1,0,0) vs (0,0,+1,0)
-    check(3, 5, Sign::Zero); // (0,-1,0,0) vs (0,0,-1,0)
+    check(2, 4, 0);  // (0,+1,0,0) vs (0,0,+1,0)
+    check(2, 5, 0);  // (0,+1,0,0) vs (0,0,-1,0)
+    check(3, 4, 0);  // (0,-1,0,0) vs (0,0,+1,0)
+    check(3, 5, 0);  // (0,-1,0,0) vs (0,0,-1,0)
 }
 
 /// Proposition: for a Lagrangian product (triangle ×_L square),
 /// all same-type adjacent pairs have ω₀ = 0 exactly.
 ///
-/// Same-type: both normals in q-space (facets 0-2) or both in p-space (facets 3-6).
+/// Same-type: both dual vertices in q-space (facets 0-2) or both in p-space (facets 3-6).
 #[test]
 fn lagrangian_triangle_square_same_type_omega_zero() {
     let p = rational_lagrangian_triangle_square();
-    let data = p.combinatorial_data();
-    let normals = p.normals();
+    let dual_verts = p.dual_vertices();
+    let adj_pairs = adjacency_pairs(&p);
 
     let q_facets: BTreeSet<usize> = [0, 1, 2].into_iter().collect();
     let p_facets: BTreeSet<usize> = [3, 4, 5, 6].into_iter().collect();
 
-    for &(i, k) in &data.adjacency {
+    for &(i, k) in &adj_pairs {
         let both_q = q_facets.contains(&i) && q_facets.contains(&k);
         let both_p = p_facets.contains(&i) && p_facets.contains(&k);
 
         if both_q || both_p {
-            let omega = omega0_rational(&normals[i], &normals[k]);
+            let omega = omega0_rational(&dual_verts[i], &dual_verts[k]);
             assert!(
                 omega.is_zero(),
                 "same-type pair ({i}, {k}) should have ω₀ = 0, got {omega}"
@@ -348,73 +389,21 @@ fn lagrangian_triangle_square_same_type_omega_zero() {
     }
 }
 
-/// Proposition: all margins are positive for every simple polytope we construct.
-///
-/// Positive margins mean the combinatorial structure is robust: small
-/// perturbations of coordinates cannot change vertex descriptors,
-/// adjacency, or nonzero ω₀ signs.
-#[test]
-fn margins_positive() {
-    let polytopes: Vec<(&str, RationalPolytope4D)> = vec![
-        ("simplex", rational_simplex()),
-        ("hypercube", rational_hypercube()),
-        ("lagrangian_tri_sq", rational_lagrangian_triangle_square()),
-    ];
-
-    for (name, p) in &polytopes {
-        let m = &p.combinatorial_data().margins;
-        assert!(
-            m.min_gap.is_positive(),
-            "{name}: min_gap should be positive, got {}",
-            m.min_gap
-        );
-        assert!(
-            m.min_abs_det.is_positive(),
-            "{name}: min_abs_det should be positive, got {}",
-            m.min_abs_det
-        );
-        // For simplex and hypercube, min_omega_nonzero must be Some (they have
-        // nonzero ω₀ pairs). For triangle×square, cross-type pairs also give nonzero ω₀.
-        let mow = m
-            .min_omega_nonzero
-            .as_ref()
-            .unwrap_or_else(|| panic!("{name}: min_omega_nonzero should be Some"));
-        assert!(
-            mow.is_positive(),
-            "{name}: min_omega_nonzero should be positive, got {mow}"
-        );
-    }
-}
-
-/// Proposition: for the simplex, min_gap = 9/5.
-///
-/// By symmetry all non-incidence gaps are equal. For vertex {0,1,2,3}
-/// (v = (-1/5,...,-1/5)), the gap from facet 4 is:
-///   h₄ - ⟨(1,1,1,1), (-1/5,...,-1/5)⟩ = 1 - (-4/5) = 9/5.
-/// Every other vertex-facet pair gives the same value by the simplex's
-/// permutation symmetry.
-#[test]
-fn simplex_min_gap() {
-    let s = rational_simplex();
-    let m = &s.combinatorial_data().margins;
-    assert_eq!(m.min_gap, frac(9, 5));
-}
-
 /// Proposition: the simplex adjacency is exactly the complete graph K₅,
 /// since every pair of facets shares at least one vertex.
 #[test]
 fn simplex_adjacency_complete() {
     let s = rational_simplex();
-    let data = s.combinatorial_data();
+    let adj_pairs = adjacency_pairs(&s);
 
     // C(5,2) = 10 adjacent pairs
-    assert_eq!(data.adjacency.len(), 10);
+    assert_eq!(adj_pairs.len(), 10);
 
     // Every pair of facets should be adjacent
     for i in 0..5 {
         for k in (i + 1)..5 {
             assert!(
-                data.adjacency.contains(&(i, k)),
+                adj_pairs.contains(&(i, k)),
                 "facets ({i}, {k}) should be adjacent in simplex"
             );
         }
@@ -423,20 +412,19 @@ fn simplex_adjacency_complete() {
 
 // ── Phase 2b: Round-trip and f64 agreement ─────────────────────────────
 
-/// Proposition: to_f64() produces a polytope with the same vertex count.
+/// Proposition: f64 accessors produce a polytope with the same vertex count.
 #[test]
 fn f64_vertex_count() {
-    let polytopes: Vec<(&str, RationalPolytope4D)> = vec![
+    let polytopes: Vec<(&str, Polytope4D)> = vec![
         ("simplex", rational_simplex()),
         ("hypercube", rational_hypercube()),
         ("lagrangian_tri_sq", rational_lagrangian_triangle_square()),
     ];
 
     for (name, rp) in &polytopes {
-        let f64_polytope = rp.to_f64().expect("to_f64 should succeed");
         assert_eq!(
-            f64_polytope.vertices().len(),
-            rp.num_vertices(),
+            rp.vertices_f64().len(),
+            rp.vertices().len(),
             "{name}: f64 vertex count should match rational vertex count"
         );
     }
@@ -449,11 +437,9 @@ fn f64_vertex_count() {
 #[test]
 fn f64_vertex_accuracy() {
     let s = rational_simplex();
-    let f64_s = s.to_f64().expect("to_f64");
 
-    // The rational simplex has non-unit normals. to_f64 normalizes them.
-    // The resulting polytope should have the same geometric vertices,
-    // just with unit normals and adjusted heights.
+    // The rational simplex has non-unit normals. The f64 accessors normalize them.
+    // The resulting f64 vertices should match the rational vertices closely.
     //
     // Check vertex count and that each f64 vertex is close to a rational vertex.
     let rational_verts: Vec<[f64; 4]> = s
@@ -462,7 +448,7 @@ fn f64_vertex_accuracy() {
         .map(|v| std::array::from_fn(|i| rational_to_f64(&v[i])))
         .collect();
 
-    for f64_v in f64_s.vertices() {
+    for f64_v in s.vertices_f64() {
         let f64_arr = [f64_v[0], f64_v[1], f64_v[2], f64_v[3]];
         // Find closest rational vertex
         let min_dist = rational_verts
@@ -483,48 +469,54 @@ fn f64_vertex_accuracy() {
     }
 }
 
-/// Proposition: for polytopes with all margins ≫ ε_machine,
+/// Proposition: for polytopes with well-separated ω₀ values,
 /// the f64 ω₀ signs agree with the exact rational signs.
 ///
 /// This tests that the exact-to-f64 conversion preserves combinatorial data.
 #[test]
 fn f64_sign_agreement() {
-    let polytopes: Vec<(&str, RationalPolytope4D)> = vec![
+    let polytopes: Vec<(&str, Polytope4D)> = vec![
         ("simplex", rational_simplex()),
         ("hypercube", rational_hypercube()),
     ];
 
     for (name, rp) in &polytopes {
-        let data = rp.combinatorial_data();
-        let f64_p = rp.to_f64().expect("to_f64");
+        let omega_signs = rp.omega_signs();
+        let f = rp.facet_count();
 
         // For each adjacent pair with a definite sign, check that the f64
         // ω₀ has the same sign.
-        for (&(i, k), &sign) in &data.sign_pattern {
-            if sign == Sign::Zero {
-                continue; // Zero might be affected by rounding
+        for i in 0..f {
+            for k in (i + 1)..f {
+                if !rp.adjacency()[(i, k)] {
+                    continue;
+                }
+                let exact_sign = omega_signs[(i, k)];
+                if exact_sign == 0 {
+                    continue; // Zero might be affected by rounding
+                }
+
+                let f64_omega =
+                    super::super::symplectic::omega0(&rp.normals_f64()[i], &rp.normals_f64()[k]);
+
+                let f64_sign = if f64_omega > 1e-15 {
+                    1i8
+                } else if f64_omega < -1e-15 {
+                    -1i8
+                } else {
+                    0i8
+                };
+
+                assert_eq!(
+                    f64_sign, exact_sign,
+                    "{name}: f64 ω₀ sign for ({i}, {k}) = {f64_omega:.2e}, expected {exact_sign}"
+                );
             }
-
-            let f64_omega =
-                super::super::symplectic::omega0(&f64_p.normals()[i], &f64_p.normals()[k]);
-
-            let f64_sign = if f64_omega > 1e-15 {
-                Sign::Plus
-            } else if f64_omega < -1e-15 {
-                Sign::Minus
-            } else {
-                Sign::Zero
-            };
-
-            assert_eq!(
-                f64_sign, sign,
-                "{name}: f64 ω₀ sign for ({i}, {k}) = {f64_omega:.2e}, expected {sign:?}"
-            );
         }
     }
 }
 
-/// Proposition: from_f64_rounded round-trips through to_f64 with bounded error.
+/// Proposition: from_f64_rounded round-trips with bounded error.
 ///
 /// Start with f64 hypercube, round to rational with D=1000,
 /// convert back to f64. Vertices should be close to originals.
@@ -533,15 +525,14 @@ fn from_f64_roundtrip() {
     let kp = super::super::known_polytopes::hypercube();
     let f64_p = &kp.polytope;
 
-    let rp = RationalPolytope4D::from_f64_rounded(f64_p.normals(), f64_p.heights(), 1000)
+    let rp = Polytope4D::from_f64_rounded(f64_p.normals_f64(), f64_p.heights_f64(), 1000)
         .expect("from_f64_rounded");
 
     // Same number of vertices
-    assert_eq!(rp.num_vertices(), f64_p.vertices().len());
+    assert_eq!(rp.vertices().len(), f64_p.vertices_f64().len());
 
-    // Convert back to f64
-    let roundtrip = rp.to_f64().expect("to_f64");
-    assert_eq!(roundtrip.vertices().len(), f64_p.vertices().len());
+    // f64 vertices should have same count
+    assert_eq!(rp.vertices_f64().len(), f64_p.vertices_f64().len());
 }
 
 // ── Validation error tests ─────────────────────────────────────────────
@@ -556,14 +547,14 @@ fn reject_too_few_facets() {
         [rat(0), rat(-1), rat(0), rat(0)],
     ];
     let heights = vec![rat(1); 4];
-    let err = RationalPolytope4D::new(normals, heights).unwrap_err();
+    let err = Polytope4D::from_rationals(normals, heights).unwrap_err();
     assert!(
-        matches!(err, RationalConstructionError::TooFewFacets(4)),
+        matches!(err, ConstructionError::TooFewFacets(4)),
         "expected TooFewFacets, got {err}"
     );
 }
 
-/// Zero normal should fail.
+/// Zero normal should fail (produces zero dual vertex).
 #[test]
 fn reject_zero_normal() {
     let normals = vec![
@@ -574,10 +565,11 @@ fn reject_zero_normal() {
         [rat(0), rat(0), rat(0), rat(1)],
     ];
     let heights = vec![rat(1); 5];
-    let err = RationalPolytope4D::new(normals, heights).unwrap_err();
+    let err = Polytope4D::from_rationals(normals, heights).unwrap_err();
+    // Zero normal / h = zero dual vertex → VertexEnumerationFailed wrapping ZeroDualVertex
     assert!(
-        matches!(err, RationalConstructionError::ZeroNormal(0)),
-        "expected ZeroNormal, got {err}"
+        matches!(err, ConstructionError::VertexEnumerationFailed(_)),
+        "expected VertexEnumerationFailed (from ZeroDualVertex), got {err}"
     );
 }
 
@@ -592,9 +584,9 @@ fn reject_nonpositive_height() {
         [rat(0), rat(0), rat(1), rat(0)],
     ];
     let heights = vec![rat(1), rat(0), rat(1), rat(1), rat(1)]; // h₁ = 0
-    let err = RationalPolytope4D::new(normals, heights).unwrap_err();
+    let err = Polytope4D::from_rationals(normals, heights).unwrap_err();
     assert!(
-        matches!(err, RationalConstructionError::NonPositiveHeight { index: 1 }),
+        matches!(err, ConstructionError::NonPositiveHeight { index: 1, .. }),
         "expected NonPositiveHeight at index 1, got {err}"
     );
 }
@@ -613,9 +605,9 @@ fn reject_redundant_facet() {
         [rat(1), rat(0), rat(0), rat(0)], // redundant: x₁ ≤ 100
     ];
     let heights = vec![frac(1, 5), frac(1, 5), frac(1, 5), frac(1, 5), rat(1), rat(100)];
-    let err = RationalPolytope4D::new(normals, heights).unwrap_err();
+    let err = Polytope4D::from_rationals(normals, heights).unwrap_err();
     assert!(
-        matches!(err, RationalConstructionError::RedundantFacet(5)),
+        matches!(err, ConstructionError::RedundantFacet(5)),
         "expected RedundantFacet(5), got {err}"
     );
 }
@@ -647,14 +639,14 @@ fn non_simple_polytope_accepted() {
         rat(1), rat(1), rat(1), rat(1),
         rat(2),  // sum ≤ 2: tight at (1,1,1,-1) etc.
     ];
-    let rp = RationalPolytope4D::new(normals, heights)
+    let rp = Polytope4D::from_rationals(normals, heights)
         .expect("non-simple polytope should be accepted");
 
-    let data = rp.combinatorial_data();
+    let vds = vertex_descriptors_from_incidence(&rp);
     // Should have 15 vertices (16 hypercube vertices minus (1,1,1,1))
-    assert_eq!(data.vertex_descriptors.len(), 15);
+    assert_eq!(vds.len(), 15);
     // 4 vertices lie on 5 facets each
-    let non_simple_count = data.vertex_descriptors.iter()
+    let non_simple_count = vds.iter()
         .filter(|vd| vd.len() > 4)
         .count();
     assert_eq!(non_simple_count, 4, "expected 4 non-simple vertices");
@@ -671,9 +663,9 @@ fn reject_unbounded_parallel() {
         [rat(5), rat(0), rat(0), rat(0)],
     ];
     let heights = vec![rat(1), rat(2), rat(3), rat(4), rat(5)];
-    let err = RationalPolytope4D::new(normals, heights).unwrap_err();
+    let err = Polytope4D::from_rationals(normals, heights).unwrap_err();
     assert!(
-        matches!(err, RationalConstructionError::Unbounded),
+        matches!(err, ConstructionError::Unbounded),
         "expected Unbounded, got {err}"
     );
 }
@@ -692,9 +684,9 @@ fn reject_unbounded_one_sided() {
         [rat(1), rat(1), rat(1), rat(1)],
     ];
     let heights = vec![rat(1); 5];
-    let err = RationalPolytope4D::new(normals, heights).unwrap_err();
+    let err = Polytope4D::from_rationals(normals, heights).unwrap_err();
     assert!(
-        matches!(err, RationalConstructionError::Unbounded),
+        matches!(err, ConstructionError::Unbounded),
         "expected Unbounded, got {err}"
     );
 }
@@ -733,20 +725,20 @@ fn rank_over_q_basic() {
     assert_eq!(rank_over_q(&single), 1);
 }
 
-/// Proposition: simplex normals pass boundedness check (positively span R^4).
+/// Proposition: simplex dual vertices pass boundedness check (positively span R^4).
 #[test]
 fn simplex_is_bounded() {
     let p = rational_simplex();
     // If we got here, construction succeeded → boundedness passed.
-    // Also verify directly:
-    assert!(check_bounded_rational(p.normals()));
+    // Also verify directly on dual vertices:
+    assert!(check_bounded_rational(p.dual_vertices()));
 }
 
-/// Proposition: hypercube normals pass boundedness check.
+/// Proposition: hypercube dual vertices pass boundedness check.
 #[test]
 fn hypercube_is_bounded() {
     let p = rational_hypercube();
-    assert!(check_bounded_rational(p.normals()));
+    assert!(check_bounded_rational(p.dual_vertices()));
 }
 
 /// Proposition: cross product in 4D over Q is perpendicular to all three inputs.
@@ -833,39 +825,38 @@ fn f64_to_rational_exact_values() {
     assert_eq!(f64_to_rational(1024.0), rat(1024));
 }
 
-/// Proposition: from_f64 produces a rational polytope whose to_f64 round-trip
-/// agrees with the original f64 polytope on vertex count and vertex coordinates.
+/// Proposition: constructing via Polytope4D::new from f64 normals/heights
+/// agrees with constructing from rationals on vertex count and coordinates.
 ///
-/// This tests the lossless entry point (vs the lossy from_f64_rounded).
+/// This tests the lossless entry point (f64 → rational dual vertices → pipeline).
 #[test]
 fn from_f64_lossless_roundtrip() {
     let kp = super::super::known_polytopes::hypercube();
     let f64_p = &kp.polytope;
 
-    let rp = RationalPolytope4D::from_f64(f64_p.normals(), f64_p.heights())
-        .expect("from_f64 should succeed for hypercube");
+    // Construct a fresh polytope from the same f64 normals/heights
+    let rp = Polytope4D::new(f64_p.normals_f64().to_vec(), f64_p.heights_f64().to_vec())
+        .expect("new should succeed for hypercube");
 
     // Same vertex count
-    assert_eq!(rp.num_vertices(), f64_p.vertices().len());
+    assert_eq!(rp.vertices().len(), f64_p.vertices().len());
 
-    // Round-trip to f64 should produce same vertex count
-    let roundtrip = rp.to_f64().expect("to_f64 should succeed");
-    assert_eq!(roundtrip.vertices().len(), f64_p.vertices().len());
+    // f64 vertices should also match
+    assert_eq!(rp.vertices_f64().len(), f64_p.vertices_f64().len());
 }
 
-/// Proposition: from_f64 on the simplex agrees with from_f64_rounded on vertex count.
-///
-/// The lossless conversion should produce the same combinatorial structure.
+/// Proposition: Polytope4D::new on the simplex has the expected combinatorics.
 #[test]
 fn from_f64_simplex() {
     let kp = super::super::known_polytopes::simplex();
     let f64_p = &kp.polytope;
 
-    let rp = RationalPolytope4D::from_f64(f64_p.normals(), f64_p.heights())
-        .expect("from_f64 should succeed for simplex");
+    // Construct fresh from f64 data
+    let rp = Polytope4D::new(f64_p.normals_f64().to_vec(), f64_p.heights_f64().to_vec())
+        .expect("new should succeed for simplex");
 
-    assert_eq!(rp.num_facets(), 5);
-    assert_eq!(rp.num_vertices(), 5);
+    assert_eq!(rp.facet_count(), 5);
+    assert_eq!(rp.vertices().len(), 5);
 }
 
 // ── Phase 4: Perturbation ────────────────────────────────────────────────
@@ -882,14 +873,17 @@ fn perturbation_preserves_nonzero_signs() {
     let perturbed = p.perturbed(&mut rng, 64).expect("perturbation should succeed");
 
     // Same vertex count
-    assert_eq!(perturbed.num_vertices(), p.num_vertices());
-    assert_eq!(perturbed.num_facets(), p.num_facets());
+    assert_eq!(perturbed.vertices().len(), p.vertices().len());
+    assert_eq!(perturbed.facet_count(), p.facet_count());
 
-    // No ω₀ = 0 in sign pattern
-    assert!(
-        !perturbed.combinatorial_data().sign_pattern.values().any(|s| *s == Sign::Zero),
-        "perturbed polytope should have no ω₀ = 0"
-    );
+    // No ω₀ = 0 in omega_signs for adjacent pairs
+    let f = perturbed.facet_count();
+    let has_zero = (0..f).any(|i| {
+        ((i + 1)..f).any(|k| {
+            perturbed.adjacency()[(i, k)] && perturbed.omega_signs()[(i, k)] == 0
+        })
+    });
+    assert!(!has_zero, "perturbed polytope should have no ω₀ = 0");
 }
 
 /// Proposition: perturbing a Lagrangian product (which has ω₀ = 0 pairs)
@@ -903,13 +897,23 @@ fn perturbation_breaks_omega_zeros() {
     let p = rational_lagrangian_triangle_square();
     let mut rng = rand_chacha::ChaCha8Rng::seed_from_u64(123);
 
-    // Before perturbation: some ω₀ = 0
-    let has_zeros = p.combinatorial_data().sign_pattern.values().any(|s| *s == Sign::Zero);
+    // Before perturbation: some adjacent pairs have ω₀ = 0
+    let f = p.facet_count();
+    let has_zeros = (0..f).any(|i| {
+        ((i + 1)..f).any(|k| {
+            p.adjacency()[(i, k)] && p.omega_signs()[(i, k)] == 0
+        })
+    });
     assert!(has_zeros, "Lagrangian product should have ω₀ = 0 pairs before perturbation");
 
     // After perturbation: no ω₀ = 0
     let perturbed = p.perturbed(&mut rng, 64).expect("perturbation should succeed");
-    let has_zeros_after = perturbed.combinatorial_data().sign_pattern.values().any(|s| *s == Sign::Zero);
+    let fp = perturbed.facet_count();
+    let has_zeros_after = (0..fp).any(|i| {
+        ((i + 1)..fp).any(|k| {
+            perturbed.adjacency()[(i, k)] && perturbed.omega_signs()[(i, k)] == 0
+        })
+    });
     assert!(!has_zeros_after, "perturbed polytope should have no ω₀ = 0");
 }
 
@@ -923,15 +927,13 @@ fn perturbation_breaks_omega_zeros() {
 fn perturbation_preserves_f64() {
     use rand::SeedableRng;
     let p = rational_simplex();
-    let f64_before = p.to_f64().expect("to_f64 should succeed");
 
     let mut rng = rand_chacha::ChaCha8Rng::seed_from_u64(99);
     let perturbed = p.perturbed(&mut rng, 64).expect("perturbation should succeed");
-    let f64_after = perturbed.to_f64().expect("to_f64 should succeed");
 
     // Unit normal components should agree within ~2^{-64} ≈ 6e-20
     let tol = 1e-18; // generous bound (actual perturbation ~5e-20)
-    for (n_before, n_after) in f64_before.normals().iter().zip(f64_after.normals().iter()) {
+    for (n_before, n_after) in p.normals_f64().iter().zip(perturbed.normals_f64().iter()) {
         for c in 0..4 {
             assert!(
                 (n_before[c] - n_after[c]).abs() < tol,
@@ -941,8 +943,8 @@ fn perturbation_preserves_f64() {
         }
     }
 
-    // Heights are unchanged (perturbation only affects normals)
-    for (h_before, h_after) in f64_before.heights().iter().zip(f64_after.heights().iter()) {
+    // Heights should be close (perturbation only affects dual vertices)
+    for (h_before, h_after) in p.heights_f64().iter().zip(perturbed.heights_f64().iter()) {
         assert!(
             (h_before - h_after).abs() < tol,
             "f64 height changed by {} after perturbation",
@@ -1062,18 +1064,6 @@ fn solve4_exact() {
 
 // ── Phase 6: Rational↔f64 pipeline consistency ─────────────────────────
 
-/// Proposition: Polytope4D::from_rational carries exact data.
-#[test]
-fn from_rational_carries_exact_data() {
-    let rp = rational_simplex();
-    let p = super::super::polytope::Polytope4D::from_rational(&rp)
-        .expect("from_rational should succeed for simplex");
-
-    let data = p.exact_data();
-    assert_eq!(data.num_facets, 5);
-    assert_eq!(data.vertex_descriptors.len(), 5);
-}
-
 /// Proposition: adjacency matrix from exact data agrees with f64 computation
 /// for the simplex (same polytope, two paths).
 #[test]
@@ -1083,10 +1073,11 @@ fn adjacency_agreement_simplex() {
     let kp = super::super::known_polytopes::simplex();
     let f64_adj = build_adjacency_matrix(&kp.polytope);
 
-    let rp = RationalPolytope4D::from_f64(kp.polytope.normals(), kp.polytope.heights())
-        .expect("from_f64 should succeed for simplex");
-    let rational_p = super::super::polytope::Polytope4D::from_rational(&rp)
-        .expect("from_rational should succeed for simplex");
+    // Construct fresh from the same f64 data
+    let rational_p = Polytope4D::new(
+        kp.polytope.normals_f64().to_vec(),
+        kp.polytope.heights_f64().to_vec(),
+    ).expect("new should succeed for simplex");
     let exact_adj = build_adjacency_matrix(&rational_p);
 
     assert_eq!(f64_adj, exact_adj, "adjacency matrices disagree for simplex");
@@ -1101,10 +1092,10 @@ fn adjacency_agreement_hypercube() {
     let kp = super::super::known_polytopes::hypercube();
     let f64_adj = build_adjacency_matrix(&kp.polytope);
 
-    let rp = RationalPolytope4D::from_f64(kp.polytope.normals(), kp.polytope.heights())
-        .expect("from_f64 should succeed for hypercube");
-    let rational_p = super::super::polytope::Polytope4D::from_rational(&rp)
-        .expect("from_rational should succeed for hypercube");
+    let rational_p = Polytope4D::new(
+        kp.polytope.normals_f64().to_vec(),
+        kp.polytope.heights_f64().to_vec(),
+    ).expect("new should succeed for hypercube");
     let exact_adj = build_adjacency_matrix(&rational_p);
 
     assert_eq!(f64_adj, exact_adj, "adjacency matrices disagree for hypercube");
@@ -1119,10 +1110,10 @@ fn directed_adjacency_agreement_simplex() {
     let kp = super::super::known_polytopes::simplex();
     let f64_dadj = build_directed_adjacency_matrix(&kp.polytope);
 
-    let rp = RationalPolytope4D::from_f64(kp.polytope.normals(), kp.polytope.heights())
-        .expect("from_f64 should succeed for simplex");
-    let rational_p = super::super::polytope::Polytope4D::from_rational(&rp)
-        .expect("from_rational should succeed for simplex");
+    let rational_p = Polytope4D::new(
+        kp.polytope.normals_f64().to_vec(),
+        kp.polytope.heights_f64().to_vec(),
+    ).expect("new should succeed for simplex");
     let exact_dadj = build_directed_adjacency_matrix(&rational_p);
 
     assert_eq!(
@@ -1140,10 +1131,10 @@ fn directed_adjacency_agreement_hypercube() {
     let kp = super::super::known_polytopes::hypercube();
     let f64_dadj = build_directed_adjacency_matrix(&kp.polytope);
 
-    let rp = RationalPolytope4D::from_f64(kp.polytope.normals(), kp.polytope.heights())
-        .expect("from_f64 should succeed for hypercube");
-    let rational_p = super::super::polytope::Polytope4D::from_rational(&rp)
-        .expect("from_rational should succeed for hypercube");
+    let rational_p = Polytope4D::new(
+        kp.polytope.normals_f64().to_vec(),
+        kp.polytope.heights_f64().to_vec(),
+    ).expect("new should succeed for hypercube");
     let exact_dadj = build_directed_adjacency_matrix(&rational_p);
 
     assert_eq!(
@@ -1154,7 +1145,7 @@ fn directed_adjacency_agreement_hypercube() {
 
 /// Proposition: EHZ capacity is unchanged when routed through the rational pipeline.
 ///
-/// Pipeline: f64 polytope → from_f64 (lossless) → from_rational → ehz_capacity.
+/// Pipeline: f64 polytope → Polytope4D::new (lossless) → ehz_capacity.
 /// The rational pipeline adds exact combinatorial data; the f64 numerics
 /// (KKT solver) see the same unit normals and heights.
 ///
@@ -1173,11 +1164,11 @@ fn capacity_agreement_simplex() {
     let kp = super::super::known_polytopes::simplex();
     let f64_result = ehz_capacity(&kp.polytope).expect("simplex should have capacity");
 
-    // Same polytope through rational pipeline
-    let rp = RationalPolytope4D::from_f64(kp.polytope.normals(), kp.polytope.heights())
-        .expect("from_f64 should succeed for simplex");
-    let rational_p = super::super::polytope::Polytope4D::from_rational(&rp)
-        .expect("from_rational should succeed for simplex");
+    // Same polytope through a fresh construction
+    let rational_p = Polytope4D::new(
+        kp.polytope.normals_f64().to_vec(),
+        kp.polytope.heights_f64().to_vec(),
+    ).expect("new should succeed for simplex");
     let exact_result = ehz_capacity(&rational_p).expect("simplex should have capacity");
 
     assert!(
@@ -1201,10 +1192,10 @@ fn capacity_agreement_hypercube() {
     let kp = super::super::known_polytopes::hypercube();
     let f64_result = ehz_capacity(&kp.polytope).expect("hypercube should have capacity");
 
-    let rp = RationalPolytope4D::from_f64(kp.polytope.normals(), kp.polytope.heights())
-        .expect("from_f64 should succeed for hypercube");
-    let rational_p = super::super::polytope::Polytope4D::from_rational(&rp)
-        .expect("from_rational should succeed for hypercube");
+    let rational_p = Polytope4D::new(
+        kp.polytope.normals_f64().to_vec(),
+        kp.polytope.heights_f64().to_vec(),
+    ).expect("new should succeed for hypercube");
     let exact_result = ehz_capacity(&rational_p).expect("hypercube should have capacity");
 
     assert!(

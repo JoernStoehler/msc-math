@@ -117,8 +117,8 @@ fn is_adjacent_cycle(perm: &[usize], adj: &[Vec<bool>]) -> bool {
 /// Returns orbits sorted by action (ascending).
 fn collect_all_orbits(polytope: &symplectic::Polytope4D) -> Vec<CollectedOrbit> {
     let f = polytope.facet_count();
-    let normals = polytope.normals();
-    let heights = polytope.heights();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
     let adj = build_directed_adjacency_matrix(polytope);
 
     let mut orbits: Vec<CollectedOrbit> = Vec::new();
@@ -240,8 +240,8 @@ fn ridge_displacement_directions(
     first_facet: usize,
     last_facet: usize,
 ) -> Vec<Vector4<f64>> {
-    let n0 = polytope.normals()[first_facet].normalize();
-    let n1 = polytope.normals()[last_facet].normalize();
+    let n0 = polytope.normals_f64()[first_facet].normalize();
+    let n1 = polytope.normals_f64()[last_facet].normalize();
 
     // Find two vectors perpendicular to both n0 and n1 via Gram-Schmidt
     // on standard basis candidates.
@@ -494,7 +494,7 @@ pub fn export(name: &str, output: &Path) -> Result<(), String> {
 
     // Reeb vectors
     let reeb_vectors: Vec<[f64; 4]> = polytope
-        .normals()
+        .normals_f64()
         .iter()
         .map(|n| v4_to_array(&reeb_trajectory::reeb_vector(n)))
         .collect();
@@ -519,13 +519,13 @@ pub fn export(name: &str, output: &Path) -> Result<(), String> {
         source: kp.source.to_string(),
         capacity,
         facet_count: polytope.facet_count(),
-        vertex_count: polytope.vertices().len(),
+        vertex_count: polytope.vertices_f64().len(),
         edge_count: skeleton.edges.len(),
         ridge_count: skeleton.ridges.len(),
-        normals: polytope.normals().iter().map(v4_to_array).collect(),
-        heights: polytope.heights().to_vec(),
+        normals: polytope.normals_f64().iter().map(v4_to_array).collect(),
+        heights: polytope.heights_f64().to_vec(),
         reeb_vectors,
-        vertices: polytope.vertices().iter().map(v4_to_array).collect(),
+        vertices: polytope.vertices_f64().iter().map(v4_to_array).collect(),
         edges: skeleton.edges.clone(),
         ridges: skeleton
             .ridges

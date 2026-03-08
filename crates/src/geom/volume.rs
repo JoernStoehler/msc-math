@@ -29,7 +29,7 @@ pub fn simplex_volume_5(
 /// # Errors
 /// Returns `QhullError` if qhull fails (typically due to numerical issues).
 pub fn volume(polytope: &Polytope4D) -> Result<f64, crate::geom::QhullError> {
-    let vertices = polytope.vertices();
+    let vertices = polytope.vertices_f64();
     crate::geom::qhull::compute_volume_qconvex(vertices)
 }
 
@@ -64,9 +64,9 @@ pub(crate) mod deprecated {
     ///
     /// This implementation uses the divergence theorem: vol(K) = (1/4) Σ h_i · vol_3D(F_i).
     pub fn volume_divergence(polytope: &Polytope4D) -> f64 {
-        let normals = polytope.normals();
-        let heights = polytope.heights();
-        let vertices = polytope.vertices();
+        let normals = polytope.normals_f64();
+        let heights = polytope.heights_f64();
+        let vertices = polytope.vertices_f64();
 
         if vertices.len() < 5 {
             return 0.0;

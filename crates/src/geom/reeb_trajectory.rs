@@ -88,8 +88,8 @@ pub fn simulate(
     max_segments: usize,
     closure_tol: f64,
 ) -> ReebTrajectory {
-    let normals = polytope.normals();
-    let heights = polytope.heights();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
     let n_facets = normals.len();
 
     let mut segments = Vec::new();
@@ -201,7 +201,7 @@ pub fn simulate(
 
 /// Compute the centroid of a facet's vertices (useful as a starting point).
 pub fn facet_centroid(polytope: &Polytope4D, skeleton: &Skeleton, facet: usize) -> Vector4<f64> {
-    let vertices = polytope.vertices();
+    let vertices = polytope.vertices_f64();
     let facet_verts: Vec<usize> = skeleton
         .vertex_facets
         .iter()

@@ -1,5 +1,4 @@
 use crate::geom::known_polytopes;
-use crate::geom::rational::RationalPolytope4D;
 use crate::kkt_rational::solve_kkt_exact;
 use num_traits::{Signed, Zero};
 
@@ -11,12 +10,10 @@ use num_traits::{Signed, Zero};
 #[test]
 fn simplex_exact_solve() {
     let simplex = known_polytopes::simplex().polytope;
-    let rational = RationalPolytope4D::from_f64(simplex.normals(), simplex.heights())
-        .expect("Simplex f64→rational conversion should succeed");
 
     // Try the identity permutation [0,1,2,3,4] (all 5 facets)
     let perm: Vec<usize> = (0..5).collect();
-    let result = solve_kkt_exact(rational.normals(), rational.heights(), &perm);
+    let result = solve_kkt_exact(simplex.dual_vertices(), &perm);
     assert!(result.is_some(), "Simplex KKT system should be solvable");
 
     let r = result.unwrap();
@@ -39,11 +36,9 @@ fn simplex_exact_vs_numerical() {
         .expect("Simplex should have capacity");
 
     // Winning perm and beta are already in natural order — pass directly.
-    let q_numerical = crate::kkt::q_from_beta(simplex.normals(), &result_f64.best_permutation, &result_f64.best_beta);
+    let q_numerical = crate::kkt::q_from_beta(simplex.normals_f64(), &result_f64.best_permutation, &result_f64.best_beta);
 
-    let rational = RationalPolytope4D::from_f64(simplex.normals(), simplex.heights())
-        .expect("Simplex f64→rational conversion should succeed");
-    let exact = solve_kkt_exact(rational.normals(), rational.heights(), &result_f64.best_permutation)
+    let exact = solve_kkt_exact(simplex.dual_vertices(), &result_f64.best_permutation)
         .expect("Exact solve should succeed on winning perm");
 
     // Q_exact and Q_numerical should agree to ~machine precision.
@@ -63,14 +58,12 @@ fn simplex_exact_vs_numerical() {
 #[test]
 fn hypercube_exact_solve() {
     let hypercube = known_polytopes::hypercube().polytope;
-    let rational = RationalPolytope4D::from_f64(hypercube.normals(), hypercube.heights())
-        .expect("Hypercube f64→rational conversion should succeed");
 
     // Try a 4-facet subset (first 4 facets).
-    // The hypercube has axis-aligned normals, so ω₀(nᵢ, nⱼ) = 0 for many pairs
-    // (e.g. normals in the same symplectic plane). Q can be zero even with non-zero β.
+    // The hypercube has axis-aligned normals, so ω₀(yᵢ, yⱼ) = 0 for many pairs
+    // (e.g. dual vertices in the same symplectic plane). Q can be zero even with non-zero β.
     let perm = vec![0, 1, 2, 3];
-    if let Some(r) = solve_kkt_exact(rational.normals(), rational.heights(), &perm) {
+    if let Some(r) = solve_kkt_exact(hypercube.dual_vertices(), &perm) {
         assert!(r.q_exact_f64.is_finite(), "Q_exact_f64 should be finite");
     }
     // It's fine if this particular perm returns None (singular) or Q = 0
@@ -83,15 +76,13 @@ fn hypercube_exact_solve() {
 #[test]
 fn singular_system_returns_none() {
     let simplex = known_polytopes::simplex().polytope;
-    let rational = RationalPolytope4D::from_f64(simplex.normals(), simplex.heights())
-        .expect("Simplex f64→rational conversion should succeed");
 
     // A 2-element permutation — very likely to be singular for the simplex
     // since m+5 = 7 > 5 = facet count, but we use valid facet indices
     let perm = vec![0, 1];
     // Whether this returns Some or None depends on the system — both are valid.
     // The key invariant is no panic.
-    let _result = solve_kkt_exact(rational.normals(), rational.heights(), &perm);
+    let _result = solve_kkt_exact(simplex.dual_vertices(), &perm);
 }
 
 /// Near-singular system (rank-deficient due to f64→rational artifacts) is handled
@@ -111,12 +102,10 @@ fn singular_system_returns_none() {
 #[test]
 fn near_singular_system_handled() {
     let pentagon = known_polytopes::hko_pentagon().polytope;
-    let rational = RationalPolytope4D::from_f64(pentagon.normals(), pentagon.heights())
-        .expect("Pentagon f64→rational conversion should succeed");
 
     // This m=7 permutation produces a near-singular KKT system.
     let perm = vec![1, 7, 2, 8, 4, 6, 5];
-    let result = solve_kkt_exact(rational.normals(), rational.heights(), &perm);
+    let result = solve_kkt_exact(pentagon.dual_vertices(), &perm);
 
     // With null-space handling, the solver may find a valid solution.
     // If it does, validate it. If it doesn't (no β > 0 in null space), that's also OK.
@@ -145,8 +134,6 @@ fn near_singular_system_handled() {
 #[test]
 fn hypercube_null_space_smoke() {
     let hypercube = known_polytopes::hypercube().polytope;
-    let rational = RationalPolytope4D::from_f64(hypercube.normals(), hypercube.heights())
-        .expect("Hypercube f64→rational conversion should succeed");
 
     // Try several permutations — some will be rank-deficient.
     // We just need to exercise the null-space path without panicking.
@@ -157,7 +144,7 @@ fn hypercube_null_space_smoke() {
     ];
 
     for perm in &perms {
-        let result = solve_kkt_exact(rational.normals(), rational.heights(), perm);
+        let result = solve_kkt_exact(hypercube.dual_vertices(), perm);
         if let Some(r) = result {
             assert!(r.q_exact_f64.is_finite(),
                 "Q should be finite for perm {:?}", perm);
@@ -184,11 +171,9 @@ fn exact_agrees_on_known_polytopes() {
             None => continue,
         };
 
-        let q_numerical = crate::kkt::q_from_beta(kp.polytope.normals(), &result_f64.best_permutation, &result_f64.best_beta);
+        let q_numerical = crate::kkt::q_from_beta(kp.polytope.normals_f64(), &result_f64.best_permutation, &result_f64.best_beta);
 
-        let rational = RationalPolytope4D::from_f64(kp.polytope.normals(), kp.polytope.heights())
-            .expect(&format!("{}: f64→rational conversion should succeed", kp.name));
-        let exact = match solve_kkt_exact(rational.normals(), rational.heights(), &result_f64.best_permutation) {
+        let exact = match solve_kkt_exact(kp.polytope.dual_vertices(), &result_f64.best_permutation) {
             Some(r) => r,
             None => {
                 eprintln!("WARNING: {} winning node is singular in exact solver", kp.name);
@@ -226,9 +211,7 @@ fn winning_beta_positive_exact() {
             None => continue,
         };
 
-        let rational = RationalPolytope4D::from_f64(kp.polytope.normals(), kp.polytope.heights())
-            .expect(&format!("{}: f64→rational conversion should succeed", kp.name));
-        let exact = match solve_kkt_exact(rational.normals(), rational.heights(), &result_f64.best_permutation) {
+        let exact = match solve_kkt_exact(kp.polytope.dual_vertices(), &result_f64.best_permutation) {
             Some(r) => r,
             None => continue,
         };

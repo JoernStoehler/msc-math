@@ -317,10 +317,10 @@ fn combinations_rec(
 
 fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let f = polytope.facet_count();
-    let normals = polytope.normals();
-    let heights = polytope.heights();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
     let mut adj = vec![vec![false; f]; f];
-    for v in polytope.vertices() {
+    for v in polytope.vertices_f64() {
         let incident: Vec<usize> = (0..f)
             .filter(|&i| (normals[i].dot(v) - heights[i]).abs() < EPS_FACET_INCIDENCE)
             .collect();
@@ -335,7 +335,7 @@ fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
 
 fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let f = polytope.facet_count();
-    let normals = polytope.normals();
+    let normals = polytope.normals_f64();
     let vertex_adj = build_adjacency_matrix(polytope);
     let mut adj = vec![vec![false; f]; f];
     for i in 0..f {
@@ -595,8 +595,8 @@ fn main() {
     let kp = known_polytopes::crosspolytope();
     let polytope = &kp.polytope;
     let f = polytope.facet_count();
-    let normals = polytope.normals();
-    let heights = polytope.heights();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
     println!("Crosspolytope: {f} facets");
 
     // 2. Volume

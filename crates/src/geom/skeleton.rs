@@ -40,18 +40,16 @@ impl Skeleton {
     /// Complexity: O(V² · F) for edges, O(F² · V) for ridges.
     /// Fine for our polytopes (V ≤ 200, F ≤ 16).
     pub fn compute(polytope: &Polytope4D) -> Self {
-        let vertices = polytope.vertices();
+        let vertices = polytope.vertices_f64();
         let f = polytope.facet_count();
 
         // Step 1: vertex-facet incidence (exact, from rational pipeline).
         // Uses exact combinatorial data instead of f64 tolerance checks.
-        let exact = polytope.exact_data();
-        let vertex_facets: Vec<Vec<usize>> = exact
-            .vertex_descriptors
-            .iter()
-            .map(|btree| btree.iter().copied().collect())
+        let incidence = polytope.incidence();
+        let v_count = incidence.nrows();
+        let vertex_facets: Vec<Vec<usize>> = (0..v_count)
+            .map(|v| (0..f).filter(|&fi| incidence[(v, fi)]).collect())
             .collect();
-        let v_count = vertex_facets.len();
 
         // Step 2: edges — vertex pairs sharing ≥3 common facets
         let mut edges = Vec::new();

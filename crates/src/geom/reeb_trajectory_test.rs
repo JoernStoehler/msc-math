@@ -71,7 +71,7 @@ fn hypercube_trajectory_visits_multiple_facets() {
     let start = facet_centroid(&kp.polytope, &skel, 0);
 
     // Verify start is on facet 0: n₀·start ≈ h₀
-    let residual = (kp.polytope.normals()[0].dot(&start) - kp.polytope.heights()[0]).abs();
+    let residual = (kp.polytope.normals_f64()[0].dot(&start) - kp.polytope.heights_f64()[0]).abs();
     assert!(residual < 1e-7, "start not on facet 0: residual {residual}");
 
     let traj = simulate(&kp.polytope, start, 0, 50, 1e-6);
@@ -90,8 +90,8 @@ fn hypercube_trajectory_visits_multiple_facets() {
 
     // Check that each segment stays on its facet
     for seg in &traj.segments {
-        let n = &kp.polytope.normals()[seg.facet];
-        let h = kp.polytope.heights()[seg.facet];
+        let n = &kp.polytope.normals_f64()[seg.facet];
+        let h = kp.polytope.heights_f64()[seg.facet];
         let start_res = (n.dot(&seg.start) - h).abs();
         let end_res = (n.dot(&seg.end) - h).abs();
         assert!(
@@ -116,7 +116,7 @@ fn trajectory_segments_are_in_reeb_direction() {
 
     for seg in &traj.segments {
         let direction = seg.end - seg.start;
-        let expected_dir = reeb_vector(&kp.polytope.normals()[seg.facet]);
+        let expected_dir = reeb_vector(&kp.polytope.normals_f64()[seg.facet]);
 
         // direction should be parallel to expected_dir (positive scalar multiple)
         if direction.norm() < 1e-12 {
@@ -166,8 +166,8 @@ fn trajectory_stays_inside_polytope() {
     ];
 
     for (name, kp) in &polytopes {
-        let normals = kp.polytope.normals();
-        let heights = kp.polytope.heights();
+        let normals = kp.polytope.normals_f64();
+        let heights = kp.polytope.heights_f64();
         let skel = Skeleton::compute(&kp.polytope);
 
         for facet in 0..normals.len() {

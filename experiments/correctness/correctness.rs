@@ -103,8 +103,8 @@ fn main() {
             test_group: "base".to_string(),
             base_index: None,
             facet_count: p.facet_count(),
-            normals: p.normals().iter().map(|n| [n[0], n[1], n[2], n[3]]).collect(),
-            heights: p.heights().to_vec(),
+            normals: p.normals_f64().iter().map(|n| [n[0], n[1], n[2], n[3]]).collect(),
+            heights: p.heights_f64().to_vec(),
             capacity_pruned: pruned,
             capacity_unpruned: Some(unpruned),
             capacity_billiard: billiard,
@@ -135,8 +135,8 @@ fn main() {
             test_group: "literature".to_string(),
             base_index: None,
             facet_count: kp.polytope.facet_count(),
-            normals: kp.polytope.normals().iter().map(|n| [n[0], n[1], n[2], n[3]]).collect(),
-            heights: kp.polytope.heights().to_vec(),
+            normals: kp.polytope.normals_f64().iter().map(|n| [n[0], n[1], n[2], n[3]]).collect(),
+            heights: kp.polytope.heights_f64().to_vec(),
             capacity_pruned: pruned,
             capacity_unpruned: None,
             capacity_billiard: billiard,
@@ -151,8 +151,8 @@ fn main() {
     for (i, p) in base_polytopes.iter().enumerate() {
         let alpha: f64 = rng.gen_range(0.5..2.0);
         let scaled = Polytope4D::new(
-            p.normals().to_vec(),
-            p.heights().iter().map(|&h| alpha * h).collect(),
+            p.normals_f64().to_vec(),
+            p.heights_f64().iter().map(|&h| alpha * h).collect(),
         ).expect("scaled");
 
         let pruned = ehz_capacity(&scaled).expect("pruned").capacity;
@@ -167,8 +167,8 @@ fn main() {
             test_group: "scaled".to_string(),
             base_index: Some(i),
             facet_count: scaled.facet_count(),
-            normals: scaled.normals().iter().map(|n| [n[0], n[1], n[2], n[3]]).collect(),
-            heights: scaled.heights().to_vec(),
+            normals: scaled.normals_f64().iter().map(|n| [n[0], n[1], n[2], n[3]]).collect(),
+            heights: scaled.heights_f64().to_vec(),
             capacity_pruned: pruned,
             capacity_unpruned: None,
             capacity_billiard: billiard,
@@ -190,8 +190,8 @@ fn main() {
             test_group: "transformed".to_string(),
             base_index: Some(i),
             facet_count: transformed.facet_count(),
-            normals: transformed.normals().iter().map(|n| [n[0], n[1], n[2], n[3]]).collect(),
-            heights: transformed.heights().to_vec(),
+            normals: transformed.normals_f64().iter().map(|n| [n[0], n[1], n[2], n[3]]).collect(),
+            heights: transformed.heights_f64().to_vec(),
             capacity_pruned: pruned,
             capacity_unpruned: None,
             capacity_billiard: None,
@@ -205,12 +205,12 @@ fn main() {
     println!("Test 5: Generating 10 perturbed polytopes (reusing base)...");
     for (i, p) in base_polytopes.iter().enumerate() {
         let epsilon = 0.01;
-        let perturbed_heights: Vec<_> = p.heights()
+        let perturbed_heights: Vec<_> = p.heights_f64()
             .iter()
             .map(|&h| h * (1.0 + epsilon * (rng.gen::<f64>() - 0.5)))
             .collect();
 
-        let perturbed = Polytope4D::new(p.normals().to_vec(), perturbed_heights)
+        let perturbed = Polytope4D::new(p.normals_f64().to_vec(), perturbed_heights)
             .expect("perturbed");
         let pruned = ehz_capacity(&perturbed).expect("pruned").capacity;
 
@@ -219,8 +219,8 @@ fn main() {
             test_group: "perturbed".to_string(),
             base_index: Some(i),
             facet_count: perturbed.facet_count(),
-            normals: perturbed.normals().iter().map(|n| [n[0], n[1], n[2], n[3]]).collect(),
-            heights: perturbed.heights().to_vec(),
+            normals: perturbed.normals_f64().iter().map(|n| [n[0], n[1], n[2], n[3]]).collect(),
+            heights: perturbed.heights_f64().to_vec(),
             capacity_pruned: pruned,
             capacity_unpruned: None,
             capacity_billiard: None,
@@ -252,11 +252,11 @@ fn main() {
 
 fn apply_symplectomorphism(p: &Polytope4D, m: &Matrix4<f64>) -> Polytope4D {
     let m_inv_t = m.transpose().try_inverse().expect("invertible");
-    let normals: Vec<_> = p.normals().iter().map(|n| {
+    let normals: Vec<_> = p.normals_f64().iter().map(|n| {
         let n_raw = m_inv_t * n;
         n_raw / n_raw.norm()
     }).collect();
-    let heights: Vec<_> = p.normals().iter().zip(p.heights().iter()).map(|(n, &h)| {
+    let heights: Vec<_> = p.normals_f64().iter().zip(p.heights_f64().iter()).map(|(n, &h)| {
         let n_raw = m_inv_t * n;
         h / n_raw.norm()
     }).collect();
@@ -430,8 +430,8 @@ mod tests {
                 ).expect("p2");
 
                 let mut alpha_max = f64::INFINITY;
-                for v in p1.vertices() {
-                    for (n, &h) in p2.normals().iter().zip(p2.heights().iter()) {
+                for v in p1.vertices_f64() {
+                    for (n, &h) in p2.normals_f64().iter().zip(p2.heights_f64().iter()) {
                         let dot = n.dot(v);
                         if dot > 1e-10 {
                             alpha_max = alpha_max.min(h / dot);

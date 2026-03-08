@@ -13,8 +13,8 @@ use crate::kkt::{build_kkt_system, solve_kkt, EPS_BETA_POSITIVE, EPS_Q_POSITIVE}
 fn pentagon_sigmas() -> (Vec<Vector4<f64>>, Vec<f64>, Vec<Vec<usize>>) {
     let kp = known_polytopes::hko_pentagon();
     let polytope = &kp.polytope;
-    let normals = polytope.normals().to_vec();
-    let heights = polytope.heights().to_vec();
+    let normals = polytope.normals_f64().to_vec();
+    let heights = polytope.heights_f64().to_vec();
 
     let classification = classify_facets(polytope).unwrap();
     let adj = crate::algorithms::hk2017::build_adjacency_matrix(polytope);

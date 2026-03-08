@@ -1,7 +1,7 @@
 /// Qhull subprocess wrapper for volume computation via `qconvex`.
 ///
 /// Vertex enumeration is handled by the exact rational pipeline
-/// ([`RationalPolytope4D`](super::rational::RationalPolytope4D)).
+/// (see `rational.rs`).
 /// This module only provides volume computation via the `qconvex FA` command.
 use nalgebra::Vector4;
 use std::io::Write;

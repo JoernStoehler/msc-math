@@ -561,8 +561,8 @@ fn eigen_gap_ratio_44_degenerate() {
     let (qn, qh) = regular_polygon_2d(4, 1.0);
     let (pn, ph) = regular_polygon_2d(4, 1.0);
     let polytope = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
-    let normals = polytope.normals();
-    let heights = polytope.heights();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
 
     // The optimal orbit at θ=0° uses facets [0,4,2,6] (alternating q/p)
     let perm = vec![0, 4, 2, 6];
@@ -634,8 +634,8 @@ fn eigen_gap_ratio_44_theta43() {
     let (pn_base, ph_base) = regular_polygon_2d(4, 1.0);
     let (pn, ph) = rotate_polygon_2d(&pn_base, &ph_base, theta);
     let polytope = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
-    let normals = polytope.normals();
-    let heights = polytope.heights();
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
 
     // This permutation gave the 594x gap in the original diagnostic
     let perm = vec![1, 0, 6, 3, 2, 4];

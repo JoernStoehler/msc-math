@@ -4,7 +4,7 @@
 /// Called from `Polytope4D::new()` as a fast-fail pre-filter before the
 /// expensive rational pipeline (which also checks boundedness exactly).
 ///
-/// Irredundancy is checked exactly by `RationalPolytope4D::new()` in rational.rs.
+/// Irredundancy is checked exactly by the rational pipeline in rational.rs.
 use crate::geom::cross_product::cross_product_4d;
 use nalgebra::Vector4;
 
