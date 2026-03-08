@@ -188,7 +188,7 @@ fn exact_comparison(polytope: &Polytope4D) -> Option<ExactResult> {
     let heights = polytope.heights();
 
     // Solve the KKT system exactly via the library's rational solver.
-    let exact_result = kkt_rational::solve_kkt_exact(normals, heights, perm)?;
+    let exact_result = kkt_rational::solve_kkt_exact_f64(normals, heights, perm)?;
     let q_exact_f64 = exact_result.q_exact_f64;
 
     // Compute numerical Q̃ and E (using the eigendecomposition path)
