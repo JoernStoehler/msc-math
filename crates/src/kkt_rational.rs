@@ -35,14 +35,10 @@
 /// [ N^T |  0   |  0 ] [ μ ] = [ 0 ]
 /// [ η^T |  0   |  0 ] [ ξ ]   [ 1 ]
 /// ```
-/// Entries are exact rationals — either natively (from `RationalPolytope4D`) or
-/// converted losslessly from f64 via [`solve_kkt_exact_f64`].
-use nalgebra::Vector4;
+/// Entries are exact rationals from `RationalPolytope4D`.
 use num_bigint::BigInt;
 use num_rational::BigRational;
 use num_traits::{One, Signed, ToPrimitive, Zero};
-
-use crate::geom::rational::f64_to_rational;
 
 /// Result of an exact KKT solve over BigRational.
 #[derive(Clone, Debug)]
@@ -67,7 +63,7 @@ pub struct ExactKktResult {
 ///
 /// # Arguments
 ///
-/// - `normals`: exact rational normal vectors (not necessarily unit).
+/// - `normals`: exact rational normal vectors (from `RationalPolytope4D`).
 /// - `heights`: exact rational positive heights.
 /// - `perm`: facet index sequence defining the (S,σ) node.
 pub fn solve_kkt_exact(
@@ -116,28 +112,6 @@ pub fn solve_kkt_exact(
             })
         }
     }
-}
-
-/// Convenience wrapper: solve KKT exactly from f64 inputs.
-///
-/// Converts f64 normals and heights to exact BigRational via [`f64_to_rational`],
-/// then calls [`solve_kkt_exact`]. Every finite f64 is an exact rational (m·2^e),
-/// so the conversion is lossless.
-///
-/// Note: the resulting "exact" answer is exact arithmetic on the f64 values,
-/// which are themselves approximate (e.g. unit normals involve sqrt). For truly
-/// exact results, pass native BigRational data from `RationalPolytope4D::new()`.
-pub fn solve_kkt_exact_f64(
-    normals: &[Vector4<f64>],
-    heights: &[f64],
-    perm: &[usize],
-) -> Option<ExactKktResult> {
-    let rat_normals: Vec<[BigRational; 4]> = normals
-        .iter()
-        .map(|n| std::array::from_fn(|i| f64_to_rational(n[i])))
-        .collect();
-    let rat_heights: Vec<BigRational> = heights.iter().map(|&h| f64_to_rational(h)).collect();
-    solve_kkt_exact(&rat_normals, &rat_heights, perm)
 }
 
 // ── KKT matrix construction ──────────────────────────────────────────────
@@ -319,6 +293,8 @@ fn gauss_solve_with_null_space(
     // Consistency check: rows below rank should have near-zero RHS.
     // With exact inputs, inconsistency means nonzero RHS on a zero row.
     // With f64-derived inputs, small residuals from skipped pivots are tolerated.
+    // Floor of 1e-10: when threshold is tiny (small matrix entries), we still need
+    // a reasonable absolute floor to avoid false inconsistency from pivot-skip artifacts.
     for aug_row in aug.iter().take(n).skip(rank) {
         let rhs_abs = rational_abs_f64(&aug_row[n]);
         if rhs_abs > threshold.max(1e-10) {
@@ -457,7 +433,9 @@ fn find_positive_beta_rational_1d(
 /// For each iteration: find the worst β_j, pick the null-space direction with
 /// the largest component at index j, and step to push β_j positive.
 ///
-/// Returns `None` if no combination of null-space directions makes all β_i > 0.
+/// Returns `None` if the heuristic fails to find β > 0 within the iteration limit.
+/// Note: `None` does NOT certify infeasibility — the heuristic may miss a valid solution.
+/// The 1D case ([`find_positive_beta_rational_1d`]) is certifying; this nD case is not.
 fn find_positive_beta_rational_nd(
     beta0: &[BigRational],
     null_vecs: &[Vec<BigRational>],
@@ -466,6 +444,9 @@ fn find_positive_beta_rational_nd(
     let k = null_vecs.len();
     let mut alpha = vec![BigRational::zero(); k];
 
+    // Iteration limit: coordinate ascent on k null-space directions over m components.
+    // In practice k ≤ 2 for f64-derived KKT systems (rank deficiency from symplectic
+    // degeneracies), so convergence is fast. 100 iterations is generous.
     for _iter in 0..100 {
         // Current β = β₀ + Σ αᵢ vᵢ
         let beta: Vec<BigRational> = (0..m)
@@ -503,7 +484,9 @@ fn find_positive_beta_rational_nd(
         };
 
         // Step: push β[worst_j] to a small positive target.
-        // target = 1/1000 (arbitrary small positive rational)
+        // 1/1000 chosen to be safely above zero without overshooting into other
+        // components' negative territory. The exact value doesn't matter much —
+        // any small positive rational works; this just controls the step size.
         let target =
             BigRational::new(BigInt::from(1), BigInt::from(1000));
         let step = (&target - worst_val) / &null_vecs[dir][worst_j];
