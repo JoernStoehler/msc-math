@@ -537,9 +537,10 @@ fn find_positive_beta_rational(
 
 // ── Q computation ────────────────────────────────────────────────────────
 
-/// Compute exact Q(β) = Σ_{i>j} β_i β_j ω₀(n_{σ(j)}, n_{σ(i)}) over BigRational.
+/// Compute exact Q(β) = Σ_{i>j} β_i β_j ω₀(y_{σ(j)}, y_{σ(i)}) over BigRational.
 ///
-/// Mirrors [`crate::kkt::q_from_beta`] exactly, but in exact arithmetic.
+/// Same formula as [`crate::kkt::q_from_beta`] but in exact arithmetic over Q,
+/// using dual vertices y_i instead of unit normals.
 /// Q > 0 for permutations in positive Reeb direction.
 fn q_from_beta_rational(
     dual_vertices: &[[BigRational; 4]],

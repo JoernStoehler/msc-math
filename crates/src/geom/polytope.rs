@@ -37,6 +37,9 @@ const EPS_UNIT: f64 = 1e-9;
 ///
 /// **Why 1e-8:** Slightly looser than EPS_UNIT (1e-9) because two normals from
 /// different constructions may accumulate rounding independently.
+/// Tight enough to catch copy-paste duplicates (~0 difference), loose enough to
+/// allow normals from independent trigonometric computations differing by O(1e-10).
+/// Re-validate if EPS_UNIT changes or construction methods change.
 const EPS_DUPLICATE_NORMAL: f64 = 1e-8;
 
 #[derive(Clone, Debug)]
@@ -255,6 +258,9 @@ impl Polytope4D {
                 super::rational::rational_to_f64(&y[3]),
             );
             let norm = y_f64.norm();
+            // Rational norm is nonzero (ZeroDualVertex checked earlier in pipeline),
+            // but f64 may underflow for astronomically small rational vectors.
+            // 1e-15 ≈ 4500× machine epsilon; catches practical underflow.
             if norm < 1e-15 {
                 return Err(ConstructionError::F64Conversion(format!(
                     "dual vertex[{i}] has near-zero f64 norm: {norm}"
@@ -291,7 +297,7 @@ impl Polytope4D {
         denominator: u64,
     ) -> Result<Self, ConstructionError> {
         use num_bigint::BigInt;
-        debug_assert!(
+        assert!(
             denominator <= 1u64 << 52,
             "denominator {denominator} exceeds 2^52; round() as i64 may overflow"
         );
