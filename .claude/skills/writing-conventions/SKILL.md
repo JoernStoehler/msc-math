@@ -103,6 +103,35 @@ Using 50 extra words to prevent a misunderstanding is always worth it.
 - Body: loaded on demand. Organize for the agent who loaded the skill — they already know they need it.
 - SKILL.md writing/editing is usually initiated or approved by Jörn — there's a natural moment to load this skill.
 
+## Optimizing rules that don't work
+
+When agents don't follow a rule:
+1. **Notice** when a different behavior would have been better — not just fixing failures, but also noticing missed opportunities for improvement.
+2. **Instruct** agents to do that different behavior.
+3. **If that's not working:** optimize what behavior to aim for. The rule may be fighting agent defaults too hard. Often a different behavior that's closer to defaults achieves most of the value.
+4. **Refactor the project** layout or state so the desired behavior becomes the natural default. Agents can often do this refactoring cheaply.
+
+Steps 3 and 4 work together as an optimization loop, not an escalation ladder. Three dimensions are optimized jointly:
+- (a) The original target behavior
+- (b) Related workflows that interact with this behavior
+- (c) Project layout and state
+
+Optimizations are not always local fine-tuning — they can be wholesale switches to entirely different optima in how-to-run-the-project space. No specific optimization algorithm is recommended; trial and error combined with detailed feedback/postmortems works.
+
+## Why word-choice sensitivity matters
+
+Jörn communicates via subtle word choices that encode real distinctions. Agents trained on natural language tend to normalize variations ("not quite" → "yes but also"), losing the correction's content. This is a known failure mode in human-agent communication: the human's correction gets paraphrased back into the agent's original framing, and the distinction is lost.
+
+The CLAUDE.md instruction tells agents to adopt Jörn's exact phrasing rather than paraphrasing, because the cost of preserving exact wording is zero but the cost of losing a distinction compounds across the session.
+
+## Why plan file maintenance matters
+
+Context compaction is lossy. The compaction summary loses scheduled items (most dangerous), context for upcoming items (moderately dangerous), and completed items (least dangerous). The plan file is the only persistent memory that survives compaction without loss.
+
+This is a rule, not a suggestion — Jörn has told multiple agents about this. Agents that don't maintain the plan file lose track of scheduled work after compaction, which wastes Jörn's time re-explaining what needs to be done.
+
+The danger ranking (scheduled > context > completed) reflects the asymmetry: completed items are already done and only matter for final reporting, while forgotten scheduled items never get done at all.
+
 ## Writing agent prompts (.claude/agents/*.md)
 
 - Agent prompts 1:1 copy relevant CLAUDE.md sections (not summaries, not references)
