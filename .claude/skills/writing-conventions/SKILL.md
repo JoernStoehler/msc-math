@@ -132,6 +132,62 @@ This is a rule, not a suggestion — Jörn has told multiple agents about this. 
 
 The danger ranking (scheduled > context > completed) reflects the asymmetry: completed items are already done and only matter for final reporting, while forgotten scheduled items never get done at all.
 
+## Prompting modern models (reported experimental result, 2026)
+
+Most prompt engineering advice — even from Anthropic 2026 — is outdated or has always been cargo culting. Jörn reports no noticeable differences from instruction phrasing variations with current models. What matters:
+- Provide enough context
+- Write clearly and unambiguously
+- Use formats agents were trained on (markdown, code blocks, bullet lists) so they process with low cognitive load
+
+This means: when writing CLAUDE.md, SKILL.md, or agent prompts, don't waste effort on "prompt engineering tricks." Focus on clarity, completeness, and unambiguity — which are already the style rules above.
+
+## Agent quality near context limits (reported observation, 2026)
+
+Agents get unfocused and impatient as sessions approach 200k tokens (near compaction). Basic operations (plan execution, coding) remain fine, but decision-making quality degrades — agents make bad decisions they wouldn't make at lower context sizes. Jörn sometimes auto-triggers compaction earlier to avoid this.
+
+Latency also increases: 20k-context agents are fast, 200k-context agents are roughly 10x slower. Agent time is cheap so latency doesn't matter much, but the quality degradation does.
+
+## HTML comments in CLAUDE.md
+
+CLAUDE.md supports `<!-- comments -->` that are NOT auto-injected into agent context but ARE visible via Read/Edit. Since Edit requires a prior Read, agents editing CLAUDE.md will always see comments.
+
+**Good for** (editor-facing metadata):
+- Maintenance notes next to rules ("added after incident X")
+- Historical context only editors need
+- Inline rationale too small to justify loading this skill
+
+**Not good for:**
+- `<copied-to>` tags — these serve dual purpose (editors need them for sync, all agents need them to know subagent coverage). Keep visible.
+- Anything all agents need to follow — must be in visible text.
+
+## What worked and what didn't (CLAUDE.md v1, assessed March 2026)
+
+Empirical observations from ~5 months of use. Input to the optimization loop.
+
+**Worked well:**
+- **Mathematical context** — useful across many agent tasks, even though math-heavy agents learn details from thesis/code anyway
+- **Multi-Language Codebase** — worked great; possibly slightly verbose (says things that are default behavior) but not worth risking degradation by trimming
+- **Git conventions** — fixed bad behavior (stale origin/main, wrong diff syntax)
+- **Subagent usage** — after explaining and instructing agents to use subagents, they use them more usefully than before. Explicit instruction of novel behavior works.
+- **Topic sections in main CLAUDE.md** — tried moving Thesis Writing, Rust Library, etc. to skills-only, review-agents-only, and per-folder CLAUDE.md files. All insufficient — agents forgot or didn't load them. These must stay in main CLAUDE.md.
+- **Review workflow (short)** — short enough to keep in CLAUDE.md; risk of agents forgetting to look up a review skill is too high
+- **Environment** — same as topic sections: didn't work as skill-only
+
+**Caused problems:**
+- **Roles section** — complex, convoluted, caused confusion/distraction. Taxonomic format ("here's what Jörn does, here's what Claude does") doesn't help agents at decision moments. Needs to be distributed into per-topic behavioral modifications that are clear/simple/actionable.
+- **Decision authority** — same problem as Roles; needs redistribution
+- **Session Workflow scope/plan separation** — agents jump into plan too fast, rarely do scope phase separately. Probably should merge scope+plan and ensure agents iterate the plan while discussing scope with Jörn.
+
+**Better as SKILL.md than CLAUDE.md:**
+- **Post-session reflection** — permanently active list of things to watch out for is too much; better as a skill loaded at session end. "Blameless postmortem" is a more accurate term.
+- **Plan workflow** — useful but most agents already use it somewhat; might work as skill (Jörn unsure)
+- **Meta-rules meta-knowledge** ("why rules get ignored") — the meta-knowledge itself can move to skill; the actionable instructions (core rule, citation verification, subagent enforcement) stay in CLAUDE.md
+
+**Structural insight for v2:**
+- Reorder topic sections so each review agent quotes one contiguous block from CLAUDE.md = 1:1 mapping to agent prompt body
+- Specialize subsections to their topic: "writing clearly for Rust comments" > "writing clearly in general" — more actionable and specific
+- Redundancy between sections is OK — doesn't increase instruction complexity (behavior modifications), only token count. Benefits: clarity, simpler subagent mapping, easier maintenance, allows specialization.
+
 ## Writing agent prompts (.claude/agents/*.md)
 
 - Agent prompts 1:1 copy relevant CLAUDE.md sections (not summaries, not references)

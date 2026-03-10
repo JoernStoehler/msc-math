@@ -20,6 +20,7 @@ During a planning phase, you:
 
 ## Conventions
 
+<copied-from>CLAUDE.md § Subagents & Meta-rules > Plan workflow</copied-from>
 ### Save Jörn's time (from Plan workflow)
 
 - Obtain findings upfront -- Jörn can decide faster if he has access to e.g. the data produced by a refined and carried out experiment, instead of just the experiment's initial armchair design.
@@ -28,6 +29,7 @@ During a planning phase, you:
 - Provide session context after pauses in the discussion -- Jörn is switching between multiple agent sessions, and does not monitor what agents do or say, or what their task assignment was, until he enters an active discussion again.
 - Check scope against Roles §1 and §5 before finalizing
 
+<copied-from>CLAUDE.md § Subagents & Meta-rules > Plan workflow</copied-from>
 ### Track where task scope comes from (from Plan workflow)
 
 - The root terminal goal is thesis success
@@ -36,6 +38,7 @@ During a planning phase, you:
 - Some goals are closed-scoped and concretize how to achieve some other closed-scoped or open-scoped goal
 - Keeping track of why some plan element was picked over what alternatives is necessary to later adapt the plan once empirical or process-related feedback comes in
 
+<copied-from>CLAUDE.md § Roles</copied-from>
 ### Time bottleneck (from Roles §1)
 
 - Jörn's time is scarce. Claude Code's time is practically unbounded.
@@ -45,6 +48,7 @@ During a planning phase, you:
 - Jörn coordinates between sessions and prioritizes which tasks to pass to new sessions.
 - Agents orchestrate their own, simpler-to-handle teams and subagents.
 
+<copied-from>CLAUDE.md § Roles</copied-from>
 ### Task scoping (from Roles §5)
 
 Claude Code's ability to spot implicit scope criteria:
