@@ -100,8 +100,6 @@ Each topic section below mentions its relevant review subagent(s) for focused ch
 
 ## Session Workflow
 
-
-
 Every agent session owns a git worktree. Subagents and teams work in the same worktree.
 
 **Time economics:** Jörn's time is scarce; agent time is practically free ($0/h). Plans minimize Jörn's workload, even at vastly higher total agent work. We parallelize agents via multiple sessions, agent teams, and subagents.
@@ -157,8 +155,6 @@ Agent time is cheap. Use it aggressively:
 - **Revert plan required:** For all these patterns, there must be a plan ahead-of-time for how to revert an agent's work. This is why we use git worktrees and why only Jörn merges to `main`.
 
 ## Subagents & Review
-
-
 
 Spawn a subagent when a subtask can run in parallel, needs isolated context, or benefits from focused work (e.g., literature extraction, code review, exploratory investigation).
 
@@ -674,13 +670,34 @@ No hardcoded paths outside `REPO_ROOT`.
 
 **Dependencies:** Listed in `experiments/requirements.txt`; install with `pip install -r experiments/requirements.txt`. Use plain Python with standard data science libraries (numpy, pandas, matplotlib, scipy). No custom framework.
 
-### Figure sizing
+### Figures and tables
+
+This section is copied to `.claude/agents/{review-python-style.md}`.
 
 All figure formatting is handled in Python. LaTeX is a 1:1 pass-through (`\includegraphics{file.png}`, no `width=`/`scale=`).
 
+**Sizing:**
 - `figsize` = the physical size in the printed PDF. `\textwidth` ≈ 5.4" (A4, 12pt article, default margins).
 - `bbox_inches='tight'` expands the output beyond `figsize` to fit labels. Verify the output PNG width fits.
 - Multi-panel figures at 5.4" are often too cramped. Prefer separate figures over wider canvases.
+- Multi-panel figures: use consistent axis scales where cross-panel comparison is intended.
+- `savefig(dpi=150)` minimum for print quality.
+
+**Visual clarity:**
+- Use markers (not just color) for grayscale compatibility in scatter/line plots.
+- Avoid red-green only distinctions; use colorblind-friendly palettes.
+- Consistent colors for the same data categories across all figures in the same experiment.
+- Axis labels must include the quantity name (not just the symbol), or be self-evident from context.
+
+**Captions:**
+- Captions state observations (what the figure shows) and comparisons (relating to an explicit reference).
+- Comparisons require an explicit target ("than general polytopes", "relative to the diagonal").
+- Interpretations and speculation belong in body text, NOT in captions.
+
+**Tables (LaTeX):**
+- Use `booktabs` (`\toprule`/`\midrule`/`\bottomrule`), not `\hline`.
+- Table body text must not go below `\small`; no `\scriptsize` or `\tiny`.
+- Column headers must have units or be self-explanatory. Numbers: consistent decimal places within each column.
 
 ### Pipeline direction
 
