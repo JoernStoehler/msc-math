@@ -89,15 +89,7 @@ When reviewing `.tex` files that reference figures:
 - Detection: grep captions for "suggests", "indicates", "means that", "because", "implies", "consistent with", "due to" — each is a potential violation
 - Comparisons require an explicit target ("than general polytopes", "relative to the diagonal")
 
-### 12. Table quality (in .tex files)
-
-- No `\scriptsize` or `\tiny` inside table environments
-- Use `booktabs` (`\toprule`/`\midrule`/`\bottomrule`), not `\hline`
-- Tables with >6 columns at `\textwidth` are likely cramped (flag as warning)
-- Column headers must have units or be self-explanatory
-- Numbers: consistent decimal places within each column
-
-### 13. Visual inspection
+### 12. Visual inspection
 
 - Read each `.png` file and check:
   - Labels are readable (not clipped, not overlapping)

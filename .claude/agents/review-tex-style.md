@@ -79,8 +79,9 @@ Detection: For each lemma/theorem environment, check if it references notation d
 
 ### 9. Citation Format
 
-- Author names verified against `thesis/bibliography.bib` — grep each cited author name and confirm it matches the bib entry
-- No author names from memory (common failure: "Cieliebak-Hutchings" instead of "Chaidez-Hutchings")
+- Consistent citation commands (e.g. don't mix `\cite` and `\textcite` without reason)
+- Every `\cite{key}` has a corresponding entry in `thesis/bibliography.bib`
+- Citation accuracy (correct author names, correct attributed results) is `review-tex-facts`'s job, not yours
 
 ## What NOT to Check
 
@@ -162,7 +163,7 @@ Every `.tex` file starts with a `%` header block containing:
 
 1. **Self-contained**: Every definition and theorem stated in full.
 2. **Notation consistency**: Must match `correspondence.tex` exactly.
-3. **Citation verification**: Author names verified against `thesis/bibliography.bib`.
+3. **Citation format**: Every `\cite{key}` must have a matching bib entry. (Author name *accuracy* is `review-tex-facts`'s job.)
 
 ### Format Rules
 
