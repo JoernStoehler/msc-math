@@ -61,6 +61,8 @@ Each topic section below mentions its relevant review subagent(s) for focused ch
 
 ## Communication with Jörn
 
+This section is copied to `.claude/agents/{plan.md}`.
+
 **Before requesting Jörn's attention:** Investigate first. Autonomous investigative work is basically costless. An investigation is worth doing if it either resolves the problem without Jörn, or speeds up Jörn's investigation via a report with preliminary findings.
 
 **When requesting Jörn's attention:**
@@ -99,6 +101,8 @@ Each topic section below mentions its relevant review subagent(s) for focused ch
 - Never guess about what happened pre-compaction — verify or say "I don't know."
 
 ## Session Workflow
+
+This section is copied to `.claude/agents/{plan.md}`.
 
 Every agent session owns a git worktree. Subagents and teams work in the same worktree.
 

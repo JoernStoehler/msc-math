@@ -157,7 +157,7 @@ CLAUDE.md supports `<!-- comments -->` that are NOT auto-injected into agent con
 - Inline rationale too small to justify loading this skill
 
 **Not good for:**
-- `<copied-to>` tags — these serve dual purpose (editors need them for sync, all agents need them to know subagent coverage). Keep visible.
+- "This section is copied to" markers — these serve dual purpose (editors need them for sync, all agents need them to know subagent coverage). Keep visible.
 - Anything all agents need to follow — must be in visible text.
 
 ## Decision records (failure modes that shaped CLAUDE.md rules)

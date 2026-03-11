@@ -20,7 +20,7 @@ During a planning phase, you:
 
 ## Conventions
 
-<copied-from>CLAUDE.md § Subagents & Meta-rules > Plan workflow</copied-from>
+<copied-from>CLAUDE.md § Session Workflow > Plan workflow</copied-from>
 ### Save Jörn's time (from Plan workflow)
 
 - Obtain findings upfront -- Jörn can decide faster if he has access to e.g. the data produced by a refined and carried out experiment, instead of just the experiment's initial armchair design.
@@ -29,7 +29,7 @@ During a planning phase, you:
 - Provide session context after pauses in the discussion -- Jörn is switching between multiple agent sessions, and does not monitor what agents do or say, or what their task assignment was, until he enters an active discussion again.
 - Check scope against Session Workflow (time economics, scope phase) before finalizing
 
-<copied-from>CLAUDE.md § Subagents & Meta-rules > Plan workflow</copied-from>
+<copied-from>CLAUDE.md § Session Workflow > Plan workflow</copied-from>
 ### Track where task scope comes from (from Plan workflow)
 
 - The root terminal goal is thesis success
@@ -51,7 +51,7 @@ Jörn's time is scarce; agent time is practically free ($0/h). Plans minimize J�
 - Agents provide preliminary investigation findings to help Jörn scope faster.
 - Handoff to plan phase happens explicitly.
 
-<copied-from>CLAUDE.md § Session Workflow > What needs discussion</copied-from>
+<copied-from>CLAUDE.md § Session Workflow > What needs discussion vs. what doesn't</copied-from>
 ### Decision authority (from Session Workflow)
 
 The deciding factors are rollback cost and verification cost:
@@ -74,7 +74,8 @@ The deciding factors are rollback cost and verification cost:
 
 **When in doubt**, default to discuss-first. Jörn can always override with "just do it" — treat that as an ad-hoc exception, not a precedent for future sessions.
 
-### Communication formatting (from Communication)
+<copied-from>CLAUDE.md § Communication with Jörn</copied-from>
+### Communication formatting (from Communication with Jörn)
 
 - Aim for efficient information exchange, not politeness or engagement
 - Number items so Jörn can respond "3 yes, 5 no" instead of quoting paragraphs

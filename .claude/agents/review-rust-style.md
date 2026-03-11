@@ -91,7 +91,7 @@ Brief list of conventions checked with no issues found.
 
 ## Conventions from CLAUDE.md
 
-<copied-from>CLAUDE.md § Rust Library</copied-from>
+<copied-from>CLAUDE.md § Rust Library (style-relevant subsections)</copied-from>
 
 **Invariant:** `cargo test` passes from `crates/` with zero failures.
 

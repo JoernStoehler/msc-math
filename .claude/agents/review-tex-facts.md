@@ -74,7 +74,7 @@ Never write a factual claim without verifying it against evidence in the same se
 
 5. **Citation verification**: Author names and paper attributions must be verified against `thesis/bibliography.bib` or `papers/`. Never produce author names from memory.
 
-<copied-from>CLAUDE.md § Thesis Writing > Comment Conventions</copied-from>
+<copied-from>CLAUDE.md § Thesis Writing > Comment Conventions (excerpt: unverifiable markers)</copied-from>
 ### Unverifiable content markers
 
 When verification is impossible, content must be marked:

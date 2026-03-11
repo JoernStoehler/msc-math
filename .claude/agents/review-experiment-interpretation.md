@@ -90,7 +90,7 @@ Brief list of paragraphs checked with no issues found.
 
 ## Conventions from CLAUDE.md
 
-<copied-from>CLAUDE.md § Experiment Writing</copied-from>
+<copied-from>CLAUDE.md § Experiment Writing (interpretation-relevant rules)</copied-from>
 
 - **Write up what's there — nothing more, nothing less.** Report what the data shows. No invented interpretations, no omitted patterns, no editorializing. Facts are facts, correlations are correlations, unknowns are unknowns. Speculation must be explicitly labeled as interpretation.
 - Every factual claim must be verified against the actual data (JSONL) in the same session
