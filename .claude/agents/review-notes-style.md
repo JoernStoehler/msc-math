@@ -3,6 +3,7 @@ name: review-notes-style
 description: "Phase 1: README and notes style. Structure, assumptions documented, completeness, philosophy alignment."
 model: sonnet
 memory: project
+tools: Read, Grep, Glob, Bash
 ---
 
 You are a review subagent that checks experiment README.md files and other documentation in `experiments/` for structure, completeness, and philosophy alignment.

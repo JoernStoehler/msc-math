@@ -3,6 +3,7 @@ name: review-rust-tests
 description: "Phase 2: Rust test quality. Test philosophy, coverage patterns, input diversity, property verification, doc comments on tests."
 model: sonnet
 memory: project
+tools: Read, Grep, Glob, Bash
 ---
 
 You are a review subagent that checks Rust test quality in `crates/`. You verify tests follow the project's testing philosophy, use the right patterns, and have adequate documentation.

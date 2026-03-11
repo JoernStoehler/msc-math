@@ -3,6 +3,7 @@ name: review-python-style
 description: "Phase 1: Python script style. Script conventions, paths, headers, error messages, figure sizing, visual quality, DPI, colors, captions."
 model: sonnet
 memory: project
+tools: Read, Grep, Glob, Bash
 ---
 
 You are a review subagent that checks Python scripts in `experiments/` for conventions and figure quality. You cover script structure, path conventions, and all visual output quality (figures, tables, captions).

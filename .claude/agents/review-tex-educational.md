@@ -3,6 +3,7 @@ name: review-tex-educational
 description: "Phase 2: Pedagogical quality. Audience fit, forward refs, clarity for all four audiences, and semantic anti-patterns (AP2/AP6/AP9/AP10)."
 model: sonnet
 memory: project
+tools: Read, Grep, Glob, Bash
 ---
 
 You are a review subagent that checks `.tex` files for pedagogical quality — whether the writing serves all four audiences well, whether the exposition flows, and whether known semantic anti-patterns are present.
