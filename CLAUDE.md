@@ -13,7 +13,7 @@ This repo is making progress towards a completed master thesis with:
 - A high-performance stable Rust library for symplectic geometry on polytopes in `crates/`
 - A reproducible experiment pipeline in `experiments/`
 
-## Mathematical context
+## Mathematical Context
 
 The thesis is motivated by a paper from Haim-Kislev and Ostrover 2024, which disproved Viterbo's conjecture in dimension 4 via an explicit counterexample polytope. The conjecture was until then a famous open problem in symplectic geometry.
 
@@ -33,171 +33,98 @@ Branches often touch multiple languages simultaneously:
 - **Markdown** (various): agent-facing writeups, including conventions, rules, workflows, documentation, takeaways, experiment ideas, data interpretation, reports and learnings, and much more.
 - **Json/Jsonl/Csv** (experiments/): for datasets that are consumed by and produced by experiments. It's just a more convenient data format than binary formats, e.g. easier git diffs.
 
-Each topic section below mentions its review subagent(s) for focused checklists.
+Each topic section below mentions its relevant review subagent(s) for focused checklists.
 
-## About This File
+## Knowledge Placement
 
-CLAUDE.md is the single conventions file read by every agent. It follows these structural rules:
+**When you produce new knowledge** (findings, conventions, docs, comments):
+- Tied to a specific file or function? → code comment, doc comment, or file header. This is the natural location agents look at when working with that code.
+- Applies to most agents? → CLAUDE.md.
+- Applies to a minority of agents? → `.claude/skills/*/SKILL.md` (progressive disclosure: name + description always loaded, body on demand).
+- Project management (tasks, ideas, deferred work, constraints)? → `TASKS.md` (root). Grows stale; that's fine.
+- Session learning or cross-session state? → `MEMORY.md`. Migrate stable entries to CLAUDE.md or standard locations.
+- Don't dump unrelated knowledge into README.md files. Each README covers its own directory's purpose.
 
-- Organized by **topic** (kind of work). Each topic mentions its relevant review subagent(s).
-- Sections should be **self-contained** — minimize cross-references between sections.
-- **Redundancy is cheap** to read (extra tokens cost nothing) but every duplicate is a maintenance point when editing.
-- Agents make **small edits to individual sections**, never full rewrites — structure accordingly.
-- **Stable conventions** (unlikely to change) may be duplicated across topics for self-containedness.
-- **Volatile conventions** (evolving) stay in one place to avoid stale duplicates.
-- When editing a section, check for duplicates and cross-references that may need updating.
-- **Subagent prompt architecture:** Subagent definitions live in `.claude/agents/`. Each agent's markdown body is its system prompt — the agent sees this prompt plus CLAUDE.md, so conventions appear twice. This is intentional: agents reliably follow inline instructions but unreliably follow "go read file X." Therefore:
-  - Agent prompts **1:1 copy** relevant CLAUDE.md sections (not summaries, not references)
-  - Agent-specific content (task description, output format, detection rules) goes at the top
-  - CLAUDE.md copies go below, clearly labeled with their source section name
-  - **Cross-reference tags** for maintainability:
-    - In CLAUDE.md: `<copied-to>agent1, agent2</copied-to>` after section headers lists which agents copy this section
-    - In agent prompts: `<copied-from>CLAUDE.md § Section Name</copied-from>` before copied blocks marks the source
-    - When editing a CLAUDE.md section, read its `<copied-to>` tag and update all listed agents
-    - When editing an agent's copied block, check `<copied-from>` to verify it still matches CLAUDE.md
-  - The maintenance cost of keeping copies in sync is accepted as the price of reliable rule-following
+**When you need knowledge you don't have:**
+- Check code comments, file headers, and README.md in the relevant directory first.
+- Check CLAUDE.md (you already have it in context — search for keywords).
+- Check skill names and descriptions — load the skill if it matches your need.
+- Check `TASKS.md` for project-level context (what's planned, what's deferred, why).
+- Check `papers/` for referenced paper sources when verifying math or citations.
+- Check `.devcontainer/` for environment details (what's installed, how sessions run).
 
-## Roles
-<copied-to>plan, review-correctness</copied-to>
+**When editing CLAUDE.md, SKILL.md, or agent prompt files:**
+- Load the `writing-conventions` skill first. It contains the rationale, style rules, and cross-reference tag system.
+- Editing CLAUDE.md or agent prompts without loading the skill risks breaking conventions that are expensive to detect later.
 
-The thesis team consists of Jörn and Claude Code. "Claude Code" refers to multiple agents running in parallel and sequential sessions, each in its own git worktree. This CLAUDE.md is read by every agent; each agent sees only its own session context.
+**Agent prompt architecture:** Subagent definitions in `.claude/agents/*.md` 1:1 copy relevant CLAUDE.md sections into their prompt body. This duplication is intentional — agents reliably follow inline instructions but unreliably follow "go read file X." Agent prompts use `<copied-from>` tags to mark the source section. Details in the `writing-conventions` skill.
 
-**1. Time bottleneck**
+## Communication with Jörn
 
-- Jörn's time is scarce. Claude Code's time is practically unbounded.
-- Plans minimize Jörn's workload, even at vastly higher total Claude Code work than a balanced plan would assign.
-- We parallelize Claude Code via multiple sessions in parallel, via agent teams, and via subagents.
-- Each agent and its spawned teams and subagents work in its own git worktree.
-- Jörn coordinates between sessions and prioritizes which tasks to pass to new sessions.
-- Agents orchestrate their own, simpler-to-handle teams and subagents.
+**Before requesting Jörn's attention:** Investigate first. Autonomous investigative work is basically costless. An investigation is worth doing if it either resolves the problem without Jörn, or speeds up Jörn's investigation via a report with preliminary findings.
 
-**2. Correctness of thesis results**
+**When requesting Jörn's attention:**
+- Describe the narrowly scoped cognitive task Jörn should do
+- Say why Jörn should do it instead of you
+- Provide the context it exists within — Jörn usually drops in without working memory of your session
+- After pauses in discussion, re-provide session context. Jörn switches between multiple agent sessions and does not monitor what agents do.
 
-We use several approaches together to ensure correctness:
+**Formatting for efficient exchange:**
+- Number items so Jörn can respond "3 yes, 5 no" instead of quoting paragraphs
+- Omit filler phrases — aim for efficient information exchange, not politeness
+- When presenting decisions with tradeoffs: use tables, quantify costs/benefits, state recommendation upfront
+- When you make repo changes Jörn should know about, mention and explain them — Jörn reviews diffs in VS Code but may not check them unprompted
 
-- We write mathematics, code, and documentation in a clear, detailed, explicit, structured, verifiable way.
-  - "clear" = easy to understand, not vague or ambiguous
-  - "explicit" = relevant implications are already spelled out for the reader, not left for them to derive
-  - "detailed" = all steps are included for verification or derived tasks, the only omitted steps are both not relevant for most readers, and are straightforward to fill in by the reader themselves if needed
-  - "structured" = the knowledge is organized into modular chunks, so that the reader can choose to keep in mind the details only for relevant chunks and for other chunks just keep the high-level takeaways
-  - "verifiable" = the reader can check the correctness by doing the local validity check for every step in every chunk, and for every cross-chunk reference.
-- We refactor, simplify, and improve until verification becomes straightforward and doable for readers. Without straightforward verification, we risk hidden gaps or mistakes.
-- Rust types, function signatures, and function bodies 1:1 correspond to mathematical definitions. "1:1" means literal structural correspondence, not just "inspired by."
-- We use `debug_assert!`, `assert!`, and `proptest` to empirically validate mathematical lemmas and intermediate propositions extracted from proofs.
+**Interaction dynamics:**
+- Push back on contradictions, gaps, unclear statements, and oversights. Jörn is not infallible — he sometimes makes ambiguous typos or has brainfarts — and he welcomes pushback.
+- Never take silence as confirmation. Especially during fast-paced back-and-forth where Jörn may respond to only parts of messages, or respond with delay.
+- **Word-choice sensitivity:** Jörn communicates distinctions via subtle word choices that agents tend to gloss over. When Jörn says "not quite" and corrects a nuance, the specific words he chose carry meaning. Don't paraphrase corrections back into your original framing — adopt his exact phrasing and check whether you lost a distinction.
 
-There are several types of work that MUST NOT be carried out by Claude Code, and MUST be assigned to Jörn instead.
+## Staying Focused Across Long Sessions
 
-**3. Verification of written proofs**
+**Plan file as persistent memory:** Update the plan file as you work — it survives context compaction, your working memory does not.
+- After completing an item: mark it done, note any surprises or context future items need.
+- Before starting a new item: record what you're about to do and why.
+- When discovering context relevant to upcoming items: write it into the plan now, not "later."
+- When you need something to survive a session boundary or compaction: put it in the plan file.
 
-- Claude Code's skill at spotting errors in proofs is specifically "only okay" — not bad, not good.
-- Claude Code can spot errors, but only in proofs written in a clear, detailed, explicit, structured way. In less perfect writing styles, more errors and gaps can be overlooked.
-- Every proof must pass Jörn's verification after every edit. We must be able to trust and build upon verified proofs.
-- See Thesis Writing § Proof Writing for the detailed CAN/CANNOT list.
+**What gets lost at compaction** (danger ranking, most to least dangerous):
+1. **Scheduled items you haven't started** — you forget they exist and they never get done
+2. **Context and considerations for upcoming items** — you redo them from scratch or miss nuances
+3. **Completed items** — low cost, already done, only needed for final reporting
 
-**4. Exhaustiveness of test suites**
-
-- Beyond conventional software tests, we add unusual test suites that check the correspondence of our code with our mathematical definitions and proofs.
-- This is an unconventional use of runtime testing.
-- Jörn must design which mathematical propositions the test suites need to cover, because the difference between high-confidence and moderate-confidence correctness signals requires complex domain models of the whole proof that Claude Code does not have.
-- Claude Code CAN: brainstorm, implement, and debug mathematical proposition tests.
-- Claude Code CANNOT: provide the exhaustiveness signal (deciding whether the test suite covers enough to give high confidence).
-
-**5. Task scoping**
-
-Claude Code's ability to spot implicit scope criteria:
-- Claude Code is okay (specifically: not bad, not good) at spotting implicit criteria imposed on a task's scope and acceptance criteria.
-- These implicit criteria come from three sources: other tasks, Claude Code's own capability limits, and Claude Code's default habits.
-- Claude Code can design and write down acceptance criteria for tasks that are similar to standard software development, scientific writing and mathematical research tasks.
-
-Why Jörn must be involved:
-- Claude Code lacks training on workflows that need a deep, accurate model of the whole remaining thesis project.
-- In particular: tasks that affect many other tasks, or that affect tasks that run only much later in the project.
-- Claude Code also lacks training on multi-agent workflows that build upon a task.
-- Consequence: Claude Code frequently makes bad scoping decisions for long-term work.
-
-What Jörn requires before a Claude-scoped task can be merged:
-- Jörn must greenlight the scope as matching his long-term vision. Normally this happens during the scope phase (see Session workflow). If that was skipped or the scope drifted during implementation, Jörn must greenlight before the merge instead — this is the safety net, not the normal path.
-- Jörn requires an analysis of (a) the task's effect on downstream aspects that appear in the final printed thesis, and (b) side effects on how agents and Jörn work on the thesis before its completion date.
-- Jörn requires an analysis of how an agent would complete the task, to catch gaps in acceptance criteria caused by pathological agent behavior. Example: if test cases are chosen after code is written, there is a danger of tests being biased toward being narrower and less diverse.
-- For tasks not yet started: Claude Code should do a throwaway preliminary investigation to gauge how an agent would approach the task. This is a good-enough proxy for the later agent's behavior, even though unexpected findings during execution may change the later agent's plan.
-- For already-completed tasks: show Jörn the final executed plan.
-
-**6. Code Review and Merge into `main`**
-
-- Claude Code reviews branches using the Review workflow (see Subagents & Meta-rules)
-- Review output: thorough findings + calibrated recommendation
-- Jörn reads review and makes merge decision (often deviates ~50% from recommendation based on project context)
-- Jörn performs the actual merge
-- This workflow minimizes Jörn's time while preserving his decision authority where it matters
-
-The following types of work SHOULD be carried out by Claude Code, and SHOULD NOT be assigned to Jörn:
-
-**7. Writing code, tests, math, docs**
-
-- Claude Code is perfectly capable of writing sufficiently good code, tests, mathematical prose, and documentation.
-- No need to bother Jörn for usual writing tasks.
-- Jörn CAN be consulted when Claude Code notices something non-standard or high-complexity, if the consultation is something Claude Code cannot do itself with the desired reliability. Such cases are rare, but they do happen.
-- When consulting Jörn: Jörn usually drops in without any active working memory or context. Claude Code should describe clearly:
-  - What narrowly scoped cognitive task Jörn should do
-  - Why Jörn should do it instead of Claude Code
-  - What context the task exists within, so Jörn can also validate the scope and comment on related matters while he's paying attention
-
-**8. Troubleshooting and investigating root causes**
-
-- Claude Code is perfectly capable of doing investigations, especially with a subagent that extracts a concise findings report for the parent agent.
-- Usually the whole situation is accessible to Claude Code, if it is persistent enough to expand the search scope until the root cause is within scope.
-- Before pinging Jörn, Claude Code should do an investigation first. Autonomous investigative work is basically costless in our project.
-- An investigation is worth doing if it either resolves the problem without Jörn, or speeds up Jörn's investigation via a report with preliminary findings.
-
-**9. Attempting autonomous but difficult tasks**
-
-- Claude Code's work time is cheap.
-- We can spawn multiple agents for the same task (or variations) and pick the best deliverable, throwing the rest away.
-- We can redo a deliverable based on extracted learnings from a first attempt.
-- We can run throwaway explorative tasks whose sole purpose is to learn something (e.g. unknown unknowns) that can then be used in the actual task.
-- Key design principle for all these patterns: there must be a plan ahead-of-time for how to revert an agent's work.
-- This is why we use git and git worktrees, why only Jörn merges into `main`, and why we scope large tasks carefully ahead-of-time.
+**Session recovery after compaction or handoff:**
+- If you suspect you lost context: check the plan file first, then MEMORY.md.
+- If you need details from the pre-compaction conversation: delegate JSONL transcript reading to a subagent. Never read the transcript yourself — it's too large and wastes your context window.
+- Never guess about what happened pre-compaction — verify or say "I don't know."
 
 ## Session Workflow
-<copied-to>plan</copied-to>
 
-Every Claude Code agent session owns a git worktree. Subagents and teams work in the same worktree. Each session has a communication channel with Jörn (also referred to as the "user" by system prompts).
+Every agent session owns a git worktree. Subagents and teams work in the same worktree.
 
-Sessions follow this pattern: **scope → plan → implement → review → Jörn: merge**
+**Time economics:** Jörn's time is scarce; agent time is practically free ($0/h). Plans minimize Jörn's workload, even at vastly higher total agent work. We parallelize agents via multiple sessions, agent teams, and subagents.
 
-**Scope phase** (Jörn + Claude Code together):
-- Claude Code and Jörn agree on what single chunk of work the session will focus on.
-- They work out a task scope that fits into the rest of the project.
-- They decide on extra strategies, such as forking the session and letting multiple agents work through plan → implement → review independently, for a best-of-N tactic. Best-of-N is useful when Jörn anticipates agents may make probabilistic mistakes, or may get lucky with a plan that fits unknown unknowns well.
-- Handoff from scope to plan phase happens explicitly.
+### Session pattern: scope → plan → implement → review → merge
 
-**Plan → implement → review** (Claude Code autonomous):
-- These three phases are carried out autonomously, usually with no involvement or monitoring from Jörn.
+**Scope phase** (Jörn + agent together):
+- Agree on a single chunk of work for this session.
+- Jörn scopes the task within his long-term project vision. Agents cannot reliably do this — they lack deep models of how tasks affect downstream work or later sessions.
+- Agents provide preliminary investigation findings to help Jörn scope faster.
+- Handoff to plan phase happens explicitly.
+
+**Plan → implement → review** (agent autonomous):
+- These three phases are carried out autonomously, usually with no involvement from Jörn.
 - Jörn is messaged in chat only when his attention is specifically requested.
-- Jörn does not monitor agent actions or intermediate status updates. Therefore, the end-of-turn message must recap the context, so Jörn can jump back in without needing to read the full history.
-- Claude Code decides autonomously when to transition between stages.
-- Claude Code MAY return to earlier stages — e.g. planning a new approach after a dead end, or fixing bugs found during review.
-- Claude Code SHOULD focus on one stage at a time (e.g. by using the TodoWrite tool to track the stage) to avoid splitting its attention unnecessarily.
+- Jörn does not monitor agent actions or intermediate status. End-of-turn messages must recap context so Jörn can jump back in without reading the full history.
+- Agents decide autonomously when to transition between phases and MAY return to earlier phases (e.g. replanning after a dead end).
+- Focus on one phase at a time to avoid splitting attention.
 
-**Merge phase** (Jörn + Claude Code together):
-- When Claude Code is satisfied with its deliverable OR wants to give up, it messages Jörn.
-- The message must include: what happened this session, what unknown unknowns were discovered, how known unknowns were resolved, and a checklist of the final review.
-- The checklist lets Jörn catch quickly when Claude Code forgot to do something.
-- Jörn may then: merge the branch, re-scope and ask for another plan → implement → review cycle, or abandon the branch.
+**Merge phase** (Jörn + agent together):
+- When the agent is satisfied with its deliverable OR wants to give up, it messages Jörn.
+- Include: what happened this session, what unknown unknowns were discovered, how known unknowns were resolved, and a checklist of the final review.
+- Only Jörn merges to `main`. Only Jörn creates PRs.
 
-**Interaction rules during scope and merge discussions:**
-- Claude Code SHOULD push back on contradictions, gaps, unclear statements, and oversights from Jörn. Jörn is not infallible — he sometimes makes ambiguous typos or has brainfarts — and he welcomes pushback and suggestions.
-- Claude Code MUST NEVER take silence as confirmation. Especially during fast-paced back-and-forth where Jörn may respond to only parts of messages, or respond with delay (i.e. a few messages later).
-
-**Post-session reflection** (blameless postmortem, just before session ends via merge or abandon):
-
-1. A report with all sources of friction, false steps, steps that turned out to have lower-than-expected value, unexpectedly good steps, and time sinks of Claude Code's own time.
-2. A breakdown of where Jörn spent time this session, what work Jörn did, and where Jörn's work was used afterward. Purpose: detect work Jörn does that Claude Code could also do, or that needn't be done at all, and identify what would make Jörn's time more effective.
-3. A list of suggestions, each labeled as confident or unconfident, and as actionably concrete or unactionably abstract. Jörn will mostly notice items that other agents also brought up. We aim to converge to better practices quickly, but don't have time for Jörn to plan through suggestions after single events.
-
-### Decision authority
-
-The Roles section defines WHAT goes to Jörn vs Claude Code. This section helps with the gray area — when you're unsure whether a specific action needs Jörn's input.
+### What needs discussion vs. what doesn't
 
 The deciding factors are rollback cost and verification cost:
 
@@ -208,89 +135,91 @@ The deciding factors are rollback cost and verification cost:
 
 **Act, then Jörn verifies** — cheap to verify, moderate risk:
 - Attempts where agent self-verification is reliable and Jörn's check is fast
-- The attempt itself provides value (e.g. a draft that's faster to correct than to discuss upfront)
+- Drafts that are faster to correct than to discuss upfront
 
 **Discuss with Jörn first** — expensive to verify or hard to roll back:
-- Scope changes — agents don't reliably notice when they've drifted or when a scope change has bad downstream consequences for the project
+- Scope changes — agents don't reliably notice when they've drifted or when a scope change has bad downstream consequences
 
 **Never without explicit instruction:**
 - Destructive operations with no rollback
-- Creating PRs or merging to `main` (Jörn does this)
+- Creating PRs or merging to `main`
 
-**When in doubt**, default to discuss-first. Jörn can always override with "just do it" — treat that as an ad-hoc exception, not a precedent for future sessions.
+**When in doubt**, default to discuss-first. Jörn can always override with "just do it."
 
-## Communication
-<copied-to>plan</copied-to>
+### Autonomous difficult tasks
 
-When requesting Jörn's attention, follow Roles point 7: describe the narrowly scoped cognitive task, why Jörn should do it, and what context it exists within.
+Agent time is cheap. Use it aggressively:
+- Spawn multiple agents for the same task (or variations) and pick the best deliverable.
+- Redo a deliverable based on learnings from a first attempt.
+- Run throwaway exploratory tasks whose sole purpose is to learn unknowns.
+- **Revert plan required:** For all these patterns, there must be a plan ahead-of-time for how to revert an agent's work. This is why we use git worktrees and why only Jörn merges to `main`.
 
-Formatting for efficient exchange:
-- Aim for efficient information exchange, not politeness or engagement
-- Number items so Jörn can respond "3 yes, 5 no" instead of quoting paragraphs
-- Omit filler phrases
-- When presenting decisions with tradeoffs: use tables, quantify costs/benefits, state recommendation upfront
-- When you make repo changes Jörn should know about, mention and explain them — Jörn reviews diffs in VS Code but may not check them unprompted
+### Plan workflow
 
-## Subagents & Meta-rules
+This section is copied to `.claude/agents/{plan.md}`.
+
+Conventions for the plan phase (the `plan` subagent overrides default `/plan`):
+
+**Save Jörn's time:**
+- Obtain findings upfront — Jörn can decide faster with data than with armchair designs
+- Present findings in a skimmable progressive-disclosure format
+- Pre-empt follow-up investigations — avoid slow back-and-forth with minute-long interruptions
+- Provide session context after pauses — Jörn switches between sessions and does not monitor agents
+- Check scope against the time economics and scoping rules in this section before finalizing
+
+**Track where task scope comes from:**
+- The root terminal goal is thesis success
+- Convergent instrumental goals (rule adherence, best practices, minimizing Jörn's time) are omnipresent
+- Open-scope ideas floated during planning can expand the session scope
+- Closed-scope goals concretize how to achieve some other goal
+- Track why each plan element was picked over alternatives — needed to adapt the plan when feedback comes in
+
+## Subagents & Review
 
 Spawn a subagent when a subtask can run in parallel, needs isolated context, or benefits from focused work (e.g., literature extraction, code review, exploratory investigation).
 
-- Create a temporary file, e.g. in /tmp/ with the subagent prompt. You can pass any corrections/extra context directly to Task. Zero cost, and: persistent record, easier to restart if agent fails.
-- Subagent output returns via the Task tool into your conversation. If it needs to persist, commit it to the repo on your branch.
 - Use Sonnet for read-heavy extraction tasks (literature, code review). Reserve Opus for tasks requiring deep reasoning (mathematical reasoning, code writing).
 - Keep subagent tasks focused and small. Agents may stall on tasks requiring 1000+ lines across multiple files.
-- **For long-running agents (>10min expected)**: Use `run_in_background=True` so Jörn's messages can reach you during execution. Without this, blocking agents prevent message delivery and you cannot respond to warnings or corrections.
+- **For long-running agents (>10min expected)**: Use `run_in_background=True` so Jörn's messages can reach you during execution.
 
-### Meta-rules
+### The core rule
 
-**The core rule:** Never write a factual claim without verifying it against evidence in the same session. "The code cross-checks X" requires reading the code and confirming the cross-check exists. "The data shows Y" requires reading the data. When verification is impossible, mark with `% [TODO: JÖRN -` or `% [GAP -`. Violating this rule is the single most damaging failure mode — it spreads across the whole thesis when others rely on a false claim, and then wastes a lot of Jörn's time that's needed to identify other downstream issues and to redo work based on the false claim.
+Never write a factual claim without verifying it against evidence in the same session. "The code cross-checks X" requires reading the code and confirming the cross-check exists. "The data shows Y" requires reading the data. When verification is impossible, mark with `% [TODO: JÖRN -` or `% [GAP -`. Violating this rule is the single most damaging failure mode — it spreads across the whole thesis when others rely on a false claim, and then wastes a lot of Jörn's time to identify downstream issues and redo work.
 
-**Citation verification (core rule instance):** Never produce author names, paper titles, or literature attributions from memory. Always verify against `thesis/bibliography.bib` (for cited works) or the paper files in `papers/` (for author names and content). Agents confidently produce plausible-sounding but wrong author names from training data — e.g., "Cieliebak-Hutchings" or "Chadez-Hutchings" instead of the correct "Chaidez-Hutchings" (CH2021). This error propagates silently across files and is hard to detect later. The authoritative sources are:
+**Citation verification (core rule instance):** Never produce author names, paper titles, or literature attributions from memory. Always verify against `thesis/bibliography.bib` (for cited works) or the paper files in `papers/` (for author names and content). Agents confidently produce plausible-sounding but wrong author names from training data — e.g., "Cieliebak-Hutchings" instead of the correct "Chaidez-Hutchings" (CH2021). The authoritative sources are:
 - `thesis/bibliography.bib` — all cited works with correct author fields
 - `papers/<key>/` — local copies of referenced papers
-- The papers' own title pages and acknowledgment sections
-
-**Why rules get ignored:**
-1. Too many rules active at once — agents cannot apply them all at once, so only the rules that stand out get applied, and not the rules that would be relevant for the current task
-2. Contradictions between rules — agents ignore both and fall back to default behavior
-3. Rules conflict with agent defaults — defaults win silently sometimes, instead different rules should be chosen to adapt to the agent's strengths and weaknesses
-4. Rules not actionable — agents do not apply too abstract rules during execution stages, so either the agents or the CLAUDE.md authors need to turn the abstract rules into actionable cognitive and behavioral patterns which the agents can follow even when focused on execution
-
-**Mitigation: subagent-based rule enforcement.** We cannot use progressive disclosure to reduce the number of active rules. So instead we use subagents that focus on one cluster of conventions at a time, and the main agent will be told about violations and thereby focus on the rules that measurably matter for the current task.
-
-- **Pre-delivery verification:** Before presenting a deliverable to Jörn, spawn a Sonnet subagent with (a) the relevant CLAUDE.md convention sections and (b) the deliverable. The subagent checks every factual claim against evidence and every applicable convention. Fix all issues before presenting to Jörn. This is mandatory for .tex deliverables and recommended for all deliverables.
-- **Plan subagent conventions:** Conventions about up-front planning, scope discipline, and minimizing Jörn's time (e.g., Roles sections 1 and 5, Session workflow, Decision authority) should be injected into Plan subagent prompts. The planning agent is a natural enforcement point for these rules since it runs before implementation begins.
-- **Meta-rule auditing:** After editing CLAUDE.md or rule files, spawn a subagent to check for internal contradictions, rules conflicting with agent defaults, non-actionable rules, and stale references. This can also be invoked as a periodic health check.
-
-**MEMORY.md scope:** Session learnings and postmortems only. Stable project conventions belong in CLAUDE.md. If a MEMORY.md entry has been confirmed across multiple sessions, migrate it to CLAUDE.md and delete the MEMORY.md entry.
-
-### Plan workflow
-<copied-to>plan</copied-to>
-
-Conventions for planning together with Jörn (subagent overrides default `/plan`):
-
-Save Jörn's time:
-- Obtain findings upfront -- Jörn can decide faster if he has access to e.g. the data produced by a refined and carried out experiment, instead of just the experiment's initial armchair design.
-- Present findings in a skimmable progressive-disclosure format -- Jörn can skip details and focus on what he judges relevant to his assigned task, e.g. to a question the agent asked Jörn
-- Pre-empt follow-up investigations -- Jörn has some overhead from frequent context switching, so ideally the agent does not do a slow back-and-forth with minute-long interruptions, but instead moves work forward to be able to react to Jörn's requests and questions immediately
-- Provide session context after pauses in the discussion -- Jörn is switching between multiple agent sessions, and does not monitor what agents do or say, or what their task assignment was, until he enters an active discussion again.
-- Check scope against Roles §1 and §5 before finalizing
-
-Track where task scope comes from:
-- The root terminal goal is thesis success
-- Convergent instrumental goals like rule adherence, best practices, and minimizing Jörn's time are omnipresent
-- There are usually open-scope ideas that are floated during planning, which can expand the session scope
-- Some goals are closed-scoped and concretize how to achieve some other closed-scoped or open-scoped goal
-- Keeping track of why some plan element was picked over what alternatives is necessary to later adapt the plan once empirical or process-related feedback comes in
 
 ### Review workflow
 
-Orchestrates review subagents based on changed files:
-1. Pick relevant subagents, e.g. based on `git diff main...HEAD --name-only`
-2. Run them in parallel
-3. Merge findings into one report
-4. Address findings and carry out follow up investigations
-5. Present to Jörn
+Reviews use a 3-phase pipeline. Fix each phase's findings before proceeding to the next.
+
+**Phase 0 — Module sanity** (`review-modules`): Folder conventions, builds pass, tests pass, pipeline consistency, data freshness.
+
+**Phase 1 — Syntax/style** (language-based, parallelizable across files):
+- `review-tex-style` — LaTeX format, environments, labels, headers, citation format
+- `review-rust-style` — code conventions, module structure, cross-ref format, magic number docs
+- `review-python-style` — script conventions, paths, headers, figure sizing, visual quality
+- `review-notes-style` — README structure, assumptions documented
+
+**Phase 2 — Semantics/content** (concern-based, on clean files):
+- `review-tex-math-correctness` — proofs: gaps, unclear steps, mistakes, definition mismatches
+- `review-tex-educational` — audience fit, forward refs, pedagogical quality
+- `review-tex-facts` — claims vs evidence (JSONL, fixtures, bib data, code refs)
+- `review-rust-tests` — test philosophy, coverage, input diversity, property verification
+- `review-rust-math-correctness` — doc comment formulas match code, invariant enforcement
+- `review-experiment-observations` — reported facts vs JSONL/output data
+- `review-experiment-interpretation` — reasoning quality, overreach, editorializing
+
+### How to run reviews (main agent does this directly)
+
+1. `git diff main...HEAD --name-only` → pick relevant subagents from the phases above
+2. Run phase 0 (`review-modules`) first if builds/tests might be broken
+3. Run phase 1 agents in parallel, fix findings
+4. Run phase 2 agents in parallel on the cleaned files, fix findings
+5. Present merged report to Jörn
+
+This is mandatory before presenting `.tex` deliverables to Jörn and recommended for all deliverables. Do not delegate this orchestration to a subagent — subagents cannot spawn subagents.
 
 ## Git
 
@@ -304,10 +233,11 @@ Jörn merges locally and pushes later, so `origin/main` is frequently stale. Com
 
 If unexpected files appear in diff, investigate — likely means branch needs rebasing.
 
-## Thesis Writing
-<copied-to>review-experiment-writing, review-correctness, review-thesis-format</copied-to>
+This section is copied to `.claude/agents/{review-modules.md}`.
 
-Subagents: `review-thesis-writing` (writing quality), `review-correctness` (mathematical correctness)
+## Thesis Writing
+
+This section is copied to `.claude/agents/{review-tex-style.md, review-tex-math-correctness.md, review-tex-educational.md, review-tex-facts.md}`.
 
 ### Build
 
@@ -384,6 +314,17 @@ Every line of LaTeX must work for all four audiences simultaneously:
    - Need ALL properties listed (including unused ones) for generating tests
    - Need concrete values and example calculations
 
+### Correctness
+
+We write mathematics, code, and documentation in a clear, detailed, explicit, structured, verifiable way:
+- "clear" = easy to understand, not vague or ambiguous
+- "explicit" = relevant implications already spelled out, not left for the reader to derive
+- "detailed" = all steps included for verification; only omit steps that are both irrelevant for most readers and straightforward to fill in
+- "structured" = organized into modular chunks; readers can keep details for relevant chunks and high-level takeaways for others
+- "verifiable" = the reader can check correctness by doing the local validity check for every step and every cross-chunk reference
+
+We refactor, simplify, and improve until verification becomes straightforward and doable for readers. Without straightforward verification, we risk hidden gaps or mistakes.
+
 ### Default Status
 
 All content is **agent-written and unreviewed** unless explicitly marked otherwise. When a `.tex` file has no review markers, assume nothing has been verified by Jörn.
@@ -405,19 +346,19 @@ Three levels, strictly ordered: **text > math > structure**. Only record the hig
 % Jörn: text approved (abc1234) — from \subsection{Sampling procedure} to "Acceptance rate sweep"
 ```
 
-The commit hash is from `git rev-parse HEAD` after committing the approved version — it's the commit the agent is already making.
+The commit hash is from `git rev-parse HEAD` after committing the approved version.
 
-Only one marker per scope. When a higher level is approved, replace the lower marker (e.g., `structure` → `text`). Scope must be explicit (section names or line ranges). Content outside any `% Jörn:` marker is unreviewed.
+Only one marker per scope. When a higher level is approved, replace the lower marker. Scope must be explicit (section names or line ranges). Content outside any `% Jörn:` marker is unreviewed.
 
-**Staleness rule**: When an agent edits content within a `% Jörn:` marker's scope, the agent **MUST** delete the marker. The edited content reverts to the default status (agent-written, unreviewed). The commit hash serves as a backup: if a marker survived an edit, anyone can diff the file since that commit to detect staleness.
+**Staleness rule**: When an agent edits content within a `% Jörn:` marker's scope, the agent **MUST** delete the marker. The edited content reverts to default status (agent-written, unreviewed). The commit hash serves as a backup for detecting staleness via diff.
 
-Jörn reviews the **PDF-visible text** (rendered output), not the `%` comments. The `% Jörn:` markers record what he approved in the PDF; they do not mean he reviewed the LaTeX source comments.
+Jörn reviews the **PDF-visible text** (rendered output), not the `%` comments.
 
 #### QC agent findings (`% QC:`)
 ```latex
 % QC: polytope per Definition~\ref{def:polytope}, facet data per Definition~\ref{def:facets}
 ```
-→ Instructions for QC agent on what to verify, or resolved QC findings that only a pedantic verifier would want spelled out. If a QC finding matters to human readers, expand it in the text instead.
+→ Instructions for QC agent on what to verify, or resolved QC findings
 
 #### Developer agents (`% Downstream:`)
 ```latex
@@ -455,7 +396,7 @@ Every `.tex` file starts with a `%` header block containing:
 2. **Sources**: where the content comes from (Jörn's dictation, literature, agent-written, etc.)
 3. **Structure**: outline of sections/subsections
 
-Do NOT put review status in the header. Review status lives inline via `% Jörn:` markers (see above).
+Do NOT put review status in the header. Review status lives inline via `% Jörn:` markers.
 
 ### Content Rules
 
@@ -469,7 +410,7 @@ Do NOT put review status in the header. Review status lives inline via `% Jörn:
 
 4. **Writing rule**: Proofs cannot cite external sources mid-proof. External results must be proven inline or stated as Claims within the proof. The thesis must be self-contained and verifiable by reading this document alone.
 
-5. **Citation verification**: Author names and paper attributions must be verified against `thesis/bibliography.bib` or `papers/`. Never produce author names from memory. See Meta-rules § Citation verification for details and common failure modes.
+5. **Citation verification**: Author names and paper attributions must be verified against `thesis/bibliography.bib` or `papers/`. Never produce author names from memory. See Subagents & Review § The core rule for details.
 
 ### Proof Writing
 
@@ -480,20 +421,17 @@ Do NOT put review status in the header. Review status lives inline via `% Jörn:
 - Annotate non-obvious steps: cite the specific theorem/lemma used, state why hypotheses are satisfied
 - Never gloss over gaps or handwave — if a step is non-trivial, say so explicitly
 
-**Agent limitations**:
-- Agents cannot reliably verify mathematical proofs
-- Agent-written proofs are drafts until Jörn reviews them
-- Never claim Jörn "approved" content unless he explicitly verified the math
-
-**What agents CAN do**:
+**Agent limitations — what agents CAN do:**
 - Turn natural language descriptions into proofs
-- Improve proof writing
-- Fix errors in proofs
-- Detect spots in proofs (but not with high reliability)
+- Improve proof writing, fix errors, detect suspicious steps
 - Report unclear or suspicious proof steps
 
-**What agents CANNOT do**:
-- Provide final high-reliability verification (that must come from Jörn)
+**What agents CANNOT do:**
+- Provide final high-reliability verification — that must come from Jörn
+- Agent skill at spotting errors is specifically "only okay" — not bad, not good
+- Agents can spot errors, but only in proofs written in a clear, detailed, explicit, structured way. In less perfect writing, errors and gaps can be overlooked.
+
+**Every proof must pass Jörn's verification after every edit.** We must be able to trust and build upon verified proofs. Never claim Jörn "approved" content unless he explicitly verified the math.
 
 ### Emphasis and Structure
 
@@ -506,12 +444,11 @@ Do NOT put review status in the header. Review status lives inline via `% Jörn:
 - Use `\definition`, `\lemma`, `\theorem`, `\proposition`, `\proof` environments
 - Use `\remark` and `\example` for context/intuition/illustrations
 - No prose paragraphs outside environments, except minimal connective text between environments
-- Calculations displayed as formulas, not described in English prose (e.g., don't write "we multiply x by y to get z" — display the equation instead)
+- Calculations displayed as formulas, not described in English prose
 
 ## Experiment Writing
-<copied-to>review-experiment-writing</copied-to>
 
-Subagent: `review-experiment-writing`
+This section is copied to `.claude/agents/{review-tex-style.md, review-experiment-observations.md, review-experiment-interpretation.md}`.
 
 Builds upon **Thesis Writing** — all Thesis Writing conventions apply to experiment `.tex` files too, except those specific to mathematical proofs (Proof Writing, Four Audiences' "imaginary master student" criterion). This section adds experiment-specific conventions.
 
@@ -525,9 +462,8 @@ Builds upon **Thesis Writing** — all Thesis Writing conventions apply to exper
 - Plots visually inspected for sanity
 
 ## Rust Library
-<copied-to>review-library, review-correctness</copied-to>
 
-Subagent: `review-library`
+This section is copied to `.claude/agents/{review-rust-style.md, review-rust-tests.md, review-rust-math-correctness.md}`.
 
 **Invariant:** `cargo test` passes from `crates/` with zero failures.
 
@@ -572,9 +508,11 @@ Where domains overlap, algorithms must agree on the computed capacity.
 - The Rust crates are self-contained mathematically — no dependency on thesis/. The thesis is downstream
 - Quality bar: specific, correct, detailed, clearly written enough that (1) Jörn can verify with low effort and (2) agents can rely on them when implementing
 
+**Math-code correspondence:** Rust types, function signatures, and function bodies 1:1 correspond to mathematical definitions. "1:1" means literal structural correspondence, not just "inspired by."
+
 **Verification criteria for mathematical doc comments:**
 - Doc comment formulas must match code's actual computation (not aspirational, not approximate)
-- Invariants stated in doc comments must be enforced by types/constructors/assert!s/debug_assert!s
+- Invariants stated in doc comments must be enforced by types/constructors/assert!/debug_assert!
 - Properties stated in doc comments must have corresponding tests
 
 ### Cross-references to thesis
@@ -598,6 +536,8 @@ Two classes of tests, both applied excessively:
 1. **Math proposition tests** (due diligence falsification): proptest generators approximate mathematical quantifiers ("∀ polytopes K", "∀ A ∈ Sp(4)", etc.). Properties under test are mathematical propositions (e.g. J^2 = -I, symplectomorphisms preserve capacity).
 2. **Standard correctness tests**: Rust best practices for correctness-critical code — edge cases, invariant checking, regression tests.
 
+**Test exhaustiveness is Jörn's domain.** Beyond conventional software tests, we add unusual test suites that check the correspondence of our code with our mathematical definitions and proofs. Jörn must design which mathematical propositions the test suites need to cover, because the difference between high-confidence and moderate-confidence correctness signals requires complex domain models of the whole proof that agents do not have. Agents CAN brainstorm, implement, and debug mathematical proposition tests. Agents CANNOT provide the exhaustiveness signal.
+
 ### Testing expensive functions
 
 For expensive functions (e.g., `ehz_capacity()` with exponential cost), split tests into two categories:
@@ -609,13 +549,6 @@ For expensive functions (e.g., `ehz_capacity()` with exponential cost), split te
 - **Preferred:** Use fixtures (pre-computed in release mode), run tests in debug suite (fast, <1s)
 - **Alternative:** Mark `#[ignore]`, run in release mode (slow but thorough)
 
-**Why this works:** We only care about the result, not how the code executes. No need for debug mode overhead (debug_assert!, bounds checking). Release mode gives 50-80x speedup for capacity tests.
-
-**Examples:**
-- Capacity values match literature (fixture-based)
-- Conformality: c(λK) = λ²c(K) (fixture-based)
-- Pentagon sys > 1 (#[ignore], release mode)
-
 #### Category B: Internal Behavior
 **What it tests:** Does the code execute safely without crashes, bounds errors, overflow, or assertion failures?
 
@@ -623,17 +556,7 @@ For expensive functions (e.g., `ehz_capacity()` with exponential cost), split te
 - Run in debug mode (enables debug_assert!, overflow checks, bounds checks)
 - Use small inputs (F ≤ 6 for capacity) to stay fast (<5s per test)
 
-**Why this works:** We're testing that code *runs correctly*, not that it *produces correct output*. Debug mode catches bugs via overflow/bounds checks. Small inputs exercise the same code paths as large inputs for internal behavior (index arithmetic, loop bounds, adjacency logic).
-
-**Examples:**
-- `simplex_capacity()` - unpruned algorithm on F=4, exercises enumeration in debug
-- `triangle_square_capacity()` - pruned algorithm on F=7, exercises adjacency filtering in debug
-- `solve_kkt_rank_deficient()` - error path handling
-- Error path tests (validation, parsing failures)
-
-### Test organization patterns
-
-Five patterns, summarized (see existing tests in `crates/` for full examples):
+### Test organization
 
 | Pattern | Suite | Speed | Use for | Example |
 |---------|-------|-------|---------|---------|
@@ -643,21 +566,16 @@ Five patterns, summarized (see existing tests in `crates/` for full examples):
 | **Fixture generator** | `#[ignore]`, release | minutes | Regenerate fixture after code changes | `test_dataset.rs` |
 | **Staleness detector** | Default (debug) | <1s | Warn if fixture out of sync | `fixture_staleness_check()` |
 
-### Test documentation requirements
-
-Tests for expensive or complex functions MUST have a doc comment explaining what it tests, why it uses its execution mode (debug/release/fixture), why it uses its specific input, and relationship to other tests (if any).
+Every test MUST have at least a doc comment stating the mathematical property it asserts. Tests for expensive or complex functions should additionally explain why they use their execution mode (debug/release/fixture), why they use their specific input, and relationship to other tests (if any).
 
 ### Test suites
 
-| Suite | Command | When to run | Time (2026-03-06) |
-|-------|---------|-------------|-------------------|
+| Suite | Command | When to run | Time |
+|-------|---------|-------------|------|
 | **Default** | `cargo test --lib` | Every iteration | ~145s wall |
 | Regenerate capacity fixture | `cargo test --release regenerate_test_dataset -- --ignored` | After changes to `ehz_capacity()` | ~20s |
 | Expensive capacity tests | `cargo test --release -- --ignored` | After capacity algorithm changes | ~2s |
-| Boundedness cross-check | `cargo test -- --ignored` | Monitoring, or after qhull/boundedness changes | ~3s |
 | All ignored tests | `cargo test -- --ignored` | Full validation | ~5 min |
-
-Target: default suite <3 min single-threaded (currently ~145s due to rational pipeline in Polytope4D::new(); see TODO(perf) in polytope.rs).
 
 **Fixture location:** `tests/fixtures/capacity_dataset.json` (committed, 27 polytopes with precomputed capacities, scaled variants for conformality tests).
 
@@ -667,7 +585,7 @@ Empirically chosen constants (tolerances, thresholds, cutoffs) must have their r
 
 ### Performance claims require measurement
 
-Never state performance without benchmark. "~1ms" is claim. "Benchmark shows 1.5-2.0ms for 5-16 facets" is measured. Add benchmark if claim exists without measurement.
+Never state performance without benchmark. "~1ms" is a claim. "Benchmark shows 1.5-2.0ms for 5-16 facets" is measured. Add benchmark if claim exists without measurement.
 
 ### Thesis constraints
 
@@ -688,44 +606,31 @@ Before final report:
 
 ## Experiments
 
+This section is copied to `.claude/agents/{review-modules.md, review-python-style.md, review-notes-style.md}`.
+
 Per-experiment folders under `experiments/`, each containing: Rust binary (.rs), Python script (.py), LaTeX writeup (.tex), data (.jsonl), figures (.png), and README (.md).
 
 Pipeline: Rust binary → .jsonl data → Python script → .png figures → .tex writeup → thesis
 
-**`experiments/reproduce.sh`** documents the full pipeline from zero data to compiled thesis. It is the single source of truth for reproduction. When adding, removing, or changing an experiment, update `reproduce.sh` to match. The script is meant to be runnable, but is not expected to be run end-to-end in practice.
-
-Subagents: `review-experiment-code` (Rust/Python code), `review-experiment-notes` (README/notes quality), `review-pipeline` (end-to-end data flow)
+**`experiments/reproduce.sh`** documents the full pipeline from zero data to compiled thesis. It is the single source of truth for reproduction. When adding, removing, or changing an experiment, update `reproduce.sh` to match.
 
 **Library stability boundary:** Only stable, proven code goes into `crates/` library. New algorithm variants are self-contained in experiment binaries (e.g. `ablation.rs`). Copy library internals into the binary where needed. If a variant is later promoted to production, it enters the library then.
 
 ### Philosophy
-<copied-to>review-experiment-notes</copied-to>
 
-Experiments start investigative and may mature into thesis-ready writeups, but the code and analysis can always be revisited.
-
-#### Continuous spectra, no discrete stages
+Experiments are always investigative — even mature ones with thesis-ready writeups remain open to revisiting, expansion, and updating (e.g. when assumptions break or new ideas emerge).
 
 Progression is fluid, with no clear cutoff points:
-
 - From [nothing] → [idea] → [plan with preliminary findings] → [active hypotheses with mysteries] → [findings from non-runnable code] → [failed attempt summary] → [cleanup commit in git log]
 - From [nothing] → [full bundle: scripts + thesis section + datasets + extra rust code]
 
-#### What agents do constantly
+Agents constantly comment on, iterate, clean, refactor, and narrow experiments — tweaking parameters, trying variations, exploring edge cases, simplifying code, focusing scope, removing dead ends.
 
-- **Comment on and iterate** experiments — tweak parameters, try variations, explore edge cases
-- **Clean, refactor, narrow** experiments — simplify code, focus scope, remove dead ends
-
-#### Cleanup and archiving (continuous spectrum)
-
-No clear cutoff for "when to archive". It's continuous prioritization:
-- Blockers: lack of ideas for improvements
-- When cleaning up code that's no longer useful:
-  - If learnings worth preserving: create `experiments/<topic>.md` with git ref to last commit
-  - Otherwise: just delete (it's in git history)
-- Purpose: keep experiment folders focused
+When cleaning up code that's no longer useful:
+- If learnings worth preserving: create `experiments/<topic>.md` with git ref to last commit
+- Otherwise: just delete (it's in git history)
 
 ### Directory structure
-<copied-to>review-experiment-code</copied-to>
 
 ```
 experiments/
@@ -743,26 +648,15 @@ experiments/
 ```
 
 ### Script conventions
-<copied-to>review-experiment-code, review-figures</copied-to>
 
 **File naming:**
 - Each experiment lives in `experiments/<name>/`
-- Rust binary: `<name>.rs`
-- Python script: `<name>.py`
-- Writeup: `README.md` (findings, methodology)
-- Thesis section: `<name>.tex` (input'd from thesis)
-- Data: `<name>.jsonl`
-- Figures: `<name>.png`
+- Rust binary: `<name>.rs`, Python script: `<name>.py`, Writeup: `README.md`, Thesis section: `<name>.tex`, Data: `<name>.jsonl`, Figures: `<name>.png`
 
 **Independent scripts, not a package:**
 - No `__init__.py`, no shared imports between scripts
 - Each script is self-contained: reads data, performs analysis, writes output
-- If two scripts share logic, copy-paste until it stabilizes (don't prematurely abstract)
-
-**No framework:**
-- Use plain Python with standard data science libraries (numpy, pandas, matplotlib, scipy)
-- No custom framework, no complex dependencies
-- Dependencies listed in `experiments/requirements.txt`; install with `pip install -r experiments/requirements.txt`
+- If two scripts share logic, copy-paste until it stabilizes
 
 **Script headers:**
 Every script must document in the docstring:
@@ -792,68 +686,72 @@ EXPERIMENT_DIR = Path(__file__).resolve().parent  # data/figures are colocated
 
 No hardcoded paths outside `REPO_ROOT`.
 
-**Error messages:**
-Make them actionable. Bad: "File not found". Good: "File not found: data.jsonl. Run Rust binary first."
+**Error messages:** Make them actionable. Bad: "File not found". Good: "File not found: data.jsonl. Run Rust binary first."
 
-### Figure sizing
-<copied-to>review-figures, review-experiment-writing, review-thesis-format, thesis-pre-reviewer</copied-to>
+**Dependencies:** Listed in `experiments/requirements.txt`; install with `pip install -r experiments/requirements.txt`. Use plain Python with standard data science libraries (numpy, pandas, matplotlib, scipy). No custom framework.
+
+### Figures and tables
+
+This section is copied to `.claude/agents/{review-python-style.md}`.
 
 All figure formatting is handled in Python. LaTeX is a 1:1 pass-through (`\includegraphics{file.png}`, no `width=`/`scale=`).
 
+**Sizing:**
 - `figsize` = the physical size in the printed PDF. `\textwidth` ≈ 5.4" (A4, 12pt article, default margins).
 - `bbox_inches='tight'` expands the output beyond `figsize` to fit labels. Verify the output PNG width fits.
 - Multi-panel figures at 5.4" are often too cramped. Prefer separate figures over wider canvases.
+- Multi-panel figures: use consistent axis scales where cross-panel comparison is intended.
+- `savefig(dpi=150)` minimum for print quality.
+
+**Visual clarity:**
+- Use markers (not just color) for grayscale compatibility in scatter/line plots.
+- Avoid red-green only distinctions; use colorblind-friendly palettes.
+- Consistent colors for the same data categories across all figures in the same experiment.
+- Axis labels must include the quantity name (not just the symbol), or be self-evident from context.
+
+**Captions:**
+- Captions state observations (what the figure shows) and comparisons (relating to an explicit reference).
+- Comparisons require an explicit target ("than general polytopes", "relative to the diagonal").
+- Interpretations and speculation belong in body text, NOT in captions.
+
+**Tables (LaTeX):**
+- Use `booktabs` (`\toprule`/`\midrule`/`\bottomrule`), not `\hline`.
+- Table body text must not go below `\small`; no `\scriptsize` or `\tiny`.
+- Column headers must have units or be self-explanatory. Numbers: consistent decimal places within each column.
 
 ### Pipeline direction
-<copied-to>review-figures, review-pipeline</copied-to>
 
 Rust binary → .jsonl → Python script → figures/tables → thesis
-
-**Data flow:**
-1. Rust binaries generate JSONL datasets → `experiments/<name>/`
-2. Python scripts load JSONL from same directory, compute statistics, generate figures
-3. LaTeX `\input`s from `../experiments/<name>/`
 
 **No circular dependencies:**
 - Python never calls Rust directly
 - Rust binaries are built from `experiments/Cargo.toml` (`cd experiments/ && cargo build --release`)
-- If Rust API changes, only experiment binaries need updates
 - To add a new experiment: create `<name>/` folder, add `[[bin]]` entry to `Cargo.toml`, update `reproduce.sh`
 
 ### Data and figures in git
-<copied-to>review-pipeline</copied-to>
 
 **Tracked (committed):**
 - `experiments/<name>/*.jsonl` — datasets generated by Rust binaries
 - `experiments/<name>/*.png` — figures generated by Python scripts
-- `experiments/<name>/<name>_output.txt` — stdout from binaries whose deliverable is stdout (e.g. q_error). Captured via `cargo run --release --bin <name> 2>&1 | tee experiments/<name>/<name>_output.txt`.
+- `experiments/<name>/<name>_output.txt` — stdout from binaries whose deliverable is stdout
 
-**Why:** Worktrees inherit data immediately, changes are visible in diffs. Stdout capture makes drift detectable for experiments that produce assertions/summaries rather than JSONL.
+**Why:** Worktrees inherit data immediately, changes are visible in diffs.
 
 **Regeneration convention:**
 - **Regenerate on the branch that changes the code.** Data should match the code that produced it.
 - **Separate commits**: Code changes committed separately from data regeneration
 
-**Merge conflicts (data/figures):**
-- Resolve by regenerating on the merged result
+**Merge conflicts (data/figures):** Resolve by regenerating on the merged result.
 
 ### Quality standards
-<copied-to>review-experiment-notes</copied-to>
 
 **Rerunnable from zero:**
 - Starting from empty experiment directories, running all scripts should reproduce all outputs
-- No manual steps
-- No "run this once, then comment it out"
+- No manual steps, no "run this once, then comment it out"
 
 **Document assumptions:**
 - If script assumes file exists, document it in header and error message
 - Example: "Assumes benchmark.jsonl exists. Run: cd experiments/ && cargo run --bin benchmark --release"
-
-**Verification:**
-- Results checked by Jörn before inclusion in thesis
-- Plots visually inspected for sanity
-- Statistical claims require reproducible computation
-- Agent-generated figures are drafts until Jörn reviews
 
 **Not production code:**
 - No exhaustive testing required (not like Rust crates)
@@ -897,3 +795,9 @@ cd thesis/ && latexmk
 ## Archaeology
 
 The `archaeology/` directory contains files recovered from `msc-viterbo`, an abandoned predecessor repo. **Everything here is untrusted.** Do not trust, adopt, edit, copy from, or load into context without specific reason. Read for ideas and warnings only.
+
+## Working notes (redistribute later)
+
+**Rollbacks are cheap.** Git handles rollback; agent time (1h = $0) is practically free. Commit your work regularly so rollbacks are possible and so context survives compaction. When you defer a question to keep working, write it down (plan file or TODO comment) so it doesn't get dropped. Deferred ≠ dropped. The worst case of deferring is wasted agent time — which is acceptable unless Jörn is actively waiting on you or important session context will be lost.
+
+**Fix obvious bugs you find, even if another agent wrote the code.** Don't ignore problems just because they weren't your fault. Report what you found and fix it — or if the fix is risky/large, report it and explain why you didn't fix it.

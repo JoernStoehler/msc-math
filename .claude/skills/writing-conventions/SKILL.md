@@ -198,6 +198,14 @@ Phase 2 agents focus on one semantic concern each. Each agent's checklist is sma
 
 Overwhelm was observed with the v1 agents: review-experiment-writing (279 lines, 14+ items) and review-library (328 lines, 14+ items) sometimes missed isolated bugs or entire checklist aspects. The v2 split addresses this by keeping each agent focused.
 
+## Post-session reflection (blameless postmortem)
+
+Just before session ends (merge or abandon):
+
+1. A report with all sources of friction, false steps, steps that turned out to have lower-than-expected value, unexpectedly good steps, and time sinks of agent time.
+2. A breakdown of where Jörn spent time this session, what work Jörn did, and where Jörn's work was used afterward. Purpose: detect work Jörn does that agents could also do, or that needn't be done at all.
+3. A list of suggestions, each labeled as confident or unconfident, and as actionably concrete or unactionably abstract.
+
 ## Writing agent prompts (.claude/agents/*.md)
 
 - Agent prompts 1:1 copy relevant CLAUDE.md sections (not summaries, not references)
