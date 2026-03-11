@@ -71,36 +71,3 @@ For each: location, what seems off, why uncertain.
 
 ### Checked and OK
 Brief list of conventions checked with no issues found.
-
----
-
-## Conventions from CLAUDE.md
-
-<copied-from>CLAUDE.md § Experiments > Philosophy</copied-from>
-
-Experiments are always investigative — even mature ones with thesis-ready writeups remain open to revisiting, expansion, and updating (e.g. when assumptions break or new ideas emerge).
-
-Progression is fluid, with no clear cutoff points:
-- From [nothing] → [idea] → [plan with preliminary findings] → [active hypotheses with mysteries] → [findings from non-runnable code] → [failed attempt summary] → [cleanup commit in git log]
-- From [nothing] → [full bundle: scripts + thesis section + datasets + extra rust code]
-
-Agents constantly comment on, iterate, clean, refactor, and narrow experiments — tweaking parameters, trying variations, exploring edge cases, simplifying code, focusing scope, removing dead ends.
-
-When cleaning up code that's no longer useful:
-- If learnings worth preserving: create `experiments/<topic>.md` with git ref to last commit
-- Otherwise: just delete (it's in git history)
-
-<copied-from>CLAUDE.md § Experiments > Quality standards</copied-from>
-
-**Rerunnable from zero:**
-- Starting from empty experiment directories, running all scripts should reproduce all outputs
-- No manual steps, no "run this once, then comment it out"
-
-**Document assumptions:**
-- If script assumes file exists, document it in header and error message
-- Example: "Assumes benchmark.jsonl exists. Run: cd experiments/ && cargo run --bin benchmark --release"
-
-**Not production code:**
-- No exhaustive testing required (not like Rust crates)
-- But must be reproducible
-- Focus on clarity and correctness over performance

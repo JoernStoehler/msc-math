@@ -57,11 +57,13 @@ Each topic section below mentions its relevant review subagent(s) for focused ch
 - Load the `writing-conventions` skill first. It contains the rationale, style rules, and cross-reference tag system.
 - Editing CLAUDE.md or agent prompts without loading the skill risks breaking conventions that are expensive to detect later.
 
-**Agent prompt architecture:** Subagent definitions in `.claude/agents/*.md` 1:1 copy relevant CLAUDE.md sections into their prompt body. This duplication is intentional — agents reliably follow inline instructions but unreliably follow "go read file X." Agent prompts use `<copied-from>` tags to mark the source section. Details in the `writing-conventions` skill.
+**Convention enforcement architecture:** Conventions live in two places:
+- **CLAUDE.md** — read by every agent (main + sub). The single conventions file.
+- **`.claude/rules/`** — path-specific rule files, auto-loaded for any agent that touches matching files (e.g. `tex-style.md` loads for `**/*.tex`). These contain the same conventions as CLAUDE.md topic sections, extracted for focused enforcement.
+
+Review subagents in `.claude/agents/` have inline **checklists** (detection rules, tips, common violations) but no longer copy CLAUDE.md sections — the rules files handle that via auto-loading.
 
 ## Communication with Jörn
-
-This section is copied to `.claude/agents/{plan.md}`.
 
 **Before requesting Jörn's attention:** Investigate first. Autonomous investigative work is basically costless. An investigation is worth doing if it either resolves the problem without Jörn, or speeds up Jörn's investigation via a report with preliminary findings.
 
@@ -101,8 +103,6 @@ This section is copied to `.claude/agents/{plan.md}`.
 - Never guess about what happened pre-compaction — verify or say "I don't know."
 
 ## Session Workflow
-
-This section is copied to `.claude/agents/{plan.md}`.
 
 Every agent session owns a git worktree. Subagents and teams work in the same worktree.
 
@@ -159,8 +159,6 @@ Agent time is cheap. Use it aggressively:
 - **Revert plan required:** For all these patterns, there must be a plan ahead-of-time for how to revert an agent's work. This is why we use git worktrees and why only Jörn merges to `main`.
 
 ### Plan workflow
-
-This section is copied to `.claude/agents/{plan.md}`.
 
 Conventions for the plan phase (the `plan` subagent overrides default `/plan`):
 
@@ -237,11 +235,7 @@ Jörn merges locally and pushes later, so `origin/main` is frequently stale. Com
 
 If unexpected files appear in diff, investigate — likely means branch needs rebasing.
 
-This section is copied to `.claude/agents/{review-modules.md}`.
-
 ## Thesis Writing
-
-This section is copied to `.claude/agents/{review-tex-style.md, review-tex-math-correctness.md, review-tex-educational.md, review-tex-facts.md}`.
 
 ### Build
 
@@ -452,8 +446,6 @@ Do NOT put review status in the header. Review status lives inline via `% Jörn:
 
 ## Experiment Writing
 
-This section is copied to `.claude/agents/{review-tex-style.md, review-experiment-observations.md, review-experiment-interpretation.md}`.
-
 Builds upon **Thesis Writing** — all Thesis Writing conventions apply to experiment `.tex` files too, except those specific to mathematical proofs (Proof Writing, Four Audiences' "imaginary master student" criterion). This section adds experiment-specific conventions.
 
 - **Write up what's there — nothing more, nothing less.** Report what the data shows. No invented interpretations, no omitted patterns, no editorializing. Facts are facts, correlations are correlations, unknowns are unknowns. Speculation must be explicitly labeled as interpretation.
@@ -466,8 +458,6 @@ Builds upon **Thesis Writing** — all Thesis Writing conventions apply to exper
 - Plots visually inspected for sanity
 
 ## Rust Library
-
-This section is copied to `.claude/agents/{review-rust-style.md, review-rust-tests.md, review-rust-math-correctness.md}`.
 
 **Invariant:** `cargo test` passes from `crates/` with zero failures.
 
@@ -603,8 +593,6 @@ Before final report:
 
 ## Experiments
 
-This section is copied to `.claude/agents/{review-modules.md, review-python-style.md, review-notes-style.md}`.
-
 Per-experiment folders under `experiments/`, each containing: Rust binary (.rs), Python script (.py), LaTeX writeup (.tex), data (.jsonl), figures (.png), and README (.md).
 
 Pipeline: Rust binary → .jsonl data → Python script → .png figures → .tex writeup → thesis
@@ -688,8 +676,6 @@ No hardcoded paths outside `REPO_ROOT`.
 **Dependencies:** Listed in `experiments/requirements.txt`; install with `pip install -r experiments/requirements.txt`. Use plain Python with standard data science libraries (numpy, pandas, matplotlib, scipy). No custom framework.
 
 ### Figures and tables
-
-This section is copied to `.claude/agents/{review-python-style.md}`.
 
 All figure formatting is handled in Python. LaTeX is a 1:1 pass-through (`\includegraphics{file.png}`, no `width=`/`scale=`).
 

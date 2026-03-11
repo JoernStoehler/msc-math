@@ -84,33 +84,3 @@ For each: location, what seems off, why uncertain.
 
 ### Verified OK
 Brief list of functions/types where doc comments match code.
-
----
-
-## Conventions from CLAUDE.md
-
-<copied-from>CLAUDE.md § Rust Library > Mathematical documentation</copied-from>
-
-- Definitions, lemmas, and proofs live as doc comments on the corresponding types/functions
-- Long proofs are outsourced to colocated `*_proof.md` files
-- The Rust crates are self-contained mathematically — no dependency on thesis/. The thesis is downstream
-- Quality bar: specific, correct, detailed, clearly written enough that (1) Jörn can verify with low effort and (2) agents can rely on them when implementing
-
-**Math-code correspondence:** Rust types, function signatures, and function bodies 1:1 correspond to mathematical definitions. "1:1" means literal structural correspondence, not just "inspired by."
-
-**Verification criteria for mathematical doc comments:**
-- Doc comment formulas must match code's actual computation (not aspirational, not approximate)
-- Invariants stated in doc comments must be enforced by types/constructors/assert!/debug_assert!
-- Properties stated in doc comments must have corresponding tests
-
-<copied-from>CLAUDE.md § Rust Library > Cross-references to thesis</copied-from>
-
-1. **Format**: `[lem:label]`, `[thm:label]`, `[def:label]`, `[alg:label]` — matching the LaTeX `\label{}` name exactly.
-2. **Always include** a one-line English description of what the referenced result says. Example:
-   ```rust
-   / Maximises Q(β) subject to the KKT constraints; see `[lem:kkt]` (thesis):
-   /// the unique maximum exists and equals 1/(2·action(orbit)).
-   ```
-3. **Never duplicate proofs** inline. The comment says *what* the code computes and *which lemma* justifies it. The thesis says *why*.
-4. **Never use rendered numbers** like "Lemma 3.2" — these change when sections renumber. Use the label.
-5. **Verification**: grep `crates/src/` for `[lem:...]`, `[thm:...]`, `[def:...]` occurrences, find the `.tex` `\label{...}`, and check the lemma statement matches what the comment claims.

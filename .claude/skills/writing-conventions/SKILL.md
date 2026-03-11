@@ -249,10 +249,15 @@ Just before session ends (merge or abandon):
 
 ## Writing agent prompts (.claude/agents/*.md)
 
-- Agent prompts 1:1 copy relevant CLAUDE.md sections (not summaries, not references)
-- Agent-specific content (task description, output format, detection rules) goes at the top
-- CLAUDE.md copies go below, labeled with source
-- Cross-reference tags for maintainability:
-  - In CLAUDE.md: `This section is copied to .claude/agents/{agent1.md, agent2.md}.` in the section body
-  - In agent prompts: `<copied-from>CLAUDE.md § Section Name</copied-from>` before copied blocks
-  - When editing either side, check the tags and update the other side
+Convention enforcement uses a two-tier architecture:
+
+1. **`.claude/rules/`** — path-specific rule files, auto-loaded for any agent that touches matching files. These contain CLAUDE.md topic section conventions extracted for focused enforcement.
+2. **Agent checklists** — inline in `.claude/agents/*.md`. Detection rules, tips, and common violations specific to each review agent's focus area.
+
+Agent prompts contain ONLY:
+- YAML frontmatter (name, description, model, memory, tools)
+- Task description (what the agent does)
+- Checklist (detection rules, tips for the specific review focus)
+- Output format
+
+Agents do NOT copy CLAUDE.md sections — the rules files handle convention loading via auto-loading based on file paths touched.
