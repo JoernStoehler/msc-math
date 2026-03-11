@@ -568,14 +568,7 @@ For expensive functions (e.g., `ehz_capacity()` with exponential cost), split te
 
 Every test MUST have at least a doc comment stating the mathematical property it asserts. Tests for expensive or complex functions should additionally explain why they use their execution mode (debug/release/fixture), why they use their specific input, and relationship to other tests (if any).
 
-### Test suites
-
-| Suite | Command | When to run | Time |
-|-------|---------|-------------|------|
-| **Default** | `cargo test --lib` | Every iteration | ~145s wall |
-| Regenerate capacity fixture | `cargo test --release regenerate_test_dataset -- --ignored` | After changes to `ehz_capacity()` | ~20s |
-| Expensive capacity tests | `cargo test --release -- --ignored` | After capacity algorithm changes | ~2s |
-| All ignored tests | `cargo test -- --ignored` | Full validation | ~5 min |
+### Fixtures
 
 **Fixture location:** `tests/fixtures/capacity_dataset.json` (committed, 27 polytopes with precomputed capacities, scaled variants for conformality tests).
 

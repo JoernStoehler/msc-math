@@ -160,6 +160,47 @@ CLAUDE.md supports `<!-- comments -->` that are NOT auto-injected into agent con
 - `<copied-to>` tags — these serve dual purpose (editors need them for sync, all agents need them to know subagent coverage). Keep visible.
 - Anything all agents need to follow — must be in visible text.
 
+## Decision records (failure modes that shaped CLAUDE.md rules)
+
+These explain *why* specific rules exist. Read when a rule seems arbitrary or when considering changes.
+
+### "Discuss-first" for issue edits and scope changes
+
+**Failure mode (issue #12, Feb 2026):** Three agents attempted #12 over two days. Each read massive agent-written comments (posted under Jörn's account), treated them as authoritative, and either continued the brain-dump or stalled planning. No deliverable produced. ~1100 lines of unreviewed drafts posted as issue comments. Future agents treated these as authoritative, creating a feedback loop.
+
+**Root causes:**
+- Agents treated issue edits the same as code edits — but issues are expensive to verify (Jörn reading ≈ cost of writing together) and hard to roll back cleanly
+- Agents interpreted Jörn's silence as approval (connection issues / thinking / typing correction)
+- GitHub shows all content under Jörn's account — no visual distinction between Jörn-written and agent-written
+
+**Decisions:** Issue edits → discuss-first. Silence ≠ confirmation. Subagent output → commit to branch via Task tool, never post as comments. All GitHub content treated as agent-written by default.
+
+### Tests are necessary but not sufficient
+
+**Failure mode (msc-viterbo, 2025):** Predecessor repo had agent-written tests that all passed. Known bugs:
+1. HK2019 QP solver missed optima — returned plausible but wrong values
+2. Trivialization formula was not a bijection
+3. Billiard orbit validation only checked even-indexed segments
+4. Pentagon capacity: 2.127 (wrong) instead of 3.441 (correct)
+
+**Root cause:** Goodhart's law. When agents write both code and tests, tests optimize for passing, not for correctness. Tests checked "does the code do what the code does?" not "does the code compute the right mathematical quantity?"
+
+**Decision:** Jörn provides domain knowledge: which test cases matter, what correct values are, what invariants to check. This is his primary quality contribution.
+
+### Test comprehension by USE, not by asking
+
+**Failure mode:** Agents asked subagents "is this clear?" — subagents that misunderstood confidently answered "yes" or identified irrelevant nitpicks while missing fundamental misunderstandings.
+
+**Root cause:** "Is this clear?" tests confidence, not comprehension. An agent that misunderstands will be confidently wrong.
+
+**Decision:** Test comprehension by asking agents to USE the content (implement from a description, answer specific questions). Check whether their output matches intent.
+
+### Why a single CLAUDE.md (not per-directory)
+
+**Previous state:** 8 files across 4 directories (818 lines total). Agents pieced together mental models from fragments and got them wrong. Duplicated content drifted.
+
+**Decision:** Single file, split by topic. Skills for progressive disclosure of minority-use-case content. Agent prompts copy CLAUDE.md sections inline (agents reliably follow inline instructions, unreliably follow "go read file X").
+
 ## What worked and what didn't (CLAUDE.md v1, assessed March 2026)
 
 Empirical observations from ~5 months of use. Input to the optimization loop.
@@ -212,6 +253,6 @@ Just before session ends (merge or abandon):
 - Agent-specific content (task description, output format, detection rules) goes at the top
 - CLAUDE.md copies go below, labeled with source
 - Cross-reference tags for maintainability:
-  - In CLAUDE.md: `<copied-to>agent1, agent2</copied-to>` after section headers
+  - In CLAUDE.md: `This section is copied to .claude/agents/{agent1.md, agent2.md}.` in the section body
   - In agent prompts: `<copied-from>CLAUDE.md § Section Name</copied-from>` before copied blocks
   - When editing either side, check the tags and update the other side

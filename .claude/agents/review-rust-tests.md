@@ -127,13 +127,6 @@ Two classes of tests, both applied excessively:
 
 Every test MUST have at least a doc comment stating the mathematical property it asserts.
 
-<copied-from>CLAUDE.md § Rust Library > Test suites</copied-from>
-
-| Suite | Command | When to run | Time |
-|-------|---------|-------------|------|
-| **Default** | `cargo test --lib` | Every iteration | ~145s wall |
-| Regenerate capacity fixture | `cargo test --release regenerate_test_dataset -- --ignored` | After changes to `ehz_capacity()` | ~20s |
-| Expensive capacity tests | `cargo test --release -- --ignored` | After capacity algorithm changes | ~2s |
-| All ignored tests | `cargo test -- --ignored` | Full validation | ~5 min |
+<copied-from>CLAUDE.md § Rust Library > Fixtures</copied-from>
 
 **Fixture location:** `tests/fixtures/capacity_dataset.json`
