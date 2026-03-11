@@ -188,6 +188,16 @@ Empirical observations from ~5 months of use. Input to the optimization loop.
 - Specialize subsections to their topic: "writing clearly for Rust comments" > "writing clearly in general" — more actionable and specific
 - Redundancy between sections is OK — doesn't increase instruction complexity (behavior modifications), only token count. Benefits: clarity, simpler subagent mapping, easier maintenance, allows specialization.
 
+**Review subagent design (v2, March 2026):**
+
+Three-phase pipeline: phase 0 (module sanity) → phase 1 (syntax/style, fix before proceeding) → phase 2 (semantics/content, on clean files). Rationale: out-of-scope errors (e.g. LaTeX syntax errors) distract agents reviewing content (e.g. proof correctness). By fixing syntax first, semantic reviewers focus on their actual concern.
+
+Phase 1 agents are language-based (review-tex-style, review-rust-style, review-python-style, review-notes-style), not folder-based. This means they can be parallelized across independent files within the same language (e.g. multiple tex-style instances for independent .tex files, or multiple rust-style instances for different module pairs).
+
+Phase 2 agents focus on one semantic concern each. Each agent's checklist is small enough that the agent can go through items sequentially without getting overwhelmed. When agents have too many items, they should: (1) read the files, (2) iterate checklist items one-by-one, (3) for each item: think, then append a paragraph to an output file. This sequential processing prevents overlooking items due to cognitive load.
+
+Overwhelm was observed with the v1 agents: review-experiment-writing (279 lines, 14+ items) and review-library (328 lines, 14+ items) sometimes missed isolated bugs or entire checklist aspects. The v2 split addresses this by keeping each agent focused.
+
 ## Writing agent prompts (.claude/agents/*.md)
 
 - Agent prompts 1:1 copy relevant CLAUDE.md sections (not summaries, not references)
