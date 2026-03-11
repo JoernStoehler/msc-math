@@ -195,11 +195,15 @@ Reviews use a 3-phase pipeline. Fix each phase's findings before proceeding to t
 - `review-experiment-observations` — reported facts vs JSONL/output data
 - `review-experiment-interpretation` — reasoning quality, overreach, editorializing
 
-Orchestration: pick relevant subagents based on `git diff main...HEAD --name-only`, run within-phase agents in parallel, merge findings into one report, address findings, present to Jörn.
+### How to run reviews (main agent does this directly)
 
-### Pre-delivery verification
+1. `git diff main...HEAD --name-only` → pick relevant subagents from the phases above
+2. Run phase 0 (`review-modules`) first if builds/tests might be broken
+3. Run phase 1 agents in parallel, fix findings
+4. Run phase 2 agents in parallel on the cleaned files, fix findings
+5. Present merged report to Jörn
 
-Before presenting a deliverable to Jörn, spawn review subagents with the relevant convention sections and the deliverable. Fix all issues before presenting. This is mandatory for `.tex` deliverables and recommended for all deliverables.
+This is mandatory before presenting `.tex` deliverables to Jörn and recommended for all deliverables. Do not delegate this orchestration to a subagent — subagents cannot spawn subagents.
 
 ## Git
 
