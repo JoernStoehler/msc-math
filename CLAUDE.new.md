@@ -57,7 +57,7 @@ Each topic section below mentions its relevant review subagent(s) for focused ch
 - Load the `writing-conventions` skill first. It contains the rationale, style rules, and cross-reference tag system.
 - Editing CLAUDE.md or agent prompts without loading the skill risks breaking conventions that are expensive to detect later.
 
-**Agent prompt architecture:** Subagent definitions in `.claude/agents/*.md` 1:1 copy relevant CLAUDE.md sections into their prompt body. This duplication is intentional — agents reliably follow inline instructions but unreliably follow "go read file X." Cross-reference tags (`<copied-to>` in CLAUDE.md, `<copied-from>` in agent files) track which copies need updating. Details in the `writing-conventions` skill.
+**Agent prompt architecture:** Subagent definitions in `.claude/agents/*.md` 1:1 copy relevant CLAUDE.md sections into their prompt body. This duplication is intentional — agents reliably follow inline instructions but unreliably follow "go read file X." Agent prompts use `<copied-from>` tags to mark the source section. Details in the `writing-conventions` skill.
 
 ## Communication with Jörn
 
@@ -99,9 +99,8 @@ Each topic section below mentions its relevant review subagent(s) for focused ch
 - Never guess about what happened pre-compaction — verify or say "I don't know."
 
 ## Session Workflow
-<copied-to>plan</copied-to>
 
-<!-- Absorbs old Roles §1 (time bottleneck), §5 (task scoping), §6 (review/merge), §9 (autonomous difficult tasks), and Decision Authority -->
+
 
 Every agent session owns a git worktree. Subagents and teams work in the same worktree.
 
@@ -158,9 +157,8 @@ Agent time is cheap. Use it aggressively:
 - **Revert plan required:** For all these patterns, there must be a plan ahead-of-time for how to revert an agent's work. This is why we use git worktrees and why only Jörn merges to `main`.
 
 ## Subagents & Review
-<copied-to>plan</copied-to>
 
-<!-- Meta-knowledge about why rules get ignored lives in writing-conventions skill -->
+
 
 Spawn a subagent when a subtask can run in parallel, needs isolated context, or benefits from focused work (e.g., literature extraction, code review, exploratory investigation).
 
@@ -215,10 +213,11 @@ Jörn merges locally and pushes later, so `origin/main` is frequently stale. Com
 
 If unexpected files appear in diff, investigate — likely means branch needs rebasing.
 
-Reviewed by subagents: review-modules
+This section is copied to `.claude/agents/{review-modules.md}`.
 
 ## Thesis Writing
-<copied-to>review-tex-style, review-tex-math-correctness, review-tex-educational, review-tex-facts</copied-to>
+
+This section is copied to `.claude/agents/{review-tex-style.md, review-tex-math-correctness.md, review-tex-educational.md, review-tex-facts.md}`.
 
 ### Build
 
@@ -427,10 +426,9 @@ Do NOT put review status in the header. Review status lives inline via `% Jörn:
 - No prose paragraphs outside environments, except minimal connective text between environments
 - Calculations displayed as formulas, not described in English prose
 
-Reviewed by subagents: review-tex-style, review-tex-math-correctness, review-tex-educational, review-tex-facts
-
 ## Experiment Writing
-<copied-to>review-tex-style, review-experiment-observations, review-experiment-interpretation</copied-to>
+
+This section is copied to `.claude/agents/{review-tex-style.md, review-experiment-observations.md, review-experiment-interpretation.md}`.
 
 Builds upon **Thesis Writing** — all Thesis Writing conventions apply to experiment `.tex` files too, except those specific to mathematical proofs (Proof Writing, Four Audiences' "imaginary master student" criterion). This section adds experiment-specific conventions.
 
@@ -443,10 +441,9 @@ Builds upon **Thesis Writing** — all Thesis Writing conventions apply to exper
 - Statistical claims require reproducible computation
 - Plots visually inspected for sanity
 
-Reviewed by subagents: review-tex-style, review-experiment-observations, review-experiment-interpretation
-
 ## Rust Library
-<copied-to>review-rust-style, review-rust-tests, review-rust-math-correctness</copied-to>
+
+This section is copied to `.claude/agents/{review-rust-style.md, review-rust-tests.md, review-rust-math-correctness.md}`.
 
 **Invariant:** `cargo test` passes from `crates/` with zero failures.
 
@@ -587,10 +584,9 @@ Before final report:
 - [ ] Performance claims have benchmarks
 - [ ] Working tree clean (no uncommitted changes)
 
-Reviewed by subagents: review-rust-style, review-rust-tests, review-rust-math-correctness
-
 ## Experiments
-<copied-to>review-modules, review-python-style, review-notes-style</copied-to>
+
+This section is copied to `.claude/agents/{review-modules.md, review-python-style.md, review-notes-style.md}`.
 
 Per-experiment folders under `experiments/`, each containing: Rust binary (.rs), Python script (.py), LaTeX writeup (.tex), data (.jsonl), figures (.png), and README (.md).
 
@@ -720,8 +716,6 @@ Rust binary → .jsonl → Python script → figures/tables → thesis
 - No exhaustive testing required (not like Rust crates)
 - But must be reproducible
 - Focus on clarity and correctness over performance
-
-Reviewed by subagents: review-modules, review-python-style, review-notes-style
 
 ## Environment
 
