@@ -163,7 +163,7 @@ Every `.tex` file starts with a `%` header block containing:
 
 1. **Self-contained**: Every definition and theorem stated in full.
 2. **Notation consistency**: Must match `correspondence.tex` exactly.
-3. **Citation format**: Every `\cite{key}` must have a matching bib entry. (Author name *accuracy* is `review-tex-facts`'s job.)
+3. **Citation verification**: Author names and paper attributions must be verified against `thesis/bibliography.bib` or `papers/`. Never produce author names from memory.
 
 ### Format Rules
 
