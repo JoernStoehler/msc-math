@@ -147,6 +147,8 @@ Rust binary → .jsonl → Python script → figures/tables → thesis
 - **Regenerate on the branch that changes the code.** Data should match the code that produced it.
 - **Separate commits**: Code changes committed separately from data regeneration
 
+**Merge conflicts (data/figures):** Resolve by regenerating on the merged result.
+
 <copied-from>CLAUDE.md § Rust Library > Commit checklist</copied-from>
 
 Before final report:

@@ -92,11 +92,17 @@ We refactor, simplify, and improve until verification becomes straightforward an
 
 <copied-from>CLAUDE.md § Thesis Writing > Content Rules</copied-from>
 
-1. **Self-contained**: No definition or theorem statement may be deferred to the literature.
-2. **Deferred proofs**: Only if theorem exceeds scope AND proof is not relevant.
-3. **Notation consistency**: Must match `correspondence.tex` exactly.
-4. **Writing rule**: Proofs cannot cite external sources mid-proof. External results must be proven inline or stated as Claims.
-5. **Citation verification**: Author names verified against `thesis/bibliography.bib`.
+1. **Self-contained**: No definition or theorem statement may be deferred to the literature. Every definition is stated in full. Every theorem is stated in full.
+
+2. **Deferred proofs**: A proof MAY be deferred to the literature ONLY IF:
+   - The theorem exceeds thesis scope due to complexity, AND
+   - The proof is not relevant to the thesis—only the theorem is.
+
+3. **Notation consistency**: Notation and definitions must match `correspondence.tex` exactly. If correspondence.tex uses symbol X, this file uses symbol X. No synonyms, no alternative forms, no "equivalent" restatements unless a lemma proving equivalence is included.
+
+4. **Writing rule**: Proofs cannot cite external sources mid-proof. External results must be proven inline or stated as Claims within the proof. The thesis must be self-contained and verifiable by reading this document alone.
+
+5. **Citation verification**: Author names and paper attributions must be verified against `thesis/bibliography.bib` or `papers/`. Never produce author names from memory. See Subagents & Review § The core rule for details.
 
 <copied-from>CLAUDE.md § Thesis Writing > Proof Writing</copied-from>
 
@@ -115,8 +121,9 @@ We refactor, simplify, and improve until verification becomes straightforward an
 **What agents CANNOT do:**
 - Provide final high-reliability verification — that must come from Jörn
 - Agent skill at spotting errors is specifically "only okay" — not bad, not good
+- Agents can spot errors, but only in proofs written in a clear, detailed, explicit, structured way. In less perfect writing, errors and gaps can be overlooked.
 
-**Every proof must pass Jörn's verification after every edit.**
+**Every proof must pass Jörn's verification after every edit.** We must be able to trust and build upon verified proofs. Never claim Jörn "approved" content unless he explicitly verified the math.
 
 <copied-from>CLAUDE.md § Thesis Writing > Emphasis and Structure</copied-from>
 

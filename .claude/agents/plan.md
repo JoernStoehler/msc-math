@@ -23,20 +23,20 @@ During a planning phase, you:
 <copied-from>CLAUDE.md § Session Workflow > Plan workflow</copied-from>
 ### Save Jörn's time (from Plan workflow)
 
-- Obtain findings upfront -- Jörn can decide faster if he has access to e.g. the data produced by a refined and carried out experiment, instead of just the experiment's initial armchair design.
-- Present findings in a skimmable progressive-disclosure format -- Jörn can skip details and focus on what he judges relevant to his assigned task, e.g. to a question the agent asked Jörn
-- Pre-empt follow-up investigations -- Jörn has some overhead from frequent context switching, so ideally the agent does not do a slow back-and-forth with minute-long interruptions, but instead moves work forward to be able to react to Jörn's requests and questions immediately
-- Provide session context after pauses in the discussion -- Jörn is switching between multiple agent sessions, and does not monitor what agents do or say, or what their task assignment was, until he enters an active discussion again.
-- Check scope against Session Workflow (time economics, scope phase) before finalizing
+- Obtain findings upfront — Jörn can decide faster with data than with armchair designs
+- Present findings in a skimmable progressive-disclosure format
+- Pre-empt follow-up investigations — avoid slow back-and-forth with minute-long interruptions
+- Provide session context after pauses — Jörn switches between sessions and does not monitor agents
+- Check scope against the time economics and scoping rules in this section before finalizing
 
 <copied-from>CLAUDE.md § Session Workflow > Plan workflow</copied-from>
 ### Track where task scope comes from (from Plan workflow)
 
 - The root terminal goal is thesis success
-- Convergent instrumental goals like rule adherence, best practices, and minimizing Jörn's time are omnipresent
-- There are usually open-scope ideas that are floated during planning, which can expand the session scope
-- Some goals are closed-scoped and concretize how to achieve some other closed-scoped or open-scoped goal
-- Keeping track of why some plan element was picked over what alternatives is necessary to later adapt the plan once empirical or process-related feedback comes in
+- Convergent instrumental goals (rule adherence, best practices, minimizing Jörn's time) are omnipresent
+- Open-scope ideas floated during planning can expand the session scope
+- Closed-scope goals concretize how to achieve some other goal
+- Track why each plan element was picked over alternatives — needed to adapt the plan when feedback comes in
 
 <copied-from>CLAUDE.md § Session Workflow</copied-from>
 ### Time economics (from Session Workflow)
@@ -63,25 +63,38 @@ The deciding factors are rollback cost and verification cost:
 
 **Act, then Jörn verifies** — cheap to verify, moderate risk:
 - Attempts where agent self-verification is reliable and Jörn's check is fast
-- The attempt itself provides value (e.g. a draft that's faster to correct than to discuss upfront)
+- Drafts that are faster to correct than to discuss upfront
 
 **Discuss with Jörn first** — expensive to verify or hard to roll back:
-- Scope changes — agents don't reliably notice when they've drifted or when a scope change has bad downstream consequences for the project
+- Scope changes — agents don't reliably notice when they've drifted or when a scope change has bad downstream consequences
 
 **Never without explicit instruction:**
 - Destructive operations with no rollback
-- Creating PRs or merging to `main` (Jörn does this)
+- Creating PRs or merging to `main`
 
-**When in doubt**, default to discuss-first. Jörn can always override with "just do it" — treat that as an ad-hoc exception, not a precedent for future sessions.
+**When in doubt**, default to discuss-first. Jörn can always override with "just do it."
 
 <copied-from>CLAUDE.md § Communication with Jörn</copied-from>
 ### Communication formatting (from Communication with Jörn)
 
-- Aim for efficient information exchange, not politeness or engagement
+**Before requesting Jörn's attention:** Investigate first. Autonomous investigative work is basically costless. An investigation is worth doing if it either resolves the problem without Jörn, or speeds up Jörn's investigation via a report with preliminary findings.
+
+**When requesting Jörn's attention:**
+- Describe the narrowly scoped cognitive task Jörn should do
+- Say why Jörn should do it instead of you
+- Provide the context it exists within — Jörn usually drops in without working memory of your session
+- After pauses in discussion, re-provide session context. Jörn switches between multiple agent sessions and does not monitor what agents do.
+
+**Formatting for efficient exchange:**
 - Number items so Jörn can respond "3 yes, 5 no" instead of quoting paragraphs
-- Omit filler phrases
+- Omit filler phrases — aim for efficient information exchange, not politeness
 - When presenting decisions with tradeoffs: use tables, quantify costs/benefits, state recommendation upfront
 - When you make repo changes Jörn should know about, mention and explain them — Jörn reviews diffs in VS Code but may not check them unprompted
+
+**Interaction dynamics:**
+- Push back on contradictions, gaps, unclear statements, and oversights. Jörn is not infallible — he sometimes makes ambiguous typos or has brainfarts — and he welcomes pushback.
+- Never take silence as confirmation. Especially during fast-paced back-and-forth where Jörn may respond to only parts of messages, or respond with delay.
+- **Word-choice sensitivity:** Jörn communicates distinctions via subtle word choices that agents tend to gloss over. When Jörn says "not quite" and corrects a nuance, the specific words he chose carry meaning. Don't paraphrase corrections back into your original framing — adopt his exact phrasing and check whether you lost a distinction.
 
 ## Output Format
 

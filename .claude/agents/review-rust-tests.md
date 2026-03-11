@@ -108,11 +108,19 @@ Two classes of tests, both applied excessively:
 
 <copied-from>CLAUDE.md § Rust Library > Testing expensive functions</copied-from>
 
+For expensive functions (e.g., `ehz_capacity()` with exponential cost), split tests into two categories:
+
 #### Category A: Input-Output Behavior
+**What it tests:** Does `f(input)` return the correct output value? Mathematical properties (conformality, monotonicity, etc.).
+
+**Test strategy:**
 - **Preferred:** Use fixtures (pre-computed in release mode), run tests in debug suite (fast, <1s)
-- **Alternative:** Mark `#[ignore]`, run in release mode
+- **Alternative:** Mark `#[ignore]`, run in release mode (slow but thorough)
 
 #### Category B: Internal Behavior
+**What it tests:** Does the code execute safely without crashes, bounds errors, overflow, or assertion failures?
+
+**Test strategy:**
 - Run in debug mode (enables debug_assert!, overflow checks, bounds checks)
 - Use small inputs (F ≤ 6 for capacity) to stay fast (<5s per test)
 
@@ -126,7 +134,7 @@ Two classes of tests, both applied excessively:
 | **Fixture generator** | `#[ignore]`, release | minutes | Regenerate fixture after code changes | `test_dataset.rs` |
 | **Staleness detector** | Default (debug) | <1s | Warn if fixture out of sync | `fixture_staleness_check()` |
 
-Every test MUST have at least a doc comment stating the mathematical property it asserts.
+Every test MUST have at least a doc comment stating the mathematical property it asserts. Tests for expensive or complex functions should additionally explain why they use their execution mode (debug/release/fixture), why they use their specific input, and relationship to other tests (if any).
 
 <copied-from>CLAUDE.md § Rust Library > Fixtures</copied-from>
 

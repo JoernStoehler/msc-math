@@ -132,6 +132,14 @@ Every line of LaTeX must work for all four audiences simultaneously:
 
 <copied-from>CLAUDE.md § Thesis Writing > Content Rules</copied-from>
 
-1. **Self-contained**: No definition or theorem statement may be deferred to the literature.
-2. **Notation consistency**: Must match `correspondence.tex` exactly.
-3. **Citation verification**: Author names verified against `thesis/bibliography.bib`.
+1. **Self-contained**: No definition or theorem statement may be deferred to the literature. Every definition is stated in full. Every theorem is stated in full.
+
+2. **Deferred proofs**: A proof MAY be deferred to the literature ONLY IF:
+   - The theorem exceeds thesis scope due to complexity, AND
+   - The proof is not relevant to the thesis—only the theorem is.
+
+3. **Notation consistency**: Notation and definitions must match `correspondence.tex` exactly. If correspondence.tex uses symbol X, this file uses symbol X. No synonyms, no alternative forms, no "equivalent" restatements unless a lemma proving equivalence is included.
+
+4. **Writing rule**: Proofs cannot cite external sources mid-proof. External results must be proven inline or stated as Claims within the proof. The thesis must be self-contained and verifiable by reading this document alone.
+
+5. **Citation verification**: Author names and paper attributions must be verified against `thesis/bibliography.bib` or `papers/`. Never produce author names from memory. See Subagents & Review § The core rule for details.

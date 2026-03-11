@@ -147,3 +147,7 @@ Never state performance without benchmark. "~1ms" is a claim. "Benchmark shows 1
 ### Thesis constraints
 
 Polytope4D: 5-16 facets typical. Research code, March 2026 deadline. Correctness > performance.
+
+Don't suggest: Theoretical numerical analysis, O(n²) documentation when n ≤ 16, production features unlikely to matter.
+
+Do suggest: Critical path tests, benchmarks for claims, robustness fixes (timeouts, limits).
