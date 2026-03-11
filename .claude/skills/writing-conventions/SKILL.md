@@ -1,0 +1,292 @@
+---
+name: writing-conventions
+description: Load before writing or editing CLAUDE.md, SKILL.md, or agent prompt files. Contains knowledge placement rationale, instruction design principles, and style rules.
+---
+
+# Writing Conventions for CLAUDE.md, SKILL.md, and Agent Prompts
+
+## Why knowledge placement matters
+
+Agents lack implicit knowledge: they don't know where to look for knowledge they need, and don't know what they don't know. Knowledge must be placed where agents will naturally find it.
+
+Not all agents need everything. Subagents have well-scoped tasks and can triage reading efficiently. Less-scoped agents (main session agents) need cross-references for multi-step discovery rather than single-step lookup.
+
+## Location tiers — rationale
+
+**1. CLAUDE.md** — always in context. Cannot be skipped, but can be ignored despite being read (see "Instruction focus" below). Cost: every agent pays the context-window cost. Put knowledge here when useful for a majority of agents, or when it has been forgotten too often in other locations.
+
+**2. SKILL.md files** — name + description always visible, body loaded on demand. Progressive disclosure for minority use cases. Limitation: agents sometimes run ahead without loading skills. Reminding agents to read skills is important. Subagents can be force-told to read a skill in their prompt.
+
+**3. Standard locations** — code comments, doc comments, file headers, README.md, config files. Agents naturally look at these from training. Prefer these over SKILL.md when knowledge is tied to a specific file or folder. Cost to non-interested agents is low — agents habitually skip irrelevant code comments. Anti-pattern: agents sometimes dump too much into README.md, treating them as catch-all dumps.
+
+**4. TASKS.md** — project management knowledge (features, experiment ideas, deferred tasks, external constraints). A single .md file + git log is more agent-ergonomic than GitHub issues or kanban boards. Grows stale — agents don't habitually update it. Other agents only need to know it exists.
+
+**5. MEMORY.md** — catch-all for session learnings, communication behavior. Occasionally clean and migrate stable entries to CLAUDE.md or standard locations.
+
+## Instruction focus
+
+Agents lose focus and ignore instructions they've read. This happens when:
+- Instructions were read early but the session is long
+- Total instruction complexity is too high. Token count is a bad proxy for complexity — what matters is: how many behavior modifications does the agent need to hold active? Complex rules (novel behavior, multiple conditions) cost much more than reminders of standard practices. Evaluate complexity item by item, not by counting tokens or rules.
+
+### Countermeasures
+
+- **Colocate** instructions in file headers, code comments, or nearby files so they are freshly read when working with a file
+- **Disentangle** instructions (how to behave) from factual knowledge (proofs, examples, function docs) to keep the instruction part simpler
+- **Write clearly** — unambiguous, specific, actionable. Don't make agents spend effort interpreting
+- **Pick natural instructions** — if an instruction is complex, ask whether a codebase change could make the desired behavior default. E.g., instead of 30 rules for how to test, adopt a standard test framework so the instruction becomes "we use pytest with hypothesis."
+- **Progressively disclose** — file-scoped instructions go in file headers, subset-scoped in skills, universal in CLAUDE.md
+- **Review subagents** with focused instruction sets catch what the parent agent missed. Each subagent gets a small instruction set for one concern and reports violations. This catches both minor issues (half-assed code comments) and major issues (fundamental design violations requiring rollback)
+
+## Style rules for CLAUDE.md
+
+The ideal CLAUDE.md is:
+- Reminders about standard practices, highlighting their importance for this project
+- Simple, actionable behavior modifications
+- Reinforcements of default behavior where forgetting has been observed
+
+Prefer reminders of well-known best practices over teaching novel practices. Novel practices are more expensive for agents to follow — they must override default behavior.
+
+### Organize by agent lifecycle, not by taxonomy
+
+Structure sections around the moments an agent faces a decision: "when you produce knowledge", "when you need knowledge", "when you edit code". Not around abstract categories ("location tiers", "knowledge types"). The agent hits a moment and immediately finds the relevant instruction — no interpretation needed.
+
+### No meta-sentences in CLAUDE.md
+
+Don't explain *why* a section exists ("Agents lack implicit knowledge..."). That's meta-knowledge about the section — it belongs in this skill, not in CLAUDE.md. CLAUDE.md goes straight to what to do.
+
+### Decision trees, not prose
+
+"Tied to a file? → code comment. Applies to most agents? → CLAUDE.md." gives a concrete action. "Knowledge should be placed appropriately" gives nothing.
+
+### Rationale lives in the skill
+
+The "why" behind CLAUDE.md rules lives here (in the writing-conventions skill). CLAUDE.md is pure action. When an agent needs to understand *why* a rule exists — e.g., to decide whether an edge case should follow the rule — they load this skill.
+
+### One claim per bullet
+
+Dense prose packs multiple claims that get lost on rewrite. Each bullet states one claim.
+
+Bad: "Claude Code is okay at spotting implicit criteria imposed on a task's scope and acceptance criteria by other tasks and by Claude Code's capability limits and default habits."
+
+Good: Break into atomic bullets where each claim is independently visible.
+
+### Qualifier preservation
+
+Every adjective narrows meaning. "Clear, detailed, explicit, structured, verifiable" is not a synonym list:
+- "clear" = easy to understand, not vague or ambiguous
+- "detailed" = all steps included for verification
+- "explicit" = implications spelled out, not left for the reader
+- "structured" = modular chunks the reader can selectively zoom into
+- "verifiable" = local validity check possible for every step
+
+When rewriting: does this preserve all constraints the original imposed?
+
+### Concrete over abstract
+
+- "Run `cargo test` from `crates/`" not "run the tests"
+- "Only Jörn merges to main" not "merges require human approval"
+
+### Decision trees over prose principles
+
+When behavior depends on conditions, use if-then structure instead of prose principles that invite interpretation variance.
+
+### Priority ordering
+
+Clarity & unambiguousness > correctness > maintainability >>> tokens (nearly unimportant at our context window scale).
+
+Using 50 extra words to prevent a misunderstanding is always worth it.
+
+## Writing SKILL.md files
+
+- Frontmatter: `name` and `description` are always loaded. Make the description specific enough that agents can decide whether to load the skill.
+- Body: loaded on demand. Organize for the agent who loaded the skill — they already know they need it.
+- SKILL.md writing/editing is usually initiated or approved by Jörn — there's a natural moment to load this skill.
+
+## Optimizing rules that don't work
+
+When agents don't follow a rule:
+1. **Notice** when a different behavior would have been better — not just fixing failures, but also noticing missed opportunities for improvement.
+2. **Instruct** agents to do that different behavior.
+3. **If that's not working:** optimize what behavior to aim for. The rule may be fighting agent defaults too hard. Often a different behavior that's closer to defaults achieves most of the value.
+4. **Refactor the project** layout or state so the desired behavior becomes the natural default. Agents can often do this refactoring cheaply.
+
+Steps 3 and 4 work together as an optimization loop, not an escalation ladder. Three dimensions are optimized jointly:
+- (a) The original target behavior
+- (b) Related workflows that interact with this behavior
+- (c) Project layout and state
+
+Optimizations are not always local fine-tuning — they can be wholesale switches to entirely different optima in how-to-run-the-project space. No specific optimization algorithm is recommended; trial and error combined with detailed feedback/postmortems works.
+
+## Why word-choice sensitivity matters
+
+Jörn communicates via subtle word choices that encode real distinctions. Agents trained on natural language tend to normalize variations ("not quite" → "yes but also"), losing the correction's content. This is a known failure mode in human-agent communication: the human's correction gets paraphrased back into the agent's original framing, and the distinction is lost.
+
+The CLAUDE.md instruction tells agents to adopt Jörn's exact phrasing rather than paraphrasing, because the cost of preserving exact wording is zero but the cost of losing a distinction compounds across the session.
+
+## Why plan file maintenance matters
+
+Context compaction is lossy. The compaction summary loses scheduled items (most dangerous), context for upcoming items (moderately dangerous), and completed items (least dangerous). The plan file is the only persistent memory that survives compaction without loss.
+
+This is a rule, not a suggestion — Jörn has told multiple agents about this. Agents that don't maintain the plan file lose track of scheduled work after compaction, which wastes Jörn's time re-explaining what needs to be done.
+
+The danger ranking (scheduled > context > completed) reflects the asymmetry: completed items are already done and only matter for final reporting, while forgotten scheduled items never get done at all.
+
+## Prompting modern models (reported experimental result, 2026)
+
+Most prompt engineering advice — even from Anthropic 2026 — is outdated or has always been cargo culting. Jörn reports no noticeable differences from instruction phrasing variations with current models. What matters:
+- Provide enough context
+- Write clearly and unambiguously
+- Use formats agents were trained on (markdown, code blocks, bullet lists) so they process with low cognitive load
+
+This means: when writing CLAUDE.md, SKILL.md, or agent prompts, don't waste effort on "prompt engineering tricks." Focus on clarity, completeness, and unambiguity — which are already the style rules above.
+
+## Agent quality near context limits (reported observation, 2026)
+
+Agents get unfocused and impatient as sessions approach 200k tokens (near compaction). Basic operations (plan execution, coding) remain fine, but decision-making quality degrades — agents make bad decisions they wouldn't make at lower context sizes. Jörn sometimes auto-triggers compaction earlier to avoid this.
+
+Latency also increases: 20k-context agents are fast, 200k-context agents are roughly 10x slower. Agent time is cheap so latency doesn't matter much, but the quality degradation does.
+
+## HTML comments in CLAUDE.md
+
+CLAUDE.md supports `<!-- comments -->` that are NOT auto-injected into agent context but ARE visible via Read/Edit. Since Edit requires a prior Read, agents editing CLAUDE.md will always see comments.
+
+**Good for** (editor-facing metadata):
+- Maintenance notes next to rules ("added after incident X")
+- Historical context only editors need
+- Inline rationale too small to justify loading this skill
+
+**Not good for:**
+- "This section is copied to" markers — these serve dual purpose (editors need them for sync, all agents need them to know subagent coverage). Keep visible.
+- Anything all agents need to follow — must be in visible text.
+
+## Decision records (failure modes that shaped CLAUDE.md rules)
+
+These explain *why* specific rules exist. Read when a rule seems arbitrary or when considering changes.
+
+### "Discuss-first" for issue edits and scope changes
+
+**Failure mode (issue #12, Feb 2026):** Three agents attempted #12 over two days. Each read massive agent-written comments (posted under Jörn's account), treated them as authoritative, and either continued the brain-dump or stalled planning. No deliverable produced. ~1100 lines of unreviewed drafts posted as issue comments. Future agents treated these as authoritative, creating a feedback loop.
+
+**Root causes:**
+- Agents treated issue edits the same as code edits — but issues are expensive to verify (Jörn reading ≈ cost of writing together) and hard to roll back cleanly
+- Agents interpreted Jörn's silence as approval (connection issues / thinking / typing correction)
+- GitHub shows all content under Jörn's account — no visual distinction between Jörn-written and agent-written
+
+**Decisions:** Issue edits → discuss-first. Silence ≠ confirmation. Subagent output → commit to branch via Task tool, never post as comments. All GitHub content treated as agent-written by default.
+
+### Tests are necessary but not sufficient
+
+**Failure mode (msc-viterbo, 2025):** Predecessor repo had agent-written tests that all passed. Known bugs:
+1. HK2019 QP solver missed optima — returned plausible but wrong values
+2. Trivialization formula was not a bijection
+3. Billiard orbit validation only checked even-indexed segments
+4. Pentagon capacity: 2.127 (wrong) instead of 3.441 (correct)
+
+**Root cause:** Goodhart's law. When agents write both code and tests, tests optimize for passing, not for correctness. Tests checked "does the code do what the code does?" not "does the code compute the right mathematical quantity?"
+
+**Decision:** Jörn provides domain knowledge: which test cases matter, what correct values are, what invariants to check. This is his primary quality contribution.
+
+### Test comprehension by USE, not by asking
+
+**Failure mode:** Agents asked subagents "is this clear?" — subagents that misunderstood confidently answered "yes" or identified irrelevant nitpicks while missing fundamental misunderstandings.
+
+**Root cause:** "Is this clear?" tests confidence, not comprehension. An agent that misunderstands will be confidently wrong.
+
+**Decision:** Test comprehension by asking agents to USE the content (implement from a description, answer specific questions). Check whether their output matches intent.
+
+### Why a single CLAUDE.md (not per-directory)
+
+**Previous state:** 8 files across 4 directories (818 lines total). Agents pieced together mental models from fragments and got them wrong. Duplicated content drifted.
+
+**Decision:** Single file, split by topic. Skills for progressive disclosure of minority-use-case content. Agent prompts copy CLAUDE.md sections inline (agents reliably follow inline instructions, unreliably follow "go read file X").
+
+## What worked and what didn't (CLAUDE.md v1, assessed March 2026)
+
+Empirical observations from ~5 months of use. Input to the optimization loop.
+
+**Worked well:**
+- **Mathematical context** — useful across many agent tasks, even though math-heavy agents learn details from thesis/code anyway
+- **Multi-Language Codebase** — worked great; possibly slightly verbose (says things that are default behavior) but not worth risking degradation by trimming
+- **Git conventions** — fixed bad behavior (stale origin/main, wrong diff syntax)
+- **Subagent usage** — after explaining and instructing agents to use subagents, they use them more usefully than before. Explicit instruction of novel behavior works.
+- **Topic sections in main CLAUDE.md** — tried moving Thesis Writing, Rust Library, etc. to skills-only, review-agents-only, and per-folder CLAUDE.md files. All insufficient — agents forgot or didn't load them. These must stay in main CLAUDE.md.
+- **Review workflow (short)** — short enough to keep in CLAUDE.md; risk of agents forgetting to look up a review skill is too high
+- **Environment** — same as topic sections: didn't work as skill-only
+
+**Caused problems:**
+- **Roles section** — complex, convoluted, caused confusion/distraction. Taxonomic format ("here's what Jörn does, here's what Claude does") doesn't help agents at decision moments. Needs to be distributed into per-topic behavioral modifications that are clear/simple/actionable.
+- **Decision authority** — same problem as Roles; needs redistribution
+- **Session Workflow scope/plan separation** — agents jump into plan too fast, rarely do scope phase separately. Probably should merge scope+plan and ensure agents iterate the plan while discussing scope with Jörn.
+
+**Better as SKILL.md than CLAUDE.md:**
+- **Post-session reflection** — permanently active list of things to watch out for is too much; better as a skill loaded at session end. "Blameless postmortem" is a more accurate term.
+- **Plan workflow** — useful but most agents already use it somewhat; might work as skill (Jörn unsure)
+- **Meta-rules meta-knowledge** ("why rules get ignored") — the meta-knowledge itself can move to skill; the actionable instructions (core rule, citation verification, subagent enforcement) stay in CLAUDE.md
+
+**Structural insight for v2:**
+- Reorder topic sections so each review agent quotes one contiguous block from CLAUDE.md = 1:1 mapping to agent prompt body
+- Specialize subsections to their topic: "writing clearly for Rust comments" > "writing clearly in general" — more actionable and specific
+- Redundancy between sections is OK — doesn't increase instruction complexity (behavior modifications), only token count. Benefits: clarity, simpler subagent mapping, easier maintenance, allows specialization.
+
+**Review subagent design (v2, March 2026):**
+
+Three-phase pipeline: phase 0 (module sanity) → phase 1 (syntax/style, fix before proceeding) → phase 2 (semantics/content, on clean files). Rationale: out-of-scope errors (e.g. LaTeX syntax errors) distract agents reviewing content (e.g. proof correctness). By fixing syntax first, semantic reviewers focus on their actual concern.
+
+Phase 1 agents are language-based (review-tex-style, review-rust-style, review-python-style, review-notes-style), not folder-based. This means they can be parallelized across independent files within the same language (e.g. multiple tex-style instances for independent .tex files, or multiple rust-style instances for different module pairs).
+
+Phase 2 agents focus on one semantic concern each. Each agent's checklist is small enough that the agent can go through items sequentially without getting overwhelmed. When agents have too many items, they should: (1) read the files, (2) iterate checklist items one-by-one, (3) for each item: think, then append a paragraph to an output file. This sequential processing prevents overlooking items due to cognitive load.
+
+Overwhelm was observed with the v1 agents: review-experiment-writing (279 lines, 14+ items) and review-library (328 lines, 14+ items) sometimes missed isolated bugs or entire checklist aspects. The v2 split addresses this by keeping each agent focused.
+
+## Post-session reflection (blameless postmortem)
+
+Just before session ends (merge or abandon):
+
+1. A report with all sources of friction, false steps, steps that turned out to have lower-than-expected value, unexpectedly good steps, and time sinks of agent time.
+2. A breakdown of where Jörn spent time this session, what work Jörn did, and where Jörn's work was used afterward. Purpose: detect work Jörn does that agents could also do, or that needn't be done at all.
+3. A list of suggestions, each labeled as confident or unconfident, and as actionably concrete or unactionably abstract.
+
+## Writing rule files (.claude/rules/*.md)
+
+Rule files are auto-loaded for any agent (main or sub) that touches files matching their `paths:` patterns. They are the single source of truth for topic-specific conventions — CLAUDE.md topic sections are summaries pointing here.
+
+**Frontmatter:**
+```yaml
+---
+paths:
+  - "**/*.tex"
+---
+```
+- `paths:` is a list of glob patterns. The file auto-loads when any touched file matches.
+- Use specific patterns (`crates/**/*.rs`) over broad ones (`**/*.rs`) when conventions only apply to a subset.
+
+**Content principles:**
+- Pure action — what to do, not why. Rationale lives here in the writing-conventions skill.
+- Same style rules as CLAUDE.md: direct imperatives, examples over abstractions, no filler.
+- Each rule file covers one topic area (e.g. tex style, rust tests). Split by syntax vs semantics to match the phase 1/phase 2 review pipeline.
+- No cross-references between rule files. Each file is self-contained — agents may see only a subset.
+
+**Relationship to CLAUDE.md:**
+- Rule files contain the detailed conventions that used to be in CLAUDE.md topic sections.
+- CLAUDE.md topic sections (Git, Thesis Writing, Rust Library, Experiments) are now 1-2 line summaries listing which rule files auto-load.
+- When editing conventions: edit the rule file, not CLAUDE.md. CLAUDE.md summaries only need updating if a rule file is added, removed, or renamed.
+
+**Relationship to agent checklists:**
+- Rule files say WHAT the conventions are (every agent sees these).
+- Agent checklists in `.claude/agents/*.md` say HOW TO DETECT violations (only review subagents see these).
+
+## Writing agent prompts (.claude/agents/*.md)
+
+Convention enforcement uses a two-tier architecture:
+
+1. **`.claude/rules/`** — path-specific rule files, auto-loaded for any agent that touches matching files. These contain the detailed conventions.
+2. **Agent checklists** — inline in `.claude/agents/*.md`. Detection rules, tips, and common violations specific to each review agent's focus area.
+
+Agent prompts contain ONLY:
+- YAML frontmatter (name, description, model, memory, tools)
+- Task description (what the agent does)
+- Checklist (detection rules, tips for the specific review focus)
+- Output format
+
+Agents do NOT copy CLAUDE.md sections — the rules files handle convention loading via auto-loading based on file paths touched.
