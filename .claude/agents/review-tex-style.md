@@ -79,9 +79,8 @@ Detection: For each lemma/theorem environment, check if it references notation d
 
 ### 9. Citation Format
 
-- Consistent citation commands (e.g. don't mix `\cite` and `\textcite` without reason)
-- Every `\cite{key}` has a corresponding entry in `thesis/bibliography.bib`
-- Citation accuracy (correct author names, correct attributed results) is `review-tex-facts`'s job, not yours
+- Author names verified against `thesis/bibliography.bib` — grep each cited author name and confirm it matches the bib entry
+- No author names from memory (common failure: "Cieliebak-Hutchings" instead of "Chaidez-Hutchings")
 
 ## What NOT to Check
 
