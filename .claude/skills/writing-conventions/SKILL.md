@@ -247,11 +247,40 @@ Just before session ends (merge or abandon):
 2. A breakdown of where Jörn spent time this session, what work Jörn did, and where Jörn's work was used afterward. Purpose: detect work Jörn does that agents could also do, or that needn't be done at all.
 3. A list of suggestions, each labeled as confident or unconfident, and as actionably concrete or unactionably abstract.
 
+## Writing rule files (.claude/rules/*.md)
+
+Rule files are auto-loaded for any agent (main or sub) that touches files matching their `paths:` patterns. They are the single source of truth for topic-specific conventions — CLAUDE.md topic sections are summaries pointing here.
+
+**Frontmatter:**
+```yaml
+---
+paths:
+  - "**/*.tex"
+---
+```
+- `paths:` is a list of glob patterns. The file auto-loads when any touched file matches.
+- Use specific patterns (`crates/**/*.rs`) over broad ones (`**/*.rs`) when conventions only apply to a subset.
+
+**Content principles:**
+- Pure action — what to do, not why. Rationale lives here in the writing-conventions skill.
+- Same style rules as CLAUDE.md: direct imperatives, examples over abstractions, no filler.
+- Each rule file covers one topic area (e.g. tex style, rust tests). Split by syntax vs semantics to match the phase 1/phase 2 review pipeline.
+- No cross-references between rule files. Each file is self-contained — agents may see only a subset.
+
+**Relationship to CLAUDE.md:**
+- Rule files contain the detailed conventions that used to be in CLAUDE.md topic sections.
+- CLAUDE.md topic sections (Git, Thesis Writing, Rust Library, Experiments) are now 1-2 line summaries listing which rule files auto-load.
+- When editing conventions: edit the rule file, not CLAUDE.md. CLAUDE.md summaries only need updating if a rule file is added, removed, or renamed.
+
+**Relationship to agent checklists:**
+- Rule files say WHAT the conventions are (every agent sees these).
+- Agent checklists in `.claude/agents/*.md` say HOW TO DETECT violations (only review subagents see these).
+
 ## Writing agent prompts (.claude/agents/*.md)
 
 Convention enforcement uses a two-tier architecture:
 
-1. **`.claude/rules/`** — path-specific rule files, auto-loaded for any agent that touches matching files. These contain CLAUDE.md topic section conventions extracted for focused enforcement.
+1. **`.claude/rules/`** — path-specific rule files, auto-loaded for any agent that touches matching files. These contain the detailed conventions.
 2. **Agent checklists** — inline in `.claude/agents/*.md`. Detection rules, tips, and common violations specific to each review agent's focus area.
 
 Agent prompts contain ONLY:

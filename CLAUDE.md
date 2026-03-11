@@ -39,7 +39,8 @@ Each topic section below mentions its relevant review subagent(s) for focused ch
 
 **When you produce new knowledge** (findings, conventions, docs, comments):
 - Tied to a specific file or function? → code comment, doc comment, or file header. This is the natural location agents look at when working with that code.
-- Applies to most agents? → CLAUDE.md.
+- Convention for a specific file type or directory? → `.claude/rules/*.md` (auto-loaded by path pattern). This is where topic-specific conventions live.
+- Applies to most agents regardless of file type? → CLAUDE.md.
 - Applies to a minority of agents? → `.claude/skills/*/SKILL.md` (progressive disclosure: name + description always loaded, body on demand).
 - Project management (tasks, ideas, deferred work, constraints)? → `TASKS.md` (root). Grows stale; that's fine.
 - Session learning or cross-session state? → `MEMORY.md`. Migrate stable entries to CLAUDE.md or standard locations.
@@ -53,9 +54,9 @@ Each topic section below mentions its relevant review subagent(s) for focused ch
 - Check `papers/` for referenced paper sources when verifying math or citations.
 - Check `.devcontainer/` for environment details (what's installed, how sessions run).
 
-**When editing CLAUDE.md, SKILL.md, or agent prompt files:**
-- Load the `writing-conventions` skill first. It contains the rationale, style rules, and cross-reference tag system.
-- Editing CLAUDE.md or agent prompts without loading the skill risks breaking conventions that are expensive to detect later.
+**When editing CLAUDE.md, `.claude/rules/`, SKILL.md, or agent prompt files:**
+- Load the `writing-conventions` skill first. It contains the rationale, style rules, and conventions for each file type.
+- Editing these files without loading the skill risks breaking conventions that are expensive to detect later.
 
 **Convention enforcement architecture:**
 - **CLAUDE.md** — project context, roles, workflow, and communication rules. Read by every agent.
