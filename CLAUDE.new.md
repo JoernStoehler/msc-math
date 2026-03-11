@@ -549,7 +549,7 @@ For expensive functions (e.g., `ehz_capacity()` with exponential cost), split te
 | **Fixture generator** | `#[ignore]`, release | minutes | Regenerate fixture after code changes | `test_dataset.rs` |
 | **Staleness detector** | Default (debug) | <1s | Warn if fixture out of sync | `fixture_staleness_check()` |
 
-Tests for expensive or complex functions MUST have a doc comment explaining what it tests, why it uses its execution mode, why it uses its specific input, and relationship to other tests (if any).
+Every test MUST have at least a doc comment stating the mathematical property it asserts. Tests for expensive or complex functions should additionally explain why they use their execution mode (debug/release/fixture), why they use their specific input, and relationship to other tests (if any).
 
 ### Test suites
 
@@ -602,7 +602,7 @@ Pipeline: Rust binary → .jsonl data → Python script → .png figures → .te
 
 ### Philosophy
 
-Experiments start investigative and may mature into thesis-ready writeups, but the code and analysis can always be revisited.
+Experiments are always investigative — even mature ones with thesis-ready writeups remain open to revisiting, expansion, and updating (e.g. when assumptions break or new ideas emerge).
 
 Progression is fluid, with no clear cutoff points:
 - From [nothing] → [idea] → [plan with preliminary findings] → [active hypotheses with mysteries] → [findings from non-runnable code] → [failed attempt summary] → [cleanup commit in git log]
