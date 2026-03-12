@@ -121,6 +121,9 @@ fn find_positive_beta_1d(beta0: &[f64], v: &[f64]) -> Option<Vec<f64>> {
 
     for j in 0..m {
         if v[j].abs() < 1e-15 {
+            // Threshold for treating a null-space component as zero. Tighter than
+            // EPS_BETA_POSITIVE (1e-12) because v is a unit-scale eigenvector —
+            // components below 1e-15 are numerical zeros from the eigensolver.
             // This component doesn't change with α — reject only if genuinely
             // infeasible (not a floating-point sign ambiguity).
             if beta0[j] <= -EPS_BETA_POSITIVE {
@@ -169,6 +172,9 @@ fn find_positive_beta_nd(beta0: &[f64], null_vecs: &[Vec<f64>]) -> Option<Vec<f6
     let k = null_vecs.len();
     let mut alpha = vec![0.0; k];
 
+    // 100 iterations suffices: each step pushes the worst component to +EPS,
+    // and with k null-space dimensions there are at most m constraints.
+    // In practice converges in < 10 iterations for our polytope sizes (m ≤ 16).
     for _iter in 0..100 {
         // Current β
         let beta: Vec<f64> = (0..m)
@@ -189,6 +195,9 @@ fn find_positive_beta_nd(beta0: &[f64], null_vecs: &[Vec<f64>]) -> Option<Vec<f6
         // Gradient of β[worst_j] w.r.t. α: g_i = null_vecs[i][worst_j]
         let grad_sq: f64 = (0..k).map(|i| null_vecs[i][worst_j].powi(2)).sum();
         if grad_sq < 1e-30 {
+            // Near-zero gradient means no null-space direction can improve this
+            // component. 1e-30 is well below any meaningful floating-point signal
+            // (machine epsilon squared ≈ 5e-32).
             // Can't improve this component. Accept if above -EPS (uncertain).
             return if *worst_val > -EPS_BETA_POSITIVE {
                 Some(beta)

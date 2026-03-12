@@ -6,7 +6,6 @@
 %
 % Structure: The Billiard Algorithm
 
-% Jörn: math approved (e1345bb) — from \subsection{The Billiard Algorithm} to end of subsection
 
 \begin{theorem}[Completeness of the billiard enumeration]%
 \label{thm:billiard-completeness}
@@ -19,11 +18,10 @@ for $k \in \{2, 3\}$.
 \end{theorem}
 
 
-\noindent\textbf{Algorithm}\label{alg:billiard}
-(computes $c_{\mathrm{EHZ}}(K_q \times K_p)$
-via Theorem~\ref{thm:billiard-completeness}).
+\begin{algorithm}[Billiard capacity]\label{alg:billiard}
+Computes $c_{\mathrm{EHZ}}(K_q \times K_p)$
+via Theorem~\ref{thm:billiard-completeness}.
 
-\smallskip\noindent
 \emph{Input:} Lagrangian product $K = K_q \times K_p$ in
 $H$-representation.
 \quad
@@ -48,3 +46,4 @@ $H$-representation.
   $A(S, \sigma) = \tfrac{1}{2}\, Q(\beta)^{-1}$.
 \item \textbf{Return} $\min A(S, \sigma)$.
 \end{enumerate}
+\end{algorithm}

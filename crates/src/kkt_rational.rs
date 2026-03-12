@@ -23,7 +23,7 @@
 ///
 /// # Performance
 ///
-/// Gaussian elimination over BigRational is ~100x slower than f64 eigendecomposition
+/// Gaussian elimination over BigRational is substantially slower than f64 eigendecomposition
 /// for typical (S,σ) sizes (m ≈ 2–16). This solver is intended for single (S,σ)
 /// lookups (e.g. the winning node), not for sweeping all nodes.
 ///
@@ -548,14 +548,13 @@ fn q_from_beta_rational(
     beta: &[BigRational],
 ) -> BigRational {
     let m = beta.len();
-    let mut sum = BigRational::zero();
-    for i in 1..m {
-        for j in 0..i {
+    (1..m)
+        .flat_map(|i| (0..i).map(move |j| (i, j)))
+        .map(|(i, j)| {
             let omega = omega0_rational(&dual_vertices[perm[j]], &dual_vertices[perm[i]]);
-            sum += &beta[i] * &beta[j] * omega;
-        }
-    }
-    sum
+            &beta[i] * &beta[j] * omega
+        })
+        .fold(BigRational::zero(), |acc, x| acc + x)
 }
 
 // ── Helpers ──────────────────────────────────────────────────────────────
