@@ -50,12 +50,15 @@ Phase 1 (syntax/style) issues distract from phase 2 (content/correctness). Fix f
 
 **Experiment interpretation quality** — overreach, editorializing, unlabeled speculation, causal claims from correlations.
 
-## How review subagents must work
+## How to spawn reviews (main agent)
 
-The main agent spawns generic review subagents, specifying:
-- Which files to review
-- Which concern(s) to focus on
-- Which convention skill(s) to load
+Spawn the `review` subagent (defined in `.claude/agents/review.md`) with the Agent tool. It preloads all convention skills. Specify concern + files + report path in the prompt.
+
+See `references/how-to-spawn-reviews.md` for concrete examples and the spawning pattern.
+
+Spawn multiple instances in parallel with `run_in_background=true`. Each writes its report to a separate file. Agent teams (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`, already enabled) are an alternative for larger reviews where reviewers benefit from communicating with each other.
+
+## How review subagents must work
 
 Each subagent then follows this workflow:
 
