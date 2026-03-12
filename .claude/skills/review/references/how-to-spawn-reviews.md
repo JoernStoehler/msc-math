@@ -87,6 +87,39 @@ Agent(
 )
 ```
 
+### Example: review figure PNGs (without polluting main agent context)
+
+```
+Agent(
+  subagent_type="figure-review",
+  description="Review figure PNGs",
+  run_in_background=true,
+  prompt="""
+    Review these figures for visual quality:
+    - experiments/omega-obstacle/omega_obstacle_gradient_dots.png
+    - experiments/omega-obstacle/omega_obstacle_omega_vs_dot.png
+
+    Report to: /tmp/review-figures-omega.md
+  """
+)
+```
+
+### Example: fix figure visual issues autonomously
+
+```
+Agent(
+  subagent_type="figure-fix",
+  description="Fix omega-obstacle figures",
+  run_in_background=true,
+  prompt="""
+    Review and fix all visual issues in:
+    experiments/omega-obstacle/omega_obstacle.py
+
+    Report to: /tmp/figure-fix-omega.md
+  """
+)
+```
+
 ## After reviews complete
 
 1. Read the report files from /tmp/
