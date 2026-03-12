@@ -22,7 +22,7 @@ When you have a new piece of knowledge to place, ask these questions in order:
 - Agents working on a specific topic → Skill SKILL.md
 - Only review agents checking a specific concern → Reference doc under `review/references/`
 - Only agents that open this specific file → Code comment or file header
-- Only when editing the meta-layer itself → `writing-conventions` skill or its references
+- Only when editing the meta-layer itself → `meta-documentation` skill or its references
 
 **2. When do they need it?**
 - During planning (before committing to approach) → Must be visible early. Skills work (name+description always visible). CLAUDE.md works. Reference docs don't — they require the agent to already know to look.
@@ -115,7 +115,7 @@ After modifying the meta-layer, check:
 
 ## Known-incomplete areas
 
-- **`writing-conventions` skill** (292 lines) is the largest skill and could be split. Not done yet because it's rarely loaded and works as-is.
+- **`meta-documentation` skill** (~240 lines) could potentially be split further. Not done yet because it's rarely loaded and works as-is.
 - **`thesis-pre-review` skill** overlaps with the review workflow. May consolidate later.
 - **MEMORY.md** has stale entries from earlier sessions. Not cleaned up — low priority.
 - **Agent teams** are experimental and untested for reviews. Documented as an alternative but not the default.

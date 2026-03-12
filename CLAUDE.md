@@ -55,7 +55,7 @@ Each topic section below mentions its relevant review subagent(s) for focused ch
 - Check `.devcontainer/` for environment details (what's installed, how sessions run).
 
 **When editing CLAUDE.md or SKILL.md files:**
-- Load the `writing-conventions` skill first for rationale and style rules.
+- Load the `meta-documentation` skill first for rationale and style rules.
 
 **Convention enforcement architecture:**
 - **CLAUDE.md** — project context, workflow, communication rules. Always loaded. Kept lean.
