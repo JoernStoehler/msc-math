@@ -355,7 +355,7 @@ def plot_timing(entries):
         "random_lagrangian": "Random Lagrangian products",
     }
 
-    fig, axes = plt.subplots(1, 2, figsize=(13, 5), sharey=False)
+    fig, axes = plt.subplots(1, 2, figsize=(5.4, 3.0), sharey=False)
 
     colors = {
         "a0_unpruned": "#e08020",
@@ -417,7 +417,7 @@ def plot_timing(entries):
         fontsize=12,
     )
     fig.tight_layout()
-    fig.savefig(FIGURE_PATH, dpi=150)
+    fig.savefig(FIGURE_PATH, dpi=150, bbox_inches='tight')
     plt.close(fig)
     print(f"Figure: {FIGURE_PATH}")
 

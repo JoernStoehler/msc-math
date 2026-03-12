@@ -152,7 +152,7 @@ def plot_unified(pruned_rows, unpruned_rows, billiard_rows, pruned_stats_random,
     a_unp, b_unp, r2_unp = fit_model(unpruned_stats) if len(unpruned_stats) >= 2 else (None, None, None)
     a_bil, b_bil, r2_bil = fit_model(billiard_stats) if len(billiard_stats) >= 2 else (None, None, None)
 
-    fig, ax = plt.subplots(figsize=(11, 6.5))
+    fig, ax = plt.subplots(figsize=(5.4, 4.0))
 
     # HK2017 pruned (random polytopes)
     F_p_rand = [r["facets"] for r in pruned_random]
@@ -225,7 +225,7 @@ def plot_unified(pruned_rows, unpruned_rows, billiard_rows, pruned_stats_random,
     fig.tight_layout()
 
     out = FIGURES_DIR / "benchmark_timing.png"
-    fig.savefig(out, dpi=150)
+    fig.savefig(out, dpi=150, bbox_inches='tight')
     plt.close(fig)
     print(f"  {out.name}: {len(pruned_random)} pruned (random), {len(pruned_lag)} pruned (Lagrangian), {len(unpruned_rows)} unpruned, {len(billiard_rows)} billiard")
 

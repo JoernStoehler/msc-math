@@ -68,7 +68,7 @@ def compute_stats(rows: list[dict]) -> list[dict]:
 def plot_summary(stats: list[dict], output_path: Path) -> None:
     FIGURES_DIR.mkdir(parents=True, exist_ok=True)
 
-    fig, ax = plt.subplots(figsize=(10, 5))
+    fig, ax = plt.subplots(figsize=(5.4, 3.5))
 
     x_positions = np.arange(len(stats))
     labels = [f"({s['pair'][0]},{s['pair'][1]})" for s in stats]
@@ -101,7 +101,7 @@ def plot_summary(stats: list[dict], output_path: Path) -> None:
     ax.legend(loc="best")
 
     fig.tight_layout()
-    fig.savefig(output_path, dpi=150)
+    fig.savefig(output_path, dpi=150, bbox_inches='tight')
     plt.close(fig)
     print(f"Saved: {output_path}")
 

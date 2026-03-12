@@ -50,7 +50,7 @@ def plot_sweep(data: list[dict], output: Path):
     angles = np.array([d["angle_deg"] for d in rows])
     sys_vals = np.array([d["sys"] for d in rows])
 
-    fig, ax = plt.subplots(figsize=(10, 5))
+    fig, ax = plt.subplots(figsize=(5.4, 3.5))
     ax.plot(angles, sys_vals, color="#2f5aa6", linewidth=2.0, label="sys(theta)")
     ax.axhline(y=1.0, color="#c0392b", linestyle="--", alpha=0.7, label="sys = 1")
 
@@ -64,7 +64,7 @@ def plot_sweep(data: list[dict], output: Path):
 
     ax.legend(loc="best")
     fig.tight_layout()
-    fig.savefig(output, dpi=150)
+    fig.savefig(output, dpi=150, bbox_inches='tight')
     plt.close(fig)
     print(f"Saved: {output}")
 
@@ -84,7 +84,7 @@ def load_pair_data(data_dir: Path) -> dict[tuple[int, int], list[dict]]:
 
 def plot_polygon_pairs(data: dict[tuple[int, int], list[dict]], output: Path):
     pairs = list(PAIR_FILES.keys())
-    fig, axes = plt.subplots(2, 5, figsize=(15, 6), sharey=True)
+    fig, axes = plt.subplots(2, 5, figsize=(5.4, 2.5), sharey=True)
     axes = axes.flatten()
 
     all_sys = []
@@ -117,7 +117,7 @@ def plot_polygon_pairs(data: dict[tuple[int, int], list[dict]], output: Path):
 
     fig.suptitle("Regular n-gon x R(theta) m-gon (6-degree steps)")
     fig.tight_layout(rect=[0, 0, 1, 0.95])
-    fig.savefig(output, dpi=150)
+    fig.savefig(output, dpi=150, bbox_inches='tight')
     plt.close(fig)
     print(f"Saved: {output}")
 

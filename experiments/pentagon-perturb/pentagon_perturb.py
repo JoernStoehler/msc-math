@@ -63,7 +63,7 @@ def format_stats_table(stats: dict, base_sys: float) -> str:
 def plot_histogram(sys_vals: np.ndarray, base_sys: float, output_path: Path) -> None:
     FIGURES_DIR.mkdir(parents=True, exist_ok=True)
 
-    fig, ax = plt.subplots(figsize=(8.5, 4.8))
+    fig, ax = plt.subplots(figsize=(5.4, 3.5))
     ax.hist(sys_vals, bins=18, color="#3b6ea8", alpha=0.75, edgecolor="white")
     ax.axvline(1.0, color="#c0392b", linestyle="--", alpha=0.7, label="sys = 1")
     ax.axvline(base_sys, color="#2d6a4f", linestyle="-", alpha=0.9, label="base sys")
@@ -75,7 +75,7 @@ def plot_histogram(sys_vals: np.ndarray, base_sys: float, output_path: Path) -> 
     ax.legend(loc="best")
 
     fig.tight_layout()
-    fig.savefig(output_path, dpi=150)
+    fig.savefig(output_path, dpi=150, bbox_inches='tight')
     plt.close(fig)
     print(f"Saved: {output_path}")
 

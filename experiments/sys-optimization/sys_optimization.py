@@ -84,7 +84,7 @@ def plot_gradient_histogram(sens_rows: list[dict], output_path: Path) -> None:
 
     all_grads = np.array(all_grads)
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4.5))
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(5.4, 2.8))
 
     # Signed histogram (linear scale), bins centered on zero
     extent = max(abs(all_grads.min()), abs(all_grads.max()))
@@ -108,7 +108,7 @@ def plot_gradient_histogram(sens_rows: list[dict], output_path: Path) -> None:
     ax2.grid(True, alpha=0.3)
 
     fig.tight_layout()
-    fig.savefig(output_path, dpi=150)
+    fig.savefig(output_path, dpi=150, bbox_inches='tight')
     plt.close(fig)
     print(f"Saved: {output_path}")
 
@@ -137,7 +137,7 @@ def plot_gradient_comparison(sens_rows: list[dict], output_path: Path) -> None:
 
     fc = facet_counts[valid]
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(13, 5.5))
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(5.4, 3.0))
 
     # Left: predicted max Δsys comparison
     scatter = ax1.scatter(
@@ -176,7 +176,7 @@ def plot_gradient_comparison(sens_rows: list[dict], output_path: Path) -> None:
     ax2.grid(True, alpha=0.3, which="both")
 
     fig.tight_layout()
-    fig.savefig(output_path, dpi=150)
+    fig.savefig(output_path, dpi=150, bbox_inches='tight')
     plt.close(fig)
     print(f"Saved: {output_path}")
 
@@ -212,7 +212,7 @@ def plot_improvement(steps_rows: list[dict], output_path: Path) -> None:
     delta_hn = np.array([best[(n, "h_n")]["delta_sys"] for n in names])
     old_sys = np.array([best[(n, "h_only")]["old_sys"] for n in names])
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(13, 5.5))
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(5.4, 3.0))
 
     # Left: delta_sys comparison
     above = delta_hn > delta_h
@@ -258,7 +258,7 @@ def plot_improvement(steps_rows: list[dict], output_path: Path) -> None:
     ax2.grid(True, alpha=0.3)
 
     fig.tight_layout()
-    fig.savefig(output_path, dpi=150)
+    fig.savefig(output_path, dpi=150, bbox_inches='tight')
     plt.close(fig)
     print(f"Saved: {output_path}")
 
@@ -287,7 +287,7 @@ def plot_convergence(iter_rows: list[dict], output_path: Path) -> None:
     for name, rows in by_name.items():
         facet_count[name] = rows[0]["facet_count"]
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(13, 5.5))
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(5.4, 3.0))
 
     # Left: sys trajectories colored by facet count
     names_sorted = sorted(by_name.keys(), key=lambda n: facet_count[n])
@@ -330,7 +330,7 @@ def plot_convergence(iter_rows: list[dict], output_path: Path) -> None:
     ax2.grid(True, alpha=0.3)
 
     fig.tight_layout()
-    fig.savefig(output_path, dpi=150)
+    fig.savefig(output_path, dpi=150, bbox_inches='tight')
     plt.close(fig)
     print(f"Saved: {output_path}")
 
@@ -363,7 +363,7 @@ def plot_iteration_summary(iter_rows: list[dict], output_path: Path) -> None:
     h_count = sum(1 for r in iter_rows if r["step_type"] == "h_only")
     hn_count = sum(1 for r in iter_rows if r["step_type"] == "h_n")
 
-    fig, axes = plt.subplots(1, 3, figsize=(16, 4.5))
+    fig, axes = plt.subplots(1, 3, figsize=(5.4, 2.5))
 
     # Left: iteration count histogram
     ax = axes[0]
@@ -404,7 +404,7 @@ def plot_iteration_summary(iter_rows: list[dict], output_path: Path) -> None:
     ax.grid(True, alpha=0.3, axis="y")
 
     fig.tight_layout()
-    fig.savefig(output_path, dpi=150)
+    fig.savefig(output_path, dpi=150, bbox_inches='tight')
     plt.close(fig)
     print(f"Saved: {output_path}")
 
@@ -424,7 +424,7 @@ def plot_validity(val_rows: list[dict], output_path: Path) -> None:
         print("WARNING: no successful validity evaluations", file=sys.stderr)
         return
 
-    fig, axes = plt.subplots(1, 3, figsize=(16, 4.5))
+    fig, axes = plt.subplots(1, 3, figsize=(5.4, 2.5))
 
     # --- Left: prediction error vs t/t_max by direction type ---
     ax = axes[0]
@@ -546,7 +546,7 @@ def plot_validity(val_rows: list[dict], output_path: Path) -> None:
         ax.grid(True, alpha=0.3)
 
     fig.tight_layout()
-    fig.savefig(output_path, dpi=150)
+    fig.savefig(output_path, dpi=150, bbox_inches='tight')
     plt.close(fig)
     print(f"Saved: {output_path}")
 

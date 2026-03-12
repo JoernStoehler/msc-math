@@ -121,7 +121,7 @@ def main():
     # -----------------------------------------------------------------------
     # Figure: beta_min distribution (log scale)
     # -----------------------------------------------------------------------
-    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+    fig, axes = plt.subplots(1, 2, figsize=(5.4, 3.0))
 
     for ax, label, subset in [
         (axes[0], "random-sweep", random_rows),
@@ -157,7 +157,7 @@ def main():
 
     fig.suptitle("Minimum β component of certified orbits", fontsize=13)
     fig.tight_layout()
-    fig.savefig(FIG_BETA_MIN, dpi=150)
+    fig.savefig(FIG_BETA_MIN, dpi=150, bbox_inches='tight')
     print(f"\nFigure saved: {FIG_BETA_MIN}")
 
 
