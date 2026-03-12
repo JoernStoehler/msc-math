@@ -24,31 +24,33 @@ Phase 1 (syntax/style) issues distract from phase 2 (content/correctness). Fix f
 
 ## Review concerns
 
-### Phase 1 — Syntax and style (fix first)
+Each concern has a checklist reference doc in `references/` with detection rules, grep patterns, and verification procedures. The subagent reads the relevant checklist(s) and works through items sequentially.
 
-**LaTeX style** — file headers, environments, comment conventions, figure/table inclusion, label format, build warnings. Load `tex-format` skill.
+### Phase 0 — Module sanity (run first if builds might be broken)
 
-**Rust style** — coding conventions, module structure, cross-ref format, magic number docs, coordinate convention. Load `rust-conventions` skill.
+**Module sanity** — builds, tests, pipeline consistency, data freshness. Checklist: `references/checklist-modules.md`.
 
-**Python style** — script headers, paths, error messages, figure sizing, DPI, visual quality, colors. Load `python-conventions` skill.
+### Phase 1 — Syntax and style (fix before phase 2)
 
-**Notes style** — README structure, assumptions documented, experiment philosophy alignment.
+**LaTeX style** — file headers, environments, comment conventions, figure/table inclusion, label format, build warnings, mechanical anti-patterns (AP4/AP5/AP7). Skills: `tex-format`, `tex-build`. Checklist: `references/checklist-tex-style.md`.
+
+**Rust style** — coding conventions, module structure, cross-ref format, magic number docs, coordinate convention. Skill: `rust-conventions`. Checklist: `references/checklist-rust-style.md`.
+
+**Python style** — script headers, paths, error messages, figure sizing, DPI, visual quality, colors, caption epistemology. Skill: `python-conventions`. Checklist: `references/checklist-python-style.md`.
+
+**Notes style** — README structure, assumptions documented, experiment philosophy alignment. Covered in Part C of `references/checklist-experiment.md`.
 
 ### Phase 2 — Semantics and content (on clean files)
 
-**LaTeX math correctness** — proofs: gaps, unclear steps, mistakes, definition mismatches. Each proof one-by-one. Load `tex-content` skill. Flag for Jörn's verification.
+**LaTeX math correctness** — proofs: gaps, unclear steps, mistakes, definition mismatches. Each proof one-by-one. Flag for Jörn's verification. Skill: `tex-content`. Checklist: `references/checklist-tex-math.md`.
 
-**LaTeX pedagogical quality** — audience fit, forward refs, emphasis proportional to importance, standard definitions. Load `tex-content` skill.
+**LaTeX pedagogical quality** — audience fit, forward refs, emphasis proportional to importance, standard definitions, semantic anti-patterns (AP2/AP6/AP9/AP10). Skill: `tex-content`. Checklist: `references/checklist-tex-educational.md`.
 
-**LaTeX factual accuracy** — claims vs evidence: numbers vs data files, code refs vs actual code, citations vs bibliography.bib.
+**LaTeX factual accuracy** — claims vs evidence: numbers vs data files, code refs vs actual code, citations vs bibliography.bib. Checklist: `references/checklist-tex-facts.md`.
 
-**Rust math-code correctness** — doc comment formulas match code, invariant enforcement, thesis cross-ref content verification. Load `rust-conventions` skill.
+**Rust math-code correctness + test quality** — doc comment formulas match code, invariant enforcement, test philosophy, coverage, input diversity. Skills: `rust-conventions`, `rust-tests`. Checklist: `references/checklist-rust-content.md`.
 
-**Rust test quality** — test philosophy, coverage patterns, input diversity, property verification. Load `rust-tests` skill.
-
-**Experiment factual accuracy** — reported facts in .tex writeups vs actual JSONL/output data. Load `experiment-conventions` skill.
-
-**Experiment interpretation quality** — overreach, editorializing, unlabeled speculation, causal claims from correlations.
+**Experiment accuracy + interpretation** — reported facts vs JSONL/output data, overreach, editorializing, causal claims from correlations, README quality. Skill: `experiment-conventions`. Checklist: `references/checklist-experiment.md`.
 
 ## How to spawn reviews (main agent)
 
@@ -65,8 +67,8 @@ Each subagent then follows this workflow:
 ### Step 1: Read everything first
 Read all assigned files in full. Don't skim — read completely. Understanding context prevents false positives.
 
-### Step 2: Build a checklist
-Based on the concern and the loaded convention skill, create a concrete checklist of items to verify. Use the task/todo tool to track items.
+### Step 2: Load the checklist
+Read the checklist reference doc for your concern (listed under "Review concerns" above). This contains the specific detection rules, grep patterns, and verification procedures. Use the task/todo tool to track items.
 
 ### Step 3: Work through items ONE AT A TIME
 For each checklist item:

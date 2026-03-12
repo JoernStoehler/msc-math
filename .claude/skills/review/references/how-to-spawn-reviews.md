@@ -4,11 +4,19 @@ This reference documents the mechanics for the main agent.
 
 ## The review agent
 
-A single generic review agent is defined at `.claude/agents/review.md`. It preloads ALL convention skills so it can review any domain. The main agent specifies the concern and files via the task prompt.
+A single generic review agent is defined at `.claude/agents/review.md`. It preloads ALL convention skills so it can review any domain. The main agent specifies the concern and files; the subagent self-serves by reading the appropriate checklist reference doc.
 
 ## Spawning pattern
 
 Use the Agent tool with `subagent_type: "review"`. Spawn multiple instances in parallel with `run_in_background: true`.
+
+The prompt needs:
+1. **Concern** — which review concern (matching the review skill's concern list)
+2. **Files** — which files to review
+3. **Report path** — where to write the report (e.g. `/tmp/review-tex-style.md`)
+4. **Phase behavior** — phase 1: fix and report; phase 2: report only
+
+The subagent reads the checklist reference doc itself based on the concern. No need to specify which checklist to load.
 
 ### Example: review a .tex deliverable
 
@@ -18,14 +26,11 @@ Agent(
   description="Review tex style",
   run_in_background=true,
   prompt="""
-    Review these files for LaTeX style and format conventions:
+    Review these files for LaTeX style (phase 1):
     - thesis/sections/algorithm.tex
     - thesis/sections/algorithm-proof.tex
 
-    Concern: LaTeX style (phase 1)
-    Convention source: tex-format skill (preloaded)
     Report to: /tmp/review-tex-style.md
-
     Phase 1: fix obvious violations directly, report what you fixed.
   """
 )
@@ -35,14 +40,11 @@ Agent(
   description="Review tex math correctness",
   run_in_background=true,
   prompt="""
-    Review these files for mathematical correctness:
+    Review these files for mathematical correctness (phase 2):
     - thesis/sections/algorithm.tex
     - thesis/sections/algorithm-proof.tex
 
-    Concern: proof correctness, definition completeness (phase 2)
-    Convention source: tex-content skill (preloaded)
     Report to: /tmp/review-tex-math.md
-
     Phase 2: report only, do not edit. Flag items for Jörn's verification.
   """
 )
@@ -56,12 +58,10 @@ Agent(
   description="Review rust style",
   run_in_background=true,
   prompt="""
-    Review these files for Rust coding conventions:
+    Review these files for Rust coding style (phase 1):
     - crates/src/algorithms/hk2017.rs
     - crates/src/kkt.rs
 
-    Concern: coding style, cross-references, magic numbers (phase 1)
-    Convention source: rust-conventions skill (preloaded)
     Report to: /tmp/review-rust-style.md
   """
 )
@@ -75,15 +75,13 @@ Agent(
   description="Review experiment facts",
   run_in_background=true,
   prompt="""
-    Review this experiment writeup for factual accuracy:
+    Review this experiment writeup for factual accuracy (phase 2):
     - experiments/sys-optimization/sys-optimization.tex
 
-    Verify all claims against:
+    Data sources to verify against:
     - experiments/sys-optimization/sys-optimization.jsonl
     - experiments/sys-optimization/sys-optimization_output.txt
 
-    Concern: factual accuracy (phase 2)
-    Convention source: experiment-conventions skill (preloaded)
     Report to: /tmp/review-experiment-facts.md
   """
 )
