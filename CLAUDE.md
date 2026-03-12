@@ -225,23 +225,23 @@ This is mandatory before presenting `.tex` deliverables to Jörn and recommended
 
 ## Git
 
-Conventions for git workflow (local main, three-dot diffs, state the base). Full details auto-load from `.claude/rules/modules.md`.
+Conventions for git workflow (local main, three-dot diffs, state the base, commit checklist). Full details auto-load from `.claude/rules/git.md`.
 
 ## Thesis Writing
 
-Conventions for `.tex` files: build commands, PDF review workflow, comment conventions, file headers, four audiences, correctness standards, content rules, proof writing, format rules. Full details auto-load from `.claude/rules/tex-style.md` and `.claude/rules/tex-content.md`.
+Conventions for `.tex` files: build commands, PDF review workflow, comment conventions, file headers, four audiences, correctness standards, content rules, proof writing, format rules. Full details auto-load from `.claude/rules/tex-build.md`, `.claude/rules/tex-format.md`, and `.claude/rules/tex-content.md`.
 
 ## Experiment Writing
 
-Builds upon Thesis Writing. Adds: "write up what's there — nothing more, nothing less", verification against JSONL data, TODO/GAP markers. Full details auto-load from `.claude/rules/tex-content.md` and `.claude/rules/experiment-content.md`.
+Builds upon Thesis Writing. Adds: "write up what's there — nothing more, nothing less", verification against JSONL data, TODO/GAP markers. Full details auto-load from `.claude/rules/tex-content.md` and `.claude/rules/experiment-writing.md`.
 
 ## Rust Library
 
-Single crate `symplectic` in `crates/`. Invariant: `cargo test` passes with zero failures. Conventions for coding style, math-code correspondence, cross-references to thesis, testing philosophy (math proposition tests + standard correctness tests), test organization, fixtures, magic numbers. Full details auto-load from `.claude/rules/rust-style.md`, `.claude/rules/rust-content.md`, and `.claude/rules/rust-tests.md`.
+Single crate `symplectic` in `crates/`. Invariant: `cargo test` passes with zero failures. Conventions for coding style, math-code correspondence, cross-references to thesis, testing philosophy (math proposition tests + standard correctness tests), test organization, fixtures, magic numbers. Full details auto-load from `.claude/rules/rust-coding.md`, `.claude/rules/rust-math-docs.md`, and `.claude/rules/rust-tests.md`.
 
 ## Experiments
 
-Per-experiment folders under `experiments/`. Pipeline: Rust binary → .jsonl → Python script → .png figures → .tex writeup → thesis. Conventions for directory structure, script headers, path conventions, figure sizing, data in git, quality standards. Full details auto-load from `.claude/rules/experiment-content.md`, `.claude/rules/python-style.md`, and `.claude/rules/modules.md`.
+Per-experiment folders under `experiments/`. Pipeline: Rust binary → .jsonl → Python script → .png figures → .tex writeup → thesis. Conventions for directory structure, philosophy, script headers, path conventions, figure sizing, data in git, quality standards. Full details auto-load from `.claude/rules/experiment-structure.md`, `.claude/rules/experiment-philosophy.md`, `.claude/rules/experiment-writing.md`, and `.claude/rules/python-style.md`.
 
 ## Environment
 
