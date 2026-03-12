@@ -1,7 +1,6 @@
 ---
-paths:
-  - "crates/**/*_test.rs"
-  - "crates/**/tests/**"
+name: rust-tests
+description: Testing conventions for Rust code in crates/. Load when writing, editing, or reviewing *_test.rs files or test fixtures. Covers testing philosophy, expensive function testing patterns, test organization, fixtures, and documentation requirements.
 ---
 
 # Rust Test Conventions

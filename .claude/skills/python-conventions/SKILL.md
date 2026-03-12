@@ -1,9 +1,9 @@
 ---
-paths:
-  - "experiments/**/*.py"
+name: python-conventions
+description: Python script conventions for experiments. Load when writing or editing .py files under experiments/. Covers script headers, path conventions, error messages, figure sizing, DPI, visual clarity, and caption rules.
 ---
 
-# Python Style Conventions
+# Python Conventions
 
 ## Script Conventions
 

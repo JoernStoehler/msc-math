@@ -1,6 +1,6 @@
 ---
-paths:
-  - "**/*.tex"
+name: tex-format
+description: LaTeX formatting conventions for .tex files. Load when writing or editing .tex files. Covers comment conventions (Jörn review markers, QC, TODO, GAP), file headers, theorem environments, figure/table inclusion, and experiment writeup format.
 ---
 
 # LaTeX Format Conventions

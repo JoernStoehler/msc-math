@@ -1,6 +1,6 @@
 ---
-paths:
-  - "**/*.tex"
+name: tex-content
+description: LaTeX content and correctness standards for .tex files. Load when writing mathematical content, proofs, definitions, or theorem statements. Covers four audiences, correctness criteria, self-containedness, proof writing structure, notation consistency, and citation verification.
 ---
 
 # LaTeX Content Conventions
@@ -61,14 +61,6 @@ We refactor, simplify, and improve until verification becomes straightforward.
 ## Rust Cross-References
 
 Rust `///` doc comments reference thesis proofs using `[lem:label]`, `[thm:label]`, `[def:label]`, `[alg:label]` format. When editing a theorem or lemma in the thesis, grep `crates/src/` for the label to find affected Rust comments.
-
-## Experiment Writing (content rules)
-
-- **Write up what's there — nothing more, nothing less.** Report what the data shows. No invented interpretations, no omitted patterns, no editorializing. Facts are facts, correlations are correlations, unknowns are unknowns. Speculation must be explicitly labeled as interpretation.
-- Every factual claim must be verified against the actual data (JSONL) in the same session
-- When verification is impossible, mark with `% [TODO: JÖRN -` or `% [GAP -`
-- Agent-generated figures and writeups are drafts until Jörn reviews
-- Statistical claims require reproducible computation
 
 ## The Core Rule
 

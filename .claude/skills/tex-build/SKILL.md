@@ -1,6 +1,6 @@
 ---
-paths:
-  - "**/*.tex"
+name: tex-build
+description: LaTeX build commands and PDF review workflow. Load when compiling the thesis, presenting content to Jörn, or looking up theorem/section numbers. Covers latexmk, check-build.sh, how Jörn reviews PDF, and rendered number lookup.
 ---
 
 # LaTeX Build and Review
@@ -11,7 +11,7 @@ paths:
 cd thesis/ && latexmk && ./check-build.sh
 ```
 
-`check-build.sh` parses the build log for overfull hboxes (> 1pt) and undefined references. It exits non-zero if any are found. **Agents must run this after every compilation** and fix any new warnings they introduced.
+`check-build.sh` parses the build log for overfull hboxes (> 1pt) and undefined references. It exits non-zero if any are found. **Run this after every compilation** and fix any new warnings you introduced.
 
 ## Jörn Reviews PDF, Not .tex
 

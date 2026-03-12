@@ -1,6 +1,6 @@
 ---
-paths:
-  - "*"
+name: git-conventions
+description: Git workflow conventions for this repo. Load when committing, diffing, reviewing branches, or preparing reports. Covers local main vs origin/main, three-dot diffs, and the commit checklist.
 ---
 
 # Git Conventions

@@ -54,14 +54,13 @@ Each topic section below mentions its relevant review subagent(s) for focused ch
 - Check `papers/` for referenced paper sources when verifying math or citations.
 - Check `.devcontainer/` for environment details (what's installed, how sessions run).
 
-**When editing CLAUDE.md, `.claude/rules/`, SKILL.md, or agent prompt files:**
-- Load the `writing-conventions` skill first. It contains the rationale, style rules, and conventions for each file type.
-- Editing these files without loading the skill risks breaking conventions that are expensive to detect later.
+**When editing CLAUDE.md or SKILL.md files:**
+- Load the `writing-conventions` skill first for rationale and style rules.
 
 **Convention enforcement architecture:**
-- **CLAUDE.md** — project context, roles, workflow, and communication rules. Read by every agent.
-- **`.claude/rules/`** — path-specific convention files, auto-loaded for any agent that touches matching files (e.g. `tex-style.md` loads for `**/*.tex`). Topic sections in CLAUDE.md (Git, Thesis Writing, Rust Library, Experiments) are summaries pointing to these files.
-- **`.claude/agents/`** — review subagents with inline checklists (detection rules, tips, common violations). They see the rules files via auto-loading.
+- **CLAUDE.md** — project context, workflow, communication rules. Always loaded. Kept lean.
+- **Skills** (`.claude/skills/`) — convention details per topic (e.g. `rust-conventions`, `tex-content`). Loaded on demand by main agents and explicitly by subagents. CLAUDE.md topic sections name which skills to load.
+- **Review workflow** — `review` skill teaches review subagents the sequential checklist methodology. Main agent spawns generic subagents specifying concern + files + skills.
 
 ## Communication with Jörn
 
@@ -194,54 +193,33 @@ Never write a factual claim without verifying it against evidence in the same se
 
 ### Review workflow
 
-Reviews use a 3-phase pipeline. Fix each phase's findings before proceeding to the next.
+Load the `review` skill for the full workflow. Key points:
 
-**Phase 0 — Module sanity** (`review-modules`): Folder conventions, builds pass, tests pass, pipeline consistency, data freshness.
-
-**Phase 1 — Syntax/style** (language-based, parallelizable across files):
-- `review-tex-style` — LaTeX format, environments, labels, headers, citation format
-- `review-rust-style` — code conventions, module structure, cross-ref format, magic number docs
-- `review-python-style` — script conventions, paths, headers, figure sizing, visual quality
-- `review-notes-style` — README structure, assumptions documented
-
-**Phase 2 — Semantics/content** (concern-based, on clean files):
-- `review-tex-math-correctness` — proofs: gaps, unclear steps, mistakes, definition mismatches
-- `review-tex-educational` — audience fit, forward refs, pedagogical quality
-- `review-tex-facts` — claims vs evidence (JSONL, fixtures, bib data, code refs)
-- `review-rust-tests` — test philosophy, coverage, input diversity, property verification
-- `review-rust-math-correctness` — doc comment formulas match code, invariant enforcement
-- `review-experiment-observations` — reported facts vs JSONL/output data
-- `review-experiment-interpretation` — reasoning quality, overreach, editorializing
-
-### How to run reviews (main agent does this directly)
-
-1. `git diff main...HEAD --name-only` → pick relevant subagents from the phases above
-2. Run phase 0 (`review-modules`) first if builds/tests might be broken
-3. Run phase 1 agents in parallel, fix findings
-4. Run phase 2 agents in parallel on the cleaned files, fix findings
-5. Present merged report to Jörn
-
-This is mandatory before presenting `.tex` deliverables to Jörn and recommended for all deliverables. Do not delegate this orchestration to a subagent — subagents cannot spawn subagents.
+- Fix syntax/style before reviewing semantics/content
+- Spawn generic review subagents in parallel — one per concern per file group
+- Each subagent loads the relevant convention skill and works through a checklist item-by-item
+- Err towards running too many subagents: agent time is free, especially parallelized
+- Mandatory before presenting `.tex` deliverables to Jörn, recommended for all deliverables
 
 ## Git
 
-Conventions for git workflow (local main, three-dot diffs, state the base, commit checklist). Full details auto-load from `.claude/rules/git.md`.
+Load `git-conventions` skill. Key: always use local `main` (not `origin/main`), three-dot diffs for reviews, commit checklist before reports.
 
 ## Thesis Writing
 
-Conventions for `.tex` files: build commands, PDF review workflow, comment conventions, file headers, four audiences, correctness standards, content rules, proof writing, format rules. Full details auto-load from `.claude/rules/tex-build.md`, `.claude/rules/tex-format.md`, and `.claude/rules/tex-content.md`.
+Load skills: `tex-build` (build commands, PDF review), `tex-format` (comments, headers, environments, figures), `tex-content` (four audiences, correctness, proofs, citations).
 
 ## Experiment Writing
 
-Builds upon Thesis Writing. Adds: "write up what's there — nothing more, nothing less", verification against JSONL data, TODO/GAP markers. Full details auto-load from `.claude/rules/tex-content.md` and `.claude/rules/experiment-writing.md`.
+Builds upon Thesis Writing. Load `experiment-conventions` skill. Key: "write up what's there — nothing more, nothing less", verification against JSONL data, pipeline Rust→JSONL→Python→figures→thesis.
 
 ## Rust Library
 
-Single crate `symplectic` in `crates/`. Invariant: `cargo test` passes with zero failures. Conventions for coding style, math-code correspondence, cross-references to thesis, testing philosophy (math proposition tests + standard correctness tests), test organization, fixtures, magic numbers. Full details auto-load from `.claude/rules/rust-coding.md`, `.claude/rules/rust-math-docs.md`, and `.claude/rules/rust-tests.md`.
+Single crate `symplectic` in `crates/`. Invariant: `cargo test` passes with zero failures. Load skills: `rust-conventions` (coding style, math-code correspondence, cross-refs), `rust-tests` (testing philosophy, fixtures, test organization).
 
 ## Experiments
 
-Per-experiment folders under `experiments/`. Pipeline: Rust binary → .jsonl → Python script → .png figures → .tex writeup → thesis. Conventions for directory structure, philosophy, script headers, path conventions, figure sizing, data in git, quality standards. Full details auto-load from `.claude/rules/experiment-structure.md`, `.claude/rules/experiment-philosophy.md`, `.claude/rules/experiment-writing.md`, and `.claude/rules/python-style.md`.
+Per-experiment folders under `experiments/`. Load skills: `experiment-conventions` (structure, pipeline, philosophy, quality), `python-conventions` (script headers, figure sizing, visual quality).
 
 ## Environment
 
