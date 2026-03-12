@@ -17,6 +17,10 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from figure_config import setup, TEXT_WIDTH
+setup()
+
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 DATA_PATH = EXPERIMENT_DIR / "ablation.jsonl"
 FIGURE_PATH = EXPERIMENT_DIR / "ablation_timing.png"
@@ -355,7 +359,7 @@ def plot_timing(entries):
         "random_lagrangian": "Random Lagrangian products",
     }
 
-    fig, axes = plt.subplots(1, 2, figsize=(5.4, 3.0), sharey=False)
+    fig, axes = plt.subplots(1, 2, figsize=(TEXT_WIDTH, 3.5), sharey=False)
 
     colors = {
         "a0_unpruned": "#e08020",
@@ -401,10 +405,9 @@ def plot_timing(entries):
             )
 
         ax.set_yscale("log")
-        ax.set_xlabel("Facet count $F$", fontsize=11)
-        ax.set_ylabel("Time (ms)", fontsize=11)
-        ax.set_title(group_display[group], fontsize=11)
-        ax.legend(fontsize=9)
+        ax.set_xlabel("Facet count $F$")
+        ax.set_ylabel("Time (ms)")
+        ax.set_title(group_display[group])
         ax.grid(True, alpha=0.3, which="both")
         # Integer x-ticks for facet count
         all_f = sorted(set(
@@ -414,10 +417,12 @@ def plot_timing(entries):
 
     fig.suptitle(
         "Adjacency pruning: timing by facet count (mean $\\pm$ std, $n=5$)",
-        fontsize=12,
     )
-    fig.tight_layout()
-    fig.savefig(FIGURE_PATH, dpi=150, bbox_inches='tight')
+    # Shared legend from first axis (both panels have same entries)
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="lower center", ncol=4, bbox_to_anchor=(0.5, -0.02))
+    fig.tight_layout(rect=[0, 0.08, 1, 0.95])
+    fig.savefig(FIGURE_PATH)
     plt.close(fig)
     print(f"Figure: {FIGURE_PATH}")
 

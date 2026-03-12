@@ -16,6 +16,10 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from figure_config import setup, FIGSIZE_DUAL
+setup()
+
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 DATA_FILE = EXPERIMENT_DIR / "unknown-predicates.jsonl"
 FIG_BETA_MIN = EXPERIMENT_DIR / "unknown_predicates_beta_min.png"
@@ -121,7 +125,7 @@ def main():
     # -----------------------------------------------------------------------
     # Figure: beta_min distribution (log scale)
     # -----------------------------------------------------------------------
-    fig, axes = plt.subplots(1, 2, figsize=(5.4, 3.0))
+    fig, axes = plt.subplots(1, 2, figsize=FIGSIZE_DUAL)
 
     for ax, label, subset in [
         (axes[0], "random-sweep", random_rows),
@@ -139,7 +143,7 @@ def main():
             np.log10(1e-12),
             color="red",
             linestyle="--",
-            label="EPS_BETA_POSITIVE (1e-12)",
+            label=r"$\epsilon_\beta = 10^{-12}$",
         )
         ax.legend(fontsize=8)
 
@@ -157,7 +161,7 @@ def main():
 
     fig.suptitle("Minimum β component of certified orbits", fontsize=13)
     fig.tight_layout()
-    fig.savefig(FIG_BETA_MIN, dpi=150, bbox_inches='tight')
+    fig.savefig(FIG_BETA_MIN)
     print(f"\nFigure saved: {FIG_BETA_MIN}")
 
 

@@ -10,11 +10,16 @@ Output: experiments/benchmark/profiling/timing_model.json (updated model),
 """
 
 import json
+import sys
 from collections import defaultdict
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from figure_config import setup, TEXT_WIDTH
+setup()
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 PROFILING_DIR = EXPERIMENT_DIR / "profiling"
@@ -152,7 +157,7 @@ def plot_unified(pruned_rows, unpruned_rows, billiard_rows, pruned_stats_random,
     a_unp, b_unp, r2_unp = fit_model(unpruned_stats) if len(unpruned_stats) >= 2 else (None, None, None)
     a_bil, b_bil, r2_bil = fit_model(billiard_stats) if len(billiard_stats) >= 2 else (None, None, None)
 
-    fig, ax = plt.subplots(figsize=(5.4, 4.0))
+    fig, ax = plt.subplots(figsize=(TEXT_WIDTH, 4.0))
 
     # HK2017 pruned (random polytopes)
     F_p_rand = [r["facets"] for r in pruned_random]
@@ -186,46 +191,47 @@ def plot_unified(pruned_rows, unpruned_rows, billiard_rows, pruned_stats_random,
 
     # Pruned (random): extrapolate to F=16
     T_fit_rand = a_rand * b_rand ** F_fit_wide
-    ax.plot(F_fit_wide, T_fit_rand, color="steelblue", linewidth=2, linestyle="--", alpha=0.7,
-            label=f"Fit (pruned, random): ${a_rand:.1e} \\cdot {b_rand:.2f}^F$")
+    ax.plot(F_fit_wide, T_fit_rand, color="steelblue", linewidth=2, linestyle="--", alpha=0.7)
 
     # Pruned (Lagrangian)
     if a_lag is not None:
         T_fit_lag = a_lag * b_lag ** F_fit_narrow
-        ax.plot(F_fit_narrow, T_fit_lag, color="darkblue", linewidth=2, linestyle="--", alpha=0.7,
-                label=f"Fit (pruned, Lagrangian): ${a_lag:.1e} \\cdot {b_lag:.2f}^F$")
+        ax.plot(F_fit_narrow, T_fit_lag, color="darkblue", linewidth=2, linestyle="--", alpha=0.7)
 
     # Unpruned (random, F≤7)
     if a_unp is not None:
         F_fit_unp = np.linspace(5, 7, 50)
         T_fit_unp = a_unp * b_unp ** F_fit_unp
-        ax.plot(F_fit_unp, T_fit_unp, color="orange", linewidth=2, linestyle="--", alpha=0.7,
-                label=f"Fit (unpruned): ${a_unp:.1e} \\cdot {b_unp:.2f}^F$")
+        ax.plot(F_fit_unp, T_fit_unp, color="orange", linewidth=2, linestyle="--", alpha=0.7)
 
     # Billiard (Lagrangian)
     if a_bil is not None:
         T_fit_bil = a_bil * b_bil ** F_fit_narrow
-        ax.plot(F_fit_narrow, T_fit_bil, color="green", linewidth=2, linestyle="--", alpha=0.7,
-                label=f"Fit (billiard): ${a_bil:.1e} \\cdot {b_bil:.2f}^F$")
+        ax.plot(F_fit_narrow, T_fit_bil, color="green", linewidth=2, linestyle="--", alpha=0.7)
 
     # Crosspolytope reference at F=16 (random polytope model only)
     T_crosspolytope = a_rand * b_rand ** 16
     ax.axvline(16, color="gray", linestyle=":", alpha=0.5)
     ax.scatter([16], [T_crosspolytope], s=120, color="red", marker="*",
                zorder=6, edgecolors="black", linewidths=1.5)
-    ax.text(16.2, T_crosspolytope, "Crosspolytope\n(F=16)", fontsize=9, va="center")
+    ax.annotate(
+        "Crosspolytope (F=16)", xy=(16, T_crosspolytope),
+        xytext=(-60, -25), textcoords="offset points",
+        fontsize=8, ha="right", va="top",
+        arrowprops=dict(arrowstyle="->", color="gray", lw=0.8),
+    )
 
     ax.set_yscale("log")
-    ax.set_xlabel("Facet count $F$", fontsize=11)
-    ax.set_ylabel("Computation time (seconds)", fontsize=11)
-    ax.set_title("EHZ capacity benchmarks: random polytopes vs Lagrangian products", fontsize=12)
-    ax.legend(loc="upper left", fontsize=7, ncol=2)
+    ax.set_xlabel("Facet count $F$")
+    ax.set_ylabel("Computation time (seconds)")
+    ax.set_title("EHZ capacity benchmarks")
+    ax.legend(loc="upper left", fontsize=8)
     ax.grid(True, alpha=0.3, which="both")
-    ax.set_xlim(4.5, 16.5)
+    ax.set_xlim(4.5, 17)
     fig.tight_layout()
 
     out = FIGURES_DIR / "benchmark_timing.png"
-    fig.savefig(out, dpi=150, bbox_inches='tight')
+    fig.savefig(out)
     plt.close(fig)
     print(f"  {out.name}: {len(pruned_random)} pruned (random), {len(pruned_lag)} pruned (Lagrangian), {len(unpruned_rows)} unpruned, {len(billiard_rows)} billiard")
 

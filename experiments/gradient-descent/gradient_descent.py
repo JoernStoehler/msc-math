@@ -13,22 +13,16 @@ Output:
 """
 
 import json
+import sys
 from collections import defaultdict
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-# Font sizes for figures rendered at \textwidth (~6.3").
-# Figures should use figsize close to rendered width to avoid downscaling.
-plt.rcParams.update({
-    "axes.labelsize": 11,
-    "axes.titlesize": 12,
-    "xtick.labelsize": 10,
-    "ytick.labelsize": 10,
-    "legend.fontsize": 10,
-    "figure.titlesize": 13,
-})
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from figure_config import setup, FIGSIZE_SINGLE, FIGSIZE_SQUARE
+setup()
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 DATA_PATH = EXPERIMENT_DIR / "gradient-descent.jsonl"
@@ -72,7 +66,7 @@ def load_data():
 
 def plot_scatter(summaries):
     """Scatter: starting sys vs final sys, colored by polytope class."""
-    fig, ax = plt.subplots(1, 1, figsize=(5.4, 5.4))
+    fig, ax = plt.subplots(1, 1, figsize=FIGSIZE_SQUARE)
 
     general = [s for s in summaries if s["polytope_type"] == "general"]
     lagrangian = [s for s in summaries if s["polytope_type"] != "general"]
@@ -96,14 +90,14 @@ def plot_scatter(summaries):
     ax.set_aspect("equal")
 
     out = EXPERIMENT_DIR / "gradient_descent_scatter.png"
-    fig.savefig(out, dpi=150, bbox_inches="tight")
+    fig.savefig(out)
     plt.close(fig)
     print(f"Saved {out}")
 
 
 def plot_gradient_vs_sys(by_name):
     """Scatter: residual height gradient vs final sys at termination."""
-    fig, ax = plt.subplots(1, 1, figsize=(5.4, 3.5))
+    fig, ax = plt.subplots(1, 1, figsize=FIGSIZE_SINGLE)
 
     for ptype, color, marker in [
         ("general", "steelblue", "o"),
@@ -143,14 +137,14 @@ def plot_gradient_vs_sys(by_name):
     ax.legend()
 
     out = EXPERIMENT_DIR / "gradient_descent_gradient.png"
-    fig.savefig(out, dpi=150, bbox_inches="tight")
+    fig.savefig(out)
     plt.close(fig)
     print(f"Saved {out}")
 
 
 def plot_step_size(rows, by_name):
     """Step size evolution: median with IQR band per iteration."""
-    fig, ax = plt.subplots(1, 1, figsize=(5.4, 3.5))
+    fig, ax = plt.subplots(1, 1, figsize=FIGSIZE_SINGLE)
 
     for ptype, color in [("general", "steelblue"), ("lagrangian", "coral")]:
         by_iter = defaultdict(list)
@@ -178,14 +172,14 @@ def plot_step_size(rows, by_name):
     ax.legend()
 
     out = EXPERIMENT_DIR / "gradient_descent_stepsize.png"
-    fig.savefig(out, dpi=150, bbox_inches="tight")
+    fig.savefig(out)
     plt.close(fig)
     print(f"Saved {out}")
 
 
 def plot_survival(by_name):
     """Survival curve: active polytopes per iteration."""
-    fig, ax = plt.subplots(1, 1, figsize=(5.4, 3.5))
+    fig, ax = plt.subplots(1, 1, figsize=FIGSIZE_SINGLE)
 
     for ptype, color in [("general", "steelblue"), ("lagrangian", "coral")]:
         by_iter = defaultdict(int)
@@ -207,7 +201,7 @@ def plot_survival(by_name):
     ax.legend()
 
     out = EXPERIMENT_DIR / "gradient_descent_survival.png"
-    fig.savefig(out, dpi=150, bbox_inches="tight")
+    fig.savefig(out)
     plt.close(fig)
     print(f"Saved {out}")
 

@@ -38,6 +38,8 @@ Each concern has a checklist reference doc in `references/` with detection rules
 
 **Python style** — script headers, paths, error messages, figure sizing, DPI, visual quality, colors, caption epistemology. Skill: `python-conventions`. Checklist: `references/checklist-python-style.md`.
 
+**Figure visual quality** — view each PNG with the Read tool, check for title collisions, label clipping, font readability at 5.4" width, legend overlap, layout balance, LaTeX rendering. Checklist: `references/checklist-python-figures.md`.
+
 **Notes style** — README structure, assumptions documented, experiment philosophy alignment. Covered in Part C of `references/checklist-experiment.md`.
 
 ### Phase 2 — Semantics and content (on clean files)

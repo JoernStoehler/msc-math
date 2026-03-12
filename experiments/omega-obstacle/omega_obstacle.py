@@ -10,10 +10,15 @@ Output: experiments/omega-obstacle/omega_obstacle_*.png (multiple figures)
 """
 
 import json
+import sys
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from figure_config import setup, FIGSIZE_SINGLE, FIGSIZE_DUAL
+setup()
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 DATA_PATH = EXPERIMENT_DIR / "omega-obstacle.jsonl"
@@ -53,7 +58,7 @@ def split_data(rows):
 
 def fig1_ridge_omega_abs_min_vs_sys(random_rows, known_rows):
     """Scatter: min |ω| over ridge-adjacent pairs vs sys. (Jörn's ideas 1+2)"""
-    fig, ax = plt.subplots(figsize=(5.4, 3.5))
+    fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
 
     for f_count in sorted(F_COLORS.keys()):
         subset = [r for r in random_rows if r["facet_count"] == f_count]
@@ -76,16 +81,15 @@ def fig1_ridge_omega_abs_min_vs_sys(random_rows, known_rows):
     ax.set_ylabel("sys = c² / (2V)")
     ax.set_title("Ridge ω abs-min vs systolic ratio")
     ax.legend(fontsize=8)
-    ax.grid(True, alpha=0.3)
     fig.tight_layout()
-    fig.savefig(EXPERIMENT_DIR / "omega_obstacle_ridge_min_vs_sys.png", dpi=150, bbox_inches='tight')
+    fig.savefig(EXPERIMENT_DIR / "omega_obstacle_ridge_min_vs_sys.png")
     plt.close(fig)
     print("  Saved: omega_obstacle_ridge_min_vs_sys.png")
 
 
 def fig2_orbit_omega_min_vs_sys(random_rows, known_rows):
     """Scatter: min ω over orbit transitions vs sys. (orbit-specific)"""
-    fig, ax = plt.subplots(figsize=(5.4, 3.5))
+    fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
 
     for f_count in sorted(F_COLORS.keys()):
         subset = [r for r in random_rows if r["facet_count"] == f_count]
@@ -107,9 +111,8 @@ def fig2_orbit_omega_min_vs_sys(random_rows, known_rows):
     ax.set_ylabel("sys = c² / (2V)")
     ax.set_title("Orbit ω min vs systolic ratio")
     ax.legend(fontsize=8)
-    ax.grid(True, alpha=0.3)
     fig.tight_layout()
-    fig.savefig(EXPERIMENT_DIR / "omega_obstacle_orbit_min_vs_sys.png", dpi=150, bbox_inches='tight')
+    fig.savefig(EXPERIMENT_DIR / "omega_obstacle_orbit_min_vs_sys.png")
     plt.close(fig)
     print("  Saved: omega_obstacle_orbit_min_vs_sys.png")
 
@@ -130,7 +133,7 @@ def fig3_orbit_vs_nonorbit_omega(random_rows):
             else:
                 nonorbit_omegas_all.append(w_abs)
 
-    fig, ax = plt.subplots(figsize=(5.4, 3.5))
+    fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
     bp = ax.boxplot([orbit_omegas_all, nonorbit_omegas_all],
                     labels=["Orbit ridges", "Non-orbit ridges"],
                     patch_artist=True)
@@ -141,7 +144,7 @@ def fig3_orbit_vs_nonorbit_omega(random_rows):
     ax.set_title("Ridge |ω| distribution: orbit vs non-orbit")
     ax.grid(True, alpha=0.3, axis="y")
     fig.tight_layout()
-    fig.savefig(EXPERIMENT_DIR / "omega_obstacle_orbit_vs_nonorbit.png", dpi=150, bbox_inches='tight')
+    fig.savefig(EXPERIMENT_DIR / "omega_obstacle_orbit_vs_nonorbit.png")
     plt.close(fig)
     print("  Saved: omega_obstacle_orbit_vs_nonorbit.png")
 
@@ -154,7 +157,7 @@ def fig3_orbit_vs_nonorbit_omega(random_rows):
 
 def fig4_orbit_omega_mean_vs_sys(random_rows, known_rows):
     """Scatter: mean orbit ω vs sys."""
-    fig, ax = plt.subplots(figsize=(5.4, 3.5))
+    fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
 
     for f_count in sorted(F_COLORS.keys()):
         subset = [r for r in random_rows if r["facet_count"] == f_count]
@@ -176,9 +179,8 @@ def fig4_orbit_omega_mean_vs_sys(random_rows, known_rows):
     ax.set_ylabel("sys = c² / (2V)")
     ax.set_title("Orbit ω mean vs systolic ratio")
     ax.legend(fontsize=8)
-    ax.grid(True, alpha=0.3)
     fig.tight_layout()
-    fig.savefig(EXPERIMENT_DIR / "omega_obstacle_orbit_mean_vs_sys.png", dpi=150, bbox_inches='tight')
+    fig.savefig(EXPERIMENT_DIR / "omega_obstacle_orbit_mean_vs_sys.png")
     plt.close(fig)
     print("  Saved: omega_obstacle_orbit_mean_vs_sys.png")
 
@@ -197,7 +199,7 @@ def fig5_gradient_dots_orbit(random_rows):
             else:
                 dots_nonorbit.append(gd["dot"])
 
-    fig, axes = plt.subplots(1, 2, figsize=(5.4, 2.8))
+    fig, axes = plt.subplots(1, 2, figsize=FIGSIZE_DUAL)
 
     # Orbit facets
     if dots_orbit:
@@ -209,11 +211,10 @@ def fig5_gradient_dots_orbit(random_rows):
         ax.axvline(median, color="blue", linewidth=1.5, linestyle="-",
                    label=f"median={median:.4f}")
         frac_neg = np.mean(np.array(dots_orbit) < 0)
-        ax.set_title(f"Orbit facets: ⟨∇sys, ∇ω⟩ ({frac_neg:.0%} negative)")
-        ax.set_xlabel("dot product ⟨∇_{n_k} sys, ∇_{n_k} ω(n_k, n_i)⟩")
+        ax.set_title(f"Orbit facets: ⟨∇sys, ∇ω⟩\n({frac_neg:.0%} negative)")
+        ax.set_xlabel("dot product ⟨∇sys, ∇ω⟩")
         ax.set_ylabel("count")
         ax.legend(fontsize=8)
-        ax.grid(True, alpha=0.3)
 
     # Non-orbit facets
     if dots_nonorbit:
@@ -225,14 +226,13 @@ def fig5_gradient_dots_orbit(random_rows):
         ax.axvline(median, color="blue", linewidth=1.5, linestyle="-",
                    label=f"median={median:.4f}")
         frac_neg = np.mean(np.array(dots_nonorbit) < 0)
-        ax.set_title(f"Non-orbit facets: ⟨∇sys, ∇ω⟩ ({frac_neg:.0%} negative)")
-        ax.set_xlabel("dot product ⟨∇_{n_k} sys, ∇_{n_k} ω(n_k, n_i)⟩")
+        ax.set_title(f"Non-orbit facets: ⟨∇sys, ∇ω⟩\n({frac_neg:.0%} negative)")
+        ax.set_xlabel("dot product ⟨∇sys, ∇ω⟩")
         ax.set_ylabel("count")
         ax.legend(fontsize=8)
-        ax.grid(True, alpha=0.3)
 
     fig.tight_layout()
-    fig.savefig(EXPERIMENT_DIR / "omega_obstacle_gradient_dots.png", dpi=150, bbox_inches='tight')
+    fig.savefig(EXPERIMENT_DIR / "omega_obstacle_gradient_dots.png")
     plt.close(fig)
     print("  Saved: omega_obstacle_gradient_dots.png")
     print(f"    Orbit facets: n={len(dots_orbit)}, "
@@ -258,7 +258,7 @@ def fig6_gradient_dots_by_orbit_neighbor(random_rows):
             else:
                 dots_i_nonorbit.append(gd["dot"])
 
-    fig, axes = plt.subplots(1, 2, figsize=(5.4, 2.8))
+    fig, axes = plt.subplots(1, 2, figsize=FIGSIZE_DUAL)
 
     for ax, data, label, color in [
         (axes[0], dots_i_orbit, "Neighbor i on orbit", "#d62728"),
@@ -274,14 +274,15 @@ def fig6_gradient_dots_by_orbit_neighbor(random_rows):
         ax.axvline(median, color="blue", linewidth=1.5, linestyle="-",
                    label=f"median={median:.4f}")
         frac_neg = np.mean(np.array(data) < 0)
-        ax.set_title(f"Orbit facet k, {label} ({frac_neg:.0%} neg)")
-        ax.set_xlabel("⟨∇_{n_k} sys, ∇_{n_k} ω(n_k, n_i)⟩")
+        short_label = "i on orbit" if "on orbit" in label and "NOT" not in label else "i not on orbit"
+        ax.set_title(f"{short_label}\n({frac_neg:.0%} neg)")
+        ax.set_xlabel("dot product ⟨∇sys, ∇ω⟩")
         ax.set_ylabel("count")
         ax.legend(fontsize=8)
-        ax.grid(True, alpha=0.3)
 
+    fig.suptitle(r"Orbit facet $k$: $\langle\nabla\mathrm{sys}, \nabla\omega\rangle$ by neighbor type", y=1.02)
     fig.tight_layout()
-    fig.savefig(EXPERIMENT_DIR / "omega_obstacle_gradient_neighbor_split.png", dpi=150, bbox_inches='tight')
+    fig.savefig(EXPERIMENT_DIR / "omega_obstacle_gradient_neighbor_split.png")
     plt.close(fig)
     print("  Saved: omega_obstacle_gradient_neighbor_split.png")
 
@@ -299,15 +300,14 @@ def fig7_omega_vs_dot(random_rows):
     if not omegas:
         return
 
-    fig, ax = plt.subplots(figsize=(5.4, 3.5))
+    fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
     ax.scatter(omegas, dots, alpha=0.15, s=5, c="#d62728")
     ax.axhline(0, color="black", linewidth=1, linestyle="--")
-    ax.set_xlabel("|ω₀(n_k, n_i)|")
-    ax.set_ylabel("⟨∇_{n_k} sys, ∇_{n_k} ω(n_k, n_i)⟩")
+    ax.set_xlabel(r"$|\omega_0(n_k, n_i)|$")
+    ax.set_ylabel(r"$\langle\nabla_{n_k}\mathrm{sys},\;\nabla_{n_k}\omega(n_k, n_i)\rangle$")
     ax.set_title("Orbit facets: |ω| vs gradient dot product")
-    ax.grid(True, alpha=0.3)
     fig.tight_layout()
-    fig.savefig(EXPERIMENT_DIR / "omega_obstacle_omega_vs_dot.png", dpi=150, bbox_inches='tight')
+    fig.savefig(EXPERIMENT_DIR / "omega_obstacle_omega_vs_dot.png")
     plt.close(fig)
     print("  Saved: omega_obstacle_omega_vs_dot.png")
 

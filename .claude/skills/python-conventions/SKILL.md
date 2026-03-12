@@ -7,10 +7,16 @@ description: Python script conventions for experiments. Load when writing or edi
 
 ## Script Conventions
 
-**Independent scripts, not a package:**
-- No `__init__.py`, no shared imports between scripts
+**Independent scripts with shared figure config:**
+- No `__init__.py`, no shared imports between scripts — except `figure_config.py`
 - Each script is self-contained: reads data, performs analysis, writes output
 - If two scripts share logic, copy-paste until it stabilizes
+- Exception: `experiments/figure_config.py` provides shared figure styling (fonts, sizes, rcParams). All scripts import it:
+  ```python
+  sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+  from figure_config import setup, FIGSIZE_SINGLE  # import what you need
+  setup()
+  ```
 
 **No framework:** Use plain Python with standard data science libraries (numpy, pandas, matplotlib, scipy). No custom framework. Dependencies in `experiments/requirements.txt`.
 
@@ -47,12 +53,15 @@ No hardcoded paths outside `REPO_ROOT`.
 
 All figure formatting is handled in Python. LaTeX is a 1:1 pass-through (`\includegraphics{file.png}`, no `width=`/`scale=`).
 
-**Sizing:**
+**Sizing and fonts (via `figure_config.py`):**
+- `setup()` configures rcParams: font family (CM serif), sizes, grid, dpi, bbox. Call it once at module level.
+- Use `FIGSIZE_SINGLE`, `FIGSIZE_DUAL`, `FIGSIZE_TRIPLE`, etc. from the config — don't hardcode figsize.
 - `figsize` = the physical size in the printed PDF. `\textwidth` ≈ 5.4" (A4, 12pt article, default margins).
-- `bbox_inches='tight'` expands the output beyond `figsize` to fit labels. Verify the output PNG width fits.
 - Multi-panel figures at 5.4" are often too cramped. Prefer separate figures over wider canvases.
 - Multi-panel figures: use consistent axis scales where cross-panel comparison is intended.
-- `savefig(dpi=150)` minimum for print quality.
+- Long titles on subplots will collide. Use `\n` to wrap, or shorten.
+
+**Axis labels with math:** Use `r"$...$"` for all mathematical notation in labels. Never use LaTeX syntax (`_{n_k}`, `^{2}`) outside of `$...$` — matplotlib renders it as literal text.
 
 **Visual clarity:**
 - Use markers (not just color) for grayscale compatibility in scatter/line plots.

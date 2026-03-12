@@ -26,18 +26,9 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-# Consistent figure style for thesis embedding.
-# Body text is ~11pt; figures are scaled to \textwidth (~5.5in),
-# so axis labels at 9pt and titles at 10pt are readable.
-plt.rcParams.update({
-    "font.size": 9,
-    "axes.titlesize": 10,
-    "axes.labelsize": 9,
-    "xtick.labelsize": 8,
-    "ytick.labelsize": 8,
-    "legend.fontsize": 8,
-    "figure.titlesize": 10,
-})
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from figure_config import setup, FIGSIZE_DUAL, TEXT_WIDTH
+setup()
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 SENSITIVITY_PATH = EXPERIMENT_DIR / "sys-optimization-sensitivity.jsonl"
@@ -84,7 +75,7 @@ def plot_gradient_histogram(sens_rows: list[dict], output_path: Path) -> None:
 
     all_grads = np.array(all_grads)
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(5.4, 2.8))
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=FIGSIZE_DUAL)
 
     # Signed histogram (linear scale), bins centered on zero
     extent = max(abs(all_grads.min()), abs(all_grads.max()))
@@ -95,8 +86,7 @@ def plot_gradient_histogram(sens_rows: list[dict], output_path: Path) -> None:
     ax1.axvline(x=0, color="black", linewidth=0.8, alpha=0.5)
     ax1.set_xlabel(r"$\partial\,\mathrm{sys}\,/\,\partial\log h_k$")
     ax1.set_ylabel("Count")
-    ax1.set_title("Logarithmic sensitivity (linear)")
-    ax1.grid(True, alpha=0.3)
+    ax1.set_title("Signed (linear scale)")
 
     # Magnitude on log scale
     abs_grads = np.abs(all_grads)
@@ -104,11 +94,12 @@ def plot_gradient_histogram(sens_rows: list[dict], output_path: Path) -> None:
     ax2.hist(log_grads, bins=50, color="#3b6ea8", alpha=0.75, edgecolor="white")
     ax2.set_xlabel(r"$\log_{10}\,|\partial\,\mathrm{sys}\,/\,\partial\log h_k|$")
     ax2.set_ylabel("Count")
-    ax2.set_title("Logarithmic sensitivity (log magnitude)")
-    ax2.grid(True, alpha=0.3)
+    ax2.set_title("Magnitude (log scale)")
 
+    fig.suptitle(r"Distribution of $\partial\,\mathrm{sys}\,/\,\partial\log h_k$", y=1.02)
     fig.tight_layout()
-    fig.savefig(output_path, dpi=150, bbox_inches='tight')
+
+    fig.savefig(output_path)
     plt.close(fig)
     print(f"Saved: {output_path}")
 
@@ -137,7 +128,7 @@ def plot_gradient_comparison(sens_rows: list[dict], output_path: Path) -> None:
 
     fc = facet_counts[valid]
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(5.4, 3.0))
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=FIGSIZE_DUAL)
 
     # Left: predicted max Δsys comparison
     scatter = ax1.scatter(
@@ -176,7 +167,7 @@ def plot_gradient_comparison(sens_rows: list[dict], output_path: Path) -> None:
     ax2.grid(True, alpha=0.3, which="both")
 
     fig.tight_layout()
-    fig.savefig(output_path, dpi=150, bbox_inches='tight')
+    fig.savefig(output_path)
     plt.close(fig)
     print(f"Saved: {output_path}")
 
@@ -212,7 +203,7 @@ def plot_improvement(steps_rows: list[dict], output_path: Path) -> None:
     delta_hn = np.array([best[(n, "h_n")]["delta_sys"] for n in names])
     old_sys = np.array([best[(n, "h_only")]["old_sys"] for n in names])
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(5.4, 3.0))
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=FIGSIZE_DUAL)
 
     # Left: delta_sys comparison
     above = delta_hn > delta_h
@@ -234,9 +225,8 @@ def plot_improvement(steps_rows: list[dict], output_path: Path) -> None:
     ax1.axvline(x=0, color="gray", linewidth=0.5, alpha=0.5)
     ax1.set_xlabel(r"$\Delta\mathrm{sys}$ (height only)")
     ax1.set_ylabel(r"$\Delta\mathrm{sys}$ (height + normal)")
-    ax1.set_title(r"Improvement comparison: $h$ vs $(h,n)$")
+    ax1.set_title(r"$\Delta\mathrm{sys}$: $h$ vs $(h,n)$")
     ax1.legend(loc="upper left")
-    ax1.grid(True, alpha=0.3)
 
     # Right: new_sys after best step of either type
     new_sys_h = np.array([best[(n, "h_only")]["new_sys"] for n in names])
@@ -255,10 +245,9 @@ def plot_improvement(steps_rows: list[dict], output_path: Path) -> None:
     ax2.set_ylim(0, lim)
     ax2.set_aspect("equal")
     ax2.legend(loc="upper left")
-    ax2.grid(True, alpha=0.3)
 
     fig.tight_layout()
-    fig.savefig(output_path, dpi=150, bbox_inches='tight')
+    fig.savefig(output_path)
     plt.close(fig)
     print(f"Saved: {output_path}")
 
@@ -287,7 +276,7 @@ def plot_convergence(iter_rows: list[dict], output_path: Path) -> None:
     for name, rows in by_name.items():
         facet_count[name] = rows[0]["facet_count"]
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(5.4, 3.0))
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(TEXT_WIDTH, 4.0))
 
     # Left: sys trajectories colored by facet count
     names_sorted = sorted(by_name.keys(), key=lambda n: facet_count[n])
@@ -312,7 +301,6 @@ def plot_convergence(iter_rows: list[dict], output_path: Path) -> None:
     ax1.set_title("Convergence trajectories")
     ax1.axhline(y=1.0, color="#c0392b", linestyle="--", alpha=0.4, label="sys = 1")
     ax1.legend(loc="lower right")
-    ax1.grid(True, alpha=0.3)
 
     # Right: delta_sys per iteration (all polytopes overlaid)
     for name in names_sorted:
@@ -327,10 +315,9 @@ def plot_convergence(iter_rows: list[dict], output_path: Path) -> None:
     ax2.set_title("Per-step improvement")
     ax2.set_yscale("symlog", linthresh=1e-6)
     ax2.axhline(y=0, color="black", linewidth=0.5, alpha=0.5)
-    ax2.grid(True, alpha=0.3)
 
     fig.tight_layout()
-    fig.savefig(output_path, dpi=150, bbox_inches='tight')
+    fig.savefig(output_path)
     plt.close(fig)
     print(f"Saved: {output_path}")
 
@@ -363,17 +350,16 @@ def plot_iteration_summary(iter_rows: list[dict], output_path: Path) -> None:
     h_count = sum(1 for r in iter_rows if r["step_type"] == "h_only")
     hn_count = sum(1 for r in iter_rows if r["step_type"] == "h_n")
 
-    fig, axes = plt.subplots(1, 3, figsize=(5.4, 2.5))
+    fig, axes = plt.subplots(1, 3, figsize=(TEXT_WIDTH, 3.5))
 
     # Left: iteration count histogram
     ax = axes[0]
     max_iter = n_iters.max()
     bins = np.arange(0.5, max_iter + 1.5, 1)
     ax.hist(n_iters, bins=bins, color="#3b6ea8", alpha=0.75, edgecolor="white")
-    ax.set_xlabel("Iterations to convergence")
+    ax.set_xlabel("Iterations")
     ax.set_ylabel("Count")
-    ax.set_title(f"Iteration counts (mean {n_iters.mean():.1f})")
-    ax.grid(True, alpha=0.3)
+    ax.set_title(f"Iteration counts\n(mean {n_iters.mean():.1f})")
 
     # Middle: starting vs final sys
     ax = axes[1]
@@ -382,15 +368,13 @@ def plot_iteration_summary(iter_rows: list[dict], output_path: Path) -> None:
     ax.plot([0, lim], [0, lim], "k--", alpha=0.3, label="No improvement")
     ax.axhline(y=1.0, color="#c0392b", linestyle="--", alpha=0.4, label="sys = 1")
     ax.set_xlabel("sys (initial)")
-    ax.set_ylabel("sys (after iteration)")
+    ax.set_ylabel("sys (final)")
     ax.set_title("Iterative improvement")
     ax.set_xlim(0, lim)
     ax.set_ylim(0, lim)
-    ax.set_aspect("equal")
-    ax.legend(loc="upper left")
-    ax.grid(True, alpha=0.3)
+    ax.legend(loc="lower right")
 
-    # Right: step type pie chart
+    # Right: step type bar chart
     ax = axes[2]
     ax.bar(
         ["$h$-only", "$(h,n)$"],
@@ -400,11 +384,11 @@ def plot_iteration_summary(iter_rows: list[dict], output_path: Path) -> None:
         edgecolor="white",
     )
     ax.set_ylabel("Steps taken")
-    ax.set_title(f"Step type usage ({h_count + hn_count} total)")
+    ax.set_title(f"Step type usage\n({h_count + hn_count} total)")
     ax.grid(True, alpha=0.3, axis="y")
 
     fig.tight_layout()
-    fig.savefig(output_path, dpi=150, bbox_inches='tight')
+    fig.savefig(output_path)
     plt.close(fig)
     print(f"Saved: {output_path}")
 
@@ -424,7 +408,7 @@ def plot_validity(val_rows: list[dict], output_path: Path) -> None:
         print("WARNING: no successful validity evaluations", file=sys.stderr)
         return
 
-    fig, axes = plt.subplots(1, 3, figsize=(5.4, 2.5))
+    fig, axes = plt.subplots(1, 3, figsize=(TEXT_WIDTH, 3.5))
 
     # --- Left: prediction error vs t/t_max by direction type ---
     ax = axes[0]
@@ -467,7 +451,7 @@ def plot_validity(val_rows: list[dict], output_path: Path) -> None:
     ax.set_yscale("log")
     ax.set_xlabel(r"$t\,/\,t_{\max}$")
     ax.set_ylabel("Relative prediction error")
-    ax.set_title("Gradient prediction accuracy")
+    ax.set_title("Prediction accuracy")
     ax.legend(loc="upper left")
     ax.grid(True, alpha=0.3, which="both")
 
@@ -501,7 +485,7 @@ def plot_validity(val_rows: list[dict], output_path: Path) -> None:
         ax.set_xticklabels([f"{f:.0f}×" for f in beyond_fracs])
         ax.set_xlabel(r"Step size ($\times\,t_{\max}$)")
         ax.set_ylabel("Success rate (%)")
-        ax.set_title("Step bound conservativeness")
+        ax.set_title("Beyond $t_{\\max}$")
         ax.legend()
         ax.grid(True, alpha=0.3, axis="y")
 
@@ -539,14 +523,13 @@ def plot_validity(val_rows: list[dict], output_path: Path) -> None:
             alpha=0.6, edgecolor="white",
         )
         ax.axvline(x=1.0, color="black", linestyle="--", alpha=0.4)
-        ax.set_xlabel(r"Validity radius ($t\,/\,t_{\max}$)")
+        ax.set_xlabel(r"$t\,/\,t_{\max}$")
         ax.set_ylabel("Count")
-        ax.set_title("Where gradient breaks down")
-        ax.legend()
-        ax.grid(True, alpha=0.3)
+        ax.set_title("Validity radius")
+        ax.legend(loc="upper right")
 
     fig.tight_layout()
-    fig.savefig(output_path, dpi=150, bbox_inches='tight')
+    fig.savefig(output_path)
     plt.close(fig)
     print(f"Saved: {output_path}")
 

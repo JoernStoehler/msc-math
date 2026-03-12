@@ -15,6 +15,10 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from figure_config import setup, FIGSIZE_SINGLE, TEXT_WIDTH
+setup()
+
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 DATA_DIR = EXPERIMENT_DIR
@@ -50,21 +54,20 @@ def plot_sweep(data: list[dict], output: Path):
     angles = np.array([d["angle_deg"] for d in rows])
     sys_vals = np.array([d["sys"] for d in rows])
 
-    fig, ax = plt.subplots(figsize=(5.4, 3.5))
+    fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
     ax.plot(angles, sys_vals, color="#2f5aa6", linewidth=2.0, label="sys(theta)")
     ax.axhline(y=1.0, color="#c0392b", linestyle="--", alpha=0.7, label="sys = 1")
 
     ax.set_xlabel("Rotation angle theta (degrees)")
     ax.set_ylabel("sys = c^2 / (2 * vol)")
     ax.set_title("Pentagon x R(theta) Pentagon (0-36 degrees)")
-    ax.grid(True, alpha=0.3)
 
     ax.axvline(x=18.0, color="#7f8c8d", linestyle=":", alpha=0.7)
     ax.text(18.2, ax.get_ylim()[0], "18 deg", fontsize=8, color="#7f8c8d", va="bottom")
 
     ax.legend(loc="best")
     fig.tight_layout()
-    fig.savefig(output, dpi=150, bbox_inches='tight')
+    fig.savefig(output)
     plt.close(fig)
     print(f"Saved: {output}")
 
@@ -84,7 +87,7 @@ def load_pair_data(data_dir: Path) -> dict[tuple[int, int], list[dict]]:
 
 def plot_polygon_pairs(data: dict[tuple[int, int], list[dict]], output: Path):
     pairs = list(PAIR_FILES.keys())
-    fig, axes = plt.subplots(2, 5, figsize=(5.4, 2.5), sharey=True)
+    fig, axes = plt.subplots(2, 5, figsize=(TEXT_WIDTH, 4.5), sharey=True)
     axes = axes.flatten()
 
     all_sys = []
@@ -101,23 +104,26 @@ def plot_polygon_pairs(data: dict[tuple[int, int], list[dict]], output: Path):
     y_max = max(all_sys)
     pad = 0.03 * (y_max - y_min) if y_max > y_min else 0.01
 
-    for ax, pair in zip(axes, pairs):
+    for i, (ax, pair) in enumerate(zip(axes, pairs)):
         rows = sorted(data[pair], key=lambda d: d["angle_deg"])
         angles = np.array([d["angle_deg"] for d in rows])
         sys_vals = np.array([d["sys"] for d in rows])
 
-        ax.plot(angles, sys_vals, color="#2f5aa6", linewidth=1.8)
+        ax.plot(angles, sys_vals, color="#2f5aa6", linewidth=1.5)
         ax.axhline(y=1.0, color="#c0392b", linestyle="--", alpha=0.6)
-        ax.set_title(f"{pair[0]}x{pair[1]}", fontsize=10)
-        ax.grid(True, alpha=0.3)
+        ax.set_title(f"{pair[0]}x{pair[1]}")
         ax.set_ylim(y_min - pad, y_max + pad)
-        ax.set_xlabel("theta (deg)", fontsize=9)
-        if ax is axes[0] or ax is axes[5]:
-            ax.set_ylabel("sys", fontsize=9)
+        # Only label bottom row x-axis, left column y-axis
+        if i >= 5:
+            ax.set_xlabel(r"$\theta$ (deg)")
+        else:
+            ax.tick_params(labelbottom=False)
+        if i % 5 == 0:
+            ax.set_ylabel("sys")
 
-    fig.suptitle("Regular n-gon x R(theta) m-gon (6-degree steps)")
-    fig.tight_layout(rect=[0, 0, 1, 0.95])
-    fig.savefig(output, dpi=150, bbox_inches='tight')
+    fig.suptitle(r"Regular $n$-gon $\times_L$ $R(\theta)$ $m$-gon (6-degree steps)")
+    fig.tight_layout(rect=[0, 0, 1, 0.94])
+    fig.savefig(output)
     plt.close(fig)
     print(f"Saved: {output}")
 

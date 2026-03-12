@@ -19,6 +19,10 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from figure_config import setup, FIGSIZE_SINGLE
+setup()
+
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 DATA_PATH = EXPERIMENT_DIR / "pentagon-perturb.jsonl"
@@ -63,7 +67,7 @@ def format_stats_table(stats: dict, base_sys: float) -> str:
 def plot_histogram(sys_vals: np.ndarray, base_sys: float, output_path: Path) -> None:
     FIGURES_DIR.mkdir(parents=True, exist_ok=True)
 
-    fig, ax = plt.subplots(figsize=(5.4, 3.5))
+    fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
     ax.hist(sys_vals, bins=18, color="#3b6ea8", alpha=0.75, edgecolor="white")
     ax.axvline(1.0, color="#c0392b", linestyle="--", alpha=0.7, label="sys = 1")
     ax.axvline(base_sys, color="#2d6a4f", linestyle="-", alpha=0.9, label="base sys")
@@ -71,11 +75,10 @@ def plot_histogram(sys_vals: np.ndarray, base_sys: float, output_path: Path) -> 
     ax.set_xlabel("Systolic ratio sys")
     ax.set_ylabel("Count")
     ax.set_title("HK-O pentagon perturbations: sys histogram (pruned)")
-    ax.grid(True, alpha=0.25)
     ax.legend(loc="best")
 
     fig.tight_layout()
-    fig.savefig(output_path, dpi=150, bbox_inches='tight')
+    fig.savefig(output_path)
     plt.close(fig)
     print(f"Saved: {output_path}")
 

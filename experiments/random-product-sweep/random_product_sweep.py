@@ -15,6 +15,10 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from figure_config import setup, FIGSIZE_SINGLE
+setup()
+
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 DATA_PATH = EXPERIMENT_DIR / "random-product-sweep.jsonl"
@@ -68,7 +72,7 @@ def compute_stats(rows: list[dict]) -> list[dict]:
 def plot_summary(stats: list[dict], output_path: Path) -> None:
     FIGURES_DIR.mkdir(parents=True, exist_ok=True)
 
-    fig, ax = plt.subplots(figsize=(5.4, 3.5))
+    fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
 
     x_positions = np.arange(len(stats))
     labels = [f"({s['pair'][0]},{s['pair'][1]})" for s in stats]
@@ -97,11 +101,10 @@ def plot_summary(stats: list[dict], output_path: Path) -> None:
     ax.set_title("Random Lagrangian products: systolic ratio by polygon pair")
     ax.set_xticks(x_positions)
     ax.set_xticklabels(labels)
-    ax.grid(True, alpha=0.3)
     ax.legend(loc="best")
 
     fig.tight_layout()
-    fig.savefig(output_path, dpi=150, bbox_inches='tight')
+    fig.savefig(output_path)
     plt.close(fig)
     print(f"Saved: {output_path}")
 
