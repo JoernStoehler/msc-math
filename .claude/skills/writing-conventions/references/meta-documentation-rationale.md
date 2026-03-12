@@ -1,9 +1,8 @@
-# Meta-Documentation Architecture Rationale
+# Meta-Documentation: How to Make Good Decisions
 
-Why the meta-documentation (CLAUDE.md, skills, agents, memory) is structured as it is.
-Written March 2026 after an audit and refactor session.
+This document teaches you how to write and modify meta-documentation (CLAUDE.md, skills, agents, memory, reference docs) at the same quality level as the current version. Read this before making structural changes to the meta-layer.
 
-## The problem
+## The constraints you're working with
 
 Agents need instructions to produce correct work, but:
 1. Instructions loaded too early get forgotten during long sessions (context decay)
@@ -12,35 +11,31 @@ Agents need instructions to produce correct work, but:
 4. Duplicated instructions across files → maintenance burden, drift, contradictions
 5. Agents don't know what they don't know — they won't search for instructions they don't realize exist
 
-## Why skills over rules
+When agents get confused or slowed down, it's usually because the meta-layer violates one of these constraints. The fix is cleanup, not more instructions.
 
-`.claude/rules/` files are path-triggered: they load when Claude reads a file matching a glob pattern (e.g. `**/*.tex`). `.claude/skills/` files have their name+description always visible in the system prompt, with the full body loaded on demand.
+## Decision framework: where does this knowledge go?
 
-We chose skills because:
+When you have a new piece of knowledge to place, ask these questions in order:
 
-**Rules load too late.** Rules trigger on file reads, which happen *after* the agent has already decided what to do. By the time the rule about "geometric definitions first" loads, the agent may have already written a coordinate-first definition. Skills are visible during planning because the agent sees the description and can load the body before committing.
+**1. Who needs it?**
+- Every agent → CLAUDE.md (but keep it lean — every token here costs every agent)
+- Agents working on a specific topic → Skill SKILL.md
+- Only review agents checking a specific concern → Reference doc under `review/references/`
+- Only agents that open this specific file → Code comment or file header
+- Only when editing the meta-layer itself → `writing-conventions` skill or its references
 
-**Rules don't load for new files.** When an agent creates a new `.tex` file (rather than editing an existing one), the rule may never trigger because no matching file was read. Skills are independent of file I/O.
+**2. When do they need it?**
+- During planning (before committing to approach) → Must be visible early. Skills work (name+description always visible). CLAUDE.md works. Reference docs don't — they require the agent to already know to look.
+- During execution → Skills or reference docs. The skill body tells the agent which reference docs exist.
+- During review → Review checklist reference docs. Subagent reads the checklist matching its concern.
 
-**Skills support progressive disclosure.** The name+description (always visible, ~10 tokens each) tells the agent "this exists and is about X." The agent loads the body only when relevant. This is the right tradeoff for a project where most agents need a subset of conventions, not all of them.
+**3. How stable is it?**
+- Stable convention → Skill SKILL.md
+- Evolving detection heuristic → Reference doc (cheaper to update)
+- Project state that decays → MEMORY.md or TASKS.md
+- One-off context → Don't persist it. Let it live in the conversation.
 
-**Anthropic best practices moved away from rules.** The Claude Code best practices page (2026) documents skills extensively and doesn't mention rules. Rules may be deprecated.
-
-**Skills can be preloaded into subagents.** Agent definitions have a `skills:` field that forces skill bodies into the subagent's context at startup. Rules don't have an equivalent mechanism — they depend on the subagent reading matching files.
-
-## Why one generic review agent instead of 12 specialized ones
-
-The old architecture had 12 review agents (review-tex-style, review-rust-tests, etc.), each ~80 lines with inline checklists. We replaced them with 1 generic review agent + 1 review skill + 8 checklist reference docs.
-
-**Maintenance cost.** 12 agents × 80 lines = 1,030 lines of agent definitions. Many contained duplicated methodology (sequential checklist approach, output format). A convention change required updating the rule file AND the review agent AND sometimes CLAUDE.md. Now: conventions live in skills, detection rules live in checklist reference docs, methodology lives in the review skill. Each piece has one canonical home.
-
-**Composability.** The old agents were monolithic: "review-tex-style" combined build checks, environment checks, comment checks, figure checks, and anti-pattern checks into one agent. You couldn't run just the anti-pattern checks. The new architecture: spawn a subagent with any combination of concern + files + checklists.
-
-**Context efficiency.** The old 12 agents all loaded the same convention content via rules auto-loading (~2-3k tokens each). The new agent preloads all skills once. Subagents read only the checklist reference docs they need.
-
-**The generic agent tested successfully.** 4 parallel review runs on the actual repo found real issues with zero false positives. The methodology (sequential checklist) is what makes reviews work, not the agent specialization. The methodology is in the review skill; it works regardless of which concern is being reviewed.
-
-## Architecture layers
+## Architecture layers and their roles
 
 ```
 CLAUDE.md                        Always loaded. Project context, workflow, communication.
@@ -58,21 +53,67 @@ Agent definitions (.claude/agents/)  Defines which tools, model, and skills a
                                      subagent type gets. Minimal prompt.
 ```
 
-**Why this layering:**
-- CLAUDE.md → every agent sees it → only put what every agent needs
-- Skills → agents self-select → put topic-specific conventions here
-- Reference docs → agents load within a skill → put detailed procedures, examples, detection rules here (these are too large/specific for the skill body itself)
-- Agent definitions → define capabilities, not behavior → behavior comes from skills
+**Key invariant:** Each piece of knowledge has exactly one canonical home. If a convention is in a skill, the review checklist references the skill's rule — it doesn't restate it. If a detection rule is in a checklist, the skill mentions the checklist exists — it doesn't inline the detection rule.
 
-## Why detection rules are separate from conventions
+**Why this layering works:**
+- CLAUDE.md → every agent pays the context cost → only put what every agent needs
+- Skills → agents self-select by reading descriptions → topic-specific conventions
+- Reference docs → agents load when inside a skill → detailed procedures too large for the skill body
+- Agent definitions → define capabilities (tools, model, skills), not behavior → behavior comes from skills
 
-Convention skills say *what's correct* (e.g. "use `\begin{algorithm}` environments"). Detection rules say *how to find violations* (e.g. "grep for `\noindent\textbf{Algorithm}`"). These are separated because:
+## Key design decisions and what makes them work
 
-1. **Different audiences.** Writing agents need conventions. Review agents need detection rules. Loading detection rules into a writing agent wastes context and causes confusion.
-2. **Different update frequency.** Conventions change when Jörn decides a new rule. Detection rules change when we discover a new violation pattern. These evolve independently.
-3. **Self-service model.** The review SKILL.md lists which checklist doc applies to which concern. The subagent reads the checklist it needs. No coordination from the main agent required.
+### Skills over rules
 
-## Decisions deferred or known-incomplete
+`.claude/rules/` are path-triggered (load when Claude reads a matching file). `.claude/skills/` have name+description always visible, body on demand.
+
+Skills win because:
+- **Rules load too late.** They trigger on file reads, after the agent has already decided what to do. Skills are visible during planning.
+- **Rules don't load for new files.** Creating a new `.tex` file may never trigger the tex rule. Skills are independent of file I/O.
+- **Skills can be preloaded into subagents** via the `skills:` field in agent definitions. Rules depend on the subagent reading matching files.
+- **Anthropic's platform direction** (as of 2026) documents skills extensively and doesn't mention rules.
+
+### One generic review agent, not 12 specialized ones
+
+What makes reviews work is the **methodology** (sequential checklist, one item at a time, record immediately), not agent specialization. That methodology lives in the review skill. Any generic agent following it produces good reviews.
+
+The old 12-agent architecture had:
+- 1,030 lines of agent definitions with duplicated methodology
+- Convention changes requiring updates in 3 places (rule + agent + sometimes CLAUDE.md)
+- No composability (couldn't run just anti-pattern checks without the full tex-style review)
+
+The new architecture separates concerns:
+- **What's correct** → convention skills (one canonical source)
+- **How to detect violations** → checklist reference docs (one per review concern)
+- **How to do a review** → review skill (methodology, output format, phase ordering)
+- **What tools/model a reviewer gets** → agent definition (minimal, just capabilities)
+
+### Detection rules separate from conventions
+
+Convention skills say *what's correct*. Checklist reference docs say *how to find violations*. Separated because:
+- **Different audiences.** Writing agents need conventions. Review agents need detection rules.
+- **Different update frequency.** Conventions change when Jörn decides a rule. Detection rules change when we discover a new violation pattern.
+- **Self-service.** The review skill lists which checklist applies to which concern. Subagents read what they need.
+
+## Relationship to Anthropic best practices
+
+Anthropic's guides are a good starting point but have gaps:
+- They don't cover when to use skills vs rules vs agents vs reference docs in combination. We filled that gap empirically (see "Decision framework" above).
+- They overstress prompt engineering and underweight structural decisions (where to put knowledge matters more than how to phrase it).
+- They target a general audience. This project does academic pure math research — a niche with specific needs (mathematical verification workflows, proof review, notation consistency) that Anthropic's guides don't address.
+
+**Rule of thumb:** Anthropic gives a good first guess. Compare with Jörn's guidance. If Jörn's guidance isn't written down for something you need, ask him.
+
+## How to evaluate your changes
+
+After modifying the meta-layer, check:
+1. **No duplication.** Is the knowledge in exactly one place? Or did you create a second copy?
+2. **Right layer.** Is it at the right visibility level for its audience?
+3. **Discoverable.** Can an agent that needs this knowledge find it? (Follow the chain: CLAUDE.md → skill description → skill body → reference doc.)
+4. **Lean CLAUDE.md.** Did you add to CLAUDE.md? Could it go in a skill instead?
+5. **No instruction overload.** Did you increase the total instruction complexity for agents that don't need this knowledge?
+
+## Known-incomplete areas
 
 - **`writing-conventions` skill** (292 lines) is the largest skill and could be split. Not done yet because it's rarely loaded and works as-is.
 - **`thesis-pre-review` skill** overlaps with the review workflow. May consolidate later.
