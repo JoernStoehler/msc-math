@@ -71,6 +71,10 @@ path = "omega-obstacle/omega_obstacle.rs"
 name = "gradient_descent"
 path = "gradient-descent/gradient_descent.rs"
 
+[[bin]]
+name = "hko_neighborhood"
+path = "hko-neighborhood/hko_neighborhood.rs"
+
 [dependencies]
 symplectic = { path = "../crates" }
 nalgebra = "0.33"
