@@ -1,4 +1,4 @@
-% hko-neighborhood.tex — \input'd from experiments/experiments.tex
+% hko-neighborhood.tex — \input'd from thesis/experiments.tex
 %
 % Symmetry analysis of the HKO2024 counterexample and its sensitivity structure.
 %
@@ -21,7 +21,7 @@ The counterexample of~\cite{HaimKislevOstrover2024} is the Lagrangian product
 $K = K_q \times K_p$ (Definition~\ref{def:lagrangian-product}),
 where $K_q \subset L_q$ is the regular pentagon with vertices at
 $(\cos\tfrac{2\pi k}{5},\, \sin\tfrac{2\pi k}{5})$ for $k = 0, \ldots, 4$,
-and $K_p \subset L_p$ is $K_q$ rotated by $90^\circ$.
+and $K_p \subset L_p$ is $K_q$ rotated by $-90^\circ$.
 The facets split into $q$-facets $\{0, \ldots, 4\}$ and
 $p$-facets $\{5, \ldots, 9\}$
 (Lemma~\ref{lem:lagrangian-facets}).
@@ -98,7 +98,7 @@ has order $50$, verified by generating all elements and
 counting the distinct permutations of the ten facet indices.
 All ten facets form a single orbit of this group.
 
-\begin{remark}
+\begin{remark}\label{rem:non-symplectic-rotations}
 $C_5^q$ and $C_5^p$ are \emph{not} symplectomorphisms:
 $C_5^q$ has matrix $\operatorname{diag}(R_{72^\circ}, I_2)$, and
 \[
@@ -185,11 +185,13 @@ Recall that $\beta_k$ denotes the dwell-time coefficient
 (segment length in the Reeb parametrization) of the orbit on
 facet~$k$ (Lemma~\ref{lem:cap-derivative}).
 The three derivative values arise from the decomposition
-$\partial\,\mathrm{sys}/\partial h_k
-= \tfrac{c_{\mathrm{EHZ}}}{\mathrm{vol}} \cdot
-  \tfrac{\partial\,c_{\mathrm{EHZ}}}{\partial h_k}
-- \tfrac{\mathrm{sys}}{\mathrm{vol}} \cdot
-  \tfrac{\partial\,\mathrm{vol}}{\partial h_k}$:
+\[
+  \frac{\partial\,\mathrm{sys}}{\partial h_k}
+  = \frac{c_{\mathrm{EHZ}}}{\mathrm{vol}} \cdot
+    \frac{\partial\,c_{\mathrm{EHZ}}}{\partial h_k}
+  - \frac{\mathrm{sys}}{\mathrm{vol}} \cdot
+    \frac{\partial\,\mathrm{vol}}{\partial h_k}:
+\]
 \begin{center}
 \begin{tabular}{lccc}
 \toprule
@@ -230,10 +232,10 @@ characteristic of regular pentagon geometry.
   By symmetry (all 10 gradients form one orbit under
   $\langle \Delta_{72^\circ}, \varphi \rangle$),
   the average of the 10 distinct per-orbit gradients has all
-  components equal and numerically zero.
+  components equal and zero by symmetry (numerical residual $\approx 7 \times 10^{-10}$).
 
-\item \textbf{One representative facet suffices for Phase~B}
-  (Section~\ref{sec:omega-obstacle})\textbf{.}
+\item \textbf{One representative facet suffices for Phase~B
+  (Section~\ref{sec:omega-obstacle}).}
   The $q$\nobreakdash-$p$ exchange $\varphi$ is a symplectomorphism
   mapping $K \to K$ and $n_0 \mapsto n_5$.
   Any facet-splitting test at $q$-facet~$0$ has an equivalent test at
