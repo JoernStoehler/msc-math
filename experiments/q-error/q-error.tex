@@ -10,7 +10,6 @@
 %   - Table 1: Error bound sweep across all (S,σ) nodes
 %   - Table 2: Exact rational comparison on winning nodes
 %   - Discussion paragraph
-%   - Note on inertia threshold sensitivity
 
 \subsection{Numerical error bound validation}
 \label{sec:q-error}
@@ -85,7 +84,7 @@ Sym.\ $\triangle{\times}\square$   & 4 & 0.5000 & 0.5000 & $1.1\times10^{-16}$ &
   $m$~is the orbit length.
   The symplectic $\triangle{\times}\triangle$ winning node has a
   singular KKT matrix and is omitted.
-  The assertion $|\tilde{Q} - Q_{\mathrm{exact}}| \le \max(E,\, \varepsilon_{\mathrm{f64}})$
+  The assertion $|\tilde{Q} - Q_{\mathrm{exact}}| \le \max(E,\, \varepsilon_{\mathrm{mach}})$
   passed for all 6~solvable polytopes.}
 \label{tab:q-error-exact}
 \end{table}
