@@ -916,8 +916,9 @@ fn compute_volume_derivatives_fd(normals: &[Vector4<f64>], heights: &[f64]) -> V
 /// where i₀ is the orbit position with perm[i₀] = k.
 /// Since A = 1/(2Q): dA/dh_k = −dQ*/(2Q²·dh_k) = ν · β_{i₀} / (2Q²).
 ///
-/// In code: `-nu * beta[i0] / (2 * q_sq)` because the code's ν is negative,
-/// so negating it gives the positive result that matches the standard formula.
+/// Lemma lem:cap-derivative (thesis): ∂A/∂h_k = ν · β_{i₀} / (2Q²).
+/// ν is the Lagrange multiplier for the normalization constraint η^T β = 1
+/// and is positive for the capacity-achieving orbit.
 ///
 /// If facet k is not in the orbit (k ∉ S), then dA/dh_k = 0.
 ///
@@ -936,9 +937,8 @@ fn compute_capacity_derivatives_analytical(
             // Find position of facet k in the orbit's permutation
             match best_orbit.permutation.iter().position(|&f| f == k) {
                 Some(i0) => {
-                    // See doc comment: dA/dh_k = ν·β_{i₀}/(2Q²) in standard convention.
-                    // Code's ν < 0, so we negate: -ν·β/(2Q²) > 0.
-                    -best_orbit.nu * best_orbit.beta[i0] / (2.0 * q_sq)
+                    // Lemma lem:cap-derivative: ∂A/∂h_k = ν·β_{i₀}/(2Q²)
+                    best_orbit.nu * best_orbit.beta[i0] / (2.0 * q_sq)
                 }
                 None => 0.0, // Facet not in orbit → height doesn't affect this orbit's action
             }

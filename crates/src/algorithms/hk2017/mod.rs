@@ -367,3 +367,7 @@ mod recover_test;
 #[cfg(test)]
 #[path = "square_product_diagnostic.rs"]
 mod square_product_diagnostic;
+
+#[cfg(test)]
+#[path = "sensitivity_test.rs"]
+mod sensitivity_test;

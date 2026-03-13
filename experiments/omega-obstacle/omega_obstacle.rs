@@ -698,7 +698,8 @@ fn compute_capacity_derivatives_h(
     (0..facet_count)
         .map(|k| {
             match best_orbit.permutation.iter().position(|&f| f == k) {
-                Some(i0) => -best_orbit.nu * best_orbit.beta[i0] / (2.0 * q_sq),
+                // Lemma lem:cap-derivative: ∂A/∂h_k = ν·β_{i₀}/(2Q²)
+                Some(i0) => best_orbit.nu * best_orbit.beta[i0] / (2.0 * q_sq),
                 None => 0.0,
             }
         })
