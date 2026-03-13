@@ -133,7 +133,8 @@ $n_k \mapsto n_{k+1\bmod 5}$ (within the $p$-block) for $p$-facets.
 Since $\Delta_{72^\circ}$ and $\varphi$ are both symplectomorphisms
 preserving~$K$,
 they map Reeb orbits to Reeb orbits of equal action
-(Lemma~\ref{lem:capacity-axioms}\,(iii) applied at the orbit level).
+(a linear symplectomorphism preserves the action integral
+$A(\gamma) = \int \lambda_0|_\gamma$ by Stokes' theorem).
 The group $\langle \Delta_{72^\circ},\, \varphi \rangle$ has order~$10$,
 verified by the same enumeration method.
 
@@ -196,7 +197,7 @@ Facet role & \# facets &
 $\partial c_{\mathrm{EHZ}} / \partial h_k$ &
 $\partial\,\mathrm{sys}/\partial h_k$ \\
 \midrule
-Unvisited & 4 & $0$ & $-0.518$ \\
+Unvisited & 4 & $0.000$ & $-0.518$ \\
 Visited, $\beta \approx 0.171$ & 4 & $\approx {+1.176}$ & $+0.198$ \\
 Visited, $\beta \approx 0.276$ & 2 & $\approx {+1.902}$ & $+0.640$ \\
 \bottomrule
@@ -228,8 +229,8 @@ characteristic of regular pentagon geometry.
   decreases $\mathrm{sys}$ (only volume grows).
   By symmetry (all 10 gradients form one orbit under
   $\langle \Delta_{72^\circ}, \varphi \rangle$),
-  the centroid of the subdifferential has all components equal
-  and approximately zero.
+  the average of the 10 distinct per-orbit gradients has all
+  components equal and numerically zero.
 
 \item \textbf{One representative facet suffices for Phase~B}
   (Section~\ref{sec:omega-obstacle})\textbf{.}
