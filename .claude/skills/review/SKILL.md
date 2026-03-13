@@ -15,12 +15,16 @@ Phase 1 (syntax/style) issues distract from phase 2 (content/correctness). Fix f
 
 ## How to run a review
 
+The review is **strictly sequential across phases**: all Phase 1 subagents run and their findings are fixed before any Phase 2 subagent is spawned. Within each phase, subagents run in parallel.
+
 1. Run `git diff main...HEAD --name-only` to identify changed files.
 2. Decide which review concerns apply (see concern list below).
-3. Spawn review subagents in parallel — one per concern per file group. Err towards running too many: agent time is free ($0/h), especially when parallelized and Jörn isn't waiting.
-4. Fix phase 1 findings.
-5. Spawn phase 2 subagents on the cleaned files.
+3. **Phase 1**: Spawn syntax/style subagents in parallel — one per concern per file group. Err towards running too many: agent time is free ($0/h), especially when parallelized and Jörn isn't waiting.
+4. **Fix** all Phase 1 findings before proceeding.
+5. **Phase 2**: Spawn content/correctness subagents in parallel on the cleaned files.
 6. Present merged report to Jörn.
+
+Do NOT run Phase 1 and Phase 2 subagents simultaneously. Phase 1 issues (broken formatting, wrong figure sizing, stale headers) distract Phase 2 reviewers from semantic content.
 
 ## Review concerns
 
@@ -38,21 +42,23 @@ Each concern has a checklist reference doc in `references/` with detection rules
 
 **Python style** — script headers, paths, error messages, figure sizing, DPI, visual quality, colors, caption epistemology. Skill: `python-conventions`. Checklist: `references/checklist-python-style.md`.
 
-**Figure visual quality** — view each PNG with the Read tool, check for title collisions, label clipping, font readability at 5.4" width, legend overlap, layout balance, LaTeX rendering. Checklist: `references/checklist-python-figures.md`.
+**Figure visual quality** — view each PNG with the Read tool, check for title collisions, label clipping, font readability at 5.4" width, legend overlap, layout balance, LaTeX rendering. Use the `figure-review` subagent (not the generic `review` subagent) — it is specialized for multimodal PNG inspection. Checklist: `references/checklist-python-figures.md`.
 
 **Notes style** — README structure, assumptions documented, experiment philosophy alignment. Covered in Part C of `references/checklist-experiment.md`.
 
 ### Phase 2 — Semantics and content (on clean files)
 
+Phase 2 subagents read figures when verifying that the .tex description matches what the figure shows. This is figure-text consistency (semantic), distinct from Phase 1 visual quality (mechanical). Phase 2 subagents should read PNGs as needed — they don't need a separate figure-review subagent for this.
+
 **LaTeX math correctness** — proofs: gaps, unclear steps, mistakes, definition mismatches. Each proof one-by-one. Flag for Jörn's verification. Skill: `tex-content`. Checklist: `references/checklist-tex-math.md`.
 
 **LaTeX pedagogical quality** — audience fit, forward refs, emphasis proportional to importance, standard definitions, semantic anti-patterns (AP2/AP6/AP9/AP10). Skill: `tex-content`. Checklist: `references/checklist-tex-educational.md`.
 
-**LaTeX factual accuracy** — claims vs evidence: numbers vs data files, code refs vs actual code, citations vs bibliography.bib. Checklist: `references/checklist-tex-facts.md`.
+**LaTeX factual accuracy** — claims vs evidence: numbers vs data files, code refs vs actual code, citations vs bibliography.bib, figure descriptions vs PNGs. Checklist: `references/checklist-tex-facts.md`.
 
 **Rust math-code correctness + test quality** — doc comment formulas match code, invariant enforcement, test philosophy, coverage, input diversity. Skills: `rust-conventions`, `rust-tests`. Checklist: `references/checklist-rust-content.md`.
 
-**Experiment accuracy + interpretation** — reported facts vs JSONL/output data, overreach, editorializing, causal claims from correlations, README quality. Skill: `experiment-conventions`. Checklist: `references/checklist-experiment.md`.
+**Experiment accuracy + interpretation** — reported facts vs JSONL/output data, figure descriptions vs PNGs, overreach, editorializing, causal claims from correlations, README quality. Skill: `experiment-conventions`. Checklist: `references/checklist-experiment.md`.
 
 ## How to spawn reviews (main agent)
 

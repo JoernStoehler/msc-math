@@ -8,7 +8,7 @@ A single generic review agent is defined at `.claude/agents/review.md`. It prelo
 
 ## Spawning pattern
 
-Use the Agent tool with `subagent_type: "review"`. Spawn multiple instances in parallel with `run_in_background: true`.
+Use the Agent tool with `subagent_type: "review"` (or `"figure-review"` for PNG visual inspection). Spawn multiple instances in parallel with `run_in_background: true`.
 
 The prompt needs:
 1. **Concern** — which review concern (matching the review skill's concern list)
@@ -18,7 +18,11 @@ The prompt needs:
 
 The subagent reads the checklist reference doc itself based on the concern. No need to specify which checklist to load.
 
-### Example: review a .tex deliverable
+**Strictly sequential across phases:** Spawn all Phase 1 subagents, wait for completion, fix findings, THEN spawn Phase 2 subagents. Never run Phase 1 and Phase 2 simultaneously.
+
+### Example: review a .tex experiment writeup (full sequence)
+
+**Step 1 — Phase 1 subagents (all in parallel):**
 
 ```
 Agent(
@@ -27,11 +31,56 @@ Agent(
   run_in_background=true,
   prompt="""
     Review these files for LaTeX style (phase 1):
-    - thesis/sections/algorithm.tex
-    - thesis/sections/algorithm-proof.tex
+    - experiments/foo/foo.tex
 
     Report to: /tmp/review-tex-style.md
     Phase 1: fix obvious violations directly, report what you fixed.
+  """
+)
+
+Agent(
+  subagent_type="figure-review",
+  description="Review figure PNGs",
+  run_in_background=true,
+  prompt="""
+    Review these figures for visual quality:
+    - experiments/foo/foo_errors.png
+  """
+)
+
+Agent(
+  subagent_type="review",
+  description="Review python style",
+  run_in_background=true,
+  prompt="""
+    Review these files for Python style (phase 1):
+    - experiments/foo/plot_foo.py
+
+    Report to: /tmp/review-python-style.md
+  """
+)
+```
+
+**Step 2 — Fix Phase 1 findings.** Then:
+
+**Step 3 — Phase 2 subagents (all in parallel, on cleaned files):**
+
+```
+Agent(
+  subagent_type="review",
+  description="Review experiment facts",
+  run_in_background=true,
+  prompt="""
+    Review this experiment writeup for factual accuracy (phase 2):
+    - experiments/foo/foo.tex
+
+    Data sources to verify against:
+    - experiments/foo/foo.jsonl
+
+    Read PNGs to verify figure descriptions match the actual figures.
+
+    Report to: /tmp/review-experiment-facts.md
+    Phase 2: report only, do not edit. Flag items for Jörn's verification.
   """
 )
 
@@ -41,8 +90,7 @@ Agent(
   run_in_background=true,
   prompt="""
     Review these files for mathematical correctness (phase 2):
-    - thesis/sections/algorithm.tex
-    - thesis/sections/algorithm-proof.tex
+    - experiments/foo/foo.tex
 
     Report to: /tmp/review-tex-math.md
     Phase 2: report only, do not edit. Flag items for Jörn's verification.
@@ -50,7 +98,7 @@ Agent(
 )
 ```
 
-### Example: review Rust code
+### Example: review Rust code (Phase 1 only)
 
 ```
 Agent(
@@ -67,44 +115,9 @@ Agent(
 )
 ```
 
-### Example: review experiment writeup against data
-
-```
-Agent(
-  subagent_type="review",
-  description="Review experiment facts",
-  run_in_background=true,
-  prompt="""
-    Review this experiment writeup for factual accuracy (phase 2):
-    - experiments/sys-optimization/sys-optimization.tex
-
-    Data sources to verify against:
-    - experiments/sys-optimization/sys-optimization.jsonl
-    - experiments/sys-optimization/sys-optimization_output.txt
-
-    Report to: /tmp/review-experiment-facts.md
-  """
-)
-```
-
-### Example: review figure PNGs (without polluting main agent context)
-
-```
-Agent(
-  subagent_type="figure-review",
-  description="Review figure PNGs",
-  run_in_background=true,
-  prompt="""
-    Review these figures for visual quality:
-    - experiments/omega-obstacle/omega_obstacle_gradient_dots.png
-    - experiments/omega-obstacle/omega_obstacle_omega_vs_dot.png
-
-    Report to: /tmp/review-figures-omega.md
-  """
-)
-```
-
 ### Example: fix figure visual issues autonomously
+
+When Phase 1 figure review finds issues, use `figure-fix` to iterate:
 
 ```
 Agent(
@@ -122,10 +135,8 @@ Agent(
 
 ## After reviews complete
 
-1. Read the report files from /tmp/
-2. Fix phase 1 issues (or verify subagent already fixed them)
-3. Spawn phase 2 reviews on the cleaned files
-4. Merge reports into a summary for Jörn
+1. Read report files from /tmp/
+2. Merge reports into a summary for Jörn
 
 ## Agent teams alternative
 
