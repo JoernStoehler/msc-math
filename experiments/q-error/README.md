@@ -15,34 +15,16 @@ complementary checks:
 Additionally, library-level `assert!` checks in `kkt.rs` enforce
 E < 1e-6 on every `solve_kkt` call (not just in this experiment).
 
-## Results (2026-03-02)
+## Results (2026-03-13)
 
-- **Part 1:** 1,133,769 total nodes across 7 polytopes, 1,111,987
+- **Part 1:** 1,133,769 total nodes across 7 polytopes, 1,109,987
   solvable. Worst E = 2.9×10⁻¹¹ (hko_pentagon). All assertions pass.
-- **Part 2:** Exact comparison for 3/7 polytopes (others have
-  rank-deficient winning nodes). Actual errors at machine epsilon
+- **Part 2:** Exact comparison for 6/7 polytopes (symplectic triangle
+  product has a singular winning node). Actual errors at machine epsilon
   (~10⁻¹⁶), confirming the solver introduces no algorithmic error
   beyond f64 precision.
-- **Parts 3-4:** Hessian definiteness and inertia diagnostics
-  (informational, not assertions). 5 threshold-sensitivity mismatches
-  in hko_pentagon inertia check (see Known Behaviors below).
 
 ## Known Behaviors
-
-### Inertia threshold sensitivity (Part 4)
-
-Part 4 classifies eigenvalues of the restricted Hessian as positive,
-negative, or zero using a single threshold (EPS = 1e-10). For
-hko_pentagon, 5 of 33,840 nodes have eigenvalues near the threshold
-boundary, causing the discrete inertia label to differ from what the
-continuous eigenvalue spectrum would suggest. The actual eigenvalues
-are correct — the issue is purely in the discrete classification step.
-
-This is expected: any single-threshold classifier will have boundary
-cases. A two-tier approach (certified/uncertain/rejected, as the
-library uses for β classification) would eliminate these, but the
-experiment's purpose is diagnostic, not certification, so the simpler
-approach suffices.
 
 ### Safety-net tolerance in exact comparison (Part 2)
 

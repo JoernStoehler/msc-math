@@ -95,6 +95,11 @@ experiments/target/release/sys_optimization
 experiments/target/release/q_error 2>&1 | tee experiments/q-error/q_error_output.txt
 # → experiments/q-error/q_error_output.txt (summary tables)
 
+# kkt_inertia: KKT matrix inertia validation (~2 min)
+# Stdout-only. Diagnostic (no hard assertions).
+experiments/target/release/kkt_inertia 2>&1 | tee experiments/kkt-inertia/kkt_inertia_output.txt
+# → experiments/kkt-inertia/kkt_inertia_output.txt (summary tables + eigenvalue diagnostics)
+
 # Omega-obstacle: symplectic area analysis + gradient dots (~8s)
 experiments/target/release/omega_obstacle
 # → experiments/omega-obstacle/omega-obstacle.jsonl

@@ -11,7 +11,7 @@
 ///
 /// Input: Known polytopes from the library (F ≤ 10).
 /// Output: Summary tables to stdout. Panics on any violation.
-use nalgebra::{DMatrix, DVector, Vector4};
+use nalgebra::{DMatrix, DVector};
 use symplectic::algorithms::hk2017::{ehz_capacity, combinations};
 use symplectic::algorithms::hk2017::permutations::cyclic_permutations;
 use symplectic::geom::known_polytopes;
@@ -25,9 +25,6 @@ const EIGEN_CONDITION_TAU: f64 = 1e-3;
 
 /// Maximum acceptable residual norm (matches EPS_KKT_RESIDUAL in kkt.rs).
 const EPS_KKT_RESIDUAL: f64 = 1e-6;
-
-/// Threshold for eigenvalue definiteness classification.
-const EPS_DEFINITE: f64 = 1e-10;
 
 /// Eigendecomposition-based solve: x̂ = Σ_i (v_i · b / λ_i) v_i for top `rank`
 /// eigenvalues by |λ|.
@@ -244,89 +241,6 @@ fn exact_comparison(polytope: &Polytope4D) -> Option<ExactResult> {
     })
 }
 
-// ── Part 3: Hessian and inertia checks (kept from original) ─────────────
-
-/// Lightweight Hessian diagnostic for a single (S, σ) node.
-fn node_hessian_check(
-    normals: &[Vector4<f64>],
-    heights: &[f64],
-    perm: &[usize],
-) -> Option<NodeInfo> {
-    let m = perm.len();
-    let size = m + 5;
-    let (kkt, rhs) = build_kkt(normals, heights, perm);
-
-    let eig = kkt.clone().symmetric_eigen();
-    let eigenvalues = &eig.eigenvalues;
-    let eigenvectors = &eig.eigenvectors;
-
-    let lambda_max_abs = eigenvalues.iter().cloned().map(f64::abs).fold(0.0_f64, f64::max);
-    let threshold = lambda_max_abs * EIGEN_CONDITION_TAU;
-    let rank = eigenvalues.iter().filter(|&&e| e.abs() > threshold).count();
-
-    let x = eigen_solve(eigenvectors, eigenvalues, &rhs, size, rank);
-    let beta: Vec<f64> = (0..m).map(|i| x[i]).collect();
-    let beta_min = beta.iter().cloned().fold(f64::INFINITY, f64::min);
-    let q = q_from_beta(normals, perm, &beta);
-
-    // Restricted Hessian
-    let mut constraint = DMatrix::zeros(5, m);
-    for i in 0..m {
-        for d in 0..4 {
-            constraint[(d, i)] = normals[perm[i]][d];
-        }
-        constraint[(4, i)] = heights[perm[i]];
-    }
-    let ctc = constraint.transpose() * &constraint;
-    let ctc_eig = ctc.symmetric_eigen();
-    let ctc_max = ctc_eig.eigenvalues.iter().cloned().fold(0.0_f64, f64::max);
-    let ctc_threshold = ctc_max * 1e-10;
-    let null_indices: Vec<usize> = (0..m)
-        .filter(|&i| ctc_eig.eigenvalues[i] < ctc_threshold)
-        .collect();
-    let tangent_dim = null_indices.len();
-
-    let definiteness = if tangent_dim == 0 {
-        Definiteness::Trivial
-    } else {
-        let mut p = DMatrix::zeros(m, tangent_dim);
-        for (k, &idx) in null_indices.iter().enumerate() {
-            for i in 0..m {
-                p[(i, k)] = ctc_eig.eigenvectors[(i, idx)];
-            }
-        }
-        let h_block = kkt.view((0, 0), (m, m)).clone_owned();
-        let h_restricted = p.transpose() * &h_block * &p;
-        let eig = h_restricted.symmetric_eigen();
-        let lam_min = eig.eigenvalues.iter().cloned().fold(f64::INFINITY, f64::min);
-        let lam_max = eig.eigenvalues.iter().cloned().fold(f64::NEG_INFINITY, f64::max);
-
-        if lam_min > EPS_DEFINITE {
-            Definiteness::PD
-        } else if lam_max < -EPS_DEFINITE {
-            Definiteness::ND
-        } else if lam_min < -EPS_DEFINITE && lam_max > EPS_DEFINITE {
-            Definiteness::Indefinite
-        } else {
-            Definiteness::NearZero
-        }
-    };
-
-    Some(NodeInfo { q, beta_min, definiteness, tangent_dim, m })
-}
-
-#[derive(Debug, Clone, Copy, PartialEq)]
-enum Definiteness { PD, ND, Indefinite, NearZero, Trivial }
-
-struct NodeInfo {
-    q: f64,
-    beta_min: f64,
-    definiteness: Definiteness,
-    #[allow(dead_code)]
-    tangent_dim: usize,
-    m: usize,
-}
-
 // ── Main ────────────────────────────────────────────────────────────────
 
 fn main() {
@@ -387,140 +301,8 @@ fn main() {
         "Exact comparison FAILED: |Q̃ - Q_exact| > max(E, f64_eps) for some polytope");
     println!("\n  All exact comparison assertions passed.\n");
 
-    // ── Part 3: Hessian definiteness across ALL nodes (kept from original) ──
-    println!("--- Part 3: Restricted Hessian across ALL evaluated (S,σ) nodes ---");
-    println!("{:<25} {:>4} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7}",
-        "polytope", "F", "total", "β>0", "Q>0", "triv", "PD", "ND", "indef", "~zero");
-    println!("{}", "-".repeat(97));
-
-    let eps_beta = 1e-8;
-    let eps_q = 1e-12;
-
-    for (name, polytope) in &polytopes {
-        let f = polytope.facet_count();
-        let normals = polytope.normals_f64();
-        let heights = polytope.heights_f64();
-
-        let mut total = 0u64;
-        let mut n_beta_pos = 0u64;
-        let mut n_q_pos = 0u64;
-        let mut n_trivial = 0u64;
-        let mut n_pd = 0u64;
-        let mut n_nd = 0u64;
-        let mut n_indef = 0u64;
-        let mut n_nearzero = 0u64;
-
-        for m in 2..=f {
-            for subset in combinations(f, m) {
-                for perm in cyclic_permutations(&subset) {
-                    total += 1;
-                    if let Some(info) = node_hessian_check(normals, heights, &perm) {
-                        if info.beta_min > eps_beta {
-                            n_beta_pos += 1;
-                        }
-                        if info.q > eps_q {
-                            n_q_pos += 1;
-                        }
-                        if info.beta_min > eps_beta && info.q > eps_q {
-                            match info.definiteness {
-                                Definiteness::Trivial => n_trivial += 1,
-                                Definiteness::PD => n_pd += 1,
-                                Definiteness::ND => n_nd += 1,
-                                Definiteness::Indefinite => n_indef += 1,
-                                Definiteness::NearZero => n_nearzero += 1,
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        println!("{:<25} {:>4} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7}",
-            name, f, total, n_beta_pos, n_q_pos,
-            n_trivial, n_pd, n_nd, n_indef, n_nearzero);
-    }
-
-    println!();
-
-    // ── Part 4: Inertia theorem validation (kept from original) ─────────
-    println!("--- Part 4: Inertia check across all (S,σ) nodes ---");
-    println!("  n-(M)=p ↔ H|_T non-negative definite");
-    println!("{:<25} {:>6} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7}",
-        "polytope", "total", "n-=p", "n->p", "PD", "ND", "indef", "match?");
-    println!("{}", "-".repeat(85));
-
-    let eig_eps = 1e-10;
-    let mut total_inertia_mismatches = 0u64;
-
-    for (name, polytope) in &polytopes {
-        let f = polytope.facet_count();
-        let mut total = 0u64;
-        let mut n_negp = 0u64;
-        let mut n_neggtp = 0u64;
-        let mut n_pd = 0u64;
-        let mut n_nd = 0u64;
-        let mut n_indef = 0u64;
-        let mut mismatches = 0u64;
-
-        for m in 2..=f {
-            for subset in combinations(f, m) {
-                for perm in cyclic_permutations(&subset) {
-                    total += 1;
-
-                    let mm = perm.len();
-                    let (kkt_mat, _) = build_kkt(polytope.normals_f64(), polytope.heights_f64(), &perm);
-
-                    let eig = kkt_mat.symmetric_eigen();
-                    let n_neg = eig.eigenvalues.iter().filter(|&&e| e < -eig_eps).count();
-                    let n_zero = eig.eigenvalues.iter().filter(|&&e| e.abs() <= eig_eps).count();
-
-                    let info = node_hessian_check(polytope.normals_f64(), polytope.heights_f64(), &perm);
-                    let (def, tangent_dim) = match info {
-                        Some(n) => (n.definiteness, n.tangent_dim),
-                        None => (Definiteness::Trivial, 0),
-                    };
-                    let p = mm - tangent_dim;
-
-                    let inertia_says_pd = n_neg == p && n_zero == (5 - p);
-                    let inertia_says_nsd = n_neg == p;
-                    if inertia_says_nsd { n_negp += 1; } else { n_neggtp += 1; }
-
-                    match def {
-                        Definiteness::PD => {
-                            n_pd += 1;
-                            if !inertia_says_pd { mismatches += 1; }
-                        },
-                        Definiteness::ND => {
-                            n_nd += 1;
-                            if inertia_says_nsd { mismatches += 1; }
-                        },
-                        Definiteness::Indefinite => {
-                            n_indef += 1;
-                            if inertia_says_nsd { mismatches += 1; }
-                        },
-                        Definiteness::NearZero | Definiteness::Trivial => {},
-                    }
-                }
-            }
-        }
-
-        let ok = mismatches == 0;
-        println!("{:<25} {:>6} {:>7} {:>7} {:>7} {:>7} {:>7} {:>7}",
-            name, total, n_negp, n_neggtp, n_pd, n_nd, n_indef,
-            if ok { "OK".to_string() } else { format!("{} FAIL", mismatches) });
-        total_inertia_mismatches += mismatches;
-    }
-
-    if total_inertia_mismatches > 0 {
-        println!("\n  WARNING: {} inertia mismatches (threshold sensitivity, not assertion failure)", total_inertia_mismatches);
-    } else {
-        println!("\n  All inertia checks passed.");
-    }
-
     // ── Summary ───────────────────────────────────────────────────────────
-    println!("\n=== Summary ===");
+    println!("=== Summary ===");
     println!("  Part 1 (error bounds):     PASSED (all {} polytopes)", polytopes.len());
     println!("  Part 2 (exact comparison): PASSED");
-    println!("  Part 3 (Hessian info):     diagnostic only");
-    println!("  Part 4 (inertia check):    {} mismatches (diagnostic)", total_inertia_mismatches);
 }
