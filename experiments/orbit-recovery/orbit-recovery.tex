@@ -79,9 +79,9 @@ $F$ & $N$ & Closure & On-facet & Violation & Action \\
 \end{table}
 
 Figure~\ref{fig:orbit-recovery-errors} shows the error scaling across
-facet counts. The jump at $F = 10$ likely reflects the combinatorial
-growth in orbit length (more facet transitions) and the resulting
-accumulation of floating-point error.
+facet counts. The jump at $F = 10$ likely reflects accumulated floating-point
+error in the KKT solve and orbit reconstruction for higher-dimensional
+linear programs.
 
 \begin{figure}[h]
 \centering
