@@ -60,6 +60,10 @@ name = "q_error"
 path = "q-error/q_error.rs"
 
 [[bin]]
+name = "kkt_inertia"
+path = "kkt-inertia/kkt_inertia.rs"
+
+[[bin]]
 name = "omega_obstacle"
 path = "omega-obstacle/omega_obstacle.rs"
 

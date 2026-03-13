@@ -96,11 +96,3 @@ across over 1.1~million nodes in practice, while the exact comparison
 confirms that the f64 solver introduces no error beyond machine
 precision at the capacity-winning nodes that determine the final result.
 
-\paragraph{Inertia threshold sensitivity.}
-A diagnostic check (not an assertion) tests whether the eigenvalue
-inertia of the restricted Hessian matches the expected pattern.
-Of 1\,112\,073~nodes in the HK-O pentagon, 5~have eigenvalues
-near the classification threshold ($10^{-10}$), causing a label
-mismatch.
-This is an inherent limitation of single-threshold classifiers and
-does not affect capacity computation.

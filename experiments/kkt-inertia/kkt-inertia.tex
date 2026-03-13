@@ -1,0 +1,72 @@
+% kkt-inertia.tex — \input'd from experiments/experiments.tex
+%
+% Sources: experiments/kkt-inertia/kkt_inertia.rs (experiment binary),
+%   experiments/kkt-inertia/kkt_inertia_output.txt (stdout output),
+%   experiments/kkt-inertia/README.md (experiment documentation),
+%   thesis/appendix-numerical.tex (Lemma~\ref{lem:kkt-inertia}).
+%
+% Structure:
+%   - Intro: what we validate and why
+%   - Table 1: Inertia decomposition check per polytope
+%   - Discussion of the 5 mismatches (threshold sensitivity)
+
+\subsection{KKT matrix inertia validation}
+\label{sec:kkt-inertia}
+
+Lemma~\ref{lem:kkt-inertia} decomposes the eigenvalue inertia
+of the KKT matrix~$M$ into contributions from the restricted
+Hessian~$H|_T$ and the constraint rank~$p$:
+\begin{equation*}
+  n_-(M) = n_-(H|_T) + p.
+\end{equation*}
+Remark~\ref{rem:eigenvalue-signs} uses this to read off the
+second-order behaviour of~$Q$ on the constraint surface from
+the eigenvalues of~$M$.
+We validate this formula on all $(S,\sigma)$ nodes of the
+7~known polytopes with $F \le 10$.
+
+For each node, we compute $n_-(M)$ from the eigenvalues of~$M$
+(using threshold $10^{-10}$) and independently classify~$H|_T$
+by restricting the Hessian to the tangent space $T = \ker(A)$.
+Table~\ref{tab:kkt-inertia} reports whether
+$n_-(M) = p$ agrees with $n_-(H|_T) = 0$
+(i.e., $H|_T$~non-negative definite).
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lrrrrrrc}
+\toprule
+Polytope & Total & $n_- {=}\, p$ & $n_- {>}\, p$ & PD & ND & Indef & Match \\
+\midrule
+Simplex              &         84 &        84 &       0 &     0 &     0 &       0 & OK \\
+Hypercube            &     16\,064 &    10\,990 &   5\,074 &   194 &   194 &   4\,880 & OK \\
+HK-O pentagon        &  1\,112\,073 &   171\,063 & 941\,010 & 3\,370 & 3\,370 & 935\,685 & 5 \\
+Lag.\ $\triangle{\times}\triangle$ &        409 &       371 &      38 &    38 &    38 &       0 & OK \\
+Sym.\ $\triangle{\times}\triangle$ &        409 &       379 &      30 &    30 &    30 &       0 & OK \\
+Lag.\ $\triangle{\times}\square$   &      2\,365 &     1\,783 &     582 &   110 &   110 &     472 & OK \\
+Sym.\ $\triangle{\times}\square$   &      2\,365 &     1\,548 &     817 &   337 &   337 &     240 & OK \\
+\bottomrule
+\end{tabular}
+\caption{Inertia decomposition check.
+  ``$n_- {=}\, p$'' counts nodes where $n_-(M)$ equals
+  the constraint rank~$p$;
+  ``PD/ND/Indef'' classify~$H|_T$ among nodes
+  with $n_-(M) > p$ (i.e., $H|_T$~has a negative eigenvalue).
+  ``Match'' reports mismatches between the inertia prediction
+  and $H|_T$ classification.}
+\label{tab:kkt-inertia}
+\end{table}
+
+The formula holds for 6 of 7~polytopes.
+The 5~mismatches in the HK-O pentagon all share the same pattern:
+$H|_T$ has eigenvalues $\{-a,\, \varepsilon,\, +a\}$ where
+$\varepsilon \sim 10^{-16}$ (machine epsilon), and the
+corresponding~$M$ has three eigenvalues at ${\sim}10^{-16}$
+that are ambiguous in sign.
+The inertia formula is correct in exact arithmetic, but the
+discrete eigenvalue classification cannot resolve eigenvalues
+at machine precision.
+% [TODO: JÖRN - verify this threshold-sensitivity interpretation.
+%  The 5 mismatches are all tangent_dim=3, p=5, with H|_T eigenvalues
+%  symmetric around zero. Eigenvalue diagnostics in kkt_inertia_output.txt.]

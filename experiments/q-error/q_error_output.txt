@@ -1,52 +1,4 @@
-   Compiling autocfg v1.5.0
-   Compiling libm v0.2.16
-   Compiling proc-macro2 v1.0.106
-   Compiling libc v0.2.182
-   Compiling num-traits v0.2.19
-   Compiling unicode-ident v1.0.24
-   Compiling quote v1.0.44
-   Compiling cfg-if v1.0.4
-   Compiling serde_core v1.0.228
-   Compiling zerocopy v0.8.39
-   Compiling syn v2.0.116
-   Compiling serde v1.0.228
-   Compiling getrandom v0.2.17
-   Compiling bytemuck v1.25.0
-   Compiling paste v1.0.15
-   Compiling safe_arch v0.7.4
-   Compiling rand_core v0.6.4
-   Compiling num-integer v0.1.46
-   Compiling matrixmultiply v0.3.10
-   Compiling getrandom v0.4.1
-   Compiling rustix v1.1.3
-   Compiling zmij v1.0.21
-   Compiling typenum v1.19.0
-   Compiling num-bigint v0.4.6
-   Compiling wide v0.7.33
-   Compiling serde_derive v1.0.228
-   Compiling ppv-lite86 v0.2.21
-   Compiling rand_chacha v0.3.1
-   Compiling approx v0.5.1
-   Compiling serde_json v1.0.149
-   Compiling rawpointer v0.2.1
-   Compiling bitflags v2.11.0
-   Compiling linux-raw-sys v0.11.0
-   Compiling num-complex v0.4.6
-   Compiling rand v0.8.5
-   Compiling simba v0.9.1
-   Compiling num-rational v0.4.2
-   Compiling nalgebra-macros v0.2.2
-   Compiling itoa v1.0.17
-   Compiling memchr v2.8.0
-   Compiling once_cell v1.21.3
-   Compiling fastrand v2.3.0
-   Compiling rand_distr v0.4.3
-   Compiling tempfile v3.25.0
-   Compiling wait-timeout v0.2.1
-   Compiling nalgebra v0.33.2
-   Compiling symplectic v0.1.0 (/workspaces/msc-math/.claude/worktrees/q-error-writeup/crates)
-   Compiling experiments v0.1.0 (/workspaces/msc-math/.claude/worktrees/q-error-writeup/experiments)
-    Finished `release` profile [optimized] target(s) in 25.40s
+    Finished `release` profile [optimized] target(s) in 0.05s
      Running `target/release/q_error`
 === Q Error Bound Experiment ===
 
@@ -83,33 +35,6 @@ symplectic_tri_sq           4   0.500000000000   0.500000000000    1.110e-16    
 
   All exact comparison assertions passed.
 
---- Part 3: Restricted Hessian across ALL evaluated (S,σ) nodes ---
-polytope                     F   total     β>0     Q>0    triv      PD      ND   indef   ~zero
--------------------------------------------------------------------------------------------------
-simplex                      5      84      84      38      38       0       0       0       0
-hypercube                    8   16064    3344     406      60       0       2     140       0
-hko_pentagon                10 1112073  121897   62142     369       0     835   12725     941
-lagrangian_triangle_product    6     409     229      86      48       0      38       0       0
-symplectic_triangle_product    6     409     229     165      45      30       0       0       0
-lagrangian_tri_sq            7    2365     445     171      61       0      10       0       0
-symplectic_tri_sq            7    2365     269     334      81       0       1      60       0
-
---- Part 4: Inertia check across all (S,σ) nodes ---
-  n-(M)=p ↔ H|_T non-negative definite
-polytope                   total    n-=p    n->p      PD      ND   indef  match?
--------------------------------------------------------------------------------------
-simplex                       84      84       0       0       0       0      OK
-hypercube                  16064   10990    5074     194     194    4880      OK
-hko_pentagon              1112073  171063  941010    3370    3370  935685  5 FAIL
-lagrangian_triangle_product    409     371      38      38      38       0      OK
-symplectic_triangle_product    409     379      30      30      30       0      OK
-lagrangian_tri_sq           2365    1783     582     110     110     472      OK
-symplectic_tri_sq           2365    1548     817     337     337     240      OK
-
-  WARNING: 5 inertia mismatches (threshold sensitivity, not assertion failure)
-
 === Summary ===
   Part 1 (error bounds):     PASSED (all 7 polytopes)
   Part 2 (exact comparison): PASSED
-  Part 3 (Hessian info):     diagnostic only
-  Part 4 (inertia check):    5 mismatches (diagnostic)
