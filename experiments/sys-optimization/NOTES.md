@@ -64,6 +64,20 @@ Four phases, all in one binary:
 - Changes combinatorial type (more facets = exponentially more expensive HK2017)
 - Deferred until h/n changes alone show their limits
 
+### HKO2024 local maximality across ambient spaces
+HKO2024 can be embedded in multiple ambient spaces (discussion 2026-03-13):
+- **LP(Fq=5,Fp=5)**: current sys-optimization already covers this (∂sys/∂h, ∂sys/∂n at HKO2024)
+- **General F=10**: same gradient data applies — but are there perturbation directions
+  outside the Lagrangian product submanifold? The normal-perturbation directions ∂sys/∂n_k
+  already break LP structure, so Phase 1 sensitivity data may already answer this.
+- **Degenerate F=11+**: HKO2024 as a polytope with collapsed facets. Adding a facet is a
+  direction invisible to the current gradient. This is the "adding facets" idea above.
+- **Convex bodies**: increasing F as a discretization of smooth boundary perturbation.
+  Track whether converged sys (Phase 3) changes as F grows.
+Key question: does the Phase 1 data already show that all gradient components point
+"inward" (sys decreases in every direction) at HKO2024? If so, that's evidence for
+local maximality in the F=10 ambient space. Check sensitivity JSONL for HKO2024 entry.
+
 ## Learnings from past data
 
 - ∇_h sys and ∇_n sys have different units (h has length scale, n dimensionless) — norms not comparable
