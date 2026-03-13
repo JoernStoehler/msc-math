@@ -139,9 +139,11 @@ python3 experiments/lagrangian-products/lagrangian_products.py
 python3 experiments/unknown-predicates/unknown_predicates.py
 # → experiments/unknown-predicates/unknown_predicates_beta_min.png
 
-# Orbit recovery: validation summary
+# Orbit recovery: validation summary + error plot
 python3 experiments/orbit-recovery/orbit_recovery.py
-# → (stdout summary only, no figures)
+# → (stdout summary only)
+python3 experiments/orbit-recovery/plot_orbit_recovery.py
+# → experiments/orbit-recovery/orbit_recovery_errors.png
 
 # Sys-optimization: gradient histograms + improvement scatter + stats table
 python3 experiments/sys-optimization/sys_optimization.py
