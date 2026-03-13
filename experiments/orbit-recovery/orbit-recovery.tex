@@ -39,12 +39,53 @@ metrics:
   \item \textbf{Action error}: $\lvert A(\gamma) - c_{\mathrm{EHZ}}(K) \rvert$,
     where~$A(\gamma)$ is the symplectic action of the recovered orbit.
 \end{itemize}
-% [TODO: JÖRN - This section needs a characterization lemma: "a piecewise-affine
-%   closed curve on bdry(K) is a simple Reeb orbit iff (checkable conditions)."
-%   The four metrics above should map to those conditions. Subtlety: breakpoints
-%   lie on faces (e.g. F_sigma(k) cap F_sigma(k+1)), not strictly at facet
-%   transitions. The velocity condition holds by construction from (S, beta)
-%   but the lemma should make this explicit.]
+% [TODO: JÖRN - verify the following characterization lemma. Derived in
+%   conversation: closure + on-facet + convexity of K reduce the defining
+%   conditions of def:reeb-orbit-polytope to finitely many checks at breakpoints.]
+\begin{lemma}[Finite verification of simple Reeb orbits]%
+\label{lem:finite-orbit-verification}
+Let $K$ be a polytope with facets $F_1, \ldots, F_F$ (outward normals
+$n_i$, offsets~$h_i$, Reeb vectors~$R_i$).
+A piecewise-affine closed curve $\gamma \colon [0, T] \to \mathbb{R}^4$
+with breakpoints $0 = t_0 < t_1 < \cdots < t_m = T$ and constant
+velocity $\dot{\gamma} = R_{\sigma(k)}$ on $(t_{k-1}, t_k)$
+is a simple Reeb orbit (Definition~\ref{def:simple-reeb-orbit})
+if and only if:
+\begin{enumerate}
+  \item \emph{Closure:}
+    $\gamma(0) = \gamma(T)$.
+  \item \emph{Reeb velocity:}
+    $\dot{\gamma}|_{(t_{k-1}, t_k)} = R_{\sigma(k)}$
+    for some facet index $\sigma(k)$, for each $k = 1, \ldots, m$.
+  \item \emph{On-facet:}
+    $\langle n_{\sigma(k)},\, \gamma(t_{k-1}) \rangle = h_{\sigma(k)}$
+    for each $k = 1, \ldots, m$.
+  \item \emph{Inside $K$:}
+    $\langle n_j,\, \gamma(t_k) \rangle \le h_j$
+    for all $j = 1, \ldots, F$ and all $k = 0, \ldots, m$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+Conditions (1) and~(2) are part of
+Definition~\ref{def:simple-reeb-orbit}.
+For~(3): since $R_{\sigma(k)}$ is tangent to $F_{\sigma(k)}$
+($\langle n_{\sigma(k)}, R_{\sigma(k)} \rangle = 0$),
+the inner product
+$\langle n_{\sigma(k)}, \gamma(t) \rangle$ is constant on the $k$-th
+segment. Hence $\gamma(t) \in F_{\sigma(k)}$ for all
+$t \in [t_{k-1}, t_k]$ if and only if it holds at~$t_{k-1}$.
+For~(4): on each segment, $\langle n_j, \gamma(t) \rangle$ is
+affine in~$t$, so it attains its maximum at an endpoint. Since $K$ is
+convex, $\gamma(t) \in K$ for all $t$ if and only if
+$\gamma(t_k) \in K$ at every breakpoint.
+\end{proof}
+
+The four error metrics measure how closely conditions~(1), (3),
+and~(4) of Lemma~\ref{lem:finite-orbit-verification} are satisfied
+numerically. Condition~(2) holds by construction, since the orbit is
+reconstructed from~$(S, \beta)$ using the facet Reeb
+vectors~$R_{\sigma(k)}$.
 Validation thresholds are $10^{-6}$ for the three geometric metrics and
 $10^{-5}$ for action error (which accumulates rounding over the full
 orbit).
