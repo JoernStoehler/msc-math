@@ -45,16 +45,17 @@ metrics:
 Let $K$ be a polytope with facets $F_1, \ldots, F_F$ (outward normals
 $n_i$, offsets~$h_i$, Reeb vectors~$R_i$).
 A piecewise-affine closed curve $\gamma \colon [0, T] \to \mathbb{R}^4$
-with breakpoints $0 = t_0 < t_1 < \cdots < t_m = T$ and constant
-velocity $\dot{\gamma} = R_{\sigma(k)}$ on $(t_{k-1}, t_k)$
+with breakpoints $0 = t_0 < t_1 < \cdots < t_m = T$ and
+piecewise-constant velocity
 is a simple Reeb orbit (Definition~\ref{def:simple-reeb-orbit})
 if and only if:
 \begin{enumerate}
   \item \emph{Closure:}
     $\gamma(0) = \gamma(T)$.
   \item \emph{Reeb velocity:}
-    $\dot{\gamma}|_{(t_{k-1}, t_k)} = R_{\sigma(k)}$
-    for some facet index $\sigma(k)$, for each $k = 1, \ldots, m$.
+    for each $k = 1, \ldots, m$, there exists a facet index
+    $\sigma(k)$ such that
+    $\dot{\gamma}|_{(t_{k-1}, t_k)} = R_{\sigma(k)}$.
   \item \emph{On-facet:}
     $\langle n_{\sigma(k)},\, \gamma(t_{k-1}) \rangle = h_{\sigma(k)}$
     for each $k = 1, \ldots, m$.
