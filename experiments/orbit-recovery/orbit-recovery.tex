@@ -39,14 +39,12 @@ metrics:
   \item \textbf{Action error}: $\lvert A(\gamma) - c_{\mathrm{EHZ}}(K) \rvert$,
     where~$A(\gamma)$ is the symplectic action of the recovered orbit.
 \end{itemize}
-These metrics verify three of the four conditions in
-Definition~\ref{def:reeb-orbit-polytope}: closure checks
-$\gamma(0) = \gamma(T)$, on-facet error and inequality violation check
-$\operatorname{Im}(\gamma) \subset \partial K$, and action error checks
-$A(\gamma) = T$. The remaining condition --- that the velocity is a
-convex combination of incident Reeb vectors --- holds by construction,
-since the orbit is reconstructed from~$(S, \beta)$ using the facet Reeb
-vectors~$R_{\sigma(k)}$.
+% [TODO: JÖRN - This section needs a characterization lemma: "a piecewise-affine
+%   closed curve on bdry(K) is a simple Reeb orbit iff (checkable conditions)."
+%   The four metrics above should map to those conditions. Subtlety: breakpoints
+%   lie on faces (e.g. F_sigma(k) cap F_sigma(k+1)), not strictly at facet
+%   transitions. The velocity condition holds by construction from (S, beta)
+%   but the lemma should make this explicit.]
 Validation thresholds are $10^{-6}$ for the three geometric metrics and
 $10^{-5}$ for action error (which accumulates rounding over the full
 orbit).
