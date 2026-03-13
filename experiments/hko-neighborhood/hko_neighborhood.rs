@@ -832,6 +832,10 @@ fn compute_capacity_derivatives_normal(
 ///
 /// For each facet k, perturb h_k by ±ε, construct the perturbed polytope,
 /// and compute capacity via `ehz_capacity`. Returns (cap_plus - cap_minus)/(2ε).
+///
+/// Not called in normal operation (permanent FD tests are in crate sensitivity_test.rs).
+/// Kept for ad-hoc debugging; call from `compute_sensitivity` when needed.
+#[allow(dead_code)]
 fn compute_capacity_derivatives_fd(normals: &[Vector4<f64>], heights: &[f64]) -> Vec<f64> {
     const FD_EPS: f64 = 1e-5;
     let f = normals.len();
@@ -862,6 +866,10 @@ fn compute_capacity_derivatives_fd(normals: &[Vector4<f64>], heights: &[f64]) ->
 ///
 /// Prints a comparison table and panics if they disagree beyond tolerance.
 /// Also verifies the Euler homogeneity identity: Σ h_k · ∂c/∂h_k = 2c.
+///
+/// Not called in normal operation (permanent FD tests are in crate sensitivity_test.rs).
+/// Kept for ad-hoc debugging; call from `compute_sensitivity` when needed.
+#[allow(dead_code)]
 fn cross_check_derivatives_fd(
     normals: &[Vector4<f64>],
     heights: &[f64],
@@ -965,10 +973,6 @@ fn compute_sensitivity(
         .zip(d_cap_h.iter())
         .map(|(&dv, &dc)| (cap * dc - sys * dv) / vol)
         .collect();
-
-    // FD cross-check for capacity and sys derivatives
-    let heights = polytope.heights_f64();
-    cross_check_derivatives_fd(&normals, &heights, cap, vol, sys, &d_cap_h, &d_sys_h);
 
     let gradient_norm_h = d_sys_h
         .iter()

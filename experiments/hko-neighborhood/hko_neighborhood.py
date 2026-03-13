@@ -78,8 +78,8 @@ def fig_gradient(sens: dict) -> None:
     ax.set_title("Normal sensitivity (norms)")
 
     fig.suptitle(
-        f"HKO2024 sensitivity: sys = {sens['sys']:.6f}, "
-        f"|∇sys| = {sens['gradient_norm_hn']:.4f}",
+        r"HKO2024 sensitivity: $\mathrm{sys}$ = " f"{sens['sys']:.6f}, "
+        r"$|\nabla\,\mathrm{sys}|$ = " f"{sens['gradient_norm_hn']:.4f}",
     )
     plt.tight_layout()
     out = SCRIPT_DIR / "hko-neighborhood-gradient.png"
@@ -107,7 +107,7 @@ def fig_orbits(sens: dict) -> None:
     ax.plot(range(len(deviations)), deviations, "o", markersize=3)
     ax.axhline(y=0, color="red", linewidth=0.5, linestyle="--")
     ax.set_xlabel("Orbit index")
-    ax.set_ylabel(f"Action $-$ {best:.6f}")
+    ax.set_ylabel(rf"Action $-\;{best:.6f}$")
     ax.set_title(f"{len(orbits)} near-optimal orbits")
     ax.ticklabel_format(axis="y", style="scientific", scilimits=(-3, 3))
 
@@ -164,8 +164,8 @@ def fig_splitting(splitting_rows: list[dict]) -> None:
 
     ax.axhline(y=0, color="red", linewidth=1, linestyle="--")
     ax.set_xlabel("Angular offset from facet normal (rad)")
-    ax.set_ylabel(r"$\Delta$ sys")
-    ax.set_title(r"$\Delta$ sys vs angle")
+    ax.set_ylabel(r"$\Delta\,\mathrm{sys}$")
+    ax.set_title(r"$\Delta\,\mathrm{sys}$ vs angle")
     ax.legend(fontsize=7)
 
     # Right: Δsys histogram
@@ -173,7 +173,7 @@ def fig_splitting(splitting_rows: list[dict]) -> None:
     all_deltas = [r["delta_sys"] for r in ok_rows]
     ax.hist(all_deltas, bins=40, edgecolor="black", linewidth=0.3, alpha=0.7)
     ax.axvline(x=0, color="red", linewidth=1, linestyle="--")
-    ax.set_xlabel(r"$\Delta$ sys")
+    ax.set_xlabel(r"$\Delta\,\mathrm{sys}$")
     ax.set_ylabel("Count")
     ax.set_title(f"Distribution (n={len(ok_rows)})")
 

@@ -1,0 +1,254 @@
+% hko-neighborhood.tex — \input'd from experiments/experiments.tex
+%
+% Symmetry analysis of the HKO2024 counterexample and its sensitivity structure.
+%
+% Sources:
+%   - Generated data: experiments/hko-neighborhood/hko-neighborhood-sensitivity.jsonl
+%   - Plot script: experiments/hko-neighborhood/hko_neighborhood.py
+%   - HKO2024 paper: papers/hko2024/counterexample.tex (Prop. 3, Sec. 3.1)
+%   - Thesis definitions: basic-definitions.tex, lagrangian-product-algorithm-proof.tex
+%
+% Structure:
+%   - Setup: HKO2024 as Lagrangian product
+%   - Polytope symmetry vs.\ symplectic symmetry
+%   - Orbit structure and subdifferential
+%   - Consequences for local maximality
+
+\subsection{Symmetry structure of HKO2024}
+\label{sec:hko-symmetry}
+
+The counterexample of~\cite{HaimKislevOstrover2024} is the Lagrangian product
+$K = K_q \times K_p$ (Definition~\ref{def:lagrangian-product}),
+where $K_q \subset L_q$ is the regular pentagon with vertices at
+$(\cos\tfrac{2\pi k}{5},\, \sin\tfrac{2\pi k}{5})$ for $k = 0, \ldots, 4$,
+and $K_p \subset L_p$ is $K_q$ rotated by $90^\circ$.
+The facets split into $q$-facets $\{0, \ldots, 4\}$ and
+$p$-facets $\{5, \ldots, 9\}$
+(Lemma~\ref{lem:lagrangian-facets}).
+All ten heights are equal:
+$h_k = \cos(\pi/5)$ for all $k$.
+
+We analyze the symmetry of this polytope and its near-optimal
+Reeb orbits to explain the structure of the sensitivity gradient
+$\nabla_h\,\mathrm{sys}$.
+The main findings are:
+the polytope symmetry group has order~50 (all facets equivalent),
+but only a symplectic subgroup of order~10 preserves the orbit structure;
+the 44 near-optimal orbits yield 10~distinct per-orbit gradients
+forming a single orbit under this subgroup;
+and the per-orbit gradients have mixed sign
+(positive at visited facets, negative at unvisited ones).
+
+The billiard algorithm
+(Algorithm~\ref{alg:billiard}) finds 364 valid orbits, of which 44
+achieve $c_{\mathrm{EHZ}}(K)$ to machine precision
+(relative gap $< 5 \times 10^{-14}$).
+The sensitivity analysis from
+Section~\ref{sec:sys-optimization} gives
+$\mathrm{sys}(K) \approx 1.04721$, confirming the
+counterexample.
+
+\subsubsection*{Polytope symmetry group}
+
+We identify the group of linear maps $\mathbb{R}^4 \to \mathbb{R}^4$
+that preserve $K$ as a set.
+
+\emph{Independent rotations.}
+Let $R_{72^\circ}$ denote the $2{\times}2$ rotation by $72^\circ = 2\pi/5$.
+Since $K_q$ is a regular pentagon, applying $R_{72^\circ}$ in $L_q$
+while fixing $L_p$ permutes the $q$-facet normals cyclically
+($n_k \mapsto n_{k+1\bmod 5}$, $k = 0, \ldots, 4$)
+without affecting the $p$-facets.
+Call this map $C_5^q$.
+Analogously, $C_5^p$ applies $R_{72^\circ}$ in $L_p$ only.
+Both preserve $K$ because all heights are equal, and they commute:
+$C_5^q C_5^p = C_5^p C_5^q$.
+Together they generate a $C_5 \times C_5$ subgroup of order~25.
+
+\emph{The $q$\nobreakdash-$p$ exchange $\varphi$.}
+% [TODO: JÖRN - verify the following map construction is correct]
+The $q$-pentagon has normals at angles
+$36^\circ$, $108^\circ$, $180^\circ$, $252^\circ$, $324^\circ$
+in the $(q_1, q_2)$ plane, while the $p$-pentagon has normals at
+$-54^\circ$, $18^\circ$, $90^\circ$, $162^\circ$, $234^\circ$
+in the $(p_1, p_2)$ plane --- offset by exactly $-90^\circ$.
+This suggests the map
+\[
+  \varphi \colon (q_1, q_2, p_1, p_2)
+  \;\mapsto\; (-p_2,\; p_1,\; q_2,\; -q_1),
+\]
+which sends each $q$-normal to the corresponding $p$-normal and vice
+versa: $\varphi(n_k) = n_{k+5\bmod 10}$ for $k = 0, \ldots, 9$.
+Since all heights are equal, $\varphi(K) = K$.
+
+The map $\varphi$ is an involution ($\varphi^2 = I$), and it is a
+symplectomorphism:
+\[
+  dq_1' \wedge dp_1' + dq_2' \wedge dp_2'
+  = (-dp_2) \wedge dq_2 + dp_1 \wedge (-dq_1)
+  = dq_2 \wedge dp_2 + dq_1 \wedge dp_1
+  = \omega_0.
+\]
+Direct computation shows that it conjugates $C_5^q$ into $C_5^p$:
+$\varphi \, C_5^q \, \varphi = C_5^p$.
+The full group
+$\langle C_5^q,\, C_5^p,\, \varphi \rangle
+\cong (C_5 \times C_5) \rtimes \mathbb{Z}_2$
+has order $50$, verified by generating all elements and
+counting the distinct permutations of the ten facet indices.
+All ten facets form a single orbit of this group.
+
+\begin{remark}
+$C_5^q$ and $C_5^p$ are \emph{not} symplectomorphisms:
+$C_5^q$ has matrix $\operatorname{diag}(R_{72^\circ}, I_2)$, and
+\[
+  (C_5^q)^\top J_0\, C_5^q
+  = \begin{pmatrix} 0 & -R_{72^\circ}^\top \\ R_{72^\circ} & 0 \end{pmatrix}
+  \neq J_0.
+\]
+Intuitively, $\omega_0 = dq_1 \wedge dp_1 + dq_2 \wedge dp_2$ couples
+$q$- and $p$-coordinates; rotating only one factor breaks this pairing.
+Nevertheless, $C_5^q$ and $C_5^p$ preserve $K$ as a set, so
+$c_{\mathrm{EHZ}}(C_5^q(K)) = c_{\mathrm{EHZ}}(K)$
+holds trivially (same convex body), but they do not map Reeb orbits
+to Reeb orbits.
+\end{remark}
+
+\subsubsection*{Symplectic symmetry and orbit structure}
+
+The \emph{diagonal rotation}
+$\Delta_{72^\circ} \coloneqq \operatorname{diag}(R_{72^\circ}, R_{72^\circ})$
+rotates both $L_q$ and $L_p$ simultaneously.
+It is a symplectomorphism:
+\[
+  \Delta_{72^\circ}^\top J_0\, \Delta_{72^\circ}
+  = \begin{pmatrix} 0 & -R_{72^\circ}^\top R_{72^\circ} \\
+    R_{72^\circ}^\top R_{72^\circ} & 0 \end{pmatrix}
+  = J_0,
+\]
+since $R_{72^\circ}^\top R_{72^\circ} = I_2$.
+It maps $n_k \mapsto n_{k+1\bmod 5}$ for $q$-facets and
+$n_k \mapsto n_{k+1\bmod 5}$ (within the $p$-block) for $p$-facets.
+
+Since $\Delta_{72^\circ}$ and $\varphi$ are both symplectomorphisms
+preserving~$K$,
+they map Reeb orbits to Reeb orbits of equal action
+(Lemma~\ref{lem:capacity-axioms}\,(iii) applied at the orbit level).
+The group $\langle \Delta_{72^\circ},\, \varphi \rangle$ has order~$10$,
+verified by the same enumeration method.
+
+\emph{This group is exactly the orbit symmetry group.}
+Each of the 44 near-optimal orbits visits exactly
+3~$q$-facets and 3~$p$-facets (empirically, all 44 orbits follow this
+pattern).
+Grouping orbits by their visited facet sets $(S_q, S_p)$ yields
+10~groups of 4--5 orbits each, and these 10 groups form a
+\emph{single orbit} under $\langle \Delta_{72^\circ}, \varphi \rangle$.
+
+\emph{$C_5^q$ alone does not preserve the orbit structure.}
+Applying $C_5^q$ (rotate $q$-facets only, fix $p$-facets) to any
+group $(S_q, S_p)$ produces a pair $(S_q', S_p)$ that does not
+appear among the 10 groups ---
+checked exhaustively for all~10.
+The Reeb dynamics on a Lagrangian product couple $q$- and
+$p$-coordinates (Lemma~\ref{lem:lagrangian-reeb}: on a $q$-facet
+the trajectory moves in $L_p$, and vice versa), so a rotation
+in one factor alone changes which facets the orbit visits in
+\emph{both} factors.
+
+\subsubsection*{Subdifferential structure}
+
+The systolic ratio is $\mathrm{sys} = c_{\mathrm{EHZ}}^2 / (2\,\mathrm{vol})$.
+Because the 44 near-optimal orbits all achieve $c_{\mathrm{EHZ}}$ up to
+machine precision, each orbit defines its own
+$\partial\,\mathrm{sys}/\partial h_k$ vector
+(Section~\ref{sec:sys-optimization}),
+and the convex hull of these 44 vectors is contained in the Clarke
+subdifferential~\cite{Clarke1983} of $\mathrm{sys}$ with respect to
+heights (the convex hull of all limit points of gradients at nearby
+differentiable points).
+
+Among the 44 per-orbit gradient vectors:
+\begin{itemize}
+\item \textbf{10 are distinct}
+  (each a permutation of three values),
+  forming a single orbit under
+  $\langle \Delta_{72^\circ}, \varphi \rangle$.
+\item \textbf{All gradient norms are identical}
+  ($\approx 1.431$, spread $< 2 \times 10^{-14}$).
+\item \textbf{The components have mixed sign:}
+  positive at visited facets, negative at unvisited ones.
+\end{itemize}
+
+Recall that $\beta_k$ denotes the dwell-time coefficient
+(segment length in the Reeb parametrization) of the orbit on
+facet~$k$ (Lemma~\ref{lem:cap-derivative}).
+The three derivative values arise from the decomposition
+$\partial\,\mathrm{sys}/\partial h_k
+= \tfrac{c_{\mathrm{EHZ}}}{\mathrm{vol}} \cdot
+  \tfrac{\partial\,c_{\mathrm{EHZ}}}{\partial h_k}
+- \tfrac{\mathrm{sys}}{\mathrm{vol}} \cdot
+  \tfrac{\partial\,\mathrm{vol}}{\partial h_k}$:
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+Facet role & \# facets &
+$\partial c_{\mathrm{EHZ}} / \partial h_k$ &
+$\partial\,\mathrm{sys}/\partial h_k$ \\
+\midrule
+Unvisited & 4 & $0$ & $-0.518$ \\
+Visited, $\beta \approx 0.171$ & 4 & $\approx {+1.176}$ & $+0.198$ \\
+Visited, $\beta \approx 0.276$ & 2 & $\approx {+1.902}$ & $+0.640$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The volume derivative $\partial\,\mathrm{vol}/\partial h_k \approx 2.795$ is
+uniform across all 10~facets,
+which follows from the polytope symmetry (order~50) making all
+facets equivalent as sets.
+The capacity derivative
+$\partial\,c_{\mathrm{EHZ}}/\partial h_k
+= \nu\,\beta_{i_0}^* / (2\,(Q^*)^2)$
+is positive for visited facets and zero otherwise
+(Lemma~\ref{lem:cap-derivative}).
+The ratio of the two nonzero $\beta$ values is
+$\beta_2 / \beta_1 \approx 1.618$ (the golden ratio),
+characteristic of regular pentagon geometry.
+
+\subsubsection*{Consequences}
+
+\begin{enumerate}
+\item \textbf{Mixed sensitivity in height space.}
+  The per-orbit gradients have positive components at visited facets
+  and negative components at unvisited ones.
+  Increasing the height of a visited facet increases
+  $\mathrm{sys}$ (both capacity and volume grow, but capacity
+  grows faster), while increasing an unvisited height
+  decreases $\mathrm{sys}$ (only volume grows).
+  By symmetry (all 10 gradients form one orbit under
+  $\langle \Delta_{72^\circ}, \varphi \rangle$),
+  the centroid of the subdifferential has all components equal
+  and approximately zero.
+
+\item \textbf{One representative facet suffices for Phase~B}
+  (Section~\ref{sec:omega-obstacle})\textbf{.}
+  The $q$\nobreakdash-$p$ exchange $\varphi$ is a symplectomorphism
+  mapping $K \to K$ and $n_0 \mapsto n_5$.
+  Any facet-splitting test at $q$-facet~$0$ has an equivalent test at
+  $p$-facet~$5$ with identical $\Delta\mathrm{sys}$
+  (by symplectic invariance of $c_{\mathrm{EHZ}}$
+  and volume-preservation of symplectomorphisms).
+  The experiment code uses two representatives (facets 0~and~5), which
+  is safe but redundant.
+
+\item \textbf{The ``broken symmetry'' is symplectic, not broken.}
+  The per-orbit gradients are not uniform across facets: visited facets
+  have positive $\partial\,\mathrm{sys}/\partial h_k$
+  while unvisited ones have negative values.
+  This variation is not a symmetry defect but the natural action of the
+  symplectic symmetry group (order~10) on the subdifferential.
+  The full polytope symmetry (order~50) makes all facets equivalent
+  as geometric entities, but the Reeb dynamics see only the symplectic
+  subgroup.
+\end{enumerate}
