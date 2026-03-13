@@ -320,7 +320,7 @@ fn triangle_square_capacity() {
 /// **What:** Computes capacity using pruned algorithm on symplectic product.
 /// **Why debug mode:** Exercises pruning logic on symplectic product geometry
 /// (triangle in (q₁,p₁), square in (q₂,p₂)) with debug checks enabled.
-/// **Why this polytope:** F=7 symplectic product. Tests Moser's theorem:
+/// **Why this polytope:** F=7 symplectic product. Tests the symplectic product formula:
 /// c(A ×_S B) = min(c(A), c(B)). Distinguishes symplectic from Lagrangian products.
 /// **Output check:** Verifies capacity = min(3√3/4, 1.0) = 1.0.
 ///
@@ -331,7 +331,7 @@ fn symplectic_triangle_square_capacity() {
     let result = ehz_capacity(&kp.polytope).expect("symplectic triangle×square capacity");
 
     // Symplectic product: triangle in (q₁, p₁) plane ×_S square in (q₂, p₂) plane.
-    // Moser's theorem: c(A ×_S B) = min(c(A), c(B))
+    // Symplectic product formula: c(A ×_S B) = min(c(A), c(B))
     // Expected: min(3√3/4, 1.0) = min(1.299..., 1.0) = 1.0
     //
     // This test verifies the algorithm correctly computes the symplectic product formula

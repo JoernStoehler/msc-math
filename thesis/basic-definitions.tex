@@ -293,6 +293,108 @@ The EHZ capacity satisfies, for all convex bodies $K, K'$:
 \end{enumerate}
 \end{lemma}
 
+% --- Capacity of symplectic products ---
+
+\begin{proposition}[Capacity of symplectic products]%
+\label{prop:capacity-symplectic-product}
+% QC: uses only the four capacity axioms above plus the fact that
+%   area-preserving = symplectic in 2D (omega_0 = dq wedge dp = area form).
+% Downstream: correctness.tex table references this for
+%   symplectic triangle products.
+Let $A, B \subset \mathbb{R}^2$ be convex bodies containing
+the origin in their interiors, where we view the first copy
+of~$\mathbb{R}^2$ as the symplectic plane $(q_1, p_1)$ and
+the second as $(q_2, p_2)$.
+The \emph{symplectic product} is
+\[
+  A \times_S B
+    \coloneqq \{(q_1, q_2, p_1, p_2) \in \mathbb{R}^4
+      : (q_1, p_1) \in A,\; (q_2, p_2) \in B\}.
+\]
+Then
+\[
+  c_{\mathrm{EHZ}}(A \times_S B)
+    = \min\!\bigl(\operatorname{area}(A),\;
+                   \operatorname{area}(B)\bigr).
+\]
+\end{proposition}
+
+\begin{proof}
+We reduce to a product of disks via an area-preserving
+map, then squeeze between a ball and a cylinder.
+
+On each copy of~$\mathbb{R}^2$, the symplectic form
+restricts to $dq_i \wedge dp_i$, which is the standard
+area form, so area-preserving diffeomorphisms are
+symplectomorphisms.
+
+We first show $c_{\mathrm{EHZ}}(A) = \operatorname{area}(A)$
+for every convex body~$A$ in~$\mathbb{R}^2$.
+By the theorem of Dacorogna and
+Moser~\cite{DacorognaMoser1990}, for any two bounded
+domains~$\Omega_1, \Omega_2 \subset \mathbb{R}^2$ with
+smooth boundaries and equal area, there exists an
+area-preserving diffeomorphism
+$\varphi \colon \overline{\Omega}_1 \to \overline{\Omega}_2$.
+The construction solves a boundary-value problem whose
+solution vanishes on~$\partial\Omega_1$, so the resulting
+divergence-free vector field extends by zero outside
+$\Omega_1$; its time-$1$ flow is a global area-preserving
+(hence symplectic) diffeomorphism of~$\mathbb{R}^2$.
+Taking $\Omega_1$ to be a smooth convex body~$A$
+and $\Omega_2 = B^2(r)$ with $\pi r^2 = \operatorname{area}(A)$,
+symplectic invariance gives
+$c_{\mathrm{EHZ}}(A) = c_{\mathrm{EHZ}}(B^2(r)) = \pi r^2
+= \operatorname{area}(A)$.
+For non-smooth convex bodies, let
+$A^{-\varepsilon} \subset A \subset A^{+\varepsilon}$
+be smooth inner and outer parallel bodies;
+monotonicity
+(Lemma~\ref{lem:capacity-axioms}\,(i)) and
+$\operatorname{area}(A^{\pm\varepsilon}) \to
+\operatorname{area}(A)$ yield
+$c_{\mathrm{EHZ}}(A) = \operatorname{area}(A)$.
+
+Now let $r_A, r_B > 0$ satisfy
+$\pi r_A^2 = \operatorname{area}(A)$ and
+$\pi r_B^2 = \operatorname{area}(B)$.
+The above gives global symplectomorphisms
+$\varphi_1, \varphi_2 \colon \mathbb{R}^2 \to \mathbb{R}^2$
+mapping $A$ to~$B^2(r_A)$ and $B$ to~$B^2(r_B)$
+respectively.
+Since $\omega_0 = dq_1 \wedge dp_1 + dq_2 \wedge dp_2$
+decomposes over the two planes, the product
+$\varphi_1 \times \varphi_2$ is a symplectomorphism
+of~$\mathbb{R}^4$.
+By symplectic invariance
+(Lemma~\ref{lem:capacity-axioms}\,(iii)),
+\[
+  c_{\mathrm{EHZ}}(A \times_S B)
+    = c_{\mathrm{EHZ}}\bigl(B^2(r_A) \times_S B^2(r_B)\bigr).
+\]
+Assume without loss of generality that $r_A \leq r_B$.
+Then
+\[
+  B^4(r_A)
+    \;\subset\; B^2(r_A) \times_S B^2(r_B)
+    \;\subset\; B^2(r_A) \times \mathbb{R}^2,
+\]
+where the first inclusion holds because $r_A \leq r_B$
+and the second because $B^2(r_B) \subset \mathbb{R}^2$.
+By monotonicity and normalization
+(Lemma~\ref{lem:capacity-axioms}\,(i)\&(iv)),
+\[
+  \pi r_A^2
+    = c_{\mathrm{EHZ}}(B^4(r_A))
+    \leq c_{\mathrm{EHZ}}\bigl(B^2(r_A) \times_S B^2(r_B)\bigr)
+    \leq c_{\mathrm{EHZ}}(B^2(r_A) \times \mathbb{R}^2)
+    = \pi r_A^2.
+\]
+Hence $c_{\mathrm{EHZ}}(A \times_S B)
+  = \pi r_A^2
+  = \min(\operatorname{area}(A), \operatorname{area}(B))$.
+\end{proof}
+
 % --- Polytope setting ---
 
 \begin{definition}[Polytope]\label{def:polytope}

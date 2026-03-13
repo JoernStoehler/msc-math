@@ -34558,7 +34558,7 @@ window.POLYTOPE_DATA = {
 },
   "symplectic_tri_sq": {
   "name": "symplectic_tri_sq",
-  "source": "Moser's theorem (symplectic product formula)",
+  "source": "Symplectic product formula (Prop. capacity-symplectic-product)",
   "capacity": 1.0,
   "facet_count": 7,
   "vertex_count": 12,
@@ -36646,7 +36646,7 @@ window.POLYTOPE_DATA = {
 },
   "symplectic_triangle_product": {
   "name": "symplectic_triangle_product",
-  "source": "Moser's theorem (symplectic product formula)",
+  "source": "Symplectic product formula (Prop. capacity-symplectic-product)",
   "capacity": 1.299038105676658,
   "facet_count": 6,
   "vertex_count": 9,

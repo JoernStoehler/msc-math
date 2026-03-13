@@ -212,10 +212,10 @@ pub fn lagrangian_triangle_product() -> KnownPolytope {
 /// (q₁, p₁) = components [0,2] and (q₂, p₂) = components [1,3].
 /// Coordinates are (q₁, q₂, p₁, p₂).
 ///
-/// Known capacity: 3√3/4 ≈ 1.299 (Moser's theorem: c(A ×_S B) = min(c(A), c(B)),
+/// Known capacity: 3√3/4 ≈ 1.299 (symplectic product formula: c(A ×_S B) = min(c(A), c(B)),
 /// both triangles have equal area 3√3/4).
 ///
-/// Source: Moser's theorem (symplectic product formula).
+/// Source: `[prop:capacity-symplectic-product]` (symplectic product formula: c(A ×_S B) = min(c(A), c(B))).
 pub fn symplectic_triangle_product() -> KnownPolytope {
     // Regular triangle: outward normals at angles π/2 + 2πk/3, inradius = cos(π/3) = 0.5
     let triangle_angles: Vec<f64> = (0..3)
@@ -234,7 +234,7 @@ pub fn symplectic_triangle_product() -> KnownPolytope {
         )
         .unzip();
 
-    // Moser's theorem: c(A ×_S B) = min(c(A), c(B))
+    // Symplectic product formula: c(A ×_S B) = min(c(A), c(B))
     // area(equilateral triangle, inradius 0.5) = 3√3/4
     let area_tri = 3.0 * 3.0_f64.sqrt() / 4.0;
     let capacity = area_tri; // min(area, area) = area
@@ -244,7 +244,7 @@ pub fn symplectic_triangle_product() -> KnownPolytope {
             .expect("symplectic triangle product construction"),
         capacity,
         name: "symplectic_triangle_product",
-        source: "Moser's theorem (symplectic product formula)",
+        source: "Symplectic product formula ([prop:capacity-symplectic-product])",
     }
 }
 
@@ -302,10 +302,10 @@ pub fn lagrangian_triangle_square() -> KnownPolytope {
 /// unit square (side 1, area = 1) in the (q₂, p₂) plane. Both planes are
 /// symplectic and symplectically orthogonal, making this a true symplectic product.
 ///
-/// Known capacity: min(3√3/4, 1) = 1.0 (formula for symplectic products).
-/// This verifies Moser's theorem: c(A ×_S B) = min(c(A), c(B)).
+/// Known capacity: min(3√3/4, 1) = 1.0 (symplectic product formula:
+/// c(A ×_S B) = min(c(A), c(B))).
 ///
-/// Source: Moser's theorem + functoriality of symplectic products.
+/// Source: `[prop:capacity-symplectic-product]` (symplectic product formula: c(A ×_S B) = min(c(A), c(B))).
 /// Computed via investigation in experiments/triangle_square.md.
 pub fn symplectic_triangle_square() -> KnownPolytope {
     // Equilateral triangle in (q₁, p₁) plane (circumradius 1, inradius 0.5)
@@ -329,7 +329,7 @@ pub fn symplectic_triangle_square() -> KnownPolytope {
         .map(|n| (n, 0.5))
         .unzip();
 
-    // For symplectic product: c(A ×_S B) = min(c(A), c(B))
+    // Symplectic product formula: c(A ×_S B) = min(c(A), c(B))
     // area(triangle) = 3√3/4 ≈ 1.299, area(square) = 1.0
     let area_tri = 3.0 * 3.0_f64.sqrt() / 4.0;
     let area_sq = 1.0;
@@ -340,7 +340,7 @@ pub fn symplectic_triangle_square() -> KnownPolytope {
             .expect("symplectic triangle×square construction"),
         capacity,
         name: "symplectic_tri_sq",
-        source: "Moser's theorem (symplectic product formula)",
+        source: "Symplectic product formula ([prop:capacity-symplectic-product])",
     }
 }
 
