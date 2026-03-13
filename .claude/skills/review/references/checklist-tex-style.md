@@ -3,6 +3,8 @@
 Detection rules and verification procedures for LaTeX formatting conventions.
 The review subagent works through these items sequentially per the review skill methodology.
 
+**Efficiency rule:** After reading the reviewed file(s) in Step 1, check all items below from the content already in context. Only use grep/read for **cross-file verification** (e.g., checking labels in `main.aux`, citations in `bibliography.bib`). Do not re-read or re-grep the reviewed files.
+
 ## 1. Build
 
 ```bash
@@ -37,7 +39,7 @@ No review status in the header (that goes in inline `% Jörn:` markers).
 ## 5. Figure and Table Inclusion
 
 **Figures:**
-- Detection: grep for `\includegraphics\[` — any `width=`, `height=`, or `scale=` parameter is a violation (all formatting is in Python).
+- Check for `\includegraphics[` — any `width=`, `height=`, or `scale=` parameter is a violation (all formatting is in Python).
 - `\includegraphics{file.png}` with no options is correct.
 
 **Tables:**
@@ -61,15 +63,15 @@ Check each proof has an overview paragraph.
 ## 8. Mechanical Anti-Patterns
 
 **AP4: Overwrought language**
-Detection: Flag adjective clusters (2+ adjectives before a noun) and dramatic words (irrevocable, catastrophic, critical) unless they carry technical meaning.
+Flag adjective clusters (2+ adjectives before a noun) and dramatic words (irrevocable, catastrophic, critical) unless they carry technical meaning.
 
 **AP5: Rust/CS notation in mathematical text**
-Detection: Flag any `\texttt{...}` inside definition/lemma/theorem/remark environments. Programming terms belong in implementation sections, not mathematical statements.
+Flag any `\texttt{...}` inside definition/lemma/theorem/remark environments. Programming terms belong in implementation sections, not mathematical statements.
 
 **AP7: Setup text outside the environment it belongs to**
-Detection: For each lemma/theorem environment, check if it references notation defined only in the preceding paragraph. If so, flag — fold the setup into the environment.
+For each lemma/theorem environment, check if it references notation defined only in the preceding paragraph. If so, flag — fold the setup into the environment.
 
 ## 9. Citation Format
 
-- Author names verified against `thesis/bibliography.bib` — grep each cited author name and confirm it matches the bib entry.
+- Author names verified against `thesis/bibliography.bib` (read once for cross-file check).
 - No author names from memory (common failure: "Cieliebak-Hutchings" instead of "Chaidez-Hutchings").

@@ -3,6 +3,8 @@
 Verification procedures for proofs, definitions, and theorem statements.
 Run on clean files (after phase 1 fixes).
 
+**Efficiency rule:** After reading the reviewed file(s) in Step 1, check all mathematical content from the content already in context. Only use grep/read for **cross-file verification** (checking what a referenced lemma actually says, verifying numbers against data files). Do not re-read or re-grep the reviewed files.
+
 **Important limitation:** Agents cannot reliably verify proof correctness — they overlook gaps, errors, and subtle logical issues. The job is to catch what you can and flag everything for Jörn's expert review. Be honest about confidence levels.
 
 ## Confidence Levels

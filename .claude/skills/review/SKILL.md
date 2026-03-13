@@ -80,9 +80,9 @@ Read the checklist reference doc for your concern (listed under "Review concerns
 
 ### Step 3: Work through items ONE AT A TIME
 For each checklist item:
-1. Search/grep for relevant patterns
-2. Evaluate findings
-3. Append findings to the output report immediately
+1. Check against the file content already in context from Step 1 — do NOT re-read or re-grep the reviewed files
+2. Only use grep/read for **cross-file verification** (e.g., checking a label exists in `main.aux`, a citation key in `bibliography.bib`, a number against a JSONL file)
+3. Evaluate findings and append to the output report immediately
 
 Do NOT attempt to hold all items in working memory and write the report at the end. That produces 10% attention on 10 items instead of 100% attention on each item sequentially.
 
