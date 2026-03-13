@@ -48,7 +48,7 @@ orbit).
 All 112~polytopes pass validation.
 Table~\ref{tab:orbit-recovery-errors} shows maximum errors by facet
 count. Known polytopes achieve errors near machine epsilon (${\sim}10^{-15}$).
-Random polytopes have errors below~$10^{-9}$ for $F \le 9$; at
+Random polytopes have errors below~$10^{-8}$ for $F \le 9$; at
 $F = 10$, accumulated floating-point error in the KKT solve and orbit
 reconstruction raises the maximum action error to~$1.83 \times 10^{-6}$,
 still well within the $10^{-5}$~threshold.
@@ -79,9 +79,9 @@ $F$ & $N$ & Closure & On-facet & Violation & Action \\
 \end{table}
 
 Figure~\ref{fig:orbit-recovery-errors} shows the error scaling across
-facet counts. The jump at $F = 10$ reflects the combinatorial growth
-in orbit length (more facet transitions) and the resulting accumulation
-of floating-point error.
+facet counts. The jump at $F = 10$ likely reflects the combinatorial
+growth in orbit length (more facet transitions) and the resulting
+accumulation of floating-point error.
 
 \begin{figure}[h]
 \centering
@@ -101,10 +101,11 @@ normals are linearly independent, the base point is unique.
 
 Of the 112~polytopes, 108 ($96.4\%$) have a unique base point
 ($\dim = 0$). The four exceptions are all known polytopes with
-special structure: the hypercube and both symplectic products have
-$\dim = 2$ (two pairs of parallel active facets), while the Lagrangian
-triangle--square product has $\dim = 1$. No random polytope exhibits
-non-uniqueness, consistent with linearly dependent active normals
-being a measure-zero condition.
+special structure: the hypercube ($\dim = 2$, 4~active facets),
+both symplectic products ($\dim = 2$, 3--4~active facets), and the
+Lagrangian triangle--square product ($\dim = 1$, 5~active facets).
+In each case, the active normals are linearly dependent due to the
+product structure. No random polytope exhibits non-uniqueness,
+consistent with this being a measure-zero condition.
 
 For further numerical error analysis, see Appendix~\ref{app:numerical}.
