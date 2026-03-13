@@ -25,7 +25,7 @@ polytopes with $F \le 10$.
 \paragraph{Error bound sweep.}
 For every combinatorial type~$(S,\sigma)$ across all 7~polytopes,
 we solve the KKT system and verify that the error bound~$E$ and
-the residual correction~$|q_{\mathrm{corr}}|$ both remain below~$10^{-6}$.
+the residual correction both remain below~$10^{-6}$.
 Table~\ref{tab:q-error-sweep} reports the worst case per polytope.
 The largest error bound observed is $E = 2.9 \times 10^{-11}$
 (HK-O pentagon), well below the~$10^{-6}$ threshold.
@@ -35,7 +35,7 @@ The largest error bound observed is $E = 2.9 \times 10^{-11}$
 \small
 \begin{tabular}{lrrrrrr}
 \toprule
-Polytope & $F$ & Nodes & Solvable & Worst $E$ & Worst $|r|$ & Worst $|q_{\mathrm{corr}}|$ \\
+Polytope & $F$ & Nodes & Solvable & Worst $E$ & Worst $\|r\|$ & Worst $|\Delta Q|$ \\
 \midrule
 Simplex              &  5 &         84 &        24 & $7.3\times10^{-28}$ & $5.2\times10^{-15}$ & $1.2\times10^{-14}$ \\
 Hypercube            &  8 &     16\,064 &    15\,600 & $3.4\times10^{-19}$ & $8.9\times10^{-11}$ & $2.6\times10^{-11}$ \\
@@ -49,8 +49,11 @@ Sym.\ $\triangle{\times}\square$   &  7 &      2\,365 &     2\,226 & $2.6\times1
 \caption{Error bound sweep across all $(S,\sigma)$ nodes.
   ``Nodes'' is the total number of combinatorial types;
   ``Solvable'' is the number with a non-singular KKT system.
-  $|r|$~is the KKT residual norm.
-  All assertions passed: $E < 10^{-6}$ and $|q_{\mathrm{corr}}| < 10^{-6}$
+  $\|r\|$~is the KKT residual norm;
+  $\Delta Q = \tilde{Q} - Q(\hat\beta)
+    = r_2^\top\hat\mu + r_3\hat\xi$
+  is the residual correction~\eqref{eq:q-corrected}.
+  All assertions passed: $E < 10^{-6}$ and $|\Delta Q| < 10^{-6}$
   for every solvable node.}
 \label{tab:q-error-sweep}
 \end{table}
