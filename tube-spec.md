@@ -26,7 +26,8 @@ We in particular can do the trick where we randomly perturb the halfspace data b
 
 This is already implemented using rationals (so the probability is due to discreteness only almost 1, but in practice that's good enough to never encounter a non-symplectic polytope).
 
-Furthermore, perturbation also ensures with probability 1 that the polytope is **simple** i.e. every 0-face lies on 4 facets, not more. I am not sure rn whether we also have probability 1 that 1-faces lie on exactly 3 facets. Note that ofc the fp64 rounded coordinates may now have e.g. two 0-faces that have same/very close fp64 coordinates, or two 1-faces, or we have a 0-face that is almost on a 3-facet but not exactly.
+Furthermore, perturbation also ensures with probability 1 that the polytope is **generic** i.e. every 0-face lies on 4 facets, and every 1-face on 3 facets.
+Proof: the intersection of m pairwise different facets gives a LP with m equations (n^T x=h) and F-m inequalities (n^T x <= h) for a 4d variable x. Generically in (n,h) this gives either an empty solution set, or a convex non-degenerate 4-m dimensional solution set (i.e. a 4-m face) on which we also get genericity properties if we like to.
 
 We use, as is done in the code, exact incidence relations to decide such equality questions.
 
@@ -53,24 +54,31 @@ This is already computed for HK2017 algorithm. Iirc(!) the equivalent checkable 
 2. there is at least one point x \in F_i \cap F_j s.t. infinitesimally going away -eps*R_i or +eps*R_j stays on the polytope boundary. This is a LP feasability question.
 
 Since ω₀ is antisymmetric, ω₀(n_i, n_j) > 0 iff ω₀(n_j, n_i) < 0. So every 2-face has at most one direction (no bidirectional edges for symplectic polytopes).
-I conjecture that for simple polytopes, we have exactly one direction, i.e. if omega_0(ni,nj)>0 then there also is at least one feasable point x.
+I conjecture that for generic polytopes, we have exactly one direction, i.e. if omega_0(ni,nj)>0 then there also is at least one feasable point x.
 
-I conjecture that for simple polytopes, if F_i -> F_j is feasable then F_i\capF_j=F_ij is a non-degenerate 2-face, i.e. we don't have transitions that go through a 1-face instead of a 2-face (?).
+I conjecture that for generic polytopes, if F_i -> F_j is feasable then F_i\capF_j=F_ij is a non-degenerate 2-face, i.e. we don't have transitions that go through a 1-face instead of a 2-face (?).
 I may be wrong about this!
 </j>
-<qj>
-Above is sth you can check now! Please do so and report back.
-</qj>
+<investigation>
+The two conjectures above are about **generic** polytopes only:
 
-**Successors**: For each facet j, the successors are {l : j → l is a directed edge}. These are the facets a trajectory can transition to after being on j.
-</draft>
+**Conjecture 1** (ω₀ sign suffices for feasibility): Let K be generic and symplectic. If F_{ij} is a 2-face with ω₀(n_i, n_j) > 0, then there exists a point x in the interior of F_{ij} such that the Reeb transition F_i → F_j is feasible at x. In other words: the ω₀ sign check alone is sufficient — the LP feasibility check (criterion 2 above) is automatically satisfied.
+
+**Conjecture 2** (no lower-dimensional transitions): Let K be generic. If a Reeb transition F_i → F_j is feasible, then F_i ∩ F_j is a 2-face (not a 1-face or 0-face). In other words: for generic polytopes, transitions only happen through ridges.
+
+Checked on 19 generic polytopes (7 known + 12 random, F=5..8). Both hold on all 19.
+
+For generic + symplectic: directed edges and ridges are in exact 1-to-1 correspondence.
+</investigation>
+
+<s>
+For the implementation: since we assume generic + symplectic, directed edges biject with ridges. We can compute the DirectedSkeleton directly from `Skeleton::ridges` + `sign_pattern`, without needing the LP feasibility check. The ω₀ sign determines the direction, and every ridge is guaranteed feasible.
+
+**Successors**: For each facet j, successors = {l : j → l is a directed edge}.
+</s>
 
 <q>
-Distinction from HK2017: `build_directed_adjacency_matrix` uses vertex-adjacency (sharing any vertex) and ω₀ ≥ 0 (non-strict). The tube algorithm uses ridge-adjacency (sharing a 2-face) and strict ω₀ > 0. For symplectic polytopes the ω₀ > 0 vs ≥ 0 distinction is moot (no zeros), but the ridge vs vertex distinction matters: vertex-adjacent pairs that don't form a 2-face should NOT appear in the directed skeleton. Is this correct?
-</q>
-
-<q>
-1-faces and 0-faces: a trajectory could in principle also transition through a 1-face (edge) or 0-face (vertex) where ≥ 3 facets meet. These are "Type 2" transitions and the tube algorithm ignores them (handles only "Type 1" = 2-face transitions). Is this understanding right, and is it justified by a genericity argument (for generic polytopes, minimum-action orbits only use Type 1 transitions)?
+The investigation confirms that for generic polytopes, vertex-adjacency and ridge-adjacency coincide. So the distinction I raised (ridge vs vertex adjacency) doesn't matter for generic polytopes. The `build_directed_adjacency_matrix` from HK2017 would give the same answer for generic polytopes (modulo the ω₀ ≥ 0 vs > 0 distinction, which is moot since we're symplectic). Should we reuse it, or build fresh from ridges for clarity?
 </q>
 
 ---

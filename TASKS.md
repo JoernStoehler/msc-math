@@ -2,6 +2,16 @@
 
 Deferred tasks, ideas, and identified work items. Grows stale; that's fine.
 
+## Handoff files (ready for separate sessions)
+
+- `handoffs/experiment-deduplication.md` — extract 4× duplicated KKT solver + derivatives to library
+- `handoffs/tube-algorithm.md` — implement tube algorithm (9 steps from tube-algorithm-plan.md)
+- `handoffs/hko-neighborhood.md` — complete HKO neighborhood writeup and assess if more experiments needed
+
+## Active design work (this session / next session with Jörn)
+
+KKT solver rework: dual-vertex parameterization, projection-based solver, β > 0 as LP, near-null eigenvalue handling. Needs spec file written collaboratively with Jörn before implementation. Code first, thesis follows.
+
 ## Identified refactors
 
 ### Unify `find_positive_beta_1d` / `find_positive_beta_nd` in kkt.rs
@@ -20,3 +30,49 @@ Deferred tasks, ideas, and identified work items. Grows stale; that's fine.
 - The "how to find β > 0" is a numerical implementation detail that belongs in appendix-numerical, not the main proof. It's dimension-agnostic (LP feasibility in the affine subspace).
 
 **Scope:** Replace both functions with a single LP-based approach, add appendix-numerical writeup explaining the numerical null-space search, verify on existing regression tests.
+
+### Audit Reeb vector factor: R = 2/h J₀ n, not 1/h J₀ n — AUDITED, CLEAN
+
+**Audit result (2026-03-14):** No wrong instances found.
+- Thesis .tex: consistently uses R_i = (2/h_i) J₀ n_i (basic-definitions.tex:478, general-case-algorithm-proof.tex:80, simple-minimizer-existence.tex:488, lagrangian-product-algorithm-proof.tex:85/92, appendix-numerical.tex:205, tube-algorithm.tex:339)
+- Library code: `reeb_vector()` returns J₀ n (direction only, documented as such). Only caller needing magnitude is `recover.rs:167` which correctly uses `* (2.0 / h)`.
+- The `reeb_vector()` function name could be confusing since it returns direction, not the actual Reeb vector. Consider renaming to `reeb_direction()` if/when refactoring.
+
+### KKT solver: implement projection-based variant
+
+**What:** Implement a second KKT solver variant that solves constraints first, then projects H onto the constraint space:
+1. Solve `(N^T | h^T) β = (0 | 1)` → (m-5)-dim affine solution space
+2. Project H onto constraint space → (m-5)×(m-5) symmetric system H'
+3. Eigendecompose H' → near-null eigenvalues = constant-action directions
+4. β > 0 check as LP feasibility on the projected null space
+5. Recover Lagrange multipliers μ, ν from Hβ + Nμ + hν = 0
+
+**Why:** Cleaner separation of concerns. Constraints satisfied by construction (no residual). Near-null eigenvalues have clear geometric meaning. Conservative inclusion of near-null eigenvalues is safe (constraints can't be violated). Better for the β > 0 feasibility check.
+
+**Interaction:** Keep existing augmented-system solver for ablation comparison. Both variants should agree on Q values.
+
+### Consider switching thesis from (n, h) to dual vertices a_i
+
+**What:** Replace the (n_i, h_i) ∈ S³ × R>0 parameterization with dual polytope vertices a_i = n_i/h_i ∈ R⁴\{0} throughout the thesis.
+
+**Why:**
+- Unit-length constraint on n is never used mathematically
+- a_i ∈ R⁴\{0} is unconstrained — simpler parameter space
+- Reeb vector becomes R_i = 2 J₀ a_i (direct, no division)
+- Gradients ∂/∂a_i need no tangent-space projection
+- Code already stores dual vertices as rationals
+
+**Scope:** Mostly a thesis notation change. Needs impact assessment: which formulas change, how many .tex files are affected, whether code interfaces change.
+
+**Ordering:** Should happen BEFORE the KKT projection refactor if we're doing both, to avoid refactoring twice.
+
+### Experiment cleanup: extract shared code to library
+
+**What:** 4 experiments (gradient-descent, sys-optimization, hko-neighborhood, omega-obstacle) each contain 930-2347 LOC copies of an instrumented KKT solver + derivative computation. Extract to shared module.
+
+**Identified duplications:**
+- Instrumented KKT solver (build_kkt_system, solve_kkt_svd_path, find_positive_beta_nd, ehz_capacity_instrumented)
+- Derivative computation (compute_capacity_derivatives_analytical, _normal, _fd; compute_volume_derivatives_analytical, _normal)
+- Adjacency/permutation logic (combinations, heap_permutations, build_adjacency_matrix) — 6+ copies
+
+**Scope:** Extract instrumented KKT + derivatives to `crates/` as public modules. Update 4 experiment binaries to use shared code. Verify outputs unchanged.
