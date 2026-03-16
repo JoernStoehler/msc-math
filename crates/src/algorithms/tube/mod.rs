@@ -25,7 +25,7 @@ mod capacity_test;
 use crate::geom::polytope::Polytope4D;
 use crate::geom::skeleton::Skeleton;
 use crate::geom::symplectic_form::omega0;
-use nalgebra::{Matrix2, Vector2, Vector4};
+use nalgebra::{Vector2, Vector4};
 
 // ── Error types ──
 
@@ -97,8 +97,6 @@ pub struct TubeResult {
 ///
 /// [alg:tube] precomputation step.
 struct TubePrecomputation {
-    /// Number of facets.
-    facet_count: usize,
     /// Directed adjacency: `directed_edges[i]` = list of facet indices j such
     /// that F_i -> F_j is a directed 2-face (omega_0(n_i, n_j) > 0 and F_i, F_j
     /// share a 2-face).
@@ -107,8 +105,6 @@ struct TubePrecomputation {
     /// Indexed as `ridge_vertices[(i, j)]` for directed edges i -> j.
     /// Stored as Vec<Vector4<f64>> with vertices in convex polygon order.
     ridge_vertices: Vec<Vec<Vec<Vector4<f64>>>>,
-    /// Reeb direction J_0 n_i for each facet i.
-    reeb_dirs: Vec<Vector4<f64>>,
     /// Full Reeb vector R_i = (2/h_i) J_0 n_i for each facet i.
     reeb_vectors: Vec<Vector4<f64>>,
     /// Normal vectors n_i.
@@ -256,13 +252,10 @@ fn precompute(polytope: &Polytope4D, skeleton: &Skeleton) -> Result<TubePrecompu
     let normals: Vec<Vector4<f64>> = (0..f).map(|i| polytope.normal_f64(i)).collect();
     let heights: Vec<f64> = (0..f).map(|i| polytope.height_f64(i)).collect();
 
-    let reeb_dirs: Vec<Vector4<f64>> = normals
+    let reeb_vectors: Vec<Vector4<f64>> = normals
         .iter()
-        .map(|n| crate::geom::reeb_trajectory::reeb_direction(n))
-        .collect();
-
-    let reeb_vectors: Vec<Vector4<f64>> = (0..f)
-        .map(|i| reeb_dirs[i] * (2.0 / heights[i]))
+        .zip(heights.iter())
+        .map(|(n, h)| crate::geom::reeb_trajectory::reeb_direction(n) * (2.0 / h))
         .collect();
 
     // Build directed edge lists and ridge vertices from the skeleton.
@@ -305,10 +298,8 @@ fn precompute(polytope: &Polytope4D, skeleton: &Skeleton) -> Result<TubePrecompu
     }
 
     Ok(TubePrecomputation {
-        facet_count: f,
         directed_edges,
         ridge_vertices,
-        reeb_dirs,
         reeb_vectors,
         normals,
         heights,
@@ -349,9 +340,6 @@ fn compute_rotation_increment(
 
     let r_j = Vector4::new(-n_j[2], -n_j[3], n_j[0], n_j[1]) * (2.0 / h_j);
     let r_l = Vector4::new(-n_l[2], -n_l[3], n_l[0], n_l[1]) * (2.0 / h_l);
-
-    // Compute omega_0(n_j, n_l) and the norms.
-    let omega_jl = omega0(n_j, n_l);
 
     // The transition matrix in the symplectic frame has trace:
     //   tr(psi) = 2 - (omega_0(n_j, n_l)^2) / (|n_j| |n_l| h_j h_l * omega_0(n_j/h_j, n_l/h_l))
@@ -509,7 +497,7 @@ fn extend_tube(
     precomp: &TubePrecomputation,
     tube: &TubeData,
     l: usize,
-    sigma_k_minus_1: usize,
+    _sigma_k_minus_1: usize,
     sigma_k: usize,
     edge_idx: usize,
 ) -> Option<TubeData> {
@@ -682,7 +670,7 @@ fn extend_tube(
     let (new_action_gradient, new_action_constant) = if new_end.len() >= 2 {
         fit_affine_function(&new_end, &action_values)
     } else {
-        (Vector4::zeros(), action_values.get(0).copied().unwrap_or(0.0))
+        (Vector4::zeros(), action_values.first().copied().unwrap_or(0.0))
     };
 
     // Update Start' = phi'^{-1}(End').
@@ -798,7 +786,7 @@ fn solve_fixed_point(
     // Set up a 2D parameterization: x = v0 + s * e1 + t * e2.
     let v0 = polygon_verts[0];
     let e1 = polygon_verts[1] - v0;
-    let e2 = find_second_basis_vector(&polygon_verts, &v0, &e1)?;
+    let e2 = find_second_basis_vector(polygon_verts, &v0, &e1)?;
 
     // Substitute into (A-I)(v0 + s*e1 + t*e2) = rhs:
     //   (A-I)*v0 + s*(A-I)*e1 + t*(A-I)*e2 = rhs
@@ -893,7 +881,7 @@ fn point_in_polygon_4d(x: &Vector4<f64>, verts: &[Vector4<f64>]) -> bool {
     };
 
     let x_2d = project(x);
-    let verts_2d: Vec<Vector2<f64>> = verts.iter().map(|v| project(v)).collect();
+    let verts_2d: Vec<Vector2<f64>> = verts.iter().map(project).collect();
 
     // Winding number test.
     point_in_convex_polygon_2d(&x_2d, &verts_2d)
@@ -966,7 +954,6 @@ fn compute_action_at_point(
     // Simpler approach: compute time for each step from the known endpoint.
     // Work backward from endpoint through the step maps.
 
-    let k = sequence.len();
     let mut total_time = 0.0;
     let mut current_point = *endpoint;
 
@@ -996,7 +983,6 @@ fn compute_action_at_point(
     for step in (2..full_seq.len()).rev() {
         let sigma_prev = full_seq[step - 2];
         let sigma_curr = full_seq[step - 1];
-        let sigma_next = full_seq[step];
 
         let r_curr = &precomp.reeb_vectors[sigma_curr];
         let n_prev = &precomp.normals[sigma_prev];
@@ -1059,13 +1045,13 @@ fn clip_polygon_to_convex_hull(
         centroid + d1 * p.x + d2 * p.y
     };
 
-    let subject_2d: Vec<Vector2<f64>> = subject.iter().map(|v| project(v)).collect();
-    let clip_2d: Vec<Vector2<f64>> = clip.iter().map(|v| project(v)).collect();
+    let subject_2d: Vec<Vector2<f64>> = subject.iter().map(&project).collect();
+    let clip_2d: Vec<Vector2<f64>> = clip.iter().map(project).collect();
 
     // Sutherland-Hodgman clipping.
     let clipped_2d = sutherland_hodgman(&subject_2d, &clip_2d);
 
-    clipped_2d.iter().map(|p| unproject(p)).collect()
+    clipped_2d.iter().map(unproject).collect()
 }
 
 /// Sutherland-Hodgman polygon clipping in 2D.
@@ -1081,7 +1067,7 @@ fn sutherland_hodgman(subject: &[Vector2<f64>], clip: &[Vector2<f64>]) -> Vec<Ve
         let edge_start = clip[i];
         let edge_end = clip[(i + 1) % n];
 
-        let mut input = output;
+        let input = output;
         output = Vec::new();
 
         let m = input.len();

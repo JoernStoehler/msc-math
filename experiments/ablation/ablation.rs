@@ -524,12 +524,14 @@ fn ehz_capacity_unpruned_with(
     let certified = best_certified?;
     let uncertain_cap = best_uncertain.map_or(certified.0, |b| b.0);
     Some(EhzResult {
-        capacity: certified.0,
-        capacity_uncertain: uncertain_cap,
+        result: symplectic::algorithms::capacity_accumulator::CapacityResult {
+            capacity: certified.0,
+            capacity_uncertain: uncertain_cap,
+            best_permutation: certified.2,
+            best_beta: certified.3,
+            iterations,
+        },
         best_subset: certified.1,
-        best_permutation: certified.2,
-        best_beta: certified.3,
-        iterations,
     })
 }
 
