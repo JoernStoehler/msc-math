@@ -1,0 +1,56 @@
+//! Standard symplectic form and J_0 matrix for R^4.
+//!
+//! Provides the symplectic geometry primitives used throughout the crate:
+//! the standard symplectic matrix J_0, its 2D counterpart J_2, and the
+//! standard symplectic form omega_0(u, v) = <J_0 u, v>.
+//!
+//! Coordinate convention: (q_1, q_2, p_1, p_2), where q = position and p = momentum.
+//! This convention is used consistently throughout the crate.
+//!
+//! Mathematical correspondence: [def:symplectic-form], [def:J0]
+
+use nalgebra::{Matrix2, Matrix4, Vector4};
+
+/// The standard symplectic matrix J_2 in R^2: [[0, -1], [1, 0]].
+///
+/// Satisfies J_2^2 = -I_2.
+///
+/// Mathematical correspondence: [def:J0] (2D case)
+pub fn j2() -> Matrix2<f64> {
+    Matrix2::new(0.0, -1.0, 1.0, 0.0)
+}
+
+/// The standard symplectic matrix J_0 in R^4 (coordinates q_1, q_2, p_1, p_2).
+///
+/// Block form: J_0 = [[0, -I_2], [I_2, 0]], satisfying J_0^2 = -I_4.
+/// The symplectic form is omega_0(u, v) = <J_0 u, v>.
+///
+/// Mathematical correspondence: [def:J0]
+pub fn j4() -> Matrix4<f64> {
+    #[rustfmt::skip]
+    let m = Matrix4::new(
+         0.0,  0.0, -1.0,  0.0,
+         0.0,  0.0,  0.0, -1.0,
+         1.0,  0.0,  0.0,  0.0,
+         0.0,  1.0,  0.0,  0.0,
+    );
+    m
+}
+
+/// Standard symplectic form: omega_0(u, v) = <J_0 u, v>.
+///
+/// In coordinates (q_1, q_2, p_1, p_2), this expands to:
+///   omega_0(u, v) = u_q1 * v_p1 - u_p1 * v_q1 + u_q2 * v_p2 - u_p2 * v_q2
+///
+/// Implements the coordinate expansion directly for performance (no matrix multiply).
+///
+/// # Properties
+///
+/// - **Antisymmetric**: omega_0(u, v) = -omega_0(v, u)
+/// - **Bilinear**: linear in each argument
+/// - **Non-degenerate**: if omega_0(u, v) = 0 for all v, then u = 0
+///
+/// Mathematical correspondence: [def:symplectic-form]
+pub fn omega0(u: &Vector4<f64>, v: &Vector4<f64>) -> f64 {
+    u[0] * v[2] - u[2] * v[0] + u[1] * v[3] - u[3] * v[1]
+}
