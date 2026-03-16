@@ -405,3 +405,27 @@ Experiment-specific code stays: custom solver variants, diagnostic instrumentati
 ## thesis/
 
 No structural changes. Experiment `.tex` writeups may need minor updates if experiment code/data changes during migration. Cross-references from code (`[lem:...]`) validated against thesis labels.
+
+---
+
+## Deviations from original spec (discovered during waves 1-2)
+
+### Visibility convention established
+
+`pub(super)` is too restrictive for utility functions used across modules (e.g. `omega0_rational` needed by both `geom/` and `kkt/`). Convention: **utility functions used cross-module → `pub(crate)`**. Only use `pub(super)` for helpers truly private to one module subtree.
+
+### Additional rename: `reeb_vector` → `reeb_direction`
+
+Not in the original spec. The function returns the direction J₀n_i, not the full Reeb vector field R_i = (2/h_i)J₀n_i. The rename is more accurate. Experiments updated.
+
+### `rational_solver` behavioral change
+
+Old `kkt_rational.rs` returned `Some(result)` with non-positive beta (callers filtered). New `kkt/rational_solver.rs` returns `None` if any beta ≤ 0. This makes the API contract cleaner but wave 3+ callers must handle `None` instead of post-filtering.
+
+### `constants.rs` has only one constant
+
+The original spec said "shared tolerance constants" (plural). Only `EPS_FACET_INCIDENCE` ended up here. Other tolerances (`EPS_BETA_POSITIVE`, `EPS_Q_POSITIVE`, `EPS_MARGIN_TRUE/FALSE`) live in their respective solver modules. This is fine — constants live near their users.
+
+### `CapacityAccumulator::submit` takes `&Solution` not `&KktResult`
+
+The spec showed `submit(&mut self, perm: &[usize], result: &KktResult)`. The implementation uses `&Solution` (the new type from `kkt/mod.rs`). `KktResult` doesn't exist in the new codebase — it was the old type name. Wave 3 subagents (#6, #7) should use `Solution`.

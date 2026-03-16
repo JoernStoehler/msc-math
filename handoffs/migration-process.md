@@ -171,3 +171,38 @@ Review findings go back to the responsible subagent for fixes before the next wa
 4. **lib.rs / mod.rs:** Pre-written in the scaffold. No subagent edits these. #16 rewrites `lib.rs` with re-exports in wave 4.
 
 5. **Duplicate test names:** Subagents that split test files (#11, #12) must delete the old monolithic test file.
+
+---
+
+## Wave 1-2 execution log
+
+Deviations from the plan, discovered during execution. Subagents for waves 3+ should read this.
+
+### Agent scope limits
+
+**#8a stalled after writing polytope.rs (17KB).** 13 files was too much for one agent. Redispatched remaining 10 files as a separate agent. **Lesson for waves 3+: keep agents to ≤8 files.**
+
+### Behavioral changes discovered by review
+
+1. **`saddle_point_solver.rs:302-304` — constraint verification logic changed.** Old code (`augmented.rs`) used `||` (reject if EITHER residual exceeds threshold). New code uses `&&` (reject only if BOTH exceed). This is more permissive. **Status: needs fix before wave 3.**
+
+2. **`rational_solver.rs:78-81` — beta positivity check added.** Old code returned `Some(result)` even with non-positive beta components (caller filtered). New code returns `None` if any beta ≤ 0. This is a deliberate behavioral improvement but changes the API contract. **Status: document as intentional, verify callers handle None.**
+
+### Visibility fixes applied
+
+- `geom/rational_arithmetic.rs`: `omega0_rational` and `rational_to_f64` changed from `pub(super)` to `pub(crate)`. Needed for cross-module access from `kkt/rational_solver.rs`.
+- `kkt/rational_solver.rs` still has local copies of these functions (stale after the visibility fix). **Status: needs cleanup — delete local copies, import from `crate::geom::rational_arithmetic`.**
+
+### Experiment import updates (#14)
+
+- Updated 18 `.rs` files under `experiments/` to new module paths.
+- Added local function copies for `build_kkt_system` and `q_from_beta` in 2 experiments where signatures changed. These are interim — should be cleaned up after wave 4 when library APIs stabilize.
+- 4 binaries compile; 14 fail on unwritten wave 3+ modules (expected).
+
+### Additional rename: `reeb_vector` → `reeb_direction`
+
+Agent #9 renamed `reeb_vector()` to `reeb_direction()` — not in the original spec but a reasonable improvement (it returns a direction, not the full vector field R_i = (2/h_i)J₀n_i). Updated in experiments by #14.
+
+### Wave 3 concern: can #6 and #7 run in parallel?
+
+Billiard is conceptually hk2017 with custom enumeration. In the old code, billiard imports adjacency functions from hk2017 — but those are now in `facet_adjacency` (wave 1). The remaining question: does billiard need anything else from hk2017/mod.rs (e.g. permutation utilities)? If so, #7 depends on #6 and they can't be parallel. **To investigate before dispatching wave 3.**
