@@ -43,7 +43,14 @@ pub fn sample_random_polytope(
     let normals: Vec<Vector4<f64>> = (0..facet_count).map(|_| random_unit_s3(rng)).collect();
     let heights: Vec<f64> = (0..facet_count).map(|_| h_dist.sample(rng)).collect();
 
-    Polytope4D::new(normals, heights)
+    // Convert (normal, height) to dual vertex: aᵢ = nᵢ / hᵢ (so nᵢᵀx ≤ hᵢ becomes aᵢᵀx ≤ 1)
+    let halfspaces: Vec<Vector4<f64>> = normals
+        .iter()
+        .zip(heights.iter())
+        .map(|(n, &h)| n / h)
+        .collect();
+
+    Polytope4D::new(halfspaces)
 }
 
 /// Generate random polytopes via rejection sampling.

@@ -70,9 +70,15 @@ pub fn simplex() -> KnownPolytope {
         .zip(&heights_raw)
         .map(|(n, h)| h - n.dot(&centroid))
         .collect();
+    // Dual vertex representation: aᵢ = nᵢ / hᵢ
+    let halfspaces: Vec<Vector4<f64>> = normals_raw
+        .iter()
+        .zip(heights.iter())
+        .map(|(n, &h)| n / h)
+        .collect();
 
     KnownPolytope {
-        polytope: Polytope4D::new(normals_raw, heights).expect("simplex construction"),
+        polytope: Polytope4D::new(halfspaces).expect("simplex construction"),
         capacity: 0.25,
         name: "simplex",
         source: "Y. Nir thesis 2013",
@@ -84,7 +90,8 @@ pub fn simplex() -> KnownPolytope {
 /// Known capacity: 4.0.
 /// Source: HK2019 Ex 4.6, Rudolf 2022.
 pub fn hypercube() -> KnownPolytope {
-    let normals = vec![
+    // [-1,1]^4: normals ±eᵢ, heights 1.0 → halfspaces aᵢ = nᵢ/hᵢ = ±eᵢ
+    let halfspaces = vec![
         Vector4::x(),
         -Vector4::x(),
         Vector4::y(),
@@ -94,10 +101,9 @@ pub fn hypercube() -> KnownPolytope {
         Vector4::w(),
         -Vector4::w(),
     ];
-    let heights = vec![1.0; 8];
 
     KnownPolytope {
-        polytope: Polytope4D::new(normals, heights).expect("hypercube construction"),
+        polytope: Polytope4D::new(halfspaces).expect("hypercube construction"),
         capacity: 4.0,
         name: "hypercube",
         source: "HK2019 Ex 4.6",
@@ -109,7 +115,8 @@ pub fn hypercube() -> KnownPolytope {
 /// Normals: all (±1, ±1, ±1, ±1)/2, heights 1.0.
 /// Capacity: 4.0 (computed by ehz_capacity; no literature value for cross-check).
 pub fn crosspolytope() -> KnownPolytope {
-    let normals: Vec<Vector4<f64>> = [-1.0_f64, 1.0]
+    // Normals (±1,±1,±1,±1)/2, heights 1.0 → halfspaces aᵢ = nᵢ/hᵢ = nᵢ
+    let halfspaces: Vec<Vector4<f64>> = [-1.0_f64, 1.0]
         .into_iter()
         .flat_map(|s0| {
             [-1.0_f64, 1.0].into_iter().flat_map(move |s1| {
@@ -121,10 +128,9 @@ pub fn crosspolytope() -> KnownPolytope {
             })
         })
         .collect();
-    let heights = vec![1.0; 16];
 
     KnownPolytope {
-        polytope: Polytope4D::new(normals, heights).expect("crosspolytope construction"),
+        polytope: Polytope4D::new(halfspaces).expect("crosspolytope construction"),
         capacity: 4.0, // computed by ehz_capacity; no literature value for cross-check
         name: "crosspolytope",
         source: "computed (no literature value)",
@@ -165,10 +171,16 @@ pub fn hko_pentagon() -> KnownPolytope {
         0.8090169943749475,
         0.8090169943749473,
     ];
+    // Dual vertex representation: aᵢ = nᵢ / hᵢ
+    let halfspaces: Vec<Vector4<f64>> = normals
+        .iter()
+        .zip(heights.iter())
+        .map(|(n, &h)| n / h)
+        .collect();
     let capacity = 2.0 * (PI / 10.0).cos() * (1.0 + (PI / 5.0).cos());
 
     KnownPolytope {
-        polytope: Polytope4D::new(normals, heights).expect("HK-O pentagon construction"),
+        polytope: Polytope4D::new(halfspaces).expect("HK-O pentagon construction"),
         capacity,
         name: "hko_pentagon",
         source: "HK-O 2024 Prop 1.4",
@@ -187,18 +199,19 @@ pub fn lagrangian_triangle_product() -> KnownPolytope {
         .collect();
 
     // Q-space triangle + P-space triangle (Lagrangian product)
-    let (normals, heights): (Vec<_>, Vec<_>) = triangle_angles
+    // Normals are unit, heights are 0.5 → halfspaces aᵢ = nᵢ / 0.5 = 2·nᵢ
+    let halfspaces: Vec<Vector4<f64>> = triangle_angles
         .iter()
-        .map(|a| (Vector4::new(a.cos(), a.sin(), 0.0, 0.0), 0.5))
+        .map(|a| Vector4::new(a.cos(), a.sin(), 0.0, 0.0) / 0.5)
         .chain(
             triangle_angles
                 .iter()
-                .map(|a| (Vector4::new(0.0, 0.0, a.cos(), a.sin()), 0.5)),
+                .map(|a| Vector4::new(0.0, 0.0, a.cos(), a.sin()) / 0.5),
         )
-        .unzip();
+        .collect();
 
     KnownPolytope {
-        polytope: Polytope4D::new(normals, heights)
+        polytope: Polytope4D::new(halfspaces)
             .expect("lagrangian triangle product construction"),
         capacity: 1.5,
         name: "lagrangian_triangle_product",
@@ -224,15 +237,16 @@ pub fn symplectic_triangle_product() -> KnownPolytope {
 
     // First triangle in (q₁, p₁) plane — normals (cos θ, 0, sin θ, 0)
     // Second triangle in (q₂, p₂) plane — normals (0, cos θ, 0, sin θ)
-    let (normals, heights): (Vec<_>, Vec<_>) = triangle_angles
+    // Heights are 0.5 → halfspaces aᵢ = nᵢ / 0.5 = 2·nᵢ
+    let halfspaces: Vec<Vector4<f64>> = triangle_angles
         .iter()
-        .map(|a| (Vector4::new(a.cos(), 0.0, a.sin(), 0.0), 0.5))
+        .map(|a| Vector4::new(a.cos(), 0.0, a.sin(), 0.0) / 0.5)
         .chain(
             triangle_angles
                 .iter()
-                .map(|a| (Vector4::new(0.0, a.cos(), 0.0, a.sin()), 0.5)),
+                .map(|a| Vector4::new(0.0, a.cos(), 0.0, a.sin()) / 0.5),
         )
-        .unzip();
+        .collect();
 
     // Symplectic product formula: c(A ×_S B) = min(c(A), c(B))
     // area(equilateral triangle, inradius 0.5) = 3√3/4
@@ -240,7 +254,7 @@ pub fn symplectic_triangle_product() -> KnownPolytope {
     let capacity = area_tri; // min(area, area) = area
 
     KnownPolytope {
-        polytope: Polytope4D::new(normals, heights)
+        polytope: Polytope4D::new(halfspaces)
             .expect("symplectic triangle product construction"),
         capacity,
         name: "symplectic_triangle_product",
@@ -264,23 +278,23 @@ pub fn symplectic_triangle_product() -> KnownPolytope {
 /// Source: HK2017 algorithm + billiard verification (see experiments/triangle_square.md).
 pub fn lagrangian_triangle_square() -> KnownPolytope {
     // Equilateral triangle in q-space (circumradius 1, inradius 0.5)
-    let triangle_normals = (0..3).map(|k| {
+    // Square [-0.5, 0.5]^2 in p-space (4 facets)
+    // All heights are 0.5 → halfspaces aᵢ = nᵢ / 0.5 = 2·nᵢ
+    let triangle_halfspaces = (0..3).map(|k| {
         let angle = PI / 2.0 + 2.0 * PI * (k as f64) / 3.0;
-        Vector4::new(angle.cos(), angle.sin(), 0.0, 0.0)
+        Vector4::new(angle.cos(), angle.sin(), 0.0, 0.0) / 0.5
     });
 
-    // Square [-0.5, 0.5]^2 in p-space (4 facets)
-    let square_normals = [
-        Vector4::new(0.0, 0.0, 1.0, 0.0),
-        Vector4::new(0.0, 0.0, -1.0, 0.0),
-        Vector4::new(0.0, 0.0, 0.0, 1.0),
-        Vector4::new(0.0, 0.0, 0.0, -1.0),
+    let square_halfspaces = [
+        Vector4::new(0.0, 0.0, 1.0, 0.0) / 0.5,
+        Vector4::new(0.0, 0.0, -1.0, 0.0) / 0.5,
+        Vector4::new(0.0, 0.0, 0.0, 1.0) / 0.5,
+        Vector4::new(0.0, 0.0, 0.0, -1.0) / 0.5,
     ];
 
-    let (normals, heights): (Vec<_>, Vec<_>) = triangle_normals
-        .chain(square_normals)
-        .map(|n| (n, 0.5))
-        .unzip();
+    let halfspaces: Vec<Vector4<f64>> = triangle_halfspaces
+        .chain(square_halfspaces)
+        .collect();
 
     // For Lagrangian product of equilateral triangle (inradius 0.5) and square (side 1),
     // the optimal orbit uses all 3 triangle facets (Q(β) = 1/3) and 2 square facets (Q(β) = 1/2).
@@ -288,7 +302,7 @@ pub fn lagrangian_triangle_square() -> KnownPolytope {
     let capacity = 1.5;
 
     KnownPolytope {
-        polytope: Polytope4D::new(normals, heights)
+        polytope: Polytope4D::new(halfspaces)
             .expect("Lagrangian triangle×square construction"),
         capacity,
         name: "lagrangian_tri_sq",
@@ -309,25 +323,23 @@ pub fn lagrangian_triangle_square() -> KnownPolytope {
 /// Computed via investigation in experiments/triangle_square.md.
 pub fn symplectic_triangle_square() -> KnownPolytope {
     // Equilateral triangle in (q₁, p₁) plane (circumradius 1, inradius 0.5)
-    // In 4D: normals = (cos θ, 0, sin θ, 0) for θ = π/2 + 2πk/3
-    let triangle_normals = (0..3).map(|k| {
+    // Square [-0.5, 0.5]^2 in (q₂, p₂) plane (4 facets)
+    // All heights are 0.5 → halfspaces aᵢ = nᵢ / 0.5 = 2·nᵢ
+    let triangle_halfspaces = (0..3).map(|k| {
         let angle = PI / 2.0 + 2.0 * PI * (k as f64) / 3.0;
-        Vector4::new(angle.cos(), 0.0, angle.sin(), 0.0)
+        Vector4::new(angle.cos(), 0.0, angle.sin(), 0.0) / 0.5
     });
 
-    // Square [-0.5, 0.5]^2 in (q₂, p₂) plane (4 facets)
-    // In 4D: normals are (0, ±1, 0, 0) and (0, 0, 0, ±1)
-    let square_normals = [
-        Vector4::new(0.0, 1.0, 0.0, 0.0),
-        Vector4::new(0.0, -1.0, 0.0, 0.0),
-        Vector4::new(0.0, 0.0, 0.0, 1.0),
-        Vector4::new(0.0, 0.0, 0.0, -1.0),
+    let square_halfspaces = [
+        Vector4::new(0.0, 1.0, 0.0, 0.0) / 0.5,
+        Vector4::new(0.0, -1.0, 0.0, 0.0) / 0.5,
+        Vector4::new(0.0, 0.0, 0.0, 1.0) / 0.5,
+        Vector4::new(0.0, 0.0, 0.0, -1.0) / 0.5,
     ];
 
-    let (normals, heights): (Vec<_>, Vec<_>) = triangle_normals
-        .chain(square_normals)
-        .map(|n| (n, 0.5))
-        .unzip();
+    let halfspaces: Vec<Vector4<f64>> = triangle_halfspaces
+        .chain(square_halfspaces)
+        .collect();
 
     // Symplectic product formula: c(A ×_S B) = min(c(A), c(B))
     // area(triangle) = 3√3/4 ≈ 1.299, area(square) = 1.0
@@ -336,7 +348,7 @@ pub fn symplectic_triangle_square() -> KnownPolytope {
     let capacity = area_tri.min(area_sq);
 
     KnownPolytope {
-        polytope: Polytope4D::new(normals, heights)
+        polytope: Polytope4D::new(halfspaces)
             .expect("symplectic triangle×square construction"),
         capacity,
         name: "symplectic_tri_sq",

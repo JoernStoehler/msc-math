@@ -338,8 +338,8 @@ fn reject_nonpositive_height() {
     let heights = vec![rat(1), rat(0), rat(1), rat(1), rat(1)];
     let err = Polytope4D::from_rationals(normals, heights).unwrap_err();
     assert!(
-        matches!(err, ConstructionError::NonPositiveHeight { index: 1, .. }),
-        "expected NonPositiveHeight at index 1, got {err}"
+        matches!(err, ConstructionError::ZeroDualVertex(1)),
+        "expected ZeroDualVertex(1), got {err}"
     );
 }
 

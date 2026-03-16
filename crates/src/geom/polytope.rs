@@ -1,18 +1,14 @@
-/// Convex polytope K ⊂ R^4 via dual representation.
+/// Convex polytope K ⊂ R⁴ via dual representation.
 ///
-/// See `[def:polytope]` (thesis): a polytope is a bounded convex subset K ⊂ R^4
-/// containing the origin in its interior, defined as an intersection of half-spaces.
+/// K = { x ∈ R⁴ | aᵢᵀ x ≤ 1 for all i = 1, ..., F }
 ///
-/// Internally uses the dual representation:
-/// K = { x ∈ R^4 | y_i · x ≤ 1 for all i = 1, ..., F }
-///
-/// where y_i = n_i / h_i ∈ R^4 are the vertices of the polar body K°.
+/// where aᵢ ∈ R⁴\{0} are the vertices of the polar body K°.
 ///
 /// # Invariants (enforced by constructor)
 ///
 /// - F ≥ 5 (minimum facets for a bounded 4D polytope)
-/// - All dual vertices y_i are nonzero
-/// - **Bounded**: dual vertices positively span R^4
+/// - All dual vertices aᵢ are nonzero
+/// - **Bounded**: dual vertices positively span R⁴
 /// - **Irredundant**: every facet has incident vertices of affine rank 3
 /// - Vertices, incidence, adjacency, and ω₀ signs are precomputed exactly over Q
 ///
@@ -20,32 +16,18 @@
 ///
 /// Exact rational data (dual_vertices, vertices, incidence, adjacency, omega_signs)
 /// is the source of truth for all discrete/combinatorial decisions.
-/// The f64 data (normals_f64, heights_f64, vertices_f64) is derived for
-/// numerical algorithms like the KKT solver.
+/// The f64 data (dual_vertices_f64, vertices_f64) is for numerical algorithms.
 use nalgebra::{DMatrix, Vector4};
 use num_rational::BigRational;
 use std::collections::BTreeSet;
 
-/// Tolerance for unit-normal check: |(‖n‖ - 1)| < EPS_UNIT.
-///
-/// **Why 1e-9:** nalgebra's `normalize()` achieves ~1e-15 relative error on f64.
-/// The 1e-9 threshold is conservative (6 orders above typical error), catching
-/// genuinely un-normalized inputs while allowing standard numerical noise.
-const EPS_UNIT: f64 = 1e-9;
-
-/// Tolerance for duplicate-normal detection: ‖n_i - n_j‖ < EPS_DUPLICATE_NORMAL.
-///
-/// **Why 1e-8:** Slightly looser than EPS_UNIT (1e-9) because two normals from
-/// different constructions may accumulate rounding independently.
-/// Tight enough to catch copy-paste duplicates (~0 difference), loose enough to
-/// allow normals from independent trigonometric computations differing by O(1e-10).
-/// Re-validate if EPS_UNIT changes or construction methods change.
-const EPS_DUPLICATE_NORMAL: f64 = 1e-8;
+/// Tolerance for duplicate-halfspace detection: ‖aᵢ - aⱼ‖ / max(‖aᵢ‖, ‖aⱼ‖) < threshold.
+const EPS_DUPLICATE_RELATIVE: f64 = 1e-8;
 
 #[derive(Clone, Debug)]
 pub struct Polytope4D {
-    /// Vertices of the polar body K°: y_i = n_i / h_i ∈ R^4.
-    /// The halfspace representation is y_i · x ≤ 1.
+    /// Vertices of the polar body K°: aᵢ ∈ R⁴\{0}.
+    /// Halfspace i is aᵢᵀ x ≤ 1.
     dual_vertices: Vec<[BigRational; 4]>,
 
     /// Vertices of K, computed exactly over Q.
@@ -60,14 +42,11 @@ pub struct Polytope4D {
     adjacency: DMatrix<bool>,
 
     /// Symplectic sign matrix ω ∈ {-1,0,+1}^{F×F}, antisymmetric.
-    /// ω[i,k] = sign(ω₀(y_i, y_k)). Zero only for non-generic polytopes.
+    /// ω[i,k] = sign(ω₀(aᵢ, aₖ)). Zero only for non-generic polytopes.
     omega_signs: DMatrix<i8>,
 
-    /// Outward unit normals n̂_i = y_i / |y_i|.
-    normals_f64: Vec<Vector4<f64>>,
-
-    /// Heights ĥ_i = 1 / |y_i| > 0.
-    heights_f64: Vec<f64>,
+    /// Dual vertices as f64. The native numerical representation.
+    dual_vertices_f64: Vec<Vector4<f64>>,
 
     /// Vertices of K rounded to f64.
     vertices_f64: Vec<Vector4<f64>>,
@@ -76,46 +55,28 @@ pub struct Polytope4D {
 /// Errors from [`Polytope4D`] construction when invariants are violated.
 #[derive(Clone, Debug, PartialEq)]
 pub enum ConstructionError {
-    LengthMismatch { normals: usize, heights: usize },
     TooFewFacets(usize),
-    NonUnitNormal { index: usize, norm: f64 },
-    NonPositiveHeight { index: usize, value: f64 },
+    ZeroDualVertex(usize),
     DuplicateHalfspaces { i: usize, j: usize },
     Unbounded,
-    /// A dual vertex y_i = n_i / h_i is the zero vector.
-    ZeroDualVertex(usize),
-    /// No vertices found — the halfspaces are inconsistent.
     NoVertices,
     /// Facet is redundant: no incident vertices, or incident vertices
     /// have affine rank < 3 (don't span the facet hyperplane).
     RedundantFacet(usize),
-    /// Conversion from exact rational to f64 failed.
     F64Conversion(String),
-    /// Perturbation failed to break all ω₀ = 0 degeneracies.
     PerturbationFailed,
 }
 
 impl std::fmt::Display for ConstructionError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::LengthMismatch { normals, heights } => {
-                write!(f, "length mismatch: {normals} normals vs {heights} heights")
-            }
             Self::TooFewFacets(n) => write!(f, "need ≥5 facets, got {n}"),
-            Self::NonUnitNormal { index, norm } => {
-                write!(f, "normal[{index}] has norm {norm}, expected 1.0")
-            }
-            Self::NonPositiveHeight { index, value } => {
-                write!(f, "height[{index}] = {value}, expected > 0")
-            }
+            Self::ZeroDualVertex(i) => write!(f, "dual vertex[{i}] is the zero vector"),
             Self::DuplicateHalfspaces { i, j } => {
-                write!(f, "normals[{i}] and normals[{j}] are duplicates")
+                write!(f, "halfspaces[{i}] and [{j}] are duplicates")
             }
             Self::Unbounded => {
-                write!(f, "polytope is unbounded (dual vertices do not positively span R^4)")
-            }
-            Self::ZeroDualVertex(i) => {
-                write!(f, "dual vertex[{i}] is the zero vector")
+                write!(f, "polytope is unbounded (dual vertices do not positively span R⁴)")
             }
             Self::NoVertices => write!(f, "no vertices found (inconsistent halfspaces)"),
             Self::RedundantFacet(i) => write!(f, "facet {i} is redundant"),
@@ -129,58 +90,79 @@ impl std::fmt::Display for ConstructionError {
 
 
 impl Polytope4D {
-    /// Construct a polytope from f64 outward unit normals and positive heights.
+    /// Construct from exact rational dual vertices aᵢ ∈ R⁴\{0}.
     ///
-    /// Validates f64 inputs, converts to exact rational dual vertices
-    /// y_i = n_i / h_i, then runs the rational pipeline to compute
-    /// vertices, incidence, adjacency, and ω₀ signs.
-    ///
-    /// The original f64 normals and heights are kept directly — no round-trip
-    /// through rational conversion.
-    pub fn new(
-        normals: Vec<Vector4<f64>>,
-        heights: Vec<f64>,
+    /// Each dual vertex defines a halfspace aᵢᵀ x ≤ 1.
+    /// This is the primary constructor — all other constructors convert to
+    /// rational dual vertices and call this.
+    pub fn from_dual_vertices(
+        dual_vertices: Vec<[BigRational; 4]>,
     ) -> Result<Self, ConstructionError> {
-        // ── f64 pre-validation ──
-        if normals.len() != heights.len() {
-            return Err(ConstructionError::LengthMismatch {
-                normals: normals.len(),
-                heights: heights.len(),
-            });
+        let (vertices, vertex_descriptors) =
+            super::vertex_enumeration::construct_rational_pipeline(&dual_vertices)?;
+
+        let dual_vertices_f64 = dual_vertices
+            .iter()
+            .enumerate()
+            .map(|(i, y)| {
+                let v = rational_array_to_f64(y);
+                if v.norm() < 1e-15 {
+                    Err(ConstructionError::F64Conversion(format!(
+                        "dual vertex[{i}] has near-zero f64 norm: {}", v.norm()
+                    )))
+                } else {
+                    Ok(v)
+                }
+            })
+            .collect::<Result<Vec<_>, _>>()?;
+
+        let vertices_f64 = rational_verts_to_f64(&vertices);
+
+        Ok(Self::assemble(
+            dual_vertices,
+            vertices,
+            &vertex_descriptors,
+            dual_vertices_f64,
+            vertices_f64,
+        ))
+    }
+
+    /// Construct from f64 dual vertices (halfspaces aᵢᵀ x ≤ 1).
+    ///
+    /// Converts to exact rationals via f64_to_rational, then runs the
+    /// rational pipeline. The f64 inputs are kept directly (no round-trip).
+    pub fn new(halfspaces: Vec<Vector4<f64>>) -> Result<Self, ConstructionError> {
+        if halfspaces.len() < 5 {
+            return Err(ConstructionError::TooFewFacets(halfspaces.len()));
         }
-        if normals.len() < 5 {
-            return Err(ConstructionError::TooFewFacets(normals.len()));
-        }
-        for (i, n) in normals.iter().enumerate() {
-            let norm = n.norm();
-            if (norm - 1.0).abs() > EPS_UNIT {
-                return Err(ConstructionError::NonUnitNormal { index: i, norm });
+
+        // Validate: nonzero, no duplicates
+        for (i, a) in halfspaces.iter().enumerate() {
+            if a.norm() < 1e-15 {
+                return Err(ConstructionError::ZeroDualVertex(i));
             }
         }
-        for (i, &h) in heights.iter().enumerate() {
-            if h <= 0.0 || !h.is_finite() {
-                return Err(ConstructionError::NonPositiveHeight { index: i, value: h });
-            }
-        }
-        let f = normals.len();
+        let f = halfspaces.len();
         for i in 0..f {
             for j in (i + 1)..f {
-                if (normals[i] - normals[j]).norm() < EPS_DUPLICATE_NORMAL {
+                let max_norm = halfspaces[i].norm().max(halfspaces[j].norm());
+                if (halfspaces[i] - halfspaces[j]).norm() < EPS_DUPLICATE_RELATIVE * max_norm {
                     return Err(ConstructionError::DuplicateHalfspaces { i, j });
                 }
             }
         }
-        if !crate::geom::validation::check_bounded(&normals) {
+
+        // Check bounded (dual vertices positively span R⁴)
+        let unit_dirs: Vec<Vector4<f64>> = halfspaces.iter().map(|a| a.normalize()).collect();
+        if !crate::geom::validation::check_bounded(&unit_dirs) {
             return Err(ConstructionError::Unbounded);
         }
 
-        // ── Convert to rational dual vertices: y_i = n_i / h_i ──
-        let dual_vertices: Vec<[BigRational; 4]> = normals
+        // Convert to rational
+        let dual_vertices: Vec<[BigRational; 4]> = halfspaces
             .iter()
-            .zip(heights.iter())
-            .map(|(n, &h)| {
-                let rh = super::rational::f64_to_rational(h);
-                std::array::from_fn(|c| super::rational::f64_to_rational(n[c]) / &rh)
+            .map(|a| {
+                std::array::from_fn(|c| super::rational::f64_to_rational(a[c]))
             })
             .collect();
 
@@ -188,25 +170,40 @@ impl Polytope4D {
         let (vertices, vertex_descriptors) =
             super::vertex_enumeration::construct_rational_pipeline(&dual_vertices)?;
 
-        // f64 vertices from exact rational coordinates
         let vertices_f64 = rational_verts_to_f64(&vertices);
 
-        // Keep original f64 normals and heights — no round-trip
+        // Keep original f64 dual vertices (no round-trip through rational)
         Ok(Self::assemble(
             dual_vertices,
             vertices,
             &vertex_descriptors,
-            normals,
-            heights,
+            halfspaces,
             vertices_f64,
         ))
     }
 
-    /// Construct a polytope from exact rational normals and heights.
+    /// Construct from f64 normals and heights (legacy interface).
     ///
-    /// The normals need not be unit vectors — they are arbitrary nonzero rational
-    /// directions. Heights must be strictly positive. Internally computes
-    /// dual vertices y_i = n_i / h_i.
+    /// Computes dual vertices aᵢ = nᵢ / hᵢ, then delegates to `new()`.
+    /// Normals need not be unit vectors.
+    pub fn from_normals_and_heights(
+        normals: Vec<Vector4<f64>>,
+        heights: Vec<f64>,
+    ) -> Result<Self, ConstructionError> {
+        if normals.len() != heights.len() {
+            return Err(ConstructionError::TooFewFacets(0)); // TODO: better error
+        }
+        let halfspaces: Vec<Vector4<f64>> = normals
+            .iter()
+            .zip(heights.iter())
+            .map(|(n, &h)| n / h)
+            .collect();
+        Self::new(halfspaces)
+    }
+
+    /// Construct from exact rational normals and heights.
+    ///
+    /// Computes dual vertices aᵢ = nᵢ / hᵢ.
     pub fn from_rationals(
         normals: Vec<[BigRational; 4]>,
         heights: Vec<BigRational>,
@@ -214,17 +211,11 @@ impl Polytope4D {
         use num_traits::Signed;
 
         if normals.len() != heights.len() {
-            return Err(ConstructionError::LengthMismatch {
-                normals: normals.len(),
-                heights: heights.len(),
-            });
+            return Err(ConstructionError::TooFewFacets(0)); // TODO: better error
         }
         for (i, h) in heights.iter().enumerate() {
             if !h.is_positive() {
-                return Err(ConstructionError::NonPositiveHeight {
-                    index: i,
-                    value: super::rational::rational_to_f64(h),
-                });
+                return Err(ConstructionError::ZeroDualVertex(i));
             }
         }
 
@@ -237,56 +228,9 @@ impl Polytope4D {
         Self::from_dual_vertices(dual_vertices)
     }
 
-    /// Construct a polytope from exact rational dual vertices y_i ∈ K°.
+    /// Round f64 normals/heights to rational, then construct.
     ///
-    /// Each dual vertex defines a halfspace y_i · x ≤ 1.
-    /// f64 normals and heights are derived: n̂_i = y_i/‖y_i‖, ĥ_i = 1/‖y_i‖.
-    pub fn from_dual_vertices(
-        dual_vertices: Vec<[BigRational; 4]>,
-    ) -> Result<Self, ConstructionError> {
-        let (vertices, vertex_descriptors) =
-            super::vertex_enumeration::construct_rational_pipeline(&dual_vertices)?;
-
-        // Derive f64 normals and heights from dual vertices
-        let mut normals_f64 = Vec::with_capacity(dual_vertices.len());
-        let mut heights_f64 = Vec::with_capacity(dual_vertices.len());
-        for (i, y) in dual_vertices.iter().enumerate() {
-            let y_f64 = Vector4::new(
-                super::rational::rational_to_f64(&y[0]),
-                super::rational::rational_to_f64(&y[1]),
-                super::rational::rational_to_f64(&y[2]),
-                super::rational::rational_to_f64(&y[3]),
-            );
-            let norm = y_f64.norm();
-            // Rational norm is nonzero (ZeroDualVertex checked earlier in pipeline),
-            // but f64 may underflow for astronomically small rational vectors.
-            // 1e-15 ≈ 4500× machine epsilon; catches practical underflow.
-            if norm < 1e-15 {
-                return Err(ConstructionError::F64Conversion(format!(
-                    "dual vertex[{i}] has near-zero f64 norm: {norm}"
-                )));
-            }
-            normals_f64.push(y_f64 / norm);
-            heights_f64.push(1.0 / norm);
-        }
-
-        let vertices_f64 = rational_verts_to_f64(&vertices);
-
-        Ok(Self::assemble(
-            dual_vertices,
-            vertices,
-            &vertex_descriptors,
-            normals_f64,
-            heights_f64,
-            vertices_f64,
-        ))
-    }
-
-    /// Round f64 normals/heights to rational with the given denominator,
-    /// then construct.
-    ///
-    /// Each coordinate x is mapped to round(x × D) / D. Lossy:
-    /// ~3 decimal digits for D = 1000.
+    /// Each coordinate x is mapped to round(x × D) / D.
     ///
     /// # Panics
     ///
@@ -327,8 +271,7 @@ impl Polytope4D {
     /// Perturb dual vertices to break ω₀ = 0 degeneracies.
     ///
     /// Returns a new `Polytope4D` whose dual vertices are randomly perturbed
-    /// by magnitude ~2^{-perturbation_bits}. The perturbed polytope is
-    /// re-enumerated from scratch.
+    /// by magnitude ~2^{-perturbation_bits}.
     ///
     /// Post-condition: all adjacent pairs have ω₀ ≠ 0.
     pub fn perturbed(
@@ -348,7 +291,7 @@ impl Polytope4D {
 
         let result = Self::from_dual_vertices(perturbed)?;
 
-        // Verify post-condition: no adjacent pair has ω₀ = 0
+        // Verify post-condition
         let f = result.facet_count();
         for i in 0..f {
             for k in (i + 1)..f {
@@ -361,32 +304,25 @@ impl Polytope4D {
         Ok(result)
     }
 
-    /// Assemble a Polytope4D from pre-computed components.
-    ///
-    /// Builds the incidence, adjacency, and omega_signs matrices from
-    /// the rational data and packages everything with the provided f64 data.
+    /// Assemble from pre-computed components.
     fn assemble(
         dual_vertices: Vec<[BigRational; 4]>,
         vertices: Vec<[BigRational; 4]>,
         vertex_descriptors: &[BTreeSet<usize>],
-        normals_f64: Vec<Vector4<f64>>,
-        heights_f64: Vec<f64>,
+        dual_vertices_f64: Vec<Vector4<f64>>,
         vertices_f64: Vec<Vector4<f64>>,
     ) -> Self {
         let v_count = vertices.len();
         let f_count = dual_vertices.len();
 
-        // Build incidence matrix V×F
         let incidence = DMatrix::from_fn(v_count, f_count, |v, f| {
             vertex_descriptors[v].contains(&f)
         });
 
-        // Build adjacency matrix F×F
         let adjacency = DMatrix::from_fn(f_count, f_count, |i, k| {
             i != k && (0..v_count).any(|v| incidence[(v, i)] && incidence[(v, k)])
         });
 
-        // Build omega signs matrix F×F (antisymmetric)
         let omega_signs = DMatrix::from_fn(f_count, f_count, |i, k| {
             if i == k {
                 return 0i8;
@@ -406,15 +342,14 @@ impl Polytope4D {
             incidence,
             adjacency,
             omega_signs,
-            normals_f64,
-            heights_f64,
+            dual_vertices_f64,
             vertices_f64,
         }
     }
 
     // ── Exact rational accessors ──
 
-    /// Dual vertices y_i = n_i / h_i, vertices of the polar body K°.
+    /// Dual vertices aᵢ, vertices of the polar body K°.
     pub fn dual_vertices(&self) -> &[[BigRational; 4]] {
         &self.dual_vertices
     }
@@ -441,14 +376,10 @@ impl Polytope4D {
 
     // ── f64 accessors ──
 
-    /// Outward unit normals n̂_i = y_i / |y_i| ∈ S³.
-    pub fn normals_f64(&self) -> &[Vector4<f64>] {
-        &self.normals_f64
-    }
-
-    /// Positive heights ĥ_i = 1 / |y_i| > 0.
-    pub fn heights_f64(&self) -> &[f64] {
-        &self.heights_f64
+    /// Dual vertices aᵢ as f64 vectors. Native numerical representation.
+    /// Halfspace i is aᵢᵀ x ≤ 1.
+    pub fn dual_vertices_f64(&self) -> &[Vector4<f64>] {
+        &self.dual_vertices_f64
     }
 
     /// Vertices of K rounded to f64.
@@ -460,21 +391,45 @@ impl Polytope4D {
     pub fn facet_count(&self) -> usize {
         self.dual_vertices.len()
     }
+
+    // ── Derived quantities (computed on the fly) ──
+
+    /// Unit normal n̂ᵢ = aᵢ / |aᵢ| for facet i.
+    /// Computed from dual_vertices_f64 — not stored.
+    pub fn normal_f64(&self, i: usize) -> Vector4<f64> {
+        self.dual_vertices_f64[i].normalize()
+    }
+
+    /// Height hᵢ = 1 / |aᵢ| for facet i.
+    /// Computed from dual_vertices_f64 — not stored.
+    pub fn height_f64(&self, i: usize) -> f64 {
+        1.0 / self.dual_vertices_f64[i].norm()
+    }
+
+    /// All unit normals, computed on the fly. For migration convenience.
+    pub fn normals_f64(&self) -> Vec<Vector4<f64>> {
+        self.dual_vertices_f64.iter().map(|a| a.normalize()).collect()
+    }
+
+    /// All heights, computed on the fly. For migration convenience.
+    pub fn heights_f64(&self) -> Vec<f64> {
+        self.dual_vertices_f64.iter().map(|a| 1.0 / a.norm()).collect()
+    }
+}
+
+/// Convert exact rational 4-vector to f64.
+fn rational_array_to_f64(v: &[BigRational; 4]) -> Vector4<f64> {
+    Vector4::new(
+        super::rational::rational_to_f64(&v[0]),
+        super::rational::rational_to_f64(&v[1]),
+        super::rational::rational_to_f64(&v[2]),
+        super::rational::rational_to_f64(&v[3]),
+    )
 }
 
 /// Convert exact rational vertices to f64 vectors.
 fn rational_verts_to_f64(vertices: &[[BigRational; 4]]) -> Vec<Vector4<f64>> {
-    vertices
-        .iter()
-        .map(|rv| {
-            Vector4::new(
-                super::rational::rational_to_f64(&rv[0]),
-                super::rational::rational_to_f64(&rv[1]),
-                super::rational::rational_to_f64(&rv[2]),
-                super::rational::rational_to_f64(&rv[3]),
-            )
-        })
-        .collect()
+    vertices.iter().map(rational_array_to_f64).collect()
 }
 
 #[cfg(test)]

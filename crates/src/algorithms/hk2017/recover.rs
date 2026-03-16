@@ -229,7 +229,7 @@ pub fn recover_base_point(
                 .collect();
 
             base_point =
-                optimize_in_null_space(base_point, &null_vecs, &displacements, normals, heights);
+                optimize_in_null_space(base_point, &null_vecs, &displacements, &normals, &heights);
         }
     }
 

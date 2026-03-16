@@ -112,7 +112,7 @@ pub fn billiard_capacity(polytope: &Polytope4D) -> Result<Option<BilliardResult>
             }
             iterations += 1;
 
-            if let Some(result) = solve_kkt(normals, heights, sigma) {
+            if let Some(result) = solve_kkt(&normals, &heights, sigma) {
                 let q_val = result.q_corrected;
                 if q_val <= EPS_Q_POSITIVE {
                     return;

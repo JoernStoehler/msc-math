@@ -566,7 +566,7 @@ fn eigen_gap_ratio_44_degenerate() {
 
     // The optimal orbit at θ=0° uses facets [0,4,2,6] (alternating q/p)
     let perm = vec![0, 4, 2, 6];
-    let (kkt, _rhs) = crate::kkt::build_kkt_system(normals, heights, &perm);
+    let (kkt, _rhs) = crate::kkt::build_kkt_system(&normals, &heights, &perm);
     let eigen = kkt.symmetric_eigen();
     let size = perm.len() + 5; // 9
 
@@ -642,7 +642,7 @@ fn eigen_gap_ratio_44_theta43() {
     let m = perm.len();
     let size = m + 5; // 11
 
-    let (kkt, _rhs) = crate::kkt::build_kkt_system(normals, heights, &perm);
+    let (kkt, _rhs) = crate::kkt::build_kkt_system(&normals, &heights, &perm);
     let eigen = kkt.symmetric_eigen();
 
     // Collect |λ_i| and sort descending (symmetric_eigen returns unspecified order)

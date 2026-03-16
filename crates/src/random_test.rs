@@ -71,12 +71,13 @@ mod proptests {
 
             // If accepted, it must pass Polytope4D::new() revalidation
             if let Ok(polytope) = result {
-                let normals = polytope.normals_f64().to_vec();
-                let heights = polytope.heights_f64().to_vec();
+                let normals = polytope.normals_f64();
+                let heights = polytope.heights_f64();
 
                 // Validate should succeed (it already did in sample_random_polytope,
                 // but we verify the polytope is still valid after construction)
-                let revalidate = Polytope4D::new(normals, heights);
+                let halfspaces: Vec<nalgebra::Vector4<f64>> = normals.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect();
+                let revalidate = Polytope4D::new(halfspaces);
                 prop_assert!(
                     revalidate.is_ok(),
                     "accepted polytope failed revalidation: {:?}",

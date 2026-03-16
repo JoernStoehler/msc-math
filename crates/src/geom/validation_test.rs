@@ -69,13 +69,15 @@ fn unbounded_normals_detected() {
 #[test]
 fn simplex_construction_succeeds() {
     let (normals, heights) = simplex_normals_heights();
-    assert!(Polytope4D::new(normals, heights).is_ok());
+    let halfspaces: Vec<Vector4<f64>> = normals.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect();
+    assert!(Polytope4D::new(halfspaces).is_ok());
 }
 
 #[test]
 fn hypercube_construction_succeeds() {
     let (normals, heights) = hypercube_normals_heights();
-    assert!(Polytope4D::new(normals, heights).is_ok());
+    let halfspaces: Vec<Vector4<f64>> = normals.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect();
+    assert!(Polytope4D::new(halfspaces).is_ok());
 }
 
 #[test]
@@ -94,7 +96,8 @@ fn constructor_rejects_redundant_facet() {
     ];
     let heights = vec![1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 10.0];
 
-    let err = Polytope4D::new(normals, heights).unwrap_err();
+    let halfspaces: Vec<Vector4<f64>> = normals.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect();
+    let err = Polytope4D::new(halfspaces).unwrap_err();
     match err {
         ConstructionError::RedundantFacet(idx) => {
             assert_eq!(idx, 8, "redundant facet should be index 8 (the added one)");
@@ -114,7 +117,8 @@ fn constructor_rejects_unbounded() {
     ];
     let heights = vec![1.0; 5];
 
-    let err = Polytope4D::new(normals, heights).unwrap_err();
+    let halfspaces: Vec<Vector4<f64>> = normals.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect();
+    let err = Polytope4D::new(halfspaces).unwrap_err();
     assert_eq!(err, ConstructionError::Unbounded);
 }
 
@@ -130,7 +134,8 @@ fn reject_exact_duplicate_normals() {
         Vector4::x(), // duplicate of [0]
     ];
     let heights = vec![1.0; 5];
-    let err = Polytope4D::new(normals, heights).unwrap_err();
+    let halfspaces: Vec<Vector4<f64>> = normals.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect();
+    let err = Polytope4D::new(halfspaces).unwrap_err();
     assert_eq!(err, ConstructionError::DuplicateHalfspaces { i: 0, j: 4 });
 }
 
@@ -139,21 +144,24 @@ fn reject_exact_duplicate_normals() {
 #[test]
 fn simplex_has_5_vertices() {
     let (normals, heights) = simplex_normals_heights();
-    let polytope = Polytope4D::new(normals, heights).expect("valid polytope");
+    let halfspaces: Vec<Vector4<f64>> = normals.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect();
+    let polytope = Polytope4D::new(halfspaces).expect("valid polytope");
     assert_eq!(polytope.vertices_f64().len(), 5);
 }
 
 #[test]
 fn hypercube_has_16_vertices() {
     let (normals, heights) = hypercube_normals_heights();
-    let polytope = Polytope4D::new(normals, heights).expect("valid polytope");
+    let halfspaces: Vec<Vector4<f64>> = normals.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect();
+    let polytope = Polytope4D::new(halfspaces).expect("valid polytope");
     assert_eq!(polytope.vertices_f64().len(), 16);
 }
 
 #[test]
 fn simplex_vertices_satisfy_constraints() {
     let (normals, heights) = simplex_normals_heights();
-    let polytope = Polytope4D::new(normals.clone(), heights.clone()).expect("valid polytope");
+    let halfspaces: Vec<Vector4<f64>> = normals.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect();
+    let polytope = Polytope4D::new(halfspaces).expect("valid polytope");
     for v in polytope.vertices_f64() {
         for (n, &h) in normals.iter().zip(&heights) {
             assert!(
@@ -171,14 +179,16 @@ fn simplex_vertices_satisfy_constraints() {
 #[test]
 fn simplex_construction_has_5_facets() {
     let (normals, heights) = simplex_normals_heights();
-    let polytope = Polytope4D::new(normals, heights).expect("valid polytope");
+    let halfspaces: Vec<Vector4<f64>> = normals.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect();
+    let polytope = Polytope4D::new(halfspaces).expect("valid polytope");
     assert_eq!(polytope.facet_count(), 5);
 }
 
 #[test]
 fn hypercube_construction_has_8_facets() {
     let (normals, heights) = hypercube_normals_heights();
-    let polytope = Polytope4D::new(normals, heights).expect("valid polytope");
+    let halfspaces: Vec<Vector4<f64>> = normals.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect();
+    let polytope = Polytope4D::new(halfspaces).expect("valid polytope");
     assert_eq!(polytope.facet_count(), 8);
 }
 

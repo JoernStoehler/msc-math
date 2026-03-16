@@ -50,7 +50,8 @@ fn perturbed_polytope(
 ) -> Option<Polytope4D> {
     let mut h = heights.to_vec();
     h[facet] += delta;
-    Polytope4D::new(normals.to_vec(), h).ok()
+    let halfspaces: Vec<Vector4<f64>> = normals.iter().zip(h.iter()).map(|(n, &hi)| n / hi).collect();
+    Polytope4D::new(halfspaces).ok()
 }
 
 /// Compute FD volume derivatives: ∂vol/∂h_k ≈ (vol(h+ε·e_k) - vol(h-ε·e_k)) / (2ε).

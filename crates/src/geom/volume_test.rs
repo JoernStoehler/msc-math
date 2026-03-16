@@ -36,7 +36,8 @@ fn hypercube_volume() {
         -Vector4::w(),
     ];
     let heights = vec![1.0; 8];
-    let polytope = Polytope4D::new(normals, heights).expect("hypercube");
+    let halfspaces: Vec<Vector4<f64>> = normals.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect();
+    let polytope = Polytope4D::new(halfspaces).expect("hypercube");
     let vol = volume(&polytope).expect("volume computation failed");
     assert!(
         (vol - 16.0).abs() < 1e-6,
@@ -61,7 +62,8 @@ fn simplex_polytope_volume() {
         .zip(&heights_raw)
         .map(|(n, h)| h - n.dot(&centroid))
         .collect();
-    let polytope = Polytope4D::new(normals_raw, heights).expect("simplex");
+    let halfspaces: Vec<Vector4<f64>> = normals_raw.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect();
+    let polytope = Polytope4D::new(halfspaces).expect("simplex");
     let vol = volume(&polytope).expect("volume computation failed");
     assert!(
         (vol - 1.0 / 24.0).abs() < 1e-6,
@@ -105,7 +107,10 @@ fn volume_positive_for_known_polytopes() {
         .collect();
 
     let polytopes = vec![
-        Polytope4D::new(simplex_n, simplex_h).expect("simplex"),
+        {
+            let halfspaces: Vec<Vector4<f64>> = simplex_n.iter().zip(simplex_h.iter()).map(|(n, &h)| n / h).collect();
+            Polytope4D::new(halfspaces).expect("simplex")
+        },
         scaled_hypercube(1.0),
     ];
 
@@ -145,7 +150,8 @@ fn triangulated_hypercube() {
         -Vector4::w(),
     ];
     let heights = vec![1.0; 8];
-    let polytope = Polytope4D::new(normals, heights).expect("hypercube");
+    let halfspaces: Vec<Vector4<f64>> = normals.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect();
+    let polytope = Polytope4D::new(halfspaces).expect("hypercube");
 
     let vol = volume(&polytope).expect("qconvex succeeds");
     assert!(
@@ -175,7 +181,10 @@ fn triangulated_matches_divergence() {
                     .zip(&heights_raw)
                     .map(|(n, h)| h - n.dot(&centroid))
                     .collect();
-                Polytope4D::new(normals_raw, heights).expect("simplex")
+                {
+                    let halfspaces: Vec<Vector4<f64>> = normals_raw.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect();
+                    Polytope4D::new(halfspaces).expect("simplex")
+                }
             },
         ),
         ("hypercube", scaled_hypercube(1.0)),
@@ -193,7 +202,8 @@ fn triangulated_matches_divergence() {
                     }
                 }
                 let heights = vec![1.0; 16];
-                Polytope4D::new(normals, heights).expect("crosspolytope")
+                let halfspaces: Vec<Vector4<f64>> = normals.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect();
+                Polytope4D::new(halfspaces).expect("crosspolytope")
             },
         ),
     ];
@@ -355,9 +365,11 @@ mod proptests {
             let heights_unit = vec![1.0; 8];
             let heights_scaled = vec![scale; 8];
 
-            let unit_cube = Polytope4D::new(normals.clone(), heights_unit)
+            let halfspaces_unit: Vec<Vector4<f64>> = normals.iter().zip(heights_unit.iter()).map(|(n, &h)| n / h).collect();
+            let halfspaces_scaled: Vec<Vector4<f64>> = normals.iter().zip(heights_scaled.iter()).map(|(n, &h)| n / h).collect();
+            let unit_cube = Polytope4D::new(halfspaces_unit)
                 .expect("unit hypercube construction");
-            let scaled_cube = Polytope4D::new(normals, heights_scaled)
+            let scaled_cube = Polytope4D::new(halfspaces_scaled)
                 .expect("scaled hypercube construction");
 
             let vol_unit = volume(&unit_cube).expect("volume computation failed");

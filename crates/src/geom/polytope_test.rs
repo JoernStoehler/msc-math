@@ -1,7 +1,8 @@
 use super::*;
 use nalgebra::Vector4;
 
-fn unit_normals_5() -> Vec<Vector4<f64>> {
+/// 5 halfspaces forming a simplex-like polytope. aᵢ = nᵢ/hᵢ with hᵢ = 1.
+fn simplex_halfspaces_5() -> Vec<Vector4<f64>> {
     vec![
         Vector4::new(1.0, 0.0, 0.0, 0.0),
         Vector4::new(0.0, 1.0, 0.0, 0.0),
@@ -13,9 +14,8 @@ fn unit_normals_5() -> Vec<Vector4<f64>> {
 
 #[test]
 fn valid_construction() {
-    let normals = unit_normals_5();
-    let heights = vec![1.0; 5];
-    let p = Polytope4D::new(normals, heights).unwrap();
+    let halfspaces = simplex_halfspaces_5();
+    let p = Polytope4D::new(halfspaces).unwrap();
     assert_eq!(p.facet_count(), 5);
     assert_eq!(p.normals_f64().len(), 5);
     assert_eq!(p.heights_f64().len(), 5);
@@ -23,101 +23,60 @@ fn valid_construction() {
 }
 
 #[test]
-fn reject_duplicate_normals() {
-    let normals = vec![
+fn reject_duplicate_halfspaces() {
+    let halfspaces = vec![
         Vector4::x(),
         Vector4::y(),
         Vector4::z(),
         Vector4::w(),
         Vector4::x(), // duplicate of [0]
     ];
-    let heights = vec![1.0; 5];
-    let err = Polytope4D::new(normals, heights).unwrap_err();
+    let err = Polytope4D::new(halfspaces).unwrap_err();
     assert_eq!(err, ConstructionError::DuplicateHalfspaces { i: 0, j: 4 });
 }
 
 #[test]
-fn reject_length_mismatch() {
-    let normals = unit_normals_5();
-    let heights = vec![1.0; 4]; // one too few
-    let err = Polytope4D::new(normals, heights).unwrap_err();
-    assert_eq!(
-        err,
-        ConstructionError::LengthMismatch {
-            normals: 5,
-            heights: 4
-        }
-    );
-}
-
-#[test]
 fn reject_too_few_facets() {
-    let normals = vec![
+    let halfspaces = vec![
         Vector4::new(1.0, 0.0, 0.0, 0.0),
         Vector4::new(0.0, 1.0, 0.0, 0.0),
         Vector4::new(0.0, 0.0, 1.0, 0.0),
         Vector4::new(0.0, 0.0, 0.0, 1.0),
     ];
-    let heights = vec![1.0; 4];
-    let err = Polytope4D::new(normals, heights).unwrap_err();
+    let err = Polytope4D::new(halfspaces).unwrap_err();
     assert_eq!(err, ConstructionError::TooFewFacets(4));
 }
 
 #[test]
-fn reject_non_unit_normal() {
-    let mut normals = unit_normals_5();
-    normals[2] = Vector4::new(0.0, 0.0, 2.0, 0.0); // not unit
-    let heights = vec![1.0; 5];
-    let err = Polytope4D::new(normals, heights).unwrap_err();
-    match err {
-        ConstructionError::NonUnitNormal { index: 2, .. } => {}
-        other => panic!("expected NonUnitNormal at index 2, got {other:?}"),
-    }
-}
-
-#[test]
-fn reject_negative_height() {
-    let normals = unit_normals_5();
-    let heights = vec![1.0, 1.0, -0.5, 1.0, 1.0];
-    let err = Polytope4D::new(normals, heights).unwrap_err();
-    match err {
-        ConstructionError::NonPositiveHeight { index: 2, .. } => {}
-        other => panic!("expected NonPositiveHeight at index 2, got {other:?}"),
-    }
-}
-
-#[test]
-fn reject_zero_height() {
-    let normals = unit_normals_5();
-    let heights = vec![1.0, 0.0, 1.0, 1.0, 1.0];
-    let err = Polytope4D::new(normals, heights).unwrap_err();
-    match err {
-        ConstructionError::NonPositiveHeight { index: 1, .. } => {}
-        other => panic!("expected NonPositiveHeight at index 1, got {other:?}"),
-    }
+fn reject_zero_halfspace() {
+    let mut halfspaces = simplex_halfspaces_5();
+    halfspaces[2] = Vector4::new(0.0, 0.0, 0.0, 0.0); // zero vector
+    let err = Polytope4D::new(halfspaces).unwrap_err();
+    assert_eq!(err, ConstructionError::ZeroDualVertex(2));
 }
 
 // ---- Boundedness (regression: constructor must reject unbounded inputs) ----
 
 #[test]
 fn reject_unbounded() {
-    // All normals point roughly in the +x direction — unbounded in -x.
-    let normals = vec![
+    // All halfspaces point roughly in the +x direction — unbounded in -x.
+    // (Unit normals with height 1.0 → halfspaces = normals.)
+    let halfspaces = vec![
         Vector4::new(1.0, 0.1, 0.0, 0.0).normalize(),
         Vector4::new(1.0, -0.1, 0.0, 0.0).normalize(),
         Vector4::new(1.0, 0.0, 0.1, 0.0).normalize(),
         Vector4::new(1.0, 0.0, -0.1, 0.0).normalize(),
         Vector4::new(1.0, 0.0, 0.0, 0.1).normalize(),
     ];
-    let heights = vec![1.0; 5];
-    let err = Polytope4D::new(normals, heights).unwrap_err();
+    let err = Polytope4D::new(halfspaces).unwrap_err();
     assert_eq!(err, ConstructionError::Unbounded);
 }
 
 #[test]
 fn reject_unbounded_missing_one_direction() {
-    // Bounded in x, y, z but not in w (no -w normal).
-    let normals = vec![
+    // Bounded in x, y, z but not in w (no -w halfspace).
+    // (Unit normals with height 1.0 → halfspaces = normals.)
+    let halfspaces = vec![
         Vector4::x(),
         -Vector4::x(),
         Vector4::y(),
@@ -128,8 +87,7 @@ fn reject_unbounded_missing_one_direction() {
         // missing -Vector4::w()
         Vector4::new(1.0, 1.0, 1.0, 1.0).normalize(),
     ];
-    let heights = vec![1.0; 8];
-    let err = Polytope4D::new(normals, heights).unwrap_err();
+    let err = Polytope4D::new(halfspaces).unwrap_err();
     assert_eq!(err, ConstructionError::Unbounded);
 }
 
@@ -138,7 +96,9 @@ fn reject_unbounded_missing_one_direction() {
 #[test]
 fn reject_redundant_facet() {
     // Hypercube [-1,1]^4 + one redundant diagonal facet far from the polytope.
-    let normals = vec![
+    // Cube halfspaces: ±eᵢ/1 = ±eᵢ. Redundant: n/h = normalize(1,1,0,0)/10.
+    let n_diag = Vector4::new(1.0, 1.0, 0.0, 0.0).normalize();
+    let halfspaces = vec![
         Vector4::x(),
         -Vector4::x(),
         Vector4::y(),
@@ -147,10 +107,9 @@ fn reject_redundant_facet() {
         -Vector4::z(),
         Vector4::w(),
         -Vector4::w(),
-        Vector4::new(1.0, 1.0, 0.0, 0.0).normalize(), // x+y ≤ √2·10 — never active
+        n_diag / 10.0, // x+y ≤ √2·10 — never active
     ];
-    let heights = vec![1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 10.0];
-    let err = Polytope4D::new(normals, heights).unwrap_err();
+    let err = Polytope4D::new(halfspaces).unwrap_err();
     match err {
         ConstructionError::RedundantFacet(idx) => {
             assert_eq!(idx, 8, "the added diagonal facet should be redundant");
@@ -162,9 +121,10 @@ fn reject_redundant_facet() {
 #[test]
 fn reject_redundant_parallel_facet() {
     // Hypercube + a parallel facet in the same direction as facet 0 but further out.
-    // Normals are near-identical so this should hit DuplicateHalfspaces first.
     // Use a slightly tilted normal to avoid the duplicate check.
-    let normals = vec![
+    // n/h with h=100 → very small halfspace vector (far-out facet).
+    let n_tilted = Vector4::new(1.0, 0.001, 0.0, 0.0).normalize();
+    let halfspaces = vec![
         Vector4::x(),
         -Vector4::x(),
         Vector4::y(),
@@ -173,10 +133,9 @@ fn reject_redundant_parallel_facet() {
         -Vector4::z(),
         Vector4::w(),
         -Vector4::w(),
-        Vector4::new(1.0, 0.001, 0.0, 0.0).normalize(), // nearly +x, far out
+        n_tilted / 100.0, // nearly +x, far out → redundant
     ];
-    let heights = vec![1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 100.0];
-    let err = Polytope4D::new(normals, heights).unwrap_err();
+    let err = Polytope4D::new(halfspaces).unwrap_err();
     match err {
         ConstructionError::RedundantFacet(idx) => {
             assert_eq!(idx, 8, "the nearly-parallel far facet should be redundant");
@@ -188,37 +147,12 @@ fn reject_redundant_parallel_facet() {
 // ---- Rational pipeline errors (ZeroDualVertex, NoVertices, F64Conversion) ----
 // Tested directly in rational_test.rs via from_rationals() constructor.
 
-// ---- NaN/infinity rejection ----
-
-#[test]
-fn reject_nan_height() {
-    let normals = unit_normals_5();
-    let heights = vec![1.0, f64::NAN, 1.0, 1.0, 1.0];
-    let err = Polytope4D::new(normals, heights).unwrap_err();
-    match err {
-        ConstructionError::NonPositiveHeight { index: 1, .. } => {}
-        other => panic!("expected NonPositiveHeight for NaN, got {other:?}"),
-    }
-}
-
-#[test]
-fn reject_infinity_height() {
-    let normals = unit_normals_5();
-    let heights = vec![1.0, 1.0, f64::INFINITY, 1.0, 1.0];
-    let err = Polytope4D::new(normals, heights).unwrap_err();
-    match err {
-        ConstructionError::NonPositiveHeight { index: 2, .. } => {}
-        other => panic!("expected NonPositiveHeight for infinity, got {other:?}"),
-    }
-}
-
 // ---- Positive tests ----
 
 #[test]
 fn vertices_satisfy_halfspace_inequalities() {
-    let normals = unit_normals_5();
-    let heights = vec![1.0; 5];
-    let p = Polytope4D::new(normals, heights).unwrap();
+    let halfspaces = simplex_halfspaces_5();
+    let p = Polytope4D::new(halfspaces).unwrap();
 
     const EPS: f64 = 1e-8;
     for v in p.vertices_f64() {

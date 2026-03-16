@@ -153,7 +153,7 @@ fn manual_orbit_injection(n1: usize, n2: usize, orbit_perm: &[usize], test_angle
         let normals = polytope.normals_f64();
         let heights = polytope.heights_f64();
 
-        match solve_kkt(normals, heights, orbit_perm) {
+        match solve_kkt(&normals, &heights, orbit_perm) {
             Some(result) => {
                 let action = 0.5 / result.q_corrected;
                 let all_pos = result.beta.iter().all(|&b| b > 1e-12);
@@ -294,7 +294,7 @@ fn minimal_broken_cases() {
         let mut found_any = false;
         for subset in super::combinations(f, m) {
             for_each_cyclic_permutation(&subset, &mut |perm| {
-                if let Some(result) = solve_kkt(normals, heights, perm) {
+                if let Some(result) = solve_kkt(&normals, &heights, perm) {
                     let action = 0.5 / result.q_corrected;
                     let all_pos = result.beta.iter().all(|&b| b > 1e-12);
                     if all_pos && result.q_corrected > 1e-15 {
@@ -378,7 +378,7 @@ fn cyclic_invariance_check() {
     eprintln!("All rotations:");
     for rot in 0..m {
         let rotated: Vec<usize> = (0..m).map(|i| perm[(i + rot) % m]).collect();
-        match solve_kkt(normals, heights, &rotated) {
+        match solve_kkt(&normals, &heights, &rotated) {
             Some(result) => {
                 let action = 0.5 / result.q_corrected;
                 eprintln!("  rot={}: {:?} → action={:.10} Q={:.10} β={:.6?}", rot, rotated, action, result.q_corrected, result.beta);
@@ -406,7 +406,7 @@ fn cyclic_invariance_check() {
     eprintln!("All rotations:");
     for rot in 0..m {
         let rotated: Vec<usize> = (0..m).map(|i| perm[(i + rot) % m]).collect();
-        match solve_kkt(normals, heights, &rotated) {
+        match solve_kkt(&normals, &heights, &rotated) {
             Some(result) => {
                 let action = 0.5 / result.q_corrected;
                 eprintln!("  rot={}: {:?} → action={:.10} Q={:.10} β={:.6?}", rot, rotated, action, result.q_corrected, result.beta);
@@ -435,7 +435,7 @@ fn cyclic_invariance_check() {
     eprintln!("All rotations:");
     for rot in 0..m {
         let rotated: Vec<usize> = (0..m).map(|i| perm[(i + rot) % m]).collect();
-        match solve_kkt(normals, heights, &rotated) {
+        match solve_kkt(&normals, &heights, &rotated) {
             Some(result) => {
                 let action = 0.5 / result.q_corrected;
                 eprintln!("  rot={}: {:?} → action={:.10} Q={:.10} β={:.6?}", rot, rotated, action, result.q_corrected, result.beta);
@@ -514,7 +514,7 @@ fn svd_null_space_debug() {
     let x0 = svd.solve(&rhs, 1e-10).unwrap();
     let beta0: Vec<f64> = (0..m).map(|i| x0[i]).collect();
     eprintln!("SVD particular β₀: {:.8?}", beta0);
-    let q0 = crate::kkt::q_from_beta(normals, perm, &beta0);
+    let q0 = crate::kkt::q_from_beta(&normals, perm, &beta0);
     eprintln!("Q(β₀) = {:.10}", q0);
 
     // Null space direction
@@ -526,7 +526,7 @@ fn svd_null_space_debug() {
     eprintln!("Q along null space:");
     for &alpha in &[-2.0, -1.0, -0.5, 0.0, 0.5, 1.0, 2.0] {
         let beta: Vec<f64> = (0..m).map(|j| beta0[j] + alpha * null_vec[j]).collect();
-        let q = crate::kkt::q_from_beta(normals, perm, &beta);
+        let q = crate::kkt::q_from_beta(&normals, perm, &beta);
         let all_pos = beta.iter().all(|&b| b > 1e-12);
         eprintln!("  α={alpha:+.1}: Q={q:.10} β_pos={all_pos} β={:.6?}", beta);
     }
@@ -567,7 +567,7 @@ fn svd_null_space_debug() {
     let x0_rot = svd2.solve(&rhs, 1e-10).unwrap();
     let beta0_rot: Vec<f64> = (0..m).map(|i| x0_rot[i]).collect();
     eprintln!("Rotated SVD particular β₀: {:.8?}", beta0_rot);
-    let q0_rot = crate::kkt::q_from_beta(normals, perm_rot, &beta0_rot);
+    let q0_rot = crate::kkt::q_from_beta(&normals, perm_rot, &beta0_rot);
     eprintln!("Q(rotated β₀) = {:.10}", q0_rot);
 
     // Expected: β₀_rot should be cyclic shift of β₀
@@ -583,7 +583,7 @@ fn svd_null_space_debug() {
     // Now call solve_kkt directly and compare
     eprintln!();
     eprintln!("Direct solve_kkt call on perm {:?}:", perm);
-    match solve_kkt(normals, heights, perm) {
+    match solve_kkt(&normals, &heights, perm) {
         Some(result) => {
             let action = 0.5 / result.q_corrected;
             eprintln!("  action={:.10} Q={:.10} β={:.8?}", action, result.q_corrected, result.beta);
@@ -622,7 +622,7 @@ fn svd_null_space_debug() {
     }
     let beta0_r9: Vec<f64> = (0..m).map(|i| x0_rank9[i]).collect();
     eprintln!("  β₀ (rank-9 pseudoinverse): {:.8?}", beta0_r9);
-    let q_r9 = crate::kkt::q_from_beta(normals, perm, &beta0_r9);
+    let q_r9 = crate::kkt::q_from_beta(&normals, perm, &beta0_r9);
     eprintln!("  Q(β₀ rank-9) = {:.10}", q_r9);
     eprintln!();
 }
@@ -677,7 +677,7 @@ fn disagreement_angles() {
             let normals = polytope.normals_f64();
             let heights = polytope.heights_f64();
             eprintln!("  Cross-check: HK2017 solve_kkt on billiard's perm {:?}:", r.best_permutation);
-            match solve_kkt(normals, heights, &r.best_permutation) {
+            match solve_kkt(&normals, &heights, &r.best_permutation) {
                 Some(result) => {
                     let action = 0.5 / result.q_corrected;
                     eprintln!("    action={:.10} beta={:.6?}", action, result.beta);
@@ -723,7 +723,7 @@ fn disagreement_angles() {
                 let rank = sv.iter().filter(|&&s| s > max_sv * 1e-10).count();
                 let min_sv = sv.iter().cloned().fold(f64::INFINITY, f64::min);
 
-                match solve_kkt(normals, heights, &rotated) {
+                match solve_kkt(&normals, &heights, &rotated) {
                     Some(result) => {
                         let action = 0.5 / result.q_corrected;
                         eprintln!("    rot={}: {:?} → action={:.10} Q={:.10} rank={}/{} min_sv={:.2e} β={:.6?}",
@@ -750,7 +750,7 @@ fn disagreement_angles() {
                 eprintln!("  All rotations of billiard's perm:");
                 for rot in 0..m {
                     let rotated: Vec<usize> = (0..m).map(|i| perm[(i + rot) % m]).collect();
-                    match solve_kkt(normals, heights, &rotated) {
+                    match solve_kkt(&normals, &heights, &rotated) {
                         Some(result) => {
                             let action = 0.5 / result.q_corrected;
                             let min_beta = result.beta.iter().cloned().fold(f64::INFINITY, f64::min);
@@ -879,13 +879,13 @@ fn solve_kkt_trace() {
     // 7. What does solve_kkt ACTUALLY return?
     eprintln!();
     eprintln!("Step 9: Actual solve_kkt result:");
-    match solve_kkt(normals, heights, perm) {
+    match solve_kkt(&normals, &heights, perm) {
         Some(result) => {
             let action = 0.5 / result.q_corrected;
             eprintln!("  RETURNED Some: action={:.10}, Q={:.10}", action, result.q_corrected);
             eprintln!("  beta={:.8?}", result.beta);
             // Verify: does this beta come from the SVD path?
-            let q_check = crate::kkt::q_from_beta(normals, perm, &result.beta);
+            let q_check = crate::kkt::q_from_beta(&normals, perm, &result.beta);
             eprintln!("  Q(beta) = {:.10} (matches? {})", q_check, (result.q_corrected - q_check).abs() < 1e-12);
             // Is this beta equal to beta0?
             let diff: f64 = result.beta.iter().zip(beta0.iter()).map(|(a, b)| (a - b).abs()).sum();

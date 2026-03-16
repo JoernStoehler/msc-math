@@ -102,10 +102,11 @@ impl DatasetEntry {
     }
 
     fn to_test_polytope(&self) -> TestPolytope {
-        let normals: Vec<Vector4<f64>> = self.normals.iter()
-            .map(|n| Vector4::new(n[0], n[1], n[2], n[3]))
+        let halfspaces: Vec<Vector4<f64>> = self.normals.iter()
+            .zip(self.heights.iter())
+            .map(|(n, &h)| Vector4::new(n[0] / h, n[1] / h, n[2] / h, n[3] / h))
             .collect();
-        let polytope = Polytope4D::new(normals, self.heights.clone())
+        let polytope = Polytope4D::new(halfspaces)
             .unwrap_or_else(|e| panic!("fixture entry '{}': {}", self.name, e));
         TestPolytope {
             name: self.name.clone(),
@@ -366,15 +367,14 @@ pub fn generate_test_dataset() -> Vec<TestPolytope> {
     dataset
 }
 
-/// Scale polytope: heights → α·heights (normals unchanged)
+/// Scale polytope: dual vertices → (1/α)·dual vertices (equivalent to heights → α·heights)
 fn scale_polytope(polytope: &Polytope4D, alpha: f64) -> Polytope4D {
-    let normals = polytope.normals_f64().to_vec();
-    let heights: Vec<f64> = polytope
-        .heights_f64()
+    let halfspaces: Vec<Vector4<f64>> = polytope
+        .dual_vertices_f64()
         .iter()
-        .map(|&h| alpha * h)
+        .map(|a| a / alpha)
         .collect();
-    Polytope4D::new(normals, heights).expect("scaled polytope")
+    Polytope4D::new(halfspaces).expect("scaled polytope")
 }
 
 /// Generate random symplectomorphism M ∈ Sp(4) (linear, no translation).
@@ -447,17 +447,19 @@ fn apply_symplectomorphism(polytope: &Polytope4D, m: &Matrix4<f64>, b: &Vector4<
         .try_inverse()
         .expect("M should be invertible");
 
-    let mut normals = Vec::with_capacity(polytope.normals_f64().len());
-    let mut heights = Vec::with_capacity(polytope.heights_f64().len());
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
 
-    for (n, &h) in polytope.normals_f64().iter().zip(polytope.heights_f64().iter()) {
+    let mut halfspaces = Vec::with_capacity(normals.len());
+    for (n, &h) in normals.iter().zip(heights.iter()) {
         let n_raw = m_inv_t * n;
         let norm = n_raw.norm();
-        normals.push(n_raw / norm);
-        heights.push((h + n_raw.dot(b)) / norm);
+        let n_new = n_raw / norm;
+        let h_new = (h + n_raw.dot(b)) / norm;
+        halfspaces.push(n_new / h_new);
     }
 
-    Polytope4D::new(normals, heights).expect("transformed polytope")
+    Polytope4D::new(halfspaces).expect("transformed polytope")
 }
 
 #[cfg(test)]

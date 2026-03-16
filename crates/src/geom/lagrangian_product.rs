@@ -26,15 +26,20 @@ pub fn lagrangian_product(
     p_normals: &[Vector2<f64>],
     p_heights: &[f64],
 ) -> Result<Polytope4D, ConstructionError> {
-    let normals_4d: Vec<Vector4<f64>> = q_normals
+    // Dual vertex representation: aᵢ = nᵢ / hᵢ, embedded in 4D
+    let halfspaces: Vec<Vector4<f64>> = q_normals
         .iter()
-        .map(|n| Vector4::new(n[0], n[1], 0.0, 0.0))
-        .chain(p_normals.iter().map(|n| Vector4::new(0.0, 0.0, n[0], n[1])))
+        .zip(q_heights.iter())
+        .map(|(n, &h)| Vector4::new(n[0], n[1], 0.0, 0.0) / h)
+        .chain(
+            p_normals
+                .iter()
+                .zip(p_heights.iter())
+                .map(|(n, &h)| Vector4::new(0.0, 0.0, n[0], n[1]) / h),
+        )
         .collect();
 
-    let heights: Vec<f64> = q_heights.iter().chain(p_heights.iter()).copied().collect();
-
-    Polytope4D::new(normals_4d, heights)
+    Polytope4D::new(halfspaces)
 }
 
 #[cfg(test)]

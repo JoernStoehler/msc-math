@@ -24,18 +24,18 @@ pub fn hypercube() -> Polytope4D {
 /// Not in `known_polytopes` because it's parameterized — no single known capacity.
 /// Expected: volume = 16s^4, EHZ capacity = 4s.
 pub fn scaled_hypercube(s: f64) -> Polytope4D {
-    let normals = vec![
-        Vector4::x(),
-        -Vector4::x(),
-        Vector4::y(),
-        -Vector4::y(),
-        Vector4::z(),
-        -Vector4::z(),
-        Vector4::w(),
-        -Vector4::w(),
+    // Normals ±eᵢ, heights s → halfspaces aᵢ = nᵢ/s = ±eᵢ/s
+    let halfspaces = vec![
+        Vector4::x() / s,
+        -Vector4::x() / s,
+        Vector4::y() / s,
+        -Vector4::y() / s,
+        Vector4::z() / s,
+        -Vector4::z() / s,
+        Vector4::w() / s,
+        -Vector4::w() / s,
     ];
-    let heights = vec![s; 8];
-    Polytope4D::new(normals, heights).expect("scaled hypercube")
+    Polytope4D::new(halfspaces).expect("scaled hypercube")
 }
 
 /// 4D crosspolytope (16 facets). Delegates to `known_polytopes::crosspolytope()`.
@@ -63,7 +63,8 @@ pub fn symplectic_triangle_product() -> Polytope4D {
 /// Panics if no valid polytope is found in 100 attempts.
 pub fn random_bounded_polytope(facet_count: usize, rng: &mut impl Rng) -> Polytope4D {
     for _ in 0..100 {
-        let normals: Vec<Vector4<f64>> = (0..facet_count)
+        // Generate random halfspaces aᵢ = nᵢ/hᵢ directly
+        let halfspaces: Vec<Vector4<f64>> = (0..facet_count)
             .map(|_| {
                 let v = Vector4::new(
                     rng.sample(StandardNormal),
@@ -71,15 +72,13 @@ pub fn random_bounded_polytope(facet_count: usize, rng: &mut impl Rng) -> Polyto
                     rng.sample(StandardNormal),
                     rng.sample(StandardNormal),
                 );
-                v.normalize()
+                let n = v.normalize();
+                let h: f64 = rng.gen_range(0.5..2.0);
+                n / h
             })
             .collect();
 
-        let heights: Vec<f64> = (0..facet_count)
-            .map(|_| rng.gen_range(0.5..2.0))
-            .collect();
-
-        if let Ok(polytope) = Polytope4D::new(normals, heights) {
+        if let Ok(polytope) = Polytope4D::new(halfspaces) {
             return polytope;
         }
     }

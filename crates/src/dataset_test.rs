@@ -12,7 +12,7 @@ fn dummy_polytope() -> Polytope4D {
         Vector4::w(),
         -Vector4::w(),
     ];
-    Polytope4D::new(normals, vec![1.0; 8]).unwrap()
+    Polytope4D::new(normals).unwrap()
 }
 
 #[test]

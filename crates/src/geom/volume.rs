@@ -73,7 +73,7 @@ pub(crate) mod deprecated {
         }
 
         (0..normals.len())
-            .map(|i| heights[i] * facet_volume_3d(normals, heights, vertices, i, normals.len()))
+            .map(|i| heights[i] * facet_volume_3d(&normals, &heights, &vertices, i, normals.len()))
             .sum::<f64>()
             / 4.0
     }

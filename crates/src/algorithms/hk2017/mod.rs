@@ -96,7 +96,7 @@ pub fn ehz_capacity_unpruned(polytope: &Polytope4D) -> Option<EhzResult> {
             for perm in cyclic_permutations(&subset) {
                 iterations += 1;
 
-                if let Some(result) = solve_kkt(normals, heights, &perm) {
+                if let Some(result) = solve_kkt(&normals, &heights, &perm) {
                     let q_val = result.q_corrected;
                     if q_val <= EPS_Q_POSITIVE {
                         continue;
@@ -282,7 +282,7 @@ pub fn ehz_capacity(polytope: &Polytope4D) -> Option<EhzResult> {
 
                 iterations += 1;
 
-                if let Some(result) = solve_kkt(normals, heights, perm) {
+                if let Some(result) = solve_kkt(&normals, &heights, perm) {
                     let q_val = result.q_corrected;
                     if q_val <= EPS_Q_POSITIVE {
                         return;

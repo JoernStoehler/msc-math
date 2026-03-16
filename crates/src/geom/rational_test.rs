@@ -221,7 +221,9 @@ fn f64_sign_agreement() {
 fn from_f64_roundtrip() {
     let kp = super::super::known_polytopes::hypercube();
     let f64_p = &kp.polytope;
-    let rp = Polytope4D::from_f64_rounded(f64_p.normals_f64(), f64_p.heights_f64(), 1000)
+    let normals = f64_p.normals_f64();
+    let heights = f64_p.heights_f64();
+    let rp = Polytope4D::from_f64_rounded(&normals, &heights, 1000)
         .expect("from_f64_rounded");
     assert_eq!(rp.vertices().len(), f64_p.vertices_f64().len());
     assert_eq!(rp.vertices_f64().len(), f64_p.vertices_f64().len());
@@ -263,7 +265,8 @@ fn f64_to_rational_exact_values() {
 fn from_f64_lossless_roundtrip() {
     let kp = super::super::known_polytopes::hypercube();
     let f64_p = &kp.polytope;
-    let rp = Polytope4D::new(f64_p.normals_f64().to_vec(), f64_p.heights_f64().to_vec())
+    let halfspaces: Vec<nalgebra::Vector4<f64>> = f64_p.normals_f64().iter().zip(f64_p.heights_f64().iter()).map(|(n, &h)| n / h).collect();
+    let rp = Polytope4D::new(halfspaces)
         .expect("new should succeed for hypercube");
     assert_eq!(rp.vertices().len(), f64_p.vertices().len());
     assert_eq!(rp.vertices_f64().len(), f64_p.vertices_f64().len());
@@ -274,7 +277,8 @@ fn from_f64_lossless_roundtrip() {
 fn from_f64_simplex() {
     let kp = super::super::known_polytopes::simplex();
     let f64_p = &kp.polytope;
-    let rp = Polytope4D::new(f64_p.normals_f64().to_vec(), f64_p.heights_f64().to_vec())
+    let halfspaces: Vec<nalgebra::Vector4<f64>> = f64_p.normals_f64().iter().zip(f64_p.heights_f64().iter()).map(|(n, &h)| n / h).collect();
+    let rp = Polytope4D::new(halfspaces)
         .expect("new should succeed for simplex");
     assert_eq!(rp.facet_count(), 5);
     assert_eq!(rp.vertices().len(), 5);
@@ -370,9 +374,8 @@ fn adjacency_agreement_simplex() {
     use crate::algorithms::hk2017::build_adjacency_matrix;
     let kp = super::super::known_polytopes::simplex();
     let f64_adj = build_adjacency_matrix(&kp.polytope);
-    let rational_p = Polytope4D::new(
-        kp.polytope.normals_f64().to_vec(), kp.polytope.heights_f64().to_vec(),
-    ).expect("new should succeed for simplex");
+    let halfspaces: Vec<nalgebra::Vector4<f64>> = kp.polytope.normals_f64().iter().zip(kp.polytope.heights_f64().iter()).map(|(n, &h)| n / h).collect();
+    let rational_p = Polytope4D::new(halfspaces).expect("new should succeed for simplex");
     assert_eq!(f64_adj, build_adjacency_matrix(&rational_p), "adjacency disagree for simplex");
 }
 
@@ -382,9 +385,8 @@ fn adjacency_agreement_hypercube() {
     use crate::algorithms::hk2017::build_adjacency_matrix;
     let kp = super::super::known_polytopes::hypercube();
     let f64_adj = build_adjacency_matrix(&kp.polytope);
-    let rational_p = Polytope4D::new(
-        kp.polytope.normals_f64().to_vec(), kp.polytope.heights_f64().to_vec(),
-    ).expect("new should succeed for hypercube");
+    let halfspaces: Vec<nalgebra::Vector4<f64>> = kp.polytope.normals_f64().iter().zip(kp.polytope.heights_f64().iter()).map(|(n, &h)| n / h).collect();
+    let rational_p = Polytope4D::new(halfspaces).expect("new should succeed for hypercube");
     assert_eq!(f64_adj, build_adjacency_matrix(&rational_p), "adjacency disagree for hypercube");
 }
 
@@ -394,9 +396,8 @@ fn directed_adjacency_agreement_simplex() {
     use crate::algorithms::hk2017::build_directed_adjacency_matrix;
     let kp = super::super::known_polytopes::simplex();
     let f64_dadj = build_directed_adjacency_matrix(&kp.polytope);
-    let rational_p = Polytope4D::new(
-        kp.polytope.normals_f64().to_vec(), kp.polytope.heights_f64().to_vec(),
-    ).expect("new should succeed for simplex");
+    let halfspaces: Vec<nalgebra::Vector4<f64>> = kp.polytope.normals_f64().iter().zip(kp.polytope.heights_f64().iter()).map(|(n, &h)| n / h).collect();
+    let rational_p = Polytope4D::new(halfspaces).expect("new should succeed for simplex");
     assert_eq!(f64_dadj, build_directed_adjacency_matrix(&rational_p),
         "directed adjacency disagree for simplex");
 }
@@ -407,9 +408,8 @@ fn directed_adjacency_agreement_hypercube() {
     use crate::algorithms::hk2017::build_directed_adjacency_matrix;
     let kp = super::super::known_polytopes::hypercube();
     let f64_dadj = build_directed_adjacency_matrix(&kp.polytope);
-    let rational_p = Polytope4D::new(
-        kp.polytope.normals_f64().to_vec(), kp.polytope.heights_f64().to_vec(),
-    ).expect("new should succeed for hypercube");
+    let halfspaces: Vec<nalgebra::Vector4<f64>> = kp.polytope.normals_f64().iter().zip(kp.polytope.heights_f64().iter()).map(|(n, &h)| n / h).collect();
+    let rational_p = Polytope4D::new(halfspaces).expect("new should succeed for hypercube");
     assert_eq!(f64_dadj, build_directed_adjacency_matrix(&rational_p),
         "directed adjacency disagree for hypercube");
 }
@@ -420,9 +420,8 @@ fn capacity_agreement_simplex() {
     use crate::algorithms::hk2017::ehz_capacity;
     let kp = super::super::known_polytopes::simplex();
     let f64_result = ehz_capacity(&kp.polytope).expect("simplex should have capacity");
-    let rational_p = Polytope4D::new(
-        kp.polytope.normals_f64().to_vec(), kp.polytope.heights_f64().to_vec(),
-    ).expect("new should succeed for simplex");
+    let halfspaces: Vec<nalgebra::Vector4<f64>> = kp.polytope.normals_f64().iter().zip(kp.polytope.heights_f64().iter()).map(|(n, &h)| n / h).collect();
+    let rational_p = Polytope4D::new(halfspaces).expect("new should succeed for simplex");
     let exact_result = ehz_capacity(&rational_p).expect("simplex should have capacity");
     assert!((f64_result.capacity - exact_result.capacity).abs() < 1e-10,
         "capacity disagrees: f64={}, exact={}", f64_result.capacity, exact_result.capacity);
@@ -434,9 +433,8 @@ fn capacity_agreement_hypercube() {
     use crate::algorithms::hk2017::ehz_capacity;
     let kp = super::super::known_polytopes::hypercube();
     let f64_result = ehz_capacity(&kp.polytope).expect("hypercube should have capacity");
-    let rational_p = Polytope4D::new(
-        kp.polytope.normals_f64().to_vec(), kp.polytope.heights_f64().to_vec(),
-    ).expect("new should succeed for hypercube");
+    let halfspaces: Vec<nalgebra::Vector4<f64>> = kp.polytope.normals_f64().iter().zip(kp.polytope.heights_f64().iter()).map(|(n, &h)| n / h).collect();
+    let rational_p = Polytope4D::new(halfspaces).expect("new should succeed for hypercube");
     let exact_result = ehz_capacity(&rational_p).expect("hypercube should have capacity");
     assert!((f64_result.capacity - exact_result.capacity).abs() < 1e-10,
         "capacity disagrees: f64={}, exact={}", f64_result.capacity, exact_result.capacity);

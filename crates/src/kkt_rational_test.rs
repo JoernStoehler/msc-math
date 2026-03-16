@@ -36,7 +36,8 @@ fn simplex_exact_vs_numerical() {
         .expect("Simplex should have capacity");
 
     // Winning perm and beta are already in natural order — pass directly.
-    let q_numerical = crate::kkt::q_from_beta(simplex.normals_f64(), &result_f64.best_permutation, &result_f64.best_beta);
+    let normals = simplex.normals_f64();
+    let q_numerical = crate::kkt::q_from_beta(&normals, &result_f64.best_permutation, &result_f64.best_beta);
 
     let exact = solve_kkt_exact(simplex.dual_vertices(), &result_f64.best_permutation)
         .expect("Exact solve should succeed on winning perm");
@@ -171,7 +172,8 @@ fn exact_agrees_on_known_polytopes() {
             None => continue,
         };
 
-        let q_numerical = crate::kkt::q_from_beta(kp.polytope.normals_f64(), &result_f64.best_permutation, &result_f64.best_beta);
+        let normals = kp.polytope.normals_f64();
+        let q_numerical = crate::kkt::q_from_beta(&normals, &result_f64.best_permutation, &result_f64.best_beta);
 
         let exact = match solve_kkt_exact(kp.polytope.dual_vertices(), &result_f64.best_permutation) {
             Some(r) => r,
