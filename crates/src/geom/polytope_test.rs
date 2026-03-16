@@ -6,7 +6,7 @@
 //!
 //! Strategy: fixture-based (simplex, hypercube, known polytopes)
 
-use crate::geom::polytope::{ConstructionError, Polytope4D};
+use crate::geom::polytope::Polytope4D;
 use nalgebra::Vector4;
 
 /// 5 halfspaces forming a simplex-like polytope. a_i = n_i/h_i with h_i = 1.

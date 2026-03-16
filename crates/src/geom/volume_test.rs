@@ -95,7 +95,6 @@ fn volume_positive_for_known_polytopes() {
 #[cfg(test)]
 mod proptests {
     use super::*;
-    use crate::geom::polytope::Polytope4D;
     use proptest::prelude::*;
 
     proptest! {

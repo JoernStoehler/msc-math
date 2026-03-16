@@ -155,11 +155,12 @@ pub fn simulate_with(
                 let residual = normals[fj].dot(&current_point) - heights[fj];
                 let denom = normals[fj].dot(&r);
                 // On the boundary of fj AND Reeb pushes through it
-                if residual.abs() < EPS_FACET_INCIDENCE && denom > EPS_DENOM {
-                    if denom > best_denom {
-                        best_denom = denom;
-                        best_immediate = Some(fj);
-                    }
+                if residual.abs() < EPS_FACET_INCIDENCE
+                    && denom > EPS_DENOM
+                    && denom > best_denom
+                {
+                    best_denom = denom;
+                    best_immediate = Some(fj);
                 }
             }
             if let Some(fj) = best_immediate {

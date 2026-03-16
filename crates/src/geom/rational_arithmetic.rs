@@ -53,7 +53,7 @@ impl Sign {
 /// since h_i, h_k > 0.
 ///
 /// Mathematical correspondence: [def:symplectic-form]
-pub(super) fn omega0_rational(u: &[BigRational; 4], v: &[BigRational; 4]) -> BigRational {
+pub(crate) fn omega0_rational(u: &[BigRational; 4], v: &[BigRational; 4]) -> BigRational {
     &u[0] * &v[2] - &u[2] * &v[0] + &u[1] * &v[3] - &u[3] * &v[1]
 }
 
@@ -65,7 +65,7 @@ pub(super) fn omega0_rational(u: &[BigRational; 4], v: &[BigRational; 4]) -> Big
 /// [`f64_to_rational`]), the division is exact in f64 arithmetic and
 /// recovers the original value. For general BigRationals with large
 /// numerators/denominators, this produces the nearest f64 approximation.
-pub(super) fn rational_to_f64(r: &BigRational) -> f64 {
+pub(crate) fn rational_to_f64(r: &BigRational) -> f64 {
     use num_traits::ToPrimitive;
     let numer: f64 = r.numer().to_f64().unwrap_or(f64::NAN);
     let denom: f64 = r.denom().to_f64().unwrap_or(f64::NAN);
