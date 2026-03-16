@@ -14,8 +14,8 @@
 //!   Might be valid solutions with floating-point sign ambiguity.
 //!
 //! The gap invariant (certified action - uncertain action <= GAP_TOLERANCE) is
-//! asserted at finalization: if an uncertain orbit achieves significantly lower
-//! action than any certified orbit, the capacity cannot be resolved at f64 precision.
+//! asserted at finalization: if an uncertain candidate achieves significantly lower
+//! action than any certified candidate, the capacity cannot be resolved at f64 precision.
 
 use crate::kkt::{Solution, Verdict};
 
@@ -44,7 +44,7 @@ pub struct CapacityResult {
     pub capacity: f64,
     /// Capacity from uncertain tier (certified + indeterminate candidates).
     /// Always <= capacity. If strictly less, borderline orbits exist with lower
-    /// action than any certified orbit.
+    /// action than any certified candidate.
     pub capacity_uncertain: f64,
     /// Cyclic permutation achieving the minimum certified action.
     pub best_permutation: Vec<usize>,
@@ -186,7 +186,7 @@ impl CapacityAccumulator {
         assert!(
             gap <= GAP_TOLERANCE,
             "Numerical gap: certified capacity {:.6e} > uncertain capacity {:.6e} (gap = {:.6e}). \
-             An UNKNOWN orbit achieves lower action than the best certified orbit. \
+             An UNKNOWN candidate achieves lower action than the best certified candidate. \
              Cannot resolve at f64 precision.",
             certified.action,
             uncertain_action,

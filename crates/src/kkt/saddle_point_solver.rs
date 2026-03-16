@@ -347,8 +347,8 @@ fn try_pseudoinverse_with_threshold(
     // Use a looser check: verify the beta constraints Cx=d hold, not the full KKT residual.
     // The Lagrange multiplier rows may not hold exactly after null-space shift.
     // Instead, check just the constraint rows (rows m..m+5) directly.
-    let normals_from_kkt = extract_constraint_residual(kkt, &beta_final, m);
-    if normals_from_kkt > EPS_KKT_RESIDUAL {
+    let constraint_residual_norm = extract_constraint_residual(kkt, &beta_final, m);
+    if constraint_residual_norm > EPS_KKT_RESIDUAL {
         return None;
     }
 
@@ -380,8 +380,7 @@ fn finalize_result(
     abs_lambda_min: f64,
     eigen_info: &EigenInfo,
 ) -> Option<KktResult> {
-    // Extract normals and perm from the KKT matrix to compute Q directly.
-    // Instead, compute Q = (1/2) beta^T H beta using the top-left m x m block of kkt.
+    // Compute Q = (1/2) beta^T H beta using the top-left m x m block of the KKT matrix.
     let mut q_raw = 0.0;
     for i in 0..m {
         for j in 0..m {

@@ -33,7 +33,7 @@ const EPS_CONSISTENCY: f64 = 1e-8;
 pub struct ConstraintSolution {
     /// Particular solution x0 (minimum-norm via SVD pseudoinverse).
     pub x0: DVector<f64>,
-    /// Orthonormal null-space basis V in R^{m x k}. Columns span ker(C).
+    /// Orthonormal numerical null-space basis V in R^{m x k}. Columns approximately span ker(C).
     /// k = m - rank. Empty (m x 0 matrix) when C has full column rank.
     pub null_basis: DMatrix<f64>,
     /// Numerical rank of C (number of singular values above threshold).
