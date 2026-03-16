@@ -1714,13 +1714,13 @@ fn main() {
 
         // Cross-check: instrumented capacity must match library ehz_capacity
         let lib_result = ehz_capacity(polytope).expect("library ehz_capacity failed");
-        let cap_diff = (instrumented.capacity - lib_result.capacity).abs();
+        let cap_diff = (instrumented.capacity - lib_result.result.capacity).abs();
         assert!(
             cap_diff < 1e-8,
             "Capacity mismatch for {}: instrumented={:.10}, library={:.10}, diff={:.2e}",
             name,
             instrumented.capacity,
-            lib_result.capacity,
+            lib_result.result.capacity,
             cap_diff
         );
 

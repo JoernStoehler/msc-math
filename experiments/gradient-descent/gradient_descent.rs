@@ -553,10 +553,10 @@ fn compute_capacity(polytope: &Polytope4D, backend: &CapacityBackend) -> Option<
     match backend {
         CapacityBackend::Hk2017 => {
             // TODO: ehz_capacity will be re-exported from top-level in wave 4
-            symplectic::algorithms::hk2017::ehz_capacity(polytope).map(|r| r.capacity)
+            symplectic::algorithms::hk2017::ehz_capacity(polytope).map(|r| r.result.capacity)
         }
         CapacityBackend::Billiard => {
-            billiard_capacity(polytope).ok()?.map(|r| r.capacity)
+            billiard_capacity(polytope).ok()?.map(|r| r.result.capacity)
         }
     }
 }
@@ -960,6 +960,7 @@ fn main() {
         let lib_cap = billiard_capacity(polytope)
             .expect("billiard failed")
             .expect("billiard None")
+            .result
             .capacity;
         let inst_cap = ehz_capacity_instrumented(polytope)
             .expect("instrumented HK2017 None")
