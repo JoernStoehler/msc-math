@@ -7,7 +7,7 @@ use std::time::Instant;
 
 use super::enumerate::{enumerate_blocks, enumerate_k_bounce_sigmas};
 use super::lagrangian::classify_facets;
-use crate::kkt::{build_kkt_system, solve_kkt, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
+use crate::kkt::augmented::{build_kkt_system, solve_kkt, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
 
 /// Collect all billiard sigma sequences for the HKO pentagon.
 fn pentagon_sigmas() -> (Vec<Vector4<f64>>, Vec<f64>, Vec<Vec<usize>>) {

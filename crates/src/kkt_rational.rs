@@ -120,7 +120,7 @@ pub fn solve_kkt_exact(
 
 /// Build the KKT matrix and RHS over Q (exact rational arithmetic).
 ///
-/// Same block structure as [`crate::kkt::build_kkt_system`], but uses dual vertices
+/// Same block structure as [`crate::kkt::augmented::build_kkt_system`], but uses dual vertices
 /// y_i = n_i/h_i instead of separate normals and heights. The η block is all ones
 /// (heights are absorbed into the dual vertices).
 fn build_kkt_rational(
@@ -539,7 +539,7 @@ fn find_positive_beta_rational(
 
 /// Compute exact Q(β) = Σ_{i>j} β_i β_j ω₀(y_{σ(j)}, y_{σ(i)}) over BigRational.
 ///
-/// Same formula as [`crate::kkt::q_from_beta`] but in exact arithmetic over Q,
+/// Same formula as [`crate::kkt::augmented::q_from_beta`] but in exact arithmetic over Q,
 /// using dual vertices y_i instead of unit normals.
 /// Q > 0 for permutations in positive Reeb direction.
 fn q_from_beta_rational(

@@ -5,7 +5,7 @@
 ///
 /// Prints raw data for investigation — does NOT assert correctness.
 use super::{ehz_capacity_unpruned, ehz_capacity, build_adjacency_matrix};
-use crate::kkt::solve_kkt;
+use crate::kkt::augmented::solve_kkt;
 use crate::algorithms::billiard::billiard_capacity;
 use crate::geom::lagrangian_product::lagrangian_product;
 use crate::geom::polygon::{regular_polygon_2d, rotate_polygon_2d};
@@ -514,7 +514,7 @@ fn svd_null_space_debug() {
     let x0 = svd.solve(&rhs, 1e-10).unwrap();
     let beta0: Vec<f64> = (0..m).map(|i| x0[i]).collect();
     eprintln!("SVD particular β₀: {:.8?}", beta0);
-    let q0 = crate::kkt::q_from_beta(&normals, perm, &beta0);
+    let q0 = crate::kkt::augmented::q_from_beta(&normals, perm, &beta0);
     eprintln!("Q(β₀) = {:.10}", q0);
 
     // Null space direction
@@ -526,7 +526,7 @@ fn svd_null_space_debug() {
     eprintln!("Q along null space:");
     for &alpha in &[-2.0, -1.0, -0.5, 0.0, 0.5, 1.0, 2.0] {
         let beta: Vec<f64> = (0..m).map(|j| beta0[j] + alpha * null_vec[j]).collect();
-        let q = crate::kkt::q_from_beta(&normals, perm, &beta);
+        let q = crate::kkt::augmented::q_from_beta(&normals, perm, &beta);
         let all_pos = beta.iter().all(|&b| b > 1e-12);
         eprintln!("  α={alpha:+.1}: Q={q:.10} β_pos={all_pos} β={:.6?}", beta);
     }
@@ -567,7 +567,7 @@ fn svd_null_space_debug() {
     let x0_rot = svd2.solve(&rhs, 1e-10).unwrap();
     let beta0_rot: Vec<f64> = (0..m).map(|i| x0_rot[i]).collect();
     eprintln!("Rotated SVD particular β₀: {:.8?}", beta0_rot);
-    let q0_rot = crate::kkt::q_from_beta(&normals, perm_rot, &beta0_rot);
+    let q0_rot = crate::kkt::augmented::q_from_beta(&normals, perm_rot, &beta0_rot);
     eprintln!("Q(rotated β₀) = {:.10}", q0_rot);
 
     // Expected: β₀_rot should be cyclic shift of β₀
@@ -622,7 +622,7 @@ fn svd_null_space_debug() {
     }
     let beta0_r9: Vec<f64> = (0..m).map(|i| x0_rank9[i]).collect();
     eprintln!("  β₀ (rank-9 pseudoinverse): {:.8?}", beta0_r9);
-    let q_r9 = crate::kkt::q_from_beta(&normals, perm, &beta0_r9);
+    let q_r9 = crate::kkt::augmented::q_from_beta(&normals, perm, &beta0_r9);
     eprintln!("  Q(β₀ rank-9) = {:.10}", q_r9);
     eprintln!();
 }
@@ -885,7 +885,7 @@ fn solve_kkt_trace() {
             eprintln!("  RETURNED Some: action={:.10}, Q={:.10}", action, result.q_corrected);
             eprintln!("  beta={:.8?}", result.beta);
             // Verify: does this beta come from the SVD path?
-            let q_check = crate::kkt::q_from_beta(&normals, perm, &result.beta);
+            let q_check = crate::kkt::augmented::q_from_beta(&normals, perm, &result.beta);
             eprintln!("  Q(beta) = {:.10} (matches? {})", q_check, (result.q_corrected - q_check).abs() < 1e-12);
             // Is this beta equal to beta0?
             let diff: f64 = result.beta.iter().zip(beta0.iter()).map(|(a, b)| (a - b).abs()).sum();

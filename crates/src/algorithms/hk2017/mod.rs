@@ -29,7 +29,7 @@
 pub mod permutations;
 
 use crate::geom::polytope::Polytope4D;
-use crate::kkt::{solve_kkt, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
+use crate::kkt::augmented::{solve_kkt, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
 use permutations::{cyclic_permutations, for_each_cyclic_permutation};
 
 /// Intermediate best candidate: (action, subset, permutation, beta).

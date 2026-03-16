@@ -13,7 +13,7 @@ mod lagrangian;
 
 use crate::algorithms::hk2017::{build_adjacency_matrix, build_directed_adjacency_matrix, is_adjacent_cycle};
 use crate::geom::polytope::Polytope4D;
-use crate::kkt::{solve_kkt, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
+use crate::kkt::augmented::{solve_kkt, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
 use enumerate::{enumerate_blocks, enumerate_k_bounce_sigmas};
 use lagrangian::classify_facets;
 
