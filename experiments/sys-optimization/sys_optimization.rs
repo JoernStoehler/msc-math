@@ -611,7 +611,7 @@ fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult
                 }
                 iterations += 1;
 
-                if let Some((beta, q_val, nu, lambda)) = solve_kkt_full(normals, heights, perm) {
+                if let Some((beta, q_val, nu, lambda)) = solve_kkt_full(&normals, &heights, perm) {
                     if q_val <= EPS_Q_POSITIVE {
                         return;
                     }
@@ -871,7 +871,7 @@ fn compute_volume_derivatives_analytical(polytope: &Polytope4D) -> Vec<f64> {
     let vertices = polytope.vertices_f64();
     let f = normals.len();
     (0..f)
-        .map(|k| facet_volume_3d(normals, heights, vertices, k, f))
+        .map(|k| facet_volume_3d(&normals, &heights, &vertices, k, f))
         .collect()
 }
 
@@ -890,11 +890,11 @@ fn compute_volume_derivatives_fd(normals: &[Vector4<f64>], heights: &[f64]) -> V
             h_plus[k] += FD_EPS;
             h_minus[k] -= FD_EPS;
 
-            let p_plus = match Polytope4D::new(normals.to_vec(), h_plus) {
+            let p_plus = match Polytope4D::from_normals_and_heights(normals.to_vec(), h_plus) {
                 Ok(p) => p,
                 Err(_) => return f64::NAN,
             };
-            let p_minus = match Polytope4D::new(normals.to_vec(), h_minus) {
+            let p_minus = match Polytope4D::from_normals_and_heights(normals.to_vec(), h_minus) {
                 Ok(p) => p,
                 Err(_) => return f64::NAN,
             };
@@ -963,7 +963,7 @@ fn compute_volume_derivatives_normal(polytope: &Polytope4D) -> Vec<Vector4<f64>>
 
     (0..f)
         .map(|k| {
-            let (s_k, centroid_k) = facet_volume_and_centroid_3d(normals, heights, vertices, k, f);
+            let (s_k, centroid_k) = facet_volume_and_centroid_3d(&normals, &heights, &vertices, k, f);
             if s_k < 1e-30 {
                 return Vector4::zeros();
             }
@@ -1058,7 +1058,7 @@ fn compute_sensitivity(
 
     // Cross-check: analytical volume derivatives (h) vs finite differences
     debug_assert!({
-        let d_vol_fd = compute_volume_derivatives_fd(normals, heights);
+        let d_vol_fd = compute_volume_derivatives_fd(&normals, &heights);
         let ok = d_vol_h.iter().zip(d_vol_fd.iter()).all(|(a, fd)| {
             if fd.is_nan() { return true; }
             let tol = (0.05 * a.abs()).max(0.1);
@@ -1093,7 +1093,7 @@ fn compute_sensitivity(
 
     // --- Normal derivatives (new) ---
     let d_vol_n = compute_volume_derivatives_normal(polytope);
-    let d_cap_n = compute_capacity_derivatives_normal(best_orbit, normals, f);
+    let d_cap_n = compute_capacity_derivatives_normal(best_orbit, &normals, f);
 
     // Chain rule: d(sys)/d(n_k) = (1/vol) * [c * dc/dn_k - sys * dvol/dn_k]
     let d_sys_n: Vec<Vector4<f64>> = d_vol_n
@@ -1385,7 +1385,7 @@ fn evaluate_gradient_step_hn(
         })
         .collect();
 
-    match Polytope4D::new(new_normals, new_heights) {
+    match Polytope4D::from_normals_and_heights(new_normals, new_heights) {
         Ok(new_polytope) => {
             let new_vol = volume(&new_polytope).unwrap_or(f64::NAN);
             let new_cap = ehz_capacity(&new_polytope)
@@ -1448,7 +1448,7 @@ fn evaluate_gradient_step(
     let f = normals.len();
     let new_heights: Vec<f64> = (0..f).map(|k| heights[k] + t * direction[k]).collect();
 
-    match Polytope4D::new(normals.to_vec(), new_heights) {
+    match Polytope4D::from_normals_and_heights(normals.to_vec(), new_heights) {
         Ok(new_polytope) => {
             let new_vol = volume(&new_polytope).unwrap_or(f64::NAN);
             // Use library ehz_capacity for the step evaluation (not instrumented — faster)
@@ -1514,7 +1514,7 @@ fn try_step_h_polytope(
     let f = normals.len();
     let new_heights: Vec<f64> = (0..f).map(|k| heights[k] + t * direction[k]).collect();
 
-    let new_polytope = match Polytope4D::new(normals.to_vec(), new_heights) {
+    let new_polytope = match Polytope4D::from_normals_and_heights(normals.to_vec(), new_heights) {
         Ok(p) => p,
         Err(_) => return None,
     };
@@ -1553,7 +1553,7 @@ fn try_step_hn_polytope(
         })
         .collect();
 
-    let new_polytope = match Polytope4D::new(new_normals, new_heights) {
+    let new_polytope = match Polytope4D::from_normals_and_heights(new_normals, new_heights) {
         Ok(p) => p,
         Err(_) => return None,
     };
@@ -1621,7 +1621,7 @@ fn load_polytopes_from_jsonl(path: &std::path::Path, source: &str) -> Vec<(Strin
             .map(|n| Vector4::new(n[0], n[1], n[2], n[3]))
             .collect();
 
-        match Polytope4D::new(normals, row.heights) {
+        match Polytope4D::from_normals_and_heights(normals, row.heights) {
             Ok(p) => polytopes.push((row.name, source.to_string(), p)),
             Err(e) => {
                 eprintln!("  {}: construction failed: {e}", row.name);
@@ -1818,8 +1818,8 @@ fn main() {
             for &frac in STEP_FRACTIONS {
                 let t = frac * t_max_h;
                 let mut step_row = evaluate_gradient_step(
-                    normals,
-                    heights,
+                    &normals,
+                    &heights,
                     &sensitivity.d_sys_h,
                     t,
                     sys,
@@ -1850,8 +1850,8 @@ fn main() {
             for &frac in STEP_FRACTIONS {
                 let t = frac * t_max_hn;
                 let mut step_row = evaluate_gradient_step_hn(
-                    normals,
-                    heights,
+                    &normals,
+                    &heights,
                     &sensitivity.d_sys_h,
                     &sensitivity.d_sys_n,
                     t,
@@ -1893,7 +1893,7 @@ fn main() {
         let t_poly = Instant::now();
 
         // Reconstruct to get an owned polytope we can replace each iteration
-        let mut current = match Polytope4D::new(
+        let mut current = match Polytope4D::from_normals_and_heights(
             start_polytope.normals_f64().to_vec(),
             start_polytope.heights_f64().to_vec(),
         ) {
@@ -1953,7 +1953,7 @@ fn main() {
                 for &frac in STEP_FRACTIONS {
                     let t = frac * t_max_h;
                     if let Some((p, new_sys)) = try_step_h_polytope(
-                        normals, heights, &sensitivity.d_sys_h, t,
+                        &normals, &heights, &sensitivity.d_sys_h, t,
                     ) {
                         if new_sys > sys && best.as_ref().map_or(true, |b| new_sys > b.1) {
                             best = Some((p, new_sys, "h_only".to_string(), frac, t));
@@ -1966,7 +1966,7 @@ fn main() {
                 for &frac in STEP_FRACTIONS {
                     let t = frac * t_max_hn;
                     if let Some((p, new_sys)) = try_step_hn_polytope(
-                        normals, heights, &sensitivity.d_sys_h, &sensitivity.d_sys_n, t,
+                        &normals, &heights, &sensitivity.d_sys_h, &sensitivity.d_sys_n, t,
                     ) {
                         if new_sys > sys && best.as_ref().map_or(true, |b| new_sys > b.1) {
                             best = Some((p, new_sys, "h_n".to_string(), frac, t));
@@ -2210,7 +2210,7 @@ fn main() {
                 let (actual_delta, construction_ok, vertex_count_changed) =
                     if dir.g_n.iter().all(|v| v.norm() < 1e-15) {
                         // h-only step
-                        match try_step_h_polytope(normals, heights, &dir.g_h, t) {
+                        match try_step_h_polytope(&normals, &heights, &dir.g_h, t) {
                             Some((new_poly, new_sys)) => {
                                 let vc = new_poly.vertices_f64().len();
                                 (new_sys - sys, true, vc != vertex_count_orig)
@@ -2219,7 +2219,7 @@ fn main() {
                         }
                     } else {
                         // (h,n) step
-                        match try_step_hn_polytope(normals, heights, &dir.g_h, &dir.g_n, t) {
+                        match try_step_hn_polytope(&normals, &heights, &dir.g_h, &dir.g_n, t) {
                             Some((new_poly, new_sys)) => {
                                 let vc = new_poly.vertices_f64().len();
                                 (new_sys - sys, true, vc != vertex_count_orig)

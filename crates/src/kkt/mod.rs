@@ -90,6 +90,10 @@ const EPS_MARGIN_FALSE: f64 = 1e-9;
 /// Uses the projection method: project to the constraint null space,
 /// optimize the reduced objective, search for β > 0 via max-margin search.
 ///
+/// **Note:** The production capacity pipeline (hk2017, billiard) currently
+/// calls `augmented::solve_kkt` directly — this entry point is not yet
+/// wired into the pipeline.
+///
 /// # Panics
 /// - If dimensions are inconsistent (C.ncols ≠ H.nrows, etc.)
 pub fn solve(qp: &QP) -> Solution {

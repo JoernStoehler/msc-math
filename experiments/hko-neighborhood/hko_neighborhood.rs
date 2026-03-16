@@ -573,7 +573,7 @@ fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult
                 }
                 iterations += 1;
 
-                if let Some((beta, q_val, nu, lambda)) = solve_kkt_full(normals, heights, perm) {
+                if let Some((beta, q_val, nu, lambda)) = solve_kkt_full(&normals, &heights, perm) {
                     if q_val <= EPS_Q_POSITIVE {
                         return;
                     }
@@ -749,7 +749,7 @@ fn compute_volume_derivatives_analytical(polytope: &Polytope4D) -> Vec<f64> {
     let f = normals.len();
     (0..f)
         .map(|k| {
-            facet_volume_and_centroid_3d(normals, heights, vertices, k, f).0
+            facet_volume_and_centroid_3d(&normals, &heights, &vertices, k, f).0
         })
         .collect()
 }
@@ -778,7 +778,7 @@ fn compute_volume_derivatives_normal(polytope: &Polytope4D) -> Vec<Vector4<f64>>
 
     (0..f)
         .map(|k| {
-            let (s_k, centroid_k) = facet_volume_and_centroid_3d(normals, heights, vertices, k, f);
+            let (s_k, centroid_k) = facet_volume_and_centroid_3d(&normals, &heights, &vertices, k, f);
             if s_k < 1e-30 {
                 return Vector4::zeros();
             }
@@ -846,11 +846,11 @@ fn compute_capacity_derivatives_fd(normals: &[Vector4<f64>], heights: &[f64]) ->
             h_plus[k] += FD_EPS;
             h_minus[k] -= FD_EPS;
 
-            let p_plus = match Polytope4D::new(normals.to_vec(), h_plus) {
+            let p_plus = match Polytope4D::from_normals_and_heights(normals.to_vec(), h_plus) {
                 Ok(p) => p,
                 Err(_) => return f64::NAN,
             };
-            let p_minus = match Polytope4D::new(normals.to_vec(), h_minus) {
+            let p_minus = match Polytope4D::from_normals_and_heights(normals.to_vec(), h_minus) {
                 Ok(p) => p,
                 Err(_) => return f64::NAN,
             };
@@ -893,7 +893,7 @@ fn cross_check_derivatives_fd(
                 h_minus[k] -= FD_EPS;
 
                 let sys_at = |h: Vec<f64>| -> Option<f64> {
-                    let p = Polytope4D::new(normals.to_vec(), h).ok()?;
+                    let p = Polytope4D::from_normals_and_heights(normals.to_vec(), h).ok()?;
                     let c = ehz_capacity(&p)?.capacity;
                     let v = volume(&p).ok()?;
                     Some(c * c / (2.0 * v))
@@ -981,7 +981,7 @@ fn compute_sensitivity(
         .sqrt();
 
     let d_vol_n = compute_volume_derivatives_normal(polytope);
-    let d_cap_n = compute_capacity_derivatives_normal(orbit, normals, f);
+    let d_cap_n = compute_capacity_derivatives_normal(orbit, &normals, f);
 
     let d_sys_n: Vec<Vector4<f64>> = d_vol_n
         .iter()
@@ -1232,7 +1232,7 @@ fn try_step_h(
     let f = normals.len();
     let new_heights: Vec<f64> = (0..f).map(|k| heights[k] + t * direction[k]).collect();
 
-    let new_polytope = Polytope4D::new(normals.to_vec(), new_heights).ok()?;
+    let new_polytope = Polytope4D::from_normals_and_heights(normals.to_vec(), new_heights).ok()?;
     let (sys, vol, cap) = safe_sys(&new_polytope)?;
     Some((new_polytope, sys, vol, cap))
 }
@@ -1253,7 +1253,7 @@ fn try_step_hn(
         })
         .collect();
 
-    let new_polytope = Polytope4D::new(new_normals, new_heights).ok()?;
+    let new_polytope = Polytope4D::from_normals_and_heights(new_normals, new_heights).ok()?;
     let (sys, vol, cap) = safe_sys(&new_polytope)?;
     Some((new_polytope, sys, vol, cap))
 }
@@ -1276,7 +1276,7 @@ fn armijo_step_h(
 
     let mut t = 0.95 * t_max;
     while t > MIN_STEP_FRACTION * t_max {
-        if let Some((new_poly, new_sys, vol, cap)) = try_step_h(normals, heights, d_sys_h, t) {
+        if let Some((new_poly, new_sys, vol, cap)) = try_step_h(&normals, &heights, d_sys_h, t) {
             // Armijo condition: f(x + td) >= f(x) + c·t·∇f·d
             if new_sys >= current_sys + ARMIJO_C * t * grad_dot_dir {
                 return Some((new_poly, new_sys, vol, cap, t));
@@ -1303,7 +1303,7 @@ fn armijo_step_hn(
     let mut t = 0.95 * t_max;
     while t > MIN_STEP_FRACTION * t_max {
         if let Some((new_poly, new_sys, vol, cap)) =
-            try_step_hn(normals, heights, d_sys_h, d_sys_n, t)
+            try_step_hn(&normals, &heights, d_sys_h, d_sys_n, t)
         {
             if new_sys >= current_sys + ARMIJO_C * t * grad_dot_dir {
                 return Some((new_poly, new_sys, vol, cap, t));
@@ -1525,7 +1525,7 @@ fn run_phase_a(base_dir: &std::path::Path) {
     let ascent_file = File::create(&ascent_path).expect("create ascent JSONL");
     let mut ascent_writer = BufWriter::new(ascent_file);
 
-    let mut current = Polytope4D::new(
+    let mut current = Polytope4D::from_normals_and_heights(
         polytope.normals_f64().to_vec(),
         polytope.heights_f64().to_vec(),
     )
@@ -1829,7 +1829,7 @@ fn run_phase_b(base_dir: &std::path::Path) {
                 new_normals.push(*dir);
                 new_heights.push(h_k_n - eps);
 
-                match Polytope4D::new(new_normals, new_heights) {
+                match Polytope4D::from_normals_and_heights(new_normals, new_heights) {
                     Ok(split_poly) => {
                         let (split_sys, split_vol, split_cap) = match safe_sys(&split_poly) {
                             Some(v) => v,
@@ -1944,7 +1944,7 @@ fn run_phase_b(base_dir: &std::path::Path) {
             new_normals.push(dir);
             new_heights.push(h_k_n - eps);
 
-            if let Ok(split_poly) = Polytope4D::new(new_normals, new_heights) {
+            if let Ok(split_poly) = Polytope4D::from_normals_and_heights(new_normals, new_heights) {
                 let (split_sys, split_vol, split_cap) = match safe_sys(&split_poly) {
                     Some(v) => v,
                     None => continue,
@@ -2038,7 +2038,7 @@ fn run_phase_b(base_dir: &std::path::Path) {
             new_normals.push(dir);
             new_heights.push(h_k_n - eps);
 
-            if let Ok(split_poly) = Polytope4D::new(new_normals, new_heights) {
+            if let Ok(split_poly) = Polytope4D::from_normals_and_heights(new_normals, new_heights) {
                     let (split_sys, split_vol, split_cap) = match safe_sys(&split_poly) {
                         Some(v) => v,
                         None => continue,

@@ -20,10 +20,12 @@ Downstream consumers: ~18 experiment binaries, thesis LaTeX.
 - `kkt/augmented.rs` — (m+5)×(m+5) saddle-point eigendecomposition. Returns KktResult with error bounds. Currently wired into the capacity pipeline.
 - `kkt/projection_solver.rs` + `constraint_solver.rs` + `margin_search.rs` — projects to constraint null space, LP-based margin search. Returns Solution with trinary Verdict. New code, NOT yet wired into the capacity pipeline.
 
-**Capacity pipeline** (calls augmented solver only):
-- `algorithms/hk2017/` — general EHZ capacity via exhaustive (S,σ) enumeration
-- `algorithms/billiard/` — Lagrangian product capacity via structured enumeration
+**Capacity pipeline** (calls augmented solver only — `kkt::solve()` is NOT yet wired in):
+- `algorithms/hk2017/` — general EHZ capacity via exhaustive (S,σ) enumeration. Calls `augmented::solve_kkt(normals, heights, perm)` directly.
+- `algorithms/billiard/` — Lagrangian product capacity via structured enumeration. Same calling pattern.
 - `kkt_rational.rs` — exact rational solver for resolving ambiguous cases
+
+**Parameterization status:** `Polytope4D` stores dual vertices aᵢ natively. But `augmented::solve_kkt` still takes `(normals, heights)`, and hk2017/billiard extract these via `.normals_f64()` / `.heights_f64()`. The dual vertex migration is done at the data model level, not at the solver interface level.
 
 **Geometry** (`geom/`): polytope representation, skeleton, symplectic form, volume, known polytopes, reeb trajectories, vertex enumeration, 2D polygons.
 

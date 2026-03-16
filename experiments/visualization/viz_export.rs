@@ -19,7 +19,7 @@ use symplectic::algorithms::hk2017::{
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
 use symplectic::geom::reeb_trajectory;
 use symplectic::known_polytopes::{self, KnownPolytope};
-use symplectic::kkt::{solve_kkt, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
+use symplectic::kkt::augmented::{solve_kkt, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
 use symplectic::Skeleton;
 
 /// Maximum number of orbits to export per polytope (keeps data.js manageable).
@@ -130,7 +130,7 @@ fn collect_all_orbits(polytope: &symplectic::Polytope4D) -> Vec<CollectedOrbit> 
                     return;
                 }
 
-                if let Some(result) = solve_kkt(normals, heights, perm) {
+                if let Some(result) = solve_kkt(&normals, &heights, perm) {
                     let q_val = result.q_corrected;
                     if q_val <= EPS_Q_POSITIVE {
                         return;

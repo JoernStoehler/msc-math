@@ -607,7 +607,7 @@ fn main() {
 
     // 3. Symmetry group
     println!("\nComputing symplectic symmetry group...");
-    let group = compute_symplectic_hyperoctahedral(normals);
+    let group = compute_symplectic_hyperoctahedral(&normals);
     println!("Hyperoctahedral group order: 384");
     println!("Symplectic subgroup order:   {}", group.len());
     println!("Expected (by hand):          32");
@@ -694,7 +694,7 @@ fn main() {
                 iterations += 1;
                 m_iterations += 1;
 
-                if let Some((beta, q_val)) = solve_kkt(normals, heights, perm) {
+                if let Some((beta, q_val)) = solve_kkt(&normals, &heights, perm) {
                     if q_val <= EPS_Q_POSITIVE {
                         return;
                     }

@@ -113,7 +113,7 @@ fn try_perturb(
         return None;
     }
 
-    let polytope = Polytope4D::new(normals.clone(), heights.clone()).ok()?;
+    let polytope = Polytope4D::from_normals_and_heights(normals.clone(), heights.clone()).ok()?;
 
     Some(PerturbedPolytope {
         polytope,

@@ -150,7 +150,7 @@ fn main() {
     println!("Test 3: Generating 10 scaled polytopes (reusing base)...");
     for (i, p) in base_polytopes.iter().enumerate() {
         let alpha: f64 = rng.gen_range(0.5..2.0);
-        let scaled = Polytope4D::new(
+        let scaled = Polytope4D::from_normals_and_heights(
             p.normals_f64().to_vec(),
             p.heights_f64().iter().map(|&h| alpha * h).collect(),
         ).expect("scaled");
@@ -210,7 +210,7 @@ fn main() {
             .map(|&h| h * (1.0 + epsilon * (rng.gen::<f64>() - 0.5)))
             .collect();
 
-        let perturbed = Polytope4D::new(p.normals_f64().to_vec(), perturbed_heights)
+        let perturbed = Polytope4D::from_normals_and_heights(p.normals_f64().to_vec(), perturbed_heights)
             .expect("perturbed");
         let pruned = ehz_capacity(&perturbed).expect("pruned").capacity;
 
@@ -252,15 +252,17 @@ fn main() {
 
 fn apply_symplectomorphism(p: &Polytope4D, m: &Matrix4<f64>) -> Polytope4D {
     let m_inv_t = m.transpose().try_inverse().expect("invertible");
-    let normals: Vec<_> = p.normals_f64().iter().map(|n| {
+    let p_normals = p.normals_f64();
+    let p_heights = p.heights_f64();
+    let normals: Vec<_> = p_normals.iter().map(|n| {
         let n_raw = m_inv_t * n;
         n_raw / n_raw.norm()
     }).collect();
-    let heights: Vec<_> = p.normals_f64().iter().zip(p.heights_f64().iter()).map(|(n, &h)| {
+    let heights: Vec<_> = p_normals.iter().zip(p_heights.iter()).map(|(n, &h)| {
         let n_raw = m_inv_t * n;
         h / n_raw.norm()
     }).collect();
-    Polytope4D::new(normals, heights).expect("transformed")
+    Polytope4D::from_normals_and_heights(normals, heights).expect("transformed")
 }
 
 fn random_sp4_matrix(rng: &mut impl Rng) -> Matrix4<f64> {
@@ -420,11 +422,11 @@ mod tests {
                 let k1 = &dataset[i];
                 let k2 = &dataset[j];
 
-                let p1 = Polytope4D::new(
+                let p1 = Polytope4D::from_normals_and_heights(
                     k1.normals.iter().map(|n| Vector4::from_row_slice(n)).collect(),
                     k1.heights.clone()
                 ).expect("p1");
-                let p2 = Polytope4D::new(
+                let p2 = Polytope4D::from_normals_and_heights(
                     k2.normals.iter().map(|n| Vector4::from_row_slice(n)).collect(),
                     k2.heights.clone()
                 ).expect("p2");

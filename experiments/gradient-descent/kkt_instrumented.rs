@@ -656,7 +656,7 @@ pub fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedRe
                 }
                 iterations += 1;
 
-                if let Some((beta, q_val, nu, lambda)) = solve_kkt_full(normals, heights, perm) {
+                if let Some((beta, q_val, nu, lambda)) = solve_kkt_full(&normals, &heights, perm) {
                     if q_val <= EPS_Q_POSITIVE {
                         return;
                     }
@@ -727,7 +727,7 @@ pub fn billiard_capacity_instrumented(polytope: &Polytope4D) -> Option<Instrumen
             }
             iterations += 1;
 
-            if let Some((beta, q_val, nu, lambda)) = solve_kkt_full(normals, heights, sigma) {
+            if let Some((beta, q_val, nu, lambda)) = solve_kkt_full(&normals, &heights, sigma) {
                 if q_val <= EPS_Q_POSITIVE {
                     return;
                 }

@@ -140,7 +140,7 @@ fn compute_volume_derivatives_h(polytope: &Polytope4D) -> Vec<f64> {
     let vertices = polytope.vertices_f64();
     let f = normals.len();
     (0..f)
-        .map(|k| facet_volume_3d(normals, heights, vertices, k, f))
+        .map(|k| facet_volume_3d(&normals, &heights, &vertices, k, f))
         .collect()
 }
 
@@ -169,7 +169,7 @@ fn compute_volume_derivatives_n(polytope: &Polytope4D) -> Vec<Vector4<f64>> {
 
     (0..f)
         .map(|k| {
-            let (s_k, centroid_k) = facet_volume_and_centroid_3d(normals, heights, vertices, k, f);
+            let (s_k, centroid_k) = facet_volume_and_centroid_3d(&normals, &heights, &vertices, k, f);
             if s_k < 1e-30 {
                 return Vector4::zeros();
             }
@@ -260,7 +260,7 @@ fn compute_sensitivity(
 
     // Normal derivatives
     let d_vol_n = compute_volume_derivatives_n(polytope);
-    let d_cap_n = compute_capacity_derivatives_n(best_orbit, normals, f);
+    let d_cap_n = compute_capacity_derivatives_n(best_orbit, &normals, f);
 
     let d_sys_n: Vec<Vector4<f64>> = d_vol_n
         .iter()
@@ -493,7 +493,7 @@ fn try_step_h(
     let f = normals.len();
     let new_heights: Vec<f64> = (0..f).map(|k| heights[k] + t * direction[k]).collect();
 
-    let new_polytope = Polytope4D::new(normals.to_vec(), new_heights).ok()?;
+    let new_polytope = Polytope4D::from_normals_and_heights(normals.to_vec(), new_heights).ok()?;
     let vol = volume(&new_polytope).ok().filter(|&v| v > 0.0)?;
     let cap = compute_capacity(&new_polytope, backend)?;
     let sys = cap * cap / (2.0 * vol);
@@ -537,7 +537,7 @@ fn try_step_hn(
         })
         .collect();
 
-    let new_polytope = Polytope4D::new(new_normals, new_heights).ok()?;
+    let new_polytope = Polytope4D::from_normals_and_heights(new_normals, new_heights).ok()?;
     let vol = volume(&new_polytope).ok().filter(|&v| v > 0.0)?;
     let cap = compute_capacity(&new_polytope, backend)?;
     let sys = cap * cap / (2.0 * vol);
@@ -575,7 +575,7 @@ fn run_gradient_ascent(
     let f = start_polytope.facet_count();
     let t_start = Instant::now();
 
-    let mut current = match Polytope4D::new(
+    let mut current = match Polytope4D::from_normals_and_heights(
         start_polytope.normals_f64().to_vec(),
         start_polytope.heights_f64().to_vec(),
     ) {
@@ -654,7 +654,7 @@ fn run_gradient_ascent(
             for &frac in STEP_FRACTIONS {
                 let t = frac * t_max_h;
                 if let Some((p, new_sys)) =
-                    try_step_h(normals, heights, &sensitivity.d_sys_h, t, backend)
+                    try_step_h(&normals, &heights, &sensitivity.d_sys_h, t, backend)
                 {
                     if new_sys > sys && best.as_ref().is_none_or(|b| new_sys > b.1) {
                         best = Some((p, new_sys, "h_only".to_string(), frac, t));
@@ -667,8 +667,8 @@ fn run_gradient_ascent(
             for &frac in STEP_FRACTIONS {
                 let t = frac * t_max_hn;
                 if let Some((p, new_sys)) = try_step_hn(
-                    normals,
-                    heights,
+                    &normals,
+                    &heights,
                     &sensitivity.d_sys_h,
                     &sensitivity.d_sys_n,
                     t,

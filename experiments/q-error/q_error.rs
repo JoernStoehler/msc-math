@@ -16,7 +16,7 @@ use symplectic::algorithms::hk2017::{ehz_capacity, combinations};
 use symplectic::algorithms::hk2017::permutations::cyclic_permutations;
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::kkt::{build_kkt_system as build_kkt, q_from_beta};
+use symplectic::kkt::augmented::{build_kkt_system as build_kkt, q_from_beta};
 use symplectic::kkt_rational;
 
 /// Condition-number threshold for rank truncation (matches EIGEN_CONDITION_TAU
@@ -76,7 +76,7 @@ fn error_bound_sweep(polytope: &Polytope4D) -> SweepResult {
             for perm in cyclic_permutations(&subset) {
                 total_nodes += 1;
                 let size = m + 5;
-                let (kkt, rhs) = build_kkt(normals, heights, &perm);
+                let (kkt, rhs) = build_kkt(&normals, &heights, &perm);
 
                 let eig = kkt.clone().symmetric_eigen();
                 let eigenvalues = &eig.eigenvalues;
@@ -113,7 +113,7 @@ fn error_bound_sweep(polytope: &Polytope4D) -> SweepResult {
 
                 // Q̃ = Q(β̂) + (r₂ᵀμ̂ + r₃ξ̂)
                 let beta: Vec<f64> = (0..m).map(|i| x[i]).collect();
-                let q_raw = q_from_beta(normals, &perm, &beta);
+                let q_raw = q_from_beta(&normals, &perm, &beta);
                 let r2_dot_mu: f64 = (m..m + 4).map(|i| residual_vec[i] * x[i]).sum();
                 let r3 = residual_vec[m + 4];
                 let xi_hat = x[m + 4];
@@ -189,7 +189,7 @@ fn exact_comparison(polytope: &Polytope4D) -> Option<ExactResult> {
     let q_exact_f64 = exact_result.q_exact_f64;
 
     // Compute numerical Q̃ and E (using the eigendecomposition path)
-    let (kkt, rhs) = build_kkt(normals, heights, perm);
+    let (kkt, rhs) = build_kkt(&normals, &heights, perm);
     let eig = kkt.clone().symmetric_eigen();
     let eigenvalues = &eig.eigenvalues;
     let eigenvectors = &eig.eigenvectors;
@@ -209,7 +209,7 @@ fn exact_comparison(polytope: &Polytope4D) -> Option<ExactResult> {
     let residual_norm = residual_vec.norm();
 
     let beta_numerical: Vec<f64> = (0..m).map(|i| x[i]).collect();
-    let q_raw = q_from_beta(normals, perm, &beta_numerical);
+    let q_raw = q_from_beta(&normals, perm, &beta_numerical);
     let r2_dot_mu: f64 = (m..m + 4).map(|i| residual_vec[i] * x[i]).sum();
     let r3 = residual_vec[m + 4];
     let xi_hat = x[m + 4];

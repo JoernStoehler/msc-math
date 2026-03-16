@@ -474,7 +474,7 @@ fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult
                 }
                 iterations += 1;
 
-                if let Some((beta, q_val, nu, lambda)) = solve_kkt_full(normals, heights, perm) {
+                if let Some((beta, q_val, nu, lambda)) = solve_kkt_full(&normals, &heights, perm) {
                     if q_val <= EPS_Q_POSITIVE {
                         return;
                     }
@@ -625,7 +625,7 @@ fn compute_volume_derivatives_h(polytope: &Polytope4D) -> Vec<f64> {
     let f = normals.len();
     (0..f)
         .map(|k| {
-            let (vol, _) = facet_volume_and_centroid_3d(normals, heights, vertices, k, f);
+            let (vol, _) = facet_volume_and_centroid_3d(&normals, &heights, vertices, k, f);
             vol
         })
         .collect()
@@ -640,7 +640,7 @@ fn compute_volume_derivatives_n(polytope: &Polytope4D) -> Vec<Vector4<f64>> {
     let f = normals.len();
     (0..f)
         .map(|k| {
-            let (s_k, centroid_k) = facet_volume_and_centroid_3d(normals, heights, vertices, k, f);
+            let (s_k, centroid_k) = facet_volume_and_centroid_3d(&normals, &heights, vertices, k, f);
             if s_k < 1e-30 {
                 return Vector4::zeros();
             }
@@ -719,7 +719,7 @@ fn compute_d_sys_n(
     let best_orbit = &instrumented.orbits[0];
 
     let d_vol_n = compute_volume_derivatives_n(polytope);
-    let d_cap_n = compute_capacity_derivatives_n(best_orbit, normals, f);
+    let d_cap_n = compute_capacity_derivatives_n(best_orbit, &normals, f);
 
     d_vol_n
         .iter()

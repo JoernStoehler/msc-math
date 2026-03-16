@@ -21,7 +21,7 @@ use symplectic::algorithms::hk2017::combinations;
 use symplectic::algorithms::hk2017::permutations::cyclic_permutations;
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::kkt::{build_kkt_system as build_kkt, q_from_beta};
+use symplectic::kkt::augmented::{build_kkt_system as build_kkt, q_from_beta};
 
 /// Condition-number threshold for rank truncation (matches EIGEN_CONDITION_TAU
 /// in crates/src/kkt.rs).
@@ -235,7 +235,7 @@ fn main() {
             for subset in combinations(f, m) {
                 for perm in cyclic_permutations(&subset) {
                     total += 1;
-                    if let Some(info) = node_hessian_check(normals, heights, &perm) {
+                    if let Some(info) = node_hessian_check(&normals, &heights, &perm) {
                         if info.beta_min > eps_beta {
                             n_beta_pos += 1;
                         }
@@ -294,13 +294,13 @@ fn main() {
                     total += 1;
 
                     let mm = perm.len();
-                    let (kkt_mat, _) = build_kkt(normals, heights, &perm);
+                    let (kkt_mat, _) = build_kkt(&normals, &heights, &perm);
 
                     let eig = kkt_mat.symmetric_eigen();
                     let n_neg = eig.eigenvalues.iter().filter(|&&e| e < -eig_eps).count();
                     let n_zero = eig.eigenvalues.iter().filter(|&&e| e.abs() <= eig_eps).count();
 
-                    let info = node_hessian_check(normals, heights, &perm);
+                    let info = node_hessian_check(&normals, &heights, &perm);
                     let (def, tangent_dim) = match info {
                         Some(n) => (n.definiteness, n.tangent_dim),
                         None => (Definiteness::Trivial, 0),
@@ -330,7 +330,7 @@ fn main() {
                     if is_mismatch {
                         mismatches += 1;
                         // Collect eigenvalue diagnostics for this mismatch
-                        if let Some(diag) = eigenvalue_diagnostics(normals, heights, &perm) {
+                        if let Some(diag) = eigenvalue_diagnostics(&normals, &heights, &perm) {
                             mismatch_details.push((
                                 name.to_string(),
                                 perm.to_vec(),

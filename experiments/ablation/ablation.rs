@@ -488,7 +488,7 @@ fn ehz_capacity_unpruned_with(
                 }
                 iterations += 1;
 
-                if let Some((beta, q_val)) = solver(normals, heights, perm) {
+                if let Some((beta, q_val)) = solver(&normals, &heights, perm) {
                     if q_val <= EPS_Q_POSITIVE {
                         return;
                     }
@@ -543,7 +543,8 @@ fn ehz_capacity_unpruned_a1(polytope: &Polytope4D) -> Option<EhzResult> {
 /// A2: directed ω₀ adjacency + standard LU/SVD solver.
 fn ehz_capacity_unpruned_a2(polytope: &Polytope4D) -> Option<EhzResult> {
     let vertex_adj = build_adjacency_matrix(polytope);
-    let dir_adj = build_directed_adjacency(&vertex_adj, polytope.normals_f64());
+    let normals = polytope.normals_f64();
+    let dir_adj = build_directed_adjacency(&vertex_adj, &normals);
     ehz_capacity_unpruned_with(polytope, &dir_adj, solve_kkt_full)
 }
 
@@ -733,8 +734,10 @@ fn build_a3_adjacency(
 /// A3: full Reeb-flow feasibility + standard LU/SVD solver.
 fn ehz_capacity_unpruned_a3(polytope: &Polytope4D) -> Option<EhzResult> {
     let vertex_adj = build_adjacency_matrix(polytope);
-    let a2_adj = build_directed_adjacency(&vertex_adj, polytope.normals_f64());
-    let a3_adj = build_a3_adjacency(&a2_adj, polytope.normals_f64(), polytope.heights_f64());
+    let normals = polytope.normals_f64();
+    let heights = polytope.heights_f64();
+    let a2_adj = build_directed_adjacency(&vertex_adj, &normals);
+    let a3_adj = build_a3_adjacency(&a2_adj, &normals, &heights);
     ehz_capacity_unpruned_with(polytope, &a3_adj, solve_kkt_full)
 }
 
@@ -801,7 +804,7 @@ fn make_bipyramid(
         heights.push(h / norm4);
     }
 
-    Polytope4D::new(normals, heights).expect("bipyramid construction")
+    Polytope4D::from_normals_and_heights(normals, heights).expect("bipyramid construction")
 }
 
 /// Construct a cut 4-simplex: standard simplex intersected with x₁ + c·x₂ ≤ 2.
@@ -828,7 +831,7 @@ fn make_cut_simplex(cut_slope: f64) -> Polytope4D {
         1.0,
         2.0 / norm,
     ];
-    Polytope4D::new(normals, heights).expect("cut simplex construction")
+    Polytope4D::from_normals_and_heights(normals, heights).expect("cut simplex construction")
 }
 
 // ============================================================================
