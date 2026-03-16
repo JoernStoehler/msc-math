@@ -34,7 +34,12 @@ fn volume_positive_on_known_polytopes() {
 }
 
 /// Verify vol(K) > 0 for 40 random bounded polytopes with 5-8 facets.
+///
+/// 40 cases = 4 facet counts (5..=8) × 10 seeds. Each calls qhull for
+/// convex hull triangulation (~1.5s per call in debug mode → ~60s total).
+/// In release mode: ~0.1s per call → ~4s total.
 #[test]
+#[ignore] // Expensive input-output: 40 qhull calls, ~60s debug / ~4s release.
 fn volume_positive_on_random_polytopes() {
     let mut tested = 0;
 

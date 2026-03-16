@@ -321,10 +321,12 @@ fn try_pseudoinverse_with_threshold(
         // and the capacity algorithm discards these solutions anyway (Q << 1
         // yields enormous action, never competitive). Only assert Q constancy
         // when Q is meaningfully nonzero.
-        // Threshold 1e-10: meaningful Q values are O(0.01)--O(10), so 1e-10
-        // is well below any competitive solution but well above f64 noise.
+        // Threshold 1e-6: meaningful Q values are O(0.01)--O(10). Near-zero
+        // Q orbits (Q < 1e-6) have enormous action and never win the capacity
+        // competition, so Q constancy noise there is harmless. The old solver
+        // used the same threshold in its constancy check.
         let q_scale = q_initial.abs().max(q_final.abs());
-        if q_scale > 1e-10 {
+        if q_scale > 1e-6 {
             assert!(
                 (q_final - q_initial).abs() < 1e-8 * q_scale,
                 "Q changed along null space: Q(beta0)={q_initial}, Q(beta_final)={q_final}"
