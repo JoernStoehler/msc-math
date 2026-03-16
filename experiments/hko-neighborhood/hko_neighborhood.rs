@@ -24,7 +24,12 @@ use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
-use symplectic::{ehz_capacity, known_polytopes, volume, Polytope4D, Skeleton};
+// TODO: These will be re-exported from top-level `symplectic::` in wave 4 (subagent #16).
+use symplectic::algorithms::hk2017::ehz_capacity;
+use symplectic::geom::known_polytopes;
+use symplectic::geom::volume::volume;
+use symplectic::geom::polytope::Polytope4D;
+use symplectic::geom::skeleton::Skeleton;
 
 /// Gap threshold for near-optimal orbits: collect orbits within δ of best.
 /// 1% is generous — in practice, HKO2024's 44 near-optimal orbits all have

@@ -29,16 +29,17 @@
 //!
 //! Total: 47 pruned + 10 unpruned + 14 billiard = 71 capacity values
 
-use symplectic::billiard_capacity;
+// TODO: These will be re-exported from top-level `symplectic::` in wave 4 (subagent #16).
+use symplectic::algorithms::billiard::billiard_capacity;
 use symplectic::random::generate_random_polytopes;
-use symplectic::known_polytopes::{
+use symplectic::geom::known_polytopes::{
     hko_pentagon, hypercube, lagrangian_triangle_product, lagrangian_triangle_square,
     simplex, symplectic_triangle_product, symplectic_triangle_square,
 };
-use symplectic::lagrangian_product;
+use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::random_polygon_2d;
-use symplectic::Polytope4D;
-use symplectic::{ehz_capacity_unpruned, ehz_capacity};
+use symplectic::geom::polytope::Polytope4D;
+use symplectic::algorithms::hk2017::{ehz_capacity_unpruned, ehz_capacity};
 use nalgebra::Matrix4;
 use rand::{Rng, SeedableRng};
 use rand_chacha::ChaCha8Rng;

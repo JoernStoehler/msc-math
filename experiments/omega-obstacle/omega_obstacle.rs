@@ -25,7 +25,13 @@ use serde::Serialize;
 use std::collections::HashSet;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
-use symplectic::{known_polytopes, omega0, volume, Polytope4D, Skeleton};
+// TODO: These will be re-exported from top-level `symplectic::` in wave 4 (subagent #16).
+// Using full module paths until then.
+use symplectic::geom::known_polytopes;
+use symplectic::geom::symplectic_form::omega0;
+use symplectic::geom::volume::volume;
+use symplectic::geom::polytope::Polytope4D;
+use symplectic::geom::skeleton::Skeleton;
 
 // ============================================================================
 // Configuration

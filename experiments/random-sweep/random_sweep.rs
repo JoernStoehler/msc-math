@@ -16,8 +16,9 @@
 //! - HK2017 pruned only (production algorithm)
 
 use symplectic::random::generate_random_polytopes;
-use symplectic::volume;
-use symplectic::ehz_capacity;
+// TODO: These will be re-exported from top-level `symplectic::` in wave 4 (subagent #16).
+use symplectic::geom::volume::volume;
+use symplectic::algorithms::hk2017::ehz_capacity;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use serde::Serialize;

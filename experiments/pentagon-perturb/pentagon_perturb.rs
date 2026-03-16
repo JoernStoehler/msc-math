@@ -11,10 +11,11 @@
 //! - 100 perturbed samples + 1 unperturbed baseline
 //! - HK2017 pruned algorithm only
 
-use symplectic::known_polytopes;
-use symplectic::Polytope4D;
-use symplectic::volume;
-use symplectic::ehz_capacity;
+// TODO: These will be re-exported from top-level `symplectic::` in wave 4 (subagent #16).
+use symplectic::geom::known_polytopes;
+use symplectic::geom::polytope::Polytope4D;
+use symplectic::geom::volume::volume;
+use symplectic::algorithms::hk2017::ehz_capacity;
 use nalgebra::Vector4;
 use rand::Rng;
 use rand::SeedableRng;

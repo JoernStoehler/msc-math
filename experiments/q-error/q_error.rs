@@ -11,13 +11,135 @@
 ///
 /// Input: Known polytopes from the library (F ≤ 10).
 /// Output: Summary tables to stdout. Panics on any violation.
-use nalgebra::{DMatrix, DVector};
-use symplectic::algorithms::hk2017::{ehz_capacity, combinations};
-use symplectic::algorithms::hk2017::permutations::cyclic_permutations;
+use nalgebra::{DMatrix, DVector, Vector4};
+// TODO: `ehz_capacity` and `combinations` move to `algorithms::hk2017` (wave 3, subagent #6)
+// TODO: `cyclic_permutations` stays at `algorithms::hk2017::permutations::cyclic_permutations` (wave 3)
+// TODO: `build_kkt_system` renamed to `kkt::qp_assembly::build_augmented_system` with signature
+//   change: now takes (polytope, perm) instead of (normals, heights, perm).
+//   `q_from_beta` removed from public API.
+// TODO: `kkt_rational` renamed to `kkt::rational_solver` (wave 2, subagent #3)
+// TODO: ehz_capacity will be re-exported from algorithms::hk2017 once wave 3 (subagent #6) writes hk2017/mod.rs
+use symplectic::algorithms::hk2017::ehz_capacity;
+// TODO: cyclic_permutations will be available from hk2017::permutations once wave 3 (subagent #6) writes it
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::kkt::augmented::{build_kkt_system as build_kkt, q_from_beta};
-use symplectic::kkt_rational;
+use symplectic::geom::symplectic_form::omega0;
+use symplectic::kkt::rational_solver as kkt_rational;
+
+// ── Local copies of library functions (modules not yet written in migration) ──
+
+/// Generate all cyclic permutations (fix first element, permute rest).
+/// Previously imported from `symplectic::algorithms::hk2017::permutations::cyclic_permutations`.
+fn cyclic_permutations(elements: &[usize]) -> Vec<Vec<usize>> {
+    let mut result = Vec::new();
+    for_each_cyclic_permutation_local(elements, &mut |p| result.push(p.to_vec()));
+    result
+}
+
+fn for_each_cyclic_permutation_local(
+    elements: &[usize],
+    callback: &mut impl FnMut(&[usize]),
+) {
+    if elements.len() <= 1 {
+        callback(elements);
+        return;
+    }
+    let mut buf = elements.to_vec();
+    let k = buf.len() - 1;
+    heap_perms_buf_local(&mut buf, 1, k, callback);
+}
+
+fn heap_perms_buf_local(
+    buf: &mut [usize],
+    offset: usize,
+    k: usize,
+    callback: &mut impl FnMut(&[usize]),
+) {
+    if k == 1 {
+        callback(buf);
+        return;
+    }
+    heap_perms_buf_local(buf, offset, k - 1, callback);
+    for i in 0..k - 1 {
+        if k % 2 == 0 {
+            buf.swap(offset + i, offset + k - 1);
+        } else {
+            buf.swap(offset, offset + k - 1);
+        }
+        heap_perms_buf_local(buf, offset, k - 1, callback);
+    }
+}
+
+/// Generate all C(n,k) combinations in lexicographic order.
+/// Previously imported from `symplectic::algorithms::hk2017::combinations`.
+fn combinations(n: usize, k: usize) -> Vec<Vec<usize>> {
+    let mut result = Vec::new();
+    let mut combo = vec![0usize; k];
+    combinations_rec(n, k, 0, 0, &mut combo, &mut result);
+    result
+}
+
+fn combinations_rec(
+    n: usize,
+    k: usize,
+    start: usize,
+    depth: usize,
+    combo: &mut Vec<usize>,
+    result: &mut Vec<Vec<usize>>,
+) {
+    if depth == k {
+        result.push(combo.clone());
+        return;
+    }
+    for i in start..=(n - k + depth) {
+        combo[depth] = i;
+        combinations_rec(n, k, i + 1, depth + 1, combo, result);
+    }
+}
+
+/// Build the (m+5)x(m+5) augmented KKT system from normals, heights, and permutation.
+/// Previously imported as `symplectic::kkt::augmented::build_kkt_system`.
+fn build_kkt(
+    normals: &[Vector4<f64>],
+    heights: &[f64],
+    perm: &[usize],
+) -> (DMatrix<f64>, DVector<f64>) {
+    let m = perm.len();
+    let size = m + 5;
+    let mut kkt = DMatrix::zeros(size, size);
+    let mut rhs = DVector::zeros(size);
+    for i in 0..m {
+        for j in (i + 1)..m {
+            let val = omega0(&normals[perm[i]], &normals[perm[j]]);
+            kkt[(i, j)] = val;
+            kkt[(j, i)] = val;
+        }
+    }
+    for i in 0..m {
+        for d in 0..4 {
+            let n = normals[perm[i]][d];
+            kkt[(i, m + d)] = n;
+            kkt[(m + d, i)] = n;
+        }
+    }
+    for i in 0..m {
+        let h = heights[perm[i]];
+        kkt[(i, m + 4)] = h;
+        kkt[(m + 4, i)] = h;
+    }
+    rhs[m + 4] = 1.0;
+    (kkt, rhs)
+}
+
+/// Q(beta) = sum_{i>j} beta_i beta_j omega_0(n_{sigma(j)}, n_{sigma(i)}).
+/// Previously imported as `symplectic::kkt::augmented::q_from_beta`.
+fn q_from_beta(normals: &[Vector4<f64>], perm: &[usize], beta: &[f64]) -> f64 {
+    let m = beta.len();
+    (1..m)
+        .flat_map(|i| (0..i).map(move |j| (i, j)))
+        .map(|(i, j)| beta[i] * beta[j] * omega0(&normals[perm[j]], &normals[perm[i]]))
+        .sum()
+}
 
 /// Condition-number threshold for rank truncation (matches EIGEN_CONDITION_TAU
 /// in crates/src/kkt.rs).

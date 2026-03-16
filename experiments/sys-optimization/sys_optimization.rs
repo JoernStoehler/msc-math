@@ -28,7 +28,11 @@ use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::time::Instant;
-use symplectic::{ehz_capacity, volume, Polytope4D, Skeleton};
+// TODO: These will be re-exported from top-level `symplectic::` in wave 4 (subagent #16).
+use symplectic::algorithms::hk2017::ehz_capacity;
+use symplectic::geom::volume::volume;
+use symplectic::geom::polytope::Polytope4D;
+use symplectic::geom::skeleton::Skeleton;
 
 /// Maximum facet count to process (HK2017 cost is exponential).
 const MAX_FACET_COUNT: usize = 10;

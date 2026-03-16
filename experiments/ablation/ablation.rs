@@ -37,9 +37,11 @@ use std::io::{BufWriter, Write};
 use std::time::Instant;
 use symplectic::geom::polygon::{random_polygon_2d, regular_polygon_2d};
 use symplectic::random::generate_random_polytopes;
-use symplectic::{
-    ehz_capacity_unpruned, known_polytopes, lagrangian_product, EhzResult, Polytope4D,
-};
+// TODO: These will be re-exported from top-level `symplectic::` in wave 4 (subagent #16).
+use symplectic::algorithms::hk2017::{ehz_capacity_unpruned, EhzResult};
+use symplectic::geom::known_polytopes;
+use symplectic::geom::lagrangian_product::lagrangian_product;
+use symplectic::geom::polytope::Polytope4D;
 
 const SEED: u64 = 42;
 const H_MIN: f64 = 0.5;

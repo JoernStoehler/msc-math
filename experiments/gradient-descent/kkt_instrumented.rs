@@ -10,7 +10,8 @@
 //! Source: experiments/sys-optimization/sys_optimization.rs lines 164–663
 
 use nalgebra::{DMatrix, DVector, Vector4};
-use symplectic::Polytope4D;
+// TODO: Polytope4D will be re-exported from top-level in wave 4 (subagent #16)
+use symplectic::geom::polytope::Polytope4D;
 
 // ============================================================================
 // Constants (copied from crates/src/kkt.rs and crates/src/constants.rs)

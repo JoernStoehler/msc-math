@@ -27,8 +27,11 @@ use std::fs::File;
 use std::io::{BufReader, BufWriter, Write};
 use std::path::PathBuf;
 use std::time::Instant;
-use symplectic::known_polytopes;
-use symplectic::{omega0, volume, Polytope4D};
+use symplectic::geom::known_polytopes;
+// TODO: These will be re-exported from top-level `symplectic::` in wave 4 (subagent #16).
+use symplectic::geom::symplectic_form::omega0;
+use symplectic::geom::volume::volume;
+use symplectic::geom::polytope::Polytope4D;
 
 // ── Constants (copied from crates/src/kkt.rs and crates/src/constants.rs) ───
 

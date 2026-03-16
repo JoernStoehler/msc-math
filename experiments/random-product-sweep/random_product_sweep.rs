@@ -12,10 +12,11 @@
 //! - Height range h in [0.8, 1.2]
 //! - Billiard algorithm only (Lagrangian products)
 
-use symplectic::billiard_capacity;
-use symplectic::lagrangian_product;
+// TODO: These will be re-exported from top-level `symplectic::` in wave 4 (subagent #16).
+use symplectic::algorithms::billiard::billiard_capacity;
+use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::random_polygon_2d;
-use symplectic::volume;
+use symplectic::geom::volume::volume;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use serde::Serialize;

@@ -12,11 +12,12 @@
 //!
 //! Total: ~85 polytopes, ~100 capacity computations
 
-use symplectic::billiard_capacity;
+// TODO: These will be re-exported from top-level `symplectic::` in wave 4 (subagent #16).
+use symplectic::algorithms::billiard::billiard_capacity;
 use symplectic::random::generate_random_polytopes;
-use symplectic::lagrangian_product;
+use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::random_polygon_2d;
-use symplectic::{ehz_capacity_unpruned, ehz_capacity};
+use symplectic::algorithms::hk2017::{ehz_capacity_unpruned, ehz_capacity};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use serde::{Deserialize, Serialize};

@@ -7,10 +7,11 @@
 //!    lagrangian-products/lagrangian-products-<n>x<m>-6deg.jsonl
 //!
 //! Capacity algorithm: billiard (fast, production default for Lagrangian products).
-use symplectic::billiard_capacity;
-use symplectic::lagrangian_product;
+// TODO: These will be re-exported from top-level `symplectic::` in wave 4 (subagent #16).
+use symplectic::algorithms::billiard::billiard_capacity;
+use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::{polygon_area, regular_polygon_2d, rotate_polygon_2d};
-use symplectic::volume;
+use symplectic::geom::volume::volume;
 use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
