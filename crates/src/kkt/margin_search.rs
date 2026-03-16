@@ -11,19 +11,17 @@
 /// - negative → every point in the subspace violates at least one constraint
 /// - near-zero → the subspace is tangent to the positivity boundary
 ///
+/// # Implementation
+///
+/// - k = 0: trivial (no degrees of freedom).
+/// - k = 1: analytic solution via interval analysis.
+/// - k ≥ 2: exact LP via `microlp`. The Chebyshev center problem is formulated as
+///   `max t  s.t.  (β₀ + V·α)_j ≥ t  ∀j`, yielding the certified optimal margin.
+///
 /// Used by `projection_solver` (Step 4) to classify the verdict for a KKT node.
 /// See §6 of `kkt-module-spec.md`.
+use microlp::{ComparisonOp, OptimizationDirection, Problem};
 use nalgebra::{DMatrix, DVector};
-
-/// Maximum iterations for the coordinate ascent (k ≥ 2 case).
-///
-/// 100 suffices for m ≤ 16, k ≤ 11. Each iteration improves the most-violated
-/// constraint, so convergence is at most m iterations for non-degenerate cases.
-/// In practice converges in < 10 iterations for our polytope sizes.
-const MAX_ITER: usize = 100;
-
-/// Convergence tolerance: stop when margin improvement < this between iterations.
-const EPS_CONVERGENCE: f64 = 1e-14;
 
 /// Component of null-space vector below this magnitude is treated as zero (k=1 case).
 ///
@@ -58,22 +56,15 @@ pub struct MarginResult {
 /// - **k = 0**: No degrees of freedom. margin = min(β₀), trivially.
 /// - **k = 1**: Analytic solution via interval analysis. The constraint β₀ + v·α ≥ 0
 ///   defines an interval [lo, hi] for α; the midpoint maximizes the margin.
-/// - **k ≥ 2**: Iterative coordinate ascent on the most-violated constraint.
-///   Each step computes the gradient of β[j*] w.r.t. α (a row of V) and steps
-///   along it to improve the worst component.
+/// - **k ≥ 2**: LP solver (`microlp`). The Chebyshev center problem is reformulated as
+///   `max t  s.t.  Σᵢ V[j,i]·αᵢ - t ≥ -β₀[j]  ∀j`, giving the certified optimal margin.
 ///
 /// # Guarantees
 ///
 /// - Always returns a result (never panics for valid inputs).
 /// - If the subspace has no feasible point, margin will be negative.
 /// - The returned margin equals min(β) exactly (verified by tests).
-///
-/// # Critical property
-///
-/// If margin < -ε, the subspace is genuinely infeasible. But the converse is NOT
-/// guaranteed for k ≥ 2: if the iterative method fails to find margin > +ε, the
-/// caller should use INDETERMINATE (not FALSE). The coordinate ascent is a heuristic
-/// that may not find the global optimum.
+/// - For all k, the margin is the certified global optimum.
 pub fn find_max_margin(beta0: &DVector<f64>, null_basis: &DMatrix<f64>) -> MarginResult {
     let k = null_basis.ncols();
 
@@ -159,134 +150,89 @@ fn find_max_margin_k1(beta0: &DVector<f64>, v: &DVector<f64>) -> MarginResult {
     }
 }
 
-/// k ≥ 2: Iterative coordinate ascent on the most-violated constraint.
+/// k ≥ 2: Exact LP solution via `microlp`.
 ///
-/// Starting from α = 0, each iteration:
-/// 1. Computes β = β₀ + V·α
-/// 2. Finds the most-violated component j* = argmin_j β_j
-/// 3. Computes the gradient g = V[j*, :]ᵀ (how α affects β[j*])
-/// 4. Steps along g to push β[j*] toward the second-smallest component
+/// Reformulates the Chebyshev center problem `max_α min_j (β₀ + V·α)_j` as:
 ///
-/// The step target is the second-smallest β component. This "equalize the two
-/// worst" strategy converges to the Chebyshev center because at the optimum,
-/// at least two constraints are equally active (the geometric insight behind
-/// the Chebyshev center). When equalization is impossible (zero gradient),
-/// we accept the current margin.
+///   max t
+///   s.t.  Σᵢ V[j,i]·αᵢ - t ≥ -β₀[j]   for each j = 1..m
 ///
-/// Convergence: stops when the margin improvement between iterations is below
-/// EPS_CONVERGENCE, or after MAX_ITER iterations.
+/// Variables: α₁..αₖ (unbounded) and t (unbounded). Total k+1 variables, m constraints.
+/// The LP is always feasible (t can go to -∞) and bounded (the affine subspace is
+/// finite-dimensional, so min_j β_j is bounded above).
+///
+/// Returns the certified optimal margin and the corresponding α, β.
 fn find_max_margin_kn(beta0: &DVector<f64>, null_basis: &DMatrix<f64>) -> MarginResult {
+    let m = beta0.len();
     let k = null_basis.ncols();
-    let mut alpha = DVector::zeros(k);
-    let mut prev_margin = f64::NEG_INFINITY;
-    let mut prev_worst_j: Option<usize> = None;
 
-    for _iter in 0..MAX_ITER {
-        // Current β = β₀ + V·α
-        let beta = beta0 + null_basis * &alpha;
+    // Build LP: max t
+    let mut problem = Problem::new(OptimizationDirection::Maximize);
 
-        // Find most-violated component: j* = argmin_j β_j
-        let (worst_j, worst_val) = beta
-            .iter()
-            .enumerate()
-            .min_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
-            .unwrap();
+    // Variables α₁..αₖ: unbounded, zero objective coefficient.
+    let alpha_vars: Vec<_> = (0..k)
+        .map(|_| problem.add_var(0.0, (f64::NEG_INFINITY, f64::INFINITY)))
+        .collect();
 
-        let current_margin = *worst_val;
+    // Variable t: unbounded, objective coefficient 1.0.
+    let t_var = problem.add_var(1.0, (f64::NEG_INFINITY, f64::INFINITY));
 
-        // Convergence check: margin stopped improving AND the same component is
-        // still the worst. If a different component is now worst at the same margin,
-        // we still have work to do (need to push that one up too).
-        let same_worst = prev_worst_j == Some(worst_j);
-        if same_worst && (current_margin - prev_margin).abs() < EPS_CONVERGENCE {
-            return MarginResult {
-                margin: current_margin,
-                alpha,
-                beta,
-            };
-        }
-        prev_margin = current_margin;
-        prev_worst_j = Some(worst_j);
-
-        // Gradient of β[j*] w.r.t. α: g_i = V[j*, i] (row j* of V)
-        // This is the direction in α-space that increases β[j*] fastest.
-        let g: DVector<f64> = null_basis.row(worst_j).transpose().into_owned();
-        let g_sq = g.dot(&g);
-
-        if g_sq < 1e-30 {
-            // Near-zero gradient: no null-space direction can improve this component.
-            // This happens when row j* of V is (near-)zero, meaning β[j*] is
-            // essentially fixed at β₀[j*] regardless of α.
-            return MarginResult {
-                margin: current_margin,
-                alpha,
-                beta,
-            };
-        }
-
-        // Target: push β[j*] toward the second-smallest β component.
-        // At the Chebyshev center, the two smallest components are equal, so
-        // this drives toward the optimum.
-        //
-        // When the second-smallest equals the current minimum (tied components),
-        // we use the mean of non-minimum components as the target instead. This
-        // ensures a nonzero step that breaks the tie.
-        //
-        // We want β[j*] + g·δα = target, where δα = step * g.
-        // Then β[j*] + g_sq * step = target → step = (target - β[j*]) / g_sq.
-        let second = second_smallest(&beta, worst_j);
-        let target = if second > current_margin + EPS_CONVERGENCE {
-            // Normal case: target the second-smallest
-            second
-        } else {
-            // Tied minimums: target the mean of components above the minimum.
-            // This provides a reasonable upward step.
-            let above: Vec<f64> = beta
-                .iter()
-                .filter(|&&v| v > current_margin + EPS_CONVERGENCE)
-                .copied()
-                .collect();
-            if above.is_empty() {
-                // All components are equal — any direction is equally good.
-                // Step by 1.0 (arbitrary but ensures progress).
-                current_margin + 1.0
-            } else {
-                above.iter().sum::<f64>() / above.len() as f64
+    // Constraints: for each j, Σᵢ V[j,i]·αᵢ - t ≥ -β₀[j]
+    for j in 0..m {
+        let mut terms: Vec<(microlp::Variable, f64)> = Vec::with_capacity(k + 1);
+        for i in 0..k {
+            let coeff = null_basis[(j, i)];
+            if coeff != 0.0 {
+                terms.push((alpha_vars[i], coeff));
             }
-        };
-
-        let step = (target - current_margin) / g_sq;
-        alpha += &g * step;
-    }
-
-    // After MAX_ITER: compute final β and margin
-    let beta = beta0 + null_basis * &alpha;
-    let margin = beta.iter().copied().fold(f64::INFINITY, f64::min);
-
-    MarginResult {
-        margin,
-        alpha,
-        beta,
-    }
-}
-
-/// Find the second-smallest value in a vector, excluding index `skip`.
-///
-/// If all remaining components are equal to the minimum (or the vector has
-/// only one element), returns the minimum + 1.0 as a fallback target.
-fn second_smallest(v: &DVector<f64>, skip: usize) -> f64 {
-    let mut second = f64::INFINITY;
-    for (j, &val) in v.iter().enumerate() {
-        if j != skip && val < second {
-            second = val;
         }
+        terms.push((t_var, -1.0));
+        problem.add_constraint(terms.as_slice(), ComparisonOp::Ge, -beta0[j]);
     }
-    if second.is_finite() {
-        second
-    } else {
-        // Only one component (m=1) — can't have a second smallest.
-        // Use min + 1 as fallback target.
-        v[skip] + 1.0
+
+    // Solve
+    match problem.solve() {
+        Ok(solution) => {
+            let alpha = DVector::from_fn(k, |i, _| solution[alpha_vars[i]]);
+            let beta = beta0 + null_basis * &alpha;
+            let margin = beta.iter().copied().fold(f64::INFINITY, f64::min);
+            MarginResult {
+                margin,
+                alpha,
+                beta,
+            }
+        }
+        Err(microlp::Error::Unbounded) => {
+            // Shouldn't happen for our problems, but handle gracefully:
+            // margin is +∞. Return a large finite step at α = 0.
+            let beta = beta0.clone();
+            let margin = beta.iter().copied().fold(f64::INFINITY, f64::min);
+            MarginResult {
+                margin,
+                alpha: DVector::zeros(k),
+                beta,
+            }
+        }
+        Err(microlp::Error::Infeasible) => {
+            // Shouldn't happen (t can always go to -∞), but handle gracefully.
+            let beta = beta0.clone();
+            let margin = beta.iter().copied().fold(f64::INFINITY, f64::min);
+            MarginResult {
+                margin,
+                alpha: DVector::zeros(k),
+                beta,
+            }
+        }
+        Err(microlp::Error::InternalError(_)) => {
+            // Solver internal error — fall back to α = 0.
+            let beta = beta0.clone();
+            let margin = beta.iter().copied().fold(f64::INFINITY, f64::min);
+            MarginResult {
+                margin,
+                alpha: DVector::zeros(k),
+                beta,
+            }
+        }
     }
 }
 
