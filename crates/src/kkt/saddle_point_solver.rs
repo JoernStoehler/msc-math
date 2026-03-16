@@ -7,9 +7,18 @@
 //!
 //! Key features:
 //! - Two-tier eigenvalue rank detection (permissive then strict)
-//! - Null-space search for beta > 0 when rank-deficient
+//! - Numerical null-space search for beta > 0 when rank-deficient
 //! - Q error bound computation via [lem:q-error-bound]
 //! - Inertia reporting for saddle-point structure analysis
+//!
+//! **Near-zero Q orbits:** Some (S,σ) pairs yield Q ≈ 0 (very high action). The error
+//! bound E is valid but may exceed |Q| itself (relative error > 100%). This is harmless:
+//! the capacity algorithm picks max Q, so near-zero Q orbits never win. The absolute
+//! threshold `E < 1e-6` is chosen relative to Q_max ≈ O(1), not relative to each orbit's Q.
+//!
+//! **Sign convention:** Q > 0 when σ follows the positive Reeb direction (where
+//! consecutive facets satisfy ω₀(n_{σ(k)}, n_{σ(k+1)}) ≥ 0). Callers pass
+//! permutations in natural order directly — no reversal needed.
 //!
 //! Mathematical correspondence: [lem:kkt], [lem:q-error-bound]
 
@@ -114,7 +123,7 @@ pub struct KktResult {
 /// Returns `Some(KktResult)` with beta, corrected Q, error bound, and inertia,
 /// or `None` if no admissible solution exists.
 ///
-/// [lem:kkt]
+/// [lem:kkt]: KKT conditions characterize the EHZ capacity optimum as a saddle point.
 pub fn solve_saddle_point(
     kkt_matrix: &DMatrix<f64>,
     rhs: &DVector<f64>,
@@ -129,6 +138,9 @@ pub fn solve_saddle_point(
     }
 
     // Compute inertia using the strict threshold (for structure analysis).
+    // The KKT matrix M is (m+5)×(m+5). The constraint block contributes at most 5
+    // negative eigenvalues, but H (the action matrix) can also have negative eigenvalues,
+    // so n_negative can exceed 5. Empirically validated by q_error experiment (Tables 8-9).
     let strict_threshold = max_abs_ev * EIGEN_CONDITION_TAU;
     let eigen_info = EigenInfo {
         n_positive: eig.eigenvalues.iter().filter(|&&e| e > strict_threshold).count(),
@@ -160,7 +172,7 @@ pub fn solve_saddle_point(
 /// Assembles the augmented system from `qp_assembly::build_augmented_system`,
 /// then calls `solve_saddle_point`.
 ///
-/// [lem:kkt]
+/// [lem:kkt]: assembles and solves the augmented KKT system for a (polytope, permutation) pair.
 pub fn solve_kkt_for(polytope: &Polytope4D, perm: &[usize]) -> Option<KktResult> {
     let (kkt, rhs) = build_augmented_system(polytope, perm);
     solve_saddle_point(&kkt, &rhs)
@@ -174,7 +186,7 @@ pub fn solve_kkt_for(polytope: &Polytope4D, perm: &[usize]) -> Option<KktResult>
 /// and the antisymmetric omega_0 form. Used for Q computation from the beta
 /// solution vector. Uses omega_0 directly (not the symmetric H matrix).
 ///
-/// [lem:H-quadratic]
+/// [lem:H-quadratic]: Q(beta) = sum_{i>j} beta_i beta_j omega_0(n_{sigma(j)}, n_{sigma(i)}).
 #[allow(dead_code)]
 pub(crate) fn q_from_beta(
     normals: &[Vector4<f64>],
@@ -258,8 +270,11 @@ fn try_pseudoinverse_with_threshold(
         return None;
     }
 
-    // Rank-deficient: search null space for beta > 0.
-    // Null space = eigenvectors for eigenvalues below the threshold.
+    // Rank-deficient: search the *numerical* null space for beta > 0.
+    // "Null space" here means eigenvectors whose eigenvalues are below the
+    // threshold — not an exact kernel (which doesn't exist in f64). The
+    // threshold is chosen so that these directions have negligible effect on
+    // the KKT objective Q, bounded by [lem:q-error-bound].
     let null_beta: Vec<Vec<f64>> = (0..size)
         .filter(|&i| eigenvalues[i].abs() <= threshold)
         .map(|i| (0..m).map(|j| eigenvectors[(j, i)]).collect())
@@ -270,6 +285,9 @@ fn try_pseudoinverse_with_threshold(
     } else {
         find_positive_beta_nd(&beta0, &null_beta)
     };
+
+    // Save beta0 for the Q constancy debug_assert after null-space shift.
+    let beta0_ref = beta0.clone();
 
     // Use null-space result if found, else fall back to beta0 if above -EPS.
     let beta_final = match beta_opt {
@@ -283,6 +301,37 @@ fn try_pseudoinverse_with_threshold(
         }
     };
 
+    // Q is constant along the null space ([lem:well-defined]): null-space
+    // directions preserve constraints, so the KKT objective is invariant.
+    // Verify this numerically — any disagreement indicates a bug in the
+    // null-space extraction or the shift computation.
+    #[cfg(debug_assertions)]
+    {
+        let mut q_final = 0.0_f64;
+        let mut q_initial = 0.0_f64;
+        for i in 0..m {
+            for j in 0..m {
+                q_final += beta_final[i] * kkt[(i, j)] * beta_final[j];
+                q_initial += beta0_ref[i] * kkt[(i, j)] * beta0_ref[j];
+            }
+        }
+        q_final *= 0.5;
+        q_initial *= 0.5;
+        // When both Q values are near-zero, the difference is pure f64 noise
+        // and the capacity algorithm discards these solutions anyway (Q << 1
+        // yields enormous action, never competitive). Only assert Q constancy
+        // when Q is meaningfully nonzero.
+        // Threshold 1e-10: meaningful Q values are O(0.01)--O(10), so 1e-10
+        // is well below any competitive solution but well above f64 noise.
+        let q_scale = q_initial.abs().max(q_final.abs());
+        if q_scale > 1e-10 {
+            assert!(
+                (q_final - q_initial).abs() < 1e-8 * q_scale,
+                "Q changed along null space: Q(beta0)={q_initial}, Q(beta_final)={q_final}"
+            );
+        }
+    }
+
     // Constraint verification for null-space-shifted solutions.
     let full_x = {
         let mut v = DVector::zeros(size);
@@ -294,12 +343,12 @@ fn try_pseudoinverse_with_threshold(
         }
         v
     };
-    let constraint_residual = (kkt * &full_x - rhs).norm();
+    let _constraint_residual = (kkt * &full_x - rhs).norm();
     // Use a looser check: verify the beta constraints Cx=d hold, not the full KKT residual.
     // The Lagrange multiplier rows may not hold exactly after null-space shift.
     // Instead, check just the constraint rows (rows m..m+5) directly.
     let normals_from_kkt = extract_constraint_residual(kkt, &beta_final, m);
-    if normals_from_kkt > EPS_KKT_RESIDUAL && constraint_residual > EPS_KKT_RESIDUAL {
+    if normals_from_kkt > EPS_KKT_RESIDUAL {
         return None;
     }
 
@@ -348,10 +397,19 @@ fn finalize_result(
     let r_sq = residual_norm * residual_norm;
     let q_error_bound = 4.5 * r_sq / abs_lambda_min;
 
+    // Calibration: q-error experiment (Part 1) measures worst-case E = 2.9e-11
+    // across 1.1M nodes (F ≤ 10). The 1e-6 threshold is ~5 orders of magnitude
+    // above observed values. If this fires on larger polytopes (F > 16),
+    // re-measure before widening.
     assert!(
         q_error_bound < 1e-6,
         "Q error bound unexpectedly large: E={:.2e}, |r|={:.2e}, |lambda_min|={:.2e}",
         q_error_bound, residual_norm, abs_lambda_min
+    );
+    assert!(
+        q_correction.abs() < 1e-6 || q_correction.abs() < 1e-6 * q_raw.abs(),
+        "Q correction unexpectedly large: correction={:.2e}, Q_raw={:.2e}, ratio={:.2e}",
+        q_correction, q_raw, q_correction.abs() / q_raw.abs().max(1e-30)
     );
 
     Some(KktResult {
