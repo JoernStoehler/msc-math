@@ -45,7 +45,7 @@ const EPS_EIGEN_FLOOR: f64 = 1e-12;
 /// See module doc for the 5-step algorithm. Returns a Solution with verdict,
 /// Q value, beta vector, and margin.
 ///
-/// [lem:kkt]
+/// [lem:kkt]: KKT conditions characterize the EHZ capacity optimum; this solver applies them via constraint projection.
 pub fn solve_projected(qp: &QP) -> Solution {
     let m = qp.c.ncols();
 

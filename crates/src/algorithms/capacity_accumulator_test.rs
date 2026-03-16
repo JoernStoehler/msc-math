@@ -42,12 +42,14 @@ fn false_solution() -> Solution {
 
 // ── Empty accumulator ──
 
+/// Verify an empty accumulator finalizes to None.
 #[test]
 fn empty_accumulator_returns_none() {
     let acc = CapacityAccumulator::new();
     assert!(acc.finalize().is_none());
 }
 
+/// Verify a default-constructed accumulator has no candidates and zero iterations.
 #[test]
 fn default_accumulator_is_empty() {
     let acc = CapacityAccumulator::default();
@@ -58,6 +60,7 @@ fn default_accumulator_is_empty() {
 
 // ── Single submission ──
 
+/// Verify a single certified submission produces the correct capacity = 1/(2Q).
 #[test]
 fn single_certified_submission() {
     let mut acc = CapacityAccumulator::new();
@@ -78,6 +81,7 @@ fn single_certified_submission() {
     assert_eq!(result.iterations, 1);
 }
 
+/// Verify a single indeterminate submission does not produce a certified result.
 #[test]
 fn single_indeterminate_does_not_certify() {
     let mut acc = CapacityAccumulator::new();
@@ -91,6 +95,7 @@ fn single_indeterminate_does_not_certify() {
 
 // ── Verdict::False is ignored ──
 
+/// Verify Verdict::False submissions are counted but not tracked as candidates.
 #[test]
 fn false_verdict_ignored() {
     let mut acc = CapacityAccumulator::new();
@@ -103,6 +108,7 @@ fn false_verdict_ignored() {
 
 // ── Near-zero Q is ignored ──
 
+/// Verify submissions with Q near zero are rejected (below EPS_Q_FLOOR).
 #[test]
 fn near_zero_q_ignored() {
     let mut acc = CapacityAccumulator::new();
@@ -115,6 +121,7 @@ fn near_zero_q_ignored() {
 
 // ── Multiple submissions: best (minimum action) wins ──
 
+/// Verify the candidate with minimum action (= 1/(2Q)) wins among multiple certified.
 #[test]
 fn minimum_action_wins() {
     let mut acc = CapacityAccumulator::new();
@@ -134,6 +141,7 @@ fn minimum_action_wins() {
 
 // ── Two-tier tracking: indeterminate tracked in uncertain tier ──
 
+/// Verify indeterminate submissions are tracked in the uncertain tier alongside certified.
 #[test]
 fn indeterminate_tracked_in_uncertain_tier() {
     let mut acc = CapacityAccumulator::new();
@@ -153,6 +161,7 @@ fn indeterminate_tracked_in_uncertain_tier() {
     assert!((result.capacity_uncertain - 0.5).abs() < 1e-14);
 }
 
+/// Verify a large gap between certified and uncertain tiers triggers a panic.
 #[test]
 fn indeterminate_with_lower_action_tracked_in_uncertain() {
     let mut acc = CapacityAccumulator::new();
@@ -185,6 +194,7 @@ fn indeterminate_with_lower_action_tracked_in_uncertain() {
 
 // ── Gap invariant ──
 
+/// Verify a tiny gap (< GAP_TOLERANCE) between tiers does not trigger a panic.
 #[test]
 fn tiny_gap_passes() {
     let mut acc = CapacityAccumulator::new();
@@ -206,6 +216,7 @@ fn tiny_gap_passes() {
 
 // ── Certified candidate also enters uncertain tier ──
 
+/// Verify certified candidates enter both certified and uncertain tiers.
 #[test]
 fn certified_enters_both_tiers() {
     let mut acc = CapacityAccumulator::new();
@@ -224,6 +235,7 @@ fn certified_enters_both_tiers() {
 
 // ── Iteration counting ──
 
+/// Verify iteration count includes all submissions (even rejected ones).
 #[test]
 fn iteration_count_includes_all_submissions() {
     let mut acc = CapacityAccumulator::new();
@@ -240,6 +252,7 @@ fn iteration_count_includes_all_submissions() {
 
 // ── Permutation is stored correctly ──
 
+/// Verify the finalized result stores the correct permutation and beta vector.
 #[test]
 fn stores_correct_permutation_and_beta() {
     let mut acc = CapacityAccumulator::new();
@@ -254,6 +267,7 @@ fn stores_correct_permutation_and_beta() {
 
 // ── Later certified candidate replaces earlier one ──
 
+/// Verify a later certified candidate with lower action replaces an earlier one.
 #[test]
 fn later_better_candidate_replaces_earlier() {
     let mut acc = CapacityAccumulator::new();
@@ -272,6 +286,7 @@ fn later_better_candidate_replaces_earlier() {
 
 // ── Edge case: equal actions ──
 
+/// Verify that equal-action candidates keep the first submitted one.
 #[test]
 fn equal_action_keeps_first() {
     let mut acc = CapacityAccumulator::new();

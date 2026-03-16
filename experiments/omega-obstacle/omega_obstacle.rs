@@ -114,15 +114,11 @@ const EPS_DEGENERATE: f64 = 1e-10;
 // (which copies from crates/src/kkt.rs with extensions for ν, λ)
 // ============================================================================
 
-fn omega0_local(u: &Vector4<f64>, v: &Vector4<f64>) -> f64 {
-    u[0] * v[2] - u[2] * v[0] + u[1] * v[3] - u[3] * v[1]
-}
-
 fn q_from_beta(normals: &[Vector4<f64>], perm: &[usize], beta: &[f64]) -> f64 {
     let m = beta.len();
     (1..m)
         .flat_map(|i| (0..i).map(move |j| (i, j)))
-        .map(|(i, j)| beta[i] * beta[j] * omega0_local(&normals[perm[j]], &normals[perm[i]]))
+        .map(|(i, j)| beta[i] * beta[j] * omega0(&normals[perm[j]], &normals[perm[i]]))
         .sum()
 }
 
@@ -212,7 +208,7 @@ fn build_kkt_system(
     let mut rhs = DVector::zeros(size);
     for i in 0..m {
         for j in (i + 1)..m {
-            let val = omega0_local(&normals[perm[i]], &normals[perm[j]]);
+            let val = omega0(&normals[perm[i]], &normals[perm[j]]);
             kkt[(i, j)] = val;
             kkt[(j, i)] = val;
         }
@@ -429,7 +425,7 @@ fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let mut adj = vec![vec![false; f]; f];
     for i in 0..f {
         for j in 0..f {
-            adj[i][j] = vertex_adj[i][j] && omega0_local(&normals[i], &normals[j]) >= 0.0;
+            adj[i][j] = vertex_adj[i][j] && omega0(&normals[i], &normals[j]) >= 0.0;
         }
     }
     adj

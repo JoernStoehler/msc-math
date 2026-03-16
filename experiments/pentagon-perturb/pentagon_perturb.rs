@@ -153,7 +153,7 @@ fn main() {
     let base_result = ehz_capacity(&base_polytope).expect("capacity computation failed");
     let base_time_capacity_ms = start_cap.elapsed().as_secs_f64() * 1000.0;
 
-    let base_sys = base_result.capacity * base_result.capacity / (2.0 * base_vol);
+    let base_sys = base_result.result.capacity * base_result.result.capacity / (2.0 * base_vol);
 
     let base_row = PentagonPerturbRow {
         name: "hko_pentagon_base".to_string(),
@@ -169,9 +169,9 @@ fn main() {
         eps_normals: EPS_NORMALS,
         eps_heights: EPS_HEIGHTS,
         volume: base_vol,
-        capacity: base_result.capacity,
+        capacity: base_result.result.capacity,
         sys: base_sys,
-        iterations: base_result.iterations,
+        iterations: base_result.result.iterations,
         time_volume_ms: base_time_volume_ms,
         time_capacity_ms: base_time_capacity_ms,
     };
@@ -203,7 +203,7 @@ fn main() {
             .expect("capacity computation failed");
         let time_capacity_ms = start_cap.elapsed().as_secs_f64() * 1000.0;
 
-        let cap = result.capacity;
+        let cap = result.result.capacity;
         let sys = cap * cap / (2.0 * vol);
 
         let row = PentagonPerturbRow {
@@ -227,7 +227,7 @@ fn main() {
             volume: vol,
             capacity: cap,
             sys,
-            iterations: result.iterations,
+            iterations: result.result.iterations,
             time_volume_ms,
             time_capacity_ms,
         };

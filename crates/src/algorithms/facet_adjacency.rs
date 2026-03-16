@@ -18,7 +18,7 @@ use crate::geom::polytope::Polytope4D;
 ///
 /// Uses the exact adjacency matrix precomputed in `Polytope4D` over Q.
 ///
-/// [lem:numerical-transition-feasibility]
+/// [lem:numerical-transition-feasibility]: transition F_i -> F_j requires F_i, F_j to share a vertex.
 pub fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let f = polytope.facet_count();
     let poly_adj = polytope.adjacency();
@@ -46,7 +46,8 @@ pub fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
 /// (outward normals divided by height). Since hᵢ, hⱼ > 0, this has the same sign as
 /// `ω₀(nᵢ, nⱼ)`.
 ///
-/// [lem:numerical-transition-feasibility], [cor:adjacency-pruning]
+/// [lem:numerical-transition-feasibility]: F_i -> F_j requires vertex adjacency + omega_0(n_i, n_j) >= 0.
+/// [cor:adjacency-pruning]: this directed adjacency can prune infeasible permutations.
 pub fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let f = polytope.facet_count();
     let vertex_adj = build_adjacency_matrix(polytope);

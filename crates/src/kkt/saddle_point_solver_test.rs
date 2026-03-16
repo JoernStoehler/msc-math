@@ -306,6 +306,7 @@ fn closure_constraint_satisfied() {
             let perm = subset.to_vec();
             let (kkt, rhs) = build_augmented_system(polytope, &perm);
             if let Some(result) = solve_saddle_point(&kkt, &rhs) {
+                #[allow(clippy::needless_range_loop)]
                 for d in 0..4 {
                     let sum: f64 = result.beta.iter().enumerate()
                         .map(|(idx, &b)| b * normals[perm[idx]][d])

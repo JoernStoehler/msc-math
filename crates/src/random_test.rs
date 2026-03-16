@@ -9,6 +9,7 @@ use super::random::*;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 
+/// Verify same seed produces identical accept/reject outcomes (determinism).
 #[test]
 fn deterministic_sampling() {
     let mut rng1 = ChaCha8Rng::seed_from_u64(42);
@@ -23,6 +24,7 @@ fn deterministic_sampling() {
     assert_eq!(results1, results2);
 }
 
+/// Verify at least one F=5 polytope is accepted out of 200 samples.
 #[test]
 fn some_polytopes_accepted_f5() {
     let mut rng = ChaCha8Rng::seed_from_u64(0);
@@ -39,6 +41,7 @@ fn some_polytopes_accepted_f5() {
     );
 }
 
+/// Verify generate_random_polytopes returns exactly the requested count.
 #[test]
 fn generate_fills_to_requested_count() {
     let mut rng = ChaCha8Rng::seed_from_u64(123);

@@ -5,8 +5,6 @@
 //!
 //! Strategy: fixture-based on simplex, hypercube, and Lagrangian products.
 
-// TODO: Tests are #[ignore] until geom types (Polytope4D, known_polytopes) are filled by #8a/#8b.
-
 use crate::algorithms::facet_adjacency::{
     build_adjacency_matrix, build_directed_adjacency_matrix, is_adjacent_cycle,
 };
@@ -15,7 +13,7 @@ use crate::geom::known_polytopes;
 /// Simplex (5 facets): every pair of facets shares a vertex (complete graph).
 /// Undirected adjacency should be all-true except diagonal.
 #[test]
-#[ignore] // Depends on #8a/#8b: geom types not yet filled
+#[allow(clippy::needless_range_loop)]
 fn simplex_undirected_is_complete() {
     let kp = known_polytopes::simplex();
     let adj = build_adjacency_matrix(&kp.polytope);
@@ -36,7 +34,7 @@ fn simplex_undirected_is_complete() {
 /// Hypercube (8 facets in 4D): opposite facets are not adjacent.
 /// Each facet should be adjacent to exactly 6 others (all except itself and its opposite).
 #[test]
-#[ignore] // Depends on #8a/#8b: geom types not yet filled
+#[allow(clippy::needless_range_loop)]
 fn hypercube_undirected_excludes_opposite_facets() {
     let kp = known_polytopes::hypercube();
     let adj = build_adjacency_matrix(&kp.polytope);
@@ -55,7 +53,7 @@ fn hypercube_undirected_excludes_opposite_facets() {
 
 /// Undirected adjacency is symmetric: adj[i][j] == adj[j][i].
 #[test]
-#[ignore] // Depends on #8a/#8b: geom types not yet filled
+#[allow(clippy::needless_range_loop)]
 fn undirected_adjacency_is_symmetric() {
     for kp in known_polytopes::all_known() {
         let adj = build_adjacency_matrix(&kp.polytope);
@@ -74,7 +72,6 @@ fn undirected_adjacency_is_symmetric() {
 
 /// Directed adjacency is a subset of undirected: if directed[i][j], then undirected[i][j].
 #[test]
-#[ignore] // Depends on #8a/#8b: geom types not yet filled
 fn directed_is_subset_of_undirected() {
     for kp in known_polytopes::all_known() {
         let undirected = build_adjacency_matrix(&kp.polytope);
@@ -98,7 +95,6 @@ fn directed_is_subset_of_undirected() {
 /// If ω₀(nᵢ, nⱼ) > 0, then ω₀(nⱼ, nᵢ) < 0, so directed[i][j] and directed[j][i]
 /// cannot both be true unless ω₀(nᵢ, nⱼ) = 0.
 #[test]
-#[ignore] // Depends on #8a/#8b: geom types not yet filled
 fn directed_adjacency_antisymmetry_property() {
     for kp in known_polytopes::all_known() {
         let directed = build_directed_adjacency_matrix(&kp.polytope);
@@ -125,14 +121,11 @@ fn directed_adjacency_antisymmetry_property() {
 /// For polytopes where ω₀ signs are nonzero (generic case), directed should have
 /// strictly fewer true entries than undirected.
 #[test]
-#[ignore] // Depends on #8a/#8b: geom types not yet filled
 fn directed_prunes_vs_undirected() {
     // The simplex is generic enough that directed should prune some edges
     let kp = known_polytopes::simplex();
     let undirected = build_adjacency_matrix(&kp.polytope);
     let directed = build_directed_adjacency_matrix(&kp.polytope);
-    let f = kp.polytope.facet_count();
-
     let count_undirected: usize = undirected.iter().flat_map(|row| row.iter()).filter(|&&v| v).count();
     let count_directed: usize = directed.iter().flat_map(|row| row.iter()).filter(|&&v| v).count();
 
@@ -194,7 +187,6 @@ fn is_adjacent_cycle_single_element() {
 /// ω₀ between two Q-type normals is 0 (both in Lagrangian subspace), similarly for P-type.
 /// ω₀ between a Q-type and P-type normal is generically nonzero.
 #[test]
-#[ignore] // Depends on #8a/#8b: geom types not yet filled
 fn lagrangian_product_q_q_transitions_bidirectional() {
     let kp = known_polytopes::lagrangian_triangle_product();
     let directed = build_directed_adjacency_matrix(&kp.polytope);

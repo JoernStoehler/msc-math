@@ -16,7 +16,6 @@ use crate::geom::symplectic_form::omega0;
 
 /// Verify QP dimensions match the permutation length.
 #[test]
-#[ignore] // Depends on Polytope4D implementation (subagent #8a)
 fn qp_dimensions_match_permutation() {
     let polytope = make_test_polytope();
     let n = polytope.facet_count();
@@ -35,7 +34,6 @@ fn qp_dimensions_match_permutation() {
 
 /// H matrix must be symmetric (omega_0 placed symmetrically: H_{ij} = H_{ji}).
 #[test]
-#[ignore] // Depends on Polytope4D implementation (subagent #8a)
 fn qp_h_is_symmetric() {
     let polytope = make_test_polytope();
     let n = polytope.facet_count();
@@ -57,7 +55,6 @@ fn qp_h_is_symmetric() {
 
 /// H diagonal must be zero (omega_0(a, a) = 0 by antisymmetry of the symplectic form).
 #[test]
-#[ignore] // Depends on Polytope4D implementation (subagent #8a)
 fn qp_h_diagonal_is_zero() {
     let polytope = make_test_polytope();
     let n = polytope.facet_count();
@@ -76,7 +73,6 @@ fn qp_h_diagonal_is_zero() {
 
 /// H entries match omega_0 applied to the permuted dual vertices.
 #[test]
-#[ignore] // Depends on Polytope4D implementation (subagent #8a)
 fn qp_h_entries_match_omega0() {
     let polytope = make_test_polytope();
     let dual_verts = polytope.dual_vertices_f64();
@@ -99,7 +95,6 @@ fn qp_h_entries_match_omega0() {
 
 /// C matrix encodes dual vertex coordinates in rows 0..3 and ones in row 4.
 #[test]
-#[ignore] // Depends on Polytope4D implementation (subagent #8a)
 fn qp_constraint_matrix_structure() {
     let polytope = make_test_polytope();
     let dual_verts = polytope.dual_vertices_f64();
@@ -127,7 +122,6 @@ fn qp_constraint_matrix_structure() {
 
 /// d vector is [0, 0, 0, 0, 1].
 #[test]
-#[ignore] // Depends on Polytope4D implementation (subagent #8a)
 fn qp_rhs_vector() {
     let polytope = make_test_polytope();
     let perm: Vec<usize> = (0..3.min(polytope.facet_count())).collect();
@@ -152,7 +146,6 @@ fn qp_rhs_vector() {
 
 /// Augmented system has size (m+5) x (m+5).
 #[test]
-#[ignore] // Depends on Polytope4D implementation (subagent #8a)
 fn augmented_system_dimensions() {
     let polytope = make_test_polytope();
     let n = polytope.facet_count();
@@ -169,7 +162,6 @@ fn augmented_system_dimensions() {
 
 /// The augmented KKT matrix must be symmetric (saddle-point structure).
 #[test]
-#[ignore] // Depends on Polytope4D implementation (subagent #8a)
 fn augmented_system_is_symmetric() {
     let polytope = make_test_polytope();
     let n = polytope.facet_count();
@@ -192,7 +184,6 @@ fn augmented_system_is_symmetric() {
 /// The augmented system block structure: H uses normals, off-diagonal blocks
 /// contain normal coordinates and heights, bottom-right 5x5 is zero, RHS = [0..0, 1].
 #[test]
-#[ignore] // Depends on Polytope4D implementation (subagent #8a)
 fn augmented_system_block_structure() {
     let polytope = make_test_polytope();
     let normals = polytope.normals_f64();
@@ -282,7 +273,6 @@ fn augmented_system_block_structure() {
 /// Permutation reordering: build_qp with permuted indices should produce
 /// different H entries when the permutation changes.
 #[test]
-#[ignore] // Depends on Polytope4D implementation (subagent #8a)
 fn permutation_reorders_matrices() {
     let polytope = make_test_polytope();
     let n = polytope.facet_count();
@@ -315,7 +305,6 @@ fn permutation_reorders_matrices() {
 /// (omega_0(e_i, e_j) = 0 unless (i,j) is a symplectic pair like (q1,p1) or (q2,p2)).
 /// The augmented system's H block should reflect this sparsity.
 #[test]
-#[ignore] // Depends on Polytope4D implementation (subagent #8a)
 fn hypercube_augmented_h_sparsity() {
     let polytope = make_test_polytope();
     let n = polytope.facet_count();

@@ -119,7 +119,7 @@ const EPS_MARGIN_FALSE: f64 = 1e-9;
 
 /// Compute Q = (1/2) beta^T H beta from pre-assembled H and beta.
 ///
-/// Mathematical correspondence: [lem:H-quadratic]
+/// Mathematical correspondence: [lem:H-quadratic]: Q(beta) = (1/2) beta^T H beta where H_{ij} = omega_0(a_i, a_j).
 pub fn q_value(h: &DMatrix<f64>, beta: &[f64]) -> f64 {
     let b = DVector::from_column_slice(beta);
     0.5 * b.dot(&(h * &b))

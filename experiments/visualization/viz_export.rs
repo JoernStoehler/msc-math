@@ -175,12 +175,14 @@ fn collect_all_orbits(polytope: &symplectic::geom::polytope::Polytope4D) -> Vec<
 /// Convert a collected orbit into an EhzResult for use with recover_base_point.
 fn orbit_to_ehz_result(orbit: &CollectedOrbit) -> EhzResult {
     EhzResult {
-        capacity: orbit.action,
-        capacity_uncertain: orbit.action,
+        result: symplectic::algorithms::capacity_accumulator::CapacityResult {
+            capacity: orbit.action,
+            capacity_uncertain: orbit.action,
+            best_permutation: orbit.permutation.clone(),
+            best_beta: orbit.beta.clone(),
+            iterations: 0,
+        },
         best_subset: orbit.subset.clone(),
-        best_permutation: orbit.permutation.clone(),
-        best_beta: orbit.beta.clone(),
-        iterations: 0,
     }
 }
 
@@ -212,7 +214,7 @@ fn orbit_to_viz_trajectory(
         return None;
     }
 
-    let sigma = &result.best_permutation;
+    let sigma = &result.result.best_permutation;
     let m = sigma.len();
 
     // breakpoints[k] → breakpoints[k+1] is a segment on facet σ[k]
@@ -296,7 +298,7 @@ fn generate_displaced_trajectories(
         None => return vec![],
     };
 
-    let perm = &result.best_permutation;
+    let perm = &result.result.best_permutation;
     let start_facet = perm[0];
     let last_facet = perm[perm.len() - 1];
     let directions = ridge_displacement_directions(polytope, start_facet, last_facet);

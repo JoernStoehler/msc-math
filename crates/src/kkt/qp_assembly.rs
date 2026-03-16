@@ -39,7 +39,7 @@ use nalgebra::{DMatrix, DVector};
 /// # Panics
 /// - If any index in `perm` is out of bounds for the polytope's facets.
 ///
-/// [lem:kkt]
+/// [lem:kkt]: KKT optimality conditions characterize the EHZ capacity optimum.
 pub fn build_qp(polytope: &Polytope4D, perm: &[usize]) -> QP {
     let m = perm.len();
     let dual_verts = polytope.dual_vertices_f64();
@@ -111,7 +111,7 @@ pub fn build_qp(polytope: &Polytope4D, perm: &[usize]) -> QP {
 /// # Panics
 /// - If any index in `perm` is out of bounds for the polytope's facets.
 ///
-/// [lem:kkt]
+/// [lem:kkt]: the augmented saddle-point system encodes stationarity + closure + normalization.
 pub fn build_augmented_system(
     polytope: &Polytope4D,
     perm: &[usize],

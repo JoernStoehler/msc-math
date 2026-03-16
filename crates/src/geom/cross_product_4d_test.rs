@@ -10,6 +10,7 @@
 use crate::geom::cross_product_4d::cross_product_4d;
 use nalgebra::Vector4;
 
+/// Verify the 4D cross product is perpendicular to all three input vectors.
 #[test]
 fn perpendicular_to_all_inputs() {
     let a = Vector4::new(1.0, 2.0, 3.0, 4.0);
@@ -33,6 +34,7 @@ fn perpendicular_to_all_inputs() {
     );
 }
 
+/// Verify cross(e_1, e_2, e_3) has unit norm and is parallel to e_4.
 #[test]
 fn standard_basis_produces_unit_vector() {
     // cross(e_1, e_2, e_3) should be +/-e_4 with norm 1
@@ -53,6 +55,7 @@ fn standard_basis_produces_unit_vector() {
     );
 }
 
+/// Verify the cross product is zero when inputs are linearly dependent.
 #[test]
 fn zero_for_linearly_dependent_inputs() {
     let a = Vector4::new(1.0, 0.0, 0.0, 0.0);
@@ -66,6 +69,7 @@ fn zero_for_linearly_dependent_inputs() {
     );
 }
 
+/// Verify ||a x b x c|| equals the 3D parallelepiped volume spanned by a, b, c.
 #[test]
 fn magnitude_equals_parallelepiped_volume() {
     // For orthonormal vectors, the parallelepiped volume is 1
@@ -91,6 +95,7 @@ fn magnitude_equals_parallelepiped_volume() {
     );
 }
 
+/// Verify swapping the first two arguments negates the cross product.
 #[test]
 fn antisymmetric_in_first_two_args() {
     let a = Vector4::new(1.0, 2.0, 3.0, 4.0);

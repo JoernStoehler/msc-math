@@ -86,7 +86,7 @@ fn main() {
             let result = ehz_capacity(p).expect("capacity computation failed");
             let time_capacity_ms = start_cap.elapsed().as_secs_f64() * 1000.0;
 
-            let cap = result.capacity;
+            let cap = result.result.capacity;
             let sys = cap * cap / (2.0 * vol);
 
             let row = RandomSweepRow {
@@ -99,7 +99,7 @@ fn main() {
                 volume: vol,
                 capacity: cap,
                 sys,
-                iterations: result.iterations,
+                iterations: result.result.iterations,
                 time_volume_ms,
                 time_capacity_ms,
             };

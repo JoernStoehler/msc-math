@@ -12,6 +12,7 @@ use crate::geom::volume::volume;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 
+/// Verify volume matches exact values for simplex, hypercube, and crosspolytope.
 #[test]
 fn volume_positive_on_known_polytopes() {
     let cases = vec![
@@ -32,6 +33,7 @@ fn volume_positive_on_known_polytopes() {
     }
 }
 
+/// Verify vol(K) > 0 for 40 random bounded polytopes with 5-8 facets.
 #[test]
 fn volume_positive_on_random_polytopes() {
     let mut tested = 0;

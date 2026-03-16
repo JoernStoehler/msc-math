@@ -13,6 +13,7 @@ use crate::geom::volume::volume;
 use nalgebra::Vector2;
 use std::f64::consts::PI;
 
+/// Verify triangle x_L triangle has 3+3 = 6 facets.
 #[test]
 fn triangle_x_triangle_has_6_facets() {
     let (qn, qh) = regular_polygon_2d(3, 1.0);
@@ -21,6 +22,7 @@ fn triangle_x_triangle_has_6_facets() {
     assert_eq!(polytope.facet_count(), 6);
 }
 
+/// Verify pentagon x_L pentagon has 5+5 = 10 facets.
 #[test]
 fn pentagon_x_pentagon_has_10_facets() {
     let (qn, qh) = regular_polygon_2d(5, 1.0);
@@ -29,6 +31,7 @@ fn pentagon_x_pentagon_has_10_facets() {
     assert_eq!(polytope.facet_count(), 10);
 }
 
+/// Verify triangle x_L square has 3+4 = 7 facets.
 #[test]
 fn triangle_x_square_has_7_facets() {
     let (qn, qh) = regular_polygon_2d(3, 1.0);
@@ -37,6 +40,7 @@ fn triangle_x_square_has_7_facets() {
     assert_eq!(polytope.facet_count(), 7);
 }
 
+/// Verify vol_4(P x_L Q) = area(P) * area(Q) for several polygon pairs.
 #[test]
 fn volume_equals_product_of_areas() {
     // For several polygon pairs, check vol_4(P x_L Q) = area(P) * area(Q).
@@ -59,6 +63,7 @@ fn volume_equals_product_of_areas() {
     }
 }
 
+/// Verify rotated pentagon product has same facet count and volume as HKO pentagon.
 #[test]
 fn rotated_pentagon_product_matches_hko_volume() {
     // Regular pentagon with our convention (starting angle pi/2) vs HKO (starting angle pi/5).
@@ -83,6 +88,7 @@ fn rotated_pentagon_product_matches_hko_volume() {
     );
 }
 
+/// Verify Lagrangian product volume is independent of rotation angle.
 #[test]
 fn rotated_product_volume_independent_of_angle() {
     // vol(P x_L R(theta)Q) = area(P) * area(Q), independent of theta
@@ -107,6 +113,7 @@ fn rotated_product_volume_independent_of_angle() {
 
 // ---- Error propagation: Polytope4D::new errors pass through ----
 
+/// Verify lagrangian_product rejects inputs with fewer than 5 total facets.
 #[test]
 fn rejects_too_few_total_facets() {
     // Triangle (3 facets) + 1 p-facet = 4 total < 5 minimum.
@@ -117,6 +124,7 @@ fn rejects_too_few_total_facets() {
     assert_eq!(err, ConstructionError::TooFewFacets(4));
 }
 
+/// Verify lagrangian_product rejects unbounded p-factor (too few p-normals).
 #[test]
 fn rejects_unbounded_single_factor() {
     // Triangle in q-space (3 facets) + 2 normals in p-space (not enough to bound p-space).
@@ -137,20 +145,20 @@ fn q_type_facets_in_q_plane() {
     let normals = polytope.normals_f64();
 
     // First 3 facets are from q-polygon: p-components should be zero
-    for i in 0..3 {
+    for (i, n) in normals.iter().enumerate().take(3) {
         assert!(
-            normals[i][2].abs() < 1e-12 && normals[i][3].abs() < 1e-12,
+            n[2].abs() < 1e-12 && n[3].abs() < 1e-12,
             "facet {i} should be Q-type: n = {:?}",
-            normals[i]
+            n
         );
     }
 
     // Last 3 facets are from p-polygon: q-components should be zero
-    for i in 3..6 {
+    for (i, n) in normals.iter().enumerate().take(6).skip(3) {
         assert!(
-            normals[i][0].abs() < 1e-12 && normals[i][1].abs() < 1e-12,
+            n[0].abs() < 1e-12 && n[1].abs() < 1e-12,
             "facet {i} should be P-type: n = {:?}",
-            normals[i]
+            n
         );
     }
 }

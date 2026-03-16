@@ -11,6 +11,7 @@ use crate::geom::test_utils::{crosspolytope, scaled_hypercube};
 use crate::geom::volume::{simplex_volume_5, volume};
 use nalgebra::Vector4;
 
+/// Verify that the 4-simplex has volume 1/24 via direct vertex computation.
 #[test]
 fn simplex_4d_volume_from_vertices() {
     // Standard 4-simplex: conv{0, e1, e2, e3, e4}
@@ -29,6 +30,7 @@ fn simplex_4d_volume_from_vertices() {
     );
 }
 
+/// Verify that the hypercube [-1,1]^4 has volume 2^4 = 16.
 #[test]
 fn hypercube_volume() {
     // [-1, 1]^4 has volume 2^4 = 16
@@ -40,6 +42,7 @@ fn hypercube_volume() {
     );
 }
 
+/// Verify that the simplex polytope has volume 1/24.
 #[test]
 fn simplex_polytope_volume() {
     // Standard simplex, volume = 1/24
@@ -52,6 +55,7 @@ fn simplex_polytope_volume() {
     );
 }
 
+/// Verify that the 4D crosspolytope has volume 32/3.
 #[test]
 fn crosspolytope_volume() {
     // 4D crosspolytope: conv{+/-e1, +/-e2, +/-e3, +/-e4} (after vertex enumeration).
@@ -66,6 +70,7 @@ fn crosspolytope_volume() {
     );
 }
 
+/// Verify vol(s*K) = s^4 * vol(K) for the hypercube at several scales.
 #[test]
 fn scaling_property() {
     // vol(s*K) = s^4 * vol(K) for the hypercube [-s,s]^4.
@@ -80,6 +85,7 @@ fn scaling_property() {
     }
 }
 
+/// Verify that volume is positive for all known polytope fixtures.
 #[test]
 fn volume_positive_for_known_polytopes() {
     for kp in known_polytopes::all_known() {

@@ -181,7 +181,7 @@ fn round_trip_cx0_equals_d() {
     ];
 
     for (i, (c, d)) in cases.iter().enumerate() {
-        let sol = solve_constraints(c, d).expect(&format!("case {} should be consistent", i));
+        let sol = solve_constraints(c, d).unwrap_or_else(|| panic!("case {} should be consistent", i));
         let residual = (c * &sol.x0 - d).norm();
         assert!(
             residual < 1e-10,
@@ -213,7 +213,7 @@ fn null_basis_in_kernel() {
 
     for (i, c) in cases.iter().enumerate() {
         let d = DVector::zeros(c.nrows());
-        let sol = solve_constraints(c, &d).expect(&format!("case {} consistent", i));
+        let sol = solve_constraints(c, &d).unwrap_or_else(|| panic!("case {} consistent", i));
 
         if sol.null_basis.ncols() == 0 {
             continue;
@@ -269,7 +269,7 @@ fn null_dim_equals_m_minus_rank() {
     ];
 
     for (i, (c, d)) in cases.iter().enumerate() {
-        let sol = solve_constraints(&c, &d).expect(&format!("case {} consistent", i));
+        let sol = solve_constraints(c, d).unwrap_or_else(|| panic!("case {} consistent", i));
         let m = c.ncols();
         assert_eq!(
             sol.null_basis.ncols(), m - sol.rank,

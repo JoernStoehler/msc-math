@@ -111,21 +111,22 @@ fn main() {
             let result = ehz_capacity(p).expect("ehz_capacity returned None");
             let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
-            let gap = result.numerical_gap();
+            let gap = result.result.numerical_gap();
             let beta_min = result
+                .result
                 .best_beta
                 .iter()
                 .cloned()
                 .fold(f64::INFINITY, f64::min);
             let has_unknown = gap > 0.0;
-            let sys = result.capacity * result.capacity / (2.0 * vol);
+            let sys = result.result.capacity * result.result.capacity / (2.0 * vol);
 
             if has_unknown {
                 total_unknowns += 1;
                 eprintln!(
                     "  UNKNOWN: random_F{facet_count}_{i}: gap={gap:.2e}, \
                      cap={:.8}, cap_unc={:.8}, beta_min={beta_min:.2e}",
-                    result.capacity, result.capacity_uncertain
+                    result.result.capacity, result.result.capacity_uncertain
                 );
             }
 
@@ -134,8 +135,8 @@ fn main() {
                 name: format!("random_F{facet_count}_{i}"),
                 algorithm: "ehz_pruned".to_string(),
                 facet_count,
-                capacity: result.capacity,
-                capacity_uncertain: result.capacity_uncertain,
+                capacity: result.result.capacity,
+                capacity_uncertain: result.result.capacity_uncertain,
                 numerical_gap: gap,
                 has_unknown,
                 beta_min,
@@ -181,21 +182,22 @@ fn main() {
                 .expect("billiard returned None");
             let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
-            let gap = result.capacity - result.capacity_uncertain;
+            let gap = result.result.capacity - result.result.capacity_uncertain;
             let beta_min = result
+                .result
                 .best_beta
                 .iter()
                 .cloned()
                 .fold(f64::INFINITY, f64::min);
             let has_unknown = gap > 0.0;
-            let sys = result.capacity * result.capacity / (2.0 * vol);
+            let sys = result.result.capacity * result.result.capacity / (2.0 * vol);
 
             if has_unknown {
                 total_unknowns += 1;
                 eprintln!(
                     "  UNKNOWN: pentagon_5x5_{angle_deg:.0}deg: gap={gap:.2e}, \
                      cap={:.8}, cap_unc={:.8}, beta_min={beta_min:.2e}",
-                    result.capacity, result.capacity_uncertain
+                    result.result.capacity, result.result.capacity_uncertain
                 );
             }
 
@@ -204,8 +206,8 @@ fn main() {
                 name: format!("pentagon_5x5_{angle_deg:.0}deg"),
                 algorithm: "billiard".to_string(),
                 facet_count: 10,
-                capacity: result.capacity,
-                capacity_uncertain: result.capacity_uncertain,
+                capacity: result.result.capacity,
+                capacity_uncertain: result.result.capacity_uncertain,
                 numerical_gap: gap,
                 has_unknown,
                 beta_min,
@@ -243,21 +245,22 @@ fn main() {
                 .expect("billiard returned None");
             let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
-            let gap = result.capacity - result.capacity_uncertain;
+            let gap = result.result.capacity - result.result.capacity_uncertain;
             let beta_min = result
+                .result
                 .best_beta
                 .iter()
                 .cloned()
                 .fold(f64::INFINITY, f64::min);
             let has_unknown = gap > 0.0;
-            let sys = result.capacity * result.capacity / (2.0 * vol);
+            let sys = result.result.capacity * result.result.capacity / (2.0 * vol);
 
             if has_unknown {
                 total_unknowns += 1;
                 eprintln!(
                     "  UNKNOWN: pair_{n1}x{n2}_{angle_deg:.0}deg: gap={gap:.2e}, \
                      cap={:.8}, cap_unc={:.8}, beta_min={beta_min:.2e}",
-                    result.capacity, result.capacity_uncertain
+                    result.result.capacity, result.result.capacity_uncertain
                 );
             }
 
@@ -266,8 +269,8 @@ fn main() {
                 name: format!("pair_{n1}x{n2}_{angle_deg:.0}deg"),
                 algorithm: "billiard".to_string(),
                 facet_count: n1 + n2,
-                capacity: result.capacity,
-                capacity_uncertain: result.capacity_uncertain,
+                capacity: result.result.capacity,
+                capacity_uncertain: result.result.capacity_uncertain,
                 numerical_gap: gap,
                 has_unknown,
                 beta_min,

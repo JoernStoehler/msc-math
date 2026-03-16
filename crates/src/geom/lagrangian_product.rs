@@ -4,8 +4,8 @@
 //! and polygon Q in p-space (p_1, p_2). The 4D polytope has facets from both
 //! factors, with normals embedded into the respective Lagrangian subspaces:
 //!
-//! - P-facets (Q-type): n = (n_P, 0, 0) in R^4 (components [0,1])
-//! - Q-facets (P-type): n = (0, 0, n_Q) in R^4 (components [2,3])
+//! - P-facets: n = (n_P, 0, 0) in R^4 (components [0,1], q-space)
+//! - Q-facets: n = (0, 0, n_Q) in R^4 (components [2,3], p-space)
 //!
 //! Coordinates: (q_1, q_2, p_1, p_2). See `symplectic_form` module for J_0 and omega_0.
 //!

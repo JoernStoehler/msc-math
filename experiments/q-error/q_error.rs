@@ -299,7 +299,7 @@ fn exact_comparison(polytope: &Polytope4D) -> Option<ExactResult> {
     let result = ehz_capacity(polytope)?;
 
     // best_permutation follows positive Reeb direction — same order passed to solve_kkt/build_kkt.
-    let perm = &result.best_permutation;
+    let perm = &result.result.best_permutation;
     let m = perm.len();
     let size = m + 5;
 

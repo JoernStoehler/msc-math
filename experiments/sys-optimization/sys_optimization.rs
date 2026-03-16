@@ -1393,7 +1393,7 @@ fn evaluate_gradient_step_hn(
         Ok(new_polytope) => {
             let new_vol = volume(&new_polytope).unwrap_or(f64::NAN);
             let new_cap = ehz_capacity(&new_polytope)
-                .map(|r| r.capacity)
+                .map(|r| r.result.capacity)
                 .unwrap_or(f64::NAN);
             let new_sys = if new_vol > 0.0 && new_cap.is_finite() {
                 new_cap * new_cap / (2.0 * new_vol)
@@ -1457,7 +1457,7 @@ fn evaluate_gradient_step(
             let new_vol = volume(&new_polytope).unwrap_or(f64::NAN);
             // Use library ehz_capacity for the step evaluation (not instrumented — faster)
             let new_cap = ehz_capacity(&new_polytope)
-                .map(|r| r.capacity)
+                .map(|r| r.result.capacity)
                 .unwrap_or(f64::NAN);
             let new_sys = if new_vol > 0.0 && new_cap.is_finite() {
                 new_cap * new_cap / (2.0 * new_vol)
@@ -1527,7 +1527,7 @@ fn try_step_h_polytope(
         return None;
     }
     let cap = ehz_capacity(&new_polytope)
-        .map(|r| r.capacity)
+        .map(|r| r.result.capacity)
         .unwrap_or(f64::NAN);
     if !cap.is_finite() {
         return None;
@@ -1566,7 +1566,7 @@ fn try_step_hn_polytope(
         return None;
     }
     let cap = ehz_capacity(&new_polytope)
-        .map(|r| r.capacity)
+        .map(|r| r.result.capacity)
         .unwrap_or(f64::NAN);
     if !cap.is_finite() {
         return None;

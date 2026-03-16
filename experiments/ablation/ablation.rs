@@ -1084,18 +1084,18 @@ fn main() {
                     n_failures += 1;
                 }
                 Some(r) => {
-                    capacities.push((variant.name.to_string(), r.capacity));
+                    capacities.push((variant.name.to_string(), r.result.capacity));
 
                     // Check against known expected capacity
                     if let Some(exp) = expected {
-                        if (r.capacity - exp).abs() > 1e-5 {
+                        if (r.result.capacity - exp).abs() > 1e-5 {
                             eprintln!(
                                 "  WRONG: {} / {}: got {:.8}, expected {:.8} (diff={:.2e})",
                                 polytope_name,
                                 variant.name,
-                                r.capacity,
+                                r.result.capacity,
                                 exp,
-                                (r.capacity - exp).abs()
+                                (r.result.capacity - exp).abs()
                             );
                             n_disagreements += 1;
                         }
@@ -1108,9 +1108,9 @@ fn main() {
                         facet_count: f,
                         normals: normals_raw.clone(),
                         heights: heights_raw.clone(),
-                        capacity: r.capacity,
-                        capacity_uncertain: r.capacity_uncertain,
-                        iterations: r.iterations,
+                        capacity: r.result.capacity,
+                        capacity_uncertain: r.result.capacity_uncertain,
+                        iterations: r.result.iterations,
                         time_ms,
                     });
                 }

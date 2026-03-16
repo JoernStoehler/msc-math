@@ -9,6 +9,7 @@
 use crate::geom::symplectic_form::{j2, j4, omega0};
 use nalgebra::{Matrix2, Matrix4, Vector4};
 
+/// Verify J_2^2 = -I_2.
 #[test]
 fn j2_squared_is_minus_identity() {
     let j = j2();
@@ -16,6 +17,7 @@ fn j2_squared_is_minus_identity() {
     assert_eq!(j_sq, -Matrix2::identity());
 }
 
+/// Verify J_4^2 = -I_4 (complex structure property).
 #[test]
 fn j4_squared_is_minus_identity() {
     let j = j4();
@@ -27,6 +29,7 @@ fn j4_squared_is_minus_identity() {
     );
 }
 
+/// Verify omega_0(u, v) + omega_0(v, u) = 0 (antisymmetry).
 #[test]
 fn omega0_antisymmetric() {
     let u = Vector4::new(1.0, 2.0, 3.0, 4.0);
@@ -38,6 +41,7 @@ fn omega0_antisymmetric() {
     );
 }
 
+/// Verify canonical basis pairings: omega_0(q_i, p_i) = 1 and cross-terms vanish.
 #[test]
 fn omega0_basis_vectors() {
     let e1 = Vector4::x(); // q_1
@@ -54,10 +58,11 @@ fn omega0_basis_vectors() {
     assert!((omega0(&e3, &e1) + 1.0).abs() < 1e-15); // omega_0(p_1, q_1) = -1
 }
 
+/// Verify omega_0(u, u) = 0 for a specific vector (consequence of antisymmetry).
 #[test]
 fn omega0_self_pairing_is_zero() {
     // omega_0(u, u) = 0 for all u (consequence of antisymmetry)
-    let u = Vector4::new(3.14, -2.71, 1.41, 0.57);
+    let u = Vector4::new(3.15, -2.71, 1.41, 0.57);
     assert!(
         omega0(&u, &u).abs() < 1e-14,
         "omega_0(u, u) should be 0, got {}",
@@ -65,6 +70,7 @@ fn omega0_self_pairing_is_zero() {
     );
 }
 
+/// Verify the coordinate formula agrees with the matrix form <J_0 u, v>.
 #[test]
 fn omega0_formula_equals_matrix_form() {
     // Verify: the direct formula u[0]*v[2] - u[2]*v[0] + u[1]*v[3] - u[3]*v[1]
@@ -111,6 +117,7 @@ fn lagrangian_subspace_q_plane() {
     );
 }
 
+/// Verify omega_0 vanishes on the p-plane {p_1, p_2} (Lagrangian subspace).
 #[test]
 fn lagrangian_subspace_p_plane() {
     let e3 = Vector4::z(); // p_1

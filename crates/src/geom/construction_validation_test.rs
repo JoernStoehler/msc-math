@@ -23,6 +23,7 @@ fn simplex_halfspaces() -> Vec<Vector4<f64>> {
 
 // ---- TooFewFacets ----
 
+/// Verify Polytope4D::new rejects 4 facets (minimum is 5 in R^4).
 #[test]
 fn reject_too_few_facets_4() {
     let halfspaces = vec![
@@ -35,6 +36,7 @@ fn reject_too_few_facets_4() {
     assert_eq!(err, ConstructionError::TooFewFacets(4));
 }
 
+/// Verify Polytope4D::new rejects an empty halfspace list.
 #[test]
 fn reject_too_few_facets_0() {
     let halfspaces: Vec<Vector4<f64>> = vec![];
@@ -42,6 +44,7 @@ fn reject_too_few_facets_0() {
     assert_eq!(err, ConstructionError::TooFewFacets(0));
 }
 
+/// Verify Polytope4D::new rejects a single halfspace.
 #[test]
 fn reject_too_few_facets_1() {
     let halfspaces = vec![Vector4::x()];
@@ -51,6 +54,7 @@ fn reject_too_few_facets_1() {
 
 // ---- ZeroDualVertex ----
 
+/// Verify Polytope4D::new rejects a zero-vector halfspace.
 #[test]
 fn reject_zero_halfspace() {
     let mut halfspaces = simplex_halfspaces();
@@ -59,6 +63,7 @@ fn reject_zero_halfspace() {
     assert_eq!(err, ConstructionError::ZeroDualVertex(2));
 }
 
+/// Verify Polytope4D::new rejects a near-zero (sub-epsilon) halfspace.
 #[test]
 fn reject_near_zero_halfspace() {
     let mut halfspaces = simplex_halfspaces();
@@ -69,6 +74,7 @@ fn reject_near_zero_halfspace() {
 
 // ---- DuplicateHalfspaces ----
 
+/// Verify Polytope4D::new rejects duplicate halfspaces.
 #[test]
 fn reject_duplicate_halfspaces() {
     let halfspaces = vec![
@@ -84,6 +90,7 @@ fn reject_duplicate_halfspaces() {
 
 // ---- Unbounded ----
 
+/// Verify Polytope4D::new rejects halfspaces all pointing in roughly +x direction.
 #[test]
 fn reject_unbounded_all_positive_x() {
     // All halfspaces point roughly in +x direction -- unbounded in -x.
@@ -98,6 +105,7 @@ fn reject_unbounded_all_positive_x() {
     assert_eq!(err, ConstructionError::Unbounded);
 }
 
+/// Verify Polytope4D::new rejects halfspaces missing the -w direction.
 #[test]
 fn reject_unbounded_missing_one_direction() {
     // Bounded in x, y, z but not in w (no -w halfspace).
@@ -118,6 +126,7 @@ fn reject_unbounded_missing_one_direction() {
 
 // ---- RedundantFacet ----
 
+/// Verify Polytope4D::new rejects a redundant diagonal facet on the hypercube.
 #[test]
 fn reject_redundant_diagonal_facet() {
     // Hypercube [-1,1]^4 + one redundant diagonal facet far from the polytope.
@@ -142,6 +151,7 @@ fn reject_redundant_diagonal_facet() {
     }
 }
 
+/// Verify Polytope4D::new rejects a nearly-parallel far-out redundant facet.
 #[test]
 fn reject_redundant_nearly_parallel_facet() {
     // Hypercube + a nearly parallel facet far from the polytope.
@@ -168,6 +178,7 @@ fn reject_redundant_nearly_parallel_facet() {
 
 // ---- Positive tests: valid inputs are accepted ----
 
+/// Verify a valid 5-facet simplex is accepted.
 #[test]
 fn simplex_accepted() {
     let halfspaces = simplex_halfspaces();
@@ -175,6 +186,7 @@ fn simplex_accepted() {
     assert_eq!(p.facet_count(), 5);
 }
 
+/// Verify a valid 8-facet hypercube is accepted.
 #[test]
 fn hypercube_accepted() {
     let halfspaces = vec![
@@ -191,6 +203,7 @@ fn hypercube_accepted() {
     assert_eq!(p.facet_count(), 8);
 }
 
+/// Verify from_normals_and_heights accepts a valid hypercube.
 #[test]
 fn from_normals_and_heights_accepted() {
     let normals = vec![

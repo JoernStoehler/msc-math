@@ -20,6 +20,7 @@ fn simplex_halfspaces_5() -> Vec<Vector4<f64>> {
     ]
 }
 
+/// Verify a valid simplex construction returns correct facet count and accessors.
 #[test]
 fn valid_construction() {
     let halfspaces = simplex_halfspaces_5();
@@ -30,6 +31,7 @@ fn valid_construction() {
     assert!(!p.vertices_f64().is_empty(), "vertices should be precomputed");
 }
 
+/// Verify every vertex satisfies all halfspace inequalities n_i . v <= h_i.
 #[test]
 fn vertices_satisfy_halfspace_inequalities() {
     let halfspaces = simplex_halfspaces_5();

@@ -19,10 +19,7 @@
 //!
 //! Mathematical correspondence: [lem:kkt], [lem:well-defined]
 
-// TODO: omega0_rational and rational_to_f64 in geom::rational_arithmetic are
-// pub(super), so they're not visible from kkt/. Once visibility is widened to
-// pub(crate), replace these local copies with imports from
-// crate::geom::rational_arithmetic::{omega0_rational, rational_to_f64}.
+use crate::geom::rational_arithmetic::{omega0_rational, rational_to_f64};
 use num_bigint::BigInt;
 use num_rational::BigRational;
 use num_traits::{One, Signed, ToPrimitive, Zero};
@@ -532,25 +529,6 @@ fn compute_q_rational(
 
 // ── Helpers ──────────────────────────────────────────────────────────────
 
-/// Standard symplectic form omega_0(u, v) over Q.
-///
-/// omega_0(u, v) = u_0 v_2 - u_2 v_0 + u_1 v_3 - u_3 v_1
-///
-/// Local copy of `geom::rational_arithmetic::omega0_rational` (which is
-/// pub(super) and therefore not visible from kkt/).
-fn omega0_rational(u: &[BigRational; 4], v: &[BigRational; 4]) -> BigRational {
-    &u[0] * &v[2] - &u[2] * &v[0] + &u[1] * &v[3] - &u[3] * &v[1]
-}
-
-/// Convert BigRational to f64 (best approximation).
-///
-/// Local copy of `geom::rational_arithmetic::rational_to_f64` (which is
-/// pub(super) and therefore not visible from kkt/).
-fn rational_to_f64(r: &BigRational) -> f64 {
-    let n = r.numer().to_f64().unwrap_or(f64::NAN);
-    let d = r.denom().to_f64().unwrap_or(f64::NAN);
-    n / d
-}
 
 /// Approximate absolute value of a BigRational as f64 (for pivot comparison).
 fn rational_abs_f64(r: &BigRational) -> f64 {

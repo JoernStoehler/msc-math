@@ -35,16 +35,19 @@ fn hypercube_normals() -> Vec<Vector4<f64>> {
 
 // ---- Boundedness ----
 
+/// Verify simplex normals form a positively spanning set (bounded polytope).
 #[test]
 fn simplex_is_bounded() {
     assert!(check_bounded(&simplex_normals()));
 }
 
+/// Verify hypercube normals form a positively spanning set (bounded polytope).
 #[test]
 fn hypercube_is_bounded() {
     assert!(check_bounded(&hypercube_normals()));
 }
 
+/// Verify check_bounded rejects normals all pointing in roughly +x direction.
 #[test]
 fn unbounded_normals_detected() {
     // All normals point roughly in the +x direction: fails positive spanning.
@@ -58,6 +61,7 @@ fn unbounded_normals_detected() {
     assert!(!check_bounded(&normals));
 }
 
+/// Verify check_bounded rejects rank-deficient normals (rank < 4).
 #[test]
 fn rank_deficient_normals_unbounded() {
     // Only 3 linearly independent directions: rank < 4.

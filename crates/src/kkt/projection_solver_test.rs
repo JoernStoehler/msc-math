@@ -111,7 +111,7 @@ fn q_constant_when_h_zero() {
 /// Prop: C beta = d for every returned beta with verdict != False.
 #[test]
 fn prop_constraint_satisfaction() {
-    let cases = vec![
+    let cases = [
         {
             #[rustfmt::skip]
             let c = DMatrix::from_row_slice(3, 5, &[

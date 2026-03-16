@@ -73,7 +73,7 @@ pub struct ReebTrajectory {
 /// In coordinates (q_1, q_2, p_1, p_2) with J_0 = [[0, -I_2], [I_2, 0]]:
 ///   J_0 (a, b, c, d) = (-c, -d, a, b)
 ///
-/// [def:reeb-vector-field]
+/// [def:reeb-vector-field]: Reeb direction on facet F_i is J_0 n_i (tangent to F_i).
 pub fn reeb_direction(normal: &Vector4<f64>) -> Vector4<f64> {
     Vector4::new(-normal[2], -normal[3], normal[0], normal[1])
 }
@@ -121,7 +121,7 @@ pub fn simulate(
 /// through it (n_j . d > 0), the trajectory cannot proceed on the current
 /// facet. It immediately transitions to F_j (zero-length segment).
 ///
-/// [lem:piecewise-linear-reeb]
+/// [lem:piecewise-linear-reeb]: Reeb trajectories on polytope boundaries are piecewise linear.
 pub fn simulate_with(
     polytope: &Polytope4D,
     start_point: Vector4<f64>,
