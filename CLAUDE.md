@@ -101,6 +101,27 @@ Each topic section below mentions its relevant review subagent(s) for focused ch
 - If you need details from the pre-compaction conversation: delegate JSONL transcript reading to a subagent. Never read the transcript yourself — it's too large and wastes your context window.
 - Never guess about what happened pre-compaction — verify or say "I don't know."
 
+**Plan + compact + continue (for multi-phase work within a single session):**
+
+With 1M context windows, sessions run for hours and accumulate far more context than the compaction summary can preserve. The plan file is the critical bridge. The workflow:
+
+1. **Work a phase.** Implement, test, commit. Update the plan file as you go (progress, decisions, surprises).
+2. **Before compaction:** Write a complete handoff in the plan file — not just progress markers, but:
+   - What was built and where (files, commits)
+   - Design decisions made during implementation and WHY (these are the hardest to recover)
+   - What's broken / known limitations
+   - What to do next, in priority order
+   - Key file paths the next phase will need
+3. **Jörn triggers compaction.** The context is summarized; most working details are lost.
+4. **After compaction:** The agent reads the plan file and picks up from "suggested next steps." The compaction summary provides rough continuity; the plan file provides precise instructions.
+
+Why this matters more at 1M than at 200k: a 200k session accumulates ~2 hours of context; compaction loses moderate detail. A 1M session accumulates ~10 hours; compaction loses proportionally more. Design discussions, Jörn's feedback, numerical insights discovered during debugging — all of this must be in the plan file or it's gone.
+
+**Anti-patterns:**
+- Updating the plan file only at the end of a phase (too late if compaction happens mid-work)
+- Writing "see code for details" instead of capturing the WHY in the plan (code shows WHAT, not WHY)
+- Assuming the compaction summary preserves specific numbers, thresholds, or file paths (it doesn't)
+
 ## Session Workflow
 
 Every agent session owns a git worktree. Subagents and teams work in the same worktree.
