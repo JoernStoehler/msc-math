@@ -57,14 +57,14 @@ pub fn literature_values() -> Vec<(&'static str, f64)> {
 /// Source: Y. Nir thesis 2013; Siegel's Symplectic Capacities Project.
 pub fn simplex() -> KnownPolytope {
     let centroid = Vector4::new(0.2, 0.2, 0.2, 0.2);
-    let normals_raw = vec![
+    let normals_raw = [
         -Vector4::x(),
         -Vector4::y(),
         -Vector4::z(),
         -Vector4::w(),
         Vector4::new(1.0, 1.0, 1.0, 1.0).normalize(),
     ];
-    let heights_raw = vec![0.0, 0.0, 0.0, 0.0, 0.5]; // h₅ = 1/‖(1,1,1,1)‖ = 1/2 for facet Σxᵢ ≤ 1
+    let heights_raw = [0.0, 0.0, 0.0, 0.0, 0.5_f64]; // h₅ = 1/‖(1,1,1,1)‖ = 1/2 for facet Σxᵢ ≤ 1
     let heights: Vec<f64> = normals_raw
         .iter()
         .zip(&heights_raw)

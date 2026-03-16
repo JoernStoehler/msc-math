@@ -17,7 +17,6 @@
 /// - `margin_search`: max-margin feasibility search for β > 0
 /// - `projection_solver`: the projection-based solver combining both sub-components
 /// - `augmented`: the legacy augmented (m+5) solver
-
 pub mod augmented;
 pub mod constraint_solver;
 pub mod margin_search;

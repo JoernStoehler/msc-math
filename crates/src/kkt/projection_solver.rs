@@ -19,7 +19,6 @@
 /// Classify the verdict from the margin.
 ///
 /// **Step 5 — Compute Q.** Q = (1/2) βᵀHβ, constant over the solution set.
-
 use super::constraint_solver;
 use super::margin_search;
 use super::{classify_margin, QP, Solution, Verdict};
@@ -108,7 +107,7 @@ pub(crate) fn solve_projected(qp: &QP) -> Solution {
         if eigenvalues[i].abs() > threshold {
             let pi = eigenvectors.column(i);
             let coeff = pi.dot(&b_prime) / eigenvalues[i];
-            alpha0 += coeff * &pi;
+            alpha0 += coeff * pi;
         }
     }
 
