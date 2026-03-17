@@ -38,6 +38,16 @@ KKT solver rework: dual-vertex parameterization, projection-based solver, β > 0
 
 **Depends on:** Migration merge (tests exist on migration-scaffold branch).
 
+## Migration cleanup (post-merge)
+
+Small fixes identified during migration review but not yet applied:
+
+1. **"orbit" → "candidate" terminology** in `capacity_accumulator.rs` (4 locations) and `saddle_point_solver.rs`. Per MEMORY.md: transitions are trajectory segments, not orbits, until closedness is established.
+2. **Duplicate EPS constants**: `projection_solver.rs` and `saddle_point_solver.rs` independently define the same threshold constants. Consolidate into `kkt/mod.rs`.
+3. **`Vec<Vec<bool>>` adjacency** in `facet_adjacency.rs` → flat `Vec<bool>` or `DMatrix<bool>`. Current sparse-ish layout causes awkward indexing and unnecessary allocation.
+4. **`build_augmented_system` allocation**: creates fresh `Vec` for normals/heights per call. Old code took pre-allocated slices. Minor regression for F=10-16.
+5. **`known_polytopes.rs` inline tests**: uses `mod tests {}` instead of colocated `_test.rs`. Low priority — tests are small and test public constructors.
+
 ## Identified refactors
 
 ### Unify `find_positive_beta_1d` / `find_positive_beta_nd` in kkt.rs
