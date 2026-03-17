@@ -73,7 +73,7 @@ path = "gradient-descent/gradient_descent.rs"
 
 [[bin]]
 name = "hko_neighborhood"
-path = "hko-neighborhood/hko_neighborhood.rs"
+path = "hko-neighborhood/run.rs"
 
 [dependencies]
 symplectic = { path = "../crates" }

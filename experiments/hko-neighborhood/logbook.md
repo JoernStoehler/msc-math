@@ -37,16 +37,15 @@ python3 experiments/hko-neighborhood/hko_neighborhood.py
 
 | File | Role |
 |---|---|
-| `hko_neighborhood.rs` | Rust binary (~2100 LOC): sensitivity analysis, gradient ascent, facet splitting |
-| `hko_neighborhood.py` | Python figures + analysis |
+| `run.rs` | Rust binary (~2100 LOC): sensitivity analysis, gradient ascent, facet splitting |
+| `analyze.py` | Python figures + analysis |
+| `math.tex` | Formal math: symmetry analysis, orbit structure, subdifferential, consequences |
 | `hko-neighborhood-sensitivity.jsonl` | Phase A: gradients at HKO2024 (1 row, large — all 44 orbit gradients inline) |
 | `hko-neighborhood-ascent.jsonl` | Phase A: gradient ascent trajectory (1 row — converged in one step) |
 | `hko-neighborhood-splitting.jsonl` | Phase B: facet-splitting data (211 rows) |
 | `hko-neighborhood-gradient.png` | Figure: bar chart of d_sys/d_h_k |
 | `hko-neighborhood-orbits.png` | Figure: orbit structure visualization |
 | `hko-neighborhood-splitting.png` | Figure: splitting results |
-| `hko-neighborhood.tex` | LaTeX writeup: symmetry analysis, orbit structure, subdifferential, consequences |
-| `README.md` | Legacy summary (predates this logbook) |
 
 ## What's been done
 
