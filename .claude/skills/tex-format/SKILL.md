@@ -46,9 +46,6 @@ Only one marker per scope. When a higher level is approved, replace the lower ma
 % [GAP - AGENT CONFIDENCE 70%: ...]
 ```
 
-### Human readers (plain `%`)
-Regular LaTeX comments.
-
 ## File Headers
 
 Every `.tex` file starts with a `%` header block containing:

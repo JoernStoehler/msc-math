@@ -89,6 +89,12 @@ Do NOT attempt to hold all items in working memory and write the report at the e
 ### Step 4: Summarize
 After all items are processed, write a summary: total issues by severity, overall readiness, which sections are cleanest vs roughest.
 
+## Scope of agent review
+
+- Agents catch surface issues (undefined terms, missing steps, obvious errors). Jörn verifies mathematical correctness. Agents cannot provide Jörn-level verification.
+- Agents check test implementation quality (fixtures, naming, coverage of stated propositions). Agents cannot decide which propositions need testing — that's Jörn's domain.
+- Figure-review runs within Phase 1, parallel with other Phase 1 subagents.
+
 ## Output format
 
 ```

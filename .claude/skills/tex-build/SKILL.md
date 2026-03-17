@@ -46,3 +46,5 @@ grep -E 'newlabel\{(sec:|thm:|lem:|def:|rem:|cor:)' thesis/build/main.aux
 ## Default Status
 
 All content is **agent-written and unreviewed** unless explicitly marked otherwise. When a `.tex` file has no review markers, assume nothing has been verified by Jörn.
+
+Unreviewed is the WIP default. Review is mandatory before presenting to Jörn. These are compatible.
