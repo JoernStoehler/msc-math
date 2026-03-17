@@ -47,6 +47,14 @@ The logbook is the **entry point** for any agent or human looking at an experime
 
 **Every entry records *why*, not just *what*.** "Ran sweep" → "Ran sweep because we suspected bimodal distribution at F=8, based on the outliers in the random-sweep data."
 
+**Preserving Jörn's words.** When Jörn provides commentary, questions, or corrections, record them with the `Jörn:` prefix and preserve his exact wording. Don't paraphrase, don't substitute words, don't "clean up" phrasing. Spelling fixes are fine; semantic changes are not. Example:
+```
+**Q: Is Phase B data complete?**
+Jörn: dunno, so probably not regenerated. sys-optimization didn't use proper gradients iirc and didn't look at cuts
+```
+
+**When sources conflict**, flag the conflict explicitly and check the data (JSONL/output files) as ground truth. Don't silently pick one version.
+
 ### math.tex — the formal document
 
 Proofs, definitions, derivations, formal statements — anything that needs LaTeX math rendering. Also a living document that grows alongside the logbook.
