@@ -1,6 +1,10 @@
 # TASKS
 
-Master task list for thesis completion. Goal: published thesis by March 2026.
+Master task list for thesis completion. **Deadline: March 31, 2026.**
+
+**Current state (2026-03-17):** No thesis chapter is publishable yet. Experiments have data but writeups are noisy and the thesis doesn't tell a coherent story backed by results. The codebase is mid-migration. Progress rate is on track for deadline.
+
+**Priority order:** Migration merge → thesis coherence + experiment quality → code refactors. Code refactors only matter if they unblock thesis content or experiment correctness.
 
 **Maintenance rule:** When an agent completes a task, discovers a new task, or learns something that affects a task's implementation, update this file immediately. Don't defer. Context that isn't written down here or in the referenced files is context that will be lost.
 
@@ -127,16 +131,26 @@ Mostly agent-written from Jörn's notes. Needs Jörn's mathematical verification
 
 ---
 
-## 5. Experiment writeups
+## 5. Experiment quality + thesis coherence
 
-🟡 Agent writes .tex, Jörn reviews content.
+🔴 Jörn scopes what the thesis story is. Agent executes.
 
-All 16 experiments have Complete status and standardized READMEs. The thesis `experiments.tex` references some but not all. Jörn decides which experiments appear in the thesis and at what depth.
+**Problem:** The thesis is currently a dump of results, not a coherent narrative. Experiments have data but writeups are noisy. There are low-hanging-fruit experiments that would provide real value but haven't been done, while some existing experiments add noise without advancing the argument.
+
+**What Jörn needs to decide:**
+- What is the thesis's central argument / story arc?
+- Which existing experiments support that story vs are background validation vs are noise?
+- Which NEW experiments should be run? (many haven't been run yet — the existing 16 are not the full set)
+- Which low-hanging-fruit experiments would provide the most value?
+- What depth does each experiment need in the thesis? (full section / brief mention / appendix / omit)
+
+**Current experiment status:** All 16 have Complete status and standardized READMEs. But "Complete" means "has data," not "writeup is publishable."
 
 **Known gaps:**
 - `sys-optimization` has no README
 - `crosspolytope` Phase 2 TODO: update known_polytopes.rs
 - `hko-neighborhood` — handoff at `handoffs/hko-neighborhood.md` says writeup needs to "tell a coherent story"
+- Experiment .tex writeups need review against the coherent-story standard once Jörn defines the story
 
 ---
 
@@ -181,14 +195,24 @@ See `handoffs/tube-algorithm.md`. The migration created a fresh implementation i
 
 ---
 
-## 8. Final thesis assembly
+## 8. Thesis chapters — all need work to be publishable
 
-🔴 Jörn-driven. Agent assists.
+🔴 Jörn decides what "publishable" means for each chapter. Agent writes drafts.
 
+No chapter is currently publishable. The thesis needs to become a coherent document that tells a story, not a collection of sections. This is the highest-value work after migration merge.
+
+**Thesis .tex files with open TODOs:**
+- `tube-algorithm.tex` — 8 TODOs (5 JÖRN questions, 3 GAP markers from agent-written content)
+- `appendix-numerical.tex` — 5 TODOs (continuity, simplicity, billiard pruning, verdict framework, unverified numerical claim)
+- Other chapters — no TODOs but Jörn doubts publishability
+
+**What agents can do:** Draft rewrites, improve flow, verify claims against code/data, fix notation inconsistencies, improve figure quality. But agents cannot decide the thesis structure or story — that's Jörn's.
+
+**Final assembly tasks (after content is stable):**
 - Abstract, introduction, conclusion
-- Bibliography check
-- Figure quality review (all experiments)
-- Proof reading pass
+- Bibliography check (all citations verified against papers/)
+- Figure quality review (all experiments, per python-conventions + figure-review agent)
+- Proofreading pass
 - Print formatting
 
 ---
