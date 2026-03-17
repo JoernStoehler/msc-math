@@ -83,6 +83,17 @@ Each topic section below mentions its relevant review subagent(s) for focused ch
 - Never take silence as confirmation. Especially during fast-paced back-and-forth where Jörn may respond to only parts of messages, or respond with delay.
 - **Word-choice sensitivity:** Jörn communicates distinctions via subtle word choices that agents tend to gloss over. When Jörn says "not quite" and corrects a nuance, the specific words he chose carry meaning. Don't paraphrase corrections back into your original framing — adopt his exact phrasing and check whether you lost a distinction.
 
+**Processing feedback (the generalization loop):**
+When Jörn flags a specific error (e.g. "line 15 doesn't check theorem X's preconditions"):
+1. Fix the specific instance
+2. Abstract: what *reasoning error* did I make? (not "theorem X" but "applying results without verifying preconditions")
+3. Scan the current file and other files from this session for the same *type* of reasoning error — it won't be the same theorem, but it will be the same mistake pattern
+4. Fix all instances found
+5. Record the reasoning error in MEMORY.md — the *class* of error, not just the specific instance, with enough context that a future agent recognizes when it applies
+6. Dispatch a subagent to re-review if the scope is large
+
+Do not just fix the flagged line and move on. Jörn's time spent on one instance should prevent all instances of that error class, not just the one he pointed at.
+
 ## Staying Focused Across Long Sessions
 
 **Plan file as persistent memory:** Update the plan file as you work — it survives context compaction, your working memory does not.
