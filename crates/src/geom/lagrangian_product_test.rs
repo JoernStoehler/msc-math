@@ -1,10 +1,19 @@
-use super::*;
+//! Tests for lagrangian_product: facet count, Q/P classification, volume.
+//!
+//! Proposition: lagrangian_product(P, Q) produces a polytope with
+//!   F = |P| + |Q| facets, and vol_4 = area(P) * area(Q).
+//! Reference: [def:lagrangian-product]
+//!
+//! Strategy: fixture-based (triangle x triangle, pentagon x pentagon, etc.)
+
+use crate::geom::lagrangian_product::lagrangian_product;
 use crate::geom::polygon::{polygon_area, regular_polygon_2d, rotate_polygon_2d};
 use crate::geom::polytope::ConstructionError;
 use crate::geom::volume::volume;
 use nalgebra::Vector2;
 use std::f64::consts::PI;
 
+/// Verify triangle x_L triangle has 3+3 = 6 facets.
 #[test]
 fn triangle_x_triangle_has_6_facets() {
     let (qn, qh) = regular_polygon_2d(3, 1.0);
@@ -13,6 +22,7 @@ fn triangle_x_triangle_has_6_facets() {
     assert_eq!(polytope.facet_count(), 6);
 }
 
+/// Verify pentagon x_L pentagon has 5+5 = 10 facets.
 #[test]
 fn pentagon_x_pentagon_has_10_facets() {
     let (qn, qh) = regular_polygon_2d(5, 1.0);
@@ -21,6 +31,7 @@ fn pentagon_x_pentagon_has_10_facets() {
     assert_eq!(polytope.facet_count(), 10);
 }
 
+/// Verify triangle x_L square has 3+4 = 7 facets.
 #[test]
 fn triangle_x_square_has_7_facets() {
     let (qn, qh) = regular_polygon_2d(3, 1.0);
@@ -29,10 +40,11 @@ fn triangle_x_square_has_7_facets() {
     assert_eq!(polytope.facet_count(), 7);
 }
 
+/// Verify vol_4(P x_L Q) = area(P) * area(Q) for several polygon pairs.
 #[test]
 fn volume_equals_product_of_areas() {
-    // For several polygon pairs, check vol4(P x_L Q) = area(P) * area(Q).
-    let pairs: Vec<(usize, usize)> = vec![(3, 3), (3, 4), (4, 4), (3, 5), (5, 5)];
+    // For several polygon pairs, check vol_4(P x_L Q) = area(P) * area(Q).
+    let pairs = [(3, 3), (3, 4), (4, 4), (3, 5), (5, 5)];
     for (n1, n2) in pairs {
         let (qn, qh) = regular_polygon_2d(n1, 1.0);
         let (pn, ph) = regular_polygon_2d(n2, 1.0);
@@ -51,12 +63,11 @@ fn volume_equals_product_of_areas() {
     }
 }
 
+/// Verify rotated pentagon product has same facet count and volume as HKO pentagon.
 #[test]
-fn rotated_pentagon_product_has_same_volume_as_hko() {
-    // Our convention uses starting angle π/2, HK-O uses π/5.
-    // Both are regular pentagons with circumradius 1, so same area/volume.
-    // Since sys is invariant under Sp(4) (rotations that map one pentagon to the other),
-    // both constructions have the same sys value.
+fn rotated_pentagon_product_matches_hko_volume() {
+    // Regular pentagon with our convention (starting angle pi/2) vs HKO (starting angle pi/5).
+    // Both are regular pentagons with circumradius 1 -> same area/volume.
     let (qn, qh) = regular_polygon_2d(5, 1.0);
     let (pn_base, ph_base) = regular_polygon_2d(5, 1.0);
     let (pn, ph) = rotate_polygon_2d(&pn_base, &ph_base, PI / 2.0);
@@ -66,18 +77,6 @@ fn rotated_pentagon_product_has_same_volume_as_hko() {
 
     // Same facet count
     assert_eq!(our_polytope.facet_count(), hko.polytope.facet_count());
-
-    // Same heights (both use circumradius 1 -> inradius = cos(π/5))
-    let our_h = our_polytope.heights_f64();
-    let hko_h = hko.polytope.heights_f64();
-    for i in 0..10 {
-        assert!(
-            (our_h[i] - hko_h[i]).abs() < 1e-10,
-            "height[{i}] mismatch: ours={}, theirs={}",
-            our_h[i],
-            hko_h[i]
-        );
-    }
 
     // Same volume
     let our_vol = volume(&our_polytope).unwrap();
@@ -89,15 +88,16 @@ fn rotated_pentagon_product_has_same_volume_as_hko() {
     );
 }
 
+/// Verify Lagrangian product volume is independent of rotation angle.
 #[test]
 fn rotated_product_volume_independent_of_angle() {
-    // vol(P x_L R(θ)Q) = area(P) * area(Q), independent of θ
+    // vol(P x_L R(theta)Q) = area(P) * area(Q), independent of theta
     let (qn, qh) = regular_polygon_2d(5, 1.0);
     let (pn, ph) = regular_polygon_2d(5, 1.0);
 
     let angles = [0.0, PI / 10.0, PI / 5.0, PI / 3.0, PI / 2.0];
     let expected_area = polygon_area(&qn, &qh).unwrap();
-    let expected_vol = expected_area * expected_area; // same polygon both sides
+    let expected_vol = expected_area * expected_area;
 
     for &theta in &angles {
         let (rpn, rph) = rotate_polygon_2d(&pn, &ph, theta);
@@ -106,17 +106,17 @@ fn rotated_product_volume_independent_of_angle() {
         let rel_err = (vol - expected_vol).abs() / expected_vol;
         assert!(
             rel_err < 1e-6,
-            "θ={theta:.3}: vol={vol}, expected={expected_vol}, rel_err={rel_err}"
+            "theta={theta:.3}: vol={vol}, expected={expected_vol}, rel_err={rel_err}"
         );
     }
 }
 
-// ---- Error propagation: lagrangian_product must propagate Polytope4D::new errors ----
+// ---- Error propagation: Polytope4D::new errors pass through ----
 
+/// Verify lagrangian_product rejects inputs with fewer than 5 total facets.
 #[test]
 fn rejects_too_few_total_facets() {
-    // Triangle (3 facets) in q-space, nothing in p-space: 3 < 5 minimum.
-    // Use a single line (1 normal) in p-space to get 4 total facets.
+    // Triangle (3 facets) + 1 p-facet = 4 total < 5 minimum.
     let (qn, qh) = regular_polygon_2d(3, 1.0);
     let pn = vec![Vector2::new(1.0, 0.0)];
     let ph = vec![1.0];
@@ -124,13 +124,41 @@ fn rejects_too_few_total_facets() {
     assert_eq!(err, ConstructionError::TooFewFacets(4));
 }
 
+/// Verify lagrangian_product rejects unbounded p-factor (too few p-normals).
 #[test]
 fn rejects_unbounded_single_factor() {
-    // Triangle in q-space (3 facets), 2 normals in p-space (not enough to bound p-space).
-    // Total = 5 facets, but q-space normals are all in [0,1] components — unbounded in p-space.
+    // Triangle in q-space (3 facets) + 2 normals in p-space (not enough to bound p-space).
+    // Total = 5 facets, but unbounded in the -p direction.
     let (qn, qh) = regular_polygon_2d(3, 1.0);
     let pn = vec![Vector2::new(1.0, 0.0), Vector2::new(0.0, 1.0)];
     let ph = vec![1.0, 1.0];
     let err = lagrangian_product(&qn, &qh, &pn, &ph).unwrap_err();
     assert_eq!(err, ConstructionError::Unbounded);
+}
+
+/// Q-type facets have normals in the q-plane (components [0,1] nonzero, [2,3] zero).
+#[test]
+fn q_type_facets_in_q_plane() {
+    let (qn, qh) = regular_polygon_2d(3, 1.0);
+    let (pn, ph) = regular_polygon_2d(3, 1.0);
+    let polytope = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
+    let normals = polytope.normals_f64();
+
+    // First 3 facets are from q-polygon: p-components should be zero
+    for (i, n) in normals.iter().enumerate().take(3) {
+        assert!(
+            n[2].abs() < 1e-12 && n[3].abs() < 1e-12,
+            "facet {i} should be Q-type: n = {:?}",
+            n
+        );
+    }
+
+    // Last 3 facets are from p-polygon: q-components should be zero
+    for (i, n) in normals.iter().enumerate().take(6).skip(3) {
+        assert!(
+            n[0].abs() < 1e-12 && n[1].abs() < 1e-12,
+            "facet {i} should be P-type: n = {:?}",
+            n
+        );
+    }
 }

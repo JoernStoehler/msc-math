@@ -1,13 +1,16 @@
 # Lagrangian Products of Rotated Polygons
 
-## Purpose
+Systematically search for Viterbo counterexamples (sys > 1) in the space of Lagrangian products of regular 2D polygons, since the only known 4D counterexample is a Lagrangian product of two pentagons.
 
-Systematically search for Viterbo counterexamples (sys > 1) in the space of Lagrangian products P x_L Q of regular 2D polygons, since the only known 4D counterexample is a Lagrangian product of two pentagons.
+## Status
+Complete
 
-## Pipeline
+## Run
 
-```
-lagrangian_sweep (Rust) → lagrangian-products-*.jsonl → lagrangian_products.py → figures
+```bash
+cd experiments/
+cargo run --bin lagrangian_sweep --release
+python3 lagrangian-products/lagrangian_products.py
 ```
 
 ## Design
@@ -41,3 +44,9 @@ Three experiment families:
 | lagrangian_products_polygon_pairs.png | Polygon pair comparison figure |
 | lagrangian-products.tex | Thesis writeup |
 | triangle_square.md | Investigation notes on triangle x square capacity |
+
+## Known limitations
+
+- Only regular polygons tested; irregular polygon products not explored
+- Rotation angle step size is 6 degrees for polygon pair grid (coarser than pentagon 1-degree sweep)
+- Family 3 (random Lagrangian products) delegated to separate random-product-sweep experiment

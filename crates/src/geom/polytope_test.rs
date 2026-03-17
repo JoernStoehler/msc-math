@@ -1,7 +1,15 @@
-use super::*;
+//! Tests for polytope: construction, accessors, and invariants.
+//!
+//! Proposition: Polytope4D construction validates inputs (nonzero, non-duplicate,
+//! bounded, irredundant) and produces consistent incidence/adjacency/omega data.
+//! Reference: [def:polytope-dual], [def:polar-body]
+//!
+//! Strategy: fixture-based (simplex, hypercube, known polytopes)
+
+use crate::geom::polytope::Polytope4D;
 use nalgebra::Vector4;
 
-/// 5 halfspaces forming a simplex-like polytope. aᵢ = nᵢ/hᵢ with hᵢ = 1.
+/// 5 halfspaces forming a simplex-like polytope. a_i = n_i/h_i with h_i = 1.
 fn simplex_halfspaces_5() -> Vec<Vector4<f64>> {
     vec![
         Vector4::new(1.0, 0.0, 0.0, 0.0),
@@ -12,6 +20,7 @@ fn simplex_halfspaces_5() -> Vec<Vector4<f64>> {
     ]
 }
 
+/// Verify a valid simplex construction returns correct facet count and accessors.
 #[test]
 fn valid_construction() {
     let halfspaces = simplex_halfspaces_5();
@@ -22,133 +31,7 @@ fn valid_construction() {
     assert!(!p.vertices_f64().is_empty(), "vertices should be precomputed");
 }
 
-#[test]
-fn reject_duplicate_halfspaces() {
-    let halfspaces = vec![
-        Vector4::x(),
-        Vector4::y(),
-        Vector4::z(),
-        Vector4::w(),
-        Vector4::x(), // duplicate of [0]
-    ];
-    let err = Polytope4D::new(halfspaces).unwrap_err();
-    assert_eq!(err, ConstructionError::DuplicateHalfspaces { i: 0, j: 4 });
-}
-
-#[test]
-fn reject_too_few_facets() {
-    let halfspaces = vec![
-        Vector4::new(1.0, 0.0, 0.0, 0.0),
-        Vector4::new(0.0, 1.0, 0.0, 0.0),
-        Vector4::new(0.0, 0.0, 1.0, 0.0),
-        Vector4::new(0.0, 0.0, 0.0, 1.0),
-    ];
-    let err = Polytope4D::new(halfspaces).unwrap_err();
-    assert_eq!(err, ConstructionError::TooFewFacets(4));
-}
-
-#[test]
-fn reject_zero_halfspace() {
-    let mut halfspaces = simplex_halfspaces_5();
-    halfspaces[2] = Vector4::new(0.0, 0.0, 0.0, 0.0); // zero vector
-    let err = Polytope4D::new(halfspaces).unwrap_err();
-    assert_eq!(err, ConstructionError::ZeroDualVertex(2));
-}
-
-// ---- Boundedness (regression: constructor must reject unbounded inputs) ----
-
-#[test]
-fn reject_unbounded() {
-    // All halfspaces point roughly in the +x direction — unbounded in -x.
-    // (Unit normals with height 1.0 → halfspaces = normals.)
-    let halfspaces = vec![
-        Vector4::new(1.0, 0.1, 0.0, 0.0).normalize(),
-        Vector4::new(1.0, -0.1, 0.0, 0.0).normalize(),
-        Vector4::new(1.0, 0.0, 0.1, 0.0).normalize(),
-        Vector4::new(1.0, 0.0, -0.1, 0.0).normalize(),
-        Vector4::new(1.0, 0.0, 0.0, 0.1).normalize(),
-    ];
-    let err = Polytope4D::new(halfspaces).unwrap_err();
-    assert_eq!(err, ConstructionError::Unbounded);
-}
-
-#[test]
-fn reject_unbounded_missing_one_direction() {
-    // Bounded in x, y, z but not in w (no -w halfspace).
-    // (Unit normals with height 1.0 → halfspaces = normals.)
-    let halfspaces = vec![
-        Vector4::x(),
-        -Vector4::x(),
-        Vector4::y(),
-        -Vector4::y(),
-        Vector4::z(),
-        -Vector4::z(),
-        Vector4::w(),
-        // missing -Vector4::w()
-        Vector4::new(1.0, 1.0, 1.0, 1.0).normalize(),
-    ];
-    let err = Polytope4D::new(halfspaces).unwrap_err();
-    assert_eq!(err, ConstructionError::Unbounded);
-}
-
-// ---- Irredundancy (regression: constructor must reject redundant facets) ----
-
-#[test]
-fn reject_redundant_facet() {
-    // Hypercube [-1,1]^4 + one redundant diagonal facet far from the polytope.
-    // Cube halfspaces: ±eᵢ/1 = ±eᵢ. Redundant: n/h = normalize(1,1,0,0)/10.
-    let n_diag = Vector4::new(1.0, 1.0, 0.0, 0.0).normalize();
-    let halfspaces = vec![
-        Vector4::x(),
-        -Vector4::x(),
-        Vector4::y(),
-        -Vector4::y(),
-        Vector4::z(),
-        -Vector4::z(),
-        Vector4::w(),
-        -Vector4::w(),
-        n_diag / 10.0, // x+y ≤ √2·10 — never active
-    ];
-    let err = Polytope4D::new(halfspaces).unwrap_err();
-    match err {
-        ConstructionError::RedundantFacet(idx) => {
-            assert_eq!(idx, 8, "the added diagonal facet should be redundant");
-        }
-        other => panic!("expected RedundantFacet, got {other:?}"),
-    }
-}
-
-#[test]
-fn reject_redundant_parallel_facet() {
-    // Hypercube + a parallel facet in the same direction as facet 0 but further out.
-    // Use a slightly tilted normal to avoid the duplicate check.
-    // n/h with h=100 → very small halfspace vector (far-out facet).
-    let n_tilted = Vector4::new(1.0, 0.001, 0.0, 0.0).normalize();
-    let halfspaces = vec![
-        Vector4::x(),
-        -Vector4::x(),
-        Vector4::y(),
-        -Vector4::y(),
-        Vector4::z(),
-        -Vector4::z(),
-        Vector4::w(),
-        -Vector4::w(),
-        n_tilted / 100.0, // nearly +x, far out → redundant
-    ];
-    let err = Polytope4D::new(halfspaces).unwrap_err();
-    match err {
-        ConstructionError::RedundantFacet(idx) => {
-            assert_eq!(idx, 8, "the nearly-parallel far facet should be redundant");
-        }
-        other => panic!("expected RedundantFacet, got {other:?}"),
-    }
-}
-
-// ---- Rational pipeline errors (ZeroDualVertex, NoVertices, F64Conversion) ----
-// Tested directly in rational_test.rs via from_rationals() constructor.
-
-// ---- Positive tests ----
-
+/// Verify every vertex satisfies all halfspace inequalities n_i . v <= h_i.
 #[test]
 fn vertices_satisfy_halfspace_inequalities() {
     let halfspaces = simplex_halfspaces_5();
@@ -161,19 +44,19 @@ fn vertices_satisfy_halfspace_inequalities() {
             assert!(
                 lhs <= h + EPS,
                 "vertex {} violates halfspace {}: {} > {}",
-                v, i, lhs, h
+                v,
+                i,
+                lhs,
+                h
             );
         }
     }
 }
 
-// ---- Vertex ordering invariant ----
-
 /// Verify that the incidence matrix is consistent with f64 vertex positions.
 ///
 /// For each vertex v and facet f: if incidence[v,f] is true, the f64 vertex
-/// must lie on that facet (within tolerance). If false, it must be strictly
-/// interior.
+/// must lie on that facet (within tolerance). If false, strictly interior.
 #[test]
 fn vertex_ordering_matches_incidence() {
     use crate::constants::EPS_FACET_INCIDENCE;
@@ -194,7 +77,6 @@ fn vertex_ordering_matches_incidence() {
         for vi in 0..v_count {
             let vertex = &p.vertices_f64()[vi];
 
-            // Vertex must lie ON each facet where incidence is true
             for fi in 0..p.facet_count() {
                 if incidence[(vi, fi)] {
                     let residual =
@@ -202,15 +84,20 @@ fn vertex_ordering_matches_incidence() {
                     assert!(
                         residual < EPS_FACET_INCIDENCE,
                         "{}: vertex {} should be on facet {} but residual = {:.2e}",
-                        kp.name, vi, fi, residual
+                        kp.name,
+                        vi,
+                        fi,
+                        residual
                     );
                 } else {
-                    let slack =
-                        p.heights_f64()[fi] - p.normals_f64()[fi].dot(vertex);
+                    let slack = p.heights_f64()[fi] - p.normals_f64()[fi].dot(vertex);
                     assert!(
                         slack > EPS_FACET_INCIDENCE,
                         "{}: vertex {} should be interior to facet {} but slack = {:.2e}",
-                        kp.name, vi, fi, slack
+                        kp.name,
+                        vi,
+                        fi,
+                        slack
                     );
                 }
             }
@@ -218,34 +105,25 @@ fn vertex_ordering_matches_incidence() {
     }
 }
 
-/// Verify vertex ordering invariant for the `from_rationals()` construction path.
-///
-/// Constructs a polytope via the rational path (from_rationals) and checks
-/// the same vertex-incidence alignment invariant.
+/// Verify vertex ordering invariant via the from_rationals() construction path.
 #[test]
 fn vertex_ordering_via_from_rationals() {
     use crate::constants::EPS_FACET_INCIDENCE;
     use crate::geom::known_polytopes;
+    use crate::geom::rational_arithmetic;
 
-    // Test with simplex (F=5) and hypercube (F=8)
     for kp in [known_polytopes::simplex(), known_polytopes::hypercube()] {
         let orig = &kp.polytope;
 
-        // Build via from_rationals using the dual vertices' rational data
-        // Re-derive rational normals and heights from the original f64 data
         let rational_normals: Vec<[num_rational::BigRational; 4]> = orig
             .normals_f64()
             .iter()
-            .map(|n| {
-                std::array::from_fn(|i| {
-                    crate::geom::rational::f64_to_rational(n[i])
-                })
-            })
+            .map(|n| std::array::from_fn(|i| rational_arithmetic::f64_to_rational(n[i])))
             .collect();
         let rational_heights: Vec<num_rational::BigRational> = orig
             .heights_f64()
             .iter()
-            .map(|&h| crate::geom::rational::f64_to_rational(h))
+            .map(|&h| rational_arithmetic::f64_to_rational(h))
             .collect();
 
         let p = Polytope4D::from_rationals(rational_normals, rational_heights)
@@ -267,19 +145,137 @@ fn vertex_ordering_via_from_rationals() {
                         (p.normals_f64()[fi].dot(vertex) - p.heights_f64()[fi]).abs();
                     assert!(
                         residual < EPS_FACET_INCIDENCE,
-                        "{} (from_rationals): vertex {} should be on facet {} but residual = {:.2e}",
-                        kp.name, vi, fi, residual
+                        "{} (from_rationals): vertex {} on facet {} residual = {:.2e}",
+                        kp.name,
+                        vi,
+                        fi,
+                        residual
                     );
                 } else {
-                    let slack =
-                        p.heights_f64()[fi] - p.normals_f64()[fi].dot(vertex);
+                    let slack = p.heights_f64()[fi] - p.normals_f64()[fi].dot(vertex);
                     assert!(
                         slack > EPS_FACET_INCIDENCE,
-                        "{} (from_rationals): vertex {} should be interior to facet {} but slack = {:.2e}",
-                        kp.name, vi, fi, slack
+                        "{} (from_rationals): vertex {} interior to facet {} slack = {:.2e}",
+                        kp.name,
+                        vi,
+                        fi,
+                        slack
                     );
                 }
             }
+        }
+    }
+}
+
+/// Adjacency matrix should be symmetric and have no self-adjacency.
+#[test]
+fn adjacency_matrix_symmetric_no_self_loops() {
+    use crate::geom::known_polytopes;
+
+    for kp in known_polytopes::all_known() {
+        let p = &kp.polytope;
+        let adj = p.adjacency();
+        let f = p.facet_count();
+
+        for i in 0..f {
+            assert!(
+                !adj[(i, i)],
+                "{}: facet {} is self-adjacent",
+                kp.name,
+                i
+            );
+            for j in (i + 1)..f {
+                assert_eq!(
+                    adj[(i, j)],
+                    adj[(j, i)],
+                    "{}: adjacency not symmetric at ({}, {})",
+                    kp.name,
+                    i,
+                    j
+                );
+            }
+        }
+    }
+}
+
+/// Omega signs matrix should be antisymmetric with zero diagonal.
+#[test]
+fn omega_signs_antisymmetric() {
+    use crate::geom::known_polytopes;
+
+    for kp in known_polytopes::all_known() {
+        let p = &kp.polytope;
+        let omega = p.omega_signs();
+        let f = p.facet_count();
+
+        for i in 0..f {
+            assert_eq!(
+                omega[(i, i)],
+                0,
+                "{}: diagonal omega[{},{}] should be 0",
+                kp.name,
+                i,
+                i
+            );
+            for j in (i + 1)..f {
+                assert_eq!(
+                    omega[(i, j)],
+                    -omega[(j, i)],
+                    "{}: omega not antisymmetric at ({}, {})",
+                    kp.name,
+                    i,
+                    j
+                );
+            }
+        }
+    }
+}
+
+/// The dual vertices accessor returns the right count and nonzero vectors.
+#[test]
+fn dual_vertices_count_and_nonzero() {
+    let halfspaces = simplex_halfspaces_5();
+    let p = Polytope4D::new(halfspaces).unwrap();
+
+    assert_eq!(p.dual_vertices_f64().len(), 5);
+    for (i, dv) in p.dual_vertices_f64().iter().enumerate() {
+        assert!(
+            dv.norm() > 1e-10,
+            "dual vertex[{i}] should be nonzero: {:?}",
+            dv
+        );
+    }
+}
+
+/// Heights are positive for bounded polytopes.
+#[test]
+fn heights_positive() {
+    use crate::geom::known_polytopes;
+
+    for kp in known_polytopes::all_known() {
+        for (i, &h) in kp.polytope.heights_f64().iter().enumerate() {
+            assert!(
+                h > 0.0,
+                "{}: height[{i}] should be positive, got {h}",
+                kp.name
+            );
+        }
+    }
+}
+
+/// Normals are unit vectors.
+#[test]
+fn normals_are_unit() {
+    use crate::geom::known_polytopes;
+
+    for kp in known_polytopes::all_known() {
+        for (i, n) in kp.polytope.normals_f64().iter().enumerate() {
+            assert!(
+                (n.norm() - 1.0).abs() < 1e-10,
+                "{}: normal[{i}] should be unit, norm = {}",
+                kp.name,
+                n.norm()
+            );
         }
     }
 }

@@ -1,56 +1,75 @@
-/// Qhull subprocess wrapper for volume computation via `qconvex`.
-///
-/// Vertex enumeration is handled by the exact rational pipeline
-/// (see `rational.rs`).
-/// This module only provides volume computation via the `qconvex FA` command.
+//! Qhull subprocess wrapper for 4D volume computation via `qconvex`.
+//!
+//! Vertex enumeration is handled by the exact rational pipeline
+//! (`vertex_enumeration.rs`). This module only provides volume computation
+//! via the `qconvex FA` command, which triangulates the convex hull and
+//! computes volume from the triangulation.
+//!
+//! Mathematical correspondence: [def:volume]
+
 use nalgebra::Vector4;
 use std::io::Write;
 use std::path::Path;
 use std::process::Command;
 use tempfile::NamedTempFile;
 
+/// Errors from qhull subprocess interaction.
 #[derive(Debug)]
 pub enum QhullError {
-    /// Qhull computation failed with diagnostic output
+    /// Qhull computation failed with diagnostic output.
     ComputationFailed(String),
-    /// qconvex command not found - install qhull-bin package
+    /// `qconvex` command not found — install `qhull-bin` package.
     QhullNotInstalled,
-    /// Failed to write input file or invoke subprocess
+    /// Failed to write input file or invoke subprocess.
     InputWriteFailed(std::io::Error),
-    /// Failed to parse qhull output
+    /// Failed to parse qhull output.
     OutputParseFailed(String),
-    /// Output format doesn't match expectations
+    /// Output format does not match expectations.
     InvalidOutput(String),
-    /// Qhull subprocess exceeded timeout limit
+    /// Qhull subprocess exceeded timeout limit.
     Timeout(u64),
 }
 
 impl std::fmt::Display for QhullError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::ComputationFailed(stderr) => write!(f, "qhull computation failed: {}", stderr),
-            Self::QhullNotInstalled => write!(f, "qconvex command not found - install qhull-bin package"),
-            Self::InputWriteFailed(e) => write!(f, "failed to write qhull input or invoke subprocess: {}", e),
-            Self::OutputParseFailed(msg) => write!(f, "failed to parse qhull output: {}", msg),
-            Self::InvalidOutput(msg) => write!(f, "invalid qhull output: {}", msg),
-            Self::Timeout(secs) => write!(f, "qhull subprocess exceeded {}s timeout - possible degenerate input", secs),
+            Self::ComputationFailed(stderr) => {
+                write!(f, "qhull computation failed: {}", stderr)
+            }
+            Self::QhullNotInstalled => {
+                write!(f, "qconvex command not found - install qhull-bin package")
+            }
+            Self::InputWriteFailed(e) => {
+                write!(f, "failed to write qhull input or invoke subprocess: {}", e)
+            }
+            Self::OutputParseFailed(msg) => {
+                write!(f, "failed to parse qhull output: {}", msg)
+            }
+            Self::InvalidOutput(msg) => {
+                write!(f, "invalid qhull output: {}", msg)
+            }
+            Self::Timeout(secs) => {
+                write!(
+                    f,
+                    "qhull subprocess exceeded {}s timeout - possible degenerate input",
+                    secs
+                )
+            }
         }
     }
 }
 
 impl std::error::Error for QhullError {}
 
-/// Write vertices to temporary file in qconvex format.
+/// Write vertices to a temporary file in qconvex input format.
 ///
-/// Format: First line is "4 N" (dimension, count), subsequent lines are
-/// "v₁ v₂ v₃ v₄" (one per vertex). The "4" is d (points have no offset term, unlike halfspaces).
+/// Format: first line is "4 N" (dimension, count), then one vertex per line
+/// as "v_0 v_1 v_2 v_3".
 fn write_qconvex_input(vertices: &[Vector4<f64>]) -> Result<NamedTempFile, QhullError> {
     let mut file = NamedTempFile::new().map_err(QhullError::InputWriteFailed)?;
 
-    // Write dimension and count
     writeln!(file, "4 {}", vertices.len()).map_err(QhullError::InputWriteFailed)?;
 
-    // Write each vertex: v₁ v₂ v₃ v₄
     for v in vertices {
         writeln!(file, "{} {} {} {}", v[0], v[1], v[2], v[3])
             .map_err(QhullError::InputWriteFailed)?;
@@ -60,10 +79,10 @@ fn write_qconvex_input(vertices: &[Vector4<f64>]) -> Result<NamedTempFile, Qhull
     Ok(file)
 }
 
-/// Run qconvex subprocess with volume flag and capture output.
+/// Run `qconvex TI <path> FA` and capture stdout.
 ///
-/// Invokes: `qconvex TI <path> FA` to read input file and compute volume.
-/// FA flag: compute facet areas and volume.
+/// FA flag: compute facet areas and total volume.
+/// Times out after 60 seconds to prevent hanging on degenerate input.
 fn run_qconvex_volume(input_path: &Path) -> Result<String, QhullError> {
     use std::io::Read;
     use std::time::Duration;
@@ -71,7 +90,6 @@ fn run_qconvex_volume(input_path: &Path) -> Result<String, QhullError> {
 
     const TIMEOUT_SECS: u64 = 60;
 
-    // Spawn qconvex process with TI flag to read file directly
     let mut child = Command::new("qconvex")
         .arg("TI")
         .arg(input_path)
@@ -87,30 +105,25 @@ fn run_qconvex_volume(input_path: &Path) -> Result<String, QhullError> {
             }
         })?;
 
-    // Wait with timeout
     let status = match child
         .wait_timeout(Duration::from_secs(TIMEOUT_SECS))
         .map_err(QhullError::InputWriteFailed)?
     {
         Some(status) => status,
         None => {
-            // Timeout - kill the process
             let _ = child.kill();
             return Err(QhullError::Timeout(TIMEOUT_SECS));
         }
     };
 
-    // Read stdout and stderr
     let mut stdout = Vec::new();
     let mut stderr = Vec::new();
-    if let Some(mut stdout_pipe) = child.stdout.take() {
-        stdout_pipe
-            .read_to_end(&mut stdout)
+    if let Some(mut pipe) = child.stdout.take() {
+        pipe.read_to_end(&mut stdout)
             .map_err(QhullError::InputWriteFailed)?;
     }
-    if let Some(mut stderr_pipe) = child.stderr.take() {
-        stderr_pipe
-            .read_to_end(&mut stderr)
+    if let Some(mut pipe) = child.stderr.take() {
+        pipe.read_to_end(&mut stderr)
             .map_err(QhullError::InputWriteFailed)?;
     }
 
@@ -124,23 +137,12 @@ fn run_qconvex_volume(input_path: &Path) -> Result<String, QhullError> {
 
 /// Parse qconvex FA output to extract volume.
 ///
-/// Format:
-/// ```text
-/// ...
-/// Approximate volume:       16
-/// ...
-/// ```
-/// or
-/// ```text
-/// ...
-///   Total volume:       16
-/// ...
-/// ```
+/// Searches for either "Approximate volume:" (non-simplicial polytopes) or
+/// "Total volume:" (simplicial polytopes) and parses the trailing number.
 fn parse_fa_output(output: &str) -> Result<f64, QhullError> {
     for line in output.lines() {
         let trimmed = line.trim();
 
-        // Try "Approximate volume:" prefix (used for non-simplicial polytopes)
         if let Some(vol_str) = trimmed.strip_prefix("Approximate volume:") {
             let vol: f64 = vol_str
                 .trim()
@@ -149,7 +151,6 @@ fn parse_fa_output(output: &str) -> Result<f64, QhullError> {
             return Ok(vol);
         }
 
-        // Try "Total volume:" prefix (used for simplicial polytopes)
         if let Some(vol_str) = trimmed.strip_prefix("Total volume:") {
             let vol: f64 = vol_str
                 .trim()
@@ -164,36 +165,33 @@ fn parse_fa_output(output: &str) -> Result<f64, QhullError> {
     ))
 }
 
-/// Compute volume of a 4D polytope using qconvex FA.
+/// Compute the volume of a 4D convex polytope using `qconvex FA`.
 ///
-/// Given vertices of a convex polytope, uses qconvex FA to compute volume directly.
+/// Writes vertex coordinates to a temp file, invokes `qconvex`, and parses
+/// the volume from the output. Returns 0.0 for fewer than 5 vertices (a 4D
+/// polytope with nonzero volume requires at least 5 vertices).
 ///
-/// # Arguments
-/// * `vertices` - Vertices of the polytope
+/// # Errors
 ///
-/// # Returns
-/// Volume as f64
+/// Returns `QhullError` if qhull is not installed, the subprocess fails,
+/// times out, or produces unparseable output.
+///
+/// Mathematical correspondence: [def:volume]
 pub(crate) fn compute_volume_qconvex(vertices: &[Vector4<f64>]) -> Result<f64, QhullError> {
-    // In R⁴, a polytope with nonzero volume requires at least 5 vertices (4-simplex).
+    // In R^4, a polytope with nonzero volume requires at least 5 vertices.
     if vertices.len() < 5 {
         return Ok(0.0);
     }
 
-    // Write vertices to temp file
     let input_file = write_qconvex_input(vertices)?;
-
-    // Run qconvex subprocess
     let output = run_qconvex_volume(input_file.path())?;
-
-    // Parse output and return volume
     parse_fa_output(&output)
 }
 
+// Inline tests: these test private parsing functions not exposed via the module API.
 #[cfg(test)]
 mod test {
     use super::*;
-
-    // ---- parse_fa_output (volume parsing) ----
 
     #[test]
     fn parse_fa_approximate_volume() {

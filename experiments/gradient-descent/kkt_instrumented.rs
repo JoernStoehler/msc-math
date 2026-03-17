@@ -10,17 +10,14 @@
 //! Source: experiments/sys-optimization/sys_optimization.rs lines 164–663
 
 use nalgebra::{DMatrix, DVector, Vector4};
-use symplectic::Polytope4D;
+// TODO: Polytope4D will be re-exported from top-level in wave 4 (subagent #16)
+use symplectic::algorithms::facet_adjacency::is_adjacent_cycle;
+use symplectic::kkt::saddle_point_solver::{EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
+use symplectic::geom::polytope::Polytope4D;
 
 // ============================================================================
 // Constants (copied from crates/src/kkt.rs and crates/src/constants.rs)
 // ============================================================================
-
-/// Minimum β_i value to consider a solution valid.
-pub const EPS_BETA_POSITIVE: f64 = 1e-12;
-
-/// Minimum Q(β) value to consider a solution valid.
-pub const EPS_Q_POSITIVE: f64 = 1e-15;
 
 /// Floor for SVD singular values.
 const EPS_SVD_FLOOR: f64 = 1e-12;
@@ -327,7 +324,9 @@ pub struct InstrumentedResult {
 // Adjacency infrastructure
 // ============================================================================
 
-/// Build undirected facet adjacency matrix (vertex-sharing).
+// TODO: Replace with `use symplectic::algorithms::facet_adjacency::build_adjacency_matrix`.
+// Local copy differs from library: uses f64 vertex incidence check (EPS_FACET_INCIDENCE)
+// instead of the library's exact rational `polytope.adjacency()`.
 pub fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let f = polytope.facet_count();
     let normals = polytope.normals_f64();
@@ -346,8 +345,9 @@ pub fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     adj
 }
 
-/// Build directed adjacency for positive Reeb direction.
-/// adj[i][j] = vertex_adj[i][j] AND ω₀(n_i, n_j) >= 0
+// TODO: Replace with `use symplectic::algorithms::facet_adjacency::build_directed_adjacency_matrix`.
+// Local copy differs from library: uses f64 `omega0_local() >= 0.0` comparison
+// instead of the library's exact rational `polytope.omega_signs()`.
 pub fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let f = polytope.facet_count();
     let normals = polytope.normals_f64();
@@ -359,12 +359,6 @@ pub fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> 
         }
     }
     adj
-}
-
-/// Check if a cyclic permutation forms an adjacent cycle.
-pub fn is_adjacent_cycle(perm: &[usize], adj: &[Vec<bool>]) -> bool {
-    let m = perm.len();
-    (0..m).all(|k| adj[perm[k]][perm[(k + 1) % m]])
 }
 
 // ============================================================================

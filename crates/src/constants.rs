@@ -2,12 +2,13 @@
 //!
 //! All tolerances that need to be consistent across modules are defined here.
 //! Module-local tolerances (used in only one place) stay in their respective modules.
+//!
+//! Mathematical correspondence: these tolerances bound the gap between exact
+//! rational arithmetic and f64 approximations throughout the pipeline.
 
 /// Vertex-on-facet incidence tolerance: |n·v - h| < EPS_FACET_INCIDENCE.
 ///
-/// Used by: skeleton, volume (deprecated), reeb_trajectory, hk2017, billiard.
-/// Previously defined under 5 different names (EPS_FACET_INCIDENCE, EPS_FEASIBILITY,
-/// EPS_ON_FACET, EPS_INCIDENCE) — all 1e-8, all checking the same geometric property.
+/// Used by: skeleton, volume, reeb_trajectory, hk2017, billiard.
 ///
 /// **Why 1e-8:** Vertices are computed exactly via the rational pipeline and
 /// converted to f64. The f64 conversion introduces rounding of ~1e-15 per

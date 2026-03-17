@@ -24,7 +24,13 @@ use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
-use symplectic::{ehz_capacity, known_polytopes, volume, Polytope4D, Skeleton};
+// TODO: These will be re-exported from top-level `symplectic::` in wave 4 (subagent #16).
+use symplectic::algorithms::facet_adjacency::is_adjacent_cycle;
+use symplectic::algorithms::hk2017::ehz_capacity;
+use symplectic::geom::known_polytopes;
+use symplectic::geom::volume::volume;
+use symplectic::geom::polytope::Polytope4D;
+use symplectic::geom::skeleton::Skeleton;
 
 /// Gap threshold for near-optimal orbits: collect orbits within δ of best.
 /// 1% is generous — in practice, HKO2024's 44 near-optimal orbits all have
@@ -495,6 +501,9 @@ fn heap_perms_buf(
     }
 }
 
+// TODO: Replace with `use symplectic::algorithms::facet_adjacency::build_adjacency_matrix`.
+// Local copy differs from library: uses f64 vertex incidence check (EPS_FACET_INCIDENCE)
+// instead of the library's exact rational `polytope.adjacency()`.
 fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let f = polytope.facet_count();
     let normals = polytope.normals_f64();
@@ -513,6 +522,9 @@ fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     adj
 }
 
+// TODO: Replace with `use symplectic::algorithms::facet_adjacency::build_directed_adjacency_matrix`.
+// Local copy differs from library: uses f64 `omega0_local() >= 0.0` comparison
+// instead of the library's exact rational `polytope.omega_signs()`.
 fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let f = polytope.facet_count();
     let normals = polytope.normals_f64();
@@ -524,11 +536,6 @@ fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
         }
     }
     adj
-}
-
-fn is_adjacent_cycle(perm: &[usize], adj: &[Vec<bool>]) -> bool {
-    let m = perm.len();
-    (0..m).all(|k| adj[perm[k]][perm[(k + 1) % m]])
 }
 
 // ============================================================================
@@ -855,8 +862,8 @@ fn compute_capacity_derivatives_fd(normals: &[Vector4<f64>], heights: &[f64]) ->
                 Err(_) => return f64::NAN,
             };
 
-            let cap_plus = ehz_capacity(&p_plus).map(|r| r.capacity).unwrap_or(f64::NAN);
-            let cap_minus = ehz_capacity(&p_minus).map(|r| r.capacity).unwrap_or(f64::NAN);
+            let cap_plus = ehz_capacity(&p_plus).map(|r| r.result.capacity).unwrap_or(f64::NAN);
+            let cap_minus = ehz_capacity(&p_minus).map(|r| r.result.capacity).unwrap_or(f64::NAN);
             (cap_plus - cap_minus) / (2.0 * FD_EPS)
         })
         .collect()
@@ -894,7 +901,7 @@ fn cross_check_derivatives_fd(
 
                 let sys_at = |h: Vec<f64>| -> Option<f64> {
                     let p = Polytope4D::from_normals_and_heights(normals.to_vec(), h).ok()?;
-                    let c = ehz_capacity(&p)?.capacity;
+                    let c = ehz_capacity(&p)?.result.capacity;
                     let v = volume(&p).ok()?;
                     Some(c * c / (2.0 * v))
                 };
@@ -1207,7 +1214,7 @@ fn safe_sys(polytope: &Polytope4D) -> Option<(f64, f64, f64)> {
     }
     // Catch panics from library KKT solver on degenerate geometry
     let cap = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-        ehz_capacity(polytope).map(|r| r.capacity)
+        ehz_capacity(polytope).map(|r| r.result.capacity)
     }))
     .ok()
     .flatten()
@@ -1333,8 +1340,8 @@ fn run_phase_a(base_dir: &std::path::Path) {
     let lib_result = ehz_capacity(polytope).expect("library ehz_capacity failed");
     println!(
         "  Library capacity: {:.10} (diff from known: {:.2e})",
-        lib_result.capacity,
-        (lib_result.capacity - known.capacity).abs()
+        lib_result.result.capacity,
+        (lib_result.result.capacity - known.capacity).abs()
     );
 
     // Instrumented HK2017
@@ -1344,12 +1351,12 @@ fn run_phase_a(base_dir: &std::path::Path) {
     let time_instrumented_ms = t_instr.elapsed().as_secs_f64() * 1000.0;
 
     // Cross-check
-    let cap_diff = (instrumented.capacity - lib_result.capacity).abs();
+    let cap_diff = (instrumented.capacity - lib_result.result.capacity).abs();
     assert!(
         cap_diff < 1e-8,
         "Capacity mismatch: instrumented={:.10}, library={:.10}",
         instrumented.capacity,
-        lib_result.capacity
+        lib_result.result.capacity
     );
     println!(
         "  Instrumented capacity: {:.10} (matches library, diff={:.2e})",
@@ -1787,7 +1794,7 @@ fn run_phase_b(base_dir: &std::path::Path) {
     let vertices = polytope.vertices_f64();
 
     let vol_orig = volume(polytope).expect("volume");
-    let cap_orig = ehz_capacity(polytope).expect("ehz").capacity;
+    let cap_orig = ehz_capacity(polytope).expect("ehz").result.capacity;
     let sys_orig = cap_orig * cap_orig / (2.0 * vol_orig);
     println!("HKO2024 baseline: F={f}, sys={sys_orig:.10}");
 
@@ -1843,7 +1850,7 @@ fn run_phase_b(base_dir: &std::path::Path) {
                         })).ok().flatten();
                         let n_valid = 0; // not computed (instrumented too expensive for F=11)
                         let best_sub = lib_result.as_ref().map(|r| r.best_subset.clone()).unwrap_or_default();
-                        let best_perm = lib_result.as_ref().map(|r| r.best_permutation.clone()).unwrap_or_default();
+                        let best_perm = lib_result.as_ref().map(|r| r.result.best_permutation.clone()).unwrap_or_default();
                         let d_sys_d_h_new = f64::NAN; // skip per-direction gradient (too expensive)
 
                         total_ok += 1;
@@ -1963,7 +1970,7 @@ fn run_phase_b(base_dir: &std::path::Path) {
                     .unwrap_or_default();
                 let best_perm = lib_result
                     .as_ref()
-                    .map(|r| r.best_permutation.clone())
+                    .map(|r| r.result.best_permutation.clone())
                     .unwrap_or_default();
 
                 total_ok += 1;
@@ -2050,7 +2057,7 @@ fn run_phase_b(base_dir: &std::path::Path) {
                     })).ok().flatten();
                     let n_valid = 0;
                     let best_sub = lib_result.as_ref().map(|r| r.best_subset.clone()).unwrap_or_default();
-                    let best_perm = lib_result.as_ref().map(|r| r.best_permutation.clone()).unwrap_or_default();
+                    let best_perm = lib_result.as_ref().map(|r| r.result.best_permutation.clone()).unwrap_or_default();
                     let d_sys_d_h_new = f64::NAN;
 
                     total_ok += 1;

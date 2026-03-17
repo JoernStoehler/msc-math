@@ -7,10 +7,11 @@
 //!    lagrangian-products/lagrangian-products-<n>x<m>-6deg.jsonl
 //!
 //! Capacity algorithm: billiard (fast, production default for Lagrangian products).
-use symplectic::billiard_capacity;
-use symplectic::lagrangian_product;
+// TODO: These will be re-exported from top-level `symplectic::` in wave 4 (subagent #16).
+use symplectic::algorithms::billiard::billiard_capacity;
+use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::{polygon_area, regular_polygon_2d, rotate_polygon_2d};
-use symplectic::volume;
+use symplectic::geom::volume::volume;
 use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
@@ -90,7 +91,7 @@ fn generate_pentagon_5x5() {
             .expect("billiard returned None");
         let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
-        let cap = result.capacity;
+        let cap = result.result.capacity;
         let sys = cap * cap / (2.0 * vol);
 
         let row = SweepRow {
@@ -105,7 +106,7 @@ fn generate_pentagon_5x5() {
             time_capacity_ms: time_ms,
             area_q,
             area_p,
-            iterations: result.iterations,
+            iterations: result.result.iterations,
             bounces: result.bounce_count,
         };
         let line = serde_json::to_string(&row).expect("serialize");
@@ -159,7 +160,7 @@ fn generate_polygon_pairs() {
                 .expect("billiard returned None");
             let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
-            let cap = result.capacity;
+            let cap = result.result.capacity;
             let sys = cap * cap / (2.0 * vol);
 
             let row = SweepRow {
@@ -174,7 +175,7 @@ fn generate_polygon_pairs() {
                 time_capacity_ms: time_ms,
                 area_q,
                 area_p,
-                iterations: result.iterations,
+                iterations: result.result.iterations,
                 bounces: result.bounce_count,
             };
             let line = serde_json::to_string(&row).expect("serialize");

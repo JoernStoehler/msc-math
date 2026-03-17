@@ -1,102 +1,100 @@
-use super::Skeleton;
-use crate::geom::known_polytopes;
+//! Tests for skeleton: face lattice construction and facet_centroid.
+//!
+//! Proposition: The skeleton correctly computes edges, ridges, and vertex-facet
+//! incidence from the exact rational incidence matrix.
+//! Reference: [def:face-lattice]
+//!
+//! Strategy: fixture-based on known polytopes with analytically known f-vectors.
 
+use crate::geom::known_polytopes;
+use crate::geom::skeleton::Skeleton;
+
+/// 4-simplex: 5 vertices, 10 edges, 10 triangular ridges, 5 facets.
+/// Every vertex lies on exactly 4 facets.
 #[test]
-fn simplex_skeleton() {
-    // 4-simplex: 5 vertices, 10 edges, 10 triangular ridges
+fn simplex_f_vector() {
     let kp = known_polytopes::simplex();
     let skel = Skeleton::compute(&kp.polytope);
 
-    assert_eq!(kp.polytope.vertices_f64().len(), 5, "simplex vertex count");
-    assert_eq!(skel.edges.len(), 10, "simplex edge count");
-    assert_eq!(skel.ridges.len(), 10, "simplex ridge count");
+    assert_eq!(kp.polytope.vertices_f64().len(), 5, "vertices");
+    assert_eq!(skel.edges.len(), 10, "edges");
+    assert_eq!(skel.ridges.len(), 10, "ridges");
 
-    // Every ridge of a simplex is a triangle (3 vertices)
     for ridge in &skel.ridges {
-        assert_eq!(ridge.vertices.len(), 3, "simplex ridge is triangle");
+        assert_eq!(ridge.vertices.len(), 3, "simplex ridge is a triangle");
     }
-
-    // Every vertex is on exactly 4 facets (in a 4-simplex)
     for vf in &skel.vertex_facets {
-        assert_eq!(vf.len(), 4, "simplex vertex incident to 4 facets");
+        assert_eq!(vf.len(), 4, "simplex vertex on 4 facets");
     }
 }
 
+/// Hypercube [-1,1]^4: 16 vertices, 32 edges, 24 square ridges, 8 facets.
+/// Every vertex lies on exactly 4 facets.
 #[test]
-fn hypercube_skeleton() {
-    // [-1,1]^4: 16 vertices, 32 edges, 24 square ridges
+fn hypercube_f_vector() {
     let kp = known_polytopes::hypercube();
     let skel = Skeleton::compute(&kp.polytope);
 
-    assert_eq!(kp.polytope.vertices_f64().len(), 16, "hypercube vertex count");
-    assert_eq!(skel.edges.len(), 32, "hypercube edge count");
-    assert_eq!(skel.ridges.len(), 24, "hypercube ridge count");
+    assert_eq!(kp.polytope.vertices_f64().len(), 16, "vertices");
+    assert_eq!(skel.edges.len(), 32, "edges");
+    assert_eq!(skel.ridges.len(), 24, "ridges");
 
-    // Every ridge of a hypercube is a square (4 vertices)
     for ridge in &skel.ridges {
-        assert_eq!(ridge.vertices.len(), 4, "hypercube ridge is square");
+        assert_eq!(ridge.vertices.len(), 4, "hypercube ridge is a square");
     }
-
-    // Every vertex of [-1,1]^4 is on exactly 4 facets
     for vf in &skel.vertex_facets {
-        assert_eq!(vf.len(), 4, "hypercube vertex incident to 4 facets");
+        assert_eq!(vf.len(), 4, "hypercube vertex on 4 facets");
     }
 }
 
+/// 4D cross-polytope: 8 vertices, 24 edges, 32 triangular ridges, 16 facets.
 #[test]
-fn crosspolytope_skeleton() {
-    // 4D cross-polytope: 8 vertices, 24 edges, 32 triangular ridges
+fn crosspolytope_f_vector() {
     let kp = known_polytopes::crosspolytope();
     let skel = Skeleton::compute(&kp.polytope);
 
-    assert_eq!(kp.polytope.vertices_f64().len(), 8, "crosspolytope vertex count");
-    assert_eq!(skel.edges.len(), 24, "crosspolytope edge count");
-    assert_eq!(skel.ridges.len(), 32, "crosspolytope ridge count");
+    assert_eq!(kp.polytope.vertices_f64().len(), 8, "vertices");
+    assert_eq!(skel.edges.len(), 24, "edges");
+    assert_eq!(skel.ridges.len(), 32, "ridges");
 
-    // Every ridge of a cross-polytope is a triangle
     for ridge in &skel.ridges {
-        assert_eq!(ridge.vertices.len(), 3, "crosspolytope ridge is triangle");
+        assert_eq!(ridge.vertices.len(), 3, "crosspolytope ridge is a triangle");
     }
 }
 
+/// Lagrangian triangle product: 9 vertices from 3x3 product structure.
 #[test]
-fn lagrangian_triangle_product_skeleton() {
-    // Triangle ×_L Triangle: 6 facets, 9 vertices, 18 edges, 9 ridges
-    // (product of two triangles in Lagrangian subspaces)
+fn lagrangian_triangle_product_basic() {
     let kp = known_polytopes::lagrangian_triangle_product();
     let skel = Skeleton::compute(&kp.polytope);
 
-    // 3 vertices × 3 vertices = 9 vertices
-    assert_eq!(kp.polytope.vertices_f64().len(), 9, "lag tri prod vertex count");
-
-    // Each ridge is a pair of facets sharing vertices.
-    // For a product P1 ×_L P2: ridges are either (fi, fj) within P1 or P2,
-    // or (fi from P1, fj from P2). We just check totals are reasonable.
+    assert_eq!(kp.polytope.vertices_f64().len(), 9, "vertices");
     assert!(!skel.edges.is_empty(), "has edges");
     assert!(!skel.ridges.is_empty(), "has ridges");
 
-    // Every ridge has ≥3 vertices (polygon)
     for ridge in &skel.ridges {
         assert!(
             ridge.vertices.len() >= 3,
-            "ridge has {} vertices, need ≥3",
+            "ridge has {} vertices, need >= 3",
             ridge.vertices.len()
         );
     }
 }
 
+/// Edge indices are always sorted: i < j.
 #[test]
 fn edges_are_sorted() {
     let kp = known_polytopes::hypercube();
     let skel = Skeleton::compute(&kp.polytope);
 
     for &[i, j] in &skel.edges {
-        assert!(i < j, "edge indices not sorted: [{i}, {j}]");
+        assert!(i < j, "edge not sorted: [{i}, {j}]");
     }
 }
 
+/// Ridge facet pairs are always sorted: facets[0] < facets[1].
 #[test]
-fn ridges_have_sorted_facets() {
+fn ridge_facets_are_sorted() {
     let kp = known_polytopes::hypercube();
     let skel = Skeleton::compute(&kp.polytope);
 
@@ -109,8 +107,9 @@ fn ridges_have_sorted_facets() {
     }
 }
 
+/// Ridge vertices actually lie on both facets of the ridge.
 #[test]
-fn ridge_vertices_lie_on_both_facets() {
+fn ridge_vertices_on_both_facets() {
     let kp = known_polytopes::hypercube();
     let skel = Skeleton::compute(&kp.polytope);
     let normals = kp.polytope.normals_f64();
@@ -124,6 +123,51 @@ fn ridge_vertices_lie_on_both_facets() {
                 assert!(
                     residual < 1e-7,
                     "vertex {vi} not on facet {fi}: residual {residual}"
+                );
+            }
+        }
+    }
+}
+
+/// facet_centroid returns a point that lies on the facet hyperplane.
+#[test]
+fn facet_centroid_on_facet() {
+    let kp = known_polytopes::hypercube();
+    let skel = Skeleton::compute(&kp.polytope);
+    let normals = kp.polytope.normals_f64();
+    let heights = kp.polytope.heights_f64();
+
+    for fi in 0..normals.len() {
+        let centroid = skel.facet_centroid(&kp.polytope, fi);
+        let residual = (normals[fi].dot(&centroid) - heights[fi]).abs();
+        assert!(
+            residual < 1e-7,
+            "centroid of facet {fi} not on facet: residual {residual}"
+        );
+    }
+}
+
+/// facet_centroid returns a point inside the polytope (satisfies all halfspaces).
+#[test]
+fn facet_centroid_inside_polytope() {
+    let polytopes = vec![
+        ("simplex", known_polytopes::simplex()),
+        ("hypercube", known_polytopes::hypercube()),
+        ("crosspolytope", known_polytopes::crosspolytope()),
+    ];
+
+    for (name, kp) in &polytopes {
+        let skel = Skeleton::compute(&kp.polytope);
+        let normals = kp.polytope.normals_f64();
+        let heights = kp.polytope.heights_f64();
+
+        for fi in 0..normals.len() {
+            let centroid = skel.facet_centroid(&kp.polytope, fi);
+            for (fk, (nk, hk)) in normals.iter().zip(heights.iter()).enumerate() {
+                let violation = nk.dot(&centroid) - hk;
+                assert!(
+                    violation < 1e-6,
+                    "{name} facet {fi} centroid violates facet {fk} by {violation:.2e}"
                 );
             }
         }

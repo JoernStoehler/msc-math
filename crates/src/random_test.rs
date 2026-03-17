@@ -1,12 +1,20 @@
-use super::*;
-use rand::SeedableRng;
+//! Tests for random: sample validity and deterministic reproducibility.
+//!
+//! Proposition: sample_random_polytope produces valid polytopes; same seed
+//! yields identical results; generate_random_polytopes fills to requested count.
+//!
+//! Strategy: fixture-based with fixed seeds, proptest for validation invariants.
 
+use super::random::*;
+use rand::SeedableRng;
+use rand_chacha::ChaCha8Rng;
+
+/// Verify same seed produces identical accept/reject outcomes (determinism).
 #[test]
 fn deterministic_sampling() {
     let mut rng1 = ChaCha8Rng::seed_from_u64(42);
     let mut rng2 = ChaCha8Rng::seed_from_u64(42);
 
-    // Generate several samples from each — results should match
     let results1: Vec<_> = (0..20)
         .map(|_| sample_random_polytope(6, 0.5, 2.0, &mut rng1).is_ok())
         .collect();
@@ -16,6 +24,7 @@ fn deterministic_sampling() {
     assert_eq!(results1, results2);
 }
 
+/// Verify at least one F=5 polytope is accepted out of 200 samples.
 #[test]
 fn some_polytopes_accepted_f5() {
     let mut rng = ChaCha8Rng::seed_from_u64(0);
@@ -32,6 +41,7 @@ fn some_polytopes_accepted_f5() {
     );
 }
 
+/// Verify generate_random_polytopes returns exactly the requested count.
 #[test]
 fn generate_fills_to_requested_count() {
     let mut rng = ChaCha8Rng::seed_from_u64(123);
@@ -47,44 +57,40 @@ fn generate_fills_to_requested_count() {
 #[cfg(test)]
 mod proptests {
     use super::*;
+    use crate::geom::polytope::Polytope4D;
     use proptest::prelude::*;
 
     proptest! {
-        /// Property: every polytope accepted by sample_random_polytope passes full validation.
+        #![proptest_config(proptest::prelude::ProptestConfig::with_cases(8))]
+        /// Property: every polytope accepted by sample_random_polytope passes
+        /// full revalidation via Polytope4D::new.
         ///
-        /// This ensures the rejection sampling loop doesn't have bugs that let
-        /// invalid polytopes through.
-        ///
-        /// NOTE: Limited to 5-6 facets and 4 seeds to keep runtime <10min.
-        /// Random polytope generation involves exact rational vertex enumeration and can be slow.
+        /// 8 cases in default suite (each runs vertex enumeration).
+        /// Already limited to 5-6 facets and 4 seeds.
         #[test]
         fn random_polytopes_pass_validation(
             facet_count in 5usize..=6,
             seed in 0u64..4
         ) {
             let mut rng = ChaCha8Rng::seed_from_u64(seed);
-            let h_min = 0.5;
-            let h_max = 2.0;
 
-            // Attempt to sample
-            let result = sample_random_polytope(facet_count, h_min, h_max, &mut rng);
+            let result = sample_random_polytope(facet_count, 0.5, 2.0, &mut rng);
 
-            // If accepted, it must pass Polytope4D::new() revalidation
             if let Ok(polytope) = result {
                 let normals = polytope.normals_f64();
                 let heights = polytope.heights_f64();
-
-                // Validate should succeed (it already did in sample_random_polytope,
-                // but we verify the polytope is still valid after construction)
-                let halfspaces: Vec<nalgebra::Vector4<f64>> = normals.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect();
-                let revalidate = Polytope4D::new(halfspaces);
+                let halfspaces: Vec<nalgebra::Vector4<f64>> = normals
+                    .iter()
+                    .zip(heights.iter())
+                    .map(|(n, &h)| n / h)
+                    .collect();
+                let revalidated = Polytope4D::new(halfspaces);
                 prop_assert!(
-                    revalidate.is_ok(),
+                    revalidated.is_ok(),
                     "accepted polytope failed revalidation: {:?}",
-                    revalidate.err()
+                    revalidated.err()
                 );
             }
-            // If rejected, that's fine — rejection sampling is allowed to reject
         }
     }
 }

@@ -28,7 +28,13 @@ use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::time::Instant;
-use symplectic::{ehz_capacity, volume, Polytope4D, Skeleton};
+// TODO: These will be re-exported from top-level `symplectic::` in wave 4 (subagent #16).
+use symplectic::algorithms::facet_adjacency::is_adjacent_cycle;
+use symplectic::algorithms::hk2017::ehz_capacity;
+use symplectic::kkt::saddle_point_solver::{EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
+use symplectic::geom::volume::volume;
+use symplectic::geom::polytope::Polytope4D;
+use symplectic::geom::skeleton::Skeleton;
 
 /// Maximum facet count to process (HK2017 cost is exponential).
 const MAX_FACET_COUNT: usize = 10;
@@ -166,14 +172,6 @@ struct InputRow {
 //
 // Uses the CURRENT condition-number approach (SVD_CONDITION_TAU = 1e-3).
 // ============================================================================
-
-/// Minimum β_i value to consider a solution valid.
-/// Copied from crates/src/kkt.rs:12
-const EPS_BETA_POSITIVE: f64 = 1e-12;
-
-/// Minimum Q(β) value to consider a solution valid.
-/// Copied from crates/src/kkt.rs:15
-const EPS_Q_POSITIVE: f64 = 1e-15;
 
 /// Floor for SVD singular values.
 /// Copied from crates/src/kkt.rs:20
@@ -518,8 +516,9 @@ fn heap_perms_buf(
     }
 }
 
-/// Build undirected facet adjacency matrix (vertex-sharing).
-/// Copied from crates/src/algorithms/hk2017/mod.rs:184-204
+// TODO: Replace with `use symplectic::algorithms::facet_adjacency::build_adjacency_matrix`.
+// Local copy differs from library: uses f64 vertex incidence check (EPS_FACET_INCIDENCE)
+// instead of the library's exact rational `polytope.adjacency()`.
 fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let f = polytope.facet_count();
     let normals = polytope.normals_f64();
@@ -538,10 +537,9 @@ fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     adj
 }
 
-/// Build directed adjacency for positive Reeb direction.
-/// adj[i][j] = vertex_adj[i][j] AND ω₀(n_i, n_j) >= 0
-/// (transition F_i → F_j in positive Reeb direction)
-/// Copied from crates/src/algorithms/hk2017/mod.rs
+// TODO: Replace with `use symplectic::algorithms::facet_adjacency::build_directed_adjacency_matrix`.
+// Local copy differs from library: uses f64 `omega0_local() >= 0.0` comparison
+// instead of the library's exact rational `polytope.omega_signs()`.
 fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let f = polytope.facet_count();
     let normals = polytope.normals_f64();
@@ -553,13 +551,6 @@ fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
         }
     }
     adj
-}
-
-/// Check if a cyclic permutation forms an adjacent cycle.
-/// Copied from crates/src/algorithms/hk2017/mod.rs:232-235
-fn is_adjacent_cycle(perm: &[usize], adj: &[Vec<bool>]) -> bool {
-    let m = perm.len();
-    (0..m).all(|k| adj[perm[k]][perm[(k + 1) % m]])
 }
 
 // ============================================================================
@@ -1389,7 +1380,7 @@ fn evaluate_gradient_step_hn(
         Ok(new_polytope) => {
             let new_vol = volume(&new_polytope).unwrap_or(f64::NAN);
             let new_cap = ehz_capacity(&new_polytope)
-                .map(|r| r.capacity)
+                .map(|r| r.result.capacity)
                 .unwrap_or(f64::NAN);
             let new_sys = if new_vol > 0.0 && new_cap.is_finite() {
                 new_cap * new_cap / (2.0 * new_vol)
@@ -1453,7 +1444,7 @@ fn evaluate_gradient_step(
             let new_vol = volume(&new_polytope).unwrap_or(f64::NAN);
             // Use library ehz_capacity for the step evaluation (not instrumented — faster)
             let new_cap = ehz_capacity(&new_polytope)
-                .map(|r| r.capacity)
+                .map(|r| r.result.capacity)
                 .unwrap_or(f64::NAN);
             let new_sys = if new_vol > 0.0 && new_cap.is_finite() {
                 new_cap * new_cap / (2.0 * new_vol)
@@ -1523,7 +1514,7 @@ fn try_step_h_polytope(
         return None;
     }
     let cap = ehz_capacity(&new_polytope)
-        .map(|r| r.capacity)
+        .map(|r| r.result.capacity)
         .unwrap_or(f64::NAN);
     if !cap.is_finite() {
         return None;
@@ -1562,7 +1553,7 @@ fn try_step_hn_polytope(
         return None;
     }
     let cap = ehz_capacity(&new_polytope)
-        .map(|r| r.capacity)
+        .map(|r| r.result.capacity)
         .unwrap_or(f64::NAN);
     if !cap.is_finite() {
         return None;
@@ -1710,13 +1701,13 @@ fn main() {
 
         // Cross-check: instrumented capacity must match library ehz_capacity
         let lib_result = ehz_capacity(polytope).expect("library ehz_capacity failed");
-        let cap_diff = (instrumented.capacity - lib_result.capacity).abs();
+        let cap_diff = (instrumented.capacity - lib_result.result.capacity).abs();
         assert!(
             cap_diff < 1e-8,
             "Capacity mismatch for {}: instrumented={:.10}, library={:.10}, diff={:.2e}",
             name,
             instrumented.capacity,
-            lib_result.capacity,
+            lib_result.result.capacity,
             cap_diff
         );
 

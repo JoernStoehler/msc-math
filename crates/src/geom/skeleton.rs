@@ -1,68 +1,107 @@
-/// Combinatorial skeleton (face lattice) of a 4D convex polytope.
+//! Face lattice (combinatorial skeleton) of a 4D convex polytope.
+//!
+//! Computes the full face structure from exact vertex-facet incidence:
+//! - 0-faces (vertices): stored on [`Polytope4D`]
+//! - 1-faces (edges): vertex pairs sharing >= 3 common facets
+//! - 2-faces (ridges): facet pairs sharing >= 3 vertices
+//! - 3-faces (facets): stored on [`Polytope4D`] as dual vertices
+//!
+//! The skeleton is NOT stored on `Polytope4D` to keep that struct lightweight.
+//! Compute on demand via [`Skeleton::compute`].
+//!
+//! Mathematical correspondence: [def:face-lattice]
+
+/// Threshold for degenerate first basis vector in polygon vertex sorting.
 ///
-/// Computes the full face structure from vertex-facet incidence:
-/// - 0-faces (vertices): stored on `Polytope4D`
-/// - 1-faces (edges): pairs of vertices sharing ≥3 common facets
-/// - 2-faces (ridges): pairs of facets sharing ≥3 vertices, forming convex polygons
-/// - 3-faces (facets): stored on `Polytope4D` as normals/heights
+/// If ||centroid -> first_vertex|| < EPS_BASIS_DEGENERATE, the centroid and
+/// first vertex coincide (degenerate polygon). Skip sorting and return unsorted.
 ///
-/// The skeleton is NOT stored on `Polytope4D` to keep that struct lightweight.
-/// Compute on demand via `Skeleton::compute()`.
+/// **Why 1e-12:** Vertices are f64 coordinates from polytope geometry, with
+/// typical scale O(0.1)--O(10). A distance below 1e-12 is pure f64 noise and
+/// indicates a degenerate configuration. Well-formed ridge polygons have vertex
+/// spacing >> 1e-12 in practice (typically O(0.01) or larger).
+const EPS_BASIS_DEGENERATE: f64 = 1e-12;
+
+/// Threshold for detecting collinear vertices in polygon vertex sorting.
+///
+/// When building the second Gram-Schmidt basis vector, if the component
+/// perpendicular to d1 has norm < EPS_COLLINEAR, the remaining vertices are
+/// collinear with the first vertex direction. Skip sorting.
+///
+/// **Why 1e-10:** Slightly looser than EPS_BASIS_DEGENERATE (1e-12) because
+/// this involves a subtraction (Gram-Schmidt projection) that accumulates
+/// more roundoff than a simple norm. Two vertices that are genuinely non-collinear
+/// with the first will have perpendicular component >> 1e-10 (typically O(0.01)
+/// or larger for real ridge polygons).
+const EPS_COLLINEAR: f64 = 1e-10;
+
 use crate::geom::polytope::Polytope4D;
 use nalgebra::Vector4;
 
 /// Full combinatorial skeleton of a 4D polytope.
+///
+/// Contains vertex-facet incidence, edges, and ridges. Computed from the
+/// exact rational incidence matrix on [`Polytope4D`].
 #[derive(Clone, Debug)]
 pub struct Skeleton {
     /// `vertex_facets[v]` = sorted facet indices incident to vertex `v`.
     pub vertex_facets: Vec<Vec<usize>>,
+
     /// Edges as pairs `[i, j]` of vertex indices with `i < j`.
     pub edges: Vec<[usize; 2]>,
+
     /// 2-faces (ridges): each is the intersection of two facets.
     pub ridges: Vec<Ridge>,
 }
 
 /// A 2-dimensional face (ridge) of a 4D polytope.
 ///
-/// The intersection of two facets. Vertices are sorted into convex polygon
-/// order within their 2D affine hull.
+/// The intersection of two facets, forming a convex polygon in R^4.
+/// Vertices are sorted into convex polygon order within their 2D affine hull.
 #[derive(Clone, Debug)]
 pub struct Ridge {
     /// Two facet indices with `facets[0] < facets[1]`.
     pub facets: [usize; 2],
+
     /// Vertex indices forming the polygon boundary, in convex order.
     pub vertices: Vec<usize>,
 }
 
 impl Skeleton {
-    /// Compute the skeleton from vertex-facet incidence.
+    /// Compute the skeleton from exact vertex-facet incidence.
     ///
-    /// Complexity: O(V² · F) for edges, O(F² · V) for ridges.
-    /// Fine for our polytopes (V ≤ 200, F ≤ 16).
+    /// Uses the rational incidence matrix from [`Polytope4D::incidence`] rather
+    /// than floating-point tolerance checks, so the combinatorial structure is
+    /// exact.
+    ///
+    /// Complexity: O(V^2 F) for edges, O(F^2 V) for ridges.
+    /// Fine for our polytopes (V <= 200, F <= 16).
     pub fn compute(polytope: &Polytope4D) -> Self {
         let vertices = polytope.vertices_f64();
         let f = polytope.facet_count();
-
-        // Step 1: vertex-facet incidence (exact, from rational pipeline).
-        // Uses exact combinatorial data instead of f64 tolerance checks.
         let incidence = polytope.incidence();
         let v_count = incidence.nrows();
+
+        // Step 1: vertex-facet incidence lists from exact boolean matrix.
         let vertex_facets: Vec<Vec<usize>> = (0..v_count)
             .map(|v| (0..f).filter(|&fi| incidence[(v, fi)]).collect())
             .collect();
 
-        // Step 2: edges — vertex pairs sharing ≥3 common facets
+        // Step 2: edges — vertex pairs sharing >= 3 common facets.
+        // In a simple 4D polytope every vertex is on exactly 4 facets,
+        // so an edge (1-face) requires >= 3 shared facets.
         let mut edges = Vec::new();
         for i in 0..v_count {
             for j in (i + 1)..v_count {
-                let common = count_common(&vertex_facets[i], &vertex_facets[j]);
+                let common = count_common_sorted(&vertex_facets[i], &vertex_facets[j]);
                 if common >= 3 {
                     edges.push([i, j]);
                 }
             }
         }
 
-        // Step 3: ridges — facet pairs sharing ≥3 vertices
+        // Step 3: ridges — facet pairs sharing >= 3 vertices.
+        // A ridge is a 2-face, which in 4D is the intersection of two facets.
         let mut ridges = Vec::new();
         for fi in 0..f {
             for fj in (fi + 1)..f {
@@ -87,10 +126,39 @@ impl Skeleton {
             ridges,
         }
     }
+
+    /// Compute the centroid of a facet's vertices.
+    ///
+    /// Returns the arithmetic mean of all vertices incident to the given facet.
+    /// Useful as a starting point for Reeb trajectory simulation.
+    ///
+    /// # Panics
+    ///
+    /// Returns the zero vector if the facet has no vertices (should not happen
+    /// for a valid polytope).
+    pub fn facet_centroid(&self, polytope: &Polytope4D, facet: usize) -> Vector4<f64> {
+        let vertices = polytope.vertices_f64();
+        let facet_verts: Vec<usize> = self
+            .vertex_facets
+            .iter()
+            .enumerate()
+            .filter_map(|(vi, facets)| facets.contains(&facet).then_some(vi))
+            .collect();
+
+        if facet_verts.is_empty() {
+            return Vector4::zeros();
+        }
+
+        facet_verts
+            .iter()
+            .map(|&vi| vertices[vi])
+            .sum::<Vector4<f64>>()
+            / facet_verts.len() as f64
+    }
 }
 
-/// Count elements common to two sorted slices.
-fn count_common(a: &[usize], b: &[usize]) -> usize {
+/// Count elements common to two sorted slices using merge intersection.
+fn count_common_sorted(a: &[usize], b: &[usize]) -> usize {
     let mut count = 0;
     let (mut i, mut j) = (0, 0);
     while i < a.len() && j < b.len() {
@@ -109,7 +177,8 @@ fn count_common(a: &[usize], b: &[usize]) -> usize {
 
 /// Sort vertex indices into convex polygon order within their 2D affine hull.
 ///
-/// Finds the centroid, builds a 2D basis via Gram-Schmidt, then sorts by angle.
+/// Algorithm: compute the centroid, build a 2D orthonormal basis via
+/// Gram-Schmidt on the offset vectors, then sort by polar angle.
 fn sort_polygon_vertices(all_vertices: &[Vector4<f64>], indices: &[usize]) -> Vec<usize> {
     if indices.len() <= 2 {
         return indices.to_vec();
@@ -118,24 +187,25 @@ fn sort_polygon_vertices(all_vertices: &[Vector4<f64>], indices: &[usize]) -> Ve
     let coords: Vec<Vector4<f64>> = indices.iter().map(|&i| all_vertices[i]).collect();
     let centroid = coords.iter().sum::<Vector4<f64>>() / coords.len() as f64;
 
-    // First basis vector: centroid → first vertex
+    // First basis vector: centroid -> first vertex, normalized.
     let d1_raw = coords[0] - centroid;
     let d1_norm = d1_raw.norm();
-    if d1_norm < 1e-12 {
+    if d1_norm < EPS_BASIS_DEGENERATE {
         return indices.to_vec();
     }
     let d1 = d1_raw / d1_norm;
 
-    // Second basis vector via Gram-Schmidt on remaining vertices
+    // Second basis vector via Gram-Schmidt on remaining offset vectors.
     let d2 = match coords.iter().skip(1).find_map(|v| {
         let rel = *v - centroid;
         let proj = rel - d1 * rel.dot(&d1);
-        (proj.norm() > 1e-10).then(|| proj.normalize())
+        (proj.norm() > EPS_COLLINEAR).then(|| proj.normalize())
     }) {
         Some(d) => d,
         None => return indices.to_vec(), // degenerate (collinear)
     };
 
+    // Sort by polar angle in the (d1, d2) plane.
     let mut indexed: Vec<(f64, usize)> = indices
         .iter()
         .map(|&idx| {
@@ -147,7 +217,3 @@ fn sort_polygon_vertices(all_vertices: &[Vector4<f64>], indices: &[usize]) -> Ve
     indexed.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
     indexed.into_iter().map(|(_, idx)| idx).collect()
 }
-
-#[cfg(test)]
-#[path = "skeleton_test.rs"]
-mod skeleton_test;

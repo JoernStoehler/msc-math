@@ -1,6 +1,16 @@
-use super::*;
+//! Tests for polygon: area, vertex count, regularity, rotation invariance.
+//!
+//! Proposition: regular_polygon_2d produces an n-gon with unit normals and
+//! inradius = circumradius * cos(pi/n). Area formulas agree with the known
+//! (n/2) * R^2 * sin(2*pi/n). Rotation preserves area and heights.
+//!
+//! Strategy: fixture-based (triangle, square, pentagon, hexagon) + edge cases
+
+use crate::geom::polygon::{polygon_area, random_polygon_2d, regular_polygon_2d, rotate_polygon_2d};
+use nalgebra::Vector2;
 use std::f64::consts::PI;
 
+/// Verify regular_polygon_2d(3) produces exactly 3 normals and heights.
 #[test]
 fn regular_triangle_has_3_normals() {
     let (normals, heights) = regular_polygon_2d(3, 1.0);
@@ -8,6 +18,7 @@ fn regular_triangle_has_3_normals() {
     assert_eq!(heights.len(), 3);
 }
 
+/// Verify regular_polygon_2d(5) produces exactly 5 normals and heights.
 #[test]
 fn regular_pentagon_has_5_normals() {
     let (normals, heights) = regular_polygon_2d(5, 1.0);
@@ -15,6 +26,7 @@ fn regular_pentagon_has_5_normals() {
     assert_eq!(heights.len(), 5);
 }
 
+/// Verify all normals of regular n-gons (n=3..8) have unit length.
 #[test]
 fn regular_polygon_normals_are_unit() {
     for n in 3..=8 {
@@ -29,6 +41,7 @@ fn regular_polygon_normals_are_unit() {
     }
 }
 
+/// Verify heights equal the inradius R*cos(pi/n) for regular n-gons.
 #[test]
 fn regular_polygon_heights_are_inradius() {
     for n in 3..=8 {
@@ -44,19 +57,21 @@ fn regular_polygon_heights_are_inradius() {
     }
 }
 
+/// Verify the pentagon's first normal starts at angle pi/2 per our convention.
 #[test]
 fn regular_pentagon_matches_hko_convention() {
-    // The HK-O pentagon has normals starting at specific angles.
-    // Our convention: π/2 + 2πk/5.
-    // k=0: π/2 = 90° => (cos 90°, sin 90°) = (0, 1)
-    // k=4: π/2 + 8π/5 = π/2 + 288° = 18° from x-axis => (cos 18°, sin 18°)
+    // Our convention: normals start at pi/2.
+    // k=0: pi/2 => (cos 90, sin 90) = (0, 1)
     let (normals, heights) = regular_polygon_2d(5, 1.0);
 
-    // First normal should be at π/2 (pointing up)
-    assert!((normals[0][0]).abs() < 1e-12, "first normal x ≈ 0");
-    assert!((normals[0][1] - 1.0).abs() < 1e-12, "first normal y ≈ 1");
+    // First normal should be at pi/2 (pointing up)
+    assert!(normals[0][0].abs() < 1e-12, "first normal x should be ~0");
+    assert!(
+        (normals[0][1] - 1.0).abs() < 1e-12,
+        "first normal y should be ~1"
+    );
 
-    // Heights should be cos(π/5) ≈ 0.809
+    // Heights should be cos(pi/5)
     let expected = (PI / 5.0).cos();
     assert!(
         (heights[0] - expected).abs() < 1e-10,
@@ -66,6 +81,7 @@ fn regular_pentagon_matches_hko_convention() {
     );
 }
 
+/// Verify that rotation does not change the height values.
 #[test]
 fn rotation_preserves_heights() {
     let (normals, heights) = regular_polygon_2d(5, 1.0);
@@ -73,6 +89,7 @@ fn rotation_preserves_heights() {
     assert_eq!(heights, rotated_heights);
 }
 
+/// Verify that rotated normals remain unit vectors.
 #[test]
 fn rotation_preserves_unit_normals() {
     let (normals, heights) = regular_polygon_2d(5, 1.0);
@@ -86,6 +103,7 @@ fn rotation_preserves_unit_normals() {
     }
 }
 
+/// Verify that rotation by zero leaves normals unchanged.
 #[test]
 fn rotation_by_zero_is_identity() {
     let (normals, heights) = regular_polygon_2d(5, 1.0);
@@ -95,6 +113,7 @@ fn rotation_by_zero_is_identity() {
     }
 }
 
+/// Verify that rotation by 2*pi returns to the original normals.
 #[test]
 fn rotation_by_2pi_is_identity() {
     let (normals, heights) = regular_polygon_2d(5, 1.0);
@@ -104,11 +123,13 @@ fn rotation_by_2pi_is_identity() {
     }
 }
 
+// ---- Area tests ----
+
+/// Verify the unit-circumradius square has area 2.
 #[test]
 fn square_area_is_correct() {
-    // Square with circumradius 1: inradius = cos(π/4) = √2/2 ≈ 0.707
-    // Side length = 2 * circumradius * sin(π/4) = √2
-    // Area = side² = 2
+    // Square with circumradius 1: inradius = cos(pi/4) = sqrt(2)/2
+    // Side length = 2 * sin(pi/4) = sqrt(2). Area = side^2 = 2.
     let (normals, heights) = regular_polygon_2d(4, 1.0);
     let area = polygon_area(&normals, &heights).unwrap();
     assert!(
@@ -117,9 +138,10 @@ fn square_area_is_correct() {
     );
 }
 
+/// Verify the unit-circumradius equilateral triangle has area 3*sqrt(3)/4.
 #[test]
 fn equilateral_triangle_area() {
-    // Circumradius 1: side = √3, area = (√3/4) * 3 = 3√3/4 ≈ 1.299
+    // Circumradius 1: area = (3/2) * sin(2*pi/3) = 3*sqrt(3)/4
     let (normals, heights) = regular_polygon_2d(3, 1.0);
     let area = polygon_area(&normals, &heights).unwrap();
     let expected = 3.0 * 3.0_f64.sqrt() / 4.0;
@@ -129,9 +151,10 @@ fn equilateral_triangle_area() {
     );
 }
 
+/// Verify the unit-circumradius regular pentagon has area (5/2)*sin(2*pi/5).
 #[test]
 fn regular_pentagon_area() {
-    // Circumradius 1: area = (5/2) * sin(2π/5) ≈ 2.378
+    // Circumradius 1: area = (5/2) * sin(2*pi/5)
     let (normals, heights) = regular_polygon_2d(5, 1.0);
     let area = polygon_area(&normals, &heights).unwrap();
     let expected = 2.5 * (2.0 * PI / 5.0).sin();
@@ -141,9 +164,10 @@ fn regular_pentagon_area() {
     );
 }
 
+/// Verify the unit-circumradius regular hexagon has area 3*sqrt(3)/2.
 #[test]
 fn regular_hexagon_area() {
-    // Circumradius 1: area = (6/2) * sin(2π/6) = 3 * sin(60°) = 3√3/2 ≈ 2.598
+    // Circumradius 1: area = (6/2) * sin(2*pi/6) = 3 * sin(60) = 3*sqrt(3)/2
     let (normals, heights) = regular_polygon_2d(6, 1.0);
     let area = polygon_area(&normals, &heights).unwrap();
     let expected = 3.0 * (2.0 * PI / 6.0).sin();
@@ -153,6 +177,7 @@ fn regular_hexagon_area() {
     );
 }
 
+/// Verify that rotating a polygon preserves its area.
 #[test]
 fn rotation_preserves_area() {
     let (normals, heights) = regular_polygon_2d(5, 1.0);
@@ -165,6 +190,9 @@ fn rotation_preserves_area() {
     );
 }
 
+// ---- random_polygon_2d tests ----
+
+/// Verify random_polygon_2d produces the requested number of normals and heights.
 #[test]
 fn random_polygon_has_correct_count() {
     let mut rng = rand::thread_rng();
@@ -173,6 +201,7 @@ fn random_polygon_has_correct_count() {
     assert_eq!(heights.len(), 5);
 }
 
+/// Verify random polygon normals are unit vectors.
 #[test]
 fn random_polygon_normals_are_unit() {
     let mut rng = rand::thread_rng();
@@ -184,28 +213,36 @@ fn random_polygon_normals_are_unit() {
     }
 }
 
+/// Verify random polygon heights fall within the requested [h_min, h_max] range.
 #[test]
 fn random_polygon_heights_in_range() {
     let mut rng = rand::thread_rng();
     for _ in 0..10 {
         let (_, heights) = random_polygon_2d(5, 0.5, 2.0, &mut rng);
         for &h in &heights {
-            assert!((0.5..=2.0).contains(&h), "height {h} out of range [0.5, 2.0]");
+            assert!(
+                (0.5..=2.0).contains(&h),
+                "height {h} out of range [0.5, 2.0]"
+            );
         }
     }
 }
 
+/// Verify random polygon normal angles are in sorted (counterclockwise) order.
 #[test]
 fn random_polygon_angles_are_sorted() {
     let mut rng = rand::thread_rng();
     for _ in 0..20 {
         let (normals, _) = random_polygon_2d(5, 0.5, 2.0, &mut rng);
-        // Map atan2 from [-π, π] to [0, 2π) for correct comparison
         let angles: Vec<f64> = normals
             .iter()
             .map(|n| {
                 let a = n[1].atan2(n[0]);
-                if a < 0.0 { a + 2.0 * PI } else { a }
+                if a < 0.0 {
+                    a + 2.0 * PI
+                } else {
+                    a
+                }
             })
             .collect();
         for i in 1..angles.len() {
@@ -218,26 +255,30 @@ fn random_polygon_angles_are_sorted() {
     }
 }
 
+// ---- Panic tests ----
+
+/// Verify regular_polygon_2d panics for n < 3 sides.
 #[test]
 #[should_panic(expected = "at least 3")]
 fn regular_polygon_2_sides_panics() {
     regular_polygon_2d(2, 1.0);
 }
 
+/// Verify regular_polygon_2d panics for zero circumradius.
 #[test]
 #[should_panic(expected = "positive")]
 fn regular_polygon_zero_radius_panics() {
     regular_polygon_2d(3, 0.0);
 }
 
+/// Verify regular_polygon_2d panics for negative circumradius.
 #[test]
 #[should_panic(expected = "positive")]
 fn regular_polygon_negative_radius_panics() {
     regular_polygon_2d(4, -1.0);
 }
 
-// ---- random_polygon_2d panic paths ----
-
+/// Verify random_polygon_2d panics for n < 3 sides.
 #[test]
 #[should_panic(expected = "at least 3")]
 fn random_polygon_too_few_sides_panics() {
@@ -245,6 +286,7 @@ fn random_polygon_too_few_sides_panics() {
     random_polygon_2d(2, 0.5, 2.0, &mut rng);
 }
 
+/// Verify random_polygon_2d panics for h_min = 0.
 #[test]
 #[should_panic(expected = "positive")]
 fn random_polygon_zero_hmin_panics() {
@@ -252,6 +294,7 @@ fn random_polygon_zero_hmin_panics() {
     random_polygon_2d(3, 0.0, 2.0, &mut rng);
 }
 
+/// Verify random_polygon_2d panics for negative h_min.
 #[test]
 #[should_panic(expected = "positive")]
 fn random_polygon_negative_hmin_panics() {
@@ -259,6 +302,7 @@ fn random_polygon_negative_hmin_panics() {
     random_polygon_2d(3, -1.0, 2.0, &mut rng);
 }
 
+/// Verify random_polygon_2d panics when h_max equals h_min.
 #[test]
 #[should_panic(expected = "h_max must exceed")]
 fn random_polygon_hmax_equals_hmin_panics() {
@@ -266,6 +310,7 @@ fn random_polygon_hmax_equals_hmin_panics() {
     random_polygon_2d(3, 1.0, 1.0, &mut rng);
 }
 
+/// Verify random_polygon_2d panics when h_max < h_min.
 #[test]
 #[should_panic(expected = "h_max must exceed")]
 fn random_polygon_hmax_less_than_hmin_panics() {
@@ -275,6 +320,7 @@ fn random_polygon_hmax_less_than_hmin_panics() {
 
 // ---- polygon_area edge cases ----
 
+/// Verify polygon_area returns None for fewer than 3 normals.
 #[test]
 fn polygon_area_too_few_normals_returns_none() {
     let normals = vec![Vector2::new(1.0, 0.0), Vector2::new(0.0, 1.0)];
@@ -282,9 +328,10 @@ fn polygon_area_too_few_normals_returns_none() {
     assert!(polygon_area(&normals, &heights).is_none());
 }
 
+/// Verify polygon_area returns None for degenerate polygon with parallel normals.
 #[test]
 fn polygon_area_parallel_normals_returns_none() {
-    // Three normals, two of them parallel — degenerate polygon.
+    // Three normals, two of them parallel -- degenerate polygon.
     let normals = vec![
         Vector2::new(1.0, 0.0),
         Vector2::new(1.0, 0.0), // parallel to first

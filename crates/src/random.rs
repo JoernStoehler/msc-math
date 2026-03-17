@@ -1,14 +1,23 @@
-/// Random polytope generation via rejection sampling.
+//! Random polytope generation via rejection sampling.
+//!
+//! Provides deterministic (seeded) random polytope sampling for dataset
+//! generation and property testing. Normals are uniformly distributed on S^3
+//! (via 4D standard normal normalization) and heights are uniform in a
+//! configurable range.
+//!
+//! Mathematical correspondence: the sampling distribution is uniform over
+//! normal directions (Haar measure on S^3) with independent height scaling.
+
 use crate::geom::polytope::{ConstructionError, Polytope4D};
 use nalgebra::Vector4;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal, Uniform};
 
-/// Reject near-zero vectors when sampling unit vectors on S³.
+/// Rejection threshold for near-zero vectors when sampling on S^3.
 /// Probability of ||v|| < 1e-10 for 4D standard normal is astronomically small.
 const EPS_NEAR_ZERO: f64 = 1e-10;
 
-/// Sample a single random unit vector on S^3 (uniform distribution).
+/// Sample a single random unit vector on S^3 (uniform distribution via Muller's method).
 fn random_unit_s3(rng: &mut ChaCha8Rng) -> Vector4<f64> {
     loop {
         let x: f64 = StandardNormal.sample(rng);
@@ -25,13 +34,14 @@ fn random_unit_s3(rng: &mut ChaCha8Rng) -> Vector4<f64> {
 
 /// Attempt to sample a single valid polytope.
 ///
-/// Returns `Ok(polytope)` if the sample passes full validation,
-/// or `Err(error)` if it fails any check.
+/// Returns `Ok(polytope)` if the sample passes full validation (including
+/// exact rational vertex enumeration), or `Err(error)` if it fails any check.
 ///
 /// # Arguments
-/// * `facet_count` - Number of halfspaces (must be ≥ 5)
-/// * `h_min`, `h_max` - Height range (0 < h_min ≤ h_max)
-/// * `rng` - Random number generator (deterministic with ChaCha8Rng)
+///
+/// * `facet_count` - Number of halfspaces (must be >= 5)
+/// * `h_min`, `h_max` - Height range (0 < h_min <= h_max)
+/// * `rng` - Deterministic random number generator
 pub fn sample_random_polytope(
     facet_count: usize,
     h_min: f64,
@@ -43,7 +53,7 @@ pub fn sample_random_polytope(
     let normals: Vec<Vector4<f64>> = (0..facet_count).map(|_| random_unit_s3(rng)).collect();
     let heights: Vec<f64> = (0..facet_count).map(|_| h_dist.sample(rng)).collect();
 
-    // Convert (normal, height) to dual vertex: aᵢ = nᵢ / hᵢ (so nᵢᵀx ≤ hᵢ becomes aᵢᵀx ≤ 1)
+    // Convert (normal, height) to dual vertex: a_i = n_i / h_i
     let halfspaces: Vec<Vector4<f64>> = normals
         .iter()
         .zip(heights.iter())
@@ -55,8 +65,7 @@ pub fn sample_random_polytope(
 
 /// Generate random polytopes via rejection sampling.
 ///
-/// Keeps sampling until `n` valid polytopes are found.
-/// Returns the accepted polytopes.
+/// Keeps sampling until `count` valid polytopes are found.
 pub fn generate_random_polytopes(
     count: usize,
     facet_count: usize,
@@ -72,7 +81,3 @@ pub fn generate_random_polytopes(
     }
     accepted
 }
-
-#[cfg(test)]
-#[path = "random_test.rs"]
-mod random_test;

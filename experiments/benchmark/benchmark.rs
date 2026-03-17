@@ -12,11 +12,12 @@
 //!
 //! Total: ~85 polytopes, ~100 capacity computations
 
-use symplectic::billiard_capacity;
+// TODO: These will be re-exported from top-level `symplectic::` in wave 4 (subagent #16).
+use symplectic::algorithms::billiard::billiard_capacity;
 use symplectic::random::generate_random_polytopes;
-use symplectic::lagrangian_product;
+use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::random_polygon_2d;
-use symplectic::{ehz_capacity_unpruned, ehz_capacity};
+use symplectic::algorithms::hk2017::{ehz_capacity_unpruned, ehz_capacity};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use serde::{Deserialize, Serialize};
@@ -103,7 +104,7 @@ fn main() {
                 let t_start = Instant::now();
                 let result = ehz_capacity_unpruned(p).expect("unpruned failed");
                 let time_ms = t_start.elapsed().as_secs_f64() * 1000.0;
-                (Some(time_ms), Some(result.capacity), Some(result.iterations))
+                (Some(time_ms), Some(result.result.capacity), Some(result.result.iterations))
             } else {
                 (None, None, None)
             };
@@ -115,8 +116,8 @@ fn main() {
                 normals: p.normals_f64().iter().map(|n| [n[0], n[1], n[2], n[3]]).collect(),
                 heights: p.heights_f64().to_vec(),
                 time_pruned_ms,
-                capacity_pruned: result_pruned.capacity,
-                iterations_pruned: result_pruned.iterations,
+                capacity_pruned: result_pruned.result.capacity,
+                iterations_pruned: result_pruned.result.iterations,
                 time_unpruned_ms,
                 capacity_unpruned,
                 iterations_unpruned,
@@ -162,14 +163,14 @@ fn main() {
                 normals: p.normals_f64().iter().map(|v| [v[0], v[1], v[2], v[3]]).collect(),
                 heights: p.heights_f64().to_vec(),
                 time_pruned_ms,
-                capacity_pruned: result_pruned.capacity,
-                iterations_pruned: result_pruned.iterations,
+                capacity_pruned: result_pruned.result.capacity,
+                iterations_pruned: result_pruned.result.iterations,
                 time_unpruned_ms: None,
                 capacity_unpruned: None,
                 iterations_unpruned: None,
                 time_billiard_ms: Some(time_billiard_ms),
-                capacity_billiard: Some(result_billiard.capacity),
-                iterations_billiard: Some(result_billiard.iterations),
+                capacity_billiard: Some(result_billiard.result.capacity),
+                iterations_billiard: Some(result_billiard.result.iterations),
             });
         }
         println!("done");

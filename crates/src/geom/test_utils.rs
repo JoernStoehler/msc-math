@@ -1,9 +1,11 @@
-/// Convenience constructors for tests and tooling.
-///
-/// Known polytopes delegate to `known_polytopes` and strip the metadata.
-/// For capacity values and literature references, use `known_polytopes` directly.
-///
-/// **Coordinates**: (q₁, q₂, p₁, p₂). See `symplectic.rs` for J₀ and ω₀.
+//! Test-only polytope constructors and helpers.
+//!
+//! Convenience wrappers around `known_polytopes` that strip metadata and return
+//! bare `Polytope4D` instances. For capacity values and literature references,
+//! use `known_polytopes` directly.
+//!
+//! Coordinates: (q_1, q_2, p_1, p_2). See `symplectic_form` module for J_0 and omega_0.
+
 use crate::geom::polytope::Polytope4D;
 use nalgebra::Vector4;
 use rand::Rng;
@@ -21,10 +23,9 @@ pub fn hypercube() -> Polytope4D {
 
 /// Scaled hypercube [-s, s]^4.
 ///
-/// Not in `known_polytopes` because it's parameterized — no single known capacity.
-/// Expected: volume = 16s^4, EHZ capacity = 4s.
+/// Not in `known_polytopes` because it is parameterized (no single known capacity).
+/// Expected: volume = 16*s^4, EHZ capacity = 4*s.
 pub fn scaled_hypercube(s: f64) -> Polytope4D {
-    // Normals ±eᵢ, heights s → halfspaces aᵢ = nᵢ/s = ±eᵢ/s
     let halfspaces = vec![
         Vector4::x() / s,
         -Vector4::x() / s,
@@ -43,27 +44,27 @@ pub fn crosspolytope() -> Polytope4D {
     crate::geom::known_polytopes::crosspolytope().polytope
 }
 
-/// Lagrangian triangle product (6 facets). Delegates to `known_polytopes::lagrangian_triangle_product()`.
+/// Lagrangian triangle product (6 facets). Delegates to `known_polytopes`.
 pub fn lagrangian_triangle_product() -> Polytope4D {
     crate::geom::known_polytopes::lagrangian_triangle_product().polytope
 }
 
-/// Symplectic triangle product (6 facets). Delegates to `known_polytopes::symplectic_triangle_product()`.
+/// Symplectic triangle product (6 facets). Delegates to `known_polytopes`.
 pub fn symplectic_triangle_product() -> Polytope4D {
     crate::geom::known_polytopes::symplectic_triangle_product().polytope
 }
 
 /// Generate a random bounded polytope with specified number of facets.
 ///
-/// Normals are uniformly distributed on S³ (via 4D standard normal, normalized).
-/// Heights are random in [0.5, 2.0] to ensure 0 ∈ int(K).
+/// Normals are uniformly distributed on S^3 (via 4D standard normal, normalized).
+/// Heights are random in [0.5, 2.0] to ensure 0 is in int(K).
 /// Retries up to 100 times if the random configuration is unbounded.
 ///
 /// # Panics
+///
 /// Panics if no valid polytope is found in 100 attempts.
 pub fn random_bounded_polytope(facet_count: usize, rng: &mut impl Rng) -> Polytope4D {
     for _ in 0..100 {
-        // Generate random halfspaces aᵢ = nᵢ/hᵢ directly
         let halfspaces: Vec<Vector4<f64>> = (0..facet_count)
             .map(|_| {
                 let v = Vector4::new(

@@ -28,9 +28,13 @@ use std::fs::{File, OpenOptions};
 use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::time::Instant;
 use symplectic::geom::polygon::random_polygon_2d;
-use symplectic::lagrangian_product;
+// TODO: These will be re-exported from top-level `symplectic::` in wave 4 (subagent #16).
+use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::random::sample_random_polytope;
-use symplectic::{billiard_capacity, volume, Polytope4D, Skeleton};
+use symplectic::algorithms::billiard::billiard_capacity;
+use symplectic::geom::volume::volume;
+use symplectic::geom::polytope::Polytope4D;
+use symplectic::geom::skeleton::Skeleton;
 
 // ============================================================================
 // Configuration
@@ -548,10 +552,11 @@ fn try_step_hn(
 fn compute_capacity(polytope: &Polytope4D, backend: &CapacityBackend) -> Option<f64> {
     match backend {
         CapacityBackend::Hk2017 => {
-            symplectic::ehz_capacity(polytope).map(|r| r.capacity)
+            // TODO: ehz_capacity will be re-exported from top-level in wave 4
+            symplectic::algorithms::hk2017::ehz_capacity(polytope).map(|r| r.result.capacity)
         }
         CapacityBackend::Billiard => {
-            billiard_capacity(polytope).ok()?.map(|r| r.capacity)
+            billiard_capacity(polytope).ok()?.map(|r| r.result.capacity)
         }
     }
 }
@@ -955,6 +960,7 @@ fn main() {
         let lib_cap = billiard_capacity(polytope)
             .expect("billiard failed")
             .expect("billiard None")
+            .result
             .capacity;
         let inst_cap = ehz_capacity_instrumented(polytope)
             .expect("instrumented HK2017 None")

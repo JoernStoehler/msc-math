@@ -12,10 +12,11 @@
 //! - Height range h in [0.8, 1.2]
 //! - Billiard algorithm only (Lagrangian products)
 
-use symplectic::billiard_capacity;
-use symplectic::lagrangian_product;
+// TODO: These will be re-exported from top-level `symplectic::` in wave 4 (subagent #16).
+use symplectic::algorithms::billiard::billiard_capacity;
+use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::random_polygon_2d;
-use symplectic::volume;
+use symplectic::geom::volume::volume;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use serde::Serialize;
@@ -96,7 +97,7 @@ fn main() {
                 .expect("billiard returned None");
             let time_capacity_ms = start_cap.elapsed().as_secs_f64() * 1000.0;
 
-            let cap = result.capacity;
+            let cap = result.result.capacity;
             let sys = cap * cap / (2.0 * vol);
 
             let row = RandomProductRow {
@@ -115,7 +116,7 @@ fn main() {
                 volume: vol,
                 capacity: cap,
                 sys,
-                iterations: result.iterations,
+                iterations: result.result.iterations,
                 bounces: result.bounce_count,
                 time_volume_ms,
                 time_capacity_ms,

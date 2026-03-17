@@ -1,6 +1,9 @@
-# Omega-obstacle experiment
+# Omega-Obstacle Experiment
 
-**Hypothesis**: Near-Lagrangian 2-faces (small |ω₀(n_i, n_j)| between adjacent facets) act as "obstacles" that help create high systolic ratios.
+Do near-Lagrangian 2-faces (small |omega_0(n_i, n_j)| between adjacent facets) act as "obstacles" that help create high systolic ratios?
+
+## Status
+Complete
 
 **Mechanism tested**: Q(β) = Σ β_i β_j ω₀(...), capacity = 1/(2·max Q), sys = c²/(2V). If ω values are small, Q is smaller → capacity is larger → sys could be larger.
 
@@ -11,7 +14,7 @@
 - Plus 3 known polytopes: HKO pentagon (sys=1.047), simplex (sys=0.75), hypercube (sys=0.5)
 - Total: 953 polytopes, generated in ~8s (release mode)
 
-## Findings
+## Key findings
 
 ### 1. Ridge min|ω| vs sys: weak negative correlation (rho=-0.22)
 
@@ -64,15 +67,23 @@ The HKO counterexample has Lagrangian ridges (ω = 0) on its orbit, but this app
 
 ## Files
 
-- `omega_obstacle.rs` — Rust binary (generates JSONL)
-- `omega_obstacle.py` — Python analysis (generates plots)
-- `omega-obstacle.jsonl` — Dataset (953 rows)
-- `omega_obstacle_*.png` — Figures (7 plots)
+| File | Purpose |
+|------|---------|
+| `omega_obstacle.rs` | Rust binary: generates JSONL dataset |
+| `omega_obstacle.py` | Python: analysis and plots |
+| `omega-obstacle.jsonl` | Dataset (953 rows) |
+| `omega_obstacle_*.png` | Figures (7 plots) |
 
-## Reproduce
+## Run
 
 ```bash
 cd experiments/
 cargo run --bin omega_obstacle --release
 python3 omega-obstacle/omega_obstacle.py
 ```
+
+## Known limitations
+
+- Correlation analysis is observational; confounds with facet count not fully controlled for
+- Only 3 known polytopes included as reference points
+- No causal analysis (gradient-based or interventional)

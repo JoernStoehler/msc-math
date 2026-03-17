@@ -1,13 +1,17 @@
 # Correctness Verification Experiment
 
-**Purpose:** Establish confidence in the HK2017 capacity implementation by verifying mathematical properties on a curated dataset.
+Establish confidence in the HK2017 capacity implementation by verifying mathematical properties on a curated dataset.
 
-**Status:** Complete. Dataset generated, all 6 tests pass.
+## Status
+Complete
 
-**Files:**
-- Rust: `experiments/correctness/correctness.rs` (dataset generator + tests)
-- Dataset: `experiments/correctness/correctness.jsonl` (47 polytopes, 71 capacity values)
-- Writeup: `experiments/correctness/correctness.tex`
+## Files
+
+| File | Purpose |
+|------|---------|
+| `correctness.rs` | Rust binary: dataset generator + tests |
+| `correctness.jsonl` | Dataset (47 polytopes, 71 capacity values) |
+| `correctness.tex` | Thesis writeup |
 
 ## Design
 
@@ -120,7 +124,7 @@ All 6 tests read from `experiments/correctness/correctness.jsonl` (dataset must 
 - **Dataset generation:** ~5.3 seconds (47 polytopes, 71 capacity values)
 - **Test execution:** ~9.7 seconds (6 tests, reads dataset 6 times)
 
-## Results Summary
+## Key findings
 
 All tests pass with tolerance 10⁻⁶ relative error:
 - ✓ 10 base polytopes: pruned = unpruned = billiard
@@ -141,15 +145,13 @@ The thesis section (`correctness.tex`) includes:
 
 The writeup is mathematical, not implementation-focused. It describes WHAT properties are verified, not HOW the Rust code works.
 
-## Known Limitations
+## Known limitations
 
 - **Test coverage:** Tests verify properties, but don't prove exhaustiveness of the orbit search. Literature agreement provides empirical evidence that pruning doesn't discard optimal orbits.
 - **Random sampling:** Base polytopes use fixed seed (42) for reproducibility. Different seeds may expose edge cases.
 - **Tolerance:** 10⁻⁶ relative error is chosen empirically. Tighter tolerance may fail due to floating-point accumulation.
 
-## Regeneration
-
-To regenerate after algorithm changes:
+## Run
 
 ```bash
 cd experiments/
@@ -157,7 +159,7 @@ cargo run --bin correctness --release   # Generates correctness/correctness.json
 cargo test --bin correctness --release  # Verifies all 6 properties
 ```
 
-If tests fail after algorithm changes, investigate before merging to main. Failures indicate either:
+If tests fail after algorithm changes, investigate before merging. Failures indicate either:
 1. Bug in new code (fix it)
 2. Test assumption violated (update test + document why)
 3. Numerical precision issue (adjust tolerance + document)

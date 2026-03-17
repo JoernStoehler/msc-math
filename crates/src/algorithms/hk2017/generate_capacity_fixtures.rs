@@ -1,71 +1,72 @@
-//! Property testing dataset infrastructure.
+//! Property testing dataset infrastructure for EHZ capacity validation.
 //!
-//! This module is primarily intended for use in tests, but is defined as a normal
-//! module to allow cross-crate test imports.
+//! Generates a deterministic catalog of ~33 test polytopes (known, random,
+//! symplectomorphism variants, conformality variants) and computes their
+//! capacities for use as regression fixtures.
 //!
 //! ## Architecture: catalog + cached fixture
 //!
-//! The polytope catalog (`polytope_catalog()`) deterministically generates ~27 test
+//! The polytope catalog (`polytope_catalog()`) deterministically generates ~33 test
 //! polytopes. Computing their capacities is expensive (~2-3 min), so values are
 //! cached as a JSON fixture:
 //!
-//! - **Default path:** Property tests load from `tests/fixtures/capacity_dataset.json`
+//! - **Default path:** `tests/fixtures/capacity_dataset.json` (relative to crate root)
 //! - **Regeneration:** Run `cargo test --release regenerate_test_dataset -- --ignored`
-//!   after changes to `ehz_capacity()` or the catalog generation logic.
 //!
 //! The fixture is committed to the repo so all worktrees have it immediately.
 //!
 //! ## Catalog phases
 //!
-//! - Phase 1: Base polytopes (known and random)
-//! - Phase 2: Symplectomorphism variants (apply random M ∈ Sp(4))
-//! - Phase 3: Conformality variants (scale by random α)
+//! - Phase 1: Base polytopes (3 known + 8 random) = 11 base
+//! - Phase 2: Symplectomorphism variants (1 per base) = 11 variants
+//! - Phase 3: Conformality variants (1 per base, random scale) = 11 variants
+//! - Total: ~33 polytopes
 //!
-//! ## Capacity variants
-//!
-//! - `capacity`: from `ehz_capacity()` — the production code path.
-//! - `capacity_unpruned`: from `ehz_capacity_unpruned()` — only for base polytopes,
-//!   to verify pruned ≈ unpruned agreement. Variants skip the expensive
-//!   unpruned computation.
+//! Mathematical correspondence: [thm:sympl-invariance], [thm:conformality]
 
 use crate::geom::known_polytopes;
 use crate::geom::polytope::Polytope4D;
 use nalgebra::{Matrix4, Vector4};
 use rand::Rng;
-use rand_distr::StandardNormal;
 use rand_chacha::ChaCha8Rng;
+use rand_distr::StandardNormal;
 use rand::SeedableRng;
 
-/// Entry in the polytope catalog (no computed values).
+/// Entry in the polytope catalog (no computed values yet).
 #[derive(Clone, Debug)]
 pub struct CatalogEntry {
+    /// Human-readable name for reporting and fixture lookup.
     pub name: String,
+    /// The polytope instance.
     pub polytope: Polytope4D,
     /// Index of the base polytope this was derived from (None for base polytopes).
     pub base_index: Option<usize>,
-    /// Transformation type: None (base), "sympl", or "conform:1.50".
+    /// Transformation type: None (base), "sympl", or "conform:{alpha}".
     pub transform: Option<String>,
 }
 
-/// Test polytope with precomputed volume and capacity.
+/// Test polytope with precomputed volume and capacity values.
 #[derive(Clone, Debug)]
 pub struct TestPolytope {
+    /// Human-readable name.
     pub name: String,
+    /// The polytope instance.
     pub polytope: Polytope4D,
+    /// 4D volume of the polytope.
     pub volume: f64,
-    /// EHZ capacity from `ehz_capacity()` (production code path).
+    /// EHZ capacity from `ehz_capacity()` (pruned, production code path).
     pub capacity: f64,
-    /// EHZ capacity from `ehz_capacity_unpruned()` (unpruned). Only set for base polytopes.
+    /// EHZ capacity from `ehz_capacity_unpruned()`. Only set for base polytopes.
     pub capacity_unpruned: Option<f64>,
     /// EHZ capacity from `billiard_capacity()`. Only set for Lagrangian products.
     pub capacity_billiard: Option<f64>,
     /// Index of the base polytope this was derived from.
     pub base_index: Option<usize>,
-    /// Transformation type: None (base), "sympl", or "conform:1.50".
+    /// Transformation type.
     pub transform: Option<String>,
 }
 
-/// Path to the cached dataset fixture, relative to the hk2017 crate root.
+/// Path to the cached dataset fixture, relative to the crate root.
 pub const FIXTURE_PATH: &str = "tests/fixtures/capacity_dataset.json";
 
 /// Serializable representation of a test polytope (no nalgebra types).
@@ -90,7 +91,12 @@ impl DatasetEntry {
     fn from_test_polytope(tp: &TestPolytope) -> Self {
         Self {
             name: tp.name.clone(),
-            normals: tp.polytope.normals_f64().iter().map(|n| [n[0], n[1], n[2], n[3]]).collect(),
+            normals: tp
+                .polytope
+                .normals_f64()
+                .iter()
+                .map(|n| [n[0], n[1], n[2], n[3]])
+                .collect(),
             heights: tp.polytope.heights_f64().to_vec(),
             volume: tp.volume,
             capacity: tp.capacity,
@@ -102,7 +108,9 @@ impl DatasetEntry {
     }
 
     fn to_test_polytope(&self) -> TestPolytope {
-        let halfspaces: Vec<Vector4<f64>> = self.normals.iter()
+        let halfspaces: Vec<Vector4<f64>> = self
+            .normals
+            .iter()
             .zip(self.heights.iter())
             .map(|(n, &h)| Vector4::new(n[0] / h, n[1] / h, n[2] / h, n[3] / h))
             .collect();
@@ -124,7 +132,8 @@ impl DatasetEntry {
 /// Save dataset to JSON fixture file (atomic: writes to temp file, then renames).
 #[cfg(test)]
 pub fn save_test_dataset(path: &std::path::Path, dataset: &[TestPolytope]) {
-    let entries: Vec<DatasetEntry> = dataset.iter().map(DatasetEntry::from_test_polytope).collect();
+    let entries: Vec<DatasetEntry> =
+        dataset.iter().map(DatasetEntry::from_test_polytope).collect();
     let json = serde_json::to_string_pretty(&entries).expect("serialize dataset");
     if let Some(parent) = path.parent() {
         std::fs::create_dir_all(parent).expect("create fixture directory");
@@ -143,7 +152,8 @@ pub fn load_test_dataset(path: &std::path::Path) -> Vec<TestPolytope> {
             "Cannot read capacity dataset fixture at {}.\n\
              Error: {}\n\
              Regenerate with: cargo test --release regenerate_test_dataset -- --ignored --nocapture",
-            path.display(), e
+            path.display(),
+            e
         )
     });
     let entries: Vec<DatasetEntry> = serde_json::from_str(&json).unwrap_or_else(|e| {
@@ -151,7 +161,8 @@ pub fn load_test_dataset(path: &std::path::Path) -> Vec<TestPolytope> {
             "Cannot parse capacity dataset fixture at {}.\n\
              Error: {}\n\
              Regenerate with: cargo test --release regenerate_test_dataset -- --ignored --nocapture",
-            path.display(), e
+            path.display(),
+            e
         )
     });
     entries.iter().map(DatasetEntry::to_test_polytope).collect()
@@ -160,7 +171,7 @@ pub fn load_test_dataset(path: &std::path::Path) -> Vec<TestPolytope> {
 /// Deterministically generate the test polytope catalog (~0ms, no capacity computation).
 ///
 /// This is the single source of truth for which polytopes exist in the test suite.
-/// Both the default suite (staleness check) and fixture generation call this function.
+/// Both fixture regeneration and staleness checks call this function.
 ///
 /// ## Phases
 ///
@@ -168,14 +179,16 @@ pub fn load_test_dataset(path: &std::path::Path) -> Vec<TestPolytope> {
 /// - Phase 2: 1 symplectomorphism variant per base = 11 variants
 /// - Phase 3: 1 conformality variant per base = 11 variants
 /// - Total: ~33 polytopes
+///
+/// [thm:sympl-invariance], [thm:conformality]: variant generation properties.
 pub fn polytope_catalog() -> Vec<CatalogEntry> {
     let mut rng = ChaCha8Rng::seed_from_u64(42);
 
-    // ===== PHASE 1: Base polytopes =====
+    // Phase 1: Base polytopes.
     let mut base_entries = Vec::new();
 
     // Known polytopes (from geom::known_polytopes, single source of truth).
-    // Excluded: crosspolytope (16 facets, HK2017 is exponential → too slow).
+    // Excluded: crosspolytope (16 facets, HK2017 is exponential -> too slow).
     let known = vec![
         known_polytopes::simplex(),
         known_polytopes::hypercube(),
@@ -190,7 +203,7 @@ pub fn polytope_catalog() -> Vec<CatalogEntry> {
         });
     }
 
-    // Small random polytopes (5-8 facets)
+    // Small random polytopes (5-8 facets).
     for facet_count in 5..=8 {
         for i in 0..2 {
             let p = crate::geom::test_utils::random_bounded_polytope(facet_count, &mut rng);
@@ -203,7 +216,7 @@ pub fn polytope_catalog() -> Vec<CatalogEntry> {
         }
     }
 
-    // ===== PHASE 2: Symplectomorphism variants =====
+    // Phase 2: Symplectomorphism variants.
     let mut full_catalog = base_entries.clone();
 
     for (i, entry) in base_entries.iter().enumerate() {
@@ -217,7 +230,7 @@ pub fn polytope_catalog() -> Vec<CatalogEntry> {
         });
     }
 
-    // ===== PHASE 3: Conformality variants =====
+    // Phase 3: Conformality variants.
     for (i, entry) in base_entries.iter().enumerate() {
         let alpha: f64 = rng.gen_range(0.5..2.0);
         let scaled = scale_polytope(&entry.polytope, alpha);
@@ -234,8 +247,8 @@ pub fn polytope_catalog() -> Vec<CatalogEntry> {
 
 /// Known literature capacity values for validation.
 ///
-/// Derived from `geom::known_polytopes` — single source of truth.
-/// Excludes polytopes with placeholder capacities (e.g. crosspolytope).
+/// Delegates to `geom::known_polytopes::literature_values()` (single source of truth).
+/// Excludes polytopes without a literature cross-check.
 pub fn literature_values() -> Vec<(&'static str, f64)> {
     crate::geom::known_polytopes::literature_values()
 }
@@ -243,14 +256,13 @@ pub fn literature_values() -> Vec<(&'static str, f64)> {
 /// Generate test dataset with fail-fast inline validation.
 ///
 /// Calls `polytope_catalog()`, then computes capacities:
-/// - Base polytopes: both `ehz_capacity()` and `ehz_capacity_unpruned()`, assert agreement.
+/// - Base polytopes: both `ehz_capacity()` and `ehz_capacity_unpruned()`, asserts agreement.
 /// - Variants: `ehz_capacity()` only.
 /// - Inline checks: literature values, conformality, symplectomorphism invariance.
 ///
-/// Fails fast on any validation error — no point computing remaining polytopes
-/// if a bug is already detected.
+/// Fails fast on any validation error.
 pub fn generate_test_dataset() -> Vec<TestPolytope> {
-    use crate::algorithms::hk2017::{ehz_capacity_unpruned, ehz_capacity};
+    use crate::algorithms::hk2017::{ehz_capacity, ehz_capacity_unpruned};
     use crate::geom::volume::volume;
 
     let catalog = polytope_catalog();
@@ -262,28 +274,33 @@ pub fn generate_test_dataset() -> Vec<TestPolytope> {
 
         let pruned_result = ehz_capacity(&entry.polytope)
             .unwrap_or_else(|| panic!("'{}': ehz_capacity() returned None", entry.name));
-        let cap_pruned = pruned_result.capacity;
+        let cap_pruned = pruned_result.result.capacity;
 
-        // Log numerical gap if nonzero
-        let gap = pruned_result.numerical_gap();
+        // Log numerical gap if nonzero.
+        let gap = pruned_result.result.numerical_gap();
         if gap > 0.0 {
             eprintln!(
-                "  {} — NUMERICAL GAP: certified={:.6} uncertain={:.6} gap={:.2e}",
-                entry.name, pruned_result.capacity, pruned_result.capacity_uncertain, gap
+                "  {} -- NUMERICAL GAP: certified={:.6} uncertain={:.6} gap={:.2e}",
+                entry.name, pruned_result.result.capacity, pruned_result.result.capacity_uncertain, gap
             );
         }
 
         let cap_unpruned = if entry.base_index.is_none() {
-            // Base polytope: also compute unpruned, verify agreement
+            // Base polytope: also compute unpruned, verify agreement.
             let unpruned_result = ehz_capacity_unpruned(&entry.polytope)
-                .unwrap_or_else(|| panic!("'{}': ehz_capacity_unpruned() returned None", entry.name));
-            let unpruned = unpruned_result.capacity;
+                .unwrap_or_else(|| {
+                    panic!("'{}': ehz_capacity_unpruned() returned None", entry.name)
+                });
+            let unpruned = unpruned_result.result.capacity;
 
             let rel_err = (cap_pruned - unpruned).abs() / unpruned;
             assert!(
                 rel_err < 1e-6,
-                "FAIL-FAST '{}': pruned ({}) ≠ unpruned ({}) capacity, rel_error = {:.2e}",
-                entry.name, cap_pruned, unpruned, rel_err
+                "FAIL-FAST '{}': pruned ({}) != unpruned ({}) capacity, rel_error = {:.2e}",
+                entry.name,
+                cap_pruned,
+                unpruned,
+                rel_err
             );
 
             Some(unpruned)
@@ -291,26 +308,33 @@ pub fn generate_test_dataset() -> Vec<TestPolytope> {
             None
         };
 
-        // Try billiard algorithm (succeeds only for Lagrangian products)
-        let cap_billiard = match crate::algorithms::billiard::billiard_capacity(&entry.polytope) {
-            Ok(Some(result)) => {
-                let rel_err = (result.capacity - cap_pruned).abs() / cap_pruned;
-                assert!(
-                    rel_err < 1e-6,
-                    "FAIL-FAST '{}': billiard ({}) ≠ HK2017 ({}) capacity, rel_error = {:.2e}",
-                    entry.name, result.capacity, cap_pruned, rel_err
-                );
-                eprintln!("  {} — billiard={:.6} (agrees with HK2017)", entry.name, result.capacity);
-                Some(result.capacity)
-            }
-            Ok(None) => {
-                eprintln!("  {} — billiard returned None", entry.name);
-                None
-            }
-            Err(_) => None, // Not a Lagrangian product
-        };
+        // Try billiard algorithm (succeeds only for Lagrangian products).
+        let cap_billiard =
+            match crate::algorithms::billiard::billiard_capacity(&entry.polytope) {
+                Ok(Some(result)) => {
+                    let rel_err = (result.result.capacity - cap_pruned).abs() / cap_pruned;
+                    assert!(
+                        rel_err < 1e-6,
+                        "FAIL-FAST '{}': billiard ({}) != HK2017 ({}) capacity, rel_error = {:.2e}",
+                        entry.name,
+                        result.result.capacity,
+                        cap_pruned,
+                        rel_err
+                    );
+                    eprintln!(
+                        "  {} -- billiard={:.6} (agrees with HK2017)",
+                        entry.name, result.result.capacity
+                    );
+                    Some(result.result.capacity)
+                }
+                Ok(None) => {
+                    eprintln!("  {} -- billiard returned None", entry.name);
+                    None
+                }
+                Err(_) => None, // Not a Lagrangian product.
+            };
 
-        // Fail-fast: literature values
+        // Fail-fast: literature values.
         for (lit_name, lit_cap) in literature_values() {
             if entry.name == lit_name {
                 let rel_err = (cap_pruned - lit_cap).abs() / lit_cap;
@@ -322,19 +346,23 @@ pub fn generate_test_dataset() -> Vec<TestPolytope> {
             }
         }
 
-        // Fail-fast: symplectomorphism invariance
+        // Fail-fast: symplectomorphism invariance.
         if entry.transform.as_deref() == Some("sympl") {
             let base_idx = entry.base_index.unwrap();
             let base_cap = dataset[base_idx].capacity;
             let rel_err = (cap_pruned - base_cap).abs() / base_cap;
             assert!(
                 rel_err < 1e-6,
-                "FAIL-FAST '{}': c(MK) = {} ≠ c(K) = {} for base '{}', rel_error = {:.2e}",
-                entry.name, cap_pruned, base_cap, dataset[base_idx].name, rel_err
+                "FAIL-FAST '{}': c(MK) = {} != c(K) = {} for base '{}', rel_error = {:.2e}",
+                entry.name,
+                cap_pruned,
+                base_cap,
+                dataset[base_idx].name,
+                rel_err
             );
         }
 
-        // Fail-fast: conformality c(αK) = α²·c(K)
+        // Fail-fast: conformality c(alpha*K) = alpha^2 * c(K).
         if let Some(transform) = &entry.transform {
             if let Some(alpha_str) = transform.strip_prefix("conform:") {
                 let alpha: f64 = alpha_str.parse().expect("valid scale factor");
@@ -343,7 +371,7 @@ pub fn generate_test_dataset() -> Vec<TestPolytope> {
                 let rel_err = (cap_pruned - expected).abs() / expected;
                 assert!(
                     rel_err < 1e-6,
-                    "FAIL-FAST '{}': c({:.2}·K) = {} ≠ {:.2}²·c(K) = {} for base '{}', rel_error = {:.2e}",
+                    "FAIL-FAST '{}': c({:.2}*K) = {} != {:.2}^2*c(K) = {} for base '{}', rel_error = {:.2e}",
                     entry.name, alpha, cap_pruned, alpha, expected, dataset[base_idx].name, rel_err
                 );
             }
@@ -360,14 +388,26 @@ pub fn generate_test_dataset() -> Vec<TestPolytope> {
             transform: entry.transform.clone(),
         });
 
-        eprintln!("  {} — cap={:.6}, vol={:.6}{}", entry.name, cap_pruned, vol,
-            if cap_unpruned.is_some() { " (unpruned verified)" } else { "" });
+        eprintln!(
+            "  {} -- cap={:.6}, vol={:.6}{}",
+            entry.name,
+            cap_pruned,
+            vol,
+            if cap_unpruned.is_some() {
+                " (unpruned verified)"
+            } else {
+                ""
+            }
+        );
     }
 
     dataset
 }
 
-/// Scale polytope: dual vertices → (1/α)·dual vertices (equivalent to heights → α·heights)
+/// Scale polytope: dual vertices -> (1/alpha) * dual vertices.
+///
+/// Equivalent to heights -> alpha * heights, normals unchanged.
+/// Used for conformality variant generation.
 fn scale_polytope(polytope: &Polytope4D, alpha: f64) -> Polytope4D {
     let halfspaces: Vec<Vector4<f64>> = polytope
         .dual_vertices_f64()
@@ -377,9 +417,9 @@ fn scale_polytope(polytope: &Polytope4D, alpha: f64) -> Polytope4D {
     Polytope4D::new(halfspaces).expect("scaled polytope")
 }
 
-/// Generate random symplectomorphism M ∈ Sp(4) (linear, no translation).
+/// Generate a random symplectomorphism M in Sp(4) (linear, no translation).
 ///
-/// Since 0 ∈ int(K) and M is invertible, 0 = M·0 ∈ int(MK),
+/// Since 0 in int(K) and M is invertible, 0 = M*0 in int(MK),
 /// so the transformed polytope always has positive heights.
 fn random_symplectomorphism(rng: &mut impl Rng) -> (Matrix4<f64>, Vector4<f64>) {
     let m = random_sp4_matrix(rng);
@@ -387,36 +427,26 @@ fn random_symplectomorphism(rng: &mut impl Rng) -> (Matrix4<f64>, Vector4<f64>) 
 }
 
 /// Generate random Sp(4) matrix using Cayley transform: M = (I - A)(I + A)^{-1}
-/// where A ∈ sp(4) satisfies A^T J + J A = 0.
+/// where A in sp(4) satisfies A^T J + J A = 0.
 ///
-/// sp(4) in 2×2 blocks: A = [[P, Q], [R, S]] with
+/// sp(4) in 2x2 blocks: A = [[P, Q], [R, S]] with
 ///   Q^T = Q (symmetric), R^T = R (symmetric), S = -P^T.
 /// This gives 4 + 3 + 3 = 10 free parameters.
 fn random_sp4_matrix(rng: &mut impl Rng) -> Matrix4<f64> {
-    // P: arbitrary 2×2 (4 free params)
     let p11: f64 = rng.sample(StandardNormal);
     let p12: f64 = rng.sample(StandardNormal);
     let p21: f64 = rng.sample(StandardNormal);
     let p22: f64 = rng.sample(StandardNormal);
 
-    // Q: symmetric 2×2 (3 free params)
     let q11: f64 = rng.sample(StandardNormal);
     let q12: f64 = rng.sample(StandardNormal);
     let q22: f64 = rng.sample(StandardNormal);
 
-    // R: symmetric 2×2 (3 free params)
     let r11: f64 = rng.sample(StandardNormal);
     let r12: f64 = rng.sample(StandardNormal);
     let r22: f64 = rng.sample(StandardNormal);
 
-    // S = -P^T
-    // A = [[P, Q], [R, -P^T]]
-    //   = [[p11, p12, q11, q12],
-    //      [p21, p22, q12, q22],
-    //      [r11, r12, -p11, -p21],
-    //      [r12, r22, -p12, -p22]]
-    //
-    // Scale down to keep Cayley transform well-conditioned
+    // Scale down to keep Cayley transform well-conditioned.
     let scale = 0.3;
     let a_mat = Matrix4::new(
         p11 * scale, p12 * scale, q11 * scale, q12 * scale,
@@ -425,7 +455,7 @@ fn random_sp4_matrix(rng: &mut impl Rng) -> Matrix4<f64> {
         r12 * scale, r22 * scale, -p12 * scale, -p22 * scale,
     );
 
-    // Cayley transform: M = (I - A)(I + A)^{-1}
+    // Cayley transform: M = (I - A)(I + A)^{-1}.
     let id = Matrix4::identity();
     let i_plus_a = id + a_mat;
     let i_minus_a = id - a_mat;
@@ -433,15 +463,18 @@ fn random_sp4_matrix(rng: &mut impl Rng) -> Matrix4<f64> {
     i_plus_a
         .try_inverse()
         .map(|inv| i_minus_a * inv)
-        .unwrap_or(id) // Fallback to identity if singular
+        .unwrap_or(id)
 }
 
-/// Apply symplectomorphism: K → MK+b
+/// Apply symplectomorphism: K -> MK + b.
 ///
-/// H-rep derivation: y ∈ MK+b ⟺ M⁻¹(y-b) ∈ K ⟺ nᵢ·M⁻¹(y-b) ≤ hᵢ
-/// ⟺ (M⁻ᵀnᵢ)·y ≤ hᵢ + (M⁻ᵀnᵢ)·b
-/// Normalizing: n'ᵢ = M⁻ᵀnᵢ/‖M⁻ᵀnᵢ‖, h'ᵢ = (hᵢ + (M⁻ᵀnᵢ)·b) / ‖M⁻ᵀnᵢ‖
-fn apply_symplectomorphism(polytope: &Polytope4D, m: &Matrix4<f64>, b: &Vector4<f64>) -> Polytope4D {
+/// H-rep derivation: y in MK+b iff M^{-1}(y-b) in K iff n_i * M^{-1}(y-b) <= h_i
+/// iff (M^{-T} n_i) * y <= h_i + (M^{-T} n_i) * b.
+fn apply_symplectomorphism(
+    polytope: &Polytope4D,
+    m: &Matrix4<f64>,
+    b: &Vector4<f64>,
+) -> Polytope4D {
     let m_inv_t = m
         .transpose()
         .try_inverse()
@@ -474,7 +507,7 @@ mod test_dataset_tests {
     /// Regenerate the cached capacity dataset fixture.
     ///
     /// Run after changes to `ehz_capacity()` or the catalog generation logic:
-    /// ```
+    /// ```text
     /// cargo test --release regenerate_test_dataset -- --ignored --nocapture
     /// ```
     #[test]
@@ -485,41 +518,58 @@ mod test_dataset_tests {
         save_test_dataset(&path, &dataset);
         println!("Saved {} polytopes to {}", dataset.len(), path.display());
 
-        // Verify round-trip
+        // Verify round-trip.
         let reloaded = load_test_dataset(&path);
         assert_eq!(dataset.len(), reloaded.len());
         for (orig, loaded) in dataset.iter().zip(reloaded.iter()) {
             assert_eq!(orig.name, loaded.name);
-            // JSON round-trip may lose ~1 ULP; 1e-12 is far tighter than the 1e-6
-            // tolerance used by property tests, so this is safe.
+            // JSON round-trip may lose ~1 ULP; 1e-12 is far tighter than 1e-6 property tests.
             assert!(
                 (orig.capacity - loaded.capacity).abs() < 1e-12,
-                "{}: capacity drift: {} vs {}", orig.name, orig.capacity, loaded.capacity
+                "{}: capacity drift: {} vs {}",
+                orig.name,
+                orig.capacity,
+                loaded.capacity
             );
             assert!(
                 (orig.volume - loaded.volume).abs() < 1e-12,
-                "{}: volume drift: {} vs {}", orig.name, orig.volume, loaded.volume
+                "{}: volume drift: {} vs {}",
+                orig.name,
+                orig.volume,
+                loaded.volume
             );
             assert_eq!(
                 orig.capacity_unpruned.is_some(),
                 loaded.capacity_unpruned.is_some(),
-                "{}: capacity_unpruned presence mismatch", orig.name
+                "{}: capacity_unpruned presence mismatch",
+                orig.name
             );
-            if let (Some(orig_unp), Some(loaded_unp)) = (orig.capacity_unpruned, loaded.capacity_unpruned) {
+            if let (Some(orig_unp), Some(loaded_unp)) =
+                (orig.capacity_unpruned, loaded.capacity_unpruned)
+            {
                 assert!(
                     (orig_unp - loaded_unp).abs() < 1e-12,
-                    "{}: capacity_unpruned drift: {} vs {}", orig.name, orig_unp, loaded_unp
+                    "{}: capacity_unpruned drift: {} vs {}",
+                    orig.name,
+                    orig_unp,
+                    loaded_unp
                 );
             }
             assert_eq!(
                 orig.capacity_billiard.is_some(),
                 loaded.capacity_billiard.is_some(),
-                "{}: capacity_billiard presence mismatch", orig.name
+                "{}: capacity_billiard presence mismatch",
+                orig.name
             );
-            if let (Some(orig_bil), Some(loaded_bil)) = (orig.capacity_billiard, loaded.capacity_billiard) {
+            if let (Some(orig_bil), Some(loaded_bil)) =
+                (orig.capacity_billiard, loaded.capacity_billiard)
+            {
                 assert!(
                     (orig_bil - loaded_bil).abs() < 1e-12,
-                    "{}: capacity_billiard drift: {} vs {}", orig.name, orig_bil, loaded_bil
+                    "{}: capacity_billiard drift: {} vs {}",
+                    orig.name,
+                    orig_bil,
+                    loaded_bil
                 );
             }
         }

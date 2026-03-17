@@ -1,46 +1,38 @@
-# kkt_inertia: KKT matrix inertia validation
+# KKT Matrix Inertia Validation
 
-## Goal
+Validate the inertia decomposition formula for the KKT matrix (Lemma `lem:kkt-inertia`) by census of all (S,sigma) nodes and checking the formula against direct eigenvalue computation.
 
-Validate Lemma `lem:kkt-inertia` (Inertia of the KKT matrix) from
-`thesis/appendix-numerical.tex`. The lemma states:
+## Status
+Complete
 
-    n_+(M) = n_+(H|_T) + p,  n_0(M) = n_0(H|_T) + (5-p),  n_-(M) = n_-(H|_T) + p
+## Design
 
-where M is the KKT matrix, H|_T is the restricted Hessian on the
-tangent space T = ker(A), and p = rank(A).
+- Input: known polytopes from `known_polytopes::all_known()`, filtered to F <= 10 (7 polytopes)
+- Part 1 (Census): Classify H|_T definiteness for all (S,sigma) nodes with beta>0 and Q>0
+- Part 2 (Inertia check): Verify n_+(M) = n_+(H|_T) + p, n_0(M) = n_0(H|_T) + (5-p), n_-(M) = n_-(H|_T) + p
 
-Two parts:
-1. **Census:** Classify H|_T definiteness for all (S,σ) nodes with
-   β>0 and Q>0 across all known polytopes with F ≤ 10.
-2. **Inertia check:** Verify the inertia decomposition formula. On
-   mismatch, print eigenvalue diagnostics.
+## Key findings
 
-## Results (2026-03-13)
+- **Part 1:** 1,133,769 total nodes surveyed across 7 polytopes. Valid (beta>0, Q>0) nodes classified as Trivial (0-dim tangent), PD, ND, Indefinite, or NearZero
+- **Part 2:** Inertia formula holds for 6/7 polytopes. 5 mismatches in hko_pentagon, all with the same pattern: tangent_dim=3, H|_T eigenvalue ~1e-16 at machine epsilon. These are threshold sensitivity artifacts, not formula errors
+- The inertia formula is correct but discrete eigenvalue classification cannot resolve eigenvalues at machine epsilon
 
-- **Part 1:** Census across 1,133,769 nodes. Among valid (β>0, Q>0)
-  nodes: mostly Trivial (0-dim tangent space), with PD, ND, Indefinite,
-  and NearZero categories for nodes with nontrivial tangent spaces.
-- **Part 2:** Inertia formula holds for 6/7 polytopes. 5 mismatches in
-  hko_pentagon, all with the same pattern: tangent_dim=3, H|_T has
-  eigenvalues [-a, ~0, +a]. The near-zero H|_T eigenvalue (~10⁻¹⁶) is
-  at machine epsilon, and the M eigenvalues near zero (~10⁻¹⁶ to
-  ~10⁻¹⁸) are ambiguous in sign. These are threshold sensitivity
-  artifacts: the inertia formula is correct but the discrete eigenvalue
-  classification cannot resolve eigenvalues at machine epsilon.
+## Files
 
-## Input
-
-Known polytopes from the library (`known_polytopes::all_known()`),
-filtered to F ≤ 10. Currently 7 polytopes.
-
-## Output
-
-Summary tables to stdout plus eigenvalue diagnostics for any mismatches.
-No hard assertions (diagnostic experiment).
+| File | Purpose |
+|------|---------|
+| `kkt_inertia.rs` | Rust binary: census + inertia check |
+| `kkt-inertia.tex` | Thesis writeup |
+| `kkt_inertia_output.txt` | Captured stdout output with tables and diagnostics |
 
 ## Run
 
 ```bash
 cd experiments/ && cargo run --release --bin kkt_inertia
 ```
+
+## Known limitations
+
+- Only 7 polytopes tested (known polytopes with F <= 10)
+- No random polytopes in dataset
+- 5 hko_pentagon mismatches are threshold artifacts, not investigated further

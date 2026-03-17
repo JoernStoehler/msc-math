@@ -1,9 +1,9 @@
 # Ablation Study: Adjacency Graph Pruning
 
-**Purpose:** Iteratively refine the adjacency graph used to prune the search
-space of the HK2017 algorithm, measuring correctness and speedup at each step.
+How much does each level of adjacency graph pruning speed up the HK2017 algorithm, and does pruning preserve correctness?
 
-**Status:** A-axis complete. Four variants (A0–A3) agree on all 54 test polytopes.
+## Status
+Complete
 
 ## Files
 
@@ -45,7 +45,7 @@ in the binary (library internals copied where needed).
 (ω₀(n_i, n_j) ≥ 0 for F_i → F_j). The code uses the reversed algebraic
 convention (ω₀ ≤ 0 for consecutive σ(k) → σ(k+1)) to match the Q-function.
 
-## Key Findings
+## Key findings
 
 **Agreement:** All four variants agree on all 54 polytopes (max absolute difference < 10⁻⁸).
 
@@ -82,7 +82,7 @@ the transition. See `[ex:a3-prunes]` in ablation.tex.
 | Hypercube | 8 | 4.000000 | ✓ | Non-degenerate: LU fast path |
 | Cut simplex | 6 | 1.650485 | ✓ | Non-simple polytope: A2≠A3 |
 
-## Regeneration
+## Run
 
 ```bash
 cd experiments/
@@ -96,3 +96,9 @@ python3 ablation/ablation.py
 
 Binary exits with code 1 if any variant disagrees or returns None.
 Python exits with code 1 if any disagreements found in the JSONL.
+
+## Known limitations
+
+- Only 54 polytopes tested; edge cases at higher F not covered
+- Fixed seed (42) for reproducibility
+- A3 vs A2 difference only demonstrated on one non-simple polytope (cut simplex)

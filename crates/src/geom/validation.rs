@@ -1,36 +1,37 @@
-/// Polytope validation: boundedness check for R^4 polytopes.
-///
-/// Enforces: **Bounded** — normals positively span R^4 (recession cone = {0}).
-/// Called from `Polytope4D::new()` as a fast-fail pre-filter before the
-/// expensive rational pipeline (which also checks boundedness exactly).
-///
-/// Irredundancy is checked exactly by the rational pipeline in rational.rs.
-use crate::geom::cross_product::cross_product_4d;
+//! Polytope boundedness check for R^4 polytopes (f64 fast-fail pre-filter).
+//!
+//! Provides a floating-point boundedness check that runs before the expensive
+//! exact rational pipeline. The rational pipeline in `vertex_enumeration.rs`
+//! performs the authoritative boundedness and irredundancy checks over Q.
+//!
+//! Mathematical correspondence: [lem:positive-span]
+
+use crate::geom::cross_product_4d::cross_product_4d;
 use nalgebra::Vector4;
 
-/// Threshold for positive-span check: n_ℓ · d > EPS means "has positive component."
+/// Threshold for positive-span check: n_l · d > EPS means "has positive component."
 ///
-/// **Why 1e-9:** Same as polytope.rs EPS_UNIT. The cross-product direction d is
-/// computed from 3 unit normals, so ‖d‖ = O(1). Inner products n_ℓ · d near
-/// zero indicate the normal is nearly orthogonal to d; 1e-9 distinguishes
-/// genuine positive components from floating-point noise.
+/// **Why 1e-9:** The cross-product direction d is computed from 3 unit normals,
+/// so ||d|| = O(1). Inner products n_l · d near zero indicate the normal is
+/// nearly orthogonal to d; 1e-9 distinguishes genuine positive components from
+/// floating-point noise.
 const EPS_UNIT: f64 = 1e-9;
 
 /// Check that the normals positively span R^4, i.e., the polytope is bounded.
 ///
-/// # Mathematical Background
-///
-/// K bounded ⟺ rec(K) = {0} ⟺ normals positively span R^4, where
-/// "positively span" means: for every nonzero d, some n_ℓ · d > 0.
+/// K bounded iff rec(K) = {0} iff normals positively span R^4, where
+/// "positively span" means: for every nonzero d, some n_l · d > 0.
 ///
 /// # Algorithm
 ///
-/// 1. Check rank(normals) = 4.
-/// 2. For each triple (i,j,k), compute 1D kernel d via 4D cross product.
-///    Verify some normal outside {i,j,k} has positive and some has negative
-///    inner product with d.
+/// 1. Check rank(normals) = 4 via SVD.
+/// 2. For each triple (i,j,k), compute the 1D kernel direction d via 4D cross
+///    product. Verify some normal outside {i,j,k} has positive and some has
+///    negative inner product with d.
 ///
-/// Complexity: O(F³).
+/// Complexity: O(F^3) where F is the number of facets.
+///
+/// Mathematical correspondence: [lem:positive-span]
 pub fn check_bounded(normals: &[Vector4<f64>]) -> bool {
     let f = normals.len();
 
@@ -66,7 +67,3 @@ pub fn check_bounded(normals: &[Vector4<f64>]) -> bool {
     }
     true
 }
-
-#[cfg(test)]
-#[path = "validation_test.rs"]
-mod validation_test;

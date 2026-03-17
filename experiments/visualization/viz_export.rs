@@ -12,15 +12,23 @@ use serde::Serialize;
 use std::fs::File;
 use std::io::BufWriter;
 use std::path::Path;
-use symplectic::algorithms::hk2017::recover::{recover_base_point, verify_orbit};
-use symplectic::algorithms::hk2017::{
-    build_directed_adjacency_matrix, combinations, EhzResult,
-};
+// TODO: `recover_base_point` and `verify_orbit` combined into
+//   `algorithms::hk2017::orbit_recovery::recover_and_verify` (wave 4, subagent #10)
+use symplectic::algorithms::hk2017::orbit_recovery::{recover_base_point, verify_orbit};
+// `build_directed_adjacency_matrix` moved from hk2017 to algorithms::facet_adjacency (wave 1, subagent #5)
+use symplectic::algorithms::facet_adjacency::build_directed_adjacency_matrix;
+// TODO: `combinations` moves to `algorithms::hk2017::permutations::combinations` (wave 3, subagent #6)
+// TODO: `EhzResult` moves to `algorithms::hk2017::EhzResult` (wave 3, subagent #6)
+use symplectic::algorithms::hk2017::{combinations, EhzResult};
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
 use symplectic::geom::reeb_trajectory;
-use symplectic::known_polytopes::{self, KnownPolytope};
-use symplectic::kkt::augmented::{solve_kkt, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
-use symplectic::Skeleton;
+// TODO: `known_polytopes` will be re-exported from `symplectic::known_polytopes` (wave 4, subagent #16)
+use symplectic::geom::known_polytopes::{self, KnownPolytope};
+// TODO: `solve_kkt` moves to `kkt::saddle_point_solver::solve_kkt` (wave 2, subagent #2)
+// TODO: `EPS_BETA_POSITIVE` and `EPS_Q_POSITIVE` move to `kkt::saddle_point_solver` (wave 2, subagent #2)
+use symplectic::kkt::saddle_point_solver::{solve_kkt, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
+// TODO: `Skeleton` will be re-exported from `symplectic::Skeleton` (wave 4, subagent #16)
+use symplectic::geom::skeleton::Skeleton;
 
 /// Maximum number of orbits to export per polytope (keeps data.js manageable).
 const MAX_ORBITS: usize = 20;
@@ -115,7 +123,7 @@ fn is_adjacent_cycle(perm: &[usize], adj: &[Vec<bool>]) -> bool {
 /// Uses the same algorithm as `ehz_capacity` (directed adjacency pruning),
 /// but collects all certified orbits instead of just the best one.
 /// Returns orbits sorted by action (ascending).
-fn collect_all_orbits(polytope: &symplectic::Polytope4D) -> Vec<CollectedOrbit> {
+fn collect_all_orbits(polytope: &symplectic::geom::polytope::Polytope4D) -> Vec<CollectedOrbit> {
     let f = polytope.facet_count();
     let normals = polytope.normals_f64();
     let heights = polytope.heights_f64();
@@ -167,12 +175,14 @@ fn collect_all_orbits(polytope: &symplectic::Polytope4D) -> Vec<CollectedOrbit> 
 /// Convert a collected orbit into an EhzResult for use with recover_base_point.
 fn orbit_to_ehz_result(orbit: &CollectedOrbit) -> EhzResult {
     EhzResult {
-        capacity: orbit.action,
-        capacity_uncertain: orbit.action,
+        result: symplectic::algorithms::capacity_accumulator::CapacityResult {
+            capacity: orbit.action,
+            capacity_uncertain: orbit.action,
+            best_permutation: orbit.permutation.clone(),
+            best_beta: orbit.beta.clone(),
+            iterations: 0,
+        },
         best_subset: orbit.subset.clone(),
-        best_permutation: orbit.permutation.clone(),
-        best_beta: orbit.beta.clone(),
-        iterations: 0,
     }
 }
 
@@ -180,7 +190,7 @@ fn orbit_to_ehz_result(orbit: &CollectedOrbit) -> EhzResult {
 ///
 /// Returns None if recovery fails or the orbit has excessive violations.
 fn orbit_to_viz_trajectory(
-    polytope: &symplectic::Polytope4D,
+    polytope: &symplectic::geom::polytope::Polytope4D,
     orbit: &CollectedOrbit,
     label: String,
 ) -> Option<VizTrajectory> {
@@ -204,7 +214,7 @@ fn orbit_to_viz_trajectory(
         return None;
     }
 
-    let sigma = &result.best_permutation;
+    let sigma = &result.result.best_permutation;
     let m = sigma.len();
 
     // breakpoints[k] → breakpoints[k+1] is a segment on facet σ[k]
@@ -236,7 +246,7 @@ fn orbit_to_viz_trajectory(
 /// back to the first). The ridge tangent space is 2D (perpendicular to both
 /// normals n_σ(0) and n_σ(m-1)). We return an orthonormal basis for it.
 fn ridge_displacement_directions(
-    polytope: &symplectic::Polytope4D,
+    polytope: &symplectic::geom::polytope::Polytope4D,
     first_facet: usize,
     last_facet: usize,
 ) -> Vec<Vector4<f64>> {
@@ -278,7 +288,7 @@ fn ridge_displacement_directions(
 /// F_σ(0) ∩ F_σ(m-1). We displace along both directions spanning the
 /// ridge's 2D tangent space.
 fn generate_displaced_trajectories(
-    polytope: &symplectic::Polytope4D,
+    polytope: &symplectic::geom::polytope::Polytope4D,
     orbit: &CollectedOrbit,
     skeleton: &Skeleton,
 ) -> Vec<VizTrajectory> {
@@ -288,7 +298,7 @@ fn generate_displaced_trajectories(
         None => return vec![],
     };
 
-    let perm = &result.best_permutation;
+    let perm = &result.result.best_permutation;
     let start_facet = perm[0];
     let last_facet = perm[perm.len() - 1];
     let directions = ridge_displacement_directions(polytope, start_facet, last_facet);
@@ -304,10 +314,10 @@ fn generate_displaced_trajectories(
     for (i, disp) in directions.iter().enumerate() {
         // Try +ε first; if that pushes outside K, try -ε (the other side of the ridge).
         let mut displaced_start = recovery.base_point + DISPLACEMENT_EPS * disp;
-        let mut traj = reeb_trajectory::simulate(polytope, displaced_start, start_facet, max_segments, 1e-6);
+        let mut traj = reeb_trajectory::simulate_with(polytope, displaced_start, start_facet, max_segments, 1e-6);
         if traj.segments.is_empty() {
             displaced_start = recovery.base_point - DISPLACEMENT_EPS * disp;
-            traj = reeb_trajectory::simulate(polytope, displaced_start, start_facet, max_segments, 1e-6);
+            traj = reeb_trajectory::simulate_with(polytope, displaced_start, start_facet, max_segments, 1e-6);
         }
         if traj.segments.is_empty() {
             eprintln!("  displaced v{}: simulation returned 0 segments in both directions", i + 1);
@@ -345,7 +355,7 @@ fn generate_displaced_trajectories(
 /// minimum-action orbit found during enumeration, avoiding a redundant
 /// `ehz_capacity()` call.
 fn generate_trajectories(
-    polytope: &symplectic::Polytope4D,
+    polytope: &symplectic::geom::polytope::Polytope4D,
     skeleton: &Skeleton,
 ) -> (Vec<VizTrajectory>, Option<f64>) {
     // Skip polytopes with too many facets (exponential cost)
@@ -438,12 +448,12 @@ fn generate_trajectories(
 
 /// Fallback: generate a single forward-simulated trajectory (the old behavior).
 fn generate_placeholder_trajectory(
-    polytope: &symplectic::Polytope4D,
+    polytope: &symplectic::geom::polytope::Polytope4D,
     skeleton: &Skeleton,
 ) -> Vec<VizTrajectory> {
     for fi in 0..polytope.facet_count() {
-        let centroid = reeb_trajectory::facet_centroid(polytope, skeleton, fi);
-        let traj = reeb_trajectory::simulate(polytope, centroid, fi, 100, 1e-6);
+        let centroid = skeleton.facet_centroid(polytope, fi);
+        let traj = reeb_trajectory::simulate_with(polytope, centroid, fi, 100, 1e-6);
 
         if !traj.segments.is_empty() {
             return vec![VizTrajectory {
@@ -496,7 +506,7 @@ pub fn export(name: &str, output: &Path) -> Result<(), String> {
     let reeb_vectors: Vec<[f64; 4]> = polytope
         .normals_f64()
         .iter()
-        .map(|n| v4_to_array(&reeb_trajectory::reeb_vector(n)))
+        .map(|n| v4_to_array(&reeb_trajectory::reeb_direction(n)))
         .collect();
 
     // Trajectories: real Reeb orbits + displaced variants
@@ -507,7 +517,7 @@ pub fn export(name: &str, output: &Path) -> Result<(), String> {
     let capacity = computed_capacity.unwrap_or(kp.capacity);
 
     // Compute volume and systolic ratio
-    let vol = symplectic::volume(polytope).unwrap_or(0.0);
+    let vol = symplectic::geom::volume::volume(polytope).unwrap_or(0.0);
     let systolic_ratio = if vol > 0.0 {
         capacity * capacity / (2.0 * vol)
     } else {

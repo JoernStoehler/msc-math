@@ -25,7 +25,14 @@ use serde::Serialize;
 use std::collections::HashSet;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
-use symplectic::{known_polytopes, omega0, volume, Polytope4D, Skeleton};
+// TODO: These will be re-exported from top-level `symplectic::` in wave 4 (subagent #16).
+// Using full module paths until then.
+use symplectic::algorithms::facet_adjacency::is_adjacent_cycle;
+use symplectic::geom::known_polytopes;
+use symplectic::geom::symplectic_form::omega0;
+use symplectic::geom::volume::volume;
+use symplectic::geom::polytope::Polytope4D;
+use symplectic::geom::skeleton::Skeleton;
 
 // ============================================================================
 // Configuration
@@ -108,15 +115,11 @@ const EPS_DEGENERATE: f64 = 1e-10;
 // (which copies from crates/src/kkt.rs with extensions for ν, λ)
 // ============================================================================
 
-fn omega0_local(u: &Vector4<f64>, v: &Vector4<f64>) -> f64 {
-    u[0] * v[2] - u[2] * v[0] + u[1] * v[3] - u[3] * v[1]
-}
-
 fn q_from_beta(normals: &[Vector4<f64>], perm: &[usize], beta: &[f64]) -> f64 {
     let m = beta.len();
     (1..m)
         .flat_map(|i| (0..i).map(move |j| (i, j)))
-        .map(|(i, j)| beta[i] * beta[j] * omega0_local(&normals[perm[j]], &normals[perm[i]]))
+        .map(|(i, j)| beta[i] * beta[j] * omega0(&normals[perm[j]], &normals[perm[i]]))
         .sum()
 }
 
@@ -206,7 +209,7 @@ fn build_kkt_system(
     let mut rhs = DVector::zeros(size);
     for i in 0..m {
         for j in (i + 1)..m {
-            let val = omega0_local(&normals[perm[i]], &normals[perm[j]]);
+            let val = omega0(&normals[perm[i]], &normals[perm[j]]);
             kkt[(i, j)] = val;
             kkt[(j, i)] = val;
         }
@@ -398,6 +401,9 @@ fn heap_perms_buf(
     }
 }
 
+// TODO: Replace with `use symplectic::algorithms::facet_adjacency::build_adjacency_matrix`.
+// Local copy differs from library: uses f64 vertex incidence check (EPS_FACET_INCIDENCE)
+// instead of the library's exact rational `polytope.adjacency()`.
 fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let f = polytope.facet_count();
     let normals = polytope.normals_f64();
@@ -416,6 +422,9 @@ fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     adj
 }
 
+// TODO: Replace with `use symplectic::algorithms::facet_adjacency::build_directed_adjacency_matrix`.
+// Local copy differs from library: uses f64 `omega0() >= 0.0` comparison
+// instead of the library's exact rational `polytope.omega_signs()`.
 fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let f = polytope.facet_count();
     let normals = polytope.normals_f64();
@@ -423,15 +432,10 @@ fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let mut adj = vec![vec![false; f]; f];
     for i in 0..f {
         for j in 0..f {
-            adj[i][j] = vertex_adj[i][j] && omega0_local(&normals[i], &normals[j]) >= 0.0;
+            adj[i][j] = vertex_adj[i][j] && omega0(&normals[i], &normals[j]) >= 0.0;
         }
     }
     adj
-}
-
-fn is_adjacent_cycle(perm: &[usize], adj: &[Vec<bool>]) -> bool {
-    let m = perm.len();
-    (0..m).all(|k| adj[perm[k]][perm[(k + 1) % m]])
 }
 
 // ============================================================================

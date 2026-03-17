@@ -37,9 +37,11 @@ use std::io::{BufWriter, Write};
 use std::time::Instant;
 use symplectic::geom::polygon::{random_polygon_2d, regular_polygon_2d};
 use symplectic::random::generate_random_polytopes;
-use symplectic::{
-    ehz_capacity_unpruned, known_polytopes, lagrangian_product, EhzResult, Polytope4D,
-};
+// TODO: These will be re-exported from top-level `symplectic::` in wave 4 (subagent #16).
+use symplectic::algorithms::hk2017::{ehz_capacity_unpruned, EhzResult};
+use symplectic::geom::known_polytopes;
+use symplectic::geom::lagrangian_product::lagrangian_product;
+use symplectic::geom::polytope::Polytope4D;
 
 const SEED: u64 = 42;
 const H_MIN: f64 = 0.5;
@@ -522,12 +524,14 @@ fn ehz_capacity_unpruned_with(
     let certified = best_certified?;
     let uncertain_cap = best_uncertain.map_or(certified.0, |b| b.0);
     Some(EhzResult {
-        capacity: certified.0,
-        capacity_uncertain: uncertain_cap,
+        result: symplectic::algorithms::capacity_accumulator::CapacityResult {
+            capacity: certified.0,
+            capacity_uncertain: uncertain_cap,
+            best_permutation: certified.2,
+            best_beta: certified.3,
+            iterations,
+        },
         best_subset: certified.1,
-        best_permutation: certified.2,
-        best_beta: certified.3,
-        iterations,
     })
 }
 
@@ -1082,18 +1086,18 @@ fn main() {
                     n_failures += 1;
                 }
                 Some(r) => {
-                    capacities.push((variant.name.to_string(), r.capacity));
+                    capacities.push((variant.name.to_string(), r.result.capacity));
 
                     // Check against known expected capacity
                     if let Some(exp) = expected {
-                        if (r.capacity - exp).abs() > 1e-5 {
+                        if (r.result.capacity - exp).abs() > 1e-5 {
                             eprintln!(
                                 "  WRONG: {} / {}: got {:.8}, expected {:.8} (diff={:.2e})",
                                 polytope_name,
                                 variant.name,
-                                r.capacity,
+                                r.result.capacity,
                                 exp,
-                                (r.capacity - exp).abs()
+                                (r.result.capacity - exp).abs()
                             );
                             n_disagreements += 1;
                         }
@@ -1106,9 +1110,9 @@ fn main() {
                         facet_count: f,
                         normals: normals_raw.clone(),
                         heights: heights_raw.clone(),
-                        capacity: r.capacity,
-                        capacity_uncertain: r.capacity_uncertain,
-                        iterations: r.iterations,
+                        capacity: r.result.capacity,
+                        capacity_uncertain: r.result.capacity_uncertain,
+                        iterations: r.result.iterations,
                         time_ms,
                     });
                 }

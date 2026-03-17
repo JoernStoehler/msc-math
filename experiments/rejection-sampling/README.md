@@ -1,16 +1,9 @@
 # Rejection Sampling Acceptance Rates
 
-## Purpose
+How often do random halfspace representations yield valid (bounded, irredundant) 4-polytopes, across facet counts and height ranges?
 
-Measure how often random halfspace representations yield valid (bounded, irredundant) 4-polytopes, across facet counts F=5..10 and three height ranges.
-
-## Pipeline
-
-```
-acceptance_sweep (Rust) → acceptance.jsonl
-```
-
-No Python script or figure — the .tex writeup uses a table directly.
+## Status
+Complete
 
 ## Design
 
@@ -29,9 +22,23 @@ No Python script or figure — the .tex writeup uses a table directly.
 
 ## Files
 
-| File | Description |
-|------|-------------|
-| acceptance_sweep.rs | Rust binary — generates dataset |
-| acceptance_sweep_test.rs | Unit tests for the sweep function |
-| acceptance.jsonl | Generated data (18 rows) |
-| rejection-sampling.tex | Thesis writeup with table |
+| File | Purpose |
+|------|---------|
+| `acceptance_sweep.rs` | Rust binary: generates dataset |
+| `acceptance_sweep_test.rs` | Unit tests for the sweep function |
+| `acceptance.jsonl` | Generated data (18 rows) |
+| `rejection-sampling.tex` | Thesis writeup with table |
+
+## Run
+
+```bash
+cd experiments/ && cargo run --bin acceptance_sweep --release
+```
+
+No Python script or figure; the .tex writeup uses a table directly from the JSONL data.
+
+## Known limitations
+
+- 1000 attempts per configuration; may not capture rare events
+- Only F=5..10 tested; higher facet counts not covered
+- Fixed seed (42) for reproducibility

@@ -1,13 +1,14 @@
 //! Exact vertex enumeration for 4D polytopes over Q.
 //!
-//! Takes dual vertices y_i ∈ K° (vertices of the polar body) and computes:
-//!
-//! - **Vertices** of K, by solving y_i · x = 1 for all C(F,4) four-element subsets
-//! - **Vertex–facet incidence**: which vertices lie on which facets
+//! Takes dual vertices y_i (vertices of the polar body K°) and computes:
+//! - **Vertices** of K by solving y_i · x = 1 for all C(F,4) four-element subsets
+//! - **Vertex-facet incidence**: which vertices lie on which facets
 //! - **Boundedness**: dual vertices positively span R^4
 //! - **Irredundancy**: every facet has incident vertices of affine rank 3
 //!
 //! All arithmetic is exact over Q — no floating-point tolerances.
+//!
+//! Mathematical correspondence: [lem:vertex-enumeration], [lem:positive-span]
 
 use num_bigint::BigInt;
 use num_rational::BigRational;
@@ -18,14 +19,19 @@ use super::polytope::ConstructionError;
 
 // ── Exact linear algebra over Q ──────────────────────────────────────────
 
-/// Compute the exact determinant of a 4×4 rational matrix.
-/// Rows are given as 4-element arrays.
-fn det4(rows: &[[BigRational; 4]; 4]) -> BigRational {
-    // Leibniz formula: sum over all 24 permutations of S₄.
-    // For a 4×4 matrix, we expand along cofactors of the first row.
+/// Determinant of a 3x3 rational matrix (Sarrus' rule).
+fn det3(r0: &[BigRational], r1: &[BigRational], r2: &[BigRational]) -> BigRational {
+    &r0[0] * (&r1[1] * &r2[2] - &r1[2] * &r2[1])
+        - &r0[1] * (&r1[0] * &r2[2] - &r1[2] * &r2[0])
+        + &r0[2] * (&r1[0] * &r2[1] - &r1[1] * &r2[0])
+}
+
+/// Exact determinant of a 4x4 rational matrix via cofactor expansion.
+///
+/// Expands along the first row using 3x3 minors.
+pub(super) fn det4(rows: &[[BigRational; 4]; 4]) -> BigRational {
     let (a, b, c, d) = (&rows[0], &rows[1], &rows[2], &rows[3]);
 
-    // Cofactors of row 0 (minor matrices with column i removed)
     let c00 = det3(
         &[b[1].clone(), b[2].clone(), b[3].clone()],
         &[c[1].clone(), c[2].clone(), c[3].clone()],
@@ -50,17 +56,13 @@ fn det4(rows: &[[BigRational; 4]; 4]) -> BigRational {
     &a[0] * c00 - &a[1] * c01 + &a[2] * c02 - &a[3] * c03
 }
 
-/// Determinant of a 3×3 matrix (Sarrus' rule).
-/// Rows are given as 3-element slices.
-fn det3(r0: &[BigRational], r1: &[BigRational], r2: &[BigRational]) -> BigRational {
-    &r0[0] * (&r1[1] * &r2[2] - &r1[2] * &r2[1])
-        - &r0[1] * (&r1[0] * &r2[2] - &r1[2] * &r2[0])
-        + &r0[2] * (&r1[0] * &r2[1] - &r1[1] * &r2[0])
-}
-
-/// Solve a 4×4 linear system N·x = b exactly via Cramer's rule.
-/// Returns None if det(N) = 0.
-fn solve4(rows: &[[BigRational; 4]; 4], rhs: &[BigRational; 4]) -> Option<[BigRational; 4]> {
+/// Solve a 4x4 linear system N*x = b exactly via Cramer's rule.
+///
+/// Returns `None` if det(N) = 0 (singular system).
+pub(super) fn solve4(
+    rows: &[[BigRational; 4]; 4],
+    rhs: &[BigRational; 4],
+) -> Option<[BigRational; 4]> {
     let d = det4(rows);
     if d.is_zero() {
         return None;
@@ -69,7 +71,6 @@ fn solve4(rows: &[[BigRational; 4]; 4], rhs: &[BigRational; 4]) -> Option<[BigRa
     let mut result: [BigRational; 4] = std::array::from_fn(|_| BigRational::zero());
 
     for col in 0..4 {
-        // Replace column `col` of N with rhs
         let mut modified = rows.clone();
         for row in 0..4 {
             modified[row][col] = rhs[row].clone();
@@ -80,21 +81,21 @@ fn solve4(rows: &[[BigRational; 4]; 4], rhs: &[BigRational; 4]) -> Option<[BigRa
     Some(result)
 }
 
-/// Inner product ⟨a, b⟩ of two 4-vectors over Q.
-fn dot4(a: &[BigRational; 4], b: &[BigRational; 4]) -> BigRational {
+/// Inner product of two 4-vectors over Q.
+pub(super) fn dot4(a: &[BigRational; 4], b: &[BigRational; 4]) -> BigRational {
     &a[0] * &b[0] + &a[1] * &b[1] + &a[2] * &b[2] + &a[3] * &b[3]
 }
 
-/// 4D cross product over Q: vector perpendicular to three vectors in R⁴.
+/// 4D cross product over Q: vector perpendicular to three vectors in R^4.
 ///
-/// Same formula as [`super::cross_product::cross_product_4d`] but exact.
-/// d_k = (-1)^k · det(3×3 minor of [a, b, c] with column k removed).
-fn cross_product_4d_rational(
+/// d_k = (-1)^k * det(3x3 minor of [a, b, c] with column k removed).
+/// Same formula as `cross_product_4d::cross_product_4d` but exact over Q.
+pub(super) fn cross_product_4d_rational(
     a: &[BigRational; 4],
     b: &[BigRational; 4],
     c: &[BigRational; 4],
 ) -> [BigRational; 4] {
-    // 2×2 minors of (b, c)
+    // 2x2 minors of (b, c)
     let bc_01 = &b[0] * &c[1] - &b[1] * &c[0];
     let bc_02 = &b[0] * &c[2] - &b[2] * &c[0];
     let bc_03 = &b[0] * &c[3] - &b[3] * &c[0];
@@ -110,10 +111,10 @@ fn cross_product_4d_rational(
     [d0, d1, d2, d3]
 }
 
-/// Compute the rank of a matrix (rows × 4) over Q via Gaussian elimination.
+/// Compute the rank of a set of 4-component rational row vectors via Gaussian elimination.
 ///
-/// Exact — no tolerances, no floating-point rounding.
-fn rank_over_q(rows: &[[BigRational; 4]]) -> usize {
+/// Exact over Q — no tolerances or floating-point rounding.
+pub(super) fn rank_over_q(rows: &[[BigRational; 4]]) -> usize {
     if rows.is_empty() {
         return 0;
     }
@@ -138,9 +139,8 @@ fn rank_over_q(rows: &[[BigRational; 4]]) -> usize {
                 continue;
             }
             let factor = &mat[r][col] / &pivot_val;
-            // Clone the pivot row to avoid borrowing mat twice.
-            let pivot_row: [BigRational; 4] = mat[rank].clone();
-            for (mat_c, pivot_c) in mat[r][col..n].iter_mut().zip(pivot_row[col..n].iter()) {
+            let pivot_row_data: [BigRational; 4] = mat[rank].clone();
+            for (mat_c, pivot_c) in mat[r][col..n].iter_mut().zip(pivot_row_data[col..n].iter()) {
                 *mat_c = &*mat_c - &factor * pivot_c;
             }
         }
@@ -153,25 +153,30 @@ fn rank_over_q(rows: &[[BigRational; 4]]) -> usize {
 
 /// Check that dual vertices positively span R^4 (polytope is bounded).
 ///
-/// K bounded ⟺ rec(K) = {0} ⟺ dual vertices positively span R^4.
-/// "Positively span" means: for every nonzero d ∈ R^4, some y_i · d > 0.
+/// K bounded iff rec(K) = {0} iff dual vertices positively span R^4.
+/// "Positively span" means: for every nonzero d in R^4, some y_i · d > 0.
 ///
 /// Since y_i = n_i / h_i with h_i > 0, positive spanning of y_i is
 /// equivalent to positive spanning of n_i.
 ///
-/// Algorithm (exact over Q):
+/// # Algorithm (exact over Q)
+///
 /// 1. Check rank(Y) = 4 via Gaussian elimination.
-/// 2. For each triple (i,j,k), compute the 1D kernel direction d via
-///    exact 4D cross product. If d = 0 (dependent triple), skip.
-///    Check some y_l · d > 0 and some y_l · d < 0 among y_l ∉ {i,j,k}.
+/// 2. For each triple (i,j,k), compute the 1D kernel direction d via exact
+///    4D cross product. If d = 0 (dependent triple), skip.
+///    Check some y_l · d > 0 and some y_l · d < 0 among y_l not in {i,j,k}.
 ///
-/// Correctness: any direction d in R^4 can be written as a linear combination
-/// of cross-product directions from triples of y_i (since rank = 4). If y_i · d > 0
-/// and y_i · d < 0 both occur for every such kernel direction, then y_i positively
-/// spans R^4. The check is sufficient because any failure of positive spanning
-/// is witnessed by some kernel direction of a triple.
+/// # Sufficiency
 ///
-/// Complexity: O(F⁴) — F³ triples × F inner products each.
+/// Any direction d in R^4 can be written as a linear combination of
+/// cross-product directions from triples of y_i (since rank = 4). If
+/// y_i · d > 0 and y_i · d < 0 both occur for every such kernel direction,
+/// then y_i positively spans R^4. The check is sufficient because any failure
+/// of positive spanning is witnessed by some kernel direction of a triple.
+///
+/// Complexity: O(F^4) — F^3 triples times F inner products each.
+///
+/// Mathematical correspondence: [lem:positive-span]
 pub(super) fn check_bounded_rational(dual_vertices: &[[BigRational; 4]]) -> bool {
     let f = dual_vertices.len();
 
@@ -210,7 +215,7 @@ pub(super) fn check_bounded_rational(dual_vertices: &[[BigRational; 4]]) -> bool
 /// Compute the affine rank of a set of 4D rational points.
 ///
 /// Affine rank = dimension of the affine span = rank of centered differences.
-fn affine_rank_rational(points: &[[BigRational; 4]]) -> usize {
+pub(super) fn affine_rank_rational(points: &[[BigRational; 4]]) -> usize {
     if points.len() <= 1 {
         return 0;
     }
@@ -241,18 +246,20 @@ fn combinations4(n: usize) -> Vec<[usize; 4]> {
     result
 }
 
-// ── Construction pipeline (called by Polytope4D constructors) ────────────
+// ── Construction pipeline ────────────────────────────────────────────────
 
 /// Run the rational construction pipeline: validate, enumerate vertices,
 /// check irredundancy.
 ///
-/// Takes dual vertices y_i ∈ K° and returns (primal_vertices, vertex_descriptors).
+/// Takes dual vertices y_i in K° and returns (primal_vertices, vertex_descriptors).
 /// Each vertex descriptor is the set of facet indices incident to that vertex.
 ///
-/// The halfspace representation is y_i · x ≤ 1 for each dual vertex y_i.
+/// The halfspace representation is y_i · x <= 1 for each dual vertex y_i.
 ///
 /// Non-simple polytopes (vertices on >4 facets) are supported: the vertex
 /// descriptor records ALL incident facets, not just the defining 4-subset.
+///
+/// Mathematical correspondence: [lem:vertex-enumeration]
 #[allow(clippy::type_complexity)]
 pub(super) fn construct_rational_pipeline(
     dual_vertices: &[[BigRational; 4]],
@@ -274,11 +281,11 @@ pub(super) fn construct_rational_pipeline(
         return Err(ConstructionError::Unbounded);
     }
 
-    // Enumerate vertices exactly (solves y_i · x = 1)
+    // Enumerate vertices exactly (solves y_i · x = 1 for all C(F,4) subsets)
     let (vertex_descriptors, vertices) = enumerate_vertices_exact(dual_vertices)?;
 
-    // Check irredundancy: every facet has incident vertices spanning a
-    // 3D affine subspace (the facet hyperplane).
+    // Irredundancy: every facet must have incident vertices spanning a 3D
+    // affine subspace (the facet hyperplane).
     for i in 0..f {
         let incident: Vec<[BigRational; 4]> = vertex_descriptors
             .iter()
@@ -298,16 +305,18 @@ pub(super) fn construct_rational_pipeline(
 /// Enumerate all vertices by testing all C(F, 4) subsets exactly.
 ///
 /// For each 4-element subset S of dual vertices:
-/// 1. Build the 4×4 system Y_S · x = 1 (constant RHS).
+/// 1. Build the 4x4 system Y_S · x = 1 (constant RHS).
 /// 2. Compute det(Y_S) exactly. If zero, skip (singular).
 /// 3. Solve Y_S · x = 1 exactly via Cramer's rule.
-/// 4. Check all gaps g_i = 1 - y_i · v ≥ 0 for i ∉ S (exact).
-/// 5. If all non-negative → v is a vertex; its descriptor is the set of
-///    ALL facets with gap = 0 (including the defining subset S).
+/// 4. Check all gaps g_i = 1 - y_i · v >= 0 for i not in S (exact).
+/// 5. If all non-negative, v is a vertex; its descriptor is the set of ALL
+///    facets with gap = 0 (including the defining subset S).
 ///
-/// Non-simple vertices (on >4 facets) are handled by merging: the first
-/// 4-subset that discovers a vertex records ALL incident facets. Later
-/// subsets that yield the same vertex are skipped (already discovered).
+/// Non-simple vertices (on >4 facets) are handled by deduplication: the first
+/// 4-subset discovering a vertex records ALL incident facets. Later subsets
+/// yielding the same vertex are skipped.
+///
+/// Mathematical correspondence: [lem:vertex-enumeration]
 #[allow(clippy::type_complexity)]
 fn enumerate_vertices_exact(
     dual_vertices: &[[BigRational; 4]],
@@ -329,16 +338,16 @@ fn enumerate_vertices_exact(
 
         let d = det4(&rows);
         if d.is_zero() {
-            continue; // Singular — skip
+            continue; // Singular subset
         }
 
         // Solve exactly: Y_S · v = 1
-        let v = solve4(&rows, &rhs).unwrap(); // safe: det ≠ 0
+        let v = solve4(&rows, &rhs).unwrap(); // safe: det != 0
 
-        // Check all gaps. gap > 0 means the facet is non-incident.
-        // gap = 0 means the vertex lies on this facet too (non-simple).
-        // gap < 0 means the point is outside K (not a vertex).
-        let mut all_nonnegative = true;
+        // Check all gaps: gap > 0 means non-incident facet,
+        // gap = 0 means incident (non-simple vertex),
+        // gap < 0 means point is outside K (not a vertex).
+        let mut all_nonneg = true;
         let mut incident_facets = BTreeSet::from(subset);
         for (i, dv) in dual_vertices.iter().enumerate() {
             if subset.contains(&i) {
@@ -346,7 +355,7 @@ fn enumerate_vertices_exact(
             }
             let gap = &one - dot4(dv, &v);
             if gap.is_negative() {
-                all_nonnegative = false;
+                all_nonneg = false;
                 break;
             }
             if gap.is_zero() {
@@ -354,16 +363,14 @@ fn enumerate_vertices_exact(
             }
         }
 
-        if !all_nonnegative {
+        if !all_nonneg {
             continue; // Point is outside K
         }
 
-        // Check if this vertex was already discovered by an earlier subset
-        // (happens for non-simple polytopes where multiple 4-subsets of the
-        // incident facets yield the same vertex).
-        let already_found = vertices.iter().any(|existing: &[BigRational; 4]| {
-            (0..4).all(|i| existing[i] == v[i])
-        });
+        // Deduplicate: skip if this vertex was already found by an earlier subset
+        let already_found = vertices
+            .iter()
+            .any(|existing: &[BigRational; 4]| (0..4).all(|i| existing[i] == v[i]));
         if already_found {
             continue;
         }
@@ -378,7 +385,3 @@ fn enumerate_vertices_exact(
 
     Ok((vertex_descriptors, vertices))
 }
-
-#[cfg(test)]
-#[path = "vertex_enumeration_test.rs"]
-mod vertex_enumeration_test;

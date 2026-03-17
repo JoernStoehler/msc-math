@@ -1,89 +1,82 @@
-/// Exact KKT solver over BigRational (rational arithmetic).
-///
-/// Solves the same constrained optimization as [`crate::kkt`] — max Q(β) subject to
-/// N^T β = 0, η^T β = 1 — but using exact arithmetic over Q instead of f64.
-///
-/// # Purpose
-///
-/// The f64 solver in [`crate::kkt`] uses eigendecomposition with residual correction
-/// and error bounds. This exact solver serves as the ground truth:
-///
-/// - **Validation**: confirm that the f64 solver's error bound is valid
-///   (|Q̃ - Q_exact| ≤ E) on specific (S,σ) nodes.
-/// - **Exact capacity**: when needed, compute the exact rational capacity value
-///   without any floating-point error.
-///
-/// # Rank-deficient systems
-///
-/// When the KKT system is rank-deficient (common for polytopes with axis-aligned
-/// normals in symplectic subplanes), Q(β) is constant along the null space
-/// (`[lem:well-defined]`). The solver detects rank deficiency via pivot analysis,
-/// extracts null-space basis vectors, and searches for β > 0 in the null space.
-/// This mirrors the f64 solver's eigendecomposition-based null-space handling.
-///
-/// # Performance
-///
-/// Gaussian elimination over BigRational is substantially slower than f64 eigendecomposition
-/// for typical (S,σ) sizes (m ≈ 2–16). This solver is intended for single (S,σ)
-/// lookups (e.g. the winning node), not for sweeping all nodes.
-///
-/// # Mathematical correspondence
-///
-/// Uses the same symmetric KKT matrix as `[lem:kkt]` (thesis):
-/// ```text
-/// [ H   |  N   |  η ] [ β ]   [ 0 ]
-/// [ N^T |  0   |  0 ] [ μ ] = [ 0 ]
-/// [ η^T |  0   |  0 ] [ ξ ]   [ 1 ]
-/// ```
-/// Entries are exact rationals from `Polytope4D::dual_vertices()`.
-///
-/// The η block is all ones because dual vertices y_i = n_i/h_i absorb the heights.
-/// This is mathematically equivalent to the f64 system (which uses separate n_i and h_i
-/// with η_i = h_i): the change of variable β_rational_i = β_f64_i · h_i preserves Q(β).
+//! Exact KKT solver over BigRational (rational arithmetic).
+//!
+//! Solves the same constrained optimization as the f64 solvers in this module —
+//! max Q(beta) subject to closure + normalization + beta > 0 — but using exact
+//! arithmetic over Q. Input polytopes provide dual vertices y_i = n_i / h_i
+//! in exact rational form; the KKT system is assembled and solved via Gaussian
+//! elimination with null-space handling.
+//!
+//! **Role in the crate:** The exact solver serves as ground truth for validating
+//! the f64 solver's error bounds and for computing exact capacity values when
+//! floating-point ambiguity is unacceptable. It is NOT used in the main capacity
+//! enumeration pipeline (too slow for sweeping all permutations).
+//!
+//! **Rank-deficient systems:** When the KKT matrix is rank-deficient (common for
+//! polytopes with axis-aligned normals in symplectic subplanes), Q(beta) is
+//! constant along the null space ([lem:well-defined]). The solver detects rank
+//! deficiency via pivot analysis, extracts null-space basis vectors, and searches
+//! for beta > 0 via Fourier-Motzkin elimination.
+//!
+//! Mathematical correspondence: [lem:kkt], [lem:well-defined]
+
+use crate::geom::rational_arithmetic::{omega0_rational, rational_to_f64};
 use num_bigint::BigInt;
 use num_rational::BigRational;
 use num_traits::{One, Signed, ToPrimitive, Zero};
 
 /// Result of an exact KKT solve over BigRational.
+///
+/// Contains the exact rational beta vector, exact Q value, and a convenient
+/// f64 approximation of Q for comparison with the numerical solver.
+///
+/// Mathematical correspondence: [lem:kkt]
 #[derive(Clone, Debug)]
 pub struct ExactKktResult {
-    /// Exact β vector (all components rational).
+    /// Exact beta vector (all components rational). When the solver returns
+    /// `Some`, all beta_k are strictly positive.
     pub beta: Vec<BigRational>,
-    /// Exact Q(β) = Σ_{i>j} β_i β_j ω₀(y_{σ(j)}, y_{σ(i)}) over Q.
+    /// Exact Q(beta) = sum_{i>j} beta_i beta_j omega_0(y_{sigma(j)}, y_{sigma(i)}) over Q.
     pub q_exact: BigRational,
     /// Q_exact converted to f64 (for convenient comparison with f64 solver).
     pub q_exact_f64: f64,
 }
 
-/// Solve the KKT system exactly for a single (S,σ) combinatorics.
+/// Solve the KKT system exactly for a single (S, sigma) combinatorics.
 ///
-/// Given dual vertices y_i = n_i/h_i (from `Polytope4D::dual_vertices()`) and a
-/// specific permutation `perm` (the σ in the thesis), builds the KKT matrix over Q
-/// and solves via Gaussian elimination with null-space handling for rank-deficient
-/// systems.
+/// Given dual vertices y_i = n_i / h_i (from `Polytope4D::dual_vertices()`) and a
+/// permutation `perm` (the sigma in the thesis), builds the (m+5) x (m+5) KKT
+/// matrix over Q and solves via Gaussian elimination with null-space handling.
 ///
-/// The dual vertex representation {y_i · x ≤ 1} has implicit heights h_i = 1,
-/// so the η block of the KKT matrix is all ones.
+/// The dual vertex representation {y_i . x <= 1} has implicit height h_i = 1,
+/// so the eta block of the KKT matrix is all ones. This is mathematically
+/// equivalent to the f64 system (which uses separate n_i and h_i with eta_i = h_i):
+/// the change of variable beta_rational_i = beta_f64_i * h_i preserves Q(beta).
 ///
 /// Returns `None` (certified) if:
-/// - the system is inconsistent, or
-/// - no β > 0 solution exists (certified via Fourier-Motzkin elimination).
+/// - the KKT system is inconsistent, or
+/// - no beta > 0 solution exists (certified via Fourier-Motzkin elimination).
 ///
 /// # Arguments
 ///
-/// - `dual_vertices`: exact rational dual vertices y_i = n_i/h_i ∈ Q^4.
-/// - `perm`: facet index sequence defining the (S,σ) node.
+/// - `dual_vertices`: exact rational dual vertices y_i = n_i / h_i in Q^4.
+/// - `perm`: facet index sequence defining the (S, sigma) node.
+///
+/// Mathematical correspondence: [lem:kkt]
 pub fn solve_kkt_exact(
     dual_vertices: &[[BigRational; 4]],
     perm: &[usize],
 ) -> Option<ExactKktResult> {
     let m = perm.len();
-    let (mat, rhs) = build_kkt_rational(dual_vertices, perm);
+    let (mat, rhs) = build_kkt_matrix(dual_vertices, perm);
 
     match gauss_solve_with_null_space(&mat, &rhs)? {
         GaussResult::FullRank(x) => {
             let beta: Vec<BigRational> = x[..m].to_vec();
-            let q_exact = q_from_beta_rational(dual_vertices, perm, &beta);
+            // Check beta > 0; if not, the solution is infeasible.
+            if !beta.iter().all(|b| b.is_positive()) {
+                return None;
+            }
+            let q_exact = compute_q_rational(dual_vertices, perm, &beta);
             let q_exact_f64 = rational_to_f64(&q_exact);
             Some(ExactKktResult {
                 beta,
@@ -96,16 +89,14 @@ pub fn solve_kkt_exact(
             null_space,
         } => {
             let beta0: Vec<BigRational> = particular[..m].to_vec();
-            let null_beta: Vec<Vec<BigRational>> = null_space
-                .iter()
-                .map(|v| v[..m].to_vec())
-                .collect();
+            let null_beta: Vec<Vec<BigRational>> =
+                null_space.iter().map(|v| v[..m].to_vec()).collect();
 
-            // Search null space for β > 0 (exact via Fourier-Motzkin).
-            let beta = find_positive_beta_rational(&beta0, &null_beta)?;
+            // Search null space for beta > 0 (exact via Fourier-Motzkin).
+            let beta = find_positive_beta(&beta0, &null_beta)?;
 
             // Q is constant along the null space ([lem:well-defined]).
-            let q_exact = q_from_beta_rational(dual_vertices, perm, &beta);
+            let q_exact = compute_q_rational(dual_vertices, perm, &beta);
             let q_exact_f64 = rational_to_f64(&q_exact);
             Some(ExactKktResult {
                 beta,
@@ -118,12 +109,18 @@ pub fn solve_kkt_exact(
 
 // ── KKT matrix construction ──────────────────────────────────────────────
 
-/// Build the KKT matrix and RHS over Q (exact rational arithmetic).
+/// Build the (m+5) x (m+5) KKT matrix and RHS over Q.
 ///
-/// Same block structure as [`crate::kkt::augmented::build_kkt_system`], but uses dual vertices
-/// y_i = n_i/h_i instead of separate normals and heights. The η block is all ones
-/// (heights are absorbed into the dual vertices).
-fn build_kkt_rational(
+/// Block structure:
+/// ```text
+/// [ H   |  N   |  eta ] [ beta ]   [ 0 ]
+/// [ N^T |  0   |  0   ] [  mu  ] = [ 0 ]
+/// [eta^T|  0   |  0   ] [  xi  ]   [ 1 ]
+/// ```
+///
+/// H_{ij} = omega_0(y_{perm[i]}, y_{perm[j]}), N_{i,d} = y_{perm[i]}[d],
+/// eta_i = 1 (dual vertex representation absorbs heights).
+fn build_kkt_matrix(
     dual_vertices: &[[BigRational; 4]],
     perm: &[usize],
 ) -> (Vec<Vec<BigRational>>, Vec<BigRational>) {
@@ -134,7 +131,7 @@ fn build_kkt_rational(
     let mut mat = vec![vec![zero.clone(); size]; size];
     let mut rhs = vec![zero.clone(); size];
 
-    // H block: H_{ij} = ω₀(y_i, y_j) for i ≠ j (symmetric)
+    // H block: H_{ij} = omega_0(y_i, y_j) for i != j, H_{ii} = 0
     for i in 0..m {
         for j in (i + 1)..m {
             let val = omega0_rational(&dual_vertices[perm[i]], &dual_vertices[perm[j]]);
@@ -143,7 +140,7 @@ fn build_kkt_rational(
         }
     }
 
-    // N block: N_{i,d} = y_{perm[i]}[d]
+    // N block: N_{i,d} = y_{perm[i]}[d], placed symmetrically
     for i in 0..m {
         for d in 0..4 {
             let val = dual_vertices[perm[i]][d].clone();
@@ -152,7 +149,7 @@ fn build_kkt_rational(
         }
     }
 
-    // η block: all ones (dual vertex representation has h_i = 1)
+    // eta block: all ones (dual vertex representation has h_i = 1)
     let one = BigRational::one();
     #[allow(clippy::needless_range_loop)]
     for i in 0..m {
@@ -160,17 +157,10 @@ fn build_kkt_rational(
         mat[m + 4][i] = one.clone();
     }
 
-    // RHS: [0, ..., 0, 1]
+    // RHS: [0, ..., 0, 1] — normalization constraint
     rhs[m + 4] = BigRational::one();
 
     (mat, rhs)
-}
-
-/// Standard symplectic form ω₀(u, v) = u₀v₂ - u₂v₀ + u₁v₃ - u₃v₁ over Q.
-///
-/// Same formula as [`crate::geom::symplectic::omega0`] but over BigRational.
-fn omega0_rational(u: &[BigRational; 4], v: &[BigRational; 4]) -> BigRational {
-    &u[0] * &v[2] - &u[2] * &v[0] + &u[1] * &v[3] - &u[3] * &v[1]
 }
 
 // ── Gaussian elimination with null-space extraction ──────────────────────
@@ -180,7 +170,7 @@ fn omega0_rational(u: &[BigRational; 4], v: &[BigRational; 4]) -> BigRational {
 enum GaussResult {
     /// System has full rank — unique solution.
     FullRank(Vec<BigRational>),
-    /// System is rank-deficient — particular solution with free variables = 0,
+    /// System is rank-deficient — particular solution (free variables = 0)
     /// plus basis vectors for the null space.
     RankDeficient {
         particular: Vec<BigRational>,
@@ -188,43 +178,37 @@ enum GaussResult {
     },
 }
 
-/// Relative threshold for detecting near-zero pivots during elimination.
+/// Relative threshold for treating a pivot as zero.
 ///
-/// A pivot is treated as zero (column is free / null-space direction) if:
-///   |pivot| < max_entry_abs * PIVOT_RELATIVE_THRESHOLD
-/// where max_entry_abs is the largest absolute entry in the original matrix.
+/// A pivot is treated as zero (column becomes free / null-space direction) if
+/// |pivot| < max_entry_abs * PIVOT_RELATIVE_THRESHOLD, where max_entry_abs
+/// is the largest absolute entry in the original matrix (measured BEFORE
+/// elimination).
 ///
-/// This catches the case where f64→rational conversion makes a mathematically
-/// zero eigenvalue into a tiny nonzero rational (e.g. ~10^-17).
+/// This handles the case where f64->rational conversion turns a mathematically
+/// zero eigenvalue into a tiny nonzero rational (~10^-17). For truly exact
+/// BigRational inputs (integer/fraction coordinates), zero pivots are exactly
+/// zero and no threshold is needed.
 ///
-/// For truly exact BigRational inputs (integer/fraction coordinates), zero
-/// pivots are exactly zero and no threshold is needed. The threshold only
-/// matters for f64-derived inputs.
-///
-/// **Why 1e-12:** f64 has ~15.9 decimal digits. A relative magnitude of 1e-12
-/// means ~12 digits lost to cancellation, leaving ~4 digits of signal.
-/// Well-conditioned systems (simplex, hypercube) have relative pivots > 1e-6.
-/// The hko_pentagon rank-deficient node has relative pivot ~1e-17.
+/// 1e-12 means ~12 digits lost to cancellation, leaving ~4 digits of signal.
+/// Well-conditioned systems have relative pivots > 1e-6. The HKO pentagon's
+/// rank-deficient node has relative pivot ~1e-17.
 const PIVOT_RELATIVE_THRESHOLD: f64 = 1e-12;
 
 /// Gaussian elimination with partial pivoting and null-space extraction.
 ///
-/// Returns `None` if the system is inconsistent (no solution exists).
-/// Returns `GaussResult::FullRank` for unique solutions.
-/// Returns `GaussResult::RankDeficient` for rank-deficient systems with
-/// a particular solution (free variables = 0) and null-space basis vectors.
-///
-/// The threshold for "effectively zero" pivots is calibrated from the maximum
-/// entry magnitude of the original matrix, computed BEFORE elimination begins.
-/// This avoids using near-zero pivots for elimination (which would amplify
-/// noise and corrupt subsequent rows).
+/// Returns:
+/// - `None` if the system is inconsistent (no solution exists)
+/// - `GaussResult::FullRank` for unique solutions
+/// - `GaussResult::RankDeficient` for rank-deficient systems with a particular
+///   solution and null-space basis vectors
 fn gauss_solve_with_null_space(
     mat: &[Vec<BigRational>],
     rhs: &[BigRational],
 ) -> Option<GaussResult> {
     let n = rhs.len();
 
-    // Compute max entry magnitude from the original matrix for threshold.
+    // Compute max entry magnitude from the original matrix for threshold calibration.
     let max_entry_abs: f64 = mat
         .iter()
         .flat_map(|row| row.iter())
@@ -244,13 +228,13 @@ fn gauss_solve_with_null_space(
         .collect();
 
     // Forward elimination with partial pivoting.
-    // Columns with below-threshold pivots are SKIPPED (not used for elimination).
-    let mut pivot_positions: Vec<(usize, usize)> = Vec::new(); // (row, col)
+    // Columns with below-threshold pivots are skipped (treated as free).
+    let mut pivot_positions: Vec<(usize, usize)> = Vec::new();
     let mut free_cols: Vec<usize> = Vec::new();
     let mut current_row = 0;
 
     for col in 0..n {
-        // Find largest-magnitude nonzero entry in this column, rows current_row..n.
+        // Find largest-magnitude nonzero entry in this column below current_row.
         let best_row = (current_row..n)
             .filter(|&r| !aug[r][col].is_zero())
             .max_by(|&a, &b| {
@@ -267,8 +251,8 @@ fn gauss_solve_with_null_space(
                 free_cols.push(col);
             }
             Some(best) if rational_abs_f64(&aug[best][col]) <= threshold => {
-                // Best pivot is below threshold — treat column as free.
-                // Do NOT use this pivot for elimination (avoids noise amplification).
+                // Best pivot is below threshold — treat as free to avoid
+                // noise amplification from near-zero pivots.
                 free_cols.push(col);
             }
             Some(best) => {
@@ -295,10 +279,7 @@ fn gauss_solve_with_null_space(
     let rank = pivot_positions.len();
 
     // Consistency check: rows below rank should have near-zero RHS.
-    // With exact inputs, inconsistency means nonzero RHS on a zero row.
-    // With f64-derived inputs, small residuals from skipped pivots are tolerated.
-    // Floor of 1e-10: when threshold is tiny (small matrix entries), we still need
-    // a reasonable absolute floor to avoid false inconsistency from pivot-skip artifacts.
+    // Floor of 1e-10 avoids false inconsistency from pivot-skip artifacts.
     for aug_row in aug.iter().take(n).skip(rank) {
         let rhs_abs = rational_abs_f64(&aug_row[n]);
         if rhs_abs > threshold.max(1e-10) {
@@ -315,20 +296,18 @@ fn gauss_solve_with_null_space(
     // Rank-deficient: extract particular solution and null space.
     let x_particular = back_substitute(&aug, &pivot_positions, n)?;
 
-    // Null space: for each free column j, set x_j = 1, all other free vars = 0,
-    // and back-substitute the pivot variables.
+    // Null space: for each free column, set that variable to 1 (all other free
+    // variables to 0) and back-substitute the pivot variables from Ax = 0.
     let null_space: Vec<Vec<BigRational>> = free_cols
         .iter()
         .map(|&free_col| {
             let mut x = vec![BigRational::zero(); n];
             x[free_col] = BigRational::one();
-            // Back-substitute pivot variables from bottom to top.
             for &(pivot_row, pivot_col) in pivot_positions.iter().rev() {
                 let mut sum = BigRational::zero();
                 for j in (pivot_col + 1)..n {
                     sum += &aug[pivot_row][j] * &x[j];
                 }
-                // RHS is 0 for null-space vectors (Ax = 0).
                 x[pivot_col] = -sum / &aug[pivot_row][pivot_col];
             }
             x
@@ -343,8 +322,8 @@ fn gauss_solve_with_null_space(
 
 /// Back substitution from row echelon form.
 ///
-/// Uses the pivot positions to extract the solution. Free variables (not in
-/// pivot_positions) remain at zero.
+/// Uses the recorded pivot positions to extract the solution. Free variables
+/// (not in pivot_positions) remain at zero.
 fn back_substitute(
     aug: &[Vec<BigRational>],
     pivot_positions: &[(usize, usize)],
@@ -352,7 +331,7 @@ fn back_substitute(
 ) -> Option<Vec<BigRational>> {
     let mut x = vec![BigRational::zero(); n];
     for &(pivot_row, pivot_col) in pivot_positions.iter().rev() {
-        let mut sum = aug[pivot_row][n].clone(); // RHS
+        let mut sum = aug[pivot_row][n].clone(); // RHS entry
         for j in (pivot_col + 1)..n {
             sum -= &aug[pivot_row][j] * &x[j];
         }
@@ -364,50 +343,48 @@ fn back_substitute(
     Some(x)
 }
 
-// ── Null-space search for β > 0 (Fourier-Motzkin) ────────────────────────
+// ── Null-space search for beta > 0 (Fourier-Motzkin) ─────────────────────
 
-/// Exact feasibility search for β₀ + V·α > 0 over Q.
+/// Exact feasibility search: find alpha such that beta0 + V * alpha > 0.
 ///
-/// Given particular solution β₀ and null-space basis vectors v₁,...,vₖ,
-/// decides whether there exist α₁,...,αₖ ∈ Q such that
-///   β₀[j] + α₁·v₁[j] + ... + αₖ·vₖ[j] > 0   for all j.
+/// Given particular solution beta0 and null-space basis vectors v_1, ..., v_k,
+/// decides whether there exist alpha_1, ..., alpha_k in Q such that
+///   beta0[j] + alpha_1 * v_1[j] + ... + alpha_k * v_k[j] > 0  for all j.
 ///
 /// Uses Fourier-Motzkin variable elimination: exact and certifying.
-/// - `Some(β)`: witness with all β[j] > 0.
+/// - `Some(beta)`: witness with all beta[j] > 0.
 /// - `None`: no solution exists (certified).
 ///
-/// Complexity: O(m^{2^k}) constraints worst-case, where m = len(β₀),
-/// k = len(null_vecs). For KKT systems (m ≤ 16, k ≤ 3): ≤ ~1000 constraints.
-fn find_positive_beta_rational(
+/// Complexity: O(m^{2^k}) constraints worst-case, where m = len(beta0),
+/// k = len(null_vecs). For KKT systems (m <= 16, k <= 3): at most ~1000.
+fn find_positive_beta(
     beta0: &[BigRational],
     null_vecs: &[Vec<BigRational>],
 ) -> Option<Vec<BigRational>> {
     let m = beta0.len();
     let k = null_vecs.len();
 
-    // Each constraint: coeffs · α > rhs  (strict inequality).
-    // coeffs.len() shrinks by 1 at each elimination step.
+    // Each constraint: coeffs . alpha > rhs (strict inequality).
     type Constraint = (Vec<BigRational>, BigRational);
 
-    // Initial system: v[i][j] · αᵢ > -β₀[j] for each component j.
+    // Initial system: for each component j, require
+    //   sum_i null_vecs[i][j] * alpha_i > -beta0[j]
     let mut constraints: Vec<Constraint> = (0..m)
         .map(|j| {
-            let coeffs: Vec<BigRational> =
-                (0..k).map(|i| null_vecs[i][j].clone()).collect();
+            let coeffs: Vec<BigRational> = (0..k).map(|i| null_vecs[i][j].clone()).collect();
             (coeffs, -&beta0[j])
         })
         .collect();
 
-    // A bound records: α[var] ≷ (rhs - remaining · α_remaining) / divisor.
-    // divisor > 0 → lower bound; divisor < 0 → upper bound.
+    // A bound records alpha[var] > or < some expression of remaining variables.
+    // divisor > 0 => lower bound; divisor < 0 => upper bound.
     struct Bound {
         remaining_coeffs: Vec<BigRational>,
         rhs: BigRational,
         divisor: BigRational,
     }
 
-    // Forward pass: eliminate variables k-1, k-2, ..., 0 (always the last index
-    // in the current coefficient vector, so remove(idx) = pop).
+    // Forward pass: eliminate variables k-1, k-2, ..., 0
     let mut stages: Vec<Vec<Bound>> = Vec::with_capacity(k);
 
     for elim_idx in (0..k).rev() {
@@ -423,7 +400,7 @@ fn find_positive_beta_rational(
             } else if coeff.is_negative() {
                 negative.push(c);
             } else {
-                // Pass through (remove the zero-coefficient column).
+                // Zero coefficient: pass through with the column removed.
                 let mut new_coeffs = c.0.clone();
                 new_coeffs.remove(elim_idx);
                 new_constraints.push((new_coeffs, c.1.clone()));
@@ -442,10 +419,7 @@ fn find_positive_beta_rational(
         }
         stages.push(bounds);
 
-        // Combine each (positive, negative) pair to eliminate α[elim_idx].
-        // Lower: a_l · α + ... > r_l  →  α > (r_l - ...) / a_l
-        // Upper: a_u · α + ... > r_u  →  α < (r_u - ...) / a_u  (a_u < 0)
-        // Combined: Σ (a_l·c_u[i] - a_u·c_l[i]) α[i] > a_l·r_u - a_u·r_l
+        // Combine each (positive, negative) pair to eliminate alpha[elim_idx].
         for (c_l, r_l) in &positive {
             for (c_u, r_u) in &negative {
                 let a_l = &c_l[elim_idx];
@@ -466,7 +440,7 @@ fn find_positive_beta_rational(
     }
 
     // After all eliminations: constraints have empty coefficients.
-    // Feasibility: 0 > rhs, i.e., rhs must be negative.
+    // Feasibility requires 0 > rhs, i.e. rhs < 0.
     for (coeffs, rhs) in &constraints {
         debug_assert!(coeffs.is_empty());
         if !rhs.is_negative() {
@@ -474,9 +448,7 @@ fn find_positive_beta_rational(
         }
     }
 
-    // Back-substitution: assign α values from last-eliminated to first.
-    // stages[s] eliminated variable (k-1-s), with remaining_coeffs for vars [0..k-1-s).
-    // Process in reverse: assign var 0 (from stages[k-1]), then var 1, ..., var k-1.
+    // Back-substitution: assign alpha values from last-eliminated to first.
     let two = BigRational::from(BigInt::from(2));
     let mut alpha = vec![BigRational::zero(); k];
 
@@ -486,7 +458,6 @@ fn find_positive_beta_rational(
         let mut hi: Option<BigRational> = None;
 
         for bound in &stages[stage_idx] {
-            // Evaluate: (rhs - remaining · α_assigned) / divisor
             let mut numerator = bound.rhs.clone();
             for (i, c) in bound.remaining_coeffs.iter().enumerate() {
                 numerator -= c * &alpha[i];
@@ -508,7 +479,7 @@ fn find_positive_beta_rational(
 
         alpha[assign_var] = match (&lo, &hi) {
             (Some(l), Some(h)) => {
-                debug_assert!(l < h, "FM back-sub: lo >= hi (should be infeasible)");
+                debug_assert!(l < h, "FM back-sub: lo >= hi (should have been infeasible)");
                 (l + h) / &two
             }
             (Some(l), None) => l + BigRational::one(),
@@ -517,7 +488,7 @@ fn find_positive_beta_rational(
         };
     }
 
-    // Compute β = β₀ + V · α.
+    // Compute beta = beta0 + V * alpha.
     let beta: Vec<BigRational> = (0..m)
         .map(|j| {
             let mut val = beta0[j].clone();
@@ -530,19 +501,18 @@ fn find_positive_beta_rational(
 
     debug_assert!(
         beta.iter().all(|b| b.is_positive()),
-        "FM back-substitution produced non-positive β"
+        "FM back-substitution produced non-positive beta"
     );
     Some(beta)
 }
 
 // ── Q computation ────────────────────────────────────────────────────────
 
-/// Compute exact Q(β) = Σ_{i>j} β_i β_j ω₀(y_{σ(j)}, y_{σ(i)}) over BigRational.
+/// Compute exact Q(beta) = sum_{i>j} beta_i beta_j omega_0(y_{sigma(j)}, y_{sigma(i)}).
 ///
-/// Same formula as [`crate::kkt::augmented::q_from_beta`] but in exact arithmetic over Q,
+/// Same formula as the f64 solver's Q computation but in exact arithmetic over Q,
 /// using dual vertices y_i instead of unit normals.
-/// Q > 0 for permutations in positive Reeb direction.
-fn q_from_beta_rational(
+fn compute_q_rational(
     dual_vertices: &[[BigRational; 4]],
     perm: &[usize],
     beta: &[BigRational],
@@ -559,20 +529,10 @@ fn q_from_beta_rational(
 
 // ── Helpers ──────────────────────────────────────────────────────────────
 
-/// Approximate absolute value of a BigRational as f64 (for pivot comparison only).
+
+/// Approximate absolute value of a BigRational as f64 (for pivot comparison).
 fn rational_abs_f64(r: &BigRational) -> f64 {
     let n = r.numer().to_f64().unwrap_or(0.0);
     let d = r.denom().to_f64().unwrap_or(1.0);
     (n / d).abs()
 }
-
-/// Convert a BigRational to f64 (best-effort, may lose precision for large rationals).
-fn rational_to_f64(r: &BigRational) -> f64 {
-    let n = r.numer().to_f64().unwrap_or(f64::NAN);
-    let d = r.denom().to_f64().unwrap_or(f64::NAN);
-    n / d
-}
-
-#[cfg(test)]
-#[path = "kkt_rational_test.rs"]
-mod kkt_rational_test;

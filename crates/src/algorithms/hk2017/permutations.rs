@@ -1,14 +1,25 @@
-/// Generate all cyclic permutations of a set of elements.
+//! Cyclic permutation generation for the HK2017 enumeration.
+//!
+//! A cyclic permutation of m elements is an equivalence class of permutations under
+//! cyclic rotation: [a, b, c] ~ [b, c, a] ~ [c, a, b]. There are (m-1)! distinct
+//! cyclic permutations. We fix the first element and permute the rest via Heap's
+//! algorithm, yielding exactly one representative per equivalence class.
+//!
+//! Two interfaces:
+//! - `cyclic_permutations`: returns all permutations as `Vec<Vec<usize>>` (allocating).
+//! - `for_each_cyclic_permutation`: callback-based, single-buffer, zero heap allocation
+//!   per permutation (preferred for the capacity algorithm's inner loop).
+//!
+//! Mathematical correspondence: [alg:ehz] step "enumerate cyclic permutations of S"
+
+/// Generate all cyclic permutations of the given elements.
 ///
-/// A cyclic permutation is an equivalence class of permutations under cyclic shifts.
-/// For m elements there are (m-1)! cyclic permutations.
-/// Each returned Vec is a full ordering of the input elements, with `elements[0]` fixed at position 0.
+/// Fixes `elements[0]` at position 0 and permutes the rest, yielding (m-1)!
+/// distinct cyclic equivalence-class representatives.
 ///
-/// We fix the first element and permute the rest, which gives exactly one
-/// representative per equivalence class.
+/// Returns `vec![elements.to_vec()]` for 0- or 1-element input (consistent with 0! = 1).
 ///
-/// Returns a single empty permutation for empty input (consistent with 0! = 1).
-/// Returns `vec![vec![x]]` for single-element input.
+/// [alg:ehz]: cyclic permutation enumeration.
 pub fn cyclic_permutations(elements: &[usize]) -> Vec<Vec<usize>> {
     let mut result = Vec::new();
     for_each_cyclic_permutation(elements, &mut |p| result.push(p.to_vec()));
@@ -17,8 +28,10 @@ pub fn cyclic_permutations(elements: &[usize]) -> Vec<Vec<usize>> {
 
 /// Call `callback` once for each cyclic permutation of `elements`.
 ///
-/// Uses a single buffer (no heap allocation per permutation).
-/// The callback receives a slice that is only valid during the call.
+/// Uses a single internal buffer (no heap allocation per permutation).
+/// The callback receives a slice that is valid only during the call.
+///
+/// [alg:ehz]: cyclic permutation enumeration (zero-alloc variant).
 pub fn for_each_cyclic_permutation(
     elements: &[usize],
     callback: &mut impl FnMut(&[usize]),
@@ -30,11 +43,13 @@ pub fn for_each_cyclic_permutation(
 
     let mut buf = elements.to_vec();
     let k = buf.len() - 1;
-    // Fix buf[0], permute buf[1..] via Heap's algorithm
+    // Fix buf[0], permute buf[1..] via Heap's algorithm.
     heap_perms_buf(&mut buf, 1, k, callback);
 }
 
-/// Heap's algorithm on buf[offset..offset+k], calling callback with the full buf.
+/// Heap's algorithm on `buf[offset..offset+k]`, calling `callback` with the full buffer.
+///
+/// Generates all k! permutations of the sub-slice while leaving `buf[..offset]` fixed.
 fn heap_perms_buf(
     buf: &mut [usize],
     offset: usize,
@@ -55,8 +70,3 @@ fn heap_perms_buf(
         heap_perms_buf(buf, offset, k - 1, callback);
     }
 }
-
-
-#[cfg(test)]
-#[path = "permutations_test.rs"]
-mod permutations_test;

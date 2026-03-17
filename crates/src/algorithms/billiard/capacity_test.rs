@@ -1,19 +1,31 @@
-use crate::geom::known_polytopes;
+//! Tests for billiard capacity: correctness and cross-validation with hk2017.
+//!
+//! Proposition: billiard_capacity agrees with known literature values and with
+//! ehz_capacity on all Lagrangian product test polytopes.
+//! Reference: [thm:billiard-characterization], [alg:billiard]
+//!
+//! Strategy: fixture-based (known polytopes), cross-algorithm (billiard vs hk2017).
 
+use crate::geom::known_polytopes;
 use super::billiard_capacity;
 
 /// Helper: assert billiard capacity matches expected value within tolerance.
-fn assert_capacity(name: &str, polytope: &crate::geom::polytope::Polytope4D, expected: f64, tol: f64) {
+fn assert_capacity(
+    name: &str,
+    polytope: &crate::geom::polytope::Polytope4D,
+    expected: f64,
+    tol: f64,
+) {
     let result = billiard_capacity(polytope)
         .unwrap_or_else(|e| panic!("{}: billiard_capacity returned error: {}", name, e))
         .unwrap_or_else(|| panic!("{}: billiard_capacity returned None", name));
 
-    let diff = (result.capacity - expected).abs();
+    let diff = (result.result.capacity - expected).abs();
     assert!(
         diff < tol,
         "{}: capacity {:.10} != expected {:.10} (diff {:.2e}, tol {:.2e})",
         name,
-        result.capacity,
+        result.result.capacity,
         expected,
         diff,
         tol,
@@ -49,10 +61,12 @@ fn triangle_square_capacity() {
 ///
 /// **Why release mode:** ~50k KKT solves, too slow for debug suite.
 #[test]
-#[ignore] // 50k KKT solves — slow in debug, run with --release --ignored
+#[ignore] // 50k KKT solves -- slow in debug, run with --release --ignored
 fn hko_pentagon_capacity() {
     let kp = known_polytopes::hko_pentagon();
-    let expected = 2.0 * (std::f64::consts::PI / 10.0).cos() * (1.0 + (std::f64::consts::PI / 5.0).cos());
+    let expected = 2.0
+        * (std::f64::consts::PI / 10.0).cos()
+        * (1.0 + (std::f64::consts::PI / 5.0).cos());
     assert_capacity("hko_pentagon", &kp.polytope, expected, 1e-6);
 }
 
@@ -62,51 +76,51 @@ fn hko_pentagon_capacity() {
 
 /// Cross-algorithm check: billiard and hk2017 agree on hypercube capacity.
 #[test]
-#[ignore] // runs hk2017 live — release-only cross-algorithm check
+#[ignore] // runs hk2017 live -- release-only cross-algorithm check
 fn agrees_with_hk2017_hypercube() {
     let kp = known_polytopes::hypercube();
     let billiard = billiard_capacity(&kp.polytope).unwrap().unwrap();
     let hk = crate::algorithms::hk2017::ehz_capacity(&kp.polytope).unwrap();
-    let diff = (billiard.capacity - hk.capacity).abs();
+    let diff = (billiard.result.capacity - hk.result.capacity).abs();
     assert!(
         diff < 1e-8,
         "hypercube: billiard {:.10} != hk2017 {:.10} (diff {:.2e})",
-        billiard.capacity,
-        hk.capacity,
+        billiard.result.capacity,
+        hk.result.capacity,
         diff,
     );
 }
 
 /// Cross-algorithm check: billiard and hk2017 agree on triangle product capacity.
 #[test]
-#[ignore] // runs hk2017 live — release-only cross-algorithm check
+#[ignore] // runs hk2017 live -- release-only cross-algorithm check
 fn agrees_with_hk2017_triangle_product() {
     let kp = known_polytopes::lagrangian_triangle_product();
     let billiard = billiard_capacity(&kp.polytope).unwrap().unwrap();
     let hk = crate::algorithms::hk2017::ehz_capacity(&kp.polytope).unwrap();
-    let diff = (billiard.capacity - hk.capacity).abs();
+    let diff = (billiard.result.capacity - hk.result.capacity).abs();
     assert!(
         diff < 1e-8,
         "triangle_product: billiard {:.10} != hk2017 {:.10} (diff {:.2e})",
-        billiard.capacity,
-        hk.capacity,
+        billiard.result.capacity,
+        hk.result.capacity,
         diff,
     );
 }
 
 /// Cross-algorithm check: billiard and hk2017 agree on triangle-square product capacity.
 #[test]
-#[ignore] // runs hk2017 live — release-only cross-algorithm check
+#[ignore] // runs hk2017 live -- release-only cross-algorithm check
 fn agrees_with_hk2017_triangle_square() {
     let kp = known_polytopes::lagrangian_triangle_square();
     let billiard = billiard_capacity(&kp.polytope).unwrap().unwrap();
     let hk = crate::algorithms::hk2017::ehz_capacity(&kp.polytope).unwrap();
-    let diff = (billiard.capacity - hk.capacity).abs();
+    let diff = (billiard.result.capacity - hk.result.capacity).abs();
     assert!(
         diff < 1e-8,
         "triangle_square: billiard {:.10} != hk2017 {:.10} (diff {:.2e})",
-        billiard.capacity,
-        hk.capacity,
+        billiard.result.capacity,
+        hk.result.capacity,
         diff,
     );
 }
@@ -115,17 +129,17 @@ fn agrees_with_hk2017_triangle_square() {
 ///
 /// **Why release mode:** hk2017 on 10-facet pentagon is exponential (~60s even in release).
 #[test]
-#[ignore] // hk2017 on 10-facet pentagon takes ~60s; capacity verified against known value instead
+#[ignore] // hk2017 on 10-facet pentagon takes ~60s; verified against known value instead
 fn agrees_with_hk2017_hko_pentagon() {
     let kp = known_polytopes::hko_pentagon();
     let billiard = billiard_capacity(&kp.polytope).unwrap().unwrap();
     let hk = crate::algorithms::hk2017::ehz_capacity(&kp.polytope).unwrap();
-    let diff = (billiard.capacity - hk.capacity).abs();
+    let diff = (billiard.result.capacity - hk.result.capacity).abs();
     assert!(
         diff < 1e-8,
         "hko_pentagon: billiard {:.10} != hk2017 {:.10} (diff {:.2e})",
-        billiard.capacity,
-        hk.capacity,
+        billiard.result.capacity,
+        hk.result.capacity,
         diff,
     );
 }
@@ -137,7 +151,6 @@ fn agrees_with_hk2017_hko_pentagon() {
 /// Verify billiard algorithm rejects the simplex (not a Lagrangian product).
 #[test]
 fn rejects_non_lagrangian_product() {
-    // Simplex has mixed normals — not a Lagrangian product.
     let kp = known_polytopes::simplex();
     let result = billiard_capacity(&kp.polytope);
     assert!(result.is_err(), "simplex should not be a Lagrangian product");
@@ -147,7 +160,6 @@ fn rejects_non_lagrangian_product() {
 /// (normals in symplectic planes, not Lagrangian subspaces).
 #[test]
 fn rejects_symplectic_triangle_product() {
-    // Symplectic product has normals in symplectic planes, not Lagrangian subspaces.
     let kp = known_polytopes::symplectic_triangle_product();
     let result = billiard_capacity(&kp.polytope);
     assert!(
@@ -160,29 +172,26 @@ fn rejects_symplectic_triangle_product() {
 // Property tests
 // ============================================================
 
-/// Verify the billiard iteration count stays within a polynomial bound (O(n_q^3 * n_p^3)).
+/// Verify the billiard iteration count stays within a polynomial bound.
 ///
 /// **Why release mode:** ~50k KKT solves on the 10-facet pentagon.
 #[test]
-#[ignore] // 50k KKT solves — slow in debug, run with --release --ignored
+#[ignore] // 50k KKT solves -- slow in debug, run with --release --ignored
 fn billiard_iterations_polynomial() {
-    // The billiard iteration count should be bounded by O(n_q^3 * n_p^3).
-    // For the pentagon (n_q = 5, n_p = 5), a generous bound: 5^3 * 5^3 * 36 * 64 = ~288M.
-    // In practice it's much less. Just verify it's a reasonable number.
     let kp = known_polytopes::hko_pentagon();
     let result = billiard_capacity(&kp.polytope).unwrap().unwrap();
     // For 5+5 facets, expect on the order of 100k iterations.
     // If it exceeds 1M, something is wrong.
     assert!(
-        result.iterations < 1_000_000,
+        result.result.iterations < 1_000_000,
         "pentagon: {} iterations exceeds polynomial bound",
-        result.iterations,
+        result.result.iterations,
     );
 }
 
 /// Check structural properties of a BilliardResult.
 fn assert_result_properties(name: &str, result: &super::BilliardResult) {
-    // bounce_count is 2 or 3
+    // bounce_count is 2 or 3.
     assert!(
         result.bounce_count == 2 || result.bounce_count == 3,
         "{}: bounce_count = {} (expected 2 or 3)",
@@ -190,20 +199,14 @@ fn assert_result_properties(name: &str, result: &super::BilliardResult) {
         result.bounce_count,
     );
 
-    // all beta positive
-    for (i, &b) in result.best_beta.iter().enumerate() {
-        assert!(
-            b > 0.0,
-            "{}: beta[{}] = {:.2e} <= 0",
-            name,
-            i,
-            b,
-        );
+    // All beta positive.
+    for (i, &b) in result.result.best_beta.iter().enumerate() {
+        assert!(b > 0.0, "{}: beta[{}] = {:.2e} <= 0", name, i, b);
     }
 
-    // permutation length matches 2k structure (between 2k and 4k)
+    // Permutation length matches 2k structure (between 2k and 4k).
     let k = result.bounce_count;
-    let len = result.best_permutation.len();
+    let len = result.result.best_permutation.len();
     assert!(
         len >= 2 * k && len <= 4 * k,
         "{}: permutation len {} not in [{}, {}] for k={}",
@@ -215,12 +218,9 @@ fn assert_result_properties(name: &str, result: &super::BilliardResult) {
     );
 }
 
-/// Verify structural properties of BilliardResult on small Lagrangian products:
-/// bounce count is 2 or 3, all beta positive, permutation length in [2k, 4k].
+/// Verify structural properties of BilliardResult on small Lagrangian products.
 #[test]
 fn result_properties() {
-    // Fast polytopes only — exercises all code paths without pentagon's 50k KKT solves.
-    // Pentagon covered by result_properties_pentagon (release-only).
     for (name, polytope) in lagrangian_test_cases_fast() {
         let result = billiard_capacity(&polytope).unwrap().unwrap();
         assert_result_properties(name, &result);
@@ -231,7 +231,7 @@ fn result_properties() {
 ///
 /// **Why release mode:** ~50k KKT solves, too slow for debug suite.
 #[test]
-#[ignore] // 50k KKT solves — slow in debug, run with --release --ignored
+#[ignore] // 50k KKT solves -- slow in debug, run with --release --ignored
 fn result_properties_pentagon() {
     let kp = known_polytopes::hko_pentagon();
     let result = billiard_capacity(&kp.polytope).unwrap().unwrap();
@@ -242,7 +242,13 @@ fn result_properties_pentagon() {
 fn lagrangian_test_cases_fast() -> Vec<(&'static str, crate::geom::polytope::Polytope4D)> {
     vec![
         ("hypercube", known_polytopes::hypercube().polytope),
-        ("triangle_product", known_polytopes::lagrangian_triangle_product().polytope),
-        ("triangle_square", known_polytopes::lagrangian_triangle_square().polytope),
+        (
+            "triangle_product",
+            known_polytopes::lagrangian_triangle_product().polytope,
+        ),
+        (
+            "triangle_square",
+            known_polytopes::lagrangian_triangle_square().polytope,
+        ),
     ]
 }

@@ -1,26 +1,46 @@
-/// JSONL row types for the polytope dataset and acceptance sweep.
+//! JSONL dataset row types for polytope datasets and acceptance sweeps.
+//!
+//! Defines the serialization schema for two dataset types:
+//! - [`PolytopeRow`]: one polytope with computed capacity, volume, and systolic ratio
+//! - [`AcceptanceRow`]: rejection sampling statistics for a given facet count
+//!
+//! Each row serializes to a single JSON line (JSONL format) for streaming I/O.
+//!
+//! Mathematical correspondence: [def:systolic-ratio]
+
 use crate::geom::polytope::Polytope4D;
 use serde::{Deserialize, Serialize};
 
-/// A single polytope row in the main dataset (dataset 1).
+/// A single polytope row in the main dataset.
+///
+/// Contains the polytope definition (normals, heights), computed geometric
+/// quantities (volume, capacity, systolic ratio), and timing information.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PolytopeRow {
+    /// How this polytope was generated (e.g., "random_F8", "hko_pentagon").
     pub source: String,
+    /// Number of facets (halfspaces).
     pub facet_count: usize,
+    /// Outward unit normals, one per facet.
     pub normals: Vec<[f64; 4]>,
+    /// Heights (offsets from origin), one per facet.
     pub heights: Vec<f64>,
+    /// 4D volume computed via qhull.
     pub volume: f64,
+    /// EHZ capacity computed via the HK2017 algorithm.
     pub capacity: f64,
-    /// Systolic ratio: sys = capacity² / (2 · volume).
+    /// Systolic ratio: sys = capacity^2 / (2 * volume).
+    ///
+    /// Mathematical correspondence: [def:systolic-ratio]
     pub sys: f64,
     /// Time to compute volume via qhull (milliseconds).
     pub time_volume_ms: f64,
-    /// Time to compute EHZ capacity via HK2017 algorithm (milliseconds).
+    /// Time to compute EHZ capacity (milliseconds).
     pub time_capacity_ms: f64,
     /// Time to generate/validate the polytope (milliseconds).
     pub time_creation_ms: f64,
-    /// Number of (subset, permutation) pairs where KKT was solved (after adjacency pruning).
-    /// 0 if capacity was skipped (e.g., too many facets).
+    /// Number of (subset, permutation) pairs where KKT was solved.
+    /// Zero if capacity was skipped (e.g., too many facets).
     #[serde(default)]
     pub iterations: u64,
 
@@ -45,6 +65,8 @@ pub struct PolytopeRow {
 
 impl PolytopeRow {
     /// Build a row from a polytope and its computed values.
+    ///
+    /// Computes the systolic ratio sys = capacity^2 / (2 * volume).
     #[allow(clippy::too_many_arguments)]
     pub fn from_polytope(
         polytope: &Polytope4D,
@@ -83,7 +105,10 @@ impl PolytopeRow {
     }
 }
 
-/// A single row in the acceptance sweep dataset (dataset 2).
+/// A single row in the acceptance sweep dataset.
+///
+/// Records rejection sampling statistics for random polytope generation
+/// at a given facet count and height range.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AcceptanceRow {
     /// Number of halfspaces in the sampled polytopes.
@@ -103,7 +128,3 @@ pub struct AcceptanceRow {
     /// Mean validation time for rejected samples (milliseconds).
     pub avg_time_rejected_ms: f64,
 }
-
-#[cfg(test)]
-#[path = "dataset_test.rs"]
-mod dataset_test;

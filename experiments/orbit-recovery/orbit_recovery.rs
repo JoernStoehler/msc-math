@@ -21,8 +21,12 @@ use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
-use symplectic::algorithms::hk2017::recover::{recover_base_point, verify_orbit};
-use symplectic::ehz_capacity;
+// TODO: `recover_base_point` and `verify_orbit` combined into
+//   `algorithms::hk2017::orbit_recovery::recover_and_verify` (wave 4, subagent #10)
+use symplectic::algorithms::hk2017::orbit_recovery::{recover_base_point, verify_orbit};
+// TODO: `ehz_capacity` will be re-exported from top-level (wave 4, subagent #16).
+//   Canonical path: `symplectic::algorithms::hk2017::ehz_capacity` (wave 3, subagent #6)
+use symplectic::algorithms::hk2017::ehz_capacity;
 use symplectic::geom::known_polytopes;
 use symplectic::random::generate_random_polytopes;
 
@@ -110,9 +114,9 @@ fn main() {
             name: kp.name.to_string(),
             facet_count: kp.polytope.facet_count(),
             source: "known".to_string(),
-            capacity: result.capacity,
+            capacity: result.result.capacity,
             active_facets,
-            total_segments: result.best_permutation.len(),
+            total_segments: result.result.best_permutation.len(),
             solution_dim: recovery.solution_dim,
             max_violation: recovery.max_violation,
             closure_error: verification.closure_error,
@@ -191,9 +195,9 @@ fn main() {
                 name: name.clone(),
                 facet_count: poly.facet_count(),
                 source: "random".to_string(),
-                capacity: result.capacity,
+                capacity: result.result.capacity,
                 active_facets,
-                total_segments: result.best_permutation.len(),
+                total_segments: result.result.best_permutation.len(),
                 solution_dim: recovery.solution_dim,
                 max_violation: recovery.max_violation,
                 closure_error: verification.closure_error,
