@@ -104,7 +104,11 @@ mod proptests {
     use proptest::prelude::*;
 
     proptest! {
+        #![proptest_config(proptest::prelude::ProptestConfig::with_cases(16))]
         /// Property: volume scaling vol(s*K) = s^4 * vol(K).
+        ///
+        /// 16 cases in default suite (each calls qhull twice). Run with
+        /// --ignored for the full 256-case version.
         #[test]
         fn volume_scales_with_fourth_power(scale in 0.1f64..10.0) {
             let unit_cube = scaled_hypercube(1.0);

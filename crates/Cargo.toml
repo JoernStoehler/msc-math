@@ -19,6 +19,8 @@ microlp = "0.4"
 
 [dev-dependencies]
 proptest = "1"
+rstest = "0.23"
+approx = "0.5"
 
 [profile.release]
 debug = true

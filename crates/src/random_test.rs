@@ -61,10 +61,12 @@ mod proptests {
     use proptest::prelude::*;
 
     proptest! {
+        #![proptest_config(proptest::prelude::ProptestConfig::with_cases(8))]
         /// Property: every polytope accepted by sample_random_polytope passes
         /// full revalidation via Polytope4D::new.
         ///
-        /// Limited to 5-6 facets and 4 seeds to keep runtime bounded.
+        /// 8 cases in default suite (each runs vertex enumeration).
+        /// Already limited to 5-6 facets and 4 seeds.
         #[test]
         fn random_polytopes_pass_validation(
             facet_count in 5usize..=6,
