@@ -137,10 +137,15 @@ Mostly agent-written from Jörn's notes. Needs Jörn's mathematical verification
 
 **Problem:** The thesis is currently a dump of results, not a coherent narrative. Experiments have data but writeups are noisy. There are low-hanging-fruit experiments that would provide real value but haven't been done, while some existing experiments add noise without advancing the argument.
 
+**Experiment ideas on file:**
+- `experiments/IDEAS.md` — research directions (symplectic classification, HKO neighborhood local maximality)
+- `experiments/ablation/ideas-future.md` — pruning extensions (A1 vs F scaling, non-simple polytopes, UNKNOWN predicates, face lattice approach, exact skeleton via perturbation)
+- Various experiment README "Known limitations" sections mention follow-up ideas
+
 **What Jörn needs to decide:**
 - What is the thesis's central argument / story arc?
 - Which existing experiments support that story vs are background validation vs are noise?
-- Which NEW experiments should be run? (many haven't been run yet — the existing 16 are not the full set)
+- Which experiments from IDEAS.md should be run? Which new ones not yet written down?
 - Which low-hanging-fruit experiments would provide the most value?
 - What depth does each experiment need in the thesis? (full section / brief mention / appendix / omit)
 
