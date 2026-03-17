@@ -115,7 +115,15 @@ Derived from migration-target.md. Every item is verifiable. Check each one.
 - [ ] Drop "plain %" comment category from tex-format
 - [ ] Add thesis/lookup.sh
 
-## 10. Cleanup
+## 10. Convention skills updated for new layout
+
+- [ ] rust-conventions/SKILL.md reflects new module paths and colocated test pattern
+- [ ] rust-tests/SKILL.md reflects single-concern test files and #[path] pattern
+- [ ] experiment-conventions/SKILL.md reflects new import paths and README template
+- [ ] review checklists (references/*.md) updated for new file names
+- [ ] **Jörn reviews ALL convention skills in full** (not just the diff — the complete files)
+
+## 11. Cleanup
 
 - [ ] No orphaned old files on disk (kkt_rational.rs, augmented.rs, etc. — 21 files listed in process #17)
 - [ ] No stale TODO comments referencing agent numbers or wave dependencies
