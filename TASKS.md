@@ -78,7 +78,25 @@ cargo clippy --tests -- -D warnings  # clean
 
 **Target:** Default suite < 2 min. Full suite (with `--ignored`) < 10 min.
 
-**Depends on:** Migration merge (#0).
+**Depends on:** Migration merge (§0).
+
+---
+
+## 1b. Migrate remaining experiments to logbook format
+
+🟢 Agent can do autonomously. ~2 hours for all 15 remaining experiments.
+
+hko-neighborhood is done (logbook.md + math.tex + role-based filenames). Remaining 15 experiments need:
+- Create `logbook.md` from README.md + .tex + git history + code headers
+- Rename `<name>.rs` → `run.rs`, `<name>.py` → `analyze.py`, `<name>.tex` → `math.tex`
+- Update `experiments/Cargo.toml` bin paths
+- Update `thesis/experiments.tex` `\input` paths (where applicable)
+- Delete `README.md`
+- Verify thesis builds
+
+**Parallelize:** Dispatch one agent per 3-4 experiments. Each reads experiment-conventions skill. Each surfaces questions it can't resolve.
+
+**Tip:** The hko-neighborhood logbook agent found stale README content by cross-checking against JSONL data. Other experiments likely have similar staleness.
 
 ---
 

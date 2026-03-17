@@ -53,7 +53,7 @@ The logbook is the **entry point** for any agent or human looking at an experime
 Jörn: dunno, so probably not regenerated. sys-optimization didn't use proper gradients iirc and didn't look at cuts
 ```
 
-**When sources conflict**, flag the conflict explicitly and check the data (JSONL/output files) as ground truth. Don't silently pick one version.
+**When sources conflict** (e.g. during migration from old README to logbook), flag the conflict explicitly and check the data (JSONL/output files) as ground truth. Don't silently pick one version.
 
 ### math.tex — the formal document
 
