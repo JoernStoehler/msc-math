@@ -228,13 +228,13 @@ Load the `review` skill for the full workflow. Key points:
 
 Load `git-conventions` skill. Key: always use local `main` (not `origin/main`), three-dot diffs for reviews, commit checklist before reports.
 
+## Mathematical Documentation
+
+Lemma statements and proofs live in `math.tex` files colocated with the code they support (one per crate module, one per experiment). The thesis is a separate final-assembly artifact written in the last week. Code and math.tex files never reference `thesis/`. Load skill: `math-tex`.
+
 ## Thesis Writing
 
-Load skills: `tex-build` (build commands, PDF review), `tex-format` (comments, headers, environments, figures), `tex-content` (four audiences, correctness, proofs, citations).
-
-## Experiment Writing
-
-Builds upon Thesis Writing. Load `experiment-conventions` skill. Key: "write up what's there — nothing more, nothing less", verification against JSONL data, pipeline Rust→JSONL→Python→figures→thesis.
+Thesis .tex files in `thesis/`. Load skills: `tex-build` (build commands, PDF review), `tex-format` (comments, headers, environments, figures), `tex-content` (four audiences, correctness, proofs, citations).
 
 ## Rust Library
 

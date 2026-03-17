@@ -1,6 +1,6 @@
 ---
 name: tex-format
-description: LaTeX formatting conventions for .tex files. Load when writing or editing .tex files. Covers comment conventions (Jörn review markers, QC, TODO, GAP), file headers, theorem environments, figure/table inclusion, and experiment writeup format.
+description: LaTeX formatting conventions for thesis .tex files in thesis/. Load when writing or editing thesis .tex files. Covers comment conventions (Jörn review markers, QC, TODO, GAP), file headers, theorem environments, figure/table inclusion. For math.tex files in crates/ or experiments/, load `math-tex` instead.
 ---
 
 # LaTeX Format Conventions
@@ -75,7 +75,6 @@ All figure formatting is handled in Python. LaTeX is a 1:1 pass-through (`\inclu
 - Captions state observations and comparisons (relating to an explicit reference).
 - Interpretations and speculation belong in body text, NOT in captions.
 
-## Experiment-Specific
+## Scope
 
-- Experiment writeups live in `experiments/<name>/<name>.tex`, wired into the thesis via `\input`
-- Builds upon Thesis Writing conventions, except those specific to mathematical proofs (Proof Writing, Four Audiences' "imaginary master student" criterion)
+This skill covers thesis .tex files in `thesis/`. For math.tex files in `crates/` or `experiments/`, load the `math-tex` skill. The comment conventions (`% Jörn:`, `% QC:`, `% [TODO:`, `% [GAP:`) apply to both.

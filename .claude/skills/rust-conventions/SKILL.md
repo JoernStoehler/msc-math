@@ -1,6 +1,6 @@
 ---
 name: rust-conventions
-description: Coding conventions and mathematical documentation standards for Rust code in crates/ and experiments/. Load when writing, editing, or reviewing .rs files. Covers module structure, coding style, coordinate conventions, math-code correspondence, doc comments, thesis cross-references, magic numbers, and performance claims.
+description: Coding conventions and mathematical documentation standards for Rust code in crates/ and experiments/. Load when writing, editing, or reviewing .rs files. Covers module structure, coding style, coordinate conventions, math-code correspondence, doc comments, math.tex cross-references, magic numbers, and performance claims.
 ---
 
 # Rust Conventions
@@ -67,22 +67,22 @@ Rust types, function signatures, and function bodies 1:1 correspond to mathemati
 - Invariants stated in doc comments must be enforced by types/constructors/assert!/debug_assert!
 - Properties stated in doc comments must have corresponding tests
 
-## Documentation Quality
+## Mathematical Documentation
 
-- Definitions, lemmas, and proofs live as doc comments on the corresponding types/functions
-- Long proofs are outsourced to colocated `*_proof.md` files
-- The Rust crates are self-contained mathematically — no dependency on thesis/
-- Quality bar: specific, correct, detailed, clearly written enough that (1) Jörn can verify with low effort and (2) agents can rely on them when implementing
+Lemma statements and proofs live in the module's `math.tex` file. Rust doc comments never contain proofs — they contain code-math correspondence only. Load the `math-tex` skill for full math.tex conventions.
 
-## Cross-References to Thesis
+**Agent rule:** Read the module's `math.tex` before editing `.rs` files in that module.
 
-Format: `[lem:label]`, `[thm:label]`, `[def:label]`, `[alg:label]` — matching LaTeX `\label{}` name exactly.
+**Cross-references in .rs doc comments:**
+
+Format: `[lem:label]`, `[thm:label]`, `[def:label]`, `[alg:label]` — matching the `\label{}` in the module's `math.tex` exactly.
 
 Rules:
 1. Always include a one-line English description of what the referenced result says
-2. Never duplicate proofs inline — comment says *what*, thesis says *why*
-3. Never use rendered numbers like "Lemma 3.2" — use the label
-4. Verification: grep `crates/src/` for occurrences, find the `.tex` `\label{...}`, check match
+2. Never duplicate proofs — doc comment says *what the code does*, math.tex says *why it's correct*
+3. Never invent labels that don't exist in a math.tex file — if the lemma isn't written yet, add a `// TODO: add [lem:...] to math.tex` comment
+4. Never use rendered numbers like "Lemma 3.2" — use the label
+5. Verification: grep for the label in `math.tex` files, confirm it exists
 
 ## Magic Numbers
 

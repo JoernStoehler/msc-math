@@ -28,17 +28,17 @@ For each property stated in doc comments:
 - Is there a corresponding test?
 - Does the test actually check the stated property (not a weaker version)?
 
-### 4. Thesis Cross-Reference Content
+### 4. math.tex Cross-Reference Content
 
 For each `[lem:label]`, `[thm:label]`, etc. in doc comments:
-- Does the corresponding `\label{}` exist in the thesis `.tex` files?
-- Does the one-line English description match what the thesis result actually says?
-- Is the cross-reference still up to date after any thesis edits?
+- Does the corresponding `\label{}` exist in the module's `math.tex`?
+- Does the one-line English description match what the math.tex result actually says?
+- Labels must never reference `thesis/` — code references its own module's `math.tex`.
 
 Verification:
 ```bash
-grep -r '\[lem:' crates/src/       # find all cross-refs in code
-grep -r 'label{lem:xyz}' thesis/   # find the thesis source
+grep -r '\[lem:' crates/src/                  # find all cross-refs in code
+grep -r 'label{lem:xyz}' crates/src/**/math.tex  # find the math.tex source
 ```
 
 ### 5. Math-Code Structural Correspondence

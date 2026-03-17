@@ -112,17 +112,9 @@ hko-neighborhood is done (logbook.md + math.tex + role-based filenames). Remaini
 
 ---
 
-## 2b. Resolve convention contradiction: math in code vs thesis (HIGH PRIORITY)
+## 2b. Resolve convention contradiction: math in code vs thesis — RESOLVED
 
-🔴 Jörn decides. Blocks §3 (thesis↔code alignment).
-
-`rust-conventions/SKILL.md` says two contradictory things:
-- "Definitions, lemmas, and proofs live as doc comments" + "Rust crates are self-contained mathematically"
-- "Never duplicate proofs inline — comment says *what*, thesis says *why*"
-
-This caused migration agents to invent 18 thesis labels that don't exist. Future agents will make the same mistake until this is resolved.
-
-Options: (a) code references thesis labels only, no inline math; (b) code has self-contained math summaries + thesis cross-refs; (c) something else.
+Convention decided (2026-03-17): One `math.tex` per module directory contains lemma statements + proofs (compiles to PDF for Jörn review). `.rs` doc comments contain code-math correspondence only (symbol mapping, label references, no proofs). Agents must read the module's `math.tex` before editing `.rs` files. `rust-conventions/SKILL.md` updated.
 
 ---
 

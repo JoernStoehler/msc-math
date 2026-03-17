@@ -57,15 +57,7 @@ Jörn: dunno, so probably not regenerated. sys-optimization didn't use proper gr
 
 ### math.tex — the formal document
 
-Proofs, definitions, derivations, formal statements — anything that needs LaTeX math rendering. Also a living document that grows alongside the logbook.
-
-**Contents:**
-- Theorem statements and proofs relevant to this experiment
-- Formal derivations (e.g. gradient formulas, error bounds)
-- Definitions introduced by this experiment
-- Formal verification of claims made in the logbook
-
-**Not a thesis section yet.** It will be distilled into thesis content when the story is clear and Jörn decides what role the findings play. Until then, it accumulates formal results.
+Proofs, definitions, derivations, formal statements — anything that needs LaTeX math rendering. Also a living document that grows alongside the logbook. Load the `math-tex` skill for full conventions.
 
 ### What goes where
 

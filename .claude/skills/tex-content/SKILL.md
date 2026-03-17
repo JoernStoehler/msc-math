@@ -1,6 +1,6 @@
 ---
 name: tex-content
-description: LaTeX content and correctness standards for .tex files. Load when writing mathematical content, proofs, definitions, or theorem statements. Covers four audiences, correctness criteria, self-containedness, proof writing structure, notation consistency, and citation verification.
+description: LaTeX content and correctness standards for thesis .tex files. Load when writing thesis chapters, proofs, definitions, or theorem statements in thesis/. Covers four audiences, correctness criteria, self-containedness, proof writing structure, notation consistency, and citation verification. For math.tex files in crates/ or experiments/, load `math-tex` instead.
 ---
 
 # LaTeX Content Conventions
@@ -58,9 +58,9 @@ We refactor, simplify, and improve until verification becomes straightforward.
 - **Geometric definitions first, formulas derived**: E.g., action = integral of Liouville form, not the coordinate expression
 - **Standard definitions**: Use them exactly as in the literature. If you use a different form, state a lemma proving equivalence
 
-## Rust Cross-References
+## Relationship to math.tex Files
 
-Rust `///` doc comments reference thesis proofs using `[lem:label]`, `[thm:label]`, `[def:label]`, `[alg:label]` format. When editing a theorem or lemma in the thesis, grep `crates/src/` for the label to find affected Rust comments.
+The thesis draws from `math.tex` files (in crate modules and experiments) during final assembly. When editing thesis content that restates a result from a math.tex file, check the math.tex source for the authoritative version.
 
 ## The Core Rule
 

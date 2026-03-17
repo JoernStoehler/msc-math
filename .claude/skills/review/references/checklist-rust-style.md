@@ -23,13 +23,14 @@ Detection rules for Rust coding conventions in `crates/` and `experiments/`.
 (q1, q2, p1, p2) — components [0,1] = q-space, [2,3] = p-space, [0,2] = (q1,p1) symplectic plane, [1,3] = (q2,p2) symplectic plane.
 - Detection: flag comments or code that assume (q1, p1, q2, p2) ordering.
 
-## 5. Cross-References to Thesis
+## 5. Cross-References to math.tex
 
 Format: `[lem:label]`, `[thm:label]`, `[def:label]`, `[alg:label]` in doc comments.
 - Must include one-line English description.
 - Must never use rendered numbers like "Lemma 3.2".
-- Must never duplicate proofs inline.
-- Detection: grep for `Lemma \d`, `Theorem \d`, `Definition \d` in doc comments — these should use labels.
+- Must never duplicate proofs — doc comment says *what the code does*, math.tex says *why it's correct*.
+- Labels must exist in the module's `math.tex` (not in `thesis/`).
+- Detection: grep for `Lemma \d`, `Theorem \d`, `Definition \d` in doc comments — these should use labels. Grep for labels and verify they exist in a `math.tex` file.
 
 ## 6. Magic Numbers
 
