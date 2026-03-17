@@ -8,16 +8,24 @@ description: Coding conventions and mathematical documentation standards for Rus
 ## Module Structure
 
 Single crate `symplectic` with modules:
-- `geom::*` — polytope types, geometry primitives
-- `algorithms::hk2017` — general capacity (exponential)
-- `algorithms::billiard` — Lagrangian product capacity (fast)
+- `geom::*` — polytope types, geometry primitives (polytope, skeleton, symplectic_form, volume, polygon, lagrangian_product, cross_product_4d, validation, rational_arithmetic, vertex_enumeration, qhull, reeb_trajectory, known_polytopes, test_utils)
+- `algorithms::hk2017` — general capacity (exponential), with submodules: permutations, orbit_recovery, generate_capacity_fixtures
+- `algorithms::billiard` — Lagrangian product capacity (fast), with submodules: block_enumeration, facet_classification, kkt_benchmark
 - `algorithms::tube` — tube algorithm (placeholder)
-- `kkt` — shared KKT solver (used by hk2017 and billiard)
+- `algorithms::capacity_accumulator` — certified/uncertain candidate tracking (shared by hk2017 and billiard)
+- `algorithms::facet_adjacency` — undirected + directed facet adjacency matrices (shared by hk2017 and billiard)
+- `kkt` — shared KKT solver infrastructure: QP struct, Solution, Verdict, classify_margin
+  - `kkt::qp_assembly` — polytope + permutation -> QP matrices (C, d, H) or augmented system
+  - `kkt::saddle_point_solver` — (m+5)x(m+5) eigendecomposition solver
+  - `kkt::constraint_solver` — Cx=d particular solution + null space via SVD
+  - `kkt::beta_feasibility` — max-margin LP for beta>0 in affine solution set
+  - `kkt::projection_solver` — null space projection, reduced objective optimization
+  - `kkt::rational_solver` — exact rational KKT solver
 - `constants` — shared tolerance constants
 - `random` — random polytope generation
 - `dataset` — dataset serialization
 
-**When modifying shared modules** (kkt, constants): Check all callers. Use `cargo test --lib` to verify.
+**When modifying shared modules** (kkt, constants, algorithms::capacity_accumulator, algorithms::facet_adjacency): Check all callers. Use `cargo test --lib` to verify.
 
 ## Three Capacity Algorithms
 
@@ -31,12 +39,12 @@ Where domains overlap, algorithms must agree on the computed capacity.
 
 ## Coding Style
 
-- Colocated tests: `foo.rs` has `foo_test.rs` in the same directory. Submodule tests use `#[path = "foo_test.rs"]`.
-- A source file may have multiple test files (e.g. `foo_math_test.rs`, `foo_test.rs`)
+- Colocated tests: `foo.rs` has `foo_test.rs` in the same directory. Test modules are declared in the parent `mod.rs` (not in the source file itself) via `#[cfg(test)] #[path = "foo_test.rs"] mod foo_test;`.
+- A source file may have multiple test files (e.g. `volume_test.rs`, `volume_properties_test.rs`), each covering a single concern.
 - Prefer iterator chains over `for` loops. Minimize mutable state. Use `map`, `filter`, `flat_map`.
 - Types encode mathematical invariants, validated at construction
 - nalgebra for linear algebra, proptest for property-based testing
-- **Coordinate convention**: (q₁, q₂, p₁, p₂) — components [0,1] = q-space (Lagrangian), [2,3] = p-space (Lagrangian), [0,2] = (q₁, p₁) symplectic plane, [1,3] = (q₂, p₂) symplectic plane. Defined in `geom/symplectic.rs`. Common mistake: assuming (q₁, p₁, q₂, p₂) ordering.
+- **Coordinate convention**: (q₁, q₂, p₁, p₂) — components [0,1] = q-space (Lagrangian), [2,3] = p-space (Lagrangian), [0,2] = (q₁, p₁) symplectic plane, [1,3] = (q₂, p₂) symplectic plane. Defined in `geom/symplectic_form.rs`. Common mistake: assuming (q₁, p₁, q₂, p₂) ordering.
 - **No rayon inside algorithms**: Parallelism is at the dataset level, not inside capacity algorithms.
 
 ## Thesis Constraints

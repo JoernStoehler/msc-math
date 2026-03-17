@@ -38,28 +38,42 @@ For expensive functions (e.g., `ehz_capacity()` with exponential cost), split te
 
 ## Test Organization
 
+**Single-concern test files:** Each test file covers one concern (e.g. conformality, pruning correctness, literature values). The hk2017 module has 9 test files, each focused on one mathematical property or concern.
+
 | Pattern | Suite | Speed | Use for | Example |
 |---------|-------|-------|---------|---------|
-| **Fixture-based property** | Default (debug) | <1s | Math properties vs pre-computed fixture | `capacity_properties_test.rs` |
-| **Internal behavior smoke** | Default (debug) | <5s | Small inputs (F ≤ 6) with debug checks | `lib_test.rs` |
+| **Fixture-based property** | Default (debug) | <1s | Math properties vs pre-computed fixture | `conformality_test.rs`, `symplectic_invariance_test.rs` |
+| **Internal behavior smoke** | Default (debug) | <5s | Small inputs (F ≤ 6) with debug checks | `kkt_edge_cases_test.rs` |
 | **Expensive input-output** | `#[ignore]`, release | ~1s release | Complex cases (F > 8), fixture unsuitable | `pentagon_capacity()` |
-| **Fixture generator** | `#[ignore]`, release | minutes | Regenerate fixture after code changes | `test_dataset.rs` |
+| **Fixture generator** | `#[ignore]`, release | minutes | Regenerate fixture after code changes | `generate_capacity_fixtures.rs` |
 | **Staleness detector** | Default (debug) | <1s | Warn if fixture out of sync | `fixture_staleness_check()` |
 
 ## Test Documentation
 
-Every test MUST have at least a doc comment stating the mathematical property it asserts. Tests for expensive or complex functions should additionally explain why they use their execution mode (debug/release/fixture), why they use their specific input, and relationship to other tests (if any).
+**Test file header (every `*_test.rs` file):**
+```rust
+//! Tests for {module}: {proposition or concern}.
+//!
+//! Proposition: {mathematical statement being tested}
+//! Reference: [lem:label] or [thm:label]
+//!
+//! Strategy: {fixture-based | proptest N cases | exhaustive for F≤6}
+```
+
+Every individual test MUST have at least a doc comment stating the mathematical property it asserts. Tests for expensive or complex functions should additionally explain why they use their execution mode (debug/release/fixture), why they use their specific input, and relationship to other tests (if any).
 
 ## Fixtures
 
-**Fixture location:** `tests/fixtures/capacity_dataset.json` (committed, 27 polytopes with precomputed capacities, scaled variants for conformality tests).
+**Fixture location:** `tests/fixtures/capacity_dataset.json` (committed, 33 polytopes with precomputed capacities, scaled variants for conformality tests).
+
+**Fixture regeneration:** `generate_capacity_fixtures.rs` (in `algorithms/hk2017/`) contains the `#[ignore]` test that regenerates the fixture dataset in release mode.
 
 ## Test Suites
 
 | Suite | Command | When to run |
 |-------|---------|-------------|
 | **Default** | `cargo test --lib` | Every iteration |
-| Regenerate capacity fixture | `cargo test --release regenerate_test_dataset -- --ignored` | After changes to `ehz_capacity()` |
+| Regenerate capacity fixture | `cargo test --release generate_capacity_fixtures -- --ignored` | After changes to `ehz_capacity()` |
 | Expensive capacity tests | `cargo test --release -- --ignored` | After capacity algorithm changes |
 | All ignored tests | `cargo test -- --ignored` | Full validation |
 

@@ -58,6 +58,37 @@ When cleaning up code that's no longer useful:
 - If learnings worth preserving: create `experiments/<topic>.md` with git ref to last commit
 - Otherwise: just delete (it's in git history)
 
+## README Template
+
+All experiments use this standardized structure (sections marked * are optional):
+
+```markdown
+# {Title}
+
+{1-2 sentence: what question does this answer?}
+
+## Status
+{Complete | In Progress | Blocked}
+
+## Design*
+{Strategy, dataset description, parameter choices}
+
+## Key findings*
+{2-5 bullets: what was discovered}
+
+## Files
+| File | Purpose |
+|------|---------|
+
+## Run
+\`\`\`bash
+{reproduction commands}
+\`\`\`
+
+## Known limitations*
+{Caveats, untested scenarios}
+```
+
 ## Quality Standards
 
 **Rerunnable from zero:**
@@ -69,9 +100,23 @@ When cleaning up code that's no longer useful:
 
 **Not production code:** No exhaustive testing required, but must be reproducible. Focus on clarity and correctness over performance.
 
+## Library Imports
+
+Stable, shared code lives in `crates/` and experiments import it. Common imports:
+- `symplectic::geom::polytope::Polytope4D` (or `symplectic::Polytope4D` via re-export)
+- `symplectic::algorithms::hk2017::ehz_capacity`
+- `symplectic::algorithms::billiard::billiard_capacity`
+- `symplectic::geom::volume::volume`
+- `symplectic::geom::symplectic_form::omega0`
+- `symplectic::geom::known_polytopes`
+- `symplectic::kkt::saddle_point_solver::{EPS_BETA_POSITIVE, EPS_Q_POSITIVE}`
+- `symplectic::algorithms::facet_adjacency::is_adjacent_cycle`
+
+Previously duplicated code (KKT assembly, adjacency matrices, combinations) now lives in the library (`kkt::qp_assembly`, `algorithms::facet_adjacency`, `algorithms::hk2017::permutations`).
+
 ## Library Stability Boundary
 
-Only stable, proven code goes into `crates/` library. New algorithm variants are self-contained in experiment binaries. Copy library internals into the binary where needed. If a variant is later promoted to production, it enters the library then.
+Only stable, proven code goes into `crates/` library. New algorithm variants are self-contained in experiment binaries. If a variant is later promoted to production, it enters the library then.
 
 ## Writing Rules
 
