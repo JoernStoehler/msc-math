@@ -145,7 +145,7 @@ The thesis section (`correctness.tex`) includes:
 
 The writeup is mathematical, not implementation-focused. It describes WHAT properties are verified, not HOW the Rust code works.
 
-## Known Limitations
+## Known limitations
 
 - **Test coverage:** Tests verify properties, but don't prove exhaustiveness of the orbit search. Literature agreement provides empirical evidence that pruning doesn't discard optimal orbits.
 - **Random sampling:** Base polytopes use fixed seed (42) for reproducibility. Different seeds may expose edge cases.
