@@ -123,7 +123,15 @@ Derived from migration-target.md. Every item is verifiable. Check each one.
 - [ ] review checklists (references/*.md) updated for new file names
 - [ ] **Jörn reviews ALL convention skills in full** (not just the diff — the complete files)
 
-## 11. Cleanup
+## 11. Thesis
+
+- [ ] `cd thesis/ && latexmk` passes
+- [ ] All 45 code cross-reference labels ([lem:...], [def:...]) exist as \label{} in .tex files (18 currently missing — see /tmp/review-target-completeness.md)
+- [ ] Experiment .tex writeups don't reference old function/module names (e.g. `augmented.rs`, `margin_search`, `cross_product.rs`)
+- [ ] Thesis prose about crate structure matches the new module layout
+- [ ] Algorithm descriptions in thesis match the new code organization (e.g. capacity_accumulator as shared infrastructure)
+
+## 12. Cleanup
 
 - [ ] No orphaned old files on disk (kkt_rational.rs, augmented.rs, etc. — 21 files listed in process #17)
 - [ ] No stale TODO comments referencing agent numbers or wave dependencies
