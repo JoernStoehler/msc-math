@@ -23,6 +23,16 @@ use nalgebra::{DMatrix, DVector};
 ///
 /// Tighter than EPS_BETA_POSITIVE (1e-12) because V has orthonormal columns --
 /// components below 1e-15 are numerical zeros from the SVD/eigensolver.
+///
+/// **Why 1e-15:** The null-space basis V has unit-length columns (||v|| = 1).
+/// For a unit vector with m components, machine epsilon contributes ~sqrt(m) * 1e-16
+/// ~ 4e-16 to each component's noise floor. 1e-15 is 2.5x above this floor.
+/// This is tighter than EPS_BETA_POSITIVE (1e-12): a v-component at 1e-13 is not
+/// machine noise for a unit eigenvector -- it's a small but real direction.
+/// Only true zero components (1e-15 magnitude) should be skipped in interval analysis.
+/// Making it 10x larger (1e-14) risks skipping real small components in the k=1
+/// analytic solver. Making it 10x smaller (1e-16) risks treating machine-epsilon
+/// noise as a real bound.
 const EPS_DIRECTION_ZERO: f64 = 1e-15;
 
 /// Result of the max-margin feasibility search.

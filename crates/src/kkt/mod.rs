@@ -110,9 +110,24 @@ pub struct Solution {
 // ── Verdict threshold constants ──
 
 /// beta_k > EPS_MARGIN_TRUE -> component is certified positive.
+///
+/// **Why 1e-9:** This is the classification boundary between True and Indeterminate.
+/// It sits between EPS_BETA_POSITIVE (1e-12, eigensolver noise floor) and typical
+/// real beta values (O(0.01)--O(10)). A beta in (1e-12, 1e-9) is above noise but
+/// ambiguous -- classified as Indeterminate and routed to the rational fallback.
+/// Beta above 1e-9 is unambiguously positive (gap of 3 orders of magnitude from noise).
+/// The symmetric value for EPS_MARGIN_FALSE ensures symmetric Indeterminate bands.
+/// Making it 10x larger (1e-8) would route more valid solutions to the rational
+/// fallback unnecessarily; 10x smaller (1e-10) would certify some noisy solutions.
 const EPS_MARGIN_TRUE: f64 = 1e-9;
 
 /// beta_k < -EPS_MARGIN_FALSE -> component is certified negative (infeasible).
+///
+/// **Why 1e-9:** Same as EPS_MARGIN_TRUE. The symmetric design means the
+/// Indeterminate band is (-1e-9, +1e-9) -- beta in this range is ambiguous.
+/// Beta below -1e-9 is unambiguously negative (infeasible), returned as False.
+/// Using a symmetric threshold simplifies reasoning: both boundaries are
+/// separated from the noise floor (1e-12) by the same factor.
 const EPS_MARGIN_FALSE: f64 = 1e-9;
 
 // ── Utility functions ──

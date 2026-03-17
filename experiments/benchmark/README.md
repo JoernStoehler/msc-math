@@ -1,16 +1,20 @@
 # Benchmark Experiment
 
-**Purpose:** Establish practical performance limits for EHZ capacity computation and guide algorithm selection.
+Establish practical performance limits for EHZ capacity computation and guide algorithm selection.
 
-**Status:** Complete. Dataset generated, timing model fitted, .tex writeup updated.
+## Status
+Complete
 
-**Files:**
-- Rust: `experiments/benchmark/benchmark.rs` (dataset generator)
-- Dataset: `experiments/benchmark/benchmark.jsonl` (~85 polytopes, ~100 capacity computations)
-- Python: `experiments/benchmark/benchmark.py` (timing model fitting + figure)
-- Figure: `experiments/benchmark/benchmark_timing.png`
-- Model: `experiments/benchmark/profiling/timing_model.json`
-- Writeup: `experiments/benchmark/benchmark.tex`
+## Files
+
+| File | Purpose |
+|------|---------|
+| `benchmark.rs` | Rust binary: dataset generator |
+| `benchmark.jsonl` | Dataset (~85 polytopes, ~100 capacity computations) |
+| `benchmark.py` | Python: timing model fitting + figure |
+| `benchmark_timing.png` | Figure: all algorithms, polytope classes, fitted models |
+| `profiling/timing_model.json` | Fitted model parameters |
+| `benchmark.tex` | Thesis writeup |
 
 ## Design
 
@@ -126,7 +130,7 @@ Before benchmarking, we optimized the HK2017 implementation without changing the
 
 **Reference:** See `hk2017_optimization.md` for full profiling methodology (Valgrind callgrind, massif heap profiling, phase-by-phase wall-clock timing).
 
-## Results Summary
+## Key findings
 
 **Timing models** (fitted exponential models for each algorithm/polytope class):
 
@@ -161,9 +165,7 @@ The thesis section (`benchmarks.tex`) includes:
 The writeup focuses on performance characteristics and practical limits.
 Implementation optimization details are documented in this .md file only.
 
-## Regeneration
-
-To regenerate after algorithm changes:
+## Run
 
 ```bash
 cd experiments/
@@ -171,9 +173,9 @@ cargo run --bin benchmark --release   # Generates benchmark/benchmark.jsonl (~8 
 python3 benchmark/benchmark.py        # Fits model, generates figure
 ```
 
-Then manually update `benchmarks.tex` table if numbers changed significantly.
+After regeneration, manually update `benchmarks.tex` table if numbers changed significantly.
 
-## Known Limitations
+## Known limitations
 
 - **Sample size at high F:** Only 3-5 samples for F≥11 due to computational cost. Limited statistical power for tail behavior.
 - **Random sampling:** Fixed seed (42) for reproducibility. Different seeds may give slightly different timing characteristics.

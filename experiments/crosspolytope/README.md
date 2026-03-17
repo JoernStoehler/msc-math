@@ -1,11 +1,12 @@
 # Crosspolytope Capacity Computation
 
-## Goal
-
 Compute the EHZ capacity of the 4D crosspolytope (hyperoctahedron), filling in the
 placeholder value in `crates/src/geom/known_polytopes.rs:127`.
 
-## Results
+## Status
+Complete (Phase 1 and 3 done; Phase 2 TODO: update known_polytopes.rs)
+
+## Key findings
 
 | Quantity | Value |
 |----------|-------|
@@ -111,7 +112,7 @@ Rust enumeration (match confirmed). The group has 8 valid coordinate permutation
 | `crosspolytope.jsonl` | Output: computed capacity and metadata |
 | `README.md` | This file |
 
-## Running
+## Run
 
 ```bash
 cd experiments/ && cargo run --release --bin crosspolytope
@@ -119,7 +120,8 @@ cd experiments/ && cargo run --release --bin crosspolytope
 
 Resumes from checkpoint if one exists. Writes `crosspolytope/crosspolytope.jsonl` on completion.
 
-## Dependencies
+## Known limitations
 
-- `symplectic` crate (for `known_polytopes`, `volume`, `omega0`, `Polytope4D`)
+- Search exhaustive only through m=12 of 16; m=13..16 skipped due to cost
+- Copies KKT solver internals from the library (cannot use public API due to lack of hooks for symmetry reduction)
 - Release mode required (debug mode is infeasible at F=16)

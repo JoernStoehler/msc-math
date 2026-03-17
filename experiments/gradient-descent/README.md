@@ -1,14 +1,16 @@
-# gradient-descent
+# Gradient Descent
 
 Gradient ascent on `sys = c_EHZ^2 / (2 vol)` for 1001 random F=10 polytopes (500 general, 501 Lagrangian products). Scales up the sys-optimization experiment.
 
-## Running
+## Status
+Complete
 
-```bash
-cd experiments/
-cargo run --release --bin gradient_descent
-python3 gradient-descent/gradient_descent.py
-```
+## Design
+
+- 1001 random F=10 polytopes: 500 general, 501 Lagrangian products (split: 167 each of 3x7, 4x6, 5x5)
+- Gradient ascent on sys with analytical gradients (d(sys)/dh)
+- Step size controlled by t_max (maximum height step before combinatorial type changes)
+- Seed 42 for reproducibility
 
 ## Key findings
 
@@ -23,13 +25,7 @@ python3 gradient-descent/gradient_descent.py
 
 - Lagrangian products reach higher sys than general polytopes
 - Balanced splits (5x5) outperform asymmetric splits (3x7)
-- **Step-bound barrier**: the algorithm terminates because t_max shrinks (combinatorial type boundary), not because gradients vanish. Residual gradients are O(1) at termination, and positively correlated with final sys (r ≈ 0.80).
-
-## Figures
-
-**`gradient_descent_scatter.png`** — Starting sys vs final sys for all 995 polytopes. General (blue circles) vs Lagrangian products (coral triangles). Key pattern: all points below sys=1 line; Lagrangian products cluster higher than general polytopes. The diagonal marks zero improvement.
-
-**`gradient_descent_convergence.png`** — Three-panel convergence diagnostics. Left: residual height gradient vs final sys (positive correlation r=0.80 — polytopes near the barrier have the strongest gradients). Center: median step size with IQR band drops 2-3 orders of magnitude (the step-bound barrier). Right: survival curve showing most polytopes converge within 5-10 iterations.
+- **Step-bound barrier**: the algorithm terminates because t_max shrinks (combinatorial type boundary), not because gradients vanish. Residual gradients are O(1) at termination, and positively correlated with final sys (r = 0.80).
 
 ## Files
 
@@ -40,3 +36,23 @@ python3 gradient-descent/gradient_descent.py
 | `gradient_descent.py` | Python: scatter and convergence figures + summary stats |
 | `gradient-descent.jsonl` | Per-iteration trajectory data (7631 rows, 995 polytopes) |
 | `gradient-descent.tex` | Thesis writeup |
+| `gradient_descent_scatter.png` | Figure: starting sys vs final sys |
+| `gradient_descent_convergence.png` | Figure: three-panel convergence diagnostics |
+| `gradient_descent_gradient.png` | Figure: residual gradient vs final sys |
+| `gradient_descent_stepsize.png` | Figure: step size decay |
+| `gradient_descent_survival.png` | Figure: iteration survival curve |
+
+## Run
+
+```bash
+cd experiments/
+cargo run --release --bin gradient_descent
+python3 gradient-descent/gradient_descent.py
+```
+
+## Known limitations
+
+- Only F=10 polytopes tested; other facet counts may behave differently
+- Step-bound barrier prevents convergence to true local optima
+- 6 polytopes failed during optimization (995 of 1001 completed)
+- Gradient ascent finds local optima only; global structure not explored

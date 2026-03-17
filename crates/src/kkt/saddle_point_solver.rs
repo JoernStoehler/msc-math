@@ -33,23 +33,58 @@ use nalgebra::{DMatrix, DVector, Vector4};
 ///
 /// Used by the accumulator and experiments to classify solution feasibility.
 /// beta_i > EPS_BETA_POSITIVE means the component is unambiguously positive.
+///
+/// **Why 1e-12:** This filters f64 eigensolver noise. The KKT matrix entries are
+/// O(1) (normals are unit vectors, heights normalized), so eigenvector components
+/// are O(1) and beta values from the pseudoinverse are O(1). Machine epsilon is
+/// ~1e-16; numerical roundoff in eigendecomposition accumulates to ~1e-12 for
+/// (m+5) x (m+5) matrices with m up to 16. A value of 1e-12 is:
+/// - Far above machine epsilon (can't be confused with exact zero)
+/// - Far below typical beta values (O(0.1)--O(10)) for real orbits
+/// - 10x tighter than EPS_MARGIN_TRUE (1e-9) so Indeterminate verdicts are
+///   returned for any solution where beta is ambiguous.
+/// Making it 10x larger (1e-11) would misclassify some real near-zero betas as
+/// positive. Making it 10x smaller (1e-13) would pass some eigensolver noise
+/// through as certified solutions.
 pub const EPS_BETA_POSITIVE: f64 = 1e-12;
 
 /// Minimum Q(beta) value to consider a solution meaningful.
 ///
 /// Avoids division-by-near-zero when computing capacity = 1/(2Q).
+///
+/// **Why 1e-15:** Q = c_EHZ^{-2} / 2 is O(0.01)--O(10) for our polytopes
+/// (typical c_EHZ ~ 0.3--3). Q < 1e-15 indicates either a degenerate orbit
+/// with astronomically high action or pure f64 noise. In either case, this
+/// orbit cannot be the capacity maximizer. 1e-15 is just above machine epsilon
+/// (~1e-16) to avoid exact-zero false positives from cancellation.
 pub const EPS_Q_POSITIVE: f64 = 1e-15;
 
 // ── Internal constants ──
 
 /// Absolute floor for eigenvalue magnitude. If the largest eigenvalue is below
 /// this, the entire matrix is treated as numerically zero (early return).
+///
+/// **Why 1e-12:** The KKT matrix entries are O(1). A largest eigenvalue below
+/// 1e-12 means the matrix is numerically zero (all eigenvalues in machine-noise
+/// range). The relative rank detection is handled by EIGEN_CONDITION_TAU; this
+/// absolute floor guards against the degenerate case before any ratio is computed.
+/// Making it 10x larger (1e-11) risks discarding matrices that are genuinely
+/// non-zero but small; 10x smaller (1e-13) risks attempting rank detection on
+/// a pure-noise matrix.
 const EPS_EIGEN_FLOOR: f64 = 1e-12;
 
 /// Condition-number threshold for eigenvalue rank detection.
 ///
 /// An eigenvalue lambda_j is "small" if |lambda_j| < |lambda|_max * tau.
 /// This catches both isolated small eigenvalues (gap case) and gradual decay.
+///
+/// **Why 1e-3:** The degenerate (4,4) Lagrangian product at theta ~ 0 deg has
+/// eigenvalue magnitudes around 8.6e-4 with |lambda|_max ~ 1-2, giving
+/// |lambda|/|lambda|_max ~ 4e-4. The threshold 1e-3 catches this with 2.5x
+/// margin. Well-conditioned random polytopes have smallest |lambda| ~ 0.01-0.1,
+/// well above 1e-3 * |lambda|_max, so no false rank-deficiency detections occur.
+/// Making it 10x larger (1e-2) would treat some well-conditioned polytopes as
+/// rank-deficient. Making it 10x smaller (1e-4) would miss the degenerate case.
 ///
 /// Calibrated to detect the degenerate (4,4) Lagrangian product at theta ~ 0 deg,
 /// which has eigenvalue magnitudes around 8.6e-4 with |lambda|_max ~ 1-2.
@@ -59,6 +94,19 @@ const EPS_EIGEN_FLOOR: f64 = 1e-12;
 const EIGEN_CONDITION_TAU: f64 = 1e-3;
 
 /// Maximum acceptable residual norm for the KKT solution.
+///
+/// Rejects numerically poor solutions where ||Mx - b|| is too large. Solutions
+/// with residual below this have Q error bounds E = 4.5 * ||r||^2 / |lambda_min|
+/// that are small relative to Q values of interest.
+///
+/// **Why 1e-6:** The q_error experiment (Part 1) measures worst-case E = 2.9e-11
+/// across 1.1M nodes (F <= 10) with typical residuals ~1e-14 to ~1e-10.
+/// Residuals above 1e-6 signal genuine numerical failure (e.g., extremely
+/// ill-conditioned matrices). At residual = 1e-6 with |lambda_min| = 1e-3,
+/// the error bound is E = 4.5e-9, which is ~5 orders of magnitude below
+/// the observed worst case. Making it 10x larger (1e-5) risks accepting poor
+/// solutions; 10x smaller (1e-7) would reject some valid solutions on
+/// moderately ill-conditioned polytopes.
 const EPS_KKT_RESIDUAL: f64 = 1e-6;
 
 // ── Public types ──
@@ -394,6 +442,11 @@ fn finalize_result(
     let q_corrected = q_raw + q_correction;
 
     // Tight bound: E = (9/2) ||r||^2 / |lambda_min|.
+    // 4.5 = 9/2 comes from [lem:q-error-bound] (thesis): the KKT block structure
+    // identity delta_beta^T H delta_beta = delta_x^T M delta_x - 2 r2^T delta_mu
+    // - 2 r3 delta_xi removes the ||H||/|lambda_min|^2 term, leaving only the
+    // quadratic term (9/2) ||r||^2 / |lambda_min|. The factor 9 comes from the
+    // Cauchy-Schwarz bound on the two-variable quadratic form in the residual.
     // See [lem:q-error-bound] (thesis).
     let r_sq = residual_norm * residual_norm;
     let q_error_bound = 4.5 * r_sq / abs_lambda_min;

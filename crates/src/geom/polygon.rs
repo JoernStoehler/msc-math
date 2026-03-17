@@ -11,6 +11,20 @@
 use nalgebra::Vector2;
 use std::f64::consts::PI;
 
+/// Threshold for treating two consecutive normals as parallel (degenerate polygon).
+///
+/// det(n_i, n_j) < EPS_PARALLEL means the angle between n_i and n_j is < ~1e-12 rad.
+/// For unit normals this equals sin(angle), so EPS_PARALLEL ~ 1e-12 rad ~ 2.3e-13 deg.
+///
+/// **Why 1e-12:** Our normals are computed from f64 trig (cos/sin), which has
+/// roundoff ~1e-16. A determinant below 1e-12 between two ostensibly distinct
+/// normals would cause catastrophic cancellation in vertex computation (dividing
+/// by near-zero det), producing wildly wrong vertices. Well-separated normals
+/// (angular gap > 0.01 rad) have det ~ 0.01, safely above 1e-12. Degenerate
+/// or near-degenerate polygons where two normals are within ~1e-12 rad are
+/// rejected as numerically unreliable.
+const EPS_PARALLEL: f64 = 1e-12;
+
 /// Regular n-gon with circumradius R, centered at origin.
 ///
 /// Outward unit normals at angles pi/2 + 2*pi*k/n for k = 0, ..., n-1.
@@ -115,7 +129,7 @@ pub fn polygon_area(normals: &[Vector2<f64>], heights: &[f64]) -> Option<f64> {
         let ni = &normals[i];
         let nj = &normals[j];
         let det = ni[0] * nj[1] - ni[1] * nj[0];
-        if det.abs() < 1e-12 {
+        if det.abs() < EPS_PARALLEL {
             // Parallel normals -- degenerate
             return None;
         }

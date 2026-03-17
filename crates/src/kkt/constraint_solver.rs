@@ -23,6 +23,17 @@ const EPS_RANK_THRESHOLD: f64 = 1e-10;
 ///
 /// If the residual exceeds this after projecting d onto the column space,
 /// the system Cx = d has no solution.
+///
+/// **Why 1e-8:** The SVD roundoff noise on our O(1)-scale matrices is ~1e-14
+/// to ~1e-13. The tolerance 1e-8 is:
+/// - Far above SVD noise: no false negatives (genuine solutions incorrectly
+///   rejected) on well-conditioned systems.
+/// - Well below scales where a genuine inconsistency would be masked: a true
+///   inconsistency (e.g. wrong closure condition) produces residuals O(0.1)--O(1).
+/// Making it 10x larger (1e-7) would mask near-inconsistent systems where the
+/// closure constraint is violated by a small numerical perturbation. Making it
+/// 10x smaller (1e-9) risks false negatives on moderately ill-conditioned
+/// constraint matrices.
 const EPS_CONSISTENCY: f64 = 1e-8;
 
 /// Solution of the linear constraint system Cx = d.

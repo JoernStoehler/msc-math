@@ -1,8 +1,9 @@
 # Visualization of Reeb Dynamics
 
-## Purpose
-
 Build geometric intuition about Reeb flows on polytope boundaries by visualizing 4D polytopes and their Reeb trajectories via stereographic projection to 3D.
+
+## Status
+Complete
 
 ## Pipeline
 
@@ -50,7 +51,7 @@ Generated figures:
 - `viz-hko-pentagon-traj.png` — Reeb trajectory on HK-O pentagon
 - `viz-lagrangian-tri-product-traj.png` — Reeb trajectory on triangle product
 
-## Regeneration
+## Run
 
 ```bash
 cd experiments/
@@ -74,7 +75,7 @@ cd visualization/viz && bash embed-data.sh > data.js
 | viz-*.png | Generated thesis figures |
 | visualization.tex | Thesis writeup |
 
-## Orbit statistics (as of last regeneration)
+## Key findings
 
 "Total orbits" = certified (S,σ,β) solutions found by exhaustive enumeration before capping.
 
@@ -88,3 +89,10 @@ cd visualization/viz && bash embed-data.sh > data.js
 | lagrangian_tri_sq | 7 | 4 | 2 | 1.5000 |
 | symplectic_tri_sq | 7 | 62 | 1 | 1.0000 |
 | crosspolytope | 16 | — | — | — (placeholder) |
+
+## Known limitations
+
+- Crosspolytope uses placeholder trajectory (orbit computation skipped due to exponential cost at F=16)
+- Some higher-action orbits fail recovery and are skipped
+- Screenshot automation requires Playwright and a local HTTP server
+- Stereographic projection distorts distances; north pole choice affects visual quality

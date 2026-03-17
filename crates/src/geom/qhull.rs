@@ -188,6 +188,7 @@ pub(crate) fn compute_volume_qconvex(vertices: &[Vector4<f64>]) -> Result<f64, Q
     parse_fa_output(&output)
 }
 
+// Inline tests: these test private parsing functions not exposed via the module API.
 #[cfg(test)]
 mod test {
     use super::*;

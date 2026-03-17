@@ -33,11 +33,23 @@ use nalgebra::{DMatrix, DVector};
 /// a lot. These directions are included in the margin search space rather than
 /// used for optimization.
 ///
-/// Same role as EIGEN_CONDITION_TAU in saddle_point_solver.rs (1e-3).
+/// Same role as EIGEN_CONDITION_TAU in saddle_point_solver.rs, same calibration:
+/// the degenerate (4,4) Lagrangian product at theta ~ 0 deg has reduced Hessian
+/// eigenvalue ratios ~ 4e-4; the 1e-3 threshold catches this with 2.5x margin.
+/// See saddle_point_solver.rs::EIGEN_CONDITION_TAU for full rationale.
+///
+/// **Why not shared:** saddle_point_solver.rs and projection_solver.rs have
+/// different matrix structures (augmented (m+5)x(m+5) vs reduced kxk H'),
+/// so they may need independent tuning in the future. Kept separate to allow
+/// independent adjustment.
 const EPS_EIGEN_THRESHOLD: f64 = 1e-3;
 
 /// Absolute floor: if max|lambda| of H' is below this, the entire reduced Hessian
 /// is numerically zero. Q = 0 along all null-space directions.
+///
+/// Same value as EPS_EIGEN_FLOOR in saddle_point_solver.rs for the same reason:
+/// matrix entries are O(1), so eigenvalues below 1e-12 are in the machine-noise
+/// range. See saddle_point_solver.rs::EPS_EIGEN_FLOOR for full rationale.
 const EPS_EIGEN_FLOOR: f64 = 1e-12;
 
 /// Solve the QP via constraint projection.

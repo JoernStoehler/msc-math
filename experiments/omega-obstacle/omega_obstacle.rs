@@ -27,6 +27,7 @@ use std::io::{BufWriter, Write};
 use std::time::Instant;
 // TODO: These will be re-exported from top-level `symplectic::` in wave 4 (subagent #16).
 // Using full module paths until then.
+use symplectic::algorithms::facet_adjacency::is_adjacent_cycle;
 use symplectic::geom::known_polytopes;
 use symplectic::geom::symplectic_form::omega0;
 use symplectic::geom::volume::volume;
@@ -400,6 +401,9 @@ fn heap_perms_buf(
     }
 }
 
+// TODO: Replace with `use symplectic::algorithms::facet_adjacency::build_adjacency_matrix`.
+// Local copy differs from library: uses f64 vertex incidence check (EPS_FACET_INCIDENCE)
+// instead of the library's exact rational `polytope.adjacency()`.
 fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let f = polytope.facet_count();
     let normals = polytope.normals_f64();
@@ -418,6 +422,9 @@ fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     adj
 }
 
+// TODO: Replace with `use symplectic::algorithms::facet_adjacency::build_directed_adjacency_matrix`.
+// Local copy differs from library: uses f64 `omega0() >= 0.0` comparison
+// instead of the library's exact rational `polytope.omega_signs()`.
 fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
     let f = polytope.facet_count();
     let normals = polytope.normals_f64();
@@ -429,11 +436,6 @@ fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
         }
     }
     adj
-}
-
-fn is_adjacent_cycle(perm: &[usize], adj: &[Vec<bool>]) -> bool {
-    let m = perm.len();
-    (0..m).all(|k| adj[perm[k]][perm[(k + 1) % m]])
 }
 
 // ============================================================================
