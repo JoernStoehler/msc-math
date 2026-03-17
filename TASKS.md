@@ -112,9 +112,25 @@ hko-neighborhood is done (logbook.md + math.tex + role-based filenames). Remaini
 
 ---
 
+## 2b. Resolve convention contradiction: math in code vs thesis (HIGH PRIORITY)
+
+🔴 Jörn decides. Blocks §3 (thesis↔code alignment).
+
+`rust-conventions/SKILL.md` says two contradictory things:
+- "Definitions, lemmas, and proofs live as doc comments" + "Rust crates are self-contained mathematically"
+- "Never duplicate proofs inline — comment says *what*, thesis says *why*"
+
+This caused migration agents to invent 18 thesis labels that don't exist. Future agents will make the same mistake until this is resolved.
+
+Options: (a) code references thesis labels only, no inline math; (b) code has self-contained math summaries + thesis cross-refs; (c) something else.
+
+---
+
 ## 3. Thesis↔code alignment
 
 🔴 Jörn decides which side to fix for each item. Agent applies the fixes.
+
+**Blocked by:** §2b (convention contradiction resolution).
 
 See `handoffs/migration-thesis-findings.md` for the full list. Highest priority items:
 
@@ -122,8 +138,6 @@ See `handoffs/migration-thesis-findings.md` for the full list. Highest priority 
 2. **KKT notation** — unify (λ,ν) vs (μ,ξ) across thesis sections and code.
 3. **Accumulator pattern** — describe two-tier certified/uncertain tracking in thesis algorithm boxes (currently only in appendix A.3-A.4).
 4. **18 missing labels** — thesis needs `\label{}` for definitions the code references (or code needs labels removed).
-
-**Tip for implementing agent:** The thesis .tex files are the source of truth for mathematical definitions. The code doc comments should cross-reference thesis labels, not duplicate definitions. The convention contradiction (rust-conventions says "self-contained mathematically" but also "never duplicate proofs") needs resolution first.
 
 ---
 
@@ -170,10 +184,12 @@ Mostly agent-written from Jörn's notes. Needs Jörn's mathematical verification
 **Current experiment status:** All 16 have Complete status and standardized READMEs. But "Complete" means "has data," not "writeup is publishable."
 
 **Known gaps:**
-- `sys-optimization` has no README
-- `crosspolytope` Phase 2 TODO: update known_polytopes.rs
-- `hko-neighborhood` — handoff at `handoffs/hko-neighborhood.md` says writeup needs to "tell a coherent story"
+- `sys-optimization` needs a redesign, not just modernization — didn't use proper gradients, didn't look at cuts
+- `crosspolytope` Phase 2 TODO: update known_polytopes.rs (tracked in its logbook after migration)
+- `hko-neighborhood` logbook created; open questions 5-7 from Jörn about neighborhood landscape, subdifferential after cuts, saddle vs local max
 - Experiment .tex writeups need review against the coherent-story standard once Jörn defines the story
+
+**Experiment ideas session needed:** 🔴 Jörn has experiment ideas not yet written down. Schedule a dedicated session where Jörn dumps thoughts and an agent interrogates to fill gaps, suggests preliminary explorations, and delegates experiments to new sessions once clarified. This is high value — new experiments may be more important than polishing existing ones.
 
 ---
 
@@ -218,6 +234,26 @@ See `handoffs/tube-algorithm.md`. The migration created a fresh implementation i
 
 ---
 
+## 7b. SLURM skill for LICCA cluster
+
+🟢 Agent can create the skill. Jörn provides the example template.
+
+Create `.claude/skills/slurm/SKILL.md` with `references/example.sh` that agents copy from when writing SLURM job scripts. Agents write the script + Rust binary; Jörn runs `ssh licca && sbatch job.sh` (agents have no SSH access).
+
+The data-pipeline skill already describes when to offload. This skill covers *how*.
+
+---
+
+## 7c. Replace reproduce.sh with decentralized approach
+
+🟢 Agent can do after experiment logbook migration.
+
+`reproduce.sh` is stale (last updated during q-error merge). Instead of maintaining a single monolithic script, each experiment's logbook says what other experiments it depends on (if any) and how to run it. The full pipeline is: read all logbooks, resolve dependencies, run.
+
+May still want a thin `reproduce.sh` that just reads logbooks and runs in dependency order. Or may not need it at all — manual reproduction following logbooks is fine for a thesis project.
+
+---
+
 ## 8. Thesis chapters — all need work to be publishable
 
 🔴 Jörn decides what "publishable" means for each chapter. Agent writes drafts.
@@ -230,6 +266,11 @@ No chapter is currently publishable. The thesis needs to become a coherent docum
 - Other chapters — no TODOs but Jörn doubts publishability
 
 **What agents can do:** Draft rewrites, improve flow, verify claims against code/data, fix notation inconsistencies, improve figure quality. But agents cannot decide the thesis structure or story — that's Jörn's.
+
+**Meta-layer cleanup:**
+- 🔴 Jörn reviews all convention skills (not just diffs) — the "agent-usage expert" review
+- 🟢 CLAUDE.md "Working notes (redistribute later)" section — items should move to skills or other locations
+- 🟢 Devcontainer rebuild (Jörn, low priority) — Dockerfile updated with nextest + cargo-watch
 
 **Final assembly tasks (after content is stable):**
 - Abstract, introduction, conclusion

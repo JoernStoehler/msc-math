@@ -1,5 +1,6 @@
 # Rust
 /crates/target/
+/experiments/target/
 **/*.rs.bk
 
 # Python
