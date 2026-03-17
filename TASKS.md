@@ -1,114 +1,234 @@
 # TASKS
 
-Deferred tasks, ideas, and identified work items. Grows stale; that's fine.
+Master task list for thesis completion. Goal: published thesis by March 2026.
 
-## Handoff files (ready for separate sessions)
+**Maintenance rule:** When an agent completes a task, discovers a new task, or learns something that affects a task's implementation, update this file immediately. Don't defer. Context that isn't written down here or in the referenced files is context that will be lost.
 
-- `handoffs/experiment-deduplication.md` — extract 4× duplicated KKT solver + derivatives to library
-- `handoffs/tube-algorithm.md` — implement tube algorithm (9 steps from tube-algorithm-plan.md)
-- `handoffs/hko-neighborhood.md` — complete HKO neighborhood writeup and assess if more experiments needed
+**Escalation markers:**
+- 🔴 Jörn decision required — agent cannot proceed alone
+- 🟡 Agent can attempt, but should present result for Jörn review before building on it
+- 🟢 Agent can do autonomously
 
-## Active design work (this session / next session with Jörn)
+---
 
-KKT solver rework: dual-vertex parameterization, projection-based solver, β > 0 as LP, near-null eigenvalue handling. Needs spec file written collaboratively with Jörn before implementation. Code first, thesis follows.
+## 0. Migration merge (blocking everything)
 
-## Test data pipeline restructuring
+**Branch:** `migration-scaffold` in `.claude/worktrees/migration-scaffold/`
 
-**Problem:** Default test suite takes 7 min. Top 10 tests = 1000s of 1050s total. Root cause: fixture-consuming tests regenerate all 33 polytope capacity values on every run instead of loading cached data.
+🔴 **Jörn reviews and merges.** Agent work is done except for gate checks.
+
+### What's done
+- 73 .rs files rewritten (72 target + lib.rs), 0 empty stubs
+- All waves (1-4) complete: geom, kkt, algorithms, tests, lib.rs re-exports
+- Experiments updated (16 .rs files, 16 READMEs standardized)
+- Meta-layer: skill contradictions fixed, archaeology skill dropped, lookup.sh added
+- Convention skills updated for new module layout
+- Clippy clean (--lib and --tests)
+- Tests: 316 pass, 0 fail, 26 ignored
+
+### What Jörn needs to review
+1. **Convention skills** — full review, not just diffs
+2. **15 thesis↔code mismatches** — see `handoffs/migration-thesis-findings.md`. Key decisions:
+   - Label mismatch: `[thm:billiard-characterization]` vs thesis `\label{thm:billiard-completeness}`
+   - Notation: KKT multipliers (λ,ν) vs (μ,ξ), sign flip, factor-of-2
+   - Algorithm boxes missing steps the code implements (accumulator, adjacency pruning)
+   - Tube: rotation increment is heuristic, not CH2021 Lem.2.21 implementation
+3. **18 cross-ref labels** in code that don't exist in thesis — add to thesis or remove from code?
+4. **qp_assembly dual-vertex formulation** — unverified mathematical equivalence with normals/heights formulation (has explicit TODO)
+5. **Experiment adjacency functions** — 4 experiments still have f64 local copies (library uses exact rational). Different algorithms, not just copies. Keep both, or convert?
+6. **KktResult→Solution bridge** — `margin = min(beta)` + `classify_margin()`. Is this the right verdict mapping?
+
+### Remaining gate checks (need CPU)
+```bash
+cd .claude/worktrees/migration-scaffold/crates
+cargo nextest run --lib            # 316 pass, ~7min (slow due to fixture regen)
+cargo clippy --lib -- -D warnings  # clean
+cargo clippy --tests -- -D warnings  # clean
+```
+
+---
+
+## 1. Test data pipeline restructuring
+
+🟢 Agent can do autonomously. Load `data-pipeline` skill for conventions.
+
+**Problem:** Default test suite takes 7 min. Root cause: fixture-consuming tests regenerate all 33 polytope capacity values every run.
 
 **Profiling data (cargo nextest, 2026-03-17):**
 
-| Test | Time | Category |
-|------|------|----------|
-| `catalog_determinism` | 162s | Fixture regeneration |
-| `fixture_staleness_check` | 158s | Fixture regeneration |
-| `literature_capacity_values` | 98s | Full EHZ on ~8 polytopes |
-| `volume_scales_with_fourth_power` | 92s | Proptest with qhull |
-| 5 fixture-consuming tests | 85-89s ea | Block on fixture generation |
-| `random_polytopes_pass_validation` | 46s | Proptest |
+| Test | Time | Fix |
+|------|------|-----|
+| `catalog_determinism` | 162s | Load from JSON |
+| `fixture_staleness_check` | 158s | Load from JSON |
+| `literature_capacity_values` | 98s | Load from JSON |
+| `volume_scales_with_fourth_power` | 92s | Fewer proptest cases in default |
+| 5 fixture-consuming tests | 85-89s ea | Load from JSON |
+| `random_polytopes_pass_validation` | 46s | Fewer proptest cases in default |
 
 **Work items:**
 1. `generate_capacity_fixtures` writes to `fixtures/capacity_fixtures.json` (on-disk, checked in)
 2. 7 fixture-consuming tests load JSON instead of regenerating (85-98s → <1s each)
-3. Staleness detection per `data-pipeline` skill (semantic + generator hash)
-4. `known_polytopes` constructors get `LazyLock` caching (~50ms × 30 tests saved)
-5. Proptest: fewer cases in default suite, full cases in `#[ignore]`
+3. Staleness detection: semantic (expected values) + generator hash (WARNING not ERROR)
+4. `known_polytopes` constructors → `LazyLock` caching (~50ms × 30 tests)
+5. Proptest: fewer cases in default, full cases in `#[ignore]`
 
 **Target:** Default suite < 2 min. Full suite (with `--ignored`) < 10 min.
 
-**Depends on:** Migration merge (tests exist on migration-scaffold branch).
+**Depends on:** Migration merge (#0).
 
-## Migration cleanup (post-merge)
+---
 
-Small fixes identified during migration review but not yet applied:
+## 2. Migration cleanup (small fixes)
 
-1. **"orbit" → "candidate" terminology** in `capacity_accumulator.rs` (4 locations) and `saddle_point_solver.rs`. Per MEMORY.md: transitions are trajectory segments, not orbits, until closedness is established.
-2. **Duplicate EPS constants**: `projection_solver.rs` and `saddle_point_solver.rs` independently define the same threshold constants. Consolidate into `kkt/mod.rs`.
-3. **`Vec<Vec<bool>>` adjacency** in `facet_adjacency.rs` → flat `Vec<bool>` or `DMatrix<bool>`. Current sparse-ish layout causes awkward indexing and unnecessary allocation.
-4. **`build_augmented_system` allocation**: creates fresh `Vec` for normals/heights per call. Old code took pre-allocated slices. Minor regression for F=10-16.
-5. **`known_polytopes.rs` inline tests**: uses `mod tests {}` instead of colocated `_test.rs`. Low priority — tests are small and test public constructors.
+🟢 Agent can do autonomously. ~1 hour.
 
-## Identified refactors
+1. **"orbit" → "candidate" terminology** in `capacity_accumulator.rs` (4 locations) and `saddle_point_solver.rs`. Per MEMORY.md: not orbits until closedness established.
+2. **Duplicate EPS constants**: `projection_solver.rs` and `saddle_point_solver.rs` define same thresholds independently. Consolidate into `kkt/mod.rs`.
+3. **`Vec<Vec<bool>>` adjacency** in `facet_adjacency.rs` → flat `DMatrix<bool>`. Eliminates awkward indexing.
+4. **`build_augmented_system` allocation**: creates fresh `Vec` per call vs old pre-allocated slices. Minor perf regression.
+5. **`known_polytopes.rs` inline tests**: uses `mod tests {}` instead of colocated `_test.rs`. Low priority.
+
+---
+
+## 3. Thesis↔code alignment
+
+🔴 Jörn decides which side to fix for each item. Agent applies the fixes.
+
+See `handoffs/migration-thesis-findings.md` for the full list. Highest priority items:
+
+1. **Tube rotation increment** — code is a heuristic claiming to implement `[def:rotation-increment]`. Fix doc comment, or implement CH2021 Lem.2.21.
+2. **KKT notation** — unify (λ,ν) vs (μ,ξ) across thesis sections and code.
+3. **Accumulator pattern** — describe two-tier certified/uncertain tracking in thesis algorithm boxes (currently only in appendix A.3-A.4).
+4. **18 missing labels** — thesis needs `\label{}` for definitions the code references (or code needs labels removed).
+
+**Tip for implementing agent:** The thesis .tex files are the source of truth for mathematical definitions. The code doc comments should cross-reference thesis labels, not duplicate definitions. The convention contradiction (rust-conventions says "self-contained mathematically" but also "never duplicate proofs") needs resolution first.
+
+---
+
+## 4. Thesis TODOs
+
+🔴 Jörn verifies the math. Agent writes drafts, Jörn reviews.
+
+### tube-algorithm.tex (8 TODOs)
+Mostly agent-written from Jörn's notes. Needs Jörn's mathematical verification on:
+- JÖRN Q1: Quaternionic formula for ψ in CH2021 Lem.2.21
+- JÖRN Q2: TF_{ij} ⊂ n_i^⊥ ∩ n_j^⊥ equivalence
+- JÖRN Q3: Rotation number — abstract vs computable definition
+- JÖRN Q4: Closing requires two extension steps (code has resolved this; thesis doesn't)
+- JÖRN Q5: Correctness proof sketch
+- 3 GAP markers where agent added unverified content
+
+### appendix-numerical.tex (5 TODOs)
+- Continuity of c_EHZ on polytopes
+- Simplicity assumption
+- Billiard algorithm — does pruning by adjacency apply?
+- Three-valued verdict framework description
+- Numerical statement agent verified but Jörn hasn't checked
+
+---
+
+## 5. Experiment writeups
+
+🟡 Agent writes .tex, Jörn reviews content.
+
+All 16 experiments have Complete status and standardized READMEs. The thesis `experiments.tex` references some but not all. Jörn decides which experiments appear in the thesis and at what depth.
+
+**Known gaps:**
+- `sys-optimization` has no README
+- `crosspolytope` Phase 2 TODO: update known_polytopes.rs
+- `hko-neighborhood` — handoff at `handoffs/hko-neighborhood.md` says writeup needs to "tell a coherent story"
+
+---
+
+## 6. Code refactors (improve before thesis freeze)
+
+### 6a. Dual-vertex parameterization (thesis notation change)
+
+🔴 Jörn decides whether to switch. Major impact on thesis .tex files.
+
+Switch from (n_i, h_i) to a_i = n_i/h_i throughout thesis. Code already uses dual vertices internally. Simplifies formulas (no unit-length constraint, Reeb vector = 2J₀a_i directly).
+
+**Ordering:** Do BEFORE KKT projection refactor to avoid double refactoring.
+
+### 6b. KKT projection-based solver
+
+🟡 Agent implements, Jörn reviews math.
+
+Implement second solver variant: solve constraints → project H → eigendecompose → LP for β>0. Keep augmented-system solver for comparison. See detailed spec in TASKS.md §"Identified refactors" below.
+
+**Tip:** `kkt/projection_solver.rs` already exists from migration with a basic implementation. The refactor is to make it mathematically rigorous and add the ablation comparison framework.
+
+### 6c. Unify β>0 feasibility as LP
+
+🟢 Agent can do. Replace 1d/nd split with single LP formulation. See detailed spec below.
+
+### 6d. Extract shared experiment code to library
+
+🟢 Agent can do. See `handoffs/experiment-deduplication.md`.
+
+4 experiments have 930-2347 LOC of duplicated instrumented KKT solver + derivative code. After migration, some of this is already in the library (adjacency, permutations). Remaining: instrumented solver, derivatives.
+
+---
+
+## 7. Tube algorithm completion
+
+🟡 Agent implements, Jörn reviews math.
+
+See `handoffs/tube-algorithm.md`. The migration created a fresh implementation in `algorithms/tube/mod.rs` (1175 lines) but:
+- Rotation increment is a heuristic, not the real CH2021 formula
+- Correctness proof is a sketch with GAPs
+- Performance on F>10 polytopes is untested
+
+---
+
+## 8. Final thesis assembly
+
+🔴 Jörn-driven. Agent assists.
+
+- Abstract, introduction, conclusion
+- Bibliography check
+- Figure quality review (all experiments)
+- Proof reading pass
+- Print formatting
+
+---
+
+## Detailed refactor specs (referenced from §6)
 
 ### Unify `find_positive_beta_1d` / `find_positive_beta_nd` in kkt.rs
 
-**What:** `crates/src/kkt.rs` has two separate functions for finding β > 0 in the KKT null space: a 1d interval-arithmetic path and an nd coordinate-ascent heuristic. These solve the same problem — find a feasible point in `{β₀ + V·α | β > 0}` — which is a standard LP regardless of null-space dimension.
-
-**Why refactor:**
-- The 1d/nd split has no profiling justification
-- The nd "coordinate ascent" is an ad-hoc heuristic, not a standard algorithm
-- An LP formulation (maximize `min_j βⱼ`) handles all dimensions uniformly
-- The nd path is the only untested code path in kkt.rs (no known input triggers a 2D+ null space)
-
-**Thesis/code tension:** The main thesis (`lem:rank-deficiency-dismissal` in `general-case-algorithm-proof.tex`) proves that pairs with δβ ≠ 0 in the null space are *redundant* — a smaller pair dominates, so the algorithm may discard them. The code does the opposite: when the system is near-singular, it searches the null space for β > 0. These aren't contradictory (the lemma says "may discard", and the code handles *near*-singular systems where rank deficiency is approximate), but the relationship needs to be made explicit:
-- Main thesis (exact): rank-deficient → discard (dominated by smaller pair)
-- Appendix-numerical (approximate): near-singular → the pseudoinverse β₀ may have some β_i < 0 due to noise; shifting along approximate null-space directions can recover feasibility without changing Q (which is constant along null directions)
-- The "how to find β > 0" is a numerical implementation detail that belongs in appendix-numerical, not the main proof. It's dimension-agnostic (LP feasibility in the affine subspace).
-
-**Scope:** Replace both functions with a single LP-based approach, add appendix-numerical writeup explaining the numerical null-space search, verify on existing regression tests.
-
-### Audit Reeb vector factor: R = 2/h J₀ n, not 1/h J₀ n — AUDITED, CLEAN
-
-**Audit result (2026-03-14):** No wrong instances found.
-- Thesis .tex: consistently uses R_i = (2/h_i) J₀ n_i (basic-definitions.tex:478, general-case-algorithm-proof.tex:80, simple-minimizer-existence.tex:488, lagrangian-product-algorithm-proof.tex:85/92, appendix-numerical.tex:205, tube-algorithm.tex:339)
-- Library code: `reeb_vector()` returns J₀ n (direction only, documented as such). Only caller needing magnitude is `recover.rs:167` which correctly uses `* (2.0 / h)`.
-- The `reeb_vector()` function name could be confusing since it returns direction, not the actual Reeb vector. Consider renaming to `reeb_direction()` if/when refactoring.
-
-### KKT solver: implement projection-based variant
-
-**What:** Implement a second KKT solver variant that solves constraints first, then projects H onto the constraint space:
-1. Solve `(N^T | h^T) β = (0 | 1)` → (m-5)-dim affine solution space
-2. Project H onto constraint space → (m-5)×(m-5) symmetric system H'
-3. Eigendecompose H' → near-null eigenvalues = constant-action directions
-4. β > 0 check as LP feasibility on the projected null space
-5. Recover Lagrange multipliers μ, ν from Hβ + Nμ + hν = 0
-
-**Why:** Cleaner separation of concerns. Constraints satisfied by construction (no residual). Near-null eigenvalues have clear geometric meaning. Conservative inclusion of near-null eigenvalues is safe (constraints can't be violated). Better for the β > 0 feasibility check.
-
-**Interaction:** Keep existing augmented-system solver for ablation comparison. Both variants should agree on Q values.
-
-### Consider switching thesis from (n, h) to dual vertices a_i
-
-**What:** Replace the (n_i, h_i) ∈ S³ × R>0 parameterization with dual polytope vertices a_i = n_i/h_i ∈ R⁴\{0} throughout the thesis.
+**What:** Replace both functions with a single LP-based approach. `maximize min_j β_j` subject to `β = β₀ + V·α` handles all null-space dimensions uniformly.
 
 **Why:**
-- Unit-length constraint on n is never used mathematically
-- a_i ∈ R⁴\{0} is unconstrained — simpler parameter space
-- Reeb vector becomes R_i = 2 J₀ a_i (direct, no division)
-- Gradients ∂/∂a_i need no tangent-space projection
-- Code already stores dual vertices as rationals
+- 1d/nd split has no profiling justification
+- nd "coordinate ascent" is ad-hoc, not a standard algorithm
+- The nd path is the only untested code path
 
-**Scope:** Mostly a thesis notation change. Needs impact assessment: which formulas change, how many .tex files are affected, whether code interfaces change.
+**Thesis/code tension:** Main thesis (`lem:rank-deficiency-dismissal`) proves rank-deficient pairs are redundant. Code searches null space for β>0 on *near*-singular systems (approximate rank deficiency). Not contradictory but needs explicit documentation:
+- Exact: rank-deficient → discard (smaller pair dominates)
+- Numerical: near-singular → pseudoinverse β₀ may have β_i < 0 from noise; null-space shift recovers feasibility without changing Q
 
-**Ordering:** Should happen BEFORE the KKT projection refactor if we're doing both, to avoid refactoring twice.
+**Scope:** Replace both functions, add appendix-numerical writeup, verify on regression tests.
 
-### Experiment cleanup: extract shared code to library
+### Audit Reeb vector factor — AUDITED, CLEAN (2026-03-14)
 
-**What:** 4 experiments (gradient-descent, sys-optimization, hko-neighborhood, omega-obstacle) each contain 930-2347 LOC copies of an instrumented KKT solver + derivative computation. Extract to shared module.
+No wrong instances found. `reeb_vector()` renamed to `reeb_direction()` during migration.
 
-**Identified duplications:**
-- Instrumented KKT solver (build_kkt_system, solve_kkt_svd_path, find_positive_beta_nd, ehz_capacity_instrumented)
-- Derivative computation (compute_capacity_derivatives_analytical, _normal, _fd; compute_volume_derivatives_analytical, _normal)
-- Adjacency/permutation logic (combinations, heap_permutations, build_adjacency_matrix) — 6+ copies
+### KKT solver: projection-based variant
 
-**Scope:** Extract instrumented KKT + derivatives to `crates/` as public modules. Update 4 experiment binaries to use shared code. Verify outputs unchanged.
+See §6b above. Detailed 5-step algorithm:
+1. Solve `(N^T | h^T) β = (0 | 1)` → (m-5)-dim affine solution space
+2. Project H → (m-5)×(m-5) reduced Hessian H'
+3. Eigendecompose H' → near-null = constant-action directions
+4. β > 0 as LP feasibility on projected null space
+5. Recover multipliers from Hβ + Nμ + hν = 0
+
+Keep augmented-system solver for ablation comparison.
+
+### Dual-vertex parameterization
+
+See §6a above.
+
+### Experiment code extraction
+
+See §6d above and `handoffs/experiment-deduplication.md`.
