@@ -139,12 +139,8 @@ fn simplex_exact_vs_numerical() {
     let result = crate::algorithms::hk2017::ehz_capacity(&simplex.polytope)
         .expect("simplex should have capacity");
     let perm = &result.result.best_permutation;
-    if let Some(exact) = super::rational_solver::solve_kkt_exact(&simplex.polytope, perm) {
+    if let Some(exact) = super::rational_solver::solve_kkt_exact(simplex.polytope.dual_vertices(), perm) {
         let q_exact = exact.q_exact_f64;
-        let q_numerical = result.result.capacity;
-        // Q = 1/(2*capacity), so capacity = 1/(2*Q). Compare Q values.
-        // Actually, result.result.capacity IS the capacity c = 1/(2Q).
-        // The exact Q should match the numerical Q from the winning beta.
         assert!(
             q_exact > 0.0,
             "exact Q should be positive, got {q_exact}"
@@ -163,7 +159,7 @@ fn exact_agrees_on_known_polytopes() {
         let result = crate::algorithms::hk2017::ehz_capacity(&kp.polytope)
             .expect("known polytope should have capacity");
         let perm = &result.result.best_permutation;
-        if let Some(exact) = super::rational_solver::solve_kkt_exact(&kp.polytope, perm) {
+        if let Some(exact) = super::rational_solver::solve_kkt_exact(kp.polytope.dual_vertices(), perm) {
             assert!(exact.q_exact_f64 > 0.0, "exact Q should be positive");
         }
     }
@@ -176,9 +172,9 @@ fn winning_beta_positive_exact() {
     let result = crate::algorithms::hk2017::ehz_capacity(&simplex.polytope)
         .expect("simplex should have capacity");
     let perm = &result.result.best_permutation;
-    if let Some(exact) = super::rational_solver::solve_kkt_exact(&simplex.polytope, perm) {
+    if let Some(exact) = super::rational_solver::solve_kkt_exact(simplex.polytope.dual_vertices(), perm) {
         assert!(
-            exact.beta_exact.iter().all(|b| b.is_positive()),
+            exact.beta.iter().all(|b| b.is_positive()),
             "all exact beta should be strictly positive on winning node"
         );
     }

@@ -30,6 +30,7 @@ const EPS_RANK_THRESHOLD: f64 = 1e-10;
 ///   rejected) on well-conditioned systems.
 /// - Well below scales where a genuine inconsistency would be masked: a true
 ///   inconsistency (e.g. wrong closure condition) produces residuals O(0.1)--O(1).
+///
 /// Making it 10x larger (1e-7) would mask near-inconsistent systems where the
 /// closure constraint is violated by a small numerical perturbation. Making it
 /// 10x smaller (1e-9) risks false negatives on moderately ill-conditioned
