@@ -12,6 +12,32 @@ Deferred tasks, ideas, and identified work items. Grows stale; that's fine.
 
 KKT solver rework: dual-vertex parameterization, projection-based solver, β > 0 as LP, near-null eigenvalue handling. Needs spec file written collaboratively with Jörn before implementation. Code first, thesis follows.
 
+## Test data pipeline restructuring
+
+**Problem:** Default test suite takes 7 min. Top 10 tests = 1000s of 1050s total. Root cause: fixture-consuming tests regenerate all 33 polytope capacity values on every run instead of loading cached data.
+
+**Profiling data (cargo nextest, 2026-03-17):**
+
+| Test | Time | Category |
+|------|------|----------|
+| `catalog_determinism` | 162s | Fixture regeneration |
+| `fixture_staleness_check` | 158s | Fixture regeneration |
+| `literature_capacity_values` | 98s | Full EHZ on ~8 polytopes |
+| `volume_scales_with_fourth_power` | 92s | Proptest with qhull |
+| 5 fixture-consuming tests | 85-89s ea | Block on fixture generation |
+| `random_polytopes_pass_validation` | 46s | Proptest |
+
+**Work items:**
+1. `generate_capacity_fixtures` writes to `fixtures/capacity_fixtures.json` (on-disk, checked in)
+2. 7 fixture-consuming tests load JSON instead of regenerating (85-98s → <1s each)
+3. Staleness detection per `data-pipeline` skill (semantic + generator hash)
+4. `known_polytopes` constructors get `LazyLock` caching (~50ms × 30 tests saved)
+5. Proptest: fewer cases in default suite, full cases in `#[ignore]`
+
+**Target:** Default suite < 2 min. Full suite (with `--ignored`) < 10 min.
+
+**Depends on:** Migration merge (tests exist on migration-scaffold branch).
+
 ## Identified refactors
 
 ### Unify `find_positive_beta_1d` / `find_positive_beta_nd` in kkt.rs
