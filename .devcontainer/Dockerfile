@@ -100,4 +100,8 @@ ENV PATH="$HOME/.cargo/bin:$HOME/.local/bin:/usr/local:$PATH"
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain stable \
     && "$HOME/.cargo/bin/rustup" component add rustfmt clippy rust-analyzer || true
 
+# Cargo tools: nextest (per-test timing/parallel), cargo-watch (auto-rerun)
+RUN curl -LsSf https://get.nexte.st/latest/linux | tar zxf - -C "$HOME/.cargo/bin" \
+    && "$HOME/.cargo/bin/cargo" install cargo-watch
+
 WORKDIR /workspaces/msc-math
