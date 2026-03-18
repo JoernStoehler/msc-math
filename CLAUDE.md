@@ -246,9 +246,14 @@ Per-experiment folders under `experiments/`. Load skills: `experiment-convention
 
 ## Environment
 
-- Sessions run in a devcontainer with the repo at `/workspaces/msc-math`.
+- Sessions run in a Docker devcontainer with the repo at `/workspaces/msc-math`. The container provides OS-level isolation, making `--dangerously-skip-permissions` safe.
+  - Architecture: see `.devcontainer/README.md` for the full access flow diagram
+  - Access from host: `dc` shell function → `devcontainer exec` → bash in container
+  - Access from remote devices: SSH into host → `dc` → container bash → `dtach`/`tmux` → `claude`
   - Worktrees: use `--worktree` flag or `EnterWorktree` tool. Hooks in `.claude/hooks/` override defaults to branch from local `main`. Worktrees land at `.claude/worktrees/<name>/`.
 - Pre-installed: Rust 1.93 (cargo, clippy), Python 3.11 (pytest, ruff, mypy, black), gh CLI (via post-create hook)
+- Session persistence: dtach (lightweight, doesn't intercept keybindings) or tmux (multiplexing)
+- Safe delete: `rm` is aliased to `trash-put` inside the container; use `/bin/rm` for real deletes
 - LaTeX: TeX Live 2023 (pdflatex, xelatex, lualatex), latexmk, biber, chktex
 
 **Runtime limits:**

@@ -57,4 +57,14 @@ if [ ! -d "${HOME}/.texlive2023/texmf-var/web2c" ]; then
   TEXMFVAR="${HOME}/.texlive2023/texmf-var" fmtutil-user --all >/dev/null 2>&1 || true
 fi
 
+# Safe delete wrapper — redirects rm to trash-put (use /bin/rm for real deletes)
+if ! grep -q 'trash-put' ~/.bashrc 2>/dev/null; then
+  cat >> ~/.bashrc << 'BASHRC'
+
+# Safe delete: redirect rm to trash-put (use /bin/rm for real deletes)
+rm() { trash-put "$@"; }
+export -f rm
+BASHRC
+fi
+
 echo "[post-create] Local post-create complete."
