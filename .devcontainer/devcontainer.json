@@ -26,6 +26,8 @@
   "runArgs": ["--memory=10g", "--memory-swap=12g", "--cap-add=SYS_ADMIN"],
   "postCreateCommand": "bash .devcontainer/post-create.sh",
   "containerEnv": {
+    "TERM": "xterm-256color",
+    "LANG": "en_US.UTF-8",
     "DEVCONTAINER_ENV": "local",
     "HISTFILE": "/home/vscode/.bash_history_dir/.bash_history",
     "CARGO_BUILD_JOBS": "4",

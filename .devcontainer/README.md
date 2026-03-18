@@ -18,12 +18,9 @@ Ghostty / Crostini /                  SSH server (:22, socket-activated)
 PowerShell / Termux                     │
   └─ ssh joern@host ────────────────────┘
        └─ dc  ─── devcontainer exec ──────────────────────────────────→ bash
-                                                                         ├─ claude --dangerously-skip-permissions
-                                                                         │    └─ Bash(), Edit(), ...
-                                                                         ├─ dtach -A /tmp/cc claude ...
-                                                                         │    (persists across disconnects)
-                                                                         └─ tmux new-session -A -s work
-                                                                              (multiplex + persist)
+                                                                         └─ tmux new-session -A -s cc
+                                                                              └─ claude --dangerously-skip-permissions
+                                                                                   └─ Bash(), Edit(), ...
 ```
 
 ### Layers
@@ -37,13 +34,13 @@ PowerShell / Termux                     │
 **Container** runs:
 - VS Code tunnel server (for browser IDE access via vscode.dev)
 - bash sessions (entered via `devcontainer exec` from host)
-- dtach / tmux (session persistence across SSH disconnects)
+- tmux (session persistence across SSH disconnects; `set -g mouse on` for scroll)
 - Claude Code CLI processes
 - Everything CC spawns: Bash() commands, cargo, python, latexmk, etc.
 
 **Remote devices** connect via:
 - Browser → vscode.dev tunnel → IDE view (file browsing, editing)
-- Terminal → SSH → host → `dc` alias → container bash → claude
+- Terminal → SSH → host → `dc` function → container bash → tmux → claude
 
 ### Why this stack
 
@@ -51,11 +48,17 @@ PowerShell / Termux                     │
 |-----------|-----|
 | Docker container | OS-level isolation — CC can't touch host filesystem, SSH keys, etc. |
 | `--dangerously-skip-permissions` | Safe because Docker provides isolation. Eliminates all permission prompts. |
-| dtach | Lightweight session persistence. Doesn't intercept keybindings (unlike tmux). Good for CC sessions where /voice or other terminal features need clean passthrough. |
-| tmux | When multiplexing is needed (multiple panes/windows). |
+| tmux | Session persistence across disconnects. `set -g mouse on` in `~/.tmux.conf` fixes scroll in CC's TUI. |
 | SSH + Tailscale | Access from any device. Works on Android (Termux), ChromeOS (Crostini), Windows (PowerShell), Linux. |
 | VS Code tunnel | Browser IDE fallback for GUI file browsing. Not the primary workflow. |
 | trash-cli + rm wrapper | `rm` → `trash-put` inside container. Use `/bin/rm` for real deletes. |
+
+### Why not dtach
+
+dtach doesn't preserve terminal buffer state. After detach/reattach, CC's TUI
+renders incorrectly and cannot be recovered without restarting. tmux maintains
+screen state across detach/reattach. dtach is still installed if needed for
+other (non-TUI) processes.
 
 ## Access from host
 
@@ -71,21 +74,19 @@ dc() {
 }
 ```
 
-From inside the container, start CC manually:
+From inside the container, start a persistent CC session:
+
+```bash
+tmux new-session -A -s cc 'claude --dangerously-skip-permissions'
+# Ctrl+b d to detach
+# Reattach later:
+tmux attach -t cc
+```
+
+Or without persistence:
 
 ```bash
 claude --dangerously-skip-permissions
-```
-
-For persistent sessions that survive SSH disconnects:
-
-```bash
-# tmux (recommended): Ctrl+b d to detach, works on all keyboard layouts
-tmux new-session -A -s cc -c /workspaces/msc-math 'claude --dangerously-skip-permissions'
-
-# dtach: lighter alternative (-e ^q sets detach to Ctrl+q;
-# default Ctrl+\ doesn't work on German keyboards where \ is AltGr+ß)
-dtach -A /tmp/cc -e ^q claude --dangerously-skip-permissions
 ```
 
 ## Access from remote devices
@@ -96,8 +97,9 @@ ssh joern@<tailscale-ip>
 cd ~/workspaces/msc-math && dc
 
 # Then inside the container:
-dtach -A /tmp/cc claude --dangerously-skip-permissions
-# Ctrl+\ to detach; reattach from any device with the same command
+tmux new-session -A -s cc 'claude --dangerously-skip-permissions'
+# Ctrl+b d to detach; reattach from any device with:
+# dc → tmux attach -t cc
 ```
 
 Tested access methods:

@@ -57,6 +57,21 @@ if [ ! -d "${HOME}/.texlive2023/texmf-var/web2c" ]; then
   TEXMFVAR="${HOME}/.texlive2023/texmf-var" fmtutil-user --all >/dev/null 2>&1 || true
 fi
 
+# tmux config for Claude Code TUI compatibility
+# Based on https://github.com/sethdford/tmux-claude-code
+cat > ~/.tmux.conf << 'TMUXCONF'
+set -g allow-passthrough on
+set -g extended-keys on
+set -as terminal-features 'xterm*:extkeys'
+set -sg escape-time 0
+set -g set-clipboard on
+set -g history-limit 250000
+set -g focus-events on
+set -g mouse on
+set -g default-terminal "tmux-256color"
+set -ag terminal-overrides ",xterm-256color:RGB"
+TMUXCONF
+
 # Safe delete wrapper — redirects rm to trash-put (use /bin/rm for real deletes)
 if ! grep -q 'trash-put' ~/.bashrc 2>/dev/null; then
   cat >> ~/.bashrc << 'BASHRC'
