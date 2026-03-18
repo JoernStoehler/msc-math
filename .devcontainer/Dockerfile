@@ -65,7 +65,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     entr \
     qhull-bin \
     tmux \
-    dtach \
     trash-cli \
     && rm -rf /var/lib/apt/lists/*
 

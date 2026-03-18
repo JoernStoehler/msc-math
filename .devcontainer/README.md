@@ -53,13 +53,6 @@ PowerShell / Termux                     │
 | VS Code tunnel | Browser IDE fallback for GUI file browsing. Not the primary workflow. |
 | trash-cli + rm wrapper | `rm` → `trash-put` inside container. Use `/bin/rm` for real deletes. |
 
-### Why not dtach
-
-dtach doesn't preserve terminal buffer state. After detach/reattach, CC's TUI
-renders incorrectly and cannot be recovered without restarting. tmux maintains
-screen state across detach/reattach. dtach is still installed if needed for
-other (non-TUI) processes.
-
 ## Access from host
 
 The `dc` shell function (add to host `~/.bashrc`) gives a bash shell in any
