@@ -1,0 +1,447 @@
+% math.tex — geom module
+% Mathematical results supporting crates/src/geom/
+%
+% Labels defined here:
+%   def:symplectic-form, def:J0, def:ehz-capacity, def:lagrangian-product,
+%   def:symplectic-product, def:cross-product-4d, def:face-lattice,
+%   def:polar-body, def:polytope-dual, def:polygon-h-rep, def:polygon-area,
+%   def:reeb-vector-field, def:volume, def:systolic-ratio,
+%   lem:piecewise-linear-reeb, lem:positive-span, lem:rational-pipeline,
+%   lem:vertex-enumeration, lem:shoelace,
+%   thm:hko-counterexample,
+%   prop:capacity-symplectic-product
+%
+% Sources: thesis/basic-definitions.tex (verified content),
+%   .rs doc comments (stubs for labels not yet in thesis)
+
+\documentclass{article}
+\usepackage{amsmath,amssymb,amsthm}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{remark}[theorem]{Remark}
+\begin{document}
+
+% ====================================================================
+% Symplectic structure
+% ====================================================================
+
+\begin{definition}[Standard symplectic structure]\label{def:symplectic-form}
+% Jörn: text approved (1aac085)
+Write $\mathbb{R}^4$ with coordinates $(q_1, q_2, p_1, p_2)$.
+The \emph{standard complex structure} is
+\[
+  J_0 = \begin{pmatrix} 0 & -I_2 \\ I_2 & 0 \end{pmatrix},
+  \qquad\text{i.e.,}\quad
+  J_0(q, p) = (-p, q),
+\]
+where $I_2$ is the $2 \times 2$ identity matrix.
+The \emph{standard symplectic form} is
+\[
+  \omega_0(u, v) \coloneqq \langle J_0 u, v \rangle
+  = \sum_{i=1}^{2} (u_{q_i} v_{p_i} - u_{p_i} v_{q_i}),
+\]
+equivalently $\omega_0 = dq_1 \wedge dp_1 + dq_2 \wedge dp_2$.
+\end{definition}
+
+
+\begin{definition}[Standard complex structure $J_0$]\label{def:J0}
+% [TODO: JÖRN - verify: J0 is defined within def:symplectic-form above.
+%   This label exists as a separate cross-reference target for code that
+%   references J0 specifically (e.g. symplectic_form.rs). Consider whether
+%   this should remain a separate label or be merged into def:symplectic-form.]
+The standard complex structure $J_0 \in \mathbb{R}^{4 \times 4}$ is
+\[
+  J_0 = \begin{pmatrix} 0 & -I_2 \\ I_2 & 0 \end{pmatrix},
+\]
+satisfying $J_0^2 = -I_4$, $J_0^{-1} = J_0^\top = -J_0$,
+$\omega_0(J_0 u, J_0 v) = \omega_0(u,v)$, and $|J_0 u| = |u|$.
+In the 2D case, $J_0^{(2)} = \bigl(\begin{smallmatrix} 0 & -1 \\ 1 & 0 \end{smallmatrix}\bigr)$.
+\end{definition}
+
+
+% ====================================================================
+% Capacity and systolic ratio
+% ====================================================================
+
+\begin{definition}[EHZ capacity]\label{def:ehz-capacity}
+% Jörn: text approved (1aac085)
+The \emph{Ekeland--Hofer--Zehnder capacity} of a convex body $K$ with smooth
+boundary is
+\[
+  c_{\mathrm{EHZ}}(K) \coloneqq \min\bigl\{ A(\gamma) :
+  \gamma \text{ is a closed characteristic on } \partial K \bigr\}.
+\]
+The minimum exists and is positive.
+The definition extends to all convex bodies by approximation;
+for polytopes, the minimum is attained by a generalized Reeb orbit.
+\end{definition}
+
+
+\begin{definition}[Systolic ratio]\label{def:systolic-ratio}
+% [TODO: JÖRN - verify statement]
+% Source: dataset.rs doc comment
+The \emph{systolic ratio} of a convex body $K \subset \mathbb{R}^4$ is
+\[
+  \operatorname{sys}(K) \coloneqq \frac{c_{\mathrm{EHZ}}(K)^2}{2\,\operatorname{vol}(K)}.
+\]
+Viterbo's conjecture asserts $\operatorname{sys}(K) \leq 1$ for all convex bodies $K$.
+\end{definition}
+
+
+% ====================================================================
+% Products
+% ====================================================================
+
+\begin{definition}[Lagrangian product]\label{def:lagrangian-product}
+% Source: thesis/lagrangian-product-algorithm-proof.tex
+Let $K_q \subset L_q$ and $K_p \subset L_p$ be convex polygons
+with $0 \in \operatorname{int}(K_q)$ and $0 \in \operatorname{int}(K_p)$,
+where $L_q = \{(q_1, q_2, 0, 0)\}$ and $L_p = \{(0, 0, p_1, p_2)\}$
+are complementary Lagrangian subspaces.
+The \emph{Lagrangian product} is the polytope
+\[
+  K \coloneqq K_q \times K_p
+  = \{ (q, p) \in \mathbb{R}^4 : q \in K_q,\; p \in K_p \}.
+\]
+\end{definition}
+
+
+\begin{definition}[Symplectic product]\label{def:symplectic-product}
+% [TODO: JÖRN - verify statement]
+% Source: known_polytopes.rs doc comment
+Let $A, B \subset \mathbb{R}^2$ be convex bodies containing
+the origin in their interiors, where we view the first copy
+of~$\mathbb{R}^2$ as the symplectic plane $(q_1, p_1)$ and
+the second as $(q_2, p_2)$.
+The \emph{symplectic product} is
+\[
+  A \times_S B
+    \coloneqq \{(q_1, q_2, p_1, p_2) \in \mathbb{R}^4
+      : (q_1, p_1) \in A,\; (q_2, p_2) \in B\}.
+\]
+\end{definition}
+
+
+\begin{proposition}[Capacity of symplectic products]%
+\label{prop:capacity-symplectic-product}
+% Source: thesis/basic-definitions.tex
+Let $A, B \subset \mathbb{R}^2$ be convex bodies containing
+the origin in their interiors, viewed as in
+Definition~\ref{def:symplectic-product}.
+Then
+\[
+  c_{\mathrm{EHZ}}(A \times_S B)
+    = \min\!\bigl(\operatorname{area}(A),\;
+                   \operatorname{area}(B)\bigr).
+\]
+\end{proposition}
+
+\begin{proof}
+We reduce to a product of disks via an area-preserving
+map, then squeeze between a ball and a cylinder.
+
+On each copy of~$\mathbb{R}^2$, the symplectic form
+restricts to $dq_i \wedge dp_i$, which is the standard
+area form, so area-preserving diffeomorphisms are
+symplectomorphisms.
+
+We first show $c_{\mathrm{EHZ}}(A) = \operatorname{area}(A)$
+for every convex body~$A$ in~$\mathbb{R}^2$.
+By the theorem of Dacorogna and
+Moser, for any two bounded
+domains~$\Omega_1, \Omega_2 \subset \mathbb{R}^2$ with
+smooth boundaries and equal area, there exists an
+area-preserving diffeomorphism
+$\varphi \colon \overline{\Omega}_1 \to \overline{\Omega}_2$.
+The construction solves a boundary-value problem whose
+solution vanishes on~$\partial\Omega_1$, so the resulting
+divergence-free vector field extends by zero outside
+$\Omega_1$; its time-$1$ flow is a global area-preserving
+(hence symplectic) diffeomorphism of~$\mathbb{R}^2$.
+Taking $\Omega_1$ to be a smooth convex body~$A$
+and $\Omega_2 = B^2(r)$ with $\pi r^2 = \operatorname{area}(A)$,
+symplectic invariance gives
+$c_{\mathrm{EHZ}}(A) = c_{\mathrm{EHZ}}(B^2(r)) = \pi r^2
+= \operatorname{area}(A)$.
+For non-smooth convex bodies, let
+$A^{-\varepsilon} \subset A \subset A^{+\varepsilon}$
+be smooth inner and outer parallel bodies;
+monotonicity and
+$\operatorname{area}(A^{\pm\varepsilon}) \to
+\operatorname{area}(A)$ yield
+$c_{\mathrm{EHZ}}(A) = \operatorname{area}(A)$.
+
+Now let $r_A, r_B > 0$ satisfy
+$\pi r_A^2 = \operatorname{area}(A)$ and
+$\pi r_B^2 = \operatorname{area}(B)$.
+The above gives global symplectomorphisms
+$\varphi_1, \varphi_2 \colon \mathbb{R}^2 \to \mathbb{R}^2$
+mapping $A$ to~$B^2(r_A)$ and $B$ to~$B^2(r_B)$
+respectively.
+Since $\omega_0 = dq_1 \wedge dp_1 + dq_2 \wedge dp_2$
+decomposes over the two planes, the product
+$\varphi_1 \times \varphi_2$ is a symplectomorphism
+of~$\mathbb{R}^4$.
+By symplectic invariance,
+\[
+  c_{\mathrm{EHZ}}(A \times_S B)
+    = c_{\mathrm{EHZ}}\bigl(B^2(r_A) \times_S B^2(r_B)\bigr).
+\]
+Assume without loss of generality that $r_A \leq r_B$.
+Then
+\[
+  B^4(r_A)
+    \;\subset\; B^2(r_A) \times_S B^2(r_B)
+    \;\subset\; B^2(r_A) \times \mathbb{R}^2,
+\]
+where the first inclusion holds because $r_A \leq r_B$
+and the second because $B^2(r_B) \subset \mathbb{R}^2$.
+By monotonicity and normalization,
+\[
+  \pi r_A^2
+    = c_{\mathrm{EHZ}}(B^4(r_A))
+    \leq c_{\mathrm{EHZ}}\bigl(B^2(r_A) \times_S B^2(r_B)\bigr)
+    \leq c_{\mathrm{EHZ}}(B^2(r_A) \times \mathbb{R}^2)
+    = \pi r_A^2.
+\]
+Hence $c_{\mathrm{EHZ}}(A \times_S B)
+  = \pi r_A^2
+  = \min(\operatorname{area}(A), \operatorname{area}(B))$.
+\end{proof}
+
+
+% ====================================================================
+% Polytope geometry
+% ====================================================================
+
+\begin{definition}[Polytope dual / polar body]\label{def:polytope-dual}
+% [TODO: JÖRN - verify statement]
+% Source: polytope.rs doc comment
+Let $K \subset \mathbb{R}^4$ be a polytope with $0 \in \operatorname{int}(K)$
+given in $H$-representation $K = \{x : \langle a_i, x\rangle \leq 1\}_{i=1}^F$.
+The \emph{polar body} (or \emph{dual}) is
+\[
+  K^\circ \coloneqq \{y \in \mathbb{R}^4 : \langle x, y \rangle \leq 1
+    \text{ for all } x \in K\}
+  = \operatorname{conv}(a_1, \ldots, a_F).
+\]
+\end{definition}
+
+\begin{remark}\label{rem:polar-body-note}
+% This remark connects def:polytope-dual to the separate label def:polar-body
+% used in some .rs files. They refer to the same concept.
+The label \texttt{def:polar-body} in some \texttt{.rs} files
+refers to the same concept as Definition~\ref{def:polytope-dual}.
+\end{remark}
+\label{def:polar-body}% alias for cross-references
+
+
+\begin{definition}[Face lattice / skeleton]\label{def:face-lattice}
+% [TODO: JÖRN - verify statement]
+% Source: skeleton.rs doc comment
+The \emph{skeleton} (or \emph{face lattice}) of a 4D convex polytope $K$
+is the combinatorial structure recording all faces of $K$
+(vertices, edges, 2-faces, facets) and their incidence relations.
+Two facets $F_i, F_j$ are \emph{adjacent} if $F_i \cap F_j$ is a
+face of dimension $\geq 1$.
+\end{definition}
+
+
+\begin{definition}[Cross product in $\mathbb{R}^4$]\label{def:cross-product-4d}
+% [TODO: JÖRN - verify statement]
+% Source: cross_product_4d.rs doc comment
+The \emph{cross product} of three vectors $u, v, w \in \mathbb{R}^4$
+is the unique vector $u \times v \times w \in \mathbb{R}^4$
+perpendicular to all three, with magnitude equal to the volume
+of the parallelepiped spanned by $u, v, w$, and orientation
+determined by the right-hand rule.
+Equivalently,
+\[
+  (u \times v \times w)_i
+  = (-1)^{i+1} \det\bigl(M_i\bigr),
+\]
+where $M_i$ is the $3 \times 3$ matrix obtained by deleting
+row~$i$ from the $4 \times 3$ matrix $(u \mid v \mid w)$.
+\end{definition}
+
+
+% ====================================================================
+% Polygon geometry
+% ====================================================================
+
+\begin{definition}[Convex polygon $H$-representation]\label{def:polygon-h-rep}
+% [TODO: JÖRN - verify statement]
+% Source: polygon.rs doc comment
+A 2D \emph{convex polygon in $H$-representation} is specified by
+outward unit normals $n_1, \ldots, n_m \in S^1$ and positive
+heights $h_1, \ldots, h_m > 0$:
+\[
+  P = \bigcap_{i=1}^{m} \{x \in \mathbb{R}^2 : \langle n_i, x \rangle \leq h_i\}.
+\]
+\end{definition}
+
+
+\begin{definition}[Polygon area]\label{def:polygon-area}
+% [TODO: JÖRN - verify statement]
+% Source: polygon.rs doc comment
+The \emph{area} of a convex polygon $P$ given in $H$-representation
+(Definition~\ref{def:polygon-h-rep}) is computed via triangulation
+from the centroid or via the shoelace formula on the vertex list.
+\end{definition}
+
+
+% ====================================================================
+% Volume
+% ====================================================================
+
+\begin{definition}[Volume of a 4D polytope]\label{def:volume}
+% [TODO: JÖRN - verify statement]
+% Source: volume.rs, qhull.rs doc comments
+The \emph{volume} of a 4D convex polytope $K$ is the standard
+Lebesgue measure $\operatorname{vol}(K) = \int_K dx$.
+In the implementation, volume is computed by triangulating $K$
+into simplices via qhull and summing the simplex volumes:
+\[
+  \operatorname{vol}(\Delta)
+  = \frac{1}{4!}\, |\det(v_1 - v_0 \mid v_2 - v_0 \mid v_3 - v_0 \mid v_4 - v_0)|.
+\]
+\end{definition}
+
+
+% ====================================================================
+% Reeb dynamics on polytopes
+% ====================================================================
+
+\begin{definition}[Reeb vector field on polytopes]\label{def:reeb-vector-field}
+% [TODO: JÖRN - verify statement]
+% Source: reeb_trajectory.rs doc comment
+On a facet $F_i$ of a polytope $K$ with outward unit normal $n_i$
+and height $h_i$, the \emph{Reeb vector} is
+\[
+  R_i = \frac{2}{h_i}\, J_0\, n_i.
+\]
+The Reeb vector $R_i$ is tangent to $F_i$
+($\langle n_i, R_i \rangle = 0$, since
+$\langle n_i, J_0 n_i \rangle = \omega_0(n_i, n_i) = 0$).
+\end{definition}
+
+
+\begin{lemma}[Piecewise-linear Reeb trajectories]\label{lem:piecewise-linear-reeb}
+% [TODO: JÖRN - verify statement, add proof]
+% Source: reeb_trajectory.rs doc comment
+Reeb trajectories on polytope boundaries are piecewise linear:
+on each facet $F_i$, the trajectory moves with constant velocity $R_i$.
+At a breakpoint where the trajectory transitions from $F_i$ to $F_j$,
+the velocity changes discontinuously from $R_i$ to $R_j$.
+\end{lemma}
+
+
+% ====================================================================
+% Computational geometry lemmas
+% ====================================================================
+
+\begin{lemma}[Positive span criterion]\label{lem:positive-span}
+% [TODO: JÖRN - verify statement, add proof]
+% Source: validation.rs, vertex_enumeration.rs doc comments
+The outward normals $n_1, \ldots, n_F$ of a polytope $K \subset \mathbb{R}^4$
+positively span $\mathbb{R}^4$ if and only if the recession cone
+$\operatorname{rec}(K) = \{0\}$, i.e., $K$ is bounded.
+This is used to verify that a given $H$-representation defines
+a bounded polytope.
+\end{lemma}
+
+
+\begin{lemma}[Exact vertex enumeration]\label{lem:vertex-enumeration}
+% [TODO: JÖRN - verify statement, add proof]
+% Source: vertex_enumeration.rs doc comment
+For a 4D polytope $K$ given by $F$ halfspaces, the vertices
+are obtained by solving $\langle n_{i_k}, x \rangle = h_{i_k}$
+for all $\binom{F}{4}$ four-element subsets $\{i_1, i_2, i_3, i_4\}$,
+then filtering for points satisfying all remaining inequalities.
+The implementation uses exact rational arithmetic to avoid
+numerical errors in degeneracy detection.
+\end{lemma}
+
+
+\begin{lemma}[Rational arithmetic pipeline]\label{lem:rational-pipeline}
+% [TODO: JÖRN - verify statement, add proof]
+% Source: rational_arithmetic.rs doc comment
+All discrete/combinatorial decisions in the geometry pipeline
+(vertex adjacency, symplectic sign $\omega_0(n_i, n_j) \gtrless 0$,
+halfspace irredundancy) are computed using exact rational arithmetic
+to prevent numerical misclassification.
+\end{lemma}
+
+
+% ====================================================================
+% Shoelace formula
+% ====================================================================
+
+\begin{lemma}[Symplectic shoelace formula]\label{lem:shoelace}
+% Jörn: text approved (b7a8bc0) — from \begin{lemma} to \end{proof}
+Let $z \colon [0, T] \to \mathbb{R}^4$ be a closed curve with
+piecewise-constant velocity:
+$\dot{z}(t) = w_k$ on $I_k = (\tau_{k-1}, \tau_k)$ for
+$k = 1, \ldots, m$, where $0 = \tau_0 < \cdots < \tau_m = T$.
+Then
+\[
+  \int_0^T \langle -J_0\, \dot{z}(t),\, z(t) \rangle \, dt
+  = \sum_{1 \leq j < i \leq m}
+    |I_j|\, |I_i|\, \omega_0(w_j, w_i).
+\]
+\end{lemma}
+
+\begin{proof}
+Since $z$ is closed, $\sum_{k=1}^m |I_k|\, w_k = 0$.
+For $t \in I_i$:
+\[
+  z(t) = z(0) + \sum_{j=1}^{i-1} |I_j|\, w_j
+    + (t - \tau_{i-1})\, w_i.
+\]
+Substitute into
+$\langle -J_0 w_i, z(t) \rangle$ and integrate over $[0, T]$:
+\begin{align*}
+\int_0^T \!\langle{-}J_0 \dot{z}, z \rangle \, dt
+  &= \sum_{i=1}^m \int_{I_i}
+    \!\langle -J_0 w_i,\;
+      z(0) + \textstyle\sum_{j < i} |I_j| w_j
+      + (t{-}\tau_{i-1}) w_i
+    \rangle\, dt \\
+  &= \underbrace{
+      \bigl\langle -J_0 \bigl(\textstyle\sum_i |I_i| w_i\bigr),\,
+      z(0) \bigr\rangle
+    }_{= \, 0 \;\text{(closure)}}
+  + \sum_{i=1}^m \sum_{j=1}^{i-1}
+      |I_i|\, |I_j|\, \omega_0(w_j, w_i) \\
+  &\quad
+  + \sum_{i=1}^m
+      \underbrace{\omega_0(w_i, w_i)}_{= \, 0}\;
+      \cdot \tfrac{|I_i|^2}{2}.
+\end{align*}
+The first term vanishes because
+$\sum |I_k| w_k = 0$ (closure of~$z$).
+The third term vanishes because
+$\omega_0$ is antisymmetric.
+\end{proof}
+
+
+% ====================================================================
+% HKO counterexample
+% ====================================================================
+
+\begin{theorem}[HKO counterexample to Viterbo's conjecture]%
+\label{thm:hko-counterexample}
+% [TODO: JÖRN - verify statement, add proof/reference]
+% Source: known_polytopes.rs doc comment
+% Reference: Haim-Kislev and Ostrover 2024
+There exists a 10-facet polytope $K \subset \mathbb{R}^4$
+(the HKO pentagon counterexample) with systolic ratio
+$\operatorname{sys}(K) > 1$, disproving Viterbo's conjecture
+in dimension~$4$.
+\end{theorem}
+
+
+\end{document}

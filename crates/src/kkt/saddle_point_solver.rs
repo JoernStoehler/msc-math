@@ -11,10 +11,10 @@
 //! - Q error bound computation via [lem:q-error-bound]
 //! - Inertia reporting for saddle-point structure analysis
 //!
-//! **Near-zero Q orbits:** Some (S,σ) pairs yield Q ≈ 0 (very high action). The error
+//! **Near-zero Q candidates:** Some (S,σ) pairs yield Q ≈ 0 (very high action). The error
 //! bound E is valid but may exceed |Q| itself (relative error > 100%). This is harmless:
-//! the capacity algorithm picks max Q, so near-zero Q orbits never win. The absolute
-//! threshold `E < 1e-6` is chosen relative to Q_max ≈ O(1), not relative to each orbit's Q.
+//! the capacity algorithm picks max Q, so near-zero Q candidates never win. The absolute
+//! threshold `E < 1e-6` is chosen relative to Q_max ≈ O(1), not relative to each candidate's Q.
 //!
 //! **Sign convention:** Q > 0 when σ follows the positive Reeb direction (where
 //! consecutive facets satisfy ω₀(n_{σ(k)}, n_{σ(k+1)}) ≥ 0). Callers pass
@@ -40,7 +40,7 @@ use nalgebra::{DMatrix, DVector, Vector4};
 /// ~1e-16; numerical roundoff in eigendecomposition accumulates to ~1e-12 for
 /// (m+5) x (m+5) matrices with m up to 16. A value of 1e-12 is:
 /// - Far above machine epsilon (can't be confused with exact zero)
-/// - Far below typical beta values (O(0.1)--O(10)) for real orbits
+/// - Far below typical beta values (O(0.1)--O(10)) for real candidates
 /// - 10x tighter than EPS_MARGIN_TRUE (1e-9) so Indeterminate verdicts are
 ///   returned for any solution where beta is ambiguous.
 ///
@@ -54,9 +54,9 @@ pub const EPS_BETA_POSITIVE: f64 = 1e-12;
 /// Avoids division-by-near-zero when computing capacity = 1/(2Q).
 ///
 /// **Why 1e-15:** Q = c_EHZ^{-2} / 2 is O(0.01)--O(10) for our polytopes
-/// (typical c_EHZ ~ 0.3--3). Q < 1e-15 indicates either a degenerate orbit
+/// (typical c_EHZ ~ 0.3--3). Q < 1e-15 indicates either a degenerate candidate
 /// with astronomically high action or pure f64 noise. In either case, this
-/// orbit cannot be the capacity maximizer. 1e-15 is just above machine epsilon
+/// candidate cannot be the capacity maximizer. 1e-15 is just above machine epsilon
 /// (~1e-16) to avoid exact-zero false positives from cancellation.
 pub const EPS_Q_POSITIVE: f64 = 1e-15;
 
@@ -287,7 +287,7 @@ fn try_pseudoinverse_with_threshold(
         return None;
     }
 
-    // Q error bound computation (Algorithm [alg:q-error-bound]).
+    // Q error bound computation ([lem:q-error-bound]).
     // Solution vector is [beta_hat; mu_hat; xi_hat].
     // Q_tilde = Q(beta_hat) + (r2^T mu_hat + r3 * xi_hat).
     let r2_dot_mu: f64 = (m..m + 4).map(|i| residual_vec[i] * x0[i]).sum();
@@ -371,9 +371,9 @@ fn try_pseudoinverse_with_threshold(
         // yields enormous action, never competitive). Only assert Q constancy
         // when Q is meaningfully nonzero.
         // Threshold 1e-3: meaningful Q values are O(0.01)--O(10). Near-zero
-        // Q orbits (|Q| < 1e-3) have enormous action (capacity ~ 1/(2Q)) and
+        // Q candidates (|Q| < 1e-3) have enormous action (capacity ~ 1/(2Q)) and
         // never win the capacity competition, so Q constancy noise there is
-        // harmless. Known case: square×square near-zero orbit has Q ~ -5e-4
+        // harmless. Known case: square×square near-zero candidate has Q ~ -5e-4
         // where null-space shift changes Q by ~6e-8 (relative ~0.01%).
         let q_scale = q_initial.abs().max(q_final.abs());
         if q_scale > 1e-3 {
