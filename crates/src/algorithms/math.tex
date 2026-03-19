@@ -29,7 +29,7 @@
 %   .rs doc comments (stubs for labels not yet in thesis)
 
 \documentclass{article}
-\usepackage{amsmath,amssymb,amsthm}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{definition}[theorem]{Definition}
@@ -512,13 +512,14 @@ If $\rho \geq 2$, then $T(\sigma)$ contains no minimum-action orbit.
 \end{lemma}
 
 \begin{proof}
-By CH2021, the minimum-action combinatorial Reeb orbit
-satisfies $\rho_{\mathrm{comb}} \leq 2$.
+By CH2021, the minimum-action Reeb orbit satisfies
+$\rho_{\mathrm{comb}} \leq 2$.
 The closing step adds at least two
 rotation increments, each in $(0, \tfrac{1}{2})$,
 so any closed orbit from $T(\sigma)$ has total rotation
 $> \rho \geq 2$.
-Hence no closed orbit from $T(\sigma)$ satisfies $\rho_{\mathrm{comb}} \leq 2$.
+Hence no closed orbit from $T(\sigma)$ satisfies
+$\rho_{\mathrm{comb}} \leq 2$.
 \end{proof}
 
 
@@ -552,11 +553,14 @@ The action of the closed orbit through the fixed point $x$ is $a''(x)$.
 \end{lemma}
 
 \begin{proof}
-A pure Reeb trajectory $\gamma \in T(\sigma(1), \ldots, \sigma(k))$ is closed
-iff $\gamma(t_{k+1}) = \gamma(t_1)$.
-After closure, $\gamma(t_{k+1}) = \varphi''(\gamma(t_1))$,
+A pure Reeb trajectory $\gamma \in T(\sigma(1), \ldots, \sigma(k))$
+is closed iff $\gamma(t_{k+1}) = \gamma(t_1)$.
+After closure,
+\[
+  \gamma(t_{k+1}) = \varphi''(\gamma(t_1)),
+\]
 so the periodicity condition is $\varphi''(\gamma(t_1)) = \gamma(t_1)$.
-The action is $a''(\varphi''(\gamma(t_1))) = a''(\gamma(t_1))$.
+The action is $a''(\gamma(t_1))$.
 \end{proof}
 
 
@@ -590,13 +594,14 @@ initialize tube $T(i, j)$.
 Then recurse: given a tube $T(\sigma(1), \ldots, \sigma(k))$:
 
 \begin{enumerate}
-\item \textbf{Prune.} Discard if:
-  $\operatorname{Start} = \emptyset$ or $\operatorname{End} = \emptyset$
-  (Lemma~\ref{lem:prune-empty}), or
-  $\min_{y \in \operatorname{End}} a(y) > c^*$
-  (Lemma~\ref{lem:prune-action}), or
-  $\rho \geq 2$
-  (Lemma~\ref{lem:prune-rotation}).
+\item \textbf{Prune.} Discard if any of the following hold:
+  \begin{itemize}
+    \item $\operatorname{Start} = \emptyset$ or $\operatorname{End} = \emptyset$
+      (Lemma~\ref{lem:prune-empty});
+    \item $\min_{y \in \operatorname{End}} a(y) > c^*$
+      (Lemma~\ref{lem:prune-action});
+    \item $\rho \geq 2$ (Lemma~\ref{lem:prune-rotation}).
+  \end{itemize}
 
 \item \textbf{Try closing.}
   Form the closure

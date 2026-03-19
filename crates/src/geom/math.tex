@@ -15,7 +15,7 @@
 %   .rs doc comments (stubs for labels not yet in thesis)
 
 \documentclass{article}
-\usepackage{amsmath,amssymb,amsthm}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{definition}[theorem]{Definition}
@@ -28,15 +28,13 @@
 % Symplectic structure
 % ====================================================================
 
-\begin{definition}[Standard symplectic structure]\label{def:symplectic-form}
-% Jörn: text approved (1aac085)
+\begin{definition}[Symplectic form and complex structure]\label{def:symplectic-form}
 Write $\mathbb{R}^4$ with coordinates $(q_1, q_2, p_1, p_2)$.
 The \emph{standard complex structure} is
 \[
   J_0 = \begin{pmatrix} 0 & -I_2 \\ I_2 & 0 \end{pmatrix},
-  \qquad\text{i.e.,}\quad
-  J_0(q, p) = (-p, q),
 \]
+i.e., $J_0(q, p) = (-p, q)$,
 where $I_2$ is the $2 \times 2$ identity matrix.
 The \emph{standard symplectic form} is
 \[
@@ -197,16 +195,16 @@ Then
     \;\subset\; B^2(r_A) \times_S B^2(r_B)
     \;\subset\; B^2(r_A) \times \mathbb{R}^2,
 \]
-where the first inclusion holds because $r_A \leq r_B$
+where the first holds because $r_A \leq r_B$
 and the second because $B^2(r_B) \subset \mathbb{R}^2$.
 By monotonicity and normalization,
-\[
+\begin{align*}
   \pi r_A^2
-    = c_{\mathrm{EHZ}}(B^4(r_A))
-    \leq c_{\mathrm{EHZ}}\bigl(B^2(r_A) \times_S B^2(r_B)\bigr)
-    \leq c_{\mathrm{EHZ}}(B^2(r_A) \times \mathbb{R}^2)
+    &= c_{\mathrm{EHZ}}(B^4(r_A)) \\
+    &\leq c_{\mathrm{EHZ}}\bigl(B^2(r_A) \times_S B^2(r_B)\bigr) \\
+    &\leq c_{\mathrm{EHZ}}(B^2(r_A) \times \mathbb{R}^2)
     = \pi r_A^2.
-\]
+\end{align*}
 Hence $c_{\mathrm{EHZ}}(A \times_S B)
   = \pi r_A^2
   = \min(\operatorname{area}(A), \operatorname{area}(B))$.
@@ -230,13 +228,9 @@ The \emph{polar body} (or \emph{dual}) is
 \]
 \end{definition}
 
-\begin{remark}\label{rem:polar-body-note}
-% This remark connects def:polytope-dual to the separate label def:polar-body
-% used in some .rs files. They refer to the same concept.
-The label \texttt{def:polar-body} in some \texttt{.rs} files
-refers to the same concept as Definition~\ref{def:polytope-dual}.
-\end{remark}
-\label{def:polar-body}% alias for cross-references
+% Agent note: def:polar-body used in some .rs files is an alias
+% for def:polytope-dual. The label below provides this as a cross-reference target.
+\phantomsection\label{def:polar-body}% alias for cross-references from .rs files
 
 
 \begin{definition}[Face lattice / skeleton]\label{def:face-lattice}
