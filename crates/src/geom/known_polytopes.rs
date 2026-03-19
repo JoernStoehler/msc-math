@@ -12,6 +12,7 @@
 //! Mathematical correspondence: [def:ehz-capacity], [thm:hko-counterexample]
 
 use crate::geom::polytope::Polytope4D;
+use crate::geom::rational_arithmetic::{frac, rat};
 use nalgebra::Vector4;
 use std::f64::consts::PI;
 use std::sync::LazyLock;
@@ -71,29 +72,22 @@ pub fn literature_values() -> Vec<(&'static str, f64)> {
 /// Mathematical correspondence: [def:ehz-capacity]
 pub fn simplex() -> &'static KnownPolytope {
     static INSTANCE: LazyLock<KnownPolytope> = LazyLock::new(|| {
-        let centroid = Vector4::new(0.2, 0.2, 0.2, 0.2);
-        let normals_raw = [
-            -Vector4::x(),
-            -Vector4::y(),
-            -Vector4::z(),
-            -Vector4::w(),
-            Vector4::new(1.0, 1.0, 1.0, 1.0).normalize(),
+        // Standard simplex conv{0, e1..e4}, translated so origin = centroid (1/5, ...).
+        // Dual vertices a_i = n_i / h_i (all integers):
+        //   facets 1-4: a_i = -5 e_i
+        //   facet 5:    a_5 = (5, 5, 5, 5)
+        let z = rat(0);
+        let dual_vertices = vec![
+            [rat(-5), z.clone(), z.clone(), z.clone()],
+            [z.clone(), rat(-5), z.clone(), z.clone()],
+            [z.clone(), z.clone(), rat(-5), z.clone()],
+            [z.clone(), z.clone(), z.clone(), rat(-5)],
+            [rat(5), rat(5), rat(5), rat(5)],
         ];
-        // h_5 = 1/||(1,1,1,1)|| = 1/2 for the facet sum(x_i) <= 1
-        let heights_raw = [0.0, 0.0, 0.0, 0.0, 0.5_f64];
-        let heights: Vec<f64> = normals_raw
-            .iter()
-            .zip(&heights_raw)
-            .map(|(n, h)| h - n.dot(&centroid))
-            .collect();
-        let halfspaces: Vec<Vector4<f64>> = normals_raw
-            .iter()
-            .zip(heights.iter())
-            .map(|(n, &h)| n / h)
-            .collect();
 
         KnownPolytope {
-            polytope: Polytope4D::new(halfspaces).expect("simplex construction"),
+            polytope: Polytope4D::from_dual_vertices(dual_vertices)
+                .expect("simplex construction"),
             capacity: 0.25,
             name: "simplex",
             source: "Y. Nir thesis 2013",
@@ -110,20 +104,22 @@ pub fn simplex() -> &'static KnownPolytope {
 /// Mathematical correspondence: [def:ehz-capacity]
 pub fn hypercube() -> &'static KnownPolytope {
     static INSTANCE: LazyLock<KnownPolytope> = LazyLock::new(|| {
-        // [-1,1]^4: normals +/-e_i, heights 1.0, halfspaces a_i = n_i/h_i = +/-e_i
-        let halfspaces = vec![
-            Vector4::x(),
-            -Vector4::x(),
-            Vector4::y(),
-            -Vector4::y(),
-            Vector4::z(),
-            -Vector4::z(),
-            Vector4::w(),
-            -Vector4::w(),
+        // [-1,1]^4: dual vertices ±e_i (all integers).
+        let z = rat(0);
+        let dual_vertices = vec![
+            [rat(1), z.clone(), z.clone(), z.clone()],
+            [rat(-1), z.clone(), z.clone(), z.clone()],
+            [z.clone(), rat(1), z.clone(), z.clone()],
+            [z.clone(), rat(-1), z.clone(), z.clone()],
+            [z.clone(), z.clone(), rat(1), z.clone()],
+            [z.clone(), z.clone(), rat(-1), z.clone()],
+            [z.clone(), z.clone(), z.clone(), rat(1)],
+            [z.clone(), z.clone(), z.clone(), rat(-1)],
         ];
 
         KnownPolytope {
-            polytope: Polytope4D::new(halfspaces).expect("hypercube construction"),
+            polytope: Polytope4D::from_dual_vertices(dual_vertices)
+                .expect("hypercube construction"),
             capacity: 4.0,
             name: "hypercube",
             source: "HK2019 Ex 4.6",
@@ -140,21 +136,21 @@ pub fn hypercube() -> &'static KnownPolytope {
 /// Mathematical correspondence: [def:ehz-capacity]
 pub fn crosspolytope() -> &'static KnownPolytope {
     static INSTANCE: LazyLock<KnownPolytope> = LazyLock::new(|| {
-        let halfspaces: Vec<Vector4<f64>> = [-1.0_f64, 1.0]
-            .into_iter()
-            .flat_map(|s0| {
-                [-1.0_f64, 1.0].into_iter().flat_map(move |s1| {
-                    [-1.0_f64, 1.0].into_iter().flat_map(move |s2| {
-                        [-1.0_f64, 1.0]
-                            .into_iter()
-                            .map(move |s3| Vector4::new(s0, s1, s2, s3).normalize())
-                    })
-                })
-            })
-            .collect();
+        // 16 dual vertices (±1/2, ±1/2, ±1/2, ±1/2) — denominator 2.
+        let mut dual_vertices = Vec::with_capacity(16);
+        for &s0 in &[-1i64, 1] {
+            for &s1 in &[-1i64, 1] {
+                for &s2 in &[-1i64, 1] {
+                    for &s3 in &[-1i64, 1] {
+                        dual_vertices.push([frac(s0, 2), frac(s1, 2), frac(s2, 2), frac(s3, 2)]);
+                    }
+                }
+            }
+        }
 
         KnownPolytope {
-            polytope: Polytope4D::new(halfspaces).expect("crosspolytope construction"),
+            polytope: Polytope4D::from_dual_vertices(dual_vertices)
+                .expect("crosspolytope construction"),
             capacity: 4.0,
             name: "crosspolytope",
             source: "computed (no literature value)",
