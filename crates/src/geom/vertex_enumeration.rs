@@ -342,7 +342,8 @@ pub(super) fn construct_rational_pipeline(
 /// g_i = 1 - y_i · v exactly. If all non-negative, v is a vertex.
 ///
 /// Stage 1 rejects ~80% of subsets, avoiding expensive rational arithmetic.
-/// It can only reject, never confirm — all actual vertices reach stage 2.
+/// It can only reject, never confirm — all actual vertices SHOULD reach stage 2.
+/// **Warning:** the error bound in stage 1 is unverified (see `f64_prefilter_rejects` doc).
 ///
 /// Non-simple vertices (on >4 facets) are handled by deduplication: the first
 /// 4-subset discovering a vertex records ALL incident facets. Later subsets
@@ -441,28 +442,21 @@ fn enumerate_vertices_exact(
 /// - `|y_i · v_f64 - 1| < margin` → INDETERMINATE → fall through to rational
 /// - `y_i · v_f64 ≤ 1 - margin` → TRUE (definitely satisfied) → continue
 ///
-/// ## Correctness argument
+/// ## Correctness: UNVERIFIED
 ///
-/// The f64 Cramer solve produces v_f64 with some error δv = v_f64 - v_exact.
-/// If δv is large (ill-conditioned system), constraint checks on v_f64 are
-/// unreliable and could produce a false FALSE (skipping an actual vertex).
+/// TODO: The error bound in this function has NOT been rigorously proven.
+/// A false FALSE (skipping an actual vertex) is a silent correctness bug.
+/// Known gaps:
+/// - The margin uses ||v_f64|| as a proxy for ||A⁻¹||, which is only a
+///   lower bound. No proof that SAFETY=100 closes the gap for all systems.
+/// - When rationals were constructed directly (not from f64), the f64
+///   matrix A_f64 differs from A_rational. The residual only measures
+///   error in the f64 system, not the rational system.
 ///
-/// To prevent this, we verify the Cramer solve quality via the **residual**:
-/// r = A · v_f64 - 1. If the residual is small, v_f64 is close to the exact
-/// solution regardless of the condition number (backward stability). We then
-/// bound the constraint error:
-///
-///   |y_i · v_f64 - y_i · v_exact| ≤ ||y_i|| · ||δv||
-///
-/// The forward error ||δv|| is bounded by ||A⁻¹|| · ||r||, but we don't know
-/// ||A⁻¹||. Instead we use ||v_f64|| as a proxy (since v = A⁻¹·1, we have
-/// ||A⁻¹|| ≥ ||v|| / 2). With a safety factor:
-///
-///   margin_i = SAFETY · ||y_i|| · ||v_f64|| · max_residual
-///
-/// This is conservative: it upper-bounds the forward error even for
-/// ill-conditioned systems, because the residual check directly measures
-/// how well the f64 solution satisfies the defining equations.
+/// Pending: rigorous analysis in math_prefilter.tex (see
+/// handoffs/session-prefilter-error-analysis.md). Until that analysis is
+/// complete, this pre-filter should be considered a performance heuristic
+/// that works in practice but lacks a correctness proof.
 fn f64_prefilter_rejects(dv_f64: &[[f64; 4]], subset: &[usize; 4], f: usize) -> bool {
     /// Safety factor for the error bound. Accounts for the gap between
     /// ||A⁻¹|| and our proxy ||v|| (factor ~2), plus rounding in the
