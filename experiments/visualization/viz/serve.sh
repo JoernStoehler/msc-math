@@ -7,8 +7,8 @@ PORT="${1:-8080}"
 DIR="$(cd "$(dirname "$0")" && pwd)"
 EXPERIMENTS="$DIR/../.."
 
-echo "Building viz_export binary..."
-cargo build --release --manifest-path "$EXPERIMENTS/Cargo.toml" --bin viz_export -q
+echo "Building visualization binary..."
+cargo build --release --manifest-path "$EXPERIMENTS/Cargo.toml" --bin visualization -q
 
 echo "Generating polytope data..."
 VIZ_DATA="$EXPERIMENTS/../docs/viz/data"
@@ -16,7 +16,7 @@ mkdir -p "$VIZ_DATA"
 for name in simplex hypercube crosspolytope hko_pentagon \
             lagrangian_triangle_product symplectic_triangle_product \
             lagrangian_tri_sq symplectic_tri_sq; do
-    "$EXPERIMENTS/target/release/viz_export" "$name" "$VIZ_DATA/$name.json"
+    "$EXPERIMENTS/target/release/visualization" "$name" "$VIZ_DATA/$name.json"
 done
 
 echo "Embedding data into viewer..."

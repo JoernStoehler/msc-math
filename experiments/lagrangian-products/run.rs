@@ -1,7 +1,7 @@
 //! Lagrangian products sweeps for selected regular polygon pairs.
 //!
 //! Architecture:
-//! 1. `cargo run --bin lagrangian_sweep --release` generates pentagon 5x5 sweep
+//! 1. `cargo run --bin lagrangian_products --release` generates pentagon 5x5 sweep
 //!    and regular polygon pair sweeps.
 //! 2. Writes to lagrangian-products/lagrangian-products-5x5.jsonl and
 //!    lagrangian-products/lagrangian-products-<n>x<m>-6deg.jsonl

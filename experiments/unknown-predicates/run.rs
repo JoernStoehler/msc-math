@@ -42,7 +42,7 @@ const RANDOM_PLAN: &[(usize, usize)] = &[
 ];
 
 // ---------------------------------------------------------------------------
-// Lagrangian-products parameters (must match lagrangian_sweep.rs exactly)
+// Lagrangian-products parameters (must match run.rs in lagrangian-products/ exactly)
 // ---------------------------------------------------------------------------
 const PENTAGON_START_DEG: f64 = 0.0;
 const PENTAGON_END_DEG: f64 = 36.0;

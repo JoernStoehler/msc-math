@@ -42,7 +42,7 @@ def load_jsonl(path: Path) -> list[dict]:
     """Load JSONL file into list of dicts."""
     if not path.exists():
         print(f"ERROR: data file not found: {path}", file=sys.stderr)
-        print("Run: cargo run --bin lagrangian_sweep --release", file=sys.stderr)
+        print("Run: cargo run --bin lagrangian_products --release", file=sys.stderr)
         sys.exit(1)
     with open(path) as f:
         return [json.loads(line) for line in f if line.strip()]
