@@ -31,3 +31,29 @@ opt-level = 3
 
 [profile.test.package.nalgebra]
 opt-level = 3
+
+# Optimize rational arithmetic in dev/test builds — BigRational is ~20x slower
+# unoptimized due to heap-allocated big integers (same pattern as nalgebra above).
+[profile.dev.package.num-bigint]
+opt-level = 3
+
+[profile.test.package.num-bigint]
+opt-level = 3
+
+[profile.dev.package.num-rational]
+opt-level = 3
+
+[profile.test.package.num-rational]
+opt-level = 3
+
+[profile.dev.package.num-integer]
+opt-level = 3
+
+[profile.test.package.num-integer]
+opt-level = 3
+
+[profile.dev.package.num-traits]
+opt-level = 3
+
+[profile.test.package.num-traits]
+opt-level = 3

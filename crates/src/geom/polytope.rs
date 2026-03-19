@@ -178,13 +178,18 @@ impl Polytope4D {
             }
         }
 
-        // Validate: bounded (dual vertices positively span R^4)
+        // Fast pre-filter: bounded check in f64. The authoritative check happens
+        // inside the rational pipeline (exact over Q), but this catches most
+        // unbounded inputs cheaply before the expensive rational conversion.
         let unit_dirs: Vec<Vector4<f64>> = halfspaces.iter().map(|a| a.normalize()).collect();
         if !crate::geom::validation::check_bounded(&unit_dirs) {
             return Err(ConstructionError::Unbounded);
         }
 
-        // Convert to rational for the exact pipeline
+        // Convert to exact rationals for the construction pipeline.
+        // Why exact: vertex-facet incidence and omega signs require exact decisions
+        // (is this vertex on this facet? is omega(y_i, y_k) positive or zero?).
+        // f64 arithmetic cannot reliably make these discrete decisions near zero.
         let dual_vertices: Vec<[BigRational; 4]> = halfspaces
             .iter()
             .map(|a| {

@@ -248,8 +248,8 @@ fn combinations4(n: usize) -> Vec<[usize; 4]> {
 
 // ── Construction pipeline ────────────────────────────────────────────────
 
-/// Run the rational construction pipeline: validate, enumerate vertices,
-/// check irredundancy.
+/// Run the exact rational construction pipeline: validate, enumerate vertices,
+/// check irredundancy — all over Q.
 ///
 /// Takes dual vertices y_i in K° and returns (primal_vertices, vertex_descriptors).
 /// Each vertex descriptor is the set of facet indices incident to that vertex.
@@ -258,6 +258,24 @@ fn combinations4(n: usize) -> Vec<[usize; 4]> {
 ///
 /// Non-simple polytopes (vertices on >4 facets) are supported: the vertex
 /// descriptor records ALL incident facets, not just the defining 4-subset.
+///
+/// ## Why exact arithmetic
+///
+/// Vertex-facet incidence is a discrete decision: is `y_i · v` exactly 1?
+/// In f64, rounding error makes this ambiguous for near-incident pairs.
+/// The exact rational pipeline resolves all such decisions without tolerances.
+/// This is critical for `omega_signs` (sign of ω₀(y_i, y_k)) which controls
+/// directed adjacency pruning in the capacity algorithm.
+///
+/// ## Performance
+///
+/// O(F⁴) BigRational operations. The `num-bigint` crate is ~20× slower in
+/// debug mode than release; Cargo profile overrides (`opt-level = 3` for
+/// `num-bigint` and `num-rational`) bring debug-mode cost close to release.
+///
+/// The boundedness check here is the authoritative exact check (distinct from
+/// the f64 pre-filter in `validation::check_bounded` which may be indeterminate
+/// near the boundary).
 ///
 /// Mathematical correspondence: [lem:vertex-enumeration]
 #[allow(clippy::type_complexity)]
