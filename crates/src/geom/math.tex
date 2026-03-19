@@ -147,31 +147,18 @@ restricts to $dq_i \wedge dp_i$, which is the standard
 area form, so area-preserving diffeomorphisms are
 symplectomorphisms.
 
+% [GAP - JÖRN: the step c_EHZ(A) = area(A) for convex bodies A in R^2
+%   was agent-written. The previous version cited "Dacorogna and Moser (1990)"
+%   and claimed a "divergence-free vector field extends by zero" to produce a
+%   global area-preserving diffeomorphism of R^2. Jörn does not recognize this
+%   construction. The entire argument for c_EHZ(A) = area(A) is UNVERIFIED
+%   agent-generated math. Needs a correct proof or literature citation.]
 We first show $c_{\mathrm{EHZ}}(A) = \operatorname{area}(A)$
 for every convex body~$A$ in~$\mathbb{R}^2$.
-By the theorem of Dacorogna and
-Moser, for any two bounded
-domains~$\Omega_1, \Omega_2 \subset \mathbb{R}^2$ with
-smooth boundaries and equal area, there exists an
-area-preserving diffeomorphism
-$\varphi \colon \overline{\Omega}_1 \to \overline{\Omega}_2$.
-The construction solves a boundary-value problem whose
-solution vanishes on~$\partial\Omega_1$, so the resulting
-divergence-free vector field extends by zero outside
-$\Omega_1$; its time-$1$ flow is a global area-preserving
-(hence symplectic) diffeomorphism of~$\mathbb{R}^2$.
-Taking $\Omega_1$ to be a smooth convex body~$A$
-and $\Omega_2 = B^2(r)$ with $\pi r^2 = \operatorname{area}(A)$,
-symplectic invariance gives
-$c_{\mathrm{EHZ}}(A) = c_{\mathrm{EHZ}}(B^2(r)) = \pi r^2
-= \operatorname{area}(A)$.
-For non-smooth convex bodies, let
-$A^{-\varepsilon} \subset A \subset A^{+\varepsilon}$
-be smooth inner and outer parallel bodies;
-monotonicity and
-$\operatorname{area}(A^{\pm\varepsilon}) \to
-\operatorname{area}(A)$ yield
-$c_{\mathrm{EHZ}}(A) = \operatorname{area}(A)$.
+This follows from the existence of a global area-preserving
+(hence symplectic) diffeomorphism mapping~$A$ to a disk
+$B^2(r)$ with $\pi r^2 = \operatorname{area}(A)$,
+together with symplectic invariance and normalization.
 
 Now let $r_A, r_B > 0$ satisfy
 $\pi r_A^2 = \operatorname{area}(A)$ and
