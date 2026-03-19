@@ -17,7 +17,7 @@ path = "correctness/correctness.rs"
 
 [[bin]]
 name = "random_sweep"
-path = "random-sweep/random_sweep.rs"
+path = "random-sweep/run.rs"
 
 [[bin]]
 name = "random_product_sweep"
