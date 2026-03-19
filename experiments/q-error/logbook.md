@@ -34,7 +34,7 @@ Output goes to stdout and is captured in `q_error_output.txt`. The binary panics
 
 1. **Part 1:** 1,133,769 total nodes across 7 polytopes, 1,111,987 solvable. Worst error bound E = 2.9e-11 (HKO pentagon). All assertions passed.
 2. **Part 2:** Exact comparison passes for all 6 non-singular polytopes. The symplectic triangle product is excluded (singular winning node). Actual numerical errors at machine epsilon (~1e-16), confirming no algorithmic error beyond f64 precision.
-3. **E_math is far below f64 noise:** The mathematical error bounds E range from 1e-28 to 1e-11, while f64_eps tolerance is ~1e-13. The assertion `|Q̃ - Q_exact| <= max(E, f64_eps)` is always dominated by the f64_eps term — the proven error bound is tighter than floating-point precision can resolve.
+3. **Part 2 error bounds are far below f64 noise:** At the capacity-winning nodes (Part 2), E_math ranges from 1e-30 to 1e-28 — far below f64_eps (~1e-13). The assertion `|Q̃ - Q_exact| <= max(E, f64_eps)` is always dominated by the f64_eps term at winning nodes. Note: Part 1's worst E across ALL nodes is 2.9e-11 (HKO pentagon), which exceeds f64_eps — but Part 1 uses a different assertion (`E < 1e-6`), not the exact comparison.
 5. The HKO pentagon dominates the dataset: 1,112,073 of the 1,133,769 total nodes (98%) come from it.
 
 ## Known limitations
