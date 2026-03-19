@@ -12,7 +12,7 @@ The only known 4D counterexample to Viterbo's conjecture is a Lagrangian product
 
 ```bash
 cd experiments/
-cargo run --bin lagrangian_sweep --release       # generates all JSONL datasets
+cargo run --bin lagrangian_products --release       # generates all JSONL datasets
 python3 lagrangian-products/analyze.py           # generates plots
 ```
 
