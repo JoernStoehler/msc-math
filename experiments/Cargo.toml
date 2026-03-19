@@ -5,71 +5,71 @@ edition = "2021"
 
 [[bin]]
 name = "ablation"
-path = "ablation/ablation.rs"
+path = "ablation/run.rs"
 
 [[bin]]
 name = "benchmark"
-path = "benchmark/benchmark.rs"
+path = "benchmark/run.rs"
 
 [[bin]]
 name = "correctness"
-path = "correctness/correctness.rs"
+path = "correctness/run.rs"
 
 [[bin]]
 name = "random_sweep"
-path = "random-sweep/random_sweep.rs"
+path = "random-sweep/run.rs"
 
 [[bin]]
 name = "random_product_sweep"
-path = "random-product-sweep/random_product_sweep.rs"
+path = "random-product-sweep/run.rs"
 
 [[bin]]
 name = "pentagon_perturb"
-path = "pentagon-perturb/pentagon_perturb.rs"
+path = "pentagon-perturb/run.rs"
 
 [[bin]]
-name = "lagrangian_sweep"
-path = "lagrangian-products/lagrangian_sweep.rs"
+name = "lagrangian_products"
+path = "lagrangian-products/run.rs"
 
 [[bin]]
-name = "acceptance_sweep"
-path = "rejection-sampling/acceptance_sweep.rs"
+name = "rejection_sampling"
+path = "rejection-sampling/run.rs"
 
 [[bin]]
-name = "viz_export"
-path = "visualization/viz_export.rs"
+name = "visualization"
+path = "visualization/run.rs"
 
 [[bin]]
 name = "unknown_predicates"
-path = "unknown-predicates/unknown_predicates.rs"
+path = "unknown-predicates/run.rs"
 
 [[bin]]
 name = "sys_optimization"
-path = "sys-optimization/sys_optimization.rs"
+path = "sys-optimization/run.rs"
 
 [[bin]]
 name = "orbit_recovery"
-path = "orbit-recovery/orbit_recovery.rs"
+path = "orbit-recovery/run.rs"
 
 [[bin]]
 name = "crosspolytope"
-path = "crosspolytope/crosspolytope.rs"
+path = "crosspolytope/run.rs"
 
 [[bin]]
 name = "q_error"
-path = "q-error/q_error.rs"
+path = "q-error/run.rs"
 
 [[bin]]
 name = "kkt_inertia"
-path = "kkt-inertia/kkt_inertia.rs"
+path = "kkt-inertia/run.rs"
 
 [[bin]]
 name = "omega_obstacle"
-path = "omega-obstacle/omega_obstacle.rs"
+path = "omega-obstacle/run.rs"
 
 [[bin]]
 name = "gradient_descent"
-path = "gradient-descent/gradient_descent.rs"
+path = "gradient-descent/run.rs"
 
 [[bin]]
 name = "hko_neighborhood"
