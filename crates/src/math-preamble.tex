@@ -1,0 +1,18 @@
+% math-preamble.tex — shared preamble for all crates/src/*/math.tex files
+%
+% Usage: \documentclass{article}
+%        \input{../math-preamble}
+%        \begin{document}
+%        ...
+%        \end{document}
+
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{algorithm}[theorem]{Algorithm}

@@ -121,7 +121,7 @@ fn simplex_capacity_via_exhaustive_search() {
     let simplex = known_polytopes::simplex();
     let (best_q, found) = find_best_q_exhaustive(&simplex.polytope);
 
-    assert!(found, "should find at least one valid orbit on simplex");
+    assert!(found, "should find at least one valid candidate on simplex");
     let capacity = 0.5 / best_q;
     assert!(
         (capacity - simplex.capacity).abs() < 1e-4 * simplex.capacity,
@@ -130,13 +130,13 @@ fn simplex_capacity_via_exhaustive_search() {
     );
 }
 
-/// Lagrangian triangle product (6 facets): solver finds valid orbits.
+/// Lagrangian triangle product (6 facets): solver finds valid candidates.
 #[test]
 fn lagrangian_triangle_product_finds_valid_solution() {
     let tri_prod = known_polytopes::lagrangian_triangle_product();
     let (best_q, found) = find_best_q_exhaustive(&tri_prod.polytope);
 
-    assert!(found, "should find at least one valid orbit on triangle product");
+    assert!(found, "should find at least one valid candidate on triangle product");
     let capacity = 0.5 / best_q;
     assert!(
         (capacity - tri_prod.capacity).abs() < 1e-4 * tri_prod.capacity,
