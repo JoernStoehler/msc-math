@@ -1,0 +1,631 @@
+% math.tex — \input'd from thesis/experiments.tex
+%
+% Sensitivity analysis and gradient-based improvement of the systolic ratio.
+%
+% Sources:
+%   - Generated data: experiments/sys-optimization/sys-optimization-sensitivity.jsonl
+%   - Generated data: experiments/sys-optimization/sys-optimization-steps.jsonl
+%   - Generated data: experiments/sys-optimization/sys-optimization-iterations.jsonl
+%   - Generated data: experiments/sys-optimization/sys-optimization-validity.jsonl
+%   - Plot script: experiments/sys-optimization/analyze.py
+%   - Developer notes: experiments/sys-optimization/logbook.md
+%
+% Structure:
+%   - Motivation and approach
+%   - Derivative computation (formal lemmas for h and n)
+%   - Step bound algorithm
+%   - Sensitivity analysis (Phase 1)
+%   - Finite gradient steps (Phase 2)
+%   - Iterative gradient ascent (Phase 3)
+%   - Gradient validity testing (Phase 4)
+%   - Discussion
+
+\subsection{Sensitivity Analysis and Gradient Optimization of sys}
+\label{sec:sys-optimization}
+
+Random sampling has not found $\mathrm{sys} > 1$ (see
+Sections~\ref{sec:random-sweep} and~\ref{sec:random-product-sweep}).
+Instead of relying on random exploration, we compute the gradient
+$\nabla_{(h,n)}\,\mathrm{sys}$ of the systolic ratio with respect to
+the facet heights $h = (h_1,\dots,h_F)$ and the facet normals
+$n = (n_1,\dots,n_F) \in (S^3)^F$, and take directed steps to increase
+$\mathrm{sys}$.
+
+\subsubsection*{Method}
+
+For a polytope $K = \{x \in \mathbb{R}^4 \mid n_k \cdot x \le h_k,\; k=1,\dots,F\}$
+with unit outward normals $n_k \in S^3$, the systolic ratio decomposes as
+$\mathrm{sys} = c_{\mathrm{EHZ}}^2 / (2\,\mathrm{vol})$.
+We compute the sensitivity of each factor to changes in both heights and normals.
+
+Since the normals live on the sphere $S^3$, only tangential perturbations
+are meaningful: for each $n_k$, we work in the tangent space
+$T_{n_k}S^3 = \{\delta \in \mathbb{R}^4 : \delta \cdot n_k = 0\}$.
+
+All quantities needed for the gradient ($\beta^*$, $\nu$, $\lambda$, $Q^*$,
+facet volumes $S_k$, facet centroids $\bar{x}_k$) are either already computed
+by the HK2017 algorithm's KKT solve or can be extracted from the polytope data
+at negligible additional cost.
+
+We first state the general principle, then apply it to height and normal
+derivatives in turn.
+
+\begin{theorem*}[Envelope theorem for constrained optimization]
+Let $f(x;\theta)$ be a smooth objective and $g_i(x;\theta) = 0$,
+$i = 1,\dots,m$, smooth equality constraints, with parameter $\theta$.
+Let $x^*(\theta)$ be a non-degenerate KKT point with multipliers
+$\lambda^*(\theta)$, and let
+$\mathcal{L}(x,\lambda;\theta) = f(x;\theta) - \sum_i \lambda_i g_i(x;\theta)$
+be the Lagrangian.
+Then the optimal value $f^*(\theta) = f(x^*(\theta);\theta)$ satisfies
+\[
+  \frac{\partial f^*}{\partial \theta}
+  = \frac{\partial \mathcal{L}}{\partial \theta}\bigg|_{x=x^*,\,\lambda=\lambda^*}
+  = \frac{\partial f}{\partial \theta}\bigg|_{x^*}
+    - \sum_i \lambda_i^* \frac{\partial g_i}{\partial \theta}\bigg|_{x^*}.
+\]
+\end{theorem*}
+
+\paragraph{Height derivatives.}
+
+% Jörn: math approved (59ddc2c) — Lemma and proof
+\begin{lemma}[Volume derivative w.r.t.\ heights]
+\label{lem:vol-derivative}
+For a convex polytope $K$ in $H$-representation with unit normals,
+\[
+  \frac{\partial\,\mathrm{vol}(K)}{\partial h_k} = S_k,
+\]
+where $S_k = \mathrm{vol}_{3}(F_k)$ is the $3$-dimensional volume of facet $F_k$.
+\end{lemma}
+
+\begin{proof}
+Moving facet $k$ outward by $\delta$ enlarges $K$ to
+$K' = K \cup \{x : h_k < n_k \cdot x \le h_k + \delta,\; n_j \cdot x \le h_j \;\forall j \ne k\}$.
+The cross-section at $n_k \cdot x = h_k + t$ equals the facet $F_k$ at $t = 0$
+and varies continuously.
+Thus $\mathrm{vol}(K') - \mathrm{vol}(K) = \delta \cdot S_k + O(\delta^2)$.
+\end{proof}
+
+% Jörn: math approved (59ddc2c) — Lemma and proof
+\begin{lemma}[Capacity derivative w.r.t.\ heights]
+\label{lem:cap-derivative}
+Fix an orbit $(S,\sigma)$ with $|S| = m$ facets. The orbit's action is
+$A(S,\sigma;h) = 1/(2\,Q^*)$, where $Q^*$ is the maximum of the KKT problem
+\[
+  Q(\beta) = \tfrac{1}{2}\beta^T H \beta
+  \quad\text{subject to}\quad
+  N^T\beta = 0,\; \eta^T\beta = 1,
+\]
+with $H$ the symmetric matrix from Lemma~\ref{lem:H-quadratic},
+$N = [n_{\sigma(1)} | \cdots | n_{\sigma(m)}]$, and $\eta_i = h_{\sigma(i)}$.
+Let $\nu$ be the Lagrange multiplier for the normalization constraint
+$\eta^T\beta = 1$ at the optimum.
+If facet $k$ appears in the orbit at position $i_0$ (i.e.\ $\sigma(i_0) = k$), then
+\[
+  \frac{\partial A}{\partial h_k}
+  = \frac{\nu\,\beta_{i_0}^*}{2\,(Q^*)^2}.
+\]
+If $k \notin S$, then $\partial A / \partial h_k = 0$.
+\end{lemma}
+
+\begin{proof}
+The Lagrangian is
+$\mathcal{L}(\beta,\lambda,\nu) = \tfrac{1}{2}\beta^T H\beta - \lambda^T N^T\beta - \nu(\eta^T\beta - 1)$.
+The heights enter only through $\eta$, and $\partial\eta_i/\partial h_k = \delta_{\sigma(i),k}$.
+By the envelope theorem,
+$\partial Q^*/\partial h_k = \partial\mathcal{L}/\partial h_k = -\nu\,\beta_{i_0}^*$.
+Since $A = 1/(2Q^*)$, the chain rule gives
+$\partial A/\partial h_k = -(\partial Q^*/\partial h_k) / (2\,(Q^*)^2) = \nu\,\beta_{i_0}^* / (2\,(Q^*)^2)$.
+\end{proof}
+
+\paragraph{Normal derivatives.}
+
+Perturbing a normal $n_k \to n_k + \varepsilon\delta$ (with $\delta \in T_{n_k}S^3$)
+tilts the facet while keeping its distance from the origin.
+Both the volume and the capacity depend on the normals, but through different mechanisms.
+
+% Jörn: math approved (59ddc2c) — Lemma and proof
+\begin{lemma}[Volume derivative w.r.t.\ normals]
+\label{lem:vol-derivative-normal}
+For a tangent perturbation $\delta \in T_{n_k}S^3$,
+\[
+  \frac{\partial\,\mathrm{vol}(K)}{\partial n_k} \cdot \delta
+  = -S_k\,(\bar{x}_k \cdot \delta),
+\]
+where $\bar{x}_k = \frac{1}{S_k}\int_{F_k} x\,d\sigma_k$ is the
+centroid of facet $F_k$.
+Equivalently, the tangent gradient is
+\[
+  \nabla_{n_k}\mathrm{vol}\big|_{T_{n_k}S^3}
+  = -S_k\,(\bar{x}_k - h_k\,n_k).
+\]
+\end{lemma}
+
+\begin{proof}
+Tilting facet $k$ by $\varepsilon\delta$ replaces the constraint
+$n_k \cdot x \le h_k$ with $(n_k + \varepsilon\delta) \cdot x \le h_k$.
+A point $x \in F_k$ (i.e.\ $n_k \cdot x = h_k$) now satisfies the
+perturbed constraint iff $\delta \cdot x \le 0$.
+The volume change to first order is
+\[
+  \mathrm{vol}(K') - \mathrm{vol}(K)
+  = -\varepsilon \int_{F_k} (\delta \cdot x)\,d\sigma_k + O(\varepsilon^2)
+  = -\varepsilon\,S_k\,(\bar{x}_k \cdot \delta) + O(\varepsilon^2).
+\]
+Since $\delta \perp n_k$, the projection onto $T_{n_k}S^3$ of the
+full gradient $-S_k\,\bar{x}_k$ is $-S_k\,(\bar{x}_k - (n_k \cdot \bar{x}_k)\,n_k)
+= -S_k\,(\bar{x}_k - h_k\,n_k)$.
+\end{proof}
+
+% Jörn: math approved (59ddc2c) — Lemma and proof (including H-term sign chain)
+\begin{lemma}[Capacity derivative w.r.t.\ normals]
+\label{lem:cap-derivative-normal}
+Using the same notation as Lemma~\ref{lem:cap-derivative}, let
+$\lambda \in \mathbb{R}^4$ be the Lagrange multiplier for the closing
+constraint $N^T\beta = 0$ at the optimum. If $\sigma(i_0) = k$, define
+\[
+  P_{i_0} = \sum_{i < i_0} \beta_i^*\,n_{\sigma(i)}.
+\]
+Then for $\delta \in T_{n_k}S^3$,
+\[
+  \frac{\partial Q^*}{\partial n_k} \cdot \delta
+  = \beta_{i_0}^*\,\bigl[J_0(2\,P_{i_0} + \beta_{i_0}^*\,n_k) - \lambda\bigr]
+    \cdot \delta,
+\]
+and the action derivative is
+$\partial A / \partial n_k \cdot \delta
+= -(\partial Q^*/\partial n_k \cdot \delta)\,/\,(2\,(Q^*)^2)$.
+If $k \notin S$, then $\partial A / \partial n_k = 0$.
+\end{lemma}
+
+\begin{proof}
+In the KKT problem, the normals enter through both $H$ and~$N$
+(but not through~$\eta$, which depends only on heights).
+
+The Lagrangian at the optimum is
+$\mathcal{L} = \tfrac{1}{2}(\beta^*)^T H\beta^* - \lambda^T N^T\beta^* - \nu(\eta^T\beta^* - 1)$.
+By the envelope theorem, $\partial Q^*/\partial n_k$ involves only the
+explicit dependence of $H$ and $N$ on $n_k$:
+\[
+  \frac{\partial Q^*}{\partial n_k} \cdot \delta
+  = \frac{1}{2}\frac{\partial((\beta^*)^T H\beta^*)}{\partial n_k}\cdot\delta
+    - \lambda^T\frac{\partial(N^T\beta^*)}{\partial n_k}\cdot\delta.
+\]
+For the $N$-term: only column~$i_0$ of $N$ depends on $n_k$, giving
+$\lambda^T(\partial N^T\beta^*/\partial n_k)\cdot\delta = \beta_{i_0}^*\,(\lambda \cdot \delta)$.
+For the $H$-term: $Q = \frac{1}{2}\beta^T H\beta
+= \sum_{j < i} \beta_i \beta_j\,\omega_0(n_{\sigma(j)}, n_{\sigma(i)})$
+by Lemma~\ref{lem:H-quadratic}. Differentiating the terms involving $n_k$
+($\sigma(i_0) = k$) and using the closing constraint
+$\sum_i \beta_i^* n_{\sigma(i)} = 0$ to simplify yields
+$\frac{1}{2}\partial(\beta^T H\beta)/\partial n_k \cdot \delta
+= \beta_{i_0}^*\,J_0(2P_{i_0} + \beta_{i_0}^* n_k) \cdot \delta$.
+(The detailed sign chain involves the antisymmetry of $\omega_0$ and the
+bilinear identity $\omega_0(u,v) = (J_0 u) \cdot v$.)
+Combining yields the stated formula.
+\end{proof}
+
+\emph{Derivative cross-checks.}
+The volume height derivatives are cross-checked against
+central finite differences ($\varepsilon = 10^{-3}$,
+above qhull's noise floor) with tolerance~$5\%$.
+The remaining derivatives (volume normal, capacity height and normal) are
+not independently cross-checked in the code; their correctness rests on
+the proofs of Lemmas~\ref{lem:vol-derivative}--\ref{lem:cap-derivative-normal}
+and on the Phase~4 validity tests, which show that the gradient accurately
+predicts $\Delta\mathrm{sys}$ at small step sizes
+(Section~\ref{sec:gradient-validity}).
+
+% Jörn: math approved (59ddc2c) — Proposition and proof sketch, parts (a)–(d)
+\begin{proposition}[Capacity as piecewise-smooth function of $(h,n)$]
+\label{prop:capacity-piecewise-smooth}
+Let $K(h,n)$ be a \emph{simple} polytope (every vertex determined by exactly~$4$
+facets) with variable heights~$h$ and normals~$n$.
+\begin{enumerate}
+\item[\textup{(a)}]
+  \emph{Combinatorial type stability.}
+  For each $(h_0,n_0)$ such that $K(h_0,n_0)$ is a simple polytope, the vertex-facet
+  incidence graph is locally constant: there exists $\varepsilon > 0$ such that
+  $K(h,n)$ has the same combinatorial type for all $\|(h,n) - (h_0,n_0)\| < \varepsilon$.
+  In particular, the set of valid orbit nodes $(S,\sigma)$ surviving
+  the HK2017 pruning is constant in this neighborhood.
+
+\item[\textup{(b)}]
+  \emph{Per-orbit smoothness.}
+  Fix an orbit $(S,\sigma)$ whose KKT problem has a unique non-degenerate
+  maximum. Then the action $A(S,\sigma;\cdot)$ is smooth in~$(h,n)$,
+  with derivatives given by Lemmas~\ref{lem:cap-derivative}
+  and~\ref{lem:cap-derivative-normal}.
+
+\item[\textup{(c)}]
+  \emph{Capacity at generic parameters.}
+  The capacity
+  \[ c_{\mathrm{EHZ}}(h,n) = \min_{(S,\sigma)} A(S,\sigma;h,n) \]
+  is continuous.
+  At parameters where the minimizing orbit is unique, $c_{\mathrm{EHZ}}$ is
+  differentiable with gradient given by that orbit's envelope theorem
+  formulae. The unique-minimizer case is generic: for any two orbits,
+  the equation $A(S_1,\sigma_1) = A(S_2,\sigma_2)$ cuts out a hypersurface
+  in the $4F$-dimensional parameter space, so the set of parameters where
+  any two orbits tie has measure zero.
+
+\item[\textup{(d)}]
+  \emph{Capacity at switching boundaries.}
+  When $r \ge 2$ orbits achieve minimum action simultaneously,
+  the capacity is non-smooth.
+  The directional derivative in direction~$d = (d_h, d_n)$ is
+  \[
+    D_d\,c_{\mathrm{EHZ}}
+    = \min_{i=1,\dots,r} \nabla_{(h,n)} A(S_i,\sigma_i) \cdot d,
+  \]
+  i.e.\ the most pessimistic rate of change among the tied orbits.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}[Proof sketch]
+(a) Each vertex of a simple polytope is the unique solution of a $4 \times 4$
+linear system $N_v\,x = h_v$ where $N_v$ is invertible, so vertices move
+continuously (indeed smoothly) in~$(h,n)$.
+For each vertex, the strict inequalities
+$n_j \cdot v < h_j$ for non-determining facets are open conditions, so they
+persist under small perturbations of~$(h,n)$.
+Similarly, for ridge-adjacent facets, $\omega_0(n_i, n_j) \neq 0$ is an open
+condition, so the directed adjacency graph (and hence the pruned orbit set)
+is locally constant.
+(b) Follows from the envelope theorem applied to the KKT problem, whose
+optimum is locally unique and smooth by the implicit function theorem
+(given LICQ and second-order sufficient conditions, which hold generically).
+(c) Continuity: $\min$ of continuous functions.
+Differentiability: when the minimizer is unique, $c_{\mathrm{EHZ}} =
+A(S^*,\sigma^*;\cdot)$ locally, hence smooth by~(b).
+Genericity: $A(S_1,\sigma_1;h,n) = A(S_2,\sigma_2;h,n)$ is one equation in~$4F$
+unknowns, so the tie locus is a hypersurface; finitely many orbit pairs, so
+the union has measure zero.
+(d) Standard result for the directional derivative of a pointwise minimum
+of smooth functions.
+\end{proof}
+
+% Jörn: math approved (b01bf24) — Remark
+\begin{remark}[Simplicity is generic]
+\label{rem:simplicity-generic}
+A polytope in $H$-representation is non-simple when $5$ or more facet
+hyperplanes meet at a single point, which imposes one additional equation
+beyond the $4$ needed to determine a vertex.
+This is a codimension-$1$ condition in the space of heights, so non-simple
+polytopes form a measure-zero subset: a random polytope is almost surely simple.
+All~$140$ polytopes in our dataset are simple at the start, and the step bound
+preserves simplicity (it is a special case of preserving the combinatorial type).
+For non-simple polytopes, vertices can split discontinuously under normal
+perturbations, so the combinatorial type need not be locally constant.
+\end{remark}
+
+\emph{Validity of the single-orbit gradient.}
+In our experiment, we compute $\nabla_{(h,n)}\,c_{\mathrm{EHZ}}$ using only
+the current minimizing orbit. By Proposition~\ref{prop:capacity-piecewise-smooth}(c),
+this is exact whenever the minimizer is unique.
+
+% Jörn: math approved (b01bf24) — Corollary
+\begin{corollary}[Systolic ratio derivative]
+\label{cor:sys-derivative}
+For $\theta \in \{h_k, n_k\}$, the chain rule applied to
+$\mathrm{sys} = c_{\mathrm{EHZ}}^2 / (2\,\mathrm{vol})$ gives
+\[
+  \frac{\partial\,\mathrm{sys}}{\partial \theta}
+  = \frac{1}{\mathrm{vol}}
+    \left[
+      c_{\mathrm{EHZ}} \cdot \frac{\partial\,c_{\mathrm{EHZ}}}{\partial \theta}
+      - \mathrm{sys} \cdot \frac{\partial\,\mathrm{vol}}{\partial \theta}
+    \right],
+\]
+where the partial derivatives of $\mathrm{vol}$ and $c_{\mathrm{EHZ}}$ are
+given by Lemmas~\ref{lem:vol-derivative}--\ref{lem:cap-derivative-normal}.
+\end{corollary}
+
+\paragraph{Step bound.}
+We compare two stepping strategies:
+\begin{itemize}
+\item \emph{Height-only}: step along $g_h = \nabla_h\,\mathrm{sys}$,
+  setting $h' = h + t\,g_h$ with normals fixed.
+\item \emph{Height + normal}: step along the full gradient
+  $g = (g_h, g_n)$ where
+  $g_n = (\nabla_{n_1}\mathrm{sys},\dots,\nabla_{n_F}\mathrm{sys})$;
+  set $h'_k = h_k + t\,g_{h,k}$ and
+  $n'_k = (n_k + t\,g_{n,k}) / \|n_k + t\,g_{n,k}\|$.
+\end{itemize}
+
+Both strategies require a step bound $t_{\max}$ to preserve the combinatorial type.
+For the height-only case, we require:
+(i)~all heights remain positive ($h_k + t\,g_{h,k} > 0$), and
+(ii)~no vertex crosses a new facet.
+For a simple vertex $v$ (exactly 4 determining facets with normals
+forming an invertible matrix $N_v$), the vertex moves as
+$v(t) = v + t\,N_v^{-1}g_{h,\mathrm{det}}$.
+For each non-incident facet $j$, the slack $s_j(t) = h_j + t\,g_{h,j} - n_j \cdot v(t)$
+must remain positive.
+For non-simple vertices, a conservative bound $t < s_j / \max_k |g_{h,k}|$ is used.
+
+For the $(h,n)$ case, an additional constraint preserves $\omega_0$
+signs: for each ridge-adjacent pair $(i,j)$, the signed area
+$\omega_0(n_i + t\,g_{n,i},\, n_j + t\,g_{n,j})$
+must not change sign (a sign flip would change the orbit structure).
+This is linear in~$t$, giving
+$t < \omega_0(n_i,n_j)\,/\,\max(0,\;-[\omega_0(g_{n,i},n_j) + \omega_0(n_i,g_{n,j})])$.
+The step bound is $t_{\max} = \min$ over all such critical times.
+
+We evaluate $\mathrm{sys}$ at step fractions
+$\{0.1, 0.25, 0.5, 0.75, 0.95\} \cdot t_{\max}$ for both strategies.
+
+The starting polytopes are the 140 polytopes from the random-sweep and
+random-product-sweep experiments with $F \le 10$.
+
+\subsubsection*{Phase 1: Gradient Structure}
+
+Figure~\ref{fig:sys-opt-gradient} shows the distribution of the
+logarithmic height sensitivity
+$h_k \cdot \partial\,\mathrm{sys}/\partial h_k$
+across all polytopes and facets.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{../experiments/sys-optimization/sys_optimization_gradient_hist.png}
+\caption{Distribution of $\partial\,\mathrm{sys}/\partial\log h_k$
+  across 1120 facets from 140 polytopes.
+  Left: signed values on linear scale. Right: magnitudes on log scale.}
+\label{fig:sys-opt-gradient}
+\end{figure}
+
+Figure~\ref{fig:sys-opt-gradient-comparison} compares the two step types.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{../experiments/sys-optimization/sys_optimization_gradient_comparison.png}
+\caption{Left: predicted maximum $\Delta\mathrm{sys}$ from a single step
+  ($t_{\max} \cdot \|\nabla\,\mathrm{sys}\|$, dimensionless) for
+  height-only vs.\ $(h,n)$ steps.
+  Points scatter around the diagonal: neither step type consistently
+  dominates in the linear prediction.
+  Right: maximum step size $t_{\max}$ for height-only vs.\ $(h,n)$ steps.
+  The $(h,n)$ step bound is $1$--$3$ orders of magnitude smaller due to
+  $\omega_0$ sign constraints.}
+\label{fig:sys-opt-gradient-comparison}
+\end{figure}
+
+Since $\nabla_h\,\mathrm{sys}$ and $\nabla_n\,\mathrm{sys}$ have different
+units (the heights carry a length scale, the normals do not), their
+magnitudes are not directly comparable.
+The dimensionless quantity
+$t_{\max} \cdot \|\nabla\,\mathrm{sys}\|$ --- the predicted maximum
+$\Delta\mathrm{sys}$ from a single linear step --- combines gradient
+magnitude and step bound into a comparable measure.
+On average, it is similar for both step types
+(mean $0.34$ for $h$-only, $0.15$ for $(h,n)$),
+with $h$-only slightly higher because the $(h,n)$ step bound is much
+smaller (median $t_{\max}^{(h,n)} \approx 0.07$ vs.\
+$t_{\max}^{(h)} \approx 2.6$).
+The $(h,n)$ bound is tight because tilting normals can quickly flip the
+sign of $\omega_0(n_i, n_j)$ for ridge-adjacent facets.
+
+\subsubsection*{Phase 2: Finite Gradient Steps}
+
+For each polytope, we take gradient steps along both the height-only direction
+and the full $(h,n)$ direction, and compare the best improvement from each.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{../experiments/sys-optimization/sys_optimization_improvement.png}
+\caption{Left: $\Delta\mathrm{sys}$ from height-only step vs.\ $(h,n)$ step
+  for each polytope. Green points: $(h,n)$ gives larger improvement.
+  Right: best achievable $\mathrm{sys}$ (from either step type) vs.\ starting
+  $\mathrm{sys}$.}
+\label{fig:sys-opt-improvement}
+\end{figure}
+
+\begin{table}[ht]
+\centering
+\input{../experiments/sys-optimization/sys_optimization_stats.tex}
+\caption{Summary statistics for the sys-optimization experiment.}
+\label{tab:sys-opt-stats}
+\end{table}
+
+The $(h,n)$ step outperforms height-only in 95 of 140 polytopes (68\%),
+with mean improvement $\Delta\mathrm{sys} = 0.054$ vs.\ $0.034$.
+Overall, 129/140 polytopes improve under $(h,n)$ steps, compared to
+126/140 for height-only.
+The best $\mathrm{sys}$ achieved is~$0.805$, starting from a polytope
+with $\mathrm{sys} = 0.735$ (a random $4 \times 5$ Lagrangian product).
+
+\subsubsection*{Phase 3: Iterative Gradient Ascent}
+
+Phases~1--2 evaluated single gradient steps from fixed starting polytopes.
+Phase~3 iterates: after each gradient step, we recompute HK2017 on the
+resulting polytope, compute the new gradient, and take another step.
+This allows the procedure to navigate across orbit switches and exploit
+the piecewise-smooth structure of $\mathrm{sys}$.
+
+At each iteration, we evaluate 5 step fractions
+$\{0.1, 0.25, 0.5, 0.75, 0.95\} \cdot t_{\max}$
+for both the $h$-only and $(h,n)$ directions,
+and select the step with the highest resulting $\mathrm{sys}$.
+Iteration terminates when the best candidate step improves
+$\mathrm{sys}$ by less than $10^{-6}$, when no candidate step
+succeeds (all constructions fail), or after 20 iterations.
+Note that termination does not imply stationarity of $\mathrm{sys}$:
+the gradient may still be large, but the type-preserving step bound
+may be too tight for any candidate step to produce a measurable
+improvement.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{../experiments/sys-optimization/sys_optimization_convergence.png}
+\caption{Left: $\mathrm{sys}$ trajectories under iterative gradient
+  ascent, colored by facet count.
+  Right: per-step improvement $\Delta\mathrm{sys}$ (symlog scale).
+  Most trajectories terminate within 5--10 iterations.}
+\label{fig:sys-opt-convergence}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{../experiments/sys-optimization/sys_optimization_iteration_summary.png}
+\caption{Left: distribution of iteration counts (mean 6.3).
+  Center: starting vs.\ final $\mathrm{sys}$ (most polytopes improve substantially).
+  Right: step type usage across all 868 iterations --- $(h,n)$ steps are
+  selected 58\% of the time.}
+\label{fig:sys-opt-iteration-summary}
+\end{figure}
+
+Iteration produces a substantial cumulative improvement:
+the mean cumulative $\Delta\mathrm{sys}$ is $0.149$, roughly $3\times$
+the single-step improvement of Phase~2.
+The best $\mathrm{sys}$ after iteration reaches~$0.878$
+(polytope \texttt{random\_5x5\_1}, starting from $\mathrm{sys} = 0.351$).
+Note: this is a different polytope from the single-step best ($0.805$);
+the highest starting $\mathrm{sys}$ in the dataset is~$0.758$, but that
+polytope admits no improving step.
+All 138 iterated polytopes terminate with improvement below $10^{-6}$
+(2 polytopes admit no improving step from their starting point).
+
+Across all iterations, $(h,n)$ steps are selected 58\% of the time
+(506 out of 868 steps).
+The algorithm selects $(h,n)$ steps most frequently at the first
+iteration (67\% of polytopes). $h$-only steps are most prevalent
+at iterations~1--2 (45--53\%), after which $(h,n)$ steps regain
+dominance (60--63\%) through the remainder of the run.
+
+\subsubsection{Phase 4: Gradient Validity Testing}
+\label{sec:gradient-validity}
+
+Phases~1--3 treat the analytical gradient as correct and use it
+for optimization. Phase~4 tests this assumption empirically:
+does the linear prediction
+$\mathrm{sys}(h + t\delta_h,\, n + t\delta_n) \approx
+\mathrm{sys}_0 + t\,(\nabla_{(h,n)}\mathrm{sys} \cdot \delta)$
+hold in practice?
+
+For each of the 140 polytopes, we test along 12 directions:
+the $\nabla_h$ gradient direction (heights only),
+the $\nabla_{(h,n)}$ gradient direction (heights + normals),
+and 10 random $(h,n)$ directions (Gaussian, projected to $T_{n_k}S^3$
+for each normal component, then normalized).
+For each direction, we evaluate at 8 step fractions
+$t/t_{\max} \in \{0.01, 0.1, 0.25, 0.5, 1.0, 2.0, 5.0, 10.0\}$,
+where $t_{\max}$ is the combinatorial-type-preserving step bound.
+Each evaluation constructs the perturbed polytope, runs HK2017, and
+compares the actual $\Delta\mathrm{sys}$ against the linear prediction.
+This produces 13{,}440 evaluations total.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{../experiments/sys-optimization/sys_optimization_validity.png}
+\caption{Left: median relative prediction error vs.\ step fraction,
+  by direction type (shading: interquartile range).
+  The height gradient (red) tracks the linear prediction closely
+  ($7.3\%$ error at $0.25\,t_{\max}$).
+  Random directions (blue) have ${\sim}90\%$ error at all scales
+  (the gradient is nearly orthogonal to random perturbations in the
+  high-dimensional parameter space).
+  Center: construction success rate beyond the step bound.
+  85\% of evaluations at $2\times t_{\max}$ produce a valid polytope.
+  Right: distribution of the largest step fraction with
+  $<20\%$ relative error, by direction type.}
+\label{fig:sys-opt-validity}
+\end{figure}
+
+Three findings:
+\begin{enumerate}
+\item \emph{Height gradient predictions are accurate.}
+  Along $\nabla_h\,\mathrm{sys}$, the median relative error is $0.3\%$
+  at $0.01\,t_{\max}$, $2.8\%$ at $0.1\,t_{\max}$, and $7.3\%$ at
+  $0.25\,t_{\max}$.
+  This is consistent with $O(t)$ truncation error from the first-order
+  approximation and validates the analytical height derivatives
+  (Lemmas~\ref{lem:vol-derivative} and~\ref{lem:cap-derivative}).
+
+\item \emph{Combined $(h,n)$ predictions have outliers.}
+  The $\nabla_{(h,n)}$ direction shows good prediction for most polytopes
+  (125/140 predict the correct sign of $\Delta\mathrm{sys}$),
+  but 15 polytopes have wrong-sign predictions
+  (the gradient predicts the opposite direction of actual change),
+  and 6 polytopes have prediction ratios exceeding 25:1.
+  % Investigation of 4990 validity records found two mechanisms for
+  % wrong-sign gradient predictions:
+  % (1) At large step sizes (t ≥ 1.0×t_max), polytope combinatorics change
+  %     (vertex_count_changed=True in 32 records) — the gradient is meaningless
+  %     because the objective function's domain has changed.
+  % (2) At moderate step sizes without combinatorial change, Reeb orbit
+  %     switching: a different (S,σ) candidate becomes the capacity-achieving
+  %     orbit, invalidating the gradient computed for the original orbit.
+  % The iterative optimizer (Phase 3) avoids both: its line search stays
+  % in the linear regime (t_fraction ≤ 0.95) and recomputes HK2017 after
+  % each step, detecting orbit switches immediately.
+  The median prediction-to-actual ratio is~$1.55$, indicating
+  systematic overprediction from the normal renormalization
+  $n_k \to (n_k + t\,g_{n,k})/\|n_k + t\,g_{n,k}\|$.
+
+\item \emph{Step bounds are conservative.}
+  At $2\times t_{\max}$, 85\% of evaluations succeed (valid polytope
+  constructed), and 35\% also preserve the combinatorial type.
+  Even at $10\times t_{\max}$, 60\% of evaluations succeed.
+  The bounds are thus safe but overly cautious for polytope
+  construction; the binding constraint in practice is
+  combinatorial type preservation, not polytope validity.
+\end{enumerate}
+
+\subsubsection*{Discussion}
+
+Iterative gradient ascent does not push $\mathrm{sys}$ past~$1$.
+The best result ($\mathrm{sys} \approx 0.88$) remains below the
+Viterbo threshold, though it substantially exceeds the maximum
+$\mathrm{sys} \approx 0.76$ found by random sampling alone.
+
+Three structural observations:
+\begin{enumerate}
+\item \emph{All 140 starting polytopes have nonzero gradient.}
+  None of the 140 starting polytopes is a critical point of $\mathrm{sys}$
+  under $(h,n)$ changes; every one admits a direction of improvement.
+  After iteration, 138/140 terminate with the best candidate step
+  improving $\mathrm{sys}$ by less than~$10^{-6}$.
+  This reflects the greedy procedure running out of type-preserving
+  steps, not stationarity of~$\mathrm{sys}$.
+
+\item \emph{Normal perturbations provide additional improvement.}
+  In both single-step (Phase~2) and iterative (Phase~3) settings,
+  $(h,n)$ steps outperform height-only.
+  In Phase~3, $(h,n)$ steps are selected 58\% of the time.
+  The allowable step size for $(h,n)$ is much smaller than for $h$-only
+  (constrained by $\omega_0$ sign preservation), yet the
+  actual improvement is larger, indicating that the optimization landscape
+  is more curved in normal directions than the linear prediction suggests.
+
+\item \emph{Iteration produces substantial cumulative improvement.}
+  The mean cumulative $\Delta\mathrm{sys}$ of $0.149$ is ${\sim}3\times$
+  the single-step improvement ($0.054$), showing that the iterative
+  procedure successfully navigates across orbit switches.
+  However, the improvement rate decreases rapidly: most of the gain
+  occurs in the first 3--5 iterations.
+\end{enumerate}
+
+\emph{Limitations and extensions.}
+The greedy gradient ascent used here preserves the combinatorial type at
+each step. Several extensions could push $\mathrm{sys}$ further:
+\begin{itemize}
+\item \emph{Large steps beyond the gradient regime.}
+  Taking steps larger than $t_{\max}$ (accepting a combinatorial type
+  change) and recomputing $\mathrm{sys}$ from scratch.
+  The gradient prediction is invalid, but the actual $\mathrm{sys}$ can
+  still be evaluated.
+\item \emph{Targeted single-facet moves.}
+  For $k \notin S$ (not in the minimizing orbit), $\partial c_{\mathrm{EHZ}}/\partial h_k = 0$,
+  so small height changes affect only $\mathrm{vol}$.
+  However, large decreases in $h_k$ could trigger an orbit switch to a
+  better orbit, combining volume reduction with capacity improvement.
+\end{itemize}
+
+Phase~4 (Figure~\ref{fig:sys-opt-validity}) addresses the question of
+gradient validity: the height gradient accurately predicts $\mathrm{sys}$
+within the step bound, and beyond the step bound, polytope construction
+succeeds far more often than the conservative bounds require.
+The combined $(h,n)$ gradient has higher variance (15 wrong-sign
+predictions out of 140), suggesting that the large-step extension above
+should recompute $\mathrm{sys}$ from scratch rather than relying on
+gradient predictions.

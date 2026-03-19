@@ -1,0 +1,236 @@
+% math.tex — \input'd from thesis/experiments.tex
+%
+% Sources: experiments/visualization/ (Three.js interactive viewer),
+%   crates/src/algorithms/hk2017/recover.rs (orbit recovery),
+%   crates/src/geom/reeb_trajectory.rs (trajectory simulation),
+%   experiments/visualization/logbook.md.
+%
+% Structure:
+%   \subsubsection*{Projection pipeline} — radial + stereographic projection, eq:stereo-proj
+%   \subsubsection*{Reeb orbits} — three trajectory types, fig:viz-trajectories, tab:viz-orbits
+%   \subsubsection*{Observations} — qualitative features per polytope
+%   \subsubsection*{Implementation} — Rust viz_export + Three.js viewer
+
+\subsection{Visualization of Reeb Dynamics}
+\label{sec:visualization}
+
+To build geometric intuition about Reeb flows on polytope boundaries,
+we visualize $\mathbb{R}^4$ polytopes and their Reeb orbits via
+stereographic projection to~$\mathbb{R}^3$.
+
+\subsubsection*{Projection pipeline}
+
+The visualization uses a two-stage projection:
+\[
+  \partial K \;\xrightarrow{\;\text{radial}\;}\; S^3
+  \;\xrightarrow{\;\text{stereographic}\;}\; \mathbb{R}^3.
+\]
+
+\emph{Radial projection.}
+The map $x \mapsto x / \lVert x \rVert$ sends $\partial K$ to~$S^3$.
+This is well-defined since $K$ is a convex body containing the origin
+in its interior, so every ray from the origin meets $\partial K$
+exactly once.
+
+\emph{Stereographic projection.}
+We use stereographic projection because it is conformal
+(preserving angles locally) and maps great circles on~$S^3$
+to circles or lines in~$\mathbb{R}^3$, so the polytope's
+combinatorial structure remains visually recognizable.
+Fix a north pole $n \in S^3$. For $y \in S^3 \setminus \{n\}$,
+the stereographic projection sends $y$ to the intersection of the ray
+from~$n$ through~$y$ with the tangent hyperplane to~$S^3$ at~$-n$.
+In coordinates:
+\begin{equation}
+  \label{eq:stereo-proj}
+  \pi_n(y) \;=\; \frac{y - \langle y, n \rangle \, n}{1 - \langle y, n \rangle},
+\end{equation}
+which maps $S^3 \setminus \{n\}$ conformally to~$\mathbb{R}^3$
+(identified with the hyperplane $n^\perp$ via an orthonormal basis).
+
+\emph{Pole singularity.}
+Points near the north pole project to large radii.
+The implementation clips geometry within an angular neighbourhood
+of~$n$: a point~$y \in S^3$ is omitted when
+$\langle y, n \rangle \geq (R^2 - 1)/(R^2 + 1)$,
+where $R$ is a configurable clipping radius.
+Line segments passing through this neighbourhood are split at the
+boundary and only the exterior portions are drawn.
+This produces visible gaps in edges and trajectories near the pole,
+which is expected and does not indicate missing geometry.
+
+\subsubsection*{Reeb orbits}
+
+The visualization shows three types of trajectories,
+all obtained from the algorithm's output
+(Definition~\ref{def:reeb-orbit-polytope},
+Lemma~\ref{lem:base-point-recovery}).
+
+\emph{Minimum-action orbits.}
+For each polytope, the algorithm (Algorithm~\ref{alg:ehz})
+enumerates all certified solutions~$(S, \sigma, \beta)$
+with $\beta_i > 0$.
+Each solution determines a closed generalized Reeb orbit
+via base point recovery (Lemma~\ref{lem:base-point-recovery}):
+the linear system $N_S \cdot b = r$ (where $N_S$ collects the
+outward normals of the facets in~$S$) is solved for
+the offset $b = \gamma(0)$, and the breakpoints
+$\gamma(t_k)$ at facet transitions are computed from~$\beta$
+and~$\sigma$.
+Solutions achieving the minimum action $c_\mathrm{EHZ}(K)$
+are labelled as minimum-action orbits.
+Several polytopes have multiple distinct minimum-action orbits
+(Table~\ref{tab:viz-orbits}).
+
+\emph{Higher-action orbits.}
+Solutions with action above the minimum are included
+when base point recovery succeeds
+(closure error ${} < 10^{-6}$,
+constraint violation ${} < 10^{-4}$).
+Some higher-action orbits have underdetermined base point
+systems and fail recovery
+(constraint violation ${} > 10^{-4}$).
+The total number of displayed orbits is capped at~20
+per polytope.
+
+\emph{Displaced trajectories.}
+To illustrate how nearby Reeb trajectories twist relative
+to a minimum-action orbit, we perturb the recovered base
+point~$b = \gamma(0)$ within the ridge
+$F_{\sigma(0)} \cap F_{\sigma(|S|-1)}$ where it lies.
+The ridge tangent space is two-dimensional
+(perpendicular to both facet normals $n_{\sigma(0)}$
+and~$n_{\sigma(|S|-1)}$); we displace by
+$\varepsilon \cdot v_k$ ($\varepsilon = 0.02$, $k = 1, 2$)
+along an orthonormal basis $\{v_1, v_2\}$ of this tangent space.
+Each displaced trajectory is then forward-simulated for the
+same number of facet segments as the original orbit.
+These displaced trajectories generally do not close:
+the combinatorial facet sequence can diverge from the
+original orbit's sequence even for small perturbations.
+
+\begin{figure}[ht]
+\centering
+\begin{minipage}{0.48\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{../experiments/visualization/viz-hypercube-edges.png}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{../experiments/visualization/viz-hypercube-ridges.png}
+\end{minipage}
+\caption{Stereographic projection of the hypercube $[-1,1]^4$
+  from the north pole $n = e_4$.
+  Left: vertices and edges.
+  Right: ridges (2-faces), which appear as curved surfaces
+  since great-circle arcs on~$S^3$ map to circles in~$\mathbb{R}^3$.}
+\label{fig:viz-hypercube}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\begin{minipage}{0.48\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{../experiments/visualization/viz-hypercube-traj.png}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{../experiments/visualization/viz-simplex-traj.png}
+\end{minipage}
+\caption{Minimum-action Reeb orbits after stereographic projection
+  from $n = e_4$.
+  Left: hypercube, one of two minimum-action orbits
+  visiting 4 of 8 facets (action $= 4$).
+  Right: simplex, one of six minimum-action orbits
+  visiting all 5 facets (action $= 0.25$).}
+\label{fig:viz-trajectories}
+\end{figure}
+
+\subsubsection*{Observations}
+
+The interactive visualization renders the eight known polytopes
+from the dataset library and is available online at
+\url{https://joernstoehler.github.io/msc-math/viz/}.
+For each polytope, the user can toggle display of vertices, edges,
+ridges (2-faces), and individual Reeb orbits, and
+rotate the stereographic north pole.
+Figures~\ref{fig:viz-hypercube} and~\ref{fig:viz-trajectories}
+show representative screenshots.
+
+Several qualitative features are visible:
+
+\begin{itemize}
+  \item On the hypercube $[-1,1]^4$, the two minimum-action orbits
+    each visit 4 of~8 facets, reflecting the decomposition into
+    two symplectic planes.
+    The projected orbits form compact, nearly elliptical closed curves.
+
+  \item On the simplex, all six minimum-action orbits visit all
+    5 facets and achieve the same action ($0.25$),
+    reflecting the full symmetry group of the simplex.
+
+  \item The HK-O pentagon has at least 20 distinct minimum-action
+    orbits (capped at~20 for display), all achieving
+    action~$\approx 3.441$.
+
+  \item On Lagrangian products, higher-action orbits frequently
+    fail base point recovery (underdetermined linear system,
+    high constraint violation), while minimum-action orbits
+    recover reliably.
+
+  \item Displaced trajectories visibly twist around the
+    minimum-action orbit.
+    On the hypercube, both displaced trajectories close
+    (the orbit family is stable under small perturbations),
+    while on less symmetric polytopes (simplex, HK-O pentagon)
+    they diverge.
+
+  \item Ridges (2-faces) curve under the stereographic projection
+    (Figure~\ref{fig:viz-hypercube}, right),
+    giving visual evidence that great-circle arcs on~$S^3$ map to
+    circles in~$\mathbb{R}^3$.
+\end{itemize}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{lccccc}
+\toprule
+Polytope & $F$ & Total orbits & Min-action & $c_\mathrm{EHZ}$ & Segments \\
+\midrule
+Simplex                       & 5  & 6    & 6    & 0.25   & 5 \\
+Hypercube                     & 8  & 142  & 2    & 4.00   & 4 \\
+HK-O pentagon                 & 10 & 718  & 20+  & 3.441  & 6--7 \\
+Lag.\ $\triangle$-product     & 6  & 8    & 2    & 1.50   & 6 \\
+Sym.\ $\triangle$-product     & 6  & 31   & 2    & 1.299  & 3 \\
+Lag.\ $\triangle \times \square$ & 7 & 4  & 2    & 1.50   & 5 \\
+Sym.\ $\triangle \times \square$ & 7 & 62 & 1    & 1.00   & 4 \\
+Crosspolytope                 & 16 & ---  & ---  & ---    & --- \\
+\bottomrule
+\end{tabular}
+\caption{Reeb orbit statistics per polytope.
+  ``Total orbits'' is the number of certified $(S, \sigma, \beta)$
+  solutions found by exhaustive enumeration.
+  ``Min-action'' counts orbits achieving $c_\mathrm{EHZ}(K)$.
+  ``Segments'' is the number of facet transitions per period
+  of a minimum-action orbit.
+  The crosspolytope ($F = 16$) is omitted due to exponential
+  enumeration cost; a placeholder forward-simulated trajectory
+  is shown instead.}
+\label{tab:viz-orbits}
+\end{table}
+
+\subsubsection*{Implementation}
+
+The visualization consists of a Rust export tool
+(\texttt{viz\_export}) that computes all Reeb orbits via
+the algorithm (Algorithm~\ref{alg:ehz}) and recovers their
+base points (Lemma~\ref{lem:base-point-recovery}),
+exporting the polytope skeleton and orbit breakpoints as JSON.
+A browser-based viewer
+(\texttt{experiments/\allowbreak visualization/\allowbreak viz/})
+built with Three.js loads the JSON data and performs the
+projection pipeline in JavaScript, rendering the result as an
+interactive 3D scene.
+Sampling along edges and ridges uses spherical linear interpolation
+(slerp) on~$S^3$ to produce uniform angular spacing, which
+stereographic projection maps to smooth~$\mathbb{R}^3$ spacing.
