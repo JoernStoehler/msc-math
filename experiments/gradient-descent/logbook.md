@@ -72,6 +72,10 @@ All verified against `gradient-descent.jsonl` (7631 rows, 995 polytopes).
 - Gradient ascent finds local optima only; global landscape structure not explored.
 - If a basin of attraction for sys > 1 exists, it may have small measure among random starting points.
 
+## Open questions
+
+1. **Naming inconsistency:** The directory and Cargo.toml bin are named `gradient-descent`/`gradient_descent`, but the algorithm performs gradient *ascent* on sys. The logbook title uses "ascent." Cosmetic — needs a decision on which name to standardize.
+
 ## Related experiments
 
 - **sys-optimization:** The method origin. Developed the gradient computation, step bound, and line search on 140 polytopes.
