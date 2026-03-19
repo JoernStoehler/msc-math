@@ -66,6 +66,15 @@ Multiple independent work streams?
 
 The patterns compose: a session can spawn subagents AND write handoff files for future sessions. A team lead can delegate to teammates AND write handoff files.
 
+## Subagent prompt quality
+
+Subagents don't load skills unless told to. Key conventions must be **included explicitly in the prompt**, not assumed via skill loading. Learnings from bulk migration work:
+
+- **Ground truth hierarchy.** When sources may conflict (README vs data vs code vs .tex), state the hierarchy in the prompt: data files > code > .tex > README/prose. Subagents faithfully copy errors from prose sources unless told to cross-check.
+- **Include known common errors.** If prior runs revealed a recurring mistake (e.g. "subagents call math.tex a 'thesis writeup' — it's a formal living document"), add a one-line correction to the prompt.
+- **Review subagents: 1 per file, pedantic, with source comparison.** Batched shallow reviews (structure/names only) miss content-level errors. Effective review subagents compare the deliverable against original sources line by line and report lost information, misleading formulations, and factual errors. One subagent per file prevents attention dilution.
+- **Iterate to convergence.** Fix review findings, then re-review the fixed files. A re-review round catches errors introduced by the fix itself (observed: conflating Part 1 and Part 2 data when fixing an explanation).
+
 ---
 
 # Writing Handoff Files
