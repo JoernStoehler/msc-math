@@ -6,7 +6,7 @@ Before using computed capacities for scientific conclusions, we need high confid
 
 ## Status
 
-**Complete.** All 6 test propositions pass. Jorn approved the thesis writeup (2026-02-16).
+**Complete.** All 6 test propositions pass. Jörn approved the thesis writeup (2026-02-16).
 
 ## How to run
 
@@ -16,7 +16,9 @@ cargo run --bin correctness --release   # Generates correctness/correctness.json
 cargo test --bin correctness --release   # Verifies all 6 properties
 ```
 
-If tests fail after algorithm changes, investigate before merging.
+If tests fail after algorithm changes, investigate before merging. Failure triage: (1) implementation bug, (2) test assumption violated, (3) numeric precision issue.
+
+Different seeds may expose edge cases not covered by seed 42.
 
 ### Files
 
@@ -50,8 +52,8 @@ Generate a curated dataset where we know what the correct answers MUST be, then 
 
 ### The 6 tests
 
-1. **Direct comparison**: Pruned vs unpruned on 10 base polytopes; pruned vs billiard on 5 Lagrangian products.
-2. **Literature agreement**: 7 known polytopes (simplex, hypercube, HK-O pentagon, 4 products) against published values.
+1. **Direct comparison**: Pruned vs unpruned on 10 base polytopes; pruned vs billiard on 5 Lagrangian products. Each test asserts an exact expected billiard count (5, 4, 5 respectively) to prevent silent vacuous passes.
+2. **Literature agreement**: 7 known polytopes (simplex, hypercube, HK-O pentagon, 4 products) against published values. Billiard computed for 4 of the 7 (hypercube, pentagon, lag triangle x triangle, lag triangle x square).
 3. **Conformality**: c(alpha*K) = alpha^2 * c(K) for 10 scaled polytopes.
 4. **Symplectic invariance**: c(M*K) = c(K) for 10 transformed polytopes (M via Cayley transform).
 5. **Continuity**: 1% height perturbation produces < 10% relative capacity change.
@@ -73,6 +75,10 @@ Generate a curated dataset where we know what the correct answers MUST be, then 
 - Fixed seed (42) for reproducibility.
 - Tolerance 1e-6 is empirically chosen; tighter tolerance may fail due to floating-point accumulation.
 - Runtime: ~5.3s for dataset generation, ~9.7s for tests (reads dataset 6 times).
+
+## Open questions
+
+1. **math.tex says "facet normals" but code perturbs heights.** Test 5 (continuity) applies a 1% height perturbation (`h * (1 + 0.01 * uniform)`) — confirmed in run.rs. But math.tex (Jörn-approved 2026-02-16) describes it as "a small random perturbation of the facet normals." One source is wrong. Needs Jörn.
 
 ## Related experiments
 
