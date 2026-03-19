@@ -137,8 +137,8 @@ fn fd_capacity_height_simplex() {
 #[ignore] // Requires volume_divergence (dropped during migration) for clean FD
 fn euler_homogeneity_volume() {
     let polytopes: Vec<(&str, Polytope4D)> = vec![
-        ("simplex", known_polytopes::simplex().polytope),
-        ("hypercube", known_polytopes::hypercube().polytope),
+        ("simplex", known_polytopes::simplex().polytope.clone()),
+        ("hypercube", known_polytopes::hypercube().polytope.clone()),
     ];
 
     for (name, poly) in &polytopes {
@@ -190,12 +190,12 @@ fn capacity_monotone_simplex() {
 #[ignore]
 fn fd_capacity_height_known_polytopes() {
     let polytopes = vec![
-        ("hypercube", known_polytopes::hypercube().polytope),
+        ("hypercube", known_polytopes::hypercube().polytope.clone()),
         (
             "lagrangian_tri",
-            known_polytopes::lagrangian_triangle_product().polytope,
+            known_polytopes::lagrangian_triangle_product().polytope.clone(),
         ),
-        ("hko_pentagon", known_polytopes::hko_pentagon().polytope),
+        ("hko_pentagon", known_polytopes::hko_pentagon().polytope.clone()),
     ];
 
     for (name, poly) in &polytopes {
@@ -277,12 +277,12 @@ fn euler_homogeneity_capacity() {
 #[ignore]
 fn capacity_monotone_known_polytopes() {
     let polytopes = vec![
-        ("hypercube", known_polytopes::hypercube().polytope),
+        ("hypercube", known_polytopes::hypercube().polytope.clone()),
         (
             "lagrangian_tri",
-            known_polytopes::lagrangian_triangle_product().polytope,
+            known_polytopes::lagrangian_triangle_product().polytope.clone(),
         ),
-        ("hko_pentagon", known_polytopes::hko_pentagon().polytope),
+        ("hko_pentagon", known_polytopes::hko_pentagon().polytope.clone()),
     ];
 
     for (name, poly) in &polytopes {

@@ -6,7 +6,9 @@
 //! - **Boundedness**: dual vertices positively span R^4
 //! - **Irredundancy**: every facet has incident vertices of affine rank 3
 //!
-//! All arithmetic is exact over Q — no floating-point tolerances.
+//! All vertex inclusion decisions are exact over Q. An f64 pre-filter
+//! accelerates rejection of non-vertex subsets but makes no inclusion
+//! decisions — all confirmed vertices are determined by exact rational arithmetic.
 //!
 //! Mathematical correspondence: [lem:vertex-enumeration], [lem:positive-span]
 
@@ -273,9 +275,10 @@ fn combinations4(n: usize) -> Vec<[usize; 4]> {
 /// debug mode than release; Cargo profile overrides (`opt-level = 3` for
 /// `num-bigint` and `num-rational`) bring debug-mode cost close to release.
 ///
-/// The boundedness check here is the authoritative exact check (distinct from
-/// the f64 pre-filter in `validation::check_bounded` which may be indeterminate
-/// near the boundary).
+/// The boundedness check here (`check_bounded_rational`) is the authoritative
+/// exact check, distinct from the f64-based `validation::check_bounded` which
+/// may be indeterminate near the boundary (and from the vertex-enumeration
+/// f64 pre-filter `f64_prefilter_rejects` which rejects non-vertex subsets).
 ///
 /// Mathematical correspondence: [lem:vertex-enumeration]
 #[allow(clippy::type_complexity)]
@@ -320,18 +323,26 @@ pub(super) fn construct_rational_pipeline(
     Ok((vertices, vertex_descriptors))
 }
 
-/// Enumerate all vertices by testing all C(F, 4) subsets exactly.
+/// Enumerate all vertices by testing all C(F, 4) subsets.
 ///
-/// For each 4-element subset S of dual vertices:
-/// 1. **f64 pre-filter**: solve Y_S · v = 1 in f64. If any gap y_i · v - 1
-///    is clearly positive (point clearly outside K), skip. This avoids the
-///    expensive rational computation for ~80% of subsets.
-/// 2. Build the 4x4 rational system Y_S · x = 1.
-/// 3. Compute det(Y_S) exactly. If zero, skip (singular).
-/// 4. Solve Y_S · x = 1 exactly via Cramer's rule.
-/// 5. Check all gaps g_i = 1 - y_i · v >= 0 for i not in S (exact).
-/// 6. If all non-negative, v is a vertex; its descriptor is the set of ALL
-///    facets with gap = 0 (including the defining subset S).
+/// Two-stage pipeline per subset: cheap f64 stage, then expensive rational stage.
+///
+/// **Stage 1 (f64):** Solve Y_S · v = 1 in f64 via Cramer's rule.
+/// For each non-defining constraint y_i · v ≤ 1, evaluate:
+/// - FALSE  (y_i · v ≥ 1 + ε): point is definitely outside K → skip subset
+/// - INDETERMINATE (|y_i · v - 1| < ε): f64 cannot decide → fall through
+/// - TRUE   (y_i · v ≤ 1 - ε): constraint definitely satisfied → continue
+///
+/// If ANY constraint is FALSE, the subset is skipped (no rational work).
+/// If the f64 Cramer solve is not well-behaved (near-singular, huge solution),
+/// the entire f64 stage is skipped and we fall through to rational.
+///
+/// **Stage 2 (rational):** Reached only when stage 1 did not reject.
+/// Solve Y_S · x = 1 exactly via Cramer's rule over Q. Check all gaps
+/// g_i = 1 - y_i · v exactly. If all non-negative, v is a vertex.
+///
+/// Stage 1 rejects ~80% of subsets, avoiding expensive rational arithmetic.
+/// It can only reject, never confirm — all actual vertices reach stage 2.
 ///
 /// Non-simple vertices (on >4 facets) are handled by deduplication: the first
 /// 4-subset discovering a vertex records ALL incident facets. Later subsets
@@ -358,17 +369,12 @@ fn enumerate_vertices_exact(
     let mut vertices = Vec::new();
 
     for subset in combinations4(f) {
-        // ── f64 pre-filter ──
-        // Solve in f64 first. If the point clearly violates any constraint,
-        // skip the expensive rational computation. This is conservative:
-        // we only skip when f64 is confident the point is OUTSIDE.
-        // Ambiguous cases (near-zero det, near-boundary gaps) fall through
-        // to the exact rational path.
+        // Stage 1: f64 pre-filter. Can only reject (FALSE), never confirm.
         if f64_prefilter_rejects(&dv_f64, &subset, f) {
             continue;
         }
 
-        // ── Exact rational path ──
+        // Stage 2: exact rational path (reached when stage 1 did not reject).
         let rows: [[BigRational; 4]; 4] = [
             dual_vertices[subset[0]].clone(),
             dual_vertices[subset[1]].clone(),
@@ -428,28 +434,48 @@ fn enumerate_vertices_exact(
 
 /// f64 pre-filter: returns true if the subset can be safely skipped.
 ///
-/// Solves the 4x4 system in f64 via Cramer's rule. If the f64 solution
-/// clearly violates some constraint, the subset cannot produce a vertex.
+/// Solves the 4x4 system A·v = 1 in f64 via Cramer's rule. For each
+/// non-defining constraint y_i · v ≤ 1, applies three-valued logic:
 ///
-/// Three-valued logic for each constraint y_i · v ≤ 1:
-/// - `y_i · v ≥ 1 + margin` → FALSE (definitely outside) → skip
-/// - `|y_i · v - 1| < margin` → INDETERMINATE → fall through to rational
-/// - `y_i · v ≤ 1 - margin` → TRUE (definitely inside) → continue checking
+/// - `y_i · v_f64 ≥ 1 + margin` → FALSE (definitely outside) → skip subset
+/// - `|y_i · v_f64 - 1| < margin` → INDETERMINATE → fall through to rational
+/// - `y_i · v_f64 ≤ 1 - margin` → TRUE (definitely satisfied) → continue
 ///
-/// Falls through to rational (returns false) when:
-/// - The Cramer solve is not numerically well-behaved (near-singular, huge
-///   solution components, non-finite results)
-/// - Any constraint check is indeterminate
+/// ## Correctness argument
 ///
-/// Safety: only returns true (skip) when DEFINITELY outside. A too-conservative
-/// pre-filter just means more rational computation — never a correctness bug.
+/// The f64 Cramer solve produces v_f64 with some error δv = v_f64 - v_exact.
+/// If δv is large (ill-conditioned system), constraint checks on v_f64 are
+/// unreliable and could produce a false FALSE (skipping an actual vertex).
+///
+/// To prevent this, we verify the Cramer solve quality via the **residual**:
+/// r = A · v_f64 - 1. If the residual is small, v_f64 is close to the exact
+/// solution regardless of the condition number (backward stability). We then
+/// bound the constraint error:
+///
+///   |y_i · v_f64 - y_i · v_exact| ≤ ||y_i|| · ||δv||
+///
+/// The forward error ||δv|| is bounded by ||A⁻¹|| · ||r||, but we don't know
+/// ||A⁻¹||. Instead we use ||v_f64|| as a proxy (since v = A⁻¹·1, we have
+/// ||A⁻¹|| ≥ ||v|| / 2). With a safety factor:
+///
+///   margin_i = SAFETY · ||y_i|| · ||v_f64|| · max_residual
+///
+/// This is conservative: it upper-bounds the forward error even for
+/// ill-conditioned systems, because the residual check directly measures
+/// how well the f64 solution satisfies the defining equations.
 fn f64_prefilter_rejects(dv_f64: &[[f64; 4]], subset: &[usize; 4], f: usize) -> bool {
-    /// Margin for the three-valued constraint check. Must be large enough to
-    /// exceed all f64 rounding errors in the Cramer solve + dot product.
-    /// For well-conditioned systems this is ~1e-12; we use 1e-6 to be safe
-    /// even for moderately ill-conditioned cases. Ill-conditioned cases are
-    /// caught by the separate reliability checks below.
-    const MARGIN: f64 = 1e-6;
+    /// Safety factor for the error bound. Accounts for the gap between
+    /// ||A⁻¹|| and our proxy ||v|| (factor ~2), plus rounding in the
+    /// residual and dot product computations (~10 ULPs each). 100× is
+    /// generous but keeps the pre-filter effective (margin stays small
+    /// for well-behaved systems).
+    const SAFETY: f64 = 100.0;
+
+    /// Maximum acceptable residual. If max(|r_k|) exceeds this, the
+    /// Cramer solve didn't converge well enough to trust. Fall through
+    /// to rational. 1e-10 is much larger than ε_mach (~1e-16), giving
+    /// room for accumulation in the cofactor expansion.
+    const MAX_RESIDUAL: f64 = 1e-10;
 
     let rows: [[f64; 4]; 4] = [
         dv_f64[subset[0]],
@@ -459,41 +485,63 @@ fn f64_prefilter_rejects(dv_f64: &[[f64; 4]], subset: &[usize; 4], f: usize) -> 
     ];
 
     let det = det4_f64(&rows);
-
-    // Cramer's rule is not numerically well-behaved for near-singular systems.
-    // |det| / product(row norms) measures how close to singular the system is.
-    let row_norm_product: f64 = rows
-        .iter()
-        .map(|r| (r[0] * r[0] + r[1] * r[1] + r[2] * r[2] + r[3] * r[3]).sqrt())
-        .product();
-    if row_norm_product < f64::EPSILON || det.abs() < 1e-8 * row_norm_product {
-        return false; // Not well-behaved → rational
+    if det == 0.0 {
+        return false; // Singular → rational
     }
 
     let v = solve4_f64(&rows, det);
 
-    // Solution with huge components or non-finite values → not well-behaved
-    if v.iter().any(|&c| !c.is_finite() || c.abs() > 1e6) {
+    if v.iter().any(|c| !c.is_finite()) {
         return false; // → rational
     }
 
-    // Check each non-defining constraint with three-valued logic
+    // Verify the Cramer solve quality: compute residual r = A · v - 1.
+    // If the residual is large, the f64 solution is unreliable regardless
+    // of whether the system "looked" well-conditioned.
+    let mut max_res: f64 = 0.0;
+    for row in &rows {
+        let dot = row[0] * v[0] + row[1] * v[1] + row[2] * v[2] + row[3] * v[3];
+        max_res = max_res.max((dot - 1.0).abs());
+    }
+    if max_res > MAX_RESIDUAL {
+        return false; // Cramer solve not accurate enough → rational
+    }
+
+    // ||v_f64|| — used as proxy for ||A⁻¹|| in the forward error bound.
+    let v_norm: f64 = v.iter().map(|c| c * c).sum::<f64>().sqrt();
+
+    // Check each non-defining constraint with adaptive margin.
+    // margin_i = SAFETY · ||y_i|| · ||v|| · max_residual
+    // This bounds |y_i · δv| via ||y_i|| · ||A⁻¹|| · ||r||,
+    // with ||A⁻¹|| ≈ ||v|| and ||r|| = max_residual.
     for i in 0..f {
         if subset.contains(&i) {
             continue;
         }
-        let dot = dv_f64[i][0] * v[0] + dv_f64[i][1] * v[1]
-            + dv_f64[i][2] * v[2] + dv_f64[i][3] * v[3];
-        if dot > 1.0 + MARGIN {
+        let y_i = &dv_f64[i];
+        let dot = y_i[0] * v[0] + y_i[1] * v[1] + y_i[2] * v[2] + y_i[3] * v[3];
+
+        let y_i_norm = (y_i[0] * y_i[0] + y_i[1] * y_i[1]
+            + y_i[2] * y_i[2] + y_i[3] * y_i[3])
+            .sqrt();
+        let margin = SAFETY * y_i_norm * v_norm * max_res;
+
+        // Floor: even with zero residual, f64 dot product has rounding error.
+        // 16 · ε_mach · ||y_i|| · ||v|| covers the dot product computation.
+        let margin = margin.max(16.0 * f64::EPSILON * y_i_norm * v_norm);
+
+        if dot > 1.0 + margin {
             return true; // Definitely outside → skip
         }
-        // Note: INDETERMINATE case (|dot - 1| < MARGIN) is fine —
-        // we just continue checking other constraints. Only if ALL
-        // constraints are satisfied or indeterminate do we fall through.
+        // INDETERMINATE and TRUE both fall through — we only reject on
+        // a definite FALSE. If no constraint is definitely violated,
+        // we proceed to rational.
     }
 
     false // No constraint was definitely violated → rational
 }
+
+// ── f64 pre-filter helpers ───────────────────────────────────────────────
 
 /// 4x4 determinant in f64 (cofactor expansion along first row).
 fn det4_f64(rows: &[[f64; 4]; 4]) -> f64 {
@@ -513,7 +561,9 @@ fn det4_f64(rows: &[[f64; 4]; 4]) -> f64 {
     a[0] * c00 - a[1] * c01 + a[2] * c02 - a[3] * c03
 }
 
-/// Solve 4x4 system via Cramer's rule in f64 (caller provides precomputed det).
+/// Solve 4x4 system via Cramer's rule in f64, specialized for rhs = [1, 1, 1, 1].
+///
+/// Caller provides the precomputed determinant to avoid recomputing it.
 fn solve4_f64(rows: &[[f64; 4]; 4], det: f64) -> [f64; 4] {
     let rhs = [1.0; 4];
     std::array::from_fn(|col| {

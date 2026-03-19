@@ -34,8 +34,8 @@ fn simplex_4d_volume_from_vertices() {
 #[test]
 fn hypercube_volume() {
     // [-1, 1]^4 has volume 2^4 = 16
-    let polytope = known_polytopes::hypercube().polytope;
-    let vol = volume(&polytope).expect("volume computation failed");
+    let polytope = &known_polytopes::hypercube().polytope;
+    let vol = volume(polytope).expect("volume computation failed");
     assert!(
         (vol - 16.0).abs() < 1e-6,
         "hypercube volume: got {vol}, expected 16"
@@ -46,8 +46,8 @@ fn hypercube_volume() {
 #[test]
 fn simplex_polytope_volume() {
     // Standard simplex, volume = 1/24
-    let polytope = known_polytopes::simplex().polytope;
-    let vol = volume(&polytope).expect("volume computation failed");
+    let polytope = &known_polytopes::simplex().polytope;
+    let vol = volume(polytope).expect("volume computation failed");
     assert!(
         (vol - 1.0 / 24.0).abs() < 1e-6,
         "simplex polytope volume: got {vol}, expected {}",

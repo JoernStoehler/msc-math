@@ -16,7 +16,7 @@ use num_traits::{Signed, Zero};
 /// exercises Gaussian elimination with a full-rank (10 x 10) system.
 #[test]
 fn simplex_exact_solve() {
-    let simplex = known_polytopes::simplex().polytope;
+    let simplex = &known_polytopes::simplex().polytope;
 
     let perm: Vec<usize> = (0..5).collect();
     let result = solve_kkt_exact(simplex.dual_vertices(), &perm);
@@ -41,7 +41,7 @@ fn simplex_exact_solve() {
 /// Exercises rank-deficient code paths.
 #[test]
 fn hypercube_exact_solve() {
-    let hypercube = known_polytopes::hypercube().polytope;
+    let hypercube = &known_polytopes::hypercube().polytope;
 
     // Try a 4-facet subset. The hypercube's axis-aligned normals mean omega_0(y_i, y_j) = 0
     // for many pairs. Q can be zero even with nonzero beta.
@@ -61,7 +61,7 @@ fn hypercube_exact_solve() {
 /// return None, not panic on under- or over-determined systems.
 #[test]
 fn short_permutation_no_panic() {
-    let simplex = known_polytopes::simplex().polytope;
+    let simplex = &known_polytopes::simplex().polytope;
 
     let perm = vec![0, 1];
     // Whether this returns Some or None depends on the system — both are valid.
@@ -79,7 +79,7 @@ fn short_permutation_no_panic() {
 /// garbage or rejected the system entirely.
 #[test]
 fn near_singular_system_handled() {
-    let pentagon = known_polytopes::hko_pentagon().polytope;
+    let pentagon = &known_polytopes::hko_pentagon().polytope;
 
     let perm = vec![1, 7, 2, 8, 4, 6, 5];
     let result = solve_kkt_exact(pentagon.dual_vertices(), &perm);
@@ -108,7 +108,7 @@ fn near_singular_system_handled() {
 /// Fourier-Motzkin search.
 #[test]
 fn hypercube_null_space_smoke() {
-    let hypercube = known_polytopes::hypercube().polytope;
+    let hypercube = &known_polytopes::hypercube().polytope;
 
     let perms = vec![
         vec![0, 1, 2, 3, 4],

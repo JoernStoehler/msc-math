@@ -12,13 +12,13 @@ use rand::Rng;
 use rand_distr::StandardNormal;
 
 /// 4-simplex (5 facets). Delegates to `known_polytopes::simplex()`.
-pub fn simplex() -> Polytope4D {
-    crate::geom::known_polytopes::simplex().polytope
+pub fn simplex() -> &'static Polytope4D {
+    &crate::geom::known_polytopes::simplex().polytope
 }
 
 /// Hypercube [-1,1]^4 (8 facets). Delegates to `known_polytopes::hypercube()`.
-pub fn hypercube() -> Polytope4D {
-    crate::geom::known_polytopes::hypercube().polytope
+pub fn hypercube() -> &'static Polytope4D {
+    &crate::geom::known_polytopes::hypercube().polytope
 }
 
 /// Scaled hypercube [-s, s]^4.
@@ -40,18 +40,18 @@ pub fn scaled_hypercube(s: f64) -> Polytope4D {
 }
 
 /// 4D crosspolytope (16 facets). Delegates to `known_polytopes::crosspolytope()`.
-pub fn crosspolytope() -> Polytope4D {
-    crate::geom::known_polytopes::crosspolytope().polytope
+pub fn crosspolytope() -> &'static Polytope4D {
+    &crate::geom::known_polytopes::crosspolytope().polytope
 }
 
 /// Lagrangian triangle product (6 facets). Delegates to `known_polytopes`.
-pub fn lagrangian_triangle_product() -> Polytope4D {
-    crate::geom::known_polytopes::lagrangian_triangle_product().polytope
+pub fn lagrangian_triangle_product() -> &'static Polytope4D {
+    &crate::geom::known_polytopes::lagrangian_triangle_product().polytope
 }
 
 /// Symplectic triangle product (6 facets). Delegates to `known_polytopes`.
-pub fn symplectic_triangle_product() -> Polytope4D {
-    crate::geom::known_polytopes::symplectic_triangle_product().polytope
+pub fn symplectic_triangle_product() -> &'static Polytope4D {
+    &crate::geom::known_polytopes::symplectic_triangle_product().polytope
 }
 
 /// Generate a random bounded polytope with specified number of facets.

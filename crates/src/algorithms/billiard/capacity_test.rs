@@ -241,14 +241,14 @@ fn result_properties_pentagon() {
 /// Small Lagrangian products: fast in both debug and release.
 fn lagrangian_test_cases_fast() -> Vec<(&'static str, crate::geom::polytope::Polytope4D)> {
     vec![
-        ("hypercube", known_polytopes::hypercube().polytope),
+        ("hypercube", known_polytopes::hypercube().polytope.clone()),
         (
             "triangle_product",
-            known_polytopes::lagrangian_triangle_product().polytope,
+            known_polytopes::lagrangian_triangle_product().polytope.clone(),
         ),
         (
             "triangle_square",
-            known_polytopes::lagrangian_triangle_square().polytope,
+            known_polytopes::lagrangian_triangle_square().polytope.clone(),
         ),
     ]
 }

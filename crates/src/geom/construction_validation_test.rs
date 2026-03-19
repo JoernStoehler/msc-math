@@ -225,7 +225,7 @@ fn from_normals_and_heights_accepted() {
 /// should be accepted. The crosspolytope is a canonical example.
 #[test]
 fn non_simple_polytope_accepted() {
-    let p = crate::geom::known_polytopes::crosspolytope().polytope;
+    let p = &crate::geom::known_polytopes::crosspolytope().polytope;
     assert_eq!(p.facet_count(), 16);
     assert!(!p.vertices_f64().is_empty());
 }

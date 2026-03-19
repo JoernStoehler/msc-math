@@ -197,7 +197,7 @@ pub fn polytope_catalog() -> Vec<CatalogEntry> {
     for kp in known {
         base_entries.push(CatalogEntry {
             name: kp.name.to_string(),
-            polytope: kp.polytope,
+            polytope: kp.polytope.clone(),
             base_index: None,
             transform: None,
         });

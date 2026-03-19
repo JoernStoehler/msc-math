@@ -36,7 +36,7 @@ use super::facet_classification::classify_facets;
 #[cfg(test)]
 fn pentagon_sigmas() -> (crate::geom::polytope::Polytope4D, Vec<Vec<usize>>) {
     let kp = known_polytopes::hko_pentagon();
-    let polytope = kp.polytope;
+    let polytope = kp.polytope.clone();
 
     let classification = classify_facets(&polytope).unwrap();
     let adj = build_adjacency_matrix(&polytope);

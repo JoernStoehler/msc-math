@@ -4,8 +4,8 @@
 //! Used by: test fixtures (`test_utils`), dataset generation, and capacity
 //! validation (`hk2017` property tests).
 //!
-//! Each constructor returns a [`KnownPolytope`] with the polytope, its known
-//! capacity value, and a literature reference.
+//! Each polytope is constructed once (on first access) and cached via `LazyLock`.
+//! Constructors return `&'static KnownPolytope` — zero-cost after first call.
 //!
 //! Coordinates: (q_1, q_2, p_1, p_2). See `symplectic_form` module for J_0 and omega_0.
 //!
@@ -14,6 +14,7 @@
 use crate::geom::polytope::Polytope4D;
 use nalgebra::Vector4;
 use std::f64::consts::PI;
+use std::sync::LazyLock;
 
 /// A polytope with a known capacity value and source reference.
 #[derive(Clone, Debug)]
@@ -29,7 +30,10 @@ pub struct KnownPolytope {
 }
 
 /// All known polytopes with verified or computed capacity values.
-pub fn all_known() -> Vec<KnownPolytope> {
+///
+/// Returns references to the cached singletons. Each polytope is constructed
+/// on first access (via its individual constructor) and never again.
+pub fn all_known() -> Vec<&'static KnownPolytope> {
     vec![
         simplex(),
         hypercube(),
@@ -54,6 +58,8 @@ pub fn literature_values() -> Vec<(&'static str, f64)> {
         .collect()
 }
 
+// ── Cached constructors ──────────────────────────────────────────────────
+
 /// 4-simplex (5 facets), translated so the origin is at the centroid.
 ///
 /// Standard simplex conv{0, e_1, e_2, e_3, e_4} with centroid at (0.2, 0.2, 0.2, 0.2).
@@ -63,34 +69,37 @@ pub fn literature_values() -> Vec<(&'static str, f64)> {
 /// Source: Y. Nir thesis 2013; Siegel's Symplectic Capacities Project.
 ///
 /// Mathematical correspondence: [def:ehz-capacity]
-pub fn simplex() -> KnownPolytope {
-    let centroid = Vector4::new(0.2, 0.2, 0.2, 0.2);
-    let normals_raw = [
-        -Vector4::x(),
-        -Vector4::y(),
-        -Vector4::z(),
-        -Vector4::w(),
-        Vector4::new(1.0, 1.0, 1.0, 1.0).normalize(),
-    ];
-    // h_5 = 1/||(1,1,1,1)|| = 1/2 for the facet sum(x_i) <= 1
-    let heights_raw = [0.0, 0.0, 0.0, 0.0, 0.5_f64];
-    let heights: Vec<f64> = normals_raw
-        .iter()
-        .zip(&heights_raw)
-        .map(|(n, h)| h - n.dot(&centroid))
-        .collect();
-    let halfspaces: Vec<Vector4<f64>> = normals_raw
-        .iter()
-        .zip(heights.iter())
-        .map(|(n, &h)| n / h)
-        .collect();
+pub fn simplex() -> &'static KnownPolytope {
+    static INSTANCE: LazyLock<KnownPolytope> = LazyLock::new(|| {
+        let centroid = Vector4::new(0.2, 0.2, 0.2, 0.2);
+        let normals_raw = [
+            -Vector4::x(),
+            -Vector4::y(),
+            -Vector4::z(),
+            -Vector4::w(),
+            Vector4::new(1.0, 1.0, 1.0, 1.0).normalize(),
+        ];
+        // h_5 = 1/||(1,1,1,1)|| = 1/2 for the facet sum(x_i) <= 1
+        let heights_raw = [0.0, 0.0, 0.0, 0.0, 0.5_f64];
+        let heights: Vec<f64> = normals_raw
+            .iter()
+            .zip(&heights_raw)
+            .map(|(n, h)| h - n.dot(&centroid))
+            .collect();
+        let halfspaces: Vec<Vector4<f64>> = normals_raw
+            .iter()
+            .zip(heights.iter())
+            .map(|(n, &h)| n / h)
+            .collect();
 
-    KnownPolytope {
-        polytope: Polytope4D::new(halfspaces).expect("simplex construction"),
-        capacity: 0.25,
-        name: "simplex",
-        source: "Y. Nir thesis 2013",
-    }
+        KnownPolytope {
+            polytope: Polytope4D::new(halfspaces).expect("simplex construction"),
+            capacity: 0.25,
+            name: "simplex",
+            source: "Y. Nir thesis 2013",
+        }
+    });
+    &INSTANCE
 }
 
 /// Hypercube [-1,1]^4 (8 facets).
@@ -99,25 +108,28 @@ pub fn simplex() -> KnownPolytope {
 /// Source: HK2019 Ex 4.6, Rudolf 2022.
 ///
 /// Mathematical correspondence: [def:ehz-capacity]
-pub fn hypercube() -> KnownPolytope {
-    // [-1,1]^4: normals +/-e_i, heights 1.0, halfspaces a_i = n_i/h_i = +/-e_i
-    let halfspaces = vec![
-        Vector4::x(),
-        -Vector4::x(),
-        Vector4::y(),
-        -Vector4::y(),
-        Vector4::z(),
-        -Vector4::z(),
-        Vector4::w(),
-        -Vector4::w(),
-    ];
+pub fn hypercube() -> &'static KnownPolytope {
+    static INSTANCE: LazyLock<KnownPolytope> = LazyLock::new(|| {
+        // [-1,1]^4: normals +/-e_i, heights 1.0, halfspaces a_i = n_i/h_i = +/-e_i
+        let halfspaces = vec![
+            Vector4::x(),
+            -Vector4::x(),
+            Vector4::y(),
+            -Vector4::y(),
+            Vector4::z(),
+            -Vector4::z(),
+            Vector4::w(),
+            -Vector4::w(),
+        ];
 
-    KnownPolytope {
-        polytope: Polytope4D::new(halfspaces).expect("hypercube construction"),
-        capacity: 4.0,
-        name: "hypercube",
-        source: "HK2019 Ex 4.6",
-    }
+        KnownPolytope {
+            polytope: Polytope4D::new(halfspaces).expect("hypercube construction"),
+            capacity: 4.0,
+            name: "hypercube",
+            source: "HK2019 Ex 4.6",
+        }
+    });
+    &INSTANCE
 }
 
 /// 4D crosspolytope (hyperoctahedron, dual of tesseract). 16 facets.
@@ -126,26 +138,29 @@ pub fn hypercube() -> KnownPolytope {
 /// Capacity: 4.0 (computed by ehz_capacity; no literature cross-check available).
 ///
 /// Mathematical correspondence: [def:ehz-capacity]
-pub fn crosspolytope() -> KnownPolytope {
-    let halfspaces: Vec<Vector4<f64>> = [-1.0_f64, 1.0]
-        .into_iter()
-        .flat_map(|s0| {
-            [-1.0_f64, 1.0].into_iter().flat_map(move |s1| {
-                [-1.0_f64, 1.0].into_iter().flat_map(move |s2| {
-                    [-1.0_f64, 1.0]
-                        .into_iter()
-                        .map(move |s3| Vector4::new(s0, s1, s2, s3).normalize())
+pub fn crosspolytope() -> &'static KnownPolytope {
+    static INSTANCE: LazyLock<KnownPolytope> = LazyLock::new(|| {
+        let halfspaces: Vec<Vector4<f64>> = [-1.0_f64, 1.0]
+            .into_iter()
+            .flat_map(|s0| {
+                [-1.0_f64, 1.0].into_iter().flat_map(move |s1| {
+                    [-1.0_f64, 1.0].into_iter().flat_map(move |s2| {
+                        [-1.0_f64, 1.0]
+                            .into_iter()
+                            .map(move |s3| Vector4::new(s0, s1, s2, s3).normalize())
+                    })
                 })
             })
-        })
-        .collect();
+            .collect();
 
-    KnownPolytope {
-        polytope: Polytope4D::new(halfspaces).expect("crosspolytope construction"),
-        capacity: 4.0,
-        name: "crosspolytope",
-        source: "computed (no literature value)",
-    }
+        KnownPolytope {
+            polytope: Polytope4D::new(halfspaces).expect("crosspolytope construction"),
+            capacity: 4.0,
+            name: "crosspolytope",
+            source: "computed (no literature value)",
+        }
+    });
+    &INSTANCE
 }
 
 /// HKO 2024 pentagon counterexample (10 facets).
@@ -157,46 +172,49 @@ pub fn crosspolytope() -> KnownPolytope {
 /// Source: Haim-Kislev & Ostrover 2024, "A counterexample to the Viterbo conjecture".
 ///
 /// Mathematical correspondence: [thm:hko-counterexample]
-pub fn hko_pentagon() -> KnownPolytope {
-    let normals = vec![
-        // Q-space pentagon (5 facets)
-        Vector4::new(0.8090169943749473, 0.5877852522924731, 0.0, 0.0),
-        Vector4::new(-0.3090169943749473, 0.9510565162951536, 0.0, 0.0),
-        Vector4::new(-1.0, 0.0, 0.0, 0.0),
-        Vector4::new(-0.30901699437494756, -0.9510565162951536, 0.0, 0.0),
-        Vector4::new(0.8090169943749473, -0.5877852522924731, 0.0, 0.0),
-        // P-space pentagon rotated 90 degrees (5 facets)
-        Vector4::new(0.0, 0.0, 0.5877852522924732, -0.8090169943749475),
-        Vector4::new(0.0, 0.0, 0.9510565162951536, 0.3090169943749474),
-        Vector4::new(0.0, 0.0, 0.0, 1.0),
-        Vector4::new(0.0, 0.0, -0.9510565162951536, 0.3090169943749476),
-        Vector4::new(0.0, 0.0, -0.5877852522924731, -0.8090169943749475),
-    ];
-    let heights = vec![
-        0.8090169943749473,
-        0.8090169943749475,
-        0.8090169943749475,
-        0.8090169943749475,
-        0.8090169943749472,
-        0.8090169943749475,
-        0.8090169943749475,
-        0.8090169943749475,
-        0.8090169943749475,
-        0.8090169943749473,
-    ];
-    let halfspaces: Vec<Vector4<f64>> = normals
-        .iter()
-        .zip(heights.iter())
-        .map(|(n, &h)| n / h)
-        .collect();
-    let capacity = 2.0 * (PI / 10.0).cos() * (1.0 + (PI / 5.0).cos());
+pub fn hko_pentagon() -> &'static KnownPolytope {
+    static INSTANCE: LazyLock<KnownPolytope> = LazyLock::new(|| {
+        let normals = vec![
+            // Q-space pentagon (5 facets)
+            Vector4::new(0.8090169943749473, 0.5877852522924731, 0.0, 0.0),
+            Vector4::new(-0.3090169943749473, 0.9510565162951536, 0.0, 0.0),
+            Vector4::new(-1.0, 0.0, 0.0, 0.0),
+            Vector4::new(-0.30901699437494756, -0.9510565162951536, 0.0, 0.0),
+            Vector4::new(0.8090169943749473, -0.5877852522924731, 0.0, 0.0),
+            // P-space pentagon rotated 90 degrees (5 facets)
+            Vector4::new(0.0, 0.0, 0.5877852522924732, -0.8090169943749475),
+            Vector4::new(0.0, 0.0, 0.9510565162951536, 0.3090169943749474),
+            Vector4::new(0.0, 0.0, 0.0, 1.0),
+            Vector4::new(0.0, 0.0, -0.9510565162951536, 0.3090169943749476),
+            Vector4::new(0.0, 0.0, -0.5877852522924731, -0.8090169943749475),
+        ];
+        let heights = vec![
+            0.8090169943749473,
+            0.8090169943749475,
+            0.8090169943749475,
+            0.8090169943749475,
+            0.8090169943749472,
+            0.8090169943749475,
+            0.8090169943749475,
+            0.8090169943749475,
+            0.8090169943749475,
+            0.8090169943749473,
+        ];
+        let halfspaces: Vec<Vector4<f64>> = normals
+            .iter()
+            .zip(heights.iter())
+            .map(|(n, &h)| n / h)
+            .collect();
+        let capacity = 2.0 * (PI / 10.0).cos() * (1.0 + (PI / 5.0).cos());
 
-    KnownPolytope {
-        polytope: Polytope4D::new(halfspaces).expect("HKO pentagon construction"),
-        capacity,
-        name: "hko_pentagon",
-        source: "HK-O 2024 Prop 1.4",
-    }
+        KnownPolytope {
+            polytope: Polytope4D::new(halfspaces).expect("HKO pentagon construction"),
+            capacity,
+            name: "hko_pentagon",
+            source: "HK-O 2024 Prop 1.4",
+        }
+    });
+    &INSTANCE
 }
 
 /// Equilateral triangle x_L triangle, Lagrangian product (6 facets).
@@ -205,30 +223,33 @@ pub fn hko_pentagon() -> KnownPolytope {
 /// Known capacity: 1.5.
 ///
 /// Mathematical correspondence: [def:lagrangian-product]
-pub fn lagrangian_triangle_product() -> KnownPolytope {
-    let triangle_angles: Vec<f64> = (0..3)
-        .map(|k| PI / 2.0 + 2.0 * PI * (k as f64) / 3.0)
-        .collect();
+pub fn lagrangian_triangle_product() -> &'static KnownPolytope {
+    static INSTANCE: LazyLock<KnownPolytope> = LazyLock::new(|| {
+        let triangle_angles: Vec<f64> = (0..3)
+            .map(|k| PI / 2.0 + 2.0 * PI * (k as f64) / 3.0)
+            .collect();
 
-    // Q-space triangle + P-space triangle (Lagrangian product)
-    // Heights are 0.5, so halfspaces a_i = n_i / 0.5 = 2*n_i
-    let halfspaces: Vec<Vector4<f64>> = triangle_angles
-        .iter()
-        .map(|a| Vector4::new(a.cos(), a.sin(), 0.0, 0.0) / 0.5)
-        .chain(
-            triangle_angles
-                .iter()
-                .map(|a| Vector4::new(0.0, 0.0, a.cos(), a.sin()) / 0.5),
-        )
-        .collect();
+        // Q-space triangle + P-space triangle (Lagrangian product)
+        // Heights are 0.5, so halfspaces a_i = n_i / 0.5 = 2*n_i
+        let halfspaces: Vec<Vector4<f64>> = triangle_angles
+            .iter()
+            .map(|a| Vector4::new(a.cos(), a.sin(), 0.0, 0.0) / 0.5)
+            .chain(
+                triangle_angles
+                    .iter()
+                    .map(|a| Vector4::new(0.0, 0.0, a.cos(), a.sin()) / 0.5),
+            )
+            .collect();
 
-    KnownPolytope {
-        polytope: Polytope4D::new(halfspaces)
-            .expect("lagrangian triangle product construction"),
-        capacity: 1.5,
-        name: "lagrangian_triangle_product",
-        source: "LP verification (HK2017 algorithm + billiard)",
-    }
+        KnownPolytope {
+            polytope: Polytope4D::new(halfspaces)
+                .expect("lagrangian triangle product construction"),
+            capacity: 1.5,
+            name: "lagrangian_triangle_product",
+            source: "LP verification (HK2017 algorithm + billiard)",
+        }
+    });
+    &INSTANCE
 }
 
 /// Equilateral triangle x_S triangle, symplectic product (6 facets).
@@ -242,31 +263,34 @@ pub fn lagrangian_triangle_product() -> KnownPolytope {
 /// Source: [prop:capacity-symplectic-product].
 ///
 /// Mathematical correspondence: [def:symplectic-product]
-pub fn symplectic_triangle_product() -> KnownPolytope {
-    let triangle_angles: Vec<f64> = (0..3)
-        .map(|k| PI / 2.0 + 2.0 * PI * (k as f64) / 3.0)
-        .collect();
+pub fn symplectic_triangle_product() -> &'static KnownPolytope {
+    static INSTANCE: LazyLock<KnownPolytope> = LazyLock::new(|| {
+        let triangle_angles: Vec<f64> = (0..3)
+            .map(|k| PI / 2.0 + 2.0 * PI * (k as f64) / 3.0)
+            .collect();
 
-    // First triangle in (q_1, p_1) plane, second in (q_2, p_2) plane
-    let halfspaces: Vec<Vector4<f64>> = triangle_angles
-        .iter()
-        .map(|a| Vector4::new(a.cos(), 0.0, a.sin(), 0.0) / 0.5)
-        .chain(
-            triangle_angles
-                .iter()
-                .map(|a| Vector4::new(0.0, a.cos(), 0.0, a.sin()) / 0.5),
-        )
-        .collect();
+        // First triangle in (q_1, p_1) plane, second in (q_2, p_2) plane
+        let halfspaces: Vec<Vector4<f64>> = triangle_angles
+            .iter()
+            .map(|a| Vector4::new(a.cos(), 0.0, a.sin(), 0.0) / 0.5)
+            .chain(
+                triangle_angles
+                    .iter()
+                    .map(|a| Vector4::new(0.0, a.cos(), 0.0, a.sin()) / 0.5),
+            )
+            .collect();
 
-    let area_tri = 3.0 * 3.0_f64.sqrt() / 4.0;
+        let area_tri = 3.0 * 3.0_f64.sqrt() / 4.0;
 
-    KnownPolytope {
-        polytope: Polytope4D::new(halfspaces)
-            .expect("symplectic triangle product construction"),
-        capacity: area_tri,
-        name: "symplectic_triangle_product",
-        source: "Symplectic product formula ([prop:capacity-symplectic-product])",
-    }
+        KnownPolytope {
+            polytope: Polytope4D::new(halfspaces)
+                .expect("symplectic triangle product construction"),
+            capacity: area_tri,
+            name: "symplectic_triangle_product",
+            source: "Symplectic product formula ([prop:capacity-symplectic-product])",
+        }
+    });
+    &INSTANCE
 }
 
 /// Triangle x_L square (Lagrangian product, 7 facets).
@@ -277,28 +301,32 @@ pub fn symplectic_triangle_product() -> KnownPolytope {
 /// Known capacity: 1.5 (verified via billiard + HK2017).
 ///
 /// Mathematical correspondence: [def:lagrangian-product]
-pub fn lagrangian_triangle_square() -> KnownPolytope {
-    let triangle_halfspaces = (0..3).map(|k| {
-        let angle = PI / 2.0 + 2.0 * PI * (k as f64) / 3.0;
-        Vector4::new(angle.cos(), angle.sin(), 0.0, 0.0) / 0.5
+pub fn lagrangian_triangle_square() -> &'static KnownPolytope {
+    static INSTANCE: LazyLock<KnownPolytope> = LazyLock::new(|| {
+        let triangle_halfspaces = (0..3).map(|k| {
+            let angle = PI / 2.0 + 2.0 * PI * (k as f64) / 3.0;
+            Vector4::new(angle.cos(), angle.sin(), 0.0, 0.0) / 0.5
+        });
+
+        let square_halfspaces = [
+            Vector4::new(0.0, 0.0, 1.0, 0.0) / 0.5,
+            Vector4::new(0.0, 0.0, -1.0, 0.0) / 0.5,
+            Vector4::new(0.0, 0.0, 0.0, 1.0) / 0.5,
+            Vector4::new(0.0, 0.0, 0.0, -1.0) / 0.5,
+        ];
+
+        let halfspaces: Vec<Vector4<f64>> =
+            triangle_halfspaces.chain(square_halfspaces).collect();
+
+        KnownPolytope {
+            polytope: Polytope4D::new(halfspaces)
+                .expect("Lagrangian triangle x square construction"),
+            capacity: 1.5,
+            name: "lagrangian_tri_sq",
+            source: "HK2017 algorithm + billiard verification",
+        }
     });
-
-    let square_halfspaces = [
-        Vector4::new(0.0, 0.0, 1.0, 0.0) / 0.5,
-        Vector4::new(0.0, 0.0, -1.0, 0.0) / 0.5,
-        Vector4::new(0.0, 0.0, 0.0, 1.0) / 0.5,
-        Vector4::new(0.0, 0.0, 0.0, -1.0) / 0.5,
-    ];
-
-    let halfspaces: Vec<Vector4<f64>> = triangle_halfspaces.chain(square_halfspaces).collect();
-
-    KnownPolytope {
-        polytope: Polytope4D::new(halfspaces)
-            .expect("Lagrangian triangle x square construction"),
-        capacity: 1.5,
-        name: "lagrangian_tri_sq",
-        source: "HK2017 algorithm + billiard verification",
-    }
+    &INSTANCE
 }
 
 /// Triangle x_S square (true symplectic product, 7 facets).
@@ -313,31 +341,35 @@ pub fn lagrangian_triangle_square() -> KnownPolytope {
 /// Source: [prop:capacity-symplectic-product].
 ///
 /// Mathematical correspondence: [def:symplectic-product]
-pub fn symplectic_triangle_square() -> KnownPolytope {
-    let triangle_halfspaces = (0..3).map(|k| {
-        let angle = PI / 2.0 + 2.0 * PI * (k as f64) / 3.0;
-        Vector4::new(angle.cos(), 0.0, angle.sin(), 0.0) / 0.5
+pub fn symplectic_triangle_square() -> &'static KnownPolytope {
+    static INSTANCE: LazyLock<KnownPolytope> = LazyLock::new(|| {
+        let triangle_halfspaces = (0..3).map(|k| {
+            let angle = PI / 2.0 + 2.0 * PI * (k as f64) / 3.0;
+            Vector4::new(angle.cos(), 0.0, angle.sin(), 0.0) / 0.5
+        });
+
+        let square_halfspaces = [
+            Vector4::new(0.0, 1.0, 0.0, 0.0) / 0.5,
+            Vector4::new(0.0, -1.0, 0.0, 0.0) / 0.5,
+            Vector4::new(0.0, 0.0, 0.0, 1.0) / 0.5,
+            Vector4::new(0.0, 0.0, 0.0, -1.0) / 0.5,
+        ];
+
+        let halfspaces: Vec<Vector4<f64>> =
+            triangle_halfspaces.chain(square_halfspaces).collect();
+
+        let area_tri = 3.0 * 3.0_f64.sqrt() / 4.0;
+        let area_sq = 1.0;
+
+        KnownPolytope {
+            polytope: Polytope4D::new(halfspaces)
+                .expect("symplectic triangle x square construction"),
+            capacity: area_tri.min(area_sq),
+            name: "symplectic_tri_sq",
+            source: "Symplectic product formula ([prop:capacity-symplectic-product])",
+        }
     });
-
-    let square_halfspaces = [
-        Vector4::new(0.0, 1.0, 0.0, 0.0) / 0.5,
-        Vector4::new(0.0, -1.0, 0.0, 0.0) / 0.5,
-        Vector4::new(0.0, 0.0, 0.0, 1.0) / 0.5,
-        Vector4::new(0.0, 0.0, 0.0, -1.0) / 0.5,
-    ];
-
-    let halfspaces: Vec<Vector4<f64>> = triangle_halfspaces.chain(square_halfspaces).collect();
-
-    let area_tri = 3.0 * 3.0_f64.sqrt() / 4.0;
-    let area_sq = 1.0;
-
-    KnownPolytope {
-        polytope: Polytope4D::new(halfspaces)
-            .expect("symplectic triangle x square construction"),
-        capacity: area_tri.min(area_sq),
-        name: "symplectic_tri_sq",
-        source: "Symplectic product formula ([prop:capacity-symplectic-product])",
-    }
+    &INSTANCE
 }
 
 #[cfg(test)]
