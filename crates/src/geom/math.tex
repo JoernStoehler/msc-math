@@ -267,11 +267,13 @@ heights $h_1, \ldots, h_m > 0$:
 
 
 \begin{definition}[Polygon area]\label{def:polygon-area}
-% [TODO: JÖRN - verify statement]
+% [TODO: JÖRN - verify statement. "Shoelace formula" here means the standard
+%   2D polygon area formula (sum of cross products), NOT lem:shoelace (which is
+%   the symplectic action integral). Clarify or rename to avoid ambiguity.]
 % Source: polygon.rs doc comment
 The \emph{area} of a convex polygon $P$ given in $H$-representation
 (Definition~\ref{def:polygon-h-rep}) is computed via triangulation
-from the centroid or via the shoelace formula on the vertex list.
+from the centroid or via the standard 2D shoelace formula on the vertex list.
 \end{definition}
 
 

@@ -302,9 +302,10 @@ The same argument applies to $p$-facets by symmetry.
 \textbf{Alternation and block structure.}\quad
 Since no three consecutive facets have the same type, each maximal
 run of same-type facets has length one or two.
-Consecutive runs must alternate between $q$ and $p$ (a $q$-run
-followed by another $q$-run would create three or more consecutive
-$q$-facets at their boundary).
+% [TODO: JÖRN - alternation argument is imprecise: two adjacent length-1
+%   q-runs would give only 2 consecutive q-facets, not 3. The correct
+%   reason is that adjacent same-type maximal runs would merge.]
+Consecutive runs must alternate between $q$ and $p$.
 In a cyclic sequence, alternation forces equal block counts:
 $k$ blocks of $q$-facets and $k$ blocks of $p$-facets.
 
@@ -362,6 +363,10 @@ $H$-representation.
   For each polygon ($K_q$ and $K_p$), enumerate all
   \emph{single-facet blocks} (one edge) and
   \emph{pair blocks} (two adjacent edges, both orderings).
+% [TODO: JÖRN - k=1 is excluded here. The thesis proves this via
+%   lem:k1-infeasible (closure condition forces antiparallel normals
+%   on adjacent edges, impossible for convex polygons). Add citation or
+%   copy the lemma.]
 \item \textbf{Enumerate.}
   For $k = 2, 3$: for each selection of $k$ non-overlapping
   $q$-blocks and $k$ non-overlapping $p$-blocks, and each
@@ -499,6 +504,8 @@ then $T(\sigma)$ contains no minimum-action orbit.
 \end{lemma}
 
 \begin{proof}
+% [TODO: JÖRN - the inequality A(gamma) >= a(gamma(t_{k-1})) asserts that
+%   closing a tube adds non-negative action. This is plausible but not proved here.]
 Every $\gamma \in T(\sigma)$ has
 $A(\gamma) \geq a(\gamma(t_{k-1})) \geq \min_{\operatorname{End}} a > c^*$.
 Since the minimum-action orbit has action $\leq c^*$, it is not in $T(\sigma)$.
@@ -530,6 +537,7 @@ then $T(\sigma)$ contains no minimum-action orbit.
 \end{lemma}
 
 \begin{proof}
+% [TODO: JÖRN - cite HK2017 or CH2021 for simplicity of the minimum-action orbit.]
 The minimum-action generalized Reeb orbit is simple:
 it visits each facet on a connected time interval and does not repeat facets.
 A pure Reeb trajectory of type $\sigma$, when closed,
@@ -553,6 +561,8 @@ The action of the closed orbit through the fixed point $x$ is $a''(x)$.
 \end{lemma}
 
 \begin{proof}
+% [TODO: JÖRN - check time index: def:tube-close appends two facets
+%   (sigma(k+1) and sigma(k+2)), so the final time may be t_{k+2}, not t_{k+1}.]
 A pure Reeb trajectory $\gamma \in T(\sigma(1), \ldots, \sigma(k))$
 is closed iff $\gamma(t_{k+1}) = \gamma(t_1)$.
 After closure,
