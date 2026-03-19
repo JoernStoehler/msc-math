@@ -78,6 +78,11 @@ set -g focus-events on
 set -g default-terminal "tmux-256color"
 set -ag terminal-overrides ",xterm-256color:RGB"
 
+# Bell passthrough — lets CC terminal_bell reach the outer terminal
+set -g bell-action any
+set -g visual-bell on
+set -g monitor-bell on
+
 # Copy mode styling (readable on light background)
 set -g mode-style "bg=#a8d1ff,fg=#000000"
 TMUXCONF

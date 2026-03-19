@@ -10,17 +10,20 @@ is the security boundary, not CC's permission rules).
 Remote devices                        Host (Ubuntu desktop)              Container (Docker)
 ─────────────────                     ──────────────────────             ──────────────────
 
-Browser                               Tailscale (100.70.188.20)
-  └─ vscode.dev ──── tunnel ─────────── code-tunnel server ─────────────→ VS Code tunnel
-                                                                           (IDE view)
+Browser (any device)                  gnome-terminal tab
+  └─ vscode.dev ──── tunnel ────────── host-vscode-tunnel.sh ──────────→ code-tunnel server
+       ├─ IDE view (file tree,                                              (VS Code tunnel)
+       │   file editor)
+       └─ Terminal (PTY) ─────────────────────────────────────────────→ bash
+                                                                         └─ tmux new -s cc
+                                                                              └─ claude
 
-Ghostty / Crostini /                  SSH server (:22, socket-activated)
-PowerShell / Termux                     │
+SSH (Termux, Crostini,               SSH server (:22, socket-activated)
+PowerShell)                             │
   └─ ssh joern@host ────────────────────┘
        └─ dc  ─── devcontainer exec ──────────────────────────────────→ bash
-                                                                         └─ tmux new-session -A -s cc
-                                                                              └─ claude --dangerously-skip-permissions
-                                                                                   └─ Bash(), Edit(), ...
+                                                                         └─ tmux new -s cc
+                                                                              └─ claude
 ```
 
 ### Layers
@@ -29,17 +32,17 @@ PowerShell / Termux                     │
 - Tailscale for mesh networking across devices
 - SSH server (socket-activated — starts on first connection)
 - `devcontainer` CLI to build/start/exec into the container
-- Utility scripts in `.devcontainer/` to manage the container
+- gnome-terminal for host-direct CC sessions and tunnel management
 
 **Container** runs:
 - VS Code tunnel server (for browser IDE access via vscode.dev)
-- bash sessions (entered via `devcontainer exec` from host)
-- tmux (session persistence across SSH disconnects; `set -g mouse on` for scroll)
+- bash sessions (entered via `devcontainer exec` from host, or VSCode terminal)
+- tmux (session persistence across disconnects; `set -g mouse on` for scroll)
 - Claude Code CLI processes
 - Everything CC spawns: Bash() commands, cargo, python, latexmk, etc.
 
 **Remote devices** connect via:
-- Browser → vscode.dev tunnel → IDE view (file browsing, editing)
+- Browser → vscode.dev tunnel → IDE view + terminal (primary path)
 - Terminal → SSH → host → `dc` function → container bash → tmux → claude
 
 ### Why this stack
@@ -48,14 +51,37 @@ PowerShell / Termux                     │
 |-----------|-----|
 | Docker container | OS-level isolation — CC can't touch host filesystem, SSH keys, etc. |
 | `--dangerously-skip-permissions` | Safe because Docker provides isolation. Eliminates all permission prompts. |
-| tmux | Session persistence across disconnects. `set -g mouse on` in `~/.tmux.conf` fixes scroll in CC's TUI. |
+| tmux | Session persistence across disconnects. Bell passthrough configured for notifications. |
 | SSH + Tailscale | Access from any device. Works on Android (Termux), ChromeOS (Crostini), Windows (PowerShell), Linux. |
-| VS Code tunnel | Browser IDE fallback for GUI file browsing. Not the primary workflow. |
+| VS Code tunnel | Browser IDE for file browsing + terminal. Primary access path for devcontainer work. |
 | trash-cli + rm wrapper | `rm` → `trash-put` inside container. Use `/bin/rm` for real deletes. |
 
-## Access from host
+## Access via VSCode tunnel (primary)
 
-The `dc` shell function (add to host `~/.bashrc`) gives a bash shell in any
+From host, start the tunnel in a gnome-terminal tab:
+
+```bash
+cd ~/workspaces/msc-math
+.devcontainer/host-vscode-tunnel.sh
+```
+
+Then open Chrome → vscode.dev/tunnel/msc-math → open terminal:
+
+```bash
+tmux new -s cc        # create a tmux session
+claude                # start CC
+# /resume, /add-dir, etc.
+```
+
+Reconnect after disconnect:
+
+```bash
+tmux attach -t cc     # reattach to existing session
+```
+
+## Access via SSH
+
+The `dc` shell function (in host `~/.bashrc`) gives a bash shell in any
 project's devcontainer:
 
 ```bash
@@ -67,39 +93,22 @@ dc() {
 }
 ```
 
-From inside the container, start a persistent CC session:
+From any device with SSH:
 
 ```bash
-tmux new-session -A -s cc 'claude --dangerously-skip-permissions'
-# Ctrl+b d to detach
-# Reattach later:
-tmux attach -t cc
-```
-
-Or without persistence:
-
-```bash
-claude --dangerously-skip-permissions
-```
-
-## Access from remote devices
-
-```bash
-# From any device with SSH:
 ssh joern@<tailscale-ip>
 cd ~/workspaces/msc-math && dc
 
-# Then inside the container:
-tmux new-session -A -s cc 'claude --dangerously-skip-permissions'
-# Ctrl+b d to detach; reattach from any device with:
-# dc → tmux attach -t cc
+# Inside the container:
+tmux new -s cc
+claude
 ```
 
 Tested access methods:
-- Chrome on Ubuntu desktop (trivial — just run `dc` in a terminal)
+- Chrome on Ubuntu desktop (vscode.dev tunnel)
 - PowerShell on Windows university PC (`ssh joern@100.70.188.20`)
 - Crostini on ChromeOS (`ssh joern@100.70.188.20`)
-- Termux on Android (`ssh joern@100.70.188.20`; optionally mosh for flaky connections)
+- Termux on Android (`ssh joern@100.70.188.20`)
 
 ## Host scripts
 
