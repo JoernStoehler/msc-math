@@ -25,7 +25,7 @@ Output is printed to stdout. Captured output is stored in `kkt_inertia_output.tx
 | File | Role |
 |------|------|
 | `run.rs` | Rust binary: census of H\|_T definiteness + inertia formula check |
-| `math.tex` | Thesis writeup (table, mismatch analysis) |
+| `math.tex` | Formal writeup (table, mismatch analysis) |
 | `kkt_inertia_output.txt` | Captured stdout with tables and eigenvalue diagnostics (67 lines) |
 
 ## Design

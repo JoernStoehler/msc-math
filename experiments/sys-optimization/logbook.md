@@ -22,7 +22,7 @@ python3 sys-optimization/analyze.py
 |------|------|
 | `run.rs` | Rust binary: all four phases (sensitivity, steps, iteration, validity) |
 | `analyze.py` | Python: gradient histograms, comparison plots, convergence, validity, stats table |
-| `math.tex` | Thesis writeup with formal lemmas and proofs (input'd from `thesis/experiments.tex`) |
+| `math.tex` | Formal writeup with formal lemmas and proofs (input'd from `thesis/experiments.tex`) |
 | `sys-optimization-sensitivity.jsonl` | Phase 1: per-polytope gradients (140 rows) |
 | `sys-optimization-steps.jsonl` | Phase 2: single gradient step evaluations (1400 rows) |
 | `sys-optimization-iterations.jsonl` | Phase 3: iterative gradient ascent trajectories (868 rows) |
@@ -85,9 +85,11 @@ All verified against the four JSONL files.
    - Height gradient: excellent predictor (<5% error at 0.25 x t_max, O(t) growth).
    - (h,n) gradient: bimodal — good for ~125/140 polytopes, ~15 outliers near orbit boundaries. Median pred/actual ratio 1.55 (systematic overprediction from normal renormalization).
    - Random directions: ~90% relative error at all scales (expected: random is nearly orthogonal to gradient in high dim).
-   - Step bounds are conservative: 85% construction success at 2 x t_max, 60% at 10 x t_max. Type preservation drops fast: 35% at 2 x t_max.
+   - Step bounds are conservative: 85% construction success at 2 x t_max, 60% at 10 x t_max. Type preservation drops fast: 35% at 2 x t_max, 19% at 10 x t_max.
 
-6. **Wrong-sign gradient predictions (investigated 2026-03-02):** Of 4990 validity records, 1977 (39.6%) have negative actual_delta_sys. Two mechanisms: (a) combinatorial type change (32 records at t >= 1.0 x t_max), (b) Reeb orbit switching (remaining cases). The iterative optimizer avoids both: line search stays at t_fraction <= 0.95 and recomputes HK2017 after each step.
+6. **Wrong-sign gradient predictions (investigated 2026-03-02):** Of 4990 validity records, 1977 (39.6%) have negative actual_delta_sys — but this inflates the apparent failure rate because it includes deliberately large steps designed to test validity bounds. Two mechanisms: (a) combinatorial type change (32 records at t >= 1.0 x t_max), (b) Reeb orbit switching (remaining cases). The iterative optimizer avoids both: line search stays at t_fraction <= 0.95 and recomputes HK2017 after each step.
+
+7. **Phase 3 has zero negative-delta-sys steps.** Every accepted step in the iterative optimizer improves sys — confirming the line search correctly rejects overshooting steps.
 
 ## Known limitations
 

@@ -22,7 +22,7 @@ No Python script or figure. The .tex writeup uses a table directly from the JSON
 |------|------|
 | `run.rs` | Rust binary: generates dataset |
 | `acceptance_sweep_test.rs` | Unit tests for the sweep function |
-| `math.tex` | Thesis writeup (sampling procedure, boundedness proposition + proof, acceptance rate table) |
+| `math.tex` | Formal writeup (sampling procedure, boundedness proposition + proof, acceptance rate table) |
 | `acceptance.jsonl` | Dataset (18 rows: 6 facet counts x 3 height ranges) |
 
 ## Design

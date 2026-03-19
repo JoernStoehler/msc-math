@@ -2,7 +2,7 @@
 
 ## Motivation
 
-All experiments in this thesis depend on the numerical KKT solver producing accurate capacity values. This experiment validates that f64 numerical errors stay within the proven error bounds (Lemma A.11), both by sweeping all (S, sigma) nodes and by exact comparison with rational arithmetic. If the error bounds were violated, every capacity value computed in the thesis would be suspect.
+All experiments in this thesis depend on the numerical KKT solver producing accurate capacity values. This experiment validates that f64 numerical errors stay within the proven error bounds (Lemma `lem:q-error-bound` in math.tex), both by sweeping all (S, sigma) nodes and by exact comparison with rational arithmetic. If the error bounds were violated, every capacity value computed in the thesis would be suspect.
 
 ## Status
 
@@ -21,7 +21,7 @@ Output goes to stdout and is captured in `q_error_output.txt`. The binary panics
 | File | Role |
 |------|------|
 | `run.rs` | Rust binary: all-node error bound sweep + exact rational comparison |
-| `math.tex` | Thesis writeup (two tables, discussion paragraph) |
+| `math.tex` | Formal writeup (two tables, discussion paragraph) |
 | `q_error_output.txt` | Captured stdout output (40 lines) with summary tables |
 
 ## Design
@@ -32,10 +32,9 @@ Output goes to stdout and is captured in `q_error_output.txt`. The binary panics
 
 ## Findings
 
-1. **Part 1:** 1,133,769 total nodes across 7 polytopes, 1,109,987 solvable. Worst error bound E = 2.9e-11 (HKO pentagon). All assertions passed.
-2. **Part 2:** Exact comparison passes for 6/7 polytopes. Actual numerical errors at machine epsilon (~1e-16), confirming no algorithmic error beyond f64 precision.
-3. The symplectic triangle product has a singular winning node and is omitted from Part 2.
-4. The safety-net tolerance (1e-13 * (1 + |Q_exact|)) was never triggered, meaning the mathematical error bound E is always above f64 noise.
+1. **Part 1:** 1,133,769 total nodes across 7 polytopes, 1,111,987 solvable. Worst error bound E = 2.9e-11 (HKO pentagon). All assertions passed.
+2. **Part 2:** Exact comparison passes for all 6 non-singular polytopes. The symplectic triangle product is excluded (singular winning node). Actual numerical errors at machine epsilon (~1e-16), confirming no algorithmic error beyond f64 precision.
+3. **E_math is far below f64 noise:** The mathematical error bounds E range from 1e-28 to 1e-11, while f64_eps tolerance is ~1e-13. The assertion `|Q̃ - Q_exact| <= max(E, f64_eps)` is always dominated by the f64_eps term — the proven error bound is tighter than floating-point precision can resolve.
 5. The HKO pentagon dominates the dataset: 1,112,073 of the 1,133,769 total nodes (98%) come from it.
 
 ## Known limitations

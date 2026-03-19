@@ -24,7 +24,7 @@ After regeneration, manually update `math.tex` table if numbers changed signific
 |------|------|
 | `run.rs` | Rust binary: dataset generator, runs all algorithm variants |
 | `analyze.py` | Python: timing model fitting (exponential) + unified figure |
-| `math.tex` | Thesis subsection: timing tables, model, algorithm selection |
+| `math.tex` | Formal writeup: timing tables, model, algorithm selection |
 | `benchmark.jsonl` | Dataset: 95 polytopes with timing for each applicable algorithm |
 | `benchmark_timing.png` | Figure: all algorithms, polytope classes, fitted models |
 | `profiling/timing_model.json` | Fitted model parameters |
@@ -97,6 +97,11 @@ Detailed profiling methodology (Valgrind callgrind, massif heap profiling, phase
 5. **Pruned vs unpruned speedup**: 8.6x at F=5, 17.5x at F=6, 42.5x at F=7.
 
 6. **Billiard vs HK2017 pruned on Lagrangian products**: billiard is 2.4-6.8x slower, but used for its polynomial-time guarantee.
+
+## Open questions
+
+1. **Timing model coefficients disagree between this logbook and math.tex.** The logbook (inherited from README) has T(F) = 2.3e-7 * 4.8^F (R^2=0.998) for HK2017 pruned random; math.tex has T(F) = 2.1e-8 * 4.2^F (R^2=0.970). The growth rate is ~5x/facet here vs ~4x in math.tex. One source was independently updated. Ground truth: rerun `analyze.py` on `benchmark.jsonl`.
+2. **"1-9 seconds" for F=11-12** — the math.tex table shows F=12 max of 1806ms (1.8s). The "9 seconds" figure is unsupported. Needs verification.
 
 ## Known limitations
 

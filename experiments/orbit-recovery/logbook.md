@@ -24,7 +24,7 @@ python3 orbit-recovery/plot_orbit_recovery.py  # generates error plot
 | `run.rs` | Rust binary: recovery + validation for each polytope |
 | `analyze.py` | Python: summary statistics (printed to stdout) |
 | `plot_orbit_recovery.py` | Python: error distribution plot by facet count |
-| `math.tex` | Thesis writeup (lemma, error table, solution dimension) |
+| `math.tex` | Formal writeup (lemma, error table, solution dimension) |
 | `orbit-recovery.jsonl` | Dataset (112 rows) |
 | `orbit_recovery_errors.png` | Error distribution by facet count figure |
 

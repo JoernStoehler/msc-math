@@ -32,7 +32,7 @@ node screenshot-figures.mjs
 | File | Role |
 |------|------|
 | `run.rs` | Rust binary: exports polytope JSON with Reeb orbits |
-| `math.tex` | Thesis writeup (input'd from `thesis/experiments.tex`) |
+| `math.tex` | Formal writeup (input'd from `thesis/experiments.tex`) |
 | `viz/` | Interactive Three.js viewer (index.html, viz.js, data files, screenshot automation) |
 | `viz/data/*.json` | Per-polytope JSON data (intermediate, regenerated) |
 | `viz/data.js` | Embedded data for viewer (auto-generated) |

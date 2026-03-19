@@ -22,8 +22,8 @@ python3 gradient-descent/analyze.py
 |------|------|
 | `run.rs` | Rust binary: polytope generation + gradient ascent |
 | `kkt_instrumented.rs` | Shared instrumented KKT solver and orbit enumeration (included via `#[path]`) |
-| `analyze.py` | Python: scatter, convergence, gradient, and survival figures |
-| `math.tex` | Thesis writeup (input'd from `thesis/experiments.tex`) |
+| `analyze.py` | Python: scatter, gradient, step-size, and survival figures |
+| `math.tex` | Formal writeup (input'd from `thesis/experiments.tex`) |
 | `gradient-descent.jsonl` | Per-iteration trajectory data: 7631 rows, 995 polytopes |
 | `gradient_descent_scatter.png` | Figure: starting vs final sys |
 | `gradient_descent_gradient.png` | Figure: residual gradient vs final sys |
@@ -53,14 +53,14 @@ All verified against `gradient-descent.jsonl` (7631 rows, 995 polytopes).
 
 2. **Results by polytope class (final sys after optimization):**
 
-   | Type | N | Max sys |
-   |------|---|---------|
-   | General | 499 | 0.870 |
-   | Lagrangian 3x7 | 166 | 0.862 |
-   | Lagrangian 4x6 | 166 | 0.881 |
-   | Lagrangian 5x5 | 164 | 0.905 |
+   | Type | N | Mean sys | Max sys | P90 sys | Mean improvement |
+   |------|---|----------|---------|---------|-----------------|
+   | General | 499 | 0.453 | 0.870 | 0.687 | +0.100 |
+   | Lagrangian 3x7 | 166 | 0.493 | 0.862 | 0.781 | +0.182 |
+   | Lagrangian 4x6 | 166 | 0.566 | 0.881 | 0.784 | +0.222 |
+   | Lagrangian 5x5 | 164 | 0.628 | 0.905 | 0.806 | +0.217 |
 
-3. **Lagrangian products reach higher sys than general polytopes.** Balanced splits (5x5) outperform asymmetric splits (3x7), consistent with HKO2024 being a 5x5 Lagrangian product.
+3. **Lagrangian products reach higher sys than general polytopes** (mean 0.56 vs 0.45). Balanced splits (5x5) outperform asymmetric splits (3x7), consistent with HKO2024 being a 5x5 Lagrangian product.
 
 4. **Step-bound barrier:** The algorithm terminates because t_max shrinks (combinatorial type boundary), not because gradients vanish. Residual gradients are O(1) at termination and positively correlated with final sys (Pearson r = 0.80). The line search selects the most aggressive fraction (0.95 x t_max) in 87% of iterations.
 

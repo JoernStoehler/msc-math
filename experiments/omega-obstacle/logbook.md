@@ -4,7 +4,7 @@
 
 The HKO counterexample is a perturbed Lagrangian product whose optimal orbit traverses ridges with omega_0(n_i, n_j) = 0 (Lagrangian ridges). This motivates the hypothesis: do near-Lagrangian ridges (small |omega_0(n_i, n_j)| between adjacent facets) act as "obstacles" that help create high systolic ratios?
 
-The mechanism: Q(beta) = sum beta_i beta_j omega_0(...), capacity = 1/(2 max Q), sys = c^2/(2V). If omega values are small, Q is smaller, capacity is larger, and sys could be larger.
+The mechanism: Q(beta) = sum beta_i beta_j omega_0(...), where Q is maximized subject to KKT constraints, capacity = 1/(2 max Q), sys = c^2/(2V). If omega values are small, Q is smaller, capacity is larger, and sys could be larger.
 
 ## Status
 
@@ -24,7 +24,7 @@ python3 omega-obstacle/analyze.py              # generates all figures
 |------|------|
 | `run.rs` | Rust binary: generates JSONL dataset with omega features and gradients |
 | `analyze.py` | Python: correlation analysis and figure generation |
-| `math.tex` | Thesis writeup (hypothesis, Phase A/B, conclusion) |
+| `math.tex` | Formal writeup (hypothesis, Phase A/B, conclusion) |
 | `omega-obstacle.jsonl` | Dataset (953 rows) |
 | `omega_obstacle_ridge_min_vs_sys.png` | Ridge min\|omega\| vs sys scatter plot |
 | `omega_obstacle_orbit_min_vs_sys.png` | Orbit min\|omega\| vs sys scatter plot |
@@ -61,6 +61,8 @@ For each polytope: c_EHZ via instrumented HK2017 (returns optimal beta, lambda, 
 3. **Orbit prefers LARGE omega transitions (opposite of hypothesis).** Orbit ridges |omega|: median = 0.54, mean = 0.52. Non-orbit ridges |omega|: median = 0.36, mean = 0.40. The orbit preferentially uses transitions with large |omega|, consistent with Q-maximization: the optimizer seeks large omega terms to maximize Q.
 
 4. **Gradient analysis: no directional signal.** <grad_{n_k} sys, grad_{n_k} omega_0(n_k, n_i)> for orbit facets: median = +0.0006, fraction negative = 49.5%. Essentially symmetric around zero. The |omega| vs dot product scatter shows a "trumpet" shape (variance increases at small |omega|), but remains centered on zero.
+
+5. **Why the hypothesis fails:** The KKT optimizer compensates — it adjusts beta* and selects orbits that maximize Q despite small individual omega_0 contributions. Small omega_0 values on individual ridges do not translate into small Q (or large capacity) because the optimizer redistributes weight across the orbit's transitions.
 
 5. **Known polytopes:** All three have ridge min|omega| = 0 (at least one Lagrangian ridge). But the hypercube has orbit_omega_min = 1.0 (orbit avoids Lagrangian ridges) yet sys = 0.5. The HKO counterexample's Lagrangian orbit ridges are a consequence of its construction as a perturbed Lagrangian product, not a general mechanism.
 

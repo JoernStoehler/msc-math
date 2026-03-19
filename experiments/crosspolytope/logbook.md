@@ -23,7 +23,7 @@ Release mode required (debug mode is infeasible at F=16).
 | File | Role |
 |------|------|
 | `run.rs` | Rust binary: backtracking + symmetry + checkpointing capacity computation |
-| `math.tex` | Thesis subsection: symmetry reduction, result, hypercube comparison |
+| `math.tex` | Formal writeup: symmetry reduction, result, hypercube comparison |
 | `crosspolytope.jsonl` | Output: 1 entry with computed capacity and metadata |
 
 ## Design
@@ -76,7 +76,7 @@ Exhaustive through m=12. Subset sizes m=13..16 are skipped because:
 ## Open questions
 
 - Does polyhedral duality preserve EHZ capacity in general, or is c_EHZ(crosspolytope) = c_EHZ(hypercube) a coincidence?
-- Phase 2 TODO: update known_polytopes.rs placeholder (capacity: 1.0 -> 4.0), remove exclusion from validation tests, regenerate test fixture.
+- Phase 2 partially done: `known_polytopes.rs` already updated to capacity = 4.0 with source "computed (no literature value)". Remaining: remove exclusion from validation tests (`test_dataset.rs`), regenerate test fixture.
 
 ## Related experiments
 

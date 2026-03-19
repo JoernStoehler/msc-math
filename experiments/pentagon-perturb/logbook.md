@@ -21,7 +21,7 @@ python experiments/pentagon-perturb/analyze.py
 |------|------|
 | `run.rs` | Rust binary: generates perturbed polytopes and computes sys |
 | `analyze.py` | Python: histogram of sys values, summary stats, and PCA tables |
-| `math.tex` | Thesis writeup (input'd from `thesis/experiments.tex`) |
+| `math.tex` | Formal writeup (input'd from `thesis/experiments.tex`) |
 | `pentagon-perturb.jsonl` | Dataset: 101 rows (100 perturbed + 1 baseline) |
 | `pentagon_perturb_sys_hist.png` | Figure: histogram of systolic ratios |
 | `pentagon_perturb_stats.tex` | LaTeX table: summary statistics |
@@ -44,8 +44,8 @@ All verified against `pentagon-perturb.jsonl` (101 rows).
 
 1. **All 100 perturbations retain sys > 1.** The counterexample is robust under small perturbations.
 2. **Summary statistics of perturbed sys:** min = 1.0022, max = 1.0333, mean = 1.0205, std = 0.0064.
-3. **Base (unperturbed) sys = 1.0472 is highest**, confirming HKO2024 is a local maximum of sys in this perturbation space.
-4. **PCA on the 50-dimensional perturbation vector** (5 components per facet x 10 facets) shows no dominant direction: top 5 components explain 5.95%, 5.59%, 5.43%, 5.27%, 5.00% of variance respectively — close to the uniform 1/50 = 2% baseline, indicating the sys landscape is roughly isotropic in perturbation space.
+3. **Base (unperturbed) sys = 1.0472 is highest**, indicating HKO2024 is a local maximum of sys in this perturbation space (among the 101 sampled points; not a proof of local maximality).
+4. **PCA on the 50-dimensional perturbation vector** (5 components per facet x 10 facets) shows no dominant direction: top 5 components explain 5.95%, 5.59%, 5.43%, 5.27%, 5.00% of variance respectively. Uniform baseline would be 1/50 = 2% per component; the top components are 2.5-3x this, so there is mild anisotropy but no single dominant direction.
 
 ## Known limitations
 

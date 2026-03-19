@@ -31,7 +31,7 @@ Python exits with code 1 if any disagreements found in the JSONL.
 |------|------|
 | `run.rs` | Rust binary: generates dataset, runs all 4 variants, checks agreement |
 | `analyze.py` | Python analysis: agreement/timing/iteration tables, timing figure |
-| `math.tex` | Thesis subsection: pruning variants, transition feasibility lemma, results |
+| `math.tex` | Formal writeup: pruning variants, transition feasibility lemma, results |
 | `ablation.jsonl` | Dataset: 216 entries (54 polytopes x 4 variants) |
 | `ablation_timing.png` | Figure: timing per group and facet count |
 
@@ -57,9 +57,13 @@ Sign convention: the thesis and this logbook use the physical convention (omega_
 | Group | Count | F | Description |
 |-------|-------|---|-------------|
 | Random generic | 30 | 5-10 | 5 random 4-polytopes per facet count |
-| Random Lagrangian | 15 | 6-8 | 5 random products per pair |
-| Non-simple | 5 | 6-9 | Bipyramids (F=6,7) and cut simplices (c=1.5,2.5,4.0) |
+| Random Lagrangian | 15 | 6-8 | 5 random products per pair: △×△ (F=6), △×□ (F=7), □×□ (F=8) |
+| Non-simple | 5 | 6, 10 | 2 bipyramids over 3-polytopes (F=10, apex on 5 facets), 3 cut simplices at depths c=1.5, 2.5, 4.0 (F=6) |
 | Regression cases | 4 | 6-8 | Fixed polytopes exercising specific solver paths |
+
+### Architecture
+
+A0 is imported from the symplectic library; A1-A3 are self-contained in the binary (to avoid coupling the experiment to library internals).
 
 ### KKT solver note
 
@@ -73,11 +77,11 @@ The binary copies `solve_kkt_svd_path` using the old gap-ratio approach (SVD_GAP
 
 3. **A3 = A2 on simple polytopes**: On all 48 simple test polytopes, A3 provides zero additional pruning beyond A2. By Ridge Sufficiency (Corollary in math.tex), vertex-adjacent facets of simple polytopes share ridges, making the LP check redundant.
 
-4. **A3 != A2 on non-simple polytopes**: All 6 non-simple polytopes show A3 pruning beyond A2. Cut simplices: 15% reduction (39 -> 33 candidates). Bipyramids (F=10): 98% reduction (11-14k -> 213 candidates).
+4. **A3 != A2 on non-simple polytopes**: All 6 non-simple polytopes (5 in Non-simple group + 1 regression cut simplex) show A3 pruning beyond A2. Cut simplices (F=6): 15% reduction (39 -> 33 candidates). Bipyramids (F=10): 98% reduction (11-14k -> 213 candidates), because bipyramid apices lie on 5 facets, creating many vertex-adjacent but infeasible transitions.
 
 5. **Lagrangian products**: Similar but less dramatic A2 speedup (~33x at F=8) due to structured normals having more omega_0 = 0 pairs.
 
-6. **Regression cases all pass**: Degenerate KKT (null-space search), LU fast path, non-simple polytope handling all verified.
+6. **Regression cases all pass**: Degenerate KKT (null-space search), LU fast path, non-simple polytope handling all verified. Expected capacity values: cut simplex 1.650485, hypercube 4.0, lag △×□ 1.5, lag □×□ 2.0.
 
 ## Known limitations
 
@@ -93,8 +97,8 @@ The binary copies `solve_kkt_svd_path` using the old gap-ratio approach (SVD_GAP
 - **Non-simple polytope dataset**: Dedicated dataset of non-simple polytopes (varying cut depths, bipyramids, truncated products) to characterize the A2 != A3 gap.
 - **Scaling exponent analysis**: With more data points (F=9,10,...), the A3/A0 scaling exponent could be estimated to quantify pruning benefit at higher F.
 - **Unknown predicates empirical check**: Test how often UNKNOWN verdicts arise in three-valued predicate logic with near-degenerate polytopes.
-- **Face lattice / skeleton data structure** (from Jorn, 2026-02-22): Represent k-faces by maximal facet index sets, making A3 feasibility purely combinatorial (avoids LP). Requires implementing face lattice computation.
-- **Exact skeleton predicates via perturbation** (from Jorn, 2026-02-22): Replace three-valued predicates with deterministic rounding plus small-perturbation arguments. Separates exact combinatorial decisions from approximate numerical ones.
+- **Face lattice / skeleton data structure** (from Jörn, 2026-02-22): Represent k-faces by maximal facet index sets, making A3 feasibility purely combinatorial (avoids LP). Requires implementing face lattice computation.
+- **Exact skeleton predicates via perturbation** (from Jörn, 2026-02-22): Replace three-valued predicates with deterministic rounding plus small-perturbation arguments. Separates exact combinatorial decisions from approximate numerical ones.
 
 ## Related experiments
 

@@ -24,7 +24,7 @@ python3 experiments/unknown-predicates/analyze.py
 |------|------|
 | `run.rs` | Rust binary: runs datasets with UNKNOWN logging |
 | `analyze.py` | Python: beta_min distribution histogram |
-| `math.tex` | Thesis writeup (experiment, results, conclusion) |
+| `math.tex` | Formal writeup (experiment, results, conclusion) |
 | `unknown-predicates.jsonl` | Dataset (162 rows: certified vs uncertain capacity per polytope) |
 | `unknown_predicates_beta_min.png` | Figure: beta_min distribution histogram |
 
@@ -53,19 +53,40 @@ python3 experiments/unknown-predicates/analyze.py
 
 ## Dead ends / deferred directions
 
-Five Phase 2 strategies were designed but not needed in practice:
+Five Phase 2 strategies were designed but not needed in practice. Each targets a different source of UNKNOWN verdicts:
 
-- **Strategy A:** Higher-precision floats for affected code paths (adjacency, positivity filter).
-- **Strategy B:** Alternative solver to SVD (QR with iterative refinement, direct LU).
-- **Strategy C:** Check if beta corresponds to a Reeb orbit (probably useless).
-- **Strategy D:** Perturb the polytope to break degeneracy.
-- **Strategy E:** Rerun with tighter tolerance.
+- **Strategy A:** Higher-precision floats for affected code paths (adjacency only, or positivity filter only — scope depends on source).
+- **Strategy B:** Alternative solver to SVD (QR with iterative refinement, direct LU) to shrink the UNKNOWN band.
+- **Strategy C:** Check if beta corresponds to a Reeb orbit (probably useless; if open question 2 is answered yes, provably useless).
+- **Strategy D:** Perturb the polytope to break degeneracy (caution: may produce spurious Q values).
+- **Strategy E:** Rerun with tighter tolerance (beta UNKNOWN at epsilon=1e-10 might resolve at 1e-14).
+
+### Decision tree (if UNKNOWNs need resolution)
+
+```
+Phase 1: Run datasets with UNKNOWN logging
+    |
+    +-- No UNKNOWNs found --> DONE (algorithm is empirically exact)
+    |
+    +-- UNKNOWNs found
+        |
+        +-- From adjacency --> Strategy A (higher-precision incidence)
+        |
+        +-- From positivity (beta near zero)
+            |
+            +-- Due to degeneracy (beta_i = 0 exactly)
+            |   --> Already handled by dismissal machinery
+            |   --> If not: Strategy D (perturbation)
+            |
+            +-- Due to numerical noise (beta_i near zero)
+                --> Strategy A, B, or E
+```
 
 ## Open questions
 
 1. Is the Q-maximization problem exactly the dual of the Reeb orbit variational problem, or only related?
 2. Does "critical admissible w.r.t. Q" imply "corresponds to a Reeb orbit"?
-3. For Q-maximization: do non-maximal critical points also correspond to orbits?
+3. For Q-maximization: do non-maximal critical points also correspond to orbits? Do non-critical feasible points ever correspond to orbits?
 
 ## Related experiments
 

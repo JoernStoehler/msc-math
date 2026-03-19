@@ -25,7 +25,7 @@ Different seeds may expose edge cases not covered by seed 42.
 | File | Role |
 |------|------|
 | `run.rs` | Rust binary: dataset generator + test harness (6 property tests) |
-| `math.tex` | Thesis subsection: algorithm variants, test propositions, literature table |
+| `math.tex` | Formal writeup: algorithm variants, test propositions, literature table |
 | `correctness.jsonl` | Dataset: 47 polytopes, 71 capacity values across 3 algorithms |
 
 ## Design
