@@ -15,7 +15,7 @@ cd experiments/
 
 # Export all polytopes
 for name in simplex hypercube hko_pentagon lagrangian_triangle_product symplectic_triangle_product lagrangian_tri_sq symplectic_tri_sq crosspolytope; do
-  cargo run --release --bin viz_export -- "$name" "visualization/viz/data/$name.json"
+  cargo run --release --bin visualization -- "$name" "visualization/viz/data/$name.json"
 done
 
 # Embed into data.js

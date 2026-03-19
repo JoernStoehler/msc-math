@@ -11,7 +11,7 @@ To probe Viterbo's conjecture computationally, we need large datasets of random 
 ## How to run
 
 ```bash
-cd experiments/ && cargo run --bin acceptance_sweep --release
+cd experiments/ && cargo run --bin rejection_sampling --release
 ```
 
 No Python script or figure. The .tex writeup uses a table directly from the JSONL data.

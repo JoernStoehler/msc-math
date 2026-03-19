@@ -108,7 +108,7 @@ All verified against the four JSONL files.
 - Does the Phase 1 data show all gradient components point "inward" at HKO2024? If so, that's evidence for local maximality in the F = 10 ambient space.
 - HKO2024 local maximality across ambient spaces: LP(5,5), general F = 10, degenerate F = 11+, convex bodies as F grows.
 
-## Jorn verification status
+## Jörn verification status
 
 All three items previously flagged are resolved:
 - Lemma vol-derivative-normal: math approved (59ddc2c)
