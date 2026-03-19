@@ -323,11 +323,14 @@ pub(super) fn construct_rational_pipeline(
 /// Enumerate all vertices by testing all C(F, 4) subsets exactly.
 ///
 /// For each 4-element subset S of dual vertices:
-/// 1. Build the 4x4 system Y_S · x = 1 (constant RHS).
-/// 2. Compute det(Y_S) exactly. If zero, skip (singular).
-/// 3. Solve Y_S · x = 1 exactly via Cramer's rule.
-/// 4. Check all gaps g_i = 1 - y_i · v >= 0 for i not in S (exact).
-/// 5. If all non-negative, v is a vertex; its descriptor is the set of ALL
+/// 1. **f64 pre-filter**: solve Y_S · v = 1 in f64. If any gap y_i · v - 1
+///    is clearly positive (point clearly outside K), skip. This avoids the
+///    expensive rational computation for ~80% of subsets.
+/// 2. Build the 4x4 rational system Y_S · x = 1.
+/// 3. Compute det(Y_S) exactly. If zero, skip (singular).
+/// 4. Solve Y_S · x = 1 exactly via Cramer's rule.
+/// 5. Check all gaps g_i = 1 - y_i · v >= 0 for i not in S (exact).
+/// 6. If all non-negative, v is a vertex; its descriptor is the set of ALL
 ///    facets with gap = 0 (including the defining subset S).
 ///
 /// Non-simple vertices (on >4 facets) are handled by deduplication: the first
@@ -339,14 +342,33 @@ pub(super) fn construct_rational_pipeline(
 fn enumerate_vertices_exact(
     dual_vertices: &[[BigRational; 4]],
 ) -> Result<(Vec<BTreeSet<usize>>, Vec<[BigRational; 4]>), ConstructionError> {
+    use super::rational_arithmetic::rational_to_f64;
+
     let f = dual_vertices.len();
     let one = BigRational::from(BigInt::from(1));
     let rhs: [BigRational; 4] = std::array::from_fn(|_| one.clone());
+
+    // Precompute f64 versions of dual vertices for the pre-filter.
+    let dv_f64: Vec<[f64; 4]> = dual_vertices
+        .iter()
+        .map(|y| std::array::from_fn(|c| rational_to_f64(&y[c])))
+        .collect();
 
     let mut vertex_descriptors = Vec::new();
     let mut vertices = Vec::new();
 
     for subset in combinations4(f) {
+        // ── f64 pre-filter ──
+        // Solve in f64 first. If the point clearly violates any constraint,
+        // skip the expensive rational computation. This is conservative:
+        // we only skip when f64 is confident the point is OUTSIDE.
+        // Ambiguous cases (near-zero det, near-boundary gaps) fall through
+        // to the exact rational path.
+        if f64_prefilter_rejects(&dv_f64, &subset, f) {
+            continue;
+        }
+
+        // ── Exact rational path ──
         let rows: [[BigRational; 4]; 4] = [
             dual_vertices[subset[0]].clone(),
             dual_vertices[subset[1]].clone(),
@@ -402,4 +424,103 @@ fn enumerate_vertices_exact(
     }
 
     Ok((vertex_descriptors, vertices))
+}
+
+/// f64 pre-filter: returns true if the subset can be safely skipped.
+///
+/// Solves the 4x4 system in f64 via Cramer's rule. If the f64 solution
+/// clearly violates some constraint, the subset cannot produce a vertex.
+///
+/// Three-valued logic for each constraint y_i · v ≤ 1:
+/// - `y_i · v ≥ 1 + margin` → FALSE (definitely outside) → skip
+/// - `|y_i · v - 1| < margin` → INDETERMINATE → fall through to rational
+/// - `y_i · v ≤ 1 - margin` → TRUE (definitely inside) → continue checking
+///
+/// Falls through to rational (returns false) when:
+/// - The Cramer solve is not numerically well-behaved (near-singular, huge
+///   solution components, non-finite results)
+/// - Any constraint check is indeterminate
+///
+/// Safety: only returns true (skip) when DEFINITELY outside. A too-conservative
+/// pre-filter just means more rational computation — never a correctness bug.
+fn f64_prefilter_rejects(dv_f64: &[[f64; 4]], subset: &[usize; 4], f: usize) -> bool {
+    /// Margin for the three-valued constraint check. Must be large enough to
+    /// exceed all f64 rounding errors in the Cramer solve + dot product.
+    /// For well-conditioned systems this is ~1e-12; we use 1e-6 to be safe
+    /// even for moderately ill-conditioned cases. Ill-conditioned cases are
+    /// caught by the separate reliability checks below.
+    const MARGIN: f64 = 1e-6;
+
+    let rows: [[f64; 4]; 4] = [
+        dv_f64[subset[0]],
+        dv_f64[subset[1]],
+        dv_f64[subset[2]],
+        dv_f64[subset[3]],
+    ];
+
+    let det = det4_f64(&rows);
+
+    // Cramer's rule is not numerically well-behaved for near-singular systems.
+    // |det| / product(row norms) measures how close to singular the system is.
+    let row_norm_product: f64 = rows
+        .iter()
+        .map(|r| (r[0] * r[0] + r[1] * r[1] + r[2] * r[2] + r[3] * r[3]).sqrt())
+        .product();
+    if row_norm_product < f64::EPSILON || det.abs() < 1e-8 * row_norm_product {
+        return false; // Not well-behaved → rational
+    }
+
+    let v = solve4_f64(&rows, det);
+
+    // Solution with huge components or non-finite values → not well-behaved
+    if v.iter().any(|&c| !c.is_finite() || c.abs() > 1e6) {
+        return false; // → rational
+    }
+
+    // Check each non-defining constraint with three-valued logic
+    for i in 0..f {
+        if subset.contains(&i) {
+            continue;
+        }
+        let dot = dv_f64[i][0] * v[0] + dv_f64[i][1] * v[1]
+            + dv_f64[i][2] * v[2] + dv_f64[i][3] * v[3];
+        if dot > 1.0 + MARGIN {
+            return true; // Definitely outside → skip
+        }
+        // Note: INDETERMINATE case (|dot - 1| < MARGIN) is fine —
+        // we just continue checking other constraints. Only if ALL
+        // constraints are satisfied or indeterminate do we fall through.
+    }
+
+    false // No constraint was definitely violated → rational
+}
+
+/// 4x4 determinant in f64 (cofactor expansion along first row).
+fn det4_f64(rows: &[[f64; 4]; 4]) -> f64 {
+    let (a, b, c, d) = (&rows[0], &rows[1], &rows[2], &rows[3]);
+    let c00 = b[1] * (c[2] * d[3] - c[3] * d[2])
+        - b[2] * (c[1] * d[3] - c[3] * d[1])
+        + b[3] * (c[1] * d[2] - c[2] * d[1]);
+    let c01 = b[0] * (c[2] * d[3] - c[3] * d[2])
+        - b[2] * (c[0] * d[3] - c[3] * d[0])
+        + b[3] * (c[0] * d[2] - c[2] * d[0]);
+    let c02 = b[0] * (c[1] * d[3] - c[3] * d[1])
+        - b[1] * (c[0] * d[3] - c[3] * d[0])
+        + b[3] * (c[0] * d[1] - c[1] * d[0]);
+    let c03 = b[0] * (c[1] * d[2] - c[2] * d[1])
+        - b[1] * (c[0] * d[2] - c[2] * d[0])
+        + b[2] * (c[0] * d[1] - c[1] * d[0]);
+    a[0] * c00 - a[1] * c01 + a[2] * c02 - a[3] * c03
+}
+
+/// Solve 4x4 system via Cramer's rule in f64 (caller provides precomputed det).
+fn solve4_f64(rows: &[[f64; 4]; 4], det: f64) -> [f64; 4] {
+    let rhs = [1.0; 4];
+    std::array::from_fn(|col| {
+        let mut modified = *rows;
+        for row in 0..4 {
+            modified[row][col] = rhs[row];
+        }
+        det4_f64(&modified) / det
+    })
 }
