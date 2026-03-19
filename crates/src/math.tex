@@ -1,0 +1,29 @@
+% math.tex — combined mathematical documentation for crates/src/
+%
+% Compiles to one PDF with all lemma statements, proofs, and definitions
+% supporting the Rust crate. Each section corresponds to a module.
+%
+% Build: cd crates/src && pdflatex math.tex
+
+\documentclass{article}
+\input{math-preamble}
+
+\title{Crate Mathematical Documentation}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Geometry (\texttt{geom/})}
+\input{geom/math}
+
+\section{KKT Solver (\texttt{kkt/})}
+\input{kkt/math}
+
+\section{Algorithms (\texttt{algorithms/})}
+\input{algorithms/math}
+
+\end{document}
