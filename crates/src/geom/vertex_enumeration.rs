@@ -517,8 +517,8 @@ fn f64_prefilter_rejects(dv_f64: &[[f64; 4]], subset: &[usize; 4], f: usize) -> 
         // δ = C · κ̂ · ε_mach · ‖v̂‖ · ‖ŷᵢ‖
         let delta = C * kappa_hat * EPS_MACH * v_norm * y_norm;
 
-        if !delta.is_finite() {
-            return false; // Overflow → INDETERMINATE
+        if !s_hat.is_finite() || !delta.is_finite() {
+            return false; // NaN/Inf → INDETERMINATE
         }
 
         // If ŝ > 1 + δ: constraint is definitely violated → reject subset.
