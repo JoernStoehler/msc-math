@@ -344,7 +344,7 @@ pub(super) fn construct_rational_pipeline(
 ///
 /// Stage 1 rejects ~80% of subsets, avoiding expensive rational arithmetic.
 /// It can only reject, never confirm — all actual vertices reach stage 2.
-/// Error bound: [prop:prefilter-bound] in math_prefilter.tex
+/// Error bound: [prop:prefilter-bound] in geom/math.tex
 /// (has open gap — see TODO there).
 ///
 /// Non-simple vertices (on >4 facets) are handled by deduplication: the first
@@ -442,8 +442,8 @@ fn enumerate_vertices_exact(
 /// When this returns false, the subset may or may not be a vertex —
 /// the rational path decides.
 ///
-/// Correctness: [cor:prefilter-soundness] in math_prefilter.tex.
-/// Note: the proof has an open gap (κ̂ vs κ, see TODO in math_prefilter.tex).
+/// Correctness: [cor:prefilter-soundness] in geom/math.tex.
+/// Note: the proof has an open gap (κ̂ vs κ, see TODO in geom/math.tex).
 fn f64_prefilter_rejects(dv_f64: &[[f64; 4]], subset: &[usize; 4], f: usize) -> bool {
     use nalgebra::{Matrix4, Vector4};
 

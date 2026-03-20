@@ -24,7 +24,7 @@ experiments/
 
 The folder name provides the namespace. Files inside use role-based names (`run.rs`, `analyze.py`, `logbook.md`, `math.tex`), not `<name>.rs`, `<name>.py`.
 
-**Legacy:** Existing experiments use `<name>.rs`, `<name>.tex`, and `README.md`. New experiments use the role-based names. Rename old files opportunistically when touching them. When renaming `<name>.rs`, update the `[[bin]]` entry in `Cargo.toml`.
+All 17 experiments now use role-based names. No legacy `<name>.rs` / `README.md` files remain.
 
 ## Two Living Documents
 
@@ -58,6 +58,8 @@ Jörn: dunno, so probably not regenerated. sys-optimization didn't use proper gr
 ### math.tex — the formal document
 
 Proofs, definitions, derivations, formal statements — anything that needs LaTeX math rendering. Also a living document that grows alongside the logbook. Load the `math-tex` skill for full conventions.
+
+**Not a thesis artifact.** math.tex is the experiment's formal document, not a polished thesis section. The thesis is a separate final-assembly artifact. In file tables and descriptions, call it "formal writeup" — never "thesis writeup" or "thesis section."
 
 ### What goes where
 

@@ -1,0 +1,801 @@
+% math.tex — geom module
+% Mathematical results supporting crates/src/geom/
+%
+% Labels defined here:
+%   def:symplectic-form, def:J0, def:ehz-capacity, def:lagrangian-product,
+%   def:symplectic-product, def:cross-product-4d, def:face-lattice,
+%   def:polar-body, def:polytope-dual, def:polygon-h-rep, def:polygon-area,
+%   def:reeb-vector-field, def:volume, def:systolic-ratio,
+%   lem:piecewise-linear-reeb, lem:positive-span, lem:rational-pipeline,
+%   lem:vertex-enumeration, lem:shoelace,
+%   thm:hko-counterexample,
+%   prop:capacity-symplectic-product,
+%   prop:prefilter-bound, cor:prefilter-soundness,
+%   fact:prefilter-round, fact:prefilter-cast, fact:prefilter-svd,
+%   fact:prefilter-solve, fact:prefilter-weyl, fact:prefilter-banach,
+%   fact:prefilter-dot, rem:prefilter-constants
+%
+% Sources: thesis/basic-definitions.tex (verified content),
+%   .rs doc comments (stubs for labels not yet in thesis),
+%   /tmp/prefilter-bound-simple.tex (Jörn + agent session)
+
+% \input'd from crates/src/math.tex — do not add \documentclass or \begin{document}
+
+% ====================================================================
+% Symplectic structure
+% ====================================================================
+
+\begin{definition}[Standard symplectic structure]\label{def:symplectic-form}
+% Jörn: text approved (1aac085)
+Write $\mathbb{R}^4$ with coordinates $(q_1, q_2, p_1, p_2)$.
+The \emph{standard complex structure} is
+\[
+  J_0 = \begin{pmatrix} 0 & -I_2 \\ I_2 & 0 \end{pmatrix},
+\]
+i.e., $J_0(q, p) = (-p, q)$,
+where $I_2$ is the $2 \times 2$ identity matrix.
+The \emph{standard symplectic form} is
+\[
+  \omega_0(u, v) \coloneqq \langle J_0 u, v \rangle
+  = \sum_{i=1}^{2} (u_{q_i} v_{p_i} - u_{p_i} v_{q_i}),
+\]
+equivalently $\omega_0 = dq_1 \wedge dp_1 + dq_2 \wedge dp_2$.
+\end{definition}
+
+
+\begin{definition}[Standard complex structure $J_0$]\label{def:J0}
+% [TODO: JÖRN - verify: J0 is defined within def:symplectic-form above.
+%   This label exists as a separate cross-reference target for code that
+%   references J0 specifically (e.g. symplectic_form.rs). Consider whether
+%   this should remain a separate label or be merged into def:symplectic-form.]
+The standard complex structure $J_0 \in \mathbb{R}^{4 \times 4}$ is
+\[
+  J_0 = \begin{pmatrix} 0 & -I_2 \\ I_2 & 0 \end{pmatrix},
+\]
+satisfying $J_0^2 = -I_4$, $J_0^{-1} = J_0^\top = -J_0$,
+$\omega_0(J_0 u, J_0 v) = \omega_0(u,v)$, and $|J_0 u| = |u|$.
+In the 2D case, $J_0^{(2)} = \bigl(\begin{smallmatrix} 0 & -1 \\ 1 & 0 \end{smallmatrix}\bigr)$.
+\end{definition}
+
+
+% ====================================================================
+% Capacity and systolic ratio
+% ====================================================================
+
+\begin{definition}[EHZ capacity]\label{def:ehz-capacity}
+% Jörn: text approved (1aac085)
+The \emph{Ekeland--Hofer--Zehnder capacity} of a convex body $K$ with smooth
+boundary is
+\[
+  c_{\mathrm{EHZ}}(K) \coloneqq \min\bigl\{ A(\gamma) :
+  \gamma \text{ is a closed characteristic on } \partial K \bigr\}.
+\]
+The minimum exists and is positive.
+The definition extends to all convex bodies by approximation;
+for polytopes, the minimum is attained by a generalized Reeb orbit.
+\end{definition}
+
+
+\begin{definition}[Systolic ratio]\label{def:systolic-ratio}
+% [TODO: JÖRN - verify statement]
+% Source: dataset.rs doc comment
+The \emph{systolic ratio} of a convex body $K \subset \mathbb{R}^4$ is
+\[
+  \operatorname{sys}(K) \coloneqq \frac{c_{\mathrm{EHZ}}(K)^2}{2\,\operatorname{vol}(K)}.
+\]
+Viterbo's conjecture asserts $\operatorname{sys}(K) \leq 1$ for all convex bodies $K$.
+\end{definition}
+
+
+% ====================================================================
+% Products
+% ====================================================================
+
+\begin{definition}[Lagrangian product]\label{def:lagrangian-product}
+% Source: thesis/lagrangian-product-algorithm-proof.tex
+Let $K_q \subset L_q$ and $K_p \subset L_p$ be convex polygons
+with $0 \in \operatorname{int}(K_q)$ and $0 \in \operatorname{int}(K_p)$,
+where $L_q = \{(q_1, q_2, 0, 0)\}$ and $L_p = \{(0, 0, p_1, p_2)\}$
+are complementary Lagrangian subspaces.
+The \emph{Lagrangian product} is the polytope
+\[
+  K \coloneqq K_q \times K_p
+  = \{ (q, p) \in \mathbb{R}^4 : q \in K_q,\; p \in K_p \}.
+\]
+\end{definition}
+
+
+\begin{definition}[Symplectic product]\label{def:symplectic-product}
+% [TODO: JÖRN - verify statement]
+% Source: known_polytopes.rs doc comment
+Let $A, B \subset \mathbb{R}^2$ be convex bodies containing
+the origin in their interiors, where we view the first copy
+of~$\mathbb{R}^2$ as the symplectic plane $(q_1, p_1)$ and
+the second as $(q_2, p_2)$.
+The \emph{symplectic product} is
+\[
+  A \times_S B
+    \coloneqq \{(q_1, q_2, p_1, p_2) \in \mathbb{R}^4
+      : (q_1, p_1) \in A,\; (q_2, p_2) \in B\}.
+\]
+\end{definition}
+
+
+\begin{proposition}[Capacity of symplectic products]%
+\label{prop:capacity-symplectic-product}
+% Source: thesis/basic-definitions.tex
+Let $A, B \subset \mathbb{R}^2$ be convex bodies containing
+the origin in their interiors, viewed as in
+Definition~\ref{def:symplectic-product}.
+Then
+\[
+  c_{\mathrm{EHZ}}(A \times_S B)
+    = \min\!\bigl(\operatorname{area}(A),\;
+                   \operatorname{area}(B)\bigr).
+\]
+\end{proposition}
+
+\begin{proof}
+We reduce to a product of disks via an area-preserving
+map, then squeeze between a ball and a cylinder.
+
+On each copy of~$\mathbb{R}^2$, the symplectic form
+restricts to $dq_i \wedge dp_i$, which is the standard
+area form, so area-preserving diffeomorphisms are
+symplectomorphisms.
+
+% [GAP - JÖRN: the step c_EHZ(A) = area(A) for convex bodies A in R^2
+%   was agent-written. The previous version cited "Dacorogna and Moser (1990)"
+%   and claimed a "divergence-free vector field extends by zero" to produce a
+%   global area-preserving diffeomorphism of R^2. Jörn does not recognize this
+%   construction. The entire argument for c_EHZ(A) = area(A) is UNVERIFIED
+%   agent-generated math. Needs a correct proof or literature citation.]
+We first show $c_{\mathrm{EHZ}}(A) = \operatorname{area}(A)$
+for every convex body~$A$ in~$\mathbb{R}^2$.
+This follows from the existence of a global area-preserving
+(hence symplectic) diffeomorphism mapping~$A$ to a disk
+$B^2(r)$ with $\pi r^2 = \operatorname{area}(A)$,
+together with symplectic invariance and normalization.
+
+Now let $r_A, r_B > 0$ satisfy
+$\pi r_A^2 = \operatorname{area}(A)$ and
+$\pi r_B^2 = \operatorname{area}(B)$.
+The above gives global symplectomorphisms
+$\varphi_1, \varphi_2 \colon \mathbb{R}^2 \to \mathbb{R}^2$
+mapping $A$ to~$B^2(r_A)$ and $B$ to~$B^2(r_B)$
+respectively.
+Since $\omega_0 = dq_1 \wedge dp_1 + dq_2 \wedge dp_2$
+decomposes over the two planes, the product
+$\varphi_1 \times \varphi_2$ is a symplectomorphism
+of~$\mathbb{R}^4$.
+By symplectic invariance,
+\[
+  c_{\mathrm{EHZ}}(A \times_S B)
+    = c_{\mathrm{EHZ}}\bigl(B^2(r_A) \times_S B^2(r_B)\bigr).
+\]
+Assume without loss of generality that $r_A \leq r_B$.
+Then
+\[
+  B^4(r_A)
+    \;\subset\; B^2(r_A) \times_S B^2(r_B)
+    \;\subset\; B^2(r_A) \times \mathbb{R}^2,
+\]
+where the first inclusion holds because $r_A \leq r_B$
+and the second because $B^2(r_B) \subset \mathbb{R}^2$.
+By monotonicity and normalization,
+\begin{align*}
+  \pi r_A^2
+    &= c_{\mathrm{EHZ}}(B^4(r_A)) \\
+    &\leq c_{\mathrm{EHZ}}\bigl(B^2(r_A) \times_S B^2(r_B)\bigr) \\
+    &\leq c_{\mathrm{EHZ}}(B^2(r_A) \times \mathbb{R}^2)
+    = \pi r_A^2.
+\end{align*}
+Hence $c_{\mathrm{EHZ}}(A \times_S B)
+  = \pi r_A^2
+  = \min(\operatorname{area}(A), \operatorname{area}(B))$.
+\end{proof}
+
+
+% ====================================================================
+% Polytope geometry
+% ====================================================================
+
+\begin{definition}[Polytope dual / polar body]\label{def:polytope-dual}
+% [TODO: JÖRN - verify statement]
+% Source: polytope.rs doc comment
+Let $K \subset \mathbb{R}^4$ be a polytope with $0 \in \operatorname{int}(K)$
+given in $H$-representation $K = \{x : \langle a_i, x\rangle \leq 1\}_{i=1}^F$.
+The \emph{polar body} (or \emph{dual}) is
+\[
+  K^\circ \coloneqq \{y \in \mathbb{R}^4 : \langle x, y \rangle \leq 1
+    \text{ for all } x \in K\}
+  = \operatorname{conv}(a_1, \ldots, a_F).
+\]
+\end{definition}
+
+% Agent note: def:polar-body used in some .rs files is an alias
+% for def:polytope-dual. The label below provides this as a cross-reference target.
+\phantomsection\label{def:polar-body}% alias for cross-references from .rs files
+
+
+\begin{definition}[Face lattice / skeleton]\label{def:face-lattice}
+% [TODO: JÖRN - verify statement]
+% Source: skeleton.rs doc comment
+The \emph{skeleton} (or \emph{face lattice}) of a 4D convex polytope $K$
+is the combinatorial structure recording all faces of $K$
+(vertices, edges, 2-faces, facets) and their incidence relations.
+Two facets $F_i, F_j$ are \emph{adjacent} if $F_i \cap F_j$ is a
+face of dimension $\geq 1$.
+\end{definition}
+
+
+\begin{definition}[Cross product in $\mathbb{R}^4$]\label{def:cross-product-4d}
+% [TODO: JÖRN - verify statement]
+% Source: cross_product_4d.rs doc comment
+The \emph{cross product} of three vectors $u, v, w \in \mathbb{R}^4$
+is the unique vector $u \times v \times w \in \mathbb{R}^4$
+perpendicular to all three, with magnitude equal to the volume
+of the parallelepiped spanned by $u, v, w$, and orientation
+determined by the right-hand rule.
+Equivalently,
+\[
+  (u \times v \times w)_i
+  = (-1)^{i+1} \det\bigl(M_i\bigr),
+\]
+where $M_i$ is the $3 \times 3$ matrix obtained by deleting
+row~$i$ from the $4 \times 3$ matrix $(u \mid v \mid w)$.
+\end{definition}
+
+
+% ====================================================================
+% Polygon geometry
+% ====================================================================
+
+\begin{definition}[Convex polygon $H$-representation]\label{def:polygon-h-rep}
+% [TODO: JÖRN - verify statement]
+% Source: polygon.rs doc comment
+A 2D \emph{convex polygon in $H$-representation} is specified by
+outward unit normals $n_1, \ldots, n_m \in S^1$ and positive
+heights $h_1, \ldots, h_m > 0$:
+\[
+  P = \bigcap_{i=1}^{m} \{x \in \mathbb{R}^2 : \langle n_i, x \rangle \leq h_i\}.
+\]
+\end{definition}
+
+
+\begin{definition}[Polygon area]\label{def:polygon-area}
+% [TODO: JÖRN - verify statement. "Shoelace formula" here means the standard
+%   2D polygon area formula (sum of cross products), NOT lem:shoelace (which is
+%   the symplectic action integral). Clarify or rename to avoid ambiguity.]
+% Source: polygon.rs doc comment
+The \emph{area} of a convex polygon $P$ given in $H$-representation
+(Definition~\ref{def:polygon-h-rep}) is computed via triangulation
+from the centroid or via the standard 2D shoelace formula on the vertex list.
+\end{definition}
+
+
+% ====================================================================
+% Volume
+% ====================================================================
+
+\begin{definition}[Volume of a 4D polytope]\label{def:volume}
+% [TODO: JÖRN - verify statement]
+% Source: volume.rs, qhull.rs doc comments
+The \emph{volume} of a 4D convex polytope $K$ is the standard
+Lebesgue measure $\operatorname{vol}(K) = \int_K dx$.
+In the implementation, volume is computed by triangulating $K$
+into simplices via qhull and summing the simplex volumes:
+\[
+  \operatorname{vol}(\Delta)
+  = \frac{1}{4!}\, |\det(v_1 - v_0 \mid v_2 - v_0 \mid v_3 - v_0 \mid v_4 - v_0)|.
+\]
+\end{definition}
+
+
+% ====================================================================
+% Reeb dynamics on polytopes
+% ====================================================================
+
+\begin{definition}[Reeb vector field on polytopes]\label{def:reeb-vector-field}
+% [TODO: JÖRN - verify statement]
+% Source: reeb_trajectory.rs doc comment
+On a facet $F_i$ of a polytope $K$ with outward unit normal $n_i$
+and height $h_i$, the \emph{Reeb vector} is
+\[
+  R_i = \frac{2}{h_i}\, J_0\, n_i.
+\]
+The Reeb vector $R_i$ is tangent to $F_i$
+($\langle n_i, R_i \rangle = 0$, since
+$\langle n_i, J_0 n_i \rangle = \omega_0(n_i, n_i) = 0$).
+\end{definition}
+
+
+\begin{lemma}[Piecewise-linear Reeb trajectories]\label{lem:piecewise-linear-reeb}
+% [TODO: JÖRN - verify statement, add proof]
+% Source: reeb_trajectory.rs doc comment
+Reeb trajectories on polytope boundaries are piecewise linear:
+on each facet $F_i$, the trajectory moves with constant velocity $R_i$.
+At a breakpoint where the trajectory transitions from $F_i$ to $F_j$,
+the velocity changes discontinuously from $R_i$ to $R_j$.
+\end{lemma}
+
+
+% ====================================================================
+% Computational geometry lemmas
+% ====================================================================
+
+\begin{lemma}[Positive span criterion]\label{lem:positive-span}
+% [TODO: JÖRN - verify statement, add proof]
+% Source: validation.rs, vertex_enumeration.rs doc comments
+The outward normals $n_1, \ldots, n_F$ of a polytope $K \subset \mathbb{R}^4$
+positively span $\mathbb{R}^4$ if and only if the recession cone
+$\operatorname{rec}(K) = \{0\}$, i.e., $K$ is bounded.
+This is used to verify that a given $H$-representation defines
+a bounded polytope.
+\end{lemma}
+
+
+\begin{lemma}[Exact vertex enumeration]\label{lem:vertex-enumeration}
+% [TODO: JÖRN - verify statement, add proof]
+% Source: vertex_enumeration.rs doc comment
+For a 4D polytope $K$ given by $F$ halfspaces, the vertices
+are obtained by solving $\langle n_{i_k}, x \rangle = h_{i_k}$
+for all $\binom{F}{4}$ four-element subsets $\{i_1, i_2, i_3, i_4\}$,
+then filtering for points satisfying all remaining inequalities.
+The implementation uses exact rational arithmetic to avoid
+numerical errors in degeneracy detection.
+\end{lemma}
+
+
+\begin{lemma}[Rational arithmetic pipeline]\label{lem:rational-pipeline}
+% [TODO: JÖRN - verify statement, add proof]
+% Source: rational_arithmetic.rs doc comment
+All discrete/combinatorial decisions in the geometry pipeline
+(vertex adjacency, symplectic sign $\omega_0(n_i, n_j) \gtrless 0$,
+halfspace irredundancy) are computed using exact rational arithmetic
+to prevent numerical misclassification.
+\end{lemma}
+
+
+% ====================================================================
+% Shoelace formula
+% ====================================================================
+
+\begin{lemma}[Symplectic shoelace formula]\label{lem:shoelace}
+% Jörn: text approved (b7a8bc0) — from \begin{lemma} to \end{proof}
+Let $z \colon [0, T] \to \mathbb{R}^4$ be a closed curve with
+piecewise-constant velocity:
+$\dot{z}(t) = w_k$ on $I_k = (\tau_{k-1}, \tau_k)$ for
+$k = 1, \ldots, m$, where $0 = \tau_0 < \cdots < \tau_m = T$.
+Then
+\[
+  \int_0^T \langle -J_0\, \dot{z}(t),\, z(t) \rangle \, dt
+  = \sum_{1 \leq j < i \leq m}
+    |I_j|\, |I_i|\, \omega_0(w_j, w_i).
+\]
+\end{lemma}
+
+\begin{proof}
+Since $z$ is closed, $\sum_{k=1}^m |I_k|\, w_k = 0$.
+For $t \in I_i$:
+\[
+  z(t) = z(0) + \sum_{j=1}^{i-1} |I_j|\, w_j
+    + (t - \tau_{i-1})\, w_i.
+\]
+Substitute into
+$\langle -J_0 w_i, z(t) \rangle$ and integrate over $[0, T]$:
+\begin{align*}
+\int_0^T \!\langle{-}J_0 \dot{z}, z \rangle \, dt
+  &= \sum_{i=1}^m \int_{I_i}
+    \!\langle -J_0 w_i,\;
+      z(0) + \textstyle\sum_{j < i} |I_j| w_j
+      + (t{-}\tau_{i-1}) w_i
+    \rangle\, dt \\
+  &= \underbrace{
+      \bigl\langle -J_0 \bigl(\textstyle\sum_i |I_i| w_i\bigr),\,
+      z(0) \bigr\rangle
+    }_{= \, 0 \;\text{(closure)}}
+  + \sum_{i=1}^m \sum_{j=1}^{i-1}
+      |I_i|\, |I_j|\, \omega_0(w_j, w_i) \\
+  &\quad
+  + \sum_{i=1}^m
+      \underbrace{\omega_0(w_i, w_i)}_{= \, 0}\;
+      \cdot \tfrac{|I_i|^2}{2}.
+\end{align*}
+The first term vanishes because
+$\sum |I_k| w_k = 0$ (closure of~$z$).
+The third term vanishes because
+$\omega_0$ is antisymmetric.
+\end{proof}
+
+
+% ====================================================================
+% HKO counterexample
+% ====================================================================
+
+\begin{theorem}[HKO counterexample to Viterbo's conjecture]%
+\label{thm:hko-counterexample}
+% [TODO: JÖRN - verify statement, add proof/reference]
+% Source: known_polytopes.rs doc comment
+% Reference: Haim-Kislev and Ostrover 2024
+There exists a 10-facet polytope $K \subset \mathbb{R}^4$
+(the HKO pentagon counterexample) with systolic ratio
+$\operatorname{sys}(K) > 1$, disproving Viterbo's conjecture
+in dimension~$4$.
+\end{theorem}
+
+
+% ====================================================================
+% f64 pre-filter for vertex enumeration
+% ====================================================================
+% Source: /tmp/prefilter-bound-simple.tex (Jörn + agent session)
+% Status: Jörn is finalizing; will be updated when final version arrives.
+
+\providecommand{\one}{\mathbf{1}}
+\providecommand{\emach}{\varepsilon_{\mathrm{mach}}}
+
+\subsection{f64 prefilter for $y^\top A^{-1}\one \le 1$}
+
+All norms are $\ell^2$ / spectral.
+Let $\emach = 2^{-53}$, $n = 4$, $\one = (1,1,1,1)^\top$
+(so $\|\one\| = 2$).
+
+\subsubsection*{Problem}
+
+Given $A \in \mathbb{Q}^{n \times n}$ and $y \in \mathbb{Q}^n$,
+decide whether $y^\top A^{-1}\one \le 1$.
+Exact rational arithmetic is expensive.
+We want an f64 algorithm that returns
+\textsc{true}, \textsc{false}, or \textsc{indeterminate},
+where the first two are always correct and the third
+triggers a fallback to exact arithmetic.
+
+\subsubsection*{Algorithm}
+
+\begin{enumerate}
+\item Round $A$ and $y$ to f64, giving $\hat{A}$ and $\hat{y}$.
+\item Compute an SVD of $\hat{A}$, giving computed singular values
+  $\hat\sigma_1 \ge \cdots \ge \hat\sigma_n$.
+  If $\hat\sigma_n = 0$: return \textsc{indeterminate}.
+\item Set $\hat\kappa = \hat\sigma_1 / \hat\sigma_n$.
+  If $\emach \hat\kappa > 1/4$: return \textsc{indeterminate}.
+\item Solve $\hat{A}\hat{v} \approx \one$ using the SVD factors.
+\item Compute $\hat{s} = \hat{y}^\top\hat{v}$ and the tolerance
+  $\delta = C \cdot \hat\kappa \cdot \emach
+  \cdot \|\hat{v}\| \cdot \|\hat{y}\|$
+  with $C = 10^4$.
+\item If $\hat{s} > 1 + \delta$: return \textsc{false}
+  ($y^\top A^{-1}\one > 1$).\\
+  If $\hat{s} < 1 - \delta$: return \textsc{true}
+  ($y^\top A^{-1}\one \le 1$).\\
+  Else: return \textsc{indeterminate}.
+\end{enumerate}
+
+If any step produces $\pm\infty$ or NaN: return
+\textsc{indeterminate}.
+Steps 1--4 cost $O(n^3)$ and depend only on $A$
+(reused across all $y$);
+steps 5--6 cost $O(n)$ per $y$.
+
+\subsubsection*{Standard facts used}
+
+\begin{fact}[IEEE~754 rounding model]\label{fact:prefilter-round}
+Rounding a real number $x$ to f64 gives $\hat{x}$
+with $|\hat{x} - x| \le \emach|x|$.
+This is the defining property of IEEE~754 round-to-nearest.
+\end{fact}
+
+\begin{fact}[Entrywise rounding $\to$ spectral norm]\label{fact:prefilter-cast}
+If $\hat{A}$ is obtained by rounding each entry of $A$
+to f64, then $|\hat{A}_{ij} - A_{ij}| \le \emach|A_{ij}|$
+entrywise (by Fact~\ref{fact:prefilter-round}), and
+$\|\hat{A} - A\| \le \sqrt{n}\,\emach\|A\|$.
+
+\emph{Proof.}
+$\|\hat{A} - A\|^2 \le \|\hat{A} - A\|_F^2
+= \sum_{ij}(\hat{A}_{ij} - A_{ij})^2
+\le \emach^2 \sum_{ij} A_{ij}^2
+= \emach^2\|A\|_F^2 \le \emach^2 n\|A\|^2$,
+where the last step uses
+$\|M\|_F^2 = \sum_i \sigma_i(M)^2 \le n\sigma_1(M)^2
+= n\|M\|^2$. \qed
+\end{fact}
+
+% TODO: verify exact theorem number in Higham Ch. 5
+\begin{fact}[SVD backward stability;
+  {Higham~(2002), Ch.~5}]\label{fact:prefilter-svd}
+The computed SVD of $B \in \mathbb{R}^{n \times n}$ produces
+factors $\hat{U}, \hat{\Sigma}, \hat{V}$ satisfying
+$B + E_{\mathrm{svd}} = \hat{U}\hat{\Sigma}\hat{V}^\top$
+with $\|E_{\mathrm{svd}}\| \le c_{\mathrm{svd}}\emach\|B\|$,
+where $c_{\mathrm{svd}} = O(n)$.
+\end{fact}
+
+% TODO: verify exact section numbers in Higham
+\begin{fact}[SVD-based solve backward stability;
+  {Higham~(2002), Ch.~3, 5}]\label{fact:prefilter-solve}
+Solving $Bx = b$ via computed SVD factors in f64 gives $\hat{x}$
+satisfying $(B + E)\hat{x} = b + e$ with
+$\|E\| \le p\emach\|B\|$ and $\|e\| \le p\emach\|b\|$,
+where $p = O(n)$; $p \le 16$ suffices for $n = 4$.
+(This combines the SVD backward error with the rounding
+in the back-substitution steps
+$\hat{U}^\top b$, $\hat{\Sigma}^{-1}(\cdot)$,
+$\hat{V}(\cdot)$.)
+\end{fact}
+
+% TODO: verify exact corollary number in GVL Ch. 8
+\begin{fact}[Weyl's singular value perturbation theorem;
+  {Golub \& Van~Loan~(2013), Ch.~8}]\label{fact:prefilter-weyl}
+For any $B, B' \in \mathbb{R}^{n \times n}$:
+$|\sigma_i(B) - \sigma_i(B')| \le \|B - B'\|$.
+\end{fact}
+
+% TODO: verify exact lemma number in Higham Ch. 2
+\begin{fact}[Banach perturbation lemma;
+  {Higham~(2002), Ch.~2}]\label{fact:prefilter-banach}
+If $B$ is invertible and $\|B^{-1}\|\|E\| < 1$, then
+$B + E$ is invertible and
+$\|(B+E)^{-1}\| \le \|B^{-1}\|/(1 - \|B^{-1}\|\|E\|)$.
+
+\emph{Proof.}
+$(B+E)^{-1} = (I + B^{-1}E)^{-1}B^{-1}
+= \bigl(\sum_{k=0}^\infty (-B^{-1}E)^k\bigr)B^{-1}$.
+The series converges when $\|B^{-1}E\| < 1$,
+and $\|(B+E)^{-1}\| \le \|B^{-1}\|/(1 - \|B^{-1}\|\|E\|)$
+by the geometric series bound. \qed
+\end{fact}
+
+% TODO: verify exact theorem number in Higham Ch. 3
+\begin{fact}[Dot product rounding;
+  {Higham~(2002), Ch.~3}]\label{fact:prefilter-dot}
+For $x, y \in \mathbb{F}^n$, the f64-computed inner product
+$\hat{s} = \mathrm{fl}(x^\top y)$ satisfies
+$|x^\top y - \hat{s}| \le \gamma_n\, |x|^\top|y|$,
+where $\gamma_n = n\emach/(1 - n\emach)$
+and $|x|$ denotes componentwise absolute values.
+\end{fact}
+
+\subsubsection*{Error bound}
+
+% [TODO: JÖRN - The proposition must be restated in terms of the
+%   COMPUTABLE $\hat\kappa$, not the true $\kappa = \kappa_2(\hat{A})$.
+%   As written, the hypothesis $\emach\kappa \le 1/4$ cannot be checked
+%   because $\kappa$ is an algebraic real we don't have.
+%
+%   Fix: restate with condition $\emach\hat\kappa \le t$ for a threshold
+%   $t$ depending on $c_{\mathrm{svd}}$. The proof bridges to $\kappa$
+%   internally using Weyl: $\kappa \le \hat\kappa/(1 - c_{\mathrm{svd}}
+%   \emach\hat\kappa)$.
+%
+%   Second consequence: the code computes $\delta = C \hat\kappa \emach
+%   \|\hat v\| \|\hat y\|$, but the proposition bounds the error with
+%   $C \kappa \emach \|\hat v\| \|\hat y\|$. For $\delta$ to be a valid
+%   overestimate, we need $\hat\kappa \ge \kappa$ (or a known bound on
+%   $\kappa/\hat\kappa$). Weyl only gives a two-sided bound, so this is
+%   not guaranteed. Same fix: restate entirely in terms of $\hat\kappa$.
+%
+%   Blocker: need concrete $c_{\mathrm{svd}}$ for $n = 4$, from
+%   Higham (2002) Ch. 5. This is tracked in TASKS.md under
+%   "Solver numerical behavior math.tex".
+%
+%   Factor-counting issue (from adversarial Opus review):
+%   - The tight bound ``$C < 1400$'' undercounts constant factors.
+%     The 6 listed $\lesssim$ factors of 2 miss at least two more:
+%     (a) $\|e\| = 2p\emach$ contributes a factor of 2 from
+%         $\|\one\| = 2$ that is an exact constant, not a
+%         $(1 \pm c\emach)$ factor, so it shouldn't be absorbed
+%         into $\lesssim$ but must be tracked explicitly.
+%     (b) Substituting $\|\hat A^{-1}\| \lesssim \kappa\|\hat v\|$
+%         into eq:prefilter-fwd gives $\kappa\|\hat v\| + \kappa\|\hat v\|
+%         = 2\kappa\|\hat v\|$, an untracked factor of 2.
+%     Correct tight bound: $C \le 21 \cdot 2^8 = 5376$, not $1344$.
+%     The safe $C = 10^4$ remains valid.
+%
+%   Additional minor gaps (from adversarial review):
+%   - The rounding model $|\hat x - x| \le \emach|x|$ assumes normal
+%     f64 numbers. Subnormals have larger relative error. Unlikely for
+%     our polytope matrices but not formally excluded.
+%   - The proposition assumes $A$ is invertible (caller's responsibility).
+%   - The code computes $\|\hat v\|$ and $\|\hat y\|$ in f64, introducing
+%     $O(\emach)$ relative error not mentioned in the proof. Absorbed by
+%     the $C = 10^4$ safety factor.]
+
+\begin{proposition}\label{prop:prefilter-bound}
+Let $A$ and $\hat{A}$ both be invertible, with
+$\kappa = \kappa_2(\hat{A}) = \|\hat{A}\|\|\hat{A}^{-1}\|$
+(the true, not computed, condition number of $\hat{A}$).
+If $\emach\kappa \le 1/4$, then:
+Write $v = A^{-1}\one$ and let $\hat{v}$, $\hat{s}$
+be the f64-computed quantities from the algorithm.
+Then
+\[
+  |y^\top v - \hat{s}|
+  \;\le\;
+  C \cdot \kappa \cdot \emach
+  \cdot \|\hat{y}\| \cdot \|\hat{v}\|
+\]
+with $C = 10^4$ for $n = 4$
+(a tighter accounting gives $C < 1400$; see Remark~\ref{rem:prefilter-constants}).
+\end{proposition}
+
+\begin{corollary}\label{cor:prefilter-soundness}
+Under the hypotheses of Proposition~\ref{prop:prefilter-bound},
+the algorithm's three-valued output is sound:
+\begin{itemize}
+\item If the algorithm returns \textsc{false}
+  ($\hat{s} > 1 + \delta$), then $y^\top A^{-1}\one > 1$.
+\item If the algorithm returns \textsc{true}
+  ($\hat{s} < 1 - \delta$), then $y^\top A^{-1}\one < 1$.
+\item If the algorithm returns \textsc{indeterminate},
+  no conclusion is drawn.
+\end{itemize}
+In particular, when the algorithm returns \textsc{false}
+for some constraint~$y_i$, the point $A^{-1}\one$ lies
+outside~$K$, so the subset cannot yield a vertex.
+\end{corollary}
+
+\begin{proof}
+By Proposition~\ref{prop:prefilter-bound},
+$|y^\top v - \hat{s}| \le \delta$.
+If $\hat{s} > 1 + \delta$, then
+$y^\top v \ge \hat{s} - \delta > 1$.
+If $\hat{s} < 1 - \delta$, then
+$y^\top v \le \hat{s} + \delta < 1$.
+\end{proof}
+
+\noindent
+\textit{Why this form?}
+The total error is $(p\kappa + 1 + n)\emach\|\hat{y}\|\|\hat{v}\|$:
+the $p\kappa$ term comes from the solve (the only step that
+amplifies errors), while $1$ and $n$ come from casting and
+the dot product (basic rounding, no amplification).
+Since $\kappa \ge 1$, we can bound
+$p\kappa + 1 + n \le (p + 1 + n)\kappa$,
+giving a single factor of $\kappa$ with a larger constant $C$.
+
+\medskip
+\noindent
+\textit{Why $\hat\kappa \approx \kappa$?}
+By Fact~\ref{fact:prefilter-svd}, the computed singular values
+$\hat\sigma_i$ are the exact singular values of
+$\hat{A} + E_{\mathrm{svd}}$ with
+$\|E_{\mathrm{svd}}\| \le c\emach\|\hat{A}\|$.
+By Fact~\ref{fact:prefilter-weyl},
+$|\hat\sigma_i - \sigma_i(\hat{A})| \le c\emach\|\hat{A}\|
+= c\emach\sigma_1(\hat{A})$.
+The relative error on $\sigma_n$ is
+$O(\emach \cdot \sigma_1/\sigma_n) = O(\emach\kappa)$,
+so $\hat\kappa = \kappa(1 + O(\emach\kappa))$.
+In the regime $\emach\kappa \le 1/4$,
+$\hat\kappa$ and $\kappa$ differ by at most a constant
+factor, absorbed into $C$.
+
+\begin{proof}
+Write $\kappa = \kappa_2(\hat{A})$.
+Throughout, $\lesssim$ means $\le$ up to factors of the
+form $(1 \pm c\emach)^{\pm 1}$ with $c \le 10^3$.
+Since $c\emach < 10^{-13}$, each such factor is $\le 2$.
+We number each use; Remark~\ref{rem:prefilter-constants}
+enumerates all six.
+
+\medskip\noindent\textbf{Step 1: Backward error of the solve.}
+By Fact~\ref{fact:prefilter-solve}, there exist
+$E \in \mathbb{R}^{n \times n}$ and
+$e \in \mathbb{R}^n$ with
+\[
+  (\hat{A} + E)\hat{v} = \one + e, \qquad
+  \|E\| \le p\emach\|\hat{A}\|, \quad
+  \|e\| \le p\emach\|\one\| = 2p\emach,
+\]
+where $p \le 16$ for $n = 4$.
+By Fact~\ref{fact:prefilter-cast},
+$\|\hat{A} - A\| \le \sqrt{n}\,\emach\|A\|$.
+Since $\sqrt{n} = 2 \le p$, the casting error
+is dominated by the solve's backward error.
+Writing $\Delta A = (\hat{A} - A) + E$:
+\[
+  (A + \Delta A)\hat{v} = \one + e, \qquad
+  \|\Delta A\| \le (p + \sqrt{n})\emach\|\hat{A}\|
+  \lesssim p\emach\|A\|.
+  \quad\text{[$\lesssim$ \#2: $\|\hat{A}\| \lesssim \|A\|$]}
+\]
+
+\medskip\noindent\textbf{Step 2: Forward error.}
+From $Av = \one$:
+$v - \hat{v} = A^{-1}(\Delta A\,\hat{v} - e)$.
+By Fact~\ref{fact:prefilter-banach}
+applied to $A = \hat{A} - (\hat{A} - A)$
+with $\|\hat{A}^{-1}\|\|\hat{A} - A\| \le
+\sqrt{n}\,\emach\|\hat{A}^{-1}\|\|A\|
+\lesssim \sqrt{n}\,\emach\kappa \le 1/2$
+(the $\lesssim$ uses $\|A\| \lesssim \|\hat{A}\|$,
+[$\lesssim$ \#1]):
+$\|A^{-1}\| \le \|\hat{A}^{-1}\|/(1 - 1/2)
+= 2\|\hat{A}^{-1}\|$
+\quad[$\lesssim$ \#3].
+Hence
+\begin{equation}\label{eq:prefilter-fwd}
+  \|v - \hat{v}\| \le \|A^{-1}\|(\|\Delta A\|\|\hat{v}\| + \|e\|)
+  \lesssim
+  p\emach\bigl(\kappa\|\hat{v}\| + \|\hat{A}^{-1}\|\bigr).
+\end{equation}
+From $(\hat{A} + E)\hat{v} = \one + e$
+and the reverse triangle inequality:
+$\|\hat{v}\| \ge
+(\|\one\| - \|e\|)/(\|\hat{A}\| + \|E\|)
+= (2 - 2p\emach)/\bigl((1 + p\emach)\|\hat{A}\|\bigr)
+\gtrsim 1/\|\hat{A}\|$,
+so $1/\|\hat{A}\| \lesssim \|\hat{v}\|$
+\quad[$\lesssim$ \#4]
+and $\|\hat{A}^{-1}\| = \kappa/\|\hat{A}\|
+\lesssim \kappa\|\hat{v}\|$.
+Substituting:
+\begin{equation}\label{eq:prefilter-fwd2}
+  \|v - \hat{v}\| \lesssim p\kappa\emach\|\hat{v}\|.
+\end{equation}
+
+\medskip\noindent\textbf{Step 3: Scalar error.}
+Decompose:
+\[
+  y^\top v - \hat{s}
+  = \underbrace{y^\top(v - \hat{v})}_{T_1}
+  + \underbrace{(y - \hat{y})^\top\hat{v}}_{T_2}
+  + \underbrace{(\hat{y}^\top\hat{v} - \hat{s})}_{T_3}.
+\]
+\emph{$T_1$} (solve error):
+$|T_1| \le \|y\|\|v - \hat{v}\|$
+by Cauchy--Schwarz.
+By Fact~\ref{fact:prefilter-cast} applied to the vector $y$
+(the $\sqrt{n}$ factor drops since $\|\cdot\|_F = \|\cdot\|_2$
+for vectors),
+$\|y - \hat{y}\| \le \emach\|y\|$,
+so $\|y\| \le \|\hat{y}\|/(1 - \emach) \lesssim \|\hat{y}\|$
+\quad[$\lesssim$ \#5].
+By~\eqref{eq:prefilter-fwd2}:
+$|T_1| \lesssim p\kappa\emach\|\hat{y}\|\|\hat{v}\|$.
+
+\emph{$T_2$} (casting $y$):
+$|T_2| \le \|y - \hat{y}\|\|\hat{v}\|
+\le \emach\|y\|\|\hat{v}\|
+\lesssim \emach\|\hat{y}\|\|\hat{v}\|$.
+
+\emph{$T_3$} (dot product rounding):
+by Fact~\ref{fact:prefilter-dot},
+$|T_3| \le \gamma_n\, |\hat{y}|^\top|\hat{v}|$
+where $\gamma_n = n\emach/(1 - n\emach) \lesssim n\emach$
+\quad[$\lesssim$ \#6].
+By Cauchy--Schwarz, $|\hat{y}|^\top|\hat{v}| \le \|\hat{y}\|\|\hat{v}\|$,
+so $|T_3| \lesssim n\emach\|\hat{y}\|\|\hat{v}\|$.
+
+\medskip\noindent\textbf{Step 4: Combine.}
+Since $\kappa \ge 1$, the $T_2$ and $T_3$ terms
+are absorbed:
+\[
+  |y^\top v - \hat{s}|
+  \lesssim (p + 1 + n)\kappa\emach\|\hat{y}\|\|\hat{v}\|.
+\]
+For $n = 4$, $p \le 16$: pre-factor $= 21$.
+With 6 factors of 2: $C \le 21 \cdot 2^6 = 1344 < 10^4$.
+\end{proof}
+
+\begin{remark}\label{rem:prefilter-constants}
+The 6 factors of~2:
+\#1~$\|A\| \lesssim \|\hat{A}\|$,
+\#2~$\|\hat{A}\| \lesssim \|A\|$,
+\#3~Banach lemma,
+\#4~lower bound on $\|\hat{v}\|$,
+\#5~$\|y\| \lesssim \|\hat{y}\|$,
+\#6~$\gamma_n$.
+Pre-factor $21$, total $C \le 1344$.
+
+For $\kappa = 1$ and $O(1)$ data:
+indeterminate zone $\approx 10^4 \cdot 10^{-16} = 10^{-12}$.
+For $\kappa = 10^8$: zone $\approx 10^{-4}$.
+\end{remark}
+
+% References:
+% - N. J. Higham, Accuracy and Stability of Numerical Algorithms,
+%   2nd ed., SIAM, 2002.
+% - G. H. Golub and C. F. Van Loan, Matrix Computations,
+%   4th ed., Johns Hopkins University Press, 2013.

@@ -1,0 +1,622 @@
+% math.tex — algorithms module
+% Mathematical results supporting crates/src/algorithms/
+%
+% Labels defined here:
+%   alg:ehz, alg:billiard, alg:tube,
+%   cor:adjacency-pruning,
+%   def:tube, def:tube-data, def:tube-extension, def:tube-close,
+%   def:rotation-increment, def:symplectic-polytope,
+%   lem:base-point-recovery, lem:fixed-point, lem:lagrangian-facets,
+%   lem:prune-action, lem:prune-empty, lem:prune-rotation, lem:prune-simple,
+%   lem:shoelace (cross-ref to geom/math.tex),
+%   lem:sigma-structure,
+%   rem:beta-to-tau,
+%   thm:billiard-characterization, thm:bounce-bound,
+%   thm:conformality, thm:sympl-invariance
+%
+% Labels referenced but defined elsewhere (do NOT redefine):
+%   lem:kkt (kkt/math.tex), def:ehz-capacity (geom/math.tex),
+%   thm:hko-counterexample (geom/math.tex),
+%   lem:numerical-transition-feasibility (kkt/math.tex),
+%   lem:q-error-bound (kkt/math.tex)
+%
+% Sources: thesis/general-case-algorithm.tex,
+%   thesis/pruned-general-case-algorithm.tex,
+%   thesis/lagrangian-product-algorithm.tex,
+%   thesis/lagrangian-product-algorithm-proof.tex,
+%   thesis/tube-algorithm.tex,
+%   thesis/simple-minimizer-existence.tex,
+%   .rs doc comments (stubs for labels not yet in thesis)
+
+% \input'd from crates/src/math.tex — do not add \documentclass or \begin{document}
+
+% ====================================================================
+% Part 1: General-case algorithm (HK2017)
+% ====================================================================
+
+\begin{algorithm}[EHZ capacity]\label{alg:ehz}
+% Jörn: text approved (06a976c)
+% Source: thesis/general-case-algorithm.tex
+Computes $c_{\mathrm{EHZ}}(K)$ via exhaustive enumeration.
+
+\smallskip\noindent
+\emph{Input:} $(n_1, h_1), \ldots, (n_F, h_F)$.
+\quad
+\emph{Output:} $c_{\mathrm{EHZ}}(K)$.
+
+\smallskip\noindent
+For each nonempty subset $S \subseteq \{1, \ldots, F\}$
+and each permutation $\sigma$ of $S$
+(identified up to cyclic shifts):
+
+\begin{enumerate}
+\item \textbf{Define}
+  the normal matrix $N \in \mathbb{R}^{|S| \times 4}$,
+  action matrix $H \in \mathbb{R}^{|S| \times |S|}$,
+  and height vector $\eta \in \mathbb{R}^{|S|}$:
+  \begin{align*}
+    N_{id} &= n_{\sigma(i),d},
+      & i &= 1, \ldots, |S|, \quad d = 1, \ldots, 4, \\
+    H_{ij} &= \begin{cases}
+      \omega_0(n_{\sigma(i)}, n_{\sigma(j)}) & \text{if } i < j, \\
+      0 & \text{if } i = j, \\
+      \omega_0(n_{\sigma(j)}, n_{\sigma(i)}) & \text{if } i > j,
+    \end{cases} \\
+    \eta_i &= h_{\sigma(i)},
+      & i &= 1, \ldots, |S|.
+  \end{align*}
+
+\item \textbf{Solve.}
+  \[
+    \begin{pmatrix} H & N & \eta \\ N^\top & 0 & 0 \\ \eta^\top & 0 & 0 \end{pmatrix}
+    \begin{pmatrix} \beta \\ \mu \\ \xi \end{pmatrix}
+    = \begin{pmatrix} 0 \\ 0 \\ 1 \end{pmatrix}.
+  \]
+
+\item \textbf{Filter.}
+  Discard $(S, \sigma)$ if the system has no solution, or
+  if $\beta_i \leq 0$ for any~$i$.
+  If the system has multiple solutions, choose any solution
+  with $\beta_i > 0$ for all~$i$, if one exists.
+
+\item \textbf{Evaluate.}
+  Record $\beta^\top H \beta$.
+\end{enumerate}
+
+\noindent
+Return
+$c_{\mathrm{EHZ}}(K) = \bigl(\max_{S,\sigma} \beta^\top H \beta\bigr)^{-1}$.
+\end{algorithm}
+
+
+\begin{corollary}[Adjacency pruning]\label{cor:adjacency-pruning}
+% Jörn: text approved (0839595)
+% Source: thesis/pruned-general-case-algorithm.tex
+In Algorithm~\ref{alg:ehz}, discard any
+$(S, \sigma)$ for which some consecutive pair
+$\sigma(k), \sigma(k{+}1)$ (cyclically) satisfies
+$F_{\sigma(k)} \cap F_{\sigma(k+1)} = \emptyset$.
+Equivalently, restrict to cyclic orderings~$\sigma$ of~$S$ that
+form a Hamiltonian cycle in the induced subgraph~$G_K[S]$.
+\end{corollary}
+
+
+\begin{theorem}[Conformality]\label{thm:conformality}
+% [TODO: JÖRN - verify statement, add proof]
+% Source: hk2017/conformality_test.rs doc comment
+EHZ capacity is degree-2 homogeneous: for any convex body $K$
+and $\alpha > 0$,
+\[
+  c_{\mathrm{EHZ}}(\alpha K) = \alpha^2\, c_{\mathrm{EHZ}}(K).
+\]
+\end{theorem}
+
+
+\begin{theorem}[Symplectic invariance]\label{thm:sympl-invariance}
+% [TODO: JÖRN - verify statement, add proof]
+% Source: hk2017/symplectic_invariance_test.rs doc comment
+EHZ capacity is invariant under symplectomorphisms: for any
+$M \in \operatorname{Sp}(4)$ and $b \in \mathbb{R}^4$,
+\[
+  c_{\mathrm{EHZ}}(MK + b) = c_{\mathrm{EHZ}}(K).
+\]
+\end{theorem}
+
+
+% ====================================================================
+% Part 2: Orbit recovery
+% ====================================================================
+
+\begin{lemma}[Base point recovery]\label{lem:base-point-recovery}
+% Jörn: math approved (f7d26ea)
+% Source: thesis/simple-minimizer-existence.tex
+Let $K$ be a polytope and $(\sigma, \tau, b)$ a simple orbit
+with $m$ active facets
+$S = \{\sigma(k) : \tau_k > 0\}$.
+Define the accumulated displacements
+\[
+  v_0 = 0, \qquad
+  v_k = \sum_{j=1}^{k-1} \tau_j\, R_{\sigma(j)}
+  \quad \text{for } k = 1, \ldots, m.
+\]
+A point $b \in \mathbb{R}^4$ is a valid base point
+(i.e., the orbit $\gamma$ with $\gamma(0) = b$ and
+velocity $R_{\sigma(k)}$ on the $k$-th segment
+is a generalized Reeb orbit on~$\partial K$) if and only if:
+\begin{enumerate}
+\item \emph{On-facet (equality):}
+  for each active $k$,
+  $\langle n_{\sigma(k)},\, b \rangle
+    = h_{\sigma(k)} - \langle n_{\sigma(k)},\, v_k \rangle$;
+\item \emph{Inside $K$ (inequality):}
+  for each active segment $k$ and all $s \in [0, \tau_k]$,
+  $\langle n_j,\, b + v_k + s\, R_{\sigma(k)} \rangle
+    \leq h_j$ for all $j = 1, \ldots, F$.
+\end{enumerate}
+The equality constraints form
+a linear system $N_S\, b = r$ with $m$ equations and $4$~unknowns.
+The set of valid base points is a convex polytope of
+dimension at most $4 - \operatorname{rank}(N_S)$.
+\end{lemma}
+
+\begin{proof}
+\emph{Equality constraints.}
+During the $k$-th segment, the orbit position is
+\[
+  \gamma(t) = b + v_k + (t - t_k)\, R_{\sigma(k)},
+  \quad t \in [t_k,\, t_k + \tau_k],
+\]
+where $t_k = \sum_{j=1}^{k-1} \tau_j$.
+For $\gamma$ to lie on facet $F_{\sigma(k)}$,
+we require $\langle n_{\sigma(k)},\, \gamma(t) \rangle
+= h_{\sigma(k)}$ throughout the segment.
+Since $R_{\sigma(k)}$ is tangent to $F_{\sigma(k)}$
+($\langle n_{\sigma(k)}, R_{\sigma(k)} \rangle = 0$),
+the time-dependent term vanishes:
+\[
+  \langle n_{\sigma(k)},\, \gamma(t) \rangle
+  = \langle n_{\sigma(k)},\, b + v_k \rangle.
+\]
+Hence the on-facet condition for the entire segment
+reduces to a single equation.
+
+\emph{Inequality constraints.}
+The orbit must remain inside~$K$:
+$\langle n_j, \gamma(t) \rangle \leq h_j$
+for all $j$ and all~$t$.
+Since $\gamma(t)$ is affine in~$t$ on each segment,
+each inequality is linear in~$s$.
+A linear function on $[0, \tau_k]$ attains its
+maximum at an endpoint, so it suffices to
+check at $s = 0$ and $s = \tau_k$ only.
+
+\emph{Solution structure.}
+The equality constraints are a linear system
+$N_S\, b = r$ in~$b \in \mathbb{R}^4$.
+Its solution set is an affine subspace of
+dimension $4 - \operatorname{rank}(N_S)$.
+The inequality constraints are linear in~$b$,
+so the intersection is a convex polytope.
+\end{proof}
+
+
+\begin{remark}[Conversion from algorithm output]\label{rem:beta-to-tau}
+% Jörn: math approved (f7d26ea)
+% Source: thesis/simple-minimizer-existence.tex
+Algorithm~\ref{alg:ehz} outputs a permutation~$\sigma$ and
+a vector~$\beta$ with $\beta_i \geq 0$ and
+$\sum_i \beta_i h_i = 1$.
+The dwell times are
+\[
+  \tau_k = T\, h_{\sigma(k)}\, \beta_{\sigma(k)},
+\]
+where $T = c_{\mathrm{EHZ}}(K)$ is the capacity
+(the period of the orbit).
+\end{remark}
+
+
+% ====================================================================
+% Part 3: Billiard algorithm (Lagrangian products)
+% ====================================================================
+
+\begin{lemma}[Facet structure of Lagrangian products]\label{lem:lagrangian-facets}
+% Source: thesis/lagrangian-product-algorithm-proof.tex
+Let $K = K_q \times K_p$ be a Lagrangian product.
+Let $K_q$ have edges with outward unit normals
+$\hat{n}_1^q, \ldots, \hat{n}_{F_q}^q \in S^1 \subset L_q$
+and heights $h_1^q, \ldots, h_{F_q}^q > 0$,
+and similarly $\hat{n}_1^p, \ldots, \hat{n}_{F_p}^p$ and $h_j^p$ for~$K_p$.
+Then $K$ has $F = F_q + F_p$ facets, partitioned into:
+\begin{itemize}
+\item \emph{$q$-facets} with normals $n_i = (\hat{n}_i^q, 0)$
+  and heights $h_i = h_i^q$, for $i = 1, \ldots, F_q$;
+\item \emph{$p$-facets} with normals $n_j = (0, \hat{n}_j^p)$
+  and heights $h_j = h_j^p$, for $j = 1, \ldots, F_p$.
+\end{itemize}
+Every facet normal lies entirely in $L_q$ or entirely in $L_p$.
+\end{lemma}
+
+\begin{proof}
+A facet of $K_q \times K_p$ arises from a facet (edge) of
+one factor and the full other factor: either
+$\text{edge}_i(K_q) \times K_p$ or $K_q \times \text{edge}_j(K_p)$.
+The outward normal to $\text{edge}_i(K_q) \times K_p$ is
+$(\hat{n}_i^q, 0)$ with height $h_{K_q}(\hat{n}_i^q) = h_i^q$;
+similarly for $p$-facets.
+\end{proof}
+
+
+\begin{lemma}[Sigma structure for Lagrangian products]\label{lem:sigma-structure}
+% Source: thesis/lagrangian-product-algorithm-proof.tex
+Let $K = K_q \times K_p$ be a Lagrangian product, and let
+$(\sigma, \tau)$ be a simple Reeb orbit on $\partial K$
+with all $\tau_k > 0$.
+Write the cyclic sequence $\sigma$ as a word in the alphabet
+$\{Q, P\}$ by replacing each $q$-facet index with $Q$ and each
+$p$-facet index with $P$.
+Then:
+\begin{enumerate}
+\item[(i)] The word has the form
+  $\bigl([Q \mid QQ]\,[P \mid PP]\bigr)^k$ for some $k \geq 1$:
+  alternating blocks of $q$- and $p$-facets, each block of length
+  one or two.
+
+\item[(ii)] Within each block of length two, the two facets are
+  adjacent in $G_K$
+  (consecutive edges of $K_q$ or $K_p$ sharing a vertex).
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+\textbf{Claim: no three consecutive same-type facets.}\quad
+Suppose for contradiction that $\sigma$ contains three
+consecutive $q$-facets $q_1, q_2, q_3$ (all with $\tau > 0$).
+The Reeb vectors $R_{q_1}, R_{q_2}, R_{q_3}$ all lie in~$L_p$,
+so $q$ is constant throughout the three segments.
+The orbit at the breakpoint between $q_1$ and $q_2$ lies on
+both facets, meaning $\langle q, \hat{n}_1^q \rangle = h_1^q$
+and $\langle q, \hat{n}_2^q \rangle = h_2^q$: the point $q$
+lies on both edges $1$ and $2$ of~$K_q$, hence at their
+common vertex $v_{12}$.
+Similarly, the breakpoint between $q_2$ and $q_3$ forces $q$
+to lie at vertex $v_{23}$ (intersection of edges $2$ and $3$).
+Since $q$ is constant, $v_{12} = v_{23}$.
+But for a nondegenerate convex polygon, $v_{12}$ and $v_{23}$
+are the two distinct endpoints of edge~$2$: contradiction.
+
+The same argument applies to $p$-facets by symmetry.
+
+\medskip\noindent
+\textbf{Alternation and block structure.}\quad
+Since no three consecutive facets have the same type, each maximal
+run of same-type facets has length one or two.
+% [TODO: JÖRN - alternation argument is imprecise: two adjacent length-1
+%   q-runs would give only 2 consecutive q-facets, not 3. The correct
+%   reason is that adjacent same-type maximal runs would merge.]
+Consecutive runs must alternate between $q$ and $p$.
+In a cyclic sequence, alternation forces equal block counts:
+$k$ blocks of $q$-facets and $k$ blocks of $p$-facets.
+
+\medskip\noindent
+\textbf{Within-block adjacency.}\quad
+Follows directly from the adjacency constraint:
+consecutive facets in $\sigma$ share a breakpoint, hence are
+adjacent in~$G_K$.
+Two same-type adjacent facets correspond to edges sharing a
+vertex in the 2D polygon.
+\end{proof}
+
+
+\begin{theorem}[Billiard characterization of EHZ capacity]%
+\label{thm:billiard-characterization}
+% Source: thesis/lagrangian-product-algorithm-proof.tex
+% Attribution: Artstein-Avidan \& Ostrover (2014); Rudolf (2022).
+For a Lagrangian product $K = K_q \times K_p$:
+\[
+  c_{\mathrm{EHZ}}(K_q \times K_p)
+  = \min\bigl\{ \ell_{K_p^\circ}(\eta) :
+  \eta \text{ is a closed $K_p$-billiard trajectory in } K_q \bigr\},
+\]
+where $\ell_{K_p^\circ}(\eta) = \sum_i h_{K_p}(\Delta_i)$ is the
+$K_p^\circ$-length and $\Delta_i = x_{i+1} - x_i$ are the edge vectors.
+\end{theorem}
+% [TODO: JÖRN - proof is in the referenced papers, not reproduced here]
+
+
+\begin{theorem}[Bounce bound]%
+\label{thm:bounce-bound}
+% Source: thesis/lagrangian-product-algorithm-proof.tex
+% Attribution: Bezdek \& Bezdek (2009); Rudolf (2022).
+For convex polygons $K_q, K_p \subset \mathbb{R}^2$,
+the minimum in Theorem~\ref{thm:billiard-characterization}
+is achieved by a billiard trajectory with at most $3$ bounce points.
+\end{theorem}
+% [TODO: JÖRN - proof is in the referenced papers, not reproduced here]
+
+
+\begin{algorithm}[Billiard capacity]\label{alg:billiard}
+% Source: thesis/lagrangian-product-algorithm.tex
+Computes $c_{\mathrm{EHZ}}(K_q \times K_p)$
+via Theorem~\ref{thm:billiard-characterization}.
+
+\emph{Input:} Lagrangian product $K = K_q \times K_p$ in
+$H$-representation.
+\quad
+\emph{Output:} $c_{\mathrm{EHZ}}(K)$.
+
+\begin{enumerate}
+\item \textbf{Classify} facets into $q$-type and $p$-type
+  (Lemma~\ref{lem:lagrangian-facets}).
+\item \textbf{Build blocks.}
+  For each polygon ($K_q$ and $K_p$), enumerate all
+  \emph{single-facet blocks} (one edge) and
+  \emph{pair blocks} (two adjacent edges, both orderings).
+% [TODO: JÖRN - k=1 is excluded here. The thesis proves this via
+%   lem:k1-infeasible (closure condition forces antiparallel normals
+%   on adjacent edges, impossible for convex polygons). Add citation or
+%   copy the lemma.]
+\item \textbf{Enumerate.}
+  For $k = 2, 3$: for each selection of $k$ non-overlapping
+  $q$-blocks and $k$ non-overlapping $p$-blocks, and each
+  interleaving into the pattern
+  $\bigl([Q \mid QQ]\,[P \mid PP]\bigr)^k$,
+  flatten the blocks into a facet sequence~$\sigma$.
+\item \textbf{Solve and filter.}
+  For each $\sigma$: solve the KKT system,
+  filter by $\beta_i > 0$ and $Q(\beta) > 0$, compute
+  $A(S, \sigma) = \tfrac{1}{2}\, Q(\beta)^{-1}$.
+\item \textbf{Return} $\min A(S, \sigma)$.
+\end{enumerate}
+\end{algorithm}
+
+
+% ====================================================================
+% Part 4: Tube algorithm
+% ====================================================================
+
+\begin{definition}[Symplectic polytope]\label{def:symplectic-polytope}
+% Source: thesis/tube-algorithm.tex
+A \emph{Lagrangian $2$-face} is a $2$-face $F_{ij}$ on which
+$\omega_0|_{T F_{ij}} = 0$, equivalently $\omega_0(n_i, n_j) = 0$.
+A \emph{symplectic polytope} is a polytope $K \subset \mathbb{R}^4$
+that has no Lagrangian $2$-face:
+\[
+  \omega_0(n_i, n_j) \neq 0
+  \qquad \text{for all pairs } (i,j)
+  \text{ such that } F_i \cap F_j \text{ is a $2$-face.}
+\]
+\end{definition}
+
+
+\begin{definition}[Tube]\label{def:tube}
+% Source: thesis/tube-algorithm.tex
+The \emph{tube} $T(\sigma)$ of a type $\sigma = (\sigma(1), \ldots, \sigma(k))$
+is the set of all pure Reeb trajectories of type $\sigma$:
+\[
+  T(\sigma) \coloneqq \bigl\{
+    \gamma \colon \mathbb{R} \to \partial K
+    : \gamma \text{ is a pure Reeb trajectory of type } \sigma
+  \bigr\}.
+\]
+A pure Reeb trajectory of type $\sigma$ has
+$\dot{\gamma}(t) = R_{\sigma(i)}$ on each interval
+$(t_{i-1}, t_i)$ for $i = 1, \ldots, k$,
+where $F_{\sigma(i)} \to F_{\sigma(i+1)}$ is a directed $2$-face
+for each $i = 1, \ldots, k-1$.
+\end{definition}
+
+
+\begin{definition}[Tube data structure]\label{def:tube-data}
+% Source: thesis/tube-algorithm.tex
+A tube $T(\sigma)$ is represented by:
+\begin{enumerate}
+\item $\operatorname{Start} \subset F_{\sigma(1)} \cap F_{\sigma(2)}$:
+  closed convex polygon.
+\item $\operatorname{End} \subset F_{\sigma(k-1)} \cap F_{\sigma(k)}$:
+  closed convex polygon.
+\item $\varphi \colon \operatorname{Start} \to \operatorname{End}$:
+  the affine map sending $\gamma(t_1)$ to $\gamma(t_{k-1})$.
+\item $a \colon \operatorname{End} \to \mathbb{R}$:
+  the affine function giving the total elapsed time (= action)
+  of $\gamma|_{[t_1, t_{k-1}]}$.
+\item $\rho \in \mathbb{R}$:
+  the rotation number accumulated on $(t_1, t_{k-1})$.
+\end{enumerate}
+\end{definition}
+
+
+\begin{definition}[Tube extension]\label{def:tube-extension}
+% Source: thesis/tube-algorithm.tex
+Let $T_k = T(\sigma(1), \ldots, \sigma(k))$ be a tube
+and $\sigma(k+1)$ satisfy $F_{\sigma(k)} \to F_{\sigma(k+1)}$.
+Write $\Phi \coloneqq \Phi_{\sigma(k-1),\sigma(k),\sigma(k+1)}$
+for the step map.
+The extended tube $T(\sigma(1), \ldots, \sigma(k+1))$ has data:
+\begin{align*}
+  \operatorname{End}' &\coloneqq
+    \Phi(\operatorname{End}) \cap \bigl( F_{\sigma(k)} \cap F_{\sigma(k+1)} \bigr), \\
+  \varphi' &\coloneqq \Phi \circ \varphi, \\
+  \operatorname{Start}' &\coloneqq (\varphi')^{-1}(\operatorname{End}'), \\
+  a'(y') &\coloneqq
+    a\bigl(\Phi^{-1}(y')\bigr)
+    + \Delta a_{\sigma(k-1),\sigma(k),\sigma(k+1)}\bigl(\Phi^{-1}(y')\bigr), \\
+  \rho' &\coloneqq \rho + \Delta\rho_{\sigma(k),\sigma(k+1)}.
+\end{align*}
+\end{definition}
+
+
+\begin{definition}[Rotation increment at a breakpoint]\label{def:rotation-increment}
+% Source: thesis/tube-algorithm.tex
+Let $F_j \to F_l$ be a directed $2$-face.
+The \emph{rotation increment} $\Delta\rho_{jl} \in \mathbb{R}$
+is the contribution to the rotation number at the breakpoint
+where a Reeb trajectory transitions from velocity $R_j$ to $R_l$.
+It is computed from the \emph{transition matrix}
+$\psi_{F_{jl}} \in \operatorname{Sp}(2)$.
+By the theory of CH2021, $\psi_{F_{jl}}$ is positive elliptic
+and $\Delta\rho_{jl} \in (0, \tfrac{1}{2})$.
+\end{definition}
+
+
+\begin{definition}[Closing a tube]\label{def:tube-close}
+% Source: thesis/tube-algorithm.tex
+Given a tube $T(\sigma(1), \ldots, \sigma(k))$,
+its \emph{closure} is obtained by performing two extension steps:
+appending $\sigma(k+1) = \sigma(1)$ and then $\sigma(k+2) = \sigma(2)$.
+The result is a tube $T(\sigma(1), \ldots, \sigma(k), \sigma(1), \sigma(2))$
+with flow map $\varphi'' \colon \operatorname{Start} \to F_{\sigma(1)} \cap F_{\sigma(2)}$
+and action function $a'' \colon \operatorname{End}'' \to \mathbb{R}$.
+\end{definition}
+
+
+% ── Pruning lemmas ──
+
+\begin{lemma}[Pruning: empty tube]\label{lem:prune-empty}
+% Source: thesis/tube-algorithm.tex
+If $\operatorname{Start}(\sigma) = \emptyset$ or $\operatorname{End}(\sigma) = \emptyset$,
+then $T(\sigma) = \emptyset$.
+\end{lemma}
+
+\begin{proof}
+A trajectory $\gamma \in T(\sigma)$ satisfies
+$\gamma(t_1) \in \operatorname{Start}(\sigma)$ and
+$\gamma(t_{k-1}) \in \operatorname{End}(\sigma)$ by definition.
+\end{proof}
+
+
+\begin{lemma}[Pruning: action lower bound]\label{lem:prune-action}
+% Source: thesis/tube-algorithm.tex
+Let $c^* > 0$ be the action of the current best candidate.
+If $\min_{y \in \operatorname{End}} a(y) > c^*$,
+then $T(\sigma)$ contains no minimum-action orbit.
+\end{lemma}
+
+\begin{proof}
+% [TODO: JÖRN - the inequality A(gamma) >= a(gamma(t_{k-1})) asserts that
+%   closing a tube adds non-negative action. This is plausible but not proved here.]
+Every $\gamma \in T(\sigma)$ has
+$A(\gamma) \geq a(\gamma(t_{k-1})) \geq \min_{\operatorname{End}} a > c^*$.
+Since the minimum-action orbit has action $\leq c^*$, it is not in $T(\sigma)$.
+\end{proof}
+
+
+\begin{lemma}[Pruning: rotation upper bound]\label{lem:prune-rotation}
+% Source: thesis/tube-algorithm.tex
+Let $\rho$ be the rotation number of tube $T(\sigma)$.
+If $\rho \geq 2$, then $T(\sigma)$ contains no minimum-action orbit.
+\end{lemma}
+
+\begin{proof}
+By CH2021, the minimum-action combinatorial Reeb orbit satisfies
+$\rho_{\mathrm{comb}} \leq 2$.
+The closing step adds at least two
+rotation increments, each in $(0, \tfrac{1}{2})$,
+so any closed orbit from $T(\sigma)$ has total rotation
+$> \rho \geq 2$.
+Hence no closed orbit from $T(\sigma)$ satisfies
+$\rho_{\mathrm{comb}} \leq 2$.
+\end{proof}
+
+
+\begin{lemma}[Pruning: simple orbit]\label{lem:prune-simple}
+% Source: thesis/tube-algorithm.tex
+If $\sigma(i) = \sigma(j)$ for some $1 \leq i < j \leq k$,
+then $T(\sigma)$ contains no minimum-action orbit.
+\end{lemma}
+
+\begin{proof}
+% [TODO: JÖRN - cite HK2017 or CH2021 for simplicity of the minimum-action orbit.]
+The minimum-action generalized Reeb orbit is simple:
+it visits each facet on a connected time interval and does not repeat facets.
+A pure Reeb trajectory of type $\sigma$, when closed,
+visits $F_{\sigma(i)}$ twice if $\sigma(i) = \sigma(j)$.
+Hence no closed orbit from $T(\sigma)$ can be the minimum-action orbit.
+\end{proof}
+
+
+\begin{lemma}[Closed orbits as fixed points]\label{lem:fixed-point}
+% Source: thesis/tube-algorithm.tex
+The closed Reeb orbits in the closure of $T(\sigma)$ are in bijection with
+fixed points of $\varphi'' \colon \operatorname{Start}' \to F_{\sigma(1)} \cap F_{\sigma(2)}$:
+\[
+  \gamma \text{ is a closed orbit in } T(\sigma)
+  \;\Longleftrightarrow\;
+  \varphi''(\gamma(t_1)) = \gamma(t_1)
+  \;\text{ and }\;
+  \gamma(t_1) \in \operatorname{Start}'.
+\]
+The action of the closed orbit through the fixed point $x$ is $a''(x)$.
+\end{lemma}
+
+\begin{proof}
+% [TODO: JÖRN - check time index: def:tube-close appends two facets
+%   (sigma(k+1) and sigma(k+2)), so the final time may be t_{k+2}, not t_{k+1}.]
+A pure Reeb trajectory $\gamma \in T(\sigma(1), \ldots, \sigma(k))$
+is closed iff $\gamma(t_{k+1}) = \gamma(t_1)$.
+After closure,
+\[
+  \gamma(t_{k+1}) = \varphi''(\gamma(t_1)),
+\]
+so the periodicity condition is $\varphi''(\gamma(t_1)) = \gamma(t_1)$.
+The action is $a''(\varphi''(\gamma(t_1))) = a''(\gamma(t_1))$.
+\end{proof}
+
+
+\begin{algorithm}[Tube algorithm]\label{alg:tube}
+% Source: thesis/tube-algorithm.tex
+Computes $c_{\mathrm{EHZ}}(K)$ for a symplectic polytope $K$
+(assuming no Type~2 orbits).
+
+\smallskip\noindent
+\emph{Input:} Facet data $(n_1, h_1), \ldots, (n_F, h_F)$.
+\quad
+\emph{Output:} $c_{\mathrm{EHZ}}(K)$.
+
+\smallskip\noindent
+\textbf{Precomputation.}
+\begin{enumerate}
+\item For each pair $(i,j)$: check if $F_i \cap F_j$ is a $2$-face
+  and compute $\omega_0(n_i, n_j)$. Record directed edges $F_i \to F_j$
+  where $\omega_0(n_i, n_j) > 0$.
+\item For each valid triple $(i,j,l)$ with $F_i \to F_j$ and $F_j \to F_l$:
+  compute the step map $\Phi_{ijl}$,
+  action increment $\Delta a_{ijl}$,
+  and rotation increment $\Delta\rho_{jl}$.
+\end{enumerate}
+
+\smallskip\noindent
+\textbf{Search.}
+Initialize $c^* = +\infty$.
+For each directed edge $(i, j)$ with $F_i \to F_j$,
+initialize tube $T(i, j)$.
+Then recurse: given a tube $T(\sigma(1), \ldots, \sigma(k))$:
+
+\begin{enumerate}
+\item \textbf{Prune.} Discard if any of the following hold:
+  \begin{itemize}
+    \item $\operatorname{Start} = \emptyset$ or $\operatorname{End} = \emptyset$
+      (Lemma~\ref{lem:prune-empty});
+    \item $\min_{y \in \operatorname{End}} a(y) > c^*$
+      (Lemma~\ref{lem:prune-action});
+    \item $\rho \geq 2$ (Lemma~\ref{lem:prune-rotation}).
+  \end{itemize}
+
+\item \textbf{Try closing.}
+  Form the closure
+  (Definition~\ref{def:tube-close}).
+  Find fixed points $x$ of $\varphi''$ in $\operatorname{Start}'$
+  (Lemma~\ref{lem:fixed-point}).
+  For each fixed point $x$, update $c^* \leftarrow \min(c^*, a''(x))$.
+
+\item \textbf{Extend.}
+  For each $l \notin \{\sigma(1), \ldots, \sigma(k)\}$
+  with $F_{\sigma(k)} \to F_l$
+  (Lemma~\ref{lem:prune-simple}):
+  compute $T(\sigma(1), \ldots, \sigma(k), l)$
+  (Definition~\ref{def:tube-extension}) and recurse.
+\end{enumerate}
+
+\noindent
+Return $c^*$.
+\end{algorithm}
+

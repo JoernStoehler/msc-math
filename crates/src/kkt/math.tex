@@ -1,0 +1,383 @@
+% math.tex — kkt module
+% Mathematical results supporting crates/src/kkt/
+%
+% Labels defined here:
+%   lem:kkt, lem:H-quadratic, lem:well-defined,
+%   lem:numerical-transition-feasibility, lem:q-error-bound
+%
+% Sources: thesis/general-case-algorithm.tex,
+%   thesis/general-case-algorithm-proof.tex,
+%   thesis/appendix-numerical.tex
+%
+% Notation: N = normal matrix, H = action matrix, eta = height vector,
+%   beta = dwell-time weights, mu = Lagrange multiplier (closure),
+%   xi = Lagrange multiplier (normalization).
+
+% \input'd from crates/src/math.tex — do not add \documentclass or \begin{document}
+
+% ── Setup: linear system referenced by the lemmas ──
+%
+% For a polytope K with facets (n_i, h_i) and a pair (S, sigma),
+% define the normal matrix N, action matrix H, and height vector eta:
+%   N_{id} = n_{sigma(i),d},
+%   H_{ij} = omega_0(n_{sigma(j)}, n_{sigma(i)})  for i > j,
+%            0                                      for i = j,
+%            omega_0(n_{sigma(i)}, n_{sigma(j)})    for i < j,
+%   eta_i  = h_{sigma(i)}.
+%
+% The linear system is:
+%   [ H      N    eta ] [ beta ]   [ 0 ]
+%   [ N^T    0    0   ] [ mu   ] = [ 0 ]
+%   [ eta^T  0    0   ] [ xi   ]   [ 1 ]
+%
+% See thesis/general-case-algorithm.tex, Algorithm [alg:ehz].
+
+
+\begin{lemma}[Double sum as quadratic form]\label{lem:H-quadratic}
+% Jörn: text approved (b7a8bc0) — from \begin{lemma} to \end{proof}
+\[
+  \sum_{1 \leq j < i \leq |S|}
+    \beta_{\sigma(i)}\, \beta_{\sigma(j)}\,
+    \omega_0(n_{\sigma(j)},\, n_{\sigma(i)})
+  = \tfrac{1}{2}\, \beta^\top H\, \beta.
+\]
+In particular,
+$\nabla_{\beta}
+  (\beta^\top H\, \beta) = 2H \beta$.
+\end{lemma}
+
+\begin{proof}
+For $i > j$,
+$H_{ij} = \omega_0(n_{\sigma(j)}, n_{\sigma(i)})$
+by definition of~$H$.
+Hence the double sum equals
+$\sum_{j < i} \beta_{\sigma(i)}\, \beta_{\sigma(j)}\, H_{ij}$.
+Since $H$ is symmetric with zero diagonal,
+$\sum_{j < i} \beta_{\sigma(i)} \beta_{\sigma(j)} H_{ij}
+= \tfrac{1}{2}\, \beta^\top H\, \beta$.
+\end{proof}
+
+
+\begin{lemma}[KKT conditions and the algorithm's linear system]%
+\label{lem:kkt}
+% Jörn: text approved (b7a8bc0) — from \begin{lemma} to \end{proof}
+% Notation updated to symmetric convention: (lambda, nu) -> (mu, xi)
+For fixed $(S, \sigma)$, the linear
+system is the Lagrange system for
+critical points of
+$\beta^\top H\, \beta$ on the constraint
+manifold
+$\{N^\top \beta = 0,\; \eta^\top \beta = 1\}$.
+\end{lemma}
+
+\begin{proof}
+The gradient is
+$\nabla_{\beta}
+  (\beta^\top H \beta) = 2H \beta$
+(Lemma~\ref{lem:H-quadratic}).
+The Lagrange conditions
+$\nabla(\beta^\top H \beta)
+= -N\lambda - \eta\nu$
+give
+$2H\beta + N\lambda + \eta\nu = 0$.
+Absorbing the factor~$2$ into the multipliers
+($\mu = \lambda/2$, $\xi = \nu/2$):
+\[
+  H \beta + N \mu + \eta \xi = 0,
+\]
+which, together with $N^\top \beta = 0$ and
+$\eta^\top \beta = 1$, is exactly
+the linear system.
+\end{proof}
+
+
+\begin{lemma}[Well-definedness]\label{lem:well-defined}
+% Jörn: text approved (06a976c) — statement
+% Jörn: text approved (0bbc647) — proof
+% Notation updated to symmetric convention: (lambda, nu) -> (mu, xi)
+If the linear system has multiple solutions
+$(\beta, \mu, \xi)$, they all yield the same value
+$\beta^\top H \beta$.
+\end{lemma}
+
+\begin{proof}
+Write the three block rows of the linear system as
+\[
+  \text{(I)}\ H\beta + N\mu + \eta\xi = 0, \qquad
+  \text{(II)}\ N^\top \beta = 0, \qquad
+  \text{(III)}\ \eta^\top \beta = 1.
+\]
+For any solution, left-multiply~(I) by~$\beta^\top$:
+\[
+  \beta^\top H\beta
+  + \underbrace{(N^\top\beta)^\top}_{=\,0\text{ by (II)}}\mu
+  + \underbrace{(\eta^\top\beta)}_{=\,1\text{ by (III)}}\xi
+  = 0,
+\]
+so $\beta^\top H\beta = -\xi$.
+Now let $(\delta\beta, \delta\mu, \delta\xi)$ be any element
+of the null space, so that
+\[
+  \text{(I$'$)}\ H\,\delta\beta + N\,\delta\mu + \eta\,\delta\xi = 0, \qquad
+  \text{(II$'$)}\ N^\top\delta\beta = 0, \qquad
+  \text{(III$'$)}\ \eta^\top\delta\beta = 0.
+\]
+Left-multiply~(I) by~$\delta\beta^\top$:
+\[
+  \delta\beta^\top H\beta
+  + \underbrace{(N^\top\delta\beta)^\top}_{=\,0\text{ by (II$'$)}}\mu
+  + \underbrace{(\eta^\top\delta\beta)}_{=\,0\text{ by (III$'$)}}\xi
+  = 0.
+\]
+Left-multiply~(I$'$) by~$\delta\beta^\top$:
+\[
+  \delta\beta^\top H\,\delta\beta
+  + \underbrace{(N^\top\delta\beta)^\top}_{0}\delta\mu
+  + \underbrace{(\eta^\top\delta\beta)}_{0}\delta\xi
+  = 0.
+\]
+Therefore
+\[
+  (\beta + \delta\beta)^\top H(\beta + \delta\beta)
+  = \beta^\top H\beta
+    + 2\,\delta\beta^\top H\beta
+    + \delta\beta^\top H\,\delta\beta
+  = -\xi. \qedhere
+\]
+\end{proof}
+
+
+\begin{lemma}[Transition feasibility]%
+\label{lem:numerical-transition-feasibility}
+% Source: thesis/appendix-numerical.tex
+Let $K \subset \mathbb{R}^4$ be a convex polytope with
+facets $F_1, \ldots, F_m$ and outward normals~$n_k$
+(not necessarily unit).
+A \emph{transition} $F_i \to F_j$ is a segment of a
+Reeb trajectory that travels with velocity~$R_i$
+for positive time,
+then immediately with velocity~$R_j$ for positive time.
+A transition $F_i \to F_j$ exists if and only if
+\begin{enumerate}
+\item $\omega_0(n_i, n_j) \ge 0$, and
+\item $\exists\, x \in F_i \cap F_j$ with
+  $\langle n_k, x \rangle < h_k$
+  for all $k \notin \{i,j\}$ satisfying
+  $\omega_0(n_i, n_k) < 0$ or
+  $\omega_0(n_j, n_k) > 0$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+A transition $F_i \to F_j$ exists if and only if
+there is a point $x \in F_i \cap F_j$ and
+$\varepsilon > 0$ such that
+$x + t\, J_0 n_i \in K$ for $t \in [-\varepsilon, 0]$
+and $x + t\, J_0 n_j \in K$ for $t \in [0, \varepsilon]$:
+since $R_i = (2/h_i)\, J_0\, n_i$ with $h_i > 0$,
+traveling with velocity~$R_i$ is equivalent to
+moving in direction~$J_0 n_i$.
+
+\emph{Necessity.}
+Let $x \in F_i \cap F_j$ realize the transition.
+For the approach ($t < 0$) to satisfy
+the~$F_j$ constraint:
+$\langle n_j, x + t\, J_0 n_i \rangle
+= h_j + t\,\omega_0(n_i, n_j) \leq h_j$,
+which forces $\omega_0(n_i, n_j) \geq 0$
+(since $t < 0$).
+For the departure ($t > 0$), the~$F_i$ constraint gives
+$\langle n_i, x + t\, J_0 n_j \rangle
+= h_i - t\,\omega_0(n_i, n_j) \leq h_i$,
+again requiring $\omega_0(n_i, n_j) \geq 0$.
+This proves~(1).
+
+For~(2), suppose $k \notin \{i,j\}$ satisfies
+$\omega_0(n_i, n_k) < 0$.
+Then
+$\langle n_k, x + t\, J_0 n_i \rangle
+= \langle n_k, x \rangle + t\,\omega_0(n_i, n_k)$.
+Since $t < 0$ and $\omega_0(n_i, n_k) < 0$,
+their product $t\,\omega_0(n_i, n_k) > 0$, so
+$\langle n_k, x + t\, J_0 n_i \rangle
+> \langle n_k, x \rangle$.
+If $\langle n_k, x \rangle = h_k$, this
+exceeds~$h_k$, violating $x + t\, J_0 n_i \in K$.
+Hence $\langle n_k, x \rangle < h_k$.
+The case $\omega_0(n_j, n_k) > 0$ is analogous
+for the departure.
+
+\emph{Sufficiency.}
+Given $x \in F_i \cap F_j$ satisfying~(1) and~(2),
+we construct $\varepsilon > 0$ witnessing
+the transition.
+For $k \notin \{i,j\}$ with
+$\omega_0(n_i, n_k) \geq 0$ and
+$\omega_0(n_j, n_k) \leq 0$:
+$\langle n_k, x + t\, J_0 n_i \rangle
+\leq \langle n_k, x \rangle \leq h_k$
+for $t \leq 0$,
+and
+$\langle n_k, x + t\, J_0 n_j \rangle
+\leq \langle n_k, x \rangle \leq h_k$
+for $t \geq 0$.
+For the remaining $k \notin \{i,j\}$
+(those with $\omega_0(n_i, n_k) < 0$ or
+$\omega_0(n_j, n_k) > 0$),
+condition~(2) gives
+$\langle n_k, x \rangle < h_k$.
+Let $\delta$ be the minimum of
+$h_k - \langle n_k, x \rangle > 0$
+over these~$k$ (or any $\delta > 0$ if there are none),
+and choose
+$\varepsilon < \delta / \max_k(
+|\omega_0(n_i, n_k)| + |\omega_0(n_j, n_k)|)$.
+Then all halfspace constraints hold for the
+approach and departure, so $x$ together
+with~$\varepsilon$ witnesses the transition
+$F_i \to F_j$.
+\end{proof}
+
+
+\begin{lemma}[$Q$ error bound from KKT residual]%
+\label{lem:q-error-bound}
+% Source: thesis/appendix-numerical.tex
+Let $M$ be the symmetric KKT matrix
+with smallest eigenvalue magnitude
+$|\lambda_{\min}| = \min_j |\lambda_j| > 0$,
+and let $x_0 = (\beta_0, \mu_0, \xi_0)$ be the exact
+solution.
+Let $\hat x = (\hat\beta, \hat\mu, \hat\xi)$ be the
+numerical solution with residual
+\[
+  r \;=\; M\hat x - b
+  \;=\; \begin{pmatrix}
+    H\hat\beta + N\hat\mu + \eta\hat\xi \\
+    N^\top\hat\beta \\
+    \eta^\top\hat\beta - 1
+  \end{pmatrix}
+  \;=:\; \begin{pmatrix}r_1 \\ r_2 \\ r_3\end{pmatrix},
+\]
+where $r_1 \in \mathbb{R}^m$ is the stationarity residual,
+$r_2 \in \mathbb{R}^4$ is the constraint residual, and
+$r_3 \in \mathbb{R}$ is the normalisation residual.
+Define the \emph{residual-corrected objective}
+\[
+  \tilde Q
+  \;=\; Q(\hat\beta)
+    + \bigl(r_2^\top\hat\mu + r_3\,\hat\xi\bigr)
+\]
+and the \emph{error bound}
+\[
+  E \;=\; \frac{9}{2}\,\frac{\|r\|^2}{|\lambda_{\min}|}.
+\]
+Then $|Q(\beta_0) - \tilde Q| \leq E$.
+\end{lemma}
+
+\begin{proof}
+Write $\delta x = \hat x - x_0$ with components
+$(\delta\beta, \delta\mu, \delta\xi)$.
+Since $M x_0 = b$, we have $M\,\delta x = r$,
+hence $\|\delta x\| \leq \|r\| / |\lambda_{\min}|$ and
+each component satisfies the same bound:
+\[
+  \|\delta\beta\| \leq \frac{\|r\|}{|\lambda_{\min}|}, \quad
+  \|\delta\mu\| \leq \frac{\|r\|}{|\lambda_{\min}|}, \quad
+  |\delta\xi| \leq \frac{\|r\|}{|\lambda_{\min}|}.
+\]
+
+\emph{Step~1: expand $Q(\hat\beta) - Q(\beta_0)$.}
+Since $Q(\beta) = \tfrac{1}{2}\,\beta^\top H\,\beta$,
+\[
+  Q(\hat\beta) - Q(\beta_0)
+  = \delta\beta^\top H\,\beta_0
+    + \tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta.
+\]
+
+\emph{Step~2: rewrite the cross term using KKT.}
+The stationarity condition (first block of $M x_0 = b$) is
+$H\beta_0 + N\mu_0 + \eta\xi_0 = 0$.
+Hence
+\[
+  \delta\beta^\top H\,\beta_0
+  = -\delta\beta^\top(N\mu_0 + \eta\xi_0)
+  = -(N^\top\delta\beta)^\top \mu_0
+    - (\eta^\top\delta\beta)\,\xi_0.
+\]
+The constraint residual blocks give
+$N^\top\delta\beta = N^\top\hat\beta = r_2$
+(since $N^\top\beta_0 = 0$ by the exact constraint)
+and similarly $\eta^\top\delta\beta = r_3$, hence
+\[
+  -\delta\beta^\top H\,\beta_0
+  = r_2^\top\mu_0 + r_3\,\xi_0.
+\]
+Substituting into Step~1 and rearranging:
+\[
+  Q(\beta_0) = Q(\hat\beta) + (r_2^\top\mu_0 + r_3\,\xi_0)
+    - \tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta.
+\]
+
+\emph{Step~3: substitute numerical multipliers.}
+Write $\mu_0 = \hat\mu - \delta\mu$ and
+$\xi_0 = \hat\xi - \delta\xi$:
+\[
+  r_2^\top\mu_0 + r_3\,\xi_0
+  = (r_2^\top\hat\mu + r_3\,\hat\xi)
+    - (r_2^\top\delta\mu + r_3\,\delta\xi).
+\]
+The first term is the computable correction.
+The second is a second-order remainder:
+\[
+  |r_2^\top\delta\mu + r_3\,\delta\xi|
+  \leq \|r_2\|\,\|\delta\mu\| + |r_3|\,|\delta\xi|
+  \leq 2\,\frac{\|r\|^2}{|\lambda_{\min}|},
+\]
+using $\|r_2\|, |r_3| \leq \|r\|$
+and the component bounds.
+
+\emph{Step~4: bound the quadratic term
+  using the KKT block structure.}
+Expanding $\delta x^\top M\,\delta x$
+via the block structure
+$M = \bigl[\begin{smallmatrix}
+  H & N & \eta \\
+  N^\top & 0 & 0 \\
+  \eta^\top & 0 & 0
+\end{smallmatrix}\bigr]$
+gives
+\[
+  \delta\beta^\top H\,\delta\beta
+  = \delta x^\top M\,\delta x
+    - 2\,r_2^\top\delta\mu
+    - 2\,r_3\,\delta\xi,
+\]
+where we used $N^\top\delta\beta = r_2$
+and $\eta^\top\delta\beta = r_3$ from Step~2.
+For the first term,
+\[
+  |\delta x^\top M\,\delta x|
+  = |r^\top M^{-1} r|
+  = \Bigl|\sum_j \frac{(v_j^\top r)^2}{\lambda_j}\Bigr|
+  \leq \frac{\|r\|^2}{|\lambda_{\min}|}.
+\]
+Combining with the component bounds
+for $\|\delta\mu\|$ and $|\delta\xi|$:
+\[
+  |\delta\beta^\top H\,\delta\beta|
+  \leq \frac{\|r\|^2}{|\lambda_{\min}|}
+    + 4\,\frac{\|r\|^2}{|\lambda_{\min}|}
+  = \frac{5\,\|r\|^2}{|\lambda_{\min}|}.
+\]
+
+\emph{Conclusion.}
+\[
+  |Q(\beta_0) - \tilde Q|
+  \leq 2\,\frac{\|r\|^2}{|\lambda_{\min}|}
+    + \frac{5}{2}\,\frac{\|r\|^2}{|\lambda_{\min}|}
+  = \frac{9}{2}\,\frac{\|r\|^2}{|\lambda_{\min}|}
+  = E.
+  \qedhere
+\]
+\end{proof}
+

@@ -43,7 +43,7 @@ pub struct CapacityResult {
     /// action = 0.5 / Q(beta).
     pub capacity: f64,
     /// Capacity from uncertain tier (certified + indeterminate candidates).
-    /// Always <= capacity. If strictly less, borderline orbits exist with lower
+    /// Always <= capacity. If strictly less, borderline candidates exist with lower
     /// action than any certified candidate.
     pub capacity_uncertain: f64,
     /// Cyclic permutation achieving the minimum certified action.
@@ -57,7 +57,7 @@ pub struct CapacityResult {
 impl CapacityResult {
     /// Gap between certified and uncertain capacity.
     ///
-    /// Zero means high confidence. Positive means borderline orbits exist.
+    /// Zero means high confidence. Positive means borderline candidates exist.
     pub fn numerical_gap(&self) -> f64 {
         self.capacity - self.capacity_uncertain
     }
@@ -170,7 +170,7 @@ impl CapacityAccumulator {
     ///
     /// Panics if the gap invariant is violated: the uncertain capacity is more
     /// than `GAP_TOLERANCE` below the certified capacity. This indicates an
-    /// ambiguous orbit that cannot be resolved at f64 precision.
+    /// ambiguous candidate that cannot be resolved at f64 precision.
     ///
     /// Panics if the certified capacity is non-positive or non-finite.
     pub fn finalize(self) -> Option<CapacityResult> {
