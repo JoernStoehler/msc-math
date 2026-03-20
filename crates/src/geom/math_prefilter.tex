@@ -157,6 +157,31 @@ with $C = 10^4$ for $n = 4$
 (a tighter accounting gives $C < 1400$; see Remark~\ref{rem:prefilter-constants}).
 \end{proposition}
 
+\begin{corollary}\label{cor:prefilter-soundness}
+Under the hypotheses of Proposition~\ref{prop:prefilter-bound},
+the algorithm's three-valued output is sound:
+\begin{itemize}
+\item If the algorithm returns \textsc{false}
+  ($\hat{s} > 1 + \delta$), then $y^\top A^{-1}\one > 1$.
+\item If the algorithm returns \textsc{true}
+  ($\hat{s} < 1 - \delta$), then $y^\top A^{-1}\one < 1$.
+\item If the algorithm returns \textsc{indeterminate},
+  no conclusion is drawn.
+\end{itemize}
+In particular, when the algorithm returns \textsc{false}
+for some constraint~$y_i$, the point $A^{-1}\one$ lies
+outside~$K$, so the subset cannot yield a vertex.
+\end{corollary}
+
+\begin{proof}
+By Proposition~\ref{prop:prefilter-bound},
+$|y^\top v - \hat{s}| \le \delta$.
+If $\hat{s} > 1 + \delta$, then
+$y^\top v \ge \hat{s} - \delta > 1$.
+If $\hat{s} < 1 - \delta$, then
+$y^\top v \le \hat{s} + \delta < 1$.
+\end{proof}
+
 \noindent
 \textit{Why this form?}
 The total error is $(p\kappa + 1 + n)\emach\|\hat{y}\|\|\hat{v}\|$:

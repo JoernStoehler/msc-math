@@ -441,7 +441,7 @@ fn enumerate_vertices_exact(
 /// When this returns false, the subset may or may not be a vertex —
 /// the rational path decides.
 ///
-/// Correctness: [prop:prefilter-bound] in math_prefilter.tex.
+/// Correctness: [cor:prefilter-soundness] in math_prefilter.tex.
 fn f64_prefilter_rejects(dv_f64: &[[f64; 4]], subset: &[usize; 4], f: usize) -> bool {
     use nalgebra::{Matrix4, Vector4};
 
