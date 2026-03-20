@@ -2,21 +2,20 @@
 % Mathematical results supporting crates/src/geom/vertex_enumeration.rs
 %
 % Labels defined here:
-%   prop:prefilter-bound
+%   prop:prefilter-bound,
+%   fact:prefilter-round, fact:prefilter-cast, fact:prefilter-svd,
+%   fact:prefilter-solve, fact:prefilter-weyl, fact:prefilter-banach,
+%   fact:prefilter-dot
 %
-% Source: /tmp/prefilter-bound-simple.tex (Jörn's algorithm specification)
-% Status: Jörn is finalizing the proof; this file will be updated when
-%   the final version is forwarded. Current content is a faithful
-%   transcription of the working draft.
+% Source: /tmp/prefilter-bound-simple.tex (Jörn + agent session)
+% Status: Jörn is finalizing; will be updated when final version arrives.
 %
-% \input'd from crates/src/geom/math.tex (or crates/src/math.tex)
-% — do not add \documentclass or \begin{document}
+% \input'd from crates/src/math.tex — do not add \documentclass or \begin{document}
 
-% Local macros for this section
 \providecommand{\one}{\mathbf{1}}
 \providecommand{\emach}{\varepsilon_{\mathrm{mach}}}
 
-\subsection{f64 pre-filter for vertex enumeration}
+\subsection{f64 prefilter for $y^\top A^{-1}\one \le 1$}
 
 All norms are $\ell^2$ / spectral.
 Let $\emach = 2^{-53}$, $n = 4$, $\one = (1,1,1,1)^\top$
@@ -61,54 +60,82 @@ steps 5--6 cost $O(n)$ per $y$.
 
 \subsubsection*{Standard facts used}
 
-The following are standard results from numerical linear algebra,
-stated without proof except where a short derivation is included.
-
-\paragraph{IEEE rounding.}
+\begin{fact}[IEEE~754 rounding model]\label{fact:prefilter-round}
 Rounding a real number $x$ to f64 gives $\hat{x}$
 with $|\hat{x} - x| \le \emach|x|$.
+This is the defining property of IEEE~754 round-to-nearest.
+\end{fact}
 
-\paragraph{Casting a matrix.}
+\begin{fact}[Entrywise rounding $\to$ spectral norm]\label{fact:prefilter-cast}
 If $\hat{A}$ is obtained by rounding each entry of $A$
 to f64, then $|\hat{A}_{ij} - A_{ij}| \le \emach|A_{ij}|$
-entrywise. For the spectral norm:
+entrywise (by Fact~\ref{fact:prefilter-round}), and
 $\|\hat{A} - A\| \le \sqrt{n}\,\emach\|A\|$.
 
-(Proof: $\|\hat{A} - A\|^2 \le \|\hat{A} - A\|_F^2
+\emph{Proof.}
+$\|\hat{A} - A\|^2 \le \|\hat{A} - A\|_F^2
 = \sum_{ij}(\hat{A}_{ij} - A_{ij})^2
 \le \emach^2 \sum_{ij} A_{ij}^2
 = \emach^2\|A\|_F^2 \le \emach^2 n\|A\|^2$,
-using $\|M\|_F^2 = \sum_i \sigma_i(M)^2 \le n\sigma_1(M)^2
-= n\|M\|^2$.)
+where the last step uses
+$\|M\|_F^2 = \sum_i \sigma_i(M)^2 \le n\sigma_1(M)^2
+= n\|M\|^2$. \qed
+\end{fact}
 
-\paragraph{SVD backward stability.}
+% TODO: verify exact theorem number in Higham Ch. 5
+\begin{fact}[SVD backward stability;
+  {Higham~(2002), Ch.~5}]\label{fact:prefilter-svd}
 The computed SVD of $B \in \mathbb{R}^{n \times n}$ produces
 factors $\hat{U}, \hat{\Sigma}, \hat{V}$ satisfying
 $B + E_{\mathrm{svd}} = \hat{U}\hat{\Sigma}\hat{V}^\top$
 with $\|E_{\mathrm{svd}}\| \le c_{\mathrm{svd}}\emach\|B\|$,
 where $c_{\mathrm{svd}} = O(n)$.
+\end{fact}
 
-\paragraph{SVD-based solve backward stability.}
-Solving $Bx = b$ via SVD factors in f64 gives $\hat{x}$
+% TODO: verify exact section numbers in Higham
+\begin{fact}[SVD-based solve backward stability;
+  {Higham~(2002), Ch.~3, 5}]\label{fact:prefilter-solve}
+Solving $Bx = b$ via computed SVD factors in f64 gives $\hat{x}$
 satisfying $(B + E)\hat{x} = b + e$ with
 $\|E\| \le p\emach\|B\|$ and $\|e\| \le p\emach\|b\|$,
 where $p = O(n)$; $p \le 16$ suffices for $n = 4$.
+(This combines the SVD backward error with the rounding
+in the back-substitution steps
+$\hat{U}^\top b$, $\hat{\Sigma}^{-1}(\cdot)$,
+$\hat{V}(\cdot)$.)
+\end{fact}
 
-\paragraph{Singular value perturbation (Weyl).}
+% TODO: verify exact corollary number in GVL Ch. 8
+\begin{fact}[Weyl's singular value perturbation theorem;
+  {Golub \& Van~Loan~(2013), Ch.~8}]\label{fact:prefilter-weyl}
 For any $B, B' \in \mathbb{R}^{n \times n}$:
 $|\sigma_i(B) - \sigma_i(B')| \le \|B - B'\|$.
+\end{fact}
 
-\paragraph{Banach perturbation lemma.}
+% TODO: verify exact lemma number in Higham Ch. 2
+\begin{fact}[Banach perturbation lemma;
+  {Higham~(2002), Ch.~2}]\label{fact:prefilter-banach}
 If $B$ is invertible and $\|B^{-1}\|\|E\| < 1$, then
 $B + E$ is invertible and
 $\|(B+E)^{-1}\| \le \|B^{-1}\|/(1 - \|B^{-1}\|\|E\|)$.
 
-\paragraph{Dot product rounding.}
+\emph{Proof.}
+$(B+E)^{-1} = (I + B^{-1}E)^{-1}B^{-1}
+= \bigl(\sum_{k=0}^\infty (-B^{-1}E)^k\bigr)B^{-1}$.
+The series converges when $\|B^{-1}E\| < 1$,
+and $\|(B+E)^{-1}\| \le \|B^{-1}\|/(1 - \|B^{-1}\|\|E\|)$
+by the geometric series bound. \qed
+\end{fact}
+
+% TODO: verify exact theorem number in Higham Ch. 3
+\begin{fact}[Dot product rounding;
+  {Higham~(2002), Ch.~3}]\label{fact:prefilter-dot}
 For $x, y \in \mathbb{F}^n$, the f64-computed inner product
 $\hat{s} = \mathrm{fl}(x^\top y)$ satisfies
 $|x^\top y - \hat{s}| \le \gamma_n\, |x|^\top|y|$,
 where $\gamma_n = n\emach/(1 - n\emach)$
 and $|x|$ denotes componentwise absolute values.
+\end{fact}
 
 \subsubsection*{Error bound}
 
@@ -127,27 +154,27 @@ Then
   \cdot \|\hat{y}\| \cdot \|\hat{v}\|
 \]
 with $C = 10^4$ for $n = 4$
-(a tighter accounting gives $C < 1400$; see Remark below).
+(a tighter accounting gives $C < 1400$; see Remark~\ref{rem:prefilter-constants}).
 \end{proposition}
 
 \noindent
 \textit{Why this form?}
-The solve $\hat{A}^{-1}\one$ is the only step that amplifies
-errors, and $\kappa$ measures the amplification.
-All other error sources --- rounding entries when casting to f64,
-evaluating a length-$4$ dot product --- are $O(n)$ basic
-operations on $O(1)$ data, contributing $O(n\emach)$ each.
-Since $\kappa \ge 1$ (because $\|B\|\|B^{-1}\| \ge \|I\| = 1$),
-these are absorbed.
+The total error is $(p\kappa + 1 + n)\emach\|\hat{y}\|\|\hat{v}\|$:
+the $p\kappa$ term comes from the solve (the only step that
+amplifies errors), while $1$ and $n$ come from casting and
+the dot product (basic rounding, no amplification).
+Since $\kappa \ge 1$, we can bound
+$p\kappa + 1 + n \le (p + 1 + n)\kappa$,
+giving a single factor of $\kappa$ with a larger constant $C$.
 
 \medskip
 \noindent
 \textit{Why $\hat\kappa \approx \kappa$?}
-By SVD backward stability, the computed singular values
+By Fact~\ref{fact:prefilter-svd}, the computed singular values
 $\hat\sigma_i$ are the exact singular values of
 $\hat{A} + E_{\mathrm{svd}}$ with
 $\|E_{\mathrm{svd}}\| \le c\emach\|\hat{A}\|$.
-By singular value perturbation (Weyl),
+By Fact~\ref{fact:prefilter-weyl},
 $|\hat\sigma_i - \sigma_i(\hat{A})| \le c\emach\|\hat{A}\|
 = c\emach\sigma_1(\hat{A})$.
 The relative error on $\sigma_n$ is
@@ -162,10 +189,11 @@ Write $\kappa = \kappa_2(\hat{A})$.
 Throughout, $\lesssim$ means $\le$ up to factors of the
 form $(1 \pm c\emach)^{\pm 1}$ with $c \le 10^3$.
 Since $c\emach < 10^{-13}$, each such factor is $\le 2$.
-We number each use; the remark below enumerates all six.
+We number each use; Remark~\ref{rem:prefilter-constants}
+enumerates all six.
 
 \medskip\noindent\textbf{Step 1: Backward error of the solve.}
-By SVD-based solve backward stability, there exist
+By Fact~\ref{fact:prefilter-solve}, there exist
 $E \in \mathbb{R}^{n \times n}$ and
 $e \in \mathbb{R}^n$ with
 \[
@@ -174,7 +202,7 @@ $e \in \mathbb{R}^n$ with
   \|e\| \le p\emach\|\one\| = 2p\emach,
 \]
 where $p \le 16$ for $n = 4$.
-By the casting bound,
+By Fact~\ref{fact:prefilter-cast},
 $\|\hat{A} - A\| \le \sqrt{n}\,\emach\|A\|$.
 Since $\sqrt{n} = 2 \le p$, the casting error
 is dominated by the solve's backward error.
@@ -189,7 +217,7 @@ Writing $\Delta A = (\hat{A} - A) + E$:
 \medskip\noindent\textbf{Step 2: Forward error.}
 From $Av = \one$:
 $v - \hat{v} = A^{-1}(\Delta A\,\hat{v} - e)$.
-By the Banach perturbation lemma
+By Fact~\ref{fact:prefilter-banach}
 applied to $A = \hat{A} - (\hat{A} - A)$
 with $\|\hat{A}^{-1}\|\|\hat{A} - A\| \le
 \sqrt{n}\,\emach\|\hat{A}^{-1}\|\|A\|
@@ -231,7 +259,7 @@ Decompose:
 \emph{$T_1$} (solve error):
 $|T_1| \le \|y\|\|v - \hat{v}\|$
 by Cauchy--Schwarz.
-By the casting bound (applied to the vector $y$),
+By Fact~\ref{fact:prefilter-cast} (applied to the vector $y$),
 $\|y - \hat{y}\| \le \emach\|y\|$,
 so $\|y\| \le \|\hat{y}\|/(1 - \emach) \lesssim \|\hat{y}\|$
 \quad[$\lesssim$ \#5].
@@ -244,7 +272,7 @@ $|T_2| \le \|y - \hat{y}\|\|\hat{v}\|
 \lesssim \emach\|\hat{y}\|\|\hat{v}\|$.
 
 \emph{$T_3$} (dot product rounding):
-by the dot product rounding bound,
+by Fact~\ref{fact:prefilter-dot},
 $|T_3| \le \gamma_n\, |\hat{y}|^\top|\hat{v}|$
 where $\gamma_n = n\emach/(1 - n\emach) \lesssim n\emach$
 \quad[$\lesssim$ \#6].
@@ -262,7 +290,7 @@ For $n = 4$, $p \le 16$: pre-factor $= 21$.
 With 6 factors of 2: $C \le 21 \cdot 2^6 = 1344 < 10^4$.
 \end{proof}
 
-\begin{remark}
+\begin{remark}\label{rem:prefilter-constants}
 The 6 factors of~2:
 \#1~$\|A\| \lesssim \|\hat{A}\|$,
 \#2~$\|\hat{A}\| \lesssim \|A\|$,
@@ -276,3 +304,9 @@ For $\kappa = 1$ and $O(1)$ data:
 indeterminate zone $\approx 10^4 \cdot 10^{-16} = 10^{-12}$.
 For $\kappa = 10^8$: zone $\approx 10^{-4}$.
 \end{remark}
+
+% References:
+% - N. J. Higham, Accuracy and Stability of Numerical Algorithms,
+%   2nd ed., SIAM, 2002.
+% - G. H. Golub and C. F. Van Loan, Matrix Computations,
+%   4th ed., Johns Hopkins University Press, 2013.
