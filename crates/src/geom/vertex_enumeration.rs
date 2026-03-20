@@ -434,27 +434,14 @@ fn enumerate_vertices_exact(
     Ok((vertex_descriptors, vertices))
 }
 
-/// f64 pre-filter: returns true if the subset can be safely skipped.
+/// f64 pre-filter: returns true if the subset definitely yields no vertex.
 ///
-/// Uses SVD-based condition estimation with a rigorous error bound.
-/// For a subset S of 4 dual vertices, builds the 4×4 matrix Â (rows = f64
-/// dual vertices), computes its SVD, estimates κ̂ = σ̂₁/σ̂₄, and solves
-/// Â·v̂ = 1 via the SVD factors. For each non-defining constraint yᵢ,
-/// checks ŷᵢᵀv̂ against 1 with tolerance δ = C · κ̂ · ε_mach · ‖v̂‖ · ‖ŷᵢ‖.
+/// When this returns true, at least one constraint yᵢᵀA⁻¹𝟏 > 1 is
+/// certified by the error bound, so the four facets cannot meet inside K.
+/// When this returns false, the subset may or may not be a vertex —
+/// the rational path decides.
 ///
-/// Returns true (reject subset) only when some ŷᵢᵀv̂ > 1 + δ, meaning
-/// the exact yᵢᵀA⁻¹𝟏 > 1 with certainty.
-///
-/// ## Correctness
-///
-/// The error bound is proven in `math_prefilter.tex` (Proposition 1).
-/// C = 10⁴ absorbs all error sources for n = 4 (tight accounting gives
-/// C < 1400): SVD backward stability, SVD-based solve backward stability,
-/// entry-wise rounding when casting Q → f64, and dot product rounding.
-/// Under the condition ε_mach · κ̂ ≤ 1/4, these combine to give
-/// |yᵀA⁻¹𝟏 − ŝ| ≤ C · κ · ε_mach · ‖v̂‖ · ‖ŷ‖.
-///
-/// Mathematical correspondence: [prop:prefilter-bound] in math_prefilter.tex
+/// Correctness: [prop:prefilter-bound] in math_prefilter.tex.
 fn f64_prefilter_rejects(dv_f64: &[[f64; 4]], subset: &[usize; 4], f: usize) -> bool {
     use nalgebra::{Matrix4, Vector4};
 
