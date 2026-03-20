@@ -158,7 +158,17 @@ and $|x|$ denotes componentwise absolute values.
 %
 %   Blocker: need concrete $c_{\mathrm{svd}}$ for $n = 4$, from
 %   Higham (2002) Ch. 5. This is tracked in TASKS.md under
-%   "Solver numerical behavior math.tex".]
+%   "Solver numerical behavior math.tex".
+%
+%   Additional minor gaps (from adversarial review):
+%   - The rounding model $|\hat x - x| \le \emach|x|$ assumes normal
+%     f64 numbers. Subnormals have larger relative error. The algorithm
+%     does not check for subnormals. Unlikely for our polytope matrices
+%     but not formally excluded.
+%   - The proposition assumes $A$ is invertible (so $v = A^{-1}\one$
+%     exists). This is the caller's responsibility: vertex enumeration
+%     only calls the pre-filter for 4-subsets of dual vertices from a
+%     bounded polytope.]
 
 \begin{proposition}\label{prop:prefilter-bound}
 Let $A$ and $\hat{A}$ both be invertible, with
