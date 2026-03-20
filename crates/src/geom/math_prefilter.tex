@@ -149,6 +149,13 @@ and $|x|$ denotes componentwise absolute values.
 %   internally using Weyl: $\kappa \le \hat\kappa/(1 - c_{\mathrm{svd}}
 %   \emach\hat\kappa)$.
 %
+%   Second consequence: the code computes $\delta = C \hat\kappa \emach
+%   \|\hat v\| \|\hat y\|$, but the proposition bounds the error with
+%   $C \kappa \emach \|\hat v\| \|\hat y\|$. For $\delta$ to be a valid
+%   overestimate, we need $\hat\kappa \ge \kappa$ (or a known bound on
+%   $\kappa/\hat\kappa$). Weyl only gives a two-sided bound, so this is
+%   not guaranteed. Same fix: restate entirely in terms of $\hat\kappa$.
+%
 %   Blocker: need concrete $c_{\mathrm{svd}}$ for $n = 4$, from
 %   Higham (2002) Ch. 5. This is tracked in TASKS.md under
 %   "Solver numerical behavior math.tex".]
