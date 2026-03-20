@@ -305,7 +305,9 @@ Decompose:
 \emph{$T_1$} (solve error):
 $|T_1| \le \|y\|\|v - \hat{v}\|$
 by Cauchy--Schwarz.
-By Fact~\ref{fact:prefilter-cast} (applied to the vector $y$),
+By Fact~\ref{fact:prefilter-cast} applied to the vector $y$
+(the $\sqrt{n}$ factor drops since $\|\cdot\|_F = \|\cdot\|_2$
+for vectors),
 $\|y - \hat{y}\| \le \emach\|y\|$,
 so $\|y\| \le \|\hat{y}\|/(1 - \emach) \lesssim \|\hat{y}\|$
 \quad[$\lesssim$ \#5].

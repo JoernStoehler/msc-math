@@ -344,7 +344,8 @@ pub(super) fn construct_rational_pipeline(
 ///
 /// Stage 1 rejects ~80% of subsets, avoiding expensive rational arithmetic.
 /// It can only reject, never confirm — all actual vertices reach stage 2.
-/// Error bound: [prop:prefilter-bound] in math_prefilter.tex.
+/// Error bound: [prop:prefilter-bound] in math_prefilter.tex
+/// (has open gap — see TODO there).
 ///
 /// Non-simple vertices (on >4 facets) are handled by deduplication: the first
 /// 4-subset discovering a vertex records ALL incident facets. Later subsets
@@ -437,11 +438,12 @@ fn enumerate_vertices_exact(
 /// f64 pre-filter: returns true if the subset definitely yields no vertex.
 ///
 /// When this returns true, at least one constraint yᵢᵀA⁻¹𝟏 > 1 is
-/// certified by the error bound, so the four facets cannot meet inside K.
+/// determined by the error bound, so the four facets cannot meet inside K.
 /// When this returns false, the subset may or may not be a vertex —
 /// the rational path decides.
 ///
 /// Correctness: [cor:prefilter-soundness] in math_prefilter.tex.
+/// Note: the proof has an open gap (κ̂ vs κ, see TODO in math_prefilter.tex).
 fn f64_prefilter_rejects(dv_f64: &[[f64; 4]], subset: &[usize; 4], f: usize) -> bool {
     use nalgebra::{Matrix4, Vector4};
 
