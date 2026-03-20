@@ -139,11 +139,20 @@ and $|x|$ denotes componentwise absolute values.
 
 \subsubsection*{Error bound}
 
+% [TODO: JÖRN - The proposition requires $\emach\kappa \le 1/4$ on the
+%   TRUE condition number $\kappa = \kappa_2(\hat{A})$, but the algorithm
+%   (step 3) can only check $\emach\hat\kappa \le 1/4$ on the COMPUTED
+%   $\hat\kappa$. Since $\hat\kappa$ can underestimate $\kappa$ (Weyl
+%   allows $\hat\sigma_{\min} > \sigma_{\min}(\hat{A})$), the check does
+%   not imply the hypothesis. Closing this gap requires a concrete value
+%   of $c_{\mathrm{svd}}$ for $n = 4$: the algorithm's threshold should
+%   be $\emach\hat\kappa \le 1/(4 + c_{\mathrm{svd}})$.]
+
 \begin{proposition}\label{prop:prefilter-bound}
 Let $A$ and $\hat{A}$ both be invertible, with
 $\kappa = \kappa_2(\hat{A}) = \|\hat{A}\|\|\hat{A}^{-1}\|$
 (the true, not computed, condition number of $\hat{A}$).
-Assume $\emach\kappa \le 1/4$.
+If $\emach\kappa \le 1/4$, then:
 Write $v = A^{-1}\one$ and let $\hat{v}$, $\hat{s}$
 be the f64-computed quantities from the algorithm.
 Then
