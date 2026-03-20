@@ -160,15 +160,27 @@ and $|x|$ denotes componentwise absolute values.
 %   Higham (2002) Ch. 5. This is tracked in TASKS.md under
 %   "Solver numerical behavior math.tex".
 %
+%   Factor-counting issue (from adversarial Opus review):
+%   - The tight bound ``$C < 1400$'' undercounts constant factors.
+%     The 6 listed $\lesssim$ factors of 2 miss at least two more:
+%     (a) $\|e\| = 2p\emach$ contributes a factor of 2 from
+%         $\|\one\| = 2$ that is an exact constant, not a
+%         $(1 \pm c\emach)$ factor, so it shouldn't be absorbed
+%         into $\lesssim$ but must be tracked explicitly.
+%     (b) Substituting $\|\hat A^{-1}\| \lesssim \kappa\|\hat v\|$
+%         into eq:prefilter-fwd gives $\kappa\|\hat v\| + \kappa\|\hat v\|
+%         = 2\kappa\|\hat v\|$, an untracked factor of 2.
+%     Correct tight bound: $C \le 21 \cdot 2^8 = 5376$, not $1344$.
+%     The safe $C = 10^4$ remains valid.
+%
 %   Additional minor gaps (from adversarial review):
 %   - The rounding model $|\hat x - x| \le \emach|x|$ assumes normal
-%     f64 numbers. Subnormals have larger relative error. The algorithm
-%     does not check for subnormals. Unlikely for our polytope matrices
-%     but not formally excluded.
-%   - The proposition assumes $A$ is invertible (so $v = A^{-1}\one$
-%     exists). This is the caller's responsibility: vertex enumeration
-%     only calls the pre-filter for 4-subsets of dual vertices from a
-%     bounded polytope.]
+%     f64 numbers. Subnormals have larger relative error. Unlikely for
+%     our polytope matrices but not formally excluded.
+%   - The proposition assumes $A$ is invertible (caller's responsibility).
+%   - The code computes $\|\hat v\|$ and $\|\hat y\|$ in f64, introducing
+%     $O(\emach)$ relative error not mentioned in the proof. Absorbed by
+%     the $C = 10^4$ safety factor.]
 
 \begin{proposition}\label{prop:prefilter-bound}
 Let $A$ and $\hat{A}$ both be invertible, with
