@@ -327,14 +327,15 @@ pub(super) fn construct_rational_pipeline(
 ///
 /// Two-stage pipeline per subset: cheap f64 stage, then expensive rational stage.
 ///
-/// **Stage 1 (f64):** Solve Y_S · v = 1 in f64 via Cramer's rule.
-/// For each non-defining constraint y_i · v ≤ 1, evaluate:
-/// - FALSE  (y_i · v ≥ 1 + ε): point is definitely outside K → skip subset
-/// - INDETERMINATE (|y_i · v - 1| < ε): f64 cannot decide → fall through
-/// - TRUE   (y_i · v ≤ 1 - ε): constraint definitely satisfied → continue
+/// **Stage 1 (f64):** Solve Y_S · v = 1 in f64 via SVD.
+/// For each non-defining constraint y_i · v ≤ 1, evaluate with tolerance
+/// δ = C · κ̂ · ε_mach · ‖v̂‖ · ‖ŷ_i‖:
+/// - FALSE  (ŝ > 1 + δ): point is definitely outside K → skip subset
+/// - INDETERMINATE (|ŝ - 1| ≤ δ): f64 cannot decide → fall through
+/// - TRUE   (ŝ < 1 - δ): constraint definitely satisfied → continue
 ///
 /// If ANY constraint is FALSE, the subset is skipped (no rational work).
-/// If the f64 Cramer solve is not well-behaved (near-singular, huge solution),
+/// If the system is too ill-conditioned (ε_mach · κ̂ > 1/4),
 /// the entire f64 stage is skipped and we fall through to rational.
 ///
 /// **Stage 2 (rational):** Reached only when stage 1 did not reject.
@@ -342,8 +343,8 @@ pub(super) fn construct_rational_pipeline(
 /// g_i = 1 - y_i · v exactly. If all non-negative, v is a vertex.
 ///
 /// Stage 1 rejects ~80% of subsets, avoiding expensive rational arithmetic.
-/// It can only reject, never confirm — all actual vertices SHOULD reach stage 2.
-/// **Warning:** the error bound in stage 1 is unverified (see `f64_prefilter_rejects` doc).
+/// It can only reject, never confirm — all actual vertices reach stage 2.
+/// Error bound: [prop:prefilter-bound] in math_prefilter.tex.
 ///
 /// Non-simple vertices (on >4 facets) are handled by deduplication: the first
 /// 4-subset discovering a vertex records ALL incident facets. Later subsets
@@ -435,136 +436,110 @@ fn enumerate_vertices_exact(
 
 /// f64 pre-filter: returns true if the subset can be safely skipped.
 ///
-/// Solves the 4x4 system A·v = 1 in f64 via Cramer's rule. For each
-/// non-defining constraint y_i · v ≤ 1, applies three-valued logic:
+/// Uses SVD-based condition estimation with a rigorous error bound.
+/// For a subset S of 4 dual vertices, builds the 4×4 matrix Â (rows = f64
+/// dual vertices), computes its SVD, estimates κ̂ = σ̂₁/σ̂₄, and solves
+/// Â·v̂ = 1 via the SVD factors. For each non-defining constraint yᵢ,
+/// checks ŷᵢᵀv̂ against 1 with tolerance δ = C · κ̂ · ε_mach · ‖v̂‖ · ‖ŷᵢ‖.
 ///
-/// - `y_i · v_f64 ≥ 1 + margin` → FALSE (definitely outside) → skip subset
-/// - `|y_i · v_f64 - 1| < margin` → INDETERMINATE → fall through to rational
-/// - `y_i · v_f64 ≤ 1 - margin` → TRUE (definitely satisfied) → continue
+/// Returns true (reject subset) only when some ŷᵢᵀv̂ > 1 + δ, meaning
+/// the exact yᵢᵀA⁻¹𝟏 > 1 with certainty.
 ///
-/// ## Correctness: UNVERIFIED
+/// ## Correctness
 ///
-/// TODO: The error bound in this function has NOT been rigorously proven.
-/// A false FALSE (skipping an actual vertex) is a silent correctness bug.
-/// Known gaps:
-/// - The margin uses ||v_f64|| as a proxy for ||A⁻¹||, which is only a
-///   lower bound. No proof that SAFETY=100 closes the gap for all systems.
-/// - When rationals were constructed directly (not from f64), the f64
-///   matrix A_f64 differs from A_rational. The residual only measures
-///   error in the f64 system, not the rational system.
+/// The error bound is proven in `math_prefilter.tex` (Proposition 1).
+/// C = 10⁴ absorbs all error sources for n = 4 (tight accounting gives
+/// C < 1400): SVD backward stability, SVD-based solve backward stability,
+/// entry-wise rounding when casting Q → f64, and dot product rounding.
+/// Under the condition ε_mach · κ̂ ≤ 1/4, these combine to give
+/// |yᵀA⁻¹𝟏 − ŝ| ≤ C · κ · ε_mach · ‖v̂‖ · ‖ŷ‖.
 ///
-/// Pending: rigorous analysis in math_prefilter.tex (see
-/// handoffs/session-prefilter-error-analysis.md). Until that analysis is
-/// complete, this pre-filter should be considered a performance heuristic
-/// that works in practice but lacks a correctness proof.
+/// Mathematical correspondence: [prop:prefilter-bound] in math_prefilter.tex
 fn f64_prefilter_rejects(dv_f64: &[[f64; 4]], subset: &[usize; 4], f: usize) -> bool {
-    /// Safety factor for the error bound. Accounts for the gap between
-    /// ||A⁻¹|| and our proxy ||v|| (factor ~2), plus rounding in the
-    /// residual and dot product computations (~10 ULPs each). 100× is
-    /// generous but keeps the pre-filter effective (margin stays small
-    /// for well-behaved systems).
-    const SAFETY: f64 = 100.0;
+    use nalgebra::{Matrix4, Vector4};
 
-    /// Maximum acceptable residual. If max(|r_k|) exceeds this, the
-    /// Cramer solve didn't converge well enough to trust. Fall through
-    /// to rational. 1e-10 is much larger than ε_mach (~1e-16), giving
-    /// room for accumulation in the cofactor expansion.
-    const MAX_RESIDUAL: f64 = 1e-10;
+    /// Unit roundoff for f64: ε_mach = 2⁻⁵³.
+    const EPS_MACH: f64 = f64::EPSILON / 2.0;
 
-    let rows: [[f64; 4]; 4] = [
-        dv_f64[subset[0]],
-        dv_f64[subset[1]],
-        dv_f64[subset[2]],
-        dv_f64[subset[3]],
-    ];
+    /// Safety constant from Proposition 1. Tight accounting gives C < 1400;
+    /// we use C = 10⁴ for generous margin.
+    const C: f64 = 1e4;
 
-    let det = det4_f64(&rows);
-    if det == 0.0 {
-        return false; // Singular → rational
+    // Step 1: Build 4×4 matrix from subset rows.
+    let a = Matrix4::new(
+        dv_f64[subset[0]][0], dv_f64[subset[0]][1],
+        dv_f64[subset[0]][2], dv_f64[subset[0]][3],
+        dv_f64[subset[1]][0], dv_f64[subset[1]][1],
+        dv_f64[subset[1]][2], dv_f64[subset[1]][3],
+        dv_f64[subset[2]][0], dv_f64[subset[2]][1],
+        dv_f64[subset[2]][2], dv_f64[subset[2]][3],
+        dv_f64[subset[3]][0], dv_f64[subset[3]][1],
+        dv_f64[subset[3]][2], dv_f64[subset[3]][3],
+    );
+
+    // Step 2: Compute SVD of Â.
+    let svd = a.svd(true, true);
+    let svals = &svd.singular_values;
+
+    // Find σ̂_min and σ̂_max (nalgebra does not guarantee sorted order).
+    let sigma_min = svals[0].min(svals[1]).min(svals[2]).min(svals[3]);
+    let sigma_max = svals[0].max(svals[1]).max(svals[2]).max(svals[3]);
+
+    // Step 3: If σ̂_min = 0, matrix is singular → INDETERMINATE.
+    if sigma_min == 0.0 {
+        return false;
     }
 
-    let v = solve4_f64(&rows, det);
-
-    if v.iter().any(|c| !c.is_finite()) {
-        return false; // → rational
+    // Step 4: Condition number check. If ε_mach · κ̂ > 1/4, the system
+    // is too ill-conditioned for the error bound to hold.
+    let kappa_hat = sigma_max / sigma_min;
+    if EPS_MACH * kappa_hat > 0.25 {
+        return false; // Too ill-conditioned → INDETERMINATE
     }
 
-    // Verify the Cramer solve quality: compute residual r = A · v - 1.
-    // If the residual is large, the f64 solution is unreliable regardless
-    // of whether the system "looked" well-conditioned.
-    let mut max_res: f64 = 0.0;
-    for row in &rows {
-        let dot = row[0] * v[0] + row[1] * v[1] + row[2] * v[2] + row[3] * v[3];
-        max_res = max_res.max((dot - 1.0).abs());
-    }
-    if max_res > MAX_RESIDUAL {
-        return false; // Cramer solve not accurate enough → rational
+    // Step 5: Solve Â·v̂ = 𝟏 via SVD factors.
+    let ones = Vector4::new(1.0, 1.0, 1.0, 1.0);
+    let v_hat = match svd.solve(&ones, 0.0) {
+        Ok(v) => v,
+        Err(_) => return false, // Solve failed → INDETERMINATE
+    };
+
+    // NaN/Inf check on the solution.
+    if v_hat.iter().any(|&x| !x.is_finite()) {
+        return false;
     }
 
-    // ||v_f64|| — used as proxy for ||A⁻¹|| in the forward error bound.
-    let v_norm: f64 = v.iter().map(|c| c * c).sum::<f64>().sqrt();
+    let v_norm = v_hat.norm();
 
-    // Check each non-defining constraint with adaptive margin.
-    // margin_i = SAFETY · ||y_i|| · ||v|| · max_residual
-    // This bounds |y_i · δv| via ||y_i|| · ||A⁻¹|| · ||r||,
-    // with ||A⁻¹|| ≈ ||v|| and ||r|| = max_residual.
-    for i in 0..f {
+    // Step 6: Check each non-defining constraint with tolerance
+    // δ = C · κ̂ · ε_mach · ‖v̂‖ · ‖ŷᵢ‖.
+    for (i, y_i) in dv_f64[..f].iter().enumerate() {
         if subset.contains(&i) {
             continue;
         }
-        let y_i = &dv_f64[i];
-        let dot = y_i[0] * v[0] + y_i[1] * v[1] + y_i[2] * v[2] + y_i[3] * v[3];
 
-        let y_i_norm = (y_i[0] * y_i[0] + y_i[1] * y_i[1]
+        // ŝ = ŷᵢᵀv̂
+        let s_hat = y_i[0] * v_hat[0] + y_i[1] * v_hat[1]
+            + y_i[2] * v_hat[2] + y_i[3] * v_hat[3];
+
+        // ‖ŷᵢ‖₂
+        let y_norm = (y_i[0] * y_i[0] + y_i[1] * y_i[1]
             + y_i[2] * y_i[2] + y_i[3] * y_i[3])
             .sqrt();
-        let margin = SAFETY * y_i_norm * v_norm * max_res;
 
-        // Floor: even with zero residual, f64 dot product has rounding error.
-        // 16 · ε_mach · ||y_i|| · ||v|| covers the dot product computation.
-        let margin = margin.max(16.0 * f64::EPSILON * y_i_norm * v_norm);
+        // δ = C · κ̂ · ε_mach · ‖v̂‖ · ‖ŷᵢ‖
+        let delta = C * kappa_hat * EPS_MACH * v_norm * y_norm;
 
-        if dot > 1.0 + margin {
-            return true; // Definitely outside → skip
+        if !delta.is_finite() {
+            return false; // Overflow → INDETERMINATE
         }
-        // INDETERMINATE and TRUE both fall through — we only reject on
-        // a definite FALSE. If no constraint is definitely violated,
-        // we proceed to rational.
+
+        // If ŝ > 1 + δ: constraint is definitely violated → reject subset.
+        if s_hat > 1.0 + delta {
+            return true;
+        }
+        // TRUE (ŝ < 1 − δ) and INDETERMINATE both fall through to rational.
     }
 
-    false // No constraint was definitely violated → rational
-}
-
-// ── f64 pre-filter helpers ───────────────────────────────────────────────
-
-/// 4x4 determinant in f64 (cofactor expansion along first row).
-fn det4_f64(rows: &[[f64; 4]; 4]) -> f64 {
-    let (a, b, c, d) = (&rows[0], &rows[1], &rows[2], &rows[3]);
-    let c00 = b[1] * (c[2] * d[3] - c[3] * d[2])
-        - b[2] * (c[1] * d[3] - c[3] * d[1])
-        + b[3] * (c[1] * d[2] - c[2] * d[1]);
-    let c01 = b[0] * (c[2] * d[3] - c[3] * d[2])
-        - b[2] * (c[0] * d[3] - c[3] * d[0])
-        + b[3] * (c[0] * d[2] - c[2] * d[0]);
-    let c02 = b[0] * (c[1] * d[3] - c[3] * d[1])
-        - b[1] * (c[0] * d[3] - c[3] * d[0])
-        + b[3] * (c[0] * d[1] - c[1] * d[0]);
-    let c03 = b[0] * (c[1] * d[2] - c[2] * d[1])
-        - b[1] * (c[0] * d[2] - c[2] * d[0])
-        + b[2] * (c[0] * d[1] - c[1] * d[0]);
-    a[0] * c00 - a[1] * c01 + a[2] * c02 - a[3] * c03
-}
-
-/// Solve 4x4 system via Cramer's rule in f64, specialized for rhs = [1, 1, 1, 1].
-///
-/// Caller provides the precomputed determinant to avoid recomputing it.
-fn solve4_f64(rows: &[[f64; 4]; 4], det: f64) -> [f64; 4] {
-    let rhs = [1.0; 4];
-    std::array::from_fn(|col| {
-        let mut modified = *rows;
-        for row in 0..4 {
-            modified[row][col] = rhs[row];
-        }
-        det4_f64(&modified) / det
-    })
+    false // No constraint was definitely violated → proceed to rational
 }
