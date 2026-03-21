@@ -126,6 +126,37 @@ When agents don't follow a rule:
 
 Steps 3 and 4 work together as an optimization loop, not an escalation ladder. Optimizations are not always local fine-tuning — they can be wholesale switches to entirely different optima in how-to-run-the-project space.
 
+## Known agent failure modes — design around these
+
+These are empirically observed failure modes that affect how you should design all agent infrastructure (skills, workflows, conventions, review agents, CLAUDE.md). Don't just tell agents to avoid these — design infrastructure that accounts for them structurally.
+
+**Instruction overload.** Agents degrade silently when holding too many novel behavior modifications simultaneously. They don't notice they're overwhelmed — they proceed and drop constraints. Design implications:
+- Skills and CLAUDE.md should minimize the number of simultaneously active novel instructions
+- Complex workflows should delegate to focused subagents with small instruction sets, not rely on one agent holding everything
+- Review agents work because each gets one concern with a small checklist, not all concerns at once
+- When writing instructions, evaluate complexity per-item (how many behavior modifications?), not per-token
+
+**Skipping planning.** Agents skip planning even at levels where it's obviously worth it (e.g., "what's the goal of this session?"). They'll agree in hindsight that planning would have helped. Design implications:
+- Complex skills should include planning as a required step in the workflow, not a suggestion
+- Don't rely on agents choosing to plan — build mandatory scope/plan phases into workflow skills
+
+**Under-asking questions.** Agents systematically avoid questions that cost Jörn 10 seconds but have high expected value (10% × 1 hour saved). They overweight the visible cost of interrupting and ignore the expected cost of being wrong. Design implications:
+- Build explicit checkpoints into workflows where the agent must verify assumptions with Jörn
+- Treat "ask Jörn" as a concrete workflow step, not a fallback
+
+**Not modeling own unreliability.** Agents don't account for the fact that their output (especially reasoning, proofs, and complex plans) is unreliable on first attempt. They proceed as if their work is correct. Design implications:
+- Review workflows must be mandatory, not optional — agents won't choose to verify
+- Build verification into the workflow itself (write → review → fix → re-review), not as a separate "if you want" step
+- For critical content (math proofs, canonical facts), the workflow should include a Jörn verification step by default
+
+**Communication failures.** Agents assume Jörn read their messages, ignore or miss Jörn's messages during tool calls, and give up on unanswered questions instead of repeating them. Design implications:
+- Skills that produce output for Jörn should summarize key decisions and questions at the end, not assume Jörn followed along
+- Handoff files exist partly because agents can't reliably communicate findings within a session
+
+**Not generalizing from mistakes.** Agents fix the specific instance flagged by Jörn but don't abstract the error class or scan for other instances — including instances in their own recent behavior. The `feedback-processing` skill addresses this but agents still don't apply it to their own process errors. Design implications:
+- The generalization step must be part of the resolution workflow, not a follow-up
+- Review agents and postmortem skills should explicitly prompt for error-class abstraction
+
 ## Why word-choice sensitivity matters
 
 Jörn communicates via subtle word choices that encode real distinctions. Agents trained on natural language tend to normalize variations ("not quite" → "yes but also"), losing the correction's content. The CLAUDE.md instruction tells agents to adopt Jörn's exact phrasing rather than paraphrasing, because the cost of preserving exact wording is zero but the cost of losing a distinction compounds across the session.

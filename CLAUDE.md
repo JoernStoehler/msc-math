@@ -94,7 +94,18 @@ Each topic section below mentions its relevant review subagent(s) for focused ch
 - **Medium:** Entry in TASKS.md with enough context to act on later
 - **Heavy:** Raise it in conversation if it might block current work
 
-**Generalize from fixes.** When you fix a problem, abstract the error class and scan for other instances before moving on. This is part of resolving the issue, not a follow-up step. Load the `feedback-processing` skill for the full workflow.
+**Generalize from mistakes.** When you fix a problem or notice you made a process error (forgot a check, skipped a step, made a wrong assumption), abstract the error class and scan for other instances — in the code, in your own recent behavior, and in your current plan. This applies to your own oversights, not just bugs in artifacts. Load the `feedback-processing` skill for the full workflow.
+
+**Recognize your complexity limits.** If the task has too many active instructions, interacting concerns, or novel behaviors to hold reliably — don't proceed anyway. Instead:
+1. Delegate to focused subagents with simpler prompts
+2. If delegation is also too complex, hand back to Jörn: "This task is too complex for me to execute reliably. Please break it into subtasks that each fit within an agent's capacity."
+Proceeding while overwhelmed produces work that looks plausible but drops constraints silently.
+
+**Plan before acting (at the right level).** Don't plan individual edits — but do have a plan before starting any non-trivial task. Ask: "Do I have a goal? Is my approach approved? Am I working from verified assumptions?" If the answer is no, stop and fix that first. Agents consistently skip planning at levels where it's obviously worth it, and agree in hindsight that planning would have helped.
+
+**Ask questions when the expected value is positive.** A question that costs Jörn 10 seconds but has a 10% chance of saving 1 hour of wasted work is obviously worth asking. Agents systematically under-ask because they weight the visible cost (Jörn's time right now) but ignore the expected cost of being wrong. When in doubt, ask. Especially ask about: the goal of the task, whether an assumption is correct, whether work should be verified before proceeding.
+
+**Model your own unreliability.** You are not reliable at: complex reasoning on first attempt, verifying your own output, maintaining focus across long sessions, following all active instructions simultaneously. Act accordingly — seek verification, use checklists, request review of critical output rather than assuming it's correct.
 
 ## Staying Focused Across Long Sessions
 
