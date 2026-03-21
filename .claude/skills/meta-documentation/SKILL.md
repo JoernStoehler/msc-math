@@ -178,16 +178,33 @@ These are empirically observed failure modes that affect how you should design a
 - Build explicit checkpoints into workflows where the agent must verify assumptions with Jörn
 - Treat "ask Jörn" as a concrete workflow step, not a fallback
 
-**Not modeling own unreliability.** Observed in msc-math: agents are unreliable at both writing correct proofs on first attempt and checking proofs for correctness. They don't realize this, and proceed as if their output is correct — instead of taking ~60 seconds of Jörn's time to verify. Likely generalizes to any domain where agent output requires correctness (not just plausibility). Design implications:
+**Not modeling own unreliability.** Observed in msc-math: agents are unreliable at both writing correct proofs on first attempt and checking proofs for correctness. They don't realize this, and proceed as if their output is correct — instead of taking ~60 seconds of Jörn's time to verify. Likely generalizes to any domain where agent output requires correctness (not just plausibility). A specific mechanism: agents don't verify the results of their own actions (edits, reverts, delegations) — they assume the action succeeded. Design implications:
 - Review workflows must be mandatory, not optional — agents won't choose to verify
 - Build verification into the workflow itself (write → review → fix → re-review), not as a separate "if you want" step
 - For critical content (math proofs, canonical facts), the workflow should include a Jörn verification step by default — the cost is low (~60s) and the cost of proceeding with errors is high
+- After any action (edit, revert, subagent delegation), check the result rather than assuming success
 
-**Communication failures.** Agents assume Jörn read their messages, ignore or miss Jörn's messages during tool calls, and give up on unanswered questions instead of repeating them. Design implications:
+**Treating presentation as confirmation.** Agents show information to Jörn and proceed as if he confirmed it. "I presented the scope" becomes "the scope is agreed." "I used this document" becomes "this document is approved." Presentation ≠ confirmation. Design implications:
+- Workflows should have explicit confirmation gates — don't let "I showed it" advance the state
+- The existence of a document (plan file, target state) is not evidence of its approval status
+
+**Not checking existing state before changing it.** Agents add content without reading what's already there, creating duplication or contradiction. Design implications:
+- Skills that add content should include a step to read the target file first
+- Review subagents should check for duplication against surrounding content, not just internal consistency
+
+**Not modeling Jörn's current state.** Agents don't consider what Jörn can see, access, or answer right now. They send text walls he can't scroll to, ask questions requiring file reads he hasn't done, respond to old queued messages instead of the most recent one. Design implications:
 - Skills that produce output for Jörn should summarize key decisions and questions at the end, not assume Jörn followed along
+- Prefer file:line references over inline text when showing content for review
 - Handoff files exist partly because agents can't reliably communicate findings within a session
 
-**Not generalizing from mistakes.** Agents fix the specific instance flagged by Jörn but don't abstract the error class or scan for other instances — in the code, in other files, or in their own recent behavior. Example: "forgot to run test XYZ" doesn't trigger "what else did I forget?" even though asking that question is well within agent capability. The `feedback-processing` skill addresses this but agents still under-apply it. Design implications:
+**Transferring cognitive work to Jörn.** Agents ask Jörn to do thinking the agent should do: "what do you want me to do?", asking permission on obvious actions, requesting scope instead of proposing one. This is the opposite of under-asking — it's asking the wrong kind of thing (open-ended "what should I do?" instead of specific "is X correct?"). Design implications:
+- Skills should frame agent actions as proposals to verify, not open questions for Jörn to answer
+- "I plan to do X because Y — any objection?" is cheaper for Jörn than "what should I do?"
+
+**Responding to social signal instead of content.** When corrected, agents respond to the criticism ("You're right, I shouldn't have done that") instead of fixing the thing. Empty agreement wastes time. Design implications:
+- Post-correction workflow: fix first, acknowledge briefly, move on
+
+**Not generalizing from mistakes.** Agents fix the specific instance flagged by Jörn but don't abstract the error class or scan for other instances — in the code, in other files, or in their own recent behavior. Example: "forgot to run test XYZ" doesn't trigger "what else did I forget?" even though asking that question is well within agent capability. A specific mechanism: agents learn lessons abstractly but don't apply them reflexively to their own current behavior (learned "keep identical" → then made project-specific examples; documented delegation failures → then trusted subagent reports). The `feedback-processing` skill addresses this but agents still under-apply it. Design implications:
 - The generalization step must be part of the resolution workflow, not a follow-up
 - Review agents and postmortem skills should explicitly prompt for error-class abstraction
 
@@ -196,6 +213,20 @@ These are empirically observed failure modes that affect how you should design a
 - Verification after delegation is high-value because the communication channel (the prompt) is unreliable and agents don't anticipate their own ambiguity
 - Complete verification (prove correctness) and incomplete falsification (find some errors) are different — don't let "we ran a review" be mistaken for "this is verified"
 - For novel tasks, result types must be explicit in the prompt — agents have no training priors to fall back on
+
+**Lossy transcription.** When encoding precise statements (from Jörn, from sources, from specifications) into their own words, agents systematically lose meaning. The losses aren't random — they tend toward simplification, generalization, flattening distinctions, and substituting the agent's framing for the original. Particularly dangerous when transcribing novel or anti-intuitive knowledge, where training priors pull the rewording toward the familiar (wrong) meaning. This is a well-known failure mode. Design implications:
+- "Word-choice sensitivity" (see section below) is one intervention for Jörn's words specifically
+- Review subagents should compare agent output against original source text, not just check internal consistency
+- When encoding someone's precise statement, prefer quoting over paraphrasing
+- Verification of transcribed content requires access to the original — a subagent checking only the transcription can't detect meaning drift
+
+**Defaulting to the easy action.** When the correct action requires more effort, agents take the lower-effort alternative. Examples: paraphrasing instead of extracting original text, claiming convergence instead of continuing to search. Design implications:
+- Workflows should make the correct (higher-effort) action the default path, not the alternative
+- When a skill offers two approaches (easy and thorough), frame the thorough one as default and the easy one as the exception requiring justification
+
+**Defaulting to the familiar action.** Agents pick the approach that pattern-matches to training, even when the situation calls for something different. Examples: "copy from the most mature source to others" (familiar pattern) instead of "evaluate each source's strengths and cross-pollinate" (requires judgment). The familiar approach might not even be easier — it's just the one the agent has seen most. Design implications:
+- Novel workflows should explicitly name the familiar-but-wrong approach and say why it doesn't apply here
+- When a task requires judgment between approaches, the skill should flag that the obvious/familiar approach may not be correct
 
 ## Why word-choice sensitivity matters
 
