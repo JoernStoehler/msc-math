@@ -18,6 +18,28 @@ Agents lack implicit knowledge: they don't know where to look for knowledge they
 
 Not all agents need everything. Subagents have well-scoped tasks and can triage reading efficiently. Less-scoped agents (main session agents) need cross-references for multi-step discovery rather than single-step lookup.
 
+## Axes of project knowledge
+
+Project knowledge varies along several observed axes that correlate with where it should live and how to communicate it to agents. This taxonomy is incomplete — a simpler or more natural decomposition may exist.
+
+**Temporal lifetime:**
+- **All projects** — universal agent knowledge (e.g., delegation safeguards, feedback processing). Lives in meta-skills, synced across repos.
+- **This project** — project-specific conventions, domain knowledge. Lives in CLAUDE.md, project skills, reference docs.
+- **This commit / branch** — current plan, in-progress state. Lives in plan files, TASKS.md, branch-specific handoffs.
+- **This subtask** — scoped context for a subagent. Lives in the subagent prompt, not persisted.
+
+**Domain:** Knowledge about agents, about Claude Code files/settings, about the project's domain (D&D, card games, symplectic geometry), about project management, etc. Domain determines which skills/files house it.
+
+**Source of truth:** A piece of text is either a source of truth or a derivative (summary, concretization, implication) of some source of truth. This applies at the paragraph or subsentence level — files are mixed. When a derivative diverges from its source of truth, the source wins. Derivatives must not be mistaken for sources.
+
+**Novelty** (relative to agent training):
+- **Common** — heavily represented in LLM training. Agents already have the behavior; a reminder is sufficient. Example: "write tests."
+- **Rare** — seen in training but not a default behavior. Explicit instruction works. Example: a rare combination of common code style conventions.
+- **Novel** — unseen, fully unknown to the agent. Needs a skill with examples; agent has no prior to build on. Example: project-specific verification workflows.
+- **Anti-intuitive** — true things that clash with what agents falsely learned in training. Agents will actively resist these. Needs strong reinforcement, verification that the agent actually followed the instruction (not just agreed), and possibly structural enforcement (review agents, mandatory steps). Example: "your proofs are unreliable on first attempt" when training says confident = correct.
+
+Most concepts are mixes: a novel spin on a common philosophy, a rare combination of common elements. The novelty axis predicts how much effort is needed to get agents to follow a rule — and anti-intuitive knowledge is the most expensive because agents fight it.
+
 ## Location tiers — rationale
 
 **1. CLAUDE.md** — always in context. Cannot be skipped, but can be ignored despite being read (see "Instruction focus" below). Cost: every agent pays the context-window cost. Put knowledge here when useful for a majority of agents, or when it has been forgotten too often in other locations.
