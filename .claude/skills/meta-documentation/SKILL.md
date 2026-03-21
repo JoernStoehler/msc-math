@@ -178,7 +178,7 @@ These are empirically observed failure modes that affect how you should design a
 - Build explicit checkpoints into workflows where the agent must verify assumptions with Jörn
 - Treat "ask Jörn" as a concrete workflow step, not a fallback
 
-**Not modeling own unreliability.** Observed in msc-math: agents write mathematical proofs, don't realize they're unreliable at this on first attempt, and proceed as if correct — instead of taking ~60 seconds of Jörn's time to verify. Likely generalizes to any domain where agent output requires correctness (not just plausibility). Design implications:
+**Not modeling own unreliability.** Observed in msc-math: agents are unreliable at both writing correct proofs on first attempt and checking proofs for correctness. They don't realize this, and proceed as if their output is correct — instead of taking ~60 seconds of Jörn's time to verify. Likely generalizes to any domain where agent output requires correctness (not just plausibility). Design implications:
 - Review workflows must be mandatory, not optional — agents won't choose to verify
 - Build verification into the workflow itself (write → review → fix → re-review), not as a separate "if you want" step
 - For critical content (math proofs, canonical facts), the workflow should include a Jörn verification step by default — the cost is low (~60s) and the cost of proceeding with errors is high
@@ -191,7 +191,7 @@ These are empirically observed failure modes that affect how you should design a
 - The generalization step must be part of the resolution workflow, not a follow-up
 - Review agents and postmortem skills should explicitly prompt for error-class abstraction
 
-**Delegation: silent failures from miscommunication.** When a parent agent delegates to a subagent, the parent plans around what it *thinks* the subagent will do (based on the description). If the description overpromises or the prompt is ambiguous, the parent's plan has a silent gap — the subagent faithfully executes what it understood, but the parent proceeds as if something different happened. Design implications:
+**Delegation failures: loud vs silent.** Subagent failures come in two kinds. Loud failures: the subagent reports "I'm stuck on X5" — the parent replans, no damage. Silent failures: the subagent reports "done" but did X' instead of X — the parent proceeds with a broken assumption. Silent failures are far more dangerous. They arise when the parent's mental model, the description, or the prompt diverge from what the subagent actually does. Crucially, the subagent cannot detect or report this kind of failure — it has no access to the parent's intent, so the information asymmetry is structural, not a matter of subagent quality. Verification must come from a third party (the parent or a separate verifier), not from the subagent being "better." Verification of reasoning tasks is especially hard because the output looks plausible even when wrong. Design implications:
 - Skill/agent descriptions must state what the tool does AND does not guarantee — descriptions are the contract that parent agents plan around
 - Verification after delegation is high-value because the communication channel (the prompt) is unreliable and agents don't anticipate their own ambiguity
 - Complete verification (prove correctness) and incomplete falsification (find some errors) are different — don't let "we ran a review" be mistaken for "this is verified"

@@ -108,7 +108,7 @@ Proceeding while overwhelmed produces work that looks plausible but drops constr
 **Communicate reliably.** Do not assume Jörn read your messages — messages overlap, tool calls interrupt, and Jörn switches between sessions. Specific failure modes to avoid:
 - Assuming Jörn saw a question or piece of information you wrote
 - Ignoring or missing Jörn's messages while making tool calls
-- Giving up on a question after it goes unanswered — repeat it or resolve it yourself
+- Giving up on a question after it goes unanswered — repeat it
 - Misinterpreting what Jörn is referring to without checking
 
 **Model your own unreliability.** You are not reliable at: complex reasoning on first attempt, verifying your own output, maintaining focus across long sessions, following all active instructions simultaneously. Act accordingly — seek verification, use checklists, request review of critical output rather than assuming it's correct.
