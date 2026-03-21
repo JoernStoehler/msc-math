@@ -254,23 +254,6 @@ Empirical observations from ~5 months of use. Input to the optimization loop.
 - **Plan workflow** — useful but most agents already use it somewhat; might work as skill
 - **Meta-rules meta-knowledge** — meta-knowledge itself can move to skill; actionable instructions stay in CLAUDE.md
 
-## Post-session reflection (blameless postmortem)
+## Post-session reflection
 
-Just before session ends (merge or abandon):
-
-### Step 1: Report (in chat)
-
-1. All sources of friction, false steps, steps that turned out to have lower-than-expected value, unexpectedly good steps, and time sinks of agent time.
-2. A breakdown of where Jörn spent time this session, what work Jörn did, and where Jörn's work was used afterward. Purpose: detect work Jörn does that agents could also do, or that needn't be done at all.
-3. A list of suggestions, each labeled as confident or unconfident, and as actionably concrete or unactionably abstract.
-
-### Step 2: Persist (into repo)
-
-Turn actionable findings into repo improvements so future agents benefit. For each finding, decide where it belongs using the location tiers above:
-
-- **Repeatable behavioral lesson** (e.g., "get proofs right before reviewing") → memory entry (type: feedback)
-- **New convention or workflow change** (e.g., "task prompts should not say 'no edits' for TODO sessions") → discuss with Jörn, then update CLAUDE.md or relevant skill
-- **Failure mode that explains a rule** → add to Decision Records in this skill
-- **Nothing actionable** (e.g., "web search couldn't find exact theorem numbers") → don't persist, it's just a fact about the session
-
-Don't persist everything — only findings that would change future agent behavior. A postmortem that produces zero repo changes is fine if nothing actionable emerged.
+Use the `/post-mortem` skill. It covers: friction, unclear instructions, missing context, Jörn's time analysis, what worked, suggested changes, process checks, generalization, and persistence guidance.

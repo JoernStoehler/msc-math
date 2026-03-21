@@ -28,10 +28,13 @@ What information wasn't provided but was needed?
 Bad: "Didn't have enough context"
 Good: "Needed to know whether the Adem-Wu proof in Chapter 3 has been reviewed by the advisor or is still draft"
 
-### 4. What Worked Well
+### 4. Jörn's Time
+Where did Jörn spend time this session? What work did Jörn do, and was it used afterward? Purpose: detect work Jörn does that agents could also do, or that needn't be done at all.
+
+### 5. What Worked Well
 What should be preserved or expanded?
 
-### 5. Suggested Changes
+### 6. Suggested Changes
 Specific, actionable improvements.
 
 Bad: "Make things clearer"
@@ -51,10 +54,16 @@ For each friction point or mistake identified above: abstract the error class an
 
 ## Output
 
-Write findings to MEMORY.md if new rules emerged.
+Persist actionable findings so future agents benefit. For each finding, decide where it belongs:
 
-Follow-up actions:
-- Update CLAUDE.md or agent prompts directly for quick fixes
+- **Repeatable behavioral lesson** (e.g., "get proofs right before reviewing") → memory entry (type: feedback)
+- **New convention or workflow change** → discuss with Jörn, then update CLAUDE.md or relevant skill
+- **Failure mode that explains a rule** → add to Decision Records in meta-documentation skill
+- **Nothing actionable** → don't persist, it's just a fact about the session
+
+Don't persist everything — only findings that would change future agent behavior. A postmortem that produces zero repo changes is fine if nothing actionable emerged.
+
+Additional follow-up actions:
 - Add TODO comments in relevant files for localized issues
 - Add to TASKS.md for issues needing more context
 - Update the plan file if session changed what's next
