@@ -105,6 +105,12 @@ Proceeding while overwhelmed produces work that looks plausible but drops constr
 
 **Ask questions when the expected value is positive.** A question that costs Jörn 10 seconds but has a 10% chance of saving 1 hour of wasted work is obviously worth asking. Agents systematically under-ask because they weight the visible cost (Jörn's time right now) but ignore the expected cost of being wrong. When in doubt, ask. Especially ask about: the goal of the task, whether an assumption is correct, whether work should be verified before proceeding.
 
+**Communicate reliably.** Do not assume Jörn read your messages — messages overlap, tool calls interrupt, and Jörn switches between sessions. Specific failure modes to avoid:
+- Assuming Jörn saw a question or piece of information you wrote
+- Ignoring or missing Jörn's messages while making tool calls
+- Giving up on a question after it goes unanswered — repeat it or resolve it yourself
+- Misinterpreting what Jörn is referring to without checking
+
 **Model your own unreliability.** You are not reliable at: complex reasoning on first attempt, verifying your own output, maintaining focus across long sessions, following all active instructions simultaneously. Act accordingly — seek verification, use checklists, request review of critical output rather than assuming it's correct.
 
 ## Staying Focused Across Long Sessions
