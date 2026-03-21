@@ -75,17 +75,17 @@ Subagents don't load skills unless told to. Key conventions must be **included e
 - **Review subagents: 1 per file, pedantic, with source comparison.** Batched shallow reviews (structure/names only) miss content-level errors. Effective review subagents compare the deliverable against original sources line by line and report lost information, misleading formulations, and factual errors. One subagent per file prevents attention dilution.
 - **Iterate to convergence.** Fix review findings, then re-review the fixed files. A re-review round catches errors introduced by the fix itself (observed: conflating Part 1 and Part 2 data when fixing an explanation).
 
-## Delegation failure modes
+## Delegation safeguards
 
-**Loud vs silent failures.** A subagent that reports "I'm stuck on X5" is a loud failure — the parent replans. A subagent that reports "done" but implemented X' instead of X is a silent failure — the parent proceeds with a broken assumption. Silent failures are far more dangerous because the parent doesn't know something went wrong.
+**Don't auto-chain dependent tasks.** If Y depends on X's result, don't auto-trigger Y when X finishes. Plan an explicit gate: check X's output before starting Y. A subagent reporting "done" may mean it failed and reported the failure.
 
-**"Done" is ambiguous.** When a subagent finishes, "done" can mean "succeeded" or "failed and reported failure." Don't auto-chain dependent tasks: if X→Y, don't auto-trigger Y when X finishes. Plan an explicit gate that checks X's result before starting Y.
+**Plan a verification step after delegation.** A subagent may complete a task differently than you intended. After receiving results, spawn a separate verification subagent that checks the output against the original spec. The verifier catches deviations regardless of cause (misunderstanding, reasoning error, prompt ambiguity).
 
-**Verification vs incomplete falsification.** The ideal is a complete verification process (prove correctness) or equivalently a complete falsification process (find all errors — if none found, the work is correct). In practice, what you actually get is incomplete falsification: a process that can find some errors but not all. The gap between "we checked and found nothing" and "it's correct" is where silent failures hide. When planning a verification step, be explicit about what it can and cannot catch — don't let "we ran a review" be mistaken for "this is verified." A verification subagent checking "does the output match the spec?" will catch X'≠X regardless of cause, but won't catch errors in the spec itself, and may miss subtle deviations.
+**State the expected result type explicitly for novel tasks.** For familiar tasks ("implement feature X"), subagents implicitly know what "done" looks like. For novel tasks, spell out the expected output format and success criteria — otherwise the subagent may produce plausible output in the wrong shape.
 
-**Implicit vs novel result types.** For training-familiar tasks ("implement feature X"), agents implicitly know the result type (working code) and common failure modes (doesn't compile, wrong behavior, edge cases). For novel tasks, the result type must be explicitly stated in the prompt — otherwise the subagent may produce a plausible-looking output in the wrong shape, and the parent won't notice because it also doesn't have strong priors about what "correct" looks like.
+**Don't treat "review found nothing" as "verified correct."** A review subagent performs incomplete falsification — it can find some errors but not all. Be explicit about what each review step can and cannot catch. See the `meta-documentation` skill's failure modes section for the underlying analysis.
 
-**Agents rarely anticipate their own prompt ambiguity.** Agents know subagents might fail or misunderstand — but they rarely consider that their own prompt is the source of ambiguity. They don't plan steps to check "did the subagent interpret my prompt the way I intended?" Verification subagents partially rescue this: they check output vs spec without caring about the cause of deviation.
+**Anticipate your own prompt ambiguity.** Before delegating, re-read your prompt and ask: could a subagent reasonably interpret this differently than I intend? If the task is novel or complex, consider a small test: ask the subagent to restate the task before executing.
 
 ## Model selection for subagents
 

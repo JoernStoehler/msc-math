@@ -169,6 +169,12 @@ These are empirically observed failure modes that affect how you should design a
 - The generalization step must be part of the resolution workflow, not a follow-up
 - Review agents and postmortem skills should explicitly prompt for error-class abstraction
 
+**Delegation: silent failures from miscommunication.** When a parent agent delegates to a subagent, the parent plans around what it *thinks* the subagent will do (based on the description). If the description overpromises or the prompt is ambiguous, the parent's plan has a silent gap — the subagent faithfully executes what it understood, but the parent proceeds as if something different happened. Design implications:
+- Skill/agent descriptions must state what the tool does AND does not guarantee — descriptions are the contract that parent agents plan around
+- Verification after delegation is high-value because the communication channel (the prompt) is unreliable and agents don't anticipate their own ambiguity
+- Complete verification (prove correctness) and incomplete falsification (find some errors) are different — don't let "we ran a review" be mistaken for "this is verified"
+- For novel tasks, result types must be explicit in the prompt — agents have no training priors to fall back on
+
 ## Why word-choice sensitivity matters
 
 Jörn communicates via subtle word choices that encode real distinctions. Agents trained on natural language tend to normalize variations ("not quite" → "yes but also"), losing the correction's content. The CLAUDE.md instruction tells agents to adopt Jörn's exact phrasing rather than paraphrasing, because the cost of preserving exact wording is zero but the cost of losing a distinction compounds across the session.
