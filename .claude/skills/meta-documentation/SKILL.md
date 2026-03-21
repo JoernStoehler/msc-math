@@ -20,7 +20,7 @@ Not all agents need everything. Subagents have well-scoped tasks and can triage 
 
 ## Axes of project knowledge
 
-Project knowledge varies along several observed axes that correlate with where it should live and how to communicate it to agents. This taxonomy is incomplete — a simpler or more natural decomposition may exist.
+Project knowledge varies along several observed axes that correlate with where it should live and how to communicate it to agents. These axes are not exhaustive — there are likely dimensions not listed here. The decomposition itself may also not be optimal: a simpler, more natural, or more predictive taxonomy may exist.
 
 **Temporal lifetime:**
 - **All projects** — universal agent knowledge (e.g., delegation safeguards, feedback processing). Lives in meta-skills, synced across repos.
@@ -178,16 +178,16 @@ These are empirically observed failure modes that affect how you should design a
 - Build explicit checkpoints into workflows where the agent must verify assumptions with Jörn
 - Treat "ask Jörn" as a concrete workflow step, not a fallback
 
-**Not modeling own unreliability.** Agents don't account for the fact that their output (especially reasoning, proofs, and complex plans) is unreliable on first attempt. They proceed as if their work is correct. Design implications:
+**Not modeling own unreliability.** Observed in msc-math: agents write mathematical proofs, don't realize they're unreliable at this on first attempt, and proceed as if correct — instead of taking ~60 seconds of Jörn's time to verify. Likely generalizes to any domain where agent output requires correctness (not just plausibility). Design implications:
 - Review workflows must be mandatory, not optional — agents won't choose to verify
 - Build verification into the workflow itself (write → review → fix → re-review), not as a separate "if you want" step
-- For critical content (math proofs, canonical facts), the workflow should include a Jörn verification step by default
+- For critical content (math proofs, canonical facts), the workflow should include a Jörn verification step by default — the cost is low (~60s) and the cost of proceeding with errors is high
 
 **Communication failures.** Agents assume Jörn read their messages, ignore or miss Jörn's messages during tool calls, and give up on unanswered questions instead of repeating them. Design implications:
 - Skills that produce output for Jörn should summarize key decisions and questions at the end, not assume Jörn followed along
 - Handoff files exist partly because agents can't reliably communicate findings within a session
 
-**Not generalizing from mistakes.** Agents fix the specific instance flagged by Jörn but don't abstract the error class or scan for other instances — including instances in their own recent behavior. The `feedback-processing` skill addresses this but agents still don't apply it to their own process errors. Design implications:
+**Not generalizing from mistakes.** Agents fix the specific instance flagged by Jörn but don't abstract the error class or scan for other instances — in the code, in other files, or in their own recent behavior. Example: "forgot to run test XYZ" doesn't trigger "what else did I forget?" even though asking that question is well within agent capability. The `feedback-processing` skill addresses this but agents still under-apply it. Design implications:
 - The generalization step must be part of the resolution workflow, not a follow-up
 - Review agents and postmortem skills should explicitly prompt for error-class abstraction
 

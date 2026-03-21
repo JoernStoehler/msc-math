@@ -83,9 +83,9 @@ Subagents don't load skills unless told to. Key conventions must be **included e
 
 **State the expected result type explicitly for novel tasks.** For familiar tasks ("implement feature X"), subagents implicitly know what "done" looks like. For novel tasks, spell out the expected output format and success criteria — otherwise the subagent may produce plausible output in the wrong shape.
 
-**Don't treat "review found nothing" as "verified correct."** A review subagent performs incomplete falsification — it can find some errors but not all. Be explicit about what each review step can and cannot catch. See the `meta-documentation` skill's failure modes section for the underlying analysis.
+**Don't treat "review found nothing" as "verified correct."** A review subagent performs incomplete falsification — it can find some errors but not all. The gap between "we checked and found nothing" and "it's actually correct" is where silent failures hide. Be explicit about what each review step can and cannot catch — otherwise "we ran a review" gets mistaken for "this is verified." See the `meta-documentation` skill's failure modes section for the underlying analysis.
 
-**Anticipate your own prompt ambiguity.** Before delegating, re-read your prompt and ask: could a subagent reasonably interpret this differently than I intend? If the task is novel or complex, consider a small test: ask the subagent to restate the task before executing.
+**Anticipate your own prompt ambiguity.** Agents rarely anticipate that their own prompt is the source of miscommunication — this is counter to agent defaults and agents will naturally skip this check. Before delegating, re-read your prompt and ask: could a subagent reasonably interpret this differently than I intend? If the task is novel or complex, consider a small test: ask the subagent to restate the task before executing.
 
 ## Model selection for subagents
 
