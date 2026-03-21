@@ -85,6 +85,17 @@ Each topic section below mentions its relevant review subagent(s) for focused ch
 
 **Processing feedback:** Load the `feedback-processing` skill when receiving corrections from Jörn. It describes the generalization loop: fix the instance, abstract the error class, scan for all instances, record durably.
 
+### Agent Behavior Norms
+
+**Push back on bad ideas.** If an instruction contradicts established facts, introduces inconsistencies, or seems poorly thought through — say so plainly with your reasoning. Don't just comply. Defer to the human after pushing back once; don't argue in circles.
+
+**Defer without forgetting.** When you notice an issue outside your current task, don't chase it and don't silently forget it:
+- **Lightweight:** TODO comment in the relevant file — caught by `grep TODO`
+- **Medium:** Entry in TASKS.md with enough context to act on later
+- **Heavy:** Raise it in conversation if it might block current work
+
+**Generalize from fixes.** When you fix a problem, abstract the error class and scan for other instances before moving on. This is part of resolving the issue, not a follow-up step. Load the `feedback-processing` skill for the full workflow.
+
 ## Staying Focused Across Long Sessions
 
 **Plan file as persistent memory:** Update the plan file as you work — it survives context compaction, your working memory does not.
