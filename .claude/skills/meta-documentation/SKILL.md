@@ -116,6 +116,16 @@ Agent definitions contain:
 
 Keep agent definitions minimal. If you find yourself writing inline checklists or detailed instructions, that content belongs in a skill or reference doc instead.
 
+## Cross-repo sync
+
+Hook scripts (`.claude/hooks/`), meta-skills (feedback-processing, collaboration, meta-documentation, session-handoff, post-mortem), and behavior norms share lineage across three repos: msc-math, dnd-claude-code, xrisk-pause-game. When improving any of these:
+
+- Check whether the improvement applies to the other repos
+- Copy changes to keep shared sections word-for-word identical (enables mechanical diffing)
+- Project-specific sections (examples, follow-up actions) may differ
+
+Sync strategy: copy files manually. No shared repo — not worth the indirection for 3 projects.
+
 ## Optimizing rules that don't work
 
 When agents don't follow a rule:
