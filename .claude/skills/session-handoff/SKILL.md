@@ -1,6 +1,6 @@
 ---
 name: session-handoff
-description: Use this checklist at the end of a working session before context is lost. Captures session state into persistent artifacts and optionally spawns a review subagent to verify completeness.
+description: End-of-session checklist. Persists decisions to files, updates task tracking, writes handoff files. Optional review subagent checks structural integrity (broken references, TASKS.md contradictions) but NOT content correctness or conversation completeness.
 user-invocable: true
 ---
 

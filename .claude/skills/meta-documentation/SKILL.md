@@ -100,7 +100,7 @@ Using 50 extra words to prevent a misunderstanding is always worth it.
 
 ## Writing SKILL.md files
 
-- Frontmatter: `name` and `description` are always loaded. Make the description specific enough that agents can decide whether to load the skill.
+- Frontmatter: `name` and `description` are always loaded. The description is load-bearing for parent agent planning — a parent agent reads the description to decide whether to call a skill/subagent, then plans as if the skill does what the description says. If the description overpromises (e.g., "verify completeness" when it only checks file references), the parent's plan silently has a gap. Descriptions must state both what the skill does AND what it does not check.
 - Body: loaded on demand. Organize for the agent who loaded the skill — they already know they need it.
 - Reference docs in `references/` for detailed content too large for the skill body. The skill body should mention which reference docs exist.
 - SKILL.md writing/editing is usually initiated or approved by Jörn — there's a natural moment to load this skill.
@@ -113,6 +113,8 @@ Agent definitions contain:
 - YAML frontmatter: name, description, model, tools, skills
 - A brief task description (what the agent does)
 - Pointers to where the agent should look for its methodology
+
+The `description` field determines how parent agents plan around this agent. The parent reads the description, decides to spawn the agent, and then plans as if the agent will do what the description says. If the description is vague or overpromises, the parent's plan has a gap equal to the delta between what it expected and what the agent actually does — and this gap is hard to catch because verifying a reasoning subagent's output is nearly as hard as doing the task yourself. Descriptions must clearly state what the agent does and does not guarantee.
 
 Keep agent definitions minimal. If you find yourself writing inline checklists or detailed instructions, that content belongs in a skill or reference doc instead.
 
