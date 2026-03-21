@@ -48,16 +48,22 @@ Key principles:
 
 ## Step 5: Subagent review (recommended for substantial sessions)
 
-Spawn a review subagent that reads ONLY the persistent artifacts (handoff files, TASKS.md, updated CLAUDE.md, changed files) — not the conversation. The subagent answers:
+Spawn a review subagent that reads ONLY the persistent artifacts (handoff files, TASKS.md, updated CLAUDE.md, changed files) — not the conversation.
 
-1. Could a new agent reconstruct what to do next from files alone?
-2. Are there decisions or context mentioned in the handoff that aren't backed by file changes?
-3. Is anything in TASKS.md contradicted by the actual file state?
-4. Are handoff file pointers valid (do the referenced files exist)?
+**What this step checks:**
+1. Do handoff file pointers reference files that actually exist?
+2. Does TASKS.md contradict the actual file state (e.g., marks something done that isn't)?
+3. Are there obvious gaps — a handoff file that says "see the updated config" but no config was changed?
+4. Is the handoff file self-contained enough that an agent reading only it and the repo could start working?
 
-The subagent simulates what the next session will experience. If it can't reconstruct the state, the handoff has gaps — fix them.
+**What this step does NOT check:**
+- Correctness of content (mathematical claims, lore consistency, code logic)
+- Completeness of what was discussed in conversation — the subagent can't see the conversation, so it can only check what's written, not what's missing
+- Quality of decisions made during the session
 
-**When to skip:** Trivial sessions (single small edit, no continuation needed). When in doubt, run it — the cost is low and it catches gaps the main agent is blind to.
+This is a structural/mechanical check, not a content review. It catches broken references and obvious contradictions, not subtle omissions or wrong claims.
+
+**When to skip:** Trivial sessions (single small edit, no continuation needed).
 
 ## Common mistakes
 
