@@ -75,6 +75,20 @@ Subagents don't load skills unless told to. Key conventions must be **included e
 - **Review subagents: 1 per file, pedantic, with source comparison.** Batched shallow reviews (structure/names only) miss content-level errors. Effective review subagents compare the deliverable against original sources line by line and report lost information, misleading formulations, and factual errors. One subagent per file prevents attention dilution.
 - **Iterate to convergence.** Fix review findings, then re-review the fixed files. A re-review round catches errors introduced by the fix itself (observed: conflating Part 1 and Part 2 data when fixing an explanation).
 
+## Model selection for subagents
+
+The model parameter is the most important variable for whether a subagent can do its job.
+
+| Task type | Model | Examples |
+|-----------|-------|----------|
+| Mathematical reasoning, proof checking, code correctness | Opus | "Is this hypothesis checkable?", "Does this proof step follow?" |
+| Formatting, style, convention compliance, mechanical checks | Sonnet | Spell-check, label resolution, constant matching, style guide |
+| Fast search, file discovery, pattern matching | Haiku/Explore | "Find all uses of X", "Which files contain Y?" |
+
+The review agent (`.claude/agents/review.md`) defaults to Sonnet. Override with `model: "opus"` when spawning for correctness concerns. Sonnet in the correctness loop is like TDD with tests that don't test.
+
+Adversarial Opus subagents with focused prompts ("be skeptical, check each hypothesis") catch deep issues that Sonnet misses entirely. For math review, always use Opus with one concern per subagent.
+
 ---
 
 # Writing Handoff Files

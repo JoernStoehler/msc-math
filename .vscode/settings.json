@@ -27,5 +27,9 @@
 	"claudeCode.useCtrlEnterToSend": true,
 	"workbench.editor.wrapTabs": true,
 	"workbench.editor.showTabs": "multiple",
-	"claudeCode.useTerminal": true
+	"claudeCode.useTerminal": true,
+	"accessibility.signals.terminalBell": {
+		"sound": "on"
+	},
+	"terminal.integrated.enableVisualBell": true
 }

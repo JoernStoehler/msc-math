@@ -1,16 +1,22 @@
 ---
 name: math-tex
-description: Conventions for math.tex files — standalone LaTeX documents containing lemma statements, proofs, and derivations. Found in crate module directories (crates/symplectic/src/kkt/math.tex) and experiment directories (experiments/<name>/math.tex). Load when reading or writing math.tex files, or when Rust/experiment code references mathematical results.
+description: Conventions for math.tex files — LaTeX documents containing lemma statements, proofs, and derivations. Crate math lives in crates/src/<module>/math.tex, compiled via crates/src/math.tex. Experiment math lives in experiments/<name>/math.tex. Load when reading or writing math.tex files, or when Rust/experiment code references mathematical results.
 ---
 
 # math.tex Conventions
 
-math.tex files are standalone LaTeX documents containing lemma statements, proofs, definitions, and derivations. They are the single source of mathematical truth for the code they sit next to.
+math.tex files contain lemma statements, proofs, definitions, and derivations. They are the single source of mathematical truth for the code they sit next to.
 
-## Locations
+## Locations and build
 
-- **Crate modules:** `crates/symplectic/src/<module>/math.tex` (e.g. `geom/math.tex`, `kkt/math.tex`)
-- **Experiments:** `experiments/<name>/math.tex`
+**Crate modules:** `crates/src/<module>/math.tex` (e.g. `geom/math.tex`, `kkt/math.tex`, `algorithms/math.tex`). These are `\input`'d by `crates/src/math.tex`, which compiles to a single PDF.
+
+- Build: `cd crates/src && pdflatex math.tex`
+- Shared preamble: `crates/src/math-preamble.tex` (packages, theorem environments)
+- Per-module files are pure content — no `\documentclass` or `\begin{document}`. New packages or theorem environments go in `math-preamble.tex`.
+- Cross-references between modules work (e.g. `algorithms/math.tex` can `\ref{lem:kkt}` from `kkt/math.tex`).
+
+**Experiments:** `experiments/<name>/math.tex` — these ARE standalone (own `\documentclass` and `\begin{document}`).
 
 ## Purpose
 
@@ -38,18 +44,17 @@ The thesis draws from math.tex files and experiment logbooks during final assemb
 - Code documentation (→ .rs doc comments)
 - Thesis narrative (→ thesis .tex, during final assembly)
 
-## File conventions
-
-- One math.tex per module/experiment directory. Split only if agents report the file is too large.
-- Must compile standalone — Jörn reviews these as PDF.
-- Uses standard LaTeX theorem environments (`\begin{lemma}`, `\begin{definition}`, `\begin{proof}`, etc.) with `\label{}`s.
-- Living document: grows alongside the code/experiment. Not a polished thesis section.
-
 ## Label conventions
 
 Labels use the format `\label{<type>:<name>}` where `<type>` is one of `lem`, `thm`, `def`, `alg`, `cor`, `rem`, `prop`.
 
-Labels must be unique across all math.tex files in the repo (since the thesis may `\input` multiple math.tex files during final assembly).
+Labels must be unique across all math.tex files in the repo (since the combined `crates/src/math.tex` and thesis may `\input` multiple files).
+
+## Notation conventions
+
+- KKT system uses the **symmetric** matrix form: `[H, N, η; N^T, 0, 0; η^T, 0, 0]`
+- Lagrange multipliers: μ (closure), ξ (normalization)
+- β ∈ R^S (facet-indexed): β_i is the weight for facet i ∈ S, accessed via β_{σ(i)} for position i in ordering σ
 
 ## Agent rules
 

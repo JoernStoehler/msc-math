@@ -312,3 +312,10 @@ See §6a above.
 ### Experiment code extraction
 
 See §6d above and `handoffs/experiment-deduplication.md`.
+
+### Solver numerical behavior math.tex 🟢
+
+Create `crates/src/math.tex` (or per-module files) collecting numerical analysis results
+for the solvers used in the crate: SVD backward stability, condition number bounds,
+LU error bounds, eigendecomposition stability. Multiple modules (prefilter, constraint_solver,
+orbit_recovery) currently use SVD without citing a shared error analysis.

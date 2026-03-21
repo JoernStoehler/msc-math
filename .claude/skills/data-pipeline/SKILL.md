@@ -86,17 +86,13 @@ If this is a legitimate code change, regenerate:
 If this is unexpected, investigate the regression.
 ```
 
-### Generator-content staleness (secondary)
+### Generator-content staleness (not implemented)
 
-The fixture file includes a content hash of the generator source. On load, compare against current file. If the generator changed but data wasn't regenerated, warn:
-```
-WARNING: generate_capacity_fixtures.rs changed since last generation.
-Consider regenerating: cargo test --lib -- generate_capacity_fixtures --ignored  (~5 min)
-```
-
-This is a WARNING, not an error — the generator might have changed in ways that don't affect output (comments, refactoring). The semantic check above catches actual mismatches.
-
-**Why not git commit hash?** Too many false positives. Every commit marks everything stale, even unrelated changes.
+Considered: embedding a content hash of the generator source in the fixture file.
+Rejected: adds complexity, and semantic staleness already catches the case that
+matters (code change produces different values → test fails). The hash would only
+catch the case where the generator changed but values stayed the same, which
+doesn't warrant the infrastructure cost.
 
 ## Cached data as regression detection
 
@@ -123,10 +119,10 @@ eprintln!("[TIMING] {test_name}: {elapsed:.1?}");
 
 ## Test performance budget
 
-| Category | Target | Current |
-|----------|--------|---------|
-| Fast tests (default suite) | < 2 min | ~7 min (needs work) |
-| Full suite (with `--ignored`) | < 10 min | unknown |
+| Category | Target | Current (2026-03-19) |
+|----------|--------|----------------------|
+| Fast tests (default suite) | < 2 min | ~31s wall / 4m51s CPU |
+| Full suite (with `--ignored`) | < 10 min | unmeasured |
 | Fixture generation | < 10 min | ~5 min |
 
 Tests exceeding the fast budget should be `#[ignore]` with a comment:
@@ -135,6 +131,46 @@ Tests exceeding the fast budget should be `#[ignore]` with a comment:
 ```
 
 **When to regenerate vs not:** Only regenerate when the generator's *semantic output* would change. A rounding change in display code doesn't warrant 5 minutes of regeneration. A KKT solver bugfix does. When in doubt, run the consumer tests first — if they pass, the cached data is still correct.
+
+## Profiling methodology
+
+When profiling test performance, use **user CPU time** (not wall clock):
+
+```bash
+bash -c 'time cargo test --lib -- test_name' 2>&1 | tail -8
+```
+
+Wall clock is unreliable: it depends on system load, number of cores, and how many tests run in parallel. User CPU time measures actual computation.
+
+**Full suite metrics:**
+- **Wall time** = user experience (how long you wait). Depends on parallelism.
+- **User CPU time** = total computation. Independent of parallelism.
+- **Report both** and note the environment (cores, load average).
+
+**Environment state to record:**
+```bash
+nproc          # available cores
+uptime         # load average (should be < nproc for clean measurements)
+pgrep -c cargo # other cargo processes (should be 0)
+```
+
+**Per-test isolation:** Run individual tests separately, not in parallel.
+The test harness runs all `cargo test --lib` tests in parallel, so individual
+test timings from the full run are distorted by contention.
+
+## Known performance characteristics
+
+`Polytope4D::new()` does exact rational vertex enumeration (O(F⁴) BigRational
+operations). This is the main construction cost, not the capacity algorithm.
+
+**Why rational:** Vertex-facet incidence and omega signs require exact discrete
+decisions (is y_i · v exactly 1? is ω₀(y_i, y_k) positive or zero?). The f64
+bounded check in `validation.rs` is a fast pre-filter; the rational pipeline
+in `vertex_enumeration.rs` is the authoritative answer.
+
+**Cargo profile overrides:** `num-bigint` and `num-rational` are compiled at
+`opt-level = 3` in dev/test builds (see `Cargo.toml`). Without this, rational
+arithmetic is ~20× slower in debug mode. Same pattern as nalgebra.
 
 ## Discovering data pipelines
 
