@@ -367,29 +367,7 @@ fn try_pseudoinverse_with_threshold(
     }
 
     let beta0_dv = DVector::from_column_slice(&beta0);
-    // Guard against microlp cycling on degenerate LPs (observed for k_eff=2,
-    // m=5 on square×square at θ=0). Use a thread + channel timeout.
-    let margin_result = if k_eff >= 2 {
-        let beta0_clone = beta0_dv.clone();
-        let basis_clone = null_basis.clone();
-        let (tx, rx) = std::sync::mpsc::channel();
-        std::thread::spawn(move || {
-            let _ = tx.send(beta_feasibility::find_max_margin(&beta0_clone, &basis_clone));
-        });
-        match rx.recv_timeout(std::time::Duration::from_millis(100)) {
-            Ok(result) => result,
-            Err(_) => {
-                // LP timed out (likely microlp cycling). Fall back to beta0.
-                if beta0.iter().all(|&b| b > -EPS_BETA_POSITIVE) {
-                    return finalize_result(&beta0, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info);
-                } else {
-                    return None;
-                }
-            }
-        }
-    } else {
-        beta_feasibility::find_max_margin(&beta0_dv, &null_basis)
-    };
+    let margin_result = beta_feasibility::find_max_margin(&beta0_dv, &null_basis);
 
     // Accept the LP result only if it satisfies constraints. The LP moves
     // along approximate null-space directions (eigenvectors of M+E, not M),

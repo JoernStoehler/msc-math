@@ -10,13 +10,13 @@
 //!
 //! - k = 0: trivial (no degrees of freedom).
 //! - k = 1: analytic solution via interval analysis.
-//! - k >= 2: exact LP via `microlp`.
+//! - k >= 2: exact LP via GLPK (through `good_lp`).
 //!
 //! Used by `projection_solver` (Step 4) to classify the verdict for a KKT node.
 //!
 //! Mathematical correspondence: [lem:numerical-transition-feasibility]
 
-use microlp::{ComparisonOp, OptimizationDirection, Problem};
+use good_lp::{constraint, default_solver, variable, variables, Expression, Solution, SolverModel};
 use nalgebra::{DMatrix, DVector};
 
 /// Component of null-space vector below this magnitude is treated as zero (k=1 case).
@@ -158,7 +158,7 @@ fn find_max_margin_k1(beta0: &DVector<f64>, v: &DVector<f64>) -> MarginResult {
     }
 }
 
-/// k >= 2: Exact LP solution via `microlp`.
+/// k >= 2: Exact LP solution via GLPK (through `good_lp`).
 ///
 /// Reformulates the Chebyshev center problem as:
 ///
@@ -168,38 +168,42 @@ fn find_max_margin_k1(beta0: &DVector<f64>, v: &DVector<f64>) -> MarginResult {
 /// Variables: alpha_1..alpha_k (unbounded) and t (unbounded).
 /// Total k+1 variables, m constraints.
 ///
-/// The LP is always feasible (t can go to -infinity) and bounded
-/// (the affine subspace is finite-dimensional).
+/// GLPK's simplex implementation uses Bland's anti-cycling rule,
+/// so it terminates on degenerate inputs where microlp would cycle.
 fn find_max_margin_kn(beta0: &DVector<f64>, null_basis: &DMatrix<f64>) -> MarginResult {
     let m = beta0.len();
     let k = null_basis.ncols();
 
-    let mut problem = Problem::new(OptimizationDirection::Maximize);
+    let mut vars = variables!();
 
-    // Variables alpha_1..alpha_k: unbounded, zero objective coefficient.
+    // Variables alpha_1..alpha_k: unbounded.
     let alpha_vars: Vec<_> = (0..k)
-        .map(|_| problem.add_var(0.0, (f64::NEG_INFINITY, f64::INFINITY)))
+        .map(|_| vars.add(variable().min(f64::NEG_INFINITY)))
         .collect();
 
-    // Variable t: unbounded, objective coefficient 1.0.
-    let t_var = problem.add_var(1.0, (f64::NEG_INFINITY, f64::INFINITY));
+    // Variable t: unbounded (objective: maximize t).
+    let t_var = vars.add(variable().min(f64::NEG_INFINITY));
+
+    let objective: Expression = t_var.into();
+
+    let mut model = vars.maximise(objective).using(default_solver);
 
     // Constraints: for each j, sum_i V[j,i] * alpha_i - t >= -beta0[j]
     for j in 0..m {
-        let mut terms: Vec<(microlp::Variable, f64)> = Vec::with_capacity(k + 1);
+        let mut lhs: Expression = Expression::from(0.0);
         for i in 0..k {
             let coeff = null_basis[(j, i)];
             if coeff != 0.0 {
-                terms.push((alpha_vars[i], coeff));
+                lhs += coeff * alpha_vars[i];
             }
         }
-        terms.push((t_var, -1.0));
-        problem.add_constraint(terms.as_slice(), ComparisonOp::Ge, -beta0[j]);
+        lhs -= t_var;
+        model = model.with(constraint!(lhs >= -beta0[j]));
     }
 
-    match problem.solve() {
+    match model.solve() {
         Ok(solution) => {
-            let alpha = DVector::from_fn(k, |i, _| solution[alpha_vars[i]]);
+            let alpha = DVector::from_fn(k, |i, _| solution.value(alpha_vars[i]));
             let beta = beta0 + null_basis * &alpha;
             let margin = beta.iter().copied().fold(f64::INFINITY, f64::min);
             MarginResult {
@@ -209,8 +213,7 @@ fn find_max_margin_kn(beta0: &DVector<f64>, null_basis: &DMatrix<f64>) -> Margin
             }
         }
         Err(_) => {
-            // Solver error (Unbounded, Infeasible, or InternalError).
-            // These shouldn't happen for our formulation, but handle gracefully.
+            // Solver error. Shouldn't happen for our formulation, but handle gracefully.
             let beta = beta0.clone();
             let margin = beta.iter().copied().fold(f64::INFINITY, f64::min);
             MarginResult {
