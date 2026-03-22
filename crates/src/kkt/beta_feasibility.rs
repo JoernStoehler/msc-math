@@ -40,23 +40,13 @@ pub struct MarginResult {
 ///
 /// This is the Chebyshev center problem for the polytope {alpha : beta0 + V * alpha >= 0}.
 ///
-/// # Cases by null-space dimension k
-///
-/// - **k = 0**: No degrees of freedom. margin = min(beta0).
-/// - **k >= 1**: LP solver (GLPK via `good_lp`). Certified optimal margin.
-///
 /// # Guarantees
 ///
 /// - Always returns a result (never panics for valid inputs).
 /// - The returned margin equals min(beta) exactly.
 /// - For all k, the margin is the certified global optimum.
 pub fn find_max_margin(beta0: &DVector<f64>, null_basis: &DMatrix<f64>) -> MarginResult {
-    let k = null_basis.ncols();
-
-    match k {
-        0 => find_max_margin_k0(beta0),
-        _ => find_max_margin_kn(beta0, null_basis),
-    }
+    find_max_margin_lp(beta0, null_basis)
 }
 
 /// Convenience wrapper: find feasible beta from a QP's constraint solution.
@@ -77,23 +67,7 @@ pub fn find_feasible_beta(
     }
 }
 
-/// k = 0: No degrees of freedom. Margin is simply min(beta0).
-fn find_max_margin_k0(beta0: &DVector<f64>) -> MarginResult {
-    let m = beta0.len();
-    let margin = if m == 0 {
-        0.0
-    } else {
-        beta0.iter().copied().fold(f64::INFINITY, f64::min)
-    };
-
-    MarginResult {
-        margin,
-        alpha: DVector::zeros(0),
-        beta: beta0.clone(),
-    }
-}
-
-/// k >= 1: LP solution via clarabel (through `good_lp`).
+/// LP solution via clarabel interior-point solver (through `good_lp`).
 ///
 /// Reformulates the Chebyshev center problem as:
 ///
@@ -103,9 +77,12 @@ fn find_max_margin_k0(beta0: &DVector<f64>) -> MarginResult {
 /// Variables: alpha_1..alpha_k (unbounded) and t (unbounded).
 /// Total k+1 variables, m constraints.
 ///
-/// GLPK's simplex implementation uses Bland's anti-cycling rule,
-/// so it terminates on degenerate inputs where microlp would cycle.
-fn find_max_margin_kn(beta0: &DVector<f64>, null_basis: &DMatrix<f64>) -> MarginResult {
+/// For k = 0: the LP has only the t variable, and t* = min(beta0).
+/// For k >= 1: standard Chebyshev center LP.
+///
+/// Clarabel uses an interior-point method — no simplex cycling on
+/// degenerate inputs (unlike microlp which hung on k=2, m=5).
+fn find_max_margin_lp(beta0: &DVector<f64>, null_basis: &DMatrix<f64>) -> MarginResult {
     let m = beta0.len();
     let k = null_basis.ncols();
 
