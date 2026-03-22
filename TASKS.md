@@ -99,15 +99,19 @@ cargo clippy --tests -- -D warnings  # clean
 
 **Target:** Default suite < 2 min. Full suite (with `--ignored`) < 10 min.
 
-**Depends on:** Migration merge (§0).
+**Status (2026-03-22):** Not started. A previous `test-data-pipeline` worktree existed but only contained pre-filter math consolidation work (now merged to main). The actual fixture pipeline work (items 1-5 above) has not been implemented. No worktree currently active.
+
+**Depends on:** Migration merge (§0) ✅.
 
 ---
 
-## 1b. Migrate remaining experiments to logbook format
+## 1b. Migrate remaining experiments to logbook format — NEARLY COMPLETE
 
-🟢 Agent can do autonomously. ~2 hours for all 15 remaining experiments.
+🟢 Agent can do autonomously.
 
-hko-neighborhood is done (logbook.md + math.tex + role-based filenames). Remaining 15 experiments need:
+**Status (2026-03-22):** 17/18 experiments have logbook.md. Only `test-profiling` still has README.md instead of logbook.md. Original estimate was 15 remaining; bulk migration happened during earlier sessions.
+
+Previously planned for remaining experiments:
 - Create `logbook.md` from README.md + .tex + git history + code headers
 - Rename `<name>.rs` → `run.rs`, `<name>.py` → `analyze.py`, `<name>.tex` → `math.tex`
 - Update `experiments/Cargo.toml` bin paths
@@ -224,9 +228,11 @@ Implement second solver variant: solve constraints → project H → eigendecomp
 
 **Tip:** `kkt/projection_solver.rs` already exists from migration with a basic implementation. The refactor is to make it mathematically rigorous and add the ablation comparison framework.
 
-### 6c. Unify β>0 feasibility as LP
+### 6c. Unify β>0 feasibility as LP — IN PROGRESS (kkt-lp-refactor worktree)
 
 🟢 Agent can do. Replace 1d/nd split with single LP formulation. See detailed spec below.
+
+**Status (2026-03-22):** `kkt-lp-refactor` worktree has 17 commits. Unified LP implemented (microlp crate), experiment copies updated, unbounded LP handling added, near-null search analysis written. Branch is 20+ commits behind main (pre-meta-refactor). Needs rebase and assessment of what's mergeable vs needs rework.
 
 ### 6d. Extract shared experiment code to library
 
