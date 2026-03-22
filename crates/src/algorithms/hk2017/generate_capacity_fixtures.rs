@@ -70,20 +70,24 @@ pub struct TestPolytope {
 pub const FIXTURE_PATH: &str = "tests/fixtures/capacity_dataset.json";
 
 /// Serializable representation of a test polytope (no nalgebra types).
+///
+/// Scalar-only: contains all fixture data except `Polytope4D`. Most fixture tests
+/// only need scalar fields (capacity, volume, etc.) and can use `load_dataset_entries()`
+/// to skip the expensive `Polytope4D::new()` call during deserialization.
 #[cfg(test)]
 #[derive(serde::Serialize, serde::Deserialize)]
-struct DatasetEntry {
-    name: String,
-    normals: Vec<[f64; 4]>,
-    heights: Vec<f64>,
-    volume: f64,
-    capacity: f64,
+pub(crate) struct DatasetEntry {
+    pub(crate) name: String,
+    pub(crate) normals: Vec<[f64; 4]>,
+    pub(crate) heights: Vec<f64>,
+    pub(crate) volume: f64,
+    pub(crate) capacity: f64,
     #[serde(default)]
-    capacity_unpruned: Option<f64>,
+    pub(crate) capacity_unpruned: Option<f64>,
     #[serde(default)]
-    capacity_billiard: Option<f64>,
-    base_index: Option<usize>,
-    transform: Option<String>,
+    pub(crate) capacity_billiard: Option<f64>,
+    pub(crate) base_index: Option<usize>,
+    pub(crate) transform: Option<String>,
 }
 
 #[cfg(test)]
@@ -166,6 +170,33 @@ pub fn load_test_dataset(path: &std::path::Path) -> Vec<TestPolytope> {
         )
     });
     entries.iter().map(DatasetEntry::to_test_polytope).collect()
+}
+
+/// Load dataset from JSON fixture file as scalar entries (no `Polytope4D` construction).
+///
+/// Returns `Vec<DatasetEntry>` with all fixture fields except `Polytope4D`.
+/// ~1ms vs ~8s for `load_test_dataset()`. Use for tests that only need scalar
+/// fields (capacity, volume, name, etc.).
+#[cfg(test)]
+pub(crate) fn load_dataset_entries(path: &std::path::Path) -> Vec<DatasetEntry> {
+    let json = std::fs::read_to_string(path).unwrap_or_else(|e| {
+        panic!(
+            "Cannot read capacity dataset fixture at {}.\n\
+             Error: {}\n\
+             Regenerate with: cargo test --release regenerate_test_dataset -- --ignored --nocapture",
+            path.display(),
+            e
+        )
+    });
+    serde_json::from_str(&json).unwrap_or_else(|e| {
+        panic!(
+            "Cannot parse capacity dataset fixture at {}.\n\
+             Error: {}\n\
+             Regenerate with: cargo test --release regenerate_test_dataset -- --ignored --nocapture",
+            path.display(),
+            e
+        )
+    })
 }
 
 /// Deterministically generate the test polytope catalog (~0ms, no capacity computation).
