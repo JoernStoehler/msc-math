@@ -1,8 +1,8 @@
 //! Gradient ascent on sys = c_EHZ² / (2 vol) for F=10 polytopes.
 //!
 //! Two modes:
-//! 1. General random F=10 polytopes — uses instrumented HK2017 (exponential enumeration)
-//! 2. F=10 Lagrangian products — uses instrumented billiard with Lagrangian-constrained gradient
+//! 1. General random F=10 polytopes — uses HK2017 (exponential enumeration)
+//! 2. F=10 Lagrangian products — uses billiard with Lagrangian-constrained gradient
 //!
 //! For Lagrangian products, the gradient step preserves the product structure:
 //! q-facet normals stay in the q-plane, p-facet normals stay in the p-plane.
@@ -15,10 +15,6 @@
 //! Input: generates its own starting polytopes (no external data dependency)
 //! Output: gradient-descent/gradient-descent.jsonl
 
-#[path = "kkt_instrumented.rs"]
-mod kkt_instrumented;
-
-use kkt_instrumented::*;
 use nalgebra::{Matrix4, Vector4};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
@@ -27,14 +23,19 @@ use std::collections::HashSet;
 use std::fs::{File, OpenOptions};
 use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::time::Instant;
-use symplectic::geom::polygon::random_polygon_2d;
-// TODO: These will be re-exported from top-level `symplectic::` in wave 4 (subagent #16).
-use symplectic::geom::lagrangian_product::lagrangian_product;
-use symplectic::random::sample_random_polytope;
 use symplectic::algorithms::billiard::billiard_capacity;
-use symplectic::geom::volume::volume;
+use symplectic::algorithms::billiard::facet_classification::{classify_facets, FacetClassification};
+use symplectic::derivatives::{
+    capacity_derivatives_h, capacity_derivatives_n, volume_derivatives_h, volume_derivatives_n,
+};
+use symplectic::geom::lagrangian_product::lagrangian_product;
+use symplectic::geom::polygon::random_polygon_2d;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
+use symplectic::geom::symplectic_form::omega0;
+use symplectic::geom::volume::volume;
+use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktResult};
+use symplectic::random::sample_random_polytope;
 
 // ============================================================================
 // Configuration
@@ -137,110 +138,22 @@ struct SensitivityResult {
     gradient_norm_hn: f64,
 }
 
-/// d(vol)/d(h_k) = S_k (3D volume of facet k).
-fn compute_volume_derivatives_h(polytope: &Polytope4D) -> Vec<f64> {
-    let normals = polytope.normals_f64();
-    let heights = polytope.heights_f64();
-    let vertices = polytope.vertices_f64();
-    let f = normals.len();
-    (0..f)
-        .map(|k| facet_volume_3d(&normals, &heights, &vertices, k, f))
-        .collect()
-}
-
-/// d(c_EHZ)/d(h_k) via envelope theorem.
-/// For orbit (S,σ) with KKT solution (β, Q, ν): dA/dh_k = −ν·β_{i₀}/(2Q²)
-fn compute_capacity_derivatives_h(best_orbit: &ValidOrbit, facet_count: usize) -> Vec<f64> {
-    let q_sq = best_orbit.q_value * best_orbit.q_value;
-    (0..facet_count)
-        .map(|k| {
-            match best_orbit.permutation.iter().position(|&f| f == k) {
-                // Lemma lem:cap-derivative: ∂A/∂h_k = ν·β_{i₀}/(2Q²)
-                Some(i0) => best_orbit.nu * best_orbit.beta[i0] / (2.0 * q_sq),
-                None => 0.0,
-            }
-        })
-        .collect()
-}
-
-/// d(vol)/d(n_k) projected onto T_{n_k}S³.
-/// Tangent gradient: −S_k(x̄_k − h_k n_k)
-fn compute_volume_derivatives_n(polytope: &Polytope4D) -> Vec<Vector4<f64>> {
-    let normals = polytope.normals_f64();
-    let heights = polytope.heights_f64();
-    let vertices = polytope.vertices_f64();
-    let f = normals.len();
-
-    (0..f)
-        .map(|k| {
-            let (s_k, centroid_k) = facet_volume_and_centroid_3d(&normals, &heights, &vertices, k, f);
-            if s_k < 1e-30 {
-                return Vector4::zeros();
-            }
-            let tangent_centroid = centroid_k - heights[k] * normals[k];
-            -s_k * tangent_centroid
-        })
-        .collect()
-}
-
-/// d(c_EHZ)/d(n_k) via envelope theorem, projected onto T_{n_k}S³.
-fn compute_capacity_derivatives_n(
-    best_orbit: &ValidOrbit,
-    normals: &[Vector4<f64>],
-    facet_count: usize,
-) -> Vec<Vector4<f64>> {
-    let q_sq = best_orbit.q_value * best_orbit.q_value;
-    let perm = &best_orbit.permutation;
-    let beta = &best_orbit.beta;
-    let lambda = Vector4::new(
-        best_orbit.lambda[0],
-        best_orbit.lambda[1],
-        best_orbit.lambda[2],
-        best_orbit.lambda[3],
-    );
-
-    (0..facet_count)
-        .map(|k| {
-            let i0 = match perm.iter().position(|&f| f == k) {
-                Some(pos) => pos,
-                None => return Vector4::zeros(),
-            };
-
-            // P_{i₀} = Σ_{i < i₀} β_i · n_{σ(i)}
-            let mut p = Vector4::zeros();
-            for i in 0..i0 {
-                p += beta[i] * normals[perm[i]];
-            }
-
-            // ∂Q*/∂n_k = β_{i₀} · [J₀(2P + β_{i₀} n_k) − λ]
-            let inner = 2.0 * p + beta[i0] * normals[k];
-            let j0_inner = j0_apply(&inner);
-            let dq_dn = beta[i0] * (j0_inner - lambda);
-
-            // Project onto T_{n_k}S³
-            let dq_dn_tangent = dq_dn - dq_dn.dot(&normals[k]) * normals[k];
-
-            // ∂A/∂n_k = −∂Q*/∂n_k / (2Q²)
-            -dq_dn_tangent / (2.0 * q_sq)
-        })
-        .collect()
-}
-
 /// Full sensitivity: d(sys)/d(h_k) and d(sys)/d(n_k) via chain rule.
+/// Uses library derivative functions with the symmetric KKT convention.
 fn compute_sensitivity(
     polytope: &Polytope4D,
     vol: f64,
     cap: f64,
     sys: f64,
-    instrumented: &InstrumentedResult,
+    kkt: &KktResult,
+    best_perm: &[usize],
 ) -> SensitivityResult {
     let normals = polytope.normals_f64();
     let f = normals.len();
-    let best_orbit = &instrumented.orbits[0];
 
-    // Height derivatives
-    let d_vol_h = compute_volume_derivatives_h(polytope);
-    let d_cap_h = compute_capacity_derivatives_h(best_orbit, f);
+    // Height derivatives (library handles sign convention internally)
+    let d_vol_h = volume_derivatives_h(polytope);
+    let d_cap_h = capacity_derivatives_h(&kkt.beta, kkt.q_corrected, kkt.xi, best_perm, f);
 
     // d(sys)/d(h_k) = (1/vol) * [c · dc/dh_k − sys · dvol/dh_k]
     let d_sys_h: Vec<f64> = d_vol_h
@@ -262,9 +175,10 @@ fn compute_sensitivity(
         .sum::<f64>()
         .sqrt();
 
-    // Normal derivatives
-    let d_vol_n = compute_volume_derivatives_n(polytope);
-    let d_cap_n = compute_capacity_derivatives_n(best_orbit, &normals, f);
+    // Normal derivatives (library handles sign convention internally)
+    let d_vol_n = volume_derivatives_n(polytope);
+    let d_cap_n =
+        capacity_derivatives_n(&kkt.beta, kkt.q_corrected, &kkt.mu, best_perm, &normals);
 
     let d_sys_n: Vec<Vector4<f64>> = d_vol_n
         .iter()
@@ -460,8 +374,8 @@ fn compute_step_bound_hn(
     for ridge in &skeleton.ridges {
         let i = ridge.facets[0];
         let j = ridge.facets[1];
-        let omega_ij = omega0_local(&normals[i], &normals[j]);
-        let d_omega = omega0_local(&g_n[i], &normals[j]) + omega0_local(&normals[i], &g_n[j]);
+        let omega_ij = omega0(&normals[i], &normals[j]);
+        let d_omega = omega0(&g_n[i], &normals[j]) + omega0(&normals[i], &g_n[j]);
         if omega_ij.abs() > 1e-15 && d_omega.abs() > 1e-15 {
             let t_flip = -omega_ij / d_omega;
             if t_flip > 0.0 && t_flip < t_max {
@@ -552,11 +466,27 @@ fn try_step_hn(
 fn compute_capacity(polytope: &Polytope4D, backend: &CapacityBackend) -> Option<f64> {
     match backend {
         CapacityBackend::Hk2017 => {
-            // TODO: ehz_capacity will be re-exported from top-level in wave 4
             symplectic::algorithms::hk2017::ehz_capacity(polytope).map(|r| r.result.capacity)
         }
         CapacityBackend::Billiard => {
             billiard_capacity(polytope).ok()?.map(|r| r.result.capacity)
+        }
+    }
+}
+
+/// Compute capacity and best permutation using the appropriate backend.
+fn compute_capacity_result(
+    polytope: &Polytope4D,
+    backend: &CapacityBackend,
+) -> Option<(f64, Vec<usize>)> {
+    match backend {
+        CapacityBackend::Hk2017 => {
+            let r = symplectic::algorithms::hk2017::ehz_capacity(polytope)?;
+            Some((r.result.capacity, r.result.best_permutation))
+        }
+        CapacityBackend::Billiard => {
+            let r = billiard_capacity(polytope).ok()??;
+            Some((r.result.capacity, r.result.best_permutation))
         }
     }
 }
@@ -613,16 +543,15 @@ fn run_gradient_ascent(
     for iter in 0..MAX_ITERATIONS {
         let t_iter = Instant::now();
 
-        // 1. Instrumented capacity
-        let instrumented = match backend {
-            CapacityBackend::Hk2017 => ehz_capacity_instrumented(&current),
-            CapacityBackend::Billiard => billiard_capacity_instrumented(&current),
-        };
-        let instrumented = match instrumented {
+        // 1. Capacity + KKT data via library
+        let (cap, best_perm) = match compute_capacity_result(&current, backend) {
             Some(r) => r,
             None => break,
         };
-        let cap = instrumented.capacity;
+        let kkt = match solve_kkt_for(&current, &best_perm) {
+            Some(k) => k,
+            None => break,
+        };
         let vol = match volume(&current) {
             Ok(v) if v > 0.0 => v,
             _ => break,
@@ -635,7 +564,7 @@ fn run_gradient_ascent(
         }
 
         // 2. Sensitivity
-        let sensitivity = compute_sensitivity(&current, vol, cap, sys, &instrumented);
+        let sensitivity = compute_sensitivity(&current, vol, cap, sys, &kkt, &best_perm);
 
         // 3. Step bounds
         let normals = current.normals_f64();
@@ -953,25 +882,26 @@ fn main() {
     let lagrangian = generate_lagrangian_polytopes(&mut rng);
     println!("Generated {} Lagrangian products.\n", lagrangian.len());
 
-    // Cross-check: instrumented HK2017 vs library billiard on first 5 products.
+    // Cross-check: library HK2017 vs library billiard on first 5 products.
     // Both algorithms should agree on capacity for Lagrangian products.
-    println!("Cross-checking instrumented HK2017 vs library billiard...");
+    println!("Cross-checking HK2017 vs billiard...");
     for (name, _, polytope) in lagrangian.iter().take(5) {
-        let lib_cap = billiard_capacity(polytope)
+        let billiard_cap = billiard_capacity(polytope)
             .expect("billiard failed")
             .expect("billiard None")
             .result
             .capacity;
-        let inst_cap = ehz_capacity_instrumented(polytope)
-            .expect("instrumented HK2017 None")
+        let hk_cap = symplectic::algorithms::hk2017::ehz_capacity(polytope)
+            .expect("HK2017 None")
+            .result
             .capacity;
-        let rel_err = ((lib_cap - inst_cap) / lib_cap).abs();
+        let rel_err = ((billiard_cap - hk_cap) / billiard_cap).abs();
         println!(
-            "  {name}: billiard={lib_cap:.10}, hk2017_inst={inst_cap:.10}, rel_err={rel_err:.2e}"
+            "  {name}: billiard={billiard_cap:.10}, hk2017={hk_cap:.10}, rel_err={rel_err:.2e}"
         );
         assert!(
             rel_err < 1e-6,
-            "Capacity mismatch: billiard={lib_cap}, hk2017={inst_cap}, rel_err={rel_err}"
+            "Capacity mismatch: billiard={billiard_cap}, hk2017={hk_cap}, rel_err={rel_err}"
         );
     }
     println!("Cross-check passed.\n");
