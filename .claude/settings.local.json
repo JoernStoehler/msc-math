@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -l \"backup-sessions\" /srv/devhome/.claude/projects/*/*.jsonl)",
+      "Bash(python3:*)",
+      "Bash(trash-list)",
+      "Read(//home/joern/**)",
+      "Read(//srv/**)",
+      "Read(//tmp/**)",
+      "Bash(lsblk -f)",
+      "Bash(mount)",
+      "Bash(find /srv/devhome/.claude/file-history/ -type f -exec grep -l backup {})",
+      "Bash(2)",
+      "Bash(for v:*)",
+      "Bash(do echo:*)",
+      "Read(//home/joern/.claude/file-history/4f7b13a1-a53a-4573-90d8-2a924d71499c/**)",
+      "Bash(done)",
+      "Bash(find /home/joern/.claude/file-history/ -type f -exec grep -l backup {})",
+      "Bash(ls /srv/devhome/.claude/projects/-workspaces-msc-math/*.jsonl)",
+      "Bash(grep:*)",
+      "Bash(docker exec:*)",
+      "WebSearch"
+    ]
+  }
+}

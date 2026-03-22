@@ -1,6 +1,6 @@
 ---
 name: meta-create-workflow
-description: Workflow for designing and writing down workflows. Load when you need to create a new workflow, decide whether it should be a skill or a subagent, or write an agent definition. Covers workflow structure, when to isolate into a subagent, and agent/hook format. For creating conventions instead, see meta-create-conventions. For creating review subagents specifically, see meta-create-review-subagent.
+description: Workflow for designing and writing down workflows. Load when you need to create a new workflow, decide whether it should be a skill or a subagent, or write an agent definition. Covers workflow structure, when to isolate into a subagent, and agent/hook format. For creating conventions instead, see meta-create-conventions.
 ---
 
 # Creating Workflows
@@ -16,7 +16,6 @@ A workflow for designing, writing down, and implementing workflows. Workflows ar
 
 - `meta-foundations` — conceptual foundation (load first if you haven't)
 - `meta-create-conventions` — for creating conventions instead of workflows
-- `meta-create-review-subagent` — specialized workflow for creating review subagents
 
 ## Skill vs subagent vs hook
 
