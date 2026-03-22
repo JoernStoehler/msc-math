@@ -2,7 +2,7 @@
 
 Master task list for thesis completion. **Deadline: March 31, 2026.**
 
-**Current state (2026-03-17):** No thesis chapter is publishable yet. Experiments have data but writeups are noisy and the thesis doesn't tell a coherent story backed by results. The codebase is mid-migration. Progress rate is on track for deadline.
+**Current state (2026-03-22):** No thesis chapter is publishable yet. Experiments have data but writeups are noisy and the thesis doesn't tell a coherent story backed by results. Migration is complete and merged. Meta-layer refactored (skills over rules, conventions as review spec). Progress rate is on track for deadline.
 
 **Priority order:** Migration merge → thesis coherence + experiment quality → code refactors. Code refactors only matter if they unblock thesis content or experiment correctness.
 
@@ -21,11 +21,11 @@ What's settled vs placeholder across the project's major components.
 
 | Component | Status | Notes |
 |-----------|--------|-------|
-| Rust library (crates/) | **Draft** | 73 files rewritten, 316 tests pass, Clippy clean — but blocked on migration merge review; cleanup tasks (§2), solver refactors (§6), and tube algorithm (§7) still ahead |
-| Migration scaffold | **Draft** | Agent work complete; 6 open review items for Jörn before merge. Blocks almost everything else |
-| Test data pipeline | **Not started** | Blocked by migration merge. Design exists (§1) but no code yet |
-| Experiment data | **Settled** | All 16 experiments have data and produce results |
-| Experiment writeups | **Placeholder** | "Complete" means has data, not publishable. Noisy, no coherent story. 15 of 16 still need logbook migration |
+| Rust library (crates/) | **Draft** | 73 files, 317 tests pass (26 ignored), Clippy clean. Tests migrated to inline modules. Cleanup tasks (§2), solver refactors (§6), and tube algorithm (§7) still ahead |
+| Migration scaffold | **Settled** | Merged to main. Complete. |
+| Test data pipeline | **Draft** | Fixture infrastructure exists (capacity_dataset.json, LazyLock loading). Design in §1. |
+| Experiment data | **Settled** | All 18 experiments have data and produce results |
+| Experiment writeups | **Draft** | All 18 experiments have logbook.md (migration complete). Content quality varies — noisy, no coherent story |
 | Experiment shared code | **Not started** | 930–2347 LOC duplicated across 4 experiments; extraction planned (§6d) but not started |
 | Thesis — tube algorithm chapter | **Draft** | 8 TODOs (5 need Jörn's math verification, 3 GAP markers from agent content) |
 | Thesis — numerical appendix | **Draft** | 5 TODOs including unverified claims |
@@ -33,16 +33,14 @@ What's settled vs placeholder across the project's major components.
 | Thesis — story arc / structure | **Not started** | Jörn hasn't defined the central argument; highest-value decision pending |
 | Thesis — final assembly | **Not started** | Abstract, intro, conclusion, bibliography, figures, proofreading — all deferred until content stabilizes |
 | Thesis↔code alignment | **Placeholder** | 15 mismatches + 18 missing cross-ref labels identified; Jörn decides which side to fix (§3) |
-| Convention skills / meta-layer | **Draft** | Updated during migration but Jörn hasn't done full review; working-notes section needs redistribution |
+| Convention skills / meta-layer | **Draft** | Refactored 2026-03-22: skills over rules, conventions as review spec, meta-* skills reorganized. Jörn hasn't done full review of convention skill content. |
 | SLURM skill | **Not started** | Planned (§7b), awaiting example template from Jörn |
 
 ---
 
-## 0. Migration merge (blocking everything)
+## 0. Migration merge ~~(blocking everything)~~ ✅ COMPLETE
 
-**Branch:** `migration-scaffold` in `.claude/worktrees/migration-scaffold/`
-
-🔴 **Jörn reviews and merges.** Agent work is done except for gate checks.
+**Merged** to main (commit 6680d0e, 2026-03-19). No longer blocking.
 
 ### What's done
 - 73 .rs files rewritten (72 target + lib.rs), 0 empty stubs

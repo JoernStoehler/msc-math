@@ -113,45 +113,45 @@ experiments/target/release/gradient_descent
 # to the same folder.
 
 # Ablation study: agreement check + timing comparison figure
-python3 experiments/ablation/ablation.py
+python3 experiments/ablation/analyze.py
 # → experiments/ablation/ablation_timing.png
 
 # Benchmark: timing model fit + unified figure
-python3 experiments/benchmark/benchmark.py
+python3 experiments/benchmark/analyze.py
 # → experiments/benchmark/benchmark_timing.png
 # → experiments/benchmark/profiling/timing_model.json
 
 # Random sweep: systolic ratio vs facet count
-python3 experiments/random-sweep/random_sweep.py
+python3 experiments/random-sweep/analyze.py
 # → experiments/random-sweep/random_sweep_sys_vs_f.png
 
 # Random product sweep: systolic ratio vs polygon pair
-python3 experiments/random-product-sweep/random_product_sweep.py
+python3 experiments/random-product-sweep/analyze.py
 # → experiments/random-product-sweep/random_product_sweep_sys_vs_pair.png
 
 # Pentagon perturbations: histogram + stats table + PCA table
-python3 experiments/pentagon-perturb/pentagon_perturb.py
+python3 experiments/pentagon-perturb/analyze.py
 # → experiments/pentagon-perturb/pentagon_perturb_sys_hist.png
 # → experiments/pentagon-perturb/pentagon_perturb_stats.tex
 # → experiments/pentagon-perturb/pentagon_perturb_pca.tex
 
 # Lagrangian products: 5×5 grid plot + polygon pairs plot
-python3 experiments/lagrangian-products/lagrangian_products.py
+python3 experiments/lagrangian-products/analyze.py
 # → experiments/lagrangian-products/lagrangian_products_5x5.png
 # → experiments/lagrangian-products/lagrangian_products_polygon_pairs.png
 
 # Unknown predicates: beta_min histogram
-python3 experiments/unknown-predicates/unknown_predicates.py
+python3 experiments/unknown-predicates/analyze.py
 # → experiments/unknown-predicates/unknown_predicates_beta_min.png
 
 # Orbit recovery: validation summary + error plot
-python3 experiments/orbit-recovery/orbit_recovery.py
+python3 experiments/orbit-recovery/analyze.py
 # → (stdout summary only)
 python3 experiments/orbit-recovery/plot_orbit_recovery.py
 # → experiments/orbit-recovery/orbit_recovery_errors.png
 
 # Sys-optimization: gradient histograms + improvement scatter + stats table
-python3 experiments/sys-optimization/sys_optimization.py
+python3 experiments/sys-optimization/analyze.py
 # → experiments/sys-optimization/sys_optimization_gradient_hist.png
 # → experiments/sys-optimization/sys_optimization_gradient_comparison.png
 # → experiments/sys-optimization/sys_optimization_improvement.png
@@ -161,7 +161,7 @@ python3 experiments/sys-optimization/sys_optimization.py
 # → experiments/sys-optimization/sys_optimization_stats.tex
 
 # Omega-obstacle: ridge ω vs sys, orbit ω analysis, gradient dot products
-python3 experiments/omega-obstacle/omega_obstacle.py
+python3 experiments/omega-obstacle/analyze.py
 # → experiments/omega-obstacle/omega_obstacle_ridge_min_vs_sys.png
 # → experiments/omega-obstacle/omega_obstacle_orbit_min_vs_sys.png
 # → experiments/omega-obstacle/omega_obstacle_orbit_vs_nonorbit.png
@@ -171,7 +171,7 @@ python3 experiments/omega-obstacle/omega_obstacle.py
 # → experiments/omega-obstacle/omega_obstacle_omega_vs_dot.png
 
 # Gradient descent: scatter and convergence diagnostics
-python3 experiments/gradient-descent/gradient_descent.py
+python3 experiments/gradient-descent/analyze.py
 # → experiments/gradient-descent/gradient_descent_scatter.png
 # → experiments/gradient-descent/gradient_descent_convergence.png
 
