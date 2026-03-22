@@ -37,11 +37,11 @@ Load the `review` skill for which reviews to run on which file types.
 
 ## Repo Layers
 
-This repo has three layers. Each layer's conventions and workflows govern the layer below it.
+This repo has three layers. Each layer's knowledge governs the layer below it.
 
-1. **Artifact layer** — The work product: Rust code, LaTeX thesis, Python experiments, datasets. What gets built.
-2. **Convention and workflow layer** — Conventions and workflows for producing artifacts. Coding style, review sequences, session phases, agent orchestration, communication norms. Lives in CLAUDE.md, skills, and agent definitions.
-3. **Meta layer** — Conventions and workflows for selecting and communicating conventions and workflows to agents. How to write skills, structure CLAUDE.md, define agents, decide where knowledge goes, sync shared files across repos. Lives in the `meta-*` skills.
+1. **Project Artifacts** — The work products: Rust code, LaTeX thesis, Python experiments, datasets. What gets built. Commonly found in similar form in projects that do not use agents.
+2. **Procedural Project Knowledge** — Conventions, advice, and workflows for producing artifacts. Lives in CLAUDE.md, skills, subagents, and per-file comments.
+3. **Meta-layer Knowledge** — Procedural knowledge about procedural knowledge: how to pick best practices, communicate them to agents, and structure the project. Lives in the `meta-*` skills. Most agents can ignore this layer entirely.
 
 ## Knowledge Placement
 
