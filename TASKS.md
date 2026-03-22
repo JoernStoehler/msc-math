@@ -23,7 +23,7 @@ What's settled vs placeholder across the project's major components.
 |-----------|--------|-------|
 | Rust library (crates/) | **Draft** | 73 files, 317 tests pass (26 ignored), Clippy clean. Tests migrated to inline modules. Cleanup tasks (§2), solver refactors (§6), and tube algorithm (§7) still ahead |
 | Migration scaffold | **Settled** | Merged to main. Complete. |
-| Test data pipeline | **Draft** | Fixture infrastructure exists (capacity_dataset.json, LazyLock loading). Design in §1. |
+| Test data pipeline | **Settled** | 1.7s release / 17s debug. Scalar fixture loading, release-mode default. See §1. |
 | Experiment data | **Settled** | All 18 experiments have data and produce results |
 | Experiment writeups | **Draft** | All 18 experiments have logbook.md (migration complete). Content quality varies — noisy, no coherent story |
 | Experiment shared code | **Not started** | 930–2347 LOC duplicated across 4 experiments; extraction planned (§6d) but not started |
@@ -73,33 +73,32 @@ cargo clippy --tests -- -D warnings  # clean
 
 ---
 
-## 1. Test data pipeline restructuring
+## 1. Test data pipeline restructuring — DONE
 
 🟢 Agent can do autonomously. Load `data-pipeline` skill for conventions.
 
-**Problem:** Default test suite takes 7 min. Root cause: fixture-consuming tests regenerate all 33 polytope capacity values every run.
+**Result:** Default suite runs in **1.7s wall** (`cargo test --release --lib`), **17s wall** (debug). Down from ~7 min originally.
 
-**Profiling data (cargo nextest, 2026-03-17):**
+**What was done:**
+1. Fixture file exists at `tests/fixtures/capacity_dataset.json` ✅ (pre-existing)
+2. `known_polytopes` uses `LazyLock` caching ✅ (pre-existing)
+3. BigRational + nalgebra opt-level=3 in dev/test builds ✅ (pre-existing, 9d191b5)
+4. SVD pre-filter skips ~70-80% of rational vertex enumeration subsets ✅ (pre-existing, edbcb6a)
+5. **Scalar-only fixture loading** — `load_dataset_entries()` returns `Vec<DatasetEntry>` with JSON parse only (~1ms), skipping the expensive `Polytope4D::new()` call (~8s). 9 of 10 fixture tests switched to this path.
+6. **`catalog_determinism` and `fixture_staleness_check` marked `#[ignore]`** — only needed during fixture regeneration.
+7. **`capacity_monotonicity` marked `#[ignore]`** — only fixture test needing `Polytope4D` (for vertex containment checks). Loads full dataset locally when run with `--ignored`.
+8. **`debug_assert!` → `assert!`** in KKT solvers — enables release-mode testing without losing invariant checks (Q-constancy, FM back-substitution). All checks are O(m²) or O(1), negligible vs the O(m³) operations they guard.
+9. **Default test command changed to `cargo test --release --lib`** — the crate's own code is 10-40× faster in release. All documentation updated.
 
-| Test | Time | Fix |
-|------|------|-----|
-| `catalog_determinism` | 162s | Load from JSON |
-| `fixture_staleness_check` | 158s | Load from JSON |
-| `literature_capacity_values` | 98s | Load from JSON |
-| `volume_scales_with_fourth_power` | 92s | Fewer proptest cases in default |
-| 5 fixture-consuming tests | 85-89s ea | Load from JSON |
-| `random_polytopes_pass_validation` | 46s | Fewer proptest cases in default |
+**Profiling (2026-03-22, post-optimization):**
 
-**Work items:**
-1. `generate_capacity_fixtures` writes to `fixtures/capacity_fixtures.json` (on-disk, checked in)
-2. 7 fixture-consuming tests load JSON instead of regenerating (85-98s → <1s each)
-3. Staleness detection: semantic (expected values) + generator hash (WARNING not ERROR)
-4. `known_polytopes` constructors → `LazyLock` caching (~50ms × 30 tests)
-5. Proptest: fewer cases in default, full cases in `#[ignore]`
-
-**Target:** Default suite < 2 min. Full suite (with `--ignored`) < 10 min.
-
-**Status (2026-03-22):** Not started. A previous `test-data-pipeline` worktree existed but only contained pre-filter math consolidation work (now merged to main). The actual fixture pipeline work (items 1-5 above) has not been implemented. No worktree currently active.
+| Mode | Wall time | Test count |
+|------|-----------|------------|
+| `cargo test --release --lib` | 1.7s | 314 pass, 29 skip |
+| `cargo test --lib` (debug) | 17s | 314 pass, 29 skip |
+| Incremental rebuild + test (release) | 13s | — |
+| Incremental rebuild + test (debug) | 16s | — |
+| Cold build + test (either) | ~44s | — |
 
 **Depends on:** Migration merge (§0) ✅.
 

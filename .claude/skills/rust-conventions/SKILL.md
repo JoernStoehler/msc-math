@@ -25,7 +25,7 @@ Single crate `symplectic` with modules:
 - `random` — random polytope generation
 - `dataset` — dataset serialization
 
-**When modifying shared modules** (kkt, constants, algorithms::capacity_accumulator, algorithms::facet_adjacency): Check all callers. Use `cargo test --lib` to verify.
+**When modifying shared modules** (kkt, constants, algorithms::capacity_accumulator, algorithms::facet_adjacency): Check all callers. Use `cargo test --release --lib` to verify.
 
 ## Three Capacity Algorithms
 
@@ -55,7 +55,7 @@ Do suggest: Critical path tests, benchmarks for claims, robustness fixes.
 
 ## Invariant
 
-`cargo test` passes from `crates/` with zero failures.
+`cargo test --release` passes from `crates/` with zero failures.
 
 ## Math-Code Correspondence
 

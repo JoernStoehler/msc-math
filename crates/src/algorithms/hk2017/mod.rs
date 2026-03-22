@@ -238,7 +238,8 @@ fn kkt_result_to_solution(result: KktResult) -> Solution {
 // Reference: [def:ehz-capacity], [thm:hko-counterexample]
 //
 // Strategy: smoke tests (direct computation, small polytopes) + fixture-based
-// (pre-computed dataset for comprehensive coverage).
+// (scalar-only dataset for regression checks). Catalog determinism and fixture
+// staleness checks are #[ignore] (run during fixture regeneration only).
 #[cfg(test)]
 mod tests_literature {
     use super::*;
@@ -251,7 +252,7 @@ mod tests_literature {
         load_dataset_entries, literature_values, polytope_catalog, DatasetEntry, FIXTURE_PATH,
     };
 
-    /// Shared dataset loaded from cached fixture (scalar-only, ~1ms).
+    /// Shared dataset loaded from cached fixture (scalar-only, no Polytope4D construction).
     ///
     /// Uses `load_dataset_entries()` which skips `Polytope4D::new()` construction.
     /// Tests in this module only need scalar fields (capacity, volume, name, etc.).
@@ -812,7 +813,7 @@ mod tests_pruning {
 
     use super::generate_capacity_fixtures::{load_dataset_entries, DatasetEntry, FIXTURE_PATH};
 
-    /// Shared dataset loaded from cached fixture (scalar-only, ~1ms).
+    /// Shared dataset loaded from cached fixture (scalar-only, no Polytope4D construction).
     static DATASET: LazyLock<Vec<DatasetEntry>> = LazyLock::new(|| {
         let path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(FIXTURE_PATH);
         load_dataset_entries(&path)
@@ -1262,7 +1263,7 @@ mod tests_conformality {
 
     use super::generate_capacity_fixtures::{load_dataset_entries, DatasetEntry, FIXTURE_PATH};
 
-    /// Shared dataset loaded from cached fixture (scalar-only, ~1ms).
+    /// Shared dataset loaded from cached fixture (scalar-only, no Polytope4D construction).
     static DATASET: LazyLock<Vec<DatasetEntry>> = LazyLock::new(|| {
         let path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(FIXTURE_PATH);
         load_dataset_entries(&path)
@@ -1394,7 +1395,7 @@ mod tests_symplectic_invariance {
         load_dataset_entries, load_test_dataset, DatasetEntry, FIXTURE_PATH,
     };
 
-    /// Shared dataset loaded from cached fixture (scalar-only, ~1ms).
+    /// Shared dataset loaded from cached fixture (scalar-only, no Polytope4D construction).
     static DATASET: LazyLock<Vec<DatasetEntry>> = LazyLock::new(|| {
         let path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(FIXTURE_PATH);
         load_dataset_entries(&path)

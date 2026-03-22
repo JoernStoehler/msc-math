@@ -175,8 +175,8 @@ pub fn load_test_dataset(path: &std::path::Path) -> Vec<TestPolytope> {
 /// Load dataset from JSON fixture file as scalar entries (no `Polytope4D` construction).
 ///
 /// Returns `Vec<DatasetEntry>` with all fixture fields except `Polytope4D`.
-/// ~1ms vs ~8s for `load_test_dataset()`. Use for tests that only need scalar
-/// fields (capacity, volume, name, etc.).
+/// Skips the expensive `Polytope4D::new()` calls in `load_test_dataset()`.
+/// Use for tests that only need scalar fields (capacity, volume, name, etc.).
 #[cfg(test)]
 pub(crate) fn load_dataset_entries(path: &std::path::Path) -> Vec<DatasetEntry> {
     let json = std::fs::read_to_string(path).unwrap_or_else(|e| {

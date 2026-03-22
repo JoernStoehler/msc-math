@@ -7,7 +7,7 @@ description: How to handle expensive test data — caching, fixture generation, 
 
 ## Design principle
 
-Balance marginal value of more compute against marginal friction to future agents. Profile before optimizing. One-time runs with large parameters are fine — the friction source is tests that run on every `cargo test --lib` and take too long.
+Balance marginal value of more compute against marginal friction to future agents. Profile before optimizing. One-time runs with large parameters are fine — the friction source is tests that run on every `cargo test --release --lib` and take too long.
 
 ## Caching strategies
 
@@ -45,20 +45,24 @@ Expensive computations write results to a checked-in data file. Tests load the f
 
 **Structure:**
 ```
-crates/src/algorithms/hk2017/
-├── generate_capacity_fixtures.rs   # generation stage (#[ignore] test)
-├── fixtures/                        # generated data (checked into git)
-│   └── capacity_fixtures.json
-├── literature_test.rs               # consumes fixtures
-├── conformality_test.rs             # consumes fixtures
-└── ...
+crates/
+├── src/algorithms/hk2017/
+│   ├── generate_capacity_fixtures.rs   # generation + loading functions
+│   ├── mod.rs                          # consumer tests (inline #[cfg(test)] modules)
+│   └── ...
+└── tests/fixtures/
+    └── capacity_dataset.json           # generated data (checked into git)
 ```
+
+**Two loading tiers:**
+- `load_dataset_entries()` → `Vec<DatasetEntry>`: JSON parse only, ~1ms. For tests needing only scalar fields (capacity, volume, name, etc.).
+- `load_test_dataset()` → `Vec<TestPolytope>`: full `Polytope4D` reconstruction, ~8s. For tests needing vertex geometry.
 
 **Generation stages are independent.** Each generates exactly one dataset. Never bundle them — an agent should only regenerate what's actually stale, not blow 30 minutes on all pipelines indiscriminately.
 
 **Generation stage:**
 - Single concern: generates exactly one dataset
-- Runnable via `cargo test --lib -- generate_capacity_fixtures --ignored`
+- Runnable via `cargo test --release --lib -- generate_capacity_fixtures --ignored`
 - Prints timing: "Generated 33 polytopes in 4m32s"
 - Writes to a deterministic path under `fixtures/`
 
@@ -82,7 +86,7 @@ The consumer test can't distinguish these. It reports the mismatch with an actio
 ```
 Capacity mismatch for simplex: cached=0.125, computed=0.126.
 If this is a legitimate code change, regenerate:
-  cargo test --lib -- generate_capacity_fixtures --ignored  (~5 min)
+  cargo test --release --lib -- regenerate_test_dataset --ignored  (~3s)
 If this is unexpected, investigate the regression.
 ```
 
@@ -113,13 +117,16 @@ eprintln!("[TIMING] {test_name}: {elapsed:.1?}");
 
 Slow test suites cause noticeable waiting time when Jörn watches agents finish implement/review stages. The CPU monitor kills sessions after 20 min sustained high CPU, so 10 min gives margin.
 
-| Category | Target | Current (2026-03-19) |
+| Category | Target | Current (2026-03-22) |
 |----------|--------|----------------------|
-| Fast tests (default suite) | < 2 min | ~31s wall / 4m51s CPU |
-| Full suite (with `--ignored`) | < 10 min | unmeasured |
-| Fixture generation | < 10 min | ~5 min |
+| Default suite (`cargo test --release --lib`) | < 5s wall | ~1.7s wall |
+| Default suite (`cargo test --lib`, debug) | < 20s wall | ~17s wall |
+| Full suite (`--release -- --ignored`) | < 10 min | unmeasured |
+| Fixture generation | < 10 min | ~3s (release) |
 
-Tests exceeding the fast budget should be `#[ignore]` with a comment:
+Default test command is `cargo test --release --lib`. The crate's own code is 10-40× faster in release mode; all `debug_assert!` invariants have been promoted to `assert!` so release mode loses no safety checks.
+
+Tests exceeding the budget should be `#[ignore]` with a comment:
 ```rust
 #[ignore] // ~30s: full permutation enumeration on 33 polytopes. Run with --ignored.
 ```
@@ -131,7 +138,7 @@ Tests exceeding the fast budget should be `#[ignore]` with a comment:
 When profiling test performance, use **user CPU time** (not wall clock):
 
 ```bash
-bash -c 'time cargo test --lib -- test_name' 2>&1 | tail -8
+bash -c 'time cargo test --release --lib -- test_name' 2>&1 | tail -8
 ```
 
 Wall clock is unreliable: it depends on system load, number of cores, and how many tests run in parallel. User CPU time measures actual computation.
