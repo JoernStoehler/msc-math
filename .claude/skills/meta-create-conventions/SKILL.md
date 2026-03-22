@@ -27,6 +27,7 @@ A convention constrains the space of acceptable artifact states. Four properties
 - **Actionable** — does the agent have actions available, and know what those actions are, that cause the desired property? Note: observable but not actionable is possible ("tests must cover all edge cases" — you can verify a complete set but can't generate one from scratch). Actionable but not observable is also possible ("write readable code" — you know how but can't measure it). Both negative and positive conventions can be actionable.
 - **Scoped** — the convention says who it applies to and when. "Rust code in crates/" is scoped. "All code" is usually too broad.
 - **Justified** — the convention exists for a reason. State the reason (or point to it) so agents can handle edge cases. A convention without a reason gets dropped when it's inconvenient. Negative conventions are often justified by anecdote (a past failure).
+- **Known** — ideally, the convention is familiar to agents from training, so that they don't incur as much attention or execution overhead from it. Novel conventions can be explained to agents, but they slow down and distract from the main task. See `meta-foundations:##Optimizing rules that don't work` for strategies to mitigate this.
 
 ## Workflow
 
@@ -45,20 +46,22 @@ State: what the target state is, who it applies to, and why. Keep it concrete �
 ### 4. Decide where it lives
 
 Use the decision tree in `references/knowledge-placement.md`:
-- Every agent needs it → CLAUDE.md
+- Tied to a specific file → code comment or file header
 - Subset of agents, specific topic → skill
 - Too detailed for skill body → reference doc
-- Tied to a specific file → code comment or file header
+- Every agent needs it → CLAUDE.md
 
 ### 5. Write it in the right format
 
 - For CLAUDE.md: see `references/claudemd-format.md`
 - For a skill: see `references/skill-format.md`
 - For a code comment: just write it where agents will see it
+- Always focus on clarity and unambiguity. The cost of verbosity is tiny, and the cost of confusion or cognitive overhead is big.
 
-### 6. Verify no duplication
+### 6. Test it
 
-Check that the convention is stated in exactly one place. Other locations should reference it, not restate it.
+- Ask a subagent to evaluate whether the meta-conventions for conventions ("what makes a good convention") are met.
+- Use concrete scenarios to test the subagent's understanding, and whether the convention is really actionable and observable. This can include a full, throwaway, low-cost mock task in a worktree.
 
 ## Refinement loop
 
