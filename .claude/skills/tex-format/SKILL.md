@@ -11,7 +11,7 @@ Use prefixed comments to separate meta information by audience:
 
 ### Jörn's review status (`% Jörn:`)
 
-Three levels, strictly ordered: **text > math > structure**. Only record the highest approved level.
+Three levels, strictly ordered: **text > math > structure**. Each level is a refinement — "math approved" implies structure is also correct; "text approved" implies both math and structure are correct. Only record the highest approved level.
 
 1. **Structure**: proof approach/strategy is correct, section organization is right
 2. **Math**: mathematical content is correct (but writing may need polish)
@@ -53,7 +53,7 @@ Every `.tex` file starts with a `%` header block containing:
 2. **Sources**: where the content comes from
 3. **Structure**: outline of sections/subsections
 
-Do NOT put review status in the header.
+This gives agents immediate context when reading any file. Do NOT put review status in the header — it grows stale as content changes; use `% Jörn:` markers in the body instead.
 
 ## Format Rules
 
@@ -70,15 +70,15 @@ Do NOT put review status in the header.
 
 ## Anti-Patterns
 
-**AP4: Overwrought language.** Flag adjective clusters (2+ adjectives before a noun) and dramatic words (irrevocable, catastrophic, critical) unless they carry technical meaning.
+**AP4: Overwrought language.** Flag adjective clusters (2+ adjectives before a noun) and dramatic words (irrevocable, catastrophic, critical) unless they carry technical meaning. Agents tend to produce confident-sounding filler that obscures gaps in reasoning — flagging overwrought language surfaces these.
 
 **AP5: Rust/CS notation in mathematical text.** Flag any `\texttt{...}` inside definition/lemma/theorem/remark environments. Programming terms belong in implementation sections, not mathematical statements.
 
-**AP7: Setup text outside the environment it belongs to.** For each lemma/theorem environment, check if it references notation defined only in the preceding paragraph. If so, flag — fold the setup into the environment.
+**AP7: Setup text outside the environment it belongs to.** For each lemma/theorem environment, check if it references notation defined only in the preceding paragraph. If so, flag — fold the setup into the environment. Reason: readers reach lemmas via `\ref` and need them to be self-contained.
 
 ## Figures and Tables
 
-All figure formatting is handled in Python. LaTeX is a 1:1 pass-through (`\includegraphics{file.png}`, no `width=`/`scale=`).
+All figure formatting is handled in Python. LaTeX is a 1:1 pass-through (`\includegraphics{file.png}`, no `width=`/`scale=`). Reason: easier to reason about figure appearance where it's created; LaTeX should be boring to review.
 
 **Tables (LaTeX):**
 - Use `booktabs` (`\toprule`/`\midrule`/`\bottomrule`), not `\hline`.
