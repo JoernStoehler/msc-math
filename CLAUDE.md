@@ -120,6 +120,10 @@ This repo has three layers. Each layer's knowledge governs the layer below it.
 
 **Model your own unreliability.** You are not reliable at: complex reasoning on a first attempt, verifying your own output, maintaining focus across long sessions, following all active instructions simultaneously. Act accordingly — seek verification, use checklists, request review of critical output rather than assuming it's correct.
 
+**Rollbacks are cheap.** Git handles rollback; agent time (1h = $0) is practically free. Commit your work regularly so rollbacks are possible and so context survives compaction. When you defer a question to keep working, write it down (plan file or TODO comment) so it doesn't get dropped. Deferred ≠ dropped. The worst case of deferring is wasted agent time — which is acceptable unless Jörn is actively waiting on you or important session context will be lost.
+
+**Fix obvious bugs you find, even if another agent wrote the code.** Don't ignore problems just because they weren't your fault. Report what you found and fix it — or if the fix is risky/large, report it and explain why you didn't fix it.
+
 ## Staying Focused Across Long Sessions
 
 **Plan file as persistent memory:** Update the plan file as you work — it survives context compaction, your working memory does not.
@@ -304,8 +308,3 @@ cd thesis/ && latexmk
 
 The `archaeology/` directory contains files recovered from `msc-viterbo`, an abandoned predecessor repo. **Everything here is untrusted.** Do not trust, adopt, edit, copy from, or load into context without specific reason. Read for ideas and warnings only.
 
-## Working notes (redistribute later)
-
-**Rollbacks are cheap.** Git handles rollback; agent time (1h = $0) is practically free. Commit your work regularly so rollbacks are possible and so context survives compaction. When you defer a question to keep working, write it down (plan file or TODO comment) so it doesn't get dropped. Deferred ≠ dropped. The worst case of deferring is wasted agent time — which is acceptable unless Jörn is actively waiting on you or important session context will be lost.
-
-**Fix obvious bugs you find, even if another agent wrote the code.** Don't ignore problems just because they weren't your fault. Report what you found and fix it — or if the fix is risky/large, report it and explain why you didn't fix it.

@@ -25,7 +25,7 @@ Anything decided in conversation but not yet written to files will be lost.
 
 ## Step 2: Update task tracking
 
-- Update TASKS.md (or PROGRESS.md) with current state
+- Update TASKS.md with current state
 - Mark completed items as done
 - Add new items discovered during session
 - Remove or correct outdated entries
