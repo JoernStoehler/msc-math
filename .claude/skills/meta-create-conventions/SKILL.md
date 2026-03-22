@@ -1,11 +1,11 @@
 ---
 name: meta-create-conventions
-description: Workflow for designing and writing down project conventions. Load when you need to create a new convention, refine an existing one, or decide where a convention should live. Covers what makes a good convention, the refinement loop, and knowledge placement. For creating workflows instead, see meta-create-workflow. For the conceptual foundation, see meta-foundations.
+description: Workflow for designing and writing down project conventions and procedural knowledge. Load when you need to create a new convention, refine an existing one, or decide where it should live. Covers what makes a good convention, the refinement loop, and knowledge placement. For creating subagent workflows specifically, see meta-create-workflow. For the conceptual foundation, see meta-foundations.
 ---
 
 # Creating Conventions
 
-A workflow for designing, refining, and writing down conventions. Conventions are target state properties — they describe what the world should look like, not what to do.
+A workflow for designing, refining, and writing down conventions. Conventions describe properties that artifacts should have. Both positive ("artifact must have X") and negative ("artifact must not have Y") framings are fine.
 
 ## Reference documents
 
@@ -21,11 +21,12 @@ A workflow for designing, refining, and writing down conventions. Conventions ar
 
 ## What makes a good convention
 
-A convention constrains the space of acceptable states. A good convention works across all three work phases (see `meta-foundations` § "The three work phases"): predictable in planning, actionable in execution, verifiable in review.
+A convention constrains the space of acceptable artifact states. Four properties to check:
 
-Additionally:
-- **Justified** — the convention exists for a reason. State the reason (or point to it) so agents can handle edge cases. A convention without a reason gets dropped when it's inconvenient.
+- **Observable** — can the agent tell whether the convention is met by inspecting the artifact? If not, the convention can't be reviewed.
+- **Actionable** — does the agent have actions available, and know what those actions are, that cause the desired property? Note: observable but not actionable is possible ("tests must cover all edge cases" — you can verify a complete set but can't generate one from scratch). Actionable but not observable is also possible ("write readable code" — you know how but can't measure it). Both negative and positive conventions can be actionable.
 - **Scoped** — the convention says who it applies to and when. "Rust code in crates/" is scoped. "All code" is usually too broad.
+- **Justified** — the convention exists for a reason. State the reason (or point to it) so agents can handle edge cases. A convention without a reason gets dropped when it's inconvenient. Negative conventions are often justified by anecdote (a past failure).
 
 ## Workflow
 
