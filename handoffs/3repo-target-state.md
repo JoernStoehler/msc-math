@@ -1,6 +1,7 @@
 # Target State: Agent Workflow Improvements Across 3 Projects
 
 **Date:** 2026-03-21
+**PARTIALLY STALE (as of 2026-03-22):** msc-math's meta-layer was refactored after this was written. `meta-documentation` was split into `meta-foundations` + `meta-create-conventions` + `meta-create-workflow` + `meta-create-review-subagent`. Checklists were deleted; conventions are now the review specification. The review system uses one generic `review` agent (loads ONE convention skill per spawn) + a dedicated `math-review` agent. See the current `.claude/skills/review/SKILL.md` for the actual architecture.
 **Projects:** msc-math (thesis), dnd-claude-code (TTRPG), xrisk-pause-game (card game)
 **Sync strategy:** Copy files between repos. Sync rarely. No shared repo — not worth the indirection for 3 projects.
 

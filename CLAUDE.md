@@ -33,21 +33,21 @@ Branches often touch multiple languages simultaneously:
 - **Markdown** (various): agent-facing writeups, including conventions, rules, workflows, documentation, takeaways, experiment ideas, data interpretation, reports and learnings, and much more.
 - **Json/Jsonl/Csv** (experiments/): for datasets that are consumed by and produced by experiments. It's just a more convenient data format than binary formats, e.g. easier git diffs.
 
-Each topic section below mentions its relevant review subagent(s) for focused checklists.
+Load the `review` skill for which reviews to run on which file types.
 
 ## Repo Layers
 
 This repo has three layers. Each layer's conventions and workflows govern the layer below it.
 
 1. **Artifact layer** — The work product: Rust code, LaTeX thesis, Python experiments, datasets. What gets built.
-2. **Convention and workflow layer** — Conventions and workflows for producing artifacts. Coding style, review sequences, session phases, agent orchestration, communication norms. Lives in CLAUDE.md, skills, rules, and agent definitions.
+2. **Convention and workflow layer** — Conventions and workflows for producing artifacts. Coding style, review sequences, session phases, agent orchestration, communication norms. Lives in CLAUDE.md, skills, and agent definitions.
 3. **Meta layer** — Conventions and workflows for selecting and communicating conventions and workflows to agents. How to write skills, structure CLAUDE.md, define agents, decide where knowledge goes, sync shared files across repos. Lives in the `meta-*` skills.
 
 ## Knowledge Placement
 
 **When you produce new knowledge** (findings, conventions, docs, comments):
 - Tied to a specific file or function? → code comment, doc comment, or file header. This is the natural location agents look at when working with that code.
-- Convention for a specific file type or directory? → `.claude/rules/*.md` (auto-loaded by path pattern). This is where topic-specific conventions live.
+- Convention for a specific file type or directory? → convention skill (e.g. `rust-conventions`, `tex-format`). Loaded on demand; also serves as the review specification.
 - Applies to most agents regardless of file type? → CLAUDE.md.
 - Applies to a minority of agents? → `.claude/skills/*/SKILL.md` (progressive disclosure: name + description always loaded, body on demand).
 - Project management (tasks, ideas, deferred work, constraints)? → `TASKS.md` (root). Grows stale; that's fine.
@@ -161,7 +161,7 @@ Why this matters more at 1M than at 200k: a 200k session accumulates ~2 hours of
 
 ## Session Workflow
 
-Every agent session owns a git worktree. Subagents and teams work in the same worktree.
+Agent sessions typically work in a git worktree. Subagents and teams work in the same worktree. Exception: sessions editing `.claude/` may work on main directly to avoid worktree path issues.
 
 **Time economics:** Jörn's time is scarce; agent time is practically free ($0/h). Plans minimize Jörn's workload, even at vastly higher total agent work. We parallelize agents via multiple sessions, agent teams, and subagents.
 

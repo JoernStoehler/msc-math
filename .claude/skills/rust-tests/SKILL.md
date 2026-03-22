@@ -62,6 +62,8 @@ For expensive functions (e.g., `ehz_capacity()` with exponential cost), split te
 
 Every individual test MUST have at least a doc comment stating the mathematical property it asserts. Tests for expensive or complex functions should additionally explain why they use their execution mode (debug/release/fixture), why they use their specific input, and relationship to other tests (if any).
 
+**Panic tests:** Use `#[should_panic(expected = "...")]` to test that invalid inputs are rejected. Always include the `expected` string to avoid false passes from unrelated panics.
+
 ## Fixtures
 
 **Fixture location:** `tests/fixtures/capacity_dataset.json` (committed, 33 polytopes with precomputed capacities, scaled variants for conformality tests).

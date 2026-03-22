@@ -66,7 +66,7 @@ Do NOT put review status in the header.
 
 - All `\ref{}` labels must be defined (check `thesis/build/main.aux`).
 - No hardcoded theorem/section numbers in `.tex` source — always use `\ref{label}`.
-- Notation must match `correspondence.tex` exactly.
+- Notation must match `appendix-notation.tex` exactly.
 
 ## Anti-Patterns
 

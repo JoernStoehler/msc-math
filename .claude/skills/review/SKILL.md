@@ -36,6 +36,7 @@ Strictly sequential across phases: all Phase 1 subagents run and findings are fi
 | Files | Convention skill | Notes |
 |-------|-----------------|-------|
 | `.tex` in thesis/ | `tex-format` | Also run `latexmk && ./check-build.sh` first |
+| `math.tex` in crates/ or experiments/ | `math-tex` | NOT tex-format — different conventions |
 | `.rs` files | `rust-conventions` | |
 | `.py` files | `python-conventions` | |
 | Figure PNGs | Use `figure-review` agent | Specialized for visual inspection |
@@ -59,7 +60,7 @@ Agent(
   description="Review tex format",
   run_in_background=true,
   prompt="""
-    Load the tex-format skill.
+    Load the math-tex skill.
     Review these files: experiments/foo/math.tex
     Report to: /tmp/review-tex-format.md
     Phase 1: fix obvious violations directly, report what you fixed.

@@ -16,7 +16,7 @@ You are a figure-fix subagent. You own a single Python script and its output PNG
 
 ## Workflow
 
-1. Read the checklist at `.claude/skills/review/references/checklist-python-figures.md`
+1. Load the `python-conventions` skill (preloaded via frontmatter) — use its figure quality rules as your checklist
 2. Read `experiments/figure_config.py` to understand sizing constants and style setup
 3. Read the Python script in full
 4. Read all PNGs the script generates (use the Read tool — you are multimodal)

@@ -29,7 +29,7 @@ We refactor, simplify, and improve until verification becomes straightforward.
 
 1. **Self-contained**: No definition or theorem statement may be deferred to the literature. Every definition and theorem is stated in full.
 2. **Deferred proofs**: A proof MAY be deferred to the literature ONLY IF the theorem exceeds thesis scope AND the proof is not relevant — only the theorem is.
-3. **Notation consistency**: Must match `correspondence.tex` exactly. No synonyms, no alternative forms, no "equivalent" restatements unless a lemma proving equivalence is included.
+3. **Notation consistency**: Must match `appendix-notation.tex` exactly. No synonyms, no alternative forms, no "equivalent" restatements unless a lemma proving equivalence is included.
 4. **Writing rule**: Proofs cannot cite external sources mid-proof. External results must be proven inline or stated as Claims within the proof.
 5. **Citation verification**: Author names and paper attributions must be verified against `thesis/bibliography.bib` or `papers/`. Never produce author names from memory.
 

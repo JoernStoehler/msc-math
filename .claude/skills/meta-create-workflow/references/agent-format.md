@@ -20,6 +20,7 @@ disallowedTools: Edit, Write        # Explicitly deny tools
 model: sonnet                       # sonnet, opus, haiku, or inherit (default)
 permissionMode: default             # default, acceptEdits, dontAsk, bypassPermissions, plan
 skills: skill-a, skill-b            # Skills to preload into agent context
+memory: project                     # Persistent memory: user, project, or local
 ---
 ```
 

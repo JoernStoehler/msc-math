@@ -66,8 +66,7 @@ All figure formatting is handled in Python. LaTeX is a 1:1 pass-through (`\inclu
 - `fontsize=` values above 14pt on individual elements signal a figsize mismatch — the figure is likely too small for its content.
 
 **Saving figures:**
-- Always pass `dpi=150` (minimum) to `savefig()` — matplotlib's default of 100 dpi is too low for print.
-- Always pass `bbox_inches='tight'` to `savefig()` to avoid clipping labels and tick text.
+- `figure_config.setup()` sets `savefig.dpi` and `savefig.bbox` globally via rcParams. Do NOT pass `dpi=` or `bbox_inches=` to individual `savefig()` calls — rely on the global config. If a script doesn't use `figure_config`, use `dpi=150` minimum and `bbox_inches='tight'`.
 
 **Axis labels with math:** Use `r"$...$"` for all mathematical notation in labels. Never use LaTeX syntax (`_{n_k}`, `^{2}`) outside of `$...$` — matplotlib renders it as literal text.
 

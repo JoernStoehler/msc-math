@@ -1,3 +1,9 @@
+---
+name: recover-context
+description: "Recover lost context from a JSONL session transcript. Spawned with a transcript path and specific questions. Returns a factual report — does not speculate. Use after compaction produces a bad summary, or when continuing a session that lost important details."
+tools: Read, Grep, Glob, Bash
+---
+
 # Context Recovery Agent
 
 Recover lost context from a JSONL session transcript. Used after compaction produces a bad summary, or when continuing a session that lost important details.
