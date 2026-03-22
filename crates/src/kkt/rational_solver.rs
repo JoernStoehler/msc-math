@@ -442,7 +442,7 @@ fn find_positive_beta(
     // After all eliminations: constraints have empty coefficients.
     // Feasibility requires 0 > rhs, i.e. rhs < 0.
     for (coeffs, rhs) in &constraints {
-        debug_assert!(coeffs.is_empty());
+        assert!(coeffs.is_empty(), "FM elimination left non-empty coefficients");
         if !rhs.is_negative() {
             return None; // Infeasible (certified)
         }
@@ -479,7 +479,7 @@ fn find_positive_beta(
 
         alpha[assign_var] = match (&lo, &hi) {
             (Some(l), Some(h)) => {
-                debug_assert!(l < h, "FM back-sub: lo >= hi (should have been infeasible)");
+                assert!(l < h, "FM back-sub: lo >= hi (should have been infeasible)");
                 (l + h) / &two
             }
             (Some(l), None) => l + BigRational::one(),
@@ -499,7 +499,7 @@ fn find_positive_beta(
         })
         .collect();
 
-    debug_assert!(
+    assert!(
         beta.iter().all(|b| b.is_positive()),
         "FM back-substitution produced non-positive beta"
     );
