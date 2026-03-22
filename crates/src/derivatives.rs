@@ -226,7 +226,7 @@ mod tests {
     //
     // Proposition: volume_derivatives_h matches finite differences to O(eps²).
     // Capacity derivatives are tested via the FD cross-check on known polytopes.
-    // Reference: [lem:cap-derivative], [lem:vol-derivative]
+    // Reference: TODO [lem:cap-derivative], [lem:vol-derivative] (not yet in math.tex)
     //
     // Strategy: fixture-based (hypercube, simplex) + FD cross-validation
 
@@ -252,8 +252,10 @@ mod tests {
             } else {
                 (analytical[k] - fd[k]).abs()
             };
+            // Volume is polynomial in h → central FD error is O(eps²) ≈ 1e-12.
+            // Use 1e-6 tolerance to allow for qhull's own numerical error.
             assert!(
-                rel_err < 1e-3,
+                rel_err < 1e-6,
                 "facet {k}: analytical={}, fd={}, rel_err={rel_err}",
                 analytical[k], fd[k]
             );
@@ -286,22 +288,22 @@ mod tests {
         let (best_q, best_beta, best_perm, best_mu, best_xi) =
             find_best_orbit(polytope);
 
-        if best_q < 1e-10 {
-            return; // Skip if no valid orbit found
-        }
+        assert!(
+            best_q > 1e-10,
+            "find_best_orbit should find a valid orbit on the hypercube"
+        );
 
         let f = polytope.facet_count();
         let analytical = capacity_derivatives_h(&best_beta, best_q, best_xi, &best_perm, f);
 
-        // FD cross-check
+        // Per-orbit FD cross-check: perturb h_k, re-solve the SAME orbit, compare.
+        // We compare against per-orbit action A = 1/(2Q), NOT global capacity,
+        // because global capacity = min over orbits, and a different orbit may
+        // become optimal after perturbation (e.g., on the hypercube where many
+        // orbits are equally optimal by symmetry).
         let normals = polytope.normals_f64();
         let heights = polytope.heights_f64();
         let eps = 1e-6;
-        let fd = capacity_derivatives_h_fd(&normals, &heights, eps, |n, h| {
-            let p = Polytope4D::from_normals_and_heights(n.to_vec(), h.to_vec()).ok()?;
-            let result = crate::algorithms::hk2017::ehz_capacity(&p)?;
-            Some(result.result.capacity)
-        });
 
         // At least some derivatives should be non-zero (the orbit uses >= 2 facets)
         let nonzero_count = analytical.iter().filter(|&&x| x.abs() > 1e-10).count();
@@ -311,14 +313,31 @@ mod tests {
         );
 
         for k in 0..f {
-            if analytical[k].abs() < 1e-12 && fd[k].abs() < 1e-6 {
-                continue; // Both near zero, skip
+            if analytical[k].abs() < 1e-12 {
+                continue; // Facet not in orbit, derivative is zero
             }
-            let abs_err = (analytical[k] - fd[k]).abs();
+            // FD for the specific orbit's action
+            let mut hp = heights.clone();
+            let mut hm = heights.clone();
+            hp[k] += eps;
+            hm[k] -= eps;
+            let pp = Polytope4D::from_normals_and_heights(normals.clone(), hp).unwrap();
+            let pm = Polytope4D::from_normals_and_heights(normals.clone(), hm).unwrap();
+            let qp = solve_kkt_for(&pp, &best_perm).map(|r| r.q_corrected);
+            let qm = solve_kkt_for(&pm, &best_perm).map(|r| r.q_corrected);
+            let fd_k = match (qp, qm) {
+                (Some(qp), Some(qm)) => {
+                    let ap = 0.5 / qp;
+                    let am = 0.5 / qm;
+                    (ap - am) / (2.0 * eps)
+                }
+                _ => continue,
+            };
+            let abs_err = (analytical[k] - fd_k).abs();
             assert!(
-                abs_err < 1e-3,
-                "facet {k}: analytical={}, fd={}, abs_err={abs_err}",
-                analytical[k], fd[k]
+                abs_err < 1e-4,
+                "facet {k}: analytical={}, fd={fd_k}, abs_err={abs_err}",
+                analytical[k]
             );
         }
     }
@@ -348,42 +367,15 @@ mod tests {
         }
     }
 
-    /// Helper: find the best orbit (max Q) for a polytope using exhaustive search.
+    /// Helper: find the best orbit for a polytope via library capacity + KKT re-solve.
     fn find_best_orbit(
         polytope: &Polytope4D,
     ) -> (f64, Vec<f64>, Vec<usize>, Vec<f64>, f64) {
-        use crate::algorithms::facet_adjacency::{build_transition_matrix, is_feasible_cycle};
-        use crate::kkt::saddle_point_solver::EPS_BETA_POSITIVE;
-
-        let f = polytope.facet_count();
-        let adj = build_transition_matrix(polytope);
-
-        let mut best_q = 0.0;
-        let mut best_beta = vec![];
-        let mut best_perm = vec![];
-        let mut best_mu = vec![0.0; 4];
-        let mut best_xi = 0.0;
-
-        // Try all 2-facet permutations (sufficient for hypercube)
-        for i in 0..f {
-            for j in 0..f {
-                if i == j { continue; }
-                let perm = vec![i, j];
-                if !is_feasible_cycle(&perm, &adj) { continue; }
-                if let Some(result) = solve_kkt_for(polytope, &perm) {
-                    if result.q_corrected > best_q
-                        && result.beta.iter().all(|&b| b > EPS_BETA_POSITIVE)
-                    {
-                        best_q = result.q_corrected;
-                        best_beta = result.beta;
-                        best_perm = perm;
-                        best_mu = result.mu;
-                        best_xi = result.xi;
-                    }
-                }
-            }
-        }
-
-        (best_q, best_beta, best_perm, best_mu, best_xi)
+        let ehz = crate::algorithms::hk2017::ehz_capacity(polytope)
+            .expect("ehz_capacity should find an orbit on test polytopes");
+        let perm = ehz.result.best_permutation;
+        let kkt = solve_kkt_for(polytope, &perm)
+            .expect("solve_kkt_for should succeed on the best permutation");
+        (kkt.q_corrected, kkt.beta, perm, kkt.mu, kkt.xi)
     }
 }
