@@ -440,18 +440,19 @@ Three types arise:
 
 \item \textbf{Type~C} ($\|(\hat v_j)_\beta\| = O(1)$,
   constraint violation $O(1)$):
-  Would break constraints.
-  \emph{Never observed} across ${\approx}\,4300$~permutations
-  on 6~polytopes.
+  \emph{Cannot occur.}
+  From $M\hat v_j = \hat\lambda_j \hat v_j$,
+  the constraint rows give
+  $N^\top (\hat v_j)_\beta = \hat\lambda_j\, (\hat v_j)_\mu$
+  and
+  $\eta^\top (\hat v_j)_\beta = \hat\lambda_j\, (\hat v_j)_\xi$.
+  Since $\|\hat v_j\| = 1$,
+  the constraint violation per unit~$\alpha$ is
+  $\leq |\hat\lambda_j| \leq \tau$.
+  For discarded eigenvectors ($|\hat\lambda_j| \leq \tau = 10^{-3}$),
+  this is $O(\tau)$, not $O(1)$.
+  The implementation includes a runtime assertion that panics
+  if a Type~C direction is ever encountered.
 \end{itemize}
-
-\medskip\noindent\textbf{Known issue: LP cycling.}
-The \texttt{microlp} simplex solver can cycle (infinite loop)
-on degenerate instances of this LP
-(observed for $k = 2$, $m = 5$ on the square$\times$square
-product at $\theta = 0$).
-The implementation guards against this with a 100\,ms timeout;
-on timeout, the LP result is discarded and $\hat\beta_0$
-is used directly.
 \end{remark}
 
