@@ -33,7 +33,7 @@ What's settled vs placeholder across the project's major components.
 | Thesis — story arc / structure | **Not started** | Jörn hasn't defined the central argument; highest-value decision pending |
 | Thesis — final assembly | **Not started** | Abstract, intro, conclusion, bibliography, figures, proofreading — all deferred until content stabilizes |
 | Thesis↔code alignment | **Placeholder** | 15 mismatches + 18 missing cross-ref labels identified; Jörn decides which side to fix (§3) |
-| Convention skills / meta-layer | **Draft** | Refactored 2026-03-22: skills over rules, conventions as review spec, meta-* skills reorganized. Jörn hasn't done full review of convention skill content. |
+| Convention skills / meta-layer | **Draft** | Refactored 2026-03-22: skills over rules, conventions as review spec, meta-* skills reorganized. Meta-foundations and meta-create-conventions Jörn-reviewed. Convention skill content not yet audited for cargo cult / unjustified items (found one: iterator chain preference was cargo cult, removed). |
 | SLURM skill | **Not started** | Planned (§7b), awaiting example template from Jörn |
 
 ---
@@ -294,7 +294,8 @@ No chapter is currently publishable. The thesis needs to become a coherent docum
 
 ## 9. Agent infrastructure (deferred — after thesis deadline)
 
-- 🟡 Split monolithic review agent into per-concern reviewers (tex-review, rust-review, experiment-review). Current agent loads all conventions and does two-phase review; per-concern reviewers would get smaller instruction sets and run in parallel. Deferred because current reviewer works and restructuring during thesis crunch is risky.
+- 🟡 ~~Split monolithic review agent into per-concern reviewers~~ — Done (2026-03-22). Generic review agent now loads ONE convention skill per spawn; math-review is a separate dedicated agent.
+- 🟡 Audit convention skills for cargo cult / unjustified items. Found one so far (iterator chain preference — removed). ~25 conventions lack stated justifications, some may be wrong. Jörn reviews items flagged by agents. See session 2026-03-22 audit for the full list.
 
 ---
 
