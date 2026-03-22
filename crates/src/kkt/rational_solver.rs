@@ -529,7 +529,6 @@ fn compute_q_rational(
 
 // ── Helpers ──────────────────────────────────────────────────────────────
 
-
 /// Approximate absolute value of a BigRational as f64 (for pivot comparison).
 fn rational_abs_f64(r: &BigRational) -> f64 {
     let n = r.numer().to_f64().unwrap_or(0.0);

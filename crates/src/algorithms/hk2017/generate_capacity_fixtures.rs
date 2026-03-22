@@ -69,6 +69,11 @@ pub struct TestPolytope {
 /// Path to the cached dataset fixture, relative to the crate root.
 pub const FIXTURE_PATH: &str = "tests/fixtures/capacity_dataset.json";
 
+/// Catalog version tag. Bump when `polytope_catalog()` changes (new polytopes,
+/// seed changes, transformation logic changes). The fixture stores this version;
+/// consumer tests check it on load and panic with a regeneration message on mismatch.
+pub const CATALOG_VERSION: u32 = 1;
+
 /// Serializable representation of a test polytope (no nalgebra types).
 ///
 /// Scalar-only: contains all fixture data except `Polytope4D`. Most fixture tests
@@ -112,6 +117,8 @@ impl DatasetEntry {
     }
 
     fn to_test_polytope(&self) -> TestPolytope {
+        // Reconstruct dual vertices a_i = n_i / h_i from stored normals and heights.
+        // Polytope4D::new() expects dual-vertex (halfspace) representation.
         let halfspaces: Vec<Vector4<f64>> = self
             .normals
             .iter()
@@ -133,12 +140,22 @@ impl DatasetEntry {
     }
 }
 
+/// Top-level JSON wrapper with catalog version tag.
+#[cfg(test)]
+#[derive(serde::Serialize, serde::Deserialize)]
+struct DatasetFile {
+    catalog_version: u32,
+    entries: Vec<DatasetEntry>,
+}
+
 /// Save dataset to JSON fixture file (atomic: writes to temp file, then renames).
 #[cfg(test)]
-pub fn save_test_dataset(path: &std::path::Path, dataset: &[TestPolytope]) {
-    let entries: Vec<DatasetEntry> =
-        dataset.iter().map(DatasetEntry::from_test_polytope).collect();
-    let json = serde_json::to_string_pretty(&entries).expect("serialize dataset");
+pub(crate) fn save_test_dataset(path: &std::path::Path, dataset: &[TestPolytope]) {
+    let file = DatasetFile {
+        catalog_version: CATALOG_VERSION,
+        entries: dataset.iter().map(DatasetEntry::from_test_polytope).collect(),
+    };
+    let json = serde_json::to_string_pretty(&file).expect("serialize dataset");
     if let Some(parent) = path.parent() {
         std::fs::create_dir_all(parent).expect("create fixture directory");
     }
@@ -148,9 +165,9 @@ pub fn save_test_dataset(path: &std::path::Path, dataset: &[TestPolytope]) {
     std::fs::rename(&tmp_path, path).expect("rename temp fixture to final path");
 }
 
-/// Load dataset from JSON fixture file.
+/// Read and parse the fixture file, checking catalog version.
 #[cfg(test)]
-pub fn load_test_dataset(path: &std::path::Path) -> Vec<TestPolytope> {
+fn read_fixture(path: &std::path::Path) -> DatasetFile {
     let json = std::fs::read_to_string(path).unwrap_or_else(|e| {
         panic!(
             "Cannot read capacity dataset fixture at {}.\n\
@@ -160,7 +177,7 @@ pub fn load_test_dataset(path: &std::path::Path) -> Vec<TestPolytope> {
             e
         )
     });
-    let entries: Vec<DatasetEntry> = serde_json::from_str(&json).unwrap_or_else(|e| {
+    let file: DatasetFile = serde_json::from_str(&json).unwrap_or_else(|e| {
         panic!(
             "Cannot parse capacity dataset fixture at {}.\n\
              Error: {}\n\
@@ -169,7 +186,25 @@ pub fn load_test_dataset(path: &std::path::Path) -> Vec<TestPolytope> {
             e
         )
     });
-    entries.iter().map(DatasetEntry::to_test_polytope).collect()
+    assert!(
+        file.catalog_version == CATALOG_VERSION,
+        "Fixture catalog_version ({}) != code CATALOG_VERSION ({}).\n\
+         The polytope catalog has changed since the fixture was generated.\n\
+         Regenerate with: cargo test --release regenerate_test_dataset -- --ignored --nocapture",
+        file.catalog_version,
+        CATALOG_VERSION,
+    );
+    file
+}
+
+/// Load dataset from JSON fixture file.
+#[cfg(test)]
+pub(crate) fn load_test_dataset(path: &std::path::Path) -> Vec<TestPolytope> {
+    read_fixture(path)
+        .entries
+        .iter()
+        .map(DatasetEntry::to_test_polytope)
+        .collect()
 }
 
 /// Load dataset from JSON fixture file as scalar entries (no `Polytope4D` construction).
@@ -179,27 +214,10 @@ pub fn load_test_dataset(path: &std::path::Path) -> Vec<TestPolytope> {
 /// Use for tests that only need scalar fields (capacity, volume, name, etc.).
 #[cfg(test)]
 pub(crate) fn load_dataset_entries(path: &std::path::Path) -> Vec<DatasetEntry> {
-    let json = std::fs::read_to_string(path).unwrap_or_else(|e| {
-        panic!(
-            "Cannot read capacity dataset fixture at {}.\n\
-             Error: {}\n\
-             Regenerate with: cargo test --release regenerate_test_dataset -- --ignored --nocapture",
-            path.display(),
-            e
-        )
-    });
-    serde_json::from_str(&json).unwrap_or_else(|e| {
-        panic!(
-            "Cannot parse capacity dataset fixture at {}.\n\
-             Error: {}\n\
-             Regenerate with: cargo test --release regenerate_test_dataset -- --ignored --nocapture",
-            path.display(),
-            e
-        )
-    })
+    read_fixture(path).entries
 }
 
-/// Deterministically generate the test polytope catalog (~0ms, no capacity computation).
+/// Deterministically generate the test polytope catalog (no capacity computation).
 ///
 /// This is the single source of truth for which polytopes exist in the test suite.
 /// Both fixture regeneration and staleness checks call this function.

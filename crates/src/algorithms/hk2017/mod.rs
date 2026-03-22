@@ -352,7 +352,7 @@ mod tests_literature {
     /// Calls polytope_catalog() twice and verifies identical output. Critical invariant
     /// for fixture generation: non-determinism would silently invalidate the fixture.
     #[test]
-    #[ignore] // ~17s: constructs all 33 polytopes twice. Run during fixture regeneration.
+    #[ignore] // ~17s debug, ~1s release: constructs all 33 polytopes twice. Run during fixture regeneration.
     fn catalog_determinism() {
         let c1 = polytope_catalog();
         let c2 = polytope_catalog();
@@ -379,7 +379,7 @@ mod tests_literature {
     /// If this test warns, regenerate the fixture:
     /// `cargo test --release regenerate_test_dataset -- --ignored --nocapture`
     #[test]
-    #[ignore] // ~17s: constructs all 33 polytopes. Run during fixture regeneration.
+    #[ignore] // ~17s debug, ~1s release: constructs all 33 polytopes. Run during fixture regeneration.
     fn fixture_staleness_check() {
         let catalog = polytope_catalog();
         let dataset = &*DATASET;
@@ -1455,14 +1455,15 @@ mod tests_symplectic_invariance {
 
     /// Verify monotonicity: if alpha*K1 fits inside K2, then c(alpha*K1) <= c(K2).
     ///
-    /// For each pair (K1, K2) in the fixture, computes the maximum alpha such that
-    /// alpha*K1 subset K2, then checks c(alpha*K1) = alpha^2*c(K1) <= c(K2).
+    /// Checks up to 20 pairs (K1, K2) from the fixture. For each, computes the
+    /// maximum alpha such that alpha*K1 subset K2, then checks
+    /// c(alpha*K1) = alpha^2*c(K1) <= c(K2).
     /// Uses conformality to avoid recomputing capacity of the scaled polytope.
     ///
     /// Why #[ignore]: needs full Polytope4D (vertex containment checks), so loads
     /// the full fixture (~8s). Run: `cargo test capacity_monotonicity -- --ignored`
     #[test]
-    #[ignore] // ~8s: needs Polytope4D for vertex containment checks.
+    #[ignore] // ~8s debug, ~0.5s release: needs Polytope4D for vertex containment checks.
     fn capacity_monotonicity() {
         // Load full TestPolytope dataset locally — the module's DATASET is scalar-only.
         let path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(FIXTURE_PATH);
