@@ -26,15 +26,19 @@ use crate::geom::polytope::Polytope4D;
 use crate::geom::symplectic_form::j4;
 use nalgebra::Vector4;
 
-/// Compute ∂A/∂h_k for all facets k = 0..f.
+/// Compute ∂A/∂h_k for all facets k = 0..f, where A = c_EHZ = 1/(2Q).
 ///
 /// For facet k in the orbit permutation (k = σ(i₀)):
-///   ∂A/∂h_k = ξ · β_{i₀} / (2Q²)
+///   ∂A/∂h_k = −ξ · β_{i₀} / (2Q²)
 ///
 /// For facets not in the orbit: ∂A/∂h_k = 0.
 ///
-/// Uses the symmetric KKT sign convention: ξ is the Lagrange multiplier for
-/// the normalization constraint η^T β = 1 from Hβ + Nμ + ηξ = 0.
+/// Derivation: envelope theorem gives ∂Q*/∂h_k = ξ·β_{i₀}, then
+/// ∂A/∂h_k = ∂[1/(2Q)]/∂h_k = −∂Q*/∂h_k / (2Q²) = −ξ·β_{i₀}/(2Q²).
+///
+/// **Cross-check with asymmetric convention:** In the asymmetric convention
+/// (Hβ = Nλ + ην), ν = −ξ, so ∂A/∂h_k = −(−ν)·β/(2Q²) = ν·β/(2Q²),
+/// matching the formula in experiment code.
 ///
 /// # Arguments
 /// - `beta`: dwell-time coefficients from KktResult
@@ -53,7 +57,7 @@ pub fn capacity_derivatives_h(
     (0..facet_count)
         .map(|k| {
             match perm.iter().position(|&f| f == k) {
-                Some(i0) => xi * beta[i0] / (2.0 * q_sq),
+                Some(i0) => -xi * beta[i0] / (2.0 * q_sq),
                 None => 0.0,
             }
         })
@@ -298,6 +302,13 @@ mod tests {
             let result = crate::algorithms::hk2017::ehz_capacity(&p)?;
             Some(result.result.capacity)
         });
+
+        // At least some derivatives should be non-zero (the orbit uses >= 2 facets)
+        let nonzero_count = analytical.iter().filter(|&&x| x.abs() > 1e-10).count();
+        assert!(
+            nonzero_count >= 2,
+            "expected >= 2 non-zero capacity derivatives, got {nonzero_count}"
+        );
 
         for k in 0..f {
             if analytical[k].abs() < 1e-12 && fd[k].abs() < 1e-6 {
