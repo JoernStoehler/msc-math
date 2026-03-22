@@ -129,10 +129,10 @@ pub struct KktResult {
     /// Optimal beta vector (all components > -EPS_BETA_POSITIVE).
     pub beta: Vec<f64>,
     /// Residual-corrected Q value: Q_tilde = Q(beta_hat) + (r2^T mu_hat + r3 * xi_hat).
-    /// See [eq:q-corrected].
+    /// See [lem:q-error-bound].
     pub q_corrected: f64,
     /// Error bound E on Q_tilde: |Q(beta_0) - Q_tilde| <= E.
-    /// See [eq:q-error-bound].
+    /// See [lem:q-error-bound].
     #[allow(dead_code)]
     pub q_error_bound: f64,
     /// Inertia of M: number of positive eigenvalues.

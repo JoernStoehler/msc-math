@@ -118,6 +118,9 @@ const EPS_MARGIN_FALSE: f64 = 1e-9;
 /// reduced Hessian H'). Despite different matrix structures, the absolute floor
 /// is the same: it guards against attempting rank detection on a pure-noise
 /// matrix, and the O(1) entry-scale argument applies to both.
+/// Making it 10x larger (1e-11) risks discarding matrices that are genuinely
+/// non-zero but small; 10x smaller (1e-13) risks attempting rank detection on
+/// a pure-noise matrix.
 pub(crate) const EPS_EIGEN_FLOOR: f64 = 1e-12;
 
 // ── Utility functions ──
