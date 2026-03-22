@@ -1,6 +1,6 @@
 ---
 name: data-pipeline
-description: Test data pipeline conventions — caching strategies, fixture generation, staleness detection, timing, and LICCA cluster offloading. Load when writing tests that consume expensive data, or when test runtime needs optimization.
+description: How to handle expensive test data — caching, fixture generation, staleness detection, and offloading slow computation to the LICCA cluster. Load when writing tests that need precomputed data (e.g., polytope datasets) or when tests are too slow because they regenerate data on every run.
 ---
 
 # Data Pipeline Conventions

@@ -1,6 +1,6 @@
 ---
 name: tex-content
-description: LaTeX content and correctness standards for thesis .tex files. Load when writing thesis chapters, proofs, definitions, or theorem statements in thesis/. Covers four audiences, correctness criteria, self-containedness, proof writing structure, notation consistency, and citation verification. For math.tex files in crates/ or experiments/, load `math-tex` instead.
+description: What thesis .tex content should say — correctness, self-containedness, proof structure, notation, citations. Load when writing or reviewing the substance of thesis chapters, proofs, or theorem statements in thesis/. Does NOT cover formatting (see tex-format) or build commands (see tex-build). For math.tex in crates/ or experiments/, load `math-tex` instead.
 ---
 
 # LaTeX Content Conventions

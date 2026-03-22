@@ -1,16 +1,6 @@
----
-name: meta-claudemd
-description: Style rules and conventions for writing CLAUDE.md. Load when editing CLAUDE.md or evaluating whether a rule belongs there. Covers structure, phrasing, and what does/doesn't work empirically. Does NOT cover where knowledge should live (see meta-folder-layout) or foundational analysis (see meta-documentation).
----
+# CLAUDE.md Format and Style
 
-# Writing and Editing CLAUDE.md
-
-How to write CLAUDE.md so agents actually follow it. For the rationale behind these rules and the foundational knowledge model, load the `meta-documentation` skill.
-
-## Related skills
-
-- `meta-documentation` — foundational analysis: knowledge taxonomy, instruction focus, failure modes
-- `meta-folder-layout` — deciding whether something belongs in CLAUDE.md vs a skill vs a reference doc
+How to write CLAUDE.md so agents actually follow it.
 
 ## The ideal CLAUDE.md
 
@@ -26,7 +16,7 @@ Structure sections around the moments an agent faces a decision: "when you produ
 
 ## No meta-sentences in CLAUDE.md
 
-Don't explain *why* a section exists ("Agents lack implicit knowledge..."). That's meta-knowledge about the section — it belongs in the `meta-documentation` skill, not in CLAUDE.md. CLAUDE.md goes straight to what to do.
+Don't explain *why* a section exists ("Agents lack implicit knowledge..."). That's meta-knowledge about the section — it belongs in the meta-foundations skill, not in CLAUDE.md. CLAUDE.md goes straight to what to do.
 
 ## Decision trees, not prose
 
@@ -34,7 +24,7 @@ Don't explain *why* a section exists ("Agents lack implicit knowledge..."). That
 
 ## Rationale lives in the skill
 
-The "why" behind CLAUDE.md rules lives in the `meta-documentation` skill and its reference docs. CLAUDE.md is pure action. When an agent needs to understand *why* a rule exists — e.g., to decide whether an edge case should follow the rule — they load that skill.
+The "why" behind CLAUDE.md rules lives in the `meta-foundations` skill and its reference docs. CLAUDE.md is pure action. When an agent needs to understand *why* a rule exists — e.g., to decide whether an edge case should follow the rule — they load that skill.
 
 ## One claim per bullet
 

@@ -1,22 +1,11 @@
----
-name: meta-skills
-description: Conventions for creating and editing SKILL.md files. Load when writing a new skill or modifying an existing one. Covers the progressive disclosure model, frontmatter requirements, description-as-contract for skill descriptions, and reference doc organization. Does NOT cover agent definitions (see meta-subagents) or CLAUDE.md style (see meta-claudemd).
----
-
-# Writing SKILL.md Files
+# SKILL.md Format
 
 How to write skills that agents discover, load, and follow correctly.
 
-## Reference documents
+## Additional reference documents
 
-- `references/anthropic-skill-guide.md` — Anthropic's skill-building guide (good starting point, has gaps — see the `meta-documentation` skill's rationale doc for where our approach diverges)
-- `references/skill-yaml-reference.md` — YAML frontmatter fields, file structure, checklist
-
-## Related skills
-
-- `meta-documentation` — foundational analysis: knowledge taxonomy, instruction focus, failure modes
-- `meta-subagents` — writing agent definitions (`.claude/agents/*.md`)
-- `meta-folder-layout` — deciding whether something belongs in a skill vs CLAUDE.md vs reference doc
+- `anthropic-skill-guide.md` (in this directory) — Anthropic's skill-building guide
+- `skill-yaml-reference.md` (in this directory) — YAML frontmatter fields, file structure, checklist
 
 ## The progressive disclosure model
 
@@ -40,7 +29,7 @@ If the description overpromises (e.g., "verify completeness" when it only checks
 - **What the skill does** — capabilities it provides
 - **What it does not check** — limits of its scope
 
-This applies equally to skill descriptions and agent descriptions (see `meta-subagents`).
+This applies equally to skill descriptions and agent descriptions.
 
 ### Description format
 
@@ -53,7 +42,6 @@ This applies equally to skill descriptions and agent descriptions (see `meta-sub
 
 - Organize for the agent who loaded the skill — they already know they need it
 - Mention which reference docs exist in `references/`
-- SKILL.md writing/editing is usually initiated or approved by Jorn — there's a natural moment to load this skill
 - Keep SKILL.md under 5,000 words; move detailed content to `references/`
 
 ## Skill folder structure

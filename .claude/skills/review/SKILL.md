@@ -1,6 +1,6 @@
 ---
 name: review
-description: Review workflow for checking code and writing quality before presenting to Jörn. Load when reviewing .tex, .rs, or .py deliverables, or when asked to run a review. Explains sequential checklist methodology, phase ordering, and how to use review subagents.
+description: How to spawn and run review subagents. Each review subagent checks ONE convention skill against a file list — spawn multiple for multiple concerns. Load when you need to review deliverables before presenting to Jörn. Does NOT cover math correctness — use the math-review agent for that.
 ---
 
 # Review Workflow

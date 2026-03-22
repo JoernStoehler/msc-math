@@ -1,4 +1,6 @@
-# Agent Definition YAML Reference
+# Agent Definition Format
+
+How to write `.claude/agents/*.md` files so parent agents plan around them correctly and subagents behave as expected.
 
 Official docs: https://code.claude.com/docs/en/sub-agents.md
 
@@ -31,6 +33,10 @@ Before creating a custom agent, consider if a built-in type suffices:
 | `Plan` | Architecture, implementation planning | Read-only |
 | `Bash` | Command execution | Bash only |
 | `general-purpose` | Complex multi-step tasks | All tools |
+
+## Preloading skills
+
+Use the `skills:` field to force-load skills into subagents. This is more reliable than hoping the subagent will discover and load the right skills on its own. Agents sometimes run ahead without loading skills — preloading removes that failure mode.
 
 ## Checklist
 

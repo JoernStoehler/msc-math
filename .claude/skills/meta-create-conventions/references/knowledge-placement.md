@@ -1,17 +1,6 @@
----
-name: meta-folder-layout
-description: Conventions for project directory structure and where to place different kinds of knowledge. Load when deciding whether something belongs in CLAUDE.md, a skill, a reference doc, code comments, TASKS.md, or MEMORY.md. Provides a decision tree for knowledge placement. Does NOT cover how to write CLAUDE.md (see meta-claudemd) or how to write skills (see meta-skills).
----
+# Knowledge Placement
 
-# Project Directory Structure and Knowledge Placement
-
-Where to put knowledge so agents find it when they need it. For foundational analysis of *why* placement matters, load the `meta-documentation` skill.
-
-## Related skills
-
-- `meta-documentation` — foundational analysis: knowledge taxonomy, instruction focus, why placement matters
-- `meta-claudemd` — how to write CLAUDE.md content once you've decided something belongs there
-- `meta-skills` — how to write SKILL.md content once you've decided something belongs in a skill
+Where to put knowledge so agents find it when they need it.
 
 ## Decision tree: where does this knowledge go?
 
@@ -38,7 +27,7 @@ Where to put knowledge so agents find it when they need it. For foundational ana
 
 ## Location tiers — full rationale
 
-**1. CLAUDE.md** — always in context. Cannot be skipped, but can be ignored despite being read (see "Instruction focus" in `meta-documentation`). Cost: every agent pays the context-window cost. Put knowledge here when useful for a majority of agents, or when it has been forgotten too often in other locations.
+**1. CLAUDE.md** — always in context. Cannot be skipped, but can be ignored despite being read (see "Instruction focus" in `meta-foundations`). Cost: every agent pays the context-window cost. Put knowledge here when useful for a majority of agents, or when it has been forgotten too often in other locations.
 
 **2. SKILL.md files** — name + description always visible, body loaded on demand. Progressive disclosure for minority use cases. Limitation: agents sometimes run ahead without loading skills. Reminding agents to read skills is important. Subagents can be force-told to read a skill in their prompt or via the `skills:` field in agent definitions.
 
@@ -50,7 +39,7 @@ Where to put knowledge so agents find it when they need it. For foundational ana
 
 **6. MEMORY.md** — catch-all for session learnings, communication behavior. Occasionally clean and migrate stable entries to CLAUDE.md or standard locations.
 
-## When to use each meta-layer component
+## Quick reference table
 
 | Component | Purpose | Example |
 |-----------|---------|---------|

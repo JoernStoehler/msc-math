@@ -1,6 +1,6 @@
 ---
-name: meta-post-mortem
-description: Run a session post-mortem to capture process failures and improvement opportunities. Use at end of session, when something went wrong, or to improve prompts.
+name: post-mortem
+description: End-of-session reflection workflow. Run at Jörn's request or after a session with significant friction, mistakes, or wasted time. Produces actionable findings (memory entries, convention changes, decision records) — not just observations.
 user-invocable: true
 ---
 
@@ -58,7 +58,7 @@ Persist actionable findings so future agents benefit. For each finding, decide w
 
 - **Repeatable behavioral lesson** (e.g., "ensure proof correctness before review") → memory entry (type: feedback)
 - **New convention or workflow change** → discuss with Jörn, then update CLAUDE.md or relevant skill
-- **Failure mode that explains a rule** → add to Decision Records in meta-documentation skill
+- **Failure mode that explains a rule** → add to `meta-foundations/references/decision-records.md`
 - **Nothing actionable** → don't persist, it's just a fact about the session
 
 Don't persist everything — only findings that would change future agent behavior. A postmortem that produces zero repo changes is fine if nothing actionable emerged.

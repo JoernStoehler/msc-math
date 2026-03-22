@@ -1,6 +1,6 @@
 ---
 name: meta-cross-repo-sync
-description: How to keep shared infrastructure synchronized across repos. Load when editing any meta-* skill, behavior norms, or hook scripts. All meta-* skills are byte-for-byte identical across repos. Does NOT cover project-specific content (CLAUDE.md sections, domain skills, agents).
+description: How to keep shared infrastructure synchronized across repos. Load when editing any meta-* skill, shared layer-2 workflow skill (collaboration, session-handoff, post-mortem), behavior norms, or hook scripts. All shared skills are byte-for-byte identical across repos. Does NOT cover project-specific content (CLAUDE.md sections, domain skills, agents).
 ---
 
 # Cross-Repo Sync
@@ -9,7 +9,8 @@ Three repos share identical meta-layer infrastructure: msc-math, dnd-claude-code
 
 ## What is shared (must be identical across repos)
 
-- All `meta-*` skills (meta-documentation, meta-claudemd, meta-skills, meta-subagents, meta-hooks, meta-folder-layout, meta-collaboration, meta-feedback-processing, meta-session-handoff, meta-post-mortem, meta-cross-repo-sync)
+- All `meta-*` skills (meta-foundations, meta-create-conventions, meta-create-workflow, meta-create-review-subagent, meta-feedback-processing, meta-cross-repo-sync)
+- Shared layer-2 workflow skills (collaboration, session-handoff, post-mortem)
 - Behavior norms section in CLAUDE.md (### Agent Behavior Norms)
 - Hook scripts (`.claude/hooks/`)
 

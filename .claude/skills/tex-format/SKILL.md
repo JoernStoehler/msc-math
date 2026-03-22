@@ -1,6 +1,6 @@
 ---
 name: tex-format
-description: LaTeX formatting conventions for thesis .tex files in thesis/. Load when writing or editing thesis .tex files. Covers comment conventions (Jörn review markers, QC, TODO, GAP), file headers, theorem environments, figure/table inclusion. For math.tex files in crates/ or experiments/, load `math-tex` instead.
+description: How thesis .tex files should look — comment markers, file headers, theorem environments, figure/table inclusion. Load when formatting or structuring thesis .tex files in thesis/. Does NOT cover what the content should say (see tex-content) or build commands (see tex-build). For math.tex in crates/ or experiments/, load `math-tex` instead.
 ---
 
 # LaTeX Format Conventions

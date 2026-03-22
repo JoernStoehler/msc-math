@@ -1,6 +1,6 @@
 ---
 name: experiment-conventions
-description: Conventions for experiments/ directory. Load when working on experiment Rust binaries, Python scripts, JSONL data, logbooks, or math writeups under experiments/. Covers directory structure, pipeline, data in git, logbook conventions, math.tex conventions, writing rules, and self-review.
+description: Directory structure, pipeline, and conventions specific to experiments/. Load when creating a new experiment or editing experiment infrastructure (directory layout, data files, logbooks, pipeline scripts). For language-specific conventions within experiments, also load the relevant skill (rust-conventions, python-conventions, math-tex).
 ---
 
 # Experiment Conventions

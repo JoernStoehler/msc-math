@@ -35,6 +35,14 @@ Branches often touch multiple languages simultaneously:
 
 Each topic section below mentions its relevant review subagent(s) for focused checklists.
 
+## Repo Layers
+
+This repo has three layers. Each layer's conventions and workflows govern the layer below it.
+
+1. **Artifact layer** — The work product: Rust code, LaTeX thesis, Python experiments, datasets. What gets built.
+2. **Convention and workflow layer** — Conventions and workflows for producing artifacts. Coding style, review sequences, session phases, agent orchestration, communication norms. Lives in CLAUDE.md, skills, rules, and agent definitions.
+3. **Meta layer** — Conventions and workflows for selecting and communicating conventions and workflows to agents. How to write skills, structure CLAUDE.md, define agents, decide where knowledge goes, sync shared files across repos. Lives in the `meta-*` skills.
+
 ## Knowledge Placement
 
 **When you produce new knowledge** (findings, conventions, docs, comments):
@@ -55,7 +63,7 @@ Each topic section below mentions its relevant review subagent(s) for focused ch
 - Check `.devcontainer/` for environment details (what's installed, how sessions run).
 
 **When editing CLAUDE.md or SKILL.md files:**
-- Load the `meta-documentation` skill first for rationale and style rules.
+- Load the `meta-foundations` skill first for the conceptual foundation, then `meta-create-conventions` for the how-to.
 
 **Convention enforcement architecture:**
 - **CLAUDE.md** — project context, workflow, communication rules. Always loaded. Kept lean.
