@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Profile the default test suite and identify slow tests.
 
-Usage: python3 experiments/test-profiling/profile.py
+Usage: python3 experiments/test-profiling/analyze.py
 
 Pipeline:
 1. Run full suite to get wall/CPU time

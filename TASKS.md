@@ -77,51 +77,45 @@ cargo clippy --tests -- -D warnings  # clean
 
 🟢 Agent can do autonomously. Load `data-pipeline` skill for conventions.
 
-**Problem:** Default test suite takes 7 min. Root cause: fixture-consuming tests regenerate all 33 polytope capacity values every run.
+**Problem:** Default test suite takes ~21s wall / ~165s CPU (with nextest, 12 cores). The slowest tests spend most time in `Polytope4D::new()` (BigRational vertex enumeration). This is much improved from the original ~7 min thanks to opt-level=3 for BigRational (9d191b5) and SVD pre-filter (edbcb6a), but further gains are possible.
 
-**Profiling data (cargo nextest, 2026-03-17):**
+**Profiling data (cargo nextest, 2026-03-20, post-SVD-pre-filter):**
 
-| Test | Time | Fix |
-|------|------|-----|
-| `catalog_determinism` | 162s | Load from JSON |
-| `fixture_staleness_check` | 158s | Load from JSON |
-| `literature_capacity_values` | 98s | Load from JSON |
-| `volume_scales_with_fourth_power` | 92s | Fewer proptest cases in default |
-| 5 fixture-consuming tests | 85-89s ea | Load from JSON |
-| `random_polytopes_pass_validation` | 46s | Fewer proptest cases in default |
+| Test | Time | Notes |
+|------|------|-------|
+| `catalog_determinism` | 11.0s | Constructs all 33 polytopes from scratch |
+| `fixture_staleness_check` | 10.8s | Same — constructs all 33 polytopes |
+| `dwell_times_positive` | 10.5s | Fixture loading triggers `Polytope4D::new()` |
+| `breakpoint_count_consistency` | 10.5s | Same |
+| `hypercube_capacity` | 10.4s | Same |
+| `hko_pentagon_recovery` | 7.6s | Same |
+| `literature_capacity_values` | 6.5s | Same |
+| 4 more fixture tests | 5.2-5.3s | Same |
+| `volume_scales_with_fourth_power` | 1.5s | Proptest |
+| `random_polytopes_pass_validation` | 0.9s | Proptest |
 
-**Work items:**
-1. `generate_capacity_fixtures` writes to `fixtures/capacity_fixtures.json` (on-disk, checked in)
-2. 7 fixture-consuming tests load JSON instead of regenerating (85-98s → <1s each)
-3. Staleness detection: semantic (expected values) + generator hash (WARNING not ERROR)
-4. `known_polytopes` constructors → `LazyLock` caching (~50ms × 30 tests)
-5. Proptest: fewer cases in default, full cases in `#[ignore]`
+**Already done:**
+- Fixture file exists at `tests/fixtures/capacity_dataset.json` (item 1 ✅)
+- `known_polytopes` uses `LazyLock` caching (item 4 ✅)
+- BigRational opt-level=3 in dev builds (9d191b5)
+- SVD pre-filter skips ~70-80% of rational vertex enumeration subsets (edbcb6a)
 
-**Target:** Default suite < 2 min. Full suite (with `--ignored`) < 10 min.
+**Remaining work items:**
+1. Scalar-only fixture loading — 7/8 fixture tests only use scalar fields (capacity, volume), never `Polytope4D`. Add a loading path that skips `Polytope4D::new()` entirely. ~1ms instead of ~10s per test.
+2. Mark `catalog_determinism` and `fixture_staleness_check` as `#[ignore]` — only needed during fixture regeneration.
+3. Proptest: fewer cases in default, full cases in `#[ignore]`.
 
-**Status (2026-03-22):** Not started. A previous `test-data-pipeline` worktree existed but only contained pre-filter math consolidation work (now merged to main). The actual fixture pipeline work (items 1-5 above) has not been implemented. No worktree currently active.
+**Target:** Default suite <10s wall time. Already at ~21s, so this is incremental, not urgent.
+
+**Status (2026-03-22):** Partially done (optimizations merged). Remaining items are low priority — current 21s wall time is acceptable. Agent plan at `replicated-crunching-ladybug.md` has detailed implementation approach for scalar-only loading.
 
 **Depends on:** Migration merge (§0) ✅.
 
 ---
 
-## 1b. Migrate remaining experiments to logbook format — NEARLY COMPLETE
+## 1b. Migrate remaining experiments to logbook format — COMPLETE
 
-🟢 Agent can do autonomously.
-
-**Status (2026-03-22):** 17/18 experiments have logbook.md. Only `test-profiling` still has README.md instead of logbook.md. Original estimate was 15 remaining; bulk migration happened during earlier sessions.
-
-Previously planned for remaining experiments:
-- Create `logbook.md` from README.md + .tex + git history + code headers
-- Rename `<name>.rs` → `run.rs`, `<name>.py` → `analyze.py`, `<name>.tex` → `math.tex`
-- Update `experiments/Cargo.toml` bin paths
-- Update `thesis/experiments.tex` `\input` paths (where applicable)
-- Delete `README.md`
-- Verify thesis builds
-
-**Parallelize:** Dispatch one agent per 3-4 experiments. Each reads experiment-conventions skill. Each surfaces questions it can't resolve.
-
-**Tip:** The hko-neighborhood logbook agent found stale README content by cross-checking against JSONL data. Other experiments likely have similar staleness.
+**Status (2026-03-22):** All 19 experiments have logbook.md. No README.md files remain. `test-profiling` was the last migration (`profile.py` → `analyze.py`, README.md → logbook.md).
 
 ---
 
@@ -209,15 +203,34 @@ Mostly agent-written from Jörn's notes. Needs Jörn's mathematical verification
 
 ---
 
+## 5b. End-to-end profiling of systolic ratio computation
+
+🟢 Agent can do autonomously. Update `experiments/benchmark/`.
+
+**Problem:** The existing benchmark experiment only times the capacity computation (permutation enumeration + KKT solve), not the full pipeline. `Polytope4D::new` (exact rational vertex enumeration, adjacency, omega signs) is not profiled but may dominate wall time for larger polytopes. There is no end-to-end breakdown showing where time goes from raw normals/heights to systolic ratio.
+
+**Work items:**
+1. Add end-to-end timing to the benchmark experiment, broken into phases:
+   - `Polytope4D::new` (rational construction: vertex enum, incidence, vertex_adjacency, omega signs)
+   - Permutation enumeration + adjacency pruning
+   - KKT assembly + solve (LU/SVD)
+   - Accumulator / orbit recovery
+2. Produce a figure (stacked bar or similar) showing phase breakdown vs facet count
+3. Update `benchmark/logbook.md` with findings
+
+---
+
 ## 6. Code refactors (improve before thesis freeze)
 
-### 6a. Dual-vertex parameterization (thesis notation change)
+### 6a. Dual-vertex parameterization (thesis notation change) — DIRECTION DECIDED
 
-🔴 Jörn decides whether to switch. Major impact on thesis .tex files.
+Direction (2026-03-22, Jörn): Thesis will introduce both (n_i, h_i) and a_i = n_i/h_i, but primarily work in a_i since n_i rarely appears without a 1/h_i factor. Thesis writing is deferred to end of week.
 
-Switch from (n_i, h_i) to a_i = n_i/h_i throughout thesis. Code already uses dual vertices internally. Simplifies formulas (no unit-length constraint, Reeb vector = 2J₀a_i directly).
+**Current state:** Code stores `dual_vertices` (a_i) as primary representation, computes (n_i, h_i) on demand. Math.tex files are mixed: `geom/math.tex` uses a_i in the H-representation definition, but `kkt/math.tex` and `algorithms/math.tex` use (n_i, h_i) throughout.
 
-**Ordering:** Do BEFORE KKT projection refactor to avoid double refactoring.
+**Open question (Jörn):** The KKT system in `kkt/math.tex` is written in (n_i, h_i) with three separate objects (N, H, eta). Is there a clean a_i-only formulation? Likely requires rescaling β so h disappears from the constraints, which changes H. Jörn to work out the math — agents should not attempt the derivation.
+
+**Ordering:** No longer blocking §6b.
 
 ### 6b. KKT projection-based solver
 

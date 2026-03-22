@@ -24,7 +24,7 @@ experiments/
 
 The folder name provides the namespace. Files inside use role-based names (`run.rs`, `analyze.py`, `logbook.md`, `math.tex`), not `<name>.rs`, `<name>.py`.
 
-All 17 experiments now use role-based names. No legacy `<name>.rs` / `README.md` files remain.
+All 19 experiments now use role-based names. No legacy `<name>.rs` / `README.md` files remain.
 
 ## Two Living Documents
 
