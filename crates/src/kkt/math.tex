@@ -385,11 +385,11 @@ for $\|\delta\mu\|$ and $|\delta\xi|$:
 
 \begin{remark}[Near-null LP search for admissible~$\hat\beta$]%
 \label{rem:near-null-lp-search}
-% Source: scratch-near-null-analysis.tex from kkt-lp-refactor branch.
-% Code: saddle_point_solver.rs, beta_feasibility.rs
-% Jörn: Type C impossibility argument verified 2026-03-22.
+% Source: saddle_point_solver.rs, beta_feasibility.rs
+% Jörn: math approved — Type C impossibility (Type C bullet only), 2026-03-22
+% [TODO: JÖRN - verify Type A filtering rationale and Type B bounded-LP argument]
 
-\medskip\noindent\textbf{Setting.}
+\noindent\textbf{Setting.}
 When the augmented KKT matrix~$M$ is numerically rank-deficient
 (eigenvalues below threshold~$\tau$),
 the pseudoinverse~$\hat\beta$ may have near-zero or negative components.
@@ -410,7 +410,6 @@ The implementation searches this affine set via
 \]
 over $\alpha \in \mathbb{R}^k$ and $t \in \mathbb{R}$.
 If $t^* > 0$, the reconstructed~$\beta$ has all components positive.
-See \texttt{beta\_feasibility::find\_max\_margin} for the implementation.
 
 \medskip\noindent\textbf{Eigenvector classification.}
 Not all discarded eigenvectors contribute usefully to the LP.
