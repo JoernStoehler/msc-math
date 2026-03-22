@@ -78,6 +78,7 @@ This repo has three layers. Each layer's knowledge governs the layer below it.
 - Describe the narrowly scoped cognitive task Jörn should do
 - Say why Jörn should do it instead of you
 - Provide the context it exists within — Jörn usually drops in without working memory of your session
+- Questions (especially via AskUserQuestion) must be self-contained — include enough context for Jörn to decide without reading TASKS.md, code, or prior conversation. The compact option format tempts terseness; resist it.
 - After pauses in discussion, re-provide session context. Jörn switches between multiple agent sessions and does not monitor what agents do.
 
 **Formatting for efficient exchange:**
