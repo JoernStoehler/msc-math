@@ -40,7 +40,6 @@ Where domains overlap, algorithms must agree on the computed capacity.
 ## Coding Style
 
 - Inline tests: tests live in a `#[cfg(test)] mod tests { use super::*; ... }` block at the bottom of the source file. This is standard Rust — tests are a child module and can access private items.
-- **Legacy:** 35 existing test files use a separate `_test.rs` pattern declared in `mod.rs`. These work but can't access private items. New tests should use inline modules. Migration of existing `_test.rs` files is deferred.
 - Use whichever of iterator chains or `for` loops is clearer for the specific case. No blanket preference.
 - Types encode mathematical invariants, validated at construction (in `::new`). This gives a single validation point (can't be forgotten like per-function checks) and 1:1 correspondence with mathematical definitions — proving code correctness via math.tex writeups becomes straightforward.
 - nalgebra for linear algebra (convenience and performance for small fixed-size 4D geometry), proptest for property-based testing
