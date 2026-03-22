@@ -115,9 +115,13 @@ const EPS_KKT_RESIDUAL: f64 = 1e-6;
 ///
 /// See [rem:near-null-lp-search] in kkt/math.tex for the full analysis.
 ///
-/// TODO [JÖRN]: Is filtering Type A (||v_beta|| < eps) mathematically justified,
-/// or just empirically safe? Empirically, Type C (constraint-breaking) directions
-/// never occur across ~4300 permutations tested (old kkt-lp-refactor branch).
+/// **Type C argument (needs Jörn verification):** For discarded eigenvectors
+/// (|lambda| <= tau), the eigenvalue equations give N^T v_beta = lambda * v_mu
+/// and eta^T v_beta = lambda * v_xi. If correct, constraint violation per unit
+/// alpha is O(|lambda|) = O(tau), so Type C (O(1) violation) cannot occur among
+/// discarded eigenvectors. Empirically confirmed: 0 Type C across ~4300 perms.
+///
+/// TODO [JÖRN]: Verify the O(|lambda|) argument above.
 const EPS_TYPE_A_FILTER: f64 = 1e-10;
 
 // ── Public types ──
@@ -343,6 +347,21 @@ fn try_pseudoinverse_with_threshold(
         if eigenvalues[i].abs() <= threshold {
             let v_beta = DVector::from_fn(m, |j, _| eigenvectors[(j, i)]);
             if v_beta.norm() >= EPS_TYPE_A_FILTER {
+                // Type C check: constraint violation must be O(|lambda|), not O(1).
+                // N^T v_beta and eta^T v_beta are in the constraint rows of M*v = lambda*v.
+                let mut constraint_violation_sq = 0.0;
+                for row in m..size {
+                    let dot: f64 = (0..m).map(|j| kkt[(row, j)] * eigenvectors[(j, i)]).sum();
+                    constraint_violation_sq += dot * dot;
+                }
+                let constraint_violation = constraint_violation_sq.sqrt();
+                assert!(
+                    constraint_violation < 0.1,
+                    "Type C eigenvector detected: ||constraint * v_beta|| = {:.2e}, \
+                     |lambda| = {:.2e}, ||v_beta|| = {:.2e}, m = {}. \
+                     This was expected to be O(|lambda|) but is O(1).",
+                    constraint_violation, eigenvalues[i].abs(), v_beta.norm(), m
+                );
                 null_columns.push(v_beta);
             }
         }

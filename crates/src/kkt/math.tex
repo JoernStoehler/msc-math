@@ -389,9 +389,10 @@ for $\|\delta\mu\|$ and $|\delta\xi|$:
 % (empirical analysis, not yet Jörn-verified).
 % Code: saddle_point_solver.rs, beta_feasibility.rs
 %
-% [TODO: JÖRN - verify or correct. The Type A filtering is empirically
-%  justified (0 Type C across ~4300 perms on 6 polytopes) but lacks a
-%  proof that Type C cannot occur.]
+% [TODO: JÖRN - verify the O(|lambda|) argument for Type C impossibility:
+%  eigenvalue equations give N^T v_beta = lambda * v_mu, eta^T v_beta = lambda * v_xi,
+%  so constraint violation is O(|lambda|) = O(tau) for discarded eigenvectors.
+%  Empirically confirmed: 0 Type C across ~4300 perms on 6 polytopes.]
 
 \medskip\noindent\textbf{Setting.}
 When the augmented KKT matrix~$M$ is numerically rank-deficient
