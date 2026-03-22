@@ -9,8 +9,7 @@
 //! with maximum clearance from all positivity constraints beta_j >= 0.
 //!
 //! - k = 0: trivial (no degrees of freedom).
-//! - k = 1: analytic solution via interval analysis.
-//! - k >= 2: exact LP via GLPK (through `good_lp`).
+//! - k >= 1: LP via clarabel interior-point solver (through `good_lp`).
 //!
 //! Used by `projection_solver` (Step 4) to classify the verdict for a KKT node.
 //!
@@ -18,22 +17,6 @@
 
 use good_lp::{constraint, default_solver, variable, variables, Expression, Solution, SolverModel};
 use nalgebra::{DMatrix, DVector};
-
-/// Component of null-space vector below this magnitude is treated as zero (k=1 case).
-///
-/// Tighter than EPS_BETA_POSITIVE (1e-12) because V has orthonormal columns --
-/// components below 1e-15 are numerical zeros from the SVD/eigensolver.
-///
-/// **Why 1e-15:** The null-space basis V has unit-length columns (||v|| = 1).
-/// For a unit vector with m components, machine epsilon contributes ~sqrt(m) * 1e-16
-/// ~ 4e-16 to each component's noise floor. 1e-15 is 2.5x above this floor.
-/// This is tighter than EPS_BETA_POSITIVE (1e-12): a v-component at 1e-13 is not
-/// machine noise for a unit eigenvector -- it's a small but real direction.
-/// Only true zero components (1e-15 magnitude) should be skipped in interval analysis.
-/// Making it 10x larger (1e-14) risks skipping real small components in the k=1
-/// analytic solver. Making it 10x smaller (1e-16) risks treating machine-epsilon
-/// noise as a real bound.
-const EPS_DIRECTION_ZERO: f64 = 1e-15;
 
 /// Result of the max-margin feasibility search.
 ///
@@ -60,8 +43,7 @@ pub struct MarginResult {
 /// # Cases by null-space dimension k
 ///
 /// - **k = 0**: No degrees of freedom. margin = min(beta0).
-/// - **k = 1**: Analytic solution via interval analysis.
-/// - **k >= 2**: LP solver (`microlp`). Certified optimal margin.
+/// - **k >= 1**: LP solver (GLPK via `good_lp`). Certified optimal margin.
 ///
 /// # Guarantees
 ///
@@ -73,7 +55,6 @@ pub fn find_max_margin(beta0: &DVector<f64>, null_basis: &DMatrix<f64>) -> Margi
 
     match k {
         0 => find_max_margin_k0(beta0),
-        1 => find_max_margin_k1(beta0, &null_basis.column(0).into_owned()),
         _ => find_max_margin_kn(beta0, null_basis),
     }
 }
@@ -112,53 +93,7 @@ fn find_max_margin_k0(beta0: &DVector<f64>) -> MarginResult {
     }
 }
 
-/// k = 1: Analytic solution via interval analysis.
-///
-/// For each component j, the constraint (beta0 + v * alpha)_j >= 0 gives:
-/// - v_j > 0: alpha >= -beta0_j / v_j  (lower bound)
-/// - v_j < 0: alpha <= -beta0_j / v_j  (upper bound)
-/// - |v_j| ~ 0: no constraint on alpha (beta0_j is fixed)
-///
-/// The feasible interval is [lo, hi]. The midpoint maximizes the margin.
-fn find_max_margin_k1(beta0: &DVector<f64>, v: &DVector<f64>) -> MarginResult {
-    let m = beta0.len();
-    let mut lo = f64::NEG_INFINITY;
-    let mut hi = f64::INFINITY;
-
-    for j in 0..m {
-        if v[j].abs() < EPS_DIRECTION_ZERO {
-            continue;
-        }
-        let bound = -beta0[j] / v[j];
-        if v[j] > 0.0 {
-            lo = lo.max(bound);
-        } else {
-            hi = hi.min(bound);
-        }
-    }
-
-    let alpha_scalar = if lo.is_finite() && hi.is_finite() {
-        (lo + hi) / 2.0
-    } else if lo.is_finite() {
-        lo + 1.0
-    } else if hi.is_finite() {
-        hi - 1.0
-    } else {
-        0.0
-    };
-
-    let alpha = DVector::from_element(1, alpha_scalar);
-    let beta = beta0 + v * alpha_scalar;
-    let margin = beta.iter().copied().fold(f64::INFINITY, f64::min);
-
-    MarginResult {
-        margin,
-        alpha,
-        beta,
-    }
-}
-
-/// k >= 2: Exact LP solution via GLPK (through `good_lp`).
+/// k >= 1: LP solution via clarabel (through `good_lp`).
 ///
 /// Reformulates the Chebyshev center problem as:
 ///
