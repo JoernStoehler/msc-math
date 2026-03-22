@@ -1,3 +1,5 @@
+**STALE (2026-03-22):** References sub-CLAUDE.md files (`thesis/CLAUDE.md`, `crates/CLAUDE.md`, `experiments/CLAUDE.md`), `knowledge-dump.md`, and multi-crate structure (`crates/geom/`, `crates/hk2017/`, `crates/datasets/`) — all since deleted or consolidated. Conventions now live in `.claude/skills/`, and there is a single crate under `crates/`.
+
 # Clarity QC Review — 2026-02-12
 
 **Base commit**: `4f36233` (local `main`)

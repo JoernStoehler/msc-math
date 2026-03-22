@@ -1,3 +1,5 @@
+**STALE (2026-03-22):** References multi-crate structure (`crates/geom/`, `crates/hk2017/`, `crates/datasets/`, `algorithms::billiard`, `algorithms::tube`) since consolidated into a single `crates/` crate. File paths in findings are outdated.
+
 # Code–Thesis Audit Report
 
 **Date:** 2026-02-18

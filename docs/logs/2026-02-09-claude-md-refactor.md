@@ -1,3 +1,5 @@
+**STALE (2026-03-22):** References `.claude/rules/` (now replaced by `.claude/skills/`) and `CLAUDE.adr.md` (deleted). The research findings and Jörn's corrections remain valid context.
+
 # CLAUDE.md refactor — research and design log
 
 Date: 2026-02-09

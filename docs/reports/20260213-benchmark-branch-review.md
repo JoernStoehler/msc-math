@@ -1,3 +1,5 @@
+**STALE (2026-03-22):** References `review-rust skill` (old skill name) and `experiments/CLAUDE.md` (deleted). Conventions now live in `.claude/skills/`.
+
 # Code Review: benchmark Branch
 
 **Reviewer:** Claude Sonnet 4.5 (review-rust skill)

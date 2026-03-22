@@ -1,3 +1,5 @@
+**STALE (2026-03-22):** References `thesis/CLAUDE.md` convention (deleted). Thesis conventions now live in `.claude/skills/tex-content/` and `.claude/skills/tex-format/`.
+
 # Review: 4D polytope visualization via stereographic projection
 
 **Branch:** /workspaces/worktrees/viz-4d (claude/viz-4d-polytope)
