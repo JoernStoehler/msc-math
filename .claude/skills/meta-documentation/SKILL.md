@@ -22,15 +22,15 @@ Not all agents need everything. Subagents have well-scoped tasks and can triage 
 
 Project knowledge varies along several observed axes that correlate with where it should live and how to communicate it to agents. These axes are not exhaustive — there are likely dimensions not listed here. The decomposition itself may also not be optimal: a simpler, more natural, or more predictive taxonomy may exist.
 
-**Temporal lifetime:**
-- **All projects** — universal agent knowledge (e.g., delegation safeguards, feedback processing). Lives in meta-skills, synced across repos.
-- **This project** — project-specific conventions, domain knowledge. Lives in CLAUDE.md, project skills, reference docs.
-- **This commit / branch** — current plan, in-progress state. Lives in plan files, TASKS.md, branch-specific handoffs.
-- **This subtask** — scoped context for a subagent. Lives in the subagent prompt, not persisted.
+**Scope and lifetime:**
+- **All projects** (permanent) — universal agent knowledge (e.g., delegation safeguards, feedback processing). Lives in meta-skills, synced across repos.
+- **This project** (project lifetime) — project-specific conventions, domain knowledge. Lives in CLAUDE.md, project skills, reference docs.
+- **This commit / branch** (branch lifetime) — current plan, in-progress state. Lives in plan files, TASKS.md, branch-specific handoffs.
+- **This subtask** (ephemeral) — scoped context for a subagent. Lives in the subagent prompt, not persisted.
 
 **Domain:** Knowledge about agents, about Claude Code files/settings, about the project's domain (D&D, card games, symplectic geometry), about project management, etc. Domain determines which skills/files house it.
 
-**Source of truth:** A piece of text is either a source of truth or a derivative (summary, concretization, implication) of some source of truth. This applies at the paragraph or subsentence level — files are mixed. When a derivative diverges from its source of truth, the source wins. Derivatives must not be mistaken for sources.
+**Source of truth:** A piece of text is either a source of truth or a derivative (summary, concretization, implication) of some source of truth. The source-vs-derivative distinction applies at the paragraph or subsentence level — a single file typically contains both. When a derivative diverges from its source of truth, the source wins. Derivatives must not be mistaken for sources.
 
 **Novelty** (relative to agent training):
 - **Common** — heavily represented in LLM training. Agents already have the behavior; a reminder is sufficient. Example: "write tests."
@@ -192,25 +192,25 @@ These are empirically observed failure modes that affect how you should design a
 - Skills that add content should include a step to read the target file first
 - Review subagents should check for duplication against surrounding content, not just internal consistency
 
-**Not modeling Jörn's current state.** Agents don't consider what Jörn can see, access, or answer right now. They send text walls he can't scroll to, ask questions requiring file reads he hasn't done, respond to old queued messages instead of the most recent one. Design implications:
+**Not modeling Jörn's current state.** Agents don't consider what Jörn can see, access, or answer right now. They send text walls too long for Jörn to review, ask questions requiring file reads he hasn't done, respond to old queued messages instead of the most recent one. Design implications:
 - Skills that produce output for Jörn should summarize key decisions and questions at the end, not assume Jörn followed along
 - Prefer file:line references over inline text when showing content for review
 - Handoff files exist partly because agents can't reliably communicate findings within a session
 
-**Transferring cognitive work to Jörn.** Agents ask Jörn to do thinking the agent should do: "what do you want me to do?", asking permission on obvious actions, requesting scope instead of proposing one. This is the opposite of under-asking — it's asking the wrong kind of thing (open-ended "what should I do?" instead of specific "is X correct?"). Design implications:
+**Transferring cognitive work to Jörn.** Agents ask Jörn to do thinking the agent should do: "what do you want me to do?", asking permission on obvious actions, requesting scope instead of proposing one. This is distinct from under-asking — the problem isn't asking too little, but asking the wrong kind of thing (open-ended "what should I do?" instead of specific "is X correct?"). Design implications:
 - Skills should frame agent actions as proposals to verify, not open questions for Jörn to answer
 - "I plan to do X because Y — any objection?" is cheaper for Jörn than "what should I do?"
 
 **Responding to social signal instead of content.** When corrected, agents respond to the criticism ("You're right, I shouldn't have done that") instead of fixing the thing. Empty agreement wastes time. Design implications:
 - Post-correction workflow: fix first, acknowledge briefly, move on
 
-**Not generalizing from mistakes.** Agents fix the specific instance flagged by Jörn but don't abstract the error class or scan for other instances — in the code, in other files, or in their own recent behavior. Example: "forgot to run test XYZ" doesn't trigger "what else did I forget?" even though asking that question is well within agent capability. A specific mechanism: agents learn lessons abstractly but don't apply them reflexively to their own current behavior (learned "keep identical" → then made project-specific examples; documented delegation failures → then trusted subagent reports). The `feedback-processing` skill addresses this but agents still under-apply it. Design implications:
+**Not generalizing from mistakes.** Agents fix the specific instance flagged by Jörn but don't abstract the error class or scan for other instances — in the code, in other files, or in their own recent behavior. Example: "forgot to run test XYZ" doesn't trigger "what else did I forget?" even though asking that question is well within agent capability. One specific manifestation: agents learn lessons abstractly but don't spontaneously apply them to their own current behavior (learned "keep shared files identical across repos" → then immediately made project-specific modifications; documented delegation failures → then immediately trusted subagent reports without verification). The `feedback-processing` skill addresses this but agents still under-apply it. Design implications:
 - The generalization step must be part of the resolution workflow, not a follow-up
 - Review agents and postmortem skills should explicitly prompt for error-class abstraction
 
-**Delegation failures: loud vs silent.** Subagent failures come in two kinds. Loud failures: the subagent reports "I'm stuck on X5" — the parent replans, no damage. Silent failures: the subagent reports "done" but did X' instead of X — the parent proceeds with a broken assumption. Silent failures are far more dangerous. They arise when the parent's mental model, the description, or the prompt diverge from what the subagent actually does. Crucially, the subagent cannot detect or report this kind of failure — it has no access to the parent's intent, so the information asymmetry is structural, not a matter of subagent quality. Verification must come from a third party (the parent or a separate verifier), not from the subagent being "better." Verification of reasoning tasks is especially hard because the output looks plausible even when wrong. Design implications:
+**Delegation failures: loud vs silent.** Subagent failures come in two kinds. Loud failures: the subagent reports "I'm stuck on subtask X" — the parent replans, no damage. Silent failures: the subagent reports "done" but did X' instead of X — the parent proceeds with a broken assumption. Silent failures are far more dangerous. They arise when the parent's mental model, the skill/agent description, or the prompt diverge from what the subagent actually does. Crucially, the subagent cannot detect or report this kind of failure — it has no access to the parent's intent, so the information asymmetry is structural, not a matter of subagent quality. Verification must come from outside the subagent (the parent or a separate verifier), not from the subagent being "better." Verification of reasoning tasks is especially hard because the output looks plausible even when wrong. Design implications:
 - Skill/agent descriptions must state what the tool does AND does not guarantee — descriptions are the contract that parent agents plan around
-- Verification after delegation is high-value because the communication channel (the prompt) is unreliable and agents don't anticipate their own ambiguity
+- Verification after delegation is high-value because the communication channel (the prompt) is unreliable and agents don't anticipate ambiguity in their own prompts
 - Complete verification (prove correctness) and incomplete falsification (find some errors) are different — don't let "we ran a review" be mistaken for "this is verified"
 - For novel tasks, result types must be explicit in the prompt — agents have no training priors to fall back on
 
@@ -224,7 +224,7 @@ These are empirically observed failure modes that affect how you should design a
 - Workflows should make the correct (higher-effort) action the default path, not the alternative
 - When a skill offers two approaches (easy and thorough), frame the thorough one as default and the easy one as the exception requiring justification
 
-**Defaulting to the familiar action.** Agents pick the approach that pattern-matches to training, even when the situation calls for something different. Examples: "copy from the most mature source to others" (familiar pattern) instead of "evaluate each source's strengths and cross-pollinate" (requires judgment). The familiar approach might not even be easier — it's just the one the agent has seen most. Design implications:
+**Defaulting to the familiar action.** Agents pick the approach that pattern-matches to training, even when the situation calls for something different. Examples: "copy from the most mature source to others" (familiar pattern) instead of "evaluate each source's strengths and cross-pollinate" (requires judgment). The familiar approach is not necessarily easier — familiarity and effort are independent. Agents pick the approach they've seen most, regardless of effort. Design implications:
 - Novel workflows should explicitly name the familiar-but-wrong approach and say why it doesn't apply here
 - When a task requires judgment between approaches, the skill should flag that the obvious/familiar approach may not be correct
 
