@@ -294,6 +294,10 @@ No chapter is currently publishable. The thesis needs to become a coherent docum
 - Proofreading pass
 - Print formatting
 
+## 9. Agent infrastructure (deferred — after thesis deadline)
+
+- 🟡 Split monolithic review agent into per-concern reviewers (tex-review, rust-review, experiment-review). Current agent loads all conventions and does two-phase review; per-concern reviewers would get smaller instruction sets and run in parallel. Deferred because current reviewer works and restructuring during thesis crunch is risky.
+
 ---
 
 ## Detailed refactor specs (referenced from §6)
