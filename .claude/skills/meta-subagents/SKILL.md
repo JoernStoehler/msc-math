@@ -7,6 +7,10 @@ description: Conventions for creating and editing agent definitions (.claude/age
 
 How to write `.claude/agents/*.md` files so parent agents plan around them correctly and subagents behave as expected.
 
+## Reference documents
+
+- `references/agent-yaml-reference.md` — YAML frontmatter fields, built-in subagent types, checklist
+
 ## Related skills
 
 - `meta-skills` — writing SKILL.md files (skills are where behavior lives)

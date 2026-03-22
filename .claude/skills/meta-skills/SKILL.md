@@ -10,6 +10,7 @@ How to write skills that agents discover, load, and follow correctly.
 ## Reference documents
 
 - `references/anthropic-skill-guide.md` — Anthropic's skill-building guide (good starting point, has gaps — see the `meta-documentation` skill's rationale doc for where our approach diverges)
+- `references/skill-yaml-reference.md` — YAML frontmatter fields, file structure, checklist
 
 ## Related skills
 
