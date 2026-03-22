@@ -65,7 +65,7 @@ impl Block {
 /// For pair blocks, both orderings (i, j) and (j, i) are generated.
 ///
 /// [lem:sigma-structure]: blocks correspond to the bounce structure of billiard trajectories.
-pub fn enumerate_blocks(facet_indices: &[usize], adj: &[Vec<bool>]) -> Vec<Block> {
+pub fn enumerate_blocks(facet_indices: &[usize], adj: &nalgebra::DMatrix<bool>) -> Vec<Block> {
     let mut blocks = Vec::new();
 
     // Single-facet blocks.
@@ -76,7 +76,7 @@ pub fn enumerate_blocks(facet_indices: &[usize], adj: &[Vec<bool>]) -> Vec<Block
     // Pair blocks: both orderings of each adjacent pair.
     for (a, &i) in facet_indices.iter().enumerate() {
         for &j in &facet_indices[a + 1..] {
-            if adj[i][j] {
+            if adj[(i, j)] {
                 blocks.push(Block::Pair(i, j));
                 blocks.push(Block::Pair(j, i));
             }

@@ -13,8 +13,6 @@
 // is gated behind #[cfg(test)].
 
 #[cfg(test)]
-use crate::algorithms::facet_adjacency::build_adjacency_matrix;
-#[cfg(test)]
 use crate::geom::known_polytopes;
 #[cfg(test)]
 use crate::kkt::qp_assembly::build_augmented_system;
@@ -39,9 +37,9 @@ fn pentagon_sigmas() -> (crate::geom::polytope::Polytope4D, Vec<Vec<usize>>) {
     let polytope = kp.polytope.clone();
 
     let classification = classify_facets(&polytope).unwrap();
-    let adj = build_adjacency_matrix(&polytope);
-    let q_blocks = enumerate_blocks(&classification.q_indices, &adj);
-    let p_blocks = enumerate_blocks(&classification.p_indices, &adj);
+    let adj = polytope.vertex_adjacency();
+    let q_blocks = enumerate_blocks(&classification.q_indices, adj);
+    let p_blocks = enumerate_blocks(&classification.p_indices, adj);
 
     let mut sigmas = Vec::new();
     for k in 2..=3 {

@@ -58,9 +58,9 @@ What's settled vs placeholder across the project's major components.
    - Notation: KKT multipliers (λ,ν) vs (μ,ξ), sign flip, factor-of-2
    - Algorithm boxes missing steps the code implements (accumulator, adjacency pruning)
    - Tube: rotation increment is heuristic, not CH2021 Lem.2.21 implementation
-3. **18 cross-ref labels** in code that don't exist in thesis — add to thesis or remove from code?
+3. ~~**18 cross-ref labels**~~ — RESOLVED (2026-03-22). All code labels reference colocated math.tex files per convention. 3 labels in `kkt/saddle_point_solver.rs` have redundant `(thesis)` markers to remove. 🟢 Trivial cleanup.
 4. **qp_assembly dual-vertex formulation** — unverified mathematical equivalence with normals/heights formulation (has explicit TODO)
-5. **Experiment adjacency functions** — 4 experiments still have f64 local copies (library uses exact rational). Different algorithms, not just copies. Keep both, or convert?
+5. **Experiment adjacency functions** — 6 experiments (not 4) have f64 local copies of the same algorithm as the library (same logic, different numeric type — not different algorithms). Should be converted to use library's exact rational version. 🟢 Agent can do.
 6. **KktResult→Solution bridge** — `margin = min(beta)` + `classify_margin()`. Is this the right verdict mapping?
 
 ### Remaining gate checks (need CPU)
@@ -131,9 +131,9 @@ Previously planned for remaining experiments:
 
 1. **"orbit" → "candidate" terminology** in `capacity_accumulator.rs` (4 locations) and `saddle_point_solver.rs`. Per MEMORY.md: not orbits until closedness established.
 2. **Duplicate EPS constants**: `projection_solver.rs` and `saddle_point_solver.rs` define same thresholds independently. Consolidate into `kkt/mod.rs`.
-3. **`Vec<Vec<bool>>` adjacency** in `facet_adjacency.rs` → flat `DMatrix<bool>`. Eliminates awkward indexing.
+3. ~~**`Vec<Vec<bool>>` adjacency**~~ — DONE (2026-03-22). Library uses `DMatrix<bool>` throughout. Renamed: `adjacency()` → `vertex_adjacency()`, `build_directed_adjacency_matrix` → `build_transition_matrix`, `is_adjacent_cycle` → `is_feasible_cycle`. Deleted `build_adjacency_matrix` (was a pointless copy of `vertex_adjacency()`).
 4. **`build_augmented_system` allocation**: creates fresh `Vec` per call vs old pre-allocated slices. Minor perf regression.
-5. **`known_polytopes.rs` inline tests**: uses `mod tests {}` instead of colocated `_test.rs`. Low priority.
+5. **Experiment f64 adjacency copies** — 6 experiments (hko-neighborhood, gradient-descent, omega-obstacle, sys-optimization, ablation, crosspolytope) have local f64 reimplementations of vertex adjacency + transition feasibility. Same algorithm as library, different numeric type. Should be converted to use `polytope.vertex_adjacency()` and `build_transition_matrix()`. ~12 function deletions + import changes.
 
 ---
 
@@ -147,14 +147,14 @@ Convention decided (2026-03-17): One `math.tex` per module directory contains le
 
 🔴 Jörn decides which side to fix for each item. Agent applies the fixes.
 
-**Blocked by:** §2b (convention contradiction resolution).
+**Blocked by:** ~~§2b (convention contradiction resolution)~~ resolved.
 
 See `handoffs/migration-thesis-findings.md` for the full list. Highest priority items:
 
 1. **Tube rotation increment** — code is a heuristic claiming to implement `[def:rotation-increment]`. Fix doc comment, or implement CH2021 Lem.2.21.
 2. **KKT notation** — unify (λ,ν) vs (μ,ξ) across thesis sections and code.
 3. **Accumulator pattern** — describe two-tier certified/uncertain tracking in thesis algorithm boxes (currently only in appendix A.3-A.4).
-4. **18 missing labels** — thesis needs `\label{}` for definitions the code references (or code needs labels removed).
+4. ~~**18 missing labels**~~ — resolved, see §0 item 3.
 
 ---
 
@@ -232,7 +232,13 @@ Implement second solver variant: solve constraints → project H → eigendecomp
 
 🟢 Agent can do. Replace 1d/nd split with single LP formulation. See detailed spec below.
 
-**Status (2026-03-22):** `kkt-lp-refactor` worktree has 17 commits. Unified LP implemented (microlp crate), experiment copies updated, unbounded LP handling added, near-null search analysis written. Branch is 20+ commits behind main (pre-meta-refactor). Needs rebase and assessment of what's mergeable vs needs rework.
+**Status (2026-03-22):** `kkt-lp-refactor` worktree has 17 commits (compiles clean, 20+ commits behind main). Not worth rebasing — start fresh worktree, using the old branch as a reference for decisions and analysis. Key content to salvage:
+- Unified `find_positive_beta` function design (4 cases: already positive / no null dirs / 1D / LP via `microlp`)
+- Near-null eigenvector Type A/B/C classification (scratch-near-null-analysis.tex) — Type A (β ≈ 0) causes LP unboundedness, Type C never observed across 4300 permutations
+- Open question for Jörn: is filtering Type A directions mathematically justified, or just empirical?
+- `thesis/appendix-numerical.tex` scaffold (A.1 input representation written, A.2–A.4 outlined)
+
+Old worktree at `.claude/worktrees/kkt-lp-refactor/` — read-only reference, do not develop on it.
 
 ### 6d. Extract shared experiment code to library
 

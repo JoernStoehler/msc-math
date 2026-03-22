@@ -47,9 +47,9 @@ pub struct Polytope4D {
     /// E[v,f] = true iff vertex v lies on facet f.
     incidence: DMatrix<bool>,
 
-    /// Facet adjacency matrix A in {0,1}^{F x F}.
-    /// A[i,k] = true iff facets i and k share a vertex.
-    adjacency: DMatrix<bool>,
+    /// Vertex-sharing adjacency matrix A in {0,1}^{F x F}.
+    /// A[i,k] = true iff facets i and k share at least one vertex.
+    vertex_adjacency: DMatrix<bool>,
 
     /// Symplectic sign matrix omega in {-1,0,+1}^{F x F}, antisymmetric.
     /// omega[i,k] = sign(omega_0(a_i, a_k)). Zero only for non-generic polytopes.
@@ -331,7 +331,7 @@ impl Polytope4D {
         let f = result.facet_count();
         for i in 0..f {
             for k in (i + 1)..f {
-                if result.adjacency[(i, k)] && result.omega_signs[(i, k)] == 0 {
+                if result.vertex_adjacency[(i, k)] && result.omega_signs[(i, k)] == 0 {
                     return Err(ConstructionError::PerturbationFailed);
                 }
             }
@@ -360,7 +360,7 @@ impl Polytope4D {
         });
 
         // Facets are adjacent iff they share at least one vertex
-        let adjacency = DMatrix::from_fn(f_count, f_count, |i, k| {
+        let vertex_adjacency = DMatrix::from_fn(f_count, f_count, |i, k| {
             i != k && (0..v_count).any(|v| incidence[(v, i)] && incidence[(v, k)])
         });
 
@@ -382,7 +382,7 @@ impl Polytope4D {
             dual_vertices,
             vertices,
             incidence,
-            adjacency,
+            vertex_adjacency,
             omega_signs,
             dual_vertices_f64,
             vertices_f64,
@@ -408,11 +408,11 @@ impl Polytope4D {
         &self.incidence
     }
 
-    /// Facet adjacency matrix A in {0,1}^{F x F}.
+    /// Vertex-sharing adjacency matrix A in {0,1}^{F x F}.
     ///
-    /// `adjacency[(i, k)]` is true iff facets i and k share at least one vertex.
-    pub fn adjacency(&self) -> &DMatrix<bool> {
-        &self.adjacency
+    /// `vertex_adjacency[(i, k)]` is true iff facets i and k share at least one vertex.
+    pub fn vertex_adjacency(&self) -> &DMatrix<bool> {
+        &self.vertex_adjacency
     }
 
     /// Symplectic sign matrix omega in {-1,0,+1}^{F x F}, antisymmetric.
@@ -666,7 +666,7 @@ mod tests {
 
         for kp in known_polytopes::all_known() {
             let p = &kp.polytope;
-            let adj = p.adjacency();
+            let adj = p.vertex_adjacency();
             let f = p.facet_count();
 
             for i in 0..f {

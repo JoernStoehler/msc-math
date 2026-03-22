@@ -27,7 +27,7 @@ pub mod orbit_recovery;
 pub mod generate_capacity_fixtures;
 
 use crate::algorithms::capacity_accumulator::{CapacityAccumulator, CapacityResult};
-use crate::algorithms::facet_adjacency::{build_directed_adjacency_matrix, is_adjacent_cycle};
+use crate::algorithms::facet_adjacency::{build_transition_matrix, is_feasible_cycle};
 use crate::geom::polytope::Polytope4D;
 use crate::kkt::saddle_point_solver::{solve_kkt_for, KktResult, EPS_Q_POSITIVE};
 use crate::kkt::{classify_margin, Solution, Verdict};
@@ -123,7 +123,7 @@ pub fn ehz_capacity_unpruned(polytope: &Polytope4D) -> Option<EhzResult> {
 /// [alg:ehz] with [cor:adjacency-pruning].
 pub fn ehz_capacity(polytope: &Polytope4D) -> Option<EhzResult> {
     let f = polytope.facet_count();
-    let adj = build_directed_adjacency_matrix(polytope);
+    let adj = build_transition_matrix(polytope);
     let mut acc = CapacityAccumulator::new();
 
     let mut best_subset_certified: Option<(f64, Vec<usize>)> = None;
@@ -132,7 +132,7 @@ pub fn ehz_capacity(polytope: &Polytope4D) -> Option<EhzResult> {
         for subset in combinations(f, m) {
             for_each_cyclic_permutation(&subset, &mut |perm| {
                 // Adjacency pruning: skip non-adjacent cycles.
-                if !is_adjacent_cycle(perm, &adj) {
+                if !is_feasible_cycle(perm, &adj) {
                     return;
                 }
 
@@ -515,7 +515,6 @@ mod tests_literature {
 // Strategy: hand-constructed polytopes with known KKT structure, direct solver calls.
 #[cfg(test)]
 mod tests_kkt_edge_cases {
-    use super::*;
     use crate::geom::polytope::Polytope4D;
     use crate::kkt::saddle_point_solver::solve_kkt_for;
     use nalgebra::Vector4;
@@ -1383,7 +1382,6 @@ mod tests_conformality {
 // from the pre-computed dataset).
 #[cfg(test)]
 mod tests_symplectic_invariance {
-    use super::*;
     use crate::geom::polytope::Polytope4D;
     use nalgebra::Vector4;
 

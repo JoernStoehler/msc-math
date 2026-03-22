@@ -112,7 +112,7 @@ mod tests {
         // With our normalization (normals (+/-1,+/-1,+/-1,+/-1)/2, heights 1.0),
         // the vertices are at +/-2*e_i. Vol = 2^n / n! * (2)^n = 32/3 for edge half-length 2.
         let polytope = crosspolytope();
-        let vol = volume(&polytope).expect("volume computation failed");
+        let vol = volume(polytope).expect("volume computation failed");
         let expected = 32.0 / 3.0;
         assert!(
             (vol - expected).abs() < 1e-6,

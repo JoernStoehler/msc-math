@@ -25,7 +25,7 @@ pub mod kkt_benchmark;
 
 use crate::algorithms::capacity_accumulator::CapacityAccumulator;
 use crate::algorithms::facet_adjacency::{
-    build_adjacency_matrix, build_directed_adjacency_matrix, is_adjacent_cycle,
+    build_transition_matrix, is_feasible_cycle,
 };
 use crate::geom::polytope::Polytope4D;
 use crate::kkt::saddle_point_solver::{solve_kkt_for, KktResult, EPS_Q_POSITIVE};
@@ -114,13 +114,13 @@ pub fn billiard_capacity(
 
     // Step 2: build adjacency matrices.
     // Undirected: for block building (same-type adjacent pairs).
-    let adj = build_adjacency_matrix(polytope);
+    let adj = polytope.vertex_adjacency();
     // Directed: for cycle pruning (omega_0 transition feasibility).
-    let directed_adj = build_directed_adjacency_matrix(polytope);
+    let directed_adj = build_transition_matrix(polytope);
 
     // Step 3: enumerate blocks.
-    let q_blocks = enumerate_blocks(&classification.q_indices, &adj);
-    let p_blocks = enumerate_blocks(&classification.p_indices, &adj);
+    let q_blocks = enumerate_blocks(&classification.q_indices, adj);
+    let p_blocks = enumerate_blocks(&classification.p_indices, adj);
 
     // Step 4: for k = 2, 3, enumerate sigma sequences and solve KKT.
     let mut acc = CapacityAccumulator::new();
@@ -130,7 +130,7 @@ pub fn billiard_capacity(
     for k in 2..=3 {
         enumerate_k_bounce_sigmas(k, &q_blocks, &p_blocks, |sigma| {
             // Directed adjacency pruning: skip cycles violating omega_0 condition.
-            if !is_adjacent_cycle(sigma, &directed_adj) {
+            if !is_feasible_cycle(sigma, &directed_adj) {
                 return;
             }
 

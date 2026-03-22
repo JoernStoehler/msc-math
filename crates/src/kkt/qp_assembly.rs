@@ -89,7 +89,6 @@ pub fn build_qp(polytope: &Polytope4D, perm: &[usize]) -> QP {
 }
 
 /// Assemble the augmented (m+5)x(m+5) KKT system from a polytope and permutation.
-
 ///
 /// Builds the symmetric saddle-point matrix M and right-hand side b:
 ///

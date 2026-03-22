@@ -1,42 +1,21 @@
-//! Undirected and directed (ω₀-aware) facet adjacency matrices.
+//! Directed (ω₀-aware) facet adjacency and cycle checks.
 //!
-//! Facet adjacency determines which facet transitions are geometrically possible
-//! in Reeb dynamics on a polytope boundary. The undirected matrix records which
-//! facet pairs share a vertex; the directed matrix additionally enforces the
-//! symplectic sign condition ω₀(nᵢ, nⱼ) ≥ 0 from [lem:numerical-transition-feasibility].
+//! Undirected adjacency (vertex-sharing) is precomputed in `Polytope4D::adjacency()`.
+//! This module adds the symplectic sign condition ω₀(nᵢ, nⱼ) ≥ 0 to produce
+//! directed adjacency, and provides cycle-checking utilities.
 //!
 //! Used by hk2017 and billiard algorithms for pruning infeasible permutations.
 //!
 //! Mathematical correspondence: [lem:numerical-transition-feasibility], [cor:adjacency-pruning]
 
 use crate::geom::polytope::Polytope4D;
-
-/// Undirected facet adjacency: `adj[i][j] = true` iff facets Fᵢ and Fⱼ share at least one vertex.
-///
-/// The diagonal is false (a facet is not adjacent to itself). This is safe because
-/// `is_adjacent_cycle` operates on distinct-element permutations.
-///
-/// Uses the exact adjacency matrix precomputed in `Polytope4D` over Q.
-///
-/// [lem:numerical-transition-feasibility]: transition F_i -> F_j requires F_i, F_j to share a vertex.
-pub fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
-    let f = polytope.facet_count();
-    let poly_adj = polytope.adjacency();
-
-    let mut adj = vec![vec![false; f]; f];
-    for i in 0..f {
-        for j in 0..f {
-            adj[i][j] = poly_adj[(i, j)];
-        }
-    }
-    adj
-}
+use nalgebra::DMatrix;
 
 /// Directed facet adjacency in the physical Reeb direction:
-/// `adj[i][j] = true` iff the transition Fᵢ → Fⱼ is feasible.
+/// `adj[(i,j)] = true` iff the transition Fᵢ → Fⱼ is feasible.
 ///
 /// Combines two conditions:
-/// 1. Vertex adjacency: Fᵢ ∩ Fⱼ ≠ ∅ (from undirected adjacency)
+/// 1. Vertex adjacency: Fᵢ ∩ Fⱼ ≠ ∅ (from `polytope.vertex_adjacency()`)
 /// 2. Symplectic sign: ω₀(nᵢ, nⱼ) ≥ 0
 ///
 /// The sign condition uses the exact `omega_signs` matrix from the rational pipeline
@@ -48,35 +27,26 @@ pub fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
 ///
 /// [lem:numerical-transition-feasibility]: F_i -> F_j requires vertex adjacency + omega_0(n_i, n_j) >= 0.
 /// [cor:adjacency-pruning]: this directed adjacency can prune infeasible permutations.
-pub fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
+pub fn build_transition_matrix(polytope: &Polytope4D) -> DMatrix<bool> {
     let f = polytope.facet_count();
-    let vertex_adj = build_adjacency_matrix(polytope);
+    let vertex_adj = polytope.vertex_adjacency();
     let omega_signs = polytope.omega_signs();
 
-    let mut adj = vec![vec![false; f]; f];
-    for i in 0..f {
-        for j in 0..f {
-            if !vertex_adj[i][j] {
-                continue;
-            }
-            // Transition Fᵢ → Fⱼ allowed when ω₀(nᵢ, nⱼ) ≥ 0,
-            // i.e. omega_signs[(i,j)] ∈ {0, +1}.
-            adj[i][j] = omega_signs[(i, j)] >= 0;
-        }
-    }
-    adj
+    DMatrix::from_fn(f, f, |i, j| {
+        vertex_adj[(i, j)] && omega_signs[(i, j)] >= 0
+    })
 }
 
 /// Check if a cyclic permutation forms an adjacent cycle in the given adjacency matrix.
 ///
 /// Returns true iff every consecutive pair `(perm[k], perm[k+1 mod m])` is adjacent.
 /// Works with both undirected and directed adjacency matrices.
-pub fn is_adjacent_cycle(perm: &[usize], adj: &[Vec<bool>]) -> bool {
+pub fn is_feasible_cycle(perm: &[usize], adj: &DMatrix<bool>) -> bool {
     let m = perm.len();
     if m == 0 {
         return true;
     }
-    (0..m).all(|k| adj[perm[k]][perm[(k + 1) % m]])
+    (0..m).all(|k| adj[(perm[k], perm[(k + 1) % m])])
 }
 
 #[cfg(test)]
@@ -84,9 +54,9 @@ mod tests {
     use super::*;
     use crate::geom::known_polytopes;
 
-    // Tests for facet_adjacency: undirected and directed adjacency correctness.
+    // Tests for facet_adjacency: directed adjacency and cycle checks.
     //
-    // Proposition: Adjacency matrices correctly encode vertex-sharing and omega_0-sign conditions.
+    // Proposition: Directed adjacency correctly combines vertex-sharing and omega_0-sign conditions.
     // Reference: [lem:numerical-transition-feasibility], [cor:adjacency-pruning]
     //
     // Strategy: fixture-based on simplex, hypercube, and Lagrangian products.
@@ -97,16 +67,16 @@ mod tests {
     #[allow(clippy::needless_range_loop)]
     fn simplex_undirected_is_complete() {
         let kp = known_polytopes::simplex();
-        let adj = build_adjacency_matrix(&kp.polytope);
+        let adj = kp.polytope.vertex_adjacency();
         let f = kp.polytope.facet_count();
         assert_eq!(f, 5);
 
         for i in 0..f {
             for j in 0..f {
                 if i == j {
-                    assert!(!adj[i][j], "diagonal should be false");
+                    assert!(!adj[(i, j)], "diagonal should be false");
                 } else {
-                    assert!(adj[i][j], "simplex facets {i} and {j} should be adjacent");
+                    assert!(adj[(i, j)], "simplex facets {i} and {j} should be adjacent");
                 }
             }
         }
@@ -118,12 +88,12 @@ mod tests {
     #[allow(clippy::needless_range_loop)]
     fn hypercube_undirected_excludes_opposite_facets() {
         let kp = known_polytopes::hypercube();
-        let adj = build_adjacency_matrix(&kp.polytope);
+        let adj = kp.polytope.vertex_adjacency();
         let f = kp.polytope.facet_count();
         assert_eq!(f, 8);
 
         for i in 0..f {
-            let neighbor_count: usize = (0..f).filter(|&j| adj[i][j]).count();
+            let neighbor_count: usize = (0..f).filter(|&j| adj[(i, j)]).count();
             // In a 4D hypercube, each facet (a 3D cube) shares vertices with 6 of 7 other facets.
             assert_eq!(
                 neighbor_count, 6,
@@ -132,17 +102,17 @@ mod tests {
         }
     }
 
-    /// Undirected adjacency is symmetric: adj[i][j] == adj[j][i].
+    /// Undirected adjacency is symmetric: adj[(i,j)] == adj[(j,i)].
     #[test]
     #[allow(clippy::needless_range_loop)]
     fn undirected_adjacency_is_symmetric() {
         for kp in known_polytopes::all_known() {
-            let adj = build_adjacency_matrix(&kp.polytope);
+            let adj = kp.polytope.vertex_adjacency();
             let f = kp.polytope.facet_count();
             for i in 0..f {
                 for j in 0..f {
                     assert_eq!(
-                        adj[i][j], adj[j][i],
+                        adj[(i, j)], adj[(j, i)],
                         "asymmetric undirected adjacency at ({i},{j}) for {}",
                         kp.name
                     );
@@ -151,18 +121,18 @@ mod tests {
         }
     }
 
-    /// Directed adjacency is a subset of undirected: if directed[i][j], then undirected[i][j].
+    /// Directed adjacency is a subset of undirected: if directed[(i,j)], then undirected[(i,j)].
     #[test]
     fn directed_is_subset_of_undirected() {
         for kp in known_polytopes::all_known() {
-            let undirected = build_adjacency_matrix(&kp.polytope);
-            let directed = build_directed_adjacency_matrix(&kp.polytope);
+            let undirected = kp.polytope.vertex_adjacency();
+            let directed = build_transition_matrix(&kp.polytope);
             let f = kp.polytope.facet_count();
             for i in 0..f {
                 for j in 0..f {
-                    if directed[i][j] {
+                    if directed[(i, j)] {
                         assert!(
-                            undirected[i][j],
+                            undirected[(i, j)],
                             "directed[{i}][{j}] true but undirected false for {}",
                             kp.name
                         );
@@ -173,17 +143,17 @@ mod tests {
     }
 
     /// Directed adjacency is NOT symmetric in general (omega_0 is antisymmetric).
-    /// If omega_0(n_i, n_j) > 0, then omega_0(n_j, n_i) < 0, so directed[i][j] and directed[j][i]
+    /// If omega_0(n_i, n_j) > 0, then omega_0(n_j, n_i) < 0, so directed[(i,j)] and directed[(j,i)]
     /// cannot both be true unless omega_0(n_i, n_j) = 0.
     #[test]
     fn directed_adjacency_antisymmetry_property() {
         for kp in known_polytopes::all_known() {
-            let directed = build_directed_adjacency_matrix(&kp.polytope);
+            let directed = build_transition_matrix(&kp.polytope);
             let omega_signs = kp.polytope.omega_signs();
             let f = kp.polytope.facet_count();
             for i in 0..f {
                 for j in (i + 1)..f {
-                    if directed[i][j] && directed[j][i] {
+                    if directed[(i, j)] && directed[(j, i)] {
                         // Both directions allowed only when omega_0(n_i, n_j) = 0
                         assert_eq!(
                             omega_signs[(i, j)],
@@ -205,10 +175,10 @@ mod tests {
     fn directed_prunes_vs_undirected() {
         // The simplex is generic enough that directed should prune some edges
         let kp = known_polytopes::simplex();
-        let undirected = build_adjacency_matrix(&kp.polytope);
-        let directed = build_directed_adjacency_matrix(&kp.polytope);
-        let count_undirected: usize = undirected.iter().flat_map(|row| row.iter()).filter(|&&v| v).count();
-        let count_directed: usize = directed.iter().flat_map(|row| row.iter()).filter(|&&v| v).count();
+        let undirected = kp.polytope.vertex_adjacency();
+        let directed = build_transition_matrix(&kp.polytope);
+        let count_undirected: usize = undirected.iter().filter(|&&v| v).count();
+        let count_directed: usize = directed.iter().filter(|&&v| v).count();
 
         assert!(
             count_directed < count_undirected,
@@ -216,51 +186,47 @@ mod tests {
         );
     }
 
-    /// is_adjacent_cycle: a valid cycle on a complete adjacency graph always returns true.
+    /// is_feasible_cycle: a valid cycle on a complete adjacency graph always returns true.
     #[test]
-    fn is_adjacent_cycle_complete_graph() {
+    fn is_feasible_cycle_complete_graph() {
         // 4-facet complete graph (all true except diagonal)
-        let adj = vec![
-            vec![false, true, true, true],
-            vec![true, false, true, true],
-            vec![true, true, false, true],
-            vec![true, true, true, false],
-        ];
-        assert!(is_adjacent_cycle(&[0, 1, 2, 3], &adj));
-        assert!(is_adjacent_cycle(&[3, 2, 1, 0], &adj));
-        assert!(is_adjacent_cycle(&[0, 2, 1, 3], &adj));
+        let adj = DMatrix::from_fn(4, 4, |i, j| i != j);
+        assert!(is_feasible_cycle(&[0, 1, 2, 3], &adj));
+        assert!(is_feasible_cycle(&[3, 2, 1, 0], &adj));
+        assert!(is_feasible_cycle(&[0, 2, 1, 3], &adj));
     }
 
-    /// is_adjacent_cycle: returns false when a transition is missing.
+    /// is_feasible_cycle: returns false when a transition is missing.
     #[test]
-    fn is_adjacent_cycle_missing_edge() {
+    fn is_feasible_cycle_missing_edge() {
         // 4 facets, but 0->2 is not adjacent
-        let adj = vec![
-            vec![false, true, false, true],
-            vec![true, false, true, true],
-            vec![false, true, false, true],
-            vec![true, true, true, false],
+        #[rustfmt::skip]
+        let data = vec![
+            false, true, false, true,
+            true, false, true, true,
+            false, true, false, true,
+            true, true, true, false,
         ];
+        let adj = DMatrix::from_row_slice(4, 4, &data);
         // 0->2 missing, so [0,2,1,3] should fail at the 0->2 step
-        assert!(!is_adjacent_cycle(&[0, 2, 1, 3], &adj));
+        assert!(!is_feasible_cycle(&[0, 2, 1, 3], &adj));
         // But [0,1,2,3] should work: 0->1 ok, 1->2 ok, 2->3 ok, 3->0 ok
-        assert!(is_adjacent_cycle(&[0, 1, 2, 3], &adj));
+        assert!(is_feasible_cycle(&[0, 1, 2, 3], &adj));
     }
 
-    /// is_adjacent_cycle: empty permutation is trivially adjacent.
+    /// is_feasible_cycle: empty permutation is trivially adjacent.
     #[test]
-    fn is_adjacent_cycle_empty() {
-        let adj: Vec<Vec<bool>> = vec![];
-        assert!(is_adjacent_cycle(&[], &adj));
+    fn is_feasible_cycle_empty() {
+        let adj = DMatrix::from_element(0, 0, false);
+        assert!(is_feasible_cycle(&[], &adj));
     }
 
-    /// is_adjacent_cycle: single-element permutation is trivially adjacent.
+    /// is_feasible_cycle: single-element permutation is trivially adjacent.
     #[test]
-    fn is_adjacent_cycle_single_element() {
-        let adj = vec![vec![false]];
-        // Single element: checks adj[0][0] which is false, but m=1 means
-        // the cycle is (0) -> (0), i.e. adj[0][0]. This is false for self-loops.
-        assert!(!is_adjacent_cycle(&[0], &adj));
+    fn is_feasible_cycle_single_element() {
+        let adj = DMatrix::from_element(1, 1, false);
+        // Single element: checks adj[(0,0)] which is false.
+        assert!(!is_feasible_cycle(&[0], &adj));
     }
 
     /// Lagrangian product: directed adjacency respects the Q/P facet structure.
@@ -270,8 +236,8 @@ mod tests {
     #[test]
     fn lagrangian_product_q_q_transitions_bidirectional() {
         let kp = known_polytopes::lagrangian_triangle_product();
-        let directed = build_directed_adjacency_matrix(&kp.polytope);
-        let undirected = build_adjacency_matrix(&kp.polytope);
+        let directed = build_transition_matrix(&kp.polytope);
+        let undirected = kp.polytope.vertex_adjacency();
         let omega_signs = kp.polytope.omega_signs();
         let f = kp.polytope.facet_count();
 
@@ -279,9 +245,9 @@ mod tests {
         // both directions should be allowed in the directed matrix.
         for i in 0..f {
             for j in 0..f {
-                if undirected[i][j] && omega_signs[(i, j)] == 0 {
+                if undirected[(i, j)] && omega_signs[(i, j)] == 0 {
                     assert!(
-                        directed[i][j] && directed[j][i],
+                        directed[(i, j)] && directed[(j, i)],
                         "omega_0=0 pair ({i},{j}) should be bidirectional in directed adjacency"
                     );
                 }
