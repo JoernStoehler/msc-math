@@ -21,18 +21,12 @@ The old 12-agent architecture had:
 - Convention changes requiring updates in 3 places (rule + agent + sometimes CLAUDE.md)
 - No composability (couldn't run just anti-pattern checks without the full tex-style review)
 
-The new architecture separates concerns:
-- **What's correct** → convention skills (one canonical source)
-- **How to detect violations** → checklist reference docs (one per review concern)
-- **How to do a review** → review skill (methodology, output format, phase ordering)
+The current architecture separates concerns:
+- **What's correct** → convention skills (one canonical source, including detection patterns)
+- **How to do a review** → review skill (orchestration, phase ordering, spawn mapping)
 - **What tools/model a reviewer gets** → agent definition (minimal, just capabilities)
 
-## Detection rules separate from conventions
-
-Convention skills say *what's correct*. Checklist reference docs say *how to find violations*. Separated because:
-- **Different audiences.** Writing agents need conventions. Review agents need detection rules.
-- **Different update frequency.** Conventions change when Jorn decides a rule. Detection rules change when we discover a new violation pattern.
-- **Self-service.** The review skill lists which checklist applies to which concern. Subagents read what they need.
+Good conventions are verifiable — the convention IS the review specification. Separate checklists were removed because they restated conventions and drifted. Detection patterns that aren't conventions (e.g., "look for unargued claims") live inline in dedicated agents (e.g., `math-review`).
 
 ## "Discuss-first" for issue edits and scope changes
 

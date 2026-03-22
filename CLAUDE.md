@@ -67,8 +67,8 @@ This repo has three layers. Each layer's conventions and workflows govern the la
 
 **Convention enforcement architecture:**
 - **CLAUDE.md** — project context, workflow, communication rules. Always loaded. Kept lean.
-- **Skills** (`.claude/skills/`) — convention details per topic (e.g. `rust-conventions`, `tex-content`). Loaded on demand by main agents and explicitly by subagents. CLAUDE.md topic sections name which skills to load.
-- **Review workflow** — `review` skill teaches review subagents the sequential checklist methodology. Main agent spawns generic subagents specifying concern + files + skills.
+- **Skills** (`.claude/skills/`) — convention details per topic (e.g. `rust-conventions`, `tex-content`). Loaded on demand by main agents and explicitly by subagents. Convention skills are also the review specification — a review agent loads the skill and checks each convention.
+- **Review** — two workflows. Convention review: `review` agent loads ONE convention skill per spawn. Math proofreading: `math-review` agent scans for error patterns. Load the `review` skill for orchestration.
 
 ## Communication with Jörn
 
@@ -233,31 +233,13 @@ Conventions for the plan phase (the `plan` subagent overrides default `/plan`):
 - Closed-scope goals concretize how to achieve some other goal
 - Track why each plan element was picked over alternatives — needed to adapt the plan when feedback comes in
 
-## Subagents & Review
-
-Spawn a subagent when a subtask can run in parallel, needs isolated context, or benefits from focused work (e.g., literature extraction, code review, exploratory investigation).
-
-- Use Sonnet for read-heavy extraction tasks (literature, code review). Reserve Opus for tasks requiring deep reasoning (mathematical reasoning, code writing).
-- Keep subagent tasks focused and small. Agents may stall on tasks requiring 1000+ lines across multiple files.
-- **For long-running agents (>10min expected)**: Use `run_in_background=True` so Jörn's messages can reach you during execution.
-
-### The core rule
+## The Core Rule
 
 Never write a factual claim without verifying it against evidence in the same session. "The code cross-checks X" requires reading the code and confirming the cross-check exists. "The data shows Y" requires reading the data. When verification is impossible, mark with `% [TODO: JÖRN -` or `% [GAP -`. Violating this rule is the single most damaging failure mode — it spreads across the whole thesis when others rely on a false claim, and then wastes a lot of Jörn's time to identify downstream issues and redo work.
 
 **Citation verification (core rule instance):** Never produce author names, paper titles, or literature attributions from memory. Always verify against `thesis/bibliography.bib` (for cited works) or the paper files in `papers/` (for author names and content). Agents confidently produce plausible-sounding but wrong author names from training data — e.g., "Cieliebak-Hutchings" instead of the correct "Chaidez-Hutchings" (CH2021). The authoritative sources are:
 - `thesis/bibliography.bib` — all cited works with correct author fields
 - `papers/<key>/` — local copies of referenced papers
-
-### Review workflow
-
-Load the `review` skill for the full workflow. Key points:
-
-- Fix syntax/style before reviewing semantics/content
-- Spawn generic review subagents in parallel — one per concern per file group
-- Each subagent loads the relevant convention skill and works through a checklist item-by-item
-- Err towards running too many subagents: agent time is free, especially parallelized
-- Mandatory before presenting `.tex` deliverables to Jörn, recommended for all deliverables
 
 ## Git
 

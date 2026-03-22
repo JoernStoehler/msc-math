@@ -1,54 +1,46 @@
 ---
 name: meta-create-review-subagent
-description: Workflow for creating a new review subagent — a specialized workflow that verifies a set of conventions. Load when you need to add a new review concern, create a new review checklist, or modify how reviews are structured. For general workflow creation, see meta-create-workflow. For the review methodology itself, see the review skill.
+description: Workflow for creating a new review subagent — a specialized workflow that verifies conventions or detects error patterns. Load when you need to add a new review concern or modify how reviews are structured. For general workflow creation, see meta-create-workflow. For the review methodology itself, see the review skill.
 ---
 
 # Creating Review Subagents
 
-A specialized form of `meta-create-workflow` for creating review subagents — workflows that verify whether a set of conventions is met.
+A specialized form of `meta-create-workflow` for creating review subagents.
 
 ## Related skills
 
 - `meta-create-workflow` — general workflow creation (review subagents are a specialization)
 - `meta-foundations` — conceptual foundation
-- `review` — the review methodology that review subagents follow
+- `review` — the review orchestration and methodology
 
-## Architecture
+## Two kinds of review
 
-Reviews separate four concerns (see `meta-foundations/references/decision-records.md` for why):
+**Convention review** — verifies target state properties. The review agent loads ONE convention skill and checks each convention. The conventions ARE the review specification — no separate checklist needed.
 
-1. **What's correct** → convention skills (one canonical source per topic)
-2. **How to detect violations** → checklist reference docs (one per review concern, in `review/references/`)
-3. **How to do a review** → the `review` skill (sequential checklist methodology, output format, phase ordering)
-4. **What tools/model a reviewer gets** → the `review` agent definition (minimal — just capabilities)
+**Error detection / proofreading** — scans for known error patterns. A dedicated agent with detection patterns inline. Used when the thing to check isn't a convention (e.g., "look for unargued claims in proofs"). Example: the `math-review` agent.
 
-A "review subagent" is a generic agent that gets: the review agent definition (capabilities), the review skill (methodology), and a specific checklist (concern).
+## When to create a new review concern
 
-## Workflow: adding a new review concern
+For convention review: if the conventions already exist in a skill, you just need to add a row to the review skill's spawn mapping table. No new agent or file needed — the generic `review` agent loads the convention skill.
 
-### 1. Identify the convention set
+For error detection: if the concern requires a different workflow, different model, or detection patterns that aren't conventions, create a dedicated agent definition with the patterns inline.
 
-What conventions should this review check? They should already exist in a convention skill. If they don't, create the conventions first (see `meta-create-conventions`).
+## Workflow: adding a convention review concern
 
-### 2. Write the checklist
+1. Ensure the conventions exist in a skill (see `meta-create-conventions`)
+2. Add the concern to the review skill's spawn mapping table
+3. Test by spawning the review agent with that skill on a file you know has violations
 
-Create a new file in `review/references/checklist-<concern>.md`. The checklist should:
+## Workflow: adding an error detection agent
 
-- **Reference the convention skill** — don't restate the conventions. "Check that doc comments follow `rust-conventions` §Doc comments" not "Check that doc comments start with a verb."
-- **List specific detection rules** — what to look for, what patterns indicate violations. Be concrete: "grep for `TODO` without a ticket reference" not "check for incomplete items."
-- **Order items by severity** — most important violations first.
-- **Include examples** of violations and correct versions where the rule is non-obvious.
-
-### 3. Register the checklist
-
-Add the new checklist to the `review` skill's list of available checklists, so the parent agent knows it exists when spawning reviews.
-
-### 4. Test by use
-
-Spawn a review subagent with the new checklist on a file you know has violations. Check that it finds them. Also check that it doesn't flag correct code as violations.
+1. Identify the error patterns — what to look for, what indicates a problem
+2. Write an agent definition with the patterns inline (see `meta-create-workflow/references/agent-format.md`)
+3. Choose the right model (Opus for reasoning-heavy detection, Sonnet for mechanical checks)
+4. Add the agent to the review skill's spawn mapping table
+5. Test on a file with known errors — check it finds them and doesn't produce false positives
 
 ## Key principles
 
-- **Checklists reference conventions, not restate them.** If a convention changes, only the convention skill needs updating. The checklist says "check X" where X is defined elsewhere.
-- **One concern per checklist.** A checklist for "Rust style" should not also check "Rust correctness." The parent agent composes reviews by spawning multiple focused subagents.
-- **Sequential methodology.** The review skill teaches the methodology: work through items one at a time, record findings immediately. This is what makes reviews reliable — not agent specialization.
+- **One concern per spawn.** Never bundle multiple concerns into one subagent — this produces 10% quality on 10 tasks instead of 100% on 1.
+- **Convention skills are the review specification.** Don't create separate checklists that restate conventions. Detection patterns only exist inline in dedicated agents for non-convention concerns.
+- **Sequential methodology.** Work through items one at a time, record findings immediately. Don't hold all items in memory.
