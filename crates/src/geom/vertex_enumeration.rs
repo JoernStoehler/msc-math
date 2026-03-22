@@ -532,3 +532,432 @@ fn f64_prefilter_rejects(dv_f64: &[[f64; 4]], subset: &[usize; 4], f: usize) -> 
 
     false // No constraint was definitely violated → proceed to rational
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::geom::polytope::Polytope4D;
+    use crate::geom::rational_arithmetic::{frac, rat};
+    use num_rational::BigRational;
+    use num_traits::Zero;
+    use std::collections::BTreeSet;
+
+    // Tests for vertex enumeration: exact vertex computation from halfspaces.
+    //
+    // Proposition: The exact rational pipeline correctly enumerates all vertices
+    // of a polytope K from its dual vertex (halfspace) representation, with
+    // correct vertex-facet incidence and exact rational coordinates.
+    // Reference: [lem:vertex-enumeration], [lem:positive-span]
+    //
+    // Strategy: fixture-based on simplex (5 facets) and hypercube (8 facets),
+    // verifying vertex counts, descriptor structure, coordinate values,
+    // affine rank, and boundedness.
+
+    // ── Test fixtures ──────────────────────────────────────────────────────
+
+    /// Build a rational 4-simplex with exact rational coordinates.
+    ///
+    /// Simplex with vertices at (-1/5)*1 + (9/5)*e_i for i=1..4, plus (-1/5)*1.
+    /// The origin is interior (all gaps = 1/5 > 0). Uses non-unit normals.
+    ///
+    /// Facets:
+    ///   0: -x_1 <= 1/5   (n = (-1,0,0,0), h = 1/5)
+    ///   1: -x_2 <= 1/5   (n = (0,-1,0,0), h = 1/5)
+    ///   2: -x_3 <= 1/5   (n = (0,0,-1,0), h = 1/5)
+    ///   3: -x_4 <= 1/5   (n = (0,0,0,-1), h = 1/5)
+    ///   4: x_1+x_2+x_3+x_4 <= 1   (n = (1,1,1,1), h = 1)
+    fn rational_simplex() -> Polytope4D {
+        let normals = vec![
+            [rat(-1), rat(0), rat(0), rat(0)],
+            [rat(0), rat(-1), rat(0), rat(0)],
+            [rat(0), rat(0), rat(-1), rat(0)],
+            [rat(0), rat(0), rat(0), rat(-1)],
+            [rat(1), rat(1), rat(1), rat(1)],
+        ];
+        let heights = vec![frac(1, 5), frac(1, 5), frac(1, 5), frac(1, 5), rat(1)];
+        Polytope4D::from_rationals(normals, heights).expect("simplex construction")
+    }
+
+    /// Build a rational hypercube [-1, 1]^4 with exact integer coordinates.
+    ///
+    /// 8 facets (+-e_i), 16 vertices (all sign combinations of (1,1,1,1)).
+    fn rational_hypercube() -> Polytope4D {
+        let normals = vec![
+            [rat(1), rat(0), rat(0), rat(0)],
+            [rat(-1), rat(0), rat(0), rat(0)],
+            [rat(0), rat(1), rat(0), rat(0)],
+            [rat(0), rat(-1), rat(0), rat(0)],
+            [rat(0), rat(0), rat(1), rat(0)],
+            [rat(0), rat(0), rat(-1), rat(0)],
+            [rat(0), rat(0), rat(0), rat(1)],
+            [rat(0), rat(0), rat(0), rat(-1)],
+        ];
+        let heights = vec![rat(1); 8];
+        Polytope4D::from_rationals(normals, heights).expect("hypercube construction")
+    }
+
+    /// Extract vertex descriptors (sets of incident facet indices) from incidence matrix.
+    fn vertex_descriptors_from_incidence(p: &Polytope4D) -> Vec<BTreeSet<usize>> {
+        let inc = p.incidence();
+        let v_count = p.vertices().len();
+        let f_count = p.facet_count();
+        (0..v_count)
+            .map(|vi| {
+                (0..f_count)
+                    .filter(|&fi| inc[(vi, fi)])
+                    .collect::<BTreeSet<usize>>()
+            })
+            .collect()
+    }
+
+    // ── Simplex vertex structure ────────────────────────────────────────────
+
+    /// Proposition: the 4-simplex has exactly 5 vertex descriptors,
+    /// each a 4-element subset of {0, 1, 2, 3, 4} (one facet omitted per vertex).
+    #[test]
+    fn exact_simplex_vertex_descriptors() {
+        let s = rational_simplex();
+        let vds = vertex_descriptors_from_incidence(&s);
+        assert_eq!(vds.len(), 5, "simplex should have exactly 5 vertices");
+
+        for vd in &vds {
+            assert_eq!(vd.len(), 4, "simplex vertex should lie on exactly 4 facets");
+            assert!(
+                vd.iter().all(|&i| i < 5),
+                "facet indices should be in 0..5"
+            );
+        }
+
+        // Each vertex descriptor is {0..4} minus one element
+        let expected: Vec<BTreeSet<usize>> = (0..5)
+            .map(|omit| (0..5).filter(|&i| i != omit).collect())
+            .collect();
+        let mut actual = vds;
+        actual.sort();
+        let mut expected_sorted = expected;
+        expected_sorted.sort();
+        assert_eq!(actual, expected_sorted);
+    }
+
+    /// Proposition: the simplex vertex on facets {0,1,2,3} (omitting the sum-constraint)
+    /// has exact coordinates (-1/5, -1/5, -1/5, -1/5).
+    #[test]
+    fn exact_simplex_vertex_coordinates() {
+        let s = rational_simplex();
+        let vds = vertex_descriptors_from_incidence(&s);
+
+        let target_vd: BTreeSet<usize> = [0, 1, 2, 3].into_iter().collect();
+        let idx = vds
+            .iter()
+            .position(|vd| *vd == target_vd)
+            .expect("vertex {0,1,2,3} should exist");
+
+        let v = &s.vertices()[idx];
+        let expected = frac(-1, 5);
+        for (c, coord) in v.iter().enumerate() {
+            assert_eq!(
+                coord, &expected,
+                "coordinate {c} should be -1/5, got {coord}"
+            );
+        }
+    }
+
+    // ── Hypercube vertex structure ──────────────────────────────────────────
+
+    /// Proposition: the hypercube [-1,1]^4 has exactly 16 vertex descriptors,
+    /// each a 4-element subset of {0,...,7}, picking one from each opposing pair.
+    #[test]
+    fn exact_hypercube_vertex_descriptors() {
+        let h = rational_hypercube();
+        let vds = vertex_descriptors_from_incidence(&h);
+        assert_eq!(vds.len(), 16, "hypercube should have 16 vertices");
+
+        for vd in &vds {
+            assert_eq!(
+                vd.len(),
+                4,
+                "hypercube vertex should lie on exactly 4 facets"
+            );
+            // Each opposing pair (0,1), (2,3), (4,5), (6,7) should contribute exactly one
+            let pairs = [(0, 1), (2, 3), (4, 5), (6, 7)];
+            for (a, b) in pairs {
+                let has_a = vd.contains(&a);
+                let has_b = vd.contains(&b);
+                assert!(
+                    has_a ^ has_b,
+                    "vertex should pick exactly one from pair ({a}, {b})"
+                );
+            }
+        }
+    }
+
+    /// Proposition: the hypercube vertices are exactly the 16 points (+-1, +-1, +-1, +-1).
+    #[test]
+    fn exact_hypercube_vertex_coordinates() {
+        let h = rational_hypercube();
+        let one = rat(1);
+        let neg_one = rat(-1);
+
+        for v in h.vertices() {
+            for coord in v {
+                assert!(
+                    coord == &one || coord == &neg_one,
+                    "hypercube vertex coordinate should be +/-1, got {coord}"
+                );
+            }
+        }
+        assert_eq!(h.vertices().len(), 16);
+    }
+
+    // ── Affine rank ─────────────────────────────────────────────────────────
+
+    /// Proposition: affine rank of the 5 simplex vertices = 4 (they span R^4).
+    #[test]
+    fn simplex_vertices_affine_rank_is_4() {
+        let p = rational_simplex();
+        assert_eq!(affine_rank_rational(p.vertices()), 4);
+    }
+
+    /// Proposition: 4 points in the hyperplane x_3 = 0 have affine rank 3 (< 4).
+    #[test]
+    fn coplanar_points_affine_rank_below_4() {
+        let points = vec![
+            [rat(0), rat(0), rat(0), rat(0)],
+            [rat(1), rat(0), rat(0), rat(0)],
+            [rat(0), rat(1), rat(0), rat(0)],
+            [rat(0), rat(0), rat(0), rat(1)],
+        ];
+        assert_eq!(affine_rank_rational(&points), 3);
+    }
+
+    // ── Boundedness ─────────────────────────────────────────────────────────
+
+    /// Proposition: simplex dual vertices positively span R^4 (simplex is bounded).
+    #[test]
+    fn simplex_is_bounded() {
+        let p = rational_simplex();
+        assert!(check_bounded_rational(p.dual_vertices()));
+    }
+
+    /// Proposition: hypercube dual vertices positively span R^4 (hypercube is bounded).
+    #[test]
+    fn hypercube_is_bounded() {
+        let p = rational_hypercube();
+        assert!(check_bounded_rational(p.dual_vertices()));
+    }
+
+    // ── Non-simple polytope ─────────────────────────────────────────────────
+
+    /// Proposition: non-simple polytopes (vertices on > 4 facets) are correctly handled.
+    /// A hypercube with a diagonal cut at x_1+x_2+x_3+x_4 <= 2 produces 4 non-simple
+    /// vertices (on 5 facets) and 11 simple vertices, totalling 15.
+    #[test]
+    fn non_simple_polytope_vertex_enumeration() {
+        let normals = vec![
+            [rat(1), rat(0), rat(0), rat(0)],
+            [rat(-1), rat(0), rat(0), rat(0)],
+            [rat(0), rat(1), rat(0), rat(0)],
+            [rat(0), rat(-1), rat(0), rat(0)],
+            [rat(0), rat(0), rat(1), rat(0)],
+            [rat(0), rat(0), rat(-1), rat(0)],
+            [rat(0), rat(0), rat(0), rat(1)],
+            [rat(0), rat(0), rat(0), rat(-1)],
+            [rat(1), rat(1), rat(1), rat(1)],
+        ];
+        let heights = vec![
+            rat(1),
+            rat(1),
+            rat(1),
+            rat(1),
+            rat(1),
+            rat(1),
+            rat(1),
+            rat(1),
+            rat(2),
+        ];
+        let p =
+            Polytope4D::from_rationals(normals, heights).expect("non-simple polytope should succeed");
+
+        let vds = vertex_descriptors_from_incidence(&p);
+        assert_eq!(vds.len(), 15, "cut hypercube should have 15 vertices");
+
+        let non_simple_count = vds.iter().filter(|vd| vd.len() > 4).count();
+        assert_eq!(
+            non_simple_count, 4,
+            "expected 4 non-simple vertices (on the diagonal cut)"
+        );
+    }
+
+    // ---- Linear algebra tests ----
+    //
+    // Tests for exact rational linear algebra helpers used by vertex enumeration.
+    //
+    // Proposition: The low-level linear algebra routines (det4, solve4, rank_over_q,
+    // cross_product_4d_rational, dot4) compute exact results over Q with no
+    // floating-point approximation.
+    // Reference: [lem:vertex-enumeration]
+    //
+    // Strategy: fixture-based on known matrices (identity, diagonal, singular)
+    // and vectors, verifying exact algebraic identities.
+
+    // ── Determinant ─────────────────────────────────────────────────────────
+
+    /// Proposition: det(I_4) = 1.
+    #[test]
+    fn det4_identity() {
+        let id: [[BigRational; 4]; 4] = [
+            [rat(1), rat(0), rat(0), rat(0)],
+            [rat(0), rat(1), rat(0), rat(0)],
+            [rat(0), rat(0), rat(1), rat(0)],
+            [rat(0), rat(0), rat(0), rat(1)],
+        ];
+        assert_eq!(det4(&id), rat(1));
+    }
+
+    /// Proposition: a matrix with two identical rows has determinant 0.
+    #[test]
+    fn det4_singular() {
+        let singular: [[BigRational; 4]; 4] = [
+            [rat(1), rat(2), rat(3), rat(4)],
+            [rat(1), rat(2), rat(3), rat(4)],
+            [rat(5), rat(6), rat(7), rat(8)],
+            [rat(9), rat(10), rat(11), rat(12)],
+        ];
+        assert_eq!(det4(&singular), rat(0));
+    }
+
+    /// Proposition: det(diag(2,3,5,7)) = 210.
+    #[test]
+    fn det4_diagonal() {
+        let diag: [[BigRational; 4]; 4] = [
+            [rat(2), rat(0), rat(0), rat(0)],
+            [rat(0), rat(3), rat(0), rat(0)],
+            [rat(0), rat(0), rat(5), rat(0)],
+            [rat(0), rat(0), rat(0), rat(7)],
+        ];
+        assert_eq!(det4(&diag), rat(210));
+    }
+
+    // ── Linear system solver (Cramer's rule) ────────────────────────────────
+
+    /// Proposition: solving I*x = b yields x = b.
+    #[test]
+    fn solve4_identity_system() {
+        let id: [[BigRational; 4]; 4] = [
+            [rat(1), rat(0), rat(0), rat(0)],
+            [rat(0), rat(1), rat(0), rat(0)],
+            [rat(0), rat(0), rat(1), rat(0)],
+            [rat(0), rat(0), rat(0), rat(1)],
+        ];
+        let rhs = [rat(3), rat(7), frac(1, 2), rat(-5)];
+        let x = solve4(&id, &rhs).expect("non-singular");
+        assert_eq!(x, rhs);
+    }
+
+    /// Proposition: solving diag(2,3,5,7)*x = (4,9,10,21) yields x = (2,3,2,3).
+    #[test]
+    fn solve4_diagonal_system() {
+        let diag: [[BigRational; 4]; 4] = [
+            [rat(2), rat(0), rat(0), rat(0)],
+            [rat(0), rat(3), rat(0), rat(0)],
+            [rat(0), rat(0), rat(5), rat(0)],
+            [rat(0), rat(0), rat(0), rat(7)],
+        ];
+        let rhs = [rat(4), rat(9), rat(10), rat(21)];
+        let x = solve4(&diag, &rhs).expect("non-singular");
+        assert_eq!(x, [rat(2), rat(3), rat(2), rat(3)]);
+    }
+
+    /// Proposition: solve4 returns None for a singular system (two identical rows).
+    #[test]
+    fn solve4_singular_returns_none() {
+        let singular: [[BigRational; 4]; 4] = [
+            [rat(1), rat(0), rat(0), rat(0)],
+            [rat(1), rat(0), rat(0), rat(0)],
+            [rat(0), rat(0), rat(1), rat(0)],
+            [rat(0), rat(0), rat(0), rat(1)],
+        ];
+        assert!(solve4(&singular, &[rat(1), rat(1), rat(1), rat(1)]).is_none());
+    }
+
+    // ── Matrix rank ─────────────────────────────────────────────────────────
+
+    /// Proposition: rank(I_4) = 4.
+    #[test]
+    fn rank_over_q_identity() {
+        let id = vec![
+            [rat(1), rat(0), rat(0), rat(0)],
+            [rat(0), rat(1), rat(0), rat(0)],
+            [rat(0), rat(0), rat(1), rat(0)],
+            [rat(0), rat(0), rat(0), rat(1)],
+        ];
+        assert_eq!(rank_over_q(&id), 4);
+    }
+
+    /// Proposition: replacing one row with a scalar multiple of another drops rank to 3.
+    #[test]
+    fn rank_over_q_dependent_row() {
+        let rows = vec![
+            [rat(1), rat(0), rat(0), rat(0)],
+            [rat(0), rat(1), rat(0), rat(0)],
+            [rat(0), rat(0), rat(1), rat(0)],
+            [rat(2), rat(0), rat(0), rat(0)], // 2 * row 0
+        ];
+        assert_eq!(rank_over_q(&rows), 3);
+    }
+
+    /// Proposition: the zero vector has rank 0.
+    #[test]
+    fn rank_over_q_zero_vector() {
+        let zeros = vec![[rat(0), rat(0), rat(0), rat(0)]];
+        assert_eq!(rank_over_q(&zeros), 0);
+    }
+
+    /// Proposition: the empty set has rank 0.
+    #[test]
+    fn rank_over_q_empty() {
+        let empty: Vec<[BigRational; 4]> = vec![];
+        assert_eq!(rank_over_q(&empty), 0);
+    }
+
+    /// Proposition: a single nonzero vector has rank 1.
+    #[test]
+    fn rank_over_q_single_nonzero() {
+        let single = vec![[rat(3), rat(-1), rat(0), rat(7)]];
+        assert_eq!(rank_over_q(&single), 1);
+    }
+
+    // ── 4D cross product ────────────────────────────────────────────────────
+
+    /// Proposition: cross_product_4d_rational(a, b, c) is perpendicular to all three inputs
+    /// and is nonzero when a, b, c are linearly independent.
+    #[test]
+    fn cross_product_4d_rational_perpendicular() {
+        let a = [rat(1), rat(2), rat(3), rat(4)];
+        let b = [rat(5), rat(-1), rat(2), rat(0)];
+        let c = [rat(0), rat(3), rat(-2), rat(1)];
+        let d = cross_product_4d_rational(&a, &b, &c);
+
+        assert!(dot4(&d, &a).is_zero(), "d . a = {} should be 0", dot4(&d, &a));
+        assert!(dot4(&d, &b).is_zero(), "d . b = {} should be 0", dot4(&d, &b));
+        assert!(dot4(&d, &c).is_zero(), "d . c = {} should be 0", dot4(&d, &c));
+        assert!(
+            !d.iter().all(|x| x.is_zero()),
+            "cross product should be nonzero for independent inputs"
+        );
+    }
+
+    /// Proposition: cross product of three dependent vectors is the zero vector.
+    #[test]
+    fn cross_product_4d_rational_dependent_is_zero() {
+        let a = [rat(1), rat(0), rat(0), rat(0)];
+        let b = [rat(0), rat(1), rat(0), rat(0)];
+        // c = a + b, linearly dependent
+        let c = [rat(1), rat(1), rat(0), rat(0)];
+        let d = cross_product_4d_rational(&a, &b, &c);
+        assert!(
+            d.iter().all(|x| x.is_zero()),
+            "cross product of dependent vectors should be zero"
+        );
+    }
+}

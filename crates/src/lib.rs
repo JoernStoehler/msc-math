@@ -30,10 +30,3 @@ pub use geom::polygon::{regular_polygon_2d, rotate_polygon_2d};
 pub use geom::known_polytopes;
 pub use geom::test_utils;
 
-#[cfg(test)]
-#[path = "dataset_test.rs"]
-mod dataset_test;
-
-#[cfg(test)]
-#[path = "random_test.rs"]
-mod random_test;
