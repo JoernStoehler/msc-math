@@ -16,7 +16,7 @@ math.tex files contain lemma statements, proofs, definitions, and derivations. T
 - Per-module files are pure content — no `\documentclass` or `\begin{document}`. New packages or theorem environments go in `math-preamble.tex`.
 - Cross-references between modules work (e.g. `algorithms/math.tex` can `\ref{lem:kkt}` from `kkt/math.tex`).
 
-**Experiments:** `experiments/<name>/math.tex` — these ARE standalone (own `\documentclass` and `\begin{document}`).
+**Experiments:** `experiments/<name>/math.tex` — these are fragments `\input`'d into `thesis/experiments.tex`. No `\documentclass` or `\begin{document}`. They contain narrative, tables, figures, and subsections in addition to lemmas/proofs — appropriate for their role as thesis content.
 
 ## Purpose
 
@@ -46,7 +46,12 @@ The thesis draws from math.tex files and experiment logbooks during final assemb
 
 ## Label conventions
 
-Labels use the format `\label{<type>:<name>}` where `<type>` is one of `lem`, `thm`, `def`, `alg`, `cor`, `rem`, `prop`.
+Labels use the format `\label{<type>:<name>}` where `<type>` is one of:
+- Mathematical: `lem`, `thm`, `def`, `alg`, `cor`, `rem`, `prop`
+- Equations: `eq` (for individual equations within larger structures)
+- Computational facts: `fact` (numerical/literature citations, e.g. Golub & Van Loan)
+- Experiment narrative: `sec`, `tab`, `fig` (subsections, tables, figures in experiment math.tex)
+- Aliases: `\phantomsection\label{...}` for cross-reference targets without their own environment
 
 Labels must be unique across all math.tex files in the repo (since the combined `crates/src/math.tex` and thesis may `\input` multiple files).
 
