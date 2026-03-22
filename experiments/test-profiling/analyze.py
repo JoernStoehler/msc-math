@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Profile the default test suite and identify slow tests.
 
-Usage: python3 experiments/test-profiling/analyze.py
+Goal: Identify hot paths in the test suite and track performance over time.
+Input: No data file; runs cargo test on crates/.
+Output: profile.jsonl, logbook.jsonl, test_timing.png.
 
 Pipeline:
 1. Run full suite to get wall/CPU time
@@ -11,13 +13,15 @@ Pipeline:
 """
 
 import json
+import os
 import subprocess
 import sys
 import time
 from datetime import date
 from pathlib import Path
 
-CRATE_DIR = Path(__file__).resolve().parent.parent.parent / "crates"
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+CRATE_DIR = REPO_ROOT / "crates"
 OUT_DIR = Path(__file__).resolve().parent
 PROFILE_JSONL = OUT_DIR / "profile.jsonl"
 LOGBOOK_JSONL = OUT_DIR / "logbook.jsonl"
@@ -53,12 +57,14 @@ def get_commit_hash() -> str:
         ["git", "rev-parse", "--short", "HEAD"],
         capture_output=True, text=True, cwd=CRATE_DIR
     )
-    return result.stdout.strip() if result.returncode == 0 else "unknown"
+    if result.returncode != 0:
+        print(f"Warning: could not get commit hash: {result.stderr.strip()}")
+        return "unknown"
+    return result.stdout.strip()
 
 
 def get_cpu_count() -> int:
     """Get available CPU count."""
-    import os
     return os.cpu_count() or 1
 
 
@@ -119,7 +125,8 @@ def time_individual_test(test_name: str) -> float:
                 return float(time_str)
             except ValueError:
                 pass
-    return -1.0  # Failed to parse
+    print(f"Warning: could not parse timing for {test_name}")
+    return -1.0
 
 
 def profile_candidates() -> list[dict]:
@@ -141,6 +148,9 @@ def generate_figure(per_test: list[dict]):
         import matplotlib
         matplotlib.use("Agg")
         import matplotlib.pyplot as plt
+        sys.path.insert(0, str(REPO_ROOT / "experiments"))
+        from figure_config import setup, FIGSIZE_SINGLE
+        setup()
     except ImportError:
         print("matplotlib not available, skipping figure generation")
         return
@@ -152,10 +162,10 @@ def generate_figure(per_test: list[dict]):
     names = [t["test"].split("::")[-1] for t in top]
     durations = [t["duration_s"] for t in top]
 
-    fig, ax = plt.subplots(figsize=(10, 6))
-    bars = ax.barh(range(len(names)), durations, color="#4C72B0")
+    fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
+    ax.barh(range(len(names)), durations, color="#4C72B0")
     ax.set_yticks(range(len(names)))
-    ax.set_yticklabels(names, fontsize=9)
+    ax.set_yticklabels(names)
     ax.set_xlabel("Duration (seconds)")
     ax.set_title("Test Suite: Slowest Tests (sequential, no contention)")
     ax.invert_yaxis()
@@ -167,7 +177,7 @@ def generate_figure(per_test: list[dict]):
                      va="center")
 
     plt.tight_layout()
-    plt.savefig(str(FIGURE_PATH), dpi=150)
+    plt.savefig(str(FIGURE_PATH))
     print(f"Figure saved: {FIGURE_PATH}")
     plt.close()
 

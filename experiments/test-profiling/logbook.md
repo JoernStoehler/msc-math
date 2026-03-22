@@ -38,7 +38,7 @@ Runs `cargo test --lib` wrapped in `bash -c "time ..."` to capture both wall-clo
 
 ### Per-test profiling
 
-Profiles 17 candidate slow tests individually, running each in isolation via `cargo test --lib -- <test_name>` with a 300-second timeout. Sequential execution avoids contention effects. The candidate list is maintained manually in `analyze.py` and should be updated when the test suite changes.
+Profiles 18 candidate slow tests individually, running each in isolation via `cargo test --lib -- <test_name>` with a 300-second timeout. Sequential execution avoids contention effects. The candidate list is maintained manually in `analyze.py` and should be updated when the test suite changes.
 
 Current candidates (all from `crates/`):
 - `algorithms::hk2017::literature_test::*` (8 tests)
