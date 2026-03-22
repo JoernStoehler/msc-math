@@ -72,6 +72,12 @@ After modifying the meta layer, check:
 4. **Lean CLAUDE.md.** Did you add to CLAUDE.md? Could it go in a skill instead?
 5. **No instruction overload.** Did you increase the total instruction complexity for agents that don't need this knowledge?
 
+## Generator-content staleness: rejected
+
+Considered embedding a content hash of the generator source in fixture files, so stale fixtures are detected even when values happen to stay the same.
+
+Rejected: adds complexity, and semantic staleness (consumer tests fail when values change) already catches the case that matters. The hash would only catch the case where the generator changed but values stayed the same, which doesn't warrant the infrastructure cost.
+
 ## HTML comments in CLAUDE.md
 
 CLAUDE.md supports `<!-- comments -->` that are NOT auto-injected into agent context but ARE visible via Read/Edit. Since Edit requires a prior Read, agents editing CLAUDE.md will always see comments.

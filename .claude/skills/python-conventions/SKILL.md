@@ -18,8 +18,6 @@ description: Python script conventions for experiments. Load when writing or edi
   setup()
   ```
 
-**No framework:** Use plain Python with standard data science libraries (numpy, pandas, matplotlib, scipy). No custom framework. Dependencies in `experiments/requirements.txt`.
-
 **Script headers:** Every script must document in the docstring:
 - **Goal**: What question does this answer?
 - **Input**: What data does it read?
@@ -71,8 +69,6 @@ All figure formatting is handled in Python. LaTeX is a 1:1 pass-through (`\inclu
 **Axis labels with math:** Use `r"$...$"` for all mathematical notation in labels. Never use LaTeX syntax (`_{n_k}`, `^{2}`) outside of `$...$` — matplotlib renders it as literal text.
 
 **Visual clarity:**
-- Use markers (not just color) for grayscale compatibility in scatter/line plots.
-- Avoid red-green only distinctions; use colorblind-friendly palettes.
 - Consistent colors for the same data categories across all figures in the same experiment.
 - Axis labels must include the quantity name (not just the symbol), or be self-evident from context.
 

@@ -86,14 +86,6 @@ If this is a legitimate code change, regenerate:
 If this is unexpected, investigate the regression.
 ```
 
-### Generator-content staleness (not implemented)
-
-Considered: embedding a content hash of the generator source in the fixture file.
-Rejected: adds complexity, and semantic staleness already catches the case that
-matters (code change produces different values → test fails). The hash would only
-catch the case where the generator changed but values stayed the same, which
-doesn't warrant the infrastructure cost.
-
 ## Cached data as regression detection
 
 On-disk cached values serve double duty: they're both test fixtures AND regression baselines. When capacity computation code changes:
