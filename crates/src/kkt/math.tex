@@ -3,7 +3,8 @@
 %
 % Labels defined here:
 %   lem:kkt, lem:H-quadratic, lem:well-defined,
-%   lem:numerical-transition-feasibility, lem:q-error-bound
+%   lem:numerical-transition-feasibility, lem:q-error-bound,
+%   rem:near-null-lp-search
 %
 % Sources: thesis/general-case-algorithm.tex,
 %   thesis/general-case-algorithm-proof.tex,
@@ -380,4 +381,81 @@ for $\|\delta\mu\|$ and $|\delta\xi|$:
   \qedhere
 \]
 \end{proof}
+
+
+\begin{remark}[Near-null LP search for admissible~$\hat\beta$]%
+\label{rem:near-null-lp-search}
+% Source: scratch-near-null-analysis.tex from kkt-lp-refactor branch
+% (empirical analysis, not yet Jörn-verified).
+% Code: saddle_point_solver.rs, beta_feasibility.rs
+%
+% [TODO: JÖRN - verify or correct. The Type A filtering is empirically
+%  justified (0 Type C across ~4300 perms on 6 polytopes) but lacks a
+%  proof that Type C cannot occur.]
+
+\medskip\noindent\textbf{Setting.}
+When the augmented KKT matrix~$M$ is numerically rank-deficient
+(eigenvalues below threshold~$\tau$),
+the pseudoinverse~$\hat\beta$ may have near-zero or negative components.
+The true~$\beta^*$ lies approximately in the affine set
+$\hat\beta + \operatorname{span}\{
+  (\hat v_{j_1})_\beta, \ldots,
+  (\hat v_{j_k})_\beta\}$,
+where~$(\hat v_j)_\beta \in \mathbb{R}^m$ denotes the
+$\beta$-block of the $j$-th discarded eigenvector.
+
+\medskip\noindent\textbf{LP formulation.}
+The implementation searches this affine set via
+\[
+  \max\; t \quad \text{s.t.}\quad
+  \hat\beta_i + \sum_{\ell=1}^{k} \alpha_\ell\,
+    (\hat v_{j_\ell})_{\beta,i} \;\geq\; t
+  \quad \text{for all } i \in S,
+\]
+over $\alpha \in \mathbb{R}^k$ and $t \in \mathbb{R}$.
+If $t^* > 0$, the reconstructed~$\beta$ has all components positive.
+See \texttt{beta\_feasibility::find\_max\_margin} for the implementation.
+
+\medskip\noindent\textbf{Eigenvector classification.}
+Not all discarded eigenvectors contribute usefully to the LP.
+The $(m{+}5)$-dimensional eigenvectors split into blocks
+$\hat v_j = ((\hat v_j)_\beta,\; (\hat v_j)_\mu,\; (\hat v_j)_\xi)$.
+From $M\hat v_j = \hat\lambda_j \hat v_j$, reading the constraint rows:
+$N^\top (\hat v_j)_\beta = \hat\lambda_j\, (\hat v_j)_\mu$
+and
+$\eta^\top (\hat v_j)_\beta = \hat\lambda_j\, (\hat v_j)_\xi$.
+Three types arise:
+
+\begin{itemize}
+\item \textbf{Type~A} ($\|(\hat v_j)_\beta\| \approx 0$):
+  Content lives in the multiplier blocks $(\mu, \xi)$.
+  Including these in the LP creates free variables with
+  near-zero coefficients, causing spurious unboundedness.
+  \emph{Filtered out} before the LP
+  (threshold $\|(\hat v_j)_\beta\| < 10^{-10}$).
+
+\item \textbf{Type~B} ($\|(\hat v_j)_\beta\| = O(1)$,
+  constraint violation $O(|\hat\lambda_j|)$):
+  Approximately constraint-preserving.
+  Since $\eta^\top (\hat v_j)_\beta \approx 0$
+  with $\eta_i > 0$, the direction has mixed signs,
+  so the LP is bounded.
+  Handled correctly by the LP.
+
+\item \textbf{Type~C} ($\|(\hat v_j)_\beta\| = O(1)$,
+  constraint violation $O(1)$):
+  Would break constraints.
+  \emph{Never observed} across ${\approx}\,4300$~permutations
+  on 6~polytopes.
+\end{itemize}
+
+\medskip\noindent\textbf{Known issue: LP cycling.}
+The \texttt{microlp} simplex solver can cycle (infinite loop)
+on degenerate instances of this LP
+(observed for $k = 2$, $m = 5$ on the square$\times$square
+product at $\theta = 0$).
+The implementation guards against this with a 100\,ms timeout;
+on timeout, the LP result is discarded and $\hat\beta_0$
+is used directly.
+\end{remark}
 
