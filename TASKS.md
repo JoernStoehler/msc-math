@@ -15,6 +15,29 @@ Master task list for thesis completion. **Deadline: March 31, 2026.**
 
 ---
 
+## Maturity Map
+
+What's settled vs placeholder across the project's major components.
+
+| Component | Status | Notes |
+|-----------|--------|-------|
+| Rust library (crates/) | **Draft** | 73 files rewritten, 316 tests pass, Clippy clean — but blocked on migration merge review; cleanup tasks (§2), solver refactors (§6), and tube algorithm (§7) still ahead |
+| Migration scaffold | **Draft** | Agent work complete; 6 open review items for Jörn before merge. Blocks almost everything else |
+| Test data pipeline | **Not started** | Blocked by migration merge. Design exists (§1) but no code yet |
+| Experiment data | **Settled** | All 16 experiments have data and produce results |
+| Experiment writeups | **Placeholder** | "Complete" means has data, not publishable. Noisy, no coherent story. 15 of 16 still need logbook migration |
+| Experiment shared code | **Not started** | 930–2347 LOC duplicated across 4 experiments; extraction planned (§6d) but not started |
+| Thesis — tube algorithm chapter | **Draft** | 8 TODOs (5 need Jörn's math verification, 3 GAP markers from agent content) |
+| Thesis — numerical appendix | **Draft** | 5 TODOs including unverified claims |
+| Thesis — other chapters | **Placeholder** | No TODOs but Jörn doubts publishability; no chapter tells a coherent story yet |
+| Thesis — story arc / structure | **Not started** | Jörn hasn't defined the central argument; highest-value decision pending |
+| Thesis — final assembly | **Not started** | Abstract, intro, conclusion, bibliography, figures, proofreading — all deferred until content stabilizes |
+| Thesis↔code alignment | **Placeholder** | 15 mismatches + 18 missing cross-ref labels identified; Jörn decides which side to fix (§3) |
+| Convention skills / meta-layer | **Draft** | Updated during migration but Jörn hasn't done full review; working-notes section needs redistribution |
+| SLURM skill | **Not started** | Planned (§7b), awaiting example template from Jörn |
+
+---
+
 ## 0. Migration merge (blocking everything)
 
 **Branch:** `migration-scaffold` in `.claude/worktrees/migration-scaffold/`
