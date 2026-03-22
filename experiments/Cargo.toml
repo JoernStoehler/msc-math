@@ -12,6 +12,10 @@ name = "benchmark"
 path = "benchmark/run.rs"
 
 [[bin]]
+name = "benchmark_profile"
+path = "benchmark/profile.rs"
+
+[[bin]]
 name = "correctness"
 path = "correctness/run.rs"
 
