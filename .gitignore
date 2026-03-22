@@ -46,5 +46,9 @@ package-lock.json
 # Claude Code agent memory (auto-generated, session-specific)
 **/.claude/agent-memory/
 
+# Profiling artifacts
+perf.data
+perf.data.old
+
 # Editor
 *.swp
