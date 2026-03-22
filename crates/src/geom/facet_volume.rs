@@ -71,7 +71,7 @@ pub fn facet_volume_3d(polytope: &Polytope4D, facet_idx: usize) -> f64 {
     let vertices = polytope.vertices_f64();
     let f = polytope.facet_count();
 
-    facet_volume_3d_raw(&normals, &heights, &vertices, facet_idx, f)
+    facet_volume_3d_raw(&normals, &heights, vertices, facet_idx, f)
 }
 
 /// Compute the 3D volume and area-weighted centroid of facet `facet_idx`.
@@ -88,7 +88,7 @@ pub fn facet_volume_and_centroid_3d(
     let vertices = polytope.vertices_f64();
     let f = polytope.facet_count();
 
-    facet_volume_and_centroid_3d_raw(&normals, &heights, &vertices, facet_idx, f)
+    facet_volume_and_centroid_3d_raw(&normals, &heights, vertices, facet_idx, f)
 }
 
 /// Raw version of `facet_volume_3d` operating on slices.

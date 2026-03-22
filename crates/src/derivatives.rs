@@ -131,7 +131,7 @@ pub fn volume_derivatives_h(polytope: &Polytope4D) -> Vec<f64> {
     let f = polytope.facet_count();
 
     (0..f)
-        .map(|k| facet_volume_3d_raw(&normals, &heights, &vertices, k, f))
+        .map(|k| facet_volume_3d_raw(&normals, &heights, vertices, k, f))
         .collect()
 }
 
@@ -150,7 +150,7 @@ pub fn volume_derivatives_n(polytope: &Polytope4D) -> Vec<Vector4<f64>> {
     (0..f)
         .map(|k| {
             let (s_k, centroid_k) =
-                facet_volume_and_centroid_3d_raw(&normals, &heights, &vertices, k, f);
+                facet_volume_and_centroid_3d_raw(&normals, &heights, vertices, k, f);
             if s_k < 1e-30 {
                 return Vector4::zeros();
             }
