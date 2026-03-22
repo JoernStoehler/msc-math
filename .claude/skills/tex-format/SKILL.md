@@ -18,13 +18,13 @@ Three levels, strictly ordered: **text > math > structure**. Each level is a ref
 3. **Text**: the written prose is correct (final quality)
 
 ```latex
-% Jörn: structure approved (abc1234) — from \subsection{Sampling procedure} to \end{proof}
-% Jörn: text approved (abc1234) — from \subsection{Sampling procedure} to "Acceptance rate sweep"
+% Jörn: structure approved — from \subsection{Sampling procedure} to \end{proof}
+% Jörn: text approved — from \subsection{Sampling procedure} to "Acceptance rate sweep"
 ```
 
 Only one marker per scope. When a higher level is approved, replace the lower marker. Scope must be explicit. Content outside any `% Jörn:` marker is unreviewed.
 
-**Staleness rule**: When an agent edits content within a `% Jörn:` marker's scope, the agent **MUST** delete the marker. Detection: if content within the marker's scope was edited after the marker's commit hash, the marker is stale.
+**Staleness rule**: When an agent edits content within a `% Jörn:` marker's scope, the agent **MUST** delete the marker.
 
 ### QC agent findings (`% QC:`)
 ```latex
