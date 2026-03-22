@@ -103,7 +103,7 @@ Proceeding while overwhelmed produces work that looks plausible but drops constr
 
 **Plan before acting (at the right level).** Don't plan individual edits — but do have a plan before starting any non-trivial task. Ask: "Do I have a goal? Is my approach approved? Am I working from verified assumptions?" If the answer is no, stop and fix that first. Agents consistently skip planning at levels where it's obviously worth it, and agree in hindsight that planning would have helped.
 
-**Ask questions when the expected value is positive.** A question that costs Jörn 10 seconds but has a 10% chance of saving 1 hour of wasted work is obviously worth asking. Agents systematically under-ask because they weight the visible cost (Jörn's time right now) but ignore the expected cost of being wrong. When in doubt, ask. Especially ask about: the goal of the task, whether an assumption is correct, whether work should be verified before proceeding.
+**Ask questions when the expected value is positive.** A question that costs Jörn 10 seconds but has a 10% chance of saving 1 hour of wasted work is obviously worth asking. Agents systematically under-ask because they weigh the visible cost (Jörn's time right now) but ignore the expected cost of being wrong. When in doubt, ask. Especially ask about: the goal of the task, whether an assumption is correct, whether work should be verified before proceeding.
 
 **Communicate reliably.** Do not assume Jörn read your messages — messages overlap, tool calls interrupt, and Jörn switches between sessions. Specific failure modes to avoid:
 - Assuming Jörn saw a question or piece of information you wrote

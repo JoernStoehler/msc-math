@@ -77,9 +77,9 @@ Subagents don't load skills unless told to. Key conventions must be **included e
 
 ## Delegation safeguards
 
-**Don't auto-chain dependent tasks.** If Y depends on X's result, don't auto-trigger Y when X finishes. Plan an explicit gate: check X's output before starting Y. A subagent reporting "done" may mean it failed and reported the failure.
+**Don't auto-chain dependent tasks.** If Y depends on X's result, don't auto-trigger Y when X finishes. Plan an explicit gate: check X's output before starting Y. A subagent reporting "done" may have completed a different task than intended, or completed only part of the task.
 
-**Plan a verification step after delegation.** A subagent may complete a task differently than you intended. After receiving results, spawn a separate verification subagent that checks the output against the original spec. The verifier catches deviations regardless of cause (misunderstanding, reasoning error, prompt ambiguity).
+**Plan a verification step after delegation.** A subagent may complete a task differently than you intended. After receiving results, spawn a separate verification subagent that checks the output against the original spec. The verifier can detect deviations from multiple causes (misunderstanding, reasoning error, prompt ambiguity) without needing to diagnose which one occurred — but it won't catch all deviations.
 
 **State the expected result type explicitly for novel tasks.** For familiar tasks ("implement feature X"), subagents implicitly know what "done" looks like. For novel tasks, spell out the expected output format and success criteria — otherwise the subagent may produce plausible output in the wrong shape.
 
