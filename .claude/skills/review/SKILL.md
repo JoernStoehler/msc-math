@@ -1,13 +1,13 @@
 ---
 name: review
-description: How to spawn and run review subagents. Each review subagent checks ONE convention skill against a file list — spawn multiple for multiple concerns. Load when you need to review deliverables before presenting to Jörn. Does NOT cover math correctness — use the math-review agent for that.
+description: How to spawn and run review subagents. Each review subagent checks ONE convention skill against a file list — spawn multiple for multiple concerns. MANDATORY before presenting any deliverable to Jörn (not just .tex — also logbooks, figures, data claims). Load this skill for the how-to. Does NOT cover math correctness — use the math-review agent for that.
 ---
 
 # Review Workflow
 
 ## When to review
 
-Mandatory before presenting `.tex` deliverables to Jörn. Recommended for all deliverables.
+Mandatory before presenting any deliverable to Jörn — `.tex` files, logbooks, figures, data claims. Not just recommended.
 
 ## Two verification workflows
 

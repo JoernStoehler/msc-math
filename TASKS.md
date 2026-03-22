@@ -221,6 +221,15 @@ Direction (2026-03-22, Jörn): Thesis will introduce both (n_i, h_i) and a_i = n
 
 **Open question (Jörn):** The KKT system in `kkt/math.tex` is written in (n_i, h_i) with three separate objects (N, H, eta). Is there a clean a_i-only formulation? Likely requires rescaling β so h disappears from the constraints, which changes H. Jörn to work out the math — agents should not attempt the derivation.
 
+**Library has no derivative API:** The library computes c_EHZ but provides no ∂c_EHZ/∂a_i (or ∂c_EHZ/∂anything). This should exist in the library — it's needed by multiple experiments and the subdifferential analysis is central to the thesis story around local maximality.
+
+**Experiment code duplicates (n, h) gradient logic:** Three experiments independently implement ∂sys/∂h and ∂sys/∂n:
+- `hko-neighborhood/run.rs` — ~2100 LOC, per-orbit gradients, gradient ascent, step bounds
+- `gradient-descent/run.rs` — ~700 LOC, gradient ascent for Lagrangian products
+- `sys-optimization/run.rs` — ~600 LOC, sensitivity + gradient iteration
+
+All three work in (n, h) space, not dual vertices. Once the a_i-only KKT formulation is settled (open question above), these should be replaced by a library API computing ∂c_EHZ/∂a_i, with the experiments calling that instead of reimplementing.
+
 **Ordering:** No longer blocking §6b.
 
 ### 6b. KKT projection-based solver
