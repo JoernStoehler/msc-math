@@ -115,13 +115,11 @@ const EPS_KKT_RESIDUAL: f64 = 1e-6;
 ///
 /// See [rem:near-null-lp-search] in kkt/math.tex for the full analysis.
 ///
-/// **Type C argument (needs Jörn verification):** For discarded eigenvectors
-/// (|lambda| <= tau), the eigenvalue equations give N^T v_beta = lambda * v_mu
-/// and eta^T v_beta = lambda * v_xi. If correct, constraint violation per unit
-/// alpha is O(|lambda|) = O(tau), so Type C (O(1) violation) cannot occur among
-/// discarded eigenvectors. Empirically confirmed: 0 Type C across ~4300 perms.
-///
-/// TODO [JÖRN]: Verify the O(|lambda|) argument above.
+/// **Why Type C cannot occur:** From Mv = λv, the constraint rows give
+/// N^T v_beta = λ v_mu and η^T v_beta = λ v_xi. Since ||v|| = 1,
+/// constraint violation per unit α is ≤ |λ| ≤ τ = 1e-3 for discarded
+/// eigenvectors. Type C (O(1) violation) is impossible.
+/// Jörn: verified 2026-03-22.
 const EPS_TYPE_A_FILTER: f64 = 1e-10;
 
 // ── Public types ──

@@ -385,14 +385,9 @@ for $\|\delta\mu\|$ and $|\delta\xi|$:
 
 \begin{remark}[Near-null LP search for admissible~$\hat\beta$]%
 \label{rem:near-null-lp-search}
-% Source: scratch-near-null-analysis.tex from kkt-lp-refactor branch
-% (empirical analysis, not yet Jörn-verified).
+% Source: scratch-near-null-analysis.tex from kkt-lp-refactor branch.
 % Code: saddle_point_solver.rs, beta_feasibility.rs
-%
-% [TODO: JÖRN - verify the O(|lambda|) argument for Type C impossibility:
-%  eigenvalue equations give N^T v_beta = lambda * v_mu, eta^T v_beta = lambda * v_xi,
-%  so constraint violation is O(|lambda|) = O(tau) for discarded eigenvectors.
-%  Empirically confirmed: 0 Type C across ~4300 perms on 6 polytopes.]
+% Jörn: Type C impossibility argument verified 2026-03-22.
 
 \medskip\noindent\textbf{Setting.}
 When the augmented KKT matrix~$M$ is numerically rank-deficient
