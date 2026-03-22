@@ -27,9 +27,10 @@
 	"claudeCode.useCtrlEnterToSend": true,
 	"workbench.editor.wrapTabs": true,
 	"workbench.editor.showTabs": "multiple",
-	"claudeCode.useTerminal": true,
+	"claudeCode.useTerminal": false,
 	"accessibility.signals.terminalBell": {
 		"sound": "on"
 	},
-	"terminal.integrated.enableVisualBell": true
+	"terminal.integrated.enableVisualBell": true,
+	"claudeCode.selectedModel": "opus[1m]"
 }
