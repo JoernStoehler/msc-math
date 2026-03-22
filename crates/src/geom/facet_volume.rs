@@ -21,6 +21,12 @@ const EPS_FACET_INCIDENCE: f64 = 1e-8;
 /// during angular sorting.
 const EPS_DEGENERATE: f64 = 1e-10;
 
+/// Floor for meaningful facet volume. Facets with total volume below this
+/// are treated as degenerate (zero volume, zero centroid). Prevents
+/// division by near-zero in centroid computation. Value is far below
+/// any real facet volume (O(0.01)–O(100)) but above f64 underflow.
+pub(crate) const EPS_VOLUME_FLOOR: f64 = 1e-30;
+
 /// Sort vertices of a convex polygon embedded in R^4 by angle around their centroid.
 ///
 /// Projects vertices onto a 2D basis in the polygon plane and sorts by atan2 angle.
@@ -190,7 +196,7 @@ pub fn facet_volume_and_centroid_3d_raw(
         }
     }
 
-    if total_vol > 1e-30 {
+    if total_vol > EPS_VOLUME_FLOOR {
         (total_vol, weighted_centroid / total_vol)
     } else {
         (0.0, Vector4::zeros())

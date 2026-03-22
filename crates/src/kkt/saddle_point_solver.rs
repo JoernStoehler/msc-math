@@ -134,8 +134,8 @@ pub(crate) struct EigenInfo {
 /// **Sign convention note:** Some references (and experiment code) use an
 /// asymmetric convention where stationarity reads Hβ = Nλ + ην. In that
 /// convention, λ = −μ and ν = −ξ. The derivative formula for the action
-/// A = 1/(2Q) is: ∂A/∂h_k = ξ·β_k/(2Q²) in our (symmetric) convention,
-/// equivalently ∂A/∂h_k = −ν·β_k/(2Q²) in the asymmetric convention.
+/// A = 1/(2Q) is: ∂A/∂h_k = −ξ·β_k/(2Q²) in our (symmetric) convention,
+/// equivalently ∂A/∂h_k = ν·β_k/(2Q²) in the asymmetric convention.
 ///
 /// See [lem:q-error-bound]: |Q(beta_0) - q_corrected| <= q_error_bound.
 #[derive(Clone, Debug)]

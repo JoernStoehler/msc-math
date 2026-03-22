@@ -19,7 +19,7 @@
 //! - ∂vol/∂h_k = S_k  (3D volume of facet k, divergence theorem)
 //! - ∂vol/∂n_k = −S_k(x̄_k − h_k n_k)  (projected to T_{n_k}S³)
 //!
-//! Mathematical correspondence: [lem:cap-derivative], [lem:vol-derivative]
+//! Mathematical correspondence: TODO write [lem:cap-derivative], [lem:vol-derivative] in math.tex
 
 use crate::geom::facet_volume::{facet_volume_3d_raw, facet_volume_and_centroid_3d_raw};
 use crate::geom::polytope::Polytope4D;
@@ -151,7 +151,7 @@ pub fn volume_derivatives_n(polytope: &Polytope4D) -> Vec<Vector4<f64>> {
         .map(|k| {
             let (s_k, centroid_k) =
                 facet_volume_and_centroid_3d_raw(&normals, &heights, vertices, k, f);
-            if s_k < 1e-30 {
+            if s_k < crate::geom::facet_volume::EPS_VOLUME_FLOOR {
                 return Vector4::zeros();
             }
             let tangent_centroid = centroid_k - heights[k] * normals[k];

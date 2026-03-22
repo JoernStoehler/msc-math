@@ -101,6 +101,7 @@ struct GradientDot {
 // ============================================================================
 
 /// J₀(a,b,c,d) = (-c,-d,a,b) in (q₁,q₂,p₁,p₂) coordinates.
+/// Equivalent to `symplectic::geom::symplectic_form::j4() * v` but avoids matrix allocation.
 fn j0_apply(v: &Vector4<f64>) -> Vector4<f64> {
     Vector4::new(-v[2], -v[3], v[0], v[1])
 }
