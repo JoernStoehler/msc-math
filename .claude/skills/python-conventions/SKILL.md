@@ -8,7 +8,7 @@ description: Python script conventions for experiments. Load when writing or edi
 ## Script Conventions
 
 **Independent scripts with shared figure config:**
-- No `__init__.py`, no shared imports between scripts — except `figure_config.py`
+- No `__init__.py`, no shared imports between scripts — except `figure_config.py`. Keeps experiments isolated so we can make fast progress without churn or having to use imperfect shared APIs.
 - Each script is self-contained: reads data, performs analysis, writes output
 - If two scripts share logic, copy-paste until it stabilizes
 - Exception: `experiments/figure_config.py` provides shared figure styling (fonts, sizes, rcParams). All scripts import it:

@@ -27,15 +27,15 @@ We refactor, simplify, and improve until verification becomes straightforward.
 
 ## Content Rules
 
-1. **Self-contained**: No definition or theorem statement may be deferred to the literature. Every definition and theorem is stated in full.
+1. **Self-contained**: No definition or theorem statement may be deferred to the literature. Every definition and theorem is stated in full. Reason: agents (and humans) read top-down without rereading — if a definition comes after its use, the reader must re-check the proof when they finally reach the definition, which is harder and error-prone.
 2. **Deferred proofs**: A proof MAY be deferred to the literature ONLY IF the theorem exceeds thesis scope AND the proof is not relevant — only the theorem is.
 3. **Notation consistency**: Must match `appendix-notation.tex` exactly. No synonyms, no alternative forms, no "equivalent" restatements unless a lemma proving equivalence is included.
-4. **Writing rule**: Proofs cannot cite external sources mid-proof. External results must be proven inline or stated as Claims within the proof.
+4. **Writing rule**: Proofs cannot cite external sources mid-proof. External results must be proven inline or stated as Claims within the proof (stating assumptions and conclusion). Reason: agents handwave with "by Theorem X.Y" without stating what the theorem says — they know it from training but readers don't. Stating it as a Claim forces the assumptions and implications to be explicit and reviewable.
 5. **Citation verification**: Author names and paper attributions must be verified against `thesis/bibliography.bib` or `papers/`. Never produce author names from memory.
 
 ## Proof Writing
 
-**Structure**: Assumptions → Claim → Overview → Steps → Conclusion
+**Structure**: Assumptions → Claim → Overview → Steps → Conclusion. This consistent structure makes it easier for Jörn to spot gaps and errors during review.
 
 **Level of detail**:
 - Detailed enough for Jörn to verify by skimming

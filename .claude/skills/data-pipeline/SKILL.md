@@ -119,6 +119,8 @@ eprintln!("[TIMING] {test_name}: {elapsed:.1?}");
 
 ## Test performance budget
 
+Slow test suites cause noticeable waiting time when Jörn watches agents finish implement/review stages. The CPU monitor kills sessions after 20 min sustained high CPU, so 10 min gives margin.
+
 | Category | Target | Current (2026-03-19) |
 |----------|--------|----------------------|
 | Fast tests (default suite) | < 2 min | ~31s wall / 4m51s CPU |
