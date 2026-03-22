@@ -77,7 +77,14 @@ Every individual test MUST have at least a doc comment stating the mathematical 
 | Expensive capacity tests | `cargo test --release -- --ignored` | After capacity algorithm changes |
 | All ignored tests | `cargo test -- --ignored` | Full validation |
 
-Target: default suite <3 min single-threaded.
+Target: default suite <3 min single-threaded. Individual default tests must each complete in <5s.
+
+## Proptest Parameters
+
+Proptest parameters must be calibrated for the time budget:
+- Too few cases: the property is under-tested and bugs can slip through.
+- Too many cases: the test exceeds the 5s-per-test budget and slows the default suite.
+- When setting `cases`, verify the test runs in <5s in debug mode on the target machine before committing.
 
 ## Math-Code Correspondence (for test design)
 

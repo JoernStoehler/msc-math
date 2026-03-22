@@ -154,6 +154,28 @@ Only stable, proven code goes into `crates/`. New algorithm variants stay self-c
 
 **Not production code:** Focus on clarity and correctness over performance. Reproducibility matters, exhaustive testing doesn't.
 
+## Review Sanity Checks
+
+**Build and test before reviewing content.** If builds or tests are broken, style and content reviews are wasted work. Run first:
+
+```bash
+cd crates/ && cargo build 2>&1
+cd crates/ && cargo clippy --lib -- -D warnings 2>&1
+timeout 5m cargo test --lib 2>&1 | tee /tmp/test-output.txt
+cd experiments/ && cargo build --release 2>&1
+```
+
+**Data freshness check.** For experiments with committed `.jsonl` data, compare git timestamps:
+
+```bash
+git log -1 --format=%H -- experiments/<name>/run.rs
+git log -1 --format=%H -- experiments/<name>/data.jsonl
+```
+
+If `run.rs` was modified more recently than `data.jsonl`, flag as potentially stale.
+
+**Run experiment binaries.** Run each binary with `timeout 3m`. Report PASS/CRASH/TIMEOUT for each. For crashes, include the last 5 lines of stderr.
+
 ## Writing Rules
 
 **Write up what's there — nothing more, nothing less.** Facts are facts, correlations are correlations, unknowns are unknowns. Speculation must be labeled as interpretation.
@@ -161,4 +183,18 @@ Only stable, proven code goes into `crates/`. New algorithm variants stay self-c
 - Every factual claim verified against actual data (JSONL) in the same session
 - Unverifiable claims marked with `% [TODO: JÖRN -` or `% [GAP -`
 - Agent-generated content is a draft until Jörn reviews
-- Statistical claims require reproducible computation
+- Statistical claims require p-values or confidence intervals — "reproducible computation" alone is not sufficient
+
+**Claim-type taxonomy.** Each type of claim has a verification method:
+- **Statistics**: "mean sys = 0.87", "73% of polytopes have sys < 1" → compute from JSONL
+- **Counts**: "27 polytopes", "10 facets" → count in JSONL
+- **Extremes**: "maximum sys = 1.03" → verify from data
+- **Comparisons**: "Lagrangian products have higher sys than general polytopes" → compute both distributions
+- **Figure descriptions**: "Figure 3 shows clustering around sys = 0.9" → read the PNG
+- **Code outputs**: "the assertion passed for all inputs" → check `_output.txt`
+
+**Causal language.** Use "correlates with", not causal language, unless causation is established. Detection: grep for "leads to", "results in", "produces", "creates", "because", "due to", "causes", "explains", "the reason" — verify these are framed as interpretation if present.
+
+**Editorial language.** Avoid: "Surprisingly", "interestingly", "remarkably", "Unfortunately", "sadly", "Clearly", "obviously". These inject the author's reaction or mask non-obvious claims.
+
+**Omission check.** Read the data and figures. Are there visible patterns NOT mentioned in the writeup? The writeup should report what's there.

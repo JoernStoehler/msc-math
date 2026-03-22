@@ -59,7 +59,15 @@ All figure formatting is handled in Python. LaTeX is a 1:1 pass-through (`\inclu
 - `figsize` = the physical size in the printed PDF. `\textwidth` ≈ 5.4" (A4, 12pt article, default margins).
 - Multi-panel figures at 5.4" are often too cramped. Prefer separate figures over wider canvases.
 - Multi-panel figures: use consistent axis scales where cross-panel comparison is intended.
-- Long titles on subplots will collide. Use `\n` to wrap, or shorten.
+- Long subplot titles collide at panel widths common in multi-panel layouts (≤1.8" in 1×3, ≤2.7" in 1×2). Use `\n` to wrap titles, or shorten them to ≤~25 characters.
+- Long x-axis labels on the rightmost panel can be clipped by the figure edge — check visually.
+- `suptitle` + `tight_layout(rect=...)` creates an awkward gap. Use `suptitle(y=1.02)` + plain `tight_layout()` instead.
+- Shared legends across panels: use `fig.legend()` with shared handles rather than per-panel legends.
+- `fontsize=` values above 14pt on individual elements signal a figsize mismatch — the figure is likely too small for its content.
+
+**Saving figures:**
+- Always pass `dpi=150` (minimum) to `savefig()` — matplotlib's default of 100 dpi is too low for print.
+- Always pass `bbox_inches='tight'` to `savefig()` to avoid clipping labels and tick text.
 
 **Axis labels with math:** Use `r"$...$"` for all mathematical notation in labels. Never use LaTeX syntax (`_{n_k}`, `^{2}`) outside of `$...$` — matplotlib renders it as literal text.
 
@@ -72,3 +80,4 @@ All figure formatting is handled in Python. LaTeX is a 1:1 pass-through (`\inclu
 **Captions (in .tex, but Python generates the figure):**
 - Captions state observations and comparisons (relating to an explicit reference).
 - Interpretations and speculation belong in body text, NOT in captions.
+- Caption violation signals: words like "suggests", "indicates", "means that", "because", "implies", "consistent with", "due to" in a caption indicate interpretation that should be moved to body text.

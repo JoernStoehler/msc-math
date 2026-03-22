@@ -58,6 +58,25 @@ We refactor, simplify, and improve until verification becomes straightforward.
 - **Geometric definitions first, formulas derived**: E.g., action = integral of Liouville form, not the coordinate expression
 - **Standard definitions**: Use them exactly as in the literature. If you use a different form, state a lemma proving equivalence
 
+## Semantic Anti-Patterns (Detection Rules)
+
+**AP2: Restating what a definition already says**
+Detection: If text after "i.e." or "equivalently" is a direct translation of the preceding statement into different notation, flag it — delete the restatement.
+
+**AP6: Conditions that are always satisfied**
+Detection: For each condition in a definition, check whether it is trivially satisfied by the objects the definition applies to. If yes, flag it.
+
+**AP9: Using notation without nearby definition**
+Detection: For each notation symbol in a definition/lemma environment, check: is it (a) standard (ω₀, det, etc.), (b) defined within the same environment, or (c) cross-referenced? If none, flag it.
+
+**AP10: Mixing literature citations with novel analysis**
+Detection: For each remark containing `\cite`, check whether the remark also contains forward references to our own lemmas/remarks or phrases like "our KKT systems", "we therefore", "for our application". If both present, flag — should be split into a citation remark and a separate analysis remark.
+
+## Forward References
+
+- Acceptable: "We will prove this in Section X" (deferred proof — reader can continue without the proof).
+- Problematic: "Using the notation from Section X below" (notation not yet available — blocks comprehension).
+
 ## Relationship to math.tex Files
 
 The thesis draws from `math.tex` files (in crate modules and experiments) during final assembly. When editing thesis content that restates a result from a math.tex file, check the math.tex source for the authoritative version.
@@ -67,3 +86,29 @@ The thesis draws from `math.tex` files (in crate modules and experiments) during
 Never write a factual claim without verifying it against evidence in the same session. "The code cross-checks X" requires reading the code. "The data shows Y" requires reading the data. When verification is impossible, mark with `% [TODO: JÖRN -` or `% [GAP -`.
 
 **Citation verification:** Never produce author names, paper titles, or literature attributions from memory. Always verify against `thesis/bibliography.bib` or `papers/`.
+
+### What Counts as a Factual Claim
+
+- **Numbers**: "27 entries", "5–16 facets", "E < 10^{-13}" → check against data files
+- **Code behavior**: "the algorithm panics", "the assertion has never fired" → check actual code
+- **Dataset properties**: "covering all test polytopes" → check fixture/JSONL files
+- **Citations**: author names, paper titles, theorem numbers → check `thesis/bibliography.bib`
+- **Cross-references**: "Lemma B.5 states X" → check the actual lemma text
+- **Literature claims**: "Haim-Kislev proved X" → check the paper in `papers/`
+
+### Verification Protocol
+
+Identify all claims from the file in context, then batch cross-file lookups:
+
+1. **Numbers against data:** Read relevant data files once (JSONL, fixtures), check all numeric claims against them.
+2. **Code claims:** Grep `crates/src/` for referenced functions/assertions.
+3. **Citations:** Read `thesis/bibliography.bib` once, check all citation keys and author names.
+4. **Cross-references:** Read `thesis/build/main.aux` once, check all `\ref{}` labels resolve.
+5. **Literature claims:** Read papers in `papers/<key>/` only if specific claims need verification.
+
+### Red Flags
+
+- Claims without a data source (where did this number come from?)
+- Claims that are close but not exact (rounding errors, stale data)
+- Claims about "all" or "none" that might have exceptions
+- Missing `% [TODO: JÖRN -` or `% [GAP -` markers on unverifiable claims

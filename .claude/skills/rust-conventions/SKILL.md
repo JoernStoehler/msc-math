@@ -88,6 +88,12 @@ Rules:
 
 Empirically chosen constants must have their rationale documented in code comments on the constant definition itself. Include: why that value, what data point motivated it, known limitations, and what must be re-validated if changed.
 
+## Experiment Binary Conventions
+
+For `experiments/*.rs` binaries only:
+- **Library stability boundary:** only stable, validated code belongs in `crates/`. New variants and exploratory algorithms are self-contained in the experiment binary.
+- **Copy, don't modify:** if an experiment needs a variant of a library internal, copy the relevant code into the binary. Do not modify the library for experiment-specific behavior.
+
 ## Performance Claims
 
 Never state performance without benchmark. "~1ms" is a claim. "Benchmark shows 1.5-2.0ms for 5-16 facets" is measured.

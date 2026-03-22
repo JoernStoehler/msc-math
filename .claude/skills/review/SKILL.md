@@ -9,106 +9,79 @@ description: How to spawn and run review subagents. Each review subagent checks 
 
 Mandatory before presenting `.tex` deliverables to Jörn. Recommended for all deliverables.
 
+## Two verification workflows
+
+**Convention review** — check whether target state properties are met. Uses the `review` agent loading ONE convention skill. The conventions in the skill ARE the review specification.
+
+**Math proofreading** — scan for known error patterns (unargued claims, missing conditions, logical gaps). Uses the `math-review` agent, which has detection patterns inline. Different workflow, different agent.
+
 ## Principle: fix syntax before semantics
 
-Phase 1 (syntax/style) issues distract from phase 2 (content/correctness). Fix formatting, broken refs, and convention violations first. Then review semantics on clean files.
+Phase 1 (formatting/style) issues distract from phase 2 (content/correctness). Fix formatting first, then review semantics on clean files.
 
-## How to run a review
+## How to run reviews
 
-The review is **strictly sequential across phases**: all Phase 1 subagents run and their findings are fixed before any Phase 2 subagent is spawned. Within each phase, subagents run in parallel.
+Strictly sequential across phases: all Phase 1 subagents run and findings are fixed before any Phase 2 subagent is spawned. Within each phase, subagents run in parallel.
 
-1. Run `git diff main...HEAD --name-only` to identify changed files.
-2. Decide which review concerns apply (see concern list below).
-3. **Phase 1**: Spawn syntax/style subagents in parallel — one per concern per file group. Err towards running too many: agent time is free ($0/h), especially when parallelized and Jörn isn't waiting.
-4. **Fix** all Phase 1 findings before proceeding.
-5. **Phase 2**: Spawn content/correctness subagents in parallel on the cleaned files.
-6. Present merged report to Jörn.
+1. Identify changed files: `git diff main...HEAD --name-only`
+2. Spawn Phase 1 subagents (one per convention skill per file group)
+3. Fix Phase 1 findings
+4. Spawn Phase 2 subagents on cleaned files
+5. Present merged report to Jörn
 
-Do NOT run Phase 1 and Phase 2 subagents simultaneously. Phase 1 issues (broken formatting, wrong figure sizing, stale headers) distract Phase 2 reviewers from semantic content.
+## Which reviews to spawn
 
-## Review concerns
+### Phase 1 — Formatting and style (fix before phase 2)
 
-Each concern has a checklist reference doc in `references/` with detection rules, grep patterns, and verification procedures. The subagent reads the relevant checklist(s) and works through items sequentially.
+| Files | Convention skill | Notes |
+|-------|-----------------|-------|
+| `.tex` in thesis/ | `tex-format` | Also run `latexmk && ./check-build.sh` first |
+| `.rs` files | `rust-conventions` | |
+| `.py` files | `python-conventions` | |
+| Figure PNGs | Use `figure-review` agent | Specialized for visual inspection |
 
-### Phase 0 — Module sanity (run first if builds might be broken)
+### Phase 2 — Content and correctness (on clean files)
 
-**Module sanity** — builds, tests, pipeline consistency, data freshness. Checklist: `references/checklist-modules.md`.
+| Files | Agent | Convention skill | Notes |
+|-------|-------|-----------------|-------|
+| `.tex` with math | `math-review` | (patterns inline) | Opus model, ONE file per spawn |
+| `.tex` in thesis/ | `review` | `tex-content` | Correctness, citations, pedagogy |
+| `.rs` files | `review` | `rust-tests` | Test quality, math-code correspondence |
+| Experiment writeups | `review` | `experiment-conventions` | Facts vs data, interpretation quality |
 
-### Phase 1 — Syntax and style (fix before phase 2)
+Spawn one subagent per row. Multiple rows can apply to the same file — that's intentional (separate concerns, separate agents).
 
-**LaTeX style** — file headers, environments, comment conventions, figure/table inclusion, label format, build warnings, mechanical anti-patterns (AP4/AP5/AP7). Skills: `tex-format`, `tex-build`. Checklist: `references/checklist-tex-style.md`.
+## Spawning pattern
 
-**Rust style** — coding conventions, module structure, cross-ref format, magic number docs, coordinate convention. Skill: `rust-conventions`. Checklist: `references/checklist-rust-style.md`.
+```
+Agent(
+  subagent_type="review",
+  description="Review tex format",
+  run_in_background=true,
+  prompt="""
+    Load the tex-format skill.
+    Review these files: experiments/foo/math.tex
+    Report to: /tmp/review-tex-format.md
+    Phase 1: fix obvious violations directly, report what you fixed.
+  """
+)
+```
 
-**Python style** — script headers, paths, error messages, figure sizing, DPI, visual quality, colors, caption epistemology. Skill: `python-conventions`. Checklist: `references/checklist-python-style.md`.
-
-**Figure visual quality** — view each PNG with the Read tool, check for title collisions, label clipping, font readability at 5.4" width, legend overlap, layout balance, LaTeX rendering. Use the `figure-review` subagent (not the generic `review` subagent) — it is specialized for multimodal PNG inspection. Checklist: `references/checklist-python-figures.md`.
-
-**Notes style** — README structure, assumptions documented, experiment philosophy alignment. Covered in Part C of `references/checklist-experiment.md`.
-
-### Phase 2 — Semantics and content (on clean files)
-
-Phase 2 subagents read figures when verifying that the .tex description matches what the figure shows. This is figure-text consistency (semantic), distinct from Phase 1 visual quality (mechanical). Phase 2 subagents should read PNGs as needed — they don't need a separate figure-review subagent for this.
-
-**LaTeX math correctness** — proofs: gaps, unclear steps, mistakes, definition mismatches. Each proof one-by-one. Flag for Jörn's verification. Skill: `tex-content`. Checklist: `references/checklist-tex-math.md`.
-
-**LaTeX pedagogical quality** — audience fit, forward refs, emphasis proportional to importance, standard definitions, semantic anti-patterns (AP2/AP6/AP9/AP10). Skill: `tex-content`. Checklist: `references/checklist-tex-educational.md`.
-
-**LaTeX factual accuracy** — claims vs evidence: numbers vs data files, code refs vs actual code, citations vs bibliography.bib, figure descriptions vs PNGs. Checklist: `references/checklist-tex-facts.md`.
-
-**Rust math-code correctness + test quality** — doc comment formulas match code, invariant enforcement, test philosophy, coverage, input diversity. Skills: `rust-conventions`, `rust-tests`. Checklist: `references/checklist-rust-content.md`.
-
-**Experiment accuracy + interpretation** — reported facts vs JSONL/output data, figure descriptions vs PNGs, overreach, editorializing, causal claims from correlations, README quality. Skill: `experiment-conventions`. Checklist: `references/checklist-experiment.md`.
-
-## How to spawn reviews (main agent)
-
-Spawn the `review` subagent (defined in `.claude/agents/review.md`) with the Agent tool. It preloads all convention skills. Specify concern + files + report path in the prompt.
-
-See `references/how-to-spawn-reviews.md` for concrete examples and the spawning pattern.
-
-Spawn multiple instances in parallel with `run_in_background=true`. Each writes its report to a separate file. Agent teams (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`, already enabled) are an alternative for larger reviews where reviewers benefit from communicating with each other.
-
-## How review subagents must work
-
-Each subagent then follows this workflow:
-
-### Step 1: Read everything first
-Read all assigned files in full. Don't skim — read completely. Understanding context prevents false positives.
-
-### Step 2: Load the checklist
-Read the checklist reference doc for your concern (listed under "Review concerns" above). This contains the specific detection rules, grep patterns, and verification procedures. Use the task/todo tool to track items.
-
-### Step 3: Work through items ONE AT A TIME
-For each checklist item:
-1. Check against the file content already in context from Step 1 — do NOT re-read or re-grep the reviewed files
-2. Only use grep/read for **cross-file verification** (e.g., checking a label exists in `main.aux`, a citation key in `bibliography.bib`, a number against a JSONL file)
-3. Evaluate findings and append to the output report immediately
-
-Do NOT attempt to hold all items in working memory and write the report at the end. That produces 10% attention on 10 items instead of 100% attention on each item sequentially.
-
-### Step 4: Summarize
-After all items are processed, write a summary: total issues by severity, overall readiness, which sections are cleanest vs roughest.
+For math proofreading:
+```
+Agent(
+  subagent_type="math-review",
+  description="Proofread math",
+  run_in_background=true,
+  prompt="""
+    Proofread this file: experiments/foo/math.tex
+    Report to: /tmp/math-review.md
+  """
+)
+```
 
 ## Scope of agent review
 
-- Agents catch surface issues (undefined terms, missing steps, obvious errors). Jörn verifies mathematical correctness. Agents cannot provide Jörn-level verification.
-- Agents check test implementation quality (fixtures, naming, coverage of stated propositions). Agents cannot decide which propositions need testing — that's Jörn's domain.
-- Figure-review runs within Phase 1, parallel with other Phase 1 subagents.
-
-## Output format
-
-```
-## [Concern]: [Files reviewed]
-
-### Item 1: [checklist item]
-- Finding: [what was found]
-- Location: [file:line or rendered theorem number]
-- Severity: FIX / LIKELY ISSUE / FLAG FOR JÖRN
-- Suggested action: [concrete fix or question]
-
-### Item 2: ...
-
-## Summary
-- N issues found (X fix, Y likely, Z flags)
-- Readiness: [ready / needs fixes / needs Jörn attention]
-```
+- Agents catch surface issues and convention violations. Jörn verifies mathematical correctness.
+- Agents check test quality. Agents cannot decide which propositions need testing — that's Jörn's domain.
+- `figure-review` and `figure-fix` agents handle visual inspection and iteration.

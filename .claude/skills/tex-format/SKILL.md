@@ -24,7 +24,7 @@ Three levels, strictly ordered: **text > math > structure**. Only record the hig
 
 Only one marker per scope. When a higher level is approved, replace the lower marker. Scope must be explicit. Content outside any `% Jörn:` marker is unreviewed.
 
-**Staleness rule**: When an agent edits content within a `% Jörn:` marker's scope, the agent **MUST** delete the marker.
+**Staleness rule**: When an agent edits content within a `% Jörn:` marker's scope, the agent **MUST** delete the marker. Detection: if content within the marker's scope was edited after the marker's commit hash, the marker is stale.
 
 ### QC agent findings (`% QC:`)
 ```latex
@@ -61,6 +61,20 @@ Do NOT put review status in the header.
 - Use `\remark` and `\example` for context/intuition/illustrations
 - No prose paragraphs outside environments, except minimal connective text between environments
 - Calculations displayed as formulas, not described in English prose
+
+## Labels and Cross-References
+
+- All `\ref{}` labels must be defined (check `thesis/build/main.aux`).
+- No hardcoded theorem/section numbers in `.tex` source — always use `\ref{label}`.
+- Notation must match `correspondence.tex` exactly.
+
+## Anti-Patterns
+
+**AP4: Overwrought language.** Flag adjective clusters (2+ adjectives before a noun) and dramatic words (irrevocable, catastrophic, critical) unless they carry technical meaning.
+
+**AP5: Rust/CS notation in mathematical text.** Flag any `\texttt{...}` inside definition/lemma/theorem/remark environments. Programming terms belong in implementation sections, not mathematical statements.
+
+**AP7: Setup text outside the environment it belongs to.** For each lemma/theorem environment, check if it references notation defined only in the preceding paragraph. If so, flag — fold the setup into the environment.
 
 ## Figures and Tables
 
