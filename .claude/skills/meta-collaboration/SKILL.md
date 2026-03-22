@@ -1,5 +1,5 @@
 ---
-name: collaboration
+name: meta-collaboration
 description: "Agent collaboration patterns and session handoff. Load when planning multi-session work, writing handoff files, deciding between subagents vs teams vs deferred sessions, or when Jörn says to hand off work to another session."
 ---
 

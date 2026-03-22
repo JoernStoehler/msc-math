@@ -1,5 +1,5 @@
 ---
-name: post-mortem
+name: meta-post-mortem
 description: Run a session post-mortem to capture process failures and improvement opportunities. Use at end of session, when something went wrong, or to improve prompts.
 user-invocable: true
 ---
@@ -42,21 +42,21 @@ Good: "Add a 'verified by advisor' field to theorem environments"
 
 ## Process checks — report only items that apply
 
-6. **Agent splitting needed?** — Did any multi-responsibility agent fail to cover all its checks? Recommend splitting if so.
-7. **Fabrications slipped through?** — Did fabricated claims, wrong theorem names, or incorrect citations reach Jörn that subagent review should have caught?
-8. **Iterated in front of user?** — Did I run multiple fix/review cycles in conversation instead of using subagents offline?
-9. **False attribution?** — Did I attribute a mathematical result to a source that didn't actually state it?
-10. **Assumed Jörn read something?** — Did I act as if Jörn saw a question or information that he may not have read?
+1. **Agent splitting needed?** — Did any multi-responsibility agent fail to cover all its checks? Recommend splitting if so.
+2. **Fabrications slipped through?** — Did fabricated claims, wrong theorem names, or incorrect citations reach Jörn that subagent review should have caught?
+3. **Iterated in front of user?** — Did I run multiple fix/review cycles in conversation instead of delegating to subagents?
+4. **False attribution?** — Did I attribute a mathematical result to a source that didn't actually state it?
+5. **Assumed Jörn read something?** — Did I act as if Jörn saw a question or information that he may not have read?
 
 ## Generalize from issues
 
-For each friction point or mistake identified above: abstract the error class and check whether the same class of error exists elsewhere in the repo. This step is part of the postmortem, not deferred — once findings are written, the generalization may never happen.
+For each friction point or mistake identified above: abstract the error class and check whether the same class of error exists elsewhere in the repo. Do this step as part of the postmortem, not later — if deferred, the generalization rarely happens.
 
 ## Output
 
 Persist actionable findings so future agents benefit. For each finding, decide where it belongs:
 
-- **Repeatable behavioral lesson** (e.g., "get proofs right before reviewing") → memory entry (type: feedback)
+- **Repeatable behavioral lesson** (e.g., "ensure proof correctness before review") → memory entry (type: feedback)
 - **New convention or workflow change** → discuss with Jörn, then update CLAUDE.md or relevant skill
 - **Failure mode that explains a rule** → add to Decision Records in meta-documentation skill
 - **Nothing actionable** → don't persist, it's just a fact about the session
@@ -65,6 +65,6 @@ Don't persist everything — only findings that would change future agent behavi
 
 Additional follow-up actions:
 - Add TODO comments in relevant files for localized issues
-- Add to TASKS.md for issues needing more context
+- Add to TASKS.md for issues that need more context than a TODO comment provides
 - Update the plan file if session changed what's next
 - Flag any unverified mathematical claims introduced this session with GAP markers

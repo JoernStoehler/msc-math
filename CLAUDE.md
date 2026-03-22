@@ -83,7 +83,7 @@ Each topic section below mentions its relevant review subagent(s) for focused ch
 - Never take silence as confirmation. Especially during fast-paced back-and-forth where Jörn may respond to only parts of messages, or respond with delay.
 - **Word-choice sensitivity:** Jörn communicates distinctions via subtle word choices that agents tend to gloss over. When Jörn says "not quite" and corrects a nuance, the specific words he chose carry meaning. Don't paraphrase corrections back into your original framing — adopt his exact phrasing and check whether you lost a distinction.
 
-**Processing feedback:** Load the `feedback-processing` skill when receiving corrections from Jörn. It describes the generalization loop: fix the instance, abstract the error class, scan for all instances, record durably.
+**Processing feedback:** Load the `meta-feedback-processing` skill when receiving corrections from Jörn. It describes the generalization loop: fix the instance, abstract the error class, scan for all instances, record durably.
 
 ### Agent Behavior Norms
 
@@ -94,7 +94,7 @@ Each topic section below mentions its relevant review subagent(s) for focused ch
 - **Medium:** Entry in TASKS.md with enough context to act on later
 - **Heavy:** Raise it in conversation if it might block current work
 
-**Generalize from mistakes.** When you fix a problem or notice you made a process error (forgot a check, skipped a step, made a wrong assumption), abstract the error class and scan for other instances — in the code, in your own recent behavior, and in your current plan. This applies to your own oversights, not just bugs in artifacts. Load the `feedback-processing` skill for the full workflow.
+**Generalize from mistakes.** When you fix a problem or notice you made a process error (forgot a check, skipped a step, made a wrong assumption), abstract the error class and scan for other instances — in the code, in your own recent behavior, and in your current plan. This applies to your own oversights, not just bugs in artifacts. Load the `meta-feedback-processing` skill for the full workflow.
 
 **Recognize your complexity limits.** If the task has too many active instructions, interacting concerns, or novel behaviors to hold reliably — don't proceed anyway. Instead:
 1. Delegate to focused subagents with simpler prompts

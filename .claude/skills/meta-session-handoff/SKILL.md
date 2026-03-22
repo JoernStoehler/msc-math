@@ -1,5 +1,5 @@
 ---
-name: session-handoff
+name: meta-session-handoff
 description: End-of-session checklist. Persists decisions to files, updates task tracking, writes handoff files. Optional review subagent checks structural integrity (broken references, TASKS.md contradictions) but NOT content correctness or conversation completeness.
 user-invocable: true
 ---
@@ -32,7 +32,7 @@ Anything decided in conversation but not yet written to files will be lost.
 
 ## Step 3: Write handoff file (if work continues)
 
-If a future session will continue this work, write a handoff file to `handoffs/`. See the `collaboration` skill for the handoff file format (Context, Scope, Out of scope, Key files, Prior findings, Success criteria, Dependencies).
+If a future session will continue this work, write a handoff file to `handoffs/`. See the `meta-collaboration` skill for the handoff file format (Context, Scope, Out of scope, Key files, Prior findings, Success criteria, Dependencies).
 
 Key principles:
 - Pointers over summaries — point to files, don't describe them

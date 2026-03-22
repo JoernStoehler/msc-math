@@ -63,7 +63,7 @@
 - **dnd:** Primary artifact is PROGRESS.md (or TASKS.md — see target #6). Check that NPC/encounter/lore decisions made in conversation are written to campaign files. dnd already has a session-handoff skill but it has no subagent review step.
 - **pause-game:** Primary artifact is TASKS.md. Check that design decisions and card concepts discussed in conversation are written to design/ files. pause-game has no handoff workflow.
 
-**Opt-in review:** The subagent step adds latency. Make it opt-in for short sessions (e.g., `/session-handoff --review`).
+**Opt-in review:** The subagent step adds latency. Make it opt-in for short sessions (e.g., `/meta-session-handoff --review`).
 
 **Applies to:** All 3 projects.
 

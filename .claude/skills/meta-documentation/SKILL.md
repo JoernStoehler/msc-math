@@ -142,7 +142,7 @@ Keep agent definitions minimal. If you find yourself writing inline checklists o
 
 ## Cross-repo sync
 
-Hook scripts (`.claude/hooks/`), meta-skills (feedback-processing, collaboration, meta-documentation, session-handoff, post-mortem), and behavior norms share lineage across three repos: msc-math, dnd-claude-code, xrisk-pause-game. When improving any of these:
+Hook scripts (`.claude/hooks/`), meta-skills (meta-feedback-processing, meta-collaboration, meta-documentation, meta-session-handoff, meta-post-mortem), and behavior norms share lineage across three repos: msc-math, dnd-claude-code, xrisk-pause-game. When improving any of these:
 
 - Check whether the improvement applies to the other repos
 - Copy changes to keep shared sections word-for-word identical (enables mechanical diffing)
@@ -204,7 +204,7 @@ These are empirically observed failure modes that affect how you should design a
 **Responding to social signal instead of content.** When corrected, agents respond to the criticism ("You're right, I shouldn't have done that") instead of fixing the thing. Empty agreement wastes time. Design implications:
 - Post-correction workflow: fix first, acknowledge briefly, move on
 
-**Not generalizing from mistakes.** Agents fix the specific instance flagged by Jörn but don't abstract the error class or scan for other instances — in the code, in other files, or in their own recent behavior. Example: "forgot to run test XYZ" doesn't trigger "what else did I forget?" even though asking that question is well within agent capability. One specific manifestation: agents learn lessons abstractly but don't spontaneously apply them to their own current behavior (learned "keep shared files identical across repos" → then immediately made project-specific modifications; documented delegation failures → then immediately trusted subagent reports without verification). The `feedback-processing` skill addresses this but agents still under-apply it. Design implications:
+**Not generalizing from mistakes.** Agents fix the specific instance flagged by Jörn but don't abstract the error class or scan for other instances — in the code, in other files, or in their own recent behavior. Example: "forgot to run test XYZ" doesn't trigger "what else did I forget?" even though asking that question is well within agent capability. One specific manifestation: agents learn lessons abstractly but don't spontaneously apply them to their own current behavior (learned "keep shared files identical across repos" → then immediately made project-specific modifications; documented delegation failures → then immediately trusted subagent reports without verification). The `meta-feedback-processing` skill addresses this but agents still under-apply it. Design implications:
 - The generalization step must be part of the resolution workflow, not a follow-up
 - Review agents and postmortem skills should explicitly prompt for error-class abstraction
 
@@ -327,4 +327,4 @@ Empirical observations from ~5 months of use. Input to the optimization loop.
 
 ## Post-session reflection
 
-Use the `/post-mortem` skill. It covers: friction, unclear instructions, missing context, Jörn's time analysis, what worked, suggested changes, process checks, generalization, and persistence guidance.
+Use the `/meta-post-mortem` skill. It covers: friction, unclear instructions, missing context, Jörn's time analysis, what worked, suggested changes, process checks, generalization, and persistence guidance.
