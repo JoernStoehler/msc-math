@@ -193,7 +193,7 @@ And each consumer should name its data source:
 
 ## LICCA cluster offloading
 
-For computations exceeding 10 minutes (large sweeps, full dataset generation):
+For single computations exceeding 10 minutes per run (large sweeps, full dataset generation):
 
 1. Agent writes the Rust binary and a SLURM job script (from template)
 2. Agent presents both to Jörn with: what it computes, expected runtime, output path
