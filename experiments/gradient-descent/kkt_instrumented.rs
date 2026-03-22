@@ -11,7 +11,7 @@
 
 use nalgebra::{DMatrix, DVector, Vector4};
 // TODO: Polytope4D will be re-exported from top-level in wave 4 (subagent #16)
-use symplectic::algorithms::facet_adjacency::is_adjacent_cycle;
+use symplectic::algorithms::facet_adjacency::{build_transition_matrix, is_feasible_cycle};
 use symplectic::kkt::saddle_point_solver::{EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
 use symplectic::geom::polytope::Polytope4D;
 
@@ -324,42 +324,6 @@ pub struct InstrumentedResult {
 // Adjacency infrastructure
 // ============================================================================
 
-// TODO: Replace with `use symplectic::algorithms::facet_adjacency::build_adjacency_matrix`.
-// Local copy differs from library: uses f64 vertex incidence check (EPS_FACET_INCIDENCE)
-// instead of the library's exact rational `polytope.adjacency()`.
-pub fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
-    let f = polytope.facet_count();
-    let normals = polytope.normals_f64();
-    let heights = polytope.heights_f64();
-    let mut adj = vec![vec![false; f]; f];
-    for v in polytope.vertices_f64() {
-        let incident: Vec<usize> = (0..f)
-            .filter(|&i| (normals[i].dot(v) - heights[i]).abs() < EPS_FACET_INCIDENCE)
-            .collect();
-        for &i in &incident {
-            for &j in &incident {
-                adj[i][j] = true;
-            }
-        }
-    }
-    adj
-}
-
-// TODO: Replace with `use symplectic::algorithms::facet_adjacency::build_directed_adjacency_matrix`.
-// Local copy differs from library: uses f64 `omega0_local() >= 0.0` comparison
-// instead of the library's exact rational `polytope.omega_signs()`.
-pub fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
-    let f = polytope.facet_count();
-    let normals = polytope.normals_f64();
-    let vertex_adj = build_adjacency_matrix(polytope);
-    let mut adj = vec![vec![false; f]; f];
-    for i in 0..f {
-        for j in 0..f {
-            adj[i][j] = vertex_adj[i][j] && omega0_local(&normals[i], &normals[j]) >= 0.0;
-        }
-    }
-    adj
-}
 
 // ============================================================================
 // Combinatorial enumeration (HK2017 style)
@@ -466,14 +430,14 @@ impl Block {
 }
 
 /// Enumerate all valid blocks for a set of facets.
-pub fn enumerate_blocks(facet_indices: &[usize], adj: &[Vec<bool>]) -> Vec<Block> {
+pub fn enumerate_blocks(facet_indices: &[usize], adj: &DMatrix<bool>) -> Vec<Block> {
     let mut blocks = Vec::new();
     for &i in facet_indices {
         blocks.push(Block::Single(i));
     }
     for (a, &i) in facet_indices.iter().enumerate() {
         for &j in &facet_indices[a + 1..] {
-            if adj[i][j] {
+            if adj[(i, j)] {
                 blocks.push(Block::Pair(i, j));
                 blocks.push(Block::Pair(j, i));
             }
@@ -636,7 +600,7 @@ pub fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedRe
     let f = polytope.facet_count();
     let normals = polytope.normals_f64();
     let heights = polytope.heights_f64();
-    let adj = build_directed_adjacency_matrix(polytope);
+    let adj = build_transition_matrix(polytope);
 
     let mut orbits: Vec<ValidOrbit> = Vec::new();
     let mut best_uncertain_action: Option<f64> = None;
@@ -645,7 +609,7 @@ pub fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedRe
     for m in 2..=f {
         for subset in combinations(f, m) {
             for_each_cyclic_permutation(&subset, &mut |perm| {
-                if !is_adjacent_cycle(perm, &adj) {
+                if !is_feasible_cycle(perm, &adj) {
                     return;
                 }
                 iterations += 1;
@@ -700,13 +664,13 @@ pub fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedRe
 /// billiard algorithm, but returns full KKT data (ν, λ) for gradient computation.
 pub fn billiard_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult> {
     let classification = classify_facets(polytope)?;
-    let adj = build_adjacency_matrix(polytope); // undirected: for block building (same-type pairs)
-    let directed_adj = build_directed_adjacency_matrix(polytope); // directed: for cycle pruning (ω₀ condition)
+    let vertex_adj = polytope.vertex_adjacency(); // undirected: for block building (same-type pairs)
+    let directed_adj = build_transition_matrix(polytope); // directed: for cycle pruning (ω₀ condition)
     let normals = polytope.normals_f64();
     let heights = polytope.heights_f64();
 
-    let q_blocks = enumerate_blocks(&classification.q_indices, &adj);
-    let p_blocks = enumerate_blocks(&classification.p_indices, &adj);
+    let q_blocks = enumerate_blocks(&classification.q_indices, vertex_adj);
+    let p_blocks = enumerate_blocks(&classification.p_indices, vertex_adj);
 
     let mut orbits: Vec<ValidOrbit> = Vec::new();
     let mut best_uncertain_action: Option<f64> = None;
@@ -716,7 +680,7 @@ pub fn billiard_capacity_instrumented(polytope: &Polytope4D) -> Option<Instrumen
         enumerate_k_bounce_sigmas(k, &q_blocks, &p_blocks, |sigma| {
             // Directed adjacency pruning: skip cycles where consecutive facets
             // violate the ω₀ transition feasibility condition.
-            if !is_adjacent_cycle(sigma, &directed_adj) {
+            if !is_feasible_cycle(sigma, &directed_adj) {
                 return;
             }
             iterations += 1;

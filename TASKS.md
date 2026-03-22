@@ -21,7 +21,7 @@ What's settled vs placeholder across the project's major components.
 
 | Component | Status | Notes |
 |-----------|--------|-------|
-| Rust library (crates/) | **Draft** | 73 files, 317 tests pass (26 ignored), Clippy clean. Tests migrated to inline modules. Cleanup tasks (§2), solver refactors (§6), and tube algorithm (§7) still ahead |
+| Rust library (crates/) | **Draft** | 73 files, 317 tests pass (26 ignored), Clippy clean. Tests migrated to inline modules. Cleanup (§2) done, solver refactors (§6) and tube algorithm (§7) still ahead |
 | Migration scaffold | **Settled** | Merged to main. Complete. |
 | Test data pipeline | **Draft** | Fixture infrastructure exists (capacity_dataset.json, LazyLock loading). Design in §1. |
 | Experiment data | **Settled** | All 18 experiments have data and produce results |
@@ -58,9 +58,9 @@ What's settled vs placeholder across the project's major components.
    - Notation: KKT multipliers (λ,ν) vs (μ,ξ), sign flip, factor-of-2
    - Algorithm boxes missing steps the code implements (accumulator, adjacency pruning)
    - Tube: rotation increment is heuristic, not CH2021 Lem.2.21 implementation
-3. ~~**18 cross-ref labels**~~ — RESOLVED (2026-03-22). All code labels reference colocated math.tex files per convention. 3 labels in `kkt/saddle_point_solver.rs` have redundant `(thesis)` markers to remove. 🟢 Trivial cleanup.
+3. ~~**18 cross-ref labels**~~ — RESOLVED (2026-03-22). All code labels reference colocated math.tex files per convention. ~~3 redundant `(thesis)` markers~~ removed in §2.
 4. **qp_assembly dual-vertex formulation** — unverified mathematical equivalence with normals/heights formulation (has explicit TODO)
-5. **Experiment adjacency functions** — 6 experiments (not 4) have f64 local copies of the same algorithm as the library (same logic, different numeric type — not different algorithms). Should be converted to use library's exact rational version. 🟢 Agent can do.
+5. ~~**Experiment adjacency functions**~~ — DONE (§2 item 5). 6 experiments converted to library API.
 6. **KktResult→Solution bridge** — `margin = min(beta)` + `classify_margin()`. Is this the right verdict mapping?
 
 ### Remaining gate checks (need CPU)
@@ -125,15 +125,14 @@ Previously planned for remaining experiments:
 
 ---
 
-## 2. Migration cleanup (small fixes)
+## 2. Migration cleanup (small fixes) — DONE (2026-03-22)
 
-🟢 Agent can do autonomously. ~1 hour.
-
-1. **"orbit" → "candidate" terminology** in `capacity_accumulator.rs` (4 locations) and `saddle_point_solver.rs`. Per MEMORY.md: not orbits until closedness established.
-2. **Duplicate EPS constants**: `projection_solver.rs` and `saddle_point_solver.rs` define same thresholds independently. Consolidate into `kkt/mod.rs`.
-3. ~~**`Vec<Vec<bool>>` adjacency**~~ — DONE (2026-03-22). Library uses `DMatrix<bool>` throughout. Renamed: `adjacency()` → `vertex_adjacency()`, `build_directed_adjacency_matrix` → `build_transition_matrix`, `is_adjacent_cycle` → `is_feasible_cycle`. Deleted `build_adjacency_matrix` (was a pointless copy of `vertex_adjacency()`).
-4. **`build_augmented_system` allocation**: creates fresh `Vec` per call vs old pre-allocated slices. Minor perf regression.
-5. **Experiment f64 adjacency copies** — 6 experiments (hko-neighborhood, gradient-descent, omega-obstacle, sys-optimization, ablation, crosspolytope) have local f64 reimplementations of vertex adjacency + transition feasibility. Same algorithm as library, different numeric type. Should be converted to use `polytope.vertex_adjacency()` and `build_transition_matrix()`. ~12 function deletions + import changes.
+1. ~~**"orbit" → "candidate" terminology**~~ — Already done during migration. No problematic uses remain.
+2. ~~**Duplicate EPS constants**~~ — DONE. `EPS_EIGEN_FLOOR` consolidated to `kkt/mod.rs`, imported by both solvers. `EPS_EIGEN_THRESHOLD` / `EIGEN_CONDITION_TAU` kept separate (different matrix structures, documented why).
+3. ~~**`Vec<Vec<bool>>` adjacency**~~ — DONE (2026-03-22, commit f073e13).
+4. ~~**`build_augmented_system` allocation**~~ — Dropped. Speculative perf claim without profiling. O(m) allocation is negligible vs O(m³) eigendecomposition.
+5. ~~**Experiment f64 adjacency copies**~~ — DONE. 6 experiments converted to use `polytope.vertex_adjacency()`, `build_transition_matrix()`, `is_feasible_cycle()`. ~11 local functions deleted, ~185 lines removed. ablation's specialized A3 variants kept.
+6. ~~**Redundant `(thesis)` markers**~~ — DONE. 5 `(thesis)` suffixes removed from `saddle_point_solver.rs` label references (now all labels reference colocated math.tex per convention).
 
 ---
 

@@ -25,6 +25,7 @@
 use crate::geom::polytope::Polytope4D;
 use crate::geom::symplectic_form::omega0;
 use super::qp_assembly::build_augmented_system;
+use super::EPS_EIGEN_FLOOR;
 use nalgebra::{DMatrix, DVector, Vector4};
 
 // ── Public constants ──
@@ -61,18 +62,6 @@ pub const EPS_BETA_POSITIVE: f64 = 1e-12;
 pub const EPS_Q_POSITIVE: f64 = 1e-15;
 
 // ── Internal constants ──
-
-/// Absolute floor for eigenvalue magnitude. If the largest eigenvalue is below
-/// this, the entire matrix is treated as numerically zero (early return).
-///
-/// **Why 1e-12:** The KKT matrix entries are O(1). A largest eigenvalue below
-/// 1e-12 means the matrix is numerically zero (all eigenvalues in machine-noise
-/// range). The relative rank detection is handled by EIGEN_CONDITION_TAU; this
-/// absolute floor guards against the degenerate case before any ratio is computed.
-/// Making it 10x larger (1e-11) risks discarding matrices that are genuinely
-/// non-zero but small; 10x smaller (1e-13) risks attempting rank detection on
-/// a pure-noise matrix.
-const EPS_EIGEN_FLOOR: f64 = 1e-12;
 
 /// Condition-number threshold for eigenvalue rank detection.
 ///
@@ -134,16 +123,16 @@ pub(crate) struct EigenInfo {
 /// Contains the solution beta, residual-corrected Q value with error bound,
 /// and inertia of the KKT matrix M.
 ///
-/// See [lem:q-error-bound] (thesis): |Q(beta_0) - q_corrected| <= q_error_bound.
+/// See [lem:q-error-bound]: |Q(beta_0) - q_corrected| <= q_error_bound.
 #[derive(Clone, Debug)]
 pub struct KktResult {
     /// Optimal beta vector (all components > -EPS_BETA_POSITIVE).
     pub beta: Vec<f64>,
     /// Residual-corrected Q value: Q_tilde = Q(beta_hat) + (r2^T mu_hat + r3 * xi_hat).
-    /// See [eq:q-corrected] (thesis).
+    /// See [eq:q-corrected].
     pub q_corrected: f64,
     /// Error bound E on Q_tilde: |Q(beta_0) - Q_tilde| <= E.
-    /// See [eq:q-error-bound] (thesis).
+    /// See [eq:q-error-bound].
     #[allow(dead_code)]
     pub q_error_bound: f64,
     /// Inertia of M: number of positive eigenvalues.
@@ -444,12 +433,12 @@ fn finalize_result(
     let q_corrected = q_raw + q_correction;
 
     // Tight bound: E = (9/2) ||r||^2 / |lambda_min|.
-    // 4.5 = 9/2 comes from [lem:q-error-bound] (thesis): the KKT block structure
+    // 4.5 = 9/2 comes from [lem:q-error-bound]: the KKT block structure
     // identity delta_beta^T H delta_beta = delta_x^T M delta_x - 2 r2^T delta_mu
     // - 2 r3 delta_xi removes the ||H||/|lambda_min|^2 term, leaving only the
     // quadratic term (9/2) ||r||^2 / |lambda_min|. The factor 9 comes from the
     // Cauchy-Schwarz bound on the two-variable quadratic form in the residual.
-    // See [lem:q-error-bound] (thesis).
+    // See [lem:q-error-bound].
     let r_sq = residual_norm * residual_norm;
     let q_error_bound = 4.5 * r_sq / abs_lambda_min;
 

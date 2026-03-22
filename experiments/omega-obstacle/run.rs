@@ -27,7 +27,7 @@ use std::io::{BufWriter, Write};
 use std::time::Instant;
 // TODO: These will be re-exported from top-level `symplectic::` in wave 4 (subagent #16).
 // Using full module paths until then.
-use symplectic::algorithms::facet_adjacency::is_adjacent_cycle;
+use symplectic::algorithms::facet_adjacency::{build_transition_matrix, is_feasible_cycle};
 use symplectic::geom::known_polytopes;
 use symplectic::geom::symplectic_form::omega0;
 use symplectic::geom::volume::volume;
@@ -401,42 +401,6 @@ fn heap_perms_buf(
     }
 }
 
-// TODO: Replace with `use symplectic::algorithms::facet_adjacency::build_adjacency_matrix`.
-// Local copy differs from library: uses f64 vertex incidence check (EPS_FACET_INCIDENCE)
-// instead of the library's exact rational `polytope.adjacency()`.
-fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
-    let f = polytope.facet_count();
-    let normals = polytope.normals_f64();
-    let heights = polytope.heights_f64();
-    let mut adj = vec![vec![false; f]; f];
-    for v in polytope.vertices_f64() {
-        let incident: Vec<usize> = (0..f)
-            .filter(|&i| (normals[i].dot(v) - heights[i]).abs() < EPS_FACET_INCIDENCE)
-            .collect();
-        for &i in &incident {
-            for &j in &incident {
-                adj[i][j] = true;
-            }
-        }
-    }
-    adj
-}
-
-// TODO: Replace with `use symplectic::algorithms::facet_adjacency::build_directed_adjacency_matrix`.
-// Local copy differs from library: uses f64 `omega0() >= 0.0` comparison
-// instead of the library's exact rational `polytope.omega_signs()`.
-fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
-    let f = polytope.facet_count();
-    let normals = polytope.normals_f64();
-    let vertex_adj = build_adjacency_matrix(polytope);
-    let mut adj = vec![vec![false; f]; f];
-    for i in 0..f {
-        for j in 0..f {
-            adj[i][j] = vertex_adj[i][j] && omega0(&normals[i], &normals[j]) >= 0.0;
-        }
-    }
-    adj
-}
 
 // ============================================================================
 // Instrumented HK2017 — returns ValidOrbit with β*, λ*, ν*, Q*
@@ -465,7 +429,7 @@ fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult
     let f = polytope.facet_count();
     let normals = polytope.normals_f64();
     let heights = polytope.heights_f64();
-    let adj = build_directed_adjacency_matrix(polytope);
+    let adj = build_transition_matrix(polytope);
 
     let mut orbits: Vec<ValidOrbit> = Vec::new();
     let mut iterations: u64 = 0;
@@ -473,7 +437,7 @@ fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult
     for m in 2..=f {
         for subset in combinations(f, m) {
             for_each_cyclic_permutation(&subset, &mut |perm| {
-                if !is_adjacent_cycle(perm, &adj) {
+                if !is_feasible_cycle(perm, &adj) {
                     return;
                 }
                 iterations += 1;

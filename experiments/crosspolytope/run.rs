@@ -27,11 +27,11 @@ use std::fs::File;
 use std::io::{BufReader, BufWriter, Write};
 use std::path::PathBuf;
 use std::time::Instant;
+use symplectic::algorithms::facet_adjacency::build_transition_matrix;
 use symplectic::geom::known_polytopes;
 // TODO: These will be re-exported from top-level `symplectic::` in wave 4 (subagent #16).
 use symplectic::geom::symplectic_form::omega0;
 use symplectic::geom::volume::volume;
-use symplectic::geom::polytope::Polytope4D;
 
 // ── Constants (copied from crates/src/kkt.rs and crates/src/constants.rs) ───
 
@@ -40,7 +40,6 @@ const EPS_Q_POSITIVE: f64 = 1e-15;
 const EPS_SVD_FLOOR: f64 = 1e-12;
 const SVD_CONDITION_TAU: f64 = 1e-3;
 const EPS_KKT_RESIDUAL: f64 = 1e-6;
-const EPS_FACET_INCIDENCE: f64 = 1e-8;
 
 /// Maximum subset size to search. The full crosspolytope has F=16, so m ranges
 /// from 2 to 16. Subset sizes m=13..16 have very large permutation counts
@@ -316,39 +315,6 @@ fn combinations_rec(
     }
 }
 
-// ── Adjacency ───────────────────────────────────────────────────────────────
-
-fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
-    let f = polytope.facet_count();
-    let normals = polytope.normals_f64();
-    let heights = polytope.heights_f64();
-    let mut adj = vec![vec![false; f]; f];
-    for v in polytope.vertices_f64() {
-        let incident: Vec<usize> = (0..f)
-            .filter(|&i| (normals[i].dot(v) - heights[i]).abs() < EPS_FACET_INCIDENCE)
-            .collect();
-        for &i in &incident {
-            for &j in &incident {
-                adj[i][j] = true;
-            }
-        }
-    }
-    adj
-}
-
-fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
-    let f = polytope.facet_count();
-    let normals = polytope.normals_f64();
-    let vertex_adj = build_adjacency_matrix(polytope);
-    let mut adj = vec![vec![false; f]; f];
-    for i in 0..f {
-        for j in 0..f {
-            adj[i][j] = vertex_adj[i][j] && omega0(&normals[i], &normals[j]) >= 0.0;
-        }
-    }
-    adj
-}
-
 // ── Backtracking permutation search ─────────────────────────────────────────
 //
 // Instead of generating all (m-1)! cyclic permutations and filtering by adjacency,
@@ -358,7 +324,7 @@ fn build_directed_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
 
 fn for_each_adjacent_cyclic_permutation(
     elements: &[usize],
-    adj: &[Vec<bool>],
+    adj: &DMatrix<bool>,
     callback: &mut impl FnMut(&[usize]),
 ) {
     let m = elements.len();
@@ -382,7 +348,7 @@ fn for_each_adjacent_cyclic_permutation(
 fn dfs_adjacent(
     candidates: &[usize],
     used: &mut [bool],
-    adj: &[Vec<bool>],
+    adj: &DMatrix<bool>,
     first: usize,
     perm: &mut Vec<usize>,
     total: usize,
@@ -392,7 +358,7 @@ fn dfs_adjacent(
 
     if perm.len() == total {
         // Check closing edge: last → first
-        if adj[prev][first] {
+        if adj[(prev, first)] {
             callback(perm);
         }
         return;
@@ -402,7 +368,7 @@ fn dfs_adjacent(
         if used[i] {
             continue;
         }
-        if !adj[prev][elem] {
+        if !adj[(prev, elem)] {
             continue; // Prune: no directed edge prev → elem
         }
         used[i] = true;
@@ -619,9 +585,9 @@ fn main() {
     }
 
     // 4. Directed adjacency matrix
-    let adj = build_directed_adjacency_matrix(polytope);
+    let adj = build_transition_matrix(polytope);
     let avg_out_degree: f64 = (0..f)
-        .map(|i| (0..f).filter(|&j| adj[i][j] && i != j).count() as f64)
+        .map(|i| (0..f).filter(|&j| adj[(i, j)] && i != j).count() as f64)
         .sum::<f64>()
         / f as f64;
     println!("\nDirected adjacency: avg out-degree = {avg_out_degree:.1} (of {} possible)", f - 1);

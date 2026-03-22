@@ -24,7 +24,7 @@
 
 use super::constraint_solver;
 use super::beta_feasibility;
-use super::{classify_margin, QP, Solution, Verdict};
+use super::{classify_margin, EPS_EIGEN_FLOOR, QP, Solution, Verdict};
 use nalgebra::{DMatrix, DVector};
 
 /// Eigenvalue threshold for the reduced Hessian H'.
@@ -43,14 +43,6 @@ use nalgebra::{DMatrix, DVector};
 /// so they may need independent tuning in the future. Kept separate to allow
 /// independent adjustment.
 const EPS_EIGEN_THRESHOLD: f64 = 1e-3;
-
-/// Absolute floor: if max|lambda| of H' is below this, the entire reduced Hessian
-/// is numerically zero. Q = 0 along all null-space directions.
-///
-/// Same value as EPS_EIGEN_FLOOR in saddle_point_solver.rs for the same reason:
-/// matrix entries are O(1), so eigenvalues below 1e-12 are in the machine-noise
-/// range. See saddle_point_solver.rs::EPS_EIGEN_FLOOR for full rationale.
-const EPS_EIGEN_FLOOR: f64 = 1e-12;
 
 /// Solve the QP via constraint projection.
 ///

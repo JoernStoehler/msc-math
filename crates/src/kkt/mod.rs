@@ -106,6 +106,20 @@ const EPS_MARGIN_TRUE: f64 = 1e-9;
 /// separated from the noise floor (1e-12) by the same factor.
 const EPS_MARGIN_FALSE: f64 = 1e-9;
 
+// ── Shared numerical constants ──
+
+/// Absolute floor for eigenvalue magnitude. If the largest eigenvalue of
+/// a matrix is below this, the matrix is treated as numerically zero.
+///
+/// **Why 1e-12:** KKT and reduced-Hessian matrix entries are O(1). Eigenvalues
+/// below 1e-12 are in the machine-noise range (machine epsilon ~1e-16, plus
+/// accumulation from O(m) operations). Used by both `saddle_point_solver` (for
+/// the augmented (m+5)x(m+5) matrix) and `projection_solver` (for the kxk
+/// reduced Hessian H'). Despite different matrix structures, the absolute floor
+/// is the same: it guards against attempting rank detection on a pure-noise
+/// matrix, and the O(1) entry-scale argument applies to both.
+pub(crate) const EPS_EIGEN_FLOOR: f64 = 1e-12;
+
 // ── Utility functions ──
 
 /// Compute Q = (1/2) beta^T H beta from pre-assembled H and beta.

@@ -395,24 +395,13 @@ fn heap_perms_buf(
     }
 }
 
-/// Build undirected facet adjacency matrix (vertex-sharing).
-/// Copied from crates/src/algorithms/hk2017/mod.rs:162-182
-fn build_adjacency_matrix(polytope: &Polytope4D) -> Vec<Vec<bool>> {
-    let f = polytope.facet_count();
-    let normals = polytope.normals_f64();
-    let heights = polytope.heights_f64();
-    let mut adj = vec![vec![false; f]; f];
-    for v in polytope.vertices_f64() {
-        let incident: Vec<usize> = (0..f)
-            .filter(|&i| (normals[i].dot(v) - heights[i]).abs() < EPS_FACET_INCIDENCE)
-            .collect();
-        for &i in &incident {
-            for &j in &incident {
-                adj[i][j] = true;
-            }
-        }
-    }
-    adj
+/// Convert a DMatrix<bool> to Vec<Vec<bool>> for use with ablation-specific
+/// adjacency infrastructure (is_adjacent_cycle, build_a3_adjacency, etc.).
+fn dmatrix_to_vec(adj: &DMatrix<bool>) -> Vec<Vec<bool>> {
+    let f = adj.nrows();
+    (0..f)
+        .map(|i| (0..f).map(|j| adj[(i, j)]).collect())
+        .collect()
 }
 
 /// Check if a cyclic permutation forms an adjacent cycle in the given graph.
@@ -439,7 +428,7 @@ fn is_adjacent_cycle(perm: &[usize], adj: &[Vec<bool>]) -> bool {
 /// Build directed adjacency for positive Reeb direction.
 /// Edge i→j allowed iff vertex-adjacent AND ω₀(n_i, n_j) ≥ -EPS.
 fn build_directed_adjacency(
-    vertex_adj: &[Vec<bool>],
+    vertex_adj: &DMatrix<bool>,
     normals: &[Vector4<f64>],
 ) -> Vec<Vec<bool>> {
     let f = normals.len();
@@ -449,7 +438,7 @@ fn build_directed_adjacency(
             if i == j {
                 continue;
             }
-            if vertex_adj[i][j] {
+            if vertex_adj[(i, j)] {
                 dir_adj[i][j] = omega0(&normals[i], &normals[j]) >= -EPS_DIRECTED;
             }
         }
@@ -540,15 +529,15 @@ fn ehz_capacity_unpruned_with(
 /// which was promoted to A2-level pruning. Uses `solve_kkt_full` for apples-to-apples
 /// comparison with A2 and A3.
 fn ehz_capacity_unpruned_a1(polytope: &Polytope4D) -> Option<EhzResult> {
-    let vertex_adj = build_adjacency_matrix(polytope);
+    let vertex_adj = dmatrix_to_vec(polytope.vertex_adjacency());
     ehz_capacity_unpruned_with(polytope, &vertex_adj, solve_kkt_full)
 }
 
 /// A2: directed ω₀ adjacency + standard LU/SVD solver.
 fn ehz_capacity_unpruned_a2(polytope: &Polytope4D) -> Option<EhzResult> {
-    let vertex_adj = build_adjacency_matrix(polytope);
+    let vertex_adj = polytope.vertex_adjacency();
     let normals = polytope.normals_f64();
-    let dir_adj = build_directed_adjacency(&vertex_adj, &normals);
+    let dir_adj = build_directed_adjacency(vertex_adj, &normals);
     ehz_capacity_unpruned_with(polytope, &dir_adj, solve_kkt_full)
 }
 
@@ -737,10 +726,10 @@ fn build_a3_adjacency(
 
 /// A3: full Reeb-flow feasibility + standard LU/SVD solver.
 fn ehz_capacity_unpruned_a3(polytope: &Polytope4D) -> Option<EhzResult> {
-    let vertex_adj = build_adjacency_matrix(polytope);
+    let vertex_adj = polytope.vertex_adjacency();
     let normals = polytope.normals_f64();
     let heights = polytope.heights_f64();
-    let a2_adj = build_directed_adjacency(&vertex_adj, &normals);
+    let a2_adj = build_directed_adjacency(vertex_adj, &normals);
     let a3_adj = build_a3_adjacency(&a2_adj, &normals, &heights);
     ehz_capacity_unpruned_with(polytope, &a3_adj, solve_kkt_full)
 }
