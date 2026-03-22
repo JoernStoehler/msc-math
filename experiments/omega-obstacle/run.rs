@@ -262,10 +262,10 @@ fn process_polytope(
 
     let time_ms = t0.elapsed().as_secs_f64() * 1000.0;
 
-    // Retrieve KKT multipliers for the best orbit via solve_kkt_for
+    // Retrieve full KKT solution for the best orbit (beta, mu, xi)
     let best_perm = &ehz_result.result.best_permutation;
-    let best_beta = &ehz_result.result.best_beta;
     let kkt_result = solve_kkt_for(polytope, best_perm)?;
+    let best_beta = &kkt_result.beta;
 
     // Phase A: omega features
     let skeleton = Skeleton::compute(polytope);

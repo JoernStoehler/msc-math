@@ -8,7 +8,7 @@
 //! Given the optimal orbit (S, σ) with solution (β, Q, μ, ξ), the action
 //! A = 1/(2Q) has derivatives:
 //!
-//! - ∂A/∂h_k = ξ · β_{i₀} / (2Q²)  where k = σ(i₀)
+//! - ∂A/∂h_k = −ξ · β_{i₀} / (2Q²)  where k = σ(i₀)
 //! - ∂A/∂n_k = −∂Q*/∂n_k / (2Q²),  projected to T_{n_k}S³
 //!
 //! **Sign convention:** Uses the symmetric KKT convention (Hβ + Nμ + ηξ = 0)

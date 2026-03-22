@@ -5,8 +5,8 @@
 //! preservation (Phase 2) and iterates to convergence (Phase 3).
 //!
 //! Uses library KKT solver, derivative functions, and facet volume helpers.
-//! Experiment-specific code: instrumented HK2017 (collects ALL valid orbits),
-//! sensitivity analysis, gradient iteration, step bounds, and validity testing.
+//! Experiment-specific code: sensitivity analysis, gradient iteration,
+//! step bounds, and validity testing.
 //!
 //! Architecture:
 //! 1. `cargo run --bin sys_optimization --release` generates datasets
