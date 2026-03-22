@@ -74,19 +74,19 @@ Every individual test MUST have at least a doc comment stating the mathematical 
 
 | Suite | Command | When to run |
 |-------|---------|-------------|
-| **Default** | `cargo test --lib` | Every iteration |
+| **Default** | `cargo test --release --lib` | Every iteration |
 | Regenerate capacity fixture | `cargo test --release generate_capacity_fixtures -- --ignored` | After changes to `ehz_capacity()` |
 | Expensive capacity tests | `cargo test --release -- --ignored` | After capacity algorithm changes |
-| All ignored tests | `cargo test -- --ignored` | Full validation |
+| All ignored tests | `cargo test --release -- --ignored` | Full validation |
 
-Target: default suite <3 min single-threaded. Individual default tests must each complete in <5s.
+Target: default suite <5s wall time in release mode. The crate's own code is 10-40× faster in release; all `debug_assert!` invariants have been promoted to `assert!` so release mode loses no safety checks.
 
 ## Proptest Parameters
 
 Proptest parameters must be calibrated for the time budget:
 - Too few cases: the property is under-tested and bugs can slip through.
 - Too many cases: the test exceeds the 5s-per-test budget and slows the default suite.
-- When setting `cases`, verify the test runs in <5s in debug mode on the target machine before committing.
+- When setting `cases`, verify the test runs in <1s in release mode on the target machine before committing.
 
 ## Math-Code Correspondence (for test design)
 

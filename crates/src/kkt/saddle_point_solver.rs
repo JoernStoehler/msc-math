@@ -324,7 +324,7 @@ fn try_pseudoinverse_with_threshold(
         find_positive_beta_nd(&beta0, &null_beta)
     };
 
-    // Save beta0 for the Q constancy debug_assert after null-space shift.
+    // Save beta0 for the Q constancy check after null-space shift.
     let beta0_ref = beta0.clone();
 
     // Use null-space result if found, else fall back to beta0 if above -EPS.
@@ -343,7 +343,8 @@ fn try_pseudoinverse_with_threshold(
     // directions preserve constraints, so the KKT objective is invariant.
     // Verify this numerically — any disagreement indicates a bug in the
     // null-space extraction or the shift computation.
-    #[cfg(debug_assertions)]
+    //
+    // Cost: O(m²) where m ≤ ~10, negligible vs O(m³) eigendecomposition.
     {
         let mut q_final = 0.0_f64;
         let mut q_initial = 0.0_f64;
@@ -366,7 +367,7 @@ fn try_pseudoinverse_with_threshold(
         // where null-space shift changes Q by ~6e-8 (relative ~0.01%).
         let q_scale = q_initial.abs().max(q_final.abs());
         if q_scale > 1e-3 {
-            debug_assert!(
+            assert!(
                 (q_final - q_initial).abs() < 1e-6 * q_scale,
                 "Q changed along null space: Q(beta0)={q_initial}, Q(beta_final)={q_final}"
             );

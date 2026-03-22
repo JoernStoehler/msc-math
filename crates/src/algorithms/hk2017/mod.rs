@@ -238,7 +238,8 @@ fn kkt_result_to_solution(result: KktResult) -> Solution {
 // Reference: [def:ehz-capacity], [thm:hko-counterexample]
 //
 // Strategy: smoke tests (direct computation, small polytopes) + fixture-based
-// (pre-computed dataset for comprehensive coverage).
+// (scalar-only dataset for regression checks). Catalog determinism and fixture
+// staleness checks are #[ignore] (run during fixture regeneration only).
 #[cfg(test)]
 mod tests_literature {
     use super::*;
@@ -248,16 +249,16 @@ mod tests_literature {
     use std::sync::LazyLock;
 
     use super::generate_capacity_fixtures::{
-        load_test_dataset, literature_values, polytope_catalog, TestPolytope, FIXTURE_PATH,
+        load_dataset_entries, literature_values, polytope_catalog, DatasetEntry, FIXTURE_PATH,
     };
 
-    /// Shared dataset loaded from cached fixture (fast, <1ms).
+    /// Shared dataset loaded from cached fixture (scalar-only, no Polytope4D construction).
     ///
-    /// If the fixture is missing, panics with instructions to regenerate:
-    /// `cargo test --release regenerate_test_dataset -- --ignored --nocapture`
-    static DATASET: LazyLock<Vec<TestPolytope>> = LazyLock::new(|| {
+    /// Uses `load_dataset_entries()` which skips `Polytope4D::new()` construction.
+    /// Tests in this module only need scalar fields (capacity, volume, name, etc.).
+    static DATASET: LazyLock<Vec<DatasetEntry>> = LazyLock::new(|| {
         let path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(FIXTURE_PATH);
-        load_test_dataset(&path)
+        load_dataset_entries(&path)
     });
 
     // ── Smoke tests: direct capacity computation on small polytopes ──
@@ -351,6 +352,7 @@ mod tests_literature {
     /// Calls polytope_catalog() twice and verifies identical output. Critical invariant
     /// for fixture generation: non-determinism would silently invalidate the fixture.
     #[test]
+    #[ignore] // ~17s debug, ~1s release: constructs all 33 polytopes twice. Run during fixture regeneration.
     fn catalog_determinism() {
         let c1 = polytope_catalog();
         let c2 = polytope_catalog();
@@ -377,6 +379,7 @@ mod tests_literature {
     /// If this test warns, regenerate the fixture:
     /// `cargo test --release regenerate_test_dataset -- --ignored --nocapture`
     #[test]
+    #[ignore] // ~17s debug, ~1s release: constructs all 33 polytopes. Run during fixture regeneration.
     fn fixture_staleness_check() {
         let catalog = polytope_catalog();
         let dataset = &*DATASET;
@@ -808,12 +811,12 @@ mod tests_pruning {
     use std::path::PathBuf;
     use std::sync::LazyLock;
 
-    use super::generate_capacity_fixtures::{load_test_dataset, TestPolytope, FIXTURE_PATH};
+    use super::generate_capacity_fixtures::{load_dataset_entries, DatasetEntry, FIXTURE_PATH};
 
-    /// Shared dataset loaded from cached fixture.
-    static DATASET: LazyLock<Vec<TestPolytope>> = LazyLock::new(|| {
+    /// Shared dataset loaded from cached fixture (scalar-only, no Polytope4D construction).
+    static DATASET: LazyLock<Vec<DatasetEntry>> = LazyLock::new(|| {
         let path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(FIXTURE_PATH);
-        load_test_dataset(&path)
+        load_dataset_entries(&path)
     });
 
     // ── Combinatorics utility ──
@@ -1258,12 +1261,12 @@ mod tests_conformality {
     use std::path::PathBuf;
     use std::sync::LazyLock;
 
-    use super::generate_capacity_fixtures::{load_test_dataset, TestPolytope, FIXTURE_PATH};
+    use super::generate_capacity_fixtures::{load_dataset_entries, DatasetEntry, FIXTURE_PATH};
 
-    /// Shared dataset loaded from cached fixture.
-    static DATASET: LazyLock<Vec<TestPolytope>> = LazyLock::new(|| {
+    /// Shared dataset loaded from cached fixture (scalar-only, no Polytope4D construction).
+    static DATASET: LazyLock<Vec<DatasetEntry>> = LazyLock::new(|| {
         let path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(FIXTURE_PATH);
-        load_test_dataset(&path)
+        load_dataset_entries(&path)
     });
 
     // ── Fixture-based conformality ──
@@ -1388,12 +1391,14 @@ mod tests_symplectic_invariance {
     use std::path::PathBuf;
     use std::sync::LazyLock;
 
-    use super::generate_capacity_fixtures::{load_test_dataset, TestPolytope, FIXTURE_PATH};
+    use super::generate_capacity_fixtures::{
+        load_dataset_entries, load_test_dataset, DatasetEntry, FIXTURE_PATH,
+    };
 
-    /// Shared dataset loaded from cached fixture.
-    static DATASET: LazyLock<Vec<TestPolytope>> = LazyLock::new(|| {
+    /// Shared dataset loaded from cached fixture (scalar-only, no Polytope4D construction).
+    static DATASET: LazyLock<Vec<DatasetEntry>> = LazyLock::new(|| {
         let path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(FIXTURE_PATH);
-        load_test_dataset(&path)
+        load_dataset_entries(&path)
     });
 
     // ── Symplectomorphism invariance ──
@@ -1450,12 +1455,19 @@ mod tests_symplectic_invariance {
 
     /// Verify monotonicity: if alpha*K1 fits inside K2, then c(alpha*K1) <= c(K2).
     ///
-    /// For each pair (K1, K2) in the fixture, computes the maximum alpha such that
-    /// alpha*K1 subset K2, then checks c(alpha*K1) = alpha^2*c(K1) <= c(K2).
+    /// Checks up to 20 pairs (K1, K2) from the fixture. For each, computes the
+    /// maximum alpha such that alpha*K1 subset K2, then checks
+    /// c(alpha*K1) = alpha^2*c(K1) <= c(K2).
     /// Uses conformality to avoid recomputing capacity of the scaled polytope.
+    ///
+    /// Why #[ignore]: needs full Polytope4D (vertex containment checks), so loads
+    /// the full fixture (~8s). Run: `cargo test capacity_monotonicity -- --ignored`
     #[test]
+    #[ignore] // ~8s debug, ~0.5s release: needs Polytope4D for vertex containment checks.
     fn capacity_monotonicity() {
-        let dataset = &*DATASET;
+        // Load full TestPolytope dataset locally — the module's DATASET is scalar-only.
+        let path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(FIXTURE_PATH);
+        let dataset = load_test_dataset(&path);
         let mut checked = 0;
 
         // Check a representative sample of pairs to keep test fast.

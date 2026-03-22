@@ -260,7 +260,7 @@ Thesis .tex files in `thesis/`. Load skills: `tex-build` (build commands, PDF re
 
 ## Rust Library
 
-Single crate `symplectic` in `crates/`. Invariant: `cargo test` passes with zero failures. Load skills: `rust-conventions` (coding style, math-code correspondence, cross-refs), `rust-tests` (testing philosophy, fixtures, test organization).
+Single crate `symplectic` in `crates/`. Invariant: `cargo test --release` passes with zero failures. Load skills: `rust-conventions` (coding style, math-code correspondence, cross-refs), `rust-tests` (testing philosophy, fixtures, test organization).
 
 ## Experiments
 
@@ -290,12 +290,12 @@ Per-experiment folders under `experiments/`. Load skills: `experiment-convention
 ```bash
 # Rust
 cd crates/ && cargo build
-cd crates/ && cargo test --lib
+cd crates/ && cargo test --release --lib
 cd crates/ && cargo clippy --lib -- -D warnings
 
 # Long-running commands: always wrap with timeout to prevent zombie processes
-timeout 5m cargo test              # routine tests
-timeout 30m cargo test -- --ignored  # slow property/monitoring tests
+timeout 5m cargo test --release              # routine tests
+timeout 30m cargo test --release -- --ignored  # slow property/monitoring tests
 
 # Python
 ruff check experiments/

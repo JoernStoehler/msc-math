@@ -23,7 +23,7 @@ What's settled vs placeholder across the project's major components.
 |-----------|--------|-------|
 | Rust library (crates/) | **Draft** | 73 files, 317 tests pass (26 ignored), Clippy clean. Tests migrated to inline modules. Cleanup (§2) done, solver refactors (§6) and tube algorithm (§7) still ahead |
 | Migration scaffold | **Settled** | Merged to main. Complete. |
-| Test data pipeline | **Draft** | Fixture infrastructure exists (capacity_dataset.json, LazyLock loading). Design in §1. |
+| Test data pipeline | **Settled** | 1.7s release / 17s debug. Scalar fixture loading, release-mode default. See §1. |
 | Experiment data | **Settled** | All 18 experiments have data and produce results |
 | Experiment writeups | **Draft** | All 18 experiments have logbook.md (migration complete). Content quality varies — noisy, no coherent story |
 | Experiment shared code | **Not started** | 930–2347 LOC duplicated across 4 experiments; extraction planned (§6d) but not started |
@@ -73,41 +73,32 @@ cargo clippy --tests -- -D warnings  # clean
 
 ---
 
-## 1. Test data pipeline restructuring
+## 1. Test data pipeline restructuring — DONE
 
 🟢 Agent can do autonomously. Load `data-pipeline` skill for conventions.
 
-**Problem:** Default test suite takes ~21s wall / ~165s CPU (with nextest, 12 cores). The slowest tests spend most time in `Polytope4D::new()` (BigRational vertex enumeration). This is much improved from the original ~7 min thanks to opt-level=3 for BigRational (9d191b5) and SVD pre-filter (edbcb6a), but further gains are possible.
+**Result:** Default suite runs in **1.7s wall** (`cargo test --release --lib`), **17s wall** (debug). Down from ~7 min originally.
 
-**Profiling data (cargo nextest, 2026-03-20, post-SVD-pre-filter):**
+**What was done:**
+1. Fixture file exists at `tests/fixtures/capacity_dataset.json` ✅ (pre-existing)
+2. `known_polytopes` uses `LazyLock` caching ✅ (pre-existing)
+3. BigRational + nalgebra opt-level=3 in dev/test builds ✅ (pre-existing, 9d191b5)
+4. SVD pre-filter skips ~70-80% of rational vertex enumeration subsets ✅ (pre-existing, edbcb6a)
+5. **Scalar-only fixture loading** — `load_dataset_entries()` returns `Vec<DatasetEntry>` with JSON parse only, skipping the expensive `Polytope4D::new()` call. 9 of 10 fixture tests switched to this path.
+6. **`catalog_determinism` and `fixture_staleness_check` marked `#[ignore]`** — only needed during fixture regeneration. `CATALOG_VERSION` tag provides O(1) staleness guard in the default suite.
+7. **`capacity_monotonicity` marked `#[ignore]`** — only fixture test needing `Polytope4D` (for vertex containment checks). Loads full dataset locally when run with `--ignored`.
+8. **`debug_assert!` → `assert!`** in KKT solvers — enables release-mode testing without losing invariant checks (Q-constancy, FM back-substitution). All checks are O(m²) or O(1), negligible vs the O(m³) operations they guard.
+9. **Default test command changed to `cargo test --release --lib`** — the crate's own code is 10-40× faster in release. All documentation updated.
 
-| Test | Time | Notes |
-|------|------|-------|
-| `catalog_determinism` | 11.0s | Constructs all 33 polytopes from scratch |
-| `fixture_staleness_check` | 10.8s | Same — constructs all 33 polytopes |
-| `dwell_times_positive` | 10.5s | Fixture loading triggers `Polytope4D::new()` |
-| `breakpoint_count_consistency` | 10.5s | Same |
-| `hypercube_capacity` | 10.4s | Same |
-| `hko_pentagon_recovery` | 7.6s | Same |
-| `literature_capacity_values` | 6.5s | Same |
-| 4 more fixture tests | 5.2-5.3s | Same |
-| `volume_scales_with_fourth_power` | 1.5s | Proptest |
-| `random_polytopes_pass_validation` | 0.9s | Proptest |
+**Profiling (2026-03-22, post-optimization):**
 
-**Already done:**
-- Fixture file exists at `tests/fixtures/capacity_dataset.json` (item 1 ✅)
-- `known_polytopes` uses `LazyLock` caching (item 4 ✅)
-- BigRational opt-level=3 in dev builds (9d191b5)
-- SVD pre-filter skips ~70-80% of rational vertex enumeration subsets (edbcb6a)
-
-**Remaining work items:**
-1. Scalar-only fixture loading — 7/8 fixture tests only use scalar fields (capacity, volume), never `Polytope4D`. Add a loading path that skips `Polytope4D::new()` entirely. ~1ms instead of ~10s per test.
-2. Mark `catalog_determinism` and `fixture_staleness_check` as `#[ignore]` — only needed during fixture regeneration.
-3. Proptest: fewer cases in default, full cases in `#[ignore]`.
-
-**Target:** Default suite <10s wall time. Already at ~21s, so this is incremental, not urgent.
-
-**Status (2026-03-22):** Partially done (optimizations merged). Remaining items are low priority — current 21s wall time is acceptable. Agent plan at `replicated-crunching-ladybug.md` has detailed implementation approach for scalar-only loading.
+| Mode | Wall time | Test count |
+|------|-----------|------------|
+| `cargo test --release --lib` | 1.7s | 314 pass, 29 skip |
+| `cargo test --lib` (debug) | 17s | 314 pass, 29 skip |
+| Incremental rebuild + test (release) | 13s | — |
+| Incremental rebuild + test (debug) | 16s | — |
+| Cold build + test (either) | ~44s | — |
 
 **Depends on:** Migration merge (§0) ✅.
 
