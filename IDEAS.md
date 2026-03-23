@@ -37,11 +37,45 @@ Each embedding gives different perturbation directions. Local max in one space �
 
 Dense (n, m, θ) sweep across wide range. Fit sys(n, m, θ) formula. Key question: does the fitted formula predict sys>1 only for P_5 ×_L R(θ) P_5?
 
+**Sub-ideas:**
+
+1. **Fit to sys(n-gon × rotated m-gon) data.**
+
+2. **Analytical proof of the fitted formula for 5-gon × rotated 5-gon.** Approach: first discuss which orbit(s) can have the minimum action and give formulas for each, and solve, and then prove which exact (θ-parameterized) value is the smallest. Guess that motivates why this is easy: there should be 1 combinatorics (+symmetries) that is minimum for θ ≠ 0 mod symmetry.
+
 ---
 
-## Dense random sweep + gradient descent on LICCA
+## Massive random search on LICCA
 
-Large-scale search for new sys>1 polytopes not close to HKO2024. Gradient descent needs redesign first (step-bound barrier at combinatorial type boundaries, poor convergence).
+**Sub-ideas:**
+
+1. **Massive random search on LICCA for random polytopes** with gradient descent and combinatoric-changing step sizes / non-GD-algorithms.
+
+2. **Massive random search but for Lagrangian products** (where we know that the density of getting close to HKO2024 is no longer negligible).
+
+3. **Random search in the neighborhood of HKO2024**, of n-gon × m-gon products with sys = 1.
+
+---
+
+## sys(K) landscape analysis
+
+Analyze the sys(K) landscape. K is a high-dimensional (stratified in F) space and sys is non-smooth, but we can randomly sample and look at gradients and follow gradient steps.
+
+**Example questions:**
+- Whether gradient flow takes two polytopes K₁, K₂ and moves them together or not
+- Whether local maxima exist at sys < 1
+- Whether all our flow methods get super slow at some points and why and whether random noise helps
+- etc.
+
+I doubt that symmetry considerations matter, even Sp(4) or symplectic-product-preserving non-linear symplectomorphisms is low-dimensional relative to the K space.
+
+---
+
+## Subdifferential analysis of sys(HKO2024)
+
+Correctly analyze the subdifferentials of sys(HKO2024). Sample along any directions with first order equal zero to see what sign the second order has in that direction.
+
+Sadly ∂²sys(K)/∂K² would be too high-dimensional and require new methods, but ∂ₓ∂ₓ sys(K) in one direction x rather two directions x₁, x₂ may be tractable and not require much new theory (i.e. it is still done by looking at the second-order derivatives of every orbit with minimum action).
 
 ---
 
