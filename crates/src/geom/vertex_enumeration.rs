@@ -514,7 +514,8 @@ fn enumerate_vertices_int(
         }
 
         // Step 4: vertex confirmed. Compute exact rational coordinates.
-        // v[j] = D · ν_j / δ
+        // v[j] = D · ν_j / δ  (reduced form — needed for reliable f64 conversion
+        // in the irredundancy check; unreduced ~240-bit numerators overflow f64).
         let v: [BigRational; 4] = std::array::from_fn(|j| {
             BigRational::new(common_denom * &nu[j], delta.clone())
         });
@@ -592,9 +593,6 @@ pub(super) fn construct_rational_pipeline(
     }
 
     // ── Step 2: Precompute integer-scaled dual vertices ──
-    // Scale all rational components to a common denominator D so that
-    // A_i = a_i * D ∈ Z^4. All subsequent exact checks use A_i (BigInt),
-    // avoiding BigRational GCD normalization.
     let (int_dual_vertices, common_denom) = integer_scale_dual_vertices(dual_vertices);
 
     // ── Step 3: Bounded check (f64-first per triple, integer fallback) ──
@@ -665,38 +663,53 @@ pub(super) fn construct_rational_pipeline(
             return Err(ConstructionError::RedundantFacet(i));
         }
 
-        // f64 fast path: pick 4 incident vertices, check det4 in f64.
+        // f64 fast path: try sets of 4 incident vertices until one confirms
+        // rank >= 3. The first 4 may be nearly coplanar; trying more avoids
+        // unnecessary fallback to expensive rational rank computation.
         if incident_indices.len() >= 4 {
             use super::rational_arithmetic::rational_to_f64;
-            let base = &vertices[incident_indices[0]];
-            let base_f64: [f64; 4] = std::array::from_fn(|c| rational_to_f64(&base[c]));
-            let mut rows = [[0.0f64; 4]; 3];
-            for (r, &idx) in incident_indices[1..4].iter().enumerate() {
-                for c in 0..4 {
-                    rows[r][c] = rational_to_f64(&vertices[idx][c]) - base_f64[c];
+            let inc_f64: Vec<[f64; 4]> = incident_indices
+                .iter()
+                .map(|&idx| std::array::from_fn(|c| rational_to_f64(&vertices[idx][c])))
+                .collect();
+
+            let mut rank_ok = false;
+            'outer: for base_idx in 0..inc_f64.len() {
+                let base = &inc_f64[base_idx];
+                // Try all triples of other vertices as the 3 difference vectors.
+                let others: Vec<usize> = (0..inc_f64.len())
+                    .filter(|&j| j != base_idx)
+                    .collect();
+                for a in 0..others.len() {
+                    for b in (a + 1)..others.len() {
+                        for c in (b + 1)..others.len() {
+                            let rows: [[f64; 4]; 3] = [
+                                std::array::from_fn(|d| inc_f64[others[a]][d] - base[d]),
+                                std::array::from_fn(|d| inc_f64[others[b]][d] - base[d]),
+                                std::array::from_fn(|d| inc_f64[others[c]][d] - base[d]),
+                            ];
+                            // Check any 3x3 minor
+                            for skip_col in 0..4 {
+                                let cols: Vec<usize> =
+                                    (0..4).filter(|&d| d != skip_col).collect();
+                                let det = rows[0][cols[0]]
+                                    * (rows[1][cols[1]] * rows[2][cols[2]]
+                                        - rows[1][cols[2]] * rows[2][cols[1]])
+                                    - rows[0][cols[1]]
+                                        * (rows[1][cols[0]] * rows[2][cols[2]]
+                                            - rows[1][cols[2]] * rows[2][cols[0]])
+                                    + rows[0][cols[2]]
+                                        * (rows[1][cols[0]] * rows[2][cols[1]]
+                                            - rows[1][cols[1]] * rows[2][cols[0]]);
+                                if det.abs() > 1e-10 {
+                                    rank_ok = true;
+                                    break 'outer;
+                                }
+                            }
+                        }
+                    }
                 }
             }
-            // 3x4 matrix → check if any 3x3 minor has large determinant
-            let rank_ok = (0..4).any(|skip_col| {
-                let m: [[f64; 3]; 3] = std::array::from_fn(|r| {
-                    let mut row = [0.0; 3];
-                    let mut ci = 0;
-                    for (c, &val) in rows[r].iter().enumerate() {
-                        if c == skip_col {
-                            continue;
-                        }
-                        row[ci] = val;
-                        ci += 1;
-                    }
-                    row
-                });
-                let det = m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1])
-                    - m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0])
-                    + m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0]);
-                // 3x3 det of O(1) entries has rounding error O(ε_mach) ≈ 1e-16.
-                // Threshold 1e-10 gives ~6 orders of margin.
-                det.abs() > 1e-10
-            });
             if rank_ok {
                 continue; // f64 confirmed rank >= 3
             }
