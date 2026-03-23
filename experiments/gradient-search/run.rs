@@ -36,6 +36,13 @@ const N_WIGGLES: usize = 5;
 const WIGGLE_STRENGTH: f64 = 0.05;
 const MAX_ESCAPE_ROUNDS: usize = 3;
 const SEED_TIME_BUDGET_SECS: f64 = 120.0;
+// Numerical zero threshold for gradient directions and slack comparisons.
+// Well below f64 relative error (~1e-16) for unit-scale polytopes. Re-validate
+// if working with very large or very small polytope coordinates.
+const EPS: f64 = 1e-15;
+// Hard floor on heights after wiggling: prevents near-degenerate polytopes.
+// Re-validate if the height scale of seeds changes substantially.
+const MIN_HEIGHT_AFTER_WIGGLE: f64 = 0.01;
 
 // ============================================================================
 // I/O schemas
@@ -88,8 +95,6 @@ fn reconstruct(normals: &[Vector4<f64>], heights: &[f64]) -> Option<Polytope4D> 
 fn parse_normals(raw: &[[f64; 4]]) -> Vec<Vector4<f64>> {
     raw.iter().map(|n| Vector4::new(n[0], n[1], n[2], n[3])).collect()
 }
-
-const EPS: f64 = 1e-15;
 
 // ============================================================================
 // Step bound (h-only, from gradient-descent experiment)
@@ -274,7 +279,7 @@ fn wiggle(
         .iter()
         .map(|&h| {
             let noise: f64 = StandardNormal.sample(rng);
-            (h * (1.0 + WIGGLE_STRENGTH * noise)).max(0.01)
+            (h * (1.0 + WIGGLE_STRENGTH * noise)).max(MIN_HEIGHT_AFTER_WIGGLE)
         })
         .collect();
     reconstruct(normals, &new_h)?;
@@ -426,7 +431,8 @@ fn main() {
 
     let total = todo.len();
     let mut processed = 0usize;
-    let mut best_global = done.iter().next().map(|_| 0.0f64).unwrap_or(0.0);
+    // Tracks the best sys seen in this run only (not previously-completed seeds).
+    let mut best_global = 0.0f64;
 
     for seed in &todo {
         let row = process_seed(seed);
