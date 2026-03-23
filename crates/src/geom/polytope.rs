@@ -13,7 +13,20 @@ use num_rational::BigRational;
 use std::collections::BTreeSet;
 
 /// Tolerance for duplicate-halfspace detection: ||a_i - a_j|| / max(||a_i||, ||a_j||) < threshold.
+///
+/// **Why 1e-8:** f64 dual vertices from user inputs differ by at least O(1e-3)
+/// in practice (physically distinct facet directions). The 1e-8 relative
+/// threshold is tight enough to reject identical or nearly-identical halfspaces
+/// while staying far above machine epsilon (~1e-16), avoiding spurious false
+/// positives from floating-point rounding.
 const EPS_DUPLICATE_RELATIVE: f64 = 1e-8;
+
+/// Near-zero f64 norm threshold for dual vertex validation.
+///
+/// **Why 1e-15:** f64 machine epsilon is ~2.2e-16; any norm below 1e-15
+/// indicates a vector whose direction is lost to rounding and cannot
+/// represent a meaningful halfspace constraint.
+const EPS_ZERO_NORM: f64 = 1e-15;
 
 /// Convex polytope K in R^4 via dual (polar) representation.
 ///
@@ -116,6 +129,11 @@ impl Polytope4D {
     /// Takes exact rational dual vertices (source of truth for all discrete
     /// decisions) and optional pre-computed f64 dual vertices (kept as-is
     /// to avoid round-trip loss; computed from rationals if not provided).
+    ///
+    /// Delegates bounded/irredundancy/vertex checks to `construct_rational_pipeline`.
+    /// Correctness: [lem:vertex-enumeration] (vertex enumeration via 4-subsets),
+    /// [lem:positive-span] + [lem:bounded-triples] (bounded check),
+    /// [lem:irredundancy] (irredundancy check), [lem:rational-pipeline] (exact Q arithmetic).
     fn build(
         dual_vertices: Vec<[BigRational; 4]>,
         dual_vertices_f64: Option<Vec<Vector4<f64>>>,
@@ -130,7 +148,7 @@ impl Polytope4D {
                 .enumerate()
                 .map(|(i, y)| {
                     let v = rational_array_to_f64(y);
-                    if v.norm() < 1e-15 {
+                    if v.norm() < EPS_ZERO_NORM {
                         Err(ConstructionError::F64Conversion(format!(
                             "dual vertex[{i}] has near-zero f64 norm: {}",
                             v.norm()
@@ -170,6 +188,10 @@ impl Polytope4D {
     /// Validates inputs (nonzero, no duplicates), converts to exact rationals
     /// via `f64_to_rational`, then runs the rational pipeline. The original f64
     /// inputs are kept directly (no round-trip through rational).
+    ///
+    /// Correctness: [lem:rational-pipeline] (exact Q arithmetic for discrete
+    /// decisions), [lem:vertex-enumeration], [lem:positive-span],
+    /// [lem:bounded-triples], [lem:irredundancy].
     pub fn from_f64(dual_vertices_f64: Vec<Vector4<f64>>) -> Result<Self, ConstructionError> {
         let f = dual_vertices_f64.len();
         if f < 5 {
@@ -178,7 +200,7 @@ impl Polytope4D {
 
         // Validate: nonzero
         for (i, a) in dual_vertices_f64.iter().enumerate() {
-            if a.norm() < 1e-15 {
+            if a.norm() < EPS_ZERO_NORM {
                 return Err(ConstructionError::ZeroDualVertex(i));
             }
         }
@@ -256,6 +278,9 @@ impl Polytope4D {
     ///
     /// Builds incidence, adjacency, and omega sign matrices from the vertex
     /// descriptors produced by the rational pipeline.
+    ///
+    /// Omega sign computation uses exact rational arithmetic: [lem:rational-pipeline]
+    /// (sign(omega_0(a_i, a_k)) computed over Q to prevent misclassification).
     fn assemble(
         dual_vertices: Vec<[BigRational; 4]>,
         vertices: Vec<[BigRational; 4]>,
