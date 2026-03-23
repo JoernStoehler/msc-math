@@ -46,6 +46,7 @@ python3 experiments/hko-neighborhood/hko_neighborhood.py
 | `hko-neighborhood-gradient.png` | Figure: bar chart of d_sys/d_h_k |
 | `hko-neighborhood-orbits.png` | Figure: orbit structure visualization |
 | `hko-neighborhood-splitting.png` | Figure: splitting results |
+| `phase_c_lp_test.py` | Phase C: LP test for 0 ∈ conv(per-orbit gradients) in (n,h)-space |
 
 ## What's been done
 
@@ -94,13 +95,15 @@ python3 experiments/hko-neighborhood/hko_neighborhood.py
 
 ## Interpretation
 
-**In h-space (normals fixed):** HKO2024 appears to be a local maximum. The evidence is gradient ascent converging at machine precision in a single step (delta_sys ~= 5e-9). The per-orbit gradients have mixed signs (positive at visited facets, negative at unvisited), and their convex hull (the Clarke subdifferential) appears to contain the origin — meaning no single height direction improves sys when all near-optimal orbits are accounted for. This is the non-smooth analog of "gradient = 0 at a critical point."
+**In h-space (normals fixed):** HKO2024 is a **proven** first-order local maximum. The 10 distinct per-orbit h-gradients have 0 ∈ conv by symmetry (uniform weights 1/10). Gradient rank 5 in R^10, giving 5 flat directions. This explains the gradient ascent convergence at machine precision — the subdifferential contains the origin.
 
-**In full (n, h) space for F=10:** The nonzero normal gradient (|grad_n| ~= 1.53) means HKO2024 is not a critical point. However, gradient ascent still converges immediately. The interpretation is that HKO2024 sits at or near a boundary of the feasible region — the gradient points "outward" into infeasible territory (degenerate or invalid polytopes). The step bound analysis in sys-optimization confirms that omega_0 sign constraints on adjacent normal pairs are the binding constraint.
+**In full (n, h) space for F=10:** HKO2024 is a **proven** first-order local maximum (Phase C, 2026-03-23). The LP test confirms 0 ∈ conv(all 44 per-orbit gradients) in the 40D effective parameter space. Individual orbits have nonzero normal gradients (||∇_n sys|| ≈ 1.5-1.8), but different permutations of the same facet set give different n-gradients, and the full set of 44 provides enough directions for the convex hull to contain 0. Twenty orbits carry equal weight 1/20 in the LP solution. Gradient rank 24 in the 40D space gives 16 flat directions needing second-order analysis.
 
-**In the F=11 ambient space:** All tested facet-splitting directions decrease sys. This is consistent with HKO2024 being a local maximum in the larger F=11 space, but the evidence is sampling-based and incomplete (especially for facet 5 where only 11 of the intended ~100+ directions were tested).
+Note: the nonzero per-orbit normal gradient (|grad_n| ~= 1.53) does NOT mean HKO2024 fails to be a local max. The Danskin condition requires 0 ∈ conv(all gradients), not that individual gradients vanish. The "gradient points outward" interpretation from Phase A was partially correct — the feasibility boundary (omega_0 sign constraints) IS binding — but the deeper reason is the subdifferential structure.
 
-**Overall:** The evidence is consistent with HKO2024 being a local maximum across all tested ambient spaces, though only h-space local maximality has analytical (non-sampling-based) support.
+**In the F=11 ambient space:** All tested facet-splitting directions decrease sys. This is consistent with local maximality but remains sampling-based (211 cuts tested). The F=11 space is not covered by the LP test (which is specific to F=10 continuous perturbations, not discrete facet-splitting).
+
+**Overall:** First-order local maximality is proven for the F=10 (n,h) parameter space. The F=11 and convex body directions remain unproven (sampling evidence only). The 16 flat directions are the remaining gap — they determine whether the max is strict or whether sys is constant along certain directions.
 
 ## Dead ends / deferred directions
 
@@ -118,15 +121,15 @@ Using increasing F as a discretization of smooth boundary perturbation. Not test
 
 ## Open questions
 
-1. **Is the gradient ascent convergence at machine precision real or numerical artifact?** The single-step delta_sys ~= 5e-9 is suggestive but not conclusive. If the subdifferential contains the origin (local max), then any direction has step size 0, which would explain the one-step convergence. But this hasn't been proven — just observed numerically.
+1. ~~**Is the gradient ascent convergence at machine precision real or numerical artifact?**~~ **RESOLVED (Phase C).** The subdifferential DOES contain the origin — proven via LP. The one-step convergence is real: every perturbation direction has at least one orbit whose sys gradient opposes it.
 
 2. **Phase B facet 5 data incomplete.** Only 11 of expected ~200+ rows. Unknown whether intentional or regeneration bug. Needs investigation or regeneration.
 
 3. **Cross-validation with sys-optimization.** Probably not done. Note: sys-optimization is a different experiment with limitations — it didn't use proper gradients and didn't look at cuts (introducing redundant halfspaces + checking subdifferential).
 
-4. **Is there a theoretical argument for local maximality?** The experiment provides numerical evidence, but the thesis would benefit from understanding *why* HKO2024 is a local maximum — what structural properties of the pentagon geometry or Lagrangian product construction force this.
+4. **Is there a theoretical argument for local maximality?** Partially resolved. Phase C provides a computational proof via Danskin's theorem + LP verification that 0 ∈ conv(subdifferential). The h-space case has a pure symmetry proof. The full (n,h) case relies on numerical LP (residual ~7e-9). A structural explanation of *why* the pentagon geometry forces this (e.g., relating it to the golden ratio β-structure, or the order-10 symplectic symmetry) would strengthen the thesis.
 
-5. **Saddle point vs local max?** The subdifferential at HKO2024 suggests local max (contains origin). But we also need to evaluate capacities + subdifferentials at polytopes CLOSE to HKO2024 to empirically distinguish saddle point from local maximum. The subdifferential gives a linear approximation — how far does it remain accurate? Do we have theory about the region/perturbation size where the subdifferential gives an accurate estimate of sys / capacity?
+5. **Saddle point vs local max?** First-order: proven local max (0 ∈ conv). The remaining question is whether it's **strict**: do the 16 flat tangent directions have negative second-order change (strict max) or zero/positive (saddle-like)? The gradient ascent convergence at machine precision and pentagon-perturb sampling both suggest strict, but no second-order proof exists.
 
 6. **Facet-splitting + subdifferential.** Phase B tests cuts (adding a halfspace) and checks whether sys decreases. But it doesn't compute the subdifferential of the F=11 polytope at the cut. Computing the subdifferential after cutting would reveal whether the cut polytope is itself a local max in F=11 space, or whether there's a further ascent direction. This is the "introduce redundant halfspace, then look at subdifferential again" approach — not yet implemented.
 
@@ -152,7 +155,7 @@ This is **first-order sufficient** — unlike smooth functions, no Hessian neede
 
 The 10 distinct per-orbit h-gradients form one orbit under the order-10 symplectic symmetry group ⟨Δ₇₂, φ⟩. This group acts transitively on the 10 gradient vectors. Therefore 0 = (1/10)Σ g_i ∈ conv(g_1,...,g_10).
 
-Moreover, 0 is in the **interior** of conv(g_i) (the 10 vectors span R^10 with mixed signs in each coordinate), giving **strict** local maximality: sys strictly decreases in every height-perturbation direction.
+Note: the LP finds 0 ∈ conv but with gradient rank only 5 in R^10 (not full rank), so 0 is on the boundary, not interior. The 5 flat h-directions correspond to perturbations that don't change sys to first order. This is consistent with the symmetry structure: the 10 h-gradients have only 3 distinct values (unvisited, small-β visited, large-β visited), highly constrained by the (C5 × C5) ⋊ Z2 polytope symmetry.
 
 This resolves open question 1 — the gradient ascent convergence is real, explained by the subdifferential containing the origin.
 
@@ -183,13 +186,32 @@ This structure is determined by finitely many orbits and is much simpler than ge
 
 Ranked by evidence value — ability to sharply update beliefs in either direction (conservation of expected evidence).
 
-### Phase C: LP test in (n,h)-space [HIGHEST PRIORITY, near-zero cost]
+### Phase C: LP test in (n,h)-space [COMPLETED 2026-03-23]
 
-Extract the 10 per-orbit gradient vectors from hko-neighborhood-sensitivity.jsonl, including both h-components and n-components (projected to T_{n_k}S³). Solve the LP for 0 ∈ conv. Binary outcome, decisive for F=10 local maximality. If infeasible, the dual gives the improving direction explicitly.
+**Script:** `phase_c_lp_test.py`
 
-### Phase D: Per-orbit normal gradient alignment analysis
+**Method:** Reconstruct KKT multipliers (μ, ξ) for each of the 44 near-optimal orbits from the stored (β, Q, permutation) data using the augmented saddle-point system. Compute per-orbit ∂sys/∂n_k via envelope theorem + tangent projection. Form full (h, n) gradient vectors and solve LP: find λ_i ≥ 0, Σ λ_i = 1, Σ λ_i g_i = 0.
 
-Compute the 10 per-orbit normal gradient vectors ∇_n sys_i and analyze their geometric arrangement. Do they point in compatible directions (bad — improving direction exists) or spread out (good — cancel in convex hull)? The symmetry group maps them to each other, so the average has zero h-components, but the normal components need checking.
+**Critical finding:** using only 10 subset-unique orbits (as originally planned) gives LP INFEASIBLE. The n-gradient depends on the **permutation order** (via partial sums P_{i₀} = Σ_{j<i₀} β_j n_{σ(j)}), not just the facet subset. Two orbits with the same facet set but different cyclic orderings have the same h-gradient but different n-gradients. All 44 orbits are needed for the convex hull to contain 0.
+
+**Results:**
+
+| Test | Space | LP result | Gradient rank | Flat directions |
+|---|---|---|---|---|
+| h-space only | R^10, 10 DOF | 0 ∈ conv (10 unique-subset orbits) | 5/10 | 5D |
+| Full (h,n) | R^50 ambient, 40 effective DOF | 0 ∈ conv (all 44 orbits) | 24/50 (24/40 effective) | 16D real + 10D gauge |
+
+**Interpretation:**
+- **HKO2024 is a first-order local maximum of sys in the F=10 (n,h) parameter space.** By Danskin's theorem, for every direction d in the 40D tangent parameter space, min_i(g_i · d) ≤ 0 — no first-order improving direction exists.
+- 0 is on the **boundary** (not interior) of conv(gradients): 20 of 44 orbits carry weight 1/20 each, 24 have zero weight. The 20 active orbits span all 10 distinct facet-subsets.
+- **16 real flat directions** exist where D_d⁺ sys = 0. Second-order analysis is needed to determine if these are strict decreasing, constant, or saddle-like.
+- Cross-check: all 44 per-orbit h-gradients match stored JSONL data to machine precision.
+
+**Key subtlety:** The gradient ∂sys/∂n_k lives in T_{n_k}S³ (3D tangent space), not R^4. The (n,h) parameter space has 10 + 10×3 = 40 effective DOF, with 10 radial gauge directions. Jörn's suggestion to reparameterize using dual vertices a_i = h_i n_i ∈ R^4 (unconstrained) avoids this gauge issue entirely: ∇_{a_i} sys ∈ R^{40} with no projection.
+
+### Phase D: Flat direction analysis [COMPLETED 2026-03-23]
+
+Incorporated into Phase C script. The 16 real flat directions are all mixed (h+n), not pure-h or pure-n. The gradient matrix has singular value spectrum: top 10 values are 7.5, 7.4, 4.6, 4.1, 3.3, 2.9, 2.8, 2.7, 2.5, 2.4 — no sharp rank gap, suggesting the 24 "active" dimensions and 16 "flat" dimensions are numerically robust but not separated by orders of magnitude.
 
 ### Phase E: Minkowski smoothing sys(K + εB⁴) [tests smooth-body direction]
 
@@ -204,16 +226,16 @@ Generate polytopes K_F ⊃ K (or K_F ⊂ K?) with F = 12, 15, 20 that approximat
 ### Bayesian experiment design notes
 
 What observations would **decrease** confidence in local max:
-- LP infeasible in (n,h)-space → improving direction exists
+- ~~LP infeasible in (n,h)-space → improving direction exists~~ **RESOLVED: LP feasible**
 - sys(K + εB⁴) > sys(K) → not local max among convex bodies
 - Some facet split increases sys → not local max in F=11+
 
 What observations would **increase** confidence:
-- LP feasible → proven local max for F=10
+- ~~LP feasible → proven local max for F=10~~ **DONE ✓**
 - sys(K + εB⁴) < sys(K) with rate O(ε²) → smoothing strictly unfavorable
 - All F=11 splits decrease sys (complete sampling)
 
-Current experiments are genuine two-sided tests (each CAN produce either outcome), but the smooth-body direction (Phases E, F) is completely untested.
+**Remaining untested directions:** Phases E (Minkowski smoothing) and F (F-refinement) probe the convex-body neighborhood. Phase B completion (facet 5 data) covers F=11. Second-order analysis of the 16 flat directions determines strict vs non-strict max.
 
 ## Related experiments
 
