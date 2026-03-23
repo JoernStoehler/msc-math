@@ -64,7 +64,7 @@ def plot_sweep(data: list[dict], output: Path):
     ax.set_title(r"Pentagon $\times_L$ $R(\theta)$ Pentagon ($0$–$36$ degrees)")
 
     ax.axvline(x=18.0, color="#7f8c8d", linestyle=":", alpha=0.7)
-    ax.text(18.2, ax.get_ylim()[0], r"$18$°", fontsize=8, color="#7f8c8d", va="bottom")
+    ax.text(18.2, ax.get_ylim()[0], r"$18^\circ$", fontsize=8, color="#7f8c8d", va="bottom")
 
     ax.legend(loc="best")
     fig.tight_layout()
@@ -120,10 +120,10 @@ def plot_polygon_pairs(data: dict[tuple[int, int], list[dict]], output: Path):
         else:
             ax.tick_params(labelbottom=False)
         if i % 5 == 0:
-            ax.set_ylabel("sys")
+            ax.set_ylabel(r"$\mathrm{sys}$")
 
-    fig.suptitle(r"Regular $n$-gon $\times_L$ $R(\theta)$ $m$-gon (6-degree steps)")
-    fig.tight_layout(rect=[0, 0, 1, 0.94])
+    fig.suptitle(r"Regular $n$-gon $\times_L$ $R(\theta)$ $m$-gon (6-degree steps)", y=1.02)
+    fig.tight_layout()
     fig.savefig(output)
     plt.close(fig)
     print(f"Saved: {output}")
@@ -147,7 +147,7 @@ def plot_heptagon_sweep(data: list[dict], output: Path):
     ax.axvline(x=angles[i_max], color="#7f8c8d", linestyle=":", alpha=0.7)
     ax.text(
         angles[i_max] + 0.3, ax.get_ylim()[0],
-        f"${angles[i_max]:.1f}$°", fontsize=8, color="#7f8c8d", va="bottom",
+        rf"${angles[i_max]:.1f}^\circ$", fontsize=8, color="#7f8c8d", va="bottom",
     )
 
     ax.legend(loc="best")
@@ -177,11 +177,8 @@ def main():
 if __name__ == "__main__":
     main()
 
-"""
-Legacy experiment (commented out for now):
-- Polygon grid sweep
-- Random Lagrangian products
-- Multi-figure plotting pipeline
-
-See git history for the full script.
-"""
+# Legacy experiment (commented out for now):
+# - Polygon grid sweep
+# - Random Lagrangian products
+# - Multi-figure plotting pipeline
+# See git history for the full script.

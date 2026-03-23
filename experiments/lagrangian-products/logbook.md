@@ -6,7 +6,7 @@ The only known 4D counterexample to Viterbo's conjecture is a Lagrangian product
 
 ## Status
 
-**Complete.** Pentagon x pentagon at theta = 18 degrees confirms the HKO counterexample (sys ~ 1.047). Heptagon x heptagon peaks at sys ~ 0.917 (theta ~ 12.9 degrees), well below 1. No other regular polygon pair with 3 <= n <= m <= 7 achieves sys > 1.
+**Complete.** Pentagon x pentagon at theta = 18 degrees confirms the HKO counterexample (sys ~ 1.047, `lagrangian-products-5x5.jsonl`). Heptagon x heptagon peaks at sys ~ 0.917 (theta ~ 12.86 degrees, `lagrangian-products-7x7.jsonl`), well below 1. No other regular polygon pair with 3 <= n <= m <= 7 achieves sys > 1.
 
 ## How to run
 
@@ -49,7 +49,7 @@ Fix polygons P in q-space and Q in p-space. Rotate Q by angle theta. The Lagrang
 
 For regular n-gon x m-gon, sys(theta) has period 2*pi/lcm(n,m) and mirror symmetry sys(theta) = sys(-theta), so the fundamental domain is [0, pi/lcm(n,m)]. (See Lemma `lem:rotation-fundamental-domain` in math.tex for the proof.)
 
-### Three families
+### Families
 
 1. **Pentagon rotation curve (Family 1):** P = Q = regular pentagon, theta in [0, 36] degrees at 1-degree steps. Fundamental domain = 180/lcm(5,5) = 36 degrees. Output: `lagrangian-products-5x5.jsonl` (37 points).
 
@@ -65,19 +65,19 @@ All capacities computed using the billiard algorithm (fast, production default f
 
 ## Findings
 
-1. **Pentagon x pentagon at theta = 18 degrees achieves sys ≈ 1.0472**, confirming the HKO counterexample. This is the global maximum across the fundamental domain.
+1. **Pentagon x pentagon at theta = 18 degrees achieves sys ≈ 1.0472** (`lagrangian-products-5x5.jsonl` row 19: sys=1.047214), confirming the HKO counterexample. This is the global maximum across the fundamental domain.
 
-2. **Minimum sys ≈ 0.9472 at theta = 0 degrees** (aligned pentagons).
+2. **Minimum sys ≈ 0.9472 at theta = 0 degrees** (aligned pentagons) (`lagrangian-products-5x5.jsonl` row 1: sys=0.947214).
 
-3. **Violation region** (sys > 1) spans approximately theta in (13.5, 22.5) degrees within each fundamental domain, about 25% of the period.
+3. **Violation region** (sys > 1) spans theta in (13, 23) degrees within each fundamental domain (from theta=14 to theta=22 at 1-degree resolution, `lagrangian-products-5x5.jsonl`), about 25% of the 36-degree period.
 
-4. **No other regular polygon pair (3 <= n <= m <= 7) achieves sys > 1.** All polygon pair curves stay below 1.
+4. **No other regular polygon pair (3 <= n <= m <= 7) achieves sys > 1.** All polygon pair curves stay below or at 1 (3x6 and 4x4 reach sys=1.000 at the sweep resolution; `lagrangian-products-3x6-6deg.jsonl`, `lagrangian-products-4x4-6deg.jsonl`).
 
-5. **Sys is a smooth function of rotation angle** with the expected periodicity from the symmetry lemma.
+5. **Sys appears continuous as a function of rotation angle** with the expected periodicity from the symmetry lemma (observed at 1-degree resolution in `lagrangian-products-5x5.jsonl`; formal smoothness not verified).
 
-6. **The counterexample is a local maximum in the rotation parameter space.** The sys(theta) curve peaks at theta = 18 degrees and decreases in both directions.
+6. **The counterexample is a local maximum in the rotation parameter space.** The sys(theta) curve peaks at theta = 18 degrees and decreases in both directions (`lagrangian-products-5x5.jsonl`).
 
-7. **Heptagon x heptagon peaks at sys ≈ 0.917 at theta ≈ 12.9 degrees.** The curve is symmetric about the midpoint of the fundamental domain (180/14 ≈ 12.86 degrees). The peak is well below 1 — no counterexample.
+7. **Heptagon x heptagon peaks at sys ≈ 0.917 at theta ≈ 12.86 degrees.** The curve is symmetric about the midpoint of the fundamental domain (180/14 ≈ 12.86 degrees). The peak is well below 1 — no counterexample (`lagrangian-products-7x7.jsonl` row 14: sys=0.917408, angle_deg=12.857).
 
 ## Triangle x Square Investigation
 
@@ -87,7 +87,7 @@ Triggered by a mismatch with CH2021 (Chaidez-Hutchings citing Schlenk Lem. 5.3.1
 
 2. **Expected capacity error:** The expected capacity was set to 1.0 (from the min(c_A, c_B) formula, which applies to symplectic products). The correct value for the equilateral triangle x_L square is 1.5 (verified by billiard computation). The Schlenk Lem. 5.3.1 reference (via CH2021) concerns a right isosceles triangle, not equilateral.
 
-Key numerical results:
+Key numerical results (billiard computation, see `crates/src/geom/known_polytopes.rs` test suite):
 - Equilateral triangle x_L square: capacity = 1.5, sys = sqrt(3)/2 ≈ 0.866 (scale-and-ratio-invariant for any equilateral triangle x_L square)
 - Right isosceles triangle x_L square: capacity = 1.0, sys = 1.0
 - True symplectic triangle x_S square: capacity = 1.0, sys = 0.385

@@ -22,6 +22,8 @@ const PENTAGON_START_DEG: f64 = 0.0;
 const PENTAGON_END_DEG: f64 = 36.0;
 const PENTAGON_STEP_DEG: f64 = 1.0;
 
+// 6° steps give at least 6 sample points even on the smallest fundamental domain
+// (lcm=6 pairs like (3,6) have domain [0°,30°], yielding 6 angles).
 const PAIR_STEP_DEG: f64 = 6.0;
 
 const PAIRS: &[(usize, usize)] = &[
@@ -101,7 +103,7 @@ fn generate_heptagon_7x7() {
         let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
         let cap = result.result.capacity;
-        let sys = cap * cap / (2.0 * vol);
+        let sys = cap * cap / (2.0 * vol); // [def:systolic-ratio]: sys = c_EHZ^2 / (2 vol)
 
         let row = SweepRow {
             family: "heptagon_7x7_sweep".to_string(),
@@ -132,6 +134,8 @@ fn generate_heptagon_7x7() {
     eprintln!("Done. Output: {}", output_path.display());
 }
 
+/// Pentagon x pentagon fine sweep over [0, 36] degrees.
+/// Fundamental domain from [lem:rotation-fundamental-domain]: 180°/lcm(5,5) = 36°.
 fn generate_pentagon_5x5() {
     let output_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("lagrangian-products/lagrangian-products-5x5.jsonl");
@@ -166,7 +170,7 @@ fn generate_pentagon_5x5() {
         let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
         let cap = result.result.capacity;
-        let sys = cap * cap / (2.0 * vol);
+        let sys = cap * cap / (2.0 * vol); // [def:systolic-ratio]: sys = c_EHZ^2 / (2 vol)
 
         let row = SweepRow {
             family: "pentagon_5x5_sweep".to_string(),
@@ -235,7 +239,7 @@ fn generate_polygon_pairs() {
             let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
             let cap = result.result.capacity;
-            let sys = cap * cap / (2.0 * vol);
+            let sys = cap * cap / (2.0 * vol); // [def:systolic-ratio]: sys = c_EHZ^2 / (2 vol)
 
             let row = SweepRow {
                 family: "polygon_pair".to_string(),
@@ -269,13 +273,17 @@ fn generate_polygon_pairs() {
 }
 
 fn sweep_angles(start_deg: f64, end_deg: f64, step_deg: f64) -> Vec<f64> {
+    // 1e-9 is a floating-point snap tolerance: angles within this tolerance
+    // of a grid point or of end_deg are considered exact. This is much smaller
+    // than any step_deg used in practice (minimum 1°), so false snaps are impossible.
+    const SNAP_TOL: f64 = 1e-9;
     let mut angles = Vec::new();
     let mut angle = start_deg;
-    while angle <= end_deg + 1e-9 {
+    while angle <= end_deg + SNAP_TOL {
         angles.push(angle);
         angle += step_deg;
     }
-    if (angles.last().unwrap_or(&start_deg) - end_deg).abs() > 1e-9 {
+    if (angles.last().unwrap_or(&start_deg) - end_deg).abs() > SNAP_TOL {
         angles.push(end_deg);
     }
     angles
