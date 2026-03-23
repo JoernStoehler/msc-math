@@ -83,6 +83,7 @@ Rules:
 3. Never invent labels that don't exist in a math.tex file — if the lemma isn't written yet, add a `// TODO: add [lem:...] to math.tex` comment
 4. Never use rendered numbers like "Lemma 3.2" — use the label
 5. Verification: grep for the label in `math.tex` files, confirm it exists
+6. **Every non-trivial code block must map to a math.tex lemma.** If a function or code block implements mathematical logic (not just plumbing) and has no `[lem:...]` / `[prop:...]` cross-reference, flag it. The math.tex entry must have a proof, not just a statement — a proof-less stub means the code's correctness is unverified.
 
 ## Magic Numbers
 

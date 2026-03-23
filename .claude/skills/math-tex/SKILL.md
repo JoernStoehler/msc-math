@@ -67,6 +67,8 @@ Labels must be unique across all math.tex files in the repo (since the combined 
 - **Never invent labels.** If a lemma isn't written yet, add `// TODO: add [lem:...] to math.tex` in the .rs file.
 - **Cross-references from .rs:** Use `[lem:label]` format with a one-line English description. See `rust-conventions` skill for details.
 - **Jörn verifies math.** Agent-written proofs are drafts. Mark unverified content with `% [TODO: JÖRN -` or `% [GAP -`.
+- **Every lemma must have a proof.** A statement-only stub (no `\begin{proof}...\end{proof}`) means the code's correctness is unverified. Flag statement-only entries as incomplete.
+- **Every non-trivial code function must have a math.tex entry.** If a function in the module's .rs files implements mathematical logic and has no corresponding lemma/proposition in math.tex, flag it. The code→math.tex mapping is the mechanism that enforces the core rule for algorithmic correctness.
 
 ## Format conventions
 
