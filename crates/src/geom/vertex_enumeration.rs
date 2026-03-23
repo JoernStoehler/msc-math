@@ -22,6 +22,7 @@ use super::polytope::ConstructionError;
 // ── Exact linear algebra over Q ──────────────────────────────────────────
 
 /// Determinant of a 3x3 rational matrix (Sarrus' rule).
+#[cfg(test)]
 fn det3(r0: &[BigRational], r1: &[BigRational], r2: &[BigRational]) -> BigRational {
     &r0[0] * (&r1[1] * &r2[2] - &r1[2] * &r2[1])
         - &r0[1] * (&r1[0] * &r2[2] - &r1[2] * &r2[0])
@@ -31,6 +32,7 @@ fn det3(r0: &[BigRational], r1: &[BigRational], r2: &[BigRational]) -> BigRation
 /// Exact determinant of a 4x4 rational matrix via cofactor expansion.
 ///
 /// Expands along the first row using 3x3 minors.
+#[cfg(test)]
 pub(super) fn det4(rows: &[[BigRational; 4]; 4]) -> BigRational {
     let (a, b, c, d) = (&rows[0], &rows[1], &rows[2], &rows[3]);
 
@@ -61,6 +63,7 @@ pub(super) fn det4(rows: &[[BigRational; 4]; 4]) -> BigRational {
 /// Solve a 4x4 linear system N*x = b exactly via Cramer's rule.
 ///
 /// Returns `None` if det(N) = 0 (singular system).
+#[cfg(test)]
 pub(super) fn solve4(
     rows: &[[BigRational; 4]; 4],
     rhs: &[BigRational; 4],
@@ -84,6 +87,7 @@ pub(super) fn solve4(
 }
 
 /// Inner product of two 4-vectors over Q.
+#[cfg(test)]
 pub(super) fn dot4(a: &[BigRational; 4], b: &[BigRational; 4]) -> BigRational {
     &a[0] * &b[0] + &a[1] * &b[1] + &a[2] * &b[2] + &a[3] * &b[3]
 }
@@ -174,11 +178,13 @@ pub(super) fn rank_over_q(rows: &[[BigRational; 4]]) -> usize {
 ///
 /// # Sufficiency
 ///
-/// Any direction d in R^4 can be written as a linear combination of
-/// cross-product directions from triples of y_i (since rank = 4). If
-/// y_i · d > 0 and y_i · d < 0 both occur for every such kernel direction,
-/// then y_i positively spans R^4. The check is sufficient because any failure
-/// of positive spanning is witnessed by some kernel direction of a triple.
+/// Suppose positive spanning fails: some nonzero d has y_i · d ≤ 0 for all i.
+/// Then d lies in the dual cone C = {d : y_i · d ≤ 0 ∀i}, which is a
+/// polyhedral cone. Since rank(Y) = 4, C is pointed and every extreme ray
+/// of C lies on the intersection of 3 linearly independent active constraints
+/// y_i · d = 0. Such an extreme ray is a kernel direction of the triple
+/// (i, j, k). Therefore, any failure of positive spanning is witnessed by
+/// some kernel direction of a triple — the check is sufficient.
 ///
 /// Complexity: O(F^4) — F^3 triples times F inner products each.
 ///
@@ -539,119 +545,83 @@ fn enumerate_vertices_int(
     Ok((vertex_descriptors, vertices))
 }
 
-// ── Construction pipeline ────────────────────────────────────────────────
-
-/// Run the exact rational construction pipeline: validate, enumerate vertices,
-/// check irredundancy — all over Q.
+/// Check that dual vertices positively span R^4 using f64-first per-triple
+/// checks with exact integer fallback.
 ///
-/// Takes dual vertices y_i in K° and returns (primal_vertices, vertex_descriptors).
-/// Each vertex descriptor is the set of facet indices incident to that vertex.
+/// 1. Rank check in integer (cheap, done once).
+/// 2. For each triple (i,j,k), try f64 first (`bounded_triple_f64_confirms`).
+///    If f64 is inconclusive, fall back to exact integer cross-product and
+///    dot-product signs.
 ///
-/// The halfspace representation is y_i · x <= 1 for each dual vertex y_i.
-///
-/// Non-simple polytopes (vertices on >4 facets) are supported: the vertex
-/// descriptor records ALL incident facets, not just the defining 4-subset.
-///
-/// ## Why exact arithmetic
-///
-/// Vertex-facet incidence is a discrete decision: is `y_i · v` exactly 1?
-/// In f64, rounding error makes this ambiguous for near-incident pairs.
-/// The exact rational pipeline resolves all such decisions without tolerances.
-/// This is critical for `omega_signs` (sign of ω₀(y_i, y_k)) which controls
-/// directed adjacency pruning in the capacity algorithm.
-///
-/// ## Performance
-///
-/// O(F⁴) BigRational operations. The `num-bigint` crate is ~20× slower in
-/// debug mode than release; Cargo profile overrides (`opt-level = 3` for
-/// `num-bigint` and `num-rational`) bring debug-mode cost close to release.
-///
-/// The pipeline uses f64-first strategies with exact integer fallbacks:
-/// - **Bounded check**: per-triple f64 pre-filter (`bounded_triple_f64_confirms`),
-///   falling back to integer cross-product signs for inconclusive triples.
-/// - **Vertex enumeration**: f64 prefilter (`f64_prefilter_rejects`) to reject
-///   ~65-93% of C(F,4) subsets, then integer Cramer's rule (`det4_int`) for
-///   the remainder — no BigRational GCD normalization needed.
-/// - **Irredundancy**: f64 rank check on incident vertices, falling back to
-///   exact rational `affine_rank_rational` when f64 is inconclusive.
-///
-/// Mathematical correspondence: [lem:vertex-enumeration]
-#[allow(clippy::type_complexity)]
-pub(super) fn construct_rational_pipeline(
+/// Mathematical correspondence: [lem:positive-span]
+fn check_bounded_f64_first(
     dual_vertices: &[[BigRational; 4]],
-) -> Result<(Vec<[BigRational; 4]>, Vec<BTreeSet<usize>>), ConstructionError> {
+    int_dual_vertices: &[[BigInt; 4]],
+) -> Result<(), ConstructionError> {
+    use super::rational_arithmetic::rational_to_f64;
+
     let f = dual_vertices.len();
+    let dv_f64: Vec<nalgebra::Vector4<f64>> = dual_vertices
+        .iter()
+        .map(|y| {
+            nalgebra::Vector4::new(
+                rational_to_f64(&y[0]),
+                rational_to_f64(&y[1]),
+                rational_to_f64(&y[2]),
+                rational_to_f64(&y[3]),
+            )
+        })
+        .collect();
 
-    // ── Step 1: Validation ──
-    if f < 5 {
-        return Err(ConstructionError::TooFewFacets(f));
+    // Rank check in integer (cheap, done once).
+    if rank_int(int_dual_vertices) < 4 {
+        return Err(ConstructionError::Unbounded);
     }
-    for (i, y) in dual_vertices.iter().enumerate() {
-        if y.iter().all(|c| c.is_zero()) {
-            return Err(ConstructionError::ZeroDualVertex(i));
-        }
-    }
 
-    // ── Step 2: Precompute integer-scaled dual vertices ──
-    let (int_dual_vertices, common_denom) = integer_scale_dual_vertices(dual_vertices);
-
-    // ── Step 3: Bounded check (f64-first per triple, integer fallback) ──
-    {
-        use super::rational_arithmetic::rational_to_f64;
-
-        let dv_f64: Vec<nalgebra::Vector4<f64>> = dual_vertices
-            .iter()
-            .map(|y| {
-                nalgebra::Vector4::new(
-                    rational_to_f64(&y[0]),
-                    rational_to_f64(&y[1]),
-                    rational_to_f64(&y[2]),
-                    rational_to_f64(&y[3]),
-                )
-            })
-            .collect();
-
-        // Rank check in integer (cheap, done once).
-        if rank_int(&int_dual_vertices) < 4 {
-            return Err(ConstructionError::Unbounded);
-        }
-
-        for i in 0..f {
-            for j in (i + 1)..f {
-                for k in (j + 1)..f {
-                    // f64 pre-filter: confirms this triple if signs are unambiguous.
-                    if bounded_triple_f64_confirms(&dv_f64, i, j, k) {
-                        continue;
-                    }
-                    // f64 inconclusive — exact integer fallback.
-                    let d_int = cross_product_4d_int(
-                        &int_dual_vertices[i],
-                        &int_dual_vertices[j],
-                        &int_dual_vertices[k],
-                    );
-                    if d_int.iter().all(|c| c.is_zero()) {
-                        continue; // Dependent triple
-                    }
-                    let has_pos = (0..f)
-                        .filter(|&l| l != i && l != j && l != k)
-                        .any(|l| dot4_int(&int_dual_vertices[l], &d_int).is_positive());
-                    let has_neg = (0..f)
-                        .filter(|&l| l != i && l != j && l != k)
-                        .any(|l| dot4_int(&int_dual_vertices[l], &d_int).is_negative());
-                    if !has_pos || !has_neg {
-                        return Err(ConstructionError::Unbounded);
-                    }
+    for i in 0..f {
+        for j in (i + 1)..f {
+            for k in (j + 1)..f {
+                // f64 pre-filter: confirms this triple if signs are unambiguous.
+                if bounded_triple_f64_confirms(&dv_f64, i, j, k) {
+                    continue;
+                }
+                // f64 inconclusive — exact integer fallback.
+                let d_int = cross_product_4d_int(
+                    &int_dual_vertices[i],
+                    &int_dual_vertices[j],
+                    &int_dual_vertices[k],
+                );
+                if d_int.iter().all(|c| c.is_zero()) {
+                    continue; // Dependent triple
+                }
+                let has_pos = (0..f)
+                    .filter(|&l| l != i && l != j && l != k)
+                    .any(|l| dot4_int(&int_dual_vertices[l], &d_int).is_positive());
+                let has_neg = (0..f)
+                    .filter(|&l| l != i && l != j && l != k)
+                    .any(|l| dot4_int(&int_dual_vertices[l], &d_int).is_negative());
+                if !has_pos || !has_neg {
+                    return Err(ConstructionError::Unbounded);
                 }
             }
         }
     }
 
-    // ── Step 4: Vertex enumeration (f64 prefilter + integer Cramer) ──
-    let (vertex_descriptors, vertices) =
-        enumerate_vertices_int(dual_vertices, &int_dual_vertices, &common_denom)?;
+    Ok(())
+}
 
-    // ── Step 5: Irredundancy check (f64-first) ──
-    for i in 0..f {
+/// Check irredundancy: every facet has incident vertices of affine rank >= 3.
+///
+/// Uses f64 fast path first (checking 3x3 minor determinants), falling back
+/// to exact rational `affine_rank_rational` when f64 is inconclusive.
+fn check_irredundancy_f64_first(
+    vertices: &[[BigRational; 4]],
+    vertex_descriptors: &[BTreeSet<usize>],
+    facet_count: usize,
+) -> Result<(), ConstructionError> {
+    use super::rational_arithmetic::rational_to_f64;
+
+    for i in 0..facet_count {
         let incident_indices: Vec<usize> = vertex_descriptors
             .iter()
             .enumerate()
@@ -667,7 +637,6 @@ pub(super) fn construct_rational_pipeline(
         // rank >= 3. The first 4 may be nearly coplanar; trying more avoids
         // unnecessary fallback to expensive rational rank computation.
         if incident_indices.len() >= 4 {
-            use super::rational_arithmetic::rational_to_f64;
             let inc_f64: Vec<[f64; 4]> = incident_indices
                 .iter()
                 .map(|&idx| std::array::from_fn(|c| rational_to_f64(&vertices[idx][c])))
@@ -725,120 +694,76 @@ pub(super) fn construct_rational_pipeline(
         }
     }
 
-    Ok((vertices, vertex_descriptors))
+    Ok(())
 }
 
-/// Enumerate all vertices by testing all C(F, 4) subsets.
+// ── Construction pipeline ────────────────────────────────────────────────
+
+/// Run the exact rational construction pipeline: validate, enumerate vertices,
+/// check irredundancy — all over Q.
 ///
-/// Two-stage pipeline per subset: cheap f64 stage, then expensive rational stage.
+/// Takes dual vertices y_i in K° and returns (primal_vertices, vertex_descriptors).
+/// Each vertex descriptor is the set of facet indices incident to that vertex.
 ///
-/// **Stage 1 (f64):** Solve Y_S · v = 1 in f64 via SVD.
-/// For each non-defining constraint y_i · v ≤ 1, evaluate with tolerance
-/// δ = C · κ̂ · ε_mach · ‖v̂‖ · ‖ŷ_i‖:
-/// - FALSE  (ŝ > 1 + δ): point is definitely outside K → skip subset
-/// - INDETERMINATE (|ŝ - 1| ≤ δ): f64 cannot decide → fall through
-/// - TRUE   (ŝ < 1 - δ): constraint definitely satisfied → continue
+/// The halfspace representation is y_i · x <= 1 for each dual vertex y_i.
 ///
-/// If ANY constraint is FALSE, the subset is skipped (no rational work).
-/// If the system is too ill-conditioned (ε_mach · κ̂ > 1/4),
-/// the entire f64 stage is skipped and we fall through to rational.
+/// Non-simple polytopes (vertices on >4 facets) are supported: the vertex
+/// descriptor records ALL incident facets, not just the defining 4-subset.
 ///
-/// **Stage 2 (rational):** Reached only when stage 1 did not reject.
-/// Solve Y_S · x = 1 exactly via Cramer's rule over Q. Check all gaps
-/// g_i = 1 - y_i · v exactly. If all non-negative, v is a vertex.
+/// ## Why exact arithmetic
 ///
-/// Stage 1 rejects ~65-93% of subsets (depending on F), avoiding expensive
-/// rational arithmetic.
-/// It can only reject, never confirm — all actual vertices reach stage 2.
-/// Error bound: [prop:prefilter-bound] in geom/math.tex
-/// (has open gap — see TODO there).
+/// Vertex-facet incidence is a discrete decision: is `y_i · v` exactly 1?
+/// In f64, rounding error makes this ambiguous for near-incident pairs.
+/// The exact rational pipeline resolves all such decisions without tolerances.
+/// This is critical for `omega_signs` (sign of ω₀(y_i, y_k)) which controls
+/// directed adjacency pruning in the capacity algorithm.
 ///
-/// Non-simple vertices (on >4 facets) are handled by deduplication: the first
-/// 4-subset discovering a vertex records ALL incident facets. Later subsets
-/// yielding the same vertex are skipped.
+/// ## Performance
+///
+/// O(F⁴) BigRational operations. The `num-bigint` crate is ~20× slower in
+/// debug mode than release; Cargo profile overrides (`opt-level = 3` for
+/// `num-bigint` and `num-rational`) bring debug-mode cost close to release.
+///
+/// The pipeline uses f64-first strategies with exact integer fallbacks:
+/// - **Bounded check**: per-triple f64 pre-filter (`bounded_triple_f64_confirms`),
+///   falling back to integer cross-product signs for inconclusive triples.
+/// - **Vertex enumeration**: f64 prefilter (`f64_prefilter_rejects`) to reject
+///   ~65-93% of C(F,4) subsets, then integer Cramer's rule (`det4_int`) for
+///   the remainder — no BigRational GCD normalization needed.
+/// - **Irredundancy**: f64 rank check on incident vertices, falling back to
+///   exact rational `affine_rank_rational` when f64 is inconclusive.
 ///
 /// Mathematical correspondence: [lem:vertex-enumeration]
-#[allow(clippy::type_complexity, dead_code)]
-fn enumerate_vertices_exact(
+#[allow(clippy::type_complexity)]
+pub(super) fn construct_rational_pipeline(
     dual_vertices: &[[BigRational; 4]],
-) -> Result<(Vec<BTreeSet<usize>>, Vec<[BigRational; 4]>), ConstructionError> {
-    use super::rational_arithmetic::rational_to_f64;
-
+) -> Result<(Vec<[BigRational; 4]>, Vec<BTreeSet<usize>>), ConstructionError> {
     let f = dual_vertices.len();
-    let one = BigRational::from(BigInt::from(1));
-    let rhs: [BigRational; 4] = std::array::from_fn(|_| one.clone());
 
-    // Precompute f64 versions of dual vertices for the pre-filter.
-    let dv_f64: Vec<[f64; 4]> = dual_vertices
-        .iter()
-        .map(|y| std::array::from_fn(|c| rational_to_f64(&y[c])))
-        .collect();
-
-    let mut vertex_descriptors = Vec::new();
-    let mut vertices = Vec::new();
-
-    for subset in combinations4(f) {
-        // Stage 1: f64 pre-filter. Can only reject (FALSE), never confirm.
-        if f64_prefilter_rejects(&dv_f64, &subset, f) {
-            continue;
+    // ── Step 1: Validation ──
+    if f < 5 {
+        return Err(ConstructionError::TooFewFacets(f));
+    }
+    for (i, y) in dual_vertices.iter().enumerate() {
+        if y.iter().all(|c| c.is_zero()) {
+            return Err(ConstructionError::ZeroDualVertex(i));
         }
-
-        // Stage 2: exact rational path (reached when stage 1 did not reject).
-        let rows: [[BigRational; 4]; 4] = [
-            dual_vertices[subset[0]].clone(),
-            dual_vertices[subset[1]].clone(),
-            dual_vertices[subset[2]].clone(),
-            dual_vertices[subset[3]].clone(),
-        ];
-
-        let d = det4(&rows);
-        if d.is_zero() {
-            continue; // Singular subset
-        }
-
-        // Solve exactly: Y_S · v = 1
-        let v = solve4(&rows, &rhs).unwrap(); // safe: det != 0
-
-        // Check all gaps: gap > 0 means non-incident facet,
-        // gap = 0 means incident (non-simple vertex),
-        // gap < 0 means point is outside K (not a vertex).
-        let mut all_nonneg = true;
-        let mut incident_facets = BTreeSet::from(subset);
-        for (i, dv) in dual_vertices.iter().enumerate() {
-            if subset.contains(&i) {
-                continue;
-            }
-            let gap = &one - dot4(dv, &v);
-            if gap.is_negative() {
-                all_nonneg = false;
-                break;
-            }
-            if gap.is_zero() {
-                incident_facets.insert(i);
-            }
-        }
-
-        if !all_nonneg {
-            continue; // Point is outside K
-        }
-
-        // Deduplicate: skip if this vertex was already found by an earlier subset
-        let already_found = vertices
-            .iter()
-            .any(|existing: &[BigRational; 4]| (0..4).all(|i| existing[i] == v[i]));
-        if already_found {
-            continue;
-        }
-
-        vertex_descriptors.push(incident_facets);
-        vertices.push(v);
     }
 
-    if vertex_descriptors.is_empty() {
-        return Err(ConstructionError::NoVertices);
-    }
+    // ── Step 2: Precompute integer-scaled dual vertices ──
+    let (int_dual_vertices, common_denom) = integer_scale_dual_vertices(dual_vertices);
 
-    Ok((vertex_descriptors, vertices))
+    // ── Step 3: Bounded check (f64-first per triple, integer fallback) ──
+    check_bounded_f64_first(dual_vertices, &int_dual_vertices)?;
+
+    // ── Step 4: Vertex enumeration (f64 prefilter + integer Cramer) ──
+    let (vertex_descriptors, vertices) =
+        enumerate_vertices_int(dual_vertices, &int_dual_vertices, &common_denom)?;
+
+    // ── Step 5: Irredundancy check (f64-first) ──
+    check_irredundancy_f64_first(&vertices, &vertex_descriptors, f)?;
+
+    Ok((vertices, vertex_descriptors))
 }
 
 /// f64 pre-filter: returns true if the subset definitely yields no vertex.
