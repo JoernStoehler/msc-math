@@ -20,6 +20,7 @@ const H_MIN: f64 = 0.8;
 const H_MAX: f64 = 1.2;
 
 /// (facet_count, n_seeds)
+/// Production seed counts. Adjust and re-run to expand the dataset.
 const PLAN: &[(usize, usize)] = &[
     (7, 100),
     (8, 100),
