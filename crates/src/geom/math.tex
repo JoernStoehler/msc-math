@@ -355,7 +355,7 @@ So $K$ contains the ray through~$d$ and is unbounded.
 \begin{lemma}[Algorithmic bounded check via triples]\label{lem:bounded-triples}
 % [TODO: JÖRN - verify statement and proof]
 % Source: check_bounded_f64_first in vertex_enumeration.rs
-Under the hypotheses of \cref{lem:positive-span}, assume
+Under the hypotheses of Lemma~\ref{lem:positive-span}, assume
 $\operatorname{rank}\{a_1, \ldots, a_F\} = 4$.
 Then $\{a_i\}$ positively spans $\mathbb{R}^4$ if and only if for every
 triple $\{i,j,k\} \subset \{1,\ldots,F\}$ and every
@@ -673,7 +673,7 @@ $\|M\|_F^2 = \sum_i \sigma_i(M)^2 \le n\sigma_1(M)^2
 = n\|M\|^2$. \qed
 \end{fact}
 
-% TODO: verify exact theorem number in Higham Ch. 5
+% [TODO: JÖRN - verify exact theorem number in Higham Ch. 5]
 \begin{fact}[SVD backward stability;
   {Higham~(2002), Ch.~5}]\label{fact:prefilter-svd}
 The computed SVD of $B \in \mathbb{R}^{n \times n}$ produces
@@ -683,7 +683,7 @@ with $\|E_{\mathrm{svd}}\| \le c_{\mathrm{svd}}\emach\|B\|$,
 where $c_{\mathrm{svd}} = O(n)$.
 \end{fact}
 
-% TODO: verify exact section numbers in Higham
+% [TODO: JÖRN - verify exact section numbers in Higham]
 \begin{fact}[SVD-based solve backward stability;
   {Higham~(2002), Ch.~3, 5}]\label{fact:prefilter-solve}
 Solving $Bx = b$ via computed SVD factors in f64 gives $\hat{x}$
@@ -696,14 +696,14 @@ $\hat{U}^\top b$, $\hat{\Sigma}^{-1}(\cdot)$,
 $\hat{V}(\cdot)$.)
 \end{fact}
 
-% TODO: verify exact corollary number in GVL Ch. 8
+% [TODO: JÖRN - verify exact corollary number in GVL Ch. 8]
 \begin{fact}[Weyl's singular value perturbation theorem;
   {Golub \& Van~Loan~(2013), Ch.~8}]\label{fact:prefilter-weyl}
 For any $B, B' \in \mathbb{R}^{n \times n}$:
 $|\sigma_i(B) - \sigma_i(B')| \le \|B - B'\|$.
 \end{fact}
 
-% TODO: verify exact lemma number in Higham Ch. 2
+% [TODO: JÖRN - verify exact lemma number in Higham Ch. 2]
 \begin{fact}[Banach perturbation lemma;
   {Higham~(2002), Ch.~2}]\label{fact:prefilter-banach}
 If $B$ is invertible and $\|B^{-1}\|\|E\| < 1$, then
@@ -718,7 +718,7 @@ and $\|(B+E)^{-1}\| \le \|B^{-1}\|/(1 - \|B^{-1}\|\|E\|)$
 by the geometric series bound. \qed
 \end{fact}
 
-% TODO: verify exact theorem number in Higham Ch. 3
+% [TODO: JÖRN - verify exact theorem number in Higham Ch. 3]
 \begin{fact}[Dot product rounding;
   {Higham~(2002), Ch.~3}]\label{fact:prefilter-dot}
 For $x, y \in \mathbb{F}^n$, the f64-computed inner product
@@ -843,7 +843,7 @@ In the regime $\emach\kappa \le 1/4$,
 $\hat\kappa$ and $\kappa$ differ by at most a constant
 factor, absorbed into $C$.
 
-\begin{proof}
+\begin{proof}[Proof of Proposition~\ref{prop:prefilter-bound}]
 Write $\kappa = \kappa_2(\hat{A})$.
 Throughout, $\lesssim$ means $\le$ up to factors of the
 form $(1 \pm c\emach)^{\pm 1}$ with $c \le 10^3$.
