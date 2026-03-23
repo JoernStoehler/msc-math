@@ -7,7 +7,7 @@
 %   def:polar-body, def:polytope-dual, def:polygon-h-rep, def:polygon-area,
 %   def:reeb-vector-field, def:volume, def:systolic-ratio,
 %   lem:piecewise-linear-reeb, lem:positive-span, lem:rational-pipeline,
-%   lem:vertex-enumeration, lem:shoelace,
+%   lem:vertex-enumeration, prop:integer-cramer, lem:shoelace,
 %   thm:hko-counterexample,
 %   prop:capacity-symplectic-product,
 %   prop:prefilter-bound, cor:prefilter-soundness,
@@ -345,6 +345,65 @@ then filtering for points satisfying all remaining inequalities.
 The implementation uses exact rational arithmetic to avoid
 numerical errors in degeneracy detection.
 \end{lemma}
+
+
+\begin{proposition}[Integer-scaled Cramer's rule]\label{prop:integer-cramer}
+% [TODO: JÖRN - verify statement and proof]
+% Source: optimized vertex enumeration in vertex_enumeration.rs
+Let $a_1, \ldots, a_F \in \mathbb{Q}^4$ be the dual vertices defining
+$K = \{x \in \mathbb{R}^4 : \langle a_i, x \rangle \leq 1\}$.
+Let $D = \operatorname{lcm}$ of all denominators of all components of
+$a_1, \ldots, a_F$, and set $A_i = D \cdot a_i \in \mathbb{Z}^4$.
+
+For a four-element subset $S = \{s_0, s_1, s_2, s_3\}$, let $M_S$ be the
+$4 \times 4$ matrix with rows $A_{s_k}$, and let $\delta = \det(M_S)$.
+If $\delta \neq 0$, the candidate vertex~$v$ solving
+$\langle a_{s_k}, v \rangle = 1$ for all $k$ has coordinates
+\[
+  v^{(j)} = \frac{D \cdot \nu_j}{\delta},
+  \qquad
+  \nu_j = \det\!\bigl(M_S \text{ with column } j
+    \text{ replaced by } \mathbf{1}\bigr),
+\]
+where $\mathbf{1} = (1,1,1,1)^\top$.
+
+The feasibility gap for facet $i \notin S$ is
+\[
+  1 - \langle a_i, v \rangle
+  = \frac{g_i}{\delta},
+  \qquad
+  g_i = \delta - \sum_{j=0}^{3} A_i^{(j)} \nu_j \;\in\; \mathbb{Z}.
+\]
+Hence $1 - \langle a_i, v \rangle \geq 0$ if and only if
+$\operatorname{sign}(g_i) = \operatorname{sign}(\delta)$ or $g_i = 0$,
+and all intermediate computations are in~$\mathbb{Z}$.
+\end{proposition}
+
+\begin{proof}
+The system $\langle a_{s_k}, v \rangle = 1$ for $k = 0, \ldots, 3$
+is equivalent to $(A_{s_k}/D)^\top v = 1$, i.e.,
+$M_S\, v = D \cdot \mathbf{1}$.
+By Cramer's rule,
+\[
+  v^{(j)} = \frac{\det(M_S^{(j)})}{\delta},
+\]
+where $M_S^{(j)}$ is $M_S$ with column~$j$ replaced by
+$D \cdot \mathbf{1}$.
+By multilinearity of the determinant in the $j$-th column,
+$\det(M_S^{(j)}) = D \cdot \nu_j$.
+
+For the feasibility gap:
+\[
+  1 - \langle a_i, v \rangle
+  = 1 - \sum_{j=0}^{3} \frac{A_i^{(j)}}{D} \cdot \frac{D\, \nu_j}{\delta}
+  = 1 - \frac{1}{\delta} \sum_{j=0}^{3} A_i^{(j)} \nu_j
+  = \frac{\delta - \sum_j A_i^{(j)} \nu_j}{\delta}
+  = \frac{g_i}{\delta}.
+\]
+Since $A_i^{(j)}, \nu_j, \delta \in \mathbb{Z}$, we have $g_i \in \mathbb{Z}$.
+The sign condition follows: $g_i / \delta \geq 0$ iff
+$\operatorname{sign}(g_i) = \operatorname{sign}(\delta)$ or $g_i = 0$.
+\end{proof}
 
 
 \begin{lemma}[Rational arithmetic pipeline]\label{lem:rational-pipeline}
