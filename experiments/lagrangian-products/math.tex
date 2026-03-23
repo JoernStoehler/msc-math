@@ -109,6 +109,27 @@ domain---about~$25\%$ of the period.
 \label{fig:pentagon-sweep}
 \end{figure}
 
+\subsubsection*{Family 1b: Heptagon rotation curve}
+
+We repeat the fine sweep for the regular heptagon ($n = 7$). The fundamental
+domain is $[0^\circ, 180^\circ/7 \approx 25.71^\circ]$
+(Lemma~\ref{lem:rotation-fundamental-domain}), sampled at~$26$ equal steps
+($\approx 0.99^\circ$ resolution). Data: \texttt{lagrangian-products-7x7.jsonl}
+(27~rows).
+
+The curve peaks at $\theta \approx 12.9^\circ$ with $\mathrm{sys} \approx 0.917$,
+well below~$1$. No counterexample.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{../experiments/lagrangian-products/lagrangian_products_7x7.png}
+\caption{Systolic ratio of $\mathrm{Heptagon} \times_L R(\theta)\,
+  \mathrm{Heptagon}$ as a function of rotation angle~$\theta$ on the
+  fundamental domain $[0^\circ, 25.7^\circ]$. The red dashed line marks
+  $\mathrm{sys} = 1$ (Viterbo threshold).}
+\label{fig:heptagon-sweep}
+\end{figure}
+
 \subsubsection*{Family 2: Regular polygon pairs}
 
 We sweep the rotation angle for the regular pairs

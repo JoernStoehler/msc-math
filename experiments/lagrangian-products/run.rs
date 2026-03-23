@@ -1,9 +1,10 @@
 //! Lagrangian products sweeps for selected regular polygon pairs.
 //!
 //! Architecture:
-//! 1. `cargo run --bin lagrangian_products --release` generates pentagon 5x5 sweep
-//!    and regular polygon pair sweeps.
-//! 2. Writes to lagrangian-products/lagrangian-products-5x5.jsonl and
+//! 1. `cargo run --bin lagrangian_products --release` generates fine sweeps
+//!    (pentagon 5x5, heptagon 7x7) and coarse polygon pair sweeps.
+//! 2. Writes to lagrangian-products/lagrangian-products-5x5.jsonl,
+//!    lagrangian-products/lagrangian-products-7x7.jsonl, and
 //!    lagrangian-products/lagrangian-products-<n>x<m>-6deg.jsonl
 //!
 //! Capacity algorithm: billiard (fast, production default for Lagrangian products).
@@ -55,7 +56,80 @@ struct SweepRow {
 
 fn main() {
     generate_pentagon_5x5();
+    generate_heptagon_7x7();
     generate_polygon_pairs();
+}
+
+/// Heptagon x heptagon fine sweep over [0, 180/7] degrees.
+/// Fundamental domain from [lem:rotation-fundamental-domain].
+fn generate_heptagon_7x7() {
+    let n = 7;
+    let end_deg = 180.0 / n as f64;
+    // 26 steps over 25.71° ≈ 0.99° per step, comparable to the 5x5 sweep (1°/step).
+    let num_steps: usize = 26;
+    let step_deg = end_deg / num_steps as f64;
+
+    let output_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("lagrangian-products/lagrangian-products-7x7.jsonl");
+    let file = File::create(&output_path).expect("cannot create output file");
+    let mut writer = BufWriter::new(file);
+
+    eprintln!(
+        "Heptagon 7x7 sweep: {} angles in [0.0°, {end_deg:.2}°], step={step_deg:.3}°",
+        num_steps + 1
+    );
+
+    let (qn, qh) = regular_polygon_2d(n, 1.0);
+    let (pn_base, ph_base) = regular_polygon_2d(n, 1.0);
+    let area_q = polygon_area(&qn, &qh).expect("area_q");
+    let area_p = polygon_area(&pn_base, &ph_base).expect("area_p");
+
+    for i in 0..=num_steps {
+        let angle_deg = step_deg * (i as f64);
+        let theta = angle_deg.to_radians();
+
+        let (pn, ph) = rotate_polygon_2d(&pn_base, &ph_base, theta);
+        let polytope = lagrangian_product(&qn, &qh, &pn, &ph)
+            .expect("heptagon product construction failed");
+
+        let vol = volume(&polytope).expect("volume computation failed");
+
+        let start = Instant::now();
+        let result = billiard_capacity(&polytope)
+            .expect("billiard failed")
+            .expect("billiard returned None");
+        let time_ms = start.elapsed().as_secs_f64() * 1000.0;
+
+        let cap = result.result.capacity;
+        let sys = cap * cap / (2.0 * vol);
+
+        let row = SweepRow {
+            family: "heptagon_7x7_sweep".to_string(),
+            n1: n,
+            n2: n,
+            angle_deg,
+            facet_count: 2 * n,
+            volume: vol,
+            capacity: cap,
+            sys,
+            time_capacity_ms: time_ms,
+            area_q,
+            area_p,
+            iterations: result.result.iterations,
+            bounces: result.bounce_count,
+        };
+        let line = serde_json::to_string(&row).expect("serialize");
+        writeln!(writer, "{line}").expect("write");
+
+        if i % 5 == 0 {
+            eprintln!(
+                "  {i}/{num_steps}: theta={angle_deg:.2} deg sys={sys:.6} cap={cap:.6} ({time_ms:.0}ms)"
+            );
+        }
+    }
+
+    writer.flush().expect("flush output");
+    eprintln!("Done. Output: {}", output_path.display());
 }
 
 fn generate_pentagon_5x5() {

@@ -6,7 +6,7 @@ The only known 4D counterexample to Viterbo's conjecture is a Lagrangian product
 
 ## Status
 
-**Complete.** Pentagon x pentagon at theta = 18 degrees confirms the HKO counterexample (sys ~ 1.047). No other regular polygon pair with 3 <= n <= m <= 6 achieves sys > 1 (at 6-degree resolution).
+**Complete.** Pentagon x pentagon at theta = 18 degrees confirms the HKO counterexample (sys ~ 1.047). Heptagon x heptagon peaks at sys ~ 0.917 (theta ~ 12.9 degrees), well below 1. No other regular polygon pair with 3 <= n <= m <= 7 achieves sys > 1.
 
 ## How to run
 
@@ -24,6 +24,7 @@ python3 lagrangian-products/analyze.py           # generates plots
 | `analyze.py` | Python: plots sys(theta) curves |
 | `math.tex` | Formal proofs and definitions (symmetry lemma, rotation curves, polygon pair grid) |
 | `lagrangian-products-5x5.jsonl` | Pentagon rotation curve (37 rows) |
+| `lagrangian-products-7x7.jsonl` | Heptagon rotation curve (27 rows) |
 | `lagrangian-products-3x3-6deg.jsonl` | Triangle x triangle sweep (11 rows) |
 | `lagrangian-products-3x4-6deg.jsonl` | Triangle x square sweep (4 rows) |
 | `lagrangian-products-3x5-6deg.jsonl` | Triangle x pentagon sweep (3 rows) |
@@ -35,6 +36,7 @@ python3 lagrangian-products/analyze.py           # generates plots
 | `lagrangian-products-5x6-6deg.jsonl` | Pentagon x hexagon sweep (2 rows) |
 | `lagrangian-products-6x6-6deg.jsonl` | Hexagon x hexagon sweep (6 rows) |
 | `lagrangian_products_5x5.png` | Pentagon rotation curve figure |
+| `lagrangian_products_7x7.png` | Heptagon rotation curve figure |
 | `lagrangian_products_polygon_pairs.png` | All polygon pairs comparison figure |
 
 ## Design
@@ -51,9 +53,11 @@ For regular n-gon x m-gon, sys(theta) has period 2*pi/lcm(n,m) and mirror symmet
 
 1. **Pentagon rotation curve (Family 1):** P = Q = regular pentagon, theta in [0, 36] degrees at 1-degree steps. Fundamental domain = 180/lcm(5,5) = 36 degrees. Output: `lagrangian-products-5x5.jsonl` (37 points).
 
-2. **Polygon pair grid (Family 2):** All pairs (n, m) with 3 <= n <= m <= 6, at 6-degree steps over the fundamental domain. 10 pairs, one JSONL file each. Capacity computed using billiard algorithm.
+2. **Heptagon rotation curve (Family 1b):** P = Q = regular heptagon, theta in [0, 180/7] degrees at ~1-degree steps (26 steps over the fundamental domain). Output: `lagrangian-products-7x7.jsonl` (27 points).
 
-3. **Random Lagrangian products (Family 3):** Delegated to separate `random-product-sweep` experiment.
+3. **Polygon pair grid (Family 2):** All pairs (n, m) with 3 <= n <= m <= 6, at 6-degree steps over the fundamental domain. 10 pairs, one JSONL file each. Capacity computed using billiard algorithm.
+
+4. **Random Lagrangian products (Family 3):** Delegated to separate `random-product-sweep` experiment.
 
 ### Algorithm
 
@@ -67,11 +71,13 @@ All capacities computed using the billiard algorithm (fast, production default f
 
 3. **Violation region** (sys > 1) spans approximately theta in (13.5, 22.5) degrees within each fundamental domain, about 25% of the period.
 
-4. **No other regular polygon pair (3 <= n <= m <= 6) achieves sys > 1** at 6-degree resolution. All 10 polygon pair curves stay below 1.
+4. **No other regular polygon pair (3 <= n <= m <= 7) achieves sys > 1.** All polygon pair curves stay below 1.
 
 5. **Sys is a smooth function of rotation angle** with the expected periodicity from the symmetry lemma.
 
 6. **The counterexample is a local maximum in the rotation parameter space.** The sys(theta) curve peaks at theta = 18 degrees and decreases in both directions.
+
+7. **Heptagon x heptagon peaks at sys ≈ 0.917 at theta ≈ 12.9 degrees.** The curve is symmetric about the midpoint of the fundamental domain (180/14 ≈ 12.86 degrees). The peak is well below 1 — no counterexample.
 
 ## Triangle x Square Investigation
 
@@ -93,5 +99,5 @@ Fixes applied to `crates/src/geom/known_polytopes.rs`:
 ## Known limitations
 
 - Only regular polygons tested; irregular polygon products not explored.
-- Rotation angle step size is 6 degrees for the polygon pair grid (coarser than the 1-degree pentagon sweep).
+- Rotation angle step size is 6 degrees for the polygon pair grid (coarser than the 1-degree pentagon/heptagon sweeps).
 - Family 3 (random Lagrangian products) delegated to `random-product-sweep` experiment.

@@ -6,6 +6,7 @@ Goal: Visualize sys(theta) for the 5x5 pentagon sweep and selected n-gon x m-gon
 Input: experiments/lagrangian-products/lagrangian-products-5x5.jsonl,
        experiments/lagrangian-products/lagrangian-products-<n>x<m>-6deg.jsonl
 Output: experiments/lagrangian-products/lagrangian_products_5x5.png,
+        experiments/lagrangian-products/lagrangian_products_7x7.png,
         experiments/lagrangian-products/lagrangian_products_polygon_pairs.png
 """
 import json
@@ -55,15 +56,15 @@ def plot_sweep(data: list[dict], output: Path):
     sys_vals = np.array([d["sys"] for d in rows])
 
     fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
-    ax.plot(angles, sys_vals, color="#2f5aa6", linewidth=2.0, label="sys(theta)")
-    ax.axhline(y=1.0, color="#c0392b", linestyle="--", alpha=0.7, label="sys = 1")
+    ax.plot(angles, sys_vals, color="#2f5aa6", linewidth=2.0, label=r"$\mathrm{sys}(\theta)$")
+    ax.axhline(y=1.0, color="#c0392b", linestyle="--", alpha=0.7, label=r"$\mathrm{sys} = 1$")
 
-    ax.set_xlabel("Rotation angle theta (degrees)")
-    ax.set_ylabel("sys = c^2 / (2 * vol)")
-    ax.set_title("Pentagon x R(theta) Pentagon (0-36 degrees)")
+    ax.set_xlabel(r"Rotation angle $\theta$ (degrees)")
+    ax.set_ylabel(r"$\mathrm{sys} = c^2 / (2\,\mathrm{vol})$")
+    ax.set_title(r"Pentagon $\times_L$ $R(\theta)$ Pentagon ($0$–$36$ degrees)")
 
     ax.axvline(x=18.0, color="#7f8c8d", linestyle=":", alpha=0.7)
-    ax.text(18.2, ax.get_ylim()[0], "18 deg", fontsize=8, color="#7f8c8d", va="bottom")
+    ax.text(18.2, ax.get_ylim()[0], r"$18$°", fontsize=8, color="#7f8c8d", va="bottom")
 
     ax.legend(loc="best")
     fig.tight_layout()
@@ -128,10 +129,46 @@ def plot_polygon_pairs(data: dict[tuple[int, int], list[dict]], output: Path):
     print(f"Saved: {output}")
 
 
+def plot_heptagon_sweep(data: list[dict], output: Path):
+    """Plot sys vs rotation angle for heptagon x R(theta) heptagon."""
+    rows = sorted(data, key=lambda d: d["angle_deg"])
+    angles = np.array([d["angle_deg"] for d in rows])
+    sys_vals = np.array([d["sys"] for d in rows])
+
+    fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
+    ax.plot(angles, sys_vals, color="#2f5aa6", linewidth=2.0, label=r"$\mathrm{sys}(\theta)$")
+    ax.axhline(y=1.0, color="#c0392b", linestyle="--", alpha=0.7, label=r"$\mathrm{sys} = 1$")
+
+    ax.set_xlabel(r"Rotation angle $\theta$ (degrees)")
+    ax.set_ylabel(r"$\mathrm{sys} = c^2 / (2\,\mathrm{vol})$")
+    ax.set_title(r"Heptagon $\times_L$ $R(\theta)$ Heptagon ($0$–$25.7$ degrees)")
+
+    i_max = int(np.argmax(sys_vals))
+    ax.axvline(x=angles[i_max], color="#7f8c8d", linestyle=":", alpha=0.7)
+    ax.text(
+        angles[i_max] + 0.3, ax.get_ylim()[0],
+        f"${angles[i_max]:.1f}$°", fontsize=8, color="#7f8c8d", va="bottom",
+    )
+
+    ax.legend(loc="best")
+    fig.tight_layout()
+    fig.savefig(output)
+    plt.close(fig)
+    print(f"Saved: {output}")
+
+    print("\nHeptagon sweep summary:")
+    print(f"  Points: {len(rows)}")
+    print(f"  sys range: [{sys_vals.min():.6f}, {sys_vals.max():.6f}]")
+    print(f"  Max sys at theta = {angles[i_max]:.2f} deg")
+
+
 def main():
     FIGURES_DIR.mkdir(parents=True, exist_ok=True)
     data = load_jsonl(DATA_DIR / "lagrangian-products-5x5.jsonl")
     plot_sweep(data, FIGURES_DIR / "lagrangian_products_5x5.png")
+
+    data_7x7 = load_jsonl(DATA_DIR / "lagrangian-products-7x7.jsonl")
+    plot_heptagon_sweep(data_7x7, FIGURES_DIR / "lagrangian_products_7x7.png")
 
     pair_data = load_pair_data(DATA_DIR)
     plot_polygon_pairs(pair_data, FIGURES_DIR / "lagrangian_products_polygon_pairs.png")
