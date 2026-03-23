@@ -11,7 +11,8 @@
 //! - k = 0: trivial (no degrees of freedom).
 //! - k >= 1: LP via clarabel interior-point solver (through `good_lp`).
 //!
-//! Used by `projection_solver` (Step 4) to classify the verdict for a KKT node.
+//! Used by `projection_solver` (Step 4) and `saddle_point_solver` (null-space
+//! search) to find the maximum-margin point in an affine solution set.
 //!
 //! Mathematical correspondence: [lem:numerical-transition-feasibility]
 
@@ -47,24 +48,6 @@ pub struct MarginResult {
 /// - For all k, the margin is the certified global optimum.
 pub fn find_max_margin(beta0: &DVector<f64>, null_basis: &DMatrix<f64>) -> MarginResult {
     find_max_margin_lp(beta0, null_basis)
-}
-
-/// Convenience wrapper: find feasible beta from a QP's constraint solution.
-///
-/// Given a constraint solution (x0, null_basis), finds the point with
-/// maximum margin and returns it if margin > 0.
-///
-/// This is the entry point used by the projection solver path.
-pub fn find_feasible_beta(
-    beta0: &DVector<f64>,
-    null_basis: &DMatrix<f64>,
-) -> Option<DVector<f64>> {
-    let result = find_max_margin(beta0, null_basis);
-    if result.margin > 0.0 {
-        Some(result.beta)
-    } else {
-        None
-    }
 }
 
 /// LP solution via clarabel interior-point solver (through `good_lp`).
@@ -414,33 +397,4 @@ mod tests {
         assert_beta_reconstruction(&beta0, &v, &result);
     }
 
-    // ── Convenience wrapper tests ──
-
-    #[test]
-    fn find_feasible_beta_returns_some_when_feasible() {
-        let beta0 = DVector::from_vec(vec![-1.0, -1.0, 3.0]);
-        #[rustfmt::skip]
-        let v = DMatrix::from_row_slice(3, 2, &[
-            1.0, 0.0,
-            0.0, 1.0,
-            0.0, 0.0,
-        ]);
-        let result = find_feasible_beta(&beta0, &v);
-        assert!(result.is_some(), "should find feasible beta");
-        let beta = result.unwrap();
-        assert!(beta.iter().all(|&b| b > 0.0), "all components should be positive");
-    }
-
-    #[test]
-    fn find_feasible_beta_returns_none_when_infeasible() {
-        let beta0 = DVector::from_vec(vec![-5.0, -5.0, -5.0]);
-        #[rustfmt::skip]
-        let v = DMatrix::from_row_slice(3, 2, &[
-            1.0,  0.0,
-            0.0,  1.0,
-           -1.0, -1.0,
-        ]);
-        let result = find_feasible_beta(&beta0, &v);
-        assert!(result.is_none(), "should not find feasible beta");
-    }
 }
