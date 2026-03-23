@@ -68,7 +68,7 @@ The thesis is currently a dump of results, not a coherent narrative. Experiments
 **Known gaps:**
 - `sys-optimization` needs a redesign, not just modernization — didn't use proper gradients, didn't look at cuts
 - `crosspolytope` Phase 2 TODO: update known_polytopes.rs (tracked in its logbook)
-- `hko-neighborhood` open questions 5-7 from Jörn about neighborhood landscape, subdifferential after cuts, saddle vs local max
+- `hko-neighborhood` Phase C (2026-03-23) proved first-order local max in F=10 (n,h)-space via LP. Remaining: 16 flat directions need second-order analysis; F=11 and convex-body directions untested (Phases E, F in logbook)
 
 **Experiment ideas:** See `IDEAS.md` (root).
 
@@ -139,13 +139,25 @@ Depends on: experiment-quality (thesis story), thesis-todos (math verification).
 
 Direction (2026-03-22, Jörn): Thesis will introduce both (n_i, h_i) and a_i = n_i/h_i, but primarily work in a_i.
 
-**Current state:** Code stores `dual_vertices` (a_i) as primary representation, computes (n_i, h_i) on demand. Math.tex files are mixed: `geom/math.tex` uses a_i, but `kkt/math.tex` and `algorithms/math.tex` use (n_i, h_i) throughout.
+**Update (2026-03-23, Jörn):** Refactor all code & math to use a_i instead of (n_i, h_i). Since we never use ||n||=1 anywhere, a_i is equivalent to assuming h_i=1 and n_i=a_i with no unit-norm constraint. Advantages:
+- Gradient ∇_{a_i} sys is a single 4-vector per facet — no separate ∂/∂h and ∂/∂n, no tangent projection to T_{n_k}S³
+- KKT constraint simplifies: Σ a_{σ(i)} β_i = 0, Σ β_i = 1 (build_qp already uses this)
+- Reeb vector R_i = 2J a_i (instead of 2/h_i · J n_i)
+- Eliminates 10D gauge freedom (radial directions) that complicates the Phase C LP test
 
-**Open question (Jörn):** Is there a clean a_i-only KKT formulation? Likely requires rescaling β so h disappears from constraints. Jörn to work out the math — agents should not attempt the derivation.
+**Motivation from Phase C (2026-03-23):** The LP test for HKO local maximality works in R^{50} ambient with 10 gauge directions, requiring careful bookkeeping (40 effective DOF, tangent projection). In a_i-space this would be a clean R^{40} LP with no gauge.
+
+**Current state:** Code stores `dual_vertices` (a_i) as primary representation, computes (n_i, h_i) on demand. `build_qp` already uses a_i. But `build_augmented_system`, `derivatives.rs`, and all experiment gradient code use (n_i, h_i).
+
+**Work items:**
+1. **Math:** Write the a_i-only KKT formulation and gradient formulas in math.tex. The formulas are: ∂A/∂a_k = envelope theorem on Q(β) = (1/2) Σ_{i<j} β_i β_j ω₀(a_{σ(i)}, a_{σ(j)}), constraint A^T β = 0, 1^T β = 1. Capacity A = 1/(2Q). (Jörn to verify the derivation.)
+2. **Library API:** Add `pub fn capacity_derivatives_a(...)` to `derivatives.rs` returning ∂c_EHZ/∂a_k ∈ R^4 per facet.
+3. **Experiment migration:** Replace (n,h) gradient code in hko-neighborhood, gradient-descent, sys-optimization with library API calls.
+4. **Math.tex migration:** Update `kkt/math.tex` and `algorithms/math.tex` from (n_i, h_i) to a_i.
 
 **Library derivative API:** The library computes c_EHZ but provides no ∂c_EHZ/∂a_i. Needed by multiple experiments and the subdifferential analysis for local maximality.
 
-**Experiment code duplication:** Three experiments independently implement ∂sys/∂h and ∂sys/∂n in (n, h) space (~2100 + 700 + 600 LOC across hko-neighborhood, gradient-descent, sys-optimization). Once a_i-only formulation is settled, replace with a library API.
+**Experiment code duplication:** Three experiments independently implement ∂sys/∂h and ∂sys/∂n in (n, h) space (~2100 + 700 + 600 LOC across hko-neighborhood, gradient-descent, sys-optimization) plus Phase C's Python reimplementation. Once a_i-only formulation is settled, replace all with a library API.
 
 ---
 
