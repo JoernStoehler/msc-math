@@ -142,6 +142,12 @@ See `handoffs/migration-thesis-findings.md` for the full list. Highest priority 
 
 ---
 
+## 3b. Audit math.tex stubs for lost mathematical backing
+
+When algorithmic lemmas were migrated from code doc comments to math.tex, some may have lost their connection to source material (papers, thesis definitions). Scan all math.tex `[TODO: JÖRN -` entries and check: was there ever a proof or citation? Did it get dropped during migration? Example: `lem:positive-span` and `lem:vertex-enumeration` in `geom/math.tex` have been proof-less stubs since their first commit — the thesis has Jörn-approved definitions of what a polytope is, but no proofs of the algorithmic facts the code relies on (positive spanning ↔ bounded, vertex enumeration correctness, irredundancy via affine rank).
+
+---
+
 ## 4. Thesis TODOs
 
 🔴 Jörn verifies the math. Agent writes drafts, Jörn reviews.

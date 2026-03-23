@@ -15,9 +15,9 @@
 %   fact:prefilter-solve, fact:prefilter-weyl, fact:prefilter-banach,
 %   fact:prefilter-dot, rem:prefilter-constants
 %
-% Sources: thesis/basic-definitions.tex (verified content),
-%   .rs doc comments (stubs for labels not yet in thesis),
-%   /tmp/prefilter-bound-simple.tex (Jörn + agent session)
+% Sources: .rs doc comments, Jörn + agent session notes.
+%   Polytope definition: def:polytope in thesis (Jörn-approved).
+%   Note: code/math.tex must NOT reference thesis/ files (convention).
 
 % \input'd from crates/src/math.tex — do not add \documentclass or \begin{document}
 
@@ -92,7 +92,7 @@ Viterbo's conjecture asserts $\operatorname{sys}(K) \leq 1$ for all convex bodie
 % ====================================================================
 
 \begin{definition}[Lagrangian product]\label{def:lagrangian-product}
-% Source: thesis/lagrangian-product-algorithm-proof.tex
+% Source: lagrangian_product.rs doc comments
 Let $K_q \subset L_q$ and $K_p \subset L_p$ be convex polygons
 with $0 \in \operatorname{int}(K_q)$ and $0 \in \operatorname{int}(K_p)$,
 where $L_q = \{(q_1, q_2, 0, 0)\}$ and $L_p = \{(0, 0, p_1, p_2)\}$
@@ -123,7 +123,7 @@ The \emph{symplectic product} is
 
 \begin{proposition}[Capacity of symplectic products]%
 \label{prop:capacity-symplectic-product}
-% Source: thesis/basic-definitions.tex
+% Source: standard result in symplectic geometry (see bibliography)
 Let $A, B \subset \mathbb{R}^2$ be convex bodies containing
 the origin in their interiors, viewed as in
 Definition~\ref{def:symplectic-product}.
