@@ -59,7 +59,7 @@ For each $k$, we define a ``blocking set''
 $B = \{k \notin \{i,j\} : \omega_0(a_i, a_k) < 0 \text{ or } \omega_0(a_j, a_k) > 0\}$,
 and check whether $F_i \cap F_j$ contains a point satisfying
 $\langle a_k, x \rangle < 1$ for all $k \in B$.
-This is a linear feasibility problem on the 2-dimensional ridge,
+This is a linear feasibility problem on the face $F_i \cap F_j$,
 solved via Fourier--Motzkin elimination.
 The $O(F^4)$ precomputation cost is negligible compared to the exponential search.
 
@@ -82,7 +82,7 @@ captures this condition exactly.
 
 \begin{lemma}[Transition feasibility]
 \label{lem:transition-feasibility}
-Let $K = \{x : \langle a_k, x \rangle \le 1,\; k = 1, \ldots, N\}$
+Let $K = \{x : \langle a_k, x \rangle \le 1,\; k = 1, \ldots, F\}$
 be a convex polytope with dual vertices~$a_k$ and facets~$F_k$.
 Define the blocking set
 $B = \{k \notin \{i,j\} : \omega_0(a_i, a_k) < 0

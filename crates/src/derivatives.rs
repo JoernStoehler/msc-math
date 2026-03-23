@@ -192,7 +192,7 @@ mod tests {
     // Capacity derivatives are tested via the FD cross-check on known polytopes.
     // Reference: [lem:cap-derivative], [lem:vol-derivative] in experiments/sys-optimization/math.tex
     //
-    // Strategy: fixture-based (hypercube, simplex) + FD cross-validation
+    // Strategy: fixture-based (hypercube) + FD cross-validation
 
     /// Volume derivative ∂vol/∂a_k should match finite differences.
     #[test]

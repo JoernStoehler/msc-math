@@ -52,7 +52,7 @@ pub struct ReebSegment {
 
 /// A piecewise-linear Reeb trajectory on the boundary of a polytope.
 ///
-/// Each segment follows the Reeb direction J_0 n_i on its facet. Consecutive
+/// Each segment follows the Reeb direction J_0 a_i on its facet. Consecutive
 /// segments share endpoints (continuity at ridges).
 #[derive(Clone, Debug)]
 pub struct ReebTrajectory {

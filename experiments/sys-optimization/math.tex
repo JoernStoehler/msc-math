@@ -131,7 +131,7 @@ bilinear identity $\omega_0(u,v) = (J_0 u) \cdot v$.)
 Combining the H-term and N-term:
 $\partial Q^*/\partial a_k
 = \beta_{i_0}^*\,[J_0(2P_{i_0} + \beta_{i_0}^* a_k) + \mu]$.
-Since $c = 1/(2Q)$, the chain rule gives
+Since $c = 1/(2Q^*)$, the chain rule gives
 $\partial c/\partial a_k = -(\partial Q^*/\partial a_k) / (2\,(Q^*)^2)$.
 \end{proof}
 
@@ -316,9 +316,13 @@ $t_{\max}$ satisfying:
 
 \item \emph{Symplectic sign preservation.}
   For each ridge-adjacent pair $(i,j)$, the signed area
-  $\omega_0(a_i + t\,g_i,\, a_j + t\,g_j)$
+  $\omega_0(a_i + t\,g_i,\, a_j + t\,g_j)
+  = \omega_0(a_i,a_j) + t\,[\omega_0(g_i,a_j) + \omega_0(a_i,g_j)] + t^2\,\omega_0(g_i,g_j)$
   must not change sign.
-  This is linear in~$t$, giving
+  % [TODO: JÖRN - step bound uses the linear approximation (ignores t^2 term).
+  % The quadratic t^2 ω₀(g_i,g_j) term can make the bound non-conservative.
+  % Verify whether the code accounts for this or whether the bound needs fixing.]
+  The linear approximation gives
   $t < \omega_0(a_i,a_j)\,/\,\max(0,\;-[\omega_0(g_i,a_j) + \omega_0(a_i,g_j)])$.
 \end{itemize}
 The step bound is $t_{\max} = \min$ over all such critical times.
