@@ -21,10 +21,10 @@ const H_MAX: f64 = 1.2;
 
 /// (facet_count, n_seeds)
 const PLAN: &[(usize, usize)] = &[
-    (7, 2_000),
-    (8, 1_000),
-    (9, 200),
-    (10, 100),
+    (7, 100),
+    (8, 100),
+    (9, 50),
+    (10, 20),
 ];
 
 #[derive(Debug, Serialize, Deserialize)]
