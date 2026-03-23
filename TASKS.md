@@ -74,44 +74,6 @@ The thesis is currently a dump of results, not a coherent narrative. Experiments
 
 Depends on: Jörn scoping the thesis story. Derivative-related experiments also depend on dual-vertex-parameterization (library derivative API).
 
-Key existing results:
-
-| Experiment | Finding |
-|---|---|
-| **crosspolytope** | First computed c_EHZ for 4D crosspolytope: c=4.0 (same as hypercube, its dual), sys=0.75. Exhaustive through m=12/16 with symmetry reduction. |
-| **hko-neighborhood** | Evidence HKO2024 is local max: gradient ascent converges in 1 step (Δsys~5e-9), all facet-splitting cuts decrease sys. 44 degenerate orbits at same action. Subdifferential appears to contain origin. Normal gradient nonzero but constrained by feasibility boundary. |
-| **lagrangian-products** | HKO is only sys>1 among regular polygon pairs (3≤n,m≤6, 6° resolution). Violation region for (5,5) spans ~13.5-22.5° rotation (~25% of period). |
-| **pentagon-perturb** | All 100 random perturbations of HKO in LP(5,5) space retain sys>1 (min 1.002, max 1.033). HKO at 1.047 is highest. No dominant PCA direction. |
-| **gradient-descent** | 995 polytopes, none reach sys>1. Lagrangian 5×5 reach higher sys (max 0.905) than general F=10 (max 0.870). Step-bound barrier at combinatorial type boundary prevents convergence; residual gradients O(1) at termination. GD currently sucks and fails hard. |
-| **sys-optimization** | Gradient ascent from 140 starts, best sys=0.878. (h,n) steps outperform h-only (68%, mean +0.054 vs +0.034). Combinatorial type boundary is binding constraint. 15/140 outliers near orbit boundaries. |
-| **omega-obstacle** | Hypothesis that small abs(ω₀) on ridges increases sys **falsified** by 4 independent tests on 953 polytopes. Orbit-specific ω has zero correlation with sys (ρ=-0.02, p=0.61). Orbits actually prefer LARGE abs(ω₀) transitions (median 0.54 orbit vs 0.36 non-orbit). KKT optimizer compensates by redistributing β — small ω doesn't make Q small because the optimizer selects orbits and weights that maximize Q regardless. HKO's Lagrangian ridges are a consequence of its construction, not a general mechanism. |
-| **random-sweep** | 70 random polytopes (F=5-12), max sys=0.578 at F=11. Median increases with F (0.08→0.48) but within-F variance large. Random polytopes stay far from violation. |
-| **random-product-sweep** | Random Lagrangian products max sys=0.794 (6×6). Higher-polygon pairs reach higher sys. HKO requires specific rotation angle, not reproduced by random orientations. |
-| **ablation** | All 4 pruning variants agree on capacity (max diff <1e-8). A2 speedup exponential: ~8x at F=5, ~1078x at F=10. A3 adds nothing on simple polytopes but 98% reduction on non-simple. |
-| **correctness** | All 6 mathematical axioms pass: algorithm agreement, literature values, conformality, symplectic invariance, perturbation stability, monotonicity. |
-| **kkt-inertia** | Eigenvalue inertia formula holds for 6/7 polytopes. 5 hko_pentagon mismatches are threshold artifacts at machine epsilon. 1.13M nodes. |
-| **orbit-recovery** | 112/112 polytopes pass all geometric checks. Closure/facet/action errors <1e-6 for F≤9. Base point generically unique (96.4%). |
-| **q-error** | 1.13M nodes, worst error bound E=2.9e-11. Actual errors at machine epsilon. Algorithm empirically exact at f64 precision. |
-| **unknown-predicates** | 29 UNKNOWNs, all Lagrangian products, all f64 noise. Random polytopes: zero. Phase 2 not needed. |
-| **benchmark** | Post-optimization (§5c): construction negligible vs capacity for all F. Capacity ~4.26^F/facet. Practical limit F≤12. Pre-optimization: construction dominated for F≤10 (80-92%), crossover at F≈11. |
-
-Observations (Jörn, 2026-03-22):
-- Gradient descent showed how rare sys>1 solutions are, but GD currently sucks and fails hard (step-bound barrier at combinatorial type boundaries, poor convergence).
-- Thesis writing postponed until end of week.
-- Thesis will introduce both (n_i, h_i) and a_i = n_i/h_i but primarily work in a_i since n_i rarely appears without a 1/h_i factor.
-
-New experiment ideas (Jörn, 2026-03-22):
-1. **HKO2024 local maximality:** Show or strongly suggest that HKO2024 is a local maximum in the space of convex bodies. Would be a publishable result.
-2. **Regular Lagrangian product analysis:** Dense (n, m, θ) sweep across wide range. Fit sys(n, m, θ) formula. Key question: does the fitted formula predict sys>1 only for P_5 ×_L R(θ) P_5?
-3. **Dense random sweep on LICCA + gradient descent:** Large-scale search for new sys>1 polytopes not close to HKO2024. GD needs redesign first.
-
-Blockers for experiment work:
-- Library has no derivative API (∂c_EHZ/∂a_i) — needed for subdifferential analysis and gradient experiments. See §6a.
-- Experiment gradient code (hko-neighborhood, gradient-descent, sys-optimization) is written in (n, h) space, not dual vertices. Needs rewriting after a_i-only KKT formulation is settled.
-- a_i-only KKT formulation is an open math question for Jörn (rescale β so h disappears from constraints). See §6a.
-
-(Session interrupted — more ideas TBD)
-
 ---
 
 ## thesis-chapters
