@@ -279,8 +279,9 @@ mod tests {
     }
 
     /// Analytical ∂A/∂h_k matches per-orbit FD central difference to O(eps²).
-    /// Uses hypercube (8 facets, fast ehz_capacity call).
+    /// Uses hypercube (8 facets; ~0.2s release, ~16s debug via ehz_capacity).
     #[test]
+    #[ignore] // Calls ehz_capacity on F=8 hypercube. Fast in release, slow in debug.
     fn capacity_derivatives_h_on_hypercube() {
         let kp = known_polytopes::hypercube();
         let polytope = &kp.polytope;
@@ -343,8 +344,10 @@ mod tests {
         }
     }
 
-    /// Capacity normal derivatives should be tangent to S³.
+    /// Capacity normal derivatives should be tangent to S³ (n · ∂A/∂n = 0).
+    /// Uses hypercube (8 facets; ~0.2s release, ~16s debug via ehz_capacity).
     #[test]
+    #[ignore] // Calls ehz_capacity on F=8 hypercube. Fast in release, slow in debug.
     fn capacity_derivatives_n_tangent() {
         let kp = known_polytopes::hypercube();
         let polytope = &kp.polytope;

@@ -215,7 +215,8 @@ mod tests {
     // with volume 8.
     // Reference: [def:volume] (per-facet specialization)
     //
-    // Strategy: fixture-based (hypercube with known facet volumes)
+    // Strategy: fixture-based (hypercube: exact volumes known;
+    //   crosspolytope: divergence-theorem cross-check with qhull)
 
     /// Each facet of [-1,1]^4 is a cube [-1,1]^3 with volume 8.
     #[test]
