@@ -186,7 +186,7 @@ Why this matters more at 1M than at 200k: a 200k session accumulates ~2 hours of
 
 ## Session Workflow
 
-Agent sessions typically work in a git worktree. Subagents and teams work in the same worktree. Exception: sessions editing `.claude/` may work on main directly to avoid worktree path issues.
+Agent sessions typically work in a git worktree. Subagents and teams work in the same worktree — parent agents must use full worktree paths (not repo root paths) in all subagent prompts so subagents edit the right files. Exception: sessions editing `.claude/` may work on main directly to avoid worktree path issues.
 
 **Time economics:** Jörn's time is scarce; agent time is practically free ($0/h). Plans minimize Jörn's workload, even at vastly higher total agent work. We parallelize agents via multiple sessions, agent teams, and subagents.
 
