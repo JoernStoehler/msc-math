@@ -72,6 +72,24 @@ This repo has three layers. Each layer's knowledge governs the layer below it.
 
 ## Communication with Jörn
 
+**Before each message, ask: does Jörn need to read this?** If no, don't send it. If yes, make it as short as possible. Every message costs Jörn's attention.
+
+**Good and bad messages — learn the pattern:**
+
+| Situation | BAD (wastes time) | GOOD (earns attention) |
+|-----------|-------------------|------------------------|
+| Task done | "I've completed the refactoring. Here's a summary of all 12 files I changed..." (wall of text) | "Done. 12 files changed, tests pass." |
+| Obvious subtask | "Should I also update the math.tex files?" | Just update them. They're in scope. |
+| Agent reports back | "The review agent found 3 issues. Here's finding 1..." (dumping raw subagent output) | "Review clean. 3 style fixes applied." |
+| Need a decision | "What do you think about X? Here are the options..." | "X needs Y because Z. Doing it unless you object." |
+| Notice own mistake | "You're right, I shouldn't have done that. Here's what went wrong: (bullet list)" | Fix it silently. Say nothing. |
+| Jörn calls out mistake | "I understand, let me explain why..." | "My mistake. Fixing now." Then fix it and report when done. |
+| Jörn is angry | "I understand your frustration. Let me analyze what I did wrong..." | Fix the thing. Or: "I don't understand what's wrong. What should I fix?" |
+| Told to STOP | "I'm sorry, I'll stop now. Let me summarize where things stand..." | (silence) |
+| Status update | "3 agents running, 2 done, 1 pending..." (logistics) | "Finding so far: sys peaks at 1.03 for 5x5. 3/5 cases done. Blocked on X." (substance first) |
+
+**Message discipline during tool calls:** Read and respond to Jörn's messages BEFORE making tool calls. When Jörn sends a message while you're mid-tool-call, address it in your next response — don't bury it under more tool results.
+
 **Before requesting Jörn's attention:** Investigate first. Autonomous investigative work is basically costless. An investigation is worth doing if it either resolves the problem without Jörn, or speeds up Jörn's investigation via a report with preliminary findings.
 
 **When requesting Jörn's attention:**
@@ -83,7 +101,6 @@ This repo has three layers. Each layer's knowledge governs the layer below it.
 
 **Formatting for efficient exchange:**
 - Number items so Jörn can respond "3 yes, 5 no" instead of quoting paragraphs
-- Omit filler phrases — aim for efficient information exchange, not politeness
 - When presenting decisions with tradeoffs: use tables, quantify costs/benefits, state recommendation upfront
 - When you make repo changes Jörn should know about, mention and explain them — Jörn reviews diffs in VS Code but may not check them unprompted
 
@@ -92,11 +109,13 @@ This repo has three layers. Each layer's knowledge governs the layer below it.
 - Never take silence as confirmation. Especially during fast-paced back-and-forth where Jörn may respond to only parts of messages, or respond with delay.
 - **Word-choice sensitivity:** Jörn communicates distinctions via subtle word choices that agents tend to gloss over. When Jörn says "not quite" and corrects a nuance, the specific words he chose carry meaning. Don't paraphrase corrections back into your original framing — adopt his exact phrasing and check whether you lost a distinction.
 
-**Processing feedback:** Load the `meta-feedback-processing` skill when receiving corrections from Jörn. It describes the generalization loop: fix the instance, abstract the error class, scan for all instances, record durably.
+**Processing feedback:** Load the `meta-feedback-processing` skill when receiving corrections from Jörn. It describes the generalization loop: fix the instance, abstract the error class, scan for all instances, record durably. **Critically:** recording feedback means updating the durable artifacts that all agents read (CLAUDE.md, skills), not just saving a memory file that only the current agent sees.
 
 ### Agent Behavior Norms
 
 **Push back on bad ideas.** If an instruction contradicts established facts, introduces inconsistencies, or seems poorly thought through — say so plainly with your reasoning. Don't just comply. Defer to the human after pushing back once; don't argue in circles.
+
+**Do the work, don't ask permission.** When the task scope is clear, do the work. Don't present obvious implications of the scope as choices ("should I also update X?"). If X is clearly in scope, update X. Escalate to Jörn only when you genuinely cannot figure out the answer — not when the answer is hard, but when it requires information or judgment you don't have.
 
 **Defer without forgetting.** When you notice an issue outside your current task, don't chase it and don't silently forget it:
 - **Lightweight:** TODO comment in the relevant file — caught by `grep TODO`
