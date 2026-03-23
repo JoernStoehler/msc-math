@@ -1272,7 +1272,12 @@ mod tests {
             [rat(1), rat(1), rat(1), rat(1)],
         ];
         let heights = vec![frac(1, 5), frac(1, 5), frac(1, 5), frac(1, 5), rat(1)];
-        Polytope4D::from_rationals(normals, heights).expect("simplex construction")
+        let dual_vertices: Vec<[BigRational; 4]> = normals
+            .iter()
+            .zip(heights.iter())
+            .map(|(n, h)| std::array::from_fn(|c| &n[c] / h))
+            .collect();
+        Polytope4D::new(dual_vertices).expect("simplex construction")
     }
 
     /// Build a rational hypercube [-1, 1]^4 with exact integer coordinates.
@@ -1290,7 +1295,12 @@ mod tests {
             [rat(0), rat(0), rat(0), rat(-1)],
         ];
         let heights = vec![rat(1); 8];
-        Polytope4D::from_rationals(normals, heights).expect("hypercube construction")
+        let dual_vertices: Vec<[BigRational; 4]> = normals
+            .iter()
+            .zip(heights.iter())
+            .map(|(n, h)| std::array::from_fn(|c| &n[c] / h))
+            .collect();
+        Polytope4D::new(dual_vertices).expect("hypercube construction")
     }
 
     /// Extract vertex descriptors (sets of incident facet indices) from incidence matrix.
@@ -1472,8 +1482,13 @@ mod tests {
             rat(1),
             rat(2),
         ];
+        let dual_vertices: Vec<[BigRational; 4]> = normals
+            .iter()
+            .zip(heights.iter())
+            .map(|(n, h)| std::array::from_fn(|c| &n[c] / h))
+            .collect();
         let p =
-            Polytope4D::from_rationals(normals, heights).expect("non-simple polytope should succeed");
+            Polytope4D::new(dual_vertices).expect("non-simple polytope should succeed");
 
         let vds = vertex_descriptors_from_incidence(&p);
         assert_eq!(vds.len(), 15, "cut hypercube should have 15 vertices");

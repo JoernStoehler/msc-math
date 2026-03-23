@@ -8,7 +8,7 @@ description: Coding conventions and mathematical documentation standards for Rus
 ## Module Structure
 
 Single crate `symplectic` with modules:
-- `geom::*` — polytope types, geometry primitives (polytope, skeleton, symplectic_form, volume, polygon, lagrangian_product, cross_product_4d, validation, rational_arithmetic, vertex_enumeration, qhull, reeb_trajectory, known_polytopes, test_utils)
+- `geom::*` — polytope types, geometry primitives (polytope, skeleton, symplectic_form, volume, facet_volume, polygon, lagrangian_product, cross_product_4d, validation, rational_arithmetic, vertex_enumeration, qhull, reeb_trajectory, known_polytopes, test_utils)
 - `algorithms::hk2017` — general capacity (exponential), with submodules: permutations, orbit_recovery, generate_capacity_fixtures
 - `algorithms::billiard` — Lagrangian product capacity (fast), with submodules: block_enumeration, facet_classification, kkt_benchmark
 - `algorithms::tube` — tube algorithm (placeholder)
@@ -21,6 +21,7 @@ Single crate `symplectic` with modules:
   - `kkt::beta_feasibility` — max-margin LP for beta>0 in affine solution set
   - `kkt::projection_solver` — null space projection, reduced objective optimization
   - `kkt::rational_solver` — exact rational KKT solver
+- `derivatives` — analytical derivatives of c_EHZ and volume w.r.t. heights and normals (envelope theorem)
 - `constants` — shared tolerance constants
 - `random` — random polytope generation
 - `dataset` — dataset serialization

@@ -211,92 +211,10 @@ impl Polytope4D {
         Self::build(dual_vertices, Some(dual_vertices_f64))
     }
 
-    /// Construct from f64 normals and heights.
-    ///
-    /// Computes dual vertices a_i = n_i / h_i, then delegates to [`Self::from_f64`].
-    pub fn from_normals_and_heights(
-        normals: Vec<Vector4<f64>>,
-        heights: Vec<f64>,
-    ) -> Result<Self, ConstructionError> {
-        if normals.len() != heights.len() {
-            return Err(ConstructionError::TooFewFacets(0));
-        }
-        let dual_vertices: Vec<Vector4<f64>> = normals
-            .iter()
-            .zip(heights.iter())
-            .map(|(n, &h)| n / h)
-            .collect();
-        Self::from_f64(dual_vertices)
-    }
-
-    /// Construct from exact rational normals and heights.
-    ///
-    /// Computes dual vertices a_i = n_i / h_i, then delegates to
-    /// [`Self::new`]. Heights must be strictly positive.
-    pub fn from_rationals(
-        normals: Vec<[BigRational; 4]>,
-        heights: Vec<BigRational>,
-    ) -> Result<Self, ConstructionError> {
-        use num_traits::Signed;
-
-        if normals.len() != heights.len() {
-            return Err(ConstructionError::TooFewFacets(0));
-        }
-        for (i, h) in heights.iter().enumerate() {
-            if !h.is_positive() {
-                return Err(ConstructionError::ZeroDualVertex(i));
-            }
-        }
-
-        let dual_vertices: Vec<[BigRational; 4]> = normals
-            .iter()
-            .zip(heights.iter())
-            .map(|(n, h)| std::array::from_fn(|c| &n[c] / h))
-            .collect();
-
-        Self::new(dual_vertices)
-    }
-
-    /// Round f64 normals/heights to rational with denominator D, then construct.
-    ///
-    /// Each coordinate x is mapped to round(x * D) / D.
-    ///
-    /// # Panics
-    ///
-    /// `denominator` must be <= 2^52 to avoid integer overflow in rounding.
-    pub fn from_f64_rounded(
-        normals: &[Vector4<f64>],
-        heights: &[f64],
-        denominator: u64,
-    ) -> Result<Self, ConstructionError> {
-        use num_bigint::BigInt;
-        assert!(
-            denominator <= 1u64 << 52,
-            "denominator {denominator} exceeds 2^52; round() as i64 may overflow"
-        );
-        let d = BigInt::from(denominator);
-
-        let rational_normals: Vec<[BigRational; 4]> = normals
-            .iter()
-            .map(|n| {
-                std::array::from_fn(|i| {
-                    let rounded = (n[i] * denominator as f64).round() as i64;
-                    BigRational::new(BigInt::from(rounded), d.clone())
-                })
-            })
-            .collect();
-
-        let rational_heights: Vec<BigRational> = heights
-            .iter()
-            .map(|&h| {
-                let rounded = (h * denominator as f64).round() as i64;
-                BigRational::new(BigInt::from(rounded), d.clone())
-            })
-            .collect();
-
-        Self::from_rationals(rational_normals, rational_heights)
-    }
-
+    // ── Removed constructors ────────────────────────────────────────────
+    // from_normals_and_heights, from_rationals, from_f64_rounded were thin
+    // wrappers that computed n/h. Callers now inline the division and call
+    // new() or from_f64() directly.
     /// Perturb dual vertices to break omega_0 = 0 degeneracies.
     ///
     /// Returns a new `Polytope4D` whose dual vertices are randomly perturbed
@@ -594,7 +512,7 @@ mod tests {
         }
     }
 
-    /// Verify vertex ordering invariant via the from_rationals() construction path.
+    /// Verify vertex ordering invariant via the rational n/h -> new() construction path.
     #[test]
     fn vertex_ordering_via_from_rationals() {
         use crate::constants::EPS_FACET_INCIDENCE;
@@ -615,8 +533,13 @@ mod tests {
                 .map(|&h| rational_arithmetic::f64_to_rational(h))
                 .collect();
 
-            let p = Polytope4D::from_rationals(rational_normals, rational_heights)
-                .expect("from_rationals should succeed");
+            let dual_vertices: Vec<[num_rational::BigRational; 4]> = rational_normals
+                .iter()
+                .zip(rational_heights.iter())
+                .map(|(n, h)| std::array::from_fn(|c| &n[c] / h))
+                .collect();
+            let p = Polytope4D::new(dual_vertices)
+                .expect("rational n/h construction should succeed");
             let incidence = p.incidence();
 
             assert_eq!(
@@ -973,7 +896,7 @@ mod tests {
         assert_eq!(p.facet_count(), 8);
     }
 
-    /// Verify from_normals_and_heights accepts a valid hypercube.
+    /// Verify from_f64 with n/h dual vertices accepts a valid hypercube.
     #[test]
     fn from_normals_and_heights_accepted() {
         let normals = vec![
@@ -987,7 +910,9 @@ mod tests {
             -Vector4::w(),
         ];
         let heights = vec![1.0; 8];
-        let p = Polytope4D::from_normals_and_heights(normals, heights).unwrap();
+        let p = Polytope4D::from_f64(
+            normals.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect(),
+        ).unwrap();
         assert_eq!(p.facet_count(), 8);
     }
 

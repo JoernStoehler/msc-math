@@ -21,7 +21,6 @@ python3 gradient-descent/analyze.py
 | File | Role |
 |------|------|
 | `run.rs` | Rust binary: polytope generation + gradient ascent |
-| `kkt_instrumented.rs` | Shared instrumented KKT solver and orbit enumeration (included via `#[path]`) |
 | `analyze.py` | Python: scatter, gradient, step-size, and survival figures |
 | `math.tex` | Formal writeup (input'd from `thesis/experiments.tex`) |
 | `gradient-descent.jsonl` | Per-iteration trajectory data: 7631 rows, 995 polytopes |
