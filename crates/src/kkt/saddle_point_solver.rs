@@ -24,6 +24,7 @@
 
 use crate::geom::polytope::Polytope4D;
 use crate::geom::symplectic_form::omega0;
+use super::beta_feasibility;
 use super::qp_assembly::build_augmented_system;
 use super::EPS_EIGEN_FLOOR;
 use nalgebra::{DMatrix, DVector, Vector4};
@@ -98,6 +99,28 @@ const EIGEN_CONDITION_TAU: f64 = 1e-3;
 /// solutions; 10x smaller (1e-7) would reject some valid solutions on
 /// moderately ill-conditioned polytopes.
 const EPS_KKT_RESIDUAL: f64 = 1e-6;
+
+/// Threshold for filtering Type A eigenvectors in null-space search.
+///
+/// When the augmented KKT matrix is rank-deficient, its null-space eigenvectors
+/// are (m+5)-dimensional. Truncated to the first m components (the beta block),
+/// some have ||v_beta|| ~ 0: their content lives in the Lagrange multiplier
+/// components (mu, xi), not in beta. Including these in the LP creates free
+/// variables with ~zero coefficients, causing spurious Unbounded results.
+///
+/// **Why 1e-10:** Eigenvectors are unit-norm in the full (m+5)-dimensional space.
+/// Type A vectors have most mass in the 5 multiplier components, so ||v_beta||
+/// is O(eps_mach). Type B vectors have ||v_beta|| = O(1). The gap is ~10 orders
+/// of magnitude — the threshold is robust anywhere in [1e-8, 1e-12].
+///
+/// See [rem:near-null-lp-search] in kkt/math.tex for the full analysis.
+///
+/// **Why Type C cannot occur:** From Mv = λv, the constraint rows give
+/// N^T v_beta = λ v_mu and η^T v_beta = λ v_xi. Since ||v|| = 1,
+/// constraint violation per unit α is ≤ |λ| ≤ τ = 1e-3 for discarded
+/// eigenvectors. Type C (O(1) violation) is impossible.
+/// Jörn: verified 2026-03-22.
+const EPS_TYPE_A_FILTER: f64 = 1e-10;
 
 // ── Public types ──
 
@@ -313,88 +336,92 @@ fn try_pseudoinverse_with_threshold(
     // threshold — not an exact kernel (which doesn't exist in f64). The
     // threshold is chosen so that these directions have negligible effect on
     // the KKT objective Q, bounded by [lem:q-error-bound].
-    let null_beta: Vec<Vec<f64>> = (0..size)
-        .filter(|&i| eigenvalues[i].abs() <= threshold)
-        .map(|i| (0..m).map(|j| eigenvectors[(j, i)]).collect())
-        .collect();
-
-    let beta_opt = if null_beta.len() == 1 {
-        find_positive_beta_1d(&beta0, &null_beta[0])
-    } else {
-        find_positive_beta_nd(&beta0, &null_beta)
-    };
-
-    // Save beta0 for the Q constancy check after null-space shift.
-    let beta0_ref = beta0.clone();
-
-    // Use null-space result if found, else fall back to beta0 if above -EPS.
-    let beta_final = match beta_opt {
-        Some(beta) => beta,
-        None => {
-            if beta0.iter().all(|&b| b > -EPS_BETA_POSITIVE) {
-                beta0
-            } else {
-                return None;
-            }
-        }
-    };
-
-    // Q is constant along the null space ([lem:well-defined]): null-space
-    // directions preserve constraints, so the KKT objective is invariant.
-    // Verify this numerically — any disagreement indicates a bug in the
-    // null-space extraction or the shift computation.
     //
-    // Cost: O(m²) where m ≤ ~10, negligible vs O(m³) eigendecomposition.
-    {
-        let mut q_final = 0.0_f64;
-        let mut q_initial = 0.0_f64;
-        for i in 0..m {
-            for j in 0..m {
-                q_final += beta_final[i] * kkt[(i, j)] * beta_final[j];
-                q_initial += beta0_ref[i] * kkt[(i, j)] * beta0_ref[j];
+    // Extract the beta-block of each null eigenvector, filtering out Type A
+    // directions (||v_beta|| ~ 0) that only move Lagrange multipliers and
+    // would cause spurious LP unboundedness. See [rem:near-null-lp-search].
+    let mut null_columns: Vec<DVector<f64>> = Vec::new();
+    for i in 0..size {
+        if eigenvalues[i].abs() <= threshold {
+            let v_beta = DVector::from_fn(m, |j, _| eigenvectors[(j, i)]);
+            if v_beta.norm() >= EPS_TYPE_A_FILTER {
+                // Type C check: constraint violation must be O(|lambda|), not O(1).
+                // N^T v_beta and eta^T v_beta are in the constraint rows of M*v = lambda*v.
+                let mut constraint_violation_sq = 0.0;
+                for row in m..size {
+                    let dot: f64 = (0..m).map(|j| kkt[(row, j)] * eigenvectors[(j, i)]).sum();
+                    constraint_violation_sq += dot * dot;
+                }
+                let constraint_violation = constraint_violation_sq.sqrt();
+                assert!(
+                    constraint_violation < 0.1,
+                    "Type C eigenvector detected: ||constraint * v_beta|| = {:.2e}, \
+                     |lambda| = {:.2e}, ||v_beta|| = {:.2e}, m = {}. \
+                     This was expected to be O(|lambda|) but is O(1).",
+                    constraint_violation, eigenvalues[i].abs(), v_beta.norm(), m
+                );
+                null_columns.push(v_beta);
             }
-        }
-        q_final *= 0.5;
-        q_initial *= 0.5;
-        // When both Q values are near-zero, the difference is pure f64 noise
-        // and the capacity algorithm discards these solutions anyway (Q << 1
-        // yields enormous action, never competitive). Only assert Q constancy
-        // when Q is meaningfully nonzero.
-        // Threshold 1e-3: meaningful Q values are O(0.01)--O(10). Near-zero
-        // Q candidates (|Q| < 1e-3) have enormous action (capacity ~ 1/(2Q)) and
-        // never win the capacity competition, so Q constancy noise there is
-        // harmless. Known case: square×square near-zero candidate has Q ~ -5e-4
-        // where null-space shift changes Q by ~6e-8 (relative ~0.01%).
-        let q_scale = q_initial.abs().max(q_final.abs());
-        if q_scale > 1e-3 {
-            assert!(
-                (q_final - q_initial).abs() < 1e-6 * q_scale,
-                "Q changed along null space: Q(beta0)={q_initial}, Q(beta_final)={q_final}"
-            );
         }
     }
 
-    // Constraint verification for null-space-shifted solutions.
-    let full_x = {
-        let mut v = DVector::zeros(size);
-        for i in 0..m {
-            v[i] = beta_final[i];
+    let k_eff = null_columns.len();
+
+    // Fast path: if all null-space directions were Type A (k_eff=0),
+    // there's nothing to search — use beta0 directly. This avoids nalgebra
+    // allocations on the hot path for degenerate polytopes.
+    if k_eff == 0 {
+        if beta0.iter().all(|&b| b > -EPS_BETA_POSITIVE) {
+            return finalize_result(&beta0, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info);
+        } else {
+            return None;
         }
-        for i in m..size {
-            v[i] = x0[i];
+    }
+
+    let mut null_basis = DMatrix::zeros(m, k_eff);
+    for (col, v) in null_columns.iter().enumerate() {
+        null_basis.set_column(col, v);
+    }
+
+    let beta0_dv = DVector::from_column_slice(&beta0);
+    let margin_result = beta_feasibility::find_max_margin(&beta0_dv, &null_basis);
+
+    // Accept the LP result only if it satisfies constraints. The LP moves
+    // along approximate null-space directions (eigenvectors of M+E, not M),
+    // so large shifts can accumulate O(alpha * |lambda_j|) constraint violation.
+    // If the LP beta violates constraints, fall back to beta0.
+    let beta_final = if margin_result.margin > -EPS_BETA_POSITIVE {
+        let lp_beta: Vec<f64> = margin_result.beta.as_slice().to_vec();
+        let lp_constraint_residual = extract_constraint_residual(kkt, &lp_beta, m);
+        if lp_constraint_residual <= EPS_KKT_RESIDUAL {
+            lp_beta
+        } else {
+            // LP shifted too far — constraint violation too large. Fall back to beta0.
+            beta0.clone()
         }
-        v
+    } else if beta0.iter().all(|&b| b > -EPS_BETA_POSITIVE) {
+        beta0.clone()
+    } else {
+        return None;
     };
-    let _constraint_residual = (kkt * &full_x - rhs).norm();
-    // Use a looser check: verify the beta constraints Cx=d hold, not the full KKT residual.
-    // The Lagrange multiplier rows may not hold exactly after null-space shift.
-    // Instead, check just the constraint rows (rows m..m+5) directly.
+
+    // Save beta0 for Q computation ([lem:well-defined]).
+    let beta0_ref = beta0;
+
+    // Verify constraints on the final beta (covers both LP and fallback paths).
     let constraint_residual_norm = extract_constraint_residual(kkt, &beta_final, m);
     if constraint_residual_norm > EPS_KKT_RESIDUAL {
         return None;
     }
 
-    finalize_result(&beta_final, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info)
+    // Q is invariant along the true null space ([lem:well-defined]), so compute
+    // Q from the pseudoinverse beta0, not from the LP-shifted beta_final.
+    // Large LP shifts along approximate null directions cause O(alpha^2 * |lambda_j|)
+    // Q drift that is spurious. beta_final is only used for feasibility (margin
+    // classification) and downstream beta values (orbit reconstruction, gradients).
+    let mut result = finalize_result(&beta0_ref, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info)?;
+    result.beta = beta_final;
+    Some(result)
 }
 
 /// Compute the constraint residual for the beta vector using the KKT matrix structure.
@@ -466,110 +493,6 @@ fn finalize_result(
         n_negative: eigen_info.n_negative,
         n_zero: eigen_info.n_zero,
     })
-}
-
-/// Search null space for beta with maximum margin (1D null space case).
-///
-/// Given particular solution beta0 and null space vector v, find alpha such that
-/// beta0 + alpha * v has maximum min(beta_j). Returns the midpoint of the
-/// feasible interval for numerical stability.
-///
-/// Accepts results with all beta > -EPS (uncertain candidates). The caller
-/// classifies beta > +EPS as certified vs beta in (-EPS, +EPS] as uncertain.
-fn find_positive_beta_1d(beta0: &[f64], v: &[f64]) -> Option<Vec<f64>> {
-    let m = beta0.len();
-    let (mut lo, mut hi) = (f64::NEG_INFINITY, f64::INFINITY);
-
-    for j in 0..m {
-        if v[j].abs() < 1e-15 {
-            // Component below numerical zero for a unit-scale eigenvector.
-            // This component is fixed at beta0[j].
-            if beta0[j] <= -EPS_BETA_POSITIVE {
-                return None;
-            }
-        } else {
-            let bound = -beta0[j] / v[j];
-            if v[j] > 0.0 {
-                lo = lo.max(bound);
-            } else {
-                hi = hi.min(bound);
-            }
-        }
-    }
-
-    if lo >= hi {
-        return None;
-    }
-
-    // Midpoint maximizes minimum distance to interval endpoints.
-    let alpha = if lo.is_finite() && hi.is_finite() {
-        (lo + hi) / 2.0
-    } else if lo.is_finite() {
-        lo + 1.0
-    } else if hi.is_finite() {
-        hi - 1.0
-    } else {
-        0.0
-    };
-
-    let beta: Vec<f64> = (0..m).map(|j| beta0[j] + alpha * v[j]).collect();
-    if beta.iter().all(|&b| b > -EPS_BETA_POSITIVE) {
-        Some(beta)
-    } else {
-        None
-    }
-}
-
-/// Search null space for beta with maximum margin (multi-dimensional case).
-///
-/// Uses iterative coordinate ascent on the most-violated constraint.
-/// 100 iterations suffice: each step pushes the worst component to +EPS,
-/// and with k null-space dimensions there are at most m constraints.
-fn find_positive_beta_nd(beta0: &[f64], null_vecs: &[Vec<f64>]) -> Option<Vec<f64>> {
-    let m = beta0.len();
-    let k = null_vecs.len();
-    let mut alpha = vec![0.0; k];
-
-    for _iter in 0..100 {
-        let beta: Vec<f64> = (0..m)
-            .map(|j| beta0[j] + (0..k).map(|i| alpha[i] * null_vecs[i][j]).sum::<f64>())
-            .collect();
-
-        let (worst_j, worst_val) = beta
-            .iter()
-            .enumerate()
-            .min_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
-            .unwrap();
-
-        if *worst_val > EPS_BETA_POSITIVE {
-            return Some(beta);
-        }
-
-        let grad_sq: f64 = (0..k).map(|i| null_vecs[i][worst_j].powi(2)).sum();
-        if grad_sq < 1e-30 {
-            return if *worst_val > -EPS_BETA_POSITIVE {
-                Some(beta)
-            } else {
-                None
-            };
-        }
-
-        let target = EPS_BETA_POSITIVE * 100.0;
-        let step = (target - worst_val) / grad_sq;
-        for i in 0..k {
-            alpha[i] += step * null_vecs[i][worst_j];
-        }
-    }
-
-    // Final feasibility check.
-    let beta: Vec<f64> = (0..m)
-        .map(|j| beta0[j] + (0..k).map(|i| alpha[i] * null_vecs[i][j]).sum::<f64>())
-        .collect();
-    if beta.iter().all(|&b| b > -EPS_BETA_POSITIVE) {
-        Some(beta)
-    } else {
-        None
-    }
 }
 
 #[cfg(test)]
