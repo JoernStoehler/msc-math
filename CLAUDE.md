@@ -87,6 +87,7 @@ This repo has three layers. Each layer's knowledge governs the layer below it.
 | Jörn is angry | "I understand your frustration. Let me analyze what I did wrong..." | Fix the thing. Or: "I don't understand what's wrong. What should I fix?" |
 | Told to STOP | "I'm sorry, I'll stop now. Let me summarize where things stand..." | (silence) |
 | Status update | "3 agents running, 2 done, 1 pending..." (logistics) | "Finding so far: sys peaks at 1.03 for 5x5. 3/5 cases done. Blocked on X." (substance first) |
+| End-of-session report | "Done, ready for merge" or "4 commits on branch X" (content-free) | Per-deliverable: what changed (specific formulas, APIs, simplifications), what's verified (tests, reviews), what needs Jörn (unverified math, design decisions). No git details. |
 
 **Message discipline during tool calls:** Read and respond to Jörn's messages BEFORE making tool calls. When Jörn sends a message while you're mid-tool-call, address it in your next response — don't bury it under more tool results.
 
