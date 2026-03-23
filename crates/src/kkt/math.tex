@@ -214,26 +214,26 @@ Given $x \in F_i \cap F_j$ satisfying~(1) and~(2),
 we construct $\varepsilon > 0$ witnessing
 the transition.
 For $k \notin \{i,j\}$ with
-$\omega_0(n_i, n_k) \geq 0$ and
-$\omega_0(n_j, n_k) \leq 0$:
-$\langle n_k, x + t\, J_0 n_i \rangle
-\leq \langle n_k, x \rangle \leq h_k$
+$\omega_0(a_i, a_k) \geq 0$ and
+$\omega_0(a_j, a_k) \leq 0$:
+$\langle a_k, x + t\, J_0 a_i \rangle
+\leq \langle a_k, x \rangle \leq 1$
 for $t \leq 0$,
 and
-$\langle n_k, x + t\, J_0 n_j \rangle
-\leq \langle n_k, x \rangle \leq h_k$
+$\langle a_k, x + t\, J_0 a_j \rangle
+\leq \langle a_k, x \rangle \leq 1$
 for $t \geq 0$.
 For the remaining $k \notin \{i,j\}$
-(those with $\omega_0(n_i, n_k) < 0$ or
-$\omega_0(n_j, n_k) > 0$),
+(those with $\omega_0(a_i, a_k) < 0$ or
+$\omega_0(a_j, a_k) > 0$),
 condition~(2) gives
-$\langle n_k, x \rangle < h_k$.
+$\langle a_k, x \rangle < 1$.
 Let $\delta$ be the minimum of
-$h_k - \langle n_k, x \rangle > 0$
+$1 - \langle a_k, x \rangle > 0$
 over these~$k$ (or any $\delta > 0$ if there are none),
 and choose
 $\varepsilon < \delta / \max_k(
-|\omega_0(n_i, n_k)| + |\omega_0(n_j, n_k)|)$.
+|\omega_0(a_i, a_k)| + |\omega_0(a_j, a_k)|)$.
 Then all halfspace constraints hold for the
 approach and departure, so $x$ together
 with~$\varepsilon$ witnesses the transition
@@ -254,9 +254,9 @@ numerical solution with residual
 \[
   r \;=\; M\hat x - b
   \;=\; \begin{pmatrix}
-    H\hat\beta + N\hat\mu + \eta\hat\xi \\
-    N^\top\hat\beta \\
-    \eta^\top\hat\beta - 1
+    H\hat\beta + A\hat\mu + \mathbf{1}\hat\xi \\
+    A^\top\hat\beta \\
+    \mathbf{1}^\top\hat\beta - 1
   \end{pmatrix}
   \;=:\; \begin{pmatrix}r_1 \\ r_2 \\ r_3\end{pmatrix},
 \]
@@ -298,18 +298,18 @@ Since $Q(\beta) = \tfrac{1}{2}\,\beta^\top H\,\beta$,
 
 \emph{Step~2: rewrite the cross term using KKT.}
 The stationarity condition (first block of $M x_0 = b$) is
-$H\beta_0 + N\mu_0 + \eta\xi_0 = 0$.
+$H\beta_0 + A\mu_0 + \mathbf{1}\xi_0 = 0$.
 Hence
 \[
   \delta\beta^\top H\,\beta_0
-  = -\delta\beta^\top(N\mu_0 + \eta\xi_0)
-  = -(N^\top\delta\beta)^\top \mu_0
-    - (\eta^\top\delta\beta)\,\xi_0.
+  = -\delta\beta^\top(A\mu_0 + \mathbf{1}\xi_0)
+  = -(A^\top\delta\beta)^\top \mu_0
+    - (\mathbf{1}^\top\delta\beta)\,\xi_0.
 \]
 The constraint residual blocks give
-$N^\top\delta\beta = N^\top\hat\beta = r_2$
-(since $N^\top\beta_0 = 0$ by the exact constraint)
-and similarly $\eta^\top\delta\beta = r_3$, hence
+$A^\top\delta\beta = A^\top\hat\beta = r_2$
+(since $A^\top\beta_0 = 0$ by the exact constraint)
+and similarly $\mathbf{1}^\top\delta\beta = r_3$, hence
 \[
   -\delta\beta^\top H\,\beta_0
   = r_2^\top\mu_0 + r_3\,\xi_0.
@@ -343,9 +343,9 @@ and the component bounds.
 Expanding $\delta x^\top M\,\delta x$
 via the block structure
 $M = \bigl[\begin{smallmatrix}
-  H & N & \eta \\
-  N^\top & 0 & 0 \\
-  \eta^\top & 0 & 0
+  H & A & \mathbf{1} \\
+  A^\top & 0 & 0 \\
+  \mathbf{1}^\top & 0 & 0
 \end{smallmatrix}\bigr]$
 gives
 \[
@@ -354,8 +354,8 @@ gives
     - 2\,r_2^\top\delta\mu
     - 2\,r_3\,\delta\xi,
 \]
-where we used $N^\top\delta\beta = r_2$
-and $\eta^\top\delta\beta = r_3$ from Step~2.
+where we used $A^\top\delta\beta = r_2$
+and $\mathbf{1}^\top\delta\beta = r_3$ from Step~2.
 For the first term,
 \[
   |\delta x^\top M\,\delta x|
@@ -417,9 +417,9 @@ Not all discarded eigenvectors contribute usefully to the LP.
 The $(m{+}5)$-dimensional eigenvectors split into blocks
 $\hat v_j = ((\hat v_j)_\beta,\; (\hat v_j)_\mu,\; (\hat v_j)_\xi)$.
 From $M\hat v_j = \hat\lambda_j \hat v_j$, reading the constraint rows:
-$N^\top (\hat v_j)_\beta = \hat\lambda_j\, (\hat v_j)_\mu$
+$A^\top (\hat v_j)_\beta = \hat\lambda_j\, (\hat v_j)_\mu$
 and
-$\eta^\top (\hat v_j)_\beta = \hat\lambda_j\, (\hat v_j)_\xi$.
+$\mathbf{1}^\top (\hat v_j)_\beta = \hat\lambda_j\, (\hat v_j)_\xi$.
 Three types arise:
 
 \begin{itemize}
@@ -433,8 +433,8 @@ Three types arise:
 \item \textbf{Type~B} ($\|(\hat v_j)_\beta\| = O(1)$,
   constraint violation $O(|\hat\lambda_j|)$):
   Approximately constraint-preserving.
-  Since $\eta^\top (\hat v_j)_\beta \approx 0$
-  with $\eta_i > 0$, the direction has mixed signs,
+  Since $\mathbf{1}^\top (\hat v_j)_\beta \approx 0$,
+  the direction has mixed signs,
   so the LP is bounded.
   Handled correctly by the LP.
 
@@ -443,9 +443,9 @@ Three types arise:
   \emph{Cannot occur.}
   From $M\hat v_j = \hat\lambda_j \hat v_j$,
   the constraint rows give
-  $N^\top (\hat v_j)_\beta = \hat\lambda_j\, (\hat v_j)_\mu$
+  $A^\top (\hat v_j)_\beta = \hat\lambda_j\, (\hat v_j)_\mu$
   and
-  $\eta^\top (\hat v_j)_\beta = \hat\lambda_j\, (\hat v_j)_\xi$.
+  $\mathbf{1}^\top (\hat v_j)_\beta = \hat\lambda_j\, (\hat v_j)_\xi$.
   Since $\|\hat v_j\| = 1$,
   the constraint violation per unit~$\alpha$ is
   $\leq |\hat\lambda_j| \leq \tau$.
