@@ -14,12 +14,19 @@ use std::fs::OpenOptions;
 use std::io::{BufRead, BufReader, BufWriter, Write};
 use symplectic::random::generate_random_polytopes;
 
+/// Date-based seed for reproducibility. Different from other experiments' seeds
+/// to avoid correlation with existing datasets.
 const BASE_SEED: u64 = 2026_03_23_00;
+/// Height range centered around 1.0 with ±20% spread. Same as gradient-descent
+/// and random-sweep experiments. Narrower → nearly spherical (boring), wider →
+/// highly elongated (more degenerate KKT solutions).
 const H_MIN: f64 = 0.8;
 const H_MAX: f64 = 1.2;
 
-/// (facet_count, n_seeds)
-/// Production seed counts. Adjust and re-run to expand the dataset.
+/// (facet_count, n_seeds). Production seed counts.
+/// F=7-8: cheap (~1ms/eval), many seeds for breadth.
+/// F=9-10: expensive (~20ms/eval), fewer seeds but where highest sys values live.
+/// Adjust and re-run generate_seeds to expand the dataset.
 const PLAN: &[(usize, usize)] = &[
     (7, 100),
     (8, 100),

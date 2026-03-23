@@ -27,21 +27,42 @@ use symplectic::kkt::saddle_point_solver::solve_kkt_for;
 // Configuration
 // ============================================================================
 
+/// 30 iters is enough for convergence in >95% of cases (gradient-descent found
+/// most converge in 5-15). Increasing adds runtime but rarely improves final sys.
 const MAX_GRADIENT_ITERS: usize = 30;
+/// Well above f64 noise (~1e-15) but small enough to capture meaningful steps.
+/// At this threshold, convergence means <0.0001% change per iteration.
 const CONVERGENCE_THRESHOLD: f64 = 1e-6;
+/// Geometric-ish spacing from conservative (0.1) to aggressive (0.95). We pick
+/// the fraction giving highest sys, so more fractions = better search at cost of
+/// more capacity evaluations. 5 fractions is a good tradeoff.
 const STEP_FRACTIONS: &[f64] = &[0.1, 0.25, 0.5, 0.75, 0.95];
+/// Multipliers beyond t_max for crossing combinatorial boundaries. The step bound
+/// t_max is where the combinatorial type first changes. Steps at 1.5-3x t_max
+/// land in neighboring cells. Larger multipliers risk invalid polytopes (negative
+/// heights) but explore further.
 const OVERSHOOT_FRACTIONS: &[f64] = &[1.5, 2.0, 3.0];
+/// Prevents pathological steps when t_max is huge (gradient nearly parallel to a
+/// constraint). Heights are O(1), so steps beyond 100 are unreasonable.
 const MAX_STEP_SIZE: f64 = 100.0;
+/// Number of random height perturbations per escape round. 5 gives reasonable
+/// coverage of nearby combinatorial cells without excessive cost.
 const N_WIGGLES: usize = 5;
+/// ~5% height perturbation. Small enough to stay near the current optimum,
+/// large enough to cross combinatorial boundaries (typical vertex slack is O(0.1)).
 const WIGGLE_STRENGTH: f64 = 0.05;
+/// Max rounds of escape attempts (overshoot + wiggle). 3 rounds balances
+/// exploration vs compute: each round tries 5 wiggles + gradient ascent.
 const MAX_ESCAPE_ROUNDS: usize = 3;
+/// Per-seed time budget prevents any single seed from hogging compute.
+/// 120s is generous: most seeds converge in <10s, but F=10 with many escape
+/// rounds can take longer.
 const SEED_TIME_BUDGET_SECS: f64 = 120.0;
-// Numerical zero threshold for gradient directions and slack comparisons.
-// Well below f64 relative error (~1e-16) for unit-scale polytopes. Re-validate
-// if working with very large or very small polytope coordinates.
+/// Numerical zero threshold for gradient directions and slack comparisons.
+/// Well below f64 relative error (~1e-16) for unit-scale polytopes.
 const EPS: f64 = 1e-15;
-// Hard floor on heights after wiggling: prevents near-degenerate polytopes.
-// Re-validate if the height scale of seeds changes substantially.
+/// Hard floor on heights after wiggling: prevents near-degenerate polytopes
+/// where qhull or the KKT solver would fail numerically.
 const MIN_HEIGHT_AFTER_WIGGLE: f64 = 0.01;
 
 // ============================================================================
@@ -75,6 +96,8 @@ struct ResultRow {
 // Helpers
 // ============================================================================
 
+/// Compute systolic ratio sys(K) = c_EHZ(K)² / (2 vol(K)).
+/// Returns None if volume or capacity computation fails.
 fn compute_sys(polytope: &Polytope4D) -> Option<f64> {
     let vol = volume(polytope).ok().filter(|&v| v > 0.0)?;
     let ehz = ehz_capacity(polytope)?;
@@ -83,6 +106,8 @@ fn compute_sys(polytope: &Polytope4D) -> Option<f64> {
     sys.is_finite().then_some(sys)
 }
 
+/// Construct a Polytope4D from normals and heights via dual vertices a_i = n_i / h_i.
+/// Returns None if the dual vertices don't form a valid polytope.
 fn reconstruct(normals: &[Vector4<f64>], heights: &[f64]) -> Option<Polytope4D> {
     let dvs: Vec<Vector4<f64>> = normals
         .iter()
@@ -92,6 +117,8 @@ fn reconstruct(normals: &[Vector4<f64>], heights: &[f64]) -> Option<Polytope4D> 
     Polytope4D::from_f64(dvs).ok()
 }
 
+/// Parse normals from serialized [f64; 4] arrays into nalgebra Vector4.
+/// Component order: (q1, q2, p1, p2) per crate coordinate convention.
 fn parse_normals(raw: &[[f64; 4]]) -> Vec<Vector4<f64>> {
     raw.iter().map(|n| Vector4::new(n[0], n[1], n[2], n[3])).collect()
 }
@@ -186,7 +213,11 @@ fn gradient_ascent(
         let current = reconstruct(normals, &cur_h)?;
         let kkt = solve_kkt_for(&current, &perm)?;
 
-        // d(sys)/dh
+        // d(sys)/dh_k by quotient rule on sys = cap² / (2 vol):
+        //   d(sys)/dh_k = (2 cap · dcap/dh_k · 2vol - cap² · 2 · dvol/dh_k) / (2vol)²
+        //               = (cap · dcap/dh_k - sys · dvol/dh_k) / vol
+        // where dcap/dh_k from envelope theorem, dvol/dh_k = facet volume S_k.
+        // See crates/src/derivatives.rs for the component derivations.
         let dc = capacity_derivatives_h(&kkt.beta, kkt.q_corrected, kkt.xi, &perm, f);
         let dv = volume_derivatives_h(&current);
         let d_sys: Vec<f64> = dc.iter().zip(dv.iter())
