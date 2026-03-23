@@ -303,6 +303,17 @@ fn precompute(polytope: &Polytope4D, skeleton: &Skeleton) -> Result<TubePrecompu
     })
 }
 
+/// Fallback rotation increment when Reeb vector norms are near-degenerate (<1e-15).
+///
+/// Used by `compute_rotation_increment`. Any value in (0, 1/2) is valid by CH2021
+/// Cor. 2.22 for symplectic polytopes; 0.25 (midpoint) is a conservative choice
+/// that does not bias the rotation bound toward either 0 or 1/2.
+///
+/// TODO [JÖRN]: The full compute_rotation_increment implementation does not match
+/// [def:rotation-increment] — see inline comment. This fallback is correct, but
+/// the non-fallback path also needs verification.
+const ROTATION_INCREMENT_FALLBACK: f64 = 0.25;
+
 /// Compute the rotation increment Delta_rho at a breakpoint j -> l.
 ///
 /// Uses the transition matrix psi_{F_{jl}} from CH2021 Def. 2.20.
@@ -312,6 +323,10 @@ fn precompute(polytope: &Polytope4D, skeleton: &Skeleton) -> Result<TubePrecompu
 /// whose rotation angle gives the rotation increment.
 ///
 /// [def:rotation-increment]
+///
+/// **Warning:** The current implementation approximates the CH2021 formula by
+/// using the angle between Reeb vectors (not the exact transition matrix trace).
+/// See TODO [JÖRN] below. The result is clamped to [0.01, 0.49] as a safety bound.
 fn compute_rotation_increment(
     n_j: &Vector4<f64>,
     h_j: &f64,
@@ -357,7 +372,7 @@ fn compute_rotation_increment(
     let nl_norm = n_l.norm();
 
     if nj_norm < 1e-15 || nl_norm < 1e-15 {
-        return 0.25; // Fallback: midpoint of (0, 1/2)
+        return ROTATION_INCREMENT_FALLBACK;
     }
 
     // The rotation increment from CH2021:
@@ -372,8 +387,15 @@ fn compute_rotation_increment(
     let r_l_norm = r_l.norm();
 
     if r_j_norm < 1e-15 || r_l_norm < 1e-15 {
-        return 0.25;
+        return ROTATION_INCREMENT_FALLBACK;
     }
+    // TODO [JÖRN]: The formula below (angle between Reeb vectors) is NOT the CH2021
+    // transition matrix trace formula. [def:rotation-increment] in algorithms/math.tex
+    // defines Delta_rho via psi_{jl}, but the psi_{jl} computation was abandoned
+    // (Sherman-Morrison singular). The angle heuristic below is a placeholder that
+    // preserves the (0, 1/2) range but may give incorrect pruning bounds.
+    // Write [lem:rotation-increment-approx] proving (or disproving) that this
+    // angle is a valid bound on the CH2021 rotation number.
 
     let cos_angle = r_j.dot(&r_l) / (r_j_norm * r_l_norm);
     // The rotation in the symplectic normal bundle is related to but not

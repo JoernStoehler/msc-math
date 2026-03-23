@@ -19,7 +19,8 @@
       "Bash(ls /srv/devhome/.claude/projects/-workspaces-msc-math/*.jsonl)",
       "Bash(grep:*)",
       "Bash(docker exec:*)",
-      "WebSearch"
+      "WebSearch",
+      "WebFetch(domain:collab.dvb.bayern)"
     ]
   }
 }

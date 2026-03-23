@@ -25,11 +25,12 @@ use nalgebra::{DMatrix, DVector};
 ///   plus normalization (sum beta_i = 1, one row). Note: when using dual vertices
 ///   directly, the closure constraint is sum a_{sigma(i)} beta_i = 0 (not normals).
 /// - **d** (5 x 1): [0, 0, 0, 0, 1]^T
-/// - **H** (m x m): action matrix, H_{ij} = omega_0(a_{sigma(i)}, a_{sigma(j)}).
-///   Symmetric because omega_0 is antisymmetric: H_{ij} = omega_0(a_i, a_j) and
-///   H_{ji} = omega_0(a_j, a_i) = -omega_0(a_i, a_j), but H_{ij} is defined as
-///   the SYMMETRIC matrix whose quadratic form gives the action. Specifically,
-///   H_{ij} = H_{ji} = omega_0(a_{sigma(i)}, a_{sigma(j)}) for i < j, and H_{ii} = 0.
+/// - **H** (m x m): action matrix, symmetrized. For i < j:
+///   H_{ij} = H_{ji} = omega_0(a_{sigma(i)}, a_{sigma(j)}).
+///   H_{ii} = 0 (since omega_0(a, a) = 0 by antisymmetry of omega_0).
+///   Note: H is symmetric by construction (both entries set to the same value),
+///   not because omega_0 is symmetric (it is antisymmetric: omega_0(a_j, a_i) = -omega_0(a_i, a_j)).
+///   The quadratic form (1/2) beta^T H beta equals the symplectic action sum.
 ///
 /// Uses dual vertices directly (not normalized normals), which simplifies the
 /// constraint structure: the closure + normalization constraints become a single
@@ -48,19 +49,16 @@ pub fn build_qp(polytope: &Polytope4D, perm: &[usize]) -> QP {
     // Rows 0..3: closure constraint sum_i a_{sigma(i)} beta_i = 0 (per coordinate)
     // Row 4: normalization sum_i beta_i = 1
     //
-    // Note: When using dual vertices a_i = h_i * n_i, the closure constraint
-    // N^T beta = 0 (with normals) becomes A^T beta = 0 (with dual vertices),
-    // because N = A * diag(1/||a_i||) and the height normalization absorbs the
-    // scaling. The normalization constraint changes from eta^T beta = 1 (with
-    // heights eta_i = 1/||a_i||) to simply sum(beta_i) = 1 when we use dual
-    // vertices and fold the ||a_i|| factors into the definition of beta.
+    // This uses the dual-vertex (beta') parameterization: beta'_i = h_{sigma(i)} * beta_i,
+    // where beta_i are the dwell-time coefficients in the normals/heights parameterization.
+    // The correspondence is: sum n_{sigma(i)} beta_i = 0 + sum h_{sigma(i)} beta_i = 1
+    // becomes sum a_{sigma(i)} beta'_i = 0 + sum beta'_i = 1 after multiplying through
+    // by the heights. The QP therefore operates in beta' coordinates.
     //
-    // TODO: Verify this dual-vertex formulation against the normals/heights
-    // formulation. The closure constraint in the normals parameterization is
-    // sum n_{sigma(i)} beta_i = 0 with normalization sum h_{sigma(i)} beta_i = 1.
-    // With dual vertices a_i = h_i * n_i, we get sum a_{sigma(i)} beta'_i = 0
-    // and sum beta'_i = 1, where beta'_i = h_{sigma(i)} * beta_i. The QP
-    // operates in the beta' (dual-vertex) parameterization.
+    // TODO [JÖRN]: Write [lem:dual-vertex-qp] in kkt/math.tex proving that this
+    // reparameterization correctly recovers the same optimal action as the
+    // normals/heights formulation used by build_augmented_system. Until verified,
+    // this is an unproven claim. Track in TASKS.md: "Verify build_qp vs build_augmented_system equivalence".
     let mut c = DMatrix::zeros(5, m);
     for (col, &facet_idx) in perm.iter().enumerate() {
         let a = &dual_verts[facet_idx];
