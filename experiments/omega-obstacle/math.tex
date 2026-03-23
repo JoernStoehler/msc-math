@@ -19,10 +19,10 @@
 \label{sec:omega-obstacle}
 
 The HK-O counterexample is a perturbed Lagrangian product whose
-optimal orbit traverses several ridges with $\omega_0(n_i, n_j) = 0$
+optimal orbit traverses several ridges with $\omega_0(a_i, a_j) = 0$
 (Lagrangian ridges).
 This motivates the hypothesis that near-Lagrangian ridges --- facet
-pairs with small $|\omega_0(n_i, n_j)|$ --- act as ``obstacles'' that
+pairs with small $|\omega_0(a_i, a_j)|$ --- act as ``obstacles'' that
 help create high systolic ratios.
 
 \subsubsection*{Mechanism}
@@ -31,7 +31,7 @@ The connection between $\omega_0$ values and $\mathrm{sys}$ runs through
 the quadratic form $Q(\beta)$ from Lemma~\ref{lem:H-quadratic}:
 \[
   Q(\beta)
-  = \sum_{j < i} \beta_i\,\beta_j\;\omega_0(n_{\sigma(j)},\, n_{\sigma(i)}).
+  = \sum_{j < i} \beta_i\,\beta_j\;\omega_0(a_{\sigma(j)},\, a_{\sigma(i)}).
 \]
 The capacity is $c_{\mathrm{EHZ}} = 1/(2\,Q^*)$, where $Q^*$ is the
 maximum of~$Q$ subject to the KKT constraints.
@@ -59,14 +59,14 @@ Total: 953 polytopes.
 For each polytope, we compute $c_{\mathrm{EHZ}}$ using the instrumented
 HK2017 algorithm (which returns the optimal $\beta^*$, $\lambda$, $\nu$,
 $Q^*$ from the KKT solve), the geometric skeleton (ridge adjacency via
-shared 2-faces), and $\omega_0(n_i, n_j)$ for every ridge pair.
+shared 2-faces), and $\omega_0(a_i, a_j)$ for every ridge pair.
 
 \subsubsection*{Phase A: Observational Correlations}
 
 \paragraph{Ridge $\min|\omega_0|$ vs sys.}
 
 Figure~\ref{fig:omega-ridge-min} plots, for each polytope, the
-smallest $|\omega_0(n_i, n_j)|$ over all ridge pairs $(i,j)$
+smallest $|\omega_0(a_i, a_j)|$ over all ridge pairs $(i,j)$
 against~$\mathrm{sys}$.
 The Spearman rank correlation is $\rho = -0.22$, $p = 8 \times 10^{-12}$:
 polytopes with a smaller global $\min|\omega_0|$ tend to have slightly
@@ -91,7 +91,7 @@ correlates positively with $\mathrm{sys}$ ($\rho = +0.37$).
 
 The more focused test restricts to $\omega_0$ values along the
 optimal orbit's consecutive facet transitions.
-Neither the orbit minimum $\min_k |\omega_0(n_{\sigma(k)}, n_{\sigma(k+1)})|$
+Neither the orbit minimum $\min_k |\omega_0(a_{\sigma(k)}, a_{\sigma(k+1)})|$
 nor the orbit mean show any correlation with $\mathrm{sys}$:
 
 \begin{center}
