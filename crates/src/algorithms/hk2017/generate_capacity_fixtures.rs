@@ -125,7 +125,7 @@ impl DatasetEntry {
             .zip(self.heights.iter())
             .map(|(n, &h)| Vector4::new(n[0] / h, n[1] / h, n[2] / h, n[3] / h))
             .collect();
-        let polytope = Polytope4D::new(halfspaces)
+        let polytope = Polytope4D::from_f64(halfspaces)
             .unwrap_or_else(|e| panic!("fixture entry '{}': {}", self.name, e));
         TestPolytope {
             name: self.name.clone(),
@@ -463,7 +463,7 @@ fn scale_polytope(polytope: &Polytope4D, alpha: f64) -> Polytope4D {
         .iter()
         .map(|a| a / alpha)
         .collect();
-    Polytope4D::new(halfspaces).expect("scaled polytope")
+    Polytope4D::from_f64(halfspaces).expect("scaled polytope")
 }
 
 /// Generate a random symplectomorphism M in Sp(4) (linear, no translation).
@@ -541,7 +541,7 @@ fn apply_symplectomorphism(
         halfspaces.push(n_new / h_new);
     }
 
-    Polytope4D::new(halfspaces).expect("transformed polytope")
+    Polytope4D::from_f64(halfspaces).expect("transformed polytope")
 }
 
 #[cfg(test)]

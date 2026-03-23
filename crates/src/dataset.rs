@@ -154,7 +154,7 @@ mod tests {
             Vector4::w(),
             -Vector4::w(),
         ];
-        Polytope4D::new(normals).unwrap()
+        Polytope4D::from_f64(normals).unwrap()
     }
 
     /// Verify PolytopeRow serializes to JSON and deserializes back without data loss.

@@ -36,7 +36,7 @@ pub fn scaled_hypercube(s: f64) -> Polytope4D {
         Vector4::w() / s,
         -Vector4::w() / s,
     ];
-    Polytope4D::new(halfspaces).expect("scaled hypercube")
+    Polytope4D::from_f64(halfspaces).expect("scaled hypercube")
 }
 
 /// 4D crosspolytope (16 facets). Delegates to `known_polytopes::crosspolytope()`.
@@ -79,7 +79,7 @@ pub fn random_bounded_polytope(facet_count: usize, rng: &mut impl Rng) -> Polyto
             })
             .collect();
 
-        if let Ok(polytope) = Polytope4D::new(halfspaces) {
+        if let Ok(polytope) = Polytope4D::from_f64(halfspaces) {
             return polytope;
         }
     }

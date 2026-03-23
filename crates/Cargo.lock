@@ -1092,6 +1092,7 @@ dependencies = [
  "microlp",
  "nalgebra",
  "num-bigint",
+ "num-integer",
  "num-rational",
  "num-traits",
  "proptest",

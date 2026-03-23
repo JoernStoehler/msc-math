@@ -32,3 +32,6 @@ pub mod known_polytopes;
 pub mod test_utils;
 
 pub use qhull::QhullError;
+
+// TEMPORARY: re-export profiling harness. Remove when profiling is complete.
+pub use vertex_enumeration::{profile_construction_phases, ConstructionProfile};

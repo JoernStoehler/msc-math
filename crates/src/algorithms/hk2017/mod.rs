@@ -537,7 +537,7 @@ mod tests_kkt_edge_cases {
 
         // Two opposite facets don't form a valid bounded polytope (need >=5 for R^4).
         // Use the augmented system directly to test the solver on this minimal input.
-        let polytope = match Polytope4D::new(normals.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect()) {
+        let polytope = match Polytope4D::from_f64(normals.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect()) {
             Ok(p) => p,
             Err(_) => {
                 // Expected: 2 facets is too few for a bounded polytope in R^4.
@@ -1588,7 +1588,7 @@ mod tests_capacity_derivative {
             .zip(h.iter())
             .map(|(n, &hi)| n / hi)
             .collect();
-        Polytope4D::new(halfspaces).ok()
+        Polytope4D::from_f64(halfspaces).ok()
     }
 
     /// Compute FD volume derivatives: dvol/dh_k ~ (vol(h+eps*e_k) - vol(h-eps*e_k)) / (2*eps).
