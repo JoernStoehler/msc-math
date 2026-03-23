@@ -430,21 +430,14 @@ fn det4_int(rows: &[[BigInt; 4]; 4]) -> BigInt {
     &a[0] * c00 - &a[1] * c01 + &a[2] * c02 - &a[3] * c03
 }
 
-/// Vertex enumeration using rational Cramer's rule with f64 prefilter.
-///
-/// For each C(F,4) subset, uses the f64 prefilter to reject non-vertex subsets,
-/// then solves via BigRational determinants (Cramer's rule) for the remainder.
-/// This is the "prefilter + rational" configuration for benchmarking — it
-/// isolates the integer arithmetic's contribution vs the prefilter's contribution.
-///
-/// Vertex enumeration using integer Cramer's rule.
+/// Vertex enumeration using integer Cramer's rule with f64 prefilter.
 ///
 /// For each C(F,4) subset, uses the f64 prefilter to reject ~65-93%
 /// (depending on facet count), then solves via integer determinants
 /// (no BigRational, no GCD). Only confirmed vertices are converted to
 /// BigRational coordinates.
 ///
-/// Mathematical correspondence: [lem:vertex-enumeration]
+/// Mathematical correspondence: [lem:vertex-enumeration], [prop:integer-cramer]
 #[allow(clippy::type_complexity)]
 fn enumerate_vertices_int(
     dual_vertices: &[[BigRational; 4]],
