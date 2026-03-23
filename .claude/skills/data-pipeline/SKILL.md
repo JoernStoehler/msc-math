@@ -15,7 +15,7 @@ Choose the cheapest strategy that avoids fatal staleness.
 
 | Strategy | When to use | Example |
 |----------|-------------|---------|
-| **No caching** | Data is fast (<10ms) or always stale when tests change | `Polytope4D::new()` from literal normals/heights |
+| **No caching** | Data is fast (<10ms) or always stale when tests change | `Polytope4D::new()` from literal dual vertices |
 | **In-memory** | Same data used by multiple tests in one binary, construction is moderate (10ms–1s) | `known_polytopes::simplex()` via `LazyLock` |
 | **On-disk** | Generation is expensive (>10s), consumed more often than regenerated | Capacity fixtures (33 polytopes × full enumeration) |
 
@@ -24,7 +24,7 @@ Choose the cheapest strategy that avoids fatal staleness.
 Inline construction. No special infrastructure needed.
 
 ```rust
-let polytope = Polytope4D::new(normals, heights).unwrap();
+let polytope = Polytope4D::new(dual_vertices).unwrap();
 ```
 
 ### In-memory caching
@@ -33,7 +33,7 @@ Use `std::sync::LazyLock` for expensive-to-construct test fixtures shared across
 
 ```rust
 static SIMPLEX: LazyLock<KnownPolytope> = LazyLock::new(|| {
-    KnownPolytope { polytope: Polytope4D::from_dual_vertices(...).unwrap(), ... }
+    KnownPolytope { polytope: Polytope4D::new(...).unwrap(), ... }
 });
 ```
 
@@ -161,13 +161,14 @@ test timings from the full run are distorted by contention.
 
 ## Known performance characteristics
 
-`Polytope4D::new()` does exact rational vertex enumeration (O(F⁴) BigRational
-operations). This is the main construction cost, not the capacity algorithm.
+`Polytope4D::new()` does integer-scaled vertex enumeration (O(F⁴) BigInt
+operations with f64 prefilters). Construction is negligible vs capacity for F≥10.
 
-**Why rational:** Vertex-facet incidence and omega signs require exact discrete
+**Why exact:** Vertex-facet incidence and omega signs require exact discrete
 decisions (is y_i · v exactly 1? is ω₀(y_i, y_k) positive or zero?). The f64
-bounded check in `validation.rs` is a fast pre-filter; the rational pipeline
-in `vertex_enumeration.rs` is the authoritative answer.
+prefilter in `vertex_enumeration.rs` rejects ~65-93% of subsets; the integer
+Cramer pipeline is the authoritative answer. Internally, rational dual vertices
+are scaled by the common denominator to work in BigInt (no GCD overhead).
 
 **Cargo profile overrides:** `num-bigint` and `num-rational` are compiled at
 `opt-level = 3` in dev/test builds (see `Cargo.toml`). Without this, rational
