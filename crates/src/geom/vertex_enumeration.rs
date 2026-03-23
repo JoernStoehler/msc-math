@@ -124,6 +124,9 @@ pub(super) fn cross_product_4d_rational(
 /// Compute the rank of a set of 4-component rational row vectors via Gaussian elimination.
 ///
 /// Exact over Q — no tolerances or floating-point rounding.
+///
+/// Mathematical correspondence: helper for [lem:vertex-enumeration] (used in vertex
+/// feasibility checks and in `affine_rank_rational` for the irredundancy check).
 pub(super) fn rank_over_q(rows: &[[BigRational; 4]]) -> usize {
     if rows.is_empty() {
         return 0;
@@ -231,6 +234,9 @@ pub(super) fn check_bounded_rational(dual_vertices: &[[BigRational; 4]]) -> bool
 /// Compute the affine rank of a set of 4D rational points.
 ///
 /// Affine rank = dimension of the affine span = rank of centered differences.
+///
+/// Mathematical correspondence: helper for [lem:irredundancy] (facets require
+/// incident vertices of affine rank >= 3).
 pub(super) fn affine_rank_rational(points: &[[BigRational; 4]]) -> usize {
     if points.len() <= 1 {
         return 0;
@@ -267,10 +273,14 @@ fn combinations4(n: usize) -> Vec<[usize; 4]> {
 // For exact checks (boundedness, vertex enumeration), we scale all rational
 // dual vertices to a common denominator D and work entirely in BigInt.
 // This eliminates GCD normalization (~40% of CPU in the BigRational path).
+// TODO: add inline benchmark citation (criterion bench date + F range) for the ~40% claim.
 
 /// Scale rational dual vertices to integer arrays with a common denominator.
 ///
 /// Returns (A, D) where A[i][j] = a_i[j] * D ∈ Z and D = lcm of all denominators.
+///
+/// Mathematical correspondence: preprocessing step for [prop:integer-cramer] (scaling
+/// eliminates GCD normalization by lifting the system to integer arithmetic).
 fn integer_scale_dual_vertices(
     dual_vertices: &[[BigRational; 4]],
 ) -> (Vec<[BigInt; 4]>, BigInt) {
@@ -323,6 +333,9 @@ fn dot4_int(a: &[BigInt; 4], b: &[BigInt; 4]) -> BigInt {
 ///
 /// Uses fraction-free elimination: pivots by subtracting scaled rows so that
 /// all entries remain integers. Only checks for zero vs nonzero pivots.
+///
+/// Mathematical correspondence: rank check step in [prop:integer-cramer] (verifying
+/// rank(A) = 4 before the bounded check in `check_bounded_f64_first`).
 fn rank_int(rows: &[[BigInt; 4]]) -> usize {
     if rows.is_empty() {
         return 0;
@@ -366,6 +379,9 @@ fn rank_int(rows: &[[BigInt; 4]]) -> usize {
 ///
 /// Same pattern as `f64_prefilter_rejects` for vertex enumeration: f64 resolves
 /// the common case cheaply, exact arithmetic handles the rare ambiguous cases.
+///
+/// Mathematical correspondence: fast path implementing [lem:bounded-triples] (reduces
+/// the bounded check to per-triple kernel direction sign tests).
 fn bounded_triple_f64_confirms(
     dv_f64: &[nalgebra::Vector4<f64>],
     i: usize,
@@ -411,6 +427,8 @@ fn bounded_triple_f64_confirms(
 }
 
 /// Determinant of a 4x4 integer matrix via cofactor expansion.
+///
+/// Mathematical correspondence: the δ = det(M_S) computation in [prop:integer-cramer].
 fn det4_int(rows: &[[BigInt; 4]; 4]) -> BigInt {
     let (a, b, c, d) = (&rows[0], &rows[1], &rows[2], &rows[3]);
 
@@ -433,9 +451,9 @@ fn det4_int(rows: &[[BigInt; 4]; 4]) -> BigInt {
 /// Vertex enumeration using integer Cramer's rule with f64 prefilter.
 ///
 /// For each C(F,4) subset, uses the f64 prefilter to reject ~65-93%
-/// (depending on facet count), then solves via integer determinants
-/// (no BigRational, no GCD). Only confirmed vertices are converted to
-/// BigRational coordinates.
+/// (depending on facet count; TODO: add criterion bench citation for this number),
+/// then solves via integer determinants (no BigRational, no GCD). Only confirmed
+/// vertices are converted to BigRational coordinates.
 ///
 /// Mathematical correspondence: [lem:vertex-enumeration], [prop:integer-cramer]
 #[allow(clippy::type_complexity)]
@@ -614,6 +632,9 @@ fn check_bounded_f64_first(
 ///
 /// Uses f64 fast path first (checking 3x3 minor determinants), falling back
 /// to exact rational `affine_rank_rational` when f64 is inconclusive.
+///
+/// Mathematical correspondence: [lem:irredundancy] (facet i is redundant iff
+/// its incident vertices have affine rank < 3).
 fn check_irredundancy_f64_first(
     vertices: &[[BigRational; 4]],
     vertex_descriptors: &[BTreeSet<usize>],
@@ -642,6 +663,14 @@ fn check_irredundancy_f64_first(
                 .map(|&idx| std::array::from_fn(|c| rational_to_f64(&vertices[idx][c])))
                 .collect();
 
+            // 3x3 minor determinant threshold for f64 rank check.
+            // Vertices are exact rational; their f64 representations have
+            // rounding error O(ε_mach) ≈ 2e-16. The 3x3 determinant has
+            // O(n·ε_mach)·||rows||³ error (n=3 terms, unit-scale vertices
+            // → error ~1e-15). Threshold 1e-10 gives ~5 orders of margin;
+            // if det < 1e-10 we fall through to exact rational `affine_rank_rational`.
+            // Must be re-validated if vertex coordinates can exceed ~1e4 in magnitude.
+            const EPS_RANK_F64: f64 = 1e-10;
             let mut rank_ok = false;
             'outer: for base_idx in 0..inc_f64.len() {
                 let base = &inc_f64[base_idx];
@@ -670,7 +699,7 @@ fn check_irredundancy_f64_first(
                                     + rows[0][cols[2]]
                                         * (rows[1][cols[0]] * rows[2][cols[1]]
                                             - rows[1][cols[1]] * rows[2][cols[0]]);
-                                if det.abs() > 1e-10 {
+                                if det.abs() > EPS_RANK_F64 {
                                     rank_ok = true;
                                     break 'outer;
                                 }
@@ -721,8 +750,9 @@ fn check_irredundancy_f64_first(
 /// ## Performance
 ///
 /// O(F⁴) BigRational operations. The `num-bigint` crate is ~20× slower in
-/// debug mode than release; Cargo profile overrides (`opt-level = 3` for
-/// `num-bigint` and `num-rational`) bring debug-mode cost close to release.
+/// debug mode than release (TODO: add criterion bench citation for this ratio);
+/// Cargo profile overrides (`opt-level = 3` for `num-bigint` and `num-rational`)
+/// bring debug-mode cost close to release.
 ///
 /// The pipeline uses f64-first strategies with exact integer fallbacks:
 /// - **Bounded check**: per-triple f64 pre-filter (`bounded_triple_f64_confirms`),
@@ -781,7 +811,7 @@ fn f64_prefilter_rejects(dv_f64: &[[f64; 4]], subset: &[usize; 4], f: usize) -> 
     /// Unit roundoff for f64: ε_mach = 2⁻⁵³.
     const EPS_MACH: f64 = f64::EPSILON / 2.0;
 
-    /// Safety constant from Proposition 1. Tight accounting gives C < 1400;
+    /// Safety constant from [prop:prefilter-bound]. Tight accounting gives C < 1400;
     /// we use C = 10⁴ for generous margin.
     const C: f64 = 1e4;
 
