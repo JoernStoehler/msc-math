@@ -278,7 +278,8 @@ mod tests {
         }
     }
 
-    /// Capacity height derivatives: test on hypercube where we can solve KKT.
+    /// Analytical ∂A/∂h_k matches per-orbit FD central difference to O(eps²).
+    /// Uses hypercube (8 facets, fast ehz_capacity call).
     #[test]
     fn capacity_derivatives_h_on_hypercube() {
         let kp = known_polytopes::hypercube();
@@ -331,7 +332,7 @@ mod tests {
                     let am = 0.5 / qm;
                     (ap - am) / (2.0 * eps)
                 }
-                _ => continue,
+                _ => panic!("solve_kkt_for failed on perturbed polytope for facet {k}, perm {best_perm:?}"),
             };
             let abs_err = (analytical[k] - fd_k).abs();
             assert!(
@@ -352,9 +353,10 @@ mod tests {
         let (best_q, best_beta, best_perm, best_mu, _best_xi) =
             find_best_orbit(polytope);
 
-        if best_q < 1e-10 {
-            return;
-        }
+        assert!(
+            best_q > 1e-10,
+            "find_best_orbit should find a valid orbit on the hypercube"
+        );
 
         let dcap_dn = capacity_derivatives_n(&best_beta, best_q, &best_mu, &best_perm, &normals);
 

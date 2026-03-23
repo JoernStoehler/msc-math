@@ -290,6 +290,9 @@ mod tests {
         let vol_qhull = crate::geom::volume::volume(polytope)
             .expect("qhull volume");
 
+        // Looser than hypercube (1e-6) because the crosspolytope has 16 facets
+        // with non-axis-aligned normals (n = ±e_i ± e_j ± ...), producing
+        // more triangulation error in both our ridge-based decomposition and qhull.
         assert!(
             (vol_from_facets - vol_qhull).abs() / vol_qhull < 1e-4,
             "facet sum = {vol_from_facets}, qhull = {vol_qhull}"
