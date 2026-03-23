@@ -57,6 +57,11 @@ const N_RANDOM_DIRECTIONS: usize = 10;
 /// Step fractions of t_max to test in Phase 4 (includes beyond-t_max values).
 const VALIDITY_STEP_FRACTIONS: &[f64] = &[0.01, 0.1, 0.25, 0.5, 1.0, 2.0, 5.0, 10.0];
 
+/// Numerical zero threshold for gradient components and rates.
+/// Near machine epsilon (~1e-16); guards against treating f64 noise as
+/// a meaningful direction or rate. Used in step bounds and gradient checks.
+const EPS_NUMERICAL_ZERO: f64 = 1e-15;
+
 // ============================================================================
 // Output schemas
 // ============================================================================
@@ -363,7 +368,7 @@ fn compute_step_bound(
                 // Rate of slack change: d(slack)/dt = g_j - n_j · dv/dt
                 let rate = direction[j] - normals[j].dot(&dv_dt);
                 // Slack hits zero at t = slack / (-rate) when rate < 0
-                if rate < -1e-15 {
+                if rate < -EPS_NUMERICAL_ZERO {
                     let t_crit = slack / (-rate);
                     if t_crit > 0.0 && t_crit < t_max {
                         t_max = t_crit;
@@ -381,7 +386,7 @@ fn compute_step_bound(
                 let slack = heights[j] - normals[j].dot(v);
                 // Conservative: assume vertex doesn't move but facet j moves
                 // This underestimates t_max but is always safe
-                if direction[j] < -1e-15 {
+                if direction[j] < -EPS_NUMERICAL_ZERO {
                     // Facet j moves inward: doesn't affect this vertex
                     // (constraint h_j - n_j·v gets tighter only if n_j·v increases)
                     continue;
@@ -390,7 +395,7 @@ fn compute_step_bound(
                 // of the determining facets. Without inverting a >4 system, use a crude bound:
                 // assume the slack can decrease at most at rate proportional to max |g_k|
                 let max_g = direction.iter().map(|x| x.abs()).fold(0.0f64, f64::max);
-                if max_g > 1e-15 {
+                if max_g > EPS_NUMERICAL_ZERO {
                     // Very conservative: t_max ≤ slack / max_g
                     let t_crit = slack / max_g;
                     if t_crit > 0.0 && t_crit < t_max {
@@ -403,7 +408,7 @@ fn compute_step_bound(
 
     // Also check that all heights stay positive
     for k in 0..f {
-        if direction[k] < -1e-15 {
+        if direction[k] < -EPS_NUMERICAL_ZERO {
             // h_k + t * g_k > 0 → t < -h_k / g_k = h_k / |g_k|
             let t_crit = heights[k] / (-direction[k]);
             if t_crit > 0.0 && t_crit < t_max {
@@ -477,7 +482,7 @@ fn compute_step_bound_hn(
                 // ds_j/dt = g_{h,j} - g_{n,j} · v - n_j · dv/dt
                 let slack = heights[j] - normals[j].dot(v);
                 let rate = g_h[j] - g_n[j].dot(v) - normals[j].dot(&dv_dt);
-                if rate < -1e-15 {
+                if rate < -EPS_NUMERICAL_ZERO {
                     let t_crit = slack / (-rate);
                     if t_crit > 0.0 && t_crit < t_max {
                         t_max = t_crit;
@@ -495,7 +500,7 @@ fn compute_step_bound_hn(
                 let max_g_h = g_h.iter().map(|x| x.abs()).fold(0.0f64, f64::max);
                 let max_g_n = g_n.iter().map(|g| g.norm()).fold(0.0f64, f64::max);
                 let max_rate = max_g_h + max_g_n * v.norm();
-                if max_rate > 1e-15 {
+                if max_rate > EPS_NUMERICAL_ZERO {
                     let t_crit = slack / max_rate;
                     if t_crit > 0.0 && t_crit < t_max {
                         t_max = t_crit;
@@ -507,7 +512,7 @@ fn compute_step_bound_hn(
 
     // --- Height positivity ---
     for k in 0..f {
-        if g_h[k] < -1e-15 {
+        if g_h[k] < -EPS_NUMERICAL_ZERO {
             let t_crit = heights[k] / (-g_h[k]);
             if t_crit > 0.0 && t_crit < t_max {
                 t_max = t_crit;
@@ -524,7 +529,7 @@ fn compute_step_bound_hn(
         let d_omega = omega0(&g_n[i], &normals[j]) + omega0(&normals[i], &g_n[j]);
         // Sign flips when omega_ij + t * d_omega = 0 → t = -omega_ij / d_omega
         // Only relevant if the sign would flip (omega_ij and d_omega have opposite signs)
-        if omega_ij.abs() > 1e-15 && d_omega.abs() > 1e-15 {
+        if omega_ij.abs() > EPS_NUMERICAL_ZERO && d_omega.abs() > EPS_NUMERICAL_ZERO {
             let t_flip = -omega_ij / d_omega;
             if t_flip > 0.0 && t_flip < t_max {
                 t_max = t_flip;
@@ -910,14 +915,14 @@ fn main() {
 
         // --- Step bounds ---
         // h-only direction: steepest ascent = d_sys_h
-        let t_max_h = if sensitivity.gradient_norm_h > 1e-15 {
+        let t_max_h = if sensitivity.gradient_norm_h > EPS_NUMERICAL_ZERO {
             compute_step_bound(polytope, &sensitivity.d_sys_h)
         } else {
             0.0
         };
 
         // (h,n) direction: steepest ascent = (d_sys_h, d_sys_n)
-        let t_max_hn = if sensitivity.gradient_norm_hn > 1e-15 {
+        let t_max_hn = if sensitivity.gradient_norm_hn > EPS_NUMERICAL_ZERO {
             compute_step_bound_hn(polytope, &sensitivity.d_sys_h, &sensitivity.d_sys_n)
         } else {
             0.0
@@ -974,7 +979,7 @@ fn main() {
 
         let vertex_count_old = polytope.vertices_f64().len();
 
-        if t_max_h > 0.0 && sensitivity.gradient_norm_h > 1e-15 {
+        if t_max_h > 0.0 && sensitivity.gradient_norm_h > EPS_NUMERICAL_ZERO {
             for &frac in STEP_FRACTIONS {
                 let t = frac * t_max_h;
                 let mut step_row = evaluate_gradient_step(
@@ -1006,7 +1011,7 @@ fn main() {
         // Phase 2b: Gradient steps (h+n combined)
         // =========================================================================
 
-        if t_max_hn > 0.0 && sensitivity.gradient_norm_hn > 1e-15 {
+        if t_max_hn > 0.0 && sensitivity.gradient_norm_hn > EPS_NUMERICAL_ZERO {
             for &frac in STEP_FRACTIONS {
                 let t = frac * t_max_hn;
                 let mut step_row = evaluate_gradient_step_hn(
@@ -1100,12 +1105,12 @@ fn main() {
             let normals = current.normals_f64();
             let heights = current.heights_f64();
 
-            let t_max_h = if sensitivity.gradient_norm_h > 1e-15 {
+            let t_max_h = if sensitivity.gradient_norm_h > EPS_NUMERICAL_ZERO {
                 compute_step_bound(&current, &sensitivity.d_sys_h)
             } else {
                 0.0
             };
-            let t_max_hn = if sensitivity.gradient_norm_hn > 1e-15 {
+            let t_max_hn = if sensitivity.gradient_norm_hn > EPS_NUMERICAL_ZERO {
                 compute_step_bound_hn(&current, &sensitivity.d_sys_h, &sensitivity.d_sys_n)
             } else {
                 0.0
@@ -1114,7 +1119,7 @@ fn main() {
             // 4. Try all step fractions for both types, pick best
             let mut best: Option<(Polytope4D, f64, String, f64, f64)> = None;
 
-            if t_max_h > 0.0 && sensitivity.gradient_norm_h > 1e-15 {
+            if t_max_h > 0.0 && sensitivity.gradient_norm_h > EPS_NUMERICAL_ZERO {
                 for &frac in STEP_FRACTIONS {
                     let t = frac * t_max_h;
                     if let Some((p, new_sys)) = try_step_h_polytope(
@@ -1127,7 +1132,7 @@ fn main() {
                 }
             }
 
-            if t_max_hn > 0.0 && sensitivity.gradient_norm_hn > 1e-15 {
+            if t_max_hn > 0.0 && sensitivity.gradient_norm_hn > EPS_NUMERICAL_ZERO {
                 for &frac in STEP_FRACTIONS {
                     let t = frac * t_max_hn;
                     if let Some((p, new_sys)) = try_step_hn_polytope(
@@ -1272,7 +1277,7 @@ fn main() {
         let mut directions: Vec<Direction> = Vec::new();
 
         // Direction 1: gradient h-only (normalize d_sys_h, zero normal component)
-        if sens.gradient_norm_h > 1e-15 {
+        if sens.gradient_norm_h > EPS_NUMERICAL_ZERO {
             let scale = 1.0 / sens.gradient_norm_h;
             let g_h: Vec<f64> = sens.d_sys_h.iter().map(|x| x * scale).collect();
             let g_n: Vec<Vector4<f64>> = vec![Vector4::zeros(); f];
@@ -1287,7 +1292,7 @@ fn main() {
         }
 
         // Direction 2: gradient (h,n) (normalize combined)
-        if sens.gradient_norm_hn > 1e-15 {
+        if sens.gradient_norm_hn > EPS_NUMERICAL_ZERO {
             let scale = 1.0 / sens.gradient_norm_hn;
             let g_h: Vec<f64> = sens.d_sys_h.iter().map(|x| x * scale).collect();
             let g_n: Vec<Vector4<f64>> = sens.d_sys_n.iter().map(|v| v * scale).collect();
@@ -1326,7 +1331,7 @@ fn main() {
             let norm_sq: f64 = raw_h.iter().map(|x| x * x).sum::<f64>()
                 + raw_n.iter().map(|v| v.norm_squared()).sum::<f64>();
             let norm = norm_sq.sqrt();
-            if norm < 1e-15 {
+            if norm < EPS_NUMERICAL_ZERO {
                 continue;
             }
             let scale = 1.0 / norm;
@@ -1361,14 +1366,14 @@ fn main() {
         // For each direction, compute t_max and test at multiple fractions
         for dir in &directions {
             // Compute step bound for this direction
-            let t_max = if dir.g_n.iter().all(|v| v.norm() < 1e-15) {
+            let t_max = if dir.g_n.iter().all(|v| v.norm() < EPS_NUMERICAL_ZERO) {
                 // Pure height direction
                 compute_step_bound(polytope, &dir.g_h)
             } else {
                 compute_step_bound_hn(polytope, &dir.g_h, &dir.g_n)
             };
 
-            if t_max < 1e-15 {
+            if t_max < EPS_NUMERICAL_ZERO {
                 continue; // Degenerate direction
             }
 
@@ -1381,7 +1386,7 @@ fn main() {
 
                 // Actual: construct perturbed polytope, compute sys
                 let (actual_delta, construction_ok, vertex_count_changed) =
-                    if dir.g_n.iter().all(|v| v.norm() < 1e-15) {
+                    if dir.g_n.iter().all(|v| v.norm() < EPS_NUMERICAL_ZERO) {
                         // h-only step
                         match try_step_h_polytope(&normals, &heights, &dir.g_h, t) {
                             Some((new_poly, new_sys)) => {

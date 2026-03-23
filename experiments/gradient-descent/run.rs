@@ -83,6 +83,11 @@ const STEP_FRACTIONS: &[f64] = &[0.1, 0.25, 0.5, 0.75, 0.95];
 /// — typical useful steps are O(0.01)–O(1.0).
 const MAX_STEP_SIZE: f64 = 100.0;
 
+/// Numerical zero threshold for gradient components and rates.
+/// Near machine epsilon (~1e-16); guards against treating f64 noise as
+/// a meaningful direction or rate. Used in step bounds and gradient checks.
+const EPS_NUMERICAL_ZERO: f64 = 1e-15;
+
 // ============================================================================
 // Output schema
 // ============================================================================
@@ -249,7 +254,7 @@ fn compute_step_bound_h(polytope: &Polytope4D, direction: &[f64]) -> f64 {
                 }
                 let slack = heights[j] - normals[j].dot(v);
                 let rate = direction[j] - normals[j].dot(&dv_dt);
-                if rate < -1e-15 {
+                if rate < -EPS_NUMERICAL_ZERO {
                     let t_crit = slack / (-rate);
                     if t_crit > 0.0 && t_crit < t_max {
                         t_max = t_crit;
@@ -264,7 +269,7 @@ fn compute_step_bound_h(polytope: &Polytope4D, direction: &[f64]) -> f64 {
                 }
                 let slack = heights[j] - normals[j].dot(v);
                 let max_g = direction.iter().map(|x| x.abs()).fold(0.0f64, f64::max);
-                if max_g > 1e-15 {
+                if max_g > EPS_NUMERICAL_ZERO {
                     let t_crit = slack / max_g;
                     if t_crit > 0.0 && t_crit < t_max {
                         t_max = t_crit;
@@ -276,7 +281,7 @@ fn compute_step_bound_h(polytope: &Polytope4D, direction: &[f64]) -> f64 {
 
     // Height positivity
     for k in 0..f {
-        if direction[k] < -1e-15 {
+        if direction[k] < -EPS_NUMERICAL_ZERO {
             let t_crit = heights[k] / (-direction[k]);
             if t_crit > 0.0 && t_crit < t_max {
                 t_max = t_crit;
@@ -333,7 +338,7 @@ fn compute_step_bound_hn(
                 }
                 let slack = heights[j] - normals[j].dot(v);
                 let rate = g_h[j] - g_n[j].dot(v) - normals[j].dot(&dv_dt);
-                if rate < -1e-15 {
+                if rate < -EPS_NUMERICAL_ZERO {
                     let t_crit = slack / (-rate);
                     if t_crit > 0.0 && t_crit < t_max {
                         t_max = t_crit;
@@ -350,7 +355,7 @@ fn compute_step_bound_hn(
                 let max_g_h = g_h.iter().map(|x| x.abs()).fold(0.0f64, f64::max);
                 let max_g_n = g_n.iter().map(|g| g.norm()).fold(0.0f64, f64::max);
                 let max_rate = max_g_h + max_g_n * v.norm();
-                if max_rate > 1e-15 {
+                if max_rate > EPS_NUMERICAL_ZERO {
                     let t_crit = slack / max_rate;
                     if t_crit > 0.0 && t_crit < t_max {
                         t_max = t_crit;
@@ -362,7 +367,7 @@ fn compute_step_bound_hn(
 
     // Height positivity
     for k in 0..f {
-        if g_h[k] < -1e-15 {
+        if g_h[k] < -EPS_NUMERICAL_ZERO {
             let t_crit = heights[k] / (-g_h[k]);
             if t_crit > 0.0 && t_crit < t_max {
                 t_max = t_crit;
@@ -376,7 +381,7 @@ fn compute_step_bound_hn(
         let j = ridge.facets[1];
         let omega_ij = omega0(&normals[i], &normals[j]);
         let d_omega = omega0(&g_n[i], &normals[j]) + omega0(&normals[i], &g_n[j]);
-        if omega_ij.abs() > 1e-15 && d_omega.abs() > 1e-15 {
+        if omega_ij.abs() > EPS_NUMERICAL_ZERO && d_omega.abs() > EPS_NUMERICAL_ZERO {
             let t_flip = -omega_ij / d_omega;
             if t_flip > 0.0 && t_flip < t_max {
                 t_max = t_flip;
@@ -447,7 +452,7 @@ fn try_step_hn(
                 }
             }
             let norm = n.norm();
-            if norm < 1e-15 {
+            if norm < EPS_NUMERICAL_ZERO {
                 normals[k] // fallback: keep original
             } else {
                 n / norm
@@ -570,12 +575,12 @@ fn run_gradient_ascent(
         let normals = current.normals_f64();
         let heights = current.heights_f64();
 
-        let t_max_h = if sensitivity.gradient_norm_h > 1e-15 {
+        let t_max_h = if sensitivity.gradient_norm_h > EPS_NUMERICAL_ZERO {
             compute_step_bound_h(&current, &sensitivity.d_sys_h)
         } else {
             0.0
         };
-        let t_max_hn = if sensitivity.gradient_norm_hn > 1e-15 {
+        let t_max_hn = if sensitivity.gradient_norm_hn > EPS_NUMERICAL_ZERO {
             compute_step_bound_hn(&current, &sensitivity.d_sys_h, &sensitivity.d_sys_n)
         } else {
             0.0
@@ -584,7 +589,7 @@ fn run_gradient_ascent(
         // 4. Try all step fractions for both types, pick best
         let mut best: Option<(Polytope4D, f64, String, f64, f64)> = None;
 
-        if t_max_h > 0.0 && sensitivity.gradient_norm_h > 1e-15 {
+        if t_max_h > 0.0 && sensitivity.gradient_norm_h > EPS_NUMERICAL_ZERO {
             for &frac in STEP_FRACTIONS {
                 let t = frac * t_max_h;
                 if let Some((p, new_sys)) =
@@ -597,7 +602,7 @@ fn run_gradient_ascent(
             }
         }
 
-        if t_max_hn > 0.0 && sensitivity.gradient_norm_hn > 1e-15 {
+        if t_max_hn > 0.0 && sensitivity.gradient_norm_hn > EPS_NUMERICAL_ZERO {
             for &frac in STEP_FRACTIONS {
                 let t = frac * t_max_hn;
                 if let Some((p, new_sys)) = try_step_hn(
