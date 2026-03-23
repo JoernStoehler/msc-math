@@ -55,6 +55,8 @@ Jörn: dunno, so probably not regenerated. sys-optimization didn't use proper gr
 
 **When sources conflict** (e.g. during migration from old README to logbook), flag the conflict explicitly and check the data (JSONL/output files) as ground truth. Don't silently pick one version.
 
+**Every numerical claim must trace to data.** A logbook entry saying "F=10: 84ms" must come from an actual benchmark run, data file, or command output — not from memory or another document. When writing numbers into logbooks, doc comments, or TASKS.md, include the source (e.g. "criterion bench 2026-03-23", "benchmark.jsonl row N"). Review agents should flag numerical claims without a traceable source.
+
 ### math.tex — the formal document
 
 Proofs, definitions, derivations, formal statements — anything that needs LaTeX math rendering. Also a living document that grows alongside the logbook. Load the `math-tex` skill for full conventions.
