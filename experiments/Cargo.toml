@@ -80,6 +80,14 @@ path = "gradient-descent/run.rs"
 name = "hko_neighborhood"
 path = "hko-neighborhood/run.rs"
 
+[[bin]]
+name = "generate_seeds"
+path = "gradient-search/generate_seeds.rs"
+
+[[bin]]
+name = "gradient_search"
+path = "gradient-search/run.rs"
+
 [dependencies]
 symplectic = { path = "../crates" }
 nalgebra = "0.33"
