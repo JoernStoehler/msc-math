@@ -4,7 +4,7 @@ Master Thesis: Probing Viterbo's Conjecture
 Author: Jörn Stöhler, University of Augsburg
 Advisor: Kai Cieliebak
 Second advisor: Elizabeth Gaar
-Timeline: Oct 2025 – March 2026
+Timeline: Oct 2025 – mid-April 2026
 
 ## End state
 
@@ -25,6 +25,8 @@ Never write a factual claim without verifying it against evidence in the same se
 ## Procedural layer is Jörn-gated
 
 Do not create, modify, or delete skills, agents, hooks, or CLAUDE.md without Jörn's explicit approval. Propose changes in conversation; Jörn implements them. This is analogous to the math verification rule — agents can't reliably produce or quality-check procedural knowledge.
+
+**Claude Code harness documentation:** Before writing any skill, agent, hook, or settings file, fetch the relevant spec from `https://code.claude.com/docs/llms.txt` using `curl -sL <url>.md -o /tmp/<name>.md` then Read. Do not use WebFetch. The complete guide to building skills is at `https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf`.
 
 ## Communication with Jörn
 
