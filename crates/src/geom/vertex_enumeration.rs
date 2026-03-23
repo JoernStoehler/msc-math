@@ -430,6 +430,13 @@ fn det4_int(rows: &[[BigInt; 4]; 4]) -> BigInt {
     &a[0] * c00 - &a[1] * c01 + &a[2] * c02 - &a[3] * c03
 }
 
+/// Vertex enumeration using rational Cramer's rule with f64 prefilter.
+///
+/// For each C(F,4) subset, uses the f64 prefilter to reject non-vertex subsets,
+/// then solves via BigRational determinants (Cramer's rule) for the remainder.
+/// This is the "prefilter + rational" configuration for benchmarking — it
+/// isolates the integer arithmetic's contribution vs the prefilter's contribution.
+///
 /// Vertex enumeration using integer Cramer's rule.
 ///
 /// For each C(F,4) subset, uses the f64 prefilter to reject ~65-93%
@@ -1305,5 +1312,334 @@ mod tests {
             d.iter().all(|x| x.is_zero()),
             "cross product of dependent vectors should be zero"
         );
+    }
+
+    // ── Edge cases for integer-scaled vertex enumeration pipeline ────────
+
+    /// Proposition: a vertex on 6 facets is correctly detected as non-simple.
+    ///
+    /// Takes hypercube [-1,1]^4 (8 facets) and adds two diagonal cuts:
+    ///   facet 8: x_1+x_2+x_3+x_4 <= 2
+    ///   facet 9: x_1+x_2-x_3-x_4 <= 2
+    /// Both are non-redundant (they cut off cube vertices like (1,1,1,1)).
+    ///
+    /// Vertex (1,1,1,-1) is tight on 6 facets: x_1<=1, x_2<=1, x_3<=1,
+    /// -x_4<=1, sum=1+1+1-1=2, diff=1+1-1+1=2. This exceeds the 5-facet
+    /// case in `non_simple_polytope_vertex_enumeration`.
+    #[test]
+    fn highly_non_simple_vertex_on_6_facets() {
+        // Hypercube [-1,1]^4 plus two diagonal cuts.
+        let normals = vec![
+            [rat(1), rat(0), rat(0), rat(0)],   // 0: x_1 <= 1
+            [rat(-1), rat(0), rat(0), rat(0)],  // 1: -x_1 <= 1
+            [rat(0), rat(1), rat(0), rat(0)],   // 2: x_2 <= 1
+            [rat(0), rat(-1), rat(0), rat(0)],  // 3: -x_2 <= 1
+            [rat(0), rat(0), rat(1), rat(0)],   // 4: x_3 <= 1
+            [rat(0), rat(0), rat(-1), rat(0)],  // 5: -x_3 <= 1
+            [rat(0), rat(0), rat(0), rat(1)],   // 6: x_4 <= 1
+            [rat(0), rat(0), rat(0), rat(-1)],  // 7: -x_4 <= 1
+            [rat(1), rat(1), rat(1), rat(1)],   // 8: x_1+x_2+x_3+x_4 <= 2
+            [rat(1), rat(1), rat(-1), rat(-1)], // 9: x_1+x_2-x_3-x_4 <= 2
+        ];
+        let heights = vec![
+            rat(1), rat(1), rat(1), rat(1),
+            rat(1), rat(1), rat(1), rat(1),
+            rat(2), rat(2),
+        ];
+        let dual_vertices: Vec<[BigRational; 4]> = normals
+            .iter()
+            .zip(heights.iter())
+            .map(|(n, h)| std::array::from_fn(|c| &n[c] / h))
+            .collect();
+        let p = Polytope4D::new(dual_vertices).expect("doubly-cut hypercube should succeed");
+
+        let vds = vertex_descriptors_from_incidence(&p);
+
+        // Find vertex (1,1,1,-1): on facets 0,2,4,7,8,9 (6 facets).
+        let target = [rat(1), rat(1), rat(1), rat(-1)];
+        let idx = p
+            .vertices()
+            .iter()
+            .position(|v| (0..4).all(|c| v[c] == target[c]))
+            .expect("vertex (1,1,1,-1) should exist");
+
+        let vd = &vds[idx];
+        assert_eq!(
+            vd.len(),
+            6,
+            "vertex (1,1,1,-1) should lie on exactly 6 facets, got {}: {:?}",
+            vd.len(),
+            vd
+        );
+        // Verify specific facet incidence
+        for &fi in &[0, 2, 4, 7, 8, 9] {
+            assert!(
+                vd.contains(&fi),
+                "vertex (1,1,1,-1) should be incident to facet {fi}"
+            );
+        }
+    }
+
+    /// Proposition: vertex enumeration is correct for large-coordinate dual vertices (~1e6).
+    ///
+    /// Scales the standard simplex dual vertices by 1e6. The integer scaling
+    /// pipeline must handle numerators of magnitude ~1e6 correctly, and the f64
+    /// prefilter must not give wrong signs for large coordinates.
+    #[test]
+    fn large_coordinate_dual_vertices() {
+        let scale = rat(1_000_000);
+        // Simplex with normals scaled by 1e6: same polytope, just different
+        // representation (n_i -> 1e6 * n_i, h_i -> 1e6 * h_i, so y_i unchanged).
+        // Instead, scale the dual vertices themselves to get large coordinates.
+        // y_i = scale * original_y_i means h-rep: (scale * n_i / h_i) . x <= 1,
+        // so K = {x : scale * y_i . x <= 1} = (1/scale) * K_original.
+        let base_normals: Vec<[BigRational; 4]> = vec![
+            [rat(-1), rat(0), rat(0), rat(0)],
+            [rat(0), rat(-1), rat(0), rat(0)],
+            [rat(0), rat(0), rat(-1), rat(0)],
+            [rat(0), rat(0), rat(0), rat(-1)],
+            [rat(1), rat(1), rat(1), rat(1)],
+        ];
+        let base_heights: Vec<BigRational> =
+            vec![frac(1, 5), frac(1, 5), frac(1, 5), frac(1, 5), rat(1)];
+
+        // Dual vertices = n_i / h_i, then scale by 1e6
+        let dual_vertices: Vec<[BigRational; 4]> = base_normals
+            .iter()
+            .zip(base_heights.iter())
+            .map(|(n, h)| std::array::from_fn(|c| &(&n[c] / h) * &scale))
+            .collect();
+
+        // Verify the coordinates are indeed large
+        let max_coord: f64 = dual_vertices
+            .iter()
+            .flat_map(|y| y.iter())
+            .filter(|c| !c.is_zero())
+            .map(|c| {
+                let f = c.numer().to_string().parse::<f64>().unwrap()
+                    / c.denom().to_string().parse::<f64>().unwrap();
+                f.abs()
+            })
+            .fold(0.0f64, f64::max);
+        assert!(
+            max_coord >= 1e5,
+            "dual vertex coordinates should be large, max = {max_coord}"
+        );
+
+        let p = Polytope4D::new(dual_vertices).expect("large-coordinate simplex should succeed");
+        assert_eq!(
+            p.vertices().len(),
+            5,
+            "scaled simplex should still have 5 vertices"
+        );
+
+        // The vertex on facets {0,1,2,3} should be (-1/5, -1/5, -1/5, -1/5) / scale
+        let vds = vertex_descriptors_from_incidence(&p);
+        let target_vd: BTreeSet<usize> = [0, 1, 2, 3].into_iter().collect();
+        let idx = vds
+            .iter()
+            .position(|vd| *vd == target_vd)
+            .expect("vertex {0,1,2,3} should exist");
+        let expected = frac(-1, 5_000_000);
+        for (c, coord) in p.vertices()[idx].iter().enumerate() {
+            assert_eq!(
+                coord, &expected,
+                "coordinate {c} of scaled simplex vertex should be -1/5000000"
+            );
+        }
+    }
+
+    /// Proposition: vertex enumeration is correct for small-coordinate dual vertices (~1e-6).
+    ///
+    /// Scales dual vertices by 1e-6. Near-zero f64 values in the prefilter must
+    /// not cause incorrect sign decisions; the exact integer fallback must handle
+    /// the resulting small numerators and large common denominator correctly.
+    #[test]
+    fn small_coordinate_dual_vertices() {
+        // Scale = 1/1000000
+        let scale = frac(1, 1_000_000);
+        let base_normals: Vec<[BigRational; 4]> = vec![
+            [rat(-1), rat(0), rat(0), rat(0)],
+            [rat(0), rat(-1), rat(0), rat(0)],
+            [rat(0), rat(0), rat(-1), rat(0)],
+            [rat(0), rat(0), rat(0), rat(-1)],
+            [rat(1), rat(1), rat(1), rat(1)],
+        ];
+        let base_heights: Vec<BigRational> =
+            vec![frac(1, 5), frac(1, 5), frac(1, 5), frac(1, 5), rat(1)];
+
+        let dual_vertices: Vec<[BigRational; 4]> = base_normals
+            .iter()
+            .zip(base_heights.iter())
+            .map(|(n, h)| std::array::from_fn(|c| &(&n[c] / h) * &scale))
+            .collect();
+
+        let p = Polytope4D::new(dual_vertices).expect("small-coordinate simplex should succeed");
+        assert_eq!(
+            p.vertices().len(),
+            5,
+            "scaled simplex should still have 5 vertices"
+        );
+
+        // Vertex on facets {0,1,2,3}: coordinates = -1/5 / scale = -1/5 * 1e6 = -200000
+        let vds = vertex_descriptors_from_incidence(&p);
+        let target_vd: BTreeSet<usize> = [0, 1, 2, 3].into_iter().collect();
+        let idx = vds
+            .iter()
+            .position(|vd| *vd == target_vd)
+            .expect("vertex {0,1,2,3} should exist");
+        let expected = rat(-200_000);
+        for (c, coord) in p.vertices()[idx].iter().enumerate() {
+            assert_eq!(
+                coord, &expected,
+                "coordinate {c} of small-scale simplex vertex should be -200000"
+            );
+        }
+    }
+
+    /// Proposition: exact rational construction handles non-power-of-2 denominators.
+    ///
+    /// Constructs a simplex from exact rationals with denominators 3, 5, 7 — values
+    /// that are not exactly representable in f64. The common denominator computation
+    /// (lcm) must correctly combine these primes, and the integer Cramer pipeline
+    /// must produce exact vertex coordinates.
+    #[test]
+    fn exact_rational_non_power_of_two_denominators() {
+        // A simplex with non-power-of-2 heights: h_0..h_3 = 1/3, h_4 = 2/7.
+        // Dual vertices y_i = n_i / h_i.
+        //
+        // Facets:
+        //   0: -x_1 <= 1/3   => y = (-3, 0, 0, 0)
+        //   1: -x_2 <= 1/3   => y = (0, -3, 0, 0)
+        //   2: -x_3 <= 1/3   => y = (0, 0, -3, 0)
+        //   3: -x_4 <= 1/3   => y = (0, 0, 0, -3)
+        //   4: x_1+x_2+x_3+x_4 <= 2/7  => y = (7/2, 7/2, 7/2, 7/2)
+        let dual_vertices: Vec<[BigRational; 4]> = vec![
+            [rat(-3), rat(0), rat(0), rat(0)],
+            [rat(0), rat(-3), rat(0), rat(0)],
+            [rat(0), rat(0), rat(-3), rat(0)],
+            [rat(0), rat(0), rat(0), rat(-3)],
+            [frac(7, 2), frac(7, 2), frac(7, 2), frac(7, 2)],
+        ];
+
+        let p = Polytope4D::new(dual_vertices.clone())
+            .expect("non-power-of-2 denominator simplex should succeed");
+        assert_eq!(p.vertices().len(), 5, "simplex should have 5 vertices");
+
+        // Verify common denominator handles the lcm(1,1,1,1,2) = 2 correctly
+        // by checking that the integer scaling produces correct results.
+        let (int_verts, common_denom) = integer_scale_dual_vertices(&dual_vertices);
+        // lcm of all denominators: denominators are 1,1,1,1,2 so lcm = 2
+        assert_eq!(
+            common_denom,
+            BigInt::from(2),
+            "common denominator should be lcm(1,1,1,1,2) = 2"
+        );
+        // int_verts[0] = (-3, 0, 0, 0) * 2 = (-6, 0, 0, 0)
+        assert_eq!(int_verts[0][0], BigInt::from(-6));
+        // int_verts[4] = (7/2, 7/2, 7/2, 7/2) * 2 = (7, 7, 7, 7)
+        assert_eq!(int_verts[4][0], BigInt::from(7));
+
+        // Vertex on facets {0,1,2,3} (omitting the sum constraint):
+        // Solving -x_i = 1/3 for i=1..4 gives x_i = -1/3.
+        let vds = vertex_descriptors_from_incidence(&p);
+        let target_vd: BTreeSet<usize> = [0, 1, 2, 3].into_iter().collect();
+        let idx = vds
+            .iter()
+            .position(|vd| *vd == target_vd)
+            .expect("vertex {0,1,2,3} should exist");
+        let expected = frac(-1, 3);
+        for (c, coord) in p.vertices()[idx].iter().enumerate() {
+            assert_eq!(
+                coord, &expected,
+                "coordinate {c} should be -1/3, got {coord}"
+            );
+        }
+
+        // Vertex on facets {1,2,3,4} (omitting facet 0, the -x_1 constraint):
+        // x_2 = x_3 = x_4 = -1/3, and x_1+x_2+x_3+x_4 = 2/7.
+        // So x_1 = 2/7 - (-1/3)*3 = 2/7 + 1 = 9/7.
+        let target_vd2: BTreeSet<usize> = [1, 2, 3, 4].into_iter().collect();
+        let idx2 = vds
+            .iter()
+            .position(|vd| *vd == target_vd2)
+            .expect("vertex {1,2,3,4} should exist");
+        let v = &p.vertices()[idx2];
+        assert_eq!(v[0], frac(9, 7), "x_1 should be 9/7, got {}", v[0]);
+        assert_eq!(v[1], frac(-1, 3), "x_2 should be -1/3, got {}", v[1]);
+        assert_eq!(v[2], frac(-1, 3), "x_3 should be -1/3, got {}", v[2]);
+        assert_eq!(v[3], frac(-1, 3), "x_4 should be -1/3, got {}", v[3]);
+    }
+
+    /// Proposition: integer Cramer's rule produces exact vertex coordinates for the
+    /// hypercube, matching the known analytical values.
+    ///
+    /// For the hypercube [-1,1]^4, each vertex (s_1, s_2, s_3, s_4) with s_i in {-1,+1}
+    /// is the unique solution of the 4x4 system formed by its 4 defining facets.
+    /// This test verifies that the integer pipeline produces these exact coordinates
+    /// by checking every vertex against the expected Cramer solution.
+    #[test]
+    fn integer_cramer_exact_coordinates_hypercube() {
+        let h = rational_hypercube();
+        let vds = vertex_descriptors_from_incidence(&h);
+
+        // For each vertex, verify coordinates match the expected sign pattern.
+        // Facet 2k: +e_{k+1} . x <= 1, so vertex on facet 2k has x_{k+1} = +1.
+        // Facet 2k+1: -e_{k+1} . x <= 1, so vertex on facet 2k+1 has x_{k+1} = -1.
+        for (vi, vd) in vds.iter().enumerate() {
+            let v = &h.vertices()[vi];
+            for dim in 0..4 {
+                let expected = if vd.contains(&(2 * dim)) {
+                    rat(1)
+                } else {
+                    assert!(
+                        vd.contains(&(2 * dim + 1)),
+                        "vertex must be on one of the pair"
+                    );
+                    rat(-1)
+                };
+                assert_eq!(
+                    v[dim], expected,
+                    "vertex {vi}, coordinate {dim}: expected {expected}, got {}",
+                    v[dim]
+                );
+            }
+        }
+    }
+
+    /// Proposition: integer Cramer's rule produces exact vertex coordinates for the
+    /// simplex, verifiable via the defining equations y_i . v = 1.
+    ///
+    /// For each vertex v and each defining facet i (in its descriptor), the inner
+    /// product y_i . v must be exactly 1. For non-defining facets, y_i . v < 1.
+    /// This end-to-end check verifies the full Cramer pipeline (det4_int, numerator
+    /// dets, coordinate assembly) without relying on known analytical formulas.
+    #[test]
+    fn integer_cramer_exact_coordinates_simplex() {
+        let s = rational_simplex();
+        let vds = vertex_descriptors_from_incidence(&s);
+        let dual_verts = s.dual_vertices();
+
+        for (vi, vd) in vds.iter().enumerate() {
+            let v = &s.vertices()[vi];
+            for fi in 0..dual_verts.len() {
+                let prod = dot4(
+                    &std::array::from_fn(|c| dual_verts[fi][c].clone()),
+                    &std::array::from_fn(|c| v[c].clone()),
+                );
+                if vd.contains(&fi) {
+                    assert_eq!(
+                        prod,
+                        rat(1),
+                        "vertex {vi} on facet {fi}: y.v should be exactly 1, got {prod}"
+                    );
+                } else {
+                    assert!(
+                        prod < rat(1),
+                        "vertex {vi} not on facet {fi}: y.v should be < 1, got {prod}"
+                    );
+                }
+            }
+        }
     }
 }

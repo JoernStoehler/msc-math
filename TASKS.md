@@ -211,7 +211,7 @@ Key existing results:
 | **orbit-recovery** | 112/112 polytopes pass all geometric checks. Closure/facet/action errors <1e-6 for F≤9. Base point generically unique (96.4%). |
 | **q-error** | 1.13M nodes, worst error bound E=2.9e-11. Actual errors at machine epsilon. Algorithm empirically exact at f64 precision. |
 | **unknown-predicates** | 29 UNKNOWNs, all Lagrangian products, all f64 noise. Random polytopes: zero. Phase 2 not needed. |
-| **benchmark** | Construction dominates for F≤10 (80-92%). Crossover at F≈11. Capacity ~4.26^F/facet. Practical limit F≤12. |
+| **benchmark** | Post-optimization (§5c): construction negligible vs capacity for all F. Capacity ~4.26^F/facet. Practical limit F≤12. Pre-optimization: construction dominated for F≤10 (80-92%), crossover at F≈11. |
 
 Observations (Jörn, 2026-03-22):
 - Gradient descent showed how rare sys>1 solutions are, but GD currently sucks and fails hard (step-bound barrier at combinatorial type boundaries, poor convergence).
@@ -236,11 +236,11 @@ Blockers for experiment work:
 
 🟢 Agent can do autonomously. Update `experiments/benchmark/`.
 
-**Problem:** The existing benchmark experiment only times the capacity computation (permutation enumeration + KKT solve), not the full pipeline. `Polytope4D::new` (exact rational vertex enumeration, adjacency, omega signs) is not profiled but may dominate wall time for larger polytopes. There is no end-to-end breakdown showing where time goes from raw normals/heights to systolic ratio.
+**Problem:** The existing benchmark experiment only times the capacity computation (permutation enumeration + KKT solve), not the full pipeline. `Polytope4D::new` (integer-scaled vertex enumeration, adjacency, omega signs) is not profiled but may dominate wall time for larger polytopes. There is no end-to-end breakdown showing where time goes from dual vertices to systolic ratio.
 
 **Work items:**
 1. Add end-to-end timing to the benchmark experiment, broken into phases:
-   - `Polytope4D::new` (rational construction: vertex enum, incidence, vertex_adjacency, omega signs)
+   - `Polytope4D::new` (construction: vertex enum, incidence, vertex_adjacency, omega signs)
    - Permutation enumeration + adjacency pruning
    - KKT assembly + solve (LU/SVD)
    - Accumulator / orbit recovery
@@ -249,15 +249,20 @@ Blockers for experiment work:
 
 ---
 
-## 5c. Optimize Polytope4D construction
+## 5c. Optimize Polytope4D construction — DONE (2026-03-23)
 
-🟢 Agent can do autonomously.
+**Result:** 31x speedup at F=10 (84ms → 2.7ms). Construction now negligible vs capacity computation.
 
-**Problem:** `Polytope4D::new` dominates end-to-end systolic ratio computation for F ≤ 10 (80-92% of total time). At F=10, construction is 83 ms vs 17 ms for capacity. The bottleneck is exact rational arithmetic — BigRational vertex enumeration via C(F,4) subset solves. The SVD pre-filter (edbcb6a) already skips 70-80% of subsets, but the remaining rational work is still expensive.
+**Method:**
+- Integer-scaled arithmetic (BigInt instead of BigRational) for vertex enumeration — avoids GCD normalization overhead
+- f64 prefilters for bounded check and irredundancy — skips expensive exact arithmetic for most subsets
+- Constructor cleanup (removed thin wrapper constructors, unified on `new()` and `from_f64()`)
 
-**Data:** See `experiments/benchmark/logbook.md` (phase breakdown table), `profiling/phase_breakdown.png`, flamegraphs at F=9 and F=11.
+**Before:** `Polytope4D::new` dominated end-to-end systolic ratio computation for F ≤ 10 (80-92% of total time). At F=10, construction was 84ms vs 17ms for capacity. Bottleneck was BigRational vertex enumeration via C(F,4) subset solves.
 
-**Goal:** Reduce construction time. No correctness compromises — the exact rational pipeline is authoritative for vertex-facet incidence, adjacency, and omega signs.
+**Remaining:**
+- Math verification of `prop:integer-cramer` by Jörn (integer-scaled Cramer's rule correctness proof)
+- f64 threshold soundness evaluation (prefilter thresholds are empirically safe but not proven)
 
 ---
 

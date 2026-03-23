@@ -211,6 +211,7 @@ impl Polytope4D {
     // from_normals_and_heights, from_rationals, from_f64_rounded were thin
     // wrappers that computed n/h. Callers now inline the division and call
     // new() or from_f64() directly.
+
     /// Perturb dual vertices to break omega_0 = 0 degeneracies.
     ///
     /// Returns a new `Polytope4D` whose dual vertices are randomly perturbed
