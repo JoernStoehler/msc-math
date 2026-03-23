@@ -57,8 +57,7 @@ For each friction point or mistake identified above: abstract the error class an
 Persist actionable findings so future agents benefit. For each finding, decide where it belongs:
 
 - **Repeatable behavioral lesson** (e.g., "ensure proof correctness before review") → memory entry (type: feedback)
-- **New convention or workflow change** → discuss with Jörn, then update CLAUDE.md or relevant skill
-- **Failure mode that explains a rule** → add to `meta-foundations/references/decision-records.md`
+- **New convention or workflow change** → discuss with Jörn, then Jörn updates CLAUDE.md or relevant skill
 - **Nothing actionable** → don't persist, it's just a fact about the session
 
 Don't persist everything — only findings that would change future agent behavior. A postmortem that produces zero repo changes is fine if nothing actionable emerged.

@@ -5,215 +5,59 @@ description: How to handle expensive test data — caching, fixture generation, 
 
 # Data Pipeline Conventions
 
-## Design principle
-
-Balance marginal value of more compute against marginal friction to future agents. Profile before optimizing. One-time runs with large parameters are fine — the friction source is tests that run on every `cargo test --release --lib` and take too long.
-
 ## Caching strategies
-
-Choose the cheapest strategy that avoids fatal staleness.
 
 | Strategy | When to use | Example |
 |----------|-------------|---------|
-| **No caching** | Data is fast (<10ms) or always stale when tests change | `Polytope4D::new()` from literal dual vertices |
-| **In-memory** | Same data used by multiple tests in one binary, construction is moderate (10ms–1s) | `known_polytopes::simplex()` via `LazyLock` |
-| **On-disk** | Generation is expensive (>10s), consumed more often than regenerated | Capacity fixtures (33 polytopes × full enumeration) |
-
-### No caching
-
-Inline construction. No special infrastructure needed.
-
-```rust
-let polytope = Polytope4D::new(dual_vertices).unwrap();
-```
-
-### In-memory caching
-
-Use `std::sync::LazyLock` for expensive-to-construct test fixtures shared across tests:
-
-```rust
-static SIMPLEX: LazyLock<KnownPolytope> = LazyLock::new(|| {
-    KnownPolytope { polytope: Polytope4D::new(...).unwrap(), ... }
-});
-```
-
-**When to use:** The same polytope constructor appears in 5+ tests and takes >10ms. Current candidates: `known_polytopes::simplex()`, `hypercube()`, `hko_pentagon()`, `lagrangian_triangle_product()`.
+| **No caching** | Fast (<10ms) or always stale | `Polytope4D::new()` from literals |
+| **In-memory** | Shared across tests, 10ms–1s | `LazyLock<KnownPolytope>` |
+| **On-disk** | Expensive (>10s), consumed often | Capacity fixtures (33 polytopes) |
 
 ### On-disk caching
 
-Expensive computations write results to a checked-in data file. Tests load the file instead of recomputing.
-
-**Structure:**
 ```
-crates/
-├── src/algorithms/hk2017/
-│   ├── generate_capacity_fixtures.rs   # generation + loading functions
-│   ├── mod.rs                          # consumer tests (inline #[cfg(test)] modules)
-│   └── ...
-└── tests/fixtures/
-    └── capacity_dataset.json           # generated data (checked into git)
+crates/tests/fixtures/capacity_dataset.json   # checked into git
+crates/src/algorithms/hk2017/generate_capacity_fixtures.rs  # generator
 ```
 
-**Two loading tiers:**
-- `load_dataset_entries()` → `Vec<DatasetEntry>`: JSON parse only, ~1ms. For tests needing only scalar fields (capacity, volume, name, etc.).
-- `load_test_dataset()` → `Vec<TestPolytope>`: full `Polytope4D` reconstruction, ~8s. For tests needing vertex geometry.
+Two loading tiers:
+- `load_dataset_entries()` → scalar fields only, ~1ms
+- `load_test_dataset()` → full `Polytope4D` reconstruction, ~8s
 
-**Generation stages are independent.** Each generates exactly one dataset. Never bundle them — an agent should only regenerate what's actually stale, not blow 30 minutes on all pipelines indiscriminately.
-
-**Generation stage:**
-- Single concern: generates exactly one dataset
-- Runnable via `cargo test --release --lib -- generate_capacity_fixtures --ignored`
-- Prints timing: "Generated 33 polytopes in 4m32s"
-- Writes to a deterministic path under `fixtures/`
-
-**Consumer tests:**
-- Load fixtures at test start
-- Check staleness (see below)
-- Run fast assertions against pre-computed data
+Generation stages are independent. Only regenerate what's stale.
 
 ## Staleness detection
 
-Two layers, complementary:
-
-### Semantic staleness (primary)
-
-The cached data includes expected values. If a code change produces different values, the consumer test fails. This is both regression detection AND staleness detection:
-
-- If the old values were correct → the code change is a regression (bug)
-- If the old values were wrong → the data was already stale (regenerate)
-
-The consumer test can't distinguish these. It reports the mismatch with an actionable message:
+Cached data includes expected values. Consumer tests recompute and compare:
 ```
 Capacity mismatch for simplex: cached=0.125, computed=0.126.
-If this is a legitimate code change, regenerate:
-  cargo test --release --lib -- regenerate_test_dataset --ignored  (~3s)
-If this is unexpected, investigate the regression.
+Regenerate: cargo test --release --lib -- regenerate_test_dataset --ignored
 ```
 
-## Cached data as regression detection
-
-On-disk cached values serve double duty: they're both test fixtures AND regression baselines. When capacity computation code changes:
-
-1. Consumer test loads cached `simplex_capacity = 0.125`
-2. Test recomputes capacity and compares
-3. Mismatch → either regression or legitimate change requiring re-validation
-
-This is the cheapest regression test: load JSON + one assertion. Expensive recomputation only happens when values actually change.
-
-## Timing collection
-
-Always collect timing by default in expensive tests. A few milliseconds of overhead prevents expensive re-runs just to measure.
-
-```rust
-let start = std::time::Instant::now();
-let result = expensive_computation();
-let elapsed = start.elapsed();
-eprintln!("[TIMING] {test_name}: {elapsed:.1?}");
-```
-
-**Why:** When a test takes 30s, you need to know whether it's the fixture load (0.1s), the capacity computation (29s), or the assertion (0.9s). Without timing, you re-run the whole thing to find out.
+Only regenerate when the generator's *semantic output* would change. Run consumer tests first — if they pass, cached data is still correct.
 
 ## Test performance budget
 
-Slow test suites cause noticeable waiting time when Jörn watches agents finish implement/review stages. The CPU monitor kills sessions after 20 min sustained high CPU, so 10 min gives margin.
+| Category | Target |
+|----------|--------|
+| `cargo test --release --lib` | < 5s wall |
+| `cargo test --lib` (debug) | < 20s wall |
+| Full suite (`--ignored`) | < 10 min |
 
-| Category | Target | Current (2026-03-22) |
-|----------|--------|----------------------|
-| Default suite (`cargo test --release --lib`) | < 5s wall | ~1.7s wall |
-| Default suite (`cargo test --lib`, debug) | < 20s wall | ~17s wall |
-| Full suite (`--release -- --ignored`) | < 10 min | unmeasured |
-| Fixture generation | < 10 min | ~3s (release) |
+Tests exceeding budget: `#[ignore]` with comment explaining why and runtime.
 
-Default test command is `cargo test --release --lib`. The crate's own code is 10-40× faster in release mode; all `debug_assert!` invariants have been promoted to `assert!` so release mode loses no safety checks.
+Default is `cargo test --release --lib`. All `debug_assert!` promoted to `assert!` so release loses no safety.
 
-Tests exceeding the budget should be `#[ignore]` with a comment:
-```rust
-#[ignore] // ~30s: full permutation enumeration on 33 polytopes. Run with --ignored.
-```
+## LICCA cluster offloading
 
-**When to regenerate vs not:** Only regenerate when the generator's *semantic output* would change. A rounding change in display code doesn't warrant 5 minutes of regeneration. A KKT solver bugfix does. When in doubt, run the consumer tests first — if they pass, the cached data is still correct.
+For computations >10 min: agent writes binary + SLURM script, Jörn submits via `ssh licca && sbatch job.sh`. Results committed back.
 
-## Profiling methodology
+Offload when inherently O(n!) / O(2^n). Optimize locally when algorithmic speedup is feasible.
 
-When profiling test performance, use **user CPU time** (not wall clock):
+## Discovering pipelines
 
-```bash
-bash -c 'time cargo test --release --lib -- test_name' 2>&1 | tail -8
-```
-
-Wall clock is unreliable: it depends on system load, number of cores, and how many tests run in parallel. User CPU time measures actual computation.
-
-**Full suite metrics:**
-- **Wall time** = user experience (how long you wait). Depends on parallelism.
-- **User CPU time** = total computation. Independent of parallelism.
-- **Report both** and note the environment (cores, load average).
-
-**Environment state to record:**
-```bash
-nproc          # available cores
-uptime         # load average (should be < nproc for clean measurements)
-pgrep -c cargo # other cargo processes (should be 0)
-```
-
-**Per-test isolation:** Run individual tests separately, not in parallel.
-The test harness runs all `cargo test --lib` tests in parallel, so individual
-test timings from the full run are distorted by contention.
-
-## Known performance characteristics
-
-`Polytope4D::new()` does integer-scaled vertex enumeration (O(F⁴) BigInt
-operations with f64 prefilters). Construction is negligible vs capacity for F≥10.
-
-**Why exact:** Vertex-facet incidence and omega signs require exact discrete
-decisions (is y_i · v exactly 1? is ω₀(y_i, y_k) positive or zero?). The f64
-prefilter in `vertex_enumeration.rs` rejects ~65-93% of subsets; the integer
-Cramer pipeline is the authoritative answer. Internally, rational dual vertices
-are scaled by the common denominator to work in BigInt (no GCD overhead).
-
-**Cargo profile overrides:** `num-bigint` and `num-rational` are compiled at
-`opt-level = 3` in dev/test builds (see `Cargo.toml`). Without this, rational
-arithmetic is ~20× slower in debug mode. Same pattern as nalgebra.
-
-## Discovering data pipelines
-
-To find all data generation stages in the codebase:
 ```bash
 grep -rn '#\[ignore\]' crates/src/ | grep -i 'generat\|fixture\|dataset'
 ```
 
-Each generation stage's doc comment should name its consumers:
-```rust
-//! Generates capacity fixtures for 33 polytopes.
-//! Consumers: literature_test.rs, conformality_test.rs, symplectic_invariance_test.rs
-```
-
-And each consumer should name its data source:
-```rust
-//! Consumes: fixtures/capacity_fixtures.json
-//! Regenerate: cargo test --lib -- generate_capacity_fixtures --ignored  (~5 min)
-```
-
-## LICCA cluster offloading
-
-For single computations exceeding 10 minutes per run (large sweeps, full dataset generation):
-
-1. Agent writes the Rust binary and a SLURM job script (from template)
-2. Agent presents both to Jörn with: what it computes, expected runtime, output path
-3. Jörn opens a terminal, builds, and submits: `ssh licca && sbatch job.sh`
-4. Results are copied back to the repo and committed
-
-**Template location:** `experiments/slurm/template.sh` (TODO: create)
-
-**When to offload vs optimize locally:**
-- If the computation can be made 10x faster with algorithmic changes → optimize locally
-- If it's inherently O(n!) or O(2^n) on large inputs → offload
-- If it runs once to generate a dataset that's consumed many times → offload
-
-## Anti-patterns
-
-- **Blanket regeneration:** `just generate-all-fixtures` runs all pipelines indiscriminately, wasting 30 minutes when only one dataset is stale. Each pipeline is independent — regenerate only what changed.
-- **Magic regeneration:** Test silently regenerates stale fixtures. Future agent doesn't know it's spending 5 minutes on regeneration vs 5 seconds on the actual test.
-- **Fixture in test body:** Large JSON literal in a test function. Hard to update, bloats the test file.
-- **Staleness via git hash:** `assert_eq!(git_hash, "abc123")` — every commit triggers regeneration even when the generator didn't change.
-- **No timing:** Test is "slow" but nobody knows which part. Agents add `#[ignore]` instead of optimizing the bottleneck.
-- **Regenerating for cosmetic changes:** Capacity values rounded differently doesn't justify 15 core-hours of regeneration. Do this once before publication to update all figures.
+Generators name consumers, consumers name data source.
