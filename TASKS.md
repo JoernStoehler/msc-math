@@ -56,6 +56,29 @@ Depends on: Jörn verifies the math. Agent writes drafts, Jörn reviews.
 
 ---
 
+## hko-local-maximality
+
+**Goal:** Show HKO2024 is a local maximum of sys. Potentially publishable alongside the thesis.
+
+**Literature (2026-03-23):** BBLM2023 (arXiv:2303.13348, `papers/bblm2023/`, bib `BBLM2023`) classifies smooth local maximizers of c_k-hat in dim 4: they are rational ellipsoids. For k=1 (= c_EHZ, our case), only the round ball. Techniques (Clarke functional, Morse theory, C³ topology) are fundamentally smooth — don't extend to polytopes. **The polytope local maximality question is genuinely open.** HKO2024 paper (line 642) explicitly calls for "further study of non-smooth domains with Besse-type dynamics."
+
+**What's done:**
+- **h-space (normals fixed):** 0 ∈ conv(subdifferential) by symmetry + Euler homogeneity. Jörn has not verified the proof.
+- **F=10 (n,h)-space:** Phase C LP confirms 0 ∈ conv(44 per-orbit gradients in R^40). First-order necessary condition for local max satisfied. 16 flat directions remain. Script: `experiments/hko-neighborhood/phase_c_lp_test.py`.
+- **F=11 facet-splitting:** 211 cuts all decrease sys (sampling-based, facet 5 incomplete: 11/200 rows).
+- **LP(5,5) perturbations:** 100 random, all lower (pentagon-perturb experiment).
+
+**Next steps (priority order):**
+1. **Second-order analysis of 16 flat directions** — compute sys along each flat direction via finite differences. Determines whether first-order necessary condition → actual local max. Agent-executable. This is the critical gap.
+2. **Jörn verifies h-space proof** — Danskin + symmetry + Euler homogeneity argument in `experiments/hko-neighborhood/logbook.md` lines 151-156. ~15 min. Then formalize in math.tex.
+3. **Complete Phase B** (facet 5: 11/200 rows). Agent-executable, low priority.
+4. **Convex-body direction** (Phases E/F in logbook) — Minkowski smoothing or F-refinement. Completely untested direction. Needs scoping: can billiard algorithm handle K+εB⁴?
+5. **Structural explanation** — why does pentagon geometry force 0 ∈ conv? Relates to golden ratio β-structure, order-10 symmetry. Jörn's domain.
+
+**Key files:** `experiments/hko-neighborhood/logbook.md` (full analysis), `experiments/hko-neighborhood/phase_c_lp_test.py` (Phase C script), `experiments/hko-neighborhood/math.tex` (theory).
+
+---
+
 ## experiment-quality
 
 The thesis is currently a dump of results, not a coherent narrative. Experiments have data but writeups are noisy.
@@ -68,7 +91,7 @@ The thesis is currently a dump of results, not a coherent narrative. Experiments
 **Known gaps:**
 - `sys-optimization` needs a redesign, not just modernization — didn't use proper gradients, didn't look at cuts
 - `crosspolytope` Phase 2 TODO: update known_polytopes.rs (tracked in its logbook)
-- `hko-neighborhood` Phase C (2026-03-23) proved first-order local max in F=10 (n,h)-space via LP. Remaining: 16 flat directions need second-order analysis; F=11 and convex-body directions untested (Phases E, F in logbook)
+- `hko-neighborhood` Phase C (2026-03-23) verified first-order necessary condition for local max in F=10 (n,h)-space via LP. See `hko-local-maximality` task for next steps.
 
 **Experiment ideas:** See `IDEAS.md` (root).
 

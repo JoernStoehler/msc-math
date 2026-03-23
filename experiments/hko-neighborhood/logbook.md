@@ -244,6 +244,16 @@ What observations would **increase** confidence:
 
 **Remaining untested directions:** Phases E (Minkowski smoothing) and F (F-refinement) probe the convex-body neighborhood. Phase B completion (facet 5 data) covers F=11. Second-order analysis of the 16 flat directions determines strict vs non-strict max.
 
+## Literature: BBLM2023 (added 2026-03-23)
+
+**Paper:** Baracco-Bernardi-Lange-Mazzucchelli, "On the local maximizers of higher capacity ratios" (arXiv:2303.13348). Local copy: `papers/bblm2023/`, bib: `BBLM2023`.
+
+**Main result (Theorem A):** Smooth star-shaped local maximizers of c_k-hat in dim 4 are precisely domains symplectomorphic to rational ellipsoids. For k=1 (= c_EHZ, our case), only the round ball.
+
+**Why it doesn't apply to us:** Techniques require smooth strict convexity (Clarke functional, Legendre dual, C³ topology). Polytopes are excluded. The paper acknowledges non-smooth domains can beat smooth maximizers (Example 1.2: polydisk P(1,1) beats all ellipsoids for k≥3).
+
+**Implication:** The question "is HKO2024 a local max of sys among polytopes?" is genuinely open. No existing theory addresses it. HKO2024 paper (line 642) calls for "further study of non-smooth domains with Besse-type dynamics."
+
 ## Related experiments
 
 - **pentagon-perturb** (`experiments/pentagon-perturb/`): Perturbation analysis of HKO pentagon in the LP(Fq=5, Fp=5) ambient space. 100 random perturbations (epsilon=0.01 per component) (source: pentagon-perturb logbook). All perturbed polytopes have lower sys. Includes PCA analysis.
