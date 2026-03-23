@@ -242,7 +242,7 @@ mod tests {
         let analytical = volume_derivatives_h(polytope);
         let eps = 1e-6;
         let fd = volume_derivatives_h_fd(&normals, &heights, eps, |n, h| {
-            let p = Polytope4D::from_normals_and_heights(n.to_vec(), h.to_vec()).ok()?;
+            let p = Polytope4D::from_f64(n.iter().zip(h.iter()).map(|(ni, &hi)| ni / hi).collect()).ok()?;
             volume(&p).ok()
         });
 
@@ -323,8 +323,8 @@ mod tests {
             let mut hm = heights.clone();
             hp[k] += eps;
             hm[k] -= eps;
-            let pp = Polytope4D::from_normals_and_heights(normals.clone(), hp).unwrap();
-            let pm = Polytope4D::from_normals_and_heights(normals.clone(), hm).unwrap();
+            let pp = Polytope4D::from_f64(normals.iter().zip(hp.iter()).map(|(n, &h)| n / h).collect()).unwrap();
+            let pm = Polytope4D::from_f64(normals.iter().zip(hm.iter()).map(|(n, &h)| n / h).collect()).unwrap();
             let qp = solve_kkt_for(&pp, &best_perm).map(|r| r.q_corrected);
             let qm = solve_kkt_for(&pm, &best_perm).map(|r| r.q_corrected);
             let fd_k = match (qp, qm) {

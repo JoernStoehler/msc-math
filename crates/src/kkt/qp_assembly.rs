@@ -513,7 +513,8 @@ mod tests {
             Vector4::new(0.0, 0.0, 0.0, -1.0),
         ];
         let heights = vec![1.0; 8];
-        Polytope4D::from_normals_and_heights(normals, heights)
-            .expect("Hypercube construction should succeed")
+        Polytope4D::from_f64(
+            normals.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect(),
+        ).expect("Hypercube construction should succeed")
     }
 }

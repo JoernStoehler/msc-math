@@ -151,9 +151,8 @@ fn main() {
     println!("Test 3: Generating 10 scaled polytopes (reusing base)...");
     for (i, p) in base_polytopes.iter().enumerate() {
         let alpha: f64 = rng.gen_range(0.5..2.0);
-        let scaled = Polytope4D::from_normals_and_heights(
-            p.normals_f64().to_vec(),
-            p.heights_f64().iter().map(|&h| alpha * h).collect(),
+        let scaled = Polytope4D::from_f64(
+            p.normals_f64().iter().zip(p.heights_f64().iter().map(|&h| alpha * h)).map(|(n, h)| n / h).collect(),
         ).expect("scaled");
 
         let pruned = ehz_capacity(&scaled).expect("pruned").result.capacity;
@@ -211,8 +210,9 @@ fn main() {
             .map(|&h| h * (1.0 + epsilon * (rng.gen::<f64>() - 0.5)))
             .collect();
 
-        let perturbed = Polytope4D::from_normals_and_heights(p.normals_f64().to_vec(), perturbed_heights)
-            .expect("perturbed");
+        let perturbed = Polytope4D::from_f64(
+            p.normals_f64().iter().zip(perturbed_heights.iter()).map(|(n, &h)| n / h).collect(),
+        ).expect("perturbed");
         let pruned = ehz_capacity(&perturbed).expect("pruned").result.capacity;
 
         entries.push(VerificationEntry {
@@ -263,7 +263,9 @@ fn apply_symplectomorphism(p: &Polytope4D, m: &Matrix4<f64>) -> Polytope4D {
         let n_raw = m_inv_t * n;
         h / n_raw.norm()
     }).collect();
-    Polytope4D::from_normals_and_heights(normals, heights).expect("transformed")
+    Polytope4D::from_f64(
+        normals.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect(),
+    ).expect("transformed")
 }
 
 fn random_sp4_matrix(rng: &mut impl Rng) -> Matrix4<f64> {
@@ -423,13 +425,13 @@ mod tests {
                 let k1 = &dataset[i];
                 let k2 = &dataset[j];
 
-                let p1 = Polytope4D::from_normals_and_heights(
-                    k1.normals.iter().map(|n| Vector4::from_row_slice(n)).collect(),
-                    k1.heights.clone()
+                let p1 = Polytope4D::from_f64(
+                    k1.normals.iter().map(|n| Vector4::from_row_slice(n))
+                        .zip(k1.heights.iter()).map(|(n, &h)| n / h).collect(),
                 ).expect("p1");
-                let p2 = Polytope4D::from_normals_and_heights(
-                    k2.normals.iter().map(|n| Vector4::from_row_slice(n)).collect(),
-                    k2.heights.clone()
+                let p2 = Polytope4D::from_f64(
+                    k2.normals.iter().map(|n| Vector4::from_row_slice(n))
+                        .zip(k2.heights.iter()).map(|(n, &h)| n / h).collect(),
                 ).expect("p2");
 
                 let mut alpha_max = f64::INFINITY;

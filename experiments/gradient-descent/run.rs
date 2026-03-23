@@ -416,7 +416,9 @@ fn try_step_h(
     let f = normals.len();
     let new_heights: Vec<f64> = (0..f).map(|k| heights[k] + t * direction[k]).collect();
 
-    let new_polytope = Polytope4D::from_normals_and_heights(normals.to_vec(), new_heights).ok()?;
+    let new_polytope = Polytope4D::from_f64(
+        normals.iter().zip(new_heights.iter()).map(|(n, &h)| n / h).collect(),
+    ).ok()?;
     let vol = volume(&new_polytope).ok().filter(|&v| v > 0.0)?;
     let cap = compute_capacity(&new_polytope, backend)?;
     let sys = cap * cap / (2.0 * vol);
@@ -460,7 +462,9 @@ fn try_step_hn(
         })
         .collect();
 
-    let new_polytope = Polytope4D::from_normals_and_heights(new_normals, new_heights).ok()?;
+    let new_polytope = Polytope4D::from_f64(
+        new_normals.iter().zip(new_heights.iter()).map(|(n, &h)| n / h).collect(),
+    ).ok()?;
     let vol = volume(&new_polytope).ok().filter(|&v| v > 0.0)?;
     let cap = compute_capacity(&new_polytope, backend)?;
     let sys = cap * cap / (2.0 * vol);
@@ -515,9 +519,8 @@ fn run_gradient_ascent(
     let f = start_polytope.facet_count();
     let t_start = Instant::now();
 
-    let mut current = match Polytope4D::from_normals_and_heights(
-        start_polytope.normals_f64().to_vec(),
-        start_polytope.heights_f64().to_vec(),
+    let mut current = match Polytope4D::from_f64(
+        start_polytope.normals_f64().iter().zip(start_polytope.heights_f64().iter()).map(|(n, &h)| n / h).collect(),
     ) {
         Ok(p) => p,
         Err(e) => {

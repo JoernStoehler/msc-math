@@ -226,7 +226,9 @@ fn compute_sensitivity(
     // Cross-check: analytical volume derivatives (h) vs finite differences
     debug_assert!({
         let d_vol_fd = volume_derivatives_h_fd(&normals, &heights, 1e-3, |n, h| {
-            let p = Polytope4D::from_normals_and_heights(n.to_vec(), h.to_vec()).ok()?;
+            let p = Polytope4D::from_f64(
+                n.iter().zip(h.iter()).map(|(ni, &hi)| ni / hi).collect(),
+            ).ok()?;
             volume(&p).ok()
         });
         let ok = d_vol_h.iter().zip(d_vol_fd.iter()).all(|(a, fd)| {
@@ -563,7 +565,9 @@ fn evaluate_gradient_step_hn(
         })
         .collect();
 
-    match Polytope4D::from_normals_and_heights(new_normals, new_heights) {
+    match Polytope4D::from_f64(
+        new_normals.iter().zip(new_heights.iter()).map(|(n, &h)| n / h).collect(),
+    ) {
         Ok(new_polytope) => {
             let new_vol = volume(&new_polytope).unwrap_or(f64::NAN);
             let new_cap = ehz_capacity(&new_polytope)
@@ -626,7 +630,9 @@ fn evaluate_gradient_step(
     let f = normals.len();
     let new_heights: Vec<f64> = (0..f).map(|k| heights[k] + t * direction[k]).collect();
 
-    match Polytope4D::from_normals_and_heights(normals.to_vec(), new_heights) {
+    match Polytope4D::from_f64(
+        normals.iter().zip(new_heights.iter()).map(|(n, &h)| n / h).collect(),
+    ) {
         Ok(new_polytope) => {
             let new_vol = volume(&new_polytope).unwrap_or(f64::NAN);
             // Use library ehz_capacity for the step evaluation (not instrumented — faster)
@@ -692,7 +698,9 @@ fn try_step_h_polytope(
     let f = normals.len();
     let new_heights: Vec<f64> = (0..f).map(|k| heights[k] + t * direction[k]).collect();
 
-    let new_polytope = match Polytope4D::from_normals_and_heights(normals.to_vec(), new_heights) {
+    let new_polytope = match Polytope4D::from_f64(
+        normals.iter().zip(new_heights.iter()).map(|(n, &h)| n / h).collect(),
+    ) {
         Ok(p) => p,
         Err(_) => return None,
     };
@@ -731,7 +739,9 @@ fn try_step_hn_polytope(
         })
         .collect();
 
-    let new_polytope = match Polytope4D::from_normals_and_heights(new_normals, new_heights) {
+    let new_polytope = match Polytope4D::from_f64(
+        new_normals.iter().zip(new_heights.iter()).map(|(n, &h)| n / h).collect(),
+    ) {
         Ok(p) => p,
         Err(_) => return None,
     };
@@ -799,7 +809,9 @@ fn load_polytopes_from_jsonl(path: &std::path::Path, source: &str) -> Vec<(Strin
             .map(|n| Vector4::new(n[0], n[1], n[2], n[3]))
             .collect();
 
-        match Polytope4D::from_normals_and_heights(normals, row.heights) {
+        match Polytope4D::from_f64(
+            normals.iter().zip(row.heights.iter()).map(|(n, &h)| n / h).collect(),
+        ) {
             Ok(p) => polytopes.push((row.name, source.to_string(), p)),
             Err(e) => {
                 eprintln!("  {}: construction failed: {e}", row.name);
@@ -1058,9 +1070,8 @@ fn main() {
         let t_poly = Instant::now();
 
         // Reconstruct to get an owned polytope we can replace each iteration
-        let mut current = match Polytope4D::from_normals_and_heights(
-            start_polytope.normals_f64().to_vec(),
-            start_polytope.heights_f64().to_vec(),
+        let mut current = match Polytope4D::from_f64(
+            start_polytope.normals_f64().iter().zip(start_polytope.heights_f64().iter()).map(|(n, &h)| n / h).collect(),
         ) {
             Ok(p) => p,
             Err(e) => {

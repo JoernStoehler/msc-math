@@ -60,7 +60,7 @@ pub fn sample_random_polytope(
         .map(|(n, &h)| n / h)
         .collect();
 
-    Polytope4D::new(halfspaces)
+    Polytope4D::from_f64(halfspaces)
 }
 
 /// Generate random polytopes via rejection sampling.
@@ -170,7 +170,7 @@ mod tests {
                         .zip(heights.iter())
                         .map(|(n, &h)| n / h)
                         .collect();
-                    let revalidated = Polytope4D::new(halfspaces);
+                    let revalidated = Polytope4D::from_f64(halfspaces);
                     prop_assert!(
                         revalidated.is_ok(),
                         "accepted polytope failed revalidation: {:?}",

@@ -24,7 +24,15 @@ Depends on: Jörn decides which side to fix for each item.
 
 ---
 
-## thesis-todos
+## 3b. Audit math.tex stubs for lost mathematical backing
+
+When algorithmic lemmas were migrated from code doc comments to math.tex, some may have lost their connection to source material (papers, thesis definitions). Scan all math.tex `[TODO: JÖRN -` entries and check: was there ever a proof or citation? Did it get dropped during migration? Example: `lem:positive-span` and `lem:vertex-enumeration` in `geom/math.tex` have been proof-less stubs since their first commit — the thesis has Jörn-approved definitions of what a polytope is, but no proofs of the algorithmic facts the code relies on (positive spanning ↔ bounded, vertex enumeration correctness, irredundancy via affine rank).
+
+---
+
+## 4. Thesis TODOs
+
+🔴 Jörn verifies the math. Agent writes drafts, Jörn reviews.
 
 ### tube-algorithm.tex (8 TODOs)
 
@@ -66,6 +74,44 @@ The thesis is currently a dump of results, not a coherent narrative. Experiments
 
 Depends on: Jörn scoping the thesis story. Derivative-related experiments also depend on dual-vertex-parameterization (library derivative API).
 
+Key existing results:
+
+| Experiment | Finding |
+|---|---|
+| **crosspolytope** | First computed c_EHZ for 4D crosspolytope: c=4.0 (same as hypercube, its dual), sys=0.75. Exhaustive through m=12/16 with symmetry reduction. |
+| **hko-neighborhood** | Evidence HKO2024 is local max: gradient ascent converges in 1 step (Δsys~5e-9), all facet-splitting cuts decrease sys. 44 degenerate orbits at same action. Subdifferential appears to contain origin. Normal gradient nonzero but constrained by feasibility boundary. |
+| **lagrangian-products** | HKO is only sys>1 among regular polygon pairs (3≤n,m≤6, 6° resolution). Violation region for (5,5) spans ~13.5-22.5° rotation (~25% of period). |
+| **pentagon-perturb** | All 100 random perturbations of HKO in LP(5,5) space retain sys>1 (min 1.002, max 1.033). HKO at 1.047 is highest. No dominant PCA direction. |
+| **gradient-descent** | 995 polytopes, none reach sys>1. Lagrangian 5×5 reach higher sys (max 0.905) than general F=10 (max 0.870). Step-bound barrier at combinatorial type boundary prevents convergence; residual gradients O(1) at termination. GD currently sucks and fails hard. |
+| **sys-optimization** | Gradient ascent from 140 starts, best sys=0.878. (h,n) steps outperform h-only (68%, mean +0.054 vs +0.034). Combinatorial type boundary is binding constraint. 15/140 outliers near orbit boundaries. |
+| **omega-obstacle** | Hypothesis that small abs(ω₀) on ridges increases sys **falsified** by 4 independent tests on 953 polytopes. Orbit-specific ω has zero correlation with sys (ρ=-0.02, p=0.61). Orbits actually prefer LARGE abs(ω₀) transitions (median 0.54 orbit vs 0.36 non-orbit). KKT optimizer compensates by redistributing β — small ω doesn't make Q small because the optimizer selects orbits and weights that maximize Q regardless. HKO's Lagrangian ridges are a consequence of its construction, not a general mechanism. |
+| **random-sweep** | 70 random polytopes (F=5-12), max sys=0.578 at F=11. Median increases with F (0.08→0.48) but within-F variance large. Random polytopes stay far from violation. |
+| **random-product-sweep** | Random Lagrangian products max sys=0.794 (6×6). Higher-polygon pairs reach higher sys. HKO requires specific rotation angle, not reproduced by random orientations. |
+| **ablation** | All 4 pruning variants agree on capacity (max diff <1e-8). A2 speedup exponential: ~8x at F=5, ~1078x at F=10. A3 adds nothing on simple polytopes but 98% reduction on non-simple. |
+| **correctness** | All 6 mathematical axioms pass: algorithm agreement, literature values, conformality, symplectic invariance, perturbation stability, monotonicity. |
+| **kkt-inertia** | Eigenvalue inertia formula holds for 6/7 polytopes. 5 hko_pentagon mismatches are threshold artifacts at machine epsilon. 1.13M nodes. |
+| **orbit-recovery** | 112/112 polytopes pass all geometric checks. Closure/facet/action errors <1e-6 for F≤9. Base point generically unique (96.4%). |
+| **q-error** | 1.13M nodes, worst error bound E=2.9e-11. Actual errors at machine epsilon. Algorithm empirically exact at f64 precision. |
+| **unknown-predicates** | 29 UNKNOWNs, all Lagrangian products, all f64 noise. Random polytopes: zero. Phase 2 not needed. |
+| **benchmark** | Post-optimization (§5c): construction negligible vs capacity for all F. Capacity ~4.26^F/facet. Practical limit F≤12. Pre-optimization: construction dominated for F≤10 (80-92%), crossover at F≈11. |
+
+Observations (Jörn, 2026-03-22):
+- Gradient descent showed how rare sys>1 solutions are, but GD currently sucks and fails hard (step-bound barrier at combinatorial type boundaries, poor convergence).
+- Thesis writing postponed until end of week.
+- Thesis will introduce both (n_i, h_i) and a_i = n_i/h_i but primarily work in a_i since n_i rarely appears without a 1/h_i factor.
+
+New experiment ideas (Jörn, 2026-03-22):
+1. **HKO2024 local maximality:** Show or strongly suggest that HKO2024 is a local maximum in the space of convex bodies. Would be a publishable result.
+2. **Regular Lagrangian product analysis:** Dense (n, m, θ) sweep across wide range. Fit sys(n, m, θ) formula. Key question: does the fitted formula predict sys>1 only for P_5 ×_L R(θ) P_5?
+3. **Dense random sweep on LICCA + gradient descent:** Large-scale search for new sys>1 polytopes not close to HKO2024. GD needs redesign first.
+
+Blockers for experiment work:
+- Library has no derivative API (∂c_EHZ/∂a_i) — needed for subdifferential analysis and gradient experiments. See §6a.
+- Experiment gradient code (hko-neighborhood, gradient-descent, sys-optimization) is written in (n, h) space, not dual vertices. Needs rewriting after a_i-only KKT formulation is settled.
+- a_i-only KKT formulation is an open math question for Jörn (rescale β so h disappears from constraints). See §6a.
+
+(Session interrupted — more ideas TBD)
+
 ---
 
 ## thesis-chapters
@@ -97,24 +143,33 @@ Depends on: experiment-quality (thesis story), thesis-todos (math verification).
 
 ## end-to-end-profiling
 
-The existing benchmark experiment only times capacity computation, not the full pipeline. `Polytope4D::new` is not profiled but may dominate wall time for larger polytopes.
+**Problem:** The existing benchmark experiment only times the capacity computation (permutation enumeration + KKT solve), not the full pipeline. `Polytope4D::new` (integer-scaled vertex enumeration, adjacency, omega signs) is not profiled but may dominate wall time for larger polytopes. There is no end-to-end breakdown showing where time goes from dual vertices to systolic ratio.
 
 **Work items:**
-1. Add end-to-end timing to benchmark experiment, broken into phases (construction, permutation enumeration, KKT solve, orbit recovery)
-2. Produce a figure showing phase breakdown vs facet count
+1. Add end-to-end timing to the benchmark experiment, broken into phases:
+   - `Polytope4D::new` (construction: vertex enum, incidence, vertex_adjacency, omega signs)
+   - Permutation enumeration + adjacency pruning
+   - KKT assembly + solve (LU/SVD)
+   - Accumulator / orbit recovery
+2. Produce a figure (stacked bar or similar) showing phase breakdown vs facet count
 3. Update `benchmark/logbook.md` with findings
 
 ---
 
-## polytope-construction-optimization
+## 5c. Optimize Polytope4D construction — DONE (2026-03-23)
 
-`Polytope4D::new` dominates end-to-end systolic ratio computation for F ≤ 10 (80-92% of total time). At F=10, construction is 83 ms vs 17 ms for capacity. Bottleneck is exact rational arithmetic (BigRational vertex enumeration via C(F,4) subset solves). SVD pre-filter already skips 70-80% of subsets.
+**Result:** 31x speedup at F=10 (84ms → 2.7ms). Construction now negligible vs capacity computation.
 
-**Data:** See `experiments/benchmark/logbook.md`, `profiling/phase_breakdown.png`, flamegraphs at F=9 and F=11.
+**Method:**
+- Integer-scaled arithmetic (BigInt instead of BigRational) for vertex enumeration — avoids GCD normalization overhead
+- f64 prefilters for bounded check and irredundancy — skips expensive exact arithmetic for most subsets
+- Constructor cleanup (removed thin wrapper constructors, unified on `new()` and `from_f64()`)
 
-**Goal:** Reduce construction time. No correctness compromises.
+**Before:** `Polytope4D::new` dominated end-to-end systolic ratio computation for F ≤ 10 (80-92% of total time). At F=10, construction was 84ms vs 17ms for capacity. Bottleneck was BigRational vertex enumeration via C(F,4) subset solves.
 
-Depends on: end-to-end-profiling (for baseline data).
+**Remaining:**
+- Math verification of `prop:integer-cramer` by Jörn (integer-scaled Cramer's rule correctness proof)
+- f64 threshold soundness evaluation (prefilter thresholds are empirically safe but not proven)
 
 ---
 

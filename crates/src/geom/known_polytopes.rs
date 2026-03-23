@@ -86,7 +86,7 @@ pub fn simplex() -> &'static KnownPolytope {
         ];
 
         KnownPolytope {
-            polytope: Polytope4D::from_dual_vertices(dual_vertices)
+            polytope: Polytope4D::new(dual_vertices)
                 .expect("simplex construction"),
             capacity: 0.25,
             name: "simplex",
@@ -118,7 +118,7 @@ pub fn hypercube() -> &'static KnownPolytope {
         ];
 
         KnownPolytope {
-            polytope: Polytope4D::from_dual_vertices(dual_vertices)
+            polytope: Polytope4D::new(dual_vertices)
                 .expect("hypercube construction"),
             capacity: 4.0,
             name: "hypercube",
@@ -149,7 +149,7 @@ pub fn crosspolytope() -> &'static KnownPolytope {
         }
 
         KnownPolytope {
-            polytope: Polytope4D::from_dual_vertices(dual_vertices)
+            polytope: Polytope4D::new(dual_vertices)
                 .expect("crosspolytope construction"),
             capacity: 4.0,
             name: "crosspolytope",
@@ -204,7 +204,7 @@ pub fn hko_pentagon() -> &'static KnownPolytope {
         let capacity = 2.0 * (PI / 10.0).cos() * (1.0 + (PI / 5.0).cos());
 
         KnownPolytope {
-            polytope: Polytope4D::new(halfspaces).expect("HKO pentagon construction"),
+            polytope: Polytope4D::from_f64(halfspaces).expect("HKO pentagon construction"),
             capacity,
             name: "hko_pentagon",
             source: "HK-O 2024 Prop 1.4",
@@ -238,7 +238,7 @@ pub fn lagrangian_triangle_product() -> &'static KnownPolytope {
             .collect();
 
         KnownPolytope {
-            polytope: Polytope4D::new(halfspaces)
+            polytope: Polytope4D::from_f64(halfspaces)
                 .expect("lagrangian triangle product construction"),
             capacity: 1.5,
             name: "lagrangian_triangle_product",
@@ -279,7 +279,7 @@ pub fn symplectic_triangle_product() -> &'static KnownPolytope {
         let area_tri = 3.0 * 3.0_f64.sqrt() / 4.0;
 
         KnownPolytope {
-            polytope: Polytope4D::new(halfspaces)
+            polytope: Polytope4D::from_f64(halfspaces)
                 .expect("symplectic triangle product construction"),
             capacity: area_tri,
             name: "symplectic_triangle_product",
@@ -315,7 +315,7 @@ pub fn lagrangian_triangle_square() -> &'static KnownPolytope {
             triangle_halfspaces.chain(square_halfspaces).collect();
 
         KnownPolytope {
-            polytope: Polytope4D::new(halfspaces)
+            polytope: Polytope4D::from_f64(halfspaces)
                 .expect("Lagrangian triangle x square construction"),
             capacity: 1.5,
             name: "lagrangian_tri_sq",
@@ -358,7 +358,7 @@ pub fn symplectic_triangle_square() -> &'static KnownPolytope {
         let area_sq = 1.0;
 
         KnownPolytope {
-            polytope: Polytope4D::new(halfspaces)
+            polytope: Polytope4D::from_f64(halfspaces)
                 .expect("symplectic triangle x square construction"),
             capacity: area_tri.min(area_sq),
             name: "symplectic_tri_sq",

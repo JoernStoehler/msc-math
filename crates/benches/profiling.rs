@@ -37,7 +37,9 @@ fn raw_inputs(f: usize) -> (Vec<Vector4<f64>>, Vec<f64>) {
 /// Pre-construct a polytope for capacity/volume benchmarks.
 fn prebuilt_polytope(f: usize) -> Polytope4D {
     let (normals, heights) = raw_inputs(f);
-    Polytope4D::from_normals_and_heights(normals, heights).expect("construction failed")
+    Polytope4D::from_f64(
+        normals.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect(),
+    ).expect("construction failed")
 }
 
 /// Find a valid permutation for single-KKT benchmarks.
@@ -71,8 +73,9 @@ fn bench_construction(c: &mut Criterion) {
         let (normals, heights) = raw_inputs(f);
         group.bench_with_input(BenchmarkId::from_parameter(f), &f, |b, _| {
             b.iter(|| {
-                Polytope4D::from_normals_and_heights(normals.clone(), heights.clone())
-                    .expect("construction failed")
+                Polytope4D::from_f64(
+                    normals.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect(),
+                ).expect("construction failed")
             });
         });
     }

@@ -78,15 +78,17 @@ Supplemented by perf flamegraphs at F=9 and F=11 for function-level CPU breakdow
 
 Two optimizations applied before benchmarking (no algorithm changes):
 
-1. **Lazy permutation generation**: In-place callback via Heap's algorithm. For m=10: eliminates 362,880 vector allocations. 4-6x wall-clock speedup, peak heap 573 KB → 17 KB.
+1. **Lazy permutation generation**: In-place callback via Heap's algorithm. For m=10: eliminates 362,880 vector allocations. 4-6x wall-clock speedup, peak heap 573 KB → 17 KB. (measured during development, not in committed output)
 
-2. **LU fast path + gap-based SVD rank detection**: Try FullPivLU first, fall back to SVD on singularity. Adds 6-12% overhead but catches SVD rank over-truncation. Retained for correctness.
+2. **LU fast path + gap-based SVD rank detection**: Try FullPivLU first, fall back to SVD on singularity. Adds 6-12% overhead but catches SVD rank over-truncation. Retained for correctness. (measured during development, not in committed output)
 
 Two discarded: pre-allocated matrix buffers (no measurable speedup), skipping LU residual check (broke correctness on hypercube).
 
 ## Findings
 
 ### End-to-end phase breakdown
+
+Source: criterion bench (`crates/benches/profiling.rs`). **Pre-optimization values** — construction column superseded by "Construction optimization" section below.
 
 | F | Construction | Capacity | Volume | Total | Construction % |
 |---|-------------|----------|--------|-------|---------------|
@@ -98,7 +100,7 @@ Two discarded: pre-allocated matrix buffers (no measurable speedup), skipping LU
 | 10 | 83.3 ms | 16.6 ms | 3.5 ms | 103.4 ms | 80.6% |
 | 11 | 103.5 ms | 121.9 ms | 3.6 ms | 228.6 ms | 45.3% |
 
-Criterion 95% CIs are <1% relative width for construction and capacity (measurement noise on the same polytope). Volume CIs are wider (2-10%) due to qhull subprocess fork/exec jitter. These CIs reflect measurement precision, not polytope-to-polytope variation (one polytope per F; see Known Limitations).
+Criterion 95% CIs are <1% relative width for construction and capacity (measurement noise on the same polytope). Volume CIs are wider (2-10%) due to qhull subprocess fork/exec jitter. These CIs reflect measurement precision, not polytope-to-polytope variation (one polytope per F; see Known Limitations). (criterion bench output)
 
 **Construction dominates for F ≤ 10.** The bottleneck is exact rational arithmetic in `Polytope4D::new` — BigRational vertex enumeration via C(F,4) Cramer solves plus GCD normalization. perf flamegraphs confirm: at F=9, ~40% of CPU is in `num_bigint` functions (biguint_shr2, sub_assign, gcd, normalized), ~44% in the capacity loop.
 
@@ -106,7 +108,31 @@ Criterion 95% CIs are <1% relative width for construction and capacity (measurem
 
 **Volume is constant and negligible** (~2-4 ms, dominated by qhull subprocess fork/exec).
 
+### Construction optimization (2026-03-23)
+
+**Optimization:** Replaced BigRational arithmetic with integer-scaled arithmetic (BigInt instead of BigRational) throughout polytope construction. Added f64 prefilters for the bounded-check and irredundancy steps to skip exact arithmetic on easy cases. Cleaned up the constructor call path.
+
+**Before/after timings** (construction phase only, same benchmark polytopes; criterion bench, `crates/benches/profiling.rs`):
+
+| F | Before | After | Speedup |
+|---|--------|-------|---------|
+| 5 | 11.1ms | 0.50ms | 22x |
+| 6 | 24.3ms | 0.84ms | 29x |
+| 7 | 34.7ms | 1.17ms | 30x |
+| 8 | 50.6ms | 1.66ms | 30x |
+| 9 | 66.8ms | 2.15ms | 31x |
+| 10 | 84.0ms | 2.69ms | 31x |
+| 11 | 103.1ms | 3.35ms | 31x |
+
+**Construction is now negligible vs capacity at F >= 10.** At F=10, construction takes 2.7ms vs capacity 17ms (criterion bench) (was 84ms vs 17ms). The crossover where capacity overtakes construction has shifted down from F ~11 to F ~7.
+
+**Updated E2E totals:** F=10 total is approximately 23ms (construction 2.7 + capacity 17 (criterion bench) + volume 3.5 (criterion bench)), down from 104ms.
+
+**New flamegraph profile:** Capacity is now the dominant cost at all interesting F values. Top functions: ehz_capacity 33%, permutations 21%, eigendecomposition 11%. BigInt/GCD dropped from ~40% of total CPU to ~6%. (profiling/flamegraph_F10_optimized.svg)
+
 ### Micro-benchmarks
+
+Source: criterion bench (`crates/benches/profiling.rs`).
 
 | Phase | Time | Scaling |
 |-------|------|---------|
@@ -129,18 +155,18 @@ Fitted exponential T(F) = a · b^F on capacity-only timing (from `benchmark.json
 
 Growth rates: ~4x/facet (pruned random), ~3.5-3.7x/facet (Lagrangian/billiard), ~7x/facet (unpruned).
 
-Pruned vs unpruned speedup (median-based): 8.8x (F=5), 17.2x (F=6), 39.6x (F=7).
+Pruned vs unpruned speedup (median-based): 8.8x (F=5), 17.2x (F=6), 39.6x (F=7). (benchmark.jsonl, median-based)
 
-Billiard vs HK2017 pruned on Lagrangian products: billiard is 2-3x faster (ratio 0.32-0.50). Used for its polynomial-time guarantee on larger Lagrangian products.
+Billiard vs HK2017 pruned on Lagrangian products: billiard is 2-3x faster (ratio 0.32-0.50). (benchmark.jsonl) Used for its polynomial-time guarantee on larger Lagrangian products.
 
 ### Practical limits
 
 Total E2E time (construction + capacity + volume):
-- F ≤ 8: < 60 ms (routine)
-- F = 9–10: 76–103 ms (routine)
-- F = 11: ~230 ms (acceptable)
-- F = 12: ~2 seconds capacity alone; construction adds ~130 ms
-- F ≥ 13: capacity prohibitively expensive
+- F ≤ 8: < 60 ms (routine) (phase breakdown table, pre-optimization values)
+- F = 9–10: 76–103 ms (routine) (phase breakdown table, pre-optimization values)
+- F = 11: ~230 ms (acceptable) (phase breakdown table, pre-optimization values)
+- F = 12: ~2 seconds capacity alone; construction adds ~130 ms (benchmark.jsonl + timing model)
+- F ≥ 13: capacity prohibitively expensive (timing model extrapolation)
 
 ### Algorithm selection
 

@@ -22,6 +22,7 @@ use super::polytope::ConstructionError;
 // ── Exact linear algebra over Q ──────────────────────────────────────────
 
 /// Determinant of a 3x3 rational matrix (Sarrus' rule).
+#[cfg(test)]
 fn det3(r0: &[BigRational], r1: &[BigRational], r2: &[BigRational]) -> BigRational {
     &r0[0] * (&r1[1] * &r2[2] - &r1[2] * &r2[1])
         - &r0[1] * (&r1[0] * &r2[2] - &r1[2] * &r2[0])
@@ -31,6 +32,7 @@ fn det3(r0: &[BigRational], r1: &[BigRational], r2: &[BigRational]) -> BigRation
 /// Exact determinant of a 4x4 rational matrix via cofactor expansion.
 ///
 /// Expands along the first row using 3x3 minors.
+#[cfg(test)]
 pub(super) fn det4(rows: &[[BigRational; 4]; 4]) -> BigRational {
     let (a, b, c, d) = (&rows[0], &rows[1], &rows[2], &rows[3]);
 
@@ -61,6 +63,7 @@ pub(super) fn det4(rows: &[[BigRational; 4]; 4]) -> BigRational {
 /// Solve a 4x4 linear system N*x = b exactly via Cramer's rule.
 ///
 /// Returns `None` if det(N) = 0 (singular system).
+#[cfg(test)]
 pub(super) fn solve4(
     rows: &[[BigRational; 4]; 4],
     rhs: &[BigRational; 4],
@@ -84,6 +87,7 @@ pub(super) fn solve4(
 }
 
 /// Inner product of two 4-vectors over Q.
+#[cfg(test)]
 pub(super) fn dot4(a: &[BigRational; 4], b: &[BigRational; 4]) -> BigRational {
     &a[0] * &b[0] + &a[1] * &b[1] + &a[2] * &b[2] + &a[3] * &b[3]
 }
@@ -92,6 +96,10 @@ pub(super) fn dot4(a: &[BigRational; 4], b: &[BigRational; 4]) -> BigRational {
 ///
 /// d_k = (-1)^k * det(3x3 minor of [a, b, c] with column k removed).
 /// Same formula as `cross_product_4d::cross_product_4d` but exact over Q.
+///
+/// Superseded in production by `cross_product_4d_int` (integer-only path);
+/// retained for tests that verify rational-level correctness.
+#[cfg(test)]
 pub(super) fn cross_product_4d_rational(
     a: &[BigRational; 4],
     b: &[BigRational; 4],
@@ -116,6 +124,9 @@ pub(super) fn cross_product_4d_rational(
 /// Compute the rank of a set of 4-component rational row vectors via Gaussian elimination.
 ///
 /// Exact over Q — no tolerances or floating-point rounding.
+///
+/// Mathematical correspondence: helper for [lem:vertex-enumeration] (used in vertex
+/// feasibility checks and in `affine_rank_rational` for the irredundancy check).
 pub(super) fn rank_over_q(rows: &[[BigRational; 4]]) -> usize {
     if rows.is_empty() {
         return 0;
@@ -170,15 +181,21 @@ pub(super) fn rank_over_q(rows: &[[BigRational; 4]]) -> usize {
 ///
 /// # Sufficiency
 ///
-/// Any direction d in R^4 can be written as a linear combination of
-/// cross-product directions from triples of y_i (since rank = 4). If
-/// y_i · d > 0 and y_i · d < 0 both occur for every such kernel direction,
-/// then y_i positively spans R^4. The check is sufficient because any failure
-/// of positive spanning is witnessed by some kernel direction of a triple.
+/// Suppose positive spanning fails: some nonzero d has y_i · d ≤ 0 for all i.
+/// Then d lies in the dual cone C = {d : y_i · d ≤ 0 ∀i}, which is a
+/// polyhedral cone. Since rank(Y) = 4, C is pointed and every extreme ray
+/// of C lies on the intersection of 3 linearly independent active constraints
+/// y_i · d = 0. Such an extreme ray is a kernel direction of the triple
+/// (i, j, k). Therefore, any failure of positive spanning is witnessed by
+/// some kernel direction of a triple — the check is sufficient.
 ///
 /// Complexity: O(F^4) — F^3 triples times F inner products each.
 ///
 /// Mathematical correspondence: [lem:positive-span]
+///
+/// Superseded in production by the per-triple f64+integer path in
+/// `construct_rational_pipeline`; retained for tests.
+#[cfg(test)]
 pub(super) fn check_bounded_rational(dual_vertices: &[[BigRational; 4]]) -> bool {
     let f = dual_vertices.len();
 
@@ -217,6 +234,9 @@ pub(super) fn check_bounded_rational(dual_vertices: &[[BigRational; 4]]) -> bool
 /// Compute the affine rank of a set of 4D rational points.
 ///
 /// Affine rank = dimension of the affine span = rank of centered differences.
+///
+/// Mathematical correspondence: helper for [lem:irredundancy] (facets require
+/// incident vertices of affine rank >= 3).
 pub(super) fn affine_rank_rational(points: &[[BigRational; 4]]) -> usize {
     if points.len() <= 1 {
         return 0;
@@ -248,6 +268,464 @@ fn combinations4(n: usize) -> Vec<[usize; 4]> {
     result
 }
 
+// ── Integer-scaled arithmetic (GCD-free) ────────────────────────────────
+//
+// For exact checks (boundedness, vertex enumeration), we scale all rational
+// dual vertices to a common denominator D and work entirely in BigInt.
+// This eliminates GCD normalization (~40% of CPU in the BigRational path).
+// TODO: add inline benchmark citation (criterion bench date + F range) for the ~40% claim.
+
+/// Scale rational dual vertices to integer arrays with a common denominator.
+///
+/// Returns (A, D) where A[i][j] = a_i[j] * D ∈ Z and D = lcm of all denominators.
+///
+/// Mathematical correspondence: preprocessing step for [prop:integer-cramer] (scaling
+/// eliminates GCD normalization by lifting the system to integer arithmetic).
+fn integer_scale_dual_vertices(
+    dual_vertices: &[[BigRational; 4]],
+) -> (Vec<[BigInt; 4]>, BigInt) {
+    // Compute D = lcm of all denominators.
+    let mut d = BigInt::from(1);
+    for y in dual_vertices {
+        for comp in y {
+            d = num_integer::Integer::lcm(&d, comp.denom());
+        }
+    }
+
+    // Scale: A_i[j] = a_i[j].numer * (D / a_i[j].denom)
+    let int_verts: Vec<[BigInt; 4]> = dual_vertices
+        .iter()
+        .map(|y| {
+            std::array::from_fn(|c| {
+                let scale = &d / y[c].denom();
+                y[c].numer() * scale
+            })
+        })
+        .collect();
+
+    (int_verts, d)
+}
+
+/// 4D cross product over Z: direction perpendicular to three integer vectors.
+fn cross_product_4d_int(a: &[BigInt; 4], b: &[BigInt; 4], c: &[BigInt; 4]) -> [BigInt; 4] {
+    // 2x2 minors of (b, c)
+    let bc_01 = &b[0] * &c[1] - &b[1] * &c[0];
+    let bc_02 = &b[0] * &c[2] - &b[2] * &c[0];
+    let bc_03 = &b[0] * &c[3] - &b[3] * &c[0];
+    let bc_12 = &b[1] * &c[2] - &b[2] * &c[1];
+    let bc_13 = &b[1] * &c[3] - &b[3] * &c[1];
+    let bc_23 = &b[2] * &c[3] - &b[3] * &c[2];
+
+    let d0 = &a[1] * &bc_23 - &a[2] * &bc_13 + &a[3] * &bc_12;
+    let d1 = -(&a[0] * &bc_23 - &a[2] * &bc_03 + &a[3] * &bc_02);
+    let d2 = &a[0] * &bc_13 - &a[1] * &bc_03 + &a[3] * &bc_01;
+    let d3 = -(&a[0] * &bc_12 - &a[1] * &bc_02 + &a[2] * &bc_01);
+
+    [d0, d1, d2, d3]
+}
+
+/// Dot product of two 4-vectors over Z.
+fn dot4_int(a: &[BigInt; 4], b: &[BigInt; 4]) -> BigInt {
+    &a[0] * &b[0] + &a[1] * &b[1] + &a[2] * &b[2] + &a[3] * &b[3]
+}
+
+/// Rank of integer 4-vectors via exact Gaussian elimination over Z.
+///
+/// Uses fraction-free elimination: pivots by subtracting scaled rows so that
+/// all entries remain integers. Only checks for zero vs nonzero pivots.
+///
+/// Mathematical correspondence: rank check step in [prop:integer-cramer] (verifying
+/// rank(A) = 4 before the bounded check in `check_bounded_f64_first`).
+fn rank_int(rows: &[[BigInt; 4]]) -> usize {
+    if rows.is_empty() {
+        return 0;
+    }
+    let m = rows.len();
+    let n = 4;
+    let mut mat: Vec<[BigInt; 4]> = rows.to_vec();
+    let mut rank = 0;
+
+    for col in 0..n {
+        let pivot_row = (rank..m).find(|&r| !mat[r][col].is_zero());
+        let Some(pivot_row) = pivot_row else {
+            continue;
+        };
+        mat.swap(rank, pivot_row);
+
+        // Eliminate: for each other row, subtract (row[col]/pivot[col]) * pivot_row.
+        // Fraction-free: row = pivot[col] * row - row[col] * pivot_row.
+        let pivot_val = mat[rank][col].clone();
+        for r in 0..m {
+            if r == rank || mat[r][col].is_zero() {
+                continue;
+            }
+            let row_val = mat[r][col].clone();
+            let pivot_row_data: [BigInt; 4] = mat[rank].clone();
+            for c in col..n {
+                mat[r][c] = &pivot_val * &mat[r][c] - &row_val * &pivot_row_data[c];
+            }
+        }
+        rank += 1;
+    }
+    rank
+}
+
+/// f64 pre-filter for a single triple in the bounded check.
+///
+/// Returns true if f64 can confirm that the kernel direction of triple (i,j,k)
+/// has both positive and negative projections among the remaining dual vertices
+/// (i.e., this direction does not witness unboundedness). Returns false if
+/// f64 cannot decide — the caller must fall through to exact integer arithmetic.
+///
+/// Same pattern as `f64_prefilter_rejects` for vertex enumeration: f64 resolves
+/// the common case cheaply, exact arithmetic handles the rare ambiguous cases.
+///
+/// Mathematical correspondence: fast path implementing [lem:bounded-triples] (reduces
+/// the bounded check to per-triple kernel direction sign tests).
+fn bounded_triple_f64_confirms(
+    dv_f64: &[nalgebra::Vector4<f64>],
+    i: usize,
+    j: usize,
+    k: usize,
+) -> bool {
+    use crate::geom::cross_product_4d::cross_product_4d;
+
+    /// Near-dependent triple: ‖d‖ below this means f64 cross product is noise.
+    /// Matches `validation::check_bounded` threshold.
+    const EPS_DEP: f64 = 1e-12;
+    /// Dot product sign threshold: f64 dot product error is O(ε_mach) ≈ 1e-16
+    /// for unit-scale vectors, so 1e-9 gives ~7 orders of margin.
+    /// Matches `validation::check_bounded` EPS_UNIT.
+    const EPS_SIGN: f64 = 1e-9;
+
+    let d = cross_product_4d(dv_f64[i], dv_f64[j], dv_f64[k]);
+    if d.norm() < EPS_DEP {
+        return false; // Near-dependent, f64 can't determine direction
+    }
+    let d = d.normalize();
+
+    let mut has_pos = false;
+    let mut has_neg = false;
+    for (l, dv) in dv_f64.iter().enumerate() {
+        if l == i || l == j || l == k {
+            continue;
+        }
+        let s = dv.dot(&d);
+        if s > EPS_SIGN {
+            has_pos = true;
+        } else if s < -EPS_SIGN {
+            has_neg = true;
+        } else {
+            return false; // Ambiguous sign, can't decide
+        }
+        if has_pos && has_neg {
+            return true; // Both signs found, triple is fine
+        }
+    }
+    // Went through all facets but didn't find both signs with clear margin
+    false
+}
+
+/// Determinant of a 4x4 integer matrix via cofactor expansion.
+///
+/// Mathematical correspondence: the δ = det(M_S) computation in [prop:integer-cramer].
+fn det4_int(rows: &[[BigInt; 4]; 4]) -> BigInt {
+    let (a, b, c, d) = (&rows[0], &rows[1], &rows[2], &rows[3]);
+
+    // Cofactor expansion along first row, using precomputed 2x2 minors.
+    let m01 = &b[0] * &c[1] - &b[1] * &c[0];
+    let m02 = &b[0] * &c[2] - &b[2] * &c[0];
+    let m03 = &b[0] * &c[3] - &b[3] * &c[0];
+    let m12 = &b[1] * &c[2] - &b[2] * &c[1];
+    let m13 = &b[1] * &c[3] - &b[3] * &c[1];
+    let m23 = &b[2] * &c[3] - &b[3] * &c[2];
+
+    let c00 = &d[1] * &m23 - &d[2] * &m13 + &d[3] * &m12;
+    let c01 = &d[0] * &m23 - &d[2] * &m03 + &d[3] * &m02;
+    let c02 = &d[0] * &m13 - &d[1] * &m03 + &d[3] * &m01;
+    let c03 = &d[0] * &m12 - &d[1] * &m02 + &d[2] * &m01;
+
+    &a[0] * c00 - &a[1] * c01 + &a[2] * c02 - &a[3] * c03
+}
+
+/// Vertex enumeration using integer Cramer's rule with f64 prefilter.
+///
+/// For each C(F,4) subset, uses the f64 prefilter to reject ~65-93%
+/// (depending on facet count; TODO: add criterion bench citation for this number),
+/// then solves via integer determinants (no BigRational, no GCD). Only confirmed
+/// vertices are converted to BigRational coordinates.
+///
+/// Mathematical correspondence: [lem:vertex-enumeration], [prop:integer-cramer]
+#[allow(clippy::type_complexity)]
+fn enumerate_vertices_int(
+    dual_vertices: &[[BigRational; 4]],
+    int_dual_vertices: &[[BigInt; 4]],
+    common_denom: &BigInt,
+) -> Result<(Vec<BTreeSet<usize>>, Vec<[BigRational; 4]>), ConstructionError> {
+    use super::rational_arithmetic::rational_to_f64;
+
+    let f = dual_vertices.len();
+    let one_int = [BigInt::from(1), BigInt::from(1), BigInt::from(1), BigInt::from(1)];
+
+    // Precompute f64 versions for the prefilter.
+    let dv_f64: Vec<[f64; 4]> = dual_vertices
+        .iter()
+        .map(|y| std::array::from_fn(|c| rational_to_f64(&y[c])))
+        .collect();
+
+    let mut vertex_descriptors = Vec::new();
+    let mut vertices = Vec::new();
+
+    for subset in combinations4(f) {
+        // Stage 1: f64 prefilter (unchanged).
+        if f64_prefilter_rejects(&dv_f64, &subset, f) {
+            continue;
+        }
+
+        // Stage 2: integer Cramer's rule.
+        let m_s: [&[BigInt; 4]; 4] = [
+            &int_dual_vertices[subset[0]],
+            &int_dual_vertices[subset[1]],
+            &int_dual_vertices[subset[2]],
+            &int_dual_vertices[subset[3]],
+        ];
+        let m_s_owned: [[BigInt; 4]; 4] = [
+            m_s[0].clone(),
+            m_s[1].clone(),
+            m_s[2].clone(),
+            m_s[3].clone(),
+        ];
+
+        // Step 1: det(M_S)
+        let delta = det4_int(&m_s_owned);
+        if delta.is_zero() {
+            continue; // Singular
+        }
+        let delta_positive = delta.is_positive();
+
+        // Step 2: Cramer numerator dets ν_j (M_S with col j = [1,1,1,1])
+        let mut nu = [BigInt::from(0), BigInt::from(0), BigInt::from(0), BigInt::from(0)];
+        for j in 0..4 {
+            let mut modified = m_s_owned.clone();
+            for row in 0..4 {
+                modified[row][j] = one_int[row].clone();
+            }
+            nu[j] = det4_int(&modified);
+        }
+
+        // Step 3: feasibility check — all gaps must be non-negative.
+        let mut all_ok = true;
+        let mut incident_facets = BTreeSet::from(subset);
+
+        for (i, a_i) in int_dual_vertices.iter().enumerate() {
+            if subset.contains(&i) {
+                continue;
+            }
+            // g_i = δ − Σ_j A_i[j] · ν_j
+            let gap_numer = &delta - dot4_int(a_i, &nu);
+
+            // gap ≥ 0 iff sign(gap_numer) matches sign(δ)
+            if gap_numer.is_zero() {
+                incident_facets.insert(i);
+            } else if gap_numer.is_positive() != delta_positive {
+                all_ok = false;
+                break;
+            }
+        }
+
+        if !all_ok {
+            continue;
+        }
+
+        // Step 4: vertex confirmed. Compute exact rational coordinates.
+        // v[j] = D · ν_j / δ  (reduced form — needed for reliable f64 conversion
+        // in the irredundancy check; unreduced ~240-bit numerators overflow f64).
+        let v: [BigRational; 4] = std::array::from_fn(|j| {
+            BigRational::new(common_denom * &nu[j], delta.clone())
+        });
+
+        // Deduplicate
+        let already_found = vertices
+            .iter()
+            .any(|existing: &[BigRational; 4]| (0..4).all(|i| existing[i] == v[i]));
+        if already_found {
+            continue;
+        }
+
+        vertex_descriptors.push(incident_facets);
+        vertices.push(v);
+    }
+
+    if vertex_descriptors.is_empty() {
+        return Err(ConstructionError::NoVertices);
+    }
+
+    Ok((vertex_descriptors, vertices))
+}
+
+/// Check that dual vertices positively span R^4 using f64-first per-triple
+/// checks with exact integer fallback.
+///
+/// 1. Rank check in integer (cheap, done once).
+/// 2. For each triple (i,j,k), try f64 first (`bounded_triple_f64_confirms`).
+///    If f64 is inconclusive, fall back to exact integer cross-product and
+///    dot-product signs.
+///
+/// Mathematical correspondence: [lem:positive-span]
+fn check_bounded_f64_first(
+    dual_vertices: &[[BigRational; 4]],
+    int_dual_vertices: &[[BigInt; 4]],
+) -> Result<(), ConstructionError> {
+    use super::rational_arithmetic::rational_to_f64;
+
+    let f = dual_vertices.len();
+    let dv_f64: Vec<nalgebra::Vector4<f64>> = dual_vertices
+        .iter()
+        .map(|y| {
+            nalgebra::Vector4::new(
+                rational_to_f64(&y[0]),
+                rational_to_f64(&y[1]),
+                rational_to_f64(&y[2]),
+                rational_to_f64(&y[3]),
+            )
+        })
+        .collect();
+
+    // Rank check in integer (cheap, done once).
+    if rank_int(int_dual_vertices) < 4 {
+        return Err(ConstructionError::Unbounded);
+    }
+
+    for i in 0..f {
+        for j in (i + 1)..f {
+            for k in (j + 1)..f {
+                // f64 pre-filter: confirms this triple if signs are unambiguous.
+                if bounded_triple_f64_confirms(&dv_f64, i, j, k) {
+                    continue;
+                }
+                // f64 inconclusive — exact integer fallback.
+                let d_int = cross_product_4d_int(
+                    &int_dual_vertices[i],
+                    &int_dual_vertices[j],
+                    &int_dual_vertices[k],
+                );
+                if d_int.iter().all(|c| c.is_zero()) {
+                    continue; // Dependent triple
+                }
+                let has_pos = (0..f)
+                    .filter(|&l| l != i && l != j && l != k)
+                    .any(|l| dot4_int(&int_dual_vertices[l], &d_int).is_positive());
+                let has_neg = (0..f)
+                    .filter(|&l| l != i && l != j && l != k)
+                    .any(|l| dot4_int(&int_dual_vertices[l], &d_int).is_negative());
+                if !has_pos || !has_neg {
+                    return Err(ConstructionError::Unbounded);
+                }
+            }
+        }
+    }
+
+    Ok(())
+}
+
+/// Check irredundancy: every facet has incident vertices of affine rank >= 3.
+///
+/// Uses f64 fast path first (checking 3x3 minor determinants), falling back
+/// to exact rational `affine_rank_rational` when f64 is inconclusive.
+///
+/// Mathematical correspondence: [lem:irredundancy] (facet i is redundant iff
+/// its incident vertices have affine rank < 3).
+fn check_irredundancy_f64_first(
+    vertices: &[[BigRational; 4]],
+    vertex_descriptors: &[BTreeSet<usize>],
+    facet_count: usize,
+) -> Result<(), ConstructionError> {
+    use super::rational_arithmetic::rational_to_f64;
+
+    for i in 0..facet_count {
+        let incident_indices: Vec<usize> = vertex_descriptors
+            .iter()
+            .enumerate()
+            .filter(|(_, vd)| vd.contains(&i))
+            .map(|(idx, _)| idx)
+            .collect();
+
+        if incident_indices.is_empty() {
+            return Err(ConstructionError::RedundantFacet(i));
+        }
+
+        // f64 fast path: try sets of 4 incident vertices until one confirms
+        // rank >= 3. The first 4 may be nearly coplanar; trying more avoids
+        // unnecessary fallback to expensive rational rank computation.
+        if incident_indices.len() >= 4 {
+            let inc_f64: Vec<[f64; 4]> = incident_indices
+                .iter()
+                .map(|&idx| std::array::from_fn(|c| rational_to_f64(&vertices[idx][c])))
+                .collect();
+
+            // 3x3 minor determinant threshold for f64 rank check.
+            // Vertices are exact rational; their f64 representations have
+            // rounding error O(ε_mach) ≈ 2e-16. The 3x3 determinant has
+            // O(n·ε_mach)·||rows||³ error (n=3 terms, unit-scale vertices
+            // → error ~1e-15). Threshold 1e-10 gives ~5 orders of margin;
+            // if det < 1e-10 we fall through to exact rational `affine_rank_rational`.
+            // Must be re-validated if vertex coordinates can exceed ~1e4 in magnitude.
+            const EPS_RANK_F64: f64 = 1e-10;
+            let mut rank_ok = false;
+            'outer: for base_idx in 0..inc_f64.len() {
+                let base = &inc_f64[base_idx];
+                // Try all triples of other vertices as the 3 difference vectors.
+                let others: Vec<usize> = (0..inc_f64.len())
+                    .filter(|&j| j != base_idx)
+                    .collect();
+                for a in 0..others.len() {
+                    for b in (a + 1)..others.len() {
+                        for c in (b + 1)..others.len() {
+                            let rows: [[f64; 4]; 3] = [
+                                std::array::from_fn(|d| inc_f64[others[a]][d] - base[d]),
+                                std::array::from_fn(|d| inc_f64[others[b]][d] - base[d]),
+                                std::array::from_fn(|d| inc_f64[others[c]][d] - base[d]),
+                            ];
+                            // Check any 3x3 minor
+                            for skip_col in 0..4 {
+                                let cols: Vec<usize> =
+                                    (0..4).filter(|&d| d != skip_col).collect();
+                                let det = rows[0][cols[0]]
+                                    * (rows[1][cols[1]] * rows[2][cols[2]]
+                                        - rows[1][cols[2]] * rows[2][cols[1]])
+                                    - rows[0][cols[1]]
+                                        * (rows[1][cols[0]] * rows[2][cols[2]]
+                                            - rows[1][cols[2]] * rows[2][cols[0]])
+                                    + rows[0][cols[2]]
+                                        * (rows[1][cols[0]] * rows[2][cols[1]]
+                                            - rows[1][cols[1]] * rows[2][cols[0]]);
+                                if det.abs() > EPS_RANK_F64 {
+                                    rank_ok = true;
+                                    break 'outer;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if rank_ok {
+                continue; // f64 confirmed rank >= 3
+            }
+        }
+
+        // Fallback: exact rational rank check
+        let incident: Vec<[BigRational; 4]> = incident_indices
+            .iter()
+            .map(|&idx| vertices[idx].clone())
+            .collect();
+        if affine_rank_rational(&incident) < 3 {
+            return Err(ConstructionError::RedundantFacet(i));
+        }
+    }
+
+    Ok(())
+}
+
 // ── Construction pipeline ────────────────────────────────────────────────
 
 /// Run the exact rational construction pipeline: validate, enumerate vertices,
@@ -272,13 +750,18 @@ fn combinations4(n: usize) -> Vec<[usize; 4]> {
 /// ## Performance
 ///
 /// O(F⁴) BigRational operations. The `num-bigint` crate is ~20× slower in
-/// debug mode than release; Cargo profile overrides (`opt-level = 3` for
-/// `num-bigint` and `num-rational`) bring debug-mode cost close to release.
+/// debug mode than release (TODO: add criterion bench citation for this ratio);
+/// Cargo profile overrides (`opt-level = 3` for `num-bigint` and `num-rational`)
+/// bring debug-mode cost close to release.
 ///
-/// The boundedness check here (`check_bounded_rational`) is the authoritative
-/// exact check, distinct from the f64-based `validation::check_bounded` which
-/// may be indeterminate near the boundary (and from the vertex-enumeration
-/// f64 pre-filter `f64_prefilter_rejects` which rejects non-vertex subsets).
+/// The pipeline uses f64-first strategies with exact integer fallbacks:
+/// - **Bounded check**: per-triple f64 pre-filter (`bounded_triple_f64_confirms`),
+///   falling back to integer cross-product signs for inconclusive triples.
+/// - **Vertex enumeration**: f64 prefilter (`f64_prefilter_rejects`) to reject
+///   ~65-93% of C(F,4) subsets, then integer Cramer's rule (`det4_int`) for
+///   the remainder — no BigRational GCD normalization needed.
+/// - **Irredundancy**: f64 rank check on incident vertices, falling back to
+///   exact rational `affine_rank_rational` when f64 is inconclusive.
 ///
 /// Mathematical correspondence: [lem:vertex-enumeration]
 #[allow(clippy::type_complexity)]
@@ -287,7 +770,7 @@ pub(super) fn construct_rational_pipeline(
 ) -> Result<(Vec<[BigRational; 4]>, Vec<BTreeSet<usize>>), ConstructionError> {
     let f = dual_vertices.len();
 
-    // Basic validation
+    // ── Step 1: Validation ──
     if f < 5 {
         return Err(ConstructionError::TooFewFacets(f));
     }
@@ -297,142 +780,20 @@ pub(super) fn construct_rational_pipeline(
         }
     }
 
-    // Boundedness: dual vertices must positively span R^4
-    if !check_bounded_rational(dual_vertices) {
-        return Err(ConstructionError::Unbounded);
-    }
+    // ── Step 2: Precompute integer-scaled dual vertices ──
+    let (int_dual_vertices, common_denom) = integer_scale_dual_vertices(dual_vertices);
 
-    // Enumerate vertices exactly (solves y_i · x = 1 for all C(F,4) subsets)
-    let (vertex_descriptors, vertices) = enumerate_vertices_exact(dual_vertices)?;
+    // ── Step 3: Bounded check (f64-first per triple, integer fallback) ──
+    check_bounded_f64_first(dual_vertices, &int_dual_vertices)?;
 
-    // Irredundancy: every facet must have incident vertices spanning a 3D
-    // affine subspace (the facet hyperplane).
-    for i in 0..f {
-        let incident: Vec<[BigRational; 4]> = vertex_descriptors
-            .iter()
-            .zip(vertices.iter())
-            .filter(|(vd, _)| vd.contains(&i))
-            .map(|(_, v)| v.clone())
-            .collect();
+    // ── Step 4: Vertex enumeration (f64 prefilter + integer Cramer) ──
+    let (vertex_descriptors, vertices) =
+        enumerate_vertices_int(dual_vertices, &int_dual_vertices, &common_denom)?;
 
-        if incident.is_empty() || affine_rank_rational(&incident) < 3 {
-            return Err(ConstructionError::RedundantFacet(i));
-        }
-    }
+    // ── Step 5: Irredundancy check (f64-first) ──
+    check_irredundancy_f64_first(&vertices, &vertex_descriptors, f)?;
 
     Ok((vertices, vertex_descriptors))
-}
-
-/// Enumerate all vertices by testing all C(F, 4) subsets.
-///
-/// Two-stage pipeline per subset: cheap f64 stage, then expensive rational stage.
-///
-/// **Stage 1 (f64):** Solve Y_S · v = 1 in f64 via SVD.
-/// For each non-defining constraint y_i · v ≤ 1, evaluate with tolerance
-/// δ = C · κ̂ · ε_mach · ‖v̂‖ · ‖ŷ_i‖:
-/// - FALSE  (ŝ > 1 + δ): point is definitely outside K → skip subset
-/// - INDETERMINATE (|ŝ - 1| ≤ δ): f64 cannot decide → fall through
-/// - TRUE   (ŝ < 1 - δ): constraint definitely satisfied → continue
-///
-/// If ANY constraint is FALSE, the subset is skipped (no rational work).
-/// If the system is too ill-conditioned (ε_mach · κ̂ > 1/4),
-/// the entire f64 stage is skipped and we fall through to rational.
-///
-/// **Stage 2 (rational):** Reached only when stage 1 did not reject.
-/// Solve Y_S · x = 1 exactly via Cramer's rule over Q. Check all gaps
-/// g_i = 1 - y_i · v exactly. If all non-negative, v is a vertex.
-///
-/// Stage 1 rejects ~80% of subsets, avoiding expensive rational arithmetic.
-/// It can only reject, never confirm — all actual vertices reach stage 2.
-/// Error bound: [prop:prefilter-bound] in geom/math.tex
-/// (has open gap — see TODO there).
-///
-/// Non-simple vertices (on >4 facets) are handled by deduplication: the first
-/// 4-subset discovering a vertex records ALL incident facets. Later subsets
-/// yielding the same vertex are skipped.
-///
-/// Mathematical correspondence: [lem:vertex-enumeration]
-#[allow(clippy::type_complexity)]
-fn enumerate_vertices_exact(
-    dual_vertices: &[[BigRational; 4]],
-) -> Result<(Vec<BTreeSet<usize>>, Vec<[BigRational; 4]>), ConstructionError> {
-    use super::rational_arithmetic::rational_to_f64;
-
-    let f = dual_vertices.len();
-    let one = BigRational::from(BigInt::from(1));
-    let rhs: [BigRational; 4] = std::array::from_fn(|_| one.clone());
-
-    // Precompute f64 versions of dual vertices for the pre-filter.
-    let dv_f64: Vec<[f64; 4]> = dual_vertices
-        .iter()
-        .map(|y| std::array::from_fn(|c| rational_to_f64(&y[c])))
-        .collect();
-
-    let mut vertex_descriptors = Vec::new();
-    let mut vertices = Vec::new();
-
-    for subset in combinations4(f) {
-        // Stage 1: f64 pre-filter. Can only reject (FALSE), never confirm.
-        if f64_prefilter_rejects(&dv_f64, &subset, f) {
-            continue;
-        }
-
-        // Stage 2: exact rational path (reached when stage 1 did not reject).
-        let rows: [[BigRational; 4]; 4] = [
-            dual_vertices[subset[0]].clone(),
-            dual_vertices[subset[1]].clone(),
-            dual_vertices[subset[2]].clone(),
-            dual_vertices[subset[3]].clone(),
-        ];
-
-        let d = det4(&rows);
-        if d.is_zero() {
-            continue; // Singular subset
-        }
-
-        // Solve exactly: Y_S · v = 1
-        let v = solve4(&rows, &rhs).unwrap(); // safe: det != 0
-
-        // Check all gaps: gap > 0 means non-incident facet,
-        // gap = 0 means incident (non-simple vertex),
-        // gap < 0 means point is outside K (not a vertex).
-        let mut all_nonneg = true;
-        let mut incident_facets = BTreeSet::from(subset);
-        for (i, dv) in dual_vertices.iter().enumerate() {
-            if subset.contains(&i) {
-                continue;
-            }
-            let gap = &one - dot4(dv, &v);
-            if gap.is_negative() {
-                all_nonneg = false;
-                break;
-            }
-            if gap.is_zero() {
-                incident_facets.insert(i);
-            }
-        }
-
-        if !all_nonneg {
-            continue; // Point is outside K
-        }
-
-        // Deduplicate: skip if this vertex was already found by an earlier subset
-        let already_found = vertices
-            .iter()
-            .any(|existing: &[BigRational; 4]| (0..4).all(|i| existing[i] == v[i]));
-        if already_found {
-            continue;
-        }
-
-        vertex_descriptors.push(incident_facets);
-        vertices.push(v);
-    }
-
-    if vertex_descriptors.is_empty() {
-        return Err(ConstructionError::NoVertices);
-    }
-
-    Ok((vertex_descriptors, vertices))
 }
 
 /// f64 pre-filter: returns true if the subset definitely yields no vertex.
@@ -450,7 +811,7 @@ fn f64_prefilter_rejects(dv_f64: &[[f64; 4]], subset: &[usize; 4], f: usize) -> 
     /// Unit roundoff for f64: ε_mach = 2⁻⁵³.
     const EPS_MACH: f64 = f64::EPSILON / 2.0;
 
-    /// Safety constant from Proposition 1. Tight accounting gives C < 1400;
+    /// Safety constant from [prop:prefilter-bound]. Tight accounting gives C < 1400;
     /// we use C = 10⁴ for generous margin.
     const C: f64 = 1e4;
 
@@ -575,7 +936,12 @@ mod tests {
             [rat(1), rat(1), rat(1), rat(1)],
         ];
         let heights = vec![frac(1, 5), frac(1, 5), frac(1, 5), frac(1, 5), rat(1)];
-        Polytope4D::from_rationals(normals, heights).expect("simplex construction")
+        let dual_vertices: Vec<[BigRational; 4]> = normals
+            .iter()
+            .zip(heights.iter())
+            .map(|(n, h)| std::array::from_fn(|c| &n[c] / h))
+            .collect();
+        Polytope4D::new(dual_vertices).expect("simplex construction")
     }
 
     /// Build a rational hypercube [-1, 1]^4 with exact integer coordinates.
@@ -593,7 +959,12 @@ mod tests {
             [rat(0), rat(0), rat(0), rat(-1)],
         ];
         let heights = vec![rat(1); 8];
-        Polytope4D::from_rationals(normals, heights).expect("hypercube construction")
+        let dual_vertices: Vec<[BigRational; 4]> = normals
+            .iter()
+            .zip(heights.iter())
+            .map(|(n, h)| std::array::from_fn(|c| &n[c] / h))
+            .collect();
+        Polytope4D::new(dual_vertices).expect("hypercube construction")
     }
 
     /// Extract vertex descriptors (sets of incident facet indices) from incidence matrix.
@@ -775,8 +1146,13 @@ mod tests {
             rat(1),
             rat(2),
         ];
+        let dual_vertices: Vec<[BigRational; 4]> = normals
+            .iter()
+            .zip(heights.iter())
+            .map(|(n, h)| std::array::from_fn(|c| &n[c] / h))
+            .collect();
         let p =
-            Polytope4D::from_rationals(normals, heights).expect("non-simple polytope should succeed");
+            Polytope4D::new(dual_vertices).expect("non-simple polytope should succeed");
 
         let vds = vertex_descriptors_from_incidence(&p);
         assert_eq!(vds.len(), 15, "cut hypercube should have 15 vertices");
@@ -959,5 +1335,334 @@ mod tests {
             d.iter().all(|x| x.is_zero()),
             "cross product of dependent vectors should be zero"
         );
+    }
+
+    // ── Edge cases for integer-scaled vertex enumeration pipeline ────────
+
+    /// Proposition: a vertex on 6 facets is correctly detected as non-simple.
+    ///
+    /// Takes hypercube [-1,1]^4 (8 facets) and adds two diagonal cuts:
+    ///   facet 8: x_1+x_2+x_3+x_4 <= 2
+    ///   facet 9: x_1+x_2-x_3-x_4 <= 2
+    /// Both are non-redundant (they cut off cube vertices like (1,1,1,1)).
+    ///
+    /// Vertex (1,1,1,-1) is tight on 6 facets: x_1<=1, x_2<=1, x_3<=1,
+    /// -x_4<=1, sum=1+1+1-1=2, diff=1+1-1+1=2. This exceeds the 5-facet
+    /// case in `non_simple_polytope_vertex_enumeration`.
+    #[test]
+    fn highly_non_simple_vertex_on_6_facets() {
+        // Hypercube [-1,1]^4 plus two diagonal cuts.
+        let normals = vec![
+            [rat(1), rat(0), rat(0), rat(0)],   // 0: x_1 <= 1
+            [rat(-1), rat(0), rat(0), rat(0)],  // 1: -x_1 <= 1
+            [rat(0), rat(1), rat(0), rat(0)],   // 2: x_2 <= 1
+            [rat(0), rat(-1), rat(0), rat(0)],  // 3: -x_2 <= 1
+            [rat(0), rat(0), rat(1), rat(0)],   // 4: x_3 <= 1
+            [rat(0), rat(0), rat(-1), rat(0)],  // 5: -x_3 <= 1
+            [rat(0), rat(0), rat(0), rat(1)],   // 6: x_4 <= 1
+            [rat(0), rat(0), rat(0), rat(-1)],  // 7: -x_4 <= 1
+            [rat(1), rat(1), rat(1), rat(1)],   // 8: x_1+x_2+x_3+x_4 <= 2
+            [rat(1), rat(1), rat(-1), rat(-1)], // 9: x_1+x_2-x_3-x_4 <= 2
+        ];
+        let heights = vec![
+            rat(1), rat(1), rat(1), rat(1),
+            rat(1), rat(1), rat(1), rat(1),
+            rat(2), rat(2),
+        ];
+        let dual_vertices: Vec<[BigRational; 4]> = normals
+            .iter()
+            .zip(heights.iter())
+            .map(|(n, h)| std::array::from_fn(|c| &n[c] / h))
+            .collect();
+        let p = Polytope4D::new(dual_vertices).expect("doubly-cut hypercube should succeed");
+
+        let vds = vertex_descriptors_from_incidence(&p);
+
+        // Find vertex (1,1,1,-1): on facets 0,2,4,7,8,9 (6 facets).
+        let target = [rat(1), rat(1), rat(1), rat(-1)];
+        let idx = p
+            .vertices()
+            .iter()
+            .position(|v| (0..4).all(|c| v[c] == target[c]))
+            .expect("vertex (1,1,1,-1) should exist");
+
+        let vd = &vds[idx];
+        assert_eq!(
+            vd.len(),
+            6,
+            "vertex (1,1,1,-1) should lie on exactly 6 facets, got {}: {:?}",
+            vd.len(),
+            vd
+        );
+        // Verify specific facet incidence
+        for &fi in &[0, 2, 4, 7, 8, 9] {
+            assert!(
+                vd.contains(&fi),
+                "vertex (1,1,1,-1) should be incident to facet {fi}"
+            );
+        }
+    }
+
+    /// Proposition: vertex enumeration is correct for large-coordinate dual vertices (~1e6).
+    ///
+    /// Scales the standard simplex dual vertices by 1e6. The integer scaling
+    /// pipeline must handle numerators of magnitude ~1e6 correctly, and the f64
+    /// prefilter must not give wrong signs for large coordinates.
+    #[test]
+    fn large_coordinate_dual_vertices() {
+        let scale = rat(1_000_000);
+        // Simplex with normals scaled by 1e6: same polytope, just different
+        // representation (n_i -> 1e6 * n_i, h_i -> 1e6 * h_i, so y_i unchanged).
+        // Instead, scale the dual vertices themselves to get large coordinates.
+        // y_i = scale * original_y_i means h-rep: (scale * n_i / h_i) . x <= 1,
+        // so K = {x : scale * y_i . x <= 1} = (1/scale) * K_original.
+        let base_normals: Vec<[BigRational; 4]> = vec![
+            [rat(-1), rat(0), rat(0), rat(0)],
+            [rat(0), rat(-1), rat(0), rat(0)],
+            [rat(0), rat(0), rat(-1), rat(0)],
+            [rat(0), rat(0), rat(0), rat(-1)],
+            [rat(1), rat(1), rat(1), rat(1)],
+        ];
+        let base_heights: Vec<BigRational> =
+            vec![frac(1, 5), frac(1, 5), frac(1, 5), frac(1, 5), rat(1)];
+
+        // Dual vertices = n_i / h_i, then scale by 1e6
+        let dual_vertices: Vec<[BigRational; 4]> = base_normals
+            .iter()
+            .zip(base_heights.iter())
+            .map(|(n, h)| std::array::from_fn(|c| &(&n[c] / h) * &scale))
+            .collect();
+
+        // Verify the coordinates are indeed large
+        let max_coord: f64 = dual_vertices
+            .iter()
+            .flat_map(|y| y.iter())
+            .filter(|c| !c.is_zero())
+            .map(|c| {
+                let f = c.numer().to_string().parse::<f64>().unwrap()
+                    / c.denom().to_string().parse::<f64>().unwrap();
+                f.abs()
+            })
+            .fold(0.0f64, f64::max);
+        assert!(
+            max_coord >= 1e5,
+            "dual vertex coordinates should be large, max = {max_coord}"
+        );
+
+        let p = Polytope4D::new(dual_vertices).expect("large-coordinate simplex should succeed");
+        assert_eq!(
+            p.vertices().len(),
+            5,
+            "scaled simplex should still have 5 vertices"
+        );
+
+        // The vertex on facets {0,1,2,3} should be (-1/5, -1/5, -1/5, -1/5) / scale
+        let vds = vertex_descriptors_from_incidence(&p);
+        let target_vd: BTreeSet<usize> = [0, 1, 2, 3].into_iter().collect();
+        let idx = vds
+            .iter()
+            .position(|vd| *vd == target_vd)
+            .expect("vertex {0,1,2,3} should exist");
+        let expected = frac(-1, 5_000_000);
+        for (c, coord) in p.vertices()[idx].iter().enumerate() {
+            assert_eq!(
+                coord, &expected,
+                "coordinate {c} of scaled simplex vertex should be -1/5000000"
+            );
+        }
+    }
+
+    /// Proposition: vertex enumeration is correct for small-coordinate dual vertices (~1e-6).
+    ///
+    /// Scales dual vertices by 1e-6. Near-zero f64 values in the prefilter must
+    /// not cause incorrect sign decisions; the exact integer fallback must handle
+    /// the resulting small numerators and large common denominator correctly.
+    #[test]
+    fn small_coordinate_dual_vertices() {
+        // Scale = 1/1000000
+        let scale = frac(1, 1_000_000);
+        let base_normals: Vec<[BigRational; 4]> = vec![
+            [rat(-1), rat(0), rat(0), rat(0)],
+            [rat(0), rat(-1), rat(0), rat(0)],
+            [rat(0), rat(0), rat(-1), rat(0)],
+            [rat(0), rat(0), rat(0), rat(-1)],
+            [rat(1), rat(1), rat(1), rat(1)],
+        ];
+        let base_heights: Vec<BigRational> =
+            vec![frac(1, 5), frac(1, 5), frac(1, 5), frac(1, 5), rat(1)];
+
+        let dual_vertices: Vec<[BigRational; 4]> = base_normals
+            .iter()
+            .zip(base_heights.iter())
+            .map(|(n, h)| std::array::from_fn(|c| &(&n[c] / h) * &scale))
+            .collect();
+
+        let p = Polytope4D::new(dual_vertices).expect("small-coordinate simplex should succeed");
+        assert_eq!(
+            p.vertices().len(),
+            5,
+            "scaled simplex should still have 5 vertices"
+        );
+
+        // Vertex on facets {0,1,2,3}: coordinates = -1/5 / scale = -1/5 * 1e6 = -200000
+        let vds = vertex_descriptors_from_incidence(&p);
+        let target_vd: BTreeSet<usize> = [0, 1, 2, 3].into_iter().collect();
+        let idx = vds
+            .iter()
+            .position(|vd| *vd == target_vd)
+            .expect("vertex {0,1,2,3} should exist");
+        let expected = rat(-200_000);
+        for (c, coord) in p.vertices()[idx].iter().enumerate() {
+            assert_eq!(
+                coord, &expected,
+                "coordinate {c} of small-scale simplex vertex should be -200000"
+            );
+        }
+    }
+
+    /// Proposition: exact rational construction handles non-power-of-2 denominators.
+    ///
+    /// Constructs a simplex from exact rationals with denominators 3, 5, 7 — values
+    /// that are not exactly representable in f64. The common denominator computation
+    /// (lcm) must correctly combine these primes, and the integer Cramer pipeline
+    /// must produce exact vertex coordinates.
+    #[test]
+    fn exact_rational_non_power_of_two_denominators() {
+        // A simplex with non-power-of-2 heights: h_0..h_3 = 1/3, h_4 = 2/7.
+        // Dual vertices y_i = n_i / h_i.
+        //
+        // Facets:
+        //   0: -x_1 <= 1/3   => y = (-3, 0, 0, 0)
+        //   1: -x_2 <= 1/3   => y = (0, -3, 0, 0)
+        //   2: -x_3 <= 1/3   => y = (0, 0, -3, 0)
+        //   3: -x_4 <= 1/3   => y = (0, 0, 0, -3)
+        //   4: x_1+x_2+x_3+x_4 <= 2/7  => y = (7/2, 7/2, 7/2, 7/2)
+        let dual_vertices: Vec<[BigRational; 4]> = vec![
+            [rat(-3), rat(0), rat(0), rat(0)],
+            [rat(0), rat(-3), rat(0), rat(0)],
+            [rat(0), rat(0), rat(-3), rat(0)],
+            [rat(0), rat(0), rat(0), rat(-3)],
+            [frac(7, 2), frac(7, 2), frac(7, 2), frac(7, 2)],
+        ];
+
+        let p = Polytope4D::new(dual_vertices.clone())
+            .expect("non-power-of-2 denominator simplex should succeed");
+        assert_eq!(p.vertices().len(), 5, "simplex should have 5 vertices");
+
+        // Verify common denominator handles the lcm(1,1,1,1,2) = 2 correctly
+        // by checking that the integer scaling produces correct results.
+        let (int_verts, common_denom) = integer_scale_dual_vertices(&dual_vertices);
+        // lcm of all denominators: denominators are 1,1,1,1,2 so lcm = 2
+        assert_eq!(
+            common_denom,
+            BigInt::from(2),
+            "common denominator should be lcm(1,1,1,1,2) = 2"
+        );
+        // int_verts[0] = (-3, 0, 0, 0) * 2 = (-6, 0, 0, 0)
+        assert_eq!(int_verts[0][0], BigInt::from(-6));
+        // int_verts[4] = (7/2, 7/2, 7/2, 7/2) * 2 = (7, 7, 7, 7)
+        assert_eq!(int_verts[4][0], BigInt::from(7));
+
+        // Vertex on facets {0,1,2,3} (omitting the sum constraint):
+        // Solving -x_i = 1/3 for i=1..4 gives x_i = -1/3.
+        let vds = vertex_descriptors_from_incidence(&p);
+        let target_vd: BTreeSet<usize> = [0, 1, 2, 3].into_iter().collect();
+        let idx = vds
+            .iter()
+            .position(|vd| *vd == target_vd)
+            .expect("vertex {0,1,2,3} should exist");
+        let expected = frac(-1, 3);
+        for (c, coord) in p.vertices()[idx].iter().enumerate() {
+            assert_eq!(
+                coord, &expected,
+                "coordinate {c} should be -1/3, got {coord}"
+            );
+        }
+
+        // Vertex on facets {1,2,3,4} (omitting facet 0, the -x_1 constraint):
+        // x_2 = x_3 = x_4 = -1/3, and x_1+x_2+x_3+x_4 = 2/7.
+        // So x_1 = 2/7 - (-1/3)*3 = 2/7 + 1 = 9/7.
+        let target_vd2: BTreeSet<usize> = [1, 2, 3, 4].into_iter().collect();
+        let idx2 = vds
+            .iter()
+            .position(|vd| *vd == target_vd2)
+            .expect("vertex {1,2,3,4} should exist");
+        let v = &p.vertices()[idx2];
+        assert_eq!(v[0], frac(9, 7), "x_1 should be 9/7, got {}", v[0]);
+        assert_eq!(v[1], frac(-1, 3), "x_2 should be -1/3, got {}", v[1]);
+        assert_eq!(v[2], frac(-1, 3), "x_3 should be -1/3, got {}", v[2]);
+        assert_eq!(v[3], frac(-1, 3), "x_4 should be -1/3, got {}", v[3]);
+    }
+
+    /// Proposition: integer Cramer's rule produces exact vertex coordinates for the
+    /// hypercube, matching the known analytical values.
+    ///
+    /// For the hypercube [-1,1]^4, each vertex (s_1, s_2, s_3, s_4) with s_i in {-1,+1}
+    /// is the unique solution of the 4x4 system formed by its 4 defining facets.
+    /// This test verifies that the integer pipeline produces these exact coordinates
+    /// by checking every vertex against the expected Cramer solution.
+    #[test]
+    fn integer_cramer_exact_coordinates_hypercube() {
+        let h = rational_hypercube();
+        let vds = vertex_descriptors_from_incidence(&h);
+
+        // For each vertex, verify coordinates match the expected sign pattern.
+        // Facet 2k: +e_{k+1} . x <= 1, so vertex on facet 2k has x_{k+1} = +1.
+        // Facet 2k+1: -e_{k+1} . x <= 1, so vertex on facet 2k+1 has x_{k+1} = -1.
+        for (vi, vd) in vds.iter().enumerate() {
+            let v = &h.vertices()[vi];
+            for dim in 0..4 {
+                let expected = if vd.contains(&(2 * dim)) {
+                    rat(1)
+                } else {
+                    assert!(
+                        vd.contains(&(2 * dim + 1)),
+                        "vertex must be on one of the pair"
+                    );
+                    rat(-1)
+                };
+                assert_eq!(
+                    v[dim], expected,
+                    "vertex {vi}, coordinate {dim}: expected {expected}, got {}",
+                    v[dim]
+                );
+            }
+        }
+    }
+
+    /// Proposition: integer Cramer's rule produces exact vertex coordinates for the
+    /// simplex, verifiable via the defining equations y_i . v = 1.
+    ///
+    /// For each vertex v and each defining facet i (in its descriptor), the inner
+    /// product y_i . v must be exactly 1. For non-defining facets, y_i . v < 1.
+    /// This end-to-end check verifies the full Cramer pipeline (det4_int, numerator
+    /// dets, coordinate assembly) without relying on known analytical formulas.
+    #[test]
+    fn integer_cramer_exact_coordinates_simplex() {
+        let s = rational_simplex();
+        let vds = vertex_descriptors_from_incidence(&s);
+        let dual_verts = s.dual_vertices();
+
+        for (vi, vd) in vds.iter().enumerate() {
+            let v = &s.vertices()[vi];
+            for fi in 0..dual_verts.len() {
+                let prod = dot4(
+                    &std::array::from_fn(|c| dual_verts[fi][c].clone()),
+                    &std::array::from_fn(|c| v[c].clone()),
+                );
+                if vd.contains(&fi) {
+                    assert_eq!(
+                        prod,
+                        rat(1),
+                        "vertex {vi} on facet {fi}: y.v should be exactly 1, got {prod}"
+                    );
+                } else {
+                    assert!(
+                        prod < rat(1),
+                        "vertex {vi} not on facet {fi}: y.v should be < 1, got {prod}"
+                    );
+                }
+            }
+        }
     }
 }

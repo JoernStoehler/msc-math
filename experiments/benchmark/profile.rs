@@ -33,8 +33,8 @@ fn main() {
 
     for i in 0..iterations {
         // Phase 1: Construction (rational vertex enum, incidence, adjacency, omega signs)
-        let p = symplectic::geom::polytope::Polytope4D::from_normals_and_heights(
-            normals.clone(), heights.clone(),
+        let p = symplectic::geom::polytope::Polytope4D::from_f64(
+            normals.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect(),
         )
         .expect("construction failed");
 

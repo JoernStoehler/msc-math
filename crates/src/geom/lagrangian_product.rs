@@ -45,7 +45,7 @@ pub fn lagrangian_product(
         )
         .collect();
 
-    Polytope4D::new(halfspaces)
+    Polytope4D::from_f64(halfspaces)
 }
 
 #[cfg(test)]
