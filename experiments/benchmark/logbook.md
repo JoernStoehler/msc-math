@@ -106,6 +106,28 @@ Criterion 95% CIs are <1% relative width for construction and capacity (measurem
 
 **Volume is constant and negligible** (~2-4 ms, dominated by qhull subprocess fork/exec).
 
+### Construction optimization (2026-03-23)
+
+**Optimization:** Replaced BigRational arithmetic with integer-scaled arithmetic (BigInt instead of BigRational) throughout polytope construction. Added f64 prefilters for the bounded-check and irredundancy steps to skip exact arithmetic on easy cases. Cleaned up the constructor call path.
+
+**Before/after timings** (construction phase only, same benchmark polytopes):
+
+| F | Before | After | Speedup |
+|---|--------|-------|---------|
+| 5 | 11.1ms | 0.50ms | 22x |
+| 6 | 24.3ms | 0.84ms | 29x |
+| 7 | 34.7ms | 1.17ms | 30x |
+| 8 | 50.6ms | 1.66ms | 30x |
+| 9 | 66.8ms | 2.15ms | 31x |
+| 10 | 84.0ms | 2.69ms | 31x |
+| 11 | 103.1ms | 3.35ms | 31x |
+
+**Construction is now negligible vs capacity at F >= 10.** At F=10, construction takes 2.7ms vs capacity 17ms (was 84ms vs 17ms). The crossover where capacity overtakes construction has shifted down from F ~11 to F ~7.
+
+**Updated E2E totals:** F=10 total is approximately 23ms (construction 2.7 + capacity 17 + volume 3.5), down from 104ms.
+
+**New flamegraph profile:** Capacity is now the dominant cost at all interesting F values. Top functions: ehz_capacity 33%, permutations 21%, eigendecomposition 11%. BigInt/GCD dropped from ~40% of total CPU to ~6%.
+
 ### Micro-benchmarks
 
 | Phase | Time | Scaling |
