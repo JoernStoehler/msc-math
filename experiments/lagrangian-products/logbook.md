@@ -53,7 +53,7 @@ For regular n-gon x m-gon, sys(theta) has period 2*pi/lcm(n,m) and mirror symmet
 
 1. **Pentagon rotation curve (Family 1):** P = Q = regular pentagon, theta in [0, 36] degrees at 1-degree steps. Fundamental domain = 180/lcm(5,5) = 36 degrees. Output: `lagrangian-products-5x5.jsonl` (37 points).
 
-2. **Heptagon rotation curve (Family 1b):** P = Q = regular heptagon, theta in [0, 180/7] degrees at ~1-degree steps (26 steps over the fundamental domain). Output: `lagrangian-products-7x7.jsonl` (27 points).
+2. **Heptagon rotation curve (Family 1b):** P = Q = regular heptagon, theta in [0, 180/7] degrees at ~1-degree steps (27 points over the fundamental domain). Output: `lagrangian-products-7x7.jsonl` (27 points).
 
 3. **Polygon pair grid (Family 2):** All pairs (n, m) with 3 <= n <= m <= 6, at 6-degree steps over the fundamental domain. 10 pairs, one JSONL file each. Capacity computed using billiard algorithm.
 
