@@ -58,8 +58,7 @@ struct AblationEntry {
     variant: String, // "a0_unpruned" | "a1_vertex_adj" | "a2_omega_directed" | "a3_reeb_feasible"
     group: String,   // "random_generic" | "random_lagrangian" | "regression"
     facet_count: usize,
-    normals: Vec<[f64; 4]>,
-    heights: Vec<f64>,
+    dual_vertices: Vec<[f64; 4]>,
     capacity: f64,
     capacity_uncertain: f64,
     iterations: u64,
@@ -464,8 +463,9 @@ fn ehz_capacity_unpruned_with(
     solver: fn(&[Vector4<f64>], &[f64], &[usize]) -> Option<(Vec<f64>, f64)>,
 ) -> Option<EhzResult> {
     let f = polytope.facet_count();
-    let normals = polytope.normals_f64();
-    let heights = polytope.heights_f64();
+    let duals = polytope.dual_vertices_f64();
+    let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
+    let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
 
     let mut best_certified: Option<Candidate> = None;
     let mut best_uncertain: Option<Candidate> = None;
@@ -536,7 +536,7 @@ fn ehz_capacity_unpruned_a1(polytope: &Polytope4D) -> Option<EhzResult> {
 /// A2: directed ω₀ adjacency + standard LU/SVD solver.
 fn ehz_capacity_unpruned_a2(polytope: &Polytope4D) -> Option<EhzResult> {
     let vertex_adj = polytope.vertex_adjacency();
-    let normals = polytope.normals_f64();
+    let normals: Vec<Vector4<f64>> = polytope.dual_vertices_f64().iter().map(|a| a / a.norm()).collect();
     let dir_adj = build_directed_adjacency(vertex_adj, &normals);
     ehz_capacity_unpruned_with(polytope, &dir_adj, solve_kkt_full)
 }
@@ -727,8 +727,9 @@ fn build_a3_adjacency(
 /// A3: full Reeb-flow feasibility + standard LU/SVD solver.
 fn ehz_capacity_unpruned_a3(polytope: &Polytope4D) -> Option<EhzResult> {
     let vertex_adj = polytope.vertex_adjacency();
-    let normals = polytope.normals_f64();
-    let heights = polytope.heights_f64();
+    let duals = polytope.dual_vertices_f64();
+    let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
+    let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
     let a2_adj = build_directed_adjacency(vertex_adj, &normals);
     let a3_adj = build_a3_adjacency(&a2_adj, &normals, &heights);
     ehz_capacity_unpruned_with(polytope, &a3_adj, solve_kkt_full)
@@ -1054,12 +1055,11 @@ fn main() {
     let mut n_failures = 0usize;
 
     for (polytope_name, group, polytope, expected) in &polytopes {
-        let normals_raw: Vec<[f64; 4]> = polytope
-            .normals_f64()
+        let duals_raw: Vec<[f64; 4]> = polytope
+            .dual_vertices_f64()
             .iter()
-            .map(|n| [n[0], n[1], n[2], n[3]])
+            .map(|a| [a[0], a[1], a[2], a[3]])
             .collect();
-        let heights_raw = polytope.heights_f64().to_vec();
         let f = polytope.facet_count();
 
         // Collect results for this polytope to check agreement
@@ -1101,8 +1101,7 @@ fn main() {
                         variant: variant.name.to_string(),
                         group: group.clone(),
                         facet_count: f,
-                        normals: normals_raw.clone(),
-                        heights: heights_raw.clone(),
+                        dual_vertices: duals_raw.clone(),
                         capacity: r.result.capacity,
                         capacity_uncertain: r.result.capacity_uncertain,
                         iterations: r.result.iterations,

@@ -26,7 +26,7 @@ use symplectic::algorithms::facet_adjacency::{build_transition_matrix, is_feasib
 use symplectic::algorithms::hk2017::{combinations, ehz_capacity};
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
 use symplectic::derivatives::{
-    capacity_derivatives_h, capacity_derivatives_n, volume_derivatives_h, volume_derivatives_n,
+    capacity_derivatives_a, volume_derivatives_a,
 };
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
@@ -88,8 +88,7 @@ const EPS_NUMERICAL_ZERO: f64 = 1e-15;
 struct SensitivityRow {
     name: String,
     facet_count: usize,
-    normals: Vec<[f64; 4]>,
-    heights: Vec<f64>,
+    dual_vertices: Vec<[f64; 4]>,
     volume: f64,
     capacity: f64,
     sys: f64,
@@ -98,14 +97,9 @@ struct SensitivityRow {
     n_near_optimal: usize,
     near_optimal_gap: f64,
     orbits: Vec<OrbitInfo>,
-    // Height derivatives (per best orbit)
-    d_vol_h: Vec<f64>,
-    d_cap_h: Vec<f64>,
+    // Derived h/n gradients
     d_sys_h: Vec<f64>,
     gradient_norm_h: f64,
-    // Normal derivatives (tangent vectors, 4 components each)
-    d_vol_n: Vec<[f64; 4]>,
-    d_cap_n: Vec<[f64; 4]>,
     d_sys_n: Vec<[f64; 4]>,
     gradient_norm_n: f64,
     // Combined
@@ -151,8 +145,7 @@ struct AscentRow {
     gradient_norm_h: f64,
     gradient_norm_hn: f64,
     // State
-    normals: Vec<[f64; 4]>,
-    heights: Vec<f64>,
+    dual_vertices: Vec<[f64; 4]>,
     time_ms: f64,
 }
 
@@ -275,12 +268,8 @@ fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult
 // ============================================================================
 
 struct SensitivityResult {
-    d_vol_h: Vec<f64>,
-    d_cap_h: Vec<f64>,
     d_sys_h: Vec<f64>,
     gradient_norm_h: f64,
-    d_vol_n: Vec<Vector4<f64>>,
-    d_cap_n: Vec<Vector4<f64>>,
     d_sys_n: Vec<Vector4<f64>>,
     gradient_norm_n: f64,
     gradient_norm_hn: f64,
@@ -293,22 +282,29 @@ fn compute_sensitivity(
     sys: f64,
     orbit: &ValidOrbit,
 ) -> SensitivityResult {
-    let normals = polytope.normals_f64();
-    let f = normals.len();
+    let duals = polytope.dual_vertices_f64();
+    let f = duals.len();
 
     // Convert asymmetric (lambda, nu) back to symmetric (mu, xi) for library calls.
     // ValidOrbit stores: lambda = -mu, nu = -xi. So: xi = -nu, mu = -lambda.
-    let xi = -orbit.nu;
     let mu: Vec<f64> = orbit.lambda.iter().map(|&l| -l).collect();
 
-    let d_vol_h = volume_derivatives_h(polytope);
-    let d_cap_h = capacity_derivatives_h(&orbit.beta, orbit.q_value, xi, &orbit.permutation, f);
+    let d_vol_a = volume_derivatives_a(polytope);
+    let d_cap_a = capacity_derivatives_a(&orbit.beta, orbit.q_value, &mu, &orbit.permutation, duals);
 
-    let d_sys_h: Vec<f64> = d_vol_h
+    let d_sys_a: Vec<Vector4<f64>> = d_vol_a
         .iter()
-        .zip(d_cap_h.iter())
-        .map(|(&dv, &dc)| (cap * dc - sys * dv) / vol)
+        .zip(d_cap_a.iter())
+        .map(|(dv, dc)| (cap * dc - sys * dv) / vol)
         .collect();
+
+    // Derive h/n gradients from dual vertex gradient
+    let d_sys_h: Vec<f64> = (0..f).map(|k| {
+        let a_norm = duals[k].norm();
+        let n = duals[k] / a_norm;
+        let h = 1.0 / a_norm;
+        d_sys_a[k].dot(&(-n / (h * h)))
+    }).collect();
 
     let gradient_norm_h = d_sys_h
         .iter()
@@ -316,14 +312,13 @@ fn compute_sensitivity(
         .sum::<f64>()
         .sqrt();
 
-    let d_vol_n = volume_derivatives_n(polytope);
-    let d_cap_n = capacity_derivatives_n(&orbit.beta, orbit.q_value, &mu, &orbit.permutation, &normals);
-
-    let d_sys_n: Vec<Vector4<f64>> = d_vol_n
-        .iter()
-        .zip(d_cap_n.iter())
-        .map(|(dv, dc)| (cap * dc - sys * dv) / vol)
-        .collect();
+    let d_sys_n: Vec<Vector4<f64>> = (0..f).map(|k| {
+        let a_norm = duals[k].norm();
+        let n = duals[k] / a_norm;
+        let h = 1.0 / a_norm;
+        let proj = d_sys_a[k] / h - (d_sys_a[k].dot(&n) / h) * n;
+        proj
+    }).collect();
 
     let gradient_norm_n = d_sys_n
         .iter()
@@ -335,12 +330,8 @@ fn compute_sensitivity(
         (gradient_norm_h * gradient_norm_h + gradient_norm_n * gradient_norm_n).sqrt();
 
     SensitivityResult {
-        d_vol_h,
-        d_cap_h,
         d_sys_h,
         gradient_norm_h,
-        d_vol_n,
-        d_cap_n,
         d_sys_n,
         gradient_norm_n,
         gradient_norm_hn,
@@ -352,8 +343,9 @@ fn compute_sensitivity(
 // ============================================================================
 
 fn compute_step_bound(polytope: &Polytope4D, direction: &[f64]) -> f64 {
-    let normals = polytope.normals_f64();
-    let heights = polytope.heights_f64();
+    let duals = polytope.dual_vertices_f64();
+    let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
+    let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
     let vertices = polytope.vertices_f64();
     let f = polytope.facet_count();
     let skeleton = Skeleton::compute(polytope);
@@ -440,8 +432,9 @@ fn compute_step_bound_hn(
     g_h: &[f64],
     g_n: &[Vector4<f64>],
 ) -> f64 {
-    let normals = polytope.normals_f64();
-    let heights = polytope.heights_f64();
+    let duals = polytope.dual_vertices_f64();
+    let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
+    let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
     let vertices = polytope.vertices_f64();
     let f = polytope.facet_count();
     let skeleton = Skeleton::compute(polytope);
@@ -610,8 +603,9 @@ fn armijo_step_h(
     t_max: f64,
     current_sys: f64,
 ) -> Option<(Polytope4D, f64, f64, f64, f64)> {
-    let normals = polytope.normals_f64();
-    let heights = polytope.heights_f64();
+    let duals = polytope.dual_vertices_f64();
+    let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
+    let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
     let grad_dot_dir: f64 = d_sys_h.iter().map(|x| x * x).sum(); // ∇f · d = |∇f|² (ascending)
 
     let mut t = 0.95 * t_max;
@@ -635,8 +629,9 @@ fn armijo_step_hn(
     t_max: f64,
     current_sys: f64,
 ) -> Option<(Polytope4D, f64, f64, f64, f64)> {
-    let normals = polytope.normals_f64();
-    let heights = polytope.heights_f64();
+    let duals = polytope.dual_vertices_f64();
+    let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
+    let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
     let grad_dot_dir: f64 = d_sys_h.iter().map(|x| x * x).sum::<f64>()
         + d_sys_n.iter().map(|v| v.norm_squared()).sum::<f64>();
 
@@ -744,12 +739,10 @@ fn run_phase_a(base_dir: &std::path::Path) {
     let time_sensitivity_ms = t_sens.elapsed().as_secs_f64() * 1000.0;
 
     println!("  ∂sys/∂h:");
-    let normals = polytope.normals_f64();
-    let heights = polytope.heights_f64();
     for k in 0..f {
         println!(
-            "    k={}: d_vol={:.6e}, d_cap={:.6e}, d_sys={:.6e}",
-            k, sensitivity.d_vol_h[k], sensitivity.d_cap_h[k], sensitivity.d_sys_h[k]
+            "    k={}: d_sys={:.6e}",
+            k, sensitivity.d_sys_h[k]
         );
     }
     println!("  |∇sys_h| = {:.6e}", sensitivity.gradient_norm_h);
@@ -805,9 +798,7 @@ fn run_phase_a(base_dir: &std::path::Path) {
     let sens_file = File::create(&sens_path).expect("create sensitivity JSONL");
     let mut sens_writer = BufWriter::new(sens_file);
 
-    let normals_raw: Vec<[f64; 4]> = normals.iter().map(|n| [n[0], n[1], n[2], n[3]]).collect();
-    let d_vol_n_raw: Vec<[f64; 4]> = sensitivity.d_vol_n.iter().map(|v| [v[0], v[1], v[2], v[3]]).collect();
-    let d_cap_n_raw: Vec<[f64; 4]> = sensitivity.d_cap_n.iter().map(|v| [v[0], v[1], v[2], v[3]]).collect();
+    let duals_raw: Vec<[f64; 4]> = polytope.dual_vertices_f64().iter().map(|a| [a[0], a[1], a[2], a[3]]).collect();
     let d_sys_n_raw: Vec<[f64; 4]> = sensitivity.d_sys_n.iter().map(|v| [v[0], v[1], v[2], v[3]]).collect();
 
     let orbit_infos: Vec<OrbitInfo> = near_optimal
@@ -825,8 +816,7 @@ fn run_phase_a(base_dir: &std::path::Path) {
     let sens_row = SensitivityRow {
         name: "hko_pentagon".to_string(),
         facet_count: f,
-        normals: normals_raw,
-        heights: heights.to_vec(),
+        dual_vertices: duals_raw,
         volume: vol,
         capacity: cap,
         sys,
@@ -834,12 +824,8 @@ fn run_phase_a(base_dir: &std::path::Path) {
         n_near_optimal: near_optimal.len(),
         near_optimal_gap: NEAR_OPTIMAL_GAP,
         orbits: orbit_infos,
-        d_vol_h: sensitivity.d_vol_h.clone(),
-        d_cap_h: sensitivity.d_cap_h.clone(),
         d_sys_h: sensitivity.d_sys_h.clone(),
         gradient_norm_h: sensitivity.gradient_norm_h,
-        d_vol_n: d_vol_n_raw,
-        d_cap_n: d_cap_n_raw,
         d_sys_n: d_sys_n_raw,
         gradient_norm_n: sensitivity.gradient_norm_n,
         gradient_norm_hn: sensitivity.gradient_norm_hn,
@@ -866,7 +852,7 @@ fn run_phase_a(base_dir: &std::path::Path) {
     let mut ascent_writer = BufWriter::new(ascent_file);
 
     let mut current = Polytope4D::from_f64(
-        polytope.normals_f64().iter().zip(polytope.heights_f64().iter()).map(|(n, &h)| n / h).collect(),
+        polytope.dual_vertices_f64().to_vec(),
     )
     .expect("reconstruct HKO2024");
     let mut current_sys = sys;
@@ -942,8 +928,6 @@ fn run_phase_a(base_dir: &std::path::Path) {
                         .count();
 
                     // Write final state
-                    let cur_normals = current.normals_f64();
-                    let cur_heights = current.heights_f64();
                     let row = AscentRow {
                         iteration: iter,
                         step_type: "none".to_string(),
@@ -960,8 +944,7 @@ fn run_phase_a(base_dir: &std::path::Path) {
                         n_near_optimal: n_near,
                         gradient_norm_h: sens.gradient_norm_h,
                         gradient_norm_hn: sens.gradient_norm_hn,
-                        normals: cur_normals.iter().map(|n| [n[0], n[1], n[2], n[3]]).collect(),
-                        heights: cur_heights.to_vec(),
+                        dual_vertices: current.dual_vertices_f64().iter().map(|a| [a[0], a[1], a[2], a[3]]).collect(),
                         time_ms: t_iter.elapsed().as_secs_f64() * 1000.0,
                     };
                     serde_json::to_writer(&mut ascent_writer, &row).expect("write ascent");
@@ -985,9 +968,6 @@ fn run_phase_a(base_dir: &std::path::Path) {
                     .count()
             })
             .unwrap_or(0);
-
-        let new_normals = new_poly.normals_f64();
-        let new_heights = new_poly.heights_f64();
 
         let new_subset = new_instr
             .as_ref()
@@ -1020,8 +1000,7 @@ fn run_phase_a(base_dir: &std::path::Path) {
             n_near_optimal: n_near,
             gradient_norm_h: sens.gradient_norm_h,
             gradient_norm_hn: sens.gradient_norm_hn,
-            normals: new_normals.iter().map(|n| [n[0], n[1], n[2], n[3]]).collect(),
-            heights: new_heights.to_vec(),
+            dual_vertices: new_poly.dual_vertices_f64().iter().map(|a| [a[0], a[1], a[2], a[3]]).collect(),
             time_ms,
         };
         serde_json::to_writer(&mut ascent_writer, &row).expect("write ascent");
@@ -1121,8 +1100,8 @@ fn run_phase_b(base_dir: &std::path::Path) {
     let known = known_polytopes::hko_pentagon();
     let polytope = &known.polytope;
     let f = polytope.facet_count();
-    let normals = polytope.normals_f64();
-    let heights = polytope.heights_f64();
+    let duals = polytope.dual_vertices_f64();
+    let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
     let vertices = polytope.vertices_f64();
 
     let vol_orig = volume(polytope).expect("volume");
@@ -1163,14 +1142,13 @@ fn run_phase_b(base_dir: &std::path::Path) {
                     .fold(f64::NEG_INFINITY, f64::max);
 
                 // Add cutting halfspace: <n, x> <= h_K(n) - eps
-                let mut new_normals = normals.to_vec();
-                let mut new_heights = heights.to_vec();
-                new_normals.push(*dir);
-                new_heights.push(h_k_n - eps);
+                // In dual vertex form: a = n / h, so new dual vertex = dir / (h_k_n - eps)
+                let new_h = h_k_n - eps;
+                if new_h <= 0.0 { continue; }
+                let mut new_duals: Vec<Vector4<f64>> = duals.to_vec();
+                new_duals.push(dir / new_h);
 
-                match Polytope4D::from_f64(
-                    new_normals.iter().zip(new_heights.iter()).map(|(n, &h)| n / h).collect(),
-                ) {
+                match Polytope4D::from_f64(new_duals) {
                     Ok(split_poly) => {
                         let (split_sys, split_vol, split_cap) = match safe_sys(&split_poly) {
                             Some(v) => v,
@@ -1280,14 +1258,12 @@ fn run_phase_b(base_dir: &std::path::Path) {
                 .map(|v| dir.dot(v))
                 .fold(f64::NEG_INFINITY, f64::max);
 
-            let mut new_normals = normals.to_vec();
-            let mut new_heights = heights.to_vec();
-            new_normals.push(dir);
-            new_heights.push(h_k_n - eps);
+            let new_h = h_k_n - eps;
+            if new_h <= 0.0 { continue; }
+            let mut new_duals: Vec<Vector4<f64>> = duals.to_vec();
+            new_duals.push(dir / new_h);
 
-            if let Ok(split_poly) = Polytope4D::from_f64(
-                new_normals.iter().zip(new_heights.iter()).map(|(n, &h)| n / h).collect(),
-            ) {
+            if let Ok(split_poly) = Polytope4D::from_f64(new_duals) {
                 let (split_sys, split_vol, split_cap) = match safe_sys(&split_poly) {
                     Some(v) => v,
                     None => continue,
@@ -1376,14 +1352,12 @@ fn run_phase_b(base_dir: &std::path::Path) {
                 .map(|v| dir.dot(v))
                 .fold(f64::NEG_INFINITY, f64::max);
 
-            let mut new_normals = normals.to_vec();
-            let mut new_heights = heights.to_vec();
-            new_normals.push(dir);
-            new_heights.push(h_k_n - eps);
+            let new_h = h_k_n - eps;
+            if new_h <= 0.0 { continue; }
+            let mut new_duals2: Vec<Vector4<f64>> = duals.to_vec();
+            new_duals2.push(dir / new_h);
 
-            if let Ok(split_poly) = Polytope4D::from_f64(
-                new_normals.iter().zip(new_heights.iter()).map(|(n, &h)| n / h).collect(),
-            ) {
+            if let Ok(split_poly) = Polytope4D::from_f64(new_duals2) {
                     let (split_sys, split_vol, split_cap) = match safe_sys(&split_poly) {
                         Some(v) => v,
                         None => continue,

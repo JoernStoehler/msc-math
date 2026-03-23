@@ -34,8 +34,7 @@ struct BenchmarkEntry {
     name: String,
     group: String, // "random" or "lagrangian"
     facet_count: usize,
-    normals: Vec<[f64; 4]>,
-    heights: Vec<f64>,
+    dual_vertices: Vec<[f64; 4]>,
 
     // Pruned timing (all polytopes)
     time_pruned_ms: f64,
@@ -113,8 +112,7 @@ fn main() {
                 name: format!("random_F{f}_{i}"),
                 group: "random".to_string(),
                 facet_count: p.facet_count(),
-                normals: p.normals_f64().iter().map(|n| [n[0], n[1], n[2], n[3]]).collect(),
-                heights: p.heights_f64().to_vec(),
+                dual_vertices: p.dual_vertices_f64().iter().map(|a| [a[0], a[1], a[2], a[3]]).collect(),
                 time_pruned_ms,
                 capacity_pruned: result_pruned.result.capacity,
                 iterations_pruned: result_pruned.result.iterations,
@@ -160,8 +158,7 @@ fn main() {
                 name: format!("lagrangian_{n}x{m}_{i}"),
                 group: "lagrangian".to_string(),
                 facet_count: p.facet_count(),
-                normals: p.normals_f64().iter().map(|v| [v[0], v[1], v[2], v[3]]).collect(),
-                heights: p.heights_f64().to_vec(),
+                dual_vertices: p.dual_vertices_f64().iter().map(|a| [a[0], a[1], a[2], a[3]]).collect(),
                 time_pruned_ms,
                 capacity_pruned: result_pruned.result.capacity,
                 iterations_pruned: result_pruned.result.iterations,

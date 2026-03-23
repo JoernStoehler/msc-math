@@ -296,18 +296,20 @@ into simplices via qhull and summing the simplex volumes:
 % ====================================================================
 % Reeb dynamics on polytopes
 % ====================================================================
+% Parameterization: K = {x : a_i^T x ≤ 1}, dual vertices a_i
 
 \begin{definition}[Reeb vector field on polytopes]\label{def:reeb-vector-field}
 % [TODO: JÖRN - verify statement]
 % Source: reeb_trajectory.rs doc comment
-On a facet $F_i$ of a polytope $K$ with outward unit normal $n_i$
-and height $h_i$, the \emph{Reeb vector} is
+Let $K = \{x : \langle a_i, x \rangle \leq 1\}$ be a polytope
+with dual vertices $a_1, \ldots, a_F$.
+On facet $F_i$, the \emph{Reeb vector} is
 \[
-  R_i = \frac{2}{h_i}\, J_0\, n_i.
+  R_i = 2\, J_0\, a_i.
 \]
 The Reeb vector $R_i$ is tangent to $F_i$
-($\langle n_i, R_i \rangle = 0$, since
-$\langle n_i, J_0 n_i \rangle = \omega_0(n_i, n_i) = 0$).
+($\langle a_i, R_i \rangle = 0$, since
+$\langle a_i, J_0 a_i \rangle = \omega_0(a_i, a_i) = 0$).
 \end{definition}
 
 
@@ -523,7 +525,7 @@ $\operatorname{sign}(g_i) = \operatorname{sign}(\delta)$ or $g_i = 0$.
 % [TODO: JÖRN - verify statement, add proof]
 % Source: rational_arithmetic.rs doc comment
 All discrete/combinatorial decisions in the geometry pipeline
-(vertex adjacency, symplectic sign $\omega_0(n_i, n_j) \gtrless 0$,
+(vertex adjacency, symplectic sign $\omega_0(a_i, a_j) \gtrless 0$,
 halfspace irredundancy) are computed using exact rational arithmetic
 to prevent numerical misclassification.
 \end{lemma}

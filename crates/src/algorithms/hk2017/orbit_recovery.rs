@@ -8,23 +8,23 @@
 //! ## Mathematical background
 //!
 //! A simple orbit with parameters (sigma, tau) has piecewise-constant velocity
-//! R_{sigma(k)} on each segment. The position during segment k is:
+//! R_{sigma(k)} = 2 J_0 a_{sigma(k)} on each segment. The position during segment k is:
 //!
 //!   gamma(t) = b + v_k + (t - t_k) * R_{sigma(k)}
 //!
 //! where v_k = sum_{j<k} tau_j R_{sigma(j)} is the accumulated displacement.
 //!
-//! For gamma(t) to lie on facet F_{sigma(k)}, we need <n_{sigma(k)}, gamma(t)> = h_{sigma(k)}.
-//! Since R_{sigma(k)} is tangent to F_{sigma(k)} (<n_{sigma(k)}, R_{sigma(k)}> = 0),
+//! For gamma(t) to lie on facet F_{sigma(k)}, we need <a_{sigma(k)}, gamma(t)> = 1.
+//! Since R_{sigma(k)} is tangent to F_{sigma(k)} (<a_{sigma(k)}, R_{sigma(k)}> = 0),
 //! this reduces to a linear system in b:
 //!
-//!   <n_{sigma(k)}, b> = h_{sigma(k)} - <n_{sigma(k)}, v_k>   for each active k
+//!   <a_{sigma(k)}, b> = 1 - <a_{sigma(k)}, v_k>   for each active k
 //!
 //! The system has m equations and 4 unknowns (b in R^4). We solve via SVD
 //! (least-norm solution when underdetermined), then optimize in the null space
 //! to minimize constraint violations.
 //!
-//! Dwell time conversion: tau_k = T * h_{sigma(k)} * beta_k, where T = c_EHZ(K).
+//! Dwell time conversion: tau_k = T * beta_k, where T = c_EHZ(K).
 //!
 //! Mathematical correspondence: [lem:base-point-recovery], [rem:beta-to-tau]
 
@@ -87,8 +87,7 @@ pub fn recover_and_verify(
     polytope: &Polytope4D,
     result: &EhzResult,
 ) -> Option<OrbitRecovery> {
-    let normals = polytope.normals_f64();
-    let heights = polytope.heights_f64();
+    let duals = polytope.dual_vertices_f64();
     let sigma = &result.result.best_permutation;
     let beta = &result.result.best_beta;
     let capacity = result.result.capacity;
@@ -96,22 +95,20 @@ pub fn recover_and_verify(
 
     // ── Stage 1: convert beta to dwell times ──
     //
-    // tau_k = T * h_{sigma(k)} * beta_k, where T = capacity.
+    // tau_k = T * beta_k, where T = capacity.
     // [rem:beta-to-tau]
     let dwell_times: Vec<f64> = (0..m)
-        .map(|k| capacity * heights[sigma[k]] * beta[k])
+        .map(|k| capacity * beta[k])
         .collect();
 
     // ── Stage 2: recover base point ──
     //
-    // Reeb vectors: R_i = (2/h_i) J_0 n_i.
+    // Reeb vectors: R_i = 2 J_0 a_i.
     let reeb_vectors: Vec<Vector4<f64>> = (0..m)
         .map(|k| {
-            let i = sigma[k];
-            let n = &normals[i];
-            let h = heights[i];
-            // J_0 n = (-n[2], -n[3], n[0], n[1]) in (q1,q2,p1,p2) coordinates
-            Vector4::new(-n[2], -n[3], n[0], n[1]) * (2.0 / h)
+            let a = &duals[sigma[k]];
+            // J_0 a = (-a[2], -a[3], a[0], a[1]) in (q1,q2,p1,p2) coordinates
+            Vector4::new(-a[2], -a[3], a[0], a[1]) * 2.0
         })
         .collect();
 
@@ -123,8 +120,8 @@ pub fn recover_and_verify(
         displacements.push(v_next);
     }
 
-    // Build linear system N_S b = r for active facets (tau_k > 0).
-    // For each active k: <n_{sigma(k)}, b> = h_{sigma(k)} - <n_{sigma(k)}, v_k>.
+    // Build linear system A_S b = r for active facets (tau_k > 0).
+    // For each active k: <a_{sigma(k)}, b> = 1 - <a_{sigma(k)}, v_k>.
     let active: Vec<usize> = (0..m).filter(|&k| dwell_times[k] > 0.0).collect();
     let n_active = active.len();
 
@@ -136,12 +133,11 @@ pub fn recover_and_verify(
     let mut rhs = DVector::<f64>::zeros(n_active);
 
     for (row, &k) in active.iter().enumerate() {
-        let i = sigma[k];
-        let n = &normals[i];
+        let a = &duals[sigma[k]];
         for col in 0..4 {
-            mat[(row, col)] = n[col];
+            mat[(row, col)] = a[col];
         }
-        rhs[row] = heights[i] - n.dot(&displacements[k]);
+        rhs[row] = 1.0 - a.dot(&displacements[k]);
     }
 
     // Solve via SVD. Pad to at least 4 rows so SVD yields a 4x4 V^T
@@ -177,8 +173,7 @@ pub fn recover_and_verify(
                 base_point,
                 &null_vecs,
                 &displacements,
-                &normals,
-                &heights,
+                duals,
             );
         }
     }
@@ -190,14 +185,13 @@ pub fn recover_and_verify(
         .map(|k| base_point + displacements[k])
         .collect();
 
-    // Max violation: max_{j,k} (<n_j, breakpoint_k> - h_j).
+    // Max violation: max_{j,k} (<a_j, breakpoint_k> - 1).
     let max_violation = breakpoints
         .iter()
         .flat_map(|p| {
-            normals
+            duals
                 .iter()
-                .zip(heights.iter())
-                .map(move |(n, &h)| n.dot(p) - h)
+                .map(move |a| a.dot(p) - 1.0)
         })
         .fold(f64::NEG_INFINITY, f64::max);
 
@@ -230,21 +224,19 @@ pub fn recover_and_verify(
 
 /// Compute the maximum halfspace violation for a candidate base point b.
 ///
-/// Returns max_{j,k} (<n_j, b + v_k> - h_j).
+/// Returns max_{j,k} (<a_j, b + v_k> - 1).
 fn max_violation_for(
     b: &Vector4<f64>,
     displacements: &[Vector4<f64>],
-    normals: &[Vector4<f64>],
-    heights: &[f64],
+    dual_vertices: &[Vector4<f64>],
 ) -> f64 {
     displacements
         .iter()
         .flat_map(|v| {
             let p = b + v;
-            normals
+            dual_vertices
                 .iter()
-                .zip(heights.iter())
-                .map(move |(n, &h)| n.dot(&p) - h)
+                .map(move |a| a.dot(&p) - 1.0)
         })
         .fold(f64::NEG_INFINITY, f64::max)
 }
@@ -259,8 +251,7 @@ fn optimize_in_null_space(
     b0: Vector4<f64>,
     null_vecs: &[Vector4<f64>],
     displacements: &[Vector4<f64>],
-    normals: &[Vector4<f64>],
-    heights: &[f64],
+    dual_vertices: &[Vector4<f64>],
 ) -> Vector4<f64> {
     if null_vecs.is_empty() {
         return b0;
@@ -287,8 +278,8 @@ fn optimize_in_null_space(
             for _ in 0..100 {
                 let m1 = lo + (hi - lo) / 3.0;
                 let m2 = hi - (hi - lo) / 3.0;
-                let v1 = max_violation_for(&candidate(m1), displacements, normals, heights);
-                let v2 = max_violation_for(&candidate(m2), displacements, normals, heights);
+                let v1 = max_violation_for(&candidate(m1), displacements, dual_vertices);
+                let v2 = max_violation_for(&candidate(m2), displacements, dual_vertices);
                 if v1 < v2 {
                     hi = m2;
                 } else {
@@ -408,19 +399,18 @@ mod tests {
         polytope: &Polytope4D,
         result: &EhzResult,
     ) {
-        let normals = polytope.normals_f64();
-        let heights = polytope.heights_f64();
+        let duals = polytope.dual_vertices_f64();
         let sigma = &result.result.best_permutation;
 
         let recovery = recover_and_verify(polytope, result).unwrap();
 
         // For each active segment k (dwell_times[k] > 0), breakpoint[k] should lie
-        // on facet sigma(k): <n_{sigma(k)}, breakpoint[k]> ~ h_{sigma(k)}.
+        // on facet sigma(k): <a_{sigma(k)}, breakpoint[k]> ~ 1.
         let on_facet_error = (0..sigma.len())
             .filter(|&k| recovery.dwell_times[k] > 0.0)
             .map(|k| {
                 let i = sigma[k];
-                (normals[i].dot(&recovery.breakpoints[k]) - heights[i]).abs()
+                (duals[i].dot(&recovery.breakpoints[k]) - 1.0).abs()
             })
             .fold(0.0_f64, f64::max);
 

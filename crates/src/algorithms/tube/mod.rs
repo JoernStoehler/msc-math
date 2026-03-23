@@ -94,19 +94,17 @@ pub struct TubeResult {
 /// [alg:tube] precomputation step.
 struct TubePrecomputation {
     /// Directed adjacency: `directed_edges[i]` = list of facet indices j such
-    /// that F_i -> F_j is a directed 2-face (omega_0(n_i, n_j) > 0 and F_i, F_j
+    /// that F_i -> F_j is a directed 2-face (omega_0(a_i, a_j) > 0 and F_i, F_j
     /// share a 2-face).
     directed_edges: Vec<Vec<usize>>,
     /// 2-face vertex coordinates (in R^4) for the ridge between facets i and j.
     /// Indexed as `ridge_vertices[(i, j)]` for directed edges i -> j.
     /// Stored as Vec<Vector4<f64>> with vertices in convex polygon order.
     ridge_vertices: Vec<Vec<Vec<Vector4<f64>>>>,
-    /// Full Reeb vector R_i = (2/h_i) J_0 n_i for each facet i.
+    /// Full Reeb vector R_i = 2 J_0 a_i for each facet i.
     reeb_vectors: Vec<Vector4<f64>>,
-    /// Normal vectors n_i.
-    normals: Vec<Vector4<f64>>,
-    /// Heights h_i.
-    heights: Vec<f64>,
+    /// Dual vertices a_i.
+    dual_vertices: Vec<Vector4<f64>>,
     /// Rotation increment Delta_rho_{j,l} for each directed edge j -> l.
     /// Indexed as rotation_increments[j][index_in_directed_edges[j]].
     rotation_increments: Vec<Vec<f64>>,
@@ -224,9 +222,9 @@ pub fn check_symplectic(polytope: &Polytope4D) -> Result<(), TubeError> {
     let skeleton = Skeleton::compute(polytope);
     for ridge in &skeleton.ridges {
         let [fi, fj] = ridge.facets;
-        let ni = polytope.normal_f64(fi);
-        let nj = polytope.normal_f64(fj);
-        let omega = omega0(&ni, &nj);
+        let ai = polytope.dual_vertices_f64()[fi];
+        let aj = polytope.dual_vertices_f64()[fj];
+        let omega = omega0(&ai, &aj);
         if omega.abs() < 1e-12 {
             return Err(TubeError::HasLagrangian2Face {
                 facet_i: fi,
@@ -245,13 +243,11 @@ pub fn check_symplectic(polytope: &Polytope4D) -> Result<(), TubeError> {
 /// increments.
 fn precompute(polytope: &Polytope4D, skeleton: &Skeleton) -> Result<TubePrecomputation, TubeError> {
     let f = polytope.facet_count();
-    let normals: Vec<Vector4<f64>> = (0..f).map(|i| polytope.normal_f64(i)).collect();
-    let heights: Vec<f64> = (0..f).map(|i| polytope.height_f64(i)).collect();
+    let duals = polytope.dual_vertices_f64();
 
-    let reeb_vectors: Vec<Vector4<f64>> = normals
+    let reeb_vectors: Vec<Vector4<f64>> = duals
         .iter()
-        .zip(heights.iter())
-        .map(|(n, h)| crate::geom::reeb_trajectory::reeb_direction(n) * (2.0 / h))
+        .map(|a| crate::geom::reeb_trajectory::reeb_direction(a) * 2.0)
         .collect();
 
     // Build directed edge lists and ridge vertices from the skeleton.
@@ -263,9 +259,9 @@ fn precompute(polytope: &Polytope4D, skeleton: &Skeleton) -> Result<TubePrecompu
 
     for ridge in &skeleton.ridges {
         let [fi, fj] = ridge.facets;
-        let ni = &normals[fi];
-        let nj = &normals[fj];
-        let omega_val = omega0(ni, nj);
+        let ai = &duals[fi];
+        let aj = &duals[fj];
+        let omega_val = omega0(ai, aj);
 
         if omega_val.abs() < 1e-12 {
             return Err(TubeError::HasLagrangian2Face {
@@ -281,14 +277,14 @@ fn precompute(polytope: &Polytope4D, skeleton: &Skeleton) -> Result<TubePrecompu
             // Directed edge fi -> fj.
             directed_edges[fi].push(fj);
             ridge_vertices[fi].push(verts.clone());
-            let delta_rho = compute_rotation_increment(ni, &heights[fi], nj, &heights[fj]);
+            let delta_rho = compute_rotation_increment(ai, aj);
             rotation_increments[fi].push(delta_rho);
         }
         if omega_val < 0.0 {
-            // Directed edge fj -> fi (omega_0(n_j, n_i) = -omega_val > 0).
+            // Directed edge fj -> fi (omega_0(a_j, a_i) = -omega_val > 0).
             directed_edges[fj].push(fi);
             ridge_vertices[fj].push(verts);
-            let delta_rho = compute_rotation_increment(nj, &heights[fj], ni, &heights[fi]);
+            let delta_rho = compute_rotation_increment(aj, ai);
             rotation_increments[fj].push(delta_rho);
         }
     }
@@ -297,8 +293,7 @@ fn precompute(polytope: &Polytope4D, skeleton: &Skeleton) -> Result<TubePrecompu
         directed_edges,
         ridge_vertices,
         reeb_vectors,
-        normals,
-        heights,
+        dual_vertices: duals.to_vec(),
         rotation_increments,
     })
 }
@@ -313,77 +308,24 @@ fn precompute(polytope: &Polytope4D, skeleton: &Skeleton) -> Result<TubePrecompu
 ///
 /// [def:rotation-increment]
 fn compute_rotation_increment(
-    n_j: &Vector4<f64>,
-    h_j: &f64,
-    n_l: &Vector4<f64>,
-    h_l: &f64,
+    a_j: &Vector4<f64>,
+    a_l: &Vector4<f64>,
 ) -> f64 {
-    // The transition matrix psi_{jl} from CH2021 tracks how the linearized
-    // flow changes when transitioning from facet j to facet l.
-    //
-    // In the 2D symplectic normal bundle, the key quantity is the ratio of
-    // the Reeb vector projections. The rotation increment is:
-    //   Delta_rho = (1/(2*pi)) * arccos(trace(psi)/2)
-    // where psi is the 2x2 transition matrix.
-    //
-    // For a polytope, the transition matrix psi_{jl} at the j -> l breakpoint
-    // can be computed from the normals and heights. Following CH2021 Lemma 2.21,
-    // the rotation number of this positive elliptic matrix is in (0, 1/2).
-    //
-    // Simplified computation: the rotation angle theta satisfies
-    //   cos(2*pi*Delta_rho) = 1 - 2 * sin^2(alpha)
-    // where alpha is the angle between the Reeb planes.
+    // Reeb vectors: R_i = 2 J_0 a_i.
+    let r_j = Vector4::new(-a_j[2], -a_j[3], a_j[0], a_j[1]) * 2.0;
+    let r_l = Vector4::new(-a_l[2], -a_l[3], a_l[0], a_l[1]) * 2.0;
 
-    let r_j = Vector4::new(-n_j[2], -n_j[3], n_j[0], n_j[1]) * (2.0 / h_j);
-    let r_l = Vector4::new(-n_l[2], -n_l[3], n_l[0], n_l[1]) * (2.0 / h_l);
-
-    // The transition matrix in the symplectic frame has trace:
-    //   tr(psi) = 2 - (omega_0(n_j, n_l)^2) / (|n_j| |n_l| h_j h_l * omega_0(n_j/h_j, n_l/h_l))
-    // This simplifies for the rotation number computation.
-    //
-    // A simpler approach: compute psi directly in a 2D symplectic basis.
-    // The Reeb vectors R_j and R_l, along with J_0 R_j and J_0 R_l, form
-    // coordinate frames on the contact hyperplane. The transition matrix
-    // psi maps one frame to another.
-
-    // Use the fact that for a 2x2 positive elliptic matrix psi with
-    // trace t in (-2, 2), the rotation number is:
-    //   rho = arccos(t/2) / (2*pi)
-
-    // Project R_j and R_l onto a common 2D symplectic plane.
-    // The transition is a rotation by the angle between the Reeb directions
-    // projected onto the normal plane.
-    let nj_norm = n_j.norm();
-    let nl_norm = n_l.norm();
-
-    if nj_norm < 1e-15 || nl_norm < 1e-15 {
-        return 0.25; // Fallback: midpoint of (0, 1/2)
-    }
-
-    // The rotation increment from CH2021:
-    // cos(2*pi*Delta_rho) = (r_j . r_l) / (|r_j| |r_l|) when projected
-    // onto the symplectic normal bundle.
-    //
-    // More precisely, the CH2021 formula gives:
-    //   tr(psi_{jl}) = 2 * (omega_0(n_j, n_l))^2 / (|n_j|^2 * |n_l|^2) - ...
-    //
-    // For a safe, conservative computation that respects (0, 1/2):
     let r_j_norm = r_j.norm();
     let r_l_norm = r_l.norm();
 
     if r_j_norm < 1e-15 || r_l_norm < 1e-15 {
-        return 0.25;
+        return 0.25; // Fallback: midpoint of (0, 1/2)
     }
 
     let cos_angle = r_j.dot(&r_l) / (r_j_norm * r_l_norm);
-    // The rotation in the symplectic normal bundle is related to but not
-    // equal to this angle. For the transition matrix from CH2021:
-    //
     // The angle between Reeb vectors captures the geometric rotation.
-    // Since omega_0(n_j, n_l) > 0 for directed edges, the transition
+    // Since omega_0(a_j, a_l) > 0 for directed edges, the transition
     // matrix is positive elliptic with rotation in (0, 1/2).
-    //
-    // Use arccos clipped to valid range, then map to (0, 1/2).
     let clamped = cos_angle.clamp(-1.0, 1.0);
     let theta = clamped.acos(); // theta in [0, pi]
     let rho = theta / (2.0 * std::f64::consts::PI);
@@ -498,19 +440,18 @@ fn extend_tube(
     edge_idx: usize,
 ) -> Option<TubeData> {
     // Step map Phi_{sigma(k-1), sigma(k), l}: x -> x + t(x) * R_{sigma(k)}
-    // where t(x) = (h_l - <x, n_l>) / <R_{sigma(k)}, n_l>.
-    let n_l = &precomp.normals[l];
-    let h_l = precomp.heights[l];
+    // where t(x) = (1 - <x, a_l>) / <R_{sigma(k)}, a_l>.
+    let a_l = &precomp.dual_vertices[l];
     let r_k = &precomp.reeb_vectors[sigma_k];
 
-    let denom = r_k.dot(n_l);
+    let denom = r_k.dot(a_l);
     if denom.abs() < 1e-12 {
         return None; // Reeb vector parallel to target facet — degenerate.
     }
 
     // Compute Phi(y) = y + ((h_l - y . n_l) / denom) * R_k for each End vertex.
     let new_end_raw: Vec<Vector4<f64>> = tube.end_vertices_4d.iter().map(|y| {
-        let t = (h_l - y.dot(n_l)) / denom;
+        let t = (1.0 - y.dot(a_l)) / denom;
         y + r_k * t
     }).collect();
 
@@ -525,17 +466,17 @@ fn extend_tube(
 
     // Update phi' = Phi ∘ phi.
     // Phi(x) = x + ((h_l - x . n_l) / denom) * R_k
-    //        = x + (h_l / denom) * R_k - (1/denom) * (n_l^T x) * R_k
-    //        = (I - (1/denom) * R_k * n_l^T) * x + (h_l / denom) * R_k
-    let step_matrix = nalgebra::Matrix4::identity() - (r_k * n_l.transpose()) / denom;
-    let step_offset = r_k * (h_l / denom);
+    //        = x + (1.0 / denom) * R_k - (1/denom) * (n_l^T x) * R_k
+    //        = (I - (1/denom) * R_k * n_l^T) * x + (1.0 / denom) * R_k
+    let step_matrix = nalgebra::Matrix4::identity() - (r_k * a_l.transpose()) / denom;
+    let step_offset = r_k * (1.0 / denom);
 
     let new_phi_matrix = step_matrix * tube.phi_matrix;
     let new_phi_offset = step_matrix * tube.phi_offset + step_offset;
 
     // Update action: a'(y') = a(Phi^{-1}(y')) + Delta_a(Phi^{-1}(y')).
     // Delta_a_{k-1,k,l}(x) = t(x) = (h_l - x . n_l) / denom.
-    // So Delta_a gradient (w.r.t. x) = -n_l / denom, constant = h_l / denom.
+    // So Delta_a gradient (w.r.t. x) = -a_l / denom, constant = 1.0 / denom.
     //
     // a'(y') = a(Phi^{-1}(y')) + t(Phi^{-1}(y'))
     //        = (action_gradient . Phi^{-1}(y') + action_constant) + (h_l - Phi^{-1}(y') . n_l) / denom
@@ -571,7 +512,7 @@ fn extend_tube(
         // old_action(x) = action_gradient . x + action_constant.
         // t(x) = (h_l - x . n_l) / denom.
         //
-        // Combined: (action_gradient - n_l / denom) . x + (action_constant + h_l / denom).
+        // Combined: (action_gradient - a_l / denom) . x + (action_constant + 1.0 / denom).
 
         // We need x = Phi^{-1}(y'). Use direct formula:
         // step_matrix * x = y' - step_offset.
@@ -601,10 +542,10 @@ fn extend_tube(
         // points... but actually it's simpler:
         //
         // a(x) + t(x) = (action_gradient + delta_a_gradient) . x + (action_constant + delta_a_constant)
-        // where delta_a_gradient = -n_l / denom, delta_a_constant = h_l / denom.
+        // where delta_a_gradient = -a_l / denom, delta_a_constant = 1.0 / denom.
         //
-        // Let combined_gradient = action_gradient - n_l / denom
-        // Let combined_constant = action_constant + h_l / denom
+        // Let combined_gradient = action_gradient - a_l / denom
+        // Let combined_constant = action_constant + 1.0 / denom
         //
         // Then a'(y') = combined_gradient . x + combined_constant
         //             = combined_gradient . (step_matrix^{-1} (y' - step_offset)) + combined_constant
@@ -981,19 +922,18 @@ fn compute_action_at_point(
         let sigma_curr = full_seq[step - 1];
 
         let r_curr = &precomp.reeb_vectors[sigma_curr];
-        let n_prev = &precomp.normals[sigma_prev];
-        let h_prev = precomp.heights[sigma_prev];
+        let a_prev = &precomp.dual_vertices[sigma_prev];
 
         // Invert: x = current_point - t * R_curr.
-        // x lies on F_{sigma_prev} ∩ F_{sigma_curr}, so n_prev . x = h_prev.
-        // n_prev . (current_point - t * R_curr) = h_prev.
-        // t = (n_prev . current_point - h_prev) / (n_prev . R_curr).
-        let denom = n_prev.dot(r_curr);
+        // x lies on F_{sigma_prev} ∩ F_{sigma_curr}, so a_prev . x = 1.
+        // a_prev . (current_point - t * R_curr) = 1.
+        // t = (a_prev . current_point - 1) / (a_prev . R_curr).
+        let denom = a_prev.dot(r_curr);
         if denom.abs() < 1e-15 {
             // Degenerate: just return the accumulated time.
             return total_time;
         }
-        let t = (n_prev.dot(&current_point) - h_prev) / denom;
+        let t = (a_prev.dot(&current_point) - 1.0) / denom;
         total_time += t;
         current_point -= r_curr * t;
     }

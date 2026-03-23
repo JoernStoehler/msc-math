@@ -379,35 +379,6 @@ impl Polytope4D {
         self.dual_vertices.len()
     }
 
-    // ── Derived quantities (computed on the fly from dual vertices) ──
-
-    /// Unit normal n_i = a_i / |a_i| for facet i.
-    ///
-    /// Computed from `dual_vertices_f64` -- not stored.
-    pub fn normal_f64(&self, i: usize) -> Vector4<f64> {
-        self.dual_vertices_f64[i].normalize()
-    }
-
-    /// Height h_i = 1 / |a_i| for facet i.
-    ///
-    /// Computed from `dual_vertices_f64` -- not stored.
-    /// The halfspace a_i^T x <= 1 is equivalently n_i^T x <= h_i.
-    pub fn height_f64(&self, i: usize) -> f64 {
-        1.0 / self.dual_vertices_f64[i].norm()
-    }
-
-    /// All unit normals, computed on the fly.
-    pub fn normals_f64(&self) -> Vec<Vector4<f64>> {
-        self.dual_vertices_f64.iter().map(|a| a.normalize()).collect()
-    }
-
-    /// All heights, computed on the fly.
-    pub fn heights_f64(&self) -> Vec<f64> {
-        self.dual_vertices_f64
-            .iter()
-            .map(|a| 1.0 / a.norm())
-            .collect()
-    }
 }
 
 /// Convert exact rational 4-vector to f64.
@@ -455,12 +426,11 @@ mod tests {
         let halfspaces = simplex_halfspaces_5();
         let p = Polytope4D::from_f64(halfspaces).unwrap();
         assert_eq!(p.facet_count(), 5);
-        assert_eq!(p.normals_f64().len(), 5);
-        assert_eq!(p.heights_f64().len(), 5);
+        assert_eq!(p.dual_vertices_f64().len(), 5);
         assert!(!p.vertices_f64().is_empty(), "vertices should be precomputed");
     }
 
-    /// Verify every vertex satisfies all halfspace inequalities n_i . v <= h_i.
+    /// Verify every vertex satisfies all halfspace inequalities a_i . v <= 1.
     #[test]
     fn vertices_satisfy_halfspace_inequalities() {
         let halfspaces = simplex_halfspaces_5();
@@ -468,15 +438,14 @@ mod tests {
 
         const EPS: f64 = 1e-8;
         for v in p.vertices_f64() {
-            for (i, (n, &h)) in p.normals_f64().iter().zip(p.heights_f64().iter()).enumerate() {
-                let lhs = n.dot(v);
+            for (i, a) in p.dual_vertices_f64().iter().enumerate() {
+                let lhs = a.dot(v);
                 assert!(
-                    lhs <= h + EPS,
-                    "vertex {} violates halfspace {}: {} > {}",
+                    lhs <= 1.0 + EPS,
+                    "vertex {} violates halfspace {}: {} > 1",
                     v,
                     i,
-                    lhs,
-                    h
+                    lhs
                 );
             }
         }
@@ -503,13 +472,13 @@ mod tests {
                 kp.name
             );
 
+            let duals = p.dual_vertices_f64();
             for vi in 0..v_count {
                 let vertex = &p.vertices_f64()[vi];
 
                 for fi in 0..p.facet_count() {
                     if incidence[(vi, fi)] {
-                        let residual =
-                            (p.normals_f64()[fi].dot(vertex) - p.heights_f64()[fi]).abs();
+                        let residual = (duals[fi].dot(vertex) - 1.0).abs();
                         assert!(
                             residual < EPS_FACET_INCIDENCE,
                             "{}: vertex {} should be on facet {} but residual = {:.2e}",
@@ -519,7 +488,7 @@ mod tests {
                             residual
                         );
                     } else {
-                        let slack = p.heights_f64()[fi] - p.normals_f64()[fi].dot(vertex);
+                        let slack = 1.0 - duals[fi].dot(vertex);
                         assert!(
                             slack > EPS_FACET_INCIDENCE,
                             "{}: vertex {} should be interior to facet {} but slack = {:.2e}",
@@ -544,24 +513,14 @@ mod tests {
         for kp in [known_polytopes::simplex(), known_polytopes::hypercube()] {
             let orig = &kp.polytope;
 
-            let rational_normals: Vec<[num_rational::BigRational; 4]> = orig
-                .normals_f64()
+            // Construct rational dual vertices from f64 dual vertices
+            let rational_duals: Vec<[num_rational::BigRational; 4]> = orig
+                .dual_vertices_f64()
                 .iter()
-                .map(|n| std::array::from_fn(|i| rational_arithmetic::f64_to_rational(n[i])))
+                .map(|a| std::array::from_fn(|i| rational_arithmetic::f64_to_rational(a[i])))
                 .collect();
-            let rational_heights: Vec<num_rational::BigRational> = orig
-                .heights_f64()
-                .iter()
-                .map(|&h| rational_arithmetic::f64_to_rational(h))
-                .collect();
-
-            let dual_vertices: Vec<[num_rational::BigRational; 4]> = rational_normals
-                .iter()
-                .zip(rational_heights.iter())
-                .map(|(n, h)| std::array::from_fn(|c| &n[c] / h))
-                .collect();
-            let p = Polytope4D::new(dual_vertices)
-                .expect("rational n/h construction should succeed");
+            let p = Polytope4D::new(rational_duals)
+                .expect("rational dual vertex construction should succeed");
             let incidence = p.incidence();
 
             assert_eq!(
@@ -571,12 +530,12 @@ mod tests {
                 kp.name
             );
 
+            let duals = p.dual_vertices_f64();
             for vi in 0..p.vertices_f64().len() {
                 let vertex = &p.vertices_f64()[vi];
                 for fi in 0..p.facet_count() {
                     if incidence[(vi, fi)] {
-                        let residual =
-                            (p.normals_f64()[fi].dot(vertex) - p.heights_f64()[fi]).abs();
+                        let residual = (duals[fi].dot(vertex) - 1.0).abs();
                         assert!(
                             residual < EPS_FACET_INCIDENCE,
                             "{} (from_rationals): vertex {} on facet {} residual = {:.2e}",
@@ -586,7 +545,7 @@ mod tests {
                             residual
                         );
                     } else {
-                        let slack = p.heights_f64()[fi] - p.normals_f64()[fi].dot(vertex);
+                        let slack = 1.0 - duals[fi].dot(vertex);
                         assert!(
                             slack > EPS_FACET_INCIDENCE,
                             "{} (from_rationals): vertex {} interior to facet {} slack = {:.2e}",
@@ -681,34 +640,43 @@ mod tests {
         }
     }
 
-    /// Heights are positive for bounded polytopes.
+    /// Dual vertices have positive norm (nonzero) for bounded polytopes.
     #[test]
-    fn heights_positive() {
+    fn dual_vertices_nonzero() {
         use crate::geom::known_polytopes;
 
         for kp in known_polytopes::all_known() {
-            for (i, &h) in kp.polytope.heights_f64().iter().enumerate() {
+            for (i, a) in kp.polytope.dual_vertices_f64().iter().enumerate() {
                 assert!(
-                    h > 0.0,
-                    "{}: height[{i}] should be positive, got {h}",
-                    kp.name
+                    a.norm() > 0.0,
+                    "{}: dual_vertex[{i}] should be nonzero, got {:?}",
+                    kp.name,
+                    a
                 );
             }
         }
     }
 
-    /// Normals are unit vectors.
+    /// Dual vertices have consistent direction (normalizing recovers a unit outward normal).
     #[test]
-    fn normals_are_unit() {
+    fn dual_vertices_normalize_to_unit() {
         use crate::geom::known_polytopes;
 
         for kp in known_polytopes::all_known() {
-            for (i, n) in kp.polytope.normals_f64().iter().enumerate() {
+            for (i, a) in kp.polytope.dual_vertices_f64().iter().enumerate() {
+                let norm = a.norm();
                 assert!(
-                    (n.norm() - 1.0).abs() < 1e-10,
-                    "{}: normal[{i}] should be unit, norm = {}",
+                    norm > 1e-10,
+                    "{}: dual_vertex[{i}] has near-zero norm = {}",
                     kp.name,
-                    n.norm()
+                    norm
+                );
+                let unit = a / norm;
+                assert!(
+                    (unit.norm() - 1.0).abs() < 1e-10,
+                    "{}: dual_vertex[{i}] normalized norm = {}",
+                    kp.name,
+                    unit.norm()
                 );
             }
         }

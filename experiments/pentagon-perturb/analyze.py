@@ -84,21 +84,23 @@ def plot_histogram(sys_vals: np.ndarray, base_sys: float, output_path: Path) -> 
 
 
 def build_delta_matrix(rows: list[dict]) -> np.ndarray:
+    """Build matrix of perturbation vectors from dual vertex deltas.
+
+    Each row becomes a 40D vector (10 facets * 4 components of delta a_i).
+    """
     vectors = []
     for r in rows:
-        delta_normals = r.get("delta_normals")
-        delta_heights = r.get("delta_heights")
-        if delta_normals is None or delta_heights is None:
-            raise ValueError("Missing delta_normals or delta_heights in dataset")
-        if len(delta_normals) != 10 or len(delta_heights) != 10:
+        delta_duals = r.get("delta_dual_vertices")
+        if delta_duals is None:
+            raise ValueError("Missing delta_dual_vertices in dataset")
+        if len(delta_duals) != 10:
             raise ValueError("Expected 10 facets for delta vectors")
         flat = []
         for facet_idx in range(10):
-            dn = delta_normals[facet_idx]
-            if len(dn) != 4:
-                raise ValueError("Expected 4D normals for each facet")
-            flat.extend(dn)
-            flat.append(delta_heights[facet_idx])
+            da = delta_duals[facet_idx]
+            if len(da) != 4:
+                raise ValueError("Expected 4D dual vertices")
+            flat.extend(da)
         vectors.append(flat)
     return np.array(vectors, dtype=float)
 
@@ -115,8 +117,7 @@ def pca_components(x: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
 
 def format_tuple(values: list[float], decimals: int = 4) -> str:
     parts = [f"{v:.{decimals}f}" for v in values[:4]]
-    h = f"{values[4]:.{decimals}f}"
-    return f"({', '.join(parts)}; {h})"
+    return f"({', '.join(parts)})"
 
 
 def build_pca_rows(
@@ -127,14 +128,12 @@ def build_pca_rows(
 ) -> list[list[str]]:
     rows = []
     base_cells = ["base"]
-    base_normals = base_row.get("normals")
-    base_heights = base_row.get("heights")
-    if base_normals is None or base_heights is None:
-        raise ValueError("Base row missing normals or heights")
+    base_duals = base_row.get("dual_vertices")
+    if base_duals is None:
+        raise ValueError("Base row missing dual_vertices")
     for facet_idx in range(10):
-        n = base_normals[facet_idx]
-        h = base_heights[facet_idx]
-        base_cells.append(format_tuple([n[0], n[1], n[2], n[3], h]))
+        a = base_duals[facet_idx]
+        base_cells.append(format_tuple([a[0], a[1], a[2], a[3]]))
     base_cells.append(f"{float(base_row['sys']):.4f}")
     rows.append(base_cells)
 
@@ -142,8 +141,8 @@ def build_pca_rows(
         comp = components[i]
         cells = [f"PC{i + 1}"]
         for facet_idx in range(10):
-            offset = facet_idx * 5
-            vals = comp[offset : offset + 5].tolist()
+            offset = facet_idx * 4
+            vals = comp[offset : offset + 4].tolist()
             cells.append(format_tuple(vals))
         cells.append(f"{strengths[i]:.4f}")
         rows.append(cells)
@@ -180,11 +179,11 @@ def format_pca_table_tex(rows: list[list[str]]) -> str:
         [
             "\\bottomrule",
             "\\end{tabular}",
-            "\\caption{HK-O pentagon perturbations: PCA components of the 50D"
-            " perturbation space, listed per facet as $(\\Delta n, \\Delta h) \\in"
-            " \\mathbb{R}^5$. The last column shows explained variance ratio for"
-            " each component, and the base row reports the unperturbed systolic"
-            " ratio.}",
+            "\\caption{HK-O pentagon perturbations: PCA components of the 40D"
+            " perturbation space, listed per facet as $\\Delta a_i \\in"
+            " \\mathbb{R}^4$. The last column shows explained variance ratio for"
+            " each component, and the base row reports the unperturbed dual"
+            " vertices and systolic ratio.}",
             "\\label{tab:pentagon-perturb-pca}",
             "\\end{table}",
         ]

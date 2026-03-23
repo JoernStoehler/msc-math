@@ -64,7 +64,8 @@ def plot_gradient_histogram(sens_rows: list[dict], output_path: Path) -> None:
     """Histogram of d(sys)/d(log h_k) = h_k * d(sys)/d(h_k), signed."""
     all_grads = []
     for r in sens_rows:
-        heights = r["heights"]
+        # Derive heights from dual vertices: h_i = 1 / ||a_i||
+        heights = [1.0 / np.linalg.norm(a) for a in r["dual_vertices"]]
         for k, ds in enumerate(r["d_sys_h"]):
             if ds is not None and np.isfinite(ds) and abs(ds) > 1e-15:
                 all_grads.append(heights[k] * ds)

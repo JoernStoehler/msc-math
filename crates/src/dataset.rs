@@ -21,10 +21,8 @@ pub struct PolytopeRow {
     pub source: String,
     /// Number of facets (halfspaces).
     pub facet_count: usize,
-    /// Outward unit normals, one per facet.
-    pub normals: Vec<[f64; 4]>,
-    /// Heights (offsets from origin), one per facet.
-    pub heights: Vec<f64>,
+    /// Dual vertices a_i (halfspace a_i^T x <= 1), one per facet.
+    pub dual_vertices: Vec<[f64; 4]>,
     /// 4D volume computed via qhull.
     pub volume: f64,
     /// EHZ capacity computed via the HK2017 algorithm.
@@ -78,17 +76,16 @@ impl PolytopeRow {
         time_capacity_ms: f64,
         time_creation_ms: f64,
     ) -> Self {
-        let normals: Vec<[f64; 4]> = polytope
-            .normals_f64()
+        let dual_vertices: Vec<[f64; 4]> = polytope
+            .dual_vertices_f64()
             .iter()
-            .map(|n| [n[0], n[1], n[2], n[3]])
+            .map(|a| [a[0], a[1], a[2], a[3]])
             .collect();
         let sys = capacity * capacity / (2.0 * volume);
         Self {
             source,
             facet_count: polytope.facet_count(),
-            normals,
-            heights: polytope.heights_f64().to_vec(),
+            dual_vertices,
             volume,
             capacity,
             sys,

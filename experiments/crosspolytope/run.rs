@@ -564,8 +564,9 @@ fn main() {
     let kp = known_polytopes::crosspolytope();
     let polytope = &kp.polytope;
     let f = polytope.facet_count();
-    let normals = polytope.normals_f64();
-    let heights = polytope.heights_f64();
+    let duals = polytope.dual_vertices_f64();
+    let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
+    let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
     println!("Crosspolytope: {f} facets");
 
     // 2. Volume

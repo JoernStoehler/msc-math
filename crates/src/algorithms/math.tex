@@ -37,10 +37,11 @@
 \begin{algorithm}[EHZ capacity]\label{alg:ehz}
 % Jörn: text approved (06a976c)
 % Source: thesis/general-case-algorithm.tex
+% Parameterization: K = {x : a_i^T x ≤ 1}, dual vertices a_i
 Computes $c_{\mathrm{EHZ}}(K)$ via exhaustive enumeration.
 
 \smallskip\noindent
-\emph{Input:} $(n_1, h_1), \ldots, (n_F, h_F)$.
+\emph{Input:} $a_1, \ldots, a_F$ (dual vertices).
 \quad
 \emph{Output:} $c_{\mathrm{EHZ}}(K)$.
 
@@ -51,24 +52,21 @@ and each permutation $\sigma$ of $S$
 
 \begin{enumerate}
 \item \textbf{Define}
-  the normal matrix $N \in \mathbb{R}^{|S| \times 4}$,
-  action matrix $H \in \mathbb{R}^{|S| \times |S|}$,
-  and height vector $\eta \in \mathbb{R}^{|S|}$:
+  the dual-vertex matrix $A \in \mathbb{R}^{|S| \times 4}$
+  and action matrix $H \in \mathbb{R}^{|S| \times |S|}$:
   \begin{align*}
-    N_{id} &= n_{\sigma(i),d},
+    A_{id} &= a_{\sigma(i),d},
       & i &= 1, \ldots, |S|, \quad d = 1, \ldots, 4, \\
     H_{ij} &= \begin{cases}
-      \omega_0(n_{\sigma(i)}, n_{\sigma(j)}) & \text{if } i < j, \\
+      \omega_0(a_{\sigma(i)}, a_{\sigma(j)}) & \text{if } i < j, \\
       0 & \text{if } i = j, \\
-      \omega_0(n_{\sigma(j)}, n_{\sigma(i)}) & \text{if } i > j,
-    \end{cases} \\
-    \eta_i &= h_{\sigma(i)},
-      & i &= 1, \ldots, |S|.
+      \omega_0(a_{\sigma(j)}, a_{\sigma(i)}) & \text{if } i > j.
+    \end{cases}
   \end{align*}
 
 \item \textbf{Solve.}
   \[
-    \begin{pmatrix} H & N & \eta \\ N^\top & 0 & 0 \\ \eta^\top & 0 & 0 \end{pmatrix}
+    \begin{pmatrix} H & A & \mathbf{1} \\ A^\top & 0 & 0 \\ \mathbf{1}^\top & 0 & 0 \end{pmatrix}
     \begin{pmatrix} \beta \\ \mu \\ \xi \end{pmatrix}
     = \begin{pmatrix} 0 \\ 0 \\ 1 \end{pmatrix}.
   \]
@@ -130,7 +128,9 @@ $M \in \operatorname{Sp}(4)$ and $b \in \mathbb{R}^4$,
 \begin{lemma}[Base point recovery]\label{lem:base-point-recovery}
 % Jörn: math approved (f7d26ea)
 % Source: thesis/simple-minimizer-existence.tex
-Let $K$ be a polytope and $(\sigma, \tau, b)$ a simple orbit
+% Parameterization: K = {x : a_i^T x ≤ 1}, dual vertices a_i
+Let $K = \{x : \langle a_i, x \rangle \leq 1\}$ be a polytope
+and $(\sigma, \tau, b)$ a simple orbit
 with $m$ active facets
 $S = \{\sigma(k) : \tau_k > 0\}$.
 Define the accumulated displacements
@@ -146,17 +146,17 @@ is a generalized Reeb orbit on~$\partial K$) if and only if:
 \begin{enumerate}
 \item \emph{On-facet (equality):}
   for each active $k$,
-  $\langle n_{\sigma(k)},\, b \rangle
-    = h_{\sigma(k)} - \langle n_{\sigma(k)},\, v_k \rangle$;
+  $\langle a_{\sigma(k)},\, b \rangle
+    = 1 - \langle a_{\sigma(k)},\, v_k \rangle$;
 \item \emph{Inside $K$ (inequality):}
   for each active segment $k$ and all $s \in [0, \tau_k]$,
-  $\langle n_j,\, b + v_k + s\, R_{\sigma(k)} \rangle
-    \leq h_j$ for all $j = 1, \ldots, F$.
+  $\langle a_j,\, b + v_k + s\, R_{\sigma(k)} \rangle
+    \leq 1$ for all $j = 1, \ldots, F$.
 \end{enumerate}
 The equality constraints form
-a linear system $N_S\, b = r$ with $m$ equations and $4$~unknowns.
+a linear system $A_S\, b = r$ with $m$ equations and $4$~unknowns.
 The set of valid base points is a convex polytope of
-dimension at most $4 - \operatorname{rank}(N_S)$.
+dimension at most $4 - \operatorname{rank}(A_S)$.
 \end{lemma}
 
 \begin{proof}
@@ -168,21 +168,21 @@ During the $k$-th segment, the orbit position is
 \]
 where $t_k = \sum_{j=1}^{k-1} \tau_j$.
 For $\gamma$ to lie on facet $F_{\sigma(k)}$,
-we require $\langle n_{\sigma(k)},\, \gamma(t) \rangle
-= h_{\sigma(k)}$ throughout the segment.
+we require $\langle a_{\sigma(k)},\, \gamma(t) \rangle
+= 1$ throughout the segment.
 Since $R_{\sigma(k)}$ is tangent to $F_{\sigma(k)}$
-($\langle n_{\sigma(k)}, R_{\sigma(k)} \rangle = 0$),
+($\langle a_{\sigma(k)}, R_{\sigma(k)} \rangle = 0$),
 the time-dependent term vanishes:
 \[
-  \langle n_{\sigma(k)},\, \gamma(t) \rangle
-  = \langle n_{\sigma(k)},\, b + v_k \rangle.
+  \langle a_{\sigma(k)},\, \gamma(t) \rangle
+  = \langle a_{\sigma(k)},\, b + v_k \rangle.
 \]
 Hence the on-facet condition for the entire segment
 reduces to a single equation.
 
 \emph{Inequality constraints.}
 The orbit must remain inside~$K$:
-$\langle n_j, \gamma(t) \rangle \leq h_j$
+$\langle a_j, \gamma(t) \rangle \leq 1$
 for all $j$ and all~$t$.
 Since $\gamma(t)$ is affine in~$t$ on each segment,
 each inequality is linear in~$s$.
@@ -192,9 +192,9 @@ check at $s = 0$ and $s = \tau_k$ only.
 
 \emph{Solution structure.}
 The equality constraints are a linear system
-$N_S\, b = r$ in~$b \in \mathbb{R}^4$.
+$A_S\, b = r$ in~$b \in \mathbb{R}^4$.
 Its solution set is an affine subspace of
-dimension $4 - \operatorname{rank}(N_S)$.
+dimension $4 - \operatorname{rank}(A_S)$.
 The inequality constraints are linear in~$b$,
 so the intersection is a convex polytope.
 \end{proof}
@@ -203,12 +203,13 @@ so the intersection is a convex polytope.
 \begin{remark}[Conversion from algorithm output]\label{rem:beta-to-tau}
 % Jörn: math approved (f7d26ea)
 % Source: thesis/simple-minimizer-existence.tex
+% Parameterization: K = {x : a_i^T x ≤ 1}, dual vertices a_i
 Algorithm~\ref{alg:ehz} outputs a permutation~$\sigma$ and
 a vector~$\beta$ with $\beta_i \geq 0$ and
-$\sum_i \beta_i h_i = 1$.
+$\sum_i \beta_i = 1$.
 The dwell times are
 \[
-  \tau_k = T\, h_{\sigma(k)}\, \beta_{\sigma(k)},
+  \tau_k = T\, \beta_{\sigma(k)},
 \]
 where $T = c_{\mathrm{EHZ}}(K)$ is the capacity
 (the period of the orbit).
@@ -376,12 +377,13 @@ $H$-representation.
 
 \begin{definition}[Symplectic polytope]\label{def:symplectic-polytope}
 % Source: thesis/tube-algorithm.tex
+% Parameterization: K = {x : a_i^T x ≤ 1}, dual vertices a_i
 A \emph{Lagrangian $2$-face} is a $2$-face $F_{ij}$ on which
-$\omega_0|_{T F_{ij}} = 0$, equivalently $\omega_0(n_i, n_j) = 0$.
+$\omega_0|_{T F_{ij}} = 0$, equivalently $\omega_0(a_i, a_j) = 0$.
 A \emph{symplectic polytope} is a polytope $K \subset \mathbb{R}^4$
 that has no Lagrangian $2$-face:
 \[
-  \omega_0(n_i, n_j) \neq 0
+  \omega_0(a_i, a_j) \neq 0
   \qquad \text{for all pairs } (i,j)
   \text{ such that } F_i \cap F_j \text{ is a $2$-face.}
 \]
@@ -568,7 +570,8 @@ Computes $c_{\mathrm{EHZ}}(K)$ for a symplectic polytope $K$
 (assuming no Type~2 orbits).
 
 \smallskip\noindent
-\emph{Input:} Facet data $(n_1, h_1), \ldots, (n_F, h_F)$.
+% Parameterization: K = {x : a_i^T x ≤ 1}, dual vertices a_i
+\emph{Input:} Dual vertices $a_1, \ldots, a_F$.
 \quad
 \emph{Output:} $c_{\mathrm{EHZ}}(K)$.
 
@@ -576,8 +579,8 @@ Computes $c_{\mathrm{EHZ}}(K)$ for a symplectic polytope $K$
 \textbf{Precomputation.}
 \begin{enumerate}
 \item For each pair $(i,j)$: check if $F_i \cap F_j$ is a $2$-face
-  and compute $\omega_0(n_i, n_j)$. Record directed edges $F_i \to F_j$
-  where $\omega_0(n_i, n_j) > 0$.
+  and compute $\omega_0(a_i, a_j)$. Record directed edges $F_i \to F_j$
+  where $\omega_0(a_i, a_j) > 0$.
 \item For each valid triple $(i,j,l)$ with $F_i \to F_j$ and $F_j \to F_l$:
   compute the step map $\Phi_{ijl}$,
   action increment $\Delta a_{ijl}$,

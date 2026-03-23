@@ -186,29 +186,29 @@ mod tests {
         assert_eq!(err, ConstructionError::Unbounded);
     }
 
-    /// Q-type facets have normals in the q-plane (components [0,1] nonzero, [2,3] zero).
+    /// Q-type facets have dual vertices in the q-plane (components [0,1] nonzero, [2,3] zero).
     #[test]
     fn q_type_facets_in_q_plane() {
         let (qn, qh) = regular_polygon_2d(3, 1.0);
         let (pn, ph) = regular_polygon_2d(3, 1.0);
         let polytope = lagrangian_product(&qn, &qh, &pn, &ph).unwrap();
-        let normals = polytope.normals_f64();
+        let duals = polytope.dual_vertices_f64();
 
         // First 3 facets are from q-polygon: p-components should be zero
-        for (i, n) in normals.iter().enumerate().take(3) {
+        for (i, a) in duals.iter().enumerate().take(3) {
             assert!(
-                n[2].abs() < 1e-12 && n[3].abs() < 1e-12,
-                "facet {i} should be Q-type: n = {:?}",
-                n
+                a[2].abs() < 1e-12 && a[3].abs() < 1e-12,
+                "facet {i} should be Q-type: a = {:?}",
+                a
             );
         }
 
         // Last 3 facets are from p-polygon: q-components should be zero
-        for (i, n) in normals.iter().enumerate().take(6).skip(3) {
+        for (i, a) in duals.iter().enumerate().take(6).skip(3) {
             assert!(
-                n[0].abs() < 1e-12 && n[1].abs() < 1e-12,
-                "facet {i} should be P-type: n = {:?}",
-                n
+                a[0].abs() < 1e-12 && a[1].abs() < 1e-12,
+                "facet {i} should be P-type: a = {:?}",
+                a
             );
         }
     }

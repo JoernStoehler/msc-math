@@ -1,11 +1,11 @@
 //! Piecewise-linear Reeb flow simulation on a polytope boundary.
 //!
-//! On facet F_i with outward unit normal n_i and height h_i, the Reeb vector
-//! field is R_i = (2/h_i) J_0 n_i. The direction J_0 n_i is automatically
-//! tangent to F_i since omega_0(n_i, n_i) = 0.
+//! For a polytope K = {x : a_i^T x <= 1}, the Reeb vector on facet F_i is
+//! R_i = 2 J_0 a_i. The direction J_0 a_i is automatically tangent to F_i
+//! since omega_0(a_i, a_i) = 0.
 //!
-//! For trajectory visualization we only need the *direction* J_0 n_i (the
-//! factor 2/h_i rescales time but does not change the trajectory shape).
+//! For trajectory visualization we only need the *direction* J_0 a_i (the
+//! factor 2 rescales time but does not change the trajectory shape).
 //!
 //! A trajectory starts at a point on a facet, follows the Reeb direction until
 //! hitting a ridge (shared 2-face with a neighboring facet), then switches to
@@ -30,7 +30,7 @@ pub const DEFAULT_MAX_SEGMENTS: usize = 50;
 /// All current call sites use 1e-6.
 pub const DEFAULT_CLOSURE_TOL: f64 = 1e-6;
 
-/// Tolerance for ray-facet intersection denominator: n_j . R_i.
+/// Tolerance for ray-facet intersection denominator: a_j . R_i.
 ///
 /// When the Reeb direction is nearly parallel to a facet (dot product near
 /// zero), the intersection time t = distance / dot becomes numerically
@@ -64,18 +64,18 @@ pub struct ReebTrajectory {
     pub closed: bool,
 }
 
-/// Compute the Reeb flow direction on a facet: J_0 n.
+/// Compute the Reeb flow direction on a facet: J_0 a.
 ///
-/// The full Reeb vector field is R = (2/h) J_0 n, but for trajectory
-/// simulation we only need the direction J_0 n (the 2/h factor rescales
+/// The full Reeb vector field is R = 2 J_0 a, but for trajectory
+/// simulation we only need the direction J_0 a (the factor 2 rescales
 /// the time parametrization without changing the trajectory shape).
 ///
 /// In coordinates (q_1, q_2, p_1, p_2) with J_0 = [[0, -I_2], [I_2, 0]]:
 ///   J_0 (a, b, c, d) = (-c, -d, a, b)
 ///
-/// [def:reeb-vector-field]: Reeb direction on facet F_i is J_0 n_i (tangent to F_i).
-pub fn reeb_direction(normal: &Vector4<f64>) -> Vector4<f64> {
-    Vector4::new(-normal[2], -normal[3], normal[0], normal[1])
+/// [def:reeb-vector-field]: Reeb direction on facet F_i is J_0 a_i (tangent to F_i).
+pub fn reeb_direction(dual_vertex: &Vector4<f64>) -> Vector4<f64> {
+    Vector4::new(-dual_vertex[2], -dual_vertex[3], dual_vertex[0], dual_vertex[1])
 }
 
 /// Forward-simulate a Reeb trajectory with default parameters.
@@ -101,24 +101,24 @@ pub fn simulate(
 /// Forward-simulate a Reeb trajectory with explicit parameters.
 ///
 /// Starting at `start_point` on `start_facet`, follows the Reeb direction
-/// J_0 n_i on each facet until hitting a neighboring facet, then switches.
+/// J_0 a_i on each facet until hitting a neighboring facet, then switches.
 /// Stops after `max_segments` segments or when returning within `closure_tol`
 /// of the starting point.
 ///
 /// # Algorithm
 ///
-/// On facet F_i with Reeb direction d_i = J_0 n_i, the trajectory is:
+/// On facet F_i with Reeb direction d_i = J_0 a_i, the trajectory is:
 ///   x(t) = x_0 + t * d_i
 ///
 /// The trajectory exits F_i when it hits a neighboring facet F_j:
-///   n_j . (x_0 + t * d_i) = h_j
-///   t = (h_j - n_j . x_0) / (n_j . d_i)
+///   a_j . (x_0 + t * d_i) = 1
+///   t = (1 - a_j . x_0) / (a_j . d_i)
 ///
 /// Take the smallest positive t among all facets j != i.
 ///
 /// **Ridge-point handling:** When the current point sits on the boundary
-/// of another facet F_j (n_j . x ~ h_j) and the Reeb direction pushes
-/// through it (n_j . d > 0), the trajectory cannot proceed on the current
+/// of another facet F_j (a_j . x ~ 1) and the Reeb direction pushes
+/// through it (a_j . d > 0), the trajectory cannot proceed on the current
 /// facet. It immediately transitions to F_j (zero-length segment).
 ///
 /// [lem:piecewise-linear-reeb]: Reeb trajectories on polytope boundaries are piecewise linear.
@@ -129,9 +129,8 @@ pub fn simulate_with(
     max_segments: usize,
     closure_tol: f64,
 ) -> ReebTrajectory {
-    let normals = polytope.normals_f64();
-    let heights = polytope.heights_f64();
-    let n_facets = normals.len();
+    let duals = polytope.dual_vertices_f64();
+    let n_facets = duals.len();
 
     let mut segments = Vec::new();
     let mut current_point = start_point;
@@ -141,19 +140,19 @@ pub fn simulate_with(
     for _ in 0..max_segments {
         // Phase 1: Handle immediate transitions at ridge points.
         //
-        // If we're on the boundary of facet F_j (n_j . x ~ h_j) and the Reeb
-        // direction pushes through (n_j . d > 0), we must transition to F_j
+        // If we're on the boundary of facet F_j (a_j . x ~ 1) and the Reeb
+        // direction pushes through (a_j . d > 0), we must transition to F_j
         // before proceeding. Safety bound: at most n_facets transitions.
         for _ in 0..n_facets {
-            let r = reeb_direction(&normals[current_facet]);
+            let r = reeb_direction(&duals[current_facet]);
             let mut best_immediate = None;
             let mut best_denom = 0.0_f64;
-            for fj in 0..n_facets {
+            for (fj, a_j) in duals.iter().enumerate() {
                 if fj == current_facet {
                     continue;
                 }
-                let residual = normals[fj].dot(&current_point) - heights[fj];
-                let denom = normals[fj].dot(&r);
+                let residual = a_j.dot(&current_point) - 1.0;
+                let denom = a_j.dot(&r);
                 // On the boundary of fj AND Reeb pushes through it
                 if residual.abs() < EPS_FACET_INCIDENCE
                     && denom > EPS_DENOM
@@ -171,19 +170,19 @@ pub fn simulate_with(
         }
 
         // Phase 2: Find the exit — smallest positive t among all other facets.
-        let reeb = reeb_direction(&normals[current_facet]);
+        let reeb = reeb_direction(&duals[current_facet]);
         let mut best_t = f64::INFINITY;
         let mut next_facet = current_facet;
 
-        for fj in 0..n_facets {
+        for (fj, a_j) in duals.iter().enumerate() {
             if fj == current_facet {
                 continue;
             }
-            let denom = normals[fj].dot(&reeb);
+            let denom = a_j.dot(&reeb);
             if denom.abs() < EPS_DENOM {
                 continue; // Reeb direction nearly parallel to this facet
             }
-            let t = (heights[fj] - normals[fj].dot(&current_point)) / denom;
+            let t = (1.0 - a_j.dot(&current_point)) / denom;
             if t > EPS_FACET_INCIDENCE && t < best_t {
                 best_t = t;
                 next_facet = fj;
@@ -198,8 +197,8 @@ pub fn simulate_with(
 
         // Validate: end point must satisfy all half-space constraints (within tolerance).
         let mut valid = true;
-        for fk in 0..n_facets {
-            let violation = normals[fk].dot(&end_point) - heights[fk];
+        for a_k in duals {
+            let violation = a_k.dot(&end_point) - 1.0;
             if violation > EPS_FACET_INCIDENCE * 100.0 {
                 valid = false;
                 break;
@@ -237,7 +236,7 @@ mod tests {
 
     // Tests for reeb_trajectory: piecewise-linear Reeb flow simulation.
     //
-    // Proposition: The simulated trajectory follows the Reeb direction J_0 n_i
+    // Proposition: The simulated trajectory follows the Reeb direction J_0 a_i
     // on each facet, transitions at ridges, and stays inside the polytope.
     // Reference: [def:reeb-vector-field], [lem:piecewise-linear-reeb]
     //
@@ -281,20 +280,20 @@ mod tests {
         }
     }
 
-    /// J_0 n . n = omega_0(n, n) = 0 (antisymmetry of the symplectic form).
+    /// J_0 a . a = omega_0(a, a) = 0 (antisymmetry of the symplectic form).
     #[test]
     fn reeb_direction_tangent_to_facet() {
-        let normals = [
+        let duals = [
             Vector4::new(1.0, 0.0, 0.0, 0.0),
-            Vector4::new(0.5, 0.5, 0.5, 0.5).normalize(),
-            Vector4::new(0.8, -0.3, 0.2, 0.5).normalize(),
+            Vector4::new(0.5, 0.5, 0.5, 0.5),
+            Vector4::new(0.8, -0.3, 0.2, 0.5),
         ];
-        for n in &normals {
-            let r = reeb_direction(n);
-            let dot = r.dot(n);
+        for a in &duals {
+            let r = reeb_direction(a);
+            let dot = r.dot(a);
             assert!(
                 dot.abs() < 1e-12,
-                "Reeb direction not tangent: n={n:?}, R.n={dot}"
+                "Reeb direction not tangent: a={a:?}, R.a={dot}"
             );
         }
     }
@@ -307,7 +306,7 @@ mod tests {
         let start = skel.facet_centroid(&kp.polytope, 0);
 
         // Verify start is on facet 0.
-        let residual = (kp.polytope.normals_f64()[0].dot(&start) - kp.polytope.heights_f64()[0]).abs();
+        let residual = (kp.polytope.dual_vertices_f64()[0].dot(&start) - 1.0).abs();
         assert!(residual < 1e-7, "start not on facet 0: residual {residual}");
 
         let traj = simulate(&kp.polytope, start, 0);
@@ -325,19 +324,17 @@ mod tests {
         }
 
         // Each segment lies on its claimed facet.
-        let normals = kp.polytope.normals_f64();
-        let heights = kp.polytope.heights_f64();
+        let duals = kp.polytope.dual_vertices_f64();
         for seg in &traj.segments {
-            let n = &normals[seg.facet];
-            let h = heights[seg.facet];
-            let start_res = (n.dot(&seg.start) - h).abs();
-            let end_res = (n.dot(&seg.end) - h).abs();
+            let a = &duals[seg.facet];
+            let start_res = (a.dot(&seg.start) - 1.0).abs();
+            let end_res = (a.dot(&seg.end) - 1.0).abs();
             assert!(start_res < 1e-7, "start not on facet {}: {start_res}", seg.facet);
             assert!(end_res < 1e-7, "end not on facet {}: {end_res}", seg.facet);
         }
     }
 
-    /// Each segment direction is parallel to J_0 n_i (the Reeb direction on its facet).
+    /// Each segment direction is parallel to J_0 a_i (the Reeb direction on its facet).
     #[test]
     fn segments_follow_reeb_direction() {
         let kp = known_polytopes::hypercube();
@@ -345,13 +342,13 @@ mod tests {
         let start = skel.facet_centroid(&kp.polytope, 0);
         let traj = simulate_with(&kp.polytope, start, 0, 20, 1e-6);
 
-        let normals = kp.polytope.normals_f64();
+        let duals = kp.polytope.dual_vertices_f64();
         for seg in &traj.segments {
             let direction = seg.end - seg.start;
             if direction.norm() < 1e-12 {
                 continue; // zero-length immediate transition
             }
-            let expected = reeb_direction(&normals[seg.facet]);
+            let expected = reeb_direction(&duals[seg.facet]);
             let cos_angle = direction.normalize().dot(&expected.normalize());
             assert!(
                 (cos_angle - 1.0).abs() < 1e-8,
@@ -395,18 +392,17 @@ mod tests {
         ];
 
         for (name, kp) in &polytopes {
-            let normals = kp.polytope.normals_f64();
-            let heights = kp.polytope.heights_f64();
+            let duals = kp.polytope.dual_vertices_f64();
             let skel = Skeleton::compute(&kp.polytope);
 
-            for facet in 0..normals.len() {
+            for facet in 0..duals.len() {
                 let start = skel.facet_centroid(&kp.polytope, facet);
                 let traj = simulate_with(&kp.polytope, start, facet, 100, 1e-6);
 
                 for (si, seg) in traj.segments.iter().enumerate() {
                     for (label, pt) in [("start", &seg.start), ("end", &seg.end)] {
-                        for (fk, (nk, hk)) in normals.iter().zip(heights.iter()).enumerate() {
-                            let violation = nk.dot(pt) - hk;
+                        for (fk, ak) in duals.iter().enumerate() {
+                            let violation = ak.dot(pt) - 1.0;
                             assert!(
                                 violation < 1e-6,
                                 "{name} facet {facet} seg {si} {label}: \
@@ -416,10 +412,9 @@ mod tests {
                     }
 
                     // Segment start/end lies on claimed facet's hyperplane.
-                    let n_f = &normals[seg.facet];
-                    let h_f = heights[seg.facet];
-                    let res_start = (n_f.dot(&seg.start) - h_f).abs();
-                    let res_end = (n_f.dot(&seg.end) - h_f).abs();
+                    let a_f = &duals[seg.facet];
+                    let res_start = (a_f.dot(&seg.start) - 1.0).abs();
+                    let res_end = (a_f.dot(&seg.end) - 1.0).abs();
                     assert!(
                         res_start < 1e-6,
                         "{name} facet {facet} seg {si}: start not on facet {}, res {res_start:.2e}",

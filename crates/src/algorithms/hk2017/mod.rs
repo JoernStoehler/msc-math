@@ -360,15 +360,9 @@ mod tests_literature {
         for (a, b) in c1.iter().zip(c2.iter()) {
             assert_eq!(a.name, b.name);
             assert_eq!(
-                a.polytope.normals_f64(),
-                b.polytope.normals_f64(),
-                "'{}': normals non-deterministic",
-                a.name
-            );
-            assert_eq!(
-                a.polytope.heights_f64(),
-                b.polytope.heights_f64(),
-                "'{}': heights non-deterministic",
+                a.polytope.dual_vertices_f64(),
+                b.polytope.dual_vertices_f64(),
+                "'{}': dual vertices non-deterministic",
                 a.name
             );
         }
@@ -1518,20 +1512,19 @@ mod tests_symplectic_invariance {
         vertices1: &[Vector4<f64>],
         polytope2: &Polytope4D,
     ) -> Option<f64> {
-        let normals2 = polytope2.normals_f64();
-        let heights2 = polytope2.heights_f64();
+        let duals2 = polytope2.dual_vertices_f64();
 
         let mut max_alpha = f64::INFINITY;
 
         for v in vertices1 {
-            for (n, &h) in normals2.iter().zip(heights2.iter()) {
-                let nv = n.dot(v);
-                if nv > 1e-12 {
-                    // v points outward from this halfspace.
-                    let alpha_bound = h / nv;
+            for a in duals2 {
+                let av = a.dot(v);
+                if av > 1e-12 {
+                    // v points outward from this halfspace: a · (alpha*v) ≤ 1
+                    let alpha_bound = 1.0 / av;
                     max_alpha = max_alpha.min(alpha_bound);
                 }
-                // If nv <= 0, v is on the safe side — no constraint.
+                // If av <= 0, v is on the safe side — no constraint.
             }
         }
 
@@ -1642,6 +1635,16 @@ mod tests_capacity_derivative {
 
     // ===== Default suite: fast tests (debug mode, < 5s each) =====
 
+    /// Extract unit normals and heights from dual vertices: n_i = a_i/||a_i||, h_i = 1/||a_i||.
+    ///
+    /// Used by FD tests that perturb heights to verify Euler homogeneity identities.
+    fn normals_and_heights(polytope: &Polytope4D) -> (Vec<Vector4<f64>>, Vec<f64>) {
+        let duals = polytope.dual_vertices_f64();
+        let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
+        let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
+        (normals, heights)
+    }
+
     /// T1: FD capacity derivatives are finite and non-negative for the simplex (5 facets).
     ///
     /// Proposition: For the 4-simplex, dc_EHZ/dh_k is finite and >= 0 for all k.
@@ -1650,8 +1653,7 @@ mod tests_capacity_derivative {
     #[test]
     fn fd_capacity_height_simplex() {
         let kp = known_polytopes::simplex();
-        let normals = kp.polytope.normals_f64();
-        let heights = kp.polytope.heights_f64();
+        let (normals, heights) = normals_and_heights(&kp.polytope);
 
         let d_cap = fd_capacity_derivatives(&normals, &heights);
 
@@ -1688,8 +1690,7 @@ mod tests_capacity_derivative {
         ];
 
         for (name, poly) in &polytopes {
-            let normals = poly.normals_f64();
-            let heights = poly.heights_f64();
+            let (normals, heights) = normals_and_heights(poly);
             let vol = volume(poly).expect("volume");
 
             let d_vol = fd_volume_derivatives(&normals, &heights);
@@ -1712,8 +1713,7 @@ mod tests_capacity_derivative {
     #[test]
     fn capacity_monotone_simplex() {
         let kp = known_polytopes::simplex();
-        let normals = kp.polytope.normals_f64();
-        let heights = kp.polytope.heights_f64();
+        let (normals, heights) = normals_and_heights(&kp.polytope);
 
         let d_cap = fd_capacity_derivatives(&normals, &heights);
 
@@ -1745,8 +1745,7 @@ mod tests_capacity_derivative {
         ];
 
         for (name, poly) in &polytopes {
-            let normals = poly.normals_f64();
-            let heights = poly.heights_f64();
+            let (normals, heights) = normals_and_heights(poly);
 
             let d_cap = fd_capacity_derivatives(&normals, &heights);
 
@@ -1789,8 +1788,7 @@ mod tests_capacity_derivative {
         ];
 
         for (name, kp) in &polytopes {
-            let normals = kp.polytope.normals_f64();
-            let heights = kp.polytope.heights_f64();
+            let (normals, heights) = normals_and_heights(&kp.polytope);
             let cap = ehz_capacity(&kp.polytope)
                 .expect("capacity")
                 .result
@@ -1832,8 +1830,7 @@ mod tests_capacity_derivative {
         ];
 
         for (name, poly) in &polytopes {
-            let normals = poly.normals_f64();
-            let heights = poly.heights_f64();
+            let (normals, heights) = normals_and_heights(poly);
 
             let d_cap = fd_capacity_derivatives(&normals, &heights);
 
@@ -1864,8 +1861,7 @@ mod tests_capacity_derivative {
         ];
 
         for (name, kp) in &polytopes {
-            let normals = kp.polytope.normals_f64();
-            let heights = kp.polytope.heights_f64();
+            let (normals, heights) = normals_and_heights(&kp.polytope);
 
             let cap = ehz_capacity(&kp.polytope)
                 .expect("capacity")

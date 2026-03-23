@@ -334,14 +334,13 @@ mod tests {
     fn ridge_vertices_on_both_facets() {
         let kp = known_polytopes::hypercube();
         let skel = Skeleton::compute(&kp.polytope);
-        let normals = kp.polytope.normals_f64();
-        let heights = kp.polytope.heights_f64();
+        let duals = kp.polytope.dual_vertices_f64();
         let vertices = kp.polytope.vertices_f64();
 
         for ridge in &skel.ridges {
             for &vi in &ridge.vertices {
                 for &fi in &ridge.facets {
-                    let residual = (normals[fi].dot(&vertices[vi]) - heights[fi]).abs();
+                    let residual = (duals[fi].dot(&vertices[vi]) - 1.0).abs();
                     assert!(
                         residual < 1e-7,
                         "vertex {vi} not on facet {fi}: residual {residual}"
@@ -356,12 +355,11 @@ mod tests {
     fn facet_centroid_on_facet() {
         let kp = known_polytopes::hypercube();
         let skel = Skeleton::compute(&kp.polytope);
-        let normals = kp.polytope.normals_f64();
-        let heights = kp.polytope.heights_f64();
+        let duals = kp.polytope.dual_vertices_f64();
 
-        for fi in 0..normals.len() {
+        for fi in 0..duals.len() {
             let centroid = skel.facet_centroid(&kp.polytope, fi);
-            let residual = (normals[fi].dot(&centroid) - heights[fi]).abs();
+            let residual = (duals[fi].dot(&centroid) - 1.0).abs();
             assert!(
                 residual < 1e-7,
                 "centroid of facet {fi} not on facet: residual {residual}"
@@ -380,13 +378,12 @@ mod tests {
 
         for (name, kp) in &polytopes {
             let skel = Skeleton::compute(&kp.polytope);
-            let normals = kp.polytope.normals_f64();
-            let heights = kp.polytope.heights_f64();
+            let duals = kp.polytope.dual_vertices_f64();
 
-            for fi in 0..normals.len() {
+            for fi in 0..duals.len() {
                 let centroid = skel.facet_centroid(&kp.polytope, fi);
-                for (fk, (nk, hk)) in normals.iter().zip(heights.iter()).enumerate() {
-                    let violation = nk.dot(&centroid) - hk;
+                for (fk, ak) in duals.iter().enumerate() {
+                    let violation = ak.dot(&centroid) - 1.0;
                     assert!(
                         violation < 1e-6,
                         "{name} facet {fi} centroid violates facet {fk} by {violation:.2e}"

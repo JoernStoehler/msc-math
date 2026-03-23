@@ -2,7 +2,7 @@
 //!
 //! Provides 3D volumes of individual facets (3-polytopes embedded in R^4)
 //! by decomposing each facet into tetrahedra via ridge triangulation.
-//! Used by derivative computation: ∂vol/∂h_k = facet_volume_3d(k).
+//! Used by derivative computation: ∂vol/∂a_k uses facet_volume_3d(k).
 //!
 //! **Algorithm:** For each facet F_i, collect vertices on F_i, then for each
 //! ridge F_i ∩ F_j, triangulate the ridge polygon and form tetrahedra with
@@ -14,7 +14,7 @@ use crate::geom::cross_product_4d::cross_product_4d;
 use crate::geom::polytope::Polytope4D;
 use nalgebra::Vector4;
 
-/// Tolerance for vertex-on-facet incidence test: |n·v − h| < EPS.
+/// Tolerance for vertex-on-facet incidence test: |a·v − 1| < EPS.
 const EPS_FACET_INCIDENCE: f64 = 1e-8;
 
 /// Tolerance for detecting degenerate (collinear) polygon vertices
@@ -70,14 +70,12 @@ pub fn sort_polygon_vertices(vertices: &[Vector4<f64>]) -> Vec<Vector4<f64>> {
 /// and triangulating each ridge (2-face = intersection of two facets).
 /// Returns 0.0 if the facet has fewer than 4 vertices.
 ///
-/// Used for volume derivatives: ∂vol(K)/∂h_k = facet_volume_3d(K, k).
+/// Used for volume derivatives: ∂vol(K)/∂a_k uses facet_volume_3d(K, k).
 pub fn facet_volume_3d(polytope: &Polytope4D, facet_idx: usize) -> f64 {
-    let normals = polytope.normals_f64();
-    let heights = polytope.heights_f64();
+    let duals = polytope.dual_vertices_f64();
     let vertices = polytope.vertices_f64();
-    let f = polytope.facet_count();
 
-    facet_volume_3d_raw(&normals, &heights, vertices, facet_idx, f)
+    facet_volume_3d_raw(duals, vertices, facet_idx)
 }
 
 /// Compute the 3D volume and area-weighted centroid of facet `facet_idx`.
@@ -89,27 +87,24 @@ pub fn facet_volume_and_centroid_3d(
     polytope: &Polytope4D,
     facet_idx: usize,
 ) -> (f64, Vector4<f64>) {
-    let normals = polytope.normals_f64();
-    let heights = polytope.heights_f64();
+    let duals = polytope.dual_vertices_f64();
     let vertices = polytope.vertices_f64();
-    let f = polytope.facet_count();
 
-    facet_volume_and_centroid_3d_raw(&normals, &heights, vertices, facet_idx, f)
+    facet_volume_and_centroid_3d_raw(duals, vertices, facet_idx)
 }
 
 /// Raw version of `facet_volume_3d` operating on slices.
 ///
-/// Provided for experiments that already have normals/heights/vertices extracted.
+/// Provided for experiments that already have dual vertices/vertices extracted.
 pub fn facet_volume_3d_raw(
-    normals: &[Vector4<f64>],
-    heights: &[f64],
+    dual_vertices: &[Vector4<f64>],
     vertices: &[Vector4<f64>],
     fi: usize,
-    f: usize,
 ) -> f64 {
+    let f = dual_vertices.len();
     let facet_verts: Vec<Vector4<f64>> = vertices
         .iter()
-        .filter(|v| (normals[fi].dot(v) - heights[fi]).abs() < EPS_FACET_INCIDENCE)
+        .filter(|v| (dual_vertices[fi].dot(v) - 1.0).abs() < EPS_FACET_INCIDENCE)
         .cloned()
         .collect();
 
@@ -124,7 +119,7 @@ pub fn facet_volume_3d_raw(
         .flat_map(|fj| {
             let ridge_verts: Vec<Vector4<f64>> = facet_verts
                 .iter()
-                .filter(|v| (normals[fj].dot(v) - heights[fj]).abs() < EPS_FACET_INCIDENCE)
+                .filter(|v| (dual_vertices[fj].dot(v) - 1.0).abs() < EPS_FACET_INCIDENCE)
                 .cloned()
                 .collect();
 
@@ -147,17 +142,15 @@ pub fn facet_volume_3d_raw(
 
 /// Raw version of `facet_volume_and_centroid_3d` operating on slices.
 ///
-/// Provided for experiments that already have normals/heights/vertices extracted.
+/// Provided for experiments that already have dual vertices/vertices extracted.
 pub fn facet_volume_and_centroid_3d_raw(
-    normals: &[Vector4<f64>],
-    heights: &[f64],
+    dual_vertices: &[Vector4<f64>],
     vertices: &[Vector4<f64>],
     fi: usize,
-    f: usize,
 ) -> (f64, Vector4<f64>) {
     let facet_verts: Vec<Vector4<f64>> = vertices
         .iter()
-        .filter(|v| (normals[fi].dot(v) - heights[fi]).abs() < EPS_FACET_INCIDENCE)
+        .filter(|v| (dual_vertices[fi].dot(v) - 1.0).abs() < EPS_FACET_INCIDENCE)
         .cloned()
         .collect();
 
@@ -170,13 +163,13 @@ pub fn facet_volume_and_centroid_3d_raw(
     let mut total_vol = 0.0;
     let mut weighted_centroid = Vector4::zeros();
 
-    for fj in 0..f {
+    for (fj, a_j) in dual_vertices.iter().enumerate() {
         if fj == fi {
             continue;
         }
         let ridge_verts: Vec<Vector4<f64>> = facet_verts
             .iter()
-            .filter(|v| (normals[fj].dot(v) - heights[fj]).abs() < EPS_FACET_INCIDENCE)
+            .filter(|v| (a_j.dot(v) - 1.0).abs() < EPS_FACET_INCIDENCE)
             .cloned()
             .collect();
 
@@ -234,16 +227,16 @@ mod tests {
         }
     }
 
-    /// Sum of facet volumes × heights / 4 = polytope volume (divergence theorem).
-    /// For [-1,1]^4: sum = 8 * (8.0 * 1.0) / 4 = 16.0.
+    /// Sum of facet volumes × h_i / 4 = polytope volume (divergence theorem).
+    /// h_i = 1/|a_i|. For [-1,1]^4: h_i = 1, sum = 8 * (8.0 * 1.0) / 4 = 16.0.
     #[test]
     fn facet_volume_sum_equals_polytope_volume() {
         let polytope = &known_polytopes::hypercube().polytope;
-        let heights = polytope.heights_f64();
+        let duals = polytope.dual_vertices_f64();
         let f = polytope.facet_count();
 
         let vol_from_facets: f64 = (0..f)
-            .map(|fi| facet_volume_3d(polytope, fi) * heights[fi])
+            .map(|fi| facet_volume_3d(polytope, fi) * (1.0 / duals[fi].norm()))
             .sum::<f64>()
             / 4.0;
 
@@ -260,18 +253,16 @@ mod tests {
     #[test]
     fn facet_centroid_on_hyperplane() {
         let polytope = &known_polytopes::hypercube().polytope;
-        let normals = polytope.normals_f64();
-        let heights = polytope.heights_f64();
+        let duals = polytope.dual_vertices_f64();
         let f = polytope.facet_count();
 
         for fi in 0..f {
             let (vol, centroid) = facet_volume_and_centroid_3d(polytope, fi);
             assert!(vol > 0.0, "facet {fi} should have positive volume");
-            let dot = normals[fi].dot(&centroid);
+            let dot = duals[fi].dot(&centroid);
             assert!(
-                (dot - heights[fi]).abs() < 1e-6,
-                "facet {fi}: centroid not on hyperplane, n·c = {dot}, h = {}",
-                heights[fi]
+                (dot - 1.0).abs() < 1e-6,
+                "facet {fi}: centroid not on hyperplane, a·c = {dot}, expected 1.0",
             );
         }
     }
@@ -280,11 +271,11 @@ mod tests {
     #[test]
     fn crosspolytope_facet_volume_sum() {
         let polytope = &known_polytopes::crosspolytope().polytope;
-        let heights = polytope.heights_f64();
+        let duals = polytope.dual_vertices_f64();
         let f = polytope.facet_count();
 
         let vol_from_facets: f64 = (0..f)
-            .map(|fi| facet_volume_3d(polytope, fi) * heights[fi])
+            .map(|fi| facet_volume_3d(polytope, fi) * (1.0 / duals[fi].norm()))
             .sum::<f64>()
             / 4.0;
 
@@ -292,8 +283,8 @@ mod tests {
             .expect("qhull volume");
 
         // Looser than hypercube (1e-6) because the crosspolytope has 16 facets
-        // with non-axis-aligned normals (n = ±e_i ± e_j ± ...), producing
-        // more triangulation error in both our ridge-based decomposition and qhull.
+        // with non-axis-aligned normals, producing more triangulation error in
+        // both our ridge-based decomposition and qhull.
         assert!(
             (vol_from_facets - vol_qhull).abs() / vol_qhull < 1e-4,
             "facet sum = {vol_from_facets}, qhull = {vol_qhull}"

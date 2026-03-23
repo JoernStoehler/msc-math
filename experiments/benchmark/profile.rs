@@ -25,16 +25,15 @@ fn main() {
 
     eprintln!("Profiling: F={f}, {iterations} iterations");
 
-    // Generate normals/heights once (not profiled).
+    // Generate dual vertices once (not profiled).
     let mut rng = ChaCha8Rng::seed_from_u64(SEED);
     let polytopes = generate_random_polytopes(1, f, H_MIN, H_MAX, &mut rng);
-    let normals: Vec<Vector4<f64>> = polytopes[0].normals_f64().to_vec();
-    let heights: Vec<f64> = polytopes[0].heights_f64().to_vec();
+    let dual_vertices: Vec<Vector4<f64>> = polytopes[0].dual_vertices_f64().to_vec();
 
     for i in 0..iterations {
         // Phase 1: Construction (rational vertex enum, incidence, adjacency, omega signs)
         let p = symplectic::geom::polytope::Polytope4D::from_f64(
-            normals.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect(),
+            dual_vertices.clone(),
         )
         .expect("construction failed");
 

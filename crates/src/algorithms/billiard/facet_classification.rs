@@ -13,12 +13,13 @@
 use crate::geom::polytope::Polytope4D;
 use super::BilliardError;
 
-/// Tolerance for classifying facet normals as q-type or p-type.
+/// Tolerance for classifying facet dual vertices as q-type or p-type.
 ///
-/// A facet is q-type if ||(n[2], n[3])||^2 < EPS, p-type if ||(n[0], n[1])||^2 < EPS.
-/// Normals are unit vectors, so the "other" component pair squared is O(eps_machine^2)
-/// for exact Lagrangian products. The 1e-10 threshold is well above machine epsilon
-/// squared (~1e-32) but far below any genuine mixed normal.
+/// A facet is q-type if ||(a[2], a[3])||^2 / ||a||^2 < EPS (normal direction lies in L_q),
+/// p-type if ||(a[0], a[1])||^2 / ||a||^2 < EPS (normal direction lies in L_p).
+/// For exact Lagrangian products, the "other" component pair is exactly zero.
+/// The 1e-10 threshold is well above machine epsilon squared but far below any
+/// genuine mixed normal.
 const EPS_LAGRANGIAN_NORMAL: f64 = 1e-10;
 
 /// Classification of facets into q-type and p-type.
@@ -40,21 +41,23 @@ pub struct FacetClassification {
 ///
 /// [lem:lagrangian-facets]: classification criterion for Lagrangian product facets.
 pub fn classify_facets(polytope: &Polytope4D) -> Result<FacetClassification, BilliardError> {
-    let normals = polytope.normals_f64();
+    let duals = polytope.dual_vertices_f64();
     let mut q_indices = Vec::new();
     let mut p_indices = Vec::new();
 
-    for (i, n) in normals.iter().enumerate() {
-        let q_norm_sq = n[0] * n[0] + n[1] * n[1];
-        let p_norm_sq = n[2] * n[2] + n[3] * n[3];
+    for (i, a) in duals.iter().enumerate() {
+        let norm_sq = a[0] * a[0] + a[1] * a[1] + a[2] * a[2] + a[3] * a[3];
+        let q_norm_sq = a[0] * a[0] + a[1] * a[1];
+        let p_norm_sq = a[2] * a[2] + a[3] * a[3];
 
-        if p_norm_sq < EPS_LAGRANGIAN_NORMAL {
-            // Normal is (n_q, 0): q-type.
+        if p_norm_sq / norm_sq < EPS_LAGRANGIAN_NORMAL {
+            // Normal direction is (n_q, 0): q-type.
             q_indices.push(i);
-        } else if q_norm_sq < EPS_LAGRANGIAN_NORMAL {
-            // Normal is (0, n_p): p-type.
+        } else if q_norm_sq / norm_sq < EPS_LAGRANGIAN_NORMAL {
+            // Normal direction is (0, n_p): p-type.
             p_indices.push(i);
         } else {
+            let n = a / a.norm();
             return Err(BilliardError::NotLagrangianProduct {
                 facet: i,
                 normal: [n[0], n[1], n[2], n[3]],

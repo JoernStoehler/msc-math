@@ -144,8 +144,9 @@ fn main() {
 
     let base = known_polytopes::hko_pentagon();
     let base_polytope = base.polytope;
-    let base_normals = base_polytope.normals_f64().to_vec();
-    let base_heights = base_polytope.heights_f64().to_vec();
+    let base_duals = base_polytope.dual_vertices_f64();
+    let base_normals: Vec<Vector4<f64>> = base_duals.iter().map(|a| a / a.norm()).collect();
+    let base_heights: Vec<f64> = base_duals.iter().map(|a| 1.0 / a.norm()).collect();
 
     let start_vol = Instant::now();
     let base_vol = volume(&base_polytope).expect("volume computation failed");
