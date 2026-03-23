@@ -568,7 +568,9 @@ fn try_step_h(
     let f = normals.len();
     let new_heights: Vec<f64> = (0..f).map(|k| heights[k] + t * direction[k]).collect();
 
-    let new_polytope = Polytope4D::from_normals_and_heights(normals.to_vec(), new_heights).ok()?;
+    let new_polytope = Polytope4D::from_f64(
+        normals.iter().zip(new_heights.iter()).map(|(n, &h)| n / h).collect(),
+    ).ok()?;
     let (sys, vol, cap) = safe_sys(&new_polytope)?;
     Some((new_polytope, sys, vol, cap))
 }
@@ -589,7 +591,9 @@ fn try_step_hn(
         })
         .collect();
 
-    let new_polytope = Polytope4D::from_normals_and_heights(new_normals, new_heights).ok()?;
+    let new_polytope = Polytope4D::from_f64(
+        new_normals.iter().zip(new_heights.iter()).map(|(n, &h)| n / h).collect(),
+    ).ok()?;
     let (sys, vol, cap) = safe_sys(&new_polytope)?;
     Some((new_polytope, sys, vol, cap))
 }
@@ -861,9 +865,8 @@ fn run_phase_a(base_dir: &std::path::Path) {
     let ascent_file = File::create(&ascent_path).expect("create ascent JSONL");
     let mut ascent_writer = BufWriter::new(ascent_file);
 
-    let mut current = Polytope4D::from_normals_and_heights(
-        polytope.normals_f64().to_vec(),
-        polytope.heights_f64().to_vec(),
+    let mut current = Polytope4D::from_f64(
+        polytope.normals_f64().iter().zip(polytope.heights_f64().iter()).map(|(n, &h)| n / h).collect(),
     )
     .expect("reconstruct HKO2024");
     let mut current_sys = sys;
@@ -1165,7 +1168,9 @@ fn run_phase_b(base_dir: &std::path::Path) {
                 new_normals.push(*dir);
                 new_heights.push(h_k_n - eps);
 
-                match Polytope4D::from_normals_and_heights(new_normals, new_heights) {
+                match Polytope4D::from_f64(
+                    new_normals.iter().zip(new_heights.iter()).map(|(n, &h)| n / h).collect(),
+                ) {
                     Ok(split_poly) => {
                         let (split_sys, split_vol, split_cap) = match safe_sys(&split_poly) {
                             Some(v) => v,
@@ -1280,7 +1285,9 @@ fn run_phase_b(base_dir: &std::path::Path) {
             new_normals.push(dir);
             new_heights.push(h_k_n - eps);
 
-            if let Ok(split_poly) = Polytope4D::from_normals_and_heights(new_normals, new_heights) {
+            if let Ok(split_poly) = Polytope4D::from_f64(
+                new_normals.iter().zip(new_heights.iter()).map(|(n, &h)| n / h).collect(),
+            ) {
                 let (split_sys, split_vol, split_cap) = match safe_sys(&split_poly) {
                     Some(v) => v,
                     None => continue,
@@ -1374,7 +1381,9 @@ fn run_phase_b(base_dir: &std::path::Path) {
             new_normals.push(dir);
             new_heights.push(h_k_n - eps);
 
-            if let Ok(split_poly) = Polytope4D::from_normals_and_heights(new_normals, new_heights) {
+            if let Ok(split_poly) = Polytope4D::from_f64(
+                new_normals.iter().zip(new_heights.iter()).map(|(n, &h)| n / h).collect(),
+            ) {
                     let (split_sys, split_vol, split_cap) = match safe_sys(&split_poly) {
                         Some(v) => v,
                         None => continue,

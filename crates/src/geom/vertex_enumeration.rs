@@ -92,6 +92,10 @@ pub(super) fn dot4(a: &[BigRational; 4], b: &[BigRational; 4]) -> BigRational {
 ///
 /// d_k = (-1)^k * det(3x3 minor of [a, b, c] with column k removed).
 /// Same formula as `cross_product_4d::cross_product_4d` but exact over Q.
+///
+/// Superseded in production by `cross_product_4d_int` (integer-only path);
+/// retained for tests that verify rational-level correctness.
+#[cfg(test)]
 pub(super) fn cross_product_4d_rational(
     a: &[BigRational; 4],
     b: &[BigRational; 4],
@@ -179,6 +183,10 @@ pub(super) fn rank_over_q(rows: &[[BigRational; 4]]) -> usize {
 /// Complexity: O(F^4) — F^3 triples times F inner products each.
 ///
 /// Mathematical correspondence: [lem:positive-span]
+///
+/// Superseded in production by the per-triple f64+integer path in
+/// `construct_rational_pipeline`; retained for tests.
+#[cfg(test)]
 pub(super) fn check_bounded_rational(dual_vertices: &[[BigRational; 4]]) -> bool {
     let f = dual_vertices.len();
 
@@ -396,46 +404,6 @@ fn bounded_triple_f64_confirms(
     false
 }
 
-/// Check that integer-scaled dual vertices positively span R^4 (polytope is bounded).
-///
-/// Same algorithm as `check_bounded_rational` but over Z — no GCD, no division.
-/// Signs are exact. Mathematical correspondence: [lem:positive-span]
-#[allow(dead_code)]
-fn check_bounded_int(int_dual_vertices: &[[BigInt; 4]]) -> bool {
-    let f = int_dual_vertices.len();
-
-    if rank_int(int_dual_vertices) < 4 {
-        return false;
-    }
-
-    for i in 0..f {
-        for j in (i + 1)..f {
-            for k in (j + 1)..f {
-                let d = cross_product_4d_int(
-                    &int_dual_vertices[i],
-                    &int_dual_vertices[j],
-                    &int_dual_vertices[k],
-                );
-                if d.iter().all(|c| c.is_zero()) {
-                    continue;
-                }
-
-                let has_pos = (0..f)
-                    .filter(|&l| l != i && l != j && l != k)
-                    .any(|l| dot4_int(&int_dual_vertices[l], &d).is_positive());
-                let has_neg = (0..f)
-                    .filter(|&l| l != i && l != j && l != k)
-                    .any(|l| dot4_int(&int_dual_vertices[l], &d).is_negative());
-
-                if !has_pos || !has_neg {
-                    return false;
-                }
-            }
-        }
-    }
-    true
-}
-
 /// Determinant of a 4x4 integer matrix via cofactor expansion.
 fn det4_int(rows: &[[BigInt; 4]; 4]) -> BigInt {
     let (a, b, c, d) = (&rows[0], &rows[1], &rows[2], &rows[3]);
@@ -458,9 +426,10 @@ fn det4_int(rows: &[[BigInt; 4]; 4]) -> BigInt {
 
 /// Vertex enumeration using integer Cramer's rule.
 ///
-/// For each C(F,4) subset, uses the f64 prefilter to reject ~90%, then
-/// solves via integer determinants (no BigRational, no GCD). Only confirmed
-/// vertices are converted to BigRational coordinates.
+/// For each C(F,4) subset, uses the f64 prefilter to reject ~65-93%
+/// (depending on facet count), then solves via integer determinants
+/// (no BigRational, no GCD). Only confirmed vertices are converted to
+/// BigRational coordinates.
 ///
 /// Mathematical correspondence: [lem:vertex-enumeration]
 #[allow(clippy::type_complexity)]
@@ -596,10 +565,14 @@ fn enumerate_vertices_int(
 /// debug mode than release; Cargo profile overrides (`opt-level = 3` for
 /// `num-bigint` and `num-rational`) bring debug-mode cost close to release.
 ///
-/// The boundedness check here (`check_bounded_rational`) is the authoritative
-/// exact check, distinct from the f64-based `validation::check_bounded` which
-/// may be indeterminate near the boundary (and from the vertex-enumeration
-/// f64 pre-filter `f64_prefilter_rejects` which rejects non-vertex subsets).
+/// The pipeline uses f64-first strategies with exact integer fallbacks:
+/// - **Bounded check**: per-triple f64 pre-filter (`bounded_triple_f64_confirms`),
+///   falling back to integer cross-product signs for inconclusive triples.
+/// - **Vertex enumeration**: f64 prefilter (`f64_prefilter_rejects`) to reject
+///   ~65-93% of C(F,4) subsets, then integer Cramer's rule (`det4_int`) for
+///   the remainder — no BigRational GCD normalization needed.
+/// - **Irredundancy**: f64 rank check on incident vertices, falling back to
+///   exact rational `affine_rank_rational` when f64 is inconclusive.
 ///
 /// Mathematical correspondence: [lem:vertex-enumeration]
 #[allow(clippy::type_complexity)]
@@ -608,7 +581,7 @@ pub(super) fn construct_rational_pipeline(
 ) -> Result<(Vec<[BigRational; 4]>, Vec<BTreeSet<usize>>), ConstructionError> {
     let f = dual_vertices.len();
 
-    // Basic validation
+    // ── Step 1: Validation ──
     if f < 5 {
         return Err(ConstructionError::TooFewFacets(f));
     }
@@ -761,7 +734,8 @@ pub(super) fn construct_rational_pipeline(
 /// Solve Y_S · x = 1 exactly via Cramer's rule over Q. Check all gaps
 /// g_i = 1 - y_i · v exactly. If all non-negative, v is a vertex.
 ///
-/// Stage 1 rejects ~80% of subsets, avoiding expensive rational arithmetic.
+/// Stage 1 rejects ~65-93% of subsets (depending on F), avoiding expensive
+/// rational arithmetic.
 /// It can only reject, never confirm — all actual vertices reach stage 2.
 /// Error bound: [prop:prefilter-bound] in geom/math.tex
 /// (has open gap — see TODO there).
@@ -950,284 +924,6 @@ fn f64_prefilter_rejects(dv_f64: &[[f64; 4]], subset: &[usize; 4], f: usize) -> 
     }
 
     false // No constraint was definitely violated → proceed to rational
-}
-
-// ── TEMPORARY: Construction profiling harness ──────────────────────────
-// Added for phase-level timing of Polytope4D::new().
-// Remove after profiling is complete.
-
-/// Timing breakdown from [`profile_construction_phases`].
-#[derive(Clone, Debug)]
-pub struct ConstructionProfile {
-    /// Time in f64 validation (nonzero, duplicate, bounded checks) — nanoseconds.
-    pub f64_validation_ns: u128,
-    /// Time in f64→rational conversion — nanoseconds.
-    pub f64_to_rational_ns: u128,
-    /// Time in `check_bounded_rational` — nanoseconds.
-    pub check_bounded_ns: u128,
-    /// Time in `enumerate_vertices_exact` — nanoseconds.
-    pub enumerate_vertices_ns: u128,
-    /// Time in irredundancy check — nanoseconds.
-    pub irredundancy_ns: u128,
-    /// Time in `assemble` (incidence, adjacency, omega signs) — nanoseconds.
-    pub assemble_ns: u128,
-    /// Total C(F,4) subsets tested.
-    pub total_subsets: usize,
-    /// Subsets rejected by f64 prefilter.
-    pub prefilter_rejected: usize,
-    /// Subsets with det=0 (singular).
-    pub det_zero: usize,
-    /// Subsets yielding a vertex (before dedup).
-    pub subsets_yielding_vertex: usize,
-    /// Total unique vertices found.
-    pub total_vertices: usize,
-    /// Number of facets.
-    pub facet_count: usize,
-}
-
-/// Run the `Polytope4D::new` pipeline with phase-level timing instrumentation.
-///
-/// TEMPORARY profiling harness. Replicates the construction pipeline from
-/// `Polytope4D::new` + `construct_rational_pipeline` + `enumerate_vertices_exact`
-/// with `std::time::Instant` measurements around each phase and subset counters.
-///
-/// Returns `Ok(profile)` on success, `Err(error)` if construction fails.
-pub fn profile_construction_phases(
-    halfspaces: Vec<nalgebra::Vector4<f64>>,
-) -> Result<ConstructionProfile, super::polytope::ConstructionError> {
-    use super::polytope::ConstructionError;
-    use super::rational_arithmetic::{f64_to_rational, rational_to_f64};
-    use nalgebra::Vector4;
-    use num_bigint::BigInt;
-    use std::collections::BTreeSet;
-    use std::time::Instant;
-
-    let f = halfspaces.len();
-
-    // ── Phase 1: f64 validation ─────────────────────────────────────────
-    let t0 = Instant::now();
-
-    if f < 5 {
-        return Err(ConstructionError::TooFewFacets(f));
-    }
-    for (i, a) in halfspaces.iter().enumerate() {
-        if a.norm() < 1e-15 {
-            return Err(ConstructionError::ZeroDualVertex(i));
-        }
-    }
-    for i in 0..f {
-        for j in (i + 1)..f {
-            let max_norm = halfspaces[i].norm().max(halfspaces[j].norm());
-            if (halfspaces[i] - halfspaces[j]).norm()
-                < super::polytope::EPS_DUPLICATE_RELATIVE_PROFILE * max_norm
-            {
-                return Err(ConstructionError::DuplicateHalfspaces { i, j });
-            }
-        }
-    }
-    let unit_dirs: Vec<Vector4<f64>> = halfspaces.iter().map(|a| a.normalize()).collect();
-    if !crate::geom::validation::check_bounded(&unit_dirs) {
-        return Err(ConstructionError::Unbounded);
-    }
-
-    let f64_validation_ns = t0.elapsed().as_nanos();
-
-    // ── Phase 2: f64→rational conversion ────────────────────────────────
-    let t1 = Instant::now();
-
-    let dual_vertices: Vec<[BigRational; 4]> = halfspaces
-        .iter()
-        .map(|a| std::array::from_fn(|c| f64_to_rational(a[c])))
-        .collect();
-
-    let f64_to_rational_ns = t1.elapsed().as_nanos();
-
-    // ── Phase 3: check_bounded_rational ─────────────────────────────────
-    let t2 = Instant::now();
-
-    if !check_bounded_rational(&dual_vertices) {
-        return Err(ConstructionError::Unbounded);
-    }
-
-    let check_bounded_ns = t2.elapsed().as_nanos();
-
-    // ── Phase 4: enumerate_vertices_exact (with counters) ───────────────
-    let t3 = Instant::now();
-
-    let one = BigRational::from(BigInt::from(1));
-    let rhs: [BigRational; 4] = std::array::from_fn(|_| one.clone());
-
-    let dv_f64: Vec<[f64; 4]> = dual_vertices
-        .iter()
-        .map(|y| std::array::from_fn(|c| rational_to_f64(&y[c])))
-        .collect();
-
-    let subsets = combinations4(f);
-    let total_subsets = subsets.len();
-    let mut prefilter_rejected: usize = 0;
-    let mut det_zero: usize = 0;
-    let mut subsets_yielding_vertex: usize = 0;
-
-    let mut vertex_descriptors = Vec::new();
-    let mut vertices: Vec<[BigRational; 4]> = Vec::new();
-
-    for subset in &subsets {
-        if f64_prefilter_rejects(&dv_f64, subset, f) {
-            prefilter_rejected += 1;
-            continue;
-        }
-
-        let rows: [[BigRational; 4]; 4] = [
-            dual_vertices[subset[0]].clone(),
-            dual_vertices[subset[1]].clone(),
-            dual_vertices[subset[2]].clone(),
-            dual_vertices[subset[3]].clone(),
-        ];
-
-        let d = det4(&rows);
-        if d.is_zero() {
-            det_zero += 1;
-            continue;
-        }
-
-        let v = solve4(&rows, &rhs).unwrap();
-
-        let mut all_nonneg = true;
-        let mut incident_facets = BTreeSet::from(*subset);
-        for (i, dv) in dual_vertices.iter().enumerate() {
-            if subset.contains(&i) {
-                continue;
-            }
-            let gap = &one - dot4(dv, &v);
-            if gap.is_negative() {
-                all_nonneg = false;
-                break;
-            }
-            if gap.is_zero() {
-                incident_facets.insert(i);
-            }
-        }
-
-        if !all_nonneg {
-            continue;
-        }
-
-        subsets_yielding_vertex += 1;
-
-        let already_found = vertices
-            .iter()
-            .any(|existing: &[BigRational; 4]| (0..4).all(|i| existing[i] == v[i]));
-        if already_found {
-            continue;
-        }
-
-        vertex_descriptors.push(incident_facets);
-        vertices.push(v);
-    }
-
-    if vertex_descriptors.is_empty() {
-        return Err(ConstructionError::NoVertices);
-    }
-
-    let total_vertices = vertices.len();
-    let enumerate_vertices_ns = t3.elapsed().as_nanos();
-
-    // ── Phase 5: irredundancy check ─────────────────────────────────────
-    let t4 = Instant::now();
-
-    for i in 0..f {
-        let incident: Vec<[BigRational; 4]> = vertex_descriptors
-            .iter()
-            .zip(vertices.iter())
-            .filter(|(vd, _)| vd.contains(&i))
-            .map(|(_, v)| v.clone())
-            .collect();
-
-        if incident.is_empty() || affine_rank_rational(&incident) < 3 {
-            return Err(ConstructionError::RedundantFacet(i));
-        }
-    }
-
-    let irredundancy_ns = t4.elapsed().as_nanos();
-
-    // ── Phase 6: assemble (incidence, adjacency, omega signs) ───────────
-    let t5 = Instant::now();
-
-    let dual_vertices_f64: Vec<Vector4<f64>> = dual_vertices
-        .iter()
-        .enumerate()
-        .map(|(i, y)| {
-            let v = Vector4::new(
-                rational_to_f64(&y[0]),
-                rational_to_f64(&y[1]),
-                rational_to_f64(&y[2]),
-                rational_to_f64(&y[3]),
-            );
-            if v.norm() < 1e-15 {
-                panic!("dual vertex[{i}] has near-zero f64 norm");
-            }
-            v
-        })
-        .collect();
-
-    let vertices_f64: Vec<Vector4<f64>> = vertices
-        .iter()
-        .map(|vr| {
-            Vector4::new(
-                rational_to_f64(&vr[0]),
-                rational_to_f64(&vr[1]),
-                rational_to_f64(&vr[2]),
-                rational_to_f64(&vr[3]),
-            )
-        })
-        .collect();
-
-    // Build incidence, adjacency, omega_signs (same as Polytope4D::assemble)
-    let v_count = vertices.len();
-    let f_count = dual_vertices.len();
-
-    let _incidence = nalgebra::DMatrix::from_fn(v_count, f_count, |v, fi| {
-        vertex_descriptors[v].contains(&fi)
-    });
-
-    let _vertex_adjacency = nalgebra::DMatrix::from_fn(f_count, f_count, |i, k| {
-        i != k && (0..v_count).any(|v| _incidence[(v, i)] && _incidence[(v, k)])
-    });
-
-    let _omega_signs = nalgebra::DMatrix::from_fn(f_count, f_count, |i, k| {
-        if i == k {
-            return 0i8;
-        }
-        let omega = super::rational_arithmetic::omega0_rational(
-            &dual_vertices[i],
-            &dual_vertices[k],
-        );
-        match super::rational_arithmetic::Sign::of(&omega) {
-            super::rational_arithmetic::Sign::Plus => 1,
-            super::rational_arithmetic::Sign::Minus => -1,
-            super::rational_arithmetic::Sign::Zero => 0,
-        }
-    });
-
-    // Suppress unused variable warnings
-    let _ = (&_vertex_adjacency, &_omega_signs, &dual_vertices_f64, &vertices_f64);
-
-    let assemble_ns = t5.elapsed().as_nanos();
-
-    Ok(ConstructionProfile {
-        f64_validation_ns,
-        f64_to_rational_ns,
-        check_bounded_ns,
-        enumerate_vertices_ns,
-        irredundancy_ns,
-        assemble_ns,
-        total_subsets,
-        prefilter_rejected,
-        det_zero,
-        subsets_yielding_vertex,
-        total_vertices,
-        facet_count: f,
-    })
 }
 
 #[cfg(test)]

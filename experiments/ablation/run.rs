@@ -797,7 +797,9 @@ fn make_bipyramid(
         heights.push(h / norm4);
     }
 
-    Polytope4D::from_normals_and_heights(normals, heights).expect("bipyramid construction")
+    Polytope4D::from_f64(
+        normals.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect(),
+    ).expect("bipyramid construction")
 }
 
 /// Construct a cut 4-simplex: standard simplex intersected with x₁ + c·x₂ ≤ 2.
@@ -824,7 +826,9 @@ fn make_cut_simplex(cut_slope: f64) -> Polytope4D {
         1.0,
         2.0 / norm,
     ];
-    Polytope4D::from_normals_and_heights(normals, heights).expect("cut simplex construction")
+    Polytope4D::from_f64(
+        normals.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect(),
+    ).expect("cut simplex construction")
 }
 
 // ============================================================================

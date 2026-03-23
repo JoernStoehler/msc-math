@@ -15,10 +15,6 @@ use std::collections::BTreeSet;
 /// Tolerance for duplicate-halfspace detection: ||a_i - a_j|| / max(||a_i||, ||a_j||) < threshold.
 const EPS_DUPLICATE_RELATIVE: f64 = 1e-8;
 
-/// Same constant, exposed for the temporary profiling harness in vertex_enumeration.rs.
-/// TEMPORARY: remove when profiling is complete.
-pub(super) const EPS_DUPLICATE_RELATIVE_PROFILE: f64 = EPS_DUPLICATE_RELATIVE;
-
 /// Convex polytope K in R^4 via dual (polar) representation.
 ///
 /// K = { x in R^4 | a_i^T x <= 1 for all i = 1, ..., F }
