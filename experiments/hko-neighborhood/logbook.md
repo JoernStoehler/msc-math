@@ -132,6 +132,89 @@ Using increasing F as a discretization of smooth boundary perturbation. Not test
 
 7. **Neighborhood capacity landscape.** Beyond gradients at HKO2024: sample polytopes in a neighborhood (various distances, various directions), compute their sys, and map the landscape. This would show whether HKO2024 is an isolated peak, a ridge, or part of a plateau. Partially covered by pentagon-perturb (100 random perturbations in LP(5,5) space, all lower) but not done systematically in the full F=10 or F=11 space.
 
+## Theoretical framework for local maximality (2026-03-23)
+
+### The Danskin argument
+
+sys is non-smooth at HKO2024 because c_EHZ = min over orbit actions, and 44 orbits achieve the minimum simultaneously. By Danskin's theorem composed with the smooth chain rule for sys = c²/(2·vol):
+
+    D_d⁺ sys = min_{i ∈ active orbits} (∇sys_i · d)
+
+where ∇sys_i is the per-orbit sys gradient and D_d⁺ is the one-sided directional derivative.
+
+**Key consequence:** sys is a local maximum iff **0 ∈ conv({∇sys_1, ..., ∇sys_k})**.
+
+Proof: If 0 = Σ λ_i g_i (λ_i ≥ 0, Σ λ_i = 1), then for any d: min_i(g_i·d) ≤ Σ λ_i(g_i·d) = 0. Conversely, if 0 ∉ conv, separating hyperplane gives a direction d with all g_i·d > 0.
+
+This is **first-order sufficient** — unlike smooth functions, no Hessian needed. The non-smooth kink structure means the subdifferential test fully resolves local maximality.
+
+### h-space local maximality: provable by symmetry
+
+The 10 distinct per-orbit h-gradients form one orbit under the order-10 symplectic symmetry group ⟨Δ₇₂, φ⟩. This group acts transitively on the 10 gradient vectors. Therefore 0 = (1/10)Σ g_i ∈ conv(g_1,...,g_10).
+
+Moreover, 0 is in the **interior** of conv(g_i) (the 10 vectors span R^10 with mixed signs in each coordinate), giving **strict** local maximality: sys strictly decreases in every height-perturbation direction.
+
+This resolves open question 1 — the gradient ascent convergence is real, explained by the subdifferential containing the origin.
+
+### (n,h)-space: open, testable via LP
+
+The 10 per-orbit gradient vectors in R^{40} (10 heights + 30 normal DOF) are available in the sensitivity JSONL. Testing 0 ∈ conv(these vectors) is a **finite LP**: find λ_i ≥ 0, Σ λ_i = 1, Σ λ_i g_i = 0. The symmetry argument gives zero h-components automatically, but the n-components need the LP.
+
+- Feasible → proves first-order local max in F=10.
+- Infeasible → the LP dual gives an explicit improving direction → path to a better counterexample.
+
+### Convex bodies: support function parameterization
+
+Nearby convex bodies are parameterized by their support function h_{K'}(u) = h_K(u) + εf(u) for f: S³ → R. The Danskin argument extends: D_f sys = min_{i active} D_f sys_i. For local max among convex bodies: need 0 ∈ conv(per-orbit sys gradients) in the space of support function perturbations — an infinite-dimensional condition.
+
+Two finite-dimensional approximations:
+1. **Minkowski smoothing** K_ε = K + εB⁴: support function h_K + ε (constant perturbation). Computable by approximating K_ε with a high-F polytope.
+2. **F-refinement**: approximate K with F=20,50,100 polytopes by adding tangent hyperplanes.
+
+Both require c_EHZ computation at F >> 10, which is blocked by HK2017's exponential cost. The billiard algorithm handles Lagrangian products but not general high-F polytopes.
+
+### Normal fan structure of the landscape
+
+Near HKO2024, the sys landscape is **piecewise-smooth**: parameter space decomposes into cones based on which orbit determines c_EHZ. Within each cone, sys is smooth (single orbit active). At cone boundaries, orbits tie → kink. HKO2024 sits at the intersection of all 10 cone boundaries (maximum degeneracy due to symmetry).
+
+This structure is determined by finitely many orbits and is much simpler than generic non-smooth optimization.
+
+## Proposed experiments (2026-03-23)
+
+Ranked by evidence value — ability to sharply update beliefs in either direction (conservation of expected evidence).
+
+### Phase C: LP test in (n,h)-space [HIGHEST PRIORITY, near-zero cost]
+
+Extract the 10 per-orbit gradient vectors from hko-neighborhood-sensitivity.jsonl, including both h-components and n-components (projected to T_{n_k}S³). Solve the LP for 0 ∈ conv. Binary outcome, decisive for F=10 local maximality. If infeasible, the dual gives the improving direction explicitly.
+
+### Phase D: Per-orbit normal gradient alignment analysis
+
+Compute the 10 per-orbit normal gradient vectors ∇_n sys_i and analyze their geometric arrangement. Do they point in compatible directions (bad — improving direction exists) or spread out (good — cancel in convex hull)? The symmetry group maps them to each other, so the average has zero h-components, but the normal components need checking.
+
+### Phase E: Minkowski smoothing sys(K + εB⁴) [tests smooth-body direction]
+
+Approximate K + εB⁴ as a high-F polytope (sample many normals on S³, compute tangent hyperplanes). Compute sys for ε = 0.01, 0.001, 0.0001. This is the only proposed experiment that probes the convex-body direction — no existing experiment covers it.
+
+Cost: high (needs high-F capacity computation). Could start with billiard algorithm if the rounded polytope retains enough Lagrangian structure, or with small F-increments.
+
+### Phase F: F-refinement convergence
+
+Generate polytopes K_F ⊃ K (or K_F ⊂ K?) with F = 12, 15, 20 that approximate HKO2024 at different resolutions. Track sys(K_F) as F increases. Tests whether polytope approximation converges from above or below.
+
+### Bayesian experiment design notes
+
+What observations would **decrease** confidence in local max:
+- LP infeasible in (n,h)-space → improving direction exists
+- sys(K + εB⁴) > sys(K) → not local max among convex bodies
+- Some facet split increases sys → not local max in F=11+
+
+What observations would **increase** confidence:
+- LP feasible → proven local max for F=10
+- sys(K + εB⁴) < sys(K) with rate O(ε²) → smoothing strictly unfavorable
+- All F=11 splits decrease sys (complete sampling)
+
+Current experiments are genuine two-sided tests (each CAN produce either outcome), but the smooth-body direction (Phases E, F) is completely untested.
+
 ## Related experiments
 
 - **pentagon-perturb** (`experiments/pentagon-perturb/`): Perturbation analysis of HKO pentagon in the LP(Fq=5, Fp=5) ambient space. 100 random perturbations (epsilon=0.01 per component). All perturbed polytopes have lower sys. Includes PCA analysis.
