@@ -155,7 +155,7 @@ Fitted exponential T(F) = a · b^F on capacity-only timing (from `benchmark.json
 
 Growth rates: ~4x/facet (pruned random), ~3.5-3.7x/facet (Lagrangian/billiard), ~7x/facet (unpruned).
 
-Pruned vs unpruned speedup (median-based): 8.8x (F=5), 17.2x (F=6), 39.6x (F=7). (benchmark.jsonl, median-based)
+Pruned vs unpruned speedup (median-based): 9.3x (F=5), 17.3x (F=6), 43.4x (F=7). (benchmark.jsonl, median-based)
 
 Billiard vs HK2017 pruned on Lagrangian products: billiard is 2-3x faster (ratio 0.32-0.50). (benchmark.jsonl) Used for its polynomial-time guarantee on larger Lagrangian products.
 
@@ -165,7 +165,7 @@ Total E2E time (construction + capacity + volume):
 - F ≤ 8: < 60 ms (routine) (phase breakdown table, pre-optimization values)
 - F = 9–10: 76–103 ms (routine) (phase breakdown table, pre-optimization values)
 - F = 11: ~230 ms (acceptable) (phase breakdown table, pre-optimization values)
-- F = 12: ~2 seconds capacity alone; construction adds ~130 ms (benchmark.jsonl + timing model)
+- F = 12: ~1.5 seconds capacity alone; construction adds ~130 ms (benchmark.jsonl + timing model)
 - F ≥ 13: capacity prohibitively expensive (timing model extrapolation)
 
 ### Algorithm selection
