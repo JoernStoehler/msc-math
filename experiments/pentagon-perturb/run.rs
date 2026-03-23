@@ -8,6 +8,11 @@
 //! Dataset design:
 //! - Start from the HK-O 2024 pentagon product (10 facets)
 //! - Apply small random perturbations to normals and heights
+//!
+//! TODO: This experiment still perturbs (n_i, h_i) independently and serializes
+//! normals/heights to JSONL. The analyze.py was converted to read dual_vertices.
+//! Either: (a) convert this to perturb a_i directly, or (b) revert analyze.py.
+//! Design decision needed — different sampling distributions.
 //! - 100 perturbed samples + 1 unperturbed baseline
 //! - HK2017 pruned algorithm only
 

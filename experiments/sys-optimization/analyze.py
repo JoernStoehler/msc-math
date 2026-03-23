@@ -2,12 +2,14 @@
 """
 Analyze sys-optimization results: sensitivity analysis, gradient steps, iteration.
 
-Compares height-only (h) vs joint height-normal (h,n) gradient steps.
+Goal: Quantify how much sys can be increased by gradient steps in dual-vertex space,
+      comparing height-only (h) vs joint height-normal (h,n) directions.
 
 Input:
   - experiments/sys-optimization/sys-optimization-sensitivity.jsonl
   - experiments/sys-optimization/sys-optimization-steps.jsonl
   - experiments/sys-optimization/sys-optimization-iterations.jsonl
+  - experiments/sys-optimization/sys-optimization-validity.jsonl
 Output:
   - experiments/sys-optimization/sys_optimization_gradient_hist.png
   - experiments/sys-optimization/sys_optimization_gradient_comparison.png
