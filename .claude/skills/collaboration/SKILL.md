@@ -19,6 +19,8 @@ Four patterns for distributing work across agents, ordered by increasing isolati
 
 **Cost model:** Subagent tokens are cheap. Spawn liberally, especially in parallel.
 
+**Parallelization rule:** When editing N independent files, spawn N parallel background agents — one per file. The Nx parallelization speedup dwarfs model speed differences (~1.5x Sonnet vs Opus). Never give one agent a list of files to process sequentially. The only exception is when files have dependencies (edit to file A determines what to do in file B).
+
 ## 2. Agent team (TeamCreate, same session)
 
 - Agent promotes to team lead, spawns teammates as separate Claude Code instances
