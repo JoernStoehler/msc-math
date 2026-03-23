@@ -143,14 +143,34 @@ pub(crate) struct EigenInfo {
 
 /// Result of the saddle-point KKT solve with diagnostics.
 ///
-/// Contains the solution beta, residual-corrected Q value with error bound,
-/// and inertia of the KKT matrix M.
+/// Contains the solution beta, Lagrange multipliers mu and xi,
+/// residual-corrected Q value with error bound, and inertia of M.
+///
+/// The augmented system uses a **symmetric** sign convention:
+/// ```text
+/// [ H  |  N  | eta ] [beta]   [0]
+/// [N^T |  0  |  0  ] [ mu ] = [0]
+/// [eta^T| 0  |  0  ] [ xi ]   [1]
+/// ```
+/// Stationarity: Hβ + Nμ + ηξ = 0.
+///
+/// **Sign convention note:** Some references (and experiment code) use an
+/// asymmetric convention where stationarity reads Hβ = Nλ + ην. In that
+/// convention, λ = −μ and ν = −ξ. The derivative formula for the action
+/// A = 1/(2Q) is: ∂A/∂h_k = −ξ·β_k/(2Q²) in our (symmetric) convention,
+/// equivalently ∂A/∂h_k = ν·β_k/(2Q²) in the asymmetric convention.
 ///
 /// See [lem:q-error-bound]: |Q(beta_0) - q_corrected| <= q_error_bound.
 #[derive(Clone, Debug)]
 pub struct KktResult {
     /// Optimal beta vector (all components > -EPS_BETA_POSITIVE).
     pub beta: Vec<f64>,
+    /// Lagrange multiplier for closure constraints N^T β = 0 (4 components).
+    /// From symmetric convention: Hβ + Nμ + ηξ = 0.
+    pub mu: Vec<f64>,
+    /// Lagrange multiplier for normalization constraint η^T β = 1 (scalar).
+    /// From symmetric convention: Hβ + Nμ + ηξ = 0.
+    pub xi: f64,
     /// Residual-corrected Q value: Q_tilde = Q(beta_hat) + (r2^T mu_hat + r3 * xi_hat).
     /// See [lem:q-error-bound].
     pub q_corrected: f64,
@@ -316,17 +336,22 @@ fn try_pseudoinverse_with_threshold(
         .max(f64::MIN_POSITIVE);
 
     let beta0: Vec<f64> = (0..m).map(|i| x0[i]).collect();
+    // Extract Lagrange multipliers from pseudoinverse solution.
+    // These are valid even after null-space shift of beta, because null-space
+    // directions preserve the KKT objective Q (see Q-constancy check below).
+    let mu0: Vec<f64> = (m..m + 4).map(|i| x0[i]).collect();
+    let xi0 = x0[m + 4];
 
     // If already feasible (all beta > EPS), compute error bound and return.
     if beta0.iter().all(|&b| b > EPS_BETA_POSITIVE) {
-        return finalize_result(&beta0, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info);
+        return finalize_result(&beta0, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info);
     }
 
     // Full rank at this threshold: unique solution. If some beta near zero,
     // still accept as uncertain candidate for the accumulator.
     if rank == size {
         if beta0.iter().all(|&b| b > -EPS_BETA_POSITIVE) {
-            return finalize_result(&beta0, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info);
+            return finalize_result(&beta0, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info);
         }
         return None;
     }
@@ -372,7 +397,7 @@ fn try_pseudoinverse_with_threshold(
     // allocations on the hot path for degenerate polytopes.
     if k_eff == 0 {
         if beta0.iter().all(|&b| b > -EPS_BETA_POSITIVE) {
-            return finalize_result(&beta0, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info);
+            return finalize_result(&beta0, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info);
         } else {
             return None;
         }
@@ -419,7 +444,7 @@ fn try_pseudoinverse_with_threshold(
     // Large LP shifts along approximate null directions cause O(alpha^2 * |lambda_j|)
     // Q drift that is spurious. beta_final is only used for feasibility (margin
     // classification) and downstream beta values (orbit reconstruction, gradients).
-    let mut result = finalize_result(&beta0_ref, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info)?;
+    let mut result = finalize_result(&beta0_ref, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info)?;
     result.beta = beta_final;
     Some(result)
 }
@@ -442,6 +467,8 @@ fn extract_constraint_residual(kkt: &DMatrix<f64>, beta: &[f64], m: usize) -> f6
 #[allow(clippy::too_many_arguments)]
 fn finalize_result(
     beta: &[f64],
+    mu: Vec<f64>,
+    xi: f64,
     kkt: &DMatrix<f64>,
     m: usize,
     q_correction: f64,
@@ -487,6 +514,8 @@ fn finalize_result(
 
     Some(KktResult {
         beta: beta.to_vec(),
+        mu,
+        xi,
         q_corrected,
         q_error_bound,
         n_positive: eigen_info.n_positive,

@@ -3,20 +3,18 @@
 //! Phase A: Near-optimal orbit tracking + sensitivity at HKO2024 (F=10 space)
 //! Phase B: Facet-splitting into F=11 — test maximality in larger ambient space
 //!
-//! Convention: The library (crates/) is stable. Experiment-specific variants
-//! (instrumented HK2017) are self-contained in this binary. Library internals
-//! needed by the variants are copied here with source references.
-//!
 //! Architecture:
 //! 1. `cargo run --bin hko_neighborhood --release` generates datasets
 //! 2. Writes to hko-neighborhood/hko-neighborhood-{sensitivity,ascent,splitting}.jsonl
 //! 3. Python script reads JSONL, produces figures
 //!
-//! KKT solver note: Uses a local copy of the library's condition-number approach
-//! (EIGEN_CONDITION_TAU = 1e-3 in crates/src/kkt.rs). The local constant retains
-//! the old SVD_CONDITION_TAU name.
+//! KKT convention: The library's KktResult uses the **symmetric** sign convention
+//! (Hβ + Nμ + ηξ = 0). This experiment's ValidOrbit stores the **asymmetric**
+//! (Hβ = Nλ + ην) multipliers: lambda = −mu, nu = −xi. The conversion happens
+//! when populating ValidOrbit from KktResult in `ehz_capacity_instrumented`.
+//! Library derivative functions accept symmetric-convention values directly.
 
-use nalgebra::{DMatrix, DVector, Matrix4, Vector4};
+use nalgebra::{Matrix4, Vector4};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal};
@@ -24,13 +22,18 @@ use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
-// TODO: These will be re-exported from top-level `symplectic::` in wave 4 (subagent #16).
 use symplectic::algorithms::facet_adjacency::{build_transition_matrix, is_feasible_cycle};
-use symplectic::algorithms::hk2017::ehz_capacity;
+use symplectic::algorithms::hk2017::{combinations, ehz_capacity};
+use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
+use symplectic::derivatives::{
+    capacity_derivatives_h, capacity_derivatives_n, volume_derivatives_h, volume_derivatives_n,
+};
 use symplectic::geom::known_polytopes;
-use symplectic::geom::volume::volume;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
+use symplectic::geom::volume::volume;
+use symplectic::kkt::saddle_point_solver::{solve_kkt_for, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
+use symplectic::omega0;
 
 /// Gap threshold for near-optimal orbits: collect orbits within δ of best.
 /// 1% is generous — in practice, HKO2024's 44 near-optimal orbits all have
@@ -71,6 +74,11 @@ const N_SPLITTING_CONTROL: usize = 20;
 
 /// Small epsilon for facet-splitting (how deep to cut).
 const SPLITTING_EPSILONS: &[f64] = &[1e-3, 1e-4];
+
+/// Numerical zero threshold for gradient components and rates.
+/// Near machine epsilon (~1e-16); guards against treating f64 noise as
+/// a meaningful direction or rate. Used in step bounds and gradient checks.
+const EPS_NUMERICAL_ZERO: f64 = 1e-15;
 
 // ============================================================================
 // Output schemas
@@ -172,337 +180,6 @@ struct SplittingRow {
 }
 
 // ============================================================================
-// Copied from library — KKT solver (crates/src/kkt.rs)
-//
-// Uses the CURRENT condition-number approach (SVD_CONDITION_TAU = 1e-3).
-// ============================================================================
-
-/// Minimum β_i value to consider a solution valid.
-/// Copied from crates/src/kkt.rs:12
-const EPS_BETA_POSITIVE: f64 = 1e-12;
-
-/// Minimum Q(β) value to consider a solution valid.
-/// Copied from crates/src/kkt.rs:15
-const EPS_Q_POSITIVE: f64 = 1e-15;
-
-/// Floor for SVD singular values.
-/// Copied from crates/src/kkt.rs:20
-const EPS_SVD_FLOOR: f64 = 1e-12;
-
-/// Condition-number threshold for SVD rank detection.
-/// Copied from crates/src/kkt.rs:41
-const SVD_CONDITION_TAU: f64 = 1e-3;
-
-/// Maximum acceptable residual norm.
-/// Copied from crates/src/kkt.rs:44
-const EPS_KKT_RESIDUAL: f64 = 1e-6;
-
-/// Facet incidence tolerance.
-/// Copied from crates/src/constants.rs
-const EPS_FACET_INCIDENCE: f64 = 1e-8;
-
-/// ω₀(u, v) = u_q1·v_p1 - u_p1·v_q1 + u_q2·v_p2 - u_p2·v_q2
-/// Copied from crates/src/geom/symplectic.rs:28
-fn omega0_local(u: &Vector4<f64>, v: &Vector4<f64>) -> f64 {
-    u[0] * v[2] - u[2] * v[0] + u[1] * v[3] - u[3] * v[1]
-}
-
-/// Q(β) = Σ_{i>j} β_i β_j ω₀(n_{σ(j)}, n_{σ(i)}) = (1/2) β^T H β
-/// Copied from crates/src/kkt.rs
-fn q_from_beta(normals: &[Vector4<f64>], perm: &[usize], beta: &[f64]) -> f64 {
-    let m = beta.len();
-    (1..m)
-        .flat_map(|i| (0..i).map(move |j| (i, j)))
-        .map(|(i, j)| beta[i] * beta[j] * omega0_local(&normals[perm[j]], &normals[perm[i]]))
-        .sum()
-}
-
-/// Search 1D null space for β > 0 solution.
-/// Copied from crates/src/kkt.rs:79-120
-fn find_positive_beta_1d(beta0: &[f64], v: &[f64]) -> Option<Vec<f64>> {
-    let m = beta0.len();
-    let (mut lo, mut hi) = (f64::NEG_INFINITY, f64::INFINITY);
-    for j in 0..m {
-        if v[j].abs() < 1e-15 {
-            if beta0[j] <= EPS_BETA_POSITIVE {
-                return None;
-            }
-        } else {
-            let bound = -beta0[j] / v[j];
-            if v[j] > 0.0 {
-                lo = lo.max(bound);
-            } else {
-                hi = hi.min(bound);
-            }
-        }
-    }
-    if lo >= hi {
-        return None;
-    }
-    let alpha = if lo.is_finite() && hi.is_finite() {
-        (lo + hi) / 2.0
-    } else if lo.is_finite() {
-        lo + 1.0
-    } else if hi.is_finite() {
-        hi - 1.0
-    } else {
-        0.0
-    };
-    let beta: Vec<f64> = (0..m).map(|j| beta0[j] + alpha * v[j]).collect();
-    if beta.iter().all(|&b| b > EPS_BETA_POSITIVE) {
-        Some(beta)
-    } else {
-        None
-    }
-}
-
-/// Search multi-dimensional null space for β > 0 solution.
-/// Copied from crates/src/kkt.rs:125-170
-fn find_positive_beta_nd(beta0: &[f64], null_vecs: &[Vec<f64>]) -> Option<Vec<f64>> {
-    let m = beta0.len();
-    let k = null_vecs.len();
-    let mut alpha = vec![0.0; k];
-    for _iter in 0..100 {
-        let beta: Vec<f64> = (0..m)
-            .map(|j| beta0[j] + (0..k).map(|i| alpha[i] * null_vecs[i][j]).sum::<f64>())
-            .collect();
-        let (worst_j, worst_val) = beta
-            .iter()
-            .enumerate()
-            .min_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
-            .unwrap();
-        if *worst_val > EPS_BETA_POSITIVE {
-            return Some(beta);
-        }
-        let grad_sq: f64 = (0..k).map(|i| null_vecs[i][worst_j].powi(2)).sum();
-        if grad_sq < 1e-30 {
-            return None;
-        }
-        let target = EPS_BETA_POSITIVE * 100.0;
-        let step = (target - worst_val) / grad_sq;
-        for i in 0..k {
-            alpha[i] += step * null_vecs[i][worst_j];
-        }
-    }
-    let beta: Vec<f64> = (0..m)
-        .map(|j| beta0[j] + (0..k).map(|i| alpha[i] * null_vecs[i][j]).sum::<f64>())
-        .collect();
-    if beta.iter().all(|&b| b > EPS_BETA_POSITIVE) {
-        Some(beta)
-    } else {
-        None
-    }
-}
-
-/// Build KKT matrix and RHS vector.
-/// Based on crates/src/kkt.rs build_kkt_system, uses ASYMMETRIC sign convention
-/// (upper-right = -n/-h, lower-left = +n/+h).
-fn build_kkt_system(
-    normals: &[Vector4<f64>],
-    heights: &[f64],
-    perm: &[usize],
-) -> (DMatrix<f64>, DVector<f64>) {
-    let m = perm.len();
-    let size = m + 5;
-    let mut kkt = DMatrix::zeros(size, size);
-    let mut rhs = DVector::zeros(size);
-    for i in 0..m {
-        for j in (i + 1)..m {
-            let val = omega0_local(&normals[perm[i]], &normals[perm[j]]);
-            kkt[(i, j)] = val;
-            kkt[(j, i)] = val;
-        }
-    }
-    for i in 0..m {
-        for d in 0..4 {
-            let n = normals[perm[i]][d];
-            kkt[(i, m + d)] = -n;
-            kkt[(m + d, i)] = n;
-        }
-    }
-    for i in 0..m {
-        let h = heights[perm[i]];
-        kkt[(i, m + 4)] = -h;
-        kkt[(m + 4, i)] = h;
-    }
-    rhs[m + 4] = 1.0;
-    (kkt, rhs)
-}
-
-/// SVD path with condition-number-based rank detection.
-/// Copied from crates/src/kkt.rs:233-359, extended to return ν and λ.
-fn solve_kkt_svd_path(
-    kkt: &DMatrix<f64>,
-    rhs: &DVector<f64>,
-    normals: &[Vector4<f64>],
-    heights: &[f64],
-    perm: &[usize],
-) -> Option<(Vec<f64>, f64, f64, Vec<f64>)> {
-    let m = perm.len();
-    let size = m + 5;
-    let svd = kkt.clone().svd(true, true);
-    let sv = &svd.singular_values;
-    let max_sv = sv.iter().cloned().fold(0.0f64, f64::max);
-    if max_sv < EPS_SVD_FLOOR {
-        return None;
-    }
-    let u = svd.u.as_ref()?;
-    let v_t = svd.v_t.as_ref()?;
-
-    let threshold = max_sv * SVD_CONDITION_TAU;
-    let rank = sv.iter().filter(|&&s| s > threshold).count();
-
-    // Early dismissal via δβ-component check
-    if rank < size && m >= 5 {
-        let mut c_matrix = DMatrix::zeros(m, 5);
-        for i in 0..m {
-            let n = &normals[perm[i]];
-            for j in 0..4 {
-                c_matrix[(i, j)] = n[j];
-            }
-            c_matrix[(i, 4)] = heights[perm[i]];
-        }
-        let c_svd = c_matrix.svd(false, false);
-        let sigma_c = c_svd
-            .singular_values
-            .iter()
-            .cloned()
-            .fold(f64::INFINITY, f64::min);
-
-        if sigma_c > EPS_SVD_FLOOR {
-            for j in rank..size {
-                let delta_beta_norm: f64 =
-                    (0..m).map(|k| v_t[(j, k)].powi(2)).sum::<f64>().sqrt();
-                if delta_beta_norm > sv[j] / sigma_c {
-                    return None;
-                }
-            }
-        }
-    }
-
-    let mut x0 = DVector::zeros(size);
-    for i in 0..rank {
-        let coeff = u.column(i).dot(rhs) / sv[i];
-        for j in 0..size {
-            x0[j] += coeff * v_t[(i, j)];
-        }
-    }
-    let residual = (kkt * &x0 - rhs).norm();
-    if residual > EPS_KKT_RESIDUAL {
-        return None;
-    }
-    let beta0: Vec<f64> = (0..m).map(|i| x0[i]).collect();
-    let lambda: Vec<f64> = (m..m + 4).map(|i| x0[i]).collect();
-    let nu = x0[m + 4];
-    if beta0.iter().all(|&b| b > EPS_BETA_POSITIVE) {
-        let q_val = q_from_beta(normals, perm, &beta0);
-        return Some((beta0, q_val, nu, lambda));
-    }
-    if rank == size {
-        return None;
-    }
-
-    let null_beta: Vec<Vec<f64>> = (rank..size)
-        .map(|i| (0..m).map(|j| v_t[(i, j)]).collect())
-        .collect();
-    let beta_opt = if null_beta.len() == 1 {
-        find_positive_beta_1d(&beta0, &null_beta[0])?
-    } else {
-        find_positive_beta_nd(&beta0, &null_beta)?
-    };
-
-    let constraint_residual: f64 = (0..4)
-        .map(|d| {
-            (0..m)
-                .map(|i| beta_opt[i] * normals[perm[i]][d])
-                .sum::<f64>()
-        })
-        .map(|x: f64| x * x)
-        .sum::<f64>()
-        + ((0..m)
-            .map(|i| beta_opt[i] * heights[perm[i]])
-            .sum::<f64>()
-            - 1.0)
-            .powi(2);
-    if constraint_residual.sqrt() > EPS_KKT_RESIDUAL {
-        return None;
-    }
-    let q_val = q_from_beta(normals, perm, &beta_opt);
-    Some((beta_opt, q_val, nu, lambda))
-}
-
-/// SVD-only KKT solver, extended to return ν and λ.
-fn solve_kkt_full(
-    normals: &[Vector4<f64>],
-    heights: &[f64],
-    perm: &[usize],
-) -> Option<(Vec<f64>, f64, f64, Vec<f64>)> {
-    let (kkt, rhs) = build_kkt_system(normals, heights, perm);
-    solve_kkt_svd_path(&kkt, &rhs, normals, heights, perm)
-}
-
-// ============================================================================
-// Copied from library — combinatorial infrastructure
-// ============================================================================
-
-fn combinations(n: usize, k: usize) -> Vec<Vec<usize>> {
-    let mut result = Vec::new();
-    let mut combo = vec![0usize; k];
-    combinations_rec(n, k, 0, 0, &mut combo, &mut result);
-    result
-}
-
-fn combinations_rec(
-    n: usize,
-    k: usize,
-    start: usize,
-    depth: usize,
-    combo: &mut Vec<usize>,
-    result: &mut Vec<Vec<usize>>,
-) {
-    if depth == k {
-        result.push(combo.clone());
-        return;
-    }
-    for i in start..=(n - k + depth) {
-        combo[depth] = i;
-        combinations_rec(n, k, i + 1, depth + 1, combo, result);
-    }
-}
-
-fn for_each_cyclic_permutation(elements: &[usize], callback: &mut impl FnMut(&[usize])) {
-    if elements.len() <= 1 {
-        callback(elements);
-        return;
-    }
-    let mut buf = elements.to_vec();
-    let k = buf.len() - 1;
-    heap_perms_buf(&mut buf, 1, k, callback);
-}
-
-fn heap_perms_buf(
-    buf: &mut [usize],
-    offset: usize,
-    k: usize,
-    callback: &mut impl FnMut(&[usize]),
-) {
-    if k == 1 {
-        callback(buf);
-        return;
-    }
-    heap_perms_buf(buf, offset, k - 1, callback);
-    for i in 0..k - 1 {
-        if k.is_multiple_of(2) {
-            buf.swap(offset + i, offset + k - 1);
-        } else {
-            buf.swap(offset, offset + k - 1);
-        }
-        heap_perms_buf(buf, offset, k - 1, callback);
-    }
-}
-
-
-// ============================================================================
 // Instrumented HK2017 — collects ALL valid orbits
 // ============================================================================
 
@@ -528,8 +205,6 @@ struct InstrumentedResult {
 
 fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult> {
     let f = polytope.facet_count();
-    let normals = polytope.normals_f64();
-    let heights = polytope.heights_f64();
     let adj = build_transition_matrix(polytope);
 
     let mut orbits: Vec<ValidOrbit> = Vec::new();
@@ -544,22 +219,26 @@ fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult
                 }
                 iterations += 1;
 
-                if let Some((beta, q_val, nu, lambda)) = solve_kkt_full(&normals, &heights, perm) {
+                if let Some(kkt_result) = solve_kkt_for(polytope, perm) {
+                    let q_val = kkt_result.q_corrected;
                     if q_val <= EPS_Q_POSITIVE {
                         return;
                     }
+                    let beta = &kkt_result.beta;
                     let beta_min = beta.iter().cloned().fold(f64::INFINITY, f64::min);
                     let action = 0.5 / q_val;
 
                     if beta_min > EPS_BETA_POSITIVE {
+                        // Convert symmetric convention (mu, xi) to asymmetric (lambda, nu):
+                        // lambda = -mu, nu = -xi
                         orbits.push(ValidOrbit {
                             action,
                             subset: subset.clone(),
                             permutation: perm.to_vec(),
                             beta: beta.clone(),
                             q_value: q_val,
-                            nu,
-                            lambda,
+                            nu: -kkt_result.xi,
+                            lambda: kkt_result.mu.iter().map(|&m| -m).collect(),
                         });
                     }
 
@@ -592,7 +271,7 @@ fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult
 }
 
 // ============================================================================
-// Sensitivity computation (copied from sys-optimization, adapted)
+// Sensitivity computation — uses library derivative functions
 // ============================================================================
 
 struct SensitivityResult {
@@ -607,325 +286,6 @@ struct SensitivityResult {
     gradient_norm_hn: f64,
 }
 
-// --- Facet volume helpers ---
-
-const EPS_DEGENERATE: f64 = 1e-10;
-
-fn cross_product_4d(a: Vector4<f64>, b: Vector4<f64>, c: Vector4<f64>) -> Vector4<f64> {
-    let bc_01 = b[0] * c[1] - b[1] * c[0];
-    let bc_02 = b[0] * c[2] - b[2] * c[0];
-    let bc_03 = b[0] * c[3] - b[3] * c[0];
-    let bc_12 = b[1] * c[2] - b[2] * c[1];
-    let bc_13 = b[1] * c[3] - b[3] * c[1];
-    let bc_23 = b[2] * c[3] - b[3] * c[2];
-
-    let d0 = a[1] * bc_23 - a[2] * bc_13 + a[3] * bc_12;
-    let d1 = -(a[0] * bc_23 - a[2] * bc_03 + a[3] * bc_02);
-    let d2 = a[0] * bc_13 - a[1] * bc_03 + a[3] * bc_01;
-    let d3 = -(a[0] * bc_12 - a[1] * bc_02 + a[2] * bc_01);
-
-    Vector4::new(d0, d1, d2, d3)
-}
-
-fn sort_polygon_vertices(vertices: &[Vector4<f64>]) -> Vec<Vector4<f64>> {
-    if vertices.len() <= 3 {
-        return vertices.to_vec();
-    }
-
-    let n = vertices.len() as f64;
-    let centroid = vertices.iter().copied().sum::<Vector4<f64>>() / n;
-    let d1 = (vertices[0] - centroid).normalize();
-
-    let d2 = match vertices.iter().skip(1).find_map(|v| {
-        let rel = *v - centroid;
-        let proj = rel - d1 * rel.dot(&d1);
-        (proj.norm() > EPS_DEGENERATE).then(|| proj.normalize())
-    }) {
-        Some(d) => d,
-        None => return vertices.to_vec(),
-    };
-
-    let mut indexed: Vec<(f64, Vector4<f64>)> = vertices
-        .iter()
-        .map(|v| {
-            let rel = *v - centroid;
-            let angle = rel.dot(&d2).atan2(rel.dot(&d1));
-            (angle, *v)
-        })
-        .collect();
-
-    indexed.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
-    indexed.into_iter().map(|(_, v)| v).collect()
-}
-
-fn facet_volume_and_centroid_3d(
-    normals: &[Vector4<f64>],
-    heights: &[f64],
-    vertices: &[Vector4<f64>],
-    fi: usize,
-    f: usize,
-) -> (f64, Vector4<f64>) {
-    let facet_verts: Vec<Vector4<f64>> = vertices
-        .iter()
-        .filter(|v| (normals[fi].dot(v) - heights[fi]).abs() < EPS_FACET_INCIDENCE)
-        .cloned()
-        .collect();
-
-    if facet_verts.len() < 4 {
-        return (0.0, Vector4::zeros());
-    }
-
-    let apex = facet_verts.iter().copied().sum::<Vector4<f64>>() / facet_verts.len() as f64;
-
-    let mut total_vol = 0.0;
-    let mut weighted_centroid = Vector4::zeros();
-
-    for fj in 0..f {
-        if fj == fi {
-            continue;
-        }
-        let ridge_verts: Vec<Vector4<f64>> = facet_verts
-            .iter()
-            .filter(|v| (normals[fj].dot(v) - heights[fj]).abs() < EPS_FACET_INCIDENCE)
-            .cloned()
-            .collect();
-
-        if ridge_verts.len() < 3 {
-            continue;
-        }
-
-        let sorted = sort_polygon_vertices(&ridge_verts);
-        for k in 1..sorted.len() - 1 {
-            let a = sorted[0] - apex;
-            let b = sorted[k] - apex;
-            let c = sorted[k + 1] - apex;
-            let tet_vol = cross_product_4d(a, b, c).norm() / 6.0;
-            let tet_centroid = (apex + sorted[0] + sorted[k] + sorted[k + 1]) / 4.0;
-            total_vol += tet_vol;
-            weighted_centroid += tet_vol * tet_centroid;
-        }
-    }
-
-    if total_vol > 1e-30 {
-        (total_vol, weighted_centroid / total_vol)
-    } else {
-        (0.0, Vector4::zeros())
-    }
-}
-
-fn compute_volume_derivatives_analytical(polytope: &Polytope4D) -> Vec<f64> {
-    let normals = polytope.normals_f64();
-    let heights = polytope.heights_f64();
-    let vertices = polytope.vertices_f64();
-    let f = normals.len();
-    (0..f)
-        .map(|k| {
-            facet_volume_and_centroid_3d(&normals, &heights, &vertices, k, f).0
-        })
-        .collect()
-}
-
-fn compute_capacity_derivatives_analytical(
-    orbit: &ValidOrbit,
-    facet_count: usize,
-) -> Vec<f64> {
-    let q_sq = orbit.q_value * orbit.q_value;
-    (0..facet_count)
-        .map(|k| {
-            match orbit.permutation.iter().position(|&f| f == k) {
-                // Lemma lem:cap-derivative: ∂A/∂h_k = ν·β_{i₀}/(2Q²)
-                Some(i0) => orbit.nu * orbit.beta[i0] / (2.0 * q_sq),
-                None => 0.0,
-            }
-        })
-        .collect()
-}
-
-fn compute_volume_derivatives_normal(polytope: &Polytope4D) -> Vec<Vector4<f64>> {
-    let normals = polytope.normals_f64();
-    let heights = polytope.heights_f64();
-    let vertices = polytope.vertices_f64();
-    let f = normals.len();
-
-    (0..f)
-        .map(|k| {
-            let (s_k, centroid_k) = facet_volume_and_centroid_3d(&normals, &heights, &vertices, k, f);
-            if s_k < 1e-30 {
-                return Vector4::zeros();
-            }
-            let tangent_centroid = centroid_k - heights[k] * normals[k];
-            -s_k * tangent_centroid
-        })
-        .collect()
-}
-
-fn j0_apply(v: &Vector4<f64>) -> Vector4<f64> {
-    Vector4::new(-v[2], -v[3], v[0], v[1])
-}
-
-fn compute_capacity_derivatives_normal(
-    orbit: &ValidOrbit,
-    normals: &[Vector4<f64>],
-    facet_count: usize,
-) -> Vec<Vector4<f64>> {
-    let q_sq = orbit.q_value * orbit.q_value;
-    let perm = &orbit.permutation;
-    let beta = &orbit.beta;
-    let lambda = Vector4::new(
-        orbit.lambda[0],
-        orbit.lambda[1],
-        orbit.lambda[2],
-        orbit.lambda[3],
-    );
-
-    (0..facet_count)
-        .map(|k| {
-            let i0 = match perm.iter().position(|&f| f == k) {
-                Some(pos) => pos,
-                None => return Vector4::zeros(),
-            };
-
-            let mut p = Vector4::zeros();
-            for i in 0..i0 {
-                p += beta[i] * normals[perm[i]];
-            }
-
-            let inner = 2.0 * p + beta[i0] * normals[k];
-            let j0_inner = j0_apply(&inner);
-            let dq_dn = beta[i0] * (j0_inner - lambda);
-            let dq_dn_tangent = dq_dn - dq_dn.dot(&normals[k]) * normals[k];
-            -dq_dn_tangent / (2.0 * q_sq)
-        })
-        .collect()
-}
-
-/// Compute d(cap)/d(h_k) via central finite differences (validation only).
-///
-/// For each facet k, perturb h_k by ±ε, construct the perturbed polytope,
-/// and compute capacity via `ehz_capacity`. Returns (cap_plus - cap_minus)/(2ε).
-///
-/// Not called in normal operation (permanent FD tests are in crate sensitivity_test.rs).
-/// Kept for ad-hoc debugging; call from `compute_sensitivity` when needed.
-#[allow(dead_code)]
-fn compute_capacity_derivatives_fd(normals: &[Vector4<f64>], heights: &[f64]) -> Vec<f64> {
-    const FD_EPS: f64 = 1e-5;
-    let f = normals.len();
-    (0..f)
-        .map(|k| {
-            let mut h_plus = heights.to_vec();
-            let mut h_minus = heights.to_vec();
-            h_plus[k] += FD_EPS;
-            h_minus[k] -= FD_EPS;
-
-            let p_plus = match Polytope4D::from_normals_and_heights(normals.to_vec(), h_plus) {
-                Ok(p) => p,
-                Err(_) => return f64::NAN,
-            };
-            let p_minus = match Polytope4D::from_normals_and_heights(normals.to_vec(), h_minus) {
-                Ok(p) => p,
-                Err(_) => return f64::NAN,
-            };
-
-            let cap_plus = ehz_capacity(&p_plus).map(|r| r.result.capacity).unwrap_or(f64::NAN);
-            let cap_minus = ehz_capacity(&p_minus).map(|r| r.result.capacity).unwrap_or(f64::NAN);
-            (cap_plus - cap_minus) / (2.0 * FD_EPS)
-        })
-        .collect()
-}
-
-/// Cross-check analytical capacity and sys derivatives against finite differences.
-///
-/// Prints a comparison table and panics if they disagree beyond tolerance.
-/// Also verifies the Euler homogeneity identity: Σ h_k · ∂c/∂h_k = 2c.
-///
-/// Not called in normal operation (permanent FD tests are in crate sensitivity_test.rs).
-/// Kept for ad-hoc debugging; call from `compute_sensitivity` when needed.
-#[allow(dead_code)]
-fn cross_check_derivatives_fd(
-    normals: &[Vector4<f64>],
-    heights: &[f64],
-    cap: f64,
-    _vol: f64,
-    sys: f64,
-    d_cap_h_analytical: &[f64],
-    d_sys_h_analytical: &[f64],
-) {
-    let f = normals.len();
-    let d_cap_h_fd = compute_capacity_derivatives_fd(normals, heights);
-
-    // Compute FD d_sys_h end-to-end: perturb h_k, recompute sys = cap²/(2·vol)
-    let d_sys_h_fd: Vec<f64> = {
-        const FD_EPS: f64 = 1e-5;
-        (0..f)
-            .map(|k| {
-                let mut h_plus = heights.to_vec();
-                let mut h_minus = heights.to_vec();
-                h_plus[k] += FD_EPS;
-                h_minus[k] -= FD_EPS;
-
-                let sys_at = |h: Vec<f64>| -> Option<f64> {
-                    let p = Polytope4D::from_normals_and_heights(normals.to_vec(), h).ok()?;
-                    let c = ehz_capacity(&p)?.result.capacity;
-                    let v = volume(&p).ok()?;
-                    Some(c * c / (2.0 * v))
-                };
-
-                match (sys_at(h_plus), sys_at(h_minus)) {
-                    (Some(sp), Some(sm)) => (sp - sm) / (2.0 * FD_EPS),
-                    _ => f64::NAN,
-                }
-            })
-            .collect()
-    };
-
-    // Print comparison table
-    println!("\n  FD cross-check (ε=1e-5):");
-    println!("  {:>5} {:>12} {:>12} {:>12}   {:>12} {:>12} {:>12}",
-        "facet", "d_cap_ana", "d_cap_fd", "cap_diff", "d_sys_ana", "d_sys_fd", "sys_diff");
-    for k in 0..f {
-        println!("  {:>5} {:>12.6} {:>12.6} {:>12.2e}   {:>12.6} {:>12.6} {:>12.2e}",
-            k,
-            d_cap_h_analytical[k], d_cap_h_fd[k],
-            d_cap_h_analytical[k] - d_cap_h_fd[k],
-            d_sys_h_analytical[k], d_sys_h_fd[k],
-            d_sys_h_analytical[k] - d_sys_h_fd[k]);
-    }
-
-    // Euler homogeneity: Σ h_k · ∂c/∂h_k should equal 2c (degree-2)
-    let euler_analytical: f64 = heights.iter().zip(d_cap_h_analytical).map(|(h, d)| h * d).sum();
-    let euler_fd: f64 = heights.iter().zip(d_cap_h_fd.iter()).map(|(h, d)| h * d).sum();
-    println!("\n  Euler homogeneity (Σ h_k · ∂c/∂h_k):");
-    println!("    Analytical: {euler_analytical:.6}  (should be 2c = {:.6})", 2.0 * cap);
-    println!("    FD:         {euler_fd:.6}  (should be 2c = {:.6})", 2.0 * cap);
-    println!("    Analytical / (2c) = {:.6}", euler_analytical / (2.0 * cap));
-    println!("    FD / (2c)         = {:.6}", euler_fd / (2.0 * cap));
-
-    // Euler homogeneity for sys: Σ h_k · ∂sys/∂h_k = -2·sys (degree -2)
-    let euler_sys_ana: f64 = heights.iter().zip(d_sys_h_analytical).map(|(h, d)| h * d).sum();
-    let euler_sys_fd: f64 = heights.iter().zip(d_sys_h_fd.iter()).map(|(h, d)| h * d).sum();
-    println!("\n  Euler homogeneity (Σ h_k · ∂sys/∂h_k):");
-    println!("    Analytical: {euler_sys_ana:.6}  (should be -2·sys = {:.6})", -2.0 * sys);
-    println!("    FD:         {euler_sys_fd:.6}  (should be -2·sys = {:.6})", -2.0 * sys);
-
-    // Assert analytical Euler identity: Σ h_k · ∂c/∂h_k = 2c (degree-2 homogeneity)
-    let euler_ana_err = (euler_analytical - 2.0 * cap).abs() / (2.0 * cap);
-    assert!(
-        euler_ana_err < 1e-10,
-        "Analytical Euler homogeneity failed: Σ h_k · d_cap_ana = {euler_analytical:.10}, \
-         2c = {:.10}, rel_err = {euler_ana_err:.2e}",
-        2.0 * cap
-    );
-
-    // Note: FD Euler may not hold exactly at degenerate points (multiple tied orbits).
-    // At HKO2024, 44 orbits tie at machine precision, so perturbing h_k may switch
-    // the optimal orbit. The FD computes ∂(max_orbits A)/∂h_k, which differs from
-    // the single-orbit ∂A/∂h_k. The 12% FD Euler error is expected here.
-    let euler_fd_err = (euler_fd - 2.0 * cap).abs() / (2.0 * cap);
-    if euler_fd_err > 0.01 {
-        println!("  Note: FD Euler error = {euler_fd_err:.2e} (expected at degenerate points)");
-    }
-}
-
 fn compute_sensitivity(
     polytope: &Polytope4D,
     vol: f64,
@@ -936,8 +296,13 @@ fn compute_sensitivity(
     let normals = polytope.normals_f64();
     let f = normals.len();
 
-    let d_vol_h = compute_volume_derivatives_analytical(polytope);
-    let d_cap_h = compute_capacity_derivatives_analytical(orbit, f);
+    // Convert asymmetric (lambda, nu) back to symmetric (mu, xi) for library calls.
+    // ValidOrbit stores: lambda = -mu, nu = -xi. So: xi = -nu, mu = -lambda.
+    let xi = -orbit.nu;
+    let mu: Vec<f64> = orbit.lambda.iter().map(|&l| -l).collect();
+
+    let d_vol_h = volume_derivatives_h(polytope);
+    let d_cap_h = capacity_derivatives_h(&orbit.beta, orbit.q_value, xi, &orbit.permutation, f);
 
     let d_sys_h: Vec<f64> = d_vol_h
         .iter()
@@ -951,8 +316,8 @@ fn compute_sensitivity(
         .sum::<f64>()
         .sqrt();
 
-    let d_vol_n = compute_volume_derivatives_normal(polytope);
-    let d_cap_n = compute_capacity_derivatives_normal(orbit, &normals, f);
+    let d_vol_n = volume_derivatives_n(polytope);
+    let d_cap_n = capacity_derivatives_n(&orbit.beta, orbit.q_value, &mu, &orbit.permutation, &normals);
 
     let d_sys_n: Vec<Vector4<f64>> = d_vol_n
         .iter()
@@ -983,7 +348,7 @@ fn compute_sensitivity(
 }
 
 // ============================================================================
-// Step bounds computation (copied from sys-optimization)
+// Step bounds computation (experiment-specific: topology-aware step size limits)
 // ============================================================================
 
 fn compute_step_bound(polytope: &Polytope4D, direction: &[f64]) -> f64 {
@@ -1026,7 +391,7 @@ fn compute_step_bound(polytope: &Polytope4D, direction: &[f64]) -> f64 {
                 }
                 let slack = heights[j] - normals[j].dot(v);
                 let rate = direction[j] - normals[j].dot(&dv_dt);
-                if rate < -1e-15 {
+                if rate < -EPS_NUMERICAL_ZERO {
                     let t_crit = slack / (-rate);
                     if t_crit > 0.0 && t_crit < t_max {
                         t_max = t_crit;
@@ -1044,11 +409,11 @@ fn compute_step_bound(polytope: &Polytope4D, direction: &[f64]) -> f64 {
                     continue;
                 }
                 let slack = heights[j] - normals[j].dot(v);
-                if direction[j] < -1e-15 {
+                if direction[j] < -EPS_NUMERICAL_ZERO {
                     continue;
                 }
                 let max_g = direction.iter().map(|x| x.abs()).fold(0.0f64, f64::max);
-                if max_g > 1e-15 {
+                if max_g > EPS_NUMERICAL_ZERO {
                     let t_crit = slack / max_g;
                     if t_crit > 0.0 && t_crit < t_max {
                         t_max = t_crit;
@@ -1059,7 +424,7 @@ fn compute_step_bound(polytope: &Polytope4D, direction: &[f64]) -> f64 {
     }
 
     for k in 0..f {
-        if direction[k] < -1e-15 {
+        if direction[k] < -EPS_NUMERICAL_ZERO {
             let t_crit = heights[k] / (-direction[k]);
             if t_crit > 0.0 && t_crit < t_max {
                 t_max = t_crit;
@@ -1114,7 +479,7 @@ fn compute_step_bound_hn(
                 }
                 let slack = heights[j] - normals[j].dot(v);
                 let rate = g_h[j] - g_n[j].dot(v) - normals[j].dot(&dv_dt);
-                if rate < -1e-15 {
+                if rate < -EPS_NUMERICAL_ZERO {
                     let t_crit = slack / (-rate);
                     if t_crit > 0.0 && t_crit < t_max {
                         t_max = t_crit;
@@ -1130,7 +495,7 @@ fn compute_step_bound_hn(
                 let max_g_h = g_h.iter().map(|x| x.abs()).fold(0.0f64, f64::max);
                 let max_g_n = g_n.iter().map(|g| g.norm()).fold(0.0f64, f64::max);
                 let max_rate = max_g_h + max_g_n * v.norm();
-                if max_rate > 1e-15 {
+                if max_rate > EPS_NUMERICAL_ZERO {
                     let t_crit = slack / max_rate;
                     if t_crit > 0.0 && t_crit < t_max {
                         t_max = t_crit;
@@ -1141,7 +506,7 @@ fn compute_step_bound_hn(
     }
 
     for k in 0..f {
-        if g_h[k] < -1e-15 {
+        if g_h[k] < -EPS_NUMERICAL_ZERO {
             let t_crit = heights[k] / (-g_h[k]);
             if t_crit > 0.0 && t_crit < t_max {
                 t_max = t_crit;
@@ -1153,9 +518,9 @@ fn compute_step_bound_hn(
     for ridge in &skeleton.ridges {
         let i = ridge.facets[0];
         let j = ridge.facets[1];
-        let omega_ij = omega0_local(&normals[i], &normals[j]);
-        let d_omega = omega0_local(&g_n[i], &normals[j]) + omega0_local(&normals[i], &g_n[j]);
-        if omega_ij.abs() > 1e-15 && d_omega.abs() > 1e-15 {
+        let omega_ij = omega0(&normals[i], &normals[j]);
+        let d_omega = omega0(&g_n[i], &normals[j]) + omega0(&normals[i], &g_n[j]);
+        if omega_ij.abs() > EPS_NUMERICAL_ZERO && d_omega.abs() > EPS_NUMERICAL_ZERO {
             let t_flip = -omega_ij / d_omega;
             if t_flip > 0.0 && t_flip < t_max {
                 t_max = t_flip;
@@ -1400,12 +765,12 @@ fn run_phase_a(base_dir: &std::path::Path) {
     );
 
     // Step bounds
-    let t_max_h = if sensitivity.gradient_norm_h > 1e-15 {
+    let t_max_h = if sensitivity.gradient_norm_h > EPS_NUMERICAL_ZERO {
         compute_step_bound(polytope, &sensitivity.d_sys_h)
     } else {
         0.0
     };
-    let t_max_hn = if sensitivity.gradient_norm_hn > 1e-15 {
+    let t_max_hn = if sensitivity.gradient_norm_hn > EPS_NUMERICAL_ZERO {
         compute_step_bound_hn(polytope, &sensitivity.d_sys_h, &sensitivity.d_sys_n)
     } else {
         0.0
@@ -1528,24 +893,24 @@ fn run_phase_a(base_dir: &std::path::Path) {
         let sens = compute_sensitivity(&current, vol, cap, sys_now, best_orbit);
 
         // Step bounds
-        let t_max_h = if sens.gradient_norm_h > 1e-15 {
+        let t_max_h = if sens.gradient_norm_h > EPS_NUMERICAL_ZERO {
             compute_step_bound(&current, &sens.d_sys_h)
         } else {
             0.0
         };
-        let t_max_hn = if sens.gradient_norm_hn > 1e-15 {
+        let t_max_hn = if sens.gradient_norm_hn > EPS_NUMERICAL_ZERO {
             compute_step_bound_hn(&current, &sens.d_sys_h, &sens.d_sys_n)
         } else {
             0.0
         };
 
         // Try Armijo for both h-only and h+n, pick better
-        let step_h = if t_max_h > 0.0 && sens.gradient_norm_h > 1e-15 {
+        let step_h = if t_max_h > 0.0 && sens.gradient_norm_h > EPS_NUMERICAL_ZERO {
             armijo_step_h(&current, &sens.d_sys_h, t_max_h, sys_now)
         } else {
             None
         };
-        let step_hn = if t_max_hn > 0.0 && sens.gradient_norm_hn > 1e-15 {
+        let step_hn = if t_max_hn > 0.0 && sens.gradient_norm_hn > EPS_NUMERICAL_ZERO {
             armijo_step_hn(&current, &sens.d_sys_h, &sens.d_sys_n, t_max_hn, sys_now)
         } else {
             None

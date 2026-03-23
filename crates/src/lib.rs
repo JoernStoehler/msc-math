@@ -9,6 +9,7 @@ pub mod kkt;
 pub mod algorithms;
 pub mod constants;
 pub mod dataset;
+pub mod derivatives;
 pub mod random;
 
 // ── Re-exports: public API surface ──
