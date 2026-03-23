@@ -47,8 +47,8 @@ package-lock.json
 **/.claude/agent-memory/
 
 # Profiling artifacts
-perf.data
-perf.data.old
+perf*.data
+perf*.data.old
 
 # Editor
 *.swp

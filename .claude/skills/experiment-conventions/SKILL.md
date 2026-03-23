@@ -10,8 +10,6 @@ description: Directory structure, pipeline, and conventions specific to experime
 ```
 experiments/
   Cargo.toml             Builds all experiment Rust binaries (depends on symplectic crate)
-  reproduce.sh           Source of truth for full pipeline (zero data → thesis PDF)
-  IDEAS.md               Research directions, priorities, deferred ideas
   <name>/                Per-experiment folder
     logbook.md           Prose: motivation, attempts, interpretation, figures, how to run
     math.tex             Formal: proofs, definitions, derivations (needs LaTeX rendering)
@@ -95,7 +93,7 @@ Logbook entries grow stale as the experiment evolves — old interpretations get
 ### Before starting work
 
 1. Read the logbook. Know why this experiment exists, what's been tried, what's worth pursuing.
-2. Check IDEAS.md and TASKS.md. Understand where this experiment fits in the project.
+2. Check `IDEAS.md` (root) and `TASKS.md`. Understand where this experiment fits in the project.
 3. If the current direction seems low-value compared to alternatives: say so and propose switching. Don't mechanically complete work that no longer matters.
 
 ### During work
@@ -122,8 +120,8 @@ Rust binary → .jsonl → Python script → figures → thesis
 
 - Python never calls Rust directly
 - Rust binaries built from `experiments/Cargo.toml` (`cd experiments/ && cargo build --release`)
-- To add a new experiment: create `<name>/` folder, add `[[bin]]` entry to `Cargo.toml`, update `reproduce.sh`
-- `reproduce.sh` is the single source of truth for the full pipeline (zero data → compiled thesis)
+- To add a new experiment: create `<name>/` folder, add `[[bin]]` entry to `Cargo.toml`, document how to run in `logbook.md`
+- Each experiment's `logbook.md` documents how to run it and what data dependencies it has
 
 ## Data and Figures in Git
 

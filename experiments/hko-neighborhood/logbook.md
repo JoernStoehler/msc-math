@@ -114,7 +114,7 @@ HKO2024 can be viewed as a degenerate member of the F=13 space (3 facets collaps
 Using increasing F as a discretization of smooth boundary perturbation. Not tested. This is conceptually important (the original Viterbo conjecture is for all convex bodies, not just polytopes) but requires infrastructure for generating high-F approximations of HKO2024.
 
 ### Dense 2D slice boundary mapping
-100 random samples give a histogram, not a boundary map. Dense sampling (1000-10000 points) in a 2D slice (e.g., two PCA directions) could map the sys=1 level set, showing the shape of the counterexample region. Mentioned in IDEAS.md and pentagon-perturb/README.md. Not attempted.
+100 random samples give a histogram, not a boundary map. Dense sampling (1000-10000 points) in a 2D slice (e.g., two PCA directions) could map the sys=1 level set, showing the shape of the counterexample region. Mentioned in `IDEAS.md` (root) and pentagon-perturb logbook. Not attempted.
 
 ## Open questions
 
