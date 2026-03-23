@@ -57,7 +57,8 @@ Labels must be unique across all math.tex files in the repo (since the combined 
 
 ## Notation conventions
 
-- KKT system uses the **symmetric** matrix form: `[H, N, η; N^T, 0, 0; η^T, 0, 0]`
+- KKT system uses the **symmetric** matrix form: `[H, A, 1; A^T, 0, 0; 1^T, 0, 0]` where A collects the dual vertices for facets in the support
+- Dual-vertex parameterization: `K = {x : a_i^T x ≤ 1}`, Reeb vector `R_i = 2 J_0 a_i`
 - Lagrange multipliers: μ (closure), ξ (normalization)
 - β ∈ R^S (facet-indexed): β_i is the weight for facet i ∈ S, accessed via β_{σ(i)} for position i in ordering σ
 
