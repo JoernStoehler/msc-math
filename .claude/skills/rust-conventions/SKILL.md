@@ -97,7 +97,7 @@ For `experiments/*.rs` binaries only:
 
 ## Performance Claims
 
-Never state performance without benchmark. "~1ms" is a claim. "Benchmark shows 1.5-2.0ms for 5-16 facets" is measured.
+Never state performance without an inline benchmark citation. "~1ms" is a claim. "1.5-2.0ms for F=5-16 (criterion bench 2026-03-23)" is measured. A performance number without an inline source is a convention violation — reviewers flag it, they should not have to find the source themselves.
 
 ## The Core Rule (for Rust doc comments)
 
