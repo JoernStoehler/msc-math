@@ -252,17 +252,7 @@ What observations would **increase** confidence:
 
 **Why it doesn't apply to us:** Techniques require smooth strict convexity (Clarke functional, Legendre dual, C³ topology). Polytopes are excluded. The paper acknowledges non-smooth domains can beat smooth maximizers (Example 1.2: polydisk P(1,1) beats all ellipsoids for k≥3).
 
-**Implication:** The question "is HKO2024 a local max of sys among polytopes?" is genuinely open. No existing theory addresses it. HKO2024 paper (line 642) calls for "further study of non-smooth domains with Besse-type dynamics."
-
-**Connections to our approach (from detailed reading of the paper):**
-
-1. **Lemma 3.10 ↔ our Danskin LP.** Their key argument: if boundary points don't participate in minimizing orbits, push the boundary inward there → volume decreases, c_k unchanged → ratio increases → contradiction with local max. Our subdifferential LP is a discrete computational analogue: if 0 ∉ conv(per-orbit gradients), a separating hyperplane gives a direction that decreases volume faster than capacity → sys increases → not a local max. Same geometric idea, different formalism.
-
-2. **Besse ↔ HKO2024's 44 orbits.** In the smooth category, local max forces the Besse property (ALL orbits closed with common period at c_k). HKO2024 has 44 orbits achieving c_EHZ simultaneously — a weaker polytope analogue. Conversely, a polytope with sys > 1 but only 1 orbit at c_EHZ would likely NOT be a local max (one could push facets away from that orbit). The high orbit degeneracy at HKO2024 is consistent with (but doesn't prove) local maximality.
-
-3. **Finite-dimensional advantage.** BBLM needs C³ topology for perturbation control. The polytope parameter space (normals + heights) is finite-dimensional, so our perturbation analysis avoids their regularity concerns entirely.
-
-4. **Questions E, F** (higher k global maximality) are not directly relevant — they concern k ≥ 3, not k = 1.
+**Implication:** The question "is HKO2024 a local max of sys among polytopes?" is genuinely open. No existing theory addresses it. HKO2024 paper (line 642) calls for "further study of non-smooth domains with Besse-type dynamics." The full paper was read; nothing beyond the above is actionable for our work.
 
 ## Related experiments
 
