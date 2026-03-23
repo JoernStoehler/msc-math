@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Phase C: LP test for 0 ∈ conv(per-orbit sys gradients) in (n,h)-space.
 
-Tests whether HKO2024 is a first-order local maximum of sys in the full
-(n, h) parameter space by checking the Danskin subdifferential condition.
+Goal: Test whether HKO2024 satisfies the first-order necessary condition for
+      local maximality of sys in the full (n, h) parameter space.
+Input: experiments/hko-neighborhood/hko-neighborhood-sensitivity.jsonl
+Output: prints analysis results to stdout (no files written)
 
 Approach:
   1. Load per-orbit data (β, Q, permutation) and polytope data (n, h) from JSONL.
@@ -10,19 +12,21 @@ Approach:
   3. Compute per-orbit ∂sys/∂h_k and ∂sys/∂n_k analytically.
   4. Solve LP: find λ_i ≥ 0, Σ λ_i = 1, Σ λ_i g_i = 0.
 
-If the LP is feasible, HKO2024 is a first-order local max in F=10 (n,h)-space.
-If infeasible, the dual gives an improving direction.
+If the LP is feasible, no first-order improving direction exists (necessary for local max).
+If infeasible, an improving direction exists (local max disproved).
 
 Mathematical framework:
   - Danskin's theorem: D_d⁺ sys = min_{i ∈ active orbits} (∇sys_i · d)
-  - Local max ⟺ D_d⁺ sys ≤ 0 for all d ⟺ 0 ∈ conv({∇sys_i})
-  - Strict local max ⟺ 0 ∈ int(conv({∇sys_i}))
+  - 0 ∈ conv({∇sys_i}) ⟺ D_d⁺ sys ≤ 0 for all d (necessary for local max, not sufficient)
+  - Sufficient for local max would also require second-order analysis of flat directions
 """
 
 import json
 import numpy as np
 from scipy.optimize import linprog
 from pathlib import Path
+
+EXPERIMENT_DIR = Path(__file__).resolve().parent
 
 # ─── Symplectic geometry primitives ───────────────────────────────────────────
 
@@ -240,7 +244,13 @@ def cross_check_h_gradients(computed_dsys_h, jsonl_dsys_h, orbit_idx):
 # ─── Main ─────────────────────────────────────────────────────────────────────
 
 def main():
-    data_path = Path(__file__).parent / "hko-neighborhood-sensitivity.jsonl"
+    data_path = EXPERIMENT_DIR / "hko-neighborhood-sensitivity.jsonl"
+    if not data_path.exists():
+        raise FileNotFoundError(
+            f"Data file not found: {data_path}\n"
+            "Run the Rust binary to generate it: "
+            "cd experiments && cargo run --bin hko_neighborhood --release"
+        )
     with open(data_path) as f:
         data = json.loads(f.readline())
 
@@ -335,11 +345,11 @@ def main():
         print(f"  Gradient matrix rank: {rank} (space dim: {len(all_h_gradients[0])})")
         print(f"  All λ > 0: {all_pos}")
         if rank == len(all_h_gradients[0]) and all_pos:
-            print("  → 0 ∈ INTERIOR of conv(gradients) → STRICT local max in h-space ✓")
+            print("  → 0 ∈ INTERIOR of conv(gradients) → no first-order improving direction (strict) ✓")
         elif feasible:
-            print("  → 0 ∈ conv(gradients) → local max in h-space (may not be strict)")
+            print("  → 0 ∈ conv(gradients) → no first-order improving direction ✓")
     else:
-        print("  → 0 ∉ conv(gradients) → NOT a local max in h-space!")
+        print("  → 0 ∉ conv(gradients) → first-order improving direction exists!")
     print()
 
     # ─── Step 3: LP test in full (h, n)-space ────────────────────────────────
@@ -355,7 +365,7 @@ def main():
         print(f"  Gradient matrix rank: {rank} (space dim: {len(all_gradients[0])})")
         print(f"  All λ > 0: {all_pos}")
         if all_pos:
-            print("  → 0 ∈ INTERIOR of conv(gradients) → STRICT local max in (h,n)-space ✓")
+            print("  → 0 ∈ INTERIOR of conv(gradients) → no first-order improving direction (strict) ✓")
         else:
             zero_lam = [i for i, l in enumerate(lam) if l < 1e-12]
             print(f"  → 0 on boundary of conv(gradients) ({len(zero_lam)} zero-weight orbits)")
@@ -377,7 +387,6 @@ def main():
         # Find direction d that maximizes min_i g_i · d subject to ||d|| = 1
         # Equivalent: find d s.t. g_i · d > 0 for all i (if 0 ∉ conv)
         # This is the "strictly separating hyperplane"
-        from scipy.optimize import linprog as lp
         # max t s.t. g_i · d ≥ t for all i, ||d||² ≤ 1
         # Relax to LP: g_i · d ≥ 1 for all i, minimize ||d||
         # Or simply: the dual of our infeasible LP gives a certificate
@@ -538,23 +547,25 @@ def main():
     print("SUMMARY")
     print("=" * 70)
     print()
-    print("1. h-space (10 DOF, normals fixed):")
-    print("   0 ∈ conv(10 unique-subset gradients) ✓")
-    print("   Gradient rank 5 / 10 → 5D flat subspace in h-space")
-    print("   LOCAL MAX by Danskin (first-order sufficient)")
+    h_G = np.array(unique_h_gradients)
+    h_rank = np.linalg.matrix_rank(h_G, tol=1e-8)
+    print(f"1. h-space ({len(unique_h_gradients[0])} DOF, normals fixed):")
+    print(f"   0 ∈ conv({len(unique_h_gradients)} unique-subset gradients) ✓")
+    print(f"   Gradient rank {h_rank} / {len(unique_h_gradients[0])} → {len(unique_h_gradients[0]) - h_rank}D flat subspace in h-space")
+    print("   No first-order improving direction (necessary condition for local max)")
     print()
     print("2. Full (h,n)-space (50 ambient DOF, 40 effective DOF):")
-    print(f"   0 ∈ conv(all 44 orbit gradients) ✓")
+    print(f"   0 ∈ conv(all {len(all_gradients)} orbit gradients) ✓ (LP residual ~7e-9)")
     print(f"   Gradient rank {rank} / {G.shape[1]} → {null_dim}D flat subspace")
-    print("   LOCAL MAX by Danskin (first-order sufficient)")
-    print("   Permutation diversity in n-gradients is essential (10 subset-unique fail)")
+    print("   No first-order improving direction (necessary condition for local max)")
+    print(f"   Permutation diversity in n-gradients essential (10 subset-unique insufficient)")
     print()
     real_flat_dim = 40 - rank
     print("3. Flat directions:")
     print(f"   {null_dim}D null space in R^50 = {real_flat_dim}D real flat + 10D gauge (radial)")
     print(f"   {real_flat_dim} directions in tangent space where D_d⁺ sys = 0")
-    print("   Second-order analysis needed to determine strict vs non-strict max")
-    print("   (But first-order local max is PROVEN regardless)")
+    print("   Second-order analysis needed to establish local maximality")
+    print("   (First-order necessary condition verified; not sufficient)")
 
 
 if __name__ == '__main__':
