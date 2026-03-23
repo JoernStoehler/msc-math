@@ -22,7 +22,9 @@
 
 The only known 4D counterexample to Viterbo's conjecture is a Lagrangian
 product of two pentagons \cite{HaimKislevOstrover2024}.
-Our sample of random 4-polytopes never exceeded~$\mathrm{sys} > 1$. 
+Our sample of random 4-polytopes never exceeded~$\mathrm{sys} > 1$
+% [TODO: JÖRN - add cross-reference to the random-product-sweep experiment once written up]
+
 We now probe the conjecture by searching systematically in the space of Lagrangian products, where counterexamples are known to exist.
 
 \subsubsection*{Mathematical setup}
@@ -36,7 +38,8 @@ The 4-volume satisfies~$\operatorname{vol}_4(P \times_L Q)
 complementary subspaces).
 
 \paragraph{Rotation parameter.}
-Fix a polygon~$P$ in $q$-space. For an angle~$\theta$, let~$R(\theta)$ denote
+Fix convex polygons~$P$ in $q$-space and~$Q$ in $p$-space.
+For an angle~$\theta$, let~$R(\theta)$ denote
 the standard rotation in~$\mathbb{R}^2$ and
 define~$Q_\theta = R(\theta)\,Q$. We study the one-parameter family
 \[
@@ -60,8 +63,10 @@ R(\varphi))$ is symplectic (direct verification: $M_\varphi^T J_0 M_\varphi
 = J_0$). Applying~$M_{2\pi/n}$ to~$P \times_L Q_\theta$
 maps~$P$ to itself ($n$-fold rotational symmetry)
 and replaces~$Q_\theta$ with~$Q_{\theta + 2\pi/n}$. Similarly, the $m$-fold symmetry of~$Q$
-gives $Q_\theta = Q_{\theta + 2\pi/m}$. The combined periodicity
-is~$2\pi/\operatorname{lcm}(n,m)$.
+gives $Q_\theta = Q_{\theta + 2\pi/m}$. A function with periods~$a$
+and~$b$ also has period~$\gcd(a,b)$; since
+$\gcd(2\pi/n,\, 2\pi/m) = 2\pi/\operatorname{lcm}(n,m)$,
+the combined periodicity is~$2\pi/\operatorname{lcm}(n,m)$.
 
 \emph{Mirror symmetry.}
 The matrix~$M = \operatorname{diag}(-1, 1, -1, 1)$ is symplectic

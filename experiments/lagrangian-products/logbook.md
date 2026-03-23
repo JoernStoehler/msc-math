@@ -71,7 +71,7 @@ All capacities computed using the billiard algorithm (fast, production default f
 
 3. **Violation region** (sys > 1) spans theta in (13, 23) degrees within each fundamental domain (from theta=14 to theta=22 at 1-degree resolution, `lagrangian-products-5x5.jsonl`), about 25% of the 36-degree period.
 
-4. **No other regular polygon pair (3 <= n <= m <= 7) achieves sys > 1.** All polygon pair curves stay below or at 1 (3x6 and 4x4 reach sys=1.000 at the sweep resolution; `lagrangian-products-3x6-6deg.jsonl`, `lagrangian-products-4x4-6deg.jsonl`).
+4. **No other tested regular polygon pair achieves sys > 1.** Among all pairs with 3 <= n <= m <= 6 (at 6-degree resolution) and the 7x7 pair (at ~1-degree resolution), all sys curves stay below or at 1. Note: mixed pairs involving 7 (3x7, 4x7, 5x7, 6x7) were not tested. The 3x6 and 4x4 pairs reach sys=1.000 at the 6-degree sweep resolution (`lagrangian-products-3x6-6deg.jsonl`, `lagrangian-products-4x4-6deg.jsonl`) — finer sweeps may be warranted.
 
 5. **Sys appears continuous as a function of rotation angle** with the expected periodicity from the symmetry lemma (observed at 1-degree resolution in `lagrangian-products-5x5.jsonl`; formal smoothness not verified).
 
@@ -87,10 +87,13 @@ Triggered by a mismatch with CH2021 (Chaidez-Hutchings citing Schlenk Lem. 5.3.1
 
 2. **Expected capacity error:** The expected capacity was set to 1.0 (from the min(c_A, c_B) formula, which applies to symplectic products). The correct value for the equilateral triangle x_L square is 1.5 (verified by billiard computation). The Schlenk Lem. 5.3.1 reference (via CH2021) concerns a right isosceles triangle, not equilateral.
 
-Key numerical results (billiard computation, see `crates/src/geom/known_polytopes.rs` test suite):
+Key numerical results (billiard computation, verified at time of investigation):
 - Equilateral triangle x_L square: capacity = 1.5, sys = sqrt(3)/2 ≈ 0.866 (scale-and-ratio-invariant for any equilateral triangle x_L square)
 - Right isosceles triangle x_L square: capacity = 1.0, sys = 1.0
 - True symplectic triangle x_S square: capacity = 1.0, sys = 0.385
+% [TODO: JÖRN - the known_polytopes functions referenced here were removed in a later refactor.
+% The numerical values above are from the original investigation but are no longer reproducible
+% from the current codebase. Decide whether to restore the test fixtures or remove this section.]
 
 Fixes applied to `crates/src/geom/known_polytopes.rs`:
 - Renamed function to `lagrangian_triangle_square()` with correct capacity 1.5
