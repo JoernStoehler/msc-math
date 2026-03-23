@@ -6,7 +6,6 @@
 //! Usage: cargo run --bin generate_seeds --release
 //! Output: gradient-search/seeds.jsonl (append mode)
 
-use nalgebra::Vector4;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use serde::{Deserialize, Serialize};

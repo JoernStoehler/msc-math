@@ -10,6 +10,22 @@ Master task list for thesis completion. **Deadline: March 31, 2026.**
 
 ---
 
+## gradient-search experiment
+
+**Status (2026-03-23):** Pipeline validated, computation not yet run at scale.
+
+Two-binary pipeline: `generate_seeds` → `seeds.jsonl` → `gradient_search` → `results.jsonl`. H-only gradient ascent with step-bound overshoot (crosses combinatorial boundaries) + wiggle. Interruptible/resumable. Branch: `gradient-search`.
+
+**Next steps:**
+1. Run production computation (270 seeds, ~10 min)
+2. Upgrade to simplified gradient API after merge from other agent
+3. Add slurm orchestration script for LICCA scaling
+4. Analyze results, produce figures
+
+See `experiments/gradient-search/logbook.md` for details.
+
+---
+
 ## thesis-code-alignment
 
 See `handoffs/migration-thesis-findings.md` for the full list. Highest priority items:
