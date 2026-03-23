@@ -7,12 +7,7 @@
 //!
 //! Dataset design:
 //! - Start from the HK-O 2024 pentagon product (10 facets)
-//! - Apply small random perturbations to normals and heights
-//!
-//! TODO: This experiment still perturbs (n_i, h_i) independently and serializes
-//! normals/heights to JSONL. The analyze.py was converted to read dual_vertices.
-//! Either: (a) convert this to perturb a_i directly, or (b) revert analyze.py.
-//! Design decision needed — different sampling distributions.
+//! - Apply small random perturbations to dual vertices a_i directly
 //! - 100 perturbed samples + 1 unperturbed baseline
 //! - HK2017 pruned algorithm only
 
@@ -32,8 +27,7 @@ use std::time::Instant;
 
 const SEED: u64 = 41;
 const N_SAMPLES: usize = 100;
-const EPS_NORMALS: f64 = 0.01;
-const EPS_HEIGHTS: f64 = 0.01;
+const EPS: f64 = 0.01;
 const MAX_ATTEMPTS: usize = 2000;
 
 #[derive(Debug, Serialize)]
@@ -41,12 +35,9 @@ struct PentagonPerturbRow {
     name: String,
     sample_index: usize,
     is_base: bool,
-    normals: Vec<[f64; 4]>,
-    heights: Vec<f64>,
-    delta_normals: Vec<[f64; 4]>,
-    delta_heights: Vec<f64>,
-    eps_normals: f64,
-    eps_heights: f64,
+    dual_vertices: Vec<[f64; 4]>,
+    delta_dual_vertices: Vec<[f64; 4]>,
+    eps: f64,
     volume: f64,
     capacity: f64,
     sys: f64,
@@ -57,79 +48,53 @@ struct PentagonPerturbRow {
 
 struct PerturbedPolytope {
     polytope: Polytope4D,
-    normals: Vec<Vector4<f64>>,
-    heights: Vec<f64>,
-    delta_normals: Vec<Vector4<f64>>,
-    delta_heights: Vec<f64>,
+    dual_vertices: Vec<Vector4<f64>>,
+    delta_dual_vertices: Vec<Vector4<f64>>,
 }
 
-fn jitter_normals(
+/// Add a small random perturbation to each dual vertex a_i.
+///
+/// Returns (perturbed_vertices, deltas) where delta_i = perturbed_i - base_i.
+fn jitter_dual_vertices(
     base: &[Vector4<f64>],
     rng: &mut ChaCha8Rng,
     eps: f64,
 ) -> (Vec<Vector4<f64>>, Vec<Vector4<f64>>) {
-    let mut normals = Vec::with_capacity(base.len());
+    let mut vertices = Vec::with_capacity(base.len());
     let mut deltas = Vec::with_capacity(base.len());
 
-    for n in base.iter() {
-        let delta_raw = Vector4::new(
+    for a in base.iter() {
+        let delta = Vector4::new(
             rng.gen_range(-eps..=eps),
             rng.gen_range(-eps..=eps),
             rng.gen_range(-eps..=eps),
             rng.gen_range(-eps..=eps),
         );
-        let mut candidate = n + delta_raw;
-        let norm = candidate.norm();
-        if norm == 0.0 {
-            candidate = *n;
-        } else {
-            candidate /= norm;
-        }
-        let delta = candidate - n;
-        normals.push(candidate);
+        let candidate = a + delta;
+        vertices.push(candidate);
         deltas.push(delta);
     }
 
-    (normals, deltas)
-}
-
-fn jitter_heights(base: &[f64], rng: &mut ChaCha8Rng, eps: f64) -> (Vec<f64>, Vec<f64>) {
-    let mut heights = Vec::with_capacity(base.len());
-    let mut deltas = Vec::with_capacity(base.len());
-
-    for h in base.iter() {
-        let delta = rng.gen_range(-eps..=eps);
-        let candidate = h + delta;
-        heights.push(candidate);
-        deltas.push(delta);
-    }
-
-    (heights, deltas)
+    (vertices, deltas)
 }
 
 fn try_perturb(
-    base_normals: &[Vector4<f64>],
-    base_heights: &[f64],
+    base_duals: &[Vector4<f64>],
     rng: &mut ChaCha8Rng,
 ) -> Option<PerturbedPolytope> {
-    let (normals, delta_normals) = jitter_normals(base_normals, rng, EPS_NORMALS);
-    let (heights, delta_heights) = jitter_heights(base_heights, rng, EPS_HEIGHTS);
+    let (dual_vertices, delta_dual_vertices) = jitter_dual_vertices(base_duals, rng, EPS);
 
-    if heights.iter().any(|h| *h <= 0.0) {
-        return None;
-    }
-
-    let polytope = Polytope4D::from_f64(
-        normals.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect(),
-    ).ok()?;
+    let polytope = Polytope4D::from_f64(dual_vertices.clone()).ok()?;
 
     Some(PerturbedPolytope {
         polytope,
-        normals,
-        heights,
-        delta_normals,
-        delta_heights,
+        dual_vertices,
+        delta_dual_vertices,
     })
+}
+
+fn v4_to_array(v: &Vector4<f64>) -> [f64; 4] {
+    [v[0], v[1], v[2], v[3]]
 }
 
 fn main() {
@@ -140,25 +105,22 @@ fn main() {
         .join("pentagon-perturb/pentagon-perturb.jsonl");
 
     println!("Generating HK-O pentagon perturbation dataset...\n");
-    println!(
-        "Perturbation eps: normals={EPS_NORMALS:.4}, heights={EPS_HEIGHTS:.4}"
-    );
+    println!("Perturbation eps: {EPS:.4}");
 
     let file = File::create(&output_path).expect("failed to create output file");
     let mut writer = BufWriter::new(file);
 
     let base = known_polytopes::hko_pentagon();
-    let base_polytope = base.polytope;
-    let base_duals = base_polytope.dual_vertices_f64();
-    let base_normals: Vec<Vector4<f64>> = base_duals.iter().map(|a| a / a.norm()).collect();
-    let base_heights: Vec<f64> = base_duals.iter().map(|a| 1.0 / a.norm()).collect();
+    let base_polytope = &base.polytope;
+    let base_duals: Vec<Vector4<f64>> = base_polytope.dual_vertices_f64().to_vec();
+    let n_facets = base_duals.len();
 
     let start_vol = Instant::now();
-    let base_vol = volume(&base_polytope).expect("volume computation failed");
+    let base_vol = volume(base_polytope).expect("volume computation failed");
     let base_time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
 
     let start_cap = Instant::now();
-    let base_result = ehz_capacity(&base_polytope).expect("capacity computation failed");
+    let base_result = ehz_capacity(base_polytope).expect("capacity computation failed");
     let base_time_capacity_ms = start_cap.elapsed().as_secs_f64() * 1000.0;
 
     let base_sys = base_result.result.capacity * base_result.result.capacity / (2.0 * base_vol);
@@ -167,15 +129,9 @@ fn main() {
         name: "hko_pentagon_base".to_string(),
         sample_index: 0,
         is_base: true,
-        normals: base_normals
-            .iter()
-            .map(|n| [n[0], n[1], n[2], n[3]])
-            .collect(),
-        heights: base_heights.clone(),
-        delta_normals: vec![[0.0; 4]; base_heights.len()],
-        delta_heights: vec![0.0; base_heights.len()],
-        eps_normals: EPS_NORMALS,
-        eps_heights: EPS_HEIGHTS,
+        dual_vertices: base_duals.iter().map(v4_to_array).collect(),
+        delta_dual_vertices: vec![[0.0; 4]; n_facets],
+        eps: EPS,
         volume: base_vol,
         capacity: base_result.result.capacity,
         sys: base_sys,
@@ -197,7 +153,7 @@ fn main() {
         }
         attempts += 1;
 
-        let perturbed = match try_perturb(&base_normals, &base_heights, &mut rng) {
+        let perturbed = match try_perturb(&base_duals, &mut rng) {
             Some(p) => p,
             None => continue,
         };
@@ -218,20 +174,9 @@ fn main() {
             name: format!("hko_pentagon_perturbed_{accepted}"),
             sample_index: accepted + 1,
             is_base: false,
-            normals: perturbed
-                .normals
-                .iter()
-                .map(|n| [n[0], n[1], n[2], n[3]])
-                .collect(),
-            heights: perturbed.heights.clone(),
-            delta_normals: perturbed
-                .delta_normals
-                .iter()
-                .map(|n| [n[0], n[1], n[2], n[3]])
-                .collect(),
-            delta_heights: perturbed.delta_heights.clone(),
-            eps_normals: EPS_NORMALS,
-            eps_heights: EPS_HEIGHTS,
+            dual_vertices: perturbed.dual_vertices.iter().map(v4_to_array).collect(),
+            delta_dual_vertices: perturbed.delta_dual_vertices.iter().map(v4_to_array).collect(),
+            eps: EPS,
             volume: vol,
             capacity: cap,
             sys,

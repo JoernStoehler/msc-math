@@ -11,7 +11,7 @@
 % Structure:
 %   - Hypothesis and mechanism
 %   - Phase A: observational (scatter plots, orbit vs non-orbit ω)
-%   - Phase B: gradient analysis (⟨∇sys, ∇ω⟩ dot products)
+%   - Phase B: gradient analysis (⟨∂sys/∂a_k, ∂ω/∂a_k⟩ dot products)
 %   - Known polytopes
 %   - Conclusion
 
@@ -137,34 +137,36 @@ seeks large $\omega_0$ terms to maximize~$Q$.
 
 Phase~A shows no observational signal.
 Phase~B asks the complementary question: does the
-$\mathrm{sys}$-increasing direction in normal space tend to
+$\mathrm{sys}$-increasing direction in dual-vertex space tend to
 \emph{decrease} $\omega_0$?
 
 For each facet~$k$ and each ridge-neighbor~$i$, we compute:
 \begin{enumerate}
-\item $\nabla_{n_k}\mathrm{sys}\big|_{T_{n_k}S^3}$ ---
-  the tangential gradient of $\mathrm{sys}$ with respect to~$n_k$,
+\item $\frac{\partial\,\mathrm{sys}}{\partial a_k} \in \mathbb{R}^4$ ---
+  the gradient of $\mathrm{sys}$ with respect to the dual vertex~$a_k$,
   using the analytical derivatives from
   Corollary~\ref{cor:sys-derivative} and
-  Lemmas~\ref{lem:vol-derivative} and~\ref{lem:cap-derivative}.
+  Lemmas~\ref{lem:vol-derivative} and~\ref{lem:cap-derivative}:
+  \[
+    \frac{\partial\,\mathrm{sys}}{\partial a_k}
+    = \frac{c_{\mathrm{EHZ}}}{\mathrm{vol}}\,
+      \frac{\partial c_{\mathrm{EHZ}}}{\partial a_k}
+    - \frac{c_{\mathrm{EHZ}}^2}{2\,\mathrm{vol}^2}\,
+      \frac{\partial\,\mathrm{vol}}{\partial a_k}.
+  \]
   For orbit facets, both volume and capacity contribute; for non-orbit
   facets, only the volume term is nonzero
-  (since $\partial c_{\mathrm{EHZ}}/\partial n_k = 0$ when
+  (since $\partial c_{\mathrm{EHZ}}/\partial a_k = 0$ when
   $k \notin S$).
 
-\item $\nabla_{n_k}\omega_0(n_k, n_i)\big|_{T_{n_k}S^3}$ ---
-  the tangential gradient of $\omega_0(n_k, n_i)$ with respect
-  to~$n_k$.
+\item $\frac{\partial}{\partial a_k}\omega_0(a_k, a_i) \in \mathbb{R}^4$ ---
+  the gradient of $\omega_0(a_k, a_i)$ with respect to~$a_k$.
   Since $\omega_0(u, v) = u^T M\,v$ where $M = J_0^T = -J_0$,
-  the full gradient is $-J_0\,n_i$.
-  Projected to $T_{n_k}S^3$:
-  \[
-    \nabla_{n_k}\omega_0(n_k, n_i) = -J_0\,n_i + (J_0\,n_i \cdot n_k)\,n_k.
-  \]
+  this is simply $-J_0\,a_i$.
 
 \item The dot product
-  $d = \langle \nabla_{n_k}\mathrm{sys},\;
-        \nabla_{n_k}\omega_0(n_k, n_i) \rangle$.
+  $d = \bigl\langle \frac{\partial\,\mathrm{sys}}{\partial a_k},\;
+        \frac{\partial}{\partial a_k}\omega_0(a_k, a_i) \bigr\rangle$.
 \end{enumerate}
 
 If $d < 0$ systematically, the $\mathrm{sys}$-increasing direction
@@ -181,14 +183,14 @@ coincides with the $\omega_0$-decreasing direction.
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.9\textwidth]{../experiments/omega-obstacle/omega_obstacle_gradient_dots.png}
-\caption{Distribution of $\langle \nabla_{n_k}\mathrm{sys},\,
-  \nabla_{n_k}\omega_0(n_k, n_i) \rangle$ for orbit facets.
+\caption{Distribution of $\bigl\langle \frac{\partial\,\mathrm{sys}}{\partial a_k},\,
+  \frac{\partial}{\partial a_k}\omega_0(a_k, a_i) \bigr\rangle$ for orbit facets.
   The distribution is symmetric around zero --- no directional signal.}
 \label{fig:omega-gradient}
 \end{figure}
 
 Figure~\ref{fig:omega-vs-dot} shows the dot product~$d$ against the
-current $|\omega_0(n_k, n_i)|$.
+current $|\omega_0(a_k, a_i)|$.
 The scatter exhibits a trumpet shape: variance increases at small
 $|\omega_0|$, but the distribution remains centered on zero at all
 $|\omega_0|$ values.
@@ -198,8 +200,8 @@ In particular, there is no special behavior near $|\omega_0| \approx 0$
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.9\textwidth]{../experiments/omega-obstacle/omega_obstacle_omega_vs_dot.png}
-\caption{Dot product $\langle \nabla_{n_k}\mathrm{sys},\,
-  \nabla_{n_k}\omega_0 \rangle$ vs.\ current $|\omega_0(n_k, n_i)|$
+\caption{Dot product $\bigl\langle \frac{\partial\,\mathrm{sys}}{\partial a_k},\,
+  \frac{\partial}{\partial a_k}\omega_0 \bigr\rangle$ vs.\ current $|\omega_0(a_k, a_i)|$
   for orbit facets.
   Trumpet shape: variance increases at small $|\omega_0|$, but the
   distribution is centered on zero throughout.}
@@ -244,7 +246,8 @@ ratios is not supported by the data:
 \item The orbit preferentially uses \emph{large} $|\omega_0|$
   transitions, consistent with the $Q$-maximization structure.
 \item The gradient analysis shows no directional relationship between
-  $\nabla\mathrm{sys}$ and $\nabla\omega_0$.
+  $\partial\mathrm{sys}/\partial a_k$ and
+  $\partial\omega_0/\partial a_k$.
 \end{enumerate}
 
 The mechanism linking small $\omega_0$ to large capacity --- while
