@@ -31,6 +31,9 @@ cd experiments/ && cargo run --bin hko_neighborhood --release
 
 # Generate figures
 python3 experiments/hko-neighborhood/analyze.py
+
+# Phase C: LP test for local maximality (requires scipy)
+python3 experiments/hko-neighborhood/phase_c_lp_test.py
 ```
 
 ### Files
@@ -58,7 +61,7 @@ python3 experiments/hko-neighborhood/analyze.py
 
 1. **Per-orbit height derivatives have mixed sign.** For the best orbit (S={0,2,4,6,8,9}), the d_sys/d_h values are: +0.198 (visited, small beta), -0.518 (unvisited), +0.640 (visited, large beta) (hko-neighborhood-sensitivity.jsonl, `d_sys_h` field). Positive at visited facets (increasing height grows both capacity and volume, but capacity faster), negative at unvisited facets (only volume grows). The 10 distinct per-orbit gradients form one orbit under the symplectic symmetry group; their average is zero by symmetry.
 
-   **NOTE:** The README.md (written before the sign bug fix in commit 6907406) claims "All 10 height derivatives are negative (range: -0.52 to -1.68)." This is **stale** — the post-fix data shows mixed signs. The .tex writeup has the correct description.
+   **NOTE:** A now-deleted README.md (written before the sign bug fix in commit 6907406) claimed "All 10 height derivatives are negative (range: -0.52 to -1.68)." The post-fix data shows mixed signs. The .tex writeup has the correct description.
 
 2. **Normal gradient is nonzero:** |grad_sys_n| ~= 1.53 (hko-neighborhood-sensitivity.jsonl, `gradient_norm_n` field). HKO2024 is NOT a critical point in the full (n, h) parameter space.
 
@@ -89,7 +92,7 @@ python3 experiments/hko-neighborhood/analyze.py
 
 3. **Epsilon values tested:** 1e-3 and 1e-4 (hko-neighborhood-splitting.jsonl, `epsilon` field). At 1e-4 the cuts are shallow enough that delta_sys approaches machine precision (~1e-9).
 
-**Data discrepancy (?):** The README.md claims 536 successful cuts (2 facets x 100 directions + 48 mixed + 20 control, each at 2 epsilon values). The actual JSONL has 211 rows: 200 for facet 0 and 11 for facet 5. Facet 5 appears incomplete. The Rust binary constants suggest N_SPLITTING_SAMPLES_PER_FACET=100, N_SPLITTING_MIXED=50, N_SPLITTING_CONTROL=20 — matching the README's intent. The data may have been regenerated with early termination, or the README describes the planned scope rather than what was actually committed.
+**Data discrepancy (?):** The Rust binary constants suggest N_SPLITTING_SAMPLES_PER_FACET=100, N_SPLITTING_MIXED=50, N_SPLITTING_CONTROL=20, implying ~536 planned cuts (2 facets × 100 directions + 48 mixed + 20 control, each at 2 epsilon values). The actual JSONL has 211 rows: 200 for facet 0 and 11 for facet 5. Facet 5 appears incomplete — the data may have been regenerated with early termination.
 
 **Caveat (from README):** Phase B only tests sub-polytopes K' that are strict subsets of K. Joint perturbations (relax an existing halfspace while adding a cut) are not tested. Phase A's gradient ascent convergence suggests these also cannot help, but this is not proven.
 
