@@ -22,6 +22,11 @@ Never write a factual claim without verifying it against evidence in the same se
 
 **Citation verification:** Never produce author names or paper titles from memory. Verify against `thesis/bibliography.bib` or `papers/`. Agents confidently produce wrong names (e.g. "Cieliebak-Hutchings" instead of the correct "Chaidez-Hutchings").
 
+**External systems (core rule instance):** When documenting external systems (LICCA cluster, university services, third-party tools), **link to the official documentation — do not paraphrase it.** Agent-written paraphrases of official docs are unverifiable, go stale silently, and future agents trust them over the real source. Reference files should contain only:
+- Links to official documentation
+- Facts personally verified in the current session (with date)
+- Clearly marked TODOs for anything not yet verified
+
 ## Procedural layer is Jörn-gated
 
 Do not create, modify, or delete skills, agents, hooks, or CLAUDE.md without Jörn's explicit approval. Propose changes in conversation; Jörn implements them. This is analogous to the math verification rule — agents can't reliably produce or quality-check procedural knowledge.
