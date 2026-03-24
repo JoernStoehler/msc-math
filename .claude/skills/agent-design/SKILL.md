@@ -139,7 +139,17 @@ Draft the files Jörn specified, using the correct file formats. Before writing:
   - *Redundancy check:* does the instruction add information beyond what agents already know from training? "Follow best practices" adds nothing. "Use `cargo clippy -- -D warnings` before committing" does.
   - *Script-or-language decision:* for anything where getting it wrong has high cost, check whether a script could enforce it instead of relying on the agent to remember.
 
-### 6. Jörn review
+### 6. Set up feedback collection
+
+Before shipping, decide how future agents will report on whether the new material works:
+
+- **Session-level feedback:** The post-mortem skill already gathers end-of-session feedback. Ensure the new skill/workflow is on the post-mortem's radar (e.g. by mentioning it in the session handoff).
+- **Subagent feedback:** If the new material includes subagent workflows, tell subagents to write observations to a feedback file (e.g. `.claude/feedback/<skill-name>.md`) or report back to the parent agent who includes it in the post-mortem. Subagent memory is another option.
+- **Do NOT:** Write feedback directly into SKILL.md or agent prompt files. Do NOT overanalyze feedback inline — raw observations only. Analysis and updates to procedural files should be done by a dedicated agent-design session that has read the right materials and has Jörn in the loop.
+
+The goal is cheap data collection now so that a future agent-design session can reevaluate and update the workflow with real evidence.
+
+### 7. Jörn review
 
 Present the draft to Jörn before committing. Flag anything you're uncertain about.
 
