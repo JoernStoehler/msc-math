@@ -18,5 +18,18 @@
 \newtheorem{algorithm}[theorem]{Algorithm}
 \newtheorem{fact}[theorem]{Fact}
 
+% Approval status bars (see math-tex skill for workflow)
+\usepackage[framemethod=default]{mdframed}
+\newmdenv[
+  leftline=true, rightline=false, topline=false, bottomline=false,
+  linecolor=red, linewidth=2pt, innerleftmargin=8pt,
+  skipabove=0pt, skipbelow=0pt
+]{unverified}
+\newmdenv[
+  leftline=true, rightline=false, topline=false, bottomline=false,
+  linecolor=orange, linewidth=2pt, innerleftmargin=8pt,
+  skipabove=0pt, skipbelow=0pt
+]{notationupdated}
+
 % Custom commands
 \newcommand{\contradiction}{\ensuremath{\Rightarrow\!\Leftarrow}}

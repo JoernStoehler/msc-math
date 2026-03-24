@@ -57,7 +57,7 @@ that preserve $K$ as a set.
 Let $R_{72^\circ}$ denote the $2{\times}2$ rotation by $72^\circ = 2\pi/5$.
 Since $K_q$ is a regular pentagon, applying $R_{72^\circ}$ in $L_q$
 while fixing $L_p$ permutes the $q$-facet normals cyclically
-($n_k \mapsto n_{k+1\bmod 5}$, $k = 0, \ldots, 4$)
+($a_k \mapsto a_{k+1\bmod 5}$, $k = 0, \ldots, 4$)
 without affecting the $p$-facets.
 Call this map $C_5^q$.
 Analogously, $C_5^p$ applies $R_{72^\circ}$ in $L_p$ only.
@@ -67,6 +67,7 @@ Together they generate a $C_5 \times C_5$ subgroup of order~25.
 
 \emph{The $q$\nobreakdash-$p$ exchange $\varphi$.}
 % [TODO: JÖRN - verify the following map construction is correct]
+\begin{unverified}
 The $q$-pentagon has normals at angles
 $36^\circ$, $108^\circ$, $180^\circ$, $252^\circ$, $324^\circ$
 in the $(q_1, q_2)$ plane, while the $p$-pentagon has normals at
@@ -78,7 +79,7 @@ This suggests the map
   \;\mapsto\; (-p_2,\; p_1,\; q_2,\; -q_1),
 \]
 which sends each $q$-normal to the corresponding $p$-normal and vice
-versa: $\varphi(n_k) = n_{k+5\bmod 10}$ for $k = 0, \ldots, 9$.
+versa: $\varphi(a_k) = a_{k+5\bmod 10}$ for $k = 0, \ldots, 9$.
 Since all heights are equal, $\varphi(K) = K$.
 
 The map $\varphi$ is an involution ($\varphi^2 = I$), and it is a
@@ -97,7 +98,9 @@ $\langle C_5^q,\, C_5^p,\, \varphi \rangle
 has order $50$, verified by generating all elements and
 counting the distinct permutations of the ten facet indices.
 All ten facets form a single orbit of this group.
+\end{unverified}
 
+\begin{unverified}
 \begin{remark}\label{rem:non-symplectic-rotations}
 $C_5^q$ and $C_5^p$ are \emph{not} symplectomorphisms:
 $C_5^q$ has matrix $\operatorname{diag}(R_{72^\circ}, I_2)$, and
@@ -113,6 +116,7 @@ $c_{\mathrm{EHZ}}(C_5^q(K)) = c_{\mathrm{EHZ}}(K)$
 holds trivially (same convex body), but they do not map Reeb orbits
 to Reeb orbits.
 \end{remark}
+\end{unverified}
 
 \subsubsection*{Symplectic symmetry and orbit structure}
 
@@ -127,8 +131,8 @@ It is a symplectomorphism:
   = J_0,
 \]
 since $R_{72^\circ}^\top R_{72^\circ} = I_2$.
-It maps $n_k \mapsto n_{k+1\bmod 5}$ for $q$-facets and
-$n_k \mapsto n_{k+1\bmod 5}$ (within the $p$-block) for $p$-facets.
+It maps $a_k \mapsto a_{k+1\bmod 5}$ for $q$-facets and
+$a_k \mapsto a_{k+1\bmod 5}$ (within the $p$-block) for $p$-facets.
 
 Since $\Delta_{72^\circ}$ and $\varphi$ are both symplectomorphisms
 preserving~$K$,
@@ -237,7 +241,7 @@ characteristic of regular pentagon geometry.
 \item \textbf{One representative facet suffices for Phase~B
   (Section~\ref{sec:omega-obstacle}).}
   The $q$\nobreakdash-$p$ exchange $\varphi$ is a symplectomorphism
-  mapping $K \to K$ and $n_0 \mapsto n_5$.
+  mapping $K \to K$ and $a_0 \mapsto a_5$.
   Any facet-splitting test at $q$-facet~$0$ has an equivalent test at
   $p$-facet~$5$ with identical $\Delta\mathrm{sys}$
   (by symplectic invariance of $c_{\mathrm{EHZ}}$

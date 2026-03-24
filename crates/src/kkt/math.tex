@@ -10,7 +10,7 @@
 %   thesis/general-case-algorithm-proof.tex,
 %   thesis/appendix-numerical.tex
 %
-% Notation: N = normal matrix, H = action matrix, eta = height vector,
+% Notation: A = dual-vertex matrix, H = action matrix,
 %   beta = dwell-time weights, mu = Lagrange multiplier (closure),
 %   xi = Lagrange multiplier (normalization).
 
@@ -18,28 +18,29 @@
 
 % ── Setup: linear system referenced by the lemmas ──
 %
-% For a polytope K with facets (n_i, h_i) and a pair (S, sigma),
-% define the normal matrix N, action matrix H, and height vector eta:
-%   N_{id} = n_{sigma(i),d},
-%   H_{ij} = omega_0(n_{sigma(j)}, n_{sigma(i)})  for i > j,
+% For a polytope K with dual vertices a_i and a pair (S, sigma),
+% define the dual-vertex matrix A and action matrix H:
+%   A_{id} = a_{sigma(i),d},
+%   H_{ij} = omega_0(a_{sigma(j)}, a_{sigma(i)})  for i > j,
 %            0                                      for i = j,
-%            omega_0(n_{sigma(i)}, n_{sigma(j)})    for i < j,
-%   eta_i  = h_{sigma(i)}.
+%            omega_0(a_{sigma(i)}, a_{sigma(j)})    for i < j.
 %
 % The linear system is:
-%   [ H      N    eta ] [ beta ]   [ 0 ]
-%   [ N^T    0    0   ] [ mu   ] = [ 0 ]
-%   [ eta^T  0    0   ] [ xi   ]   [ 1 ]
+%   [ H    A    1 ] [ beta ]   [ 0 ]
+%   [ A^T  0    0 ] [ mu   ] = [ 0 ]
+%   [ 1^T  0    0 ] [ xi   ]   [ 1 ]
 %
 % See thesis/general-case-algorithm.tex, Algorithm [alg:ehz].
 
 
+\begin{notationupdated}
 \begin{lemma}[Double sum as quadratic form]\label{lem:H-quadratic}
 % Jörn: text approved (b7a8bc0) — from \begin{lemma} to \end{proof}
+% Notation updated to dual-vertex form; math unchanged
 \[
   \sum_{1 \leq j < i \leq |S|}
     \beta_{\sigma(i)}\, \beta_{\sigma(j)}\,
-    \omega_0(n_{\sigma(j)},\, n_{\sigma(i)})
+    \omega_0(a_{\sigma(j)},\, a_{\sigma(i)})
   = \tfrac{1}{2}\, \beta^\top H\, \beta.
 \]
 In particular,
@@ -49,7 +50,7 @@ $\nabla_{\beta}
 
 \begin{proof}
 For $i > j$,
-$H_{ij} = \omega_0(n_{\sigma(j)}, n_{\sigma(i)})$
+$H_{ij} = \omega_0(a_{\sigma(j)}, a_{\sigma(i)})$
 by definition of~$H$.
 Hence the double sum equals
 $\sum_{j < i} \beta_{\sigma(i)}\, \beta_{\sigma(j)}\, H_{ij}$.
@@ -57,18 +58,21 @@ Since $H$ is symmetric with zero diagonal,
 $\sum_{j < i} \beta_{\sigma(i)} \beta_{\sigma(j)} H_{ij}
 = \tfrac{1}{2}\, \beta^\top H\, \beta$.
 \end{proof}
+\end{notationupdated}
 
 
+\begin{notationupdated}
 \begin{lemma}[KKT conditions and the algorithm's linear system]%
 \label{lem:kkt}
 % Jörn: text approved (b7a8bc0) — from \begin{lemma} to \end{proof}
 % Notation updated to symmetric convention: (lambda, nu) -> (mu, xi)
+% Notation updated to dual-vertex form; math unchanged
 For fixed $(S, \sigma)$, the linear
 system is the Lagrange system for
 critical points of
 $\beta^\top H\, \beta$ on the constraint
 manifold
-$\{N^\top \beta = 0,\; \eta^\top \beta = 1\}$.
+$\{A^\top \beta = 0,\; \mathbf{1}^\top \beta = 1\}$.
 \end{lemma}
 
 \begin{proof}
@@ -78,24 +82,27 @@ $\nabla_{\beta}
 (Lemma~\ref{lem:H-quadratic}).
 The Lagrange conditions
 $\nabla(\beta^\top H \beta)
-= -N\lambda - \eta\nu$
+= -A\lambda - \mathbf{1}\nu$
 give
-$2H\beta + N\lambda + \eta\nu = 0$.
+$2H\beta + A\lambda + \mathbf{1}\nu = 0$.
 Absorbing the factor~$2$ into the multipliers
 ($\mu = \lambda/2$, $\xi = \nu/2$):
 \[
-  H \beta + N \mu + \eta \xi = 0,
+  H \beta + A \mu + \mathbf{1} \xi = 0,
 \]
-which, together with $N^\top \beta = 0$ and
-$\eta^\top \beta = 1$, is exactly
+which, together with $A^\top \beta = 0$ and
+$\mathbf{1}^\top \beta = 1$, is exactly
 the linear system.
 \end{proof}
+\end{notationupdated}
 
 
+\begin{notationupdated}
 \begin{lemma}[Well-definedness]\label{lem:well-defined}
 % Jörn: text approved (06a976c) — statement
 % Jörn: text approved (0bbc647) — proof
 % Notation updated to symmetric convention: (lambda, nu) -> (mu, xi)
+% Notation updated to dual-vertex form; math unchanged
 If the linear system has multiple solutions
 $(\beta, \mu, \xi)$, they all yield the same value
 $\beta^\top H \beta$.
@@ -104,37 +111,37 @@ $\beta^\top H \beta$.
 \begin{proof}
 Write the three block rows of the linear system as
 \[
-  \text{(I)}\ H\beta + N\mu + \eta\xi = 0, \qquad
-  \text{(II)}\ N^\top \beta = 0, \qquad
-  \text{(III)}\ \eta^\top \beta = 1.
+  \text{(I)}\ H\beta + A\mu + \mathbf{1}\xi = 0, \qquad
+  \text{(II)}\ A^\top \beta = 0, \qquad
+  \text{(III)}\ \mathbf{1}^\top \beta = 1.
 \]
 For any solution, left-multiply~(I) by~$\beta^\top$:
 \[
   \beta^\top H\beta
-  + \underbrace{(N^\top\beta)^\top}_{=\,0\text{ by (II)}}\mu
-  + \underbrace{(\eta^\top\beta)}_{=\,1\text{ by (III)}}\xi
+  + \underbrace{(A^\top\beta)^\top}_{=\,0\text{ by (II)}}\mu
+  + \underbrace{(\mathbf{1}^\top\beta)}_{=\,1\text{ by (III)}}\xi
   = 0,
 \]
 so $\beta^\top H\beta = -\xi$.
 Now let $(\delta\beta, \delta\mu, \delta\xi)$ be any element
 of the null space, so that
 \[
-  \text{(I$'$)}\ H\,\delta\beta + N\,\delta\mu + \eta\,\delta\xi = 0, \qquad
-  \text{(II$'$)}\ N^\top\delta\beta = 0, \qquad
-  \text{(III$'$)}\ \eta^\top\delta\beta = 0.
+  \text{(I$'$)}\ H\,\delta\beta + A\,\delta\mu + \mathbf{1}\,\delta\xi = 0, \qquad
+  \text{(II$'$)}\ A^\top\delta\beta = 0, \qquad
+  \text{(III$'$)}\ \mathbf{1}^\top\delta\beta = 0.
 \]
 Left-multiply~(I) by~$\delta\beta^\top$:
 \[
   \delta\beta^\top H\beta
-  + \underbrace{(N^\top\delta\beta)^\top}_{=\,0\text{ by (II$'$)}}\mu
-  + \underbrace{(\eta^\top\delta\beta)}_{=\,0\text{ by (III$'$)}}\xi
+  + \underbrace{(A^\top\delta\beta)^\top}_{=\,0\text{ by (II$'$)}}\mu
+  + \underbrace{(\mathbf{1}^\top\delta\beta)}_{=\,0\text{ by (III$'$)}}\xi
   = 0.
 \]
 Left-multiply~(I$'$) by~$\delta\beta^\top$:
 \[
   \delta\beta^\top H\,\delta\beta
-  + \underbrace{(N^\top\delta\beta)^\top}_{0}\delta\mu
-  + \underbrace{(\eta^\top\delta\beta)}_{0}\delta\xi
+  + \underbrace{(A^\top\delta\beta)^\top}_{0}\delta\mu
+  + \underbrace{(\mathbf{1}^\top\delta\beta)}_{0}\delta\xi
   = 0.
 \]
 Therefore
@@ -146,26 +153,27 @@ Therefore
   = -\xi. \qedhere
 \]
 \end{proof}
+\end{notationupdated}
 
 
+\begin{unverified}
 \begin{lemma}[Transition feasibility]%
 \label{lem:numerical-transition-feasibility}
 % Source: thesis/appendix-numerical.tex
 Let $K \subset \mathbb{R}^4$ be a convex polytope with
-facets $F_1, \ldots, F_m$ and outward normals~$n_k$
-(not necessarily unit).
+facets $F_1, \ldots, F_m$ and dual vertices~$a_k$.
 A \emph{transition} $F_i \to F_j$ is a segment of a
 Reeb trajectory that travels with velocity~$R_i$
 for positive time,
 then immediately with velocity~$R_j$ for positive time.
 A transition $F_i \to F_j$ exists if and only if
 \begin{enumerate}
-\item $\omega_0(n_i, n_j) \ge 0$, and
+\item $\omega_0(a_i, a_j) \ge 0$, and
 \item $\exists\, x \in F_i \cap F_j$ with
-  $\langle n_k, x \rangle < h_k$
+  $\langle a_k, x \rangle < 1$
   for all $k \notin \{i,j\}$ satisfying
-  $\omega_0(n_i, n_k) < 0$ or
-  $\omega_0(n_j, n_k) > 0$.
+  $\omega_0(a_i, a_k) < 0$ or
+  $\omega_0(a_j, a_k) > 0$.
 \end{enumerate}
 \end{lemma}
 
@@ -173,39 +181,39 @@ A transition $F_i \to F_j$ exists if and only if
 A transition $F_i \to F_j$ exists if and only if
 there is a point $x \in F_i \cap F_j$ and
 $\varepsilon > 0$ such that
-$x + t\, J_0 n_i \in K$ for $t \in [-\varepsilon, 0]$
-and $x + t\, J_0 n_j \in K$ for $t \in [0, \varepsilon]$:
-since $R_i = (2/h_i)\, J_0\, n_i$ with $h_i > 0$,
+$x + t\, J_0 a_i \in K$ for $t \in [-\varepsilon, 0]$
+and $x + t\, J_0 a_j \in K$ for $t \in [0, \varepsilon]$:
+since $R_i = 2\, J_0\, a_i$,
 traveling with velocity~$R_i$ is equivalent to
-moving in direction~$J_0 n_i$.
+moving in direction~$J_0 a_i$.
 
 \emph{Necessity.}
 Let $x \in F_i \cap F_j$ realize the transition.
 For the approach ($t < 0$) to satisfy
 the~$F_j$ constraint:
-$\langle n_j, x + t\, J_0 n_i \rangle
-= h_j + t\,\omega_0(n_i, n_j) \leq h_j$,
-which forces $\omega_0(n_i, n_j) \geq 0$
+$\langle a_j, x + t\, J_0 a_i \rangle
+= 1 + t\,\omega_0(a_i, a_j) \leq 1$,
+which forces $\omega_0(a_i, a_j) \geq 0$
 (since $t < 0$).
 For the departure ($t > 0$), the~$F_i$ constraint gives
-$\langle n_i, x + t\, J_0 n_j \rangle
-= h_i - t\,\omega_0(n_i, n_j) \leq h_i$,
-again requiring $\omega_0(n_i, n_j) \geq 0$.
+$\langle a_i, x + t\, J_0 a_j \rangle
+= 1 - t\,\omega_0(a_i, a_j) \leq 1$,
+again requiring $\omega_0(a_i, a_j) \geq 0$.
 This proves~(1).
 
 For~(2), suppose $k \notin \{i,j\}$ satisfies
-$\omega_0(n_i, n_k) < 0$.
+$\omega_0(a_i, a_k) < 0$.
 Then
-$\langle n_k, x + t\, J_0 n_i \rangle
-= \langle n_k, x \rangle + t\,\omega_0(n_i, n_k)$.
-Since $t < 0$ and $\omega_0(n_i, n_k) < 0$,
-their product $t\,\omega_0(n_i, n_k) > 0$, so
-$\langle n_k, x + t\, J_0 n_i \rangle
-> \langle n_k, x \rangle$.
-If $\langle n_k, x \rangle = h_k$, this
-exceeds~$h_k$, violating $x + t\, J_0 n_i \in K$.
-Hence $\langle n_k, x \rangle < h_k$.
-The case $\omega_0(n_j, n_k) > 0$ is analogous
+$\langle a_k, x + t\, J_0 a_i \rangle
+= \langle a_k, x \rangle + t\,\omega_0(a_i, a_k)$.
+Since $t < 0$ and $\omega_0(a_i, a_k) < 0$,
+their product $t\,\omega_0(a_i, a_k) > 0$, so
+$\langle a_k, x + t\, J_0 a_i \rangle
+> \langle a_k, x \rangle$.
+If $\langle a_k, x \rangle = 1$, this
+exceeds~$1$, violating $x + t\, J_0 a_i \in K$.
+Hence $\langle a_k, x \rangle < 1$.
+The case $\omega_0(a_j, a_k) > 0$ is analogous
 for the departure.
 
 \emph{Sufficiency.}
@@ -213,33 +221,34 @@ Given $x \in F_i \cap F_j$ satisfying~(1) and~(2),
 we construct $\varepsilon > 0$ witnessing
 the transition.
 For $k \notin \{i,j\}$ with
-$\omega_0(n_i, n_k) \geq 0$ and
-$\omega_0(n_j, n_k) \leq 0$:
-$\langle n_k, x + t\, J_0 n_i \rangle
-\leq \langle n_k, x \rangle \leq h_k$
+$\omega_0(a_i, a_k) \geq 0$ and
+$\omega_0(a_j, a_k) \leq 0$:
+$\langle a_k, x + t\, J_0 a_i \rangle
+\leq \langle a_k, x \rangle \leq 1$
 for $t \leq 0$,
 and
-$\langle n_k, x + t\, J_0 n_j \rangle
-\leq \langle n_k, x \rangle \leq h_k$
+$\langle a_k, x + t\, J_0 a_j \rangle
+\leq \langle a_k, x \rangle \leq 1$
 for $t \geq 0$.
 For the remaining $k \notin \{i,j\}$
-(those with $\omega_0(n_i, n_k) < 0$ or
-$\omega_0(n_j, n_k) > 0$),
+(those with $\omega_0(a_i, a_k) < 0$ or
+$\omega_0(a_j, a_k) > 0$),
 condition~(2) gives
-$\langle n_k, x \rangle < h_k$.
+$\langle a_k, x \rangle < 1$.
 Let $\delta$ be the minimum of
-$h_k - \langle n_k, x \rangle > 0$
+$1 - \langle a_k, x \rangle > 0$
 over these~$k$ (or any $\delta > 0$ if there are none),
 and choose
 $\varepsilon < \delta / \max_k(
-|\omega_0(n_i, n_k)| + |\omega_0(n_j, n_k)|)$.
+|\omega_0(a_i, a_k)| + |\omega_0(a_j, a_k)|)$.
 Then all halfspace constraints hold for the
 approach and departure, so $x$ together
 with~$\varepsilon$ witnesses the transition
 $F_i \to F_j$.
 \end{proof}
+\end{unverified}
 
-
+\begin{unverified}
 \begin{lemma}[$Q$ error bound from KKT residual]%
 \label{lem:q-error-bound}
 % Source: thesis/appendix-numerical.tex
@@ -253,9 +262,9 @@ numerical solution with residual
 \[
   r \;=\; M\hat x - b
   \;=\; \begin{pmatrix}
-    H\hat\beta + N\hat\mu + \eta\hat\xi \\
-    N^\top\hat\beta \\
-    \eta^\top\hat\beta - 1
+    H\hat\beta + A\hat\mu + \mathbf{1}\hat\xi \\
+    A^\top\hat\beta \\
+    \mathbf{1}^\top\hat\beta - 1
   \end{pmatrix}
   \;=:\; \begin{pmatrix}r_1 \\ r_2 \\ r_3\end{pmatrix},
 \]
@@ -297,18 +306,18 @@ Since $Q(\beta) = \tfrac{1}{2}\,\beta^\top H\,\beta$,
 
 \emph{Step~2: rewrite the cross term using KKT.}
 The stationarity condition (first block of $M x_0 = b$) is
-$H\beta_0 + N\mu_0 + \eta\xi_0 = 0$.
+$H\beta_0 + A\mu_0 + \mathbf{1}\xi_0 = 0$.
 Hence
 \[
   \delta\beta^\top H\,\beta_0
-  = -\delta\beta^\top(N\mu_0 + \eta\xi_0)
-  = -(N^\top\delta\beta)^\top \mu_0
-    - (\eta^\top\delta\beta)\,\xi_0.
+  = -\delta\beta^\top(A\mu_0 + \mathbf{1}\xi_0)
+  = -(A^\top\delta\beta)^\top \mu_0
+    - (\mathbf{1}^\top\delta\beta)\,\xi_0.
 \]
 The constraint residual blocks give
-$N^\top\delta\beta = N^\top\hat\beta = r_2$
-(since $N^\top\beta_0 = 0$ by the exact constraint)
-and similarly $\eta^\top\delta\beta = r_3$, hence
+$A^\top\delta\beta = A^\top\hat\beta = r_2$
+(since $A^\top\beta_0 = 0$ by the exact constraint)
+and similarly $\mathbf{1}^\top\delta\beta = r_3$, hence
 \[
   -\delta\beta^\top H\,\beta_0
   = r_2^\top\mu_0 + r_3\,\xi_0.
@@ -342,9 +351,9 @@ and the component bounds.
 Expanding $\delta x^\top M\,\delta x$
 via the block structure
 $M = \bigl[\begin{smallmatrix}
-  H & N & \eta \\
-  N^\top & 0 & 0 \\
-  \eta^\top & 0 & 0
+  H & A & \mathbf{1} \\
+  A^\top & 0 & 0 \\
+  \mathbf{1}^\top & 0 & 0
 \end{smallmatrix}\bigr]$
 gives
 \[
@@ -353,8 +362,8 @@ gives
     - 2\,r_2^\top\delta\mu
     - 2\,r_3\,\delta\xi,
 \]
-where we used $N^\top\delta\beta = r_2$
-and $\eta^\top\delta\beta = r_3$ from Step~2.
+where we used $A^\top\delta\beta = r_2$
+and $\mathbf{1}^\top\delta\beta = r_3$ from Step~2.
 For the first term,
 \[
   |\delta x^\top M\,\delta x|
@@ -381,8 +390,9 @@ for $\|\delta\mu\|$ and $|\delta\xi|$:
   \qedhere
 \]
 \end{proof}
+\end{unverified}
 
-
+\begin{unverified}
 \begin{remark}[Near-null LP search for admissible~$\hat\beta$]%
 \label{rem:near-null-lp-search}
 % Source: saddle_point_solver.rs, beta_feasibility.rs
@@ -416,9 +426,9 @@ Not all discarded eigenvectors contribute usefully to the LP.
 The $(m{+}5)$-dimensional eigenvectors split into blocks
 $\hat v_j = ((\hat v_j)_\beta,\; (\hat v_j)_\mu,\; (\hat v_j)_\xi)$.
 From $M\hat v_j = \hat\lambda_j \hat v_j$, reading the constraint rows:
-$N^\top (\hat v_j)_\beta = \hat\lambda_j\, (\hat v_j)_\mu$
+$A^\top (\hat v_j)_\beta = \hat\lambda_j\, (\hat v_j)_\mu$
 and
-$\eta^\top (\hat v_j)_\beta = \hat\lambda_j\, (\hat v_j)_\xi$.
+$\mathbf{1}^\top (\hat v_j)_\beta = \hat\lambda_j\, (\hat v_j)_\xi$.
 Three types arise:
 
 \begin{itemize}
@@ -432,8 +442,8 @@ Three types arise:
 \item \textbf{Type~B} ($\|(\hat v_j)_\beta\| = O(1)$,
   constraint violation $O(|\hat\lambda_j|)$):
   Approximately constraint-preserving.
-  Since $\eta^\top (\hat v_j)_\beta \approx 0$
-  with $\eta_i > 0$, the direction has mixed signs,
+  Since $\mathbf{1}^\top (\hat v_j)_\beta \approx 0$,
+  the direction has mixed signs,
   so the LP is bounded.
   Handled correctly by the LP.
 
@@ -442,9 +452,9 @@ Three types arise:
   \emph{Cannot occur.}
   From $M\hat v_j = \hat\lambda_j \hat v_j$,
   the constraint rows give
-  $N^\top (\hat v_j)_\beta = \hat\lambda_j\, (\hat v_j)_\mu$
+  $A^\top (\hat v_j)_\beta = \hat\lambda_j\, (\hat v_j)_\mu$
   and
-  $\eta^\top (\hat v_j)_\beta = \hat\lambda_j\, (\hat v_j)_\xi$.
+  $\mathbf{1}^\top (\hat v_j)_\beta = \hat\lambda_j\, (\hat v_j)_\xi$.
   Since $\|\hat v_j\| = 1$,
   the constraint violation per unit~$\alpha$ is
   $\leq |\hat\lambda_j| \leq \tau$.
@@ -454,4 +464,5 @@ Three types arise:
   if a Type~C direction is ever encountered.
 \end{itemize}
 \end{remark}
+\end{unverified}
 

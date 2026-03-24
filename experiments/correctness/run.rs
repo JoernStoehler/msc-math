@@ -54,8 +54,7 @@ struct VerificationEntry {
     test_group: String, // "base", "literature", "scaled", "transformed", "perturbed"
     base_index: Option<usize>, // For scaled/transformed/perturbed: index into base group
     facet_count: usize,
-    normals: Vec<[f64; 4]>,
-    heights: Vec<f64>,
+    dual_vertices: Vec<[f64; 4]>,
     capacity_pruned: f64,
     capacity_unpruned: Option<f64>,
     capacity_billiard: Option<f64>,
@@ -104,8 +103,7 @@ fn main() {
             test_group: "base".to_string(),
             base_index: None,
             facet_count: p.facet_count(),
-            normals: p.normals_f64().iter().map(|n| [n[0], n[1], n[2], n[3]]).collect(),
-            heights: p.heights_f64().to_vec(),
+            dual_vertices: p.dual_vertices_f64().iter().map(|a| [a[0], a[1], a[2], a[3]]).collect(),
             capacity_pruned: pruned,
             capacity_unpruned: Some(unpruned),
             capacity_billiard: billiard,
@@ -136,8 +134,7 @@ fn main() {
             test_group: "literature".to_string(),
             base_index: None,
             facet_count: kp.polytope.facet_count(),
-            normals: kp.polytope.normals_f64().iter().map(|n| [n[0], n[1], n[2], n[3]]).collect(),
-            heights: kp.polytope.heights_f64().to_vec(),
+            dual_vertices: kp.polytope.dual_vertices_f64().iter().map(|a| [a[0], a[1], a[2], a[3]]).collect(),
             capacity_pruned: pruned,
             capacity_unpruned: None,
             capacity_billiard: billiard,
@@ -152,7 +149,7 @@ fn main() {
     for (i, p) in base_polytopes.iter().enumerate() {
         let alpha: f64 = rng.gen_range(0.5..2.0);
         let scaled = Polytope4D::from_f64(
-            p.normals_f64().iter().zip(p.heights_f64().iter().map(|&h| alpha * h)).map(|(n, h)| n / h).collect(),
+            p.dual_vertices_f64().iter().map(|a| a / alpha).collect(),
         ).expect("scaled");
 
         let pruned = ehz_capacity(&scaled).expect("pruned").result.capacity;
@@ -167,8 +164,7 @@ fn main() {
             test_group: "scaled".to_string(),
             base_index: Some(i),
             facet_count: scaled.facet_count(),
-            normals: scaled.normals_f64().iter().map(|n| [n[0], n[1], n[2], n[3]]).collect(),
-            heights: scaled.heights_f64().to_vec(),
+            dual_vertices: scaled.dual_vertices_f64().iter().map(|a| [a[0], a[1], a[2], a[3]]).collect(),
             capacity_pruned: pruned,
             capacity_unpruned: None,
             capacity_billiard: billiard,
@@ -190,8 +186,7 @@ fn main() {
             test_group: "transformed".to_string(),
             base_index: Some(i),
             facet_count: transformed.facet_count(),
-            normals: transformed.normals_f64().iter().map(|n| [n[0], n[1], n[2], n[3]]).collect(),
-            heights: transformed.heights_f64().to_vec(),
+            dual_vertices: transformed.dual_vertices_f64().iter().map(|a| [a[0], a[1], a[2], a[3]]).collect(),
             capacity_pruned: pruned,
             capacity_unpruned: None,
             capacity_billiard: None,
@@ -205,13 +200,12 @@ fn main() {
     println!("Test 5: Generating 10 perturbed polytopes (reusing base)...");
     for (i, p) in base_polytopes.iter().enumerate() {
         let epsilon = 0.01;
-        let perturbed_heights: Vec<_> = p.heights_f64()
-            .iter()
-            .map(|&h| h * (1.0 + epsilon * (rng.gen::<f64>() - 0.5)))
-            .collect();
-
         let perturbed = Polytope4D::from_f64(
-            p.normals_f64().iter().zip(perturbed_heights.iter()).map(|(n, &h)| n / h).collect(),
+            p.dual_vertices_f64().iter().map(|a| {
+                // Perturb height h_i → h_i * (1 + ε·δ), so a_i → a_i / (1 + ε·δ)
+                let delta = rng.gen::<f64>() - 0.5;
+                a / (1.0 + epsilon * delta)
+            }).collect(),
         ).expect("perturbed");
         let pruned = ehz_capacity(&perturbed).expect("pruned").result.capacity;
 
@@ -220,8 +214,7 @@ fn main() {
             test_group: "perturbed".to_string(),
             base_index: Some(i),
             facet_count: perturbed.facet_count(),
-            normals: perturbed.normals_f64().iter().map(|n| [n[0], n[1], n[2], n[3]]).collect(),
-            heights: perturbed.heights_f64().to_vec(),
+            dual_vertices: perturbed.dual_vertices_f64().iter().map(|a| [a[0], a[1], a[2], a[3]]).collect(),
             capacity_pruned: pruned,
             capacity_unpruned: None,
             capacity_billiard: None,
@@ -252,20 +245,10 @@ fn main() {
 }
 
 fn apply_symplectomorphism(p: &Polytope4D, m: &Matrix4<f64>) -> Polytope4D {
+    // For symplectomorphism M: a' = M^{-T} a
     let m_inv_t = m.transpose().try_inverse().expect("invertible");
-    let p_normals = p.normals_f64();
-    let p_heights = p.heights_f64();
-    let normals: Vec<_> = p_normals.iter().map(|n| {
-        let n_raw = m_inv_t * n;
-        n_raw / n_raw.norm()
-    }).collect();
-    let heights: Vec<_> = p_normals.iter().zip(p_heights.iter()).map(|(n, &h)| {
-        let n_raw = m_inv_t * n;
-        h / n_raw.norm()
-    }).collect();
-    Polytope4D::from_f64(
-        normals.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect(),
-    ).expect("transformed")
+    let new_duals: Vec<_> = p.dual_vertices_f64().iter().map(|a| m_inv_t * a).collect();
+    Polytope4D::from_f64(new_duals).expect("transformed")
 }
 
 fn random_sp4_matrix(rng: &mut impl Rng) -> Matrix4<f64> {
@@ -426,20 +409,20 @@ mod tests {
                 let k2 = &dataset[j];
 
                 let p1 = Polytope4D::from_f64(
-                    k1.normals.iter().map(|n| Vector4::from_row_slice(n))
-                        .zip(k1.heights.iter()).map(|(n, &h)| n / h).collect(),
+                    k1.dual_vertices.iter().map(|a| Vector4::from_row_slice(a)).collect(),
                 ).expect("p1");
                 let p2 = Polytope4D::from_f64(
-                    k2.normals.iter().map(|n| Vector4::from_row_slice(n))
-                        .zip(k2.heights.iter()).map(|(n, &h)| n / h).collect(),
+                    k2.dual_vertices.iter().map(|a| Vector4::from_row_slice(a)).collect(),
                 ).expect("p2");
 
+                // Containment check: a · v ≤ 1 for all dual vertices a of K2
+                // α_max = min over v,a of 1 / (a · v) when a · v > 0
                 let mut alpha_max = f64::INFINITY;
                 for v in p1.vertices_f64() {
-                    for (n, &h) in p2.normals_f64().iter().zip(p2.heights_f64().iter()) {
-                        let dot = n.dot(v);
+                    for a in p2.dual_vertices_f64() {
+                        let dot = a.dot(v);
                         if dot > 1e-10 {
-                            alpha_max = alpha_max.min(h / dot);
+                            alpha_max = alpha_max.min(1.0 / dot);
                         }
                     }
                 }

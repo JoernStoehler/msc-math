@@ -23,7 +23,7 @@ use std::collections::HashSet;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
 use symplectic::derivatives::{
-    capacity_derivatives_n, volume_derivatives_n,
+    capacity_derivatives_a, volume_derivatives_a,
 };
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
@@ -58,8 +58,7 @@ const SAMPLING_PLAN: &[(usize, usize)] = &[
 struct OmegaRow {
     source: String,
     facet_count: usize,
-    normals: Vec<[f64; 4]>,
-    heights: Vec<f64>,
+    dual_vertices: Vec<[f64; 4]>,
     volume: f64,
     capacity: f64,
     sys: f64,
@@ -108,7 +107,7 @@ fn j0_apply(v: &Vector4<f64>) -> Vector4<f64> {
 
 /// Full ∇_{n_k} sys via chain rule: d(sys)/d(n_k) = (1/V)[c·dc/dn_k - sys·dV/dn_k].
 #[allow(clippy::too_many_arguments)]
-fn compute_d_sys_n(
+fn compute_d_sys_a(
     polytope: &Polytope4D,
     vol: f64,
     cap: f64,
@@ -118,14 +117,14 @@ fn compute_d_sys_n(
     best_q: f64,
     best_mu: &[f64],
 ) -> Vec<Vector4<f64>> {
-    let normals = polytope.normals_f64();
+    let duals = polytope.dual_vertices_f64();
 
-    let d_vol_n = volume_derivatives_n(polytope);
-    let d_cap_n = capacity_derivatives_n(best_beta, best_q, best_mu, best_perm, &normals);
+    let d_vol_a = volume_derivatives_a(polytope);
+    let d_cap_a = capacity_derivatives_a(best_beta, best_q, best_mu, best_perm, duals);
 
-    d_vol_n
+    d_vol_a
         .iter()
-        .zip(d_cap_n.iter())
+        .zip(d_cap_a.iter())
         .map(|(dv, dc)| (cap * dc - sys * dv) / vol)
         .collect()
 }
@@ -140,7 +139,8 @@ fn compute_omega_features(
     skeleton: &Skeleton,
     orbit_facets: &[usize],  // physical direction (from EhzResult)
 ) -> (Vec<[f64; 3]>, Vec<f64>) {
-    let normals = polytope.normals_f64();
+    let duals = polytope.dual_vertices_f64();
+    let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
 
     // Ridge omegas: for each ridge (2-face shared by facets i, j with i < j)
     let ridge_omegas: Vec<[f64; 3]> = skeleton
@@ -198,10 +198,10 @@ fn omega_gradient_on_tangent(n_k: &Vector4<f64>, n_i: &Vector4<f64>) -> Vector4<
 fn compute_gradient_dots(
     polytope: &Polytope4D,
     skeleton: &Skeleton,
-    d_sys_n: &[Vector4<f64>],
+    d_sys_a: &[Vector4<f64>],
     orbit_facets: &[usize],
 ) -> Vec<GradientDot> {
-    let normals = polytope.normals_f64();
+    let normals: Vec<Vector4<f64>> = polytope.dual_vertices_f64().iter().map(|a| a / a.norm()).collect();
     let orbit_set: HashSet<usize> = orbit_facets.iter().copied().collect();
 
     // Build ridge-neighbor lookup: for each facet k, list of neighbors
@@ -216,7 +216,7 @@ fn compute_gradient_dots(
 
     let mut dots = Vec::new();
     for k in 0..f {
-        let grad_sys = &d_sys_n[k];
+        let grad_sys = &d_sys_a[k];
         let grad_sys_norm = grad_sys.norm();
 
         for &i in &neighbors[k] {
@@ -248,8 +248,7 @@ fn process_polytope(
     source: &str,
 ) -> Option<OmegaRow> {
     let f = polytope.facet_count();
-    let normals = polytope.normals_f64();
-    let heights = polytope.heights_f64();
+    let duals = polytope.dual_vertices_f64();
 
     let t0 = Instant::now();
 
@@ -297,18 +296,17 @@ fn process_polytope(
         );
     }
 
-    // Phase B: gradient dots (using library derivative functions with symmetric KKT multipliers)
-    let d_sys_n = compute_d_sys_n(
+    // Phase B: gradient dots (using library derivative functions with dual vertex parameterization)
+    let d_sys_a = compute_d_sys_a(
         polytope, vol, cap, sys,
         best_perm, best_beta, kkt_result.q_corrected, &kkt_result.mu,
     );
-    let gradient_dots = compute_gradient_dots(polytope, &skeleton, &d_sys_n, best_perm);
+    let gradient_dots = compute_gradient_dots(polytope, &skeleton, &d_sys_a, best_perm);
 
     Some(OmegaRow {
         source: source.to_string(),
         facet_count: f,
-        normals: normals.iter().map(|n| [n[0], n[1], n[2], n[3]]).collect(),
-        heights: heights.to_vec(),
+        dual_vertices: duals.iter().map(|a| [a[0], a[1], a[2], a[3]]).collect(),
         volume: vol,
         capacity: cap,
         sys,

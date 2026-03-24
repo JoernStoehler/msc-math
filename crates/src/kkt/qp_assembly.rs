@@ -17,8 +17,8 @@ use nalgebra::{DMatrix, DVector};
 
 /// Assemble the QP {C, d, H} from a polytope and cyclic permutation.
 ///
-/// Given a polytope with dual vertices a_i (= h_i * n_i, where n_i is the outward
-/// unit normal and h_i the support distance) and a permutation sigma of m facet
+/// Given a polytope K = {x : a_i^T x <= 1} with dual vertices a_i and a
+/// permutation sigma of m facet
 /// indices, assembles:
 ///
 /// - **C** (5 x m): closure constraints (sum a_{sigma(i)} beta_i = 0, four rows)
@@ -91,20 +91,19 @@ pub fn build_qp(polytope: &Polytope4D, perm: &[usize]) -> QP {
 /// Builds the symmetric saddle-point matrix M and right-hand side b:
 ///
 /// ```text
-/// [ H   |  N   |  eta ] [ beta ]   [ 0 ]
-/// [ N^T |  0   |  0   ] [  mu  ] = [ 0 ]
-/// [eta^T|  0   |  0   ] [  xi  ]   [ 1 ]
+/// [ H   |  A   |  1 ] [ beta ]   [ 0 ]
+/// [ A^T |  0   |  0 ] [  mu  ] = [ 0 ]
+/// [ 1^T |  0   |  0 ] [  xi  ]   [ 1 ]
 /// ```
 ///
 /// where:
-/// - H (m x m): action matrix, H_{ij} = omega_0(n_{sigma(i)}, n_{sigma(j)})
-/// - N (m x 4): facet normals, N_{i,d} = n_{sigma(i),d}
-/// - eta (m x 1): facet heights, eta_i = h_{sigma(i)}
+/// - H (m x m): action matrix, H_{ij} = omega_0(a_{sigma(i)}, a_{sigma(j)})
+/// - A (m x 4): dual vertices, A_{i,d} = a_{sigma(i),d}
+/// - 1 (m x 1): all ones
 ///
-/// Stationarity: H beta + N mu + eta xi = 0, with Lagrange multipliers mu in R^4, xi in R.
+/// Uses dual vertices a_i directly (K = {x : a_i^T x <= 1}).
+/// Stationarity: H beta + A mu + 1 xi = 0, with Lagrange multipliers mu in R^4, xi in R.
 /// Symmetry enables eigendecomposition M = V Lambda V^T.
-///
-/// Uses **period normalization** (trajectory on [0,T]); see appendix-notation.tex.
 ///
 /// # Panics
 /// - If any index in `perm` is out of bounds for the polytope's facets.
@@ -116,36 +115,34 @@ pub fn build_augmented_system(
 ) -> (DMatrix<f64>, DVector<f64>) {
     let m = perm.len();
     let size = m + 5;
-    let normals = polytope.normals_f64();
-    let heights = polytope.heights_f64();
+    let dual_verts = polytope.dual_vertices_f64();
 
     let mut kkt = DMatrix::zeros(size, size);
     let mut rhs = DVector::zeros(size);
 
-    // Top-left block: H (m x m) — action matrix with omega_0 values between normals.
-    // H_{ij} = omega_0(n_{sigma(i)}, n_{sigma(j)}) for i != j, H_{ii} = 0.
+    // Top-left block: H (m x m) — action matrix with omega_0 values between dual vertices.
+    // H_{ij} = omega_0(a_{sigma(i)}, a_{sigma(j)}) for i != j, H_{ii} = 0.
     for i in 0..m {
         for j in (i + 1)..m {
-            let val = omega0(&normals[perm[i]], &normals[perm[j]]);
+            let val = omega0(&dual_verts[perm[i]], &dual_verts[perm[j]]);
             kkt[(i, j)] = val;
             kkt[(j, i)] = val;
         }
     }
 
-    // Off-diagonal blocks: N (m x 4) and N^T (4 x m) — placed symmetrically.
+    // Off-diagonal blocks: A (m x 4) and A^T (4 x m) — placed symmetrically.
     for i in 0..m {
         for d in 0..4 {
-            let n = normals[perm[i]][d];
-            kkt[(i, m + d)] = n;
-            kkt[(m + d, i)] = n;
+            let a = dual_verts[perm[i]][d];
+            kkt[(i, m + d)] = a;
+            kkt[(m + d, i)] = a;
         }
     }
 
-    // Off-diagonal blocks: eta (m x 1) and eta^T (1 x m) — placed symmetrically.
+    // Off-diagonal blocks: 1 (m x 1) and 1^T (1 x m) — placed symmetrically.
     for i in 0..m {
-        let h = heights[perm[i]];
-        kkt[(i, m + 4)] = h;
-        kkt[(m + 4, i)] = h;
+        kkt[(i, m + 4)] = 1.0;
+        kkt[(m + 4, i)] = 1.0;
     }
 
     // RHS: [0, ..., 0, 1] — normalization constraint.
@@ -339,26 +336,25 @@ mod tests {
         }
     }
 
-    /// The augmented system block structure: H uses normals, off-diagonal blocks
-    /// contain normal coordinates and heights, bottom-right 5x5 is zero, RHS = [0..0, 1].
+    /// The augmented system block structure: H uses dual vertices, off-diagonal blocks
+    /// contain dual vertex coordinates and ones, bottom-right 5x5 is zero, RHS = [0..0, 1].
     #[test]
     fn augmented_system_block_structure() {
         let polytope = make_test_polytope();
-        let normals = polytope.normals_f64();
-        let heights = polytope.heights_f64();
+        let dual_verts = polytope.dual_vertices_f64();
         let n = polytope.facet_count();
         let perm: Vec<usize> = (0..n).collect();
         let m = perm.len();
 
         let (kkt, rhs) = build_augmented_system(&polytope, &perm);
 
-        // Check H block (top-left m x m): omega_0 between permuted normals.
+        // Check H block (top-left m x m): omega_0 between permuted dual vertices.
         for i in 0..m {
             for j in (i + 1)..m {
-                let expected = omega0(&normals[perm[i]], &normals[perm[j]]);
+                let expected = omega0(&dual_verts[perm[i]], &dual_verts[perm[j]]);
                 assert!(
                     (kkt[(i, j)] - expected).abs() < 1e-15,
-                    "H[{},{}]={} != omega0(n_{}, n_{})={}",
+                    "H[{},{}]={} != omega0(a_{}, a_{})={}",
                     i, j, kkt[(i, j)], perm[i], perm[j], expected
                 );
             }
@@ -370,34 +366,33 @@ mod tests {
             );
         }
 
-        // Check N block (rows 0..m, cols m..m+4) and N^T (rows m..m+4, cols 0..m).
+        // Check A block (rows 0..m, cols m..m+4) and A^T (rows m..m+4, cols 0..m).
         for i in 0..m {
             for d in 0..4 {
-                let expected = normals[perm[i]][d];
+                let expected = dual_verts[perm[i]][d];
                 assert!(
                     (kkt[(i, m + d)] - expected).abs() < 1e-15,
-                    "N[{},{}] mismatch",
+                    "A[{},{}] mismatch",
                     i, d
                 );
                 assert!(
                     (kkt[(m + d, i)] - expected).abs() < 1e-15,
-                    "N^T[{},{}] mismatch",
+                    "A^T[{},{}] mismatch",
                     d, i
                 );
             }
         }
 
-        // Check eta block (rows 0..m, col m+4) and eta^T (row m+4, cols 0..m).
+        // Check ones block (rows 0..m, col m+4) and ones^T (row m+4, cols 0..m).
         for i in 0..m {
-            let expected = heights[perm[i]];
             assert!(
-                (kkt[(i, m + 4)] - expected).abs() < 1e-15,
-                "eta[{}] mismatch",
+                (kkt[(i, m + 4)] - 1.0).abs() < 1e-15,
+                "ones[{}] mismatch",
                 i
             );
             assert!(
-                (kkt[(m + 4, i)] - expected).abs() < 1e-15,
-                "eta^T[{}] mismatch",
+                (kkt[(m + 4, i)] - 1.0).abs() < 1e-15,
+                "ones^T[{}] mismatch",
                 i
             );
         }

@@ -48,8 +48,7 @@ struct RandomProductRow {
     k: usize,
     m: usize,
     facet_count: usize,
-    normals: Vec<[f64; 4]>,
-    heights: Vec<f64>,
+    dual_vertices: Vec<[f64; 4]>,
     h_min: f64,
     h_max: f64,
     volume: f64,
@@ -105,12 +104,11 @@ fn main() {
                 k,
                 m,
                 facet_count: k + m,
-                normals: polytope
-                    .normals_f64()
+                dual_vertices: polytope
+                    .dual_vertices_f64()
                     .iter()
-                    .map(|n| [n[0], n[1], n[2], n[3]])
+                    .map(|a| [a[0], a[1], a[2], a[3]])
                     .collect(),
-                heights: polytope.heights_f64().to_vec(),
                 h_min: H_MIN,
                 h_max: H_MAX,
                 volume: vol,

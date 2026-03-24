@@ -26,7 +26,7 @@ use symplectic::geom::reeb_trajectory;
 use symplectic::geom::known_polytopes::{self, KnownPolytope};
 // TODO: `solve_kkt` moves to `kkt::saddle_point_solver::solve_kkt` (wave 2, subagent #2)
 // TODO: `EPS_BETA_POSITIVE` and `EPS_Q_POSITIVE` move to `kkt::saddle_point_solver` (wave 2, subagent #2)
-use symplectic::kkt::saddle_point_solver::{solve_kkt, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
+use symplectic::kkt::saddle_point_solver::{solve_kkt_for, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
 // TODO: `Skeleton` will be re-exported from `symplectic::Skeleton` (wave 4, subagent #16)
 use symplectic::geom::skeleton::Skeleton;
 
@@ -49,13 +49,9 @@ pub struct VizExport {
     pub vertex_count: usize,
     pub edge_count: usize,
     pub ridge_count: usize,
-    /// Facet normals, each `[n₁, n₂, n₃, n₄]`.
-    pub normals: Vec<[f64; 4]>,
-    /// Facet heights.
-    pub heights: Vec<f64>,
-    /// Reeb flow directions per facet: `reeb_vectors[i] = J₀ · normals[i]`.
-    /// (The full Reeb vector is R_i = (2/h_i) J₀ n_i, but we export only
-    /// the direction for visualization, since the factor 2/h_i rescales time.)
+    /// Dual vertices a_i where K = {x : a_i^T x <= 1}, each `[a₁, a₂, a₃, a₄]`.
+    pub dual_vertices: Vec<[f64; 4]>,
+    /// Reeb flow directions per facet: `reeb_vectors[i] = J₀ · a_i`.
     pub reeb_vectors: Vec<[f64; 4]>,
     /// Vertices, each `[x₁, x₂, x₃, x₄]`.
     pub vertices: Vec<[f64; 4]>,
@@ -125,8 +121,6 @@ fn is_adjacent_cycle(perm: &[usize], adj: &[Vec<bool>]) -> bool {
 /// Returns orbits sorted by action (ascending).
 fn collect_all_orbits(polytope: &symplectic::geom::polytope::Polytope4D) -> Vec<CollectedOrbit> {
     let f = polytope.facet_count();
-    let normals = polytope.normals_f64();
-    let heights = polytope.heights_f64();
     let adj = build_directed_adjacency_matrix(polytope);
 
     let mut orbits: Vec<CollectedOrbit> = Vec::new();
@@ -138,7 +132,7 @@ fn collect_all_orbits(polytope: &symplectic::geom::polytope::Polytope4D) -> Vec<
                     return;
                 }
 
-                if let Some(result) = solve_kkt(&normals, &heights, perm) {
+                if let Some(result) = solve_kkt_for(polytope, perm) {
                     let q_val = result.q_corrected;
                     if q_val <= EPS_Q_POSITIVE {
                         return;
@@ -250,8 +244,9 @@ fn ridge_displacement_directions(
     first_facet: usize,
     last_facet: usize,
 ) -> Vec<Vector4<f64>> {
-    let n0 = polytope.normals_f64()[first_facet].normalize();
-    let n1 = polytope.normals_f64()[last_facet].normalize();
+    let duals = polytope.dual_vertices_f64();
+    let n0 = duals[first_facet].normalize();
+    let n1 = duals[last_facet].normalize();
 
     // Find two vectors perpendicular to both n0 and n1 via Gram-Schmidt
     // on standard basis candidates.
@@ -502,11 +497,11 @@ pub fn export(name: &str, output: &Path) -> Result<(), String> {
     let polytope = &kp.polytope;
     let skeleton = Skeleton::compute(polytope);
 
-    // Reeb vectors
+    // Reeb vectors (from dual vertices a_i: R_i = J_0 a_i)
     let reeb_vectors: Vec<[f64; 4]> = polytope
-        .normals_f64()
+        .dual_vertices_f64()
         .iter()
-        .map(|n| v4_to_array(&reeb_trajectory::reeb_direction(n)))
+        .map(|a| v4_to_array(&reeb_trajectory::reeb_direction(a)))
         .collect();
 
     // Trajectories: real Reeb orbits + displaced variants
@@ -532,8 +527,7 @@ pub fn export(name: &str, output: &Path) -> Result<(), String> {
         vertex_count: polytope.vertices_f64().len(),
         edge_count: skeleton.edges.len(),
         ridge_count: skeleton.ridges.len(),
-        normals: polytope.normals_f64().iter().map(v4_to_array).collect(),
-        heights: polytope.heights_f64().to_vec(),
+        dual_vertices: polytope.dual_vertices_f64().iter().map(v4_to_array).collect(),
         reeb_vectors,
         vertices: polytope.vertices_f64().iter().map(v4_to_array).collect(),
         edges: skeleton.edges.clone(),

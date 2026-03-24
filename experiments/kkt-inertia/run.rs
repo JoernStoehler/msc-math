@@ -343,8 +343,9 @@ fn main() {
 
     for (name, polytope) in &polytopes {
         let f = polytope.facet_count();
-        let normals = polytope.normals_f64();
-        let heights = polytope.heights_f64();
+        let duals = polytope.dual_vertices_f64();
+        let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
+        let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
 
         let mut total = 0u64;
         let mut n_beta_pos = 0u64;
@@ -402,8 +403,9 @@ fn main() {
 
     for (name, polytope) in &polytopes {
         let f = polytope.facet_count();
-        let normals = polytope.normals_f64();
-        let heights = polytope.heights_f64();
+        let duals = polytope.dual_vertices_f64();
+        let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
+        let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
         let mut total = 0u64;
         let mut n_negp = 0u64;
         let mut n_neggtp = 0u64;

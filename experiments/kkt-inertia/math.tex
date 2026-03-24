@@ -58,6 +58,10 @@ Sym.\ $\triangle{\times}\square$   &      2\,365 &     1\,548 &     817 &   337 
 \label{tab:kkt-inertia}
 \end{table}
 
+% [TODO: JÖRN - verify this threshold-sensitivity interpretation.
+%  The 5 mismatches are all tangent_dim=3, p=5, with H|_T eigenvalues
+%  symmetric around zero. Eigenvalue diagnostics in kkt_inertia_output.txt.]
+\begin{unverified}
 The formula holds for 6 of 7~polytopes.
 The 5~mismatches in the HK-O pentagon all share the same pattern:
 $H|_T$ has three eigenvalues $\{-a,\, \varepsilon,\, +a\}$
@@ -71,6 +75,4 @@ instead of~$6$.
 The inertia formula itself is not violated;
 the mismatch arises from eigenvalue classification at
 machine epsilon.
-% [TODO: JÖRN - verify this threshold-sensitivity interpretation.
-%  The 5 mismatches are all tangent_dim=3, p=5, with H|_T eigenvalues
-%  symmetric around zero. Eigenvalue diagnostics in kkt_inertia_output.txt.]
+\end{unverified}

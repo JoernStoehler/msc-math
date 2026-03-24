@@ -163,14 +163,8 @@ mod tests {
                 let result = sample_random_polytope(facet_count, 0.5, 2.0, &mut rng);
 
                 if let Ok(polytope) = result {
-                    let normals = polytope.normals_f64();
-                    let heights = polytope.heights_f64();
-                    let halfspaces: Vec<nalgebra::Vector4<f64>> = normals
-                        .iter()
-                        .zip(heights.iter())
-                        .map(|(n, &h)| n / h)
-                        .collect();
-                    let revalidated = Polytope4D::from_f64(halfspaces);
+                    let duals = polytope.dual_vertices_f64();
+                    let revalidated = Polytope4D::from_f64(duals.to_vec());
                     prop_assert!(
                         revalidated.is_ok(),
                         "accepted polytope failed revalidation: {:?}",

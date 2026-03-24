@@ -57,7 +57,8 @@ Labels must be unique across all math.tex files in the repo (since the combined 
 
 ## Notation conventions
 
-- KKT system uses the **symmetric** matrix form: `[H, N, η; N^T, 0, 0; η^T, 0, 0]`
+- KKT system uses the **symmetric** matrix form: `[H, A, 1; A^T, 0, 0; 1^T, 0, 0]` where A collects the dual vertices for facets in the support
+- Dual-vertex parameterization: `K = {x : a_i^T x ≤ 1}`, Reeb vector `R_i = 2 J_0 a_i`
 - Lagrange multipliers: μ (closure), ξ (normalization)
 - β ∈ R^S (facet-indexed): β_i is the weight for facet i ∈ S, accessed via β_{σ(i)} for position i in ordering σ
 
@@ -69,6 +70,23 @@ Labels must be unique across all math.tex files in the repo (since the combined 
 - **Jörn verifies math.** Agent-written proofs are drafts. Mark unverified content with `% [TODO: JÖRN -` or `% [GAP -`.
 - **Every lemma must have a proof.** A statement-only stub (no `\begin{proof}...\end{proof}`) means the code's correctness is unverified. Flag statement-only entries as incomplete.
 - **Every non-trivial code function must have a math.tex entry.** If a function in the module's .rs files implements mathematical logic and has no corresponding lemma/proposition in math.tex, flag it. The code→math.tex mapping is the mechanism that enforces the core rule for algorithmic correctness.
+
+## Approval status (thesis .tex files)
+
+Thesis math content uses colored margin bars to indicate review status. Defined in `thesis/preamble.tex` using `mdframed`.
+
+**Three states:**
+- **Unapproved (red bar):** Wrap in `\begin{unverified}...\end{unverified}`. Default for all new agent-written math.
+- **Notation-updated (orange bar):** Wrap in `\begin{notationupdated}...\end{notationupdated}`. For content that was previously approved by Jörn but has had a mechanical substitution applied (e.g. notation rename).
+- **Approved (no bar):** No wrapper. Must have `% Jörn: math approved (<commit>)` marker comment.
+
+**Workflow:**
+- Agents writing new lemma/proof blocks in thesis .tex files wrap them in `\begin{unverified}...\end{unverified}`.
+- When Jörn approves: remove the `unverified` wrapper, add `% Jörn: math approved (<commit>)`.
+- When a mechanical substitution (e.g. notation change) is applied to approved content: replace the bare content with `\begin{notationupdated}...\end{notationupdated}`, preserving the approval marker comment inside.
+- The wrappers nest around theorem environments: `\begin{unverified}\begin{lemma}...\end{lemma}\begin{proof}...\end{proof}\end{unverified}`.
+
+**Scope:** This system applies to thesis .tex files only, not crate math.tex files.
 
 ## Format conventions
 

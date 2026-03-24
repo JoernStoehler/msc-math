@@ -26,8 +26,7 @@ use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::time::Instant;
 use symplectic::algorithms::hk2017::ehz_capacity;
 use symplectic::derivatives::{
-    capacity_derivatives_h, capacity_derivatives_n,
-    volume_derivatives_h, volume_derivatives_h_fd, volume_derivatives_n,
+    capacity_derivatives_a, volume_derivatives_a, volume_derivatives_a_fd,
 };
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
@@ -71,22 +70,21 @@ struct SensitivityRow {
     name: String,
     source_dataset: String,
     facet_count: usize,
-    normals: Vec<[f64; 4]>,
-    heights: Vec<f64>,
+    dual_vertices: Vec<[f64; 4]>,
     volume: f64,
     capacity: f64,
     sys: f64,
     /// Number of facets in the best orbit's permutation.
     orbit_length: usize,
     best_action: f64,
-    // Height derivatives
-    d_vol_h: Vec<f64>,
-    d_cap_h: Vec<f64>,
+    // Dual vertex derivatives
+    d_vol_a: Vec<[f64; 4]>,
+    d_cap_a: Vec<[f64; 4]>,
+    d_sys_a: Vec<[f64; 4]>,
+    gradient_norm_a: f64,
+    // Derived h/n gradients
     d_sys_h: Vec<f64>,
     gradient_norm_h: f64,
-    // Normal derivatives (tangent vectors, 4 components each)
-    d_vol_n: Vec<[f64; 4]>,
-    d_cap_n: Vec<[f64; 4]>,
     d_sys_n: Vec<[f64; 4]>,
     gradient_norm_n: f64,
     // Combined
@@ -179,14 +177,15 @@ struct InputRow {
 // ============================================================================
 
 struct SensitivityResult {
-    // Height derivatives
-    d_vol_h: Vec<f64>,
-    d_cap_h: Vec<f64>,
+    // Dual vertex derivatives d(sys)/d(a_k)
+    d_vol_a: Vec<Vector4<f64>>,
+    d_cap_a: Vec<Vector4<f64>>,
+    d_sys_a: Vec<Vector4<f64>>,
+    gradient_norm_a: f64,
+    // Height derivatives (derived from d/d(a_k) via chain rule for step bound compatibility)
     d_sys_h: Vec<f64>,
     gradient_norm_h: f64,
-    // Normal derivatives (tangent vectors in T_{n_k}S³)
-    d_vol_n: Vec<Vector4<f64>>,
-    d_cap_n: Vec<Vector4<f64>>,
+    // Normal derivatives (derived from d/d(a_k) via chain rule)
     d_sys_n: Vec<Vector4<f64>>,
     gradient_norm_n: f64,
     // Combined gradient norm
@@ -197,13 +196,11 @@ struct SensitivityResult {
 // Derivative functions and facet volume helpers: uses library
 // (crates/src/derivatives.rs, crates/src/geom/facet_volume.rs).
 
-/// Compute full sensitivity: d(sys)/d(h_k) and d(sys)/d(n_k) via chain rule.
+/// Compute full sensitivity: d(sys)/d(a_k) via chain rule, plus derived h/n gradients.
 ///
-/// Height derivatives: library volume_derivatives_h + capacity_derivatives_h (envelope theorem).
-/// Normal derivatives: library volume_derivatives_n + capacity_derivatives_n.
-///
-/// Sign convention: Library uses symmetric KKT (Hβ + Nμ + ηξ = 0).
-/// The derivative functions handle the sign convention internally — no adjustment needed.
+/// Uses library volume_derivatives_a + capacity_derivatives_a (envelope theorem).
+/// Also derives d(sys)/d(h_k) and d(sys)/d(n_k) from the dual vertex gradient
+/// for compatibility with step bound functions that work in normals/heights space.
 ///
 /// # Arguments
 /// - `kkt`: KKT solution for the best orbit (from `solve_kkt_for`)
@@ -216,78 +213,78 @@ fn compute_sensitivity(
     kkt: &KktResult,
     perm: &[usize],
 ) -> SensitivityResult {
-    let normals = polytope.normals_f64();
-    let heights = polytope.heights_f64();
-    let f = normals.len();
+    let duals = polytope.dual_vertices_f64();
+    let f = duals.len();
 
-    // --- Height derivatives ---
-    let d_vol_h = volume_derivatives_h(polytope);
+    // --- Dual vertex derivatives ---
+    let d_vol_a = volume_derivatives_a(polytope);
 
-    // Cross-check: analytical volume derivatives (h) vs finite differences
+    // Cross-check: analytical volume derivatives (a) vs finite differences
     debug_assert!({
-        let d_vol_fd = volume_derivatives_h_fd(&normals, &heights, 1e-3, |n, h| {
-            let p = Polytope4D::from_f64(
-                n.iter().zip(h.iter()).map(|(ni, &hi)| ni / hi).collect(),
-            ).ok()?;
+        let d_vol_fd = volume_derivatives_a_fd(duals, 1e-3, |a_perturbed| {
+            let p = Polytope4D::from_f64(a_perturbed.to_vec()).ok()?;
             volume(&p).ok()
         });
-        let ok = d_vol_h.iter().zip(d_vol_fd.iter()).all(|(a, fd)| {
-            if fd.is_nan() { return true; }
-            let tol = (0.05 * a.abs()).max(0.1);
-            (a - fd).abs() < tol
+        let ok = d_vol_a.iter().zip(d_vol_fd.iter()).all(|(a, fd)| {
+            let a_norm = a.norm();
+            let fd_norm = fd.norm();
+            if fd_norm < 1e-15 { return a_norm < 0.1; }
+            let tol = (0.05 * a_norm).max(0.1);
+            (a - fd).norm() < tol
         });
         if !ok {
-            eprintln!("volume h-derivative mismatch: analytical={:?} fd={:?}", d_vol_h, d_vol_fd);
+            eprintln!("volume a-derivative mismatch: analytical={:?} fd={:?}", d_vol_a, d_vol_fd);
         }
         ok
-    }, "volume h-derivative: analytical vs FD mismatch");
+    }, "volume a-derivative: analytical vs FD mismatch");
 
-    // Library capacity_derivatives_h uses symmetric convention (xi from KktResult).
-    let d_cap_h = capacity_derivatives_h(
-        &kkt.beta,
-        kkt.q_corrected,
-        kkt.xi,
-        perm,
-        f,
-    );
-
-    let d_sys_h: Vec<f64> = d_vol_h
-        .iter()
-        .zip(d_cap_h.iter())
-        .map(|(&dv, &dc)| {
-            if dv.is_nan() || dc.is_nan() {
-                f64::NAN
-            } else {
-                (cap * dc - sys * dv) / vol
-            }
-        })
-        .collect();
-
-    let gradient_norm_h = d_sys_h
-        .iter()
-        .filter(|x| !x.is_nan())
-        .map(|x| x * x)
-        .sum::<f64>()
-        .sqrt();
-
-    // --- Normal derivatives ---
-    let d_vol_n = volume_derivatives_n(polytope);
-
-    // Library capacity_derivatives_n uses symmetric convention (mu from KktResult).
-    let d_cap_n = capacity_derivatives_n(
+    let d_cap_a = capacity_derivatives_a(
         &kkt.beta,
         kkt.q_corrected,
         &kkt.mu,
         perm,
-        &normals,
+        duals,
     );
 
-    // Chain rule: d(sys)/d(n_k) = (1/vol) * [c * dc/dn_k - sys * dvol/dn_k]
-    let d_sys_n: Vec<Vector4<f64>> = d_vol_n
+    let d_sys_a: Vec<Vector4<f64>> = d_vol_a
         .iter()
-        .zip(d_cap_n.iter())
+        .zip(d_cap_a.iter())
         .map(|(dv, dc)| (cap * dc - sys * dv) / vol)
         .collect();
+
+    let gradient_norm_a = d_sys_a
+        .iter()
+        .map(|v| v.norm_squared())
+        .sum::<f64>()
+        .sqrt();
+
+    // --- Derive h/n gradients from dual vertex gradient ---
+    // a_k = n_k / h_k, so d(sys)/d(h_k) = d(sys)/d(a_k) · d(a_k)/d(h_k) = d(sys)/d(a_k) · (-n_k / h_k²)
+    // and d(sys)/d(n_k) = d(sys)/d(a_k) · d(a_k)/d(n_k) = d(sys)/d(a_k) · (1/h_k) projected to T_{n_k}S³
+    let d_sys_h: Vec<f64> = (0..f).map(|k| {
+        let a_norm = duals[k].norm();
+        let n = duals[k] / a_norm;
+        let h = 1.0 / a_norm;
+        // d(a_k)/d(h_k) = -n_k / h_k² = -a_k * ||a_k||²
+        // d(sys)/d(h_k) = d(sys)/d(a_k) · (-n / h²)
+        d_sys_a[k].dot(&(-n / (h * h)))
+    }).collect();
+
+    let gradient_norm_h = d_sys_h
+        .iter()
+        .map(|x| x * x)
+        .sum::<f64>()
+        .sqrt();
+
+    let d_sys_n: Vec<Vector4<f64>> = (0..f).map(|k| {
+        let a_norm = duals[k].norm();
+        let n = duals[k] / a_norm;
+        let h = 1.0 / a_norm;
+        // d(a_k)/d(n_k) = (1/h_k) * (I - n_k n_k^T) on T_{n_k}S³
+        // d(sys)/d(n_k) = (1/h) * proj_{T_{n_k}S³}(d(sys)/d(a_k))
+        let proj = d_sys_a[k] / h - (d_sys_a[k].dot(&n) / h) * n;
+        proj
+    }).collect();
 
     let gradient_norm_n = d_sys_n
         .iter()
@@ -298,12 +295,12 @@ fn compute_sensitivity(
     let gradient_norm_hn = (gradient_norm_h * gradient_norm_h + gradient_norm_n * gradient_norm_n).sqrt();
 
     SensitivityResult {
-        d_vol_h,
-        d_cap_h,
+        d_vol_a,
+        d_cap_a,
+        d_sys_a,
+        gradient_norm_a,
         d_sys_h,
         gradient_norm_h,
-        d_vol_n,
-        d_cap_n,
         d_sys_n,
         gradient_norm_n,
         gradient_norm_hn,
@@ -322,8 +319,9 @@ fn compute_step_bound(
     polytope: &Polytope4D,
     direction: &[f64],
 ) -> f64 {
-    let normals = polytope.normals_f64();
-    let heights = polytope.heights_f64();
+    let duals = polytope.dual_vertices_f64();
+    let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
+    let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
     let vertices = polytope.vertices_f64();
     let f = polytope.facet_count();
     let skeleton = Skeleton::compute(polytope);
@@ -434,8 +432,9 @@ fn compute_step_bound_hn(
     g_h: &[f64],
     g_n: &[Vector4<f64>],
 ) -> f64 {
-    let normals = polytope.normals_f64();
-    let heights = polytope.heights_f64();
+    let duals = polytope.dual_vertices_f64();
+    let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
+    let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
     let vertices = polytope.vertices_f64();
     let f = polytope.facet_count();
     let skeleton = Skeleton::compute(polytope);
@@ -882,8 +881,6 @@ fn main() {
 
     for (idx, (name, source, polytope)) in polytopes.iter().enumerate() {
         let f = polytope.facet_count();
-        let normals = polytope.normals_f64();
-        let heights = polytope.heights_f64();
 
         print!("[{}/{}] {} (F={}): ", idx + 1, n_polytopes, name, f);
 
@@ -952,27 +949,30 @@ fn main() {
         );
 
         // Write sensitivity row
-        let normals_raw: Vec<[f64; 4]> = normals.iter().map(|n| [n[0], n[1], n[2], n[3]]).collect();
-        let d_vol_n_raw: Vec<[f64; 4]> = sensitivity.d_vol_n.iter().map(|v| [v[0], v[1], v[2], v[3]]).collect();
-        let d_cap_n_raw: Vec<[f64; 4]> = sensitivity.d_cap_n.iter().map(|v| [v[0], v[1], v[2], v[3]]).collect();
+        let duals = polytope.dual_vertices_f64();
+        let duals_raw: Vec<[f64; 4]> = duals.iter().map(|a| [a[0], a[1], a[2], a[3]]).collect();
+        let d_vol_a_raw: Vec<[f64; 4]> = sensitivity.d_vol_a.iter().map(|v| [v[0], v[1], v[2], v[3]]).collect();
+        let d_cap_a_raw: Vec<[f64; 4]> = sensitivity.d_cap_a.iter().map(|v| [v[0], v[1], v[2], v[3]]).collect();
+        let d_sys_a_raw: Vec<[f64; 4]> = sensitivity.d_sys_a.iter().map(|v| [v[0], v[1], v[2], v[3]]).collect();
         let d_sys_n_raw: Vec<[f64; 4]> = sensitivity.d_sys_n.iter().map(|v| [v[0], v[1], v[2], v[3]]).collect();
+        let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
+        let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
         let sens_row = SensitivityRow {
             name: name.clone(),
             source_dataset: source.clone(),
             facet_count: f,
-            normals: normals_raw,
-            heights: heights.to_vec(),
+            dual_vertices: duals_raw,
             volume: vol,
             capacity: cap,
             sys,
             orbit_length: best_perm.len(),
             best_action: cap,
-            d_vol_h: sensitivity.d_vol_h,
-            d_cap_h: sensitivity.d_cap_h,
+            d_vol_a: d_vol_a_raw,
+            d_cap_a: d_cap_a_raw,
+            d_sys_a: d_sys_a_raw,
+            gradient_norm_a: sensitivity.gradient_norm_a,
             d_sys_h: sensitivity.d_sys_h.clone(),
             gradient_norm_h: sensitivity.gradient_norm_h,
-            d_vol_n: d_vol_n_raw,
-            d_cap_n: d_cap_n_raw,
             d_sys_n: d_sys_n_raw,
             gradient_norm_n: sensitivity.gradient_norm_n,
             gradient_norm_hn: sensitivity.gradient_norm_hn,
@@ -1071,7 +1071,7 @@ fn main() {
 
         // Reconstruct to get an owned polytope we can replace each iteration
         let mut current = match Polytope4D::from_f64(
-            start_polytope.normals_f64().iter().zip(start_polytope.heights_f64().iter()).map(|(n, &h)| n / h).collect(),
+            start_polytope.dual_vertices_f64().to_vec(),
         ) {
             Ok(p) => p,
             Err(e) => {
@@ -1113,8 +1113,9 @@ fn main() {
             let sensitivity = compute_sensitivity(&current, vol, cap, sys, &kkt, best_perm);
 
             // 3. Step bounds
-            let normals = current.normals_f64();
-            let heights = current.heights_f64();
+            let cur_duals = current.dual_vertices_f64();
+            let normals: Vec<Vector4<f64>> = cur_duals.iter().map(|a| a / a.norm()).collect();
+            let heights: Vec<f64> = cur_duals.iter().map(|a| 1.0 / a.norm()).collect();
 
             let t_max_h = if sensitivity.gradient_norm_h > EPS_NUMERICAL_ZERO {
                 compute_step_bound(&current, &sensitivity.d_sys_h)
@@ -1248,8 +1249,9 @@ fn main() {
 
     for (idx, (name, _source, polytope)) in polytopes.iter().enumerate() {
         let f = polytope.facet_count();
-        let normals = polytope.normals_f64();
-        let heights = polytope.heights_f64();
+        let poly_duals = polytope.dual_vertices_f64();
+        let normals: Vec<Vector4<f64>> = poly_duals.iter().map(|a| a / a.norm()).collect();
+        let heights: Vec<f64> = poly_duals.iter().map(|a| 1.0 / a.norm()).collect();
         let vertex_count_orig = polytope.vertices_f64().len();
 
         print!("[{}/{}] {} (F={}): ", idx + 1, n_polytopes, name, f);

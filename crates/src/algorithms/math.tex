@@ -37,10 +37,11 @@
 \begin{algorithm}[EHZ capacity]\label{alg:ehz}
 % Jörn: text approved (06a976c)
 % Source: thesis/general-case-algorithm.tex
+% Parameterization: K = {x : a_i^T x ≤ 1}, dual vertices a_i
 Computes $c_{\mathrm{EHZ}}(K)$ via exhaustive enumeration.
 
 \smallskip\noindent
-\emph{Input:} $(n_1, h_1), \ldots, (n_F, h_F)$.
+\emph{Input:} $a_1, \ldots, a_F$ (dual vertices).
 \quad
 \emph{Output:} $c_{\mathrm{EHZ}}(K)$.
 
@@ -51,24 +52,21 @@ and each permutation $\sigma$ of $S$
 
 \begin{enumerate}
 \item \textbf{Define}
-  the normal matrix $N \in \mathbb{R}^{|S| \times 4}$,
-  action matrix $H \in \mathbb{R}^{|S| \times |S|}$,
-  and height vector $\eta \in \mathbb{R}^{|S|}$:
+  the dual-vertex matrix $A \in \mathbb{R}^{|S| \times 4}$
+  and action matrix $H \in \mathbb{R}^{|S| \times |S|}$:
   \begin{align*}
-    N_{id} &= n_{\sigma(i),d},
+    A_{id} &= a_{\sigma(i),d},
       & i &= 1, \ldots, |S|, \quad d = 1, \ldots, 4, \\
     H_{ij} &= \begin{cases}
-      \omega_0(n_{\sigma(i)}, n_{\sigma(j)}) & \text{if } i < j, \\
+      \omega_0(a_{\sigma(i)}, a_{\sigma(j)}) & \text{if } i < j, \\
       0 & \text{if } i = j, \\
-      \omega_0(n_{\sigma(j)}, n_{\sigma(i)}) & \text{if } i > j,
-    \end{cases} \\
-    \eta_i &= h_{\sigma(i)},
-      & i &= 1, \ldots, |S|.
+      \omega_0(a_{\sigma(j)}, a_{\sigma(i)}) & \text{if } i > j.
+    \end{cases}
   \end{align*}
 
 \item \textbf{Solve.}
   \[
-    \begin{pmatrix} H & N & \eta \\ N^\top & 0 & 0 \\ \eta^\top & 0 & 0 \end{pmatrix}
+    \begin{pmatrix} H & A & \mathbf{1} \\ A^\top & 0 & 0 \\ \mathbf{1}^\top & 0 & 0 \end{pmatrix}
     \begin{pmatrix} \beta \\ \mu \\ \xi \end{pmatrix}
     = \begin{pmatrix} 0 \\ 0 \\ 1 \end{pmatrix}.
   \]
@@ -101,6 +99,7 @@ form a Hamiltonian cycle in the induced subgraph~$G_K[S]$.
 \end{corollary}
 
 
+\begin{unverified}
 \begin{theorem}[Conformality]\label{thm:conformality}
 % [TODO: JÖRN - verify statement, add proof]
 % Source: hk2017/conformality_test.rs doc comment
@@ -110,8 +109,10 @@ and $\alpha > 0$,
   c_{\mathrm{EHZ}}(\alpha K) = \alpha^2\, c_{\mathrm{EHZ}}(K).
 \]
 \end{theorem}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{theorem}[Symplectic invariance]\label{thm:sympl-invariance}
 % [TODO: JÖRN - verify statement, add proof]
 % Source: hk2017/symplectic_invariance_test.rs doc comment
@@ -121,6 +122,7 @@ $M \in \operatorname{Sp}(4)$ and $b \in \mathbb{R}^4$,
   c_{\mathrm{EHZ}}(MK + b) = c_{\mathrm{EHZ}}(K).
 \]
 \end{theorem}
+\end{unverified}
 
 
 % ====================================================================
@@ -130,7 +132,9 @@ $M \in \operatorname{Sp}(4)$ and $b \in \mathbb{R}^4$,
 \begin{lemma}[Base point recovery]\label{lem:base-point-recovery}
 % Jörn: math approved (f7d26ea)
 % Source: thesis/simple-minimizer-existence.tex
-Let $K$ be a polytope and $(\sigma, \tau, b)$ a simple orbit
+% Parameterization: K = {x : a_i^T x ≤ 1}, dual vertices a_i
+Let $K = \{x : \langle a_i, x \rangle \leq 1\}$ be a polytope
+and $(\sigma, \tau, b)$ a simple orbit
 with $m$ active facets
 $S = \{\sigma(k) : \tau_k > 0\}$.
 Define the accumulated displacements
@@ -146,17 +150,17 @@ is a generalized Reeb orbit on~$\partial K$) if and only if:
 \begin{enumerate}
 \item \emph{On-facet (equality):}
   for each active $k$,
-  $\langle n_{\sigma(k)},\, b \rangle
-    = h_{\sigma(k)} - \langle n_{\sigma(k)},\, v_k \rangle$;
+  $\langle a_{\sigma(k)},\, b \rangle
+    = 1 - \langle a_{\sigma(k)},\, v_k \rangle$;
 \item \emph{Inside $K$ (inequality):}
   for each active segment $k$ and all $s \in [0, \tau_k]$,
-  $\langle n_j,\, b + v_k + s\, R_{\sigma(k)} \rangle
-    \leq h_j$ for all $j = 1, \ldots, F$.
+  $\langle a_j,\, b + v_k + s\, R_{\sigma(k)} \rangle
+    \leq 1$ for all $j = 1, \ldots, F$.
 \end{enumerate}
 The equality constraints form
-a linear system $N_S\, b = r$ with $m$ equations and $4$~unknowns.
+a linear system $A_S\, b = r$ with $m$ equations and $4$~unknowns.
 The set of valid base points is a convex polytope of
-dimension at most $4 - \operatorname{rank}(N_S)$.
+dimension at most $4 - \operatorname{rank}(A_S)$.
 \end{lemma}
 
 \begin{proof}
@@ -168,21 +172,21 @@ During the $k$-th segment, the orbit position is
 \]
 where $t_k = \sum_{j=1}^{k-1} \tau_j$.
 For $\gamma$ to lie on facet $F_{\sigma(k)}$,
-we require $\langle n_{\sigma(k)},\, \gamma(t) \rangle
-= h_{\sigma(k)}$ throughout the segment.
+we require $\langle a_{\sigma(k)},\, \gamma(t) \rangle
+= 1$ throughout the segment.
 Since $R_{\sigma(k)}$ is tangent to $F_{\sigma(k)}$
-($\langle n_{\sigma(k)}, R_{\sigma(k)} \rangle = 0$),
+($\langle a_{\sigma(k)}, R_{\sigma(k)} \rangle = 0$),
 the time-dependent term vanishes:
 \[
-  \langle n_{\sigma(k)},\, \gamma(t) \rangle
-  = \langle n_{\sigma(k)},\, b + v_k \rangle.
+  \langle a_{\sigma(k)},\, \gamma(t) \rangle
+  = \langle a_{\sigma(k)},\, b + v_k \rangle.
 \]
 Hence the on-facet condition for the entire segment
 reduces to a single equation.
 
 \emph{Inequality constraints.}
 The orbit must remain inside~$K$:
-$\langle n_j, \gamma(t) \rangle \leq h_j$
+$\langle a_j, \gamma(t) \rangle \leq 1$
 for all $j$ and all~$t$.
 Since $\gamma(t)$ is affine in~$t$ on each segment,
 each inequality is linear in~$s$.
@@ -192,9 +196,9 @@ check at $s = 0$ and $s = \tau_k$ only.
 
 \emph{Solution structure.}
 The equality constraints are a linear system
-$N_S\, b = r$ in~$b \in \mathbb{R}^4$.
+$A_S\, b = r$ in~$b \in \mathbb{R}^4$.
 Its solution set is an affine subspace of
-dimension $4 - \operatorname{rank}(N_S)$.
+dimension $4 - \operatorname{rank}(A_S)$.
 The inequality constraints are linear in~$b$,
 so the intersection is a convex polytope.
 \end{proof}
@@ -203,12 +207,13 @@ so the intersection is a convex polytope.
 \begin{remark}[Conversion from algorithm output]\label{rem:beta-to-tau}
 % Jörn: math approved (f7d26ea)
 % Source: thesis/simple-minimizer-existence.tex
+% Parameterization: K = {x : a_i^T x ≤ 1}, dual vertices a_i
 Algorithm~\ref{alg:ehz} outputs a permutation~$\sigma$ and
 a vector~$\beta$ with $\beta_i \geq 0$ and
-$\sum_i \beta_i h_i = 1$.
+$\sum_i \beta_i = 1$.
 The dwell times are
 \[
-  \tau_k = T\, h_{\sigma(k)}\, \beta_{\sigma(k)},
+  \tau_k = T\, \beta_{\sigma(k)},
 \]
 where $T = c_{\mathrm{EHZ}}(K)$ is the capacity
 (the period of the orbit).
@@ -219,6 +224,7 @@ where $T = c_{\mathrm{EHZ}}(K)$ is the capacity
 % Part 3: Billiard algorithm (Lagrangian products)
 % ====================================================================
 
+\begin{unverified}
 \begin{lemma}[Facet structure of Lagrangian products]\label{lem:lagrangian-facets}
 % Source: thesis/lagrangian-product-algorithm-proof.tex
 Let $K = K_q \times K_p$ be a Lagrangian product.
@@ -244,8 +250,10 @@ The outward normal to $\text{edge}_i(K_q) \times K_p$ is
 $(\hat{n}_i^q, 0)$ with height $h_{K_q}(\hat{n}_i^q) = h_i^q$;
 similarly for $p$-facets.
 \end{proof}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{lemma}[Sigma structure for Lagrangian products]\label{lem:sigma-structure}
 % Source: thesis/lagrangian-product-algorithm-proof.tex
 Let $K = K_q \times K_p$ be a Lagrangian product, and let
@@ -305,8 +313,10 @@ adjacent in~$G_K$.
 Two same-type adjacent facets correspond to edges sharing a
 vertex in the 2D polygon.
 \end{proof}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{theorem}[Billiard characterization of EHZ capacity]%
 \label{thm:billiard-characterization}
 % Source: thesis/lagrangian-product-algorithm-proof.tex
@@ -321,8 +331,10 @@ where $\ell_{K_p^\circ}(\eta) = \sum_i h_{K_p}(\Delta_i)$ is the
 $K_p^\circ$-length and $\Delta_i = x_{i+1} - x_i$ are the edge vectors.
 \end{theorem}
 % [TODO: JÖRN - proof is in the referenced papers, not reproduced here]
+\end{unverified}
 
 
+\begin{unverified}
 \begin{theorem}[Bounce bound]%
 \label{thm:bounce-bound}
 % Source: thesis/lagrangian-product-algorithm-proof.tex
@@ -332,8 +344,10 @@ the minimum in Theorem~\ref{thm:billiard-characterization}
 is achieved by a billiard trajectory with at most $3$ bounce points.
 \end{theorem}
 % [TODO: JÖRN - proof is in the referenced papers, not reproduced here]
+\end{unverified}
 
 
+\begin{unverified}
 \begin{algorithm}[Billiard capacity]\label{alg:billiard}
 % Source: thesis/lagrangian-product-algorithm.tex
 Computes $c_{\mathrm{EHZ}}(K_q \times K_p)$
@@ -368,26 +382,31 @@ $H$-representation.
 \item \textbf{Return} $\min A(S, \sigma)$.
 \end{enumerate}
 \end{algorithm}
+\end{unverified}
 
 
 % ====================================================================
 % Part 4: Tube algorithm
 % ====================================================================
 
+\begin{unverified}
 \begin{definition}[Symplectic polytope]\label{def:symplectic-polytope}
 % Source: thesis/tube-algorithm.tex
+% Parameterization: K = {x : a_i^T x ≤ 1}, dual vertices a_i
 A \emph{Lagrangian $2$-face} is a $2$-face $F_{ij}$ on which
-$\omega_0|_{T F_{ij}} = 0$, equivalently $\omega_0(n_i, n_j) = 0$.
+$\omega_0|_{T F_{ij}} = 0$, equivalently $\omega_0(a_i, a_j) = 0$.
 A \emph{symplectic polytope} is a polytope $K \subset \mathbb{R}^4$
 that has no Lagrangian $2$-face:
 \[
-  \omega_0(n_i, n_j) \neq 0
+  \omega_0(a_i, a_j) \neq 0
   \qquad \text{for all pairs } (i,j)
   \text{ such that } F_i \cap F_j \text{ is a $2$-face.}
 \]
 \end{definition}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{definition}[Tube]\label{def:tube}
 % Source: thesis/tube-algorithm.tex
 The \emph{tube} $T(\sigma)$ of a type $\sigma = (\sigma(1), \ldots, \sigma(k))$
@@ -404,8 +423,10 @@ $(t_{i-1}, t_i)$ for $i = 1, \ldots, k$,
 where $F_{\sigma(i)} \to F_{\sigma(i+1)}$ is a directed $2$-face
 for each $i = 1, \ldots, k-1$.
 \end{definition}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{definition}[Tube data structure]\label{def:tube-data}
 % Source: thesis/tube-algorithm.tex
 A tube $T(\sigma)$ is represented by:
@@ -423,8 +444,10 @@ A tube $T(\sigma)$ is represented by:
   the rotation number accumulated on $(t_1, t_{k-1})$.
 \end{enumerate}
 \end{definition}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{definition}[Tube extension]\label{def:tube-extension}
 % Source: thesis/tube-algorithm.tex
 Let $T_k = T(\sigma(1), \ldots, \sigma(k))$ be a tube
@@ -443,8 +466,10 @@ The extended tube $T(\sigma(1), \ldots, \sigma(k+1))$ has data:
   \rho' &\coloneqq \rho + \Delta\rho_{\sigma(k),\sigma(k+1)}.
 \end{align*}
 \end{definition}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{definition}[Rotation increment at a breakpoint]\label{def:rotation-increment}
 % Source: thesis/tube-algorithm.tex
 Let $F_j \to F_l$ be a directed $2$-face.
@@ -456,8 +481,10 @@ $\psi_{F_{jl}} \in \operatorname{Sp}(2)$.
 By the theory of CH2021, $\psi_{F_{jl}}$ is positive elliptic
 and $\Delta\rho_{jl} \in (0, \tfrac{1}{2})$.
 \end{definition}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{definition}[Closing a tube]\label{def:tube-close}
 % Source: thesis/tube-algorithm.tex
 Given a tube $T(\sigma(1), \ldots, \sigma(k))$,
@@ -467,10 +494,12 @@ The result is a tube $T(\sigma(1), \ldots, \sigma(k), \sigma(1), \sigma(2))$
 with flow map $\varphi'' \colon \operatorname{Start} \to F_{\sigma(1)} \cap F_{\sigma(2)}$
 and action function $a'' \colon \operatorname{End}'' \to \mathbb{R}$.
 \end{definition}
+\end{unverified}
 
 
 % ── Pruning lemmas ──
 
+\begin{unverified}
 \begin{lemma}[Pruning: empty tube]\label{lem:prune-empty}
 % Source: thesis/tube-algorithm.tex
 If $\operatorname{Start}(\sigma) = \emptyset$ or $\operatorname{End}(\sigma) = \emptyset$,
@@ -482,8 +511,10 @@ A trajectory $\gamma \in T(\sigma)$ satisfies
 $\gamma(t_1) \in \operatorname{Start}(\sigma)$ and
 $\gamma(t_{k-1}) \in \operatorname{End}(\sigma)$ by definition.
 \end{proof}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{lemma}[Pruning: action lower bound]\label{lem:prune-action}
 % Source: thesis/tube-algorithm.tex
 Let $c^* > 0$ be the action of the current best candidate.
@@ -498,8 +529,10 @@ Every $\gamma \in T(\sigma)$ has
 $A(\gamma) \geq a(\gamma(t_{k-1})) \geq \min_{\operatorname{End}} a > c^*$.
 Since the minimum-action orbit has action $\leq c^*$, it is not in $T(\sigma)$.
 \end{proof}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{lemma}[Pruning: rotation upper bound]\label{lem:prune-rotation}
 % Source: thesis/tube-algorithm.tex
 Let $\rho$ be the rotation number of tube $T(\sigma)$.
@@ -516,8 +549,10 @@ $> \rho \geq 2$.
 Hence no closed orbit from $T(\sigma)$ satisfies
 $\rho_{\mathrm{comb}} \leq 2$.
 \end{proof}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{lemma}[Pruning: simple orbit]\label{lem:prune-simple}
 % Source: thesis/tube-algorithm.tex
 If $\sigma(i) = \sigma(j)$ for some $1 \leq i < j \leq k$,
@@ -532,8 +567,10 @@ A pure Reeb trajectory of type $\sigma$, when closed,
 visits $F_{\sigma(i)}$ twice if $\sigma(i) = \sigma(j)$.
 Hence no closed orbit from $T(\sigma)$ can be the minimum-action orbit.
 \end{proof}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{lemma}[Closed orbits as fixed points]\label{lem:fixed-point}
 % Source: thesis/tube-algorithm.tex
 The closed Reeb orbits in the closure of $T(\sigma)$ are in bijection with
@@ -560,15 +597,18 @@ After closure,
 so the periodicity condition is $\varphi''(\gamma(t_1)) = \gamma(t_1)$.
 The action is $a''(\varphi''(\gamma(t_1))) = a''(\gamma(t_1))$.
 \end{proof}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{algorithm}[Tube algorithm]\label{alg:tube}
 % Source: thesis/tube-algorithm.tex
 Computes $c_{\mathrm{EHZ}}(K)$ for a symplectic polytope $K$
 (assuming no Type~2 orbits).
 
 \smallskip\noindent
-\emph{Input:} Facet data $(n_1, h_1), \ldots, (n_F, h_F)$.
+% Parameterization: K = {x : a_i^T x ≤ 1}, dual vertices a_i
+\emph{Input:} Dual vertices $a_1, \ldots, a_F$.
 \quad
 \emph{Output:} $c_{\mathrm{EHZ}}(K)$.
 
@@ -576,8 +616,8 @@ Computes $c_{\mathrm{EHZ}}(K)$ for a symplectic polytope $K$
 \textbf{Precomputation.}
 \begin{enumerate}
 \item For each pair $(i,j)$: check if $F_i \cap F_j$ is a $2$-face
-  and compute $\omega_0(n_i, n_j)$. Record directed edges $F_i \to F_j$
-  where $\omega_0(n_i, n_j) > 0$.
+  and compute $\omega_0(a_i, a_j)$. Record directed edges $F_i \to F_j$
+  where $\omega_0(a_i, a_j) > 0$.
 \item For each valid triple $(i,j,l)$ with $F_i \to F_j$ and $F_j \to F_l$:
   compute the step map $\Phi_{ijl}$,
   action increment $\Delta a_{ijl}$,
@@ -619,4 +659,5 @@ Then recurse: given a tube $T(\sigma(1), \ldots, \sigma(k))$:
 \noindent
 Return $c^*$.
 \end{algorithm}
+\end{unverified}
 

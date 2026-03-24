@@ -37,7 +37,7 @@ use nalgebra::{DMatrix, DVector, Vector4};
 /// beta_i > EPS_BETA_POSITIVE means the component is unambiguously positive.
 ///
 /// **Why 1e-12:** This filters f64 eigensolver noise. The KKT matrix entries are
-/// O(1) (normals are unit vectors, heights normalized), so eigenvector components
+/// O(1) (dual vertices and omega_0 values are O(1)), so eigenvector components
 /// are O(1) and beta values from the pseudoinverse are O(1). Machine epsilon is
 /// ~1e-16; numerical roundoff in eigendecomposition accumulates to ~1e-12 for
 /// (m+5) x (m+5) matrices with m up to 16. A value of 1e-12 is:
@@ -165,11 +165,11 @@ pub(crate) struct EigenInfo {
 pub struct KktResult {
     /// Optimal beta vector (all components > -EPS_BETA_POSITIVE).
     pub beta: Vec<f64>,
-    /// Lagrange multiplier for closure constraints N^T β = 0 (4 components).
-    /// From symmetric convention: Hβ + Nμ + ηξ = 0.
+    /// Lagrange multiplier for closure constraints A^T β = 0 (4 components).
+    /// From symmetric convention: Hβ + Aμ + 1ξ = 0.
     pub mu: Vec<f64>,
-    /// Lagrange multiplier for normalization constraint η^T β = 1 (scalar).
-    /// From symmetric convention: Hβ + Nμ + ηξ = 0.
+    /// Lagrange multiplier for normalization constraint 1^T β = 1 (scalar).
+    /// From symmetric convention: Hβ + Aμ + 1ξ = 0.
     pub xi: f64,
     /// Residual-corrected Q value: Q_tilde = Q(beta_hat) + (r2^T mu_hat + r3 * xi_hat).
     /// See [lem:q-error-bound].
@@ -261,23 +261,23 @@ pub fn solve_kkt_for(polytope: &Polytope4D, perm: &[usize]) -> Option<KktResult>
 
 // ── Internal helpers ──
 
-/// Compute Q(beta) = sum_{i>j} beta_i * beta_j * omega_0(n_{sigma(j)}, n_{sigma(i)}).
+/// Compute Q(beta) = sum_{i>j} beta_i * beta_j * omega_0(a_{sigma(j)}, a_{sigma(i)}).
 ///
-/// This is the action sum (1/2) beta^T H beta computed directly from normals
+/// This is the action sum (1/2) beta^T H beta computed directly from dual vertices
 /// and the antisymmetric omega_0 form. Used for Q computation from the beta
 /// solution vector. Uses omega_0 directly (not the symmetric H matrix).
 ///
-/// [lem:H-quadratic]: Q(beta) = sum_{i>j} beta_i beta_j omega_0(n_{sigma(j)}, n_{sigma(i)}).
+/// [lem:H-quadratic]: Q(beta) = sum_{i>j} beta_i beta_j omega_0(a_{sigma(j)}, a_{sigma(i)}).
 #[allow(dead_code)]
 pub(crate) fn q_from_beta(
-    normals: &[Vector4<f64>],
+    dual_vertices: &[Vector4<f64>],
     perm: &[usize],
     beta: &[f64],
 ) -> f64 {
     let m = beta.len();
     (1..m)
         .flat_map(|i| (0..i).map(move |j| (i, j)))
-        .map(|(i, j)| beta[i] * beta[j] * omega0(&normals[perm[j]], &normals[perm[i]]))
+        .map(|(i, j)| beta[i] * beta[j] * omega0(&dual_vertices[perm[j]], &dual_vertices[perm[i]]))
         .sum()
 }
 
@@ -791,13 +791,12 @@ mod tests {
 
     // ── Constraint satisfaction ──
 
-    /// All returned solutions satisfy the normalization constraint (eta^T beta = 1).
+    /// All returned solutions satisfy the normalization constraint (1^T beta = 1).
     #[test]
     fn normalization_constraint_satisfied() {
         let simplex = known_polytopes::simplex();
         let polytope = &simplex.polytope;
         let f = polytope.facet_count();
-        let heights = polytope.heights_f64();
 
         let mut checked = 0;
         for size in 2..=f.min(6) {
@@ -805,13 +804,11 @@ mod tests {
                 let perm = subset.to_vec();
                 let (kkt, rhs) = build_augmented_system(polytope, &perm);
                 if let Some(result) = solve_saddle_point(&kkt, &rhs) {
-                    let eta_dot_beta: f64 = result.beta.iter().enumerate()
-                        .map(|(idx, &b)| b * heights[perm[idx]])
-                        .sum();
+                    let sum_beta: f64 = result.beta.iter().sum();
                     assert!(
-                        (eta_dot_beta - 1.0).abs() < 1e-6,
-                        "normalization violated: eta^T beta = {}, expected 1.0 (perm {:?})",
-                        eta_dot_beta, perm
+                        (sum_beta - 1.0).abs() < 1e-6,
+                        "normalization violated: sum(beta) = {}, expected 1.0 (perm {:?})",
+                        sum_beta, perm
                     );
                     checked += 1;
                 }
@@ -820,13 +817,13 @@ mod tests {
         assert!(checked > 0, "should have checked at least one solution");
     }
 
-    /// All returned solutions satisfy the closure constraint (N^T beta = 0).
+    /// All returned solutions satisfy the closure constraint (A^T beta = 0).
     #[test]
     fn closure_constraint_satisfied() {
         let simplex = known_polytopes::simplex();
         let polytope = &simplex.polytope;
         let f = polytope.facet_count();
-        let normals = polytope.normals_f64();
+        let dual_verts = polytope.dual_vertices_f64();
 
         let mut checked = 0;
         for size in 2..=f.min(6) {
@@ -837,7 +834,7 @@ mod tests {
                     #[allow(clippy::needless_range_loop)]
                     for d in 0..4 {
                         let sum: f64 = result.beta.iter().enumerate()
-                            .map(|(idx, &b)| b * normals[perm[idx]][d])
+                            .map(|(idx, &b)| b * dual_verts[perm[idx]][d])
                             .sum();
                         assert!(
                             sum.abs() < 1e-6,

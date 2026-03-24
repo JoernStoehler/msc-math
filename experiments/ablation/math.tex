@@ -31,7 +31,7 @@ Variant & Pruning condition for transition $F_i \to F_j$ \\
 \midrule
 A0 & None (unpruned): exhaustive search over all $(S, \sigma)$ \\
 A1 & Vertex adjacency: $F_i \cap F_j \neq \varnothing$, checked via shared polytope vertices (Corollary~\ref{cor:adjacency-pruning}) \\
-A2 & Directed $\omega_0$: A1 and $\omega_0(n_i, n_j) \ge 0$, ensuring the Reeb flow on $F_i$ carries the orbit toward~$F_j$ \\
+A2 & Directed $\omega_0$: A1 and $\omega_0(a_i, a_j) \ge 0$, ensuring the Reeb flow on $F_i$ carries the orbit toward~$F_j$ \\
 A3 & Reeb-flow feasibility: A2 and $\exists\, x \in F_i \cap F_j$ with $x - \varepsilon V_i \in F_i$ and $x + \varepsilon V_j \in F_j$, ensuring other halfspaces do not block the transition \\
 \bottomrule
 \end{tabular}
@@ -45,7 +45,7 @@ A3 & Reeb-flow feasibility: A2 and $\exists\, x \in F_i \cap F_j$ with $x - \var
 For a physical orbit transition $F_i \to F_j$ at a ridge point $x \in F_i \cap F_j$,
 the backward flow $x - \varepsilon V_i$ must remain in~$K$.
 Checking the half-space constraint for facet~$j$ gives
-$\omega_0(n_i, n_j) \ge 0$ as a necessary condition;
+$\omega_0(a_i, a_j) \ge 0$ as a necessary condition;
 the forward flow $x + \varepsilon V_j$ on~$F_j$ gives the same condition
 by antisymmetry of~$\omega_0$.
 This is condition~(1) of Lemma~\ref{lem:transition-feasibility} below,
@@ -56,23 +56,23 @@ which proves the condition is both necessary and sufficient
 A3 strengthens A2 by also checking the half-space constraints of all \emph{other}
 facets $F_k$ ($k \neq i, j$).
 For each $k$, we define a ``blocking set''
-$B = \{k \notin \{i,j\} : \omega_0(n_i, n_k) < 0 \text{ or } \omega_0(n_j, n_k) > 0\}$,
+$B = \{k \notin \{i,j\} : \omega_0(a_i, a_k) < 0 \text{ or } \omega_0(a_j, a_k) > 0\}$,
 and check whether $F_i \cap F_j$ contains a point satisfying
-$n_k \cdot x < h_k$ for all $k \in B$.
-This is a linear feasibility problem on the 2-dimensional ridge,
+$\langle a_k, x \rangle < 1$ for all $k \in B$.
+This is a linear feasibility problem on the face $F_i \cap F_j$,
 solved via Fourier--Motzkin elimination.
 The $O(F^4)$ precomputation cost is negligible compared to the exponential search.
 
 \paragraph{Transition feasibility.}
 We now characterize exactly when a piecewise-linear orbit can
 transition from~$F_i$ to~$F_j$.
-Write $V_k = J_0 n_k$ for the characteristic direction on~$F_k$
-(proportional to the Reeb vector $R_k = \tfrac{2}{h_k}\, J_0 n_k$
-of Section~\ref{sec:algorithms}, but without the normalization factor).
+Write $V_k = J_0 a_k$ for the characteristic direction on~$F_k$
+(proportional to the Reeb vector $R_k = 2\, J_0 a_k$
+of Section~\ref{sec:algorithms}, but without the factor of~$2$).
 In coordinates $(q_1, q_2, p_1, p_2)$ with
 $J_0 = \bigl[\begin{smallmatrix} 0 & -I_2 \\ I_2 & 0 \end{smallmatrix}\bigr]$,
-we have $V_k = (-n_k^{(3)}, -n_k^{(4)}, n_k^{(1)}, n_k^{(2)})$
-and $n_k \cdot V_\ell = \omega_0(n_\ell, n_k)$.
+we have $V_k = (-a_k^{(3)}, -a_k^{(4)}, a_k^{(1)}, a_k^{(2)})$
+and $a_k \cdot V_\ell = \omega_0(a_\ell, a_k)$.
 A transition $F_i \to F_j$ requires a point $x \in F_i \cap F_j$
 and $\varepsilon > 0$ with
 $x + t\, V_i \in K$ for $t \in [-\varepsilon, 0]$
@@ -80,61 +80,64 @@ and $x + t\, V_j \in K$ for $t \in [0, \varepsilon]$.
 The following lemma shows that the A3 feasibility check
 captures this condition exactly.
 
+\begin{unverified}
 \begin{lemma}[Transition feasibility]
 \label{lem:transition-feasibility}
-Let $K \subset \mathbb{R}^4$ be a convex polytope with facets
-$F_1, \ldots, F_N$, outward unit normals~$n_k$, and support values~$h_k$.
+Let $K = \{x : \langle a_k, x \rangle \le 1,\; k = 1, \ldots, F\}$
+be a convex polytope with dual vertices~$a_k$ and facets~$F_k$.
 Define the blocking set
-$B = \{k \notin \{i,j\} : \omega_0(n_i, n_k) < 0
-  \textup{ or } \omega_0(n_j, n_k) > 0\}$.
+$B = \{k \notin \{i,j\} : \omega_0(a_i, a_k) < 0
+  \textup{ or } \omega_0(a_j, a_k) > 0\}$.
 A physical orbit transition $F_i \to F_j$ is feasible if and only if
 \begin{enumerate}
-  \item $\omega_0(n_i, n_j) \ge 0$, and
+  \item $\omega_0(a_i, a_j) \ge 0$, and
   \item $\exists\, x \in F_i \cap F_j$ with
-    $n_k \cdot x < h_k$ for all $k \in B$.
+    $\langle a_k, x \rangle < 1$ for all $k \in B$.
 \end{enumerate}
 \end{lemma}
 
 \begin{proof}
-Throughout, we use $n_k \cdot V_\ell = \omega_0(n_\ell, n_k)$.
+Throughout, we use $a_k \cdot V_\ell = \omega_0(a_\ell, a_k)$.
 
 \emph{Necessity.}
 Let $\gamma(0) = x \in F_i \cap F_j$ realize the transition.
 For the approach ($\gamma(t) = x + t\, V_i$, $t < 0$),
-$n_j \cdot \gamma(t) = h_j + t\, \omega_0(n_i, n_j) \le h_j$
-forces $\omega_0(n_i, n_j) \ge 0$ (since $t < 0$),
+$\langle a_j, \gamma(t) \rangle = 1 + t\, \omega_0(a_i, a_j) \le 1$
+forces $\omega_0(a_i, a_j) \ge 0$ (since $t < 0$),
 and the departure gives the same by antisymmetry. This is~(1).
-For~(2), suppose $k \in B$ with $\omega_0(n_i, n_k) < 0$.
-Then $n_k \cdot (x + t\, V_i) = n_k \cdot x + t\,\omega_0(n_i, n_k)$;
-since $\omega_0(n_i, n_k) < 0$ and $t < 0$, this equals
-$n_k \cdot x + |t|\,|\omega_0(n_i, n_k)| > n_k \cdot x$.
-If $n_k \cdot x = h_k$, this exceeds~$h_k$ for any $\varepsilon > 0$,
+For~(2), suppose $k \in B$ with $\omega_0(a_i, a_k) < 0$.
+Then $\langle a_k, x + t\, V_i \rangle = \langle a_k, x \rangle + t\,\omega_0(a_i, a_k)$;
+since $\omega_0(a_i, a_k) < 0$ and $t < 0$, this equals
+$\langle a_k, x \rangle + |t|\,|\omega_0(a_i, a_k)| > \langle a_k, x \rangle$.
+If $\langle a_k, x \rangle = 1$, this exceeds~$1$ for any $\varepsilon > 0$,
 violating $\gamma(t) \in K$.
-Hence $n_k \cdot x < h_k$.
-The argument for departure-blocking $k$ (with $\omega_0(n_j, n_k) > 0$)
+Hence $\langle a_k, x \rangle < 1$.
+The argument for departure-blocking $k$ (with $\omega_0(a_j, a_k) > 0$)
 is analogous.
 
 \emph{Sufficiency.}
 Given $x \in F_i \cap F_j$ satisfying~(1) and~(2),
-set $\delta = \min_{k \in B} (h_k - n_k \cdot x) > 0$.
+set $\delta = \min_{k \in B} (1 - \langle a_k, x \rangle) > 0$.
 For non-blocking $k \notin B \cup \{i,j\}$:
 the approach satisfies
-$n_k \cdot (x + t\, V_i) = n_k \cdot x + t\,\omega_0(n_i, n_k) \le n_k \cdot x \le h_k$
-since $t \le 0$ and $\omega_0(n_i, n_k) \ge 0$;
+$\langle a_k, x + t\, V_i \rangle = \langle a_k, x \rangle + t\,\omega_0(a_i, a_k) \le \langle a_k, x \rangle \le 1$
+since $t \le 0$ and $\omega_0(a_i, a_k) \ge 0$;
 the departure satisfies
-$n_k \cdot (x + t\, V_j) = n_k \cdot x + t\,\omega_0(n_j, n_k) \le n_k \cdot x \le h_k$
-since $t \ge 0$ and $\omega_0(n_j, n_k) \le 0$.
+$\langle a_k, x + t\, V_j \rangle = \langle a_k, x \rangle + t\,\omega_0(a_j, a_k) \le \langle a_k, x \rangle \le 1$
+since $t \ge 0$ and $\omega_0(a_j, a_k) \le 0$.
 For blocking $k \in B$, the slack~$\delta$ absorbs the perturbation:
-choosing $\varepsilon < \delta / \max_k(|\omega_0(n_i, n_k)| + |\omega_0(n_j, n_k)|)$
+choosing $\varepsilon < \delta / \max_k(|\omega_0(a_i, a_k)| + |\omega_0(a_j, a_k)|)$
 ensures all constraints hold.
 The cases $k = i$ and $k = j$ follow from~(1) and
-the antisymmetry $\omega_0(n_i, n_i) = 0$.
+the antisymmetry $\omega_0(a_i, a_i) = 0$.
 \end{proof}
+\end{unverified}
 
+\begin{unverified}
 \begin{corollary}[Ridge sufficiency]
 \label{cor:ridge-sufficiency}
 If\/ $F_i \cap F_j$ is a 2-dimensional face (ridge) of~$K$
-and $\omega_0(n_i, n_j) \ge 0$, then the transition $F_i \to F_j$
+and $\omega_0(a_i, a_j) \ge 0$, then the transition $F_i \to F_j$
 is feasible.
 In particular, the A2 and~A3 conditions are equivalent
 for simple polytopes and for Lagrangian products of convex polygons.
@@ -142,7 +145,7 @@ for simple polytopes and for Lagrangian products of convex polygons.
 
 \begin{proof}
 If $F_i \cap F_j$ is a ridge, any $x$ in its relative interior satisfies
-$n_k \cdot x < h_k$ for all $k \notin \{i,j\}$ (hence for all $k \in B$),
+$\langle a_k, x \rangle < 1$ for all $k \notin \{i,j\}$ (hence for all $k \in B$),
 so condition~(2) of Lemma~\ref{lem:transition-feasibility} holds
 automatically.
 For simple 4-polytopes, each vertex lies on exactly four facets,
@@ -153,6 +156,7 @@ and two edges of~$Q$, hence on exactly four facets;
 thus $P \times Q$ is simple, and every pair of intersecting facets
 shares a 2-face (``vertex $\times$ polygon'' or ``edge $\times$ edge'').
 \end{proof}
+\end{unverified}
 
 \begin{example}[Non-simple polytope where A3 prunes beyond A2]
 \label{ex:a3-prunes}
@@ -168,12 +172,12 @@ plus the cutting facet~$F_5$), so $K$ is non-simple.
 Every facet pair shares a ridge \emph{except} $(F_1, F_5)$,
 whose intersection is the single vertex~$v_0$.
 
-Since $\omega_0(n_5, n_1) > 0$, condition~(1) of
+Since $\omega_0(a_5, a_1) > 0$, condition~(1) of
 Lemma~\ref{lem:transition-feasibility} holds and A2 allows
 the directed transition $F_5 \to F_1$.
 However, $F_2$ belongs to the blocking set~$B$
-(since $\omega_0(n_5, n_2) < 0$), and $v_0 \in F_2$
-gives $n_2 \cdot v_0 = h_2$:
+(since $\omega_0(a_5, a_2) < 0$), and $v_0 \in F_2$
+gives $\langle a_2, v_0 \rangle = 1$:
 the only point of $F_1 \cap F_5$ is tight on the blocking facet.
 Condition~(2) fails, and A3 correctly prunes this transition.
 In total, A3 admits $33$ candidate orderings versus $39$ for~A2.
@@ -281,7 +285,7 @@ Hypercube ($F = 8$)                  & 16\,064 & 5\,556 & 1\,970 & 1\,970 \\
   Vertex adjacency~(A1) provides moderate pruning;
   the directed $\omega_0$ condition~(A2) eliminates $87$--$99.95\%$
   of remaining candidates.
-  A2 and A3 agree on all simple polytopes.}
+  A2 and~A3 agree on all simple polytopes.}
 \label{tab:ablation-iterations}
 \end{table}
 

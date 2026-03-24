@@ -34,7 +34,7 @@ metrics:
   \item \textbf{On-facet error}: maximum distance of any breakpoint
     from its assigned facet.
   \item \textbf{Inequality violation}: maximum violation of
-    $\langle n_i, \gamma(t_j) \rangle \le h_i$ across all facets~$i$
+    $\langle a_i, \gamma(t_j) \rangle \le 1$ across all facets~$i$
     and breakpoints~$t_j$.
   \item \textbf{Action error}: $\lvert A(\gamma) - c_{\mathrm{EHZ}}(K) \rvert$,
     where~$A(\gamma)$ is the symplectic action of the recovered orbit.
@@ -42,8 +42,8 @@ metrics:
 % Jörn: math approved (9987258) — Lemma lem:finite-orbit-verification + proof
 \begin{lemma}[Finite verification of simple Reeb orbits]%
 \label{lem:finite-orbit-verification}
-Let $K$ be a polytope with facets $F_1, \ldots, F_F$ (outward normals
-$n_i$, offsets~$h_i$, Reeb vectors~$R_i$).
+Let $K = \{x : \langle a_i, x \rangle \le 1\}$ be a polytope with
+facets $F_1, \ldots, F_F$ (dual vertices~$a_i$, Reeb vectors~$R_i$).
 A piecewise-affine closed curve $\gamma \colon [0, T] \to \mathbb{R}^4$
 with breakpoints $0 = t_0 < t_1 < \cdots < t_m = T$ and
 piecewise-constant velocity
@@ -57,10 +57,10 @@ if and only if:
     $\sigma(k)$ such that
     $\dot{\gamma}|_{(t_{k-1}, t_k)} = R_{\sigma(k)}$.
   \item \emph{On-facet:}
-    $\langle n_{\sigma(k)},\, \gamma(t_{k-1}) \rangle = h_{\sigma(k)}$
+    $\langle a_{\sigma(k)},\, \gamma(t_{k-1}) \rangle = 1$
     for each $k = 1, \ldots, m$.
   \item \emph{Inside $K$:}
-    $\langle n_j,\, \gamma(t_k) \rangle \le h_j$
+    $\langle a_j,\, \gamma(t_k) \rangle \le 1$
     for all $j = 1, \ldots, F$ and all $k = 0, \ldots, m$.
 \end{enumerate}
 \end{lemma}
@@ -69,12 +69,12 @@ if and only if:
 Conditions (1) and~(2) are part of
 Definition~\ref{def:simple-reeb-orbit}.
 For~(3): since $R_{\sigma(k)}$ is tangent to $F_{\sigma(k)}$
-($\langle n_{\sigma(k)}, R_{\sigma(k)} \rangle = 0$),
+($\langle a_{\sigma(k)}, R_{\sigma(k)} \rangle = 0$),
 the inner product
-$\langle n_{\sigma(k)}, \gamma(t) \rangle$ is constant on the $k$-th
+$\langle a_{\sigma(k)}, \gamma(t) \rangle$ is constant on the $k$-th
 segment. Hence $\gamma(t) \in F_{\sigma(k)}$ for all
 $t \in [t_{k-1}, t_k]$ if and only if it holds at~$t_{k-1}$.
-For~(4): on each segment, $\langle n_j, \gamma(t) \rangle$ is
+For~(4): on each segment, $\langle a_j, \gamma(t) \rangle$ is
 affine in~$t$, so it attains its maximum at an endpoint. Since $K$ is
 convex, $\gamma(t) \in K$ for all $t$ if and only if
 $\gamma(t_k) \in K$ at every breakpoint.
@@ -140,17 +140,17 @@ linear programs.
 
 \subsubsection*{Solution Dimension}
 
-Base point recovery solves the linear system~$N_S b = r$, where~$N_S$
-collects the outward normals of the active facets. The solution
-dimension is $\dim = 4 - \operatorname{rank}(N_S)$: when the active
-normals are linearly independent, the base point is unique.
+Base point recovery solves the linear system~$A_S b = r$, where~$A_S$
+collects the dual vertices of the active facets. The solution
+dimension is $\dim = 4 - \operatorname{rank}(A_S)$: when the active
+dual vertices are linearly independent, the base point is unique.
 
 Of the 112~polytopes, 108 ($96.4\%$) have a unique base point
 ($\dim = 0$). The four exceptions are all known polytopes with
 special structure: the hypercube ($\dim = 2$, 4~active facets),
 both symplectic products ($\dim = 2$, 3--4~active facets), and the
 Lagrangian triangle--square product ($\dim = 1$, 5~active facets).
-In each case, the active normals are linearly dependent due to the
+In each case, the active dual vertices are linearly dependent due to the
 product structure. No random polytope exhibits non-uniqueness,
 consistent with this being a measure-zero condition.
 

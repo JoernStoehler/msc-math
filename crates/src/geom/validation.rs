@@ -11,7 +11,7 @@ use nalgebra::Vector4;
 
 /// Threshold for positive-span check: n_l · d > EPS means "has positive component."
 ///
-/// **Why 1e-9:** The cross-product direction d is computed from 3 unit normals,
+/// **Why 1e-9:** The cross-product direction d is computed from 3 dual vertices,
 /// so ||d|| = O(1). Inner products n_l · d near zero indicate the normal is
 /// nearly orthogonal to d; 1e-9 distinguishes genuine positive components from
 /// floating-point noise.

@@ -98,15 +98,22 @@ pub(crate) struct DatasetEntry {
 #[cfg(test)]
 impl DatasetEntry {
     fn from_test_polytope(tp: &TestPolytope) -> Self {
+        let duals = tp.polytope.dual_vertices_f64();
+        // Derive unit normals and heights from dual vertices for JSON fixture format:
+        // n_i = a_i / ||a_i||, h_i = 1 / ||a_i||
+        let normals: Vec<[f64; 4]> = duals
+            .iter()
+            .map(|a| {
+                let norm = a.norm();
+                let n = a / norm;
+                [n[0], n[1], n[2], n[3]]
+            })
+            .collect();
+        let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
         Self {
             name: tp.name.clone(),
-            normals: tp
-                .polytope
-                .normals_f64()
-                .iter()
-                .map(|n| [n[0], n[1], n[2], n[3]])
-                .collect(),
-            heights: tp.polytope.heights_f64().to_vec(),
+            normals,
+            heights,
             volume: tp.volume,
             capacity: tp.capacity,
             capacity_unpruned: tp.capacity_unpruned,
@@ -529,16 +536,16 @@ fn apply_symplectomorphism(
         .try_inverse()
         .expect("M should be invertible");
 
-    let normals = polytope.normals_f64();
-    let heights = polytope.heights_f64();
+    let duals = polytope.dual_vertices_f64();
 
-    let mut halfspaces = Vec::with_capacity(normals.len());
-    for (n, &h) in normals.iter().zip(heights.iter()) {
-        let n_raw = m_inv_t * n;
-        let norm = n_raw.norm();
-        let n_new = n_raw / norm;
-        let h_new = (h + n_raw.dot(b)) / norm;
-        halfspaces.push(n_new / h_new);
+    let mut halfspaces = Vec::with_capacity(duals.len());
+    for a in duals {
+        // Transform: a_i^T x <= 1 under x -> Mx + b gives
+        // (M^{-T} a_i)^T y <= 1 + a_i^T M^{-1} b = 1 + (M^{-T} a_i)^T b
+        // New dual vertex: a'_i = (M^{-T} a_i) / (1 + (M^{-T} a_i)^T b)
+        let a_raw = m_inv_t * a;
+        let rhs_new = 1.0 + a_raw.dot(b);
+        halfspaces.push(a_raw / rhs_new);
     }
 
     Polytope4D::from_f64(halfspaces).expect("transformed polytope")

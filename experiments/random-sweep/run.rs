@@ -46,8 +46,7 @@ const RANDOM_PLAN: &[(usize, usize)] = &[
 struct RandomSweepRow {
     name: String,
     facet_count: usize,
-    normals: Vec<[f64; 4]>,
-    heights: Vec<f64>,
+    dual_vertices: Vec<[f64; 4]>,
     h_min: f64,
     h_max: f64,
     volume: f64,
@@ -92,8 +91,7 @@ fn main() {
             let row = RandomSweepRow {
                 name: format!("random_F{facet_count}_{i}"),
                 facet_count,
-                normals: p.normals_f64().iter().map(|n| [n[0], n[1], n[2], n[3]]).collect(),
-                heights: p.heights_f64().to_vec(),
+                dual_vertices: p.dual_vertices_f64().iter().map(|a| [a[0], a[1], a[2], a[3]]).collect(),
                 h_min: H_MIN,
                 h_max: H_MAX,
                 volume: vol,
