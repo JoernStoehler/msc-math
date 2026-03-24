@@ -104,6 +104,10 @@ d) runtime costs, e.g. long test suites or subagents that block the agent's work
 
 In general, for all questions the goal is to help out Jörn by accelerating his work, not to replace his judgment. The agents' written output is meant to be skimmed quickly by Jörn, is meant to serve as a first exploration that Jörn can use to focus his attention where his expertise is actually impactful and needed, and is meant to surface ideas that Jörn would have arrived more slowly at than the agent.
 
+[TODO: add real examples from actual agent-design sessions as they accumulate]
+[TODO: add concrete strategies/learnings about how to answer these questions well]
+[TODO: add other questions where an agent's preliminary investigation / draft answers helped Jörn work faster]
+
 ### 3. Jörn decides on the approach
 
 Jörn applies his expert model to pick/design the workflow. The agent does not substitute its own judgment here. Agent asks clarifying questions until Jörn's proposal is clear enough to be implemented and the agent does not have any concerns about it anymore.
