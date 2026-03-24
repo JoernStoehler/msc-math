@@ -7,46 +7,64 @@ description: Collaborative workflow for designing agent materials (skills, agent
 
 This is a collaborative workflow. Jörn has the expert model for what works with agents. The agent supplies cognitive labor (research, brainstorming, enumeration, drafting) that helps Jörn arrive at good decisions faster. The agent does NOT decide what workflow agents should follow — that requires expertise agents don't have.
 
-## What agents are bad at (defer to Jörn)
+## Expert model (from Jörn)
 
-Agents are bad at tasks that require:
-a) Jörn's deep expert model of agent behavior (too complex to teach, anti-intuitive to agents)
-b) Jörn's experience — knowing many example failure/success stories
-c) Theory of mind — imagining what an agent who hasn't read the same guides will do based off only a single skill file or an alternate CLAUDE.md
+### Agent behavior
+- Agents behave like their training data (frequent human tool use patterns). Agent knowledge is popular internet text.
+- Training knowledge is associative: agents can be prompted or triggered to recall more of it. A mere reminder (config file in the tree, code snippet in a familiar style) is often enough to activate trained behavior.
+- Popular patterns are cheap: conventions, tech stacks, factual knowledge (e.g. library APIs) needn't be explained. Just state the convention.
+- Unpopular or novel patterns are expensive: weak or no training signal, need explicit detailed instructions.
+
+### Agent cognition (RLVR)
+- Agents need tractable verifiable goals. They flail on tasks without clear verification.
+- Agents don't reject goals or question whether a goal is the right one — RLVR trains pursuit, not evaluation.
+- Agents plan by anticipating outcomes and mentally verifying them. Works when mental verification is possible, fails when it requires experience the agent lacks.
+- When verification isn't tractable, agents use strategies that look productive but aren't — they don't switch to fundamentally different approaches.
+
+### Agent limitations on meta-work
+- Agents can't reliably evaluate their own output quality on agent-centric tasks. Over-optimistic, miss ambiguity.
+- Agents can't predict how other agents will interpret instructions (theory of mind failure).
+- Written instructions have limited adherence — knowledge in context ≠ knowledge used. Structural enforcement (scripts, hooks, repo layout) is more reliable.
+- Don't teach agents abstract models of agent cognition. Instead: for specific situations, apply expert knowledge and record as concrete artifacts.
+
+### Design strategy
+- 80/20: tackle the 20% of workflow types causing 80% of problems. For the rest, hand back to Jörn.
+- Familiar developer artifacts (test suites, CI scripts, config files) get better engagement than novel formats.
+- Cheap-to-try first. Iterate on observed behavior, not predicted.
+- Feedback loops > getting it right the first time.
+
+[Jörn: prune/correct/expand. Agent-expanded from Jörn's statements, 2026-03-24]
+
+## Experience (from Jörn)
+
+### What agents are bad at (defer to Jörn)
+
+Tasks requiring:
+a) Jörn's deep expert model (too complex to teach, anti-intuitive to agents)
+b) Jörn's experience — knowing many failure/success stories
+c) Theory of mind — imagining what a different agent will do from only a skill file
 
 Concrete examples:
-- Predicting how much attention agents will pay to loaded instructions (over-optimistic)
-- Predicting how agents will interpret instructions and translate them into behavior (miss ambiguity)
-- Predicting agent failure modes from first principles (even Jörn isn't great at this — feedback loops matter more)  
-- Generalizing from a best practice to more situations (requires deep understanding of why the practice works for the narrow case)
-- Deciding what should be a skill vs CLAUDE.md vs repo artifact (unfamiliar with formats)
-- A-priori evaluation of whether a procedural file adds value (no experience with how agents take prompts and behave afterwards)
+- Predicting how much attention agents pay to loaded instructions (over-optimistic)
+- Predicting how agents interpret instructions (miss ambiguity)
+- Predicting failure modes from first principles (feedback loops matter more)
+- Generalizing from a best practice to more situations
+- Deciding skill vs CLAUDE.md vs repo artifact (cheap to ask Jörn — seconds)
+- A-priori evaluation of whether a procedural file adds value
+- Questioning or rejecting goals
 
-Note: asking agents to "explicitly be critical and look for potential misunderstanding" improves quality to barely-okay, but it's usually faster and better to just ask Jörn.  
+Note: "be explicitly critical" improves to barely-okay. Usually faster to ask Jörn.
+Note: Some tasks take especially little time for Jörn: picking file formats, picking from suggestions, predicting how a draft will fail.
 
-Note: Some tasks take especially little time for Jörn due to his experience, e.g. deciding what file formats to use, picking from multiple suggestions the ones that look promising, and predicting how a draft file will fail in practice.
+### What agents are good at (do these)
 
-[TODO: revisit — Jörn flagged this list as probably incomplete, 2026-03-24]  
+d) Work unrelated to agents — file tools, syntax checks, scripting
+e) Shallow agent knowledge work — extracting from search, following this workflow
+f) Applying human project/team management theory to a situation
+g) Accessing trained knowledge and presenting it (associative recall, popular patterns)
+h) Spawning subagents to observe behavior — testing whether a skill file works under realistic conditions
 
-## What agents are good at (do these)
-
-Agents are good at:
-d) Work unrelated to agents — file tools, style and syntax checks, scripting
-e) Shallow work with knowledge about agents — extracting from search results, following this very workflow
-f) Regurgitating and applying best practices from human project/team management theory to a situation
-g) Accessing their own trained knowledge and presenting results — e.g. answering what tools and conventions agents are familiar with from training
-h) Spawning new agents with controlled context to observe behavior — e.g. testing whether a skill file is sufficient by spawning a subagent under fake realistic conditions with a throwaway task
-
-Concrete tasks in this workflow:
-- Gathering concrete failure data (session logs, usage report, git history)
-- Enumerating options and trade-offs for Jörn to evaluate
-- Brainstorming what common practices/tools/patterns exist that could be combined
-- Looking up what agents already know from their system prompt and training
-- Researching Claude Code file formats and features (via llms.txt)
-- Drafting files from Jörn's decisions using correct syntax
-- Testing whether skills trigger correctly, whether descriptions are clear
-
-[TODO: revisit — Jörn flagged this list as probably incomplete, 2026-03-24]
+[TODO: revisit — Jörn flagged both lists as probably incomplete, 2026-03-24]
 
 ## Workflow
 
@@ -62,51 +80,41 @@ Present prioritized concrete situations to Jörn. He confirms which matter and h
 
 ### 2. Supply helpful information to Jörn
 
-For each situation Jörn wants to address, the agent autonomously gathers and presents helpful information to Jörn to accelerate Jörn's decision-making and to surface ideas that Jörn overlooks otherwise.
-The following independent research questions are almost always helpful:
+For each situation Jörn wants to address, autonomously gather and present helpful information to accelerate Jörn's decision-making and surface ideas he'd overlook otherwise. The following research questions are almost always helpful:
 
-**Question:** What are relevant common/popular practices, conventions, tools, and workflow patterns that exist across the agent's training data, i.e. in books, blogs, github repos, config files and log data?
-**Why relevant**: Agents acquire knowledge and behavior patterns from training data, with more popular patterns more strongly represented. Such trained behavior is easy to activate, a mere reminder is often enough, e.g. the presence of a config file in the file tree or code snippets that follow some popular style. Agents know about correlations between patterns across the training distribution, e.g. they know full tech stacks and interactions between tools, not just individual libraries. Popular procedural knowledge, e.g. how to write code that follows a convention, needn't even be explained, instead we can just state the convention or even a bundle of correlated conventions. Popular factual knowledge, e.g. what api functions a library version exposes, also is known to the agent without further explanation. 
-Agents' training knowledge is associative, similar to human memory, and they can be prompted or triggered to recall more of it, or pay more attention to what they already know.
-**How to answer**: Simply think through what the most popular / most common patterns, best practices, conventions, tools and workflows/processes are that are associated with the concrete scenario. Rank and triage. Present to Jörn a rationale for why each may/may not fit. Explain each item to Jörn, but not to agents. Jörn does not have as broad knowledge as agents do. Jörn will add his own ideas, and pick the most promising ideas to combine.
+**What common practices/tools/patterns exist in training data for this kind of situation?**
+Rank and triage. Explain each to Jörn (he doesn't have the agent's breadth). Present rationale for why each may/may not fit. Jörn picks the most promising to combine.
 
-**Question:** What is the causal chain for this situation, i.e. what leads to the emergence of the situation?
-**Why relevant**: Often we can/need to change agent behavior as to avoid scenarios from ever emerging. For example, telling an agent to use some set of convention can prevent a complex bug from reemerging, if the bug depends on earlier convention violations, and if the agents follow the conventions reliably. To plan where to intervene, we need to understand how the situation comes to happen.
-**How to answer:** Look at real cases of the scenario, and the preceding events. This is a rather difficult task, since it borders on using theory of mind, but a preliminary analysis with brainstormed ideas for interventions that preempt the situation can be helpful for Jörn. Jörn will also add his own ideas to the pool, and he will pick the most promising interventions to try out.
+**What is the causal chain — what leads to the situation emerging?**
+Look at real cases and preceding events. Brainstorm interventions that could preempt the situation. Jörn picks the most promising.
 
-**Question:** How is the system prompt / how is the situation already interacting with the agent? What instructions is the agent given in the moment?
-**Why relevant**: Jörn does not memorized, read through and reason through the system prompt with the same amount of efforts as agents do, and Jörn does not have the same reading comprehension behavior as agents. So it's important to get an agent's perspective on what the system prompt says that's relevant to the situation. Sometimes misbehavior even is directly traced back to bad instructions that Anthropic added to claude code and which contradict what would be best practices in the situation. Fighting against the system prompt is especially annoying, and requires loud, strong prompting that overrides the system prompt and that sadly takes up attention and causes overhead. Disabling sections of the system prompt is sometimes possible, see the configuration options in llms.txt, but usually it is not editable.
-**How to answer:** Agents already see the system prompt and tool instructions. If there's anything relevant, you can download a human-readable copy of the system prompt files via
+**What does the system prompt already say about this situation?**
+Agents see the system prompt; Jörn doesn't have it memorized. Report what's relevant. Sometimes misbehavior traces directly to Anthropic's instructions contradicting best practices. Download a human-readable copy for Jörn via:
 ```bash
 bash .claude/skills/agent-design/scripts/download-system-prompt.sh <folder>
 ```
-Then tell Jörn about where to read up on the relevant sections, so he is up to speed on what the agent is already being told by the harness itself, regardless of what other files we add.
 
-**Question:** How can the situation be detected, i.e. what are reliable signals that an agent has entered a situation in which agents have made mistakes in the past and where our additional prompts are needed?
-**Why relevant**: If we can detect the situation, we can trigger a tailored response workflow that helps out the agent to deal with the situation well. The most frequent way to encode triggers is via skill names+descriptions, since agents have been a trained on the claude code harness during their RLVR stage (reinforcement learning with verifiable reward) to load skills when skills become useful. There's some tradeoff to make between false positive and false negative rates, but Jörn has more experience and better assessment of the benefits/costs of both types of errors than agents do. So the focus is on suggesting potential signals and triggers, with preliminary guesstimates of their reliability. Jörn will then add his own ideas, and pick the most promising trigger(s) to use to inject additional prompts into the agent.
-**How to answer:** Look at real cases of the scenario, and brainstorm what is related to the situation, e.g. by noticing first what is unusual / different about it. For concrete trigger pathways that SKILL.md descriptions enable, be ambitious and suggest natural language reasoning in the background even if it seems vague, but also more concrete natural language reasoning options. For concrete trigger pathways that hooks enable, consider what triggers are scriptable, e.g. via the symbolic tool calls from agents (tool hooks), including file reads, or lifecycle hooks. Jörn has more expertise in predicting whether a trigger moment is actually correctly detecting the situation, and whether a SKILL.md description and hook logic are reliable enough. So again Jörn profits from being given a lot of ideas to pick from, besides his own.
+**How can the situation be detected?**
+Suggest signals and triggers — both via skill descriptions (agents are RLVR-trained to load skills when relevant) and via hooks (scriptable tool-call triggers). Jörn assesses reliability and false-positive/negative tradeoffs.
 
-**Question:** What post-incident verification or feedback mechanisms could work?
-**Why relevant**: Besides preempting mistakes and changing behavior during a situation that could lead to mistakes, we can also just correct mistakes. To do so we need to catch them reliably. The previous question of detecting a dangerous situation is related and similar, but the trigger there ideally precedes the mistake, while here we are after the fact. One important difference is whether the mistake is detectable from the agent's behavior, which is part of the session log / the agent's context window, and/or from the repo state, which consists of files, git log, and any bash tool that can be run. Like before, triggers can be implemented via skill descriptions and hooks. If mistakes are fine to be caught in batch and later, then we can also have review processes that review e.g. multiple commits, the whole repo, or one or more session logs. Reviews can be completely or partially automated, depending on whether finding a class of mistakes is within the capabilities of agents or requires Jörn's help. The more we can automate, the cheaper, faster and more scalable the feedback loop. For reviews, often instead of a SKILL.md an agent prompt is useful, since it isolates the review process from the working agent, and thus the subagents are more focused on the review alone and also work faster due to a smaller context window length. Good places to trigger the review-running behavior are the agent prompt descriptions, which ideally remind the agent that a review process is available and needs to be run, and a generic pre-merge workflow (already set up [TODO]) which reminds agents to spawn review subagents before merging into the main branch.
-**How to answer:** Look at real cases of the scenario, and what complaints Jörn had about agent behavior. How can the mistakes be detected, i.e. how can Jörn's complaining be automated. Ask Jörn what tipped him off and what he paid attention to, since that often points directly at reliable and automatable signals. Brainstorm and filter potential detection mechanisms, e.g. by thinking about downstream effects (symptoms) of an error, about what distinguishes an error-free from an erroneous result, and whether there are tests/verification steps that can be done via scripts, via subagents, or via ideally efficient queries to Jörn. As usual, this is meant to help Jörn pick and design the best mechanism, not to replace his judgement or reduce his action space.
+**What post-incident verification or feedback mechanisms could work?**
+Distinguish: detection before vs after the mistake. Consider what's detectable from agent behavior (session log, context) vs repo state (files, git, bash). Consider automated reviews via subagents. Jörn picks mechanisms.
 
-**Question:** What conflicts and trade-offs and synergies exist between the brainstormed ideas?
-**Why relevant**: Straightforward. Jörn isn't as broadly knowledgable as agents, and does not know which combinations of patterns are popular, or what side effects / mechanisms the proposed scripts would have. This is simply to help out Jörn arrive faster at a good model of what ideas can be combined.
-**How to answer:** Freeform reasoning through the interactions of the promising ideas so far. Common patterns to look out for: defense in depth, redundancy, parallelization, contradictions, fast paths, the most reliable option, the most easy-to-try option, etc etc. Present your reasoning to Jörn in a skimmable format, so that he quickly gets the idea of what interactions to be mindful of when designing the workflow.
+**What conflicts, trade-offs, and synergies exist between the ideas?**
+Reason through interactions. Present in skimmable format so Jörn quickly sees what combinations work.
 
-**Question:** What costs do the brainstormed ideas cause outside the situations we want to address?
-**Why relevant**: So far questions mainly revolved around what happens around the mistake, not what happens in entirely different situations. The main costs most solutions have are
-a) one-time complexity cost to set up, especially if they require Jörn to e.g. write a lot of text
-b) ongoing maintenance effort, e.g. if they can grow stale over time, including the cost of stale information causing agents to hold false beliefs
-c) attention and instruction costs from the name+description of skills and subagents, from loaded skill bodies, from printed hook outputs, and from the read repo files / tool outputs. The attention cost is about overloading an agent with non-dismissable information that isn't quite obviously irrelevant to its situation. The instruction cost is about overloading an agent with too many instructions that need to be considered while it works, including instructions that are after consideration not applicable. E.g. rust conventions still eat into the instruction budget even while an agent works on python, though somewhat less severely.
-d) runtime costs, e.g. long test suites or subagents that block the agent's workflow until they finish. Parallelization of e.g. multiple subagents or verification scripts can help reduce wall-time and is a useful trick to keep in mind.
-**How to answer:** Go through the ideas one by one, assess effects and costs, and write up your guesses for Jörn. This requires a lot of experience with how agents act, and so the information is mostly there to help Jörn get started, and isn't suitable for making decisions. Jörn will contradict most cost and impact assessments, but it's good if basic ideas such as parallelization at least done once on side of the agent, so that it's in the list of recommendations and Jörn doesn't forget about it as an option.
+**What costs do the ideas cause outside the target situations?**
+Main cost categories:
+a) One-time setup complexity
+b) Ongoing maintenance / staleness risk
+c) Attention and instruction costs (overloading agents with non-dismissable info)
+d) Runtime costs (long tests, blocking subagents — parallelization helps)
 
-In general, for all questions the goal is to help out Jörn by accelerating his work, not to replace his judgment. The agents' written output is meant to be skimmed quickly by Jörn, is meant to serve as a first exploration that Jörn can use to focus his attention where his expertise is actually impactful and needed, and is meant to surface ideas that Jörn would have arrived more slowly at than the agent.
+In general: the goal is to help Jörn by accelerating his work, not to replace his judgment. Present output that's fast to skim and surfaces ideas Jörn would have arrived at more slowly.
 
 [TODO: add real examples from actual agent-design sessions as they accumulate]
 [TODO: add concrete strategies/learnings about how to answer these questions well]
-[TODO: add other questions where an agent's preliminary investigation / draft answers helped Jörn work faster]
+[TODO: add other questions where an agent's preliminary investigation helped Jörn work faster]
 
 ### 3. Jörn decides on the approach
 
@@ -171,29 +179,3 @@ git diff .claude/skills/agent-design/references/system-prompt/
 
 **Skills creation guide:**
 `references/skills-guide.md` (transcribed from https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf)
-
-## Principles (from Jörn, expanded by agent — Jörn please prune/correct)
-
-### Agent behavior
-- Agents behave like their training data (frequent human tool use patterns). Agent knowledge is popular internet text. Design repo structures that activate trained patterns.
-- Agents' training knowledge is associative: they can be prompted or triggered to recall more of it, or pay more attention to what they already know. A mere reminder (config file in the tree, code snippet in a familiar style) is often enough to activate trained behavior.
-- Popular patterns are cheap: popular conventions, tech stacks, and factual knowledge (e.g. library APIs) needn't be explained — agents already know them. Just state the convention.
-- Unpopular or novel patterns are expensive: agents have weak or no training signal for them and need explicit, detailed instructions. The less familiar a pattern, the more instruction is needed.
-
-### Agent cognition (RLVR)
-- Agents need tractable verifiable goals (RLVR training). They flail on tasks without clear verification. Build verification into structure, don't rely on agent self-reflection.
-- Agents don't reject goals or question whether a goal is the right one — RLVR trains them to pursue goals, not evaluate them.
-- Agents plan by anticipating outcomes and mentally verifying them. This works when mental verification is possible, but fails when verification requires experience or expertise the agent lacks.
-- When verification isn't tractable, agents use strategies that look productive but aren't — they don't switch to fundamentally different approaches (like asking for help, or stepping back to reconsider scope).
-
-### Agent limitations on meta-work
-- Don't teach agents abstract models of agent cognition. Instead: for specific high-impact situations, apply expert knowledge and record the result as concrete artifacts agents can handle.
-- Agents can't reliably evaluate their own output quality on agent-centric tasks. They're over-optimistic and miss ambiguity.
-- Agents can't reliably predict how other agents will interpret instructions (theory of mind failure).
-- Written instructions have limited adherence — having knowledge in context doesn't mean agents use it. Structural enforcement (scripts, hooks, repo layout) is more reliable than language instructions.
-
-### Strategy
-- 80/20: tackle the 20% of workflow types that cause 80% of agent-centric labor problems. For the rest, agents hand work back to Jörn.
-- Solutions that look like familiar developer artifacts (test suites, CI scripts, config files, structured logs) get better agent engagement than novel formats.
-- Cheap-to-try solutions first: prefer low-setup interventions over elaborate infrastructure. Iterate based on observed behavior, not predicted behavior.
-- Feedback loops matter more than getting it right the first time. Set up data collection so you can reevaluate.
