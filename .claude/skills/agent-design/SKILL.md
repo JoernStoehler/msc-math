@@ -132,8 +132,16 @@ Draft the files Jörn specified, using the correct file formats. Before writing:
 
 - **Spec compliance:** Spawn a subagent per file to check it against the matching file format spec from llms.txt (e.g. to catch wrongly used YAML frontmatter fields or overlooked semantic aspects of the body)
 - **Triggering:** Does the skill trigger on relevant queries? Test by asking a fresh subagent "when would you use X?" Does it NOT trigger on unrelated queries?
-- **Actionability:** Are instructions specific enough that an agent can follow them without guessing? Would a script be more reliable than a natural language instruction for critical checks?
-- **Jörn review:** Present the draft to Jörn before committing. Flag anything you're uncertain about.
+- **Actionability:**
+  - *Vague word scan:* grep for "appropriate", "properly", "ensure", "good", "consider" — these delegate judgment without criteria. Replace with concrete verbs + objects.
+  - *Naive subagent test:* spawn a fresh subagent with only the written file and a realistic test task. If it gets stuck, misinterprets, or does the wrong thing, the instructions aren't clear enough.
+  - *Detectability check:* for any "if X then Y" instruction, verify X is actually observable by the agent (e.g. "if the code is complex" is undetectable; "if the file has more than 3 functions" is detectable).
+  - *Redundancy check:* does the instruction add information beyond what agents already know from training? "Follow best practices" adds nothing. "Use `cargo clippy -- -D warnings` before committing" does.
+  - *Script-or-language decision:* for anything where getting it wrong has high cost, check whether a script could enforce it instead of relying on the agent to remember.
+
+### 6. Jörn review
+
+Present the draft to Jörn before committing. Flag anything you're uncertain about.
 
 ## Reference sources
 
