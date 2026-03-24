@@ -130,11 +130,10 @@ Draft the files Jörn specified, using the correct file formats. Before writing:
 
 ### 5. Verify
 
-- Does the skill trigger on relevant queries? (Test by asking "when would you use X?")
-- Does it NOT trigger on unrelated queries?
-- Is the description under 1024 chars?
-- Are instructions specific and actionable (not vague advice)?
-- Would a script be more reliable than a language instruction for critical checks?
+- **Spec compliance:** Spawn a subagent per file to check it against the matching file format spec from llms.txt (e.g. to catch wrongly used YAML frontmatter fields or overlooked semantic aspects of the body)
+- **Triggering:** Does the skill trigger on relevant queries? Test by asking a fresh subagent "when would you use X?" Does it NOT trigger on unrelated queries?
+- **Actionability:** Are instructions specific enough that an agent can follow them without guessing? Would a script be more reliable than a natural language instruction for critical checks?
+- **Jörn review:** Present the draft to Jörn before committing. Flag anything you're uncertain about.
 
 ## Reference sources
 
