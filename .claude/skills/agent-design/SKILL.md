@@ -123,8 +123,8 @@ Jörn applies his expert model to pick/design the workflow. The agent does not s
 
 ### 4. Agent writes it up
 
-Using correct file formats. Before writing:
-- Fetch relevant spec: `curl -sL https://code.claude.com/docs/llms.txt` then the specific page
+Draft the files Jörn specified, using the correct file formats. Before writing:
+- Fetch the relevant spec: `curl -sL https://code.claude.com/docs/llms.txt` then the specific page
 - For skill creation specifically, follow the guide at `references/skills-guide.md` (transcribed from Anthropic's "Complete Guide to Building Skills for Claude")
 - Key from the guide: start with use cases, description = WHAT + WHEN + trigger phrases, progressive disclosure, test for triggering
 
