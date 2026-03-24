@@ -33,6 +33,7 @@
 % See thesis/general-case-algorithm.tex, Algorithm [alg:ehz].
 
 
+\begin{notationupdated}
 \begin{lemma}[Double sum as quadratic form]\label{lem:H-quadratic}
 % Jörn: text approved (b7a8bc0) — from \begin{lemma} to \end{proof}
 % Notation updated to dual-vertex form; math unchanged
@@ -57,8 +58,10 @@ Since $H$ is symmetric with zero diagonal,
 $\sum_{j < i} \beta_{\sigma(i)} \beta_{\sigma(j)} H_{ij}
 = \tfrac{1}{2}\, \beta^\top H\, \beta$.
 \end{proof}
+\end{notationupdated}
 
 
+\begin{notationupdated}
 \begin{lemma}[KKT conditions and the algorithm's linear system]%
 \label{lem:kkt}
 % Jörn: text approved (b7a8bc0) — from \begin{lemma} to \end{proof}
@@ -91,8 +94,10 @@ which, together with $A^\top \beta = 0$ and
 $\mathbf{1}^\top \beta = 1$, is exactly
 the linear system.
 \end{proof}
+\end{notationupdated}
 
 
+\begin{notationupdated}
 \begin{lemma}[Well-definedness]\label{lem:well-defined}
 % Jörn: text approved (06a976c) — statement
 % Jörn: text approved (0bbc647) — proof
@@ -148,8 +153,10 @@ Therefore
   = -\xi. \qedhere
 \]
 \end{proof}
+\end{notationupdated}
 
 
+\begin{unverified}
 \begin{lemma}[Transition feasibility]%
 \label{lem:numerical-transition-feasibility}
 % Source: thesis/appendix-numerical.tex
@@ -239,8 +246,9 @@ approach and departure, so $x$ together
 with~$\varepsilon$ witnesses the transition
 $F_i \to F_j$.
 \end{proof}
+\end{unverified}
 
-
+\begin{unverified}
 \begin{lemma}[$Q$ error bound from KKT residual]%
 \label{lem:q-error-bound}
 % Source: thesis/appendix-numerical.tex
@@ -382,8 +390,9 @@ for $\|\delta\mu\|$ and $|\delta\xi|$:
   \qedhere
 \]
 \end{proof}
+\end{unverified}
 
-
+\begin{unverified}
 \begin{remark}[Near-null LP search for admissible~$\hat\beta$]%
 \label{rem:near-null-lp-search}
 % Source: saddle_point_solver.rs, beta_feasibility.rs
@@ -455,4 +464,5 @@ Three types arise:
   if a Type~C direction is ever encountered.
 \end{itemize}
 \end{remark}
+\end{unverified}
 

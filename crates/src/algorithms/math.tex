@@ -99,6 +99,7 @@ form a Hamiltonian cycle in the induced subgraph~$G_K[S]$.
 \end{corollary}
 
 
+\begin{unverified}
 \begin{theorem}[Conformality]\label{thm:conformality}
 % [TODO: JÖRN - verify statement, add proof]
 % Source: hk2017/conformality_test.rs doc comment
@@ -108,8 +109,10 @@ and $\alpha > 0$,
   c_{\mathrm{EHZ}}(\alpha K) = \alpha^2\, c_{\mathrm{EHZ}}(K).
 \]
 \end{theorem}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{theorem}[Symplectic invariance]\label{thm:sympl-invariance}
 % [TODO: JÖRN - verify statement, add proof]
 % Source: hk2017/symplectic_invariance_test.rs doc comment
@@ -119,6 +122,7 @@ $M \in \operatorname{Sp}(4)$ and $b \in \mathbb{R}^4$,
   c_{\mathrm{EHZ}}(MK + b) = c_{\mathrm{EHZ}}(K).
 \]
 \end{theorem}
+\end{unverified}
 
 
 % ====================================================================
@@ -220,6 +224,7 @@ where $T = c_{\mathrm{EHZ}}(K)$ is the capacity
 % Part 3: Billiard algorithm (Lagrangian products)
 % ====================================================================
 
+\begin{unverified}
 \begin{lemma}[Facet structure of Lagrangian products]\label{lem:lagrangian-facets}
 % Source: thesis/lagrangian-product-algorithm-proof.tex
 Let $K = K_q \times K_p$ be a Lagrangian product.
@@ -245,8 +250,10 @@ The outward normal to $\text{edge}_i(K_q) \times K_p$ is
 $(\hat{n}_i^q, 0)$ with height $h_{K_q}(\hat{n}_i^q) = h_i^q$;
 similarly for $p$-facets.
 \end{proof}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{lemma}[Sigma structure for Lagrangian products]\label{lem:sigma-structure}
 % Source: thesis/lagrangian-product-algorithm-proof.tex
 Let $K = K_q \times K_p$ be a Lagrangian product, and let
@@ -306,8 +313,10 @@ adjacent in~$G_K$.
 Two same-type adjacent facets correspond to edges sharing a
 vertex in the 2D polygon.
 \end{proof}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{theorem}[Billiard characterization of EHZ capacity]%
 \label{thm:billiard-characterization}
 % Source: thesis/lagrangian-product-algorithm-proof.tex
@@ -322,8 +331,10 @@ where $\ell_{K_p^\circ}(\eta) = \sum_i h_{K_p}(\Delta_i)$ is the
 $K_p^\circ$-length and $\Delta_i = x_{i+1} - x_i$ are the edge vectors.
 \end{theorem}
 % [TODO: JÖRN - proof is in the referenced papers, not reproduced here]
+\end{unverified}
 
 
+\begin{unverified}
 \begin{theorem}[Bounce bound]%
 \label{thm:bounce-bound}
 % Source: thesis/lagrangian-product-algorithm-proof.tex
@@ -333,8 +344,10 @@ the minimum in Theorem~\ref{thm:billiard-characterization}
 is achieved by a billiard trajectory with at most $3$ bounce points.
 \end{theorem}
 % [TODO: JÖRN - proof is in the referenced papers, not reproduced here]
+\end{unverified}
 
 
+\begin{unverified}
 \begin{algorithm}[Billiard capacity]\label{alg:billiard}
 % Source: thesis/lagrangian-product-algorithm.tex
 Computes $c_{\mathrm{EHZ}}(K_q \times K_p)$
@@ -369,12 +382,14 @@ $H$-representation.
 \item \textbf{Return} $\min A(S, \sigma)$.
 \end{enumerate}
 \end{algorithm}
+\end{unverified}
 
 
 % ====================================================================
 % Part 4: Tube algorithm
 % ====================================================================
 
+\begin{unverified}
 \begin{definition}[Symplectic polytope]\label{def:symplectic-polytope}
 % Source: thesis/tube-algorithm.tex
 % Parameterization: K = {x : a_i^T x ≤ 1}, dual vertices a_i
@@ -388,8 +403,10 @@ that has no Lagrangian $2$-face:
   \text{ such that } F_i \cap F_j \text{ is a $2$-face.}
 \]
 \end{definition}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{definition}[Tube]\label{def:tube}
 % Source: thesis/tube-algorithm.tex
 The \emph{tube} $T(\sigma)$ of a type $\sigma = (\sigma(1), \ldots, \sigma(k))$
@@ -406,8 +423,10 @@ $(t_{i-1}, t_i)$ for $i = 1, \ldots, k$,
 where $F_{\sigma(i)} \to F_{\sigma(i+1)}$ is a directed $2$-face
 for each $i = 1, \ldots, k-1$.
 \end{definition}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{definition}[Tube data structure]\label{def:tube-data}
 % Source: thesis/tube-algorithm.tex
 A tube $T(\sigma)$ is represented by:
@@ -425,8 +444,10 @@ A tube $T(\sigma)$ is represented by:
   the rotation number accumulated on $(t_1, t_{k-1})$.
 \end{enumerate}
 \end{definition}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{definition}[Tube extension]\label{def:tube-extension}
 % Source: thesis/tube-algorithm.tex
 Let $T_k = T(\sigma(1), \ldots, \sigma(k))$ be a tube
@@ -445,8 +466,10 @@ The extended tube $T(\sigma(1), \ldots, \sigma(k+1))$ has data:
   \rho' &\coloneqq \rho + \Delta\rho_{\sigma(k),\sigma(k+1)}.
 \end{align*}
 \end{definition}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{definition}[Rotation increment at a breakpoint]\label{def:rotation-increment}
 % Source: thesis/tube-algorithm.tex
 Let $F_j \to F_l$ be a directed $2$-face.
@@ -458,8 +481,10 @@ $\psi_{F_{jl}} \in \operatorname{Sp}(2)$.
 By the theory of CH2021, $\psi_{F_{jl}}$ is positive elliptic
 and $\Delta\rho_{jl} \in (0, \tfrac{1}{2})$.
 \end{definition}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{definition}[Closing a tube]\label{def:tube-close}
 % Source: thesis/tube-algorithm.tex
 Given a tube $T(\sigma(1), \ldots, \sigma(k))$,
@@ -469,10 +494,12 @@ The result is a tube $T(\sigma(1), \ldots, \sigma(k), \sigma(1), \sigma(2))$
 with flow map $\varphi'' \colon \operatorname{Start} \to F_{\sigma(1)} \cap F_{\sigma(2)}$
 and action function $a'' \colon \operatorname{End}'' \to \mathbb{R}$.
 \end{definition}
+\end{unverified}
 
 
 % ── Pruning lemmas ──
 
+\begin{unverified}
 \begin{lemma}[Pruning: empty tube]\label{lem:prune-empty}
 % Source: thesis/tube-algorithm.tex
 If $\operatorname{Start}(\sigma) = \emptyset$ or $\operatorname{End}(\sigma) = \emptyset$,
@@ -484,8 +511,10 @@ A trajectory $\gamma \in T(\sigma)$ satisfies
 $\gamma(t_1) \in \operatorname{Start}(\sigma)$ and
 $\gamma(t_{k-1}) \in \operatorname{End}(\sigma)$ by definition.
 \end{proof}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{lemma}[Pruning: action lower bound]\label{lem:prune-action}
 % Source: thesis/tube-algorithm.tex
 Let $c^* > 0$ be the action of the current best candidate.
@@ -500,8 +529,10 @@ Every $\gamma \in T(\sigma)$ has
 $A(\gamma) \geq a(\gamma(t_{k-1})) \geq \min_{\operatorname{End}} a > c^*$.
 Since the minimum-action orbit has action $\leq c^*$, it is not in $T(\sigma)$.
 \end{proof}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{lemma}[Pruning: rotation upper bound]\label{lem:prune-rotation}
 % Source: thesis/tube-algorithm.tex
 Let $\rho$ be the rotation number of tube $T(\sigma)$.
@@ -518,8 +549,10 @@ $> \rho \geq 2$.
 Hence no closed orbit from $T(\sigma)$ satisfies
 $\rho_{\mathrm{comb}} \leq 2$.
 \end{proof}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{lemma}[Pruning: simple orbit]\label{lem:prune-simple}
 % Source: thesis/tube-algorithm.tex
 If $\sigma(i) = \sigma(j)$ for some $1 \leq i < j \leq k$,
@@ -534,8 +567,10 @@ A pure Reeb trajectory of type $\sigma$, when closed,
 visits $F_{\sigma(i)}$ twice if $\sigma(i) = \sigma(j)$.
 Hence no closed orbit from $T(\sigma)$ can be the minimum-action orbit.
 \end{proof}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{lemma}[Closed orbits as fixed points]\label{lem:fixed-point}
 % Source: thesis/tube-algorithm.tex
 The closed Reeb orbits in the closure of $T(\sigma)$ are in bijection with
@@ -562,8 +597,10 @@ After closure,
 so the periodicity condition is $\varphi''(\gamma(t_1)) = \gamma(t_1)$.
 The action is $a''(\varphi''(\gamma(t_1))) = a''(\gamma(t_1))$.
 \end{proof}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{algorithm}[Tube algorithm]\label{alg:tube}
 % Source: thesis/tube-algorithm.tex
 Computes $c_{\mathrm{EHZ}}(K)$ for a symplectic polytope $K$
@@ -622,4 +659,5 @@ Then recurse: given a tube $T(\sigma(1), \ldots, \sigma(k))$:
 \noindent
 Return $c^*$.
 \end{algorithm}
+\end{unverified}
 

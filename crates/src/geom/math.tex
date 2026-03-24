@@ -44,6 +44,7 @@ equivalently $\omega_0 = dq_1 \wedge dp_1 + dq_2 \wedge dp_2$.
 \end{definition}
 
 
+\begin{unverified}
 \begin{definition}[Standard complex structure $J_0$]\label{def:J0}
 % [TODO: JÖRN - verify: J0 is defined within def:symplectic-form above.
 %   This label exists as a separate cross-reference target for code that
@@ -57,6 +58,7 @@ satisfying $J_0^2 = -I_4$, $J_0^{-1} = J_0^\top = -J_0$,
 $\omega_0(J_0 u, J_0 v) = \omega_0(u,v)$, and $|J_0 u| = |u|$.
 In the 2D case, $J_0^{(2)} = \bigl(\begin{smallmatrix} 0 & -1 \\ 1 & 0 \end{smallmatrix}\bigr)$.
 \end{definition}
+\end{unverified}
 
 
 % ====================================================================
@@ -77,6 +79,7 @@ for polytopes, the minimum is attained by a generalized Reeb orbit.
 \end{definition}
 
 
+\begin{unverified}
 \begin{definition}[Systolic ratio]\label{def:systolic-ratio}
 % [TODO: JÖRN - verify statement]
 % Source: dataset.rs doc comment
@@ -86,12 +89,14 @@ The \emph{systolic ratio} of a convex body $K \subset \mathbb{R}^4$ is
 \]
 Viterbo's conjecture asserts $\operatorname{sys}(K) \leq 1$ for all convex bodies $K$.
 \end{definition}
+\end{unverified}
 
 
 % ====================================================================
 % Products
 % ====================================================================
 
+\begin{unverified}
 \begin{definition}[Lagrangian product]\label{def:lagrangian-product}
 % Source: lagrangian_product.rs doc comments
 Let $K_q \subset L_q$ and $K_p \subset L_p$ be convex polygons
@@ -104,8 +109,10 @@ The \emph{Lagrangian product} is the polytope
   = \{ (q, p) \in \mathbb{R}^4 : q \in K_q,\; p \in K_p \}.
 \]
 \end{definition}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{definition}[Symplectic product]\label{def:symplectic-product}
 % [TODO: JÖRN - verify statement]
 % Source: known_polytopes.rs doc comment
@@ -120,8 +127,10 @@ The \emph{symplectic product} is
       : (q_1, p_1) \in A,\; (q_2, p_2) \in B\}.
 \]
 \end{definition}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{proposition}[Capacity of symplectic products]%
 \label{prop:capacity-symplectic-product}
 % Source: standard result in symplectic geometry (see bibliography)
@@ -195,12 +204,14 @@ Hence $c_{\mathrm{EHZ}}(A \times_S B)
   = \pi r_A^2
   = \min(\operatorname{area}(A), \operatorname{area}(B))$.
 \end{proof}
+\end{unverified}
 
 
 % ====================================================================
 % Polytope geometry
 % ====================================================================
 
+\begin{unverified}
 \begin{definition}[Polytope dual / polar body]\label{def:polytope-dual}
 % [TODO: JÖRN - verify statement]
 % Source: polytope.rs doc comment
@@ -213,12 +224,14 @@ The \emph{polar body} (or \emph{dual}) is
   = \operatorname{conv}(a_1, \ldots, a_F).
 \]
 \end{definition}
+\end{unverified}
 
 % Agent note: def:polar-body used in some .rs files is an alias
 % for def:polytope-dual. The label below provides this as a cross-reference target.
 \phantomsection\label{def:polar-body}% alias for cross-references from .rs files
 
 
+\begin{unverified}
 \begin{definition}[Face lattice / skeleton]\label{def:face-lattice}
 % [TODO: JÖRN - verify statement]
 % Source: skeleton.rs doc comment
@@ -228,8 +241,10 @@ is the combinatorial structure recording all faces of $K$
 Two facets $F_i, F_j$ are \emph{adjacent} if $F_i \cap F_j$ is a
 face of dimension $\geq 1$.
 \end{definition}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{definition}[Cross product in $\mathbb{R}^4$]\label{def:cross-product-4d}
 % [TODO: JÖRN - verify statement]
 % Source: cross_product_4d.rs doc comment
@@ -246,12 +261,14 @@ Equivalently,
 where $M_i$ is the $3 \times 3$ matrix obtained by deleting
 row~$i$ from the $4 \times 3$ matrix $(u \mid v \mid w)$.
 \end{definition}
+\end{unverified}
 
 
 % ====================================================================
 % Polygon geometry
 % ====================================================================
 
+\begin{unverified}
 \begin{definition}[Convex polygon $H$-representation]\label{def:polygon-h-rep}
 % [TODO: JÖRN - verify statement]
 % Source: polygon.rs doc comment
@@ -262,8 +279,10 @@ heights $h_1, \ldots, h_m > 0$:
   P = \bigcap_{i=1}^{m} \{x \in \mathbb{R}^2 : \langle n_i, x \rangle \leq h_i\}.
 \]
 \end{definition}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{definition}[Polygon area]\label{def:polygon-area}
 % [TODO: JÖRN - verify statement. "Shoelace formula" here means the standard
 %   2D polygon area formula (sum of cross products), NOT lem:shoelace (which is
@@ -273,12 +292,14 @@ The \emph{area} of a convex polygon $P$ given in $H$-representation
 (Definition~\ref{def:polygon-h-rep}) is computed via triangulation
 from the centroid or via the standard 2D shoelace formula on the vertex list.
 \end{definition}
+\end{unverified}
 
 
 % ====================================================================
 % Volume
 % ====================================================================
 
+\begin{unverified}
 \begin{definition}[Volume of a 4D polytope]\label{def:volume}
 % [TODO: JÖRN - verify statement]
 % Source: volume.rs, qhull.rs doc comments
@@ -291,6 +312,7 @@ into simplices via qhull and summing the simplex volumes:
   = \frac{1}{4!}\, |\det(v_1 - v_0 \mid v_2 - v_0 \mid v_3 - v_0 \mid v_4 - v_0)|.
 \]
 \end{definition}
+\end{unverified}
 
 
 % ====================================================================
@@ -298,6 +320,7 @@ into simplices via qhull and summing the simplex volumes:
 % ====================================================================
 % Parameterization: K = {x : a_i^T x ≤ 1}, dual vertices a_i
 
+\begin{unverified}
 \begin{definition}[Reeb vector field on polytopes]\label{def:reeb-vector-field}
 % [TODO: JÖRN - verify statement]
 % Source: reeb_trajectory.rs doc comment
@@ -311,8 +334,10 @@ The Reeb vector $R_i$ is tangent to $F_i$
 ($\langle a_i, R_i \rangle = 0$, since
 $\langle a_i, J_0 a_i \rangle = \omega_0(a_i, a_i) = 0$).
 \end{definition}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{lemma}[Piecewise-linear Reeb trajectories]\label{lem:piecewise-linear-reeb}
 % [TODO: JÖRN - verify statement, add proof]
 % Source: reeb_trajectory.rs doc comment
@@ -321,12 +346,14 @@ on each facet $F_i$, the trajectory moves with constant velocity $R_i$.
 At a breakpoint where the trajectory transitions from $F_i$ to $F_j$,
 the velocity changes discontinuously from $R_i$ to $R_j$.
 \end{lemma}
+\end{unverified}
 
 
 % ====================================================================
 % Computational geometry lemmas
 % ====================================================================
 
+\begin{unverified}
 \begin{lemma}[Positive span implies boundedness]\label{lem:positive-span}
 % [TODO: JÖRN - verify statement and proof]
 % Source: check_bounded_f64_first in vertex_enumeration.rs
@@ -352,8 +379,10 @@ Since $0 \in \operatorname{int}(K)$, we have $0 + td \in K$ for all
 $t \geq 0$: indeed $\langle a_i, td \rangle = t\langle a_i, d\rangle \leq 0 < 1$.
 So $K$ contains the ray through~$d$ and is unbounded.
 \end{proof}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{lemma}[Algorithmic bounded check via triples]\label{lem:bounded-triples}
 % [TODO: JÖRN - verify statement and proof]
 % Source: check_bounded_f64_first in vertex_enumeration.rs
@@ -386,8 +415,10 @@ kernel direction~$d$, then $\langle a_l, d \rangle \leq 0$ for all
 $l \neq i,j,k$ (and $\langle a_i, d \rangle = \langle a_j, d \rangle
 = \langle a_k, d \rangle = 0$), so positive spanning fails.
 \end{proof}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{lemma}[Exact vertex enumeration]\label{lem:vertex-enumeration}
 % [TODO: JÖRN - verify statement and proof]
 % Source: enumerate_vertices_int in vertex_enumeration.rs
@@ -430,8 +461,10 @@ The algorithm finds all vertices because every vertex has at least one
 (by the rank argument above), and the algorithm tests all such subsets.
 Deduplication handles non-simple vertices found via multiple subsets.
 \end{proof}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{lemma}[Irredundancy check]\label{lem:irredundancy}
 % [TODO: JÖRN - verify statement and proof]
 % Source: check_irredundancy_f64_first in vertex_enumeration.rs
@@ -460,8 +493,10 @@ A face of dimension $< \dim(K) - 1 = 3$ is not a facet, meaning
 the constraint is redundant: it is implied by the other constraints
 in a neighborhood of $F_i$.
 \end{proof}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{proposition}[Integer-scaled Cramer's rule]\label{prop:integer-cramer}
 % [TODO: JÖRN - verify statement and proof]
 % Source: optimized vertex enumeration in vertex_enumeration.rs
@@ -519,8 +554,10 @@ Since $A_i^{(j)}, \nu_j, \delta \in \mathbb{Z}$, we have $g_i \in \mathbb{Z}$.
 The sign condition follows: $g_i / \delta \geq 0$ iff
 $\operatorname{sign}(g_i) = \operatorname{sign}(\delta)$ or $g_i = 0$.
 \end{proof}
+\end{unverified}
 
 
+\begin{unverified}
 \begin{lemma}[Rational arithmetic pipeline]\label{lem:rational-pipeline}
 % [TODO: JÖRN - verify statement, add proof]
 % Source: rational_arithmetic.rs doc comment
@@ -529,6 +566,7 @@ All discrete/combinatorial decisions in the geometry pipeline
 halfspace irredundancy) are computed using exact rational arithmetic
 to prevent numerical misclassification.
 \end{lemma}
+\end{unverified}
 
 
 % ====================================================================
@@ -587,6 +625,7 @@ $\omega_0$ is antisymmetric.
 % HKO counterexample
 % ====================================================================
 
+\begin{unverified}
 \begin{theorem}[HKO counterexample to Viterbo's conjecture]%
 \label{thm:hko-counterexample}
 % [TODO: JÖRN - verify statement, add proof/reference]
@@ -597,6 +636,7 @@ There exists a 10-facet polytope $K \subset \mathbb{R}^4$
 $\operatorname{sys}(K) > 1$, disproving Viterbo's conjecture
 in dimension~$4$.
 \end{theorem}
+\end{unverified}
 
 
 % ====================================================================
@@ -653,12 +693,15 @@ steps 5--6 cost $O(n)$ per $y$.
 
 \subsubsection*{Standard facts used}
 
+\begin{unverified}
 \begin{fact}[IEEE~754 rounding model]\label{fact:prefilter-round}
 Rounding a real number $x$ to f64 gives $\hat{x}$
 with $|\hat{x} - x| \le \emach|x|$.
 This is the defining property of IEEE~754 round-to-nearest.
 \end{fact}
+\end{unverified}
 
+\begin{unverified}
 \begin{fact}[Entrywise rounding $\to$ spectral norm]\label{fact:prefilter-cast}
 If $\hat{A}$ is obtained by rounding each entry of $A$
 to f64, then $|\hat{A}_{ij} - A_{ij}| \le \emach|A_{ij}|$
@@ -674,8 +717,10 @@ where the last step uses
 $\|M\|_F^2 = \sum_i \sigma_i(M)^2 \le n\sigma_1(M)^2
 = n\|M\|^2$. \qed
 \end{fact}
+\end{unverified}
 
 % [TODO: JÖRN - verify exact theorem number in Higham Ch. 5]
+\begin{unverified}
 \begin{fact}[SVD backward stability;
   {Higham~(2002), Ch.~5}]\label{fact:prefilter-svd}
 The computed SVD of $B \in \mathbb{R}^{n \times n}$ produces
@@ -684,8 +729,10 @@ $B + E_{\mathrm{svd}} = \hat{U}\hat{\Sigma}\hat{V}^\top$
 with $\|E_{\mathrm{svd}}\| \le c_{\mathrm{svd}}\emach\|B\|$,
 where $c_{\mathrm{svd}} = O(n)$.
 \end{fact}
+\end{unverified}
 
 % [TODO: JÖRN - verify exact section numbers in Higham]
+\begin{unverified}
 \begin{fact}[SVD-based solve backward stability;
   {Higham~(2002), Ch.~3, 5}]\label{fact:prefilter-solve}
 Solving $Bx = b$ via computed SVD factors in f64 gives $\hat{x}$
@@ -697,15 +744,19 @@ in the back-substitution steps
 $\hat{U}^\top b$, $\hat{\Sigma}^{-1}(\cdot)$,
 $\hat{V}(\cdot)$.)
 \end{fact}
+\end{unverified}
 
 % [TODO: JÖRN - verify exact corollary number in GVL Ch. 8]
+\begin{unverified}
 \begin{fact}[Weyl's singular value perturbation theorem;
   {Golub \& Van~Loan~(2013), Ch.~8}]\label{fact:prefilter-weyl}
 For any $B, B' \in \mathbb{R}^{n \times n}$:
 $|\sigma_i(B) - \sigma_i(B')| \le \|B - B'\|$.
 \end{fact}
+\end{unverified}
 
 % [TODO: JÖRN - verify exact lemma number in Higham Ch. 2]
+\begin{unverified}
 \begin{fact}[Banach perturbation lemma;
   {Higham~(2002), Ch.~2}]\label{fact:prefilter-banach}
 If $B$ is invertible and $\|B^{-1}\|\|E\| < 1$, then
@@ -719,8 +770,10 @@ The series converges when $\|B^{-1}E\| < 1$,
 and $\|(B+E)^{-1}\| \le \|B^{-1}\|/(1 - \|B^{-1}\|\|E\|)$
 by the geometric series bound. \qed
 \end{fact}
+\end{unverified}
 
 % [TODO: JÖRN - verify exact theorem number in Higham Ch. 3]
+\begin{unverified}
 \begin{fact}[Dot product rounding;
   {Higham~(2002), Ch.~3}]\label{fact:prefilter-dot}
 For $x, y \in \mathbb{F}^n$, the f64-computed inner product
@@ -729,6 +782,7 @@ $|x^\top y - \hat{s}| \le \gamma_n\, |x|^\top|y|$,
 where $\gamma_n = n\emach/(1 - n\emach)$
 and $|x|$ denotes componentwise absolute values.
 \end{fact}
+\end{unverified}
 
 \subsubsection*{Error bound}
 
@@ -775,6 +829,7 @@ and $|x|$ denotes componentwise absolute values.
 %     $O(\emach)$ relative error not mentioned in the proof. Absorbed by
 %     the $C = 10^4$ safety factor.]
 
+\begin{unverified}
 \begin{proposition}\label{prop:prefilter-bound}
 Let $A$ and $\hat{A}$ both be invertible, with
 $\kappa = \kappa_2(\hat{A}) = \|\hat{A}\|\|\hat{A}^{-1}\|$
@@ -792,7 +847,9 @@ Then
 with $C = 10^4$ for $n = 4$
 (a tighter accounting gives $C < 1400$; see Remark~\ref{rem:prefilter-constants}).
 \end{proposition}
+\end{unverified}
 
+\begin{unverified}
 \begin{corollary}\label{cor:prefilter-soundness}
 Under the hypotheses of Proposition~\ref{prop:prefilter-bound},
 the algorithm's three-valued output is sound:
@@ -817,6 +874,7 @@ $y^\top v \ge \hat{s} - \delta > 1$.
 If $\hat{s} < 1 - \delta$, then
 $y^\top v \le \hat{s} + \delta < 1$.
 \end{proof}
+\end{unverified}
 
 \noindent
 \textit{Why this form?}
@@ -845,6 +903,7 @@ In the regime $\emach\kappa \le 1/4$,
 $\hat\kappa$ and $\kappa$ differ by at most a constant
 factor, absorbed into $C$.
 
+\begin{unverified}
 \begin{proof}[Proof of Proposition~\ref{prop:prefilter-bound}]
 Write $\kappa = \kappa_2(\hat{A})$.
 Throughout, $\lesssim$ means $\le$ up to factors of the
@@ -952,7 +1011,9 @@ are absorbed:
 For $n = 4$, $p \le 16$: pre-factor $= 21$.
 With 6 factors of 2: $C \le 21 \cdot 2^6 = 1344 < 10^4$.
 \end{proof}
+\end{unverified}
 
+\begin{unverified}
 \begin{remark}\label{rem:prefilter-constants}
 The 6 factors of~2:
 \#1~$\|A\| \lesssim \|\hat{A}\|$,
@@ -967,6 +1028,7 @@ For $\kappa = 1$ and $O(1)$ data:
 indeterminate zone $\approx 10^4 \cdot 10^{-16} = 10^{-12}$.
 For $\kappa = 10^8$: zone $\approx 10^{-4}$.
 \end{remark}
+\end{unverified}
 
 % References:
 % - N. J. Higham, Accuracy and Stability of Numerical Algorithms,

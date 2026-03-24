@@ -80,6 +80,7 @@ and $x + t\, V_j \in K$ for $t \in [0, \varepsilon]$.
 The following lemma shows that the A3 feasibility check
 captures this condition exactly.
 
+\begin{unverified}
 \begin{lemma}[Transition feasibility]
 \label{lem:transition-feasibility}
 Let $K = \{x : \langle a_k, x \rangle \le 1,\; k = 1, \ldots, F\}$
@@ -130,7 +131,9 @@ ensures all constraints hold.
 The cases $k = i$ and $k = j$ follow from~(1) and
 the antisymmetry $\omega_0(a_i, a_i) = 0$.
 \end{proof}
+\end{unverified}
 
+\begin{unverified}
 \begin{corollary}[Ridge sufficiency]
 \label{cor:ridge-sufficiency}
 If\/ $F_i \cap F_j$ is a 2-dimensional face (ridge) of~$K$
@@ -153,6 +156,7 @@ and two edges of~$Q$, hence on exactly four facets;
 thus $P \times Q$ is simple, and every pair of intersecting facets
 shares a 2-face (``vertex $\times$ polygon'' or ``edge $\times$ edge'').
 \end{proof}
+\end{unverified}
 
 \begin{example}[Non-simple polytope where A3 prunes beyond A2]
 \label{ex:a3-prunes}
