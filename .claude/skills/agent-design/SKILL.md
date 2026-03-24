@@ -9,31 +9,64 @@ This is a collaborative workflow. Jörn has the expert model for what works with
 
 ## Expert model (from Jörn)
 
-### Agent behavior
-- Agents behave like their training data (frequent human tool use patterns). Agent knowledge is popular internet text.
-- Training knowledge is associative: agents can be prompted or triggered to recall more of it. A mere reminder (config file in the tree, code snippet in a familiar style) is often enough to activate trained behavior.
+This is a simplified subset of Jörn's expert model. It's marginally useful for helping agents predict what might work, but it's not reliable enough to replace querying Jörn directly, as agents rarely fully apply it in enough depth.
+
+### Training on Vast Training Data
+- Agents behave like their training data (frequent human tool use patterns). Agent knowledge is popular internet text, including books, code, documentation, logs.
+- Training knowledge is associative: agents can be prompted or triggered to recall more of it. A mere reminder (config file in the tree, code snippet in a familiar style) is often enough to activate trained behavior and increase the likelihood of recalling relevant knowledge.
 - Popular patterns are cheap: conventions, tech stacks, factual knowledge (e.g. library APIs) needn't be explained. Just state the convention.
 - Unpopular or novel patterns are expensive: weak or no training signal, need explicit detailed instructions.
 
-### Agent cognition (RLVR)
-- Agents need tractable verifiable goals. They flail on tasks without clear verification.
-- Agents don't reject goals or question whether a goal is the right one — RLVR trains pursuit, not evaluation.
-- Agents plan by anticipating outcomes and mentally verifying them. Works when mental verification is possible, fails when it requires experience the agent lacks.
-- When verification isn't tractable, agents use strategies that look productive but aren't — they don't switch to fundamentally different approaches.
+### Training using RLVR
+- Agents were trained on
+  - Tasks with known or secret verification methods (e.g. code with known/secret test suites, human review of output correctness).
+  - Tasks with known or secret progress signals (e.g. number of passed tests, code quality metrics, proof quality rating by another agent).
+  - Large tasks that require decomposition, small tasks that do not.
+  - Difficult tasks that require upfront planning and reasoning, easy tasks that can be done directly.
+  - Autonomous tasks without intermittent human feedback.
+  - Tasks inside projects, where the task is human-defined and quite useful.
+- Agents were not trained, or at least not as much, on 
+  - Tasks where no straightforward verification method can be found.
+  - Tasks that are hit or miss, except if they are also frequent subtasks of other tasks
+  - Workflows with frequent interruptions for human feedback.
+  - Agent-generated tasks in a project, that may be useless, harmful or at least not the best way to proceed.
+- The default agent behavior is attuned to situations similar to training, and degrades or even derails entirely in situations that are dissimilar to training, often without the agent realizing.
+  - Agents don't reject directly assigned goals or questions as unproductive. An extra preceding task / a first subtask needs to be added to evaluate the goal/question, and activate the agent's learned capabilities at writing reviews.
+  - Agents don't spend enough effort on finding verification methods and measures of progress, they are used to this being a small part of the full task. An extra preceding task again can correct the reasoning budget they spend.
+  - Agents need familiar verification signals that they are used to incorporate during planning. For verification signals during implementation, their general capability to run arbitrary scripts and understand text compensates their lack of training diversity. For upfront planning, novel signals need to be explained and made predictable so that agents can anticipate whether a plan will pass verification.
+- Agents were not trained to recognize when they are given a task dissimilar to training, and can derail entirely into unproductive busywork, loops, or iteration until misunderstandings accumulate and they declare success despite failure. To catch when an agent fails without realizing, a strong verification signal of the agent's output is needed, one the agent cannot unintentionally brute-force into passing through repeated attempts.
 
-### Agent limitations on meta-work
-- Agents can't reliably evaluate their own output quality on agent-centric tasks. Over-optimistic, miss ambiguity.
-- Agents can't predict how other agents will interpret instructions (theory of mind failure).
-- Written instructions have limited adherence — knowledge in context ≠ knowledge used. Structural enforcement (scripts, hooks, repo layout) is more reliable.
-- Don't teach agents abstract models of agent cognition. Instead: for specific situations, apply expert knowledge and record as concrete artifacts.
+### Lack of Agent-Usage in Training
+- Agents were not trained, or at least not as much, on tasks that involve using multiple agents, including
+  - picking up a repository worked on by past agents instead of humans
+  - handing off the repository to future agents
+  - using a subagent
+  - using multiple subagents in parallel (there is some training with subagents, but not much)
+  - coordinating with other agents in parallel
+  - predicting the behavior of agents (aka theory of mind)
+- Agents were trained, at least somewhat, on situations that involve
+  - interruptions in the agent's session
+  - past reasoning summaries instead of the raw reasoning text being passed to the next reasoning step
+  - switching focus and chaining together different phases of work where knowledge isn't homogenously accessed and behavior is heterogenous
+  - continuing work of a human, passing on work to a human who rates the agent's helpfulness
+  - being assigned work from a human
+- Their default behavior is tuned to situations similar to training, and as a consequence agents are guessing and extrapolating without deep understanding when it comes to agent-agent interactions. Some classes of failures:
+  - agents fail at theory of mind with agents, i.e. imagining how ai will interpret text and behave when the ai has a different state of knowledge and a different set of instructions than the agent has. Explicitly asking the agent to use theory of mind yields only moderate improvements, and slows the agent down and consumes a lot of attention.
+  - agents prompt subagents similar to how humans prompt agents, but apply only a shallow theory of mind, such that standard delegation tasks work well (shallow imitation suffices), while more complex or unusual delegation patterns are nonsense and fail (deep understanding of how to delegate is needed, shallow imitation just fails to cover the new situation adequately).
+
+### Bounded Rationality
+- Agents have limited internal bandwidths when it comes to reasoning budget, attention, and reflection on the agent's session. They are less bottlenecked on recall of factual knowledge, i.e. have an efficient huge associative memory.
+- As a consequence, a few pitfalls in prompting can overwhelm the agent and degrade the quality of their actions, triggering incoherence, confusion, or derailment, often without the agent noticing, since noticing this failure would require reflection/attention/reasoning budget. Examples:
+  - If a too complex set of instructions is given, the agent may fail to follow them, basically overlooking and forgetting and making up new, contradictory instructions as it becomes detached from the written ones.
+  - If an agent is given too many novel facts and concepts, or is given too abstract mental models, the application runs into reasoning budget limits and the agent fails to apply them deeply or consider the knowledge in its entirety.
+  - If an agent is asked to reflect on a long session, the agent may make wrong recalls and gloss over such an unusual, un-training-like situation by making up plausible-sounding summaries instead that are detached from reality.
+- This all means for the agent-design workflow that the section on Jörn's expert model and Jörn's experience are not going to work well, and the agent will not acquire expertise or experience beyond an unreliable spot-checking ability. The agent needs to defer to Jörn when the expert model or experience is needed for a workflow step.
 
 ### Design strategy
 - 80/20: tackle the 20% of workflow types causing 80% of problems. For the rest, hand back to Jörn.
 - Familiar developer artifacts (test suites, CI scripts, config files) get better engagement than novel formats.
 - Cheap-to-try first. Iterate on observed behavior, not predicted.
 - Feedback loops > getting it right the first time.
-
-[Jörn: prune/correct/expand. Agent-expanded from Jörn's statements, 2026-03-24]
 
 ## Experience (from Jörn)
 
