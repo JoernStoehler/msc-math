@@ -172,9 +172,28 @@ git diff .claude/skills/agent-design/references/system-prompt/
 **Skills creation guide:**
 `references/skills-guide.md` (transcribed from https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf)
 
-## Key principles (from Jörn)
+## Principles (from Jörn, expanded by agent — Jörn please prune/correct)
 
+### Agent behavior
 - Agents behave like their training data (frequent human tool use patterns). Agent knowledge is popular internet text. Design repo structures that activate trained patterns.
+- Agents' training knowledge is associative: they can be prompted or triggered to recall more of it, or pay more attention to what they already know. A mere reminder (config file in the tree, code snippet in a familiar style) is often enough to activate trained behavior.
+- Popular patterns are cheap: popular conventions, tech stacks, and factual knowledge (e.g. library APIs) needn't be explained — agents already know them. Just state the convention.
+- Unpopular or novel patterns are expensive: agents have weak or no training signal for them and need explicit, detailed instructions. The less familiar a pattern, the more instruction is needed.
+
+### Agent cognition (RLVR)
 - Agents need tractable verifiable goals (RLVR training). They flail on tasks without clear verification. Build verification into structure, don't rely on agent self-reflection.
+- Agents don't reject goals or question whether a goal is the right one — RLVR trains them to pursue goals, not evaluate them.
+- Agents plan by anticipating outcomes and mentally verifying them. This works when mental verification is possible, but fails when verification requires experience or expertise the agent lacks.
+- When verification isn't tractable, agents use strategies that look productive but aren't — they don't switch to fundamentally different approaches (like asking for help, or stepping back to reconsider scope).
+
+### Agent limitations on meta-work
 - Don't teach agents abstract models of agent cognition. Instead: for specific high-impact situations, apply expert knowledge and record the result as concrete artifacts agents can handle.
+- Agents can't reliably evaluate their own output quality on agent-centric tasks. They're over-optimistic and miss ambiguity.
+- Agents can't reliably predict how other agents will interpret instructions (theory of mind failure).
+- Written instructions have limited adherence — having knowledge in context doesn't mean agents use it. Structural enforcement (scripts, hooks, repo layout) is more reliable than language instructions.
+
+### Strategy
 - 80/20: tackle the 20% of workflow types that cause 80% of agent-centric labor problems. For the rest, agents hand work back to Jörn.
+- Solutions that look like familiar developer artifacts (test suites, CI scripts, config files, structured logs) get better agent engagement than novel formats.
+- Cheap-to-try solutions first: prefer low-setup interventions over elaborate infrastructure. Iterate based on observed behavior, not predicted behavior.
+- Feedback loops matter more than getting it right the first time. Set up data collection so you can reevaluate.
