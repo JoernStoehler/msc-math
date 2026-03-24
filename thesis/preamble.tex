@@ -1,0 +1,21 @@
+% preamble.tex — additional preamble definitions (loaded after packages in main.tex)
+%
+% Currently: approval status bars for math review
+
+\usepackage{mdframed}
+
+% Approval status bars for math review
+% - unverified: red bar — unapproved math, needs Jörn's review
+% - notationupdated: orange bar — was approved, mechanical substitution applied
+% - approved: no wrapper needed (default appearance)
+\newmdenv[
+  leftline=true, rightline=false, topline=false, bottomline=false,
+  linecolor=red, linewidth=2pt, innerleftmargin=8pt,
+  skipabove=0pt, skipbelow=0pt
+]{unverified}
+
+\newmdenv[
+  leftline=true, rightline=false, topline=false, bottomline=false,
+  linecolor=orange, linewidth=2pt, innerleftmargin=8pt,
+  skipabove=0pt, skipbelow=0pt
+]{notationupdated}
