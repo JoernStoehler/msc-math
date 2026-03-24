@@ -151,7 +151,7 @@ The goal is cheap data collection now so that a future agent-design session can 
 
 ### 7. Jörn review
 
-Present the draft to Jörn before committing. Flag anything you're uncertain about.
+Present the draft and discuss it with Jörn before declaring it accepted. Do not guess at approval — get an explicit positive confirmation from Jörn. Also present alongside the draft a prioritized list of spots Jörn should pay attention to, e.g. because you are not as certain there and/or they are higher impact. This helps iterate faster on the draft. Also accept when Jörn asks you implicitly to go back to an earlier stage — not all drafts work out in the end and pivoting is cheap.
 
 ## Reference sources
 
