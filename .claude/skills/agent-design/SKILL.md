@@ -110,7 +110,16 @@ In general, for all questions the goal is to help out Jörn by accelerating his 
 
 ### 3. Jörn decides on the approach
 
-Jörn applies his expert model to pick/design the workflow. The agent does not substitute its own judgment here. Agent asks clarifying questions until Jörn's proposal is clear enough to be implemented and the agent does not have any concerns about it anymore.
+Jörn applies his expert model to pick/design the workflow. The agent does not substitute its own judgment here. What the agent should do during this phase:
+
+- Present step 2 findings in a format Jörn can skim in seconds (bullets, tables, short labels — not paragraphs)
+- When Jörn picks/proposes an approach, ask clarifying questions until the proposal is unambiguous enough to implement. Specifically check:
+  - What file type(s) should be written (skill, agent, hook, CLAUDE.md addition, repo artifact)?
+  - What is the trigger / when should this activate?
+  - What is the expected agent behavior after the material is loaded?
+  - Are there known edge cases or exceptions Jörn wants handled?
+- If something in Jörn's proposal seems like it might be misinterpreted by agents (ambiguous phrasing, implicit assumptions), flag it — Jörn can quickly confirm or rephrase
+- Do NOT silently fill in gaps with your own judgment. If Jörn left something unspecified, ask rather than guess.
 
 ### 4. Agent writes it up
 
