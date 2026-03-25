@@ -67,3 +67,4 @@ Additional follow-up actions:
 - Add to TASKS.md for issues that need more context than a TODO comment provides
 - Update the plan file if session changed what's next
 - Flag any unverified mathematical claims introduced this session with GAP markers
+- If a skill or agent prompt caused friction, write raw observations to `feedback/<skill-name>.md` — don't fix the skill directly. A future agent-design session will analyze and update it with Jörn.
