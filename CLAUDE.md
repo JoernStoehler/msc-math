@@ -1,143 +1,53 @@
 # CLAUDE.md
 
-Master Thesis: Probing Viterbo's Conjecture
-Author: Jörn Stöhler, University of Augsburg
-Advisor: Kai Cieliebak
-Second advisor: Elizabeth Gaar
-Timeline: Oct 2025 – mid-April 2026
+## Project
 
-## End state
+Master thesis by Jörn Stöhler, University of Augsburg.
+Advisor: Kai Cieliebak. Second advisor: Elizabeth Gaar.
+Deadline: mid-April 2026.
+Topic: Probing Viterbo's Conjecture
 
-A printed-quality LaTeX thesis (`thesis/build/main.pdf`), a high-performance Rust library for symplectic geometry on polytopes (`crates/`), and a reproducible experiment pipeline (`experiments/`).
+Three planned deliverables:
+1. A printed-quality LaTeX thesis (`thesis/build/main.pdf`)
+2. A high-performance Rust library for symplectic geometry on polytopes (`crates/`)
+3. A reproducible experiment pipeline (`experiments/`)
 
-## Mathematical Context
+## Project Layout
 
-Viterbo's Conjecture (2000): For any convex body K in R^2n, the systolic ratio `sys(K) = c_EHZ(K)^2 / (2 vol(K))` is at most 1. Haim-Kislev and Ostrover (2024, Annals) disproved it in dimension 4 with an explicit 10-facet counterexample.
+```
+crates/                    Rust library (the core)
+  src/
+    lib.rs                 crate root
+    geom/                  polytopes and basic euclidean and symplectic geometry
+    kkt/                   general KKT solver
+    algorithms/            different algorithms for the EHZ capacity 
+    derivatives.rs         derivative of the capacity in the dual vertices
+    dataset.rs             polytope datasets
+  main.tex                 correctness proofs for the entire library (includes subfolder math.tex files)
 
-We follow HK2017, CH2021 to compute c_EHZ for polytopes in R^4, implement the algorithms in Rust with correctness verification, and probe the conjecture by computing sys across large polytope datasets.
+experiments/               each experiment is a self-contained directory
+  <name>/
+    run.rs                 binary to create the data files
+    *.jsonl, *.csv         data files
+    analyze.py             postprocessing, analysis, figures and tables
+    logbook.md             experiment logbook, what was done, results, learnings, ideas
+    math.tex               correctness proofs for the experiment
+    thesis.tex             writeup of the experiment takeaways for the thesis
 
-## The Core Rule
+thesis/
+  main.tex                 master document, includes chapters and experiment writeups
+  *.tex                    chapter files
+  bibliography.bib         citations
+  build/                   latexmk output
 
-Never write a factual claim without verifying it against evidence in the same session. "The code cross-checks X" requires reading the code. "The data shows Y" requires reading the data. When verification is impossible, mark with `% [TODO: JÖRN -` or `% [GAP -`.
+papers/<abreviationYear>/*.tex  arXiv paper sources for reading
+handoffs/*.md              task handoff files for future sessions
 
-**Citation verification:** Never produce author names or paper titles from memory. Verify against `thesis/bibliography.bib` or `papers/`. Agents confidently produce wrong names (e.g. "Cieliebak-Hutchings" instead of the correct "Chaidez-Hutchings").
-
-**External systems (core rule instance):** When documenting external systems (LICCA cluster, university services, third-party tools), **link to the official documentation — do not paraphrase it.** Agent-written paraphrases of official docs are unverifiable, go stale silently, and future agents trust them over the real source. Reference files should contain only:
-- Links to official documentation
-- Facts personally verified in the current session (with date)
-- Clearly marked TODOs for anything not yet verified
-
-## Procedural layer is Jörn-gated
-
-Do not create, modify, or delete skills, agents, hooks, or CLAUDE.md without Jörn's explicit approval. Propose changes in conversation; Jörn implements them. This is analogous to the math verification rule — agents can't reliably produce or quality-check procedural knowledge.
-
-## Communication with Jörn
-
-**Before each message, ask: does Jörn need to read this?** If no, don't send it. If yes, make it as short as possible.
-
-| Situation | BAD | GOOD |
-|-----------|-----|------|
-| Task done | Wall of text summary | "Done. 12 files changed, tests pass." |
-| Obvious subtask | "Should I also update X?" | Just do it. |
-| Agent reports back | Dumping raw subagent output | "Review clean. 3 style fixes applied." |
-| Need a decision | "What do you think?" | "X needs Y because Z. Doing it unless you object." |
-| Own mistake | Self-flagellation | Fix it silently. |
-| Jörn calls out mistake | Explaining why | "My mistake. Fixing now." |
-| Told to STOP | Apologetic summary | (silence) |
-| Status update | Session logistics | Research substance first |
-
-**Interaction dynamics:**
-- Read and respond to Jörn's messages BEFORE making tool calls
-- Push back on contradictions and oversights — Jörn welcomes it
-- Never take silence as confirmation
-- Adopt Jörn's exact phrasing when he corrects nuance
-- Questions must be self-contained — Jörn switches sessions and doesn't have TASKS.md memorized
-- Number items so Jörn can respond "3 yes, 5 no"
-
-**When receiving feedback:** Fix the instance, abstract the error class, scan for all instances, record durably in the relevant skill or CLAUDE.md.
-
-## Session Workflow
-
-Sessions work in git worktrees. Use full worktree paths in subagent prompts.
-
-**Time economics:** Jörn's time is scarce; agent time is free. Parallelize via subagents and teams.
-
-### scope → plan → implement → review → merge
-
-**Scope** (Jörn + agent): Jörn scopes. Agents provide investigation findings.
-
-**Plan → implement → review** (agent autonomous): No Jörn involvement unless specifically requested. End-of-turn messages recap context. Agents may return to earlier phases.
-
-**Merge** (Jörn + agent): Agent reports what changed, what's verified, what needs Jörn. Only Jörn merges to `main`.
-
-### Decision authority
-
-| | Cheap to verify | Expensive to verify |
-|---|---|---|
-| **Easy rollback** | Act freely | Act, then Jörn verifies |
-| **Hard rollback** | Discuss first | Discuss first |
-
-Never without instruction: destructive operations, PRs, merging to `main`.
-
-### Long sessions and compaction
-
-Update the plan file as you work — it survives compaction, working memory does not. Write design decisions and their WHY into the plan (not just progress markers). After compaction, read the plan file to recover context. Never guess about pre-compaction events.
-
-## Multi-Language Codebase
-
-- **Rust** (crates/, experiments/): performance-critical and correctness-critical code
-- **Python** (experiments/): plotting, data processing, orchestration
-- **LaTeX** (thesis/, experiments/): thesis and math.tex files
-- **Markdown**: agent-facing writeups, conventions, documentation
-- **Json/Jsonl/Csv** (experiments/): datasets
-
-## Skill Reference
-
-Load skills on demand. Skills also serve as review specifications.
-
-- `git-conventions` — local `main` (not `origin/main`), three-dot diffs, commit checklist
-- `math-tex` — lemma statements and proofs colocated with code
-- `tex-build` — build commands, PDF review workflow
-- `tex-format` — .tex file structure, environments, figures
-- `tex-content` — correctness, proofs, citations
-- `rust-conventions` — coding style, math-code correspondence
-- `rust-tests` — testing philosophy, fixtures, organization
-- `experiment-conventions` — directory structure, pipeline
-- `python-conventions` — script headers, figure sizing, visual quality
-- `review` — how to run review subagents (mandatory before presenting to Jörn)
-- `collaboration` — multi-agent coordination
-- `session-handoff` — end-of-session persistence
-- `data-pipeline` — expensive test data, LICCA cluster
-- `agent-design` — collaborative workflow for designing procedural files with Jörn
-- `slurm` — LICCA cluster job submission
-- `post-mortem` — end-of-session reflection
-
-## Environment
-
-- Docker devcontainer at `/workspaces/msc-math`. OS-level isolation.
-- Worktrees: `--worktree` flag or `EnterWorktree`. Branch from local `main`. Land at `.claude/worktrees/<name>/`.
-- Pre-installed: Rust 1.93, Python 3.11 (pytest, ruff, mypy, black), gh CLI, TeX Live 2023
-- `rm` is aliased to `trash-put`; use `/bin/rm` for real deletes
-- **Runtime limit:** repeated commands must complete in ≤10 minutes (CPU monitor kills at 20min sustained)
-
-## Quick Commands
-
-```bash
-# Rust
-cd crates/ && cargo build
-cd crates/ && cargo test --release --lib
-cd crates/ && cargo clippy --lib -- -D warnings
-timeout 5m cargo test --release
-timeout 30m cargo test --release -- --ignored
-
-# Python
-ruff check experiments/
-pytest experiments/
-
-# LaTeX
-cd thesis/ && latexmk
+TASKS.md                   master task list, project management
+CLAUDE.md, .claude/        extra information for claude code agents
 ```
 
-## Archaeology
-
-`archaeology/` contains untrusted files from an abandoned predecessor repo. Don't use without specific reason.
+**Key architectural patterns:**
+- math.tex files live alongside code, not in thesis/. They contain proofs and derivations that back the code. Thesis chapters reference these but don't duplicate them.
+- Each experiment is self-contained: own binary, own data, own logbook, own math. No shared state between experiments.
+- The library (`crates/`) is the single source of truth for computation. Experiments call into it.
