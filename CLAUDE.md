@@ -108,6 +108,9 @@ Load skills on demand. Skills also serve as review specifications.
 - `collaboration` — multi-agent coordination
 - `session-handoff` — end-of-session persistence
 - `data-pipeline` — expensive test data, LICCA cluster
+- `agent-design` — collaborative workflow for designing procedural files with Jörn
+- `slurm` — LICCA cluster job submission
+- `post-mortem` — end-of-session reflection
 
 ## Environment
 
