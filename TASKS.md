@@ -1,12 +1,19 @@
 # TASKS
 
-Master task list for thesis completion. **Deadline: March 31, 2026.**
+Master task list for thesis completion. **Deadline: mid-April 2026.**
 
-**Current state (2026-03-23):** No thesis chapter is publishable yet. Experiments have data but writeups are noisy and the thesis doesn't tell a coherent story. Migration complete and merged. Meta-layer refactored. Progress rate on track.
+## How to use this file
+
+- **Format:** Each task is a `##` section with status, description, next steps, and dependencies.
+- **Maintenance:** Update this file immediately when completing, discovering, or learning something that affects a task. Context not written down here is context that will be lost.
+- **Status dates:** Always include a date when updating status (e.g. "Status (2026-03-24)").
+- **Completed tasks:** Move to the `## Completed` section at the bottom with a one-line summary.
+- **Dependencies:** State what blocks a task. If it's Jörn-gated, say so explicitly.
+- **Scope:** This file tracks WHAT needs doing. HOW is in skills, conventions, and logbooks.
+
+**Current state (2026-03-24):** No thesis chapter is publishable yet. Experiments have data but writeups are noisy and the thesis doesn't tell a coherent story. Migration complete and merged. Meta-layer refactored and agent-design workflow established. Progress rate on track.
 
 **Priority:** Thesis coherence + experiment quality > code refactors. Code refactors only matter if they unblock thesis content or experiment correctness.
-
-**Maintenance rule:** Update this file immediately when completing, discovering, or learning something that affects a task. Context not written down here is context that will be lost.
 
 ---
 
@@ -125,11 +132,6 @@ No chapter is currently publishable. The thesis needs to become a coherent docum
 - Other chapters — no TODOs but Jörn doubts publishability
 
 **What agents can do:** Draft rewrites, improve flow, verify claims against code/data, fix notation inconsistencies, improve figure quality. Agents cannot decide thesis structure or story.
-
-**Meta-layer cleanup:**
-- Jörn reviews all convention skills (not just diffs) — includes auditing for cargo cult / unjustified items (~25 conventions lack stated justifications)
-- CLAUDE.md "Working notes" section — items should move to skills or other locations
-- Devcontainer rebuild (low priority) — Dockerfile updated with nextest + cargo-watch
 
 **Final assembly (after content is stable):**
 - Abstract, introduction, conclusion
@@ -254,12 +256,6 @@ Depends on: Jörn reviews math.
 
 ---
 
-## slurm-skill
-
-Create `.claude/skills/slurm/SKILL.md` with `references/example.sh` for writing SLURM job scripts targeting LICCA cluster. Agents write scripts + Rust binaries; Jörn runs `ssh licca && sbatch job.sh`.
-
-Depends on: Jörn provides example template.
-
 ---
 
 ## Completed
@@ -273,3 +269,5 @@ Depends on: Jörn provides example template.
 - **review-agent-split** — DONE (2026-03-22)
 - **experiment-code-extraction** — DONE (commit 8dcc7c4). Extracted derivatives, facet volumes, KKT multipliers to library. ~2035 LOC removed from 4 experiments.
 - **reproduce-decentralization** — DONE (2026-03-23). Deleted `reproduce.sh`; all 19 logbooks have "How to run" sections.
+- **slurm-skill** — DONE. `.claude/skills/slurm/SKILL.md` exists.
+- **meta-layer-refactor** — DONE (2026-03-24). Simplified procedural layer, created agent-design workflow skill.
