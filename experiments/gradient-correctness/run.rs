@@ -46,13 +46,18 @@ const FD_EPSILONS: &[f64] = &[
     1e-2, 3e-3, 1e-3, 3e-4, 1e-4, 3e-5, 1e-5, 3e-6, 1e-6, 3e-7, 1e-7, 3e-8, 1e-8,
 ];
 
-/// Single sweet-spot epsilon for Q2/Q3/Q4 (structural tests, not step-size tests).
+/// Sweet-spot FD epsilon for Q2/Q3/Q4 (structural tests, not step-size tests).
+/// Chosen from Q1 step-sweep: capacity V-curve minimum is at eps≈3e-6, but volume
+/// and sys sweet spots are at eps≈1e-4. 1e-5 is a compromise that gives capacity
+/// errors ~2e-9 and volume errors ~1e-2. If changed, re-validate against Q1 sweep.
 const FD_SWEET_SPOT: f64 = 1e-5;
 
 /// Q1: polytopes per facet count.
 const Q1_POLYTOPES_PER_F: usize = 20;
 
 /// Q3: max candidates to generate when filling gap bins.
+/// 2000 is enough to fill the large/medium/small bins (20 each) and get ~13 in the
+/// tiny (<1e-4) bin at F=6. Increase if tiny bin needs more samples.
 const Q3_MAX_CANDIDATES: usize = 2000;
 
 /// Q3: max polytopes per gap bin.
@@ -61,13 +66,21 @@ const Q3_PER_BIN: usize = 20;
 /// Q4: base polytopes to augment.
 const Q4_BASE_COUNT: usize = 10;
 
-/// Q4: barely-cutting delta values.
+/// Q4: barely-cutting delta values. Range 1e-1 to 1e-5 spans from "substantial cut"
+/// to "facet volume near zero". Below 1e-5, Polytope4D::from_f64 may reject as
+/// degenerate. Above 1e-1, the facet is not "barely cutting" anymore.
 const Q4_DELTAS: &[f64] = &[1e-1, 1e-2, 1e-3, 1e-4, 1e-5];
 
-/// Floor for relative error computation (avoids 0/0).
+/// Floor for relative error computation (avoids 0/0 when both analytical and FD
+/// gradients are near-zero). Set to ~√(machine_eps) so components below this are
+/// treated as numerically zero. If polytope scale changes from O(1), revisit.
 const REL_ERROR_FLOOR: f64 = 1e-12;
 
 /// Minimum beta for certified orbit in Q3 enumeration.
+/// Matches the library's EPS_MARGIN_TRUE (1e-9) from kkt/mod.rs — this is the
+/// threshold above which a beta component is unambiguously positive. Stricter than
+/// EPS_BETA_POSITIVE (1e-12) to exclude near-boundary solutions that would be
+/// classified as Indeterminate by the production accumulator.
 const EPS_BETA_CERTIFIED: f64 = 1e-9;
 
 // ============================================================================
@@ -118,6 +131,7 @@ fn to_raw(vecs: &[Vector4<f64>]) -> Vec<[f64; 4]> {
 }
 
 /// Compute ∂sys/∂a_k analytically via quotient rule.
+/// [cor:sys-derivative] in experiments/sys-optimization/math.tex.
 /// sys = c² / (2·vol), so ∂sys/∂a_k = (c · ∂c/∂a_k − sys · ∂vol/∂a_k) / vol.
 fn sys_derivatives_a(
     d_cap: &[Vector4<f64>],
@@ -217,7 +231,7 @@ fn compute_error_metrics(analytical: &[Vector4<f64>], fd: &[Vector4<f64>]) -> (f
 }
 
 /// Sample a random unit vector on S³ (Muller's method).
-/// Copied from crates/src/random.rs (private there).
+/// Copied from crates/src/random.rs (private there, same threshold).
 fn random_unit_s3(rng: &mut ChaCha8Rng) -> Vector4<f64> {
     loop {
         let x: f64 = StandardNormal.sample(rng);
@@ -226,6 +240,7 @@ fn random_unit_s3(rng: &mut ChaCha8Rng) -> Vector4<f64> {
         let w: f64 = StandardNormal.sample(rng);
         let v = Vector4::new(x, y, z, w);
         let norm = v.norm();
+        // Reject near-zero samples (P(||v|| < 1e-10) ≈ 0 for 4D standard normal).
         if norm > 1e-10 {
             return v / norm;
         }
@@ -445,7 +460,8 @@ fn add_barely_cutting_facet(
     let vertices = polytope.vertices_f64();
     let duals = polytope.dual_vertices_f64();
 
-    // Try multiple vertex/direction combinations
+    // Try multiple vertex/direction combinations. 50 attempts is generous —
+    // success rate is ~80% per attempt at delta≥1e-3, dropping to ~50% at delta=1e-5.
     for _ in 0..50 {
         // Pick a random vertex
         let idx = Uniform::from(0..vertices.len()).sample(rng);
