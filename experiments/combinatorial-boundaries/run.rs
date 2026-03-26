@@ -228,7 +228,6 @@ struct InputRow {
 ///    n_k(t) = (a_k + t·d_k) / |a_k + t·d_k|, so ω₀ changes as normals rotate.
 /// 3. **Dual vertex degeneration:** |a_k + t·d_k| → 0.
 ///
-// TODO: add [lem:first-boundary-a] to math.tex
 fn compute_step_bound_detailed(
     polytope: &Polytope4D,
     direction: &[Vector4<f64>],
