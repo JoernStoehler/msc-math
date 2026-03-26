@@ -25,9 +25,9 @@ import matplotlib.pyplot as plt
 
 EVENT_COLORS = {
     "incidence_flip": "#2196F3",
-    "height_zero": "#F44336",
-    "unbounded": "#9E9E9E",
     "omega_flip": "#FF9800",
+    "dual_vertex_degen": "#F44336",
+    "unbounded": "#9E9E9E",
 }
 
 DIR_COLORS = {
@@ -86,7 +86,7 @@ print("  boundary_event_types.png")
 # ============================================================================
 
 fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
-for et in ["incidence_flip", "height_zero"]:
+for et in ["incidence_flip", "omega_flip", "dual_vertex_degen"]:
     vals = [row["t_max"] for row in anatomy if row["event_type"] == et and row["t_max"] < 100]
     if vals:
         ax.hist(vals, bins=50, alpha=0.7, label=et.replace("_", " "),

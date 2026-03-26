@@ -5,6 +5,9 @@
 //! characterizes the boundaries between these regions: what events occur, how sys and the
 //! gradient behave across them, and how dense they are.
 //!
+//! All directions and perturbations work directly in dual-vertex (a) space — the canonical
+//! parameterization used by the library derivative API.
+//!
 //! Three phases:
 //! - Phase 1 (anatomy): classify the first boundary event along each direction
 //! - Phase 2 (crossing): measure sys/orbit before and after each boundary
@@ -30,6 +33,7 @@ use symplectic::algorithms::hk2017::ehz_capacity;
 use symplectic::derivatives::{capacity_derivatives_a, volume_derivatives_a};
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
+use symplectic::geom::symplectic_form::omega0;
 use symplectic::geom::volume::volume;
 use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktResult};
 
@@ -71,14 +75,12 @@ enum EventType {
         new_facet: usize,
     },
     /// ω₀(n_i, n_j) changes sign for ridge-adjacent facets i, j.
-    /// Not triggered by h-only perturbations (normals fixed), but needed for (h,n) extension.
-    #[allow(dead_code)]
     OmegaFlip {
         facet_i: usize,
         facet_j: usize,
     },
-    /// Height h_k = 1/|a_k| approaches zero (facet goes to infinity).
-    HeightZero {
+    /// |a_k + t·d_k| → 0 (dual vertex degenerates).
+    DualVertexDegen {
         facet: usize,
     },
     /// t_max was capped at MAX_STEP_SIZE (no real boundary found).
@@ -90,7 +92,7 @@ impl EventType {
         match self {
             EventType::IncidenceFlip { .. } => "incidence_flip",
             EventType::OmegaFlip { .. } => "omega_flip",
-            EventType::HeightZero { .. } => "height_zero",
+            EventType::DualVertexDegen { .. } => "dual_vertex_degen",
             EventType::Unbounded => "unbounded",
         }
     }
@@ -107,15 +109,15 @@ struct BoundaryEvent {
 // Direction types
 // ============================================================================
 
-/// A probe direction in the dual-vertex space, represented as height perturbations.
+/// A probe direction in dual-vertex space R^{4F}.
 #[derive(Debug, Clone)]
 struct Direction {
     /// Type label for the JSONL output.
     dir_type: String,
-    /// Index within the type (0 for gradient, 0..N-1 for random, 0..F-1 for coordinate).
+    /// Index within the type (0 for gradient, 0..N-1 for random, 0..4F-1 for coordinate).
     index: usize,
-    /// Height perturbation vector (one entry per facet).
-    g_h: Vec<f64>,
+    /// Direction vector: one Vector4 per facet. Step: a'_k(t) = a_k + t·d[k].
+    d: Vec<Vector4<f64>>,
 }
 
 // ============================================================================
@@ -140,7 +142,7 @@ struct AnatomyRow {
     event_vertex: Option<usize>,
     event_facet_new: Option<usize>,
     event_facet_pair: Option<[usize; 2]>,
-    event_facet_vanish: Option<usize>,
+    event_facet_degen: Option<usize>,
 
     vertex_count: usize,
     all_vertices_simple: bool,
@@ -210,26 +212,27 @@ struct InputRow {
 }
 
 // ============================================================================
-// Enriched step-bound computation
+// Enriched step-bound computation in a-space
 // ============================================================================
 
-/// Compute the first boundary event along the h-direction g_h.
+/// Compute the first boundary event along a direction in dual-vertex space.
 ///
-/// For step a'_k = a_k * h_k / (h_k + t * g_h[k]) (i.e., heights change, normals fixed):
-/// - Vertex-facet incidence: slack s_j(v) = h_j - n_j · v reaches zero
-/// - Height positivity: h_k + t * g_h[k] > 0
+/// For step a'_k(t) = a_k + t·d_k, the combinatorial type changes when:
+/// 1. **Incidence flip:** a vertex's slack w.r.t. a non-incident facet reaches zero.
+///    For simple vertex v determined by facets {j1,..,j4}, we have a_ji · v = 1.
+///    Differentiating: d_ji · v + a_ji · dv/dt = 0 ⟹ dv/dt = −A_v⁻¹ (d_{det} · v)
+///    where A_v = [a_{j1}; ...; a_{j4}] and (d_{det} · v)_i = d_{ji} · v.
+///    For non-incident facet j: slack = 1 − a_j · v, rate = −d_j · v − a_j · dv/dt.
+/// 2. **ω₀ flip:** ω₀(n_i, n_j) changes sign for ridge-adjacent facets.
+///    n_k(t) = (a_k + t·d_k) / |a_k + t·d_k|, so ω₀ changes as normals rotate.
+/// 3. **Dual vertex degeneration:** |a_k + t·d_k| → 0.
 ///
-/// Returns the binding event and the critical t value.
-///
-/// Adapted from sys-optimization/run.rs compute_step_bound() with event tracking.
-// TODO: add [lem:first-boundary] to math.tex
+// TODO: add [lem:first-boundary-a] to math.tex
 fn compute_step_bound_detailed(
     polytope: &Polytope4D,
-    direction: &[f64],
+    direction: &[Vector4<f64>],
 ) -> BoundaryEvent {
     let duals = polytope.dual_vertices_f64();
-    let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
-    let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
     let vertices = polytope.vertices_f64();
     let f = polytope.facet_count();
     let skeleton = Skeleton::compute(polytope);
@@ -244,36 +247,40 @@ fn compute_step_bound_detailed(
         let v = &vertices[vi];
 
         if vertex_facets.len() == 4 {
-            // Simple vertex: exactly 4 determining facets.
-            // v = N_v^{-1} h_v, so dv/dt = N_v^{-1} g_h[det].
+            // Simple vertex: v satisfies a_{ji} · v = 1 for determining facets ji.
+            // A_v · v = 1, so A_v · dv/dt = −(d_det · v) where (d_det · v)_i = d_{ji} · v.
+            // dv/dt = −A_v⁻¹ · rhs where rhs_i = d_{ji} · v.
             let det_facets = vertex_facets;
-            let n_mat = Matrix4::from_rows(&[
-                normals[det_facets[0]].transpose(),
-                normals[det_facets[1]].transpose(),
-                normals[det_facets[2]].transpose(),
-                normals[det_facets[3]].transpose(),
+            let a_mat = Matrix4::from_rows(&[
+                duals[det_facets[0]].transpose(),
+                duals[det_facets[1]].transpose(),
+                duals[det_facets[2]].transpose(),
+                duals[det_facets[3]].transpose(),
             ]);
 
-            let n_inv = match n_mat.try_inverse() {
+            let a_inv = match a_mat.try_inverse() {
                 Some(inv) => inv,
                 None => continue,
             };
 
-            let g_det = Vector4::new(
-                direction[det_facets[0]],
-                direction[det_facets[1]],
-                direction[det_facets[2]],
-                direction[det_facets[3]],
+            let rhs = Vector4::new(
+                direction[det_facets[0]].dot(v),
+                direction[det_facets[1]].dot(v),
+                direction[det_facets[2]].dot(v),
+                direction[det_facets[3]].dot(v),
             );
 
-            let dv_dt = n_inv * g_det;
+            let dv_dt = -(a_inv * rhs);
 
+            // Check each non-determining facet
             for j in 0..f {
                 if vertex_facets.contains(&j) {
                     continue;
                 }
-                let slack = heights[j] - normals[j].dot(v);
-                let rate = direction[j] - normals[j].dot(&dv_dt);
+                // Slack: s_j = 1 − a_j · v > 0
+                let slack = 1.0 - duals[j].dot(v);
+                // ds_j/dt = −d_j · v − a_j · dv/dt
+                let rate = -direction[j].dot(v) - duals[j].dot(&dv_dt);
                 if rate < -EPS_NUMERICAL_ZERO {
                     let t_crit = slack / (-rate);
                     if t_crit > 0.0 && t_crit < best.t_max {
@@ -289,17 +296,16 @@ fn compute_step_bound_detailed(
             }
         } else {
             // Non-simple vertex (>4 incident facets). Conservative bound.
-            for j in 0..f {
+            let max_d = direction.iter().map(|dk| dk.norm()).fold(0.0f64, f64::max);
+            for (j, a_j) in duals.iter().enumerate() {
                 if vertex_facets.contains(&j) {
                     continue;
                 }
-                let slack = heights[j] - normals[j].dot(v);
-                if direction[j] < -EPS_NUMERICAL_ZERO {
-                    continue;
-                }
-                let max_g = direction.iter().map(|x| x.abs()).fold(0.0f64, f64::max);
-                if max_g > EPS_NUMERICAL_ZERO {
-                    let t_crit = slack / max_g;
+                let slack = 1.0 - a_j.dot(v);
+                // Conservative: max rate from all direction components acting on vertex
+                let max_rate = max_d * v.norm() + a_j.norm() * max_d * v.norm();
+                if max_rate > EPS_NUMERICAL_ZERO {
+                    let t_crit = slack / max_rate;
                     if t_crit > 0.0 && t_crit < best.t_max {
                         best = BoundaryEvent {
                             t_max: t_crit,
@@ -314,15 +320,56 @@ fn compute_step_bound_detailed(
         }
     }
 
-    // --- Height positivity ---
-    for k in 0..f {
-        if direction[k] < -EPS_NUMERICAL_ZERO {
-            let t_crit = heights[k] / (-direction[k]);
-            if t_crit > 0.0 && t_crit < best.t_max {
+    // --- ω₀ sign preservation for ridge-adjacent pairs ---
+    // ω₀(n_i, n_j) where n_k = a_k / |a_k|.
+    // First-order: dω₀/dt ≈ ω₀(d_i/|a_i|, n_j) + ω₀(n_i, d_j/|a_j|)
+    // (ignoring the projection terms from |a_k| changing, which are second-order
+    // when d_k is not parallel to a_k).
+    for ridge in &skeleton.ridges {
+        let i = ridge.facets[0];
+        let j = ridge.facets[1];
+        let a_i_norm = duals[i].norm();
+        let a_j_norm = duals[j].norm();
+        let n_i = duals[i] / a_i_norm;
+        let n_j = duals[j] / a_j_norm;
+        let omega_ij = omega0(&n_i, &n_j);
+
+        // Approximate rate using projected direction components
+        let d_omega = omega0(&(direction[i] / a_i_norm), &n_j)
+            + omega0(&n_i, &(direction[j] / a_j_norm));
+
+        if omega_ij.abs() > EPS_NUMERICAL_ZERO && d_omega.abs() > EPS_NUMERICAL_ZERO {
+            let t_flip = -omega_ij / d_omega;
+            if t_flip > 0.0 && t_flip < best.t_max {
                 best = BoundaryEvent {
-                    t_max: t_crit,
-                    event: EventType::HeightZero { facet: k },
+                    t_max: t_flip,
+                    event: EventType::OmegaFlip {
+                        facet_i: i,
+                        facet_j: j,
+                    },
                 };
+            }
+        }
+    }
+
+    // --- Dual vertex degeneration: |a_k + t·d_k| → 0 ---
+    // |a_k + t·d_k|² = |a_k|² + 2t(a_k·d_k) + t²|d_k|² = 0
+    // Quadratic in t. Real roots when discriminant ≥ 0.
+    for k in 0..f {
+        let a = direction[k].norm_squared();
+        let b = 2.0 * duals[k].dot(&direction[k]);
+        let c = duals[k].norm_squared();
+        let disc = b * b - 4.0 * a * c;
+        if disc >= 0.0 && a > EPS_NUMERICAL_ZERO {
+            let sqrt_disc = disc.sqrt();
+            for &sign in &[-1.0, 1.0] {
+                let t_crit = (-b + sign * sqrt_disc) / (2.0 * a);
+                if t_crit > EPS_NUMERICAL_ZERO && t_crit < best.t_max {
+                    best = BoundaryEvent {
+                        t_max: t_crit,
+                        event: EventType::DualVertexDegen { facet: k },
+                    };
+                }
             }
         }
     }
@@ -342,85 +389,88 @@ fn compute_step_bound_detailed(
 // Direction construction
 // ============================================================================
 
-/// Build the set of probe directions for a polytope.
-///
-/// Directions are in height-space: each direction[k] represents d(h_k)/dt.
-/// Given a gradient in dual-vertex space d(sys)/d(a_k), we project to height space via:
-///   d(sys)/d(h_k) = d(sys)/d(a_k) · (-n_k / h_k²)
+/// Build the set of probe directions for a polytope in dual-vertex space R^{4F}.
 fn build_directions(
-    _polytope: &Polytope4D,
-    d_sys_h: &[f64],
+    d_sys_a: &[Vector4<f64>],
     f: usize,
     rng: &mut ChaCha8Rng,
 ) -> Vec<Direction> {
     let mut dirs = Vec::new();
 
-    // 1. Gradient direction (height-only)
-    let grad_norm: f64 = d_sys_h.iter().map(|x| x * x).sum::<f64>().sqrt();
+    // 1. Gradient direction (∂sys/∂a, normalized)
+    let grad_norm: f64 = d_sys_a.iter().map(|v| v.norm_squared()).sum::<f64>().sqrt();
     if grad_norm > EPS_NUMERICAL_ZERO {
-        let normalized: Vec<f64> = d_sys_h.iter().map(|x| x / grad_norm).collect();
+        let normalized: Vec<Vector4<f64>> = d_sys_a.iter().map(|v| v / grad_norm).collect();
         dirs.push(Direction {
             dir_type: "gradient".to_string(),
             index: 0,
-            g_h: normalized,
+            d: normalized,
         });
     }
 
     // 2. Negative gradient direction
     if grad_norm > EPS_NUMERICAL_ZERO {
-        let neg_normalized: Vec<f64> = d_sys_h.iter().map(|x| -x / grad_norm).collect();
+        let neg: Vec<Vector4<f64>> = d_sys_a.iter().map(|v| -v / grad_norm).collect();
         dirs.push(Direction {
             dir_type: "neg_gradient".to_string(),
             index: 0,
-            g_h: neg_normalized,
+            d: neg,
         });
     }
 
-    // 3. Random directions (uniform on S^{F-1} via Gaussian normalization)
+    // 3. Random directions (uniform on S^{4F-1} via Gaussian normalization)
     for i in 0..N_RANDOM_DIRECTIONS {
-        let raw: Vec<f64> = (0..f)
-            .map(|_| StandardNormal.sample(rng))
+        let raw: Vec<Vector4<f64>> = (0..f)
+            .map(|_| {
+                Vector4::new(
+                    StandardNormal.sample(rng),
+                    StandardNormal.sample(rng),
+                    StandardNormal.sample(rng),
+                    StandardNormal.sample(rng),
+                )
+            })
             .collect();
-        let norm: f64 = raw.iter().map(|x| x * x).sum::<f64>().sqrt();
+        let norm: f64 = raw.iter().map(|v| v.norm_squared()).sum::<f64>().sqrt();
         if norm > EPS_NUMERICAL_ZERO {
-            let normalized: Vec<f64> = raw.iter().map(|x| x / norm).collect();
+            let normalized: Vec<Vector4<f64>> = raw.iter().map(|v| v / norm).collect();
             dirs.push(Direction {
                 dir_type: "random".to_string(),
                 index: i,
-                g_h: normalized,
+                d: normalized,
             });
         }
     }
 
-    // 4. Coordinate directions (one facet at a time)
+    // 4. Coordinate directions (one component of one facet at a time)
     for k in 0..f {
-        let mut g_h = vec![0.0; f];
-        g_h[k] = 1.0;
-        dirs.push(Direction {
-            dir_type: "coordinate".to_string(),
-            index: k,
-            g_h,
-        });
+        for c in 0..4 {
+            let mut d = vec![Vector4::zeros(); f];
+            d[k][c] = 1.0;
+            dirs.push(Direction {
+                dir_type: "coordinate".to_string(),
+                index: k * 4 + c,
+                d,
+            });
+        }
     }
 
     dirs
 }
 
 // ============================================================================
-// Sensitivity computation (adapted from sys-optimization/run.rs)
+// Sensitivity computation
 // ============================================================================
 
-/// Compute d(sys)/d(h_k) for all facets. Returns (d_sys_h, d_sys_a).
-fn compute_sys_gradient(
+/// Compute d(sys)/d(a_k) for all facets.
+fn compute_sys_gradient_a(
     polytope: &Polytope4D,
     vol: f64,
     cap: f64,
     sys: f64,
     kkt: &KktResult,
     perm: &[usize],
-) -> (Vec<f64>, Vec<Vector4<f64>>) {
+) -> Vec<Vector4<f64>> {
     let duals = polytope.dual_vertices_f64();
-    let f = duals.len();
 
     let d_vol_a = volume_derivatives_a(polytope);
     let d_cap_a = capacity_derivatives_a(
@@ -431,51 +481,27 @@ fn compute_sys_gradient(
         duals,
     );
 
-    let d_sys_a: Vec<Vector4<f64>> = d_vol_a
+    d_vol_a
         .iter()
         .zip(d_cap_a.iter())
         .map(|(dv, dc)| (cap * dc - sys * dv) / vol)
-        .collect();
-
-    let d_sys_h: Vec<f64> = (0..f)
-        .map(|k| {
-            let a_norm = duals[k].norm();
-            let n = duals[k] / a_norm;
-            let h = 1.0 / a_norm;
-            d_sys_a[k].dot(&(-n / (h * h)))
-        })
-        .collect();
-
-    (d_sys_h, d_sys_a)
+        .collect()
 }
 
 // ============================================================================
 // Polytope construction at perturbed parameter
 // ============================================================================
 
-/// Construct a polytope with heights shifted: h'_k = h_k + t * g_h[k].
-///
-/// Dual vertices become a'_k = n_k / h'_k = a_k * (h_k / h'_k).
+/// Construct a polytope at a'_k = a_k + t·d_k.
 fn construct_at_t(
     duals: &[Vector4<f64>],
-    direction: &[f64],
+    direction: &[Vector4<f64>],
     t: f64,
 ) -> Option<Polytope4D> {
     let new_duals: Vec<Vector4<f64>> = duals
         .iter()
         .zip(direction.iter())
-        .map(|(a, &g)| {
-            let a_norm = a.norm();
-            let h = 1.0 / a_norm;
-            let h_new = h + t * g;
-            if h_new <= 0.0 {
-                return Vector4::zeros(); // Will fail construction
-            }
-            // a'_k = n_k / h'_k = (a / |a|) / h'_k = a * (|a| * h'_k)^{-1} ...
-            // Actually: a = n/h, so n = a*h = a/|a|, h = 1/|a|.
-            // a' = n / h' = (a / |a|) / h' = a / (|a| * h')
-            *a / (a_norm * h_new)
-        })
+        .map(|(a, d)| a + t * d)
         .collect();
 
     Polytope4D::from_f64(new_duals).ok()
@@ -534,12 +560,12 @@ fn perm_to_string(perm: &[usize]) -> String {
 /// Evaluate sys/orbit on both sides of a boundary.
 fn evaluate_crossing(
     duals: &[Vector4<f64>],
-    direction: &[f64],
+    direction: &[Vector4<f64>],
     boundary: &BoundaryEvent,
 ) -> Option<CrossingRow> {
     // Skip uncrossable events
     match boundary.event {
-        EventType::Unbounded | EventType::HeightZero { .. } => return None,
+        EventType::Unbounded | EventType::DualVertexDegen { .. } => return None,
         _ => {}
     }
 
@@ -548,13 +574,13 @@ fn evaluate_crossing(
         return None;
     }
 
-    // Before boundary: use proportional epsilon (1e-4 × t_max), with floor at 1e-8
+    // Before boundary: proportional epsilon (1e-4 × t_max), floor at 1e-8
     let eps_before = (1e-4 * t).max(1e-8);
     let poly_before = construct_at_t(duals, direction, t - eps_before)?;
     let (sys_b, cap_b, vol_b, perm_b, _) = compute_sys(&poly_before)?;
     let skel_before = Skeleton::compute(&poly_before);
 
-    // After boundary — try proportional epsilons: 1e-4, 1e-3, 1e-2, 5e-2 of t_max
+    // After boundary — try proportional epsilons
     let after_fractions = [1e-4, 1e-3, 1e-2, 5e-2, 0.1];
     let mut eps_used = 0.0;
     let mut sys_a = f64::NAN;
@@ -616,11 +642,11 @@ fn evaluate_crossing(
 /// Compute gradient info on both sides of a boundary.
 fn evaluate_gradient_crossing(
     duals: &[Vector4<f64>],
-    direction: &[f64],
+    direction: &[Vector4<f64>],
     boundary: &BoundaryEvent,
 ) -> Option<GradientRow> {
     match boundary.event {
-        EventType::Unbounded | EventType::HeightZero { .. } => return None,
+        EventType::Unbounded | EventType::DualVertexDegen { .. } => return None,
         _ => {}
     }
 
@@ -628,53 +654,52 @@ fn evaluate_gradient_crossing(
     if t <= 0.0 {
         return None;
     }
-    let f = duals.len();
 
     // Before boundary
     let eps_before = (1e-4 * t).max(1e-8);
     let poly_before = construct_at_t(duals, direction, t - eps_before)?;
     let (sys_b, cap_b, vol_b, perm_b, kkt_b) = compute_sys(&poly_before)?;
-    let (d_sys_h_b, _) =
-        compute_sys_gradient(&poly_before, vol_b, cap_b, sys_b, &kkt_b, &perm_b);
+    let d_sys_a_b =
+        compute_sys_gradient_a(&poly_before, vol_b, cap_b, sys_b, &kkt_b, &perm_b);
 
     // After boundary — proportional epsilons
     let after_fractions = [1e-4, 1e-3, 1e-2, 5e-2, 0.1];
-    let mut after_grad = None;
+    let mut d_sys_a_after = None;
     for &frac in &after_fractions {
         let eps = (frac * t).max(1e-8);
         if let Some(poly_after) = construct_at_t(duals, direction, t + eps) {
             if let Some((sys_a, cap_a, vol_a, perm_a, kkt_a)) = compute_sys(&poly_after) {
-                let (d_sys_h_a, _) =
-                    compute_sys_gradient(&poly_after, vol_a, cap_a, sys_a, &kkt_a, &perm_a);
-                after_grad = Some(d_sys_h_a);
+                let d =
+                    compute_sys_gradient_a(&poly_after, vol_a, cap_a, sys_a, &kkt_a, &perm_a);
+                d_sys_a_after = Some(d);
                 break;
             }
         }
     }
 
-    let d_sys_h_a = after_grad?;
+    let d_sys_a_a = d_sys_a_after?;
 
-    // Gradient norms
-    let norm_b: f64 = d_sys_h_b.iter().map(|x| x * x).sum::<f64>().sqrt();
-    let norm_a: f64 = d_sys_h_a.iter().map(|x| x * x).sum::<f64>().sqrt();
+    // Gradient norms in R^{4F}
+    let norm_b: f64 = d_sys_a_b.iter().map(|v| v.norm_squared()).sum::<f64>().sqrt();
+    let norm_a: f64 = d_sys_a_a.iter().map(|v| v.norm_squared()).sum::<f64>().sqrt();
 
-    // Directional derivatives (gradient dot direction)
-    let dd_b: f64 = d_sys_h_b
+    // Directional derivatives: ∑_k d_sys_a[k] · direction[k]
+    let dd_b: f64 = d_sys_a_b
         .iter()
         .zip(direction.iter())
-        .map(|(g, d)| g * d)
+        .map(|(g, d)| g.dot(d))
         .sum();
-    let dd_a: f64 = d_sys_h_a
+    let dd_a: f64 = d_sys_a_a
         .iter()
         .zip(direction.iter())
-        .map(|(g, d)| g * d)
+        .map(|(g, d)| g.dot(d))
         .sum();
 
-    // Angle between gradients
-    let dot: f64 = d_sys_h_b
+    // Angle between gradients in R^{4F}
+    let dot: f64 = d_sys_a_b
         .iter()
-        .zip(d_sys_h_a.iter())
-        .map(|(a, b)| a * b)
+        .zip(d_sys_a_a.iter())
+        .map(|(a, b)| a.dot(b))
         .sum();
     let angle_rad = if norm_b > EPS_NUMERICAL_ZERO && norm_a > EPS_NUMERICAL_ZERO {
         (dot / (norm_b * norm_a)).clamp(-1.0, 1.0).acos()
@@ -684,7 +709,7 @@ fn evaluate_gradient_crossing(
 
     Some(GradientRow {
         polytope_name: String::new(),
-        facet_count: f,
+        facet_count: duals.len(),
         direction_type: String::new(),
         direction_index: 0,
         t_max: boundary.t_max,
@@ -841,7 +866,7 @@ fn main() {
             }
         };
         let (sys, cap, vol, perm, kkt) = base_result;
-        let (d_sys_h, _d_sys_a) = compute_sys_gradient(polytope, vol, cap, sys, &kkt, &perm);
+        let d_sys_a = compute_sys_gradient_a(polytope, vol, cap, sys, &kkt, &perm);
 
         let skeleton = Skeleton::compute(polytope);
         let vertex_count = skeleton.vertex_facets.len();
@@ -849,23 +874,23 @@ fn main() {
         let orbit_str = perm_to_string(&perm);
 
         // Build directions
-        let directions = build_directions(polytope, &d_sys_h, f, &mut rng);
+        let directions = build_directions(&d_sys_a, f, &mut rng);
         let duals = polytope.dual_vertices_f64();
 
         for dir in &directions {
             let t_dir = Instant::now();
 
             // Phase 1: Boundary anatomy
-            let boundary = compute_step_bound_detailed(polytope, &dir.g_h);
+            let boundary = compute_step_bound_detailed(polytope, &dir.d);
 
-            let (ev_vertex, ev_facet_new, ev_facet_pair, ev_facet_vanish) = match &boundary.event {
+            let (ev_vertex, ev_facet_new, ev_facet_pair, ev_facet_degen) = match &boundary.event {
                 EventType::IncidenceFlip { vertex_index, new_facet } => {
                     (Some(*vertex_index), Some(*new_facet), None, None)
                 }
                 EventType::OmegaFlip { facet_i, facet_j } => {
                     (None, None, Some([*facet_i, *facet_j]), None)
                 }
-                EventType::HeightZero { facet } => {
+                EventType::DualVertexDegen { facet } => {
                     (None, None, None, Some(*facet))
                 }
                 EventType::Unbounded => (None, None, None, None),
@@ -886,7 +911,7 @@ fn main() {
                 event_vertex: ev_vertex,
                 event_facet_new: ev_facet_new,
                 event_facet_pair: ev_facet_pair,
-                event_facet_vanish: ev_facet_vanish,
+                event_facet_degen: ev_facet_degen,
                 vertex_count,
                 all_vertices_simple: all_simple,
                 time_ms: t_dir.elapsed().as_secs_f64() * 1000.0,
@@ -898,7 +923,7 @@ fn main() {
 
             // Phase 2: Crossing evaluation
             if let Some(mut crossing_row) =
-                evaluate_crossing(duals, &dir.g_h, &boundary)
+                evaluate_crossing(duals, &dir.d, &boundary)
             {
                 crossing_row.polytope_name = name.clone();
                 crossing_row.direction_type = dir.dir_type.clone();
@@ -913,7 +938,7 @@ fn main() {
             // Phase 3: Gradient crossing
             if RUN_PHASE_3 {
                 if let Some(mut grad_row) =
-                    evaluate_gradient_crossing(duals, &dir.g_h, &boundary)
+                    evaluate_gradient_crossing(duals, &dir.d, &boundary)
                 {
                     grad_row.polytope_name = name.clone();
                     grad_row.direction_type = dir.dir_type.clone();
