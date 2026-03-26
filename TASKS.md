@@ -128,10 +128,9 @@ Dependency chain: #1 validates the gradient → #2 characterizes the obstacle �
 **Experiment ideas:** See `IDEAS.md` (root).
 
 **New experiment ideas (2026-03-26, discussion with Jörn):**
-- **Dense 2D slice** around HKO2024 — map the sys=1 level set. Most interpretable as 2D extension of lagrangian-products' rotation sweep. See `handoffs/dense-2d-slice.md`.
-- **Higher polygon Lagrangian products** — LP(5,7), LP(7,7) etc. untested, HKO came from LP(5,5).
+- **lagrangian-search** (scaffolded) — Is the sys>1 region accessible by random sampling of Lagrangian products? Three phases: feasibility estimate (volume ratio of sys>1 region), guided search (gradient ascent from random seeds), novelty check (is any new sys>1 polytope related to HKO by symplectomorphism?). Subsumes the dense-2D-slice and pentagon-pair-landscape ideas. See `experiments/lagrangian-search/logbook.md`.
+- **Higher polygon Lagrangian products** — LP(5,7), LP(7,7) etc. untested, HKO came from LP(5,5). Partially covered by lagrangian-search Phase 1.
 - **Dimension scaling** — how does max-achievable-sys scale with F for random polytopes? Scattered data exists but no systematic study.
-- **Pentagon-pair landscape** — what makes LP(5,5) special vs LP(4,6), LP(3,7)? Systematic (n,m,θ) sweep at higher resolution.
 
 Depends on: Jörn scoping the thesis story. Derivative-related experiments also depend on dual-vertex-parameterization (library derivative API, now mostly complete).
 
