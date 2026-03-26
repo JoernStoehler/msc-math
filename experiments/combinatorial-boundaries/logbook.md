@@ -97,7 +97,7 @@ sys is continuous at all 5531 tested boundaries: max |Δsys| = 3.34e-3 (crossing
 
 ### Crossing success rate
 
-98% of boundary crossings succeed (5531/5644). Only 113 failures, all from near-degenerate capacity computation at the boundary. This is dramatically better than the initial (incorrect) h-only implementation which had 55% failure rate.
+98% of boundary crossings succeed (5531/5644). The 113 failures are from near-degenerate capacity computation at the boundary (KKT solver panics on small eigenvalues).
 
 ## Interpretation
 
