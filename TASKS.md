@@ -256,6 +256,18 @@ Depends on: Jörn reviews math.
 
 ---
 
+## collaboration-skill
+
+**Status (2026-03-26):** Deferred. Need evidence from real work sessions before designing.
+
+Evidence gathered so far (from session log analysis):
+- 57% of agent-era sessions use zero subagents — under-delegation is the main problem
+- Sessions just stop without cleanup (0/362 self-initiated postmortems)
+- Subagent prompting is fine — subagents self-serve skills and rules via shared system prompt
+- Handoff quality is good when created, but creation is bursty not routine
+
+**Next steps:** Run real work sessions with the new procedural layer. Observe whether "use proactively" descriptions + CLAUDE.md delegation nudge address under-delegation. Collect feedback in `feedback/`. Design the skill based on observed failures, not predictions.
+
 ---
 
 ## Completed
