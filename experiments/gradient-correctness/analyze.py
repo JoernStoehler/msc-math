@@ -20,6 +20,7 @@ import sys
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -212,7 +213,6 @@ def plot_q3_gap_vs_error(data):
         ax.set_title(TARGET_LABELS[target])
 
         # Legend for orbit switching
-        from matplotlib.lines import Line2D
         handles = [
             Line2D([0], [0], marker="o", color="w", markerfacecolor=TARGET_COLORS[target],
                    markersize=5, label="No switch"),
