@@ -111,6 +111,5 @@ sys is continuous at all 5531 tested boundaries: max |Δsys| = 3.34e-3 (crossing
 
 ## Open questions
 
-1. **Multi-boundary sweep:** What happens further along the path? How many boundaries must be crossed before an orbit switch? What fraction of orbit switches are reversible (orbit switches back after a later boundary)?
-2. **Non-simple vertex handling:** The conservative step bound for non-simple vertices (Lagrangian products) underestimates t_max. How much data are we missing?
-3. **Orbit switch prediction:** Can we predict which boundaries will cause orbit switches from the boundary geometry (event type, which vertex/facet, proximity to other boundaries)?
+1. **Orbit switch prediction:** Can we predict which boundaries will cause orbit switches from the boundary geometry (event type, which vertex/facet, proximity of second-best orbit's action to best orbit's action)?
+2. **math.tex:** Formalize the step-bound computation and continuity argument. The step-bound has a TODO for [lem:first-boundary-a].
