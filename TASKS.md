@@ -113,17 +113,17 @@ The thesis is currently a dump of results, not a coherent narrative. Experiments
 - What depth does each experiment need in the thesis? (full section / brief mention / appendix / omit)
 
 **Known gaps:**
-- `sys-optimization` needs a redesign, not just modernization — didn't use proper gradients, didn't look at cuts. v2 vision: combine gradient ascent + overshoot (from gradient-search) + facet-splitting (from hko-neighborhood Phase B) + wiggle. Not blocked on dual-vertex refactor but benefits from it (cleaner gradient code, no gauge freedom).
 - `crosspolytope` Phase 2 TODO: update known_polytopes.rs (tracked in its logbook)
 - `hko-neighborhood` Phase C (2026-03-23) verified first-order necessary condition for local max in F=10 (n,h)-space via LP. See `hko-local-maximality` task for next steps.
 
-**Build audit (2026-03-26):** 3 experiments broken by API drift:
-- `gradient-search` + `generate-seeds`: nonexistent `capacity_derivatives_h` etc. (dual-vertex migration)
-- `visualization`: `recover_base_point` → `recover_and_verify`, `build_directed_adjacency_matrix` → `build_transition_matrix`
-- `orbit-recovery`: same `recover_base_point` / `verify_orbit` rename
-- Also: hko-neighborhood triggers Q error panic at E=1.68e-6 (threshold 1e-6) on perturbed HKO — marginal, threshold may be too tight for near-degenerate polytopes.
+**Gradient experiment redesign (2026-03-26, Jörn):** The three gradient experiments (`sys-optimization`, `gradient-descent`, `gradient-search`) evolved incrementally and overlap significantly. Replace with cleanly scoped experiments:
+1. **gradient-correctness** (scaffolded) — Is ∂sys/∂a_k correct? Generic polytopes, non-generic geometry, near-degeneracy, redundant halfspaces. See `experiments/gradient-correctness/logbook.md`.
+2. **optimization-landscape** (not yet scaffolded) — What does the optimization landscape look like? Gradient ascent from diverse starting points, step-bound barrier, general vs Lagrangian. Supersedes gradient-descent + sys-optimization Phase 3.
+3. **boundary-crossing** (not yet scaffolded) — Can we escape local optima? Overshoot + wiggle + cuts from converged points of #2. Supersedes gradient-search.
 
-See `handoffs/experiment-api-fixes.md` for the fix batch.
+Delete old experiments once new ones are confirmed better. #3 depends on #2's output.
+
+**Build audit (2026-03-26):** visualization and orbit-recovery fixed. gradient-search still broken (API drift, but will be superseded by boundary-crossing). Q error panic threshold (E=1.68e-6, threshold 1e-6) on near-degenerate polytopes — see `handoffs/experiment-api-fixes.md`.
 
 **Experiment ideas:** See `IDEAS.md` (root).
 
