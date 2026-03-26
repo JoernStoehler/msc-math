@@ -12,6 +12,7 @@
 //!
 //! Self-contained: generates all polytopes internally (no dependency on other datasets).
 
+use std::panic;
 use nalgebra::Vector4;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
@@ -160,7 +161,7 @@ fn sys_derivatives_a_fd(dual_vertices: &[Vector4<f64>], eps: f64) -> Vec<Vector4
 /// Compute sys = c²/(2·vol) from dual vertices, returning None if construction or capacity fails.
 fn compute_sys_from_duals(duals: &[Vector4<f64>]) -> Option<f64> {
     let p = Polytope4D::from_f64(duals.to_vec()).ok()?;
-    let cap = ehz_capacity(&p)?.result.capacity;
+    let cap = ehz_capacity_safe(&p)?.result.capacity;
     let vol = volume(&p).ok()?;
     if vol <= 0.0 { return None; }
     Some(cap * cap / (2.0 * vol))
@@ -231,6 +232,15 @@ fn random_unit_s3(rng: &mut ChaCha8Rng) -> Vector4<f64> {
     }
 }
 
+/// Safe wrapper around ehz_capacity that catches panics (e.g. Q-correction panic
+/// on near-degenerate polytopes). Returns None on panic instead of crashing.
+fn ehz_capacity_safe(polytope: &Polytope4D) -> Option<symplectic::EhzResult> {
+    let polytope = polytope.clone();
+    panic::catch_unwind(panic::AssertUnwindSafe(|| ehz_capacity(&polytope)))
+        .ok()
+        .flatten()
+}
+
 /// Information about a polytope needed for gradient validation.
 struct PolytopeInfo {
     polytope: Polytope4D,
@@ -244,7 +254,7 @@ struct PolytopeInfo {
 /// Compute capacity, volume, sys, best orbit, and KKT for a polytope.
 /// Returns None if capacity computation fails.
 fn analyze_polytope(polytope: &Polytope4D) -> Option<PolytopeInfo> {
-    let ehz = ehz_capacity(polytope)?;
+    let ehz = ehz_capacity_safe(polytope)?;
     let cap = ehz.result.capacity;
     let vol = volume(polytope).ok()?;
     if vol <= 0.0 { return None; }
@@ -281,7 +291,7 @@ fn validate_derivatives(
     );
     let d_cap_fd = capacity_derivatives_a_fd(&duals, eps, |perturbed| {
         let p = Polytope4D::from_f64(perturbed.to_vec()).ok()?;
-        Some(ehz_capacity(&p)?.result.capacity)
+        Some(ehz_capacity_safe(&p)?.result.capacity)
     });
     let (mr, mnr, ma, cs) = compute_error_metrics(&d_cap_analytical, &d_cap_fd);
     rows.push(GradientRow {
@@ -413,7 +423,7 @@ fn check_orbit_switching(duals: &[Vector4<f64>], eps: f64, original_perm: &[usiz
                 let mut perturbed = duals.to_vec();
                 perturbed[k][d] += sign * eps;
                 if let Ok(p) = Polytope4D::from_f64(perturbed) {
-                    if let Some(ehz) = ehz_capacity(&p) {
+                    if let Some(ehz) = ehz_capacity_safe(&p) {
                         if ehz.result.best_permutation != original_perm {
                             return true;
                         }
@@ -570,7 +580,13 @@ fn run_q2(base_dir: &str) {
         for j in 0..random_per_pair {
             let (qn, qh) = random_polygon_2d(n1, 0.5, 2.0, &mut rng);
             let (pn, ph) = random_polygon_2d(n2, 0.5, 2.0, &mut rng);
-            let polytope = lagrangian_product(&qn, &qh, &pn, &ph).expect("random LP");
+            let polytope = match lagrangian_product(&qn, &qh, &pn, &ph) {
+                Ok(p) => p,
+                Err(e) => {
+                    eprintln!("  Q2: random LP({},{},{}) — construction failed: {:?}", n1, n2, j, e);
+                    continue;
+                }
+            };
             let id = format!("lp_random_{}_{}_{:02}", n1, n2, j);
 
             if let Some(info) = analyze_polytope(&polytope) {
@@ -745,30 +761,49 @@ fn run_q4(base_dir: &str) {
 
 fn main() {
     let base_dir = "gradient-correctness";
+    let args: Vec<String> = std::env::args().collect();
 
-    println!("=== Gradient Correctness Experiment ===\n");
+    // Optional: pass phase names to run only specific phases.
+    // E.g. `cargo run --release --bin gradient_correctness -- q2 q3 q4`
+    let run_all = args.len() <= 1;
+    let phases: Vec<&str> = if run_all {
+        vec!["q1", "q2", "q3", "q4"]
+    } else {
+        args[1..].iter().map(|s| s.as_str()).collect()
+    };
+
+    println!("=== Gradient Correctness Experiment ===");
+    println!("Phases: {:?}\n", phases);
 
     let t0 = Instant::now();
 
-    println!("--- Phase Q1: Generic random polytopes ---");
-    let t_q1 = Instant::now();
-    run_q1(base_dir);
-    println!("  Q1 time: {:.1}s\n", t_q1.elapsed().as_secs_f64());
+    if phases.contains(&"q1") {
+        println!("--- Phase Q1: Generic random polytopes ---");
+        let t_q1 = Instant::now();
+        run_q1(base_dir);
+        println!("  Q1 time: {:.1}s\n", t_q1.elapsed().as_secs_f64());
+    }
 
-    println!("--- Phase Q2: Non-generic geometry ---");
-    let t_q2 = Instant::now();
-    run_q2(base_dir);
-    println!("  Q2 time: {:.1}s\n", t_q2.elapsed().as_secs_f64());
+    if phases.contains(&"q2") {
+        println!("--- Phase Q2: Non-generic geometry ---");
+        let t_q2 = Instant::now();
+        run_q2(base_dir);
+        println!("  Q2 time: {:.1}s\n", t_q2.elapsed().as_secs_f64());
+    }
 
-    println!("--- Phase Q3: Near-degeneracy ---");
-    let t_q3 = Instant::now();
-    run_q3(base_dir);
-    println!("  Q3 time: {:.1}s\n", t_q3.elapsed().as_secs_f64());
+    if phases.contains(&"q3") {
+        println!("--- Phase Q3: Near-degeneracy ---");
+        let t_q3 = Instant::now();
+        run_q3(base_dir);
+        println!("  Q3 time: {:.1}s\n", t_q3.elapsed().as_secs_f64());
+    }
 
-    println!("--- Phase Q4: Barely-cutting facets ---");
-    let t_q4 = Instant::now();
-    run_q4(base_dir);
-    println!("  Q4 time: {:.1}s\n", t_q4.elapsed().as_secs_f64());
+    if phases.contains(&"q4") {
+        println!("--- Phase Q4: Barely-cutting facets ---");
+        let t_q4 = Instant::now();
+        run_q4(base_dir);
+        println!("  Q4 time: {:.1}s\n", t_q4.elapsed().as_secs_f64());
+    }
 
     println!("=== Total time: {:.1}s ===", t0.elapsed().as_secs_f64());
 }
