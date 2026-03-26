@@ -38,8 +38,15 @@ If code is newer, regenerate data on this branch.
 - [ ] Cross-references resolve (`thesis/build/main.aux`)
 - [ ] Logbook entries cite sources inline for all numbers
 
+## Update TASKS.md
+
+- Mark completed tasks as done (move to Completed section with date and one-line summary)
+- Update status/next-steps for tasks affected by this work
+- Add newly discovered tasks if any
+
 ## What to report to Jörn
 
 - What changed (files, scope)
 - What's verified vs what needs Jörn's review
 - Any unresolved TODOs or GAPs introduced
+- If work is incomplete: write a handoff file to `handoffs/<name>.md` with context, scope, key files, prior findings, and success criteria
