@@ -45,7 +45,8 @@ use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktResult};
 const MAX_FACET_COUNT: usize = 10;
 
 /// Number of random directions to probe per polytope.
-/// 10 gives reasonable statistics; each costs only ~0.1ms for the step bound.
+/// 10 gives reasonable coverage of the direction sphere while keeping
+/// per-polytope runtime dominated by the capacity evaluations in Phases 2-3.
 const N_RANDOM_DIRECTIONS: usize = 10;
 
 /// Maximum step size cap (prevents infinite steps when no combinatorial bound exists).
@@ -462,6 +463,12 @@ fn build_directions(
 // ============================================================================
 
 /// Compute d(sys)/d(a_k) for all facets.
+///
+/// sys = c²/(2V), so by the quotient rule:
+///   d(sys)/d(a_k) = (c · dc/d(a_k) - sys · dV/d(a_k)) / V
+///
+/// Uses library capacity_derivatives_a [lem:cap-derivative] and
+/// volume_derivatives_a [lem:vol-derivative] from experiments/sys-optimization/math.tex.
 fn compute_sys_gradient_a(
     polytope: &Polytope4D,
     vol: f64,

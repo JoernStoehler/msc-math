@@ -12,7 +12,7 @@ import numpy as np
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(EXPERIMENT_DIR.parent))
 from figure_config import (
-    setup, FIGSIZE_SINGLE, FIGSIZE_DUAL, SCATTER_SIZE,
+    setup, FIGSIZE_SINGLE, SCATTER_SIZE,
     FONT_SIZE_SMALL,
 )
 setup()
@@ -207,7 +207,7 @@ print(f"\n  Orbit switches at first boundary: {orbit_switch_count}/{len(ok_cross
 
 if gradient:
     angles = [row["gradient_angle_change_deg"] for row in gradient
-              if row["gradient_angle_change_deg"] == row["gradient_angle_change_deg"]]
+              if not np.isnan(row["gradient_angle_change_deg"])]
     if angles:
         fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
         ax.hist(angles, bins=50, color="#E91E63", alpha=0.7)
@@ -294,7 +294,7 @@ if ok_crossing:
 if gradient:
     print(f"\nGradient rows: {len(gradient)}")
     angles_all = [row["gradient_angle_change_deg"] for row in gradient
-                  if row["gradient_angle_change_deg"] == row["gradient_angle_change_deg"]]
+                  if not np.isnan(row["gradient_angle_change_deg"])]
     if angles_all:
         print(f"Gradient angle change: max={max(angles_all):.4f} deg")
 
