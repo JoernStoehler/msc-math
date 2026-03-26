@@ -1,7 +1,6 @@
 ---
 name: pre-merge
 description: Checklist before presenting work for merge to main. Load when finishing a task and preparing to report to Jörn.
-disable-model-invocation: true
 ---
 
 # Pre-Merge Checklist

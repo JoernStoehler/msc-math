@@ -1,7 +1,6 @@
 ---
 name: download-paper
 description: Download an arXiv paper into papers/ and add a bib entry. Load when Jörn asks to fetch a paper or when a citation needs its source.
-disable-model-invocation: true
 ---
 
 # Download Paper Workflow
