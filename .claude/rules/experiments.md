@@ -23,6 +23,10 @@ Not all experiments have all files — some are Rust-only (no analyze.py/figures
 
 Shared resources in `experiments/`: `figure_config.py` (figure styling), `requirements.txt` (Python deps), `Cargo.toml` (binary registration).
 
+## Methodology comes before implementation
+
+Experiments have open research questions. Answering them requires choosing what to measure, how to measure it, and what the observations would mean — this is the methodology. Different methodologies test different things, assume different things, and can miss different failure modes. The wrong choice wastes the implementation effort. Use `/experiment-design` to formalize the question, generate candidate methods, and present them to Jörn before implementing.
+
 ## Pipeline
 
 Rust binary → .jsonl → Python script → .png → (used by thesis during assembly)

@@ -169,6 +169,8 @@ Draft the files Jörn specified, using the correct file formats. Before writing:
 - For skill creation specifically, follow the guide at `references/skills-guide.md` (transcribed from Anthropic's "Complete Guide to Building Skills for Claude")
 - Key from the guide: start with use cases, description = WHAT + WHEN + trigger phrases, progressive disclosure, test for triggering
 
+**Writing style for rules and skills:** Say what you mean. Spell out the concept, the reasoning, and the action in concrete terms. Don't use analogies or abstractions to carry the point — if you include them, they clarify, not replace. Concise means removing indirection, not removing content.
+
 ### 5. Verify
 
 - **Spec compliance:** Spawn a subagent per file to check it against the matching file format spec from llms.txt (e.g. to catch wrongly used YAML frontmatter fields or overlooked semantic aspects of the body)
