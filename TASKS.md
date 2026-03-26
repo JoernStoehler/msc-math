@@ -11,7 +11,7 @@ Master task list for thesis completion. **Deadline: mid-April 2026.**
 - **Dependencies:** State what blocks a task. If it's Jörn-gated, say so explicitly.
 - **Scope:** This file tracks WHAT needs doing. HOW is in skills, conventions, and logbooks.
 
-**Current state (2026-03-24):** No thesis chapter is publishable yet. Experiments have data but writeups are noisy and the thesis doesn't tell a coherent story. Migration complete and merged. Meta-layer refactored and agent-design workflow established. Progress rate on track.
+**Current state (2026-03-26):** No thesis chapter is publishable yet. Experiments have data but writeups are noisy and the thesis doesn't tell a coherent story. Procedural layer fully rewritten and ready for testing. Progress rate on track.
 
 **Priority:** Thesis coherence + experiment quality > code refactors. Code refactors only matter if they unblock thesis content or experiment correctness.
 
@@ -271,3 +271,4 @@ Depends on: Jörn reviews math.
 - **reproduce-decentralization** — DONE (2026-03-23). Deleted `reproduce.sh`; all 19 logbooks have "How to run" sections.
 - **slurm-skill** — DONE. `.claude/skills/slurm/SKILL.md` exists.
 - **meta-layer-refactor** — DONE (2026-03-24). Simplified procedural layer, created agent-design workflow skill.
+- **procedural-rewrite** — DONE (2026-03-26). Full rewrite: 5 rules, 1 output style, 8 skills, 9 agents, CLAUDE.md updated. Old unvetted skills/agents deleted. Collaboration skill deferred. Feedback collection set up.
