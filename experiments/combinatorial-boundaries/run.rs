@@ -75,7 +75,7 @@ enum EventType {
         vertex_index: usize,
         new_facet: usize,
     },
-    /// ω₀(n_i, n_j) changes sign for ridge-adjacent facets i, j.
+    /// sign(ω₀(a_i, a_j)) changes for ridge-adjacent facets i, j.
     OmegaFlip {
         facet_i: usize,
         facet_j: usize,
@@ -224,8 +224,8 @@ struct InputRow {
 ///    Differentiating: d_ji · v + a_ji · dv/dt = 0 ⟹ dv/dt = −A_v⁻¹ (d_{det} · v)
 ///    where A_v = [a_{j1}; ...; a_{j4}] and (d_{det} · v)_i = d_{ji} · v.
 ///    For non-incident facet j: slack = 1 − a_j · v, rate = −d_j · v − a_j · dv/dt.
-/// 2. **ω₀ flip:** ω₀(n_i, n_j) changes sign for ridge-adjacent facets.
-///    n_k(t) = (a_k + t·d_k) / |a_k + t·d_k|, so ω₀ changes as normals rotate.
+/// 2. **ω₀ flip:** sign(ω₀(a_i, a_j)) changes for ridge-adjacent facets.
+///    ω₀(a_i(t), a_j(t)) is quadratic in t; exact roots via quadratic formula.
 /// 3. **Dual vertex degeneration:** |a_k + t·d_k| → 0.
 ///
 fn compute_step_bound_detailed(
@@ -321,26 +321,36 @@ fn compute_step_bound_detailed(
     }
 
     // --- ω₀ sign preservation for ridge-adjacent pairs ---
-    // ω₀(n_i, n_j) where n_k = a_k / |a_k|.
-    // First-order: dω₀/dt ≈ ω₀(d_i/|a_i|, n_j) + ω₀(n_i, d_j/|a_j|)
-    // (ignoring the projection terms from |a_k| changing, which are second-order
-    // when d_k is not parallel to a_k).
+    // sign(ω₀(n_i, n_j)) = sign(ω₀(a_i, a_j)) since |a_k| > 0 and ω₀ is bilinear.
+    // Along the path a_k(t) = a_k + t·d_k, bilinearity gives:
+    //   ω₀(a_i(t), a_j(t)) = c + b·t + a·t²
+    // where c = ω₀(a_i, a_j), b = ω₀(d_i, a_j) + ω₀(a_i, d_j), a = ω₀(d_i, d_j).
+    // Sign flips at the smallest positive root of this quadratic.
     for ridge in &skeleton.ridges {
         let i = ridge.facets[0];
         let j = ridge.facets[1];
-        let a_i_norm = duals[i].norm();
-        let a_j_norm = duals[j].norm();
-        let n_i = duals[i] / a_i_norm;
-        let n_j = duals[j] / a_j_norm;
-        let omega_ij = omega0(&n_i, &n_j);
+        let c = omega0(&duals[i], &duals[j]);
+        let b = omega0(&direction[i], &duals[j]) + omega0(&duals[i], &direction[j]);
+        let a = omega0(&direction[i], &direction[j]);
 
-        // Approximate rate using projected direction components
-        let d_omega = omega0(&(direction[i] / a_i_norm), &n_j)
-            + omega0(&n_i, &(direction[j] / a_j_norm));
+        // Find smallest positive root of a·t² + b·t + c = 0
+        let roots = if a.abs() > EPS_NUMERICAL_ZERO {
+            let disc = b * b - 4.0 * a * c;
+            if disc < 0.0 {
+                vec![]
+            } else {
+                let sqrt_disc = disc.sqrt();
+                vec![(-b - sqrt_disc) / (2.0 * a), (-b + sqrt_disc) / (2.0 * a)]
+            }
+        } else if b.abs() > EPS_NUMERICAL_ZERO {
+            // Linear: b·t + c = 0
+            vec![-c / b]
+        } else {
+            vec![]
+        };
 
-        if omega_ij.abs() > EPS_NUMERICAL_ZERO && d_omega.abs() > EPS_NUMERICAL_ZERO {
-            let t_flip = -omega_ij / d_omega;
-            if t_flip > 0.0 && t_flip < best.t_max {
+        for t_flip in roots {
+            if t_flip > EPS_NUMERICAL_ZERO && t_flip < best.t_max {
                 best = BoundaryEvent {
                     t_max: t_flip,
                     event: EventType::OmegaFlip {
