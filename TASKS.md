@@ -11,7 +11,7 @@ Master task list for thesis completion. **Deadline: mid-April 2026.**
 - **Dependencies:** State what blocks a task. If it's Jörn-gated, say so explicitly.
 - **Scope:** This file tracks WHAT needs doing. HOW is in skills, conventions, and logbooks.
 
-**Current state (2026-03-26):** No thesis chapter is publishable yet. Experiments have data but writeups are noisy and the thesis doesn't tell a coherent story. Procedural layer fully rewritten and ready for testing. Progress rate on track.
+**Current state (2026-03-26):** No thesis chapter is publishable yet. Experiments have data but writeups are noisy and the thesis doesn't tell a coherent story. Procedural layer fully rewritten and ready for testing. Progress rate on track. Build audit (2026-03-26): library clean (323 tests, clippy clean), 3 experiment binaries broken by API drift (gradient-search, visualization, orbit-recovery), all others build and run correctly.
 
 **Priority:** Thesis coherence + experiment quality > code refactors. Code refactors only matter if they unblock thesis content or experiment correctness.
 
@@ -19,15 +19,16 @@ Master task list for thesis completion. **Deadline: mid-April 2026.**
 
 ## gradient-search experiment
 
-**Status (2026-03-23):** Pipeline validated, computation not yet run at scale.
+**Status (2026-03-26):** Does not compile. Blocked on API migration.
 
 Two-binary pipeline: `generate_seeds` → `seeds.jsonl` → `gradient_search` → `results.jsonl`. H-only gradient ascent with step-bound overshoot (crosses combinatorial boundaries) + wiggle. Interruptible/resumable. Branch: `gradient-search`.
 
+**Build failure (2026-03-26):** Imports nonexistent `capacity_derivatives_h`, `volume_derivatives_h`, `normals_f64()`, `heights_f64()`. Library was refactored to dual-vertex `_a` API but this experiment was never migrated. Requires reworking derivative calls and step-bound computation to use `capacity_derivatives_a` / `volume_derivatives_a`.
+
 **Next steps:**
-1. Run production computation (270 seeds, ~10 min)
-2. Upgrade to simplified gradient API after merge from other agent
-3. Add slurm orchestration script for LICCA scaling
-4. Analyze results, produce figures
+1. **Migrate to `_a` API** — see `handoffs/experiment-api-fixes.md`
+2. Run production computation (270 seeds, ~10 min locally, trivially parallelizable on LICCA)
+3. Analyze results, produce figures
 
 See `experiments/gradient-search/logbook.md` for details.
 
@@ -112,13 +113,27 @@ The thesis is currently a dump of results, not a coherent narrative. Experiments
 - What depth does each experiment need in the thesis? (full section / brief mention / appendix / omit)
 
 **Known gaps:**
-- `sys-optimization` needs a redesign, not just modernization — didn't use proper gradients, didn't look at cuts
+- `sys-optimization` needs a redesign, not just modernization — didn't use proper gradients, didn't look at cuts. v2 vision: combine gradient ascent + overshoot (from gradient-search) + facet-splitting (from hko-neighborhood Phase B) + wiggle. Not blocked on dual-vertex refactor but benefits from it (cleaner gradient code, no gauge freedom).
 - `crosspolytope` Phase 2 TODO: update known_polytopes.rs (tracked in its logbook)
 - `hko-neighborhood` Phase C (2026-03-23) verified first-order necessary condition for local max in F=10 (n,h)-space via LP. See `hko-local-maximality` task for next steps.
 
+**Build audit (2026-03-26):** 3 experiments broken by API drift:
+- `gradient-search` + `generate-seeds`: nonexistent `capacity_derivatives_h` etc. (dual-vertex migration)
+- `visualization`: `recover_base_point` → `recover_and_verify`, `build_directed_adjacency_matrix` → `build_transition_matrix`
+- `orbit-recovery`: same `recover_base_point` / `verify_orbit` rename
+- Also: hko-neighborhood triggers Q error panic at E=1.68e-6 (threshold 1e-6) on perturbed HKO — marginal, threshold may be too tight for near-degenerate polytopes.
+
+See `handoffs/experiment-api-fixes.md` for the fix batch.
+
 **Experiment ideas:** See `IDEAS.md` (root).
 
-Depends on: Jörn scoping the thesis story. Derivative-related experiments also depend on dual-vertex-parameterization (library derivative API).
+**New experiment ideas (2026-03-26, discussion with Jörn):**
+- **Dense 2D slice** around HKO2024 — map the sys=1 level set. Most interpretable as 2D extension of lagrangian-products' rotation sweep. See `handoffs/dense-2d-slice.md`.
+- **Higher polygon Lagrangian products** — LP(5,7), LP(7,7) etc. untested, HKO came from LP(5,5).
+- **Dimension scaling** — how does max-achievable-sys scale with F for random polytopes? Scattered data exists but no systematic study.
+- **Pentagon-pair landscape** — what makes LP(5,5) special vs LP(4,6), LP(3,7)? Systematic (n,m,θ) sweep at higher resolution.
+
+Depends on: Jörn scoping the thesis story. Derivative-related experiments also depend on dual-vertex-parameterization (library derivative API, now mostly complete).
 
 ---
 
@@ -188,17 +203,21 @@ Direction (2026-03-22, Jörn): Thesis will introduce both (n_i, h_i) and a_i = n
 
 **Motivation from Phase C (2026-03-23):** The LP test for HKO local maximality works in R^{50} ambient with 10 gauge directions, requiring careful bookkeeping (40 effective DOF, tangent projection). In a_i-space this would be a clean R^{40} LP with no gauge.
 
-**Current state:** Code stores `dual_vertices` (a_i) as primary representation, computes (n_i, h_i) on demand. `build_qp` already uses a_i. But `build_augmented_system`, `derivatives.rs`, and all experiment gradient code use (n_i, h_i).
+**Current state (2026-03-26):** Library API is done. Most experiment migration complete. Math.tex migration not started.
 
-**Work items:**
-1. **Math:** Write the a_i-only KKT formulation and gradient formulas in math.tex. The formulas are: ∂A/∂a_k = envelope theorem on Q(β) = (1/2) Σ_{i<j} β_i β_j ω₀(a_{σ(i)}, a_{σ(j)}), constraint A^T β = 0, 1^T β = 1. Capacity A = 1/(2Q). (Jörn to verify the derivation.)
-2. **Library API:** Add `pub fn capacity_derivatives_a(...)` to `derivatives.rs` returning ∂c_EHZ/∂a_k ∈ R^4 per facet.
-3. **Experiment migration:** Replace (n,h) gradient code in hko-neighborhood, gradient-descent, sys-optimization with library API calls.
-4. **Math.tex migration:** Update `kkt/math.tex` and `algorithms/math.tex` from (n_i, h_i) to a_i.
+- ✅ `capacity_derivatives_a()` and `volume_derivatives_a()` exist in `derivatives.rs`, tested (FD cross-check)
+- ✅ `build_qp` uses a_i internally
+- ✅ 4/5 gradient experiments migrated: sys-optimization, hko-neighborhood, gradient-descent, omega-obstacle
+- ❌ gradient-search: imports nonexistent `_h` functions (does not compile)
+- ❌ math.tex migration: `kkt/math.tex` and `algorithms/math.tex` still use (n_i, h_i) notation
+- ❌ Jörn verification: `[lem:cap-derivative]` and `[lem:vol-derivative]` in sys-optimization/math.tex marked `\begin{unverified}`
+- ❌ `[lem:dual-vertex-qp]`: TODO in qp_assembly.rs:58-61 — prove a_i QP formulation recovers same optimal action as (n,h)
 
-**Library derivative API:** The library computes c_EHZ but provides no ∂c_EHZ/∂a_i. Needed by multiple experiments and the subdifferential analysis for local maximality.
-
-**Experiment code duplication:** Three experiments independently implement ∂sys/∂h and ∂sys/∂n in (n, h) space (~2100 + 700 + 600 LOC across hko-neighborhood, gradient-descent, sys-optimization) plus Phase C's Python reimplementation. Once a_i-only formulation is settled, replace all with a library API.
+**Remaining work items:**
+1. **gradient-search migration** — see `handoffs/experiment-api-fixes.md`. Agent task, small.
+2. **Math.tex migration** — rewrite `kkt/math.tex` and `algorithms/math.tex` to a_i notation. Agent task, medium.
+3. **Jörn verifies derivative lemmas** — `[lem:cap-derivative]`, `[lem:vol-derivative]` in experiments/sys-optimization/math.tex.
+4. **Write `[lem:dual-vertex-qp]` proof** — mathematical equivalence of a_i and (n,h) QP formulations. Agent drafts, Jörn verifies.
 
 ---
 
