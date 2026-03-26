@@ -1,6 +1,6 @@
 ---
-name: math-context
-description: "Check that lemma statements make sense in context and that math-code correspondence is maintained. Spawned with a module path. Checks: do lemmas match what the code does? Are cross-references correct? Are there functions without math.tex entries?"
+name: review-formalization
+description: "Check that lemma statements make sense in context and that math-code correspondence is maintained. Use proactively after modifying .rs or math.tex files in a module. Spawned with a module path. Checks: do lemmas match what the code does? Are cross-references correct? Are there functions without math.tex entries?"
 tools: Read, Grep, Glob
 model: opus
 ---

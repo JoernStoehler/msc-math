@@ -1,6 +1,6 @@
 ---
-name: claim-verify
-description: "Verify that factual claims in a logbook or thesis section correspond to actual data and code. Spawned with a file to verify. Checks numbers against JSONL, code claims against grep, citations against .bib."
+name: review-claims
+description: "Verify that factual claims in a logbook or thesis section correspond to actual data and code. Use proactively after writing logbook entries or thesis content with numerical claims. Spawned with a file to verify. Checks numbers against JSONL, code claims against grep, citations against .bib."
 tools: Read, Grep, Glob, Bash
 model: sonnet
 ---
@@ -25,7 +25,7 @@ For each factual claim in the document:
 
 - Every number must have a verifiable source. If the document doesn't cite one, flag it.
 - If you cannot verify a claim (data file missing, code too complex), report it as UNVERIFIABLE, not as wrong.
-- Do not check mathematical correctness of proofs — that's math-review's job.
+- Do not check mathematical correctness of proofs — that's review-proof's job.
 
 ## Output format
 

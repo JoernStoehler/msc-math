@@ -26,4 +26,4 @@ Post-compaction replays messages with the same UUIDs. Always deduplicate by UUID
 - Chronological factual report answering the specific questions asked
 - Use Jörn's exact words when quoting
 - Flag gaps where information was likely lost to compaction
-- Do not speculate about what might have happened — report only what the transcript shows
+- Do not speculate about what might have happened

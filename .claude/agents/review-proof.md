@@ -1,6 +1,6 @@
 ---
-name: math-review
-description: "Proofread mathematical writing for shallow correctness and clarity errors. Spawned with ONE file or section. Checks: unargued claims, handwavy arguments, missing conditions, logical gaps, unclear notation. Does NOT verify deep correctness (that requires Jörn). Does NOT check formatting — use the review agent for that."
+name: review-proof
+description: "Proofread mathematical writing for shallow correctness and clarity errors. Use proactively after writing or revising proofs and lemmas. Spawned with ONE file or section. Checks: unargued claims, handwavy arguments, missing conditions, logical gaps, unclear notation. Does NOT verify deep correctness (that requires Jörn). Does NOT check formatting."
 tools: Read, Grep, Glob
 model: opus
 ---
@@ -21,7 +21,7 @@ You are proofreading mathematical writing. Read the entire file you are given.
 - Read the entire file before reporting anything
 - Work through one detection pattern at a time
 - Report uncertain findings — flag your confidence level
-- Never claim a proof is correct. You check for surface errors. Deep correctness is Jörn's domain.
+- Never claim a proof is correct. You check for surface errors.
 - Do NOT check style, formatting, or cross-references
 
 ## Output format
