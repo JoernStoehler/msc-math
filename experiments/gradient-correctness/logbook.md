@@ -2,9 +2,7 @@
 
 ## Motivation
 
-The library provides analytical gradients ∂sys/∂a_k via `capacity_derivatives_a` and `volume_derivatives_a` (envelope theorem for capacity, chain rule through h=1/|a|, n=a/|a| for volume). These are used by multiple optimization and analysis experiments. This experiment validates the gradients under increasingly adversarial conditions to understand where they're reliable and where they break down.
-
-The envelope theorem derivation assumes a unique action-minimizing orbit with strict complementarity. Real polytopes can violate or nearly violate these assumptions.
+The library provides analytical gradients ∂sys/∂a_k via `capacity_derivatives_a` and `volume_derivatives_a`. These are used by multiple optimization and analysis experiments. This experiment validates the gradients under increasingly adversarial conditions to understand where they're reliable and where they break down.
 
 ## Status
 
@@ -12,25 +10,21 @@ The envelope theorem derivation assumes a unique action-minimizing orbit with st
 
 ## Research questions
 
-1. **Generic polytopes:** Does the analytical gradient match finite differences across directions in R^{4F}? What sampling strategy is needed — along gradient, random directions, coordinate-aligned? How does accuracy depend on FD step size and polytope dimension?
+1. **Generic polytopes:** Does the analytical gradient match finite differences? What sampling strategy works in R^{4F} — along gradient, random directions, coordinate-aligned? How does accuracy depend on FD step size and polytope dimension?
 
 2. **Non-generic geometry:** Is the gradient correct for Lagrangian products (which have symmetry-degenerate orbits) and other polytopes with symmetry groups? What about polytopes where multiple orbits achieve near-identical action?
 
-3. **Near-degeneracy:** What happens when the gap between the best and second-best orbit action is small? The envelope theorem requires a unique minimizer — how does the gradient behave as this assumption is approached?
+3. **Near-degeneracy:** What happens when the gap between the best and second-best orbit action is small? How does the gradient behave as the minimizer becomes non-unique?
 
-4. **Redundant halfspaces:** If we introduce a halfspace that barely cuts the polytope (or doesn't cut it at all), the gradient with respect to that facet should be zero (or nearly so). Is it?
+4. **Redundant halfspaces:** If we introduce a halfspace that barely cuts the polytope, what happens to the gradient for that facet?
 
 ## Design notes
 
 - A shared validation harness (analytical vs FD comparison, error metrics) should serve all phases.
-- Phase 3 (near-degeneracy) likely needs instrumentation beyond just "different polytopes" — e.g., logging the action gap, tracking which orbit the solver picks on each FD perturbation.
-- The existing `capacity_derivatives_a_fd` and `volume_derivatives_a_fd` in `crates/src/derivatives.rs` provide FD baselines.
-- Existing FD validation in `derivatives.rs` tests only the hypercube. This experiment should cover a much broader range of polytopes.
+- Question 3 likely needs instrumentation beyond just "different polytopes" — e.g., logging the action gap, tracking which orbit the solver picks on each FD perturbation.
+- Existing `capacity_derivatives_a_fd` and `volume_derivatives_a_fd` in `crates/src/derivatives.rs` provide FD baselines. Currently tested only on the hypercube.
+- Check the derivative lemmas in `experiments/sys-optimization/math.tex` and `crates/src/derivatives.rs` for what assumptions the formulas rely on.
 
 ## Predecessor experiments
 
-This experiment supersedes the gradient validation aspects of:
-- **sys-optimization** Phases 1, 2, 4 (sensitivity analysis, single steps, validity testing)
-- Parts of **correctness** (which tests capacity axioms, not gradient correctness)
-
-The optimization aspects of sys-optimization (Phase 3) move to a separate experiment.
+This experiment supersedes the gradient validation aspects of sys-optimization (Phases 1, 2, 4). The optimization aspects of sys-optimization (Phase 3) move to a separate experiment.
