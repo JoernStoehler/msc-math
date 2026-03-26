@@ -371,7 +371,7 @@ fn main() {
     let polytopes: Vec<(&str, Polytope4D)> = known_polytopes::all_known()
         .into_iter()
         .filter(|kp| kp.polytope.facet_count() <= 10)
-        .map(|kp| (kp.name, kp.polytope))
+        .map(|kp| (kp.name, kp.polytope.clone()))
         .collect();
 
     println!("=== Q Error Bound Experiment ===\n");

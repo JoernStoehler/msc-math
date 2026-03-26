@@ -936,7 +936,7 @@ fn main() {
         polytopes.push((
             "regression_hypercube".to_string(),
             "regression".to_string(),
-            kp.polytope,
+            kp.polytope.clone(),
             Some(kp.capacity),
         ));
     }
