@@ -33,8 +33,8 @@ EVENT_COLORS = {
 DIR_COLORS = {
     "gradient": "#E91E63",
     "neg_gradient": "#9C27B0",
-    "random": "#2196F3",
-    "coordinate": "#4CAF50",
+    "dense_random": "#2196F3",
+    "sparse_random": "#4CAF50",
 }
 
 # ============================================================================
@@ -104,7 +104,7 @@ print("  boundary_tmax_distribution.png")
 # ============================================================================
 
 fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
-dir_types = ["gradient", "neg_gradient", "random", "coordinate"]
+dir_types = ["gradient", "neg_gradient", "dense_random", "sparse_random"]
 data_by_dir = {}
 for row in anatomy:
     dt = row["direction_type"]
@@ -226,7 +226,7 @@ if gradient:
 # ============================================================================
 
 fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
-for dt in ["gradient", "neg_gradient", "random", "coordinate"]:
+for dt in ["gradient", "neg_gradient", "random"]:
     vals = sorted(row["t_max"] for row in anatomy
                   if row["direction_type"] == dt
                   and row["event_type"] != "unbounded"

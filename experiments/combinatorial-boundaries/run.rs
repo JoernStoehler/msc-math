@@ -44,10 +44,11 @@ use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktResult};
 /// Maximum facet count to process (HK2017 cost is exponential).
 const MAX_FACET_COUNT: usize = 10;
 
-/// Number of random directions to probe per polytope.
-/// 10 gives reasonable coverage of the direction sphere while keeping
-/// per-polytope runtime dominated by the capacity evaluations in Phases 2-3.
-const N_RANDOM_DIRECTIONS: usize = 10;
+/// Number of dense random directions per polytope (uniform on S^{4F-1}).
+const N_DENSE_RANDOM: usize = 5;
+
+/// Number of sparse random directions per polytope (one random facet perturbed).
+const N_SPARSE_RANDOM: usize = 5;
 
 /// Maximum step size cap (prevents infinite steps when no combinatorial bound exists).
 const MAX_STEP_SIZE: f64 = 100.0;
@@ -400,6 +401,11 @@ fn compute_step_bound_detailed(
 // ============================================================================
 
 /// Build the set of probe directions for a polytope in dual-vertex space R^{4F}.
+///
+/// Three categories:
+/// - Gradient (+ negative): the optimization-relevant direction
+/// - Dense random: uniform on S^{4F-1}, all facets perturbed simultaneously
+/// - Sparse random: one randomly chosen facet perturbed, rest zero
 fn build_directions(
     d_sys_a: &[Vector4<f64>],
     f: usize,
@@ -428,8 +434,8 @@ fn build_directions(
         });
     }
 
-    // 3. Random directions (uniform on S^{4F-1} via Gaussian normalization)
-    for i in 0..N_RANDOM_DIRECTIONS {
+    // 3. Dense random directions (uniform on S^{4F-1} via Gaussian normalization)
+    for i in 0..N_DENSE_RANDOM {
         let raw: Vec<Vector4<f64>> = (0..f)
             .map(|_| {
                 Vector4::new(
@@ -444,21 +450,29 @@ fn build_directions(
         if norm > EPS_NUMERICAL_ZERO {
             let normalized: Vec<Vector4<f64>> = raw.iter().map(|v| v / norm).collect();
             dirs.push(Direction {
-                dir_type: "random".to_string(),
+                dir_type: "dense_random".to_string(),
                 index: i,
                 d: normalized,
             });
         }
     }
 
-    // 4. Coordinate directions (one component of one facet at a time)
-    for k in 0..f {
-        for c in 0..4 {
+    // 4. Sparse random directions (perturb one random facet with a random unit 4-vector)
+    for i in 0..N_SPARSE_RANDOM {
+        let facet_idx = rand::Rng::gen_range(rng, 0..f);
+        let raw: Vector4<f64> = Vector4::new(
+            StandardNormal.sample(rng),
+            StandardNormal.sample(rng),
+            StandardNormal.sample(rng),
+            StandardNormal.sample(rng),
+        );
+        let norm = raw.norm();
+        if norm > EPS_NUMERICAL_ZERO {
             let mut d = vec![Vector4::zeros(); f];
-            d[k][c] = 1.0;
+            d[facet_idx] = raw / norm;
             dirs.push(Direction {
-                dir_type: "coordinate".to_string(),
-                index: k * 4 + c,
+                dir_type: "sparse_random".to_string(),
+                index: i,
                 d,
             });
         }
@@ -951,7 +965,8 @@ fn main() {
                 total_crossing += 1;
             }
 
-            // Phase 3: Gradient crossing
+            // Phase 3: Gradient crossing (on all probes — validates that gradient
+            // is stable except at orbit switches, not just at orbit switches)
             if RUN_PHASE_3 {
                 if let Some(mut grad_row) =
                     evaluate_gradient_crossing(duals, &dir.d, &boundary)

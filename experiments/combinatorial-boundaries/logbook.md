@@ -47,67 +47,69 @@ Requires: `random-sweep/random-sweep.jsonl` and `random-product-sweep/random-pro
 
 ## Results (2026-03-26)
 
-All directions and perturbations work directly in dual-vertex (a) space: a'_k(t) = a_k + t·d_k.
+All directions and perturbations work directly in dual-vertex (a) space: a'_k(t) = a_k + t·d_k. The ω₀ sign flip detection uses sign(ω₀(a_i, a_j)) directly (not unit normals) — ω₀(a_i(t), a_j(t)) is quadratic in t by bilinearity, so flip times are exact roots.
 
 ### Dataset
 
 - 140 polytopes (60 random F=5-10, 80 Lagrangian products F=6-10)
-- ~44 directions per polytope: 1 gradient, 1 neg-gradient, 10 random, 4F coordinate (one per component per facet)
-- 6160 anatomy rows, 5644 crossing attempts, 5531 successful crossings, 5531 gradient rows
+- 12 directions per polytope: 1 gradient, 1 neg-gradient, 5 dense random (uniform on S^{4F-1}), 5 sparse random (one random facet perturbed)
+- 1680 anatomy rows, 1516 successful crossings, 1516 gradient rows
 
 ### RQ1: What causes combinatorial type changes?
 
 | Event type | Count | Fraction |
 |------------|-------|----------|
-| Incidence flip | 4221 | 68.5% |
-| ω₀ flip | 1937 | 31.4% |
-| Unbounded | 2 | 0.0% |
+| Incidence flip | 1073 | 63.9% |
+| ω₀ flip | 606 | 36.1% |
 
-(anatomy JSONL, all 6160 rows)
+(anatomy JSONL, all 1680 rows, 1 unbounded excluded)
 
-**Two kinds of boundaries.** Incidence flips (vertex gains a new facet) are the most common. ω₀ flips (ω₀(n_i, n_j) changes sign for ridge-adjacent facets) are the second-most common and occur because a-space directions rotate normals. No dual-vertex degeneration events (directions are unit-normalized).
+**Two kinds of boundaries.** Incidence flips (vertex gains a new facet) dominate. ω₀ flips (sign(ω₀(a_i, a_j)) changes for ridge-adjacent facets) are the second-most common.
 
-### RQ2: sys is continuous; orbits switch 10% of the time
+### RQ2: sys is continuous; orbits switch at 7.7% of boundaries
 
-sys is continuous at all 5531 tested boundaries: max |Δsys| = 3.34e-3 (crossing JSONL, boundary_sys_continuity.png).
+sys is continuous at all 1516 tested boundaries: max |Δsys| = 3.86e-4 (crossing JSONL, boundary_sys_continuity.png).
 
-**Orbit switches occur at 10% of boundaries** (550/5531). Broken down by event type:
-- Incidence flips: 8.8% orbit switch rate (339/3845)
-- ω₀ flips: 12.5% orbit switch rate (211/1686)
+**Orbit switch rate depends strongly on direction sparsity:**
 
-ω₀ flips are slightly more likely to trigger orbit switches than incidence flips.
+| Direction type | Crossings | Orbit switches | Rate |
+|----------------|-----------|----------------|------|
+| Sparse random | 642 | 90 | 14.0% |
+| Gradient | 140 | 5 | 3.6% |
+| Neg gradient | 74 | 3 | 4.1% |
+| Dense random | 660 | 18 | 2.7% |
+
+(crossing JSONL, construction_ok_after=true rows)
+
+**Sparse perturbations cause 5× more orbit switches than dense perturbations** (14% vs 2.7%). Perturbing a single facet is a targeted change that is much more likely to flip the optimal orbit than a smooth perturbation of all facets. This is a key structural finding: the orbit landscape has many boundaries in "single-facet" directions but few in "all-facet" directions.
 
 ### RQ3: Gradient is discontinuous at orbit-switching boundaries
 
-| Metric | Median | p95 | Max |
-|--------|--------|-----|-----|
-| Gradient angle change | 0.002° | 6.7° | 75.2° |
+| Metric | Median | Max |
+|--------|--------|-----|
+| Gradient angle change | 0.002° | 70.2° |
 
-(gradient JSONL, all 5531 rows)
+(gradient JSONL, all 1516 rows)
 
-8.1% of boundaries have gradient angle change > 1°, 3.9% have > 10°. The large gradient jumps correlate with orbit switches: when the optimal orbit changes, the gradient can rotate by up to 75°.
-
-**Key implication for optimization:** gradient-based search must handle sudden direction changes at ~10% of boundaries. A step that crosses such a boundary may overshoot badly if it assumes the gradient is constant.
+The gradient is effectively constant at non-switching boundaries (median 0.002°) but can rotate by up to 70° at orbit-switching boundaries. Phase 3 runs on all probes, confirming that gradient stability away from orbit switches is not an assumption but a validated observation.
 
 ### RQ4: Boundary density
 
-**Boundary distance decreases with F** (boundary_tmax_vs_F.png). Gradient directions hit boundaries soonest (boundary_density_cdf.png).
-
-**Gradient directions** encounter boundaries earliest, followed by neg-gradient, then random, then coordinate. Coordinate directions have a long tail because single-component perturbations are less constrained.
+**Boundary distance decreases with F** (boundary_tmax_vs_F.png). Gradient and sparse directions hit boundaries sooner than dense random (boundary_density_cdf.png).
 
 ### Crossing success rate
 
-98% of boundary crossings succeed (5531/5644). The 113 failures are from near-degenerate capacity computation at the boundary (KKT solver panics on small eigenvalues).
+100% of boundary crossings succeed (1516/1516). No construction or capacity failures.
 
 ## Interpretation
 
-**sys is continuous but not smooth.** The systolic ratio is continuous across all combinatorial boundaries (as expected from the min-of-continuous-functions structure of c_EHZ). But the gradient can jump by up to 75° when the optimal orbit switches.
+**sys is continuous but not smooth.** The systolic ratio is continuous across all combinatorial boundaries (consistent with the min-of-continuous-functions structure of c_EHZ). The gradient can jump by up to 70° when the optimal orbit switches.
 
-**Orbit switches happen at ~10% of first boundaries.** This means that even the first gradient step can encounter an orbit switch. Optimization strategies need to detect and handle these transitions rather than assuming smooth behavior within a "large" combinatorial cell.
+**Sparsity is the key predictor of orbit switches.** Sparse perturbations (one facet) cause 14% orbit switches; dense perturbations (all facets) cause 2.7%. This means: moving one facet at a time is much more likely to change which orbit is optimal. Gradient ascent (dense, structured) encounters orbit switches rarely (~3.6%), which is favorable for optimization — but boundary-crossing strategies that overshoot into sparse directions would encounter orbit switches frequently.
 
-**ω₀ flips are significant.** They account for 31% of boundaries and have a higher orbit-switch rate (12.5%) than incidence flips (8.8%). Any boundary-crossing strategy that only handles incidence flips would miss a third of the boundaries.
+**ω₀ flips are significant.** They account for 36% of boundaries. Any step-bound computation that only tracks incidence flips would miss a third of the boundaries.
 
-**Boundary density constrains gradient ascent.** The gradient direction hits boundaries faster than random directions, confirming that gradient ascent inherently pushes toward combinatorial boundaries.
+**Boundary density constrains gradient ascent.** The gradient direction hits boundaries faster than dense random directions.
 
 ## Open questions
 
