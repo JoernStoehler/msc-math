@@ -261,3 +261,9 @@ What observations would **increase** confidence:
 - **sys-optimization** (`experiments/sys-optimization/`): Gradient-based optimization of sys for 140 polytopes including HKO2024. Provides the analytical gradient framework (envelope theorem for capacity derivatives, swept-volume for volume derivatives) that Phase A uses. Phase 3 iterative ascent starting from HKO2024 shows no improvement. Best sys across all polytopes: 0.878 (source: sys-optimization data — verify against that experiment's JSONL). No polytope reaches sys > 1.
 
 - **gradient-descent** (`experiments/gradient-descent/`) — gradient ascent on F=10 polytopes. Related infrastructure for optimizing sys via gradient steps.
+
+## Data regeneration (2026-03-26)
+
+Data regenerated against current library (post dual-vertex migration). Phase B splitting now has 536 directions (was 212 before b9eedda deletion). Same conclusion: all cuts decrease sys, best Δsys = -4.49e-9.
+
+Note: Q error panic (E=1.68e-6, threshold 1e-6) triggered during gradient ascent on a perturbed HKO pentagon. Caught by `catch_unwind` — experiment continued. The near-degenerate KKT system (|λ_min| near machine epsilon) inflates the error bound. See `handoffs/experiment-api-fixes.md` for the threshold investigation task.

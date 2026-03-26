@@ -164,8 +164,7 @@ struct InputRow {
     name: String,
     #[serde(alias = "facet_count")]
     facet_count: usize,
-    normals: Vec<[f64; 4]>,
-    heights: Vec<f64>,
+    dual_vertices: Vec<[f64; 4]>,
 }
 
 // KKT solver: uses library solve_kkt_for (crates/src/kkt/saddle_point_solver.rs).
@@ -802,15 +801,13 @@ fn load_polytopes_from_jsonl(path: &std::path::Path, source: &str) -> Vec<(Strin
             continue;
         }
 
-        let normals: Vec<Vector4<f64>> = row
-            .normals
+        let duals: Vec<Vector4<f64>> = row
+            .dual_vertices
             .iter()
-            .map(|n| Vector4::new(n[0], n[1], n[2], n[3]))
+            .map(|a| Vector4::new(a[0], a[1], a[2], a[3]))
             .collect();
 
-        match Polytope4D::from_f64(
-            normals.iter().zip(row.heights.iter()).map(|(n, &h)| n / h).collect(),
-        ) {
+        match Polytope4D::from_f64(duals) {
             Ok(p) => polytopes.push((row.name, source.to_string(), p)),
             Err(e) => {
                 eprintln!("  {}: construction failed: {e}", row.name);

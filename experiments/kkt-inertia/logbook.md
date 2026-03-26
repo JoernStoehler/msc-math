@@ -56,5 +56,9 @@ Output is printed to stdout. Captured output is stored in `kkt_inertia_output.tx
 
 - Only 7 polytopes tested (known polytopes with F <= 10).
 - No random polytopes in the dataset.
-- The 5 hko_pentagon mismatches are threshold artifacts, not investigated further.
-- TODO for Jorn: verify the threshold-sensitivity interpretation of the 5 mismatches (see eigenvalue diagnostics in `kkt_inertia_output.txt`).
+- The hko_pentagon mismatches are threshold artifacts, not investigated further.
+- TODO for Jorn: verify the threshold-sensitivity interpretation of the mismatches (see eigenvalue diagnostics in `kkt_inertia_output.txt`).
+
+## Data regeneration (2026-03-26)
+
+Regenerated against current library (post dual-vertex migration). Now 8 mismatches (was 5), all in hko_pentagon, all at machine-epsilon eigenvalue thresholds. Same pattern as before — no new failure mode.

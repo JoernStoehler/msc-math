@@ -124,3 +124,7 @@ All three items previously flagged are resolved:
 - **gradient-descent:** Scales up Phase 3 to ~1000 polytopes. Uses kkt_instrumented.rs copied from this experiment.
 - **pentagon-perturb:** Complementary approach — random perturbations of the known counterexample.
 - **random-sweep, random-product-sweep:** Source of the 140 starting polytopes.
+
+## Data regeneration (2026-03-26)
+
+Regenerated against current library (post dual-vertex migration). Fixed InputRow deserialization (`normals`/`heights` → `dual_vertices`). Phases 1-2 complete. Phase 3 panicked at polytope 123/140: `Q error bound unexpectedly large: E=7.15e-6, |r|=6.03e-8, |lambda_min|=2.29e-9` in saddle_point_solver.rs:504. The gradient-stepped polytope had a near-degenerate KKT system. Phase 4 (validity) not regenerated. Partial data committed (950 iteration rows). See `handoffs/experiment-api-fixes.md` for the Q error threshold investigation.
