@@ -116,12 +116,12 @@ The thesis is currently a dump of results, not a coherent narrative. Experiments
 - `crosspolytope` Phase 2 TODO: update known_polytopes.rs (tracked in its logbook)
 - `hko-neighborhood` Phase C (2026-03-23) verified first-order necessary condition for local max in F=10 (n,h)-space via LP. See `hko-local-maximality` task for next steps.
 
-**Gradient experiment redesign (2026-03-26, Jörn):** The three gradient experiments (`sys-optimization`, `gradient-descent`, `gradient-search`) evolved incrementally and overlap significantly. Replace with cleanly scoped experiments:
-1. **gradient-correctness** (scaffolded) — Is ∂sys/∂a_k correct? Generic polytopes, non-generic geometry, near-degeneracy, redundant halfspaces. See `experiments/gradient-correctness/logbook.md`.
-2. **optimization-landscape** (not yet scaffolded) — What does the optimization landscape look like? Gradient ascent from diverse starting points, step-bound barrier, general vs Lagrangian. Supersedes gradient-descent + sys-optimization Phase 3.
-3. **boundary-crossing** (not yet scaffolded) — Can we escape local optima? Overshoot + wiggle + cuts from converged points of #2. Supersedes gradient-search.
+**Gradient experiment redesign (2026-03-26, Jörn):** The three gradient experiments (`sys-optimization`, `gradient-descent`, `gradient-search`) evolved incrementally and overlap significantly. Replace with three cleanly scoped experiments:
+1. **gradient-correctness** (scaffolded) — Is ∂sys/∂a_k correct? Generic polytopes, non-generic geometry, near-degeneracy, redundant halfspaces.
+2. **combinatorial-boundaries** (scaffolded) — What happens at combinatorial type boundaries? How does sys/gradient behave across them? How dense are they?
+3. **sys-search** (scaffolded) — Gradient-based search for sys > 1. Single-step characterization + multi-step search with boundary-crossing strategies (overshoot, wiggle, cuts).
 
-Delete old experiments once new ones are confirmed better. #3 depends on #2's output.
+Dependency chain: #1 validates the gradient → #2 characterizes the obstacle → #3 applies the tool. #3 can start independently but benefits from #2's findings. Delete old experiments once new ones are confirmed better.
 
 **Build audit (2026-03-26):** visualization and orbit-recovery fixed. gradient-search still broken (API drift, but will be superseded by boundary-crossing). Q error panic threshold (E=1.68e-6, threshold 1e-6) on near-degenerate polytopes — see `handoffs/experiment-api-fixes.md`.
 
