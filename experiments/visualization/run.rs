@@ -7,16 +7,13 @@
 /// Trajectories include:
 /// - All closed Reeb orbits found by the HK2017 algorithm (min-action and others)
 /// - Displaced variants of the min-action orbit to illustrate twisting
-use nalgebra::Vector4;
+use nalgebra::{DMatrix, Vector4};
 use serde::Serialize;
 use std::fs::File;
 use std::io::BufWriter;
 use std::path::Path;
-// TODO: `recover_base_point` and `verify_orbit` combined into
-//   `algorithms::hk2017::orbit_recovery::recover_and_verify` (wave 4, subagent #10)
-use symplectic::algorithms::hk2017::orbit_recovery::{recover_base_point, verify_orbit};
-// `build_directed_adjacency_matrix` moved from hk2017 to algorithms::facet_adjacency (wave 1, subagent #5)
-use symplectic::algorithms::facet_adjacency::build_directed_adjacency_matrix;
+use symplectic::algorithms::hk2017::orbit_recovery::recover_and_verify;
+use symplectic::algorithms::facet_adjacency::build_transition_matrix;
 // TODO: `combinations` moves to `algorithms::hk2017::permutations::combinations` (wave 3, subagent #6)
 // TODO: `EhzResult` moves to `algorithms::hk2017::EhzResult` (wave 3, subagent #6)
 use symplectic::algorithms::hk2017::{combinations, EhzResult};
@@ -109,9 +106,9 @@ struct CollectedOrbit {
 
 /// Check if a cyclic permutation forms an adjacent cycle.
 /// Copied from crates/src/algorithms/hk2017/mod.rs (3 lines, not pub).
-fn is_adjacent_cycle(perm: &[usize], adj: &[Vec<bool>]) -> bool {
+fn is_adjacent_cycle(perm: &[usize], adj: &DMatrix<bool>) -> bool {
     let m = perm.len();
-    (0..m).all(|k| adj[perm[k]][perm[(k + 1) % m]])
+    (0..m).all(|k| adj[(perm[k], perm[(k + 1) % m])])
 }
 
 /// Collect ALL valid Reeb orbits for the polytope.
@@ -121,7 +118,7 @@ fn is_adjacent_cycle(perm: &[usize], adj: &[Vec<bool>]) -> bool {
 /// Returns orbits sorted by action (ascending).
 fn collect_all_orbits(polytope: &symplectic::geom::polytope::Polytope4D) -> Vec<CollectedOrbit> {
     let f = polytope.facet_count();
-    let adj = build_directed_adjacency_matrix(polytope);
+    let adj = build_transition_matrix(polytope);
 
     let mut orbits: Vec<CollectedOrbit> = Vec::new();
 
@@ -189,14 +186,13 @@ fn orbit_to_viz_trajectory(
     label: String,
 ) -> Option<VizTrajectory> {
     let result = orbit_to_ehz_result(orbit);
-    let recovery = recover_base_point(polytope, &result)?;
-    let verification = verify_orbit(polytope, &result, &recovery);
+    let recovery = recover_and_verify(polytope, &result)?;
 
     // Validate orbit quality
-    if verification.closure_error > 1e-6 {
+    if recovery.closure_error > 1e-6 {
         eprintln!(
             "  WARN orbit {}: closure_error={:.2e} (too large, skipping)",
-            label, verification.closure_error
+            label, recovery.closure_error
         );
         return None;
     }
@@ -288,7 +284,7 @@ fn generate_displaced_trajectories(
     skeleton: &Skeleton,
 ) -> Vec<VizTrajectory> {
     let result = orbit_to_ehz_result(orbit);
-    let recovery = match recover_base_point(polytope, &result) {
+    let recovery = match recover_and_verify(polytope, &result) {
         Some(r) => r,
         None => return vec![],
     };
@@ -308,10 +304,10 @@ fn generate_displaced_trajectories(
     let mut trajectories = Vec::new();
     for (i, disp) in directions.iter().enumerate() {
         // Try +ε first; if that pushes outside K, try -ε (the other side of the ridge).
-        let mut displaced_start = recovery.base_point + DISPLACEMENT_EPS * disp;
+        let mut displaced_start = recovery.breakpoints[0] + DISPLACEMENT_EPS * disp;
         let mut traj = reeb_trajectory::simulate_with(polytope, displaced_start, start_facet, max_segments, 1e-6);
         if traj.segments.is_empty() {
-            displaced_start = recovery.base_point - DISPLACEMENT_EPS * disp;
+            displaced_start = recovery.breakpoints[0] - DISPLACEMENT_EPS * disp;
             traj = reeb_trajectory::simulate_with(polytope, displaced_start, start_facet, max_segments, 1e-6);
         }
         if traj.segments.is_empty() {
@@ -476,7 +472,7 @@ fn generate_placeholder_trajectory(
 // ============================================================================
 
 /// Look up a known polytope by name. Returns `None` for unknown names.
-fn lookup_known(name: &str) -> Option<KnownPolytope> {
+fn lookup_known(name: &str) -> Option<&'static KnownPolytope> {
     known_polytopes::all_known()
         .into_iter()
         .find(|kp| kp.name == name)

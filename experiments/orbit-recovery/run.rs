@@ -21,13 +21,10 @@ use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
-// TODO: `recover_base_point` and `verify_orbit` combined into
-//   `algorithms::hk2017::orbit_recovery::recover_and_verify` (wave 4, subagent #10)
-use symplectic::algorithms::hk2017::orbit_recovery::{recover_base_point, verify_orbit};
-// TODO: `ehz_capacity` will be re-exported from top-level (wave 4, subagent #16).
-//   Canonical path: `symplectic::algorithms::hk2017::ehz_capacity` (wave 3, subagent #6)
-use symplectic::algorithms::hk2017::ehz_capacity;
+use symplectic::algorithms::hk2017::orbit_recovery::{recover_and_verify, OrbitRecovery};
+use symplectic::algorithms::hk2017::{ehz_capacity, EhzResult};
 use symplectic::geom::known_polytopes;
+use symplectic::geom::polytope::Polytope4D;
 use symplectic::random::generate_random_polytopes;
 
 const SEED: u64 = 42;
@@ -63,6 +60,23 @@ struct OrbitRecoveryRow {
     time_recovery_ms: f64,
 }
 
+/// Compute on-facet error: max over active segments of |<a_{sigma(k)}, breakpoint_k> - 1|.
+///
+/// This metric was previously returned by the library's `verify_orbit`, but is
+/// no longer part of `OrbitRecovery`. We compute it here from breakpoints and
+/// dual vertices.
+fn compute_on_facet_error(polytope: &Polytope4D, result: &EhzResult, recovery: &OrbitRecovery) -> f64 {
+    let duals = polytope.dual_vertices_f64();
+    let sigma = &result.result.best_permutation;
+    (0..sigma.len())
+        .filter(|&k| recovery.dwell_times[k] > 0.0)
+        .map(|k| {
+            let a = &duals[sigma[k]];
+            (a.dot(&recovery.breakpoints[k]) - 1.0).abs()
+        })
+        .fold(0.0_f64, f64::max)
+}
+
 fn main() {
     let t0 = Instant::now();
     let mut rng = ChaCha8Rng::seed_from_u64(SEED);
@@ -95,10 +109,10 @@ fn main() {
         let time_capacity_ms = t_cap.elapsed().as_secs_f64() * 1000.0;
 
         let t_rec = Instant::now();
-        let recovery = match recover_base_point(&kp.polytope, &result) {
+        let recovery = match recover_and_verify(&kp.polytope, &result) {
             Some(r) => r,
             None => {
-                eprintln!("  FAIL {} (base point recovery failed)", kp.name);
+                eprintln!("  FAIL {} (orbit recovery failed)", kp.name);
                 failures += 1;
                 total += 1;
                 continue;
@@ -106,9 +120,9 @@ fn main() {
         };
         let time_recovery_ms = t_rec.elapsed().as_secs_f64() * 1000.0;
 
-        let verification = verify_orbit(&kp.polytope, &result, &recovery);
-
         let active_facets = recovery.dwell_times.iter().filter(|&&t| t > 0.0).count();
+        let on_facet_error = compute_on_facet_error(&kp.polytope, &result, &recovery);
+        let action_error = (recovery.action - result.result.capacity).abs();
 
         let row = OrbitRecoveryRow {
             name: kp.name.to_string(),
@@ -117,13 +131,13 @@ fn main() {
             capacity: result.result.capacity,
             active_facets,
             total_segments: result.result.best_permutation.len(),
-            solution_dim: recovery.solution_dim,
+            solution_dim: 0, // no longer exposed by library; recorded as 0
             max_violation: recovery.max_violation,
-            closure_error: verification.closure_error,
-            on_facet_error: verification.on_facet_error,
-            inside_k_error: verification.inside_k_error,
-            computed_action: verification.computed_action,
-            action_error: verification.action_error,
+            closure_error: recovery.closure_error,
+            on_facet_error,
+            inside_k_error: recovery.max_violation,
+            computed_action: recovery.action,
+            action_error,
             time_capacity_ms,
             time_recovery_ms,
         };
@@ -133,19 +147,18 @@ fn main() {
         //   - closure/on_facet/violation: up to ~1e-7 (threshold 1e-6)
         //   - action: up to ~1.8e-6 (threshold 1e-5, looser because action
         //     accumulates rounding over the full orbit reconstruction)
-        let valid = verification.closure_error < 1e-6
-            && verification.on_facet_error < 1e-6
+        let valid = recovery.closure_error < 1e-6
+            && on_facet_error < 1e-6
             && recovery.max_violation < 1e-6
-            && verification.action_error < 1e-5;
+            && action_error < 1e-5;
 
         eprintln!(
-            "  {} F={} dim={} viol={:.2e} close={:.2e} action_err={:.2e} {}",
+            "  {} F={} viol={:.2e} close={:.2e} action_err={:.2e} {}",
             kp.name,
             kp.polytope.facet_count(),
-            recovery.solution_dim,
             recovery.max_violation,
-            verification.closure_error,
-            verification.action_error,
+            recovery.closure_error,
+            action_error,
             if valid { "OK" } else { "FAIL" }
         );
 
@@ -176,10 +189,10 @@ fn main() {
             let time_capacity_ms = t_cap.elapsed().as_secs_f64() * 1000.0;
 
             let t_rec = Instant::now();
-            let recovery = match recover_base_point(poly, &result) {
+            let recovery = match recover_and_verify(poly, &result) {
                 Some(r) => r,
                 None => {
-                    eprintln!("  FAIL {name} (base point recovery failed)");
+                    eprintln!("  FAIL {name} (orbit recovery failed)");
                     failures += 1;
                     total += 1;
                     continue;
@@ -187,9 +200,9 @@ fn main() {
             };
             let time_recovery_ms = t_rec.elapsed().as_secs_f64() * 1000.0;
 
-            let verification = verify_orbit(poly, &result, &recovery);
-
             let active_facets = recovery.dwell_times.iter().filter(|&&t| t > 0.0).count();
+            let on_facet_error = compute_on_facet_error(poly, &result, &recovery);
+            let action_error = (recovery.action - result.result.capacity).abs();
 
             let row = OrbitRecoveryRow {
                 name: name.clone(),
@@ -198,30 +211,29 @@ fn main() {
                 capacity: result.result.capacity,
                 active_facets,
                 total_segments: result.result.best_permutation.len(),
-                solution_dim: recovery.solution_dim,
+                solution_dim: 0, // no longer exposed by library; recorded as 0
                 max_violation: recovery.max_violation,
-                closure_error: verification.closure_error,
-                on_facet_error: verification.on_facet_error,
-                inside_k_error: verification.inside_k_error,
-                computed_action: verification.computed_action,
-                action_error: verification.action_error,
+                closure_error: recovery.closure_error,
+                on_facet_error,
+                inside_k_error: recovery.max_violation,
+                computed_action: recovery.action,
+                action_error,
                 time_capacity_ms,
                 time_recovery_ms,
             };
 
             // See threshold rationale in known-polytopes block above.
-            let valid = verification.closure_error < 1e-6
-                && verification.on_facet_error < 1e-6
+            let valid = recovery.closure_error < 1e-6
+                && on_facet_error < 1e-6
                 && recovery.max_violation < 1e-6
-                && verification.action_error < 1e-5;
+                && action_error < 1e-5;
 
-            if !valid || recovery.solution_dim > 0 {
+            if !valid {
                 eprintln!(
-                    "  {name} F={f} dim={} viol={:.2e} close={:.2e} action_err={:.2e} {}",
-                    recovery.solution_dim,
+                    "  {name} F={f} viol={:.2e} close={:.2e} action_err={:.2e} {}",
                     recovery.max_violation,
-                    verification.closure_error,
-                    verification.action_error,
+                    recovery.closure_error,
+                    action_error,
                     if valid { "OK" } else { "FAIL" }
                 );
             }
