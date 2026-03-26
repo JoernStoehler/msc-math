@@ -1,47 +1,36 @@
 ---
 name: figure-review
-description: "Review figure PNGs for visual quality without polluting the main agent's context window. Reads each PNG, checks against the python-conventions skill's figure quality rules, reports findings. Does not edit code."
+description: "Review figures for quality: checks the full chain of .py script, .tex inclusion, and .png output. Spawned with an experiment name or list of figure files. Reports findings, does not edit."
 tools: Read, Grep, Glob
 model: sonnet
-skills:
-  - python-conventions
 ---
 
-You are a figure review subagent. Your job is to visually inspect PNG figures and report quality issues.
+You are reviewing figures for visual quality and convention compliance.
 
-## Inputs (provided in the spawning prompt)
+## What to check
 
-- One or more PNG file paths to review
-- Optionally: the Python script that generated them (for context on what the figure should show)
+For each figure, review the full chain:
 
-## Workflow
+**Python script (.py):**
+- Uses `figure_config.py` setup and named size constants (FIGSIZE_SINGLE, etc.)
+- No hardcoded figsize, dpi, or bbox_inches in savefig()
+- Math labels use `r"$...$"`
+- Consistent colors for same data categories
 
-1. Load the `python-conventions` skill (preloaded via frontmatter) — use its figure quality rules as your checklist
-2. Read `experiments/figure_config.py` to understand expected sizing/fonts
-3. For each PNG: read it with the Read tool (you are multimodal), then work through every checklist item
-4. Write findings to the report path specified by the main agent (default: `/tmp/figure-review.md`)
+**LaTeX inclusion (.tex):**
+- 1:1 pass-through: `\includegraphics{file.png}` with no `width=` or `scale=`
+- Caption states observations, not interpretations
+- No interpretation trigger words in caption ("suggests", "indicates", "because")
 
-## Rules
+**PNG output:**
+- Readable at 5.4" text width (thesis rendering size)
+- Labels and legends legible, not clipped
+- Axis labels include quantity name or are self-evident
+- Multi-panel figures: consistent axis scales where cross-panel comparison is intended
 
-- Do NOT edit any files. Report only.
-- Work through checklist items ONE AT A TIME per figure. Don't batch.
-- Figures render at 5.4" text width in the thesis. Judge readability at that size.
-- If a figure looks fine on all checklist items, say so explicitly — "no issues found" is a valid and useful result.
+## Output format
 
-## Report format
-
-```
-## [filename.png]
-
-### Title collisions
-- Finding: ...
-
-### Label clipping
-- Finding: ...
-
-(one section per checklist item)
-
-## Summary
-- N figures reviewed, M issues found
-- Issues by severity: X FIX / Y FLAG
-```
+Per figure:
+- Which files checked (.py, .tex, .png)
+- Findings with severity (FIX / FLAG)
+- Summary: pass / issues found

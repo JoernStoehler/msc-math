@@ -23,7 +23,7 @@ crates/                    Rust library (the core)
     algorithms/            different algorithms for the EHZ capacity 
     derivatives.rs         derivative of the capacity in the dual vertices
     dataset.rs             polytope datasets
-  main.tex                 correctness proofs for the entire library (includes subfolder math.tex files)
+  math.tex                 correctness proofs for the entire library (includes all repo math.tex files)
 
 experiments/               each experiment is a self-contained directory
   <name>/
@@ -32,22 +32,83 @@ experiments/               each experiment is a self-contained directory
     analyze.py             postprocessing, analysis, figures and tables
     logbook.md             experiment logbook, what was done, results, learnings, ideas
     math.tex               correctness proofs for the experiment
-    thesis.tex             writeup of the experiment takeaways for the thesis
-
+    
 thesis/
-  main.tex                 master document, includes chapters and experiment writeups
+  main.tex                 master document
   *.tex                    chapter files
   bibliography.bib         citations
   build/                   latexmk output
 
-papers/<abreviationYear>/*.tex  arXiv paper sources for reading
-handoffs/*.md              task handoff files for future sessions
+papers/
+  <abreviationYear>/
+    *.tex                  arXiv paper sources for reading
 
+handoffs/
+  *.md                     temporary task handoff files for future sessions
 TASKS.md                   master task list, project management
+
 CLAUDE.md, .claude/        extra information for claude code agents
 ```
 
+**Navigating source files:** Every source file has a header explaining purpose and context (Rust: `//!` doc comments, Python: docstring, LaTeX: `%` block). Module-level files (mod.rs, main .tex includes) additionally document the module group's architecture.
+
 **Key architectural patterns:**
-- math.tex files live alongside code, not in thesis/. They contain proofs and derivations that back the code. Thesis chapters reference these but don't duplicate them.
-- Each experiment is self-contained: own binary, own data, own logbook, own math. No shared state between experiments.
-- The library (`crates/`) is the single source of truth for computation. Experiments call into it.
+- The thesis is independent of both library and experiments code, documentation and math.tex files. Unlike the rest of the repo, it is optimized for human readers and for final publication, not for the agents who develop the project. It heavily copies from the math.tex files, uses produced asset figures and tables, and presents algorithms, theorems, experiment results, and other insights from the project to the human readers. Jörn reviews main.pdf, not .tex files.
+- Each experiment is self-contained to avoid refactoring and rerunning churn. Stable code that is duplicated by multiple experiments regularly is moved to the library. Jörn reviews math.pdf and logbook.md, not .tex, .rs, .py files.
+- The library (`crates/`) is the single source of truth for proven stable algorithms. The experiments copy the library code when code modifications are needed just for one experiment. Jörn reviews math.pdf, not .rs files.
+- math.tex files live alongside code in the library and experiments, and are independent of thesis/. They prove the correctness of the code and of other mathematical claims, and they both documentation for developers about how the algorithm works on a mathematical level, and they ensure code is correct by formalizing claims and proving claims in LaTeX. Jörn reviews math.pdf, not math.tex files.
+- Polished workflows and conventions and best practice tips are provided to the agents, so that they work effectively and minimize the use of Jörn's limited time. Agent time is priced at $0/h, due to the flatrate Anthropic Max $200/mo subscription, but Jörn's time is limited.
+
+## Core Rule
+
+Never write a factual claim without verifying it against evidence in the same session. "The code does X" requires reading the code. "The data shows Y" requires reading the data. When verification is impossible, mark with `% [TODO: JÖRN -` to track and assign it to Jörn for manual verification.
+
+**Citation verification:** Never produce author names or paper titles from memory. Verify against `thesis/bibliography.bib` or `papers/`. Agents confidently produce wrong names (e.g. "Cieliebak-Hutchings" instead of the correct "Chaidez-Hutchings").
+
+**External systems:** When documenting external systems (LICCA cluster, university services), link to official documentation — do not paraphrase it. Agent paraphrases go stale silently and are unverifiable.
+
+## Decision Authority
+
+| | Cheap to verify | Expensive to verify |
+|---|---|---|
+| **Easy rollback** | Act freely | Act, then Jörn verifies |
+| **Hard rollback** | Discuss first | Discuss first |
+
+Never without Jörn's instruction: destructive operations, merging to `main`, modifying `.claude/` procedural files.
+
+## Session Workflow
+
+**Scope** (Jörn + agent): Jörn scopes. Agents provide investigation findings, and suggest scope expansion/contraction, but Jörn decides. Agents ask clarifying questions to ensure they and Jörn understand the scope the same way. Agents track scope provenance in the plan file.
+
+**Plan → implement → review** (agent autonomous): No Jörn involvement unless specifically requested. Agents may return to earlier phases.
+
+**Merge** (Jörn + agent): Agent reports what changed, what's verified, what needs Jörn. Jörn gates merges to `main`.
+
+**Long sessions:** Update the plan file as you work — it survives compaction, working memory does not. Write design decisions and their WHY into the plan. After compaction, read the plan file to recover context.
+
+## Git
+
+- Always use local `main`, never `origin/main`.
+- Before committing: `cargo test --release --lib` passes, `cargo clippy --lib -- -D warnings` is clean.
+
+## Environment
+
+- Docker devcontainer at `/workspaces/msc-math`
+- Rust 1.94, Python 3.12, TeX Live, gh CLI
+- `rm` is aliased to `trash-put` for safety
+- `archaeology/` contains untrusted files from an abandoned predecessor repo
+
+## Quick Commands
+
+```bash
+# Rust
+cd crates/ && cargo test --release --lib          # default test suite (<5s)
+cd crates/ && cargo clippy --lib -- -D warnings   # lint
+cd crates/ && cargo test --release -- --ignored   # full suite (slow)
+
+# Thesis
+cd thesis/ && latexmk && ./check-build.sh         # build + check
+
+# Experiments
+cd experiments/ && cargo build --release          # build experiment binaries
+```
