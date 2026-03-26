@@ -532,9 +532,16 @@ fn run_q2(base_dir: &str) {
     let rotation_angles = [PI / 7.0, PI / 5.0, PI / 3.0];
     let random_pairs = [(3, 3), (3, 4), (4, 4), (5, 5)];
     let random_per_pair = 5;
+    // Skip polytopes with F > 8 to avoid F=10 bottleneck (LP(5,5)=F10, LP(4,5)=F9).
+    // Q1 already covers F=9-10 generic polytopes; Q2 focuses on structural questions.
+    let max_facet_q2: usize = 8;
 
     // Regular Lagrangian products
     for &(n1, n2) in &regular_pairs {
+        if n1 + n2 > max_facet_q2 {
+            println!("  Q2: skipping LP({},{}) — F={} > {}", n1, n2, n1 + n2, max_facet_q2);
+            continue;
+        }
         let (qn, qh) = regular_polygon_2d(n1, 1.0);
         let (pn, ph) = regular_polygon_2d(n2, 1.0);
         let polytope = lagrangian_product(&qn, &qh, &pn, &ph).expect("regular LP");
@@ -554,6 +561,9 @@ fn run_q2(base_dir: &str) {
 
     // Rotated Lagrangian products
     for &(n1, n2) in &regular_pairs {
+        if n1 + n2 > max_facet_q2 {
+            continue;
+        }
         let (qn, qh) = regular_polygon_2d(n1, 1.0);
         for (ai, &theta) in rotation_angles.iter().enumerate() {
             let (pn, ph) = regular_polygon_2d(n2, 1.0);
@@ -577,6 +587,9 @@ fn run_q2(base_dir: &str) {
     // Random Lagrangian products
     let mut rng = ChaCha8Rng::seed_from_u64(SEED_BASE + 100);
     for &(n1, n2) in &random_pairs {
+        if n1 + n2 > max_facet_q2 {
+            continue;
+        }
         for j in 0..random_per_pair {
             let (qn, qh) = random_polygon_2d(n1, 0.5, 2.0, &mut rng);
             let (pn, ph) = random_polygon_2d(n2, 0.5, 2.0, &mut rng);

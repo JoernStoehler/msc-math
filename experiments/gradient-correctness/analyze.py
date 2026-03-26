@@ -112,7 +112,7 @@ def plot_q1_dimension(data):
             errs = [r["max_rel_error"] for r in target_data if r["facet_count"] == fc]
             box_data.append(errs)
 
-        bp = ax.boxplot(box_data, labels=[str(f) for f in facet_counts],
+        bp = ax.boxplot(box_data, tick_labels=[str(f) for f in facet_counts],
                         patch_artist=True)
         for patch in bp["boxes"]:
             patch.set_facecolor(TARGET_COLORS[target])
@@ -168,7 +168,7 @@ def plot_q2_nongeneric(q1_data, q2_data):
                 labels.append(class_labels.get(cls, cls))
 
         if box_data:
-            bp = ax.boxplot(box_data, labels=labels, patch_artist=True)
+            bp = ax.boxplot(box_data, tick_labels=labels, patch_artist=True)
             for patch in bp["boxes"]:
                 patch.set_facecolor(TARGET_COLORS[target])
                 patch.set_alpha(0.4)
