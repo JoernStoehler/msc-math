@@ -1,7 +1,7 @@
 <!--
 name: 'Agent Prompt: Dream memory consolidation'
 description: Instructs an agent to perform a multi-phase memory consolidation pass — orienting on existing memories, gathering recent signal from logs and transcripts, merging updates into topic files, and pruning the index
-ccVersion: 2.1.78
+ccVersion: 2.1.83
 variables:
   - MEMORY_DIR
   - MEMORY_DIR_CONTEXT
@@ -50,10 +50,10 @@ Focus on:
 
 ## Phase 4 — Prune and index
 
-Update `${INDEX_FILE}` so it stays under ${INDEX_MAX_LINES} lines. It's an **index**, not a dump — link to memory files with one-line descriptions. Never write memory content directly into it.
+Update `${INDEX_FILE}` so it stays under ${INDEX_MAX_LINES} lines AND under ~25KB. It's an **index**, not a dump — each entry should be one line under ~150 characters: `- [Title](file.md) — one-line hook`. Never write memory content directly into it.
 
 - Remove pointers to memories that are now stale, wrong, or superseded
-- Demote verbose entries: keep the gist in the index, move the detail into the topic file
+- Demote verbose entries: if an index line is over ~200 chars, it's carrying content that belongs in the topic file — shorten the line, move the detail
 - Add pointers to newly important memories
 - Resolve contradictions — if two files disagree, fix the wrong one
 

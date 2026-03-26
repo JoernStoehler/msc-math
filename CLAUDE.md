@@ -86,6 +86,8 @@ Never without Jörn's instruction: destructive operations, merging to `main`, mo
 
 **Long sessions:** Update the plan file as you work — it survives compaction, working memory does not. Write design decisions and their WHY into the plan. After compaction, read the plan file to recover context.
 
+**Subagents:** Delegate aggressively — N files → N parallel subagents. Subagents self-serve skills and rules (shared system prompt), no special prompting needed. Use review agents (review-proof, review-claims, review-formalization, etc.) proactively before presenting work.
+
 ## Git
 
 - Always use local `main`, never `origin/main`.

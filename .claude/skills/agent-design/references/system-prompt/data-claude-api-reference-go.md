@@ -1,7 +1,7 @@
 <!--
 name: 'Data: Claude API reference — Go'
 description: Go SDK reference
-ccVersion: 2.1.78
+ccVersion: 2.1.83
 -->
 # Claude API — Go
 
@@ -317,6 +317,23 @@ for _, block := range resp.Content {
 > **Deprecated:** `ThinkingConfigParamOfEnabled(budgetTokens)` (fixed-budget extended thinking) still works on Claude 4.6 but is deprecated. Use adaptive thinking above.
 
 To disable: `anthropic.ThinkingConfigParamUnion{OfDisabled: &anthropic.ThinkingConfigDisabledParam{}}`.
+
+---
+
+## Prompt Caching
+
+`System` is `[]TextBlockParam`; set `CacheControl` on the last block to cache tools + system together. For placement patterns and the silent-invalidator audit checklist, see `shared/prompt-caching.md`.
+
+```go
+System: []anthropic.TextBlockParam{{
+    Text:         longSystemPrompt,
+    CacheControl: anthropic.NewCacheControlEphemeralParam(), // default 5m TTL
+}},
+```
+
+For 1-hour TTL: `anthropic.CacheControlEphemeralParam{TTL: anthropic.CacheControlEphemeralTTLTTL1h}`. There's also a top-level `CacheControl` on `MessageNewParams` that auto-places on the last cacheable block.
+
+Verify hits via `resp.Usage.CacheCreationInputTokens` / `resp.Usage.CacheReadInputTokens`.
 
 ---
 

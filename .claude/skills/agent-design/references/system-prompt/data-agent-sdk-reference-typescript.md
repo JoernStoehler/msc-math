@@ -1,7 +1,7 @@
 <!--
 name: 'Data: Agent SDK reference — TypeScript'
 description: TypeScript Agent SDK reference including installation, quick start, custom tools, and hooks
-ccVersion: 2.1.78
+ccVersion: 2.1.83
 -->
 # Agent SDK — TypeScript
 
@@ -192,6 +192,7 @@ for await (const message of query({
         description: "Expert code reviewer for quality and security reviews.",
         prompt: "Analyze code quality and suggest improvements.",
         tools: ["Read", "Glob", "Grep"],
+        // Optional: skills, mcpServers for subagent customization
       },
     },
   },

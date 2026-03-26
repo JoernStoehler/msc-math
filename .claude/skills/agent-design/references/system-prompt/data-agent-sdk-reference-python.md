@@ -1,7 +1,7 @@
 <!--
 name: 'Data: Agent SDK reference — Python'
 description: Python Agent SDK reference including installation, quick start, custom tools via MCP, and hooks
-ccVersion: 2.1.78
+ccVersion: 2.1.83
 -->
 # Agent SDK — Python
 
@@ -218,6 +218,16 @@ async for message in query(
         print(f"Stop reason: {message.stop_reason}")  # e.g., "end_turn", "max_turns"
     elif isinstance(message, SystemMessage) and message.subtype == "init":
         session_id = message.data.get("session_id")  # Capture for resuming later
+```
+
+`AssistantMessage` includes per-turn `usage` data (a dict matching the Anthropic API usage shape) for tracking costs:
+
+```python
+from claude_agent_sdk import query, ClaudeAgentOptions, AssistantMessage
+
+async for message in query(prompt="...", options=ClaudeAgentOptions()):
+    if isinstance(message, AssistantMessage) and message.usage:
+        print(f"Input: {message.usage['input_tokens']}, Output: {message.usage['output_tokens']}")
 ```
 
 Typed task message subclasses are available for better type safety when handling subagent task events:

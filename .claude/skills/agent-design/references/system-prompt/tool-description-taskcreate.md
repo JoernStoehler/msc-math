@@ -1,7 +1,7 @@
 <!--
 name: 'Tool Description: TaskCreate'
 description: Tool description for TaskCreate tool
-ccVersion: 2.1.69
+ccVersion: 2.1.84
 variables:
   - CONDTIONAL_TEAMMATES_NOTE
   - CONDITIONAL_TASK_NOTES
@@ -35,7 +35,7 @@ NOTE that you should not use this tool if there is only one trivial task to do. 
 ## Task Fields
 
 - **subject**: A brief, actionable title in imperative form (e.g., "Fix authentication bug in login flow")
-- **description**: Detailed description of what needs to be done, including context and acceptance criteria
+- **description**: What needs to be done
 - **activeForm** (optional): Present continuous form shown in the spinner when the task is in_progress (e.g., "Fixing authentication bug"). If omitted, the spinner shows the subject instead.
 
 All tasks are created with status `pending`.
@@ -43,6 +43,5 @@ All tasks are created with status `pending`.
 ## Tips
 
 - Create tasks with clear, specific subjects that describe the outcome
-- Include enough detail in the description for another agent to understand and complete the task
 - After creating tasks, use TaskUpdate to set up dependencies (blocks/blockedBy) if needed
 ${CONDITIONAL_TASK_NOTES}- Check TaskList first to avoid creating duplicate tasks

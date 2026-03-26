@@ -1,7 +1,7 @@
 <!--
 name: 'Data: Claude API reference — Java'
 description: Java SDK reference including installation, client initialization, basic requests, streaming, and beta tool use
-ccVersion: 2.1.78
+ccVersion: 2.1.83
 -->
 # Claude API — Java
 
@@ -15,14 +15,14 @@ Maven:
 <dependency>
     <groupId>com.anthropic</groupId>
     <artifactId>anthropic-java</artifactId>
-    <version>2.16.1</version>
+    <version>2.17.0</version>
 </dependency>
 ```
 
 Gradle:
 
 ```groovy
-implementation("com.anthropic:anthropic-java:2.16.1")
+implementation("com.anthropic:anthropic-java:2.17.0")
 ```
 
 ## Client Initialization
@@ -259,7 +259,7 @@ Combine with `Thinking = ThinkingConfigAdaptive` for cost-quality control.
 
 ## Prompt Caching
 
-System message as a list of `TextBlockParam` with `CacheControlEphemeral`. Use `.systemOfTextBlockParams(...)` — the plain `.system(String)` overload can't carry cache control.
+System message as a list of `TextBlockParam` with `CacheControlEphemeral`. Use `.systemOfTextBlockParams(...)` — the plain `.system(String)` overload can't carry cache control. For placement patterns and the silent-invalidator audit checklist, see `shared/prompt-caching.md`.
 
 ```java
 import com.anthropic.models.messages.TextBlockParam;
@@ -275,6 +275,8 @@ import com.anthropic.models.messages.CacheControlEphemeral;
 ```
 
 There's also a top-level `.cacheControl(CacheControlEphemeral)` on `MessageCreateParams.Builder` and on `Tool.builder()`.
+
+Verify hits via `response.usage().cacheCreationInputTokens()` / `response.usage().cacheReadInputTokens()`.
 
 ---
 

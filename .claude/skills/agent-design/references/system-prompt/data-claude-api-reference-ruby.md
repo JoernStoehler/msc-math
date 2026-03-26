@@ -1,7 +1,7 @@
 <!--
 name: 'Data: Claude API reference — Ruby'
 description: Ruby SDK reference including installation, client initialization, basic requests, streaming, and beta tool runner
-ccVersion: 2.1.78
+ccVersion: 2.1.83
 -->
 # Claude API — Ruby
 
@@ -95,3 +95,24 @@ end
 ### Manual Loop
 
 See the [shared tool use concepts](../shared/tool-use-concepts.md) for the tool definition format and agentic loop pattern.
+
+---
+
+## Prompt Caching
+
+`system_:` (trailing underscore — avoids shadowing `Kernel#system`) takes an array of text blocks; set `cache_control` on the last block. Plain hashes work via the `OrHash` type alias. For placement patterns and the silent-invalidator audit checklist, see `shared/prompt-caching.md`.
+
+```ruby
+message = client.messages.create(
+  model: :"{{OPUS_ID}}",
+  max_tokens: 16000,
+  system_: [
+    { type: "text", text: long_system_prompt, cache_control: { type: "ephemeral" } }
+  ],
+  messages: [{ role: "user", content: "Summarize the key points" }]
+)
+```
+
+For 1-hour TTL: `cache_control: { type: "ephemeral", ttl: "1h" }`. There's also a top-level `cache_control:` on `messages.create` that auto-places on the last cacheable block.
+
+Verify hits via `message.usage.cache_creation_input_tokens` / `message.usage.cache_read_input_tokens`.
