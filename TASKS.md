@@ -93,9 +93,9 @@ Depends on: Jörn verifies the math. Agent writes drafts, Jörn reviews.
 - **LP(5,5) perturbations:** 100 random, all lower (pentagon-perturb experiment).
 
 **Next steps (priority order):**
-1. **Second-order analysis of 16 flat directions** — compute sys along each flat direction via finite differences. Determines whether first-order necessary condition → actual local max. Agent-executable. This is the critical gap.
+1. **Second-order analysis of flat directions** — compute sys along each flat direction via finite differences. Determines whether first-order necessary condition → actual local max. Agent-executable. This is the critical gap. Note (2026-03-26): the 16 flat directions were computed in (n,h)-space including gauge directions. After a_i migration, Phase C LP could be redone in clean R^{40} with no gauge — possibly fewer true flat directions. Consider waiting for migration or doing both.
 2. **Jörn verifies h-space proof** — Danskin + symmetry + Euler homogeneity argument in `experiments/hko-neighborhood/logbook.md` lines 151-156. ~15 min. Then formalize in math.tex.
-3. **Complete Phase B** (facet 5: 11/200 rows). Agent-executable, low priority.
+3. **Complete Phase B** — facet-splitting now has 536 directions (regenerated 2026-03-26, was 212). All decrease sys.
 4. **Convex-body direction** (Phases E/F in logbook) — Minkowski smoothing or F-refinement. Completely untested direction. Needs scoping: can billiard algorithm handle K+εB⁴?
 5. **Structural explanation** — why does pentagon geometry force 0 ∈ conv? Relates to golden ratio β-structure, order-10 symmetry. Jörn's domain.
 
@@ -134,6 +134,24 @@ Dependency chain: #1 validates the gradient → #2 characterizes the obstacle �
 - **Pentagon-pair landscape** — what makes LP(5,5) special vs LP(4,6), LP(3,7)? Systematic (n,m,θ) sweep at higher resolution.
 
 Depends on: Jörn scoping the thesis story. Derivative-related experiments also depend on dual-vertex-parameterization (library derivative API, now mostly complete).
+
+---
+
+## q-error-threshold
+
+**Status (2026-03-26):** Needs Jörn to review the math. Potentially blocks new gradient experiments.
+
+The KKT solver panics when the error bound E = |r| / |λ_min| exceeds 1e-6. This is triggered by near-degenerate polytopes (gradient-stepped or perturbed) where |λ_min| is tiny:
+- hko-neighborhood: E=1.68e-6 (|r|=6e-8, |λ_min| near eps). Caught by `catch_unwind`.
+- sys-optimization: E=7.15e-6 (|r|=6e-8, |λ_min|=2.29e-9). Uncaught, aborted Phase 3 at 123/140.
+
+The actual residual |r| is always small (~1e-8). The bound blows up because λ_min is near machine epsilon, not because the solution is wrong. The q-error experiment validated the 1e-6 threshold on 1.1M nodes — but those were all non-perturbed polytopes.
+
+**Question for Jörn:** Is E = |r| / |λ_min| the right error metric when λ_min → 0? The solution may still be accurate (small residual), but the bound is vacuous. Should we use a different metric for near-singular systems, or accept the panic and skip those polytopes?
+
+**Impact:** Any experiment that evaluates sys on gradient-stepped or perturbed polytopes (gradient-correctness, combinatorial-boundaries, sys-search) may hit this. Current workaround is `catch_unwind` + skip.
+
+**Location:** `crates/src/kkt/saddle_point_solver.rs:504`
 
 ---
 
