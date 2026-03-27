@@ -44,6 +44,15 @@ Empirically chosen constants: document rationale, motivating data point, limitat
 
 Never state performance without an inline benchmark citation. "~1ms" is a claim. "1.5-2.0ms for F=5-16 (criterion bench 2026-03-23)" is measured.
 
+## Panics
+
+Panics signal that something is wrong in the broader context — not in the local code, but in the external assumptions it relies on. Examples: a lemma has been proven wrong by the code, a deferred task needs to be done before proceeding, a calibration doesn't cover the input encountered.
+
+- Panics bubble up all the way to Jörn. Never catch panics (`catch_unwind`). Never convert panics to `None` or `Err`. Never skip inputs to avoid triggering a panic.
+- When a panic fires: investigate the panic message and comment, understand what deferred work or wrong assumption it signals, and report to Jörn. Jörn decides the fix.
+- Panic comments must explain the broader context: what assumption is violated, what investigation is needed, what deferred work is signaled. Not just "this shouldn't happen."
+- `Option<T>` returning `None` is not an error — it means "no value" (e.g. an orbit has no feasible solution). `Result<T, E>` with error types is for expected, handleable errors. Panics are for unexpected conditions requiring human investigation.
+
 ## Experiment binaries
 
 For `experiments/*.rs`: copy library code into the binary rather than modifying `crates/` for experiment-specific behavior. Only stable, validated code lives in `crates/`.
