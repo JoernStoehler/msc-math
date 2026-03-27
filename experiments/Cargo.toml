@@ -92,6 +92,10 @@ path = "gradient-search/run.rs"
 name = "sys_search"
 path = "sys-search/run.rs"
 
+[[bin]]
+name = "lagrangian_search"
+path = "lagrangian-search/run.rs"
+
 [dependencies]
 symplectic = { path = "../crates" }
 nalgebra = "0.33"
