@@ -124,12 +124,25 @@ The analytical gradients ∂c/∂a_k, ∂vol/∂a_k, ∂sys/∂a_k correctly pre
 4. Predict: D_d c = min_i(g_i · d) for each direction d
 5. Compare against actual capacity change via full `ehz_capacity` on the perturbed polytope
 
-**Design questions for Jörn:**
-- Gap threshold: what range of action gaps counts as "near-tied"? (Exact ties have measure zero; finite step sizes make near-ties relevant.)
-- Should volume and sys also get subdifferential treatment? (Volume is smooth — no orbit switching. Sys inherits capacity's non-smoothness.)
-- Should this live in Q5 here, or as a separate experiment?
+**Methodology (designed 2026-03-27, via /experiment-design workflow):**
 
-**Performance concern:** Full ehz_capacity on perturbed polytopes is expensive (exponential in F). May need to restrict to small F (≤7) or use a budget of perturbation evaluations.
+Core test (A): subdifferential prediction. For each polytope with near-tied orbits:
+1. Enumerate ALL certified orbits via `enumerate_all_orbits`
+2. For each orbit within generous gap threshold of the best, compute its gradient via `capacity_derivatives_a`
+3. For each random direction d: predict D_d c = min_i(g_i · d) over the included orbits
+4. Compute actual capacity change via full `ehz_capacity` on the perturbed polytope
+5. Check: |c(a+td) − c(a) − t · min_i(g_i · d)| / t → 0
+
+Diagnostic (B): record which orbit wins in the perturbed polytope (free — ehz_capacity already returns best_permutation). Reveals orbit switching.
+
+Gap-threshold sweep: enumerate once with a generous threshold (e.g. τ=1e-1), record each orbit's action in the JSONL. Filter in post-processing to study how prediction quality depends on how many near-tied orbits are included. No separate computation needed.
+
+**Design decisions (Jörn, 2026-03-27):**
+- Generous gap threshold for enumeration, filter in analysis (Jörn's suggestion — avoids redundant computation)
+- Sys: still open — volume is smooth (no orbit switching), sys inherits c's non-smoothness via quotient rule. Worth testing or implied?
+- F ∈ {5, 6, 7} to keep full ehz_capacity tractable on perturbed polytopes
+
+**Performance:** Full ehz_capacity is the bottleneck. At F=6 it's ~ms, F=7 still tractable. F≥8 gets slow. Use Q3's binned-gap-sampling approach to find polytopes at specific gap levels.
 
 ## Known issues
 
