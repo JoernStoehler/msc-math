@@ -200,6 +200,39 @@ Smaller gaps lead to earlier switching (at smaller t). Switching is rare at t �
 - Whether the switching boundaries are smooth manifolds (only their existence is observed)
 - Non-smooth optimization (e.g. subgradient methods) — the subdiff might still be useful for optimization even if it fails for first-order prediction at generic points
 
+## Smoothness framework (refined 2026-03-27)
+
+The smoothness of c_EHZ(a) decomposes into per-orbit and capacity-level questions.
+
+### Per-orbit: A_σ(a)
+
+For a fixed cyclic permutation σ, three questions:
+
+1. **Feasibility:** Does the KKT system for σ have a solution with β ≥ 0? The feasibility region {a : σ is feasible} is open (by continuity of the KKT solution). Its boundary is where some β_k → 0 — but this is not orbit "death": at the boundary, σ' = σ \ {k} is feasible with the same action (β_k = 0 for σ means the characteristic doesn't touch facet k, i.e. it's really orbit σ'). So feasibility boundaries are switching boundaries.
+
+2. **Uniqueness:** Is the KKT solution for σ unique at a? The KKT conditions form a linear saddle-point system; uniqueness holds when the matrix is non-singular. **Open question:** can the saddle-point matrix be singular at points where all β > 0? If so, A_σ(a) could have kinks even for fixed σ (the IFT argument requires non-degeneracy). The experiment does not test this — slope 2.00 at random polytopes is consistent with generic non-degeneracy, but doesn't rule out a codimension-1 singular locus.
+
+3. **Smoothness:** Where feasible and unique, A_σ(a) is C^∞ by the implicit function theorem applied to the KKT conditions. This is what Q1-Q4 test (fixed σ, slope 2.00). The C^∞ claim is [prop:capacity-piecewise-smooth](b).
+
+### Capacity: c(a) = min over feasible σ of A_σ(a)
+
+| Points | Smoothness | Mechanism |
+|--------|-----------|-----------|
+| Generic (unique minimizer, gap > 0) | C^∞ | c = A_σ* for unique best σ*; smooth by per-orbit (3) |
+| Switching boundary (r orbits tied, distinct gradients) | Lipschitz, **not C¹** | D_d c = min_i(∇A_σᵢ · d) depends on d; no gradient |
+| Degenerate tie (r orbits tied, matching gradients) | C¹, possibly not C² | Non-generic (codimension > codimension of tie) |
+
+Non-smoothness of c comes entirely from the min operation (orbit switching), not from individual A_σ failing.
+
+Additional subtlety: **orbit appearance.** Under perturbation, an orbit σ' that was infeasible at a can become feasible at a+td. If it appears with action below the current best, this is a switching event not detectable by enumerating orbits at the base point only. Q5 detects these via full ehz_capacity on the perturbed polytope (the perturbed_best_perm field), but cannot predict them from the base point's orbit landscape.
+
+### What this framework implies for the experiment
+
+- Q1-Q4 (fixed orbit, slope 2.00): confirms per-orbit smoothness (row 3 above) at generic random polytopes
+- Q5 (full ehz_capacity, slope 2.00 at generic points): trivially follows — c = A_σ* at generic points
+- The 12/600 Q1 outliers with slope < 1.90 over [-4,-1] are large-t artifacts: refitting over [-4,-2] leaves 1/600, and over [-6,-3] leaves 0/600. The quadratic approximation has limited radius at some polytopes (large cubic Taylor coefficient), not a C² failure.
+- Open: test at polytopes with small min(β) (probing the IFT boundary) and at polytopes where the KKT Jacobian is near-singular
+
 ## Known issues
 
 - **Q-correction panic:** `solve_kkt_for` panics on some near-degenerate polytopes. Caught via `catch_unwind` in `solve_kkt_safe`. Results in missing rows (perturbation skipped), not incorrect data.
