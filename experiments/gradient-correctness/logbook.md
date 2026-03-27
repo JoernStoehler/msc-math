@@ -6,7 +6,7 @@ The library provides analytical gradients ∂c/∂a_k and ∂vol/∂a_k via enve
 
 ## Status
 
-**v2 + Q5 complete.** Data generated 2026-03-27. v1 (FD cross-checking) is in git log — superseded because FD cross-checking tests agreement between two computations, not whether the output is a gradient. Q5 (orbit switching, subdifferential prediction) added 2026-03-27.
+**v2 + Q5 + Q5b complete. Q5c next.** Data generated 2026-03-27. v1 (FD cross-checking) is in git log — superseded. Q5b expanded to 12 polytope types (LP, simplex, hypercube, hko2024, G-orbit). Discovered orbit appearance failure and diagnosed root cause (boundary orbit A_σ only defined on half-space). New theorem [thm:subdiff-with-appearance] (math.tex Theorem 80) proposes direction-filtered subdifferential. Q5c will test it experimentally.
 
 ## Methodology
 
@@ -406,8 +406,27 @@ Figure: gc_q5b_boundary.png. Three panels (one per LP). Blue = subdiff traces, r
 
 **OQ8 status:** [partially answered] LP(4,4) provides a clean example of orbit appearance: length-4 → length-6 orbit under perturbation. This is the orbit contraction boundary: the expanding orbit has β_k = 0 at the base point.
 
-**OQ10. Extended subdiff formula accounting for orbit appearance.** [open, mathematical]
-The subdiff formula min_i(g_i · d) over base-point orbits fails when new orbits appear under perturbation. Could extend by including orbits at the feasibility boundary (β_k = 0) — these are exactly the orbits that may appear. By [lem:orbit-contraction], they have the same action as their contracted versions, so they're tied. Including them in the subdiff computation might fix the LP(4,4) prediction. This connects to Clarke's generalized gradient: the subdifferential should include all limiting gradients, including from approaching orbits.
+**OQ10. Direction-filtered subdiff formula.** [answered theoretically, Q5c will test]
+Root cause identified (2026-03-27): A_σ for a boundary orbit (β_k = 0) is only defined
+on the half-space of directions where β_k stays ≥ 0. The standard subdiff formula
+(Danskin's theorem) requires each function to be C¹ on a full neighborhood.
+
+**Attempts that failed:**
+- Including β ≥ 0 orbits in the subdiff: boundary gradients are degenerate (β_k = 0 → zero
+  contribution), identical to shorter orbit by orbit contraction. LP(4,4): 194 tied orbits,
+  slopes actually got worse (subdiff_gd = -0.53, actual/t = +0.16 — wrong sign).
+- Augmented subdiff (Op 2): compute appearing orbit's gradient at perturbed point. Works for
+  G-orbit n4_03 (slope 1.01 → 1.85) but not for LP(4,4)/hypercube (appearing orbit's g·d is
+  higher than base subdiff, so min doesn't change).
+
+**Fix [thm:subdiff-with-appearance] (math.tex Theorem 80):** Direction-dependent filter.
+For each direction d, include orbit σ in the min only if ∇_a β_k(σ; a₀) · d > 0 for all
+boundary indices k. This filters out orbits that become infeasible in direction d (their
+gradient describes motion into an infeasible region). The sensitivity ∇_a β_k comes from
+implicit differentiation of the KKT system: ∂x/∂a_j = -M⁻¹ (∂M/∂a_j) x₀.
+
+**Q5c plan:** Implement ∇_a β_k computation, apply direction filter, test on LP(4,4) and
+hypercube. Expected: filtered subdiff slope ≈ 2.
 
 ## Known issues
 
