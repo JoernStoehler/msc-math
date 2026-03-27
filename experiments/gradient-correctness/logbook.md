@@ -353,8 +353,8 @@ Polytopes: LP(3,3) F=6, LP(4,4) F=8, LP(5,5) F=10. Regular polygon with n sides 
 All three have distinct gradients among tied orbits — no degenerate ties with matching gradients.
 
 **Obs 10. Subdifferential convergence at LP(3,3) and LP(5,5) confirms [prop:capacity-smoothness-classification](b).**
-- LP(3,3): subdiff slope = 2.00 for all 10 directions. Single-orbit slope = 2.00 in 6/10 directions (where both orbits agree on g·d), slope = 1.00 in 4/10 directions (where they disagree). (gradient-correctness-q5b-symmetric.jsonl, polytope_id=q5b_lp3_3)
-- LP(5,5): subdiff slope = 2.00 for all 5 directions. Single-orbit slope = 1.00 for all 5 directions (with 20 tied orbits, the single-orbit gradient is always wrong). (gradient-correctness-q5b-symmetric.jsonl, polytope_id=q5b_lp5_5)
+- LP(3,3): subdiff slope ≈ 2 for all 10 directions (range 1.96–2.02 in [1e-5, 1e-2] fit; full-range fit gives 1.84 for dir 3 due to floating-point floor at tiny t). Single-orbit slope ≈ 2 in 6/10 directions (where both orbits agree on g·d), slope ≈ 1.00 in 4/10 directions (where they disagree). (gradient-correctness-q5b-symmetric.jsonl, polytope_id=q5b_lp3_3)
+- LP(5,5): subdiff slope ≈ 2 for all 5 directions (range 1.93–2.00 in full-range fit). Single-orbit slope ≈ 1.00 for all 5 directions (0.996–1.000; with 20 tied orbits, the single-orbit gradient is always wrong). (gradient-correctness-q5b-symmetric.jsonl, polytope_id=q5b_lp5_5)
 
 Interpretation: slope 2 for subdiff means the formula min_i(g_i · d) correctly predicts the directional derivative, and the O(t²) remainder comes from each per-orbit action being C². Slope 1 for single orbit confirms non-differentiability: at the switching boundary, no single gradient exists.
 
