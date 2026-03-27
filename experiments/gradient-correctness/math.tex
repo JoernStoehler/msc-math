@@ -72,7 +72,9 @@ We write $\beta_k(\sigma; a)$ for the $k$-th component
   A_\sigma(a) = \frac{1}{2\,Q(\sigma; a)}.
 \]
 An orbit~$\sigma$ is \emph{feasible} at~$a$ when
-$\beta(\sigma; a) \geq 0$ componentwise and $Q(\sigma; a) > 0$.
+$M_\sigma(a)$ is non-singular,
+$\beta(\sigma; a) \geq 0$ componentwise,
+and $Q(\sigma; a) > 0$.
 The EHZ capacity is
 \begin{equation}\label{eq:capacity-min}
   c(a) = \min\bigl\{A_\sigma(a) :
@@ -156,8 +158,10 @@ Write the KKT system for~$\sigma$ in block rows:
 \]
 Let $S' = \{1,\ldots,m\} \setminus \{k\}$ index the positions
 of~$\sigma'$.
-Let $H'$ and~$A'$ denote the submatrices
-obtained by deleting row/column~$k$.
+Let $H'$ denote the $(m{-}1) \times (m{-}1)$ submatrix of~$H$
+obtained by deleting row and column~$k$,
+and $A'$ the $(m{-}1) \times 4$ submatrix of~$A$
+obtained by deleting row~$k$.
 
 \emph{(a).}
 For $j \in S'$:
@@ -223,8 +227,8 @@ Solving gives~\eqref{eq:kkt-sensitivity}.
 \item[\textup{(a)}]
   \emph{Generic points.}
   If at~$a_0$ a unique orbit~$\sigma^*$ achieves the minimum
-  in~\eqref{eq:capacity-min}, with $M_{\sigma^*}(a_0)$ non-singular
-  and $\beta(\sigma^*; a_0) > 0$,
+  in~\eqref{eq:capacity-min}, with $\beta(\sigma^*; a_0) > 0$,
+  and every other feasible orbit has action strictly above~$c(a_0)$,
   then $c$ is $C^\infty$ in a neighborhood of~$a_0$,
   with gradient given by the envelope theorem formula
   (\textup{[lem:cap-derivative]}).
@@ -232,11 +236,11 @@ Solving gives~\eqref{eq:kkt-sensitivity}.
 \item[\textup{(b)}]
   \emph{Switching boundary (interior orbits).}
   If $r \geq 2$ orbits $\sigma_1, \ldots, \sigma_r$ achieve the
-  minimum, each with $\beta(\sigma_i; a_0) > 0$ and
-  $M_{\sigma_i}(a_0)$ non-singular,
-  and with distinct gradients
+  minimum, each with $\beta(\sigma_i; a_0) > 0$,
+  with distinct gradients
   ($\nabla_a A_{\sigma_i} \neq \nabla_a A_{\sigma_j}$
   for some~$i, j$),
+  and every other feasible orbit has action strictly above~$c(a_0)$,
   then $c$ is Lipschitz but not differentiable at~$a_0$.
   The directional derivative is
   $D_d\, c(a_0) = \min_{i=1,\ldots,r} \nabla_a A_{\sigma_i}(a_0) \cdot d$.
@@ -270,27 +274,33 @@ A_\sigma(a_0) - A_{\sigma^*}(a_0) > 0$ is preserved
 in a neighborhood, so $c(a) = A_{\sigma^*}(a)$ there.
 
 \emph{(b).}
-Each~$A_{\sigma_i}$ is $C^1$ locally
-(in fact $C^\infty$ by Lemma~\ref{lem:per-orbit-smooth},
-since $\beta > 0$ and $M$ non-singular).
+Each~$A_{\sigma_i}$ is $C^\infty$ near~$a_0$
+(by Lemma~\ref{lem:per-orbit-smooth},
+since $\beta(\sigma_i; a_0) > 0$).
 Write $g_i = \nabla_a A_{\sigma_i}(a_0)$.
-Since each $A_{\sigma_i}$ is $C^1$ with Lipschitz gradient,
-there exist constants~$C_i$ with
+Since each $A_{\sigma_i}$ is $C^2$, Taylor's theorem gives
 $|A_{\sigma_i}(a_0 + td) - A_{\sigma_i}(a_0) - t\, g_i \cdot d|
-\leq C_i\, t^2$ for small~$t$.
+\leq C_i\, t^2$ for small~$t$ and some constants~$C_i$.
 Set $C = \max_i C_i$.
-Then for $t > 0$:
-\[
-  c(a_0) + t\, \min_i(g_i \cdot d) - C t^2
-  \leq \min_i A_{\sigma_i}(a_0 + td)
-  \leq c(a_0) + t\, \min_i(g_i \cdot d) + C t^2,
-\]
-where the inequalities follow from
-$\min_i(f_i + e_i) \in [\min_i f_i - \max|e_i|,\;
-\min_i f_i + \max|e_i|]$
-applied to $f_i = A_{\sigma_i}(a_0) + t\, g_i \cdot d$
-and $e_i = O(t^2)$.
-Hence $D_d\, c(a_0) = \min_i (g_i \cdot d)$.
+
+\emph{Upper bound.}
+Each $\sigma_i$ remains feasible near~$a_0$
+(by Lemma~\ref{lem:orbit-feasibility-open}), so
+$c(a_0 + td) \leq A_{\sigma_i}(a_0 + td)$ for all~$i$.
+Hence $c(a_0 + td) \leq \min_i A_{\sigma_i}(a_0 + td)
+\leq c(a_0) + t\,\min_i(g_i \cdot d) + Ct^2$.
+
+\emph{Lower bound.}
+By hypothesis, every feasible orbit outside
+$\{\sigma_1, \ldots, \sigma_r\}$ has action strictly
+above~$c(a_0)$.
+By continuity, these orbits' actions remain
+above $c(a_0) + \delta/2$ for some $\delta > 0$
+and small~$t$, so they cannot undercut the minimum.
+Hence $c(a_0 + td) = \min_i A_{\sigma_i}(a_0 + td) + O(t^2)
+\geq c(a_0) + t\,\min_i(g_i \cdot d) - Ct^2$.
+
+Combining: $D_d\, c(a_0) = \min_i (g_i \cdot d)$.
 
 \emph{Non-differentiability.}
 Suppose for contradiction that $c$ is differentiable at~$a_0$
@@ -345,9 +355,11 @@ an orbit $\sigma \in \mathcal{R}$ is
 \emph{directionally feasible in direction~$d$} if for every
 index~$k$ with $\beta_k(\sigma; a_0) = 0$,
 \begin{equation}\label{eq:dir-feasible-condition}
-  \nabla_a \beta_k(\sigma; a_0) \cdot d \geq 0,
+  \nabla_a \beta_k(\sigma; a_0) \cdot d > 0.
 \end{equation}
-where $\nabla_a \beta_k$ is the sensitivity from
+(The strict inequality ensures~$\beta_k$
+becomes positive at first order under the perturbation.)
+Here $\nabla_a \beta_k$ is the sensitivity from
 Lemma~\ref{lem:kkt-sensitivity}.
 The directionally feasible subset is
 \begin{equation}\label{eq:dir-feasible-set}
@@ -358,6 +370,12 @@ The directionally feasible subset is
 Orbits with $\beta(\sigma; a_0) > 0$ componentwise are
 directionally feasible in every direction
 (the condition~\eqref{eq:dir-feasible-condition} is vacuous).
+
+Assume additionally that for every $\sigma \in \mathcal{R}$
+and every~$k$ with $\beta_k(\sigma; a_0) = 0$,
+$\nabla_a \beta_k(\sigma; a_0) \cdot d \neq 0$.
+(This is a non-degeneracy condition; it holds for
+generic~$d$ since $\nabla_a \beta_k \neq 0$ generically.)
 
 If $\mathcal{R}(d) \neq \emptyset$, the one-sided directional
 derivative of the capacity exists and equals
@@ -386,32 +404,30 @@ Suppose $\sigma \in \mathcal{R}(d)$ and
 $\beta_k(\sigma; a_0) = 0$ for some index~$k$.
 By Lemma~\ref{lem:kkt-sensitivity}, the map
 $a \mapsto \beta(\sigma; a) = M_\sigma(a)^{-1} b$
-is smooth near~$a_0$ (regardless of the sign of~$\beta$:
-the smoothness of the KKT solution holds wherever
-$M_\sigma$ is non-singular, with no sign condition on~$\beta$).
+is smooth near~$a_0$ (the smoothness of the KKT solution holds
+wherever $M_\sigma$ is non-singular, with no sign condition
+on~$\beta$).
 Therefore
 \[
   \beta_k(\sigma; a(t))
   = \underbrace{\beta_k(\sigma; a_0)}_{=\,0}
-  + t\,\underbrace{\nabla_a \beta_k(\sigma; a_0) \cdot d}_{\geq\, 0}
-  + O(t^2).
+  + t\,\underbrace{\nabla_a \beta_k(\sigma; a_0) \cdot d}_{>\, 0}
+  + O(t^2)
+  > 0 \quad \text{for small } t > 0,
 \]
-If $\nabla_a \beta_k \cdot d > 0$, then
-$\beta_k(\sigma; a(t)) > 0$ for small $t > 0$.
-% [GAP - when nabla_a beta_k . d = 0, the sign of beta_k(a(t))
-%  depends on the O(t^2) term. Generically this is nonzero and
-%  could be negative. A complete argument would need a second-order
-%  condition or a genericity assumption.]
+where the strict positivity of the first-order term uses
+the directional feasibility condition~\eqref{eq:dir-feasible-condition}.
 Components with $\beta_k(\sigma; a_0) > 0$ remain positive by
 continuity.
-Hence $\sigma$ is feasible at~$a(t)$ for small $t > 0$
-(generically), and the Taylor expansion of~$A_\sigma$ applies:
+Hence $\sigma$ is feasible at~$a(t)$ for small $t > 0$,
+and the Taylor expansion of~$A_\sigma$ applies:
 $A_\sigma(a(t)) = A_\sigma(a_0) + t\,\nabla_a A_\sigma(a_0) \cdot d + O(t^2)$.
 
 \emph{Step 3: Directionally infeasible orbits become infeasible.}
-If $\sigma \notin \mathcal{R}(d)$, there exists~$k$ with
-$\beta_k(\sigma; a_0) = 0$ and
-$\nabla_a \beta_k(\sigma; a_0) \cdot d < 0$.
+If $\sigma \in \mathcal{R} \setminus \mathcal{R}(d)$,
+there exists~$k$ with $\beta_k(\sigma; a_0) = 0$ and
+$\nabla_a \beta_k(\sigma; a_0) \cdot d < 0$
+(strict, by the non-degeneracy hypothesis).
 Then $\beta_k(\sigma; a(t)) = t\,(\nabla_a \beta_k \cdot d) + O(t^2) < 0$
 for small $t > 0$, so $\sigma$ is infeasible at~$a(t)$
 and does not contribute to~$c(a(t))$.
@@ -494,8 +510,8 @@ so $D_d^+\, c(a_0)
 %    infinitesimal, so that A_sigma(a(t)) transitions smoothly and the
 %    action gap is preserved. Generically true, but needs proof.
 %
-% 3. The nabla_a beta_k . d = 0 case in Step 2.
-%    When the first-order sensitivity vanishes, the sign of beta_k(a(t))
-%    depends on the second-order term. The orbit may become infeasible
-%    even though the first-order condition is satisfied. A complete argument
-%    needs either a second-order condition or a genericity assumption.
+% 3. The nabla_a beta_k . d = 0 case.
+%    The theorem avoids this by requiring strict inequality. For the
+%    degenerate directions where nabla_a beta_k . d = 0, the formula
+%    may still hold but requires second-order analysis. This is a
+%    measure-zero set of directions (for generic a_0).
