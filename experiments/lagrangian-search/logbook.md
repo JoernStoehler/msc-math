@@ -15,7 +15,7 @@ HKO2024 is the only known polytope with sys > 1. It's a Lagrangian product of tw
 What fraction of random Lagrangian products have sys > 1?
 
 Existing data points:
-- LP(5,5) rotation sweep (lagrangian-products experiment): ~28% of rotations of *regular* pentagons have sys > 1 (θ ∈ ~13°–23° of the 36° fundamental domain).
+- LP(5,5) rotation sweep (lagrangian-products experiment): ~25% of rotations of *regular* pentagons have sys > 1 (9/36 at 1° resolution; θ ∈ 14°–22° of the 36° fundamental domain, `lagrangian-products-5x5.jsonl`).
 - random-product-sweep: 100 random products with 3≤k≤m≤6, max sys = 0.794. None near 1.
 
 These suggest regularity of the pentagon matters a lot, not just the polygon count. The question: what's the volume ratio of {sys > 1} to the full LP parameter space? If it's < 1e-4, brute-force sampling won't find it. If it's ~ 1%, a few thousand samples might.
@@ -26,7 +26,7 @@ Sample random LP(n,m) products (random polygon shapes, random rotation) for vari
 
 Does gradient ascent from random Lagrangian products find trajectories to the sys > 1 region? How large is HKO's basin of attraction under gradient ascent?
 
-gradient-descent found best sys = 0.905 from 501 Lagrangian starts (within-cell only). With boundary crossing, maybe some trajectories reach HKO's basin. But if Phase 1 shows the sys > 1 region is extremely small, this may not be worth running at scale.
+gradient-descent logbook reports best sys = 0.905 from Lagrangian starts (within-cell only). % [TODO: JÖRN - gradient-descent.jsonl appears truncated (612 polytopes, missing 4x6 and 5x5 splits). The 0.905 claim comes from the logbook, not verified against current JSONL.] With boundary crossing, maybe some trajectories reach HKO's basin. But if Phase 1 shows the sys > 1 region is extremely small, this may not be worth running at scale.
 
 ### Phase 3: Novelty check (contingent on Phase 2)
 
@@ -131,7 +131,7 @@ The transition is smooth (no sharp boundary), the std of sys grows with ε (expe
 
 2. **Is the region star-shaped?** The random perturbation approach implicitly assumes the boundary is "roughly convex" for the fraction-vs-ε curve to be meaningful. If the region has tentacles or holes, the fraction curve is an average over directions. Directional analysis would reveal this.
 
-3. **What fraction of the full LP(5,5) parameter space is sys > 1?** Our sweep measures the local radius but not the global fraction. The full LP(5,5) space is ~17-20 dimensional (depending on quotient), and the sys > 1 ball has radius ~0.035 around a point at distance ~1.24 from the origin. A rough volume fraction estimate: (0.035/1.24)^20 ≈ 10^{-31} — vanishingly small. Even in 1D (rotation only), the fraction is 25% (regular pentagons), but shape variation adds ~18 more dimensions in which the region is narrow.
+3. **What fraction of the full LP(5,5) parameter space is sys > 1?** Our sweep measures the local radius but not the global fraction. The full LP(5,5) space is ~17-20 dimensional (depending on quotient), and the sys > 1 ball has radius ~0.035 around a point at distance ~1.24 from the origin. A rough volume fraction estimate: (0.035/1.24)^20 ≈ 10^{-31} — vanishingly small. Even in 1D (rotation only), the fraction is ~25% (regular pentagons, 9/36 in `lagrangian-products-5x5.jsonl`), but shape variation adds ~18 more dimensions in which the region is narrow.
 
 4. **Why does regularity matter?** The rotation sweep (lagrangian-products) shows 25% of rotations of *regular* pentagons exceed sys > 1. Random pentagons never come close. The transition from regular to irregular appears to happen at ~3% perturbation. Understanding *which* deformations from regularity are most harmful would clarify why HKO works.
 
