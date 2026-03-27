@@ -379,6 +379,27 @@ Q5b cleanly separates two phenomena:
 
 Figure: gc_q5b_boundary.png. Three panels (one per LP). Blue = subdiff traces, red = single-orbit traces. LP(3,3) and LP(5,5): blue at slope 2, red splits. LP(4,4): both at slope 1.
 
+**Obs 13. Non-product polytopes confirm subdiff formula.**
+- **Simplex** (F=5, 6 tied orbits = all certified orbits): subdiff slope = 2.00 for all 10 directions, single-orbit slope = 1.00 for all 10 directions. The cleanest result in the entire Q5b dataset — every certified orbit is tied, non-product, perfect slope separation. (gradient-correctness-q5b-symmetric.jsonl, polytope_id=q5b_simplex)
+- **G-orbit n=5** polytopes (F=10, 5 tied orbits, non-product): subdiff slope ≈ 2.0, single-orbit slope ≈ 1.0–1.4. Three polytopes found from 50 random seeds (hit rate 6%). Constructed as orbits of random dual vertices under symplectic rotation by 2π/5 in both symplectic planes. (polytope_ids q5b_gorbit_n5_00, q5b_gorbit_n5_05, q5b_gorbit_n5_06)
+
+**Obs 14. hko2024 (Viterbo counterexample): 190 tied orbits, mixed slopes.**
+- 8040 certified orbits, 190 tied at minimum (action ≈ 3.4410). DISTINCT gradients. (gradient-correctness-q5b-symmetric.jsonl, polytope_id=q5b_hko2024)
+- Per-direction: 3/5 directions have subdiff slope ≈ 2.00, 2/5 have slope ≈ 0.94. Single-orbit slope ≈ 1.00 for all 5 directions.
+- No orbit appearance (0/64 rows). The slope ≈ 1 directions likely have orbits with β_k ≈ 0 that are counted as tied but whose gradients don't correctly represent the directional derivative — possibly the Q5B_TIE_RTOL (1e-8) includes orbits that are near-tied but not exactly tied, or the 190 orbits don't include all limiting orbits at the feasibility boundary.
+- Interpretation: hko2024 is an intermediate case — the subdiff formula works in most directions but not all. The massive degeneracy (190 orbits) makes it harder for the finite orbit set to capture all relevant directional derivatives.
+
+**Obs 15. Orbit appearance is not specific to Lagrangian products.**
+- **Hypercube** (F=8, 2 tied orbits, non-product): subdiff slope ≈ 1.00, single-orbit slope ≈ 0.98. Orbit appearance in 75/108 rows (69.4%). Same pattern as LP(4,4): base orbits are replaced by different orbits under perturbation. (gradient-correctness-q5b-symmetric.jsonl, polytope_id=q5b_hypercube)
+- **G-orbit n=4** polytopes (F=8, 2 tied, non-product): slope ≈ 0.8–1.1, high orbit appearance rates (60–95/~93 rows). Three polytopes found from 50 seeds (hit rate 6%).
+- Pattern: orbit appearance correlates with F=8 and only 2 tied orbits — insufficient orbit coverage to handle perturbations.
+
+**Obs 16. G-orbit construction: hit rates depend on order.**
+- Order 3 (F=6): 0/50 had tied orbits. C₃ symmetry in Sp(4) doesn't force orbit ties at F=6.
+- Order 4 (F=8): 3/50 had tied orbits (6% hit rate). All showed orbit appearance.
+- Order 5 (F=10): 3/50 had tied orbits (6% hit rate). All showed correct subdiff (slope ≈ 2).
+- Construction: M = diag(R(2π/n), R(2π/n)) ∈ U(2) ⊂ Sp(4). Two random seeds → F = 2n facets. The low hit rate suggests this particular symmetry (equal rotation in both planes) doesn't strongly constrain the orbit landscape. Richer symmetry groups (e.g., non-diagonal symplectic matrices) might yield higher hit rates.
+
 ### Updated open questions
 
 **OQ1 status:** [answered] Symmetric polytopes LP(3,3) and LP(5,5) confirm subdiff correctness at exact boundaries. LP(4,4) reveals orbit appearance as a complementary failure mode.

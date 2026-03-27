@@ -477,9 +477,26 @@ def plot_q5_switching(data, filename="gc_q5_switching.png"):
 # Q5b: Subdifferential at exact switching boundaries (symmetric polytopes)
 # ============================================================================
 
+def q5b_short_name(pid):
+    """Human-readable short name for Q5b polytope IDs."""
+    if pid.startswith("q5b_lp"):
+        parts = pid.replace("q5b_lp", "").split("_")
+        return f"LP({parts[0]},{parts[1]})"
+    elif pid == "q5b_hko2024":
+        return "HKO2024"
+    elif pid == "q5b_simplex":
+        return "Simplex"
+    elif pid == "q5b_hypercube":
+        return "Hypercube"
+    elif pid.startswith("q5b_gorbit"):
+        parts = pid.replace("q5b_gorbit_n", "").split("_")
+        return f"G-orbit n={parts[0]}"
+    return pid
+
+
 def plot_q5b_boundary(data, filename="gc_q5b_boundary.png"):
-    """One panel per LP(n,n). Each panel shows per-direction convergence traces
-    for subdiff (blue) and single-orbit (red) predictions. Reference slope lines.
+    """Selected panels showing subdiff (blue) and single-orbit (red) convergence
+    at exact switching boundaries. One panel per polytope type.
 
     Key test of [prop:capacity-smoothness-classification](b): at exact switching
     boundaries, D_d c = min_i(g_i · d). Slope 2 = correct directional derivative
@@ -488,28 +505,44 @@ def plot_q5b_boundary(data, filename="gc_q5b_boundary.png"):
     if not data:
         return
 
-    # Group by polytope
     by_poly = defaultdict(list)
     for r in data:
         by_poly[r["polytope_id"]].append(r)
 
-    polytope_ids = sorted(by_poly.keys())
-    n_polys = len(polytope_ids)
+    # Select representative polytopes (skip redundant G-orbits)
+    # Priority: LP(3,3), simplex, hko2024, LP(5,5), hypercube, LP(4,4)
+    # + one G-orbit n=5 if available
+    priority = [
+        "q5b_lp3_3", "q5b_simplex", "q5b_hko2024",
+        "q5b_lp5_5", "q5b_hypercube", "q5b_lp4_4",
+    ]
+    # Add first G-orbit n=5 with data
+    for pid in sorted(by_poly.keys()):
+        if pid.startswith("q5b_gorbit_n5") and pid not in priority:
+            priority.append(pid)
+            break
+
+    selected = [pid for pid in priority if pid in by_poly]
+    n_polys = len(selected)
     if n_polys == 0:
         return
 
-    fig, axes = plt.subplots(1, n_polys, figsize=FIGSIZE_TRIPLE, sharey=True)
-    if n_polys == 1:
-        axes = [axes]
+    n_cols = min(n_polys, 4)
+    n_rows = (n_polys + n_cols - 1) // n_cols
+    fig_w = FIGSIZE_TRIPLE[0]
+    fig_h = FIGSIZE_TRIPLE[1] * n_rows
+    fig, axes_flat = plt.subplots(n_rows, n_cols, figsize=(fig_w, fig_h),
+                                  sharey=True, squeeze=False)
+    axes = [axes_flat[r][c] for r in range(n_rows) for c in range(n_cols)]
 
-    for ax, pid in zip(axes, polytope_ids):
+    for idx, pid in enumerate(selected):
+        ax = axes[idx]
         prows = by_poly[pid]
         n_orbits = prows[0]["n_orbits"]
         f_count = prows[0]["facet_count"]
 
         dirs = sorted(set(r["dir_idx"] for r in prows))
 
-        # Per-direction traces
         for di in dirs:
             drows = sorted(
                 [r for r in prows if r["dir_idx"] == di], key=lambda r: r["log_t"]
@@ -518,15 +551,15 @@ def plot_q5b_boundary(data, filename="gc_q5b_boundary.png"):
             sub_lr = [r["subdiff_log_residual"] for r in drows]
             sin_lr = [r["single_log_residual"] for r in drows]
 
-            label_sub = r"$\min_i(g_i \cdot d)$" if di == 0 else None
-            label_sin = r"$g_{\mathrm{best}} \cdot d$" if di == 0 else None
+            label_sub = r"$\min_i(g_i \cdot d)$" if di == 0 and idx == 0 else None
+            label_sin = r"$g_{\mathrm{best}} \cdot d$" if di == 0 and idx == 0 else None
 
             ax.plot(log_ts, sub_lr, color="C0", alpha=0.4, linewidth=1,
                     label=label_sub)
             ax.plot(log_ts, sin_lr, color="C3", alpha=0.4, linewidth=1,
                     label=label_sin)
 
-        # Reference slopes anchored at the subdiff median at largest t
+        # Reference slopes
         all_lt = sorted(set(r["log_t"] for r in prows))
         lr_at_max = [r["subdiff_log_residual"] for r in prows
                      if r["log_t"] == all_lt[-1]]
@@ -535,18 +568,22 @@ def plot_q5b_boundary(data, filename="gc_q5b_boundary.png"):
             x0 = all_lt[-1]
             ref_x = np.array(all_lt)
             ax.plot(ref_x, y0 + 2 * (ref_x - x0), "k--", alpha=0.4,
-                    linewidth=1, label="Slope 2" if pid == polytope_ids[0] else None)
+                    linewidth=1, label="Slope 2" if idx == 0 else None)
             ax.plot(ref_x, y0 + 1 * (ref_x - x0), "k:", alpha=0.4,
-                    linewidth=1, label="Slope 1" if pid == polytope_ids[0] else None)
+                    linewidth=1, label="Slope 1" if idx == 0 else None)
 
-        # Extract LP sizes from id like "q5b_lp3_3"
-        parts = pid.replace("q5b_lp", "").split("_")
-        n_lp = parts[0] if parts else "?"
-        ax.set_title(f"LP({n_lp},{n_lp}): F={f_count}, {n_orbits} tied",
+        short = q5b_short_name(pid)
+        ax.set_title(f"{short}: F={f_count}, {n_orbits} tied",
                      fontsize=FONT_SIZE_SMALL)
         ax.set_xlabel(r"$\log_{10} t$")
 
+    # Hide unused panels
+    for idx in range(n_polys, len(axes)):
+        axes[idx].set_visible(False)
+
     axes[0].set_ylabel(r"$\log_{10}$ residual")
+    if n_rows > 1:
+        axes[n_cols].set_ylabel(r"$\log_{10}$ residual")
     axes[0].legend(fontsize=FONT_SIZE_SMALL - 1, loc="upper left")
     fig.tight_layout()
     fig.savefig(EXPERIMENT_DIR / filename)
