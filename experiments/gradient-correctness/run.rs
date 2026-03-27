@@ -10,6 +10,7 @@
 //! Q3: Near-degeneracy — small action gap between best and second-best orbit
 //! Q4: Barely-cutting facets — near-redundant halfspaces
 //! Q5: Orbit-switching — subdifferential prediction at near-tied orbits
+//! Q5b: Exact switching boundaries — subdifferential prediction at symmetric LP(n,n)
 //!
 //! Methodology (Q1-Q4):
 //! - For each polytope, compute base values and analytical gradients
@@ -36,8 +37,16 @@
 //! - [prop:capacity-smoothness-classification] (unverified): refined decomposition into
 //!   per-orbit feasibility/smoothness and capacity-level min structure (this experiment's math.tex)
 //!
+//! Methodology (Q5b):
+//! - Use LP(n,n) (regular Lagrangian products) where symmetry forces exact orbit ties
+//! - Enumerate all orbits, identify those tied at the minimum action (gap = 0)
+//! - Compute per-orbit gradients, predict D_d c = min_i(g_i · d)
+//! - Compare against full ehz_capacity on perturbed polytope
+//! - [prop:capacity-smoothness-classification](b): at exact boundaries, the subdiff
+//!   formula gives the correct directional derivative
+//!
 //! Architecture:
-//! 1. `cargo run --release --bin gradient_correctness [q1 q2 q3 q4 q5]` → JSONL files
+//! 1. `cargo run --release --bin gradient_correctness [q1 q2 q3 q4 q5 q5b]` → JSONL files
 //! 2. Python analyze.py → convergence plots and slope analysis
 //!
 //! Self-contained: generates all polytopes internally.
@@ -149,6 +158,18 @@ const Q5_GAP_BINS: [(f64, f64, &str); 4] = [
     (1e-5, 1e-3, "small"),
     (0.0, 1e-5, "tiny"),
 ];
+
+/// Q5b: relative tolerance for identifying tied orbits at symmetric polytopes.
+/// Two orbits are "tied" when |action_1 - action_2| / action_1 < this threshold.
+/// 1e-8 is well above machine epsilon (~1e-16) but tight enough to filter out
+/// genuinely distinct actions. Symmetric LP(n,n) should produce exact ties
+/// (relative gap ~1e-14), so this is conservative.
+const Q5B_TIE_RTOL: f64 = 1e-8;
+
+/// Q5b: number of random directions per polytope. More than Q1-Q5 because
+/// the subdiff formula min_i(g_i · d) depends on direction — some directions
+/// agree with the single-orbit gradient, others don't.
+const Q5B_N_DIRS: usize = 10;
 
 // ============================================================================
 // Output schema
@@ -1110,6 +1131,233 @@ fn run_q5(base_dir: &str) {
 }
 
 // ============================================================================
+// Q5b: Subdifferential prediction at exact switching boundaries (symmetric polytopes)
+// ============================================================================
+
+/// Q5b tests the subdifferential formula D_d c = min_i(g_i · d) at points where
+/// multiple orbits are exactly tied (gap = 0), using symmetric LP(n,n) polytopes
+/// where symmetry forces exact orbit degeneracy.
+///
+/// [prop:capacity-smoothness-classification](b): at switching boundaries with r >= 2
+/// tied orbits having distinct gradients, D_d c = min_i(g_i · d) and c is Lipschitz
+/// but not differentiable.
+///
+/// Expected outcomes:
+/// - If tied orbits have DISTINCT gradients: subdiff residual slope ≈ 1 (C¹ not C²),
+///   single-orbit residual slope ≈ 0 (wrong gradient). Non-differentiable point.
+/// - If symmetry forces MATCHING gradients: both residuals have slope ≈ 2 (degenerate
+///   tie, c is actually C¹ here despite the orbit tie).
+fn run_q5b(base_dir: &str) {
+    let path = format!("{}/gradient-correctness-q5b-symmetric.jsonl", base_dir);
+    let file = File::create(&path).expect("create Q5b JSONL");
+    let mut writer = BufWriter::new(file);
+    let mut total_rows = 0;
+
+    // LP(n,n) for n = 3, 4, 5 — regular polygon with n sides in each Lagrangian factor.
+    // F = 2n facets. LP(3,3): F=6, LP(4,4): F=8, LP(5,5): F=10.
+    // LP(5,5) with F=10 is expensive for ehz_capacity (~3 min per call in Q2 benchmarks).
+    // We include it but with fewer directions if too slow.
+    let lp_sizes = [3, 4, 5];
+
+    let mut rng = ChaCha8Rng::seed_from_u64(SEED_BASE + 700);
+
+    for &n in &lp_sizes {
+        let f_count = 2 * n;
+        let (qn, qh) = regular_polygon_2d(n, 1.0);
+        let (pn, ph) = regular_polygon_2d(n, 1.0);
+        let polytope = lagrangian_product(&qn, &qh, &pn, &ph).expect("regular LP for Q5b");
+        let duals = polytope.dual_vertices_f64();
+
+        println!("  Q5b: LP({},{}) — F={}, enumerating all orbits...", n, n, f_count);
+        let t_enum = Instant::now();
+        let all_orbits = enumerate_all_orbits(&polytope);
+        let enum_secs = t_enum.elapsed().as_secs_f64();
+        println!(
+            "  Q5b: LP({},{}) — {} certified orbits in {:.1}s",
+            n, n, all_orbits.len(), enum_secs,
+        );
+
+        if all_orbits.is_empty() {
+            eprintln!("  Q5b: LP({},{}) — no certified orbits, skipping", n, n);
+            continue;
+        }
+
+        let best_action = all_orbits[0].0;
+
+        // Find all tied orbits (action matches best within relative tolerance)
+        let tied_orbits: Vec<_> = all_orbits
+            .iter()
+            .filter(|(action, _, _)| {
+                (action - best_action).abs() / best_action.max(1e-30) < Q5B_TIE_RTOL
+            })
+            .collect();
+
+        let n_tied = tied_orbits.len();
+        println!(
+            "  Q5b: LP({},{}) — {} tied orbits (action ≈ {:.8})",
+            n, n, n_tied, best_action,
+        );
+
+        if n_tied < 2 {
+            println!("  Q5b: LP({},{}) — only 1 tied orbit, no boundary to test", n, n);
+            continue;
+        }
+
+        // Compute per-orbit gradients for all tied orbits
+        let orbit_grads: Vec<Vec<Vector4<f64>>> = tied_orbits
+            .iter()
+            .map(|(_action, perm, kkt)| {
+                capacity_derivatives_a(&kkt.beta, kkt.q_corrected, &kkt.mu, perm, &duals)
+            })
+            .collect();
+
+        // Check whether gradients are distinct or matching
+        // Compute pairwise gradient distances (in R^{4F} norm)
+        let grad_norms: Vec<f64> = orbit_grads
+            .iter()
+            .map(|g| g.iter().map(|v| v.norm_squared()).sum::<f64>().sqrt())
+            .collect();
+
+        let mut max_grad_dist = 0.0f64;
+        for i in 0..n_tied {
+            for j in (i + 1)..n_tied {
+                let dist: f64 = orbit_grads[i]
+                    .iter()
+                    .zip(orbit_grads[j].iter())
+                    .map(|(a, b)| (a - b).norm_squared())
+                    .sum::<f64>()
+                    .sqrt();
+                max_grad_dist = max_grad_dist.max(dist);
+            }
+        }
+        let avg_grad_norm = grad_norms.iter().sum::<f64>() / grad_norms.len() as f64;
+        let gradients_distinct = max_grad_dist > 1e-6 * avg_grad_norm.max(1e-30);
+
+        println!(
+            "  Q5b: LP({},{}) — max gradient distance: {:.2e} (avg norm: {:.2e}) → {}",
+            n, n, max_grad_dist, avg_grad_norm,
+            if gradients_distinct { "DISTINCT" } else { "MATCHING" },
+        );
+
+        // Determine number of directions (fewer for expensive LP(5,5))
+        let n_dirs = if f_count <= 8 { Q5B_N_DIRS } else { 5 };
+
+        let id_base = format!("q5b_lp{}_{}", n, n);
+        let min_beta = tied_orbits[0]
+            .2
+            .beta
+            .iter()
+            .copied()
+            .fold(f64::INFINITY, f64::min);
+
+        for dir_idx in 0..n_dirs {
+            let direction = random_direction(duals.len(), &mut rng);
+
+            // g_i · d for each tied orbit
+            let orbit_gd: Vec<f64> = orbit_grads
+                .iter()
+                .map(|g| dot_grad_dir(g, &direction))
+                .collect();
+
+            // [prop:capacity-smoothness-classification](b): D_d c = min_i(g_i · d)
+            let subdiff_gd = orbit_gd
+                .iter()
+                .copied()
+                .fold(f64::INFINITY, f64::min);
+            // Single best-orbit gradient (may differ from subdiff when orbits are tied)
+            let single_gd = orbit_gd[0];
+
+            let orbit_info: Vec<OrbitGradInfo> = tied_orbits
+                .iter()
+                .zip(orbit_gd.iter())
+                .map(|((action, _, _), &gd)| OrbitGradInfo {
+                    action: *action,
+                    grad_dot_d: gd,
+                })
+                .collect();
+            let orbit_grads_json = serde_json::to_string(&orbit_info).unwrap();
+            let base_perm_str = serde_json::to_string(&tied_orbits[0].1).unwrap();
+
+            for &t in T_VALUES {
+                let t0 = Instant::now();
+
+                let perturbed_duals: Vec<Vector4<f64>> = duals
+                    .iter()
+                    .zip(direction.iter())
+                    .map(|(a, d)| a + t * d)
+                    .collect();
+
+                let perturbed_polytope = match Polytope4D::from_f64(perturbed_duals) {
+                    Ok(p) => p,
+                    Err(_) => continue,
+                };
+
+                let perturbed_ehz = match ehz_capacity_safe(&perturbed_polytope) {
+                    Some(r) => r,
+                    None => continue,
+                };
+
+                let c_perturbed = perturbed_ehz.result.capacity;
+                let perturbed_perm = &perturbed_ehz.result.best_permutation;
+                let perturbed_perm_str = serde_json::to_string(perturbed_perm).unwrap();
+                let orbit_switched = perturbed_perm != &tied_orbits[0].1;
+
+                let actual = c_perturbed - best_action;
+
+                let subdiff_pred = t * subdiff_gd;
+                let subdiff_res = (actual - subdiff_pred).abs();
+
+                let single_pred = t * single_gd;
+                let single_res = (actual - single_pred).abs();
+
+                let elapsed = t0.elapsed().as_secs_f64() * 1000.0;
+
+                let row = SubdiffRow {
+                    phase: "q5b".to_string(),
+                    polytope_id: id_base.clone(),
+                    facet_count: f_count,
+                    n_orbits: n_tied,
+                    action_gap: 0.0,
+                    dir_idx,
+                    t,
+                    log_t: t.abs().log10(),
+                    c_base: best_action,
+                    c_perturbed,
+                    actual_change: actual,
+                    subdiff_dot_d: subdiff_gd,
+                    subdiff_predicted: subdiff_pred,
+                    subdiff_residual: subdiff_res,
+                    subdiff_log_residual: subdiff_res.max(1e-300).log10(),
+                    single_dot_d: single_gd,
+                    single_predicted: single_pred,
+                    single_residual: single_res,
+                    single_log_residual: single_res.max(1e-300).log10(),
+                    min_beta,
+                    base_best_perm: base_perm_str.clone(),
+                    perturbed_best_perm: perturbed_perm_str,
+                    orbit_switched,
+                    orbit_grads: orbit_grads_json.clone(),
+                    time_ms: elapsed,
+                };
+
+                let json = serde_json::to_string(&row).expect("serialize Q5b row");
+                writeln!(writer, "{}", json).expect("write Q5b row");
+                total_rows += 1;
+            }
+        }
+
+        println!(
+            "  Q5b: LP({},{}) — {} rows written",
+            n, n,
+            n_dirs * T_VALUES.len(),
+        );
+    }
+
+    writer.flush().expect("flush Q5b");
+    println!("Q5b done: {} rows written to {}", total_rows, path);
+}
+
+// ============================================================================
 // Main
 // ============================================================================
 
@@ -1118,7 +1366,7 @@ fn main() {
     let args: Vec<String> = std::env::args().collect();
     let run_all = args.len() <= 1;
     let phases: Vec<&str> = if run_all {
-        vec!["q1", "q2", "q3", "q4", "q5"]
+        vec!["q1", "q2", "q3", "q4", "q5", "q5b"]
     } else {
         args[1..].iter().map(|s| s.as_str()).collect()
     };
@@ -1150,6 +1398,10 @@ fn main() {
             "q5" => {
                 println!("--- Q5: Orbit-switching (subdifferential prediction) ---");
                 run_q5(base_dir);
+            }
+            "q5b" => {
+                println!("--- Q5b: Subdifferential at exact boundaries (symmetric polytopes) ---");
+                run_q5b(base_dir);
             }
             other => eprintln!("Unknown phase: {}", other),
         }

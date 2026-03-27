@@ -6,6 +6,7 @@ Input:
   - experiments/gradient-correctness/gradient-correctness-q3-degeneracy.jsonl
   - experiments/gradient-correctness/gradient-correctness-q4-redundant.jsonl
   - experiments/gradient-correctness/gradient-correctness-q5-subdiff.jsonl
+  - experiments/gradient-correctness/gradient-correctness-q5b-symmetric.jsonl
 Output:
   - experiments/gradient-correctness/gc_convergence.png    (Q1 log-log convergence)
   - experiments/gradient-correctness/gc_slopes.png         (slope distributions Q1+Q2)
@@ -13,6 +14,7 @@ Output:
   - experiments/gradient-correctness/gc_q4_delta.png       (Q4 delta vs slope)
   - experiments/gradient-correctness/gc_q5_convergence.png (Q5 subdiff vs single-orbit convergence)
   - experiments/gradient-correctness/gc_q5_switching.png   (Q5 orbit switching rate vs t and gap)
+  - experiments/gradient-correctness/gc_q5b_boundary.png   (Q5b subdiff at exact switching boundaries)
   - experiments/gradient-correctness/gc_summary.tex        (summary table)
 """
 
@@ -472,6 +474,87 @@ def plot_q5_switching(data, filename="gc_q5_switching.png"):
 
 
 # ============================================================================
+# Q5b: Subdifferential at exact switching boundaries (symmetric polytopes)
+# ============================================================================
+
+def plot_q5b_boundary(data, filename="gc_q5b_boundary.png"):
+    """One panel per LP(n,n). Each panel shows per-direction convergence traces
+    for subdiff (blue) and single-orbit (red) predictions. Reference slope lines.
+
+    Key test of [prop:capacity-smoothness-classification](b): at exact switching
+    boundaries, D_d c = min_i(g_i · d). Slope 2 = correct directional derivative
+    with C² per-orbit remainder. Slope 1 = wrong prediction (O(t) error).
+    """
+    if not data:
+        return
+
+    # Group by polytope
+    by_poly = defaultdict(list)
+    for r in data:
+        by_poly[r["polytope_id"]].append(r)
+
+    polytope_ids = sorted(by_poly.keys())
+    n_polys = len(polytope_ids)
+    if n_polys == 0:
+        return
+
+    fig, axes = plt.subplots(1, n_polys, figsize=FIGSIZE_TRIPLE, sharey=True)
+    if n_polys == 1:
+        axes = [axes]
+
+    for ax, pid in zip(axes, polytope_ids):
+        prows = by_poly[pid]
+        n_orbits = prows[0]["n_orbits"]
+        f_count = prows[0]["facet_count"]
+
+        dirs = sorted(set(r["dir_idx"] for r in prows))
+
+        # Per-direction traces
+        for di in dirs:
+            drows = sorted(
+                [r for r in prows if r["dir_idx"] == di], key=lambda r: r["log_t"]
+            )
+            log_ts = [r["log_t"] for r in drows]
+            sub_lr = [r["subdiff_log_residual"] for r in drows]
+            sin_lr = [r["single_log_residual"] for r in drows]
+
+            label_sub = r"$\min_i(g_i \cdot d)$" if di == 0 else None
+            label_sin = r"$g_{\mathrm{best}} \cdot d$" if di == 0 else None
+
+            ax.plot(log_ts, sub_lr, color="C0", alpha=0.4, linewidth=1,
+                    label=label_sub)
+            ax.plot(log_ts, sin_lr, color="C3", alpha=0.4, linewidth=1,
+                    label=label_sin)
+
+        # Reference slopes anchored at the subdiff median at largest t
+        all_lt = sorted(set(r["log_t"] for r in prows))
+        lr_at_max = [r["subdiff_log_residual"] for r in prows
+                     if r["log_t"] == all_lt[-1]]
+        if lr_at_max and all_lt:
+            y0 = np.median(lr_at_max)
+            x0 = all_lt[-1]
+            ref_x = np.array(all_lt)
+            ax.plot(ref_x, y0 + 2 * (ref_x - x0), "k--", alpha=0.4,
+                    linewidth=1, label="Slope 2" if pid == polytope_ids[0] else None)
+            ax.plot(ref_x, y0 + 1 * (ref_x - x0), "k:", alpha=0.4,
+                    linewidth=1, label="Slope 1" if pid == polytope_ids[0] else None)
+
+        # Extract LP sizes from id like "q5b_lp3_3"
+        parts = pid.replace("q5b_lp", "").split("_")
+        n_lp = parts[0] if parts else "?"
+        ax.set_title(f"LP({n_lp},{n_lp}): F={f_count}, {n_orbits} tied",
+                     fontsize=FONT_SIZE_SMALL)
+        ax.set_xlabel(r"$\log_{10} t$")
+
+    axes[0].set_ylabel(r"$\log_{10}$ residual")
+    axes[0].legend(fontsize=FONT_SIZE_SMALL - 1, loc="upper left")
+    fig.tight_layout()
+    fig.savefig(EXPERIMENT_DIR / filename)
+    plt.close(fig)
+    print(f"Saved {filename}")
+
+
+# ============================================================================
 # Summary table
 # ============================================================================
 
@@ -531,8 +614,9 @@ def main():
     q3 = load_jsonl("gradient-correctness-q3-degeneracy.jsonl")
     q4 = load_jsonl("gradient-correctness-q4-redundant.jsonl")
     q5 = load_jsonl("gradient-correctness-q5-subdiff.jsonl")
+    q5b = load_jsonl("gradient-correctness-q5b-symmetric.jsonl")
 
-    print(f"Loaded: Q1={len(q1)}, Q2={len(q2)}, Q3={len(q3)}, Q4={len(q4)}, Q5={len(q5)} rows")
+    print(f"Loaded: Q1={len(q1)}, Q2={len(q2)}, Q3={len(q3)}, Q4={len(q4)}, Q5={len(q5)}, Q5b={len(q5b)} rows")
 
     plot_convergence(q1, "gc_convergence.png")
     plot_slopes(q1, q2, "gc_slopes.png")
@@ -540,6 +624,7 @@ def main():
     plot_q4_delta(q4, "gc_q4_delta.png")
     plot_q5_convergence(q5, "gc_q5_convergence.png")
     plot_q5_switching(q5, "gc_q5_switching.png")
+    plot_q5b_boundary(q5b, "gc_q5b_boundary.png")
     write_summary(q1, q2, q3, q4)
 
 

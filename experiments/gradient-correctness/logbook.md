@@ -335,6 +335,57 @@ Obs 7 shows switching rate as a function of gap and t. This implicitly defines a
 - **Medium value:** OQ6 (Hessian test), OQ8 (orbit appearance from existing data)
 - **Low priority for thesis:** OQ4 (F scaling — nice but not essential), OQ5 (mathematical, may be hard), OQ7 (LP volume cancellation — minor), OQ9 (step size bounds — belongs in sys-search)
 
+## Q5b: Subdifferential at exact switching boundaries (2026-03-27)
+
+### Setup
+
+Tests the subdifferential formula D_d c = min_i(g_i · d) at points where multiple orbits are exactly tied (gap = 0), using symmetric LP(n,n) polytopes. This is the correct domain of [prop:capacity-smoothness-classification](b): at switching boundaries, the directional derivative IS min_i(g_i · d).
+
+Polytopes: LP(3,3) F=6, LP(4,4) F=8, LP(5,5) F=10. Regular polygon with n sides in each Lagrangian factor. Directions: 10 per polytope (5 for LP(5,5) due to cost). Data: 290 rows in gradient-correctness-q5b-symmetric.jsonl.
+
+### Observations
+
+**Obs 9. Orbit enumeration at symmetric LP(n,n).**
+- LP(3,3): 38 certified orbits, 2 tied at minimum (action = 1.5000). DISTINCT gradients (max distance 1.00, avg norm 0.79).
+- LP(4,4): 142 certified orbits, 2 tied at minimum (action = 2.0000). DISTINCT gradients (max distance 2.00, avg norm 1.41).
+- LP(5,5): 8569 certified orbits (71s enumeration), 20 tied at minimum (action ≈ 3.2725). DISTINCT gradients (max distance 3.78, avg norm 2.68).
+
+All three have distinct gradients among tied orbits — no degenerate ties with matching gradients.
+
+**Obs 10. Subdifferential convergence at LP(3,3) and LP(5,5) confirms [prop:capacity-smoothness-classification](b).**
+- LP(3,3): subdiff slope = 2.00 for all 10 directions. Single-orbit slope = 2.00 in 6/10 directions (where both orbits agree on g·d), slope = 1.00 in 4/10 directions (where they disagree). (gradient-correctness-q5b-symmetric.jsonl, polytope_id=q5b_lp3_3)
+- LP(5,5): subdiff slope = 2.00 for all 5 directions. Single-orbit slope = 1.00 for all 5 directions (with 20 tied orbits, the single-orbit gradient is always wrong). (gradient-correctness-q5b-symmetric.jsonl, polytope_id=q5b_lp5_5)
+
+Interpretation: slope 2 for subdiff means the formula min_i(g_i · d) correctly predicts the directional derivative, and the O(t²) remainder comes from each per-orbit action being C². Slope 1 for single orbit confirms non-differentiability: at the switching boundary, no single gradient exists.
+
+**Obs 11. LP(4,4) shows orbit appearance failure.**
+- LP(4,4): subdiff slope ≈ 1.00 and single-orbit slope ≈ 1.00 for ALL 10 directions. (gradient-correctness-q5b-symmetric.jsonl, polytope_id=q5b_lp4_4)
+- Root cause: the base orbits use 4 facets (e.g., [1,5,3,7]), but perturbed polytopes find length-6 orbits (e.g., [0,5,4,2,3,6]) as optimal. These length-6 orbits are NOT among the 2 tied orbits at the base point — they were infeasible at the base and appeared under perturbation. 100% of rows switch to a new orbit type at ALL t values (gradient-correctness-q5b-symmetric.jsonl, all LP(4,4) rows).
+- The subdiff formula based on base-point orbits cannot account for orbits that don't exist at the base point. Both predictions are O(t) wrong.
+- Connection to [lem:orbit-contraction]: at the base point, the length-6 orbits have some β_k = 0 (they contract to the length-4 orbit). Under perturbation, β_k becomes positive (orbit expands). This is the orbit appearance phenomenon flagged in math.tex open question 2.
+
+**Obs 12. Orbit structure varies across LP sizes.**
+- LP(3,3): optimal orbits use ALL 6 facets. No room for orbit appearance.
+- LP(4,4): optimal orbits use 4 of 8 facets. Length-6 orbits appear under perturbation.
+- LP(5,5): optimal orbits use 6 of 10 facets. 20 tied orbits provide enough coverage — perturbation switches among them (same facet count, different subsets), no orbit appearance.
+
+### Summary and confidence
+
+Q5b cleanly separates two phenomena:
+1. **Orbit switching between known orbits** (LP(3,3), LP(5,5)): subdiff formula D_d c = min_i(g_i · d) is correct. Residual slope = 2 confirms C² per-orbit actions and correct directional derivative. Single-orbit gradient fails (slope 1) unless it happens to agree with the subdiff in a particular direction. **High confidence** — consistent across all tested directions.
+2. **Orbit appearance** (LP(4,4)): new orbits become feasible under perturbation. The base-point orbit landscape is insufficient to predict the directional derivative. Both subdiff and single-orbit have slope 1. **High confidence** — consistent across all 10 directions, structural explanation via orbit contraction/expansion.
+
+Figure: gc_q5b_boundary.png. Three panels (one per LP). Blue = subdiff traces, red = single-orbit traces. LP(3,3) and LP(5,5): blue at slope 2, red splits. LP(4,4): both at slope 1.
+
+### Updated open questions
+
+**OQ1 status:** [answered] Symmetric polytopes LP(3,3) and LP(5,5) confirm subdiff correctness at exact boundaries. LP(4,4) reveals orbit appearance as a complementary failure mode.
+
+**OQ8 status:** [partially answered] LP(4,4) provides a clean example of orbit appearance: length-4 → length-6 orbit under perturbation. This is the orbit contraction boundary: the expanding orbit has β_k = 0 at the base point.
+
+**OQ10. Extended subdiff formula accounting for orbit appearance.** [open, mathematical]
+The subdiff formula min_i(g_i · d) over base-point orbits fails when new orbits appear under perturbation. Could extend by including orbits at the feasibility boundary (β_k = 0) — these are exactly the orbits that may appear. By [lem:orbit-contraction], they have the same action as their contracted versions, so they're tied. Including them in the subdiff computation might fix the LP(4,4) prediction. This connects to Clarke's generalized gradient: the subdifferential should include all limiting gradients, including from approaching orbits.
+
 ## Known issues
 
 - **Q-correction panic:** `solve_kkt_for` panics on some near-degenerate polytopes. Caught via `catch_unwind` in `solve_kkt_safe`. Results in missing rows (perturbation skipped), not incorrect data.
