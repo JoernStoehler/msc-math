@@ -28,14 +28,19 @@
 //! - Subdifferential prediction: D_d c = min_i(g_i · d)
 //! - Compare against actual capacity change via full ehz_capacity on perturbed polytope
 //! - Records orbit switching (which orbit wins in the perturbed polytope)
-//! - [prop:capacity-piecewise-smooth](d): at switching boundaries, D_d c = min_i(∇A_i · d)
+//! - [prop:capacity-smoothness-classification](b): at switching boundaries, D_d c = min_i(∇A_i · d).
+//!   In experiments/gradient-correctness/math.tex.
 //!
 //! Mathematical correspondence:
-//! - [lem:cap-derivative] (unverified): envelope theorem formula for ∂c/∂a_k
-//! - [lem:vol-derivative] (unverified): chain rule formula for ∂vol/∂a_k
-//! - [prop:capacity-piecewise-smooth] (unverified): piecewise C^∞, generic differentiability
+//! - [lem:cap-derivative] (unverified): envelope theorem formula for ∂c/∂a_k.
+//!   In experiments/sys-optimization/math.tex.
+//! - [lem:vol-derivative] (unverified): chain rule formula for ∂vol/∂a_k.
+//!   In experiments/sys-optimization/math.tex.
+//! - [prop:capacity-piecewise-smooth] (unverified): piecewise C^∞, generic differentiability.
+//!   In experiments/sys-optimization/math.tex.
 //! - [prop:capacity-smoothness-classification] (unverified): refined decomposition into
-//!   per-orbit feasibility/smoothness and capacity-level min structure (this experiment's math.tex)
+//!   per-orbit feasibility/smoothness and capacity-level min structure.
+//!   In experiments/gradient-correctness/math.tex.
 //!
 //! Methodology (Q5b):
 //! - Use LP(n,n) (regular Lagrangian products) where symmetry forces exact orbit ties
@@ -166,10 +171,22 @@ const Q5_GAP_BINS: [(f64, f64, &str); 4] = [
 /// (relative gap ~1e-14), so this is conservative.
 const Q5B_TIE_RTOL: f64 = 1e-8;
 
-/// Q5b: number of random directions per polytope. More than Q1-Q5 because
-/// the subdiff formula min_i(g_i · d) depends on direction — some directions
-/// agree with the single-orbit gradient, others don't.
+/// Q5b: number of random directions per polytope. More than Q1-Q5 (5 dirs)
+/// because the subdiff formula min_i(g_i · d) depends on direction — some
+/// directions agree with the single-orbit gradient, others don't. At LP(3,3)
+/// with 2 tied orbits, 10 directions yielded 6 agreeing and 4 disagreeing
+/// (run 2026-03-27), providing both sub-cases in one polytope. Reducing to 5
+/// risks capturing only one sub-case. LP(5,5) uses 5 dirs due to ehz_capacity
+/// cost (~70s per orbit enumeration).
 const Q5B_N_DIRS: usize = 10;
+
+/// Q5b: relative threshold for classifying tied-orbit gradients as "distinct"
+/// vs "matching". Two gradient sets are distinct when
+/// max_ij ||g_i - g_j|| > Q5B_GRAD_DISTINCT_RTOL * avg_i ||g_i||.
+/// 1e-6 is well above numerical noise (~1e-12 relative) but below any
+/// physically meaningful gradient difference. Used only for the diagnostic
+/// println (not written to JSONL).
+const Q5B_GRAD_DISTINCT_RTOL: f64 = 1e-6;
 
 // ============================================================================
 // Output schema
@@ -1024,7 +1041,7 @@ fn run_q5(base_dir: &str) {
                     .map(|g| dot_grad_dir(g, &direction))
                     .collect();
 
-                // [prop:capacity-piecewise-smooth](d): at switching boundaries,
+                // [prop:capacity-smoothness-classification](b): at switching boundaries,
                 // the directional derivative D_d c = min_i(∇_a A_i · d).
                 let subdiff_gd = orbit_gd
                     .iter()
@@ -1232,7 +1249,8 @@ fn run_q5b(base_dir: &str) {
             }
         }
         let avg_grad_norm = grad_norms.iter().sum::<f64>() / grad_norms.len() as f64;
-        let gradients_distinct = max_grad_dist > 1e-6 * avg_grad_norm.max(1e-30);
+        let gradients_distinct =
+            max_grad_dist > Q5B_GRAD_DISTINCT_RTOL * avg_grad_norm.max(1e-30);
 
         println!(
             "  Q5b: LP({},{}) — max gradient distance: {:.2e} (avg norm: {:.2e}) → {}",
