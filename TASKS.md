@@ -128,7 +128,7 @@ Dependency chain: #1 validates the gradient → #2 characterizes the obstacle �
 **Experiment ideas:** See `IDEAS.md` (root).
 
 **New experiment ideas (2026-03-26, discussion with Jörn):**
-- **lagrangian-search** (scaffolded) — Is the sys>1 region accessible by random sampling of Lagrangian products? Three phases: feasibility estimate (volume ratio of sys>1 region), guided search (gradient ascent from random seeds), novelty check (is any new sys>1 polytope related to HKO by symplectomorphism?). Subsumes the dense-2D-slice and pentagon-pair-landscape ideas. See `experiments/lagrangian-search/logbook.md`.
+- **lagrangian-search** (Phase 1 complete, 2026-03-27) — Measured the sys>1 region around HKO2024 via dense perturbation sweep (6500 samples, 13 ε-levels) and directional boundary probing (500 rays). Key findings: characteristic per-component radius ε*≈0.035, anisotropic boundary with 7× aspect ratio, shape governed by combinatorial orbit structure (not smooth geometry). Random sampling in full LP space is hopeless (~10⁻³¹ volume fraction). Phases 2-3 (guided search, novelty check) deferred. See `experiments/lagrangian-search/logbook.md`.
 - **Higher polygon Lagrangian products** — LP(5,7), LP(7,7) etc. untested, HKO came from LP(5,5). Partially covered by lagrangian-search Phase 1.
 - **Dimension scaling** — how does max-achievable-sys scale with F for random polytopes? Scattered data exists but no systematic study.
 
