@@ -127,12 +127,39 @@ The transition is smooth (no sharp boundary), the std of sys grows with ε (expe
 
 ### Open questions
 
-1. **Anisotropy:** Is the sys > 1 boundary roughly spherical in the 20D perturbation space, or highly elongated/irregular? The per-sample perturbation vectors (stored in `delta_2d`) enable post-hoc directional analysis (PCA of above/below partition, directional hit rates, etc.). Not yet analyzed.
+1. **What fraction of the full LP(5,5) parameter space is sys > 1?** Our sweep measures the local radius but not the global fraction. The full LP(5,5) space is ~17-20 dimensional (depending on quotient), and the sys > 1 region has characteristic radius ~0.035 around a point at distance ~1.24 from the origin. A rough volume fraction estimate: (0.035/1.24)^20 ≈ 10^{-31} — vanishingly small. Even in 1D (rotation only), the fraction is ~25% (regular pentagons, 9/36 in `lagrangian-products-5x5.jsonl`), but shape variation adds ~18 more dimensions in which the region is narrow.
 
-2. **Is the region star-shaped?** The random perturbation approach implicitly assumes the boundary is "roughly convex" for the fraction-vs-ε curve to be meaningful. If the region has tentacles or holes, the fraction curve is an average over directions. Directional analysis would reveal this.
+2. **Why does regularity matter?** The rotation sweep (lagrangian-products) shows ~25% of rotations of *regular* pentagons exceed sys > 1. Random pentagons never come close. The transition from regular to irregular appears to happen at ~3% perturbation. Understanding *which* deformations from regularity are most harmful would clarify why HKO works.
 
-3. **What fraction of the full LP(5,5) parameter space is sys > 1?** Our sweep measures the local radius but not the global fraction. The full LP(5,5) space is ~17-20 dimensional (depending on quotient), and the sys > 1 ball has radius ~0.035 around a point at distance ~1.24 from the origin. A rough volume fraction estimate: (0.035/1.24)^20 ≈ 10^{-31} — vanishingly small. Even in 1D (rotation only), the fraction is ~25% (regular pentagons, 9/36 in `lagrangian-products-5x5.jsonl`), but shape variation adds ~18 more dimensions in which the region is narrow.
+3. **What does the sys > 1 region look like?** See analysis attempt below.
 
-4. **Why does regularity matter?** The rotation sweep (lagrangian-products) shows 25% of rotations of *regular* pentagons exceed sys > 1. Random pentagons never come close. The transition from regular to irregular appears to happen at ~3% perturbation. Understanding *which* deformations from regularity are most harmful would clarify why HKO works.
+## Shape of the sys > 1 region (2026-03-27)
 
-5. **Higher polygon pairs:** LP(7,7) regular peaks at 0.917. Would a dense perturbation sweep around the LP(7,7) optimum show a sys > 1 region (latent in the deformation), or is it strictly below 1 for all nearby shapes?
+### Failed approaches
+
+**Linear model on δ:** Fitting sys ~ δ (20 features) gives R²=0.02. Expected: at a critical point the linear term vanishes, and the dominant dependence is higher-order. The R²≈0 confirms gradient ≈ 0 (this doesn't require C²).
+
+**Isotropic quadratic (L2 norm):** Fitting Δsys ~ ‖δ‖² gives R²=0.48 in the transition zone (ε=0.03-0.06, n=2000). Pooling all ε levels, sys ~ L2 gives R²=0.85, but this is trivially driven by the ε-level structure.
+
+**Anisotropic quadratic (Hessian):** Fitting Δsys ~ δᵀHδ (210 features) gives R²=0.78, a 0.30 improvement over isotropic. The fitted H has eigenvalues from -8.2 to +0.7 (16 negative, 4 positive), suggesting ~9× aspect ratio.
+
+**Why the quadratic model is wrong:** sys is not C² at HKO2024. HKO has degenerate minimum-action orbits (multiple orbits tie for the capacity), so sys = c²/2vol is locally the pointwise minimum of several smooth sheets. The Hessian of a pointwise minimum is not the Hessian of any individual sheet. The 4 positive eigenvalues likely reflect directions where one sheet rises while another (lower) sheet falls — the quadratic form can't represent this. The fitted "eigenvalues" are artifacts of projecting a non-smooth surface onto a smooth model.
+
+### The clean question
+
+We have f: R²⁰ → R (sys as a function of the perturbation δ). Properties:
+- f(0) ≈ 1.047 (local max, or near one)
+- f is Lipschitz but not C² (piecewise smooth: f = min_k f_k where each f_k is smooth, corresponding to a particular optimal orbit)
+- 6500 point evaluations at random locations in L∞ boxes of varying size
+
+We want to characterize S = {δ : f(δ) > 1}.
+
+**Approaches that respect the structure:**
+
+1. **Directional radius estimation.** For random directions u ∈ S¹⁹, binary-search for r(u) where f(r·u) = 1. The distribution of r(u) characterizes S without smoothness assumptions. Requires ~200 new evaluations (20 directions × 10 bisection steps), ~5 seconds. Assumes S is star-shaped w.r.t. the origin.
+
+2. **Piecewise-linear model.** The correct local model is f(δ) ≈ f(0) + min_k ⟨g_k, δ⟩, where g_k are the gradients of the smooth sheets meeting at HKO. Fitting this is a min-of-affine-functions regression. The level set {min_k ⟨g_k, δ⟩ = c} is a polytope in δ-space, which is the right geometric object for piecewise-smooth f. The number of sheets k can be estimated from the data by the number of distinct orbit types appearing near HKO.
+
+3. **Support function / convex hull.** If S is convex, compute the convex hull of the above-threshold samples. Its principal widths characterize the shape without smoothness. Requires convexity of S (plausible for the superlevel set of a concave piecewise-linear f, but not guaranteed).
+
+Method 1 is cheapest and most informative per evaluation. Method 2 is the correct theoretical model but requires identifying the orbit sheets.
