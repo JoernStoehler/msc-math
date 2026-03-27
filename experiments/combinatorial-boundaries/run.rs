@@ -380,7 +380,7 @@ fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult
 // ============================================================================
 
 /// Compute the first boundary event along a direction in dual-vertex space.
-/// // TODO: add [lem:step-bound-incidence] and [lem:step-bound-omega] to math.tex
+/// [lem:step-bound-incidence] incidence flip detection, [lem:step-bound-omega] ω₀ flip detection
 ///
 /// For step a'_k(t) = a_k + t·d_k, the combinatorial type changes when:
 /// 1. **Incidence flip:** a vertex's slack w.r.t. a non-incident facet reaches zero.
@@ -644,7 +644,7 @@ fn build_global_directions(
 // ============================================================================
 
 /// Compute d(sys)/d(a_k) for all facets.
-/// // TODO: add [lem:sys-gradient-a] to math.tex
+/// [lem:sys-gradient-a] gradient of sys in dual vertices
 ///
 /// sys = c²/(2V), so by the quotient rule:
 ///   d(sys)/d(a_k) = (c · dc/d(a_k) - sys · dV/d(a_k)) / V
