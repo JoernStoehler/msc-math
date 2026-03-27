@@ -452,7 +452,9 @@ Hypercube has the same structure (194 tied, 2 degenerate interior, 192 boundary)
 
 ### Observation 19: Solver panic on perturbed LP(4,4)
 
-`ehz_capacity` panics on perturbed LP(4,4) and hypercube. The panic is `assert!(q_error_bound < 1e-6)` in saddle_point_solver.rs:504, which fires when the degenerate 4-facet orbit produces |λ_min| ≈ 1e-12. The experiment uses `catch_unwind` to work around this (added in commit 87071e9 by an agent). This violates the project convention (feedback_fix_cause_not_symptom.md): fix the input, don't suppress the guard. The catch_unwind should be removed and the experiment should not generate inputs that trigger the panic. Tracked in TASKS.md.
+`ehz_capacity` panics on perturbed LP(4,4) and hypercube. The panic is `assert!(q_error_bound < 1e-6)` in saddle_point_solver.rs:504, a deferred-work panic that fires when degenerate 4-facet orbits produce |λ_min| ≈ 1e-12. Root cause: the Q error bound formula E = 4.5·||r||²/|λ_min| is vacuously large for near-singular KKT matrices, even though the residual is small. The solver's near-null-space algorithm handles β correctly but the error bound still uses the raw λ_min.
+
+The panic correctly escalates: this is math work (investigate whether the error bound formula is appropriate for near-singular systems). Tracked in TASKS.md (q-error-threshold). The experiment cannot run LP(4,4) or hypercube through the perturbation sweep until this is resolved. `catch_unwind` was removed per the error handling convention (.claude/rules/rust.md).
 
 ### Q5c conclusion
 
@@ -462,5 +464,5 @@ The real problem is at LP(4,4) and hypercube: the "interior" orbits (4-facet, β
 
 ## Known issues
 
-- **Q-correction panic:** `solve_kkt_for` panics on some near-degenerate polytopes. Caught via `catch_unwind` in `solve_kkt_safe`. Results in missing rows (perturbation skipped), not incorrect data.
+- **Q-error-bound panic:** `ehz_capacity` panics on perturbed LP(4,4)/hypercube (degenerate 4-facet orbits). Deferred-work panic — see Obs 19, TASKS.md q-error-threshold. The experiment cannot run these polytopes through the perturbation sweep until resolved.
 - **Q2 volume/sys slope degradation:** Lagrangian products show lower fitted slopes for volume (1.74) and sys (1.65). Likely floating-point cancellation on small-facet polytopes, not a gradient error. The convergent region still trends correctly.
