@@ -171,25 +171,62 @@ With the sparse/dense directions replaced by gradient + neg-gradient + 5 dense r
 
 The 107 missing crossings (10.9%) are concentrated in neg_gradient directions (66/107) and at low F (F=5,6: 60/107). The neg_gradient direction moves away from the sys optimizer, creating polytopes where EHZ has numerical issues. Not a structural limitation.
 
+### Products vs random polytopes
+
+Splitting all metrics by source dataset reveals a fundamental structural difference:
+
+| Metric | Random | Lagrangian product |
+|--------|--------|-------------------|
+| Transition failures (convexity) | **0/1156 (0%)** | **1565/1565 (100%)** |
+| Orbit gap median | 0.163 | 0.008 |
+| Orbit-facet cell width | 0.169 | 0.363 |
+| Anisotropy | 10.6× | 7.0× |
+
+(all existing JSONL files, grouped by source_dataset)
+
+**Non-convexity is entirely a product phenomenon.** The 57.5% overall rate is a Simpson's paradox — random polytopes have 0% transition failures, products have 100%. This makes structural sense: Lagrangian products have special ω₀ relationships between cross-factor facet pairs (near-zero values that flip easily under perturbation). Random polytopes have generic ω₀ values far from zero.
+
+**Product orbit gaps are 20× smaller** (median 0.008 vs 0.163), meaning products are generically near-degenerate — the second-best orbit is almost as good as the best.
+
+### Multi-boundary sweeps
+
+Walk along a direction for distance 1.0, iteratively stepping past each boundary. 560 sweeps (140 polytopes × 4 directions: gradient, neg-gradient, 2 dense random).
+
+| F | Median boundaries | Mean | Max |
+|---|-------------------|------|-----|
+| 5 | 1 | 2.1 | 6 |
+| 6 | 3 | 3.2 | 13 |
+| 7 | 4 | 5.5 | 17 |
+| 8 | 7 | 8.0 | 36 |
+| 9 | 10 | 10.8 | 33 |
+| 10 | 14 | 14.4 | 45 |
+
+(sweep JSONL, budget=1.0, sweep directions: gradient + neg-gradient + 2 dense random)
+
+**A typical gradient step crosses ~6 boundaries** (median across all F and directions). This scales roughly linearly with F: ~1 at F=5, ~14 at F=10. The inter-boundary spacing is median 0.026, meaning boundaries are closely packed.
+
+**Event type distribution in sweeps:** incidence flips 75.6%, ω₀ flips 24.4%. Incidence flips dominate multi-boundary paths more than single-boundary probes (57/43 split). This makes sense: as the polytope deforms further from the starting point, vertex positions accumulate larger changes, crossing more incidence boundaries.
+
+**36% of sweeps end by construction failure** before exhausting the distance budget. This limits the practical range of multi-step algorithms — after ~6-14 boundary crossings, accumulated perturbation creates near-degenerate polytopes.
+
 ## Interpretation
 
 **sys is continuous but not smooth.** The systolic ratio is continuous across all combinatorial boundaries (consistent with the min-of-continuous-functions structure of c_EHZ). The gradient can jump by up to 70° when the optimal orbit switches.
 
-**ω₀ flips are significant.** They account for 43% of global-probe boundaries and dominate per-facet probes. Any step-bound computation that only tracks incidence flips would miss a third of the boundaries.
+**ω₀ flips are significant.** They account for 43% of global-probe boundaries. Any step-bound computation that only tracks incidence flips would miss almost half the boundaries.
 
-**Cells are non-convex and this matters.** 57.5% of midpoints have a different transition matrix — different feasible orbits. This isn't just a sign flip in some abstract quantity; it changes which Reeb orbits exist. Incidence is preserved 99.2% of the time ("incidence-convex"), but the transition matrix depends on ω₀ signs for all vertex-adjacent pairs, and those flip frequently.
+**Non-convexity is a product phenomenon, not generic.** Random polytopes have empirically convex cells (0% midpoint transition failures at F≤10). Lagrangian products have 100% failure — every midpoint test changes the transition matrix. This is due to the special symplectic structure of products: cross-factor ω₀ values are near-zero and flip easily.
 
-**Orbit facets are wider, not narrower.** The intuition that "orbit facets are bottlenecks" is wrong — non-orbit facets are narrower. This suggests that optimization is free to move orbit facets significantly without hitting a boundary, while non-orbit facets are more constrained. A step-size strategy should account for this asymmetry.
+**Gradient ascent should plan for ~F boundaries per step.** A step of distance ~1 crosses a median of F boundaries (linearly in F). Most of these are benign (gradient angle change ~0.002°), but any one could trigger an orbit switch (3% per boundary). Over F boundaries, the probability of at least one orbit switch is roughly 1-(0.97)^F ≈ 15-35% for F=5-10.
 
-**High anisotropy (8.3×) constrains step selection.** Within each facet's R⁴, some directions have much more room than others. An isotropic step (equal perturbation in all directions) will hit a boundary in the narrow direction long before exhausting the wide direction. Anisotropy-aware step selection could take larger steps by aligning with the wide directions of each facet's cell.
+**Orbit facets are wider, not narrower.** Non-orbit facets are the bottleneck (median 0.124 vs 0.258). Optimization is free to move orbit facets significantly without hitting a boundary.
 
-**Gradient-cell alignment is favorable (r = 0.518).** The gradient doesn't push toward the narrowest cell boundary. This is good news for gradient ascent: the step-size limit imposed by cell geometry is correlated with, not opposed to, the gradient direction.
+**High anisotropy (8.3×) constrains step selection.** Within each facet's R⁴, some directions have much more room than others. Anisotropy-aware step selection could take larger steps by aligning with wide directions.
 
-**Boundary density constrains gradient ascent.** The gradient direction hits boundaries faster than dense random directions. But the gradient boundary distance correlates with overall cell width, so narrower cells constrain everything, not just the gradient.
+**Gradient-cell alignment is favorable (r = 0.52).** The gradient doesn't push toward the narrowest cell boundary.
 
 ## Open questions
 
 1. **Continuity of sys:** The observation that sys is continuous at boundaries is consistent with the min-of-continuous-functions structure of c_EHZ, but a formal proof that new orbits enter continuously (not just that existing orbit actions are continuous) may be worth writing up for the thesis.
-2. **ω₀ non-convexity impact:** Answered — yes. 57.5% of midpoints have a different transition matrix. The non-convexity changes which orbits are feasible and is operationally significant.
-3. **Anisotropy structure:** What determines the anisotropy directions within each facet's R⁴? Is it related to the positions of adjacent facets, the symplectic structure, or both?
-4. **Step-size strategy:** Can per-facet cell widths be used to construct an anisotropic step-size bound that allows larger steps than the isotropic bound?
+2. **Anisotropy structure:** What determines the anisotropy directions within each facet's R⁴? Is it related to the positions of adjacent facets, the symplectic structure, or both? Deferred unless sys-search needs anisotropic steps.
+3. **Construction failure after multi-boundary crossing:** 36% of sweeps fail. Is the failure mode predictable? Can the sweep be made more robust (e.g., by normalizing dual vertices after each step)?

@@ -87,6 +87,15 @@ const SEED: u64 = 42;
 /// Whether to run gradient measurement across boundaries (Pass 2 Phase 3).
 const RUN_GRADIENT: bool = true;
 
+/// Distance budget for multi-boundary sweep (Pass 4).
+/// Typical gradient t_max is O(0.1); 1.0 is ~10× a typical step.
+/// If changed: larger budgets cross more boundaries but risk accumulating
+/// numerical error from repeated polytope reconstruction.
+const SWEEP_BUDGET: f64 = 1.0;
+
+/// Step-over epsilon for multi-boundary sweep: fraction of t_max to step past boundary.
+const SWEEP_STEP_FRACTION: f64 = 1e-3;
+
 // ============================================================================
 // Boundary event types
 // ============================================================================
@@ -250,6 +259,26 @@ struct ConvexityRow {
     midpoint_same_omega_signs: bool,
     midpoint_same_transitions: bool,
     midpoint_construction_ok: bool,
+}
+
+/// Pass 4: multi-boundary sweep row (one row per polytope per direction).
+#[derive(Debug, Serialize)]
+struct SweepRow {
+    polytope_name: String,
+    facet_count: usize,
+    direction_type: String,
+    /// Total distance budget for the sweep.
+    budget: f64,
+    /// Number of boundaries crossed before budget or failure.
+    n_boundaries: usize,
+    /// Cumulative distances at each boundary.
+    boundary_distances: Vec<f64>,
+    /// Event types at each boundary.
+    event_types: Vec<String>,
+    /// Whether the sweep ended due to construction failure (vs budget exhausted).
+    ended_by_failure: bool,
+    /// Total distance traveled.
+    total_distance: f64,
 }
 
 // ============================================================================
@@ -984,6 +1013,75 @@ fn load_polytopes_from_jsonl(
 }
 
 // ============================================================================
+// Pass 4: Multi-boundary sweep
+// ============================================================================
+
+/// Walk along a direction, iteratively stepping past each boundary.
+/// Returns the sweep row with all boundaries encountered.
+fn multi_boundary_sweep(
+    start_duals: &[Vector4<f64>],
+    direction: &[Vector4<f64>],
+    budget: f64,
+) -> SweepRow {
+    let mut current_duals = start_duals.to_vec();
+    let mut total_distance = 0.0;
+    let mut boundary_distances = Vec::new();
+    let mut event_types = Vec::new();
+    let mut ended_by_failure = false;
+
+    loop {
+        // Build polytope at current position
+        let poly = match Polytope4D::from_f64(current_duals.clone()) {
+            Ok(p) => p,
+            Err(_) => {
+                ended_by_failure = true;
+                break;
+            }
+        };
+
+        // Find next boundary
+        let boundary = compute_step_bound_detailed(&poly, direction);
+
+        if matches!(boundary.event, EventType::Unbounded) {
+            // No more boundaries within MAX_STEP_SIZE
+            break;
+        }
+
+        let t = boundary.t_max;
+        if total_distance + t > budget {
+            // Budget exhausted before reaching next boundary
+            break;
+        }
+
+        total_distance += t;
+        boundary_distances.push(total_distance);
+        event_types.push(boundary.event.name().to_string());
+
+        // Step just past the boundary
+        let step_over = (SWEEP_STEP_FRACTION * t).max(EPS_FLOOR);
+        let t_step = t + step_over;
+        total_distance += step_over;
+
+        // Update current duals
+        for (a, d) in current_duals.iter_mut().zip(direction.iter()) {
+            *a += t_step * d;
+        }
+    }
+
+    SweepRow {
+        polytope_name: String::new(), // filled by caller
+        facet_count: start_duals.len(),
+        direction_type: String::new(),
+        budget,
+        n_boundaries: boundary_distances.len(),
+        boundary_distances,
+        event_types,
+        ended_by_failure,
+        total_distance,
+    }
+}
+
+// ============================================================================
 // Main
 // ============================================================================
 
@@ -1051,6 +1149,10 @@ fn main() {
         File::create(out_dir.join("combinatorial-boundaries-convexity.jsonl")).expect("create convexity JSONL");
     let mut convexity_writer = BufWriter::new(convexity_file);
 
+    let sweep_file =
+        File::create(out_dir.join("combinatorial-boundaries-sweep.jsonl")).expect("create sweep JSONL");
+    let mut sweep_writer = BufWriter::new(sweep_file);
+
     // =========================================================================
     // Process each polytope
     // =========================================================================
@@ -1060,6 +1162,7 @@ fn main() {
     let mut total_crossing = 0usize;
     let mut total_gradient = 0usize;
     let mut total_convexity = 0usize;
+    let mut total_sweep = 0usize;
     let mut n_skipped = 0usize;
 
     for (idx, (name, source, polytope)) in polytopes.iter().enumerate() {
@@ -1329,6 +1432,55 @@ fn main() {
         }
 
         // =====================================================================
+        // Pass 4: Multi-boundary sweep (gradient + 2 dense random)
+        // =====================================================================
+
+        // Gradient sweep
+        let grad_norm: f64 = d_sys_a.iter().map(|v| v.norm_squared()).sum::<f64>().sqrt();
+        if grad_norm > EPS_NUMERICAL_ZERO {
+            let grad_dir: Vec<Vector4<f64>> = d_sys_a.iter().map(|v| v / grad_norm).collect();
+            let mut row = multi_boundary_sweep(duals, &grad_dir, SWEEP_BUDGET);
+            row.polytope_name = name.clone();
+            row.direction_type = "gradient".to_string();
+            serde_json::to_writer(&mut sweep_writer, &row).unwrap();
+            writeln!(sweep_writer).unwrap();
+            total_sweep += 1;
+
+            // Negative gradient
+            let neg_dir: Vec<Vector4<f64>> = grad_dir.iter().map(|v| -v).collect();
+            let mut row = multi_boundary_sweep(duals, &neg_dir, SWEEP_BUDGET);
+            row.polytope_name = name.clone();
+            row.direction_type = "neg_gradient".to_string();
+            serde_json::to_writer(&mut sweep_writer, &row).unwrap();
+            writeln!(sweep_writer).unwrap();
+            total_sweep += 1;
+        }
+
+        // 2 dense random sweeps
+        for i in 0..2 {
+            let raw: Vec<Vector4<f64>> = (0..f)
+                .map(|_| {
+                    Vector4::new(
+                        StandardNormal.sample(&mut rng),
+                        StandardNormal.sample(&mut rng),
+                        StandardNormal.sample(&mut rng),
+                        StandardNormal.sample(&mut rng),
+                    )
+                })
+                .collect();
+            let norm: f64 = raw.iter().map(|v| v.norm_squared()).sum::<f64>().sqrt();
+            if norm > EPS_NUMERICAL_ZERO {
+                let dir: Vec<Vector4<f64>> = raw.iter().map(|v| v / norm).collect();
+                let mut row = multi_boundary_sweep(duals, &dir, SWEEP_BUDGET);
+                row.polytope_name = name.clone();
+                row.direction_type = format!("dense_random_{i}");
+                serde_json::to_writer(&mut sweep_writer, &row).unwrap();
+                writeln!(sweep_writer).unwrap();
+                total_sweep += 1;
+            }
+        }
+
+        // =====================================================================
         // Progress reporting
         // =====================================================================
 
@@ -1356,6 +1508,7 @@ fn main() {
         w.flush().unwrap();
     }
     convexity_writer.flush().unwrap();
+    sweep_writer.flush().unwrap();
 
     let total_time = t0.elapsed().as_secs_f64();
     println!("\nDone in {total_time:.1}s.");
@@ -1365,6 +1518,7 @@ fn main() {
     if RUN_GRADIENT {
         println!("  Gradient rows:  {total_gradient}");
     }
+    println!("  Sweep rows:     {total_sweep}");
     println!("  Convexity rows: {total_convexity}");
     if n_skipped > 0 {
         println!("  Skipped:        {n_skipped} (base computation failed)");
