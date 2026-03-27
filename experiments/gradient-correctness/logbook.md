@@ -358,11 +358,13 @@ All three have distinct gradients among tied orbits — no degenerate ties with 
 
 Interpretation: slope 2 for subdiff means the formula min_i(g_i · d) correctly predicts the directional derivative, and the O(t²) remainder comes from each per-orbit action being C². Slope 1 for single orbit confirms non-differentiability: at the switching boundary, no single gradient exists.
 
-**Obs 11. LP(4,4) shows orbit appearance failure.**
-- LP(4,4): subdiff slope ≈ 1.00 and single-orbit slope ≈ 1.00 for ALL 10 directions. (gradient-correctness-q5b-symmetric.jsonl, polytope_id=q5b_lp4_4)
-- Root cause: the base orbits use 4 facets (e.g., [1,5,3,7]), but perturbed polytopes find length-6 orbits (e.g., [0,5,4,2,3,6]) as optimal. These length-6 orbits are NOT among the 2 tied orbits at the base point — they were infeasible at the base and appeared under perturbation. 100% of rows switch to a new orbit type at ALL t values (gradient-correctness-q5b-symmetric.jsonl, all LP(4,4) rows).
-- The subdiff formula based on base-point orbits cannot account for orbits that don't exist at the base point. Both predictions are O(t) wrong.
-- Connection to [lem:orbit-contraction]: at the base point, the length-6 orbits have some β_k = 0 (they contract to the length-4 orbit). Under perturbation, β_k becomes positive (orbit expands). This is the orbit appearance phenomenon flagged in math.tex open question 2.
+**Obs 11. LP(4,4) shows orbit appearance with a characteristic transition scale.**
+- LP(4,4): 95 of 130 expected rows produced (35 lost to KKT solver panics in transition zone). Base orbits use 4 facets (e.g., [1,5,3,7]). (gradient-correctness-q5b-symmetric.jsonl, polytope_id=q5b_lp4_4)
+- Two regimes separated by a transition at t ≈ 1e-5 to 3e-5:
+  - **Small t (≤ ~3e-6):** Base orbit persists (or switches to another length-4 orbit). Subdiff slope ≈ 2.0 — gradient is correct. (e.g., dir 3: no switching at t ≤ 3e-6, subdiff slope 2.05 over small-t range; dir 4: subdiff slope 1.99; dir 6: slope 1.99)
+  - **Large t (≥ ~3e-5):** Length-6 orbits appear (e.g., [0,5,4,2,3,6]). These were infeasible at the base point. Subdiff slope ≈ 1.0 across all directions (dir 0: 1.00, dir 1: 1.00, ..., all large-t fits ≈ 1.00).
+- Overall: 81/95 rows (85.3%) show orbit switching. Perturbed perm lengths: 70 length-6 (orbit appearance), 25 length-4 (switching among existing tied orbits). Dirs 0,1 have no small-t data at all (rows start at t ≥ 1e-4).
+- Connection to [lem:orbit-contraction]: at the base point, length-6 orbits have some β_k = 0 (they contract to the length-4 orbit with equal action). Under perturbation, β_k becomes positive (orbit expands) and the action diverges. This is the orbit appearance phenomenon flagged in math.tex open question 2.
 
 **Obs 12. Orbit structure varies across LP sizes.**
 - LP(3,3): optimal orbits use ALL 6 facets. No room for orbit appearance.
@@ -373,7 +375,7 @@ Interpretation: slope 2 for subdiff means the formula min_i(g_i · d) correctly 
 
 Q5b cleanly separates two phenomena:
 1. **Orbit switching between known orbits** (LP(3,3), LP(5,5)): subdiff formula D_d c = min_i(g_i · d) is correct. Residual slope = 2 confirms C² per-orbit actions and correct directional derivative. Single-orbit gradient fails (slope 1) unless it happens to agree with the subdiff in a particular direction. **High confidence** — consistent across all tested directions.
-2. **Orbit appearance** (LP(4,4)): new orbits become feasible under perturbation. The base-point orbit landscape is insufficient to predict the directional derivative. Both subdiff and single-orbit have slope 1. **High confidence** — consistent across all 10 directions, structural explanation via orbit contraction/expansion.
+2. **Orbit appearance** (LP(4,4)): at large perturbations (t ≥ ~3e-5), new length-6 orbits become feasible and win over the base length-4 orbits. Subdiff and single-orbit both have slope ≈ 1. At small perturbations (t ≤ ~3e-6), the base orbit persists and subdiff slope ≈ 2 (correct). The orbit appearance has a finite "radius" — below it, the gradient is still valid. **High confidence** — two-regime pattern consistent across directions, structural explanation via orbit contraction/expansion. 35/130 rows lost to KKT panics in the transition zone.
 
 Figure: gc_q5b_boundary.png. Three panels (one per LP). Blue = subdiff traces, red = single-orbit traces. LP(3,3) and LP(5,5): blue at slope 2, red splits. LP(4,4): both at slope 1.
 
