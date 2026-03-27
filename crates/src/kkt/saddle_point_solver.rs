@@ -875,6 +875,36 @@ mod tests {
         );
     }
 
+    /// Perturbed LP(4,4): ehz_capacity completes without panic.
+    ///
+    /// Before the KktOutcome refactor, ehz_capacity panicked on perturbed LP(4,4)
+    /// with "Q error bound unexpectedly large" because degenerate orbits reached
+    /// finalize_result with |λ_min| ≈ 1e-12. After the refactor, these orbits
+    /// return Infeasible (β < 0 or Q ≤ 0) before reaching the error bound check.
+    ///
+    /// Regression test: if this starts panicking again, the KktOutcome early
+    /// returns are no longer catching the degenerate cases.
+    #[test]
+    fn perturbed_lp44_ehz_capacity_no_panic() {
+        use crate::{lagrangian_product, regular_polygon_2d};
+        let (qn, qh) = regular_polygon_2d(4, 1.0);
+        let polytope = lagrangian_product(&qn, &qh, &qn, &qh).expect("LP(4,4)");
+        let duals = polytope.dual_vertices_f64();
+        // Fixed perturbation that breaks square symmetry.
+        // Uses the exact dual vertices rather than RNG for stability.
+        let perturbed: Vec<nalgebra::Vector4<f64>> = duals
+            .iter()
+            .enumerate()
+            .map(|(i, a)| {
+                let s = 0.01 * ((i + 1) as f64);
+                nalgebra::Vector4::new(a[0] + s * 0.3, a[1] - s * 0.7, a[2] + s * 0.5, a[3] - s * 0.1)
+            })
+            .collect();
+        let pp = crate::geom::polytope::Polytope4D::from_f64(perturbed).expect("perturbed LP(4,4)");
+        let result = crate::algorithms::hk2017::ehz_capacity(&pp);
+        assert!(result.is_some(), "ehz_capacity should succeed on perturbed LP(4,4)");
+    }
+
     // ── Constraint satisfaction ──
 
     /// All returned solutions satisfy the normalization constraint (1^T beta = 1).
