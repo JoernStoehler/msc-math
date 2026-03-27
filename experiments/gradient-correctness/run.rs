@@ -64,7 +64,6 @@ use serde::Serialize;
 use std::f64::consts::PI;
 use std::fs::File;
 use std::io::{BufWriter, Write};
-use std::panic;
 use std::time::Instant;
 use symplectic::algorithms::hk2017::combinations;
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
@@ -323,25 +322,12 @@ fn dot_grad_dir(g: &[Vector4<f64>], d: &[Vector4<f64>]) -> f64 {
     g.iter().zip(d.iter()).map(|(gk, dk)| gk.dot(dk)).sum()
 }
 
-/// Wrapper: ehz_capacity can panic on ill-conditioned KKT matrices (Q error
-/// bound / Q correction assertions). These are calibrated invariants that fire
-/// for nearly-singular M (e.g. minimal-length orbits at symmetric polytopes).
-/// The experiment feeds such polytopes intentionally, so catch and treat as None.
 fn ehz_capacity_safe(polytope: &Polytope4D) -> Option<symplectic::EhzResult> {
-    let polytope = polytope.clone();
-    panic::catch_unwind(panic::AssertUnwindSafe(|| ehz_capacity(&polytope)))
-        .ok()
-        .flatten()
+    ehz_capacity(polytope)
 }
 
-/// Wrapper: solve_kkt_for can panic on ill-conditioned KKT matrices.
-/// See ehz_capacity_safe for rationale.
 fn solve_kkt_safe(polytope: &Polytope4D, perm: &[usize]) -> Option<KktResult> {
-    let polytope = polytope.clone();
-    let perm = perm.to_vec();
-    panic::catch_unwind(panic::AssertUnwindSafe(|| solve_kkt_for(&polytope, &perm)))
-        .ok()
-        .flatten()
+    solve_kkt_for(polytope, perm)
 }
 
 /// Compute ∇_a β_k · d for each orbit position k, given a perturbation direction d.
