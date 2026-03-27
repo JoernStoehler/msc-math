@@ -48,6 +48,16 @@ Depends on: Jörn decides which side to fix for each item.
 
 ---
 
+## math.tex content audit
+
+**Status (2026-03-27):** Several experiment math.tex files contain not just mathematical proofs but also figures, result tables, and experiment writeups. This is wrong — math.tex should contain only lemma/theorem statements, proofs, definitions, and formal derivations. Prose, figures, and result discussions belong in logbook.md (for developers) or thesis/ (for examiners).
+
+**Known offenders (from root math.pdf build):** experiments that include `\includegraphics` or data tables in their math.tex: ablation, gradient-descent, lagrangian-products, omega-obstacle, orbit-recovery, pentagon-perturb, random-product-sweep, random-sweep, sys-optimization, visualization.
+
+**Fix:** Move non-proof content out of math.tex into logbook.md or separate files. Low priority — doesn't block anything, but makes the combined math.pdf noisy.
+
+---
+
 ## 3b. Audit math.tex stubs for lost mathematical backing
 
 When algorithmic lemmas were migrated from code doc comments to math.tex, some may have lost their connection to source material (papers, thesis definitions). Scan all math.tex `[TODO: JÖRN -` entries and check: was there ever a proof or citation? Did it get dropped during migration? Example: `lem:positive-span` and `lem:vertex-enumeration` in `geom/math.tex` have been proof-less stubs since their first commit — the thesis has Jörn-approved definitions of what a polytope is, but no proofs of the algorithmic facts the code relies on (positive spanning ↔ bounded, vertex enumeration correctness, irredundancy via affine rank).
@@ -117,7 +127,7 @@ The thesis is currently a dump of results, not a coherent narrative. Experiments
 - `hko-neighborhood` Phase C (2026-03-23) verified first-order necessary condition for local max in F=10 (n,h)-space via LP. See `hko-local-maximality` task for next steps.
 
 **Gradient experiment redesign (2026-03-26, Jörn):** The three gradient experiments (`sys-optimization`, `gradient-descent`, `gradient-search`) evolved incrementally and overlap significantly. Replace with three cleanly scoped experiments:
-1. **gradient-correctness** (Q1-Q5b complete, branch `gradient-correctness`, 34 commits) — Per-orbit gradient validated (slope=2.00 across all conditions). Q5: orbit-switching subdifferential at near-ties. Q5b: subdiff at exact switching boundaries via LP(n,n) — confirms [prop:capacity-smoothness-classification](b) at LP(3,3)/LP(5,5) (subdiff slope=2.00), discovers orbit appearance failure at LP(4,4). math.tex: 4 proven smoothness results (2 gaps for Jörn). Ready for merge. See logbook for 10 open questions with priority assessment.
+1. **gradient-correctness** (Q1-Q5b complete, branch `gradient-correctness`, ~48 commits) — Per-orbit gradient validated (slope=2.00 across all conditions). Q5b expanded: LP(n,n), simplex, hypercube, hko2024, G-orbit polytopes. Discovered orbit appearance failure at LP(4,4)/hypercube: subdiff formula fails because appearing orbits' A_σ is only defined on a half-space (β_k=0 boundary). New theorem [thm:subdiff-with-appearance] (math.tex Theorem 80): direction-dependent feasibility filter R(d) using ∇_a β_k sensitivity. Proof reviewed. Next: implement ∇_a β_k computation and test experimentally. See logbook for 16 observations and open questions.
 2. **combinatorial-boundaries** (scaffolded) — What happens at combinatorial type boundaries? How does sys/gradient behave across them? How dense are they?
 3. **sys-search** (scaffolded) — Gradient-based search for sys > 1. Single-step characterization + multi-step search with boundary-crossing strategies (overshoot, wiggle, cuts).
 
