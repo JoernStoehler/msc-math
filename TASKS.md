@@ -93,9 +93,9 @@ Depends on: Jörn verifies the math. Agent writes drafts, Jörn reviews.
 - **LP(5,5) perturbations:** 100 random, all lower (pentagon-perturb experiment).
 
 **Next steps (priority order):**
-1. **Second-order analysis of 16 flat directions** — compute sys along each flat direction via finite differences. Determines whether first-order necessary condition → actual local max. Agent-executable. This is the critical gap.
+1. **Second-order analysis of flat directions** — compute sys along each flat direction via finite differences. Determines whether first-order necessary condition → actual local max. Agent-executable. This is the critical gap. Note (2026-03-26): the 16 flat directions were computed in (n,h)-space including gauge directions. After a_i migration, Phase C LP could be redone in clean R^{40} with no gauge — possibly fewer true flat directions. Consider waiting for migration or doing both.
 2. **Jörn verifies h-space proof** — Danskin + symmetry + Euler homogeneity argument in `experiments/hko-neighborhood/logbook.md` lines 151-156. ~15 min. Then formalize in math.tex.
-3. **Complete Phase B** (facet 5: 11/200 rows). Agent-executable, low priority.
+3. **Complete Phase B** — facet-splitting now has 536 directions (regenerated 2026-03-26, was 212). All decrease sys.
 4. **Convex-body direction** (Phases E/F in logbook) — Minkowski smoothing or F-refinement. Completely untested direction. Needs scoping: can billiard algorithm handle K+εB⁴?
 5. **Structural explanation** — why does pentagon geometry force 0 ∈ conv? Relates to golden ratio β-structure, order-10 symmetry. Jörn's domain.
 
@@ -119,7 +119,7 @@ The thesis is currently a dump of results, not a coherent narrative. Experiments
 **Gradient experiment redesign (2026-03-26, Jörn):** The three gradient experiments (`sys-optimization`, `gradient-descent`, `gradient-search`) evolved incrementally and overlap significantly. Replace with three cleanly scoped experiments:
 1. **gradient-correctness** (scaffolded) — Is ∂sys/∂a_k correct? Generic polytopes, non-generic geometry, near-degeneracy, redundant halfspaces.
 2. **combinatorial-boundaries** (complete, 2026-03-27) — Random cells convex, product cells non-convex (0% vs 100% transition failures). ~F boundaries per gradient step. Orbit facets 2× wider than non-orbit. Gradient-cell alignment favorable (r=0.52). sys continuous, gradient stable except at orbit switches (3%/boundary, up to 70° jump). See logbook.
-3. **sys-search** (scaffolded) — Gradient-based search for sys > 1. Single-step characterization + multi-step search with boundary-crossing strategies (overshoot, wiggle, cuts).
+3. **sys-search** (dev run complete, branch `sys-search`) — Gradient-based search for sys > 1. Dev run: 42 seeds, best sys=0.933, wiggle dominates overshoot. Next: landscape characterization and search strategy comparison. See `handoffs/sys-search.md`.
 
 Dependency chain: #1 validates the gradient → #2 characterizes the obstacle → #3 applies the tool. #3 can start independently but benefits from #2's findings. Delete old experiments once new ones are confirmed better.
 
@@ -128,12 +128,29 @@ Dependency chain: #1 validates the gradient → #2 characterizes the obstacle �
 **Experiment ideas:** See `IDEAS.md` (root).
 
 **New experiment ideas (2026-03-26, discussion with Jörn):**
-- **Dense 2D slice** around HKO2024 — map the sys=1 level set. Most interpretable as 2D extension of lagrangian-products' rotation sweep. See `handoffs/dense-2d-slice.md`.
-- **Higher polygon Lagrangian products** — LP(5,7), LP(7,7) etc. untested, HKO came from LP(5,5).
+- **lagrangian-search** (Phase 1 complete, 2026-03-27) — Measured the sys>1 region around HKO2024 via dense perturbation sweep (6500 samples, 13 ε-levels) and directional boundary probing (500 rays). Key findings: characteristic per-component radius ε*≈0.035, anisotropic boundary with 7× aspect ratio, shape governed by combinatorial orbit structure (not smooth geometry). Random sampling in full LP space is hopeless (~10⁻³¹ volume fraction). Phases 2-3 (guided search, novelty check) deferred. See `experiments/lagrangian-search/logbook.md`.
+- **Higher polygon Lagrangian products** — LP(5,7), LP(7,7) etc. untested, HKO came from LP(5,5). Partially covered by lagrangian-search Phase 1.
 - **Dimension scaling** — how does max-achievable-sys scale with F for random polytopes? Scattered data exists but no systematic study.
-- **Pentagon-pair landscape** — what makes LP(5,5) special vs LP(4,6), LP(3,7)? Systematic (n,m,θ) sweep at higher resolution.
 
 Depends on: Jörn scoping the thesis story. Derivative-related experiments also depend on dual-vertex-parameterization (library derivative API, now mostly complete).
+
+---
+
+## q-error-threshold
+
+**Status (2026-03-26):** Needs Jörn to review the math. Potentially blocks new gradient experiments.
+
+The KKT solver panics when the error bound E = |r| / |λ_min| exceeds 1e-6. This is triggered by near-degenerate polytopes (gradient-stepped or perturbed) where |λ_min| is tiny:
+- hko-neighborhood: E=1.68e-6 (|r|=6e-8, |λ_min| near eps). Caught by `catch_unwind`.
+- sys-optimization: E=7.15e-6 (|r|=6e-8, |λ_min|=2.29e-9). Uncaught, aborted Phase 3 at 123/140.
+
+The actual residual |r| is always small (~1e-8). The bound blows up because λ_min is near machine epsilon, not because the solution is wrong. The q-error experiment validated the 1e-6 threshold on 1.1M nodes — but those were all non-perturbed polytopes.
+
+**Question for Jörn:** Is E = |r| / |λ_min| the right error metric when λ_min → 0? The solution may still be accurate (small residual), but the bound is vacuous. Should we use a different metric for near-singular systems, or accept the panic and skip those polytopes?
+
+**Impact:** Any experiment that evaluates sys on gradient-stepped or perturbed polytopes (gradient-correctness, combinatorial-boundaries, sys-search) may hit this. Current workaround is `catch_unwind` + skip.
+
+**Location:** `crates/src/kkt/saddle_point_solver.rs:504`
 
 ---
 

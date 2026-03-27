@@ -1,0 +1,315 @@
+//! Dense perturbation sweep around HKO2024 in Lagrangian product space.
+//!
+//! Architecture:
+//! 1. `cargo run --bin lagrangian_search --release` generates datasets
+//! 2. Writes per-sample data to lagrangian-search/lagrangian-search.jsonl
+//! 3. Writes per-level summary to lagrangian-search/lagrangian-search-levels.jsonl
+//! 4. Python script analyzes and plots
+//!
+//! Dataset design:
+//! - Base: HKO2024 (Lagrangian product of two regular pentagons at θ=18°)
+//! - Perturbation: Uniform[-ε, ε] on the 2 nonzero Lagrangian components of each
+//!   dual vertex (20 independent perturbation coordinates for 10 facets)
+//! - Sweep ε over geometric range: 0.01 to 2.0
+//! - 500 valid samples per ε level via rejection sampling
+//! - Billiard algorithm (fast, native for Lagrangian products)
+
+use nalgebra::Vector4;
+use rand::Rng;
+use rand::SeedableRng;
+use rand_chacha::ChaCha8Rng;
+use serde::Serialize;
+use std::fs::File;
+use std::io::{BufWriter, Write};
+use std::time::Instant;
+use symplectic::algorithms::billiard::billiard_capacity;
+use symplectic::geom::known_polytopes;
+use symplectic::geom::polytope::Polytope4D;
+use symplectic::geom::volume::volume;
+
+const SEED: u64 = 42;
+
+/// Number of valid samples to collect per epsilon level.
+/// 500 × 13 levels = 6500 evals. Observed total runtime: ~7 min (2026-03-27 run).
+const SAMPLES_PER_LEVEL: usize = 500;
+
+/// Maximum attempts per epsilon level before moving on.
+/// Worst observed acceptance rate: 5.2% at ε=2.0 (500/9653 in first run).
+/// At ε=1.0: 21.3% (500/2350). 100K attempts gives headroom for ε up to ~2.0.
+/// Re-validate if adding ε > 2.0 or changing perturbation distribution.
+const MAX_ATTEMPTS_PER_LEVEL: usize = 100_000;
+
+/// Epsilon levels: dense in the transition zone [0.02, 0.10], sparser outside.
+/// 0.01 matches pentagon-perturb baseline. Dual vertex magnitudes are ~1.24,
+/// so ε=1.0 is ~80% relative perturbation per component.
+const EPSILON_LEVELS: &[f64] = &[
+    0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.10, 0.15, 0.20, 0.50, 1.00,
+];
+
+#[derive(Debug, Serialize)]
+struct SampleRow {
+    epsilon: f64,
+    sample_index: usize,
+    is_base: bool,
+    /// Perturbation in the 2D Lagrangian plane per facet.
+    /// For q-facets: delta in (q₁, q₂). For p-facets: delta in (p₁, p₂).
+    /// 10 entries × 2 components = 20 perturbation coordinates.
+    delta_2d: Vec<[f64; 2]>,
+    /// L2 norm of the full 20D perturbation vector.
+    l2_norm: f64,
+    dual_vertices: Vec<[f64; 4]>,
+    volume: f64,
+    capacity: f64,
+    sys: f64,
+    bounces: usize,
+}
+
+#[derive(Debug, Serialize)]
+struct LevelRow {
+    epsilon: f64,
+    n_accepted: usize,
+    n_attempts: usize,
+    accept_rate: f64,
+    n_above_1: usize,
+    frac_above_1: f64,
+    sys_min: f64,
+    sys_mean: f64,
+    sys_max: f64,
+    sys_std: f64,
+    time_s: f64,
+}
+
+/// Identify which 2D components are nonzero for each dual vertex.
+/// Returns (i0, i1) index pairs: [0,1] for q-facets, [2,3] for p-facets.
+///
+/// For a Lagrangian product, each dual vertex lies entirely in q-space or p-space.
+/// We classify by comparing the squared norms of the q and p components.
+// TODO: add [def:lagrangian-facet-type] to math.tex (trivial from the LP definition)
+fn lagrangian_component_indices(duals: &[Vector4<f64>]) -> Vec<(usize, usize)> {
+    duals
+        .iter()
+        .map(|a| {
+            let q_sq = a[0] * a[0] + a[1] * a[1];
+            let p_sq = a[2] * a[2] + a[3] * a[3];
+            if q_sq > p_sq {
+                (0, 1) // q-facet
+            } else {
+                (2, 3) // p-facet
+            }
+        })
+        .collect()
+}
+
+/// Perturb dual vertices in their Lagrangian 2D plane.
+/// Returns (perturbed_duals, delta_2d, l2_norm).
+///
+/// Only the nonzero 2D components are perturbed, so the result remains a
+/// valid Lagrangian product (q-facets stay in q-space, p-facets in p-space).
+// TODO: add [lem:lagrangian-perturbation-closure] to math.tex
+fn perturb_lagrangian(
+    base: &[Vector4<f64>],
+    indices: &[(usize, usize)],
+    eps: f64,
+    rng: &mut ChaCha8Rng,
+) -> (Vec<Vector4<f64>>, Vec<[f64; 2]>, f64) {
+    let mut perturbed = Vec::with_capacity(base.len());
+    let mut deltas = Vec::with_capacity(base.len());
+    let mut l2_sq = 0.0;
+
+    for (a, &(i0, i1)) in base.iter().zip(indices.iter()) {
+        let d0: f64 = rng.gen_range(-eps..=eps);
+        let d1: f64 = rng.gen_range(-eps..=eps);
+        l2_sq += d0 * d0 + d1 * d1;
+
+        let mut v = *a;
+        v[i0] += d0;
+        v[i1] += d1;
+
+        perturbed.push(v);
+        deltas.push([d0, d1]);
+    }
+
+    (perturbed, deltas, l2_sq.sqrt())
+}
+
+fn v4_to_array(v: &Vector4<f64>) -> [f64; 4] {
+    [v[0], v[1], v[2], v[3]]
+}
+
+fn main() {
+    let t0 = Instant::now();
+    let mut rng = ChaCha8Rng::seed_from_u64(SEED);
+
+    let base_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("lagrangian-search");
+    let samples_path = base_dir.join("lagrangian-search.jsonl");
+    let levels_path = base_dir.join("lagrangian-search-levels.jsonl");
+
+    println!("Lagrangian search: dense perturbation sweep around HKO2024\n");
+
+    let samples_file = File::create(&samples_path).expect("failed to create samples file");
+    let mut samples_writer = BufWriter::new(samples_file);
+
+    let levels_file = File::create(&levels_path).expect("failed to create levels file");
+    let mut levels_writer = BufWriter::new(levels_file);
+
+    // Base polytope
+    let base = known_polytopes::hko_pentagon();
+    let base_polytope = &base.polytope;
+    let base_duals: Vec<Vector4<f64>> = base_polytope.dual_vertices_f64().to_vec();
+    let indices = lagrangian_component_indices(&base_duals);
+
+    // Compute and write base row (epsilon = 0)
+    let base_vol = volume(base_polytope).expect("volume computation failed");
+    let base_billiard = billiard_capacity(base_polytope)
+        .expect("billiard classification failed")
+        .expect("billiard returned None");
+    let base_cap = base_billiard.result.capacity;
+    let base_sys = base_cap * base_cap / (2.0 * base_vol);
+
+    println!(
+        "Base: sys = {:.6}, cap = {:.6}, vol = {:.6}\n",
+        base_sys, base_cap, base_vol
+    );
+
+    let base_row = SampleRow {
+        epsilon: 0.0,
+        sample_index: 0,
+        is_base: true,
+        delta_2d: vec![[0.0; 2]; base_duals.len()],
+        l2_norm: 0.0,
+        dual_vertices: base_duals.iter().map(v4_to_array).collect(),
+        volume: base_vol,
+        capacity: base_cap,
+        sys: base_sys,
+        bounces: base_billiard.bounce_count,
+    };
+    let line = serde_json::to_string(&base_row).expect("serialize");
+    writeln!(samples_writer, "{line}").expect("write");
+
+    let mut total_rows = 1usize;
+
+    // Header
+    println!(
+        "{:<8} {:>10} {:>10} {:>8} {:>10} {:>8} {:>8} {:>8} {:>6}",
+        "epsilon", "accepted", "attempts", "acc%", "sys>1", "frac%", "sys_min", "sys_max", "time"
+    );
+    println!("{}", "-".repeat(86));
+
+    // Sweep epsilon levels
+    for &eps in EPSILON_LEVELS {
+        let level_start = Instant::now();
+        let mut accepted = 0usize;
+        let mut attempts = 0usize;
+        let mut n_above_1 = 0usize;
+        let mut sys_values = Vec::with_capacity(SAMPLES_PER_LEVEL);
+
+        while accepted < SAMPLES_PER_LEVEL && attempts < MAX_ATTEMPTS_PER_LEVEL {
+            attempts += 1;
+
+            let (perturbed_duals, delta_2d, l2_norm) =
+                perturb_lagrangian(&base_duals, &indices, eps, &mut rng);
+
+            // Try to construct a valid polytope
+            let polytope = match Polytope4D::from_f64(perturbed_duals.clone()) {
+                Ok(p) => p,
+                Err(_) => continue,
+            };
+
+            // Compute capacity via billiard
+            let billiard = match billiard_capacity(&polytope) {
+                Ok(Some(r)) => r,
+                Ok(None) | Err(_) => continue,
+            };
+
+            let vol = match volume(&polytope) {
+                Ok(v) if v > 0.0 => v,
+                _ => continue,
+            };
+
+            let cap = billiard.result.capacity;
+            let sys = cap * cap / (2.0 * vol);
+
+            if sys > 1.0 {
+                n_above_1 += 1;
+            }
+            sys_values.push(sys);
+
+            let row = SampleRow {
+                epsilon: eps,
+                sample_index: accepted,
+                is_base: false,
+                delta_2d,
+                l2_norm,
+                dual_vertices: perturbed_duals.iter().map(v4_to_array).collect(),
+                volume: vol,
+                capacity: cap,
+                sys,
+                bounces: billiard.bounce_count,
+            };
+            let line = serde_json::to_string(&row).expect("serialize");
+            writeln!(samples_writer, "{line}").expect("write");
+
+            accepted += 1;
+        }
+
+        total_rows += accepted;
+        let level_time = level_start.elapsed().as_secs_f64();
+        let accept_rate = if attempts > 0 {
+            accepted as f64 / attempts as f64
+        } else {
+            0.0
+        };
+        let frac_above_1 = if accepted > 0 {
+            n_above_1 as f64 / accepted as f64
+        } else {
+            0.0
+        };
+
+        // Compute statistics
+        let (sys_min, sys_max, sys_mean, sys_std) = if !sys_values.is_empty() {
+            let n = sys_values.len() as f64;
+            let min = sys_values.iter().cloned().fold(f64::INFINITY, f64::min);
+            let max = sys_values
+                .iter()
+                .cloned()
+                .fold(f64::NEG_INFINITY, f64::max);
+            let mean = sys_values.iter().sum::<f64>() / n;
+            let var = sys_values.iter().map(|&s| (s - mean) * (s - mean)).sum::<f64>() / n;
+            (min, max, mean, var.sqrt())
+        } else {
+            (0.0, 0.0, 0.0, 0.0)
+        };
+
+        // Write level summary
+        let level_row = LevelRow {
+            epsilon: eps,
+            n_accepted: accepted,
+            n_attempts: attempts,
+            accept_rate,
+            n_above_1,
+            frac_above_1,
+            sys_min,
+            sys_mean,
+            sys_max,
+            sys_std,
+            time_s: level_time,
+        };
+        let line = serde_json::to_string(&level_row).expect("serialize");
+        writeln!(levels_writer, "{line}").expect("write");
+
+        println!(
+            "{:<8.2} {:>10} {:>10} {:>7.1}% {:>10} {:>7.1}% {:>8.4} {:>8.4} {:>5.1}s",
+            eps, accepted, attempts, accept_rate * 100.0, n_above_1, frac_above_1 * 100.0,
+            sys_min, sys_max, level_time
+        );
+    }
+
+    samples_writer.flush().expect("flush samples");
+    levels_writer.flush().expect("flush levels");
+    println!(
+        "\nWrote {total_rows} sample rows to {}",
+        samples_path.display()
+    );
+    println!("Wrote level summary to {}", levels_path.display());
+    println!("Total time: {:.1}s", t0.elapsed().as_secs_f64());
+}
