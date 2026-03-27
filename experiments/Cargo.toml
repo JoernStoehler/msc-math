@@ -89,6 +89,10 @@ name = "gradient_search"
 path = "gradient-search/run.rs"
 
 [[bin]]
+name = "combinatorial_boundaries"
+path = "combinatorial-boundaries/run.rs"
+
+[[bin]]
 name = "sys_search"
 path = "sys-search/run.rs"
 
