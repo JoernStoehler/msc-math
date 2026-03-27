@@ -218,6 +218,12 @@ struct SubdiffRow {
     single_residual: f64,
     single_log_residual: f64,
 
+    /// Smallest beta component of the best orbit's KKT solution.
+    /// Probes IFT boundary: smoothness of A_sigma requires all beta > 0
+    /// ([lem:per-orbit-smooth]). Small min_beta means the orbit is near
+    /// the boundary of its feasibility region.
+    min_beta: f64,
+
     base_best_perm: String,
     perturbed_best_perm: String,
     orbit_switched: bool,
@@ -968,7 +974,13 @@ fn run_q5(base_dir: &str) {
         for (pi, pd) in polytope_data.iter().enumerate() {
             let duals = pd.polytope.dual_vertices_f64();
             let best_perm = &pd.orbits[0].1;
+            let best_kkt = &pd.orbits[0].2;
             let c_base = pd.orbits[0].0; // capacity = action of best orbit
+            let min_beta = best_kkt
+                .beta
+                .iter()
+                .copied()
+                .fold(f64::INFINITY, f64::min);
 
             // Compute per-orbit gradients
             let orbit_grads: Vec<Vec<Vector4<f64>>> = pd
@@ -1068,6 +1080,7 @@ fn run_q5(base_dir: &str) {
                         single_predicted: single_pred,
                         single_residual: single_res,
                         single_log_residual: single_res.max(1e-300).log10(),
+                        min_beta,
                         base_best_perm: base_perm_str.clone(),
                         perturbed_best_perm: perturbed_perm_str,
                         orbit_switched,
