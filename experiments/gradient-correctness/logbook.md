@@ -428,6 +428,38 @@ implicit differentiation of the KKT system: ∂x/∂a_j = -M⁻¹ (∂M/∂a_j) 
 **Q5c plan:** Implement ∇_a β_k computation, apply direction filter, test on LP(4,4) and
 hypercube. Expected: filtered subdiff slope ≈ 2.
 
+## Q5c: Direction-filtered subdiff — empirical test (2026-03-27)
+
+### Implementation
+
+Added `beta_directional_sensitivity` function: computes ∇_a β_k · d via implicit differentiation of M·x = b (lem:kkt-sensitivity). Modified Q5b to enumerate orbits with β ≥ 0 (inclusive), classify as interior (all β > 1e-9) vs boundary (some β ≤ 1e-9), and for each direction d filter boundary orbits by ∇_a β_k · d > 0. New JSONL fields: `filtered_dot_d`, `n_inclusive_tied`, `n_interior_tied`, `n_dir_feasible`.
+
+### Observation 17: Direction filter does not improve predictions
+
+For all 12 polytopes tested, `filtered_dot_d == subdiff_dot_d` to machine precision. The filter correctly admits/rejects boundary orbits per direction (LP(4,4): 58 of 194 admitted, 92 with g·d < interior min correctly excluded), but the minimum over R(d) equals the minimum over interior orbits alone.
+
+Note: a boundary orbit σ with β_k = 0 has ∇A_σ = ∇A_σ' where σ' is the direct contraction (removing position k). But σ' is not necessarily an interior orbit — it may itself be boundary, and the contraction chain may terminate at a non-interior orbit with a different gradient than the interior orbits. LP(4,4) confirms this: 92 boundary orbits have g·d = -0.528, well below the interior min of -0.068. The direction filter excludes these because ∇_a β_k · d < 0. The empirical equality filtered == subdiff holds for all tested polytopes but is not a mathematical necessity.
+
+### Observation 18: LP(4,4) interior orbits are structurally degenerate
+
+LP(4,4) has 194 tied orbits: 2 classified as "interior" (perm [1,5,3,7] and [0,4,2,6], β = 0.25), 192 boundary. The 2 interior orbits use only 4 facets. The KKT system has m=4 unknowns (β) and 4+1=5 constraints (closure + normalization) — exactly determined, zero degrees of freedom. They are feasible only at the symmetric point. Under any perturbation, β jumps to -1.0 (verified by direct LU solve at t=1e-5).
+
+Consequence: lem:orbit-feasibility-open requires that β > 0 persists in a neighborhood. For 4-facet orbits on LP(4,4), M_σ is effectively singular (the orbit occupies a codimension-1 surface in parameter space). The lemma's hypothesis (M non-singular) is violated or borderline.
+
+Data: LP(4,4) dir 0, actual/t converges to +0.161 as t → 0, but interior subdiff predicts -0.068. Residual slope ≈ 1.0 (first-order error, not second-order).
+
+Hypercube has the same structure (194 tied, 2 degenerate interior, 192 boundary).
+
+### Observation 19: Solver panic on perturbed LP(4,4)
+
+`ehz_capacity` panics on perturbed LP(4,4) and hypercube. The panic is `assert!(q_error_bound < 1e-6)` in saddle_point_solver.rs:504, which fires when the degenerate 4-facet orbit produces |λ_min| ≈ 1e-12. The experiment uses `catch_unwind` to work around this (added in commit 87071e9 by an agent). This violates the project convention (feedback_fix_cause_not_symptom.md): fix the input, don't suppress the guard. The catch_unwind should be removed and the experiment should not generate inputs that trigger the panic. Tracked in TASKS.md.
+
+### Q5c conclusion
+
+The direction-filtered subdiff formula (thm:subdiff-with-appearance) is implemented and the direction filter works correctly (admits/rejects boundary orbits based on ∇_a β_k · d). However, for all tested polytopes the filtered prediction equals the interior-only prediction — the filter does not improve slopes.
+
+The real problem is at LP(4,4) and hypercube: the "interior" orbits (4-facet, β = 0.25) are structurally degenerate (5 constraints on 4 unknowns, feasible only at the symmetric point). They become immediately infeasible under any perturbation. No first-order formula evaluated at a₀ can predict capacity changes for these polytopes, because no tied orbit remains feasible in all directions. The theorem needs a hypothesis excluding this case (e.g., requiring m > dim + 1, or requiring M_σ non-singular on an open neighborhood).
+
 ## Known issues
 
 - **Q-correction panic:** `solve_kkt_for` panics on some near-degenerate polytopes. Caught via `catch_unwind` in `solve_kkt_safe`. Results in missing rows (perturbation skipped), not incorrect data.

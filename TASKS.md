@@ -154,6 +154,7 @@ Depends on: Jörn scoping the thesis story. Derivative-related experiments also 
 The KKT solver panics when the error bound E = |r| / |λ_min| exceeds 1e-6. This is triggered by near-degenerate polytopes (gradient-stepped or perturbed) where |λ_min| is tiny:
 - hko-neighborhood: E=1.68e-6 (|r|=6e-8, |λ_min| near eps). Caught by `catch_unwind`.
 - sys-optimization: E=7.15e-6 (|r|=6e-8, |λ_min|=2.29e-9). Uncaught, aborted Phase 3 at 123/140.
+- gradient-correctness Q5b: E≈0.3 (|λ_min|≈3e-12) on perturbed LP(4,4)/hypercube. 4-facet orbits have structurally singular M under symmetry-breaking perturbation (5 constraints on 4 unknowns). Caught by `catch_unwind`.
 
 The actual residual |r| is always small (~1e-8). The bound blows up because λ_min is near machine epsilon, not because the solution is wrong. The q-error experiment validated the 1e-6 threshold on 1.1M nodes — but those were all non-perturbed polytopes.
 

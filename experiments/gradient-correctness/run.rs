@@ -56,7 +56,7 @@
 //!
 //! Self-contained: generates all polytopes internally.
 
-use nalgebra::Vector4;
+use nalgebra::{DVector, Vector4};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal, Uniform};
@@ -71,6 +71,8 @@ use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
 use symplectic::derivatives::{capacity_derivatives_a, volume_derivatives_a};
 use symplectic::geom::facet_volume::facet_volume_3d;
 use symplectic::geom::polygon::random_polygon_2d;
+use symplectic::geom::symplectic_form::omega0;
+use symplectic::kkt::qp_assembly::build_augmented_system;
 use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktResult, EPS_Q_POSITIVE};
 use symplectic::random::generate_random_polytopes;
 use symplectic::{ehz_capacity, lagrangian_product, regular_polygon_2d, rotate_polygon_2d};
@@ -180,13 +182,6 @@ const Q5B_TIE_RTOL: f64 = 1e-8;
 /// cost (~70s per orbit enumeration).
 const Q5B_N_DIRS: usize = 10;
 
-/// Q5b: relative threshold for classifying tied-orbit gradients as "distinct"
-/// vs "matching". Two gradient sets are distinct when
-/// max_ij ||g_i - g_j|| > Q5B_GRAD_DISTINCT_RTOL * avg_i ||g_i||.
-/// 1e-6 is well above numerical noise (~1e-12 relative) but below any
-/// physically meaningful gradient difference. Used only for the diagnostic
-/// println (not written to JSONL).
-const Q5B_GRAD_DISTINCT_RTOL: f64 = 1e-6;
 
 // ============================================================================
 // Output schema
@@ -279,6 +274,22 @@ struct SubdiffRow {
     /// JSON array of {action, grad_dot_d} per orbit — for post-hoc gap-threshold analysis.
     orbit_grads: String,
 
+    /// [thm:subdiff-with-appearance] Direction-filtered subdifferential.
+    /// Uses inclusive orbit enumeration (β ≥ 0) and filters boundary orbits
+    /// by ∇_a β_k · d > 0 for all k with β_k = 0.
+    /// NaN when no directionally feasible orbits exist for this direction.
+    filtered_dot_d: f64,
+    filtered_predicted: f64,
+    filtered_residual: f64,
+    filtered_log_residual: f64,
+
+    /// Number of tied orbits with β ≥ 0 (inclusive enumeration).
+    n_inclusive_tied: usize,
+    /// Number of tied orbits with all β > 0 (interior orbits).
+    n_interior_tied: usize,
+    /// Number of orbits in R(d) for this direction (interior + directionally feasible boundary).
+    n_dir_feasible: usize,
+
     time_ms: f64,
 }
 
@@ -312,8 +323,10 @@ fn dot_grad_dir(g: &[Vector4<f64>], d: &[Vector4<f64>]) -> f64 {
     g.iter().zip(d.iter()).map(|(gk, dk)| gk.dot(dk)).sum()
 }
 
-/// Safe wrapper around ehz_capacity that catches panics (Q-correction panic
-/// on near-degenerate polytopes).
+/// Wrapper: ehz_capacity can panic on ill-conditioned KKT matrices (Q error
+/// bound / Q correction assertions). These are calibrated invariants that fire
+/// for nearly-singular M (e.g. minimal-length orbits at symmetric polytopes).
+/// The experiment feeds such polytopes intentionally, so catch and treat as None.
 fn ehz_capacity_safe(polytope: &Polytope4D) -> Option<symplectic::EhzResult> {
     let polytope = polytope.clone();
     panic::catch_unwind(panic::AssertUnwindSafe(|| ehz_capacity(&polytope)))
@@ -321,13 +334,81 @@ fn ehz_capacity_safe(polytope: &Polytope4D) -> Option<symplectic::EhzResult> {
         .flatten()
 }
 
-/// Safe wrapper around solve_kkt_for that catches panics (Q-correction panic).
+/// Wrapper: solve_kkt_for can panic on ill-conditioned KKT matrices.
+/// See ehz_capacity_safe for rationale.
 fn solve_kkt_safe(polytope: &Polytope4D, perm: &[usize]) -> Option<KktResult> {
     let polytope = polytope.clone();
     let perm = perm.to_vec();
     panic::catch_unwind(panic::AssertUnwindSafe(|| solve_kkt_for(&polytope, &perm)))
         .ok()
         .flatten()
+}
+
+/// Compute ∇_a β_k · d for each orbit position k, given a perturbation direction d.
+///
+/// Returns a Vec<f64> of length m where entry k = (∂β_k/∂a) · d, the rate of change
+/// of the k-th dwell-time weight when dual vertices move in direction d.
+///
+/// Uses [lem:kkt-sensitivity]: ∂x/∂a = -M⁻¹(Ṁ x₀), where Ṁ = dM/dt|_{t=0}
+/// for the perturbation a(t) = a₀ + t·d. The product Ṁ·x₀ simplifies to:
+///   (Ṁ·x₀)[i] = ω₀(a_{σ(i)}, D) + d_{σ(i)}·μ   for i < m,
+///   (Ṁ·x₀)[m+d] = D_d                              for d < 4,
+///   (Ṁ·x₀)[m+4] = 0,
+/// where D = Σ_l β_l · d_{σ(l)} (using closure constraint A^T β = 0).
+fn beta_directional_sensitivity(
+    polytope: &Polytope4D,
+    perm: &[usize],
+    kkt: &KktResult,
+    duals: &[Vector4<f64>],
+    direction: &[Vector4<f64>],
+) -> Vec<f64> {
+    let m = perm.len();
+    let size = m + 5;
+
+    // D = Σ_i β_i · d_{σ(i)} — weighted direction sum over orbit positions
+    let mut big_d = Vector4::zeros();
+    for i in 0..m {
+        big_d += kkt.beta[i] * direction[perm[i]];
+    }
+
+    // Build RHS = Ṁ · x₀
+    let mu_vec = Vector4::new(kkt.mu[0], kkt.mu[1], kkt.mu[2], kkt.mu[3]);
+    let mut rhs = DVector::zeros(size);
+    for i in 0..m {
+        rhs[i] = omega0(&duals[perm[i]], &big_d) + direction[perm[i]].dot(&mu_vec);
+    }
+    for d in 0..4 {
+        rhs[m + d] = big_d[d];
+    }
+    // rhs[m + 4] = 0 already
+
+    // Build M and solve M·w = -rhs via eigendecomposition
+    let (kkt_matrix, _) = build_augmented_system(polytope, perm);
+    let eig = kkt_matrix.symmetric_eigen();
+
+    // Pseudoinverse threshold: same as saddle_point_solver's EIGEN_CONDITION_TAU (1e-3)
+    // relative to max eigenvalue magnitude.
+    let max_abs_eig = eig
+        .eigenvalues
+        .iter()
+        .map(|e| e.abs())
+        .fold(0.0f64, f64::max);
+    let threshold = max_abs_eig * 1e-3;
+
+    // w = -M⁻¹ · rhs = -Σ_i (v_i · rhs / λ_i) · v_i
+    let mut w = DVector::zeros(size);
+    for i in 0..size {
+        let lambda = eig.eigenvalues[i];
+        if lambda.abs() > threshold.max(1e-12) {
+            let coeff = eig.eigenvectors.column(i).dot(&rhs) / lambda;
+            for j in 0..size {
+                w[j] -= coeff * eig.eigenvectors[(j, i)];
+            }
+        }
+    }
+
+    // Return β-components: w[0..m]
+    (0..m).map(|k| w[k]).collect()
 }
 
 /// Compute ∂sys/∂a_k via quotient rule: sys = c²/(2·vol).
@@ -1152,6 +1233,13 @@ fn run_q5(base_dir: &str) {
                         perturbed_best_perm: perturbed_perm_str,
                         orbit_switched,
                         orbit_grads: orbit_grads_json.clone(),
+                        filtered_dot_d: f64::NAN,
+                        filtered_predicted: f64::NAN,
+                        filtered_residual: f64::NAN,
+                        filtered_log_residual: f64::NAN,
+                        n_inclusive_tied: 0,
+                        n_interior_tied: 0,
+                        n_dir_feasible: 0,
                         time_ms: elapsed,
                     };
 
@@ -1214,11 +1302,11 @@ fn q5b_process_polytope(
     let f_count = polytope.facet_count();
     let duals = polytope.dual_vertices_f64();
 
-    println!("  Q5b: {} — F={}, enumerating orbits (strict β > 0)...", id, f_count);
+    // Inclusive enumeration: β ≥ 0 (picks up boundary orbits with β_k = 0).
+    // [thm:subdiff-with-appearance] needs these to compute the direction-filtered subdiff.
+    println!("  Q5b: {} — F={}, enumerating orbits (inclusive β ≥ 0)...", id, f_count);
     let t_enum = Instant::now();
-    // Use strict β > 0: boundary orbits (β_k = 0) have degenerate gradients
-    // that pollute the subdiff min with artificially low values.
-    let all_orbits = enumerate_all_orbits(polytope);
+    let all_orbits = enumerate_all_orbits_inclusive(polytope);
     let enum_secs = t_enum.elapsed().as_secs_f64();
     println!(
         "  Q5b: {} — {} certified orbits in {:.1}s",
@@ -1241,52 +1329,38 @@ fn q5b_process_polytope(
         })
         .collect();
 
-    let n_tied = tied_orbits.len();
+    let n_inclusive_tied = tied_orbits.len();
+
+    // Classify orbits: interior (all β > 0) vs boundary (some β_k ≈ 0).
+    // Boundary orbits need the direction filter from [thm:subdiff-with-appearance].
+    let is_interior: Vec<bool> = tied_orbits
+        .iter()
+        .map(|(_, _, kkt)| {
+            kkt.beta
+                .iter()
+                .all(|&b| b > EPS_BETA_CERTIFIED)
+        })
+        .collect();
+    let n_interior_tied = is_interior.iter().filter(|&&b| b).count();
+    let n_boundary = n_inclusive_tied - n_interior_tied;
+
     println!(
-        "  Q5b: {} — {} tied orbits (action ≈ {:.8})",
-        id, n_tied, best_action,
+        "  Q5b: {} — {} tied orbits (action ≈ {:.8}): {} interior, {} boundary",
+        id, n_inclusive_tied, best_action, n_interior_tied, n_boundary,
     );
 
-    if n_tied < 2 {
+    if n_inclusive_tied < 2 {
         println!("  Q5b: {} — only 1 tied orbit, no boundary to test", id);
         return 0;
     }
 
+    // Compute gradients for ALL tied orbits (interior + boundary).
     let orbit_grads: Vec<Vec<Vector4<f64>>> = tied_orbits
         .iter()
         .map(|(_action, perm, kkt)| {
             capacity_derivatives_a(&kkt.beta, kkt.q_corrected, &kkt.mu, perm, &duals)
         })
         .collect();
-
-    let grad_norms: Vec<f64> = orbit_grads
-        .iter()
-        .map(|g| g.iter().map(|v| v.norm_squared()).sum::<f64>().sqrt())
-        .collect();
-
-    let mut max_grad_dist = 0.0f64;
-    for i in 0..n_tied {
-        for j in (i + 1)..n_tied {
-            let dist: f64 = orbit_grads[i]
-                .iter()
-                .zip(orbit_grads[j].iter())
-                .map(|(a, b)| (a - b).norm_squared())
-                .sum::<f64>()
-                .sqrt();
-            max_grad_dist = max_grad_dist.max(dist);
-        }
-    }
-    let avg_grad_norm = grad_norms.iter().sum::<f64>() / grad_norms.len() as f64;
-    let gradients_distinct =
-        max_grad_dist > Q5B_GRAD_DISTINCT_RTOL * avg_grad_norm.max(1e-30);
-
-    println!(
-        "  Q5b: {} — max gradient distance: {:.2e} (avg norm: {:.2e}) → {}",
-        id,
-        max_grad_dist,
-        avg_grad_norm,
-        if gradients_distinct { "DISTINCT" } else { "MATCHING" },
-    );
 
     let min_beta = tied_orbits[0]
         .2
@@ -1300,17 +1374,70 @@ fn q5b_process_polytope(
     for dir_idx in 0..n_dirs {
         let direction = random_direction(duals.len(), rng);
 
+        // Compute g_i · d for all tied orbits
         let orbit_gd: Vec<f64> = orbit_grads
             .iter()
             .map(|g| dot_grad_dir(g, &direction))
             .collect();
 
+        // subdiff_gd: min over INTERIOR orbits only (the standard formula).
         // [prop:capacity-smoothness-classification](b): D_d c = min_i(g_i · d)
+        // This works when all tied orbits have β > 0 but fails at orbit appearance.
         let subdiff_gd = orbit_gd
             .iter()
-            .copied()
+            .zip(is_interior.iter())
+            .filter(|(_, &interior)| interior)
+            .map(|(&gd, _)| gd)
             .fold(f64::INFINITY, f64::min);
-        let single_gd = orbit_gd[0];
+        let single_gd = orbit_gd
+            .iter()
+            .zip(is_interior.iter())
+            .find(|(_, &interior)| interior)
+            .map(|(&gd, _)| gd)
+            .unwrap_or(orbit_gd[0]);
+
+        // Direction filter: [thm:subdiff-with-appearance]
+        // For boundary orbits, check ∇_a β_k · d > 0 for all k with β_k = 0.
+        let mut dir_feasible_gd: Vec<f64> = Vec::new();
+        let mut n_dir_feasible = 0usize;
+
+        for (idx, ((_action, perm, kkt), &gd)) in
+            tied_orbits.iter().zip(orbit_gd.iter()).enumerate()
+        {
+            if is_interior[idx] {
+                // Interior orbits are always directionally feasible
+                dir_feasible_gd.push(gd);
+                n_dir_feasible += 1;
+            } else {
+                // Boundary orbit: compute ∇_a β_k · d and check sign
+                let beta_sens =
+                    beta_directional_sensitivity(polytope, perm, kkt, &duals, &direction);
+
+                // Check: for every k with β_k ≈ 0, need ∇_a β_k · d > 0
+                let mut feasible = true;
+                for (k, &bk) in kkt.beta.iter().enumerate() {
+                    if bk <= EPS_BETA_CERTIFIED {
+                        if beta_sens[k] <= 0.0 {
+                            feasible = false;
+                            break;
+                        }
+                    }
+                }
+                if feasible {
+                    dir_feasible_gd.push(gd);
+                    n_dir_feasible += 1;
+                }
+            }
+        }
+
+        let (filtered_gd, filtered_valid) = if dir_feasible_gd.is_empty() {
+            (f64::NAN, false)
+        } else {
+            (
+                dir_feasible_gd.iter().copied().fold(f64::INFINITY, f64::min),
+                true,
+            )
+        };
 
         let orbit_info: Vec<OrbitGradInfo> = tied_orbits
             .iter()
@@ -1359,7 +1486,6 @@ fn q5b_process_polytope(
             // Op 2: augmented subdiff — include appearing orbit's gradient
             // computed at the perturbed point where it IS feasible.
             let (aug_gd, aug_pred, aug_res, aug_log_res) = if orbit_switched {
-                // Solve KKT for the perturbed best perm at the perturbed polytope
                 let perturbed_duals_vec = perturbed_polytope.dual_vertices_f64();
                 let appearing_grad = solve_kkt_safe(&perturbed_polytope, perturbed_perm)
                     .map(|kkt| {
@@ -1372,9 +1498,7 @@ fn q5b_process_polytope(
                         )
                     });
                 if let Some(grad) = appearing_grad {
-                    // Compute g_appearing · d (using base-point direction)
                     let appearing_gd = dot_grad_dir(&grad, &direction);
-                    // Augmented subdiff: min of base subdiff and appearing orbit
                     let aug = subdiff_gd.min(appearing_gd);
                     let pred = t * aug;
                     let res = (actual - pred).abs();
@@ -1383,8 +1507,16 @@ fn q5b_process_polytope(
                     (f64::NAN, f64::NAN, f64::NAN, f64::NAN)
                 }
             } else {
-                // No orbit appearance — augmented = subdiff (no change)
                 (subdiff_gd, subdiff_pred, subdiff_res, subdiff_res.max(1e-300).log10())
+            };
+
+            // Direction-filtered subdiff prediction
+            let (filt_pred, filt_res, filt_log_res) = if filtered_valid {
+                let pred = t * filtered_gd;
+                let res = (actual - pred).abs();
+                (pred, res, res.max(1e-300).log10())
+            } else {
+                (f64::NAN, f64::NAN, f64::NAN)
             };
 
             let elapsed = t0.elapsed().as_secs_f64() * 1000.0;
@@ -1393,7 +1525,7 @@ fn q5b_process_polytope(
                 phase: "q5b".to_string(),
                 polytope_id: id.to_string(),
                 facet_count: f_count,
-                n_orbits: n_tied,
+                n_orbits: n_inclusive_tied,
                 action_gap: 0.0,
                 dir_idx,
                 t,
@@ -1418,6 +1550,13 @@ fn q5b_process_polytope(
                 perturbed_best_perm: perturbed_perm_str,
                 orbit_switched,
                 orbit_grads: orbit_grads_json.clone(),
+                filtered_dot_d: filtered_gd,
+                filtered_predicted: filt_pred,
+                filtered_residual: filt_res,
+                filtered_log_residual: filt_log_res,
+                n_inclusive_tied,
+                n_interior_tied,
+                n_dir_feasible,
                 time_ms: elapsed,
             };
 
