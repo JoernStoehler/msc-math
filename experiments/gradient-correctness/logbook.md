@@ -82,7 +82,7 @@ Q3 scatter plot (gc_q3_gap.png) shows no correlation between action gap and fitt
 
 ### Observation 4: Barely-cutting facets have no effect
 
-Q4 plot (gc_q4_delta.png) shows all slopes between 1.94 and 2.04 regardless of δ, with no systematic trend. The gradient remains correct even as the added facet contributes negligibly to the polytope.
+Q4 plot (gc_q4_delta.png) shows median slopes between 1.94 and 2.04 regardless of δ, with no systematic trend. The gradient remains correct even as the added facet contributes negligibly to the polytope.
 
 ### Summary table (fitted slope, log_t ∈ [-4, -1])
 
