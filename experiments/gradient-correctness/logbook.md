@@ -109,6 +109,28 @@ The analytical gradients ∂c/∂a_k, ∂vol/∂a_k, ∂sys/∂a_k correctly pre
 - Whether the subdifferential characterization at non-smooth points is correct
 - Whether the unverified lemmas [lem:cap-derivative], [lem:vol-derivative] are mathematically correct (the experiment only tests whether the code predictions match the code values — a shared conceptual error in both the function and the gradient code would not be detected)
 
+## Open: Q5 — Orbit-switching and subdifferential prediction
+
+**Status:** Scoped, not implemented. Expands scope of this experiment.
+
+**Research question:** At parameters where multiple orbits are tied or near-tied, does the Clarke subdifferential (set of per-orbit gradients) correctly predict the capacity to first order?
+
+**Background:** [prop:capacity-piecewise-smooth](d) claims that at a switching boundary with r tied orbits, the directional derivative is D_d c = min_i(∇_a A_i · d). Q1-Q4 only tested the per-orbit gradient (fixed orbit, using solve_kkt_for). Q5 would test the min-over-orbits prediction using full ehz_capacity for the perturbed point.
+
+**What's needed in the library:** Currently `capacity_derivatives_a` takes a single orbit's KKT solution and returns one gradient. There is no function that returns multiple gradients for tied/near-tied orbits. The experiment would need to:
+1. Enumerate all certified orbits via `enumerate_all_orbits` (already in this experiment's Q3 code)
+2. Filter to those within some action gap threshold of the best (degenerate ties + near-ties relevant to finite step sizes)
+3. Compute `capacity_derivatives_a` for each such orbit
+4. Predict: D_d c = min_i(g_i · d) for each direction d
+5. Compare against actual capacity change via full `ehz_capacity` on the perturbed polytope
+
+**Design questions for Jörn:**
+- Gap threshold: what range of action gaps counts as "near-tied"? (Exact ties have measure zero; finite step sizes make near-ties relevant.)
+- Should volume and sys also get subdifferential treatment? (Volume is smooth — no orbit switching. Sys inherits capacity's non-smoothness.)
+- Should this live in Q5 here, or as a separate experiment?
+
+**Performance concern:** Full ehz_capacity on perturbed polytopes is expensive (exponential in F). May need to restrict to small F (≤7) or use a budget of perturbation evaluations.
+
 ## Known issues
 
 - **Q-correction panic:** `solve_kkt_for` panics on some near-degenerate polytopes. Caught via `catch_unwind` in `solve_kkt_safe`. Results in missing rows (perturbation skipped), not incorrect data.

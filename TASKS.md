@@ -117,7 +117,7 @@ The thesis is currently a dump of results, not a coherent narrative. Experiments
 - `hko-neighborhood` Phase C (2026-03-23) verified first-order necessary condition for local max in F=10 (n,h)-space via LP. See `hko-local-maximality` task for next steps.
 
 **Gradient experiment redesign (2026-03-26, Jörn):** The three gradient experiments (`sys-optimization`, `gradient-descent`, `gradient-search`) evolved incrementally and overlap significantly. Replace with three cleanly scoped experiments:
-1. **gradient-correctness** (scaffolded) — Is ∂sys/∂a_k correct? Generic polytopes, non-generic geometry, near-degeneracy, redundant halfspaces.
+1. **gradient-correctness** (Q1-Q4 complete 2026-03-27, branch `gradient-correctness`) — Per-orbit gradient validated via first-order prediction test (slope=2.00 for capacity, all conditions). **Q5 open:** orbit-switching / subdifferential prediction at non-smooth points — tests whether min_i(g_i·d) predicts capacity change when orbits are tied/near-tied. Needs full ehz_capacity on perturbed polytopes (expensive, F≤7). Jörn scoped 2026-03-27.
 2. **combinatorial-boundaries** (scaffolded) — What happens at combinatorial type boundaries? How does sys/gradient behave across them? How dense are they?
 3. **sys-search** (scaffolded) — Gradient-based search for sys > 1. Single-step characterization + multi-step search with boundary-crossing strategies (overshoot, wiggle, cuts).
 
