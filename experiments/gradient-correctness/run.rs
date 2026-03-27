@@ -1139,14 +1139,15 @@ fn run_q5(base_dir: &str) {
 /// where symmetry forces exact orbit degeneracy.
 ///
 /// [prop:capacity-smoothness-classification](b): at switching boundaries with r >= 2
-/// tied orbits having distinct gradients, D_d c = min_i(g_i · d) and c is Lipschitz
-/// but not differentiable.
+/// tied orbits, D_d c = min_i(g_i · d). When gradients are distinct, c is Lipschitz
+/// but not differentiable. When all gradients match, min_i reduces to the common
+/// gradient and c is C¹ at that point (degenerate tie).
 ///
-/// Expected outcomes:
-/// - If tied orbits have DISTINCT gradients: subdiff residual slope ≈ 1 (C¹ not C²),
-///   single-orbit residual slope ≈ 0 (wrong gradient). Non-differentiable point.
-/// - If symmetry forces MATCHING gradients: both residuals have slope ≈ 2 (degenerate
-///   tie, c is actually C¹ here despite the orbit tie).
+/// Expected outcomes for DISTINCT gradients (verified for all tested LP(n,n)):
+/// - Subdiff residual slope ≈ 2: formula gives correct directional derivative,
+///   with O(t²) remainder from C² per-orbit actions.
+/// - Single-orbit residual slope ≈ 1 (in directions where orbits disagree on g·d)
+///   or slope ≈ 2 (in directions where they happen to agree).
 fn run_q5b(base_dir: &str) {
     let path = format!("{}/gradient-correctness-q5b-symmetric.jsonl", base_dir);
     let file = File::create(&path).expect("create Q5b JSONL");
