@@ -60,7 +60,9 @@ const SEED_BASE: u64 = 7777;
 
 /// Number of random perturbation directions per polytope.
 /// 5 directions in R^{4F} provides reasonable coverage for detecting
-/// direction-dependent issues with isotropic sampling.
+/// direction-dependent issues with isotropic sampling. Increasing to 10+
+/// would tighten the slope distribution but 5 already gives IQR width < 0.1
+/// for capacity. Decreasing below 3 risks missing direction-dependent bugs.
 const N_DIRS: usize = 5;
 
 /// Perturbation sizes for the first-order prediction test.
@@ -72,17 +74,20 @@ const T_VALUES: &[f64] = &[
     1e-1, 3e-2, 1e-2, 3e-3, 1e-3, 3e-4, 1e-4, 3e-5, 1e-5, 3e-6, 1e-6, 3e-7, 1e-7,
 ];
 
-/// Q1: polytopes per facet count.
+/// Q1: polytopes per facet count. 20 gives 600 traces total (6 F-values × 20 ×
+/// 5 dirs), enough for stable slope medians. Runtime scales linearly.
 const Q1_POLYTOPES_PER_F: usize = 20;
 
 /// Q3: max candidates to generate when filling gap bins.
 /// 2000 is enough to fill all bins at F=6 (verified in v1).
 const Q3_MAX_CANDIDATES: usize = 2000;
 
-/// Q3: max polytopes per gap bin.
+/// Q3: max polytopes per gap bin. 20 gives ~100 traces per bin (×5 dirs),
+/// enough for meaningful per-bin slope statistics.
 const Q3_PER_BIN: usize = 20;
 
 /// Q4: base polytopes to augment with barely-cutting facets.
+/// 10 × 5 deltas × 5 dirs = 250 traces. Runtime is fast (F=7, ~12s total).
 const Q4_BASE_COUNT: usize = 10;
 
 /// Q4: barely-cutting delta values. Range 1e-1 to 1e-5 spans from "substantial cut"
@@ -190,7 +195,8 @@ fn solve_kkt_safe(polytope: &Polytope4D, perm: &[usize]) -> Option<KktResult> {
 
 /// Compute ∂sys/∂a_k via quotient rule: sys = c²/(2·vol).
 /// ∂sys/∂a_k = (c·∂c/∂a_k − sys·∂vol/∂a_k) / vol.
-/// [cor:sys-derivative] in experiments/sys-optimization/math.tex.
+/// [cor:sys-derivative] quotient-rule derivative of the systolic ratio.
+/// In experiments/sys-optimization/math.tex.
 fn sys_derivatives_a(
     d_cap: &[Vector4<f64>],
     d_vol: &[Vector4<f64>],
