@@ -88,15 +88,15 @@ All verified against `lagrangian-search-levels.jsonl`.
 
 | ε | accepted/attempts | sys > 1 fraction | sys range |
 |---|---|---|---|
-| 0.01 | 500/500 (100%) | 500/500 (100.0%) | [1.014, 1.042] |
+| 0.01 | 500/500 (100%) | 500/500 (100.0%) | [1.014, 1.041] |
 | 0.02 | 500/500 (100%) | 492/500 (98.4%) | [0.993, 1.037] |
 | 0.03 | 500/500 (100%) | 367/500 (73.4%) | [0.970, 1.033] |
 | 0.04 | 500/500 (100%) | 172/500 (34.4%) | [0.944, 1.030] |
-| 0.05 | 500/500 (100%) | 79/500 (15.8%) | [0.912, 1.025] |
+| 0.05 | 500/500 (100%) | 79/500 (15.8%) | [0.911, 1.025] |
 | 0.06 | 500/500 (100%) | 24/500 (4.8%) | [0.908, 1.027] |
 | 0.07 | 500/500 (100%) | 8/500 (1.6%) | [0.873, 1.016] |
 | 0.08 | 500/500 (100%) | 1/500 (0.2%) | [0.862, 1.002] |
-| 0.10 | 500/500 (100%) | 1/500 (0.2%) | [0.814, 1.002] |
+| 0.10 | 500/500 (100%) | 1/500 (0.2%) | [0.814, 1.001] |
 | 0.15 | 500/500 (100%) | 0/500 (0.0%) | [0.707, 0.971] |
 | 0.20 | 500/500 (100%) | 0/500 (0.0%) | [0.605, 0.957] |
 | 0.50 | 500/521 (96.0%) | 0/500 (0.0%) | [0.322, 0.905] |
@@ -141,7 +141,7 @@ The transition is smooth (no sharp boundary), the std of sys grows with ε (expe
 
 **Isotropic quadratic (L2 norm):** Fitting Δsys ~ ‖δ‖² gives R²=0.48 in the transition zone (ε=0.03-0.06, n=2000). Pooling all ε levels, sys ~ L2 gives R²=0.85, but this is trivially driven by the ε-level structure.
 
-**Anisotropic quadratic (Hessian):** Fitting Δsys ~ δᵀHδ (210 features) gives R²=0.78, a 0.30 improvement over isotropic. The fitted H has eigenvalues from -8.2 to +0.7 (16 negative, 4 positive), suggesting ~9× aspect ratio.
+**Anisotropic quadratic (Hessian):** Fitting Δsys ~ δᵀHδ (210 features) gives R²=0.78, a 0.30 improvement over isotropic. The fitted H has eigenvalues from -8.2 to +0.7 (16 negative, 4 positive).
 
 **Why the quadratic model is wrong:** sys is not C² at HKO2024. HKO has degenerate minimum-action orbits (multiple orbits tie for the capacity), so sys = c²/2vol is locally the pointwise minimum of several smooth sheets. The Hessian of a pointwise minimum is not the Hessian of any individual sheet. The 4 positive eigenvalues likely reflect directions where one sheet rises while another (lower) sheet falls — the quadratic form can't represent this. The fitted "eigenvalues" are artifacts of projecting a non-smooth surface onto a smooth model.
 
