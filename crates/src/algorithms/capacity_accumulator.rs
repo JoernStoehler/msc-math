@@ -180,13 +180,17 @@ impl CapacityAccumulator {
             .as_ref()
             .map_or(certified.action, |u| u.action);
 
-        // Panic: an indeterminate orbit achieves lower action than the best
-        // certified orbit, and the gap exceeds numerical noise. This means the
-        // capacity cannot be resolved at f64 precision — the true minimum might
-        // be an orbit whose feasibility we can't determine. Investigation needed:
-        // either improve the feasibility classification (tighter EPS thresholds,
-        // rational solver fallback) or accept that this polytope is beyond f64
-        // resolution.
+        // DEFERRED WORK: capacity unresolvable at f64 precision.
+        //
+        // Why deferred: An indeterminate orbit (β near zero — can't certify feasible
+        // or infeasible) achieves lower action than the best certified orbit. The true
+        // capacity might be this orbit's action, but we can't prove it's feasible.
+        // The right fix is a typed outcome (e.g. CapacityOutcome::Unresolvable) or
+        // better feasibility classification (tighter EPS, rational solver fallback).
+        //
+        // What to do: Check which orbit is indeterminate and why. If the Q-error-bound
+        // panic was recently converted to None, indeterminate orbits that were previously
+        // rejected may now reach the accumulator — revert that change.
         let gap = certified.action - uncertain_action;
         assert!(
             gap <= GAP_TOLERANCE,

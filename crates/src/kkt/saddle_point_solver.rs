@@ -202,7 +202,13 @@ pub struct KktResult {
 /// single factorization.
 ///
 /// Returns `Some(KktResult)` with beta, corrected Q, error bound, and inertia,
-/// or `None` if no admissible solution exists.
+/// or `None` if no admissible solution exists (residual too large, beta infeasible,
+/// Q non-positive, or inertia mismatch).
+///
+/// TODO: Replace `Option<KktResult>` with a typed enum (e.g. `KktOutcome`) that
+/// distinguishes infeasible / ill-conditioned / Q-non-positive outcomes.
+/// `None` discards the reason, violating the error handling convention in
+/// `.claude/rules/rust.md`. See TASKS.md q-error-threshold.
 ///
 /// [lem:kkt]: KKT conditions characterize the EHZ capacity optimum as a saddle point.
 pub fn solve_saddle_point(
@@ -497,19 +503,25 @@ fn finalize_result(
     let r_sq = residual_norm * residual_norm;
     let q_error_bound = 4.5 * r_sq / abs_lambda_min;
 
-    // Panic: the Q value computed from this eigendecomposition is unreliable.
-    // This signals deferred work: the calibration (q-error experiment, 1.1M nodes,
-    // F ≤ 10) does not cover the input that triggered this. Investigation needed:
-    // either the threshold needs re-measuring for this input class, or the solver
-    // needs a different approach for ill-conditioned KKT matrices.
+    // DEFERRED WORK: Q error bound exceeds calibrated threshold.
     //
-    // Known trigger: degenerate orbits at symmetric polytopes (e.g. 4-facet orbits
-    // on LP(4,4)) where |λ_min| ≈ 1e-12. See gradient-correctness logbook Obs 18-19.
+    // Why deferred: The error bound E = 4.5·||r||²/|λ_min| ([lem:q-error-bound]) is a
+    // proven upper bound on |Q_true - Q_computed|. When |λ_min| → 0, E → ∞ even though
+    // ||r|| may be small — the bound is correct but vacuously large. The right fix is to
+    // either (a) use a tighter bound for near-singular systems, or (b) return this as a
+    // typed outcome (e.g. KktOutcome::IllConditioned) instead of Option<KktResult>.
+    // Both require mathematical work. See TASKS.md q-error-threshold.
     //
-    // Calibration: q-error experiment (Part 1) measures worst-case E = 2.9e-11
-    // across 1.1M nodes (F ≤ 10). The 1e-6 threshold is ~5 orders of magnitude
-    // above observed values. If this fires on larger polytopes (F > 16),
-    // re-measure before widening.
+    // When this fires: The KKT matrix has a near-zero eigenvalue, making the error bound
+    // vacuous. Known trigger: degenerate orbits at symmetric polytopes (4-facet orbits on
+    // LP(4,4), |λ_min| ≈ 1e-12). See gradient-correctness logbook Obs 18-19.
+    //
+    // What to do: Investigate why this orbit's KKT matrix is near-singular. If it's a
+    // structurally degenerate orbit (m ≤ dim), the orbit likely has no robust feasible
+    // solution and should be a typed "infeasible" outcome, not a panic.
+    //
+    // Calibration: q-error experiment measures worst-case E = 2.9e-11 across 1.1M
+    // well-conditioned nodes (F ≤ 10). Threshold 1e-6 is ~5 orders above that.
     assert!(
         q_error_bound < 1e-6,
         "Q error bound unexpectedly large: E={:.2e}, |r|={:.2e}, |lambda_min|={:.2e}",
