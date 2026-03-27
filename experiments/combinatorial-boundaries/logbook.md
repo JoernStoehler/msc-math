@@ -6,7 +6,7 @@ When deforming a polytope by moving dual vertices a_i, the combinatorial type (v
 
 ## Status
 
-**Phases A-E complete (2026-03-27).** Per-facet cell profiling, convexity testing, orbit gap, gradient-cell alignment. 140 polytopes, 11200 per-facet probes, 980 global probes, 2800 convexity tests.
+**Complete (2026-03-27).** Per-facet cell profiling, convexity testing (with transition matrix), orbit gap, gradient-cell alignment, products-vs-random split, multi-boundary sweep. 140 polytopes, 6 JSONL files, 15 figures. Key findings: cells are convex for random polytopes but not for Lagrangian products; a gradient step crosses ~F boundaries; gradient-cell alignment is favorable.
 
 ## Research questions
 
@@ -39,7 +39,7 @@ Characterization aspects of this question appear scattered across:
 
 ```bash
 cd experiments/
-cargo run --release --bin combinatorial_boundaries   # ~47s, generates 5 JSONL files
+cargo run --release --bin combinatorial_boundaries   # ~60s, generates 6 JSONL files
 python3 combinatorial-boundaries/analyze.py          # generates figures
 ```
 
