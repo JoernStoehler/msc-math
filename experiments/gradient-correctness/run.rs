@@ -266,6 +266,16 @@ struct SubdiffRow {
     perturbed_best_perm: String,
     orbit_switched: bool,
 
+    /// Op 2 augmented subdiff: when orbit_switched is true, we compute the
+    /// appearing orbit's gradient at the perturbed point a + td and include it
+    /// in the subdiff min retroactively. Tests whether the orbit's gradient at
+    /// a nearby feasible point would fix the prediction.
+    /// NaN when not applicable (orbit_switched = false or gradient unavailable).
+    augmented_dot_d: f64,
+    augmented_predicted: f64,
+    augmented_residual: f64,
+    augmented_log_residual: f64,
+
     /// JSON array of {action, grad_dot_d} per orbit — for post-hoc gap-threshold analysis.
     orbit_grads: String,
 
@@ -1133,6 +1143,10 @@ fn run_q5(base_dir: &str) {
                         single_predicted: single_pred,
                         single_residual: single_res,
                         single_log_residual: single_res.max(1e-300).log10(),
+                        augmented_dot_d: f64::NAN,
+                        augmented_predicted: f64::NAN,
+                        augmented_residual: f64::NAN,
+                        augmented_log_residual: f64::NAN,
                         min_beta,
                         base_best_perm: base_perm_str.clone(),
                         perturbed_best_perm: perturbed_perm_str,
@@ -1200,12 +1214,14 @@ fn q5b_process_polytope(
     let f_count = polytope.facet_count();
     let duals = polytope.dual_vertices_f64();
 
-    println!("  Q5b: {} — F={}, enumerating all orbits (β ≥ 0)...", id, f_count);
+    println!("  Q5b: {} — F={}, enumerating orbits (strict β > 0)...", id, f_count);
     let t_enum = Instant::now();
-    let all_orbits = enumerate_all_orbits_inclusive(polytope);
+    // Use strict β > 0: boundary orbits (β_k = 0) have degenerate gradients
+    // that pollute the subdiff min with artificially low values.
+    let all_orbits = enumerate_all_orbits(polytope);
     let enum_secs = t_enum.elapsed().as_secs_f64();
     println!(
-        "  Q5b: {} — {} orbits (incl. boundary) in {:.1}s",
+        "  Q5b: {} — {} certified orbits in {:.1}s",
         id,
         all_orbits.len(),
         enum_secs,
@@ -1340,6 +1356,37 @@ fn q5b_process_polytope(
             let single_pred = t * single_gd;
             let single_res = (actual - single_pred).abs();
 
+            // Op 2: augmented subdiff — include appearing orbit's gradient
+            // computed at the perturbed point where it IS feasible.
+            let (aug_gd, aug_pred, aug_res, aug_log_res) = if orbit_switched {
+                // Solve KKT for the perturbed best perm at the perturbed polytope
+                let perturbed_duals_vec = perturbed_polytope.dual_vertices_f64();
+                let appearing_grad = solve_kkt_safe(&perturbed_polytope, perturbed_perm)
+                    .map(|kkt| {
+                        capacity_derivatives_a(
+                            &kkt.beta,
+                            kkt.q_corrected,
+                            &kkt.mu,
+                            perturbed_perm,
+                            &perturbed_duals_vec,
+                        )
+                    });
+                if let Some(grad) = appearing_grad {
+                    // Compute g_appearing · d (using base-point direction)
+                    let appearing_gd = dot_grad_dir(&grad, &direction);
+                    // Augmented subdiff: min of base subdiff and appearing orbit
+                    let aug = subdiff_gd.min(appearing_gd);
+                    let pred = t * aug;
+                    let res = (actual - pred).abs();
+                    (aug, pred, res, res.max(1e-300).log10())
+                } else {
+                    (f64::NAN, f64::NAN, f64::NAN, f64::NAN)
+                }
+            } else {
+                // No orbit appearance — augmented = subdiff (no change)
+                (subdiff_gd, subdiff_pred, subdiff_res, subdiff_res.max(1e-300).log10())
+            };
+
             let elapsed = t0.elapsed().as_secs_f64() * 1000.0;
 
             let row = SubdiffRow {
@@ -1362,6 +1409,10 @@ fn q5b_process_polytope(
                 single_predicted: single_pred,
                 single_residual: single_res,
                 single_log_residual: single_res.max(1e-300).log10(),
+                augmented_dot_d: aug_gd,
+                augmented_predicted: aug_pred,
+                augmented_residual: aug_res,
+                augmented_log_residual: aug_log_res,
                 min_beta,
                 base_best_perm: base_perm_str.clone(),
                 perturbed_best_perm: perturbed_perm_str,
