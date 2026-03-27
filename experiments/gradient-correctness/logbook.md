@@ -282,6 +282,52 @@ The experiment contains 8 observations across 5 phases (Q1-Q5), supported by 4 p
 - Obs 1 (capacity slope = 2.00) is stated as depending on [prop:capacity-piecewise-smooth]. The observation itself (the slope IS 2.00) is direct and doesn't depend on any proposition. The proposition is needed only for the inference that the gradient formula is correct.
 - The math.tex proofs have TODO markers on two gaps, but the main results (lem:orbit-feasibility-open, lem:per-orbit-smooth, lem:orbit-contraction, and the non-differentiability argument in prop(b)) are standard IFT and convex analysis, likely correct.
 
+## Open questions (2026-03-27)
+
+Organized by distance from the experiment's stated scope. Items marked [actionable] have a clear methodology; items marked [open] need design work or are mathematical questions.
+
+### Within scope: gaps in Q1-Q5 answers
+
+**OQ1. Subdiff prediction at actual switching boundaries (gap = 0).** [actionable]
+Q5 tests the subdiff formula min_i(g_i · d) at non-boundary points, where it correctly fails (Obs 6). It does NOT test the formula at actual boundaries where it should succeed. Symmetry-forced ties provide exact gap = 0 polytopes: LP(n,n) and other HKO2024 polytopes where symmetry groups map orbits to orbits, guaranteeing identical actions. A generic perturbation direction breaks the symmetry, making the min non-trivial.
+
+Expected outcome: slope ≈ 1 (capacity is C¹ not C² at the boundary, since the directional derivative min_i(g_i · d) is piecewise linear in d). Slope = 2 would be surprising and would indicate the tied orbits have matching gradients (degenerate tie case in [prop:capacity-smoothness-classification]).
+
+**OQ2. Mathematical correctness of [lem:cap-derivative].** [open]
+The experiment tests code-vs-code, not the formula itself. A shared conceptual error in both the gradient code and the capacity code would be invisible. Options: (a) mathematical proof of the envelope theorem formula (formalizing the proof sketch in sys-optimization/math.tex), (b) independent reimplementation, (c) comparison against symbolic differentiation on small cases. Option (a) is the thesis-appropriate path.
+
+**OQ3. Non-best-orbit gradient correctness.** [actionable]
+Q1-Q4 only test the best orbit's gradient. The non-best orbit gradients used in Q5's subdiff prediction are untested individually. Could test by running the Q1-Q4 first-order test with a non-best orbit fixed (use solve_kkt_for with each orbit's permutation, not just the best). If each orbit's gradient independently shows slope 2.00, this closes the gap. Low effort — reuse existing code with different orbit selection.
+
+### Adjacent: smoothness structure questions
+
+**OQ4. F scaling (F > 10).** [actionable but expensive]
+All data is F ≤ 10. At F = 20+, orbit counts explode combinatorially. Per-orbit smoothness should still hold (local IFT), but switching boundaries could become dense, making the "generic point" assumption practically relevant. Would need LICCA cluster for F ≥ 12. Question: does the radius of the smooth region (before hitting a switching boundary) shrink with F?
+
+**OQ5. KKT matrix singularity at β > 0.** [open, mathematical]
+Can the KKT saddle-point matrix M(a) be singular when all β > 0? If yes, per-orbit smoothness fails there and the C² finding is weaker than it appears. The data (slope 2.00 at random polytopes) is consistent with generic non-degeneracy but doesn't rule out a codimension-1 singular locus. This is a question about the rank of a specific structured matrix — potentially answerable by linear algebra.
+
+**OQ6. Second-order behavior (Hessian).** [actionable]
+We confirm C² but don't test C³. For Newton-type optimization (relevant to sys-search), the Hessian should exist and be computable. Could test by computing second-order prediction residual |f(a+td) - f(a) - t·g·d - ½t²·d^T H d| and checking for slope 3. Requires computing or approximating the Hessian. Medium effort.
+
+**OQ7. Volume/sys degradation on Lagrangian products.** [actionable, low priority]
+Q2 slopes for volume (1.74) and sys (1.65) are attributed to floating-point cancellation. Could verify by using higher-precision arithmetic (e.g. f128 or arbitrary precision) on a few LP examples. If slopes improve, it's cancellation. If not, there may be a real numerical issue in the volume computation. Low priority — the gradient is correct in the convergent region regardless.
+
+### Beyond scope: optimization implications
+
+**OQ8. Orbit appearance under perturbation.** [open]
+An orbit infeasible at a can become feasible at a+td. Q5 detects these via ehz_capacity but can't predict them from the base orbit landscape. How common is this? What fraction of Q5 switching events are "new orbit appearance" vs "existing orbit overtakes"? Could answer from existing Q5 data by comparing base orbits against perturbed-best orbits.
+
+**OQ9. Practical step size bounds.** [open, connects to sys-search]
+Obs 7 shows switching rate as a function of gap and t. This implicitly defines a "safe step size" before hitting a switching boundary: for gap δ, perturbations with t << δ stay within the smooth region. Formalizing this into a step size bound for gradient-based optimization connects directly to the sys-search experiment.
+
+### Priority assessment (for thesis project management)
+
+- **High value, low effort:** OQ1 (symmetric polytopes, ~1 day), OQ3 (non-best orbit test, ~2 hours)
+- **High value, medium effort:** OQ2 (proving [lem:cap-derivative], effort depends on proof difficulty)
+- **Medium value:** OQ6 (Hessian test), OQ8 (orbit appearance from existing data)
+- **Low priority for thesis:** OQ4 (F scaling — nice but not essential), OQ5 (mathematical, may be hard), OQ7 (LP volume cancellation — minor), OQ9 (step size bounds — belongs in sys-search)
+
 ## Known issues
 
 - **Q-correction panic:** `solve_kkt_for` panics on some near-degenerate polytopes. Caught via `catch_unwind` in `solve_kkt_safe`. Results in missing rows (perturbation skipped), not incorrect data.
