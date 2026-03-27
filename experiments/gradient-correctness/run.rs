@@ -566,9 +566,24 @@ fn add_barely_cutting_facet(
     None
 }
 
-/// Enumerate all certified orbits for a polytope.
+/// Enumerate all certified orbits for a polytope (strict: β > EPS, Q > EPS).
 /// Returns (action, permutation, kkt_result) sorted by action ascending.
 fn enumerate_all_orbits(polytope: &Polytope4D) -> Vec<(f64, Vec<usize>, KktResult)> {
+    enumerate_orbits_inner(polytope, EPS_BETA_CERTIFIED)
+}
+
+/// Like enumerate_all_orbits but includes boundary orbits (β ≥ 0 up to
+/// numerical tolerance). Orbits with β_k ≈ 0 are feasible on the boundary
+/// of the orbit's feasibility region — they represent orbits that are about
+/// to appear/disappear and contribute to the Clarke subdifferential.
+fn enumerate_all_orbits_inclusive(polytope: &Polytope4D) -> Vec<(f64, Vec<usize>, KktResult)> {
+    enumerate_orbits_inner(polytope, -EPS_BETA_CERTIFIED)
+}
+
+fn enumerate_orbits_inner(
+    polytope: &Polytope4D,
+    beta_threshold: f64,
+) -> Vec<(f64, Vec<usize>, KktResult)> {
     let f = polytope.facet_count();
     let mut orbits = Vec::new();
 
@@ -577,7 +592,7 @@ fn enumerate_all_orbits(polytope: &Polytope4D) -> Vec<(f64, Vec<usize>, KktResul
             for_each_cyclic_permutation(&subset, &mut |perm| {
                 if let Some(kkt) = solve_kkt_safe(polytope, perm) {
                     let min_beta = kkt.beta.iter().copied().fold(f64::INFINITY, f64::min);
-                    if min_beta > EPS_BETA_CERTIFIED && kkt.q_corrected > EPS_Q_POSITIVE {
+                    if min_beta > beta_threshold && kkt.q_corrected > EPS_Q_POSITIVE {
                         let action = 0.5 / kkt.q_corrected;
                         orbits.push((action, perm.to_vec(), kkt));
                     }
@@ -1185,12 +1200,12 @@ fn q5b_process_polytope(
     let f_count = polytope.facet_count();
     let duals = polytope.dual_vertices_f64();
 
-    println!("  Q5b: {} — F={}, enumerating all orbits...", id, f_count);
+    println!("  Q5b: {} — F={}, enumerating all orbits (β ≥ 0)...", id, f_count);
     let t_enum = Instant::now();
-    let all_orbits = enumerate_all_orbits(polytope);
+    let all_orbits = enumerate_all_orbits_inclusive(polytope);
     let enum_secs = t_enum.elapsed().as_secs_f64();
     println!(
-        "  Q5b: {} — {} certified orbits in {:.1}s",
+        "  Q5b: {} — {} orbits (incl. boundary) in {:.1}s",
         id,
         all_orbits.len(),
         enum_secs,
