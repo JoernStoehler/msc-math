@@ -6,7 +6,7 @@ When deforming a polytope by moving dual vertices a_i, the combinatorial type (v
 
 ## Status
 
-**Phase 1-3 complete (2026-03-26).** First-boundary anatomy, crossing evaluation, and gradient measurement for 140 polytopes × ~20 directions. Math.tex deferred.
+**Phases 1-3 complete (2026-03-26).** First-boundary anatomy, crossing, gradient for 140 polytopes × 12 directions (sparse + dense). Phases A-E (cell geometry) designed, not yet implemented.
 
 ## Research questions
 
@@ -111,7 +111,46 @@ The gradient is effectively constant at non-switching boundaries (median 0.002°
 
 **Boundary density constrains gradient ascent.** The gradient direction hits boundaries faster than dense random directions.
 
+## Next phases: cell geometry
+
+The sparse/dense finding hints at deeper structure. The R^4 subspace per facet k is low-dimensional enough that random S³ directions sample it well, so per-facet probing gives interpretable cell cross-sections. Phases A-D below are mostly cheap (no EHZ), so they can run fast and inform whether deeper investigation pays off.
+
+### Phase A: Per-facet cell profiling
+
+For each polytope, for each facet k: probe ~10 random directions in R⁴_k. Record t_max and event type. Measures:
+- Cell width per facet (median t_max)
+- Anisotropy within each R⁴ (max/min t_max — round or elongated?)
+- Whether orbit-facets (in optimal σ) are narrower than non-orbit facets
+- Which event type dominates per facet
+
+**Cost:** Phase 1 only (step-bound, no EHZ). ~10 dirs × F facets × 140 polytopes = 14000 probes in seconds.
+
+### Phase B: Convexity testing
+
+Pick pairs of directions d₁, d₂. Construct polytopes at 0.5·t_max along each. Check if the midpoint has the same combinatorial type. Since ω₀ boundaries are quadric (not hyperplanes), cells need not be convex — this tests how often convexity fails empirically.
+
+**Cost:** Polytope construction + skeleton only, no EHZ.
+
+### Phase C: Gradient-cell alignment
+
+Decompose ∂sys/∂a_k (a 4-vector per facet) into the principal axes of each facet's R⁴ cross-section (from Phase A). Key question: does the gradient point toward the narrow direction of the cell? If so, gradient ascent inherently pushes toward boundaries — and knowing *which* facet is the bottleneck could inform step-size selection.
+
+**Cost:** One EHZ + gradient per polytope (already computed in current Phases 2-3).
+
+### Phase D: Orbit-optimality boundaries
+
+The optimal orbit can switch *within* a polytope-combinatorics cell. These orbit-optimality boundaries are smooth hypersurfaces where Q(σ₁) = Q(σ₂). Measure the action gap Q_best − Q_second-best per polytope. Where the gap is small, orbit switches are imminent even without a combinatorial boundary.
+
+**Cost:** One EHZ per polytope (reuses Phase C). The action gap comes from the capacity computation.
+
+### Phase E: Selective crossing evaluation
+
+Run Phases 2-3 (sys + gradient measurement across boundary) selectively on interesting boundaries identified by A-D: orbit switches, narrow facets, convexity failures.
+
+**Potential payoff for sys-search:** Per-facet cell width gives finite-distance information about where the gradient will change. A step-size strategy that accounts for not just the local gradient but also the cell geometry (which facets are narrow, which boundaries are nearby) could avoid overshooting orbit-switching boundaries while taking larger steps in safe directions.
+
 ## Open questions
 
-1. **Orbit switch prediction:** Can we predict which boundaries will cause orbit switches from the boundary geometry (event type, which vertex/facet, proximity of second-best orbit's action to best orbit's action)?
-2. **Continuity of sys:** The observation that sys is continuous at boundaries is consistent with the min-of-continuous-functions structure of c_EHZ, but a formal proof that new orbits enter continuously (not just that existing orbit actions are continuous) may be worth writing up for the thesis.
+1. **Continuity of sys:** The observation that sys is continuous at boundaries is consistent with the min-of-continuous-functions structure of c_EHZ, but a formal proof that new orbits enter continuously (not just that existing orbit actions are continuous) may be worth writing up for the thesis.
+2. **Cell convexity:** ω₀ boundaries are quadrics ⟹ cells are semi-algebraic, not necessarily convex. How often does convexity fail in practice? Does non-convexity matter for gradient ascent?
+3. **Orbit-facet narrowness:** Are facets in the optimal orbit's permutation the bottleneck for cell width? If so, moving *along* the orbit (adjusting orbit-facets) is constrained while moving *perpendicular* to it (adjusting non-orbit facets) is free.
