@@ -86,16 +86,6 @@ The gradient is effectively constant at non-switching boundaries (median 0.002°
 
 **Boundary distance decreases with F** (boundary_tmax_vs_F.png). Gradient direction hits boundaries sooner than dense random (boundary_density_cdf.png).
 
-## Interpretation
-
-**sys is continuous but not smooth.** The systolic ratio is continuous across all combinatorial boundaries (consistent with the min-of-continuous-functions structure of c_EHZ). The gradient can jump by up to 70° when the optimal orbit switches.
-
-**Sparsity is the key predictor of orbit switches.** Sparse perturbations (one facet) cause 14% orbit switches; dense perturbations (all facets) cause 2.7%. This means: moving one facet at a time is much more likely to change which orbit is optimal. Gradient ascent (dense, structured) encounters orbit switches rarely (~3.6%), which is favorable for optimization — but boundary-crossing strategies that overshoot into sparse directions would encounter orbit switches frequently.
-
-**ω₀ flips are significant.** They account for 36% of boundaries. Any step-bound computation that only tracks incidence flips would miss a third of the boundaries.
-
-**Boundary density constrains gradient ascent.** The gradient direction hits boundaries faster than dense random directions.
-
 ## Results: cell geometry (2026-03-27)
 
 Refactored to three passes: per-facet cell profiling (11200 probes, no EHZ), global probes with crossing + gradient (980 probes, with EHZ), convexity testing (2800 midpoint checks). Instrumented EHZ provides orbit gap per polytope. Runtime: 47s.
@@ -166,7 +156,7 @@ With the sparse/dense directions replaced by gradient + neg-gradient + 5 dense r
 
 | Metric | Value |
 |--------|-------|
-| Crossing success rate | 873/873 (100%) |
+| Crossing coverage | 873/980 (89.1%) |
 | Orbit switch rate | 26/873 (3.0%) |
 | Max |Δsys| | 2.91e-4 |
 | Gradient angle: median | 0.002° |
