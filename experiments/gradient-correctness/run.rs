@@ -9,8 +9,9 @@
 //! Q2: Non-generic geometry — Lagrangian products with symmetry-degenerate orbits
 //! Q3: Near-degeneracy — small action gap between best and second-best orbit
 //! Q4: Barely-cutting facets — near-redundant halfspaces
+//! Q5: Orbit-switching — subdifferential prediction at near-tied orbits
 //!
-//! Methodology:
+//! Methodology (Q1-Q4):
 //! - For each polytope, compute base values and analytical gradients
 //! - Sample random directions d in R^{4F} (unit vectors via Muller's method)
 //! - Sweep perturbation size t geometrically from 1e-1 to 1e-7
@@ -20,13 +21,21 @@
 //! - For volume: volume() of the perturbed polytope
 //! - For sys = c²/(2·vol): derived from perturbed cap and vol
 //!
+//! Methodology (Q5):
+//! - Enumerate all certified orbits within generous action gap of the best
+//! - Compute per-orbit gradient g_i via capacity_derivatives_a for each
+//! - Subdifferential prediction: D_d c = min_i(g_i · d)
+//! - Compare against actual capacity change via full ehz_capacity on perturbed polytope
+//! - Records orbit switching (which orbit wins in the perturbed polytope)
+//! - [prop:capacity-piecewise-smooth](d): at switching boundaries, D_d c = min_i(∇A_i · d)
+//!
 //! Mathematical correspondence:
 //! - [lem:cap-derivative] (unverified): envelope theorem formula for ∂c/∂a_k
 //! - [lem:vol-derivative] (unverified): chain rule formula for ∂vol/∂a_k
 //! - [prop:capacity-piecewise-smooth] (unverified): piecewise C^∞, generic differentiability
 //!
 //! Architecture:
-//! 1. `cargo run --release --bin gradient_correctness [q1 q2 q3 q4]` → JSONL files
+//! 1. `cargo run --release --bin gradient_correctness [q1 q2 q3 q4 q5]` → JSONL files
 //! 2. Python analyze.py → convergence plots and slope analysis
 //!
 //! Self-contained: generates all polytopes internally.
@@ -103,7 +112,7 @@ const Q3_GAP_BINS: [(f64, f64, &str); 4] = [
     (0.0, 1e-4, "tiny"),
 ];
 
-/// Minimum beta for certified orbit in Q3 enumeration.
+/// Minimum beta for certified orbit in Q3/Q5 enumeration.
 /// Matches the library's EPS_MARGIN_TRUE (1e-9) from kkt/mod.rs — orbits with
 /// beta below this are Indeterminate in the production accumulator.
 const EPS_BETA_CERTIFIED: f64 = 1e-9;
@@ -111,6 +120,33 @@ const EPS_BETA_CERTIFIED: f64 = 1e-9;
 /// Skip Q2 polytopes with F > this to avoid slow ehz_capacity calls.
 /// LP(5,5) has F=10 (~3 min per ehz_capacity call in v1). F≤8 is tractable.
 const MAX_FACET_Q2: usize = 8;
+
+/// Q5: generous action gap threshold for orbit enumeration.
+/// All orbits with action ≤ best_action + this threshold are kept.
+/// Analysis filters to tighter thresholds in post-processing (no recomputation).
+/// Value 0.1 chosen to include orbits up to ~10% of typical capacities (O(1)–O(10)),
+/// matching the upper boundary of the "medium" gap bin (1e-3 to 1e-1). Orbits further
+/// than 0.1 from the best have very different gradients and are not subdifferential
+/// candidates at any realistic step size.
+const Q5_GAP_THRESHOLD: f64 = 0.1;
+
+/// Q5: polytopes per gap bin per facet count.
+/// 15 per bin × 4 bins × 2 F-values = 120 polytopes (target), × 5 dirs × 13 t ≈ 7800
+/// ehz_capacity calls on perturbed polytopes. 131s total (run 2026-03-27, F=6-7).
+const Q5_PER_BIN: usize = 15;
+
+/// Q5: max candidates to generate when filling gap bins.
+/// 3000 fills all non-tiny bins at F=6-7 (run 2026-03-27: 47/60 at F=6, 53/60 at F=7).
+/// Tiny bins (gap < 1e-5) are structurally rare and underfill regardless of budget.
+const Q5_MAX_CANDIDATES: usize = 3000;
+
+/// Q5: gap bins for polytope selection (by gap between best and second-best orbit).
+const Q5_GAP_BINS: [(f64, f64, &str); 4] = [
+    (1e-1, f64::INFINITY, "large"),
+    (1e-3, 1e-1, "medium"),
+    (1e-5, 1e-3, "small"),
+    (0.0, 1e-5, "tiny"),
+];
 
 // ============================================================================
 // Output schema
@@ -141,6 +177,51 @@ struct PredictionRow {
     action_gap: Option<f64>,
     barely_cutting_delta: Option<f64>,
     min_facet_volume: Option<f64>,
+
+    time_ms: f64,
+}
+
+/// Q5: per-orbit info embedded in each JSONL row for post-hoc gap-threshold filtering.
+#[derive(Debug, Serialize)]
+struct OrbitGradInfo {
+    action: f64,
+    grad_dot_d: f64,
+}
+
+/// Q5 output row: subdifferential prediction test for orbit-switching behavior.
+#[derive(Debug, Serialize)]
+struct SubdiffRow {
+    phase: String,
+    polytope_id: String,
+    facet_count: usize,
+
+    n_orbits: usize,
+    action_gap: f64,
+
+    dir_idx: usize,
+    t: f64,
+    log_t: f64,
+
+    c_base: f64,
+    c_perturbed: f64,
+    actual_change: f64,
+
+    subdiff_dot_d: f64,
+    subdiff_predicted: f64,
+    subdiff_residual: f64,
+    subdiff_log_residual: f64,
+
+    single_dot_d: f64,
+    single_predicted: f64,
+    single_residual: f64,
+    single_log_residual: f64,
+
+    base_best_perm: String,
+    perturbed_best_perm: String,
+    orbit_switched: bool,
+
+    /// JSON array of {action, grad_dot_d} per orbit — for post-hoc gap-threshold analysis.
+    orbit_grads: String,
 
     time_ms: f64,
 }
@@ -463,6 +544,8 @@ fn enumerate_all_orbits(polytope: &Polytope4D) -> Vec<(f64, Vec<usize>, KktResul
     orbits
 }
 
+
+
 // ============================================================================
 // Phases
 // ============================================================================
@@ -776,6 +859,242 @@ fn run_q4(base_dir: &str) {
 }
 
 // ============================================================================
+// Q5: Orbit-switching and subdifferential prediction
+// ============================================================================
+
+fn run_q5(base_dir: &str) {
+    let path = format!("{}/gradient-correctness-q5-subdiff.jsonl", base_dir);
+    let file = File::create(&path).expect("create Q5 JSONL");
+    let mut writer = BufWriter::new(file);
+    let mut total_rows = 0;
+
+    let facet_counts = [6, 7];
+
+    for &f_count in &facet_counts {
+        // Benchmark ehz_capacity at this F
+        let mut bench_rng = ChaCha8Rng::seed_from_u64(SEED_BASE + 550 + f_count as u64);
+        let bench_polys = generate_random_polytopes(5, f_count, 0.5, 2.0, &mut bench_rng);
+        let t0 = Instant::now();
+        for p in &bench_polys {
+            ehz_capacity_safe(p);
+        }
+        let bench_ms = t0.elapsed().as_secs_f64() * 1000.0 / bench_polys.len() as f64;
+        println!("  Q5: F={} ehz_capacity benchmark: {:.2}ms/call", f_count, bench_ms);
+
+        // Fill gap bins: find polytopes with different action gap levels
+        let mut rng = ChaCha8Rng::seed_from_u64(SEED_BASE + 500 + f_count as u64);
+        let mut bin_counts = [0usize; 4];
+        let mut generated = 0;
+
+        struct PolytopeWithOrbits {
+            polytope: Polytope4D,
+            orbits: Vec<(f64, Vec<usize>, KktResult)>,
+            gap: f64,
+        }
+        let mut polytope_data: Vec<PolytopeWithOrbits> = Vec::new();
+
+        println!("  Q5: Finding polytopes with near-tied orbits at F={}...", f_count);
+
+        while generated < Q5_MAX_CANDIDATES && bin_counts.iter().any(|&c| c < Q5_PER_BIN) {
+            let polytopes = generate_random_polytopes(10, f_count, 0.5, 2.0, &mut rng);
+
+            for polytope in &polytopes {
+                generated += 1;
+                if bin_counts.iter().all(|&c| c >= Q5_PER_BIN) {
+                    break;
+                }
+
+                // Use enumerate_all_orbits for binning (need second-best action).
+                // Then filter to gap threshold for storage.
+                let all_orbits = enumerate_all_orbits(polytope);
+                if all_orbits.len() < 2 {
+                    continue;
+                }
+
+                let best_action = all_orbits[0].0;
+                let second_action = all_orbits[1].0;
+                let gap = second_action - best_action;
+
+                let bin_idx = Q5_GAP_BINS
+                    .iter()
+                    .position(|&(lo, hi, _)| gap >= lo && gap < hi);
+                let bin_idx = match bin_idx {
+                    Some(idx) if bin_counts[idx] < Q5_PER_BIN => idx,
+                    _ => continue,
+                };
+
+                // Keep only orbits within generous gap threshold
+                let filtered: Vec<_> = all_orbits
+                    .into_iter()
+                    .filter(|(action, _, _)| *action <= best_action + Q5_GAP_THRESHOLD)
+                    .collect();
+
+                polytope_data.push(PolytopeWithOrbits {
+                    polytope: polytope.clone(),
+                    orbits: filtered,
+                    gap,
+                });
+                bin_counts[bin_idx] += 1;
+
+                if generated % 200 == 0 {
+                    println!(
+                        "    {} candidates, bins: large={}, medium={}, small={}, tiny={}",
+                        generated,
+                        bin_counts[0],
+                        bin_counts[1],
+                        bin_counts[2],
+                        bin_counts[3],
+                    );
+                }
+            }
+        }
+
+        println!(
+            "  Q5: F={} — {} polytopes (bins: {}/{}/{}/{}), from {} candidates",
+            f_count,
+            polytope_data.len(),
+            bin_counts[0],
+            bin_counts[1],
+            bin_counts[2],
+            bin_counts[3],
+            generated,
+        );
+
+        // Process each polytope
+        let mut dir_rng = ChaCha8Rng::seed_from_u64(SEED_BASE + 600 + f_count as u64);
+
+        for (pi, pd) in polytope_data.iter().enumerate() {
+            let duals = pd.polytope.dual_vertices_f64();
+            let best_perm = &pd.orbits[0].1;
+            let c_base = pd.orbits[0].0; // capacity = action of best orbit
+
+            // Compute per-orbit gradients
+            let orbit_grads: Vec<Vec<Vector4<f64>>> = pd
+                .orbits
+                .iter()
+                .map(|(_action, perm, kkt)| {
+                    capacity_derivatives_a(&kkt.beta, kkt.q_corrected, &kkt.mu, perm, &duals)
+                })
+                .collect();
+
+            let id = format!("q5_F{}_{:03}", f_count, pi);
+            let base_perm_str = serde_json::to_string(best_perm).unwrap();
+
+            for dir_idx in 0..N_DIRS {
+                let direction = random_direction(duals.len(), &mut dir_rng);
+
+                // g_i · d for each orbit
+                let orbit_gd: Vec<f64> = orbit_grads
+                    .iter()
+                    .map(|g| dot_grad_dir(g, &direction))
+                    .collect();
+
+                // [prop:capacity-piecewise-smooth](d): at switching boundaries,
+                // the directional derivative D_d c = min_i(∇_a A_i · d).
+                let subdiff_gd = orbit_gd
+                    .iter()
+                    .copied()
+                    .fold(f64::INFINITY, f64::min);
+                // [lem:cap-derivative]: single best-orbit gradient prediction.
+                let single_gd = orbit_gd[0];
+
+                // Per-orbit details for post-hoc gap-threshold analysis
+                let orbit_info: Vec<OrbitGradInfo> = pd
+                    .orbits
+                    .iter()
+                    .zip(orbit_gd.iter())
+                    .map(|((action, _, _), &gd)| OrbitGradInfo {
+                        action: *action,
+                        grad_dot_d: gd,
+                    })
+                    .collect();
+                let orbit_grads_json = serde_json::to_string(&orbit_info).unwrap();
+
+                for &t in T_VALUES {
+                    let t0 = Instant::now();
+
+                    // Perturb dual vertices
+                    let perturbed_duals: Vec<Vector4<f64>> = duals
+                        .iter()
+                        .zip(direction.iter())
+                        .map(|(a, d)| a + t * d)
+                        .collect();
+
+                    let perturbed_polytope = match Polytope4D::from_f64(perturbed_duals) {
+                        Ok(p) => p,
+                        Err(_) => continue,
+                    };
+
+                    // Full ehz_capacity on perturbed polytope — the key difference from Q1-Q4
+                    let perturbed_ehz = match ehz_capacity_safe(&perturbed_polytope) {
+                        Some(r) => r,
+                        None => continue,
+                    };
+
+                    let c_perturbed = perturbed_ehz.result.capacity;
+                    let perturbed_perm = &perturbed_ehz.result.best_permutation;
+                    let perturbed_perm_str = serde_json::to_string(perturbed_perm).unwrap();
+                    let orbit_switched = perturbed_perm != best_perm;
+
+                    let actual = c_perturbed - c_base;
+
+                    let subdiff_pred = t * subdiff_gd;
+                    let subdiff_res = (actual - subdiff_pred).abs();
+
+                    let single_pred = t * single_gd;
+                    let single_res = (actual - single_pred).abs();
+
+                    let elapsed = t0.elapsed().as_secs_f64() * 1000.0;
+
+                    let row = SubdiffRow {
+                        phase: "q5".to_string(),
+                        polytope_id: id.clone(),
+                        facet_count: f_count,
+                        n_orbits: pd.orbits.len(),
+                        action_gap: pd.gap,
+                        dir_idx,
+                        t,
+                        log_t: t.abs().log10(),
+                        c_base,
+                        c_perturbed,
+                        actual_change: actual,
+                        subdiff_dot_d: subdiff_gd,
+                        subdiff_predicted: subdiff_pred,
+                        subdiff_residual: subdiff_res,
+                        subdiff_log_residual: subdiff_res.max(1e-300).log10(),
+                        single_dot_d: single_gd,
+                        single_predicted: single_pred,
+                        single_residual: single_res,
+                        single_log_residual: single_res.max(1e-300).log10(),
+                        base_best_perm: base_perm_str.clone(),
+                        perturbed_best_perm: perturbed_perm_str,
+                        orbit_switched,
+                        orbit_grads: orbit_grads_json.clone(),
+                        time_ms: elapsed,
+                    };
+
+                    let json = serde_json::to_string(&row).expect("serialize Q5 row");
+                    writeln!(writer, "{}", json).expect("write Q5 row");
+                    total_rows += 1;
+                }
+            }
+
+            if (pi + 1) % 10 == 0 {
+                println!(
+                    "  Q5: F={} — {}/{} polytopes done",
+                    f_count,
+                    pi + 1,
+                    polytope_data.len()
+                );
+            }
+        }
+    }
+
+    writer.flush().expect("flush Q5");
+    println!("Q5 done: {} rows written to {}", total_rows, path);
+}
+
+// ============================================================================
 // Main
 // ============================================================================
 
@@ -784,7 +1103,7 @@ fn main() {
     let args: Vec<String> = std::env::args().collect();
     let run_all = args.len() <= 1;
     let phases: Vec<&str> = if run_all {
-        vec!["q1", "q2", "q3", "q4"]
+        vec!["q1", "q2", "q3", "q4", "q5"]
     } else {
         args[1..].iter().map(|s| s.as_str()).collect()
     };
@@ -812,6 +1131,10 @@ fn main() {
             "q4" => {
                 println!("--- Q4: Barely-cutting facets ---");
                 run_q4(base_dir);
+            }
+            "q5" => {
+                println!("--- Q5: Orbit-switching (subdifferential prediction) ---");
+                run_q5(base_dir);
             }
             other => eprintln!("Unknown phase: {}", other),
         }

@@ -5,11 +5,14 @@ Input:
   - experiments/gradient-correctness/gradient-correctness-q2-nongeneric.jsonl
   - experiments/gradient-correctness/gradient-correctness-q3-degeneracy.jsonl
   - experiments/gradient-correctness/gradient-correctness-q4-redundant.jsonl
+  - experiments/gradient-correctness/gradient-correctness-q5-subdiff.jsonl
 Output:
   - experiments/gradient-correctness/gc_convergence.png    (Q1 log-log convergence)
   - experiments/gradient-correctness/gc_slopes.png         (slope distributions Q1+Q2)
   - experiments/gradient-correctness/gc_q3_gap.png         (Q3 action gap vs slope)
   - experiments/gradient-correctness/gc_q4_delta.png       (Q4 delta vs slope)
+  - experiments/gradient-correctness/gc_q5_convergence.png (Q5 subdiff vs single-orbit convergence)
+  - experiments/gradient-correctness/gc_q5_switching.png   (Q5 orbit switching rate vs t and gap)
   - experiments/gradient-correctness/gc_summary.tex        (summary table)
 """
 
@@ -25,6 +28,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from figure_config import (
     setup,
     FIGSIZE_SINGLE,
+    FIGSIZE_DUAL,
     FIGSIZE_TRIPLE,
     FONT_SIZE_SMALL,
     SCATTER_SIZE,
@@ -298,6 +302,176 @@ def plot_q4_delta(data, filename="gc_q4_delta.png"):
 
 
 # ============================================================================
+# Q5: Subdifferential prediction — convergence and orbit switching
+# ============================================================================
+
+Q5_GAP_BINS = [
+    (0.0, 1e-5, "tiny"),
+    (1e-5, 1e-3, "small"),
+    (1e-3, 1e-1, "medium"),
+    (1e-1, np.inf, "large"),
+]
+Q5_GAP_COLORS = {"tiny": "C3", "small": "C2", "medium": "C1", "large": "C0"}
+
+
+def q5_gap_label(gap):
+    """Assign gap bin label."""
+    for lo, hi, label in Q5_GAP_BINS:
+        if lo <= gap < hi:
+            return label
+    return "large"
+
+
+def q5_group_traces(data, residual_field):
+    """Group Q5 rows into traces: (polytope_id, dir_idx) -> [(log_t, log_residual)].
+
+    residual_field: 'subdiff_log_residual' or 'single_log_residual'.
+    """
+    traces = defaultdict(list)
+    for r in data:
+        key = (r["polytope_id"], r["dir_idx"])
+        traces[key].append((r["log_t"], r[residual_field]))
+    for key in traces:
+        traces[key].sort()
+    return traces
+
+
+def plot_q5_convergence(data, filename="gc_q5_convergence.png"):
+    """Two-panel convergence: subdiff prediction (left) vs single-orbit (right).
+
+    Traces colored by action gap bin. Shows whether subdiff prediction
+    improves convergence at small gap.
+    """
+    if not data:
+        return
+
+    gap_map = {}
+    for r in data:
+        key = (r["polytope_id"], r["dir_idx"])
+        gap_map[key] = r["action_gap"]
+
+    fig, axes = plt.subplots(1, 2, figsize=FIGSIZE_DUAL, sharey=True)
+    panels = [
+        ("subdiff_log_residual", r"Subdiff: $\min_i(g_i \cdot d)$"),
+        ("single_log_residual", r"Single orbit: $g_{\mathrm{best}} \cdot d$"),
+    ]
+
+    for ax, (res_field, title) in zip(axes, panels):
+        traces = q5_group_traces(data, res_field)
+
+        # Aggregate by gap bin and t
+        by_bin_t = defaultdict(lambda: defaultdict(list))
+        for key, pts in traces.items():
+            gap_label = q5_gap_label(gap_map.get(key, np.inf))
+            for lt, lr in pts:
+                by_bin_t[gap_label][lt].append(lr)
+
+        for lo, hi, gap_label in Q5_GAP_BINS:
+            if gap_label not in by_bin_t:
+                continue
+            bt = by_bin_t[gap_label]
+            t_sorted = sorted(bt.keys())
+            medians = [np.median(bt[lt]) for lt in t_sorted]
+            n = sum(len(bt[lt]) for lt in t_sorted) // max(1, len(t_sorted))
+            ax.plot(t_sorted, medians, color=Q5_GAP_COLORS[gap_label],
+                    linewidth=1.5, label=f"gap {gap_label} (n={n})")
+
+        # Reference slope 2
+        if traces:
+            all_lt = sorted({lt for pts in traces.values() for lt, _ in pts})
+            ref_x = np.array(all_lt)
+            # Anchor at largest t using the overall median
+            all_lr_at_max = []
+            for pts in traces.values():
+                for lt, lr in pts:
+                    if lt == all_lt[-1]:
+                        all_lr_at_max.append(lr)
+            if all_lr_at_max:
+                y0 = np.median(all_lr_at_max)
+                x0 = all_lt[-1]
+                ax.plot(ref_x, y0 + 2 * (ref_x - x0), "k--", alpha=0.4,
+                        linewidth=1, label=r"Slope 2 ($C^2$)")
+
+        ax.set_xlabel(r"$\log_{10} t$")
+        ax.set_title(title)
+
+    axes[0].set_ylabel(r"$\log_{10}$ residual")
+    axes[0].legend(fontsize=FONT_SIZE_SMALL - 1, loc="upper left")
+    fig.tight_layout()
+    fig.savefig(EXPERIMENT_DIR / filename)
+    plt.close(fig)
+    print(f"Saved {filename}")
+
+
+def plot_q5_switching(data, filename="gc_q5_switching.png"):
+    """Two-panel: orbit switching rate vs t by gap bin (left),
+    and switching rate vs action gap at t=0.1 and t=0.01 (right)."""
+    if not data:
+        return
+
+    fig, axes = plt.subplots(1, 2, figsize=FIGSIZE_DUAL)
+
+    # Left: switching rate vs t, by gap bin
+    ax = axes[0]
+    by_bin_t = defaultdict(lambda: defaultdict(lambda: [0, 0]))  # [switched, total]
+    for r in data:
+        gap_label = q5_gap_label(r["action_gap"])
+        lt = r["log_t"]
+        by_bin_t[gap_label][lt][1] += 1
+        if r["orbit_switched"]:
+            by_bin_t[gap_label][lt][0] += 1
+
+    for lo, hi, gap_label in Q5_GAP_BINS:
+        if gap_label not in by_bin_t:
+            continue
+        bt = by_bin_t[gap_label]
+        t_sorted = sorted(bt.keys())
+        rates = [bt[lt][0] / max(1, bt[lt][1]) for lt in t_sorted]
+        ax.plot(t_sorted, rates, marker=".", color=Q5_GAP_COLORS[gap_label],
+                linewidth=1.5, label=f"gap {gap_label}")
+
+    ax.set_xlabel(r"$\log_{10} t$")
+    ax.set_ylabel("Orbit switching rate")
+    ax.set_ylim(-0.05, 1.05)
+    ax.legend(fontsize=FONT_SIZE_SMALL - 1)
+
+    # Right: switching rate vs gap at a few t values
+    ax = axes[1]
+    t_targets = [0.1, 0.01, 0.001]
+    t_colors = ["C3", "C1", "C0"]
+
+    for t_val, t_col in zip(t_targets, t_colors):
+        rows_at_t = [r for r in data if abs(r["t"] - t_val) < t_val * 0.05]
+        if not rows_at_t:
+            continue
+        # Bin by gap (log-spaced)
+        gaps = np.array([r["action_gap"] for r in rows_at_t])
+        switched = np.array([r["orbit_switched"] for r in rows_at_t])
+        log_gaps = np.log10(np.maximum(gaps, 1e-8))
+        bin_edges = np.linspace(log_gaps.min() - 0.1, log_gaps.max() + 0.1, 12)
+        bin_centers = 0.5 * (bin_edges[:-1] + bin_edges[1:])
+        bin_rates = []
+        for j in range(len(bin_edges) - 1):
+            mask = (log_gaps >= bin_edges[j]) & (log_gaps < bin_edges[j + 1])
+            if mask.sum() > 0:
+                bin_rates.append(switched[mask].mean())
+            else:
+                bin_rates.append(np.nan)
+        ax.plot(bin_centers, bin_rates, marker=".", color=t_col,
+                linewidth=1.5, label=f"$t={t_val}$")
+
+    ax.set_xlabel(r"$\log_{10}$ action gap")
+    ax.set_ylabel("Orbit switching rate")
+    ax.set_ylim(-0.05, 1.05)
+    ax.legend(fontsize=FONT_SIZE_SMALL - 1)
+
+    fig.tight_layout()
+    fig.savefig(EXPERIMENT_DIR / filename)
+    plt.close(fig)
+    print(f"Saved {filename}")
+
+
+# ============================================================================
 # Summary table
 # ============================================================================
 
@@ -356,13 +530,16 @@ def main():
     q2 = load_jsonl("gradient-correctness-q2-nongeneric.jsonl")
     q3 = load_jsonl("gradient-correctness-q3-degeneracy.jsonl")
     q4 = load_jsonl("gradient-correctness-q4-redundant.jsonl")
+    q5 = load_jsonl("gradient-correctness-q5-subdiff.jsonl")
 
-    print(f"Loaded: Q1={len(q1)}, Q2={len(q2)}, Q3={len(q3)}, Q4={len(q4)} rows")
+    print(f"Loaded: Q1={len(q1)}, Q2={len(q2)}, Q3={len(q3)}, Q4={len(q4)}, Q5={len(q5)} rows")
 
     plot_convergence(q1, "gc_convergence.png")
     plot_slopes(q1, q2, "gc_slopes.png")
     plot_q3_gap(q3, "gc_q3_gap.png")
     plot_q4_delta(q4, "gc_q4_delta.png")
+    plot_q5_convergence(q5, "gc_q5_convergence.png")
+    plot_q5_switching(q5, "gc_q5_switching.png")
     write_summary(q1, q2, q3, q4)
 
 
