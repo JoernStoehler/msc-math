@@ -497,18 +497,29 @@ fn finalize_result(
     let r_sq = residual_norm * residual_norm;
     let q_error_bound = 4.5 * r_sq / abs_lambda_min;
 
-    // Reject unreliable solutions: the error bound or correction exceeds
-    // calibrated thresholds. This happens for ill-conditioned KKT matrices
-    // (|λ_min| near machine epsilon), which arise during normal orbit
-    // enumeration for degenerate orbits (e.g. minimal-length orbits at
-    // symmetric polytopes).
+    // Panic: the Q value computed from this eigendecomposition is unreliable.
+    // This signals deferred work: the calibration (q-error experiment, 1.1M nodes,
+    // F ≤ 10) does not cover the input that triggered this. Investigation needed:
+    // either the threshold needs re-measuring for this input class, or the solver
+    // needs a different approach for ill-conditioned KKT matrices.
+    //
+    // Known trigger: degenerate orbits at symmetric polytopes (e.g. 4-facet orbits
+    // on LP(4,4)) where |λ_min| ≈ 1e-12. See gradient-correctness logbook Obs 18-19.
     //
     // Calibration: q-error experiment (Part 1) measures worst-case E = 2.9e-11
-    // across 1.1M non-degenerate nodes (F ≤ 10). The 1e-6 threshold is ~5
-    // orders of magnitude above observed values for well-conditioned systems.
-    if q_error_bound >= 1e-6 || (q_correction.abs() >= 1e-6 && q_correction.abs() >= 1e-6 * q_raw.abs()) {
-        return None;
-    }
+    // across 1.1M nodes (F ≤ 10). The 1e-6 threshold is ~5 orders of magnitude
+    // above observed values. If this fires on larger polytopes (F > 16),
+    // re-measure before widening.
+    assert!(
+        q_error_bound < 1e-6,
+        "Q error bound unexpectedly large: E={:.2e}, |r|={:.2e}, |lambda_min|={:.2e}",
+        q_error_bound, residual_norm, abs_lambda_min
+    );
+    assert!(
+        q_correction.abs() < 1e-6 || q_correction.abs() < 1e-6 * q_raw.abs(),
+        "Q correction unexpectedly large: correction={:.2e}, Q_raw={:.2e}, ratio={:.2e}",
+        q_correction, q_raw, q_correction.abs() / q_raw.abs().max(1e-30)
+    );
 
     Some(KktResult {
         beta: beta.to_vec(),

@@ -180,14 +180,23 @@ impl CapacityAccumulator {
             .as_ref()
             .map_or(certified.action, |u| u.action);
 
-        // Gap invariant: certified action >= uncertain action (since uncertain
-        // is a superset), and the gap must be small. If an indeterminate orbit
-        // achieves lower action than the best certified orbit, the capacity
-        // cannot be reliably determined at f64 precision.
+        // Panic: an indeterminate orbit achieves lower action than the best
+        // certified orbit, and the gap exceeds numerical noise. This means the
+        // capacity cannot be resolved at f64 precision — the true minimum might
+        // be an orbit whose feasibility we can't determine. Investigation needed:
+        // either improve the feasibility classification (tighter EPS thresholds,
+        // rational solver fallback) or accept that this polytope is beyond f64
+        // resolution.
         let gap = certified.action - uncertain_action;
-        if gap > GAP_TOLERANCE {
-            return None;
-        }
+        assert!(
+            gap <= GAP_TOLERANCE,
+            "Numerical gap: certified capacity {:.6e} > uncertain capacity {:.6e} (gap = {:.6e}). \
+             An UNKNOWN candidate achieves lower action than the best certified candidate. \
+             Cannot resolve at f64 precision.",
+            certified.action,
+            uncertain_action,
+            gap,
+        );
 
         // Sanity: capacity must be positive and finite.
         assert!(
@@ -411,11 +420,20 @@ mod tests {
 
         // Certified tier: action = 0.5.
         // Uncertain tier: action = 0.25 (the indeterminate candidate wins).
-        // Gap = 0.5 - 0.25 = 0.25 > GAP_TOLERANCE -> returns None (unresolvable).
-        assert!(
-            acc.finalize().is_none(),
-            "large gap should return None (capacity unresolvable at f64 precision)"
-        );
+        // Gap = 0.5 - 0.25 = 0.25 > GAP_TOLERANCE -> should panic.
+        let result = std::panic::catch_unwind(|| {
+            let acc_inner = {
+                let mut a = CapacityAccumulator::new();
+                a.submit(&[0, 1], &certified_solution(1.0, vec![0.5, 0.5]));
+                a.submit(
+                    &[2, 3],
+                    &indeterminate_solution(2.0, vec![0.0001, 0.9999]),
+                );
+                a
+            };
+            acc_inner.finalize()
+        });
+        assert!(result.is_err(), "should panic on large gap");
     }
 
     // ── Gap invariant ──

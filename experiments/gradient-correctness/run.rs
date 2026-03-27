@@ -64,6 +64,7 @@ use serde::Serialize;
 use std::f64::consts::PI;
 use std::fs::File;
 use std::io::{BufWriter, Write};
+use std::panic;
 use std::time::Instant;
 use symplectic::algorithms::hk2017::combinations;
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
@@ -322,12 +323,26 @@ fn dot_grad_dir(g: &[Vector4<f64>], d: &[Vector4<f64>]) -> f64 {
     g.iter().zip(d.iter()).map(|(gk, dk)| gk.dot(dk)).sum()
 }
 
+/// The library panics on ill-conditioned KKT matrices (Q error bound, gap
+/// invariant). These panics signal deferred work (see saddle_point_solver.rs,
+/// capacity_accumulator.rs comments). This experiment intentionally evaluates
+/// polytopes that trigger these panics (perturbed symmetric polytopes with
+/// degenerate orbits). catch_unwind is used to skip the affected data points
+/// and continue the sweep. The skipped cases are documented in the logbook
+/// (Obs 18-19) and tracked in TASKS.md (q-error-threshold).
 fn ehz_capacity_safe(polytope: &Polytope4D) -> Option<symplectic::EhzResult> {
-    ehz_capacity(polytope)
+    let polytope = polytope.clone();
+    panic::catch_unwind(panic::AssertUnwindSafe(|| ehz_capacity(&polytope)))
+        .ok()
+        .flatten()
 }
 
 fn solve_kkt_safe(polytope: &Polytope4D, perm: &[usize]) -> Option<KktResult> {
-    solve_kkt_for(polytope, perm)
+    let polytope = polytope.clone();
+    let perm = perm.to_vec();
+    panic::catch_unwind(panic::AssertUnwindSafe(|| solve_kkt_for(&polytope, &perm)))
+        .ok()
+        .flatten()
 }
 
 /// Compute ∇_a β_k · d for each orbit position k, given a perturbation direction d.
