@@ -166,6 +166,20 @@ The actual residual |r| is always small (~1e-8). The bound blows up because λ_m
 
 ---
 
+## convention-violations
+
+**Status (2026-03-27):** New. Fix all violations of the panics convention (once finalized in rust.md).
+
+**Known violations:**
+- `experiments/gradient-correctness/run.rs`: 2× `catch_unwind` wrapping `ehz_capacity` and `solve_kkt_for`
+- `experiments/hko-neighborhood/run.rs`: 4× `catch_unwind` wrapping `ehz_capacity`
+- `crates/src/kkt/saddle_point_solver.rs:504,509`: panic comments don't meet the convention standard (improved on gradient-correctness branch, but not finalized)
+- `crates/src/algorithms/capacity_accumulator.rs:186`: gap invariant panic comment needs improvement
+
+**Depends on:** panics convention finalized in rust.md.
+
+---
+
 ## thesis-chapters
 
 No chapter is currently publishable. The thesis needs to become a coherent document that tells a story, not a collection of sections.
