@@ -1,0 +1,136 @@
+% math.tex — root mathematical documentation for the entire project
+%
+% Compiles all crate and experiment math.tex files into a single PDF
+% so that cross-references (e.g., experiment referencing a crate lemma)
+% resolve correctly.
+%
+% Build:  pdflatex math.tex && pdflatex math.tex   (two passes for refs)
+%
+% Experiment math.tex files use bare filenames for \includegraphics and
+% \input (e.g., foo.png, not ../experiments/<name>/foo.png).
+% Each experiment section sets \graphicspath to its directory.
+%
+% Structure:
+%   Part I:  Library (crates/src/) — geometry, KKT solver, algorithms
+%   Part II: Experiments — one section per experiment with a math.tex
+
+\documentclass{article}
+\input{crates/src/math-preamble}
+\usepackage{xcolor}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{float}
+
+% Extra environments used by some experiments
+\newtheorem{example}[theorem]{Example}
+\newtheorem*{theorem*}{Theorem}
+
+\title{Mathematical Documentation\\[0.5em]
+  \large Probing Viterbo's Conjecture — Crate \& Experiments}
+\author{}
+\date{\today}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+
+% ════════════════════════════════════════════════════════════════════
+\part{Library (\texttt{crates/src/})}
+% ════════════════════════════════════════════════════════════════════
+
+\section{Geometry (\texttt{geom/})}
+\input{crates/src/geom/math}
+
+\section{KKT Solver (\texttt{kkt/})}
+\input{crates/src/kkt/math}
+
+\section{Algorithms (\texttt{algorithms/})}
+\input{crates/src/algorithms/math}
+
+
+% ════════════════════════════════════════════════════════════════════
+\part{Experiments}
+% ════════════════════════════════════════════════════════════════════
+
+\section{Correctness (\texttt{correctness/})}
+\graphicspath{{experiments/correctness/}}
+\input{experiments/correctness/math}
+
+\section{Orbit Recovery (\texttt{orbit-recovery/})}
+\graphicspath{{experiments/orbit-recovery/}}
+\input{experiments/orbit-recovery/math}
+
+\section{Q-Error (\texttt{q-error/})}
+\graphicspath{{experiments/q-error/}}
+\input{experiments/q-error/math}
+
+\section{KKT Inertia (\texttt{kkt-inertia/})}
+\graphicspath{{experiments/kkt-inertia/}}
+\input{experiments/kkt-inertia/math}
+
+\section{Benchmark (\texttt{benchmark/})}
+\graphicspath{{experiments/benchmark/}}
+\input{experiments/benchmark/math}
+
+\section{Unknown Predicates (\texttt{unknown-predicates/})}
+\graphicspath{{experiments/unknown-predicates/}}
+\input{experiments/unknown-predicates/math}
+
+\section{Ablation (\texttt{ablation/})}
+\graphicspath{{experiments/ablation/}}
+\input{experiments/ablation/math}
+
+\section{Rejection Sampling (\texttt{rejection-sampling/})}
+\graphicspath{{experiments/rejection-sampling/}}
+\input{experiments/rejection-sampling/math}
+
+\section{Random Sweep (\texttt{random-sweep/})}
+\graphicspath{{experiments/random-sweep/}}
+\input{experiments/random-sweep/math}
+
+\section{Random Product Sweep (\texttt{random-product-sweep/})}
+\graphicspath{{experiments/random-product-sweep/}}
+\input{experiments/random-product-sweep/math}
+
+% TODO: pentagon-perturb \input{pentagon_perturb_stats.tex} needs path fix
+%\section{Pentagon Perturbation (\texttt{pentagon-perturb/})}
+%\graphicspath{{experiments/pentagon-perturb/}}
+%\input{experiments/pentagon-perturb/math}
+
+\section{Lagrangian Products (\texttt{lagrangian-products/})}
+\graphicspath{{experiments/lagrangian-products/}}
+\input{experiments/lagrangian-products/math}
+
+\section{Visualization (\texttt{visualization/})}
+\graphicspath{{experiments/visualization/}}
+\input{experiments/visualization/math}
+
+\section{Crosspolytope (\texttt{crosspolytope/})}
+\graphicspath{{experiments/crosspolytope/}}
+\input{experiments/crosspolytope/math}
+
+% TODO: sys-optimization \input{sys_optimization_stats.tex} needs path fix
+%\section{Systematic Optimization (\texttt{sys-optimization/})}
+%\graphicspath{{experiments/sys-optimization/}}
+%\input{experiments/sys-optimization/math}
+
+\section{Omega Obstacle (\texttt{omega-obstacle/})}
+\graphicspath{{experiments/omega-obstacle/}}
+\input{experiments/omega-obstacle/math}
+
+\section{Gradient Descent (\texttt{gradient-descent/})}
+\graphicspath{{experiments/gradient-descent/}}
+\input{experiments/gradient-descent/math}
+
+\section{HKO Neighborhood (\texttt{hko-neighborhood/})}
+\graphicspath{{experiments/hko-neighborhood/}}
+\input{experiments/hko-neighborhood/math}
+
+\section{Gradient Correctness (\texttt{gradient-correctness/})}
+\graphicspath{{experiments/gradient-correctness/}}
+\input{experiments/gradient-correctness/math}
+
+\end{document}
