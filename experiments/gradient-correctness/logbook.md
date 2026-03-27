@@ -231,7 +231,24 @@ Additional subtlety: **orbit appearance.** Under perturbation, an orbit σ' that
 - Q1-Q4 (fixed orbit, slope 2.00): confirms per-orbit smoothness (row 3 above) at generic random polytopes
 - Q5 (full ehz_capacity, slope 2.00 at generic points): trivially follows — c = A_σ* at generic points
 - The 12/600 Q1 outliers with slope < 1.90 over [-4,-1] are large-t artifacts: refitting over [-4,-2] leaves 1/600, and over [-6,-3] leaves 0/600. The quadratic approximation has limited radius at some polytopes (large cubic Taylor coefficient), not a C² failure.
-- Open: test at polytopes with small min(β) (probing the IFT boundary) and at polytopes where the KKT Jacobian is near-singular
+### Observation 8: Small min(β) does not degrade per-orbit smoothness
+
+Q5 records min(β) of the best orbit's KKT solution. Distribution across 100 polytopes: min 1.1e-5, median 0.016, max 0.11.
+
+| min(β) range | Single-orbit slope (median [P25, P75]) | n |
+|-------------|---------------------------------------|---|
+| < 0.01 | 2.000 [1.973, 2.022] | 220 |
+| 0.01–0.05 | 2.001 [1.981, 2.014] | 170 |
+| 0.05–0.1 | 1.998 [1.984, 2.015] | 100 |
+| > 0.1 | 2.006 [1.969, 2.018] | 10 |
+
+Spearman correlation: r = −0.007, p = 0.87. No correlation.
+
+Even at min(β) = 1.1e-5 (only 10× above the certified threshold 1e-9), the per-orbit action is C² (slope 2.00). The few outliers (9/80 with slope < 1.90 in the low-β bin) vanish when fitting over [-4,-2] (2/80) or [-6,-3] (2/80) — same large-t artifacts as Q1.
+
+**Epistemic status:** Observation. Consistent with the IFT argument: smoothness requires β > 0 strictly, but doesn't degrade as β → 0. The KKT Jacobian appears non-degenerate even near the feasibility boundary.
+
+**Proofs:** [lem:orbit-feasibility-open], [lem:per-orbit-smooth], [lem:orbit-contraction], [prop:capacity-smoothness-classification] in experiments/gradient-correctness/math.tex. Two gaps flagged for Jörn: competing-orbit continuity in prop(a), transversality in prop(c)
 
 ## Known issues
 
