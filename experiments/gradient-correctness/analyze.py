@@ -160,7 +160,7 @@ def plot_convergence(data, filename="gc_convergence.png"):
             y0 = median_r[-1]  # median residual there
             ref_x = np.array(t_sorted)
             ax.plot(ref_x, y0 + 2 * (ref_x - x0), "k--", alpha=0.4,
-                    linewidth=1, label="Slope 2 (C²)")
+                    linewidth=1, label=r"Slope 2 ($C^2$)")
             ax.plot(ref_x, y0 + 1 * (ref_x - x0), "k:", alpha=0.4,
                     linewidth=1, label="Slope 1")
 
