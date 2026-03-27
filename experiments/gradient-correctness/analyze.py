@@ -1,33 +1,30 @@
 """
-Goal: Validate analytical gradient correctness across 4 experimental phases.
+Goal: Analyze first-order prediction test for gradient correctness.
 Input:
   - experiments/gradient-correctness/gradient-correctness-q1-generic.jsonl
   - experiments/gradient-correctness/gradient-correctness-q2-nongeneric.jsonl
   - experiments/gradient-correctness/gradient-correctness-q3-degeneracy.jsonl
   - experiments/gradient-correctness/gradient-correctness-q4-redundant.jsonl
 Output:
-  - experiments/gradient-correctness/gc_q1_step_sweep.png
-  - experiments/gradient-correctness/gc_q1_dimension.png
-  - experiments/gradient-correctness/gc_q2_nongeneric.png
-  - experiments/gradient-correctness/gc_q3_gap_vs_error.png
-  - experiments/gradient-correctness/gc_q3_orbit_switching.png
-  - experiments/gradient-correctness/gc_q4_delta_vs_error.png
-  - experiments/gradient-correctness/gc_summary.tex
+  - experiments/gradient-correctness/gc_convergence.png    (Q1 log-log convergence)
+  - experiments/gradient-correctness/gc_slopes.png         (slope distributions Q1+Q2)
+  - experiments/gradient-correctness/gc_q3_gap.png         (Q3 action gap vs slope)
+  - experiments/gradient-correctness/gc_q4_delta.png       (Q4 delta vs slope)
+  - experiments/gradient-correctness/gc_summary.tex        (summary table)
 """
 
 import json
 import sys
+from collections import defaultdict
 from pathlib import Path
 
 import matplotlib.pyplot as plt
-from matplotlib.lines import Line2D
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from figure_config import (
     setup,
     FIGSIZE_SINGLE,
-    FIGSIZE_DUAL,
     FIGSIZE_TRIPLE,
     FONT_SIZE_SMALL,
     SCATTER_SIZE,
@@ -38,13 +35,21 @@ setup()
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 
 TARGETS = ["capacity", "volume", "sys"]
-TARGET_LABELS = {"capacity": r"$\partial c / \partial a_k$",
-                 "volume": r"$\partial \mathrm{vol} / \partial a_k$",
-                 "sys": r"$\partial \mathrm{sys} / \partial a_k$"}
+TARGET_LABELS = {
+    "capacity": r"$c_{\mathrm{EHZ}}$",
+    "volume": r"$\mathrm{vol}$",
+    "sys": r"$\mathrm{sys}$",
+}
 TARGET_COLORS = {"capacity": "C0", "volume": "C1", "sys": "C2"}
+
+# Fit slope over t in [1e-4, 1e-1] (log_t in [-4, -1]) to avoid the
+# floating-point cancellation region at small t (volume and sys degrade
+# below t ~ 1e-4 due to f(a+td)-f(a) cancellation).
+SLOPE_FIT_LOG_T_RANGE = (-4.0, -1.0)
 
 
 def load_jsonl(name):
+    """Load JSONL file, return list of dicts. Returns [] if file missing."""
     path = EXPERIMENT_DIR / name
     if not path.exists():
         print(f"Warning: {path} not found, skipping")
@@ -53,330 +58,293 @@ def load_jsonl(name):
         return [json.loads(line) for line in f if line.strip()]
 
 
+def group_traces(data):
+    """Group rows into traces: (polytope_id, dir_idx, target) -> [(log_t, log_residual)]."""
+    traces = defaultdict(list)
+    for r in data:
+        key = (r["polytope_id"], r["dir_idx"], r["target"])
+        traces[key].append((r["log_t"], r["log_residual"]))
+    for key in traces:
+        traces[key].sort()
+    return traces
+
+
+def fit_slope(points, log_t_range=SLOPE_FIT_LOG_T_RANGE):
+    """Fit slope of log(residual) vs log(t) within a t range.
+
+    Returns (slope, r_squared). The slope should be ~2 for C^2 functions
+    (quadratic Taylor remainder), ~1 for C^1 not C^2, ~0 at non-differentiable points.
+    Returns (nan, nan) if fewer than 3 points in range.
+    """
+    x = np.array([p[0] for p in points])
+    y = np.array([p[1] for p in points])
+    mask = (x >= log_t_range[0]) & (x <= log_t_range[1]) & (y > -250)
+    x, y = x[mask], y[mask]
+    if len(x) < 3:
+        return np.nan, np.nan
+    coeffs = np.polyfit(x, y, 1)
+    y_pred = np.polyval(coeffs, x)
+    ss_res = np.sum((y - y_pred) ** 2)
+    ss_tot = np.sum((y - np.mean(y)) ** 2)
+    r2 = 1 - ss_res / ss_tot if ss_tot > 0 else 0.0
+    return coeffs[0], r2
+
+
+def compute_all_slopes(data, r2_threshold=0.5):
+    """Compute fitted slopes for all traces, filtered by R^2.
+
+    Returns dict: target -> list of slopes.
+    """
+    traces = group_traces(data)
+    result = defaultdict(list)
+    for key, pts in traces.items():
+        target = key[2]
+        slope, r2 = fit_slope(pts)
+        if not np.isnan(slope) and r2 > r2_threshold:
+            result[target].append(slope)
+    return result
+
+
 # ============================================================================
-# Q1: FD step-size sweep and dimension scaling
+# Figure 1: Q1 Convergence (the main result)
 # ============================================================================
 
-def plot_q1_step_sweep(data):
-    """V-curve: log(eps) vs log(max_rel_error), one line per F, 3 panels."""
+def plot_convergence(data, filename="gc_convergence.png"):
+    """Log-log plot of residual vs t, showing convergence rate.
+
+    One panel per target. Thin gray lines = individual traces,
+    thick colored line = median, shaded band = IQR.
+    Reference lines at slope 1 and slope 2.
+    """
     if not data:
         return
-
-    fig, axes = plt.subplots(1, 3, figsize=FIGSIZE_TRIPLE, sharey=True)
-    facet_counts = sorted(set(r["facet_count"] for r in data))
-    cmap = plt.cm.viridis(np.linspace(0.1, 0.9, len(facet_counts)))
-
-    for ax, target in zip(axes, TARGETS):
-        target_data = [r for r in data if r["target"] == target]
-        for fi, fc in enumerate(facet_counts):
-            fc_data = [r for r in target_data if r["facet_count"] == fc]
-            # Group by epsilon, compute median error
-            eps_vals = sorted(set(r["fd_epsilon"] for r in fc_data))
-            medians = []
-            for eps in eps_vals:
-                errs = [r["max_rel_error"] for r in fc_data if r["fd_epsilon"] == eps]
-                medians.append(np.median(errs))
-            ax.plot(eps_vals, medians, marker="o", color=cmap[fi],
-                    label=f"F={fc}", markersize=3)
-
-        ax.set_xscale("log")
-        ax.set_yscale("log")
-        ax.set_xlabel(r"FD step size $\varepsilon$")
-        ax.set_title(TARGET_LABELS[target])
-        ax.invert_xaxis()
-
-    axes[0].set_ylabel("Median max relative error")
-    axes[-1].legend(fontsize=FONT_SIZE_SMALL, loc="upper left")
-    fig.tight_layout()
-    fig.savefig(EXPERIMENT_DIR / "gc_q1_step_sweep.png")
-    plt.close(fig)
-    print("Saved gc_q1_step_sweep.png")
-
-
-def plot_q1_dimension(data):
-    """Error at sweet-spot eps vs F, box plot, 3 panels."""
-    if not data:
-        return
-
-    sweet_eps = 1e-5
-    eps_tol = 0.5  # relative tolerance for matching epsilon
-    sweet_data = [r for r in data
-                  if abs(r["fd_epsilon"] - sweet_eps) / sweet_eps < eps_tol]
-
-    fig, axes = plt.subplots(1, 3, figsize=FIGSIZE_TRIPLE, sharey=True)
-    facet_counts = sorted(set(r["facet_count"] for r in sweet_data))
-
-    for ax, target in zip(axes, TARGETS):
-        target_data = [r for r in sweet_data if r["target"] == target]
-        box_data = []
-        for fc in facet_counts:
-            errs = [r["max_rel_error"] for r in target_data if r["facet_count"] == fc]
-            box_data.append(errs)
-
-        bp = ax.boxplot(box_data, tick_labels=[str(f) for f in facet_counts],
-                        patch_artist=True)
-        for patch in bp["boxes"]:
-            patch.set_facecolor(TARGET_COLORS[target])
-            patch.set_alpha(0.4)
-
-        ax.set_yscale("log")
-        ax.set_xlabel("Facet count F")
-        ax.set_title(TARGET_LABELS[target])
-
-    axes[0].set_ylabel(r"Max relative error at $\varepsilon = 10^{-5}$")
-    fig.tight_layout()
-    fig.savefig(EXPERIMENT_DIR / "gc_q1_dimension.png")
-    plt.close(fig)
-    print("Saved gc_q1_dimension.png")
-
-
-# ============================================================================
-# Q2: Non-generic geometry
-# ============================================================================
-
-def plot_q2_nongeneric(q1_data, q2_data):
-    """Error comparison: generic (Q1 at sweet-spot) vs non-generic (Q2) types."""
-    if not q2_data:
-        return
-
-    sweet_eps = 1e-5
-    eps_tol = 0.5
-    q1_sweet = [r for r in q1_data
-                if abs(r["fd_epsilon"] - sweet_eps) / sweet_eps < eps_tol]
-
-    classes = sorted(set(r["polytope_class"] for r in q2_data))
-    all_classes = ["random"] + classes
-    class_labels = {
-        "random": "Generic\n(Q1)",
-        "lagrangian_regular": "LP\nregular",
-        "lagrangian_rotated": "LP\nrotated",
-        "lagrangian_random": "LP\nrandom",
-    }
+    traces = group_traces(data)
 
     fig, axes = plt.subplots(1, 3, figsize=FIGSIZE_TRIPLE, sharey=True)
 
     for ax, target in zip(axes, TARGETS):
-        box_data = []
-        labels = []
-        for cls in all_classes:
-            if cls == "random":
-                errs = [r["max_rel_error"] for r in q1_sweet if r["target"] == target]
-            else:
-                errs = [r["max_rel_error"] for r in q2_data
-                        if r["target"] == target and r["polytope_class"] == cls]
-            if errs:
-                box_data.append(errs)
-                labels.append(class_labels.get(cls, cls))
+        target_traces = {k: v for k, v in traces.items() if k[2] == target}
 
-        if box_data:
-            bp = ax.boxplot(box_data, tick_labels=labels, patch_artist=True)
-            for patch in bp["boxes"]:
-                patch.set_facecolor(TARGET_COLORS[target])
-                patch.set_alpha(0.4)
+        # Aggregate: for each log_t, collect all log_residual values
+        by_t = defaultdict(list)
+        for pts in target_traces.values():
+            for lt, lr in pts:
+                by_t[lt].append(lr)
 
-        ax.set_yscale("log")
-        ax.set_title(TARGET_LABELS[target])
-        ax.tick_params(axis="x", labelsize=FONT_SIZE_SMALL - 1)
+        t_sorted = sorted(by_t.keys())
+        median_r = [np.median(by_t[lt]) for lt in t_sorted]
+        q25 = [np.percentile(by_t[lt], 25) for lt in t_sorted]
+        q75 = [np.percentile(by_t[lt], 75) for lt in t_sorted]
 
-    axes[0].set_ylabel("Max relative error")
-    fig.tight_layout()
-    fig.savefig(EXPERIMENT_DIR / "gc_q2_nongeneric.png")
-    plt.close(fig)
-    print("Saved gc_q2_nongeneric.png")
-
-
-# ============================================================================
-# Q3: Near-degeneracy
-# ============================================================================
-
-def plot_q3_gap_vs_error(data):
-    """Scatter: log(action_gap) vs log(max_rel_error) for capacity and sys."""
-    if not data:
-        return
-
-    fig, axes = plt.subplots(1, 2, figsize=FIGSIZE_DUAL, sharey=True)
-
-    for ax, target in zip(axes, ["capacity", "sys"]):
-        target_data = [r for r in data
-                       if r["target"] == target and r["action_gap"] is not None]
-        gaps = [r["action_gap"] for r in target_data]
-        errs = [r["max_rel_error"] for r in target_data]
-        switched = [r.get("orbit_switched_in_fd", False) for r in target_data]
-
-        # Color by orbit switching
-        colors = ["C3" if s else TARGET_COLORS[target] for s in switched]
-        ax.scatter(gaps, errs, c=colors, s=SCATTER_SIZE, alpha=0.7, edgecolors="none")
-
-        ax.set_xscale("log")
-        ax.set_yscale("log")
-        ax.set_xlabel("Action gap (2nd best − best)")
-        ax.set_title(TARGET_LABELS[target])
-
-        # Legend for orbit switching
-        handles = [
-            Line2D([0], [0], marker="o", color="w", markerfacecolor=TARGET_COLORS[target],
-                   markersize=5, label="No switch"),
-            Line2D([0], [0], marker="o", color="w", markerfacecolor="C3",
-                   markersize=5, label="Orbit switched"),
-        ]
-        ax.legend(handles=handles, fontsize=FONT_SIZE_SMALL)
-
-    axes[0].set_ylabel("Max relative error")
-    fig.tight_layout()
-    fig.savefig(EXPERIMENT_DIR / "gc_q3_gap_vs_error.png")
-    plt.close(fig)
-    print("Saved gc_q3_gap_vs_error.png")
-
-
-def plot_q3_orbit_switching(data):
-    """Fraction of polytopes with orbit switching, binned by action gap."""
-    if not data:
-        return
-
-    # Only look at capacity target (orbit switching is per-polytope, same for cap and sys)
-    cap_data = [r for r in data
-                if r["target"] == "capacity" and r["action_gap"] is not None]
-    if not cap_data:
-        return
-
-    bin_edges = [0, 1e-4, 1e-2, 1e-1, float("inf")]
-    bin_labels = [r"$< 10^{-4}$", r"$10^{-4}$–$10^{-2}$",
-                  r"$10^{-2}$–$10^{-1}$", r"$> 10^{-1}$"]
-
-    fractions = []
-    counts = []
-    for i in range(len(bin_edges) - 1):
-        lo, hi = bin_edges[i], bin_edges[i + 1]
-        bin_rows = [r for r in cap_data if lo <= r["action_gap"] < hi]
-        n = len(bin_rows)
-        if n > 0:
-            switched = sum(1 for r in bin_rows if r.get("orbit_switched_in_fd", False))
-            fractions.append(switched / n)
+        # Individual traces (subsample for readability)
+        trace_list = list(target_traces.values())
+        rng = np.random.default_rng(42)
+        n_show = min(100, len(trace_list))
+        if len(trace_list) > n_show:
+            indices = rng.choice(len(trace_list), n_show, replace=False)
         else:
-            fractions.append(0)
-        counts.append(n)
+            indices = range(len(trace_list))
+        for idx in indices:
+            pts = trace_list[idx]
+            ax.plot([p[0] for p in pts], [p[1] for p in pts],
+                    color="gray", alpha=0.05, linewidth=0.5)
 
-    fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
-    x = range(len(bin_labels))
-    bars = ax.bar(x, fractions, color="C3", alpha=0.7)
+        # Median + IQR
+        ax.plot(t_sorted, median_r, color=TARGET_COLORS[target], linewidth=2,
+                label="Median")
+        ax.fill_between(t_sorted, q25, q75, color=TARGET_COLORS[target], alpha=0.2)
 
-    # Annotate with counts
-    for bar, count in zip(bars, counts):
-        ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.02,
-                f"n={count}", ha="center", fontsize=FONT_SIZE_SMALL)
+        # Reference slopes anchored at the largest t (rightmost point)
+        if t_sorted and median_r:
+            x0 = t_sorted[-1]  # log_t at largest t (≈ -1)
+            y0 = median_r[-1]  # median residual there
+            ref_x = np.array(t_sorted)
+            ax.plot(ref_x, y0 + 2 * (ref_x - x0), "k--", alpha=0.4,
+                    linewidth=1, label="Slope 2 (C²)")
+            ax.plot(ref_x, y0 + 1 * (ref_x - x0), "k:", alpha=0.4,
+                    linewidth=1, label="Slope 1")
 
-    ax.set_xticks(list(x))
-    ax.set_xticklabels(bin_labels)
-    ax.set_xlabel("Action gap bin")
-    ax.set_ylabel("Fraction with orbit switching in FD")
-    ax.set_ylim(0, 1.1)
+        ax.set_xlabel(r"$\log_{10} t$")
+        ax.set_title(TARGET_LABELS[target])
+
+    axes[0].set_ylabel(r"$\log_{10} |f(a{+}td) - f(a) - t \, g \cdot d|$")
+    axes[0].legend(fontsize=FONT_SIZE_SMALL, loc="upper left")
     fig.tight_layout()
-    fig.savefig(EXPERIMENT_DIR / "gc_q3_orbit_switching.png")
+    fig.savefig(EXPERIMENT_DIR / filename)
     plt.close(fig)
-    print("Saved gc_q3_orbit_switching.png")
+    print(f"Saved {filename}")
 
 
 # ============================================================================
-# Q4: Barely-cutting facets
+# Figure 2: Slope distributions (Q1 + Q2)
 # ============================================================================
 
-def plot_q4_delta_vs_error(data):
-    """Error vs log(delta), lines for cap/vol/sys."""
+def plot_slopes(q1, q2, filename="gc_slopes.png"):
+    """Histogram of fitted log-log slopes, one panel per target."""
+    fig, axes = plt.subplots(1, 3, figsize=FIGSIZE_TRIPLE, sharey=True)
+
+    for ax, target in zip(axes, TARGETS):
+        slopes_q1 = compute_all_slopes(q1).get(target, []) if q1 else []
+        slopes_q2 = compute_all_slopes(q2).get(target, []) if q2 else []
+
+        bins = np.linspace(0, 3, 31)
+        if slopes_q1:
+            ax.hist(slopes_q1, bins=bins, alpha=0.6, color="C0",
+                    label=f"Q1 generic (n={len(slopes_q1)})")
+        if slopes_q2:
+            ax.hist(slopes_q2, bins=bins, alpha=0.6, color="C1",
+                    label=f"Q2 non-generic (n={len(slopes_q2)})")
+
+        ax.axvline(2.0, color="k", linestyle="--", alpha=0.5, label=r"Slope $= 2$")
+        ax.set_xlabel("Fitted log-log slope")
+        ax.set_title(TARGET_LABELS[target])
+        ax.legend(fontsize=FONT_SIZE_SMALL - 1)
+
+    axes[0].set_ylabel("Count")
+    fig.tight_layout()
+    fig.savefig(EXPERIMENT_DIR / filename)
+    plt.close(fig)
+    print(f"Saved {filename}")
+
+
+# ============================================================================
+# Figure 3: Q3 — action gap vs fitted slope
+# ============================================================================
+
+def plot_q3_gap(data, filename="gc_q3_gap.png"):
+    """Scatter: action gap vs fitted slope. Shows whether near-degeneracy
+    affects gradient quality."""
     if not data:
         return
+
+    traces = group_traces(data)
+    gap_map = {}
+    for r in data:
+        if r["action_gap"] is not None:
+            key = (r["polytope_id"], r["dir_idx"], r["target"])
+            gap_map[key] = r["action_gap"]
+
+    fig, axes = plt.subplots(1, 3, figsize=FIGSIZE_TRIPLE, sharey=True)
+
+    for ax, target in zip(axes, TARGETS):
+        gaps = []
+        slopes = []
+        for key, pts in traces.items():
+            if key[2] != target or key not in gap_map:
+                continue
+            slope, r2 = fit_slope(pts)
+            if not np.isnan(slope):
+                gaps.append(gap_map[key])
+                slopes.append(slope)
+
+        if gaps:
+            ax.scatter(gaps, slopes, s=SCATTER_SIZE, alpha=0.5,
+                       color=TARGET_COLORS[target], edgecolors="none")
+            ax.axhline(2.0, color="k", linestyle="--", alpha=0.3)
+            ax.set_xscale("log")
+            ax.set_xlabel("Action gap")
+            ax.set_title(TARGET_LABELS[target])
+
+    axes[0].set_ylabel("Fitted log-log slope")
+    fig.tight_layout()
+    fig.savefig(EXPERIMENT_DIR / filename)
+    plt.close(fig)
+    print(f"Saved {filename}")
+
+
+# ============================================================================
+# Figure 4: Q4 — delta vs fitted slope
+# ============================================================================
+
+def plot_q4_delta(data, filename="gc_q4_delta.png"):
+    """Median slope vs barely-cutting delta, one line per target."""
+    if not data:
+        return
+
+    traces = group_traces(data)
+    delta_map = {}
+    for r in data:
+        if r["barely_cutting_delta"] is not None:
+            key = (r["polytope_id"], r["dir_idx"], r["target"])
+            delta_map[key] = r["barely_cutting_delta"]
 
     fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
 
     for target in TARGETS:
-        target_data = [r for r in data
-                       if r["target"] == target and r["barely_cutting_delta"] is not None]
-        deltas = sorted(set(r["barely_cutting_delta"] for r in target_data))
-        medians = []
-        p25 = []
-        p75 = []
-        for d in deltas:
-            errs = [r["max_rel_error"] for r in target_data if r["barely_cutting_delta"] == d]
-            medians.append(np.median(errs))
-            p25.append(np.percentile(errs, 25))
-            p75.append(np.percentile(errs, 75))
+        by_delta = defaultdict(list)
+        for key, pts in traces.items():
+            if key[2] != target or key not in delta_map:
+                continue
+            slope, r2 = fit_slope(pts)
+            if not np.isnan(slope):
+                by_delta[delta_map[key]].append(slope)
 
-        ax.plot(deltas, medians, marker="o", color=TARGET_COLORS[target],
-                label=TARGET_LABELS[target], markersize=4)
-        ax.fill_between(deltas, p25, p75, color=TARGET_COLORS[target], alpha=0.15)
+        if by_delta:
+            ds = sorted(by_delta.keys())
+            medians = [np.median(by_delta[d]) for d in ds]
+            ax.plot(ds, medians, marker="o", color=TARGET_COLORS[target],
+                    label=TARGET_LABELS[target])
 
+    ax.axhline(2.0, color="k", linestyle="--", alpha=0.3, label=r"Slope $= 2$")
     ax.set_xscale("log")
-    ax.set_yscale("log")
     ax.set_xlabel(r"Barely-cutting $\delta$")
-    ax.set_ylabel("Median max relative error")
-    ax.legend()
+    ax.set_ylabel("Median fitted slope")
+    ax.legend(fontsize=FONT_SIZE_SMALL)
     ax.invert_xaxis()
     fig.tight_layout()
-    fig.savefig(EXPERIMENT_DIR / "gc_q4_delta_vs_error.png")
+    fig.savefig(EXPERIMENT_DIR / filename)
     plt.close(fig)
-    print("Saved gc_q4_delta_vs_error.png")
+    print(f"Saved {filename}")
 
 
 # ============================================================================
 # Summary table
 # ============================================================================
 
-def write_summary_table(q1, q2, q3, q4):
-    """Write LaTeX summary table with median and P95 errors per phase x target."""
-    sweet_eps = 1e-5
-    eps_tol = 0.5
-
+def write_summary(q1, q2, q3, q4):
+    """Print and save summary statistics of fitted slopes per phase x target."""
     phases = [
-        ("Q1 generic", [r for r in q1 if abs(r["fd_epsilon"] - sweet_eps) / sweet_eps < eps_tol]),
+        ("Q1 generic", q1),
         ("Q2 non-generic", q2),
         ("Q3 near-degenerate", q3),
         ("Q4 barely-cutting", q4),
     ]
 
-    lines = []
-    lines.append(r"\begin{tabular}{l l r r r}")
-    lines.append(r"\toprule")
-    lines.append(r"Phase & Target & Median & P95 & Max \\")
-    lines.append(r"\midrule")
+    print(f"\n{'Phase':<20} {'Target':<10} {'Median':>8} {'P25':>8} {'P75':>8} {'n':>6}")
+    print("-" * 56)
+
+    tex_lines = []
+    tex_lines.append(r"\begin{tabular}{l l r r r}")
+    tex_lines.append(r"\toprule")
+    tex_lines.append(r"Phase & Target & Median slope & [P25, P75] & $n$ \\")
+    tex_lines.append(r"\midrule")
 
     for phase_name, phase_data in phases:
         if not phase_data:
             continue
+        slopes_by_target = compute_all_slopes(phase_data)
         for target in TARGETS:
-            td = [r["max_rel_error"] for r in phase_data if r["target"] == target]
-            if not td:
+            slopes = slopes_by_target.get(target, [])
+            if not slopes:
                 continue
-            med = np.median(td)
-            p95 = np.percentile(td, 95)
-            mx = np.max(td)
-            lines.append(
-                f"{phase_name} & {target} & "
-                f"{med:.2e} & {p95:.2e} & {mx:.2e} \\\\"
+            med = np.median(slopes)
+            p25 = np.percentile(slopes, 25)
+            p75 = np.percentile(slopes, 75)
+            n = len(slopes)
+            print(f"{phase_name:<20} {target:<10} {med:>8.2f} {p25:>8.2f} {p75:>8.2f} {n:>6}")
+            tex_lines.append(
+                f"{phase_name} & {target} & {med:.2f} & [{p25:.2f}, {p75:.2f}] & {n} \\\\"
             )
-        lines.append(r"\midrule")
+        tex_lines.append(r"\midrule")
 
-    # Remove last midrule, replace with bottomrule
-    if lines[-1] == r"\midrule":
-        lines[-1] = r"\bottomrule"
-    lines.append(r"\end{tabular}")
+    if tex_lines[-1] == r"\midrule":
+        tex_lines[-1] = r"\bottomrule"
+    tex_lines.append(r"\end{tabular}")
 
     path = EXPERIMENT_DIR / "gc_summary.tex"
     with open(path, "w") as f:
-        f.write("\n".join(lines) + "\n")
-    print(f"Saved gc_summary.tex")
-
-    # Also print to stdout
-    print("\nSummary (max_rel_error):")
-    print(f"{'Phase':<20} {'Target':<10} {'Median':>10} {'P95':>10} {'Max':>10}")
-    print("-" * 62)
-    for phase_name, phase_data in phases:
-        if not phase_data:
-            continue
-        for target in TARGETS:
-            td = [r["max_rel_error"] for r in phase_data if r["target"] == target]
-            if not td:
-                continue
-            print(f"{phase_name:<20} {target:<10} {np.median(td):>10.2e} "
-                  f"{np.percentile(td, 95):>10.2e} {np.max(td):>10.2e}")
+        f.write("\n".join(tex_lines) + "\n")
+    print(f"\nSaved gc_summary.tex")
 
 
 # ============================================================================
@@ -389,15 +357,13 @@ def main():
     q3 = load_jsonl("gradient-correctness-q3-degeneracy.jsonl")
     q4 = load_jsonl("gradient-correctness-q4-redundant.jsonl")
 
-    print(f"Loaded: Q1={len(q1)}, Q2={len(q2)}, Q3={len(q3)}, Q4={len(q4)} rows\n")
+    print(f"Loaded: Q1={len(q1)}, Q2={len(q2)}, Q3={len(q3)}, Q4={len(q4)} rows")
 
-    plot_q1_step_sweep(q1)
-    plot_q1_dimension(q1)
-    plot_q2_nongeneric(q1, q2)
-    plot_q3_gap_vs_error(q3)
-    plot_q3_orbit_switching(q3)
-    plot_q4_delta_vs_error(q4)
-    write_summary_table(q1, q2, q3, q4)
+    plot_convergence(q1, "gc_convergence.png")
+    plot_slopes(q1, q2, "gc_slopes.png")
+    plot_q3_gap(q3, "gc_q3_gap.png")
+    plot_q4_delta(q4, "gc_q4_delta.png")
+    write_summary(q1, q2, q3, q4)
 
 
 if __name__ == "__main__":

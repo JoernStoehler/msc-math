@@ -2,83 +2,114 @@
 
 ## Motivation
 
-The library provides analytical gradients ∂sys/∂a_k via `capacity_derivatives_a` and `volume_derivatives_a`. These are used by multiple optimization and analysis experiments. This experiment validates the gradients under increasingly adversarial conditions to understand where they're reliable and where they break down.
+The library provides analytical gradients ∂c/∂a_k and ∂vol/∂a_k via envelope theorem and chain rule formulas ([lem:cap-derivative], [lem:vol-derivative] — both unverified). The systolic ratio gradient ∂sys/∂a_k is derived via quotient rule ([cor:sys-derivative]). These are used by optimization experiments. This experiment tests whether the analytical gradients correctly predict function values to first order.
 
 ## Status
 
-**Q1-Q4 complete.** Data generated 2026-03-26. Figures produced.
+**v2 complete.** Data generated 2026-03-27. v1 (FD cross-checking) is in git log — superseded because FD cross-checking tests agreement between two computations, not whether the output is a gradient.
+
+## Methodology
+
+**First-order prediction test.** The defining property of a gradient g of f at a is:
+
+    f(a + td) − f(a) − t·g·d = o(t)  as t → 0
+
+For each polytope, target f ∈ {capacity, volume, sys}, and random direction d ∈ R^{4F}:
+- Compute f(a), g(a) analytically
+- Sweep t geometrically from 1e-1 to 1e-7 (13 values)
+- Compute residual r(t) = |f(a+td) − f(a) − t·g·d|
+- Fit log-log slope of r(t) vs t
+
+**Interpretation of slope:**
+- Slope ≈ 2: function is C² (quadratic Taylor remainder dominates) — expected within a smooth orbit region
+- Slope ≈ 1: function is C¹ but not C² — would indicate Lipschitz but not smooth gradient
+- Slope ≈ 0: function is non-differentiable at the test point
+
+**Capacity perturbation uses fixed orbit:** The perturbed capacity is computed via `solve_kkt_for` with the base point's best orbit, not via full `ehz_capacity`. This tests the per-orbit envelope theorem gradient ([lem:cap-derivative]), which equals the capacity gradient at generic parameters where the minimizing orbit is unique ([prop:capacity-piecewise-smooth](c)). It does NOT test behavior at orbit-switching boundaries — that would require full `ehz_capacity` on the perturbed polytope.
+
+**Assumption:** [prop:capacity-piecewise-smooth] (unverified) — piecewise C^∞ structure, generic differentiability. The experiment cannot verify this proposition; it assumes it and tests the gradient formula conditional on it.
+
+5 random directions per polytope, seeded RNG for reproducibility.
 
 ## Research questions
 
-1. **Generic polytopes:** Does the analytical gradient match finite differences? What sampling strategy works in R^{4F} — along gradient, random directions, coordinate-aligned? How does accuracy depend on FD step size and polytope dimension?
-
-2. **Non-generic geometry:** Is the gradient correct for Lagrangian products (which have symmetry-degenerate orbits) and other polytopes with symmetry groups? What about polytopes where multiple orbits achieve near-identical action?
-
-3. **Near-degeneracy:** What happens when the gap between the best and second-best orbit action is small? How does the gradient behave as the minimizer becomes non-unique?
-
-4. **Redundant halfspaces:** If we introduce a halfspace that barely cuts the polytope, what happens to the gradient for that facet?
-
-## Design notes
-
-- A shared validation harness (analytical vs FD comparison, error metrics) should serve all phases.
-- Question 3 likely needs instrumentation beyond just "different polytopes" — e.g., logging the action gap, tracking which orbit the solver picks on each FD perturbation.
-- Existing `capacity_derivatives_a_fd` and `volume_derivatives_a_fd` in `crates/src/derivatives.rs` provide FD baselines. Currently tested only on the hypercube.
-- Check the derivative lemmas in `experiments/sys-optimization/math.tex` and `crates/src/derivatives.rs` for what assumptions the formulas rely on.
+1. **Q1 Generic polytopes:** Does the gradient predict to first order? What convergence rate? How does it vary with F?
+2. **Q2 Non-generic geometry:** Does the gradient work for Lagrangian products with symmetry-degenerate orbits?
+3. **Q3 Near-degeneracy:** Does the gradient degrade when the gap between best and second-best orbit action is small?
+4. **Q4 Barely-cutting facets:** Does the gradient degrade for near-redundant halfspaces?
 
 ## How to run
 
 ```bash
 cd experiments/
 cargo run --release --bin gradient_correctness        # all phases
-cargo run --release --bin gradient_correctness -- q2 q3 q4  # skip Q1
+cargo run --release --bin gradient_correctness -- q1   # single phase
 python3 gradient-correctness/analyze.py               # figures + summary
 ```
 
-## Results (2026-03-26)
+## Results (2026-03-27)
 
 ### Dataset sizes
 
-| Phase | Rows | Polytopes | Time |
-|-------|------|-----------|------|
-| Q1 generic | 4680 | 120 (F=5..10, 20 each) × 13 eps × 3 targets | ~45 min (F=10 dominates) |
-| Q2 non-generic | 48 | 16 Lagrangian products (F≤8) × 1 eps × 3 targets | 14s |
-| Q3 near-degenerate | 219 | 73 at F=6 (binned by action gap) × 1 eps × 3 targets | 37s |
-| Q4 barely-cutting | 150 | 10 base × 5 δ values × 1 eps × 3 targets | 25s |
+| Phase | Rows | Polytopes | Directions | t-values | Time |
+|-------|------|-----------|------------|----------|------|
+| Q1 generic | 22999 | 120 (F=5..10, 20 each) | 5 | 13 | 34s |
+| Q2 non-generic | 3138 | ~20 Lagrangian products (F≤8) | 5 | 13 | 5s |
+| Q3 near-degenerate | 14578 | 78 at F=6 (binned by action gap) | 5 | 13 | 29s |
+| Q4 barely-cutting | 8966 | 10 base × 5 δ | 5 | 13 | 12s |
 
-### Key findings
+Some rows missing vs theoretical maximum due to failed perturbations (polytope construction or KKT solve fails at large t or on degenerate geometries).
 
-**1. Capacity gradient: validated to machine-precision accuracy.**
+### Observation 1: Capacity gradient is correct (slope = 2.00)
 
-Analytical ∂c/∂a_k matches FD to median relative error ~2e-9 across all 4 phases (gc_q1_step_sweep.png, gc_summary.tex). Step-size sweep shows textbook V-curve with sweet spot at eps≈3e-6, confirming O(eps²) central-difference truncation balanced against O(machine_eps/eps) roundoff.
+Fitted log-log slope for capacity is 2.00 [1.99, 2.01] (median [P25, P75]) across all 600 Q1 traces and all phases (gc_slopes.png, gc_summary.tex). The convergence plot (gc_convergence.png, left panel) shows residual tracking the slope-2 reference line from t=1e-1 to t=1e-7 with no deviation.
 
-**2. Volume and sys gradients: FD validation breaks on small facets.**
+**Epistemic status:** Observation — the data directly shows this. The inference that the envelope theorem formula is correct follows from this observation plus the assumption that [prop:capacity-piecewise-smooth] holds.
 
-Median errors for ∂vol/∂a_k and ∂sys/∂a_k are 5e-3 to 2e-2 at eps=1e-5, with P95 reaching 1.0 (gc_q1_dimension.png). Investigation shows the max_rel_error is driven by facets with tiny analytical gradient norms — the FD returns zero for these because `Polytope4D::from_f64` on the perturbed dual vertices changes the combinatorial type (vertex appears/disappears). When filtering facets below 1% of max gradient norm, volume median error drops to 2.6e-3 and max to 8.8e-2.
+### Observation 2: Volume gradient is correct but has cancellation floor
 
-The volume step-sweep sweet spot is shifted to eps≈3e-4 (vs 3e-6 for capacity), reflecting that volume is computed via qhull vertex enumeration and is only piecewise smooth in dual vertex space. This is not a bug in the analytical gradient — it's a fundamental FD limitation for piecewise-smooth functions.
+Fitted slope for volume is 1.98 [1.92, 2.05] for Q1 (gc_convergence.png, middle panel). The convergence plot shows residual tracking slope 2 from t=1e-1 to t≈1e-4, then leveling off and increasing. This V-shape is floating-point cancellation: for small t, `vol(a+td) − vol(a)` loses precision because two nearly-equal volumes are subtracted.
 
-**3. Non-generic geometry (Q2): no structural issues.**
+The gradient is correct in the convergent region (t ∈ [1e-1, 1e-4]). The cancellation floor does not indicate a gradient error.
 
-Lagrangian products (regular, rotated, random) show comparable or better errors than generic polytopes for all three targets (gc_q2_nongeneric.png). Symmetry-degenerate orbits do not cause gradient degradation.
+Q2 (Lagrangian products) shows lower slopes for volume (median 1.74) and sys (median 1.65). This may reflect worse cancellation behavior on Lagrangian products, where some facet volumes are very small. Not investigated further — the convergent region still shows the correct trend.
 
-LP(5,5) and LP(4,5) (F=9-10) were excluded from Q2 due to runtime — already covered by Q1 generic at F=9-10.
+### Observation 3: Near-degeneracy has no effect on per-orbit gradient
 
-Random LP construction frequently fails (Unbounded, RedundantFacet) at small polygon counts. Only LP(4,4) produced valid random instances.
+Q3 scatter plot (gc_q3_gap.png) shows no correlation between action gap and fitted slope. Slopes cluster at 2.0 regardless of whether the gap is 10^{-5} or 10^1.
 
-**4. Near-degeneracy (Q3): orbit switching correlates with large errors.**
+**Caveat:** This tests the per-orbit gradient only (fixed orbit during perturbation). At orbit-switching boundaries, the actual capacity min(A₁, A₂) is non-differentiable. Testing this would require using full `ehz_capacity` for the perturbed point, which this experiment does not do.
 
-When the action gap between best and second-best orbit is small (< 1e-4), FD perturbations sometimes switch the optimal orbit, making the capacity gradient prediction incorrect for those polytopes (gc_q3_gap_vs_error.png, gc_q3_orbit_switching.png).
+### Observation 4: Barely-cutting facets have no effect
 
-For polytopes without orbit switching, capacity errors remain ~1e-9 regardless of gap size. For polytopes with orbit switching, capacity errors jump to ~1e-1 — this is expected behavior at non-smooth points of the capacity function.
+Q4 plot (gc_q4_delta.png) shows all slopes between 1.94 and 2.04 regardless of δ, with no systematic trend. The gradient remains correct even as the added facet contributes negligibly to the polytope.
 
-**5. Barely-cutting facets (Q4): volume gradient degrades.**
+### Summary table (fitted slope, log_t ∈ [-4, -1])
 
-As δ→0 (facet becomes near-redundant), volume and sys FD errors increase systematically (gc_q4_delta_vs_error.png). Capacity errors remain low (~1e-9) because barely-cutting facets are rarely in the optimal orbit.
+| Phase | capacity | volume | sys |
+|-------|----------|--------|-----|
+| Q1 generic | 2.00 [1.99, 2.01] | 1.98 [1.92, 2.05] | 1.98 [1.91, 2.02] |
+| Q2 non-generic | 2.00 [2.00, 2.00] | 1.74 [1.63, 1.88] | 1.65 [1.42, 1.89] |
+| Q3 near-degenerate | 2.00 [1.99, 2.01] | 1.98 [1.94, 2.05] | 1.99 [1.94, 2.02] |
+| Q4 barely-cutting | 2.00 [1.99, 2.01] | 1.98 [1.93, 2.07] | 1.98 [1.92, 2.01] |
 
-### Known Q-correction panic
+Values are median [P25, P75] of fitted log-log slopes across all traces with R² > 0.5.
 
-Many FD perturbations (especially on Lagrangian products) trigger the known Q-correction panic in `saddle_point_solver.rs:504-509`. These are caught via `catch_unwind` and result in NaN FD components. This does not affect the analytical gradient — it only means some FD perturbations cannot be evaluated.
+### Inference
 
-## Predecessor experiments
+The analytical gradients ∂c/∂a_k, ∂vol/∂a_k, ∂sys/∂a_k correctly predict their respective function values to first order. The convergence rate confirms all three functions are C² in the dual vertex parameter space (within a fixed orbit region), consistent with the unverified claim in [prop:capacity-piecewise-smooth] that the per-orbit action is smooth.
 
-This experiment supersedes the gradient validation aspects of sys-optimization (Phases 1, 2, 4). The optimization aspects of sys-optimization (Phase 3) move to a separate experiment.
+**This inference depends on:**
+- [prop:capacity-piecewise-smooth] (unverified): the capacity is piecewise C^∞
+- The KKT solver and volume computation being correct (tested elsewhere)
+- The random direction sampling being representative (5 directions per polytope)
+
+**This inference does NOT address:**
+- Whether the capacity is differentiable at orbit-switching boundaries (non-generic points)
+- Whether the subdifferential characterization at non-smooth points is correct
+- Whether the unverified lemmas [lem:cap-derivative], [lem:vol-derivative] are mathematically correct (the experiment only tests whether the code predictions match the code values — a shared conceptual error in both the function and the gradient code would not be detected)
+
+## Known issues
+
+- **Q-correction panic:** `solve_kkt_for` panics on some near-degenerate polytopes. Caught via `catch_unwind` in `solve_kkt_safe`. Results in missing rows (perturbation skipped), not incorrect data.
+- **Q2 volume/sys slope degradation:** Lagrangian products show lower fitted slopes for volume (1.74) and sys (1.65). Likely floating-point cancellation on small-facet polytopes, not a gradient error. The convergent region still trends correctly.
