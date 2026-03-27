@@ -315,59 +315,45 @@ if ok_conv:
 
     fig, axes = plt.subplots(1, 2, figsize=FIGSIZE_DUAL)
 
-    # Left: overall convexity failure rates
+    # Left: overall convexity failure rates (three checks)
     ax = axes[0]
-    categories = ["All", "Same-facet", "Cross-facet"]
-    incidence_fail = [
-        100 * (1 - sum(1 for r in ok_conv if r["midpoint_same_incidence"]) / len(ok_conv)),
-        100 * (1 - sum(1 for r in same_facet if r["midpoint_same_incidence"]) / max(len(same_facet), 1)),
-        100 * (1 - sum(1 for r in cross_facet if r["midpoint_same_incidence"]) / max(len(cross_facet), 1)),
-    ]
-    omega_fail = [
-        100 * (1 - sum(1 for r in ok_conv if r["midpoint_same_omega_signs"]) / len(ok_conv)),
-        100 * (1 - sum(1 for r in same_facet if r["midpoint_same_omega_signs"]) / max(len(same_facet), 1)),
-        100 * (1 - sum(1 for r in cross_facet if r["midpoint_same_omega_signs"]) / max(len(cross_facet), 1)),
-    ]
+    categories = ["Incidence", r"$\omega_0$ signs", "Transitions"]
 
-    x = np.arange(len(categories))
-    width = 0.35
-    bars1 = ax.bar(x - width/2, incidence_fail, width, label="Incidence change",
-                   color="#2196F3", alpha=0.7)
-    bars2 = ax.bar(x + width/2, omega_fail, width, label=r"$\omega_0$ sign change",
-                   color="#FF9800", alpha=0.7)
-    ax.set_xticks(x)
-    ax.set_xticklabels(categories)
+    def fail_rate(rows, key):
+        return 100 * (1 - sum(1 for r in rows if r[key]) / max(len(rows), 1))
+
+    all_rates = [fail_rate(ok_conv, "midpoint_same_incidence"),
+                 fail_rate(ok_conv, "midpoint_same_omega_signs"),
+                 fail_rate(ok_conv, "midpoint_same_transitions")]
+
+    bars = ax.bar(categories, all_rates,
+                  color=["#2196F3", "#FF9800", "#F44336"], alpha=0.7)
+    for bar, rate in zip(bars, all_rates):
+        ax.text(bar.get_x() + bar.get_width() / 2, rate + 0.5,
+                f"{rate:.1f}%", ha="center", va="bottom", fontsize=FONT_SIZE_SMALL)
     ax.set_ylabel("Failure rate (%)")
-    ax.set_title("Convexity failure rates")
-    ax.legend()
+    ax.set_title("Midpoint type change rates")
 
-    for bars in [bars1, bars2]:
-        for bar in bars:
-            h = bar.get_height()
-            if h > 0.5:
-                ax.text(bar.get_x() + bar.get_width() / 2, h + 0.5,
-                        f"{h:.1f}%", ha="center", va="bottom", fontsize=FONT_SIZE_SMALL)
-
-    # Right: by F
+    # Right: transition failure by F
     ax = axes[1]
-    conv_by_f = defaultdict(lambda: {"total": 0, "omega_fail": 0, "incidence_fail": 0})
+    conv_by_f = defaultdict(lambda: {"total": 0, "trans_fail": 0, "omega_fail": 0})
     for r in ok_conv:
         f = r["facet_count"]
         conv_by_f[f]["total"] += 1
+        if not r["midpoint_same_transitions"]:
+            conv_by_f[f]["trans_fail"] += 1
         if not r["midpoint_same_omega_signs"]:
             conv_by_f[f]["omega_fail"] += 1
-        if not r["midpoint_same_incidence"]:
-            conv_by_f[f]["incidence_fail"] += 1
 
     f_vals = sorted(conv_by_f.keys())
+    trans_rates = [100 * conv_by_f[f]["trans_fail"] / conv_by_f[f]["total"] for f in f_vals]
     omega_rates = [100 * conv_by_f[f]["omega_fail"] / conv_by_f[f]["total"] for f in f_vals]
-    incidence_rates = [100 * conv_by_f[f]["incidence_fail"] / conv_by_f[f]["total"] for f in f_vals]
 
-    ax.plot(f_vals, omega_rates, "o-", color="#FF9800", label=r"$\omega_0$ sign change")
-    ax.plot(f_vals, incidence_rates, "s-", color="#2196F3", label="Incidence change")
+    ax.plot(f_vals, trans_rates, "o-", color="#F44336", label="Transition matrix")
+    ax.plot(f_vals, omega_rates, "s--", color="#FF9800", alpha=0.6, label=r"$\omega_0$ signs")
     ax.set_xlabel(r"$F$")
     ax.set_ylabel("Failure rate (%)")
-    ax.set_title("Convexity failure by facet count")
+    ax.set_title("Non-convexity by facet count")
     ax.legend()
 
     fig.suptitle("Cell convexity testing")
@@ -558,10 +544,12 @@ print(f"  Anisotropy:       median={np.median(anisotropies):.1f}x "
 # Convexity
 if ok_conv:
     omega_fail_rate = 100 * (1 - sum(1 for r in ok_conv if r["midpoint_same_omega_signs"]) / len(ok_conv))
+    trans_fail_rate = 100 * (1 - sum(1 for r in ok_conv if r["midpoint_same_transitions"]) / len(ok_conv))
     incidence_fail_rate = 100 * (1 - sum(1 for r in ok_conv if r["midpoint_same_incidence"]) / len(ok_conv))
     print(f"\nConvexity (midpoint test, n={len(ok_conv)}):")
-    print(f"  Incidence failure: {incidence_fail_rate:.1f}%")
-    print(f"  ω₀ sign failure:   {omega_fail_rate:.1f}%")
+    print(f"  Incidence failure:    {incidence_fail_rate:.1f}%")
+    print(f"  ω₀ sign failure:      {omega_fail_rate:.1f}%")
+    print(f"  Transition failure:   {trans_fail_rate:.1f}%")
 
 # Orbit gap
 if unique_gaps:

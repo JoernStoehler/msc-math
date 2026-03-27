@@ -39,7 +39,7 @@ Characterization aspects of this question appear scattered across:
 
 ```bash
 cd experiments/
-cargo run --release --bin combinatorial_boundaries   # ~11 min, generates 3 JSONL files
+cargo run --release --bin combinatorial_boundaries   # ~47s, generates 5 JSONL files
 python3 combinatorial-boundaries/analyze.py          # generates figures
 ```
 
@@ -116,17 +116,22 @@ Refactored to three passes: per-facet cell profiling (11200 probes, no EHZ), glo
 | Check | Failure rate |
 |-------|-------------|
 | Incidence change | 0.8% |
-| ω₀ sign change | 52.5% |
+| ω₀ sign change (ridge-adjacent) | 52.5% |
+| Transition matrix change | 57.5% |
 
 (convexity JSONL, midpoint_construction_ok=true rows, cell_convexity.png)
 
-**Cells are NOT convex.** 52.5% of midpoint tests show ω₀ sign changes, confirming that ω₀ boundaries are quadric hypersurfaces (not hyperplanes). Two points inside the same combinatorial cell can have a midpoint in a different cell due to ω₀ sign flips.
+**Cells are NOT convex.** 57.5% of midpoints have a different transition matrix (= different set of feasible Reeb orbits). This is the operationally relevant measure: the transition matrix determines which cycles are feasible in HK2017.
+
+The transition matrix depends on vertex adjacency AND ω₀ signs for all vertex-adjacent pairs (not just ridge-adjacent). Ridge-adjacent ω₀ flips account for 52.5% of failures; the remaining 5% come from ω₀ flips in vertex-adjacent but non-ridge-adjacent pairs. Every ridge-adjacent ω₀ flip also changes the transition matrix (100% overlap).
 
 Incidence is almost always preserved (99.2%), consistent with incidence boundaries being (approximately) hyperplanes — the vertex-facet slack is affine in the dual vertices.
 
-**Same-facet vs cross-facet:** same-facet pairs have 38.7% ω₀ failure, cross-facet pairs have 54.6% (cell_convexity.png). Cross-facet midpoints are worse because they combine perturbations of two different dual vertices, creating more opportunity for the bilinear ω₀ to change sign.
+**Failure rate increases sharply with F:** ~0% at F=5, ~50% at F=6, ~65% at F≥8 (cell_convexity.png). More facets means more ω₀ pairs that can flip.
 
-**Implications for optimization:** Non-convexity means that line searches cannot assume the combinatorial type is constant along a straight-line interpolation between two interior points. However, since incidence is preserved 99.2% of the time, the non-convexity is primarily about ω₀ signs — and ω₀ sign boundaries may be less disruptive than incidence changes (they don't change the skeleton, only the symplectic structure).
+**Same-facet vs cross-facet:** same-facet 50.5% transition failure, cross-facet 58.6%. Cross-facet midpoints are worse because they combine perturbations of two different dual vertices, creating more opportunity for the bilinear ω₀ to change sign.
+
+**Implications for optimization:** Non-convexity means that line searches cannot assume the combinatorial type is constant along a straight-line interpolation between two interior points. The transition matrix changes alter which orbits are feasible, so this is not merely a cosmetic issue — it can change which orbit minimizes the action and thus affect the gradient.
 
 ### Phase C: Gradient-cell alignment
 
@@ -164,7 +169,7 @@ With the sparse/dense directions replaced by gradient + neg-gradient + 5 dense r
 
 (crossing JSONL, gradient JSONL)
 
-Results consistent with Phases 1-3: sys is continuous, gradient is stable except at orbit switches.
+The 107 missing crossings (10.9%) are concentrated in neg_gradient directions (66/107) and at low F (F=5,6: 60/107). The neg_gradient direction moves away from the sys optimizer, creating polytopes where EHZ has numerical issues. Not a structural limitation.
 
 ## Interpretation
 
@@ -172,7 +177,7 @@ Results consistent with Phases 1-3: sys is continuous, gradient is stable except
 
 **ω₀ flips are significant.** They account for 43% of global-probe boundaries and dominate per-facet probes. Any step-bound computation that only tracks incidence flips would miss a third of the boundaries.
 
-**Cells are non-convex but "incidence-convex".** ω₀ sign boundaries are quadric, causing 52.5% of midpoint tests to fail. But incidence is preserved 99.2% of the time. The practical impact for optimization depends on whether ω₀ sign changes affect the optimal orbit (they can, since the set of feasible cycles depends on the transition matrix, which depends on ω₀ signs).
+**Cells are non-convex and this matters.** 57.5% of midpoints have a different transition matrix — different feasible orbits. This isn't just a sign flip in some abstract quantity; it changes which Reeb orbits exist. Incidence is preserved 99.2% of the time ("incidence-convex"), but the transition matrix depends on ω₀ signs for all vertex-adjacent pairs, and those flip frequently.
 
 **Orbit facets are wider, not narrower.** The intuition that "orbit facets are bottlenecks" is wrong — non-orbit facets are narrower. This suggests that optimization is free to move orbit facets significantly without hitting a boundary, while non-orbit facets are more constrained. A step-size strategy should account for this asymmetry.
 
@@ -185,6 +190,6 @@ Results consistent with Phases 1-3: sys is continuous, gradient is stable except
 ## Open questions
 
 1. **Continuity of sys:** The observation that sys is continuous at boundaries is consistent with the min-of-continuous-functions structure of c_EHZ, but a formal proof that new orbits enter continuously (not just that existing orbit actions are continuous) may be worth writing up for the thesis.
-2. **ω₀ non-convexity impact:** Does ω₀ sign non-convexity actually affect optimization? If the optimal orbit's feasibility is unchanged by ω₀ flips in non-orbit facet pairs, the non-convexity may be harmless for gradient ascent.
+2. **ω₀ non-convexity impact:** Answered — yes. 57.5% of midpoints have a different transition matrix. The non-convexity changes which orbits are feasible and is operationally significant.
 3. **Anisotropy structure:** What determines the anisotropy directions within each facet's R⁴? Is it related to the positions of adjacent facets, the symplectic structure, or both?
 4. **Step-size strategy:** Can per-facet cell widths be used to construct an anisotropic step-size bound that allows larger steps than the isotropic bound?

@@ -248,6 +248,7 @@ struct ConvexityRow {
     t2_max: f64,
     midpoint_same_incidence: bool,
     midpoint_same_omega_signs: bool,
+    midpoint_same_transitions: bool,
     midpoint_construction_ok: bool,
 }
 
@@ -914,6 +915,14 @@ fn same_omega(a: &CombinatorialType, b: &CombinatorialType) -> bool {
     a.omega_signs == b.omega_signs
 }
 
+/// Compare transition matrices (vertex adjacency + ω₀ signs → directed facet graph).
+/// This is what actually determines which Reeb orbits are feasible.
+fn same_transitions(base: &Polytope4D, other: &Polytope4D) -> bool {
+    let t1 = build_transition_matrix(base);
+    let t2 = build_transition_matrix(other);
+    t1 == t2
+}
+
 // ============================================================================
 // Data loading
 // ============================================================================
@@ -1280,12 +1289,14 @@ fn main() {
                         let mut construction_ok = false;
                         let mut same_incidence_val = false;
                         let mut same_omega_val = false;
+                        let mut same_transitions_val = false;
 
                         if let Some(mid_poly) = construct_at_t(duals, &mid_dir, 1.0) {
                             construction_ok = true;
                             let mid_type = combinatorial_type(&mid_poly);
                             same_incidence_val = same_incidence(&base_type, &mid_type);
                             same_omega_val = same_omega(&base_type, &mid_type);
+                            same_transitions_val = same_transitions(polytope, &mid_poly);
                         }
 
                         let row = ConvexityRow {
@@ -1299,6 +1310,7 @@ fn main() {
                             t2_max: p2.t_max,
                             midpoint_same_incidence: same_incidence_val,
                             midpoint_same_omega_signs: same_omega_val,
+                            midpoint_same_transitions: same_transitions_val,
                             midpoint_construction_ok: construction_ok,
                         };
 
