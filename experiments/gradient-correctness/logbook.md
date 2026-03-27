@@ -6,7 +6,7 @@ The library provides analytical gradients ∂c/∂a_k and ∂vol/∂a_k via enve
 
 ## Status
 
-**v2 complete.** Data generated 2026-03-27. v1 (FD cross-checking) is in git log — superseded because FD cross-checking tests agreement between two computations, not whether the output is a gradient.
+**v2 + Q5 complete.** Data generated 2026-03-27. v1 (FD cross-checking) is in git log — superseded because FD cross-checking tests agreement between two computations, not whether the output is a gradient. Q5 (orbit switching, subdifferential prediction) added 2026-03-27.
 
 ## Methodology
 
@@ -37,14 +37,15 @@ For each polytope, target f ∈ {capacity, volume, sys}, and random direction d 
 2. **Q2 Non-generic geometry:** Does the gradient work for Lagrangian products with symmetry-degenerate orbits?
 3. **Q3 Near-degeneracy:** Does the gradient degrade when the gap between best and second-best orbit action is small?
 4. **Q4 Barely-cutting facets:** Does the gradient degrade for near-redundant halfspaces?
+5. **Q5 Orbit-switching:** Does the subdifferential (set of per-orbit gradients) predict capacity at near-switching points? When does orbit switching occur?
 
 ## How to run
 
 ```bash
 cd experiments/
-cargo run --release --bin gradient_correctness        # all phases
-cargo run --release --bin gradient_correctness -- q1   # single phase
-python3 gradient-correctness/analyze.py               # figures + summary
+cargo run --release --bin gradient_correctness            # all phases
+cargo run --release --bin gradient_correctness -- q1      # single phase (q1-q5)
+python3 gradient-correctness/analyze.py                   # figures + summary
 ```
 
 ## Results (2026-03-27)
@@ -109,40 +110,95 @@ The analytical gradients ∂c/∂a_k, ∂vol/∂a_k, ∂sys/∂a_k correctly pre
 - Whether the subdifferential characterization at non-smooth points is correct
 - Whether the unverified lemmas [lem:cap-derivative], [lem:vol-derivative] are mathematically correct (the experiment only tests whether the code predictions match the code values — a shared conceptual error in both the function and the gradient code would not be detected)
 
-## Open: Q5 — Orbit-switching and subdifferential prediction
+## Q5 — Orbit-switching and subdifferential prediction
 
-**Status:** Scoped, not implemented. Expands scope of this experiment.
+**Status: v1 complete.** Data generated 2026-03-27.
 
-**Research question:** At parameters where multiple orbits are tied or near-tied, does the Clarke subdifferential (set of per-orbit gradients) correctly predict the capacity to first order?
+**Research question:** At parameters where multiple orbits are near-tied, does the Clarke subdifferential (set of per-orbit gradients) correctly predict the capacity to first order? When does orbit switching occur under perturbation?
 
-**Background:** [prop:capacity-piecewise-smooth](d) claims that at a switching boundary with r tied orbits, the directional derivative is D_d c = min_i(∇_a A_i · d). Q1-Q4 only tested the per-orbit gradient (fixed orbit, using solve_kkt_for). Q5 would test the min-over-orbits prediction using full ehz_capacity for the perturbed point.
+**Background:** [prop:capacity-piecewise-smooth](d) claims that at a switching boundary with r tied orbits, the directional derivative is D_d c = min_i(∇_a A_i · d). Q1-Q4 tested only the per-orbit gradient (fixed orbit via solve_kkt_for). Q5 tests the min-over-orbits prediction using full ehz_capacity for the perturbed point.
 
-**What's needed in the library:** Currently `capacity_derivatives_a` takes a single orbit's KKT solution and returns one gradient. There is no function that returns multiple gradients for tied/near-tied orbits. The experiment would need to:
-1. Enumerate all certified orbits via `enumerate_all_orbits` (already in this experiment's Q3 code)
-2. Filter to those within some action gap threshold of the best (degenerate ties + near-ties relevant to finite step sizes)
-3. Compute `capacity_derivatives_a` for each such orbit
-4. Predict: D_d c = min_i(g_i · d) for each direction d
-5. Compare against actual capacity change via full `ehz_capacity` on the perturbed polytope
+**Methodology:**
 
-**Methodology (designed 2026-03-27, via /experiment-design workflow):**
+For each polytope with ≥2 certified orbits, binned by action gap between best and second-best:
+1. Enumerate all certified orbits via `enumerate_all_orbits` (same as Q3)
+2. Keep orbits within gap threshold τ=0.1 of the best
+3. Compute per-orbit gradient g_i via `capacity_derivatives_a` for each
+4. For each random direction d: predict D_d c = min_i(g_i · d) (subdiff) and D_d c = g_best · d (single)
+5. Compute actual capacity change via full `ehz_capacity` on the perturbed polytope
+6. Record which orbit wins in the perturbed polytope (orbit switching diagnostic)
 
-Core test (A): subdifferential prediction. For each polytope with near-tied orbits:
-1. Enumerate ALL certified orbits via `enumerate_all_orbits`
-2. For each orbit within generous gap threshold of the best, compute its gradient via `capacity_derivatives_a`
-3. For each random direction d: predict D_d c = min_i(g_i · d) over the included orbits
-4. Compute actual capacity change via full `ehz_capacity` on the perturbed polytope
-5. Check: |c(a+td) − c(a) − t · min_i(g_i · d)| / t → 0
-
-Diagnostic (B): record which orbit wins in the perturbed polytope (free — ehz_capacity already returns best_permutation). Reveals orbit switching.
-
-Gap-threshold sweep: enumerate once with a generous threshold (e.g. τ=1e-1), record each orbit's action in the JSONL. Filter in post-processing to study how prediction quality depends on how many near-tied orbits are included. No separate computation needed.
+Per-orbit (action, g_i · d) embedded in each JSONL row for post-hoc gap-threshold filtering.
 
 **Design decisions (Jörn, 2026-03-27):**
-- Generous gap threshold for enumeration, filter in analysis (Jörn's suggestion — avoids redundant computation)
-- Sys: still open — volume is smooth (no orbit switching), sys inherits c's non-smoothness via quotient rule. Worth testing or implied?
-- F ∈ {5, 6, 7} to keep full ehz_capacity tractable on perturbed polytopes
+- Capacity only (volume is smooth; sys less interesting than c right now)
+- Generous gap threshold, filter in analysis
+- F ∈ {6, 7} — per-row cost ~1ms at F=6, ~1.6ms at F=7 (including polytope construction + ehz_capacity)
 
-**Performance:** Full ehz_capacity is the bottleneck. At F=6 it's ~ms, F=7 still tractable. F≥8 gets slow. Use Q3's binned-gap-sampling approach to find polytopes at specific gap levels.
+### Dataset
+
+| F | Polytopes | Gap bins (large/med/small/tiny) | Rows | Time |
+|---|-----------|-------------------------------|------|------|
+| 6 | 47 | 15/15/15/2 | 3036 | ~60s |
+| 7 | 53 | 15/15/15/8 | 3419 | ~70s |
+
+Tiny gap bin (gap < 1e-5) is underfilled — polytopes with near-exact orbit ties are rare at F=6-7.
+
+### Observation 5: Per-orbit gradient is correct at all gap levels
+
+Fitted single-orbit log-log slope (t ∈ [1e-4, 1e-1]):
+
+| Gap bin | Slope (median [P25, P75]) | n |
+|---------|---------------------------|---|
+| tiny | 2.00 [1.97, 2.03] | 50 |
+| small | 2.00 [1.97, 2.03] | 150 |
+| medium | 2.00 [1.98, 2.01] | 150 |
+| large | 2.00 [1.98, 2.01] | 150 |
+
+**Epistemic status:** Observation. The per-orbit gradient correctly predicts to first order regardless of how close other orbits are. This extends Q3's finding (which used fixed-orbit perturbation) to the full-capacity setting.
+
+### Observation 6: Subdifferential prediction is biased at non-boundary points
+
+Fitted subdiff log-log slope (t ∈ [1e-4, 1e-1]):
+
+| Gap bin | Slope (median [P25, P75]) | n |
+|---------|---------------------------|---|
+| tiny | 1.82 [1.45, 1.96] | 50 |
+| small | 1.45 [1.06, 1.99] | 150 |
+| medium | 1.24 [0.99, 1.99] | 150 |
+| large | 2.00 [1.98, 2.01] | 150 |
+
+The subdiff prediction min_i(g_i · d) systematically underpredicts at non-boundary points (gap > 0), because the true gradient is g_best, not the min over all nearby orbits. The bias grows with the number of included non-optimal orbits: at large gap, only 1 orbit is within threshold (subdiff = single), so slope is 2. At medium gap, more orbits with different gradients pull the min down, giving O(t) error (slope ≈ 1).
+
+**Epistemic status:** Observation + interpretation. The observation is that subdiff slope degrades. The interpretation — that it's because min_i(g_i · d) is the directional derivative at the boundary, not at a generic point — follows from [prop:capacity-piecewise-smooth](d), which says the formula applies only at boundary points where orbits are tied.
+
+### Observation 7: Orbit switching is a finite-step boundary-crossing phenomenon
+
+Orbit switching rate by perturbation size and gap bin (gc_q5_switching.png):
+
+| Gap bin | t=1e-1 | t=1e-2 | t=1e-3 | t=1e-4 |
+|---------|--------|--------|--------|--------|
+| tiny | 76% | 54% | 28% | 4% |
+| small | 61% | 24% | 4% | 0% |
+| medium | 35% | 3% | 1% | 0% |
+| large | 15% | 1% | 0% | 0% |
+
+Smaller gaps lead to earlier switching (at smaller t). Switching is rare at t ≤ 1e-4 (only 2 out of 50 tiny-gap rows), vanishing for all other bins. At switching rows, the single-orbit prediction is still better than subdiff (66% vs 20%), confirming that the perturbation crosses a boundary but both linear predictions fail in the nonlinear regime.
+
+**Epistemic status:** Observation. Consistent with the mathematical picture: c is smooth within each orbit region, and finite-step perturbations can cross into adjacent regions.
+
+### Q5 inference
+
+1. The per-orbit gradient ∂c/∂a_k correctly predicts capacity to first order regardless of orbit gap (Obs. 5). Combined with Q1-Q4, this fully validates [lem:cap-derivative] at generic and near-degenerate points.
+
+2. The subdifferential formula min_i(g_i · d) is not designed for prediction at non-boundary points and indeed fails there (Obs. 6). Testing it at actual boundary points (gap = 0) would require constructing polytopes exactly on a switching boundary — not done.
+
+3. Orbit switching under perturbation is a smooth function of gap and step size (Obs. 7). At tiny gaps, switching rate increases from 4% at t=1e-4 to 76% at t=1e-1, consistent with the mathematical picture that switching boundaries are smooth manifolds in parameter space ([prop:capacity-piecewise-smooth](a)).
+
+**This inference does NOT address:**
+- Whether the subdifferential formula is correct AT boundary points (gap = 0)
+- Whether the switching boundaries are smooth manifolds (only their existence is observed)
+- Non-smooth optimization (e.g. subgradient methods) — the subdiff might still be useful for optimization even if it fails for first-order prediction at generic points
 
 ## Known issues
 
