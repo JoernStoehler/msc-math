@@ -275,8 +275,14 @@ struct SweepRow {
     boundary_distances: Vec<f64>,
     /// Event types at each boundary.
     event_types: Vec<String>,
+    /// sys value after each boundary crossing (NaN if EHZ failed).
+    sys_values: Vec<f64>,
+    /// sys at start of sweep.
+    sys_start: f64,
     /// Whether the sweep ended due to construction failure (vs budget exhausted).
     ended_by_failure: bool,
+    /// Failure reason if ended_by_failure is true.
+    failure_reason: String,
     /// Total distance traveled.
     total_distance: f64,
 }
@@ -1017,24 +1023,29 @@ fn load_polytopes_from_jsonl(
 // ============================================================================
 
 /// Walk along a direction, iteratively stepping past each boundary.
+/// Computes sys at each step to track whether optimization direction maintains improvement.
 /// Returns the sweep row with all boundaries encountered.
 fn multi_boundary_sweep(
     start_duals: &[Vector4<f64>],
     direction: &[Vector4<f64>],
     budget: f64,
+    sys_start: f64,
 ) -> SweepRow {
     let mut current_duals = start_duals.to_vec();
     let mut total_distance = 0.0;
     let mut boundary_distances = Vec::new();
     let mut event_types = Vec::new();
+    let mut sys_values = Vec::new();
     let mut ended_by_failure = false;
+    let mut failure_reason = String::new();
 
     loop {
         // Build polytope at current position
         let poly = match Polytope4D::from_f64(current_duals.clone()) {
             Ok(p) => p,
-            Err(_) => {
+            Err(e) => {
                 ended_by_failure = true;
+                failure_reason = format!("polytope construction: {e}");
                 break;
             }
         };
@@ -1043,13 +1054,11 @@ fn multi_boundary_sweep(
         let boundary = compute_step_bound_detailed(&poly, direction);
 
         if matches!(boundary.event, EventType::Unbounded) {
-            // No more boundaries within MAX_STEP_SIZE
             break;
         }
 
         let t = boundary.t_max;
         if total_distance + t > budget {
-            // Budget exhausted before reaching next boundary
             break;
         }
 
@@ -1066,17 +1075,28 @@ fn multi_boundary_sweep(
         for (a, d) in current_duals.iter_mut().zip(direction.iter()) {
             *a += t_step * d;
         }
+
+        // Compute sys at this position (cheap attempt, NaN on failure)
+        let sys_here = Polytope4D::from_f64(current_duals.clone())
+            .ok()
+            .and_then(|p| compute_sys(&p))
+            .map(|(s, _, _, _, _)| s)
+            .unwrap_or(f64::NAN);
+        sys_values.push(sys_here);
     }
 
     SweepRow {
-        polytope_name: String::new(), // filled by caller
+        polytope_name: String::new(),
         facet_count: start_duals.len(),
         direction_type: String::new(),
         budget,
         n_boundaries: boundary_distances.len(),
         boundary_distances,
         event_types,
+        sys_values,
+        sys_start,
         ended_by_failure,
+        failure_reason,
         total_distance,
     }
 }
@@ -1439,7 +1459,7 @@ fn main() {
         let grad_norm: f64 = d_sys_a.iter().map(|v| v.norm_squared()).sum::<f64>().sqrt();
         if grad_norm > EPS_NUMERICAL_ZERO {
             let grad_dir: Vec<Vector4<f64>> = d_sys_a.iter().map(|v| v / grad_norm).collect();
-            let mut row = multi_boundary_sweep(duals, &grad_dir, SWEEP_BUDGET);
+            let mut row = multi_boundary_sweep(duals, &grad_dir, SWEEP_BUDGET, sys);
             row.polytope_name = name.clone();
             row.direction_type = "gradient".to_string();
             serde_json::to_writer(&mut sweep_writer, &row).unwrap();
@@ -1448,7 +1468,7 @@ fn main() {
 
             // Negative gradient
             let neg_dir: Vec<Vector4<f64>> = grad_dir.iter().map(|v| -v).collect();
-            let mut row = multi_boundary_sweep(duals, &neg_dir, SWEEP_BUDGET);
+            let mut row = multi_boundary_sweep(duals, &neg_dir, SWEEP_BUDGET, sys);
             row.polytope_name = name.clone();
             row.direction_type = "neg_gradient".to_string();
             serde_json::to_writer(&mut sweep_writer, &row).unwrap();
@@ -1471,7 +1491,7 @@ fn main() {
             let norm: f64 = raw.iter().map(|v| v.norm_squared()).sum::<f64>().sqrt();
             if norm > EPS_NUMERICAL_ZERO {
                 let dir: Vec<Vector4<f64>> = raw.iter().map(|v| v / norm).collect();
-                let mut row = multi_boundary_sweep(duals, &dir, SWEEP_BUDGET);
+                let mut row = multi_boundary_sweep(duals, &dir, SWEEP_BUDGET, sys);
                 row.polytope_name = name.clone();
                 row.direction_type = format!("dense_random_{i}");
                 serde_json::to_writer(&mut sweep_writer, &row).unwrap();

@@ -207,7 +207,11 @@ Walk along a direction for distance 1.0, iteratively stepping past each boundary
 
 **Event type distribution in sweeps:** incidence flips 75.6%, ω₀ flips 24.4%. Incidence flips dominate multi-boundary paths more than single-boundary probes (57/43 split). This makes sense: as the polytope deforms further from the starting point, vertex positions accumulate larger changes, crossing more incidence boundaries.
 
-**36% of sweeps end by construction failure** before exhausting the distance budget. This limits the practical range of multi-step algorithms — after ~6-14 boundary crossings, accumulated perturbation creates near-degenerate polytopes.
+**36% of sweeps end by construction failure** before exhausting the distance budget. Failure modes: 84% "unbounded" (dual vertices no longer positively span R⁴ — the perturbation moved facets so far that containment is lost), 16% "facet redundant" (a facet was shrunk to nothing). Both are geometric degeneracy from accumulated perturbation, not numerical bugs.
+
+**sys increases along gradient sweeps despite boundary crossings.** 71% of gradient sweeps end with higher sys than they started (median improvement 65%). 0% of neg-gradient sweeps increase sys (sanity check). The path is not monotonic (only 28% non-decreasing) — sys oscillates across boundaries, sometimes dipping before recovering. But the overall trend in the gradient direction is strongly positive.
+
+**Orbit switches in the gradient direction tend to increase sys.** At single-boundary crossings: 4/5 gradient-direction orbit switches had positive Δsys, vs 6/20 for random directions. The gradient direction biases orbit switches toward better orbits.
 
 ## Interpretation
 
@@ -217,7 +221,7 @@ Walk along a direction for distance 1.0, iteratively stepping past each boundary
 
 **Non-convexity is a product phenomenon, not generic.** Random polytopes have empirically convex cells (0% midpoint transition failures at F≤10). Lagrangian products have 100% failure — every midpoint test changes the transition matrix. This is due to the special symplectic structure of products: cross-factor ω₀ values are near-zero and flip easily.
 
-**Gradient ascent should plan for ~F boundaries per step.** A step of distance ~1 crosses a median of F boundaries (linearly in F). Most of these are benign (gradient angle change ~0.002°), but any one could trigger an orbit switch (3% per boundary). Over F boundaries, the probability of at least one orbit switch is roughly 1-(0.97)^F ≈ 15-35% for F=5-10.
+**Gradient ascent works across boundaries.** A step of distance ~1 crosses a median of F boundaries (linearly in F). Despite this, 71% of gradient sweeps increase sys (median +65%). The gradient direction is robust to boundary crossings: orbit switches in the gradient direction tend to find better orbits (4/5 positive). Sys-search can use aggressive steps that cross multiple boundaries rather than stopping at the first one.
 
 **Orbit facets are wider, not narrower.** Non-orbit facets are the bottleneck (median 0.124 vs 0.258). Optimization is free to move orbit facets significantly without hitting a boundary.
 
@@ -229,4 +233,4 @@ Walk along a direction for distance 1.0, iteratively stepping past each boundary
 
 1. **Continuity of sys:** The observation that sys is continuous at boundaries is consistent with the min-of-continuous-functions structure of c_EHZ, but a formal proof that new orbits enter continuously (not just that existing orbit actions are continuous) may be worth writing up for the thesis.
 2. **Anisotropy structure:** What determines the anisotropy directions within each facet's R⁴? Is it related to the positions of adjacent facets, the symplectic structure, or both? Deferred unless sys-search needs anisotropic steps.
-3. **Construction failure after multi-boundary crossing:** 36% of sweeps fail. Is the failure mode predictable? Can the sweep be made more robust (e.g., by normalizing dual vertices after each step)?
+3. **Construction failure after multi-boundary crossing:** 36% of sweeps fail — 84% "unbounded" (lost positive spanning), 16% "facet redundant". Sys-search should detect these and backtrack or restart rather than trying to prevent them.

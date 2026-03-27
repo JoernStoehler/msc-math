@@ -1,0 +1,189 @@
+% math.tex — combinatorial-boundaries experiment
+%
+% Defines combinatorial type, boundary events, step-bound formulas,
+% and proves continuity of sys across combinatorial boundaries.
+%
+% Sources:
+%   - run.rs: compute_step_bound_detailed(), compute_sys_gradient_a()
+%   - logbook.md: empirical continuity observation
+%   - crates/src/kkt/math.tex: transition feasibility [lem:numerical-transition-feasibility]
+%   - crates/src/geom/math.tex: EHZ capacity [def:ehz-capacity], systolic ratio [def:systolic-ratio]
+
+\subsection{Combinatorial type and boundaries}
+\label{sec:combinatorial-boundaries}
+
+\begin{definition}[Combinatorial type]\label{def:combinatorial-type}
+Let $K = \{x \in \mathbb{R}^4 : a_k^T x \le 1,\; k = 1, \ldots, F\}$ be a
+convex polytope with dual vertices $a_k$.
+The \emph{combinatorial type} of~$K$ is the pair $(\mathcal{I}, \Omega)$ where:
+\begin{itemize}
+  \item $\mathcal{I} \subseteq \{1, \ldots, V\} \times \{1, \ldots, F\}$ is the
+    vertex-facet incidence (vertex~$v$ is incident to facet~$k$ iff $a_k^T v = 1$);
+  \item $\Omega \in \{-1, 0, +1\}^{F \times F}$ is the $\omega_0$ sign matrix,
+    $\Omega_{ij} = \operatorname{sign}(\omega_0(a_i, a_j))$.
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Transition matrix]\label{def:transition-matrix}
+The \emph{transition matrix} $T \in \{0,1\}^{F \times F}$ has $T_{ij} = 1$ iff
+facets $i$ and $j$ share at least one vertex \emph{and} $\omega_0(a_i, a_j) \ge 0$.
+A cyclic permutation $\sigma = (k_1, \ldots, k_m)$ is \emph{feasible} iff
+$T_{k_\ell, k_{\ell+1}} = 1$ for all $\ell$ (indices mod~$m$);
+see~[lem:numerical-transition-feasibility].
+\end{definition}
+
+\begin{definition}[Boundary events]\label{def:boundary-events}
+Along a path $a_k(t) = a_k + t \, d_k$ in dual-vertex space, the combinatorial
+type changes at the smallest positive~$t$ where one of the following occurs:
+\begin{enumerate}
+  \item \textbf{Incidence flip:} a vertex's slack w.r.t.\ a non-incident facet
+    reaches zero.
+  \item \textbf{$\omega_0$ flip:} $\operatorname{sign}(\omega_0(a_i(t), a_j(t)))$
+    changes for a pair $(i,j)$ with $\omega_0(a_i, a_j) \ne 0$.
+  \item \textbf{Dual vertex degeneration:} $|a_k(t)| \to 0$.
+\end{enumerate}
+\end{definition}
+
+\begin{lemma}[Incidence flip detection]\label{lem:step-bound-incidence}
+Let $v$ be a simple vertex determined by facets $\{j_1, \ldots, j_4\}$, so
+$A_v \, v = \mathbf{1}$ where $(A_v)_i = a_{j_i}^T$.
+Along $a_k(t) = a_k + t \, d_k$, the vertex moves as
+$\dot{v} = -A_v^{-1} \, r$ where $r_i = d_{j_i}^T v$.
+For non-incident facet~$j$, the slack $s_j(t) = 1 - a_j(t)^T v(t)$ satisfies
+$\dot{s}_j = -d_j^T v - a_j^T \dot{v}$ (linearized).
+The incidence flip time is $t_{\mathrm{flip}} = s_j(0) / (-\dot{s}_j)$
+when $\dot{s}_j < 0$.
+\end{lemma}
+\begin{proof}
+Differentiate $A_v(t) \, v(t) = \mathbf{1}$ at $t = 0$.
+The $i$-th row gives $d_{j_i}^T v + a_{j_i}^T \dot{v} = 0$,
+so $A_v \, \dot{v} = -r$ and $\dot{v} = -A_v^{-1} r$.
+Then $\dot{s}_j = -(d_j^T v + a_j^T \dot{v})$.
+The linearization is exact at first order; the critical time is
+$t_{\mathrm{flip}} = s_j(0) / |\dot{s}_j|$ for the closest flip.
+% [GAP - This is a first-order approximation; the actual flip time may differ
+% slightly due to higher-order terms. The code uses this linear estimate.]
+\end{proof}
+
+\begin{lemma}[$\omega_0$ flip detection]\label{lem:step-bound-omega}
+Along $a_k(t) = a_k + t \, d_k$, the quantity
+$\omega_0(a_i(t), a_j(t))$ is a quadratic polynomial in~$t$:
+\[
+  \omega_0(a_i(t), a_j(t))
+  = \underbrace{\omega_0(a_i, a_j)}_{c}
+  + \underbrace{\bigl(\omega_0(d_i, a_j) + \omega_0(a_i, d_j)\bigr)}_{b} \, t
+  + \underbrace{\omega_0(d_i, d_j)}_{a} \, t^2.
+\]
+The sign flips at the smallest positive root of $a t^2 + b t + c = 0$.
+\end{lemma}
+\begin{proof}
+By bilinearity of $\omega_0$:
+$\omega_0(a_i + t d_i, a_j + t d_j)
+ = \omega_0(a_i, a_j) + t\,[\omega_0(d_i, a_j) + \omega_0(a_i, d_j)]
+   + t^2\,\omega_0(d_i, d_j)$.
+This is exact (no approximation).
+\end{proof}
+
+\subsection{Continuity of the systolic ratio}
+\label{sec:sys-continuity}
+
+% [TODO: JÖRN - verify this proof sketch. The key subtlety is at the boundary
+% point itself, where the polytope may be degenerate (e.g., non-simple vertices).
+% The argument handles this via the semicontinuity structure but needs review.]
+
+\begin{proposition}[Continuity of $\operatorname{sys}$ at combinatorial boundaries]%
+\label{prop:sys-continuous}
+Let $a(t) = a + t \, d$ be a path in dual-vertex space crossing a combinatorial
+boundary at $t = t^*$. Assume the polytope $K(t)$ is well-defined (bounded, full-dimensional)
+for $t$ in a neighborhood of $t^*$. Then
+$\operatorname{sys}(K(t))$ is continuous at $t = t^*$.
+\end{proposition}
+\begin{proof}[Proof sketch]
+Write $\operatorname{sys} = c_{\mathrm{EHZ}}^2 / (2V)$.
+The volume $V(t)$ is a rational function of the dual vertices, hence continuous.
+It suffices to show $c_{\mathrm{EHZ}}(t)$ is continuous.
+
+For a polytope $K$, the EHZ capacity is
+$c_{\mathrm{EHZ}}(K) = \min_{\sigma \in \mathcal{F}(K)} A(\sigma)$,
+where $\mathcal{F}(K)$ is the set of feasible cyclic permutations and
+$A(\sigma) = 1/(2\,Q(\sigma))$ is the action, with $Q(\sigma)$ depending
+continuously on the dual vertices.
+
+\emph{Upper semicontinuity} ($\limsup \le$):
+For any $\varepsilon > 0$, let $\sigma^*$ be a minimizer for $K(t^*)$.
+% [GAP - At the boundary, $\sigma^*$ may not be feasible for $K(t^* \pm \delta)$
+% because the transition matrix changes. However, by construction of the boundary
+% events, the transition that breaks $\sigma^*$ involves either (a) a vertex-facet
+% incidence change or (b) an $\omega_0$ sign flip. In case (a), the vertex
+% continuously approaches the new facet, so the orbit action varies continuously
+% up to the boundary. In case (b), the $\omega_0$ value passes through zero, and
+% the orbit action is independent of the $\omega_0$ sign (it depends only on
+% $\beta$ and $Q$ from the KKT system). So $A(\sigma^*) \to A(\sigma^*, t^*)$
+% from both sides, establishing upper semicontinuity.]
+Since each orbit's action depends continuously on the dual vertices, and the
+infeasibility at $t^* - \delta$ (or $t^* + \delta$) only removes orbits whose
+action is at least $A(\sigma^*, t^*)$ in the limit, the capacity cannot jump up.
+
+\emph{Lower semicontinuity} ($\liminf \ge$):
+% [GAP - This is the harder direction. We need: no sequence of newly feasible
+% orbits can have actions converging to something strictly less than
+% $c_{\mathrm{EHZ}}(K(t^*))$. The finite set of possible permutations is bounded
+% (at most $\sum_{m=2}^{F} \binom{F}{m} (m-1)!$ permutations), and each action
+% is continuous. So the infimum over a finite family of continuous functions is
+% lower semicontinuous. But the family changes at $t^*$ --- this is the gap.]
+The set of all cyclic permutations of facets is finite (independent of~$t$).
+For each permutation~$\sigma$, the action $A(\sigma, t)$ is continuous in~$t$
+(it depends on the dual vertices through the KKT system).
+The feasibility of~$\sigma$ may change at~$t^*$, but a permutation that becomes
+newly feasible at $t^* + \delta$ has a well-defined action $A(\sigma, t^* + \delta)$
+that converges to a finite limit as $\delta \to 0$.
+If this limit were strictly less than $c_{\mathrm{EHZ}}(K(t^*))$, then
+at $t = t^*$ the orbit would either be feasible (contradicting minimality)
+or have $Q(\sigma, t^*) > 0$ with some $\beta_k = 0$
+(a degenerate orbit on the boundary of the feasibility cone).
+
+% [TODO: JÖRN - The degenerate case ($\beta_k = 0$) is where the argument
+% needs the most care. The orbit is on the boundary of feasibility: it's
+% feasible in the limit but $\beta_k \downarrow 0$. In this case the action
+% is still well-defined and continuous, so the limit action equals $A(\sigma, t^*)$.
+% This should give lower semicontinuity, but the formal argument needs to
+% handle the case where $Q(\sigma, t^*) = 0$ (degenerate KKT).]
+
+Under non-degeneracy assumptions (the KKT system is non-singular at $t^*$),
+the action of every permutation is continuous through the boundary,
+and the minimum over the (changing but always finite) feasible set is continuous.
+\end{proof}
+
+\begin{remark}\label{rem:sys-continuous-empirical}
+The experiment confirms continuity empirically: across 873 boundary crossings,
+$\max |\Delta\operatorname{sys}| = 2.91 \times 10^{-4}$
+(limited by the finite step-over~$\varepsilon$, not by a discontinuity).
+\end{remark}
+
+\subsection{Systolic ratio gradient}
+\label{sec:sys-gradient}
+
+\begin{lemma}[Gradient of $\operatorname{sys}$ in dual vertices]\label{lem:sys-gradient-a}
+% TODO: add cross-references to capacity_derivatives_a and volume_derivatives_a lemmas
+For a polytope $K$ with dual vertices $a_k$, volume $V$, capacity $c$, and
+$\operatorname{sys} = c^2 / (2V)$, the gradient with respect to dual vertex~$a_k$ is
+\[
+  \frac{\partial \operatorname{sys}}{\partial a_k}
+  = \frac{1}{V}\!\left(
+    c \, \frac{\partial c}{\partial a_k}
+    - \operatorname{sys} \, \frac{\partial V}{\partial a_k}
+  \right).
+\]
+\end{lemma}
+\begin{proof}
+By the quotient rule applied to $\operatorname{sys} = c^2 / (2V)$:
+\[
+  \frac{\partial \operatorname{sys}}{\partial a_k}
+  = \frac{2c \, \frac{\partial c}{\partial a_k} \cdot 2V
+    - c^2 \cdot 2\,\frac{\partial V}{\partial a_k}}{(2V)^2}
+  = \frac{c \, \frac{\partial c}{\partial a_k}}{V}
+    - \frac{c^2}{2V} \cdot \frac{\frac{\partial V}{\partial a_k}}{V}
+  = \frac{c \, \frac{\partial c}{\partial a_k} - \operatorname{sys} \, \frac{\partial V}{\partial a_k}}{V}.
+  \qedhere
+\]
+\end{proof}
