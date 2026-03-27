@@ -193,7 +193,7 @@ Smaller gaps lead to earlier switching (at smaller t). Switching is rare at t �
 
 2. The subdifferential formula min_i(g_i · d) is not designed for prediction at non-boundary points and indeed fails there (Obs. 6). Testing it at actual boundary points (gap = 0) would require constructing polytopes exactly on a switching boundary — not done.
 
-3. Orbit switching under perturbation is a smooth function of gap and step size (Obs. 7). At tiny gaps, switching rate increases from 4% at t=1e-4 to 76% at t=1e-1, consistent with the mathematical picture that switching boundaries are smooth manifolds in parameter space ([prop:capacity-piecewise-smooth](a)).
+3. Orbit switching rate is monotone in both gap and step size (Obs. 7). At tiny gaps, switching rate increases from 4% at t=1e-4 to 76% at t=1e-1, consistent with the mathematical picture that switching boundaries are codimension-1 manifolds in parameter space ([prop:capacity-piecewise-smooth](a)).
 
 **This inference does NOT address:**
 - Whether the subdifferential formula is correct AT boundary points (gap = 0)
@@ -231,6 +231,7 @@ Additional subtlety: **orbit appearance.** Under perturbation, an orbit σ' that
 - Q1-Q4 (fixed orbit, slope 2.00): confirms per-orbit smoothness (row 3 above) at generic random polytopes
 - Q5 (full ehz_capacity, slope 2.00 at generic points): trivially follows — c = A_σ* at generic points
 - The 12/600 Q1 outliers with slope < 1.90 over [-4,-1] are large-t artifacts: refitting over [-4,-2] leaves 1/600, and over [-6,-3] leaves 0/600. The quadratic approximation has limited radius at some polytopes (large cubic Taylor coefficient), not a C² failure.
+
 ### Observation 8: Small min(β) does not degrade per-orbit smoothness
 
 Q5 records min(β) of the best orbit's KKT solution. Distribution across 100 polytopes: min 1.1e-5, median 0.016, max 0.11.
@@ -249,6 +250,37 @@ Even at min(β) = 1.1e-5 (only 10× above the certified threshold 1e-9), the per
 **Epistemic status:** Observation. Consistent with the IFT argument: smoothness requires β > 0 strictly, but doesn't degrade as β → 0. The KKT Jacobian appears non-degenerate even near the feasibility boundary.
 
 **Proofs:** [lem:orbit-feasibility-open], [lem:per-orbit-smooth], [lem:orbit-contraction], [prop:capacity-smoothness-classification] in experiments/gradient-correctness/math.tex. Two gaps flagged for Jörn: competing-orbit continuity in prop(a), transversality in prop(c)
+
+## Integrated summary
+
+The experiment contains 8 observations across 5 phases (Q1-Q5), supported by 4 proven results in math.tex.
+
+**What the experiment establishes (high confidence):**
+
+1. The per-orbit gradient formula [lem:cap-derivative] correctly predicts the per-orbit action to first order, with C² convergence (slope 2.00 ± 0.03), across all tested conditions: generic polytopes F=5-10 (Q1), Lagrangian products (Q2), near-degenerate gaps (Q3), barely-cutting facets (Q4), full-capacity perturbation (Q5), and small min(β) near the IFT boundary (Q5/Obs 8). 600+ traces, zero outliers at [-6,-3] fit range.
+
+2. The volume gradient [lem:vol-derivative] and systolic ratio gradient [cor:sys-derivative] correctly predict to first order, with C² convergence in the region t ∈ [1e-1, 1e-4] before floating-point cancellation dominates.
+
+3. Orbit switching under perturbation is a quantitatively characterized function of action gap and step size (Obs 7). Switching rate is monotone in both variables, from 0% (large gap, small t) to 76% (tiny gap, t=0.1).
+
+**What the experiment does NOT establish (potential overconfidence areas):**
+
+1. **Shared-bug blindness.** The test checks code-vs-code consistency: do the gradient predictions match the function values? A conceptual error shared by both the gradient formula and the function evaluation would not be detected. The mathematical correctness of [lem:cap-derivative] and [lem:vol-derivative] is a separate question — the experiment assumes they are correct and tests the implementation.
+
+2. **"Large-t artifact" interpretation is plausible but unproven.** The 12/600 Q1 outliers (slope < 1.90 at [-4,-1]) vanish at narrower fit ranges. I attribute this to cubic Taylor terms dominating at large t. But I haven't verified this by fitting the cubic coefficient or checking that the slope increases toward 3 at large t. An alternative explanation — that the function is C^k for some 1 < k < 2 at those points — would also be consistent with the data but would contradict the IFT prediction.
+
+3. **"No correlation" between min(β) and slope** (Obs 8) means the IFT boundary isn't causing detectable slope degradation. But the condition number of the quadratic approximation (how large the t² coefficient is relative to the t¹ coefficient) could still degrade near β = 0 — this would shrink the radius of the C² regime without affecting the fitted slope within that regime. The experiment doesn't measure this.
+
+4. **Non-best-orbit gradients are untested.** Q1-Q4 test only the best orbit's gradient. Q5 uses gradients of non-best orbits to form the subdifferential prediction, but the individual correctness of those gradients is not independently verified. The subdiff slope degradation (Obs 6) is attributed to the subdiff formula being wrong at generic points, but could also reflect gradient errors for non-optimal orbits.
+
+5. **Obs 6 interpretation.** The subdiff prediction min_i(g_i · d) fails at non-boundary points because it's the directional derivative AT boundaries, not away from them. This interpretation is correct ([prop:capacity-smoothness-classification](b)), but the experiment doesn't test the formula at actual boundaries (gap = 0), which is where it should work. So the experiment confirms the formula fails where theory predicts failure, but doesn't confirm it succeeds where theory predicts success.
+
+6. **"Orbit switching is a smooth function"** (Q5 inference 3) overstates the evidence. The data shows a monotonic trend in a 4×4 table. "Consistent with smooth switching boundaries" is more accurate than "smooth function of gap and step size."
+
+**Where I might be under-confident:**
+
+- Obs 1 (capacity slope = 2.00) is stated as depending on [prop:capacity-piecewise-smooth]. The observation itself (the slope IS 2.00) is direct and doesn't depend on any proposition. The proposition is needed only for the inference that the gradient formula is correct.
+- The math.tex proofs have TODO markers on two gaps, but the main results (lem:orbit-feasibility-open, lem:per-orbit-smooth, lem:orbit-contraction, and the non-differentiability argument in prop(b)) are standard IFT and convex analysis, likely correct.
 
 ## Known issues
 
