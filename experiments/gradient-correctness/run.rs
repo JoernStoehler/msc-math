@@ -327,7 +327,7 @@ fn ehz_capacity_safe(polytope: &Polytope4D) -> Option<symplectic::EhzResult> {
 }
 
 fn solve_kkt_safe(polytope: &Polytope4D, perm: &[usize]) -> Option<KktResult> {
-    solve_kkt_for(polytope, perm)
+    solve_kkt_for(polytope, perm).feasible()
 }
 
 /// Compute ∇_a β_k · d for each orbit position k, given a perturbation direction d.

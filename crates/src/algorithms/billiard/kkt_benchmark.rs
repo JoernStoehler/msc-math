@@ -17,7 +17,7 @@ use crate::geom::known_polytopes;
 #[cfg(test)]
 use crate::kkt::qp_assembly::build_augmented_system;
 #[cfg(test)]
-use crate::kkt::saddle_point_solver::{solve_kkt_for, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
+use crate::kkt::saddle_point_solver::{solve_kkt_for, KktOutcome, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
 #[cfg(test)]
 use nalgebra::DVector;
 #[cfg(test)]
@@ -69,7 +69,7 @@ fn bench_kkt_eigen() {
     let mut valid_count = 0u64;
     let mut best_capacity = f64::INFINITY;
     for sigma in &sigmas {
-        if let Some(result) = solve_kkt_for(&polytope, sigma) {
+        if let KktOutcome::Feasible(result) = solve_kkt_for(&polytope, sigma) {
             if result.beta.iter().all(|&b| b > EPS_BETA_POSITIVE)
                 && result.q_corrected > EPS_Q_POSITIVE
             {
