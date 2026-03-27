@@ -246,3 +246,17 @@ The sys > 1 region around HKO2024 is a **compact, anisotropic body** in 20D Lagr
 - Right-skewed: compact in most directions, with sparse long-range extensions (up to 0.30)
 - 7× aspect ratio, but no interpretable dominant direction
 - Shape likely determined by the combinatorial structure of degenerate minimum-action orbits at HKO2024, not by smooth geometry
+
+## Speculative takeaways (2026-03-27)
+
+*Everything below is interpretation/speculation, not established by the data.*
+
+**1. The combinatorial-boundaries experiment is the natural next step for understanding the shape.** Each "facet" of the sys > 1 boundary likely corresponds to a different orbit becoming cheaper than HKO's optimal orbit. Recording which orbit is optimal at each probe boundary point would reveal the facet structure directly — the boundary is a patchwork of surfaces from different orbit sheets, and characterizing those sheets is what the combinatorial-boundaries experiment (scaffolded) is designed to do.
+
+**2. The peninsulas (r up to 0.30, 3× the median) are the interesting part.** In those directions, HKO's orbit stays optimal much further from regularity. These might be perturbations that preserve some symmetry of the optimal orbit, or directions where no competing orbit exists nearby. Identifying what the 20-30 long-range directions have in common could reveal what makes HKO robust.
+
+**3. The hko-neighborhood 16 flat directions might overlap with the peninsulas.** If the first-order-flat directions (where the subdifferential test passes) correspond to directions where the boundary is far, that's a consistency check. The 14 flat directions beyond scaling and joint rotation are currently uncharacterized.
+
+**4. Random sampling for new counterexamples is quantitatively hopeless.** Volume fraction of the sys > 1 region in the full LP(5,5) space is ~10⁻³¹ (rough estimate: (0.035/1.24)^20). Any search strategy for new counterexamples must start near a known one or use structural insight — never blind sampling.
+
+**5. The uninterpretable shape suggests HKO is "combinatorially accidental."** The counterexample arises from a specific orbit coincidence (multiple orbits tying at minimum action with the right geometry), not from a geometric principle that would predict families of counterexamples. If the shape were an ellipsoid aligned with a meaningful direction (rotation, symmetry, etc.), it would suggest a structural explanation. The lack of interpretable structure supports a narrative that Viterbo's conjecture is "almost true" with rare combinatorial exceptions.
