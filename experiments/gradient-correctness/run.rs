@@ -33,6 +33,8 @@
 //! - [lem:cap-derivative] (unverified): envelope theorem formula for ∂c/∂a_k
 //! - [lem:vol-derivative] (unverified): chain rule formula for ∂vol/∂a_k
 //! - [prop:capacity-piecewise-smooth] (unverified): piecewise C^∞, generic differentiability
+//! - [prop:capacity-smoothness-classification] (unverified): refined decomposition into
+//!   per-orbit feasibility/smoothness and capacity-level min structure (this experiment's math.tex)
 //!
 //! Architecture:
 //! 1. `cargo run --release --bin gradient_correctness [q1 q2 q3 q4 q5]` → JSONL files

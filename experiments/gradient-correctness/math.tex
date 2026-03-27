@@ -1,0 +1,281 @@
+% math.tex — gradient-correctness experiment
+%
+% Smoothness analysis of the EHZ capacity as a function of dual vertices.
+% Refines [prop:capacity-piecewise-smooth] from experiments/sys-optimization/math.tex
+% with per-orbit feasibility analysis and precise smoothness classification.
+%
+% Sources:
+%   - Generated data: experiments/gradient-correctness/*.jsonl
+%   - Developer notes: experiments/gradient-correctness/logbook.md
+%   - KKT formulation: crates/src/kkt/math.tex
+%   - Existing proposition: experiments/sys-optimization/math.tex
+%
+% Structure:
+%   - Per-orbit feasibility and smoothness
+%   - Orbit contraction at feasibility boundary
+%   - Capacity smoothness classification
+%
+% Labels defined here:
+%   lem:orbit-feasibility-open, lem:orbit-contraction,
+%   lem:per-orbit-smooth, prop:capacity-smoothness-classification
+
+% ── Per-orbit feasibility and smoothness ──
+%
+% We use the KKT setup from crates/src/kkt/math.tex:
+%   M(a) x = b,  where  M = [H, A, 1; A^T, 0, 0; 1^T, 0, 0],
+%   x = (beta, mu, xi),  b = (0, 0, 1).
+% H and A depend smoothly on the dual vertices a = (a_1, ..., a_F)
+% via H_{ij} = omega_0(a_{sigma(j)}, a_{sigma(i)}) and A_{id} = a_{sigma(i),d}.
+
+\begin{unverified}
+\begin{lemma}[Feasibility region is open]\label{lem:orbit-feasibility-open}
+Fix a cyclic permutation~$\sigma$.
+Suppose at~$a_0$ the KKT matrix~$M(a_0)$ is non-singular
+and the solution $x_0 = M(a_0)^{-1} b$ has $\beta_0 > 0$
+componentwise.
+Then there exists $\varepsilon > 0$ such that for all
+$\|a - a_0\| < \varepsilon$,
+the matrix~$M(a)$ is non-singular and
+$M(a)^{-1} b$ has $\beta(a) > 0$.
+\end{lemma}
+
+\begin{proof}
+$M(a)$ depends smoothly on~$a$ (its entries are bilinear in the
+dual vertices via~$\omega_0$ and linear via~$A$).
+The map $a \mapsto \det M(a)$ is continuous and non-zero at~$a_0$,
+so $M(a)$ is non-singular in a neighborhood of~$a_0$.
+On this neighborhood, $a \mapsto M(a)^{-1} b$ is smooth
+(Cramer's rule: each entry of~$M^{-1}$ is a ratio of
+polynomials in the entries of~$M$, with denominator $\det M \neq 0$).
+Since~$\beta(a_0) > 0$ componentwise and~$\beta(a)$ is
+continuous, $\beta(a) > 0$ for $a$ sufficiently close to~$a_0$.
+\end{proof}
+\end{unverified}
+
+
+\begin{unverified}
+\begin{lemma}[Per-orbit action is smooth]\label{lem:per-orbit-smooth}
+Under the hypotheses of Lemma~\ref{lem:orbit-feasibility-open},
+and assuming additionally that $Q(a_0) = \tfrac{1}{2}\beta_0^\top H(a_0)\,\beta_0 > 0$,
+the per-orbit action
+$A_\sigma(a) = 1/(2Q(a))$ where $Q(a) = \tfrac{1}{2}\beta(a)^\top H(a)\,\beta(a)$
+is $C^\infty$ in~$a$ on the neighborhood where~$M(a)$ is
+non-singular and $\beta(a) > 0$.
+\end{lemma}
+
+\begin{proof}
+$\beta(a) = (\text{first $|S|$ components of } M(a)^{-1} b)$
+is smooth in~$a$ (smooth entries composed with matrix inversion).
+$H(a)$ is smooth in~$a$ (bilinear in dual vertices).
+Hence $Q(a) = \tfrac{1}{2}\beta(a)^\top H(a)\,\beta(a)$
+is smooth as a composition of smooth maps.
+Since $Q(a_0) > 0$ by hypothesis and~$Q$ is continuous,
+$Q(a) > 0$ on a neighborhood, and
+$A_\sigma(a) = 1/(2Q(a))$ is smooth there.
+\end{proof}
+\end{unverified}
+
+
+\begin{unverified}
+\begin{lemma}[Orbit contraction at feasibility boundary]%
+\label{lem:orbit-contraction}
+Let $\sigma = (\sigma_1, \ldots, \sigma_m)$ be a cyclic permutation
+and suppose the KKT system for~$\sigma$ at~$a$ has a solution
+$(\beta, \mu, \xi)$ with $\beta_k = 0$ for some index~$k$
+and $\beta_j > 0$ for all $j \neq k$.
+Let $\sigma' = (\sigma_1, \ldots, \sigma_{k-1}, \sigma_{k+1}, \ldots, \sigma_m)$
+be the contracted permutation.
+Then:
+\begin{enumerate}
+\item[\textup{(a)}]
+  $(\beta', \mu, \xi)$ where $\beta' = (\beta_1, \ldots, \beta_{k-1},
+  \beta_{k+1}, \ldots, \beta_m)$ satisfies the KKT system for~$\sigma'$ at~$a$.
+\item[\textup{(b)}]
+  $A_\sigma(a) = A_{\sigma'}(a)$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+Write the KKT system for~$\sigma$ in block rows:
+\[
+  \text{(I)}\ (H\beta)_j + (A\mu)_j + \xi = 0 \;\; \forall j, \qquad
+  \text{(II)}\ A^\top \beta = 0, \qquad
+  \text{(III)}\ \mathbf{1}^\top \beta = 1.
+\]
+Let $S' = \{1,\ldots,m\} \setminus \{k\}$ index the positions
+of~$\sigma'$.
+Identify each $j \in S'$ with the same position in~$\sigma$;
+then $\sigma'(j) = \sigma(j)$ for $j < k$ and
+$\sigma'(j) = \sigma(j{+}1)$ for $j \geq k$ after relabeling.
+For the proof, we work with indices in the
+$\sigma$-system and simply restrict to $S'$.
+
+Let $H'$ and~$A'$ denote the $|S'| \times |S'|$
+and $|S'| \times 4$ submatrices of~$H$ and~$A$
+obtained by deleting row/column~$k$.
+Their entries are
+$H'_{jl} = H_{jl} = \omega_0(a_{\sigma(l)}, a_{\sigma(j)})$ and
+$A'_{jd} = A_{jd} = a_{\sigma(j),d}$
+for $j, l \in S'$.
+
+\emph{(a).}
+For $j \in S'$:
+$(H\beta)_j = \sum_{l=1}^{m} H_{jl} \beta_l
+= \sum_{l \in S'} H_{jl} \beta_l + H_{jk} \cdot 0
+= (H'\beta')_j$.
+Similarly $(A\mu)_j = a_{\sigma(j)} \cdot \mu = (A'\mu)_j$.
+So equation~(I) for $j \in S'$ gives (I) for the $\sigma'$-system.
+
+For (II): $A^\top \beta = \sum_{j=1}^{m} \beta_j a_{\sigma(j)}
+= \sum_{j \in S'} \beta_j a_{\sigma(j)} = {A'}^\top \beta' = 0$.
+
+For (III): $\mathbf{1}^\top \beta' = \sum_{j \in S'} \beta_j
+= \mathbf{1}^\top \beta - 0 = 1$.
+
+\emph{(b).}
+By Lemma~\ref{lem:well-defined},
+$\beta^\top H\,\beta = -\xi$ for any solution of the
+$\sigma$-system. Since $(\beta', \mu, \xi)$ satisfies
+the $\sigma'$-system by~(a), the same lemma gives
+${\beta'}^\top H'\,\beta' = -\xi$.
+Hence $Q_\sigma = Q_{\sigma'} = -\xi/2$ and
+$A_\sigma = 1/(2Q) = A_{\sigma'}$.
+\end{proof}
+\end{unverified}
+
+
+\begin{unverified}
+\begin{proposition}[Smoothness classification of $c_{\mathrm{EHZ}}(a)$]%
+\label{prop:capacity-smoothness-classification}
+Let $c(a) = \min_\sigma A_\sigma(a)$ where the minimum ranges
+over all cyclic permutations~$\sigma$ for which the KKT system
+has a feasible solution ($\beta \geq 0$, $Q > 0$).
+\begin{enumerate}
+\item[\textup{(a)}]
+  \emph{Generic points.}
+  If at~$a_0$ a unique orbit~$\sigma^*$ achieves the minimum,
+  and the KKT matrix for~$\sigma^*$ is non-singular with
+  $\beta^* > 0$,
+  then $c$ is $C^\infty$ in a neighborhood of~$a_0$,
+  with gradient given by the envelope theorem formula
+  (\textup{[lem:cap-derivative]}).
+
+\item[\textup{(b)}]
+  \emph{Switching boundary.}
+  If $r \geq 2$ orbits $\sigma_1, \ldots, \sigma_r$ achieve the
+  minimum with distinct gradients
+  $\nabla_a A_{\sigma_1} \neq \nabla_a A_{\sigma_j}$
+  for some~$j$,
+  then $c$ is Lipschitz but not differentiable at~$a_0$.
+  The directional derivative is
+  $D_d\, c(a_0) = \min_{i=1,\ldots,r} \nabla_a A_{\sigma_i}(a_0) \cdot d$.
+
+% [GAP - degenerate tie case: r orbits tied with matching gradients.
+%  c is C^1 there but possibly not C^2. Non-generic (higher codimension).
+%  Not formalized.]
+
+\item[\textup{(c)}]
+  \emph{Genericity.}
+  The switching locus (where $\geq 2$ orbits tie)
+  has measure zero in the space of dual vertices.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+\emph{(a).}
+By Lemma~\ref{lem:per-orbit-smooth},
+$A_{\sigma^*}$ is $C^\infty$ near~$a_0$.
+% [TODO: JÖRN - the gap argument assumes that every competing orbit's
+%  action A_sigma(a) is continuous near a_0. This holds when each
+%  competing sigma has non-singular M(a) (by lem:per-orbit-smooth),
+%  but could fail for orbits with singular KKT matrix.
+%  It also does not account for orbits that are infeasible at a_0
+%  but become feasible nearby with lower action (orbit appearance).
+%  Both gaps are flagged as open questions at the end of this file.]
+Assuming each competing orbit's action is continuous near~$a_0$
+and no new orbits appear:
+the gap $\delta = \min_{\sigma \neq \sigma^*}
+A_\sigma(a_0) - A_{\sigma^*}(a_0) > 0$ is preserved
+in a neighborhood, so $c(a) = A_{\sigma^*}(a)$ there.
+The gradient is $\nabla_a c = \nabla_a A_{\sigma^*}$,
+given by the envelope theorem formula [lem:cap-derivative].
+
+\emph{(b).}
+Each~$A_{\sigma_i}$ is $C^\infty$ (and hence Lipschitz) locally.
+The minimum of finitely many Lipschitz functions is Lipschitz.
+
+\emph{Directional derivative.}
+Write $g_i = \nabla_a A_{\sigma_i}(a_0)$.
+Since each $A_{\sigma_i}$ is $C^2$,
+there exist constants~$C_i$ with
+$|A_{\sigma_i}(a_0 + td) - A_{\sigma_i}(a_0) - t\, g_i \cdot d|
+\leq C_i\, t^2$ for small~$t$.
+Set $C = \max_i C_i$.
+Then for $t > 0$:
+\[
+  c(a_0) + t\, \min_i(g_i \cdot d) - C t^2
+  \leq \min_i A_{\sigma_i}(a_0 + td)
+  \leq c(a_0) + t\, \min_i(g_i \cdot d) + C t^2,
+\]
+where the inequalities follow from applying
+$\min_i(f_i + e_i) \in [\min_i f_i - \max|e_i|,\;
+\min_i f_i + \max|e_i|]$
+to $f_i = A_{\sigma_i}(a_0) + t\, g_i \cdot d$
+and $e_i = O(t^2)$ bounded by~$Ct^2$.
+Hence $D_d^+\, c(a_0) = \min_i (g_i \cdot d)$.
+The same argument with $t < 0$ gives
+$D_d^-\, c(a_0) = \min_i (g_i \cdot d)$,
+so the two-sided directional derivative exists
+and equals $\min_i(g_i \cdot d)$.
+
+\emph{Non-differentiability.}
+Suppose for contradiction that $c$ is differentiable at~$a_0$
+with gradient~$g$.
+Then $g \cdot d = D_d c = \min_i (g_i \cdot d)$ for all~$d$.
+The map $d \mapsto \min_i(g_i \cdot d)$ is the pointwise
+minimum of finitely many linear functions, hence convex.
+A function that is both linear and convex is linear, so
+$\min_i(g_i \cdot d) = g \cdot d$ for all~$d$ implies
+$g_i \cdot d \geq g \cdot d$ for all~$d$ and~$i$.
+Taking $d = g - g_i$ gives
+$g_i \cdot (g - g_i) \geq g \cdot (g - g_i)$,
+i.e.\ $-\|g - g_i\|^2 \geq 0$, so $g_i = g$ for all~$i$.
+This contradicts $g_1 \neq g_j$.
+
+\emph{(c).}
+For any two orbits $\sigma_1 \neq \sigma_2$,
+$A_{\sigma_1}(a) = A_{\sigma_2}(a)$ is one equation
+in $4F$ parameters.
+% [TODO: JÖRN - to conclude codimension 1, need
+%  nabla_a(A_{sigma_1} - A_{sigma_2}) != 0 generically
+%  (the two gradients are distinct on the tie locus).
+%  Plausible but requires a transversality argument.]
+Assuming $\nabla_a(A_{\sigma_1} - A_{\sigma_2}) \neq 0$
+on the tie locus (i.e.\ the two orbits have distinct gradients
+where they tie --- generically expected but not proved here),
+the implicit function theorem gives a codimension-$1$
+hypersurface.
+There are finitely many orbit pairs, so the union of tie
+loci has measure zero.
+\end{proof}
+\end{unverified}
+
+
+% ── Open questions ──
+%
+% 1. Uniqueness of KKT solution for fixed sigma.
+%    Lemma [lem:well-defined] shows Q = -xi is unique even when M is singular.
+%    But when M is singular, the beta-components need not be unique, and the
+%    LP search (rem:near-null-lp-search) selects one with beta > 0.
+%    Question: is A_sigma(a) still smooth in a at points where M(a) is singular?
+%    The action value is well-defined, but the IFT argument
+%    (Lemma [lem:per-orbit-smooth]) requires non-singular M.
+%
+% 2. Orbit appearance under perturbation.
+%    An orbit sigma' that is infeasible at a (no beta >= 0 solution)
+%    can become feasible at a + td. If it appears with action below
+%    the current best, the capacity switches to sigma'.
+%    This switching event is not predictable from the orbit landscape at a alone.
+%    The experiment detects these via full ehz_capacity on perturbed polytopes
+%    (the perturbed_best_perm field in the Q5 JSONL), but cannot predict them
+%    from the base point's orbit landscape.
