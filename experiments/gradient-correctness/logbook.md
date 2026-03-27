@@ -288,10 +288,17 @@ Organized by distance from the experiment's stated scope. Items marked [actionab
 
 ### Within scope: gaps in Q1-Q5 answers
 
-**OQ1. Subdiff prediction at actual switching boundaries (gap = 0).** [actionable]
-Q5 tests the subdiff formula min_i(g_i · d) at non-boundary points, where it correctly fails (Obs 6). It does NOT test the formula at actual boundaries where it should succeed. Symmetry-forced ties provide exact gap = 0 polytopes: LP(n,n) and other HKO2024 polytopes where symmetry groups map orbits to orbits, guaranteeing identical actions. A generic perturbation direction breaks the symmetry, making the min non-trivial.
+**OQ1. Subdiff prediction at actual switching boundaries (gap = 0).** [actionable → Q5b]
 
-Expected outcome: slope ≈ 1 (capacity is C¹ not C² at the boundary, since the directional derivative min_i(g_i · d) is piecewise linear in d). Slope = 2 would be surprising and would indicate the tied orbits have matching gradients (degenerate tie case in [prop:capacity-smoothness-classification]).
+Q5 tests the subdiff formula min_i(g_i · d) at non-boundary points, where it correctly fails (Obs 6). It does NOT test the formula at actual boundaries where it should succeed. Three candidate methodologies:
+
+**(A) Symmetric polytopes (chosen, Jörn 2026-03-27).** Use LP(n,n) where symmetry forces exact orbit ties. Already in codebase (Q2 generates them). Quick implementation (~2h). Limitation: tests at symmetric points only, not generic boundary points.
+
+**(B) Path-following to boundary (deferred).** Start at generic polytope (gap > 0), find direction that shrinks gap, walk to gap = 0. Tests at generic boundary points. Harder: requires computing ∇(A_σ₁ − A_σ₂), bisection to locate boundary.
+
+**(C) Interpolation between polytopes with different winners (deferred).** Use Q5 orbit-switching events: at base point σ₁ wins, at perturbed point σ₂ wins. Interpolate a(s) = (1−s)a₁ + s·a₂ to find crossover s*. Systematic, uses existing data. Medium effort.
+
+Expected outcome for (A): slope ≈ 1 (capacity is Lipschitz not C² at the boundary, since the directional derivative min_i(g_i · d) is piecewise linear in d, not linear). Slope ≈ 2 would indicate the tied orbits have matching gradients (degenerate tie — possible at symmetric polytopes).
 
 **OQ2. Mathematical correctness of [lem:cap-derivative].** [open]
 The experiment tests code-vs-code, not the formula itself. A shared conceptual error in both the gradient code and the capacity code would be invisible. Options: (a) mathematical proof of the envelope theorem formula (formalizing the proof sketch in sys-optimization/math.tex), (b) independent reimplementation, (c) comparison against symbolic differentiation on small cases. Option (a) is the thesis-appropriate path.
