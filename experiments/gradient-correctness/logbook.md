@@ -444,7 +444,7 @@ Note: a boundary orbit σ with β_k = 0 has ∇A_σ = ∇A_σ' where σ' is the 
 
 LP(4,4) has 194 tied orbits: 2 classified as "interior" (perm [1,5,3,7] and [0,4,2,6], β = 0.25), 192 boundary. The 2 interior orbits use only 4 facets. The KKT system has m=4 unknowns (β) and 4+1=5 constraints (closure + normalization) — exactly determined, zero degrees of freedom. They are feasible only at the symmetric point. Under any perturbation, β jumps to -1.0 (verified by direct LU solve at t=1e-5).
 
-Consequence: lem:orbit-feasibility-open requires that β > 0 persists in a neighborhood. For 4-facet orbits on LP(4,4), M_σ is effectively singular (the orbit occupies a codimension-1 surface in parameter space). The lemma's hypothesis (M non-singular) is violated or borderline.
+Consequence: lem:orbit-feasibility-open requires M non-singular and β > 0 at a₀, and concludes β > 0 in a neighborhood. M may well be non-singular here (not checked). The issue is that for m=4 in ℝ⁴, the feasibility constraints (4 closure + 1 normalization) leave zero degrees of freedom in β — the solution β > 0 exists only when the constraints are exactly compatible, which is a codimension-1 condition in parameter space. Generic perturbations break compatibility, sending β negative. The lemma's conclusion fails not because its hypotheses are violated, but because the neighborhood is a single point.
 
 Data: LP(4,4) dir 0, actual/t converges to +0.161 as t → 0, but interior subdiff predicts -0.068. Residual slope ≈ 1.0 (first-order error, not second-order).
 
