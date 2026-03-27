@@ -145,6 +145,50 @@ def plot_sys_vs_epsilon(samples):
     print(f"Wrote {out}")
 
 
+def load_probes():
+    """Load directional probe data."""
+    path = EXPERIMENT_DIR / "lagrangian-probe.jsonl"
+    if not path.exists():
+        return None
+    rows = []
+    with open(path) as f:
+        for line in f:
+            rows.append(json.loads(line))
+    return rows
+
+
+def plot_radius_histogram(probes):
+    """Plot histogram of boundary radii from directional probing."""
+    radii = np.array([p["radius"] for p in probes if p["success"]])
+    if len(radii) == 0:
+        return
+
+    fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
+    ax.hist(radii, bins=40, color="C0", alpha=0.7, edgecolor="C0")
+    ax.axvline(
+        x=np.median(radii),
+        color="C1",
+        linestyle="-",
+        linewidth=LINE_WIDTH,
+        label=f"median = {np.median(radii):.4f}",
+    )
+    ax.axvline(
+        x=np.mean(radii),
+        color="C3",
+        linestyle="--",
+        linewidth=LINE_WIDTH,
+        label=f"mean = {np.mean(radii):.4f}",
+    )
+    ax.set_xlabel(r"Boundary radius $r(\mathbf{u})$ (L2 norm)")
+    ax.set_ylabel("Count")
+    ax.legend()
+
+    out = EXPERIMENT_DIR / "lagrangian_probe_radii.png"
+    fig.savefig(out)
+    plt.close(fig)
+    print(f"Wrote {out}")
+
+
 def print_summary_table(levels):
     """Print a summary table for the logbook."""
     print("\n## Summary table\n")
@@ -169,3 +213,7 @@ if __name__ == "__main__":
     plot_fraction_curve(levels)
     plot_sys_vs_epsilon(samples)
     print_summary_table(levels)
+
+    probes = load_probes()
+    if probes is not None:
+        plot_radius_histogram(probes)

@@ -181,3 +181,68 @@ Method 1 is cheapest and most informative per evaluation. Method 2 is the correc
 | 0.06 | 4.8% | 0.197 | 0.112 |
 
 The boundary radius r(u) varies from ~0.05 (steepest directions) to ~0.20 (flattest). The fraction-vs-ε curve averages over all directions and reports the mean behavior.
+
+## Directional boundary probing (2026-03-27)
+
+The L∞-box sweep measures the average size of the sys > 1 region but can't resolve its shape (L2 concentration at fixed ε prevents directional discrimination). To measure the shape directly, we binary-search for the boundary radius r(u) along 500 random directions u ∈ S¹⁹ from HKO2024.
+
+### How to run
+
+```bash
+cd experiments/
+cargo run --release --bin lagrangian_probe
+python3 lagrangian-search/analyze.py
+```
+
+### Files
+
+| File | Role |
+|------|------|
+| `probe.rs` | Rust binary: directional binary search along 500 random rays |
+| `lagrangian-probe.jsonl` | Per-direction data (500 rows: direction vector, boundary radius) |
+| `lagrangian_probe_radii.png` | Histogram of boundary radii |
+
+### Findings
+
+All 500 directions probed successfully (bisection to tolerance 1e-4). Verified against `lagrangian-probe.jsonl`.
+
+**1. The boundary is anisotropic with 7× aspect ratio.**
+
+| Stat | Value |
+|---|---|
+| Mean radius | 0.0941 |
+| Median radius | 0.0901 |
+| Std | 0.0290 |
+| CV | 0.309 |
+| Min | 0.0432 |
+| Max | 0.3033 |
+| Ratio max/min | 7.01 |
+| Per-component (mean/√(20/3)) | 0.0364 |
+
+The per-component radius 0.036 matches ε* ≈ 0.035 from the fraction-vs-ε curve — the two measurements are consistent.
+
+**2. The distribution is right-skewed.** Most directions have radii in [0.06, 0.11] (P10-P75), with a long tail extending to 0.30. The region is compact in most directions but has a few "peninsulas" where the boundary extends 3× further than the median.
+
+| Percentile | Radius |
+|---|---|
+| P5 | 0.059 |
+| P25 | 0.074 |
+| P50 | 0.090 |
+| P75 | 0.106 |
+| P95 | 0.150 |
+
+**3. The anisotropy is not attributable to known geometric directions.**
+
+- Scaling direction: r = 0.114 correlation with radius (3.8% R²)
+- Joint rotation direction: r = 0.151 correlation (marginal effect)
+- All 20 direction components together: R² = 0.066
+
+Neither scaling, rotation, nor any linear combination of perturbation components explains the directional variation. The radius function r(u) appears "unstructured" — the variation comes from the combinatorial orbit structure (which facet sequence is optimal changes along different rays), not from any smooth geometric feature.
+
+### Interpretation
+
+The sys > 1 region around HKO2024 is a **compact, anisotropic body** in 20D Lagrangian perturbation space:
+- Median radius 0.09 in L2 (per-component ~0.035)
+- Right-skewed: compact in most directions, with sparse long-range extensions (up to 0.30)
+- 7× aspect ratio, but no interpretable dominant direction
+- Shape likely determined by the combinatorial structure of degenerate minimum-action orbits at HKO2024, not by smooth geometry

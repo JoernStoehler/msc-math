@@ -96,6 +96,10 @@ path = "sys-search/run.rs"
 name = "lagrangian_search"
 path = "lagrangian-search/run.rs"
 
+[[bin]]
+name = "lagrangian_probe"
+path = "lagrangian-search/probe.rs"
+
 [dependencies]
 symplectic = { path = "../crates" }
 nalgebra = "0.33"
