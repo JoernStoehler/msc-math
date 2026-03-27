@@ -118,7 +118,7 @@ The thesis is currently a dump of results, not a coherent narrative. Experiments
 
 **Gradient experiment redesign (2026-03-26, Jörn):** The three gradient experiments (`sys-optimization`, `gradient-descent`, `gradient-search`) evolved incrementally and overlap significantly. Replace with three cleanly scoped experiments:
 1. **gradient-correctness** (scaffolded) — Is ∂sys/∂a_k correct? Generic polytopes, non-generic geometry, near-degeneracy, redundant halfspaces.
-2. **combinatorial-boundaries** (Phases 1-3 complete, A-E designed, 2026-03-27) — sys continuous at boundaries; sparse perturbations cause 5× more orbit switches (14%) than dense (2.7%); gradient jumps up to 70° at orbit switches; ω₀ flips are 36% of events. Next: per-facet cell profiling, convexity testing, gradient-cell alignment, orbit-gap analysis. Potential payoff: informed step-size strategies for sys-search that use cell geometry. See logbook.
+2. **combinatorial-boundaries** (complete, 2026-03-27) — Cells are non-convex (52.5% ω₀ midpoint failures), orbit facets are 2× wider than non-orbit, anisotropy 8.3×, gradient-cell correlation r=0.52. sys continuous at all boundaries, gradient stable except at orbit switches (3% rate, up to 70° jump). Orbit gap predicts switches. See logbook.
 3. **sys-search** (scaffolded) — Gradient-based search for sys > 1. Single-step characterization + multi-step search with boundary-crossing strategies (overshoot, wiggle, cuts).
 
 Dependency chain: #1 validates the gradient → #2 characterizes the obstacle → #3 applies the tool. #3 can start independently but benefits from #2's findings. Delete old experiments once new ones are confirmed better.
