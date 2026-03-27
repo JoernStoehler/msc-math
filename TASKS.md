@@ -134,6 +134,12 @@ Dependency chain: #1 validates the gradient → #2 characterizes the obstacle �
 
 Depends on: Jörn scoping the thesis story. Derivative-related experiments also depend on dual-vertex-parameterization (library derivative API, now mostly complete).
 
+**Cross-experiment cleanup (2026-03-27):**
+- **Step-bound code duplication:** `compute_step_bound` (incidence + ω₀ detection in a-space) exists in sys-optimization, combinatorial-boundaries, sys-search. sys-search version is missing ω₀ detection (43% of boundaries). Candidates: unify into library, or at minimum copy the enriched version from combinatorial-boundaries into sys-search.
+- **Products-vs-random split:** Every gradient experiment should split analysis by source dataset. The 0%/100% convexity split is a fundamental structural difference that affects strategy choice. Could add a standard `source_dataset` analysis function to figure_config.py.
+- **Wiggle strength justification:** sys-search uses 5% (from gradient-search, unjustified). combinatorial-boundaries provides per-facet cell widths (0.12–0.26) that could inform this. See combinatorial-boundaries logbook "Unused synergies" section.
+- **sys-search + combinatorial-boundaries overlap:** The multi-boundary sweep with sys tracking (combinatorial-boundaries Pass 4) answers a sys-search question. If sys-search grows a similar capability, consider removing it from combinatorial-boundaries to avoid duplication.
+
 ---
 
 ## q-error-threshold

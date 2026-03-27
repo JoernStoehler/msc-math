@@ -229,8 +229,29 @@ Walk along a direction for distance 1.0, iteratively stepping past each boundary
 
 **Gradient-cell alignment is favorable (r = 0.52).** The gradient doesn't push toward the narrowest cell boundary.
 
+## Cross-experiment notes
+
+**sys-search (dev run, 2026-03-27):** 42 seeds, best sys=0.933, wiggle dominates overshoot 41/1. No contradictions with our findings — strong alignment:
+- Overshoot never wins → consistent with 36% sweep construction failures from accumulated perturbation.
+- Wiggle wins → consistent with random-polytope cells being convex (random re-entry lands in a valid cell).
+- Step-bound is the limiter, not gradient vanishing → consistent with ~F boundaries per step.
+
+**Unused synergies for sys-search to pick up:**
+- **Wiggle strength from cell width.** sys-search uses 5% (unjustified). Per-facet median cell width (0.12–0.26) could inform this. Wiggle should exceed cell width to escape, but not so large as to cause construction failure.
+- **Per-facet targeted wiggle.** Orbit facets are 2× wider → wiggle them more aggressively. Non-orbit facets are narrower → wiggle them less.
+- **Orbit gap as escape trigger.** Small orbit gap means orbit switches are imminent even without combinatorial change. Could trigger earlier escape attempts.
+- **Product-specific strategy.** 100% non-convexity means line search is unreliable for products. Overshoot is expected to fail; only wiggle (random re-entry) makes sense.
+
+**Code overlap with sys-search:** Both experiments implement `compute_step_bound` in a-space with incidence + ω₀ detection. The sys-search version (run.rs:162-235) tracks only incidence flips, not ω₀ flips — it's missing 43% of boundaries. Should be unified or sys-search should copy our enriched version.
+
+**Potential experiment reorganization:**
+- The step-bound code (incidence + ω₀ detection) is now in 3 places: sys-optimization, combinatorial-boundaries, sys-search. Candidate for library promotion if stable.
+- The gradient sweep (multi-boundary + sys tracking) could live in sys-search instead of here, since it directly answers a sys-search question. We "stole" it because the data was available.
+- The products-vs-random split is relevant to every gradient experiment. Could become a standard analysis step in figure_config.py or a shared utility.
+
 ## Open questions
 
-1. **Continuity of sys:** The observation that sys is continuous at boundaries is consistent with the min-of-continuous-functions structure of c_EHZ, but a formal proof that new orbits enter continuously (not just that existing orbit actions are continuous) may be worth writing up for the thesis.
-2. **Anisotropy structure:** What determines the anisotropy directions within each facet's R⁴? Is it related to the positions of adjacent facets, the symplectic structure, or both? Deferred unless sys-search needs anisotropic steps.
-3. **Construction failure after multi-boundary crossing:** 36% of sweeps fail — 84% "unbounded" (lost positive spanning), 16% "facet redundant". Sys-search should detect these and backtrack or restart rather than trying to prevent them.
+1. **Continuity of sys:** math.tex has a proof sketch (Prop. prop:sys-continuous). The polytope-specific argument gives lower semicontinuity; full continuity requires citing general c_EHZ continuity on convex bodies. Jörn to review.
+2. **Anisotropy structure:** What determines the anisotropy directions within each facet's R⁴? Deferred unless sys-search needs anisotropic steps.
+3. **Construction failure after multi-boundary crossing:** 36% of sweeps fail — 84% "unbounded" (lost positive spanning), 16% "facet redundant". Sys-search should detect and backtrack.
+4. **sys-search ω₀ gap:** sys-search step bound doesn't detect ω₀ flips (only incidence). Missing 43% of boundaries. Impact unclear — may just cause slightly conservative steps (stopping at incidence boundaries before reaching ω₀ boundaries). Or may cause overshoot past undetected ω₀ boundaries.
