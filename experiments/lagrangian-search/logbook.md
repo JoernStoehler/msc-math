@@ -163,3 +163,21 @@ We want to characterize S = {δ : f(δ) > 1}.
 3. **Support function / convex hull.** If S is convex, compute the convex hull of the above-threshold samples. Its principal widths characterize the shape without smoothness. Requires convexity of S (plausible for the superlevel set of a concave piecewise-linear f, but not guaranteed).
 
 Method 1 is cheapest and most informative per evaluation. Method 2 is the correct theoretical model but requires identifying the orbit sheets.
+
+### Ball test from existing data
+
+**The region is not a ball.** Direct test: if S were an L2 ball of radius R, every above-1 sample would have L2 < R and every below-1 sample L2 > R. But:
+- Furthest above-1 sample: L2 = 0.230
+- Closest below-1 sample: L2 = 0.050
+
+966 above-1 samples are further from HKO than the closest below-1 sample. The boundary radius varies by at least 4.6× across directions. Per-ε breakdown:
+
+| ε | frac>1 | L2 of furthest above-1 | L2 of closest below-1 |
+|---|---|---|---|
+| 0.02 | 98.4% | 0.065 | 0.050 |
+| 0.03 | 73.4% | 0.096 | 0.060 |
+| 0.04 | 34.4% | 0.124 | 0.073 |
+| 0.05 | 15.8% | 0.166 | 0.088 |
+| 0.06 | 4.8% | 0.197 | 0.112 |
+
+The boundary radius r(u) varies from ~0.05 (steepest directions) to ~0.20 (flattest). The fraction-vs-ε curve averages over all directions and reports the mean behavior.
