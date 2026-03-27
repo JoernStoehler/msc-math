@@ -837,6 +837,44 @@ mod tests {
         let _result = solve_saddle_point(&kkt, &rhs);
     }
 
+    // ── Q error bound panic on perturbed symmetric polytopes ──
+
+    /// Perturbed LP(4,4) triggers the Q-error-bound panic on degenerate 4-facet orbits.
+    /// The KKT matrix eigenvalues shift from null (at the symmetric point) to small-but-
+    /// retained (at the perturbed point), making |λ_min| tiny and the error bound vacuous.
+    /// This is a regression test: when the deferred work (TASKS.md q-error-threshold) is
+    /// resolved, this test should be updated to expect the new behavior.
+    #[test]
+    fn perturbed_lp44_degenerate_orbit() {
+        use crate::{lagrangian_product, regular_polygon_2d};
+        let (qn, qh) = regular_polygon_2d(4, 1.0);
+        let polytope = lagrangian_product(&qn, &qh, &qn, &qh).expect("regular LP(4,4)");
+        let duals = polytope.dual_vertices_f64();
+        // Small perturbation breaking the square symmetry
+        // Small perturbation breaking square symmetry.
+        let perturbed: Vec<nalgebra::Vector4<f64>> = duals
+            .iter()
+            .enumerate()
+            .map(|(i, a)| {
+                let s = 1e-4 * ((i + 1) as f64);
+                nalgebra::Vector4::new(a[0] + s * 0.3, a[1] - s * 0.7, a[2] + s * 0.5, a[3] - s * 0.1)
+            })
+            .collect();
+        let perturbed_poly =
+            crate::geom::polytope::Polytope4D::from_f64(perturbed).expect("perturbed LP(4,4)");
+        // Solve KKT directly for the degenerate 4-facet orbit [1,5,3,7].
+        // At the symmetric point this orbit has β = 0.25. Under perturbation,
+        // the KKT eigenvalues shift from null to small-but-retained, making
+        // the Q error bound vacuous.
+        let outcome = solve_kkt_for(&perturbed_poly, &[1, 5, 3, 7]);
+        // The degenerate orbit should NOT be feasible on the perturbed polytope.
+        assert!(
+            !matches!(outcome, KktOutcome::Feasible(_)),
+            "degenerate 4-facet orbit on perturbed LP(4,4) should not be feasible, got {:?}",
+            outcome
+        );
+    }
+
     // ── Constraint satisfaction ──
 
     /// All returned solutions satisfy the normalization constraint (1^T beta = 1).
