@@ -392,7 +392,11 @@ $g = \nabla_a\,\mathrm{sys}$ and evaluate the improvement.
 
 \begin{table}[ht]
 \centering
-\input{sys_optimization_stats.tex}
+\InputIfFileExists{sys_optimization_stats.tex}{}{%
+  \InputIfFileExists{../experiments/sys-optimization/sys_optimization_stats.tex}{}{%
+    \textbf{[sys\_optimization\_stats.tex not found]}%
+  }%
+}
 \caption{Summary statistics for the sys-optimization experiment.}
 \label{tab:sys-opt-stats}
 \end{table}
