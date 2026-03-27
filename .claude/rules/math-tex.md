@@ -18,7 +18,7 @@ Preamble: `crates/src/math-preamble.tex` (packages, environments). Per-module fi
 
 **Experiments:** `experiments/<name>/math.tex` — content files `\input`'d by root `math.tex`. No `\documentclass`. Use bare filenames for `\includegraphics` (e.g., `foo.png`, not `../experiments/<name>/foo.png`); the compile context sets `\graphicspath` per section.
 
-**Thesis:** `thesis/` is independent of math.tex files. The thesis is written for human readers (examiners) and has its own self-contained prose. It uses figures and tables produced by experiments, but does NOT `\input` experiment math.tex files. (Note: `thesis/experiments.tex` currently does `\input` them — this is a known bug from a prior agent session, to be cleaned up on main.)
+**Thesis:** `thesis/` is independent of math.tex files. The thesis is written for human readers (examiners) and has its own self-contained prose. It uses figures and tables produced by experiments, but does NOT `\input` experiment math.tex files.
 
 ## What belongs here
 
