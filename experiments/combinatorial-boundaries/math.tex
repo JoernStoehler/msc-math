@@ -87,9 +87,10 @@ This is exact (no approximation).
 \subsection{Continuity of the systolic ratio}
 \label{sec:sys-continuity}
 
-% [TODO: JÖRN - verify this proof sketch. The key subtlety is at the boundary
-% point itself, where the polytope may be degenerate (e.g., non-simple vertices).
-% The argument handles this via the semicontinuity structure but needs review.]
+% [TODO: JÖRN - review the polytope-specific mechanism below and decide whether
+% the direct argument or the citation of general c_EHZ continuity is better for
+% the thesis. The direct argument gives lower semicontinuity; full continuity
+% may require the general theory.]
 
 \begin{proposition}[Continuity of $\operatorname{sys}$ at combinatorial boundaries]%
 \label{prop:sys-continuous}
@@ -100,58 +101,64 @@ $\operatorname{sys}(K(t))$ is continuous at $t = t^*$.
 \end{proposition}
 \begin{proof}[Proof sketch]
 Write $\operatorname{sys} = c_{\mathrm{EHZ}}^2 / (2V)$.
-The volume $V(t)$ is a rational function of the dual vertices, hence continuous.
-It suffices to show $c_{\mathrm{EHZ}}(t)$ is continuous.
+The volume $V(K(t))$ depends continuously on the dual vertices (it is continuous
+in the Hausdorff topology on convex bodies, and $t \mapsto K(t)$ is Hausdorff-continuous
+since the half-space description varies linearly).
+It suffices to show $c_{\mathrm{EHZ}}(K(t))$ is continuous.
 
-For a polytope $K$, the EHZ capacity is
-$c_{\mathrm{EHZ}}(K) = \min_{\sigma \in \mathcal{F}(K)} A(\sigma)$,
-where $\mathcal{F}(K)$ is the set of feasible cyclic permutations and
-$A(\sigma) = 1/(2\,Q(\sigma))$ is the action, with $Q(\sigma)$ depending
-continuously on the dual vertices.
+\textbf{Approach 1 (general theory).}
+The EHZ capacity is continuous on the space of convex bodies with the Hausdorff
+metric~\cite{HoferZehnder1994}. Since $t \mapsto K(t)$ is Hausdorff-continuous,
+$c_{\mathrm{EHZ}}(K(t))$ is continuous.
+% [TODO: JÖRN - verify this citation. The continuity result is standard but
+% I haven't checked the exact statement in Hofer--Zehnder. The extension to
+% non-smooth bodies (polytopes) may need the approximation argument from
+% the definition of c_EHZ.]
 
-\emph{Upper semicontinuity} ($\limsup \le$):
-For any $\varepsilon > 0$, let $\sigma^*$ be a minimizer for $K(t^*)$.
-% [GAP - At the boundary, $\sigma^*$ may not be feasible for $K(t^* \pm \delta)$
-% because the transition matrix changes. However, by construction of the boundary
-% events, the transition that breaks $\sigma^*$ involves either (a) a vertex-facet
-% incidence change or (b) an $\omega_0$ sign flip. In case (a), the vertex
-% continuously approaches the new facet, so the orbit action varies continuously
-% up to the boundary. In case (b), the $\omega_0$ value passes through zero, and
-% the orbit action is independent of the $\omega_0$ sign (it depends only on
-% $\beta$ and $Q$ from the KKT system). So $A(\sigma^*) \to A(\sigma^*, t^*)$
-% from both sides, establishing upper semicontinuity.]
-Since each orbit's action depends continuously on the dual vertices, and the
-infeasibility at $t^* - \delta$ (or $t^* + \delta$) only removes orbits whose
-action is at least $A(\sigma^*, t^*)$ in the limit, the capacity cannot jump up.
+\textbf{Approach 2 (polytope-specific mechanism).}
+For a polytope $K$, write $c_{\mathrm{EHZ}}(K) = \min_{\sigma \in \mathcal{F}(K)} A(\sigma)$,
+where $\mathcal{F}(K)$ is the set of feasible cyclic permutations
+(those forming feasible cycles in the transition matrix,
+Definition~\ref{def:transition-matrix})
+and $A(\sigma) = 1/(2\,Q(\sigma))$ is the action.
+Here $Q(\sigma) = \beta^\top H \beta$ where $\beta$ solves the KKT system
+for permutation~$\sigma$; it depends continuously on the dual vertices
+when the KKT system is non-degenerate.
 
-\emph{Lower semicontinuity} ($\liminf \ge$):
-% [GAP - This is the harder direction. We need: no sequence of newly feasible
-% orbits can have actions converging to something strictly less than
-% $c_{\mathrm{EHZ}}(K(t^*))$. The finite set of possible permutations is bounded
-% (at most $\sum_{m=2}^{F} \binom{F}{m} (m-1)!$ permutations), and each action
-% is continuous. So the infimum over a finite family of continuous functions is
-% lower semicontinuous. But the family changes at $t^*$ --- this is the gap.]
-The set of all cyclic permutations of facets is finite (independent of~$t$).
-For each permutation~$\sigma$, the action $A(\sigma, t)$ is continuous in~$t$
-(it depends on the dual vertices through the KKT system).
-The feasibility of~$\sigma$ may change at~$t^*$, but a permutation that becomes
-newly feasible at $t^* + \delta$ has a well-defined action $A(\sigma, t^* + \delta)$
-that converges to a finite limit as $\delta \to 0$.
-If this limit were strictly less than $c_{\mathrm{EHZ}}(K(t^*))$, then
-at $t = t^*$ the orbit would either be feasible (contradicting minimality)
-or have $Q(\sigma, t^*) > 0$ with some $\beta_k = 0$
-(a degenerate orbit on the boundary of the feasibility cone).
+\emph{Key structural fact:} at a generic codimension-1 combinatorial boundary,
+$\mathcal{F}(K(t^*)) \supseteq \mathcal{F}(K(t^* - \delta)) \cup \mathcal{F}(K(t^* + \delta))$
+for small $\delta > 0$.
+This is because:
+\begin{itemize}
+  \item At an $\omega_0$ boundary where $\omega_0(a_i, a_j)$ passes through zero:
+    at $t^*$, both transitions $i \to j$ and $j \to i$ are feasible ($\omega_0 \ge 0$
+    is satisfied with equality). A cyclic permutation visits each facet at most once,
+    so it uses at most one of $i \to j$ or $j \to i$, hence is feasible on at least
+    one side.
+  \item At an incidence boundary: vertex adjacency at $t^*$ is a superset of either side's.
+\end{itemize}
+There are no ``boundary-only'' orbits (feasible at $t^*$ but on neither side)
+at generic codimension-1 boundaries.
 
-% [TODO: JÖRN - The degenerate case ($\beta_k = 0$) is where the argument
-% needs the most care. The orbit is on the boundary of feasibility: it's
-% feasible in the limit but $\beta_k \downarrow 0$. In this case the action
-% is still well-defined and continuous, so the limit action equals $A(\sigma, t^*)$.
-% This should give lower semicontinuity, but the formal argument needs to
-% handle the case where $Q(\sigma, t^*) = 0$ (degenerate KKT).]
+\emph{Lower semicontinuity} ($c_{\mathrm{EHZ}}(t^*) \le \liminf$):
+Since $\mathcal{F}(t^*) \supseteq \mathcal{F}(t^* \pm \delta)$, the minimum
+over the larger set is $\le$ the minimum over each side. So
+$c_{\mathrm{EHZ}}(t^*) \le \lim_{t \to t^{*\pm}} c_{\mathrm{EHZ}}(t)$.
 
-Under non-degeneracy assumptions (the KKT system is non-singular at $t^*$),
-the action of every permutation is continuous through the boundary,
-and the minimum over the (changing but always finite) feasible set is continuous.
+\emph{Upper semicontinuity} ($c_{\mathrm{EHZ}}(t^*) \ge \limsup$):
+% [GAP - The direct argument does NOT give upper semicontinuity.
+% A minimizer $\sigma^*$ at $t^*$ is feasible on at least one side (say the left).
+% Then $c(t^* - \delta) \le A(\sigma^*, t^* - \delta) \to A(\sigma^*, t^*) = c(t^*)$.
+% So $\limsup_{\text{left}} \le c(t^*)$. But from the right, the minimizer at $t^*$
+% might not be feasible, and the right-feasible orbits might have strictly higher
+% actions at $t^*$: $\lim_{\text{right}} c(t) = \min_{F(\text{right})} A(\sigma, t^*)
+% > c(t^*) = \min_{F(t^*)} A(\sigma, t^*)$.
+% This would make c LOWER semicontinuous with a possible downward jump at $t^*$.
+% Full continuity requires either the general theory (Approach 1) or an additional
+% argument that the minimizer at $t^*$ is feasible on BOTH sides.]
+This direction requires Approach~1 (general theory) or an argument that
+$c_{\mathrm{EHZ}}(t^*)$ cannot be strictly lower than either one-sided limit.
+The polytope-specific mechanism alone gives only lower semicontinuity.
 \end{proof}
 
 \begin{remark}\label{rem:sys-continuous-empirical}
