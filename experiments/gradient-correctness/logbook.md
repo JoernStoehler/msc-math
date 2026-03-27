@@ -363,7 +363,7 @@ Interpretation: slope 2 for subdiff means the formula min_i(g_i · d) correctly 
 - Two regimes separated by a transition at t ≈ 1e-5 to 3e-5:
   - **Small t (≤ ~3e-6):** Base orbit persists (or switches to another length-4 orbit). Subdiff slope ≈ 2.0 — gradient is correct. (e.g., dir 3: no switching at t ≤ 3e-6, subdiff slope 2.05 over small-t range; dir 4: subdiff slope 1.99; dir 6: slope 1.99)
   - **Large t (≥ ~3e-5):** Length-6 orbits appear (e.g., [0,5,4,2,3,6]). These were infeasible at the base point. Subdiff slope ≈ 1.0 across all directions (dir 0: 1.00, dir 1: 1.00, ..., all large-t fits ≈ 1.00).
-- Overall: 81/95 rows (85.3%) show orbit switching. Perturbed perm lengths: 70 length-6 (orbit appearance), 25 length-4 (switching among existing tied orbits). Dirs 0,1 have no small-t data at all (rows start at t ≥ 1e-4).
+- Overall: 70/95 rows (73.7%) show genuine orbit appearance (perturbed best is NOT any of the base tied orbits). All 70 have length-6 perturbed perms. The remaining 25 rows (at small t) stay within the tied orbit set or switch among the 2 tied length-4 orbits. Dirs 0,1 have no small-t data at all (rows start at t ≥ 1e-4).
 - Connection to [lem:orbit-contraction]: at the base point, length-6 orbits have some β_k = 0 (they contract to the length-4 orbit with equal action). Under perturbation, β_k becomes positive (orbit expands) and the action diverges. This is the orbit appearance phenomenon flagged in math.tex open question 2.
 
 **Obs 12. Orbit structure varies across LP sizes.**

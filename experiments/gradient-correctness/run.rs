@@ -1301,7 +1301,11 @@ fn run_q5b(base_dir: &str) {
                 let c_perturbed = perturbed_ehz.result.capacity;
                 let perturbed_perm = &perturbed_ehz.result.best_permutation;
                 let perturbed_perm_str = serde_json::to_string(perturbed_perm).unwrap();
-                let orbit_switched = perturbed_perm != &tied_orbits[0].1;
+                // True orbit switch: perturbed best is NOT any of the tied orbits.
+                // Intra-tie switches (perturbed picks a different tied orbit) are not
+                // "orbit appearance" — the subdiff formula accounts for them.
+                let orbit_switched =
+                    !tied_orbits.iter().any(|(_, perm, _)| perm == perturbed_perm);
 
                 let actual = c_perturbed - best_action;
 
