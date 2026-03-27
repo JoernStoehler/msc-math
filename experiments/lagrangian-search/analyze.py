@@ -72,7 +72,7 @@ def plot_fraction_curve(levels):
         fracs,
         "o-",
         color="C0",
-        markersize=MARKER_SIZE + 1,
+        markersize=MARKER_SIZE,
         linewidth=LINE_WIDTH,
         zorder=3,
     )
@@ -122,7 +122,7 @@ def plot_sys_vs_epsilon(samples):
         ax.plot(
             [np.log10(eps) - 0.03, np.log10(eps) + 0.03],
             [med, med],
-            color="C3",
+            color="C1",
             linewidth=2,
             zorder=4,
         )
