@@ -13,7 +13,7 @@ import numpy as np
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(EXPERIMENT_DIR.parent))
 from figure_config import (
-    setup, FIGSIZE_SINGLE, SCATTER_SIZE,
+    setup, FIGSIZE_SINGLE, FIGSIZE_DUAL, SCATTER_SIZE,
     FONT_SIZE_SMALL,
 )
 setup()
@@ -247,7 +247,7 @@ print("  cell_orbit_vs_nonorbit.png")
 # Figure 9: Per-facet cell width by F (profiling)
 # ============================================================================
 
-fig, axes = plt.subplots(1, 2, figsize=(FIGSIZE_SINGLE[0] * 2, FIGSIZE_SINGLE[1]))
+fig, axes = plt.subplots(1, 2, figsize=FIGSIZE_DUAL)
 
 for ax_idx, (in_orbit, label, color) in enumerate([
     (True, "Orbit facets", "#E91E63"),
@@ -294,7 +294,7 @@ fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
 ax.hist(anisotropies, bins=50, color="#4CAF50", alpha=0.7)
 ax.axvline(np.median(anisotropies), color="red", ls="--", lw=1,
            label=f"Median: {np.median(anisotropies):.1f}")
-ax.set_xlabel("Anisotropy (max / min $t_{\\max}$ within facet $\\mathbb{R}^4$)")
+ax.set_xlabel(r"Anisotropy (max / min $t_{\max}$ within facet $\mathbb{R}^4$)")
 ax.set_ylabel("Count")
 ax.set_title("Cell anisotropy per facet")
 ax.legend()
@@ -313,7 +313,7 @@ if ok_conv:
     same_facet = [r for r in ok_conv if r["dir1_facet"] == r["dir2_facet"]]
     cross_facet = [r for r in ok_conv if r["dir1_facet"] != r["dir2_facet"]]
 
-    fig, axes = plt.subplots(1, 2, figsize=(FIGSIZE_SINGLE[0] * 2, FIGSIZE_SINGLE[1]))
+    fig, axes = plt.subplots(1, 2, figsize=FIGSIZE_DUAL)
 
     # Left: overall convexity failure rates
     ax = axes[0]
@@ -395,7 +395,7 @@ if unique_gaps:
                label=f"Median: {np.median(unique_gaps):.4f}")
     ax.set_xlabel("Orbit gap (second best − best action)")
     ax.set_ylabel("Count")
-    ax.set_title(f"Orbit action gap ({len(unique_gaps)} polytopes with $\\geq 2$ orbits)")
+    ax.set_title(rf"Orbit action gap ({len(unique_gaps)} polytopes with $\geq 2$ orbits)")
     ax.legend()
     fig.savefig(EXPERIMENT_DIR / "orbit_gap_distribution.png")
     plt.close()
