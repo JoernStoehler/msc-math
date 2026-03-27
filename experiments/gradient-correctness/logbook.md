@@ -257,7 +257,7 @@ The experiment contains 8 observations across 5 phases (Q1-Q5), supported by 4 p
 
 **What the experiment establishes (high confidence):**
 
-1. The per-orbit gradient formula [lem:cap-derivative] correctly predicts the per-orbit action to first order, with C² convergence (slope 2.00 ± 0.03), across all tested conditions: generic polytopes F=5-10 (Q1), Lagrangian products (Q2), near-degenerate gaps (Q3), barely-cutting facets (Q4), full-capacity perturbation (Q5), and small min(β) near the IFT boundary (Q5/Obs 8). 600+ traces, zero outliers at [-6,-3] fit range.
+1. The per-orbit gradient formula [lem:cap-derivative] correctly predicts the per-orbit action to first order, with C² convergence (slope 2.00 ± 0.03), across all tested conditions: generic polytopes F=5-10 (Q1), Lagrangian products (Q2), near-degenerate gaps (Q3), barely-cutting facets (Q4), full-capacity perturbation (Q5), and small min(β) near the IFT boundary (Q5/Obs 8). Q1 alone: 600 traces, 0 outliers below 1.95 at [-6,-3] fit range. Q3 and Q5 have 3 outliers total at [-6,-3] (1 in Q3 at slope 1.42, 2 in Q5), likely near-degenerate polytopes where the quadratic Taylor radius is small.
 
 2. The volume gradient [lem:vol-derivative] and systolic ratio gradient [cor:sys-derivative] correctly predict to first order, with C² convergence in the region t ∈ [1e-1, 1e-4] before floating-point cancellation dominates.
 
