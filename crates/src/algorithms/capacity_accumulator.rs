@@ -166,13 +166,14 @@ impl CapacityAccumulator {
     ///
     /// Returns `None` if no certified candidate was found.
     ///
+    /// Returns `None` if the gap invariant is violated: an uncertain candidate
+    /// achieves action more than `GAP_TOLERANCE` below the certified capacity,
+    /// meaning the capacity cannot be resolved at f64 precision.
+    ///
     /// # Panics
     ///
-    /// Panics if the gap invariant is violated: the uncertain capacity is more
-    /// than `GAP_TOLERANCE` below the certified capacity. This indicates an
-    /// ambiguous candidate that cannot be resolved at f64 precision.
-    ///
-    /// Panics if the certified capacity is non-positive or non-finite.
+    /// Panics if the certified capacity is non-positive or non-finite (math
+    /// invariant violation — the algorithm produced a nonsensical result).
     pub fn finalize(self) -> Option<CapacityResult> {
         let certified = self.best_certified?;
         let uncertain_action = self

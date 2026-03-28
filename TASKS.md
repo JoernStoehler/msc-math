@@ -170,18 +170,18 @@ Depends on: Jörn scoping the thesis story. Derivative-related experiments also 
 
 ## code-math-correspondence-audit
 
-**Status (2026-03-28):** New. Audit all code-math correspondences in crates/src/.
+**Status (2026-03-28):** Complete. Full report: `handoffs/cross-reference-audit.md`.
 
-The KKT solver's Q error bound assert cites lem:q-error-bound but the code doesn't match the lemma: the code uses |λ_min| of retained eigenvalues (a heuristic numerical cutoff), while the lemma assumes |λ_min| > 0 for the full matrix. This mismatch was never caught because nobody audited whether the code actually corresponds 1:1 to the cited math.
+~170 cross-references audited across 25 files, citing 45 distinct labels. Results: ~160 OK, 3 MISMATCH (all in saddle_point_solver.rs, all known), 2 TODO (missing lemma labels, properly flagged in code).
 
-**Scope:** Every `[lem:...]` / `[thm:...]` cross-reference in crates/src/*.rs must be checked:
-1. Does the code implement what the lemma states? (not just cite it)
-2. Are the lemma's preconditions satisfied by the code's inputs?
-3. Are heuristic numerical thresholds distinguished from proven mathematical conditions?
+**Mismatches (all in saddle_point_solver.rs):**
+- M1 (critical): line 358 — lem:q-error-bound bound inapplicable to pseudoinverse (known, tracked in verify-numerics)
+- M2 (high): line 477 — lem:well-defined: returned β_final differs from β₀ used for Q computation
+- M3 (medium): lines 534-544 — lem:q-error-bound: code comment oversimplifies the proof's Step 4
 
-**Known violations:**
-- `saddle_point_solver.rs:354-360`: `abs_lambda_min` filters eigenvalues by threshold, lemma uses min over all eigenvalues
-- `saddle_point_solver.rs:550-558`: Q error bound assert treats a heuristic calibration threshold as a mathematical invariant
+**Missing labels (both properly TODO-flagged):**
+- qp_assembly.rs:58 → lem:dual-vertex-qp (needs writing)
+- tube/mod.rs:344 → lem:rotation-increment-approx (needs writing)
 
 ---
 
@@ -197,15 +197,13 @@ The Q error bound E = (9/2)||r||²/|λ_min| ([lem:q-error-bound]) uses |λ_min| 
 
 ## convention-violations
 
-**Status (2026-03-27):** New. Fix all violations of the panics convention (once finalized in rust.md).
+**Status (2026-03-28):** Done.
 
-**Known violations:**
-- `experiments/gradient-correctness/run.rs`: 2× `catch_unwind` wrapping `ehz_capacity` and `solve_kkt_for`
-- `experiments/hko-neighborhood/run.rs`: 4× `catch_unwind` wrapping `ehz_capacity`
-- `crates/src/kkt/saddle_point_solver.rs:504,509`: panic comments don't meet the convention standard (improved on gradient-correctness branch, but not finalized)
-- `crates/src/algorithms/capacity_accumulator.rs:186`: gap invariant panic comment needs improvement
-
-**Depends on:** panics convention finalized in rust.md.
+- `experiments/gradient-correctness/run.rs`: catch_unwind already removed in prior session
+- `experiments/hko-neighborhood/run.rs`: catch_unwind already removed in prior session
+- `experiments/combinatorial-boundaries/run.rs`: 2× catch_unwind removed (unlisted, found during fix)
+- `crates/src/kkt/saddle_point_solver.rs`: panic comments rewritten (deferred-work context, root cause, resolution path)
+- `crates/src/algorithms/capacity_accumulator.rs`: stale doc comment fixed (gap case returns None, not panic)
 
 ---
 

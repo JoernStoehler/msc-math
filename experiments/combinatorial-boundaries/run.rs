@@ -702,11 +702,7 @@ fn compute_sys(
         return None;
     }
 
-    let ehz = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-        symplectic::algorithms::hk2017::ehz_capacity(polytope)
-    }))
-    .ok()
-    .flatten()?;
+    let ehz = symplectic::algorithms::hk2017::ehz_capacity(polytope)?;
 
     let cap = ehz.result.capacity;
     if !cap.is_finite() || cap <= 0.0 {
@@ -1194,12 +1190,10 @@ fn main() {
         // Base computation: instrumented EHZ for orbit gap + gradient
         // =====================================================================
 
-        let instrumented = match std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-            ehz_capacity_instrumented(polytope)
-        })) {
-            Ok(Some(r)) => r,
-            _ => {
-                eprintln!("  {name}: instrumented EHZ failed, skipping");
+        let instrumented = match ehz_capacity_instrumented(polytope) {
+            Some(r) => r,
+            None => {
+                eprintln!("  {name}: instrumented EHZ returned None, skipping");
                 n_skipped += 1;
                 continue;
             }
