@@ -106,6 +106,7 @@ Never without Jörn's instruction: destructive operations, merging to `main`, mo
 
 - Always use local `main`, never `origin/main`.
 - Before committing: `cargo test --release --lib` passes, `cargo clippy --lib -- -D warnings` is clean.
+- Work in a worktree (separate branch) unless Jörn says otherwise. This keeps `main` clean and lets multiple sessions run in parallel without conflicts.
 
 ## Environment
 
