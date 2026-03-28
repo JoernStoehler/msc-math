@@ -23,7 +23,10 @@ crates/                    Rust library (the core)
     algorithms/            different algorithms for the EHZ capacity 
     derivatives.rs         derivative of the capacity in the dual vertices
     dataset.rs             polytope datasets
-  math.tex                 correctness proofs for the entire library (includes all repo math.tex files)
+  math.tex                 correctness proofs for the library (crate modules only)
+
+math.tex                     root math.tex: compiles ALL crate + experiment proofs into one PDF
+                             (cross-references between experiments and crate lemmas resolve here)
 
 experiments/               each experiment is a self-contained directory
   <name>/
@@ -110,6 +113,9 @@ cd crates/ && cargo test --release -- --ignored   # full suite (slow)
 
 # Thesis
 cd thesis/ && latexmk && ./check-build.sh         # build + check
+
+# Math (all proofs — crate + experiments)
+pdflatex math.tex && pdflatex math.tex            # root math.pdf (two passes)
 
 # Experiments
 cd experiments/ && cargo build --release          # build experiment binaries

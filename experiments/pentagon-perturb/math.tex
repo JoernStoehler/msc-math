@@ -29,14 +29,18 @@ This may not mean that the counterexample is a local maximum among all polytopes
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.9\textwidth]{../experiments/pentagon-perturb/pentagon_perturb_sys_hist.png}
+\includegraphics[width=0.9\textwidth]{pentagon_perturb_sys_hist.png}
 \caption{HK-O pentagon perturbations: systolic ratio histogram for 100 perturbed
   samples. The dashed line marks $\mathrm{sys}=1$, and the solid line marks the
   unperturbed counterexample.}
 \label{fig:pentagon-perturb-hist}
 \end{figure}
 
-\input{../experiments/pentagon-perturb/pentagon_perturb_stats.tex}
+\InputIfFileExists{pentagon_perturb_stats.tex}{}{%
+  \InputIfFileExists{../experiments/pentagon-perturb/pentagon_perturb_stats.tex}{}{%
+    \textbf{[pentagon\_perturb\_stats.tex not found]}%
+  }%
+}
 
 %We also compute PCA on the 50D perturbation vectors
 %$(\Delta n, \Delta h) \in \mathbb{R}^5$ for each of the 10 facets, using only
@@ -44,4 +48,4 @@ This may not mean that the counterexample is a local maximum among all polytopes
 %reports the base polytope row and the top PCA components, with the last column
 %showing the explained variance ratio.
 
-%\input{../experiments/pentagon-perturb/pentagon_perturb_pca.tex}
+%\input{pentagon_perturb_pca.tex}

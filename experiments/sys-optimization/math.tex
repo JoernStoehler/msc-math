@@ -351,7 +351,7 @@ across all polytopes and facets.
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=\textwidth]{../experiments/sys-optimization/sys_optimization_gradient_hist.png}
+\includegraphics[width=\textwidth]{sys_optimization_gradient_hist.png}
 \caption{Distribution of $\|\partial\,\mathrm{sys}/\partial a_k\|$
   across 1120 facets from 140 polytopes.
   Left: signed values on linear scale. Right: magnitudes on log scale.}
@@ -363,7 +363,7 @@ prediction and step bound.
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=\textwidth]{../experiments/sys-optimization/sys_optimization_gradient_comparison.png}
+\includegraphics[width=\textwidth]{sys_optimization_gradient_comparison.png}
 \caption{Left: predicted maximum $\Delta\mathrm{sys}$ from a single step
   ($t_{\max} \cdot \|\nabla_a\,\mathrm{sys}\|$, dimensionless).
   Right: maximum step size $t_{\max}$, constrained by vertex feasibility
@@ -383,7 +383,7 @@ $g = \nabla_a\,\mathrm{sys}$ and evaluate the improvement.
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=\textwidth]{../experiments/sys-optimization/sys_optimization_improvement.png}
+\includegraphics[width=\textwidth]{sys_optimization_improvement.png}
 \caption{Left: $\Delta\mathrm{sys}$ from a single gradient step
   for each polytope.
   Right: best achievable $\mathrm{sys}$ vs.\ starting $\mathrm{sys}$.}
@@ -392,7 +392,11 @@ $g = \nabla_a\,\mathrm{sys}$ and evaluate the improvement.
 
 \begin{table}[ht]
 \centering
-\input{../experiments/sys-optimization/sys_optimization_stats.tex}
+\InputIfFileExists{sys_optimization_stats.tex}{}{%
+  \InputIfFileExists{../experiments/sys-optimization/sys_optimization_stats.tex}{}{%
+    \textbf{[sys\_optimization\_stats.tex not found]}%
+  }%
+}
 \caption{Summary statistics for the sys-optimization experiment.}
 \label{tab:sys-opt-stats}
 \end{table}
@@ -422,7 +426,7 @@ improvement.
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=\textwidth]{../experiments/sys-optimization/sys_optimization_convergence.png}
+\includegraphics[width=\textwidth]{sys_optimization_convergence.png}
 \caption{Left: $\mathrm{sys}$ trajectories under iterative gradient
   ascent, colored by facet count.
   Right: per-step improvement $\Delta\mathrm{sys}$ (symlog scale).
@@ -432,7 +436,7 @@ improvement.
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=\textwidth]{../experiments/sys-optimization/sys_optimization_iteration_summary.png}
+\includegraphics[width=\textwidth]{sys_optimization_iteration_summary.png}
 \caption{Left: distribution of iteration counts (mean 6.3).
   Center: starting vs.\ final $\mathrm{sys}$ (most polytopes improve substantially).
   Right: step type usage across all 868 iterations.}
@@ -472,7 +476,7 @@ This produces 13{,}440 evaluations total.
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=\textwidth]{../experiments/sys-optimization/sys_optimization_validity.png}
+\includegraphics[width=\textwidth]{sys_optimization_validity.png}
 \caption{Left: median relative prediction error vs.\ step fraction,
   by direction type (shading: interquartile range).
   The gradient direction (red) tracks the linear prediction closely

@@ -170,7 +170,7 @@ pub fn billiard_capacity(
 ///
 /// Same conversion logic as `hk2017::solve_and_convert`.
 fn solve_and_convert(polytope: &Polytope4D, perm: &[usize]) -> Option<Solution> {
-    let kkt = solve_kkt_for(polytope, perm)?;
+    let kkt = solve_kkt_for(polytope, perm).feasible()?;
     Some(kkt_result_to_solution(kkt))
 }
 

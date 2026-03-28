@@ -55,3 +55,8 @@ perf*.data.old
 
 # Editor
 *.swp
+math.aux
+math.log
+math.out
+math.pdf
+math.toc

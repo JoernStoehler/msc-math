@@ -14,7 +14,9 @@
 //! Used by `projection_solver` (Step 4) and `saddle_point_solver` (null-space
 //! search) to find the maximum-margin point in an affine solution set.
 //!
-//! Mathematical correspondence: [lem:numerical-transition-feasibility]
+//! Mathematical correspondence: [rem:near-null-lp-search] — max-margin LP
+//! for beta > 0 in the KKT null space. The remark describes the Type A/B
+//! eigenvector classification and the LP formulation used here.
 
 use good_lp::{constraint, default_solver, variable, variables, Expression, Solution, SolverModel};
 use nalgebra::{DMatrix, DVector};

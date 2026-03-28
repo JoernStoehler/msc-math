@@ -48,6 +48,16 @@ Depends on: Jörn decides which side to fix for each item.
 
 ---
 
+## math.tex content audit
+
+**Status (2026-03-27):** Several experiment math.tex files contain not just mathematical proofs but also figures, result tables, and experiment writeups. This is wrong — math.tex should contain only lemma/theorem statements, proofs, definitions, and formal derivations. Prose, figures, and result discussions belong in logbook.md (for developers) or thesis/ (for examiners).
+
+**Known offenders (from root math.pdf build):** experiments that include `\includegraphics` or data tables in their math.tex: ablation, gradient-descent, lagrangian-products, omega-obstacle, orbit-recovery, pentagon-perturb, random-product-sweep, random-sweep, sys-optimization, visualization.
+
+**Fix:** Move non-proof content out of math.tex into logbook.md or separate files. Low priority — doesn't block anything, but makes the combined math.pdf noisy.
+
+---
+
 ## 3b. Audit math.tex stubs for lost mathematical backing
 
 When algorithmic lemmas were migrated from code doc comments to math.tex, some may have lost their connection to source material (papers, thesis definitions). Scan all math.tex `[TODO: JÖRN -` entries and check: was there ever a proof or citation? Did it get dropped during migration? Example: `lem:positive-span` and `lem:vertex-enumeration` in `geom/math.tex` have been proof-less stubs since their first commit — the thesis has Jörn-approved definitions of what a polytope is, but no proofs of the algorithmic facts the code relies on (positive spanning ↔ bounded, vertex enumeration correctness, irredundancy via affine rank).
@@ -117,7 +127,7 @@ The thesis is currently a dump of results, not a coherent narrative. Experiments
 - `hko-neighborhood` Phase C (2026-03-23) verified first-order necessary condition for local max in F=10 (n,h)-space via LP. See `hko-local-maximality` task for next steps.
 
 **Gradient experiment redesign (2026-03-26, Jörn):** The three gradient experiments (`sys-optimization`, `gradient-descent`, `gradient-search`) evolved incrementally and overlap significantly. Replace with three cleanly scoped experiments:
-1. **gradient-correctness** (scaffolded) — Is ∂sys/∂a_k correct? Generic polytopes, non-generic geometry, near-degeneracy, redundant halfspaces.
+1. **gradient-correctness** (Q5b/Q5c complete, merged to main 2026-03-28) — Per-orbit gradient validated (slope=2.00). Q5b: 12 polytope types. Q5c: direction-filtered subdiff is a negative result. KktOutcome enum, error handling convention, code-math audit. 14 tests fail due to wrong Q error bound math (lem:q-error-bound too loose). See logbook, TASKS.md q-error-threshold.
 2. **combinatorial-boundaries** (complete, 2026-03-27) — Random cells convex, product cells non-convex (0% vs 100% transition failures). ~F boundaries per gradient step. Orbit facets 2× wider than non-orbit. Gradient-cell alignment favorable (r=0.52). sys continuous, gradient stable except at orbit switches (3%/boundary, up to 70° jump). See logbook.
 3. **sys-search** (dev run complete, branch `sys-search`) — Gradient-based search for sys > 1. Dev run: 42 seeds, best sys=0.933, wiggle dominates overshoot. Next: landscape characterization and search strategy comparison. See `handoffs/sys-search.md`.
 
@@ -142,21 +152,62 @@ Depends on: Jörn scoping the thesis story. Derivative-related experiments also 
 
 ---
 
+## numerics-experiments
+
+**Status (2026-03-28):** New. Two experiments needed to stress-test numerical code.
+
+**1. KKT solver numerics.** Feed the solver matrices with controlled degeneracy (vary λ_min from 1e-3 to 1e-15, vary rank, condition number). Compare eigendecomposition pseudoinverse Q against exact rational Q (rational_solver exists). Check: do quality gates (E threshold, Q correction threshold) reject/accept correctly? Find inputs where the code gives wrong answers.
+
+**2. Polytope construction numerics.** Feed `Polytope4D::from_f64` dual vertices with near-duplicates, near-degenerate geometry, extreme aspect ratios. Compare f64 prefilter decisions (bounded check, irredundancy) against exact arithmetic decisions. Find inputs where the prefilter gives the wrong answer.
+
+Both experiments should collect regression tests: inputs that break the code or reveal the error bounds are wrong/too lax.
+
+---
+
+## code-math-correspondence-audit
+
+**Status (2026-03-28):** New. Audit all code-math correspondences in crates/src/.
+
+The KKT solver's Q error bound assert cites lem:q-error-bound but the code doesn't match the lemma: the code uses |λ_min| of retained eigenvalues (a heuristic numerical cutoff), while the lemma assumes |λ_min| > 0 for the full matrix. This mismatch was never caught because nobody audited whether the code actually corresponds 1:1 to the cited math.
+
+**Scope:** Every `[lem:...]` / `[thm:...]` cross-reference in crates/src/*.rs must be checked:
+1. Does the code implement what the lemma states? (not just cite it)
+2. Are the lemma's preconditions satisfied by the code's inputs?
+3. Are heuristic numerical thresholds distinguished from proven mathematical conditions?
+
+**Known violations:**
+- `saddle_point_solver.rs:354-360`: `abs_lambda_min` filters eigenvalues by threshold, lemma uses min over all eigenvalues
+- `saddle_point_solver.rs:550-558`: Q error bound assert treats a heuristic calibration threshold as a mathematical invariant
+
+---
+
 ## q-error-threshold
 
-**Status (2026-03-26):** Needs Jörn to review the math. Potentially blocks new gradient experiments.
+**Status (2026-03-28):** Root cause identified. Needs new math (tighter Q error bound). Handoff written at `handoffs/q-error-bound-rework.md`.
 
-The KKT solver panics when the error bound E = |r| / |λ_min| exceeds 1e-6. This is triggered by near-degenerate polytopes (gradient-stepped or perturbed) where |λ_min| is tiny:
-- hko-neighborhood: E=1.68e-6 (|r|=6e-8, |λ_min| near eps). Caught by `catch_unwind`.
-- sys-optimization: E=7.15e-6 (|r|=6e-8, |λ_min|=2.29e-9). Uncaught, aborted Phase 3 at 123/140.
+The Q error bound E = (9/2)||r||²/|λ_min| ([lem:q-error-bound]) uses |λ_min| of ALL eigenvalues but the code uses |λ_min| of RETAINED eigenvalues. This mismatch was never caught. Using all eigenvalues matches the lemma but makes E vacuously large (3 tests fail). Using retained eigenvalues works in practice but applies an unproven bound.
 
-The actual residual |r| is always small (~1e-8). The bound blows up because λ_min is near machine epsilon, not because the solution is wrong. The q-error experiment validated the 1e-6 threshold on 1.1M nodes — but those were all non-perturbed polytopes.
+**Root cause (2026-03-28):** The lemma bounds ||δx|| ≤ ||r||/|λ_min| which blows up. But the β-block of near-null eigenvectors is O(|λ_j|) (Type C impossibility), so ||δβ|| = O(||r||) without blow-up. A tighter bound exploiting this structure + Q-constancy (lem:well-defined) + eigendecomposition backward error (Weyl, Davis-Kahan) should be possible.
 
-**Question for Jörn:** Is E = |r| / |λ_min| the right error metric when λ_min → 0? The solution may still be accurate (small residual), but the bound is vacuous. Should we use a different metric for near-singular systems, or accept the panic and skip those polytopes?
+**Current state:** The code returns KktOutcome::NumericalFailure (not panic) for large E or large Q correction. Q5b runs to completion without panics. The heuristic thresholds work empirically but are unproven.
 
-**Impact:** Any experiment that evaluates sys on gradient-stepped or perturbed polytopes (gradient-correctness, combinatorial-boundaries, sys-search) may hit this. Current workaround is `catch_unwind` + skip.
+**Next:** Design a numerics experiment on generic KKT matrices, derive and prove a tighter bound. See handoff.
 
-**Location:** `crates/src/kkt/saddle_point_solver.rs:504`
+**Location:** `crates/src/kkt/saddle_point_solver.rs:537-567`
+
+---
+
+## convention-violations
+
+**Status (2026-03-27):** New. Fix all violations of the panics convention (once finalized in rust.md).
+
+**Known violations:**
+- `experiments/gradient-correctness/run.rs`: 2× `catch_unwind` wrapping `ehz_capacity` and `solve_kkt_for`
+- `experiments/hko-neighborhood/run.rs`: 4× `catch_unwind` wrapping `ehz_capacity`
+- `crates/src/kkt/saddle_point_solver.rs:504,509`: panic comments don't meet the convention standard (improved on gradient-correctness branch, but not finalized)
+- `crates/src/algorithms/capacity_accumulator.rs:186`: gap invariant panic comment needs improvement
+
+**Depends on:** panics convention finalized in rust.md.
 
 ---
 

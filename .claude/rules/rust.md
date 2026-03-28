@@ -23,7 +23,7 @@ Types, function signatures, and function bodies have 1:1 structural corresponden
 Format: `[lem:label]`, `[thm:label]`, `[def:label]` — matching `\label{}` in the module's math.tex.
 
 - Include a one-line English description of the referenced result
-- Never duplicate proofs — doc comments say *what*, math.tex says *why*
+- Never duplicate proofs — math.tex is the single maintained source of truth
 - Never invent labels — use `// TODO: add [lem:...] to math.tex` if the lemma isn't written
 - In source code, never use rendered numbers like "Lemma 3.2" — always use the label
 - Every non-trivial code block must map to a math.tex lemma
@@ -43,6 +43,18 @@ Empirically chosen constants: document rationale, motivating data point, limitat
 ## Performance claims
 
 Never state performance without an inline benchmark citation. "~1ms" is a claim. "1.5-2.0ms for F=5-16 (criterion bench 2026-03-23)" is measured.
+
+## Error handling
+
+Standard Rust error handling, plus:
+
+- When math is violated, panic. Don't try to recover gracefully — the math needs to be fixed, not worked around.
+
+- Don't use `Option<T>` in math code. `None` has no canonical mathematical meaning.
+
+- In math code, use enums instead of errors or panics to classify cases (e.g. invertible vs singular, feasible vs infeasible). Each variant is a mathematical proposition.
+
+- Callers of math code must match on all variants and handle each case locally. Don't propagate with `?`. If a case is proven or conjectured to not occur, `assert!` on it.
 
 ## Experiment binaries
 

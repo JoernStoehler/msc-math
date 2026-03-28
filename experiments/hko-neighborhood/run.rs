@@ -32,7 +32,7 @@ use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::volume::volume;
-use symplectic::kkt::saddle_point_solver::{solve_kkt_for, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
+use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktOutcome, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
 use symplectic::omega0;
 
 /// Gap threshold for near-optimal orbits: collect orbits within δ of best.
@@ -212,7 +212,7 @@ fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult
                 }
                 iterations += 1;
 
-                if let Some(kkt_result) = solve_kkt_for(polytope, perm) {
+                if let KktOutcome::Feasible(kkt_result) = solve_kkt_for(polytope, perm) {
                     let q_val = kkt_result.q_corrected;
                     if q_val <= EPS_Q_POSITIVE {
                         return;
@@ -534,13 +534,9 @@ fn safe_sys(polytope: &Polytope4D) -> Option<(f64, f64, f64)> {
     if vol <= 0.0 {
         return None;
     }
-    // Catch panics from library KKT solver on degenerate geometry
-    let cap = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-        ehz_capacity(polytope).map(|r| r.result.capacity)
-    }))
-    .ok()
-    .flatten()
-    .unwrap_or(f64::NAN);
+    let cap = ehz_capacity(polytope)
+        .map(|r| r.result.capacity)
+        .unwrap_or(f64::NAN);
     if !cap.is_finite() {
         return None;
     }
@@ -1157,9 +1153,7 @@ fn run_phase_b(base_dir: &std::path::Path) {
                         let delta = split_sys - sys_orig;
 
                         // Use library ehz_capacity for orbit info (cheaper than instrumented)
-                        let lib_result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-                            ehz_capacity(&split_poly)
-                        })).ok().flatten();
+                        let lib_result = ehz_capacity(&split_poly);
                         let n_valid = 0; // not computed (instrumented too expensive for F=11)
                         let best_sub = lib_result.as_ref().map(|r| r.best_subset.clone()).unwrap_or_default();
                         let best_perm = lib_result.as_ref().map(|r| r.result.best_permutation.clone()).unwrap_or_default();
@@ -1270,11 +1264,7 @@ fn run_phase_b(base_dir: &std::path::Path) {
                 };
                 let delta = split_sys - sys_orig;
 
-                let lib_result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-                    ehz_capacity(&split_poly)
-                }))
-                .ok()
-                .flatten();
+                let lib_result = ehz_capacity(&split_poly);
                 let n_valid = 0;
                 let best_sub = lib_result
                     .as_ref()
@@ -1364,9 +1354,7 @@ fn run_phase_b(base_dir: &std::path::Path) {
                     };
                     let delta = split_sys - sys_orig;
 
-                    let lib_result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-                        ehz_capacity(&split_poly)
-                    })).ok().flatten();
+                    let lib_result = ehz_capacity(&split_poly);
                     let n_valid = 0;
                     let best_sub = lib_result.as_ref().map(|r| r.best_subset.clone()).unwrap_or_default();
                     let best_perm = lib_result.as_ref().map(|r| r.result.best_permutation.clone()).unwrap_or_default();

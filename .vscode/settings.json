@@ -32,5 +32,6 @@
 		"sound": "on"
 	},
 	"terminal.integrated.enableVisualBell": true,
-	"claudeCode.selectedModel": "opus[1m]"
+	"claudeCode.selectedModel": "opus[1m]",
+	"workbench.editor.editorActionsLocation": "default"
 }

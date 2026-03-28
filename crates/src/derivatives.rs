@@ -259,8 +259,8 @@ mod tests {
                 am[k][d] -= eps;
                 let pp = Polytope4D::from_f64(ap).unwrap();
                 let pm = Polytope4D::from_f64(am).unwrap();
-                let qp = solve_kkt_for(&pp, &best_perm).map(|r| r.q_corrected);
-                let qm = solve_kkt_for(&pm, &best_perm).map(|r| r.q_corrected);
+                let qp = solve_kkt_for(&pp, &best_perm).feasible().map(|r| r.q_corrected);
+                let qm = solve_kkt_for(&pm, &best_perm).feasible().map(|r| r.q_corrected);
                 let fd_kd = match (qp, qm) {
                     (Some(qp), Some(qm)) => {
                         let ap = 0.5 / qp;
@@ -287,6 +287,7 @@ mod tests {
             .expect("ehz_capacity should find an orbit on test polytopes");
         let perm = ehz.result.best_permutation;
         let kkt = solve_kkt_for(polytope, &perm)
+            .feasible()
             .expect("solve_kkt_for should succeed on the best permutation");
         (kkt.q_corrected, kkt.beta, perm, kkt.mu, kkt.xi)
     }

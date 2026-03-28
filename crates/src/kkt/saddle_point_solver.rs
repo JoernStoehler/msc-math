@@ -141,7 +141,32 @@ pub(crate) struct EigenInfo {
     pub n_zero: usize,
 }
 
-/// Result of the saddle-point KKT solve with diagnostics.
+/// Outcome of the saddle-point KKT solve.
+///
+/// Every variant corresponds to a mathematical proposition about the orbit.
+/// There is no "error" variant — the solver either produces a mathematical
+/// result or panics (bug). See `.claude/rules/rust.md` error handling convention.
+#[derive(Clone, Debug)]
+pub enum KktOutcome {
+    /// The orbit has a feasible solution with β > 0 and Q > 0.
+    Feasible(KktResult),
+    /// The orbit is infeasible: β has a non-positive component, or Q ≤ 0.
+    Infeasible,
+    /// The KKT matrix is singular (all eigenvalues ≈ 0).
+    SingularMatrix,
+}
+
+impl KktOutcome {
+    /// Extract the feasible result, or None if not feasible.
+    pub fn feasible(self) -> Option<KktResult> {
+        match self {
+            KktOutcome::Feasible(r) => Some(r),
+            _ => None,
+        }
+    }
+}
+
+/// Feasible KKT solution with diagnostics.
 ///
 /// Contains the solution beta, Lagrange multipliers mu and xi,
 /// residual-corrected Q value with error bound, and inertia of M.
@@ -201,21 +226,21 @@ pub struct KktResult {
 /// the strict tier takes over. This replaces the old LU + SVD fallback with a
 /// single factorization.
 ///
-/// Returns `Some(KktResult)` with beta, corrected Q, error bound, and inertia,
-/// or `None` if no admissible solution exists.
+/// Returns `KktOutcome::Feasible(result)` with beta, corrected Q, error bound,
+/// and inertia, or a non-feasible variant explaining why no solution was found.
 ///
 /// [lem:kkt]: KKT conditions characterize the EHZ capacity optimum as a saddle point.
 pub fn solve_saddle_point(
     kkt_matrix: &DMatrix<f64>,
     rhs: &DVector<f64>,
-) -> Option<KktResult> {
+) -> KktOutcome {
     let m = rhs.len() - 5;
     let size = rhs.len();
 
     let eig = kkt_matrix.clone().symmetric_eigen();
     let max_abs_ev = eig.eigenvalues.iter().map(|e| e.abs()).fold(0.0f64, f64::max);
     if max_abs_ev < EPS_EIGEN_FLOOR {
-        return None;
+        return KktOutcome::SingularMatrix;
     }
 
     // Compute inertia using the strict threshold (for structure analysis).
@@ -233,19 +258,21 @@ pub fn solve_saddle_point(
     };
 
     // Tier 1: Permissive threshold — retain all eigenvalues above machine-epsilon floor.
-    let result = try_pseudoinverse_with_threshold(
+    if let Some(outcome) = try_pseudoinverse_with_threshold(
         kkt_matrix, rhs, m,
         &eigen_info, EPS_EIGEN_FLOOR,
-    );
-    if result.is_some() {
-        return result;
+    ) {
+        if let KktOutcome::Feasible(_) = &outcome {
+            return outcome;
+        }
     }
 
     // Tier 2: Strict threshold — treat small eigenvalues as null space.
+    // If Tier 2 also fails (None), the solver couldn't classify this orbit.
     try_pseudoinverse_with_threshold(
         kkt_matrix, rhs, m,
         &eigen_info, strict_threshold,
-    )
+    ).unwrap_or(KktOutcome::Infeasible)
 }
 
 /// Convenience: solve KKT for a polytope and permutation in one call.
@@ -254,7 +281,7 @@ pub fn solve_saddle_point(
 /// then calls `solve_saddle_point`.
 ///
 /// [lem:kkt]: assembles and solves the augmented KKT system for a (polytope, permutation) pair.
-pub fn solve_kkt_for(polytope: &Polytope4D, perm: &[usize]) -> Option<KktResult> {
+pub fn solve_kkt_for(polytope: &Polytope4D, perm: &[usize]) -> KktOutcome {
     let (kkt, rhs) = build_augmented_system(polytope, perm);
     solve_saddle_point(&kkt, &rhs)
 }
@@ -287,15 +314,16 @@ pub(crate) fn q_from_beta(
 /// checks the residual, searches the null space if rank-deficient, and computes
 /// the Q error bound.
 ///
-/// Returns None if: residual too large, beta <= 0 with full rank, or null space
-/// search fails.
+/// Returns None if this threshold didn't produce a result (caller should try
+/// a different threshold). Returns Some(KktOutcome) with a mathematical
+/// classification if a definitive answer was reached.
 fn try_pseudoinverse_with_threshold(
     kkt: &DMatrix<f64>,
     rhs: &DVector<f64>,
     m: usize,
     eigen_info: &EigenInfo,
     threshold: f64,
-) -> Option<KktResult> {
+) -> Option<KktOutcome> {
     let size = m + 5;
     let eigenvalues = &eigen_info.eigenvalues;
     let eigenvectors = &eigen_info.eigenvectors;
@@ -316,7 +344,7 @@ fn try_pseudoinverse_with_threshold(
     let residual_vec = kkt * &x0 - rhs;
     let residual_norm = residual_vec.norm();
     if residual_norm > EPS_KKT_RESIDUAL {
-        return None;
+        return None;  // Tier fallback: try next threshold.
     }
 
     // Q error bound computation ([lem:q-error-bound]).
@@ -327,10 +355,13 @@ fn try_pseudoinverse_with_threshold(
     let xi_hat = x0[m + 4];
     let q_correction = r2_dot_mu + r3 * xi_hat;
 
-    // |lambda_min| of RETAINED eigenvalues.
+    // [lem:q-error-bound]: |lambda_min| = min_j |lambda_j| over ALL eigenvalues of M.
+    // This makes E large for near-singular M, which correctly exposes that the lemma's
+    // bound is too loose. The solver panics on basic polytopes (simplex, hypercube, etc.)
+    // because the bound is wrong — the actual Q is accurate but the bound says otherwise.
+    // See TASKS.md q-error-threshold: the lemma needs replacing with a tighter bound.
     let abs_lambda_min = eigenvalues
         .iter()
-        .filter(|&&e| e.abs() > threshold)
         .map(|e| e.abs())
         .fold(f64::INFINITY, f64::min)
         .max(f64::MIN_POSITIVE);
@@ -344,23 +375,24 @@ fn try_pseudoinverse_with_threshold(
 
     // If already feasible (all beta > EPS), compute error bound and return.
     if beta0.iter().all(|&b| b > EPS_BETA_POSITIVE) {
-        return finalize_result(&beta0, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info);
+        return Some(finalize_result(&beta0, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info));
     }
 
     // Full rank at this threshold: unique solution. If some beta near zero,
     // still accept as uncertain candidate for the accumulator.
     if rank == size {
         if beta0.iter().all(|&b| b > -EPS_BETA_POSITIVE) {
-            return finalize_result(&beta0, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info);
+            return Some(finalize_result(&beta0, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info));
         }
-        return None;
+        return Some(KktOutcome::Infeasible);
     }
 
     // Rank-deficient: search the *numerical* null space for beta > 0.
     // "Null space" here means eigenvectors whose eigenvalues are below the
-    // threshold — not an exact kernel (which doesn't exist in f64). The
-    // threshold is chosen so that these directions have negligible effect on
-    // the KKT objective Q, bounded by [lem:q-error-bound].
+    // threshold — not an exact kernel (which doesn't exist in f64).
+    // [lem:well-defined]: Q is exactly invariant along the true null space,
+    // so shifting beta along these approximate null directions changes Q by
+    // at most O(|lambda_j|) where lambda_j are the discarded eigenvalues.
     //
     // Extract the beta-block of each null eigenvector, filtering out Type A
     // directions (||v_beta|| ~ 0) that only move Lagrange multipliers and
@@ -397,9 +429,9 @@ fn try_pseudoinverse_with_threshold(
     // allocations on the hot path for degenerate polytopes.
     if k_eff == 0 {
         if beta0.iter().all(|&b| b > -EPS_BETA_POSITIVE) {
-            return finalize_result(&beta0, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info);
+            return Some(finalize_result(&beta0, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info));
         } else {
-            return None;
+            return Some(KktOutcome::Infeasible);
         }
     }
 
@@ -427,7 +459,7 @@ fn try_pseudoinverse_with_threshold(
     } else if beta0.iter().all(|&b| b > -EPS_BETA_POSITIVE) {
         beta0.clone()
     } else {
-        return None;
+        return Some(KktOutcome::Infeasible);
     };
 
     // Save beta0 for Q computation ([lem:well-defined]).
@@ -436,17 +468,24 @@ fn try_pseudoinverse_with_threshold(
     // Verify constraints on the final beta (covers both LP and fallback paths).
     let constraint_residual_norm = extract_constraint_residual(kkt, &beta_final, m);
     if constraint_residual_norm > EPS_KKT_RESIDUAL {
-        return None;
+        panic!(
+            "KKT constraint residual too large after LP: ||r|| = {:.2e} > {:.2e}",
+            constraint_residual_norm, EPS_KKT_RESIDUAL
+        );
     }
 
-    // Q is invariant along the true null space ([lem:well-defined]), so compute
+    // [lem:well-defined]: Q is invariant along the true null space, so compute
     // Q from the pseudoinverse beta0, not from the LP-shifted beta_final.
-    // Large LP shifts along approximate null directions cause O(alpha^2 * |lambda_j|)
+    // TODO: the claim "approximate null shifts cause O(alpha^2 |lambda_j|)
     // Q drift that is spurious. beta_final is only used for feasibility (margin
     // classification) and downstream beta values (orbit reconstruction, gradients).
-    let mut result = finalize_result(&beta0_ref, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info)?;
-    result.beta = beta_final;
-    Some(result)
+    Some(match finalize_result(&beta0_ref, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info) {
+        KktOutcome::Feasible(mut result) => {
+            result.beta = beta_final;
+            KktOutcome::Feasible(result)
+        }
+        other => other,
+    })
 }
 
 /// Compute the constraint residual for the beta vector using the KKT matrix structure.
@@ -475,7 +514,7 @@ fn finalize_result(
     residual_norm: f64,
     abs_lambda_min: f64,
     eigen_info: &EigenInfo,
-) -> Option<KktResult> {
+) -> KktOutcome {
     // Compute Q = (1/2) beta^T H beta using the top-left m x m block of the KKT matrix.
     let mut q_raw = 0.0;
     for i in 0..m {
@@ -487,6 +526,10 @@ fn finalize_result(
 
     let q_corrected = q_raw + q_correction;
 
+    if q_corrected <= EPS_Q_POSITIVE {
+        return KktOutcome::Infeasible;
+    }
+
     // Tight bound: E = (9/2) ||r||^2 / |lambda_min|.
     // 4.5 = 9/2 comes from [lem:q-error-bound]: the KKT block structure
     // identity delta_beta^T H delta_beta = delta_x^T M delta_x - 2 r2^T delta_mu
@@ -497,22 +540,25 @@ fn finalize_result(
     let r_sq = residual_norm * residual_norm;
     let q_error_bound = 4.5 * r_sq / abs_lambda_min;
 
-    // Calibration: q-error experiment (Part 1) measures worst-case E = 2.9e-11
-    // across 1.1M nodes (F ≤ 10). The 1e-6 threshold is ~5 orders of magnitude
-    // above observed values. If this fires on larger polytopes (F > 16),
-    // re-measure before widening.
-    assert!(
-        q_error_bound < 1e-6,
-        "Q error bound unexpectedly large: E={:.2e}, |r|={:.2e}, |lambda_min|={:.2e}",
-        q_error_bound, residual_norm, abs_lambda_min
-    );
-    assert!(
-        q_correction.abs() < 1e-6 || q_correction.abs() < 1e-6 * q_raw.abs(),
-        "Q correction unexpectedly large: correction={:.2e}, Q_raw={:.2e}, ratio={:.2e}",
-        q_correction, q_raw, q_correction.abs() / q_raw.abs().max(1e-30)
-    );
+    // Heuristic quality gate: reject solutions where the proven error bound E
+    // ([lem:q-error-bound]) or the correction term exceeds calibrated thresholds.
+    // These are NOT mathematically derived thresholds — they are empirical cutoffs
+    // from the q-error experiment (worst-case E = 2.9e-11 across 1.1M nodes, F ≤ 10).
+    // TODO: derive thresholds from the math, or write a lemma justifying them.
+    if q_error_bound >= 1e-6 {
+        panic!(
+            "Q error bound too large: E={:.2e}, |r|={:.2e}, |lambda_min|={:.2e}",
+            q_error_bound, residual_norm, abs_lambda_min
+        );
+    }
+    if q_correction.abs() >= 1e-6 && q_correction.abs() >= 1e-6 * q_raw.abs() {
+        panic!(
+            "Q correction too large: correction={:.2e}, Q_raw={:.2e}, ratio={:.2e}",
+            q_correction, q_raw, q_correction.abs() / q_raw.abs().max(1e-30)
+        );
+    }
 
-    Some(KktResult {
+    KktOutcome::Feasible(KktResult {
         beta: beta.to_vec(),
         mu,
         xi,
@@ -571,7 +617,7 @@ mod tests {
                     let mut perm = vec![subset[0]];
                     perm.extend_from_slice(&rest);
                     let (kkt, rhs) = build_augmented_system(polytope, &perm);
-                    if let Some(result) = solve_saddle_point(&kkt, &rhs) {
+                    if let KktOutcome::Feasible(result) = solve_saddle_point(&kkt, &rhs) {
                         if result.beta.iter().all(|&b| b > EPS_BETA_POSITIVE)
                             && result.q_corrected > EPS_Q_POSITIVE
                         {
@@ -688,15 +734,17 @@ mod tests {
         let result_convenience = solve_kkt_for(polytope, &perm);
 
         match (result_direct, result_convenience) {
-            (Some(d), Some(c)) => {
+            (KktOutcome::Feasible(d), KktOutcome::Feasible(c)) => {
                 assert_approx(d.q_corrected, c.q_corrected, 1e-12, "Q should match");
                 assert_eq!(d.beta.len(), c.beta.len());
                 for i in 0..d.beta.len() {
                     assert_approx(d.beta[i], c.beta[i], 1e-12, &format!("beta[{}]", i));
                 }
             }
-            (None, None) => {} // both fail: acceptable
-            _ => panic!("direct and convenience should agree on Some/None"),
+            (KktOutcome::Feasible(_), _) | (_, KktOutcome::Feasible(_)) => {
+                panic!("direct and convenience should agree on feasibility");
+            }
+            _ => {} // both non-feasible: acceptable
         }
     }
 
@@ -714,7 +762,7 @@ mod tests {
             for_each_combination(f, size, &mut |subset| {
                 let perm = subset.to_vec();
                 let (kkt, rhs) = build_augmented_system(polytope, &perm);
-                if let Some(result) = solve_saddle_point(&kkt, &rhs) {
+                if let KktOutcome::Feasible(result) = solve_saddle_point(&kkt, &rhs) {
                     assert!(
                         result.q_error_bound >= 0.0,
                         "error bound should be non-negative, got {}",
@@ -742,7 +790,7 @@ mod tests {
         let perm = vec![0, 1, 2];
         let (kkt, rhs) = build_augmented_system(polytope, &perm);
 
-        if let Some(result) = solve_saddle_point(&kkt, &rhs) {
+        if let KktOutcome::Feasible(result) = solve_saddle_point(&kkt, &rhs) {
             let m = perm.len();
             let size = m + 5;
             assert_eq!(
@@ -762,7 +810,7 @@ mod tests {
         let size = 8;
         let kkt = DMatrix::zeros(size, size);
         let rhs = DVector::zeros(size);
-        assert!(solve_saddle_point(&kkt, &rhs).is_none());
+        assert!(matches!(solve_saddle_point(&kkt, &rhs), KktOutcome::SingularMatrix));
     }
 
     /// Identity matrix with standard RHS: verify it doesn't panic.
@@ -789,6 +837,74 @@ mod tests {
         let _result = solve_saddle_point(&kkt, &rhs);
     }
 
+    // ── Q error bound panic on perturbed symmetric polytopes ──
+
+    /// Perturbed LP(4,4) triggers the Q-error-bound panic on degenerate 4-facet orbits.
+    /// The KKT matrix eigenvalues shift from null (at the symmetric point) to small-but-
+    /// retained (at the perturbed point), making |λ_min| tiny and the error bound vacuous.
+    /// This is a regression test: when the deferred work (TASKS.md q-error-threshold) is
+    /// resolved, this test should be updated to expect the new behavior.
+    #[test]
+    fn perturbed_lp44_degenerate_orbit() {
+        use crate::{lagrangian_product, regular_polygon_2d};
+        let (qn, qh) = regular_polygon_2d(4, 1.0);
+        let polytope = lagrangian_product(&qn, &qh, &qn, &qh).expect("regular LP(4,4)");
+        let duals = polytope.dual_vertices_f64();
+        // Small perturbation breaking the square symmetry
+        // Small perturbation breaking square symmetry.
+        let perturbed: Vec<nalgebra::Vector4<f64>> = duals
+            .iter()
+            .enumerate()
+            .map(|(i, a)| {
+                let s = 1e-4 * ((i + 1) as f64);
+                nalgebra::Vector4::new(a[0] + s * 0.3, a[1] - s * 0.7, a[2] + s * 0.5, a[3] - s * 0.1)
+            })
+            .collect();
+        let perturbed_poly =
+            crate::geom::polytope::Polytope4D::from_f64(perturbed).expect("perturbed LP(4,4)");
+        // Solve KKT directly for the degenerate 4-facet orbit [1,5,3,7].
+        // At the symmetric point this orbit has β = 0.25. Under perturbation,
+        // the KKT eigenvalues shift from null to small-but-retained, making
+        // the Q error bound vacuous.
+        let outcome = solve_kkt_for(&perturbed_poly, &[1, 5, 3, 7]);
+        // The degenerate orbit should NOT be feasible on the perturbed polytope.
+        assert!(
+            !matches!(outcome, KktOutcome::Feasible(_)),
+            "degenerate 4-facet orbit on perturbed LP(4,4) should not be feasible, got {:?}",
+            outcome
+        );
+    }
+
+    /// Perturbed LP(4,4): ehz_capacity completes without panic.
+    ///
+    /// Before the KktOutcome refactor, ehz_capacity panicked on perturbed LP(4,4)
+    /// with "Q error bound unexpectedly large" because degenerate orbits reached
+    /// finalize_result with |λ_min| ≈ 1e-12. After the refactor, these orbits
+    /// return Infeasible (β < 0 or Q ≤ 0) before reaching the error bound check.
+    ///
+    /// Regression test: if this starts panicking again, the KktOutcome early
+    /// returns are no longer catching the degenerate cases.
+    #[test]
+    fn perturbed_lp44_ehz_capacity_no_panic() {
+        use crate::{lagrangian_product, regular_polygon_2d};
+        let (qn, qh) = regular_polygon_2d(4, 1.0);
+        let polytope = lagrangian_product(&qn, &qh, &qn, &qh).expect("LP(4,4)");
+        let duals = polytope.dual_vertices_f64();
+        // Fixed perturbation that breaks square symmetry.
+        // Uses the exact dual vertices rather than RNG for stability.
+        let perturbed: Vec<nalgebra::Vector4<f64>> = duals
+            .iter()
+            .enumerate()
+            .map(|(i, a)| {
+                let s = 0.01 * ((i + 1) as f64);
+                nalgebra::Vector4::new(a[0] + s * 0.3, a[1] - s * 0.7, a[2] + s * 0.5, a[3] - s * 0.1)
+            })
+            .collect();
+        let pp = crate::geom::polytope::Polytope4D::from_f64(perturbed).expect("perturbed LP(4,4)");
+        let result = crate::algorithms::hk2017::ehz_capacity(&pp);
+        assert!(result.is_some(), "ehz_capacity should succeed on perturbed LP(4,4)");
+    }
+
     // ── Constraint satisfaction ──
 
     /// All returned solutions satisfy the normalization constraint (1^T beta = 1).
@@ -803,7 +919,7 @@ mod tests {
             for_each_combination(f, size, &mut |subset| {
                 let perm = subset.to_vec();
                 let (kkt, rhs) = build_augmented_system(polytope, &perm);
-                if let Some(result) = solve_saddle_point(&kkt, &rhs) {
+                if let KktOutcome::Feasible(result) = solve_saddle_point(&kkt, &rhs) {
                     let sum_beta: f64 = result.beta.iter().sum();
                     assert!(
                         (sum_beta - 1.0).abs() < 1e-6,
@@ -830,7 +946,7 @@ mod tests {
             for_each_combination(f, size, &mut |subset| {
                 let perm = subset.to_vec();
                 let (kkt, rhs) = build_augmented_system(polytope, &perm);
-                if let Some(result) = solve_saddle_point(&kkt, &rhs) {
+                if let KktOutcome::Feasible(result) = solve_saddle_point(&kkt, &rhs) {
                     #[allow(clippy::needless_range_loop)]
                     for d in 0..4 {
                         let sum: f64 = result.beta.iter().enumerate()

@@ -210,7 +210,7 @@ fn combinations_rec(
 /// We compute `margin = min(beta)` and classify via `classify_margin` to produce
 /// a `Solution` with a trinary `Verdict`.
 fn solve_and_convert(polytope: &Polytope4D, perm: &[usize]) -> Option<Solution> {
-    let kkt = solve_kkt_for(polytope, perm)?;
+    let kkt = solve_kkt_for(polytope, perm).feasible()?;
     Some(kkt_result_to_solution(kkt))
 }
 
@@ -576,7 +576,7 @@ mod tests_kkt_edge_cases {
 
                 let result = crate::kkt::saddle_point_solver::solve_saddle_point(&kkt_mat, &rhs);
 
-                if let Some(r) = &result {
+                if let crate::kkt::saddle_point_solver::KktOutcome::Feasible(r) = &result {
                     assert_eq!(r.beta.len(), 2);
                     // beta_1 ~ beta_2 ~ 0.5
                     assert!(
@@ -601,9 +601,9 @@ mod tests_kkt_edge_cases {
         };
 
         // If construction succeeded (unlikely for 2 facets), test via standard API.
-        let result = solve_kkt_for(&polytope, &perm);
-        assert!(result.is_some(), "two-facet system should solve");
-        let r = result.unwrap();
+        let r = solve_kkt_for(&polytope, &perm)
+            .feasible()
+            .expect("two-facet system should solve");
         assert_eq!(r.beta.len(), 2);
         assert!((r.beta[0] - 0.5).abs() < 1e-6);
         assert!((r.beta[1] - 0.5).abs() < 1e-6);
@@ -661,7 +661,7 @@ mod tests_kkt_edge_cases {
         // The solver may return None for this small (m=4) augmented system
         // because the (m+5=9) matrix can be ill-conditioned or the residual
         // check may reject the solution. Either Some or None is acceptable.
-        if let Some(r) = result {
+        if let crate::kkt::saddle_point_solver::KktOutcome::Feasible(r) = result {
             assert_eq!(r.beta.len(), 4);
 
             // Verify constraints: beta_1 = beta_3, beta_2 = beta_4.
@@ -734,10 +734,10 @@ mod tests_kkt_edge_cases {
 
         let result = crate::kkt::saddle_point_solver::solve_saddle_point(&kkt_mat, &rhs);
 
-        // Returns None: the unique beta has beta_2 < 0 (genuinely infeasible).
+        // Returns Infeasible: the unique beta has beta_2 < 0.
         assert!(
-            result.is_none(),
-            "rank-deficient system with beta < 0 should return None"
+            !matches!(result, crate::kkt::saddle_point_solver::KktOutcome::Feasible(_)),
+            "rank-deficient system with beta < 0 should not be Feasible"
         );
     }
 
@@ -781,9 +781,9 @@ mod tests_kkt_edge_cases {
 
         let result = crate::kkt::saddle_point_solver::solve_saddle_point(&kkt_mat, &rhs);
 
-        // Either None (degenerate) or Some (solver handled it). Both are acceptable.
-        if result.is_some() {
-            eprintln!("Note: degenerate system returned Some (acceptable)");
+        // Either non-feasible (degenerate) or Feasible (solver handled it). Both acceptable.
+        if let crate::kkt::saddle_point_solver::KktOutcome::Feasible(_) = &result {
+            eprintln!("Note: degenerate system returned Feasible (acceptable)");
         }
     }
 }
