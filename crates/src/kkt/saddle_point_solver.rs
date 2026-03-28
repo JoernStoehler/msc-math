@@ -143,18 +143,17 @@ pub(crate) struct EigenInfo {
 
 /// Outcome of the saddle-point KKT solve.
 ///
-/// Distinguishes mathematical outcomes (feasible, infeasible, singular)
-/// from numerical failures. See `.claude/rules/rust.md` error handling convention.
+/// Every variant corresponds to a mathematical proposition about the orbit.
+/// There is no "error" variant — the solver either produces a mathematical
+/// result or panics (bug). See `.claude/rules/rust.md` error handling convention.
 #[derive(Clone, Debug)]
 pub enum KktOutcome {
     /// The orbit has a feasible solution with β > 0 and Q > 0.
     Feasible(KktResult),
     /// The orbit is infeasible: β has a non-positive component, or Q ≤ 0.
     Infeasible,
-    /// The KKT matrix is singular (all eigenvalues ≈ 0) or has no valid structure.
+    /// The KKT matrix is singular (all eigenvalues ≈ 0).
     SingularMatrix,
-    /// The numerical solve failed (residual too large, LP failure, constraint violation).
-    NumericalFailure,
 }
 
 impl KktOutcome {
@@ -340,7 +339,10 @@ fn try_pseudoinverse_with_threshold(
     let residual_vec = kkt * &x0 - rhs;
     let residual_norm = residual_vec.norm();
     if residual_norm > EPS_KKT_RESIDUAL {
-        return KktOutcome::NumericalFailure;
+        panic!(
+            "KKT residual too large: ||r|| = {:.2e} > {:.2e}",
+            residual_norm, EPS_KKT_RESIDUAL
+        );
     }
 
     // Q error bound computation ([lem:q-error-bound]).
@@ -471,7 +473,10 @@ fn try_pseudoinverse_with_threshold(
     // Verify constraints on the final beta (covers both LP and fallback paths).
     let constraint_residual_norm = extract_constraint_residual(kkt, &beta_final, m);
     if constraint_residual_norm > EPS_KKT_RESIDUAL {
-        return KktOutcome::NumericalFailure;
+        panic!(
+            "KKT constraint residual too large after LP: ||r|| = {:.2e} > {:.2e}",
+            constraint_residual_norm, EPS_KKT_RESIDUAL
+        );
     }
 
     // [lem:well-defined]: Q is invariant along the true null space, so compute
@@ -546,10 +551,16 @@ fn finalize_result(
     // from the q-error experiment (worst-case E = 2.9e-11 across 1.1M nodes, F ≤ 10).
     // TODO: derive thresholds from the math, or write a lemma justifying them.
     if q_error_bound >= 1e-6 {
-        return KktOutcome::NumericalFailure;
+        panic!(
+            "Q error bound too large: E={:.2e}, |r|={:.2e}, |lambda_min|={:.2e}",
+            q_error_bound, residual_norm, abs_lambda_min
+        );
     }
     if q_correction.abs() >= 1e-6 && q_correction.abs() >= 1e-6 * q_raw.abs() {
-        return KktOutcome::NumericalFailure;
+        panic!(
+            "Q correction too large: correction={:.2e}, Q_raw={:.2e}, ratio={:.2e}",
+            q_correction, q_raw, q_correction.abs() / q_raw.abs().max(1e-30)
+        );
     }
 
     KktOutcome::Feasible(KktResult {

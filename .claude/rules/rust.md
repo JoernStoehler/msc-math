@@ -46,17 +46,15 @@ Never state performance without an inline benchmark citation. "~1ms" is a claim.
 
 ## Error handling
 
-Follow standard Rust error handling. Types have semantic meaning — use them to distinguish outcomes.
+Standard Rust error handling, plus:
 
-**Return types for mathematical outcomes.** When a computation has multiple valid outcomes (e.g. feasible, infeasible, ill-conditioned), use an enum — not `Option<T>`. `None` discards the reason and is an anti-pattern for semantically meaningful results. Example: a KKT solver should return an enum like `KktOutcome::Feasible(result) | Infeasible { min_beta } | IllConditioned { lambda_min }`, not `Option<KktResult>`.
+- When math is violated, panic. Don't try to recover gracefully — the math needs to be fixed, not worked around.
 
-**`Result<T, E>` for operational errors.** I/O failures, invalid input formats, resource exhaustion. Use domain-specific error enums (`thiserror`), not strings. Propagate with `?`.
+- Don't use `Option<T>` in math code. `None` has no canonical mathematical meaning.
 
-**`panic!` / `assert!` for bugs only.** Panics mean programmer error or violated invariants or falsified math theorems — conditions that should be unreachable in correct code and correct math. Standard Rust semantics.
-- Never catch panics (`catch_unwind`). Never convert panics to `None` or `Result::Err`. Escalate them to the developer agent.
-- When a panic fires during a run: read the source comment at the panic location, then investigate to find the root causes that fully explain why the panic was possible. Report preliminary findings to Jörn if the root cause is unclear, or has no straightforward fix that is in-scope. Don't hide the bug, not even to defer its resolution to later.
-- Intentional panics for deferred work (edge case the developer knows CAN fire but hasn't handled yet) must have a comment explaining: why the work was deferred and what to do when the panic fires. These are temporary — they should be converted to proper return types when the deferred work is done.
-- Standard idiomatic safety-net asserts (conditions the developer believes CANNOT fire in correct code with correct math) need no special comment beyond the assert message.
+- In math code, use enums instead of errors or panics to classify cases (e.g. invertible vs singular, feasible vs infeasible). Each variant is a mathematical proposition.
+
+- Callers of math code must match on all variants and handle each case locally. Don't propagate with `?`. If a case is proven or conjectured to not occur, `assert!` on it.
 
 ## Experiment binaries
 
