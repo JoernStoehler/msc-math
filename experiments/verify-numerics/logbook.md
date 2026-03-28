@@ -65,6 +65,16 @@ Important domain context: β_k=0 boundary cases are handled by the caller runnin
 - Include empirical math validation (not just solver numerics).
 - If special structure of C matters (from the domain), read the codebase and ask Jörn whether narrowing scope is better than the general problem.
 
+## Known issues from code-math audit (2026-03-28)
+
+Cross-reference audit (`handoffs/cross-reference-audit.md`) found 3 mismatches, all in `saddle_point_solver.rs`:
+
+- **M1 (critical):** `lem:q-error-bound` uses |λ_min| over ALL eigenvalues, code uses |λ_min| of RETAINED eigenvalues (after threshold τ=10⁻³). Bound is too loose — panics on basic polytopes. Already tracked in TASKS.md.
+- **M2 (high):** Q is computed from β₀ (pseudoinverse solution) but the returned `result.beta` is β_final (LP-shifted). These don't correspond — the structural contract "result.beta and result.q come from the same solution" is broken. Incomplete TODO at line 479.
+- **M3 (medium):** Code comment at lines 534-544 oversimplifies the lem:q-error-bound proof. The 9/2 constant is correct but the explanation ("removes the ||H||/|λ_min|² term") is misleading.
+
+Everything else in the codebase (~160 references) checked out OK. All problems are in the error bound machinery.
+
 ## Status
 
 Not started.

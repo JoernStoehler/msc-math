@@ -39,3 +39,9 @@ Session: cross-reference audit. Jörn asked "what does your agent written prompt
 **Root cause:** Agent assumed Jörn already knew the content and was making a point, rather than taking the question at face value. Memory entry `silence_not_confirmation` covers a related pattern (don't assume Jörn read/agreed) but the agent didn't generalize it to question interpretation.
 
 **Lesson:** When Jörn asks "what does X say?", answer literally first — quote the content. If the question seems too obvious to be literal, still answer literally, then ask if there's more to it. Don't guess at implied meaning when the literal meaning is answerable.
+
+### 2026-03-28 — Ran git stash on main with dirty working tree from other sessions
+
+During pre-merge checklist, agent used `git stash` on main to check whether test failures were pre-existing. The working tree had uncommitted changes from other sessions (TASKS.md, capacity_accumulator.rs, math.tex, etc.). The stash/pop completed cleanly, but this risked losing or corrupting in-progress work.
+
+**The right thing to do:** The agent's change was a one-line comment edit. Comment-only changes cannot cause test failures. The agent should have reasoned about this instead of touching the working tree. More broadly: never use git stash/reset/checkout on main when there are uncommitted changes from other sessions.
