@@ -147,6 +147,23 @@ Depends on: Jörn scoping the thesis story. Derivative-related experiments also 
 
 ---
 
+## code-math-correspondence-audit
+
+**Status (2026-03-28):** New. Audit all code-math correspondences in crates/src/.
+
+The KKT solver's Q error bound assert cites lem:q-error-bound but the code doesn't match the lemma: the code uses |λ_min| of retained eigenvalues (a heuristic numerical cutoff), while the lemma assumes |λ_min| > 0 for the full matrix. This mismatch was never caught because nobody audited whether the code actually corresponds 1:1 to the cited math.
+
+**Scope:** Every `[lem:...]` / `[thm:...]` cross-reference in crates/src/*.rs must be checked:
+1. Does the code implement what the lemma states? (not just cite it)
+2. Are the lemma's preconditions satisfied by the code's inputs?
+3. Are heuristic numerical thresholds distinguished from proven mathematical conditions?
+
+**Known violations:**
+- `saddle_point_solver.rs:354-360`: `abs_lambda_min` filters eigenvalues by threshold, lemma uses min over all eigenvalues
+- `saddle_point_solver.rs:550-558`: Q error bound assert treats a heuristic calibration threshold as a mathematical invariant
+
+---
+
 ## q-error-threshold
 
 **Status (2026-03-26):** Needs Jörn to review the math. Potentially blocks new gradient experiments.
