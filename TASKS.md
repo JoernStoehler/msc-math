@@ -166,20 +166,17 @@ The KKT solver's Q error bound assert cites lem:q-error-bound but the code doesn
 
 ## q-error-threshold
 
-**Status (2026-03-26):** Needs Jörn to review the math. Potentially blocks new gradient experiments.
+**Status (2026-03-28):** Root cause identified. Needs new math (tighter Q error bound). Handoff written at `handoffs/q-error-bound-rework.md`.
 
-The KKT solver panics when the error bound E = |r| / |λ_min| exceeds 1e-6. This is triggered by near-degenerate polytopes (gradient-stepped or perturbed) where |λ_min| is tiny:
-- hko-neighborhood: E=1.68e-6 (|r|=6e-8, |λ_min| near eps). Caught by `catch_unwind`.
-- sys-optimization: E=7.15e-6 (|r|=6e-8, |λ_min|=2.29e-9). Uncaught, aborted Phase 3 at 123/140.
-- gradient-correctness Q5b: E≈0.3 (|λ_min|≈3e-12) on perturbed LP(4,4)/hypercube. 4-facet orbits have structurally singular M under symmetry-breaking perturbation (5 constraints on 4 unknowns). Caught by `catch_unwind`.
+The Q error bound E = (9/2)||r||²/|λ_min| ([lem:q-error-bound]) uses |λ_min| of ALL eigenvalues but the code uses |λ_min| of RETAINED eigenvalues. This mismatch was never caught. Using all eigenvalues matches the lemma but makes E vacuously large (3 tests fail). Using retained eigenvalues works in practice but applies an unproven bound.
 
-The actual residual |r| is always small (~1e-8). The bound blows up because λ_min is near machine epsilon, not because the solution is wrong. The q-error experiment validated the 1e-6 threshold on 1.1M nodes — but those were all non-perturbed polytopes.
+**Root cause (2026-03-28):** The lemma bounds ||δx|| ≤ ||r||/|λ_min| which blows up. But the β-block of near-null eigenvectors is O(|λ_j|) (Type C impossibility), so ||δβ|| = O(||r||) without blow-up. A tighter bound exploiting this structure + Q-constancy (lem:well-defined) + eigendecomposition backward error (Weyl, Davis-Kahan) should be possible.
 
-**Question for Jörn:** Is E = |r| / |λ_min| the right error metric when λ_min → 0? The solution may still be accurate (small residual), but the bound is vacuous. Should we use a different metric for near-singular systems, or accept the panic and skip those polytopes?
+**Current state:** The code returns KktOutcome::NumericalFailure (not panic) for large E or large Q correction. Q5b runs to completion without panics. The heuristic thresholds work empirically but are unproven.
 
-**Impact:** Any experiment that evaluates sys on gradient-stepped or perturbed polytopes (gradient-correctness, combinatorial-boundaries, sys-search) may hit this. Current workaround is `catch_unwind` + skip.
+**Next:** Design a numerics experiment on generic KKT matrices, derive and prove a tighter bound. See handoff.
 
-**Location:** `crates/src/kkt/saddle_point_solver.rs:504`
+**Location:** `crates/src/kkt/saddle_point_solver.rs:537-567`
 
 ---
 
