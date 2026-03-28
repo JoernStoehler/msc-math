@@ -147,6 +147,18 @@ Depends on: Jörn scoping the thesis story. Derivative-related experiments also 
 
 ---
 
+## numerics-experiments
+
+**Status (2026-03-28):** New. Two experiments needed to stress-test numerical code.
+
+**1. KKT solver numerics.** Feed the solver matrices with controlled degeneracy (vary λ_min from 1e-3 to 1e-15, vary rank, condition number). Compare eigendecomposition pseudoinverse Q against exact rational Q (rational_solver exists). Check: do quality gates (E threshold, Q correction threshold) reject/accept correctly? Find inputs where the code gives wrong answers.
+
+**2. Polytope construction numerics.** Feed `Polytope4D::from_f64` dual vertices with near-duplicates, near-degenerate geometry, extreme aspect ratios. Compare f64 prefilter decisions (bounded check, irredundancy) against exact arithmetic decisions. Find inputs where the prefilter gives the wrong answer.
+
+Both experiments should collect regression tests: inputs that break the code or reveal the error bounds are wrong/too lax.
+
+---
+
 ## code-math-correspondence-audit
 
 **Status (2026-03-28):** New. Audit all code-math correspondences in crates/src/.
