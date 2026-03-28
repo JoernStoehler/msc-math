@@ -88,6 +88,7 @@ set -g mode-style "bg=#a8d1ff,fg=#000000"
 TMUXCONF
 
 # Safe delete wrapper — redirects rm to trash-put (use /bin/rm for real deletes)
+# Requires .Trash-1000/ in .gitignore to avoid committing trashed files.
 if ! grep -q 'trash-put' ~/.bashrc 2>/dev/null; then
   cat >> ~/.bashrc << 'BASHRC'
 

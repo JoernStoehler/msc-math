@@ -5,13 +5,13 @@ Master task list for thesis completion. **Deadline: mid-April 2026.**
 ## How to use this file
 
 - **Format:** Each task is a `##` section with status, description, next steps, and dependencies.
-- **Maintenance:** Update this file immediately when completing, discovering, or learning something that affects a task. Context not written down here is context that will be lost.
+- **Maintenance:** Update when a task's status, blockers, or dependencies change. Record decisions and reasons — these can't be derived later. Don't cache derivable state (build status, test counts, which binaries compile) — run the command instead. An agent acting on stale cached state has worse consequences than the seconds it takes to run `cargo test`.
 - **Status dates:** Always include a date when updating status (e.g. "Status (2026-03-24)").
 - **Completed tasks:** Move to the `## Completed` section at the bottom with a one-line summary.
 - **Dependencies:** State what blocks a task. If it's Jörn-gated, say so explicitly.
 - **Scope:** This file tracks WHAT needs doing. HOW is in skills, conventions, and logbooks.
 
-**Current state (2026-03-26):** No thesis chapter is publishable yet. Experiments have data but writeups are noisy and the thesis doesn't tell a coherent story. Procedural layer fully rewritten and ready for testing. Progress rate on track. Build audit (2026-03-26): library clean (323 tests, clippy clean), 3 experiment binaries broken by API drift (gradient-search, visualization, orbit-recovery), all others build and run correctly.
+**Current state (2026-03-28):** No thesis chapter is publishable yet. Experiments have data but writeups are noisy and the thesis doesn't tell a coherent story. Procedural layer fully rewritten and ready for testing. Progress rate on track.
 
 **Priority:** Thesis coherence + experiment quality > code refactors. Code refactors only matter if they unblock thesis content or experiment correctness.
 
@@ -133,7 +133,6 @@ The thesis is currently a dump of results, not a coherent narrative. Experiments
 
 Dependency chain: #1 validates the gradient → #2 characterizes the obstacle → #3 applies the tool. #3 can start independently but benefits from #2's findings. Delete old experiments once new ones are confirmed better.
 
-**Build audit (2026-03-26):** visualization and orbit-recovery fixed. gradient-search still broken (API drift, but will be superseded by boundary-crossing). Q error panic threshold (E=1.68e-6, threshold 1e-6) on near-degenerate polytopes — see `handoffs/experiment-api-fixes.md`.
 
 **Experiment ideas:** See `IDEAS.md` (root).
 

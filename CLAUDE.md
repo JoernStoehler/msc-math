@@ -16,6 +16,7 @@ Three planned deliverables:
 
 ```
 crates/                    Rust library (the core)
+  Cargo.toml
   src/
     lib.rs                 crate root
     geom/                  polytopes and basic euclidean and symplectic geometry
@@ -23,7 +24,7 @@ crates/                    Rust library (the core)
     algorithms/            different algorithms for the EHZ capacity 
     derivatives.rs         derivative of the capacity in the dual vertices
     dataset.rs             polytope datasets
-  math.tex                 correctness proofs for the library (crate modules only)
+    **/math.tex            correctness proofs (one per module)
 
 math.tex                     root math.tex: compiles ALL crate + experiment proofs into one PDF
                              (cross-references between experiments and crate lemmas resolve here)
@@ -49,6 +50,9 @@ papers/
 handoffs/
   *.md                     temporary task handoff files for future sessions
 TASKS.md                   master task list, project management
+IDEAS.md                   research directions and experiment ideas
+
+.devcontainer/             devcontainer config, access method docs
 
 CLAUDE.md, .claude/        agent configuration
   rules/                   path-scoped rules (auto-loaded by file pattern)
@@ -56,8 +60,10 @@ CLAUDE.md, .claude/        agent configuration
   skills/                  skill workflows (each a directory with SKILL.md)
   hooks/                   shell hooks for session/worktree events
   output-styles/           output style definitions
+  memory/                  persistent cross-session memory
   settings.json            Claude Code settings
 
+archaeology/               untrusted files from abandoned predecessor repo
 feedback/                  raw agent-design observations (rules, skills, agents, output style)
 ```
 
@@ -70,7 +76,7 @@ feedback/                  raw agent-design observations (rules, skills, agents,
   - When experiment code is stable and used by ≥2 experiments, promote it to `crates/` with tests and math.tex proofs. This is the only path into the library.
   - The library (`crates/`) contains proven stable algorithms. Changes must pass `cargo test --release --lib` and `cargo clippy`. Don't experiment in the library.
   - Jörn reviews math.pdf and logbook.md, not .tex, .rs, .py files.
-- math.tex files live alongside code in the library and experiments, and are independent of thesis/. They prove the correctness of the code and of other mathematical claims, and they both documentation for developers about how the algorithm works on a mathematical level, and they ensure code is correct by formalizing claims and proving claims in LaTeX. Jörn reviews math.pdf, not math.tex files.
+- math.tex files live alongside code in the library and experiments, and are independent of thesis/. They prove the correctness of the code and of other mathematical claims, and they serve as documentation for developers about how the algorithm works on a mathematical level, and they ensure code is correct by formalizing claims and proving claims in LaTeX. Jörn reviews math.pdf, not math.tex files.
 - Polished workflows and conventions and best practice tips are provided to the agents, so that they work effectively and minimize the use of Jörn's limited time. Agent time is priced at $0/h, due to the flatrate Anthropic Max $200/mo subscription, but Jörn's time is limited.
 
 ## Core Rule
@@ -113,7 +119,7 @@ Never without Jörn's instruction: destructive operations, merging to `main`, mo
 - Docker devcontainer at `/workspaces/msc-math`
 - Rust 1.94, Python 3.12, TeX Live, gh CLI
 - `rm` is aliased to `trash-put` for safety
-- `archaeology/` contains untrusted files from an abandoned predecessor repo
+- `archaeology/` is in the repo but untrusted — do not rely on its contents
 
 ## Quick Commands
 

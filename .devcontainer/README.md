@@ -6,44 +6,25 @@ is the security boundary, not CC's permission rules).
 
 ## Architecture
 
-```
-Remote devices                        Host (Ubuntu desktop)              Container (Docker)
-─────────────────                     ──────────────────────             ──────────────────
-
-Browser (any device)                  gnome-terminal tab
-  └─ vscode.dev ──── tunnel ────────── host-vscode-tunnel.sh ──────────→ code-tunnel server
-       ├─ IDE view (file tree,                                              (VS Code tunnel)
-       │   file editor)
-       └─ Terminal (PTY) ─────────────────────────────────────────────→ bash
-                                                                         └─ tmux new -s cc
-                                                                              └─ claude
-
-SSH (Termux, Crostini,               SSH server (:22, socket-activated)
-PowerShell)                             │
-  └─ ssh joern@host ────────────────────┘
-       └─ dc  ─── devcontainer exec ──────────────────────────────────→ bash
-                                                                         └─ tmux new -s cc
-                                                                              └─ claude
-```
-
 ### Layers
 
-**Host** runs:
+**Host** (Ubuntu desktop) runs:
 - Tailscale for mesh networking across devices
 - SSH server (socket-activated — starts on first connection)
 - `devcontainer` CLI to build/start/exec into the container
 - gnome-terminal for host-direct CC sessions and tunnel management
 
-**Container** runs:
+**Container** (Docker) runs:
 - VS Code tunnel server (for browser IDE access via vscode.dev)
 - bash sessions (entered via `devcontainer exec` from host, or VSCode terminal)
 - tmux (session persistence across disconnects; `set -g mouse on` for scroll)
 - Claude Code CLI processes
 - Everything CC spawns: Bash() commands, cargo, python, latexmk, etc.
 
-**Remote devices** connect via:
-- Browser → vscode.dev tunnel → IDE view + terminal (primary path)
-- Terminal → SSH → host → `dc` function → container bash → tmux → claude
+### Access paths
+
+1. **VS Code tunnel (desktop):** Chrome → vscode.dev → tunnel → container → bash → tmux → claude
+2. **SSH (mobile):** Android → Termux → SSH → Tailscale → host → devcontainer exec → container → bash → tmux → claude
 
 ### Why this stack
 
@@ -52,8 +33,8 @@ PowerShell)                             │
 | Docker container | OS-level isolation — CC can't touch host filesystem, SSH keys, etc. |
 | `--dangerously-skip-permissions` | Safe because Docker provides isolation. Eliminates all permission prompts. |
 | tmux | Session persistence across disconnects. Bell passthrough configured for notifications. |
-| SSH + Tailscale | Access from any device. Works on Android (Termux), ChromeOS (Crostini), Windows (PowerShell), Linux. |
-| VS Code tunnel | Browser IDE for file browsing + terminal. Primary access path for devcontainer work. |
+| SSH + Tailscale | Access from any device (currently: Termux on Android). |
+| VS Code tunnel | Browser IDE for file browsing + terminal. Primary access path from desktop. |
 | trash-cli + rm wrapper | `rm` → `trash-put` inside container. Use `/bin/rm` for real deletes. |
 
 ## Access via VSCode tunnel (primary)
@@ -104,11 +85,9 @@ tmux new -s cc
 claude
 ```
 
-Tested access methods:
+Access methods (see Architecture section above):
 - Chrome on Ubuntu desktop (vscode.dev tunnel)
-- PowerShell on Windows university PC (`ssh joern@100.70.188.20`)
-- Crostini on ChromeOS (`ssh joern@100.70.188.20`)
-- Termux on Android (`ssh joern@100.70.188.20`)
+- Termux on Android (`ssh joern@<tailscale-ip>`)
 
 ## Host scripts
 

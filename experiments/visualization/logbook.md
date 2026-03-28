@@ -6,7 +6,7 @@ To build geometric intuition about Reeb flows on polytope boundaries, this exper
 
 ## Status
 
-**Complete.** Eight polytopes exported and visualized. Thesis figures generated via Playwright screenshot automation. Interactive viewer deployed at https://joernstoehler.github.io/msc-math/viz/.
+**Complete.** Eight polytopes exported and visualized. Thesis figures generated via Playwright screenshot automation. Interactive viewer in `viz/` (run `viz/serve.sh` to start local server).
 
 ## How to run
 
@@ -94,6 +94,12 @@ Qualitative observations:
 4. On Lagrangian products, higher-action orbits frequently fail base point recovery, while min-action orbits recover reliably.
 5. Displaced trajectories visibly twist around the min-action orbit. On the hypercube they close (stable orbit family); on less symmetric polytopes they diverge.
 6. Ridges curve under stereographic projection (great-circle arcs on S^3 map to circles in R^3).
+
+## Changes (2026-03-28)
+
+- `serve.sh` data path changed from `docs/viz/data` to local `viz/data` (after `docs/` deletion). **Untested** — visualization binary doesn't compile (KktOutcome API change).
+- `docs/viz/` deleted (was stale copy of `viz/`, formerly used as GitHub Pages deployment target — no longer used).
+- GitHub Pages URL removed from logbook and math.tex.
 
 ## Known limitations
 
