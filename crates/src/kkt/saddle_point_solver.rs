@@ -351,7 +351,17 @@ fn try_pseudoinverse_with_threshold(
     let xi_hat = x0[m + 4];
     let q_correction = r2_dot_mu + r3 * xi_hat;
 
-    // |lambda_min| of RETAINED eigenvalues.
+    // KNOWN MISMATCH with [lem:q-error-bound]: the lemma defines |lambda_min| =
+    // min_j |lambda_j| over ALL eigenvalues. The code uses only RETAINED eigenvalues
+    // (above threshold). Using all eigenvalues would match the lemma but makes E
+    // vacuously large for near-singular M, breaking valid solutions (e.g. LP(4,4)
+    // triangle product — 3 orbit_recovery tests fail).
+    //
+    // The mismatch means the code applies a DIFFERENT (tighter) bound than the lemma
+    // proves. This tighter bound is not proven. A correct fix requires either:
+    // (a) a new lemma proving the retained-eigenvalue bound, or
+    // (b) exploiting Q = -xi/2 ([lem:well-defined]) for a tighter bound.
+    // See TASKS.md code-math-correspondence-audit.
     let abs_lambda_min = eigenvalues
         .iter()
         .filter(|&&e| e.abs() > threshold)
@@ -382,9 +392,10 @@ fn try_pseudoinverse_with_threshold(
 
     // Rank-deficient: search the *numerical* null space for beta > 0.
     // "Null space" here means eigenvectors whose eigenvalues are below the
-    // threshold — not an exact kernel (which doesn't exist in f64). The
-    // threshold is chosen so that these directions have negligible effect on
-    // the KKT objective Q, bounded by [lem:q-error-bound].
+    // threshold — not an exact kernel (which doesn't exist in f64).
+    // [lem:well-defined]: Q is exactly invariant along the true null space,
+    // so shifting beta along these approximate null directions changes Q by
+    // at most O(|lambda_j|) where lambda_j are the discarded eigenvalues.
     //
     // Extract the beta-block of each null eigenvector, filtering out Type A
     // directions (||v_beta|| ~ 0) that only move Lagrange multipliers and
@@ -463,9 +474,9 @@ fn try_pseudoinverse_with_threshold(
         return KktOutcome::NumericalFailure;
     }
 
-    // Q is invariant along the true null space ([lem:well-defined]), so compute
+    // [lem:well-defined]: Q is invariant along the true null space, so compute
     // Q from the pseudoinverse beta0, not from the LP-shifted beta_final.
-    // Large LP shifts along approximate null directions cause O(alpha^2 * |lambda_j|)
+    // TODO: the claim "approximate null shifts cause O(alpha^2 |lambda_j|)
     // Q drift that is spurious. beta_final is only used for feasibility (margin
     // classification) and downstream beta values (orbit reconstruction, gradients).
     match finalize_result(&beta0_ref, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info) {
@@ -529,34 +540,17 @@ fn finalize_result(
     let r_sq = residual_norm * residual_norm;
     let q_error_bound = 4.5 * r_sq / abs_lambda_min;
 
-    // DEFERRED WORK: Q error bound exceeds calibrated threshold.
-    //
-    // Why deferred: The error bound E = 4.5·||r||²/|λ_min| ([lem:q-error-bound]) is a
-    // proven upper bound on |Q_true - Q_computed|. When |λ_min| → 0, E → ∞ even though
-    // ||r|| may be small — the bound is correct but vacuously large. The right fix is to
-    // use a tighter bound for near-singular systems. Requires mathematical work.
-    // See TASKS.md q-error-threshold.
-    //
-    // When this fires: The KKT matrix has a near-zero eigenvalue, making the error bound
-    // vacuous. Known trigger: degenerate orbits at symmetric polytopes (4-facet orbits on
-    // LP(4,4), |λ_min| ≈ 1e-12). See gradient-correctness logbook Obs 18-19.
-    //
-    // What to do: Investigate why this orbit's KKT matrix is near-singular. If it's a
-    // structurally degenerate orbit (m ≤ dim), the orbit likely has no robust feasible
-    // solution and should be a typed "infeasible" outcome, not a panic.
-    //
-    // Calibration: q-error experiment measures worst-case E = 2.9e-11 across 1.1M
-    // well-conditioned nodes (F ≤ 10). Threshold 1e-6 is ~5 orders above that.
-    assert!(
-        q_error_bound < 1e-6,
-        "Q error bound unexpectedly large: E={:.2e}, |r|={:.2e}, |lambda_min|={:.2e}",
-        q_error_bound, residual_norm, abs_lambda_min
-    );
-    assert!(
-        q_correction.abs() < 1e-6 || q_correction.abs() < 1e-6 * q_raw.abs(),
-        "Q correction unexpectedly large: correction={:.2e}, Q_raw={:.2e}, ratio={:.2e}",
-        q_correction, q_raw, q_correction.abs() / q_raw.abs().max(1e-30)
-    );
+    // Heuristic quality gate: reject solutions where the proven error bound E
+    // ([lem:q-error-bound]) or the correction term exceeds calibrated thresholds.
+    // These are NOT mathematically derived thresholds — they are empirical cutoffs
+    // from the q-error experiment (worst-case E = 2.9e-11 across 1.1M nodes, F ≤ 10).
+    // TODO: derive thresholds from the math, or write a lemma justifying them.
+    if q_error_bound >= 1e-6 {
+        return KktOutcome::NumericalFailure;
+    }
+    if q_correction.abs() >= 1e-6 && q_correction.abs() >= 1e-6 * q_raw.abs() {
+        return KktOutcome::NumericalFailure;
+    }
 
     KktOutcome::Feasible(KktResult {
         beta: beta.to_vec(),
