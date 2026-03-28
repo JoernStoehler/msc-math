@@ -56,15 +56,14 @@ For each friction point or mistake identified above: abstract the error class an
 
 Persist actionable findings so future agents benefit. For each finding, decide where it belongs:
 
-- **Repeatable behavioral lesson** (e.g., "ensure proof correctness before review") → memory entry (type: feedback)
+- **Behavioral lesson or friction with rules/skills/agents/output style** → append raw observations to the matching file in `feedback/` (rules.md, skills.md, agents.md, output-style.md). Don't fix procedural files directly — a future agent-design session will analyze and act on these with Jörn.
 - **New convention or workflow change** → discuss with Jörn, then Jörn updates CLAUDE.md or relevant skill
 - **Nothing actionable** → don't persist, it's just a fact about the session
 
-Don't persist everything — only findings that would change future agent behavior. A postmortem that produces zero repo changes is fine if nothing actionable emerged.
+Don't persist everything — only findings that would change future agent behavior. A postmortem that produces zero repo changes is fine if nothing actionable emerged. Do NOT write to agent memory — memory entries go stale and are not maintained.
 
 Additional follow-up actions:
 - Add TODO comments in relevant files for localized issues
 - Add to TASKS.md for issues that need more context than a TODO comment provides
 - Update the plan file if session changed what's next
 - Flag any unverified mathematical claims introduced this session with GAP markers
-- If a rule, skill, agent, or output style caused friction, write raw observations to the matching file in `feedback/` (rules.md, skills.md, agents.md, output-style.md) — don't fix the file directly. A future agent-design session will analyze and update it with Jörn.

@@ -50,7 +50,15 @@ handoffs/
   *.md                     temporary task handoff files for future sessions
 TASKS.md                   master task list, project management
 
-CLAUDE.md, .claude/        extra information for claude code agents
+CLAUDE.md, .claude/        agent configuration
+  rules/                   path-scoped rules (auto-loaded by file pattern)
+  agents/                  subagent definitions
+  skills/                  skill workflows (each a directory with SKILL.md)
+  hooks/                   shell hooks for session/worktree events
+  output-styles/           output style definitions
+  settings.json            Claude Code settings
+
+feedback/                  raw agent-design observations (rules, skills, agents, output style)
 ```
 
 **Navigating source files:** Every source file has a header explaining purpose and context (Rust: `//!` doc comments, Python: docstring, LaTeX: `%` block). Module-level files (mod.rs, main .tex includes) additionally document the module group's architecture.
