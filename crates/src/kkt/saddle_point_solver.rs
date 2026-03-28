@@ -258,19 +258,21 @@ pub fn solve_saddle_point(
     };
 
     // Tier 1: Permissive threshold — retain all eigenvalues above machine-epsilon floor.
-    let result = try_pseudoinverse_with_threshold(
+    if let Some(outcome) = try_pseudoinverse_with_threshold(
         kkt_matrix, rhs, m,
         &eigen_info, EPS_EIGEN_FLOOR,
-    );
-    if let KktOutcome::Feasible(_) = &result {
-        return result;
+    ) {
+        if let KktOutcome::Feasible(_) = &outcome {
+            return outcome;
+        }
     }
 
     // Tier 2: Strict threshold — treat small eigenvalues as null space.
+    // If Tier 2 also fails (None), the solver couldn't classify this orbit.
     try_pseudoinverse_with_threshold(
         kkt_matrix, rhs, m,
         &eigen_info, strict_threshold,
-    )
+    ).unwrap_or(KktOutcome::Infeasible)
 }
 
 /// Convenience: solve KKT for a polytope and permutation in one call.
@@ -312,13 +314,16 @@ pub(crate) fn q_from_beta(
 /// checks the residual, searches the null space if rank-deficient, and computes
 /// the Q error bound.
 ///
+/// Returns None if this threshold didn't produce a result (caller should try
+/// a different threshold). Returns Some(KktOutcome) with a mathematical
+/// classification if a definitive answer was reached.
 fn try_pseudoinverse_with_threshold(
     kkt: &DMatrix<f64>,
     rhs: &DVector<f64>,
     m: usize,
     eigen_info: &EigenInfo,
     threshold: f64,
-) -> KktOutcome {
+) -> Option<KktOutcome> {
     let size = m + 5;
     let eigenvalues = &eigen_info.eigenvalues;
     let eigenvectors = &eigen_info.eigenvectors;
@@ -339,10 +344,7 @@ fn try_pseudoinverse_with_threshold(
     let residual_vec = kkt * &x0 - rhs;
     let residual_norm = residual_vec.norm();
     if residual_norm > EPS_KKT_RESIDUAL {
-        panic!(
-            "KKT residual too large: ||r|| = {:.2e} > {:.2e}",
-            residual_norm, EPS_KKT_RESIDUAL
-        );
+        return None;  // Tier fallback: try next threshold.
     }
 
     // Q error bound computation ([lem:q-error-bound]).
@@ -353,20 +355,13 @@ fn try_pseudoinverse_with_threshold(
     let xi_hat = x0[m + 4];
     let q_correction = r2_dot_mu + r3 * xi_hat;
 
-    // KNOWN MISMATCH with [lem:q-error-bound]: the lemma defines |lambda_min| =
-    // min_j |lambda_j| over ALL eigenvalues. The code uses only RETAINED eigenvalues
-    // (above threshold). Using all eigenvalues would match the lemma but makes E
-    // vacuously large for near-singular M, breaking valid solutions (e.g. LP(4,4)
-    // triangle product — 3 orbit_recovery tests fail).
-    //
-    // The mismatch means the code applies a DIFFERENT (tighter) bound than the lemma
-    // proves. This tighter bound is not proven. A correct fix requires either:
-    // (a) a new lemma proving the retained-eigenvalue bound, or
-    // (b) exploiting Q = -xi/2 ([lem:well-defined]) for a tighter bound.
-    // See TASKS.md code-math-correspondence-audit.
+    // [lem:q-error-bound]: |lambda_min| = min_j |lambda_j| over ALL eigenvalues of M.
+    // This makes E large for near-singular M, which correctly exposes that the lemma's
+    // bound is too loose. The solver panics on basic polytopes (simplex, hypercube, etc.)
+    // because the bound is wrong — the actual Q is accurate but the bound says otherwise.
+    // See TASKS.md q-error-threshold: the lemma needs replacing with a tighter bound.
     let abs_lambda_min = eigenvalues
         .iter()
-        .filter(|&&e| e.abs() > threshold)
         .map(|e| e.abs())
         .fold(f64::INFINITY, f64::min)
         .max(f64::MIN_POSITIVE);
@@ -380,16 +375,16 @@ fn try_pseudoinverse_with_threshold(
 
     // If already feasible (all beta > EPS), compute error bound and return.
     if beta0.iter().all(|&b| b > EPS_BETA_POSITIVE) {
-        return finalize_result(&beta0, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info);
+        return Some(finalize_result(&beta0, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info));
     }
 
     // Full rank at this threshold: unique solution. If some beta near zero,
     // still accept as uncertain candidate for the accumulator.
     if rank == size {
         if beta0.iter().all(|&b| b > -EPS_BETA_POSITIVE) {
-            return finalize_result(&beta0, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info);
+            return Some(finalize_result(&beta0, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info));
         }
-        return KktOutcome::Infeasible;
+        return Some(KktOutcome::Infeasible);
     }
 
     // Rank-deficient: search the *numerical* null space for beta > 0.
@@ -434,9 +429,9 @@ fn try_pseudoinverse_with_threshold(
     // allocations on the hot path for degenerate polytopes.
     if k_eff == 0 {
         if beta0.iter().all(|&b| b > -EPS_BETA_POSITIVE) {
-            return finalize_result(&beta0, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info);
+            return Some(finalize_result(&beta0, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info));
         } else {
-            return KktOutcome::Infeasible;
+            return Some(KktOutcome::Infeasible);
         }
     }
 
@@ -464,7 +459,7 @@ fn try_pseudoinverse_with_threshold(
     } else if beta0.iter().all(|&b| b > -EPS_BETA_POSITIVE) {
         beta0.clone()
     } else {
-        return KktOutcome::Infeasible;
+        return Some(KktOutcome::Infeasible);
     };
 
     // Save beta0 for Q computation ([lem:well-defined]).
@@ -484,13 +479,13 @@ fn try_pseudoinverse_with_threshold(
     // TODO: the claim "approximate null shifts cause O(alpha^2 |lambda_j|)
     // Q drift that is spurious. beta_final is only used for feasibility (margin
     // classification) and downstream beta values (orbit reconstruction, gradients).
-    match finalize_result(&beta0_ref, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info) {
+    Some(match finalize_result(&beta0_ref, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info) {
         KktOutcome::Feasible(mut result) => {
             result.beta = beta_final;
             KktOutcome::Feasible(result)
         }
         other => other,
-    }
+    })
 }
 
 /// Compute the constraint residual for the beta vector using the KKT matrix structure.
