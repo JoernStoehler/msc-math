@@ -152,15 +152,19 @@ Depends on: Jörn scoping the thesis story. Derivative-related experiments also 
 
 ---
 
-## numerics-experiments
+## verify-numerics
 
-**Status (2026-03-28):** New. Two experiments needed to stress-test numerical code.
+**Status (2026-03-28):** Scaffolded. Logbook written, not yet implemented.
 
-**1. KKT solver numerics.** Feed the solver matrices with controlled degeneracy (vary λ_min from 1e-3 to 1e-15, vary rank, condition number). Compare eigendecomposition pseudoinverse Q against exact rational Q (rational_solver exists). Check: do quality gates (E threshold, Q correction threshold) reject/accept correctly? Find inputs where the code gives wrong answers.
+**Problem:** Find the maximum of ½β^TQβ subject to Cβ=d, β≥0. Develop the right algorithm (not assume the current one is right), formalize error bounds as lemmas, prove them, empirically verify. Generic numerics framework: certify propositions as TRUE/FALSE/INDETERMINATE, error bounds for values, INDETERMINATE falls back to rational arithmetic (lazily, with short-circuit evaluation).
 
-**2. Polytope construction numerics.** Feed `Polytope4D::from_f64` dual vertices with near-duplicates, near-degenerate geometry, extreme aspect ratios. Compare f64 prefilter decisions (bounded check, irredundancy) against exact arithmetic decisions. Find inputs where the prefilter gives the wrong answer.
+**Scope:** The main QP problem + whatever sub-subroutines emerge during algorithm design. Each sub-subroutine gets its own run_*.rs and the same treatment (math spec → algorithm design → error analysis → edge cases → empirical verification).
 
-Both experiments should collect regression tests: inputs that break the code or reveal the error bounds are wrong/too lax.
+**Priority:** Blocks other experiment development. All experiments rely on this machinery.
+
+**Subsumes:** q-error-threshold (error bound analysis is part of this experiment), numerics portion of code-math-correspondence-audit (code/math mismatches discovered during verification).
+
+**Location:** `experiments/verify-numerics/`
 
 ---
 
@@ -183,17 +187,11 @@ The KKT solver's Q error bound assert cites lem:q-error-bound but the code doesn
 
 ## q-error-threshold
 
-**Status (2026-03-28):** Root cause identified. Needs new math (tighter Q error bound). Handoff written at `handoffs/q-error-bound-rework.md`.
+**Status (2026-03-28):** Subsumed by verify-numerics experiment. Root cause and context preserved below for reference.
 
-The Q error bound E = (9/2)||r||²/|λ_min| ([lem:q-error-bound]) uses |λ_min| of ALL eigenvalues but the code uses |λ_min| of RETAINED eigenvalues. This mismatch was never caught. Using all eigenvalues matches the lemma but makes E vacuously large (3 tests fail). Using retained eigenvalues works in practice but applies an unproven bound.
+The Q error bound E = (9/2)||r||²/|λ_min| ([lem:q-error-bound]) uses |λ_min| of ALL eigenvalues but the code uses |λ_min| of RETAINED eigenvalues. This mismatch was never caught. The verify-numerics experiment will develop a correct error bound as part of its systematic treatment of the QP solver.
 
-**Root cause (2026-03-28):** The lemma bounds ||δx|| ≤ ||r||/|λ_min| which blows up. But the β-block of near-null eigenvectors is O(|λ_j|) (Type C impossibility), so ||δβ|| = O(||r||) without blow-up. A tighter bound exploiting this structure + Q-constancy (lem:well-defined) + eigendecomposition backward error (Weyl, Davis-Kahan) should be possible.
-
-**Current state:** The code returns KktOutcome::NumericalFailure (not panic) for large E or large Q correction. Q5b runs to completion without panics. The heuristic thresholds work empirically but are unproven.
-
-**Next:** Design a numerics experiment on generic KKT matrices, derive and prove a tighter bound. See handoff.
-
-**Location:** `crates/src/kkt/saddle_point_solver.rs:537-567`
+**Handoff:** `handoffs/q-error-bound-rework.md`. **Location:** `crates/src/kkt/saddle_point_solver.rs:537-567`
 
 ---
 

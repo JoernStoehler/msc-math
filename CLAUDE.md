@@ -65,8 +65,11 @@ feedback/                  raw agent-design observations (rules, skills, agents,
 
 **Key architectural patterns:**
 - The thesis is independent of both library and experiments code, documentation and math.tex files. Unlike the rest of the repo, it is optimized for human readers and for final publication, not for the agents who develop the project. It heavily copies from the math.tex files, uses produced asset figures and tables, and presents algorithms, theorems, experiment results, and other insights from the project to the human readers. Jörn reviews main.pdf, not .tex files.
-- Each experiment is self-contained to avoid refactoring and rerunning churn. Stable code that is duplicated by multiple experiments regularly is moved to the library. Jörn reviews math.pdf and logbook.md, not .tex, .rs, .py files.
-- The library (`crates/`) is the single source of truth for proven stable algorithms. The experiments copy the library code when code modifications are needed just for one experiment. Jörn reviews math.pdf, not .rs files.
+- **Code lifecycle: experiment → library.**
+  - New algorithms and verification code start as experiments (`experiments/`). Experiments are sandboxes: iterate freely, break things, explore. Each experiment is self-contained — don't modify another experiment or library code for one experiment's needs; copy what you need.
+  - When experiment code is stable and used by ≥2 experiments, promote it to `crates/` with tests and math.tex proofs. This is the only path into the library.
+  - The library (`crates/`) contains proven stable algorithms. Changes must pass `cargo test --release --lib` and `cargo clippy`. Don't experiment in the library.
+  - Jörn reviews math.pdf and logbook.md, not .tex, .rs, .py files.
 - math.tex files live alongside code in the library and experiments, and are independent of thesis/. They prove the correctness of the code and of other mathematical claims, and they both documentation for developers about how the algorithm works on a mathematical level, and they ensure code is correct by formalizing claims and proving claims in LaTeX. Jörn reviews math.pdf, not math.tex files.
 - Polished workflows and conventions and best practice tips are provided to the agents, so that they work effectively and minimize the use of Jörn's limited time. Agent time is priced at $0/h, due to the flatrate Anthropic Max $200/mo subscription, but Jörn's time is limited.
 
