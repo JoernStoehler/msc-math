@@ -1,6 +1,6 @@
 ---
 name: post-mortem
-description: End-of-session reflection workflow. Run at Jörn's request or after a session with significant friction, mistakes, or wasted time. Produces actionable findings (memory entries, convention changes, decision records) — not just observations.
+description: End-of-session reflection workflow. Run at Jörn's request or after a session with significant friction, mistakes, or wasted time. Produces actionable findings (feedback/ entries, convention changes, decision records) — not just observations.
 user-invocable: true
 ---
 
