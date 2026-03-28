@@ -228,26 +228,29 @@ where $T = c_{\mathrm{EHZ}}(K)$ is the capacity
 \begin{lemma}[Facet structure of Lagrangian products]\label{lem:lagrangian-facets}
 % Source: thesis/lagrangian-product-algorithm-proof.tex
 Let $K = K_q \times K_p$ be a Lagrangian product.
-Let $K_q$ have edges with outward unit normals
-$\hat{n}_1^q, \ldots, \hat{n}_{F_q}^q \in S^1 \subset L_q$
-and heights $h_1^q, \ldots, h_{F_q}^q > 0$,
-and similarly $\hat{n}_1^p, \ldots, \hat{n}_{F_p}^p$ and $h_j^p$ for~$K_p$.
+Let $K_q = \{x \in L_q : \langle a_k^q, x \rangle \leq 1\}$
+with dual vertices
+$a_1^q, \ldots, a_{F_q}^q \in L_q$,
+and similarly $K_p$ with dual vertices
+$a_1^p, \ldots, a_{F_p}^p \in L_p$.
 Then $K$ has $F = F_q + F_p$ facets, partitioned into:
 \begin{itemize}
-\item \emph{$q$-facets} with normals $n_i = (\hat{n}_i^q, 0)$
-  and heights $h_i = h_i^q$, for $i = 1, \ldots, F_q$;
-\item \emph{$p$-facets} with normals $n_j = (0, \hat{n}_j^p)$
-  and heights $h_j = h_j^p$, for $j = 1, \ldots, F_p$.
+\item \emph{$q$-facets} with dual vertices $a_i = (a_i^q, 0)$,
+  for $i = 1, \ldots, F_q$;
+\item \emph{$p$-facets} with dual vertices $a_j = (0, a_j^p)$,
+  for $j = 1, \ldots, F_p$.
 \end{itemize}
-Every facet normal lies entirely in $L_q$ or entirely in $L_p$.
+Every dual vertex lies entirely in $L_q$ or entirely in $L_p$.
 \end{lemma}
 
 \begin{proof}
 A facet of $K_q \times K_p$ arises from a facet (edge) of
 one factor and the full other factor: either
 $\text{edge}_i(K_q) \times K_p$ or $K_q \times \text{edge}_j(K_p)$.
-The outward normal to $\text{edge}_i(K_q) \times K_p$ is
-$(\hat{n}_i^q, 0)$ with height $h_{K_q}(\hat{n}_i^q) = h_i^q$;
+The defining constraint $\langle a_i^q, x_q \rangle \leq 1$
+for edge~$i$ of~$K_q$ lifts to
+$\langle (a_i^q, 0),\, x \rangle \leq 1$,
+so the dual vertex is $(a_i^q, 0)$;
 similarly for $p$-facets.
 \end{proof}
 \end{unverified}
@@ -282,8 +285,8 @@ consecutive $q$-facets $q_1, q_2, q_3$ (all with $\tau > 0$).
 The Reeb vectors $R_{q_1}, R_{q_2}, R_{q_3}$ all lie in~$L_p$,
 so $q$ is constant throughout the three segments.
 The orbit at the breakpoint between $q_1$ and $q_2$ lies on
-both facets, meaning $\langle q, \hat{n}_1^q \rangle = h_1^q$
-and $\langle q, \hat{n}_2^q \rangle = h_2^q$: the point $q$
+both facets, meaning $\langle a_{q_1}^q, q \rangle = 1$
+and $\langle a_{q_2}^q, q \rangle = 1$: the point $q$
 lies on both edges $1$ and $2$ of~$K_q$, hence at their
 common vertex $v_{12}$.
 Similarly, the breakpoint between $q_2$ and $q_3$ forces $q$
