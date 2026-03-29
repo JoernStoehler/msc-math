@@ -25,7 +25,7 @@ For each situation Jörn wants to address, gather and present:
 - **Causal chain:** What leads to the situation? Look at real cases. Brainstorm interventions.
 - **System prompt:** What do agents already see about this? Report relevant parts — Jörn doesn't have the system prompt memorized. Download via:
   ```bash
-  bash .claude/skills/agent-design/scripts/download-system-prompt.sh <folder>
+  bash .claude/skills/create-workflow/scripts/download-system-prompt.sh <folder>
   ```
 - **Detection:** How can the situation be detected? Skill descriptions (RLVR-trained triggering), hooks (scriptable tool-call triggers), subagent reviews.
 - **Costs:** One-time setup, ongoing maintenance/staleness, attention budget consumed, runtime costs.

@@ -47,6 +47,7 @@ Good: "Add a 'verified by advisor' field to theorem environments"
 3. **Iterated in front of user?** — Did I run multiple fix/review cycles in conversation instead of delegating to subagents?
 4. **False attribution?** — Did I attribute a mathematical result to a source that didn't actually state it?
 5. **Assumed Jörn read something?** — Did I act as if Jörn saw a question or information that he may not have read?
+6. **Test task candidate?** — Did this session surface a failure mode that should become a test task for `/test-workflow`? If so, draft the test task (prompt, expected behavior, failure modes, pass criteria) and save to `.claude/skills/test-workflow/references/test-tasks/`.
 
 ## Generalize from issues
 

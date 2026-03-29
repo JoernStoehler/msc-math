@@ -24,6 +24,8 @@ The main output is session prompts Jörn pastes into separate Claude Code sessio
 - State the problem context and WHY the work matters (not step-by-step instructions)
 - Reference the files to read for full context
 - Name relevant skills to use (e.g., /experiment-design)
+- State the deliverable: what file(s) should exist when the session is done
+- If the work corresponds to a TASKS.md task, name it so the session can update its status
 - Be self-contained — the target session has CLAUDE.md and rules but no conversation history
 - Use fenced code blocks (```) so Jörn can copy them easily
 

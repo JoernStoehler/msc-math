@@ -1,6 +1,8 @@
 # Feedback: Output Style
 
-Raw observations about the Project Partner output style. Do not analyze here — a future agent-design session will review and act on these.
+**Conclusion (2026-03-29):** Removed `outputStyle` from settings.json. The description field enters the system prompt and vague adjectives there ("terse", "action-oriented", "technically strong user") caused cascading behavioral failures (10 incidents below). All style guidance now lives in CLAUDE.md "Chat with Jörn". Do not re-introduce outputStyle.
+
+Raw observations below are kept as evidence.
 
 ## Format
 
