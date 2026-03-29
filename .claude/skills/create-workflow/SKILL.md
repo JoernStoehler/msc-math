@@ -50,11 +50,25 @@ Write the files Jörn specified. Before writing:
 - For skills: follow `references/skills-guide.md`
 - Writing style: follow CLAUDE.md "Text that agents read" section — correct, corrigible, verifiable, unambiguous, complete, actionable, simple. Run the vague-word scan.
 
-## 5. Jörn reviews
+## 5. Self-review against quality criteria
+
+Before presenting to Jörn, check the draft against these criteria:
+
+- **Actionable, concrete.** Every instruction tells the agent what to do, not what to be. "Run `cargo clippy -- -D warnings` before committing" not "follow best practices."
+- **Observable, measurable, verifiable.** Conditions in "if X then Y" instructions are observable by the agent. "If the file has more than 3 functions" is observable; "if the code is complex" is not. Expected outcomes are checkable during planning (does the plan satisfy the criteria?), implementation (is the agent doing it?), and review (did it work?).
+- **Clear, unambiguous, low-overhead.** Each sentence has one reading. Agent doesn't need to spend attention resolving ambiguity or recalling novel terminology.
+- **Correct, precise.** Claims about agent behavior, tool capabilities, or file formats are verified against the source (system prompt, llms.txt, observed behavior). Wrong instructions cause silent failures.
+- **Overall adherence is testable.** There exists a realistic scenario where you could spawn a subagent and check whether it follows the instructions. If you can't imagine such a test, the instructions may be too vague to influence behavior.
+- **Feedback is collected.** The instruction set includes or references a mechanism for future agents to report whether it worked (post-mortem, feedback/ files, subagent observations).
+- **Vague-word scan.** Grep for "appropriate", "properly", "ensure", "good", "consider", "reasonable", "necessary", "efficient", "robust" — replace each with what specifically makes it so.
+- **Redundancy check.** Does each instruction add information beyond what agents already do from training? "Follow best practices" adds nothing. Remove instructions that don't change behavior.
+- **Script-or-language decision.** For anything where getting it wrong has high cost, check whether a script/hook could enforce it instead of relying on the agent to remember.
+
+## 6. Jörn reviews
 
 Present the draft with a prioritized list of spots Jörn should check (uncertain areas, high-impact phrasing). Get explicit approval — don't guess at it. Accept pivots back to earlier steps.
 
-## 6. Set up verification
+## 7. Set up verification
 
 Before shipping, decide how to verify the new infrastructure works:
 - Define ≥1 test task for `/test-workflow` (concrete scenario, expected behavior, pass/fail criteria)

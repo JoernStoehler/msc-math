@@ -60,7 +60,6 @@ CLAUDE.md                  (this file)
   agents/                  subagent definitions
   skills/                  skill workflows (each a directory with SKILL.md)
   hooks/                   shell hooks for session/worktree events
-  output-styles/           output style definitions
   memory/                  persistent cross-session memory
   settings.json            Claude Code settings
 

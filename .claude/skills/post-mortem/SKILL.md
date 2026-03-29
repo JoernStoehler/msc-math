@@ -57,7 +57,7 @@ For each friction point or mistake identified above: abstract the error class an
 
 Persist actionable findings so future agents benefit. For each finding, decide where it belongs:
 
-- **Behavioral lesson or friction with rules/skills/agents/output style** → append raw observations to the matching file in `feedback/` (rules.md, skills.md, agents.md, output-style.md). Don't fix procedural files directly — a future agent-design session will analyze and act on these with Jörn.
+- **Behavioral lesson or friction with rules/skills/agents/output style** → append raw observations to the matching file in `feedback/` (rules.md, skills.md, agents.md, output-style.md). Don't fix procedural files directly — a future `/update-workflow` session will analyze and act on these with Jörn.
 - **New convention or workflow change** → discuss with Jörn, then Jörn updates CLAUDE.md or relevant skill
 - **Nothing actionable** → don't persist, it's just a fact about the session
 

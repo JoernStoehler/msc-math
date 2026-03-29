@@ -30,7 +30,7 @@ Present diagnosis to Jörn. He confirms or redirects.
 
 ## 3. Draft the fix
 
-Edit the file(s). Follow CLAUDE.md "Text that agents read" conventions. Run the vague-word scan on changed text.
+Edit the file(s). Follow CLAUDE.md "Text that agents read" conventions. Self-review against the quality criteria in `/create-workflow` step 5 (actionable, observable, clear, correct, testable, feedback collected, vague-word scan, redundancy check, script-or-language decision).
 
 For the fix, prefer:
 - Making the existing text more specific over adding new text
