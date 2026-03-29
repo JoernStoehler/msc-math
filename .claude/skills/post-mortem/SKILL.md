@@ -47,7 +47,7 @@ Good: "Add a 'verified by advisor' field to theorem environments"
 3. **Iterated in front of user?** — Did I run multiple fix/review cycles in conversation instead of delegating to subagents?
 4. **False attribution?** — Did I attribute a mathematical result to a source that didn't actually state it?
 5. **Assumed Jörn read something?** — Did I act as if Jörn saw a question or information that he may not have read?
-6. **Test task candidate?** — Did this session surface a failure mode that should become a test task for `/test-workflow`? If so, draft the test task (prompt, expected behavior, failure modes, pass criteria) and save to `.claude/skills/test-workflow/references/test-tasks/`.
+6. **Regression test candidate?** — Did this session contain a concrete input→output pair worth preserving as a regression test? Both failures (agent did the wrong thing — test should catch it) and successes (agent handled a tricky situation well — test should ensure it keeps working). Look for moments where conventions or workflows made a visible difference. Extract: the context the agent had, the user message, what happened (good or bad), what the correct behavior is. Save to `.claude/skills/test-workflow/references/test-tasks/`. Prefer real session data over synthetic scenarios.
 
 ## Generalize from issues
 
