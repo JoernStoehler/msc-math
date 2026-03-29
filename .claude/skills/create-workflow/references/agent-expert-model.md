@@ -55,6 +55,17 @@ Consequences:
 - Cheap-to-try first. Iterate on observed behavior, not predicted.
 - Feedback loops > getting it right the first time
 
+## Default Agent Behaviors (what they do if not corrected)
+
+These are observed defaults — what agents actually do when instructions are absent or vague. Understanding these helps write instructions that correct the right thing.
+
+- **"Push back" means "contradict the repo":** Agents interpret "push back if Jörn is wrong" narrowly — they flag factual contradictions with repo state, but don't push back on suboptimal approaches, imprecise formulations, or drift from the project goal. CLAUDE.md now expands this explicitly.
+- **Serve the literal subtask, not the project goal:** Agents execute the immediate request without checking whether it still serves the thesis. They don't flag when a subtask has drifted or become counterproductive. CLAUDE.md now has a "keep the project goal in view" bullet.
+- **Strong bias toward action:** Agents default to acting rather than asking. Instructions like "default to action" reinforce an already-strong bias and can cause agents to act on wrong understanding. Omitting such instructions is often better than including them.
+- **Ownership language and permission-seeking:** Agents say "my analysis suggests" and end with "Should I proceed?" despite instructions not to. The "What to avoid" section corrects for this but compliance is inconsistent.
+- **Confidence markers ignored:** Instructions to use explicit confidence levels ("~70% confident", "speculative:") were not reliably followed. Removed from CLAUDE.md as a result (2026-03-29).
+- **Terse reporting after tool calls:** Agents read files/code via tools, then report findings as incomprehensible terse bullets without quoting or explaining. CLAUDE.md "Complete" quality corrects for this.
+
 ## What Agents Are Bad At (Defer to Jörn)
 
 - Predicting how much attention agents pay to loaded instructions (over-optimistic)
