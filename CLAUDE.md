@@ -139,6 +139,21 @@ Don't optimize for, i.e. don't waste effort on: short vs long, boring vs excitin
 
 Jörn reviews rendered PDFs, not source files. Reference rendered theorem/section numbers from `thesis/build/main.aux`, not labels or file paths.
 
+## Text that agents read
+
+Code comments, logbook entries, math.tex, skill files, TASKS.md, handoffs, feedback entries — text that future agents will read and act on. Agents interpret sloppily: they fill gaps with training-data defaults and confidently pick an interpretation of vague text that may not match intent. The writer cannot predict well which reading an agent picks.
+
+Optimize for these qualities (descending effort priority):
+
+1. **Correct, corrigible.** Verify claims against code or data. When text will inevitably be wrong, make errors findable and fixable by future agents — cite sources, state assumptions explicitly, include enough context to tell correct from incorrect.
+2. **Verifiable, observable, measurable.** State things the reader can check. Write "the code matches lem:foo — both compute X by doing Y" not "the code is correct." Write "returns the smallest eigenvalue of M" not "returns the appropriate eigenvalue."
+3. **Unambiguous, clear, specific.** Each sentence should have one reading. Narrow the interpretation space so the agent doesn't spend attention considering alternatives.
+4. **Complete.** Include what the reader needs to understand and act. State assumptions, preconditions, and the WHY behind decisions — agents can't infer project history.
+5. **Actionable, low-overhead.** The reader should know what to do after reading. Provide concrete next steps, not just observations.
+6. **Simple, concrete, standard.** Familiar patterns, concrete examples, no unnecessary terminology. Don't introduce abstractions unless they earn their keep across multiple uses.
+
+**Vague-word ban:** Do not use "appropriate", "properly", "ensure", "good", "consider", "reasonable", "necessary", "efficient", "robust" without specifying *what* makes it so. These words feel informative but leave the agent to guess.
+
 ## Session Workflow
 
 **Scope** (Jörn + agent): Jörn scopes. Agents provide investigation findings, and suggest scope expansion/contraction, but Jörn decides. Agents ask clarifying questions to ensure they and Jörn understand the scope the same way. Agents track scope provenance in the plan file.
