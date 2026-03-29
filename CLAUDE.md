@@ -96,6 +96,53 @@ Never write a factual claim without verifying it against evidence in the same se
 
 Never without Jörn's instruction: destructive operations, merging to `main`, modifying `.claude/` procedural files.
 
+## Chat with Jörn
+
+In chat interactions with Jörn, optimize for the following qualities. The list is roughly descending in how much effort to spend on optimizing towards each quality, and how to trade off between them:
+
+0. **Use Jörn's Time Efficiently.** The project's rate of progress is bottlenecked entirely on Jörn's time. The other qualities all serve to ensure it is used well, which mainly means avoiding pitfalls that consume a lot of his time now, later, or even in future sessions with new agents. Jörn works in parallel with multiple agent sessions, so the two interaction regimes are:
+  a. Tight interaction with Jörn, multi-second back and worth between agent and Jörn to exchange a burst of information or to collaborate on a reasoning/ideation process.
+  b. Asynchronous interaction, where Jörn has to context switch between multiple sessions, and so the agent messages are mostly stand-alone, with past messages and tool calls already forgotten/never read by Jörn.
+1. **Correct.** Verify claims before you make them. Indicate sources where verification of claims is difficult otherwise. Mark degrees of certainty where relevant. If you have made an error, acknowledge it out loud and correct it and move on. Don't hide mistakes or uncertainties, don't double down nor flip around, instead calmly move towards correctness. Also, push back when you think Jörn is wrong or made a typo. Ask for confirmation/verification/explanations when you don't know what's correct but expect that Jörn has a good chance of knowing/of being able to help cheaply. Wrong beliefs are disruptive in chat, on both sides, so spend the effort to get things right.
+2. **Unambiguous and Clear.** Write so that Jörn can understand you quickly in one go. Use precise, specific, common language, provide context and examples when beneficial, and disambiguate when the best guess interpretation is not near-certain. Say what you mean, instead of awkward phrasings. One difficulty here is that Jörn skims multiple chats in parallel, time may pass between messages, and so Jörn may not have as much recollection of the conversation as you do. Err towards avoiding novel terminology that Jörn needs to remember, and err towards repeating context that is needed to understand the message.
+3. **Complete.** Include all information you want Jörn to have. Spell out implications, spell out assumptions made, provide and repeat context so Jörn can understand the message without having to re-read previous messages. Instead of leaving details for Jörn to infer, which he might not do as you anticipated, spell them out in a skippable manner.
+4. **Actionable.** Provide everything needed for Jörn to take the next steps you want him to take, with low overhead. Include copy-paste-ready commands, absolute file paths, and ideally ask independent, prioritized questions, with answer options where you have candidates/directions worth mentioning.
+5. **Skimmable.** Use formatting, ordering, structure, repetition and other techniques to make it easy for Jörn to skim the message. Jörn is managing multiple chats in parallel, and context-switching after 2-20 minute delays between messages is accumulating quickly as overhead cost. Skimmable/skippable text messages make it easy for Jörn to use his knowledge of what he already knows / still remembers from this chat, without having to tell you what he still recalls about the conversation. Repeating context, assumptions, and the immediate conversation goal / the breadcrumb trail of why you are talking with Jörn about some aspect / why you are asking some question is especially skimmable and valuable here, since it's information that hurts if Jörn forgot it and yet is cheap to repeat/include. Highlight important snippets using bold **keywords**, e.g. a **Questions** section. Use roughly a bullet/numbered list style since it favors skimmability and progressive disclosure of details.
+
+There are a few qualities that don't need to be paid any extra effort, because they are either unimportant, implied by above important qualities, or already part of the strong default writing style that agents exhibit:
+
+1. **Concise/Verbose.** The length of a message is a bad proxy for how much effort Jörn needs to spend on it, and how much value Jörn gets out of it. Not worth worrying about.
+2. **Exciting/Impressive/Boring.** Formatting is a more efficient way to indicate where you believe Jörn needs to pay attention, more so than emotional affect. Jörn is a busy advisor, he already has bought into the project goal and the session scope. Interesting content will naturally be interesting to him.
+3. **Visually balanced.** The chat is not published, and balance is a bad proxy for readability, for skimmability, for the right level of detail, for prioritization, etc. Mix formatting freely, e.g. flat vs nested lists, prose vs phrases, numbered vs alphabetical vs labeled items, long vs short paragraphs, etc.
+
+To enhance skimmability and actionability, use formatting techniques such as:
+- **Bold** for keywords so Jörn can visually get an overview of the message structure and jump to anchor points.
+1. Numbered/labeled lists so both you and Jörn can reference items by short symbol/keyword instead of having to re-describe them awkwardly.
+- Quotes instead of indirect references, especially when there's a lot of tool calls/a lot of passed time between.
+- Copy-paste-ready commands and file paths.
+- Specific words such as 'action', 'question', 'assumption', and 'hypothesis/goal' to distinguish different types of content swiftly.
+
+### Making Requests and Asking Questions
+
+- 
+
+- Produce work, not descriptions of work you plan to do.
+- When you are unsure what Jörn means, ask. Wrong work costs more than a clarifying question.
+- For reversible low-risk choices (file naming, formatting, tool selection): make a default choice and note it.
+- Read Jörn's messages literally. If he asks "what does X say?", answer with what X says.
+- Jörn may stop reading partway through a message. Do not treat a missing response as agreement.
+- When reporting findings, report what you found — not "my analysis suggests" or "I recommend." The findings are from the code/data, not from you. Don't end reports with "Should I proceed?" — either proceed or state what decision you need from Jörn.
+
+### What to avoid
+
+- No apologies, praise, or conversation-about-the-conversation.
+- No announcements of what you're about to do — produce the work directly.
+- No trailing summaries of what you just did — Jörn can read the diff.
+
+### Thesis content
+
+Jörn reviews rendered PDFs, not source files. Reference rendered theorem/section numbers from `thesis/build/main.aux`, not labels or file paths.
+
 ## Session Workflow
 
 **Scope** (Jörn + agent): Jörn scopes. Agents provide investigation findings, and suggest scope expansion/contraction, but Jörn decides. Agents ask clarifying questions to ensure they and Jörn understand the scope the same way. Agents track scope provenance in the plan file.
