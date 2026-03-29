@@ -26,8 +26,8 @@ crates/                    Rust library (the core)
     dataset.rs             polytope datasets
     **/math.tex            correctness proofs (one per module)
 
-math.tex                     root math.tex: compiles ALL crate + experiment proofs into one PDF
-                             (cross-references between experiments and crate lemmas resolve here)
+math.tex                   root math.tex: compiles ALL crate + experiment proofs into one PDF
+                           (cross-references between experiments and crate lemmas resolve here)
 
 experiments/               each experiment is a self-contained directory
   <name>/
@@ -52,9 +52,10 @@ handoffs/
 TASKS.md                   master task list, project management
 IDEAS.md                   research directions and experiment ideas
 
-.devcontainer/             devcontainer config, access method docs
+.devcontainer/             the development environment
 
-CLAUDE.md, .claude/        agent configuration
+CLAUDE.md                  (this file)
+.claude/                   
   rules/                   path-scoped rules (auto-loaded by file pattern)
   agents/                  subagent definitions
   skills/                  skill workflows (each a directory with SKILL.md)
@@ -63,8 +64,9 @@ CLAUDE.md, .claude/        agent configuration
   memory/                  persistent cross-session memory
   settings.json            Claude Code settings
 
+feedback/                  agent-written feedback about the infrastructure and workflows
+
 archaeology/               untrusted files from abandoned predecessor repo
-feedback/                  raw agent-design observations (rules, skills, agents, output style)
 ```
 
 **Navigating source files:** Every source file has a header explaining purpose and context (Rust: `//!` doc comments, Python: docstring, LaTeX: `%` block). Module-level files (mod.rs, main .tex includes) additionally document the module group's architecture.
