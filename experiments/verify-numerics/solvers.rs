@@ -218,6 +218,7 @@ pub fn q_value(h: &DMatrix<f64>, beta: &[f64]) -> f64 {
 ///
 /// Returns E₁ = ||H|| · ||β̃|| · ||r|| / σ_min(C).
 /// Panics if any assumption or conjecture is violated.
+/// All checks run before panicking, so the panic message reports ALL violations.
 ///
 /// [lem:q-error-first-order]: |Q̃ - Q*| ≤ E₁ (proven, max empirical ratio 0.196).
 pub fn compute_e1_bound(
@@ -228,63 +229,44 @@ pub fn compute_e1_bound(
     norm_r_lambda: f64,
     sigma_min_c: f64,
 ) -> f64 {
-    // ── Assumption: C has full row rank ──
-    // σ_min(C) is computed via SVD in f64, with numerical resolution ~ε_mach · σ_max(C).
-    // We require σ_min(C) / norm_h > ε_mach (otherwise the bound E₁ would overflow).
-    // The constraint solver uses EPS_RANK_THRESHOLD = 1e-10 relative to σ_max for rank detection.
-    // In library code this should be an enum variant (rank-deficient C is a valid mathematical case).
-    assert!(
-        sigma_min_c > 1e-14 * norm_h.max(1.0),
-        "σ_min(C) = {:.2e} is indistinguishable from zero at this scale (||H|| = {:.2e}). \
-         Constraint matrix C is numerically rank-deficient.",
-        sigma_min_c, norm_h
-    );
+    let _ = norm_r_lambda; // used for documentation; the proof uses ||r_λ|| ≤ ||r|| trivially
 
-    // ── Conjecture: ||H||/σ_min(C) bounded for EHZ polytopes ──
-    // Observed max: 21 across 186 polytope orbits (2026-03-30).
-    // Threshold: 5x observed max.
-    // On panic → escalate to Jörn: conjecture disproven by this polytope.
-    let h_over_smin = norm_h / sigma_min_c;
-    assert!(
-        h_over_smin <= CONJECTURED_H_OVER_SIGMA_MIN_C,
-        "||H||/σ_min(C) = {:.2e} exceeds conjectured bound {:.0e}. \
-         Observed max across 186 polytope orbits: 21. \
-         Escalate to Jörn. ||H|| = {:.2e}, σ_min(C) = {:.2e}",
-        h_over_smin, CONJECTURED_H_OVER_SIGMA_MIN_C, norm_h, sigma_min_c
-    );
+    let mut violations = Vec::new();
 
-    // ── Conjecture: stationarity residual ||r_β|| is negligible ──
-    // r = (r_β, r_λ) where r_β = Hβ̃ + C^Tλ̃ (stationarity violation).
-    // Empirically: r_β/r_λ < 1e-3 for all 533 tested cases (max ||r_β|| = 7.2e-11).
-    // The proof uses ||r_λ|| ≤ ||r||, which is tight because ||r|| ≈ ||r_λ|| when ||r_β|| ≈ 0.
-    // If ||r_β|| were large, the bound would still hold but would be looser.
-    // On panic → investigate: the eigendecomposition may be producing poor stationarity.
-    if norm_r_lambda > 1e-15 {
-        let r_beta_ratio = norm_r_beta / norm_r_lambda;
-        assert!(
-            r_beta_ratio < 1.0,
-            "||r_β||/||r_λ|| = {:.2e} ≥ 1: stationarity residual is not negligible. \
-             ||r_β|| = {:.2e}, ||r_λ|| = {:.2e}. \
-             The E₁ bound still holds but may be looser than expected.",
-            r_beta_ratio, norm_r_beta, norm_r_lambda
-        );
+    // σ_min(C) numerically nonzero (C full row rank).
+    // f64 SVD resolution: ~ε_mach · σ_max(C). Below 1e-14 · max(||H||, 1) is indistinguishable from 0.
+    if !(sigma_min_c > 1e-14 * norm_h.max(1.0)) {
+        violations.push(format!(
+            "σ_min(C) = {:.2e}: numerically zero at scale ||H|| = {:.2e}. C is rank-deficient.",
+            sigma_min_c, norm_h));
     }
 
-    // ── Conjecture: ||r_λ|| ≈ ||r|| (constraint violation dominates residual) ──
-    // Empirically: ||r_λ||/||r|| ≥ 0.14 for all cases, median 0.75.
-    // This is used in the proof: ||r_λ|| ≤ ||r|| (trivially true for sub-vectors).
-    // The conjecture here is the converse: ||r|| is not much larger than ||r_λ||.
-    // Not load-bearing for correctness — just for tightness.
+    // ||H||/σ_min(C) ≤ 100 (conjectured for EHZ polytopes, observed max 21 across 186 orbits).
+    if sigma_min_c > 0.0 && norm_h / sigma_min_c > CONJECTURED_H_OVER_SIGMA_MIN_C {
+        violations.push(format!(
+            "||H||/σ_min(C) = {:.2e} > {:.0e}. Observed max: 21. Conjecture disproven → escalate to Jörn.",
+            norm_h / sigma_min_c, CONJECTURED_H_OVER_SIGMA_MIN_C));
+    }
 
-    // ── Conjecture: ||β̃|| ≤ 2 for EHZ (since 1^T β = 1, β > 0 → ||β||₁ = 1) ──
-    // ||β||₂ ≤ ||β||₁ = 1 for exact β*. The computed β̃ may slightly exceed this.
-    // Threshold at 2 for safety.
-    assert!(
-        norm_beta <= 2.0,
-        "||β̃|| = {:.4} > 2: unexpectedly large. For EHZ with 1^Tβ = 1, β > 0: ||β||₂ ≤ 1. \
-         This β̃ is far from normalized. Investigate solver output.",
-        norm_beta
-    );
+    // ||r_β|| < 1e-3 (stationarity residual small in absolute terms).
+    // Observed max: 1.1e-9 across 533 cases. Ratio ||r_β||/||r_λ|| can exceed 1
+    // when both are at machine epsilon (irrelevant for Q error).
+    if !(norm_r_beta < 1e-3) {
+        violations.push(format!(
+            "||r_β|| = {:.2e} > 1e-3. Observed max: 1.1e-9. Stationarity badly violated.",
+            norm_r_beta));
+    }
+
+    // ||β̃|| ≤ 2 (for EHZ: 1^T β = 1, β > 0 ⇒ ||β||₂ ≤ ||β||₁ = 1; threshold 2x for f64 slack).
+    if !(norm_beta <= 2.0) {
+        violations.push(format!(
+            "||β̃|| = {:.4} > 2. For EHZ: ||β||₂ ≤ 1. Solver returned un-normalized β.",
+            norm_beta));
+    }
+
+    if !violations.is_empty() {
+        panic!("compute_e1_bound: {} violation(s):\n  {}", violations.len(), violations.join("\n  "));
+    }
 
     norm_h * norm_beta * residual_norm / sigma_min_c
 }
