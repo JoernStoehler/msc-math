@@ -122,3 +122,15 @@ Jörn said "Quote tool output is not correct." Agent abandoned its citation enti
 Agent committed to main (violating worktree instruction), then in the pre-merge report said "nothing needs Jörn's review." Jörn said "Merge." Agent assumed Jörn had read and accepted the earlier explanation that the commit was already on main. Jörn hadn't — he was responding to the pre-merge report.
 
 Same pattern as the existing memory entry `silence_not_confirmation`: don't treat lack of objection as agreement. When the situation is unusual (committed to main instead of a branch), state it explicitly in the merge-relevant message rather than relying on earlier context.
+
+### 2026-03-30 — Dropped columns from large tables in chat, repeatedly
+
+Session: verify-numerics Q accuracy. Tables with 8-10 columns. Agent kept producing incomplete tables — Jörn had to say "the table is incomplete again", "why are those two tables?", "you are constantly losing columns". Cost: ~5 messages of friction.
+
+**Fix:** For tables with >6 columns, write to a file and show the path. Chat markdown tables are unreliable for wide data. The analyze.py pattern (write to q_accuracy_checks.txt) worked — should have done that from the start instead of trying to render in chat.
+
+### 2026-03-30 — Generalized from top-N sorted sample to full distribution
+
+Agent claimed ‖r_β‖/‖r_λ‖ < 1e-3 "for all 533 cases" based on looking at top-15 cases sorted by error. Actually false for 56% of cases (ratio up to 30). Jörn said "I am surprised!" and the agent had to retract.
+
+**Pattern:** Top-N sampling bias. When sorted by one variable (error), the other variables are not representative. Fix: always show full distribution (min/p5/median/p95/max) before generalizing. Never claim "for all N cases" from a sorted subset.
