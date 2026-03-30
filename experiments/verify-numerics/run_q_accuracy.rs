@@ -98,6 +98,29 @@ struct Record {
     // Runtime error bound E₁ = ||H||·||β̃||·||r||/σ_min(C)
     // [lem:q-error-first-order] — bounds first-order Q error
     e1_bound: f64,
+
+    // ── Intermediate quantities for chain validation ──
+    // Each has an exact value, an f64 value, and a bound.
+    // Goal: classify each bound as strict/lax/invalid with a prefactor.
+
+    // Residual decomposition: r = (r_beta, r_lambda)
+    norm_r_beta: f64,    // ||r_β|| = ||(Hβ̃ + C^Tλ̃)||
+    norm_r_lambda: f64,  // ||r_λ|| = ||Cβ̃ - d||
+
+    // Lagrange multiplier comparison
+    norm_lambda_exact: f64,  // ||λ*|| (from exact solver)
+    norm_lambda_sp: f64,     // ||λ̃|| (from SP solver)
+    lambda_err: f64,         // ||δλ|| = ||λ̃ - λ*||
+
+    // Q error decomposition (exact values, not bounds)
+    first_order_term: f64,   // |(Hβ*)^T δβ| = |λ*^T r_λ|
+    second_order_term: f64,  // |½ δβ^T H δβ|
+    correction_term: f64,    // |λ̃^T r_λ| (what the solver adds)
+    corrected_residual: f64, // |δλ^T r_λ| (first-order after correction)
+
+    // Bound on ||λ*||: proven ≤ ||H||·||β*||/σ_min(C)
+    lambda_bound: f64,       // the bound value
+    lambda_bound_ratio: f64, // ||λ*|| / bound (should be ≤ 1)
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -107,6 +130,7 @@ struct Record {
 /// Result of exact QP solve.
 struct ExactQpResult {
     beta: Vec<BigRational>,
+    lambda: Vec<BigRational>, // Lagrange multiplier (p components)
     q_exact: BigRational,
     q_exact_f64: f64,
 }
@@ -153,6 +177,7 @@ fn solve_qp_exact(
     match gauss_solve_with_null_space(&mat, &rhs)? {
         GaussResult::FullRank(x) => {
             let beta: Vec<BigRational> = x[..m].to_vec();
+            let lambda: Vec<BigRational> = x[m..].to_vec();
             if !beta.iter().all(|b| b.is_positive()) {
                 return None;
             }
@@ -160,6 +185,7 @@ fn solve_qp_exact(
             let q_f64 = rational_to_f64(&q);
             Some(ExactQpResult {
                 beta,
+                lambda,
                 q_exact: q,
                 q_exact_f64: q_f64,
             })
@@ -173,10 +199,15 @@ fn solve_qp_exact(
                 null_space.iter().map(|v| v[..m].to_vec()).collect();
 
             let beta = find_positive_beta(&beta0, &null_beta)?;
+            // Recompute lambda from the found beta: solve Hβ + C^Tλ = 0 for λ.
+            // λ = -(C C^T)^{-1} C H β (least-squares).
+            // For now, compute from full KKT system with this beta.
+            let lambda = compute_exact_lambda(h, c, &beta);
             let q = compute_q_exact(h, &beta);
             let q_f64 = rational_to_f64(&q);
             Some(ExactQpResult {
                 beta,
+                lambda,
                 q_exact: q,
                 q_exact_f64: q_f64,
             })
@@ -195,6 +226,86 @@ fn compute_q_exact(h: &[Vec<BigRational>], beta: &[BigRational]) -> BigRational 
         }
     }
     sum / two
+}
+
+/// Compute exact λ from Hβ + C^Tλ = 0 (stationarity).
+/// Solves C C^T λ = -C H β by Gaussian elimination.
+fn compute_exact_lambda(
+    h: &[Vec<BigRational>],
+    c: &[Vec<BigRational>],
+    beta: &[BigRational],
+) -> Vec<BigRational> {
+    let m = beta.len();
+    let p = c.len();
+    let zero = BigRational::zero();
+
+    // Compute g = H β
+    let mut g = vec![zero.clone(); m];
+    for i in 0..m {
+        for j in 0..m {
+            g[i] += &h[i][j] * &beta[j];
+        }
+    }
+
+    // Compute rhs = -C g = -C H β
+    let mut rhs = vec![zero.clone(); p];
+    for i in 0..p {
+        for j in 0..m {
+            rhs[i] -= &c[i][j] * &g[j];
+        }
+    }
+
+    // Compute A = C C^T (p × p)
+    let mut a = vec![vec![zero.clone(); p]; p];
+    for i in 0..p {
+        for j in 0..p {
+            for k in 0..m {
+                a[i][j] += &c[i][k] * &c[j][k];
+            }
+        }
+    }
+
+    // Solve A λ = rhs by Gaussian elimination
+    // Augmented matrix [A | rhs]
+    let mut aug = vec![vec![zero.clone(); p + 1]; p];
+    for i in 0..p {
+        for j in 0..p {
+            aug[i][j] = a[i][j].clone();
+        }
+        aug[i][p] = rhs[i].clone();
+    }
+
+    // Forward elimination
+    for col in 0..p {
+        // Find pivot
+        let pivot_row = (col..p).find(|&r| !aug[r][col].is_zero());
+        let pivot_row = match pivot_row {
+            Some(r) => r,
+            None => return vec![zero; p], // degenerate
+        };
+        aug.swap(col, pivot_row);
+        let pivot = aug[col][col].clone();
+        for row in (col + 1)..p {
+            let factor = &aug[row][col] / &pivot;
+            for j in col..=p {
+                let val = &aug[col][j] * &factor;
+                aug[row][j] -= val;
+            }
+        }
+    }
+
+    // Back substitution
+    let mut lambda = vec![zero.clone(); p];
+    for col in (0..p).rev() {
+        let mut val = aug[col][p].clone();
+        for j in (col + 1)..p {
+            val -= &aug[col][j] * &lambda[j];
+        }
+        if !aug[col][col].is_zero() {
+            lambda[col] = val / &aug[col][col];
+        }
+    }
+    lambda
 }
 
 // ── Gaussian elimination (copied from rational_solver.rs) ──
@@ -1013,6 +1124,7 @@ struct SpResult {
     q: f64,       // q_corrected
     q_raw: f64,   // q_raw (before correction)
     beta: Vec<f64>,
+    lambda: Vec<f64>, // (mu[0..4], xi) — full Lagrange multiplier
     residual_norm: f64,
     lambda_min_all: f64,
     lambda_min_retained: f64,
@@ -1090,10 +1202,13 @@ fn run_saddle_point(h: &DMatrix<f64>, c: &DMatrix<f64>, d: &DVector<f64>) -> SpR
             let residual_norm = residual_vec.norm();
             let margin = result.beta.iter().copied().fold(f64::INFINITY, f64::min);
 
+            let mut lam = result.mu.clone();
+            lam.push(result.xi);
             SpResult {
                 q: result.q_corrected,
                 q_raw: result.q_raw,
                 beta: result.beta,
+                lambda: lam,
                 residual_norm,
                 lambda_min_all,
                 lambda_min_retained,
@@ -1107,6 +1222,7 @@ fn run_saddle_point(h: &DMatrix<f64>, c: &DMatrix<f64>, d: &DVector<f64>) -> SpR
             q: f64::NAN,
             q_raw: f64::NAN,
             beta: vec![],
+            lambda: vec![],
             residual_norm: f64::NAN,
             lambda_min_all,
             lambda_min_retained,
@@ -1119,6 +1235,7 @@ fn run_saddle_point(h: &DMatrix<f64>, c: &DMatrix<f64>, d: &DVector<f64>) -> SpR
             q: f64::NAN,
             q_raw: f64::NAN,
             beta: vec![],
+            lambda: vec![],
             residual_norm: f64::NAN,
             lambda_min_all,
             lambda_min_retained,
@@ -1224,6 +1341,7 @@ fn main() {
                     q: f64::NAN,
                     q_raw: f64::NAN,
                     beta: vec![],
+                    lambda: vec![],
                     residual_norm: f64::NAN,
                     lambda_min_all: f64::NAN,
                     lambda_min_retained: f64::NAN,
@@ -1330,6 +1448,118 @@ fn main() {
             n_all_feasible += 1;
         }
 
+        // ── Intermediate chain quantities ──
+        // Compute all decomposition values when both exact and SP are feasible.
+
+        // Residual decomposition: r = (r_beta, r_lambda)
+        // r_beta = H β̃ + C^T λ̃ (stationarity residual, first m components)
+        // r_lambda = C β̃ - d (constraint residual, last p components)
+        let (norm_r_beta, norm_r_lambda) = if !sp.beta.is_empty() && sp.verdict == "feasible" {
+            let beta_dv = DVector::from_column_slice(&sp.beta);
+            // r_lambda = C β̃ - d
+            let r_lambda = &prob.c_f64 * &beta_dv - &prob.d_f64;
+            let nr_lambda = r_lambda.norm();
+            // r_beta = H β̃ + C^T λ̃
+            // λ̃ = (mu[0..4], xi) from the KktResult
+            // But we don't have lambda_tilde in SpResult... reconstruct from KKT residual
+            // Actually: r = M x̃ - b, so r_beta = first m components of r
+            // We can compute it directly.
+            let h_beta = &prob.h_f64 * &beta_dv;
+            // We need lambda_tilde. Let's just compute norm_r_beta from total residual.
+            // ||r||² = ||r_β||² + ||r_λ||², so ||r_β|| = sqrt(||r||² - ||r_λ||²)
+            let r_total = sp.residual_norm;
+            let nr_beta = if r_total >= nr_lambda {
+                (r_total * r_total - nr_lambda * nr_lambda).max(0.0).sqrt()
+            } else {
+                0.0 // rounding
+            };
+            (nr_beta, nr_lambda)
+        } else {
+            (f64::NAN, f64::NAN)
+        };
+
+        // Lambda norms and error
+        let (norm_lambda_exact, lambda_exact_f64) = match &exact {
+            Some(r) => {
+                let lam_f64: Vec<f64> = r.lambda.iter().map(|l| rational_to_f64(l)).collect();
+                let norm = lam_f64.iter().map(|x| x * x).sum::<f64>().sqrt();
+                (norm, Some(lam_f64))
+            }
+            None => (f64::NAN, None),
+        };
+
+        let norm_lambda_sp = if !sp.lambda.is_empty() {
+            sp.lambda.iter().map(|x| x * x).sum::<f64>().sqrt()
+        } else {
+            f64::NAN
+        };
+
+        let lambda_err = match &lambda_exact_f64 {
+            Some(le) if !sp.lambda.is_empty() && sp.lambda.len() == le.len() => {
+                le.iter().zip(sp.lambda.iter())
+                    .map(|(a, b)| (a - b).powi(2)).sum::<f64>().sqrt()
+            }
+            _ => f64::NAN,
+        };
+
+        // Q error decomposition: requires exact β*, exact λ*, and f64 β̃
+        let (first_order_term, second_order_term, correction_term, corrected_residual) =
+            if let (Some(be), Some(le)) = (&beta_exact, &lambda_exact_f64) {
+                if !sp.beta.is_empty() && sp.verdict == "feasible" {
+                    let m = prob.m;
+                    let be_f64: Vec<f64> = be.iter().map(|b| rational_to_f64(b)).collect();
+                    let db: Vec<f64> = (0..m).map(|i| sp.beta[i] - be_f64[i]).collect();
+                    let db_dv = DVector::from_column_slice(&db);
+
+                    // r_lambda = C δβ
+                    let r_lam = &prob.c_f64 * &db_dv;
+
+                    // First-order: |λ*^T r_λ|
+                    let le_dv = DVector::from_column_slice(le);
+                    let first = le_dv.dot(&r_lam).abs();
+
+                    // Second-order: |½ δβ^T H δβ|
+                    let h_db = &prob.h_f64 * &db_dv;
+                    let second = (0.5 * db_dv.dot(&h_db)).abs();
+
+                    // Correction: |λ̃^T r_λ|
+                    let corr_magnitude = if !sp.lambda.is_empty() {
+                        let lt = DVector::from_column_slice(&sp.lambda);
+                        lt.dot(&r_lam).abs()
+                    } else {
+                        (sp.q_raw - sp.q).abs() // fallback
+                    };
+
+                    // Corrected residual: |δλ^T r_λ|
+                    let corr_residual = if !sp.lambda.is_empty() && sp.lambda.len() == le.len() {
+                        let dl: Vec<f64> = sp.lambda.iter().zip(le.iter())
+                            .map(|(a, b)| a - b).collect();
+                        let dl_dv = DVector::from_column_slice(&dl);
+                        dl_dv.dot(&r_lam).abs()
+                    } else {
+                        f64::NAN
+                    };
+
+                    (first, second, corr_magnitude, corr_residual)
+                } else {
+                    (f64::NAN, f64::NAN, f64::NAN, f64::NAN)
+                }
+            } else {
+                (f64::NAN, f64::NAN, f64::NAN, f64::NAN)
+            };
+
+        // Lambda bound: ||λ*|| ≤ ||H||·||β*||/σ_min(C)
+        let lambda_bound = if norm_beta_exact.is_finite() && sigma_min_c > 0.0 {
+            norm_h * norm_beta_exact / sigma_min_c
+        } else {
+            f64::NAN
+        };
+        let lambda_bound_ratio = if lambda_bound.is_finite() && lambda_bound > 0.0 && norm_lambda_exact.is_finite() {
+            norm_lambda_exact / lambda_bound
+        } else {
+            f64::NAN
+        };
+
         let record = Record {
             family: prob.family.clone(),
             instance: prob.instance,
@@ -1370,6 +1600,17 @@ fn main() {
             } else {
                 f64::NAN
             },
+            norm_r_beta,
+            norm_r_lambda,
+            norm_lambda_exact,
+            norm_lambda_sp,
+            lambda_err,
+            first_order_term,
+            second_order_term,
+            correction_term,
+            corrected_residual,
+            lambda_bound,
+            lambda_bound_ratio,
         };
 
         let json = serde_json::to_string(&record).expect("serialize");
