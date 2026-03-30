@@ -35,3 +35,9 @@ Prompt's first three words: "Work in a worktree." Agent discovered the task was 
 This is the same error class as 2026-03-28. The 2026-03-28 entries didn't have explicit worktree instructions in the prompt — this time the instruction was explicit and the agent still skipped it. The "too small to bother" reasoning overrides both implicit conventions and explicit instructions.
 
 **Pattern:** Agents treat worktree instructions as advisory when they judge the scope is small. This has now happened in 3 sessions.
+
+### 2026-03-30 — Unnecessary recovery: reverted + created worktree instead of acknowledging
+
+Same session as above. When Jörn said "Read the prompt" (pointing out the worktree violation), agent immediately reverted the commit, created a worktree, re-applied the edit — without asking Jörn what to do. Jörn then pointed out this was also wasteful: the change was already on main, creating a worktree only to immediately merge it back is pointless.
+
+**The right thing to do:** Acknowledge the mistake ("I should have used a worktree but committed directly to main — the change is only TASKS.md, do you want me to leave it or redo it?") instead of reflexively "fixing" it in the most literal way possible.

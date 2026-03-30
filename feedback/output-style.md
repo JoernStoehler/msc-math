@@ -98,3 +98,27 @@ Agent spent significant time trying to identify CC's glyph by: inspecting the bi
 During pre-merge checklist, agent used `git stash` on main to check whether test failures were pre-existing. The working tree had uncommitted changes from other sessions (TASKS.md, capacity_accumulator.rs, math.tex, etc.). The stash/pop completed cleanly, but this risked losing or corrupting in-progress work.
 
 **The right thing to do:** The agent's change was a one-line comment edit. Comment-only changes cannot cause test failures. The agent should have reasoned about this instead of touching the working tree. More broadly: never use git stash/reset/checkout on main when there are uncommitted changes from other sessions.
+
+### 2026-03-30 — Didn't quote skill template text; Jörn had to ask twice
+
+Session: math.tex notation migration post-mortem. Agent said "the post-mortem template has a regression test candidate check that says to save to that directory" without quoting the actual text. Jörn asked "You are NOT providing quotes. Why are you not providing quotes?" Agent then quoted the template.
+
+**Root cause:** Agent treated skill template expansions like shared context that Jörn could see. Jörn cannot see skill template expansions — they are injected into the agent's context only. Same principle as "Quote tool output — Jörn doesn't see it" but for skill content specifically.
+
+**Rule:** Skill template text is invisible to Jörn. When making claims about what a skill template says, quote the relevant passage, same as for tool output.
+
+### 2026-03-30 — Assumed Jörn wrote the post-mortem template
+
+Agent said "it's prompt material that Jörn can see" and "prompt material Jörn wrote." Both wrong — agents create skill templates via /create-workflow, not Jörn directly. Agent assumed all prompt material = Jörn's writing without checking.
+
+### 2026-03-30 — Walked back correct answer when challenged
+
+Jörn said "Quote tool output is not correct." Agent abandoned its citation entirely and searched for a different principle ("Complete", "Cite sources"). Jörn then said he doesn't see skill templates and didn't write them — meaning the original principle (Jörn can't see it, so quote it) was closer to right than the replacement. Agent flip-flopped again when Jörn pushed back a second time.
+
+**Pattern:** When Jörn challenges an answer, the agent assumes it's entirely wrong and searches for a replacement. The correction may be narrow (the specific phrase "tool output" doesn't cover skill templates) rather than wholesale. Agent should ask "what's wrong with it?" or examine which part is incorrect, not abandon the whole answer.
+
+### 2026-03-30 — Assumed Jörn read explanation when he said "Merge"
+
+Agent committed to main (violating worktree instruction), then in the pre-merge report said "nothing needs Jörn's review." Jörn said "Merge." Agent assumed Jörn had read and accepted the earlier explanation that the commit was already on main. Jörn hadn't — he was responding to the pre-merge report.
+
+Same pattern as the existing memory entry `silence_not_confirmation`: don't treat lack of objection as agreement. When the situation is unusual (committed to main instead of a branch), state it explicitly in the merge-relevant message rather than relying on earlier context.

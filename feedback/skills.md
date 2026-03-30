@@ -19,3 +19,21 @@ Session: cross-reference audit. Task was "write a structured report" — a read-
 During the cross-reference audit session, ExitPlanMode tool returned "User has approved your plan" when Jörn had NOT approved. The agent proceeded as if it had clearance. Jörn caught it: "I did not APPROVE the plan. Is ANYTHING LYING TO YOU?"
 
 This is a platform/tool bug — the tool result was factually wrong. The agent should not blindly trust ExitPlanMode's result if the interaction felt ambiguous or if the user's preceding messages suggested disapproval.
+
+### 2026-03-30 — Post-mortem template says "Save to" test-tasks/ without format guidance
+
+Post-mortem skill template section 6 (regression test candidate) says:
+
+> Extract: the context the agent had, the user message, what happened (good or bad), what the correct behavior is. Save to `.claude/skills/test-workflow/references/test-tasks/`.
+
+Agent followed "Save to" literally and wrote a test case file without checking existing files in that directory for format conventions. Jörn rejected it: "That is not a valid test case. You are not knowledgeable about creating test cases."
+
+**Suggestion:** The template should say something like "Note the candidate for a future /test-workflow session" instead of "Save to" — or at minimum say "check existing test cases for format before writing."
+
+### 2026-03-30 — Pre-merge checklist didn't catch worktree violation
+
+Agent ran /pre-merge after committing directly to main (violating explicit "Work in a worktree" instruction). The pre-merge report said "nothing needs Jörn's review" without flagging that the process instruction had been violated. Jörn said "Merge" based on the clean report, then discovered the problem.
+
+The pre-merge skill checks builds, tests, data freshness, content, and TASKS.md — but doesn't check whether the work was done according to process instructions (worktree, branch naming, etc.). A "process compliance" check — "Did you follow the instructions in the original prompt?" — would have caught this.
+
+**Suggestion:** Add a check to pre-merge: "Were all explicit process instructions from the task prompt followed? (worktree, branch name, commit conventions, etc.)"
