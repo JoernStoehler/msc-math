@@ -941,8 +941,145 @@ fn generate_problems() -> Vec<TestProblem> {
         problems.push(prob);
     }
 
+    // ── Family 13: Both H and C near-singular ──
+    // Double-singular: both H and C have near-zero singular values.
+    // Tests whether the bound degrades multiplicatively.
+    for inst in 0..200 {
+        let m = rng.gen_range(6..=10);
+        let prob = make_double_singular_problem(&mut rng, m, inst);
+        problems.push(prob);
+    }
+
+    // ── Family 14: Near-degenerate eigenspaces of H ──
+    // H has clusters of nearly-equal eigenvalues. The eigenvectors within a
+    // cluster are numerically unstable (rotations within the eigenspace are
+    // arbitrary at machine precision). Tests whether the bound depends on
+    // eigenvector stability.
+    for inst in 0..200 {
+        let m = rng.gen_range(6..=10);
+        let prob = make_clustered_eigenvalue_problem(&mut rng, m, inst);
+        problems.push(prob);
+    }
+
+    // ── Family 15: Near-degenerate eigenspaces of M ──
+    // The augmented KKT matrix M has clustered eigenvalues.
+    // The pseudoinverse eigenvectors are unstable within clusters.
+    for inst in 0..200 {
+        let m = rng.gen_range(6..=10);
+        let prob = make_clustered_m_eigenvalue_problem(&mut rng, m, inst);
+        problems.push(prob);
+    }
+
     println!("Generated {} test problems", problems.len());
     problems
+}
+
+/// Both H and C have near-zero singular values.
+fn make_double_singular_problem(rng: &mut StdRng, m: usize, inst: usize) -> TestProblem {
+    // Small eigenvalue for H
+    let h_small = 10.0_f64.powi(-((inst % 8) as i32 + 1)); // 1e-1 to 1e-8
+    // Small singular value for C
+    let c_small = 10.0_f64.powi(-((inst / 8 % 8) as i32 + 1)); // 1e-1 to 1e-8
+
+    // Build H with controlled small eigenvalue
+    let random_mat = DMatrix::from_fn(m, m, |_, _| rng.gen_range(-1.0..1.0));
+    let qr = random_mat.qr();
+    let q = qr.q();
+    let eigenvalues = DVector::from_fn(m, |i, _| {
+        if i == 0 { h_small }
+        else { rng.gen_range(0.5..2.0) * if i % 2 == 0 { 1.0 } else { -1.0 } }
+    });
+    let lambda = DMatrix::from_diagonal(&eigenvalues);
+    let h = &q * &lambda * q.transpose();
+
+    // Build ill-conditioned C
+    let mut c = DMatrix::from_fn(P, m, |i, _| {
+        if i < P - 1 { rng.gen_range(-3.0..3.0) } else { 1.0 }
+    });
+    for j in 0..m {
+        c[(3, j)] = c[(0, j)] + c_small * rng.gen_range(-1.0..1.0);
+    }
+
+    // Feasible by construction
+    let raw: Vec<f64> = (0..m).map(|_| rng.gen_range(0.1..1.0)).collect();
+    let sum: f64 = raw.iter().sum();
+    let beta: Vec<f64> = raw.iter().map(|x| x / sum).collect();
+    let beta_dv = DVector::from_column_slice(&beta);
+    let d = &c * &beta_dv;
+
+    make_problem_f64("double_singular", inst, &h, &c, &d)
+}
+
+/// H has clustered eigenvalues (near-degenerate eigenspaces).
+/// Eigenvectors within clusters are numerically unstable.
+fn make_clustered_eigenvalue_problem(rng: &mut StdRng, m: usize, inst: usize) -> TestProblem {
+    let random_mat = DMatrix::from_fn(m, m, |_, _| rng.gen_range(-1.0..1.0));
+    let qr = random_mat.qr();
+    let q = qr.q();
+
+    // Cluster structure: groups of 2-3 eigenvalues separated by gap_size
+    let gap_exp = (inst % 10) as i32 + 3; // gaps of 1e-3 to 1e-12
+    let gap = 10.0_f64.powi(-gap_exp);
+
+    let eigenvalues = DVector::from_fn(m, |i, _| {
+        let cluster_center = if i < m / 2 { 2.0 } else { -1.5 }; // two clusters
+        let perturbation = gap * rng.gen_range(-1.0..1.0);
+        cluster_center + perturbation
+    });
+    let lambda = DMatrix::from_diagonal(&eigenvalues);
+    let h = &q * &lambda * q.transpose();
+
+    // Well-conditioned C
+    let c = DMatrix::from_fn(P, m, |i, _| {
+        if i < P - 1 { rng.gen_range(-3.0..3.0) } else { 1.0 }
+    });
+
+    // Feasible by construction
+    let raw: Vec<f64> = (0..m).map(|_| rng.gen_range(0.1..1.0)).collect();
+    let sum: f64 = raw.iter().sum();
+    let beta: Vec<f64> = raw.iter().map(|x| x / sum).collect();
+    let beta_dv = DVector::from_column_slice(&beta);
+    let d = &c * &beta_dv;
+
+    make_problem_f64("clustered_h_eig", inst, &h, &c, &d)
+}
+
+/// Augmented KKT matrix M has clustered eigenvalues.
+/// Achieved by making H diagonal with values chosen so M = [H, C^T; C, 0]
+/// has near-degenerate eigenvalues.
+fn make_clustered_m_eigenvalue_problem(rng: &mut StdRng, m: usize, inst: usize) -> TestProblem {
+    // Simple approach: make H have eigenvalues near ±σ_i(C) so that
+    // the eigenvalues of M = [H, C^T; C, 0] cluster.
+    // For H = αI, M has eigenvalues (α ± sqrt(α² + σ_i²))/2... complex.
+    // Simpler: just build H with values close to each other.
+    let gap_exp = (inst % 10) as i32 + 3;
+    let gap = 10.0_f64.powi(-gap_exp);
+    let base_val = rng.gen_range(0.5..2.0);
+
+    let h = DMatrix::from_fn(m, m, |i, j| {
+        if i == j { base_val + gap * rng.gen_range(-1.0..1.0) }
+        else { 0.0 }
+    });
+
+    // Moderately ill-conditioned C (so M has interesting structure)
+    let kc_target = 10.0_f64.powi((inst / 10 % 6) as i32 + 1); // 10 to 1e6
+    let mut c = DMatrix::from_fn(P, m, |i, _| {
+        if i < P - 1 { rng.gen_range(-3.0..3.0) } else { 1.0 }
+    });
+    // Adjust row 3 to control κ(C)
+    let adjust = 1.0 / kc_target;
+    for j in 0..m {
+        c[(3, j)] = c[(0, j)] + adjust * rng.gen_range(-1.0..1.0);
+    }
+
+    // Feasible by construction
+    let raw: Vec<f64> = (0..m).map(|_| rng.gen_range(0.1..1.0)).collect();
+    let sum: f64 = raw.iter().sum();
+    let beta: Vec<f64> = raw.iter().map(|x| x / sum).collect();
+    let beta_dv = DVector::from_column_slice(&beta);
+    let d = &c * &beta_dv;
+
+    make_problem_f64("clustered_m_eig", inst, &h, &c, &d)
 }
 
 /// Construct a near-singular H via eigendecomposition: H = Q^T diag(λ) Q.
