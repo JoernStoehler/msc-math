@@ -229,11 +229,15 @@ pub fn compute_e1_bound(
     sigma_min_c: f64,
 ) -> f64 {
     // ── Assumption: C has full row rank ──
-    // Mathematical precondition. In library code this should be an enum variant,
-    // not a panic (rank-deficient C is a valid mathematical case).
+    // σ_min(C) is computed via SVD in f64, with numerical resolution ~ε_mach · σ_max(C).
+    // We require σ_min(C) / norm_h > ε_mach (otherwise the bound E₁ would overflow).
+    // The constraint solver uses EPS_RANK_THRESHOLD = 1e-10 relative to σ_max for rank detection.
+    // In library code this should be an enum variant (rank-deficient C is a valid mathematical case).
     assert!(
-        sigma_min_c > 0.0,
-        "σ_min(C) = 0: constraint matrix C is rank-deficient"
+        sigma_min_c > 1e-14 * norm_h.max(1.0),
+        "σ_min(C) = {:.2e} is indistinguishable from zero at this scale (||H|| = {:.2e}). \
+         Constraint matrix C is numerically rank-deficient.",
+        sigma_min_c, norm_h
     );
 
     // ── Conjecture: ||H||/σ_min(C) bounded for EHZ polytopes ──
