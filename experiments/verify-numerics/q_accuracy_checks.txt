@@ -59,10 +59,8 @@ PROVEN BOUNDS (from math.tex, checked against exact rational ground truth)
   B5: 1st/2nd = 2  (identity, full-rank M only)
     Type: proven_identity  |  Assumes: P3, x*∈col(M)  |  Used for: structural
     Threshold: ratio = 2 ± 1e-3
-    EHZ-like:    n=   1  range=7.97e+10 – 7.97e+10             tightest=   ±7.97e+10  violations=1
-    Stress-test: n=   1  range=1.08e+12 – 1.08e+12             tightest=   ±1.08e+12  violations=1
-    VIOLATION: ratio=1.0790e+12 family=clustered_h_eig inst=152 m=7
-    VIOLATION: ratio=7.9697e+10 family=feasible_constructed inst=234 m=11
+    EHZ-like:    n=   0  range=—                               tightest=           —  violations=0
+    Stress-test: n=   0  range=—                               tightest=           —  violations=0
 
   B6: |Q−Q*| / |Q_raw−Q*| ≤ 2  (correction doesn't worsen)
     Type: observation  |  Assumes: —  |  Used for: sanity
