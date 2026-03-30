@@ -1720,6 +1720,33 @@ fn main() {
             f64::NAN
         };
 
+        // ── Assert proven bounds (validated against exact rational ground truth) ──
+        // These hold by proof; assertion catches proof bugs or implementation errors.
+
+        // B2: ||λ*|| ≤ ||H||·||β*||/σ_min(C)
+        if lambda_bound_ratio.is_finite() {
+            assert!(lambda_bound_ratio <= 1.0 + 1e-10,
+                "B2 violated: ||λ*||/bound = {:.6e} > 1. ||λ*||={:.2e}, bound={:.2e}, family={}, inst={}",
+                lambda_bound_ratio, norm_lambda_exact, lambda_bound, prob.family, prob.instance);
+        }
+
+        // B3: |Q − Q*| ≤ E₁
+        let e1 = if norm_beta_sp.is_finite() && sp.residual_norm.is_finite() && sigma_min_c > 0.0 {
+            norm_h * norm_beta_sp * sp.residual_norm / sigma_min_c
+        } else { f64::NAN };
+        if e1.is_finite() && err_saddle.is_finite() && e1 > 0.0 {
+            assert!(err_saddle <= e1 * (1.0 + 1e-10),
+                "B3 violated: |Q−Q*|/E₁ = {:.6e} > 1. err={:.2e}, E₁={:.2e}, family={}, inst={}",
+                err_saddle / e1, err_saddle, e1, prob.family, prob.instance);
+        }
+
+        // B4: |Q_raw − Q*| ≤ E₁
+        if e1.is_finite() && err_raw_saddle.is_finite() && e1 > 0.0 {
+            assert!(err_raw_saddle <= e1 * (1.0 + 1e-10),
+                "B4 violated: |Q_raw−Q*|/E₁ = {:.6e} > 1. err_raw={:.2e}, E₁={:.2e}, family={}, inst={}",
+                err_raw_saddle / e1, err_raw_saddle, e1, prob.family, prob.instance);
+        }
+
         let record = Record {
             family: prob.family.clone(),
             instance: prob.instance,
