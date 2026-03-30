@@ -19,11 +19,12 @@ use rand::{Rng, SeedableRng};
 use serde::Serialize;
 use std::io::Write;
 
-// ── Library imports (read-only usage) ──
+// ── Local solver module (self-contained, no library dependency) ──
 
-use symplectic::kkt::projection_solver::solve_projected;
-use symplectic::kkt::saddle_point_solver::solve_saddle_point;
-use symplectic::kkt::{QP, Verdict};
+#[path = "solvers.rs"]
+mod solvers;
+
+use solvers::{solve_projected, solve_saddle_point, QP, Verdict};
 
 // ── Constants ──
 
@@ -1014,7 +1015,7 @@ fn run_saddle_point(h: &DMatrix<f64>, c: &DMatrix<f64>, d: &DVector<f64>) -> SpR
         .count();
 
     match solve_saddle_point(&kkt, &rhs) {
-        symplectic::kkt::saddle_point_solver::KktOutcome::Feasible(result) => {
+        solvers::KktOutcome::Feasible(result) => {
             let residual_vec = &kkt * DVector::from_column_slice(&{
                 let mut x = result.beta.clone();
                 x.extend_from_slice(&result.mu);
@@ -1036,7 +1037,7 @@ fn run_saddle_point(h: &DMatrix<f64>, c: &DMatrix<f64>, d: &DVector<f64>) -> SpR
                 margin,
             }
         }
-        symplectic::kkt::saddle_point_solver::KktOutcome::Infeasible => SpResult {
+        solvers::KktOutcome::Infeasible => SpResult {
             q: f64::NAN,
             beta: vec![],
             residual_norm: f64::NAN,
@@ -1047,7 +1048,7 @@ fn run_saddle_point(h: &DMatrix<f64>, c: &DMatrix<f64>, d: &DVector<f64>) -> SpR
             verdict: "infeasible".to_string(),
             margin: f64::NEG_INFINITY,
         },
-        symplectic::kkt::saddle_point_solver::KktOutcome::SingularMatrix => SpResult {
+        solvers::KktOutcome::SingularMatrix => SpResult {
             q: f64::NAN,
             beta: vec![],
             residual_norm: f64::NAN,
@@ -1101,105 +1102,12 @@ fn run_projection(h: &DMatrix<f64>, c: &DMatrix<f64>, d: &DVector<f64>) -> ProjR
     }
 }
 
-/// Corrected projection solver: fixes the sign error in α₀ computation.
+/// Corrected projection solver.
 ///
-/// The library's projection_solver.rs computes α₀ = (H')⁺ g where g = V^T H β₀.
-/// The correct stationarity condition H'α + g = 0 gives α₀ = -(H')⁺ g.
-/// This function implements the corrected version to verify the hypothesis.
+/// Now that solvers.rs has the sign fix, this is identical to run_projection.
+/// Kept as a separate call for JSONL backward compatibility (q_proj_corrected field).
 fn run_projection_corrected(h: &DMatrix<f64>, c: &DMatrix<f64>, d: &DVector<f64>) -> ProjResult {
-    let m = h.nrows();
-
-    // Step 1: Solve constraints via SVD
-    let constraint_sol = match symplectic::kkt::constraint_solver::solve_constraints(c, d) {
-        Some(sol) => sol,
-        None => {
-            return ProjResult {
-                q: 0.0,
-                beta: vec![0.0; m],
-                constraint_residual: f64::NAN,
-                verdict: "false".to_string(),
-                margin: f64::NEG_INFINITY,
-            };
-        }
-    };
-
-    let beta0 = &constraint_sol.x0;
-    let v = &constraint_sol.null_basis;
-    let k = v.ncols();
-
-    if k == 0 {
-        let q = 0.5 * beta0.dot(&(h * beta0));
-        let margin = beta0.iter().copied().fold(f64::INFINITY, f64::min);
-        let verdict = if margin > 1e-9 { "true" } else if margin < -1e-9 { "false" } else { "indeterminate" };
-        return ProjResult {
-            q,
-            beta: beta0.as_slice().to_vec(),
-            constraint_residual: 0.0,
-            verdict: verdict.to_string(),
-            margin,
-        };
-    }
-
-    // Step 2: Reduced Hessian
-    let hv = h * v;
-    let h_prime = v.transpose() * &hv;
-    let b_prime = v.transpose() * &(h * beta0);
-
-    let eig = h_prime.clone().symmetric_eigen();
-    let eigenvalues = &eig.eigenvalues;
-    let eigenvectors = &eig.eigenvectors;
-
-    let lambda_max = eigenvalues.iter().map(|e| e.abs()).fold(0.0_f64, f64::max);
-    let threshold = if lambda_max < 1e-12 { f64::INFINITY } else { lambda_max * 1e-3 };
-
-    // Step 3: CORRECTED pseudoinverse: α₀ = -(H')⁺ g (note the minus sign!)
-    let mut alpha0 = DVector::zeros(k);
-    for i in 0..k {
-        if eigenvalues[i].abs() > threshold {
-            let pi = eigenvectors.column(i);
-            let coeff = -pi.dot(&b_prime) / eigenvalues[i]; // NEGATED
-            alpha0 += coeff * &pi;
-        }
-    }
-
-    // Null-space directions of H'
-    let null_indices: Vec<usize> = (0..k)
-        .filter(|&i| eigenvalues[i].abs() <= threshold)
-        .collect();
-
-    let beta_base = beta0 + v * &alpha0;
-
-    let n_null = null_indices.len();
-    let v_search = if n_null > 0 {
-        let mut w_alpha = DMatrix::zeros(k, n_null);
-        for (j, &idx) in null_indices.iter().enumerate() {
-            let col = eigenvectors.column(idx);
-            for i in 0..k {
-                w_alpha[(i, j)] = col[i];
-            }
-        }
-        v * w_alpha
-    } else {
-        DMatrix::zeros(m, 0)
-    };
-
-    // Step 4: Max-margin search
-    let margin_result = symplectic::kkt::beta_feasibility::find_max_margin(&beta_base, &v_search);
-
-    // Step 5: Compute Q
-    let q = 0.5 * margin_result.beta.dot(&(h * &margin_result.beta));
-    let margin = margin_result.margin;
-    let verdict = if margin > 1e-9 { "true" } else if margin < -1e-9 { "false" } else { "indeterminate" };
-
-    let constraint_residual = (c * &margin_result.beta - d).norm();
-
-    ProjResult {
-        q,
-        beta: margin_result.beta.as_slice().to_vec(),
-        constraint_residual,
-        verdict: verdict.to_string(),
-        margin,
-    }
+    run_projection(h, c, d)
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
