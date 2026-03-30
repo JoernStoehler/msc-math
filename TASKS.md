@@ -272,20 +272,21 @@ Direction (2026-03-22, Jörn): Thesis will introduce both (n_i, h_i) and a_i = n
 
 **Motivation from Phase C (2026-03-23):** The LP test for HKO local maximality works in R^{50} ambient with 10 gauge directions, requiring careful bookkeeping (40 effective DOF, tangent projection). In a_i-space this would be a clean R^{40} LP with no gauge.
 
-**Current state (2026-03-30):** Library API is done. Most experiment migration complete. Math.tex migration complete.
+**Current state (2026-03-26):** Library API is done. Most experiment migration complete. Math.tex migration not started.
 
 - ✅ `capacity_derivatives_a()` and `volume_derivatives_a()` exist in `derivatives.rs`, tested (FD cross-check)
 - ✅ `build_qp` uses a_i internally
 - ✅ 4/5 gradient experiments migrated: sys-optimization, hko-neighborhood, gradient-descent, omega-obstacle
 - ❌ gradient-search: imports nonexistent `_h` functions (does not compile)
-- ✅ math.tex migration: `kkt/math.tex` and `algorithms/math.tex` use a_i throughout (commits b9eedda, 4afefb9, 0ff6c6d)
+- ❌ math.tex migration: `kkt/math.tex` and `algorithms/math.tex` still use (n_i, h_i) notation
 - ❌ Jörn verification: `[lem:cap-derivative]` and `[lem:vol-derivative]` in sys-optimization/math.tex marked `\begin{unverified}`
 - ❌ `[lem:dual-vertex-qp]`: TODO in qp_assembly.rs:58-61 — prove a_i QP formulation recovers same optimal action as (n,h)
 
 **Remaining work items:**
 1. **gradient-search migration** — see `handoffs/experiment-api-fixes.md`. Agent task, small.
-2. **Jörn verifies derivative lemmas** — `[lem:cap-derivative]`, `[lem:vol-derivative]` in experiments/sys-optimization/math.tex.
-3. **Write `[lem:dual-vertex-qp]` proof** — mathematical equivalence of a_i and (n,h) QP formulations. Agent drafts, Jörn verifies.
+2. **Math.tex migration** — rewrite `kkt/math.tex` and `algorithms/math.tex` to a_i notation. Agent task, medium.
+3. **Jörn verifies derivative lemmas** — `[lem:cap-derivative]`, `[lem:vol-derivative]` in experiments/sys-optimization/math.tex.
+4. **Write `[lem:dual-vertex-qp]` proof** — mathematical equivalence of a_i and (n,h) QP formulations. Agent drafts, Jörn verifies.
 
 ---
 
