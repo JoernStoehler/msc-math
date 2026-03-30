@@ -101,6 +101,9 @@ pub struct KktResult {
     pub n_negative: usize,
     /// Inertia of M: number of near-zero eigenvalues.
     pub n_zero: usize,
+    /// ||P_discard b||: norm of b projected onto the discarded eigenspace.
+    /// With b = (0_m, 0_4, 1), this equals sqrt(sum |v_i[m+4]|^2) over discarded eigenvectors.
+    pub p_discard_b_norm: f64,
 }
 
 /// Eigendecomposition info for the KKT matrix M.
@@ -453,6 +456,17 @@ fn try_pseudoinverse_with_threshold(
         }
     }
 
+    // ||P_discard b||: b = (0_m, 0_4, 1), so b-component of discarded eigenvector v_i
+    // is v_i[m+4]. ||P_discard b||^2 = sum |v_i[m+4]|^2 over discarded eigenvectors.
+    let mut p_discard_b_sq = 0.0;
+    for i in 0..size {
+        if eigenvalues[i].abs() <= threshold {
+            let comp = eigenvectors[(m + 4, i)];
+            p_discard_b_sq += comp * comp;
+        }
+    }
+    let p_discard_b_norm = p_discard_b_sq.sqrt();
+
     let residual_vec = kkt * &x0 - rhs;
     let residual_norm = residual_vec.norm();
     if residual_norm > EPS_KKT_RESIDUAL {
@@ -475,15 +489,23 @@ fn try_pseudoinverse_with_threshold(
     let mu0: Vec<f64> = (m..m + 4).map(|i| x0[i]).collect();
     let xi0 = x0[m + 4];
 
+    // Helper: set p_discard_b_norm on feasible results.
+    let set_p_discard = |outcome: KktOutcome| -> KktOutcome {
+        match outcome {
+            KktOutcome::Feasible(mut r) => { r.p_discard_b_norm = p_discard_b_norm; KktOutcome::Feasible(r) }
+            other => other,
+        }
+    };
+
     // If already feasible (all beta > EPS), compute error bound and return.
     if beta0.iter().all(|&b| b > EPS_BETA_POSITIVE) {
-        return Some(finalize_result(&beta0, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, &eigen_info));
+        return Some(set_p_discard(finalize_result(&beta0, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, &eigen_info)));
     }
 
     // Full rank at this threshold: unique solution.
     if rank == size {
         if beta0.iter().all(|&b| b > -EPS_BETA_POSITIVE) {
-            return Some(finalize_result(&beta0, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, &eigen_info));
+            return Some(set_p_discard(finalize_result(&beta0, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, &eigen_info)));
         }
         return Some(KktOutcome::Infeasible);
     }
@@ -519,7 +541,7 @@ fn try_pseudoinverse_with_threshold(
     // use beta0 directly.
     if k_eff == 0 {
         if beta0.iter().all(|&b| b > -EPS_BETA_POSITIVE) {
-            return Some(finalize_result(&beta0, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, &eigen_info));
+            return Some(set_p_discard(finalize_result(&beta0, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, &eigen_info)));
         } else {
             return Some(KktOutcome::Infeasible);
         }
@@ -562,7 +584,7 @@ fn try_pseudoinverse_with_threshold(
     }
 
     // Compute Q from pseudoinverse beta0, not LP-shifted beta_final.
-    Some(match finalize_result(&beta0_ref, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, &eigen_info) {
+    Some(match set_p_discard(finalize_result(&beta0_ref, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, &eigen_info)) {
         KktOutcome::Feasible(mut result) => {
             result.beta = beta_final;
             KktOutcome::Feasible(result)
@@ -629,6 +651,7 @@ fn finalize_result(
         n_positive: eigen_info.n_positive,
         n_negative: eigen_info.n_negative,
         n_zero: eigen_info.n_zero,
+        p_discard_b_norm: 0.0, // Set by caller (try_pseudoinverse_with_threshold)
     })
 }
 

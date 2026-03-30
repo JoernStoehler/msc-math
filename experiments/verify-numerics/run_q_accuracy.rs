@@ -129,6 +129,11 @@ struct Record {
     // Correct decomposition using δβ₀ = β₀ - β* (the perturbation that actually affects Q)
     first_order_beta0: f64,  // |(Hβ*)^T δβ₀|
     second_order_beta0: f64, // |½ δβ₀^T H δβ₀|
+
+    // Eigenspace projection: ||P_discard b|| where b = (0_m, 0_4, 1)
+    // Measures how much of the RHS lives in the discarded eigenspace.
+    // For EHZ: this is sqrt(Σ |v_i[m+4]|²) over discarded eigenvectors.
+    p_discard_b_norm: f64,
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -1271,6 +1276,7 @@ struct SpResult {
     beta: Vec<f64>,   // β_final (after LP shift)
     beta0: Vec<f64>,  // β₀ (pseudoinverse, Q computed from this)
     lambda: Vec<f64>, // (mu[0..4], xi) — full Lagrange multiplier
+    p_discard_b_norm: f64, // ||P_discard b||
     residual_norm: f64,
     lambda_min_all: f64,
     lambda_min_retained: f64,
@@ -1356,6 +1362,7 @@ fn run_saddle_point(h: &DMatrix<f64>, c: &DMatrix<f64>, d: &DVector<f64>) -> SpR
                 beta: result.beta,
                 beta0: result.beta0,
                 lambda: lam,
+                p_discard_b_norm: result.p_discard_b_norm,
                 residual_norm,
                 lambda_min_all,
                 lambda_min_retained,
@@ -1371,6 +1378,7 @@ fn run_saddle_point(h: &DMatrix<f64>, c: &DMatrix<f64>, d: &DVector<f64>) -> SpR
             beta: vec![],
             beta0: vec![],
             lambda: vec![],
+            p_discard_b_norm: f64::NAN,
             residual_norm: f64::NAN,
             lambda_min_all,
             lambda_min_retained,
@@ -1385,6 +1393,7 @@ fn run_saddle_point(h: &DMatrix<f64>, c: &DMatrix<f64>, d: &DVector<f64>) -> SpR
             beta: vec![],
             beta0: vec![],
             lambda: vec![],
+            p_discard_b_norm: f64::NAN,
             residual_norm: f64::NAN,
             lambda_min_all,
             lambda_min_retained,
@@ -1492,6 +1501,7 @@ fn main() {
                     beta: vec![],
                     beta0: vec![],
                     lambda: vec![],
+                    p_discard_b_norm: f64::NAN,
                     residual_norm: f64::NAN,
                     lambda_min_all: f64::NAN,
                     lambda_min_retained: f64::NAN,
@@ -1789,6 +1799,7 @@ fn main() {
                 }
                 _ => f64::NAN,
             },
+            p_discard_b_norm: sp.p_discard_b_norm,
             second_order_beta0: match &beta_exact {
                 Some(be) if !sp.beta0.is_empty() && sp.verdict == "feasible" => {
                     let m = prob.m;
