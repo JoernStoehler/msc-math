@@ -225,11 +225,66 @@ All quantities from the solver: ||H|| from eigendecomposition, ||β̃|| from the
 3. ||δβ|| in the second-order term: can we bound it at runtime without knowing β*? The constraint residual gives ||δβ_range|| ≤ ||r_λ||/σ_min(C) but the null-space component is harder.
 4. The solver's Q correction already cancels the first-order error. Can the runtime bound be sharpened using the corrected Q?
 
+## Session 2026-03-30: Structural Theorem and Chain Validation
+
+### Finding: Q correction is exact in theory
+
+**Theorem.** For the pseudoinverse solution x̃ = M⁺b of the KKT system Mx = b:
+
+If x* ∈ col(M), then δx = x̃ − x* ∈ col(M), and r = Mδx ⊥ col(M) implies δx^T r = 0, hence **δx^T M δx = 0**.
+
+Block expansion: δβ^T H δβ + 2 r_λ^T δλ = 0, so ½ δβ^T H δβ = −r_λ^T δλ.
+
+**Consequence for Q_raw_err:** The Taylor expansion Q(β̃) − Q(β*) = (Hβ*)^T δβ + ½ δβ^T Hδβ satisfies first_order = 2 × second_order exactly (opposite signs), so Q_raw_err = ½ δβ^T Hδβ.
+
+**Consequence for Q_corr_err:** Q_corr_err = δλ^T r_λ + ½ δβ^T Hδβ = δλ^T r_λ − r_λ^T δλ = 0. The correction is *exact* in exact arithmetic.
+
+**Verified empirically:** first_order/second_order = 2.0000 to machine precision in all 95 rank-deficient feasible cases. For full-rank M, both errors are at machine epsilon.
+
+**When the theorem fails:** x* ∉ col(M) when M is singular and x* has a null-space component. All high-error cases (err > 1e-2) are rank-deficient. The f64 eigendecomposition thresholds eigenvalues, changing the effective null space. If the exact x* has components in directions that get thresholded, the pseudoinverse "sees" a different subspace.
+
+### Chain bound table
+
+Validated on 477 SP-feasible cases across 15 matrix families (4303 problems total).
+
+| Bound | Status | Max ratio | Note |
+|-------|--------|-----------|------|
+| ‖r_λ‖ ≤ ‖r‖ | VALID | 1.00 | Sub-vector, always tight |
+| ‖λ*‖ ≤ ‖H‖·‖β*‖/σ_min(C) | VALID | 0.89 | Tight, proven [lem:q-error-first-order] |
+| \|Q_corr_err\| ≤ E₁ | VALID | 0.196 | Runtime bound, moderate tightness |
+| \|Q_raw_err\| ≤ E₁ | VALID | 0.33 | Also covers uncorrected Q |
+| \|λ*^T r_λ\| ≤ E₁ | VALID | 0.37 | First-order term |
+| \|½δβ^T Hδβ\| ≤ ½‖H‖·‖δβ‖² | VALID | 1.00 | Spectral norm, tight |
+| ‖δβ‖ ≤ ‖r‖/σ_min(C) | **INVALID** | 4.63 | δβ has null(C) component |
+| 4.5‖r‖²/\|λ_min\| as e2e bound | **INVALID** | 4.7e12 | Bounds wrong quantity |
+
+### Stress test results
+
+| Family | n_feasible | Max err | What it tests |
+|--------|-----------|---------|---------------|
+| double_singular | 8 | 2.0e-1 | Both H and C near-singular |
+| clustered_h_eig | 7 | 9.7e-17 | Near-degenerate H eigenspaces |
+| clustered_m_eig | 200 | 1.0e-2 | Near-degenerate M eigenspaces |
+
+**Clustered/degenerate H eigenspaces cause ZERO extra error.** Q = ½β^T Hβ depends on H as a matrix, not on its eigenvectors. The eigenvector instability is irrelevant.
+
+**Double-singular adds no error beyond κ(C).** The H near-singularity is harmless; only C near-singularity matters.
+
+### How to run
+
+```bash
+cd experiments/ && cargo build --release --bin verify_numerics_q_accuracy
+cargo run --release --bin verify_numerics_q_accuracy
+# Output: verify-numerics/q_accuracy.jsonl (4303 rows, 15 families)
+```
+
 ## Status
 
-In progress. Three findings:
+In progress. Key findings:
 1. **Projection solver sign error** (confirmed, one-line fix needed in library)
-2. **κ(C) drives e2e error** (not κ(H) or |λ_min(M)|), but must include ||H|| in the bound
-3. **Proven Q error bound** [lem:q-error-first-order]: |Q_err| ≤ ||H||·||β||·||r||/σ_min(C) + O(||δβ||²)
+2. **Proven Q error bound** [lem:q-error-first-order]: |Q_err| ≤ ‖H‖·‖β‖·‖r‖/σ_min(C) + ½‖H‖·‖δβ‖²
+3. **Q correction is exact in theory** (δx^T M δx = 0 for pseudoinverse)
+4. **E₁ runtime bound validated**: zero violations across 477 cases, max ratio 0.196
+5. **Chain table**: 6 valid bounds, 2 invalid, all intermediate quantities measured
 
-Next: address proof review feedback, investigate tighter constant, check bound against EHZ-pipeline inputs.
+Next: close gap in math.tex (eigendecomposition backward stability → ‖r‖ bound), check EHZ pipeline inputs, formalize the structural theorem.
