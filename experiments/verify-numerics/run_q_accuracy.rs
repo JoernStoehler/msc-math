@@ -121,6 +121,14 @@ struct Record {
     // Bound on ||λ*||: proven ≤ ||H||·||β*||/σ_min(C)
     lambda_bound: f64,       // the bound value
     lambda_bound_ratio: f64, // ||λ*|| / bound (should be ≤ 1)
+
+    // β₀ vs β_final mismatch (M2 from cross-reference audit)
+    beta0_err: f64,          // ||β₀ - β*|| (pseudoinverse perturbation)
+    lp_shift_norm: f64,      // ||β_final - β₀|| (LP shift magnitude)
+
+    // Correct decomposition using δβ₀ = β₀ - β* (the perturbation that actually affects Q)
+    first_order_beta0: f64,  // |(Hβ*)^T δβ₀|
+    second_order_beta0: f64, // |½ δβ₀^T H δβ₀|
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -1123,7 +1131,8 @@ fn make_ill_conditioned_c_problem(rng: &mut StdRng, m: usize, inst: usize, small
 struct SpResult {
     q: f64,       // q_corrected
     q_raw: f64,   // q_raw (before correction)
-    beta: Vec<f64>,
+    beta: Vec<f64>,   // β_final (after LP shift)
+    beta0: Vec<f64>,  // β₀ (pseudoinverse, Q computed from this)
     lambda: Vec<f64>, // (mu[0..4], xi) — full Lagrange multiplier
     residual_norm: f64,
     lambda_min_all: f64,
@@ -1208,6 +1217,7 @@ fn run_saddle_point(h: &DMatrix<f64>, c: &DMatrix<f64>, d: &DVector<f64>) -> SpR
                 q: result.q_corrected,
                 q_raw: result.q_raw,
                 beta: result.beta,
+                beta0: result.beta0,
                 lambda: lam,
                 residual_norm,
                 lambda_min_all,
@@ -1222,6 +1232,7 @@ fn run_saddle_point(h: &DMatrix<f64>, c: &DMatrix<f64>, d: &DVector<f64>) -> SpR
             q: f64::NAN,
             q_raw: f64::NAN,
             beta: vec![],
+            beta0: vec![],
             lambda: vec![],
             residual_norm: f64::NAN,
             lambda_min_all,
@@ -1235,6 +1246,7 @@ fn run_saddle_point(h: &DMatrix<f64>, c: &DMatrix<f64>, d: &DVector<f64>) -> SpR
             q: f64::NAN,
             q_raw: f64::NAN,
             beta: vec![],
+            beta0: vec![],
             lambda: vec![],
             residual_norm: f64::NAN,
             lambda_min_all,
@@ -1341,6 +1353,7 @@ fn main() {
                     q: f64::NAN,
                     q_raw: f64::NAN,
                     beta: vec![],
+                    beta0: vec![],
                     lambda: vec![],
                     residual_norm: f64::NAN,
                     lambda_min_all: f64::NAN,
@@ -1580,7 +1593,7 @@ fn main() {
             cond_c,
             cond_h,
             verdict_exact,
-            verdict_saddle: sp.verdict,
+            verdict_saddle: sp.verdict.clone(),
             verdict_projection: proj.verdict,
             beta_err_saddle: beta_err_sp,
             beta_err_projection: beta_err_proj,
@@ -1611,6 +1624,45 @@ fn main() {
             corrected_residual,
             lambda_bound,
             lambda_bound_ratio,
+            beta0_err: match &beta_exact {
+                Some(be) if !sp.beta0.is_empty() => {
+                    let be_f64: Vec<f64> = be.iter().map(|b| rational_to_f64(b)).collect();
+                    be_f64.iter().zip(sp.beta0.iter()).map(|(a, b)| (a - b).powi(2)).sum::<f64>().sqrt()
+                }
+                _ => f64::NAN,
+            },
+            lp_shift_norm: if !sp.beta.is_empty() && !sp.beta0.is_empty() && sp.beta.len() == sp.beta0.len() {
+                sp.beta.iter().zip(sp.beta0.iter()).map(|(a, b)| (a - b).powi(2)).sum::<f64>().sqrt()
+            } else {
+                f64::NAN
+            },
+            first_order_beta0: match &beta_exact {
+                Some(be) if !sp.beta0.is_empty() && sp.verdict == "feasible" => {
+                    let m = prob.m;
+                    let be_f64: Vec<f64> = be.iter().map(|b| rational_to_f64(b)).collect();
+                    let db0: Vec<f64> = (0..m).map(|i| sp.beta0[i] - be_f64[i]).collect();
+                    // (Hβ*)^T δβ₀
+                    let mut hb_star = vec![0.0f64; m];
+                    for i in 0..m {
+                        for j in 0..m {
+                            hb_star[i] += prob.h_f64[(i, j)] * be_f64[j];
+                        }
+                    }
+                    hb_star.iter().zip(db0.iter()).map(|(a, b)| a * b).sum::<f64>().abs()
+                }
+                _ => f64::NAN,
+            },
+            second_order_beta0: match &beta_exact {
+                Some(be) if !sp.beta0.is_empty() && sp.verdict == "feasible" => {
+                    let m = prob.m;
+                    let be_f64: Vec<f64> = be.iter().map(|b| rational_to_f64(b)).collect();
+                    let db0: Vec<f64> = (0..m).map(|i| sp.beta0[i] - be_f64[i]).collect();
+                    let db0_dv = DVector::from_column_slice(&db0);
+                    let h_db0 = &prob.h_f64 * &db0_dv;
+                    (0.5 * db0_dv.dot(&h_db0)).abs()
+                }
+                _ => f64::NAN,
+            },
         };
 
         let json = serde_json::to_string(&record).expect("serialize");

@@ -87,7 +87,9 @@ pub struct KktResult {
     pub mu: Vec<f64>,
     /// Lagrange multiplier for normalization constraint (scalar).
     pub xi: f64,
-    /// Uncorrected Q value: ½ β^T H β.
+    /// Pseudoinverse beta (β₀, before LP shift). Q is computed from this.
+    pub beta0: Vec<f64>,
+    /// Uncorrected Q value: ½ β₀^T H β₀.
     pub q_raw: f64,
     /// Residual-corrected Q value: q_raw + λ̃^T r_λ.
     pub q_corrected: f64,
@@ -618,6 +620,7 @@ fn finalize_result(
 
     KktOutcome::Feasible(KktResult {
         beta: beta.to_vec(),
+        beta0: beta.to_vec(), // Will be overwritten if LP shift happens
         mu,
         xi,
         q_raw,
