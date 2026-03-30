@@ -548,8 +548,10 @@ fn try_pseudoinverse_with_threshold(
 
     // Verify constraints on the final beta.
     let constraint_residual_norm = extract_constraint_residual(kkt, &beta_final, m);
+    // NOTE: In the experiment, we do NOT panic on large constraint residuals.
+    // We record the result and compare against exact ground truth.
     if constraint_residual_norm > EPS_KKT_RESIDUAL {
-        panic!(
+        eprintln!(
             "KKT constraint residual too large after LP: ||r|| = {:.2e} > {:.2e}",
             constraint_residual_norm, EPS_KKT_RESIDUAL
         );
@@ -608,18 +610,9 @@ fn finalize_result(
     let r_sq = residual_norm * residual_norm;
     let q_error_bound = 4.5 * r_sq / abs_lambda_min;
 
-    if q_error_bound >= 1e-6 {
-        panic!(
-            "Q error bound too large: E={:.2e}, |r|={:.2e}, |lambda_min|={:.2e}",
-            q_error_bound, residual_norm, abs_lambda_min
-        );
-    }
-    if q_correction.abs() >= 1e-6 && q_correction.abs() >= 1e-6 * q_raw.abs() {
-        panic!(
-            "Q correction too large: correction={:.2e}, Q_raw={:.2e}, ratio={:.2e}",
-            q_correction, q_raw, q_correction.abs() / q_raw.abs().max(1e-30)
-        );
-    }
+    // NOTE: In the experiment, we do NOT panic on large error bounds.
+    // We record the result and compare against exact ground truth.
+    // The library code panics here; we want to measure actual errors instead.
 
     KktOutcome::Feasible(KktResult {
         beta: beta.to_vec(),

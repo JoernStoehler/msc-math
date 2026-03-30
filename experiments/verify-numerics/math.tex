@@ -1,0 +1,152 @@
+% math.tex — verify-numerics experiment
+% Mathematical results for the QP error analysis.
+%
+% Labels defined here:
+%   lem:q-error-first-order — first-order Q error bound via stationarity
+%   lem:q-correction-second-order — Q correction reduces error to second order
+%   rem:runtime-q-bound — computable runtime error bound
+
+% \input'd from root math.tex — no \documentclass
+
+% ── Problem setup ──
+%
+% Maximize $\tfrac{1}{2}\beta^\top H \beta$ subject to $C\beta = d$, $\beta > 0$,
+% where $H \in \mathbb{R}^{m \times m}$ is symmetric (possibly indefinite),
+% $C \in \mathbb{R}^{p \times m}$ has full row rank~$p$, and $d \in \mathbb{R}^p$.
+%
+% The KKT conditions for the interior case ($\beta > 0$) are:
+% \[
+%   M \begin{pmatrix} \beta \\ \lambda \end{pmatrix}
+%   = \begin{pmatrix} 0 \\ d \end{pmatrix},
+%   \qquad
+%   M = \begin{pmatrix} H & C^\top \\ C & 0 \end{pmatrix}.
+% \]
+% Write $x^* = (\beta^*, \lambda^*)$ for the exact KKT solution
+% and $\tilde{x} = (\tilde\beta, \tilde\lambda)$ for the computed solution.
+% Define $\delta\beta = \tilde\beta - \beta^*$, $\delta\lambda = \tilde\lambda - \lambda^*$,
+% and the residual $r = M\tilde{x} - b$, with block decomposition
+% $r = (r_\beta,\, r_\lambda)$ where $r_\beta \in \mathbb{R}^m$ and $r_\lambda \in \mathbb{R}^p$.
+% Note $r_\lambda = C\tilde\beta - d = C\,\delta\beta$.
+
+\begin{lemma}[First-order Q error bound]\label{lem:q-error-first-order}
+Let $\beta^*$ solve the KKT system with Lagrange multiplier $\lambda^*$,
+and let $\tilde\beta$ be the computed solution with KKT residual
+$r = M\tilde{x} - b$ satisfying $\|r\| \leq \varepsilon$.
+Assume $C$ has full row rank. Then
+\[
+  |Q(\tilde\beta) - Q(\beta^*)|
+  \;\leq\;
+  \frac{\|H\|\,\|\beta^*\|}{\sigma_{\min}(C)}\,\|r\|
+  \;+\; \tfrac{1}{2}\,\|H\|\,\|\delta\beta\|^2,
+\]
+where $\|\cdot\|$ denotes the spectral norm for matrices and the
+Euclidean norm for vectors, and $\sigma_{\min}(C)$ is the smallest
+singular value of~$C$.
+\end{lemma}
+
+\begin{proof}
+Write $Q(\beta) = \tfrac{1}{2}\beta^\top H \beta$. Taylor expansion at $\beta^*$:
+\begin{equation}\label{eq:q-taylor}
+  Q(\tilde\beta) - Q(\beta^*)
+  = (H\beta^*)^\top \delta\beta + \tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta.
+\end{equation}
+
+\emph{First-order term.}
+Stationarity at $\beta^*$ gives $H\beta^* + C^\top\lambda^* = 0$, so
+$H\beta^* = -C^\top\lambda^*$. Substituting:
+\begin{equation}\label{eq:first-order-rewrite}
+  (H\beta^*)^\top\delta\beta
+  = -(C^\top\lambda^*)^\top\delta\beta
+  = -\lambda^{*\top} C\,\delta\beta
+  = -\lambda^{*\top} r_\lambda.
+\end{equation}
+Since $C$ has full row rank, $\sigma_{\min}(C^\top) = \sigma_{\min}(C) > 0$,
+and $C^\top\lambda^* = -H\beta^*$ gives
+\[
+  \sigma_{\min}(C)\,\|\lambda^*\|
+  \leq \|C^\top\lambda^*\|
+  = \|H\beta^*\|
+  \leq \|H\|\,\|\beta^*\|.
+\]
+Thus $\|\lambda^*\| \leq \|H\|\,\|\beta^*\| / \sigma_{\min}(C)$.
+Also, $\|r_\lambda\| = \|C\,\delta\beta\| \leq \|r\|$ since
+$r_\lambda$ is a sub-vector of $r$.
+Therefore
+\[
+  |(H\beta^*)^\top\delta\beta|
+  = |\lambda^{*\top} r_\lambda|
+  \leq \|\lambda^*\|\,\|r_\lambda\|
+  \leq \frac{\|H\|\,\|\beta^*\|}{\sigma_{\min}(C)}\,\|r\|.
+\]
+
+\emph{Second-order term.}
+$|\tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta|
+  \leq \tfrac{1}{2}\,\|H\|\,\|\delta\beta\|^2$.
+
+Combining with \eqref{eq:q-taylor} by the triangle inequality:
+\[
+  |Q(\tilde\beta) - Q(\beta^*)|
+  \leq \frac{\|H\|\,\|\beta^*\|}{\sigma_{\min}(C)}\,\|r\|
+  + \tfrac{1}{2}\,\|H\|\,\|\delta\beta\|^2. \qedhere
+\]
+\end{proof}
+
+
+\begin{lemma}[Q correction is second-order]\label{lem:q-correction-second-order}
+Define the \emph{Q correction} as $\Delta Q = \tilde\lambda^\top r_\lambda$,
+where $\tilde\lambda$ is the computed Lagrange multiplier and
+$r_\lambda = C\tilde\beta - d$. Then the corrected Q value
+$Q_{\mathrm{corr}} = Q(\tilde\beta) + \Delta Q$ satisfies
+\[
+  |Q_{\mathrm{corr}} - Q(\beta^*)|
+  \leq \|\delta\lambda\|\,\|r_\lambda\|
+    + \tfrac{1}{2}\,\|H\|\,\|\delta\beta\|^2.
+\]
+Both terms are products of error quantities, so the corrected error
+is second-order in the perturbation.
+\end{lemma}
+
+\begin{proof}
+From the proof of \ref{lem:q-error-first-order},
+$Q(\tilde\beta) - Q(\beta^*) = -\lambda^{*\top} r_\lambda
++ \tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta$. Adding the correction:
+\begin{align*}
+  Q_{\mathrm{corr}} - Q(\beta^*)
+  &= Q(\tilde\beta) + \tilde\lambda^\top r_\lambda - Q(\beta^*) \\
+  &= -\lambda^{*\top} r_\lambda + \tilde\lambda^\top r_\lambda
+    + \tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta \\
+  &= (\tilde\lambda - \lambda^*)^\top r_\lambda
+    + \tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta \\
+  &= \delta\lambda^\top r_\lambda
+    + \tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta.
+\end{align*}
+Both terms involve products of error quantities ($\delta\lambda$ and
+$r_\lambda$ for the first; $\delta\beta$ twice for the second), hence
+the bound by the triangle inequality.
+\end{proof}
+
+
+\begin{remark}[Runtime error bound]\label{rem:runtime-q-bound}
+At runtime, the exact $\beta^*$ is unknown. The bound from
+\ref{lem:q-error-first-order} can be computed using the solver output
+$\tilde\beta$ as a proxy for $\beta^*$:
+\[
+  E = \frac{\|H\|\,\|\tilde\beta\|}{\sigma_{\min}(C)}\,\|r\|.
+\]
+Since $\|\beta^*\| \leq \|\tilde\beta\| + \|\delta\beta\|$ and
+$\|\delta\beta\|$ is small relative to $\|\tilde\beta\|$ when the
+residual $\|r\|$ is small, this introduces a negligible relative error
+in the bound.
+
+All quantities are available from the solver: $\|H\|$ from the
+eigendecomposition (largest $|\lambda_i(H)|$), $\|\tilde\beta\|$ from
+the solution vector, $\|r\|$ from the KKT residual, and
+$\sigma_{\min}(C)$ from the SVD of~$C$ (already computed by the
+constraint solver).
+
+% [TODO: JÖRN - Empirical validation shows max ratio
+%   |Q_err| / E = 0.186 across 269 test problems from 12 matrix families.
+%   The constant 1 in the bound is not tight; the proof gives an upper
+%   bound, not an equality.  Whether a tighter constant can be proven
+%   (e.g., involving dimension m) is open.]
+\end{remark}

@@ -161,10 +161,75 @@ The existing bound E ~ 1e-28 for well-conditioned problems is a bound on |Q(β�
 2. The error scaling with κ(C) is noisy. What additional quantities predict the error? σ_min(C), the angle between ker(C) and H's eigenspaces?
 3. Is κ(C) ever large in the actual EHZ pipeline? If C always has σ_min > some threshold, the ill-conditioned regime may be irrelevant.
 
+## Session 2026-03-30: Error Bound Iteration
+
+### Conjecture evolution
+
+**Candidate A (simple):** `|Q_err| ≤ C · ||r|| · κ(C)`. Tested on 3203 problems across 11 families: zero violations, max ratio 0.063 (q_accuracy.jsonl row: ill_cond_c with κ(C)=1.12e12). Log-log correlation between err and ||r||·κ(C): 0.90.
+
+**Stress test:** Added family 12 "large_h_ill_c" — large ||H|| (eigenvalues 10–100) combined with ill-conditioned C. Also removed panics from experiment solver to measure actual Q error for all cases.
+
+**Candidate A breaks.** large_h_ill_c produces max ratio **0.921** (92% of the bound). Case: m=7, ||H||=98, ||β||=0.55, κ(C)=1.17e9, err=11.4. With ||H||=200 the bound would be violated.
+
+**Candidate B (perturbation):** `|Q_err| ≤ C · ||H|| · ||β|| · ||r|| / σ_min(C)`. Max ratio **0.186**, zero violations across 269 SP-feasible cases from 12 families (3703 problems total). This is the correct functional form.
+
+**Why Candidate A appeared to work:** the ill_cond_c family uses well-conditioned H (||H|| ~ 4), so the ||H||·||β||/σ_max(C) factor is ≈ 0.3, absorbed by the constant. When ||H|| increases to 98, the factor jumps to 7.7 and the bound nearly breaks.
+
+### Proof ([lem:q-error-first-order] in math.tex)
+
+**Theorem.** At a KKT point β* with multiplier λ*:
+
+|Q(β̃) − Q(β*)| ≤ (||H||·||β*||/σ_min(C))·||r|| + ½||H||·||δβ||²
+
+**Proof sketch:**
+1. Taylor: Q_err = (Hβ*)ᵀδβ + ½ δβᵀHδβ
+2. Stationarity: Hβ* = −Cᵀλ*, so (Hβ*)ᵀδβ = −λ*ᵀCδβ = −λ*ᵀr_λ
+3. Bound: ||λ*|| ≤ ||H||·||β*||/σ_min(C) from ||Cᵀλ*|| = ||Hβ*||
+4. And ||r_λ|| ≤ ||r|| (subvector of total residual)
+5. Combine with triangle inequality. □
+
+**Key insight:** at the critical point, dQ/dβ = Hβ* = −Cᵀλ* is in range(Cᵀ). So null-space perturbations of β don't affect Q at first order — only the constraint residual r_λ matters.
+
+### Finding: Q correction is second-order ([lem:q-correction-second-order])
+
+The solver already computes Q_corrected = Q_raw + λ̃ᵀr_λ. This exactly cancels the first-order error term:
+
+Q_corrected − Q_exact = δλᵀr_λ + ½ δβᵀHδβ
+
+Both terms are products of error quantities (second-order). This explains why the measured Q errors are so small for well-conditioned problems (the first-order correction works).
+
+### Decomposition validation
+
+Step-by-step empirical validation against 269 feasible cases:
+
+| Bound | Max ratio | Violations |
+|-------|-----------|------------|
+| err ≤ ||H||·||β||·||δβ|| (Taylor) | 0.207 | 0 |
+| err ≤ ||H||·||β||·||r||/σ_min (Theorem) | 0.186 | 0 |
+| err ≤ ||r||·κ(C) (simple, no ||H||) | 0.921 | 0 (barely) |
+| ||δβ|| ≤ ||r||/σ_min(C) (naive) | 4.631 | 109 |
+| err ≤ ||H||·(||r||/σ_min)² (quadratic) | 8.3e13 | 153 |
+
+**Rejected bounds:** ||δβ|| ≤ ||r||/σ_min fails because δβ can have a large null(C) component that doesn't contribute to r_λ. The quadratic bound fails for well-conditioned problems because the Q error floor is set by floating-point rounding in the Q_raw computation, not by β perturbation.
+
+### Runtime error bound
+
+At runtime, compute: E = ||H|| · ||β̃|| · ||r|| / σ_min(C)
+
+All quantities from the solver: ||H|| from eigendecomposition, ||β̃|| from the solution, ||r|| from KKT residual, σ_min(C) from SVD.
+
+### Open questions
+
+1. Can the constant 0.186 be improved? The proof gives 1 (the Taylor first-order coefficient). The gap may be structural (always <1/5) or an artifact of our test distribution.
+2. For the EHZ pipeline: what are typical values of ||H||, ||β||, σ_min(C)? If ||H|| and 1/σ_min are bounded, the bound simplifies.
+3. ||δβ|| in the second-order term: can we bound it at runtime without knowing β*? The constraint residual gives ||δβ_range|| ≤ ||r_λ||/σ_min(C) but the null-space component is harder.
+4. The solver's Q correction already cancels the first-order error. Can the runtime bound be sharpened using the corrected Q?
+
 ## Status
 
-In progress. Two findings:
+In progress. Three findings:
 1. **Projection solver sign error** (confirmed, one-line fix needed in library)
-2. **κ(C) drives e2e error** (not κ(H) or |λ_min(M)|)
+2. **κ(C) drives e2e error** (not κ(H) or |λ_min(M)|), but must include ||H|| in the bound
+3. **Proven Q error bound** [lem:q-error-first-order]: |Q_err| ≤ ||H||·||β||·||r||/σ_min(C) + O(||δβ||²)
 
-Next: copy/own solver code in experiment, iterate on error bound conjectures, hunt for edge cases in the error-vs-κ(C) relationship.
+Next: address proof review feedback, investigate tighter constant, check bound against EHZ-pipeline inputs.

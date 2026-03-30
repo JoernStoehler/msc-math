@@ -83,6 +83,13 @@ struct Record {
     q_proj_corrected: f64,
     err_proj_corrected: f64,
     verdict_proj_corrected: String,
+
+    // Quantities for error bound analysis
+    norm_h: f64,           // spectral norm ||H||_2
+    sigma_min_c: f64,      // smallest singular value of C
+    sigma_max_c: f64,      // largest singular value of C
+    norm_beta_exact: f64,  // ||β_exact||_2 (NaN if infeasible)
+    norm_beta_sp: f64,     // ||β_sp||_2 (NaN if infeasible)
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -794,6 +801,19 @@ fn generate_problems() -> Vec<TestProblem> {
         problems.push(prob);
     }
 
+    // ── Family 12: Large ||H|| + ill-conditioned C ──
+    // Stress-test whether the simple bound err <= C * ||r|| * kappa(C) breaks
+    // when ||H|| * ||beta|| / sigma_max(C) is large.
+    // The perturbation bound err <= ||H|| * ||beta|| * ||r|| / sigma_min(C) predicts
+    // this should produce larger err / (||r|| * kappa(C)) ratios.
+    for inst in 0..500 {
+        let m = rng.gen_range(6..=10);
+        let small_exp = (inst % 12) as i32 + 1;
+        let small_val = 10.0_f64.powi(-small_exp);
+        let prob = make_large_h_ill_c_problem(&mut rng, m, inst, small_val);
+        problems.push(prob);
+    }
+
     println!("Generated {} test problems", problems.len());
     problems
 }
@@ -902,6 +922,42 @@ fn make_tiny_lambda_min_problem(rng: &mut StdRng, m: usize, inst: usize, small_v
     let h = &q * &lambda * q.transpose();
 
     make_problem_f64("tiny_lam_min", inst, &h, &c, &d)
+}
+
+/// Large ||H|| combined with ill-conditioned C.
+///
+/// Designed to stress-test the simple bound err <= C * ||r|| * kappa(C).
+/// The perturbation bound involves ||H|| * ||beta|| / sigma_max(C), so
+/// by making ||H|| large (eigenvalues in [10, 100]) while keeping C ill-conditioned,
+/// we increase this factor and potentially violate the simple bound.
+fn make_large_h_ill_c_problem(rng: &mut StdRng, m: usize, inst: usize, small_val: f64) -> TestProblem {
+    // Build ill-conditioned C (same as ill_cond_c family)
+    let mut c = DMatrix::from_fn(P, m, |i, _| {
+        if i < P - 1 { rng.gen_range(-3.0..3.0) } else { 1.0 }
+    });
+    for j in 0..m {
+        c[(3, j)] = c[(0, j)] + small_val * rng.gen_range(-1.0..1.0);
+    }
+
+    // Random β > 0, set d = C β for feasibility
+    let raw: Vec<f64> = (0..m).map(|_| rng.gen_range(0.1..1.0)).collect();
+    let sum: f64 = raw.iter().sum();
+    let beta: Vec<f64> = raw.iter().map(|x| x / sum).collect();
+    let beta_dv = DVector::from_column_slice(&beta);
+    let d = &c * &beta_dv;
+
+    // Large ||H||: eigenvalues in [10, 100] magnitude (mixed signs for indefiniteness)
+    let random_mat = DMatrix::from_fn(m, m, |_, _| rng.gen_range(-1.0..1.0));
+    let qr = random_mat.qr();
+    let q = qr.q();
+    let eigenvalues = DVector::from_fn(m, |i, _| {
+        let mag = rng.gen_range(10.0..100.0);
+        if i % 2 == 0 { mag } else { -mag }
+    });
+    let lambda = DMatrix::from_diagonal(&eigenvalues);
+    let h = &q * &lambda * q.transpose();
+
+    make_problem_f64("large_h_ill_c", inst, &h, &c, &d)
 }
 
 /// Problem with near-dependent C rows (ill-conditioned constraints).
@@ -1205,20 +1261,36 @@ fn main() {
             _ => f64::NAN,
         };
 
-        // Condition numbers
-        let cond_c = {
+        // Condition numbers and norms
+        let (cond_c, sigma_min_c, sigma_max_c) = {
             let svd = prob.c_f64.clone().svd(false, false);
             let s = &svd.singular_values;
             let s_max = s.iter().cloned().fold(0.0f64, f64::max);
             let s_min = s.iter().cloned().filter(|&x| x > 1e-15).fold(f64::INFINITY, f64::min);
-            if s_min > 0.0 { s_max / s_min } else { f64::INFINITY }
+            let cond = if s_min > 0.0 { s_max / s_min } else { f64::INFINITY };
+            (cond, if s_min.is_finite() { s_min } else { 0.0 }, s_max)
         };
-        let cond_h = {
+        let (cond_h, norm_h) = {
             let eig = prob.h_f64.clone().symmetric_eigen();
             let ev = &eig.eigenvalues;
             let ev_max = ev.iter().map(|e| e.abs()).fold(0.0f64, f64::max);
             let ev_min = ev.iter().map(|e| e.abs()).filter(|&e| e > 1e-15).fold(f64::INFINITY, f64::min);
-            if ev_min > 0.0 { ev_max / ev_min } else { f64::INFINITY }
+            let cond = if ev_min > 0.0 { ev_max / ev_min } else { f64::INFINITY };
+            (cond, ev_max)
+        };
+
+        // Beta norms
+        let norm_beta_exact = match &beta_exact {
+            Some(be) => {
+                let be_f64: Vec<f64> = be.iter().map(|b| rational_to_f64(b)).collect();
+                be_f64.iter().map(|x| x * x).sum::<f64>().sqrt()
+            }
+            None => f64::NAN,
+        };
+        let norm_beta_sp = if !sp.beta.is_empty() {
+            sp.beta.iter().map(|x| x * x).sum::<f64>().sqrt()
+        } else {
+            f64::NAN
         };
 
         let err_proj_corrected = if exact.is_some() && (proj_corr.verdict == "true" || proj_corr.verdict == "indeterminate") {
@@ -1268,6 +1340,11 @@ fn main() {
             q_proj_corrected: proj_corr.q,
             err_proj_corrected,
             verdict_proj_corrected: proj_corr.verdict,
+            norm_h,
+            sigma_min_c,
+            sigma_max_c,
+            norm_beta_exact,
+            norm_beta_sp,
         };
 
         let json = serde_json::to_string(&record).expect("serialize");
