@@ -1720,6 +1720,27 @@ fn main() {
             f64::NAN
         };
 
+        // ── Compute first/second order terms for B5 assert ──
+        let (first_order_b0, second_order_b0) = match &beta_exact {
+            Some(be) if !sp.beta0.is_empty() && sp.verdict == "feasible" => {
+                let m = prob.m;
+                let be_f64: Vec<f64> = be.iter().map(|b| rational_to_f64(b)).collect();
+                let db0: Vec<f64> = (0..m).map(|i| sp.beta0[i] - be_f64[i]).collect();
+                let mut hb_star = vec![0.0f64; m];
+                for i in 0..m {
+                    for j in 0..m {
+                        hb_star[i] += prob.h_f64[(i, j)] * be_f64[j];
+                    }
+                }
+                let fo = hb_star.iter().zip(db0.iter()).map(|(a, b)| a * b).sum::<f64>().abs();
+                let db0_dv = DVector::from_column_slice(&db0);
+                let h_db0 = &prob.h_f64 * &db0_dv;
+                let so = (0.5 * db0_dv.dot(&h_db0)).abs();
+                (fo, so)
+            }
+            _ => (f64::NAN, f64::NAN),
+        };
+
         // ── Assert proven bounds (validated against exact rational ground truth) ──
         // These hold by proof; assertion catches proof bugs or implementation errors.
 
@@ -1745,6 +1766,31 @@ fn main() {
             assert!(err_raw_saddle <= e1 * (1.0 + 1e-10),
                 "B4 violated: |Q_raw−Q*|/E₁ = {:.6e} > 1. err_raw={:.2e}, E₁={:.2e}, family={}, inst={}",
                 err_raw_saddle / e1, err_raw_saddle, e1, prob.family, prob.instance);
+        }
+
+        // B5: 1st_order / 2nd_order ≥ 2 (from δx^T M δx = 0, when x* ∈ col(M))
+        // Only meaningful when both terms are above noise floor.
+        {
+            let fo = first_order_b0;
+            let so = second_order_b0;
+            if fo.is_finite() && so.is_finite() && so > 1e-20 && fo > 1e-20 {
+                let ratio = fo / so;
+                assert!(ratio >= 2.0 - 1e-6,
+                    "B5 violated: 1st/2nd = {:.6} < 2. 1st={:.2e}, 2nd={:.2e}, family={}, inst={}",
+                    ratio, fo, so, prob.family, prob.instance);
+            }
+        }
+
+        // B6: |Q_corr − Q*| ≈ |Q_raw − Q*| or better.
+        // In exact arithmetic (x* ∈ col(M)): correction is perfect (Q_corr = Q*).
+        // In f64: correction can worsen by O(ε_mach) when both errors are at noise floor.
+        // Assert: correction doesn't make things MUCH worse (100x tolerance for noise).
+        if err_saddle.is_finite() && err_raw_saddle.is_finite()
+            && err_raw_saddle > 1e-14  // only check when raw error is above noise floor
+        {
+            assert!(err_saddle <= err_raw_saddle * 2.0,
+                "B6 violated: correction made Q much worse. |Q−Q*|={:.2e} > 2·|Q_raw−Q*|={:.2e}, family={}, inst={}",
+                err_saddle, err_raw_saddle, prob.family, prob.instance);
         }
 
         let record = Record {
@@ -1810,34 +1856,9 @@ fn main() {
             } else {
                 f64::NAN
             },
-            first_order_beta0: match &beta_exact {
-                Some(be) if !sp.beta0.is_empty() && sp.verdict == "feasible" => {
-                    let m = prob.m;
-                    let be_f64: Vec<f64> = be.iter().map(|b| rational_to_f64(b)).collect();
-                    let db0: Vec<f64> = (0..m).map(|i| sp.beta0[i] - be_f64[i]).collect();
-                    // (Hβ*)^T δβ₀
-                    let mut hb_star = vec![0.0f64; m];
-                    for i in 0..m {
-                        for j in 0..m {
-                            hb_star[i] += prob.h_f64[(i, j)] * be_f64[j];
-                        }
-                    }
-                    hb_star.iter().zip(db0.iter()).map(|(a, b)| a * b).sum::<f64>().abs()
-                }
-                _ => f64::NAN,
-            },
+            first_order_beta0: first_order_b0,
             p_discard_b_norm: sp.p_discard_b_norm,
-            second_order_beta0: match &beta_exact {
-                Some(be) if !sp.beta0.is_empty() && sp.verdict == "feasible" => {
-                    let m = prob.m;
-                    let be_f64: Vec<f64> = be.iter().map(|b| rational_to_f64(b)).collect();
-                    let db0: Vec<f64> = (0..m).map(|i| sp.beta0[i] - be_f64[i]).collect();
-                    let db0_dv = DVector::from_column_slice(&db0);
-                    let h_db0 = &prob.h_f64 * &db0_dv;
-                    (0.5 * db0_dv.dot(&h_db0)).abs()
-                }
-                _ => f64::NAN,
-            },
+            second_order_beta0: second_order_b0,
         };
 
         let json = serde_json::to_string(&record).expect("serialize");
