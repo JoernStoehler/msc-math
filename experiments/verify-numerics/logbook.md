@@ -118,16 +118,53 @@ No panics occurred on these abstract matrix problems (unlike the polytope-specif
 ```bash
 cd experiments/ && cargo build --release --bin verify_numerics_q_accuracy
 cargo run --release --bin verify_numerics_q_accuracy
-# Output: verify-numerics/q_accuracy.jsonl (293 rows)
+# Output: verify-numerics/q_accuracy.jsonl (3203 rows)
 ```
+
+### Finding: κ(C) Predicts E2E Error, Not κ(H) or |λ_min(M)|
+
+Added two new matrix families to stress tiny |λ_min(M)|:
+- **tiny_lam_min**: H with controlled small eigenvalues (10⁻¹ to 10⁻¹⁴), feasible by construction. 48/500 feasible.
+- **ill_cond_c**: C with near-dependent rows (κ(C) from 10¹ to 10¹²), well-conditioned H. 192/200 feasible.
+
+Results (3203 problems, 364 exact-feasible):
+
+| Family | n feasible | SP max error | Proj max error | SP panics |
+|--------|-----------|-------------|---------------|-----------|
+| tiny_lam_min | 48 | 4.16e-17 | 3.14e-15 | 0 |
+| ill_cond_c | 192 | **1.03e-01** | **1.03e-01** | **70** |
+| near_singular_h | 27 | 8.33e-17 | 2.36e-16 | 0 |
+| feasible_constructed | 52 | 6.66e-16 | 1.33e-15 | 0 |
+
+**Tiny eigenvalues of H cause zero extra error.** Both solvers handle them fine to machine epsilon.
+
+**Ill-conditioned C causes large e2e errors and panics.** When κ(C) > 10⁸, Q errors reach 10⁻³ to 10⁻¹. The saddle-point solver panics on 70/192 of these cases (the existing bound E > 1e-6 threshold trips). Error grows roughly with κ(C):
+
+| log₁₀(κ(C)) | n | max error |
+|-------------|---|-----------|
+| 1-3 | 39 | 3e-13 |
+| 4-6 | 51 | 7e-7 |
+| 7-9 | 46 | 3e-3 |
+| 10-12 | 28 | **1e-1** |
+
+The relationship is not simply ε_mach · κ(C) · |Q| — the ratios vary by 5 orders of magnitude, suggesting other factors matter (C structure, null-space angle, etc.).
+
+**The current error bound E = 4.5||r||²/|λ_min(M)| focuses on the wrong quantity.** |λ_min(M)| can be tiny from H's small eigenvalues (no real error) or from C's ill-conditioning (real error). The bound doesn't distinguish these. A better bound would involve κ(C) or σ_min(C).
+
+### Insight: error bound vs e2e error mismatch
+
+The existing bound E ~ 1e-28 for well-conditioned problems is a bound on |Q(β₀) - Q̃| (solver internal error, measured via KKT residual). The measured e2e error |Q_f64 - Q_exact| ~ 1e-16 for those same problems includes matrix-entry rounding that the bound doesn't account for. Both are valid but measure different things. For the certification framework, we need the e2e bound.
 
 ### Open questions
 
-1. The current test matrix families have low exact-feasibility rates. Better generators (e.g., construct β > 0 first, then derive compatible H) would give more data points.
-2. The experiment currently imports library solvers as "code under test." A future iteration should copy the solver code into the experiment for self-containment (Jörn).
-3. The M1/M2/M3 mismatches are about the saddle-point solver's error bound machinery, not Q accuracy. The Q values are accurate — the *bound on the error* is what's broken. This experiment measures the actual error, which is the input for conjecturing a better bound.
-4. No EHZ-like or indefinite problems produced exact-feasible instances. These families need better generators.
+1. The experiment imports library solvers. Should copy/own them for self-containment and iterability (Jörn).
+2. The error scaling with κ(C) is noisy. What additional quantities predict the error? σ_min(C), the angle between ker(C) and H's eigenspaces?
+3. Is κ(C) ever large in the actual EHZ pipeline? If C always has σ_min > some threshold, the ill-conditioned regime may be irrelevant.
 
 ## Status
 
-In progress. First measurement done. Sign error in projection solver found and verified. Next: improve feasibility rates, start error bound analysis on saddle-point solver.
+In progress. Two findings:
+1. **Projection solver sign error** (confirmed, one-line fix needed in library)
+2. **κ(C) drives e2e error** (not κ(H) or |λ_min(M)|)
+
+Next: copy/own solver code in experiment, iterate on error bound conjectures, hunt for edge cases in the error-vs-κ(C) relationship.
