@@ -75,6 +75,59 @@ Cross-reference audit (`handoffs/cross-reference-audit.md`) found 3 mismatches, 
 
 Everything else in the codebase (~160 references) checked out OK. All problems are in the error bound machinery.
 
+## Session 2026-03-30: Q Accuracy Measurement
+
+### Approach
+
+Measure actual Q error of both f64 solvers against exact rational arithmetic on abstract (H, C, d) matrices.
+
+**Design choice (Jörn):** iterate on abstract KKT problems, not polytopes. Advantages: controlled inputs, explicit assumptions, no coupling to other code.
+
+**Matrix families generated:** identity, random dense symmetric, EHZ-like, near-singular H, singular H, indefinite H, small m=6, large m=16, feasible-by-construction. Total: 293 problems. Low feasibility rate (16/293) — most random matrices have no β > 0 solution. The "feasible by construction" family is the most productive (7/50 feasible). Note: the exact solver uses the same f64→BigRational conversion, so some problems that are feasible in exact f64 arithmetic may be infeasible over Q.
+
+### Finding: Sign Error in projection_solver.rs
+
+**The library's projection solver (`crates/src/kkt/projection_solver.rs`) has a sign error that causes Q errors up to 0.57 (57% of Q).**
+
+The stationarity condition for the reduced QP is H'α + g = 0 where g = V^T H β₀ and H' = V^T H V. The solution is α₀ = -(H')⁺g. The code at lines 108–116 computes α₀ = +(H')⁺g (no negation). The comment says "Solve H' alpha = b'" when the correct equation is "Solve H' alpha = -b'."
+
+Measured Q errors (16 exact-feasible problems across all families):
+
+| Solver | Median Q error | Max Q error | n |
+|--------|---------------|-------------|---|
+| Saddle-point | 4.16e-17 | 1.67e-16 | 12 |
+| Projection (library) | 4.50e-02 | 5.69e-01 | 11 |
+| Projection (sign fix) | 1.67e-16 | 2.83e-15 | 16 |
+
+The corrected projection solver matches machine epsilon. The library version is off by orders of magnitude.
+
+**Why existing tests didn't catch this:** The projection solver tests use H = I or simple block structures where b_prime = V^T H β₀ = V^T β₀ = 0 (because β₀ is the min-norm SVD solution, orthogonal to ker(C) = range(V)). When b_prime = 0, the sign error is invisible.
+
+**Impact on production code:** None currently. The production pipeline uses the saddle-point solver. The projection solver is an alternative that's never called in the capacity algorithms.
+
+**Action needed:** Fix the sign in `crates/src/kkt/projection_solver.rs` line ~113: change `pi.dot(&b_prime) / eigenvalues[i]` to `-pi.dot(&b_prime) / eigenvalues[i]`.
+
+### Finding: Saddle-point Solver Accuracy
+
+The saddle-point solver Q errors are at machine epsilon (max 1.67e-16) across all test families. The corrected Q value (Q_raw + residual correction) is highly accurate.
+
+No panics occurred on these abstract matrix problems (unlike the polytope-specific panic from M1). This is consistent with M1: the panic is triggered by specific eigenvalue structure from degenerate polytope orbits, not by general matrices.
+
+### How to run
+
+```bash
+cd experiments/ && cargo build --release --bin verify_numerics_q_accuracy
+cargo run --release --bin verify_numerics_q_accuracy
+# Output: verify-numerics/q_accuracy.jsonl (293 rows)
+```
+
+### Open questions
+
+1. The current test matrix families have low exact-feasibility rates. Better generators (e.g., construct β > 0 first, then derive compatible H) would give more data points.
+2. The experiment currently imports library solvers as "code under test." A future iteration should copy the solver code into the experiment for self-containment (Jörn).
+3. The M1/M2/M3 mismatches are about the saddle-point solver's error bound machinery, not Q accuracy. The Q values are accurate — the *bound on the error* is what's broken. This experiment measures the actual error, which is the input for conjecturing a better bound.
+4. No EHZ-like or indefinite problems produced exact-feasible instances. These families need better generators.
+
 ## Status
 
-Not started.
+In progress. First measurement done. Sign error in projection solver found and verified. Next: improve feasibility rates, start error bound analysis on saddle-point solver.
