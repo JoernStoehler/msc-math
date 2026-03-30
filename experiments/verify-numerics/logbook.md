@@ -278,13 +278,66 @@ cargo run --release --bin verify_numerics_q_accuracy
 # Output: verify-numerics/q_accuracy.jsonl (4303 rows, 15 families)
 ```
 
+## Propositions and bounds (final state)
+
+Run `python3 verify-numerics/analyze.py` from `experiments/` for the full check output.
+
+Propositions (assert in library, check in post-processing):
+
+| # | Statement | Type | EHZ range | Stress range | Threshold | EHZ violations |
+|---|-----------|------|-----------|-------------|-----------|----------------|
+| P1 | d = (0,0,0,0,1) | assumption | by type | by type | — | — |
+| P2 | C = (A^T; 1^T), 5×m | assumption | by type | by type | — | — |
+| P3 | H symmetric | assumption | by type | by type | — | — |
+| P4 | σ_min(C) > 1e-12 | assumption | 0.31–3.15 | 2.7e-13–1.98 | > 1e-12 | 0 |
+| P5 | ‖H‖/σ_min(C) ≤ 100 | conjecture | 0.47–39.8 | 1.01–1.3e14 | ≤ 100 | 0 |
+| P6 | ‖r_β‖ < 1e-3 | bug detection | max 6.3e-11 | max 1.1e-9 | < 1e-3 | 0 |
+| P7 | ‖β‖ ≤ 2 | bug detection | 0.33–0.55 | 0.32–2.83 | ≤ 2 | 0 |
+| P8 | ‖r_λ‖ < 1e-6 | bug detection | max 2.0e-11 | max 2.3e-7 | < 1e-6 | 0 |
+
+Proven bounds (from math.tex, validated against exact rational ground truth):
+
+| # | Bound | Assumes | EHZ max ratio | Stress max ratio | Violations |
+|---|-------|---------|---------------|-----------------|------------|
+| B2 | ‖λ*‖ ≤ ‖H‖·‖β*‖/σ_min(C) | P3, P4 | 0.888 | 0.508 | 0 |
+| B3 | \|Q−Q*\| ≤ ‖H‖·‖β‖·‖r‖/σ_min(C) | P3, P4, β*>0 | 0.149 | 0.196 | 0 |
+| B4 | \|Q_raw−Q*\| ≤ same | P3, P4, β*>0 | 0.328 | 0.286 | 0 |
+| B5 | 1st/2nd = 2 (identity) | P3, x*∈col(M) | (below noise) | (below noise) | 0 |
+| B6 | correction ≤ 2x worsening | — | max 3e-3 | max 1.0 | 0 |
+
+EHZ polytope data (186 orbits from existing datasets): σ_min(C) ∈ [0.11, 2.45], κ(C) ∈ [1.0, 97.5], ‖H‖/σ_min(C) ∈ [1.4, 21.0].
+
+## Capacity pipeline integration
+
+The capacity algorithm for a given (σ, S) computes (Q, β) and certifies:
+- **β > 0?** → TRUE / FALSE / INDETERMINATE (margin classification, separate analysis)
+- **|Q − Q*| small?** → check ‖H‖·‖β‖·‖r‖/σ_min(C) < tolerance
+
+All quantities in the bound are already computed by the solver: ‖H‖ from eigendecomposition, ‖β‖ from solution, ‖r‖ from KKT residual, σ_min(C) from SVD. No extra computation.
+
+## How to run
+
+```bash
+cd experiments/
+cargo build --release --bin verify_numerics_q_accuracy
+cargo run --release --bin verify_numerics_q_accuracy
+# Output: verify-numerics/q_accuracy.jsonl (4303 rows, 15 families)
+python3 verify-numerics/analyze.py
+# Output: verify-numerics/q_accuracy_checks.txt + stdout
+```
+
 ## Status
 
-In progress. Key findings:
-1. **Projection solver sign error** (confirmed, one-line fix needed in library)
-2. **Proven Q error bound** [lem:q-error-first-order]: |Q_err| ≤ ‖H‖·‖β‖·‖r‖/σ_min(C) + ½‖H‖·‖δβ‖²
-3. **Q correction is exact in theory** (δx^T M δx = 0 for pseudoinverse)
-4. **E₁ runtime bound validated**: zero violations across 477 cases, max ratio 0.196
-5. **Chain table**: 6 valid bounds, 2 invalid, all intermediate quantities measured
+Complete for Q accuracy. Deliverables:
+1. **Proven bound** [lem:q-error-first-order]: |Q−Q*| ≤ ‖H‖·‖β‖·‖r‖/σ_min(C)
+2. **Structural theorem** [lem:pseudoinverse-orthogonality, cor:taylor-structure, cor:exact-correction]
+3. **Runtime certification**: compute bound from solver output, TRUE/INDETERMINATE
+4. **15 matrix families**, 4303 problems, 533 feasible, all checked
+5. **analyze.py** post-processing with full proposition/bound validation
+6. **Projection solver sign error** (one-line library fix needed)
 
-Next: close gap in math.tex (eigendecomposition backward stability → ‖r‖ bound), check EHZ pipeline inputs, formalize the structural theorem.
+Open:
+- Library promotion: move proven bound + asserts into `crates/src/kkt/`
+- Fix projection solver sign in library (`crates/src/kkt/projection_solver.rs:113`)
+- β > 0 certification (margin analysis, separate experiment)
+- GAP in cor:taylor-structure proof (extra terms cancellation, needs Jörn)
