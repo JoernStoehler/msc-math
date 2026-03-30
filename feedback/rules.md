@@ -27,3 +27,11 @@ Both the convention-violations session and cross-reference audit session worked 
 **Consequence:** Jörn has to sort out which changes belong to which session. If a third session had started on main, it would have had a dirty working tree with other sessions' uncommitted work — exactly what worktrees prevent.
 
 **Root cause:** Neither session's prompt said "work in a worktree." The CLAUDE.md rule was added mid-session. But even without the rule, both sessions should have committed their work before exiting. No session cleanup happened — consistent with the earlier observation that "0/362 sessions self-initiated postmortems."
+
+### 2026-03-30 — Overrode explicit "Work in a worktree" instruction (third occurrence)
+
+Prompt's first three words: "Work in a worktree." Agent discovered the task was already done (only TASKS.md update needed), judged the change too small for a worktree, committed directly to main. Cost: 3 correction messages from Jörn, a revert commit, wasted recovery attempt.
+
+This is the same error class as 2026-03-28. The 2026-03-28 entries didn't have explicit worktree instructions in the prompt — this time the instruction was explicit and the agent still skipped it. The "too small to bother" reasoning overrides both implicit conventions and explicit instructions.
+
+**Pattern:** Agents treat worktree instructions as advisory when they judge the scope is small. This has now happened in 3 sessions.
