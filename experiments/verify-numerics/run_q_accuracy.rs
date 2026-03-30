@@ -696,7 +696,7 @@ fn generate_problems() -> Vec<TestProblem> {
     }
 
     // ── Family 2: Random dense symmetric H ──
-    for inst in 0..50 {
+    for inst in 0..500 {
         let m = rng.gen_range(6..=12);
         let h = random_symmetric_int(&mut rng, m, 10);
         let c = random_constraint_int(&mut rng, P, m, 5);
@@ -704,7 +704,7 @@ fn generate_problems() -> Vec<TestProblem> {
     }
 
     // ── Family 3: EHZ-like (antisymmetric pairs, simulating ω₀) ──
-    for inst in 0..50 {
+    for inst in 0..500 {
         let m = rng.gen_range(6..=12);
         let h = random_antisymmetric_int(&mut rng, m, 10);
         let c = random_constraint_int(&mut rng, P, m, 5);
@@ -713,7 +713,7 @@ fn generate_problems() -> Vec<TestProblem> {
 
     // ── Family 4: Near-singular H (small eigenvalues via construction) ──
     // H = Q^T diag(λ) Q with some λ_i small
-    for inst in 0..30 {
+    for inst in 0..200 {
         let m = rng.gen_range(6..=10);
         let h = make_near_singular_h(&mut rng, m, inst);
         let c = random_constraint_int(&mut rng, P, m, 5);
@@ -724,7 +724,7 @@ fn generate_problems() -> Vec<TestProblem> {
     }
 
     // ── Family 5: Singular H (zero eigenvalues) ──
-    for inst in 0..30 {
+    for inst in 0..200 {
         let m = rng.gen_range(6..=10);
         let h = make_singular_h(&mut rng, m);
         let c = random_constraint_int(&mut rng, P, m, 5);
@@ -735,7 +735,7 @@ fn generate_problems() -> Vec<TestProblem> {
     }
 
     // ── Family 6: Indefinite H (mixed ± eigenvalues) ──
-    for inst in 0..30 {
+    for inst in 0..200 {
         let m = rng.gen_range(6..=10);
         let h = make_indefinite_h(&mut rng, m);
         let c = random_constraint_int(&mut rng, P, m, 5);
@@ -746,7 +746,7 @@ fn generate_problems() -> Vec<TestProblem> {
     }
 
     // ── Family 7: Small (m=6, minimum for p=5 constraints to have k≥1) ──
-    for inst in 0..30 {
+    for inst in 0..200 {
         let m = 6;
         let h = random_symmetric_int(&mut rng, m, 5);
         let c = random_constraint_int(&mut rng, P, m, 3);
@@ -754,7 +754,7 @@ fn generate_problems() -> Vec<TestProblem> {
     }
 
     // ── Family 8: Large (m=16) ──
-    for inst in 0..20 {
+    for inst in 0..200 {
         let m = 16;
         let h = random_symmetric_int(&mut rng, m, 10);
         let c = random_constraint_int(&mut rng, P, m, 5);
@@ -763,7 +763,7 @@ fn generate_problems() -> Vec<TestProblem> {
 
     // ── Family 9: Feasible by construction ──
     // Start from a known β > 0, build C and d such that Cβ = d holds.
-    for inst in 0..50 {
+    for inst in 0..500 {
         let m = rng.gen_range(6..=12);
         let prob = make_feasible_problem(&mut rng, m, inst);
         problems.push(prob);
