@@ -90,6 +90,10 @@ struct Record {
     sigma_max_c: f64,      // largest singular value of C
     norm_beta_exact: f64,  // ||β_exact||_2 (NaN if infeasible)
     norm_beta_sp: f64,     // ||β_sp||_2 (NaN if infeasible)
+
+    // Runtime error bound E₁ = ||H||·||β̃||·||r||/σ_min(C)
+    // [lem:q-error-first-order] — bounds first-order Q error
+    e1_bound: f64,
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -1345,6 +1349,11 @@ fn main() {
             sigma_max_c,
             norm_beta_exact,
             norm_beta_sp,
+            e1_bound: if norm_beta_sp.is_finite() && sp.residual_norm.is_finite() && sigma_min_c > 0.0 {
+                norm_h * norm_beta_sp * sp.residual_norm / sigma_min_c
+            } else {
+                f64::NAN
+            },
         };
 
         let json = serde_json::to_string(&record).expect("serialize");
