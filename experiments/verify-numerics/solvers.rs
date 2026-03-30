@@ -175,6 +175,19 @@ const EIGEN_CONDITION_TAU: f64 = 1e-3;
 /// Maximum acceptable residual norm for the KKT solution.
 const EPS_KKT_RESIDUAL: f64 = 1e-6;
 
+/// E₁ error bound tolerance. If E₁ exceeds this, the Q value is unreliable
+/// and should be classified as INDETERMINATE (fall back to rational arithmetic).
+/// [lem:q-error-first-order]: E₁ = ||H|| · ||β̃|| · ||r|| / σ_min(C).
+pub const EPS_E1_BOUND: f64 = 1e-6;
+
+/// Conjectured upper bound on ||H|| / σ_min(C) for EHZ polytope orbits.
+/// Observed max: 21 across 186 polytope orbits (verify-numerics experiment, 2026-03-30).
+/// Threshold set at 5x the observed max for safety margin.
+/// On panic → escalate to Jörn: the conjecture about ||H||/σ_min(C) has been disproven,
+/// which means E₁ may be too large for certification at the default tolerance.
+/// TODO: prove for all polytopes, or wait for the first panic to provide a counterexample.
+const CONJECTURED_H_OVER_SIGMA_MIN_C: f64 = 100.0;
+
 /// Threshold for filtering Type A eigenvectors in null-space search.
 const EPS_TYPE_A_FILTER: f64 = 1e-10;
 
@@ -199,6 +212,36 @@ const EPS_EIGEN_THRESHOLD: f64 = 1e-3;
 pub fn q_value(h: &DMatrix<f64>, beta: &[f64]) -> f64 {
     let b = DVector::from_column_slice(beta);
     0.5 * b.dot(&(h * &b))
+}
+
+/// Compute the E₁ error bound and check the ||H||/σ_min(C) conjecture.
+///
+/// Returns E₁ = ||H|| · ||β̃|| · ||r|| / σ_min(C), or panics if the
+/// scale-invariant ratio ||H||/σ_min(C) exceeds the conjectured bound.
+///
+/// [lem:q-error-first-order]: |Q̃ - Q*| ≤ E₁ (proven, max empirical ratio 0.196).
+pub fn compute_e1_bound(
+    norm_h: f64,
+    norm_beta: f64,
+    residual_norm: f64,
+    sigma_min_c: f64,
+) -> f64 {
+    assert!(
+        sigma_min_c > 0.0,
+        "σ_min(C) = 0: constraint matrix C is rank-deficient"
+    );
+
+    let ratio = norm_h / sigma_min_c;
+    assert!(
+        ratio <= CONJECTURED_H_OVER_SIGMA_MIN_C,
+        "||H||/σ_min(C) = {:.2e} exceeds conjectured bound {:.0e}. \
+         Observed max across 186 polytope orbits: 21. \
+         This polytope violates the conjecture — escalate to Jörn. \
+         ||H|| = {:.2e}, σ_min(C) = {:.2e}",
+        ratio, CONJECTURED_H_OVER_SIGMA_MIN_C, norm_h, sigma_min_c
+    );
+
+    norm_h * norm_beta * residual_norm / sigma_min_c
 }
 
 /// Classify a margin value into a trinary verdict.
