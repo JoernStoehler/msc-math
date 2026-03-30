@@ -1741,60 +1741,8 @@ fn main() {
             _ => (f64::NAN, f64::NAN),
         };
 
-        // ── Assert proven bounds (validated against exact rational ground truth) ──
-        // These hold by proof; assertion catches proof bugs or implementation errors.
-
-        // B2: ||λ*|| ≤ ||H||·||β*||/σ_min(C)
-        if lambda_bound_ratio.is_finite() {
-            assert!(lambda_bound_ratio <= 1.0 + 1e-10,
-                "B2 violated: ||λ*||/bound = {:.6e} > 1. ||λ*||={:.2e}, bound={:.2e}, family={}, inst={}",
-                lambda_bound_ratio, norm_lambda_exact, lambda_bound, prob.family, prob.instance);
-        }
-
-        // B3: |Q − Q*| ≤ E₁
-        let e1 = if norm_beta_sp.is_finite() && sp.residual_norm.is_finite() && sigma_min_c > 0.0 {
-            norm_h * norm_beta_sp * sp.residual_norm / sigma_min_c
-        } else { f64::NAN };
-        if e1.is_finite() && err_saddle.is_finite() && e1 > 0.0 {
-            assert!(err_saddle <= e1 * (1.0 + 1e-10),
-                "B3 violated: |Q−Q*|/E₁ = {:.6e} > 1. err={:.2e}, E₁={:.2e}, family={}, inst={}",
-                err_saddle / e1, err_saddle, e1, prob.family, prob.instance);
-        }
-
-        // B4: |Q_raw − Q*| ≤ E₁
-        if e1.is_finite() && err_raw_saddle.is_finite() && e1 > 0.0 {
-            assert!(err_raw_saddle <= e1 * (1.0 + 1e-10),
-                "B4 violated: |Q_raw−Q*|/E₁ = {:.6e} > 1. err_raw={:.2e}, E₁={:.2e}, family={}, inst={}",
-                err_raw_saddle / e1, err_raw_saddle, e1, prob.family, prob.instance);
-        }
-
-        // B5: 1st_order / 2nd_order = 2 exactly (identity from δx^T M δx = 0)
-        // Requires: x* ∈ col(M), which holds when M is full rank (no eigenvalue thresholding).
-        // When rank-deficient: x* may have a null-space component, identity fails.
-        // Only check when both terms are well above noise floor.
-        {
-            let fo = first_order_b0;
-            let so = second_order_b0;
-            let is_full_rank = sp.rank == prob.m + 5;
-            if is_full_rank && fo.is_finite() && so.is_finite() && so > 1e-10 && fo > 1e-10 {
-                let ratio = fo / so;
-                assert!((ratio - 2.0).abs() < 1e-3,
-                    "B5 violated: 1st/2nd = {:.6} ≠ 2 (full-rank M). 1st={:.2e}, 2nd={:.2e}, family={}, inst={}",
-                    ratio, fo, so, prob.family, prob.instance);
-            }
-        }
-
-        // B6: |Q_corr − Q*| ≈ |Q_raw − Q*| or better.
-        // In exact arithmetic (x* ∈ col(M)): correction is perfect (Q_corr = Q*).
-        // In f64: correction can worsen by O(ε_mach) when both errors are at noise floor.
-        // Assert: correction doesn't make things MUCH worse (100x tolerance for noise).
-        if err_saddle.is_finite() && err_raw_saddle.is_finite()
-            && err_raw_saddle > 1e-14  // only check when raw error is above noise floor
-        {
-            assert!(err_saddle <= err_raw_saddle * 2.0,
-                "B6 violated: correction made Q much worse. |Q−Q*|={:.2e} > 2·|Q_raw−Q*|={:.2e}, family={}, inst={}",
-                err_saddle, err_raw_saddle, prob.family, prob.instance);
-        }
+        // All proposition/bound checks are done in post-processing (analyze.py),
+        // not here. The binary just records all quantities.
 
         let record = Record {
             family: prob.family.clone(),
