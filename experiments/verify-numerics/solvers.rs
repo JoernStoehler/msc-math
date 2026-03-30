@@ -234,11 +234,14 @@ pub fn compute_e1_bound(
     let mut violations = Vec::new();
 
     // σ_min(C) numerically nonzero (C full row rank).
-    // f64 SVD resolution: ~ε_mach · σ_max(C). Below 1e-14 · max(||H||, 1) is indistinguishable from 0.
-    if !(sigma_min_c > 1e-14 * norm_h.max(1.0)) {
+    // f64 SVD resolution: ~ε_mach · σ_max(C). Use 1e-10 · σ_max(C) as threshold
+    // (matches EPS_RANK_THRESHOLD in constraint_solver.rs).
+    // We don't have σ_max(C) here, but σ_min(C) < 1e-12 is suspicious for any C from EHZ
+    // (observed min: 0.11 across 186 orbits).
+    if !(sigma_min_c > 1e-12) {
         violations.push(format!(
-            "σ_min(C) = {:.2e}: numerically zero at scale ||H|| = {:.2e}. C is rank-deficient.",
-            sigma_min_c, norm_h));
+            "σ_min(C) = {:.2e} < 1e-12: numerically rank-deficient. EHZ observed min: 0.11.",
+            sigma_min_c));
     }
 
     // ||H||/σ_min(C) ≤ 100 (conjectured for EHZ polytopes, observed max 21 across 186 orbits).
