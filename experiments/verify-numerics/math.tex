@@ -177,8 +177,76 @@ $\sigma_{\min}(C)$ from the SVD of~$C$
 (already computed by the constraint solver).
 
 % [TODO: JÖRN - Empirical validation shows max ratio
-%   |Q_err| / E_1 = 0.186 across 269 test problems from 12 matrix families.
+%   |Q_err| / E_1 = 0.196 across 477 test problems from 15 matrix families.
 %   The constant 1 in the bound is not tight; the proof gives an upper
 %   bound, not an equality.  Whether a tighter constant can be proven
 %   (e.g., involving dimension m) is open.]
 \end{remark}
+
+
+\begin{lemma}[Pseudoinverse orthogonality]\label{lem:pseudoinverse-orthogonality}
+Let $M$ be symmetric and $\tilde x = M^+ b$ the pseudoinverse solution.
+Let $x^*$ satisfy $M x^* = b$ with $x^* \in \mathrm{col}(M)$.
+Define $\delta x = \tilde x - x^*$ and $r = M\tilde x - b$.
+Then $\delta x^\top M\, \delta x = 0$.
+\end{lemma}
+
+\begin{proof}
+Since $M$ is symmetric, $M^+$ maps into $\mathrm{col}(M) = \mathrm{row}(M)$,
+so $\tilde x \in \mathrm{col}(M)$. By assumption $x^* \in \mathrm{col}(M)$,
+hence $\delta x \in \mathrm{col}(M)$.
+From $M\tilde x = b + r$ and $M x^* = b$, we get $M\,\delta x = r$.
+The residual satisfies $r \perp \mathrm{col}(M)$ (standard pseudoinverse property).
+Therefore $\delta x^\top r = 0$ (since $\delta x \in \mathrm{col}(M)$), and
+\[
+  \delta x^\top M\,\delta x = \delta x^\top r = 0. \qedhere
+\]
+\end{proof}
+
+
+\begin{corollary}[Taylor structure of Q error]\label{cor:taylor-structure}
+Under the assumptions of Lemma~\ref{lem:q-error-first-order} and
+Lemma~\ref{lem:pseudoinverse-orthogonality}, the uncorrected Q~error satisfies
+\[
+  Q(\tilde\beta) - Q(\beta^*)
+  = (H\beta^*)^\top\delta\beta + \tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta
+\]
+with $(H\beta^*)^\top\delta\beta = -\delta\beta^\top H\,\delta\beta$,
+i.e., the first-order term is exactly $-2$ times the second-order term.
+Consequently, $Q(\tilde\beta) - Q(\beta^*) = -\tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta$.
+\end{corollary}
+
+\begin{proof}
+Expanding $\delta x^\top M\,\delta x = 0$ in blocks:
+\[
+  \delta\beta^\top H\,\delta\beta + 2\,\delta\beta^\top C^\top\delta\lambda = 0.
+\]
+From $x^{*\top} M\,\delta x = 0$ (same argument with $x^*$ in place of $\delta x$):
+\[
+  \beta^{*\top} H\,\delta\beta + d^\top\delta\lambda + \lambda^{*\top} r_\lambda = 0,
+\]
+using $C\beta^* = d$ and $C\,\delta\beta = r_\lambda$.
+Subtracting gives
+$(H\beta^*)^\top\delta\beta - \delta\beta^\top H\,\delta\beta
+= d^\top\delta\lambda + \lambda^{*\top} r_\lambda - 2\,r_\lambda^\top\delta\lambda$.
+% [GAP - The identity (Hβ*)^T δβ = -δβ^T H δβ is verified empirically
+% (ratio = 2.0000 across 95 rank-deficient cases) but the algebraic
+% proof above yields extra terms d^T δλ + λ*^T r_λ - 2 r_λ^T δλ
+% that need to cancel. This cancellation follows from x*^T r = 0
+% (since x* ∈ col(M)), giving β*^T r_β + λ*^T r_λ = 0, combined
+% with the block expansion. Full derivation needs Jörn.]
+\end{proof}
+
+
+\begin{corollary}[Exact correction in exact arithmetic]\label{cor:exact-correction}
+Under the same assumptions,
+\[
+  Q_{\mathrm{corr}} - Q(\beta^*)
+  = \delta\lambda^\top r_\lambda + \tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta.
+\]
+From Lemma~\ref{lem:pseudoinverse-orthogonality},
+$\tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta = -r_\lambda^\top\delta\lambda$
+(expanding $\delta x^\top M\,\delta x = 0$).
+Since $\delta\lambda^\top r_\lambda$ and $r_\lambda^\top\delta\lambda$ are
+both scalars and equal, $Q_{\mathrm{corr}} - Q(\beta^*) = 0$.
+\end{corollary}
