@@ -47,9 +47,13 @@ struct Record {
     q_saddle: f64,
     q_projection: f64,
 
-    // Q errors
+    // Q errors (corrected)
     err_saddle: f64,
     err_projection: f64,
+
+    // Raw Q (before correction) and its error
+    q_raw_saddle: f64,
+    err_raw_saddle: f64,
 
     // Saddle-point diagnostics
     sp_residual_norm: f64,
@@ -1006,7 +1010,8 @@ fn make_ill_conditioned_c_problem(rng: &mut StdRng, m: usize, inst: usize, small
 
 /// Saddle-point solver result.
 struct SpResult {
-    q: f64,
+    q: f64,       // q_corrected
+    q_raw: f64,   // q_raw (before correction)
     beta: Vec<f64>,
     residual_norm: f64,
     lambda_min_all: f64,
@@ -1087,6 +1092,7 @@ fn run_saddle_point(h: &DMatrix<f64>, c: &DMatrix<f64>, d: &DVector<f64>) -> SpR
 
             SpResult {
                 q: result.q_corrected,
+                q_raw: result.q_raw,
                 beta: result.beta,
                 residual_norm,
                 lambda_min_all,
@@ -1099,6 +1105,7 @@ fn run_saddle_point(h: &DMatrix<f64>, c: &DMatrix<f64>, d: &DVector<f64>) -> SpR
         }
         solvers::KktOutcome::Infeasible => SpResult {
             q: f64::NAN,
+            q_raw: f64::NAN,
             beta: vec![],
             residual_norm: f64::NAN,
             lambda_min_all,
@@ -1110,6 +1117,7 @@ fn run_saddle_point(h: &DMatrix<f64>, c: &DMatrix<f64>, d: &DVector<f64>) -> SpR
         },
         solvers::KktOutcome::SingularMatrix => SpResult {
             q: f64::NAN,
+            q_raw: f64::NAN,
             beta: vec![],
             residual_norm: f64::NAN,
             lambda_min_all,
@@ -1214,6 +1222,7 @@ fn main() {
                 sp_panics += 1;
                 SpResult {
                     q: f64::NAN,
+                    q_raw: f64::NAN,
                     beta: vec![],
                     residual_norm: f64::NAN,
                     lambda_min_all: f64::NAN,
@@ -1241,6 +1250,11 @@ fn main() {
         // 4. Compute errors
         let err_saddle = if exact.is_some() && sp.verdict == "feasible" {
             (sp.q - q_exact).abs()
+        } else {
+            f64::NAN
+        };
+        let err_raw_saddle = if exact.is_some() && sp.verdict == "feasible" {
+            (sp.q_raw - q_exact).abs()
         } else {
             f64::NAN
         };
@@ -1325,6 +1339,8 @@ fn main() {
             q_projection: proj.q,
             err_saddle,
             err_projection,
+            q_raw_saddle: sp.q_raw,
+            err_raw_saddle,
             sp_residual_norm: sp.residual_norm,
             sp_lambda_min_all: sp.lambda_min_all,
             sp_lambda_min_retained: sp.lambda_min_retained,

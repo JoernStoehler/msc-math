@@ -87,7 +87,9 @@ pub struct KktResult {
     pub mu: Vec<f64>,
     /// Lagrange multiplier for normalization constraint (scalar).
     pub xi: f64,
-    /// Residual-corrected Q value.
+    /// Uncorrected Q value: ½ β^T H β.
+    pub q_raw: f64,
+    /// Residual-corrected Q value: q_raw + λ̃^T r_λ.
     pub q_corrected: f64,
     /// Error bound E on Q_tilde.
     pub q_error_bound: f64,
@@ -618,6 +620,7 @@ fn finalize_result(
         beta: beta.to_vec(),
         mu,
         xi,
+        q_raw,
         q_corrected,
         q_error_bound,
         n_positive: eigen_info.n_positive,
