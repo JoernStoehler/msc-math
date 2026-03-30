@@ -1768,15 +1768,18 @@ fn main() {
                 err_raw_saddle / e1, err_raw_saddle, e1, prob.family, prob.instance);
         }
 
-        // B5: 1st_order / 2nd_order ≥ 2 (from δx^T M δx = 0, when x* ∈ col(M))
-        // Only meaningful when both terms are above noise floor.
+        // B5: 1st_order / 2nd_order = 2 exactly (identity from δx^T M δx = 0)
+        // Requires: x* ∈ col(M), which holds when M is full rank (no eigenvalue thresholding).
+        // When rank-deficient: x* may have a null-space component, identity fails.
+        // Only check when both terms are well above noise floor.
         {
             let fo = first_order_b0;
             let so = second_order_b0;
-            if fo.is_finite() && so.is_finite() && so > 1e-20 && fo > 1e-20 {
+            let is_full_rank = sp.rank == prob.m + 5;
+            if is_full_rank && fo.is_finite() && so.is_finite() && so > 1e-10 && fo > 1e-10 {
                 let ratio = fo / so;
-                assert!(ratio >= 2.0 - 1e-6,
-                    "B5 violated: 1st/2nd = {:.6} < 2. 1st={:.2e}, 2nd={:.2e}, family={}, inst={}",
+                assert!((ratio - 2.0).abs() < 1e-3,
+                    "B5 violated: 1st/2nd = {:.6} ≠ 2 (full-rank M). 1st={:.2e}, 2nd={:.2e}, family={}, inst={}",
                     ratio, fo, so, prob.family, prob.instance);
             }
         }
