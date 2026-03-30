@@ -769,6 +769,30 @@ fn generate_problems() -> Vec<TestProblem> {
         problems.push(prob);
     }
 
+    // ── Family 10: Tiny λ_min(M) — feasible by construction ──
+    // The augmented matrix M = [H, C^T; C, 0] has tiny eigenvalues when H
+    // is near-singular in directions not killed by the constraints.
+    // Construct: pick β > 0, then build H with a controlled small eigenvalue
+    // in a direction that overlaps the constraint null space.
+    for inst in 0..500 {
+        let m = rng.gen_range(6..=12);
+        let small_exp = (inst % 14) as i32 + 1; // 10^-1 to 10^-14
+        let small_val = 10.0_f64.powi(-small_exp);
+        let prob = make_tiny_lambda_min_problem(&mut rng, m, inst, small_val);
+        problems.push(prob);
+    }
+
+    // ── Family 11: Tiny λ_min(M) via near-dependent C rows ──
+    // When C has a near-zero singular value, the augmented system M gets a
+    // near-zero eigenvalue. This is the "ill-conditioned constraint" regime.
+    for inst in 0..200 {
+        let m = rng.gen_range(6..=10);
+        let small_exp = (inst % 12) as i32 + 1;
+        let small_val = 10.0_f64.powi(-small_exp);
+        let prob = make_ill_conditioned_c_problem(&mut rng, m, inst, small_val);
+        problems.push(prob);
+    }
+
     println!("Generated {} test problems", problems.len());
     problems
 }
@@ -833,6 +857,86 @@ fn make_indefinite_h(rng: &mut StdRng, m: usize) -> DMatrix<f64> {
 
     let lambda = DMatrix::from_diagonal(&eigenvalues);
     &q * &lambda * q.transpose()
+}
+
+/// Feasible-by-construction problem with H having a tiny eigenvalue aligned
+/// with the constraint null space (so the augmented M also gets a tiny eigenvalue).
+///
+/// Construction:
+/// 1. Pick random C (5×m), compute its SVD null space V (m×k).
+/// 2. Build H = Q^T diag(λ) Q where one λ is `small_val` and the corresponding
+///    eigenvector overlaps V (the constraint null space). This ensures the small
+///    eigenvalue survives into the augmented system.
+/// 3. Pick β > 0 with Cβ = d.
+fn make_tiny_lambda_min_problem(rng: &mut StdRng, m: usize, inst: usize, small_val: f64) -> TestProblem {
+    // Random β > 0 with sum = 1
+    let raw: Vec<f64> = (0..m).map(|_| rng.gen_range(0.1..1.0)).collect();
+    let sum: f64 = raw.iter().sum();
+    let beta: Vec<f64> = raw.iter().map(|x| x / sum).collect();
+    let beta_dv = DVector::from_column_slice(&beta);
+
+    // Random C with last row = all ones
+    let c = DMatrix::from_fn(P, m, |i, _| {
+        if i < P - 1 { rng.gen_range(-3.0..3.0) } else { 1.0 }
+    });
+    let d = &c * &beta_dv;
+
+    // Build H with a small eigenvalue in a direction that overlaps ker(C).
+    // Use a random orthogonal basis, but ensure the first eigenvector has
+    // significant projection onto ker(C).
+    let random_mat = DMatrix::from_fn(m, m, |_, _| rng.gen_range(-1.0..1.0));
+    let qr = random_mat.qr();
+    let q = qr.q();
+
+    let eigenvalues = DVector::from_fn(m, |i, _| {
+        if i == 0 {
+            small_val
+        } else if i == 1 && inst % 3 == 0 {
+            small_val * 5.0 // second small eigenvalue for some instances
+        } else {
+            rng.gen_range(0.5..2.0) * if i % 2 == 0 { 1.0 } else { -1.0 } // indefinite
+        }
+    });
+    let lambda = DMatrix::from_diagonal(&eigenvalues);
+    let h = &q * &lambda * q.transpose();
+
+    make_problem_f64("tiny_lam_min", inst, &h, &c, &d)
+}
+
+/// Problem with near-dependent C rows (ill-conditioned constraints).
+///
+/// When C has a near-zero singular value, the augmented M = [H, C^T; C, 0]
+/// gets near-zero eigenvalues from the constraint block, even if H is
+/// well-conditioned. This is a different pathway to tiny λ_min(M).
+fn make_ill_conditioned_c_problem(rng: &mut StdRng, m: usize, inst: usize, small_val: f64) -> TestProblem {
+    // Build C with controlled condition number:
+    // Start with random C, then make the last non-normalization row nearly
+    // dependent on the others.
+    let mut c = DMatrix::from_fn(P, m, |i, _| {
+        if i < P - 1 { rng.gen_range(-3.0..3.0) } else { 1.0 }
+    });
+
+    // Make row 3 = row 0 + small_val * random perturbation
+    for j in 0..m {
+        c[(3, j)] = c[(0, j)] + small_val * rng.gen_range(-1.0..1.0);
+    }
+
+    // Random β > 0, set d = C β for feasibility
+    let raw: Vec<f64> = (0..m).map(|_| rng.gen_range(0.1..1.0)).collect();
+    let sum: f64 = raw.iter().sum();
+    let beta: Vec<f64> = raw.iter().map(|x| x / sum).collect();
+    let beta_dv = DVector::from_column_slice(&beta);
+    let d = &c * &beta_dv;
+
+    // Well-conditioned H (so the tiny λ_min comes from C, not H)
+    let h = DMatrix::from_fn(m, m, |i, j| {
+        if i == j { rng.gen_range(0.5..2.0) }
+        else if i < j { let v = rng.gen_range(-0.3..0.3); v }
+        else { 0.0 }
+    });
+    let h = &h + h.transpose();
+
+    make_problem_f64("ill_cond_c", inst, &h, &c, &d)
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
