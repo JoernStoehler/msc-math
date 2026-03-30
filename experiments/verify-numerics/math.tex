@@ -5,6 +5,13 @@
 %   lem:q-error-first-order — first-order Q error bound via stationarity
 %   lem:q-correction-second-order — Q correction reduces error to second order
 %   rem:runtime-q-bound — computable runtime error bound
+%
+% Notation: This file uses a general constrained QP setup with
+% constraint matrix $C$ and Lagrange multiplier $\lambda$.
+% In the EHZ pipeline (crate kkt/ module), the specific instantiation is:
+%   $C = [A^\top;\, \mathbf{1}^\top]$ (4 closure rows + 1 normalization),
+%   $d = [0;\, 1]$,
+%   $\lambda = [\mu;\, \xi]$.
 
 % \input'd from root math.tex — no \documentclass
 
@@ -29,10 +36,18 @@
 % Note $r_\lambda = C\tilde\beta - d = C\,\delta\beta$.
 
 \begin{lemma}[First-order Q error bound]\label{lem:q-error-first-order}
-Let $\beta^*$ solve the KKT system with Lagrange multiplier $\lambda^*$,
-and let $\tilde\beta$ be the computed solution with KKT residual
-$r = M\tilde{x} - b$ satisfying $\|r\| \leq \varepsilon$.
-Assume $C$ has full row rank. Then
+Let $Q(\beta) = \tfrac{1}{2}\beta^\top H \beta$ where
+$H \in \mathbb{R}^{m \times m}$ is symmetric.
+Let $C \in \mathbb{R}^{p \times m}$ have full row rank,
+$d \in \mathbb{R}^p$, and
+$M = \bigl[\begin{smallmatrix} H & C^\top \\ C & 0 \end{smallmatrix}\bigr]$.
+Suppose $\beta^* > 0$ solves the interior KKT system $M(\beta^*,\lambda^*)^\top = (0,d)^\top$,
+and $(\tilde\beta, \tilde\lambda)$ is a computed solution with residual
+$r = M(\tilde\beta,\tilde\lambda)^\top - (0,d)^\top$.
+Write $\delta\beta = \tilde\beta - \beta^*$ and
+$r_\lambda = C\tilde\beta - d = C\,\delta\beta$ for the
+constraint residual (the last $p$ components of~$r$).
+Then
 \[
   |Q(\tilde\beta) - Q(\beta^*)|
   \;\leq\;
@@ -45,14 +60,15 @@ singular value of~$C$.
 \end{lemma}
 
 \begin{proof}
-Write $Q(\beta) = \tfrac{1}{2}\beta^\top H \beta$. Taylor expansion at $\beta^*$:
+Taylor expansion at $\beta^*$:
 \begin{equation}\label{eq:q-taylor}
   Q(\tilde\beta) - Q(\beta^*)
   = (H\beta^*)^\top \delta\beta + \tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta.
 \end{equation}
 
 \emph{First-order term.}
-Stationarity at $\beta^*$ gives $H\beta^* + C^\top\lambda^* = 0$, so
+Since $\beta^* > 0$, the interior KKT stationarity condition gives
+$H\beta^* + C^\top\lambda^* = 0$, i.e.,
 $H\beta^* = -C^\top\lambda^*$. Substituting:
 \begin{equation}\label{eq:first-order-rewrite}
   (H\beta^*)^\top\delta\beta
@@ -60,8 +76,10 @@ $H\beta^* = -C^\top\lambda^*$. Substituting:
   = -\lambda^{*\top} C\,\delta\beta
   = -\lambda^{*\top} r_\lambda.
 \end{equation}
-Since $C$ has full row rank, $\sigma_{\min}(C^\top) = \sigma_{\min}(C) > 0$,
-and $C^\top\lambda^* = -H\beta^*$ gives
+Since $C$ has full row rank~$p$, $C^\top \in \mathbb{R}^{m \times p}$
+is injective (its null space is trivial). Therefore
+$\|C^\top y\| \geq \sigma_{\min}(C^\top)\|y\| = \sigma_{\min}(C)\|y\|$
+for all $y \in \mathbb{R}^p$. Applying this to $C^\top\lambda^* = -H\beta^*$:
 \[
   \sigma_{\min}(C)\,\|\lambda^*\|
   \leq \|C^\top\lambda^*\|
@@ -69,8 +87,8 @@ and $C^\top\lambda^* = -H\beta^*$ gives
   \leq \|H\|\,\|\beta^*\|.
 \]
 Thus $\|\lambda^*\| \leq \|H\|\,\|\beta^*\| / \sigma_{\min}(C)$.
-Also, $\|r_\lambda\| = \|C\,\delta\beta\| \leq \|r\|$ since
-$r_\lambda$ is a sub-vector of $r$.
+Since $r_\lambda$ is a sub-vector of $r$ (Euclidean norm),
+$\|r_\lambda\| \leq \|r\|$.
 Therefore
 \[
   |(H\beta^*)^\top\delta\beta|
@@ -93,21 +111,26 @@ Combining with \eqref{eq:q-taylor} by the triangle inequality:
 
 
 \begin{lemma}[Q correction is second-order]\label{lem:q-correction-second-order}
-Define the \emph{Q correction} as $\Delta Q = \tilde\lambda^\top r_\lambda$,
+Under the same assumptions as Lemma~\ref{lem:q-error-first-order},
+define the \emph{Q correction} as $\Delta Q = \tilde\lambda^\top r_\lambda$,
 where $\tilde\lambda$ is the computed Lagrange multiplier and
-$r_\lambda = C\tilde\beta - d$. Then the corrected Q value
+$r_\lambda = C\tilde\beta - d$.
+Then the corrected Q value
 $Q_{\mathrm{corr}} = Q(\tilde\beta) + \Delta Q$ satisfies
 \[
-  |Q_{\mathrm{corr}} - Q(\beta^*)|
-  \leq \|\delta\lambda\|\,\|r_\lambda\|
-    + \tfrac{1}{2}\,\|H\|\,\|\delta\beta\|^2.
+  Q_{\mathrm{corr}} - Q(\beta^*)
+  = \delta\lambda^\top r_\lambda
+    + \tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta,
 \]
-Both terms are products of error quantities, so the corrected error
-is second-order in the perturbation.
+where $\delta\lambda = \tilde\lambda - \lambda^*$.
+In particular,
+$|Q_{\mathrm{corr}} - Q(\beta^*)|
+  \leq \|\delta\lambda\|\,\|r_\lambda\|
+    + \tfrac{1}{2}\,\|H\|\,\|\delta\beta\|^2$.
 \end{lemma}
 
 \begin{proof}
-From the proof of \ref{lem:q-error-first-order},
+From \eqref{eq:q-taylor} and \eqref{eq:first-order-rewrite}:
 $Q(\tilde\beta) - Q(\beta^*) = -\lambda^{*\top} r_\lambda
 + \tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta$. Adding the correction:
 \begin{align*}
@@ -120,32 +143,41 @@ $Q(\tilde\beta) - Q(\beta^*) = -\lambda^{*\top} r_\lambda
   &= \delta\lambda^\top r_\lambda
     + \tfrac{1}{2}\,\delta\beta^\top H\,\delta\beta.
 \end{align*}
-Both terms involve products of error quantities ($\delta\lambda$ and
-$r_\lambda$ for the first; $\delta\beta$ twice for the second), hence
-the bound by the triangle inequality.
+The bound follows from the triangle inequality and
+$|\delta\beta^\top H\,\delta\beta| \leq \|H\|\,\|\delta\beta\|^2$.
 \end{proof}
 
 
 \begin{remark}[Runtime error bound]\label{rem:runtime-q-bound}
-At runtime, the exact $\beta^*$ is unknown. The bound from
-\ref{lem:q-error-first-order} can be computed using the solver output
-$\tilde\beta$ as a proxy for $\beta^*$:
+At runtime, the exact $\beta^*$ is unknown.
+The first-order term of Lemma~\ref{lem:q-error-first-order}
+can be computed using the solver output $\tilde\beta$
+as a proxy for~$\beta^*$:
 \[
-  E = \frac{\|H\|\,\|\tilde\beta\|}{\sigma_{\min}(C)}\,\|r\|.
+  E_1 = \frac{\|H\|\,\|\tilde\beta\|}{\sigma_{\min}(C)}\,\|r\|.
 \]
-Since $\|\beta^*\| \leq \|\tilde\beta\| + \|\delta\beta\|$ and
-$\|\delta\beta\|$ is small relative to $\|\tilde\beta\|$ when the
-residual $\|r\|$ is small, this introduces a negligible relative error
-in the bound.
+This bounds the first-order part of the Q~error.
+The second-order term $\tfrac{1}{2}\|H\|\,\|\delta\beta\|^2$
+cannot be computed directly (since $\delta\beta$ is unknown),
+but is negligible when $\|\delta\beta\| \ll \|\beta^*\|$,
+which holds when the solver achieves small residuals on
+well-conditioned problems.
 
-All quantities are available from the solver: $\|H\|$ from the
-eigendecomposition (largest $|\lambda_i(H)|$), $\|\tilde\beta\|$ from
-the solution vector, $\|r\|$ from the KKT residual, and
-$\sigma_{\min}(C)$ from the SVD of~$C$ (already computed by the
-constraint solver).
+% [GAP - The claim "||delta_beta|| is small when ||r|| is small" requires
+% bounding ||delta_beta|| in terms of ||r|| via the conditioning of M.
+% The naive bound ||delta_beta|| <= ||M^+|| * ||r|| is valid but
+% ||M^+|| can be very large (up to 10^16 in experiments). A tighter
+% analysis via the block structure of M is needed to make this rigorous.]
+
+All quantities in $E_1$ are available from the solver:
+$\|H\|$ from the eigendecomposition (largest $|\lambda_i(H)|$),
+$\|\tilde\beta\|$ from the solution vector,
+$\|r\|$ from the KKT residual, and
+$\sigma_{\min}(C)$ from the SVD of~$C$
+(already computed by the constraint solver).
 
 % [TODO: JÖRN - Empirical validation shows max ratio
-%   |Q_err| / E = 0.186 across 269 test problems from 12 matrix families.
+%   |Q_err| / E_1 = 0.186 across 269 test problems from 12 matrix families.
 %   The constant 1 in the bound is not tight; the proof gives an upper
 %   bound, not an equality.  Whether a tighter constant can be proven
 %   (e.g., involving dimension m) is open.]
