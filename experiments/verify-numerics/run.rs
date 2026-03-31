@@ -1,14 +1,14 @@
-//! Q accuracy measurement: compare f64 solvers against exact rational arithmetic.
+//! KKT solver accuracy measurement: compare f64 solvers against exact rational arithmetic.
 //!
-//! Generates abstract QP problems (H, C, d) from controlled matrix families,
-//! solves each with the saddle-point solver, projection solver, and exact rational
-//! solver, and records Q error, β error, and diagnostic measurements.
+//! Loads QP problems (H, C, d) from two datasets:
+//! - artificial.jsonl: synthetic matrix families with controlled properties (stress-tests)
+//! - collected.jsonl: actual (H, C, d) from polytope σ-nodes (real input distribution)
 //!
-//! Design choice: iterate on abstract matrices, not polytopes. This gives controlled
-//! inputs and explicit assumptions about what the solvers handle.
+//! For each problem: runs saddle-point solver, projection solver, and exact rational
+//! solver. Records Q error, β error, margin, and ~50 diagnostic fields.
 //!
-//! Usage: cargo run --release --bin verify_numerics_q_accuracy
-//! Output: experiments/verify-numerics/q_accuracy.jsonl
+//! Usage: cargo run --release --bin verify_numerics
+//! Output: experiments/verify-numerics/results.jsonl
 
 use nalgebra::{DMatrix, DVector};
 use num_bigint::BigInt;

@@ -109,8 +109,12 @@ name = "lagrangian_probe"
 path = "lagrangian-search/probe.rs"
 
 [[bin]]
-name = "verify_numerics_q_accuracy"
-path = "verify-numerics/run_q_accuracy.rs"
+name = "verify_numerics"
+path = "verify-numerics/run.rs"
+
+[[bin]]
+name = "collect_inputs"
+path = "verify-numerics/collect_inputs.rs"
 
 [dependencies]
 symplectic = { path = "../crates" }
