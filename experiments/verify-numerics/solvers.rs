@@ -643,14 +643,52 @@ fn try_pseudoinverse_with_threshold(
     let beta0_dv = DVector::from_column_slice(&beta0);
     let margin_result = find_max_margin(&beta0_dv, &null_basis);
 
-    // Accept the LP result only if it satisfies constraints.
+    // Accept the LP result, projecting back onto {Cβ = d} if needed.
+    //
+    // The LP shifts β₀ along approximate null-space directions (discarded eigenvectors
+    // of M). These directions have small but nonzero eigenvalues, so the shift introduces
+    // a constraint violation proportional to |shift| × |λ_discarded|. When the shift is
+    // large (e.g., ~2) and the eigenvalue is small (e.g., ~1e-4), the violation can be
+    // too large for the old tolerance check.
+    //
+    // Fix attempt: project the LP result back onto {Cβ = d} using C's SVD. This preserves
+    // β > 0 (approximately) while restoring constraint feasibility. The projection subtracts
+    // C^+(Cβ_lp - d) from β_lp, where C^+ is the pseudoinverse of C.
+    //
+    // Result: fixes 2/26 false negatives (stress-test). Doesn't fix the 9 natural polytope
+    // false negatives because the approximate null-space direction is NOT in null(C) — projecting
+    // back to Cβ = d pulls β back toward the boundary. A more fundamental fix would be to use
+    // the projection solver approach (solve C first, then optimize H in null(C)).
     let beta_final = if margin_result.margin > -EPS_BETA_POSITIVE {
-        let lp_beta: Vec<f64> = margin_result.beta.as_slice().to_vec();
-        let lp_constraint_residual = extract_constraint_residual(kkt, &lp_beta, m);
+        let lp_beta_dv = margin_result.beta.clone();
+        let lp_constraint_residual = extract_constraint_residual(kkt, lp_beta_dv.as_slice(), m);
+
         if lp_constraint_residual <= EPS_KKT_RESIDUAL {
-            lp_beta
+            // Constraints already satisfied — use LP result directly.
+            lp_beta_dv.as_slice().to_vec()
         } else {
-            beta0.clone()
+            // Project LP result back onto {Cβ = d}.
+            // Extract C from the KKT matrix (rows m..m+5, cols 0..m).
+            let c_mat = DMatrix::from_fn(5, m, |i, j| kkt[(m + i, j)]);
+            let d_vec = DVector::from_fn(5, |i, _| if i == 4 { 1.0 } else { 0.0 });
+            let c_beta = &c_mat * &lp_beta_dv;
+            let residual = &c_beta - &d_vec;
+
+            // Compute C^+ * residual via SVD.
+            let svd = c_mat.svd(true, true);
+            let correction = svd.solve(&residual, 1e-12).unwrap_or_else(|_| DVector::zeros(m));
+            let projected = &lp_beta_dv - &correction;
+
+            let proj_residual = extract_constraint_residual(kkt, projected.as_slice(), m);
+            let proj_margin = projected.iter().copied().fold(f64::INFINITY, f64::min);
+
+            if proj_residual <= EPS_KKT_RESIDUAL && proj_margin > -EPS_BETA_POSITIVE {
+                // Projection restored feasibility while keeping β > 0.
+                projected.as_slice().to_vec()
+            } else {
+                // Projection didn't help — fall back to β₀.
+                beta0.clone()
+            }
         }
     } else if beta0.iter().all(|&b| b > -EPS_BETA_POSITIVE) {
         beta0.clone()
