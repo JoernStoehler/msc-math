@@ -153,6 +153,8 @@ struct InputRow {
     q: Option<f64>,
     #[serde(default)]
     margin: Option<f64>,
+    #[serde(default)]
+    sigma_min_c: Option<f64>,
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -699,25 +701,80 @@ fn load_datasets() -> Vec<TestProblem> {
 
     let n_artificial = problems.len();
 
-    // Load natural dataset (filter: only feasible rows)
+    // Load natural dataset with filtering.
+    //
+    // Include:
+    // - All feasible rows with Q > 0 (the standard case)
+    // - Sample of feasible rows with Q ≤ 0 (saddle points, indefinite H on constraint set)
+    // - Sample of beta_non_positive rows with σ_min(C) > 1e-6 (check for false negatives)
+    // - All rows with σ_min(C) < 1e-3 and σ_min(C) > 0 (near-singular constraint regime)
+    //
+    // Exclude:
+    // - residual_too_large (solver couldn't solve the system)
+    // - σ_min(C) = 0 exactly (C is rank-deficient, exact solver can't find unique solution)
     if let Ok(file) = std::fs::File::open(COLLECTED_PATH) {
         let reader = std::io::BufReader::new(file);
         let mut n_total = 0;
         let mut n_loaded = 0;
+        let mut n_q_pos = 0;
+        let mut n_q_leq0 = 0;
+        let mut n_beta_np = 0;
+        let mut n_skipped_smin0 = 0;
+
+        // Cap Q≤0 and beta_non_positive to avoid blowing up exact solver time.
+        let max_q_leq0 = 500;
+        let max_beta_np = 500;
+
         for (idx, line) in reader.lines().enumerate() {
             let line = line.unwrap_or_else(|e| panic!("Read error in collected.jsonl line {}: {}", idx, e));
             if line.trim().is_empty() { continue; }
             n_total += 1;
             let row: InputRow = serde_json::from_str(&line)
                 .unwrap_or_else(|e| panic!("Parse error in collected.jsonl line {}: {}", idx, e));
-            // Filter: only feasible rows (exact solver is expensive)
-            if row.verdict != "feasible" {
+
+            // Skip residual_too_large (solver failed)
+            if row.verdict == "residual_too_large" || row.verdict == "singular" || row.verdict == "panic" {
                 continue;
             }
-            problems.push(input_row_to_test_problem(&row));
-            n_loaded += 1;
+
+            // Skip σ_min(C) = 0 (rank-deficient C, exact solver won't work)
+            if row.sigma_min_c.unwrap_or(0.0) < 1e-15 {
+                n_skipped_smin0 += 1;
+                continue;
+            }
+
+            let include = if row.verdict == "feasible" {
+                let q = row.q.unwrap_or(f64::NAN);
+                if q > 1e-15 {
+                    // Q > 0: always include (the standard case)
+                    n_q_pos += 1;
+                    true
+                } else if n_q_leq0 < max_q_leq0 {
+                    // Q ≤ 0: sample (saddle points / indefinite H)
+                    n_q_leq0 += 1;
+                    true
+                } else {
+                    false
+                }
+            } else if row.verdict == "beta_non_positive" {
+                // β has negative component: check for false negatives
+                if row.sigma_min_c.unwrap_or(0.0) > 1e-6 && n_beta_np < max_beta_np {
+                    n_beta_np += 1;
+                    true
+                } else {
+                    false
+                }
+            } else {
+                false
+            };
+
+            if include {
+                problems.push(input_row_to_test_problem(&row));
+                n_loaded += 1;
+            }
         }
-        println!("Loaded {}/{} feasible problems from {}", n_loaded, n_total, COLLECTED_PATH);
+        println!("Loaded {}/{} problems from {} (Q>0: {}, Q≤0: {}, β<0: {}, skipped σ_min=0: {})",
+            n_loaded, n_total, COLLECTED_PATH, n_q_pos, n_q_leq0, n_beta_np, n_skipped_smin0);
     } else {
         println!("Warning: {} not found, skipping natural dataset", COLLECTED_PATH);
     }
@@ -864,7 +921,7 @@ fn run_saddle_point(h: &DMatrix<f64>, c: &DMatrix<f64>, d: &DVector<f64>) -> SpR
                 margin,
             }
         }
-        solvers::KktOutcome::Infeasible => SpResult {
+        ref other @ (solvers::KktOutcome::BetaNonPositive | solvers::KktOutcome::ResidualTooLarge) => SpResult {
             q: f64::NAN,
             q_raw: f64::NAN,
             beta: vec![],
@@ -876,7 +933,7 @@ fn run_saddle_point(h: &DMatrix<f64>, c: &DMatrix<f64>, d: &DVector<f64>) -> SpR
             lambda_min_retained,
             error_bound: f64::NAN,
             rank,
-            verdict: "infeasible".to_string(),
+            verdict: other.verdict_str().to_string(),
             margin: f64::NEG_INFINITY,
         },
         solvers::KktOutcome::SingularMatrix => SpResult {

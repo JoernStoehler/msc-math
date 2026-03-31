@@ -60,12 +60,17 @@ pub struct Solution {
 /// Outcome of the saddle-point KKT solve.
 #[derive(Clone, Debug)]
 pub enum KktOutcome {
-    /// The orbit has a feasible solution with beta > 0 and Q > 0.
+    /// Found a stationary point with β > 0 (all components > -EPS_BETA_POSITIVE).
+    /// Q may be positive, zero, or negative — the caller decides what to do.
     Feasible(KktResult),
-    /// The orbit is infeasible: beta has a non-positive component, or Q <= 0.
-    Infeasible,
+    /// β has a non-positive component at the stationary point (and LP search
+    /// in the null space couldn't fix it). Q was not checked.
+    BetaNonPositive,
     /// The KKT matrix is singular (all eigenvalues near 0).
     SingularMatrix,
+    /// Residual too large: the pseudoinverse solution doesn't satisfy Mx = b
+    /// within tolerance at any threshold tier.
+    ResidualTooLarge,
 }
 
 impl KktOutcome {
@@ -74,6 +79,16 @@ impl KktOutcome {
         match self {
             KktOutcome::Feasible(r) => Some(r),
             _ => None,
+        }
+    }
+
+    /// Short string name for JSONL serialization.
+    pub fn verdict_str(&self) -> &'static str {
+        match self {
+            KktOutcome::Feasible(_) => "feasible",
+            KktOutcome::BetaNonPositive => "beta_non_positive",
+            KktOutcome::SingularMatrix => "singular",
+            KktOutcome::ResidualTooLarge => "residual_too_large",
         }
     }
 }
@@ -501,7 +516,7 @@ pub fn solve_saddle_point(
     try_pseudoinverse_with_threshold(
         kkt_matrix, rhs, m,
         &eigen_info, strict_threshold,
-    ).unwrap_or(KktOutcome::Infeasible)
+    ).unwrap_or(KktOutcome::ResidualTooLarge)
 }
 
 /// Try to find an admissible beta > 0 solution using a specific eigenvalue threshold.
@@ -580,7 +595,7 @@ fn try_pseudoinverse_with_threshold(
         if beta0.iter().all(|&b| b > -EPS_BETA_POSITIVE) {
             return Some(set_p_discard(finalize_result(&beta0, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, &eigen_info)));
         }
-        return Some(KktOutcome::Infeasible);
+        return Some(KktOutcome::BetaNonPositive);
     }
 
     // Rank-deficient: search the numerical null space for beta > 0.
@@ -616,7 +631,7 @@ fn try_pseudoinverse_with_threshold(
         if beta0.iter().all(|&b| b > -EPS_BETA_POSITIVE) {
             return Some(set_p_discard(finalize_result(&beta0, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, &eigen_info)));
         } else {
-            return Some(KktOutcome::Infeasible);
+            return Some(KktOutcome::BetaNonPositive);
         }
     }
 
@@ -640,7 +655,7 @@ fn try_pseudoinverse_with_threshold(
     } else if beta0.iter().all(|&b| b > -EPS_BETA_POSITIVE) {
         beta0.clone()
     } else {
-        return Some(KktOutcome::Infeasible);
+        return Some(KktOutcome::BetaNonPositive);
     };
 
     let beta0_ref = beta0;
@@ -701,9 +716,9 @@ fn finalize_result(
 
     let q_corrected = q_raw + q_correction;
 
-    if q_corrected <= EPS_Q_POSITIVE {
-        return KktOutcome::Infeasible;
-    }
+    // NOTE: Previously returned Infeasible when q_corrected <= 0. Removed:
+    // Q sign is the caller's decision. The solver reports the stationary point
+    // regardless of Q sign. This lets the experiment study Q ≤ 0 cases.
 
     // Tight bound: E = (9/2) ||r||^2 / |lambda_min|.
     let r_sq = residual_norm * residual_norm;

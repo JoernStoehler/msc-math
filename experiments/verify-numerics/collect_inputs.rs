@@ -560,104 +560,50 @@ fn solve_and_record(
         .filter(|&&e| e.abs() > strict_threshold)
         .count();
 
+    // Build base row (fields shared across all outcomes)
+    let mut row = InputRow {
+        family: family.to_string(),
+        instance,
+        m,
+        dataset: dataset.to_string(),
+        h: matrix_to_vecs(&h_clone),
+        c: matrix_to_vecs(c),
+        d: d.iter().copied().collect(),
+        verdict: String::new(),
+        q: f64::NAN,
+        q_raw: f64::NAN,
+        margin: f64::NAN,
+        residual_norm: f64::NAN,
+        rank,
+        norm_h,
+        sigma_min_c: smin_c,
+        polytope_id,
+        perm: perm_opt,
+        facet_count,
+    };
+
     match result {
-        Ok(solvers::KktOutcome::Feasible(kkt_result)) => {
-            // Compute residual
-            let mut x_vec = kkt_result.beta.clone();
-            x_vec.extend_from_slice(&kkt_result.mu);
-            x_vec.push(kkt_result.xi);
-            let x_dv = DVector::from_column_slice(&x_vec);
-            let residual_vec = &kkt * &x_dv - &rhs;
-            let residual_norm = residual_vec.norm();
-
-            let margin = kkt_result
-                .beta
-                .iter()
-                .copied()
-                .fold(f64::INFINITY, f64::min);
-
-            InputRow {
-                family: family.to_string(),
-                instance,
-                m,
-                dataset: dataset.to_string(),
-                h: matrix_to_vecs(&h_clone),
-                c: matrix_to_vecs(c),
-                d: d.iter().copied().collect(),
-                verdict: "feasible".to_string(),
-                q: kkt_result.q_corrected,
-                q_raw: kkt_result.q_raw,
-                margin,
-                residual_norm,
-                rank,
-                norm_h,
-                sigma_min_c: smin_c,
-                polytope_id,
-                perm: perm_opt,
-                facet_count,
+        Ok(ref outcome) => {
+            row.verdict = outcome.verdict_str().to_string();
+            if let solvers::KktOutcome::Feasible(kkt_result) = outcome {
+                let mut x_vec = kkt_result.beta.clone();
+                x_vec.extend_from_slice(&kkt_result.mu);
+                x_vec.push(kkt_result.xi);
+                let x_dv = DVector::from_column_slice(&x_vec);
+                let residual_vec = &kkt * &x_dv - &rhs;
+                row.residual_norm = residual_vec.norm();
+                row.margin = kkt_result.beta.iter().copied().fold(f64::INFINITY, f64::min);
+                row.q = kkt_result.q_corrected;
+                row.q_raw = kkt_result.q_raw;
             }
         }
-        Ok(solvers::KktOutcome::Infeasible) => InputRow {
-            family: family.to_string(),
-            instance,
-            m,
-            dataset: dataset.to_string(),
-            h: matrix_to_vecs(&h_clone),
-            c: matrix_to_vecs(c),
-            d: d.iter().copied().collect(),
-            verdict: "infeasible".to_string(),
-            q: f64::NAN,
-            q_raw: f64::NAN,
-            margin: f64::NAN,
-            residual_norm: f64::NAN,
-            rank,
-            norm_h,
-            sigma_min_c: smin_c,
-            polytope_id,
-            perm: perm_opt,
-            facet_count,
-        },
-        Ok(solvers::KktOutcome::SingularMatrix) => InputRow {
-            family: family.to_string(),
-            instance,
-            m,
-            dataset: dataset.to_string(),
-            h: matrix_to_vecs(&h_clone),
-            c: matrix_to_vecs(c),
-            d: d.iter().copied().collect(),
-            verdict: "singular".to_string(),
-            q: f64::NAN,
-            q_raw: f64::NAN,
-            margin: f64::NAN,
-            residual_norm: f64::NAN,
-            rank,
-            norm_h,
-            sigma_min_c: smin_c,
-            polytope_id,
-            perm: perm_opt,
-            facet_count,
-        },
-        Err(_) => InputRow {
-            family: family.to_string(),
-            instance,
-            m,
-            dataset: dataset.to_string(),
-            h: matrix_to_vecs(&h_clone),
-            c: matrix_to_vecs(c),
-            d: d.iter().copied().collect(),
-            verdict: "panic".to_string(),
-            q: f64::NAN,
-            q_raw: f64::NAN,
-            margin: f64::NAN,
-            residual_norm: f64::NAN,
-            rank: 0,
-            norm_h,
-            sigma_min_c: smin_c,
-            polytope_id,
-            perm: perm_opt,
-            facet_count,
-        },
+        Err(_) => {
+            row.verdict = "panic".to_string();
+            row.rank = 0;
+        }
     }
+
+    row
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -1084,17 +1030,17 @@ fn write_jsonl(rows: &[InputRow], path: &str) {
 
 fn print_summary(rows: &[InputRow], label: &str) {
     let total = rows.len();
-    let feasible = rows.iter().filter(|r| r.verdict == "feasible").count();
-    let infeasible = rows.iter().filter(|r| r.verdict == "infeasible").count();
-    let singular = rows.iter().filter(|r| r.verdict == "singular").count();
-    let panics = rows.iter().filter(|r| r.verdict == "panic").count();
+    // Count verdicts
+    let mut verdict_counts: std::collections::BTreeMap<&str, usize> = std::collections::BTreeMap::new();
+    for row in rows {
+        *verdict_counts.entry(&row.verdict).or_insert(0) += 1;
+    }
 
     println!("\n=== {} Summary ===", label);
-    println!("  Total:      {}", total);
-    println!("  Feasible:   {} ({:.1}%)", feasible, 100.0 * feasible as f64 / total as f64);
-    println!("  Infeasible: {} ({:.1}%)", infeasible, 100.0 * infeasible as f64 / total as f64);
-    println!("  Singular:   {} ({:.1}%)", singular, 100.0 * singular as f64 / total as f64);
-    println!("  Panics:     {} ({:.1}%)", panics, 100.0 * panics as f64 / total as f64);
+    println!("  Total: {}", total);
+    for (verdict, count) in &verdict_counts {
+        println!("  {:20} {:>6} ({:.1}%)", verdict, count, 100.0 * *count as f64 / total as f64);
+    }
 
     // Per-family breakdown
     let mut families: Vec<String> = rows.iter().map(|r| r.family.clone()).collect();
