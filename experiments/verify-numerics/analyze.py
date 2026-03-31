@@ -2,8 +2,8 @@
 Goal: Check all propositions and bounds from the Q accuracy experiment.
       Report observed ranges for EHZ-like vs abstract datasets.
       Identify violations, tightest cases, and filtering effects.
-Input: experiments/verify-numerics/q_accuracy.jsonl
-Output: stdout (tables), experiments/verify-numerics/q_accuracy_checks.txt
+Input: experiments/verify-numerics/results.jsonl
+Output: stdout (tables), experiments/verify-numerics/checks.txt
 """
 
 import json
@@ -14,15 +14,17 @@ from collections import defaultdict
 from dataclasses import dataclass
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
-DATA_PATH = EXPERIMENT_DIR / "q_accuracy.jsonl"
-OUTPUT_PATH = EXPERIMENT_DIR / "q_accuracy_checks.txt"
+DATA_PATH = EXPERIMENT_DIR / "results.jsonl"
+OUTPUT_PATH = EXPERIMENT_DIR / "checks.txt"
 
 # ── EHZ-like families (feasible by construction, well-conditioned) ──
 # vs abstract stress-test families (deliberately extreme)
+# Natural (polytope-derived) families are classified as EHZ-like.
 EHZ_LIKE_FAMILIES = {
     "identity", "random_dense", "ehz_like", "small_m6", "large_m16",
     "feasible_constructed", "near_singular_h", "singular_h", "indefinite_h",
     "tiny_lam_min",
+    "polytope_sigma_node",  # natural dataset: actual polytope inputs
 }
 STRESS_FAMILIES = {
     "ill_cond_c", "large_h_ill_c", "double_singular",

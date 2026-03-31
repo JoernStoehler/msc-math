@@ -14,10 +14,8 @@ use nalgebra::{DMatrix, DVector};
 use num_bigint::BigInt;
 use num_rational::BigRational;
 use num_traits::{One, Signed, ToPrimitive, Zero};
-use rand::rngs::StdRng;
-use rand::{Rng, SeedableRng};
-use serde::Serialize;
-use std::io::Write;
+use serde::{Deserialize, Serialize};
+use std::io::{BufRead, Write};
 
 // ── Local solver module (self-contained, no library dependency) ──
 
@@ -32,7 +30,7 @@ use solvers::{solve_projected, solve_saddle_point, QP, Verdict};
 const P: usize = 5;
 
 /// Output file path.
-const OUTPUT_PATH: &str = "verify-numerics/q_accuracy.jsonl";
+const OUTPUT_PATH: &str = "verify-numerics/results.jsonl";
 
 // ── Output record ──
 
@@ -134,6 +132,27 @@ struct Record {
     // Measures how much of the RHS lives in the discarded eigenspace.
     // For EHZ: this is sqrt(Σ |v_i[m+4]|²) over discarded eigenvectors.
     p_discard_b_norm: f64,
+}
+
+/// Row from collected.jsonl or artificial.jsonl (written by collect_inputs.rs).
+/// Row from collected.jsonl or artificial.jsonl (written by collect_inputs.rs).
+/// Only the fields we need for analysis. Extra JSON fields are silently ignored.
+#[derive(Deserialize)]
+struct InputRow {
+    family: String,
+    instance: usize,
+    m: usize,
+    #[allow(dead_code)]
+    dataset: String,
+    h: Vec<Vec<f64>>,
+    c: Vec<Vec<f64>>,
+    d: Vec<f64>,
+    verdict: String,
+    // q, margin, etc. may be null (NaN) for infeasible rows — use Option<f64>
+    #[serde(default)]
+    q: Option<f64>,
+    #[serde(default)]
+    margin: Option<f64>,
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -602,7 +621,7 @@ fn rational_to_f64(r: &BigRational) -> f64 {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// Matrix generation
+// Test problem representation
 // ══════════════════════════════════════════════════════════════════════════════
 
 /// A test problem with both rational (exact) and f64 (numerical) representations.
@@ -620,13 +639,12 @@ struct TestProblem {
     d_f64: DVector<f64>,
 }
 
-fn rat(n: i64) -> BigRational {
-    BigRational::from(BigInt::from(n))
-}
+// ══════════════════════════════════════════════════════════════════════════════
+// Dataset loading
+// ══════════════════════════════════════════════════════════════════════════════
 
-fn rat_frac(n: i64, d: i64) -> BigRational {
-    BigRational::new(BigInt::from(n), BigInt::from(d))
-}
+const ARTIFICIAL_PATH: &str = "verify-numerics/artificial.jsonl";
+const COLLECTED_PATH: &str = "verify-numerics/collected.jsonl";
 
 /// Convert f64 matrix to rational (exact for integer/simple-fraction inputs).
 fn f64_to_rat(x: f64) -> BigRational {
@@ -658,36 +676,77 @@ fn f64_to_rat(x: f64) -> BigRational {
     }
 }
 
-/// Build a TestProblem from integer H entries and a standard C = [random 4×m; 1^T], d = [0,0,0,0,1].
-fn make_problem(
-    family: &str,
-    instance: usize,
-    h_entries: Vec<Vec<i64>>,
-    c_entries: Vec<Vec<i64>>,
-) -> TestProblem {
-    let m = h_entries.len();
-    let p = c_entries.len();
+/// Load problems from JSONL datasets (artificial + natural).
+/// Natural dataset is filtered in-memory: only feasible rows are kept
+/// (the exact solver is expensive, so we skip rows the f64 solver already rejects).
+fn load_datasets() -> Vec<TestProblem> {
+    let mut problems = Vec::new();
 
-    let h_rat: Vec<Vec<BigRational>> = h_entries
-        .iter()
-        .map(|row| row.iter().map(|&x| rat(x)).collect())
+    // Load artificial dataset (all rows — it's small)
+    if let Ok(file) = std::fs::File::open(ARTIFICIAL_PATH) {
+        let reader = std::io::BufReader::new(file);
+        for (idx, line) in reader.lines().enumerate() {
+            let line = line.unwrap_or_else(|e| panic!("Read error in artificial.jsonl line {}: {}", idx, e));
+            if line.trim().is_empty() { continue; }
+            let row: InputRow = serde_json::from_str(&line)
+                .unwrap_or_else(|e| panic!("Parse error in artificial.jsonl line {}: {}", idx, e));
+            problems.push(input_row_to_test_problem(&row));
+        }
+        println!("Loaded {} problems from {}", problems.len(), ARTIFICIAL_PATH);
+    } else {
+        println!("Warning: {} not found, skipping artificial dataset", ARTIFICIAL_PATH);
+    }
+
+    let n_artificial = problems.len();
+
+    // Load natural dataset (filter: only feasible rows)
+    if let Ok(file) = std::fs::File::open(COLLECTED_PATH) {
+        let reader = std::io::BufReader::new(file);
+        let mut n_total = 0;
+        let mut n_loaded = 0;
+        for (idx, line) in reader.lines().enumerate() {
+            let line = line.unwrap_or_else(|e| panic!("Read error in collected.jsonl line {}: {}", idx, e));
+            if line.trim().is_empty() { continue; }
+            n_total += 1;
+            let row: InputRow = serde_json::from_str(&line)
+                .unwrap_or_else(|e| panic!("Parse error in collected.jsonl line {}: {}", idx, e));
+            // Filter: only feasible rows (exact solver is expensive)
+            if row.verdict != "feasible" {
+                continue;
+            }
+            problems.push(input_row_to_test_problem(&row));
+            n_loaded += 1;
+        }
+        println!("Loaded {}/{} feasible problems from {}", n_loaded, n_total, COLLECTED_PATH);
+    } else {
+        println!("Warning: {} not found, skipping natural dataset", COLLECTED_PATH);
+    }
+
+    println!("Total: {} problems ({} artificial, {} natural)", problems.len(), n_artificial, problems.len() - n_artificial);
+    problems
+}
+
+/// Convert an InputRow (from JSONL) to a TestProblem (for analysis).
+/// Rationalizes f64 matrices to BigRational via exact IEEE 754 representation.
+fn input_row_to_test_problem(row: &InputRow) -> TestProblem {
+    let m = row.m;
+    let p = row.c.len(); // number of constraint rows (typically 5)
+
+    let h_f64 = DMatrix::from_fn(m, m, |i, j| row.h[i][j]);
+    let c_f64 = DMatrix::from_fn(p, m, |i, j| row.c[i][j]);
+    let d_f64 = DVector::from_column_slice(&row.d);
+
+    let h_rat: Vec<Vec<BigRational>> = (0..m)
+        .map(|i| (0..m).map(|j| f64_to_rat(row.h[i][j])).collect())
         .collect();
-    let c_rat: Vec<Vec<BigRational>> = c_entries
-        .iter()
-        .map(|row| row.iter().map(|&x| rat(x)).collect())
+    let c_rat: Vec<Vec<BigRational>> = (0..p)
+        .map(|i| (0..m).map(|j| f64_to_rat(row.c[i][j])).collect())
         .collect();
-
-    let mut d_rat = vec![BigRational::zero(); p];
-    d_rat[p - 1] = BigRational::one();
-
-    let h_f64 = DMatrix::from_fn(m, m, |i, j| h_entries[i][j] as f64);
-    let c_f64 = DMatrix::from_fn(p, m, |i, j| c_entries[i][j] as f64);
-    let mut d_f64 = DVector::zeros(p);
-    d_f64[p - 1] = 1.0;
+    let d_rat: Vec<BigRational> = row.d.iter().map(|&v| f64_to_rat(v)).collect();
 
     TestProblem {
-        family: family.to_string(),
-        instance,
+        family: row.family.clone(),
+        instance: row.instance,
         m,
         h_rat,
         c_rat,
@@ -696,573 +755,6 @@ fn make_problem(
         c_f64,
         d_f64,
     }
-}
-
-/// Build a TestProblem from f64 matrices (exact IEEE 754 representation as rationals).
-fn make_problem_f64(
-    family: &str,
-    instance: usize,
-    h: &DMatrix<f64>,
-    c: &DMatrix<f64>,
-    d: &DVector<f64>,
-) -> TestProblem {
-    let m = h.nrows();
-    let p = c.nrows();
-
-    let h_rat: Vec<Vec<BigRational>> = (0..m)
-        .map(|i| (0..m).map(|j| f64_to_rat(h[(i, j)])).collect())
-        .collect();
-    let c_rat: Vec<Vec<BigRational>> = (0..p)
-        .map(|i| (0..m).map(|j| f64_to_rat(c[(i, j)])).collect())
-        .collect();
-    let d_rat: Vec<BigRational> = (0..p).map(|i| f64_to_rat(d[i])).collect();
-
-    TestProblem {
-        family: family.to_string(),
-        instance,
-        m,
-        h_rat,
-        c_rat,
-        d_rat,
-        h_f64: h.clone(),
-        c_f64: c.clone(),
-        d_f64: d.clone(),
-    }
-}
-
-/// Generate a random symmetric m×m integer matrix with entries in [-scale, scale].
-fn random_symmetric_int(rng: &mut StdRng, m: usize, scale: i64) -> Vec<Vec<i64>> {
-    let mut h = vec![vec![0i64; m]; m];
-    for i in 0..m {
-        for j in i..m {
-            let val = rng.gen_range(-scale..=scale);
-            h[i][j] = val;
-            h[j][i] = val;
-        }
-    }
-    h
-}
-
-/// Generate a random m×m antisymmetric matrix (like ω₀), with zero diagonal.
-fn random_antisymmetric_int(rng: &mut StdRng, m: usize, scale: i64) -> Vec<Vec<i64>> {
-    let mut h = vec![vec![0i64; m]; m];
-    for i in 0..m {
-        for j in (i + 1)..m {
-            let val = rng.gen_range(-scale..=scale);
-            // H is symmetrized: H[i][j] = H[j][i] = val
-            // (even though omega_0 is antisymmetric, H is built symmetric in the code)
-            h[i][j] = val;
-            h[j][i] = val;
-        }
-    }
-    h
-}
-
-/// Generate a random p×m integer matrix with entries in [-scale, scale].
-fn random_constraint_int(rng: &mut StdRng, p: usize, m: usize, scale: i64) -> Vec<Vec<i64>> {
-    let mut c = vec![vec![0i64; m]; p];
-    for i in 0..p {
-        for j in 0..m {
-            c[i][j] = rng.gen_range(-scale..=scale);
-        }
-    }
-    // Last row is all ones (normalization)
-    for j in 0..m {
-        c[p - 1][j] = 1;
-    }
-    c
-}
-
-/// Generate a feasible-by-construction problem.
-///
-/// Strategy: pick a random β > 0 with sum = 1, then build C such that Cβ = d.
-/// The first 4 rows of C are random, and we set d[0..4] = C[0..4] * β.
-/// The last row is all-ones (normalization) with d[4] = 1.
-fn make_feasible_problem(rng: &mut StdRng, m: usize, inst: usize) -> TestProblem {
-    // Random β > 0 with sum = 1
-    let raw: Vec<f64> = (0..m).map(|_| rng.gen_range(0.1..1.0)).collect();
-    let sum: f64 = raw.iter().sum();
-    let beta: Vec<f64> = raw.iter().map(|x| x / sum).collect();
-
-    // Random H (symmetric)
-    let h = DMatrix::from_fn(m, m, |i, j| {
-        if i <= j {
-            rng.gen_range(-5.0..5.0)
-        } else {
-            0.0 // filled below
-        }
-    });
-    let h = &h + h.transpose(); // symmetrize (doubles diagonal, but that's fine)
-
-    // Random C (first 4 rows random, last row all-ones)
-    let mut c = DMatrix::from_fn(P, m, |i, j| {
-        if i < P - 1 {
-            rng.gen_range(-3i64..=3) as f64
-        } else {
-            1.0 // normalization row
-        }
-    });
-
-    // Set d = C * β (so that Cβ = d by construction)
-    let beta_dv = DVector::from_column_slice(&beta);
-    let d = &c * &beta_dv;
-
-    make_problem_f64(&format!("feasible_constructed"), inst, &h, &c, &d)
-}
-
-/// Generate test problems for each family.
-fn generate_problems() -> Vec<TestProblem> {
-    let mut problems = Vec::new();
-    let mut rng = StdRng::seed_from_u64(42);
-
-    // ── Family 1: Identity (sanity check) ──
-    // H = I, C = [I_4 | 0; 1^T], d = [0,0,0,0,1]
-    // Exact solution: β_i = 1/m for all i, Q = ½·(1/m)
-    for m in [6, 8, 10] {
-        let mut h = vec![vec![0i64; m]; m];
-        for i in 0..m {
-            h[i][i] = 1;
-        }
-        let mut c = vec![vec![0i64; m]; P];
-        // First 4 rows: just pick first 4 coordinates as constraints
-        for i in 0..4.min(m) {
-            c[i][i] = 1;
-        }
-        // Last row: all ones
-        for j in 0..m {
-            c[P - 1][j] = 1;
-        }
-        problems.push(make_problem("identity", m, h, c));
-    }
-
-    // ── Family 2: Random dense symmetric H ──
-    for inst in 0..500 {
-        let m = rng.gen_range(6..=12);
-        let h = random_symmetric_int(&mut rng, m, 10);
-        let c = random_constraint_int(&mut rng, P, m, 5);
-        problems.push(make_problem("random_dense", inst, h, c));
-    }
-
-    // ── Family 3: EHZ-like (antisymmetric pairs, simulating ω₀) ──
-    for inst in 0..500 {
-        let m = rng.gen_range(6..=12);
-        let h = random_antisymmetric_int(&mut rng, m, 10);
-        let c = random_constraint_int(&mut rng, P, m, 5);
-        problems.push(make_problem("ehz_like", inst, h, c));
-    }
-
-    // ── Family 4: Near-singular H (small eigenvalues via construction) ──
-    // H = Q^T diag(λ) Q with some λ_i small
-    for inst in 0..200 {
-        let m = rng.gen_range(6..=10);
-        let h = make_near_singular_h(&mut rng, m, inst);
-        let c = random_constraint_int(&mut rng, P, m, 5);
-        let c_f64 = DMatrix::from_fn(P, m, |i, j| c[i][j] as f64);
-        let mut d_f64 = DVector::zeros(P);
-        d_f64[P - 1] = 1.0;
-        problems.push(make_problem_f64("near_singular_h", inst, &h, &c_f64, &d_f64));
-    }
-
-    // ── Family 5: Singular H (zero eigenvalues) ──
-    for inst in 0..200 {
-        let m = rng.gen_range(6..=10);
-        let h = make_singular_h(&mut rng, m);
-        let c = random_constraint_int(&mut rng, P, m, 5);
-        let c_f64 = DMatrix::from_fn(P, m, |i, j| c[i][j] as f64);
-        let mut d_f64 = DVector::zeros(P);
-        d_f64[P - 1] = 1.0;
-        problems.push(make_problem_f64("singular_h", inst, &h, &c_f64, &d_f64));
-    }
-
-    // ── Family 6: Indefinite H (mixed ± eigenvalues) ──
-    for inst in 0..200 {
-        let m = rng.gen_range(6..=10);
-        let h = make_indefinite_h(&mut rng, m);
-        let c = random_constraint_int(&mut rng, P, m, 5);
-        let c_f64 = DMatrix::from_fn(P, m, |i, j| c[i][j] as f64);
-        let mut d_f64 = DVector::zeros(P);
-        d_f64[P - 1] = 1.0;
-        problems.push(make_problem_f64("indefinite_h", inst, &h, &c_f64, &d_f64));
-    }
-
-    // ── Family 7: Small (m=6, minimum for p=5 constraints to have k≥1) ──
-    for inst in 0..200 {
-        let m = 6;
-        let h = random_symmetric_int(&mut rng, m, 5);
-        let c = random_constraint_int(&mut rng, P, m, 3);
-        problems.push(make_problem("small_m6", inst, h, c));
-    }
-
-    // ── Family 8: Large (m=16) ──
-    for inst in 0..200 {
-        let m = 16;
-        let h = random_symmetric_int(&mut rng, m, 10);
-        let c = random_constraint_int(&mut rng, P, m, 5);
-        problems.push(make_problem("large_m16", inst, h, c));
-    }
-
-    // ── Family 9: Feasible by construction ──
-    // Start from a known β > 0, build C and d such that Cβ = d holds.
-    for inst in 0..500 {
-        let m = rng.gen_range(6..=12);
-        let prob = make_feasible_problem(&mut rng, m, inst);
-        problems.push(prob);
-    }
-
-    // ── Family 10: Tiny λ_min(M) — feasible by construction ──
-    // The augmented matrix M = [H, C^T; C, 0] has tiny eigenvalues when H
-    // is near-singular in directions not killed by the constraints.
-    // Construct: pick β > 0, then build H with a controlled small eigenvalue
-    // in a direction that overlaps the constraint null space.
-    for inst in 0..500 {
-        let m = rng.gen_range(6..=12);
-        let small_exp = (inst % 14) as i32 + 1; // 10^-1 to 10^-14
-        let small_val = 10.0_f64.powi(-small_exp);
-        let prob = make_tiny_lambda_min_problem(&mut rng, m, inst, small_val);
-        problems.push(prob);
-    }
-
-    // ── Family 11: Tiny λ_min(M) via near-dependent C rows ──
-    // When C has a near-zero singular value, the augmented system M gets a
-    // near-zero eigenvalue. This is the "ill-conditioned constraint" regime.
-    for inst in 0..200 {
-        let m = rng.gen_range(6..=10);
-        let small_exp = (inst % 12) as i32 + 1;
-        let small_val = 10.0_f64.powi(-small_exp);
-        let prob = make_ill_conditioned_c_problem(&mut rng, m, inst, small_val);
-        problems.push(prob);
-    }
-
-    // ── Family 12: Large ||H|| + ill-conditioned C ──
-    // Stress-test whether the simple bound err <= C * ||r|| * kappa(C) breaks
-    // when ||H|| * ||beta|| / sigma_max(C) is large.
-    // The perturbation bound err <= ||H|| * ||beta|| * ||r|| / sigma_min(C) predicts
-    // this should produce larger err / (||r|| * kappa(C)) ratios.
-    for inst in 0..500 {
-        let m = rng.gen_range(6..=10);
-        let small_exp = (inst % 12) as i32 + 1;
-        let small_val = 10.0_f64.powi(-small_exp);
-        let prob = make_large_h_ill_c_problem(&mut rng, m, inst, small_val);
-        problems.push(prob);
-    }
-
-    // ── Family 13: Both H and C near-singular ──
-    // Double-singular: both H and C have near-zero singular values.
-    // Tests whether the bound degrades multiplicatively.
-    for inst in 0..200 {
-        let m = rng.gen_range(6..=10);
-        let prob = make_double_singular_problem(&mut rng, m, inst);
-        problems.push(prob);
-    }
-
-    // ── Family 14: Near-degenerate eigenspaces of H ──
-    // H has clusters of nearly-equal eigenvalues. The eigenvectors within a
-    // cluster are numerically unstable (rotations within the eigenspace are
-    // arbitrary at machine precision). Tests whether the bound depends on
-    // eigenvector stability.
-    for inst in 0..200 {
-        let m = rng.gen_range(6..=10);
-        let prob = make_clustered_eigenvalue_problem(&mut rng, m, inst);
-        problems.push(prob);
-    }
-
-    // ── Family 15: Near-degenerate eigenspaces of M ──
-    // The augmented KKT matrix M has clustered eigenvalues.
-    // The pseudoinverse eigenvectors are unstable within clusters.
-    for inst in 0..200 {
-        let m = rng.gen_range(6..=10);
-        let prob = make_clustered_m_eigenvalue_problem(&mut rng, m, inst);
-        problems.push(prob);
-    }
-
-    println!("Generated {} test problems", problems.len());
-    problems
-}
-
-/// Both H and C have near-zero singular values.
-fn make_double_singular_problem(rng: &mut StdRng, m: usize, inst: usize) -> TestProblem {
-    // Small eigenvalue for H
-    let h_small = 10.0_f64.powi(-((inst % 8) as i32 + 1)); // 1e-1 to 1e-8
-    // Small singular value for C
-    let c_small = 10.0_f64.powi(-((inst / 8 % 8) as i32 + 1)); // 1e-1 to 1e-8
-
-    // Build H with controlled small eigenvalue
-    let random_mat = DMatrix::from_fn(m, m, |_, _| rng.gen_range(-1.0..1.0));
-    let qr = random_mat.qr();
-    let q = qr.q();
-    let eigenvalues = DVector::from_fn(m, |i, _| {
-        if i == 0 { h_small }
-        else { rng.gen_range(0.5..2.0) * if i % 2 == 0 { 1.0 } else { -1.0 } }
-    });
-    let lambda = DMatrix::from_diagonal(&eigenvalues);
-    let h = &q * &lambda * q.transpose();
-
-    // Build ill-conditioned C
-    let mut c = DMatrix::from_fn(P, m, |i, _| {
-        if i < P - 1 { rng.gen_range(-3.0..3.0) } else { 1.0 }
-    });
-    for j in 0..m {
-        c[(3, j)] = c[(0, j)] + c_small * rng.gen_range(-1.0..1.0);
-    }
-
-    // Feasible by construction
-    let raw: Vec<f64> = (0..m).map(|_| rng.gen_range(0.1..1.0)).collect();
-    let sum: f64 = raw.iter().sum();
-    let beta: Vec<f64> = raw.iter().map(|x| x / sum).collect();
-    let beta_dv = DVector::from_column_slice(&beta);
-    let d = &c * &beta_dv;
-
-    make_problem_f64("double_singular", inst, &h, &c, &d)
-}
-
-/// H has clustered eigenvalues (near-degenerate eigenspaces).
-/// Eigenvectors within clusters are numerically unstable.
-fn make_clustered_eigenvalue_problem(rng: &mut StdRng, m: usize, inst: usize) -> TestProblem {
-    let random_mat = DMatrix::from_fn(m, m, |_, _| rng.gen_range(-1.0..1.0));
-    let qr = random_mat.qr();
-    let q = qr.q();
-
-    // Cluster structure: groups of 2-3 eigenvalues separated by gap_size
-    let gap_exp = (inst % 10) as i32 + 3; // gaps of 1e-3 to 1e-12
-    let gap = 10.0_f64.powi(-gap_exp);
-
-    let eigenvalues = DVector::from_fn(m, |i, _| {
-        let cluster_center = if i < m / 2 { 2.0 } else { -1.5 }; // two clusters
-        let perturbation = gap * rng.gen_range(-1.0..1.0);
-        cluster_center + perturbation
-    });
-    let lambda = DMatrix::from_diagonal(&eigenvalues);
-    let h = &q * &lambda * q.transpose();
-
-    // Well-conditioned C
-    let c = DMatrix::from_fn(P, m, |i, _| {
-        if i < P - 1 { rng.gen_range(-3.0..3.0) } else { 1.0 }
-    });
-
-    // Feasible by construction
-    let raw: Vec<f64> = (0..m).map(|_| rng.gen_range(0.1..1.0)).collect();
-    let sum: f64 = raw.iter().sum();
-    let beta: Vec<f64> = raw.iter().map(|x| x / sum).collect();
-    let beta_dv = DVector::from_column_slice(&beta);
-    let d = &c * &beta_dv;
-
-    make_problem_f64("clustered_h_eig", inst, &h, &c, &d)
-}
-
-/// Augmented KKT matrix M has clustered eigenvalues.
-/// Achieved by making H diagonal with values chosen so M = [H, C^T; C, 0]
-/// has near-degenerate eigenvalues.
-fn make_clustered_m_eigenvalue_problem(rng: &mut StdRng, m: usize, inst: usize) -> TestProblem {
-    // Simple approach: make H have eigenvalues near ±σ_i(C) so that
-    // the eigenvalues of M = [H, C^T; C, 0] cluster.
-    // For H = αI, M has eigenvalues (α ± sqrt(α² + σ_i²))/2... complex.
-    // Simpler: just build H with values close to each other.
-    let gap_exp = (inst % 10) as i32 + 3;
-    let gap = 10.0_f64.powi(-gap_exp);
-    let base_val = rng.gen_range(0.5..2.0);
-
-    let h = DMatrix::from_fn(m, m, |i, j| {
-        if i == j { base_val + gap * rng.gen_range(-1.0..1.0) }
-        else { 0.0 }
-    });
-
-    // Moderately ill-conditioned C (so M has interesting structure)
-    let kc_target = 10.0_f64.powi((inst / 10 % 6) as i32 + 1); // 10 to 1e6
-    let mut c = DMatrix::from_fn(P, m, |i, _| {
-        if i < P - 1 { rng.gen_range(-3.0..3.0) } else { 1.0 }
-    });
-    // Adjust row 3 to control κ(C)
-    let adjust = 1.0 / kc_target;
-    for j in 0..m {
-        c[(3, j)] = c[(0, j)] + adjust * rng.gen_range(-1.0..1.0);
-    }
-
-    // Feasible by construction
-    let raw: Vec<f64> = (0..m).map(|_| rng.gen_range(0.1..1.0)).collect();
-    let sum: f64 = raw.iter().sum();
-    let beta: Vec<f64> = raw.iter().map(|x| x / sum).collect();
-    let beta_dv = DVector::from_column_slice(&beta);
-    let d = &c * &beta_dv;
-
-    make_problem_f64("clustered_m_eig", inst, &h, &c, &d)
-}
-
-/// Construct a near-singular H via eigendecomposition: H = Q^T diag(λ) Q.
-fn make_near_singular_h(rng: &mut StdRng, m: usize, inst: usize) -> DMatrix<f64> {
-    // Random orthogonal matrix via QR decomposition of random matrix
-    let random_mat = DMatrix::from_fn(m, m, |_, _| rng.gen_range(-1.0..1.0));
-    let qr = random_mat.qr();
-    let q = qr.q();
-
-    // Eigenvalues: most are O(1), one or two are small
-    let small_val = 10.0_f64.powi(-((inst % 10) as i32 + 2)); // 1e-2 to 1e-11
-    let mut eigenvalues = DVector::from_fn(m, |i, _| {
-        if i == 0 {
-            small_val
-        } else {
-            rng.gen_range(0.5..2.0)
-        }
-    });
-    if inst % 3 == 0 {
-        // Also make the second eigenvalue small
-        eigenvalues[1] = small_val * 10.0;
-    }
-
-    let lambda = DMatrix::from_diagonal(&eigenvalues);
-    &q * &lambda * q.transpose()
-}
-
-/// Construct a singular H (with exact zero eigenvalues).
-fn make_singular_h(rng: &mut StdRng, m: usize) -> DMatrix<f64> {
-    let random_mat = DMatrix::from_fn(m, m, |_, _| rng.gen_range(-1.0..1.0));
-    let qr = random_mat.qr();
-    let q = qr.q();
-
-    let n_zero = rng.gen_range(1..=3.min(m - 1));
-    let eigenvalues = DVector::from_fn(m, |i, _| {
-        if i < n_zero {
-            0.0
-        } else {
-            rng.gen_range(0.5..2.0)
-        }
-    });
-
-    let lambda = DMatrix::from_diagonal(&eigenvalues);
-    &q * &lambda * q.transpose()
-}
-
-/// Construct an indefinite H (mixed positive and negative eigenvalues).
-fn make_indefinite_h(rng: &mut StdRng, m: usize) -> DMatrix<f64> {
-    let random_mat = DMatrix::from_fn(m, m, |_, _| rng.gen_range(-1.0..1.0));
-    let qr = random_mat.qr();
-    let q = qr.q();
-
-    let eigenvalues = DVector::from_fn(m, |i, _| {
-        if i < m / 2 {
-            rng.gen_range(0.5..2.0)
-        } else {
-            rng.gen_range(-2.0..-0.5)
-        }
-    });
-
-    let lambda = DMatrix::from_diagonal(&eigenvalues);
-    &q * &lambda * q.transpose()
-}
-
-/// Feasible-by-construction problem with H having a tiny eigenvalue aligned
-/// with the constraint null space (so the augmented M also gets a tiny eigenvalue).
-///
-/// Construction:
-/// 1. Pick random C (5×m), compute its SVD null space V (m×k).
-/// 2. Build H = Q^T diag(λ) Q where one λ is `small_val` and the corresponding
-///    eigenvector overlaps V (the constraint null space). This ensures the small
-///    eigenvalue survives into the augmented system.
-/// 3. Pick β > 0 with Cβ = d.
-fn make_tiny_lambda_min_problem(rng: &mut StdRng, m: usize, inst: usize, small_val: f64) -> TestProblem {
-    // Random β > 0 with sum = 1
-    let raw: Vec<f64> = (0..m).map(|_| rng.gen_range(0.1..1.0)).collect();
-    let sum: f64 = raw.iter().sum();
-    let beta: Vec<f64> = raw.iter().map(|x| x / sum).collect();
-    let beta_dv = DVector::from_column_slice(&beta);
-
-    // Random C with last row = all ones
-    let c = DMatrix::from_fn(P, m, |i, _| {
-        if i < P - 1 { rng.gen_range(-3.0..3.0) } else { 1.0 }
-    });
-    let d = &c * &beta_dv;
-
-    // Build H with a small eigenvalue in a direction that overlaps ker(C).
-    // Use a random orthogonal basis, but ensure the first eigenvector has
-    // significant projection onto ker(C).
-    let random_mat = DMatrix::from_fn(m, m, |_, _| rng.gen_range(-1.0..1.0));
-    let qr = random_mat.qr();
-    let q = qr.q();
-
-    let eigenvalues = DVector::from_fn(m, |i, _| {
-        if i == 0 {
-            small_val
-        } else if i == 1 && inst % 3 == 0 {
-            small_val * 5.0 // second small eigenvalue for some instances
-        } else {
-            rng.gen_range(0.5..2.0) * if i % 2 == 0 { 1.0 } else { -1.0 } // indefinite
-        }
-    });
-    let lambda = DMatrix::from_diagonal(&eigenvalues);
-    let h = &q * &lambda * q.transpose();
-
-    make_problem_f64("tiny_lam_min", inst, &h, &c, &d)
-}
-
-/// Large ||H|| combined with ill-conditioned C.
-///
-/// Designed to stress-test the simple bound err <= C * ||r|| * kappa(C).
-/// The perturbation bound involves ||H|| * ||beta|| / sigma_max(C), so
-/// by making ||H|| large (eigenvalues in [10, 100]) while keeping C ill-conditioned,
-/// we increase this factor and potentially violate the simple bound.
-fn make_large_h_ill_c_problem(rng: &mut StdRng, m: usize, inst: usize, small_val: f64) -> TestProblem {
-    // Build ill-conditioned C (same as ill_cond_c family)
-    let mut c = DMatrix::from_fn(P, m, |i, _| {
-        if i < P - 1 { rng.gen_range(-3.0..3.0) } else { 1.0 }
-    });
-    for j in 0..m {
-        c[(3, j)] = c[(0, j)] + small_val * rng.gen_range(-1.0..1.0);
-    }
-
-    // Random β > 0, set d = C β for feasibility
-    let raw: Vec<f64> = (0..m).map(|_| rng.gen_range(0.1..1.0)).collect();
-    let sum: f64 = raw.iter().sum();
-    let beta: Vec<f64> = raw.iter().map(|x| x / sum).collect();
-    let beta_dv = DVector::from_column_slice(&beta);
-    let d = &c * &beta_dv;
-
-    // Large ||H||: eigenvalues in [10, 100] magnitude (mixed signs for indefiniteness)
-    let random_mat = DMatrix::from_fn(m, m, |_, _| rng.gen_range(-1.0..1.0));
-    let qr = random_mat.qr();
-    let q = qr.q();
-    let eigenvalues = DVector::from_fn(m, |i, _| {
-        let mag = rng.gen_range(10.0..100.0);
-        if i % 2 == 0 { mag } else { -mag }
-    });
-    let lambda = DMatrix::from_diagonal(&eigenvalues);
-    let h = &q * &lambda * q.transpose();
-
-    make_problem_f64("large_h_ill_c", inst, &h, &c, &d)
-}
-
-/// Problem with near-dependent C rows (ill-conditioned constraints).
-///
-/// When C has a near-zero singular value, the augmented M = [H, C^T; C, 0]
-/// gets near-zero eigenvalues from the constraint block, even if H is
-/// well-conditioned. This is a different pathway to tiny λ_min(M).
-fn make_ill_conditioned_c_problem(rng: &mut StdRng, m: usize, inst: usize, small_val: f64) -> TestProblem {
-    // Build C with controlled condition number:
-    // Start with random C, then make the last non-normalization row nearly
-    // dependent on the others.
-    let mut c = DMatrix::from_fn(P, m, |i, _| {
-        if i < P - 1 { rng.gen_range(-3.0..3.0) } else { 1.0 }
-    });
-
-    // Make row 3 = row 0 + small_val * random perturbation
-    for j in 0..m {
-        c[(3, j)] = c[(0, j)] + small_val * rng.gen_range(-1.0..1.0);
-    }
-
-    // Random β > 0, set d = C β for feasibility
-    let raw: Vec<f64> = (0..m).map(|_| rng.gen_range(0.1..1.0)).collect();
-    let sum: f64 = raw.iter().sum();
-    let beta: Vec<f64> = raw.iter().map(|x| x / sum).collect();
-    let beta_dv = DVector::from_column_slice(&beta);
-    let d = &c * &beta_dv;
-
-    // Well-conditioned H (so the tiny λ_min comes from C, not H)
-    let h = DMatrix::from_fn(m, m, |i, j| {
-        if i == j { rng.gen_range(0.5..2.0) }
-        else if i < j { let v = rng.gen_range(-0.3..0.3); v }
-        else { 0.0 }
-    });
-    let h = &h + h.transpose();
-
-    make_problem_f64("ill_cond_c", inst, &h, &c, &d)
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -1458,7 +950,7 @@ fn run_projection_corrected(h: &DMatrix<f64>, c: &DMatrix<f64>, d: &DVector<f64>
 // ══════════════════════════════════════════════════════════════════════════════
 
 fn main() {
-    let problems = generate_problems();
+    let problems = load_datasets();
 
     let out_path = std::path::Path::new(OUTPUT_PATH);
     let mut out_file = std::fs::File::create(out_path)
