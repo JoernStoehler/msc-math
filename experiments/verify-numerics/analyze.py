@@ -137,19 +137,22 @@ def check_all(rows):
                lambda r: safe_get(r, "sigma_min_c"),
                lambda v: v > 1e-12, "lower", 1e-12)
 
-    # P5: ||H|| / sigma_min(C) <= 100
-    check_prop("P5: ‖H‖/σ_min(C) ≤ 100",
-               "conjecture", "—", "recorded",
-               "≤ 100",
+    # P5: REMOVED (2026-03-31). ‖H‖/σ_min(C) ≤ 100 falsified on natural polytope data.
+    # σ_min(C) → 0 for m ≤ 5 (C rank-deficient), ratio unbounded.
+    # Still recorded as a diagnostic (not a conjecture):
+    check_prop("P5: ‖H‖/σ_min(C) (diagnostic, no threshold)",
+               "diagnostic", "—", "recorded (conjecture falsified 2026-03-31)",
+               "none",
                lambda r: safe_get(r, "norm_h") / safe_get(r, "sigma_min_c")
                          if safe_get(r, "sigma_min_c") > 0 else None,
-               lambda v: v <= 100, "upper", 100)
+               lambda v: True, "upper", float('inf'))
 
-    # P6: ||r_beta|| < 1e-3
-    check_prop("P6: ‖r_β‖ < 1e-3",
+    # P6: ||r_beta|| < 1e-3 (full-rank M only)
+    # Rank-deficient cases have ||r_beta|| up to 0.63 by construction (discarded eigenspace).
+    check_prop("P6: ‖r_β‖ < 1e-3 (full-rank M only)",
                "bug_detection", "—", "sanity",
                "< 1e-3",
-               lambda r: safe_get(r, "norm_r_beta"),
+               lambda r: safe_get(r, "norm_r_beta") if r["sp_rank"] == r["m"] + 5 else None,
                lambda v: v < 1e-3, "upper", 1e-3)
 
     # P7: ||beta|| <= 2
