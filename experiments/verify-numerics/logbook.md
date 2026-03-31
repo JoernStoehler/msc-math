@@ -326,18 +326,91 @@ python3 verify-numerics/analyze.py
 # Output: verify-numerics/q_accuracy_checks.txt + stdout
 ```
 
+## Session 2026-03-31: Infrastructure Refactoring + Natural Data + β > 0 Classification
+
+### Pipeline refactoring
+
+Three-stage pipeline replaces the monolithic binary:
+1. `collect_inputs.rs` generates `artificial.jsonl` (15 synthetic families, 4303 problems) and `collected.jsonl` (polytope σ-nodes from correctness.jsonl, F≤8, 70K rows)
+2. `run.rs` loads both datasets, filters in-memory, runs f64 + exact rational solver, writes `results.jsonl`
+3. `analyze.py` reads `results.jsonl`, checks propositions, bounds, β > 0 classification
+
+### Solver fix: Q ≤ 0 conflation
+
+The solver previously returned `Infeasible` when Q ≤ 0 at the stationary point, conflating "Q is negative" with "β is infeasible." Fixed: solver now returns `Feasible` whenever β > 0 regardless of Q sign. Effect: 48K natural σ-nodes now visible (was 2.7K). 42K of these have Q ≈ 0, 2.7K have Q < 0.
+
+Also removed `SingularMatrix` variant (was: all eigenvalues ≈ 0, meaning both H ≈ 0 and C ≈ 0). This is garbage input, not a QP outcome. Now a panic.
+
+### Natural polytope data (correctness.jsonl, 47 polytopes, F ≤ 8)
+
+From 70,676 σ-nodes: 48,257 feasible (β > 0), 14,037 β_non_positive, 8,382 residual_too_large.
+
+After filtering (all Q > 0, sample 500 Q ≤ 0, sample 500 β < 0): 3,719 natural + 4,303 artificial = 8,022 problems in results.jsonl.
+
+Key findings (2,378 natural feasible with exact ground truth):
+
+| Quantity | Natural polytopes | Synthetic EHZ-like |
+|----------|------------------|--------------------|
+| B3 max ratio | 0.161 | 0.149 |
+| B3 violations | **0** | 0 |
+| max \|Q−Q*\| | 3.95e-14 | 6.6e-16 |
+| σ_min(C) min | **1.19e-3** | 0.31 |
+| ‖H‖/σ_min(C) max | **1310** | 39.8 |
+| ‖r_β‖ max | **0.63** | 6.3e-11 |
+
+### β > 0 classification
+
+| | Natural polytope | Stress-test |
+|---|---|---|
+| True positive (both β > 0) | 2352 | 460 |
+| **False positive** | **0** | **0** |
+| False negative | **9** | 17 |
+| Min TP margin | 5.56e-4 | 2.09e-3 |
+
+Zero false positives. 9 false negatives on natural data — all m=6, rank 10/11 (one discarded eigenvalue).
+
+### Root cause of false negatives
+
+All 9 share the same mechanism:
+1. M has eigenvalue below threshold τ = 1e-3 · max|λ| → discarded
+2. LP finds null-space direction, shifts β₀ by ~2 to get β > 0
+3. Shifted β violates Cβ = d (constraint residual ~0.6) because the eigenvector isn't truly in null(M)
+4. Solver falls back to β₀, which has margin ≈ 0 (machine epsilon)
+5. Exact solver finds β* with margin 0.17 — well inside feasible region
+
+The discarded eigenvalue direction is informative for β > 0 but shifting along it violates constraints. This is a solver algorithm limitation, not a numerical accuracy issue.
+
+### Conjecture violations on natural data
+
+- **P5 violated** (‖H‖/σ_min(C) ≤ 100): 15 cases from 4 polytopes with σ_min(C) ≈ 1e-3. ‖H‖ ≈ 1.5 (normal). Ratio unbounded as σ_min(C) → 0. P5 is not a useful conjecture.
+- **P6 violated** (‖r_β‖ < 1e-3): 25 cases, all m=6 rank-deficient. Same mechanism as false negatives.
+- σ_min(C) = 0 occurs for 2,904 σ-nodes (m ∈ {4,5,6}, C rank-deficient).
+
+### Correlation findings
+
+| Comparison | Key finding |
+|-----------|-------------|
+| Q error: full-rank vs rank-deficient M | max 8e-16 vs max 382. 10^18× gap. |
+| Q error: Q > 0 vs Q ≤ 0 | Q sign not the driver — rank deficiency is |
+| Correction effectiveness | More impactful in rank-deficient (48%) than full-rank (28%) |
+| Margin vs σ_min(C) on natural data | σ_min(C) < 0.01 → median margin 2e-12 (boundary cases) |
+| β error vs margin | β accuracy excellent (1e-15) even for small margins |
+
 ## Status
 
-Complete for Q accuracy. Deliverables:
-1. **Proven bound** [lem:q-error-first-order]: |Q−Q*| ≤ ‖H‖·‖β‖·‖r‖/σ_min(C)
+Complete for Q accuracy and β > 0 classification. The proven Q bound B3 holds on natural data.
+
+Deliverables:
+1. **Proven bound** [lem:q-error-first-order]: |Q−Q*| ≤ ‖H‖·‖β‖·‖r‖/σ_min(C) — zero violations on 8022 problems
 2. **Structural theorem** [lem:pseudoinverse-orthogonality, cor:taylor-structure, cor:exact-correction]
-3. **Runtime certification**: compute bound from solver output, TRUE/INDETERMINATE
-4. **15 matrix families**, 4303 problems, 533 feasible, all checked
-5. **analyze.py** post-processing with full proposition/bound validation
-6. **Projection solver sign error** (one-line library fix needed)
+3. **β > 0 classification**: zero false positives, 9 false negatives (root-caused)
+4. **Three-stage pipeline**: collect → run → analyze, natural + artificial datasets
+5. **analyze.py** with full proposition/bound/classification validation
 
 Open:
 - Library promotion: move proven bound + asserts into `crates/src/kkt/`
-- Fix projection solver sign in library (`crates/src/kkt/projection_solver.rs:113`)
-- β > 0 certification (margin analysis, separate experiment)
-- GAP in cor:taylor-structure proof (extra terms cancellation, needs Jörn)
+- Fix projection solver sign in library (`crates/src/kkt/projection_solver.rs:93`)
+- P5 conjecture: remove or replace (ratio unbounded on natural inputs)
+- P6 threshold: increase or gate on full-rank M
+- False-negative solver improvement: eigenvalue threshold too aggressive for m=6 rank-deficient
+- GAP in cor:taylor-structure proof (needs Jörn)

@@ -936,21 +936,8 @@ fn run_saddle_point(h: &DMatrix<f64>, c: &DMatrix<f64>, d: &DVector<f64>) -> SpR
             verdict: other.verdict_str().to_string(),
             margin: f64::NEG_INFINITY,
         },
-        solvers::KktOutcome::SingularMatrix => SpResult {
-            q: f64::NAN,
-            q_raw: f64::NAN,
-            beta: vec![],
-            beta0: vec![],
-            lambda: vec![],
-            p_discard_b_norm: f64::NAN,
-            residual_norm: f64::NAN,
-            lambda_min_all,
-            lambda_min_retained,
-            error_bound: f64::NAN,
-            rank,
-            verdict: "singular".to_string(),
-            margin: f64::NEG_INFINITY,
-        },
+        // SingularMatrix removed — now a panic (garbage input).
+        // catch_unwind in the caller handles it as verdict = "panic".
     }
 }
 

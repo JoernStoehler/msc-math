@@ -66,8 +66,6 @@ pub enum KktOutcome {
     /// β has a non-positive component at the stationary point (and LP search
     /// in the null space couldn't fix it). Q was not checked.
     BetaNonPositive,
-    /// The KKT matrix is singular (all eigenvalues near 0).
-    SingularMatrix,
     /// Residual too large: the pseudoinverse solution doesn't satisfy Mx = b
     /// within tolerance at any threshold tier.
     ResidualTooLarge,
@@ -87,7 +85,6 @@ impl KktOutcome {
         match self {
             KktOutcome::Feasible(_) => "feasible",
             KktOutcome::BetaNonPositive => "beta_non_positive",
-            KktOutcome::SingularMatrix => "singular",
             KktOutcome::ResidualTooLarge => "residual_too_large",
         }
     }
@@ -487,9 +484,12 @@ pub fn solve_saddle_point(
 
     let eig = kkt_matrix.clone().symmetric_eigen();
     let max_abs_ev = eig.eigenvalues.iter().map(|e| e.abs()).fold(0.0f64, f64::max);
-    if max_abs_ev < EPS_EIGEN_FLOOR {
-        return KktOutcome::SingularMatrix;
-    }
+    assert!(
+        max_abs_ev >= EPS_EIGEN_FLOOR,
+        "KKT matrix has all eigenvalues < {:.0e} (max |λ| = {:.2e}). \
+         This means both H ≈ 0 and C ≈ 0 — garbage input, not a valid QP.",
+        EPS_EIGEN_FLOOR, max_abs_ev
+    );
 
     // Compute inertia using the strict threshold.
     let strict_threshold = max_abs_ev * EIGEN_CONDITION_TAU;
