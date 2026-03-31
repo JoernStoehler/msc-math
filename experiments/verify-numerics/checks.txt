@@ -83,6 +83,40 @@ CORRECTION EFFECTIVENESS
     Correction helps >10x: 251/496
 
 ========================================================================================================================
+β > 0 CLASSIFICATION
+========================================================================================================================
+
+  EHZ-like (2550 problems, 0 skipped):
+    True positive  (both β>0):  2524
+    True negative  (both β≤0):  17
+    False positive (solver β>0, exact β≤0): 0
+    False negative (solver β≤0, exact β>0): 9
+    |margin_f64 - margin_exact|: med=2.08e-16, max=1.73e-01
+    ‖β_f64 - β*‖₂: med=7.28e-16, max=2.09e-01
+    True-positive margin_f64: min=8.00e-05, med=4.99e-02, max=3.33e-01
+    Q sign: both Q>0: 2323, Q*≤0: 217, Q_f64≤0: 211
+
+  Stress-test (496 problems, 19 skipped):
+    True positive  (both β>0):  460
+    True negative  (both β≤0):  0
+    False positive (solver β>0, exact β≤0): 0
+    False negative (solver β≤0, exact β>0): 17
+    |margin_f64 - margin_exact|: med=1.30e-09, max=5.54e+01
+    ‖β_f64 - β*‖₂: med=3.62e-09, max=9.84e+01
+    True-positive margin_f64: min=2.09e-03, med=5.56e-02, max=1.45e-01
+    Q sign: both Q>0: 400, Q*≤0: 58, Q_f64≤0: 63
+
+  Natural polytope (2378 problems, 0 skipped):
+    True positive  (both β>0):  2352
+    True negative  (both β≤0):  17
+    False positive (solver β>0, exact β≤0): 0
+    False negative (solver β≤0, exact β>0): 9
+    |margin_f64 - margin_exact|: med=2.08e-16, max=1.73e-01
+    ‖β_f64 - β*‖₂: med=7.38e-16, max=2.09e-01
+    True-positive margin_f64: min=5.56e-04, med=5.02e-02, max=3.33e-01
+    Q sign: both Q>0: 2223, Q*≤0: 145, Q_f64≤0: 139
+
+========================================================================================================================
 FAMILY SUMMARY
 ========================================================================================================================
 

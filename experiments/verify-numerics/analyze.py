@@ -288,6 +288,73 @@ def check_all(rows):
     # ══════════════════════════════════════════════════════════════
     log()
     log("=" * 120)
+    log("β > 0 CLASSIFICATION")
+    log("=" * 120)
+
+    # Compare f64 solver β > 0 classification against exact rational solver.
+    # verdict_saddle: "feasible" means f64 solver found β > 0.
+    # verdict_exact: "feasible" means exact solver found β > 0.
+    # margin_saddle: min(β) from f64 solver.
+    # margin_exact: min(β*) from exact solver (None if exact infeasible).
+
+    for label, group in [("EHZ-like", sp_ehz), ("Stress-test", sp_stress), ("Natural polytope",
+            [r for r in sp if r["family"] == "polytope_sigma_node"])]:
+        if not group:
+            continue
+
+        # Classification matrix
+        tp = fp = fn_ = tn = skip = 0
+        margin_errs = []
+        beta_errs = []
+        for r in group:
+            me = safe_get(r, "margin_exact")
+            ms = safe_get(r, "margin_saddle")
+            vs = r.get("verdict_saddle", "")
+            ve = r.get("verdict_exact", "")
+            if not math.isfinite(me) or not math.isfinite(ms):
+                skip += 1
+                continue
+            exact_pos = me > 1e-12
+            solver_pos = ms > 1e-9
+            if exact_pos and solver_pos: tp += 1
+            elif not exact_pos and not solver_pos: tn += 1
+            elif solver_pos and not exact_pos: fp += 1
+            elif not solver_pos and exact_pos: fn_ += 1
+            margin_errs.append(abs(ms - me))
+
+        beta_errs_all = sorted([safe_get(r, "beta_err_saddle")
+                                for r in group
+                                if math.isfinite(safe_get(r, "beta_err_saddle"))])
+
+        log(f"\n  {label} ({len(group)} problems, {skip} skipped):")
+        log(f"    True positive  (both β>0):  {tp}")
+        log(f"    True negative  (both β≤0):  {tn}")
+        log(f"    False positive (solver β>0, exact β≤0): {fp}")
+        log(f"    False negative (solver β≤0, exact β>0): {fn_}")
+
+        if margin_errs:
+            margin_errs.sort()
+            log(f"    |margin_f64 - margin_exact|: med={margin_errs[len(margin_errs)//2]:.2e}, max={margin_errs[-1]:.2e}")
+
+        if beta_errs_all:
+            log(f"    ‖β_f64 - β*‖₂: med={beta_errs_all[len(beta_errs_all)//2]:.2e}, max={beta_errs_all[-1]:.2e}")
+
+        # Margin distribution for true positives
+        tp_margins = sorted([safe_get(r, "margin_saddle")
+                            for r in group
+                            if safe_get(r, "margin_exact") > 1e-12 and safe_get(r, "margin_saddle") > 1e-9])
+        if tp_margins:
+            log(f"    True-positive margin_f64: min={tp_margins[0]:.2e}, med={tp_margins[len(tp_margins)//2]:.2e}, max={tp_margins[-1]:.2e}")
+
+        # Q sign classification
+        q_pos = sum(1 for r in group if safe_get(r, "q_exact") > 0 and safe_get(r, "q_saddle") > 0)
+        q_neg_exact = sum(1 for r in group if safe_get(r, "q_exact") <= 0)
+        q_neg_f64 = sum(1 for r in group if safe_get(r, "q_saddle") <= 0)
+        log(f"    Q sign: both Q>0: {q_pos}, Q*≤0: {q_neg_exact}, Q_f64≤0: {q_neg_f64}")
+
+    # ══════════════════════════════════════════════════════════════
+    log()
+    log("=" * 120)
     log("FAMILY SUMMARY")
     log("=" * 120)
 
