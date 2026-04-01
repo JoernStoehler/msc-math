@@ -180,7 +180,11 @@ dependencies = [
 name = "experiments"
 version = "0.1.0"
 dependencies = [
+ "good_lp",
  "nalgebra",
+ "num-bigint",
+ "num-rational",
+ "num-traits",
  "rand",
  "rand_chacha",
  "rand_distr",
