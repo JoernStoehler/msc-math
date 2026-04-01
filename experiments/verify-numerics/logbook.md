@@ -482,3 +482,26 @@ Open:
 - Write the f64 algorithm (Part III of math.tex)
 - Extend η_k bound for null-eigenvalue LP search
 - GAP in cor:taylor-structure proof (needs Jörn)
+
+### Infrastructure simplification (2026-04-01)
+
+Split solvers.rs into projection_solver.rs (active) and saddle_point_solver.rs (dead code, reference).
+Removed saddle-point code from run.rs (~20 fields, ~150 lines). Extracted exact rational solver
+into shared exact_solver.rs.
+
+Deleted 4 filter binaries (filter_poly_smoke, filter_poly_diverse, filter_synth_all) and
+collect_synth. Filters are now ad-hoc (jq/Python one-liners on collected_poly.jsonl).
+
+Created testdata/ with 30 curated (H,C,d) test cases per conjecture:
+- eigendirection_scaling.jsonl: 30 cases (m=6,7) for rem:eigendirection-error
+- eta_bound_validity.jsonl: 30 cases (m=6,7,8) for lem:link-beta eq:eta-computable
+
+Created tests.rs: two Rust #[test] functions that load testdata, run both projection and
+exact solvers, and check the conjecture properties. Both pass:
+- eigendirection_error_scaling: 12 eigendirections, max ratio 0.9
+- eta_bound_validity: 50 components, max ratio 0.007
+
+Simplified analyze.py (499→130 lines): removed bound-checking (now in Rust tests),
+kept exploratory summaries. Simplified Makefile to just collect + ad-hoc run/analyze.
+
+Run tests: `cd experiments/ && cargo test --test verify_numerics_tests`

@@ -112,26 +112,15 @@ path = "lagrangian-search/probe.rs"
 name = "verify_numerics"
 path = "verify-numerics/run.rs"
 
+[[test]]
+name = "verify_numerics_tests"
+path = "verify-numerics/tests.rs"
+
 
 [[bin]]
 name = "collect_poly"
 path = "verify-numerics/collect_poly.rs"
 
-[[bin]]
-name = "collect_synth"
-path = "verify-numerics/collect_synth.rs"
-
-[[bin]]
-name = "filter_poly_smoke"
-path = "verify-numerics/filter_poly_smoke.rs"
-
-[[bin]]
-name = "filter_poly_diverse"
-path = "verify-numerics/filter_poly_diverse.rs"
-
-[[bin]]
-name = "filter_synth_all"
-path = "verify-numerics/filter_synth_all.rs"
 
 [dependencies]
 symplectic = { path = "../crates" }

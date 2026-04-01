@@ -1,4 +1,4 @@
-//! Shared types and helpers for collect_poly.rs and collect_synth.rs.
+//! Shared types and helpers for collect_poly.rs.
 //!
 //! Included via `#[path = "collect_common.rs"] mod common;` in each binary.
 
@@ -6,7 +6,7 @@ use nalgebra::{DMatrix, DVector};
 use serde::{Deserialize, Serialize};
 use std::io::Write;
 
-#[path = "solvers.rs"]
+#[path = "projection_solver.rs"]
 pub mod solvers;
 
 /// Number of constraint rows. Matches the EHZ structure (4 closure + 1 normalization).
@@ -22,25 +22,20 @@ pub struct InputRow {
     pub dataset: String, // "synthetic" or "poly"
 
     // KKT input matrices (row-major)
-    pub h: Vec<Vec<f64>>, // m×m symmetric
-    pub c: Vec<Vec<f64>>, // p×m (p=5 for EHZ)
+    pub h: Vec<Vec<f64>>, // m x m symmetric
+    pub c: Vec<Vec<f64>>, // p x m (p=5 for EHZ)
     pub d: Vec<f64>,      // p
 
-    // f64 solver output (raw vectors for downstream filtering/analysis)
-    pub verdict: String, // "feasible", "beta_non_positive", "residual_too_large", "panic"
+    // f64 projection solver output
+    pub verdict: String, // "true", "false", "indeterminate"
     pub q: f64,
-    pub q_raw: f64,
     pub margin: f64,
-    pub residual_norm: f64,
-    pub rank: usize,
     pub norm_h: f64,
     pub sigma_min_c: f64,
 
     // Raw solver vectors (empty if not feasible)
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub beta: Vec<f64>,
-    #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub lambda: Vec<f64>,
 
     // Polytope metadata (only for poly dataset)
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -77,7 +72,7 @@ pub fn matrix_to_vecs(m: &DMatrix<f64>) -> Vec<Vec<f64>> {
         .collect()
 }
 
-/// Run the saddle-point solver on (H, C, d) and record all output.
+/// Run the projection solver on (H, C, d) and record all output.
 pub fn solve_and_record(
     family: &str,
     instance: usize,
@@ -90,99 +85,52 @@ pub fn solve_and_record(
     facet_count: Option<usize>,
 ) -> InputRow {
     let m = h.nrows();
-    let p = c.nrows();
-    let size = m + p;
-
     let norm_h = spectral_norm(h);
     let smin_c = sigma_min(c);
 
-    // Build augmented KKT matrix M = [[H, C^T], [C, 0]] and rhs = [0..0, d]
-    let mut kkt = DMatrix::zeros(size, size);
-    let mut rhs = DVector::zeros(size);
-
-    for i in 0..m {
-        for j in 0..m {
-            kkt[(i, j)] = h[(i, j)];
-        }
-    }
-    for i in 0..p {
-        for j in 0..m {
-            kkt[(j, m + i)] = c[(i, j)];
-            kkt[(m + i, j)] = c[(i, j)];
-        }
-    }
-    for i in 0..p {
-        rhs[m + i] = d[i];
-    }
+    let qp = solvers::QP {
+        h: h.clone(),
+        c: c.clone(),
+        d: d.clone(),
+    };
 
     // Run solver with panic catching
-    let h_clone = h.clone();
-    let kkt_clone = kkt.clone();
-    let rhs_clone = rhs.clone();
     let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-        solvers::solve_saddle_point(&kkt_clone, &rhs_clone)
+        solvers::solve_projected(&qp)
     }));
-
-    // Eigendecompose for rank
-    let eig = kkt.clone().symmetric_eigen();
-    let max_abs = eig
-        .eigenvalues
-        .iter()
-        .map(|e| e.abs())
-        .fold(0.0f64, f64::max);
-    let tau = 1e-3;
-    let strict_threshold = max_abs * tau;
-    let rank = eig
-        .eigenvalues
-        .iter()
-        .filter(|&&e| e.abs() > strict_threshold)
-        .count();
 
     let mut row = InputRow {
         family: family.to_string(),
         instance,
         m,
         dataset: dataset.to_string(),
-        h: matrix_to_vecs(&h_clone),
+        h: matrix_to_vecs(h),
         c: matrix_to_vecs(c),
         d: d.iter().copied().collect(),
         verdict: String::new(),
         q: f64::NAN,
-        q_raw: f64::NAN,
         margin: f64::NAN,
-        residual_norm: f64::NAN,
-        rank,
         norm_h,
         sigma_min_c: smin_c,
         beta: Vec::new(),
-        lambda: Vec::new(),
         polytope_id,
         perm: perm_opt,
         facet_count,
     };
 
     match result {
-        Ok(ref outcome) => {
-            row.verdict = outcome.verdict_str().to_string();
-            if let solvers::KktOutcome::Feasible(kkt_result) = outcome {
-                let mut x_vec = kkt_result.beta.clone();
-                x_vec.extend_from_slice(&kkt_result.mu);
-                x_vec.push(kkt_result.xi);
-                let x_dv = DVector::from_column_slice(&x_vec);
-                let residual_vec = &kkt * &x_dv - &rhs;
-                row.residual_norm = residual_vec.norm();
-                row.margin = kkt_result.beta.iter().copied().fold(f64::INFINITY, f64::min);
-                row.q = kkt_result.q_corrected;
-                row.q_raw = kkt_result.q_raw;
-                row.beta = kkt_result.beta.clone();
-                let mut lam = kkt_result.mu.clone();
-                lam.push(kkt_result.xi);
-                row.lambda = lam;
-            }
+        Ok(sol) => {
+            row.verdict = match sol.verdict {
+                solvers::Verdict::True => "true".to_string(),
+                solvers::Verdict::False => "false".to_string(),
+                solvers::Verdict::Indeterminate => "indeterminate".to_string(),
+            };
+            row.q = sol.q;
+            row.margin = sol.margin;
+            row.beta = sol.beta;
         }
         Err(_) => {
             row.verdict = "panic".to_string();
-            row.rank = 0;
         }
     }
 
@@ -229,11 +177,11 @@ pub fn print_summary(rows: &[InputRow], label: &str) {
     for fam in &families {
         let fam_rows: Vec<&InputRow> = rows.iter().filter(|r| r.family == *fam).collect();
         let n = fam_rows.len();
-        let n_feas = fam_rows.iter().filter(|r| r.verdict == "feasible").count();
+        let n_true = fam_rows.iter().filter(|r| r.verdict == "true").count();
         let n_panic = fam_rows.iter().filter(|r| r.verdict == "panic").count();
         println!(
-            "    {:<25} {:>5} rows, {:>5} feasible, {:>3} panics",
-            fam, n, n_feas, n_panic
+            "    {:<25} {:>5} rows, {:>5} true, {:>3} panics",
+            fam, n, n_true, n_panic
         );
     }
 }
