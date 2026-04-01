@@ -501,7 +501,7 @@ exact solvers, and check the conjecture properties. Both pass:
 - eigendirection_error_scaling: 12 eigendirections, max ratio 0.9
 - eta_bound_validity: 50 components, max ratio 0.007
 
-Simplified analyze.py (499→130 lines): removed bound-checking (now in Rust tests),
+Simplified analyze.py (499→147 lines): removed bound-checking (now in Rust tests),
 kept exploratory summaries. Simplified Makefile to just collect + ad-hoc run/analyze.
 
 Run tests: `cd experiments/ && cargo test --test verify_numerics_tests`
