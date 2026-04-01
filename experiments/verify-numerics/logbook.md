@@ -423,3 +423,43 @@ Open:
 - P6 threshold: increase or gate on full-rank M
 - False-negative solver improvement: eigenvalue threshold too aggressive for m=6 rank-deficient
 - GAP in cor:taylor-structure proof (needs Jörn)
+
+## Pipeline restructure (2026-04-01)
+
+Restructured to Jörn's 4-stage design:
+
+```
+Stage 1: collect_poly.rs → collected_poly.jsonl (1.66M rows, gitignored)
+         collect_synth.rs → collected_synth.jsonl (4303 rows, gitignored)
+Stage 2: filter_poly_smoke.rs → filtered_poly_smoke.jsonl (~6 rows)
+         filter_poly_diverse.rs → filtered_poly_diverse.jsonl (~1500 rows)
+         filter_synth_all.rs → filtered_synth_all.jsonl (4303 rows)
+Stage 3: run.rs <input> <output> → results_*.jsonl (f64 + exact + diagnostics)
+Stage 4: analyze.py <results1> [results2 ...] → checks.txt
+```
+
+Run: `make smoke` (<1s), `make full` (~3.5 min). See Makefile.
+
+Stage 1 now saves raw β, λ vectors (not just summary stats).
+Filter binaries coexist — edit/add filters without churn.
+
+## Perturbation chain and β certification bound (2026-04-01)
+
+Added to math.tex:
+- lem:link-beta0: β₀ perturbation bound, O(ε_mach/σ_min(C)²)
+- lem:link-gradient: reduced gradient perturbation
+- rem:conditioning-precondition: σ_min(C) gates the chain
+- lem:link-beta rewritten: explicit componentwise η_k bound (eq:eta-computable)
+
+Implemented in solvers.rs: `solve_projected_with_diagnostics()`, `compute_eta_bound()`.
+
+Results on natural data (1192 polytope σ-nodes via filter_poly_diverse):
+- Well-separated eigenvalues: zero violations, 86% β > 0 certified
+- Null-eigenvalue cases (k=1, H' ≈ 0): 39 violations, η bound doesn't cover LP search step
+
+Root cause of violations: when H' has a near-zero eigenvalue, the solver searches the null eigendirection via LP. The LP shift is O(1) but the bound predicts O(ε_mach). Extending the bound to cover this case is the next step.
+
+Open:
+- Write the f64 algorithm (Part III of math.tex)
+- Extend η_k bound for null-eigenvalue LP search
+- GAP in cor:taylor-structure proof (needs Jörn)

@@ -112,9 +112,6 @@ path = "lagrangian-search/probe.rs"
 name = "verify_numerics"
 path = "verify-numerics/run.rs"
 
-[[bin]]
-name = "collect_inputs"
-path = "verify-numerics/collect_inputs.rs"
 
 [[bin]]
 name = "collect_poly"
