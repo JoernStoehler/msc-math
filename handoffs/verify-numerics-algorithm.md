@@ -95,6 +95,52 @@ The capacity algorithm iterates over all subsets S and cyclic permutations σ of
 
 However: this argument requires that the minimum-length minimum-action orbit passes adjacency pruning. This is Jörn's claim from the mathematical structure, not proven in the experiment.
 
+### Subagent research results (2026-04-01)
+
+Three opus subagents explored research directions. Key findings:
+
+**QP algorithm analysis:** Vertex enumeration (enumerate all C(m,5) subsets of 5 nonzero β components, solve 5×5 systems) was proposed as a third algorithm. **It's wrong for our problem:** the claim "max of quadratic on polytope is at a vertex" holds for convex (H positive semidefinite) objectives, NOT for our indefinite H. For indefinite H, the max can be in the interior of a face. The subagent caught and corrected this. For concave objectives (H negative semidefinite), the max CAN be interior — and for our ω₀-derived H which is typically indefinite, neither vertex-max nor interior-max is guaranteed. Active-set enumeration over all faces would work but is more expensive.
+
+**Backward stability:** The residual bound is ‖r‖ ≤ ‖P̂_D b‖ + c·(m+5)·ε_mach·‖M‖·‖x̃‖. Two terms: thresholding (discarded eigenspace projection of b, zero when full-rank) and rounding (O(ε_mach)). References: Higham 2002 Theorem 8.5 (backward stability of symmetric eigendecomposition), Golub & Van Loan 2013 Theorem 8.1.5 (Weyl eigenvalue perturbation). **Theorem numbers need physical verification** — they're from the subagent's knowledge, not read from the books.
+
+**β > 0 certification:** The null-space component of δβ **cannot be bounded from the constraint residual alone** (proven impossibility: two exact solutions with different null components have identical Cβ). The operational approach: **reframe as feasibility**, not perturbation. Project β̃ onto {Cβ = d}, check positivity of the projection. The certification condition becomes: min_j β̃_j > ‖C^T(CC^T)^{-1}‖_{∞←2} · ‖Cβ̃ − d‖₂. This sidesteps the null-space bound entirely — you're free to pick any feasible point near β̃.
+
+### Correlation findings
+
+| Comparison | Finding |
+|-----------|---------|
+| Q error: full-rank vs rank-deficient M | max 8e-16 vs 382 — 10^18× gap. Rank deficiency dominates. |
+| Q error: Q > 0 vs Q ≤ 0 | Q sign NOT the driver — rank deficiency is |
+| Correction effectiveness by rank | Helps >10× in 28% full-rank, 48% rank-deficient |
+| Margin vs σ_min(C) on natural | σ_min(C) < 0.01 → median margin 2e-12 (boundary) |
+| β error vs margin | β accuracy excellent (1e-15) even for small margins |
+| p_discard_b_norm vs Q error | Only 2 cases with p_discard_b > 1e-6 |
+
+### Capacity algorithm and boundary optima
+
+The capacity algorithm iterates over all subsets S ⊆ {1,...,F} and all cyclic permutations σ of S, with adjacency pruning per permutation (`is_feasible_cycle`). A subset S is enumerated but may produce zero solved permutations after all its orderings fail adjacency.
+
+**Jörn's argument for why false negatives on boundary cases don't matter:** The capacity-achieving orbit has minimum action, is simple, and has minimum combinatorial length. This orbit has all β* > 0 strictly (if β_k = 0, a shorter σ exists, contradicting length minimality). Its permutation passes adjacency (it IS a Reeb orbit — every transition physically occurs). So the solver only needs correct interior-β > 0 classification for permutations that pass adjacency. The adjacency pruning doesn't kick out minimum-length minimum-action simple Reeb orbits because it only removes (i,j) pairs where no locally simple Reeb trajectory exists.
+
+**However:** This argument is from the mathematical structure (Jörn's domain knowledge), not proven in the experiment. And false negatives on non-capacity-achieving σ-nodes could still affect other uses of the solver.
+
+### Design principles from session
+
+- **"Continuity of variables":** Every numerical test should be a continuous function of input. Rank, eigenvalue signs, β > 0 are discontinuous → use trinary TRUE/FALSE/INDETERMINATE with continuous buffer zones.
+- **Seeds are fragile:** Don't use seeded RNG for reproducibility. Generate once, store as JSONL, commit. The artificial.jsonl is the source of truth, not the generation code.
+- **SingularMatrix is garbage input:** All eigenvalues ≈ 0 means H ≈ 0 AND C ≈ 0. Not a QP outcome. Now a panic, not a KktOutcome variant.
+- **Rank is not numerically testable:** For matrices H, H* with ‖H − H*‖ < δ, rank(H) and rank(H*) can differ. No finite-precision computation distinguishes eigenvalue 0 from eigenvalue 1e-15.
+
+### Scope and iteration guidance
+
+**Agent owns:** All experiment files (run.rs, solvers.rs, collect_inputs.rs, analyze.py, math.tex, logbook.md), JSONL data, TASKS.md updates, solver algorithm changes.
+
+**Needs Jörn:** GAP in cor:taylor-structure proof, mathematical review of new bounds, merge to main, scope decisions.
+
+**Iteration scope (things to consider changing):** Filter criteria, diagnostic fields, proposition thresholds, new propositions/bounds, polytope sources, analyze.py checks, algorithms in solvers.rs (new error correction, margin optimization, diagnostic variables).
+
+**Iteration feedback:** checks.txt violations/ranges, diff from previous run, correlation hunting, coverage gaps, tightness of bounds approaching 1.0, natural vs artificial comparison, independent audit via review-proof/review-formalization subagents.
+
 ## Branch state
 
 Worktree at `.claude/worktrees/verify-numerics-q-accuracy`, branch `verify-numerics-q-accuracy`, 12 commits ahead of main. Clean working tree (last commit: `c0b30f9`).
