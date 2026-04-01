@@ -22,7 +22,7 @@ use std::io::{BufRead, Write};
 #[path = "solvers.rs"]
 mod solvers;
 
-use solvers::{solve_projected, solve_saddle_point, QP, Verdict};
+use solvers::{solve_projected, solve_projected_with_diagnostics, solve_saddle_point, QP, Verdict};
 
 // ── Constants ──
 
@@ -132,6 +132,34 @@ struct Record {
     // Measures how much of the RHS lives in the discarded eigenspace.
     // For EHZ: this is sqrt(Σ |v_i[m+4]|²) over discarded eigenvectors.
     p_discard_b_norm: f64,
+
+    // ── Perturbation chain diagnostics (projection solver) ──
+    // [lem:link-beta] eq:eta-computable
+
+    /// ε_γ = ‖H‖ · ε_mach / σ_min(C) — eigenvalue perturbation threshold.
+    proj_eps_gamma: f64,
+
+    /// max_k η_k — the largest componentwise β certification bound.
+    proj_eta_max: f64,
+
+    /// max_k |β̃_k - β*_k| / η_k — tightness ratio.
+    /// < 1 means the bound is valid. << 1 means it's loose.
+    proj_eta_ratio: f64,
+
+    /// max_k |β̃_k - β*_k| — actual componentwise β error (projection solver vs exact).
+    proj_beta_err_inf: f64,
+
+    /// min_k (β̃_k - η_k) — if > 0, β > 0 is certified by the bound.
+    proj_certified_margin: f64,
+
+    /// Number of eigenvalues with |γ̃_j| > ε_γ (reliably signed).
+    proj_n_reliable_eigs: usize,
+
+    /// Number of eigenvalues with |γ̃_j| ≤ ε_γ (sign uncertain).
+    proj_n_uncertain_eigs: usize,
+
+    /// dim(ker(C)) = k.
+    proj_null_dim: usize,
 }
 
 /// Row from collected.jsonl or artificial.jsonl (written by collect_inputs.rs).
@@ -1052,14 +1080,42 @@ fn main() {
             n_sp_feasible += 1;
         }
 
-        // 3. Projection solve (library version, possibly buggy)
-        let proj = run_projection(&prob.h_f64, &prob.c_f64, &prob.d_f64);
+        // 3. Projection solve with diagnostics
+        let (proj_sol, proj_diag) = {
+            let qp = QP {
+                c: prob.c_f64.clone(),
+                d: prob.d_f64.clone(),
+                h: prob.h_f64.clone(),
+            };
+            solve_projected_with_diagnostics(&qp)
+        };
+        let proj = {
+            let constraint_residual = if proj_sol.verdict != Verdict::False {
+                let beta_dv = DVector::from_column_slice(&proj_sol.beta);
+                (&prob.c_f64 * &beta_dv - &prob.d_f64).norm()
+            } else {
+                f64::NAN
+            };
+            let verdict_str = match proj_sol.verdict {
+                Verdict::True => "true",
+                Verdict::False => "false",
+                Verdict::Indeterminate => "indeterminate",
+            };
+            ProjResult {
+                q: proj_sol.q,
+                beta: proj_sol.beta,
+                constraint_residual,
+                verdict: verdict_str.to_string(),
+                margin: proj_sol.margin,
+            }
+        };
         if proj.verdict == "true" || proj.verdict == "indeterminate" {
             n_proj_feasible += 1;
         }
 
         // 3b. Corrected projection solve (sign fix hypothesis)
-        let proj_corr = run_projection_corrected(&prob.h_f64, &prob.c_f64, &prob.d_f64);
+        // Now identical to proj since solvers.rs has the sign fix.
+        let proj_corr = run_projection(&prob.h_f64, &prob.c_f64, &prob.d_f64);
 
         // 4. Compute errors
         let err_saddle = if exact.is_some() && sp.verdict == "feasible" {
@@ -1301,7 +1357,7 @@ fn main() {
             cond_h,
             verdict_exact,
             verdict_saddle: sp.verdict.clone(),
-            verdict_projection: proj.verdict,
+            verdict_projection: proj.verdict.clone(),
             beta_err_saddle: beta_err_sp,
             beta_err_projection: beta_err_proj,
             margin_saddle: sp.margin,
@@ -1346,6 +1402,53 @@ fn main() {
             first_order_beta0: first_order_b0,
             p_discard_b_norm: sp.p_discard_b_norm,
             second_order_beta0: second_order_b0,
+
+            // Perturbation chain diagnostics
+            proj_eps_gamma: proj_diag.as_ref().map_or(f64::NAN, |d| d.eps_gamma),
+            proj_eta_max: proj_diag.as_ref().map_or(f64::NAN, |d| {
+                d.eta.iter().cloned().fold(0.0f64, f64::max)
+            }),
+            proj_eta_ratio: {
+                // max_k |β̃_k - β*_k| / η_k
+                match (&beta_exact, &proj_diag) {
+                    (Some(be), Some(diag)) if proj.verdict == "true" || proj.verdict == "indeterminate" => {
+                        let be_f64: Vec<f64> = be.iter().map(|b| rational_to_f64(b)).collect();
+                        let mut max_ratio = 0.0f64;
+                        for k_idx in 0..prob.m.min(be_f64.len()).min(diag.eta.len()).min(proj.beta.len()) {
+                            let actual_err = (proj.beta[k_idx] - be_f64[k_idx]).abs();
+                            if diag.eta[k_idx] > 0.0 && diag.eta[k_idx].is_finite() {
+                                max_ratio = max_ratio.max(actual_err / diag.eta[k_idx]);
+                            }
+                        }
+                        max_ratio
+                    }
+                    _ => f64::NAN,
+                }
+            },
+            proj_beta_err_inf: match (&beta_exact, &proj.beta) {
+                (Some(be), pb) if !pb.is_empty() && (proj.verdict == "true" || proj.verdict == "indeterminate") => {
+                    let be_f64: Vec<f64> = be.iter().map(|b| rational_to_f64(b)).collect();
+                    be_f64.iter().zip(pb.iter())
+                        .map(|(a, b)| (a - b).abs())
+                        .fold(0.0f64, f64::max)
+                }
+                _ => f64::NAN,
+            },
+            proj_certified_margin: match &proj_diag {
+                Some(diag) if proj.verdict == "true" || proj.verdict == "indeterminate" => {
+                    proj.beta.iter().zip(diag.eta.iter())
+                        .map(|(&b, &e)| b - e)
+                        .fold(f64::INFINITY, f64::min)
+                }
+                _ => f64::NAN,
+            },
+            proj_n_reliable_eigs: proj_diag.as_ref().map_or(0, |d| {
+                d.eigenvalues.iter().filter(|&&g| g.abs() > d.eps_gamma).count()
+            }),
+            proj_n_uncertain_eigs: proj_diag.as_ref().map_or(0, |d| {
+                d.eigenvalues.iter().filter(|&&g| g.abs() <= d.eps_gamma).count()
+            }),
+            proj_null_dim: proj_diag.as_ref().map_or(0, |d| d.null_dim),
         };
 
         let json = serde_json::to_string(&record).expect("serialize");

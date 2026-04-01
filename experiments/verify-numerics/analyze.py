@@ -357,6 +357,101 @@ def check_all(rows):
 
     # ══════════════════════════════════════════════════════════════
     log()
+    # ══════════════════════════════════════════════════════════════
+    log("\n" + "=" * 120)
+    log("PERTURBATION CHAIN — β > 0 CERTIFICATION BOUND [lem:link-beta]")
+    log("=" * 120)
+
+    # Filter: projection solver returned true/indeterminate AND exact is feasible
+    proj_feasible = [r for r in rows
+                     if r["verdict_exact"] == "feasible"
+                     and r.get("verdict_projection") in ("true", "indeterminate")
+                     and math.isfinite(safe_get(r, "proj_eta_ratio"))]
+
+    if proj_feasible:
+        eta_ratios = sorted([safe_get(r, "proj_eta_ratio") for r in proj_feasible
+                             if math.isfinite(safe_get(r, "proj_eta_ratio"))])
+        eta_maxes = sorted([safe_get(r, "proj_eta_max") for r in proj_feasible
+                            if math.isfinite(safe_get(r, "proj_eta_max"))])
+        beta_errs = sorted([safe_get(r, "proj_beta_err_inf") for r in proj_feasible
+                            if math.isfinite(safe_get(r, "proj_beta_err_inf"))])
+        cert_margins = sorted([safe_get(r, "proj_certified_margin") for r in proj_feasible
+                               if math.isfinite(safe_get(r, "proj_certified_margin"))])
+        eps_gammas = sorted([safe_get(r, "proj_eps_gamma") for r in proj_feasible
+                             if math.isfinite(safe_get(r, "proj_eps_gamma"))])
+
+        log(f"\n  Dataset: {len(proj_feasible)} problems (projection feasible + exact feasible)")
+        log(f"")
+        log(f"  η_k bound validity (max_k |β̃_k - β*_k| / η_k):")
+        log(f"    Should be ≤ 1 for the bound to be valid.")
+        if eta_ratios:
+            log(f"    median: {eta_ratios[len(eta_ratios)//2]:.4e}")
+            log(f"    p99:    {eta_ratios[int(len(eta_ratios)*0.99)]:.4e}")
+            log(f"    max:    {eta_ratios[-1]:.4e}")
+            n_invalid = sum(1 for r in eta_ratios if r > 1.0)
+            log(f"    violations (ratio > 1): {n_invalid}/{len(eta_ratios)}")
+
+        log(f"")
+        log(f"  Actual β error (max_k |β̃_k - β*_k|):")
+        if beta_errs:
+            log(f"    median: {beta_errs[len(beta_errs)//2]:.4e}")
+            log(f"    p99:    {beta_errs[int(len(beta_errs)*0.99)]:.4e}")
+            log(f"    max:    {beta_errs[-1]:.4e}")
+
+        log(f"")
+        log(f"  η_k bound magnitude (max_k η_k):")
+        if eta_maxes:
+            log(f"    median: {eta_maxes[len(eta_maxes)//2]:.4e}")
+            log(f"    p99:    {eta_maxes[int(len(eta_maxes)*0.99)]:.4e}")
+            log(f"    max:    {eta_maxes[-1]:.4e}")
+            n_inf = sum(1 for e in eta_maxes if e > 1e100)
+            log(f"    infinite (η = ∞): {n_inf}/{len(eta_maxes)}")
+
+        log(f"")
+        log(f"  Certified margin min_k(β̃_k - η_k):")
+        if cert_margins:
+            n_certified = sum(1 for m in cert_margins if m > 0)
+            n_finite = sum(1 for m in cert_margins if math.isfinite(m))
+            log(f"    β > 0 certified: {n_certified}/{n_finite} ({100*n_certified/max(n_finite,1):.1f}%)")
+            positive_margins = sorted([m for m in cert_margins if m > 0])
+            if positive_margins:
+                log(f"    certified margin min: {positive_margins[0]:.4e}")
+                log(f"    certified margin max: {positive_margins[-1]:.4e}")
+
+        log(f"")
+        log(f"  ε_γ (eigenvalue perturbation threshold):")
+        if eps_gammas:
+            log(f"    median: {eps_gammas[len(eps_gammas)//2]:.4e}")
+            log(f"    max:    {eps_gammas[-1]:.4e}")
+
+        # Breakdown by family
+        log(f"\n  Per-family breakdown:")
+        log(f"  {'Family':25s} {'n':>5s} {'max η_ratio':>12s} {'med η_max':>12s} "
+            f"{'certified':>10s} {'max|δβ|':>10s}")
+        log("  " + "-" * 80)
+        by_fam_proj = defaultdict(list)
+        for r in proj_feasible:
+            by_fam_proj[r["family"]].append(r)
+        for fam in sorted(by_fam_proj.keys()):
+            group = by_fam_proj[fam]
+            ratios = sorted([safe_get(r, "proj_eta_ratio") for r in group
+                             if math.isfinite(safe_get(r, "proj_eta_ratio"))])
+            etas = sorted([safe_get(r, "proj_eta_max") for r in group
+                           if math.isfinite(safe_get(r, "proj_eta_max"))])
+            errs = sorted([safe_get(r, "proj_beta_err_inf") for r in group
+                           if math.isfinite(safe_get(r, "proj_beta_err_inf"))])
+            n_cert = sum(1 for r in group
+                         if math.isfinite(safe_get(r, "proj_certified_margin"))
+                         and safe_get(r, "proj_certified_margin") > 0)
+            log(f"  {fam:25s} {len(group):5d} "
+                f"{ratios[-1] if ratios else float('nan'):12.4e} "
+                f"{etas[len(etas)//2] if etas else float('nan'):12.4e} "
+                f"{n_cert:>4d}/{len(group):<5d} "
+                f"{errs[-1] if errs else float('nan'):10.4e}")
+    else:
+        log("\n  No projection-feasible + exact-feasible problems found.")
+
+    log("")
     log("=" * 120)
     log("FAMILY SUMMARY")
     log("=" * 120)

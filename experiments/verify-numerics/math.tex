@@ -15,7 +15,18 @@
 %   rem:exact-not-compute — what the solver skips (boundary projection)
 %   rem:discontinuities — 6 discontinuities for f64
 %
-% Part II — Error analysis:
+% Part II — Error analysis (perturbation chain):
+%   rem:conditioning-precondition — sigma_min(C) gates the chain
+%   rem:perturbation-chain — perturbation chain overview
+%   lem:link-assembly — Link 1: assembly errors
+%   lem:link-svd — Link 2: null-space basis via SVD
+%   lem:link-beta0 — Link 2b: particular solution perturbation
+%   lem:link-gradient — Link 2c: reduced gradient perturbation
+%   lem:link-reduced-hessian — Link 3: reduced Hessian perturbation
+%   lem:link-eigenvalues — Link 4: eigenvalue perturbation + sign threshold
+%   lem:link-beta — Link 5: beta perturbation + certification bound
+%
+% Part II — Q error bounds (complementary approach via KKT residual):
 %   lem:q-error-first-order — first-order Q error bound via stationarity
 %   lem:q-correction-second-order — Q correction reduces error to second order
 %   rem:runtime-q-bound — computable runtime error bound
@@ -620,6 +631,46 @@ We list each discontinuity and what makes it problematic.
 
 % ── A. Perturbation chain ────────────────────────────────────────────
 
+\begin{remark}[Conditioning precondition]\label{rem:conditioning-precondition}
+All bounds in the perturbation chain
+(Lemmas~\ref{lem:link-assembly}--\ref{lem:link-beta})
+have $\sigma_{\min}(C)$ in their denominators.
+When $\sigma_{\min}(C)$ is small:
+\begin{itemize}
+  \item The null-space basis error $\|\delta V\|$ grows as
+    $O(\varepsilon_{\mathrm{mach}} / \sigma_{\min}(C))$
+    (Lemma~\ref{lem:link-svd});
+  \item The particular solution error $\|\delta\beta_0\|$ grows as
+    $O(\varepsilon_{\mathrm{mach}} / \sigma_{\min}(C)^2)$
+    (Lemma~\ref{lem:link-beta0});
+  \item The eigenvalue perturbation $\varepsilon_\gamma$ grows as
+    $O(\varepsilon_{\mathrm{mach}} / \sigma_{\min}(C))$,
+    potentially exceeding $|\gamma_j|$ for all eigenvalues.
+\end{itemize}
+The f64 solver checks $\tilde\sigma_{\min}(C) > \varepsilon_C$
+as a precondition.
+If the check fails, the solver returns \textsc{Indeterminate}
+for the entire $\sigma$-node, because no downstream bound
+can certify anything.
+
+The threshold $\varepsilon_C$ is not a single derived value.
+Rather, $\sigma_{\min}(C)$ enters all downstream bounds, and the
+solver computes those bounds using the observed $\tilde\sigma_{\min}(C)$.
+If all resulting bounds are too large to certify
+(eigenvalue signs, $\beta > 0$, or Q~error), the outcome is
+\textsc{Indeterminate} regardless of any fixed threshold.
+The precondition $\tilde\sigma_{\min}(C) > \varepsilon_C$ is
+a fast short-circuit: skip the chain when the bounds are
+guaranteed to be useless.
+
+% [GAP - The value of eps_C is determined empirically: choose
+% the smallest value such that no certified (TRUE/FALSE) verdict
+% is overturned by exact arithmetic.  The perturbation chain
+% bounds are valid for any sigma_min(C) > 0; the question is
+% whether they are tight enough to certify.]
+\end{remark}
+
+
 \begin{remark}[Perturbation chain overview]\label{rem:perturbation-chain}
 The f64 solver computes a chain of quantities, each depending
 on the previous.
@@ -709,6 +760,88 @@ and $\sigma_{p+1}(C) = 0$ (the gap to the null space).
 \end{lemma}
 
 
+\begin{lemma}[Link 2b: Particular solution]\label{lem:link-beta0}
+The particular solution $\beta_0 = C^+ d$ (minimum-norm solution
+of $C\beta = d$) is computed from the SVD of~$C$.
+Write $\tilde\beta_0 = \tilde C^+ d$ for the computed value.
+Since $C$ has full row rank, $C^+ = C^\top(C C^\top)^{-1}$
+and $\|C^+\| = 1/\sigma_{\min}(C)$.
+The standard pseudoinverse perturbation bound
+for full-row-rank matrices gives:
+% [TODO: JÖRN - cite Wedin 1973 or Stewart 1977 for pseudoinverse
+% perturbation.  Standard result for rank-preserving perturbations:
+% ||(C + delta C)^+ - C^+|| <= sqrt(2) ||C^+||^2 ||delta C||
+% + O(||delta C||^2).]
+\[
+  \|\delta\beta_0\|
+  = \|\tilde\beta_0 - \beta_0\|
+  \leq \frac{c_6\,\|\delta C_{\mathrm{total}}\| \cdot \|d\|}
+       {\sigma_{\min}(C)^2}
+  + O(\text{second order}),
+\]
+where $c_6$ is a small constant.
+Using $\|\delta C_{\mathrm{total}}\| = O(\varepsilon_{\mathrm{mach}} \cdot \|C\|)$
+from Lemmas~\ref{lem:link-assembly}--\ref{lem:link-svd}:
+\begin{equation}\label{eq:beta0-perturbation}
+  \|\delta\beta_0\|
+  = O\!\left(
+    \frac{\varepsilon_{\mathrm{mach}} \cdot \|C\| \cdot \|d\|}
+         {\sigma_{\min}(C)^2}
+  \right).
+\end{equation}
+The $1/\sigma_{\min}(C)^2$ scaling is one power worse than the
+null-space error ($1/\sigma_{\min}(C)$ from Lemma~\ref{lem:link-svd}),
+because $\beta_0$ depends on the inverses of the singular values of~$C$,
+not just their separation from zero.
+
+We also record $\|\beta_0\| \leq \|C^+\| \cdot \|d\|
+= \|d\| / \sigma_{\min}(C)$, which enters subsequent bounds.
+\end{lemma}
+
+
+\begin{lemma}[Link 2c: Reduced gradient]\label{lem:link-gradient}
+The reduced gradient $g = V^\top H \beta_0$ is computed as
+$\tilde g = \tilde V^\top \tilde H\, \tilde\beta_0$.
+Write $\delta g = \tilde g - g$.  Expanding to first order:
+\begin{align*}
+  \delta g
+  &= (V + \delta V)^\top (H + \delta H)(\beta_0 + \delta\beta_0)
+     - V^\top H \beta_0 \\
+  &= V^\top H\, \delta\beta_0
+     + \delta V^\top H\, \beta_0
+     + V^\top \delta H\, \beta_0
+     + O(\text{second order}).
+\end{align*}
+Each term is bounded by:
+\begin{enumerate}
+  \item $\|V^\top H\, \delta\beta_0\|
+    \leq \|H\| \cdot \|\delta\beta_0\|$
+    \quad (Lemma~\ref{lem:link-beta0}).
+  \item $\|\delta V^\top H\, \beta_0\|
+    \leq \|H\| \cdot \|\delta V\| \cdot \|\beta_0\|$
+    \quad (Lemma~\ref{lem:link-svd}).
+  \item $\|V^\top \delta H\, \beta_0\|
+    \leq \|\delta H\| \cdot \|\beta_0\|$
+    \quad (Lemma~\ref{lem:link-assembly}).
+\end{enumerate}
+Substituting:
+$\|\delta\beta_0\| = O(\varepsilon_{\mathrm{mach}} \cdot \|C\| / \sigma_{\min}(C)^2)$,\;
+$\|\delta V\| = O(\varepsilon_{\mathrm{mach}} / \sigma_{\min}(C))$,\;
+$\|\beta_0\| \leq \|d\| / \sigma_{\min}(C)$,\;
+$\|\delta H\| = O(\varepsilon_{\mathrm{mach}})$:
+\begin{equation}\label{eq:gradient-perturbation}
+  \|\delta g\|
+  = O\!\left(
+    \frac{(\|H\| \cdot \|C\| + \|H\| + 1) \cdot
+          \varepsilon_{\mathrm{mach}} \cdot \|d\|}
+         {\sigma_{\min}(C)^2}
+  \right).
+\end{equation}
+In the EHZ setting ($\|H\|$, $\|C\|$, $\|d\|$ all $O(1)$),
+this simplifies to $\|\delta g\| = O(\varepsilon_{\mathrm{mach}} / \sigma_{\min}(C)^2)$.
+\end{lemma}
+
+
 \begin{lemma}[Link 3: Reduced Hessian]\label{lem:link-reduced-hessian}
 The reduced Hessian $H' = V^\top H V$ is computed as
 $\tilde H' = \tilde V^\top \tilde H\, \tilde V$.
@@ -771,58 +904,152 @@ The trinary classification threshold is derived, not heuristic.
 \end{lemma}
 
 
-\begin{lemma}[Link 5: Critical point $\beta^*$]\label{lem:link-beta}
-In the negative definite case (all $\gamma_j < 0$),
-the exact critical point is
-$\beta^* = \beta_0 + V \alpha^*$ where
-$\alpha^* = -(H')^{-1} g$.
-The computed $\tilde\alpha = -(\tilde H')^{-1} \tilde g$
-satisfies
-\[
-  \|\tilde\alpha - \alpha^*\|
-  \leq \|(H')^{-1}\| \cdot
-    \bigl(
-      \|\Delta H'\| \cdot \|\alpha^*\| + \|\delta g\|
-    \bigr)
-    + O(\text{second order}),
-\]
-% [TODO: JÖRN - this is the standard perturbation bound for
-% linear solves: (A+dA)^{-1}(b+db) - A^{-1}b.  Cite.]
-where $\|(H')^{-1}\| = 1/\min_j |\gamma_j|$.
+\begin{lemma}[Link 5: Critical point and $\beta > 0$ certification]%
+\label{lem:link-beta}
+Assume all retained eigenvalues of~$\tilde H'$ are negative:
+$\tilde\gamma_j < -\varepsilon_\gamma$ for $j = 1, \ldots, k$
+(no null eigenvalues; the semidefinite case with null directions
+is treated separately via the LP search in the f64 algorithm).
+By Lemma~\ref{lem:link-eigenvalues}, the exact eigenvalues
+satisfy $\gamma_j < 0$, so $H'$ is negative definite
+and the unique critical point is
+$\alpha^* = -(H')^{-1} g$ with $\beta^* = \beta_0 + V\alpha^*$.
 
-\textbf{Direction-dependent amplification:}
-In the eigenbasis of $H'$, the $j$-th component of
-$\tilde\alpha - \alpha^*$ is amplified by $1/|\gamma_j|$.
-For small $|\gamma_j|$, the error in direction~$j$ is large.
-Consequently:
-\[
-  \tilde\beta_k - \beta^*_k
-  = \sum_j (V w_j)_k \cdot
-    \frac{\delta(\text{stuff})_j}{|\gamma_j|},
-\]
-where $w_j$ are the eigenvectors of~$H'$.
-When $|\gamma_j|$ is small, component~$k$ of $\tilde\beta$
-can differ from $\beta^*_k$ by much more than
-$\varepsilon_{\mathrm{mach}}$.
+Let $w_1, \ldots, w_k$ be orthonormal eigenvectors of~$H'$
+(so $H' w_j = \gamma_j w_j$, $g_j = w_j^\top g$,
+$\alpha^*_j = -g_j / \gamma_j$).
+The computed $\tilde\alpha = -(\tilde H')^{-1} \tilde g$ has
+first-order error:
+% [TODO: JÖRN - cite GVL \S2.6.2 or Higham \S7.2 for the standard
+% perturbation bound $(A+\delta A)^{-1}(b+\delta b) - A^{-1}b
+% = -A^{-1}(\delta A \cdot x + \delta b) + O(\|\delta A\|^2)$.]
+\begin{equation}\label{eq:alpha-perturbation}
+  \delta\alpha
+  = \tilde\alpha - \alpha^*
+  = -(H')^{-1}\bigl(\Delta H' \cdot \alpha^* + \delta g\bigr)
+  + O(\text{second order}).
+\end{equation}
 
-\textbf{$\beta > 0$ certification:}
-We need $\min_k \beta^*_k > 0$.  The margin test is:
-\[
-  \min_k \tilde\beta_k
-  > \sum_j \frac{|(\text{error bound})_j|}{|\gamma_j|}
-    \cdot \max_k |(V w_j)_k|.
-\]
-If this holds, $\beta^* > 0$ is certified.
-If not, return INDETERMINATE.
+\textbf{Direction-dependent amplification.}
+In the eigenbasis of~$H'$, the $j$-th component is:
+\begin{equation}\label{eq:alpha-component-error}
+  (\delta\alpha)_j
+  = -\frac{e_j + f_j}{\gamma_j},
+  \qquad
+  e_j = w_j^\top \Delta H'\, \alpha^*,
+  \quad
+  f_j = w_j^\top \delta g.
+\end{equation}
+The amplification $1/|\gamma_j|$ makes the error large for
+eigenvalues near zero.
 
-% [GAP - The bound above is schematic, not rigorous.
-% The "delta(stuff)_j" involves both Delta H' and delta g
-% projected onto eigenvector j.  Need to make this precise.
-% Also: the bound requires knowing |gamma_j| (exact), but
-% we only have |tilde gamma_j|.  By Lemma lem:link-eigenvalues,
-% |gamma_j| >= |tilde gamma_j| - epsilon_gamma, so we can
-% substitute -- but this fails when |tilde gamma_j| <= epsilon_gamma
-% (the INDETERMINATE zone for eigenvalues).]
+\textbf{Full $\beta$ error.}
+The error in $\beta$ has three sources:
+\begin{equation}\label{eq:beta-error-decomposition}
+  \delta\beta_k
+  = \underbrace{\sum_j (Vw_j)_k \cdot (\delta\alpha)_j}_{%
+      \text{critical-point shift}}
+  + \underbrace{(\delta V \cdot \alpha^*)_k}_{%
+      \text{null-space rotation}}
+  + \underbrace{(\delta\beta_0)_k}_{%
+      \text{particular-solution shift}}
+  + O(\text{second order}).
+\end{equation}
+
+\textbf{Componentwise bound.}
+Each term in~\eqref{eq:beta-error-decomposition} is bounded by:
+\begin{itemize}
+  \item $|e_j| \leq \|\Delta H'\| \cdot \|\alpha^*\|$
+    (Cauchy--Schwarz; Lemma~\ref{lem:link-reduced-hessian}).
+  \item $|f_j| \leq \|\delta g\|$
+    (Lemma~\ref{lem:link-gradient}).
+  \item $|(\delta V \cdot \alpha^*)_k|
+    \leq \|\delta V\| \cdot \|\alpha^*\|$
+    (Lemma~\ref{lem:link-svd}).
+  \item $|(\delta\beta_0)_k| \leq \|\delta\beta_0\|$
+    (Lemma~\ref{lem:link-beta0}).
+\end{itemize}
+Combining:
+\begin{equation}\label{eq:beta-certification-bound}
+  |\delta\beta_k|
+  \leq \bigl(\|\Delta H'\| \cdot \|\alpha^*\| + \|\delta g\|\bigr)
+       \sum_{j=1}^{k} \frac{|(Vw_j)_k|}{|\gamma_j|}
+  + \|\delta V\| \cdot \|\alpha^*\|
+  + \|\delta\beta_0\|.
+\end{equation}
+
+\textbf{Computable proxy.}
+Since exact quantities ($V$, $w_j$, $\gamma_j$, $\alpha^*$)
+are unavailable, the f64 solver substitutes computed values.
+For retained eigenvalues ($|\tilde\gamma_j| > \varepsilon_\gamma$),
+Lemma~\ref{lem:link-eigenvalues} gives
+$|\gamma_j| \geq |\tilde\gamma_j| - \varepsilon_\gamma > 0$.
+Define the computable bound:
+\begin{equation}\label{eq:eta-computable}
+  \eta_k
+  = \bigl(\hat E_{\Delta H'} \|\tilde\alpha\|
+    + \hat E_{\delta g}\bigr)
+    \sum_{j=1}^{k}
+      \frac{|(\tilde V \tilde w_j)_k|}
+           {|\tilde\gamma_j| - \varepsilon_\gamma}
+  + \hat E_{\delta V} \|\tilde\alpha\|
+  + \hat E_{\delta\beta_0},
+\end{equation}
+where the constants are computable upper bounds from
+Lemmas~\ref{lem:link-svd}--\ref{lem:link-gradient}:
+\begin{align*}
+  \hat E_{\Delta H'}
+  &= c_{\Delta H'}\,
+     \frac{\|\tilde H\|\, \varepsilon_{\mathrm{mach}}}
+          {\tilde\sigma_{\min}(C)},
+  &
+  \hat E_{\delta g}
+  &= c_{\delta g}\,
+     \frac{\|\tilde H\| \cdot \|\tilde C\| \cdot
+           \varepsilon_{\mathrm{mach}}}
+          {\tilde\sigma_{\min}(C)^2}, \\
+  \hat E_{\delta V}
+  &= c_{\delta V}\,
+     \frac{\varepsilon_{\mathrm{mach}}}
+          {\tilde\sigma_{\min}(C)},
+  &
+  \hat E_{\delta\beta_0}
+  &= c_{\delta\beta_0}\,
+     \frac{\|\tilde C\| \cdot
+           \varepsilon_{\mathrm{mach}}}
+          {\tilde\sigma_{\min}(C)^2}.
+\end{align*}
+Tildes denote computed (f64) values; the substitution
+of computed for exact quantities introduces $O(\varepsilon_{\mathrm{mach}})$
+relative errors, absorbed into the constants.
+All quantities ($\tilde V$, $\tilde w_j$, $\tilde\gamma_j$,
+$\tilde\alpha$, $\tilde H$, $\tilde C$,
+$\tilde\sigma_{\min}(C)$) are available from the solver.
+
+\medskip\noindent
+\textbf{Trinary $\beta > 0$ certification.}
+\begin{itemize}
+  \item \textsc{True}
+    ($\tilde\beta_k - \eta_k > 0$ for all~$k$):
+    then $\beta^*_k \geq \tilde\beta_k - |\delta\beta_k|
+    \geq \tilde\beta_k - \eta_k > 0$.
+    Interior solution certified.
+  \item \textsc{False}
+    ($\tilde\beta_k + \eta_k < 0$ for some~$k$):
+    then $\beta^*_k \leq \tilde\beta_k + \eta_k < 0$.
+    Infeasible $\beta$ certified.
+  \item \textsc{Indeterminate}: otherwise.
+    Cannot determine the sign of~$\beta^*_k$.
+\end{itemize}
+
+% [GAP - The constants c_{DeltaH'}, c_{delta g}, c_{delta V},
+% c_{delta beta_0} are not derived from first principles.
+% In the implementation, we set all constants to 1 and measure
+% the ratio |actual delta beta_k| / eta_k across the test dataset.
+% If the ratio exceeds 1 for any problem, the constants must be
+% increased.  If the ratio is always << 1, the bound is valid
+% but loose.  The empirical data determines whether eta_k is
+% small enough to certify a useful fraction of problems.]
 \end{lemma}
 
 

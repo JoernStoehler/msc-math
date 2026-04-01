@@ -898,3 +898,281 @@ pub fn solve_projected(qp: &QP) -> Solution {
 fn q_value_from_dvec(h: &DMatrix<f64>, beta: &DVector<f64>) -> f64 {
     0.5 * beta.dot(&(h * beta))
 }
+
+// ══════════════════════════════════════════════════════════════════════════════
+// Projection solver diagnostics — perturbation chain validation
+// [lem:link-beta] eq:eta-computable
+// ══════════════════════════════════════════════════════════════════════════════
+
+/// Diagnostics from the projection solver's perturbation chain.
+/// All quantities needed to compute and validate the β > 0 certification bound.
+#[derive(Clone, Debug)]
+pub struct ProjDiagnostics {
+    /// Particular solution β₀ = C⁺d.
+    pub beta0: Vec<f64>,
+    /// Null-space basis V (m × k).
+    pub null_basis: DMatrix<f64>,
+    /// Reduced Hessian H' = V^T H V (k × k).
+    pub h_prime: DMatrix<f64>,
+    /// Reduced gradient g = V^T H β₀ (k × 1).
+    pub g: DVector<f64>,
+    /// Eigenvalues γ̃_j of H' (k entries).
+    pub eigenvalues: DVector<f64>,
+    /// Eigenvectors W = [w̃_1 | ... | w̃_k] of H' (k × k).
+    pub eigenvectors: DMatrix<f64>,
+    /// Critical point in null-space coords: α̃ = -(H')⁺ g (k × 1).
+    pub alpha: DVector<f64>,
+    /// σ_min(C) — smallest singular value of C.
+    pub sigma_min_c: f64,
+    /// ‖H‖ — spectral norm of H.
+    pub norm_h: f64,
+    /// ‖C‖ — spectral norm of C.
+    pub norm_c: f64,
+    /// k = dim(ker(C)) = ncols of null_basis.
+    pub null_dim: usize,
+    /// Eigenvalue perturbation threshold ε_γ = c · ‖H‖ · ε_mach / σ_min(C).
+    /// Eigenvalue signs are certified when |γ̃_j| > ε_γ.
+    pub eps_gamma: f64,
+    /// Componentwise β certification bound η_k from eq:eta-computable.
+    /// η_k bounds |β̃_k - β*_k| using the perturbation chain.
+    pub eta: Vec<f64>,
+    /// Final β̃ from the solver (may differ from β₀ + V·α̃ due to LP margin search).
+    pub beta_final: Vec<f64>,
+}
+
+/// Machine epsilon for f64.
+const EPS_MACH: f64 = f64::EPSILON; // 2.22e-16
+
+/// Solve the QP via constraint projection, returning both the solution
+/// and perturbation-chain diagnostics for validation.
+pub fn solve_projected_with_diagnostics(qp: &QP) -> (Solution, Option<ProjDiagnostics>) {
+    let m = qp.c.ncols();
+
+    // Step 1: Solve constraints.
+    let constraint_sol = match solve_constraints(&qp.c, &qp.d) {
+        Some(sol) => sol,
+        None => {
+            return (Solution {
+                verdict: Verdict::False,
+                q: 0.0,
+                beta: vec![0.0; m],
+                margin: f64::NEG_INFINITY,
+            }, None);
+        }
+    };
+
+    let beta0 = &constraint_sol.x0;
+    let v = &constraint_sol.null_basis;
+    let k = v.ncols();
+
+    // Compute σ_min(C) and ‖C‖ from SVD (re-compute to get singular values).
+    let svd_c = qp.c.clone().svd(false, false);
+    let sigma_vals = &svd_c.singular_values;
+    let sigma_min_c = sigma_vals.iter().cloned()
+        .filter(|&s| s > 1e-15)
+        .fold(f64::INFINITY, f64::min);
+    let norm_c = sigma_vals.iter().cloned().fold(0.0f64, f64::max);
+
+    // ‖H‖ = max |eigenvalue of H|.
+    let eig_h = qp.h.clone().symmetric_eigen();
+    let norm_h = eig_h.eigenvalues.iter().map(|e| e.abs()).fold(0.0f64, f64::max);
+
+    // Special case: k = 0 (unique beta from constraints).
+    if k == 0 {
+        let q = q_value_from_dvec(&qp.h, beta0);
+        let margin = beta0.iter().copied().fold(f64::INFINITY, f64::min);
+        let verdict = classify_margin(margin);
+        let sol = Solution {
+            verdict,
+            q,
+            beta: beta0.as_slice().to_vec(),
+            margin,
+        };
+        let diag = ProjDiagnostics {
+            beta0: beta0.as_slice().to_vec(),
+            null_basis: v.clone(),
+            h_prime: DMatrix::zeros(0, 0),
+            g: DVector::zeros(0),
+            eigenvalues: DVector::zeros(0),
+            eigenvectors: DMatrix::zeros(0, 0),
+            alpha: DVector::zeros(0),
+            sigma_min_c,
+            norm_h,
+            norm_c,
+            null_dim: 0,
+            eps_gamma: f64::INFINITY,
+            eta: vec![f64::INFINITY; m],
+            beta_final: beta0.as_slice().to_vec(),
+        };
+        return (sol, Some(diag));
+    }
+
+    // Step 2: Project and optimize.
+    let hv = &qp.h * v;
+    let h_prime = v.transpose() * &hv;
+    let h_beta0 = &qp.h * beta0;
+    let b_prime = v.transpose() * &h_beta0; // g = V^T H β₀
+
+    // Eigendecompose H' = P Λ P^T.
+    let eig = h_prime.clone().symmetric_eigen();
+    let eigenvalues = &eig.eigenvalues;
+    let eigenvectors = &eig.eigenvectors;
+
+    // Partition eigenvalues into retained and null.
+    let lambda_max = eigenvalues.iter().map(|e| e.abs()).fold(0.0_f64, f64::max);
+    let threshold = if lambda_max < EPS_EIGEN_FLOOR {
+        f64::INFINITY
+    } else {
+        lambda_max * EPS_EIGEN_THRESHOLD
+    };
+
+    // ε_γ from [lem:link-eigenvalues]: eigenvalue perturbation bound.
+    // Using c₅ = 1 for now (to be calibrated empirically).
+    let eps_gamma = if sigma_min_c > 1e-15 {
+        norm_h * EPS_MACH / sigma_min_c
+    } else {
+        f64::INFINITY
+    };
+
+    // α̃ = -(H')⁺ g (thresholded pseudoinverse).
+    let mut alpha0 = DVector::zeros(k);
+    for i in 0..k {
+        if eigenvalues[i].abs() > threshold {
+            let pi = eigenvectors.column(i);
+            let coeff = -pi.dot(&b_prime) / eigenvalues[i]; // NEGATED (sign fix)
+            alpha0 += coeff * &pi;
+        }
+    }
+
+    // Null-space directions of H'.
+    let null_indices: Vec<usize> = (0..k)
+        .filter(|&i| eigenvalues[i].abs() <= threshold)
+        .collect();
+
+    // Step 3: Compose search space.
+    let beta_base = beta0 + v * &alpha0;
+    let n_null = null_indices.len();
+    let v_search = if n_null > 0 {
+        let mut w_alpha = DMatrix::zeros(k, n_null);
+        for (j, &idx) in null_indices.iter().enumerate() {
+            let col = eigenvectors.column(idx);
+            for i in 0..k {
+                w_alpha[(i, j)] = col[i];
+            }
+        }
+        v * w_alpha
+    } else {
+        DMatrix::zeros(m, 0)
+    };
+
+    // Step 4: Max-margin search.
+    let margin_result = find_max_margin(&beta_base, &v_search);
+
+    // Step 5: Compute Q.
+    let q = q_value_from_dvec(&qp.h, &margin_result.beta);
+    let margin = margin_result.margin;
+    let verdict = classify_margin(margin);
+
+    // ── Compute η_k (certification bound from eq:eta-computable) ──
+    // Using constants c = 1 for all terms (to be calibrated empirically).
+    let eta = compute_eta_bound(
+        m, k, v, eigenvectors, eigenvalues, &alpha0, &margin_result.beta,
+        norm_h, norm_c, sigma_min_c, eps_gamma, &null_indices,
+    );
+
+    let sol = Solution {
+        verdict,
+        q,
+        beta: margin_result.beta.as_slice().to_vec(),
+        margin,
+    };
+
+    let diag = ProjDiagnostics {
+        beta0: beta0.as_slice().to_vec(),
+        null_basis: v.clone(),
+        h_prime,
+        g: b_prime,
+        eigenvalues: eigenvalues.clone(),
+        eigenvectors: eigenvectors.clone(),
+        alpha: alpha0,
+        sigma_min_c,
+        norm_h,
+        norm_c,
+        null_dim: k,
+        eps_gamma,
+        eta,
+        beta_final: margin_result.beta.as_slice().to_vec(),
+    };
+
+    (sol, Some(diag))
+}
+
+/// Compute the componentwise β certification bound η_k from eq:eta-computable.
+///
+/// η_k = (E_ΔH' · ‖α̃‖ + E_δg) · Σ_j |(Ṽw̃_j)_k| / (|γ̃_j| - ε_γ)
+///       + E_δV · ‖α̃‖ + E_δβ₀
+///
+/// All constants set to 1 for initial calibration.
+fn compute_eta_bound(
+    m: usize,
+    k: usize,
+    v: &DMatrix<f64>,        // m × k null-space basis
+    w: &DMatrix<f64>,        // k × k eigenvectors of H'
+    gamma: &DVector<f64>,    // k eigenvalues of H'
+    alpha: &DVector<f64>,    // k critical-point coords
+    _beta_final: &DVector<f64>, // m final beta (for reference)
+    norm_h: f64,
+    norm_c: f64,
+    sigma_min_c: f64,
+    eps_gamma: f64,
+    null_indices: &[usize],  // indices of null eigenvalues
+) -> Vec<f64> {
+    if k == 0 || sigma_min_c < 1e-15 {
+        return vec![f64::INFINITY; m];
+    }
+
+    let alpha_norm = alpha.norm();
+
+    // Error magnitudes from the perturbation chain (constants = 1).
+    let e_delta_h_prime = norm_h * EPS_MACH / sigma_min_c;
+    let e_delta_g = norm_h * norm_c * EPS_MACH / (sigma_min_c * sigma_min_c);
+    let e_delta_v = EPS_MACH / sigma_min_c;
+    let e_delta_beta0 = norm_c * EPS_MACH / (sigma_min_c * sigma_min_c);
+
+    // Pre-compute V · w_j for each eigenvector j (m-dimensional vectors).
+    // (Ṽw̃_j)_k = Σ_l V[k,l] · w_j[l]
+    let vw: Vec<DVector<f64>> = (0..k)
+        .map(|j| {
+            let wj = w.column(j);
+            v * &wj
+        })
+        .collect();
+
+    let mut eta = vec![0.0f64; m];
+
+    for comp_k in 0..m {
+        // Term 1: critical-point shift (sum over retained eigenvalues only)
+        let mut sum_amplified = 0.0f64;
+        for j in 0..k {
+            // Skip null eigenvalues (they're handled by LP search, not by α)
+            if null_indices.contains(&j) {
+                continue;
+            }
+            let gamma_j_safe = gamma[j].abs() - eps_gamma;
+            if gamma_j_safe <= 0.0 {
+                // Eigenvalue too close to threshold — bound is infinite
+                eta[comp_k] = f64::INFINITY;
+                break;
+            }
+            sum_amplified += vw[j][comp_k].abs() / gamma_j_safe;
+        }
+        if eta[comp_k].is_infinite() {
+            continue;
+        }
+        eta[comp_k] = (e_delta_h_prime * alpha_norm + e_delta_g) * sum_amplified
+            + e_delta_v * alpha_norm
+            + e_delta_beta0;
+    }
+
+    eta
+}

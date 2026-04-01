@@ -1,4 +1,4 @@
-Q Accuracy Checks — 18366 problems, 13390 feasible (12894 EHZ-like, 496 stress-test)
+Q Accuracy Checks — 4303 problems, 668 feasible (172 EHZ-like, 496 stress-test)
 
 ========================================================================================================================
 PROPOSITIONS (assumptions, conjectures, bug detection)
@@ -7,31 +7,31 @@ PROPOSITIONS (assumptions, conjectures, bug detection)
   P4: σ_min(C) > 1e-12
     Type: assumption  |  Assumes: —  |  Used for: B2, B3 (E₁ finite)
     Threshold: > 1e-12
-    EHZ-like:    n=12894  range=1.19e-03 – 3.15e+00             tightest=     8.4e-10  violations=0
+    EHZ-like:    n= 172  range=2.14e-01 – 3.15e+00             tightest=     4.7e-12  violations=0
     Stress-test: n= 496  range=2.65e-13 – 2.35e+00             tightest=     3.8e+00  violations=18
 
   P5: ‖H‖/σ_min(C) (diagnostic, no threshold)
     Type: diagnostic  |  Assumes: —  |  Used for: recorded (conjecture falsified 2026-03-31)
     Threshold: none
-    EHZ-like:    n=12894  range=0.00e+00 – 1.31e+03             tightest=       0.000  violations=0
+    EHZ-like:    n= 172  range=4.73e-01 – 7.08e+01             tightest=       0.000  violations=0
     Stress-test: n= 496  range=8.52e-01 – 2.27e+14             tightest=       0.000  violations=0
 
   P6: ‖r_β‖ < 1e-3 (full-rank M only)
     Type: bug_detection  |  Assumes: —  |  Used for: sanity
     Threshold: < 1e-3
-    EHZ-like:    n=12497  range=6.51e-17 – 7.08e-08             tightest=       0.000  violations=0
+    EHZ-like:    n= 170  range=4.81e-16 – 6.33e-11             tightest=       0.000  violations=0
     Stress-test: n=  30  range=5.01e-16 – 7.64e-11             tightest=       0.000  violations=0
 
   P7: ‖β‖ ≤ 2
     Type: bug_detection  |  Assumes: —  |  Used for: sanity (EHZ: ‖β‖₁=1)
     Threshold: ≤ 2
-    EHZ-like:    n=12894  range=3.30e-01 – 7.56e-01             tightest=       0.378  violations=0
+    EHZ-like:    n= 172  range=3.30e-01 – 5.45e-01             tightest=       0.272  violations=0
     Stress-test: n= 496  range=3.18e-01 – 2.83e+00             tightest=       1.417  violations=2
 
   P8: ‖r_λ‖ < 1e-6
     Type: bug_detection  |  Assumes: —  |  Used for: sanity
     Threshold: < 1e-6
-    EHZ-like:    n=12894  range=5.00e-17 – 2.88e-08             tightest=       0.029  violations=0
+    EHZ-like:    n= 172  range=3.38e-16 – 2.03e-11             tightest=       0.000  violations=0
     Stress-test: n= 496  range=2.78e-16 – 1.73e+00             tightest= 1732568.111  violations=2
 
 ========================================================================================================================
@@ -41,19 +41,19 @@ PROVEN BOUNDS (from math.tex, checked against exact rational ground truth)
   B2: ‖λ*‖ / (‖H‖·‖β*‖/σ_min(C)) ≤ 1
     Type: proven_bound  |  Assumes: P3, P4  |  Used for: B3 proof
     Threshold: ratio ≤ 1
-    EHZ-like:    n=12879  range=0.00e+00 – 9.76e-01             tightest=       0.976  violations=0
+    EHZ-like:    n= 172  range=4.29e-02 – 8.88e-01             tightest=       0.888  violations=0
     Stress-test: n= 461  range=6.06e-04 – 6.36e-01             tightest=       0.636  violations=0
 
   B3: |Q−Q*| / (‖H‖·‖β‖·‖r‖/σ_min(C)) ≤ 1
     Type: proven_bound  |  Assumes: P3, P4, β*>0  |  Used for: runtime certification
     Threshold: ratio ≤ 1
-    EHZ-like:    n=10854  range=2.26e-10 – 1.68e-01             tightest=       0.168  violations=0
+    EHZ-like:    n= 145  range=6.08e-07 – 1.49e-01             tightest=       0.149  violations=0
     Stress-test: n= 446  range=1.61e-11 – 2.33e-01             tightest=       0.233  violations=0
 
   B4: |Q_raw−Q*| / (‖H‖·‖β‖·‖r‖/σ_min(C)) ≤ 1
     Type: proven_bound  |  Assumes: P3, P4, β*>0  |  Used for: correction helps
     Threshold: ratio ≤ 1
-    EHZ-like:    n=12572  range=2.04e-06 – 5.57e-01             tightest=       0.557  violations=0
+    EHZ-like:    n= 165  range=9.69e-04 – 3.28e-01             tightest=       0.328  violations=0
     Stress-test: n= 456  range=1.61e-11 – 2.86e-01             tightest=       0.286  violations=0
 
   B5: 1st/2nd = 2  (identity, full-rank M only)
@@ -65,17 +65,17 @@ PROVEN BOUNDS (from math.tex, checked against exact rational ground truth)
   B6: |Q−Q*| / |Q_raw−Q*| ≤ 2  (correction doesn't worsen)
     Type: observation  |  Assumes: —  |  Used for: sanity
     Threshold: ratio ≤ 2
-    EHZ-like:    n= 357  range=6.07e-08 – 6.34e-02             tightest=       0.032  violations=0
+    EHZ-like:    n=   6  range=1.72e-05 – 2.58e-02             tightest=       0.013  violations=0
     Stress-test: n= 353  range=3.81e-07 – 1.00e+00             tightest=       0.500  violations=0
 
 ========================================================================================================================
 CORRECTION EFFECTIVENESS
 ========================================================================================================================
 
-  EHZ-like (12894 cases):
-    |Q_raw−Q*|:  median 4.9e-17,  max 4.4e-09
-    |Q−Q*|:      median 6.9e-18,  max 3.9e-14
-    Correction helps >10x: 4298/12894
+  EHZ-like (172 cases):
+    |Q_raw−Q*|:  median 1.5e-16,  max 6.4e-12
+    |Q−Q*|:      median 3.5e-17,  max 6.7e-16
+    Correction helps >10x: 34/172
 
   Stress-test (496 cases):
     |Q_raw−Q*|:  median 2.4e-10,  max 3.8e+02
@@ -86,15 +86,15 @@ CORRECTION EFFECTIVENESS
 β > 0 CLASSIFICATION
 ========================================================================================================================
 
-  EHZ-like (12894 problems, 0 skipped):
-    True positive  (both β>0):  12868
-    True negative  (both β≤0):  17
+  EHZ-like (172 problems, 0 skipped):
+    True positive  (both β>0):  172
+    True negative  (both β≤0):  0
     False positive (solver β>0, exact β≤0): 0
-    False negative (solver β≤0, exact β>0): 9
-    |margin_f64 - margin_exact|: med=1.99e-16, max=1.73e-01
-    ‖β_f64 - β*‖₂: med=7.75e-16, max=2.09e-01
-    True-positive margin_f64: min=3.51e-05, med=3.75e-02, max=3.33e-01
-    Q sign: both Q>0: 12667, Q*≤0: 217, Q_f64≤0: 211
+    False negative (solver β≤0, exact β>0): 0
+    |margin_f64 - margin_exact|: med=1.80e-16, max=3.60e-13
+    ‖β_f64 - β*‖₂: med=6.43e-16, max=2.99e-12
+    True-positive margin_f64: min=8.00e-05, med=2.91e-02, max=1.12e-01
+    Q sign: both Q>0: 100, Q*≤0: 72, Q_f64≤0: 72
 
   Stress-test (496 problems, 19 skipped):
     True positive  (both β>0):  462
@@ -106,15 +106,56 @@ CORRECTION EFFECTIVENESS
     True-positive margin_f64: min=2.09e-03, med=5.56e-02, max=1.45e-01
     Q sign: both Q>0: 400, Q*≤0: 58, Q_f64≤0: 63
 
-  Natural polytope (12722 problems, 0 skipped):
-    True positive  (both β>0):  12696
-    True negative  (both β≤0):  17
-    False positive (solver β>0, exact β≤0): 0
-    False negative (solver β≤0, exact β>0): 9
-    |margin_f64 - margin_exact|: med=2.01e-16, max=1.73e-01
-    ‖β_f64 - β*‖₂: med=7.78e-16, max=2.09e-01
-    True-positive margin_f64: min=3.51e-05, med=3.77e-02, max=3.33e-01
-    Q sign: both Q>0: 12567, Q*≤0: 145, Q_f64≤0: 139
+
+========================================================================================================================
+PERTURBATION CHAIN — β > 0 CERTIFICATION BOUND [lem:link-beta]
+========================================================================================================================
+
+  Dataset: 668 problems (projection feasible + exact feasible)
+
+  η_k bound validity (max_k |β̃_k - β*_k| / η_k):
+    Should be ≤ 1 for the bound to be valid.
+    median: 5.6496e-05
+    p99:    9.9337e-01
+    max:    5.8610e+01
+    violations (ratio > 1): 6/668
+
+  Actual β error (max_k |β̃_k - β*_k|):
+    median: 4.2161e-14
+    p99:    8.5791e-02
+    max:    9.9151e-01
+
+  η_k bound magnitude (max_k η_k):
+    median: 4.5137e-09
+    p99:    1.7601e+10
+    max:    6.6366e+10
+    infinite (η = ∞): 0/668
+
+  Certified margin min_k(β̃_k - η_k):
+    β > 0 certified: 547/668 (81.9%)
+    certified margin min: 8.0048e-05
+    certified margin max: 1.3545e-01
+
+  ε_γ (eigenvalue perturbation threshold):
+    median: 3.6371e-13
+    max:    5.0419e-02
+
+  Per-family breakdown:
+  Family                        n  max η_ratio    med η_max  certified    max|δβ|
+  --------------------------------------------------------------------------------
+  clustered_h_eig              19   2.3368e+00   2.9121e-15   19/19    1.7417e-15
+  clustered_m_eig             200   2.2308e-02   8.6472e-09  200/200   9.8701e-06
+  double_singular              25   1.0188e-02   1.0121e-04   17/25    2.0924e-08
+  ehz_like                      9   2.6636e-01   3.1726e-15    9/9     1.0547e-15
+  feasible_constructed         52   1.0968e+01   3.4692e-15   52/52    1.6750e-14
+  ill_cond_c                  191   1.7057e-02   1.6105e-02   98/191   9.9151e-01
+  indefinite_h                  2   3.3773e-01   2.4756e-15    2/2     3.8858e-16
+  large_h_ill_c                61   6.2713e-03   3.3336e-04   41/61    6.5314e-02
+  near_singular_h              27   5.8610e+01   1.5875e-15   27/27    6.7498e-14
+  random_dense                 11   2.6919e-01   2.3566e-15   11/11    6.6613e-16
+  singular_h                   16   4.9798e-01   1.6071e-15   16/16    7.0777e-16
+  small_m6                      7   6.3063e-01   2.9204e-15    7/7     1.8319e-15
+  tiny_lam_min                 48   5.5592e+00   5.3246e-15   48/48    7.4940e-15
 
 ========================================================================================================================
 FAMILY SUMMARY
@@ -131,7 +172,6 @@ FAMILY SUMMARY
     indefinite_h                2   4.16e-17   4.16e-17   1.80e+00   1.09e+00 2/2
   * large_h_ill_c              60   3.82e+02   2.06e-10   4.16e-13   2.27e+14 0/60
     near_singular_h            27   8.33e-17   1.39e-17   1.93e+00   9.95e-01 27/27
-    polytope_sigma_node     12722   3.95e-14   5.20e-18   1.19e-03   1.31e+03 12327/12722
     random_dense               11   6.66e-16   1.67e-16   1.15e+00   1.87e+01 11/11
     singular_h                 16   2.78e-17   1.39e-17   1.22e+00   1.16e+00 16/16
     small_m6                    7   2.22e-16   5.55e-17   3.11e-01   3.96e+01 6/7
