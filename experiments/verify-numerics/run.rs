@@ -161,6 +161,15 @@ struct Record {
 
     /// dim(ker(C)) = k.
     proj_null_dim: usize,
+
+    /// Per-eigendirection error: |δα_j| for j = 1..k, where δα = V^T(β̃ - β*).
+    /// Empty if exact or projection solver infeasible.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    proj_delta_alpha: Vec<f64>,
+
+    /// Eigenvalues γ_j of H' (same order as proj_delta_alpha).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    proj_eigenvalues: Vec<f64>,
 }
 
 /// Row from collected.jsonl or artificial.jsonl (written by collect_inputs.rs).
@@ -1370,6 +1379,30 @@ fn main() {
                 d.eigenvalues.iter().filter(|&&g| g.abs() <= d.eps_gamma).count()
             }),
             proj_null_dim: proj_diag.as_ref().map_or(0, |d| d.null_dim),
+            proj_delta_alpha: {
+                // δα = W^T V^T (β̃ - β*) — error in eigenbasis of H'.
+                match (&beta_exact, &proj_diag) {
+                    (Some(be), Some(diag)) if !proj.beta.is_empty()
+                        && (proj.verdict == "true" || proj.verdict == "indeterminate")
+                        && diag.null_dim > 0 =>
+                    {
+                        let be_f64: Vec<f64> = be.iter().map(|b| rational_to_f64(b)).collect();
+                        let k = diag.null_dim;
+                        let m = prob.m;
+                        // δβ = β̃ - β*
+                        let db = DVector::from_fn(m, |i, _| proj.beta[i] - be_f64[i]);
+                        // V^T δβ (project into null-space coords)
+                        let vt_db = diag.null_basis.transpose() * &db;
+                        // W^T (V^T δβ) (rotate into eigenbasis)
+                        let delta_alpha = diag.eigenvectors.transpose() * &vt_db;
+                        (0..k).map(|j| delta_alpha[j].abs()).collect()
+                    }
+                    _ => Vec::new(),
+                }
+            },
+            proj_eigenvalues: proj_diag.as_ref().map_or(Vec::new(), |d| {
+                d.eigenvalues.iter().copied().collect()
+            }),
         };
 
         let json = serde_json::to_string(&record).expect("serialize");

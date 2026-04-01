@@ -459,6 +459,25 @@ Results on natural data (1192 polytope σ-nodes via filter_poly_diverse):
 
 Root cause of violations: when H' has a near-zero eigenvalue, the solver searches the null eigendirection via LP. The LP shift is O(1) but the bound predicts O(ε_mach). Extending the bound to cover this case is the next step.
 
+### Empirical conjecture: per-eigendirection β error (2026-04-01)
+
+Confirmed on 364 I1 problems (all γ_j < 0, unique interior β*) from natural polytope data:
+
+|δα_j| ≈ ε_mach / |γ_j|
+
+where δα_j is the error in the j-th eigendirection of H' (δα = W^T V^T (β̃ - β*)).
+The product |δα_j| · |γ_j| is ~10^{-16} to 10^{-17} across 15 orders of magnitude of |γ_j|
+(from |γ_j| ≈ 1 down to |γ_j| ≈ 10^{-5}). Proportionality constant ≈ ε_mach.
+
+The componentwise β error follows via:
+|δβ_k| ≈ ε_mach · Σ_j |(Vw_j)_k| / |γ_j|
+
+This is the shape of the η_k bound (eq:eta-computable in math.tex). The bound is valid
+with safety constant c = m² (zero violations on well-separated eigenvalues).
+
+Outlier: |γ_j| ≈ 10^{-15} gives |δα_j| ≈ 0.05 — same root cause as the 39 bound violations
+(null eigenvalue, solver retains it, 1/γ amplification produces O(1) error).
+
 Open:
 - Write the f64 algorithm (Part III of math.tex)
 - Extend η_k bound for null-eigenvalue LP search
