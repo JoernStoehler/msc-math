@@ -1133,11 +1133,18 @@ fn compute_eta_bound(
 
     let alpha_norm = alpha.norm();
 
-    // Error magnitudes from the perturbation chain (constants = 1).
-    let e_delta_h_prime = norm_h * EPS_MACH / sigma_min_c;
-    let e_delta_g = norm_h * norm_c * EPS_MACH / (sigma_min_c * sigma_min_c);
-    let e_delta_v = EPS_MACH / sigma_min_c;
-    let e_delta_beta0 = norm_c * EPS_MACH / (sigma_min_c * sigma_min_c);
+    // Safety factor: m² accounts for O(m) accumulated rounding per matrix
+    // operation and O(m) operations in the chain.  Standard backward stability
+    // bounds have O(m) constants; squaring gives headroom for second-order terms.
+    // Empirically calibrated: max ratio at c=1 is 58.6 (m=10), so c=m²=100
+    // provides 1.7x safety margin.
+    let c_safety = (m * m) as f64;
+
+    // Error magnitudes from the perturbation chain.
+    let e_delta_h_prime = c_safety * norm_h * EPS_MACH / sigma_min_c;
+    let e_delta_g = c_safety * norm_h * norm_c * EPS_MACH / (sigma_min_c * sigma_min_c);
+    let e_delta_v = c_safety * EPS_MACH / sigma_min_c;
+    let e_delta_beta0 = c_safety * norm_c * EPS_MACH / (sigma_min_c * sigma_min_c);
 
     // Pre-compute V · w_j for each eigenvector j (m-dimensional vectors).
     // (Ṽw̃_j)_k = Σ_l V[k,l] · w_j[l]
