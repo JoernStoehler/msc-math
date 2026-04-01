@@ -61,3 +61,5 @@ math.out
 math.pdf
 math.toc
 .Trash-1000/
+experiments/verify-numerics/collected_poly.jsonl
+experiments/verify-numerics/collected_synth.jsonl
