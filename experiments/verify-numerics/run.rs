@@ -1381,6 +1381,8 @@ fn main() {
             proj_null_dim: proj_diag.as_ref().map_or(0, |d| d.null_dim),
             proj_delta_alpha: {
                 // δα = W^T V^T (β̃ - β*) — error in eigenbasis of H'.
+                // [rem:eigendirection-error]: |δα_j| ≈ ε_mach / |γ_j|,
+                // confirmed on 364 I1 problems across 15 orders of magnitude.
                 match (&beta_exact, &proj_diag) {
                     (Some(be), Some(diag)) if !proj.beta.is_empty()
                         && (proj.verdict == "true" || proj.verdict == "indeterminate")

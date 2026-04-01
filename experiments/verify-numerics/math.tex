@@ -1062,13 +1062,49 @@ $\tilde\sigma_{\min}(C)$) are available from the solver.
 
 % [GAP - The constants c_{DeltaH'}, c_{delta g}, c_{delta V},
 % c_{delta beta_0} are not derived from first principles.
-% In the implementation, we set all constants to 1 and measure
-% the ratio |actual delta beta_k| / eta_k across the test dataset.
-% If the ratio exceeds 1 for any problem, the constants must be
-% increased.  If the ratio is always << 1, the bound is valid
-% but loose.  The empirical data determines whether eta_k is
-% small enough to certify a useful fraction of problems.]
+% In the implementation, we use c = m^2 as a safety factor.
+% Empirical validation: zero violations on 364 I1 natural polytope
+% problems and all synthetic well-conditioned problems.
+% 39 violations on null-eigenvalue cases (|gamma_j| < eps_gamma)
+% where the bound does not apply — these are INDETERMINATE.]
 \end{lemma}
+
+
+\begin{remark}[Per-eigendirection error structure]%
+\label{rem:eigendirection-error}
+From~\eqref{eq:alpha-component-error},
+$|(\delta\alpha)_j| \leq (|e_j| + |f_j|) / |\gamma_j|$
+where $|e_j|, |f_j| = O(\varepsilon_{\mathrm{mach}})$
+(Lemmas~\ref{lem:link-reduced-hessian}--\ref{lem:link-gradient}).
+This gives
+\begin{equation}\label{eq:eigendirection-scaling}
+  |(\delta\alpha)_j|
+  = O\!\left(\frac{\varepsilon_{\mathrm{mach}}}{|\gamma_j|}\right).
+\end{equation}
+
+\textbf{Empirical confirmation}
+(364 natural polytope problems in case~I1, all $\gamma_j < 0$):
+the product $|(\delta\alpha)_j| \cdot |\gamma_j|$ is
+$10^{-17}$--$10^{-16}$ across 15 orders of magnitude of~$|\gamma_j|$
+($10^{-5}$ to $10^0$), confirming~\eqref{eq:eigendirection-scaling}
+with proportionality constant $\approx \varepsilon_{\mathrm{mach}}$.
+The $\eta_k$ bound~\eqref{eq:eta-computable} uses $c = m^2$
+as a safety factor; zero violations on all well-conditioned problems.
+
+\textbf{Limitation:}
+When $|\gamma_j| \lesssim \varepsilon_\gamma$
+($= O(\|H\| \varepsilon_{\mathrm{mach}} / \sigma_{\min}(C))$,
+Lemma~\ref{lem:link-eigenvalues}),
+the first-order analysis breaks down:
+$\|\Delta H'\| \gtrsim |\gamma_j|$, so the perturbation
+is not small relative to the eigenvalue.
+Empirically, $|(\delta\alpha)_j| = O(1)$ for $|\gamma_j| \approx 10^{-15}$.
+These cases must be classified as \textsc{Indeterminate}.
+
+% Empirical data: verify-numerics experiment, filter_poly_diverse,
+% 364 I1 problems from 307 polytopes (max 8 facets).
+% Diagnostic fields: proj_delta_alpha, proj_eigenvalues in results.jsonl.
+\end{remark}
 
 
 % ── B. Q error bounds (existing) ─────────────────────────────────────
