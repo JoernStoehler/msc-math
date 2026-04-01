@@ -278,34 +278,43 @@ cargo run --release --bin verify_numerics_q_accuracy
 # Output: verify-numerics/q_accuracy.jsonl (4303 rows, 15 families)
 ```
 
-## Propositions and bounds (final state)
+## Propositions and bounds (current state, 2026-04-01)
 
-Run `python3 verify-numerics/analyze.py` from `experiments/` for the full check output.
+Run `python3 verify-numerics/analyze.py` from `experiments/` for the full check output (`checks.txt`).
 
-Propositions (assert in library, check in post-processing):
+Dataset: 51,784 problems (4303 artificial + 47,481 natural from 458 polytopes F≤8). 45,476 SP-feasible (44,980 EHZ-like, 496 stress-test).
 
-| # | Statement | Type | EHZ range | Stress range | Threshold | EHZ violations |
-|---|-----------|------|-----------|-------------|-----------|----------------|
-| P1 | d = (0,0,0,0,1) | assumption | by type | by type | — | — |
-| P2 | C = (A^T; 1^T), 5×m | assumption | by type | by type | — | — |
-| P3 | H symmetric | assumption | by type | by type | — | — |
-| P4 | σ_min(C) > 1e-12 | assumption | 0.31–3.15 | 2.7e-13–1.98 | > 1e-12 | 0 |
-| P5 | ‖H‖/σ_min(C) ≤ 100 | conjecture | 0.47–39.8 | 1.01–1.3e14 | ≤ 100 | 0 |
-| P6 | ‖r_β‖ < 1e-3 | bug detection | max 6.3e-11 | max 1.1e-9 | < 1e-3 | 0 |
-| P7 | ‖β‖ ≤ 2 | bug detection | 0.33–0.55 | 0.32–2.83 | ≤ 2 | 0 |
-| P8 | ‖r_λ‖ < 1e-6 | bug detection | max 2.0e-11 | max 2.3e-7 | < 1e-6 | 0 |
+Propositions:
 
-Proven bounds (from math.tex, validated against exact rational ground truth):
+| # | Statement | Type | Status | Notes |
+|---|-----------|------|--------|-------|
+| P1 | d = (0,0,0,0,1) | assumption | ✓ | by construction |
+| P2 | C = (A^T; 1^T), 5×m | assumption | ✓ | by construction |
+| P3 | H symmetric | assumption | ✓ | by construction |
+| P4 | σ_min(C) > 1e-12 | assumption | 0 EHZ violations | σ_min(C) = 0 for 30K σ-nodes with m ≤ 5 (C rank-deficient) |
+| P5 | ‖H‖/σ_min(C) ≤ 100 | **FALSIFIED** | max 1310 on natural data | Ratio unbounded as σ_min(C) → 0. Now diagnostic only. |
+| P6 | ‖r_β‖ < 1e-3 (full-rank M) | bug detection | 0 violations | Gated on full-rank M. Rank-deficient has ‖r_β‖ up to 0.63. |
+| P7 | ‖β‖ ≤ 2 | bug detection | 0 EHZ violations | 3 stress violations (Q ≤ 0 cases, β large) |
+| P8 | ‖r_λ‖ < 1e-6 | bug detection | 0 violations | Max 2.9e-8 on natural data |
+
+Proven bounds (validated against exact rational ground truth):
 
 | # | Bound | Assumes | EHZ max ratio | Stress max ratio | Violations |
 |---|-------|---------|---------------|-----------------|------------|
-| B2 | ‖λ*‖ ≤ ‖H‖·‖β*‖/σ_min(C) | P3, P4 | 0.888 | 0.508 | 0 |
-| B3 | \|Q−Q*\| ≤ ‖H‖·‖β‖·‖r‖/σ_min(C) | P3, P4, β*>0 | 0.149 | 0.196 | 0 |
-| B4 | \|Q_raw−Q*\| ≤ same | P3, P4, β*>0 | 0.328 | 0.286 | 0 |
+| B2 | ‖λ*‖ ≤ ‖H‖·‖β*‖/σ_min(C) | P3, P4 | 0.976 | 0.636 | 0 |
+| B3 | \|Q−Q*\| ≤ ‖H‖·‖β‖·‖r‖/σ_min(C) | P3, P4, β*>0 | 0.217 | 0.233 | 0 |
+| B4 | \|Q_raw−Q*\| ≤ same | P3, P4, β*>0 | 0.613 | 0.286 | 0 |
 | B5 | 1st/2nd = 2 (identity) | P3, x*∈col(M) | (below noise) | (below noise) | 0 |
-| B6 | correction ≤ 2x worsening | — | max 3e-3 | max 1.0 | 0 |
+| B6 | correction ≤ 2x worsening | — | max 6.3e-2 | max 1.0 | 0 |
 
-EHZ polytope data (186 orbits from existing datasets): σ_min(C) ∈ [0.11, 2.45], κ(C) ∈ [1.0, 97.5], ‖H‖/σ_min(C) ∈ [1.4, 21.0].
+β > 0 classification:
+
+| | Natural polytope (44,808) | Stress-test (496) |
+|---|---|---|
+| True positive | 44,414 | 462 |
+| **False positive** | **0** | **0** |
+| False negative | 9 | 15 |
+| Min TP margin | 1.11e-5 | 2.09e-3 |
 
 ## Capacity pipeline integration
 
