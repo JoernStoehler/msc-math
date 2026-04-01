@@ -129,6 +129,10 @@ name = "filter_poly_smoke"
 path = "verify-numerics/filter_poly_smoke.rs"
 
 [[bin]]
+name = "filter_poly_diverse"
+path = "verify-numerics/filter_poly_diverse.rs"
+
+[[bin]]
 name = "filter_synth_all"
 path = "verify-numerics/filter_synth_all.rs"
 
