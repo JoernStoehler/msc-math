@@ -1,14 +1,16 @@
-//! KKT solver accuracy measurement: compare f64 solvers against exact rational arithmetic.
+//! Stage 3: Compare f64 solvers against exact rational arithmetic.
 //!
-//! Loads QP problems (H, C, d) from two datasets:
-//! - artificial.jsonl: synthetic matrix families with controlled properties (stress-tests)
-//! - collected.jsonl: actual (H, C, d) from polytope σ-nodes (real input distribution)
+//! Takes a single filtered JSONL file (from stage 2), runs the f64 projection
+//! solver, f64 saddle-point solver, and exact rational solver on each row.
+//! Records Q error, β error, perturbation chain diagnostics, and ~50 fields.
 //!
-//! For each problem: runs saddle-point solver, projection solver, and exact rational
-//! solver. Records Q error, β error, margin, and ~50 diagnostic fields.
+//! Usage:
+//!   cargo run --release --bin verify_numerics -- <input.jsonl> <output.jsonl>
 //!
-//! Usage: cargo run --release --bin verify_numerics
-//! Output: experiments/verify-numerics/results.jsonl
+//! Example:
+//!   cargo run --release --bin verify_numerics -- \
+//!     verify-numerics/filtered_poly_smoke.jsonl \
+//!     verify-numerics/results_poly_smoke.jsonl
 
 use nalgebra::{DMatrix, DVector};
 use num_bigint::BigInt;
@@ -29,8 +31,7 @@ use solvers::{solve_projected, solve_projected_with_diagnostics, solve_saddle_po
 /// Number of constraint rows. Matches the EHZ structure (4 closure + 1 normalization).
 const P: usize = 5;
 
-/// Output file path.
-const OUTPUT_PATH: &str = "verify-numerics/results.jsonl";
+// No hardcoded paths — input and output are CLI arguments.
 
 // ── Output record ──
 
@@ -673,8 +674,7 @@ struct TestProblem {
 // Dataset loading
 // ══════════════════════════════════════════════════════════════════════════════
 
-const ARTIFICIAL_PATH: &str = "verify-numerics/artificial.jsonl";
-const COLLECTED_PATH: &str = "verify-numerics/collected.jsonl";
+// Input/output paths are CLI arguments (no hardcoded paths).
 
 /// Convert f64 matrix to rational (exact for integer/simple-fraction inputs).
 fn f64_to_rat(x: f64) -> BigRational {
@@ -706,108 +706,21 @@ fn f64_to_rat(x: f64) -> BigRational {
     }
 }
 
-/// Load problems from JSONL datasets (artificial + natural).
-/// Natural dataset is filtered in-memory: only feasible rows are kept
-/// (the exact solver is expensive, so we skip rows the f64 solver already rejects).
-fn load_datasets() -> Vec<TestProblem> {
+/// Load problems from a single JSONL file (pre-filtered by stage 2).
+fn load_input(path: &str) -> Vec<TestProblem> {
+    let file = std::fs::File::open(path)
+        .unwrap_or_else(|e| panic!("Cannot open {}: {}", path, e));
+    let reader = std::io::BufReader::new(file);
+
     let mut problems = Vec::new();
-
-    // Load artificial dataset (all rows — it's small)
-    if let Ok(file) = std::fs::File::open(ARTIFICIAL_PATH) {
-        let reader = std::io::BufReader::new(file);
-        for (idx, line) in reader.lines().enumerate() {
-            let line = line.unwrap_or_else(|e| panic!("Read error in artificial.jsonl line {}: {}", idx, e));
-            if line.trim().is_empty() { continue; }
-            let row: InputRow = serde_json::from_str(&line)
-                .unwrap_or_else(|e| panic!("Parse error in artificial.jsonl line {}: {}", idx, e));
-            problems.push(input_row_to_test_problem(&row));
-        }
-        println!("Loaded {} problems from {}", problems.len(), ARTIFICIAL_PATH);
-    } else {
-        println!("Warning: {} not found, skipping artificial dataset", ARTIFICIAL_PATH);
+    for (idx, line) in reader.lines().enumerate() {
+        let line = line.unwrap_or_else(|e| panic!("Read error in {} line {}: {}", path, idx, e));
+        if line.trim().is_empty() { continue; }
+        let row: InputRow = serde_json::from_str(&line)
+            .unwrap_or_else(|e| panic!("Parse error in {} line {}: {}", path, idx, e));
+        problems.push(input_row_to_test_problem(&row));
     }
-
-    let n_artificial = problems.len();
-
-    // Load natural dataset with filtering.
-    //
-    // Include:
-    // - All feasible rows with Q > 0 (the standard case)
-    // - Sample of feasible rows with Q ≤ 0 (saddle points, indefinite H on constraint set)
-    // - Sample of beta_non_positive rows with σ_min(C) > 1e-6 (check for false negatives)
-    // - All rows with σ_min(C) < 1e-3 and σ_min(C) > 0 (near-singular constraint regime)
-    //
-    // Exclude:
-    // - residual_too_large (solver couldn't solve the system)
-    // - σ_min(C) = 0 exactly (C is rank-deficient, exact solver can't find unique solution)
-    if let Ok(file) = std::fs::File::open(COLLECTED_PATH) {
-        let reader = std::io::BufReader::new(file);
-        let mut n_total = 0;
-        let mut n_loaded = 0;
-        let mut n_q_pos = 0;
-        let mut n_q_leq0 = 0;
-        let mut n_beta_np = 0;
-        let mut n_skipped_smin0 = 0;
-
-        // Cap Q≤0 and beta_non_positive to avoid blowing up exact solver time.
-        let max_q_leq0 = 500;
-        let max_beta_np = 500;
-
-        for (idx, line) in reader.lines().enumerate() {
-            let line = line.unwrap_or_else(|e| panic!("Read error in collected.jsonl line {}: {}", idx, e));
-            if line.trim().is_empty() { continue; }
-            n_total += 1;
-            let row: InputRow = serde_json::from_str(&line)
-                .unwrap_or_else(|e| panic!("Parse error in collected.jsonl line {}: {}", idx, e));
-
-            // Skip residual_too_large (solver failed)
-            if row.verdict == "residual_too_large" || row.verdict == "singular" || row.verdict == "panic" {
-                continue;
-            }
-
-            // Skip σ_min(C) = 0 (rank-deficient C, exact solver won't work)
-            if row.sigma_min_c.unwrap_or(0.0) < 1e-15 {
-                n_skipped_smin0 += 1;
-                continue;
-            }
-
-            let include = if row.verdict == "feasible" {
-                let q = row.q.unwrap_or(f64::NAN);
-                if q > 1e-15 {
-                    // Q > 0: always include (the standard case)
-                    n_q_pos += 1;
-                    true
-                } else if n_q_leq0 < max_q_leq0 {
-                    // Q ≤ 0: sample (saddle points / indefinite H)
-                    n_q_leq0 += 1;
-                    true
-                } else {
-                    false
-                }
-            } else if row.verdict == "beta_non_positive" {
-                // β has negative component: check for false negatives
-                if row.sigma_min_c.unwrap_or(0.0) > 1e-6 && n_beta_np < max_beta_np {
-                    n_beta_np += 1;
-                    true
-                } else {
-                    false
-                }
-            } else {
-                false
-            };
-
-            if include {
-                problems.push(input_row_to_test_problem(&row));
-                n_loaded += 1;
-            }
-        }
-        println!("Loaded {}/{} problems from {} (Q>0: {}, Q≤0: {}, β<0: {}, skipped σ_min=0: {})",
-            n_loaded, n_total, COLLECTED_PATH, n_q_pos, n_q_leq0, n_beta_np, n_skipped_smin0);
-    } else {
-        println!("Warning: {} not found, skipping natural dataset", COLLECTED_PATH);
-    }
-
-    println!("Total: {} problems ({} artificial, {} natural)", problems.len(), n_artificial, problems.len() - n_artificial);
+    println!("Loaded {} problems from {}", problems.len(), path);
     problems
 }
 
@@ -1022,11 +935,19 @@ fn run_projection_corrected(h: &DMatrix<f64>, c: &DMatrix<f64>, d: &DVector<f64>
 // ══════════════════════════════════════════════════════════════════════════════
 
 fn main() {
-    let problems = load_datasets();
+    let args: Vec<String> = std::env::args().collect();
+    if args.len() != 3 {
+        eprintln!("Usage: {} <input.jsonl> <output.jsonl>", args[0]);
+        std::process::exit(1);
+    }
+    let input_path = &args[1];
+    let output_path = &args[2];
 
-    let out_path = std::path::Path::new(OUTPUT_PATH);
+    let problems = load_input(input_path);
+
+    let out_path = std::path::Path::new(output_path);
     let mut out_file = std::fs::File::create(out_path)
-        .unwrap_or_else(|e| panic!("Cannot create {}: {}", OUTPUT_PATH, e));
+        .unwrap_or_else(|e| panic!("Cannot create {}: {}", output_path, e));
 
     let mut n_exact_feasible = 0usize;
     let mut n_sp_feasible = 0usize;
@@ -1496,5 +1417,5 @@ fn main() {
         println!("  max:    {:.2e}", max);
     }
 
-    println!("\nOutput written to {}", OUTPUT_PATH);
+    println!("\nOutput written to {}", output_path);
 }

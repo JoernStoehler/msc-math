@@ -54,8 +54,8 @@ struct InputRow {
     c: Vec<Vec<f64>>, // p×m (p=5 for EHZ)
     d: Vec<f64>,      // p
 
-    // f64 solver output (for downstream filtering)
-    verdict: String,    // "feasible", "infeasible", "singular", "panic"
+    // f64 solver output (raw vectors for downstream filtering/analysis)
+    verdict: String,    // "feasible", "beta_non_positive", "residual_too_large", "panic"
     q: f64,             // q_corrected (NaN if not feasible)
     q_raw: f64,         // q_raw before correction (NaN if not feasible)
     margin: f64,        // min(β) (NaN if not feasible)
@@ -63,6 +63,12 @@ struct InputRow {
     rank: usize,        // # retained eigenvalues (0 if not feasible)
     norm_h: f64,        // spectral norm of H
     sigma_min_c: f64,   // smallest singular value of C
+
+    // Raw solver vectors (empty if not feasible)
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    beta: Vec<f64>,     // β solution vector (m components)
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    lambda: Vec<f64>,   // Lagrange multiplier (p components: mu[0..4], xi)
 
     // Polytope metadata (only for natural dataset)
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -577,6 +583,8 @@ fn solve_and_record(
         rank,
         norm_h,
         sigma_min_c: smin_c,
+        beta: Vec::new(),
+        lambda: Vec::new(),
         polytope_id,
         perm: perm_opt,
         facet_count,
@@ -595,6 +603,11 @@ fn solve_and_record(
                 row.margin = kkt_result.beta.iter().copied().fold(f64::INFINITY, f64::min);
                 row.q = kkt_result.q_corrected;
                 row.q_raw = kkt_result.q_raw;
+                // Save raw solver vectors
+                row.beta = kkt_result.beta.clone();
+                let mut lam = kkt_result.mu.clone();
+                lam.push(kkt_result.xi);
+                row.lambda = lam;
             }
         }
         Err(_) => {

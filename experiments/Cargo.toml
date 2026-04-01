@@ -116,6 +116,22 @@ path = "verify-numerics/run.rs"
 name = "collect_inputs"
 path = "verify-numerics/collect_inputs.rs"
 
+[[bin]]
+name = "collect_poly"
+path = "verify-numerics/collect_poly.rs"
+
+[[bin]]
+name = "collect_synth"
+path = "verify-numerics/collect_synth.rs"
+
+[[bin]]
+name = "filter_poly_smoke"
+path = "verify-numerics/filter_poly_smoke.rs"
+
+[[bin]]
+name = "filter_synth_all"
+path = "verify-numerics/filter_synth_all.rs"
+
 [dependencies]
 symplectic = { path = "../crates" }
 nalgebra = "0.33"

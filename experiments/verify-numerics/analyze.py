@@ -14,7 +14,6 @@ from collections import defaultdict
 from dataclasses import dataclass
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
-DATA_PATH = EXPERIMENT_DIR / "results.jsonl"
 OUTPUT_PATH = EXPERIMENT_DIR / "checks.txt"
 
 # ── EHZ-like families (feasible by construction, well-conditioned) ──
@@ -49,11 +48,13 @@ class CheckResult:
     violations_stress: int
 
 
-def load_data():
+def load_data(paths):
     rows = []
-    with open(DATA_PATH) as f:
-        for line in f:
-            rows.append(json.loads(line))
+    for path in paths:
+        with open(path) as f:
+            for line in f:
+                rows.append(json.loads(line))
+        print(f"Loaded {len(rows)} rows total (including {path})")
     return rows
 
 
@@ -491,5 +492,8 @@ def check_all(rows):
 
 
 if __name__ == "__main__":
-    rows = load_data()
+    if len(sys.argv) < 2:
+        print(f"Usage: {sys.argv[0]} <results1.jsonl> [results2.jsonl ...]")
+        sys.exit(1)
+    rows = load_data(sys.argv[1:])
     check_all(rows)
