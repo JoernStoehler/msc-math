@@ -153,15 +153,26 @@ Depends on: Jörn scoping the thesis story. Derivative-related experiments also 
 
 ## verify-numerics
 
-**Status (2026-03-28):** Scaffolded. Logbook written, not yet implemented.
+**Status (2026-04-01):** Perturbation chain analysis complete. Infrastructure simplified.
+Branch `verify-numerics-q-accuracy`, 16 commits.
 
-**Problem:** Find the maximum of ½β^TQβ subject to Cβ=d, β≥0. Develop the right algorithm (not assume the current one is right), formalize error bounds as lemmas, prove them, empirically verify. Generic numerics framework: certify propositions as TRUE/FALSE/INDETERMINATE, error bounds for values, INDETERMINATE falls back to rational arithmetic (lazily, with short-circuit evaluation).
+**Done:**
+- math.tex: Parts I+II complete (problem, structure, exact algorithm, perturbation chain error bounds)
+- Projection solver with diagnostics (projection_solver.rs) + eta_k certification bound
+- Exact rational solver (exact_solver.rs) for ground truth
+- Saddle-point solver archived in saddle_point_solver.rs (dead code)
+- Rust test infrastructure: testdata/ (30 cases/conjecture) + tests.rs (2 tests, both pass)
+- Eigendirection scaling confirmed: |delta_alpha_j| ~ eps_mach / |gamma_j|
+- Eta bound valid for well-conditioned problems (c = m^2 safety factor, zero violations)
 
-**Scope:** The main QP problem + whatever sub-subroutines emerge during algorithm design. Each sub-subroutine gets its own run_*.rs and the same treatment (math spec → algorithm design → error analysis → edge cases → empirical verification).
+**Open:**
+- Part III of math.tex (f64 algorithm description) not written
+- Eta bound doesn't cover LP null-space search (39 violations on natural data with near-zero eigenvalues)
+- GAP in cor:taylor-structure proof (needs Jörn)
 
 **Priority:** Blocks other experiment development. All experiments rely on this machinery.
 
-**Subsumes:** q-error-threshold (error bound analysis is part of this experiment), numerics portion of code-math-correspondence-audit (code/math mismatches discovered during verification).
+**Subsumes:** q-error-threshold, numerics portion of code-math-correspondence-audit.
 
 **Location:** `experiments/verify-numerics/`
 
