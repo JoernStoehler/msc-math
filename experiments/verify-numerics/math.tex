@@ -369,6 +369,170 @@ already does this by enumerating shorter permutations~$\sigma'$
 \end{remark}
 
 
+% ── 4b. Near-boundary dropping ───────────────────────────────────────
+
+\begin{lemma}[Q loss from dropping a near-boundary component]%
+\label{lem:near-boundary-drop}
+Let $\beta^* \in \mathcal{F}$ achieve
+$Q_{\mathcal{F}} = \max_{\beta \in \mathcal{F}} Q(\beta)$,
+with $\beta^*_k \leq \varepsilon$ for some index~$k$
+and $\beta^*_i \geq \delta > 0$ for all $i \neq k$.
+Let $\sigma' = \sigma$ with $\sigma(k)$ removed,
+with constraint matrix $C' \in \mathbb{R}^{5 \times (m-1)}$
+(column~$k$ of~$C$ deleted), and feasible set
+$\mathcal{F}' = \{C'\beta' = d,\; \beta' \geq 0\}$.
+
+Define $\beta' \in \mathbb{R}^{m-1}$ by deleting component~$k$
+from~$\beta^*$:
+$\beta'_i = \beta^*_i$ for $i \neq k$
+(reindexed to $\{1, \ldots, m-1\}$).
+Then:
+\begin{enumerate}
+  \item \textbf{Constraint violation of $\beta'$:}
+    \begin{equation}\label{eq:constraint-violation}
+      C'\beta' = d - c_k\, \varepsilon_k,
+    \end{equation}
+    where $c_k = C_{:,k}$ is the $k$-th column of~$C$
+    (the dual vertex $a_{\sigma(k)}$ stacked with a~$1$)
+    and $\varepsilon_k = \beta^*_k \leq \varepsilon$.
+    In particular, $\|C'\beta' - d\| = \|c_k\| \cdot \varepsilon_k
+    \leq \|c_k\| \cdot \varepsilon$.
+
+  \item \textbf{Feasibility restoration:}
+    if $\sigma_{\min}(C') > 0$, define the projection
+    \[
+      \bar\beta' = \beta' + C'^\top (C' C'^\top)^{-1}
+        (d - C'\beta').
+    \]
+    Then $C'\bar\beta' = d$ and
+    \begin{equation}\label{eq:correction-bound}
+      \|\bar\beta' - \beta'\|
+      \leq \frac{\|c_k\|}{\sigma_{\min}(C')} \cdot \varepsilon_k.
+    \end{equation}
+    Componentwise:
+    $|\bar\beta'_i - \beta'_i| \leq \|\bar\beta' - \beta'\|$
+    for each~$i$.
+    Hence $\bar\beta'_i \geq \beta'_i - \|\bar\beta' - \beta'\|
+    = \beta^*_i - \frac{\|c_k\|}{\sigma_{\min}(C')} \varepsilon_k$.
+    So $\bar\beta' \geq 0$ provided
+    \begin{equation}\label{eq:positivity-condition}
+      \delta > \frac{\|c_k\|}{\sigma_{\min}(C')} \cdot \varepsilon.
+    \end{equation}
+
+  \item \textbf{Q change:}
+    The action of $\beta'$ (under $H'$, the action matrix for~$\sigma'$,
+    which is $H$ with row and column~$k$ deleted) satisfies
+    \begin{equation}\label{eq:q-removal}
+      Q(\beta^*) - Q'(\beta')
+      = \beta^*_k \sum_{j \neq k} H_{kj}\, \beta^*_j,
+    \end{equation}
+    where $Q'$ denotes the action under~$H'$.
+    Hence
+    \begin{equation}\label{eq:q-removal-bound}
+      |Q(\beta^*) - Q'(\beta')|
+      \leq \varepsilon_k \cdot \|H_{k,:}\| \cdot \|\beta^*\|
+      \leq \varepsilon \cdot \|H\| \cdot \|\beta^*\|.
+    \end{equation}
+
+    The Q change from the feasibility correction is:
+    \begin{align}
+      Q'(\bar\beta') - Q'(\beta')
+      &= (H'\beta')^\top (\bar\beta' - \beta')
+        + \tfrac{1}{2}(\bar\beta' - \beta')^\top H'(\bar\beta' - \beta')
+        \nonumber\\
+      &\leq \|H'\| \cdot \|\beta'\| \cdot \|\bar\beta' - \beta'\|
+        + \tfrac{1}{2}\|H'\| \cdot \|\bar\beta' - \beta'\|^2.
+        \label{eq:q-correction-bound}
+    \end{align}
+
+  \item \textbf{Combined bound:}
+    since $Q^*(\sigma') \geq Q'(\bar\beta')$
+    (the maximum over $\mathcal{F}'$ is at least as large as
+    the value at the feasible point $\bar\beta'$),
+    \begin{equation}\label{eq:combined-drop-bound}
+      Q^*(\sigma) - Q^*(\sigma')
+      \leq \varepsilon \left(
+        \|H\| \cdot \|\beta^*\|
+        + \frac{\|H\| \cdot \|\beta^*\| \cdot \|c_k\|}{\sigma_{\min}(C')}
+        + \frac{\|H\| \cdot \|c_k\|^2 \varepsilon}{2\, \sigma_{\min}(C')^2}
+      \right).
+    \end{equation}
+    For $\varepsilon$ small, this is
+    $O\bigl(\varepsilon \cdot \|H\| \cdot \|\beta^*\| \cdot
+      (1 + \|c_k\| / \sigma_{\min}(C'))\bigr)$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+\emph{Part 1.}
+$C'\beta' = \sum_{i \neq k} C_{:,i}\, \beta^*_i
+= C\beta^* - C_{:,k}\, \beta^*_k
+= d - c_k\, \varepsilon_k$.
+
+\emph{Part 2.}
+$\bar\beta' = \beta' + C'^\top(C'C'^\top)^{-1}(d - C'\beta')$.
+Then $C'\bar\beta' = C'\beta' + C'C'^\top(C'C'^\top)^{-1}(d - C'\beta') = d$.
+The correction norm: $\|\bar\beta' - \beta'\|
+= \|C'^\top(C'C'^\top)^{-1} c_k \varepsilon_k\|
+\leq \|C'^\top(C'C'^\top)^{-1}\| \cdot \|c_k\| \cdot \varepsilon_k$.
+Since $\|C'^\top(C'C'^\top)^{-1}\| = 1/\sigma_{\min}(C')$
+(the operator maps $\mathbb{R}^5 \to \mathbb{R}^{m-1}$
+with norm $1/\sigma_{\min}(C')$),
+this gives~\eqref{eq:correction-bound}.
+
+\emph{Part 3.}
+Expand $Q(\beta^*)$ in the full $m$-dimensional space:
+\[
+  Q(\beta^*) = \tfrac{1}{2}\sum_{i,j} H_{ij}\beta^*_i\beta^*_j
+  = \tfrac{1}{2}\sum_{i,j \neq k} H_{ij}\beta^*_i\beta^*_j
+    + \beta^*_k \sum_{j \neq k} H_{kj}\beta^*_j
+    + \tfrac{1}{2} H_{kk} (\beta^*_k)^2.
+\]
+Since $H_{kk} = 0$: $Q(\beta^*) = Q'(\beta') + \beta^*_k \sum_{j \neq k} H_{kj}\beta^*_j$.
+This gives~\eqref{eq:q-removal}.
+Bound~\eqref{eq:q-removal-bound} follows from Cauchy--Schwarz.
+
+The correction bound~\eqref{eq:q-correction-bound}
+is the standard quadratic Taylor bound.
+
+\emph{Part 4.}
+$Q^*(\sigma) = Q(\beta^*)$,\;
+$Q^*(\sigma') \geq Q'(\bar\beta')$,\;
+so $Q^*(\sigma) - Q^*(\sigma')
+\leq Q(\beta^*) - Q'(\bar\beta')
+= [Q(\beta^*) - Q'(\beta')] + [Q'(\beta') - Q'(\bar\beta')]$.
+Apply~\eqref{eq:q-removal-bound} and~\eqref{eq:q-correction-bound}
+with $\|\bar\beta' - \beta'\| \leq \|c_k\| \varepsilon / \sigma_{\min}(C')$.
+\end{proof}
+
+
+\begin{remark}[Interpretation]\label{rem:near-boundary-interpretation}
+Lemma~\ref{lem:near-boundary-drop} says:
+if a maximizer $\beta^*$ has $\beta^*_k \leq \varepsilon$
+(near the boundary) and the other components are bounded
+away from zero ($\geq \delta$), then dropping $\sigma$ loses
+at most $O(\varepsilon)$ in the $Q$ value, with a constant
+depending on $\|H\|$, $\|\beta^*\|$, $\|c_k\|$, and $\sigma_{\min}(C')$.
+
+For the capacity algorithm: if the f64 solver observes
+$\tilde\beta_k \leq \varepsilon_\beta$ for some~$k$, it can
+DROP this~$\sigma$ and accept the $Q$ loss.
+The critical requirement is condition~\eqref{eq:positivity-condition}:
+the remaining $\beta^*_i$ (for $i \neq k$) must be large enough
+that the feasibility correction doesn't make $\bar\beta'$ negative.
+If multiple components of~$\beta^*$ are near zero simultaneously,
+the correction might fail --- the Q loss is then not bounded
+by this lemma.
+
+\textbf{Open question:} for the capacity-achieving orbit
+(minimum-support maximizer), all $\beta^*_i > 0$.
+Is the margin $\min_i \beta^*_i$ bounded below by a function
+of the polytope geometry?  If so, the minimum-support orbit
+is never DROPped (its margin exceeds $\varepsilon_\beta$),
+and all DROPped orbits are redundant.
+\end{remark}
+
+
 % ── 5. Continuity issues for f64 ────────────────────────────────────
 
 \begin{remark}[Discontinuities in the exact algorithm]%
