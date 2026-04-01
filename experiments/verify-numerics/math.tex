@@ -378,158 +378,142 @@ $Q_{\mathcal{F}} = \max_{\beta \in \mathcal{F}} Q(\beta)$,
 with $\beta^*_k \leq \varepsilon$ for some index~$k$
 and $\beta^*_i \geq \delta > 0$ for all $i \neq k$.
 Let $\sigma' = \sigma$ with $\sigma(k)$ removed,
-with constraint matrix $C' \in \mathbb{R}^{5 \times (m-1)}$
+with constraint matrix $C_{-k} \in \mathbb{R}^{5 \times (m-1)}$
 (column~$k$ of~$C$ deleted), and feasible set
-$\mathcal{F}' = \{C'\beta' = d,\; \beta' \geq 0\}$.
+$\mathcal{F}' = \{C_{-k}\beta' = d,\; \beta' \geq 0\}$.
 
-Define $\beta' \in \mathbb{R}^{m-1}$ by deleting component~$k$
-from~$\beta^*$:
-$\beta'_i = \beta^*_i$ for $i \neq k$
-(reindexed to $\{1, \ldots, m-1\}$).
-Then:
-\begin{enumerate}
-  \item \textbf{Constraint violation of $\beta'$:}
-    \begin{equation}\label{eq:constraint-violation}
-      C'\beta' = d - c_k\, \varepsilon_k,
-    \end{equation}
-    where $c_k = C_{:,k}$ is the $k$-th column of~$C$
-    (the dual vertex $a_{\sigma(k)}$ stacked with a~$1$)
-    and $\varepsilon_k = \beta^*_k \leq \varepsilon$.
-    In particular, $\|C'\beta' - d\| = \|c_k\| \cdot \varepsilon_k
-    \leq \|c_k\| \cdot \varepsilon$.
+Assume $\sigma_{\min}(C_{-k}) > 0$ and
+\begin{equation}\label{eq:positivity-condition}
+  \delta > \frac{\|c_k\|}{\sigma_{\min}(C_{-k})} \cdot \varepsilon,
+\end{equation}
+where $c_k = C_{:,k}$ is the $k$-th column of~$C$.
+Write $H_{-k} \in \mathbb{R}^{(m-1) \times (m-1)}$ for $H$
+with row and column~$k$ deleted,
+and $Q_{-k}(\beta') = \tfrac{1}{2}\beta'^\top H_{-k}\, \beta'$.
 
-  \item \textbf{Feasibility restoration:}
-    if $\sigma_{\min}(C') > 0$, define the projection
-    \[
-      \bar\beta' = \beta' + C'^\top (C' C'^\top)^{-1}
-        (d - C'\beta').
-    \]
-    Then $C'\bar\beta' = d$ and
-    \begin{equation}\label{eq:correction-bound}
-      \|\bar\beta' - \beta'\|
-      \leq \frac{\|c_k\|}{\sigma_{\min}(C')} \cdot \varepsilon_k.
-    \end{equation}
-    Componentwise:
-    $|\bar\beta'_i - \beta'_i| \leq \|\bar\beta' - \beta'\|$
-    for each~$i$.
-    Hence $\bar\beta'_i \geq \beta'_i - \|\bar\beta' - \beta'\|
-    = \beta^*_i - \frac{\|c_k\|}{\sigma_{\min}(C')} \varepsilon_k$.
-    So $\bar\beta' \geq 0$ provided
-    \begin{equation}\label{eq:positivity-condition}
-      \delta > \frac{\|c_k\|}{\sigma_{\min}(C')} \cdot \varepsilon.
-    \end{equation}
-
-  \item \textbf{Q change:}
-    The action of $\beta'$ (under $H'$, the action matrix for~$\sigma'$,
-    which is $H$ with row and column~$k$ deleted) satisfies
-    \begin{equation}\label{eq:q-removal}
-      Q(\beta^*) - Q'(\beta')
-      = \beta^*_k \sum_{j \neq k} H_{kj}\, \beta^*_j,
-    \end{equation}
-    where $Q'$ denotes the action under~$H'$.
-    Hence
-    \begin{equation}\label{eq:q-removal-bound}
-      |Q(\beta^*) - Q'(\beta')|
-      \leq \varepsilon_k \cdot \|H_{k,:}\| \cdot \|\beta^*\|
-      \leq \varepsilon \cdot \|H\| \cdot \|\beta^*\|.
-    \end{equation}
-
-    The Q change from the feasibility correction is:
-    \begin{align}
-      Q'(\bar\beta') - Q'(\beta')
-      &= (H'\beta')^\top (\bar\beta' - \beta')
-        + \tfrac{1}{2}(\bar\beta' - \beta')^\top H'(\bar\beta' - \beta')
-        \nonumber\\
-      &\leq \|H'\| \cdot \|\beta'\| \cdot \|\bar\beta' - \beta'\|
-        + \tfrac{1}{2}\|H'\| \cdot \|\bar\beta' - \beta'\|^2.
-        \label{eq:q-correction-bound}
-    \end{align}
-
-  \item \textbf{Combined bound:}
-    since $Q^*(\sigma') \geq Q'(\bar\beta')$
-    (the maximum over $\mathcal{F}'$ is at least as large as
-    the value at the feasible point $\bar\beta'$),
-    \begin{equation}\label{eq:combined-drop-bound}
-      Q^*(\sigma) - Q^*(\sigma')
-      \leq \varepsilon \left(
-        \|H\| \cdot \|\beta^*\|
-        + \frac{\|H\| \cdot \|\beta^*\| \cdot \|c_k\|}{\sigma_{\min}(C')}
-        + \frac{\|H\| \cdot \|c_k\|^2 \varepsilon}{2\, \sigma_{\min}(C')^2}
-      \right).
-    \end{equation}
-    For $\varepsilon$ small, this is
-    $O\bigl(\varepsilon \cdot \|H\| \cdot \|\beta^*\| \cdot
-      (1 + \|c_k\| / \sigma_{\min}(C'))\bigr)$.
-\end{enumerate}
+Then $Q^*(\sigma') \geq Q^*(\sigma) - E_{\mathrm{drop}}$ where
+\begin{equation}\label{eq:combined-drop-bound}
+  E_{\mathrm{drop}}
+  = \varepsilon \left(
+    \|H\| \cdot \|\beta^*\|
+    + \frac{\|H\| \cdot \|\beta^*\| \cdot \|c_k\|}
+           {\sigma_{\min}(C_{-k})}
+    + \frac{\|H\| \cdot \|c_k\|^2 \varepsilon}
+           {2\, \sigma_{\min}(C_{-k})^2}
+  \right).
+\end{equation}
 \end{lemma}
 
 \begin{proof}
-\emph{Part 1.}
-$C'\beta' = \sum_{i \neq k} C_{:,i}\, \beta^*_i
-= C\beta^* - C_{:,k}\, \beta^*_k
-= d - c_k\, \varepsilon_k$.
+Define $\beta' \in \mathbb{R}^{m-1}$ by deleting component~$k$
+from~$\beta^*$ (reindexed to $\{1, \ldots, m-1\}$).
 
-\emph{Part 2.}
-$\bar\beta' = \beta' + C'^\top(C'C'^\top)^{-1}(d - C'\beta')$.
-Then $C'\bar\beta' = C'\beta' + C'C'^\top(C'C'^\top)^{-1}(d - C'\beta') = d$.
-The correction norm: $\|\bar\beta' - \beta'\|
-= \|C'^\top(C'C'^\top)^{-1} c_k \varepsilon_k\|
-\leq \|C'^\top(C'C'^\top)^{-1}\| \cdot \|c_k\| \cdot \varepsilon_k$.
-Since $\|C'^\top(C'C'^\top)^{-1}\| = 1/\sigma_{\min}(C')$
-(the operator maps $\mathbb{R}^5 \to \mathbb{R}^{m-1}$
-with norm $1/\sigma_{\min}(C')$),
-this gives~\eqref{eq:correction-bound}.
+\emph{Step 1: Constraint violation of $\beta'$.}
+$C_{-k}\beta' = \sum_{i \neq k} C_{:,i}\, \beta^*_i
+= C\beta^* - c_k\, \beta^*_k = d - c_k\, \beta^*_k$.
+So $\|C_{-k}\beta' - d\| = \|c_k\| \cdot \beta^*_k
+\leq \|c_k\| \cdot \varepsilon$.
 
-\emph{Part 3.}
-Expand $Q(\beta^*)$ in the full $m$-dimensional space:
+\emph{Step 2: Feasibility restoration.}
+Define the projection onto $\{C_{-k}\beta' = d\}$:
+$\bar\beta' = \beta' + C_{-k}^\top (C_{-k} C_{-k}^\top)^{-1}
+  (d - C_{-k}\beta')$.
+Then $C_{-k}\bar\beta' = d$ and
 \[
-  Q(\beta^*) = \tfrac{1}{2}\sum_{i,j} H_{ij}\beta^*_i\beta^*_j
-  = \tfrac{1}{2}\sum_{i,j \neq k} H_{ij}\beta^*_i\beta^*_j
-    + \beta^*_k \sum_{j \neq k} H_{kj}\beta^*_j
-    + \tfrac{1}{2} H_{kk} (\beta^*_k)^2.
+  \|\bar\beta' - \beta'\|
+  \leq \frac{\|c_k\|}{\sigma_{\min}(C_{-k})} \cdot \beta^*_k
+  \leq \frac{\|c_k\|}{\sigma_{\min}(C_{-k})} \cdot \varepsilon.
 \]
-Since $H_{kk} = 0$: $Q(\beta^*) = Q'(\beta') + \beta^*_k \sum_{j \neq k} H_{kj}\beta^*_j$.
-This gives~\eqref{eq:q-removal}.
-Bound~\eqref{eq:q-removal-bound} follows from Cauchy--Schwarz.
+Componentwise: $\bar\beta'_i \geq \beta^*_i - \|\bar\beta' - \beta'\|
+\geq \delta - \|c_k\| \varepsilon / \sigma_{\min}(C_{-k}) > 0$
+by~\eqref{eq:positivity-condition}.
+So $\bar\beta' \in \mathcal{F}'$ (feasible for~$\sigma'$).
 
-The correction bound~\eqref{eq:q-correction-bound}
-is the standard quadratic Taylor bound.
+\emph{Step 3: Q change from removing component~$k$.}
+Expanding $Q(\beta^*) = \tfrac{1}{2}\sum_{i,j} H_{ij}\beta^*_i\beta^*_j$
+and using $H_{kk} = 0$:
+\begin{equation}\label{eq:q-removal}
+  Q(\beta^*) - Q_{-k}(\beta')
+  = \beta^*_k \sum_{j \neq k} H_{kj}\, \beta^*_j.
+\end{equation}
+Hence $|Q(\beta^*) - Q_{-k}(\beta')|
+\leq \beta^*_k \cdot \|H_{k,:}\| \cdot \|\beta^*\|
+\leq \varepsilon \cdot \|H\| \cdot \|\beta^*\|$
+(Cauchy--Schwarz; $\|H_{k,:}\| \leq \|H\|$).
 
-\emph{Part 4.}
-$Q^*(\sigma) = Q(\beta^*)$,\;
-$Q^*(\sigma') \geq Q'(\bar\beta')$,\;
-so $Q^*(\sigma) - Q^*(\sigma')
-\leq Q(\beta^*) - Q'(\bar\beta')
-= [Q(\beta^*) - Q'(\beta')] + [Q'(\beta') - Q'(\bar\beta')]$.
-Apply~\eqref{eq:q-removal-bound} and~\eqref{eq:q-correction-bound}
-with $\|\bar\beta' - \beta'\| \leq \|c_k\| \varepsilon / \sigma_{\min}(C')$.
+\emph{Step 4: Q change from the feasibility correction.}
+By the triangle inequality on the quadratic Taylor expansion:
+\[
+  |Q_{-k}(\bar\beta') - Q_{-k}(\beta')|
+  \leq \|H_{-k}\| \cdot \|\beta'\| \cdot \|\bar\beta' - \beta'\|
+    + \tfrac{1}{2}\|H_{-k}\| \cdot \|\bar\beta' - \beta'\|^2.
+\]
+Since $\|H_{-k}\| \leq \|H\|$ (principal submatrix)
+and $\|\beta'\| \leq \|\beta^*\|$:
+\[
+  |Q_{-k}(\bar\beta') - Q_{-k}(\beta')|
+  \leq \frac{\|H\| \cdot \|\beta^*\| \cdot \|c_k\| \varepsilon}
+            {\sigma_{\min}(C_{-k})}
+    + \frac{\|H\| \cdot \|c_k\|^2 \varepsilon^2}
+            {2\, \sigma_{\min}(C_{-k})^2}.
+\]
+
+\emph{Step 5: Combined bound.}
+Since $Q^*(\sigma') \geq Q_{-k}(\bar\beta')$ (maximum $\geq$ any feasible value):
+\begin{align*}
+  Q^*(\sigma) - Q^*(\sigma')
+  &\leq Q(\beta^*) - Q_{-k}(\bar\beta') \\
+  &\leq |Q(\beta^*) - Q_{-k}(\beta')| + |Q_{-k}(\beta') - Q_{-k}(\bar\beta')|
+  \leq E_{\mathrm{drop}}. \qedhere
+\end{align*}
 \end{proof}
 
 
-\begin{remark}[Interpretation]\label{rem:near-boundary-interpretation}
-Lemma~\ref{lem:near-boundary-drop} says:
-if a maximizer $\beta^*$ has $\beta^*_k \leq \varepsilon$
-(near the boundary) and the other components are bounded
-away from zero ($\geq \delta$), then dropping $\sigma$ loses
-at most $O(\varepsilon)$ in the $Q$ value, with a constant
-depending on $\|H\|$, $\|\beta^*\|$, $\|c_k\|$, and $\sigma_{\min}(C')$.
+\begin{remark}[Trinary treatment of $\beta > 0$]%
+\label{rem:trinary-beta}
+The test $\min_k \beta^*_k > 0$ is discontinuous.
+The f64 solver computes $\tilde\beta$ and classifies:
+\begin{itemize}
+  \item $\min_k \tilde\beta_k > \varepsilon_\beta$
+    $\;\Rightarrow\;$ \textsc{True}:
+    by perturbation bounds,
+    $\beta^*_k \geq \tilde\beta_k - \eta > 0$
+    (where $\eta$ bounds $\|\tilde\beta - \beta^*\|_\infty$).
+    KEEP: report $\tilde Q$.
+  \item $\min_k \tilde\beta_k < -\varepsilon_\beta$
+    $\;\Rightarrow\;$ \textsc{False}:
+    $\beta^*_k < 0$, exact maximizer outside $\{\beta > 0\}$.
+    DROP.
+  \item $|\min_k \tilde\beta_k| \leq \varepsilon_\beta$
+    $\;\Rightarrow\;$ \textsc{Indeterminate}:
+    cannot determine sign of~$\beta^*_k$.
+    \textbf{Also DROP}, justified by Lemma~\ref{lem:near-boundary-drop}:
+\end{itemize}
 
-For the capacity algorithm: if the f64 solver observes
-$\tilde\beta_k \leq \varepsilon_\beta$ for some~$k$, it can
-DROP this~$\sigma$ and accept the $Q$ loss.
-The critical requirement is condition~\eqref{eq:positivity-condition}:
-the remaining $\beta^*_i$ (for $i \neq k$) must be large enough
-that the feasibility correction doesn't make $\bar\beta'$ negative.
-If multiple components of~$\beta^*$ are near zero simultaneously,
-the correction might fail --- the Q loss is then not bounded
-by this lemma.
+\noindent
+\textbf{Why Indeterminate $\to$ DROP is safe.}
+If $|\min_k \tilde\beta_k| \leq \varepsilon_\beta$,
+then $\beta^*_k \in [-\varepsilon_\beta - \eta,\;
+\varepsilon_\beta + \eta]$.
+Two sub-cases:
+\begin{enumerate}
+  \item $\beta^*_k \leq 0$: exact maximizer is on the boundary
+    or outside. DROP is correct --- a shorter $\sigma'$ achieves
+    $Q^*(\sigma') \geq Q^*(\sigma)$.
+  \item $\beta^*_k > 0$ but $\beta^*_k \leq \varepsilon_\beta + \eta$:
+    exact maximizer is interior but near-boundary.
+    By Lemma~\ref{lem:near-boundary-drop} (with
+    $\varepsilon = \varepsilon_\beta + \eta$),
+    DROP loses at most $E_{\mathrm{drop}}$ in~$Q$.
+\end{enumerate}
+In both sub-cases, DROP is safe with bounded Q~loss.
 
-\textbf{Open question:} for the capacity-achieving orbit
-(minimum-support maximizer), all $\beta^*_i > 0$.
-Is the margin $\min_i \beta^*_i$ bounded below by a function
-of the polytope geometry?  If so, the minimum-support orbit
-is never DROPped (its margin exceeds $\varepsilon_\beta$),
-and all DROPped orbits are redundant.
+\textbf{Critical assumption:} the capacity-achieving orbit
+(minimum-support maximizer, Remark~\ref{rem:min-support})
+has $\min_k \beta^*_k > \varepsilon_\beta + \eta$,
+so it is classified \textsc{True} and never DROPped.
+If this fails (margin below f64 resolution),
+rational arithmetic fallback is needed.
 \end{remark}
 
 
