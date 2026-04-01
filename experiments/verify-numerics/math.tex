@@ -174,15 +174,17 @@ Define:
     \quad (affine constraint set).
   \item $\mathcal{F} = \mathcal{A} \cap \{\beta \geq 0\}$
     \quad (closed feasible set).
-  \item $\beta_0 \in \mathcal{A}$: a particular solution.
+  \item $\beta_0 \in \mathcal{A}$: a particular solution
+    (e.g., $\beta_0 = C^+ d$, the minimum-norm solution).
   \item $V \in \mathbb{R}^{m \times k}$: orthonormal basis for
     $\ker(C)$,\; $k = m - \operatorname{rank}(C)$,
     \;so $\mathcal{A} = \beta_0 + \operatorname{im}(V)$.
   \item $H' = V^\top H V \in \mathbb{R}^{k \times k}$:
     the \emph{reduced Hessian} (restriction of $H$ to~$\mathcal{A}$).
+  \item $\gamma_1, \ldots, \gamma_k$: eigenvalues of~$H'$,
+    with orthonormal eigenvectors $w_1, \ldots, w_k \in \mathbb{R}^k$.
   \item $g = V^\top H \beta_0 \in \mathbb{R}^k$:
     the gradient of $Q|_{\mathcal{A}}$ at $\alpha = 0$.
-  \item $\gamma_1, \ldots, \gamma_k$: eigenvalues of~$H'$.
 \end{itemize}
 The per-$\sigma$ problem is:
 maximize $Q(\beta) = \tfrac{1}{2}\beta^\top H \beta$
@@ -194,13 +196,16 @@ over $\beta \in \mathcal{F}$.
 \leavevmode
 \begin{enumerate}
   \item $\mathcal{A}$ may be empty (if $C\beta = d$ is inconsistent).
-  \item When $\mathcal{A} \neq \emptyset$,\;
-    $\mathcal{F} = \mathcal{A} \cap \{\beta \geq 0\}$
-    is compact: it is closed and bounded
-    (contained in the simplex
+  \item $\mathcal{F} = \mathcal{A} \cap \{\beta \geq 0\}$
+    is compact (closed and bounded; contained in the simplex
     $\Delta = \{\beta \geq 0,\; \sum \beta_i = 1\}$
     by the normalization constraint).
-    Hence $Q$ attains its maximum on~$\mathcal{F}$.
+    This includes the case $\mathcal{F} = \emptyset$
+    (which is compact): even when $\mathcal{A} \neq \emptyset$,
+    the intersection with $\{\beta \geq 0\}$ may be empty.
+  \item When $\mathcal{F} \neq \emptyset$,
+    $Q$ attains its maximum on~$\mathcal{F}$
+    (continuous function on a compact set).
 \end{enumerate}
 \end{proposition}
 
@@ -233,8 +238,8 @@ The critical points of $Q|_{\mathcal{A}}$
     (Lemma~\ref{lem:well-defined}).
   \item \textbf{$H'$ singular, $g \not\perp \ker(H')$}:
     no critical points.
-    $Q|_{\mathcal{A}}$ is affine (hence unbounded)
-    along directions in $\ker(H')$ where $g$ has nonzero projection.
+    $Q|_{\mathcal{A}}$ has no stationary point
+    ($H'\alpha + g = 0$ is inconsistent).
 \end{enumerate}
 \end{proposition}
 
