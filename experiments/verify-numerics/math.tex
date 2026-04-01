@@ -472,48 +472,71 @@ Since $Q^*(\sigma') \geq Q_{-k}(\bar\beta')$ (maximum $\geq$ any feasible value)
 \begin{remark}[Trinary treatment of $\beta > 0$]%
 \label{rem:trinary-beta}
 The test $\min_k \beta^*_k > 0$ is discontinuous.
-The f64 solver computes $\tilde\beta$ and classifies:
+The f64 solver computes $\tilde\beta$ and classifies
+(with perturbation bound $\eta \geq \|\tilde\beta - \beta^*\|_\infty$):
 \begin{itemize}
-  \item $\min_k \tilde\beta_k > \varepsilon_\beta$
-    $\;\Rightarrow\;$ \textsc{True}:
-    by perturbation bounds,
-    $\beta^*_k \geq \tilde\beta_k - \eta > 0$
-    (where $\eta$ bounds $\|\tilde\beta - \beta^*\|_\infty$).
-    KEEP: report $\tilde Q$.
-  \item $\min_k \tilde\beta_k < -\varepsilon_\beta$
-    $\;\Rightarrow\;$ \textsc{False}:
-    $\beta^*_k < 0$, exact maximizer outside $\{\beta > 0\}$.
-    DROP.
-  \item $|\min_k \tilde\beta_k| \leq \varepsilon_\beta$
-    $\;\Rightarrow\;$ \textsc{Indeterminate}:
-    cannot determine sign of~$\beta^*_k$.
-    \textbf{Also DROP}, justified by Lemma~\ref{lem:near-boundary-drop}:
+  \item \textsc{True}
+    ($\min_k \tilde\beta_k > \varepsilon_\beta$
+    where $\varepsilon_\beta > \eta$):
+    $\beta^*_k \geq \tilde\beta_k - \eta > 0$ for all~$k$.
+    Certified interior solution.
+    $\tilde Q$ is a reliable approximation of $Q_{\mathcal{F}}(\sigma)$
+    (the exact per-$\sigma$ optimum on~$\mathcal{F}$).
+  \item \textsc{False}
+    ($\min_k \tilde\beta_k < -\varepsilon_\beta$):
+    $\beta^*_k < 0$ for some~$k$.
+    The unconstrained critical point lies outside~$\mathcal{F}$.
+    The true $Q_{\mathcal{F}}(\sigma)$ (max over $\beta \geq 0$)
+    is lower, and is achieved on~$\partial\mathcal{F}$;
+    a shorter~$\sigma'$ finds it.
+    Discard this~$\sigma$.
+  \item \textsc{Indeterminate}
+    (some $\tilde\beta_k \in [-\varepsilon_\beta,\, \varepsilon_\beta]$):
+    cannot determine whether $\beta^* > 0$.
+    $\tilde Q$ is the unconstrained value $Q(\tilde\beta)$, which
+    may \textbf{overestimate} $Q_{\mathcal{F}}(\sigma)$:
+    if $\beta^*_k < 0$, the true maximum on~$\mathcal{F}$ is on the
+    boundary and lower.
 \end{itemize}
 
-\noindent
-\textbf{Why Indeterminate $\to$ DROP is safe.}
-If $|\min_k \tilde\beta_k| \leq \varepsilon_\beta$,
-then $\beta^*_k \in [-\varepsilon_\beta - \eta,\;
-\varepsilon_\beta + \eta]$.
-Two sub-cases:
-\begin{enumerate}
-  \item $\beta^*_k \leq 0$: exact maximizer is on the boundary
-    or outside. DROP is correct --- a shorter $\sigma'$ achieves
-    $Q^*(\sigma') \geq Q^*(\sigma)$.
-  \item $\beta^*_k > 0$ but $\beta^*_k \leq \varepsilon_\beta + \eta$:
-    exact maximizer is interior but near-boundary.
-    By Lemma~\ref{lem:near-boundary-drop} (with
-    $\varepsilon = \varepsilon_\beta + \eta$),
-    DROP loses at most $E_{\mathrm{drop}}$ in~$Q$.
-\end{enumerate}
-In both sub-cases, DROP is safe with bounded Q~loss.
+\medskip\noindent
+\textbf{Indeterminate is not DROP.}
+An \textsc{Indeterminate} node cannot be dropped (its
+$\tilde Q$ might be an overestimate, so dropping it could
+discard a node whose true $Q_{\mathcal{F}}$ is the global max).
+Nor can its $\tilde Q$ be trusted as a lower bound on~$Q_{\max}$
+(the overestimate means $\tilde Q$ could exceed the true
+$Q_{\max}$, producing a capacity that is too small).
 
-\textbf{Critical assumption:} the capacity-achieving orbit
-(minimum-support maximizer, Remark~\ref{rem:min-support})
-has $\min_k \beta^*_k > \varepsilon_\beta + \eta$,
-so it is classified \textsc{True} and never DROPped.
-If this fails (margin below f64 resolution),
-rational arithmetic fallback is needed.
+\textsc{Indeterminate} must be \textbf{propagated} to the
+accumulator, which resolves it lazily:
+\begin{enumerate}
+  \item Collect all $(\sigma, \tilde Q, \text{verdict})$ triples.
+  \item Sort by $\tilde Q$ descending.
+  \item The global maximum $Q_{\max}$ is determined by the
+    highest $\tilde Q$ among \textsc{True} nodes.
+  \item Any \textsc{Indeterminate} node with
+    $\tilde Q > Q_{\max}^{\textsc{True}}$
+    must be resolved (e.g., by rational arithmetic) to determine
+    whether its true $Q_{\mathcal{F}}(\sigma) > Q_{\max}^{\textsc{True}}$.
+  \item \textsc{Indeterminate} nodes with
+    $\tilde Q \leq Q_{\max}^{\textsc{True}}$ can be ignored
+    (even if their true $Q_{\mathcal{F}}$ is slightly different,
+    it cannot exceed $Q_{\max}^{\textsc{True}}$ by more than
+    $E_{\mathrm{drop}}$ from Lemma~\ref{lem:near-boundary-drop}).
+  \item If no \textsc{True} nodes exist, all candidates are
+    \textsc{Indeterminate} and must be resolved.
+\end{enumerate}
+
+\medskip\noindent
+\textbf{Remark on Lemma~\ref{lem:near-boundary-drop}.}
+The lemma remains useful for bounding the Q~loss in item~5:
+if $\tilde Q \leq Q_{\max}^{\textsc{True}}$ and $\beta^*_k$
+is near zero, the true $Q_{\mathcal{F}}(\sigma)$ differs from
+the shorter~$\sigma'$ value by at most $E_{\mathrm{drop}}$.
+But the lemma does not justify converting \textsc{Indeterminate}
+to DROP --- it bounds the loss \emph{if we drop}, not the
+overestimate \emph{if we keep}.
 \end{remark}
 
 
