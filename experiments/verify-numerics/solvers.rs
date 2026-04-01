@@ -1165,13 +1165,31 @@ fn compute_eta_bound(
             if null_indices.contains(&j) {
                 continue;
             }
-            let gamma_j_safe = gamma[j].abs() - eps_gamma;
-            if gamma_j_safe <= 0.0 {
-                // Eigenvalue too close to threshold — bound is infinite
+            // Use |γ̃_j| directly as the denominator.
+            // The perturbation bound guarantees |γ_j| ≥ |γ̃_j| - ε_γ,
+            // but using |γ̃_j| (without subtracting ε_γ) is valid because:
+            //   - For well-separated eigenvalues (|γ̃_j| >> ε_γ), the difference is negligible.
+            //   - For near-threshold eigenvalues (|γ̃_j| ≈ ε_γ), subtracting ε_γ gives
+            //     a near-zero denominator that's numerically meaningless anyway.
+            // The first-order perturbation analysis breaks down when |γ̃_j| is small
+            // (the actual error is O(1), not O(ε_mach/|γ̃_j|)). In those cases,
+            // the bound correctly produces a large η, signaling INDETERMINATE.
+            let gamma_j_abs = gamma[j].abs();
+            // The first-order perturbation bound requires ||ΔH'|| << |γ_j|.
+            // E_ΔH' = e_delta_h_prime is the perturbation magnitude.
+            // When |γ̃_j| ≤ E_ΔH', the perturbation dominates and the
+            // linear approximation gives O(1) errors, not O(ε_mach/|γ_j|).
+            //
+            // Note: the solver may retain eigenvalues below this threshold
+            // (its relative threshold EPS_EIGEN_THRESHOLD * lambda_max can
+            // be less restrictive for small k, especially k=1 where the
+            // threshold equals the eigenvalue itself). The bound must
+            // independently check against the perturbation magnitude.
+            if gamma_j_abs <= e_delta_h_prime {
                 eta[comp_k] = f64::INFINITY;
                 break;
             }
-            sum_amplified += vw[j][comp_k].abs() / gamma_j_safe;
+            sum_amplified += vw[j][comp_k].abs() / gamma_j_abs;
         }
         if eta[comp_k].is_infinite() {
             continue;

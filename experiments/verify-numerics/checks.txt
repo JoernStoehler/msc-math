@@ -137,8 +137,8 @@ PERTURBATION CHAIN — β > 0 CERTIFICATION BOUND [lem:link-beta]
 
   η_k bound magnitude (max_k η_k):
     median: 1.6166e-12
-    p99:    5.0848e+11
-    max:    5.3756e+12
+    p99:    5.0827e+11
+    max:    5.3663e+12
     infinite (η = ∞): 0/1219
 
   Certified margin min_k(β̃_k - η_k):
