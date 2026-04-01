@@ -15,7 +15,466 @@
 
 % \input'd from root math.tex — no \documentclass
 
-% ── Problem setup ──
+
+% ══════════════════════════════════════════════════════════════════════
+% Part I: Solver specification
+% ══════════════════════════════════════════════════════════════════════
+%
+% This part defines the per-sigma problem, its role in the capacity
+% algorithm, what properties a solver MUST and CAN have, and the
+% exact (rational-arithmetic) algorithm.  The f64 algorithm and its
+% error analysis follow in Part II.
+%
+% Notation conventions:
+%   Exact quantities:  beta^*, lambda^*, Q^*  (superscript *)
+%   Computed (f64):    \tilde\beta, \tilde\lambda, \tilde Q  (tilde)
+%   Perturbation:      \delta\beta = \tilde\beta - \beta^*  (delta)
+
+
+% ── 1. The per-sigma problem ──────────────────────────────────────────
+
+\begin{definition}[Per-$\sigma$ QP]\label{def:per-sigma-qp}
+Let $K = \{x \in \mathbb{R}^4 : a_i^\top x \leq 1,\; i = 1,\ldots,F\}$
+be a convex polytope with dual vertices
+$a_1, \ldots, a_F \in \mathbb{R}^4$.
+Let $\sigma = (\sigma(1), \ldots, \sigma(m))$ be a cyclic permutation
+of a subset $S \subseteq \{1, \ldots, F\}$ with $|S| = m \geq 2$.
+Define:
+\begin{itemize}
+  \item \textbf{Action matrix}
+    $H \in \mathbb{R}^{m \times m}$:
+    $H_{ij} = \omega_0(a_{\sigma(i)},\, a_{\sigma(j)})$ for $i \neq j$,
+    $\; H_{ii} = 0$.
+    ($H$ is symmetric with zero diagonal; see
+    Lemma~\ref{lem:H-quadratic}.)
+  \item \textbf{Constraint matrix}
+    $C \in \mathbb{R}^{5 \times m}$:
+    rows $0$--$3$ are $C_{d,k} = a_{\sigma(k),d}$;
+    row $4$ is $C_{4,k} = 1$.
+  \item \textbf{Constraint RHS}
+    $d = (0, 0, 0, 0, 1)^\top \in \mathbb{R}^5$.
+\end{itemize}
+The \emph{per-$\sigma$ QP} is:
+\begin{equation}\label{eq:per-sigma-qp}
+  \max_{\beta \in \mathbb{R}^m}\;
+  Q(\beta) = \tfrac{1}{2}\,\beta^\top H\, \beta
+  \quad \text{subject to} \quad
+  C\beta = d, \;\; \beta > 0.
+\end{equation}
+The constraints encode:
+\begin{itemize}
+  \item \textbf{Closure} (rows $0$--$3$):
+    $\sum_{i=1}^m a_{\sigma(i)}\, \beta_i = 0$
+    --- the Reeb trajectory returns to its starting point.
+  \item \textbf{Normalization} (row $4$):
+    $\sum_{i=1}^m \beta_i = 1$.
+  \item \textbf{Positivity} ($\beta > 0$):
+    each $\beta_i > 0$, meaning the orbit dwells on each
+    facet $F_{\sigma(i)}$ for positive time.
+\end{itemize}
+\end{definition}
+
+
+% ── 2. Role in the capacity algorithm ────────────────────────────────
+
+\begin{remark}[Capacity algorithm and the per-$\sigma$ solver]%
+\label{rem:capacity-role}
+The EHZ capacity algorithm (see~[alg:ehz]) iterates over all subsets
+$S \subseteq \{1, \ldots, F\}$ and all cyclic permutations $\sigma$ of
+each~$S$, calls a per-$\sigma$ solver for each, and computes
+\[
+  c_{\mathrm{EHZ}}(K)
+  = \frac{1}{2\, \max_\sigma Q^*(\sigma)},
+\]
+where $Q^*(\sigma)$ is the exact optimal value of~\eqref{eq:per-sigma-qp}
+for those $\sigma$ where a feasible $\beta^* > 0$ exists.
+
+The per-$\sigma$ solver does not need to solve every instance exactly.
+It only needs to produce enough information so that the capacity
+algorithm can compute an accurate $c_{\mathrm{EHZ}}$.
+This is formalized below.
+\end{remark}
+
+
+% ── 3. Solver contract ───────────────────────────────────────────────
+
+\begin{definition}[Per-$\sigma$ solver contract]\label{def:solver-contract}
+A per-$\sigma$ solver takes $(H, C, d)$ and returns one of:
+\begin{enumerate}
+  \item[(a)]
+    \textbf{A value $\hat Q$ with error bound $E \geq 0$}
+    such that $|Q^* - \hat Q| \leq E$, where $Q^*$ is
+    the exact optimum of~\eqref{eq:per-sigma-qp}
+    and the solver certifies that a feasible $\beta^* > 0$ exists.
+    May additionally return a vector $\hat\beta$ with
+    direction-dependent error bounds.
+  \item[(b)]
+    \textbf{DROP}: the solver declines to report a value for
+    this $\sigma$.
+\end{enumerate}
+No other outputs are permitted.
+In particular, the solver never claims ``no feasible $\beta^* > 0$
+exists'' --- it either certifies existence (case~a) or declines (case~b).
+
+\medskip
+\noindent\textbf{Correctness requirements:}
+\begin{itemize}
+  \item[\textsc{(Must)}]
+    \textbf{No false claims.}
+    If the solver returns case~(a),
+    then there exists an exact $\beta^*$ with $C\beta^* = d$,
+    $\beta^* > 0$, and $\beta^*$ is a critical point of~$Q$ on
+    $\{C\beta = d\}$, and $|Q(\beta^*) - \hat Q| \leq E$.
+    The error bound~$E$ must be proven, not a heuristic or conjecture.
+  \item[\textsc{(Must)}]
+    \textbf{No silent incorrectness.}
+    The solver may use conjectured properties (e.g., ``this case
+    never occurs'') only if it panics when the conjecture is violated.
+    This ensures that incorrect output is replaced by a crash,
+    which is detectable and fixable, unlike silent wrong answers.
+  \item[\textsc{(Can)}]
+    \textbf{Drop any node.}
+    The solver may return DROP for any~$\sigma$,
+    as long as the capacity algorithm retains at least one $\sigma$
+    with $|Q^*(\sigma) - Q^*_{\max}|$ small enough that the
+    capacity error is acceptable.
+  \item[\textsc{(Can)}]
+    \textbf{Return inaccurate $\hat\beta$.}
+    The solver may return $\hat\beta$ with
+    $\|\hat\beta - \beta^*\|$ large in some directions,
+    provided $|\hat Q - Q^*|$ is small.  Callers who need
+    accurate $\beta^*$ (e.g.\ for orbit recovery)
+    must either use the direction-dependent error bounds
+    or fall back to exact rational arithmetic.
+\end{itemize}
+\end{definition}
+
+
+% ── 4. Valid node-dropping rules ─────────────────────────────────────
+
+\begin{lemma}[Dropping $\beta^*_k = 0$ nodes]%
+\label{lem:drop-zero-beta}
+If the per-$\sigma$ QP~\eqref{eq:per-sigma-qp} has an optimal
+$\beta^*$ with $\beta^*_k = 0$ for some~$k$, then the same orbit
+is found by a shorter permutation $\sigma'$ that omits $\sigma(k)$.
+Therefore, dropping $\sigma$ does not cause the capacity algorithm
+to miss the capacity-achieving orbit, provided it also enumerates
+$\sigma'$.
+\end{lemma}
+
+\begin{proof}
+If $\beta^*_k = 0$, the orbit does not dwell on facet~$\sigma(k)$.
+The dwell times on the remaining $m-1$ facets satisfy the closure
+and normalization constraints with $\sigma(k)$ removed
+(since $a_{\sigma(k)} \cdot 0 = 0$ does not contribute to the
+closure sum, and $\beta^*_k = 0$ does not contribute to
+the normalization sum).
+The action $Q(\beta^*) = \tfrac{1}{2}\, \beta^{*\top} H\, \beta^*$
+depends only on the nonzero $\beta^*_i$, and
+$\omega_0(a_{\sigma(i)}, a_{\sigma(k)}) \cdot \beta^*_k = 0$
+for all terms involving~$k$.
+Hence $\beta^*$ restricted to $S \setminus \{\sigma(k)\}$
+achieves the same $Q^*$ under the shorter permutation~$\sigma'$.
+\end{proof}
+
+
+\begin{lemma}[Dropping non-concave nodes]%
+\label{lem:drop-non-concave}
+% [TODO: JÖRN - verify this argument; the bounded feasible set
+% claim relies on C having full row rank and beta >= 0]
+Let $\mathcal{A} = \{\beta : C\beta = d\}$ and
+$V \in \mathbb{R}^{m \times k}$ an orthonormal basis for
+$\ker(C)$, so $\mathcal{A} = \beta_0 + \operatorname{im}(V)$
+for a particular solution $\beta_0$.
+Define the \emph{reduced Hessian}
+$H' = V^\top H V \in \mathbb{R}^{k \times k}$.
+
+Suppose $H'$ has a positive eigenvalue:
+$\exists\, w \in \mathbb{R}^k$ with $\|w\| = 1$ and
+$w^\top H' w > 0$.
+Then $Q$ is unbounded above on~$\mathcal{A}$.
+Since $\mathcal{F} = \mathcal{A} \cap \{\beta \geq 0\}$ is
+a bounded polytope (when nonempty),
+the maximum of~$Q$ over~$\mathcal{F}$ exists and is attained
+on the boundary $\{\beta_k = 0$ for some~$k\}$.
+By Lemma~\ref{lem:drop-zero-beta},
+such boundary optima are found by shorter permutations.
+\end{lemma}
+
+\begin{proof}
+Along the ray $\beta(t) = \beta_0 + V(t\, w)$ for $t \in \mathbb{R}$:
+\[
+  Q(\beta(t))
+  = \tfrac{1}{2}\, (\beta_0 + tVw)^\top H (\beta_0 + tVw)
+  = Q(\beta_0) + t\, (Vw)^\top H \beta_0
+    + \tfrac{1}{2}\, t^2\, w^\top H' w.
+\]
+Since $w^\top H' w > 0$, $Q(\beta(t)) \to +\infty$ as $t \to \pm\infty$.
+Hence $Q$ is unbounded on~$\mathcal{A}$.
+
+The set $\mathcal{F} = \mathcal{A} \cap \{\beta \geq 0\}$
+is a polytope (intersection of an affine subspace with the
+nonnegative orthant), hence bounded and closed
+(it is contained in the simplex $\{\beta \geq 0, \sum \beta_i = 1\}$
+by the normalization constraint).
+A continuous function on a compact set attains its maximum.
+Since $Q$ is unbounded on~$\mathcal{A}$ but bounded on~$\mathcal{F}$,
+the maximum on~$\mathcal{F}$ must be on the boundary
+$\partial\mathcal{F} = \mathcal{F} \cap \{\beta_k = 0 \text{ for some } k\}$.
+
+More precisely: if the maximum were at an interior point
+$\beta^*$ of~$\mathcal{F}$ (i.e., $\beta^* > 0$), then $\beta^*$
+would be a local maximum of~$Q$ on~$\mathcal{A}$.
+But the positive eigenvalue of~$H'$ means $Q$ increases along
+the direction $Vw$ from any point in~$\mathcal{A}$
+(for large enough steps), contradicting local maximality.
+
+% [GAP - The last sentence is imprecise: "Q increases along Vw"
+% is true quadratically, but a local max could still exist if
+% the linear term dominates locally.  The correct argument is:
+% at an interior critical point of Q on A, the Hessian restricted
+% to A is H', and a positive eigenvalue means the critical point
+% is not a local max (it's a saddle point).  Hence the max of Q
+% on F is not at an interior critical point of Q|_A, so it must
+% be on the boundary.  Note: the max of Q on F could also be
+% at an interior point of a FACE of F (where some beta_k = 0
+% but the point is interior to that face), which is fine for
+% our purposes since Lemma lem:drop-zero-beta still applies.]
+\end{proof}
+
+
+\begin{lemma}[Dropping infeasible-interior nodes]%
+\label{lem:drop-infeasible-interior}
+Suppose $H'$ is negative definite (all eigenvalues $< 0$),
+so that $Q|_{\mathcal{A}}$ has a unique critical point
+$\beta^* = \beta_0 - V (H')^{-1} V^\top H \beta_0$.
+If $\beta^*_k < 0$ for some~$k$, then
+$\beta^*$ is not feasible for~\eqref{eq:per-sigma-qp},
+and the maximum of~$Q$ on $\mathcal{F} = \mathcal{A} \cap \{\beta \geq 0\}$
+is again on the boundary.
+By Lemma~\ref{lem:drop-zero-beta}, dropping $\sigma$ is valid.
+\end{lemma}
+
+\begin{proof}
+$H'$ negative definite means $Q|_{\mathcal{A}}$ is strictly concave,
+so $\beta^*$ is the unique global maximum on~$\mathcal{A}$.
+Since $\beta^* \notin \{\beta > 0\}$, the maximum of~$Q$
+on~$\mathcal{F}$ (which exists by compactness)
+must be at a point with $\beta_k = 0$ for some~$k$.
+\end{proof}
+
+
+\begin{remark}[Negative semidefinite case]%
+\label{rem:semidefinite-case}
+If $H'$ is negative semidefinite but not negative definite
+(i.e., some eigenvalue equals exactly~$0$), the critical
+``point'' of $Q|_{\mathcal{A}}$ is an affine subspace:
+$Q$ is constant along the null eigenvectors of~$H'$.
+A feasible $\beta^* > 0$ may or may not exist in this subspace.
+Geometrically, the level set $\{Q = Q^*\} \cap \mathcal{A}$
+is an affine subspace of dimension $\geq 1$, and we need to check
+whether it intersects $\{\beta > 0\}$.
+
+In exact arithmetic, this is a linear feasibility problem.
+In f64 arithmetic, eigenvalue $= 0$ is indistinguishable from
+eigenvalue $\approx 0$, so this case merges with the
+``near-zero eigenvalue'' regime treated in Part~II.
+\end{remark}
+
+
+% ── 5. Exact algorithm (rational arithmetic) ─────────────────────────
+
+\begin{algorithm}[Exact per-$\sigma$ solver]\label{alg:exact-solver}
+Given exact $(H, C, d)$ over~$\mathbb{Q}$:
+
+\medskip\noindent
+\textbf{Step~1 (Constraint space).}
+Compute $\ker(C) \subseteq \mathbb{R}^m$ and a particular
+solution $\beta_0$ with $C\beta_0 = d$.
+If $\{C\beta = d\}$ is empty (rank deficient or inconsistent),
+return DROP.
+Let $V \in \mathbb{R}^{m \times k}$ be a basis for~$\ker(C)$,
+where $k = m - \operatorname{rank}(C)$.
+
+\medskip\noindent
+\textbf{Step~2 (Reduced Hessian).}
+Compute $H' = V^\top H V \in \mathbb{R}^{k \times k}$.
+$H'$ is symmetric.
+Compute the eigenvalues $\gamma_1, \ldots, \gamma_k$ of~$H'$.
+
+\medskip\noindent
+\textbf{Step~3 (Classify).}
+\begin{itemize}
+  \item If any $\gamma_j > 0$: return DROP.
+
+    \emph{Justification:} Lemma~\ref{lem:drop-non-concave}.
+
+  \item If all $\gamma_j < 0$:
+    proceed to Step~4a (negative definite).
+
+  \item If all $\gamma_j \leq 0$ and some $\gamma_j = 0$:
+    proceed to Step~4b (negative semidefinite).
+\end{itemize}
+
+\medskip\noindent
+\textbf{Step~4a (Negative definite: unique critical point).}
+The unique critical point of $Q|_{\mathcal{A}}$ is
+\[
+  \beta^* = \beta_0 + V\alpha^*,
+  \qquad
+  \alpha^* = -(H')^{-1}\, V^\top H\, \beta_0.
+\]
+If $\beta^* > 0$: return $Q^* = Q(\beta^*)$ with $E = 0$.
+
+If $\beta^*_k \leq 0$ for some~$k$: return DROP
+(Lemma~\ref{lem:drop-infeasible-interior}).
+
+\medskip\noindent
+\textbf{Step~4b (Negative semidefinite: critical subspace).}
+Let $W \in \mathbb{R}^{k \times \ell}$ be a basis for
+$\ker(H')$ ($\ell \geq 1$).
+The critical set of $Q|_{\mathcal{A}}$ is
+$\{\beta_0 + V(\alpha^*_{\mathrm{part}} + W\gamma)
+  : \gamma \in \mathbb{R}^\ell\}$,
+where $\alpha^*_{\mathrm{part}}$ solves
+$H'\alpha = -V^\top H \beta_0$
+on $\operatorname{im}(H') = \ker(H')^\perp$
+(any particular solution; the general solution adds~$W\gamma$).
+$Q$ takes the same value $Q^*$ at all points of this set.
+
+Check whether $\{\beta_0 + V(\alpha^*_{\mathrm{part}} + W\gamma)
+  : \gamma \in \mathbb{R}^\ell\} \cap \{\beta > 0\} \neq \emptyset$.
+This is a linear feasibility problem in~$\gamma$.
+
+If feasible: return $Q^*$ with $E = 0$.
+
+If infeasible: all critical points have some $\beta_k \leq 0$,
+so the maximum on $\mathcal{F}$ is on the boundary.
+Return DROP.
+\end{algorithm}
+
+
+\begin{remark}[Completeness of the exact solver]%
+\label{rem:exact-completeness}
+Algorithm~\ref{alg:exact-solver} returns DROP whenever the
+maximum of~$Q$ on $\mathcal{F} = \{C\beta = d,\; \beta \geq 0\}$
+is on the boundary (some $\beta_k = 0$).
+By Lemma~\ref{lem:drop-zero-beta}, all such boundary optima
+are found by shorter permutations~$\sigma'$.
+Therefore, the capacity algorithm finds
+$Q^*_{\max} = \max_\sigma Q^*(\sigma)$ correctly, provided
+it enumerates all subsets and permutations
+(including all sub-permutations of any dropped~$\sigma$).
+
+The algorithm returns a value only when a unique
+$\beta^* > 0$ exists (Step~4a) or when a positive-beta
+point exists in the critical subspace (Step~4b).
+In both cases, $Q^* = Q(\beta^*)$ is the exact optimum and $E = 0$.
+\end{remark}
+
+
+% ── 6. The f64 challenge ─────────────────────────────────────────────
+
+\begin{remark}[Exact vs.\ f64: the core difficulty]%
+\label{rem:exact-vs-f64}
+Algorithm~\ref{alg:exact-solver} relies on three exact tests:
+\begin{enumerate}
+  \item \textbf{Sign of eigenvalues:}
+    $\gamma_j > 0$, $\gamma_j < 0$, or $\gamma_j = 0$?
+  \item \textbf{Sign of $\beta^*_k$:}
+    $\beta^*_k > 0$ or $\beta^*_k \leq 0$?
+  \item \textbf{Feasibility of the critical subspace}
+    (Step~4b): does $\{\ldots\} \cap \{\beta > 0\} \neq \emptyset$?
+\end{enumerate}
+All three are \textbf{discontinuous} functions of the input $(H, C, d)$:
+an arbitrarily small perturbation of~$a_i$ can flip an eigenvalue
+sign, move $\beta^*_k$ across zero, or change feasibility.
+No f64 computation can determine a discontinuous function of a
+perturbed input.
+
+The f64 solver therefore replaces each binary test with a
+\textbf{trinary} classification:
+$\textsc{True}$ / $\textsc{False}$ / $\textsc{Indeterminate}$.
+The $\textsc{Indeterminate}$ zone covers inputs near
+the discontinuity, where the f64 evidence is insufficient
+to determine the exact answer.
+The key design principle (from the verify-numerics experiment):
+every intermediate quantity used for classification must be a
+\textbf{continuous} function of the input.
+Eigenvalue values (continuous) replace eigenvalue signs (discontinuous).
+Margin $\min_k \beta_k$ (continuous) replaces positivity (discontinuous).
+The trinary threshold defines a \emph{buffer zone} around each
+discontinuity, within which the solver returns
+$\textsc{Indeterminate}$.
+
+The size of the buffer zone at each decision point must be
+\textbf{derived from proven error bounds}, not chosen by heuristic.
+Specifically, the buffer must be at least as wide as the
+maximum discrepancy between the f64-computed quantity and the
+exact quantity, given backward-stable f64 arithmetic.
+This is the subject of Part~II.
+\end{remark}
+
+
+\begin{remark}[What remains to be proven (Part~II roadmap)]%
+\label{rem:part-ii-roadmap}
+The f64 solver needs proven bounds for:
+\begin{enumerate}
+  \item \textbf{Eigenvalue perturbation chain.}
+    How much can $\tilde\gamma_j$ (f64-computed eigenvalue
+    of the f64-computed $\tilde{H}'$) differ from $\gamma_j^*$
+    (exact eigenvalue of the exact $H'^*$)?
+    This involves bounding:
+    $a_i \to C \to V \to H' \to \gamma_j$
+    through the chain of SVD, null-space basis, projection,
+    and eigendecomposition.
+
+  \item \textbf{$Q$ error.}
+    $|Q(\tilde\beta) - Q(\beta^*)|$.
+    Partially solved: Lemma~\ref{lem:q-error-first-order} gives
+    a first-order bound via the residual.
+    The second-order term requires bounding $\|\delta\beta\|$
+    (open; see GAP in Remark~\ref{rem:runtime-q-bound}).
+
+  \item \textbf{$\beta > 0$ certification.}
+    When the f64 solver computes $\tilde\beta$ with
+    $\min_k \tilde\beta_k > 0$, under what conditions can it
+    certify $\beta^* > 0$?
+    The difficulty: $\beta^*$ depends on $(H')^{-1}$,
+    which amplifies errors by $1/|\gamma_j|$ in direction~$j$.
+    When $|\gamma_j|$ is small, $\tilde\beta$ can differ
+    from~$\beta^*$ by a large amount in direction~$j$.
+    However, $Q$ is insensitive to perturbations in these
+    directions (varies as $O(\gamma_j \cdot |\delta\beta_j|^2)$;
+    see Corollary~\ref{cor:taylor-structure}).
+    So $\hat Q$ can be accurate even when $\hat\beta$ is not.
+    Certifying $\beta^* > 0$ requires either
+    (a)~direction-dependent bounds showing the ``tube''
+    of possible $\beta^*$ values fits inside $\{\beta > 0\}$,
+    or (b)~a feasibility-based approach that sidesteps
+    bounding~$\|\delta\beta\|$.
+
+  \item \textbf{Continuity at eigenvalue thresholds.}
+    The f64 solver must choose a threshold~$\varepsilon$ separating
+    ``clearly negative'' from ``near-zero'' eigenvalues.
+    At this threshold, eigenvectors are included or excluded
+    from the computation of~$\alpha^*$ — a discontinuous operation.
+    Need: an argument that at the threshold, the contribution
+    of the eigenvector to both $Q$ and the $\beta > 0$ test
+    is small enough that the discontinuity is harmless.
+\end{enumerate}
+\end{remark}
+
+
+% ══════════════════════════════════════════════════════════════════════
+% Part II: Error analysis
+% ══════════════════════════════════════════════════════════════════════
+%
+% Existing results below.  New f64 algorithm specification and
+% proofs will be added here as they are developed.
+
+
+% ── Problem setup (restated for Part II) ──
 %
 % Maximize $\tfrac{1}{2}\beta^\top H \beta$ subject to $C\beta = d$, $\beta > 0$,
 % where $H \in \mathbb{R}^{m \times m}$ is symmetric (possibly indefinite),
