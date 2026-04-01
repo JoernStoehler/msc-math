@@ -441,29 +441,231 @@ We list each discontinuity and what makes it problematic.
 % Part II: Error analysis
 % ══════════════════════════════════════════════════════════════════════
 %
-% Existing results below.  New f64 algorithm specification and
-% proofs will be added here as they are developed.
+% Structure:
+%   (A) Perturbation chain: a_i -> C -> V -> H' -> gamma_j -> beta
+%   (B) Q error bounds (existing, from earlier work)
+%   (C) beta > 0 certification (the main open problem)
 
 
-% ── Problem setup (restated for Part II) ──
+% ── A. Perturbation chain ────────────────────────────────────────────
+
+\begin{remark}[Perturbation chain overview]\label{rem:perturbation-chain}
+The f64 solver computes a chain of quantities, each depending
+on the previous.
+At each link, errors from f64 arithmetic and from perturbed
+inputs accumulate.
+We bound the error at each link using standard backward
+stability results for the f64 primitives (SVD, eigendecomposition)
+and perturbation theory (Weyl, Davis--Kahan).
+
+The chain, with the key bound at each link:
+\[
+  a_i
+  \;\xrightarrow{\text{assemble}}\;
+  C, H
+  \;\xrightarrow{\text{SVD}}\;
+  V, \beta_0
+  \;\xrightarrow{V^\top H V}\;
+  H'
+  \;\xrightarrow{\text{eig}}\;
+  \gamma_j
+  \;\xrightarrow{(H')^{-1} g}\;
+  \alpha^*
+  \;\xrightarrow{\beta_0 + V\alpha^*}\;
+  \beta^*.
+\]
+\end{remark}
+
+
+\begin{lemma}[Link 1: Assembly]\label{lem:link-assembly}
+$H$ and $C$ are assembled from the dual vertices $a_i$ by
+$O(m^2)$ elementary f64 operations
+($\omega_0$ evaluations, copies).
+The computed $\tilde C$ and $\tilde H$ satisfy
+\[
+  \|\tilde C - C\| \leq c_1\, \varepsilon_{\mathrm{mach}}\, \|C\|,
+  \qquad
+  \|\tilde H - H\| \leq c_2\, \varepsilon_{\mathrm{mach}}\, \|H\|,
+\]
+where $c_1, c_2$ are small constants depending on~$m$
+(at most $O(m)$), and $\varepsilon_{\mathrm{mach}} \approx 1.1 \times 10^{-16}$.
+% [TODO: JÖRN - verify constants; the assembly involves
+% a subtraction (omega_0 = q1*p2 - q2*p1) which could cause
+% cancellation if a_i are nearly aligned.  For our polytopes,
+% a_i are O(1) with no near-cancellation, so this is safe.]
+
+In our setting, $\|C\|$ and $\|H\|$ are $O(1)$
+(dual vertices $a_i$ are $O(1)$),
+so $\|\delta C\|$ and $\|\delta H\|$ are $O(\varepsilon_{\mathrm{mach}})$.
+\end{lemma}
+
+
+\begin{lemma}[Link 2: Null-space basis via SVD]\label{lem:link-svd}
+% [TODO: JÖRN - cite specific theorem from Higham or GVL
+% for backward stability of SVD and null-space computation.
+% Standard result: computed SVD is exact SVD of C + delta C
+% with ||delta C|| <= c * eps_mach * ||C||.]
+The SVD of~$\tilde C$ is backward stable: the computed
+$\tilde U \tilde\Sigma \tilde V_{\mathrm{full}}^\top$
+is the exact SVD of $\tilde C + \delta C_{\mathrm{SVD}}$
+where $\|\delta C_{\mathrm{SVD}}\| \leq c_3\, \varepsilon_{\mathrm{mach}}\, \|\tilde C\|$.
+
+The null-space basis $\tilde V$ (the last $k$ right singular vectors)
+approximates the exact null space of~$C$.
+The angle between the computed and exact null spaces is bounded by
+the \textbf{Davis--Kahan $\sin\theta$ theorem}:
+\[
+  \|\sin\Theta(\tilde V, V)\|
+  \leq \frac{\|\delta C_{\mathrm{total}}\|}
+       {\sigma_p(C) - \sigma_{p+1}(C)}
+  = \frac{\|\delta C_{\mathrm{total}}\|}
+       {\sigma_{\min}(C)},
+\]
+where $\delta C_{\mathrm{total}}$ combines assembly and SVD errors,
+$\sigma_p(C) = \sigma_{\min}(C)$ is the smallest nonzero singular
+value ($C$ has full row rank~$p = 5$),
+and $\sigma_{p+1}(C) = 0$ (the gap to the null space).
+
+% [GAP - The sin(Theta) bound requires sigma_min(C) >> 0.
+% If sigma_min(C) is small, the null space of C is
+% ill-conditioned: a small perturbation of C changes V
+% significantly.  In the EHZ setting, sigma_min(C) depends
+% on the geometry of the dual vertices a_{sigma(i)}.
+% Empirically, sigma_min(C) < 0.01 is associated with
+% boundary-case beta (margin ~ 1e-12), so ill-conditioned
+% null spaces coincide with cases the solver should return
+% INDETERMINATE anyway.]
+\end{lemma}
+
+
+\begin{lemma}[Link 3: Reduced Hessian]\label{lem:link-reduced-hessian}
+The reduced Hessian $H' = V^\top H V$ is computed as
+$\tilde H' = \tilde V^\top \tilde H\, \tilde V$.
+Write $\tilde V = V + \delta V$ where $\|\delta V\|$ is bounded
+by Lemma~\ref{lem:link-svd}. Then:
+\begin{align*}
+  \tilde H'
+  &= (V + \delta V)^\top (H + \delta H) (V + \delta V) \\
+  &= V^\top H V
+     + V^\top H\, \delta V
+     + \delta V^\top H V
+     + V^\top \delta H\, V
+     + O(\|\delta V\|^2, \|\delta H\| \cdot \|\delta V\|) \\
+  &= H' + \Delta H',
+\end{align*}
+where the first-order perturbation satisfies
+\[
+  \|\Delta H'\|
+  \leq 2\,\|H\|\,\|\delta V\| + \|\delta H\| + O(\text{second order}).
+\]
+Using $\|\delta H\| = O(\varepsilon_{\mathrm{mach}})$
+and $\|\delta V\| = O(\varepsilon_{\mathrm{mach}} / \sigma_{\min}(C))$
+from Lemmas~\ref{lem:link-assembly}--\ref{lem:link-svd}:
+\[
+  \|\Delta H'\|
+  = O\!\left(
+    \frac{\|H\|\, \varepsilon_{\mathrm{mach}}}{\sigma_{\min}(C)}
+  \right).
+\]
+\end{lemma}
+
+
+\begin{lemma}[Link 4: Eigenvalues of the reduced Hessian]%
+\label{lem:link-eigenvalues}
+% [TODO: JÖRN - cite Weyl's theorem precisely]
+By Weyl's eigenvalue perturbation theorem,
+the computed eigenvalues $\tilde\gamma_j$ of~$\tilde H'$
+satisfy
+\[
+  |\tilde\gamma_j - \gamma_j|
+  \leq \|\tilde H' - H'\|
+  \leq \|\Delta H'\| + c_4\, \varepsilon_{\mathrm{mach}}\, \|\tilde H'\|,
+\]
+where the second term accounts for f64 rounding in the
+eigendecomposition itself (backward stable).
+Combining with Lemma~\ref{lem:link-reduced-hessian}:
+\begin{equation}\label{eq:eigenvalue-perturbation}
+  |\tilde\gamma_j - \gamma_j|
+  = O\!\left(
+    \frac{\|H\|\, \varepsilon_{\mathrm{mach}}}{\sigma_{\min}(C)}
+  \right).
+\end{equation}
+
+\textbf{Eigenvalue sign reliability:}
+if $|\tilde\gamma_j| > \varepsilon_\gamma$
+where
+$\varepsilon_\gamma = c_5 \cdot \|H\|\, \varepsilon_{\mathrm{mach}} / \sigma_{\min}(C)$,
+then $\operatorname{sign}(\tilde\gamma_j) = \operatorname{sign}(\gamma_j)$.
+The trinary classification threshold is derived, not heuristic.
+\end{lemma}
+
+
+\begin{lemma}[Link 5: Critical point $\beta^*$]\label{lem:link-beta}
+In the negative definite case (all $\gamma_j < 0$),
+the exact critical point is
+$\beta^* = \beta_0 + V \alpha^*$ where
+$\alpha^* = -(H')^{-1} g$.
+The computed $\tilde\alpha = -(\tilde H')^{-1} \tilde g$
+satisfies
+\[
+  \|\tilde\alpha - \alpha^*\|
+  \leq \|(H')^{-1}\| \cdot
+    \bigl(
+      \|\Delta H'\| \cdot \|\alpha^*\| + \|\delta g\|
+    \bigr)
+    + O(\text{second order}),
+\]
+% [TODO: JÖRN - this is the standard perturbation bound for
+% linear solves: (A+dA)^{-1}(b+db) - A^{-1}b.  Cite.]
+where $\|(H')^{-1}\| = 1/\min_j |\gamma_j|$.
+
+\textbf{Direction-dependent amplification:}
+In the eigenbasis of $H'$, the $j$-th component of
+$\tilde\alpha - \alpha^*$ is amplified by $1/|\gamma_j|$.
+For small $|\gamma_j|$, the error in direction~$j$ is large.
+Consequently:
+\[
+  \tilde\beta_k - \beta^*_k
+  = \sum_j (V w_j)_k \cdot
+    \frac{\delta(\text{stuff})_j}{|\gamma_j|},
+\]
+where $w_j$ are the eigenvectors of~$H'$.
+When $|\gamma_j|$ is small, component~$k$ of $\tilde\beta$
+can differ from $\beta^*_k$ by much more than
+$\varepsilon_{\mathrm{mach}}$.
+
+\textbf{$\beta > 0$ certification:}
+We need $\min_k \beta^*_k > 0$.  The margin test is:
+\[
+  \min_k \tilde\beta_k
+  > \sum_j \frac{|(\text{error bound})_j|}{|\gamma_j|}
+    \cdot \max_k |(V w_j)_k|.
+\]
+If this holds, $\beta^* > 0$ is certified.
+If not, return INDETERMINATE.
+
+% [GAP - The bound above is schematic, not rigorous.
+% The "delta(stuff)_j" involves both Delta H' and delta g
+% projected onto eigenvector j.  Need to make this precise.
+% Also: the bound requires knowing |gamma_j| (exact), but
+% we only have |tilde gamma_j|.  By Lemma lem:link-eigenvalues,
+% |gamma_j| >= |tilde gamma_j| - epsilon_gamma, so we can
+% substitute -- but this fails when |tilde gamma_j| <= epsilon_gamma
+% (the INDETERMINATE zone for eigenvalues).]
+\end{lemma}
+
+
+% ── B. Q error bounds (existing) ─────────────────────────────────────
+
+% The lemmas below were proven before the perturbation chain above.
+% They bound |Q(tilde beta) - Q(beta^*)| using the KKT residual r,
+% without going through the chain.  This is a complementary approach:
+% the chain gives componentwise understanding, while the residual
+% bound gives a single scalar bound on Q error.
 %
-% Maximize $\tfrac{1}{2}\beta^\top H \beta$ subject to $C\beta = d$, $\beta > 0$,
-% where $H \in \mathbb{R}^{m \times m}$ is symmetric (possibly indefinite),
-% $C \in \mathbb{R}^{p \times m}$ has full row rank~$p$, and $d \in \mathbb{R}^p$.
-%
-% The KKT conditions for the interior case ($\beta > 0$) are:
-% \[
-%   M \begin{pmatrix} \beta \\ \lambda \end{pmatrix}
-%   = \begin{pmatrix} 0 \\ d \end{pmatrix},
-%   \qquad
-%   M = \begin{pmatrix} H & C^\top \\ C & 0 \end{pmatrix}.
-% \]
-% Write $x^* = (\beta^*, \lambda^*)$ for the exact KKT solution
-% and $\tilde{x} = (\tilde\beta, \tilde\lambda)$ for the computed solution.
-% Define $\delta\beta = \tilde\beta - \beta^*$, $\delta\lambda = \tilde\lambda - \lambda^*$,
-% and the residual $r = M\tilde{x} - b$, with block decomposition
-% $r = (r_\beta,\, r_\lambda)$ where $r_\beta \in \mathbb{R}^m$ and $r_\lambda \in \mathbb{R}^p$.
-% Note $r_\lambda = C\tilde\beta - d = C\,\delta\beta$.
+% The KKT system M x = b where M = [H, C^T; C, 0] is the augmented
+% form of the per-sigma problem.  The residual r = M tilde x - b
+% measures how well the computed solution satisfies the KKT conditions.
 
 \begin{lemma}[First-order Q error bound]\label{lem:q-error-first-order}
 Let $Q(\beta) = \tfrac{1}{2}\beta^\top H \beta$ where
