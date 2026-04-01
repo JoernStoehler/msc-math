@@ -153,17 +153,26 @@ Depends on: Jörn scoping the thesis story. Derivative-related experiments also 
 
 ## verify-numerics
 
-**Status (2026-03-28):** Scaffolded. Logbook written, not yet implemented.
+**Status (2026-04-01):** Active. Q accuracy proven + validated. β > 0 classification empirically validated. Algorithm redesign in progress.
+
+**Branch:** `verify-numerics-q-accuracy` (worktree `.claude/worktrees/verify-numerics-q-accuracy`), 12 commits ahead of main.
 
 **Problem:** Find the maximum of ½β^TQβ subject to Cβ=d, β≥0. Develop the right algorithm (not assume the current one is right), formalize error bounds as lemmas, prove them, empirically verify. Generic numerics framework: certify propositions as TRUE/FALSE/INDETERMINATE, error bounds for values, INDETERMINATE falls back to rational arithmetic (lazily, with short-circuit evaluation).
 
-**Scope:** The main QP problem + whatever sub-subroutines emerge during algorithm design. Each sub-subroutine gets its own run_*.rs and the same treatment (math spec → algorithm design → error analysis → edge cases → empirical verification).
+**Completed:**
+- Proven Q error bound: |Q−Q*| ≤ ‖H‖·‖β‖·‖r‖/σ_min(C). Zero violations on 45K natural polytope problems.
+- β > 0 classification: zero false positives on 45K problems. 9 false negatives root-caused.
+- 3-stage pipeline: collect_inputs.rs → run.rs → analyze.py. 458 polytopes, 51K problems.
+- Structural theorem: Q correction exact in exact arithmetic (pseudoinverse orthogonality).
+- Projection solver sign bug identified (crates/src/kkt/projection_solver.rs:93).
+
+**Next:** Write up algorithm specification as math.tex + correctness proofs. The algorithm design discussion (2026-04-01) produced a clean specification separating: affine set check → second-order classification (trinary) → β > 0 certification (direction-dependent bounds) → Q with error bound. Key insight: projection solver structure (separate C and H) maps to this spec. See handoff.
 
 **Priority:** Blocks other experiment development. All experiments rely on this machinery.
 
-**Subsumes:** q-error-threshold (error bound analysis is part of this experiment), numerics portion of code-math-correspondence-audit (code/math mismatches discovered during verification).
+**Subsumes:** q-error-threshold, numerics portion of code-math-correspondence-audit.
 
-**Location:** `experiments/verify-numerics/`
+**Location:** `experiments/verify-numerics/`, handoff at `handoffs/verify-numerics-algorithm.md`
 
 ---
 
