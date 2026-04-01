@@ -65,10 +65,15 @@ Define:
 \begin{itemize}
   \item \textbf{Action matrix}
     $H \in \mathbb{R}^{m \times m}$:
-    $H_{ij} = \omega_0(a_{\sigma(i)},\, a_{\sigma(j)})$ for $i \neq j$,
-    $\; H_{ii} = 0$.
-    ($H$ is symmetric with zero diagonal; see
-    Lemma~\ref{lem:H-quadratic}.)
+    for $i < j$,\;
+    $H_{ij} = H_{ji} = \omega_0(a_{\sigma(i)},\, a_{\sigma(j)})$;\;
+    $H_{ii} = 0$.
+    ($H$ is symmetric by construction: both off-diagonal entries
+    are set to the same value.
+    Note that $\omega_0$ is antisymmetric,
+    $\omega_0(u, v) = -\omega_0(v, u)$,
+    so $H_{ij} \neq \omega_0(a_{\sigma(j)}, a_{\sigma(i)})$.
+    See Lemma~\ref{lem:H-quadratic}.)
   \item \textbf{Constraint matrix}
     $C \in \mathbb{R}^{5 \times m}$:
     rows $0$--$3$ are $C_{d,k} = a_{\sigma(k),d}$;
@@ -95,6 +100,37 @@ The constraints encode:
     facet $F_{\sigma(i)}$ for positive time.
 \end{itemize}
 \end{definition}
+
+
+\begin{remark}[Open vs.\ closed feasible set]%
+\label{rem:open-vs-closed}
+The QP~\eqref{eq:per-sigma-qp} uses the open constraint $\beta > 0$.
+The feasible set $\mathcal{A} \cap \{\beta > 0\}$ is open
+(within~$\mathcal{A}$), so the supremum of~$Q$ may not be attained.
+However, the closure
+$\mathcal{F} = \mathcal{A} \cap \{\beta \geq 0\}$ is compact
+(bounded by $\sum \beta_i = 1$, $\beta_i \geq 0$),
+so the maximum of~$Q$ on~$\mathcal{F}$ is attained.
+
+\textbf{Three cases:}
+\begin{enumerate}
+  \item The max of~$Q$ on~$\mathcal{F}$ is at an interior point
+    ($\beta^* > 0$): the sup over $\{\beta > 0\}$ equals the
+    max over $\{\beta \geq 0\}$, and is attained.
+  \item The max of~$Q$ on~$\mathcal{F}$ is on the boundary
+    ($\beta^*_k = 0$ for some~$k$): the sup over $\{\beta > 0\}$
+    may or may not equal the max over $\{\beta \geq 0\}$
+    (it equals it by continuity of~$Q$), but the sup is not
+    attained in~$\{\beta > 0\}$.
+    By Lemma~\ref{lem:drop-zero-beta}, a shorter permutation
+    handles this case.
+  \item $\mathcal{F}$ is empty: no feasible $\beta$ exists, DROP.
+\end{enumerate}
+The dropping lemmas below work with~$\mathcal{F}$
+(closed constraint $\beta \geq 0$) and use
+Lemma~\ref{lem:drop-zero-beta} to justify that boundary
+optima are found by shorter permutations.
+\end{remark}
 
 
 % ── 2. Role in the capacity algorithm ────────────────────────────────
@@ -244,24 +280,20 @@ Since $Q$ is unbounded on~$\mathcal{A}$ but bounded on~$\mathcal{F}$,
 the maximum on~$\mathcal{F}$ must be on the boundary
 $\partial\mathcal{F} = \mathcal{F} \cap \{\beta_k = 0 \text{ for some } k\}$.
 
-More precisely: if the maximum were at an interior point
-$\beta^*$ of~$\mathcal{F}$ (i.e., $\beta^* > 0$), then $\beta^*$
-would be a local maximum of~$Q$ on~$\mathcal{A}$.
-But the positive eigenvalue of~$H'$ means $Q$ increases along
-the direction $Vw$ from any point in~$\mathcal{A}$
-(for large enough steps), contradicting local maximality.
+More precisely: suppose the maximum on~$\mathcal{F}$ is attained
+at an interior point $\beta^*$ (i.e., $\beta^* > 0$).
+Since $\beta^* > 0$, there is a neighborhood of~$\beta^*$
+in~$\mathcal{A}$ contained in~$\mathcal{F}$.
+Hence $\beta^*$ is a local maximum of~$Q$ on~$\mathcal{A}$.
+At any local maximum of~$Q$ on~$\mathcal{A}$, the second-order
+necessary condition requires $H' = V^\top H V$ to be negative
+semidefinite.  But $H'$ has a positive eigenvalue by hypothesis,
+contradiction.
 
-% [GAP - The last sentence is imprecise: "Q increases along Vw"
-% is true quadratically, but a local max could still exist if
-% the linear term dominates locally.  The correct argument is:
-% at an interior critical point of Q on A, the Hessian restricted
-% to A is H', and a positive eigenvalue means the critical point
-% is not a local max (it's a saddle point).  Hence the max of Q
-% on F is not at an interior critical point of Q|_A, so it must
-% be on the boundary.  Note: the max of Q on F could also be
-% at an interior point of a FACE of F (where some beta_k = 0
-% but the point is interior to that face), which is fine for
-% our purposes since Lemma lem:drop-zero-beta still applies.]
+(The maximum on~$\mathcal{F}$ may be in the interior of a
+\emph{face} of~$\mathcal{F}$, where some $\beta_k = 0$ but
+the point is interior to that face.
+This is fine: Lemma~\ref{lem:drop-zero-beta} still applies.)
 \end{proof}
 
 
@@ -348,21 +380,39 @@ The unique critical point of $Q|_{\mathcal{A}}$ is
 \]
 If $\beta^* > 0$: return $Q^* = Q(\beta^*)$ with $E = 0$.
 
-If $\beta^*_k \leq 0$ for some~$k$: return DROP
+If $\beta^*_k < 0$ for some~$k$: return DROP
 (Lemma~\ref{lem:drop-infeasible-interior}).
+If $\beta^*_k = 0$ for some~$k$: return DROP
+(Lemma~\ref{lem:drop-zero-beta}).
 
 \medskip\noindent
 \textbf{Step~4b (Negative semidefinite: critical subspace).}
 Let $W \in \mathbb{R}^{k \times \ell}$ be a basis for
 $\ker(H')$ ($\ell \geq 1$).
-The critical set of $Q|_{\mathcal{A}}$ is
+Let $g = V^\top H \beta_0$ (the gradient of $Q|_{\mathcal{A}}$
+at~$\beta_0$).
+
+\emph{Solvability check:}
+Decompose $g = g_{\parallel} + g_{\perp}$ where
+$g_{\parallel} \in \operatorname{im}(H')$ and
+$g_{\perp} \in \ker(H')$.
+The system $H'\alpha = -g$ has a solution if and only if
+$g_{\perp} = 0$.
+
+If $g_{\perp} \neq 0$:
+$Q|_{\mathcal{A}}$ is affine (unbounded) along $\ker(H')$,
+so no critical point exists.
+The max of~$Q$ on~$\mathcal{F}$ is on the boundary.
+Return DROP (by Lemma~\ref{lem:drop-zero-beta}).
+
+If $g_{\perp} = 0$:
+the critical set of $Q|_{\mathcal{A}}$ is
 $\{\beta_0 + V(\alpha^*_{\mathrm{part}} + W\gamma)
   : \gamma \in \mathbb{R}^\ell\}$,
 where $\alpha^*_{\mathrm{part}}$ solves
-$H'\alpha = -V^\top H \beta_0$
-on $\operatorname{im}(H') = \ker(H')^\perp$
-(any particular solution; the general solution adds~$W\gamma$).
-$Q$ takes the same value $Q^*$ at all points of this set.
+$H'\alpha = -g$ on $\operatorname{im}(H')$.
+$Q$ takes the same value $Q^*$ at all points of this set
+(Lemma~\ref{lem:well-defined}).
 
 Check whether $\{\beta_0 + V(\alpha^*_{\mathrm{part}} + W\gamma)
   : \gamma \in \mathbb{R}^\ell\} \cap \{\beta > 0\} \neq \emptyset$.
