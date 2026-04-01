@@ -134,3 +134,15 @@ Session: verify-numerics Q accuracy. Tables with 8-10 columns. Agent kept produc
 Agent claimed ‖r_β‖/‖r_λ‖ < 1e-3 "for all 533 cases" based on looking at top-15 cases sorted by error. Actually false for 56% of cases (ratio up to 30). Jörn said "I am surprised!" and the agent had to retract.
 
 **Pattern:** Top-N sampling bias. When sorted by one variable (error), the other variables are not representative. Fix: always show full distribution (min/p5/median/p95/max) before generalizing. Never claim "for all N cases" from a sorted subset.
+
+### 2026-04-01 — Claimed capacity algorithm catches false negatives without checking code
+
+Agent stated "false negatives are caught by the capacity algorithm's enumeration over sub-permutations" as a fact. Jörn asked "Why is this the case / how does catching them work precisely?" Agent then checked the code and found: (1) subsets are enumerated but permutations within subsets are pruned by adjacency, so boundary optima aren't guaranteed to be found; (2) the argument only works for boundary cases (β_k = 0), not interior optima (β > 0). The claim was wrong.
+
+**Pattern:** Stating algorithmic behavior as fact from general understanding instead of reading the code. Similar to the r_β/r_λ generalization: confident claim, then retraction when challenged. Fix: when making claims about code behavior outside the current experiment, read the code first or flag as "I believe X but haven't verified."
+
+### 2026-04-01 — Presented subagent's mathematical claim without checking applicability
+
+Opus subagent recommended vertex enumeration, claiming "max of quadratic on compact polytope is at a vertex." This is true for convex objectives (H positive semidefinite) but false for our indefinite H. Agent presented it to Jörn as "an interesting third approach worth exploring" without checking whether H is definite. Jörn caught it.
+
+**Pattern:** Trusting subagent mathematical claims without domain-specific verification. The subagent had correct theorems but applied them to the wrong case. Fix: when a subagent makes a mathematical recommendation, check whether the hypotheses apply to the specific problem before presenting.
