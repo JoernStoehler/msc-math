@@ -101,14 +101,27 @@ The constraints encode:
 \end{itemize}
 \end{definition}
 
+\noindent
+\textbf{Standing notation.}
+Write $\mathcal{A} = \{\beta \in \mathbb{R}^m : C\beta = d\}$
+for the affine constraint set,
+and $\mathcal{F} = \mathcal{A} \cap \{\beta \geq 0\}$ for
+its intersection with the nonnegative orthant (the closed
+feasible set).
+Let $\beta_0 \in \mathcal{A}$ be a particular solution,
+$V \in \mathbb{R}^{m \times k}$ an orthonormal basis
+for $\ker(C)$ where $k = m - \operatorname{rank}(C)$,
+so that $\mathcal{A} = \beta_0 + \operatorname{im}(V)$.
+The \emph{reduced Hessian} is
+$H' = V^\top H V \in \mathbb{R}^{k \times k}$,
+with eigenvalues $\gamma_1, \ldots, \gamma_k$.
 
 \begin{remark}[Open vs.\ closed feasible set]%
 \label{rem:open-vs-closed}
 The QP~\eqref{eq:per-sigma-qp} uses the open constraint $\beta > 0$.
 The feasible set $\mathcal{A} \cap \{\beta > 0\}$ is open
 (within~$\mathcal{A}$), so the supremum of~$Q$ may not be attained.
-However, the closure
-$\mathcal{F} = \mathcal{A} \cap \{\beta \geq 0\}$ is compact
+$\mathcal{F}$ is compact
 (bounded by $\sum \beta_i = 1$, $\beta_i \geq 0$),
 so the maximum of~$Q$ on~$\mathcal{F}$ is attained.
 
@@ -240,18 +253,11 @@ achieves the same $Q^*$ under the shorter permutation~$\sigma'$.
 \label{lem:drop-non-concave}
 % [TODO: JÖRN - verify this argument; the bounded feasible set
 % claim relies on C having full row rank and beta >= 0]
-Let $\mathcal{A} = \{\beta : C\beta = d\}$ and
-$V \in \mathbb{R}^{m \times k}$ an orthonormal basis for
-$\ker(C)$, so $\mathcal{A} = \beta_0 + \operatorname{im}(V)$
-for a particular solution $\beta_0$.
-Define the \emph{reduced Hessian}
-$H' = V^\top H V \in \mathbb{R}^{k \times k}$.
-
 Suppose $H'$ has a positive eigenvalue:
 $\exists\, w \in \mathbb{R}^k$ with $\|w\| = 1$ and
 $w^\top H' w > 0$.
 Then $Q$ is unbounded above on~$\mathcal{A}$.
-Since $\mathcal{F} = \mathcal{A} \cap \{\beta \geq 0\}$ is
+Since $\mathcal{F}$ is
 a bounded polytope (when nonempty),
 the maximum of~$Q$ over~$\mathcal{F}$ exists and is attained
 on the boundary $\{\beta_k = 0$ for some~$k\}$.
@@ -270,9 +276,8 @@ Along the ray $\beta(t) = \beta_0 + V(t\, w)$ for $t \in \mathbb{R}$:
 Since $w^\top H' w > 0$, $Q(\beta(t)) \to +\infty$ as $t \to \pm\infty$.
 Hence $Q$ is unbounded on~$\mathcal{A}$.
 
-The set $\mathcal{F} = \mathcal{A} \cap \{\beta \geq 0\}$
-is a polytope (intersection of an affine subspace with the
-nonnegative orthant), hence bounded and closed
+$\mathcal{F}$ is a polytope (intersection of an affine subspace
+with the nonnegative orthant), hence bounded and closed
 (it is contained in the simplex $\{\beta \geq 0, \sum \beta_i = 1\}$
 by the normalization constraint).
 A continuous function on a compact set attains its maximum.
@@ -304,7 +309,7 @@ so that $Q|_{\mathcal{A}}$ has a unique critical point
 $\beta^* = \beta_0 - V (H')^{-1} V^\top H \beta_0$.
 If $\beta^*_k < 0$ for some~$k$, then
 $\beta^*$ is not feasible for~\eqref{eq:per-sigma-qp},
-and the maximum of~$Q$ on $\mathcal{F} = \mathcal{A} \cap \{\beta \geq 0\}$
+and the maximum of~$Q$ on~$\mathcal{F}$
 is again on the boundary.
 By Lemma~\ref{lem:drop-zero-beta}, dropping $\sigma$ is valid.
 \end{lemma}
