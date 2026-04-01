@@ -1,13 +1,35 @@
 % math.tex — verify-numerics experiment
-% Mathematical results for the QP error analysis.
+% Solver specification and numerical error analysis for the per-sigma QP.
 %
-% Labels defined here:
+% Part I — Solver specification:
+%   def:per-sigma-qp — problem statement
+%   rem:capacity-role — role in capacity algorithm
+%   def:solver-contract — CAN/MUST properties
+%   lem:drop-zero-beta — boundary optima found by shorter permutations
+%   lem:drop-non-concave — positive eigenvalue → DROP
+%   lem:drop-infeasible-interior — beta outside feasible → DROP
+%   rem:semidefinite-case — zero eigenvalue edge case
+%   alg:exact-solver — rational-arithmetic algorithm
+%   rem:exact-completeness — correctness of exact algorithm
+%   rem:exact-vs-f64 — the three discontinuous tests
+%   rem:part-ii-roadmap — what Part II needs to prove
+%
+% Part II — Error analysis:
 %   lem:q-error-first-order — first-order Q error bound via stationarity
 %   lem:q-correction-second-order — Q correction reduces error to second order
 %   rem:runtime-q-bound — computable runtime error bound
+%   lem:pseudoinverse-orthogonality — structural property of pseudoinverse
+%   cor:taylor-structure — first-order = -2x second-order
+%   cor:exact-correction — correction exact in exact arithmetic
 %
-% Notation: This file uses a general constrained QP setup with
-% constraint matrix $C$ and Lagrange multiplier $\lambda$.
+% Notation:
+%   Exact quantities:  beta^*, lambda^*, Q^*  (superscript *)
+%   Computed (f64):    \tilde\beta, \tilde\lambda, \tilde Q  (tilde)
+%   Perturbation:      \delta\beta = \tilde\beta - \beta^*  (delta)
+%   H, C, d — QP matrices (Definition def:per-sigma-qp)
+%   H' = V^T H V — reduced Hessian on ker(C)
+%   gamma_j — eigenvalues of H'
+%
 % In the EHZ pipeline (crate kkt/ module), the specific instantiation is:
 %   $C = [A^\top;\, \mathbf{1}^\top]$ (4 closure rows + 1 normalization),
 %   $d = [0;\, 1]$,
