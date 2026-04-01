@@ -253,29 +253,40 @@ $\mathcal{F}_{\max} \subseteq \partial\mathcal{F}$
 (max is on the boundary):
 \begin{enumerate}
   \item[(B1)] Some $\gamma_j > 0$:
-    $Q$ is unbounded on~$\mathcal{A}$
-    (grows as $\tfrac{1}{2}\gamma_j t^2$ along eigenvector~$j$).
-    Any interior maximum of $Q|_{\mathcal{A}}$ would require
-    $H'$ negative semidefinite (second-order necessary condition),
-    contradicting $\gamma_j > 0$.
+    if some $\beta^* \in \mathcal{F}_{\max}$ had $\beta^* > 0$,
+    then $\beta^*$ would be a local maximum of $Q|_{\mathcal{A}}$
+    (since $\mathcal{F}$ agrees with $\mathcal{A}$ near any
+    interior point).
+    The second-order necessary condition for a local maximum
+    requires $H' \preceq 0$, contradicting $\gamma_j > 0$.
     So $\mathcal{F}_{\max} \subseteq \partial\mathcal{F}$.
 
-  \item[(B2)] All $\gamma_j \leq 0$, unique critical point
-    (case~1 of Prop.~\ref{prop:critical-points}),
+  \item[(B2)] All $\gamma_j < 0$ ($H'$ negative definite),
+    unique critical point $\beta^* = \beta_0 - V(H')^{-1}g$,
     but $\beta^*_k \leq 0$ for some~$k$:
-    the global maximum of~$Q$ on~$\mathcal{A}$ is at~$\beta^*$
-    (which is the unique critical point of a concave function),
-    but $\beta^* \notin \{\beta > 0\}$,
-    so $\mathcal{F}_{\max} \subseteq \partial\mathcal{F}$.
+    $\beta^*$ is the global maximum of~$Q$ on~$\mathcal{A}$
+    (strict concavity), and $Q(\beta) < Q(\beta^*)$ for all
+    $\beta \in \mathcal{A} \setminus \{\beta^*\}$.
+    Since $\beta^* \notin \{\beta > 0\}$,
+    $\mathcal{F}_{\max} \subseteq \partial\mathcal{F}$.
 
   \item[(B3)] $H'$ singular, $g \not\perp \ker(H')$
     (case~3 of Prop.~\ref{prop:critical-points}):
-    $Q|_{\mathcal{A}}$ unbounded, same argument as~(B1).
+    $Q|_{\mathcal{A}}$ has no critical point
+    ($H'\alpha + g = 0$ has no solution).
+    If some $\beta^* \in \mathcal{F}_{\max}$ had $\beta^* > 0$,
+    then $\beta^*$ would be a local max of $Q|_{\mathcal{A}}$
+    (locally $\mathcal{F} = \mathcal{A}$), hence a critical point.
+    Contradiction.
+    So $\mathcal{F}_{\max} \subseteq \partial\mathcal{F}$.
 
-  \item[(B4)] $H'$ singular, $g \perp \ker(H')$,
+  \item[(B4)] $H'$ negative semidefinite (all $\gamma_j \leq 0$,
+    some $\gamma_j = 0$), $g \perp \ker(H')$,
     critical subspace does not intersect~$\{\beta > 0\}$:
-    all critical points have some $\beta_k \leq 0$,
-    so $\mathcal{F}_{\max} \subseteq \partial\mathcal{F}$.
+    $Q|_{\mathcal{A}}$ is concave, so its maximum on~$\mathcal{A}$
+    is attained on the critical subspace.
+    Since no critical point has $\beta > 0$,
+    $\mathcal{F}_{\max} \subseteq \partial\mathcal{F}$.
 \end{enumerate}
 
 \medskip\noindent
@@ -315,7 +326,9 @@ For any $\beta \in \mathcal{F}$, $Q(\beta) \leq Q(\beta^*)$.
 Since $\beta^* \notin \mathcal{F}^{\circ}$,
 the max on~$\mathcal{F}$ is on~$\partial\mathcal{F}$.
 
-(B3): Same as (B1) --- no critical point exists, so no interior max.
+(B3): If some $\beta^* \in \mathcal{F}_{\max}$ had $\beta^* > 0$,
+it would be a local max of $Q|_{\mathcal{A}}$ (locally $\mathcal{F} = \mathcal{A}$),
+hence a critical point. But no critical point exists. Contradiction.
 
 (B4): $Q$ is constant on the critical subspace.
 Any $\beta \notin$ critical subspace has strictly lower~$Q$
