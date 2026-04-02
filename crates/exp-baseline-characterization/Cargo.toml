@@ -1,9 +1,22 @@
 [package]
-name = "symplectic"
+name = "exp-baseline-characterization"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name = "base-random-sweep"
+path = "random-sweep/run.rs"
+
+[[bin]]
+name = "base-random-product-sweep"
+path = "random-product-sweep/run.rs"
+
+[[bin]]
+name = "base-rejection-sampling"
+path = "rejection-sampling/run.rs"
+
 [dependencies]
+symplectic.workspace = true
 nalgebra.workspace = true
 serde.workspace = true
 serde_json.workspace = true
@@ -13,17 +26,4 @@ rand_distr.workspace = true
 num-bigint.workspace = true
 num-rational.workspace = true
 num-traits.workspace = true
-tempfile.workspace = true
-wait-timeout.workspace = true
 good_lp.workspace = true
-num-integer.workspace = true
-
-[dev-dependencies]
-proptest.workspace = true
-rstest.workspace = true
-approx.workspace = true
-criterion.workspace = true
-
-[[bench]]
-name = "profiling"
-harness = false

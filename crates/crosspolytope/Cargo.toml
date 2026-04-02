@@ -1,0 +1,14 @@
+[package]
+name = "crosspolytope"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "crosspolytope"
+path = "run.rs"
+
+[dependencies]
+symplectic.workspace = true
+nalgebra.workspace = true
+serde.workspace = true
+serde_json.workspace = true

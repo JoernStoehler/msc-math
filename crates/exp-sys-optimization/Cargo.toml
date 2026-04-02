@@ -1,0 +1,48 @@
+[package]
+name = "exp-sys-optimization"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "opt-gradient-validation"
+path = "gradient-validation/run.rs"
+
+[[bin]]
+name = "opt-large-scale-descent"
+path = "large-scale-descent/run.rs"
+
+[[bin]]
+name = "opt-gradient-search"
+path = "gradient-search/run.rs"
+
+[[bin]]
+name = "opt-generate-seeds"
+path = "gradient-search/generate_seeds.rs"
+
+[[bin]]
+name = "opt-boundary-crossing"
+path = "boundary-crossing-search/run.rs"
+
+[[bin]]
+name = "opt-sensitivity"
+path = "sensitivity-analysis/run.rs"
+
+[[bin]]
+name = "opt-combinatorial"
+path = "combinatorial-structure/run.rs"
+
+[dependencies]
+symplectic.workspace = true
+nalgebra.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+rand.workspace = true
+rand_chacha.workspace = true
+rand_distr.workspace = true
+num-bigint.workspace = true
+num-rational.workspace = true
+num-traits.workspace = true
+good_lp.workspace = true
