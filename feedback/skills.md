@@ -55,3 +55,9 @@ Agent ran /pre-merge and handled content checks ("All new factual claims verifie
 The pre-merge skill shown to the agent after `/pre-merge` still referenced `cd crates/` and `cd experiments/` — the old paths — even though the skill file itself had been updated earlier in the session (by a subagent). This is likely because the skill content was loaded from the SKILL.md file at invocation time and the subagent's edit happened within the same session. The agent adapted and ran the right commands anyway, but a less experienced agent might have followed the stale instructions.
 
 **Not actionable as a skill fix** — this was a one-time issue caused by editing the skill file and then invoking it in the same session. The skill file is now correct.
+
+### 2026-04-02 — Mechanical experiment fixes should check whether experiment is active
+
+Post-migration audit fixed 8 broken experiment binaries via subagents. One of them (`gradient-search`) is superseded by `sys-search` (documented in TASKS.md 100 lines below the gradient-search section). Neither the main agent nor the subagent checked whether the experiment was still active before fixing it. Jörn caught it.
+
+**Suggestion:** When fixing experiment code mechanically (API migration, import updates), check TASKS.md and the experiment's logbook.md for supersession/deprecation status before presenting the fix as meaningful work. A 30-second read avoids presenting stale work to Jörn.
