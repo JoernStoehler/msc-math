@@ -37,3 +37,15 @@ Agent ran /pre-merge after committing directly to main (violating explicit "Work
 The pre-merge skill checks builds, tests, data freshness, content, and TASKS.md — but doesn't check whether the work was done according to process instructions (worktree, branch naming, etc.). A "process compliance" check — "Did you follow the instructions in the original prompt?" — would have caught this.
 
 **Suggestion:** Add a check to pre-merge: "Were all explicit process instructions from the task prompt followed? (worktree, branch name, commit conventions, etc.)"
+
+### 2026-04-01 — Pre-merge content checks not linked to review subagents
+
+Agent ran /pre-merge and handled content checks ("All new factual claims verified", "New math.tex content has proofs", "Logbook entries cite sources inline") by grepping for "GAP" and eyeballing a few lines. Didn't launch any review subagents despite CLAUDE.md saying "Use review agents proactively before presenting work" and despite review-proof, review-claims, review-formalization agents existing for exactly these checks. Only launched them after Jörn asked about it.
+
+**Root cause:** The pre-merge skill lists content checks as a checklist but doesn't say how to do them. The agent defaulted to shallow manual checking instead of using the purpose-built review agents. The connection between "verify factual claims" and "launch review-claims agent" wasn't made.
+
+**Suggestion:** Pre-merge content checks section should explicitly say which review subagents to launch:
+- "All new factual claims verified" → launch review-claims on logbook.md and any files with new claims
+- "New math.tex content has proofs" → launch review-proof on math.tex
+- "Cross-references resolve" → launch review-formalization on the module
+- Run these as parallel background agents while doing the bash build/test checks

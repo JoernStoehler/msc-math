@@ -41,3 +41,11 @@ This is the same error class as 2026-03-28. The 2026-03-28 entries didn't have e
 Same session as above. When Jörn said "Read the prompt" (pointing out the worktree violation), agent immediately reverted the commit, created a worktree, re-applied the edit — without asking Jörn what to do. Jörn then pointed out this was also wasteful: the change was already on main, creating a worktree only to immediately merge it back is pointless.
 
 **The right thing to do:** Acknowledge the mistake ("I should have used a worktree but committed directly to main — the change is only TASKS.md, do you want me to leave it or redo it?") instead of reflexively "fixing" it in the most literal way possible.
+
+### 2026-04-02 — 8 broken experiment binaries block `cargo test` for any experiment test
+
+Pre-existing compilation errors in `generate_seeds`, `gradient_search`, `sys_search`, `combinatorial_boundaries`, `gradient_descent`, `sys_optimization`, `visualization`, `omega_obstacle` prevent `cargo test --test <name>` from working — Cargo compiles all targets in the package. Workaround: temporarily stub the broken files. This will recur for any session that adds or runs experiment tests.
+
+**Root cause:** All 8 binaries reference `KktOutcome` or methods on `Polytope4D` that were changed/removed. They weren't fixed because their experiments aren't active.
+
+**Suggestion:** Either fix the compilation errors on main (probably quick — type signature changes), or move broken experiments out of `Cargo.toml` so they don't block the rest. This is a TASKS.md item.
