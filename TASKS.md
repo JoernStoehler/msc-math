@@ -165,7 +165,7 @@ Depends on: Jörn scoping the thesis story. Derivative-related experiments also 
 - Eta bound valid for well-conditioned problems (c = m^2 safety factor, zero violations)
 - Proven Q error bound: |Q−Q*| ≤ ‖H‖·‖β‖·‖r‖/σ_min(C). Zero violations on 45K natural polytope problems.
 - β > 0 classification: zero false positives on 45K problems. 9 false negatives root-caused.
-- Projection solver sign bug identified (crates/src/kkt/projection_solver.rs:93).
+- Projection solver sign bug identified (crates/library/src/kkt/projection_solver.rs:93).
 
 **Open:**
 - Part III of math.tex (f64 algorithm description) not written
@@ -203,7 +203,7 @@ Depends on: Jörn scoping the thesis story. Derivative-related experiments also 
 
 The Q error bound E = (9/2)||r||²/|λ_min| ([lem:q-error-bound]) uses |λ_min| of ALL eigenvalues but the code uses |λ_min| of RETAINED eigenvalues. This mismatch was never caught. The verify-numerics experiment will develop a correct error bound as part of its systematic treatment of the QP solver.
 
-**Handoff:** `handoffs/q-error-bound-rework.md`. **Location:** `crates/src/kkt/saddle_point_solver.rs:537-567`
+**Handoff:** `handoffs/q-error-bound-rework.md`. **Location:** `crates/library/src/kkt/saddle_point_solver.rs:537-567`
 
 ---
 
@@ -214,8 +214,8 @@ The Q error bound E = (9/2)||r||²/|λ_min| ([lem:q-error-bound]) uses |λ_min| 
 - `crates/exp-sys-optimization/gradient-validation/run.rs`: catch_unwind already removed in prior session
 - `crates/exp-hko-local-maximum/gradient-is-zero/run.rs`: catch_unwind already removed in prior session
 - `crates/exp-sys-optimization/combinatorial-structure/run.rs`: 2× catch_unwind removed (unlisted, found during fix)
-- `crates/src/kkt/saddle_point_solver.rs`: panic comments rewritten (deferred-work context, root cause, resolution path)
-- `crates/src/algorithms/capacity_accumulator.rs`: stale doc comment fixed (gap case returns None, not panic)
+- `crates/library/src/kkt/saddle_point_solver.rs`: panic comments rewritten (deferred-work context, root cause, resolution path)
+- `crates/library/src/algorithms/capacity_accumulator.rs`: stale doc comment fixed (gap case returns None, not panic)
 
 ---
 

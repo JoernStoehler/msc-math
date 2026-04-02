@@ -29,18 +29,18 @@
 //! - Compare against actual capacity change via full ehz_capacity on perturbed polytope
 //! - Records orbit switching (which orbit wins in the perturbed polytope)
 //! - [prop:capacity-smoothness-classification](b): at switching boundaries, D_d c = min_i(∇A_i · d).
-//!   In experiments/gradient-correctness/math.tex.
+//!   In crates/exp-sys-optimization/gradient-validation/math.tex.
 //!
 //! Mathematical correspondence:
 //! - [lem:cap-derivative] (unverified): envelope theorem formula for ∂c/∂a_k.
-//!   In experiments/sys-optimization/math.tex.
+//!   In crates/exp-sys-optimization/sensitivity-analysis/math.tex.
 //! - [lem:vol-derivative] (unverified): chain rule formula for ∂vol/∂a_k.
-//!   In experiments/sys-optimization/math.tex.
+//!   In crates/exp-sys-optimization/sensitivity-analysis/math.tex.
 //! - [prop:capacity-piecewise-smooth] (unverified): piecewise C^∞, generic differentiability.
-//!   In experiments/sys-optimization/math.tex.
+//!   In crates/exp-sys-optimization/sensitivity-analysis/math.tex.
 //! - [prop:capacity-smoothness-classification] (unverified): refined decomposition into
 //!   per-orbit feasibility/smoothness and capacity-level min structure.
-//!   In experiments/gradient-correctness/math.tex.
+//!   In crates/exp-sys-optimization/gradient-validation/math.tex.
 //!
 //! Methodology (Q5b):
 //! - Use LP(n,n) (regular Lagrangian products) where symmetry forces exact orbit ties
@@ -400,7 +400,7 @@ fn beta_directional_sensitivity(
 /// Compute ∂sys/∂a_k via quotient rule: sys = c²/(2·vol).
 /// ∂sys/∂a_k = (c·∂c/∂a_k − sys·∂vol/∂a_k) / vol.
 /// [cor:sys-derivative] quotient-rule derivative of the systolic ratio.
-/// In experiments/sys-optimization/math.tex.
+/// In crates/exp-sys-optimization/sensitivity-analysis/math.tex.
 fn sys_derivatives_a(
     d_cap: &[Vector4<f64>],
     d_vol: &[Vector4<f64>],
