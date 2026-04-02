@@ -7,6 +7,9 @@ edition = "2021"
 name = "visualization"
 path = "run.rs"
 
+[lints]
+workspace = true
+
 [dependencies]
 symplectic.workspace = true
 nalgebra.workspace = true

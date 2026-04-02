@@ -15,6 +15,9 @@ path = "benchmark/run.rs"
 name = "cmp-benchmark-profile"
 path = "benchmark/profile.rs"
 
+[lints]
+workspace = true
+
 [dependencies]
 symplectic.workspace = true
 nalgebra.workspace = true

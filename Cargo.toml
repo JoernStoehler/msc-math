@@ -34,6 +34,17 @@ rstest = "0.23"
 approx = "0.5"
 criterion = { version = "0.5", features = ["html_reports"] }
 
+# Relaxed lints for experiment crates — keeps correctness and suspicious,
+# suppresses style/complexity/perf noise that buries real issues.
+# Library does NOT inherit these (stays strict via `cargo clippy --lib -- -D warnings`).
+[workspace.lints.clippy]
+style = "allow"
+complexity = "allow"
+perf = "allow"
+[workspace.lints.rust]
+dead_code = "allow"
+unused_variables = "allow"
+
 [profile.release]
 debug = true
 

@@ -34,6 +34,9 @@ path = "sensitivity-analysis/run.rs"
 name = "opt-combinatorial"
 path = "combinatorial-structure/run.rs"
 
+[lints]
+workspace = true
+
 [dependencies]
 symplectic.workspace = true
 nalgebra.workspace = true

@@ -30,6 +30,9 @@ path = "unknown-predicates/run.rs"
 name = "verify_numerics_tests"
 path = "error-bounds/tests.rs"
 
+[lints]
+workspace = true
+
 [dependencies]
 symplectic.workspace = true
 nalgebra.workspace = true

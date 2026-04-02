@@ -30,6 +30,9 @@ path = "rotation-sweep/run.rs"
 name = "hko-omega"
 path = "omega-hypothesis/run.rs"
 
+[lints]
+workspace = true
+
 [dependencies]
 symplectic.workspace = true
 nalgebra.workspace = true
