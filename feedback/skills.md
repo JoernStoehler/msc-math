@@ -49,3 +49,9 @@ Agent ran /pre-merge and handled content checks ("All new factual claims verifie
 - "New math.tex content has proofs" → launch review-proof on math.tex
 - "Cross-references resolve" → launch review-formalization on the module
 - Run these as parallel background agents while doing the bash build/test checks
+
+### 2026-04-02 — Pre-merge skill text had stale paths during session
+
+The pre-merge skill shown to the agent after `/pre-merge` still referenced `cd crates/` and `cd experiments/` — the old paths — even though the skill file itself had been updated earlier in the session (by a subagent). This is likely because the skill content was loaded from the SKILL.md file at invocation time and the subagent's edit happened within the same session. The agent adapted and ran the right commands anyway, but a less experienced agent might have followed the stale instructions.
+
+**Not actionable as a skill fix** — this was a one-time issue caused by editing the skill file and then invoking it in the same session. The skill file is now correct.

@@ -56,3 +56,17 @@ The error class: "prior instruction superseded by new context, but agent continu
 - **pre-merge skill:** Content checks section should explicitly say to launch review subagents (review-claims for factual claims, review-proof for math.tex, review-formalization for cross-references) and to cross-check their output before presenting.
 
 - **Not in agent definitions** — the caller doesn't read those, so guidance there doesn't reach the agent that needs it. The fix belongs in places the caller sees: the pre-merge skill (see skills.md entry), CLAUDE.md's subagent section, or similar.
+
+## 2026-04-02: repo-wide path-update subagents missed file categories
+
+**What happened:** Launched 5 parallel sonnet subagents for Phase 4 path updates (math.tex, Python, CLAUDE.md+rules, TASKS.md+handoffs, logbooks). Two categories of files were missed:
+
+1. `.claude/skills/` and `.claude/agents/` — The CLAUDE.md+rules subagent was prompted with "CLAUDE.md and .claude/rules/*.md" but not `.claude/skills/` or `.claude/agents/`. Three skill files and one agent file had stale `experiments/` paths.
+
+2. `.rs` doc comments in 8 files — The logbook subagent updated logbooks but the prompt didn't cover .rs files. The Python subagent covered analyze.py but left docstrings alone. No subagent was responsible for .rs doc comments.
+
+Required two additional fix-up passes (one via subagents, one manual via sed).
+
+**Error class:** Subagent scope gaps when partitioning work by file type. Each subagent's prompt defined a narrow file set, and files that didn't fit neatly into any category fell through the cracks.
+
+**Suggestion:** For repo-wide find-and-replace tasks, add a "sweep" subagent whose job is to grep for remaining stale references across ALL file types after the targeted subagents complete, and fix anything they missed. Or: include a verification grep in each subagent's prompt and have them report (not fix) files outside their scope.
