@@ -26,9 +26,8 @@ Two-binary pipeline: `generate_seeds` → `seeds.jsonl` → `gradient_search` �
 **Build failure (2026-03-26):** Imports nonexistent `capacity_derivatives_h`, `volume_derivatives_h`, `normals_f64()`, `heights_f64()`. Library was refactored to dual-vertex `_a` API but this experiment was never migrated. Requires reworking derivative calls and step-bound computation to use `capacity_derivatives_a` / `volume_derivatives_a`.
 
 **Next steps:**
-1. **Migrate to `_a` API** — see `handoffs/experiment-api-fixes.md`
-2. Run production computation (270 seeds, ~10 min locally, trivially parallelizable on LICCA)
-3. Analyze results, produce figures
+1. ~~**Migrate to `_a` API**~~ — done (2026-04-02, post-migration audit). Note: `generate_seeds.rs` round-trips through (normals, heights) because the experiment was designed pre-dual-vertex migration. Not worth cleaning up — this experiment is superseded by `sys-search`.
+2. **Delete** once sys-search is confirmed better (see gradient experiment redesign below).
 
 See `crates/exp-sys-optimization/gradient-search/logbook.md` for details.
 
@@ -293,13 +292,13 @@ Direction (2026-03-22, Jörn): Thesis will introduce both (n_i, h_i) and a_i = n
 - ✅ `capacity_derivatives_a()` and `volume_derivatives_a()` exist in `derivatives.rs`, tested (FD cross-check)
 - ✅ `build_qp` uses a_i internally
 - ✅ 4/5 gradient experiments migrated: sys-optimization, hko-neighborhood, gradient-descent, omega-obstacle
-- ❌ gradient-search: imports nonexistent `_h` functions (does not compile)
+- ✅ gradient-search: migrated to `_a` API (2026-04-02). Superseded by sys-search — delete pending.
 - ✅ math.tex migration: `kkt/math.tex` and `algorithms/math.tex` use a_i throughout (commits b9eedda, 4afefb9, 0ff6c6d)
 - ❌ Jörn verification: `[lem:cap-derivative]` and `[lem:vol-derivative]` in sys-optimization/math.tex marked `\begin{unverified}`
 - ❌ `[lem:dual-vertex-qp]`: TODO in qp_assembly.rs:58-61 — prove a_i QP formulation recovers same optimal action as (n,h)
 
 **Remaining work items:**
-1. **gradient-search migration** — see `handoffs/experiment-api-fixes.md`. Agent task, small.
+1. ~~**gradient-search migration**~~ — done (2026-04-02).
 2. **Jörn verifies derivative lemmas** — `[lem:cap-derivative]`, `[lem:vol-derivative]` in `crates/exp-sys-optimization/sensitivity-analysis/math.tex`.
 3. **Write `[lem:dual-vertex-qp]` proof** — mathematical equivalence of a_i and (n,h) QP formulations. Agent drafts, Jörn verifies.
 
