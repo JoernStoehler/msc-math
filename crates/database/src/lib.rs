@@ -160,7 +160,7 @@ pub struct SigmaAction {
     pub action: f64,
 }
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, PartialEq)]
 #[serde(tag = "family")]
 pub enum Source {
     #[serde(rename = "random")]
