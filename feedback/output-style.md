@@ -172,3 +172,9 @@ Later, agent wrote another multi-paragraph response about whether to store f64 d
 After one round of exploration, agent wrote a detailed concrete plan and called ExitPlanMode. Jörn rejected: "I'd like to see more discussion of different approaches." Had to redo as a broad comparison covering 6 format options, 4 architectures, 4 key strategies, etc.
 
 **Pattern:** "Help me plan" means "explore the design space with me," not "propose a solution for my approval." Present options and tradeoffs first, converge after Jörn has shaped the direction.
+
+### 2026-04-02 — Confident "none are candidates" without criteria or investigation
+
+Jörn asked which experiments are candidates for database migration. Agent said "none of the existing experiments are good candidates" based on surface-level pattern matching: the handoff said "Do NOT modify existing experiments" and experiments have custom output schemas. When Jörn asked "what criteria did you use?", agent realized it had no criteria and hadn't investigated. A thorough follow-up investigation found massive redundancy: HKO pentagon computed 5 times, `from_f64()` reconstruction spam across sys-optimization, same-seed random polytopes across 3 experiments.
+
+**Pattern:** Producing a confident evaluation without stating criteria. The conclusion pattern-matched on a handoff constraint instead of investigating the actual question. Fix: when asked to evaluate something, state explicit criteria first, then investigate against those criteria, then report. Never produce a confident "none" or "all" without investigation.
