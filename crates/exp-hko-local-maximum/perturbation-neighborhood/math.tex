@@ -1,0 +1,51 @@
+% math.tex — \input'd from thesis/experiments.tex
+%
+% Perturbation study of the HK-O pentagon counterexample.
+%
+% Sources:
+%   - Generated data: crates/exp-hko-local-maximum/perturbation-neighborhood/pentagon-perturb.jsonl
+%   - Plot script: crates/exp-hko-local-maximum/perturbation-neighborhood/analyze.py
+%   - Experiment notes: crates/exp-hko-local-maximum/perturbation-neighborhood/logbook.md
+%
+% Structure:
+%   - Perturbation setup
+%   - Histogram of systolic ratios
+%   - Summary stats and PCA table
+
+\subsection{HK-O Pentagon Perturbations}
+\label{sec:pentagon-perturb}
+
+We perturb the standard HK-O pentagon counterexample by adding small uniform
+noise to each facet normal component and each height, renormalizing each
+normal to unit length. We generate 100 perturbed samples and compute
+$c_{\mathrm{EHZ}}$ using the HK2017 pruned algorithm. This probes the local
+stability of the counterexample under small geometric perturbations.
+
+Figure~\ref{fig:pentagon-perturb-hist} shows the histogram of systolic ratios
+$\mathrm{sys} = c_{\mathrm{EHZ}}^2/(2\,\mathrm{vol})$ for the perturbed samples,
+with the unperturbed value marked for reference.
+All perturbed samples fall in the interval between $1$ and the unperturbed value, indicating that the counterexample is a local maximum of the systolic ratio in the perturbation space.
+This may not mean that the counterexample is a local maximum among all polytopes with regards to Hausdorff distance, since we only considered perturbations that preserve the facet count $F=10$.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{pentagon_perturb_sys_hist.png}
+\caption{HK-O pentagon perturbations: systolic ratio histogram for 100 perturbed
+  samples. The dashed line marks $\mathrm{sys}=1$, and the solid line marks the
+  unperturbed counterexample.}
+\label{fig:pentagon-perturb-hist}
+\end{figure}
+
+\InputIfFileExists{pentagon_perturb_stats.tex}{}{%
+  \InputIfFileExists{../exp-hko-local-maximum/perturbation-neighborhood/pentagon_perturb_stats.tex}{}{%
+    \textbf{[pentagon\_perturb\_stats.tex not found]}%
+  }%
+}
+
+%We also compute PCA on the 50D perturbation vectors
+%$(\Delta n, \Delta h) \in \mathbb{R}^5$ for each of the 10 facets, using only
+%perturbed samples and centering the data. Table~\ref{tab:pentagon-perturb-pca}
+%reports the base polytope row and the top PCA components, with the last column
+%showing the explained variance ratio.
+
+%\input{pentagon_perturb_pca.tex}

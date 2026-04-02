@@ -58,4 +58,4 @@ Standard Rust error handling, plus:
 
 ## Experiment binaries
 
-For `experiments/*.rs`: copy library code into the binary rather than modifying `crates/` for experiment-specific behavior. Only stable, validated code lives in `crates/`.
+For `crates/exp-*/<subdir>/run.rs`: copy library code into the binary rather than modifying `crates/library/` for experiment-specific behavior. Only stable, validated code lives in `crates/library/`.

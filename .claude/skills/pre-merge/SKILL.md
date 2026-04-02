@@ -12,7 +12,7 @@ Run through before telling Jörn work is ready.
 ```bash
 cd crates/ && cargo test --release --lib
 cd crates/ && cargo clippy --lib -- -D warnings
-cd experiments/ && cargo build --release
+cargo build -p exp-<group> --release   # or: cargo build --workspace --release
 cd thesis/ && latexmk && ./check-build.sh
 ```
 
@@ -23,8 +23,8 @@ All must pass. If thesis doesn't compile, fix before presenting — Jörn review
 For experiments with committed data, check whether code changed more recently than data:
 
 ```bash
-git log -1 --format='%H %ci' -- experiments/<name>/run.rs
-git log -1 --format='%H %ci' -- experiments/<name>/*.jsonl
+git log -1 --format='%H %ci' -- crates/exp-<group>/<subdir>/run.rs
+git log -1 --format='%H %ci' -- crates/exp-<group>/<subdir>/*.jsonl
 ```
 
 If code is newer, regenerate data on this branch.

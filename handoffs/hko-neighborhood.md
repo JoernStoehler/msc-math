@@ -32,21 +32,21 @@ The HKO2024 polytope (pentagon × pentagon at θ=18°) is the known Viterbo coun
 ## Key files
 
 Experiment code and data:
-- `/workspaces/msc-math/experiments/hko-neighborhood/hko_neighborhood.rs` (2118 LOC)
-- `/workspaces/msc-math/experiments/hko-neighborhood/hko-neighborhood-sensitivity.jsonl`
-- `/workspaces/msc-math/experiments/hko-neighborhood/hko-neighborhood-ascent.jsonl`
-- `/workspaces/msc-math/experiments/hko-neighborhood/hko-neighborhood-splitting.jsonl`
+- `/workspaces/msc-math/crates/exp-hko-local-maximum/gradient-is-zero/hko_neighborhood.rs` (2118 LOC)
+- `/workspaces/msc-math/crates/exp-hko-local-maximum/gradient-is-zero/hko-neighborhood-sensitivity.jsonl`
+- `/workspaces/msc-math/crates/exp-hko-local-maximum/gradient-is-zero/hko-neighborhood-ascent.jsonl`
+- `/workspaces/msc-math/crates/exp-hko-local-maximum/gradient-is-zero/hko-neighborhood-splitting.jsonl`
 
 Writeup and figures:
-- `/workspaces/msc-math/experiments/hko-neighborhood/hko-neighborhood.tex`
-- `/workspaces/msc-math/experiments/hko-neighborhood/hko-neighborhood-gradient.png`
-- `/workspaces/msc-math/experiments/hko-neighborhood/hko-neighborhood-orbits.png`
-- `/workspaces/msc-math/experiments/hko-neighborhood/hko-neighborhood-splitting.png`
+- `/workspaces/msc-math/crates/exp-hko-local-maximum/gradient-is-zero/hko-neighborhood.tex`
+- `/workspaces/msc-math/crates/exp-hko-local-maximum/gradient-is-zero/hko-neighborhood-gradient.png`
+- `/workspaces/msc-math/crates/exp-hko-local-maximum/gradient-is-zero/hko-neighborhood-orbits.png`
+- `/workspaces/msc-math/crates/exp-hko-local-maximum/gradient-is-zero/hko-neighborhood-splitting.png`
 
 Related experiments for context:
-- `/workspaces/msc-math/experiments/sys-optimization/` — gradient analysis across random polytopes
-- `/workspaces/msc-math/experiments/gradient-descent/` — gradient ascent on F=10 polytopes
-- `/workspaces/msc-math/experiments/pentagon-perturb/` — perturbation analysis of HKO pentagon
+- `/workspaces/msc-math/crates/exp-sys-optimization/sensitivity-analysis/` — gradient analysis across random polytopes
+- `/workspaces/msc-math/crates/exp-sys-optimization/large-scale-descent/` — gradient ascent on F=10 polytopes
+- `/workspaces/msc-math/crates/exp-hko-local-maximum/perturbation-neighborhood/` — perturbation analysis of HKO pentagon
 
 Memory with project context:
 - `/home/vscode/.claude/projects/-workspaces-msc-math/memory/project_hko_neighborhood.md`

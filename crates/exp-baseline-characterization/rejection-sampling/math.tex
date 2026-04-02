@@ -1,0 +1,236 @@
+% math.tex — \input'd from thesis/experiments.tex
+%
+% Rejection sampling pipeline for generating random bounded irredundant
+% 4-polytopes. Contains a self-contained proposition + proof for the
+% boundedness characterization (Proposition~\ref{prop:boundedness-iff}).
+%
+% Sources:
+%   - Proposition and proof: standard convex geometry (recession cones,
+%     positive span). Proof written by Claude, reviewed by Jörn.
+%   - Acceptance rate data: real code execution (validation.rs).
+%   - Experiment notes: crates/exp-baseline-characterization/rejection-sampling/logbook.md
+%
+% Structure:
+%   - Sampling procedure (halfspace representation, 4-step validation)
+%   - Proposition: bounded iff (span R^4) and (all triples pass)
+%   - Proof: recession cone ↔ bounded, positive span ↔ (i)+(ii)
+%   - Acceptance rate sweep (table + observations)
+
+% Jörn: text approved (57e73d9) — from \subsection{Rejection sampling} to "Acceptance rate sweep"
+\subsection{Rejection sampling acceptance rates}
+\label{sec:rejection-sampling}
+
+To probe Viterbo's conjecture computationally, we need large datasets of
+random convex polytopes in~$\mathbb{R}^4$. We generate these by rejection
+sampling: sample a candidate halfspace representation, then validate that it
+defines a bounded, irredundant polytope.
+
+\subsubsection*{Sampling procedure}
+
+A polytope~$K \subset \mathbb{R}^4$ is specified by dual vertices
+$a_1, \ldots, a_F \in \mathbb{R}^4$:
+\[
+  K = \bigl\{\, x \in \mathbb{R}^4 \;\big|\; \langle a_i, x \rangle \le 1,\;
+  i = 1, \ldots, F \,\bigr\}.
+\]
+Each dual vertex decomposes as $a_i = n_i / h_i$ where~$n_i \in S^3$ is the
+outward unit normal and~$h_i > 0$ is the height
+(positive heights ensure the origin lies in the interior).
+
+For a given facet count~$F$ and height range~$[h_{\min}, h_{\max}]$, each
+sample attempt proceeds as follows:
+\begin{enumerate}
+  \item Sample~$F$ independent unit normals uniformly on~$S^3$
+    (via normalized standard Gaussian vectors in~$\mathbb{R}^4$).
+  \item Sample~$F$ independent heights uniformly from~$[h_{\min}, h_{\max}]$.
+    Set $a_i = n_i / h_i$.
+  \item Validate the candidate~$(a_1, \ldots, a_F)$:
+  \begin{enumerate}
+    \item \emph{No duplicate normals}: reject if~$\|n_i - n_j\| < \varepsilon$
+      for any~$i \ne j$.
+      % Same-direction only (n_i ≈ n_j). Antiparallel normals (n_i ≈ -n_j)
+      % are valid opposite-facing facets, e.g. hypercube has ±e_i.
+    \item \emph{Boundedness}: the polytope must be bounded
+      (Proposition~\ref{prop:boundedness-iff} below). We first check that the
+      dual vertices span~$\mathbb{R}^4$ (via SVD rank), then enumerate all
+      triples~$(i,j,k)$: the three dual vertices share a 1D kernel direction~$d$
+      (computed via the generalized cross product in~$\mathbb{R}^4$), and we
+      verify that some $a_\ell$ has positive inner product with~$d$ and some
+      has negative inner product with~$d$.
+      % The degenerate case (three coplanar dual vertices, kernel ≥ 2D) is skipped in
+      % the code — probability zero for continuous distributions on S^3.
+    \item \emph{Vertex enumeration}: a vertex lies at the intersection of
+      exactly~$4$ facet hyperplanes. Solve all~$\binom{F}{4}$ linear systems,
+      discard infeasible or duplicate solutions.
+    \item \emph{Irredundancy}: each facet must be a genuine 3-dimensional
+      face. Check that the vertices lying on each facet hyperplane span a
+      3-dimensional affine subspace (via SVD).
+  \end{enumerate}
+  \item If all checks pass, accept the polytope.
+\end{enumerate}
+
+\begin{unverified}
+\begin{proposition}[Boundedness check]\label{prop:boundedness-iff}
+Let $K = \{x : \langle a_\ell, x \rangle \le 1,\; \ell = 1, \ldots, F\}$
+with $0 \in \operatorname{int} K$, and let $A$ be the $F \times 4$ matrix
+with rows $a_1, \ldots, a_F$. Then $K$ is
+bounded if and only if
+\textup{(i)}~the dual vertices $a_1, \ldots, a_F$ span~$\mathbb{R}^4$, and
+\textup{(ii)}~for every triple~$(i,j,k)$ whose dual vertices have a 1-dimensional
+kernel direction~$d$, some $a_\ell$ has positive inner product with~$d$ and some
+has negative inner product with~$d$.
+% When rank(A) <= 2, no triple has a 1D kernel, so the triple check is
+% vacuously true but K is unbounded. The "span R^4" clause handles this.
+\end{proposition}
+
+\begin{proof}
+The recession cone $\operatorname{rec}(K) = \{d : \langle a_\ell, d \rangle \le 0\;\forall \ell\}$ satisfies
+$\operatorname{rec}(K) \subset K$ (since $0 \in K$, any $d \in
+\operatorname{rec}(K)$ gives a ray $\{td : t \ge 0\} \subset K$).
+Conversely, if~$K$ is unbounded it contains a ray $\{x_0 + td : t \ge 0\}$
+for some nonzero~$d$; substituting into $\langle a_\ell, x_0 + td \rangle \le 1$ and letting
+$t \to \infty$ forces $\langle a_\ell, d \rangle \le 0$, so $d \in \operatorname{rec}(K)$.  Hence
+\[
+  K \text{ bounded}
+  \;\Longleftrightarrow\;
+  \operatorname{rec}(K) = \{0\}.
+\]
+Now $\operatorname{rec}(K) = \{0\}$ means there is no nonzero~$d$ with
+$a_\ell \cdot d \le 0$ for all~$\ell$; equivalently, for every nonzero~$d$,
+some $a_\ell \cdot d > 0$.  This is exactly the condition that the dual vertices
+\emph{positively span}~$\mathbb{R}^4$.  It remains to show that positive span
+is equivalent to the conjunction of~\textup{(i)} and~\textup{(ii)}.
+
+\medskip\noindent\emph{($\Rightarrow$) Positive span implies both conditions.}
+Positive span implies span~$\mathbb{R}^4$ (a fortiori). For the triple check:
+let~$d$ be a kernel direction of triple~$(i,j,k)$, so $a_i \cdot d = a_j
+\cdot d = a_k \cdot d = 0$. By positive span, some~$a_\ell$ has $a_\ell \cdot
+d > 0$; since the triple's own dual vertices have zero dot product with~$d$, this
+$a_\ell$ lies outside the triple. Applying the same argument to~$-d$ gives a
+dual vertex with negative inner product.
+% QC: The kernel is 1-dimensional by hypothesis, so d is determined up to
+% sign. The condition "some positive, some negative" is sign-symmetric,
+% hence independent of the choice of generator.
+
+\medskip\noindent\emph{($\Leftarrow$) Span~$\mathbb{R}^4$ and all triples
+pass implies positive span.}
+We prove the contrapositive: if positive span fails but the dual vertices
+span~$\mathbb{R}^4$, some triple fails.
+
+Suppose $\operatorname{rec}(K) \neq \{0\}$, i.e., there exists a nonzero~$d$
+with $a_\ell \cdot d \le 0$ for all~$\ell$. We produce a triple~$(i,j,k)$
+whose kernel direction satisfies $a_\ell \cdot d \le 0$ for all~$\ell$
+(so no dual vertex blocks it).
+
+Among all unit vectors in~$\operatorname{rec}(K)$, pick~$d$ maximizing the
+number of orthogonal dual vertices $S_0 = \{\ell : a_\ell \cdot d = 0\}$.  We claim
+that~$\{a_\ell : \ell \in S_0\}$ contains three linearly independent vectors.
+If not, $\{a_\ell : \ell \in S_0\}$ spans a subspace of dimension~$\le 2$,
+so its orthogonal complement~$W$ has $\dim W \ge 4 - 2 = 2$.  Since
+$a_\ell \cdot d = 0$ for every $\ell \in S_0$, we have $d \in W$.  Because
+$\dim W \ge 2$ and $d \ne 0$, there exists $v \in W$ not parallel to~$d$.
+Since $v \perp a_\ell$ for all $\ell \in S_0$, we have
+\[
+  a_\ell \cdot (d + tv) = a_\ell \cdot d + t\,(a_\ell \cdot v)
+  = \begin{cases}
+    0 + t \cdot 0 = 0 & \text{if } \ell \in S_0, \\
+    \underbrace{a_\ell \cdot d}_{<\,0} + t\,(a_\ell \cdot v) < 0
+    & \text{if } \ell \notin S_0, \text{ for small } |t|.
+  \end{cases}
+\]
+% QC: ℓ ∉ S₀ is non-empty because dual vertices span R^4 ⟹ rank(A) = 4
+% ⟹ ker(A) = {0}, so the nonzero vector d cannot satisfy a_ℓ · d = 0 for all ℓ.
+(The case $\ell \notin S_0$ is non-empty: since the dual vertices span~$\mathbb{R}^4$,
+the matrix~$A$ has trivial kernel, so~$d \ne 0$ cannot be orthogonal to all
+dual vertices.)
+So $d + tv \in \operatorname{rec}(K)$ for small~$|t|$.
+
+Consider increasing~$|t|$ from zero.  The set
+$T = \{t \in \mathbb{R} : a_\ell \cdot (d + tv) \le 0 \;\forall \ell\}$ is
+a closed interval containing~$0$ (the intersection of half-lines
+$\{t : a_\ell \cdot d + t\,a_\ell \cdot v \le 0\}$).  This interval is
+bounded: if $d + tv \in \operatorname{rec}(K)$ for all~$t$, then
+$a_\ell \cdot v = 0$ for every~$\ell$ with $a_\ell \cdot d < 0$; combined
+with $a_\ell \cdot v = 0$ for $\ell \in S_0$, this gives $a_\ell \cdot v = 0$
+for all~$\ell$, contradicting $\operatorname{rank}(A) = 4$.
+
+So $T = [t^-, t^+]$ is a bounded closed interval, and at least one
+endpoint~$t^*$ is nonzero.  At $t = t^*$, some new index
+$\ell^* \notin S_0$ satisfies $a_{\ell^*} \cdot (d + t^* v) = 0$.  Set
+$d' = d + t^* v$; this is nonzero because $d$ and~$v$ are not parallel.
+Since $v \in W$, we still have $a_\ell \cdot d' = a_\ell \cdot d = 0$
+for every $\ell \in S_0$.  Thus
+$\{\ell : a_\ell \cdot d' = 0\} \supseteq S_0 \cup \{\ell^*\}$,
+a strict superset of~$S_0$.  Since $d' \in \operatorname{rec}(K)$, the unit
+vector $d' / \|d'\|$ contradicts the choice of~$d$ as maximizing~$|S_0|$.
+
+So~$\{a_\ell : \ell \in S_0\}$ contains three linearly independent vectors;
+pick such a triple~$(i,j,k)$ from~$S_0$.  Since $a_i, a_j, a_k$ are linearly
+independent in~$\mathbb{R}^4$, their common kernel $\ker(a_i, a_j, a_k)$ is
+$(4 - 3)$-dimensional, so the triple falls under condition~\textup{(ii)}.
+The direction~$d$ spans this kernel, and $d \in \operatorname{rec}(K)$ gives
+$a_\ell \cdot d \le 0$ for all~$\ell$.  In particular, no dual vertex has positive
+inner product with~$d$, so triple~$(i,j,k)$ fails condition~\textup{(ii)}.
+\end{proof}
+\end{unverified}
+
+\subsubsection*{Acceptance rate sweep}
+
+We measured acceptance rates across a grid of parameters: facet
+counts~$F \in \{5, 6, \ldots, 10\}$ and three height
+ranges~$[h_{\min}, h_{\max}]$, from narrow ($[0.8, 1.2]$, heights nearly
+equal) to wide ($[0.1, 5.0]$, heights spanning a 50$\times$ range). For each
+of the $6 \times 3 = 18$ configurations, 1000~independent attempts were made
+with a deterministic random seed.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{r ccc}
+\toprule
+& \multicolumn{3}{c}{Acceptance rate} \\
+\cmidrule(lr){2-4}
+$F$ & $h \in [0.5, 2.0]$ & $h \in [0.1, 5.0]$ & $h \in [0.8, 1.2]$ \\
+\midrule
+ 5 & 0.057 & 0.057 & 0.057 \\
+ 6 & 0.168 & 0.162 & 0.170 \\
+ 7 & 0.333 & 0.305 & 0.344 \\
+ 8 & 0.450 & 0.371 & 0.506 \\
+ 9 & 0.488 & 0.332 & 0.602 \\
+10 & 0.504 & 0.282 & 0.729 \\
+\bottomrule
+\end{tabular}
+\caption{Acceptance rates for rejection sampling of random 4-polytopes
+  with~$F$ facets. Each cell reports the fraction of 1000 attempts that passed
+  all validation checks.}
+\label{tab:acceptance-rates}
+\end{table}
+
+\subsubsection*{Observations}
+
+\paragraph{Acceptance increases with~$F$ for narrow height ranges.}
+For~$h \in [0.8, 1.2]$, the rate climbs from~5.7\% at~$F = 5$ to~72.9\%
+at~$F = 10$. More facets provide more directions to ``close off'' the
+polytope, making boundedness easier to satisfy.
+
+\paragraph{Acceptance is insensitive to height range at low~$F$.}
+At~$F = 5$, all three height ranges give exactly the same rate (5.7\%).
+This is not a coincidence: with only~5 facets, most random normal
+configurations fail the boundedness check regardless of the heights chosen.
+Since boundedness depends only on the normal directions, varying the height
+range has no effect.
+% The same seed produces the same normals for all three h-ranges of a given F.
+% Identical acceptance at F=5 confirms that rejection is dominated by the
+% boundedness check (which is height-independent), not irredundancy.
+
+\paragraph{Wide height ranges hurt at high~$F$.}
+At~$F = 10$, the rate drops from 72.9\% (for $h \in [0.8, 1.2]$) to 28.2\%
+(for $h \in [0.1, 5.0]$). With~10 facets, boundedness is almost always
+satisfied, so the irredundancy check becomes the bottleneck. When heights vary
+over a wide range, some facets end up with too few incident vertices to span
+a 3-dimensional face, causing rejection.
+
+\paragraph{Practical consequence.}
+For building datasets with~$F \ge 7$ and moderate height ranges, rejection
+sampling is efficient (acceptance~$\ge 30\%$). Even the worst case ($F = 5$,
+5.7\% acceptance) requires only~${\sim}18$ attempts per accepted polytope,
+which is practical for datasets of a few thousand samples.
