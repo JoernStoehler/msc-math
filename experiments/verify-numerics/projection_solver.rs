@@ -92,7 +92,7 @@ const EPS_MARGIN_FALSE: f64 = 1e-9;
 
 /// Absolute floor for eigenvalue magnitude. Matrix treated as numerically zero
 /// if largest eigenvalue is below this.
-const EPS_EIGEN_FLOOR: f64 = 1e-12;
+pub const EPS_EIGEN_FLOOR: f64 = 1e-12;
 
 /// Relative threshold for SVD rank detection.
 const EPS_RANK_THRESHOLD: f64 = 1e-10;
@@ -101,7 +101,7 @@ const EPS_RANK_THRESHOLD: f64 = 1e-10;
 const EPS_CONSISTENCY: f64 = 1e-8;
 
 /// Eigenvalue threshold for the reduced Hessian H'.
-const EPS_EIGEN_THRESHOLD: f64 = 1e-3;
+pub const EPS_EIGEN_THRESHOLD: f64 = 1e-3;
 
 /// Machine epsilon for f64.
 const EPS_MACH: f64 = f64::EPSILON; // 2.22e-16

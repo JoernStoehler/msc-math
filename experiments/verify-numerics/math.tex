@@ -963,14 +963,14 @@ The amplification $1/|\gamma_j|$ makes the error large for
 eigenvalues near zero.
 
 \textbf{Full $\beta$ error.}
-The error in $\beta$ has three sources:
+The error in component~$i$ of $\beta$ ($i = 1, \ldots, m$) has three sources:
 \begin{equation}\label{eq:beta-error-decomposition}
-  \delta\beta_k
-  = \underbrace{\sum_j (Vw_j)_k \cdot (\delta\alpha)_j}_{%
+  (\delta\beta)_i
+  = \underbrace{\sum_j (Vw_j)_i \cdot (\delta\alpha)_j}_{%
       \text{critical-point shift}}
-  + \underbrace{(\delta V \cdot \alpha^*)_k}_{%
+  + \underbrace{(\delta V \cdot \alpha^*)_i}_{%
       \text{null-space rotation}}
-  + \underbrace{(\delta\beta_0)_k}_{%
+  + \underbrace{(\delta\beta_0)_i}_{%
       \text{particular-solution shift}}
   + O(\text{second order}).
 \end{equation}
@@ -982,17 +982,17 @@ Each term in~\eqref{eq:beta-error-decomposition} is bounded by:
     (Cauchy--Schwarz; Lemma~\ref{lem:link-reduced-hessian}).
   \item $|f_j| \leq \|\delta g\|$
     (Lemma~\ref{lem:link-gradient}).
-  \item $|(\delta V \cdot \alpha^*)_k|
+  \item $|(\delta V \cdot \alpha^*)_i|
     \leq \|\delta V\| \cdot \|\alpha^*\|$
     (Lemma~\ref{lem:link-svd}).
-  \item $|(\delta\beta_0)_k| \leq \|\delta\beta_0\|$
+  \item $|(\delta\beta_0)_i| \leq \|\delta\beta_0\|$
     (Lemma~\ref{lem:link-beta0}).
 \end{itemize}
-Combining:
+Combining (for each component $i = 1, \ldots, m$):
 \begin{equation}\label{eq:beta-certification-bound}
-  |\delta\beta_k|
+  |(\delta\beta)_i|
   \leq \bigl(\|\Delta H'\| \cdot \|\alpha^*\| + \|\delta g\|\bigr)
-       \sum_{j=1}^{k} \frac{|(Vw_j)_k|}{|\gamma_j|}
+       \sum_{j=1}^{k} \frac{|(Vw_j)_i|}{|\gamma_j|}
   + \|\delta V\| \cdot \|\alpha^*\|
   + \|\delta\beta_0\|.
 \end{equation}
@@ -1003,17 +1003,26 @@ are unavailable, the f64 solver substitutes computed values.
 For retained eigenvalues ($|\tilde\gamma_j| > \varepsilon_\gamma$),
 Lemma~\ref{lem:link-eigenvalues} gives
 $|\gamma_j| \geq |\tilde\gamma_j| - \varepsilon_\gamma > 0$.
-Define the computable bound:
+Define the computable bound (for each $i = 1, \ldots, m$;
+the sum runs over retained eigenvalues only,
+i.e.\ those with $|\tilde\gamma_j| > \hat E_{\Delta H'}$):
 \begin{equation}\label{eq:eta-computable}
-  \eta_k
+  \eta_i
   = \bigl(\hat E_{\Delta H'} \|\tilde\alpha\|
     + \hat E_{\delta g}\bigr)
     \sum_{j=1}^{k}
-      \frac{|(\tilde V \tilde w_j)_k|}
-           {|\tilde\gamma_j| - \varepsilon_\gamma}
+      \frac{|(\tilde V \tilde w_j)_i|}
+           {|\tilde\gamma_j|}
   + \hat E_{\delta V} \|\tilde\alpha\|
   + \hat E_{\delta\beta_0},
 \end{equation}
+where $\eta_i = \infty$ if any retained eigenvalue has
+$|\tilde\gamma_j| \leq \hat E_{\Delta H'}$ (perturbation
+dominates the eigenvalue; first-order analysis invalid).
+Using $|\tilde\gamma_j|$ instead of $|\tilde\gamma_j| - \varepsilon_\gamma$
+is valid: for well-separated eigenvalues the difference is negligible,
+and for near-threshold eigenvalues the guard $|\tilde\gamma_j| > \hat E_{\Delta H'}$
+already triggers $\eta_i = \infty$ before the denominator becomes problematic.
 where the constants are computable upper bounds from
 Lemmas~\ref{lem:link-svd}--\ref{lem:link-gradient}:
 \begin{align*}
@@ -1049,16 +1058,16 @@ $\tilde\sigma_{\min}(C)$) are available from the solver.
 \textbf{Trinary $\beta > 0$ certification.}
 \begin{itemize}
   \item \textsc{True}
-    ($\tilde\beta_k - \eta_k > 0$ for all~$k$):
-    then $\beta^*_k \geq \tilde\beta_k - |\delta\beta_k|
-    \geq \tilde\beta_k - \eta_k > 0$.
+    ($\tilde\beta_i - \eta_i > 0$ for all~$i$):
+    then $\beta^*_i \geq \tilde\beta_i - |(\delta\beta)_i|
+    \geq \tilde\beta_i - \eta_i > 0$.
     Interior solution certified.
   \item \textsc{False}
-    ($\tilde\beta_k + \eta_k < 0$ for some~$k$):
-    then $\beta^*_k \leq \tilde\beta_k + \eta_k < 0$.
+    ($\tilde\beta_i + \eta_i < 0$ for some~$i$):
+    then $\beta^*_i \leq \tilde\beta_i + \eta_i < 0$.
     Infeasible $\beta$ certified.
   \item \textsc{Indeterminate}: otherwise.
-    Cannot determine the sign of~$\beta^*_k$.
+    Cannot determine the sign of~$\beta^*_i$.
 \end{itemize}
 
 % [GAP - The constants c_{DeltaH'}, c_{delta g}, c_{delta V},
@@ -1089,7 +1098,7 @@ the product $|(\delta\alpha)_j| \cdot |\gamma_j|$ is
 $10^{-17}$--$10^{-16}$ across 15 orders of magnitude of~$|\gamma_j|$
 ($10^{-5}$ to $10^0$), confirming~\eqref{eq:eigendirection-scaling}
 with proportionality constant $\approx \varepsilon_{\mathrm{mach}}$.
-The $\eta_k$ bound~\eqref{eq:eta-computable} uses $c = m^2$
+The $\eta_i$ bound~\eqref{eq:eta-computable} uses $c = m^2$
 as a safety factor; zero violations on all well-conditioned problems.
 
 \textbf{Limitation:}
