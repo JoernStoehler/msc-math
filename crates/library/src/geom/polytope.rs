@@ -229,6 +229,65 @@ impl Polytope4D {
         Self::build(dual_vertices, Some(dual_vertices_f64))
     }
 
+    /// Construct from pre-computed rational dual vertices and vertices.
+    ///
+    /// Recomputes vertex_descriptors by checking, for each vertex v and facet f,
+    /// whether a_f · v = 1 (exact rational dot product). This is O(V·F) — much
+    /// cheaper than vertex enumeration which is O(C(F,4)).
+    ///
+    /// Then calls assemble() to build incidence, omega_signs, vertex_adjacency,
+    /// and f64 copies.
+    pub fn from_rational_parts(
+        dual_vertices: Vec<[BigRational; 4]>,
+        vertices: Vec<[BigRational; 4]>,
+    ) -> Result<Self, ConstructionError> {
+        use num_traits::One;
+
+        let one = BigRational::one();
+
+        // Recompute vertex_descriptors: for each vertex, which facets is it on?
+        let vertex_descriptors: Vec<BTreeSet<usize>> = vertices
+            .iter()
+            .map(|v| {
+                (0..dual_vertices.len())
+                    .filter(|&f| {
+                        let dot = &dual_vertices[f][0] * &v[0]
+                            + &dual_vertices[f][1] * &v[1]
+                            + &dual_vertices[f][2] * &v[2]
+                            + &dual_vertices[f][3] * &v[3];
+                        dot == one
+                    })
+                    .collect()
+            })
+            .collect();
+
+        let dual_vertices_f64 = dual_vertices
+            .iter()
+            .enumerate()
+            .map(|(i, y)| {
+                let v = rational_array_to_f64(y);
+                if v.norm() < EPS_ZERO_NORM {
+                    Err(ConstructionError::F64Conversion(format!(
+                        "dual vertex[{i}] has near-zero f64 norm: {}",
+                        v.norm()
+                    )))
+                } else {
+                    Ok(v)
+                }
+            })
+            .collect::<Result<Vec<_>, _>>()?;
+
+        let vertices_f64 = rational_verts_to_f64(&vertices);
+
+        Ok(Self::assemble(
+            dual_vertices,
+            vertices,
+            &vertex_descriptors,
+            dual_vertices_f64,
+            vertices_f64,
+        ))
+    }
+
     // ── Removed constructors ────────────────────────────────────────────
     // from_normals_and_heights, from_rationals, from_f64_rounded were thin
     // wrappers that computed n/h. Callers now inline the division and call
@@ -913,5 +972,43 @@ mod tests {
         let p = &crate::geom::known_polytopes::crosspolytope().polytope;
         assert_eq!(p.facet_count(), 16);
         assert!(!p.vertices_f64().is_empty());
+    }
+
+    /// from_rational_parts produces identical incidence, omega_signs, and adjacency
+    /// as the original construction via from_f64.
+    #[test]
+    fn from_rational_parts_matches_from_f64() {
+        let halfspaces = simplex_halfspaces_5();
+        let original = Polytope4D::from_f64(halfspaces).unwrap();
+
+        let reconstructed = Polytope4D::from_rational_parts(
+            original.dual_vertices().to_vec(),
+            original.vertices().to_vec(),
+        )
+        .unwrap();
+
+        assert_eq!(original.facet_count(), reconstructed.facet_count());
+        assert_eq!(original.vertices().len(), reconstructed.vertices().len());
+        assert_eq!(original.incidence(), reconstructed.incidence());
+        assert_eq!(original.omega_signs(), reconstructed.omega_signs());
+        assert_eq!(original.vertex_adjacency(), reconstructed.vertex_adjacency());
+    }
+
+    /// from_rational_parts on the crosspolytope (non-simple, 16 facets).
+    #[test]
+    fn from_rational_parts_crosspolytope() {
+        let original = &crate::geom::known_polytopes::crosspolytope().polytope;
+
+        let reconstructed = Polytope4D::from_rational_parts(
+            original.dual_vertices().to_vec(),
+            original.vertices().to_vec(),
+        )
+        .unwrap();
+
+        assert_eq!(original.facet_count(), reconstructed.facet_count());
+        assert_eq!(original.vertices().len(), reconstructed.vertices().len());
+        assert_eq!(original.incidence(), reconstructed.incidence());
+        assert_eq!(original.omega_signs(), reconstructed.omega_signs());
+        assert_eq!(original.vertex_adjacency(), reconstructed.vertex_adjacency());
     }
 }

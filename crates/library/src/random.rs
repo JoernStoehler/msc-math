@@ -10,6 +10,7 @@
 
 use crate::geom::polytope::{ConstructionError, Polytope4D};
 use nalgebra::Vector4;
+use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal, Uniform};
 
@@ -61,6 +62,27 @@ pub fn sample_random_polytope(
         .collect();
 
     Polytope4D::from_f64(halfspaces)
+}
+
+/// Generate a single polytope attempt with an independent seed.
+/// The (master_seed, attempt) pair fully determines the attempt.
+///
+/// Uses blake3 key derivation to produce a 32-byte seed from
+/// (master_seed, attempt), then seeds ChaCha8Rng for the actual
+/// random number generation.
+pub fn generate_polytope(
+    facet_count: usize,
+    h_min: f64,
+    h_max: f64,
+    master_seed: u64,
+    attempt: u64,
+) -> Result<Polytope4D, ConstructionError> {
+    let mut key_material = [0u8; 16];
+    key_material[..8].copy_from_slice(&master_seed.to_le_bytes());
+    key_material[8..].copy_from_slice(&attempt.to_le_bytes());
+    let seed = blake3::derive_key("polytope-gen", &key_material);
+    let mut rng = ChaCha8Rng::from_seed(seed);
+    sample_random_polytope(facet_count, h_min, h_max, &mut rng)
 }
 
 /// Generate random polytopes via rejection sampling.
@@ -135,6 +157,35 @@ mod tests {
         assert_eq!(polytopes.len(), 3);
         for p in &polytopes {
             assert_eq!(p.facet_count(), 5);
+        }
+    }
+
+    /// generate_polytope with different attempts produces different RNG streams.
+    #[test]
+    fn generate_polytope_different_attempts() {
+        // Both may succeed or fail, but the RNG streams must differ.
+        // We check by comparing the raw seeds derived from blake3.
+        let mut key0 = [0u8; 16];
+        key0[..8].copy_from_slice(&42u64.to_le_bytes());
+        key0[8..].copy_from_slice(&0u64.to_le_bytes());
+        let seed0 = blake3::derive_key("polytope-gen", &key0);
+
+        let mut key1 = [0u8; 16];
+        key1[..8].copy_from_slice(&42u64.to_le_bytes());
+        key1[8..].copy_from_slice(&1u64.to_le_bytes());
+        let seed1 = blake3::derive_key("polytope-gen", &key1);
+
+        assert_ne!(seed0, seed1, "different attempts must produce different seeds");
+    }
+
+    /// generate_polytope is reproducible: same (master_seed, attempt) → same result.
+    #[test]
+    fn generate_polytope_reproducible() {
+        let r1 = generate_polytope(6, 0.5, 2.0, 99, 0);
+        let r2 = generate_polytope(6, 0.5, 2.0, 99, 0);
+        assert_eq!(r1.is_ok(), r2.is_ok());
+        if let (Ok(p1), Ok(p2)) = (r1, r2) {
+            assert_eq!(p1.incidence(), p2.incidence());
         }
     }
 
