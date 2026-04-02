@@ -1,2 +1,7 @@
-# Intermediate cache — regenerate with: cargo run --release --bin collect_inputs -- natural --polytopes ...
-collected.jsonl
+# Stage 1 output — large, regenerate with collect_poly
+collected_poly.jsonl
+collected_synth.jsonl
+
+# Ad-hoc filter/results outputs (not committed — use testdata/ for stable test cases)
+filtered_*.jsonl
+results_*.jsonl

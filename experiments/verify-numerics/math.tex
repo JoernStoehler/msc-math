@@ -1,39 +1,1133 @@
 % math.tex — verify-numerics experiment
-% Mathematical results for the QP error analysis.
+% Problem specification, exact algorithm, and numerical error analysis.
 %
-% Labels defined here:
+% Part I — Problem, structure, exact algorithm:
+%   def:hk2017-problem — full HK2017 capacity problem
+%   fact:hk2017 — maximizer = minimum-action simple Reeb orbit
+%   rem:min-support — minimum-support maximizers have beta > 0
+%   rem:adjacency-pruning — directed transition prefilter
+%   rem:qp-setup — per-sigma notation (A, F, V, beta_0, H', g, gamma_j)
+%   prop:basic-properties — A may be empty, F is compact
+%   prop:q-on-affine — Q restricted to affine plane
+%   prop:critical-points — 3 cases for critical-point structure
+%   prop:boundary-vs-interior — B1-B4 (boundary) and I1-I2 (interior)
+%   alg:exact-solver — rational-arithmetic per-sigma solver
+%   rem:exact-not-compute — what the solver skips (boundary projection)
+%   rem:discontinuities — 6 discontinuities for f64
+%
+% Part II — Error analysis (perturbation chain):
+%   rem:conditioning-precondition — sigma_min(C) gates the chain
+%   rem:perturbation-chain — perturbation chain overview
+%   lem:link-assembly — Link 1: assembly errors
+%   lem:link-svd — Link 2: null-space basis via SVD
+%   lem:link-beta0 — Link 2b: particular solution perturbation
+%   lem:link-gradient — Link 2c: reduced gradient perturbation
+%   lem:link-reduced-hessian — Link 3: reduced Hessian perturbation
+%   lem:link-eigenvalues — Link 4: eigenvalue perturbation + sign threshold
+%   lem:link-beta — Link 5: beta perturbation + certification bound
+%   rem:eigendirection-error — per-eigendirection error |delta_alpha_j| ~ eps_mach / |gamma_j|
+%
+% Part II — Q error bounds (complementary approach via KKT residual):
 %   lem:q-error-first-order — first-order Q error bound via stationarity
 %   lem:q-correction-second-order — Q correction reduces error to second order
 %   rem:runtime-q-bound — computable runtime error bound
+%   lem:pseudoinverse-orthogonality — structural property of pseudoinverse
+%   cor:taylor-structure — first-order = -2x second-order
+%   cor:exact-correction — correction exact in exact arithmetic
 %
-% Notation: This file uses a general constrained QP setup with
-% constraint matrix $C$ and Lagrange multiplier $\lambda$.
-% In the EHZ pipeline (crate kkt/ module), the specific instantiation is:
-%   $C = [A^\top;\, \mathbf{1}^\top]$ (4 closure rows + 1 normalization),
-%   $d = [0;\, 1]$,
-%   $\lambda = [\mu;\, \xi]$.
+% ── Notational conventions ──
+%
+% Variables and their roles:
+%   beta           free/generic variable ("maximize over beta")
+%   beta_0         particular solution of C beta = d
+%   beta^*         exact optimal beta (maximizer of Q on F)
+%   \tilde\beta    f64-computed approximation of beta^*
+%   \delta\beta    = \tilde\beta - beta^* (solution error)
+%
+% Decoration scheme (applies to all quantities, not just beta):
+%   plain          exact mathematical value: H, C, V, H', g, gamma_j, Q
+%   tilde (~)      f64-computed value: \tilde H, \tilde V, \tilde H', \tilde gamma_j
+%   superscript *  optimal / solution: beta^*, Q^* = Q(beta^*)
+%   subscript 0    particular / initial: beta_0
+%   delta          perturbation / error: delta H = \tilde H - H
+%
+% Derived quantities (per-sigma, exact):
+%   H, C, d        QP matrices (Definition def:hk2017-problem)
+%   A              = {beta : C beta = d} (affine constraint set)
+%   F              = A cap {beta >= 0} (closed feasible set)
+%   V              orthonormal basis for ker(C), so A = beta_0 + im(V)
+%   H'             = V^T H V (reduced Hessian on ker(C))
+%   g              = V^T H beta_0 (gradient of Q|_A at alpha=0)
+%   gamma_j        eigenvalues of H'
+%   k              = dim ker(C) = m - rank(C)
+%
+% Standard reference: Higham, "Accuracy and Stability of Numerical
+% Algorithms" (2002).  Plain = exact, tilde = computed follows Higham's
+% convention.  Superscript * for optima is standard in optimization.
 
 % \input'd from root math.tex — no \documentclass
 
-% ── Problem setup ──
+
+% ══════════════════════════════════════════════════════════════════════
+% Part I: Problem, structure, and exact algorithm
+% ══════════════════════════════════════════════════════════════════════
 %
-% Maximize $\tfrac{1}{2}\beta^\top H \beta$ subject to $C\beta = d$, $\beta > 0$,
-% where $H \in \mathbb{R}^{m \times m}$ is symmetric (possibly indefinite),
-% $C \in \mathbb{R}^{p \times m}$ has full row rank~$p$, and $d \in \mathbb{R}^p$.
+% (1) HK2017 full problem
+% (2) Simple Reeb orbit structure: minimum-support maximizers, pruning
+% (3) General facts: quadratic forms on affine planes
+% (4) Exact per-sigma solver
+% (5) Continuity issues for f64
+
+
+% ── 1. The HK2017 capacity problem ──────────────────────────────────
+
+\begin{definition}[HK2017 capacity problem]\label{def:hk2017-problem}
+Let $K = \{x \in \mathbb{R}^4 : a_i^\top x \leq 1,\; i = 1,\ldots,F\}$
+be a convex polytope with dual vertices
+$a_1, \ldots, a_F \in \mathbb{R}^4$.
+For each subset $S \subseteq \{1, \ldots, F\}$ with $|S| = m \geq 2$
+and each cyclic permutation $\sigma$ of~$S$, define:
+\begin{itemize}
+  \item \textbf{Action matrix}
+    $H(\sigma) \in \mathbb{R}^{m \times m}$:
+    for $i < j$,\;
+    $H_{ij} = H_{ji} = \omega_0(a_{\sigma(i)},\, a_{\sigma(j)})$;\;
+    $H_{ii} = 0$.
+    (Symmetric by construction.
+    $\omega_0$ is antisymmetric: $\omega_0(u, v) = -\omega_0(v, u)$.
+    See Lemma~\ref{lem:H-quadratic}.)
+  \item \textbf{Constraint matrix}
+    $C(\sigma) \in \mathbb{R}^{5 \times m}$:
+    rows $0$--$3$ are $C_{d,k} = a_{\sigma(k),d}$
+    (closure: $\sum a_{\sigma(i)} \beta_i = 0$);
+    row $4$ is all ones
+    (normalization: $\sum \beta_i = 1$).
+  \item $d = (0, 0, 0, 0, 1)^\top$.
+\end{itemize}
+The \emph{HK2017 capacity problem} is:
+\begin{equation}\label{eq:hk2017-problem}
+  Q_{\max}
+  = \max_{\sigma}\;
+    \max_{\beta}\;
+    \tfrac{1}{2}\,\beta^\top H(\sigma)\, \beta
+  \quad \text{s.t.} \quad
+  C(\sigma)\beta = d, \;\; \beta \geq 0,
+\end{equation}
+where $\sigma$ ranges over all cyclic permutations of all subsets
+$S \subseteq \{1, \ldots, F\}$ with $|S| \geq 2$.
+The EHZ capacity is $c_{\mathrm{EHZ}}(K) = 1/(2\, Q_{\max})$.
+\end{definition}
+
+\begin{fact}[HK2017]\label{fact:hk2017}
+% [TODO: JÖRN - cite HK2017 theorem precisely; which theorem number?]
+Any global maximizer $(\sigma^*, \beta^*)$
+of~\eqref{eq:hk2017-problem}
+corresponds to a minimum-action simple closed Reeb orbit on
+$\partial K$.
+\end{fact}
+
+
+% ── 2. Structure from Reeb orbits ────────────────────────────────────
+
+\begin{remark}[Minimum-support maximizers]\label{rem:min-support}
+A global maximizer $(\sigma^*, \beta^*)$
+of~\eqref{eq:hk2017-problem}
+may have $\beta^*_k = 0$ for some indices~$k$
+(the orbit does not dwell on those facets).
+Among all global maximizers achieving~$Q_{\max}$,
+take one with minimum $|\operatorname{supp}(\beta^*)|$
+(fewest nonzero components).
+This minimum-support maximizer has $\beta^* > 0$:
+if $\beta^*_k = 0$ for some~$k$, removing $\sigma(k)$
+from the permutation gives a shorter $\sigma'$ with the same
+$Q$ value (the $k$-th row/column of~$H$ contributes nothing,
+and the constraints are satisfied by the remaining components).
+This contradicts minimality of the support.
+
+\textbf{Consequence:} the HK2017 algorithm can skip any
+$(\sigma, \beta)$ where the maximum of~$Q$ over
+$\{C(\sigma)\beta = d,\; \beta \geq 0\}$
+is attained only on the boundary ($\beta_k = 0$ for some~$k$).
+A shorter~$\sigma'$ achieves the same or higher~$Q$.
+\end{remark}
+
+\begin{remark}[Adjacency pruning]\label{rem:adjacency-pruning}
+After the minimum-support reduction, one can further skip
+permutations~$\sigma$ where consecutive pairs
+$(\sigma(i), \sigma(i{+}1))$ fail the directed transition
+feasibility test (Lemma~\ref{lem:numerical-transition-feasibility}):
+no Reeb trajectory with that combinatorics exists.
+This is independent of the $\beta$-optimization and is applied
+as a prefilter before solving.
+\end{remark}
+
+
+% ── 3. Quadratic forms on affine planes ──────────────────────────────
+
+% General facts, not specific to EHZ.
+
+\begin{remark}[Setup and notation]\label{rem:qp-setup}
+For a fixed~$\sigma$, write $H = H(\sigma)$,
+$C = C(\sigma)$ (suppressing the $\sigma$-dependence).
+Define:
+\begin{itemize}
+  \item $\mathcal{A} = \{\beta \in \mathbb{R}^m : C\beta = d\}$
+    \quad (affine constraint set).
+  \item $\mathcal{F} = \mathcal{A} \cap \{\beta \geq 0\}$
+    \quad (closed feasible set).
+  \item $\beta_0 \in \mathcal{A}$: a particular solution
+    (e.g., $\beta_0 = C^+ d$, the minimum-norm solution).
+  \item $V \in \mathbb{R}^{m \times k}$: orthonormal basis for
+    $\ker(C)$,\; $k = m - \operatorname{rank}(C)$,
+    \;so $\mathcal{A} = \beta_0 + \operatorname{im}(V)$.
+  \item $H' = V^\top H V \in \mathbb{R}^{k \times k}$:
+    the \emph{reduced Hessian} (restriction of $H$ to~$\mathcal{A}$).
+  \item $\gamma_1, \ldots, \gamma_k$: eigenvalues of~$H'$,
+    with orthonormal eigenvectors $w_1, \ldots, w_k \in \mathbb{R}^k$.
+  \item $g = V^\top H \beta_0 \in \mathbb{R}^k$:
+    the gradient of $Q|_{\mathcal{A}}$ at $\alpha = 0$.
+\end{itemize}
+The per-$\sigma$ problem is:
+maximize $Q(\beta) = \tfrac{1}{2}\beta^\top H \beta$
+over $\beta \in \mathcal{F}$.
+\end{remark}
+
+\begin{proposition}[Basic properties of $\mathcal{A}$ and $\mathcal{F}$]%
+\label{prop:basic-properties}
+\leavevmode
+\begin{enumerate}
+  \item $\mathcal{A}$ may be empty (if $C\beta = d$ is inconsistent).
+  \item $\mathcal{F} = \mathcal{A} \cap \{\beta \geq 0\}$
+    is compact (closed and bounded; contained in the simplex
+    $\Delta = \{\beta \geq 0,\; \sum \beta_i = 1\}$
+    by the normalization constraint).
+    This includes the case $\mathcal{F} = \emptyset$
+    (which is compact): even when $\mathcal{A} \neq \emptyset$,
+    the intersection with $\{\beta \geq 0\}$ may be empty.
+  \item When $\mathcal{F} \neq \emptyset$,
+    $Q$ attains its maximum on~$\mathcal{F}$
+    (continuous function on a compact set).
+\end{enumerate}
+\end{proposition}
+
+\begin{proposition}[$Q$ on the affine plane]\label{prop:q-on-affine}
+Parametrize $\mathcal{A}$ as $\beta = \beta_0 + V\alpha$,
+$\alpha \in \mathbb{R}^k$.  Then
+\begin{equation}\label{eq:q-restricted}
+  Q(\beta_0 + V\alpha)
+  = \underbrace{\tfrac{1}{2}\,\alpha^\top H' \alpha}_{\text{quadratic}}
+  + \underbrace{g^\top \alpha}_{\text{linear}}
+  + \underbrace{Q(\beta_0)}_{\text{constant}}.
+\end{equation}
+Setting $\nabla_\alpha = 0$ gives the stationarity condition
+$H' \alpha + g = 0$.
+\end{proposition}
+
+\begin{proposition}[Critical-point structure]\label{prop:critical-points}
+The critical points of $Q|_{\mathcal{A}}$
+(solutions of $H'\alpha + g = 0$) form one of three cases:
+\begin{enumerate}
+  \item \textbf{$H'$ invertible} ($\det H' \neq 0$):
+    unique critical point $\alpha^* = -(H')^{-1} g$,
+    hence $\beta^* = \beta_0 + V\alpha^*$.
+  \item \textbf{$H'$ singular, $g \perp \ker(H')$}
+    (i.e., $g \in \operatorname{im}(H')$):
+    affine subspace of critical points,
+    $\alpha^*_{\mathrm{part}} + \ker(H')$,
+    where $\alpha^*_{\mathrm{part}}$ is any particular solution.
+    $Q$ takes the same value at all of them
+    (Lemma~\ref{lem:well-defined}).
+  \item \textbf{$H'$ singular, $g \not\perp \ker(H')$}:
+    no critical points.
+    $Q|_{\mathcal{A}}$ has no stationary point
+    ($H'\alpha + g = 0$ is inconsistent).
+\end{enumerate}
+\end{proposition}
+
+\begin{proposition}[Boundary vs.\ interior maximum on $\mathcal{F}$]%
+\label{prop:boundary-vs-interior}
+Write $Q_{\mathcal{F}} = \max_{\beta \in \mathcal{F}} Q(\beta)$
+and $\mathcal{F}_{\max} = \arg\max_{\beta \in \mathcal{F}} Q(\beta)
+\subseteq \mathcal{F}$.
+Define the boundary
+$\partial\mathcal{F} = \{\beta \in \mathcal{F} : \beta_k = 0
+\text{ for some } k\}$.
+
+\medskip\noindent
+\textbf{Cases where}
+$\mathcal{F}_{\max} \subseteq \partial\mathcal{F}$
+(max is on the boundary):
+\begin{enumerate}
+  \item[(B1)] Some $\gamma_j > 0$:
+    if some $\beta^* \in \mathcal{F}_{\max}$ had $\beta^* > 0$,
+    then $\beta^*$ would be a local maximum of $Q|_{\mathcal{A}}$
+    (since $\mathcal{F}$ agrees with $\mathcal{A}$ near any
+    interior point).
+    The second-order necessary condition for a local maximum
+    requires $H' \preceq 0$, contradicting $\gamma_j > 0$.
+    So $\mathcal{F}_{\max} \subseteq \partial\mathcal{F}$.
+
+  \item[(B2)] All $\gamma_j < 0$ ($H'$ negative definite),
+    unique critical point $\beta^* = \beta_0 - V(H')^{-1}g$,
+    but $\beta^*_k \leq 0$ for some~$k$:
+    $\beta^*$ is the global maximum of~$Q$ on~$\mathcal{A}$
+    (strict concavity), and $Q(\beta) < Q(\beta^*)$ for all
+    $\beta \in \mathcal{A} \setminus \{\beta^*\}$.
+    Since $\beta^* \notin \{\beta > 0\}$,
+    $\mathcal{F}_{\max} \subseteq \partial\mathcal{F}$.
+
+  \item[(B3)] $H'$ singular, $g \not\perp \ker(H')$
+    (case~3 of Prop.~\ref{prop:critical-points}):
+    $Q|_{\mathcal{A}}$ has no critical point
+    ($H'\alpha + g = 0$ has no solution).
+    If some $\beta^* \in \mathcal{F}_{\max}$ had $\beta^* > 0$,
+    then $\beta^*$ would be a local max of $Q|_{\mathcal{A}}$
+    (locally $\mathcal{F} = \mathcal{A}$), hence a critical point.
+    Contradiction.
+    So $\mathcal{F}_{\max} \subseteq \partial\mathcal{F}$.
+
+  \item[(B4)] $H'$ negative semidefinite (all $\gamma_j \leq 0$,
+    some $\gamma_j = 0$), $g \perp \ker(H')$,
+    critical subspace does not intersect~$\{\beta > 0\}$:
+    $Q|_{\mathcal{A}}$ is concave, so its maximum on~$\mathcal{A}$
+    is attained on the critical subspace.
+    Since no critical point has $\beta > 0$,
+    $\mathcal{F}_{\max} \subseteq \partial\mathcal{F}$.
+\end{enumerate}
+
+\medskip\noindent
+\textbf{Cases where}
+$\mathcal{F}_{\max} \cap \{\beta > 0\} \neq \emptyset$
+(max is at an interior point):
+\begin{enumerate}
+  \item[(I1)] All $\gamma_j < 0$ (negative definite $H'$),
+    unique critical point $\beta^* > 0$:
+    $\beta^*$ is the global maximum on~$\mathcal{A}$
+    (concavity) and lies in the interior of~$\mathcal{F}$.
+    $Q_{\mathcal{F}} = Q(\beta^*)$.
+
+  \item[(I2)] $H'$ negative semidefinite, $g \perp \ker(H')$,
+    critical subspace intersects $\{\beta > 0\}$:
+    $Q_{\mathcal{F}} = Q(\beta^*)$ for any critical
+    $\beta^* > 0$ in the subspace.
+\end{enumerate}
+
+In both~(I1) and~(I2), the interior maximizer has $\beta^* > 0$
+and $Q(\beta^*)$ is the per-$\sigma$ contribution to~$Q_{\max}$.
+\end{proposition}
+
+\begin{proof}
+(B1): If $\mathcal{F}_{\max} \not\subseteq \partial\mathcal{F}$,
+some maximizer $\beta^* \in \mathcal{F}$ has $\beta^* > 0$.
+Then $\beta^*$ is a local max of $Q$ on~$\mathcal{A}$
+(locally $\mathcal{F}$ agrees with $\mathcal{A}$).
+The second-order necessary condition requires $H'$ negative
+semidefinite, contradicting $\gamma_j > 0$.
+(The max may be interior to a \emph{face} of~$\mathcal{F}$
+where some $\beta_k = 0$; this is still in~$\partial\mathcal{F}$.)
+
+(B2): $H'$ negative definite means $Q|_{\mathcal{A}}$ is strictly
+concave with unique maximum at~$\beta^*$.
+For any $\beta \in \mathcal{F}$, $Q(\beta) \leq Q(\beta^*)$.
+Since $\beta^* \notin \mathcal{F}^{\circ}$,
+the max on~$\mathcal{F}$ is on~$\partial\mathcal{F}$.
+
+(B3): If some $\beta^* \in \mathcal{F}_{\max}$ had $\beta^* > 0$,
+it would be a local max of $Q|_{\mathcal{A}}$ (locally $\mathcal{F} = \mathcal{A}$),
+hence a critical point. But no critical point exists. Contradiction.
+
+(B4): $Q$ is constant on the critical subspace.
+Any $\beta \notin$ critical subspace has strictly lower~$Q$
+(the non-null eigenvalues are $< 0$).
+Since the critical subspace misses~$\{\beta > 0\}$,
+the max on~$\mathcal{F}$ is on~$\partial\mathcal{F}$.
+
+(I1), (I2): The critical $\beta^*$ achieves the global max of~$Q$
+on~$\mathcal{A}$ (concavity / negative semidefiniteness).
+Since $\beta^* > 0$, it is in~$\mathcal{F}^{\circ}$ and
+$Q_{\mathcal{F}} = Q(\beta^*)$.
+\end{proof}
+
+
+% ── 4. Exact per-sigma solver ────────────────────────────────────────
+
+\begin{algorithm}[Exact per-$\sigma$ solver]\label{alg:exact-solver}
+Given exact $(H, C, d)$ over~$\mathbb{Q}$:
+
+\medskip\noindent
+\textbf{Step~1.}
+Compute $\mathcal{A}$, $V$, $\beta_0$, $H'$, $g$, $\gamma_j$
+(notation of Remark~\ref{rem:qp-setup}).
+If $\mathcal{A} = \emptyset$: return DROP.
+
+\medskip\noindent
+\textbf{Step~2 (Boundary test).}
+Determine whether $\mathcal{F}_{\max} \subseteq \partial\mathcal{F}$
+using Proposition~\ref{prop:boundary-vs-interior}:
+\begin{itemize}
+  \item Check (B1): any $\gamma_j > 0$?
+  \item Check (B3): $H'$ singular and $g \not\perp \ker(H')$?
+  \item If $H'$ invertible:
+    compute $\beta^* = \beta_0 - V(H')^{-1} g$.
+    Check (B2): any $\beta^*_k \leq 0$?
+  \item If $H'$ singular and $g \perp \ker(H')$:
+    check (B4): does the critical subspace
+    miss $\{\beta > 0\}$? (Linear feasibility in~$\gamma$.)
+\end{itemize}
+
+If any of (B1)--(B4) holds: return DROP.
+By Remark~\ref{rem:min-support}, a shorter
+permutation achieves the same~$Q$.
+The HK2017 loop finds it.
+
+\medskip\noindent
+\textbf{Step~3 (Report).}
+We are in case (I1) or (I2).
+Return $Q_{\mathcal{F}} = Q(\beta^*)$
+for any critical $\beta^*$ with $\beta^* > 0$.
+\end{algorithm}
+
+\begin{remark}[What the exact solver does \emph{not} compute]%
+\label{rem:exact-not-compute}
+When $\mathcal{F}_{\max} \subseteq \partial\mathcal{F}$ (cases B1--B4),
+the solver returns DROP without computing $Q_{\mathcal{F}}$ or
+$\mathcal{F}_{\max}$.
+The complete answer would require projecting onto each boundary
+face ($\beta_k = 0$) and optimizing there --- but the HK2017 loop
+already does this by enumerating shorter permutations~$\sigma'$
+(at least the ones that matter for~$Q_{\max}$).
+\end{remark}
+
+
+% ── 4b. Near-boundary dropping ───────────────────────────────────────
+
+\begin{lemma}[Q loss from dropping a near-boundary component]%
+\label{lem:near-boundary-drop}
+Let $\beta^* \in \mathcal{F}$ achieve
+$Q_{\mathcal{F}} = \max_{\beta \in \mathcal{F}} Q(\beta)$,
+with $\beta^*_k \leq \varepsilon$ for some index~$k$
+and $\beta^*_i \geq \delta > 0$ for all $i \neq k$.
+Let $\sigma' = \sigma$ with $\sigma(k)$ removed,
+with constraint matrix $C_{-k} \in \mathbb{R}^{5 \times (m-1)}$
+(column~$k$ of~$C$ deleted), and feasible set
+$\mathcal{F}' = \{C_{-k}\beta' = d,\; \beta' \geq 0\}$.
+
+Assume $\sigma_{\min}(C_{-k}) > 0$ and
+\begin{equation}\label{eq:positivity-condition}
+  \delta > \frac{\|c_k\|}{\sigma_{\min}(C_{-k})} \cdot \varepsilon,
+\end{equation}
+where $c_k = C_{:,k}$ is the $k$-th column of~$C$.
+Write $H_{-k} \in \mathbb{R}^{(m-1) \times (m-1)}$ for $H$
+with row and column~$k$ deleted,
+and $Q_{-k}(\beta') = \tfrac{1}{2}\beta'^\top H_{-k}\, \beta'$.
+
+Then $Q^*(\sigma') \geq Q^*(\sigma) - E_{\mathrm{drop}}$ where
+\begin{equation}\label{eq:combined-drop-bound}
+  E_{\mathrm{drop}}
+  = \varepsilon \left(
+    \|H\| \cdot \|\beta^*\|
+    + \frac{\|H\| \cdot \|\beta^*\| \cdot \|c_k\|}
+           {\sigma_{\min}(C_{-k})}
+    + \frac{\|H\| \cdot \|c_k\|^2 \varepsilon}
+           {2\, \sigma_{\min}(C_{-k})^2}
+  \right).
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Define $\beta' \in \mathbb{R}^{m-1}$ by deleting component~$k$
+from~$\beta^*$ (reindexed to $\{1, \ldots, m-1\}$).
+
+\emph{Step 1: Constraint violation of $\beta'$.}
+$C_{-k}\beta' = \sum_{i \neq k} C_{:,i}\, \beta^*_i
+= C\beta^* - c_k\, \beta^*_k = d - c_k\, \beta^*_k$.
+So $\|C_{-k}\beta' - d\| = \|c_k\| \cdot \beta^*_k
+\leq \|c_k\| \cdot \varepsilon$.
+
+\emph{Step 2: Feasibility restoration.}
+Define the projection onto $\{C_{-k}\beta' = d\}$:
+$\bar\beta' = \beta' + C_{-k}^\top (C_{-k} C_{-k}^\top)^{-1}
+  (d - C_{-k}\beta')$.
+Then $C_{-k}\bar\beta' = d$ and
+\[
+  \|\bar\beta' - \beta'\|
+  \leq \frac{\|c_k\|}{\sigma_{\min}(C_{-k})} \cdot \beta^*_k
+  \leq \frac{\|c_k\|}{\sigma_{\min}(C_{-k})} \cdot \varepsilon.
+\]
+Componentwise: $\bar\beta'_i \geq \beta^*_i - \|\bar\beta' - \beta'\|
+\geq \delta - \|c_k\| \varepsilon / \sigma_{\min}(C_{-k}) > 0$
+by~\eqref{eq:positivity-condition}.
+So $\bar\beta' \in \mathcal{F}'$ (feasible for~$\sigma'$).
+
+\emph{Step 3: Q change from removing component~$k$.}
+Expanding $Q(\beta^*) = \tfrac{1}{2}\sum_{i,j} H_{ij}\beta^*_i\beta^*_j$
+and using $H_{kk} = 0$:
+\begin{equation}\label{eq:q-removal}
+  Q(\beta^*) - Q_{-k}(\beta')
+  = \beta^*_k \sum_{j \neq k} H_{kj}\, \beta^*_j.
+\end{equation}
+Hence $|Q(\beta^*) - Q_{-k}(\beta')|
+\leq \beta^*_k \cdot \|H_{k,:}\| \cdot \|\beta^*\|
+\leq \varepsilon \cdot \|H\| \cdot \|\beta^*\|$
+(Cauchy--Schwarz; $\|H_{k,:}\| \leq \|H\|$).
+
+\emph{Step 4: Q change from the feasibility correction.}
+By the triangle inequality on the quadratic Taylor expansion:
+\[
+  |Q_{-k}(\bar\beta') - Q_{-k}(\beta')|
+  \leq \|H_{-k}\| \cdot \|\beta'\| \cdot \|\bar\beta' - \beta'\|
+    + \tfrac{1}{2}\|H_{-k}\| \cdot \|\bar\beta' - \beta'\|^2.
+\]
+Since $\|H_{-k}\| \leq \|H\|$ (principal submatrix)
+and $\|\beta'\| \leq \|\beta^*\|$:
+\[
+  |Q_{-k}(\bar\beta') - Q_{-k}(\beta')|
+  \leq \frac{\|H\| \cdot \|\beta^*\| \cdot \|c_k\| \varepsilon}
+            {\sigma_{\min}(C_{-k})}
+    + \frac{\|H\| \cdot \|c_k\|^2 \varepsilon^2}
+            {2\, \sigma_{\min}(C_{-k})^2}.
+\]
+
+\emph{Step 5: Combined bound.}
+Since $Q^*(\sigma') \geq Q_{-k}(\bar\beta')$ (maximum $\geq$ any feasible value):
+\begin{align*}
+  Q^*(\sigma) - Q^*(\sigma')
+  &\leq Q(\beta^*) - Q_{-k}(\bar\beta') \\
+  &\leq |Q(\beta^*) - Q_{-k}(\beta')| + |Q_{-k}(\beta') - Q_{-k}(\bar\beta')|
+  \leq E_{\mathrm{drop}}. \qedhere
+\end{align*}
+\end{proof}
+
+
+\begin{remark}[Trinary treatment of $\beta > 0$]%
+\label{rem:trinary-beta}
+The test $\min_k \beta^*_k > 0$ is discontinuous.
+The f64 solver computes $\tilde\beta$ and classifies
+(with perturbation bound $\eta \geq \|\tilde\beta - \beta^*\|_\infty$):
+\begin{itemize}
+  \item \textsc{True}
+    ($\min_k \tilde\beta_k > \varepsilon_\beta$
+    where $\varepsilon_\beta > \eta$):
+    $\beta^*_k \geq \tilde\beta_k - \eta > 0$ for all~$k$.
+    Certified interior solution.
+    $\tilde Q$ is a reliable approximation of $Q_{\mathcal{F}}(\sigma)$
+    (the exact per-$\sigma$ optimum on~$\mathcal{F}$).
+  \item \textsc{False}
+    ($\min_k \tilde\beta_k < -\varepsilon_\beta$):
+    $\beta^*_k < 0$ for some~$k$.
+    The unconstrained critical point lies outside~$\mathcal{F}$.
+    The true $Q_{\mathcal{F}}(\sigma)$ (max over $\beta \geq 0$)
+    is lower, and is achieved on~$\partial\mathcal{F}$;
+    a shorter~$\sigma'$ finds it.
+    Discard this~$\sigma$.
+  \item \textsc{Indeterminate}
+    (some $\tilde\beta_k \in [-\varepsilon_\beta,\, \varepsilon_\beta]$):
+    cannot determine whether $\beta^* > 0$.
+    $\tilde Q$ is the unconstrained value $Q(\tilde\beta)$, which
+    may \textbf{overestimate} $Q_{\mathcal{F}}(\sigma)$:
+    if $\beta^*_k < 0$, the true maximum on~$\mathcal{F}$ is on the
+    boundary and lower.
+\end{itemize}
+
+\medskip\noindent
+\textbf{Indeterminate is not DROP.}
+An \textsc{Indeterminate} node cannot be dropped (its
+$\tilde Q$ might be an overestimate, so dropping it could
+discard a node whose true $Q_{\mathcal{F}}$ is the global max).
+Nor can its $\tilde Q$ be trusted as a lower bound on~$Q_{\max}$
+(the overestimate means $\tilde Q$ could exceed the true
+$Q_{\max}$, producing a capacity that is too small).
+
+\textsc{Indeterminate} must be \textbf{propagated} to the
+accumulator, which resolves it lazily:
+\begin{enumerate}
+  \item Collect all $(\sigma, \tilde Q, \text{verdict})$ triples.
+  \item Sort by $\tilde Q$ descending.
+  \item The global maximum $Q_{\max}$ is determined by the
+    highest $\tilde Q$ among \textsc{True} nodes.
+  \item Any \textsc{Indeterminate} node with
+    $\tilde Q > Q_{\max}^{\textsc{True}}$
+    must be resolved (e.g., by rational arithmetic) to determine
+    whether its true $Q_{\mathcal{F}}(\sigma) > Q_{\max}^{\textsc{True}}$.
+  \item \textsc{Indeterminate} nodes with
+    $\tilde Q \leq Q_{\max}^{\textsc{True}}$ can be ignored
+    (even if their true $Q_{\mathcal{F}}$ is slightly different,
+    it cannot exceed $Q_{\max}^{\textsc{True}}$ by more than
+    $E_{\mathrm{drop}}$ from Lemma~\ref{lem:near-boundary-drop}).
+  \item If no \textsc{True} nodes exist, all candidates are
+    \textsc{Indeterminate} and must be resolved.
+\end{enumerate}
+
+\medskip\noindent
+\textbf{Remark on Lemma~\ref{lem:near-boundary-drop}.}
+The lemma remains useful for bounding the Q~loss in item~5:
+if $\tilde Q \leq Q_{\max}^{\textsc{True}}$ and $\beta^*_k$
+is near zero, the true $Q_{\mathcal{F}}(\sigma)$ differs from
+the shorter~$\sigma'$ value by at most $E_{\mathrm{drop}}$.
+But the lemma does not justify converting \textsc{Indeterminate}
+to DROP --- it bounds the loss \emph{if we drop}, not the
+overestimate \emph{if we keep}.
+\end{remark}
+
+
+% ── 5. Continuity issues for f64 ────────────────────────────────────
+
+\begin{remark}[Discontinuities in the exact algorithm]%
+\label{rem:discontinuities}
+Algorithm~\ref{alg:exact-solver} uses several tests that are
+\textbf{discontinuous} functions of the input $(a_1, \ldots, a_F)$.
+An f64 implementation cannot evaluate these tests exactly.
+We list each discontinuity and what makes it problematic.
+
+\begin{enumerate}
+  \item \textbf{Sign of $\gamma_j$ (eigenvalues of $H'$).}
+    Eigenvalue \emph{values} are continuous functions of~$H'$
+    (Weyl's theorem), but $H'$ itself depends on $V$ (the
+    null-space basis of~$C$), which changes discontinuously
+    when the rank of~$C$ changes.
+    Even at fixed rank, the sign test $\gamma_j > 0$ vs.\
+    $\gamma_j \leq 0$ is discontinuous at $\gamma_j = 0$.
+    Near $\gamma_j = 0$, f64 rounding can flip the sign.
+
+  \item \textbf{Sign of $\beta^*_k$.}
+    $\beta^* = \beta_0 - V(H')^{-1} g$ involves $(H')^{-1}$,
+    which amplifies errors by $1/|\gamma_j|$ in eigendirection~$j$.
+    When $|\gamma_j|$ is small, $\beta^*$ is ill-conditioned:
+    small perturbations of $a_i$ cause large changes in~$\beta^*$.
+    The test $\beta^*_k > 0$ vs.\ $\beta^*_k \leq 0$ is
+    discontinuous at $\beta^*_k = 0$, and near this boundary,
+    the ill-conditioning of~$\beta^*$ makes the test unreliable.
+
+  \item \textbf{Rank of $C$.}
+    The dimension $k = m - \operatorname{rank}(C)$
+    of the null space is an integer-valued function of~$C$.
+    A small perturbation can change rank, which changes the
+    dimension of~$\mathcal{A}$ and the size of~$H'$.
+    In f64, rank is determined by thresholding singular values
+    of~$C$, which is discontinuous at the threshold.
+
+  \item \textbf{Rank of $H'$ (semidefinite case).}
+    The solvability check $g \perp \ker(H')$
+    (Prop.~\ref{prop:critical-points}, case~2 vs.\ case~3)
+    depends on the rank of~$H'$.
+    Same discontinuity as item~3.
+
+  \item \textbf{Feasibility of the critical subspace (case B4).}
+    The LP ``does the critical subspace intersect
+    $\{\beta > 0\}$?'' has a binary answer that is discontinuous
+    in the LP coefficients, which depend on~$V$, $H'$, $g$.
+
+  \item \textbf{Eigenvalue threshold for the reduced Hessian.}
+    An f64 solver must choose a threshold $\varepsilon$ separating
+    ``clearly negative'' from ``near-zero'' eigenvalues.
+    Eigenvectors with $|\gamma_j| > \varepsilon$ contribute to
+    $(H')^{-1}$ (and hence to $\beta^*$); those with
+    $|\gamma_j| \leq \varepsilon$ are treated as null
+    (and contribute to the search space for $\beta > 0$).
+    This inclusion/exclusion is a discontinuous function of
+    $\gamma_j$ at $\gamma_j = \pm\varepsilon$.
+    At the threshold, the eigenvector's contribution to
+    $\beta^*$ is $O(g_j / \varepsilon)$, which can be large.
+
+    % [GAP - Need an argument that at the threshold, the
+    % contribution to Q is small (it should be, since Q varies
+    % as O(gamma_j * |delta_beta_j|^2) near critical points,
+    % and gamma_j = epsilon is small).  But the contribution
+    % to the beta > 0 test may NOT be small.]
+\end{enumerate}
+\end{remark}
+
+
+% ══════════════════════════════════════════════════════════════════════
+% Part II: Error analysis
+% ══════════════════════════════════════════════════════════════════════
 %
-% The KKT conditions for the interior case ($\beta > 0$) are:
-% \[
-%   M \begin{pmatrix} \beta \\ \lambda \end{pmatrix}
-%   = \begin{pmatrix} 0 \\ d \end{pmatrix},
-%   \qquad
-%   M = \begin{pmatrix} H & C^\top \\ C & 0 \end{pmatrix}.
-% \]
-% Write $x^* = (\beta^*, \lambda^*)$ for the exact KKT solution
-% and $\tilde{x} = (\tilde\beta, \tilde\lambda)$ for the computed solution.
-% Define $\delta\beta = \tilde\beta - \beta^*$, $\delta\lambda = \tilde\lambda - \lambda^*$,
-% and the residual $r = M\tilde{x} - b$, with block decomposition
-% $r = (r_\beta,\, r_\lambda)$ where $r_\beta \in \mathbb{R}^m$ and $r_\lambda \in \mathbb{R}^p$.
-% Note $r_\lambda = C\tilde\beta - d = C\,\delta\beta$.
+% Structure:
+%   (A) Perturbation chain: a_i -> C -> V -> H' -> gamma_j -> beta
+%   (B) Q error bounds (existing, from earlier work)
+%   (C) beta > 0 certification (the main open problem)
+
+
+% ── A. Perturbation chain ────────────────────────────────────────────
+
+\begin{remark}[Conditioning precondition]\label{rem:conditioning-precondition}
+All bounds in the perturbation chain
+(Lemmas~\ref{lem:link-assembly}--\ref{lem:link-beta})
+have $\sigma_{\min}(C)$ in their denominators.
+When $\sigma_{\min}(C)$ is small:
+\begin{itemize}
+  \item The null-space basis error $\|\delta V\|$ grows as
+    $O(\varepsilon_{\mathrm{mach}} / \sigma_{\min}(C))$
+    (Lemma~\ref{lem:link-svd});
+  \item The particular solution error $\|\delta\beta_0\|$ grows as
+    $O(\varepsilon_{\mathrm{mach}} / \sigma_{\min}(C)^2)$
+    (Lemma~\ref{lem:link-beta0});
+  \item The eigenvalue perturbation $\varepsilon_\gamma$ grows as
+    $O(\varepsilon_{\mathrm{mach}} / \sigma_{\min}(C))$,
+    potentially exceeding $|\gamma_j|$ for all eigenvalues.
+\end{itemize}
+The f64 solver checks $\tilde\sigma_{\min}(C) > \varepsilon_C$
+as a precondition.
+If the check fails, the solver returns \textsc{Indeterminate}
+for the entire $\sigma$-node, because no downstream bound
+can certify anything.
+
+The threshold $\varepsilon_C$ is not a single derived value.
+Rather, $\sigma_{\min}(C)$ enters all downstream bounds, and the
+solver computes those bounds using the observed $\tilde\sigma_{\min}(C)$.
+If all resulting bounds are too large to certify
+(eigenvalue signs, $\beta > 0$, or Q~error), the outcome is
+\textsc{Indeterminate} regardless of any fixed threshold.
+The precondition $\tilde\sigma_{\min}(C) > \varepsilon_C$ is
+a fast short-circuit: skip the chain when the bounds are
+guaranteed to be useless.
+
+% [GAP - The value of eps_C is determined empirically: choose
+% the smallest value such that no certified (TRUE/FALSE) verdict
+% is overturned by exact arithmetic.  The perturbation chain
+% bounds are valid for any sigma_min(C) > 0; the question is
+% whether they are tight enough to certify.]
+\end{remark}
+
+
+\begin{remark}[Perturbation chain overview]\label{rem:perturbation-chain}
+The f64 solver computes a chain of quantities, each depending
+on the previous.
+At each link, errors from f64 arithmetic and from perturbed
+inputs accumulate.
+We bound the error at each link using standard backward
+stability results for the f64 primitives (SVD, eigendecomposition)
+and perturbation theory (Weyl, Davis--Kahan).
+
+The chain, with the key bound at each link:
+\[
+  a_i
+  \;\xrightarrow{\text{assemble}}\;
+  C, H
+  \;\xrightarrow{\text{SVD}}\;
+  V, \beta_0
+  \;\xrightarrow{V^\top H V}\;
+  H'
+  \;\xrightarrow{\text{eig}}\;
+  \gamma_j
+  \;\xrightarrow{(H')^{-1} g}\;
+  \alpha^*
+  \;\xrightarrow{\beta_0 + V\alpha^*}\;
+  \beta^*.
+\]
+\end{remark}
+
+
+\begin{lemma}[Link 1: Assembly]\label{lem:link-assembly}
+$H$ and $C$ are assembled from the dual vertices $a_i$ by
+$O(m^2)$ elementary f64 operations
+($\omega_0$ evaluations, copies).
+The computed $\tilde C$ and $\tilde H$ satisfy
+\[
+  \|\tilde C - C\| \leq c_1\, \varepsilon_{\mathrm{mach}}\, \|C\|,
+  \qquad
+  \|\tilde H - H\| \leq c_2\, \varepsilon_{\mathrm{mach}}\, \|H\|,
+\]
+where $c_1, c_2$ are small constants depending on~$m$
+(at most $O(m)$), and $\varepsilon_{\mathrm{mach}} \approx 1.1 \times 10^{-16}$.
+% [TODO: JÖRN - verify constants; the assembly involves
+% a subtraction (omega_0 = q1*p2 - q2*p1) which could cause
+% cancellation if a_i are nearly aligned.  For our polytopes,
+% a_i are O(1) with no near-cancellation, so this is safe.]
+
+In our setting, $\|C\|$ and $\|H\|$ are $O(1)$
+(dual vertices $a_i$ are $O(1)$),
+so $\|\delta C\|$ and $\|\delta H\|$ are $O(\varepsilon_{\mathrm{mach}})$.
+\end{lemma}
+
+
+\begin{lemma}[Link 2: Null-space basis via SVD]\label{lem:link-svd}
+% [TODO: JÖRN - cite specific theorem from Higham or GVL
+% for backward stability of SVD and null-space computation.
+% Standard result: computed SVD is exact SVD of C + delta C
+% with ||delta C|| <= c * eps_mach * ||C||.]
+The SVD of~$\tilde C$ is backward stable: the computed
+$\tilde U \tilde\Sigma \tilde V_{\mathrm{full}}^\top$
+is the exact SVD of $\tilde C + \delta C_{\mathrm{SVD}}$
+where $\|\delta C_{\mathrm{SVD}}\| \leq c_3\, \varepsilon_{\mathrm{mach}}\, \|\tilde C\|$.
+
+The null-space basis $\tilde V$ (the last $k$ right singular vectors)
+approximates the exact null space of~$C$.
+The angle between the computed and exact null spaces is bounded by
+the \textbf{Davis--Kahan $\sin\theta$ theorem}:
+\[
+  \|\sin\Theta(\tilde V, V)\|
+  \leq \frac{\|\delta C_{\mathrm{total}}\|}
+       {\sigma_p(C) - \sigma_{p+1}(C)}
+  = \frac{\|\delta C_{\mathrm{total}}\|}
+       {\sigma_{\min}(C)},
+\]
+where $\delta C_{\mathrm{total}}$ combines assembly and SVD errors,
+$\sigma_p(C) = \sigma_{\min}(C)$ is the smallest nonzero singular
+value ($C$ has full row rank~$p = 5$),
+and $\sigma_{p+1}(C) = 0$ (the gap to the null space).
+
+% [GAP - The sin(Theta) bound requires sigma_min(C) >> 0.
+% If sigma_min(C) is small, the null space of C is
+% ill-conditioned: a small perturbation of C changes V
+% significantly.  In the EHZ setting, sigma_min(C) depends
+% on the geometry of the dual vertices a_{sigma(i)}.
+% Empirically, sigma_min(C) < 0.01 is associated with
+% boundary-case beta (margin ~ 1e-12), so ill-conditioned
+% null spaces coincide with cases the solver should return
+% INDETERMINATE anyway.]
+\end{lemma}
+
+
+\begin{lemma}[Link 2b: Particular solution]\label{lem:link-beta0}
+The particular solution $\beta_0 = C^+ d$ (minimum-norm solution
+of $C\beta = d$) is computed from the SVD of~$C$.
+Write $\tilde\beta_0 = \tilde C^+ d$ for the computed value.
+Since $C$ has full row rank, $C^+ = C^\top(C C^\top)^{-1}$
+and $\|C^+\| = 1/\sigma_{\min}(C)$.
+The standard pseudoinverse perturbation bound
+for full-row-rank matrices gives:
+% [TODO: JÖRN - cite Wedin 1973 or Stewart 1977 for pseudoinverse
+% perturbation.  Standard result for rank-preserving perturbations:
+% ||(C + delta C)^+ - C^+|| <= sqrt(2) ||C^+||^2 ||delta C||
+% + O(||delta C||^2).]
+\[
+  \|\delta\beta_0\|
+  = \|\tilde\beta_0 - \beta_0\|
+  \leq \frac{c_6\,\|\delta C_{\mathrm{total}}\| \cdot \|d\|}
+       {\sigma_{\min}(C)^2}
+  + O(\text{second order}),
+\]
+where $c_6$ is a small constant.
+Using $\|\delta C_{\mathrm{total}}\| = O(\varepsilon_{\mathrm{mach}} \cdot \|C\|)$
+from Lemmas~\ref{lem:link-assembly}--\ref{lem:link-svd}:
+\begin{equation}\label{eq:beta0-perturbation}
+  \|\delta\beta_0\|
+  = O\!\left(
+    \frac{\varepsilon_{\mathrm{mach}} \cdot \|C\| \cdot \|d\|}
+         {\sigma_{\min}(C)^2}
+  \right).
+\end{equation}
+The $1/\sigma_{\min}(C)^2$ scaling is one power worse than the
+null-space error ($1/\sigma_{\min}(C)$ from Lemma~\ref{lem:link-svd}),
+because $\beta_0$ depends on the inverses of the singular values of~$C$,
+not just their separation from zero.
+
+We also record $\|\beta_0\| \leq \|C^+\| \cdot \|d\|
+= \|d\| / \sigma_{\min}(C)$, which enters subsequent bounds.
+\end{lemma}
+
+
+\begin{lemma}[Link 2c: Reduced gradient]\label{lem:link-gradient}
+The reduced gradient $g = V^\top H \beta_0$ is computed as
+$\tilde g = \tilde V^\top \tilde H\, \tilde\beta_0$.
+Write $\delta g = \tilde g - g$.  Expanding to first order:
+\begin{align*}
+  \delta g
+  &= (V + \delta V)^\top (H + \delta H)(\beta_0 + \delta\beta_0)
+     - V^\top H \beta_0 \\
+  &= V^\top H\, \delta\beta_0
+     + \delta V^\top H\, \beta_0
+     + V^\top \delta H\, \beta_0
+     + O(\text{second order}).
+\end{align*}
+Each term is bounded by:
+\begin{enumerate}
+  \item $\|V^\top H\, \delta\beta_0\|
+    \leq \|H\| \cdot \|\delta\beta_0\|$
+    \quad (Lemma~\ref{lem:link-beta0}).
+  \item $\|\delta V^\top H\, \beta_0\|
+    \leq \|H\| \cdot \|\delta V\| \cdot \|\beta_0\|$
+    \quad (Lemma~\ref{lem:link-svd}).
+  \item $\|V^\top \delta H\, \beta_0\|
+    \leq \|\delta H\| \cdot \|\beta_0\|$
+    \quad (Lemma~\ref{lem:link-assembly}).
+\end{enumerate}
+Substituting:
+$\|\delta\beta_0\| = O(\varepsilon_{\mathrm{mach}} \cdot \|C\| / \sigma_{\min}(C)^2)$,\;
+$\|\delta V\| = O(\varepsilon_{\mathrm{mach}} / \sigma_{\min}(C))$,\;
+$\|\beta_0\| \leq \|d\| / \sigma_{\min}(C)$,\;
+$\|\delta H\| = O(\varepsilon_{\mathrm{mach}})$:
+\begin{equation}\label{eq:gradient-perturbation}
+  \|\delta g\|
+  = O\!\left(
+    \frac{(\|H\| \cdot \|C\| + \|H\| + 1) \cdot
+          \varepsilon_{\mathrm{mach}} \cdot \|d\|}
+         {\sigma_{\min}(C)^2}
+  \right).
+\end{equation}
+In the EHZ setting ($\|H\|$, $\|C\|$, $\|d\|$ all $O(1)$),
+this simplifies to $\|\delta g\| = O(\varepsilon_{\mathrm{mach}} / \sigma_{\min}(C)^2)$.
+\end{lemma}
+
+
+\begin{lemma}[Link 3: Reduced Hessian]\label{lem:link-reduced-hessian}
+The reduced Hessian $H' = V^\top H V$ is computed as
+$\tilde H' = \tilde V^\top \tilde H\, \tilde V$.
+Write $\tilde V = V + \delta V$ where $\|\delta V\|$ is bounded
+by Lemma~\ref{lem:link-svd}. Then:
+\begin{align*}
+  \tilde H'
+  &= (V + \delta V)^\top (H + \delta H) (V + \delta V) \\
+  &= V^\top H V
+     + V^\top H\, \delta V
+     + \delta V^\top H V
+     + V^\top \delta H\, V
+     + O(\|\delta V\|^2, \|\delta H\| \cdot \|\delta V\|) \\
+  &= H' + \Delta H',
+\end{align*}
+where the first-order perturbation satisfies
+\[
+  \|\Delta H'\|
+  \leq 2\,\|H\|\,\|\delta V\| + \|\delta H\| + O(\text{second order}).
+\]
+Using $\|\delta H\| = O(\varepsilon_{\mathrm{mach}})$
+and $\|\delta V\| = O(\varepsilon_{\mathrm{mach}} / \sigma_{\min}(C))$
+from Lemmas~\ref{lem:link-assembly}--\ref{lem:link-svd}:
+\[
+  \|\Delta H'\|
+  = O\!\left(
+    \frac{\|H\|\, \varepsilon_{\mathrm{mach}}}{\sigma_{\min}(C)}
+  \right).
+\]
+\end{lemma}
+
+
+\begin{lemma}[Link 4: Eigenvalues of the reduced Hessian]%
+\label{lem:link-eigenvalues}
+% [TODO: JÖRN - cite Weyl's theorem precisely]
+By Weyl's eigenvalue perturbation theorem,
+the computed eigenvalues $\tilde\gamma_j$ of~$\tilde H'$
+satisfy
+\[
+  |\tilde\gamma_j - \gamma_j|
+  \leq \|\tilde H' - H'\|
+  \leq \|\Delta H'\| + c_4\, \varepsilon_{\mathrm{mach}}\, \|\tilde H'\|,
+\]
+where the second term accounts for f64 rounding in the
+eigendecomposition itself (backward stable).
+Combining with Lemma~\ref{lem:link-reduced-hessian}:
+\begin{equation}\label{eq:eigenvalue-perturbation}
+  |\tilde\gamma_j - \gamma_j|
+  = O\!\left(
+    \frac{\|H\|\, \varepsilon_{\mathrm{mach}}}{\sigma_{\min}(C)}
+  \right).
+\end{equation}
+
+\textbf{Eigenvalue sign reliability:}
+if $|\tilde\gamma_j| > \varepsilon_\gamma$
+where
+$\varepsilon_\gamma = c_5 \cdot \|H\|\, \varepsilon_{\mathrm{mach}} / \sigma_{\min}(C)$,
+then $\operatorname{sign}(\tilde\gamma_j) = \operatorname{sign}(\gamma_j)$.
+The trinary classification threshold is derived, not heuristic.
+\end{lemma}
+
+
+\begin{lemma}[Link 5: Critical point and $\beta > 0$ certification]%
+\label{lem:link-beta}
+Assume all retained eigenvalues of~$\tilde H'$ are negative:
+$\tilde\gamma_j < -\varepsilon_\gamma$ for $j = 1, \ldots, k$
+(no null eigenvalues; the semidefinite case with null directions
+is treated separately via the LP search in the f64 algorithm).
+By Lemma~\ref{lem:link-eigenvalues}, the exact eigenvalues
+satisfy $\gamma_j < 0$, so $H'$ is negative definite
+and the unique critical point is
+$\alpha^* = -(H')^{-1} g$ with $\beta^* = \beta_0 + V\alpha^*$.
+
+Let $w_1, \ldots, w_k$ be orthonormal eigenvectors of~$H'$
+(so $H' w_j = \gamma_j w_j$, $g_j = w_j^\top g$,
+$\alpha^*_j = -g_j / \gamma_j$).
+The computed $\tilde\alpha = -(\tilde H')^{-1} \tilde g$ has
+first-order error:
+% [TODO: JÖRN - cite GVL \S2.6.2 or Higham \S7.2 for the standard
+% perturbation bound $(A+\delta A)^{-1}(b+\delta b) - A^{-1}b
+% = -A^{-1}(\delta A \cdot x + \delta b) + O(\|\delta A\|^2)$.]
+\begin{equation}\label{eq:alpha-perturbation}
+  \delta\alpha
+  = \tilde\alpha - \alpha^*
+  = -(H')^{-1}\bigl(\Delta H' \cdot \alpha^* + \delta g\bigr)
+  + O(\text{second order}).
+\end{equation}
+
+\textbf{Direction-dependent amplification.}
+In the eigenbasis of~$H'$, the $j$-th component is:
+\begin{equation}\label{eq:alpha-component-error}
+  (\delta\alpha)_j
+  = -\frac{e_j + f_j}{\gamma_j},
+  \qquad
+  e_j = w_j^\top \Delta H'\, \alpha^*,
+  \quad
+  f_j = w_j^\top \delta g.
+\end{equation}
+The amplification $1/|\gamma_j|$ makes the error large for
+eigenvalues near zero.
+
+\textbf{Full $\beta$ error.}
+The error in component~$i$ of $\beta$ ($i = 1, \ldots, m$) has three sources:
+\begin{equation}\label{eq:beta-error-decomposition}
+  (\delta\beta)_i
+  = \underbrace{\sum_j (Vw_j)_i \cdot (\delta\alpha)_j}_{%
+      \text{critical-point shift}}
+  + \underbrace{(\delta V \cdot \alpha^*)_i}_{%
+      \text{null-space rotation}}
+  + \underbrace{(\delta\beta_0)_i}_{%
+      \text{particular-solution shift}}
+  + O(\text{second order}).
+\end{equation}
+
+\textbf{Componentwise bound.}
+Each term in~\eqref{eq:beta-error-decomposition} is bounded by:
+\begin{itemize}
+  \item $|e_j| \leq \|\Delta H'\| \cdot \|\alpha^*\|$
+    (Cauchy--Schwarz; Lemma~\ref{lem:link-reduced-hessian}).
+  \item $|f_j| \leq \|\delta g\|$
+    (Lemma~\ref{lem:link-gradient}).
+  \item $|(\delta V \cdot \alpha^*)_i|
+    \leq \|\delta V\| \cdot \|\alpha^*\|$
+    (Lemma~\ref{lem:link-svd}).
+  \item $|(\delta\beta_0)_i| \leq \|\delta\beta_0\|$
+    (Lemma~\ref{lem:link-beta0}).
+\end{itemize}
+Combining (for each component $i = 1, \ldots, m$):
+\begin{equation}\label{eq:beta-certification-bound}
+  |(\delta\beta)_i|
+  \leq \bigl(\|\Delta H'\| \cdot \|\alpha^*\| + \|\delta g\|\bigr)
+       \sum_{j=1}^{k} \frac{|(Vw_j)_i|}{|\gamma_j|}
+  + \|\delta V\| \cdot \|\alpha^*\|
+  + \|\delta\beta_0\|.
+\end{equation}
+
+\textbf{Computable proxy.}
+Since exact quantities ($V$, $w_j$, $\gamma_j$, $\alpha^*$)
+are unavailable, the f64 solver substitutes computed values.
+For retained eigenvalues ($|\tilde\gamma_j| > \varepsilon_\gamma$),
+Lemma~\ref{lem:link-eigenvalues} gives
+$|\gamma_j| \geq |\tilde\gamma_j| - \varepsilon_\gamma > 0$.
+Define the computable bound (for each $i = 1, \ldots, m$;
+the sum runs over retained eigenvalues only,
+i.e.\ those with $|\tilde\gamma_j| > \hat E_{\Delta H'}$):
+\begin{equation}\label{eq:eta-computable}
+  \eta_i
+  = \bigl(\hat E_{\Delta H'} \|\tilde\alpha\|
+    + \hat E_{\delta g}\bigr)
+    \sum_{j=1}^{k}
+      \frac{|(\tilde V \tilde w_j)_i|}
+           {|\tilde\gamma_j|}
+  + \hat E_{\delta V} \|\tilde\alpha\|
+  + \hat E_{\delta\beta_0},
+\end{equation}
+where $\eta_i = \infty$ if any retained eigenvalue has
+$|\tilde\gamma_j| \leq \hat E_{\Delta H'}$ (perturbation
+dominates the eigenvalue; first-order analysis invalid).
+Using $|\tilde\gamma_j|$ instead of $|\tilde\gamma_j| - \varepsilon_\gamma$
+is valid: for well-separated eigenvalues the difference is negligible,
+and for near-threshold eigenvalues the guard $|\tilde\gamma_j| > \hat E_{\Delta H'}$
+already triggers $\eta_i = \infty$ before the denominator becomes problematic.
+where the constants are computable upper bounds from
+Lemmas~\ref{lem:link-svd}--\ref{lem:link-gradient}:
+\begin{align*}
+  \hat E_{\Delta H'}
+  &= c_{\Delta H'}\,
+     \frac{\|\tilde H\|\, \varepsilon_{\mathrm{mach}}}
+          {\tilde\sigma_{\min}(C)},
+  &
+  \hat E_{\delta g}
+  &= c_{\delta g}\,
+     \frac{\|\tilde H\| \cdot \|\tilde C\| \cdot
+           \varepsilon_{\mathrm{mach}}}
+          {\tilde\sigma_{\min}(C)^2}, \\
+  \hat E_{\delta V}
+  &= c_{\delta V}\,
+     \frac{\varepsilon_{\mathrm{mach}}}
+          {\tilde\sigma_{\min}(C)},
+  &
+  \hat E_{\delta\beta_0}
+  &= c_{\delta\beta_0}\,
+     \frac{\|\tilde C\| \cdot
+           \varepsilon_{\mathrm{mach}}}
+          {\tilde\sigma_{\min}(C)^2}.
+\end{align*}
+Tildes denote computed (f64) values; the substitution
+of computed for exact quantities introduces $O(\varepsilon_{\mathrm{mach}})$
+relative errors, absorbed into the constants.
+All quantities ($\tilde V$, $\tilde w_j$, $\tilde\gamma_j$,
+$\tilde\alpha$, $\tilde H$, $\tilde C$,
+$\tilde\sigma_{\min}(C)$) are available from the solver.
+
+\medskip\noindent
+\textbf{Trinary $\beta > 0$ certification.}
+\begin{itemize}
+  \item \textsc{True}
+    ($\tilde\beta_i - \eta_i > 0$ for all~$i$):
+    then $\beta^*_i \geq \tilde\beta_i - |(\delta\beta)_i|
+    \geq \tilde\beta_i - \eta_i > 0$.
+    Interior solution certified.
+  \item \textsc{False}
+    ($\tilde\beta_i + \eta_i < 0$ for some~$i$):
+    then $\beta^*_i \leq \tilde\beta_i + \eta_i < 0$.
+    Infeasible $\beta$ certified.
+  \item \textsc{Indeterminate}: otherwise.
+    Cannot determine the sign of~$\beta^*_i$.
+\end{itemize}
+
+% [GAP - The constants c_{DeltaH'}, c_{delta g}, c_{delta V},
+% c_{delta beta_0} are not derived from first principles.
+% In the implementation, we use c = m^2 as a safety factor.
+% Empirical validation: zero violations on 364 I1 natural polytope
+% problems and all synthetic well-conditioned problems.
+% 39 violations on null-eigenvalue cases (|gamma_j| < eps_gamma)
+% where the bound does not apply — these are INDETERMINATE.]
+\end{lemma}
+
+
+\begin{remark}[Per-eigendirection error structure]%
+\label{rem:eigendirection-error}
+From~\eqref{eq:alpha-component-error},
+$|(\delta\alpha)_j| \leq (|e_j| + |f_j|) / |\gamma_j|$
+where $|e_j|, |f_j| = O(\varepsilon_{\mathrm{mach}})$
+(Lemmas~\ref{lem:link-reduced-hessian}--\ref{lem:link-gradient}).
+This gives
+\begin{equation}\label{eq:eigendirection-scaling}
+  |(\delta\alpha)_j|
+  = O\!\left(\frac{\varepsilon_{\mathrm{mach}}}{|\gamma_j|}\right).
+\end{equation}
+
+\textbf{Empirical confirmation}
+(364 natural polytope problems in case~I1, all $\gamma_j < 0$):
+the product $|(\delta\alpha)_j| \cdot |\gamma_j|$ is
+$10^{-17}$--$10^{-16}$ across 15 orders of magnitude of~$|\gamma_j|$
+($10^{-5}$ to $10^0$), confirming~\eqref{eq:eigendirection-scaling}
+with proportionality constant $\approx \varepsilon_{\mathrm{mach}}$.
+The $\eta_i$ bound~\eqref{eq:eta-computable} uses $c = m^2$
+as a safety factor; zero violations on all well-conditioned problems.
+
+\textbf{Limitation:}
+When $|\gamma_j| \lesssim \varepsilon_\gamma$
+($= O(\|H\| \varepsilon_{\mathrm{mach}} / \sigma_{\min}(C))$,
+Lemma~\ref{lem:link-eigenvalues}),
+the first-order analysis breaks down:
+$\|\Delta H'\| \gtrsim |\gamma_j|$, so the perturbation
+is not small relative to the eigenvalue.
+Empirically, $|(\delta\alpha)_j| = O(1)$ for $|\gamma_j| \approx 10^{-15}$.
+These cases must be classified as \textsc{Indeterminate}.
+
+% Empirical data: verify-numerics experiment, filter_poly_diverse,
+% 364 I1 problems from 307 polytopes (max 8 facets).
+% Diagnostic fields: proj_delta_alpha, proj_eigenvalues in results.jsonl.
+\end{remark}
+
+
+% ── B. Q error bounds (existing) ─────────────────────────────────────
+
+% The lemmas below were proven before the perturbation chain above.
+% They bound |Q(tilde beta) - Q(beta^*)| using the KKT residual r,
+% without going through the chain.  This is a complementary approach:
+% the chain gives componentwise understanding, while the residual
+% bound gives a single scalar bound on Q error.
+%
+% The KKT system M x = b where M = [H, C^T; C, 0] is the augmented
+% form of the per-sigma problem.  The residual r = M tilde x - b
+% measures how well the computed solution satisfies the KKT conditions.
 
 \begin{lemma}[First-order Q error bound]\label{lem:q-error-first-order}
 Let $Q(\beta) = \tfrac{1}{2}\beta^\top H \beta$ where

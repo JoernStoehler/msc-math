@@ -423,3 +423,85 @@ Open:
 - P6 threshold: increase or gate on full-rank M
 - False-negative solver improvement: eigenvalue threshold too aggressive for m=6 rank-deficient
 - GAP in cor:taylor-structure proof (needs Jörn)
+
+## Pipeline restructure (2026-04-01)
+
+Restructured to Jörn's 4-stage design:
+
+```
+Stage 1: collect_poly.rs → collected_poly.jsonl (1.66M rows, gitignored)
+         collect_synth.rs → collected_synth.jsonl (4303 rows, gitignored)
+Stage 2: filter_poly_smoke.rs → filtered_poly_smoke.jsonl (~6 rows)
+         filter_poly_diverse.rs → filtered_poly_diverse.jsonl (~1500 rows)
+         filter_synth_all.rs → filtered_synth_all.jsonl (4303 rows)
+Stage 3: run.rs <input> <output> → results_*.jsonl (f64 + exact + diagnostics)
+Stage 4: analyze.py <results1> [results2 ...] → checks.txt
+```
+
+Run: `make smoke` (<1s), `make full` (~3.5 min). See Makefile.
+
+Stage 1 now saves raw β, λ vectors (not just summary stats).
+Filter binaries coexist — edit/add filters without churn.
+
+## Perturbation chain and β certification bound (2026-04-01)
+
+Added to math.tex:
+- lem:link-beta0: β₀ perturbation bound, O(ε_mach/σ_min(C)²)
+- lem:link-gradient: reduced gradient perturbation
+- rem:conditioning-precondition: σ_min(C) gates the chain
+- lem:link-beta rewritten: explicit componentwise η_k bound (eq:eta-computable)
+
+Implemented in solvers.rs: `solve_projected_with_diagnostics()`, `compute_eta_bound()`.
+
+Results on natural data (1192 polytope σ-nodes via filter_poly_diverse):
+- Well-separated eigenvalues: zero violations, 86% β > 0 certified
+- Null-eigenvalue cases (k=1, H' ≈ 0): 39 violations, η bound doesn't cover LP search step
+
+Root cause of violations: when H' has a near-zero eigenvalue, the solver searches the null eigendirection via LP. The LP shift is O(1) but the bound predicts O(ε_mach). Extending the bound to cover this case is the next step.
+
+### Empirical conjecture: per-eigendirection β error (2026-04-01)
+
+Confirmed on 364 I1 problems (all γ_j < 0, unique interior β*) from natural polytope data:
+
+|δα_j| ≈ ε_mach / |γ_j|
+
+where δα_j is the error in the j-th eigendirection of H' (δα = W^T V^T (β̃ - β*)).
+The product |δα_j| · |γ_j| is ~10^{-16} to 10^{-17} across 15 orders of magnitude of |γ_j|
+(from |γ_j| ≈ 1 down to |γ_j| ≈ 10^{-5}). Proportionality constant ≈ ε_mach.
+
+The componentwise β error follows via:
+|δβ_k| ≈ ε_mach · Σ_j |(Vw_j)_k| / |γ_j|
+
+This is the shape of the η_k bound (eq:eta-computable in math.tex). The bound is valid
+with safety constant c = m² (zero violations on well-separated eigenvalues).
+
+Outlier: |γ_j| ≈ 10^{-15} gives |δα_j| ≈ 0.05 — same root cause as the 39 bound violations
+(null eigenvalue, solver retains it, 1/γ amplification produces O(1) error).
+
+Open:
+- Write the f64 algorithm (Part III of math.tex)
+- Extend η_k bound for null-eigenvalue LP search
+- GAP in cor:taylor-structure proof (needs Jörn)
+
+### Infrastructure simplification (2026-04-01)
+
+Split solvers.rs into projection_solver.rs (active) and saddle_point_solver.rs (dead code, reference).
+Removed saddle-point code from run.rs (~20 fields, ~150 lines). Extracted exact rational solver
+into shared exact_solver.rs.
+
+Deleted 4 filter binaries (filter_poly_smoke, filter_poly_diverse, filter_synth_all) and
+collect_synth. Filters are now ad-hoc (jq/Python one-liners on collected_poly.jsonl).
+
+Created testdata/ with 30 curated (H,C,d) test cases per conjecture:
+- eigendirection_scaling.jsonl: 30 cases (m=6,7) for rem:eigendirection-error
+- eta_bound_validity.jsonl: 30 cases (m=6,7,8) for lem:link-beta eq:eta-computable
+
+Created tests.rs: two Rust #[test] functions that load testdata, run both projection and
+exact solvers, and check the conjecture properties. Both pass:
+- eigendirection_error_scaling: 12 eigendirections, max ratio 0.9
+- eta_bound_validity: 50 components, max ratio 0.007
+
+Simplified analyze.py (499→147 lines): removed bound-checking (now in Rust tests),
+kept exploratory summaries. Simplified Makefile to just collect + ad-hoc run/analyze.
+
+Run tests: `cd experiments/ && cargo test --test verify_numerics_tests`
