@@ -1,7 +1,7 @@
 """
 Goal: Analyze combinatorial boundary events and cell geometry.
-Input: experiments/combinatorial-boundaries/combinatorial-boundaries-{profiling,anatomy,crossing,gradient,convexity}.jsonl
-Output: experiments/combinatorial-boundaries/*.png
+Input: crates/exp-sys-optimization/combinatorial-structure/combinatorial-boundaries-{profiling,anatomy,crossing,gradient,convexity}.jsonl
+Output: crates/exp-sys-optimization/combinatorial-structure/*.png
 """
 
 import json

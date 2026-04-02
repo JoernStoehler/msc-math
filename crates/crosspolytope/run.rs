@@ -1,8 +1,8 @@
 //! Resumable, symmetry-reduced EHZ capacity computation for the 4D crosspolytope.
 //!
-//! Goal: Fill the placeholder capacity in `crates/src/geom/known_polytopes.rs`.
+//! Goal: Fill the placeholder capacity in `crates/library/src/geom/known_polytopes.rs`.
 //! Input: Crosspolytope from `known_polytopes::crosspolytope()` (16 facets).
-//! Output: `experiments/crosspolytope/crosspolytope.jsonl`
+//! Output: `crates/crosspolytope/crosspolytope.jsonl`
 //!
 //! Three optimizations over the library's `ehz_capacity()`:
 //!
@@ -18,7 +18,7 @@
 //!    On restart, resumes from the last completed m.
 //!
 //! Run:
-//!   cd experiments/ && cargo run --release --bin crosspolytope
+//!   cargo run -p crosspolytope --release --bin crosspolytope
 
 use nalgebra::{DMatrix, DVector, Matrix4, Vector4};
 use serde::{Deserialize, Serialize};
@@ -33,7 +33,7 @@ use symplectic::geom::known_polytopes;
 use symplectic::geom::symplectic_form::omega0;
 use symplectic::geom::volume::volume;
 
-// ── Constants (copied from crates/src/kkt.rs and crates/src/constants.rs) ───
+// ── Constants (copied from crates/library/src/kkt.rs and crates/library/src/constants.rs) ───
 
 const EPS_BETA_POSITIVE: f64 = 1e-12;
 const EPS_Q_POSITIVE: f64 = 1e-15;
@@ -49,7 +49,7 @@ const EPS_KKT_RESIDUAL: f64 = 1e-6;
 /// actions generally increase with m, stopping at m=12 is likely sufficient (unproven).
 const MAX_SUBSET_SIZE: usize = 12;
 
-// ── KKT solver (copied from crates/src/kkt.rs) ─────────────────────────────
+// ── KKT solver (copied from crates/library/src/kkt.rs) ─────────────────────────────
 
 fn q_from_beta(normals: &[Vector4<f64>], perm: &[usize], beta: &[f64]) -> f64 {
     let m = beta.len();

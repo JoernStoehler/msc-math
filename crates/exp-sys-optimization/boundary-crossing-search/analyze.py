@@ -4,8 +4,8 @@ Analyze sys-search results: gradient ascent with boundary-crossing strategies.
 
 Goal: Assess whether boundary-crossing (overshoot, wiggle) improves sys beyond
       within-cell gradient ascent, and compare strategies.
-Input: experiments/sys-search/sys-search.jsonl (per-seed summaries)
-       experiments/sys-search/sys-search-trace.jsonl (per-iteration trace)
+Input: crates/exp-sys-optimization/boundary-crossing-search/sys-search.jsonl (per-seed summaries)
+       crates/exp-sys-optimization/boundary-crossing-search/sys-search-trace.jsonl (per-iteration trace)
 Output:
   - sys_search_distribution.png   (final sys histogram by polytope type)
   - sys_search_improvement.png    (starting vs final sys scatter)
@@ -235,7 +235,7 @@ def plot_convergence(data):
 
 def main():
     if not SUMMARY_PATH.exists():
-        print(f"No data at {SUMMARY_PATH}. Run: cd experiments/ && cargo run --release --bin sys_search")
+        print(f"No data at {SUMMARY_PATH}. Run: cargo run -p exp-sys-optimization --release --bin opt-boundary-crossing")
         return
 
     data = load_summaries()

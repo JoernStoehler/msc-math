@@ -167,7 +167,7 @@ struct InputRow {
     dual_vertices: Vec<[f64; 4]>,
 }
 
-// KKT solver: uses library solve_kkt_for (crates/src/kkt/saddle_point_solver.rs).
+// KKT solver: uses library solve_kkt_for (crates/library/src/kkt/saddle_point_solver.rs).
 // Capacity: uses library ehz_capacity, then solve_kkt_for for the best permutation
 // to obtain the full KKT solution (beta, mu, xi) needed for derivative computation.
 
@@ -193,7 +193,7 @@ struct SensitivityResult {
 
 
 // Derivative functions and facet volume helpers: uses library
-// (crates/src/derivatives.rs, crates/src/geom/facet_volume.rs).
+// (crates/library/src/derivatives.rs, crates/library/src/geom/facet_volume.rs).
 
 /// Compute full sensitivity: d(sys)/d(a_k) via chain rule, plus derived h/n gradients.
 ///

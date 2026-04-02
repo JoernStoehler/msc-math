@@ -22,10 +22,10 @@ HIGH — thesis-visible. The appendix reads as if this pipeline is implemented. 
 ## Key files
 
 - `thesis/appendix-numerical.tex:57-165` — the claims
-- `crates/src/geom/polytope.rs` — `Polytope4D` struct (f64 storage)
-- `crates/src/geom/vertices.rs`, `crates/src/geom/qhull.rs` — vertex enumeration (qhull, not Cramer)
-- `crates/src/algorithms/hk2017/mod.rs:242` — symplectic sign check (f64 comparison)
-- `crates/src/geom/known_polytopes.rs` — polytope constructors (exact-looking constants, but stored as f64)
+- `crates/library/src/geom/polytope.rs` — `Polytope4D` struct (f64 storage)
+- `crates/library/src/geom/vertices.rs`, `crates/library/src/geom/qhull.rs` — vertex enumeration (qhull, not Cramer)
+- `crates/library/src/algorithms/hk2017/mod.rs:242` — symplectic sign check (f64 comparison)
+- `crates/library/src/geom/known_polytopes.rs` — polytope constructors (exact-looking constants, but stored as f64)
 
 ## Jörn's direction
 

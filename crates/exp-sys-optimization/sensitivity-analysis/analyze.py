@@ -6,18 +6,18 @@ Goal: Quantify how much sys can be increased by gradient steps in dual-vertex sp
       comparing height-only (h) vs joint height-normal (h,n) directions.
 
 Input:
-  - experiments/sys-optimization/sys-optimization-sensitivity.jsonl
-  - experiments/sys-optimization/sys-optimization-steps.jsonl
-  - experiments/sys-optimization/sys-optimization-iterations.jsonl
-  - experiments/sys-optimization/sys-optimization-validity.jsonl
+  - crates/exp-sys-optimization/sensitivity-analysis/sys-optimization-sensitivity.jsonl
+  - crates/exp-sys-optimization/sensitivity-analysis/sys-optimization-steps.jsonl
+  - crates/exp-sys-optimization/sensitivity-analysis/sys-optimization-iterations.jsonl
+  - crates/exp-sys-optimization/sensitivity-analysis/sys-optimization-validity.jsonl
 Output:
-  - experiments/sys-optimization/sys_optimization_gradient_hist.png
-  - experiments/sys-optimization/sys_optimization_gradient_comparison.png
-  - experiments/sys-optimization/sys_optimization_improvement.png
-  - experiments/sys-optimization/sys_optimization_convergence.png
-  - experiments/sys-optimization/sys_optimization_iteration_summary.png
-  - experiments/sys-optimization/sys_optimization_validity.png
-  - experiments/sys-optimization/sys_optimization_stats.tex
+  - crates/exp-sys-optimization/sensitivity-analysis/sys_optimization_gradient_hist.png
+  - crates/exp-sys-optimization/sensitivity-analysis/sys_optimization_gradient_comparison.png
+  - crates/exp-sys-optimization/sensitivity-analysis/sys_optimization_improvement.png
+  - crates/exp-sys-optimization/sensitivity-analysis/sys_optimization_convergence.png
+  - crates/exp-sys-optimization/sensitivity-analysis/sys_optimization_iteration_summary.png
+  - crates/exp-sys-optimization/sensitivity-analysis/sys_optimization_validity.png
+  - crates/exp-sys-optimization/sensitivity-analysis/sys_optimization_stats.tex
 """
 
 import json

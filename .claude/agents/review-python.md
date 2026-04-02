@@ -10,7 +10,7 @@ You are reviewing Python files against the project's Python conventions.
 ## Setup
 
 Read `.claude/rules/python.md` for the full convention set.
-Also read `experiments/figure_config.py` to know the available constants.
+Also read `crates/figure_config.py` to know the available constants.
 
 ## Workflow
 

@@ -142,7 +142,7 @@ fn q_from_beta(normals: &[Vector4<f64>], perm: &[usize], beta: &[f64]) -> f64 {
 }
 
 /// Condition-number threshold for rank truncation (matches EIGEN_CONDITION_TAU
-/// in crates/src/kkt.rs).
+/// in crates/library/src/kkt.rs).
 const EIGEN_CONDITION_TAU: f64 = 1e-3;
 
 /// Maximum acceptable residual norm (matches EPS_KKT_RESIDUAL in kkt.rs).

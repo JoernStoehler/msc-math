@@ -3,7 +3,7 @@
 
 Goal: Test whether HKO2024 satisfies the first-order necessary condition for
       local maximality of sys in the full (n, h) parameter space.
-Input: experiments/hko-neighborhood/hko-neighborhood-sensitivity.jsonl
+Input: crates/exp-hko-local-maximum/gradient-is-zero/hko-neighborhood-sensitivity.jsonl
 Output: prints analysis results to stdout (no files written)
 
 Approach:

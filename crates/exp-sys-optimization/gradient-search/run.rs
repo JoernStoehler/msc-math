@@ -217,7 +217,7 @@ fn gradient_ascent(
         //   d(sys)/dh_k = (2 cap · dcap/dh_k · 2vol - cap² · 2 · dvol/dh_k) / (2vol)²
         //               = (cap · dcap/dh_k - sys · dvol/dh_k) / vol
         // where dcap/dh_k from envelope theorem, dvol/dh_k = facet volume S_k.
-        // See crates/src/derivatives.rs for the component derivations.
+        // See crates/library/src/derivatives.rs for the component derivations.
         let dc = capacity_derivatives_h(&kkt.beta, kkt.q_corrected, kkt.xi, &perm, f);
         let dv = volume_derivatives_h(&current);
         let d_sys: Vec<f64> = dc.iter().zip(dv.iter())

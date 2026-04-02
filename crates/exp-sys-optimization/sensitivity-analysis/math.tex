@@ -3,12 +3,12 @@
 % Sensitivity analysis and gradient-based improvement of the systolic ratio.
 %
 % Sources:
-%   - Generated data: experiments/sys-optimization/sys-optimization-sensitivity.jsonl
-%   - Generated data: experiments/sys-optimization/sys-optimization-steps.jsonl
-%   - Generated data: experiments/sys-optimization/sys-optimization-iterations.jsonl
-%   - Generated data: experiments/sys-optimization/sys-optimization-validity.jsonl
-%   - Plot script: experiments/sys-optimization/analyze.py
-%   - Developer notes: experiments/sys-optimization/logbook.md
+%   - Generated data: crates/exp-sys-optimization/sensitivity-analysis/sys-optimization-sensitivity.jsonl
+%   - Generated data: crates/exp-sys-optimization/sensitivity-analysis/sys-optimization-steps.jsonl
+%   - Generated data: crates/exp-sys-optimization/sensitivity-analysis/sys-optimization-iterations.jsonl
+%   - Generated data: crates/exp-sys-optimization/sensitivity-analysis/sys-optimization-validity.jsonl
+%   - Plot script: crates/exp-sys-optimization/sensitivity-analysis/analyze.py
+%   - Developer notes: crates/exp-sys-optimization/sensitivity-analysis/logbook.md
 %
 % Structure:
 %   - Motivation and approach
@@ -393,7 +393,7 @@ $g = \nabla_a\,\mathrm{sys}$ and evaluate the improvement.
 \begin{table}[ht]
 \centering
 \InputIfFileExists{sys_optimization_stats.tex}{}{%
-  \InputIfFileExists{../experiments/sys-optimization/sys_optimization_stats.tex}{}{%
+  \InputIfFileExists{../exp-sys-optimization/sensitivity-analysis/sys_optimization_stats.tex}{}{%
     \textbf{[sys\_optimization\_stats.tex not found]}%
   }%
 }

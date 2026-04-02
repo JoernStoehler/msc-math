@@ -1,21 +1,21 @@
 """
 Goal: Analyze first-order prediction test for gradient correctness.
 Input:
-  - experiments/gradient-correctness/gradient-correctness-q1-generic.jsonl
-  - experiments/gradient-correctness/gradient-correctness-q2-nongeneric.jsonl
-  - experiments/gradient-correctness/gradient-correctness-q3-degeneracy.jsonl
-  - experiments/gradient-correctness/gradient-correctness-q4-redundant.jsonl
-  - experiments/gradient-correctness/gradient-correctness-q5-subdiff.jsonl
-  - experiments/gradient-correctness/gradient-correctness-q5b-symmetric.jsonl
+  - crates/exp-sys-optimization/gradient-validation/gradient-correctness-q1-generic.jsonl
+  - crates/exp-sys-optimization/gradient-validation/gradient-correctness-q2-nongeneric.jsonl
+  - crates/exp-sys-optimization/gradient-validation/gradient-correctness-q3-degeneracy.jsonl
+  - crates/exp-sys-optimization/gradient-validation/gradient-correctness-q4-redundant.jsonl
+  - crates/exp-sys-optimization/gradient-validation/gradient-correctness-q5-subdiff.jsonl
+  - crates/exp-sys-optimization/gradient-validation/gradient-correctness-q5b-symmetric.jsonl
 Output:
-  - experiments/gradient-correctness/gc_convergence.png    (Q1 log-log convergence)
-  - experiments/gradient-correctness/gc_slopes.png         (slope distributions Q1+Q2)
-  - experiments/gradient-correctness/gc_q3_gap.png         (Q3 action gap vs slope)
-  - experiments/gradient-correctness/gc_q4_delta.png       (Q4 delta vs slope)
-  - experiments/gradient-correctness/gc_q5_convergence.png (Q5 subdiff vs single-orbit convergence)
-  - experiments/gradient-correctness/gc_q5_switching.png   (Q5 orbit switching rate vs t and gap)
-  - experiments/gradient-correctness/gc_q5b_boundary.png   (Q5b subdiff at exact switching boundaries)
-  - experiments/gradient-correctness/gc_summary.tex        (summary table)
+  - crates/exp-sys-optimization/gradient-validation/gc_convergence.png    (Q1 log-log convergence)
+  - crates/exp-sys-optimization/gradient-validation/gc_slopes.png         (slope distributions Q1+Q2)
+  - crates/exp-sys-optimization/gradient-validation/gc_q3_gap.png         (Q3 action gap vs slope)
+  - crates/exp-sys-optimization/gradient-validation/gc_q4_delta.png       (Q4 delta vs slope)
+  - crates/exp-sys-optimization/gradient-validation/gc_q5_convergence.png (Q5 subdiff vs single-orbit convergence)
+  - crates/exp-sys-optimization/gradient-validation/gc_q5_switching.png   (Q5 orbit switching rate vs t and gap)
+  - crates/exp-sys-optimization/gradient-validation/gc_q5b_boundary.png   (Q5b subdiff at exact switching boundaries)
+  - crates/exp-sys-optimization/gradient-validation/gc_summary.tex        (summary table)
 """
 
 import json

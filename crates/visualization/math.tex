@@ -1,9 +1,9 @@
 % math.tex — \input'd from thesis/experiments.tex
 %
-% Sources: experiments/visualization/ (Three.js interactive viewer),
-%   crates/src/algorithms/hk2017/recover.rs (orbit recovery),
-%   crates/src/geom/reeb_trajectory.rs (trajectory simulation),
-%   experiments/visualization/logbook.md.
+% Sources: crates/visualization/ (Three.js interactive viewer),
+%   crates/library/src/algorithms/hk2017/recover.rs (orbit recovery),
+%   crates/library/src/geom/reeb_trajectory.rs (trajectory simulation),
+%   crates/visualization/logbook.md.
 %
 % Structure:
 %   \subsubsection*{Projection pipeline} — radial + stereographic projection, eq:stereo-proj
@@ -226,7 +226,7 @@ the algorithm (Algorithm~\ref{alg:ehz}) and recovers their
 base points (Lemma~\ref{lem:base-point-recovery}),
 exporting the polytope skeleton and orbit breakpoints as JSON.
 A browser-based viewer
-(\texttt{experiments/\allowbreak visualization/\allowbreak viz/})
+(\texttt{crates/\allowbreak visualization/\allowbreak viz/})
 built with Three.js loads the JSON data and performs the
 projection pipeline in JavaScript, rendering the result as an
 interactive 3D scene.

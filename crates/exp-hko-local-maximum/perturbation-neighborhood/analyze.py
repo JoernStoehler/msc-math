@@ -4,12 +4,12 @@ Analyze perturbations of the HK-O pentagon counterexample.
 
 Goal: Plot histogram of systolic ratios under small facet perturbations,
       summarize stats, and compute PCA directions of the perturbation space.
-Input: experiments/pentagon-perturb/pentagon-perturb.jsonl
-Output: experiments/pentagon-perturb/pentagon_perturb_sys_hist.png
-    experiments/pentagon-perturb/pentagon_perturb_stats.md
-    experiments/pentagon-perturb/pentagon_perturb_stats.tex
-    experiments/pentagon-perturb/pentagon_perturb_pca.md
-    experiments/pentagon-perturb/pentagon_perturb_pca.tex
+Input: crates/exp-hko-local-maximum/perturbation-neighborhood/pentagon-perturb.jsonl
+Output: crates/exp-hko-local-maximum/perturbation-neighborhood/pentagon_perturb_sys_hist.png
+    crates/exp-hko-local-maximum/perturbation-neighborhood/pentagon_perturb_stats.md
+    crates/exp-hko-local-maximum/perturbation-neighborhood/pentagon_perturb_stats.tex
+    crates/exp-hko-local-maximum/perturbation-neighborhood/pentagon_perturb_pca.md
+    crates/exp-hko-local-maximum/perturbation-neighborhood/pentagon_perturb_pca.tex
 """
 
 import json

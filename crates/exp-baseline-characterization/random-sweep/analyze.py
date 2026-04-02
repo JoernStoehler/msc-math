@@ -3,8 +3,8 @@
 Plot systolic ratio summary for random 4D polytopes by facet count.
 
 Goal: Visualize how sys varies with F using random polytopes and the pruned algorithm.
-Input: experiments/random-sweep/random-sweep.jsonl
-Output: experiments/random-sweep/random_sweep_sys_vs_f.png
+Input: crates/exp-baseline-characterization/random-sweep/random-sweep.jsonl
+Output: crates/exp-baseline-characterization/random-sweep/random_sweep_sys_vs_f.png
 """
 
 import json

@@ -3,7 +3,7 @@
 Analyze gradient ascent results on F=10 polytopes.
 
 Goal: Visualize gradient ascent outcomes and diagnose convergence behavior.
-Input: experiments/gradient-descent/gradient-descent.jsonl (7631 rows, 995 polytopes)
+Input: crates/exp-sys-optimization/large-scale-descent/gradient-descent.jsonl (7631 rows, 995 polytopes)
 Output:
   - gradient_descent_scatter.png    (starting vs final sys, by class)
   - gradient_descent_gradient.png   (residual gradient vs final sys)
@@ -38,7 +38,7 @@ def load_data():
                 rows.append(json.loads(line))
 
     if not rows:
-        print(f"No data in {DATA_PATH}. Run: cd experiments/ && cargo run --release --bin gradient_descent")
+        print(f"No data in {DATA_PATH}. Run: cargo run -p exp-sys-optimization --release --bin opt-large-scale-descent")
         return None, None, None
 
     by_name = defaultdict(list)
@@ -286,7 +286,7 @@ def print_convergence_stats(by_name, rows):
 def main():
     if not DATA_PATH.exists():
         print(f"Data not found: {DATA_PATH}")
-        print("Run: cd experiments/ && cargo run --release --bin gradient_descent")
+        print("Run: cargo run -p exp-sys-optimization --release --bin opt-large-scale-descent")
         return
 
     rows, by_name, summaries = load_data()

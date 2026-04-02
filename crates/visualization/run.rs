@@ -105,7 +105,7 @@ struct CollectedOrbit {
 }
 
 /// Check if a cyclic permutation forms an adjacent cycle.
-/// Copied from crates/src/algorithms/hk2017/mod.rs (3 lines, not pub).
+/// Copied from crates/library/src/algorithms/hk2017/mod.rs (3 lines, not pub).
 fn is_adjacent_cycle(perm: &[usize], adj: &DMatrix<bool>) -> bool {
     let m = perm.len();
     (0..m).all(|k| adj[(perm[k], perm[(k + 1) % m])])

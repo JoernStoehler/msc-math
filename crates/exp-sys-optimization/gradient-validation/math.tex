@@ -1,14 +1,14 @@
 % math.tex — gradient-correctness experiment
 %
 % Smoothness analysis of the EHZ capacity as a function of dual vertices.
-% Refines [prop:capacity-piecewise-smooth] from experiments/sys-optimization/math.tex
+% Refines [prop:capacity-piecewise-smooth] from crates/exp-sys-optimization/sensitivity-analysis/math.tex
 % with per-orbit feasibility analysis and precise smoothness classification.
 %
 % Sources:
-%   - Generated data: experiments/gradient-correctness/*.jsonl
-%   - Developer notes: experiments/gradient-correctness/logbook.md
-%   - KKT formulation: crates/src/kkt/math.tex
-%   - Existing proposition: experiments/sys-optimization/math.tex
+%   - Generated data: crates/exp-sys-optimization/gradient-validation/*.jsonl
+%   - Developer notes: crates/exp-sys-optimization/gradient-validation/logbook.md
+%   - KKT formulation: crates/library/src/kkt/math.tex
+%   - Existing proposition: crates/exp-sys-optimization/sensitivity-analysis/math.tex
 %
 % Structure:
 %   §1 Setup and notation
@@ -36,7 +36,7 @@ $c(a)$ depends on it.
 
 For a cyclic permutation $\sigma = (\sigma_1, \ldots, \sigma_m)$
 of a subset of~$\{1, \ldots, F\}$,
-the KKT system (see \texttt{crates/src/kkt/math.tex}) is
+the KKT system (see \texttt{crates/library/src/kkt/math.tex}) is
 \begin{equation}\label{eq:kkt-system}
   M_\sigma(a)\, x = b,
   \qquad
