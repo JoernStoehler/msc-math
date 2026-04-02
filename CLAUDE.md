@@ -64,8 +64,6 @@ CLAUDE.md                  (this file)
   settings.json            Claude Code settings
 
 feedback/                  agent-written feedback about the infrastructure and workflows
-
-archaeology/               untrusted files from abandoned predecessor repo
 ```
 
 **Navigating source files:** Every source file has a header explaining purpose and context (Rust: `//!` doc comments, Python: docstring, LaTeX: `%` block). Module-level files (mod.rs, main .tex includes) additionally document the module group's architecture.
@@ -179,7 +177,6 @@ Optimize for these qualities (descending effort priority):
 - Docker devcontainer at `/workspaces/msc-math`
 - Rust 1.94, Python 3.12, TeX Live, gh CLI
 - `rm` is aliased to `trash-put` for safety
-- `archaeology/` is in the repo but untrusted — do not rely on its contents
 
 ## Quick Commands
 
