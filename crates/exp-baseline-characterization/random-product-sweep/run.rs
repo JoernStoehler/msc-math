@@ -1,9 +1,10 @@
 //! Random Lagrangian product sweep over polygon pairs.
 //!
 //! Architecture:
-//! 1. `cargo run --bin random_product_sweep --release` generates dataset
-//! 2. Writes to random-product-sweep/random-product-sweep.jsonl
-//! 3. Python script plots sys vs (k,m)
+//! 1. `cargo run --bin base-random-product-sweep --release` generates dataset
+//! 2. Polytopes are cached in data/polytopes.jsonl. Re-runs skip capacity.
+//! 3. Writes to random-product-sweep/random-product-sweep.jsonl
+//! 4. Python script plots sys vs (k,m)
 //!
 //! Dataset design:
 //! - Random 2D polygons with k, m in {3,4,5,6}
@@ -11,8 +12,13 @@
 //! - 10 samples per bucket
 //! - Height range h in [0.8, 1.2]
 //! - Billiard algorithm only (Lagrangian products)
+//!
+//! Note: Uses shared RNG (no blake3 per-attempt seeding) because there is no
+//! generate_polytope equivalent for Lagrangian products. Database lookup is
+//! key-based (BigRational dual vertices), not Source-based.
 
-// TODO: These will be re-exported from top-level `symplectic::` in wave 4 (subagent #16).
+use database::{DualVerticesKey, PolytopeRecord, SigmaAction};
+use std::collections::HashMap;
 use symplectic::algorithms::billiard::billiard_capacity;
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::random_polygon_2d;
@@ -22,6 +28,7 @@ use rand_chacha::ChaCha8Rng;
 use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
+use std::path::Path;
 use std::time::Instant;
 
 const SEED: u64 = 42;
@@ -64,20 +71,27 @@ fn main() {
     let t0 = Instant::now();
     let mut rng = ChaCha8Rng::seed_from_u64(SEED);
 
-    let output_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+    let db_path = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../data/polytopes.jsonl");
+    let output_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("random-product-sweep/random-product-sweep.jsonl");
 
-    println!("Generating random Lagrangian product sweep...\n");
+    let mut db: HashMap<DualVerticesKey, PolytopeRecord> =
+        database::load(&db_path).expect("failed to load database");
+    println!("Loaded database: {} entries\n", db.len());
 
     let file = File::create(&output_path).expect("failed to create output file");
     let mut writer = BufWriter::new(file);
 
     let mut total = 0usize;
+    let mut cache_hits = 0usize;
+
     for &(k, m) in PAIRS {
         println!("Bucket ({k},{m}) with {SAMPLES_PER_BUCKET} samples");
 
         let mut accepted = 0usize;
         while accepted < SAMPLES_PER_BUCKET {
+            // Generate polygon pair using shared RNG (advances RNG regardless of acceptance)
             let (qn, qh) = random_polygon_2d(k, H_MIN, H_MAX, &mut rng);
             let (pn, ph) = random_polygon_2d(m, H_MIN, H_MAX, &mut rng);
 
@@ -86,6 +100,44 @@ fn main() {
                 Err(_) => continue,
             };
 
+            let key: DualVerticesKey = polytope.dual_vertices().to_vec();
+
+            // Key-based lookup: check if this exact polytope is already cached
+            if let Some(record) = db.get(&key) {
+                if let (Some(vol), Some(cap)) = (record.volume, record.capacity) {
+                    let sys = cap * cap / (2.0 * vol);
+
+                    let row = RandomProductRow {
+                        name: format!("random_{k}x{m}_{accepted}"),
+                        k,
+                        m,
+                        facet_count: k + m,
+                        dual_vertices: polytope
+                            .dual_vertices_f64()
+                            .iter()
+                            .map(|a| [a[0], a[1], a[2], a[3]])
+                            .collect(),
+                        h_min: H_MIN,
+                        h_max: H_MAX,
+                        volume: vol,
+                        capacity: cap,
+                        sys,
+                        iterations: 0,
+                        bounces: 0,
+                        time_volume_ms: 0.0,
+                        time_capacity_ms: 0.0,
+                    };
+
+                    let line = serde_json::to_string(&row).expect("serialize row");
+                    writeln!(writer, "{line}").expect("write line");
+                    accepted += 1;
+                    total += 1;
+                    cache_hits += 1;
+                    continue;
+                }
+            }
+
+            // Cache miss: compute capacity
             let start_vol = Instant::now();
             let vol = volume(&polytope).expect("volume computation failed");
             let time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
@@ -98,6 +150,18 @@ fn main() {
 
             let cap = result.result.capacity;
             let sys = cap * cap / (2.0 * vol);
+
+            // Insert into database
+            let mut record = PolytopeRecord::from_polytope(&polytope);
+            record = record.with_computed_fields(vol, 0.0, cap, 0.0);
+            record = record.with_sigmas(
+                vec![SigmaAction {
+                    perm: result.result.best_permutation.clone(),
+                    action: cap,
+                }],
+                0.0,
+            );
+            db.insert(key, record);
 
             let row = RandomProductRow {
                 name: format!("random_{k}x{m}_{accepted}"),
@@ -128,6 +192,10 @@ fn main() {
     }
 
     writer.flush().expect("flush output");
+    database::save(&db_path, &db).expect("failed to save database");
+
     println!("\nWrote {total} entries to {}", output_path.display());
+    println!("Database: {} entries (saved to {})", db.len(), db_path.display());
+    println!("Cache hits: {cache_hits}/{total}");
     println!("Total time: {:.1}s", t0.elapsed().as_secs_f64());
 }
