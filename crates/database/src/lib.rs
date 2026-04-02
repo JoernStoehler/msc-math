@@ -6,6 +6,10 @@
 //!
 //! Progressive fill: records start with just rational geometry, then accumulate
 //! computed fields (volume, capacity) and sigma lists in later passes.
+//!
+//! BigRational is serialized as `"numerator/denominator"` strings for human
+//! readability and `jq`/Python compatibility. The `rational_vec4_serde` module
+//! handles the `Vec<[BigRational; 4]>` ↔ `Vec<[String; 4]>` conversion.
 
 use num_rational::BigRational;
 use serde::{Deserialize, Serialize};
@@ -18,11 +22,59 @@ use symplectic::{ConstructionError, Polytope4D};
 /// BigRational implements Hash + Eq, so this works as a HashMap key.
 pub type DualVerticesKey = Vec<[BigRational; 4]>;
 
+/// Serde module for `Vec<[BigRational; 4]>` as `Vec<["numer/denom"; 4]>`.
+///
+/// Each BigRational is serialized as a JSON string `"numerator/denominator"`.
+/// Example: `BigRational(3, 7)` → `"3/7"`, `BigRational(-1, 2)` → `"-1/2"`.
+mod rational_vec4_serde {
+    use num_bigint::BigInt;
+    use num_rational::BigRational;
+    use serde::{Deserialize, Deserializer, Serialize, Serializer};
+    use std::str::FromStr;
+
+    type Vec4 = Vec<[BigRational; 4]>;
+
+    pub fn serialize<S: Serializer>(data: &Vec4, serializer: S) -> Result<S::Ok, S::Error> {
+        let string_data: Vec<[String; 4]> = data
+            .iter()
+            .map(|row| {
+                std::array::from_fn(|i| format!("{}/{}", row[i].numer(), row[i].denom()))
+            })
+            .collect();
+        string_data.serialize(serializer)
+    }
+
+    pub fn deserialize<'de, D: Deserializer<'de>>(deserializer: D) -> Result<Vec4, D::Error> {
+        let string_data: Vec<[String; 4]> = Deserialize::deserialize(deserializer)?;
+        string_data
+            .into_iter()
+            .map(|row| {
+                let mut arr = [(); 4].map(|_| BigRational::default());
+                for (i, s) in row.iter().enumerate() {
+                    let (n, d) = s
+                        .split_once('/')
+                        .ok_or_else(|| serde::de::Error::custom(
+                            format!("expected 'numer/denom', got {:?}", s),
+                        ))?;
+                    let numer = BigInt::from_str(n)
+                        .map_err(|e| serde::de::Error::custom(format!("bad numerator: {e}")))?;
+                    let denom = BigInt::from_str(d)
+                        .map_err(|e| serde::de::Error::custom(format!("bad denominator: {e}")))?;
+                    arr[i] = BigRational::new(numer, denom);
+                }
+                Ok(arr)
+            })
+            .collect::<Result<Vec4, _>>()
+    }
+}
+
 /// A database record. Fields beyond dual_vertices_rational are progressively filled.
 #[derive(Serialize, Deserialize, Clone)]
 pub struct PolytopeRecord {
     // Always present — the defining data
+    #[serde(with = "rational_vec4_serde")]
     pub dual_vertices_rational: Vec<[BigRational; 4]>,
+    #[serde(with = "rational_vec4_serde")]
     pub vertices_rational: Vec<[BigRational; 4]>,
 
     // Source / provenance
@@ -222,6 +274,26 @@ mod tests {
         assert_eq!(p.incidence(), p2.incidence());
         assert_eq!(p.omega_signs(), p2.omega_signs());
         assert_eq!(p.vertex_adjacency(), p2.vertex_adjacency());
+    }
+
+    /// Verify JSON output uses "numer/denom" strings, not u32 limb arrays.
+    #[test]
+    fn json_format_human_readable() {
+        let p = test_polytope();
+        let record = PolytopeRecord::from_polytope(&p);
+        let json = serde_json::to_string_pretty(&record).unwrap();
+
+        // The first dual vertex is (1, 0, 0, 0) from f64,
+        // so the rational should be "1/1" or similar simple fraction.
+        assert!(
+            json.contains('/'),
+            "JSON should contain 'numer/denom' strings"
+        );
+        // Should NOT contain the u32 limb format [[sign, [limbs...]],...]
+        assert!(
+            !json.contains("[[1,["),
+            "JSON should not use default BigInt limb format"
+        );
     }
 
     /// save() then load() round-trips the HashMap exactly.
