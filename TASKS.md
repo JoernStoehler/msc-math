@@ -372,6 +372,22 @@ Evidence gathered so far (from session log analysis):
 
 ---
 
+## polytope-database
+
+**Status (2026-04-02):** Database crate implemented, branch `database-implementation` ready to merge. Experiment migration is future work.
+
+**Done:**
+- `crates/database/` — PolytopeRecord, load/save JSONL, from_polytope/to_polytope, progressive fill, custom "numer/denom" BigRational serde
+- `Polytope4D::from_rational_parts` — reconstruct from cached rational data, skip vertex enumeration
+- `generate_polytope` — blake3 key derivation for independent per-attempt seeding
+- Dependency changes: serde features on num-rational/num-bigint, blake3 added
+
+**Next: experiment migration** — restructure experiment binaries to read capacity/sigmas from `data/polytopes.jsonl` instead of computing inline. Centralizes the capacity algorithm call so algorithm changes propagate automatically. See `handoffs/experiment-database-migration.md` for full plan with per-experiment analysis.
+
+**Priority:** High when capacity algorithm changes land (new algorithms make all experiments need reruns). Lower priority otherwise.
+
+---
+
 ## Completed
 
 - **migration-merge** — DONE (2026-03-19, commit 6680d0e)
