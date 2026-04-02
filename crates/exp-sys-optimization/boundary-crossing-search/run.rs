@@ -15,14 +15,16 @@
 //! Output: sys-search/sys-search.jsonl      (per-seed summary)
 //!         sys-search/sys-search-trace.jsonl (per-iteration trace)
 
+use database::{DualVerticesKey, PolytopeRecord, SigmaAction};
 use nalgebra::{Matrix4, Vector4};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal};
 use serde::{Deserialize, Serialize};
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::fs::{File, OpenOptions};
 use std::io::{BufRead, BufReader, BufWriter, Write};
+use std::path::Path;
 use std::time::Instant;
 use symplectic::algorithms::billiard::billiard_capacity;
 use symplectic::algorithms::billiard::facet_classification::{classify_facets, FacetClassification};
@@ -713,6 +715,32 @@ fn load_completed_names(path: &std::path::Path) -> HashSet<String> {
 // Main
 // ============================================================================
 
+/// Insert a polytope into the database if not already present.
+/// Computes and stores capacity + volume if the record is new.
+fn insert_polytope_to_db(
+    db: &mut HashMap<DualVerticesKey, PolytopeRecord>,
+    polytope: &Polytope4D,
+    capacity: Option<f64>,
+    volume_val: Option<f64>,
+    best_perm: Option<&[usize]>,
+) {
+    let key: DualVerticesKey = polytope.dual_vertices().to_vec();
+    if db.contains_key(&key) {
+        return;
+    }
+    let mut record = PolytopeRecord::from_polytope(polytope);
+    if let (Some(cap), Some(vol)) = (capacity, volume_val) {
+        record = record.with_computed_fields(vol, 0.0, cap, 0.0);
+        if let Some(perm) = best_perm {
+            record = record.with_sigmas(
+                vec![SigmaAction { perm: perm.to_vec(), action: cap }],
+                0.0,
+            );
+        }
+    }
+    db.insert(key, record);
+}
+
 /// Write a seed result to the summary and trace JSONL files.
 fn write_result(
     result: &SeedResult,
@@ -783,6 +811,13 @@ fn main() {
     let mut best_global = 0.0f64;
     let mut best_name = String::new();
 
+    // Load polytope database for caching
+    let db_path = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../data/polytopes.jsonl");
+    let mut db: HashMap<DualVerticesKey, PolytopeRecord> =
+        database::load(&db_path).expect("failed to load database");
+    println!("Loaded database: {} entries\n", db.len());
+
     // =========================================================================
     // Phase 1: General random polytopes
     // =========================================================================
@@ -792,6 +827,9 @@ fn main() {
     println!("Generated {} polytopes.\n", general.len());
 
     for (idx, (name, polytope)) in general.iter().enumerate() {
+        // Insert starting seed into database
+        insert_polytope_to_db(&mut db, polytope, None, None, None);
+
         if completed.contains(name) {
             continue;
         }
@@ -830,6 +868,8 @@ fn main() {
     println!("Generated {} Lagrangian products.\n", lagrangian.len());
 
     for (idx, (name, bucket, polytope)) in lagrangian.iter().enumerate() {
+        insert_polytope_to_db(&mut db, polytope, None, None, None);
+
         if completed.contains(name) {
             continue;
         }
@@ -874,6 +914,8 @@ fn main() {
     println!("Loaded {} warm-start polytopes.\n", warm.len());
 
     for (idx, (name, ptype, polytope)) in warm.iter().enumerate() {
+        insert_polytope_to_db(&mut db, polytope, None, None, None);
+
         if completed.contains(name) {
             continue;
         }
@@ -919,9 +961,11 @@ fn main() {
 
     summary_writer.flush().expect("flush summary");
     trace_writer.flush().expect("flush trace");
+    database::save(&db_path, &db).expect("failed to save database");
 
     println!("\n========================================");
     println!("Best sys: {:.6} ({})", best_global, best_name);
+    println!("Database: {} entries", db.len());
     println!("Total time: {:.1}s", t_global.elapsed().as_secs_f64());
     println!("Output: {}", summary_path.display());
     println!("Trace: {}", trace_path.display());
