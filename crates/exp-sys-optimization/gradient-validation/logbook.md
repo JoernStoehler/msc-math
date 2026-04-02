@@ -42,10 +42,10 @@ For each polytope, target f ∈ {capacity, volume, sys}, and random direction d 
 ## How to run
 
 ```bash
-cd experiments/
-cargo run --release --bin gradient_correctness            # all phases
-cargo run --release --bin gradient_correctness -- q1      # single phase (q1-q5)
-python3 gradient-correctness/analyze.py                   # figures + summary
+cd crates/exp-sys-optimization/gradient-validation/
+cargo run --release --bin opt-gradient-validation            # all phases
+cargo run --release --bin opt-gradient-validation -- q1      # single phase (q1-q5)
+python3 analyze.py                                           # figures + summary
 ```
 
 ## Results (2026-03-27)
@@ -249,7 +249,7 @@ Even at min(β) = 1.1e-5 (only 10× above the certified threshold 1e-9), the per
 
 **Epistemic status:** Observation. Consistent with the IFT argument: smoothness requires β > 0 strictly, but doesn't degrade as β → 0. The KKT Jacobian appears non-degenerate even near the feasibility boundary.
 
-**Proofs:** [lem:orbit-feasibility-open], [lem:per-orbit-smooth], [lem:orbit-contraction], [prop:capacity-smoothness-classification] in experiments/gradient-correctness/math.tex. Two gaps flagged for Jörn: competing-orbit continuity in prop(a), transversality in prop(c)
+**Proofs:** [lem:orbit-feasibility-open], [lem:per-orbit-smooth], [lem:orbit-contraction], [prop:capacity-smoothness-classification] in `crates/exp-sys-optimization/gradient-validation/math.tex`. Two gaps flagged for Jörn: competing-orbit continuity in prop(a), transversality in prop(c)
 
 ## Integrated summary
 

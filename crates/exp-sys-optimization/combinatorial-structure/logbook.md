@@ -38,12 +38,12 @@ Characterization aspects of this question appear scattered across:
 ## How to run
 
 ```bash
-cd experiments/
-cargo run --release --bin combinatorial_boundaries   # ~60s, generates 6 JSONL files
-python3 combinatorial-boundaries/analyze.py          # generates figures
+cd crates/exp-sys-optimization/combinatorial-structure/
+cargo run --release --bin opt-combinatorial   # ~60s, generates 6 JSONL files
+python3 analyze.py                            # generates figures
 ```
 
-Requires: `random-sweep/random-sweep.jsonl` and `random-product-sweep/random-product-sweep.jsonl`.
+Requires: `crates/exp-baseline-characterization/random-sweep/random-sweep.jsonl` and `crates/exp-baseline-characterization/random-product-sweep/random-product-sweep.jsonl`.
 
 ## Results: boundary anatomy (2026-03-26, updated 2026-03-27)
 

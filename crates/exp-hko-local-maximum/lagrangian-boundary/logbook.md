@@ -49,9 +49,9 @@ If Phase 2 (or Phase 1) finds a sys > 1 polytope: is it related to HKO2024 by a 
 ## How to run
 
 ```bash
-cd experiments/
-cargo run --release --bin lagrangian_search
-python3 lagrangian-search/analyze.py
+cd crates/exp-hko-local-maximum/lagrangian-boundary/
+cargo run --release --bin hko-lagrangian-boundary
+python3 analyze.py
 ```
 
 ### Files
@@ -189,9 +189,9 @@ The L∞-box sweep measures the average size of the sys > 1 region but can't res
 ### How to run
 
 ```bash
-cd experiments/
-cargo run --release --bin lagrangian_probe
-python3 lagrangian-search/analyze.py
+cd crates/exp-hko-local-maximum/lagrangian-boundary/
+cargo run --release --bin hko-lagrangian-probe
+python3 analyze.py
 ```
 
 ### Files

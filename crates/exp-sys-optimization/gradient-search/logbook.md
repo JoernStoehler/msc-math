@@ -13,11 +13,11 @@ local optima.
 ## How to run
 
 ```bash
-cd experiments
+cd crates/exp-sys-optimization/gradient-search/
 # 1. Generate seeds (appends, skips existing)
-cargo run --bin generate_seeds --release
+cargo run --bin opt-generate-seeds --release
 # 2. Optimize (appends, skips completed seed_ids)
-cargo run --bin gradient_search --release
+cargo run --bin opt-gradient-search --release
 ```
 
 Interrupt with Ctrl+C at any time. Re-run to resume.

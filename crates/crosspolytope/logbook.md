@@ -2,7 +2,7 @@
 
 ## Motivation
 
-The 4D crosspolytope (hyperoctahedron, dual to the hypercube) has 16 facets and no known literature value for c_EHZ. Computing its capacity fills a placeholder in `crates/src/geom/known_polytopes.rs` and provides a data point for Viterbo's conjecture on a highly symmetric, non-simple polytope.
+The 4D crosspolytope (hyperoctahedron, dual to the hypercube) has 16 facets and no known literature value for c_EHZ. Computing its capacity fills a placeholder in `crates/library/src/geom/known_polytopes.rs` and provides a data point for Viterbo's conjecture on a highly symmetric, non-simple polytope.
 
 ## Status
 
@@ -11,7 +11,7 @@ The 4D crosspolytope (hyperoctahedron, dual to the hypercube) has 16 facets and 
 ## How to run
 
 ```bash
-cd experiments/ && cargo run --release --bin crosspolytope
+cd crates/crosspolytope/ && cargo run --release --bin crosspolytope
 # Resumes from checkpoint if one exists.
 # Writes crosspolytope/crosspolytope.jsonl on completion.
 ```
@@ -43,7 +43,7 @@ Extrapolated from the benchmark timing model (F=5..12):
 
 ### Three optimizations over the library's ehz_capacity()
 
-The binary cannot use the library's public API because it lacks hooks for symmetry reduction and checkpointing. It copies KKT solver internals from `crates/src/kkt.rs` and combinatorics from `crates/src/algorithms/hk2017/`.
+The binary cannot use the library's public API because it lacks hooks for symmetry reduction and checkpointing. It copies KKT solver internals from `crates/library/src/kkt.rs` and combinatorics from `crates/library/src/algorithms/hk2017/`.
 
 1. **Backtracking permutation search**: DFS through the directed adjacency graph instead of generating all (m-1)! cyclic permutations. Avoids the 15! ~ 1.3 trillion iteration problem for m=16.
 

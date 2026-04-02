@@ -20,7 +20,7 @@ import time
 from datetime import date
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 CRATE_DIR = REPO_ROOT / "crates"
 OUT_DIR = Path(__file__).resolve().parent
 PROFILE_JSONL = OUT_DIR / "profile.jsonl"
@@ -148,7 +148,7 @@ def generate_figure(per_test: list[dict]):
         import matplotlib
         matplotlib.use("Agg")
         import matplotlib.pyplot as plt
-        sys.path.insert(0, str(REPO_ROOT / "experiments"))
+        sys.path.insert(0, str(REPO_ROOT / "crates"))
         from figure_config import setup, FIGSIZE_SINGLE
         setup()
     except ImportError:

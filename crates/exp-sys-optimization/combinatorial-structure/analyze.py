@@ -11,7 +11,7 @@ from pathlib import Path
 import numpy as np
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
-sys.path.insert(0, str(EXPERIMENT_DIR.parent))
+sys.path.insert(0, str(EXPERIMENT_DIR.parent.parent))
 from figure_config import (
     setup, FIGSIZE_SINGLE, FIGSIZE_DUAL, SCATTER_SIZE,
     FONT_SIZE_SMALL,

@@ -11,11 +11,11 @@ To build geometric intuition about Reeb flows on polytope boundaries, this exper
 ## How to run
 
 ```bash
-cd experiments/
+cd crates/visualization/
 
 # Export all polytopes
 for name in simplex hypercube hko_pentagon lagrangian_triangle_product symplectic_triangle_product lagrangian_tri_sq symplectic_tri_sq crosspolytope; do
-  cargo run --release --bin visualization -- "$name" "visualization/viz/data/$name.json"
+  cargo run --release --bin visualization -- "$name" "viz/data/$name.json"
 done
 
 # Embed into data.js

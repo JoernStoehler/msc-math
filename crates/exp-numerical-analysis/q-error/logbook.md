@@ -11,7 +11,7 @@ All experiments in this thesis depend on the numerical KKT solver producing accu
 ## How to run
 
 ```bash
-cd experiments/ && cargo run --release --bin q_error
+cd crates/exp-numerical-analysis/q-error/ && cargo run --release --bin num-q-error
 ```
 
 Output goes to stdout and is captured in `q_error_output.txt`. The binary panics on any violation.

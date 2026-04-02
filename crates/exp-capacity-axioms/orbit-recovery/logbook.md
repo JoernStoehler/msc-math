@@ -11,10 +11,10 @@ The EHZ algorithm (Algorithm `alg:ehz`) returns a facet sequence S and weights b
 ## How to run
 
 ```bash
-cd experiments/
-cargo run --release --bin orbit_recovery       # generates orbit-recovery.jsonl
-python3 orbit-recovery/analyze.py              # prints summary statistics
-python3 orbit-recovery/plot_orbit_recovery.py  # generates error plot
+cd crates/exp-capacity-axioms/orbit-recovery/
+cargo run --release --bin axioms-orbit-recovery   # generates orbit-recovery.jsonl
+python3 analyze.py                                # prints summary statistics
+python3 plot_orbit_recovery.py                    # generates error plot
 ```
 
 ### Files

@@ -12,10 +12,10 @@ The capacity algorithm uses a three-valued admissibility predicate: certified, r
 
 ```bash
 # Generate dataset
-cd experiments/ && cargo run --bin unknown_predicates --release
+cd crates/exp-numerical-analysis/unknown-predicates/ && cargo run --bin num-unknown-predicates --release
 
 # Plot beta_min histogram
-python3 experiments/unknown-predicates/analyze.py
+python3 analyze.py
 ```
 
 ### Files

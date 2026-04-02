@@ -11,9 +11,9 @@ Random sampling experiments (random-sweep, random-product-sweep) found no polyto
 ## How to run
 
 ```bash
-cd experiments/
-cargo run --release --bin gradient_descent
-python3 gradient-descent/analyze.py
+cd crates/exp-sys-optimization/large-scale-descent/
+cargo run --release --bin opt-large-scale-descent
+python3 analyze.py
 ```
 
 ### Files

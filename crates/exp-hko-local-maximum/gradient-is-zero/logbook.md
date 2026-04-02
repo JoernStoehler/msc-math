@@ -27,13 +27,13 @@ Each embedding gives different perturbation directions. A local max in one space
 
 ```bash
 # Generate all data (Phase A + Phase B)
-cd experiments/ && cargo run --bin hko_neighborhood --release
+cd crates/exp-hko-local-maximum/gradient-is-zero/ && cargo run --bin hko-gradient --release
 
 # Generate figures
-python3 experiments/hko-neighborhood/analyze.py
+python3 analyze.py
 
 # Phase C: LP test for local maximality (requires scipy)
-python3 experiments/hko-neighborhood/phase_c_lp_test.py
+python3 phase_c_lp_test.py
 ```
 
 ### Files
@@ -206,7 +206,7 @@ Ranked by evidence value — ability to sharply update beliefs in either directi
 | h-space only | R^10, 10 DOF | 0 ∈ conv (10 unique-subset orbits) | 5/10 | 5D |
 | Full (h,n) | R^50 ambient, 40 effective DOF | 0 ∈ conv (all 44 orbits) | 24/50 (24/40 effective) | 16D real + 10D gauge |
 
-(Source: phase_c_lp_test.py stdout — no committed output file; regenerate with `python3 experiments/hko-neighborhood/phase_c_lp_test.py`)
+(Source: phase_c_lp_test.py stdout — no committed output file; regenerate with `python3 phase_c_lp_test.py` from `crates/exp-hko-local-maximum/gradient-is-zero/`)
 
 **Interpretation:**
 - **No first-order improving direction exists in the F=10 (n,h) parameter space** (necessary condition for local maximality). By Danskin's theorem, for every direction d in the 40D tangent parameter space, min_i(g_i · d) ≤ 0. Local maximality itself is not yet established (16 flat directions need second-order analysis). Result is computational (LP residual ~7e-9), not a mathematical proof.
@@ -256,11 +256,11 @@ What observations would **increase** confidence:
 
 ## Related experiments
 
-- **pentagon-perturb** (`experiments/pentagon-perturb/`): Perturbation analysis of HKO pentagon in the LP(Fq=5, Fp=5) ambient space. 100 random perturbations (epsilon=0.01 per component) (source: pentagon-perturb logbook). All perturbed polytopes have lower sys. Includes PCA analysis.
+- **perturbation-neighborhood** (`crates/exp-hko-local-maximum/perturbation-neighborhood/`): Perturbation analysis of HKO pentagon in the LP(Fq=5, Fp=5) ambient space. 100 random perturbations (epsilon=0.01 per component) (source: perturbation-neighborhood logbook). All perturbed polytopes have lower sys. Includes PCA analysis.
 
-- **sys-optimization** (`experiments/sys-optimization/`): Gradient-based optimization of sys for 140 polytopes including HKO2024. Provides the analytical gradient framework (envelope theorem for capacity derivatives, swept-volume for volume derivatives) that Phase A uses. Phase 3 iterative ascent starting from HKO2024 shows no improvement. Best sys across all polytopes: 0.878 (source: sys-optimization data — verify against that experiment's JSONL). No polytope reaches sys > 1.
+- **sensitivity-analysis** (`crates/exp-sys-optimization/sensitivity-analysis/`): Gradient-based optimization of sys for 140 polytopes including HKO2024. Provides the analytical gradient framework (envelope theorem for capacity derivatives, swept-volume for volume derivatives) that Phase A uses. Phase 3 iterative ascent starting from HKO2024 shows no improvement. Best sys across all polytopes: 0.878 (source: sensitivity-analysis data — verify against that experiment's JSONL). No polytope reaches sys > 1.
 
-- **gradient-descent** (`experiments/gradient-descent/`) — gradient ascent on F=10 polytopes. Related infrastructure for optimizing sys via gradient steps.
+- **large-scale-descent** (`crates/exp-sys-optimization/large-scale-descent/`) — gradient ascent on F=10 polytopes. Related infrastructure for optimizing sys via gradient steps.
 
 ## Data regeneration (2026-03-26)
 

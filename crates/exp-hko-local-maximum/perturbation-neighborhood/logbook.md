@@ -11,8 +11,8 @@ Viterbo's conjecture was disproved by Haim-Kislev and Ostrover (2024) via an exp
 ## How to run
 
 ```bash
-cd experiments/ && cargo run --bin pentagon_perturb --release
-python experiments/pentagon-perturb/analyze.py
+cd crates/exp-hko-local-maximum/perturbation-neighborhood/ && cargo run --bin hko-perturbation --release
+python analyze.py
 ```
 
 ### Files

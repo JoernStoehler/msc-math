@@ -11,9 +11,9 @@ Before using computed capacities for scientific conclusions, we need high confid
 ## How to run
 
 ```bash
-cd experiments/
-cargo run --bin correctness --release   # Generates correctness/correctness.jsonl
-cargo test --bin correctness --release   # Verifies all 6 properties
+cd crates/exp-capacity-axioms/correctness/
+cargo run --bin axioms-correctness --release   # Generates correctness.jsonl
+cargo test --bin axioms-correctness --release   # Verifies all 6 properties
 ```
 
 If tests fail after algorithm changes, investigate before merging. Failure triage: (1) implementation bug, (2) test assumption violated, (3) numeric precision issue.

@@ -232,6 +232,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d0a5c400df2834b80a4c3327b3aad3a4c4cd4de0629063962b03235697506a28"
 
 [[package]]
+name = "crosspolytope"
+version = "0.1.0"
+dependencies = [
+ "nalgebra",
+ "serde",
+ "serde_json",
+ "symplectic",
+]
+
+[[package]]
 name = "crunchy"
 version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -270,6 +280,15 @@ dependencies = [
  "darling_core",
  "quote",
  "syn 1.0.109",
+]
+
+[[package]]
+name = "database"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "symplectic",
 ]
 
 [[package]]
@@ -335,6 +354,108 @@ checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
 dependencies = [
  "libc",
  "windows-sys",
+]
+
+[[package]]
+name = "exp-algorithm-comparison"
+version = "0.1.0"
+dependencies = [
+ "good_lp",
+ "nalgebra",
+ "num-bigint",
+ "num-rational",
+ "num-traits",
+ "rand 0.8.5",
+ "rand_chacha 0.3.1",
+ "rand_distr",
+ "serde",
+ "serde_json",
+ "symplectic",
+]
+
+[[package]]
+name = "exp-baseline-characterization"
+version = "0.1.0"
+dependencies = [
+ "good_lp",
+ "nalgebra",
+ "num-bigint",
+ "num-rational",
+ "num-traits",
+ "rand 0.8.5",
+ "rand_chacha 0.3.1",
+ "rand_distr",
+ "serde",
+ "serde_json",
+ "symplectic",
+]
+
+[[package]]
+name = "exp-capacity-axioms"
+version = "0.1.0"
+dependencies = [
+ "good_lp",
+ "nalgebra",
+ "num-bigint",
+ "num-rational",
+ "num-traits",
+ "rand 0.8.5",
+ "rand_chacha 0.3.1",
+ "rand_distr",
+ "serde",
+ "serde_json",
+ "symplectic",
+]
+
+[[package]]
+name = "exp-hko-local-maximum"
+version = "0.1.0"
+dependencies = [
+ "good_lp",
+ "nalgebra",
+ "num-bigint",
+ "num-rational",
+ "num-traits",
+ "rand 0.8.5",
+ "rand_chacha 0.3.1",
+ "rand_distr",
+ "serde",
+ "serde_json",
+ "symplectic",
+]
+
+[[package]]
+name = "exp-numerical-analysis"
+version = "0.1.0"
+dependencies = [
+ "good_lp",
+ "nalgebra",
+ "num-bigint",
+ "num-rational",
+ "num-traits",
+ "rand 0.8.5",
+ "rand_chacha 0.3.1",
+ "rand_distr",
+ "serde",
+ "serde_json",
+ "symplectic",
+]
+
+[[package]]
+name = "exp-sys-optimization"
+version = "0.1.0"
+dependencies = [
+ "good_lp",
+ "nalgebra",
+ "num-bigint",
+ "num-rational",
+ "num-traits",
+ "rand 0.8.5",
+ "rand_chacha 0.3.1",
+ "rand_distr",
+ "serde",
+ "serde_json",
+ "symplectic",
 ]
 
 [[package]]
@@ -1318,6 +1439,16 @@ name = "unicode-xid"
 version = "0.2.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ebc1c04c71510c7f702b52b7c350734c9ff1295c464a03335b00bb84fc54f853"
+
+[[package]]
+name = "visualization"
+version = "0.1.0"
+dependencies = [
+ "nalgebra",
+ "serde",
+ "serde_json",
+ "symplectic",
+]
 
 [[package]]
 name = "wait-timeout"

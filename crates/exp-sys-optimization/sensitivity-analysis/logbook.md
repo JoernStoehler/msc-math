@@ -11,9 +11,9 @@ Random sampling (random-sweep, random-product-sweep) has not found sys > 1. Inst
 ## How to run
 
 ```bash
-cd experiments/
-cargo run --release --bin sys_optimization
-python3 sys-optimization/analyze.py
+cd crates/exp-sys-optimization/sensitivity-analysis/
+cargo run --release --bin opt-sensitivity
+python3 analyze.py
 ```
 
 ### Files

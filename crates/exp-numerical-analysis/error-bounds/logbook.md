@@ -18,7 +18,7 @@ Given:
 - d: constraint RHS
 - β≥0: componentwise positivity
 
-The current codebase has solvers for this in `crates/src/kkt/`. Read them. They are one candidate approach, not the answer.
+The current codebase has solvers for this in `crates/library/src/kkt/`. Read them. They are one candidate approach, not the answer.
 
 ## Generic Numerics Framework
 
@@ -43,7 +43,7 @@ Sub-subroutines each get their own `run_*.rs` file and the same treatment.
 
 ## Context from the codebase
 
-The current solvers live in `crates/src/kkt/`. Key files:
+The current solvers live in `crates/library/src/kkt/`. Key files:
 - `saddle_point_solver.rs` — eigendecomposition-based KKT solver (main production solver)
 - `projection_solver.rs` — alternative QP solver via projection onto constraint null space
 - `rational_solver.rs` — exact rational arithmetic solver (ground truth)
@@ -87,7 +87,7 @@ Measure actual Q error of both f64 solvers against exact rational arithmetic on 
 
 ### Finding: Sign Error in projection_solver.rs
 
-**The library's projection solver (`crates/src/kkt/projection_solver.rs`) has a sign error that causes Q errors up to 0.57 (57% of Q).**
+**The library's projection solver (`crates/library/src/kkt/projection_solver.rs`) has a sign error that causes Q errors up to 0.57 (57% of Q).**
 
 The stationarity condition for the reduced QP is H'α + g = 0 where g = V^T H β₀ and H' = V^T H V. The solution is α₀ = -(H')⁺g. The code at lines 108–116 computes α₀ = +(H')⁺g (no negation). The comment says "Solve H' alpha = b'" when the correct equation is "Solve H' alpha = -b'."
 
@@ -105,7 +105,7 @@ The corrected projection solver matches machine epsilon. The library version is 
 
 **Impact on production code:** None currently. The production pipeline uses the saddle-point solver. The projection solver is an alternative that's never called in the capacity algorithms.
 
-**Action needed:** Fix the sign in `crates/src/kkt/projection_solver.rs` line ~113: change `pi.dot(&b_prime) / eigenvalues[i]` to `-pi.dot(&b_prime) / eigenvalues[i]`.
+**Action needed:** Fix the sign in `crates/library/src/kkt/projection_solver.rs` line ~113: change `pi.dot(&b_prime) / eigenvalues[i]` to `-pi.dot(&b_prime) / eigenvalues[i]`.
 
 ### Finding: Saddle-point Solver Accuracy
 
@@ -116,9 +116,9 @@ No panics occurred on these abstract matrix problems (unlike the polytope-specif
 ### How to run
 
 ```bash
-cd experiments/ && cargo build --release --bin verify_numerics_q_accuracy
-cargo run --release --bin verify_numerics_q_accuracy
-# Output: verify-numerics/q_accuracy.jsonl (3203 rows)
+cd crates/exp-numerical-analysis/error-bounds/ && cargo build --release --bin num-collect-poly
+cargo run --release --bin num-error-bounds
+# Output: q_accuracy.jsonl (3203 rows)
 ```
 
 ### Finding: κ(C) Predicts E2E Error, Not κ(H) or |λ_min(M)|
@@ -273,14 +273,14 @@ Validated on 477 SP-feasible cases across 15 matrix families (4303 problems tota
 ### How to run
 
 ```bash
-cd experiments/ && cargo build --release --bin verify_numerics_q_accuracy
-cargo run --release --bin verify_numerics_q_accuracy
-# Output: verify-numerics/q_accuracy.jsonl (4303 rows, 15 families)
+cd crates/exp-numerical-analysis/error-bounds/ && cargo build --release --bin num-collect-poly
+cargo run --release --bin num-error-bounds
+# Output: q_accuracy.jsonl (4303 rows, 15 families)
 ```
 
 ## Propositions and bounds (current state, 2026-04-01)
 
-Run `python3 verify-numerics/analyze.py` from `experiments/` for the full check output (`checks.txt`).
+Run `python3 analyze.py` from `crates/exp-numerical-analysis/error-bounds/` for the full check output (`checks.txt`).
 
 Dataset: 51,784 problems (4303 artificial + 47,481 natural from 458 polytopes F≤8). 45,476 SP-feasible (44,980 EHZ-like, 496 stress-test).
 
@@ -327,12 +327,12 @@ All quantities in the bound are already computed by the solver: ‖H‖ from eig
 ## How to run
 
 ```bash
-cd experiments/
-cargo build --release --bin verify_numerics_q_accuracy
-cargo run --release --bin verify_numerics_q_accuracy
-# Output: verify-numerics/q_accuracy.jsonl (4303 rows, 15 families)
-python3 verify-numerics/analyze.py
-# Output: verify-numerics/q_accuracy_checks.txt + stdout
+cd crates/exp-numerical-analysis/error-bounds/
+cargo build --release --bin num-collect-poly
+cargo run --release --bin num-error-bounds
+# Output: q_accuracy.jsonl (4303 rows, 15 families)
+python3 analyze.py
+# Output: q_accuracy_checks.txt + stdout
 ```
 
 ## Session 2026-03-31: Infrastructure Refactoring + Natural Data + β > 0 Classification
@@ -417,8 +417,8 @@ Deliverables:
 5. **analyze.py** with full proposition/bound/classification validation
 
 Open:
-- Library promotion: move proven bound + asserts into `crates/src/kkt/`
-- Fix projection solver sign in library (`crates/src/kkt/projection_solver.rs:93`)
+- Library promotion: move proven bound + asserts into `crates/library/src/kkt/`
+- Fix projection solver sign in library (`crates/library/src/kkt/projection_solver.rs:93`)
 - P5 conjecture: remove or replace (ratio unbounded on natural inputs)
 - P6 threshold: increase or gate on full-rank M
 - False-negative solver improvement: eigenvalue threshold too aggressive for m=6 rank-deficient
@@ -504,4 +504,4 @@ exact solvers, and check the conjecture properties. Both pass:
 Simplified analyze.py (499→147 lines): removed bound-checking (now in Rust tests),
 kept exploratory summaries. Simplified Makefile to just collect + ad-hoc run/analyze.
 
-Run tests: `cd experiments/ && cargo test --test verify_numerics_tests`
+Run tests: `cd crates/exp-numerical-analysis/error-bounds/ && cargo test --test verify_numerics_tests`

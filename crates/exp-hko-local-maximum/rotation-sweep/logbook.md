@@ -11,9 +11,9 @@ The only known 4D counterexample to Viterbo's conjecture is a Lagrangian product
 ## How to run
 
 ```bash
-cd experiments/
-cargo run --bin lagrangian_products --release       # generates all JSONL datasets
-python3 lagrangian-products/analyze.py           # generates plots
+cd crates/exp-hko-local-maximum/rotation-sweep/
+cargo run --bin hko-rotation-sweep --release   # generates all JSONL datasets
+python3 analyze.py                             # generates plots
 ```
 
 ### Files
@@ -95,7 +95,7 @@ Key numerical results (billiard computation, verified at time of investigation):
 % The numerical values above are from the original investigation but are no longer reproducible
 % from the current codebase. Decide whether to restore the test fixtures or remove this section.]
 
-Fixes applied to `crates/src/geom/known_polytopes.rs`:
+Fixes applied to `crates/library/src/geom/known_polytopes.rs`:
 - Renamed function to `lagrangian_triangle_square()` with correct capacity 1.5
 - Added separate `symplectic_triangle_square()` with capacity 1.0
 

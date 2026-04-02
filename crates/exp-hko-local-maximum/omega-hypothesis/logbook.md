@@ -13,9 +13,9 @@ The mechanism: Q(beta) = sum beta_i beta_j omega_0(...), where Q is maximized su
 ## How to run
 
 ```bash
-cd experiments/
-cargo run --bin omega_obstacle --release       # generates omega-obstacle.jsonl
-python3 omega-obstacle/analyze.py              # generates all figures
+cd crates/exp-hko-local-maximum/omega-hypothesis/
+cargo run --bin hko-omega --release       # generates omega-obstacle.jsonl
+python3 analyze.py                        # generates all figures
 ```
 
 ### Files

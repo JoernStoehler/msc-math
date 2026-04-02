@@ -9,34 +9,38 @@ Topic: Probing Viterbo's Conjecture
 
 Three planned deliverables:
 1. A printed-quality LaTeX thesis (`thesis/build/main.pdf`)
-2. A high-performance Rust library for symplectic geometry on polytopes (`crates/`)
-3. A reproducible experiment pipeline (`experiments/`)
+2. A high-performance Rust library for symplectic geometry on polytopes (`crates/library/`)
+3. A reproducible experiment pipeline (`crates/exp-*/`)
 
 ## Project Layout
 
 ```
-crates/                    Rust library (the core)
-  Cargo.toml
-  src/
-    lib.rs                 crate root
-    geom/                  polytopes and basic euclidean and symplectic geometry
-    kkt/                   general KKT solver
-    algorithms/            different algorithms for the EHZ capacity 
-    derivatives.rs         derivative of the capacity in the dual vertices
-    dataset.rs             polytope datasets
-    **/math.tex            correctness proofs (one per module)
+crates/                    all Rust code (library + experiments)
+  Cargo.toml               workspace manifest (members: library, exp-*)
+  figure_config.py         shared Python figure styling for all experiments
+  requirements.txt         shared Python dependencies for all experiments
+  library/                 Rust library (the core)
+    Cargo.toml
+    src/
+      lib.rs               crate root
+      geom/                polytopes and basic euclidean and symplectic geometry
+      kkt/                 general KKT solver
+      algorithms/          different algorithms for the EHZ capacity
+      derivatives.rs       derivative of the capacity in the dual vertices
+      dataset.rs           polytope datasets
+      **/math.tex          correctness proofs (one per module)
+  exp-<group>/             experiment group (e.g. exp-hko-local-maximum)
+    Cargo.toml             binary registrations for the group
+    <subdir>/              each experiment is a self-contained directory
+      run.rs               binary to create the data files
+      *.jsonl, *.csv       data files
+      analyze.py           postprocessing, analysis, figures and tables
+      logbook.md           experiment logbook, what was done, results, learnings, ideas
+      math.tex             correctness proofs for the experiment
 
 math.tex                   root math.tex: compiles ALL crate + experiment proofs into one PDF
                            (cross-references between experiments and crate lemmas resolve here)
 
-experiments/               each experiment is a self-contained directory
-  <name>/
-    run.rs                 binary to create the data files
-    *.jsonl, *.csv         data files
-    analyze.py             postprocessing, analysis, figures and tables
-    logbook.md             experiment logbook, what was done, results, learnings, ideas
-    math.tex               correctness proofs for the experiment
-    
 thesis/
   main.tex                 master document
   *.tex                    chapter files
@@ -73,9 +77,9 @@ archaeology/               untrusted files from abandoned predecessor repo
 **Key architectural patterns:**
 - The thesis is independent of both library and experiments code, documentation and math.tex files. Unlike the rest of the repo, it is optimized for human readers and for final publication, not for the agents who develop the project. It heavily copies from the math.tex files, uses produced asset figures and tables, and presents algorithms, theorems, experiment results, and other insights from the project to the human readers. Jörn reviews main.pdf, not .tex files.
 - **Code lifecycle: experiment → library.**
-  - New algorithms and verification code start as experiments (`experiments/`). Experiments are sandboxes: iterate freely, break things, explore. Each experiment is self-contained — don't modify another experiment or library code for one experiment's needs; copy what you need.
-  - When experiment code is stable and used by ≥2 experiments, promote it to `crates/` with tests and math.tex proofs. This is the only path into the library.
-  - The library (`crates/`) contains proven stable algorithms. Changes must pass `cargo test --release --lib` and `cargo clippy`. Don't experiment in the library.
+  - New algorithms and verification code start as experiments (`crates/exp-*/`). Experiments are sandboxes: iterate freely, break things, explore. Each experiment is self-contained — don't modify another experiment or library code for one experiment's needs; copy what you need.
+  - When experiment code is stable and used by ≥2 experiments, promote it to `crates/library/` with tests and math.tex proofs. This is the only path into the library.
+  - The library (`crates/library/`) contains proven stable algorithms. Changes must pass `cargo test --release --lib` and `cargo clippy`. Don't experiment in the library.
   - Jörn reviews math.pdf and logbook.md, not .tex, .rs, .py files.
 - math.tex files live alongside code in the library and experiments, and are independent of thesis/. They prove the correctness of the code and of other mathematical claims, and they serve as documentation for developers about how the algorithm works on a mathematical level, and they ensure code is correct by formalizing claims and proving claims in LaTeX. Jörn reviews math.pdf, not math.tex files.
 - Polished workflows and conventions and best practice tips are provided to the agents, so that they work effectively and minimize the use of Jörn's limited time. Agent time is priced at $0/h, due to the flatrate Anthropic Max $200/mo subscription, but Jörn's time is limited.
@@ -171,7 +175,7 @@ Optimize for these qualities (descending effort priority):
 ## Git
 
 - Always use local `main`, never `origin/main`.
-- Before committing: `cargo test --release --lib` passes, `cargo clippy --lib -- -D warnings` is clean.
+- Before committing: `cd crates/library/ && cargo test --release --lib` passes, `cargo clippy --lib -- -D warnings` is clean.
 - Work in a worktree (separate branch) unless Jörn says otherwise. This keeps `main` clean and lets multiple sessions run in parallel without conflicts.
 
 ## Environment
@@ -184,17 +188,18 @@ Optimize for these qualities (descending effort priority):
 ## Quick Commands
 
 ```bash
-# Rust
-cd crates/ && cargo test --release --lib          # default test suite (<5s)
-cd crates/ && cargo clippy --lib -- -D warnings   # lint
-cd crates/ && cargo test --release -- --ignored   # full suite (slow)
+# Rust (library)
+cd crates/library/ && cargo test --release --lib          # default test suite (<5s)
+cd crates/library/ && cargo clippy --lib -- -D warnings   # lint
+cd crates/library/ && cargo test --release -- --ignored   # full suite (slow)
+
+# Rust (experiments)
+cargo build -p exp-<group> --release              # build one experiment group
+cargo build --workspace --release                 # build all (library + all experiment groups)
 
 # Thesis
 cd thesis/ && latexmk && ./check-build.sh         # build + check
 
 # Math (all proofs — crate + experiments)
 pdflatex math.tex && pdflatex math.tex            # root math.pdf (two passes)
-
-# Experiments
-cd experiments/ && cargo build --release          # build experiment binaries
 ```

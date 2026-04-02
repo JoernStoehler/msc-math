@@ -13,10 +13,10 @@ math.tex files are the single source of mathematical truth for colocated code.
 Build: `pdflatex math.tex && pdflatex math.tex` (two passes for cross-refs).
 This is the authoritative build — cross-references between experiments and crate lemmas resolve here.
 
-**Crate modules:** `crates/src/<module>/math.tex`, `\input`'d by both root `math.tex` and `crates/src/math.tex`.
-Preamble: `crates/src/math-preamble.tex` (packages, environments). Per-module files are pure content — no `\documentclass`.
+**Crate modules:** `crates/library/src/<module>/math.tex`, `\input`'d by both root `math.tex` and `crates/library/src/math.tex`.
+Preamble: `crates/library/src/math-preamble.tex` (packages, environments). Per-module files are pure content — no `\documentclass`.
 
-**Experiments:** `experiments/<name>/math.tex` — content files `\input`'d by root `math.tex`. No `\documentclass`. Use bare filenames for `\includegraphics` (e.g., `foo.png`, not `../experiments/<name>/foo.png`); the compile context sets `\graphicspath` per section.
+**Experiments:** `crates/exp-<group>/<subdir>/math.tex` — content files `\input`'d by root `math.tex`. No `\documentclass`. Use bare filenames for `\includegraphics` (e.g., `foo.png`, not `../crates/exp-<group>/<subdir>/foo.png`); the compile context sets `\graphicspath` per section.
 
 **Thesis:** `thesis/` is independent of math.tex files. The thesis is written for human readers (examiners) and has its own self-contained prose. It uses figures and tables produced by experiments, but does NOT `\input` experiment math.tex files.
 

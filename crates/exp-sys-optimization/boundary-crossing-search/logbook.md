@@ -39,10 +39,10 @@ Supersedes:
 ## How to run
 
 ```
-cd experiments/
-cargo run --release --bin sys_search           # resume from existing data
-cargo run --release --bin sys_search -- --fresh # rerun from scratch
-python3 sys-search/analyze.py                  # generate figures + summary
+cd crates/exp-sys-optimization/boundary-crossing-search/
+cargo run --release --bin opt-boundary-crossing           # resume from existing data
+cargo run --release --bin opt-boundary-crossing -- --fresh # rerun from scratch
+python3 analyze.py                                         # generate figures + summary
 ```
 
 ### Files

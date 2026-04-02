@@ -30,7 +30,7 @@ Two-binary pipeline: `generate_seeds` → `seeds.jsonl` → `gradient_search` �
 2. Run production computation (270 seeds, ~10 min locally, trivially parallelizable on LICCA)
 3. Analyze results, produce figures
 
-See `experiments/gradient-search/logbook.md` for details.
+See `crates/exp-sys-optimization/gradient-search/logbook.md` for details.
 
 ---
 
@@ -98,18 +98,18 @@ Depends on: Jörn verifies the math. Agent writes drafts, Jörn reviews.
 
 **What's done:**
 - **h-space (normals fixed):** 0 ∈ conv(subdifferential) by symmetry + Euler homogeneity. Jörn has not verified the proof.
-- **F=10 (n,h)-space:** Phase C LP confirms 0 ∈ conv(44 per-orbit gradients in R^40). First-order necessary condition for local max satisfied. 16 flat directions remain. Script: `experiments/hko-neighborhood/phase_c_lp_test.py`.
+- **F=10 (n,h)-space:** Phase C LP confirms 0 ∈ conv(44 per-orbit gradients in R^40). First-order necessary condition for local max satisfied. 16 flat directions remain. Script: `crates/exp-hko-local-maximum/gradient-is-zero/phase_c_lp_test.py`.
 - **F=11 facet-splitting:** 211 cuts all decrease sys (sampling-based, facet 5 incomplete: 11/200 rows).
 - **LP(5,5) perturbations:** 100 random, all lower (pentagon-perturb experiment).
 
 **Next steps (priority order):**
 1. **Second-order analysis of flat directions** — compute sys along each flat direction via finite differences. Determines whether first-order necessary condition → actual local max. Agent-executable. This is the critical gap. Note (2026-03-26): the 16 flat directions were computed in (n,h)-space including gauge directions. After a_i migration, Phase C LP could be redone in clean R^{40} with no gauge — possibly fewer true flat directions. Consider waiting for migration or doing both.
-2. **Jörn verifies h-space proof** — Danskin + symmetry + Euler homogeneity argument in `experiments/hko-neighborhood/logbook.md` lines 151-156. ~15 min. Then formalize in math.tex.
+2. **Jörn verifies h-space proof** — Danskin + symmetry + Euler homogeneity argument in `crates/exp-hko-local-maximum/gradient-is-zero/logbook.md` lines 151-156. ~15 min. Then formalize in math.tex.
 3. **Complete Phase B** — facet-splitting now has 536 directions (regenerated 2026-03-26, was 212). All decrease sys.
 4. **Convex-body direction** (Phases E/F in logbook) — Minkowski smoothing or F-refinement. Completely untested direction. Needs scoping: can billiard algorithm handle K+εB⁴?
 5. **Structural explanation** — why does pentagon geometry force 0 ∈ conv? Relates to golden ratio β-structure, order-10 symmetry. Jörn's domain.
 
-**Key files:** `experiments/hko-neighborhood/logbook.md` (full analysis), `experiments/hko-neighborhood/phase_c_lp_test.py` (Phase C script), `experiments/hko-neighborhood/math.tex` (theory).
+**Key files:** `crates/exp-hko-local-maximum/gradient-is-zero/logbook.md` (full analysis), `crates/exp-hko-local-maximum/gradient-is-zero/phase_c_lp_test.py` (Phase C script), `crates/exp-hko-local-maximum/gradient-is-zero/math.tex` (theory).
 
 ---
 
@@ -124,7 +124,7 @@ The thesis is currently a dump of results, not a coherent narrative. Experiments
 
 **Known gaps:**
 - `crosspolytope` Phase 2 TODO: update known_polytopes.rs (tracked in its logbook)
-- `hko-neighborhood` Phase C (2026-03-23) verified first-order necessary condition for local max in F=10 (n,h)-space via LP. See `hko-local-maximality` task for next steps.
+- `crates/exp-hko-local-maximum/gradient-is-zero` Phase C (2026-03-23) verified first-order necessary condition for local max in F=10 (n,h)-space via LP. See `hko-local-maximality` task for next steps.
 
 **Gradient experiment redesign (2026-03-26, Jörn):** The three gradient experiments (`sys-optimization`, `gradient-descent`, `gradient-search`) evolved incrementally and overlap significantly. Replace with three cleanly scoped experiments:
 1. **gradient-correctness** (Q5b/Q5c complete, merged to main 2026-03-28) — Per-orbit gradient validated (slope=2.00). Q5b: 12 polytope types. Q5c: direction-filtered subdiff is a negative result. KktOutcome enum, error handling convention, code-math audit. 14 tests fail due to wrong Q error bound math (lem:q-error-bound too loose). See logbook, TASKS.md q-error-threshold.
@@ -137,7 +137,7 @@ Dependency chain: #1 validates the gradient → #2 characterizes the obstacle �
 **Experiment ideas:** See `IDEAS.md` (root).
 
 **New experiment ideas (2026-03-26, discussion with Jörn):**
-- **lagrangian-search** (Phase 1 complete, 2026-03-27) — Measured the sys>1 region around HKO2024 via dense perturbation sweep (6500 samples, 13 ε-levels) and directional boundary probing (500 rays). Key findings: characteristic per-component radius ε*≈0.035, anisotropic boundary with 7× aspect ratio, shape governed by combinatorial orbit structure (not smooth geometry). Random sampling in full LP space is hopeless (~10⁻³¹ volume fraction). Phases 2-3 (guided search, novelty check) deferred. See `experiments/lagrangian-search/logbook.md`.
+- **lagrangian-search** (Phase 1 complete, 2026-03-27) — Measured the sys>1 region around HKO2024 via dense perturbation sweep (6500 samples, 13 ε-levels) and directional boundary probing (500 rays). Key findings: characteristic per-component radius ε*≈0.035, anisotropic boundary with 7× aspect ratio, shape governed by combinatorial orbit structure (not smooth geometry). Random sampling in full LP space is hopeless (~10⁻³¹ volume fraction). Phases 2-3 (guided search, novelty check) deferred. See `crates/exp-hko-local-maximum/lagrangian-boundary/logbook.md`.
 - **Higher polygon Lagrangian products** — LP(5,7), LP(7,7) etc. untested, HKO came from LP(5,5). Partially covered by lagrangian-search Phase 1.
 - **Dimension scaling** — how does max-achievable-sys scale with F for random polytopes? Scattered data exists but no systematic study.
 
@@ -176,7 +176,7 @@ Depends on: Jörn scoping the thesis story. Derivative-related experiments also 
 
 **Subsumes:** q-error-threshold, numerics portion of code-math-correspondence-audit.
 
-**Location:** `experiments/verify-numerics/`, handoff at `handoffs/verify-numerics-algorithm.md`
+**Location:** `crates/exp-numerical-analysis/error-bounds/`, handoff at `handoffs/verify-numerics-algorithm.md`
 
 ---
 
@@ -211,9 +211,9 @@ The Q error bound E = (9/2)||r||²/|λ_min| ([lem:q-error-bound]) uses |λ_min| 
 
 **Status (2026-03-28):** Done.
 
-- `experiments/gradient-correctness/run.rs`: catch_unwind already removed in prior session
-- `experiments/hko-neighborhood/run.rs`: catch_unwind already removed in prior session
-- `experiments/combinatorial-boundaries/run.rs`: 2× catch_unwind removed (unlisted, found during fix)
+- `crates/exp-sys-optimization/gradient-validation/run.rs`: catch_unwind already removed in prior session
+- `crates/exp-hko-local-maximum/gradient-is-zero/run.rs`: catch_unwind already removed in prior session
+- `crates/exp-sys-optimization/combinatorial-structure/run.rs`: 2× catch_unwind removed (unlisted, found during fix)
 - `crates/src/kkt/saddle_point_solver.rs`: panic comments rewritten (deferred-work context, root cause, resolution path)
 - `crates/src/algorithms/capacity_accumulator.rs`: stale doc comment fixed (gap case returns None, not panic)
 
@@ -297,7 +297,7 @@ Direction (2026-03-22, Jörn): Thesis will introduce both (n_i, h_i) and a_i = n
 
 **Remaining work items:**
 1. **gradient-search migration** — see `handoffs/experiment-api-fixes.md`. Agent task, small.
-2. **Jörn verifies derivative lemmas** — `[lem:cap-derivative]`, `[lem:vol-derivative]` in experiments/sys-optimization/math.tex.
+2. **Jörn verifies derivative lemmas** — `[lem:cap-derivative]`, `[lem:vol-derivative]` in `crates/exp-sys-optimization/sensitivity-analysis/math.tex`.
 3. **Write `[lem:dual-vertex-qp]` proof** — mathematical equivalence of a_i and (n,h) QP formulations. Agent drafts, Jörn verifies.
 
 ---

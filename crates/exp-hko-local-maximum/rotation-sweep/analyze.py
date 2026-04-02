@@ -16,11 +16,11 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from figure_config import setup, FIGSIZE_SINGLE, TEXT_WIDTH
 setup()
 
-REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 DATA_DIR = EXPERIMENT_DIR
 FIGURES_DIR = EXPERIMENT_DIR

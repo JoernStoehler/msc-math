@@ -15,7 +15,7 @@ This experiment validates the formula empirically, since the lemma is used (via 
 ## How to run
 
 ```bash
-cd experiments/ && cargo run --release --bin kkt_inertia
+cd crates/exp-numerical-analysis/kkt-inertia/ && cargo run --release --bin num-kkt-inertia
 ```
 
 Output is printed to stdout. Captured output is stored in `kkt_inertia_output.txt`.

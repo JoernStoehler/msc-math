@@ -11,8 +11,8 @@ Profile the default test suite (`cargo test --lib`) to identify hot paths and tr
 ## How to run
 
 ```bash
-cd experiments/
-python3 test-profiling/analyze.py
+cd crates/exp-algorithm-comparison/profiling/
+python3 analyze.py
 ```
 
 This runs the full pipeline:

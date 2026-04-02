@@ -15,10 +15,10 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 
-sys.path.insert(0, str(REPO_ROOT / "experiments"))
+sys.path.insert(0, str(REPO_ROOT / "crates"))
 from figure_config import setup, FIGSIZE_SINGLE, FIGSIZE_DUAL
 
 setup()

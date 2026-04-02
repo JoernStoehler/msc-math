@@ -12,10 +12,10 @@ Can random Lagrangian products approach or exceed the Viterbo threshold sys = 1?
 
 ```bash
 # Generate dataset
-cd experiments/ && cargo run --bin random_product_sweep --release
+cd crates/exp-baseline-characterization/random-product-sweep/ && cargo run --bin base-random-product-sweep --release
 
 # Plot
-python3 experiments/random-product-sweep/analyze.py
+python3 analyze.py
 ```
 
 ### Files
