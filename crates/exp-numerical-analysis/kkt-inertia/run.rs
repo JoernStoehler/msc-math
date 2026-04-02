@@ -1,18 +1,18 @@
 #![allow(clippy::collapsible_if, clippy::op_ref, clippy::bool_comparison, dead_code)]
 
-/// KKT matrix inertia experiment.
-///
-/// Validates Lemma lem:kkt-inertia (Inertia of the KKT matrix) from
-/// thesis/appendix-numerical.tex. The lemma states:
-///   n_+(M) = n_+(H|_T) + p,  n_0(M) = n_0(H|_T) + (5 - p),  n_-(M) = n_-(H|_T) + p
-/// where M is the KKT matrix, H|_T is the restricted Hessian on the tangent
-/// space T = ker(A), and p = rank(A).
-///
-/// Two parts:
-/// 1. Census: classify H|_T definiteness for all (S,σ) nodes with β>0, Q>0.
-/// 2. Inertia check: verify the inertia decomposition formula.
-///    On mismatch, print eigenvalue diagnostics to identify threshold artifacts
-///    vs genuine violations.
+//! KKT matrix inertia experiment.
+//!
+//! Validates Lemma lem:kkt-inertia (Inertia of the KKT matrix) from
+//! thesis/appendix-numerical.tex. The lemma states:
+//!   n_+(M) = n_+(H|_T) + p,  n_0(M) = n_0(H|_T) + (5 - p),  n_-(M) = n_-(H|_T) + p
+//! where M is the KKT matrix, H|_T is the restricted Hessian on the tangent
+//! space T = ker(A), and p = rank(A).
+//!
+//! Two parts:
+//! 1. Census: classify H|_T definiteness for all (S,σ) nodes with β>0, Q>0.
+//! 2. Inertia check: verify the inertia decomposition formula.
+//!    On mismatch, print eigenvalue diagnostics to identify threshold artifacts
+//!    vs genuine violations.
 ///
 /// Input: Known polytopes from the library (F ≤ 10).
 /// Output: Summary tables to stdout. No hard assertions (diagnostic experiment).

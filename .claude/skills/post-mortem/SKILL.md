@@ -61,7 +61,7 @@ Persist actionable findings so future agents benefit. For each finding, decide w
 - **New convention or workflow change** → discuss with Jörn, then Jörn updates CLAUDE.md or relevant skill
 - **Nothing actionable** → don't persist, it's just a fact about the session
 
-Don't persist everything — only findings that would change future agent behavior. A postmortem that produces zero repo changes is fine if nothing actionable emerged. Do NOT write to agent memory — memory entries go stale and are not maintained.
+Don't persist everything — only findings that would change future agent behavior. A postmortem that produces zero repo changes is fine if nothing actionable emerged.
 
 Additional follow-up actions:
 - Add TODO comments in relevant files for localized issues

@@ -551,7 +551,7 @@ fn run_gradient_ascent(
             Some(r) => r,
             None => break,
         };
-        let kkt = match solve_kkt_for(&current, &best_perm) {
+        let kkt = match solve_kkt_for(&current, &best_perm).feasible() {
             Some(k) => k,
             None => break,
         };

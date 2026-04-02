@@ -79,11 +79,18 @@ fn main() {
 
         for p in &polytopes {
             if !existing.contains(&seed_id) {
+                // Recover (normal, height) from dual vertices a_i = n_i / h_i.
+                // Since ||n_i|| = 1: h_i = 1/||a_i||, n_i = a_i / ||a_i||.
+                let normals: Vec<[f64; 4]> = p.dual_vertices_f64().iter().map(|a| {
+                    let n = a.normalize();
+                    [n[0], n[1], n[2], n[3]]
+                }).collect();
+                let heights: Vec<f64> = p.dual_vertices_f64().iter().map(|a| 1.0 / a.norm()).collect();
                 let row = SeedRow {
                     seed_id,
                     facet_count: f,
-                    normals: p.normals_f64().iter().map(|n| [n[0], n[1], n[2], n[3]]).collect(),
-                    heights: p.heights_f64(),
+                    normals,
+                    heights,
                 };
                 writeln!(writer, "{}", serde_json::to_string(&row).unwrap()).unwrap();
                 added += 1;

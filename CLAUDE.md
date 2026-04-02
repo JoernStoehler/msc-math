@@ -15,8 +15,9 @@ Three planned deliverables:
 ## Project Layout
 
 ```
+Cargo.toml                 workspace manifest
+Cargo.lock                 locked dependency versions
 crates/                    all Rust code (library + experiments)
-  Cargo.toml               workspace manifest (members: library, exp-*)
   figure_config.py         shared Python figure styling for all experiments
   requirements.txt         shared Python dependencies for all experiments
   library/                 Rust library (the core)
@@ -37,6 +38,9 @@ crates/                    all Rust code (library + experiments)
       analyze.py           postprocessing, analysis, figures and tables
       logbook.md           experiment logbook, what was done, results, learnings, ideas
       math.tex             correctness proofs for the experiment
+  crosspolytope/           standalone computation (not an exp-group)
+  database/                stub library for future sigma cache
+  visualization/           interactive HTML polytope viewer
 
 math.tex                   root math.tex: compiles ALL crate + experiment proofs into one PDF
                            (cross-references between experiments and crate lemmas resolve here)
@@ -64,13 +68,14 @@ CLAUDE.md                  (this file)
   agents/                  subagent definitions
   skills/                  skill workflows (each a directory with SKILL.md)
   hooks/                   shell hooks for session/worktree events
-  memory/                  persistent cross-session memory
+  prompts/                 saved prompts for recurring agent tasks
+  agent-memory/            subagent persistent memory (auto-generated)
   settings.json            Claude Code settings
 
 feedback/                  agent-written feedback about the infrastructure and workflows
 ```
 
-**Navigating source files:** Every source file has a header explaining purpose and context (Rust: `//!` doc comments, Python: docstring, LaTeX: `%` block). Module-level files (mod.rs, main .tex includes) additionally document the module group's architecture.
+**Navigating source files:** Every source file has a header explaining purpose and context (Rust: `//!` doc comments, Python: docstring, LaTeX: `%` block). Module-level files (mod.rs, math.tex) additionally document the module group's architecture.
 
 **Key architectural patterns:**
 - The thesis is independent of both library and experiments code, documentation and math.tex files. Unlike the rest of the repo, it is optimized for human readers and for final publication, not for the agents who develop the project. It heavily copies from the math.tex files, uses produced asset figures and tables, and presents algorithms, theorems, experiment results, and other insights from the project to the human readers. Jörn reviews main.pdf, not .tex files.

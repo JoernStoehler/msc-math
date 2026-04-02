@@ -341,7 +341,7 @@ fn gradient_ascent(
 
         // 1. Capacity + KKT
         let (cap, best_perm) = compute_capacity_result(&current, backend)?;
-        let kkt = solve_kkt_for(&current, &best_perm)?;
+        let kkt = solve_kkt_for(&current, &best_perm).feasible()?;
         let vol = volume(&current).ok().filter(|&v| v > 0.0)?;
         let sys = cap * cap / (2.0 * vol);
 

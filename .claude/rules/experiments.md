@@ -26,14 +26,7 @@ Role-based file names (`run.rs`, `analyze.py`, `logbook.md`, `math.tex`). Data a
 
 Not all experiments have all files — some are Rust-only (no analyze.py/figures), some have multiple binaries.
 
-**Experiment groups and their subdirectories:**
-- `exp-hko-local-maximum`: gradient-is-zero, perturbation-neighborhood, lagrangian-boundary, rotation-sweep, omega-hypothesis
-- `exp-sys-optimization`: gradient-validation, large-scale-descent, gradient-search, boundary-crossing-search, sensitivity-analysis, combinatorial-structure
-- `exp-capacity-axioms`: correctness, orbit-recovery
-- `exp-numerical-analysis`: error-bounds, q-error, kkt-inertia, unknown-predicates
-- `exp-baseline-characterization`: random-sweep, random-product-sweep, rejection-sampling
-- `exp-algorithm-comparison`: ablation, benchmark, profiling
-- Standalone: `crosspolytope`, `visualization`
+**Experiment locations:** `crates/exp-<group>/<subdir>/` for grouped experiments, `crates/<name>/` for standalone ones (crosspolytope, visualization). Before adding or editing an experiment, scan the other experiments in the group for context — shared patterns, naming conventions, and what's already been tried.
 
 ## Methodology comes before implementation
 

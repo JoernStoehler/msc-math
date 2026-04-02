@@ -23,7 +23,7 @@ use symplectic::geom::reeb_trajectory;
 use symplectic::geom::known_polytopes::{self, KnownPolytope};
 // TODO: `solve_kkt` moves to `kkt::saddle_point_solver::solve_kkt` (wave 2, subagent #2)
 // TODO: `EPS_BETA_POSITIVE` and `EPS_Q_POSITIVE` move to `kkt::saddle_point_solver` (wave 2, subagent #2)
-use symplectic::kkt::saddle_point_solver::{solve_kkt_for, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
+use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktOutcome, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
 // TODO: `Skeleton` will be re-exported from `symplectic::Skeleton` (wave 4, subagent #16)
 use symplectic::geom::skeleton::Skeleton;
 
@@ -129,7 +129,7 @@ fn collect_all_orbits(polytope: &symplectic::geom::polytope::Polytope4D) -> Vec<
                     return;
                 }
 
-                if let Some(result) = solve_kkt_for(polytope, perm) {
+                if let KktOutcome::Feasible(result) = solve_kkt_for(polytope, perm) {
                     let q_val = result.q_corrected;
                     if q_val <= EPS_Q_POSITIVE {
                         return;

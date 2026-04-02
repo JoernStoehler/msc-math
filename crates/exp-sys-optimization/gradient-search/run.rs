@@ -17,7 +17,7 @@ use std::fs::OpenOptions;
 use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::time::Instant;
 use symplectic::algorithms::hk2017::ehz_capacity;
-use symplectic::derivatives::{capacity_derivatives_h, volume_derivatives_h};
+use symplectic::derivatives::{capacity_derivatives_a, volume_derivatives_a};
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::volume::volume;
@@ -128,8 +128,9 @@ fn parse_normals(raw: &[[f64; 4]]) -> Vec<Vector4<f64>> {
 // ============================================================================
 
 fn step_bound_h(polytope: &Polytope4D, direction: &[f64]) -> f64 {
-    let normals = polytope.normals_f64();
-    let heights = polytope.heights_f64();
+    let duals = polytope.dual_vertices_f64();
+    let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
+    let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
     let vertices = polytope.vertices_f64();
     let f = polytope.facet_count();
     let skeleton = Skeleton::compute(polytope);
@@ -211,17 +212,28 @@ fn gradient_ascent(
         if t0.elapsed().as_secs_f64() > budget { break; }
 
         let current = reconstruct(normals, &cur_h)?;
-        let kkt = solve_kkt_for(&current, &perm)?;
+        let kkt = solve_kkt_for(&current, &perm).feasible()?;
 
         // d(sys)/dh_k by quotient rule on sys = cap² / (2 vol):
-        //   d(sys)/dh_k = (2 cap · dcap/dh_k · 2vol - cap² · 2 · dvol/dh_k) / (2vol)²
-        //               = (cap · dcap/dh_k - sys · dvol/dh_k) / vol
-        // where dcap/dh_k from envelope theorem, dvol/dh_k = facet volume S_k.
-        // See crates/library/src/derivatives.rs for the component derivations.
-        let dc = capacity_derivatives_h(&kkt.beta, kkt.q_corrected, kkt.xi, &perm, f);
-        let dv = volume_derivatives_h(&current);
-        let d_sys: Vec<f64> = dc.iter().zip(dv.iter())
-            .map(|(&dc, &dv)| (cap * dc - sys * dv) / vol)
+        //   d(sys)/dh_k = (cap · dcap/dh_k - sys · dvol/dh_k) / vol
+        //
+        // The library provides ∂c/∂a_k and ∂vol/∂a_k (derivatives w.r.t. dual vertices).
+        // Since a_k = n_k / h_k with n_k fixed, da_k/dh_k = -n_k / h_k².
+        // Chain rule: ∂c/∂h_k = (∂c/∂a_k) · (-n_k / h_k²), same for vol.
+        let duals = current.dual_vertices_f64();
+        let dc_a = capacity_derivatives_a(&kkt.beta, kkt.q_corrected, &kkt.mu, &perm, &duals);
+        let dv_a = volume_derivatives_a(&current);
+        let d_sys: Vec<f64> = (0..f)
+            .map(|k| {
+                let a_norm = duals[k].norm();
+                let n_k = duals[k] / a_norm;
+                let h_k = 1.0 / a_norm;
+                // da_k/dh_k = -n_k / h_k²
+                let da_dh = -n_k / (h_k * h_k);
+                let dc_dh = dc_a[k].dot(&da_dh);
+                let dv_dh = dv_a[k].dot(&da_dh);
+                (cap * dc_dh - sys * dv_dh) / vol
+            })
             .collect();
 
         let gn = d_sys.iter().map(|x| x * x).sum::<f64>().sqrt();

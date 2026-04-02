@@ -115,5 +115,4 @@ Reference for what results exist. See individual logbooks for full details.
 | **benchmark** | Construction dominates for F≤10 (80-92%). Practical limit F≤12 |
 
 **Blockers for new experiment work:**
-- Library has no derivative API (∂c_EHZ/∂a_i) — see TASKS.md `dual-vertex-parameterization`
-- Experiment gradient code is in (n, h) space, needs rewriting after a_i-only KKT formulation
+- Derivative API exists (`capacity_derivatives_a()`, `volume_derivatives_a()`) but 8 experiment binaries still need migration to the new API — see TASKS.md `dual-vertex-parameterization`

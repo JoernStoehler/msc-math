@@ -1,16 +1,16 @@
 #![allow(clippy::collapsible_if, clippy::op_ref, clippy::bool_comparison, dead_code)]
 
-/// Numerical accuracy experiment for the KKT solver.
-///
-/// Goal: Verify that f64 numerical errors stay within the proven error bounds.
-///
-/// Two complementary checks:
-/// 1. At ALL (S,σ) nodes: assert the error bound E and residual ‖r‖ are small.
-/// 2. At select nodes: compare numerical Q̃ against exact Q (rational arithmetic),
-///    and assert |Q̃ - Q_exact| ≤ E (the error bound is valid).
-///
-/// Input: Known polytopes from the library (F ≤ 10).
-/// Output: Summary tables to stdout. Panics on any violation.
+//! Numerical accuracy experiment for the KKT solver.
+//!
+//! Goal: Verify that f64 numerical errors stay within the proven error bounds.
+//!
+//! Two complementary checks:
+//! 1. At ALL (S,σ) nodes: assert the error bound E and residual ‖r‖ are small.
+//! 2. At select nodes: compare numerical Q̃ against exact Q (rational arithmetic),
+//!    and assert |Q̃ - Q_exact| ≤ E (the error bound is valid).
+//!
+//! Input: Known polytopes from the library (F ≤ 10).
+//! Output: Summary tables to stdout. Panics on any violation.
 use nalgebra::{DMatrix, DVector, Vector4};
 // TODO: `ehz_capacity` and `combinations` move to `algorithms::hk2017` (wave 3, subagent #6)
 // TODO: `cyclic_permutations` stays at `algorithms::hk2017::permutations::cyclic_permutations` (wave 3)

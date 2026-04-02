@@ -50,11 +50,14 @@ Depends on: Jörn decides which side to fix for each item.
 
 ## math.tex content audit
 
-**Status (2026-03-27):** Several experiment math.tex files contain not just mathematical proofs but also figures, result tables, and experiment writeups. This is wrong — math.tex should contain only lemma/theorem statements, proofs, definitions, and formal derivations. Prose, figures, and result discussions belong in logbook.md (for developers) or thesis/ (for examiners).
+**Status (2026-04-02):** 15 experiment math.tex files contain `\includegraphics` or `\begin{table}` alongside proofs. Convention (`.claude/rules/math-tex.md`): math.tex is for proofs/definitions/derivations only; empirical figures and tables go in logbook.md.
 
-**Known offenders (from root math.pdf build):** experiments that include `\includegraphics` or data tables in their math.tex: ablation, gradient-descent, lagrangian-products, omega-obstacle, orbit-recovery, pentagon-perturb, random-product-sweep, random-sweep, sys-optimization, visualization.
+**Affected files (all under `crates/`):**
+visualization, exp-sys-optimization/sensitivity-analysis, exp-sys-optimization/large-scale-descent, exp-numerical-analysis/kkt-inertia, exp-numerical-analysis/q-error, exp-hko-local-maximum/rotation-sweep, exp-hko-local-maximum/perturbation-neighborhood, exp-hko-local-maximum/omega-hypothesis, exp-capacity-axioms/orbit-recovery, exp-capacity-axioms/correctness, exp-baseline-characterization/rejection-sampling, exp-baseline-characterization/random-sweep, exp-baseline-characterization/random-product-sweep, exp-algorithm-comparison/ablation, crosspolytope
 
-**Fix:** Move non-proof content out of math.tex into logbook.md or separate files. Low priority — doesn't block anything, but makes the combined math.pdf noisy.
+**Fix:** For each file: cut figures/tables/empirical-result text from math.tex, paste into logbook.md (as markdown tables and `![](image.png)` references). Mechanical — parallelize with one subagent per file.
+
+**Priority:** Low — doesn't block anything, but makes math.pdf noisy and violates convention.
 
 ---
 

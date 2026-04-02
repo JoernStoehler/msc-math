@@ -146,3 +146,29 @@ Agent stated "false negatives are caught by the capacity algorithm's enumeration
 Opus subagent recommended vertex enumeration, claiming "max of quadratic on compact polytope is at a vertex." This is true for convex objectives (H positive semidefinite) but false for our indefinite H. Agent presented it to Jörn as "an interesting third approach worth exploring" without checking whether H is definite. Jörn caught it.
 
 **Pattern:** Trusting subagent mathematical claims without domain-specific verification. The subagent had correct theorems but applied them to the wrong case. Fix: when a subagent makes a mathematical recommendation, check whether the hypotheses apply to the specific problem before presenting.
+
+### 2026-04-02 — Presented fake objections to technology choices in database design
+
+During format comparison (JSONL vs SQLite vs Arrow), agent presented several false or irrelevant objections:
+- "Large dependencies slow builds" → Rust caches compiled crates; not an ongoing cost
+- "Version conflicts are a risk" → Either versions resolve or they don't; one-time check
+- "C dependencies are hard to install" → Devcontainer handles this with one Dockerfile line
+- "Agents would need to navigate Arrow's complex API" → The API is encapsulated; agents write the DB module once, consumers use our thin API
+
+Each wrong claim cost a round trip for Jörn to debunk. Total: ~5 unnecessary exchanges.
+
+**Pattern:** Rationalizing a preferred choice (JSONL) with unverified claims about alternatives. The actual differentiators (data shape fit, git diffability, Python interop) were real but modest. Fix: before presenting a pro/con for a technology, verify the claim is actually true. Don't manufacture disadvantages for options you don't prefer.
+
+### 2026-04-02 — Rambled when short answer was obvious
+
+Jörn asked "should we cache vertices?" Agent wrote 3 paragraphs weighing tradeoffs. The answer: "Yes — 10ms × 900K polytopes = too slow to recompute on every load." Jörn said "this is a rambling answer?"
+
+Later, agent wrote another multi-paragraph response about whether to store f64 dual vertices. Jörn: "sorry are you still asking whether to pay 10h cost whenever we want to load/stream the polytopes?"
+
+**Pattern:** When the arithmetic gives a clear answer, state the arithmetic and the conclusion. Don't hedge with "the question is whether..." paragraphs.
+
+### 2026-04-02 — Converged on design before presenting option space
+
+After one round of exploration, agent wrote a detailed concrete plan and called ExitPlanMode. Jörn rejected: "I'd like to see more discussion of different approaches." Had to redo as a broad comparison covering 6 format options, 4 architectures, 4 key strategies, etc.
+
+**Pattern:** "Help me plan" means "explore the design space with me," not "propose a solution for my approval." Present options and tradeoffs first, converge after Jörn has shaped the direction.

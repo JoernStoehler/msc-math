@@ -24,14 +24,14 @@ The verify-numerics experiment has proven Q error bounds and empirically validat
 
 ## Out of scope
 
-- Library promotion (crates/src/kkt/ changes) — do after the algorithm is settled.
+- Library promotion (crates/library/src/kkt/ changes) — do after the algorithm is settled.
 - Thesis chapter writing — the experiment's math.tex is the source; thesis copies from it later.
 - Merging to main — Jörn gates merges.
 - Rational solver fallback for INDETERMINATE cases — design decision for later.
 
 ## Key files
 
-- `/workspaces/msc-math/.claude/worktrees/verify-numerics-q-accuracy/experiments/verify-numerics/` — all experiment files
+- `crates/exp-numerical-analysis/error-bounds/` — all experiment files
   - `run.rs` — stage 2 binary (loads JSONL, exact + f64 solver, diagnostics)
   - `collect_inputs.rs` — stage 1 binary (generates artificial.jsonl + collected.jsonl)
   - `solvers.rs` — f64 solver copy (sign-fixed, no panics, LP-then-project fix)
@@ -42,9 +42,8 @@ The verify-numerics experiment has proven Q error bounds and empirically validat
   - `collected.jsonl` — 1.66M polytope σ-nodes (gitignored, regenerate with collect_inputs.rs)
   - `results.jsonl` — 51K problems with exact ground truth (committed)
   - `checks.txt` — latest analysis output
-- `/home/vscode/.claude/plans/peppy-finding-ritchie.md` — detailed plan with phases
-- `/workspaces/msc-math/crates/src/kkt/projection_solver.rs:93` — library sign bug (unfixed)
-- `/workspaces/msc-math/crates/src/kkt/qp_assembly.rs` — matrix assembly reference
+- `crates/library/src/kkt/projection_solver.rs` — library sign bug (unfixed)
+- `crates/library/src/kkt/qp_assembly.rs` — matrix assembly reference
 
 ## Prior findings
 
@@ -147,16 +146,15 @@ Worktree at `.claude/worktrees/verify-numerics-q-accuracy`, branch `verify-numer
 
 To regenerate data:
 ```bash
-cd experiments/
-cargo run --release --bin collect_inputs -- artificial
-cargo run --release --bin collect_inputs -- natural --polytopes /tmp/all_polytopes.jsonl --max-facets 8
-cargo run --release --bin verify_numerics
-python3 verify-numerics/analyze.py
+cargo run -p exp-numerical-analysis --release --bin collect_inputs -- artificial
+cargo run -p exp-numerical-analysis --release --bin collect_inputs -- natural --polytopes /tmp/all_polytopes.jsonl --max-facets 8
+cargo run -p exp-numerical-analysis --release --bin verify_numerics
+python3 crates/exp-numerical-analysis/error-bounds/analyze.py
 ```
 
-The `/tmp/all_polytopes.jsonl` is a concatenation of `correctness.jsonl + random-product-sweep.jsonl + benchmark.jsonl + ablation.jsonl`. Recreate with:
+The `/tmp/all_polytopes.jsonl` is a concatenation of correctness + random-product-sweep + benchmark + ablation data. Recreate with:
 ```bash
-cat correctness/correctness.jsonl random-product-sweep/random-product-sweep.jsonl benchmark/benchmark.jsonl ablation/ablation.jsonl > /tmp/all_polytopes.jsonl
+cat crates/exp-capacity-axioms/correctness/correctness.jsonl crates/exp-baseline-characterization/random-product-sweep/random-product-sweep.jsonl crates/exp-algorithm-comparison/benchmark/benchmark.jsonl crates/exp-algorithm-comparison/ablation/ablation.jsonl > /tmp/all_polytopes.jsonl
 ```
 
 ## Success criteria

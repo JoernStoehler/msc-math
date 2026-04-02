@@ -14,23 +14,23 @@ The verify-numerics experiment develops a provably correct f64 algorithm for the
 
 ## Out of scope
 
-- Library promotion (crates/src/kkt/ changes)
+- Library promotion (crates/library/src/kkt/ changes)
 - Thesis chapter writing
 - Merging to main
 
 ## Key files
 
-- `experiments/verify-numerics/math.tex` — perturbation chain, η_k bound
-- `experiments/verify-numerics/solvers.rs` — `solve_projected_with_diagnostics()`, `compute_eta_bound()`
-- `experiments/verify-numerics/run.rs` — stage 3 (one input, one output)
-- `experiments/verify-numerics/analyze.py` — stage 4 (multiple inputs)
-- `experiments/verify-numerics/collect_poly.rs` — stage 1 natural
-- `experiments/verify-numerics/collect_synth.rs` — stage 1 synthetic
-- `experiments/verify-numerics/filter_poly_smoke.rs` — ~6 rows, pipeline smoke test
-- `experiments/verify-numerics/filter_poly_diverse.rs` — ~1500 rows, per-polytope diverse
-- `experiments/verify-numerics/filter_synth_all.rs` — pass-through
-- `experiments/verify-numerics/collect_common.rs` — shared types (InputRow with β, λ)
-- `experiments/verify-numerics/Makefile` — `make smoke` (seconds), `make full` (~3.5 min)
+- `crates/exp-numerical-analysis/error-bounds/math.tex` — perturbation chain, η_k bound
+- `crates/exp-numerical-analysis/error-bounds/solvers.rs` — `solve_projected_with_diagnostics()`, `compute_eta_bound()`
+- `crates/exp-numerical-analysis/error-bounds/run.rs` — stage 3 (one input, one output)
+- `crates/exp-numerical-analysis/error-bounds/analyze.py` — stage 4 (multiple inputs)
+- `crates/exp-numerical-analysis/error-bounds/collect_poly.rs` — stage 1 natural
+- `crates/exp-numerical-analysis/error-bounds/collect_synth.rs` — stage 1 synthetic
+- `crates/exp-numerical-analysis/error-bounds/filter_poly_smoke.rs` — ~6 rows, pipeline smoke test
+- `crates/exp-numerical-analysis/error-bounds/filter_poly_diverse.rs` — ~1500 rows, per-polytope diverse
+- `crates/exp-numerical-analysis/error-bounds/filter_synth_all.rs` — pass-through
+- `crates/exp-numerical-analysis/error-bounds/collect_common.rs` — shared types (InputRow with β, λ)
+- `crates/exp-numerical-analysis/error-bounds/Makefile` — `make smoke` (seconds), `make full` (~3.5 min)
 
 ## Prior findings
 
@@ -55,10 +55,10 @@ Worktree at `.claude/worktrees/verify-numerics-math/`, branch `verify-numerics-q
 
 Regenerate stage 1 data:
 ```bash
-cd experiments/verify-numerics
-cat ../../experiments/correctness/correctness.jsonl ../../experiments/random-product-sweep/random-product-sweep.jsonl ../../experiments/benchmark/benchmark.jsonl ../../experiments/ablation/ablation.jsonl > /tmp/all_polytopes.jsonl
-cd .. && cargo run --release --bin collect_poly -- --polytopes /tmp/all_polytopes.jsonl --max-facets 8
-cargo run --release --bin collect_synth
+cd crates/exp-numerical-analysis/error-bounds
+cat ../../exp-capacity-axioms/correctness/correctness.jsonl ../../exp-baseline-characterization/random-product-sweep/random-product-sweep.jsonl ../../exp-algorithm-comparison/benchmark/benchmark.jsonl ../../exp-algorithm-comparison/ablation/ablation.jsonl > /tmp/all_polytopes.jsonl
+cargo run -p exp-numerical-analysis --release --bin collect_poly -- --polytopes /tmp/all_polytopes.jsonl --max-facets 8
+cargo run -p exp-numerical-analysis --release --bin collect_synth
 ```
 
 ## Success criteria

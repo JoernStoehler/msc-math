@@ -264,7 +264,7 @@ fn process_polytope(
 
     // Retrieve full KKT solution for the best orbit (beta, mu, xi)
     let best_perm = &ehz_result.result.best_permutation;
-    let kkt_result = solve_kkt_for(polytope, best_perm)?;
+    let kkt_result = solve_kkt_for(polytope, best_perm).feasible()?;
     let best_beta = &kkt_result.beta;
 
     // Phase A: omega features

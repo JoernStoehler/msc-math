@@ -32,7 +32,7 @@ use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::symplectic_form::omega0;
 use symplectic::geom::volume::volume;
-use symplectic::kkt::saddle_point_solver::{solve_kkt_for, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
+use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktOutcome, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
 
 // ============================================================================
 // Configuration
@@ -332,7 +332,7 @@ fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult
                     return;
                 }
 
-                if let Some(kkt_result) = solve_kkt_for(polytope, perm) {
+                if let KktOutcome::Feasible(kkt_result) = solve_kkt_for(polytope, perm) {
                     let q_val = kkt_result.q_corrected;
                     if q_val <= EPS_Q_POSITIVE {
                         return;
@@ -710,7 +710,7 @@ fn compute_sys(
     }
 
     let perm = ehz.result.best_permutation;
-    let kkt = solve_kkt_for(polytope, &perm)?;
+    let kkt = solve_kkt_for(polytope, &perm).feasible()?;
     let sys = cap * cap / (2.0 * vol);
 
     if sys.is_finite() {
@@ -1216,8 +1216,8 @@ fn main() {
 
         // KKT for gradient computation
         let kkt = match solve_kkt_for(polytope, perm) {
-            Some(k) => k,
-            None => {
+            KktOutcome::Feasible(k) => k,
+            _ => {
                 eprintln!("  {name}: KKT failed, skipping");
                 n_skipped += 1;
                 continue;

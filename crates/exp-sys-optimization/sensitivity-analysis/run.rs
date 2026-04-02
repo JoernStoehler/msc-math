@@ -32,7 +32,7 @@ use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::symplectic_form::omega0;
 use symplectic::geom::volume::volume;
-use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktResult};
+use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktOutcome, KktResult};
 
 /// Maximum facet count to process (HK2017 cost is exponential).
 const MAX_FACET_COUNT: usize = 10;
@@ -892,8 +892,8 @@ fn main() {
         };
         let best_perm = &ehz.result.best_permutation;
         let kkt = match solve_kkt_for(polytope, best_perm) {
-            Some(r) => r,
-            None => {
+            KktOutcome::Feasible(r) => r,
+            KktOutcome::Infeasible | KktOutcome::SingularMatrix => {
                 println!("SKIP (KKT solve failed for best permutation)");
                 continue;
             }
@@ -1094,8 +1094,8 @@ fn main() {
             };
             let best_perm = &ehz.result.best_permutation;
             let kkt = match solve_kkt_for(&current, best_perm) {
-                Some(r) => r,
-                None => break,
+                KktOutcome::Feasible(r) => r,
+                KktOutcome::Infeasible | KktOutcome::SingularMatrix => break,
             };
             let cap = ehz.result.capacity;
             let vol = volume(&current).expect("volume");
@@ -1263,8 +1263,8 @@ fn main() {
         };
         let best_perm = &ehz.result.best_permutation;
         let kkt = match solve_kkt_for(polytope, best_perm) {
-            Some(r) => r,
-            None => {
+            KktOutcome::Feasible(r) => r,
+            KktOutcome::Infeasible | KktOutcome::SingularMatrix => {
                 println!("SKIP (KKT failed)");
                 continue;
             }

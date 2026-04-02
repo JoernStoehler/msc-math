@@ -27,7 +27,7 @@ Preamble: `crates/library/src/math-preamble.tex` (packages, environments). Per-m
 - Definitions used by colocated code
 - Formal derivations (gradient formulas, error bounds)
 
-NOT here: prose motivation (→ logbook.md), code documentation (→ .rs doc comments), thesis narrative (→ thesis/).
+NOT here: prose motivation (→ logbook.md), code documentation (→ .rs doc comments), thesis narrative (→ thesis/), empirical result figures and tables (→ logbook.md).
 
 ## Labels
 
