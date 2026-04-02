@@ -35,6 +35,7 @@
 	"claudeCode.selectedModel": "opus[1m]",
 	"workbench.editor.editorActionsLocation": "default",
 	"files.exclude": {
-		".Trash-1000": true
+		".Trash-1000": true,
+		".ruff_cache": true
 	}
 }
