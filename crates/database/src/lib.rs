@@ -1,15 +1,65 @@
-//! Polytope database: JSONL storage with rational-key deduplication.
+//! Polytope database: shared cache of (polytope, capacity, sigmas) across experiments.
 //!
-//! Stores polytope data (rational vertices, computed capacity/volume, sigma lists)
-//! in a flat JSONL file. On load, records are indexed by their rational dual vertices
-//! into a HashMap for O(1) lookup. On save, the entire HashMap is written atomically.
+//! # Why
 //!
-//! Progressive fill: records start with just rational geometry, then accumulate
-//! computed fields (volume, capacity) and sigma lists in later passes.
+//! Multiple experiments compute the same expensive operations on the same polytopes:
+//! vertex enumeration (O(C(F,4))), EHZ capacity, volume, sigma lists. The database
+//! caches these results in a JSONL file committed to git, so they are computed once
+//! and reused across experiments, worktrees, and reruns.
 //!
-//! BigRational is serialized as `"numerator/denominator"` strings for human
-//! readability and `jq`/Python compatibility. The `rational_vec4_serde` module
-//! handles the `Vec<[BigRational; 4]>` ↔ `Vec<[String; 4]>` conversion.
+//! New worktrees inherit cached data from `main`. JSONL is one-record-per-line, so
+//! git merges work automatically when two branches append different records.
+//!
+//! The database also enables regression testing: compare `data/polytopes.jsonl`
+//! across commits to detect changes in capacity values or sigma lists after
+//! algorithm modifications.
+//!
+//! # Public API
+//!
+//! **Types:**
+//! - [`PolytopeRecord`] — one database row: rational geometry + optional capacity/volume/sigmas
+//! - [`DualVerticesKey`] — `Vec<[BigRational; 4]>`, the HashMap key (rational dual vertices)
+//! - [`Source`] — provenance enum: `Random { master_seed, attempt, ... }`,
+//!   `LagrangianProduct { n1, n2, ... }`, `Known { name }`
+//! - [`SigmaAction`] — one near-optimal orbit: `perm: Vec<usize>` + `action: f64`
+//!
+//! **Functions:**
+//! - [`load(path)`] → `HashMap<DualVerticesKey, PolytopeRecord>` (empty if file missing)
+//! - [`save(path, &HashMap)`] — atomic write (tmp file + rename)
+//!
+//! **Record methods:**
+//! - [`PolytopeRecord::from_polytope(&Polytope4D)`] — create from constructed polytope
+//! - [`.to_polytope()`] → `Polytope4D` — reconstruct via `from_rational_parts` (skips vertex enumeration)
+//! - [`.with_computed_fields(volume, volume_err, capacity, capacity_err)`] — add capacity/volume
+//! - [`.with_sigmas(sigmas, gap_cutoff)`] — add sigma list
+//! - [`.key()`] → `DualVerticesKey` — extract the HashMap key
+//!
+//! # Usage pattern
+//!
+//! ```rust,ignore
+//! let mut db = database::load(&db_path)?;
+//!
+//! for polytope in &my_polytopes {
+//!     let key = polytope.dual_vertices().to_vec();
+//!     let record = db.entry(key).or_insert_with(|| {
+//!         PolytopeRecord::from_polytope(polytope)
+//!     });
+//!     if record.capacity.is_none() {
+//!         let cap = ehz_capacity(polytope);
+//!         let vol = volume(polytope);
+//!         *record = record.clone().with_computed_fields(vol, 0.0, cap, 0.0);
+//!     }
+//!     // Use record.capacity, record.sigmas, etc.
+//! }
+//!
+//! database::save(&db_path, &db)?;
+//! ```
+//!
+//! # Storage format
+//!
+//! JSONL (one JSON object per line). BigRational values are serialized as
+//! `"numerator/denominator"` strings (e.g. `"3/7"`, `"-1/2"`) for human
+//! readability and `jq`/Python compatibility.
 
 use num_rational::BigRational;
 use serde::{Deserialize, Serialize};
