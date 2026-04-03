@@ -342,4 +342,5 @@ Evidence gathered so far (from session log analysis):
 - **Polytope4D optimization** — DONE (2026-03-23). 31× speedup at F=10 via integer-scaled arithmetic + f64 prefilters. Remaining: Jörn verifies `prop:integer-cramer`, f64 threshold soundness.
 - **gradient-search** — Deleted (2026-04-03). Superseded by boundary-crossing-search (confirmed by Jörn).
 - **sensitivity-analysis** — Deleted (2026-04-03). Superseded by boundary-crossing-search. Derivative lemmas relocated to `crates/library/src/algorithms/math.tex`.
+- **experiment-reorg** — DONE (2026-04-03). dev-*/exp-* lifecycle split, 3 overloaded experiments split into 10 focused units, RESEARCH.md created, all paths updated.
 - **large-scale-descent** — Deleted (2026-04-03). Superseded by boundary-crossing-search. Key finding: within-cell gradient ascent caps at sys ≈ 0.905.

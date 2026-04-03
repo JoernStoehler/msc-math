@@ -1,14 +1,14 @@
 % math.tex — basic gradient validation (Q1 generic, Q2 non-generic)
 %
 % Smoothness analysis of the EHZ capacity as a function of dual vertices.
-% Refines [prop:capacity-piecewise-smooth] from crates/exp-sys-landscape/sensitivity-analysis/math.tex
+% Refines [prop:capacity-piecewise-smooth] from crates/library/src/algorithms/math.tex
 % with per-orbit feasibility analysis and precise smoothness classification.
 %
 % Sources:
 %   - Generated data: crates/dev-gradient-validation/basic-validation/*.jsonl
 %   - Developer notes: crates/dev-gradient-validation/basic-validation/logbook.md
 %   - KKT formulation: crates/library/src/kkt/math.tex
-%   - Existing proposition: crates/exp-sys-landscape/sensitivity-analysis/math.tex
+%   - Existing proposition: crates/library/src/algorithms/math.tex
 %
 % Structure:
 %   §1 Setup and notation
@@ -230,7 +230,7 @@ Solving gives~\eqref{eq:kkt-sensitivity}.
   and every other feasible orbit has action strictly above~$c(a_0)$,
   then $c$ is $C^\infty$ in a neighborhood of~$a_0$,
   with gradient given by the envelope theorem formula
-  (\textup{[lem:cap-derivative]}).
+  (Lemma~\ref{lem:cap-derivative}).
 
 \item[\textup{(b)}]
   \emph{Switching boundary (interior orbits).}

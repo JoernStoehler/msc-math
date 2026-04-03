@@ -16,7 +16,7 @@
 //! - Compare against actual capacity change via full ehz_capacity on perturbed polytope
 //! - Records orbit switching (which orbit wins in the perturbed polytope)
 //! - [prop:capacity-smoothness-classification](b): at switching boundaries, D_d c = min_i(nabla A_i . d).
-//!   In crates/dev-gradient-validation/subdifferential/math.tex.
+//!   In crates/dev-gradient-validation/basic-validation/math.tex.
 //!
 //! Methodology (Q5b):
 //! - Use LP(n,n) (regular Lagrangian products) where symmetry forces exact orbit ties
@@ -31,7 +31,7 @@
 //!   In crates/library/src/algorithms/math.tex.
 //! - [prop:capacity-smoothness-classification] (unverified): refined decomposition into
 //!   per-orbit feasibility/smoothness and capacity-level min structure.
-//!   In crates/dev-gradient-validation/subdifferential/math.tex.
+//!   In crates/dev-gradient-validation/basic-validation/math.tex.
 //! - [thm:subdiff-with-appearance] (unverified): direction-filtered subdifferential
 //!   extending the formula to orbits at the feasibility boundary.
 //!   In crates/dev-gradient-validation/subdifferential/math.tex.

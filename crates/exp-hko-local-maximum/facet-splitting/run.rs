@@ -399,7 +399,7 @@ fn run_phase_b(base_dir: &std::path::Path) {
             .map(|n| n.dot(&dir).clamp(-1.0, 1.0).acos())
             .fold(f64::INFINITY, f64::min);
 
-        for &eps in &[1e-3, 1e-4] {
+        for &eps in SPLITTING_EPSILONS {
             let t_split = Instant::now();
             total_directions += 1;
 
