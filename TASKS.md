@@ -11,25 +11,9 @@ Master task list for thesis completion. **Deadline: mid-April 2026.**
 - **Dependencies:** State what blocks a task. If it's Jörn-gated, say so explicitly.
 - **Scope:** This file tracks WHAT needs doing. HOW is in skills, conventions, and logbooks.
 
-**Current state (2026-03-28):** No thesis chapter is publishable yet. Experiments have data but writeups are noisy and the thesis doesn't tell a coherent story. Procedural layer fully rewritten and ready for testing. Progress rate on track.
+**Current state (2026-04-03):** No thesis chapter is publishable yet. Experiments have data but writeups are noisy and the thesis doesn't tell a coherent story. Since 2026-03-28: verify-numerics merged (open items remain), polytope database merged (6 experiments migrated), Git LFS set up, gradient-search migrated then confirmed superseded by sys-search. Workspace restructured into cargo workspace with renamed experiment directories.
 
 **Priority:** Thesis coherence + experiment quality > code refactors. Code refactors only matter if they unblock thesis content or experiment correctness.
-
----
-
-## gradient-search experiment
-
-**Status (2026-03-26):** Does not compile. Blocked on API migration.
-
-Two-binary pipeline: `generate_seeds` → `seeds.jsonl` → `gradient_search` → `results.jsonl`. H-only gradient ascent with step-bound overshoot (crosses combinatorial boundaries) + wiggle. Interruptible/resumable. Branch: `gradient-search`.
-
-**Build failure (2026-03-26):** Imports nonexistent `capacity_derivatives_h`, `volume_derivatives_h`, `normals_f64()`, `heights_f64()`. Library was refactored to dual-vertex `_a` API but this experiment was never migrated. Requires reworking derivative calls and step-bound computation to use `capacity_derivatives_a` / `volume_derivatives_a`.
-
-**Next steps:**
-1. ~~**Migrate to `_a` API**~~ — done (2026-04-02, post-migration audit). Note: `generate_seeds.rs` round-trips through (normals, heights) because the experiment was designed pre-dual-vertex migration. Not worth cleaning up — this experiment is superseded by `sys-search`.
-2. **Delete** once sys-search is confirmed better (see gradient experiment redesign below).
-
-See `crates/exp-sys-optimization/gradient-search/logbook.md` for details.
 
 ---
 
@@ -129,9 +113,9 @@ The thesis is currently a dump of results, not a coherent narrative. Experiments
 - `crates/exp-hko-local-maximum/gradient-is-zero` Phase C (2026-03-23) verified first-order necessary condition for local max in F=10 (n,h)-space via LP. See `hko-local-maximality` task for next steps.
 
 **Gradient experiment redesign (2026-03-26, Jörn):** The three gradient experiments (`sys-optimization`, `gradient-descent`, `gradient-search`) evolved incrementally and overlap significantly. Replace with three cleanly scoped experiments:
-1. **gradient-correctness** (Q5b/Q5c complete, merged to main 2026-03-28) — Per-orbit gradient validated (slope=2.00). Q5b: 12 polytope types. Q5c: direction-filtered subdiff is a negative result. KktOutcome enum, error handling convention, code-math audit. 14 tests fail due to wrong Q error bound math (lem:q-error-bound too loose). See logbook, TASKS.md q-error-threshold.
-2. **combinatorial-boundaries** (complete, 2026-03-27) — Random cells convex, product cells non-convex (0% vs 100% transition failures). ~F boundaries per gradient step. Orbit facets 2× wider than non-orbit. Gradient-cell alignment favorable (r=0.52). sys continuous, gradient stable except at orbit switches (3%/boundary, up to 70° jump). See logbook.
-3. **sys-search** (dev run complete, branch `sys-search`) — Gradient-based search for sys > 1. Dev run: 42 seeds, best sys=0.933, wiggle dominates overshoot. Next: landscape characterization and search strategy comparison. See `handoffs/sys-search.md`.
+1. **gradient-validation** (Q5b/Q5c complete, merged to main 2026-03-28) — Per-orbit gradient validated (slope=2.00). Q5b: 12 polytope types. Q5c: direction-filtered subdiff is a negative result. KktOutcome enum, error handling convention, code-math audit. 14 tests fail due to wrong Q error bound math (lem:q-error-bound too loose). See logbook. Directory: `crates/exp-sys-optimization/gradient-validation/`.
+2. **combinatorial-structure** (complete, 2026-03-27) — Random cells convex, product cells non-convex (0% vs 100% transition failures). ~F boundaries per gradient step. Orbit facets 2× wider than non-orbit. Gradient-cell alignment favorable (r=0.52). sys continuous, gradient stable except at orbit switches (3%/boundary, up to 70° jump). See logbook. Directory: `crates/exp-sys-optimization/combinatorial-structure/`. Note: `combinatorial-boundaries/` is a data-only subdirectory (6 `.jsonl` files, no code).
+3. **boundary-crossing-search** (dev run complete, merged to main) — Gradient-based search for sys > 1. Dev run: 42 seeds, best sys=0.933, wiggle dominates overshoot. Next: landscape characterization and search strategy comparison. See `handoffs/sys-search.md`. Directory: `crates/exp-sys-optimization/boundary-crossing-search/`.
 
 Dependency chain: #1 validates the gradient → #2 characterizes the obstacle → #3 applies the tool. #3 can start independently but benefits from #2's findings. Delete old experiments once new ones are confirmed better.
 
@@ -145,11 +129,11 @@ Dependency chain: #1 validates the gradient → #2 characterizes the obstacle �
 
 Depends on: Jörn scoping the thesis story. Derivative-related experiments also depend on dual-vertex-parameterization (library derivative API, now mostly complete).
 
-**Cross-experiment cleanup (2026-03-27):**
-- **Step-bound code duplication:** `compute_step_bound` (incidence + ω₀ detection in a-space) exists in sys-optimization, combinatorial-boundaries, sys-search. sys-search version is missing ω₀ detection (43% of boundaries). Candidates: unify into library, or at minimum copy the enriched version from combinatorial-boundaries into sys-search.
+**Cross-experiment cleanup (2026-03-27, names updated 2026-04-03):**
+- **Step-bound code duplication:** `compute_step_bound` (incidence + ω₀ detection in a-space) exists in sys-optimization, combinatorial-structure, boundary-crossing-search. boundary-crossing-search version is missing ω₀ detection (43% of boundaries). Candidates: unify into library, or at minimum copy the enriched version from combinatorial-structure into boundary-crossing-search.
 - **Products-vs-random split:** Every gradient experiment should split analysis by source dataset. The 0%/100% convexity split is a fundamental structural difference that affects strategy choice. Could add a standard `source_dataset` analysis function to figure_config.py.
-- **Wiggle strength justification:** sys-search uses 5% (from gradient-search, unjustified). combinatorial-boundaries provides per-facet cell widths (0.12–0.26) that could inform this. See combinatorial-boundaries logbook "Unused synergies" section.
-- **sys-search + combinatorial-boundaries overlap:** The multi-boundary sweep with sys tracking (combinatorial-boundaries Pass 4) answers a sys-search question. If sys-search grows a similar capability, consider removing it from combinatorial-boundaries to avoid duplication.
+- **Wiggle strength justification:** boundary-crossing-search uses 5% (from gradient-search, unjustified). combinatorial-structure provides per-facet cell widths (0.12–0.26) that could inform this. See combinatorial-structure logbook "Unused synergies" section.
+- **boundary-crossing-search + combinatorial-structure overlap:** The multi-boundary sweep with sys tracking (combinatorial-structure Pass 4) answers a boundary-crossing-search question. If boundary-crossing-search grows a similar capability, consider removing it from combinatorial-structure to avoid duplication.
 
 ---
 
@@ -182,45 +166,6 @@ Depends on: Jörn scoping the thesis story. Derivative-related experiments also 
 
 ---
 
-## code-math-correspondence-audit
-
-**Status (2026-03-28):** Complete. Full report: `handoffs/cross-reference-audit.md`.
-
-~170 cross-references audited across 25 files, citing 45 distinct labels. Results: ~160 OK, 3 MISMATCH (all in saddle_point_solver.rs, all known), 2 TODO (missing lemma labels, properly flagged in code).
-
-**Mismatches (all in saddle_point_solver.rs):**
-- M1 (critical): line 358 — lem:q-error-bound bound inapplicable to pseudoinverse (known, tracked in verify-numerics)
-- M2 (high): line 477 — lem:well-defined: returned β_final differs from β₀ used for Q computation
-- M3 (medium): lines 534-544 — lem:q-error-bound: code comment oversimplifies the proof's Step 4
-
-**Missing labels (both properly TODO-flagged):**
-- qp_assembly.rs:58 → lem:dual-vertex-qp (needs writing)
-- tube/mod.rs:344 → lem:rotation-increment-approx (needs writing)
-
----
-
-## q-error-threshold
-
-**Status (2026-03-28):** Subsumed by verify-numerics experiment. Root cause and context preserved below for reference.
-
-The Q error bound E = (9/2)||r||²/|λ_min| ([lem:q-error-bound]) uses |λ_min| of ALL eigenvalues but the code uses |λ_min| of RETAINED eigenvalues. This mismatch was never caught. The verify-numerics experiment will develop a correct error bound as part of its systematic treatment of the QP solver.
-
-**Handoff:** `handoffs/q-error-bound-rework.md`. **Location:** `crates/library/src/kkt/saddle_point_solver.rs:537-567`
-
----
-
-## convention-violations
-
-**Status (2026-03-28):** Done.
-
-- `crates/exp-sys-optimization/gradient-validation/run.rs`: catch_unwind already removed in prior session
-- `crates/exp-hko-local-maximum/gradient-is-zero/run.rs`: catch_unwind already removed in prior session
-- `crates/exp-sys-optimization/combinatorial-structure/run.rs`: 2× catch_unwind removed (unlisted, found during fix)
-- `crates/library/src/kkt/saddle_point_solver.rs`: panic comments rewritten (deferred-work context, root cause, resolution path)
-- `crates/library/src/algorithms/capacity_accumulator.rs`: stale doc comment fixed (gap case returns None, not panic)
-
----
-
 ## thesis-chapters
 
 No chapter is currently publishable. The thesis needs to become a coherent document that tells a story, not a collection of sections.
@@ -228,6 +173,8 @@ No chapter is currently publishable. The thesis needs to become a coherent docum
 **Thesis .tex files with open TODOs:**
 - `tube-algorithm.tex` — 8 TODOs (5 JÖRN questions, 3 GAP markers)
 - `appendix-numerical.tex` — 5 TODOs
+- `main.tex` — 1 TODO (write introduction)
+- `experiments.tex` — 1 TODO (write thesis experiments chapter)
 - Other chapters — no TODOs but Jörn doubts publishability
 
 **What agents can do:** Draft rewrites, improve flow, verify claims against code/data, fix notation inconsistencies, improve figure quality. Agents cannot decide thesis structure or story.
@@ -258,23 +205,6 @@ Depends on: experiment-quality (thesis story), thesis-todos (math verification).
 
 ---
 
-## 5c. Optimize Polytope4D construction — DONE (2026-03-23)
-
-**Result:** 31x speedup at F=10 (84ms → 2.7ms). Construction now negligible vs capacity computation.
-
-**Method:**
-- Integer-scaled arithmetic (BigInt instead of BigRational) for vertex enumeration — avoids GCD normalization overhead
-- f64 prefilters for bounded check and irredundancy — skips expensive exact arithmetic for most subsets
-- Constructor cleanup (removed thin wrapper constructors, unified on `new()` and `from_f64()`)
-
-**Before:** `Polytope4D::new` dominated end-to-end systolic ratio computation for F ≤ 10 (80-92% of total time). At F=10, construction was 84ms vs 17ms for capacity. Bottleneck was BigRational vertex enumeration via C(F,4) subset solves.
-
-**Remaining:**
-- Math verification of `prop:integer-cramer` by Jörn (integer-scaled Cramer's rule correctness proof)
-- f64 threshold soundness evaluation (prefilter thresholds are empirically safe but not proven)
-
----
-
 ## dual-vertex-parameterization
 
 Direction (2026-03-22, Jörn): Thesis will introduce both (n_i, h_i) and a_i = n_i/h_i, but primarily work in a_i.
@@ -292,13 +222,13 @@ Direction (2026-03-22, Jörn): Thesis will introduce both (n_i, h_i) and a_i = n
 - ✅ `capacity_derivatives_a()` and `volume_derivatives_a()` exist in `derivatives.rs`, tested (FD cross-check)
 - ✅ `build_qp` uses a_i internally
 - ✅ 4/5 gradient experiments migrated: sys-optimization, hko-neighborhood, gradient-descent, omega-obstacle
-- ✅ gradient-search: migrated to `_a` API (2026-04-02). Superseded by sys-search — delete pending.
+- ✅ gradient-search: migrated to `_a` API (2026-04-02). Superseded by boundary-crossing-search (confirmed 2026-04-03). Directory deleted.
 - ✅ math.tex migration: `kkt/math.tex` and `algorithms/math.tex` use a_i throughout (commits b9eedda, 4afefb9, 0ff6c6d)
 - ❌ Jörn verification: `[lem:cap-derivative]` and `[lem:vol-derivative]` in sys-optimization/math.tex marked `\begin{unverified}`
 - ❌ `[lem:dual-vertex-qp]`: TODO in qp_assembly.rs:58-61 — prove a_i QP formulation recovers same optimal action as (n,h)
 
 **Remaining work items:**
-1. ~~**gradient-search migration**~~ — done (2026-04-02).
+1. ~~**gradient-search migration**~~ — done (2026-04-02). Directory deleted (2026-04-03).
 2. **Jörn verifies derivative lemmas** — `[lem:cap-derivative]`, `[lem:vol-derivative]` in `crates/exp-sys-optimization/sensitivity-analysis/math.tex`.
 3. **Write `[lem:dual-vertex-qp]` proof** — mathematical equivalence of a_i and (n,h) QP formulations. Agent drafts, Jörn verifies.
 
@@ -332,12 +262,10 @@ Replace `find_positive_beta_1d` / `find_positive_beta_nd` with a single LP-based
 
 **Thesis/code tension:** Main thesis (`lem:rank-deficiency-dismissal`) proves rank-deficient pairs are redundant (exact rank deficiency → discard, smaller pair dominates). Code searches null space for β>0 on *near*-singular systems — pseudoinverse β₀ may have β_i < 0 from noise; null-space shift recovers feasibility without changing Q. Not contradictory but needs explicit documentation.
 
-**Status (2026-03-22):** Previous `kkt-lp-refactor` worktree has 17 commits (20+ commits behind main). Not worth rebasing — start fresh, using old branch as reference. Key content to salvage:
+**Status (2026-04-03):** Previous `kkt-lp-refactor` branch deleted (was 567 commits behind main). Key content to salvage from git history (branch tip was `7ca81b53`):
 - Unified `find_positive_beta` function design (4 cases)
 - Near-null eigenvector Type A/B/C classification
 - Open question for Jörn: is filtering Type A directions mathematically justified?
-
-Old worktree at `.claude/worktrees/kkt-lp-refactor/` — read-only reference.
 
 ---
 
@@ -374,7 +302,7 @@ Evidence gathered so far (from session log analysis):
 
 ## polytope-database
 
-**Status (2026-04-03):** Database crate + experiment migration done. Branch `experiment-database-migration`.
+**Status (2026-04-03):** Database crate + experiment migration done. Merged to main (commit 2f73c3ee).
 
 **Done:**
 - `crates/database/` — PolytopeRecord, load/save JSONL, from_polytope/to_polytope, progressive fill, custom "numer/denom" BigRational serde, `PartialEq` on `Source`
@@ -408,3 +336,8 @@ Evidence gathered so far (from session log analysis):
 - **slurm-skill** — DONE. `.claude/skills/slurm/SKILL.md` exists.
 - **meta-layer-refactor** — DONE (2026-03-24). Simplified procedural layer, created agent-design workflow skill.
 - **procedural-rewrite** — DONE (2026-03-26). Full rewrite: 5 rules, 1 output style, 8 skills, 9 agents, CLAUDE.md updated. Old unvetted skills/agents deleted. Collaboration skill deferred. Feedback collection set up.
+- **code-math-correspondence-audit** — DONE (2026-03-28). ~170 cross-references audited, 3 mismatches (all saddle_point_solver.rs, known), 2 TODOs (properly flagged). Report: `handoffs/cross-reference-audit.md`.
+- **q-error-threshold** — Subsumed by verify-numerics (2026-03-28). Q error bound mismatch tracked there.
+- **convention-violations** — DONE (2026-03-28). catch_unwind removed from 3 experiments, panic comments rewritten, stale doc comments fixed.
+- **Polytope4D optimization** — DONE (2026-03-23). 31× speedup at F=10 via integer-scaled arithmetic + f64 prefilters. Remaining: Jörn verifies `prop:integer-cramer`, f64 threshold soundness.
+- **gradient-search** — Deleted (2026-04-03). Superseded by boundary-crossing-search (confirmed by Jörn).

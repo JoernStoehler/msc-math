@@ -15,14 +15,6 @@ name = "opt-large-scale-descent"
 path = "large-scale-descent/run.rs"
 
 [[bin]]
-name = "opt-gradient-search"
-path = "gradient-search/run.rs"
-
-[[bin]]
-name = "opt-generate-seeds"
-path = "gradient-search/generate_seeds.rs"
-
-[[bin]]
 name = "opt-boundary-crossing"
 path = "boundary-crossing-search/run.rs"
 
