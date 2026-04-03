@@ -35,7 +35,7 @@ cat <<EOF
 {
   "hookSpecificOutput": {
     "hookEventName": "PostToolUse",
-    "additionalContext": "SUBAGENT RELIABILITY NOTICE ($SUBAGENT_TYPE): This result is from a subagent. Subagent answers can be overconfident, miss context, or fabricate details (especially documentation claims). Before presenting subagent findings to Jörn or building on them: (1) check file:line sources directly, (2) verify factual claims against primary sources, (3) for critical decisions, launch a second subagent to cross-check."
+    "additionalContext": "SUBAGENT RELIABILITY NOTICE ($SUBAGENT_TYPE): Subagent answers can be overconfident or miss context. Cheap-to-check facts (file existence, grep results, data values) are worth verifying directly. A second subagent can cross-check if warranted."
   }
 }
 EOF
