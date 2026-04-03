@@ -1,10 +1,9 @@
 """
-HKO-Neighborhood experiment: figures and analysis.
+Gradient analysis experiment: figures and analysis.
 
-Goal: Visualize local maximality of HKO2024 via sensitivity data, gradient
-      ascent trajectory, and facet-splitting results.
-Input: hko-neighborhood-{sensitivity,ascent,splitting}.jsonl
-Output: hko-neighborhood-{gradient,orbits,splitting}.png
+Goal: Visualize sensitivity structure and gradient ascent at HKO2024.
+Input: hko-neighborhood-sensitivity.jsonl, hko-neighborhood-ascent.jsonl
+Output: hko-neighborhood-gradient.png, hko-neighborhood-orbits.png
 """
 
 import json
@@ -43,7 +42,7 @@ def load_jsonl(name: str) -> list[dict]:
 
 
 def fig_gradient(sens: dict) -> None:
-    """Bar chart of ∂sys/∂h_k for HKO2024."""
+    """Bar chart of dellsys/dellh_k for HKO2024."""
     d_sys_h = sens["d_sys_h"]
     f = len(d_sys_h)
     facet_labels = [f"$h_{{{k}}}$" for k in range(f)]
@@ -131,82 +130,15 @@ def fig_orbits(sens: dict) -> None:
     print(f"  Wrote {out}")
 
 
-def fig_splitting(splitting_rows: list[dict]) -> None:
-    """Facet-splitting results: Δsys vs angular offset."""
-    if not splitting_rows:
-        print("  No splitting data, skipping splitting figure")
-        return
-
-    # Filter to successful constructions
-    ok_rows = [r for r in splitting_rows if r.get("construction_ok", True) and np.isfinite(r.get("delta_sys", float("nan")))]
-    if not ok_rows:
-        print("  No successful splits, skipping splitting figure")
-        return
-
-    # Separate by type
-    facet_rows = [r for r in ok_rows if r["source_facet"] < 100]
-    other_rows = [r for r in ok_rows if r["source_facet"] >= 100]
-
-    fig, axes = plt.subplots(1, 2, figsize=FIGSIZE_DUAL)
-
-    # Left: Δsys vs angular offset
-    ax = axes[0]
-    for eps_val in sorted(set(r["epsilon"] for r in facet_rows)):
-        eps_rows = [r for r in facet_rows if r["epsilon"] == eps_val]
-        angles = [r["angular_offset"] for r in eps_rows]
-        deltas = [r["delta_sys"] for r in eps_rows]
-        ax.scatter(angles, deltas, s=10, alpha=0.6, label=f"near-facet ε={eps_val:.0e}")
-    # Include mixed/control rows
-    if other_rows:
-        angles = [r["angular_offset"] for r in other_rows]
-        deltas = [r["delta_sys"] for r in other_rows]
-        ax.scatter(angles, deltas, s=10, alpha=0.4, marker="x", color="gray", label="mixed/control")
-
-    ax.axhline(y=0, color="red", linewidth=1, linestyle="--")
-    ax.set_xlabel("Angular offset from facet normal (rad)")
-    ax.set_ylabel(r"$\Delta\,\mathrm{sys}$")
-    ax.set_title(r"$\Delta\,\mathrm{sys}$ vs angle")
-    ax.legend(fontsize=7)
-
-    # Right: Δsys histogram
-    ax = axes[1]
-    all_deltas = [r["delta_sys"] for r in ok_rows]
-    ax.hist(all_deltas, bins=40, edgecolor="black", linewidth=0.3, alpha=0.7)
-    ax.axvline(x=0, color="red", linewidth=1, linestyle="--")
-    ax.set_xlabel(r"$\Delta\,\mathrm{sys}$")
-    ax.set_ylabel("Count")
-    ax.set_title(f"Distribution (n={len(ok_rows)})")
-
-    # Add annotation about whether any improvement was found
-    n_positive = sum(1 for d in all_deltas if d > 0)
-    n_negative = sum(1 for d in all_deltas if d < 0)
-    n_zero = sum(1 for d in all_deltas if d == 0)
-    ax.text(
-        0.95, 0.95,
-        f"+: {n_positive}\n−: {n_negative}\n0: {n_zero}",
-        transform=ax.transAxes,
-        ha="right", va="top",
-        fontsize=8,
-        bbox=dict(boxstyle="round,pad=0.3", facecolor="lightyellow", alpha=0.8),
-    )
-
-    plt.tight_layout()
-    out = SCRIPT_DIR / "hko-neighborhood-splitting.png"
-    fig.savefig(out, dpi=150, bbox_inches="tight")
-    plt.close()
-    print(f"  Wrote {out}")
-
-
 def main():
-    print("HKO-Neighborhood: generating figures\n")
+    print("Gradient analysis: generating figures\n")
 
     # Load data
     sens_rows = load_jsonl("hko-neighborhood-sensitivity.jsonl")
     ascent_rows = load_jsonl("hko-neighborhood-ascent.jsonl")
-    splitting_rows = load_jsonl("hko-neighborhood-splitting.jsonl")
 
     if not sens_rows:
-        print("ERROR: No sensitivity data. Run `cargo run --bin hko_neighborhood --release` first.")
+        print("ERROR: No sensitivity data. Run `cargo run -p exp-hko-local-maximum --release --bin hko-gradient-analysis` first.")
         sys.exit(1)
 
     sens = sens_rows[0]
@@ -216,21 +148,21 @@ def main():
     print(f"  sys = {sens['sys']:.10f}")
     print(f"  capacity = {sens['capacity']:.10f}")
     print(f"  volume = {sens['volume']:.10f}")
-    print(f"  |∇sys_h| = {sens['gradient_norm_h']:.6e}")
-    print(f"  |∇sys_n| = {sens['gradient_norm_n']:.6e}")
-    print(f"  |∇sys_hn| = {sens['gradient_norm_hn']:.6e}")
+    print(f"  |grad_sys_h| = {sens['gradient_norm_h']:.6e}")
+    print(f"  |grad_sys_n| = {sens['gradient_norm_n']:.6e}")
+    print(f"  |grad_sys_hn| = {sens['gradient_norm_hn']:.6e}")
     print(f"  Valid orbits: {sens['n_valid_orbits']}")
     print(f"  Near-optimal: {sens['n_near_optimal']}")
 
     # All d_sys_h are negative → HKO2024 is a local max in height space
     d_sys_h = sens["d_sys_h"]
     all_negative = all(d < 0 for d in d_sys_h)
-    print(f"\n  All ∂sys/∂h_k < 0: {all_negative}")
+    print(f"\n  All dellsys/dellh_k < 0: {all_negative}")
     if all_negative:
-        print("  → Increasing any h_k DECREASES sys (normals fixed)")
-        print("  → Decreasing any h_k would shrink K (heights bounded below)")
-        print(f"  → |∇sys_n| = {sens['gradient_norm_n']:.4e} (nonzero — not a critical point)")
-        print("  → HKO2024 is a local max in h-space; normal gradient is nonzero")
+        print("  -> Increasing any h_k DECREASES sys (normals fixed)")
+        print("  -> Decreasing any h_k would shrink K (heights bounded below)")
+        print(f"  -> |grad_sys_n| = {sens['gradient_norm_n']:.4e} (nonzero -- not a critical point)")
+        print("  -> HKO2024 is a local max in h-space; normal gradient is nonzero")
     print()
 
     # Ascent summary
@@ -239,29 +171,13 @@ def main():
         print("Gradient ascent:")
         print(f"  Iterations: {len(ascent_rows)}")
         print(f"  Final sys: {last['sys_after']:.10f}")
-        print(f"  Δsys: {last['sys_after'] - sens['sys']:.6e}")
-        print()
-
-    # Splitting summary
-    if splitting_rows:
-        ok = [r for r in splitting_rows if r.get("construction_ok", True) and np.isfinite(r.get("delta_sys", float("nan")))]
-        deltas = [r["delta_sys"] for r in ok]
-        print("Facet-splitting:")
-        print(f"  Total directions: {len(splitting_rows)}")
-        print(f"  Successful: {len(ok)}")
-        if deltas:
-            print(f"  max Δsys: {max(deltas):.6e}")
-            print(f"  min Δsys: {min(deltas):.6e}")
-            print(f"  All Δsys ≤ 0: {all(d <= 0 for d in deltas)}")
-            n_near_zero = sum(1 for d in deltas if abs(d) < 1e-8)
-            print(f"  Near-zero (|Δsys| < 1e-8): {n_near_zero} of {len(deltas)}")
+        print(f"  delta_sys: {last['sys_after'] - sens['sys']:.6e}")
         print()
 
     # Generate figures
     print("Generating figures...")
     fig_gradient(sens)
     fig_orbits(sens)
-    fig_splitting(splitting_rows)
 
     print("\nDone.")
 

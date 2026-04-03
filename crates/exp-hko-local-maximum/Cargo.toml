@@ -7,8 +7,12 @@ edition = "2021"
 path = "src/lib.rs"
 
 [[bin]]
-name = "hko-gradient"
-path = "gradient-is-zero/run.rs"
+name = "hko-gradient-analysis"
+path = "gradient-analysis/run.rs"
+
+[[bin]]
+name = "hko-facet-splitting"
+path = "facet-splitting/run.rs"
 
 [[bin]]
 name = "hko-lagrangian-boundary"

@@ -3,7 +3,7 @@
 
 Goal: Test whether HKO2024 satisfies the first-order necessary condition for
       local maximality of sys in the full (n, h) parameter space.
-Input: crates/exp-hko-local-maximum/gradient-is-zero/hko-neighborhood-sensitivity.jsonl
+Input: crates/exp-hko-local-maximum/gradient-analysis/hko-neighborhood-sensitivity.jsonl
 Output: prints analysis results to stdout (no files written)
 
 Approach:
@@ -27,6 +27,7 @@ from scipy.optimize import linprog
 from pathlib import Path
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
+GRADIENT_ANALYSIS_DIR = EXPERIMENT_DIR.parent / "gradient-analysis"
 
 # ─── Symplectic geometry primitives ───────────────────────────────────────────
 
@@ -244,7 +245,7 @@ def cross_check_h_gradients(computed_dsys_h, jsonl_dsys_h, orbit_idx):
 # ─── Main ─────────────────────────────────────────────────────────────────────
 
 def main():
-    data_path = EXPERIMENT_DIR / "hko-neighborhood-sensitivity.jsonl"
+    data_path = GRADIENT_ANALYSIS_DIR / "hko-neighborhood-sensitivity.jsonl"
     if not data_path.exists():
         raise FileNotFoundError(
             f"Data file not found: {data_path}\n"

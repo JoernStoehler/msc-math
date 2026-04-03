@@ -1,0 +1,75 @@
+# Combinatorial Anatomy: Logbook
+
+Split from `combinatorial-structure/` (Pass 2). See that logbook for full history.
+
+## Motivation
+
+Full EHZ at boundaries + crossing analysis + gradient measurement. For each polytope, probes the gradient direction, negative gradient, and 5 dense random directions. At each boundary: records anatomy (event type, t_max, orbit gap), evaluates crossing (sys before/after, orbit switch), and measures gradient change.
+
+## Status
+
+**Complete (2026-03-27).** 140 polytopes, 980 anatomy rows, 873 crossing rows, 873 gradient rows, 10 figures. Split into standalone experiment.
+
+## How to run
+
+```bash
+cargo run -p exp-sys-landscape --release --bin sys-combinatorial-anatomy
+python3 analyze.py
+```
+
+## Results (from combinatorial-structure, 2026-03-26, updated 2026-03-27)
+
+### RQ1: What causes combinatorial type changes?
+
+| Event type | Count | Fraction |
+|------------|-------|----------|
+| Incidence flip | 556 | 56.7% |
+| omega_0 flip | 424 | 43.3% |
+
+(anatomy JSONL, 980 rows, 0 unbounded)
+
+### RQ2: sys is continuous; orbits switch at 3% of boundaries
+
+sys is continuous at all 873 tested boundaries: max |delta_sys| = 2.91e-4 (crossing JSONL, boundary_sys_continuity.png).
+
+Orbit switch rate: 26/873 (3.0%).
+
+### RQ3: Gradient is discontinuous at orbit-switching boundaries
+
+| Metric | Median | Max |
+|--------|--------|-----|
+| Gradient angle change | 0.002 deg | 70.2 deg |
+
+(gradient JSONL, all 873 rows)
+
+### RQ4: Boundary density
+
+Boundary distance decreases with F (boundary_tmax_vs_F.png). Gradient direction hits boundaries sooner than dense random (boundary_density_cdf.png).
+
+### Orbit gap
+
+132/140 polytopes have >= 2 valid orbits. Median gap 0.054, min ~0, max 13.76 (orbit_gap_distribution.png).
+
+Orbit gap predicts orbit switches (orbit_gap_vs_switch.png): lowest gap quartile has higher switch rates.
+
+### Products vs random polytopes
+
+| Metric | Random | Lagrangian product |
+|--------|--------|-------------------|
+| Orbit gap median | 0.163 | 0.008 |
+| Orbit-facet cell width | 0.169 | 0.363 |
+
+### Gradient-cell alignment
+
+Correlation between gradient boundary distance and narrowest per-facet cell width: r = 0.518 (gradient_cell_alignment.png). The gradient doesn't target narrow cell directions.
+
+## Related experiments
+
+- **combinatorial-profiling** -- per-facet cell width data used for gradient-cell alignment analysis
+- **gradient-correctness** -- validates gradient formula; this experiment studies what happens when the gradient changes
+- **sys-search** -- uses boundary-crossing strategies; this experiment characterizes the boundaries
+
+## Open questions
+
+1. **Continuity of sys:** math.tex has a proof sketch (Prop. prop:sys-continuous). Full continuity may require citing general c_EHZ continuity on convex bodies.
+2. **sys-search omega_0 gap:** sys-search step bound doesn't detect omega_0 flips. Missing 43% of boundaries.

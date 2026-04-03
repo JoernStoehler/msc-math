@@ -37,13 +37,18 @@ No privileged threshold — sys is studied as a continuous function.
 - **3a.** Structural features correlated with high sys?
   → [omega-hypothesis](crates/exp-sys-landscape/omega-hypothesis/) (falsified: small symplectic area not the mechanism)
 - **3b.** Behavior across combinatorial type boundaries?
-  → [combinatorial-structure](crates/exp-sys-landscape/combinatorial-structure/)
+  → [combinatorial-profiling](crates/exp-sys-landscape/combinatorial-profiling/),
+    [combinatorial-anatomy](crates/exp-sys-landscape/combinatorial-anatomy/),
+    [combinatorial-convexity](crates/exp-sys-landscape/combinatorial-convexity/),
+    [combinatorial-sweep](crates/exp-sys-landscape/combinatorial-sweep/)
 - **3c.** sys distribution for random polytopes?
   → [random-sweep](crates/exp-sys-landscape/random-sweep/),
     [random-product-sweep](crates/exp-sys-landscape/random-product-sweep/),
     [rejection-sampling](crates/exp-sys-landscape/rejection-sampling/)
 - **3d.** Following sys gradients?
-  → library `derivatives.rs`; validated by [gradient-validation](crates/dev-gradient-validation/gradient-validation/)
+  → library `derivatives.rs`; validated by [basic-validation](crates/dev-gradient-validation/basic-validation/),
+    [edge-cases](crates/dev-gradient-validation/edge-cases/),
+    [subdifferential](crates/dev-gradient-validation/subdifferential/)
 
 ## 4. How do we compute capacity better?
 
@@ -63,4 +68,6 @@ Instrument development — results promote to `crates/library/`.
   → [correctness](crates/dev-capacity-validation/correctness/),
     [orbit-recovery](crates/dev-capacity-validation/orbit-recovery/)
 - **4d.** Analytical gradients match finite differences?
-  → [gradient-validation](crates/dev-gradient-validation/gradient-validation/)
+  → [basic-validation](crates/dev-gradient-validation/basic-validation/),
+    [edge-cases](crates/dev-gradient-validation/edge-cases/),
+    [subdifferential](crates/dev-gradient-validation/subdifferential/)

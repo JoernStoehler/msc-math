@@ -7,8 +7,16 @@ edition = "2021"
 path = "src/lib.rs"
 
 [[bin]]
-name = "dev-gradient-validation"
-path = "gradient-validation/run.rs"
+name = "dev-basic-validation"
+path = "basic-validation/run.rs"
+
+[[bin]]
+name = "dev-edge-cases"
+path = "edge-cases/run.rs"
+
+[[bin]]
+name = "dev-subdifferential"
+path = "subdifferential/run.rs"
 
 [lints]
 workspace = true

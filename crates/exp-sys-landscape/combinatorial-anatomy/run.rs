@@ -1,20 +1,17 @@
-//! Combinatorial Boundaries: characterize combinatorial type cells in dual-vertex space.
+//! Combinatorial Anatomy: full EHZ at boundaries + crossing analysis + gradient measurement.
 //!
-//! For polytopes K = {x : a_k · x ≤ 1}, the combinatorial type (vertex-facet incidence,
-//! ω₀ sign pattern) is constant within open regions of dual-vertex space R^{4F}. This
-//! experiment characterizes these cells: their shape (per-facet cross-sections), convexity,
-//! relationship to the gradient and optimal orbit, and what happens at boundaries.
+//! For polytopes K = {x : a_k . x <= 1}, probes the gradient direction, negative gradient,
+//! and N_GLOBAL_DENSE random directions. At each boundary:
+//! - Records boundary anatomy (event type, t_max, orbit gap, etc.)
+//! - Evaluates crossing (sys before/after, orbit switch)
+//! - Measures gradient change across the boundary
 //!
-//! Three passes:
-//! - Pass 1 (per-facet profiling): for each facet k, probe 10 random S³ directions in R⁴_k.
-//!   Measures cell width per facet, anisotropy, orbit-facet narrowness. No EHZ needed.
-//! - Pass 2 (global probes): gradient + neg-gradient + 5 dense random directions.
-//!   Full boundary anatomy + crossing evaluation + gradient measurement.
-//! - Pass 3 (convexity testing): sample direction pairs from Pass 1, check if midpoint
-//!   of two interior points has the same combinatorial type.
+//! Split from combinatorial-structure (Pass 2).
 //!
-//! Input: data/polytopes.jsonl (polytope database, populated by random-sweep + random-product-sweep)
-//! Filter: F ≤ 10 (HK2017 is exponential in F)
+//! Input: data/polytopes.jsonl (polytope database)
+//! Filter: F <= 10 (HK2017 is exponential in F)
+//! Output: combinatorial-boundaries-anatomy.jsonl, combinatorial-boundaries-crossing.jsonl,
+//!         combinatorial-boundaries-gradient.jsonl
 
 use database::{PolytopeRecord, Source};
 use nalgebra::{Matrix4, Vector4};
@@ -43,40 +40,27 @@ use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktOutcome, EPS_BETA_P
 /// Maximum facet count to process (HK2017 cost is exponential).
 const MAX_FACET_COUNT: usize = 10;
 
-/// Number of random S³ directions per facet for cell profiling (Pass 1).
-/// 10 directions in R⁴ give reasonable coverage of S³.
-const N_FACET_DIRS: usize = 10;
-
-/// Number of dense random directions for global probes (Pass 2).
+/// Number of dense random directions for global probes.
 const N_GLOBAL_DENSE: usize = 5;
 
-/// Number of direction pairs sampled per polytope for convexity testing (Pass 3).
-/// Mix of same-facet and cross-facet pairs.
-const N_CONVEXITY_PAIRS: usize = 20;
-
 /// Maximum step size cap (prevents infinite steps when no combinatorial bound exists).
-/// Typical boundary distances are O(0.01)–O(1); 100.0 is well beyond any real boundary.
-/// If changed: only affects the "unbounded" classification, not actual boundary detection.
+/// Typical boundary distances are O(0.01)-O(1); 100.0 is well beyond any real boundary.
 const MAX_STEP_SIZE: f64 = 100.0;
 
 /// Numerical zero threshold for rates and slacks.
 /// Set near machine epsilon (~1e-16); guards against treating f64 noise as a
-/// meaningful direction or rate. Used in step bounds and gradient checks.
-/// If changed: values much larger risk missing real boundaries; much smaller risks
-/// false positives from floating-point noise.
+/// meaningful direction or rate.
 const EPS_NUMERICAL_ZERO: f64 = 1e-15;
 
 /// Epsilon fractions for crossing evaluation: proportional to t_max.
 /// Geometric progression from 1e-4 to 0.1 of t_max. Start close to the boundary
-/// (1e-4 × t_max) for accuracy; fall back to larger fractions if construction or
+/// (1e-4 * t_max) for accuracy; fall back to larger fractions if construction or
 /// EHZ fails near the boundary. Floor at 1e-8 prevents sub-machine-epsilon steps.
 /// Validated: 100% crossing success rate at 873/873 boundaries with this sequence.
-/// If changed: smaller fractions improve accuracy but risk numerical failure;
-/// larger fractions degrade continuity measurements.
 const CROSSING_EPS_FRACTIONS: &[f64] = &[1e-4, 1e-3, 1e-2, 5e-2, 0.1];
 
 /// Fraction of t_max used for the "before boundary" evaluation point.
-/// 1e-4 × t_max places us close enough that sys_before ≈ sys(original) while
+/// 1e-4 * t_max places us close enough that sys_before ~= sys(original) while
 /// being safely on the pre-boundary side.
 const BEFORE_EPS_FRACTION: f64 = 1e-4;
 
@@ -86,17 +70,8 @@ const EPS_FLOOR: f64 = 1e-8;
 /// Random seed for reproducibility.
 const SEED: u64 = 42;
 
-/// Whether to run gradient measurement across boundaries (Pass 2 Phase 3).
+/// Whether to run gradient measurement across boundaries.
 const RUN_GRADIENT: bool = true;
-
-/// Distance budget for multi-boundary sweep (Pass 4).
-/// Typical gradient t_max is O(0.1); 1.0 is ~10× a typical step.
-/// If changed: larger budgets cross more boundaries but risk accumulating
-/// numerical error from repeated polytope reconstruction.
-const SWEEP_BUDGET: f64 = 1.0;
-
-/// Step-over epsilon for multi-boundary sweep: fraction of t_max to step past boundary.
-const SWEEP_STEP_FRACTION: f64 = 1e-3;
 
 // ============================================================================
 // Boundary event types
@@ -107,9 +82,9 @@ const SWEEP_STEP_FRACTION: f64 = 1e-3;
 enum EventType {
     /// A vertex's slack with respect to a non-incident facet reaches zero.
     IncidenceFlip { vertex_index: usize, new_facet: usize },
-    /// sign(ω₀(a_i, a_j)) changes for ridge-adjacent facets i, j.
+    /// sign(omega_0(a_i, a_j)) changes for ridge-adjacent facets i, j.
     OmegaFlip { facet_i: usize, facet_j: usize },
-    /// |a_k + t·d_k| → 0 (dual vertex degenerates).
+    /// |a_k + t*d_k| -> 0 (dual vertex degenerates).
     DualVertexDegen { facet: usize },
     /// t_max was capped at MAX_STEP_SIZE (no real boundary found).
     Unbounded,
@@ -146,7 +121,7 @@ struct Direction {
     index: usize,
     /// Which facet this direction perturbs (None for global/dense directions).
     facet_index: Option<usize>,
-    /// Direction vector: one Vector4 per facet. Step: a'_k(t) = a_k + t·d[k].
+    /// Direction vector: one Vector4 per facet. Step: a'_k(t) = a_k + t*d[k].
     d: Vec<Vector4<f64>>,
 }
 
@@ -154,19 +129,7 @@ struct Direction {
 // Output schemas
 // ============================================================================
 
-/// Pass 1: per-facet cell profiling row.
-#[derive(Debug, Serialize)]
-struct ProfilingRow {
-    polytope_name: String,
-    facet_count: usize,
-    facet_index: usize,
-    facet_in_orbit: bool,
-    direction_index: usize,
-    t_max: f64,
-    event_type: String,
-}
-
-/// Pass 2: boundary anatomy row (one per global direction).
+/// Boundary anatomy row (one per global direction).
 #[derive(Debug, Serialize)]
 struct AnatomyRow {
     polytope_name: String,
@@ -195,7 +158,7 @@ struct AnatomyRow {
     time_ms: f64,
 }
 
-/// Pass 2: crossing evaluation row.
+/// Crossing evaluation row.
 #[derive(Debug, Serialize)]
 struct CrossingRow {
     polytope_name: String,
@@ -225,7 +188,7 @@ struct CrossingRow {
     vertex_count_changed: bool,
 }
 
-/// Pass 2: gradient crossing row.
+/// Gradient crossing row.
 #[derive(Debug, Serialize)]
 struct GradientRow {
     polytope_name: String,
@@ -244,49 +207,6 @@ struct GradientRow {
     gradient_norm_jump: f64,
     directional_deriv_jump: f64,
     gradient_angle_change_deg: f64,
-}
-
-/// Pass 3: convexity testing row.
-#[derive(Debug, Serialize)]
-struct ConvexityRow {
-    polytope_name: String,
-    facet_count: usize,
-    dir1_facet: usize,
-    dir1_index: usize,
-    dir2_facet: usize,
-    dir2_index: usize,
-    t1_max: f64,
-    t2_max: f64,
-    midpoint_same_incidence: bool,
-    midpoint_same_omega_signs: bool,
-    midpoint_same_transitions: bool,
-    midpoint_construction_ok: bool,
-}
-
-/// Pass 4: multi-boundary sweep row (one row per polytope per direction).
-#[derive(Debug, Serialize)]
-struct SweepRow {
-    polytope_name: String,
-    facet_count: usize,
-    direction_type: String,
-    /// Total distance budget for the sweep.
-    budget: f64,
-    /// Number of boundaries crossed before budget or failure.
-    n_boundaries: usize,
-    /// Cumulative distances at each boundary.
-    boundary_distances: Vec<f64>,
-    /// Event types at each boundary.
-    event_types: Vec<String>,
-    /// sys value after each boundary crossing (NaN if EHZ failed).
-    sys_values: Vec<f64>,
-    /// sys at start of sweep.
-    sys_start: f64,
-    /// Whether the sweep ended due to construction failure (vs budget exhausted).
-    ended_by_failure: bool,
-    /// Failure reason if ended_by_failure is true.
-    failure_reason: String,
-    /// Total distance traveled.
-    total_distance: f64,
 }
 
 // ============================================================================
@@ -318,7 +238,7 @@ fn source_dataset_from_record(record: &PolytopeRecord) -> String {
 }
 
 // ============================================================================
-// Instrumented EHZ capacity — collects ALL valid orbits
+// Instrumented EHZ capacity -- collects ALL valid orbits
 // ============================================================================
 
 #[derive(Debug, Clone)]
@@ -336,7 +256,6 @@ struct InstrumentedResult {
 }
 
 /// Enumerate all valid orbits via HK2017, return best + orbit gap.
-/// Copied from hko-neighborhood/run.rs, simplified (we only need gap, not all orbits).
 fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult> {
     let f = polytope.facet_count();
     let adj = build_transition_matrix(polytope);
@@ -398,17 +317,12 @@ fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult
 // ============================================================================
 
 /// Compute the first boundary event along a direction in dual-vertex space.
-/// [lem:step-bound-incidence] incidence flip detection, [lem:step-bound-omega] ω₀ flip detection
+/// [lem:step-bound-incidence] incidence flip detection, [lem:step-bound-omega] omega_0 flip detection
 ///
-/// For step a'_k(t) = a_k + t·d_k, the combinatorial type changes when:
+/// For step a'_k(t) = a_k + t*d_k, the combinatorial type changes when:
 /// 1. **Incidence flip:** a vertex's slack w.r.t. a non-incident facet reaches zero.
-///    For simple vertex v determined by facets {j1,..,j4}, we have a_ji · v = 1.
-///    Differentiating: d_ji · v + a_ji · dv/dt = 0 ⟹ dv/dt = −A_v⁻¹ (d_{det} · v)
-///    where A_v = [a_{j1}; ...; a_{j4}] and (d_{det} · v)_i = d_{ji} · v.
-///    For non-incident facet j: slack = 1 − a_j · v, rate = −d_j · v − a_j · dv/dt.
-/// 2. **ω₀ flip:** sign(ω₀(a_i, a_j)) changes for ridge-adjacent facets.
-///    ω₀(a_i(t), a_j(t)) is quadratic in t; exact roots via quadratic formula.
-/// 3. **Dual vertex degeneration:** |a_k + t·d_k| → 0.
+/// 2. **omega_0 flip:** sign(omega_0(a_i, a_j)) changes for ridge-adjacent facets.
+/// 3. **Dual vertex degeneration:** |a_k + t*d_k| -> 0.
 fn compute_step_bound_detailed(
     polytope: &Polytope4D,
     direction: &[Vector4<f64>],
@@ -494,12 +408,7 @@ fn compute_step_bound_detailed(
         }
     }
 
-    // --- ω₀ sign preservation for ridge-adjacent pairs ---
-    // sign(ω₀(n_i, n_j)) = sign(ω₀(a_i, a_j)) since |a_k| > 0 and ω₀ is bilinear.
-    // Along the path a_k(t) = a_k + t·d_k, bilinearity gives:
-    //   ω₀(a_i(t), a_j(t)) = c + b·t + a·t²
-    // where c = ω₀(a_i, a_j), b = ω₀(d_i, a_j) + ω₀(a_i, d_j), a = ω₀(d_i, d_j).
-    // Sign flips at the smallest positive root of this quadratic.
+    // --- omega_0 sign preservation for ridge-adjacent pairs ---
     for ridge in &skeleton.ridges {
         let i = ridge.facets[0];
         let j = ridge.facets[1];
@@ -537,7 +446,7 @@ fn compute_step_bound_detailed(
         }
     }
 
-    // --- Dual vertex degeneration: |a_k + t·d_k| → 0 ---
+    // --- Dual vertex degeneration: |a_k + t*d_k| -> 0 ---
     for k in 0..f {
         let a_coeff = direction[k].norm_squared();
         let b = 2.0 * duals[k].dot(&direction[k]);
@@ -568,36 +477,26 @@ fn compute_step_bound_detailed(
 }
 
 // ============================================================================
-// Direction construction
+// Polytope construction at perturbed parameter
 // ============================================================================
 
-/// Build per-facet directions: N_FACET_DIRS random S³ directions per facet.
-/// Each direction is nonzero only in R⁴_k for facet k.
-fn build_facet_directions(f: usize, rng: &mut ChaCha8Rng) -> Vec<Direction> {
-    let mut dirs = Vec::with_capacity(f * N_FACET_DIRS);
-    for k in 0..f {
-        for i in 0..N_FACET_DIRS {
-            let raw: Vector4<f64> = Vector4::new(
-                StandardNormal.sample(rng),
-                StandardNormal.sample(rng),
-                StandardNormal.sample(rng),
-                StandardNormal.sample(rng),
-            );
-            let norm = raw.norm();
-            if norm > EPS_NUMERICAL_ZERO {
-                let mut d = vec![Vector4::zeros(); f];
-                d[k] = raw / norm;
-                dirs.push(Direction {
-                    dir_type: "facet".to_string(),
-                    index: i,
-                    facet_index: Some(k),
-                    d,
-                });
-            }
-        }
-    }
-    dirs
+/// Construct a polytope at a'_k = a_k + t*d_k.
+fn construct_at_t(
+    duals: &[Vector4<f64>],
+    direction: &[Vector4<f64>],
+    t: f64,
+) -> Option<Polytope4D> {
+    let new_duals: Vec<Vector4<f64>> = duals
+        .iter()
+        .zip(direction.iter())
+        .map(|(a, d)| a + t * d)
+        .collect();
+    Polytope4D::from_f64(new_duals).ok()
 }
+
+// ============================================================================
+// Direction construction
+// ============================================================================
 
 /// Build global directions: gradient + neg-gradient + N_GLOBAL_DENSE dense random.
 fn build_global_directions(
@@ -664,8 +563,8 @@ fn build_global_directions(
 /// Compute d(sys)/d(a_k) for all facets.
 /// [lem:sys-gradient-a] gradient of sys in dual vertices
 ///
-/// sys = c²/(2V), so by the quotient rule:
-///   d(sys)/d(a_k) = (c · dc/d(a_k) - sys · dV/d(a_k)) / V
+/// sys = c^2/(2V), so by the quotient rule:
+///   d(sys)/d(a_k) = (c * dc/d(a_k) - sys * dV/d(a_k)) / V
 fn compute_sys_gradient_a(
     polytope: &Polytope4D,
     vol: f64,
@@ -684,24 +583,6 @@ fn compute_sys_gradient_a(
         .zip(d_cap_a.iter())
         .map(|(dv, dc)| (cap * dc - sys * dv) / vol)
         .collect()
-}
-
-// ============================================================================
-// Polytope construction at perturbed parameter
-// ============================================================================
-
-/// Construct a polytope at a'_k = a_k + t·d_k.
-fn construct_at_t(
-    duals: &[Vector4<f64>],
-    direction: &[Vector4<f64>],
-    t: f64,
-) -> Option<Polytope4D> {
-    let new_duals: Vec<Vector4<f64>> = duals
-        .iter()
-        .zip(direction.iter())
-        .map(|(a, d)| a + t * d)
-        .collect();
-    Polytope4D::from_f64(new_duals).ok()
 }
 
 /// Compute sys for a polytope using standard (non-instrumented) EHZ.
@@ -766,7 +647,7 @@ fn perm_to_string(perm: &[usize]) -> String {
 }
 
 // ============================================================================
-// Phase 2: Crossing evaluation
+// Crossing evaluation
 // ============================================================================
 
 /// Evaluate sys/orbit on both sides of a boundary.
@@ -844,7 +725,7 @@ fn evaluate_crossing(
 }
 
 // ============================================================================
-// Phase 3: Gradient crossing evaluation
+// Gradient crossing evaluation
 // ============================================================================
 
 /// Compute gradient info on both sides of a boundary.
@@ -927,152 +808,6 @@ fn evaluate_gradient_crossing(
 }
 
 // ============================================================================
-// Combinatorial type comparison (for convexity testing)
-// ============================================================================
-
-/// Combinatorial type signature: sorted vertex-facet incidence + omega signs.
-/// Two polytopes with the same signature have the same combinatorial type.
-struct CombinatorialType {
-    /// Sorted list of sorted vertex-facet incidence vectors.
-    vertex_facets: Vec<Vec<usize>>,
-    /// Sorted list of (facet_i, facet_j, sign_positive) for ridge-adjacent pairs.
-    omega_signs: Vec<(usize, usize, bool)>,
-}
-
-fn combinatorial_type(polytope: &Polytope4D) -> CombinatorialType {
-    let skeleton = Skeleton::compute(polytope);
-    let duals = polytope.dual_vertices_f64();
-
-    let mut vf: Vec<Vec<usize>> = skeleton
-        .vertex_facets
-        .iter()
-        .map(|facets| {
-            let mut f = facets.clone();
-            f.sort();
-            f
-        })
-        .collect();
-    vf.sort();
-
-    let mut omega_signs: Vec<(usize, usize, bool)> = skeleton
-        .ridges
-        .iter()
-        .map(|r| {
-            let i = r.facets[0].min(r.facets[1]);
-            let j = r.facets[0].max(r.facets[1]);
-            let sign = omega0(&duals[i], &duals[j]) >= 0.0;
-            (i, j, sign)
-        })
-        .collect();
-    omega_signs.sort();
-
-    CombinatorialType {
-        vertex_facets: vf,
-        omega_signs,
-    }
-}
-
-fn same_incidence(a: &CombinatorialType, b: &CombinatorialType) -> bool {
-    a.vertex_facets == b.vertex_facets
-}
-
-fn same_omega(a: &CombinatorialType, b: &CombinatorialType) -> bool {
-    a.omega_signs == b.omega_signs
-}
-
-/// Compare transition matrices (vertex adjacency + ω₀ signs → directed facet graph).
-/// This is what actually determines which Reeb orbits are feasible.
-fn same_transitions(base: &Polytope4D, other: &Polytope4D) -> bool {
-    let t1 = build_transition_matrix(base);
-    let t2 = build_transition_matrix(other);
-    t1 == t2
-}
-
-
-// ============================================================================
-// Pass 4: Multi-boundary sweep
-// ============================================================================
-
-/// Walk along a direction, iteratively stepping past each boundary.
-/// Computes sys at each step to track whether optimization direction maintains improvement.
-/// Returns the sweep row with all boundaries encountered.
-fn multi_boundary_sweep(
-    start_duals: &[Vector4<f64>],
-    direction: &[Vector4<f64>],
-    budget: f64,
-    sys_start: f64,
-) -> SweepRow {
-    let mut current_duals = start_duals.to_vec();
-    let mut total_distance = 0.0;
-    let mut boundary_distances = Vec::new();
-    let mut event_types = Vec::new();
-    let mut sys_values = Vec::new();
-    let mut ended_by_failure = false;
-    let mut failure_reason = String::new();
-
-    loop {
-        // Build polytope at current position
-        let poly = match Polytope4D::from_f64(current_duals.clone()) {
-            Ok(p) => p,
-            Err(e) => {
-                ended_by_failure = true;
-                failure_reason = format!("polytope construction: {e}");
-                break;
-            }
-        };
-
-        // Find next boundary
-        let boundary = compute_step_bound_detailed(&poly, direction);
-
-        if matches!(boundary.event, EventType::Unbounded) {
-            break;
-        }
-
-        let t = boundary.t_max;
-        if total_distance + t > budget {
-            break;
-        }
-
-        total_distance += t;
-        boundary_distances.push(total_distance);
-        event_types.push(boundary.event.name().to_string());
-
-        // Step just past the boundary
-        let step_over = (SWEEP_STEP_FRACTION * t).max(EPS_FLOOR);
-        let t_step = t + step_over;
-        total_distance += step_over;
-
-        // Update current duals
-        for (a, d) in current_duals.iter_mut().zip(direction.iter()) {
-            *a += t_step * d;
-        }
-
-        // Compute sys at this position (cheap attempt, NaN on failure)
-        let sys_here = Polytope4D::from_f64(current_duals.clone())
-            .ok()
-            .and_then(|p| compute_sys(&p))
-            .map(|(s, _, _, _, _)| s)
-            .unwrap_or(f64::NAN);
-        sys_values.push(sys_here);
-    }
-
-    SweepRow {
-        polytope_name: String::new(),
-        facet_count: start_duals.len(),
-        direction_type: String::new(),
-        budget,
-        n_boundaries: boundary_distances.len(),
-        boundary_distances,
-        event_types,
-        sys_values,
-        sys_start,
-        ended_by_failure,
-        failure_reason,
-        total_distance,
-    }
-}
-
-// ============================================================================
 // Main
 // ============================================================================
 
@@ -1081,13 +816,13 @@ fn main() {
     let base_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
     let mut rng = ChaCha8Rng::seed_from_u64(SEED);
 
-    println!("Combinatorial Boundaries: cell geometry characterization\n");
+    println!("Combinatorial Anatomy: boundary crossing analysis\n");
 
     // =========================================================================
     // Load starting polytopes from database
     // =========================================================================
 
-    println!("Loading starting polytopes from database (F ≤ {MAX_FACET_COUNT})...");
+    println!("Loading starting polytopes from database (F <= {MAX_FACET_COUNT})...");
 
     let db_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("../../data/polytopes.jsonl");
@@ -1113,7 +848,7 @@ fn main() {
     }
 
     let n_polytopes = polytopes.len();
-    println!("  {n_polytopes} polytopes loaded from database (F ≤ {MAX_FACET_COUNT})\n");
+    println!("  {n_polytopes} polytopes loaded from database (F <= {MAX_FACET_COUNT})\n");
 
     if n_polytopes == 0 {
         eprintln!("ERROR: No polytopes in database. Run base-random-sweep and base-random-product-sweep first.");
@@ -1124,11 +859,7 @@ fn main() {
     // Open output files
     // =========================================================================
 
-    let out_dir = base_dir.join("combinatorial-boundaries");
-
-    let profiling_file =
-        File::create(out_dir.join("combinatorial-boundaries-profiling.jsonl")).expect("create profiling JSONL");
-    let mut profiling_writer = BufWriter::new(profiling_file);
+    let out_dir = base_dir.join("combinatorial-anatomy");
 
     let anatomy_file =
         File::create(out_dir.join("combinatorial-boundaries-anatomy.jsonl")).expect("create anatomy JSONL");
@@ -1146,24 +877,13 @@ fn main() {
         None
     };
 
-    let convexity_file =
-        File::create(out_dir.join("combinatorial-boundaries-convexity.jsonl")).expect("create convexity JSONL");
-    let mut convexity_writer = BufWriter::new(convexity_file);
-
-    let sweep_file =
-        File::create(out_dir.join("combinatorial-boundaries-sweep.jsonl")).expect("create sweep JSONL");
-    let mut sweep_writer = BufWriter::new(sweep_file);
-
     // =========================================================================
     // Process each polytope
     // =========================================================================
 
-    let mut total_profiling = 0usize;
     let mut total_anatomy = 0usize;
     let mut total_crossing = 0usize;
     let mut total_gradient = 0usize;
-    let mut total_convexity = 0usize;
-    let mut total_sweep = 0usize;
     let mut n_skipped = 0usize;
 
     for (idx, (name, source, polytope)) in polytopes.iter().enumerate() {
@@ -1175,8 +895,6 @@ fn main() {
         // Base computation: instrumented EHZ for orbit gap + gradient
         // =====================================================================
 
-        // Base computation wrapped in catch_unwind — the KKT solver can panic
-        // on near-singular systems (pre-existing issue in saddle_point_solver).
         let base = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
             let instrumented = ehz_capacity_instrumented(polytope)?;
             let vol = volume(polytope).ok().filter(|&v| v > 0.0)?;
@@ -1204,58 +922,8 @@ fn main() {
         let all_simple = skeleton.vertex_facets.iter().all(|vf| vf.len() == 4);
         let orbit_str = perm_to_string(&perm);
 
-        // Which facets are in the optimal orbit?
-        let orbit_facets: Vec<bool> = (0..f).map(|k| perm.contains(&k)).collect();
-
-        // Base combinatorial type (for convexity testing)
-        let base_type = combinatorial_type(polytope);
-
         // =====================================================================
-        // Pass 1: Per-facet cell profiling (cheap, no EHZ)
-        // =====================================================================
-
-        let facet_dirs = build_facet_directions(f, &mut rng);
-
-        // Store profiling results for convexity testing
-        struct FacetProbe {
-            facet: usize,
-            dir_index: usize,
-            t_max: f64,
-            direction: Vec<Vector4<f64>>,
-        }
-        let mut probes: Vec<FacetProbe> = Vec::new();
-
-        for dir in &facet_dirs {
-            let boundary = compute_step_bound_detailed(polytope, &dir.d);
-            let k = dir.facet_index.unwrap();
-
-            let row = ProfilingRow {
-                polytope_name: name.clone(),
-                facet_count: f,
-                facet_index: k,
-                facet_in_orbit: orbit_facets[k],
-                direction_index: dir.index,
-                t_max: boundary.t_max,
-                event_type: boundary.event.name().to_string(),
-            };
-
-            serde_json::to_writer(&mut profiling_writer, &row).unwrap();
-            writeln!(profiling_writer).unwrap();
-            total_profiling += 1;
-
-            // Store for convexity testing (skip unbounded)
-            if boundary.t_max < MAX_STEP_SIZE {
-                probes.push(FacetProbe {
-                    facet: k,
-                    dir_index: dir.index,
-                    t_max: boundary.t_max,
-                    direction: dir.d.clone(),
-                });
-            }
-        }
-
-        // =====================================================================
-        // Pass 2: Global probes (moderate, with EHZ)
+        // Global probes (with EHZ)
         // =====================================================================
 
         let global_dirs = build_global_directions(&d_sys_a, f, &mut rng);
@@ -1339,135 +1007,6 @@ fn main() {
         }
 
         // =====================================================================
-        // Pass 3: Convexity testing
-        // =====================================================================
-
-        if probes.len() >= 2 {
-            let n_pairs = N_CONVEXITY_PAIRS.min(probes.len() * (probes.len() - 1) / 2);
-
-            // Sample pairs: mix of same-facet and cross-facet
-            let mut pairs_tested = 0;
-            let mut pair_idx = 0;
-
-            // Deterministic sampling: stride through all pairs
-            let total_pairs = probes.len() * (probes.len() - 1) / 2;
-            let stride = if total_pairs > n_pairs {
-                total_pairs / n_pairs
-            } else {
-                1
-            };
-
-            'pairs: for i in 0..probes.len() {
-                for j in (i + 1)..probes.len() {
-                    if pair_idx % stride == 0 {
-                        let p1 = &probes[i];
-                        let p2 = &probes[j];
-
-                        // Interior points: 0.5 * t_max along each direction
-                        let t1 = 0.5 * p1.t_max;
-                        let t2 = 0.5 * p2.t_max;
-
-                        // Midpoint direction: 0.5 * (t1*d1 + t2*d2)
-                        let mid_dir: Vec<Vector4<f64>> = p1
-                            .direction
-                            .iter()
-                            .zip(p2.direction.iter())
-                            .map(|(d1, d2)| 0.5 * (t1 * d1 + t2 * d2))
-                            .collect();
-
-                        // Construct polytope at midpoint (a + mid_dir, i.e. t=1)
-                        let mut construction_ok = false;
-                        let mut same_incidence_val = false;
-                        let mut same_omega_val = false;
-                        let mut same_transitions_val = false;
-
-                        if let Some(mid_poly) = construct_at_t(duals, &mid_dir, 1.0) {
-                            construction_ok = true;
-                            let mid_type = combinatorial_type(&mid_poly);
-                            same_incidence_val = same_incidence(&base_type, &mid_type);
-                            same_omega_val = same_omega(&base_type, &mid_type);
-                            same_transitions_val = same_transitions(polytope, &mid_poly);
-                        }
-
-                        let row = ConvexityRow {
-                            polytope_name: name.clone(),
-                            facet_count: f,
-                            dir1_facet: p1.facet,
-                            dir1_index: p1.dir_index,
-                            dir2_facet: p2.facet,
-                            dir2_index: p2.dir_index,
-                            t1_max: p1.t_max,
-                            t2_max: p2.t_max,
-                            midpoint_same_incidence: same_incidence_val,
-                            midpoint_same_omega_signs: same_omega_val,
-                            midpoint_same_transitions: same_transitions_val,
-                            midpoint_construction_ok: construction_ok,
-                        };
-
-                        serde_json::to_writer(&mut convexity_writer, &row).unwrap();
-                        writeln!(convexity_writer).unwrap();
-                        total_convexity += 1;
-                        pairs_tested += 1;
-
-                        if pairs_tested >= n_pairs {
-                            break 'pairs;
-                        }
-                    }
-                    pair_idx += 1;
-                }
-            }
-        }
-
-        // =====================================================================
-        // Pass 4: Multi-boundary sweep (gradient + 2 dense random)
-        // =====================================================================
-
-        // Gradient sweep
-        let grad_norm: f64 = d_sys_a.iter().map(|v| v.norm_squared()).sum::<f64>().sqrt();
-        if grad_norm > EPS_NUMERICAL_ZERO {
-            let grad_dir: Vec<Vector4<f64>> = d_sys_a.iter().map(|v| v / grad_norm).collect();
-            let mut row = multi_boundary_sweep(duals, &grad_dir, SWEEP_BUDGET, sys);
-            row.polytope_name = name.clone();
-            row.direction_type = "gradient".to_string();
-            serde_json::to_writer(&mut sweep_writer, &row).unwrap();
-            writeln!(sweep_writer).unwrap();
-            total_sweep += 1;
-
-            // Negative gradient
-            let neg_dir: Vec<Vector4<f64>> = grad_dir.iter().map(|v| -v).collect();
-            let mut row = multi_boundary_sweep(duals, &neg_dir, SWEEP_BUDGET, sys);
-            row.polytope_name = name.clone();
-            row.direction_type = "neg_gradient".to_string();
-            serde_json::to_writer(&mut sweep_writer, &row).unwrap();
-            writeln!(sweep_writer).unwrap();
-            total_sweep += 1;
-        }
-
-        // 2 dense random sweeps
-        for i in 0..2 {
-            let raw: Vec<Vector4<f64>> = (0..f)
-                .map(|_| {
-                    Vector4::new(
-                        StandardNormal.sample(&mut rng),
-                        StandardNormal.sample(&mut rng),
-                        StandardNormal.sample(&mut rng),
-                        StandardNormal.sample(&mut rng),
-                    )
-                })
-                .collect();
-            let norm: f64 = raw.iter().map(|v| v.norm_squared()).sum::<f64>().sqrt();
-            if norm > EPS_NUMERICAL_ZERO {
-                let dir: Vec<Vector4<f64>> = raw.iter().map(|v| v / norm).collect();
-                let mut row = multi_boundary_sweep(duals, &dir, SWEEP_BUDGET, sys);
-                row.polytope_name = name.clone();
-                row.direction_type = format!("dense_random_{i}");
-                serde_json::to_writer(&mut sweep_writer, &row).unwrap();
-                writeln!(sweep_writer).unwrap();
-                total_sweep += 1;
-            }
-        }
-
-        // =====================================================================
         // Progress reporting
         // =====================================================================
 
@@ -1488,25 +1027,19 @@ fn main() {
     // Flush and report
     // =========================================================================
 
-    profiling_writer.flush().unwrap();
     anatomy_writer.flush().unwrap();
     crossing_writer.flush().unwrap();
     if let Some(ref mut w) = gradient_writer {
         w.flush().unwrap();
     }
-    convexity_writer.flush().unwrap();
-    sweep_writer.flush().unwrap();
 
     let total_time = t0.elapsed().as_secs_f64();
     println!("\nDone in {total_time:.1}s.");
-    println!("  Profiling rows: {total_profiling}");
     println!("  Anatomy rows:   {total_anatomy}");
     println!("  Crossing rows:  {total_crossing}");
     if RUN_GRADIENT {
         println!("  Gradient rows:  {total_gradient}");
     }
-    println!("  Sweep rows:     {total_sweep}");
-    println!("  Convexity rows: {total_convexity}");
     if n_skipped > 0 {
         println!("  Skipped:        {n_skipped} (base computation failed)");
     }

@@ -23,8 +23,20 @@ name = "sys-boundary-crossing"
 path = "boundary-crossing-search/run.rs"
 
 [[bin]]
-name = "sys-combinatorial"
-path = "combinatorial-structure/run.rs"
+name = "sys-comb-profiling"
+path = "combinatorial-profiling/run.rs"
+
+[[bin]]
+name = "sys-comb-anatomy"
+path = "combinatorial-anatomy/run.rs"
+
+[[bin]]
+name = "sys-comb-convexity"
+path = "combinatorial-convexity/run.rs"
+
+[[bin]]
+name = "sys-comb-sweep"
+path = "combinatorial-sweep/run.rs"
 
 [[bin]]
 name = "sys-random-sweep"

@@ -1,12 +1,12 @@
-% math.tex — gradient-correctness experiment
+% math.tex — basic gradient validation (Q1 generic, Q2 non-generic)
 %
 % Smoothness analysis of the EHZ capacity as a function of dual vertices.
 % Refines [prop:capacity-piecewise-smooth] from crates/exp-sys-optimization/sensitivity-analysis/math.tex
 % with per-orbit feasibility analysis and precise smoothness classification.
 %
 % Sources:
-%   - Generated data: crates/exp-sys-optimization/gradient-validation/*.jsonl
-%   - Developer notes: crates/exp-sys-optimization/gradient-validation/logbook.md
+%   - Generated data: crates/dev-gradient-validation/basic-validation/*.jsonl
+%   - Developer notes: crates/dev-gradient-validation/basic-validation/logbook.md
 %   - KKT formulation: crates/library/src/kkt/math.tex
 %   - Existing proposition: crates/exp-sys-optimization/sensitivity-analysis/math.tex
 %
@@ -16,12 +16,10 @@
 %   §3 Orbit contraction at feasibility boundary (lem:orbit-contraction)
 %   §4 KKT sensitivity (lem:kkt-sensitivity)
 %   §5 Capacity smoothness classification (prop:capacity-smoothness-classification)
-%   §6 Directional derivative with orbit appearance (thm:subdiff-with-appearance)
 %
 % Labels defined here:
 %   lem:orbit-feasibility-open, lem:per-orbit-smooth, lem:orbit-contraction,
-%   lem:kkt-sensitivity, prop:capacity-smoothness-classification,
-%   thm:subdiff-with-appearance
+%   lem:kkt-sensitivity, prop:capacity-smoothness-classification
 
 
 % ── §1 Setup and notation ──
@@ -324,195 +322,3 @@ hypersurface. Finitely many orbit pairs, so the union has
 measure zero.
 \end{proof}
 \end{unverified}
-
-
-% ── §6 Directional derivative with orbit appearance ──
-%
-% Proposition (b) above assumes all tied orbits have beta > 0, so each
-% A_sigma is C^1 on a full neighborhood of a_0. This fails when an orbit
-% has beta_k = 0 for some k: the orbit is only feasible in the half-space
-% of directions where beta_k does not go negative. The following theorem
-% extends the directional derivative formula to this setting.
-
-\begin{unverified}
-\begin{theorem}[Directional derivative with orbit appearance]%
-\label{thm:subdiff-with-appearance}
-At~$a_0$, define the set of minimizing orbits
-(feasible with minimum action):
-\begin{equation}\label{eq:minimizer-set}
-  \mathcal{R} = \bigl\{\sigma :
-    A_\sigma(a_0) = c(a_0),\;
-    \beta(\sigma; a_0) \geq 0,\;
-    Q(\sigma; a_0) > 0,\;
-    M_\sigma(a_0) \text{ non-singular}
-  \bigr\}.
-\end{equation}
-Assume $|\mathcal{R}| \geq 1$ and that no orbit
-outside~$\mathcal{R}$ achieves action~$c(a_0)$
-with $\beta \geq 0$ and $Q > 0$.
-
-For a perturbation direction~$d \in (\mathbb{R}^4)^F$,
-an orbit $\sigma \in \mathcal{R}$ is
-\emph{directionally feasible in direction~$d$} if for every
-index~$k$ with $\beta_k(\sigma; a_0) = 0$,
-\begin{equation}\label{eq:dir-feasible-condition}
-  \nabla_a \beta_k(\sigma; a_0) \cdot d > 0.
-\end{equation}
-(The strict inequality ensures~$\beta_k$
-becomes positive at first order under the perturbation.)
-Here $\nabla_a \beta_k$ is the sensitivity from
-Lemma~\ref{lem:kkt-sensitivity}.
-The directionally feasible subset is
-\begin{equation}\label{eq:dir-feasible-set}
-  \mathcal{R}(d) = \bigl\{\sigma \in \mathcal{R} :
-    \sigma \text{ is directionally feasible in direction } d
-  \bigr\}.
-\end{equation}
-Orbits with $\beta(\sigma; a_0) > 0$ componentwise are
-directionally feasible in every direction
-(the condition~\eqref{eq:dir-feasible-condition} is vacuous).
-
-Assume additionally that for every $\sigma \in \mathcal{R}$
-and every~$k$ with $\beta_k(\sigma; a_0) = 0$,
-$\nabla_a \beta_k(\sigma; a_0) \cdot d \neq 0$.
-(This is a non-degeneracy condition; it holds for
-generic~$d$ since $\nabla_a \beta_k \neq 0$ generically.)
-
-If $\mathcal{R}(d) \neq \emptyset$, the one-sided directional
-derivative of the capacity exists and equals
-\begin{equation}\label{eq:subdiff-appearance}
-  D_d^+\, c(a_0) = \min_{\sigma \in \mathcal{R}(d)}
-    \nabla_a A_\sigma(a_0) \cdot d.
-\end{equation}
-\end{theorem}
-
-\begin{proof}
-Write $a(t) = a_0 + t\,d$ for $t \geq 0$.
-We classify orbits in~$\mathcal{R}$ by their behavior
-under the perturbation.
-
-\emph{Step 1: Interior orbits remain feasible.}
-If $\beta(\sigma; a_0) > 0$ componentwise, then
-$\sigma \in \mathcal{R}(d)$ for all~$d$, and by
-Lemma~\ref{lem:orbit-feasibility-open},
-$\sigma$ remains feasible at~$a(t)$ for small~$t > 0$.
-By Lemma~\ref{lem:per-orbit-smooth}, $A_\sigma$ is $C^\infty$
-near~$a_0$, so
-$A_\sigma(a(t)) = A_\sigma(a_0) + t\,\nabla_a A_\sigma(a_0) \cdot d + O(t^2)$.
-
-\emph{Step 2: Directionally feasible boundary orbits remain feasible.}
-Suppose $\sigma \in \mathcal{R}(d)$ and
-$\beta_k(\sigma; a_0) = 0$ for some index~$k$.
-By Lemma~\ref{lem:kkt-sensitivity}, the map
-$a \mapsto \beta(\sigma; a) = M_\sigma(a)^{-1} b$
-is smooth near~$a_0$ (the smoothness of the KKT solution holds
-wherever $M_\sigma$ is non-singular, with no sign condition
-on~$\beta$).
-Therefore
-\[
-  \beta_k(\sigma; a(t))
-  = \underbrace{\beta_k(\sigma; a_0)}_{=\,0}
-  + t\,\underbrace{\nabla_a \beta_k(\sigma; a_0) \cdot d}_{>\, 0}
-  + O(t^2)
-  > 0 \quad \text{for small } t > 0,
-\]
-where the strict positivity of the first-order term uses
-the directional feasibility condition~\eqref{eq:dir-feasible-condition}.
-Components with $\beta_k(\sigma; a_0) > 0$ remain positive by
-continuity.
-Hence $\sigma$ is feasible at~$a(t)$ for small $t > 0$,
-and the Taylor expansion of~$A_\sigma$ applies:
-$A_\sigma(a(t)) = A_\sigma(a_0) + t\,\nabla_a A_\sigma(a_0) \cdot d + O(t^2)$.
-
-\emph{Step 3: Directionally infeasible orbits become infeasible.}
-If $\sigma \in \mathcal{R} \setminus \mathcal{R}(d)$,
-there exists~$k$ with $\beta_k(\sigma; a_0) = 0$ and
-$\nabla_a \beta_k(\sigma; a_0) \cdot d < 0$
-(strict, by the non-degeneracy hypothesis).
-Then $\beta_k(\sigma; a(t)) = t\,(\nabla_a \beta_k \cdot d) + O(t^2) < 0$
-for small $t > 0$, so $\sigma$ is infeasible at~$a(t)$
-and does not contribute to~$c(a(t))$.
-
-\emph{Step 4: Upper bound.}
-For every $\sigma \in \mathcal{R}(d)$,
-$c(a(t)) \leq A_\sigma(a(t))
-= c(a_0) + t\,g_\sigma \cdot d + O(t^2)$,
-where $g_\sigma = \nabla_a A_\sigma(a_0)$.
-Hence
-\[
-  c(a(t)) \leq c(a_0)
-  + t\,\min_{\sigma \in \mathcal{R}(d)} g_\sigma \cdot d
-  + O(t^2).
-\]
-
-\emph{Step 5: Lower bound.}
-Any orbit~$\sigma$ contributing to $c(a(t))$ is feasible
-at~$a(t)$ and thus either:
-\begin{itemize}
-\item
-  belongs to $\mathcal{R}(d)$ (handled in Step~4), or
-\item
-  belongs to $\mathcal{R}$ but is directionally infeasible
-  (impossible by Step~3: it is infeasible at~$a(t)$), or
-\item
-  lies outside~$\mathcal{R}$ with $A_\sigma(a_0) > c(a_0)$.
-  By continuity of~$A_\sigma$,
-  $A_\sigma(a(t)) > c(a_0) + \delta/2$ for some $\delta > 0$
-  and small~$t$, so it cannot undercut the minimum.
-% [TODO: JÖRN - this argument requires that every orbit sigma
-%  outside R with beta(sigma; a_0) >= 0 has A_sigma(a_0) > c(a_0)
-%  strictly. The third hypothesis in the theorem statement
-%  ensures this. It also does not account for orbits that are
-%  strictly infeasible at a_0 (some beta_k < 0, not just = 0)
-%  but become feasible at a(t). Such orbits have A_sigma(a_0)
-%  computed from the unconstrained KKT solution, which may be
-%  below c(a_0). For the formula to hold, we need the action gap
-%  between such orbits and c(a_0) to be bounded away from zero.
-%  This is generically true but not formally proved here.]
-\end{itemize}
-Hence
-\[
-  c(a(t)) \geq c(a_0)
-  + t\,\min_{\sigma \in \mathcal{R}(d)} g_\sigma \cdot d
-  - O(t^2).
-\]
-
-\emph{Conclusion.}
-Combining Steps~4 and~5:
-\[
-  c(a(t)) - c(a_0)
-  = t\,\min_{\sigma \in \mathcal{R}(d)} g_\sigma \cdot d + O(t^2),
-\]
-so $D_d^+\, c(a_0)
-= \lim_{t \to 0^+} \frac{c(a(t)) - c(a_0)}{t}
-= \min_{\sigma \in \mathcal{R}(d)} g_\sigma \cdot d$.
-\end{proof}
-\end{unverified}
-
-
-% ── Open questions ──
-%
-% 1. Uniqueness of KKT solution for fixed sigma.
-%    Lemma [lem:well-defined] shows Q = -xi is unique even when M is singular.
-%    But when M is singular, the beta-components need not be unique, and the
-%    LP search (rem:near-null-lp-search) selects one with beta > 0.
-%    Question: is A_sigma(a) still smooth in a at points where M(a) is singular?
-%    The action value is well-defined, but the IFT argument
-%    (Lemma [lem:per-orbit-smooth]) requires non-singular M.
-%
-% 2. Lower bound gap in thm:subdiff-with-appearance.
-%    The lower bound (Step 5) does not account for orbits that are strictly
-%    infeasible at a_0 (beta_k(a_0) < 0 for some k) but become feasible
-%    at a(t) with action below c(a_0). Such an orbit is NOT in R (since
-%    R requires beta >= 0), and its unconstrained action A_sigma(a_0) may
-%    be below c(a_0). For the formula to hold, we need A_sigma(a(t)) to
-%    remain above c(a_0) + o(t) for such orbits. This requires the
-%    infeasibility (negative beta_k) to be first-order, not merely
-%    infinitesimal, so that A_sigma(a(t)) transitions smoothly and the
-%    action gap is preserved. Generically true, but needs proof.
-%
-% 3. The nabla_a beta_k . d = 0 case.
-%    The theorem avoids this by requiring strict inequality. For the
-%    degenerate directions where nabla_a beta_k . d = 0, the formula
-%    may still hold but requires second-order analysis. This is a
-%    measure-zero set of directions (for generic a_0).

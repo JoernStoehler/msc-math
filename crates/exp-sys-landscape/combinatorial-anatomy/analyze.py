@@ -1,7 +1,8 @@
 """
-Goal: Analyze combinatorial boundary events and cell geometry.
-Input: crates/exp-sys-optimization/combinatorial-structure/combinatorial-boundaries-{profiling,anatomy,crossing,gradient,convexity}.jsonl
-Output: crates/exp-sys-optimization/combinatorial-structure/*.png
+Goal: Analyze boundary anatomy, crossing evaluation, gradient measurement, and orbit gap.
+Input: crates/exp-sys-landscape/combinatorial-anatomy/combinatorial-boundaries-{anatomy,crossing,gradient}.jsonl
+       crates/exp-sys-landscape/combinatorial-profiling/combinatorial-boundaries-profiling.jsonl (for gradient-cell alignment)
+Output: crates/exp-sys-landscape/combinatorial-anatomy/*.png
 """
 
 import json
@@ -35,7 +36,6 @@ DIR_COLORS = {
     "gradient": "#E91E63",
     "neg_gradient": "#9C27B0",
     "dense_random": "#2196F3",
-    "facet": "#4CAF50",
 }
 
 # ============================================================================
@@ -52,14 +52,22 @@ def load_jsonl(filename):
     return rows
 
 
-profiling = load_jsonl("combinatorial-boundaries-profiling.jsonl")
 anatomy = load_jsonl("combinatorial-boundaries-anatomy.jsonl")
 crossing = load_jsonl("combinatorial-boundaries-crossing.jsonl")
 gradient = load_jsonl("combinatorial-boundaries-gradient.jsonl")
-convexity = load_jsonl("combinatorial-boundaries-convexity.jsonl")
 
-print(f"Loaded: {len(profiling)} profiling, {len(anatomy)} anatomy, "
-      f"{len(crossing)} crossing, {len(gradient)} gradient, {len(convexity)} convexity rows")
+# Load profiling data from sibling experiment for gradient-cell alignment
+PROFILING_DIR = EXPERIMENT_DIR.parent / "combinatorial-profiling"
+profiling_path = PROFILING_DIR / "combinatorial-boundaries-profiling.jsonl"
+profiling = []
+if profiling_path.exists():
+    with open(profiling_path) as f:
+        for line in f:
+            if line.strip():
+                profiling.append(json.loads(line))
+
+print(f"Loaded: {len(anatomy)} anatomy, {len(crossing)} crossing, "
+      f"{len(gradient)} gradient, {len(profiling)} profiling rows")
 
 # ============================================================================
 # Figure 1: Event type breakdown (anatomy, global probes)
@@ -219,151 +227,7 @@ plt.close()
 print("  boundary_density_cdf.png")
 
 # ============================================================================
-# Figure 8: Per-facet cell width — orbit facets vs non-orbit facets (profiling)
-# ============================================================================
-
-orbit_tmax = [r["t_max"] for r in profiling if r["facet_in_orbit"] and r["t_max"] < 100]
-non_orbit_tmax = [r["t_max"] for r in profiling if not r["facet_in_orbit"] and r["t_max"] < 100]
-
-fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
-bp = ax.boxplot([orbit_tmax, non_orbit_tmax],
-                tick_labels=["Orbit\nfacets", "Non-orbit\nfacets"],
-                patch_artist=True, showfliers=False)
-bp["boxes"][0].set_facecolor("#E91E63")
-bp["boxes"][0].set_alpha(0.7)
-bp["boxes"][1].set_facecolor("#2196F3")
-bp["boxes"][1].set_alpha(0.7)
-ax.set_ylabel(r"$t_{\max}$ (cell width in facet $\mathbb{R}^4$)")
-ax.set_title("Cell width: orbit facets vs non-orbit facets")
-# Add median annotations
-for i, data in enumerate([orbit_tmax, non_orbit_tmax], 1):
-    med = np.median(data)
-    ax.text(i, med, f"  {med:.3f}", va="center", fontsize=FONT_SIZE_SMALL)
-fig.savefig(EXPERIMENT_DIR / "cell_orbit_vs_nonorbit.png")
-plt.close()
-print("  cell_orbit_vs_nonorbit.png")
-
-# ============================================================================
-# Figure 9: Per-facet cell width by F (profiling)
-# ============================================================================
-
-fig, axes = plt.subplots(1, 2, figsize=FIGSIZE_DUAL)
-
-for ax_idx, (in_orbit, label, color) in enumerate([
-    (True, "Orbit facets", "#E91E63"),
-    (False, "Non-orbit facets", "#2196F3"),
-]):
-    ax = axes[ax_idx]
-    tmax_by_f = defaultdict(list)
-    for r in profiling:
-        if r["facet_in_orbit"] == in_orbit and r["t_max"] < 100:
-            tmax_by_f[r["facet_count"]].append(r["t_max"])
-    f_vals = sorted(tmax_by_f.keys())
-    if f_vals:
-        medians = [np.median(tmax_by_f[f]) for f in f_vals]
-        q25 = [np.percentile(tmax_by_f[f], 25) for f in f_vals]
-        q75 = [np.percentile(tmax_by_f[f], 75) for f in f_vals]
-        ax.plot(f_vals, medians, "o-", color=color, label="Median")
-        ax.fill_between(f_vals, q25, q75, alpha=0.2, color=color, label="IQR")
-    ax.set_xlabel(r"$F$")
-    ax.set_ylabel(r"$t_{\max}$")
-    ax.set_title(label)
-    ax.legend()
-
-fig.suptitle("Cell width by facet count")
-fig.tight_layout()
-fig.savefig(EXPERIMENT_DIR / "cell_width_by_F.png")
-plt.close()
-print("  cell_width_by_F.png")
-
-# ============================================================================
-# Figure 10: Anisotropy histogram (profiling)
-# ============================================================================
-
-facet_groups = defaultdict(list)
-for r in profiling:
-    if r["t_max"] < 100:
-        facet_groups[(r["polytope_name"], r["facet_index"])].append(r["t_max"])
-
-anisotropies = []
-for key, vals in facet_groups.items():
-    if len(vals) >= 2 and min(vals) > 0:
-        anisotropies.append(max(vals) / min(vals))
-
-fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
-ax.hist(anisotropies, bins=50, color="#4CAF50", alpha=0.7)
-ax.axvline(np.median(anisotropies), color="red", ls="--", lw=1,
-           label=f"Median: {np.median(anisotropies):.1f}")
-ax.set_xlabel(r"Anisotropy (max / min $t_{\max}$ within facet $\mathbb{R}^4$)")
-ax.set_ylabel("Count")
-ax.set_title("Cell anisotropy per facet")
-ax.legend()
-fig.savefig(EXPERIMENT_DIR / "cell_anisotropy.png")
-plt.close()
-print("  cell_anisotropy.png")
-
-# ============================================================================
-# Figure 11: Convexity failure rates (convexity)
-# ============================================================================
-
-ok_conv = [r for r in convexity if r["midpoint_construction_ok"]]
-
-if ok_conv:
-    # By type: same-facet vs cross-facet
-    same_facet = [r for r in ok_conv if r["dir1_facet"] == r["dir2_facet"]]
-    cross_facet = [r for r in ok_conv if r["dir1_facet"] != r["dir2_facet"]]
-
-    fig, axes = plt.subplots(1, 2, figsize=FIGSIZE_DUAL)
-
-    # Left: overall convexity failure rates (three checks)
-    ax = axes[0]
-    categories = ["Incidence", r"$\omega_0$ signs", "Transitions"]
-
-    def fail_rate(rows, key):
-        return 100 * (1 - sum(1 for r in rows if r[key]) / max(len(rows), 1))
-
-    all_rates = [fail_rate(ok_conv, "midpoint_same_incidence"),
-                 fail_rate(ok_conv, "midpoint_same_omega_signs"),
-                 fail_rate(ok_conv, "midpoint_same_transitions")]
-
-    bars = ax.bar(categories, all_rates,
-                  color=["#2196F3", "#FF9800", "#F44336"], alpha=0.7)
-    for bar, rate in zip(bars, all_rates):
-        ax.text(bar.get_x() + bar.get_width() / 2, rate + 0.5,
-                f"{rate:.1f}%", ha="center", va="bottom", fontsize=FONT_SIZE_SMALL)
-    ax.set_ylabel("Failure rate (%)")
-    ax.set_title("Midpoint type change rates")
-
-    # Right: transition failure by F
-    ax = axes[1]
-    conv_by_f = defaultdict(lambda: {"total": 0, "trans_fail": 0, "omega_fail": 0})
-    for r in ok_conv:
-        f = r["facet_count"]
-        conv_by_f[f]["total"] += 1
-        if not r["midpoint_same_transitions"]:
-            conv_by_f[f]["trans_fail"] += 1
-        if not r["midpoint_same_omega_signs"]:
-            conv_by_f[f]["omega_fail"] += 1
-
-    f_vals = sorted(conv_by_f.keys())
-    trans_rates = [100 * conv_by_f[f]["trans_fail"] / conv_by_f[f]["total"] for f in f_vals]
-    omega_rates = [100 * conv_by_f[f]["omega_fail"] / conv_by_f[f]["total"] for f in f_vals]
-
-    ax.plot(f_vals, trans_rates, "o-", color="#F44336", label="Transition matrix")
-    ax.plot(f_vals, omega_rates, "s--", color="#FF9800", alpha=0.6, label=r"$\omega_0$ signs")
-    ax.set_xlabel(r"$F$")
-    ax.set_ylabel("Failure rate (%)")
-    ax.set_title("Non-convexity by facet count")
-    ax.legend()
-
-    fig.suptitle("Cell convexity testing")
-    fig.tight_layout()
-    fig.savefig(EXPERIMENT_DIR / "cell_convexity.png")
-    plt.close()
-    print("  cell_convexity.png")
-
-# ============================================================================
-# Figure 12: Orbit gap distribution (anatomy)
+# Figure 8: Orbit gap distribution (anatomy)
 # ============================================================================
 
 orbit_gaps = [r["orbit_gap"] for r in anatomy if r["orbit_gap"] is not None]
@@ -388,7 +252,7 @@ if unique_gaps:
     print("  orbit_gap_distribution.png")
 
 # ============================================================================
-# Figure 13: Orbit gap vs orbit switch rate (crossing + anatomy)
+# Figure 9: Orbit gap vs orbit switch rate (crossing + anatomy)
 # ============================================================================
 
 # Match crossing rows to their polytope's orbit gap
@@ -442,84 +306,50 @@ if ok_cross:
         print("  orbit_gap_vs_switch.png")
 
 # ============================================================================
-# Figure 14: Gradient-cell alignment (profiling + anatomy)
+# Figure 10: Gradient-cell alignment (anatomy + profiling)
 # ============================================================================
 
-# For each polytope, get the gradient per-facet magnitudes and the per-facet median t_max
-polytope_gradient = {}
-for r in anatomy:
-    if r["direction_type"] == "gradient":
-        polytope_gradient[r["polytope_name"]] = r  # one gradient row per polytope
+if profiling:
+    facet_median_tmax = defaultdict(dict)
+    for r in profiling:
+        if r["t_max"] < 100:
+            key = (r["polytope_name"], r["facet_index"])
+            facet_median_tmax[r["polytope_name"]][r["facet_index"]] = \
+                facet_median_tmax[r["polytope_name"]].get(r["facet_index"], [])
+            facet_median_tmax[r["polytope_name"]][r["facet_index"]].append(r["t_max"])
 
-facet_median_tmax = defaultdict(dict)
-for r in profiling:
-    if r["t_max"] < 100:
-        key = (r["polytope_name"], r["facet_index"])
-        facet_median_tmax[r["polytope_name"]][r["facet_index"]] = \
-            facet_median_tmax[r["polytope_name"]].get(r["facet_index"], [])
-        facet_median_tmax[r["polytope_name"]][r["facet_index"]].append(r["t_max"])
+    # Compute median per facet
+    for pname in facet_median_tmax:
+        for k in facet_median_tmax[pname]:
+            vals = facet_median_tmax[pname][k]
+            facet_median_tmax[pname][k] = np.median(vals)
 
-# Compute median per facet
-for pname in facet_median_tmax:
-    for k in facet_median_tmax[pname]:
-        vals = facet_median_tmax[pname][k]
-        facet_median_tmax[pname][k] = np.median(vals)
+    grad_tmax = []
+    min_cell_width = []
+    for r in anatomy:
+        if r["direction_type"] == "gradient" and r["t_max"] < 100:
+            pname = r["polytope_name"]
+            if pname in facet_median_tmax:
+                widths = list(facet_median_tmax[pname].values())
+                if widths:
+                    grad_tmax.append(r["t_max"])
+                    min_cell_width.append(min(widths))
 
-# Now correlate: for each polytope + facet, do we have both gradient magnitude and cell width?
-# We need the actual gradient components per facet — those aren't in the JSONL directly.
-# Instead, use the gradient t_max (boundary distance in gradient direction) as a proxy:
-# if gradient points toward narrow cells, gradient t_max should be small when cells are narrow.
-# A simpler approach: just correlate per-polytope min cell width with gradient t_max.
-grad_tmax = []
-min_cell_width = []
-for r in anatomy:
-    if r["direction_type"] == "gradient" and r["t_max"] < 100:
-        pname = r["polytope_name"]
-        if pname in facet_median_tmax:
-            widths = list(facet_median_tmax[pname].values())
-            if widths:
-                grad_tmax.append(r["t_max"])
-                min_cell_width.append(min(widths))
+    if grad_tmax and min_cell_width:
+        fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
+        ax.scatter(min_cell_width, grad_tmax, s=SCATTER_SIZE, alpha=0.5,
+                   c="#E91E63", edgecolors="none")
+        ax.set_xlabel("Min per-facet median cell width")
+        ax.set_ylabel(r"Gradient direction $t_{\max}$")
+        ax.set_title("Gradient boundary distance vs narrowest cell width")
 
-if grad_tmax and min_cell_width:
-    fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
-    ax.scatter(min_cell_width, grad_tmax, s=SCATTER_SIZE, alpha=0.5,
-               c="#E91E63", edgecolors="none")
-    ax.set_xlabel("Min per-facet median cell width")
-    ax.set_ylabel(r"Gradient direction $t_{\max}$")
-    ax.set_title("Gradient boundary distance vs narrowest cell width")
-
-    # Correlation
-    corr = np.corrcoef(min_cell_width, grad_tmax)[0, 1]
-    ax.text(0.05, 0.95, f"r = {corr:.3f}", transform=ax.transAxes, va="top",
-            fontsize=FONT_SIZE_SMALL)
-    fig.savefig(EXPERIMENT_DIR / "gradient_cell_alignment.png")
-    plt.close()
-    print("  gradient_cell_alignment.png")
-
-# ============================================================================
-# Figure 15: Event type breakdown in profiling (per-facet)
-# ============================================================================
-
-prof_event_counts = {}
-for row in profiling:
-    et = row["event_type"]
-    prof_event_counts[et] = prof_event_counts.get(et, 0) + 1
-
-fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
-labels = sorted(prof_event_counts.keys())
-values = [prof_event_counts[l] for l in labels]
-colors = [EVENT_COLORS.get(l, "#999") for l in labels]
-bars = ax.bar(labels, values, color=colors)
-for bar, val in zip(bars, values):
-    ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 10,
-            f"{val}\n({100 * val / sum(values):.0f}%)",
-            ha="center", va="bottom", fontsize=FONT_SIZE_SMALL)
-ax.set_ylabel("Count")
-ax.set_title("Boundary event types (per-facet probes)")
-fig.savefig(EXPERIMENT_DIR / "profiling_event_types.png")
-plt.close()
-print("  profiling_event_types.png")
+        # Correlation
+        corr = np.corrcoef(min_cell_width, grad_tmax)[0, 1]
+        ax.text(0.05, 0.95, f"r = {corr:.3f}", transform=ax.transAxes, va="top",
+                fontsize=FONT_SIZE_SMALL)
+        fig.savefig(EXPERIMENT_DIR / "gradient_cell_alignment.png")
+        plt.close()
+        print("  gradient_cell_alignment.png")
 
 # ============================================================================
 # Summary statistics
@@ -527,34 +357,7 @@ print("  profiling_event_types.png")
 
 print("\n=== Summary Statistics ===")
 print(f"Polytopes analyzed: {len(set(row['polytope_name'] for row in anatomy))}")
-print(f"Profiling probes: {len(profiling)}")
 print(f"Global direction probes: {len(anatomy)}")
-
-# Profiling: orbit vs non-orbit
-orbit_tmax_vals = [r["t_max"] for r in profiling if r["facet_in_orbit"] and r["t_max"] < 100]
-non_orbit_tmax_vals = [r["t_max"] for r in profiling if not r["facet_in_orbit"] and r["t_max"] < 100]
-print(f"\nPer-facet cell width (t_max):")
-print(f"  Orbit facets:     median={np.median(orbit_tmax_vals):.4f} "
-      f"(n={len(orbit_tmax_vals)})")
-print(f"  Non-orbit facets: median={np.median(non_orbit_tmax_vals):.4f} "
-      f"(n={len(non_orbit_tmax_vals)})")
-print(f"  Anisotropy:       median={np.median(anisotropies):.1f}x "
-      f"(max={max(anisotropies):.0f}x)")
-
-# Convexity
-if ok_conv:
-    omega_fail_rate = 100 * (1 - sum(1 for r in ok_conv if r["midpoint_same_omega_signs"]) / len(ok_conv))
-    trans_fail_rate = 100 * (1 - sum(1 for r in ok_conv if r["midpoint_same_transitions"]) / len(ok_conv))
-    incidence_fail_rate = 100 * (1 - sum(1 for r in ok_conv if r["midpoint_same_incidence"]) / len(ok_conv))
-    print(f"\nConvexity (midpoint test, n={len(ok_conv)}):")
-    print(f"  Incidence failure:    {incidence_fail_rate:.1f}%")
-    print(f"  ω₀ sign failure:      {omega_fail_rate:.1f}%")
-    print(f"  Transition failure:   {trans_fail_rate:.1f}%")
-
-# Orbit gap
-if unique_gaps:
-    print(f"\nOrbit gap ({len(unique_gaps)} polytopes with ≥2 orbits):")
-    print(f"  min={min(unique_gaps):.6f}, median={np.median(unique_gaps):.4f}, max={max(unique_gaps):.4f}")
 
 # Crossing
 if ok_cross:
@@ -572,5 +375,10 @@ if gradient:
     if angles_all:
         print(f"\nGradient angle change: median={np.median(angles_all):.4f}°, "
               f"max={max(angles_all):.1f}°")
+
+# Orbit gap
+if unique_gaps:
+    print(f"\nOrbit gap ({len(unique_gaps)} polytopes with ≥2 orbits):")
+    print(f"  min={min(unique_gaps):.6f}, median={np.median(unique_gaps):.4f}, max={max(unique_gaps):.4f}")
 
 print("\nDone.")
