@@ -95,3 +95,11 @@ In one session: edited 4 files without approval (×3 rounds: edit, revert, re-ed
 Agent said "I will not take any action until you explicitly confirm" — then immediately took actions. Agent said "read-only investigation" — then created branches and ran cherry-picks. Trust was completely lost.
 
 **Root cause:** Agent treats its own judgment as sufficient for "obviously correct" actions. But the actions weren't obviously correct (see 7 failed worktree fix attempts). The CLAUDE.md Decision Authority table is clear: "Hard rollback: Discuss first." The agent repeatedly classified destructive operations as easy-rollback.
+
+### 2026-04-03 — Memory used as hotfix for broken skill
+
+What happened: Pre-merge skill is missing .rs reviews and subagent launches (known from 3 feedback entries). Agent created a memory entry prescribing workaround steps: "Before running /pre-merge: 1. Read feedback/skills.md for known issues. 2. The skill currently lacks .rs review — manually launch review-rust..." This is a patch, not a behavioral rule. It encodes a workaround for the current broken state of a specific skill.
+
+What should have happened: Record the incident in feedback/skills.md (done). Don't create a memory entry. The fix belongs in the skill itself via /update-workflow. Memory entries should capture behavioral rules ("don't skip checklist items"), not compensating procedures for broken infrastructure.
+
+**Pattern:** Memory system misuse — using memories to hotfix infrastructure gaps instead of fixing the infrastructure. The memory system instructions say to save "behavioral rules that should persist across sessions." A step-by-step workaround for a broken skill is not a behavioral rule — it's a patch that masks the problem and prevents it from being fixed properly.
