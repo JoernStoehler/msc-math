@@ -1,6 +1,6 @@
 # Combinatorial Anatomy: Logbook
 
-Split from `combinatorial-structure/` (Pass 2). See that logbook for full history.
+Split from `combinatorial-anatomy/` (Pass 2). See that logbook for full history.
 
 ## Motivation
 

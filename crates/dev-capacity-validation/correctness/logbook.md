@@ -11,7 +11,7 @@ Before using computed capacities for scientific conclusions, we need high confid
 ## How to run
 
 ```bash
-cd crates/exp-capacity-axioms/correctness/
+cd crates/dev-capacity-validation/correctness/
 cargo run --bin axioms-correctness --release   # Generates correctness.jsonl
 cargo test --bin axioms-correctness --release   # Verifies all 6 properties
 ```

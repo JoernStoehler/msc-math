@@ -3,8 +3,8 @@
 Plot orbit recovery error metrics by facet count.
 
 Goal: Visualize how recovery errors scale with polytope complexity (F).
-Input: crates/exp-capacity-axioms/orbit-recovery/orbit-recovery.jsonl
-Output: crates/exp-capacity-axioms/orbit-recovery/orbit_recovery_errors.png
+Input: crates/dev-capacity-validation/orbit-recovery/orbit-recovery.jsonl
+Output: crates/dev-capacity-validation/orbit-recovery/orbit_recovery_errors.png
 """
 
 import json
@@ -26,7 +26,7 @@ OUTPUT_FILE = EXPERIMENT_DIR / "orbit_recovery_errors.png"
 def load_data():
     if not DATA_FILE.exists():
         print(f"File not found: {DATA_FILE}")
-        print("Run Rust binary first: cargo run -p exp-capacity-axioms --release --bin axioms-orbit-recovery")
+        print("Run Rust binary first: cargo run -p dev-capacity-validation --release --bin axioms-orbit-recovery")
         sys.exit(1)
 
     rows = []

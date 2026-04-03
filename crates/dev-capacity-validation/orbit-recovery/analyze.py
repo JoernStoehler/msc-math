@@ -4,7 +4,7 @@ Analyze orbit recovery results across polytope dataset.
 
 Goal: Validate base point recovery algorithm across known + random polytopes.
       Identify edge cases, distribution of solution dimension, violation levels.
-Input: crates/exp-capacity-axioms/orbit-recovery/orbit-recovery.jsonl
+Input: crates/dev-capacity-validation/orbit-recovery/orbit-recovery.jsonl
 Output: Summary statistics printed to stdout.
 """
 
@@ -20,7 +20,7 @@ DATA_FILE = EXPERIMENT_DIR / "orbit-recovery.jsonl"
 def load_data():
     if not DATA_FILE.exists():
         print(f"File not found: {DATA_FILE}")
-        print("Run Rust binary first: cargo run -p exp-capacity-axioms --release --bin axioms-orbit-recovery")
+        print("Run Rust binary first: cargo run -p dev-capacity-validation --release --bin axioms-orbit-recovery")
         sys.exit(1)
 
     rows = []

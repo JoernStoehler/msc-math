@@ -1,6 +1,6 @@
 # Combinatorial Convexity: Logbook
 
-Split from `combinatorial-structure/` (Pass 3). See that logbook for full history.
+Split from `combinatorial-anatomy/` (Pass 3). See that logbook for full history.
 
 ## Motivation
 

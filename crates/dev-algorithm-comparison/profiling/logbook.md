@@ -11,7 +11,7 @@ Profile the default test suite (`cargo test --lib`) to identify hot paths and tr
 ## How to run
 
 ```bash
-cd crates/exp-algorithm-comparison/profiling/
+cd crates/dev-algorithm-comparison/profiling/
 python3 analyze.py
 ```
 

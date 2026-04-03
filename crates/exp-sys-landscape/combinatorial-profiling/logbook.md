@@ -1,6 +1,6 @@
 # Combinatorial Profiling: Logbook
 
-Split from `combinatorial-structure/` (Pass 1). See that logbook for full history.
+Split from `combinatorial-anatomy/` (Pass 1). See that logbook for full history.
 
 ## Motivation
 

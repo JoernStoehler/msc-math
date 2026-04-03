@@ -36,7 +36,7 @@ Depends on: Jörn decides which side to fix for each item.
 **Status (2026-04-02):** 15 experiment math.tex files contain `\includegraphics` or `\begin{table}` alongside proofs. Convention (`.claude/rules/math-tex.md`): math.tex is for proofs/definitions/derivations only; empirical figures and tables go in logbook.md.
 
 **Affected files (all under `crates/`):**
-visualization, exp-sys-optimization/sensitivity-analysis, exp-sys-optimization/large-scale-descent, exp-numerical-analysis/kkt-inertia, exp-numerical-analysis/q-error, exp-hko-local-maximum/rotation-sweep, exp-hko-local-maximum/perturbation-neighborhood, exp-hko-local-maximum/omega-hypothesis, exp-capacity-axioms/orbit-recovery, exp-capacity-axioms/correctness, exp-baseline-characterization/rejection-sampling, exp-baseline-characterization/random-sweep, exp-baseline-characterization/random-product-sweep, exp-algorithm-comparison/ablation, crosspolytope
+visualization, exp-sys-landscape/sensitivity-analysis, exp-sys-landscape/large-scale-descent, dev-numerical-analysis/kkt-inertia, dev-numerical-analysis/q-error, exp-hko-local-maximum/rotation-sweep, exp-hko-local-maximum/perturbation-neighborhood, exp-hko-local-maximum/omega-hypothesis, dev-capacity-validation/orbit-recovery, dev-capacity-validation/correctness, exp-sys-landscape/rejection-sampling, exp-sys-landscape/random-sweep, exp-sys-landscape/random-product-sweep, dev-algorithm-comparison/ablation, crosspolytope
 
 **Fix:** For each file: cut figures/tables/empirical-result text from math.tex, paste into logbook.md (as markdown tables and `![](image.png)` references). Mechanical — parallelize with one subagent per file.
 
@@ -84,18 +84,18 @@ Depends on: Jörn verifies the math. Agent writes drafts, Jörn reviews.
 
 **What's done:**
 - **h-space (normals fixed):** 0 ∈ conv(subdifferential) by symmetry + Euler homogeneity. Jörn has not verified the proof.
-- **F=10 (n,h)-space:** Phase C LP confirms 0 ∈ conv(44 per-orbit gradients in R^40). First-order necessary condition for local max satisfied. 16 flat directions remain. Script: `crates/exp-hko-local-maximum/gradient-is-zero/phase_c_lp_test.py`.
+- **F=10 (n,h)-space:** Phase C LP confirms 0 ∈ conv(44 per-orbit gradients in R^40). First-order necessary condition for local max satisfied. 16 flat directions remain. Script: `crates/exp-hko-local-maximum/subdifferential-lp/phase_c_lp_test.py`.
 - **F=11 facet-splitting:** 211 cuts all decrease sys (sampling-based, facet 5 incomplete: 11/200 rows).
 - **LP(5,5) perturbations:** 100 random, all lower (pentagon-perturb experiment).
 
 **Next steps (priority order):**
 1. **Second-order analysis of flat directions** — compute sys along each flat direction via finite differences. Determines whether first-order necessary condition → actual local max. Agent-executable. This is the critical gap. Note (2026-03-26): the 16 flat directions were computed in (n,h)-space including gauge directions. After a_i migration, Phase C LP could be redone in clean R^{40} with no gauge — possibly fewer true flat directions. Consider waiting for migration or doing both.
-2. **Jörn verifies h-space proof** — Danskin + symmetry + Euler homogeneity argument in `crates/exp-hko-local-maximum/gradient-is-zero/logbook.md` lines 151-156. ~15 min. Then formalize in math.tex.
+2. **Jörn verifies h-space proof** — Danskin + symmetry + Euler homogeneity argument in `crates/exp-hko-local-maximum/gradient-analysis/logbook.md` lines 151-156. ~15 min. Then formalize in math.tex.
 3. **Complete Phase B** — facet-splitting now has 536 directions (regenerated 2026-03-26, was 212). All decrease sys.
 4. **Convex-body direction** (Phases E/F in logbook) — Minkowski smoothing or F-refinement. Completely untested direction. Needs scoping: can billiard algorithm handle K+εB⁴?
 5. **Structural explanation** — why does pentagon geometry force 0 ∈ conv? Relates to golden ratio β-structure, order-10 symmetry. Jörn's domain.
 
-**Key files:** `crates/exp-hko-local-maximum/gradient-is-zero/logbook.md` (full analysis), `crates/exp-hko-local-maximum/gradient-is-zero/phase_c_lp_test.py` (Phase C script), `crates/exp-hko-local-maximum/gradient-is-zero/math.tex` (theory).
+**Key files:** `crates/exp-hko-local-maximum/gradient-analysis/logbook.md` (full analysis), `crates/exp-hko-local-maximum/subdifferential-lp/phase_c_lp_test.py` (Phase C script), `crates/exp-hko-local-maximum/gradient-analysis/math.tex` (theory).
 
 ---
 
@@ -110,12 +110,12 @@ The thesis is currently a dump of results, not a coherent narrative. Experiments
 
 **Known gaps:**
 - `crosspolytope` Phase 2 TODO: update known_polytopes.rs (tracked in its logbook)
-- `crates/exp-hko-local-maximum/gradient-is-zero` Phase C (2026-03-23) verified first-order necessary condition for local max in F=10 (n,h)-space via LP. See `hko-local-maximality` task for next steps.
+- `crates/exp-hko-local-maximum/subdifferential-lp/` Phase C (2026-03-23) verified first-order necessary condition for local max in F=10 (n,h)-space via LP. See `hko-local-maximality` task for next steps.
 
 **Gradient experiment redesign (2026-03-26, Jörn; cleanup 2026-04-03):** The old gradient experiments (`sys-optimization`/sensitivity-analysis, `gradient-descent`/large-scale-descent, `gradient-search`) were superseded and deleted. Derivative lemmas relocated to `crates/library/src/algorithms/math.tex`. Three current experiments:
-1. **gradient-validation** (Q5b/Q5c complete, merged to main 2026-03-28) — Per-orbit gradient validated (slope=2.00). Q5b: 12 polytope types. Q5c: direction-filtered subdiff is a negative result. KktOutcome enum, error handling convention, code-math audit. 14 tests fail due to wrong Q error bound math (lem:q-error-bound too loose). See logbook. Directory: `crates/exp-sys-optimization/gradient-validation/`.
-2. **combinatorial-structure** (complete, 2026-03-27) — Random cells convex, product cells non-convex (0% vs 100% transition failures). ~F boundaries per gradient step. Orbit facets 2× wider than non-orbit. Gradient-cell alignment favorable (r=0.52). sys continuous, gradient stable except at orbit switches (3%/boundary, up to 70° jump). See logbook. Directory: `crates/exp-sys-optimization/combinatorial-structure/`.
-3. **boundary-crossing-search** (dev run complete, merged to main) — Gradient-based search for sys > 1. Dev run: 42 seeds, best sys=0.933, wiggle dominates overshoot. Next: landscape characterization and search strategy comparison. See `handoffs/sys-search.md`. Directory: `crates/exp-sys-optimization/boundary-crossing-search/`.
+1. **gradient-validation** (Q5b/Q5c complete, merged to main 2026-03-28) — Per-orbit gradient validated (slope=2.00). Q5b: 12 polytope types. Q5c: direction-filtered subdiff is a negative result. KktOutcome enum, error handling convention, code-math audit. 14 tests fail due to wrong Q error bound math (lem:q-error-bound too loose). See logbook. Directory: `crates/dev-gradient-validation/` (split into basic-validation/, edge-cases/, subdifferential/).
+2. **combinatorial-structure** (complete, 2026-03-27) — Random cells convex, product cells non-convex (0% vs 100% transition failures). ~F boundaries per gradient step. Orbit facets 2× wider than non-orbit. Gradient-cell alignment favorable (r=0.52). sys continuous, gradient stable except at orbit switches (3%/boundary, up to 70° jump). See logbook. Directory: `crates/exp-sys-landscape/` (split into combinatorial-profiling/, -anatomy/, -convexity/, -sweep/).
+3. **boundary-crossing-search** (dev run complete, merged to main) — Gradient-based search for sys > 1. Dev run: 42 seeds, best sys=0.933, wiggle dominates overshoot. Next: landscape characterization and search strategy comparison. See `handoffs/sys-search.md`. Directory: `crates/exp-sys-landscape/boundary-crossing-search/`.
 
 Dependency chain: #1 validates the gradient → #2 characterizes the obstacle → #3 applies the tool. #3 can start independently but benefits from #2's findings.
 
@@ -130,10 +130,10 @@ Dependency chain: #1 validates the gradient → #2 characterizes the obstacle �
 Depends on: Jörn scoping the thesis story. Derivative-related experiments also depend on dual-vertex-parameterization (library derivative API, now mostly complete).
 
 **Cross-experiment cleanup (2026-03-27, names updated 2026-04-03):**
-- **Step-bound code duplication:** `compute_step_bound` (incidence + ω₀ detection in a-space) exists in combinatorial-structure and boundary-crossing-search. boundary-crossing-search version is missing ω₀ detection (43% of boundaries). Candidates: unify into library, or at minimum copy the enriched version from combinatorial-structure into boundary-crossing-search.
+- **Step-bound code duplication:** `compute_step_bound` (incidence + ω₀ detection in a-space) exists in combinatorial-profiling and boundary-crossing-search. boundary-crossing-search version is missing ω₀ detection (43% of boundaries). Candidates: unify into library, or at minimum copy the enriched version into boundary-crossing-search.
 - **Products-vs-random split:** Every gradient experiment should split analysis by source dataset. The 0%/100% convexity split is a fundamental structural difference that affects strategy choice. Could add a standard `source_dataset` analysis function to figure_config.py.
-- **Wiggle strength justification:** boundary-crossing-search uses 5% (from gradient-search, unjustified). combinatorial-structure provides per-facet cell widths (0.12–0.26) that could inform this. See combinatorial-structure logbook "Unused synergies" section.
-- **boundary-crossing-search + combinatorial-structure overlap:** The multi-boundary sweep with sys tracking (combinatorial-structure Pass 4) answers a boundary-crossing-search question. If boundary-crossing-search grows a similar capability, consider removing it from combinatorial-structure to avoid duplication.
+- **Wiggle strength justification:** boundary-crossing-search uses 5% (from gradient-search, unjustified). combinatorial-profiling provides per-facet cell widths (0.12–0.26) that could inform this. See combinatorial-profiling logbook.
+- **boundary-crossing-search + combinatorial-sweep overlap:** The multi-boundary sweep with sys tracking (combinatorial-sweep) answers a boundary-crossing-search question. If boundary-crossing-search grows a similar capability, consider removing combinatorial-sweep to avoid duplication.
 
 ---
 
@@ -162,7 +162,7 @@ Depends on: Jörn scoping the thesis story. Derivative-related experiments also 
 
 **Subsumes:** q-error-threshold, numerics portion of code-math-correspondence-audit.
 
-**Location:** `crates/exp-numerical-analysis/error-bounds/`, handoff at `handoffs/verify-numerics-algorithm.md`
+**Location:** `crates/dev-numerical-analysis/error-bounds/`, handoff at `handoffs/verify-numerics-algorithm.md`
 
 ---
 
@@ -308,7 +308,7 @@ Evidence gathered so far (from session log analysis):
 - `crates/database/` — PolytopeRecord, load/save JSONL, from_polytope/to_polytope, progressive fill, custom "numer/denom" BigRational serde, `PartialEq` on `Source`
 - `Polytope4D::from_rational_parts` — reconstruct from cached rational data, skip vertex enumeration
 - `generate_polytope` — blake3 key derivation for independent per-attempt seeding
-- Experiment migration (6 experiments): random-sweep, random-product-sweep, combinatorial-structure, boundary-crossing-search, omega-hypothesis, orbit-recovery
+- Experiment migration (6 experiments): random-sweep, random-product-sweep, combinatorial-{profiling,anatomy,convexity,sweep}, boundary-crossing-search, omega-hypothesis, orbit-recovery
 - `data/polytopes.jsonl` — 1198 entries (70 random + 100 product + 941 omega + 87 orbit-recovery)
 
 **Skipped:**
@@ -316,8 +316,8 @@ Evidence gathered so far (from session log analysis):
 - q-error — low priority, only 7 known polytopes
 
 **Not yet done:**
-- combinatorial-structure needs `catch_unwind` in its main loop (KKT panics kill the run on some polytopes)
-- boundary-crossing-search and combinatorial-structure data not regenerated (need full runs)
+- combinatorial-{profiling,anatomy,convexity,sweep} all use `catch_unwind` in their main loops (KKT panics)
+- boundary-crossing-search and combinatorial-* data not regenerated (need full runs)
 - Lagrangian products use shared RNG (no blake3 equivalent), so Source-based lookup doesn't work for them — key-based only
 
 ---

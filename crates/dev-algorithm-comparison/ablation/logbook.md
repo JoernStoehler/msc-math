@@ -13,7 +13,7 @@ This directly supports the thesis by justifying the use of A2/A3 pruning in all 
 ## How to run
 
 ```bash
-cd crates/exp-algorithm-comparison/ablation/
+cd crates/dev-algorithm-comparison/ablation/
 cargo run --bin cmp-ablation --release
 # -> ablation.jsonl (216 entries: 54 polytopes x 4 variants)
 

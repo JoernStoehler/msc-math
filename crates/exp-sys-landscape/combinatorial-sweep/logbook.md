@@ -1,6 +1,6 @@
 # Combinatorial Sweep: Logbook
 
-Split from `combinatorial-structure/` (Pass 4). See that logbook for full history.
+Split from `combinatorial-anatomy/` (Pass 4). See that logbook for full history.
 
 ## Motivation
 

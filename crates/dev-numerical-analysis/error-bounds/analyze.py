@@ -1,6 +1,6 @@
 """
 Goal: Exploratory analysis of verify-numerics results.
-Input: crates/exp-numerical-analysis/error-bounds/results_*.jsonl (CLI args)
+Input: crates/dev-numerical-analysis/error-bounds/results_*.jsonl (CLI args)
 Output: stdout (summary tables)
 
 Bound checking and conjecture validation is in Rust tests:

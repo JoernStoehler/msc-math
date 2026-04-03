@@ -1,6 +1,6 @@
 # Facet-Splitting: Logbook
 
-Split from `gradient-is-zero/logbook.md` (Phase B content). See `gradient-is-zero/logbook.md` for full history including motivation, interpretation, and theoretical framework.
+Split from `gradient-analysis/logbook.md` (Phase B content). See `gradient-analysis/logbook.md` for full history including motivation, interpretation, and theoretical framework.
 
 ## Status
 

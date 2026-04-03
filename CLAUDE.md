@@ -30,7 +30,7 @@ crates/                    all Rust code (library + experiments)
       derivatives.rs       derivative of the capacity in the dual vertices
       dataset.rs           polytope datasets
       **/math.tex          correctness proofs (one per module)
-  exp-<group>/             experiment group (e.g. exp-hko-local-maximum)
+  exp-<group>/             research experiments (e.g. exp-hko-local-maximum)
     Cargo.toml             binary registrations for the group
     <subdir>/              each experiment is a self-contained directory
       run.rs               binary to create the data files
@@ -38,6 +38,8 @@ crates/                    all Rust code (library + experiments)
       analyze.py           postprocessing, analysis, figures and tables
       logbook.md           experiment logbook, what was done, results, learnings, ideas
       math.tex             correctness proofs for the experiment
+  dev-<group>/             instrument development (e.g. dev-gradient-validation)
+    (same structure as exp-<group>/, promotes to library when stable)
   crosspolytope/           standalone computation (not an exp-group)
   database/                stub library for future sigma cache
   visualization/           interactive HTML polytope viewer

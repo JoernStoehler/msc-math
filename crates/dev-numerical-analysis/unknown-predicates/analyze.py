@@ -4,8 +4,8 @@ Analyze UNKNOWN admissibility predicate prevalence across datasets.
 
 Goal: Determine whether the EHZ capacity algorithm ever produces UNKNOWN
       (inconclusive) admissibility verdicts on our polytope datasets.
-Input: crates/exp-numerical-analysis/unknown-predicates/unknown-predicates.jsonl
-Output: crates/exp-numerical-analysis/unknown-predicates/unknown_predicates_beta_min.png
+Input: crates/dev-numerical-analysis/unknown-predicates/unknown-predicates.jsonl
+Output: crates/dev-numerical-analysis/unknown-predicates/unknown_predicates_beta_min.png
         Summary statistics to stdout
 """
 
@@ -29,7 +29,7 @@ def load_data(path: Path) -> list[dict]:
     if not path.exists():
         print(
             f"File not found: {path}\n"
-            "Run: cargo run -p exp-numerical-analysis --bin num-unknown-predicates --release",
+            "Run: cargo run -p dev-numerical-analysis --bin num-unknown-predicates --release",
             file=sys.stderr,
         )
         sys.exit(1)

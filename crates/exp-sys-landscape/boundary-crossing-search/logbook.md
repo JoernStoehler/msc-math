@@ -39,7 +39,7 @@ Supersedes:
 ## How to run
 
 ```
-cd crates/exp-sys-optimization/boundary-crossing-search/
+cd crates/exp-sys-landscape/boundary-crossing-search/
 cargo run --release --bin opt-boundary-crossing           # resume from existing data
 cargo run --release --bin opt-boundary-crossing -- --fresh # rerun from scratch
 python3 analyze.py                                         # generate figures + summary

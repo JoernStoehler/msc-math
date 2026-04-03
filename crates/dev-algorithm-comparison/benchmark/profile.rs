@@ -13,7 +13,7 @@ use symplectic::algorithms::hk2017::ehz_capacity;
 use symplectic::geom::volume::volume;
 use symplectic::random::generate_random_polytopes;
 
-// Same seed and height range as crates/exp-algorithm-comparison/benchmark/run.rs for consistency.
+// Same seed and height range as crates/dev-algorithm-comparison/benchmark/run.rs for consistency.
 const SEED: u64 = 42;
 const H_MIN: f64 = 0.5;
 const H_MAX: f64 = 2.0;

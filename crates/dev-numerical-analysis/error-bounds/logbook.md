@@ -116,7 +116,7 @@ No panics occurred on these abstract matrix problems (unlike the polytope-specif
 ### How to run
 
 ```bash
-cd crates/exp-numerical-analysis/error-bounds/ && cargo build --release --bin num-collect-poly
+cd crates/dev-numerical-analysis/error-bounds/ && cargo build --release --bin num-collect-poly
 cargo run --release --bin num-error-bounds
 # Output: q_accuracy.jsonl (3203 rows)
 ```
@@ -273,14 +273,14 @@ Validated on 477 SP-feasible cases across 15 matrix families (4303 problems tota
 ### How to run
 
 ```bash
-cd crates/exp-numerical-analysis/error-bounds/ && cargo build --release --bin num-collect-poly
+cd crates/dev-numerical-analysis/error-bounds/ && cargo build --release --bin num-collect-poly
 cargo run --release --bin num-error-bounds
 # Output: q_accuracy.jsonl (4303 rows, 15 families)
 ```
 
 ## Propositions and bounds (current state, 2026-04-01)
 
-Run `python3 analyze.py` from `crates/exp-numerical-analysis/error-bounds/` for the full check output (`checks.txt`).
+Run `python3 analyze.py` from `crates/dev-numerical-analysis/error-bounds/` for the full check output (`checks.txt`).
 
 Dataset: 51,784 problems (4303 artificial + 47,481 natural from 458 polytopes F≤8). 45,476 SP-feasible (44,980 EHZ-like, 496 stress-test).
 
@@ -327,7 +327,7 @@ All quantities in the bound are already computed by the solver: ‖H‖ from eig
 ## How to run
 
 ```bash
-cd crates/exp-numerical-analysis/error-bounds/
+cd crates/dev-numerical-analysis/error-bounds/
 cargo build --release --bin num-collect-poly
 cargo run --release --bin num-error-bounds
 # Output: q_accuracy.jsonl (4303 rows, 15 families)
@@ -504,7 +504,7 @@ exact solvers, and check the conjecture properties. Both pass:
 Simplified analyze.py (499→147 lines): removed bound-checking (now in Rust tests),
 kept exploratory summaries. Simplified Makefile to just collect + ad-hoc run/analyze.
 
-Run tests: `cd crates/exp-numerical-analysis/error-bounds/ && cargo test --test verify_numerics_tests`
+Run tests: `cd crates/dev-numerical-analysis/error-bounds/ && cargo test --test verify_numerics_tests`
 
 ## Git LFS tracking (2026-04-03)
 
