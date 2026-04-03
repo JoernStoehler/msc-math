@@ -71,3 +71,18 @@ Session: building session-search agent + PostToolUse hook. Both were created in 
 Had to merge first, test after. This means `/create-workflow` and `/test-workflow` can't iterate on hook/agent behavior within a worktree — you must merge to main or temporarily edit main's files.
 
 **Affects:** create-workflow, test-workflow, any session that adds new agent types or hook entries.
+
+### 2026-04-03 — Pre-merge skipped thesis build and TASKS.md update
+
+Agent ran /pre-merge and executed `cargo test`, `cargo clippy`, `cargo build --workspace`, and `pdflatex math.tex`. But skipped two mandatory checklist items:
+
+1. `cd thesis/ && latexmk && ./check-build.sh` — skipped with rationale "no thesis changes in this branch." The checklist says "All must pass" without exceptions.
+2. TASKS.md update — didn't mark anything completed or add to Completed section.
+
+Both were listed explicitly in the pre-merge skill output. The agent selectively followed the checklist.
+
+**What should have happened:** Run every checklist item. If an item doesn't apply, run it anyway to confirm (takes seconds). For TASKS.md, either update it or explicitly note "no TASKS.md entries to update" in the report.
+
+Additionally, no review subagents were launched (review-formalization, review-proof, review-claims) despite the 2026-04-01 feedback entry explicitly calling this out as a gap. The split math.tex files have cross-references that should have been verified.
+
+**Pattern:** Checklist items skipped based on agent judgment ("no thesis changes", "just a restructure"). Same class as 2026-03-30 "Pre-merge checklist didn't catch worktree violation" and 2026-04-01 "Pre-merge content checks not linked to review subagents" — the agent treats the checklist as advisory rather than mandatory. Three incidents of the same class.
