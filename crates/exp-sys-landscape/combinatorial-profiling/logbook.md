@@ -1,6 +1,6 @@
 # Combinatorial Profiling: Logbook
 
-Split from `combinatorial-anatomy/` (Pass 1). See that logbook for full history.
+Split from the original `combinatorial-structure/` experiment (Pass 1: per-facet profiling).
 
 ## Motivation
 
@@ -13,7 +13,7 @@ Per-facet cell width measurement in dual-vertex space. For each facet k, probe N
 ## How to run
 
 ```bash
-cargo run -p exp-sys-landscape --release --bin sys-combinatorial-profiling
+cargo run -p exp-sys-landscape --release --bin sys-comb-profiling
 python3 analyze.py
 ```
 

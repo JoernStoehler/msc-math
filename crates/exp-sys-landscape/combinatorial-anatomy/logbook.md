@@ -1,6 +1,6 @@
 # Combinatorial Anatomy: Logbook
 
-Split from `combinatorial-anatomy/` (Pass 2). See that logbook for full history.
+Split from the original `combinatorial-structure/` experiment (Pass 2: boundary anatomy + crossing + gradient).
 
 ## Motivation
 
@@ -13,7 +13,7 @@ Full EHZ at boundaries + crossing analysis + gradient measurement. For each poly
 ## How to run
 
 ```bash
-cargo run -p exp-sys-landscape --release --bin sys-combinatorial-anatomy
+cargo run -p exp-sys-landscape --release --bin sys-comb-anatomy
 python3 analyze.py
 ```
 

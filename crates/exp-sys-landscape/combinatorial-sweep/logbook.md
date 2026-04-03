@@ -1,6 +1,6 @@
 # Combinatorial Sweep: Logbook
 
-Split from `combinatorial-anatomy/` (Pass 4). See that logbook for full history.
+Split from the original `combinatorial-structure/` experiment (Pass 4: multi-boundary sweep).
 
 ## Motivation
 
@@ -13,7 +13,7 @@ Multi-boundary traversal: walk along a direction for a distance budget, iterativ
 ## How to run
 
 ```bash
-cargo run -p exp-sys-landscape --release --bin sys-combinatorial-sweep
+cargo run -p exp-sys-landscape --release --bin sys-comb-sweep
 python3 analyze.py
 ```
 

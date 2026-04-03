@@ -1,6 +1,6 @@
 # Gradient Analysis: Logbook
 
-Split from `gradient-analysis/logbook.md` (Phase A content). See `gradient-analysis/logbook.md` for full history including motivation, interpretation, and theoretical framework.
+Split from the original `gradient-is-zero/` experiment (Phase A: sensitivity analysis + gradient ascent).
 
 ## Status
 

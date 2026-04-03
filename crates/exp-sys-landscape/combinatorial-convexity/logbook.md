@@ -1,6 +1,6 @@
 # Combinatorial Convexity: Logbook
 
-Split from `combinatorial-anatomy/` (Pass 3). See that logbook for full history.
+Split from the original `combinatorial-structure/` experiment (Pass 3: convexity testing).
 
 ## Motivation
 
@@ -13,7 +13,7 @@ Tests whether combinatorial-type cells in dual-vertex space are convex. Samples 
 ## How to run
 
 ```bash
-cargo run -p exp-sys-landscape --release --bin sys-combinatorial-convexity
+cargo run -p exp-sys-landscape --release --bin sys-comb-convexity
 python3 analyze.py
 ```
 

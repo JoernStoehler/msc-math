@@ -36,7 +36,7 @@ Depends on: Jörn decides which side to fix for each item.
 **Status (2026-04-02):** 15 experiment math.tex files contain `\includegraphics` or `\begin{table}` alongside proofs. Convention (`.claude/rules/math-tex.md`): math.tex is for proofs/definitions/derivations only; empirical figures and tables go in logbook.md.
 
 **Affected files (all under `crates/`):**
-visualization, exp-sys-landscape/sensitivity-analysis, exp-sys-landscape/large-scale-descent, dev-numerical-analysis/kkt-inertia, dev-numerical-analysis/q-error, exp-hko-local-maximum/rotation-sweep, exp-hko-local-maximum/perturbation-neighborhood, exp-hko-local-maximum/omega-hypothesis, dev-capacity-validation/orbit-recovery, dev-capacity-validation/correctness, exp-sys-landscape/rejection-sampling, exp-sys-landscape/random-sweep, exp-sys-landscape/random-product-sweep, dev-algorithm-comparison/ablation, crosspolytope
+visualization, dev-numerical-analysis/kkt-inertia, dev-numerical-analysis/q-error, exp-sys-landscape/rotation-sweep, exp-sys-landscape/perturbation-neighborhood, exp-sys-landscape/omega-hypothesis, dev-capacity-validation/orbit-recovery, dev-capacity-validation/correctness, exp-sys-landscape/rejection-sampling, exp-sys-landscape/random-sweep, exp-sys-landscape/random-product-sweep, dev-algorithm-comparison/ablation, crosspolytope
 
 **Fix:** For each file: cut figures/tables/empirical-result text from math.tex, paste into logbook.md (as markdown tables and `![](image.png)` references). Mechanical — parallelize with one subagent per file.
 
@@ -221,7 +221,7 @@ Direction (2026-03-22, Jörn): Thesis will introduce both (n_i, h_i) and a_i = n
 
 - ✅ `capacity_derivatives_a()` and `volume_derivatives_a()` exist in `derivatives.rs`, tested (FD cross-check)
 - ✅ `build_qp` uses a_i internally
-- ✅ 4/5 gradient experiments migrated: sys-optimization, hko-neighborhood, gradient-descent, omega-obstacle
+- ✅ All gradient experiments migrated to dual-vertex (a_i) API. Old experiments deleted (sensitivity-analysis, large-scale-descent, gradient-search). Current experiments: gradient-analysis, facet-splitting, boundary-crossing-search, basic-validation, edge-cases, subdifferential.
 - ✅ gradient-search: migrated to `_a` API (2026-04-02). Superseded by boundary-crossing-search (confirmed 2026-04-03). Directory deleted.
 - ✅ math.tex migration: `kkt/math.tex` and `algorithms/math.tex` use a_i throughout (commits b9eedda, 4afefb9, 0ff6c6d)
 - ❌ Jörn verification: `[lem:cap-derivative]` and `[lem:vol-derivative]` in `crates/library/src/algorithms/math.tex` marked `\begin{unverified}`

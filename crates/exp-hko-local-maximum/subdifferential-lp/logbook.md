@@ -1,6 +1,6 @@
 # Subdifferential LP: Logbook
 
-Split from `gradient-analysis/logbook.md` (Phase C content). See `gradient-analysis/logbook.md` for full history including motivation, interpretation, and theoretical framework.
+Split from the original `gradient-is-zero/` experiment (Phase C: LP test). See `../gradient-analysis/logbook.md` for full history including motivation, interpretation, and theoretical framework.
 
 ## Status
 
