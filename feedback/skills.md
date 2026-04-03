@@ -86,3 +86,18 @@ Both were listed explicitly in the pre-merge skill output. The agent selectively
 Additionally, no review subagents were launched (review-formalization, review-proof, review-claims) despite the 2026-04-01 feedback entry explicitly calling this out as a gap. The split math.tex files have cross-references that should have been verified.
 
 **Pattern:** Checklist items skipped based on agent judgment ("no thesis changes", "just a restructure"). Same class as 2026-03-30 "Pre-merge checklist didn't catch worktree violation" and 2026-04-01 "Pre-merge content checks not linked to review subagents" — the agent treats the checklist as advisory rather than mandatory. Three incidents of the same class.
+
+### 2026-04-03 — Agent used known-broken skill without checking feedback
+
+What happened: Agent ran /pre-merge on a 200-file restructure that created 10 new run.rs files. The pre-merge skill has no .rs review step and no subagent launches. Three prior feedback entries in this file (2026-04-01 content checks, 2026-03-30 worktree violation, 2026-04-01 review subagents) describe these exact gaps with concrete fix suggestions. The agent:
+
+1. Ran the skill as-is without reading feedback/skills.md for known issues
+2. Didn't notice the skill lacks .rs review despite this session producing 10 new .rs files
+3. Self-certified content checks without launching any review subagents
+4. Presented work as "verified" to Jörn
+
+The feedback entries have been sitting for 2-5 days. No agent in any session has acted on them to improve the skill.
+
+What should have happened: Before running a skill, check its feedback file for known issues. If feedback describes concrete gaps relevant to the current work, either fix the skill first or manually compensate. For a 200-file restructure with 10 new .rs files, the absence of .rs review is not a minor gap — it's the primary risk.
+
+**Pattern:** Two failures: (1) using a tool without reading its known issues (same class as not reading math.tex before editing .rs — the rule exists for code, should apply to skills too); (2) systemic: feedback accumulates without being incorporated into skills. No session checks "does this skill have unaddressed feedback?" before using it.
