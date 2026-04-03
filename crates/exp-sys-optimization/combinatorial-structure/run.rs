@@ -706,7 +706,23 @@ fn construct_at_t(
 
 /// Compute sys for a polytope using standard (non-instrumented) EHZ.
 /// Returns (sys, capacity, volume, best_perm, kkt).
+/// Wrapped in catch_unwind because the KKT solver can panic on
+/// near-singular systems (pre-existing issue in saddle_point_solver).
 fn compute_sys(
+    polytope: &Polytope4D,
+) -> Option<(
+    f64,
+    f64,
+    f64,
+    Vec<usize>,
+    symplectic::kkt::saddle_point_solver::KktResult,
+)> {
+    std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+        compute_sys_inner(polytope)
+    })).ok()?
+}
+
+fn compute_sys_inner(
     polytope: &Polytope4D,
 ) -> Option<(
     f64,
@@ -1159,46 +1175,34 @@ fn main() {
         // Base computation: instrumented EHZ for orbit gap + gradient
         // =====================================================================
 
-        let instrumented = match ehz_capacity_instrumented(polytope) {
-            Some(r) => r,
-            None => {
-                eprintln!("  {name}: instrumented EHZ returned None, skipping");
+        // Base computation wrapped in catch_unwind — the KKT solver can panic
+        // on near-singular systems (pre-existing issue in saddle_point_solver).
+        let base = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            let instrumented = ehz_capacity_instrumented(polytope)?;
+            let vol = volume(polytope).ok().filter(|&v| v > 0.0)?;
+            let cap = instrumented.capacity;
+            let sys = cap * cap / (2.0 * vol);
+            let perm = instrumented.best_permutation;
+            let orbit_gap = instrumented.orbit_gap;
+            let n_valid_orbits = instrumented.n_valid_orbits;
+            let kkt = solve_kkt_for(polytope, &perm).feasible()?;
+            Some((cap, vol, sys, perm, orbit_gap, n_valid_orbits, kkt))
+        }));
+
+        let (cap, vol, sys, perm, orbit_gap, n_valid_orbits, kkt) = match base {
+            Ok(Some(t)) => t,
+            Ok(None) | Err(_) => {
                 n_skipped += 1;
                 continue;
             }
         };
 
-        let vol = match volume(polytope) {
-            Ok(v) if v > 0.0 => v,
-            _ => {
-                eprintln!("  {name}: volume computation failed, skipping");
-                n_skipped += 1;
-                continue;
-            }
-        };
-
-        let cap = instrumented.capacity;
-        let sys = cap * cap / (2.0 * vol);
-        let perm = &instrumented.best_permutation;
-        let orbit_gap = instrumented.orbit_gap;
-        let n_valid_orbits = instrumented.n_valid_orbits;
-
-        // KKT for gradient computation
-        let kkt = match solve_kkt_for(polytope, perm) {
-            KktOutcome::Feasible(k) => k,
-            _ => {
-                eprintln!("  {name}: KKT failed, skipping");
-                n_skipped += 1;
-                continue;
-            }
-        };
-
-        let d_sys_a = compute_sys_gradient_a(polytope, vol, cap, sys, &kkt, perm);
+        let d_sys_a = compute_sys_gradient_a(polytope, vol, cap, sys, &kkt, &perm);
 
         let skeleton = Skeleton::compute(polytope);
         let vertex_count = skeleton.vertex_facets.len();
         let all_simple = skeleton.vertex_facets.iter().all(|vf| vf.len() == 4);
-        let orbit_str = perm_to_string(perm);
+        let orbit_str = perm_to_string(&perm);
 
         // Which facets are in the optimal orbit?
         let orbit_facets: Vec<bool> = (0..f).map(|k| perm.contains(&k)).collect();
