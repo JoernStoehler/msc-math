@@ -61,3 +61,13 @@ The pre-merge skill shown to the agent after `/pre-merge` still referenced `cd c
 Post-migration audit fixed 8 broken experiment binaries via subagents. One of them (`gradient-search`) is superseded by `sys-search` (documented in TASKS.md 100 lines below the gradient-search section). Neither the main agent nor the subagent checked whether the experiment was still active before fixing it. Jörn caught it.
 
 **Suggestion:** When fixing experiment code mechanically (API migration, import updates), check TASKS.md and the experiment's logbook.md for supersession/deprecation status before presenting the fix as meaningful work. A 30-second read avoids presenting stale work to Jörn.
+
+### 2026-04-03 — Worktree isolation blocks hook/agent testing in create-workflow
+
+Session: building session-search agent + PostToolUse hook. Both were created in a worktree. Neither worked until merged to main:
+- Agent type `session-search` wasn't available for spawning (agent definitions resolve from main project dir)
+- PostToolUse hook with Agent matcher didn't fire (settings.json read from main, not worktree)
+
+Had to merge first, test after. This means `/create-workflow` and `/test-workflow` can't iterate on hook/agent behavior within a worktree — you must merge to main or temporarily edit main's files.
+
+**Affects:** create-workflow, test-workflow, any session that adds new agent types or hook entries.

@@ -134,3 +134,15 @@ The agent IDs were in the JSONL transcript the whole time. The agents had been l
 Session: building PostExitPlanMode hook. Agent launched claude-code-guide subagent to research hook events. Subagent returned a massive response (28 events, full JSON schemas, detailed field descriptions). Agent started building on this without reading the actual Anthropic docs. Jörn asked "Did you read the anthropic guide on hooks?" — agent then fetched the real docs via WebFetch and found the subagent output was plausible but unverifiable in detail.
 
 **Pattern:** Subagents (especially those using smaller models) are unreliable for external documentation lookups — they may produce plausible but fabricated API details, field names, or event schemas. The Core Rule covers "the code does X" and "the data shows Y" but not "the docs say Z." For external documentation claims, verify against the primary source (WebFetch, official docs) before building on them.
+
+## 2026-04-03: hook-injected additionalContext should be lightweight
+
+Session: building PostToolUse reliability blurb for Agent tool. First draft had prescriptive numbered rules: "(1) check file:line sources directly, (2) verify factual claims against primary sources, (3) for critical decisions, launch a second subagent to cross-check." Jörn's feedback:
+- "this result is not needed" (unnecessary preamble)
+- "esp doc claims adds complexity" (only applies to one agent type, not general)
+- "(1) only applies to one agent" (file:line sources are specific to session-search)
+- "doesn't define critical" (agent should decide using its own context, not a predefined rule)
+
+Revised blurb: "Subagent answers can be overconfident or miss context. Cheap-to-check facts (file existence, grep results, data values) are worth verifying directly. A second subagent can cross-check if warranted."
+
+**Pattern:** Hook-injected context (additionalContext) is a system reminder, not an instruction manual. State the risk, give lightweight guidance, let the agent decide. Don't write prescriptive multi-point rules — they add complexity and try to predetermine decisions the agent should make using its own context.
