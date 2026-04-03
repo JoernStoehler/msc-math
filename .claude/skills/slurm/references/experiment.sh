@@ -6,9 +6,9 @@
 #
 # Usage:
 #   cd ~/msc-math
-#   sbatch experiments/<experiment>/job.sh
+#   sbatch crates/exp-<group>/<subdir>/job.sh
 #
-# Copy this template to experiments/<experiment>/job.sh and fill in the
+# Copy this template to crates/exp-<group>/<subdir>/job.sh and fill in the
 # variables marked with TODO.
 #===============================================================================
 
@@ -31,7 +31,7 @@ export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK:-1}
 # --- Build (skip if already built) ---
 cd "$HOME/msc-math"
 echo "=== Building at $(date) ==="
-cargo build --release --manifest-path experiments/Cargo.toml 2>&1 | tail -5
+cargo build --workspace --release 2>&1 | tail -5
 
 # --- Run experiment ---
 echo "=== Running at $(date) ==="

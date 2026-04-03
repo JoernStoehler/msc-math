@@ -180,6 +180,7 @@ Optimize for these qualities (descending effort priority):
 - Always use local `main`, never `origin/main`.
 - Before committing: `cd crates/library/ && cargo test --release --lib` passes, `cargo clippy --lib -- -D warnings` is clean.
 - Work in a worktree (separate branch) unless Jörn says otherwise. This keeps `main` clean and lets multiple sessions run in parallel without conflicts.
+- **Git LFS** tracks `.jsonl` files (configured in `.gitattributes`). This is transparent — `git add`, `git commit`, `git push` work normally. Limits on GitHub free plan ([docs](https://docs.github.com/en/billing/managing-billing-for-git-large-file-storage/about-billing-for-git-large-file-storage)): 2 GB per file, 10 GiB storage, 10 GiB bandwidth/month. If an experiment binary produces output >2 GB, compress (gzip) or split into multiple files before committing. A pre-commit hook (`scripts/pre-commit`, symlinked into `.git/hooks/`) blocks files >10 MB that aren't LFS-tracked — if it fires, either add the file pattern to `.gitattributes` via `git lfs track` or add to `.gitignore`.
 
 ## Environment
 

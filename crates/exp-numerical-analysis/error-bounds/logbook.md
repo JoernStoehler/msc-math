@@ -505,3 +505,10 @@ Simplified analyze.py (499→147 lines): removed bound-checking (now in Rust tes
 kept exploratory summaries. Simplified Makefile to just collect + ad-hoc run/analyze.
 
 Run tests: `cd crates/exp-numerical-analysis/error-bounds/ && cargo test --test verify_numerics_tests`
+
+## Git LFS tracking (2026-04-03)
+
+collected_poly.jsonl (2.2 GB, 1.66M rows) exceeds GitHub LFS 2 GB per-file limit.
+Currently .gitignored. Future runs of collect_poly must either compress output
+(gzip — JSONL compresses ~5-10x) or split into chunks <2 GB, then remove from
+.gitignore so LFS tracks it.

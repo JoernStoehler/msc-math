@@ -60,6 +60,4 @@ math.out
 math.pdf
 math.toc
 .Trash-1000/
-crates/exp-numerical-analysis/error-bounds/collected_poly.jsonl
-crates/exp-numerical-analysis/error-bounds/collected_synth.jsonl
 **/checkpoint.json

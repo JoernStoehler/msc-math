@@ -29,6 +29,14 @@ if command -v gh >/dev/null 2>&1; then
   gh auth setup-git || true
 fi
 
+# Initialize Git LFS (git-lfs is installed via Dockerfile; this sets up the
+# smudge/clean filters so LFS-tracked files are handled on checkout/commit)
+git lfs install
+
+# Pre-commit hooks (check-added-large-files blocks files >10 MB)
+pip install --break-system-packages pre-commit
+pre-commit install
+
 # Install Claude Code CLI
 curl -fsSL https://claude.ai/install.sh | bash
 

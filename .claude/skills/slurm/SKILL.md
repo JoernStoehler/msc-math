@@ -24,3 +24,7 @@ description: LICCA cluster job submission. Load when an experiment needs more co
 5. **Present to Jörn:** what the job computes, the resource table, expected output paths
 
 Jörn's submission/retrieval commands: `references/licca-setup.md`
+
+## After Jörn retrieves results
+
+Jörn scps result files into the repo, then commits: `git add <file> && git commit -m "Add <experiment> results from LICCA"`. Git LFS handles the upload on push (transparent — .jsonl files are LFS-tracked via `.gitattributes`).
