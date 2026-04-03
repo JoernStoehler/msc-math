@@ -1,0 +1,56 @@
+[package]
+name = "exp-sys-landscape"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "sys-rotation-sweep"
+path = "rotation-sweep/run.rs"
+
+[[bin]]
+name = "sys-perturbation"
+path = "perturbation-neighborhood/run.rs"
+
+[[bin]]
+name = "sys-omega"
+path = "omega-hypothesis/run.rs"
+
+[[bin]]
+name = "sys-boundary-crossing"
+path = "boundary-crossing-search/run.rs"
+
+[[bin]]
+name = "sys-combinatorial"
+path = "combinatorial-structure/run.rs"
+
+[[bin]]
+name = "sys-random-sweep"
+path = "random-sweep/run.rs"
+
+[[bin]]
+name = "sys-random-product-sweep"
+path = "random-product-sweep/run.rs"
+
+[[bin]]
+name = "sys-rejection-sampling"
+path = "rejection-sampling/run.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+database = { path = "../database" }
+symplectic.workspace = true
+nalgebra.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+rand.workspace = true
+rand_chacha.workspace = true
+rand_distr.workspace = true
+num-bigint.workspace = true
+num-rational.workspace = true
+num-traits.workspace = true
+good_lp.workspace = true

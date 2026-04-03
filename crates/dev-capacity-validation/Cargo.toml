@@ -1,24 +1,21 @@
 [package]
-name = "exp-algorithm-comparison"
+name = "dev-capacity-validation"
 version = "0.1.0"
 edition = "2021"
 
 [[bin]]
-name = "cmp-ablation"
-path = "ablation/run.rs"
+name = "axioms-correctness"
+path = "correctness/run.rs"
 
 [[bin]]
-name = "cmp-benchmark"
-path = "benchmark/run.rs"
-
-[[bin]]
-name = "cmp-benchmark-profile"
-path = "benchmark/profile.rs"
+name = "axioms-orbit-recovery"
+path = "orbit-recovery/run.rs"
 
 [lints]
 workspace = true
 
 [dependencies]
+database = { path = "../database" }
 symplectic.workspace = true
 nalgebra.workspace = true
 serde.workspace = true

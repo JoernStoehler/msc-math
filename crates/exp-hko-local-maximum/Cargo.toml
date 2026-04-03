@@ -11,24 +11,12 @@ name = "hko-gradient"
 path = "gradient-is-zero/run.rs"
 
 [[bin]]
-name = "hko-perturbation"
-path = "perturbation-neighborhood/run.rs"
-
-[[bin]]
 name = "hko-lagrangian-boundary"
 path = "lagrangian-boundary/run.rs"
 
 [[bin]]
 name = "hko-lagrangian-probe"
 path = "lagrangian-boundary/probe.rs"
-
-[[bin]]
-name = "hko-rotation-sweep"
-path = "rotation-sweep/run.rs"
-
-[[bin]]
-name = "hko-omega"
-path = "omega-hypothesis/run.rs"
 
 [lints]
 workspace = true

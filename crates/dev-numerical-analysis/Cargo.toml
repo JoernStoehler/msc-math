@@ -1,5 +1,5 @@
 [package]
-name = "exp-sys-optimization"
+name = "dev-numerical-analysis"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,22 +7,33 @@ edition = "2021"
 path = "src/lib.rs"
 
 [[bin]]
-name = "opt-gradient-validation"
-path = "gradient-validation/run.rs"
+name = "num-error-bounds"
+path = "error-bounds/run.rs"
 
 [[bin]]
-name = "opt-boundary-crossing"
-path = "boundary-crossing-search/run.rs"
+name = "num-collect-poly"
+path = "error-bounds/collect_poly.rs"
 
 [[bin]]
-name = "opt-combinatorial"
-path = "combinatorial-structure/run.rs"
+name = "num-q-error"
+path = "q-error/run.rs"
+
+[[bin]]
+name = "num-kkt-inertia"
+path = "kkt-inertia/run.rs"
+
+[[bin]]
+name = "num-unknown-predicates"
+path = "unknown-predicates/run.rs"
+
+[[test]]
+name = "verify_numerics_tests"
+path = "error-bounds/tests.rs"
 
 [lints]
 workspace = true
 
 [dependencies]
-database = { path = "../database" }
 symplectic.workspace = true
 nalgebra.workspace = true
 serde.workspace = true
