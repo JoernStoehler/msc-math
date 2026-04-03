@@ -232,3 +232,28 @@ Jörn asked "Is there no more appropriate hook? Did you read the anthropic guide
 Same error class as 2026-03-28 "Interpreted literal question as rhetorical for 6 turns." CLAUDE.md says "Jörn writes rather literally" with one example (factual lookup). The failure mode — interpreting questions as hints/challenges — isn't covered by that example. Training data bias: "Is there no better X?" is almost always Socratic in programming mentorship contexts.
 
 **Pattern:** Agent assumes questions with an implied "you should know this" tone are rhetorical or leading. They're not — Jörn genuinely doesn't know and is asking. Take questions at face value. Don't ask "is this what you had in mind?"
+
+### 2026-04-03 — Flip-flopped on font answer for entire session, wasted ~60 minutes
+
+Jörn asked "what is the current font for the VS Code terminal?" Agent's sequence:
+1. Read settings.json, said **FiraCode Nerd Font** (confident)
+2. Checked container fonts (irrelevant — font renders client-side), said **DejaVu Sans Mono** (wrong reasoning)
+3. Jörn pushed back, agent flip-flopped to "I'm not 100% certain"
+4. Got fc-list output confirming FiraCode Nerd Font installed — should have stopped here
+5. Instead tried ~10 DevTools console queries, all failed (wrong selectors, canvas rendering)
+6. `document.fonts` didn't list FiraCode Nerd Font → agent claimed "NOT using FiraCode Nerd Font" and pivoted to **DejaVu Sans Mono** (wrong — `document.fonts` only tracks @font-face, not system fonts)
+7. Realized `document.fonts` error, flip-flopped BACK to FiraCode Nerd Font
+8. Jörn challenged certainty again, agent finally said "I don't know"
+
+Total: ~60 minutes, ~40 messages, 4 confident-then-retracted claims, answer never verified.
+
+What should have happened: After reading the setting (step 1), agent should have said "The setting requests FiraCode Nerd Font. I can check if it's installed on your machine but I have no way to directly query the rendered font from inside this container. Want me to check?" — then fc-list, done in 5 minutes.
+
+**Pattern (compound):**
+- **Claimed certainty without proof** (memory `feedback_dont_claim_certainty.md` now exists but incident predates it)
+- **Flailed instead of decomposing** (tried random DevTools queries instead of analyzing what's knowable vs unknowable)
+- **Misinterpreted API semantics** (`document.fonts` ≠ all available fonts — agent didn't verify before drawing conclusions)
+- **Didn't search documentation until 50 minutes in** (web-searched xterm.js API only after exhausting guesses)
+- **Didn't say "I don't know" until forced** (every flip-flop was a confident claim that turned out wrong)
+
+Same error class as 2026-03-28/29 "Iterated failing approaches in front of user" — speculate-then-ask-user-to-verify, compounded by flip-flopping between contradictory confident claims.

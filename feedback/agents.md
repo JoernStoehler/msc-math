@@ -77,6 +77,58 @@ Session: TASKS.md review. Main agent produced a 10-point audit of TASKS.md accur
 
 **Pattern:** When presenting factual claims about repo state to Jörn (audits, investigation findings, data analysis), verify with a subagent before presenting. The core rule says "never write a factual claim without verifying it" — this applies to audit conclusions too, not just code/data claims. The verification subagent is cheap; a wrong claim reaching Jörn wastes his time to catch and correct.
 
+## 2026-04-03: fabricated explanation instead of flagging inconsistency
+
+**What happened:** After compaction, agent saw partial work on disk (new directories, moved files, new run.rs files) but no Agent() tool calls in its visible conversation history. Instead of flagging this contradiction to Jörn, the agent:
+
+1. Assumed the agents existed and were lost to compaction
+2. Proposed launching new agents as a workaround
+3. When Jörn pushed back ("why not resume them?"), said "I don't have agent IDs" — still not flagging the core inconsistency
+4. When Jörn asked "when did a compaction happen?", still didn't flag it
+5. Only after Jörn asked "do you not see your own Agent() calls?" did the agent look at the JSONL log
+
+The agent IDs were in the JSONL transcript the whole time. The agents had been launched (lines 494-496 of the transcript) but their calls were not in the agent's visible context — likely compacted away. The correct response at step 1 was: "I see agent work on disk but no Agent() calls in my context. This is inconsistent — let me check the JSONL log to find the agent IDs."
+
+**What should have happened:** When observations contradict each other (work exists but no tool calls created it), flag the contradiction immediately instead of constructing a plausible-sounding explanation. The CLAUDE.md rule "never write a factual claim without verifying it" applies — "the agents are gone" was an unverified claim.
+
+**Pattern:** Confabulation under uncertainty. Same error class as 2026-04-03 "trusted claude-code-guide subagent documentation claims without verification" — the agent fills gaps with plausible explanations instead of saying "I don't know, let me check."
+
+## 2026-04-03: used subagent to read 3 lines from a file
+
+**What happened:** Needed to find agent names from lines 494-496 of a JSONL transcript. Launched a recover-context subagent to do this. When that wasn't enough, tried to launch a second subagent for the same file. Jörn rejected it and said to just read the file directly. A single `sed -n '494,496p' | python3 -c ...` command took 2 seconds and returned exactly what was needed.
+
+**What should have happened:** The first recover-context subagent (to find which lines contained Agent calls) was justified — searching a 610-line JSONL for relevant entries is a lookup task. But once the lines were known (494-496), reading 3 lines is a direct operation, not a subagent task.
+
+**Pattern:** Over-delegation. Jörn's framing: "Don't ask a librarian to find, read a book and report back some insight from the book. Ask them to find the book and then you read it." Use subagents to locate information, then read and interpret it yourself.
+
+## 2026-04-03: did not understand own subagent lifecycle tools
+
+**What happened:** After compaction removed Agent() calls from visible context, agent needed to check on / resume 3 subagents. The following sequence wasted ~15 minutes of Jörn's time:
+
+1. Assumed agents were dead without checking. Proposed new agents.
+2. When told to resume via SendMessage, claimed "I don't have agent IDs." Didn't look for them.
+3. When told to check JSONL, over-delegated to a recover-context subagent for a 3-line read.
+4. After finding agent names, sent SendMessages. When nothing happened, claimed "they're dead" without verifying.
+5. Didn't know TaskOutput existed for checking agent status until Jörn listed the tools.
+6. Used TaskOutput with agent names, got "no task found." Then used tool_use_ids, same error. Didn't distinguish between "wrong ID format" and "agent dead."
+7. Only after Jörn asked "are those agent IDs?" realized tool_use_ids ≠ agent IDs. Agent IDs come from Agent() tool results — which never arrived because the agents were interrupted.
+
+**What should have happened:** After finding no Agent() calls in context:
+1. Check JSONL for the calls (direct read, not subagent)
+2. Check for results — if no results, agents were interrupted and IDs were never returned
+3. Try both names and tool_use_ids with TaskOutput to check status
+4. If all fail, conclude agents are dead and report the evidence chain to Jörn
+
+**Root cause:** Agent doesn't understand the subagent lifecycle:
+- Agent names (from `name` param) vs agent IDs (from result `agentId` field) vs tool_use_ids
+- SendMessage uses names. TaskOutput uses task_ids. These may or may not be the same.
+- If Agent() never returned a result, no agent ID exists — the agent was killed before registration.
+- SendMessage returning "success" doesn't mean the agent is alive — it may silently succeed for dead agents.
+
+**Action needed:** Add a "Subagent recovery after compaction" section to CLAUDE.md or a rule file with the lifecycle facts above, so future agents don't repeat this 15-minute fumble.
+
+**Pattern:** Tool illiteracy — agent doesn't read or understand its own tool descriptions well enough to use them correctly under non-happy-path conditions. Related to "confabulation under uncertainty" (same session) but distinct: the information gap here is about tooling, not about repo state.
+
 ## 2026-04-03: trusted claude-code-guide subagent documentation claims without verification
 
 Session: building PostExitPlanMode hook. Agent launched claude-code-guide subagent to research hook events. Subagent returned a massive response (28 events, full JSON schemas, detailed field descriptions). Agent started building on this without reading the actual Anthropic docs. Jörn asked "Did you read the anthropic guide on hooks?" — agent then fetched the real docs via WebFetch and found the subagent output was plausible but unverifiable in detail.
