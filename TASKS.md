@@ -374,17 +374,23 @@ Evidence gathered so far (from session log analysis):
 
 ## polytope-database
 
-**Status (2026-04-02):** Database crate implemented, branch `database-implementation` ready to merge. Experiment migration is future work.
+**Status (2026-04-03):** Database crate + experiment migration done. Branch `experiment-database-migration`.
 
 **Done:**
-- `crates/database/` — PolytopeRecord, load/save JSONL, from_polytope/to_polytope, progressive fill, custom "numer/denom" BigRational serde
+- `crates/database/` — PolytopeRecord, load/save JSONL, from_polytope/to_polytope, progressive fill, custom "numer/denom" BigRational serde, `PartialEq` on `Source`
 - `Polytope4D::from_rational_parts` — reconstruct from cached rational data, skip vertex enumeration
 - `generate_polytope` — blake3 key derivation for independent per-attempt seeding
-- Dependency changes: serde features on num-rational/num-bigint, blake3 added
+- Experiment migration (6 experiments): random-sweep, random-product-sweep, combinatorial-structure, boundary-crossing-search, omega-hypothesis, orbit-recovery
+- `data/polytopes.jsonl` — 1198 entries (70 random + 100 product + 941 omega + 87 orbit-recovery)
 
-**Next: experiment migration** — restructure experiment binaries to read capacity/sigmas from `data/polytopes.jsonl` instead of computing inline. Centralizes the capacity algorithm call so algorithm changes propagate automatically. See `handoffs/experiment-database-migration.md` for full plan with per-experiment analysis.
+**Skipped:**
+- gradient-search — superseded by sys-search
+- q-error — low priority, only 7 known polytopes
 
-**Priority:** High when capacity algorithm changes land (new algorithms make all experiments need reruns). Lower priority otherwise.
+**Not yet done:**
+- combinatorial-structure needs `catch_unwind` in its main loop (KKT panics kill the run on some polytopes)
+- boundary-crossing-search and combinatorial-structure data not regenerated (need full runs)
+- Lagrangian products use shared RNG (no blake3 equivalent), so Source-based lookup doesn't work for them — key-based only
 
 ---
 

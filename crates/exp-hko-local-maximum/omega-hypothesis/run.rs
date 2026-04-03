@@ -11,16 +11,18 @@
 //! Negative dot product → sys increases when ω decreases → hypothesis supported.
 //!
 //! Architecture:
-//! 1. `cargo run --bin omega_obstacle --release` generates dataset
-//! 2. Writes to omega-obstacle/omega-obstacle.jsonl
-//! 3. Python script reads JSONL, produces figures
+//! 1. `cargo run --bin hko-omega --release` generates dataset
+//! 2. Polytopes cached in data/polytopes.jsonl. When capacity + sigmas are cached,
+//!    skips full EHZ (exponential) and only runs single-perm KKT solve for beta.
+//! 3. Writes to omega-obstacle/omega-obstacle.jsonl
+//! 4. Python script reads JSONL, produces figures
 
+use database::{DualVerticesKey, PolytopeRecord, SigmaAction, Source};
 use nalgebra::Vector4;
-use rand::SeedableRng;
-use rand_chacha::ChaCha8Rng;
 use serde::Serialize;
-use std::collections::HashSet;
+use std::collections::HashMap;
 use std::io::{BufWriter, Write};
+use std::path::Path;
 use std::time::Instant;
 use symplectic::derivatives::{
     capacity_derivatives_a, volume_derivatives_a,
@@ -31,6 +33,7 @@ use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::symplectic_form::omega0;
 use symplectic::geom::volume::volume;
 use symplectic::kkt::saddle_point_solver::solve_kkt_for;
+use symplectic::random::generate_polytope;
 
 // ============================================================================
 // Configuration
@@ -129,15 +132,12 @@ fn compute_d_sys_a(
         .collect()
 }
 
-// ============================================================================
-// Phase A: Omega feature computation
-// ============================================================================
-
-/// Compute ω₀ for all ridge-adjacent pairs and orbit transitions.
+/// Omega features: ω₀(n_i, n_j) for skeleton ridges and orbit transitions.
+/// Uses normals (unit dual vertices) for ω₀ computation.
 fn compute_omega_features(
     polytope: &Polytope4D,
     skeleton: &Skeleton,
-    orbit_facets: &[usize],  // physical direction (from EhzResult)
+    orbit_facets: &[usize],
 ) -> (Vec<[f64; 3]>, Vec<f64>) {
     let duals = polytope.dual_vertices_f64();
     let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
@@ -155,7 +155,6 @@ fn compute_omega_features(
         .collect();
 
     // Orbit omegas: ω₀(n_{σ(k)}, n_{σ(k+1)}) for physical transition σ(k) → σ(k+1).
-    // For a physical transition A → B, feasibility requires ω₀(n_A, n_B) ≥ 0.
     let m = orbit_facets.len();
     let orbit_omegas: Vec<f64> = (0..m)
         .map(|k| {
@@ -168,33 +167,17 @@ fn compute_omega_features(
     (ridge_omegas, orbit_omegas)
 }
 
-// ============================================================================
-// Phase B: Gradient dot product computation
-// ============================================================================
-
-/// Compute ∇_{n_k} ω₀(n_k, n_i) projected to T_{n_k}S³.
+/// ∂ω₀(n_k, n_i)/∂n_k projected to T_{n_k}S³.
 ///
-/// Since ω₀(u, v) = ⟨J₀ u, v⟩ is bilinear:
-///   ∂ω₀(n_k, n_i)/∂n_k = J₀^T n_i = -J₀ n_i  (because J₀^T = -J₀)
-///
-/// Wait — ω₀(n_k, n_i) = ⟨J₀ n_k, n_i⟩ (linear in n_k), so the gradient
-/// w.r.t. n_k in R⁴ is J₀^T n_i = -J₀ n_i. But ω₀(u,v) = u^T J₀^T v
-/// where we use the convention ω₀(u,v) = u[0]v[2] - u[2]v[0] + ...
-/// Let's check: ω₀(u,v) = Σ (u_{q_j} v_{p_j} - u_{p_j} v_{q_j})
-///            = u^T M v where M has the right entries.
-/// ∂ω₀(n_k, n_i)/∂n_k = M n_i where M is the matrix of ω₀.
-///
-/// M = [[0,0,1,0],[0,0,0,1],[-1,0,0,0],[0,-1,0,0]] = J₀^T = -J₀
-/// (since J₀ is skew-symmetric: J₀^T = -J₀)
-///
-/// So ∂ω₀(n_k, n_i)/∂n_k = -J₀ n_i. Projected to T_{n_k}S³.
+/// ω₀(u,v) = u^T M v where M = J₀^T = -J₀ (skew-symmetric).
+/// So ∂ω₀(n_k, n_i)/∂n_k = -J₀ n_i, projected onto tangent space of S³ at n_k.
 fn omega_gradient_on_tangent(n_k: &Vector4<f64>, n_i: &Vector4<f64>) -> Vector4<f64> {
     let neg_j0_ni = -j0_apply(n_i);
     // Project to T_{n_k}S³: remove component along n_k
     neg_j0_ni - neg_j0_ni.dot(n_k) * n_k
 }
 
-/// Compute gradient dot products for all (facet, ridge-neighbor) pairs.
+/// Gradient dot products for all (facet, ridge-neighbor) pairs.
 fn compute_gradient_dots(
     polytope: &Polytope4D,
     skeleton: &Skeleton,
@@ -202,7 +185,7 @@ fn compute_gradient_dots(
     orbit_facets: &[usize],
 ) -> Vec<GradientDot> {
     let normals: Vec<Vector4<f64>> = polytope.dual_vertices_f64().iter().map(|a| a / a.norm()).collect();
-    let orbit_set: HashSet<usize> = orbit_facets.iter().copied().collect();
+    let orbit_set: std::collections::HashSet<usize> = orbit_facets.iter().copied().collect();
 
     // Build ridge-neighbor lookup: for each facet k, list of neighbors
     let f = polytope.facet_count();
@@ -240,36 +223,81 @@ fn compute_gradient_dots(
 }
 
 // ============================================================================
-// Main
+// Database helpers
 // ============================================================================
 
+/// Find a cached record by Source metadata. Linear scan, negligible for <1000 records.
+fn find_by_source<'a>(
+    db: &'a HashMap<DualVerticesKey, PolytopeRecord>,
+    source: &Source,
+) -> Option<(&'a DualVerticesKey, &'a PolytopeRecord)> {
+    db.iter().find(|(_, r)| r.source.as_ref() == Some(source))
+}
+
+/// Cached capacity + best permutation from a database record.
+struct CachedCapacity {
+    capacity: f64,
+    volume: f64,
+    best_perm: Vec<usize>,
+}
+
+fn cached_capacity_from_record(record: &PolytopeRecord) -> Option<CachedCapacity> {
+    let capacity = record.capacity?;
+    let volume = record.volume?;
+    let sigmas = record.sigmas.as_ref()?;
+    let best_sigma = sigmas.first()?;
+    Some(CachedCapacity {
+        capacity,
+        volume,
+        best_perm: best_sigma.perm.clone(),
+    })
+}
+
+// ============================================================================
+// Core processing
+// ============================================================================
+
+/// Process one polytope: compute omega features and gradient dots.
+///
+/// If `cached` is Some, skip full EHZ and use cached capacity + permutation.
+/// Still runs single-perm KKT solve for beta (needed for gradient computation).
 fn process_polytope(
     polytope: &Polytope4D,
     source: &str,
+    cached: Option<&CachedCapacity>,
 ) -> Option<OmegaRow> {
     let f = polytope.facet_count();
     let duals = polytope.dual_vertices_f64();
 
     let t0 = Instant::now();
 
-    // Volume
-    let vol = volume(polytope).ok()?;
+    let (vol, cap, iterations, best_perm);
 
-    // Capacity via library ehz_capacity
-    let ehz_result = symplectic::ehz_capacity(polytope)?;
-    let cap = ehz_result.result.capacity;
+    if let Some(c) = cached {
+        // Database hit: skip full EHZ, use cached values
+        vol = c.volume;
+        cap = c.capacity;
+        iterations = 0;
+        best_perm = c.best_perm.clone();
+    } else {
+        // No cache: full EHZ computation
+        vol = volume(polytope).ok()?;
+        let ehz_result = symplectic::ehz_capacity(polytope)?;
+        cap = ehz_result.result.capacity;
+        iterations = ehz_result.result.iterations;
+        best_perm = ehz_result.result.best_permutation;
+    }
+
     let sys = cap * cap / (2.0 * vol);
-
     let time_ms = t0.elapsed().as_secs_f64() * 1000.0;
 
-    // Retrieve full KKT solution for the best orbit (beta, mu, xi)
-    let best_perm = &ehz_result.result.best_permutation;
-    let kkt_result = solve_kkt_for(polytope, best_perm).feasible()?;
+    // Single-perm KKT solve for beta (cheap, ~0.01ms)
+    let kkt_result = solve_kkt_for(polytope, &best_perm).feasible()?;
     let best_beta = &kkt_result.beta;
 
     // Phase A: omega features
     let skeleton = Skeleton::compute(polytope);
-    let (ridge_omegas, orbit_omegas) = compute_omega_features(polytope, &skeleton, best_perm);
+    let (ridge_omegas, orbit_omegas) = compute_omega_features(polytope, &skeleton, &best_perm);
 
     let orbit_omega_min = orbit_omegas
         .iter()
@@ -299,9 +327,9 @@ fn process_polytope(
     // Phase B: gradient dots (using library derivative functions with dual vertex parameterization)
     let d_sys_a = compute_d_sys_a(
         polytope, vol, cap, sys,
-        best_perm, best_beta, kkt_result.q_corrected, &kkt_result.mu,
+        &best_perm, best_beta, kkt_result.q_corrected, &kkt_result.mu,
     );
-    let gradient_dots = compute_gradient_dots(polytope, &skeleton, &d_sys_a, best_perm);
+    let gradient_dots = compute_gradient_dots(polytope, &skeleton, &d_sys_a, &best_perm);
 
     Some(OmegaRow {
         source: source.to_string(),
@@ -310,10 +338,10 @@ fn process_polytope(
         volume: vol,
         capacity: cap,
         sys,
-        iterations: ehz_result.result.iterations,
+        iterations,
         time_ms,
         orbit_length: best_perm.len(),
-        orbit_facets: best_perm.clone(),
+        orbit_facets: best_perm,
         orbit_betas: best_beta.clone(),
         orbit_omegas,
         orbit_omega_min,
@@ -331,91 +359,152 @@ fn main() {
     let file = std::fs::File::create(&out_path).expect("Failed to create output file");
     let mut writer = BufWriter::new(file);
 
-    let mut rng = ChaCha8Rng::seed_from_u64(SEED);
+    let db_path = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../data/polytopes.jsonl");
+    let mut db: HashMap<DualVerticesKey, PolytopeRecord> =
+        database::load(&db_path).expect("failed to load database");
+    eprintln!("Loaded database: {} entries", db.len());
+
     let mut total = 0usize;
     let mut failed = 0usize;
+    let mut cache_hits = 0usize;
 
     eprintln!("=== Omega-obstacle experiment ===");
     eprintln!("Output: {}", out_path.display());
 
-    // Random polytopes
+    // Random polytopes via generate_polytope (blake3 per-attempt seeding)
+    let mut attempt: u64 = 0;
     for &(f, n) in SAMPLING_PLAN {
         let t0 = Instant::now();
-        let polytopes = symplectic::random::generate_random_polytopes(n, f, H_MIN, H_MAX, &mut rng);
-        eprintln!(
-            "F={}: generated {} polytopes in {:.1}s",
-            f,
-            polytopes.len(),
-            t0.elapsed().as_secs_f64()
-        );
+        let mut accepted = 0usize;
+        let mut hits_this_f = 0usize;
 
-        for (idx, polytope) in polytopes.iter().enumerate() {
-            let source = format!("random_F{}_{}", f, idx);
-            match process_polytope(polytope, &source) {
+        while accepted < n {
+            let source_tag = Source::Random {
+                master_seed: SEED,
+                attempt,
+                facet_count_target: f,
+                h_min: H_MIN,
+                h_max: H_MAX,
+            };
+
+            // Source-based lookup
+            let (polytope, cached) = if let Some((_, record)) = find_by_source(&db, &source_tag) {
+                let p = record.to_polytope().expect("failed to reconstruct polytope from database");
+                let c = cached_capacity_from_record(record);
+                if c.is_some() { hits_this_f += 1; }
+                (p, c)
+            } else {
+                // Generate new polytope
+                match generate_polytope(f, H_MIN, H_MAX, SEED, attempt) {
+                    Ok(p) => (p, None),
+                    Err(_) => {
+                        attempt += 1;
+                        continue; // rejection sampling
+                    }
+                }
+            };
+
+            let source_name = format!("random_F{}_{}", f, accepted);
+            match process_polytope(&polytope, &source_name, cached.as_ref()) {
                 Some(row) => {
                     serde_json::to_writer(&mut writer, &row).unwrap();
                     writeln!(writer).unwrap();
+
+                    // Insert into database if not already there
+                    let key: DualVerticesKey = polytope.dual_vertices().to_vec();
+                    if !db.contains_key(&key) {
+                        let mut record = PolytopeRecord::from_polytope(&polytope);
+                        record.source = Some(source_tag);
+                        record = record.with_computed_fields(row.volume, 0.0, row.capacity, 0.0);
+                        record = record.with_sigmas(
+                            vec![SigmaAction {
+                                perm: row.orbit_facets.clone(),
+                                action: row.capacity,
+                            }],
+                            0.0,
+                        );
+                        db.insert(key, record);
+                    }
+
                     total += 1;
+                    if cached.is_some() { cache_hits += 1; }
                 }
                 None => {
-                    eprintln!("  SKIP: {} (capacity computation failed)", source);
+                    eprintln!("  SKIP: {} (capacity computation failed)", source_name);
                     failed += 1;
                 }
             }
+            accepted += 1;
+            attempt += 1;
         }
         eprintln!(
-            "  F={}: processed in {:.1}s (total so far: {})",
-            f,
-            t0.elapsed().as_secs_f64(),
-            total
+            "F={}: {} polytopes in {:.1}s ({} cache hits)",
+            f, n, t0.elapsed().as_secs_f64(), hits_this_f
         );
     }
 
-    // HKO counterexample
-    {
+    // Known polytopes (HKO pentagon, simplex, hypercube)
+    // Wrapped in catch_unwind because the KKT solver can panic on near-singular
+    // systems (pre-existing issue in library's saddle_point_solver.rs:557).
+    let known_polytopes_list: Vec<(String, Polytope4D)> = {
         let hko = known_polytopes::hko_pentagon();
-        let source = "hko_pentagon";
-        match process_polytope(&hko.polytope, source) {
-            Some(row) => {
+        let mut list = vec![("hko_pentagon".to_string(), hko.polytope.clone())];
+        for kp in &[known_polytopes::simplex(), known_polytopes::hypercube()] {
+            if kp.polytope.facet_count() <= 10 {
+                list.push((kp.name.to_string(), kp.polytope.clone()));
+            } else {
+                eprintln!("SKIP: {} (F={} > 10, too expensive for HK2017)",
+                          kp.name, kp.polytope.facet_count());
+            }
+        }
+        list
+    };
+
+    for (name, polytope) in &known_polytopes_list {
+        let key: DualVerticesKey = polytope.dual_vertices().to_vec();
+        let cached = db.get(&key).and_then(cached_capacity_from_record);
+
+        let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            process_polytope(polytope, name, cached.as_ref())
+        }));
+
+        match result {
+            Ok(Some(row)) => {
                 serde_json::to_writer(&mut writer, &row).unwrap();
                 writeln!(writer).unwrap();
+
+                if !db.contains_key(&key) {
+                    let mut record = PolytopeRecord::from_polytope(polytope);
+                    record.source = Some(Source::Known { name: name.clone() });
+                    record = record.with_computed_fields(row.volume, 0.0, row.capacity, 0.0);
+                    record = record.with_sigmas(
+                        vec![SigmaAction { perm: row.orbit_facets.clone(), action: row.capacity }],
+                        0.0,
+                    );
+                    db.insert(key, record);
+                }
+
                 total += 1;
-                eprintln!("HKO pentagon: sys = {:.6}", row.sys);
+                eprintln!("{}: sys = {:.6}", name, row.sys);
             }
-            None => {
-                eprintln!("WARNING: HKO pentagon capacity failed");
+            Ok(None) => {
+                eprintln!("SKIP: {} (capacity computation returned None)", name);
                 failed += 1;
             }
-        }
-    }
-
-    // Other known polytopes for reference (skip F > 10 — instrumented HK2017 is exponential)
-    for kp in &[
-        known_polytopes::simplex(),
-        known_polytopes::hypercube(),
-    ] {
-        if kp.polytope.facet_count() > 10 {
-            eprintln!("SKIP: {} (F={} > 10, too expensive for instrumented HK2017)",
-                      kp.name, kp.polytope.facet_count());
-            continue;
-        }
-        match process_polytope(&kp.polytope, kp.name) {
-            Some(row) => {
-                serde_json::to_writer(&mut writer, &row).unwrap();
-                writeln!(writer).unwrap();
-                total += 1;
-            }
-            None => {
+            Err(_) => {
+                eprintln!("SKIP: {} (KKT solver panicked — pre-existing numerical issue)", name);
                 failed += 1;
             }
         }
     }
 
     writer.flush().unwrap();
+    database::save(&db_path, &db).expect("failed to save database");
+
     eprintln!(
-        "\nDone: {} polytopes written, {} failed. Output: {}",
-        total,
-        failed,
-        out_path.display()
+        "\nDone: {} polytopes written, {} failed, {} cache hits. Database: {} entries.",
+        total, failed, cache_hits, db.len()
     );
+    eprintln!("Output: {}", out_path.display());
 }

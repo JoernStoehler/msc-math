@@ -13,16 +13,18 @@
 //! - Pass 3 (convexity testing): sample direction pairs from Pass 1, check if midpoint
 //!   of two interior points has the same combinatorial type.
 //!
-//! Input: random-sweep/random-sweep.jsonl, random-product-sweep/random-product-sweep.jsonl
+//! Input: data/polytopes.jsonl (polytope database, populated by random-sweep + random-product-sweep)
 //! Filter: F ≤ 10 (HK2017 is exponential in F)
 
+use database::{PolytopeRecord, Source};
 use nalgebra::{Matrix4, Vector4};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal};
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use std::fs::File;
-use std::io::{BufRead, BufReader, BufWriter, Write};
+use std::io::{BufWriter, Write};
+use std::path::Path;
 use std::time::Instant;
 use symplectic::algorithms::facet_adjacency::{build_transition_matrix, is_feasible_cycle};
 use symplectic::algorithms::hk2017::combinations;
@@ -288,15 +290,31 @@ struct SweepRow {
 }
 
 // ============================================================================
-// Input deserialization
+// Database helpers
 // ============================================================================
 
-#[derive(Debug, Deserialize)]
-struct InputRow {
-    name: String,
-    #[serde(alias = "facet_count")]
-    facet_count: usize,
-    dual_vertices: Vec<[f64; 4]>,
+/// Derive a human-readable name from a database record's Source.
+fn name_from_record(record: &PolytopeRecord, index: usize) -> String {
+    match &record.source {
+        Some(Source::Random { facet_count_target, attempt, .. }) => {
+            format!("random_F{facet_count_target}_a{attempt}")
+        }
+        Some(Source::LagrangianProduct { n1, n2, .. }) => {
+            format!("product_{n1}x{n2}_{index}")
+        }
+        Some(Source::Known { name }) => name.clone(),
+        None => format!("polytope_{index}"),
+    }
+}
+
+/// Derive a source dataset string from a database record's Source.
+fn source_dataset_from_record(record: &PolytopeRecord) -> String {
+    match &record.source {
+        Some(Source::Random { .. }) => "random-sweep".to_string(),
+        Some(Source::LagrangianProduct { .. }) => "random-product-sweep".to_string(),
+        Some(Source::Known { .. }) => "known".to_string(),
+        None => "unknown".to_string(),
+    }
 }
 
 // ============================================================================
@@ -688,7 +706,23 @@ fn construct_at_t(
 
 /// Compute sys for a polytope using standard (non-instrumented) EHZ.
 /// Returns (sys, capacity, volume, best_perm, kkt).
+/// Wrapped in catch_unwind because the KKT solver can panic on
+/// near-singular systems (pre-existing issue in saddle_point_solver).
 fn compute_sys(
+    polytope: &Polytope4D,
+) -> Option<(
+    f64,
+    f64,
+    f64,
+    Vec<usize>,
+    symplectic::kkt::saddle_point_solver::KktResult,
+)> {
+    std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+        compute_sys_inner(polytope)
+    })).ok()?
+}
+
+fn compute_sys_inner(
     polytope: &Polytope4D,
 ) -> Option<(
     f64,
@@ -954,65 +988,6 @@ fn same_transitions(base: &Polytope4D, other: &Polytope4D) -> bool {
     t1 == t2
 }
 
-// ============================================================================
-// Data loading
-// ============================================================================
-
-fn load_polytopes_from_jsonl(
-    path: &std::path::Path,
-    source: &str,
-) -> Vec<(String, String, Polytope4D)> {
-    let file = match File::open(path) {
-        Ok(f) => f,
-        Err(e) => {
-            eprintln!("WARNING: Could not open {}: {e}", path.display());
-            eprintln!("  Run the corresponding experiment binary first.");
-            return Vec::new();
-        }
-    };
-    let reader = BufReader::new(file);
-    let mut polytopes = Vec::new();
-
-    for (line_no, line) in reader.lines().enumerate() {
-        let line = match line {
-            Ok(l) => l,
-            Err(e) => {
-                eprintln!("  Line {}: read error: {e}", line_no + 1);
-                continue;
-            }
-        };
-        if line.trim().is_empty() {
-            continue;
-        }
-
-        let row: InputRow = match serde_json::from_str(&line) {
-            Ok(r) => r,
-            Err(e) => {
-                eprintln!("  Line {}: parse error: {e}", line_no + 1);
-                continue;
-            }
-        };
-
-        if row.facet_count > MAX_FACET_COUNT {
-            continue;
-        }
-
-        let duals: Vec<Vector4<f64>> = row
-            .dual_vertices
-            .iter()
-            .map(|a| Vector4::new(a[0], a[1], a[2], a[3]))
-            .collect();
-
-        match Polytope4D::from_f64(duals) {
-            Ok(p) => polytopes.push((row.name, source.to_string(), p)),
-            Err(e) => {
-                eprintln!("  {}: construction failed: {e}", row.name);
-            }
-        }
-    }
-
-    polytopes
-}
 
 // ============================================================================
 // Pass 4: Multi-boundary sweep
@@ -1109,29 +1084,39 @@ fn main() {
     println!("Combinatorial Boundaries: cell geometry characterization\n");
 
     // =========================================================================
-    // Load starting polytopes
+    // Load starting polytopes from database
     // =========================================================================
 
-    println!("Loading starting polytopes (F ≤ {MAX_FACET_COUNT})...");
+    println!("Loading starting polytopes from database (F ≤ {MAX_FACET_COUNT})...");
 
-    let random_sweep_path = base_dir.join("random-sweep/random-sweep.jsonl");
-    let random_product_path = base_dir.join("random-product-sweep/random-product-sweep.jsonl");
+    let db_path = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../data/polytopes.jsonl");
+    let db = database::load(&db_path).expect("failed to load database");
 
     let mut polytopes: Vec<(String, String, Polytope4D)> = Vec::new();
 
-    let rs = load_polytopes_from_jsonl(&random_sweep_path, "random-sweep");
-    println!("  random-sweep: {} polytopes loaded", rs.len());
-    polytopes.extend(rs);
-
-    let rp = load_polytopes_from_jsonl(&random_product_path, "random-product-sweep");
-    println!("  random-product-sweep: {} polytopes loaded", rp.len());
-    polytopes.extend(rp);
+    for (idx, (_, record)) in db.iter().enumerate() {
+        let f = record.dual_vertices_rational.len();
+        if f > MAX_FACET_COUNT {
+            continue;
+        }
+        let p = match record.to_polytope() {
+            Ok(p) => p,
+            Err(e) => {
+                eprintln!("  db entry {idx}: reconstruction failed: {e}");
+                continue;
+            }
+        };
+        let name = name_from_record(record, idx);
+        let source = source_dataset_from_record(record);
+        polytopes.push((name, source, p));
+    }
 
     let n_polytopes = polytopes.len();
-    println!("  Total: {n_polytopes} polytopes\n");
+    println!("  {n_polytopes} polytopes loaded from database (F ≤ {MAX_FACET_COUNT})\n");
 
     if n_polytopes == 0 {
-        eprintln!("ERROR: No polytopes loaded. Run random_sweep and random_product_sweep first.");
+        eprintln!("ERROR: No polytopes in database. Run base-random-sweep and base-random-product-sweep first.");
         std::process::exit(1);
     }
 
@@ -1190,46 +1175,34 @@ fn main() {
         // Base computation: instrumented EHZ for orbit gap + gradient
         // =====================================================================
 
-        let instrumented = match ehz_capacity_instrumented(polytope) {
-            Some(r) => r,
-            None => {
-                eprintln!("  {name}: instrumented EHZ returned None, skipping");
+        // Base computation wrapped in catch_unwind — the KKT solver can panic
+        // on near-singular systems (pre-existing issue in saddle_point_solver).
+        let base = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            let instrumented = ehz_capacity_instrumented(polytope)?;
+            let vol = volume(polytope).ok().filter(|&v| v > 0.0)?;
+            let cap = instrumented.capacity;
+            let sys = cap * cap / (2.0 * vol);
+            let perm = instrumented.best_permutation;
+            let orbit_gap = instrumented.orbit_gap;
+            let n_valid_orbits = instrumented.n_valid_orbits;
+            let kkt = solve_kkt_for(polytope, &perm).feasible()?;
+            Some((cap, vol, sys, perm, orbit_gap, n_valid_orbits, kkt))
+        }));
+
+        let (cap, vol, sys, perm, orbit_gap, n_valid_orbits, kkt) = match base {
+            Ok(Some(t)) => t,
+            Ok(None) | Err(_) => {
                 n_skipped += 1;
                 continue;
             }
         };
 
-        let vol = match volume(polytope) {
-            Ok(v) if v > 0.0 => v,
-            _ => {
-                eprintln!("  {name}: volume computation failed, skipping");
-                n_skipped += 1;
-                continue;
-            }
-        };
-
-        let cap = instrumented.capacity;
-        let sys = cap * cap / (2.0 * vol);
-        let perm = &instrumented.best_permutation;
-        let orbit_gap = instrumented.orbit_gap;
-        let n_valid_orbits = instrumented.n_valid_orbits;
-
-        // KKT for gradient computation
-        let kkt = match solve_kkt_for(polytope, perm) {
-            KktOutcome::Feasible(k) => k,
-            _ => {
-                eprintln!("  {name}: KKT failed, skipping");
-                n_skipped += 1;
-                continue;
-            }
-        };
-
-        let d_sys_a = compute_sys_gradient_a(polytope, vol, cap, sys, &kkt, perm);
+        let d_sys_a = compute_sys_gradient_a(polytope, vol, cap, sys, &kkt, &perm);
 
         let skeleton = Skeleton::compute(polytope);
         let vertex_count = skeleton.vertex_facets.len();
         let all_simple = skeleton.vertex_facets.iter().all(|vf| vf.len() == 4);
-        let orbit_str = perm_to_string(perm);
+        let orbit_str = perm_to_string(&perm);
 
         // Which facets are in the optimal orbit?
         let orbit_facets: Vec<bool> = (0..f).map(|k| perm.contains(&k)).collect();

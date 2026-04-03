@@ -2,28 +2,30 @@
 //!
 //! Goal: Compute systolic ratios for random 4D polytopes across facet counts F=5..12,
 //!   to probe whether random generic polytopes approach the Viterbo threshold.
-//! Input: None (generates random polytopes from hardcoded seed and parameters).
-//! Output: crates/exp-baseline-characterization/random-sweep/random-sweep.jsonl (70 polytopes with capacity, volume, sys).
+//! Input: Polytope database at data/polytopes.jsonl (created if missing).
+//! Output: crates/exp-baseline-characterization/random-sweep/random-sweep.jsonl
 //!
 //! Architecture:
-//! 1. `cargo run --bin random_sweep --release` generates dataset
-//! 2. Writes to random-sweep/random-sweep.jsonl
-//! 3. Python script plots sys vs F
+//! 1. `cargo run --bin base-random-sweep --release` generates dataset
+//! 2. Polytopes are generated via `generate_polytope` (blake3 per-attempt seeding)
+//!    and cached in the polytope database. Re-runs skip generation + capacity.
+//! 3. Writes to random-sweep/random-sweep.jsonl
+//! 4. Python script plots sys vs F
 //!
 //! Dataset design:
 //! - Random polytopes with facet counts F=5..12
 //! - Height range h in [0.8, 1.2]
 //! - HK2017 pruned only (production algorithm)
 
-use symplectic::random::generate_random_polytopes;
-// TODO: These will be re-exported from top-level `symplectic::` in wave 4 (subagent #16).
-use symplectic::geom::volume::volume;
+use database::{DualVerticesKey, PolytopeRecord, SigmaAction, Source};
+use std::collections::HashMap;
 use symplectic::algorithms::hk2017::ehz_capacity;
-use rand::SeedableRng;
-use rand_chacha::ChaCha8Rng;
+use symplectic::geom::volume::volume;
+use symplectic::random::generate_polytope;
 use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
+use std::path::Path;
 use std::time::Instant;
 
 const SEED: u64 = 42;
@@ -57,39 +59,114 @@ struct RandomSweepRow {
     time_capacity_ms: f64,
 }
 
+/// Find a cached record by Source metadata. Linear scan, negligible for <1000 records.
+fn find_by_source<'a>(
+    db: &'a HashMap<DualVerticesKey, PolytopeRecord>,
+    source: &Source,
+) -> Option<(&'a DualVerticesKey, &'a PolytopeRecord)> {
+    db.iter().find(|(_, r)| r.source.as_ref() == Some(source))
+}
+
 fn main() {
     let t0 = Instant::now();
-    let mut rng = ChaCha8Rng::seed_from_u64(SEED);
 
-    let output_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+    let db_path = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../data/polytopes.jsonl");
+    let output_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("random-sweep/random-sweep.jsonl");
 
-    println!("Generating random sweep dataset...\n");
+    let mut db = database::load(&db_path).expect("failed to load database");
+    println!("Loaded database: {} entries\n", db.len());
 
     let file = File::create(&output_path).expect("failed to create output file");
     let mut writer = BufWriter::new(file);
 
     let mut total = 0usize;
+    let mut cache_hits = 0usize;
+    let mut attempt: u64 = 0;
+
     for &(facet_count, n_samples) in RANDOM_PLAN {
         println!(
             "F={facet_count:2}: generating {n_samples:2} samples (h in [{H_MIN}, {H_MAX}])"
         );
-        let polytopes = generate_random_polytopes(n_samples, facet_count, H_MIN, H_MAX, &mut rng);
+        let mut accepted = 0usize;
 
-        for (i, p) in polytopes.iter().enumerate() {
+        while accepted < n_samples {
+            let source = Source::Random {
+                master_seed: SEED,
+                attempt,
+                facet_count_target: facet_count,
+                h_min: H_MIN,
+                h_max: H_MAX,
+            };
+
+            // Try Source-based lookup first
+            if let Some((_, record)) = find_by_source(&db, &source) {
+                // Cache hit: reconstruct polytope from rational data (skip vertex enumeration)
+                let p = record.to_polytope().expect("failed to reconstruct polytope from database");
+                let vol = record.volume.expect("cached record missing volume");
+                let cap = record.capacity.expect("cached record missing capacity");
+                let sys = cap * cap / (2.0 * vol);
+
+                let row = RandomSweepRow {
+                    name: format!("random_F{facet_count}_{accepted}"),
+                    facet_count,
+                    dual_vertices: p.dual_vertices_f64().iter().map(|a| [a[0], a[1], a[2], a[3]]).collect(),
+                    h_min: H_MIN,
+                    h_max: H_MAX,
+                    volume: vol,
+                    capacity: cap,
+                    sys,
+                    iterations: 0, // not stored in database
+                    time_volume_ms: 0.0,
+                    time_capacity_ms: 0.0,
+                };
+
+                let line = serde_json::to_string(&row).expect("serialize row");
+                writeln!(writer, "{line}").expect("write line");
+                total += 1;
+                accepted += 1;
+                cache_hits += 1;
+                attempt += 1;
+                continue;
+            }
+
+            // Cache miss: generate polytope
+            let p = match generate_polytope(facet_count, H_MIN, H_MAX, SEED, attempt) {
+                Ok(p) => p,
+                Err(_) => {
+                    // Rejection: this (seed, attempt) doesn't produce a valid polytope
+                    attempt += 1;
+                    continue;
+                }
+            };
+
             let start_vol = Instant::now();
-            let vol = volume(p).expect("volume computation failed");
+            let vol = volume(&p).expect("volume computation failed");
             let time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
 
             let start_cap = Instant::now();
-            let result = ehz_capacity(p).expect("capacity computation failed");
+            let ehz = ehz_capacity(&p).expect("capacity computation failed");
             let time_capacity_ms = start_cap.elapsed().as_secs_f64() * 1000.0;
 
-            let cap = result.result.capacity;
+            let cap = ehz.result.capacity;
             let sys = cap * cap / (2.0 * vol);
 
+            // Insert into database
+            let mut record = PolytopeRecord::from_polytope(&p);
+            record.source = Some(source);
+            record = record.with_computed_fields(vol, 0.0, cap, 0.0);
+            record = record.with_sigmas(
+                vec![SigmaAction {
+                    perm: ehz.result.best_permutation.clone(),
+                    action: cap,
+                }],
+                0.0, // gap_cutoff: only storing the best sigma
+            );
+            db.insert(record.key(), record);
+
             let row = RandomSweepRow {
-                name: format!("random_F{facet_count}_{i}"),
+                name: format!("random_F{facet_count}_{accepted}"),
                 facet_count,
                 dual_vertices: p.dual_vertices_f64().iter().map(|a| [a[0], a[1], a[2], a[3]]).collect(),
                 h_min: H_MIN,
@@ -97,7 +174,7 @@ fn main() {
                 volume: vol,
                 capacity: cap,
                 sys,
-                iterations: result.result.iterations,
+                iterations: ehz.result.iterations,
                 time_volume_ms,
                 time_capacity_ms,
             };
@@ -105,10 +182,16 @@ fn main() {
             let line = serde_json::to_string(&row).expect("serialize row");
             writeln!(writer, "{line}").expect("write line");
             total += 1;
+            accepted += 1;
+            attempt += 1;
         }
     }
 
     writer.flush().expect("flush output");
+    database::save(&db_path, &db).expect("failed to save database");
+
     println!("\nWrote {total} entries to {}", output_path.display());
+    println!("Database: {} entries (saved to {})", db.len(), db_path.display());
+    println!("Cache hits: {cache_hits}/{total}");
     println!("Total time: {:.1}s", t0.elapsed().as_secs_f64());
 }
