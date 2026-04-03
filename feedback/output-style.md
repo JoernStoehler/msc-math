@@ -187,6 +187,26 @@ When the agent finally attempted comparisons, they were incomplete: missing appr
 
 **Pattern:** Agent optimizes for producing any answer quickly rather than producing a thorough answer. When told to compare, agent produces a minimal 2-row table and asks "approve?" instead of thinking about all approaches and all criteria before presenting. This is the same "converge before exploring" pattern from 2026-04-02, but more extreme because the user explicitly requested exploration.
 
+### 2026-04-03 — Narrated corrections instead of asking for the one decision needed
+
+Session: TASKS.md review. After subagent found corrections to my audit, I presented all corrections in detail ("verify-numerics should NOT move to Completed, commit distance was off, thesis TODOs in other files, priority guidance vs actual work, cross-experiment cleanup items stale, orphan handoff files, gradient-search still exists"). Jörn said "I don't need to be told about all those updates. Please just ask for feedback that's valuable to you bc it helps maximize the expected value."
+
+The only thing I actually needed from Jörn was: "Is sys-search confirmed better than gradient-search?" Everything else was either a self-correction I could just apply, or context Jörn didn't need to review. Narrating self-corrections wastes Jörn's time and makes messages harder to skim.
+
+**Pattern:** Agent conflates "I need to correct my work" with "Jörn needs to see the corrections." Internal corrections should be applied silently. Only surface decisions or information Jörn can act on.
+
+### 2026-04-03 — Speculated about agent behavior when asked a factual question
+
+Jörn asked about profiling/ being flagged repeatedly. I answered with speculation about what agents will do ("agents keep inventorying... agents don't weigh that caveat... any audit subagent starts fresh"). Jörn said "Where do you know from what agents will do? Anyway I think you're speculating now on low value items which just wastes my time."
+
+**Pattern:** When asked "why does X happen?", answer with observable evidence, not theories about agent cognition. I don't know how future agents will behave. If I don't have a factual answer, say so.
+
+### 2026-04-03 — Hedged with ~ when exact number was available
+
+Said "~6 days" when the commits span exactly from 2026-03-28 to 2026-04-03 (6 days). Jörn caught it: "6 days? Why the ~?" No reason for the hedge — the data was precise.
+
+**Pattern:** Unnecessary hedging erodes trust. If you have the exact number, use it. If you're uncertain, say why.
+
 ### 2026-04-03 — Minimized edits instead of optimizing for project success
 
 When planning LFS setup, agent repeatedly said "no change needed" for things that should have changed: didn't want to migrate existing files ("not worth another history rewrite for 102.7 MB"), didn't want to modify WorktreeCreate.sh ("no hook change needed"), didn't want to add documentation ("agents don't need to know"). Each "no change needed" was optimizing for less agent work, not for project quality.
