@@ -224,3 +224,11 @@ Multiple times during the session:
 - "Do you want me to strip those too?" — should have recommended based on analysis
 
 Each question transferred work to Jörn that the agent could have done with a few seconds of investigation. This is the opposite of the "don't ask when actionable" memory entry — the agent asks when it's uncertain instead of investigating to remove the uncertainty.
+
+### 2026-04-03 — Interpreted genuine question as Socratic hint
+
+Jörn asked "Is there no more appropriate hook? Did you read the anthropic guide on hooks?" Agent interpreted this as Socratic hinting — assumed Jörn knew a better answer and was leading the agent to it. Responded with "Is PostToolUse on ExitPlanMode the hook you had in mind, or were you pointing me toward something else?" Jörn: "i did not have sth in mind. i am not teasing you."
+
+Same error class as 2026-03-28 "Interpreted literal question as rhetorical for 6 turns." CLAUDE.md says "Jörn writes rather literally" with one example (factual lookup). The failure mode — interpreting questions as hints/challenges — isn't covered by that example. Training data bias: "Is there no better X?" is almost always Socratic in programming mentorship contexts.
+
+**Pattern:** Agent assumes questions with an implied "you should know this" tone are rhetorical or leading. They're not — Jörn genuinely doesn't know and is asking. Take questions at face value. Don't ask "is this what you had in mind?"

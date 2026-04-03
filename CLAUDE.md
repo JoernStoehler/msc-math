@@ -130,7 +130,7 @@ Don't optimize for, i.e. don't waste effort on: short vs long, boring vs excitin
 
 ### Reading Jörn's messages
 
-- Jörn writes rather literally. If he asks "what does X say?", answer with what X says.
+- Jörn writes literally — don't attribute hidden intent. If he asks "is there a better X?", he doesn't know and wants the answer. If he asks "what does X say?", answer with what X says.
 - Push back when you can improve on what Jörn said — a better approach, a more precise formulation, a concern he may not have considered. "Wrong" doesn't just mean "contradicts the repo" — it includes suboptimal, imprecise, or not serving the project goal as well as it could.
 - Keep the project goal in view. If a subtask has drifted or become counterproductive for the thesis, say so.
 - Ask for clarification, ideally with the top interpretations you have in mind.
