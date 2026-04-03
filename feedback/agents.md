@@ -76,3 +76,9 @@ Required two additional fix-up passes (one via subagents, one manual via sed).
 Session: TASKS.md review. Main agent produced a 10-point audit of TASKS.md accuracy and presented it to Jörn without subagent verification. Jörn asked "Have you asked a subagent to verify/check your review for accuracy & for full argumentation & for gaps/oversights?" The verification subagent then found a real error (verify-numerics incorrectly recommended for Completed despite having open items) and several gaps (thesis TODOs in other files, priority guidance conflict, stale cross-experiment cleanup section).
 
 **Pattern:** When presenting factual claims about repo state to Jörn (audits, investigation findings, data analysis), verify with a subagent before presenting. The core rule says "never write a factual claim without verifying it" — this applies to audit conclusions too, not just code/data claims. The verification subagent is cheap; a wrong claim reaching Jörn wastes his time to catch and correct.
+
+## 2026-04-03: trusted claude-code-guide subagent documentation claims without verification
+
+Session: building PostExitPlanMode hook. Agent launched claude-code-guide subagent to research hook events. Subagent returned a massive response (28 events, full JSON schemas, detailed field descriptions). Agent started building on this without reading the actual Anthropic docs. Jörn asked "Did you read the anthropic guide on hooks?" — agent then fetched the real docs via WebFetch and found the subagent output was plausible but unverifiable in detail.
+
+**Pattern:** Subagents (especially those using smaller models) are unreliable for external documentation lookups — they may produce plausible but fabricated API details, field names, or event schemas. The Core Rule covers "the code does X" and "the data shows Y" but not "the docs say Z." For external documentation claims, verify against the primary source (WebFetch, official docs) before building on them.
