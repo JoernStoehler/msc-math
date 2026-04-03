@@ -11,16 +11,8 @@ name = "opt-gradient-validation"
 path = "gradient-validation/run.rs"
 
 [[bin]]
-name = "opt-large-scale-descent"
-path = "large-scale-descent/run.rs"
-
-[[bin]]
 name = "opt-boundary-crossing"
 path = "boundary-crossing-search/run.rs"
-
-[[bin]]
-name = "opt-sensitivity"
-path = "sensitivity-analysis/run.rs"
 
 [[bin]]
 name = "opt-combinatorial"

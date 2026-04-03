@@ -112,12 +112,12 @@ The thesis is currently a dump of results, not a coherent narrative. Experiments
 - `crosspolytope` Phase 2 TODO: update known_polytopes.rs (tracked in its logbook)
 - `crates/exp-hko-local-maximum/gradient-is-zero` Phase C (2026-03-23) verified first-order necessary condition for local max in F=10 (n,h)-space via LP. See `hko-local-maximality` task for next steps.
 
-**Gradient experiment redesign (2026-03-26, Jörn):** The three gradient experiments (`sys-optimization`, `gradient-descent`, `gradient-search`) evolved incrementally and overlap significantly. Replace with three cleanly scoped experiments:
+**Gradient experiment redesign (2026-03-26, Jörn; cleanup 2026-04-03):** The old gradient experiments (`sys-optimization`/sensitivity-analysis, `gradient-descent`/large-scale-descent, `gradient-search`) were superseded and deleted. Derivative lemmas relocated to `crates/library/src/algorithms/math.tex`. Three current experiments:
 1. **gradient-validation** (Q5b/Q5c complete, merged to main 2026-03-28) — Per-orbit gradient validated (slope=2.00). Q5b: 12 polytope types. Q5c: direction-filtered subdiff is a negative result. KktOutcome enum, error handling convention, code-math audit. 14 tests fail due to wrong Q error bound math (lem:q-error-bound too loose). See logbook. Directory: `crates/exp-sys-optimization/gradient-validation/`.
-2. **combinatorial-structure** (complete, 2026-03-27) — Random cells convex, product cells non-convex (0% vs 100% transition failures). ~F boundaries per gradient step. Orbit facets 2× wider than non-orbit. Gradient-cell alignment favorable (r=0.52). sys continuous, gradient stable except at orbit switches (3%/boundary, up to 70° jump). See logbook. Directory: `crates/exp-sys-optimization/combinatorial-structure/`. Note: `combinatorial-boundaries/` is a data-only subdirectory (6 `.jsonl` files, no code).
+2. **combinatorial-structure** (complete, 2026-03-27) — Random cells convex, product cells non-convex (0% vs 100% transition failures). ~F boundaries per gradient step. Orbit facets 2× wider than non-orbit. Gradient-cell alignment favorable (r=0.52). sys continuous, gradient stable except at orbit switches (3%/boundary, up to 70° jump). See logbook. Directory: `crates/exp-sys-optimization/combinatorial-structure/`.
 3. **boundary-crossing-search** (dev run complete, merged to main) — Gradient-based search for sys > 1. Dev run: 42 seeds, best sys=0.933, wiggle dominates overshoot. Next: landscape characterization and search strategy comparison. See `handoffs/sys-search.md`. Directory: `crates/exp-sys-optimization/boundary-crossing-search/`.
 
-Dependency chain: #1 validates the gradient → #2 characterizes the obstacle → #3 applies the tool. #3 can start independently but benefits from #2's findings. Delete old experiments once new ones are confirmed better.
+Dependency chain: #1 validates the gradient → #2 characterizes the obstacle → #3 applies the tool. #3 can start independently but benefits from #2's findings.
 
 
 **Experiment ideas:** See `IDEAS.md` (root).
@@ -130,7 +130,7 @@ Dependency chain: #1 validates the gradient → #2 characterizes the obstacle �
 Depends on: Jörn scoping the thesis story. Derivative-related experiments also depend on dual-vertex-parameterization (library derivative API, now mostly complete).
 
 **Cross-experiment cleanup (2026-03-27, names updated 2026-04-03):**
-- **Step-bound code duplication:** `compute_step_bound` (incidence + ω₀ detection in a-space) exists in sys-optimization, combinatorial-structure, boundary-crossing-search. boundary-crossing-search version is missing ω₀ detection (43% of boundaries). Candidates: unify into library, or at minimum copy the enriched version from combinatorial-structure into boundary-crossing-search.
+- **Step-bound code duplication:** `compute_step_bound` (incidence + ω₀ detection in a-space) exists in combinatorial-structure and boundary-crossing-search. boundary-crossing-search version is missing ω₀ detection (43% of boundaries). Candidates: unify into library, or at minimum copy the enriched version from combinatorial-structure into boundary-crossing-search.
 - **Products-vs-random split:** Every gradient experiment should split analysis by source dataset. The 0%/100% convexity split is a fundamental structural difference that affects strategy choice. Could add a standard `source_dataset` analysis function to figure_config.py.
 - **Wiggle strength justification:** boundary-crossing-search uses 5% (from gradient-search, unjustified). combinatorial-structure provides per-facet cell widths (0.12–0.26) that could inform this. See combinatorial-structure logbook "Unused synergies" section.
 - **boundary-crossing-search + combinatorial-structure overlap:** The multi-boundary sweep with sys tracking (combinatorial-structure Pass 4) answers a boundary-crossing-search question. If boundary-crossing-search grows a similar capability, consider removing it from combinatorial-structure to avoid duplication.
@@ -224,12 +224,12 @@ Direction (2026-03-22, Jörn): Thesis will introduce both (n_i, h_i) and a_i = n
 - ✅ 4/5 gradient experiments migrated: sys-optimization, hko-neighborhood, gradient-descent, omega-obstacle
 - ✅ gradient-search: migrated to `_a` API (2026-04-02). Superseded by boundary-crossing-search (confirmed 2026-04-03). Directory deleted.
 - ✅ math.tex migration: `kkt/math.tex` and `algorithms/math.tex` use a_i throughout (commits b9eedda, 4afefb9, 0ff6c6d)
-- ❌ Jörn verification: `[lem:cap-derivative]` and `[lem:vol-derivative]` in sys-optimization/math.tex marked `\begin{unverified}`
+- ❌ Jörn verification: `[lem:cap-derivative]` and `[lem:vol-derivative]` in `crates/library/src/algorithms/math.tex` marked `\begin{unverified}`
 - ❌ `[lem:dual-vertex-qp]`: TODO in qp_assembly.rs:58-61 — prove a_i QP formulation recovers same optimal action as (n,h)
 
 **Remaining work items:**
 1. ~~**gradient-search migration**~~ — done (2026-04-02). Directory deleted (2026-04-03).
-2. **Jörn verifies derivative lemmas** — `[lem:cap-derivative]`, `[lem:vol-derivative]` in `crates/exp-sys-optimization/sensitivity-analysis/math.tex`.
+2. **Jörn verifies derivative lemmas** — `[lem:cap-derivative]`, `[lem:vol-derivative]` in `crates/library/src/algorithms/math.tex` (relocated from deleted sensitivity-analysis experiment).
 3. **Write `[lem:dual-vertex-qp]` proof** — mathematical equivalence of a_i and (n,h) QP formulations. Agent drafts, Jörn verifies.
 
 ---
@@ -341,3 +341,5 @@ Evidence gathered so far (from session log analysis):
 - **convention-violations** — DONE (2026-03-28). catch_unwind removed from 3 experiments, panic comments rewritten, stale doc comments fixed.
 - **Polytope4D optimization** — DONE (2026-03-23). 31× speedup at F=10 via integer-scaled arithmetic + f64 prefilters. Remaining: Jörn verifies `prop:integer-cramer`, f64 threshold soundness.
 - **gradient-search** — Deleted (2026-04-03). Superseded by boundary-crossing-search (confirmed by Jörn).
+- **sensitivity-analysis** — Deleted (2026-04-03). Superseded by boundary-crossing-search. Derivative lemmas relocated to `crates/library/src/algorithms/math.tex`.
+- **large-scale-descent** — Deleted (2026-04-03). Superseded by boundary-crossing-search. Key finding: within-cell gradient ascent caps at sys ≈ 0.905.

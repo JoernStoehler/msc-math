@@ -7,10 +7,13 @@
 %   def:tube, def:tube-data, def:tube-extension, def:tube-close,
 %   def:rotation-increment, def:symplectic-polytope,
 %   lem:base-point-recovery, lem:fixed-point, lem:lagrangian-facets,
+%   lem:cap-derivative, lem:vol-derivative,
 %   lem:prune-action, lem:prune-empty, lem:prune-rotation, lem:prune-simple,
 %   lem:shoelace (cross-ref to geom/math.tex),
 %   lem:sigma-structure,
-%   rem:beta-to-tau,
+%   prop:capacity-piecewise-smooth,
+%   rem:beta-to-tau, rem:simplicity-generic,
+%   cor:sys-derivative,
 %   thm:billiard-characterization, thm:bounce-bound,
 %   thm:conformality, thm:sympl-invariance
 %
@@ -662,5 +665,272 @@ Then recurse: given a tube $T(\sigma(1), \ldots, \sigma(k))$:
 \noindent
 Return $c^*$.
 \end{algorithm}
+\end{unverified}
+
+
+% ====================================================================
+% Part 5: Derivatives of capacity, volume, and systolic ratio
+% ====================================================================
+% Relocated from exp-sys-optimization/sensitivity-analysis/math.tex
+% (experiment deleted 2026-04-03, superseded by boundary-crossing-search).
+% These lemmas document crates/library/src/derivatives.rs.
+% Label sec:sys-optimization kept for backward compatibility with
+% cross-references in gradient-is-zero/math.tex.
+
+\subsection{Derivatives of the Systolic Ratio}
+\label{sec:sys-optimization}
+
+For a polytope $K = \{x \in \mathbb{R}^4 \mid \langle a_k, x \rangle \le 1,\; k=1,\dots,F\}$
+with dual vertices $a_k \in \mathbb{R}^4 \setminus \{0\}$,
+the systolic ratio decomposes as
+$\mathrm{sys} = c_{\mathrm{EHZ}}^2 / (2\,\mathrm{vol})$.
+The gradient $\partial/\partial a_k \in \mathbb{R}^4$ is a single vector
+per facet, without the manifold constraints that arise in the unit-normal
+parameterization.
+
+\begin{theorem*}[Envelope theorem for constrained optimization]
+Let $f(x;\theta)$ be a smooth objective and $g_i(x;\theta) = 0$,
+$i = 1,\dots,m$, smooth equality constraints, with parameter $\theta$.
+Let $x^*(\theta)$ be a non-degenerate KKT point with multipliers
+$\lambda^*(\theta)$, and let
+$\mathcal{L}(x,\lambda;\theta) = f(x;\theta) - \sum_i \lambda_i g_i(x;\theta)$
+be the Lagrangian.
+Then the optimal value $f^*(\theta) = f(x^*(\theta);\theta)$ satisfies
+\[
+  \frac{\partial f^*}{\partial \theta}
+  = \frac{\partial \mathcal{L}}{\partial \theta}\bigg|_{x=x^*,\,\lambda=\lambda^*}
+  = \frac{\partial f}{\partial \theta}\bigg|_{x^*}
+    - \sum_i \lambda_i^* \frac{\partial g_i}{\partial \theta}\bigg|_{x^*}.
+\]
+\end{theorem*}
+
+\paragraph{Capacity derivative.}
+
+% [TODO: JÖRN - verify statement and proof — replaces old lem:cap-derivative + lem:cap-derivative-normal]
+\begin{unverified}
+\begin{lemma}[Capacity derivative w.r.t.\ dual vertices]
+\label{lem:cap-derivative}
+Fix an orbit $(S,\sigma)$ with $|S| = m$ facets. The orbit's action is
+$A(S,\sigma;a) = 1/(2\,Q^*)$, where $Q^*$ is the maximum of the KKT problem
+\[
+  Q(\beta) = \tfrac{1}{2}\beta^T H \beta
+  \quad\text{subject to}\quad
+  N^T\beta = 0,\; \eta^T\beta = 1,
+\]
+with $H$ the symmetric matrix from Lemma~\ref{lem:H-quadratic},
+$N = [a_{\sigma(1)} | \cdots | a_{\sigma(m)}]$, and
+$\eta = \mathbf{1}$ (all ones), so the normalization constraint is
+$\sum_i \beta_i = 1$.
+
+Let $\mu \in \mathbb{R}^4$ be the Lagrange multiplier for the closing
+constraint $N^T\beta = 0$ at the optimum. If facet $k$ appears in the
+orbit at position $i_0$ (i.e.\ $\sigma(i_0) = k$), define
+\[
+  P_{i_0} = \sum_{i < i_0} \beta_i^*\,a_{\sigma(i)}.
+\]
+Then
+\[
+  \frac{\partial Q^*}{\partial a_k}
+  = \beta_{i_0}^*\,\bigl[J_0(2\,P_{i_0} + \beta_{i_0}^*\,a_k) + \mu\bigr],
+\]
+and the capacity derivative is
+\[
+  \frac{\partial c}{\partial a_k}
+  = -\frac{1}{2\,(Q^*)^2}\,\frac{\partial Q^*}{\partial a_k}.
+\]
+If $k \notin S$, then $\partial c / \partial a_k = 0$.
+\end{lemma}
+
+\begin{proof}
+The Lagrangian is
+$\mathcal{L} = \tfrac{1}{2}\beta^T H\beta + \mu^T N^T\beta + \xi(\mathbf{1}^T\beta - 1)$,
+with stationarity condition $H\beta + N\mu + \mathbf{1}\xi = 0$.
+Since $\eta = \mathbf{1}$ does not depend on~$a_k$, the dual vertices enter
+through $H$ and~$N$ only.
+By the envelope theorem, $\partial Q^*/\partial a_k$ involves only the
+explicit dependence of $H$ and $N$ on $a_k$:
+\[
+  \frac{\partial Q^*}{\partial a_k}
+  = \frac{1}{2}\frac{\partial((\beta^*)^T H\beta^*)}{\partial a_k}
+    + \mu^T\frac{\partial(N^T\beta^*)}{\partial a_k}.
+\]
+For the $N$-term: only column~$i_0$ of $N$ depends on $a_k$, giving
+$\mu^T(\partial N^T\beta^*/\partial a_k) = \beta_{i_0}^*\,\mu$
+(as a vector in $\mathbb{R}^4$).
+
+For the $H$-term: $Q = \frac{1}{2}\beta^T H\beta
+= \sum_{j < i} \beta_i \beta_j\,\omega_0(a_{\sigma(j)}, a_{\sigma(i)})$
+by Lemma~\ref{lem:H-quadratic}. Differentiating the terms involving $a_k$
+($\sigma(i_0) = k$) and using the closing constraint
+$\sum_i \beta_i^* a_{\sigma(i)} = 0$ to simplify yields
+$\frac{1}{2}\partial(\beta^T H\beta)/\partial a_k
+= \beta_{i_0}^*\,J_0(2P_{i_0} + \beta_{i_0}^* a_k)$.
+(The detailed sign chain involves the antisymmetry of $\omega_0$ and the
+bilinear identity $\omega_0(u,v) = (J_0 u) \cdot v$.)
+
+Combining the H-term and N-term:
+$\partial Q^*/\partial a_k
+= \beta_{i_0}^*\,[J_0(2P_{i_0} + \beta_{i_0}^* a_k) + \mu]$.
+Since $c = 1/(2Q^*)$, the chain rule gives
+$\partial c/\partial a_k = -(\partial Q^*/\partial a_k) / (2\,(Q^*)^2)$.
+\end{proof}
+\end{unverified}
+
+\paragraph{Volume derivative.}
+
+% [TODO: JÖRN - verify statement and proof — replaces old lem:vol-derivative + lem:vol-derivative-normal]
+\begin{unverified}
+\begin{lemma}[Volume derivative w.r.t.\ dual vertices]
+\label{lem:vol-derivative}
+For a convex polytope $K = \{x : \langle a_k, x \rangle \le 1\}$ with
+$0 \in \operatorname{int}(K)$,
+\[
+  \frac{\partial\,\mathrm{vol}(K)}{\partial a_k}
+  = -\frac{S_k}{\|a_k\|^3}\,a_k
+    + \frac{1}{\|a_k\|}\,\nabla_{n_k}\mathrm{vol},
+\]
+where $S_k = \mathrm{vol}_3(F_k)$ is the $3$-dimensional volume of facet
+$F_k$, $n_k = a_k/\|a_k\|$ is the unit normal, $h_k = 1/\|a_k\|$ is the
+support height, and
+$\nabla_{n_k}\mathrm{vol} = -S_k\,(\bar{x}_k - h_k\,n_k)$
+is the tangential volume gradient with $\bar{x}_k$ the centroid of~$F_k$.
+\end{lemma}
+
+\begin{proof}
+The volume depends on $a_k$ through the height $h_k = 1/\|a_k\|$ and
+the unit normal $n_k = a_k/\|a_k\|$.  By the chain rule,
+\[
+  \frac{\partial\,\mathrm{vol}}{\partial a_k}
+  = \frac{\partial\,\mathrm{vol}}{\partial h_k}\,
+    \frac{\partial h_k}{\partial a_k}
+  + \left(\frac{\partial\,\mathrm{vol}}{\partial n_k}\right)^{\!T}
+    \frac{\partial n_k}{\partial a_k}.
+\]
+
+\emph{Height term.}
+Moving facet $k$ outward by $\delta$ enlarges $K$ by a slab of
+approximate volume $\delta \cdot S_k$, so
+$\partial\,\mathrm{vol}/\partial h_k = S_k$.
+Since $h_k = \|a_k\|^{-1}$, we have
+$\partial h_k/\partial a_k = -a_k/\|a_k\|^3$.
+
+\emph{Normal term.}
+Tilting facet $k$ by $\varepsilon\delta$ (with $\delta \perp n_k$)
+replaces the constraint $\langle n_k, x \rangle \le h_k$ with
+$\langle n_k + \varepsilon\delta, x \rangle \le h_k$, changing the volume by
+$-\varepsilon\,S_k\,(\bar{x}_k \cdot \delta) + O(\varepsilon^2)$.
+The tangential gradient (projected to $T_{n_k}S^3$) is
+$\nabla_{n_k}\mathrm{vol} = -S_k\,(\bar{x}_k - h_k\,n_k)$.
+Since $\partial n_k/\partial a_k = (I - n_k n_k^T)/\|a_k\|$, and
+$\nabla_{n_k}\mathrm{vol} \perp n_k$, the projection acts as the identity:
+$(\nabla_{n_k}\mathrm{vol})^T (I - n_k n_k^T)/\|a_k\|
+= \nabla_{n_k}\mathrm{vol} / \|a_k\|$.
+
+Combining both terms yields the stated formula.
+\end{proof}
+\end{unverified}
+
+\emph{Derivative cross-checks.}
+Both the capacity and volume analytical derivatives are cross-checked against
+central finite differences ($\varepsilon = 10^{-6}$) on fixture polytopes
+(hypercube, simplex) with relative tolerance~$10^{-4}$.
+
+% [TODO: JÖRN - verify statement and proof sketch — was prop:capacity-piecewise-smooth]
+\begin{unverified}
+\begin{proposition}[Capacity as piecewise-smooth function of dual vertices]
+\label{prop:capacity-piecewise-smooth}
+Let $K(a)$ be a \emph{simple} polytope (every vertex determined by exactly~$4$
+facets) with variable dual vertices $a = (a_1,\dots,a_F)$.
+\begin{enumerate}
+\item[\textup{(a)}]
+  \emph{Combinatorial type stability.}
+  For each $a_0$ such that $K(a_0)$ is a simple polytope, the vertex-facet
+  incidence graph is locally constant: there exists $\varepsilon > 0$ such that
+  $K(a)$ has the same combinatorial type for all $\|a - a_0\| < \varepsilon$.
+  In particular, the set of valid orbit nodes $(S,\sigma)$ surviving
+  the HK2017 pruning is constant in this neighborhood.
+
+\item[\textup{(b)}]
+  \emph{Per-orbit smoothness.}
+  Fix an orbit $(S,\sigma)$ whose KKT problem has a unique non-degenerate
+  maximum. Then the action $A(S,\sigma;\cdot)$ is smooth in~$a$,
+  with derivatives given by Lemma~\ref{lem:cap-derivative}.
+
+\item[\textup{(c)}]
+  \emph{Capacity at generic parameters.}
+  The capacity
+  \[ c_{\mathrm{EHZ}}(a) = \min_{(S,\sigma)} A(S,\sigma;a) \]
+  is continuous.
+  At parameters where the minimizing orbit is unique, $c_{\mathrm{EHZ}}$ is
+  differentiable with gradient given by that orbit's envelope theorem
+  formula. The unique-minimizer case is generic: for any two orbits,
+  the equation $A(S_1,\sigma_1) = A(S_2,\sigma_2)$ cuts out a hypersurface
+  in the $4F$-dimensional parameter space, so the set of parameters where
+  any two orbits tie has measure zero.
+
+\item[\textup{(d)}]
+  \emph{Capacity at switching boundaries.}
+  When $r \ge 2$ orbits achieve minimum action simultaneously,
+  the capacity is non-smooth.
+  The directional derivative in direction~$d = (d_{a_1},\dots,d_{a_F})$ is
+  \[
+    D_d\,c_{\mathrm{EHZ}}
+    = \min_{i=1,\dots,r} \nabla_a A(S_i,\sigma_i) \cdot d,
+  \]
+  i.e.\ the most pessimistic rate of change among the tied orbits.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}[Proof sketch]
+(a) Each vertex of a simple polytope is the unique solution of a $4 \times 4$
+linear system $A_v\,x = \mathbf{1}$ where $A_v$ is the matrix of the four
+determining dual vertices. Since $A_v$ is invertible, vertices move
+continuously (indeed smoothly) in~$a$.
+For each vertex, the strict inequalities
+$\langle a_j, v \rangle < 1$ for non-determining facets are open conditions, so they
+persist under small perturbations of~$a$.
+Similarly, for ridge-adjacent facets, $\omega_0(a_i, a_j) \neq 0$ is an open
+condition, so the directed adjacency graph (and hence the pruned orbit set)
+is locally constant.
+(b) Follows from the envelope theorem applied to the KKT problem, whose
+optimum is locally unique and smooth by the implicit function theorem
+(given LICQ and second-order sufficient conditions, which hold generically).
+(c) Continuity: $\min$ of continuous functions.
+Differentiability: when the minimizer is unique, $c_{\mathrm{EHZ}} =
+A(S^*,\sigma^*;\cdot)$ locally, hence smooth by~(b).
+Genericity: $A(S_1,\sigma_1;a) = A(S_2,\sigma_2;a)$ is one equation in~$4F$
+unknowns, so the tie locus is a hypersurface; finitely many orbit pairs, so
+the union has measure zero.
+(d) Standard result for the directional derivative of a pointwise minimum
+of smooth functions.
+\end{proof}
+\end{unverified}
+
+% Jörn: math approved (b01bf24) — Remark
+\begin{remark}[Simplicity is generic]
+\label{rem:simplicity-generic}
+A polytope in dual-vertex representation is non-simple when $5$ or more facet
+hyperplanes $\langle a_k, x \rangle = 1$ meet at a single point, which
+imposes one additional equation beyond the $4$ needed to determine a vertex.
+This is a codimension-$1$ condition in the space of dual vertices, so non-simple
+polytopes form a measure-zero subset: a random polytope is almost surely simple.
+\end{remark}
+
+% [TODO: JÖRN - verify statement — was cor:sys-derivative]
+\begin{unverified}
+\begin{corollary}[Systolic ratio derivative]
+\label{cor:sys-derivative}
+The chain rule applied to
+$\mathrm{sys} = c_{\mathrm{EHZ}}^2 / (2\,\mathrm{vol})$ gives
+\[
+  \frac{\partial\,\mathrm{sys}}{\partial a_k}
+  = \frac{c_{\mathrm{EHZ}}}{\mathrm{vol}}
+    \cdot \frac{\partial\,c_{\mathrm{EHZ}}}{\partial a_k}
+  - \frac{\mathrm{sys}}{\mathrm{vol}}
+    \cdot \frac{\partial\,\mathrm{vol}}{\partial a_k},
+\]
+where the partial derivatives of $\mathrm{vol}$ and $c_{\mathrm{EHZ}}$ are
+given by Lemmas~\ref{lem:vol-derivative} and~\ref{lem:cap-derivative}.
+\end{corollary}
 \end{unverified}
 
