@@ -7,12 +7,12 @@ edition = "2021"
 path = "src/lib.rs"
 
 [[bin]]
-name = "hko-gradient"
-path = "gradient-is-zero/run.rs"
+name = "hko-gradient-analysis"
+path = "gradient-analysis/run.rs"
 
 [[bin]]
-name = "hko-perturbation"
-path = "perturbation-neighborhood/run.rs"
+name = "hko-facet-splitting"
+path = "facet-splitting/run.rs"
 
 [[bin]]
 name = "hko-lagrangian-boundary"
@@ -21,14 +21,6 @@ path = "lagrangian-boundary/run.rs"
 [[bin]]
 name = "hko-lagrangian-probe"
 path = "lagrangian-boundary/probe.rs"
-
-[[bin]]
-name = "hko-rotation-sweep"
-path = "rotation-sweep/run.rs"
-
-[[bin]]
-name = "hko-omega"
-path = "omega-hypothesis/run.rs"
 
 [lints]
 workspace = true

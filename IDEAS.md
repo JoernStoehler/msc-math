@@ -3,7 +3,7 @@
 Research directions and experiment ideas. See individual experiment logbooks for experiment-specific follow-ups.
 
 **Other idea sources:**
-- `crates/exp-algorithm-comparison/ablation/ideas-future.md` — pruning extensions (A1 vs F scaling, non-simple polytopes, UNKNOWN predicates, face lattice approach, exact skeleton via perturbation)
+- `crates/dev-algorithm-comparison/ablation/ideas-future.md` — pruning extensions (A1 vs F scaling, non-simple polytopes, UNKNOWN predicates, face lattice approach, exact skeleton via perturbation)
 - Individual experiment logbook "Known limitations" sections
 
 ---

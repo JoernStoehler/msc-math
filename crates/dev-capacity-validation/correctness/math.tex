@@ -1,0 +1,109 @@
+% math.tex — \input'd from thesis/experiments.tex
+%
+% Status: APPROVED (Jörn 2026-02-16)
+%
+% Sources: crates/dev-capacity-validation/correctness/run.rs (dataset generator + tests),
+%   crates/dev-capacity-validation/correctness/correctness.jsonl (generated dataset),
+%   crates/dev-capacity-validation/correctness/logbook.md (experiment design documentation).
+%
+% Structure:
+%   - Algorithm variants table
+%   - Verification capacity counts table
+%   - Six test propositions (enumerated)
+%   - Literature polytopes table
+%
+% This section documents the mathematical propositions verified to establish
+% correctness of the capacity computation implementation.
+
+\subsection{Correctness Verification}
+\label{sec:correctness}
+
+We test our implementation on several propositions that must hold for any
+algorithm that computes the correct capacity.
+Table~\ref{tab:correctness-algorithms} lists the algorithm variants we use.
+Table~\ref{tab:verification-capacity-counts} shows the 6 tests we run, and
+how many new capacity computations each test required. Tests reuse capacity
+computations from other tests for development efficiency.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ll}
+\toprule
+Algorithm & Description \\
+\midrule
+Pruned & HK2017 with adjacency-based orbit pruning (production) \\
+Unpruned & HK2017 without pruning (validation only) \\
+Billiard & Billiard algorithm (Lagrangian products only) \\
+\bottomrule
+\end{tabular}
+\caption{Algorithm variants used for correctness verification.}
+\label{tab:correctness-algorithms}
+\end{table}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lrrr}
+\toprule
+Test & Pruned & Unpruned & Billiard \\
+\midrule
+Test 1: Direct comparison & 10 & 10 & 5 \\
+Test 2: Literature & 7 & 0 & 4 \\
+Test 3: Conformality & 10 & 0 & 5 \\
+Test 4: Symplectic invariance & 10 & 0 & 0 \\
+Test 5: Continuity & 10 & 0 & 0 \\
+Test 6: Monotonicity & 0 & 0 & 0 \\
+\midrule
+\textbf{Total} & \textbf{47} & \textbf{10} & \textbf{14} \\
+\bottomrule
+\end{tabular}
+\caption{Required capacity computations for verification. Test~1 generates
+  10~base polytopes (5~random generic, 5~Lagrangian products). Tests~3--5
+  reuse these base polytopes (scaled, transformed, perturbed). Test~6 uses
+  existing capacities from tests~1--5. Total: 71~capacity values.}
+\label{tab:verification-capacity-counts}
+\end{table}
+
+The 6 test propositions are:
+\begin{enumerate}
+  \item \textbf{Direct comparison} between all applicable algorithms on
+    5~random polytopes and 5~random Lagrangian product polytopes.
+
+  \item \textbf{Literature agreement} for all efficient (Pruned, Billiard)
+    algorithms on the known published polytopes from
+    Table~\ref{tab:literature-polytopes}.
+
+  \item \textbf{Conformality}: $c(\alpha K) = \alpha^2 c(K)$ holds for the
+    10~polytopes from test~1, with a random scaling~$\alpha$ each.
+
+  \item \textbf{Symplectic invariance}: $c(MK) = c(K)$ holds for the
+    10~polytopes from test~1, with a random~$M \in \mathrm{Sp}(4)$ each.
+
+  \item \textbf{Continuity}: For the 10~polytopes from test~1, a small
+    random perturbation of the dual vertices produces a small change in
+    capacity.
+
+  \item \textbf{Monotonicity}: $\alpha^2 c(K_1) \le c(K_2)$ where we pick
+    $\alpha$ maximal such that~$\alpha K_1 \subseteq K_2$, for all
+    polytopes~$K_1, K_2$ in the dataset.
+\end{enumerate}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{llrrrr}
+\toprule
+Polytope & $F$ & $c_{\mathrm{EHZ}}$ & $\mathrm{vol}(K)$ & $\mathrm{sys}(K)$ & Source \\
+\midrule
+Simplex & 5 & 0.25 & 0.0417 & 0.750 & \cite{Nir2013} \\
+Hypercube $[-1,1]^4$ & 8 & 4.0 & 16.0 & 0.500 & \cite{HK2019} Ex~4.6 \\
+HK-O pentagon & 10 & 3.441 & 5.6532 & 1.047 & \cite{HaimKislevOstrover2024} Prop~1.4 \\
+Lag.\ $\triangle \times \triangle$ & 6 & 1.5 & 1.6875 & 0.667 & \cite{HK2017} + billiard \\
+Sym.\ $\triangle \times \triangle$ & 6 & 1.299 & 1.6875 & 0.500 & Prop.~\ref{prop:capacity-symplectic-product} \\
+Lag.\ $\triangle \times \square$ & 7 & 1.5 & 1.2990 & 0.866 & \cite{HK2017} + billiard \\
+Sym.\ $\triangle \times \square$ & 7 & 1.0 & 1.2990 & 0.385 & Prop.~\ref{prop:capacity-symplectic-product} \\
+\bottomrule
+\end{tabular}
+\caption{Known polytopes from the literature used in test~2.}
+\label{tab:literature-polytopes}
+\end{table}

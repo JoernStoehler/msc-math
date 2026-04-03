@@ -52,56 +52,93 @@
 
 
 % ════════════════════════════════════════════════════════════════════
-\part{Experiments}
+\part{HKO Local Maximum (\texttt{exp-hko-local-maximum/})}
 % ════════════════════════════════════════════════════════════════════
 
-\section{Correctness (\texttt{correctness/})}
-\graphicspath{{crates/exp-capacity-axioms/correctness/}}
-\input{crates/exp-capacity-axioms/correctness/math}
+\section{Gradient Analysis (\texttt{gradient-analysis/})}
+\graphicspath{{crates/exp-hko-local-maximum/gradient-analysis/}}
+\input{crates/exp-hko-local-maximum/gradient-analysis/math}
 
-\section{Orbit Recovery (\texttt{orbit-recovery/})}
-\graphicspath{{crates/exp-capacity-axioms/orbit-recovery/}}
-\input{crates/exp-capacity-axioms/orbit-recovery/math}
 
-\section{Q-Error (\texttt{q-error/})}
-\graphicspath{{crates/exp-numerical-analysis/q-error/}}
-\input{crates/exp-numerical-analysis/q-error/math}
+% ════════════════════════════════════════════════════════════════════
+\part{Sys Landscape (\texttt{exp-sys-landscape/})}
+% ════════════════════════════════════════════════════════════════════
 
-\section{KKT Inertia (\texttt{kkt-inertia/})}
-\graphicspath{{crates/exp-numerical-analysis/kkt-inertia/}}
-\input{crates/exp-numerical-analysis/kkt-inertia/math}
+\section{Lagrangian Products (\texttt{rotation-sweep/})}
+\graphicspath{{crates/exp-sys-landscape/rotation-sweep/}}
+\input{crates/exp-sys-landscape/rotation-sweep/math}
 
-\section{Benchmark (\texttt{benchmark/})}
-\graphicspath{{crates/exp-algorithm-comparison/benchmark/}}
-\input{crates/exp-algorithm-comparison/benchmark/math}
+\section{Pentagon Perturbation (\texttt{perturbation-neighborhood/})}
+\graphicspath{{crates/exp-sys-landscape/perturbation-neighborhood/}}
+\input{crates/exp-sys-landscape/perturbation-neighborhood/math}
 
-\section{Unknown Predicates (\texttt{unknown-predicates/})}
-\graphicspath{{crates/exp-numerical-analysis/unknown-predicates/}}
-\input{crates/exp-numerical-analysis/unknown-predicates/math}
-
-\section{Ablation (\texttt{ablation/})}
-\graphicspath{{crates/exp-algorithm-comparison/ablation/}}
-\input{crates/exp-algorithm-comparison/ablation/math}
+\section{Omega Obstacle (\texttt{omega-hypothesis/})}
+\graphicspath{{crates/exp-sys-landscape/omega-hypothesis/}}
+\input{crates/exp-sys-landscape/omega-hypothesis/math}
 
 \section{Rejection Sampling (\texttt{rejection-sampling/})}
-\graphicspath{{crates/exp-baseline-characterization/rejection-sampling/}}
-\input{crates/exp-baseline-characterization/rejection-sampling/math}
+\graphicspath{{crates/exp-sys-landscape/rejection-sampling/}}
+\input{crates/exp-sys-landscape/rejection-sampling/math}
 
 \section{Random Sweep (\texttt{random-sweep/})}
-\graphicspath{{crates/exp-baseline-characterization/random-sweep/}}
-\input{crates/exp-baseline-characterization/random-sweep/math}
+\graphicspath{{crates/exp-sys-landscape/random-sweep/}}
+\input{crates/exp-sys-landscape/random-sweep/math}
 
 \section{Random Product Sweep (\texttt{random-product-sweep/})}
-\graphicspath{{crates/exp-baseline-characterization/random-product-sweep/}}
-\input{crates/exp-baseline-characterization/random-product-sweep/math}
+\graphicspath{{crates/exp-sys-landscape/random-product-sweep/}}
+\input{crates/exp-sys-landscape/random-product-sweep/math}
 
-\section{Pentagon Perturbation (\texttt{pentagon-perturb/})}
-\graphicspath{{crates/exp-hko-local-maximum/perturbation-neighborhood/}}
-\input{crates/exp-hko-local-maximum/perturbation-neighborhood/math}
+\section{Combinatorial Anatomy (\texttt{combinatorial-anatomy/})}
+\graphicspath{{crates/exp-sys-landscape/combinatorial-anatomy/}}
+\input{crates/exp-sys-landscape/combinatorial-anatomy/math}
 
-\section{Lagrangian Products (\texttt{lagrangian-products/})}
-\graphicspath{{crates/exp-hko-local-maximum/rotation-sweep/}}
-\input{crates/exp-hko-local-maximum/rotation-sweep/math}
+% ════════════════════════════════════════════════════════════════════
+\part{Instrument Development (\texttt{dev-*/})}
+% ════════════════════════════════════════════════════════════════════
+
+\section{Ablation (\texttt{ablation/})}
+\graphicspath{{crates/dev-algorithm-comparison/ablation/}}
+\input{crates/dev-algorithm-comparison/ablation/math}
+
+\section{Benchmark (\texttt{benchmark/})}
+\graphicspath{{crates/dev-algorithm-comparison/benchmark/}}
+\input{crates/dev-algorithm-comparison/benchmark/math}
+
+\section{Verify Numerics (\texttt{error-bounds/})}
+\graphicspath{{crates/dev-numerical-analysis/error-bounds/}}
+\input{crates/dev-numerical-analysis/error-bounds/math}
+
+\section{Q-Error (\texttt{q-error/})}
+\graphicspath{{crates/dev-numerical-analysis/q-error/}}
+\input{crates/dev-numerical-analysis/q-error/math}
+
+\section{KKT Inertia (\texttt{kkt-inertia/})}
+\graphicspath{{crates/dev-numerical-analysis/kkt-inertia/}}
+\input{crates/dev-numerical-analysis/kkt-inertia/math}
+
+\section{Unknown Predicates (\texttt{unknown-predicates/})}
+\graphicspath{{crates/dev-numerical-analysis/unknown-predicates/}}
+\input{crates/dev-numerical-analysis/unknown-predicates/math}
+
+\section{Correctness (\texttt{correctness/})}
+\graphicspath{{crates/dev-capacity-validation/correctness/}}
+\input{crates/dev-capacity-validation/correctness/math}
+
+\section{Orbit Recovery (\texttt{orbit-recovery/})}
+\graphicspath{{crates/dev-capacity-validation/orbit-recovery/}}
+\input{crates/dev-capacity-validation/orbit-recovery/math}
+
+\section{Basic Gradient Validation (\texttt{basic-validation/})}
+\graphicspath{{crates/dev-gradient-validation/basic-validation/}}
+\input{crates/dev-gradient-validation/basic-validation/math}
+
+\section{Subdifferential Validation (\texttt{subdifferential/})}
+\graphicspath{{crates/dev-gradient-validation/subdifferential/}}
+\input{crates/dev-gradient-validation/subdifferential/math}
+
+% ════════════════════════════════════════════════════════════════════
+\part{Standalone}
+% ════════════════════════════════════════════════════════════════════
 
 \section{Visualization (\texttt{visualization/})}
 \graphicspath{{crates/visualization/}}
@@ -110,25 +147,5 @@
 \section{Crosspolytope (\texttt{crosspolytope/})}
 \graphicspath{{crates/crosspolytope/}}
 \input{crates/crosspolytope/math}
-
-\section{Omega Obstacle (\texttt{omega-obstacle/})}
-\graphicspath{{crates/exp-hko-local-maximum/omega-hypothesis/}}
-\input{crates/exp-hko-local-maximum/omega-hypothesis/math}
-
-\section{HKO Neighborhood (\texttt{hko-neighborhood/})}
-\graphicspath{{crates/exp-hko-local-maximum/gradient-is-zero/}}
-\input{crates/exp-hko-local-maximum/gradient-is-zero/math}
-
-\section{Gradient Correctness (\texttt{gradient-correctness/})}
-\graphicspath{{crates/exp-sys-optimization/gradient-validation/}}
-\input{crates/exp-sys-optimization/gradient-validation/math}
-
-\section{Verify Numerics (\texttt{verify-numerics/})}
-\graphicspath{{crates/exp-numerical-analysis/error-bounds/}}
-\input{crates/exp-numerical-analysis/error-bounds/math}
-
-\section{Combinatorial Structure (\texttt{combinatorial-structure/})}
-\graphicspath{{crates/exp-sys-optimization/combinatorial-structure/}}
-\input{crates/exp-sys-optimization/combinatorial-structure/math}
 
 \end{document}

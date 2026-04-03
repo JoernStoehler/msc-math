@@ -1,0 +1,29 @@
+[package]
+name = "dev-capacity-validation"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "axioms-correctness"
+path = "correctness/run.rs"
+
+[[bin]]
+name = "axioms-orbit-recovery"
+path = "orbit-recovery/run.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+database = { path = "../database" }
+symplectic.workspace = true
+nalgebra.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+rand.workspace = true
+rand_chacha.workspace = true
+rand_distr.workspace = true
+num-bigint.workspace = true
+num-rational.workspace = true
+num-traits.workspace = true
+good_lp.workspace = true

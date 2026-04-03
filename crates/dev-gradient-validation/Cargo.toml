@@ -1,0 +1,36 @@
+[package]
+name = "dev-gradient-validation"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "dev-basic-validation"
+path = "basic-validation/run.rs"
+
+[[bin]]
+name = "dev-edge-cases"
+path = "edge-cases/run.rs"
+
+[[bin]]
+name = "dev-subdifferential"
+path = "subdifferential/run.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+database = { path = "../database" }
+symplectic.workspace = true
+nalgebra.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+rand.workspace = true
+rand_chacha.workspace = true
+rand_distr.workspace = true
+num-bigint.workspace = true
+num-rational.workspace = true
+num-traits.workspace = true
+good_lp.workspace = true

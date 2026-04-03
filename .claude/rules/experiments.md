@@ -1,6 +1,7 @@
 ---
 paths:
   - "crates/exp-*/**/*"
+  - "crates/dev-*/**/*"
 ---
 
 # Experiment Conventions

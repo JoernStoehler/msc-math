@@ -378,6 +378,76 @@ dependencies = [
 ]
 
 [[package]]
+name = "dev-algorithm-comparison"
+version = "0.1.0"
+dependencies = [
+ "good_lp",
+ "nalgebra",
+ "num-bigint",
+ "num-rational",
+ "num-traits",
+ "rand 0.8.5",
+ "rand_chacha 0.3.1",
+ "rand_distr",
+ "serde",
+ "serde_json",
+ "symplectic",
+]
+
+[[package]]
+name = "dev-capacity-validation"
+version = "0.1.0"
+dependencies = [
+ "database",
+ "good_lp",
+ "nalgebra",
+ "num-bigint",
+ "num-rational",
+ "num-traits",
+ "rand 0.8.5",
+ "rand_chacha 0.3.1",
+ "rand_distr",
+ "serde",
+ "serde_json",
+ "symplectic",
+]
+
+[[package]]
+name = "dev-gradient-validation"
+version = "0.1.0"
+dependencies = [
+ "database",
+ "good_lp",
+ "nalgebra",
+ "num-bigint",
+ "num-rational",
+ "num-traits",
+ "rand 0.8.5",
+ "rand_chacha 0.3.1",
+ "rand_distr",
+ "serde",
+ "serde_json",
+ "symplectic",
+]
+
+[[package]]
+name = "dev-numerical-analysis"
+version = "0.1.0"
+dependencies = [
+ "good_lp",
+ "nalgebra",
+ "num-bigint",
+ "num-rational",
+ "num-traits",
+ "rand 0.8.5",
+ "rand_chacha 0.3.1",
+ "rand_distr",
+ "serde",
+ "serde_json",
+ "symplectic",
+]
+
+[[package]]
 name = "either"
 version = "1.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -412,59 +482,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "exp-algorithm-comparison"
-version = "0.1.0"
-dependencies = [
- "good_lp",
- "nalgebra",
- "num-bigint",
- "num-rational",
- "num-traits",
- "rand 0.8.5",
- "rand_chacha 0.3.1",
- "rand_distr",
- "serde",
- "serde_json",
- "symplectic",
-]
-
-[[package]]
-name = "exp-baseline-characterization"
-version = "0.1.0"
-dependencies = [
- "database",
- "good_lp",
- "nalgebra",
- "num-bigint",
- "num-rational",
- "num-traits",
- "rand 0.8.5",
- "rand_chacha 0.3.1",
- "rand_distr",
- "serde",
- "serde_json",
- "symplectic",
-]
-
-[[package]]
-name = "exp-capacity-axioms"
-version = "0.1.0"
-dependencies = [
- "database",
- "good_lp",
- "nalgebra",
- "num-bigint",
- "num-rational",
- "num-traits",
- "rand 0.8.5",
- "rand_chacha 0.3.1",
- "rand_distr",
- "serde",
- "serde_json",
- "symplectic",
-]
-
-[[package]]
 name = "exp-hko-local-maximum"
 version = "0.1.0"
 dependencies = [
@@ -483,24 +500,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "exp-numerical-analysis"
-version = "0.1.0"
-dependencies = [
- "good_lp",
- "nalgebra",
- "num-bigint",
- "num-rational",
- "num-traits",
- "rand 0.8.5",
- "rand_chacha 0.3.1",
- "rand_distr",
- "serde",
- "serde_json",
- "symplectic",
-]
-
-[[package]]
-name = "exp-sys-optimization"
+name = "exp-sys-landscape"
 version = "0.1.0"
 dependencies = [
  "database",

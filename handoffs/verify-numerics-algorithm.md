@@ -31,7 +31,7 @@ The verify-numerics experiment has proven Q error bounds and empirically validat
 
 ## Key files
 
-- `crates/exp-numerical-analysis/error-bounds/` — all experiment files
+- `crates/dev-numerical-analysis/error-bounds/` — all experiment files
   - `run.rs` — stage 2 binary (loads JSONL, exact + f64 solver, diagnostics)
   - `collect_inputs.rs` — stage 1 binary (generates artificial.jsonl + collected.jsonl)
   - `solvers.rs` — f64 solver copy (sign-fixed, no panics, LP-then-project fix)
@@ -146,15 +146,15 @@ Worktree at `.claude/worktrees/verify-numerics-q-accuracy`, branch `verify-numer
 
 To regenerate data:
 ```bash
-cargo run -p exp-numerical-analysis --release --bin collect_inputs -- artificial
-cargo run -p exp-numerical-analysis --release --bin collect_inputs -- natural --polytopes /tmp/all_polytopes.jsonl --max-facets 8
-cargo run -p exp-numerical-analysis --release --bin verify_numerics
-python3 crates/exp-numerical-analysis/error-bounds/analyze.py
+cargo run -p dev-numerical-analysis --release --bin collect_inputs -- artificial
+cargo run -p dev-numerical-analysis --release --bin collect_inputs -- natural --polytopes /tmp/all_polytopes.jsonl --max-facets 8
+cargo run -p dev-numerical-analysis --release --bin verify_numerics
+python3 crates/dev-numerical-analysis/error-bounds/analyze.py
 ```
 
 The `/tmp/all_polytopes.jsonl` is a concatenation of correctness + random-product-sweep + benchmark + ablation data. Recreate with:
 ```bash
-cat crates/exp-capacity-axioms/correctness/correctness.jsonl crates/exp-baseline-characterization/random-product-sweep/random-product-sweep.jsonl crates/exp-algorithm-comparison/benchmark/benchmark.jsonl crates/exp-algorithm-comparison/ablation/ablation.jsonl > /tmp/all_polytopes.jsonl
+cat crates/dev-capacity-validation/correctness/correctness.jsonl crates/exp-sys-landscape/random-product-sweep/random-product-sweep.jsonl crates/dev-algorithm-comparison/benchmark/benchmark.jsonl crates/dev-algorithm-comparison/ablation/ablation.jsonl > /tmp/all_polytopes.jsonl
 ```
 
 ## Success criteria
