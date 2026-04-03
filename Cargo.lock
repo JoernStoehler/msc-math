@@ -450,6 +450,7 @@ dependencies = [
 name = "exp-capacity-axioms"
 version = "0.1.0"
 dependencies = [
+ "database",
  "good_lp",
  "nalgebra",
  "num-bigint",
