@@ -32,6 +32,9 @@
 		"sound": "on"
 	},
 	"terminal.integrated.enableVisualBell": true,
+	"terminal.integrated.fontFamily": "'FiraCode Nerd Font', 'Fira Code', 'Noto Sans Mono', 'Roboto Mono', monospace",
+	"terminal.integrated.unicodeVersion": "11",
+	"editor.fontFamily": "'FiraCode Nerd Font', 'Fira Code', 'Noto Sans Mono', 'Roboto Mono', monospace",
 	"claudeCode.selectedModel": "opus[1m]",
 	"workbench.editor.editorActionsLocation": "default",
 	"files.exclude": {
