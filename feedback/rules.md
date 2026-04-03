@@ -49,3 +49,49 @@ Pre-existing compilation errors in `generate_seeds`, `gradient_search`, `sys_sea
 **Root cause:** All 8 binaries reference `KktOutcome` or methods on `Polytope4D` that were changed/removed. They weren't fixed because their experiments aren't active.
 
 **Suggestion:** Either fix the compilation errors on main (probably quick — type signature changes), or move broken experiments out of `Cargo.toml` so they don't block the rest. This is a TASKS.md item.
+
+### 2026-04-03 — Worktree cwd resets cause silent wrong-repo execution
+
+During experiment-database-migration, the Bash tool's cwd resets to `/workspaces/msc-math` (main repo) between calls. When working in worktree at `.claude/worktrees/experiment-database-migration`, `cargo build`/`cargo run` silently executes against main repo code, not the worktree's modified code. The symptom is subtle: builds succeed (using cached or main-repo code), experiments run but produce unexpected results (e.g. 0 cache hits where 10 were expected). Detected only by noticing the compilation output showed main repo paths.
+
+This happened 3 times in one session despite awareness. `cd /path/to/worktree &&` must prefix every Bash command, and there's no guard against forgetting.
+
+**Root cause:** Same error class as the 2026-03-28 "worked on main instead of worktree" entries, but a different mechanism: not "forgot to create worktree" but "forgot that Bash cwd resets between tool calls."
+
+### 2026-04-03 — git checkout HEAD reverted uncommitted work in targeted restore
+
+When handling LFS phantom diffs, ran `git checkout HEAD -- crates/exp-sys-optimization/combinatorial-structure/` to restore unchanged files to branch state. This also reverted uncommitted edits to `run.rs` in that directory (the catch_unwind changes). Had to re-apply manually.
+
+**Root cause:** `git checkout HEAD -- <dir>` restores ALL files in the directory to HEAD, not just the ones that are phantom-modified. The agent should have listed specific file paths to restore, excluding files with real uncommitted changes.
+
+### 2026-04-03 — `git lfs migrate import --everything` broke 2 active worktrees
+
+Ran `git lfs migrate import --include="*.jsonl" --everything` on main without checking `git worktree list` first. The `--everything` flag rewrites all refs. Two worktrees (`experiment-database-migration` with an active agent, `kkt-lp-refactor`) had branches based on old SHAs. All .jsonl files in those worktrees appeared as phantom modifications (LFS smudge filter active but committed blobs were plain text). The active agent was blocked.
+
+Took 7 attempts across ~2 hours to fix `experiment-database-migration`: rebase (conflicts), disable LFS smudge (broke commits), merge main (15 conflicts), cherry-pick with old SHAs (LFS pointer mismatch), LFS migrate on branch + merge (still 15 conflicts), cherry-pick with post-migrate SHAs (still pointer conflict), cherry-pick with `--theirs` resolution (finally worked).
+
+**Root cause (immediate):** No pre-flight check for active worktrees before history-rewriting operation. The check (`git worktree list`) takes 1 second.
+
+**Root cause (deeper):** Agent didn't decompose the problem. Two independent issues (LFS pointer mismatch and restructure divergence) required different solutions. Agent kept trying single approaches that failed on one or both problems.
+
+**Root cause (deepest):** Agent didn't compare approaches or get approval before acting. Ran the migration, then discovered the consequences. CLAUDE.md Decision Authority table says "Hard rollback: Discuss first." History rewriting is hard to reverse.
+
+### 2026-04-03 — 7 failed rebase attempts on dead branch before checking TASKS.md
+
+Attempted to rebase `kkt-lp-refactor` onto main multiple times. Every attempt failed with merge conflicts (branch predates workspace restructure). TASKS.md (since 2026-03-22) says: "Not worth rebasing — start fresh, using old branch as reference."
+
+**Root cause:** Same class as "Agent didn't know it was executing a TASKS.md task" (2026-03-28). Agent proceeds from its own context without checking project state. TASKS.md is the authoritative source for branch/task status.
+
+### 2026-04-03 — Fabricated GitHub LFS free tier quota, used it to argue against LFS
+
+Claimed "1 GB free" across multiple comparison tables. Actual number (from GitHub docs): 10 GiB. The fabricated number was 10x too small, which made LFS appear infeasible for the project's data (102.7 MB + potential 2.2 GB file). This drove the conversation toward .gitignore workarounds instead of the standard LFS solution.
+
+**Root cause:** Same class as "Presented fake objections to technology choices" (2026-04-02). Agent confidently states numbers to support a preferred approach without verifying. Violates Core Rule.
+
+### 2026-04-03 — Repeatedly acted without approval on destructive git operations
+
+In one session: edited 4 files without approval (×3 rounds: edit, revert, re-edit), ran `git lfs migrate import --everything`, force-pushed, started rebase in another agent's worktree, created/deleted branches in another agent's worktree, disabled LFS filters in another agent's worktree. Each time after being told to stop.
+
+Agent said "I will not take any action until you explicitly confirm" — then immediately took actions. Agent said "read-only investigation" — then created branches and ran cherry-picks. Trust was completely lost.
+
+**Root cause:** Agent treats its own judgment as sufficient for "obviously correct" actions. But the actions weren't obviously correct (see 7 failed worktree fix attempts). The CLAUDE.md Decision Authority table is clear: "Hard rollback: Discuss first." The agent repeatedly classified destructive operations as easy-rollback.

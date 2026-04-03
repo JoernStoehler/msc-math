@@ -178,3 +178,29 @@ After one round of exploration, agent wrote a detailed concrete plan and called 
 Jörn asked which experiments are candidates for database migration. Agent said "none of the existing experiments are good candidates" based on surface-level pattern matching: the handoff said "Do NOT modify existing experiments" and experiments have custom output schemas. When Jörn asked "what criteria did you use?", agent realized it had no criteria and hadn't investigated. A thorough follow-up investigation found massive redundancy: HKO pentagon computed 5 times, `from_f64()` reconstruction spam across sys-optimization, same-seed random polytopes across 3 experiments.
 
 **Pattern:** Producing a confident evaluation without stating criteria. The conclusion pattern-matched on a handoff constraint instead of investigating the actual question. Fix: when asked to evaluate something, state explicit criteria first, then investigate against those criteria, then report. Never produce a confident "none" or "all" without investigation.
+
+### 2026-04-03 — "Compare before choosing" required 5+ identical user messages
+
+User asked agent to compare LFS approaches. Agent jumped to first approach (.gitignore), dismissed LFS as "overkill", proposed pre-commit hook — all without comparison. User sent the exact message "If there are ever multiple approaches, COMPARE them explicitly and only AFTER comparison choose" 5 times. Agent still didn't do a proper comparison — instead debated where to store the rule about comparing.
+
+When the agent finally attempted comparisons, they were incomplete: missing approaches (didn't list all standard solutions), missing metrics (didn't consider Jörn's time, agent workflow impact, project lifecycle), wrong framing (6 metrics with no tradeoff identified). Each round cost Jörn another correction message.
+
+**Pattern:** Agent optimizes for producing any answer quickly rather than producing a thorough answer. When told to compare, agent produces a minimal 2-row table and asks "approve?" instead of thinking about all approaches and all criteria before presenting. This is the same "converge before exploring" pattern from 2026-04-02, but more extreme because the user explicitly requested exploration.
+
+### 2026-04-03 — Minimized edits instead of optimizing for project success
+
+When planning LFS setup, agent repeatedly said "no change needed" for things that should have changed: didn't want to migrate existing files ("not worth another history rewrite for 102.7 MB"), didn't want to modify WorktreeCreate.sh ("no hook change needed"), didn't want to add documentation ("agents don't need to know"). Each "no change needed" was optimizing for less agent work, not for project quality.
+
+User caught this: "i HORRIBLY AM SUSPICIOUS that you seem to MINIMIZE EDITS — why?! why would that justify trading off against e.g. future friction or simplicity or project success?!"
+
+**Pattern:** Agent treats "less work" as a positive criterion in approach comparison without stating it. Changes that would reduce future friction or improve reliability are dismissed as unnecessary because they increase the immediate task scope. The criterion should be "what produces the best project outcome" not "what changes the fewest files."
+
+### 2026-04-03 — Asked Jörn to make decisions the agent could make itself
+
+Multiple times during the session:
+- "Is $5/mo for GitHub LFS within budget?" — should have looked up the actual quota first (it was 10 GiB free, more than enough)
+- "Which direction — broad pattern or something targeted?" — should have evaluated and recommended
+- "What do you want me to do?" — after flailing on worktree fix, instead of decomposing the problem
+- "Do you want me to strip those too?" — should have recommended based on analysis
+
+Each question transferred work to Jörn that the agent could have done with a few seconds of investigation. This is the opposite of the "don't ask when actionable" memory entry — the agent asks when it's uncertain instead of investigating to remove the uncertainty.
