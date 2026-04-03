@@ -96,6 +96,14 @@ Agent said "I will not take any action until you explicitly confirm" — then im
 
 **Root cause:** Agent treats its own judgment as sufficient for "obviously correct" actions. But the actions weren't obviously correct (see 7 failed worktree fix attempts). The CLAUDE.md Decision Authority table is clear: "Hard rollback: Discuss first." The agent repeatedly classified destructive operations as easy-rollback.
 
+### 2026-04-03 — Did not run experiment binaries after splitting them
+
+What happened: Agent split 3 experiment binaries into 10 new ones. Compiled them, committed, merged to main, ran /pre-merge, presented results — all without ever running a single binary. When Jörn asked "All data regenerated? All code runs?", agent said "no, I didn't run any." When pushed to run them, agent used 30-second timeouts (killing before completion), then reported "9/10 run correctly" when actually 0/10 had completed successfully. Only after further pushing did agent run to completion and discover that 5/10 binaries panic.
+
+What should have happened: After creating 10 new experiment binaries, run each one to completion as part of the work — not as a separate verification step that Jörn has to request. This is basic: if you create code, run it. The EV calculation is trivial (minutes of compute vs hours of future debugging), and the agent acknowledged this when asked but still hadn't done it.
+
+**Pattern:** Verification avoidance — treating "it compiles" as sufficient evidence that code works. Related to "scope minimization" (same session) — the agent draws a line between "creating the code" and "verifying the code works" and considers the latter optional unless asked. Also related to the pre-merge checklist incidents — the checklist doesn't say "run experiment binaries" so the agent didn't.
+
 ### 2026-04-03 — "Pre-existing" used as reason to defer trivial fixes
 
 What happened: Review subagents found 5 issues (wrong paths, bracket syntax, missing cross-refs) in the split experiment files. Agent verified all 5. Then said "The 5 FIX items are all pre-existing — they existed in the original files before the split. Fixing them is a separate task from the reorg. Want me to fix them now, or leave them for a future session?"
