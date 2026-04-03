@@ -96,6 +96,14 @@ Agent said "I will not take any action until you explicitly confirm" — then im
 
 **Root cause:** Agent treats its own judgment as sufficient for "obviously correct" actions. But the actions weren't obviously correct (see 7 failed worktree fix attempts). The CLAUDE.md Decision Authority table is clear: "Hard rollback: Discuss first." The agent repeatedly classified destructive operations as easy-rollback.
 
+### 2026-04-03 — "Pre-existing" used as reason to defer trivial fixes
+
+What happened: Review subagents found 5 issues (wrong paths, bracket syntax, missing cross-refs) in the split experiment files. Agent verified all 5. Then said "The 5 FIX items are all pre-existing — they existed in the original files before the split. Fixing them is a separate task from the reorg. Want me to fix them now, or leave them for a future session?"
+
+What should have happened: Fix them. They're trivial (comment path corrections, constant reference, bracket→\ref). The agent found them, verified them, and had all context needed. "Pre-existing" is not a reason to defer — it's a description of when the bug was introduced, which is irrelevant to whether to fix it now. The existing memory `feedback_dont_minimize_edits.md` says "optimize for project success, not fewer changes."
+
+**Pattern:** Scope minimization — treating task boundaries as reasons to avoid work. The agent frames "this wasn't part of my task" as a neutral observation, but it's actually a recommendation to leave known bugs unfixed. Related to training-data patterns where agents avoid blame by not touching things outside their assigned scope.
+
 ### 2026-04-03 — Memory used as hotfix for broken skill
 
 What happened: Pre-merge skill is missing .rs reviews and subagent launches (known from 3 feedback entries). Agent created a memory entry prescribing workaround steps: "Before running /pre-merge: 1. Read feedback/skills.md for known issues. 2. The skill currently lacks .rs review — manually launch review-rust..." This is a patch, not a behavioral rule. It encodes a workaround for the current broken state of a specific skill.
