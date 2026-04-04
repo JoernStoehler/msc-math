@@ -83,3 +83,13 @@ What should have happened: Use `trash-put` explicitly when deletion should be re
 **Root cause:** When two languages compute the same quantity, threshold conventions must be explicitly synchronized. The Rust code documented its threshold convention clearly; the Python code didn't consider that numpy's default differs.
 
 **Pattern:** Cross-language numerical convention mismatch. The math-tex convention says "math.tex is single source of truth" — a similar principle could apply to numerical thresholds: define once, document, use consistently.
+
+### 2026-04-04 — Cache .gitignored, lost on worktree cleanup
+
+**What happened:** The variable-f-ascent agent added `cache.jsonl` (26 MB, capacity lookup cache making reruns 18x faster) but also added a `.gitignore` excluding it. When the worktree was cleaned up after merge to main, the cache was lost. Pre-merge smoke test ran cold (62s instead of ~3s), and any future checkout would also run cold.
+
+**Root cause:** Agent treated the cache as a transient build artifact rather than a committed asset. `.jsonl` is already LFS-tracked globally (`.gitattributes`), so there was no storage reason to exclude it. The experiment conventions say "Committed: .jsonl [...] stored in git so [...] data doesn't need regenerating in worktrees/after merges" — the cache falls under this rule.
+
+**Pattern:** Same error class as 2026-04-04 "Database caching not used" — two-part failure where first the agent didn't cache, then when told to cache, it .gitignored the cache. The underlying pattern is: agent doesn't think about what happens after the worktree is gone. Data and caches that took compute to produce should survive branch merges.
+
+**Suggestion:** Add to experiment conventions: "Never .gitignore .jsonl files. All .jsonl files are LFS-tracked and should be committed so they survive worktree cleanup and branch merges."
