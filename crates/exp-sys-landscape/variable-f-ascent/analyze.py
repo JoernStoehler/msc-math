@@ -105,7 +105,7 @@ def analyze_rq1(rows):
 
 
 def analyze_rq2(rows):
-    """RQ2: Three-way comparison from random F=10 starts."""
+    """RQ2: Four-way comparison from random F=10 starts."""
     rq2 = [r for r in rows if r["rq"] == "rq2"]
     if not rq2:
         print("No RQ2 data found.")
@@ -114,11 +114,13 @@ def analyze_rq2(rows):
     path_a = [r for r in rq2 if r["path"] == "f10_ascent"]
     path_b = [r for r in rq2 if r["path"] == "f10_add_then_f11"]
     path_c = [r for r in rq2 if r["path"] == "random_f11"]
+    path_d = [r for r in rq2 if r["path"] == "f10_ascent_then_f11"]
 
-    print("\n=== RQ2: Three-way comparison ===")
+    print("\n=== RQ2: Four-way comparison ===")
     for label, data in [("A: F=10 ascent", path_a),
                          ("B: add+F=11 ascent", path_b),
-                         ("C: random F=11", path_c)]:
+                         ("C: random F=11", path_c),
+                         ("D: F=10 ascent → F=11", path_d)]:
         if not data:
             print(f"  {label}: no data")
             continue
@@ -129,37 +131,39 @@ def analyze_rq2(rows):
               f"max={max(finals):.4f}, "
               f"min={min(finals):.4f}")
 
-    # Paired comparison: for each seed, compare A vs B
-    if path_a and path_b:
-        # Extract seed indices from names
-        a_by_seed = {}
-        for r in path_a:
-            seed = r["name"].replace("_pathA_f10", "")
-            a_by_seed[seed] = r["final_sys"]
-        b_by_seed = {}
-        for r in path_b:
-            seed = r["name"].replace("_pathB_f11add", "")
-            b_by_seed[seed] = r["final_sys"]
+    # Paired comparisons
+    def by_seed(data, suffix):
+        return {r["name"].replace(suffix, ""): r["final_sys"] for r in data}
 
-        common = sorted(set(a_by_seed) & set(b_by_seed))
+    a_by_seed = by_seed(path_a, "_pathA_f10") if path_a else {}
+    b_by_seed = by_seed(path_b, "_pathB_f11add") if path_b else {}
+    d_by_seed = by_seed(path_d, "_pathD_f10then11") if path_d else {}
+
+    for lbl, x_seeds, y_seeds, x_name, y_name in [
+        ("A vs B", a_by_seed, b_by_seed, "A", "B"),
+        ("A vs D", a_by_seed, d_by_seed, "A", "D"),
+        ("D vs B", d_by_seed, b_by_seed, "D", "B"),
+    ]:
+        common = sorted(set(x_seeds) & set(y_seeds))
         if common:
-            n_b_wins = sum(1 for s in common if b_by_seed[s] > a_by_seed[s] + 1e-6)
-            print(f"\n  Paired A vs B: {len(common)} seeds, "
-                  f"B wins {n_b_wins}/{len(common)}")
-            diffs = [b_by_seed[s] - a_by_seed[s] for s in common]
-            print(f"  Mean(B-A) = {np.mean(diffs):+.4f}, "
-                  f"Median(B-A) = {np.median(diffs):+.4f}")
+            n_y_wins = sum(1 for s in common
+                          if y_seeds[s] > x_seeds[s] + 1e-6)
+            diffs = [y_seeds[s] - x_seeds[s] for s in common]
+            print(f"\n  Paired {lbl}: {len(common)} seeds, "
+                  f"{y_name} wins {n_y_wins}/{len(common)}, "
+                  f"Mean({y_name}-{x_name}) = {np.mean(diffs):+.4f}")
 
-    # Figure: grouped bar chart or box plot
+    # Figure: box plot
     fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
 
     plot_data = []
     labels = []
-    colors = ["#4878CF", "#6ACC65", "#D65F5F"]
+    colors = ["#4878CF", "#D65F5F", "#6ACC65", "#E5AE38"]
     for label, data, color in [
-        (r"A: $F\!=\!10$ ascent", path_a, colors[0]),
-        (r"B: add+$F\!=\!11$", path_b, colors[1]),
-        (r"C: random $F\!=\!11$", path_c, colors[2]),
+        (r"A: $F\!=\!10$" + "\nascent", path_a, colors[0]),
+        (r"D: $F\!=\!10 \to 11$" + "\nascent+expand", path_d, colors[3]),
+        (r"B: add+$F\!=\!11$" + "\nexpand+ascent", path_b, colors[1]),
+        (r"C: random $F\!=\!11$" + "\nascent", path_c, colors[2]),
     ]:
         if data:
             finals = [r["final_sys"] for r in data]
@@ -179,7 +183,7 @@ def analyze_rq2(rows):
         ax.set_xticks(positions)
         ax.set_xticklabels(labels)
         ax.set_ylabel(r"Final $\mathrm{sys}$")
-        ax.set_title("RQ2: Three-way comparison")
+        ax.set_title("RQ2: Four-way comparison")
 
     fig.savefig(EXPERIMENT_DIR / "variable-f-rq2.png")
     plt.close(fig)

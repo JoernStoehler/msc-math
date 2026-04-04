@@ -4,10 +4,11 @@
 //! Two research questions:
 //! - RQ1: Can F=10 local maxima be improved by embedding into F=11 space?
 //!   Take a local max, add a barely-non-redundant facet, run gradient ascent.
-//! - RQ2: Three-way comparison from the same random F=10 start:
+//! - RQ2: Four-way comparison from the same random F=10 start:
 //!   Path A: F=10 gradient ascent
 //!   Path B: add facet → F=11 gradient ascent
 //!   Path C: random F=11 gradient ascent (baseline)
+//!   Path D: F=10 ascent → add facet → F=11 ascent (optimize first, then expand)
 //!
 //! Gradient ascent algorithm copied from gradient-ascent-general/run.rs
 //! (self-contained per experiment convention).
@@ -16,12 +17,13 @@
 //! Flags: --fresh  (clear existing data and rerun)
 //! Output: variable-f-ascent/variable-f-ascent.jsonl
 
+use database::{DualVerticesKey, PolytopeRecord};
 use nalgebra::{Matrix4, Vector4};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal};
 use serde::{Deserialize, Serialize};
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::fs::{File, OpenOptions};
 use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::time::Instant;
@@ -31,6 +33,8 @@ use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::volume::volume;
 use symplectic::kkt::saddle_point_solver::solve_kkt_for;
 use symplectic::random::sample_random_polytope;
+
+type Db = HashMap<DualVerticesKey, PolytopeRecord>;
 
 // ============================================================================
 // Configuration
@@ -231,9 +235,9 @@ fn compute_step_bound_a(polytope: &Polytope4D, direction: &[Vector4<f64>]) -> f6
 // Gradient step in a-space (copied from gradient-ascent-general)
 // ============================================================================
 
-fn compute_sys(polytope: &Polytope4D) -> Option<f64> {
+fn compute_sys(polytope: &Polytope4D, db: &mut Db) -> Option<f64> {
     let vol = volume(polytope).ok().filter(|&v| v > 0.0)?;
-    let cap = compute_capacity(polytope)?;
+    let cap = compute_capacity(polytope, db)?;
     let sys = cap * cap / (2.0 * vol);
     sys.is_finite().then_some(sys)
 }
@@ -242,6 +246,7 @@ fn try_step_a(
     duals: &[Vector4<f64>],
     direction: &[Vector4<f64>],
     t: f64,
+    db: &mut Db,
 ) -> Option<(Polytope4D, f64)> {
     let new_duals: Vec<Vector4<f64>> = duals
         .iter()
@@ -249,17 +254,48 @@ fn try_step_a(
         .map(|(a, d)| a + t * d)
         .collect();
     let polytope = Polytope4D::from_f64(new_duals).ok()?;
-    let sys = compute_sys(&polytope)?;
+    let sys = compute_sys(&polytope, db)?;
     Some((polytope, sys))
 }
 
-fn compute_capacity(polytope: &Polytope4D) -> Option<f64> {
-    symplectic::algorithms::hk2017::ehz_capacity(polytope).map(|r| r.result.capacity)
+fn compute_capacity(polytope: &Polytope4D, db: &mut Db) -> Option<f64> {
+    let key: DualVerticesKey = polytope.dual_vertices().to_vec();
+    if let Some(record) = db.get(&key) {
+        if let Some(cap) = record.capacity {
+            return Some(cap);
+        }
+    }
+    let r = symplectic::algorithms::hk2017::ehz_capacity(polytope)?;
+    let cap = r.result.capacity;
+    let record = db
+        .entry(key)
+        .or_insert_with(|| PolytopeRecord::from_polytope(polytope));
+    record.capacity = Some(cap);
+    Some(cap)
 }
 
-fn compute_capacity_result(polytope: &Polytope4D) -> Option<(f64, Vec<usize>)> {
+fn compute_capacity_result(polytope: &Polytope4D, db: &mut Db) -> Option<(f64, Vec<usize>)> {
+    let key: DualVerticesKey = polytope.dual_vertices().to_vec();
+    // Check cache: need both capacity and best permutation
+    if let Some(record) = db.get(&key) {
+        if let (Some(cap), Some(sigmas)) = (record.capacity, record.sigmas.as_ref()) {
+            if let Some(best) = sigmas.first() {
+                return Some((cap, best.perm.clone()));
+            }
+        }
+    }
     let r = symplectic::algorithms::hk2017::ehz_capacity(polytope)?;
-    Some((r.result.capacity, r.result.best_permutation))
+    let cap = r.result.capacity;
+    let perm = r.result.best_permutation.clone();
+    let record = db
+        .entry(key)
+        .or_insert_with(|| PolytopeRecord::from_polytope(polytope));
+    record.capacity = Some(cap);
+    record.sigmas = Some(vec![database::SigmaAction {
+        perm: perm.clone(),
+        action: cap,
+    }]);
+    Some((cap, perm))
 }
 
 // ============================================================================
@@ -280,9 +316,10 @@ fn gradient_ascent_phase(
     start: &Polytope4D,
     t0: Instant,
     budget: f64,
+    db: &mut Db,
 ) -> Option<(Polytope4D, f64, usize)> {
     let mut current = Polytope4D::from_f64(start.dual_vertices_f64().to_vec()).ok()?;
-    let mut current_sys = compute_sys(&current)?;
+    let mut current_sys = compute_sys(&current, db)?;
     let mut n_iters = 0usize;
 
     for iter in 0..MAX_ITERATIONS {
@@ -290,7 +327,7 @@ fn gradient_ascent_phase(
             break;
         }
 
-        let (cap, best_perm) = compute_capacity_result(&current)?;
+        let (cap, best_perm) = compute_capacity_result(&current, db)?;
         let kkt = solve_kkt_for(&current, &best_perm).feasible()?;
         let vol = volume(&current).ok().filter(|&v| v > 0.0)?;
         let sys = cap * cap / (2.0 * vol);
@@ -323,7 +360,7 @@ fn gradient_ascent_phase(
 
         for &frac in STEP_FRACTIONS {
             let t = frac * t_max;
-            if let Some((p, new_sys)) = try_step_a(duals, &d_sys_a, t) {
+            if let Some((p, new_sys)) = try_step_a(duals, &d_sys_a, t, db) {
                 if new_sys > sys && best.as_ref().is_none_or(|b| new_sys > b.1) {
                     best = Some((p, new_sys));
                 }
@@ -333,7 +370,7 @@ fn gradient_ascent_phase(
         if t_max < MAX_STEP_SIZE {
             for &mult in OVERSHOOT_MULTIPLIERS {
                 let t = mult * t_max;
-                if let Some((p, new_sys)) = try_step_a(duals, &d_sys_a, t) {
+                if let Some((p, new_sys)) = try_step_a(duals, &d_sys_a, t, db) {
                     if new_sys > sys && best.as_ref().is_none_or(|b| new_sys > b.1) {
                         best = Some((p, new_sys));
                     }
@@ -377,11 +414,12 @@ fn full_ascent(
     start: &Polytope4D,
     rng: &mut ChaCha8Rng,
     budget: f64,
+    db: &mut Db,
 ) -> Option<AscentResult> {
     let t0 = Instant::now();
 
     let (mut best_polytope, mut best_sys, mut total_iters) =
-        gradient_ascent_phase(start, t0, budget)?;
+        gradient_ascent_phase(start, t0, budget, db)?;
     let mut n_phases = 1usize;
 
     for _round in 0..MAX_ESCAPE_ROUNDS {
@@ -395,7 +433,7 @@ fn full_ascent(
             }
             if let Some(wiggled) = wiggle(&best_polytope, rng) {
                 if let Some((p, s, iters)) =
-                    gradient_ascent_phase(&wiggled, t0, budget)
+                    gradient_ascent_phase(&wiggled, t0, budget, db)
                 {
                     n_phases += 1;
                     total_iters += iters;
@@ -589,6 +627,13 @@ fn main() {
 
     let mut rng = ChaCha8Rng::seed_from_u64(SEED);
 
+    // Local capacity cache — avoids recomputing ehz_capacity on reruns.
+    // Separate from the shared data/polytopes.jsonl to avoid bloating it
+    // with thousands of intermediate gradient-step polytopes.
+    let cache_path = base.join("cache.jsonl");
+    let mut db: Db = database::load(&cache_path).expect("load cache");
+    println!("Cache: {} entries\n", db.len());
+
     // =========================================================================
     // RQ1: Can F=10 local maxima be improved in F=11 space?
     // =========================================================================
@@ -624,7 +669,7 @@ fn main() {
                 }
             };
 
-            let sys_after_add = compute_sys(&f11_polytope);
+            let sys_after_add = compute_sys(&f11_polytope, &mut db);
             let sys_after_add_val = match sys_after_add {
                 Some(s) => s,
                 None => {
@@ -634,7 +679,7 @@ fn main() {
             };
 
             // Run gradient ascent on F=11 polytope
-            match full_ascent(&f11_polytope, &mut rng, TRIAL_TIME_BUDGET_SECS) {
+            match full_ascent(&f11_polytope, &mut rng, TRIAL_TIME_BUDGET_SECS, &mut db) {
                 Some(result) => {
                     let delta = result.final_sys - src_sys;
                     rq1_total += 1;
@@ -695,7 +740,7 @@ fn main() {
     // RQ2: Three-way comparison from random F=10 starts
     // =========================================================================
 
-    println!("=== RQ2: Three-way comparison (F=10 ascent vs add+F=11 vs random F=11) ===\n");
+    println!("=== RQ2: Four-way comparison ===\n");
 
     // Generate F=10 starting polytopes
     let mut rq2_starts: Vec<(String, Polytope4D)> = Vec::new();
@@ -734,7 +779,7 @@ fn main() {
     println!("Generated {} F=11 random polytopes.\n", rq2_f11_random.len());
 
     for (idx, (seed_name, start_polytope)) in rq2_starts.iter().enumerate() {
-        let start_sys = match compute_sys(start_polytope) {
+        let start_sys = match compute_sys(start_polytope, &mut db) {
             Some(s) => s,
             None => {
                 println!("[{seed_name}] sys computation failed, skipping");
@@ -745,35 +790,85 @@ fn main() {
 
         // --- Path A: F=10 gradient ascent ---
         let path_a_name = format!("{seed_name}_pathA_f10");
-        if !completed.contains(&path_a_name) {
+        let mut path_a_result: Option<(Polytope4D, f64)> = None;
+        {
             let t0 = Instant::now();
-            match full_ascent(start_polytope, &mut rng, TRIAL_TIME_BUDGET_SECS) {
+            match full_ascent(start_polytope, &mut rng, TRIAL_TIME_BUDGET_SECS, &mut db) {
                 Some(result) => {
-                    let row = ResultRow {
-                        rq: "rq2".into(),
-                        path: "f10_ascent".into(),
-                        name: path_a_name.clone(),
-                        starting_f: 10,
-                        starting_sys: start_sys,
-                        sys_after_addition: None,
-                        final_sys: result.final_sys,
-                        delta_vs_source: result.final_sys - start_sys,
-                        n_iterations: result.n_iters,
-                        n_phases: result.n_phases,
-                        placement_direction: None,
-                        facet_remained_active: None,
-                        total_time_ms: t0.elapsed().as_secs_f64() * 1000.0,
-                        final_dual_vertices: dvs_to_array(&result.final_polytope),
-                    };
-                    write_row(&row, &mut writer);
+                    if !completed.contains(&path_a_name) {
+                        let row = ResultRow {
+                            rq: "rq2".into(),
+                            path: "f10_ascent".into(),
+                            name: path_a_name.clone(),
+                            starting_f: 10,
+                            starting_sys: start_sys,
+                            sys_after_addition: None,
+                            final_sys: result.final_sys,
+                            delta_vs_source: result.final_sys - start_sys,
+                            n_iterations: result.n_iters,
+                            n_phases: result.n_phases,
+                            placement_direction: None,
+                            facet_remained_active: None,
+                            total_time_ms: t0.elapsed().as_secs_f64() * 1000.0,
+                            final_dual_vertices: dvs_to_array(&result.final_polytope),
+                        };
+                        write_row(&row, &mut writer);
+                    }
                     println!(
                         "  [A: F=10 ascent] final_sys={:.4} (Δ={:+.4}), {:.1}s",
                         result.final_sys,
                         result.final_sys - start_sys,
                         t0.elapsed().as_secs_f64(),
                     );
+                    path_a_result = Some((result.final_polytope, result.final_sys));
                 }
                 None => println!("  [A: F=10 ascent] FAILED"),
+            }
+        }
+
+        // --- Path D: F=10 ascent → add facet → F=11 ascent ---
+        let path_d_name = format!("{seed_name}_pathD_f10then11");
+        if !completed.contains(&path_d_name) {
+            if let Some((ref a_polytope, a_sys)) = path_a_result {
+                let t0 = Instant::now();
+                let dir = random_direction(&mut rng);
+
+                match add_facet(a_polytope, &dir, FACET_EPSILON) {
+                    Some(f11_polytope) => {
+                        let sys_after_add = compute_sys(&f11_polytope, &mut db);
+                        match full_ascent(&f11_polytope, &mut rng, TRIAL_TIME_BUDGET_SECS, &mut db) {
+                            Some(result) => {
+                                let active = last_facet_active(&result.final_polytope);
+                                let row = ResultRow {
+                                    rq: "rq2".into(),
+                                    path: "f10_ascent_then_f11".into(),
+                                    name: path_d_name.clone(),
+                                    starting_f: 11,
+                                    starting_sys: start_sys,
+                                    sys_after_addition: sys_after_add,
+                                    final_sys: result.final_sys,
+                                    delta_vs_source: result.final_sys - start_sys,
+                                    n_iterations: result.n_iters,
+                                    n_phases: result.n_phases,
+                                    placement_direction: Some([dir[0], dir[1], dir[2], dir[3]]),
+                                    facet_remained_active: Some(active),
+                                    total_time_ms: t0.elapsed().as_secs_f64() * 1000.0,
+                                    final_dual_vertices: dvs_to_array(&result.final_polytope),
+                                };
+                                write_row(&row, &mut writer);
+                                println!(
+                                    "  [D: F=10→F=11] a_sys={a_sys:.4} → add={:.4} → final={:.4} (Δ={:+.4}), active={active}, {:.1}s",
+                                    sys_after_add.unwrap_or(f64::NAN),
+                                    result.final_sys,
+                                    result.final_sys - start_sys,
+                                    t0.elapsed().as_secs_f64(),
+                                );
+                            }
+                            None => println!("  [D: F=10→F=11] gradient ascent FAILED"),
+                        }
+                    }
+                    None => println!("  [D: F=10→F=11] facet addition FAILED"),
+                }
             }
         }
 
@@ -785,8 +880,8 @@ fn main() {
 
             match add_facet(start_polytope, &dir, FACET_EPSILON) {
                 Some(f11_polytope) => {
-                    let sys_after_add = compute_sys(&f11_polytope);
-                    match full_ascent(&f11_polytope, &mut rng, TRIAL_TIME_BUDGET_SECS) {
+                    let sys_after_add = compute_sys(&f11_polytope, &mut db);
+                    match full_ascent(&f11_polytope, &mut rng, TRIAL_TIME_BUDGET_SECS, &mut db) {
                         Some(result) => {
                             let active = last_facet_active(&result.final_polytope);
                             let row = ResultRow {
@@ -829,8 +924,8 @@ fn main() {
         if !completed.contains(&path_c_name) {
             if let Some((_, f11_polytope)) = rq2_f11_random.get(idx) {
                 let t0 = Instant::now();
-                let f11_start_sys = compute_sys(f11_polytope);
-                match full_ascent(f11_polytope, &mut rng, TRIAL_TIME_BUDGET_SECS) {
+                let f11_start_sys = compute_sys(f11_polytope, &mut db);
+                match full_ascent(f11_polytope, &mut rng, TRIAL_TIME_BUDGET_SECS, &mut db) {
                     Some(result) => {
                         let row = ResultRow {
                             rq: "rq2".into(),
@@ -871,8 +966,10 @@ fn main() {
     // =========================================================================
 
     writer.flush().expect("flush output");
+    database::save(&cache_path, &db).expect("save cache");
 
     println!("========================================");
+    println!("Cache: {} entries (saved to {})", db.len(), cache_path.display());
     println!("Total time: {:.1}s", t_global.elapsed().as_secs_f64());
     println!("Output: {}", output_path.display());
 }

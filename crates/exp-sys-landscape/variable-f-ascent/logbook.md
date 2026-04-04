@@ -60,7 +60,7 @@ Starting points: 10 F=10 local maxima from gradient-ascent-general (final_dual_v
 
 ## Findings (2026-04-04)
 
-Total runtime: 1644s (~27 min), 80 trials.
+Total runtime: 1986s (~33 min), 90 trials. Cached rerun: 111s.
 
 ### RQ1: 43/50 (86%) improved over F=10 local max
 
@@ -85,26 +85,30 @@ Mean Δ across all 50 trials: +0.016. Max Δ: +0.057 (variable-f-ascent.jsonl, r
 
 HKO2024 testing (cut + ascent in F=11 space) moved to `exp-hko-local-maximum/cut-and-ascent/`.
 
-### RQ2: F=10 ascent beats add+F=11 from random starts
+### RQ2: Four-way comparison from random F=10 starts
 
-| Path | Mean final sys | Median | Max | Min |
-|------|---------------|--------|-----|-----|
-| A: F=10 ascent | 0.794 | 0.813 | 0.891 | 0.695 |
-| B: add facet + F=11 ascent | 0.609 | 0.722 | 0.869 | 0.123 |
-| C: random F=11 ascent | 0.816 | 0.814 | 0.887 | 0.728 |
+Four paths from the same 10 random F=10 starting polytopes (seed 43):
 
-Paired A vs B: B wins **0/10** seeds. Mean(B-A) = -0.185.
+| Path | Description | Mean | Median | Max | Min |
+|------|-------------|------|--------|-----|-----|
+| **D: F=10→F=11** | F=10 ascent → add facet → F=11 ascent | **0.828** | **0.852** | **0.901** | 0.698 |
+| C: random F=11 | fresh random F=11 → ascent | 0.807 | 0.805 | 0.871 | 0.723 |
+| A: F=10 ascent | F=10 → ascent | 0.795 | 0.821 | 0.879 | 0.686 |
+| B: add+F=11 | add facet → F=11 ascent | 0.707 | 0.770 | 0.860 | 0.203 |
 
-**Interpretation:** Adding a thin facet to an un-optimized F=10 polytope and then optimizing is much **worse** than just optimizing in F=10 space. The thin-sliver facet creates a pathological starting point that the optimizer struggles with. In contrast, random F=11 polytopes (Path C) perform slightly better than F=10, showing that more facets do help — but only if the extra facet is structurally sound, not a thin sliver.
+Paired comparisons:
+- D wins **10/10** vs A. Mean(D-A) = +0.033.
+- B wins **3/10** vs A. Mean(B-A) = -0.088.
+- B wins **1/10** vs D. Mean(B-D) = -0.122.
 
-**Key conclusion:** Facet addition is useful **at convergence** (RQ1: breaks through F-local maxima 78% of the time) but harmful **at the start** (RQ2: thin-sliver facets degrade optimization). The correct strategy is: optimize in F-space first, then add facets when stuck.
+**Ordering: D > C > A > B.** Optimize first, then expand F is strictly best. Adding a thin-sliver facet before optimization (Path B) hurts — the optimizer struggles with the pathological starting geometry. Random F=11 (Path C) slightly outperforms F=10 (Path A), showing more facets help when the geometry is natural.
 
 ### Figures
 
 | Figure | Description |
 |--------|-------------|
 | variable-f-rq1.png | Scatter: F=10 local max sys vs F=11 ascent final sys. Points above diagonal = improved. |
-| variable-f-rq2.png | Box plot: three-way comparison of final sys by path. |
+| variable-f-rq2.png | Box plot: four-way comparison of final sys by path. |
 
 ## Open questions
 
