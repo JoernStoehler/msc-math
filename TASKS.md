@@ -139,7 +139,7 @@ Depends on: Jörn scoping the thesis story. Derivative-related experiments also 
 
 ## verify-numerics
 
-**Status (2026-04-02):** Perturbation chain analysis complete. Infrastructure simplified. Merged to main.
+**Status (2026-04-04):** Deferred-work panics removed from saddle_point_solver.rs (Jörn decision). Capacity computation conjectures low A_min error for ill-conditioned orbits — degenerate orbits are never capacity-achieving, so the final capacity comes from well-conditioned orbits with proven low error. 14 previously-failing library tests now pass (329 pass, 0 fail). Gap remains: need proven error bound or algorithm change before publication.
 
 **Done:**
 - math.tex: Parts I+II complete (problem, structure, exact algorithm, perturbation chain error bounds)
