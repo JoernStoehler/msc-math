@@ -93,3 +93,13 @@ What should have happened: Use `trash-put` explicitly when deletion should be re
 **Pattern:** Same error class as 2026-04-04 "Database caching not used" — two-part failure where first the agent didn't cache, then when told to cache, it .gitignored the cache. The underlying pattern is: agent doesn't think about what happens after the worktree is gone. Data and caches that took compute to produce should survive branch merges.
 
 **Suggestion:** Add to experiment conventions: "Never .gitignore .jsonl files. All .jsonl files are LFS-tracked and should be committed so they survive worktree cleanup and branch merges."
+
+**Resolution (same session):** Jörn rewrote the convention. Now in experiments.md as "Data and caches in git" section. Incident entry kept for pattern documentation.
+
+### 2026-04-04 — Confident performance claim without tracing cache state
+
+**What happened:** Pre-merge review flagged Path A re-running on resume. Agent reported "30-100s wasted compute" and called it a bug. Jörn pushed back three times ("Why is it wasted compute?") before agent realized: with warm cache, Path A takes ~10s total (not 30-100s), and it's not wasted because Path D needs the in-memory result.
+
+**Root cause:** Agent used cold-cache timing (3-10s/seed from smoke test output) to estimate warm-cache resume cost. Never traced what happens when cache.jsonl is loaded and all capacity lookups are hits. Made a confident quantitative claim about a code path it hadn't fully understood.
+
+**Pattern:** Quantitative claims about state-dependent behavior. A timing number is meaningless without specifying the state (cache warm/cold, data size, hardware). The general rule: before stating a number, identify what it depends on and verify under the relevant condition. Related to "Don't claim certainty without proof" memory, but specific to performance/timing.

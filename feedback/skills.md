@@ -25,3 +25,7 @@ This is a platform/tool bug — the tool result was factually wrong. The agent s
 The pre-merge skill shown to the agent after `/pre-merge` still referenced `cd crates/` and `cd experiments/` — the old paths — even though the skill file itself had been updated earlier in the session (by a subagent). This is likely because the skill content was loaded from the SKILL.md file at invocation time and the subagent's edit happened within the same session. The agent adapted and ran the right commands anyway, but a less experienced agent might have followed the stale instructions.
 
 **Not actionable as a skill fix** — this was a one-time issue caused by editing the skill file and then invoking it in the same session. The skill file is now correct.
+
+### 2026-04-04 — Pre-merge skill doesn't cover post-hoc reviews
+
+`/pre-merge` was run after the branch was already merged to main (Jörn merged without running it first). Phase 5 sanity check says "Work is on a worktree branch, not main" — inapplicable in this case. Phase 3 (data freshness) and Phase 2 (smoke tests) worked fine on main. The skill could note that post-hoc reviews on main are valid — skip the "not on main" check, and note that fixes go directly on main as follow-up commits rather than on a branch.
