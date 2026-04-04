@@ -17,7 +17,7 @@ import numpy as np
 from scipy.optimize import linprog
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
-from figure_config import setup, FIGSIZE_SINGLE
+from figure_config import setup, FIGSIZE_SINGLE, MARKER_SIZE, LINE_WIDTH
 
 import matplotlib.pyplot as plt
 
@@ -196,7 +196,7 @@ def plot_curves(base, curves, dir_curvatures):
         rows = sorted(by_dir[d_idx], key=lambda r: r["epsilon"])
         eps = [r["epsilon"] for r in rows]
         delta = [r["sys"] - sys_base for r in rows]
-        ax.plot(eps, delta, 'o-', color=colors[d_idx], markersize=2, linewidth=0.8,
+        ax.plot(eps, delta, 'o-', color=colors[d_idx], markersize=MARKER_SIZE, linewidth=LINE_WIDTH,
                 label=f"$d_{{{d_idx}}}$" if d_idx % 3 == 0 else None)
 
     ax.axhline(0, color='k', linewidth=0.5, linestyle='--')

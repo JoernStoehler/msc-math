@@ -160,6 +160,11 @@ fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult
 ///
 /// ∇_{a_i} sys = (c · ∇_{a_i} c_orbit - sys · ∇_{a_i} vol) / vol
 ///
+/// This is the quotient rule applied to sys = c²/(2·vol):
+/// ∂sys/∂a_k = (c/vol) · ∂c/∂a_k − (sys/vol) · ∂vol/∂a_k.
+/// Per-orbit: uses ∂c_i/∂a_k from [lem:cap-derivative] and ∂vol/∂a_k from [lem:vol-derivative].
+/// // TODO: add [lem:sys-derivative] to math.tex — quotient rule for sys = c²/(2vol)
+///
 /// Requires re-solving KKT to obtain the multiplier μ (not stored in JSONL).
 fn orbit_sys_gradient_a(
     polytope: &Polytope4D,
