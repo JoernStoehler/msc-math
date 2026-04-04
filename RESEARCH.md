@@ -35,12 +35,13 @@ The sys=1 threshold matters — this is about Viterbo's conjecture specifically.
 No privileged threshold — sys is studied as a continuous function.
 
 - **3a.** Structural features correlated with high sys?
-  → [omega-hypothesis](crates/exp-sys-landscape/omega-hypothesis/) (falsified: small symplectic area not the mechanism)
+  → [omega-hypothesis](crates/exp-combinatorial-cells/omega-hypothesis/) (falsified: small symplectic area not the mechanism)
 - **3b.** Behavior across combinatorial type boundaries?
-  → [combinatorial-profiling](crates/exp-sys-landscape/combinatorial-profiling/),
-    [combinatorial-anatomy](crates/exp-sys-landscape/combinatorial-anatomy/),
-    [combinatorial-convexity](crates/exp-sys-landscape/combinatorial-convexity/),
-    [combinatorial-sweep](crates/exp-sys-landscape/combinatorial-sweep/)
+  → [cell-widths](crates/exp-combinatorial-cells/cell-widths/),
+    [boundary-characterization](crates/exp-combinatorial-cells/boundary-characterization/),
+    [gradient-discontinuity](crates/exp-combinatorial-cells/gradient-discontinuity/),
+    [convexity](crates/exp-combinatorial-cells/convexity/),
+    [multiple-crossings](crates/exp-combinatorial-cells/multiple-crossings/)
 - **3c.** sys distribution for random polytopes?
   → [random-sweep](crates/exp-sys-landscape/random-sweep/),
     [random-product-sweep](crates/exp-sys-landscape/random-product-sweep/),

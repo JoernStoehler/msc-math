@@ -13,8 +13,8 @@ The mechanism: Q(beta) = sum beta_i beta_j omega_0(...), where Q is maximized su
 ## How to run
 
 ```bash
-cd crates/exp-hko-local-maximum/omega-hypothesis/
-cargo run --bin hko-omega --release       # generates omega-obstacle.jsonl
+cargo run -p exp-combinatorial-cells --release --bin cell-omega   # generates omega-obstacle.jsonl
+cd crates/exp-combinatorial-cells/omega-hypothesis/
 python3 analyze.py                        # generates all figures
 ```
 

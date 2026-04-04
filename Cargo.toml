@@ -4,6 +4,7 @@ members = [
     "crates/database",
     "crates/exp-hko-local-maximum",
     "crates/exp-sys-landscape",
+    "crates/exp-combinatorial-cells",
     "crates/dev-algorithm-comparison",
     "crates/dev-numerical-analysis",
     "crates/dev-capacity-validation",

@@ -1,20 +1,18 @@
 """
-Goal: Analyze boundary anatomy, crossing evaluation, gradient measurement, and orbit gap.
-Input: crates/exp-sys-landscape/combinatorial-anatomy/combinatorial-boundaries-{anatomy,crossing,gradient}.jsonl
-       crates/exp-sys-landscape/combinatorial-profiling/combinatorial-boundaries-profiling.jsonl (for gradient-cell alignment)
-Output: crates/exp-sys-landscape/combinatorial-anatomy/*.png
+Goal: Analyze boundary anatomy, crossing evaluation, and orbit gap.
+Input: crates/exp-combinatorial-cells/boundary-characterization/combinatorial-boundaries-{anatomy,crossing}.jsonl
+Output: crates/exp-combinatorial-cells/boundary-characterization/*.png
 """
 
 import json
 import sys
-from collections import defaultdict
 from pathlib import Path
 import numpy as np
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(EXPERIMENT_DIR.parent.parent))
 from figure_config import (
-    setup, FIGSIZE_SINGLE, FIGSIZE_DUAL, SCATTER_SIZE,
+    setup, FIGSIZE_SINGLE, SCATTER_SIZE,
     FONT_SIZE_SMALL,
 )
 setup()
@@ -54,20 +52,8 @@ def load_jsonl(filename):
 
 anatomy = load_jsonl("combinatorial-boundaries-anatomy.jsonl")
 crossing = load_jsonl("combinatorial-boundaries-crossing.jsonl")
-gradient = load_jsonl("combinatorial-boundaries-gradient.jsonl")
 
-# Load profiling data from sibling experiment for gradient-cell alignment
-PROFILING_DIR = EXPERIMENT_DIR.parent / "combinatorial-profiling"
-profiling_path = PROFILING_DIR / "combinatorial-boundaries-profiling.jsonl"
-profiling = []
-if profiling_path.exists():
-    with open(profiling_path) as f:
-        for line in f:
-            if line.strip():
-                profiling.append(json.loads(line))
-
-print(f"Loaded: {len(anatomy)} anatomy, {len(crossing)} crossing, "
-      f"{len(gradient)} gradient, {len(profiling)} profiling rows")
+print(f"Loaded: {len(anatomy)} anatomy, {len(crossing)} crossing rows")
 
 # ============================================================================
 # Figure 1: Event type breakdown (anatomy, global probes)
@@ -184,27 +170,7 @@ if ok_crossing:
     print("  boundary_sys_continuity.png")
 
 # ============================================================================
-# Figure 6: Gradient angle change histogram (gradient)
-# ============================================================================
-
-if gradient:
-    angles = [row["gradient_angle_change_deg"] for row in gradient
-              if not np.isnan(row["gradient_angle_change_deg"])]
-    if angles:
-        fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
-        ax.hist(angles, bins=50, color="#E91E63", alpha=0.7)
-        ax.set_xlabel("Gradient angle change (degrees)")
-        ax.set_ylabel("Count")
-        ax.set_title("Gradient direction change at first boundary")
-        ax.axvline(np.median(angles), color="red", ls="--", lw=1,
-                   label=f"Median: {np.median(angles):.4f}" + r"$^\circ$")
-        ax.legend()
-        fig.savefig(EXPERIMENT_DIR / "boundary_gradient_angle.png")
-        plt.close()
-        print("  boundary_gradient_angle.png")
-
-# ============================================================================
-# Figure 7: CDF of t_max by direction type (anatomy)
+# Figure 6: CDF of t_max by direction type (anatomy)
 # ============================================================================
 
 fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
@@ -227,7 +193,7 @@ plt.close()
 print("  boundary_density_cdf.png")
 
 # ============================================================================
-# Figure 8: Orbit gap distribution (anatomy)
+# Figure 7: Orbit gap distribution (anatomy)
 # ============================================================================
 
 orbit_gaps = [r["orbit_gap"] for r in anatomy if r["orbit_gap"] is not None]
@@ -252,7 +218,7 @@ if unique_gaps:
     print("  orbit_gap_distribution.png")
 
 # ============================================================================
-# Figure 9: Orbit gap vs orbit switch rate (crossing + anatomy)
+# Figure 8: Orbit gap vs orbit switch rate (crossing + anatomy)
 # ============================================================================
 
 # Match crossing rows to their polytope's orbit gap
@@ -306,52 +272,6 @@ if ok_cross:
         print("  orbit_gap_vs_switch.png")
 
 # ============================================================================
-# Figure 10: Gradient-cell alignment (anatomy + profiling)
-# ============================================================================
-
-if profiling:
-    facet_median_tmax = defaultdict(dict)
-    for r in profiling:
-        if r["t_max"] < 100:
-            key = (r["polytope_name"], r["facet_index"])
-            facet_median_tmax[r["polytope_name"]][r["facet_index"]] = \
-                facet_median_tmax[r["polytope_name"]].get(r["facet_index"], [])
-            facet_median_tmax[r["polytope_name"]][r["facet_index"]].append(r["t_max"])
-
-    # Compute median per facet
-    for pname in facet_median_tmax:
-        for k in facet_median_tmax[pname]:
-            vals = facet_median_tmax[pname][k]
-            facet_median_tmax[pname][k] = np.median(vals)
-
-    grad_tmax = []
-    min_cell_width = []
-    for r in anatomy:
-        if r["direction_type"] == "gradient" and r["t_max"] < 100:
-            pname = r["polytope_name"]
-            if pname in facet_median_tmax:
-                widths = list(facet_median_tmax[pname].values())
-                if widths:
-                    grad_tmax.append(r["t_max"])
-                    min_cell_width.append(min(widths))
-
-    if grad_tmax and min_cell_width:
-        fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
-        ax.scatter(min_cell_width, grad_tmax, s=SCATTER_SIZE, alpha=0.5,
-                   c="#E91E63", edgecolors="none")
-        ax.set_xlabel("Min per-facet median cell width")
-        ax.set_ylabel(r"Gradient direction $t_{\max}$")
-        ax.set_title("Gradient boundary distance vs narrowest cell width")
-
-        # Correlation
-        corr = np.corrcoef(min_cell_width, grad_tmax)[0, 1]
-        ax.text(0.05, 0.95, f"r = {corr:.3f}", transform=ax.transAxes, va="top",
-                fontsize=FONT_SIZE_SMALL)
-        fig.savefig(EXPERIMENT_DIR / "gradient_cell_alignment.png")
-        plt.close()
-        print("  gradient_cell_alignment.png")
-
-# ============================================================================
 # Summary statistics
 # ============================================================================
 
@@ -368,17 +288,9 @@ if ok_cross:
     print(f"  Orbit switches: {orbit_switch_count}/{len(ok_cross)} "
           f"({100 * orbit_switch_count / len(ok_cross):.1f}%)")
 
-# Gradient
-if gradient:
-    angles_all = [r["gradient_angle_change_deg"] for r in gradient
-                  if not np.isnan(r["gradient_angle_change_deg"])]
-    if angles_all:
-        print(f"\nGradient angle change: median={np.median(angles_all):.4f}°, "
-              f"max={max(angles_all):.1f}°")
-
 # Orbit gap
 if unique_gaps:
-    print(f"\nOrbit gap ({len(unique_gaps)} polytopes with ≥2 orbits):")
+    print(f"\nOrbit gap ({len(unique_gaps)} polytopes with >=2 orbits):")
     print(f"  min={min(unique_gaps):.6f}, median={np.median(unique_gaps):.4f}, max={max(unique_gaps):.4f}")
 
 print("\nDone.")

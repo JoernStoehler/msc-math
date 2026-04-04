@@ -5,8 +5,8 @@ Analyze the omega-obstacle hypothesis: do small ω₀ values correlate with high
 Goal: Test whether near-Lagrangian 2-faces (small |ω₀(n_i, n_j)|) between adjacent
 facets help create high systolic ratios.
 
-Input: crates/exp-hko-local-maximum/omega-hypothesis/omega-obstacle.jsonl
-Output: crates/exp-hko-local-maximum/omega-hypothesis/omega_obstacle_*.png (multiple figures)
+Input: crates/exp-combinatorial-cells/omega-hypothesis/omega-obstacle.jsonl
+Output: crates/exp-combinatorial-cells/omega-hypothesis/omega_obstacle_*.png (multiple figures)
 """
 
 import json
@@ -40,7 +40,7 @@ def load_data():
     if not DATA_PATH.exists():
         raise FileNotFoundError(
             f"Data not found: {DATA_PATH}\n"
-            "Run: cargo run -p exp-hko-local-maximum --bin hko-omega --release"
+            "Run: cargo run -p exp-combinatorial-cells --bin cell-omega --release"
         )
     rows = []
     with open(DATA_PATH) as f:

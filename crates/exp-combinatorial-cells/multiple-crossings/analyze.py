@@ -1,7 +1,7 @@
 """
 Goal: Analyze multi-boundary sweep results.
-Input: crates/exp-sys-landscape/combinatorial-sweep/combinatorial-boundaries-sweep.jsonl
-Output: crates/exp-sys-landscape/combinatorial-sweep/*.png
+Input: crates/exp-combinatorial-cells/multiple-crossings/combinatorial-boundaries-sweep.jsonl
+Output: crates/exp-combinatorial-cells/multiple-crossings/*.png
 
 Note: The original combined analyze.py did not produce sweep-specific figures.
 This script provides summary statistics from the sweep data. Figures can be

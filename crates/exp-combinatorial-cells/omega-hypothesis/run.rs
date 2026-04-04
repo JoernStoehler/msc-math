@@ -10,8 +10,10 @@
 //! Phase B (gradient): Compute ⟨∇_{n_k} sys, ∇_{n_k} ω(n_k, n_i)⟩ analytically.
 //! Negative dot product → sys increases when ω decreases → hypothesis supported.
 //!
+//! Location: crates/exp-combinatorial-cells/omega-hypothesis/run.rs
+//!
 //! Architecture:
-//! 1. `cargo run --bin hko-omega --release` generates dataset
+//! 1. `cargo run -p exp-combinatorial-cells --bin cell-omega --release` generates dataset
 //! 2. Polytopes cached in data/polytopes.jsonl. When capacity + sigmas are cached,
 //!    skips full EHZ (exponential) and only runs single-perm KKT solve for beta.
 //! 3. Writes to omega-obstacle/omega-obstacle.jsonl

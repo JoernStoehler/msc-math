@@ -1,4 +1,4 @@
-# Combinatorial Anatomy: Logbook
+# Boundary Characterization: Logbook
 
 Split from the original `combinatorial-structure/` experiment (Pass 2: boundary anatomy + crossing + gradient).
 
@@ -6,14 +6,16 @@ Split from the original `combinatorial-structure/` experiment (Pass 2: boundary 
 
 Full EHZ at boundaries + crossing analysis + gradient measurement. For each polytope, probes the gradient direction, negative gradient, and 5 dense random directions. At each boundary: records anatomy (event type, t_max, orbit gap), evaluates crossing (sys before/after, orbit switch), and measures gradient change.
 
+The run.rs binary also produces gradient data used by `gradient-discontinuity/`.
+
 ## Status
 
-**Complete (2026-03-27).** 140 polytopes, 980 anatomy rows, 873 crossing rows, 873 gradient rows, 10 figures. Split into standalone experiment.
+**Complete (2026-03-27).** 140 polytopes, 980 anatomy rows, 873 crossing rows, 873 gradient rows, 8 figures. Split into standalone experiment.
 
 ## How to run
 
 ```bash
-cargo run -p exp-sys-landscape --release --bin sys-comb-anatomy
+cargo run -p exp-combinatorial-cells --release --bin cell-boundary-characterization
 python3 analyze.py
 ```
 
@@ -34,14 +36,6 @@ sys is continuous at all 873 tested boundaries: max |delta_sys| = 2.91e-4 (cross
 
 Orbit switch rate: 26/873 (3.0%).
 
-### RQ3: Gradient is discontinuous at orbit-switching boundaries
-
-| Metric | Median | Max |
-|--------|--------|-----|
-| Gradient angle change | 0.002 deg | 70.2 deg |
-
-(gradient JSONL, all 873 rows)
-
 ### RQ4: Boundary density
 
 Boundary distance decreases with F (boundary_tmax_vs_F.png). Gradient direction hits boundaries sooner than dense random (boundary_density_cdf.png).
@@ -59,15 +53,12 @@ Orbit gap predicts orbit switches (orbit_gap_vs_switch.png): lowest gap quartile
 | Orbit gap median | 0.163 | 0.008 |
 | Orbit-facet cell width | 0.169 | 0.363 |
 
-### Gradient-cell alignment
-
-Correlation between gradient boundary distance and narrowest per-facet cell width: r = 0.518 (gradient_cell_alignment.png). The gradient doesn't target narrow cell directions.
-
 ## Related experiments
 
-- **combinatorial-profiling** -- per-facet cell width data used for gradient-cell alignment analysis
+- **gradient-discontinuity** -- analyzes gradient angle change and gradient-cell alignment using data from this experiment's run.rs
+- **cell-widths** -- per-facet cell width data used for gradient-cell alignment analysis (in gradient-discontinuity)
 - **gradient-correctness** -- validates gradient formula; this experiment studies what happens when the gradient changes
-- **sys-search** -- uses boundary-crossing strategies; this experiment characterizes the boundaries
+- **boundary-crossing-search** (exp-sys-landscape) -- uses boundary-crossing strategies; this experiment characterizes the boundaries
 
 ## Open questions
 

@@ -1,18 +1,20 @@
-//! Combinatorial Convexity: midpoint combinatorial-type checks for cell convexity.
+//! Cell Widths: per-facet cell width measurement in dual-vertex space.
 //!
-//! Tests whether combinatorial-type cells in dual-vertex space are convex by sampling
-//! pairs of boundary probes and checking if the midpoint has the same combinatorial type.
+//! Location: crates/exp-combinatorial-cells/cell-widths/run.rs
 //!
-//! First computes per-facet boundary probes (same as combinatorial-profiling) to find
-//! interior points near the cell boundary, then tests midpoints of pairs of such points.
-//! Checks three levels: incidence preservation, omega_0 sign preservation, transition
-//! matrix preservation.
+//! For polytopes K = {x : a_k . x <= 1}, the combinatorial type (vertex-facet incidence,
+//! omega_0 sign pattern) is constant within open regions of dual-vertex space R^{4F}. This
+//! experiment measures the cell width per facet by probing random S^3 directions in each
+//! facet's R^4 subspace. No EHZ capacity computation needed -- only boundary detection.
 //!
-//! Split from combinatorial-structure (Pass 3, with inlined Pass 1 boundary computation).
+//! For each facet k, probe N_FACET_DIRS random S^3 directions in R^4_k.
+//! Measures cell width per facet, anisotropy, orbit-facet narrowness.
+//!
+//! Split from combinatorial-structure (Pass 1).
 //!
 //! Input: data/polytopes.jsonl (polytope database)
 //! Filter: F <= 10 (HK2017 is exponential in F)
-//! Output: combinatorial-boundaries-convexity.jsonl
+//! Output: combinatorial-boundaries-profiling.jsonl
 
 use database::{PolytopeRecord, Source};
 use nalgebra::{Matrix4, Vector4};
@@ -39,21 +41,20 @@ use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktOutcome, EPS_BETA_P
 /// Maximum facet count to process (HK2017 cost is exponential).
 const MAX_FACET_COUNT: usize = 10;
 
-/// Number of random S^3 directions per facet for boundary probing.
+/// Number of random S^3 directions per facet for cell profiling.
 /// 10 directions in R^4 give reasonable coverage of S^3.
 const N_FACET_DIRS: usize = 10;
 
-/// Number of direction pairs sampled per polytope for convexity testing.
-/// Mix of same-facet and cross-facet pairs.
-const N_CONVEXITY_PAIRS: usize = 20;
-
 /// Maximum step size cap (prevents infinite steps when no combinatorial bound exists).
 /// Typical boundary distances are O(0.01)-O(1); 100.0 is well beyond any real boundary.
+/// If changed: only affects the "unbounded" classification, not actual boundary detection.
 const MAX_STEP_SIZE: f64 = 100.0;
 
 /// Numerical zero threshold for rates and slacks.
 /// Set near machine epsilon (~1e-16); guards against treating f64 noise as a
-/// meaningful direction or rate.
+/// meaningful direction or rate. Used in step bounds and gradient checks.
+/// If changed: values much larger risk missing real boundaries; much smaller risks
+/// false positives from floating-point noise.
 const EPS_NUMERICAL_ZERO: f64 = 1e-15;
 
 /// Random seed for reproducibility.
@@ -74,6 +75,17 @@ enum EventType {
     DualVertexDegen { facet: usize },
     /// t_max was capped at MAX_STEP_SIZE (no real boundary found).
     Unbounded,
+}
+
+impl EventType {
+    fn name(&self) -> &'static str {
+        match self {
+            EventType::IncidenceFlip { .. } => "incidence_flip",
+            EventType::OmegaFlip { .. } => "omega_flip",
+            EventType::DualVertexDegen { .. } => "dual_vertex_degen",
+            EventType::Unbounded => "unbounded",
+        }
+    }
 }
 
 /// Result of the enriched step-bound computation.
@@ -104,21 +116,16 @@ struct Direction {
 // Output schema
 // ============================================================================
 
-/// Convexity testing row.
+/// Per-facet cell profiling row.
 #[derive(Debug, Serialize)]
-struct ConvexityRow {
+struct ProfilingRow {
     polytope_name: String,
     facet_count: usize,
-    dir1_facet: usize,
-    dir1_index: usize,
-    dir2_facet: usize,
-    dir2_index: usize,
-    t1_max: f64,
-    t2_max: f64,
-    midpoint_same_incidence: bool,
-    midpoint_same_omega_signs: bool,
-    midpoint_same_transitions: bool,
-    midpoint_construction_ok: bool,
+    facet_index: usize,
+    facet_in_orbit: bool,
+    direction_index: usize,
+    t_max: f64,
+    event_type: String,
 }
 
 // ============================================================================
@@ -140,7 +147,7 @@ fn name_from_record(record: &PolytopeRecord, index: usize) -> String {
 }
 
 // ============================================================================
-// Instrumented EHZ capacity -- collects ALL valid orbits (for orbit membership)
+// Instrumented EHZ capacity -- collects ALL valid orbits
 // ============================================================================
 
 #[derive(Debug, Clone)]
@@ -153,6 +160,7 @@ struct InstrumentedResult {
     capacity: f64,
     best_permutation: Vec<usize>,
     n_valid_orbits: usize,
+    /// Q_second_best - Q_best (action gap). f64::INFINITY if only one orbit.
     orbit_gap: f64,
 }
 
@@ -219,6 +227,11 @@ fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult
 
 /// Compute the first boundary event along a direction in dual-vertex space.
 /// [lem:step-bound-incidence] incidence flip detection, [lem:step-bound-omega] omega_0 flip detection
+///
+/// For step a'_k(t) = a_k + t*d_k, the combinatorial type changes when:
+/// 1. **Incidence flip:** a vertex's slack w.r.t. a non-incident facet reaches zero.
+/// 2. **omega_0 flip:** sign(omega_0(a_i, a_j)) changes for ridge-adjacent facets.
+/// 3. **Dual vertex degeneration:** |a_k + t*d_k| -> 0.
 fn compute_step_bound_detailed(
     polytope: &Polytope4D,
     direction: &[Vector4<f64>],
@@ -280,6 +293,7 @@ fn compute_step_bound_detailed(
                 }
             }
         } else {
+            // Non-simple vertex (>4 incident facets). Conservative bound.
             let max_d = direction.iter().map(|dk| dk.norm()).fold(0.0f64, f64::max);
             for (j, a_j) in duals.iter().enumerate() {
                 if vertex_facets.contains(&j) {
@@ -372,24 +386,6 @@ fn compute_step_bound_detailed(
 }
 
 // ============================================================================
-// Polytope construction at perturbed parameter
-// ============================================================================
-
-/// Construct a polytope at a'_k = a_k + t*d_k.
-fn construct_at_t(
-    duals: &[Vector4<f64>],
-    direction: &[Vector4<f64>],
-    t: f64,
-) -> Option<Polytope4D> {
-    let new_duals: Vec<Vector4<f64>> = duals
-        .iter()
-        .zip(direction.iter())
-        .map(|(a, d)| a + t * d)
-        .collect();
-    Polytope4D::from_f64(new_duals).ok()
-}
-
-// ============================================================================
 // Direction construction
 // ============================================================================
 
@@ -422,68 +418,6 @@ fn build_facet_directions(f: usize, rng: &mut ChaCha8Rng) -> Vec<Direction> {
 }
 
 // ============================================================================
-// Combinatorial type comparison (for convexity testing)
-// ============================================================================
-
-/// Combinatorial type signature: sorted vertex-facet incidence + omega signs.
-/// Two polytopes with the same signature have the same combinatorial type.
-struct CombinatorialType {
-    /// Sorted list of sorted vertex-facet incidence vectors.
-    vertex_facets: Vec<Vec<usize>>,
-    /// Sorted list of (facet_i, facet_j, sign_positive) for ridge-adjacent pairs.
-    omega_signs: Vec<(usize, usize, bool)>,
-}
-
-fn combinatorial_type(polytope: &Polytope4D) -> CombinatorialType {
-    let skeleton = Skeleton::compute(polytope);
-    let duals = polytope.dual_vertices_f64();
-
-    let mut vf: Vec<Vec<usize>> = skeleton
-        .vertex_facets
-        .iter()
-        .map(|facets| {
-            let mut f = facets.clone();
-            f.sort();
-            f
-        })
-        .collect();
-    vf.sort();
-
-    let mut omega_signs: Vec<(usize, usize, bool)> = skeleton
-        .ridges
-        .iter()
-        .map(|r| {
-            let i = r.facets[0].min(r.facets[1]);
-            let j = r.facets[0].max(r.facets[1]);
-            let sign = omega0(&duals[i], &duals[j]) >= 0.0;
-            (i, j, sign)
-        })
-        .collect();
-    omega_signs.sort();
-
-    CombinatorialType {
-        vertex_facets: vf,
-        omega_signs,
-    }
-}
-
-fn same_incidence(a: &CombinatorialType, b: &CombinatorialType) -> bool {
-    a.vertex_facets == b.vertex_facets
-}
-
-fn same_omega(a: &CombinatorialType, b: &CombinatorialType) -> bool {
-    a.omega_signs == b.omega_signs
-}
-
-/// Compare transition matrices (vertex adjacency + omega_0 signs -> directed facet graph).
-/// This is what actually determines which Reeb orbits are feasible.
-fn same_transitions(base: &Polytope4D, other: &Polytope4D) -> bool {
-    let t1 = build_transition_matrix(base);
-    let t2 = build_transition_matrix(other);
-    t1 == t2
-}
-
-// ============================================================================
 // Main
 // ============================================================================
 
@@ -492,7 +426,7 @@ fn main() {
     let base_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
     let mut rng = ChaCha8Rng::seed_from_u64(SEED);
 
-    println!("Combinatorial Convexity: midpoint combinatorial-type checks\n");
+    println!("Combinatorial Profiling: per-facet cell width measurement\n");
 
     // =========================================================================
     // Load starting polytopes from database
@@ -534,153 +468,67 @@ fn main() {
     // Open output file
     // =========================================================================
 
-    let out_dir = base_dir.join("combinatorial-convexity");
-    let convexity_file =
-        File::create(out_dir.join("combinatorial-boundaries-convexity.jsonl")).expect("create convexity JSONL");
-    let mut convexity_writer = BufWriter::new(convexity_file);
+    let out_dir = base_dir.join("combinatorial-profiling");
+    let profiling_file =
+        File::create(out_dir.join("combinatorial-boundaries-profiling.jsonl"))
+            .expect("create profiling JSONL");
+    let mut profiling_writer = BufWriter::new(profiling_file);
 
     // =========================================================================
     // Process each polytope
     // =========================================================================
 
-    let mut total_convexity = 0usize;
+    let mut total_profiling = 0usize;
     let mut n_skipped = 0usize;
 
     for (idx, (name, polytope)) in polytopes.iter().enumerate() {
         let t_poly = Instant::now();
         let f = polytope.facet_count();
-        let duals = polytope.dual_vertices_f64();
 
         // =====================================================================
-        // Base computation: need orbit membership for consistent output schema
-        // (ConvexityRow doesn't use orbit info, but we need base to succeed
-        // to ensure polytope is valid for EHZ-based experiments.)
+        // Base computation: instrumented EHZ for orbit membership
         // =====================================================================
 
         let base = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
             let instrumented = ehz_capacity_instrumented(polytope)?;
-            Some(instrumented.best_permutation)
+            let perm = instrumented.best_permutation;
+            Some((perm,))
         }));
 
-        let _perm = match base {
-            Ok(Some(p)) => p,
+        let (perm,) = match base {
+            Ok(Some(t)) => t,
             Ok(None) | Err(_) => {
                 n_skipped += 1;
                 continue;
             }
         };
 
-        // Base combinatorial type (for convexity testing)
-        let base_type = combinatorial_type(polytope);
+        // Which facets are in the optimal orbit?
+        let orbit_facets: Vec<bool> = (0..f).map(|k| perm.contains(&k)).collect();
 
         // =====================================================================
-        // Inlined Pass 1: per-facet boundary probes (cheap, no EHZ)
-        // These provide the interior points used for midpoint convexity tests.
+        // Per-facet cell profiling (cheap, no EHZ)
         // =====================================================================
 
         let facet_dirs = build_facet_directions(f, &mut rng);
-
-        struct FacetProbe {
-            facet: usize,
-            dir_index: usize,
-            t_max: f64,
-            direction: Vec<Vector4<f64>>,
-        }
-        let mut probes: Vec<FacetProbe> = Vec::new();
 
         for dir in &facet_dirs {
             let boundary = compute_step_bound_detailed(polytope, &dir.d);
             let k = dir.facet_index.unwrap();
 
-            // Store for convexity testing (skip unbounded)
-            if boundary.t_max < MAX_STEP_SIZE {
-                probes.push(FacetProbe {
-                    facet: k,
-                    dir_index: dir.index,
-                    t_max: boundary.t_max,
-                    direction: dir.d.clone(),
-                });
-            }
-        }
-
-        // =====================================================================
-        // Convexity testing
-        // =====================================================================
-
-        if probes.len() >= 2 {
-            let n_pairs = N_CONVEXITY_PAIRS.min(probes.len() * (probes.len() - 1) / 2);
-
-            // Sample pairs: mix of same-facet and cross-facet
-            let mut pairs_tested = 0;
-            let mut pair_idx = 0;
-
-            // Deterministic sampling: stride through all pairs
-            let total_pairs = probes.len() * (probes.len() - 1) / 2;
-            let stride = if total_pairs > n_pairs {
-                total_pairs / n_pairs
-            } else {
-                1
+            let row = ProfilingRow {
+                polytope_name: name.clone(),
+                facet_count: f,
+                facet_index: k,
+                facet_in_orbit: orbit_facets[k],
+                direction_index: dir.index,
+                t_max: boundary.t_max,
+                event_type: boundary.event.name().to_string(),
             };
 
-            'pairs: for i in 0..probes.len() {
-                for j in (i + 1)..probes.len() {
-                    if pair_idx % stride == 0 {
-                        let p1 = &probes[i];
-                        let p2 = &probes[j];
-
-                        // Interior points: 0.5 * t_max along each direction
-                        let t1 = 0.5 * p1.t_max;
-                        let t2 = 0.5 * p2.t_max;
-
-                        // Midpoint direction: 0.5 * (t1*d1 + t2*d2)
-                        let mid_dir: Vec<Vector4<f64>> = p1
-                            .direction
-                            .iter()
-                            .zip(p2.direction.iter())
-                            .map(|(d1, d2)| 0.5 * (t1 * d1 + t2 * d2))
-                            .collect();
-
-                        // Construct polytope at midpoint (a + mid_dir, i.e. t=1)
-                        let mut construction_ok = false;
-                        let mut same_incidence_val = false;
-                        let mut same_omega_val = false;
-                        let mut same_transitions_val = false;
-
-                        if let Some(mid_poly) = construct_at_t(duals, &mid_dir, 1.0) {
-                            construction_ok = true;
-                            let mid_type = combinatorial_type(&mid_poly);
-                            same_incidence_val = same_incidence(&base_type, &mid_type);
-                            same_omega_val = same_omega(&base_type, &mid_type);
-                            same_transitions_val = same_transitions(polytope, &mid_poly);
-                        }
-
-                        let row = ConvexityRow {
-                            polytope_name: name.clone(),
-                            facet_count: f,
-                            dir1_facet: p1.facet,
-                            dir1_index: p1.dir_index,
-                            dir2_facet: p2.facet,
-                            dir2_index: p2.dir_index,
-                            t1_max: p1.t_max,
-                            t2_max: p2.t_max,
-                            midpoint_same_incidence: same_incidence_val,
-                            midpoint_same_omega_signs: same_omega_val,
-                            midpoint_same_transitions: same_transitions_val,
-                            midpoint_construction_ok: construction_ok,
-                        };
-
-                        serde_json::to_writer(&mut convexity_writer, &row).unwrap();
-                        writeln!(convexity_writer).unwrap();
-                        total_convexity += 1;
-                        pairs_tested += 1;
-
-                        if pairs_tested >= n_pairs {
-                            break 'pairs;
-                        }
-                    }
-                    pair_idx += 1;
-                }
-            }
+            serde_json::to_writer(&mut profiling_writer, &row).unwrap();
+            writeln!(profiling_writer).unwrap();
+            total_profiling += 1;
         }
 
         // =====================================================================
@@ -704,11 +552,11 @@ fn main() {
     // Flush and report
     // =========================================================================
 
-    convexity_writer.flush().unwrap();
+    profiling_writer.flush().unwrap();
 
     let total_time = t0.elapsed().as_secs_f64();
     println!("\nDone in {total_time:.1}s.");
-    println!("  Convexity rows: {total_convexity}");
+    println!("  Profiling rows: {total_profiling}");
     if n_skipped > 0 {
         println!("  Skipped:        {n_skipped} (base computation failed)");
     }

@@ -1,7 +1,7 @@
 """
 Goal: Analyze per-facet cell profiling in dual-vertex space.
-Input: crates/exp-sys-landscape/combinatorial-profiling/combinatorial-boundaries-profiling.jsonl
-Output: crates/exp-sys-landscape/combinatorial-profiling/*.png
+Input: crates/exp-combinatorial-cells/cell-widths/combinatorial-boundaries-profiling.jsonl
+Output: crates/exp-combinatorial-cells/cell-widths/*.png
 """
 
 import json

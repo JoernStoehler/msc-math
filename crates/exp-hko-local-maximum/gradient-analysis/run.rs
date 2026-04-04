@@ -304,7 +304,7 @@ fn compute_sensitivity(
 // ============================================================================
 // Step bounds computation (experiment-specific: topology-aware step size limits)
 // Same math as [lem:step-bound-incidence] and [lem:step-bound-omega] in
-// crates/exp-sys-landscape/combinatorial-anatomy/math.tex, adapted for (h,n) space.
+// crates/exp-combinatorial-cells/boundary-characterization/math.tex, adapted for (h,n) space.
 // TODO: add [lem:step-bound-hn] to gradient-analysis/math.tex for the (h,n) variant.
 // ============================================================================
 

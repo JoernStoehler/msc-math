@@ -17,12 +17,12 @@ cargo run -p dev-gradient-ascent --release --bin dev_strategy_comparison
 ## Research questions
 
 1. Overshoot vs wiggle vs additive noise vs random restart: which converges fastest?
-2. What wiggle strength is optimal? (combinatorial-profiling cell widths suggest 0.12-0.26 as scale)
+2. What wiggle strength is optimal? (cell-widths experiment cell widths suggest 0.12-0.26 as scale)
 3. Does mixing strategies (e.g. wiggle + occasional random restart) help?
 4. How does strategy choice interact with polytope type (random vs Lagrangian product)?
 
 ## Related experiments
 
 - `exp-sys-landscape/boundary-crossing-search/` — found wiggle > overshoot, 5% strength
-- `exp-sys-landscape/combinatorial-profiling/` — cell widths for calibrating wiggle strength
-- `exp-sys-landscape/combinatorial-convexity/` — random cells convex, product cells not
+- `exp-combinatorial-cells/cell-widths/` — cell widths for calibrating wiggle strength
+- `exp-combinatorial-cells/convexity/` — random cells convex, product cells not

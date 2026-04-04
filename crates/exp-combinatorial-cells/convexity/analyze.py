@@ -1,7 +1,7 @@
 """
 Goal: Analyze cell convexity testing results.
-Input: crates/exp-sys-landscape/combinatorial-convexity/combinatorial-boundaries-convexity.jsonl
-Output: crates/exp-sys-landscape/combinatorial-convexity/*.png
+Input: crates/exp-combinatorial-cells/convexity/combinatorial-boundaries-convexity.jsonl
+Output: crates/exp-combinatorial-cells/convexity/*.png
 """
 
 import json

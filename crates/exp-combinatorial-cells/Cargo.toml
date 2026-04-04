@@ -1,5 +1,5 @@
 [package]
-name = "exp-sys-landscape"
+name = "exp-combinatorial-cells"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,28 +7,24 @@ edition = "2021"
 path = "src/lib.rs"
 
 [[bin]]
-name = "sys-rotation-sweep"
-path = "rotation-sweep/run.rs"
+name = "cell-boundary-characterization"
+path = "boundary-characterization/run.rs"
 
 [[bin]]
-name = "sys-perturbation"
-path = "perturbation-neighborhood/run.rs"
+name = "cell-widths"
+path = "cell-widths/run.rs"
 
 [[bin]]
-name = "sys-boundary-crossing"
-path = "boundary-crossing-search/run.rs"
+name = "cell-convexity"
+path = "convexity/run.rs"
 
 [[bin]]
-name = "sys-random-sweep"
-path = "random-sweep/run.rs"
+name = "cell-multiple-crossings"
+path = "multiple-crossings/run.rs"
 
 [[bin]]
-name = "sys-random-product-sweep"
-path = "random-product-sweep/run.rs"
-
-[[bin]]
-name = "sys-rejection-sampling"
-path = "rejection-sampling/run.rs"
+name = "cell-omega"
+path = "omega-hypothesis/run.rs"
 
 [lints]
 workspace = true
