@@ -136,7 +136,7 @@ def summary(rows):
 
 def main():
     if len(sys.argv) < 2:
-        print(f"Usage: python3 {sys.argv[0]} <results1.jsonl> [results2.jsonl ...]")
+        print(f"Usage: uv run {sys.argv[0]} <results1.jsonl> [results2.jsonl ...]")
         sys.exit(1)
 
     rows = load_data(sys.argv[1:])
