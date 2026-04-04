@@ -10,12 +10,13 @@ Two research questions:
 Take an F=10 local maximum, add a barely-non-redundant facet (embedding into F=11 space near the original polytope), then run gradient ascent. Does sys improve beyond the F=10 local max?
 
 **RQ2: Is (F+1)-ascent better than F-ascent when started early?**
-From the same random F=10 start, compare three paths:
+From the same random F=10 start, compare four paths:
 - **Path A**: F=10 gradient ascent
 - **Path B**: add facet → F=11 gradient ascent
 - **Path C**: fresh random F=11 gradient ascent (baseline)
+- **Path D**: F=10 ascent → add facet → F=11 ascent (optimize-then-expand)
 
-The three-way comparison separates "structured entry from F-space helps" from "more facets help."
+The four-way comparison separates "structured entry from F-space helps" from "more facets help", and tests whether optimizing before expanding (D) beats expanding before optimizing (B).
 
 ## Status
 
@@ -52,11 +53,11 @@ Same algorithm as gradient-ascent-general: line search over step fractions of t_
 
 ### RQ1 setup
 
-Starting points: 10 F=10 local maxima from gradient-ascent-general (final_dual_vertices from gradient-ascent-general.jsonl) + HKO2024. For each: 5 random facet placements → (F+1) gradient ascent.
+Starting points: 10 F=10 local maxima from gradient-ascent-general (final_dual_vertices from gradient-ascent-general.jsonl). For each: 5 random facet placements → (F+1) gradient ascent.
 
 ### RQ2 setup
 
-10 random F=10 starting polytopes (fresh, master seed 43 to avoid overlap with gradient-ascent-general's seed 42). For each, all three paths run from the same starting polytope.
+10 random F=10 starting polytopes (fresh, master seed 43 to avoid overlap with gradient-ascent-general's seed 42). For each, all four paths run from the same starting polytope.
 
 ## Findings (2026-04-04)
 
@@ -92,14 +93,14 @@ Four paths from the same 10 random F=10 starting polytopes (seed 43):
 | Path | Description | Mean | Median | Max | Min |
 |------|-------------|------|--------|-----|-----|
 | **D: F=10→F=11** | F=10 ascent → add facet → F=11 ascent | **0.828** | **0.852** | **0.901** | 0.698 |
-| C: random F=11 | fresh random F=11 → ascent | 0.807 | 0.805 | 0.871 | 0.723 |
+| C: random F=11 | fresh random F=11 → ascent | 0.806 | 0.805 | 0.871 | 0.723 |
 | A: F=10 ascent | F=10 → ascent | 0.795 | 0.821 | 0.879 | 0.686 |
 | B: add+F=11 | add facet → F=11 ascent | 0.707 | 0.770 | 0.860 | 0.203 |
 
 Paired comparisons:
 - D wins **10/10** vs A. Mean(D-A) = +0.033.
 - B wins **3/10** vs A. Mean(B-A) = -0.088.
-- B wins **1/10** vs D. Mean(B-D) = -0.122.
+- B wins **1/10** vs D. Mean(B-D) = -0.121.
 
 **Ordering: D > C > A > B.** Optimize first, then expand F is strictly best. Adding a thin-sliver facet before optimization (Path B) hurts — the optimizer struggles with the pathological starting geometry. Random F=11 (Path C) slightly outperforms F=10 (Path A), showing more facets help when the geometry is natural.
 

@@ -119,7 +119,7 @@ const EPS: f64 = 1e-15;
 struct ResultRow {
     /// "rq1" or "rq2"
     rq: String,
-    /// "f10_localmax_then_f11", "f10_ascent", "f10_add_then_f11", "random_f11"
+    /// "f10_localmax_then_f11", "f10_ascent", "f10_add_then_f11", "random_f11", "f10_ascent_then_f11"
     path: String,
     /// Seed/source identifier
     name: String,

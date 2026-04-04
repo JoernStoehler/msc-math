@@ -17,7 +17,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-# figure_config.py is at crates/figure_config.py (two levels up from this script)
+# figure_config.py is at crates/figure_config.py (three levels up from this script)
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from figure_config import setup, FIGSIZE_SINGLE, SCATTER_SIZE
 

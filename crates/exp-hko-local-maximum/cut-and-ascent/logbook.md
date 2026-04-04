@@ -10,7 +10,7 @@ If any trial improves over HKO2024, it would weaken the evidence for HKO2024 bei
 
 ## Status
 
-**Scaffolded.** Binary and logbook created. Preliminary data from 5 trials (migrated from variable-f-ascent experiment): 0/5 improved.
+**Scaffolded.** Binary and logbook created. Preliminary data from 20 trials: 0/20 improved.
 
 ## How to run
 
@@ -28,9 +28,9 @@ cargo run -p exp-hko-local-maximum --release --bin hko-cut-and-ascent -- --fresh
 
 ## Preliminary findings (from variable-f-ascent, 2026-04-04)
 
-5 random facet placements on HKO2024 with ε=1e-3, followed by gradient ascent (overshoot + wiggle escape, same algorithm as gradient-ascent-general). All 5 trials converged back to sys≈1.0472 with Δ ≈ -0.0000. All added facets remained non-redundant (active).
+20 random facet placements on HKO2024 with ε=1e-3, followed by gradient ascent (overshoot + wiggle escape, same algorithm as gradient-ascent-general). All 20 trials converged back to sys≈1.0472 with Δ ≈ -0.0000 (cut-and-ascent.jsonl, hko_p0–hko_p19). All added facets remained non-redundant (active).
 
-This is consistent with facet-splitting's finding (0/536 cuts improved sys without ascent) and suggests that gradient ascent does not change the picture. However, 5 trials with random placement is a small sample.
+This is consistent with facet-splitting's finding (0/536 cuts improved sys without ascent) and suggests that gradient ascent does not change the picture.
 
 ## Ideas to flesh this out
 
