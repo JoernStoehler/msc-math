@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.12"
+# dependencies = ["matplotlib"]
+# ///
+
 """Profile the default test suite and identify slow tests.
 
 Goal: Identify hot paths in the test suite and track performance over time.

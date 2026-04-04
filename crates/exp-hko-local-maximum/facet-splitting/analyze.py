@@ -107,7 +107,7 @@ def fig_splitting(splitting_rows: list[dict]) -> None:
 
     plt.tight_layout()
     out = SCRIPT_DIR / "hko-neighborhood-splitting.png"
-    fig.savefig(out, dpi=150, bbox_inches="tight")
+    fig.savefig(out)
     plt.close()
     print(f"  Wrote {out}")
 

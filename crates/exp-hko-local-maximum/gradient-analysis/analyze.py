@@ -87,7 +87,7 @@ def fig_gradient(sens: dict) -> None:
     )
     plt.tight_layout()
     out = SCRIPT_DIR / "hko-neighborhood-gradient.png"
-    fig.savefig(out, dpi=150, bbox_inches="tight")
+    fig.savefig(out)
     plt.close()
     print(f"  Wrote {out}")
 
@@ -130,7 +130,7 @@ def fig_orbits(sens: dict) -> None:
     )
     plt.tight_layout()
     out = SCRIPT_DIR / "hko-neighborhood-orbits.png"
-    fig.savefig(out, dpi=150, bbox_inches="tight")
+    fig.savefig(out)
     plt.close()
     print(f"  Wrote {out}")
 
