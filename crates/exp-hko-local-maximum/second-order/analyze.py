@@ -220,7 +220,7 @@ def plot_curvatures(dir_curvatures):
     ax.bar(indices, curvs, color=colors, edgecolor='k', linewidth=0.5)
     ax.axhline(0, color='k', linewidth=0.5)
     ax.set_xlabel("Flat direction index")
-    ax.set_ylabel(r"Curvature $r(\varepsilon) = (\mathrm{sys}(+\varepsilon) + \mathrm{sys}(-\varepsilon) - 2\,\mathrm{sys}(0))/\varepsilon^2$")
+    ax.set_ylabel(r"Second-order curvature $r(\varepsilon)$")
     ax.set_xticks(indices)
 
     fig.savefig(EXPERIMENT_DIR / "second_order_curvatures.png")
