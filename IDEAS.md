@@ -57,6 +57,20 @@ Dense (n, m, θ) sweep across wide range. Fit sys(n, m, θ) formula. Key questio
 
 ---
 
+## Gradient ascent with variable facet count (F → F+1)
+
+Current gradient ascent is fixed-F: perturb existing dual vertices along ∇sys, reject steps that make facets redundant. This can't explore whether adding facets (F → F+1) could increase sys — e.g. whether a well-placed F=11 facet on HKO2024 (F=10) could push sys higher.
+
+**Approach:** Add a new dual vertex a_{F+1} that is barely non-redundant (slightly inside the dual polytope's surface, shaving off a thin sliver of the primal polytope). Then run standard fixed-F gradient ascent on the F+1 polytope. The library handles this — just construct a valid `Polytope4D` with F+1 vertices. Cold-start cost for the first gradient step is acceptable since F changes rarely.
+
+**Deferred/rejected variant — warm-start via sigma-list reuse:** When adding a_{F+1} without moving existing a_0,...,a_F, old orbits (not involving facet F+1) have identical KKT matrices, so their solutions are reusable. Only orbits involving the new facet need computation. This saves enumeration cost but adds significant implementation complexity (partial orbit caching, incremental accumulator). Not worth it — the cold-start approach is simpler and F changes are infrequent.
+
+**Open questions:** Where to place the initial vertex (random? informed by cell structure? near high-gradient facets?). Whether facet-adding steps compose well with gradient ascent (does the optimizer keep adding facets, or stabilize?).
+
+**Status:** Deferred. Noted 2026-04-04. Low priority relative to fixed-F gradient experiments which are not yet exhausted.
+
+---
+
 ## sys(K) landscape analysis
 
 Analyze the sys(K) landscape. K is a high-dimensional (stratified in F) space and sys is non-smooth, but we can randomly sample and look at gradients and follow gradient steps.
