@@ -77,7 +77,7 @@ The binary copies `solve_kkt_svd_path` using the old gap-ratio approach (SVD_GAP
 
 3. **A3 = A2 on simple polytopes**: On all 48 simple test polytopes, A3 provides zero additional pruning beyond A2. By Ridge Sufficiency (Corollary in math.tex), vertex-adjacent facets of simple polytopes share ridges, making the LP check redundant.
 
-4. **A3 != A2 on non-simple polytopes**: All 6 non-simple polytopes (5 in Non-simple group + 1 regression cut simplex) show A3 pruning beyond A2. Cut simplices (F=6): 15% reduction (39 -> 33 candidates). Bipyramids (F=10): 98% reduction (11-14k -> 213 candidates), because bipyramid apices lie on 5 facets, creating many vertex-adjacent but infeasible transitions.
+4. **A3 != A2 on non-simple polytopes**: All 6 non-simple polytopes (5 in Non-simple group + 1 regression cut simplex) show A3 pruning beyond A2. Cut simplices (F=6): 15% reduction (39 -> 33 candidates). Bipyramids (F=10): 96-98% reduction (5-14k -> 213 candidates), because bipyramid apices lie on 5 facets, creating many vertex-adjacent but infeasible transitions.
 
 5. **Lagrangian products**: Similar but less dramatic A2 speedup (~33x at F=8) due to structured normals having more omega_0 = 0 pairs.
 
@@ -105,7 +105,7 @@ A2 vs A3 candidate orderings for non-simple polytopes:
 | Cut simplex (c=1.5) | 6 | 39 | 33 | 6 | (15%) |
 | Cut simplex (c=2.5) | 6 | 39 | 33 | 6 | (15%) |
 | Cut simplex (c=4.0) | 6 | 44 | 38 | 6 | (14%) |
-| Bipyramid (tri. prism) | 10 | 11,277 | 213 | 11,064 | (98%) |
+| Bipyramid (tri. prism) | 10 | 5,241 | 213 | 5,028 | (96%) |
 | Bipyramid (sq. pyramid) | 10 | 13,545 | 213 | 13,332 | (98%) |
 
 Cut simplices: A3 prunes 6 transitions regardless of cut depth. Bipyramids: apex vertices lie on 5 facets, creating many vertex-adjacent pairs whose ridges are 0- or 1-dimensional; A3 prunes 98% of A2 candidates.
