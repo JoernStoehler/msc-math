@@ -84,18 +84,21 @@ Depends on: Jörn verifies the math. Agent writes drafts, Jörn reviews.
 
 **What's done:**
 - **h-space (normals fixed):** 0 ∈ conv(subdifferential) by symmetry + Euler homogeneity. Jörn has not verified the proof.
-- **F=10 (n,h)-space:** Phase C LP confirms 0 ∈ conv(44 per-orbit gradients in R^40). First-order necessary condition for local max satisfied. 16 flat directions remain. Script: `crates/exp-hko-local-maximum/subdifferential-lp/phase_c_lp_test.py`.
-- **F=11 facet-splitting:** 211 cuts all decrease sys (sampling-based, facet 5 incomplete: 11/200 rows).
+- **F=10 (n,h)-space:** Phase C LP confirms 0 ∈ conv(per-orbit gradients). First-order necessary condition for local max satisfied. Old (n,h) script broken after a_i migration; replaced by `second-order/analyze.py`.
+- **F=10 a_i-space (2026-04-04):** Gradient matrix rank 25 in R^40, 15 flat directions. LP confirms 0 ∈ conv(150 per-orbit gradients). Script: `crates/exp-hko-local-maximum/second-order/analyze.py`.
+- **Second-order analysis (2026-04-04):** All 15 flat directions have negative curvature (finite differences, ε ∈ [-0.04, 0.04]). Curvatures range from -0.31 to -0.02. Numerical evidence supports local maximality. Experiment: `crates/exp-hko-local-maximum/second-order/`.
+- **F=11 facet-splitting:** 536 cuts all decrease sys (sampling-based, regenerated 2026-03-26).
 - **LP(5,5) perturbations:** 100 random, all lower (pentagon-perturb experiment).
 
 **Next steps (priority order):**
-1. **Second-order analysis of flat directions** — compute sys along each flat direction via finite differences. Determines whether first-order necessary condition → actual local max. Agent-executable. This is the critical gap. Note (2026-03-26): the 16 flat directions were computed in (n,h)-space including gauge directions. After a_i migration, Phase C LP could be redone in clean R^{40} with no gauge — possibly fewer true flat directions. Consider waiting for migration or doing both.
+1. ~~**Second-order analysis of flat directions**~~ — done (2026-04-04). All 15 curvatures negative. See `crates/exp-hko-local-maximum/second-order/`.
 2. **Jörn verifies h-space proof** — Danskin + symmetry + Euler homogeneity argument in `crates/exp-hko-local-maximum/gradient-analysis/logbook.md` lines 151-156. ~15 min. Then formalize in math.tex.
-3. **Complete Phase B** — facet-splitting now has 536 directions (regenerated 2026-03-26, was 212). All decrease sys.
-4. **Convex-body direction** (Phases E/F in logbook) — Minkowski smoothing or F-refinement. Completely untested direction. Needs scoping: can billiard algorithm handle K+εB⁴?
-5. **Structural explanation** — why does pentagon geometry force 0 ∈ conv? Relates to golden ratio β-structure, order-10 symmetry. Jörn's domain.
+3. **Jörn verifies second-order math.tex** — Proposition in `crates/exp-hko-local-maximum/second-order/math.tex` (non-smooth second-order sufficiency). Proof sketch needs rigor check.
+4. **Complete Phase B** — facet-splitting now has 536 directions (regenerated 2026-03-26, was 212). All decrease sys.
+5. **Convex-body direction** (Phases E/F in logbook) — Minkowski smoothing or F-refinement. Completely untested direction. Needs scoping: can billiard algorithm handle K+εB⁴?
+6. **Structural explanation** — why does pentagon geometry force 0 ∈ conv? Relates to golden ratio β-structure, order-10 symmetry. Jörn's domain.
 
-**Key files:** `crates/exp-hko-local-maximum/gradient-analysis/logbook.md` (full analysis), `crates/exp-hko-local-maximum/subdifferential-lp/phase_c_lp_test.py` (Phase C script), `crates/exp-hko-local-maximum/gradient-analysis/math.tex` (theory).
+**Key files:** `crates/exp-hko-local-maximum/gradient-analysis/logbook.md` (full analysis), `crates/exp-hko-local-maximum/second-order/` (second-order analysis + Phase C replacement), `crates/exp-hko-local-maximum/gradient-analysis/math.tex` (symmetry theory).
 
 ---
 
