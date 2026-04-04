@@ -1,0 +1,201 @@
+% math.tex — \input'd from root math.tex
+%
+% Second-order sufficient conditions for local maximality of the systolic ratio.
+%
+% Sources:
+%   - Generated data: crates/exp-hko-local-maximum/second-order/second-order-base.jsonl
+%   - Gradient analysis: crates/exp-hko-local-maximum/gradient-analysis/math.tex
+%   - Capacity derivatives: crates/library/src/algorithms/math.tex [lem:cap-derivative]
+%   - Volume derivatives: crates/library/src/algorithms/math.tex [lem:vol-derivative]
+
+\subsection{Second-order analysis of flat directions}
+\label{sec:second-order-analysis}
+
+% [TODO: JÖRN - verify that this non-smooth second-order sufficiency argument
+% is mathematically rigorous. The key claim (Proposition~\ref{prop:second-order-local-max})
+% uses Danskin's theorem for the first-order part and a direct second-order argument
+% for flat directions. The non-smooth analysis (orbit switching) may need additional
+% justification from non-smooth optimization theory.]
+
+\subsubsection{Setup}
+
+Let $K = \{x \in \mathbb{R}^4 : a_i^\top x \leq 1,\; i = 1,\ldots,F\}$ be
+a convex polytope with dual vertices $a_i \in \mathbb{R}^4$.
+The systolic ratio is
+\[
+  \operatorname{sys}(K) = \frac{c_{\mathrm{EHZ}}(K)^2}{2\,\operatorname{vol}(K)}.
+\]
+By~\cite[Thm~1.1]{HaimKislevOstrover2024}, the EHZ capacity is the minimum action
+over all closed characteristics (Reeb orbits):
+\[
+  c_{\mathrm{EHZ}}(K) = \min_{i \in \mathcal{I}} c_i(K),
+\]
+where $\mathcal{I}$ indexes the finitely many combinatorial orbit types $(S,\sigma)$
+and each $c_i(K)$ is the capacity computed from the KKT system for orbit type~$i$.
+
+Each $c_i$ is a smooth function of the dual vertices $a_k$
+(Lemma~\ref{lem:cap-derivative}), hence each per-orbit systolic ratio
+$\operatorname{sys}_i(K) = c_i(K)^2 / (2\operatorname{vol}(K))$ is smooth.
+The systolic ratio is
+\begin{equation}\label{eq:sys-min-envelope}
+  \operatorname{sys}(K) = \min_{i \in \mathcal{I}} \operatorname{sys}_i(K).
+\end{equation}
+
+\subsubsection{First-order necessary condition}
+
+By Danskin's theorem, the directional derivative of $\operatorname{sys}$ at $K$
+in direction $d \in \mathbb{R}^{4F}$ is
+\begin{equation}\label{eq:danskin-directional}
+  D_d^+ \operatorname{sys}(K) = \min_{i \in \mathcal{A}(K)} \nabla_{a} \operatorname{sys}_i(K) \cdot d,
+\end{equation}
+where $\mathcal{A}(K) = \{i \in \mathcal{I} : \operatorname{sys}_i(K) = \operatorname{sys}(K)\}$
+is the active set of orbits achieving the minimum.
+
+\begin{lemma}[First-order necessary condition]\label{lem:first-order-necessary}
+  If $K$ is a local maximum of $\operatorname{sys}$, then
+  $0 \in \operatorname{conv}\{\nabla_{a}\operatorname{sys}_i(K) : i \in \mathcal{A}(K)\}$.
+\end{lemma}
+\begin{proof}
+  If $K$ is a local maximum, then $D_d^+ \operatorname{sys}(K) \leq 0$ for all $d$.
+  By~\eqref{eq:danskin-directional}, this means
+  $\min_{i \in \mathcal{A}} \nabla\operatorname{sys}_i \cdot d \leq 0$ for all $d$,
+  which is equivalent to $0 \in \operatorname{conv}\{\nabla\operatorname{sys}_i\}$
+  (standard separation argument).
+\end{proof}
+
+\subsubsection{Flat directions}
+
+Let $G \in \mathbb{R}^{|\mathcal{A}| \times 4F}$ be the gradient matrix
+with rows $\nabla_a \operatorname{sys}_i(K)^\top$ for $i \in \mathcal{A}(K)$.
+
+\begin{definition}[Non-decreasing cone and flat directions]\label{def:flat-directions}
+  The \emph{non-decreasing cone} is
+  \[
+    C = \{d \in \mathbb{R}^{4F} : \langle \nabla\operatorname{sys}_i, d \rangle \geq 0
+    \text{ for all } i \in \mathcal{A}\},
+  \]
+  the intersection of $|\mathcal{A}|$ closed half-spaces through the origin.
+  A direction $d$ is \emph{flat} if $D_d^+ \operatorname{sys}(K) = 0$,
+  i.e., $d$ lies on the boundary of~$C$.
+\end{definition}
+
+\begin{lemma}[Non-decreasing cone collapses to kernel]\label{lem:cone-equals-kernel}
+  Suppose $0 \in \operatorname{conv}\{\nabla\operatorname{sys}_i : i \in \mathcal{A}\}$
+  with convex coefficients $\lambda_i \geq 0$, and let
+  $\mathcal{A}^+ = \{i \in \mathcal{A} : \lambda_i > 0\}$.
+  If $\operatorname{rank}(G_{\mathcal{A}^+}) = \operatorname{rank}(G)$,
+  then $C = \ker(G)$.
+  In particular, every flat direction satisfies
+  $\langle \nabla\operatorname{sys}_i, d \rangle = 0$
+  for \emph{all} $i \in \mathcal{A}$, and the set of flat directions
+  is a linear subspace.
+\end{lemma}
+\begin{proof}
+  $\ker(G) \subseteq C$ is immediate. For the reverse, let $d \in C$.
+  Then $\langle \nabla\operatorname{sys}_i, d \rangle \geq 0$ for all $i$.
+  Since $0 = \sum_i \lambda_i \nabla\operatorname{sys}_i$, we have
+  $0 = \sum_i \lambda_i \langle \nabla\operatorname{sys}_i, d \rangle$.
+  Each term is $\geq 0$ (product of $\lambda_i \geq 0$ and
+  $\langle \nabla\operatorname{sys}_i, d \rangle \geq 0$), so each term
+  equals~$0$. For $i \in \mathcal{A}^+$ ($\lambda_i > 0$), this gives
+  $\langle \nabla\operatorname{sys}_i, d \rangle = 0$, hence
+  $d \in \ker(G_{\mathcal{A}^+})$.
+  Since $\operatorname{rank}(G_{\mathcal{A}^+}) = \operatorname{rank}(G)$,
+  we have $\ker(G_{\mathcal{A}^+}) = \ker(G)$, so $d \in \ker(G)$.
+\end{proof}
+
+If $0 \in \operatorname{int}(\operatorname{conv}\{\nabla\operatorname{sys}_i\})$,
+then $\ker(G) = \{0\}$ and $K$ is a strict first-order local maximum
+(all directional derivatives are strictly negative).
+Otherwise, $\ker(G)$ is nontrivial and second-order analysis is needed.
+
+\subsubsection{Second-order sufficient condition}
+
+\begin{proposition}[Second-order sufficient condition for local maximality]
+\label{prop:second-order-local-max}
+  Suppose $K$ satisfies the first-order necessary condition
+  ($0 \in \operatorname{conv}\{\nabla\operatorname{sys}_i\}$)
+  and additionally:
+  \begin{enumerate}
+    \item For every non-flat direction $d \notin \ker(G)$: $D_d^+ \operatorname{sys}(K) < 0$
+    (which follows from $0 \in \operatorname{conv}$ and $Gd \neq 0$).
+    \item For every flat direction $d \in \ker(G) \setminus \{0\}$:
+    \begin{equation}\label{eq:second-order-condition}
+      \limsup_{\varepsilon \to 0} \frac{\operatorname{sys}(K + \varepsilon d) - \operatorname{sys}(K)}{\varepsilon^2} < 0.
+    \end{equation}
+  \end{enumerate}
+  Then $K$ is a strict local maximum of $\operatorname{sys}$.
+\end{proposition}
+
+% [TODO: JÖRN - the proof below is a sketch. The compactness argument
+% on S^{4F-1} needs care because the convergence rate in condition (1) may
+% degenerate as d approaches ker(G). A full proof would need uniform
+% bounds, e.g., via the angle between d and ker(G).]
+\begin{proof}[Proof sketch]
+  Decompose any direction $d = d_\perp + d_\parallel$ where
+  $d_\parallel \in \ker(G)$ and $d_\perp \perp \ker(G)$.
+
+  For $d_\perp \neq 0$: by condition~(1),
+  $D_{d_\perp}^+ \operatorname{sys} < 0$, so
+  $\operatorname{sys}(K + \varepsilon d) \leq
+  \operatorname{sys}(K) + \varepsilon D_{d_\perp}^+ \operatorname{sys} + O(\varepsilon^2)
+  < \operatorname{sys}(K)$
+  for small $\varepsilon > 0$.
+
+  For $d_\perp = 0$ (pure flat): condition~(2) gives
+  $\operatorname{sys}(K + \varepsilon d) < \operatorname{sys}(K)$
+  for small $|\varepsilon|$.
+
+  For mixed directions: the first-order decrease from $d_\perp$ dominates
+  the second-order behavior along $d_\parallel$.
+
+  By compactness of $S^{4F-1}$, the required $\varepsilon$ is bounded below
+  uniformly, so $K$ is a strict local maximum.
+\end{proof}
+
+\begin{remark}\label{rem:non-smooth-curvature}
+  The limit in~\eqref{eq:second-order-condition} is the curvature of the
+  min-envelope~\eqref{eq:sys-min-envelope} along the flat direction~$d$.
+  When the same orbit $i$ achieves the minimum for all $|\varepsilon|$ small,
+  this equals $\frac{1}{2} d^\top \nabla^2 \operatorname{sys}_i(K) d$.
+  At orbit-switching boundaries (where the minimizing orbit changes),
+  the curvature may be discontinuous, but its sign remains well-defined.
+\end{remark}
+
+\subsubsection{Computational results for HKO2024}
+
+For HKO2024 with $F = 10$, the gradient matrix $G$ has $|\mathcal{A}| = 150$
+active orbits and lives in $\mathbb{R}^{150 \times 40}$
+(dual-vertex parameterization, $4F = 40$ dimensions, no gauge).
+
+\paragraph{First-order analysis.}
+\begin{itemize}
+  \item $\operatorname{rank}(G) = 25$, so $\dim\ker(G) = 15$.
+  \item The LP test confirms $0 \in \operatorname{conv}\{\nabla\operatorname{sys}_i\}$
+    with $26$ orbits having $\lambda_i > 0$ (Lemma~\ref{lem:first-order-necessary}).
+  \item $\operatorname{rank}(G_{\mathcal{A}^+}) = 25 = \operatorname{rank}(G)$,
+    so by Lemma~\ref{lem:cone-equals-kernel}, $C = \ker(G)$:
+    the flat directions form a $15$-dimensional linear subspace.
+\end{itemize}
+
+\paragraph{Second-order analysis.}
+\begin{itemize}
+  \item For $15$ orthonormal basis vectors $d_0, \ldots, d_{14}$ of $\ker(G)$
+    (from SVD), the curvature ratio
+    $r(\varepsilon) = (\operatorname{sys}(K + \varepsilon d) + \operatorname{sys}(K - \varepsilon d) - 2\operatorname{sys}(K)) / \varepsilon^2$
+    is negative for all $15$ directions, with median values ranging from
+    $-0.31$ to $-0.02$ (second-order-curves.jsonl).
+  \item Negative curvature on all basis vectors implies the diagonal of the
+    generalized Hessian $H$ restricted to $\ker(G)$ is negative in the SVD
+    basis, but does not prove negative definiteness (off-diagonal entries
+    could produce positive eigenvalues).
+  \item To test negative definiteness: $100$ random unit directions
+    in $\ker(G)$ (uniform on $S^{14}$) all have negative curvature,
+    with the least negative being $-0.06$ (second-order-random.jsonl).
+\end{itemize}
+
+Both conditions of Proposition~\ref{prop:second-order-local-max} are
+numerically verified, with the second condition checked along $15$ basis
+directions and $100$ random directions (all negative). This constitutes
+strong numerical evidence that HKO2024 is a strict local maximum of
+$\operatorname{sys}$ among $F = 10$ polytopes in $\mathbb{R}^4$.
