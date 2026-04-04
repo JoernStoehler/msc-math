@@ -52,6 +52,30 @@ What should have happened: Use `trash-put` explicitly when deletion should be re
 
 **Pattern:** Citation fabrication — confident-sounding `\cite[Thm N]{Key}` references produced without checking the paper. CLAUDE.md already prohibits this ("Never produce author names or paper titles from memory. Verify against thesis/bibliography.bib or papers/"). The rule covers author names and titles but the same pattern applies to theorem numbers within papers.
 
+### 2026-04-04 — Database caching not used for gradient ascent experiments
+
+**What happened:** variable-f-ascent experiment ran 3 times (~30 min each) without database caching. Each rerun recomputed all capacity calls from scratch. Jörn pointed out the database was supposed to cache capacity. Agent added a local `cache.jsonl` with 12K polytopes, making reruns 18x faster (111s vs 1986s).
+
+**Root cause:** The existing gradient-ascent-general experiment only inserts starting polytopes into the database, not intermediate gradient steps. No experiment convention or rule says "use the database for caching capacity during gradient ascent." The agent followed the precedent of gradient-ascent-general rather than thinking about what the database is *for*.
+
+**Suggestion:** Add to experiment conventions: "For iterative experiments (gradient ascent, optimization), use a local cache.jsonl to cache capacity computations. This makes reruns near-instant when RNG is deterministic."
+
+### 2026-04-04 — Included out-of-scope data point (HKO2024 in landscape experiment)
+
+**What happened:** Included HKO2024 (sys>1) as a starting point in a landscape experiment focused on general polytopes (sys<1). Jörn caught it: "This reads like you investigate sth outside scope." Had to remove HKO2024, migrate to a separate exp-hko-local-maximum experiment, and rerun.
+
+**Root cause:** IDEAS.md mentioned HKO2024 in the variable-F entry, so the agent included it without checking whether it served the experiment's RQ (landscape exploration, not HKO local maximality).
+
+**Pattern:** Scope drift from source material. When implementing an experiment from IDEAS.md, the agent should filter the ideas through the scoped RQs agreed with Jörn, not include everything the IDEAS.md entry mentions.
+
+### 2026-04-04 — Presented trivially true result as empirical finding
+
+**What happened:** Reported "Path D wins 10/10 vs Path A" as a headline finding. But D starts from A's endpoint and ascends — D ≥ A is guaranteed by construction. Jörn caught this at ~250k tokens when the agent's reasoning was degraded.
+
+**Root cause:** At high token count, agent failed to check whether a comparison result was trivially expected before presenting it as a finding.
+
+**Pattern:** Before presenting any A-vs-B comparison, ask: "Is this outcome guaranteed by construction?" If yes, the magnitude of the difference is interesting, not the sign.
+
 ### 2026-04-04 — numpy vs Rust SVD rank threshold mismatch
 
 **What happened:** `analyze.py` used `np.linalg.matrix_rank(G, tol=1e-8)` (absolute threshold) while `run.rs` used `1e-8 × σ_max` (relative threshold). σ[25]=1.57e-8 was above the absolute 1e-8 cutoff but below the relative 9.4e-8 cutoff. This produced rank 26 in Python vs rank 25 in Rust, causing a false warning "C ⊋ ker(G)" in the rank condition check.
