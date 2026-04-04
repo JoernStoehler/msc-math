@@ -83,6 +83,23 @@ def phase_c_lp(base):
             print(f"  0 ∈ INTERIOR of conv(gradients) → strict first-order local max")
         else:
             print(f"  0 on BOUNDARY of conv(gradients) → flat directions exist")
+
+            # Verify rank condition for lem:cone-equals-kernel: rank(G_{A+}) = rank(G)
+            # Use relative threshold (1e-8 × σ_max) matching the Rust SVD convention,
+            # not an absolute threshold. σ[25] ≈ 1.6e-8 is numerical noise (1.7e-9 relative).
+            active_mask = lam > 1e-12
+            G_active = gradients[active_mask]
+            sv_all = np.linalg.svd(gradients, compute_uv=False)
+            rel_tol = 1e-8 * sv_all[0]
+            rank_active = int(np.sum(np.linalg.svd(G_active, compute_uv=False) > rel_tol))
+            rank_all = int(np.sum(sv_all > rel_tol))
+            print(f"\n  Rank condition (lem:cone-equals-kernel):")
+            print(f"    rank(G_all {n_orbits} orbits) = {rank_all}")
+            print(f"    rank(G_active {int(active_mask.sum())} orbits) = {rank_active}")
+            if rank_active == rank_all:
+                print(f"    rank(G_active) = rank(G_all) → C = ker(G): flat directions form a subspace")
+            else:
+                print(f"    WARNING: rank(G_active) < rank(G_all) → C ⊋ ker(G)")
     else:
         print(f"  Result: INFEASIBLE — {result.message}")
         print(f"  0 ∉ conv(gradients) → improving direction exists!")
