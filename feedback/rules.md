@@ -135,3 +135,21 @@ What happened: Agent ran `rm` to delete 6 memory files, expecting the devcontain
 What should have happened: Use `trash-put` explicitly when deletion should be recoverable. Or: don't delete files that can't be trivially recreated without checking that the safety alias is active.
 
 **Pattern:** Environment assumption — the devcontainer's interactive shell has safety aliases that don't apply in the Bash tool's non-interactive shell. Same class could apply to other aliases or shell functions agents rely on.
+
+### 2026-04-04 — False citation in math.tex (HKO2024 Thm 1.1)
+
+**What happened:** Agent wrote `\cite[Thm~1.1]{HaimKislevOstrover2024}` for "EHZ capacity is the minimum action over all closed characteristics." Thm 1.1 of that paper is actually the counterexample statement ("Viterbo's conjecture fails for n≥2"), not the capacity formula. The capacity-as-minimum-action result is Thm 2.2, and only for Lagrangian products.
+
+**How caught:** review-proof subagent checked the paper source, found the mismatch.
+
+**Root cause:** Agent produced citation from memory without verification, violating CLAUDE.md Core Rule ("Never write a factual claim without verifying it against evidence in the same session"). The `papers/hko2024/counterexample.tex` was available in the repo.
+
+**Pattern:** Citation fabrication — confident-sounding `\cite[Thm N]{Key}` references produced without checking the paper. CLAUDE.md already prohibits this ("Never produce author names or paper titles from memory. Verify against thesis/bibliography.bib or papers/"). The rule covers author names and titles but the same pattern applies to theorem numbers within papers.
+
+### 2026-04-04 — numpy vs Rust SVD rank threshold mismatch
+
+**What happened:** `analyze.py` used `np.linalg.matrix_rank(G, tol=1e-8)` (absolute threshold) while `run.rs` used `1e-8 × σ_max` (relative threshold). σ[25]=1.57e-8 was above the absolute 1e-8 cutoff but below the relative 9.4e-8 cutoff. This produced rank 26 in Python vs rank 25 in Rust, causing a false warning "C ⊋ ker(G)" in the rank condition check.
+
+**Root cause:** When two languages compute the same quantity, threshold conventions must be explicitly synchronized. The Rust code documented its threshold convention clearly; the Python code didn't consider that numpy's default differs.
+
+**Pattern:** Cross-language numerical convention mismatch. The math-tex convention says "math.tex is single source of truth" — a similar principle could apply to numerical thresholds: define once, document, use consistently.
