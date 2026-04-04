@@ -4,7 +4,7 @@ Split from the original `gradient-is-zero/` experiment (Phase C: LP test). See `
 
 ## Status
 
-**Active.** Script runs, results printed to stdout.
+**Broken (2026-04-04).** Script crashes with `KeyError: 'normals'`. The (n,h)→(a) parameterization migration updated the Rust binary's output schema (`normals`/`heights` → `dual_vertices`, removed `d_vol_h`/`d_vol_n`) but this script was not updated. The script reimplements symplectic geometry primitives (ω₀, J₀, KKT reconstruction, capacity/volume derivatives) in Python — all of which now exist in the Rust library. Fix: have the Rust binary output per-orbit `∇sys` in a-space, then the script just loads gradients and runs the LP. See TASKS.md.
 
 ## How to run
 
