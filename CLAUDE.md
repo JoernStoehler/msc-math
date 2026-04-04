@@ -87,7 +87,6 @@ feedback/                  agent-written feedback about the infrastructure and w
   - The library (`crates/library/`) contains proven stable algorithms. Changes must pass `cargo test --release --lib` and `cargo clippy`. Don't experiment in the library.
   - Jörn reviews math.pdf and logbook.md, not .tex, .rs, .py files.
 - math.tex files live alongside code in the library and experiments, and are independent of thesis/. They prove the correctness of the code and of other mathematical claims, and they serve as documentation for developers about how the algorithm works on a mathematical level, and they ensure code is correct by formalizing claims and proving claims in LaTeX. Jörn reviews math.pdf, not math.tex files.
-- Polished workflows and conventions and best practice tips are provided to the agents, so that they work effectively and minimize the use of Jörn's limited time. Agent time is priced at $0/h, due to the flatrate Anthropic Max $200/mo subscription, but Jörn's time is limited.
 
 ## Core Rule
 
@@ -97,14 +96,26 @@ Never write a factual claim without verifying it against evidence in the same se
 
 **External systems:** When documenting external systems (LICCA cluster, university services), link to official documentation — do not paraphrase it. Agent paraphrases go stale silently and are unverifiable.
 
-## Decision Authority
+**Substantial outputs** (reports, analyses, audits, investigation findings): Write to a scratch file (`/tmp/`) or delegate to a subagent first. Re-read and iterate before presenting to Jörn. Direct-to-chat drafts can't be corrected after sending — file-based drafts can be revised, cross-checked, and improved. This applies to any output longer than a few paragraphs where factual accuracy matters.
 
-| | Cheap to verify | Expensive to verify |
-|---|---|---|
-| **Easy rollback** | Act freely | Act, then Jörn verifies |
-| **Hard rollback** | Discuss first | Discuss first |
+## Making Decisions
 
-Never without Jörn's instruction: destructive operations, merging to `main`, modifying `.claude/` procedural files.
+Never without Jörn's instruction: destructive operations, merging to `main`, modifying `.claude/` procedural files. For hard-to-reverse decisions (architecture, multi-session scope), discuss with Jörn before starting.
+
+Agent time is free. Jörn's time is expensive. When choosing between spending more agent time (exploring alternatives, reading code, running experiments, rolling back failed attempts) and spending Jörn's time (asking questions, presenting incomplete work, leaving problems for him to catch) — spend agent time. 
+
+The main risk factors that can consume Jörn's time are
+- badly written texts that require repeated questions from Jörn for him to understand
+- wasted interactions with Jörn for tasks that aren't productively progressing the thesis project, e.g. due to bad prioritization, errors and wrong assumptions, drifted goals/tasks that just aren't optimal, or conversations that aren't goal-directed at all
+- active waiting time without a parallel task for Jörn (e.g. another agent session, or a math review)
+- high-frequency context switching
+
+The total amount of time spent on ten-second questions and clarification requests is not an issue.
+
+To avoid wasted effort that is later overwritten, explore alternative approaches and discuss scope and task usefulness early and compare the approaches/scopes/goal-operationalizations with consultations from Jörn.
+Investigate, or follow up on delegated investigations, instead of going in blind.
+
+Answer questions you can answer yourself (by reading, web search, bash commands, subagents, scripting, ...) before including them in a batch to Jörn. Agent-answerable questions dilute the ones only Jörn can answer. Each question batch costs Jörn a context switch, so fewer higher-signal batches beat frequent low-signal ones.
 
 ## Chat with Jörn
 
@@ -114,8 +125,6 @@ Two interaction modes:
 - **Tight loop:** rapid back-and-forth (seconds between messages), collaborating on reasoning or exchanging a burst of information.
 - **Async:** Jörn returns after working in other sessions. Past messages and tool calls are likely forgotten or unread.
 
-The project's main bottleneck is Jörn's time, and the biggest driver of costs are lengthy interactions to resolve problems and to plan complex tasks, as well as long file reviews, and the total context-switching overhead between sessions. Use Jörn's time efficiently, and deliberately choose interaction modes. 
-
 **Example:** Plan a complex task. Start with a tight loop to gather context. Asynchronously investigate and plan your approach and write it up. Request a long single-message review. Discuss feedback in a tight loop until approval. Implement asynchronously. Pause half-way through and escalate when the plan doesn't work. Discuss solutions in a tight loop. Implement the solution asynchronously. Present a final report and request single-message review.
 
 ### Message Style
@@ -124,11 +133,13 @@ Optimize for these qualities (descending effort priority):
 
 1. **Correct, verifiable.** Verify claims before making them. Cite sources. Mark uncertainty.
 2. **Unambiguous, self-contained.** Precise common language. Repeat context Jörn may have forgotten. Disambiguate when the best guess is not near-certain.
-3. **Complete.** Include everything Jörn needs to act. Spell out implications rather than leaving them to infer. Quote tool output — Jörn doesn't see it.
+3. **Complete.** Include everything Jörn needs to act. Spell out implications rather than leaving them to infer. Quote tool output, system prompt and skill template text — Jörn sees only your messages.
 4. **Actionable, low-overhead.** Copy-paste-ready commands, absolute file paths, questions with answer options, labels/numbers for referencing.
 5. **Skimmable.** Bold **keywords**, structured lists, (brackets), prioritization of content, repeated context so Jörn can skim after a context switch, breadcrumbs for the current topic.
 
 Don't optimize for, i.e. don't waste effort on: short vs long, boring vs exciting, visual balance.
+
+Wide tables (>6 columns) are unreadable in chat — write to a file.
 
 ### Reading Jörn's messages
 
@@ -145,6 +156,7 @@ Don't optimize for, i.e. don't waste effort on: short vs long, boring vs excitin
 - No narrating plans ("I'll now read the file and check...") — do the work and show results.
 - No trailing summaries of what you just did — Jörn can read the diff.
 - No ownership language for findings ("my analysis suggests", "I recommend") — the findings are from the code/data. No "Should I proceed?" — either proceed or state what decision you need.
+- No narrating self-corrections ("the subagent found X, so I fixed it"). Apply corrections silently. Only surface decisions Jörn needs to make.
 
 ### Thesis content
 
@@ -152,7 +164,7 @@ Jörn reviews rendered PDFs, not source files. Reference rendered theorem/sectio
 
 ## Text that agents read
 
-Code comments, logbook entries, math.tex, skill files, TASKS.md, handoffs, feedback entries — text that future agents will read and act on. Agents interpret sloppily: they fill gaps with training-data defaults and confidently pick an interpretation of vague text that may not match intent. The writer cannot predict well which reading an agent picks.
+Code comments, logbook entries, math.tex, skill files, TASKS.md, handoffs, feedback entries — text that future agents will read and act on. Write precisely — vague text gets misinterpreted.
 
 Optimize for these qualities (descending effort priority):
 
@@ -163,7 +175,7 @@ Optimize for these qualities (descending effort priority):
 5. **Actionable, low-overhead.** The reader should know what to do after reading. Provide concrete next steps, not just observations.
 6. **Simple, concrete, standard.** Familiar patterns, concrete examples, no unnecessary terminology. Don't introduce abstractions unless they earn their keep across multiple uses.
 
-**Vague-word ban:** Do not use "appropriate", "properly", "ensure", "good", "consider", "reasonable", "necessary", "efficient", "robust" without specifying *what* makes it so. These words feel informative but leave the agent to guess.
+**Vague-word ban:** Do not use "appropriate", "properly", "ensure", "good", "consider", "reasonable", "necessary", "efficient", "robust" without specifying *what* makes it so.
 
 ## Session Workflow
 
