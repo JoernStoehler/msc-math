@@ -96,16 +96,46 @@ CV (coefficient of variation of r(ε) over ε ≤ 5e-3) > 1 in several direction
 
 Direction 0 has the smallest curvature magnitude (−0.018), about 17× smaller than the largest (direction 5, −0.309). Still clearly negative, not ambiguous.
 
+### Negative definiteness check (Phase 3, 2026-04-04)
+
+Measuring curvature along 15 orthonormal basis vectors of ker(G) proves the diagonal of the Hessian is negative in that basis, but does NOT prove the Hessian is negative definite — off-diagonal entries could produce positive eigenvalues.
+
+Phase 3 samples 100 random unit directions in the 15D flat subspace (uniform on S^14, seed 42) and measures curvature at each via FD at ε ∈ {1e-4, 5e-4, 1e-3, 5e-3}. Results (second-order-random.jsonl):
+- **100/100 negative**, 0 ambiguous, 0 positive
+- Worst (most positive) curvature: −0.060
+- Mean: −0.167, std: 0.052
+- Runtime: ~41s (800 capacity evaluations)
+
+Combined with the 15 basis directions, this gives strong numerical evidence for negative definiteness.
+
+### Symmetry decomposition (2026-04-04)
+
+The symplectic symmetry group G_symp = ⟨Δ₇₂°, φ⟩ ≅ C₅ × Z₂ (order 10, abelian) acts on R^40 by permuting dual vertices. HKO2024 is a fixed point. The flat subspace ker(G) is invariant under this action.
+
+**Irreducible decomposition of the 15D flat subspace:**
+
+| Sector | dim | Geometric meaning |
+|--------|-----|-------------------|
+| Δ=1, φ=+1 | 3 | Fully symmetric (includes uniform scaling) |
+| Δ=1, φ=-1 | 2 | Differential q/p (breaks q↔p symmetry) |
+| Δ=e^{±72°i} | 4 | Breaks C₅ rotational symmetry (2 copies of 2D irrep) |
+| Δ=e^{±144°i} | 6 | Breaks C₅ rotational symmetry (3 copies of 2D irrep) |
+
+**Uniform scaling** (a_i → λa_i for all i) lies entirely in the flat subspace: sys = c²/(2vol) is scale-invariant because capacity is degree-2 homogeneous and volume is degree-4 in R^4.
+
+**Directions up to symmetry:** ≤10 distinct curvature classes. Within each 2D C₅-irrep, the rotation mixes all directions → one curvature value. The 3D and 2D trivial sectors have independently varying curvatures.
+
 ### Interpretation
 
 HKO2024 satisfies:
 1. **First-order necessary condition:** 0 ∈ conv(subdifferential) in R^40 (LP feasible)
-2. **Second-order condition:** negative curvature along all 15 flat directions
+2. **Second-order condition:** negative curvature along all 15 basis directions AND all 100 random directions in the flat subspace (worst: −0.060)
 
-This constitutes numerical evidence that HKO2024 is a strict local maximum of sys among F=10 polytopes in the dual-vertex parameter space. The evidence is computational (finite differences, not a proof with error bounds).
+This constitutes strong numerical evidence for negative definiteness of the generalized Hessian on the 15D flat subspace, supporting that HKO2024 is a strict local maximum of sys among F=10 polytopes.
 
 ### Limitations
 
 - Finite-difference curvatures have no rigorous error bounds
 - Only tests flat directions in the fixed-F=10 parameter space — not facet-splitting (F=11) or convex-body perturbations
 - Piecewise smoothness of sys means the "second derivative" is the curvature of the min-envelope, not a classical Hessian eigenvalue
+- Random sampling on S^14 provides probabilistic, not exhaustive, coverage

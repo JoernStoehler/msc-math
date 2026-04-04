@@ -243,6 +243,147 @@ def write_curvature_table(dir_curvatures, dir_curvature_arrays):
         f.write("\\end{tabular}\n")
     print(f"  Wrote second_order_curvatures.tex")
 
+# ─── Part C: Random direction check + symmetry decomposition ────────────────
+
+def load_random():
+    path = EXPERIMENT_DIR / "second-order-random.jsonl"
+    if not path.exists():
+        return None
+    rows = []
+    with open(path) as f:
+        for line in f:
+            rows.append(json.loads(line))
+    return rows
+
+def analyze_random(random_rows):
+    """Analyze curvatures of random directions in the flat subspace."""
+    print("=" * 70)
+    print("NEGATIVE DEFINITENESS: Random directions in flat subspace")
+    print("=" * 70)
+
+    curvatures = [r["curvature"] for r in random_rows]
+    n_total = len(curvatures)
+    n_neg = sum(1 for c in curvatures if c < -1e-6)
+    n_pos = sum(1 for c in curvatures if c > 1e-6)
+    n_amb = n_total - n_neg - n_pos
+    worst = max(curvatures)
+
+    print(f"  Sampled {n_total} random unit directions in 15D flat subspace")
+    print(f"  Negative: {n_neg}, Ambiguous: {n_amb}, Positive: {n_pos}")
+    print(f"  Worst (most positive) curvature: {worst:+.4e}")
+    print(f"  Mean curvature: {np.mean(curvatures):+.4e}")
+    print(f"  Std curvature: {np.std(curvatures):.4e}")
+    print()
+
+    if n_pos == 0:
+        print("  → No positive curvature among random samples.")
+        print("    Combined with 15 basis directions: strong evidence for negative definiteness.")
+    else:
+        print(f"  → WARNING: {n_pos} directions with positive curvature!")
+    print()
+
+    return curvatures
+
+def symmetry_decomposition(base):
+    """Decompose the flat subspace under the HKO2024 symplectic symmetry group C₅ × Z₂."""
+    print("=" * 70)
+    print("SYMMETRY: Decomposition of flat subspace under G_symp = C₅ × Z₂")
+    print("=" * 70)
+
+    duals = np.array(base["dual_vertices"])  # (10, 4)
+    flat_dirs = np.array([np.array(d).flatten() for d in base["flat_directions"]])  # (15, 40)
+    n_flat = flat_dirs.shape[0]
+
+    # Build group generators in R^40
+    theta = 2 * np.pi / 5
+    co, si = np.cos(theta), np.sin(theta)
+    R72 = np.array([[co, -si], [si, co]])
+    Delta72 = np.block([[R72, np.zeros((2,2))], [np.zeros((2,2)), R72]])
+    Phi = np.array([[0,0,0,-1],[0,0,1,0],[0,1,0,0],[-1,0,0,0]], dtype=float)
+
+    perm_delta = [1,2,3,4,0,6,7,8,9,5]
+    perm_phi = [5,6,7,8,9,0,1,2,3,4]
+
+    def build_rep40(M4, perm):
+        inv_perm = [0]*10
+        for i, p in enumerate(perm): inv_perm[p] = i
+        rep = np.zeros((40, 40))
+        for k in range(10):
+            rep[4*k:4*k+4, 4*inv_perm[k]:4*inv_perm[k]+4] = M4
+        return rep
+
+    rep_delta = build_rep40(Delta72, perm_delta)
+    rep_phi = build_rep40(Phi, perm_phi)
+
+    # Restrict to flat subspace
+    M_d = flat_dirs @ rep_delta @ flat_dirs.T
+    M_p = flat_dirs @ rep_phi @ flat_dirs.T
+
+    # Verify group structure
+    print(f"  G_symp = ⟨Δ₇₂°, φ⟩, order 10")
+    print(f"  Abelian (C₅ × Z₂): {np.allclose(M_p @ M_d @ M_p, M_d)}")
+
+    # Eigenvalues of Δ₇₂°
+    eigvals_d = np.linalg.eigvals(M_d)
+    from collections import Counter
+    angle_counts = Counter()
+    for ev in eigvals_d:
+        angle = round(np.degrees(np.angle(ev)))
+        angle_counts[angle] += 1
+
+    print(f"\n  Δ₇₂° eigenvalue spectrum on flat subspace:")
+    for angle in sorted(angle_counts.keys()):
+        print(f"    e^{{i·{angle}°}}: multiplicity {angle_counts[angle]}")
+
+    # Eigenvalues of φ
+    eigvals_p = np.linalg.eigvals(M_p)
+    n_phi_plus = sum(1 for ev in eigvals_p if abs(ev - 1) < 1e-6)
+    n_phi_minus = sum(1 for ev in eigvals_p if abs(ev + 1) < 1e-6)
+    print(f"\n  φ eigenvalue spectrum: +1 × {n_phi_plus}, -1 × {n_phi_minus}")
+
+    # Joint fixed subspace (Δ=1 AND φ=+1)
+    M_dm1 = M_d - np.eye(n_flat)
+    M_pm1 = M_p - np.eye(n_flat)
+    combined = np.vstack([M_dm1, M_pm1])
+    s_combined = np.linalg.svd(combined, compute_uv=False)
+    n_invariant = np.sum(s_combined < 1e-6)
+
+    print(f"\n  Fully invariant directions (Δ=1, φ=+1): {n_invariant}")
+
+    # Check uniform scaling
+    scaling = duals.flatten()
+    scaling_unit = scaling / np.linalg.norm(scaling)
+    coords = flat_dirs @ scaling_unit
+    proj_norm = np.linalg.norm(coords)
+    print(f"\n  Uniform scaling a_i → λa_i:")
+    print(f"    Component in flat subspace: {proj_norm:.6f} / 1.000 → {'IS flat' if proj_norm > 0.999 else 'NOT flat'}")
+    print(f"    (sys is scale-invariant: c² ∝ λ⁴, vol ∝ λ⁴ in R⁴)")
+
+    # Irreducible decomposition summary
+    n_72 = angle_counts.get(72, 0)
+    n_144 = angle_counts.get(144, 0)
+    print(f"\n  Irreducible decomposition of 15D flat subspace:")
+    print(f"    Δ=1, φ=+1 (invariant):   {n_invariant}D")
+    print(f"    Δ=1, φ=-1 (q↔p antisym): {angle_counts.get(0, 0) - n_invariant}D")
+    print(f"    Δ=e^{{±72°i}} (2D irreps):  {2*n_72}D ({n_72} copies)")
+    print(f"    Δ=e^{{±144°i}} (2D irreps): {2*n_144}D ({n_144} copies)")
+    print(f"    Total: {n_flat}D")
+    n_curv_classes = n_invariant + (angle_counts.get(0, 0) - n_invariant) + n_72 + n_144
+    print(f"\n  Curvature classes (directions up to symmetry): ≤{n_curv_classes}")
+    print()
+
+def plot_random_histogram(curvatures):
+    """Histogram of curvatures from random directions."""
+    fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
+    ax.hist(curvatures, bins=20, color='#2ca02c', edgecolor='k', linewidth=0.5)
+    ax.axvline(0, color='#d62728', linewidth=1.5, linestyle='--', label=r"$r = 0$")
+    ax.set_xlabel(r"Curvature $r(\varepsilon)$")
+    ax.set_ylabel("Count")
+    ax.legend()
+    fig.savefig(EXPERIMENT_DIR / "second_order_random_hist.png")
+    plt.close(fig)
+    print(f"  Wrote second_order_random_hist.png")
+
 # ─── Main ────────────────────────────────────────────────────────────────────
 
 def main():
@@ -254,14 +395,23 @@ def main():
     # Part A: Phase C LP
     lp_feasible = phase_c_lp(base)
 
-    # Part B: Curvature analysis
+    # Part B: Curvature analysis (SVD basis)
     dir_curvatures, dir_curvature_arrays = analyze_curvatures(base, curves)
+
+    # Part C: Random directions + symmetry
+    random_rows = load_random()
+    random_curvatures = None
+    if random_rows:
+        random_curvatures = analyze_random(random_rows)
+        symmetry_decomposition(base)
 
     # Figures
     print("--- Figures ---")
     plot_curves(base, curves, dir_curvatures)
     plot_curvatures(dir_curvatures)
     write_curvature_table(dir_curvatures, dir_curvature_arrays)
+    if random_curvatures is not None:
+        plot_random_histogram(random_curvatures)
 
     # Summary
     print()
@@ -271,14 +421,22 @@ def main():
     print(f"  LP feasible (0 ∈ conv): {lp_feasible}")
     print(f"  Gradient rank: {base['rank']} / 40")
     print(f"  Flat directions: {base['n_flat_directions']}")
-    all_neg = all(c < 0 for c in dir_curvatures.values())
-    print(f"  All curvatures negative: {all_neg}")
-    if all_neg:
+    all_neg_basis = all(c < 0 for c in dir_curvatures.values())
+    print(f"  All basis curvatures negative: {all_neg_basis}")
+    if random_curvatures is not None:
+        all_neg_random = all(c < -1e-6 for c in random_curvatures)
+        print(f"  All random curvatures negative: {all_neg_random} ({len(random_curvatures)} samples)")
+        worst = max(random_curvatures)
+        print(f"  Worst random curvature: {worst:+.4e}")
+    if all_neg_basis:
         print()
-        print("  CONCLUSION: HKO2024 satisfies both the first-order necessary condition")
-        print("  (0 ∈ conv of subdifferential) and the second-order sufficient condition")
-        print("  (negative curvature along all flat directions) for local maximality")
-        print("  of sys in the F=10 dual-vertex parameter space R^40.")
+        print("  CONCLUSION: HKO2024 satisfies:")
+        print("  1. First-order necessary condition: 0 ∈ conv(subdifferential)")
+        print("  2. All 15 SVD basis directions have negative curvature")
+        if random_curvatures and all(c < -1e-6 for c in random_curvatures):
+            print(f"  3. All {len(random_curvatures)} random directions have negative curvature (worst: {worst:+.4e})")
+            print("  → Strong numerical evidence for negative definiteness of the Hessian")
+            print("    on the 15D flat subspace, supporting local maximality of sys.")
 
 
 if __name__ == "__main__":

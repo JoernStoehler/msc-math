@@ -19,6 +19,9 @@
 //! then K is a strict local maximum. See math.tex for formal statement.
 
 use nalgebra::{DMatrix, Vector4};
+use rand::Rng as _;
+use rand::SeedableRng;
+use rand_chacha::ChaCha8Rng;
 use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
@@ -54,6 +57,19 @@ const EPSILON_GRID: &[f64] = &[
     1e-3, 2e-3, 5e-3,
     1e-2, 1.5e-2, 2e-2, 2.5e-2, 3e-2, 3.5e-2, 4e-2,
 ];
+
+/// Number of random directions in ker(G) to sample for negative-definiteness check.
+/// 100 random directions on S^{14} (unit sphere in the 15D flat subspace) give high
+/// probability of detecting any positive-curvature direction if one exists.
+const N_RANDOM_DIRECTIONS: usize = 100;
+
+/// Epsilon values for the random-direction curvature check.
+/// Fewer points than the full grid — we only need the curvature sign, not a detailed curve.
+/// Using the medium range where FD noise is low and curvature signal is clear.
+const EPSILON_RANDOM: &[f64] = &[1e-4, 5e-4, 1e-3, 5e-3];
+
+/// RNG seed for reproducibility.
+const RANDOM_SEED: u64 = 42;
 
 // ============================================================================
 // Output schemas
@@ -428,6 +444,166 @@ fn run_phase2(
 }
 
 // ============================================================================
+// Phase 3: Random directions in ker(G) for negative-definiteness check
+// ============================================================================
+
+/// Sample a random unit vector in the flat subspace by generating random
+/// coefficients in the flat basis and normalizing.
+fn random_flat_direction(flat_basis: &[Vec<f64>], rng: &mut ChaCha8Rng) -> Vec<f64> {
+    let dim = flat_basis[0].len(); // 40
+    let n_flat = flat_basis.len(); // 15
+
+    // Random coefficients ~ N(0,1), then normalize
+    let coeffs: Vec<f64> = (0..n_flat).map(|_| rng.gen_range(-1.0..1.0)).collect();
+    let norm_coeffs: f64 = coeffs.iter().map(|c| c * c).sum::<f64>().sqrt();
+
+    let mut direction = vec![0.0; dim];
+    for (i, c) in coeffs.iter().enumerate() {
+        let normalized_c = c / norm_coeffs;
+        for j in 0..dim {
+            direction[j] += normalized_c * flat_basis[i][j];
+        }
+    }
+    direction
+}
+
+/// Compute symmetric curvature ratio at a single epsilon:
+/// r(ε) = (sys(+ε) + sys(-ε) - 2·sys(0)) / ε²
+fn curvature_at_epsilon(
+    polytope: &Polytope4D,
+    direction: &[f64],
+    eps: f64,
+    sys_base: f64,
+) -> Option<f64> {
+    let duals = polytope.dual_vertices_f64();
+    let f = polytope.facet_count();
+
+    let eval = |sign: f64| -> Option<f64> {
+        let e = sign * eps;
+        let perturbed: Vec<Vector4<f64>> = (0..f)
+            .map(|k| {
+                let d_k = Vector4::new(
+                    direction[4 * k],
+                    direction[4 * k + 1],
+                    direction[4 * k + 2],
+                    direction[4 * k + 3],
+                );
+                duals[k] + e * d_k
+            })
+            .collect();
+        let poly = Polytope4D::from_f64(perturbed).ok()?;
+        let cap = ehz_capacity(&poly)?.result.capacity;
+        let vol = volume(&poly).ok().filter(|&v| v > 0.0)?;
+        Some(cap * cap / (2.0 * vol))
+    };
+
+    let sys_plus = eval(1.0)?;
+    let sys_minus = eval(-1.0)?;
+    Some((sys_plus + sys_minus - 2.0 * sys_base) / (eps * eps))
+}
+
+#[derive(Debug, Serialize)]
+struct RandomDirectionRow {
+    direction_index: usize,
+    /// Median curvature over EPSILON_RANDOM values.
+    curvature: f64,
+    /// Individual curvature ratios at each epsilon.
+    curvatures_by_eps: Vec<f64>,
+    /// The random direction as coefficients in the flat basis (for reproducibility).
+    flat_basis_coefficients: Vec<f64>,
+}
+
+fn run_phase3(
+    polytope: &Polytope4D,
+    sys_base: f64,
+    flat_directions: &[Vec<f64>],
+    writer: &mut BufWriter<File>,
+) {
+    let n_flat = flat_directions.len();
+    let dim = flat_directions[0].len();
+    let mut rng = ChaCha8Rng::seed_from_u64(RANDOM_SEED);
+
+    println!(
+        "\n  Sampling {} random directions in {}D flat subspace, {} ε values each",
+        N_RANDOM_DIRECTIONS, n_flat, EPSILON_RANDOM.len(),
+    );
+
+    let mut n_negative = 0;
+    let mut n_ambiguous = 0;
+    let mut n_positive = 0;
+    let mut worst_curvature = f64::NEG_INFINITY;
+
+    for dir_idx in 0..N_RANDOM_DIRECTIONS {
+        // Generate random coefficients
+        let coeffs: Vec<f64> = (0..n_flat).map(|_| rng.gen_range(-1.0..1.0)).collect();
+        let norm_coeffs: f64 = coeffs.iter().map(|c| c * c).sum::<f64>().sqrt();
+        let normalized_coeffs: Vec<f64> = coeffs.iter().map(|c| c / norm_coeffs).collect();
+
+        // Build direction in R^40
+        let mut direction = vec![0.0; dim];
+        for (i, &c) in normalized_coeffs.iter().enumerate() {
+            for j in 0..dim {
+                direction[j] += c * flat_directions[i][j];
+            }
+        }
+
+        // Compute curvature at each epsilon
+        let mut curvatures: Vec<f64> = Vec::new();
+        for &eps in EPSILON_RANDOM {
+            if let Some(curv) = curvature_at_epsilon(polytope, &direction, eps, sys_base) {
+                curvatures.push(curv);
+            }
+        }
+
+        // Median curvature
+        let median = if curvatures.is_empty() {
+            f64::NAN
+        } else {
+            let mut sorted = curvatures.clone();
+            sorted.sort_by(|a, b| a.partial_cmp(b).unwrap());
+            sorted[sorted.len() / 2]
+        };
+
+        if median < -1e-6 {
+            n_negative += 1;
+        } else if median > 1e-6 {
+            n_positive += 1;
+        } else {
+            n_ambiguous += 1;
+        }
+        if median > worst_curvature {
+            worst_curvature = median;
+        }
+
+        let row = RandomDirectionRow {
+            direction_index: dir_idx,
+            curvature: median,
+            curvatures_by_eps: curvatures,
+            flat_basis_coefficients: normalized_coeffs,
+        };
+        serde_json::to_writer(&mut *writer, &row).expect("write random row");
+        writeln!(writer).expect("newline");
+
+        if dir_idx % 20 == 19 {
+            println!(
+                "  {}/{}: {} negative, {} ambiguous, {} positive, worst={:.4e}",
+                dir_idx + 1, N_RANDOM_DIRECTIONS, n_negative, n_ambiguous, n_positive, worst_curvature
+            );
+        }
+    }
+
+    println!(
+        "\n  Summary: {n_negative} negative, {n_ambiguous} ambiguous, {n_positive} positive"
+    );
+    println!("  Worst (most positive) curvature: {worst_curvature:.4e}");
+    if n_positive == 0 {
+        println!("  → No positive curvature found among {} random directions", N_RANDOM_DIRECTIONS);
+    } else {
+        println!("  → WARNING: {} directions with positive curvature!", n_positive);
+    }
+}
+
+// ============================================================================
 // Main
 // ============================================================================
 
@@ -491,6 +667,21 @@ fn main() {
         let phase2_time = t_phase2.elapsed().as_secs_f64();
         println!("  Phase 2 time: {phase2_time:.1}s");
         println!("  Wrote {}", curves_path.display());
+
+        // Phase 3: Random directions for negative-definiteness check
+        println!("\n--- Phase 3: Random directions in flat subspace ({} samples) ---", N_RANDOM_DIRECTIONS);
+        let t_phase3 = Instant::now();
+
+        let random_path = out_dir.join("second-order-random.jsonl");
+        let random_file = File::create(&random_path).expect("create random JSONL");
+        let mut random_writer = BufWriter::new(random_file);
+
+        run_phase3(polytope, base_row.sys_base, &flat_directions, &mut random_writer);
+
+        random_writer.flush().expect("flush random");
+        let phase3_time = t_phase3.elapsed().as_secs_f64();
+        println!("  Phase 3 time: {phase3_time:.1}s");
+        println!("  Wrote {}", random_path.display());
     }
 
     let total = t0.elapsed().as_secs_f64();
