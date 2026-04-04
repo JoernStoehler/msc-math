@@ -79,10 +79,12 @@ if sweep:
     grad_sweeps = [r for r in sweep if r["direction_type"] == "gradient"]
     if grad_sweeps:
         n_improved = sum(1 for r in grad_sweeps
-                        if r["sys_values"] and r["sys_values"][-1] > r["sys_start"]
-                        and not np.isnan(r["sys_values"][-1]))
+                        if r["sys_values"] and r["sys_values"][-1] is not None
+                        and not np.isnan(r["sys_values"][-1])
+                        and r["sys_values"][-1] > r["sys_start"])
         n_valid = sum(1 for r in grad_sweeps
-                     if r["sys_values"] and not np.isnan(r["sys_values"][-1]))
+                     if r["sys_values"] and r["sys_values"][-1] is not None
+                     and not np.isnan(r["sys_values"][-1]))
         if n_valid > 0:
             print(f"\nGradient sweeps with sys improvement: {n_improved}/{n_valid} "
                   f"({100 * n_improved / n_valid:.0f}%)")
