@@ -46,9 +46,9 @@ No privileged threshold — sys is studied as a continuous function.
     [random-product-sweep](crates/exp-sys-landscape/random-product-sweep/),
     [rejection-sampling](crates/exp-sys-landscape/rejection-sampling/)
 - **3d.** Following sys gradients?
-  → library `derivatives.rs`; validated by [basic-validation](crates/dev-gradient-validation/basic-validation/),
-    [edge-cases](crates/dev-gradient-validation/edge-cases/),
-    [subdifferential](crates/dev-gradient-validation/subdifferential/)
+  → library `derivatives.rs`; validated by [numerics](crates/dev-gradient/numerics/),
+    [numerics-edge-cases](crates/dev-gradient/numerics-edge-cases/),
+    [numerics-subdifferential](crates/dev-gradient/numerics-subdifferential/)
 
 ## 4. How do we compute capacity better?
 
@@ -68,6 +68,6 @@ Instrument development — results promote to `crates/library/`.
   → [correctness](crates/dev-capacity-validation/correctness/),
     [orbit-recovery](crates/dev-capacity-validation/orbit-recovery/)
 - **4d.** Analytical gradients match finite differences?
-  → [basic-validation](crates/dev-gradient-validation/basic-validation/),
-    [edge-cases](crates/dev-gradient-validation/edge-cases/),
-    [subdifferential](crates/dev-gradient-validation/subdifferential/)
+  → [numerics](crates/dev-gradient/numerics/),
+    [numerics-edge-cases](crates/dev-gradient/numerics-edge-cases/),
+    [numerics-subdifferential](crates/dev-gradient/numerics-subdifferential/)

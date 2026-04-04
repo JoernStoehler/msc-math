@@ -7,7 +7,7 @@ members = [
     "crates/dev-algorithm-comparison",
     "crates/dev-numerical-analysis",
     "crates/dev-capacity-validation",
-    "crates/dev-gradient-validation",
+    "crates/dev-gradient",
     "crates/crosspolytope",
     "crates/visualization",
 ]

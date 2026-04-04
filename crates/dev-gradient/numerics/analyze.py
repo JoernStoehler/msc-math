@@ -1,12 +1,12 @@
 """
 Goal: Analyze first-order prediction test for gradient correctness (Q1 generic, Q2 non-generic).
 Input:
-  - crates/dev-gradient-validation/basic-validation/gradient-correctness-q1-generic.jsonl
-  - crates/dev-gradient-validation/basic-validation/gradient-correctness-q2-nongeneric.jsonl
+  - crates/dev-gradient/numerics/gradient-correctness-q1-generic.jsonl
+  - crates/dev-gradient/numerics/gradient-correctness-q2-nongeneric.jsonl
 Output:
-  - crates/dev-gradient-validation/basic-validation/gc_convergence.png    (Q1 log-log convergence)
-  - crates/dev-gradient-validation/basic-validation/gc_slopes.png         (slope distributions Q1+Q2)
-  - crates/dev-gradient-validation/basic-validation/gc_summary.tex        (summary table)
+  - crates/dev-gradient/numerics/gc_convergence.png    (Q1 log-log convergence)
+  - crates/dev-gradient/numerics/gc_slopes.png         (slope distributions Q1+Q2)
+  - crates/dev-gradient/numerics/gc_summary.tex        (summary table)
 """
 
 import json

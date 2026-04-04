@@ -38,7 +38,7 @@ crates/                    all Rust code (library + experiments)
       analyze.py           postprocessing, analysis, figures and tables
       logbook.md           experiment logbook, what was done, results, learnings, ideas
       math.tex             correctness proofs for the experiment
-  dev-<group>/             instrument development (e.g. dev-gradient-validation)
+  dev-<group>/             instrument development (e.g. dev-gradient)
     (same structure as exp-<group>/, promotes to library when stable)
   crosspolytope/           standalone computation (not an exp-group)
   database/                stub library for future sigma cache

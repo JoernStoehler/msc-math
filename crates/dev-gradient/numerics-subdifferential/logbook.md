@@ -5,7 +5,7 @@ Split from the original `gradient-validation/` experiment (Q5 + Q5b + Q5c).
 ## How to run
 
 ```bash
-cargo run -p dev-gradient-validation --release --bin dev-subdifferential
+cargo run -p dev-gradient --release --bin dev_numerics_subdifferential
 ```
 
 Produces `gradient-correctness-q5-subdiff.jsonl` and `gradient-correctness-q5b-symmetric.jsonl`.

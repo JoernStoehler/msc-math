@@ -1,5 +1,5 @@
 [package]
-name = "dev-gradient-validation"
+name = "dev-gradient"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,16 +7,16 @@ edition = "2021"
 path = "src/lib.rs"
 
 [[bin]]
-name = "dev-basic-validation"
-path = "basic-validation/run.rs"
+name = "dev_numerics"
+path = "numerics/run.rs"
 
 [[bin]]
-name = "dev-edge-cases"
-path = "edge-cases/run.rs"
+name = "dev_numerics_edge_cases"
+path = "numerics-edge-cases/run.rs"
 
 [[bin]]
-name = "dev-subdifferential"
-path = "subdifferential/run.rs"
+name = "dev_numerics_subdifferential"
+path = "numerics-subdifferential/run.rs"
 
 [lints]
 workspace = true

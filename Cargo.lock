@@ -413,7 +413,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "dev-gradient-validation"
+name = "dev-gradient"
 version = "0.1.0"
 dependencies = [
  "database",
