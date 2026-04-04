@@ -21,7 +21,7 @@ uv run analyze.py                             # generates plots
 |------|------|
 | `run.rs` | Rust binary: generates all sweep datasets |
 | `analyze.py` | Python: plots sys(theta) curves |
-| `math.tex` | Formal proofs and definitions (symmetry lemma, rotation curves, polygon pair grid) |
+| `math.tex` | Formal proofs and definitions (rotation setup, symmetry lemma) |
 | `lagrangian-products-5x5.jsonl` | Pentagon rotation curve (37 rows) |
 | `lagrangian-products-7x7.jsonl` | Heptagon rotation curve (27 rows) |
 | `lagrangian-products-3x3-6deg.jsonl` | Triangle x triangle sweep (11 rows) |
@@ -97,6 +97,12 @@ Key numerical results (billiard computation, verified at time of investigation):
 Fixes applied to `crates/library/src/geom/known_polytopes.rs`:
 - Renamed function to `lagrangian_triangle_square()` with correct capacity 1.5
 - Added separate `symplectic_triangle_square()` with capacity 1.0
+
+## Figures
+
+- `lagrangian_products_5x5.png`: Systolic ratio of Pentagon x_L R(theta) Pentagon as a function of rotation angle theta on the fundamental domain [0, 36 degrees]. Red dashed line marks sys = 1 (Viterbo threshold). Shows the violation region around theta = 18 degrees.
+- `lagrangian_products_7x7.png`: Systolic ratio of Heptagon x_L R(theta) Heptagon as a function of rotation angle theta on the fundamental domain [0, 25.7 degrees]. Red dashed line marks sys = 1 (Viterbo threshold). Peak at sys ~ 0.917, well below 1.
+- `lagrangian_products_polygon_pairs.png`: Systolic ratio curves for all 10 regular n-gon x_L R(theta) m-gon pairs (3 <= n <= m <= 6). Dashed line marks sys = 1.
 
 ## Known limitations
 

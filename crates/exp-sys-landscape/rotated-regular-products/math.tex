@@ -12,10 +12,8 @@
 % Structure:
 %   - Mathematical setup (Lagrangian products, rotation parameter)
 %   - Symmetry lemma (fundamental domain)
-%   - Pentagon rotation curve (Family 1)
-%   - Regular polygon grid (Family 2)
-%   - Random Lagrangian products (Family 3)
-%   - Findings
+%
+% Empirical content (sweep descriptions, figures, observations) lives in logbook.md.
 
 \subsection{Lagrangian Products of Rotated Polygons}
 \label{sec:lagrangian-products}
@@ -89,76 +87,3 @@ domain is~$[0, \pi/\operatorname{lcm}(n,m)]$.
 % For odd polygons, -P = R(π)P so the swap also rotates one factor by 180°.
 % (Jörn verified 2025-02-14.)
 
-\subsubsection*{Family 1: Pentagon rotation curve}
-
-We sweep the fundamental domain~$\theta \in [0^\circ, 36^\circ]$ at~$1^\circ$ resolution (37 points)
-for the family~$\mathrm{Pentagon} \times_L R(\theta)\,\mathrm{Pentagon}$,
-where each pentagon is regular with circumradius~1.
-We compute~$c_{\mathrm{EHZ}}$ using the billiard algorithm, which is the production-fast method for Lagrangian
-products.
-
-Figure~\ref{fig:pentagon-sweep} shows the resulting curve.
-
-The maximum~$\mathrm{sys} \approx 1.0472$ occurs at~$\theta \equiv 18^\circ
-\pmod{36^\circ}$ (equivalently $\theta = 90^\circ$, the HK-O angle).
-The minimum~$\mathrm{sys} \approx 0.9472$ occurs
-at~$\theta \equiv 0^\circ \pmod{36^\circ}$ (aligned or maximally rotated
-pentagons). The violation region $\mathrm{sys} > 1$ spans
-approximately~$\theta \in (13.5^\circ, 22.5^\circ)$ within each fundamental
-domain---about~$25\%$ of the period.
-
-\begin{figure}[h]
-\centering
-\includegraphics{lagrangian_products_5x5.png}
-\caption{Systolic ratio of $\mathrm{Pentagon} \times_L R(\theta)\,
-  \mathrm{Pentagon}$ as a function of rotation angle~$\theta$ on the
-  fundamental domain $[0^\circ, 36^\circ]$. The red dashed line marks
-  $\mathrm{sys} = 1$ (Viterbo threshold).}
-\label{fig:pentagon-sweep}
-\end{figure}
-
-\subsubsection*{Family 1b: Heptagon rotation curve}
-
-We repeat the fine sweep for the regular heptagon ($n = 7$). The fundamental
-domain is $[0^\circ, 180^\circ/7 \approx 25.71^\circ]$
-(Lemma~\ref{lem:rotation-fundamental-domain}), sampled at~$26$ equal steps
-($\approx 0.99^\circ$ resolution). Data: \texttt{lagrangian-products-7x7.jsonl}
-(27~rows).
-
-The curve peaks at $\theta \approx 12.9^\circ$ with $\mathrm{sys} \approx 0.917$,
-well below~$1$. No counterexample.
-
-\begin{figure}[h]
-\centering
-\includegraphics{lagrangian_products_7x7.png}
-\caption{Systolic ratio of $\mathrm{Heptagon} \times_L R(\theta)\,
-  \mathrm{Heptagon}$ as a function of rotation angle~$\theta$ on the
-  fundamental domain $[0^\circ, 25.7^\circ]$. The red dashed line marks
-  $\mathrm{sys} = 1$ (Viterbo threshold).}
-\label{fig:heptagon-sweep}
-\end{figure}
-
-\subsubsection*{Family 2: Regular polygon pairs}
-
-We sweep the rotation angle for the regular pairs
-$(3,3)$, $(3,4)$, $(3,5)$, $(3,6)$, $(4,4)$, $(4,5)$, $(4,6)$, $(5,5)$,
-$(5,6)$, and $(6,6)$. For each pair, we sample the fundamental domain
-$[0^\circ, 180^\circ/\operatorname{lcm}(n,m)]$ at~$6^\circ$ steps.
-Each pair is stored in its own JSONL file
-\texttt{lagrangian-products-\emph{n}x\emph{m}-6deg.jsonl} and computed using
-the billiard algorithm only.
-
-Figure~\ref{fig:polygon-pairs} shows the resulting curves.
-
-\begin{figure}[h]
-\centering
-\includegraphics{lagrangian_products_polygon_pairs.png}
-\caption{Systolic ratio curves for regular $n$-gon $\times_L$ $R(\theta)$
-  $m$-gon, for the 10 selected pairs. The dashed line marks $\mathrm{sys} = 1$.}
-\label{fig:polygon-pairs}
-\end{figure}
-%
-% Legacy experiment sections (commented out for now):
-% - Family 3: Random Lagrangian products
-% - Aggregate findings list
-%

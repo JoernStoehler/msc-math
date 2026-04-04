@@ -43,14 +43,19 @@ Output is printed to stdout. Captured output is stored in `kkt_inertia_output.tx
 
 3. **5 mismatches in hko_pentagon:** All share the same pattern: tangent_dim = 3, p = 5, with H|_T eigenvalues {-a, epsilon, +a} where a ~ 0.4--1.1 and epsilon ~ 1e-16 (machine epsilon). Since n_-(H|_T) = 1, the lemma predicts n_-(M) = 6, but the threshold-based classifier reports n_-(M) = 5 because M has three eigenvalues at ~1e-16 whose signs cannot be resolved. The inertia formula itself is not violated; the mismatch is a classification artifact.
 
-4. **Part 2 summary table (from output):**
-   - simplex: 84 total, 84 n_-=p, 0 mismatches
-   - hypercube: 16,064 total, 10,990 n_-=p, 0 mismatches
-   - hko_pentagon: 1,112,073 total, 171,063 n_-=p, 5 mismatches
-   - lagrangian_triangle_product: 409 total, 371 n_-=p, 0 mismatches
-   - symplectic_triangle_product: 409 total, 379 n_-=p, 0 mismatches
-   - lagrangian_tri_sq: 2,365 total, 1,783 n_-=p, 0 mismatches
-   - symplectic_tri_sq: 2,365 total, 1,548 n_-=p, 0 mismatches
+4. **Part 2 inertia decomposition check** (from math.tex table, moved here during audit 2026-04-04):
+
+   | Polytope | Total | n_-=p | n_->p | PD | ND | Indef | Match |
+   |----------|------:|------:|------:|---:|---:|------:|-------|
+   | Simplex | 84 | 84 | 0 | 0 | 0 | 0 | OK |
+   | Hypercube | 16,064 | 10,990 | 5,074 | 194 | 194 | 4,880 | OK |
+   | HK-O pentagon | 1,112,073 | 171,063 | 941,010 | 3,370 | 3,370 | 935,685 | 5 |
+   | Lag. triangle x triangle | 409 | 371 | 38 | 38 | 38 | 0 | OK |
+   | Sym. triangle x triangle | 409 | 379 | 30 | 30 | 30 | 0 | OK |
+   | Lag. triangle x square | 2,365 | 1,783 | 582 | 110 | 110 | 472 | OK |
+   | Sym. triangle x square | 2,365 | 1,548 | 817 | 337 | 337 | 240 | OK |
+
+   "n_-=p" counts nodes where n_-(M) equals the constraint rank p. "PD/ND/Indef" classify H|_T across all nodes with nontrivial tangent space. "Match" reports mismatches between the inertia prediction and H|_T classification.
 
 ## Known limitations
 

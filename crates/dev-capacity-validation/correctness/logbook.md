@@ -25,7 +25,7 @@ Different seeds may expose edge cases not covered by seed 42.
 | File | Role |
 |------|------|
 | `run.rs` | Rust binary: dataset generator + test harness (6 property tests) |
-| `math.tex` | Formal writeup: algorithm variants, test propositions, literature table |
+| `math.tex` | Empty — no formal mathematics in this experiment |
 | `correctness.jsonl` | Dataset: 47 polytopes, 71 capacity values across 3 algorithms |
 
 ## Design
@@ -68,6 +68,40 @@ Generate a curated dataset where we know what the correct answers MUST be, then 
 5. 10 transformed: c(M*K) = c(K) confirmed.
 6. 10 perturbed: small delta_h produces small delta_c.
 7. 20+ monotonicity pairs verified.
+
+### Algorithm variants
+
+| Algorithm | Description |
+|-----------|-------------|
+| Pruned | HK2017 with adjacency-based orbit pruning (production) |
+| Unpruned | HK2017 without pruning (validation only) |
+| Billiard | Billiard algorithm (Lagrangian products only) |
+
+### Capacity computations per test
+
+| Test | Pruned | Unpruned | Billiard |
+|------|--------|----------|----------|
+| Test 1: Direct comparison | 10 | 10 | 5 |
+| Test 2: Literature | 7 | 0 | 4 |
+| Test 3: Conformality | 10 | 0 | 5 |
+| Test 4: Symplectic invariance | 10 | 0 | 0 |
+| Test 5: Continuity | 10 | 0 | 0 |
+| Test 6: Monotonicity | 0 | 0 | 0 |
+| **Total** | **47** | **10** | **14** |
+
+Test 1 generates 10 base polytopes (5 random generic, 5 Lagrangian products). Tests 3-5 reuse these base polytopes (scaled, transformed, perturbed). Test 6 uses existing capacities from tests 1-5. Total: 71 capacity values.
+
+### Literature polytopes (test 2)
+
+| Polytope | F | c_EHZ | vol(K) | sys(K) | Source |
+|----------|---|-------|--------|--------|--------|
+| Simplex | 5 | 0.25 | 0.0417 | 0.750 | [Nir2013] |
+| Hypercube [-1,1]^4 | 8 | 4.0 | 16.0 | 0.500 | [HK2019] Ex 4.6 |
+| HK-O pentagon | 10 | 3.441 | 5.6532 | 1.047 | [HaimKislevOstrover2024] Prop 1.4 |
+| Lag. triangle x triangle | 6 | 1.5 | 1.6875 | 0.667 | [HK2017] + billiard |
+| Sym. triangle x triangle | 6 | 1.299 | 1.6875 | 0.500 | capacity of symplectic product |
+| Lag. triangle x square | 7 | 1.5 | 1.2990 | 0.866 | [HK2017] + billiard |
+| Sym. triangle x square | 7 | 1.0 | 1.2990 | 0.385 | capacity of symplectic product |
 
 ## Known limitations
 
