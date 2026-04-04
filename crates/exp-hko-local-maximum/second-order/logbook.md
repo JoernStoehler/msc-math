@@ -84,13 +84,13 @@ Compared to old (n,h)-space result: rank 24 in R^50 with 10 gauge → 16 flat in
 | 5 | −3.09e-1 | 1.34 |
 | 6 | −2.33e-1 | 0.82 |
 | 7 | −1.78e-1 | 1.27 |
-| 8 | −1.87e-1 | 0.47 |
+| 8 | −1.87e-1 | 0.36 |
 | 9 | −1.19e-1 | 1.25 |
-| 10 | −5.68e-2 | 0.33 |
+| 10 | −5.68e-2 | 0.12 |
 | 11 | −1.60e-1 | 0.77 |
-| 12 | −1.90e-1 | 0.20 |
-| 13 | −7.49e-2 | 0.22 |
-| 14 | −1.31e-1 | 0.36 |
+| 12 | −1.90e-1 | 0.21 |
+| 13 | −7.49e-2 | 0.11 |
+| 14 | −1.31e-1 | 0.19 |
 
 CV (coefficient of variation of r(ε) over ε ≤ 5e-3) > 1 in several directions indicates orbit switching — the curvature ratio is not constant because different orbits dominate at different ε. The sign is consistently negative regardless.
 
