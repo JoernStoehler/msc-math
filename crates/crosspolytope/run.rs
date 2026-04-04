@@ -42,12 +42,11 @@ const SVD_CONDITION_TAU: f64 = 1e-3;
 const EPS_KKT_RESIDUAL: f64 = 1e-6;
 
 /// Maximum subset size to search. The full crosspolytope has F=16, so m ranges
-/// from 2 to 16. Subset sizes m=13..16 have very large permutation counts
-/// ((m-1)! cyclic orderings to explore), making exhaustive search infeasible
-/// within session time limits. m=12 is the largest size completing in ~4.6 minutes;
-/// m=13 alone takes ~8 minutes. Since the best action is found at m=4 and
-/// actions generally increase with m, stopping at m=12 is likely sufficient (unproven).
-const MAX_SUBSET_SIZE: usize = 12;
+/// from 2 to 16. Scaling analysis (2026-04-04) estimates ~146M binary iterations
+/// for m=13..16 total (~2-5 hours). Growth factor of adjacent cycles declines
+/// linearly: 5.6x (m=5) → 3.4x (m=11), so m=13-16 are increasingly constrained.
+/// Running with m=16 to attempt full exhaustive certification.
+const MAX_SUBSET_SIZE: usize = 16;
 
 // ── KKT solver (copied from crates/library/src/kkt.rs) ─────────────────────────────
 

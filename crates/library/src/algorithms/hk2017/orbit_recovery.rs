@@ -449,15 +449,9 @@ mod tests {
         test_recovery("hypercube", &kp.polytope, kp.capacity);
     }
 
-    /// Recover orbit for the crosspolytope (F=16).
-    ///
-    /// Known capacity = 1.0. F=16 makes this too slow for debug mode.
-    #[test]
-    #[ignore]
-    fn crosspolytope_recovery() {
-        let kp = known_polytopes::crosspolytope();
-        test_recovery("crosspolytope", &kp.polytope, kp.capacity);
-    }
+    // crosspolytope orbit recovery is tested in crosspolytope_upper_bound()
+    // (hk2017/mod.rs) via a direct KKT solve on the known permutation, avoiding
+    // the ~4 hour ehz_capacity() call that test_recovery() would require.
 
     /// Recover orbit for the HKO pentagon (F=10).
     ///
