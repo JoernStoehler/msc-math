@@ -18,7 +18,7 @@
 //! Output: gradient-ascent-products/gradient-ascent-products.jsonl      (per-seed summary)
 //!         gradient-ascent-products/gradient-ascent-products-trace.jsonl (per-iteration trace)
 
-use database::{DualVerticesKey, PolytopeRecord, SigmaAction};
+use database::{DualVerticesKey, PolytopeRecord};
 use nalgebra::{Matrix4, Vector4};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
@@ -605,28 +605,16 @@ fn load_completed_names(path: &std::path::Path) -> HashSet<String> {
 // ============================================================================
 
 /// Insert a polytope into the database if not already present.
-/// Computes and stores capacity + volume if the record is new.
+/// Stores rational geometry for future vertex-enumeration-free reconstruction.
 fn insert_polytope_to_db(
     db: &mut HashMap<DualVerticesKey, PolytopeRecord>,
     polytope: &Polytope4D,
-    capacity: Option<f64>,
-    volume_val: Option<f64>,
-    best_perm: Option<&[usize]>,
 ) {
     let key: DualVerticesKey = polytope.dual_vertices().to_vec();
     if db.contains_key(&key) {
         return;
     }
-    let mut record = PolytopeRecord::from_polytope(polytope);
-    if let (Some(cap), Some(vol)) = (capacity, volume_val) {
-        record = record.with_computed_fields(vol, 0.0, cap, 0.0);
-        if let Some(perm) = best_perm {
-            record = record.with_sigmas(
-                vec![SigmaAction { perm: perm.to_vec(), action: cap }],
-                0.0,
-            );
-        }
-    }
+    let record = PolytopeRecord::from_polytope(polytope);
     db.insert(key, record);
 }
 
@@ -709,7 +697,7 @@ fn main() {
     println!("Generated {} Lagrangian products.\n", lagrangian.len());
 
     for (idx, (name, bucket, polytope)) in lagrangian.iter().enumerate() {
-        insert_polytope_to_db(&mut db, polytope, None, None, None);
+        insert_polytope_to_db(&mut db, polytope);
 
         if completed.contains(name) {
             continue;

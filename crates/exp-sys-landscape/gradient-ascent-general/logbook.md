@@ -2,7 +2,7 @@
 
 ## Motivation
 
-Can gradient-based optimization push sys past 1 for general (non-Lagrangian) polytopes? Previous gradient experiments found best non-HKO sys ~ 0.905 but were limited by the step-bound barrier (gradient ascent converges within each combinatorial cell but cannot cross boundaries). This experiment combines within-cell ascent with boundary-crossing strategies on general polytopes.
+Can gradient-based optimization push sys past 1 for general (non-Lagrangian) polytopes? Previous gradient experiments found best non-HKO sys=0.905 (lagrangian_5x5_143 in large-scale-descent, deleted in fc298ce7) but were limited by the step-bound barrier (gradient ascent converges within each combinatorial cell but cannot cross boundaries). This experiment combines within-cell ascent with boundary-crossing strategies on general polytopes.
 
 ## Status
 

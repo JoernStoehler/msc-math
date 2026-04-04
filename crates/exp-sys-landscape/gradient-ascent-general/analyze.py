@@ -103,7 +103,8 @@ def plot_improvement(data):
             finals = [r["final_sys"] for r in rows]
             ax.scatter(starts, finals, s=SCATTER_SIZE, alpha=0.7, label=cat, color=colors[cat])
 
-    lims = [0, max(r["final_sys"] for r in data) * 1.05]
+    upper = max(max(r["starting_sys"] for r in data), max(r["final_sys"] for r in data))
+    lims = [0, upper * 1.05]
     ax.plot(lims, lims, "k--", linewidth=0.8, alpha=0.5, label=r"$y = x$")
     ax.axhline(y=1.0, color="red", linestyle="--", linewidth=0.8, alpha=0.5)
 
