@@ -30,6 +30,10 @@ path = "perturbation-neighborhood/run.rs"
 name = "hko-second-order"
 path = "second-order/run.rs"
 
+[[bin]]
+name = "hko-cut-and-ascent"
+path = "cut-and-ascent/run.rs"
+
 [lints]
 workspace = true
 

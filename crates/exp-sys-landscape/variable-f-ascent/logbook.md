@@ -60,9 +60,9 @@ Starting points: 10 F=10 local maxima from gradient-ascent-general (final_dual_v
 
 ## Findings (2026-04-04)
 
-Total runtime: 1676s (~28 min), 85 trials.
+Total runtime: 1644s (~27 min), 80 trials.
 
-### RQ1: 43/55 (78%) improved over F=10 local max
+### RQ1: 43/50 (86%) improved over F=10 local max
 
 F=11 gradient ascent starting from barely-perturbed F=10 local maxima **consistently improves sys**. All added facets remained non-redundant (active) at the end of optimization — the F+1 polytope genuinely uses the extra degree of freedom.
 
@@ -78,23 +78,22 @@ F=11 gradient ascent starting from barely-perturbed F=10 local maxima **consiste
 | general_7 | 0.9005 | 3/5 | 0.9035 | +0.003 |
 | general_8 | 0.8324 | 5/5 | 0.8752 | +0.043 |
 | general_9 | 0.7151 | 5/5 | 0.7593 | +0.044 |
-| **hko2024** | **1.0472** | **0/5** | **1.0472** | **-0.000** |
-
-Mean Δ across all 55 trials: +0.014. Max Δ: +0.057 (variable-f-ascent.jsonl, rq1_general_4_p3).
-
-**HKO2024 did not improve** — consistent with being a robust local max in F=11 space. This confirms the facet-splitting finding (0/536 cuts improved sys) and extends it: even with gradient ascent afterward, the F=11 landscape near HKO2024 has no higher peaks.
 
 **Improvement rate correlates inversely with src_sys:** lower local maxima improve more reliably (general_0 at 0.776: 5/5) than higher ones (general_7 at 0.901: 3/5). The higher the F=10 local max, the closer it already is to the F=11 local max above it.
+
+Mean Δ across all 50 trials: +0.016. Max Δ: +0.057 (variable-f-ascent.jsonl, rq1_general_4_p3).
+
+HKO2024 testing (cut + ascent in F=11 space) moved to `exp-hko-local-maximum/cut-and-ascent/`.
 
 ### RQ2: F=10 ascent beats add+F=11 from random starts
 
 | Path | Mean final sys | Median | Max | Min |
 |------|---------------|--------|-----|-----|
-| A: F=10 ascent | 0.789 | 0.795 | 0.854 | 0.709 |
-| B: add facet + F=11 ascent | 0.628 | 0.719 | 0.795 | 0.186 |
-| C: random F=11 ascent | 0.811 | 0.805 | 0.903 | 0.721 |
+| A: F=10 ascent | 0.794 | 0.813 | 0.891 | 0.695 |
+| B: add facet + F=11 ascent | 0.609 | 0.722 | 0.869 | 0.123 |
+| C: random F=11 ascent | 0.816 | 0.814 | 0.887 | 0.728 |
 
-Paired A vs B: B wins only **1/10** seeds. Mean(B-A) = -0.161.
+Paired A vs B: B wins **0/10** seeds. Mean(B-A) = -0.185.
 
 **Interpretation:** Adding a thin facet to an un-optimized F=10 polytope and then optimizing is much **worse** than just optimizing in F=10 space. The thin-sliver facet creates a pathological starting point that the optimizer struggles with. In contrast, random F=11 polytopes (Path C) perform slightly better than F=10, showing that more facets do help — but only if the extra facet is structurally sound, not a thin sliver.
 
@@ -112,7 +111,6 @@ Paired A vs B: B wins only **1/10** seeds. Mean(B-A) = -0.161.
 1. Does iterating (F→F+1→F+2→...) keep improving, or does it plateau after one step?
 2. Would larger ε (deeper cuts) or gradient-informed placement (not random) improve RQ1 success rate?
 3. Does the improvement rate depend on F? (Currently only tested F=10→F=11.)
-4. The HKO2024 non-improvement: is this specific to Lagrangian products, or would other high-sys polytopes also resist F+1 improvement?
 
 ## Related experiments
 

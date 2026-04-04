@@ -26,7 +26,6 @@ use std::fs::{File, OpenOptions};
 use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::time::Instant;
 use symplectic::derivatives::{capacity_derivatives_a, volume_derivatives_a};
-use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::volume::volume;
@@ -599,14 +598,8 @@ fn main() {
     // Load local maxima from gradient-ascent-general
     let ga_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("gradient-ascent-general/gradient-ascent-general.jsonl");
-    let mut local_maxima = load_local_maxima(&ga_path);
-    println!("Loaded {} local maxima from gradient-ascent-general.", local_maxima.len());
-
-    // Add HKO2024
-    let hko = known_polytopes::hko_pentagon().polytope.clone();
-    let hko_sys = compute_sys(&hko).expect("HKO2024 sys");
-    local_maxima.push(("hko2024".to_string(), hko_sys, hko));
-    println!("Added HKO2024 (sys={hko_sys:.4}). Total: {} starting points.\n", local_maxima.len());
+    let local_maxima = load_local_maxima(&ga_path);
+    println!("Loaded {} local maxima from gradient-ascent-general.\n", local_maxima.len());
 
     let mut rq1_improved = 0usize;
     let mut rq1_total = 0usize;
