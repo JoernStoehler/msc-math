@@ -11,6 +11,7 @@ members = [
     "dev-capacity-validation",
     "dev-gradient",
     "dev-gradient-ascent",
+    "dev-tube",
     "crosspolytope",
     "visualization",
 ]

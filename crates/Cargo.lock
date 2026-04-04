@@ -476,6 +476,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "dev-tube"
+version = "0.1.0"
+dependencies = [
+ "nalgebra",
+ "symplectic",
+]
+
+[[package]]
 name = "either"
 version = "1.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
