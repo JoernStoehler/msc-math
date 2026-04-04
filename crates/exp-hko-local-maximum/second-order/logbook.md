@@ -133,6 +133,24 @@ HKO2024 satisfies:
 
 This constitutes strong numerical evidence for negative definiteness of the generalized Hessian on the 15D flat subspace, supporting that HKO2024 is a strict local maximum of sys among F=10 polytopes.
 
+### Conceptual discussion (2026-04-04)
+
+Discussion with Jörn clarified the mathematical structure. Key points:
+
+**Why flat directions form a subspace (not just a cone):**
+The Danskin directional derivative D_d⁺ sys = min_{i ∈ A} ⟨∇sys_i, d⟩ is piecewise linear in d (min of 150 linear functions). A direction is "flat" if this min equals 0, which a priori defines the boundary of the non-decreasing cone C = {d : ⟨∇sys_i, d⟩ ≥ 0 for all i ∈ A} — not necessarily a subspace. But Lemma `lem:cone-equals-kernel` (math.tex) shows C = ker(G) when two conditions hold: (a) 0 ∈ conv(gradients), and (b) rank(G_active) = rank(G_all). Condition (b) says the 26 LP-active orbits (those with λ_i > 0) span the same row space as all 150 orbits. Verified: both have rank 25. So C collapses to a 15D linear subspace.
+
+**No improving direction exists:**
+0 ∈ conv(gradients) means D_d⁺ sys ≤ 0 for every d ∈ R^40. Combined with C = ker(G): every direction either has D_d⁺ sys < 0 (the 25D complement of ker(G)) or D_d⁺ sys = 0 (the 15D flat subspace). There is no direction where sys increases to first order.
+
+**The rank condition does double duty:**
+It proves (1) flat directions form a subspace, and (2) no improving direction hides among "partially flat" directions where some but not all orbit inner products are positive. If the rank condition failed, a positive combination of flat directions could be an improving direction.
+
+**Basis curvature vs negative definiteness:**
+Measuring curvature on 15 basis vectors checks the diagonal of the Hessian restricted to ker(G), not negative definiteness. Off-diagonal terms could produce positive eigenvalues. The 100 random directions (Phase 3) address this gap probabilistically.
+
+Source: session transcript line ~300 onward.
+
 ### Limitations
 
 - Finite-difference curvatures have no rigorous error bounds
