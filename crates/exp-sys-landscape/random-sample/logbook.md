@@ -36,6 +36,8 @@ python3 analyze.py
 
 ## Findings
 
+![Systolic ratio vs facet count](random_sweep_sys_vs_f.png)
+
 1. **No polytope achieved sys > 1.** Maximum sys = 0.578 (at F=11). All 70 random polytopes remain well below the Viterbo threshold.
 
 2. **Median sys increases with F.** From 0.08 (F=5) to 0.48 (F=12). Spearman rho = 0.47. But within-F variance is large — spread from min to max is comparable to the median at each F. Median is non-monotone between adjacent F values.

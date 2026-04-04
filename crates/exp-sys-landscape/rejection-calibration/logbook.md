@@ -14,7 +14,7 @@ To probe Viterbo's conjecture computationally, we need large datasets of random 
 cargo run -p exp-sys-landscape --release --bin sys-rejection-calibration
 ```
 
-No Python script or figure. The .tex writeup uses a table directly from the JSONL data.
+No Python script or figure. Acceptance rate table is in this logbook (below).
 
 ### Files
 
@@ -22,7 +22,7 @@ No Python script or figure. The .tex writeup uses a table directly from the JSON
 |------|------|
 | `run.rs` | Rust binary: generates dataset |
 | `acceptance_sweep_test.rs` | Unit tests for the sweep function |
-| `math.tex` | Formal writeup (sampling procedure, boundedness proposition + proof, acceptance rate table) |
+| `math.tex` | Formal writeup (sampling procedure, boundedness proposition + proof) |
 | `acceptance.jsonl` | Dataset (18 rows: 6 facet counts x 3 height ranges) |
 
 ## Design
@@ -32,6 +32,19 @@ No Python script or figure. The .tex writeup uses a table directly from the JSON
 - **Facet counts:** F = 5, 6, 7, 8, 9, 10.
 - **Total configurations:** 18 (6 x 3).
 - **Seed:** 42 (deterministic).
+
+## Acceptance rate table
+
+(Source: acceptance.jsonl, 1000 attempts per configuration, seed 42)
+
+| F  | h ∈ [0.5, 2.0] | h ∈ [0.1, 5.0] | h ∈ [0.8, 1.2] |
+|----|-----------------|-----------------|-----------------|
+|  5 | 0.057           | 0.057           | 0.057           |
+|  6 | 0.168           | 0.162           | 0.170           |
+|  7 | 0.333           | 0.305           | 0.344           |
+|  8 | 0.450           | 0.371           | 0.506           |
+|  9 | 0.488           | 0.332           | 0.602           |
+| 10 | 0.504           | 0.282           | 0.729           |
 
 ## Findings
 

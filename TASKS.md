@@ -33,14 +33,7 @@ Depends on: Jörn decides which side to fix for each item.
 
 ## math.tex content audit
 
-**Status (2026-04-02):** 15 experiment math.tex files contain `\includegraphics` or `\begin{table}` alongside proofs. Convention (`.claude/rules/math-tex.md`): math.tex is for proofs/definitions/derivations only; empirical figures and tables go in logbook.md.
-
-**Affected files (all under `crates/`):**
-visualization, dev-numerical-analysis/kkt-inertia, dev-numerical-analysis/q-error, exp-sys-landscape/rotated-regular-products, exp-hko-local-maximum/perturbation-neighborhood, exp-combinatorial-cells/omega-hypothesis, dev-capacity-validation/orbit-recovery, dev-capacity-validation/correctness, exp-sys-landscape/rejection-calibration, exp-sys-landscape/random-sample, exp-sys-landscape/random-product-sample, dev-algorithm-comparison/ablation, crosspolytope
-
-**Fix:** For each file: cut figures/tables/empirical-result text from math.tex, paste into logbook.md (as markdown tables and `![](image.png)` references). Mechanical — parallelize with one subagent per file.
-
-**Priority:** Low — doesn't block anything, but makes math.pdf noisy and violates convention.
+**Status (2026-04-04): Done.** All 13 experiment math.tex files audited. Empirical figures and tables moved to logbook.md (or confirmed already present). 9 pure-empirical files stubbed; 4 mixed files surgically trimmed (proofs kept, empirical content removed). math.pdf compiles clean (42 pages). Net -1142 lines across 20 files.
 
 ---
 

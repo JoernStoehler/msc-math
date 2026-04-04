@@ -1,22 +1,20 @@
-% math.tex — \input'd from thesis/experiments.tex
+% math.tex — \input'd by root math.tex
 %
-% Rejection sampling pipeline for generating random bounded irredundant
-% 4-polytopes. Contains a self-contained proposition + proof for the
-% boundedness characterization (Proposition~\ref{prop:boundedness-iff}).
+% Boundedness characterization for rejection sampling of random 4-polytopes.
+% Contains the sampling procedure and Proposition~\ref{prop:boundedness-iff}
+% with proof.
 %
 % Sources:
 %   - Proposition and proof: standard convex geometry (recession cones,
 %     positive span). Proof written by Claude, reviewed by Jörn.
-%   - Acceptance rate data: real code execution (validation.rs).
-%   - Experiment notes: crates/exp-sys-landscape/rejection-calibration/logbook.md
+%   - Empirical acceptance rates: logbook.md (moved from here)
 %
 % Structure:
 %   - Sampling procedure (halfspace representation, 4-step validation)
 %   - Proposition: bounded iff (span R^4) and (all triples pass)
 %   - Proof: recession cone ↔ bounded, positive span ↔ (i)+(ii)
-%   - Acceptance rate sweep (table + observations)
 
-% Jörn: text approved (57e73d9) — from \subsection{Rejection sampling} to "Acceptance rate sweep"
+% Jörn: text approved (57e73d9) — sampling procedure + proposition + proof
 \subsection{Rejection sampling acceptance rates}
 \label{sec:rejection-calibration}
 
@@ -173,64 +171,3 @@ $a_\ell \cdot d \le 0$ for all~$\ell$.  In particular, no dual vertex has positi
 inner product with~$d$, so triple~$(i,j,k)$ fails condition~\textup{(ii)}.
 \end{proof}
 \end{unverified}
-
-\subsubsection*{Acceptance rate sweep}
-
-We measured acceptance rates across a grid of parameters: facet
-counts~$F \in \{5, 6, \ldots, 10\}$ and three height
-ranges~$[h_{\min}, h_{\max}]$, from narrow ($[0.8, 1.2]$, heights nearly
-equal) to wide ($[0.1, 5.0]$, heights spanning a 50$\times$ range). For each
-of the $6 \times 3 = 18$ configurations, 1000~independent attempts were made
-with a deterministic random seed.
-
-\begin{table}[ht]
-\centering
-\begin{tabular}{r ccc}
-\toprule
-& \multicolumn{3}{c}{Acceptance rate} \\
-\cmidrule(lr){2-4}
-$F$ & $h \in [0.5, 2.0]$ & $h \in [0.1, 5.0]$ & $h \in [0.8, 1.2]$ \\
-\midrule
- 5 & 0.057 & 0.057 & 0.057 \\
- 6 & 0.168 & 0.162 & 0.170 \\
- 7 & 0.333 & 0.305 & 0.344 \\
- 8 & 0.450 & 0.371 & 0.506 \\
- 9 & 0.488 & 0.332 & 0.602 \\
-10 & 0.504 & 0.282 & 0.729 \\
-\bottomrule
-\end{tabular}
-\caption{Acceptance rates for rejection sampling of random 4-polytopes
-  with~$F$ facets. Each cell reports the fraction of 1000 attempts that passed
-  all validation checks.}
-\label{tab:acceptance-rates}
-\end{table}
-
-\subsubsection*{Observations}
-
-\paragraph{Acceptance increases with~$F$ for narrow height ranges.}
-For~$h \in [0.8, 1.2]$, the rate climbs from~5.7\% at~$F = 5$ to~72.9\%
-at~$F = 10$. More facets provide more directions to ``close off'' the
-polytope, making boundedness easier to satisfy.
-
-\paragraph{Acceptance is insensitive to height range at low~$F$.}
-At~$F = 5$, all three height ranges give exactly the same rate (5.7\%).
-This is not a coincidence: with only~5 facets, most random normal
-configurations fail the boundedness check regardless of the heights chosen.
-Since boundedness depends only on the normal directions, varying the height
-range has no effect.
-% The same seed produces the same normals for all three h-ranges of a given F.
-% Identical acceptance at F=5 confirms that rejection is dominated by the
-% boundedness check (which is height-independent), not irredundancy.
-
-\paragraph{Wide height ranges hurt at high~$F$.}
-At~$F = 10$, the rate drops from 72.9\% (for $h \in [0.8, 1.2]$) to 28.2\%
-(for $h \in [0.1, 5.0]$). With~10 facets, boundedness is almost always
-satisfied, so the irredundancy check becomes the bottleneck. When heights vary
-over a wide range, some facets end up with too few incident vertices to span
-a 3-dimensional face, causing rejection.
-
-\paragraph{Practical consequence.}
-For building datasets with~$F \ge 7$ and moderate height ranges, rejection
-sampling is efficient (acceptance~$\ge 30\%$). Even the worst case ($F = 5$,
-5.7\% acceptance) requires only~${\sim}18$ attempts per accepted polytope,
-which is practical for datasets of a few thousand samples.
