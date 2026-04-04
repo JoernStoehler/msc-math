@@ -476,9 +476,9 @@ fn try_pseudoinverse_with_threshold(
 
     // [lem:well-defined]: Q is invariant along the true null space, so compute
     // Q from the pseudoinverse beta0, not from the LP-shifted beta_final.
-    // TODO: the claim "approximate null shifts cause O(alpha^2 |lambda_j|)
-    // Q drift that is spurious. beta_final is only used for feasibility (margin
-    // classification) and downstream beta values (orbit reconstruction, gradients).
+    // Q is computed from beta0 (pseudoinverse solution), not beta_final (LP-shifted).
+    // beta_final is only used for feasibility (margin classification) and downstream
+    // beta values (orbit reconstruction, gradients).
     Some(match finalize_result(&beta0_ref, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info) {
         KktOutcome::Feasible(mut result) => {
             result.beta = beta_final;
