@@ -93,6 +93,20 @@ Sadly ∂²sys(K)/∂K² would be too high-dimensional and require new methods, 
 
 ---
 
+## Crosspolytope capacity: mathematical optimality proof
+
+The minimizing orbit for c_EHZ(crosspolytope) = 4.0 has unusually clean structure:
+- β = (0.25, 0.25, 0.25, 0.25) — uniform weights
+- All 4 transition edges have ω₀ = +1.0 — the maximum possible value
+- Subset {0, 3, 12, 15} consists of two antipodal pairs (0↔15, 3↔12)
+- Permutation [0, 12, 15, 3] visits the pairs alternately
+
+This high symmetry suggests a proof that the m=4 orbit is globally optimal might be easier than exhaustive enumeration of m=14-16 (which takes hours and only gives numerical verification, not a proof). A symmetry argument could show that any orbit with m>4 facets or with non-uniform β has strictly larger action.
+
+**Source:** observed during crosspolytope Phase 2 (2026-04-04), checkpoint data in `crates/crosspolytope/logbook.md`.
+
+---
+
 ## Symplectic classification of simplices
 
 **Source:** Fickel (supervised by Cieliebak, Augsburg). Two 2n-simplices are equivalent under affine symplectomorphism iff their 2-dimensional subsimplices have identical symplectic areas.
