@@ -19,7 +19,7 @@ cargo run -p exp-hko-local-maximum --release --bin hko-second-order
 cd crates/exp-hko-local-maximum/second-order && python3 analyze.py
 ```
 
-Total runtime: ~20 seconds.
+Total runtime: ~60s (Phase 1: 0.4s, Phase 2: 18s, Phase 3: 41s).
 
 ## Files
 
@@ -104,7 +104,8 @@ Phase 3 samples 100 random unit directions in the 15D flat subspace (uniform on 
 - **100/100 negative**, 0 ambiguous, 0 positive
 - Worst (most positive) curvature: −0.060
 - Mean: −0.167, std: 0.052
-- Runtime: ~41s (800 capacity evaluations)
+- Per-direction time: 283–560ms, mean 405ms (second-order-random.jsonl time_ms field)
+- Total Phase 3: 40.5s (800 capacity evaluations)
 
 Combined with the 15 basis directions, this gives strong numerical evidence for negative definiteness.
 

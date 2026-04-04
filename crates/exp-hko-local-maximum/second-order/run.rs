@@ -511,6 +511,7 @@ struct RandomDirectionRow {
     curvatures_by_eps: Vec<f64>,
     /// The random direction as coefficients in the flat basis (for reproducibility).
     flat_basis_coefficients: Vec<f64>,
+    time_ms: f64,
 }
 
 fn run_phase3(
@@ -534,6 +535,7 @@ fn run_phase3(
     let mut worst_curvature = f64::NEG_INFINITY;
 
     for dir_idx in 0..N_RANDOM_DIRECTIONS {
+        let t_dir = Instant::now();
         // Generate random coefficients
         let coeffs: Vec<f64> = (0..n_flat).map(|_| rng.gen_range(-1.0..1.0)).collect();
         let norm_coeffs: f64 = coeffs.iter().map(|c| c * c).sum::<f64>().sqrt();
@@ -580,6 +582,7 @@ fn run_phase3(
             curvature: median,
             curvatures_by_eps: curvatures,
             flat_basis_coefficients: normalized_coeffs,
+            time_ms: t_dir.elapsed().as_secs_f64() * 1000.0,
         };
         serde_json::to_writer(&mut *writer, &row).expect("write random row");
         writeln!(writer).expect("newline");
