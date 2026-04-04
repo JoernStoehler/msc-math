@@ -372,17 +372,17 @@ mod tests {
 
     /// Both solvers agree on capacity for the simplex.
     #[test]
-    #[ignore] // Depends on algorithms::hk2017 (wave 3)
+    #[ignore] // Test body not implemented — needs cross-solver comparison logic
     fn capacity_agrees_on_simplex() {
-        // TODO: Once algorithms::hk2017::ehz_capacity is available (wave 3),
-        // this test should compare augmented and projection solver results.
+        // TODO: Implement cross-solver comparison: run both augmented-system and
+        // projection solver on the simplex, verify they agree on capacity.
     }
 
     /// Both solvers agree on capacity for the hypercube.
     #[test]
-    #[ignore] // Depends on algorithms::hk2017 (wave 3)
+    #[ignore] // Test body not implemented — needs cross-solver comparison logic
     fn capacity_agrees_on_hypercube() {
-        // TODO: Uncomment when algorithms::hk2017 is available.
+        // TODO: Implement cross-solver comparison for the hypercube.
     }
 
     /// Projection solver finds positive Q on simplex with exhaustive search over

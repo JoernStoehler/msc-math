@@ -1304,7 +1304,7 @@ mod tests {
     // ── Cross-validation with HK2017 ──
 
     #[test]
-    #[ignore] // Depends on hk2017 module (wave 3)
+    #[ignore] // Some polytopes trigger large Q error bounds in hk2017 (see TASKS.md verify-numerics)
     fn tube_agrees_with_hk2017_on_all_symplectic() {
         use crate::algorithms::hk2017::ehz_capacity;
 
