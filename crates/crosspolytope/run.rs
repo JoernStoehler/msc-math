@@ -42,12 +42,14 @@ const SVD_CONDITION_TAU: f64 = 1e-3;
 const EPS_KKT_RESIDUAL: f64 = 1e-6;
 
 /// Maximum subset size to search. The full crosspolytope has F=16, so m ranges
-/// from 2 to 16. Subset sizes m=13..16 have very large permutation counts
-/// ((m-1)! cyclic orderings to explore), making exhaustive search infeasible
-/// within session time limits. m=12 is the largest size completing in ~4.6 minutes;
-/// m=13 alone takes ~8 minutes. Since the best action is found at m=4 and
-/// actions generally increase with m, stopping at m=12 is likely sufficient (unproven).
-const MAX_SUBSET_SIZE: usize = 12;
+/// from 2 to 16. Empirical timing (2026-04-04, devcontainer release mode):
+/// m=2..13 completes in 1113s / 31.8M iterations. Per-m growth factor declines
+/// from 4.3x (m=9) to 2.3x (m=13). m=14..16 not attempted (few canonical
+/// subsets but deep DFS; hours of compute for diminishing confidence).
+/// Since the best action is found at m=4 and actions generally increase with m,
+/// stopping at m=13 gives high confidence (unproven) that c_EHZ = 4.0.
+/// If changed: re-run binary and update timing, verify best action still at m=4.
+const MAX_SUBSET_SIZE: usize = 13;
 
 // ── KKT solver (copied from crates/library/src/kkt.rs) ─────────────────────────────
 

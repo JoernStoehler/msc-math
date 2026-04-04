@@ -105,7 +105,7 @@ The thesis is currently a dump of results, not a coherent narrative. Experiments
 - What depth does each experiment need in the thesis? (full section / brief mention / appendix / omit)
 
 **Known gaps:**
-- `crosspolytope` Phase 2 TODO: update known_polytopes.rs (tracked in its logbook)
+- `crosspolytope` Phase 2 done (2026-04-04): smoke test `crosspolytope_upper_bound()` added, search extended to m=13
 - `crates/exp-hko-local-maximum/subdifferential-lp/` Phase C (2026-03-23) verified first-order necessary condition for local max in F=10 (n,h)-space via LP. See `hko-local-maximality` task for next steps.
 
 **Gradient experiment redesign (2026-03-26, Jörn; cleanup 2026-04-03):** The old gradient experiments (`sys-optimization`/sensitivity-analysis, `gradient-descent`/large-scale-descent, `gradient-search`) were superseded and deleted. Derivative lemmas relocated to `crates/library/src/algorithms/math.tex`. Three current experiments:
