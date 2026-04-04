@@ -10,7 +10,7 @@ The run.rs binary also produces gradient data used by `gradient-discontinuity/`.
 
 ## Status
 
-**Complete (2026-03-27).** 140 polytopes, 980 anatomy rows, 873 crossing rows, 873 gradient rows, 8 figures. Split into standalone experiment.
+**Complete (2026-03-27).** 140 polytopes, 980 anatomy rows, 882 crossing rows, 882 gradient rows, 8 figures. Split into standalone experiment.
 
 ## How to run
 
@@ -32,9 +32,9 @@ python3 analyze.py
 
 ### RQ2: sys is continuous; orbits switch at 3% of boundaries
 
-sys is continuous at all 873 tested boundaries: max |delta_sys| = 2.91e-4 (crossing JSONL, boundary_sys_continuity.png).
+sys is continuous at all 882 tested boundaries: max |delta_sys| = 2.91e-4 (crossing JSONL, boundary_sys_continuity.png).
 
-Orbit switch rate: 26/873 (3.0%).
+Orbit switch rate: 26/882 (2.9%).
 
 ### RQ4: Boundary density
 
