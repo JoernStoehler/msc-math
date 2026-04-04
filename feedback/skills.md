@@ -20,84 +20,8 @@ During the cross-reference audit session, ExitPlanMode tool returned "User has a
 
 This is a platform/tool bug — the tool result was factually wrong. The agent should not blindly trust ExitPlanMode's result if the interaction felt ambiguous or if the user's preceding messages suggested disapproval.
 
-### 2026-03-30 — Post-mortem template says "Save to" test-tasks/ without format guidance
-
-Post-mortem skill template section 6 (regression test candidate) says:
-
-> Extract: the context the agent had, the user message, what happened (good or bad), what the correct behavior is. Save to `.claude/skills/test-workflow/references/test-tasks/`.
-
-Agent followed "Save to" literally and wrote a test case file without checking existing files in that directory for format conventions. Jörn rejected it: "That is not a valid test case. You are not knowledgeable about creating test cases."
-
-**Suggestion:** The template should say something like "Note the candidate for a future /test-workflow session" instead of "Save to" — or at minimum say "check existing test cases for format before writing."
-
-### 2026-03-30 — Pre-merge checklist didn't catch worktree violation
-
-Agent ran /pre-merge after committing directly to main (violating explicit "Work in a worktree" instruction). The pre-merge report said "nothing needs Jörn's review" without flagging that the process instruction had been violated. Jörn said "Merge" based on the clean report, then discovered the problem.
-
-The pre-merge skill checks builds, tests, data freshness, content, and TASKS.md — but doesn't check whether the work was done according to process instructions (worktree, branch naming, etc.). A "process compliance" check — "Did you follow the instructions in the original prompt?" — would have caught this.
-
-**Suggestion:** Add a check to pre-merge: "Were all explicit process instructions from the task prompt followed? (worktree, branch name, commit conventions, etc.)"
-
-### 2026-04-01 — Pre-merge content checks not linked to review subagents
-
-Agent ran /pre-merge and handled content checks ("All new factual claims verified", "New math.tex content has proofs", "Logbook entries cite sources inline") by grepping for "GAP" and eyeballing a few lines. Didn't launch any review subagents despite CLAUDE.md saying "Use review agents proactively before presenting work" and despite review-proof, review-claims, review-formalization agents existing for exactly these checks. Only launched them after Jörn asked about it.
-
-**Root cause:** The pre-merge skill lists content checks as a checklist but doesn't say how to do them. The agent defaulted to shallow manual checking instead of using the purpose-built review agents. The connection between "verify factual claims" and "launch review-claims agent" wasn't made.
-
-**Suggestion:** Pre-merge content checks section should explicitly say which review subagents to launch:
-- "All new factual claims verified" → launch review-claims on logbook.md and any files with new claims
-- "New math.tex content has proofs" → launch review-proof on math.tex
-- "Cross-references resolve" → launch review-formalization on the module
-- Run these as parallel background agents while doing the bash build/test checks
-
 ### 2026-04-02 — Pre-merge skill text had stale paths during session
 
 The pre-merge skill shown to the agent after `/pre-merge` still referenced `cd crates/` and `cd experiments/` — the old paths — even though the skill file itself had been updated earlier in the session (by a subagent). This is likely because the skill content was loaded from the SKILL.md file at invocation time and the subagent's edit happened within the same session. The agent adapted and ran the right commands anyway, but a less experienced agent might have followed the stale instructions.
 
 **Not actionable as a skill fix** — this was a one-time issue caused by editing the skill file and then invoking it in the same session. The skill file is now correct.
-
-### 2026-04-02 — Mechanical experiment fixes should check whether experiment is active
-
-Post-migration audit fixed 8 broken experiment binaries via subagents. One of them (`gradient-search`) is superseded by `sys-search` (documented in TASKS.md 100 lines below the gradient-search section). Neither the main agent nor the subagent checked whether the experiment was still active before fixing it. Jörn caught it.
-
-**Suggestion:** When fixing experiment code mechanically (API migration, import updates), check TASKS.md and the experiment's logbook.md for supersession/deprecation status before presenting the fix as meaningful work. A 30-second read avoids presenting stale work to Jörn.
-
-### 2026-04-03 — Worktree isolation blocks hook/agent testing in create-workflow
-
-Session: building session-search agent + PostToolUse hook. Both were created in a worktree. Neither worked until merged to main:
-- Agent type `session-search` wasn't available for spawning (agent definitions resolve from main project dir)
-- PostToolUse hook with Agent matcher didn't fire (settings.json read from main, not worktree)
-
-Had to merge first, test after. This means `/create-workflow` and `/test-workflow` can't iterate on hook/agent behavior within a worktree — you must merge to main or temporarily edit main's files.
-
-**Affects:** create-workflow, test-workflow, any session that adds new agent types or hook entries.
-
-### 2026-04-03 — Pre-merge skipped thesis build and TASKS.md update
-
-Agent ran /pre-merge and executed `cargo test`, `cargo clippy`, `cargo build --workspace`, and `pdflatex math.tex`. But skipped two mandatory checklist items:
-
-1. `cd thesis/ && latexmk && ./check-build.sh` — skipped with rationale "no thesis changes in this branch." The checklist says "All must pass" without exceptions.
-2. TASKS.md update — didn't mark anything completed or add to Completed section.
-
-Both were listed explicitly in the pre-merge skill output. The agent selectively followed the checklist.
-
-**What should have happened:** Run every checklist item. If an item doesn't apply, run it anyway to confirm (takes seconds). For TASKS.md, either update it or explicitly note "no TASKS.md entries to update" in the report.
-
-Additionally, no review subagents were launched (review-formalization, review-proof, review-claims) despite the 2026-04-01 feedback entry explicitly calling this out as a gap. The split math.tex files have cross-references that should have been verified.
-
-**Pattern:** Checklist items skipped based on agent judgment ("no thesis changes", "just a restructure"). Same class as 2026-03-30 "Pre-merge checklist didn't catch worktree violation" and 2026-04-01 "Pre-merge content checks not linked to review subagents" — the agent treats the checklist as advisory rather than mandatory. Three incidents of the same class.
-
-### 2026-04-03 — Agent used known-broken skill without checking feedback
-
-What happened: Agent ran /pre-merge on a 200-file restructure that created 10 new run.rs files. The pre-merge skill has no .rs review step and no subagent launches. Three prior feedback entries in this file (2026-04-01 content checks, 2026-03-30 worktree violation, 2026-04-01 review subagents) describe these exact gaps with concrete fix suggestions. The agent:
-
-1. Ran the skill as-is without reading feedback/skills.md for known issues
-2. Didn't notice the skill lacks .rs review despite this session producing 10 new .rs files
-3. Self-certified content checks without launching any review subagents
-4. Presented work as "verified" to Jörn
-
-The feedback entries have been sitting for 2-5 days. No agent in any session has acted on them to improve the skill.
-
-What should have happened: Before running a skill, check its feedback file for known issues. If feedback describes concrete gaps relevant to the current work, either fix the skill first or manually compensate. For a 200-file restructure with 10 new .rs files, the absence of .rs review is not a minor gap — it's the primary risk.
-
-**Pattern:** Two failures: (1) using a tool without reading its known issues (same class as not reading math.tex before editing .rs — the rule exists for code, should apply to skills too); (2) systemic: feedback accumulates without being incorporated into skills. No session checks "does this skill have unaddressed feedback?" before using it.
