@@ -54,10 +54,39 @@ The binary cannot use the library's public API because it lacks hooks for symmet
 ### Search completeness
 
 Exhaustive through m=13 (2026-04-04 rerun with MAX_SUBSET_SIZE=13). Subset sizes m=14..16 skipped:
-- m=14 has only 6 canonical subsets but depth-13 DFS per subset; estimated ~30-60 min
+- m=14 has only 6 canonical subsets but depth-13 DFS per subset
 - m=15-16 would take hours; diminishing returns vs. a mathematical optimality argument
 - The best action is found at m=4, and actions generally increase with m
 - High confidence but not proven that m=14..16 agree
+
+### Per-m scaling data (2026-04-04, devcontainer release mode)
+
+Transition graph: directed, vertex adjacency AND ω₀(nᵢ,nⱼ) ≥ 0. Uniform out-degree 9.
+
+| m  | C(16,m) | canonical | adj_perms   | kkt_solutions | time (s) | growth (iters) |
+|----|---------|-----------|-------------|---------------|----------|----------------|
+| 2  | 120     | 6         | 2           | 0             | 0.00     | —              |
+| 3  | 560     | 21        | 7           | 0             | 0.00     | —              |
+| 4  | 1820    | 68        | 65          | 5             | 0.00     | —              |
+| 5  | 4368    | 147       | 313         | 11            | 0.01     | 4.8x           |
+| 6  | 8008    | 270       | 1,790       | 88            | 0.04     | 5.7x           |
+| 7  | 11440   | 375       | 9,158       | 254           | 0.17     | 5.1x           |
+| 8  | 12870   | 431       | 45,899      | 950           | 0.89     | 5.0x           |
+| 9  | 11440   | 375       | 196,468     | 2,518         | 4.37     | 4.3x           |
+| 10 | 8008    | 270       | 793,361     | 6,867         | 20.11    | 4.0x           |
+| 11 | 4368    | 147       | 2,674,709   | 12,673        | 76.65    | 3.4x           |
+| 12 | 1820    | 68        | 8,492,172   | 31,617        | 278.34   | 3.2x           |
+| 13 | 560     | 21        | 19,565,504  | 43,756        | 732.18   | 2.3x           |
+
+Total: 31,779,448 adj_perms evaluated, 1112.8s elapsed.
+
+The iteration growth factor declines ~0.4/step from m=9 onward.
+Exact adjacent cycle counts (all subsets, no symmetry) for m=2..11 were computed
+independently via Python DFS and match after applying the ~30x symmetry factor.
+
+For m=14-16 feasibility: C(16,14)=120 (6 canonical), C(16,15)=16 (~2 canonical),
+C(16,16)=1. The per-canonical-subset DFS work grows sharply with depth, so total
+time is dominated by the few large subsets despite small canonical counts.
 
 ## Findings
 
