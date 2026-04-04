@@ -8,6 +8,7 @@ members = [
     "crates/dev-numerical-analysis",
     "crates/dev-capacity-validation",
     "crates/dev-gradient",
+    "crates/dev-gradient-ascent",
     "crates/crosspolytope",
     "crates/visualization",
 ]
