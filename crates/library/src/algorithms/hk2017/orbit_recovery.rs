@@ -451,7 +451,8 @@ mod tests {
 
     // crosspolytope orbit recovery is tested in crosspolytope_upper_bound()
     // (hk2017/mod.rs) via a direct KKT solve on the known permutation, avoiding
-    // the ~4 hour ehz_capacity() call that test_recovery() would require.
+    // the ehz_capacity() call that test_recovery() would require (F=16 is
+    // infeasible for the library's unpruned/pruned algorithm).
 
     /// Recover orbit for the HKO pentagon (F=10).
     ///

@@ -345,6 +345,81 @@ mod tests_literature {
         );
     }
 
+    /// Verify the known minimizing orbit of the 4D crosspolytope gives action = 4.0.
+    ///
+    /// This is a fast certificate test (single KKT solve + orbit recovery, ~ms).
+    /// It proves c_EHZ(crosspolytope) ≤ 4.0 by exhibiting a feasible orbit with
+    /// action 4.0. The full enumeration proving c_EHZ = 4.0 (minimum over all
+    /// orbits) was done by `crates/crosspolytope/run.rs` using symmetry-reduced
+    /// exhaustive search (see that crate's logbook for search completeness details).
+    ///
+    /// Known minimizing orbit: subset {0, 3, 12, 15}, permutation [0, 12, 15, 3],
+    /// β = (0.25, 0.25, 0.25, 0.25). All transition edges have ω₀ = +1.0.
+    #[test]
+    fn crosspolytope_upper_bound() {
+        use crate::kkt::saddle_point_solver::KktOutcome;
+        use crate::algorithms::hk2017::orbit_recovery::recover_and_verify;
+        use crate::algorithms::capacity_accumulator::CapacityResult;
+
+        let kp = known_polytopes::crosspolytope();
+        assert_eq!(kp.capacity, 4.0);
+
+        // Solve KKT for the known minimizing permutation [0, 12, 15, 3].
+        let perm = [0usize, 12, 15, 3];
+        let outcome = solve_kkt_for(&kp.polytope, &perm);
+
+        let kkt_result = match outcome {
+            KktOutcome::Feasible(r) => r,
+            other => panic!("expected Feasible, got {:?}", other),
+        };
+
+        // Verify β ≈ (0.25, 0.25, 0.25, 0.25).
+        for (k, &b) in kkt_result.beta.iter().enumerate() {
+            assert!(
+                (b - 0.25).abs() < 1e-10,
+                "beta[{k}] = {b}, expected 0.25"
+            );
+        }
+
+        // Verify action = 0.5 / Q ≈ 4.0.
+        let action = 0.5 / kkt_result.q_corrected;
+        assert!(
+            (action - 4.0).abs() < 1e-8,
+            "action = {action}, expected 4.0"
+        );
+
+        // Orbit recovery: construct EhzResult and verify geometric validity.
+        let ehz_result = EhzResult {
+            result: CapacityResult {
+                capacity: action,
+                capacity_uncertain: action,
+                best_permutation: perm.to_vec(),
+                best_beta: kkt_result.beta.clone(),
+                iterations: 1,
+            },
+            best_subset: vec![0, 3, 12, 15],
+        };
+
+        let recovery = recover_and_verify(&kp.polytope, &ehz_result)
+            .expect("orbit recovery failed");
+
+        assert!(
+            recovery.closure_error < 1e-8,
+            "closure error {:.2e} too large",
+            recovery.closure_error
+        );
+        assert!(
+            recovery.max_violation < 1e-6,
+            "max violation {:.2e} too large",
+            recovery.max_violation
+        );
+        assert!(
+            (recovery.action - 4.0).abs() < 1e-8,
+            "recovered action = {}, expected 4.0",
+            recovery.action
+        );
+    }
+
     // ── Fixture-based tests ──
 
     /// Verify polytope_catalog() is deterministic (same seed -> same polytopes).
@@ -1216,81 +1291,6 @@ mod tests_regression {
         assert!(sys > 1.0, "pentagon should have sys > 1, got {}", sys);
     }
 
-    /// Verify the known minimizing orbit of the 4D crosspolytope gives action = 4.0.
-    ///
-    /// This is a fast certificate test (single KKT solve + orbit recovery, ~ms).
-    /// It proves c_EHZ(crosspolytope) ≤ 4.0 by exhibiting a feasible orbit with
-    /// action 4.0. The full enumeration proving c_EHZ = 4.0 (minimum over all
-    /// orbits) was done by `crates/crosspolytope/run.rs` using symmetry-reduced
-    /// exhaustive search (see that crate's logbook for search completeness details).
-    ///
-    /// Known minimizing orbit: subset {0, 3, 12, 15}, permutation [0, 12, 15, 3],
-    /// β = (0.25, 0.25, 0.25, 0.25). All transition edges have ω₀ = +1.0.
-    #[test]
-    fn crosspolytope_upper_bound() {
-        use crate::geom::known_polytopes;
-        use crate::kkt::saddle_point_solver::KktOutcome;
-        use crate::algorithms::hk2017::orbit_recovery::recover_and_verify;
-        use crate::algorithms::capacity_accumulator::CapacityResult;
-
-        let kp = known_polytopes::crosspolytope();
-        assert_eq!(kp.capacity, 4.0);
-
-        // Solve KKT for the known minimizing permutation [0, 12, 15, 3].
-        let perm = [0usize, 12, 15, 3];
-        let outcome = solve_kkt_for(&kp.polytope, &perm);
-
-        let kkt_result = match outcome {
-            KktOutcome::Feasible(r) => r,
-            other => panic!("expected Feasible, got {:?}", other),
-        };
-
-        // Verify β ≈ (0.25, 0.25, 0.25, 0.25).
-        for (k, &b) in kkt_result.beta.iter().enumerate() {
-            assert!(
-                (b - 0.25).abs() < 1e-10,
-                "beta[{k}] = {b}, expected 0.25"
-            );
-        }
-
-        // Verify action = 0.5 / Q ≈ 4.0.
-        let action = 0.5 / kkt_result.q_corrected;
-        assert!(
-            (action - 4.0).abs() < 1e-8,
-            "action = {action}, expected 4.0"
-        );
-
-        // Orbit recovery: construct EhzResult and verify geometric validity.
-        let ehz_result = EhzResult {
-            result: CapacityResult {
-                capacity: action,
-                capacity_uncertain: action,
-                best_permutation: perm.to_vec(),
-                best_beta: kkt_result.beta.clone(),
-                iterations: 1,
-            },
-            best_subset: vec![0, 3, 12, 15],
-        };
-
-        let recovery = recover_and_verify(&kp.polytope, &ehz_result)
-            .expect("orbit recovery failed");
-
-        assert!(
-            recovery.closure_error < 1e-8,
-            "closure error {:.2e} too large",
-            recovery.closure_error
-        );
-        assert!(
-            recovery.max_violation < 1e-6,
-            "max violation {:.2e} too large",
-            recovery.max_violation
-        );
-        assert!(
-            (recovery.action - 4.0).abs() < 1e-8,
-            "recovered action = {}, expected 4.0",
-            recovery.action
-        );
-    }
 }
 
 // Tests for hk2017: conformality property c(alpha*K) = alpha^2 * c(K).
