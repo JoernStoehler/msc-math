@@ -42,9 +42,14 @@ use symplectic::random::sample_random_polytope;
 const SEED: u64 = 43;
 
 /// Number of random facet placements per F=10 local max in RQ1.
+/// 5 per source: enough to detect improvement if it occurs at ≥20% rate
+/// (binomial P(0/5) = 33% miss rate). Increase for higher-confidence
+/// improvement rates.
 const N_PLACEMENTS_RQ1: usize = 5;
 
 /// Number of random starting polytopes for RQ2.
+/// 10 seeds: matches gradient-ascent-general. Increase for tighter
+/// confidence intervals on mean sys.
 const N_SEEDS_RQ2: usize = 10;
 
 /// Base facet count.
@@ -55,9 +60,11 @@ const H_MIN: f64 = 0.8;
 const H_MAX: f64 = 1.2;
 
 /// Depth parameter for facet addition: a_{F+1} = n / (h_K(n) - ε).
-/// Same as facet-splitting experiment. Small enough that the (F+1)-polytope
+/// 1e-3 used in facet-splitting experiment (SPLITTING_EPSILONS range
+/// [1e-3, 1e-4]). Chosen as upper end: small enough that the (F+1)-polytope
 /// is close to the F-polytope; large enough that the new facet is robustly
-/// non-redundant at f64 precision.
+/// non-redundant at f64 precision. If changed, verify that Polytope4D
+/// construction doesn't produce RedundantFacet errors at smaller ε.
 const FACET_EPSILON: f64 = 1e-3;
 
 // --- Gradient ascent parameters (copied from gradient-ascent-general) ---
@@ -65,7 +72,9 @@ const FACET_EPSILON: f64 = 1e-3;
 /// Maximum gradient ascent iterations per phase.
 const MAX_ITERATIONS: usize = 30;
 
-/// Minimum improvement per iteration to continue.
+/// Minimum improvement per iteration to continue. Well above f64 noise
+/// (~1e-15) but small enough to capture meaningful steps. Matches
+/// gradient-ascent-general. If changed, re-check convergence rates.
 const CONVERGENCE_THRESHOLD: f64 = 1e-6;
 
 /// Step fractions of t_max for within-bound line search.
@@ -80,16 +89,23 @@ const MAX_STEP_SIZE: f64 = 100.0;
 /// Number of random dual-vertex perturbations per escape round.
 const N_WIGGLES: usize = 5;
 
-/// ~5% perturbation of dual vertex components.
+/// ~5% perturbation of dual vertex components. Small enough to stay near the
+/// current optimum, large enough to cross combinatorial boundaries.
+/// Inherited from gradient-ascent-general (unjustified, see
+/// dev-gradient-ascent/strategy-comparison for planned calibration).
 const WIGGLE_STRENGTH: f64 = 0.05;
 
 /// Maximum rounds of escape attempts after convergence.
 const MAX_ESCAPE_ROUNDS: usize = 3;
 
-/// Per-trial time budget. 180s for F=11 (more orbits than F=10).
+/// Per-trial time budget. 180s is 1.5x gradient-ascent-general's 120s,
+/// accounting for F=11 having ~1.5x more orbits than F=10
+/// (C(11,4)/C(10,4) = 330/210 ≈ 1.57). Initial run (2026-04-04):
+/// max trial time was ~59s, so 180s is generous.
 const TRIAL_TIME_BUDGET_SECS: f64 = 180.0;
 
-/// Numerical zero threshold.
+/// Numerical zero threshold for gradient norms, rates, and slack comparisons.
+/// Near machine epsilon for unit-scale f64. Matches gradient-ascent-general.
 const EPS: f64 = 1e-15;
 
 // ============================================================================
@@ -140,6 +156,10 @@ struct GradientAscentRow {
 // Step bound in a-space (copied from gradient-ascent-general)
 // ============================================================================
 
+/// Maximum step t > 0 along direction d_k in dual-vertex space before the
+/// combinatorial type changes. See gradient-ascent-general/run.rs for the
+/// full derivation.
+// TODO: add [lem:step-bound-a] to math.tex (see combinatorial-boundaries experiment)
 fn compute_step_bound_a(polytope: &Polytope4D, direction: &[Vector4<f64>]) -> f64 {
     let duals = polytope.dual_vertices_f64();
     let vertices = polytope.vertices_f64();
@@ -254,6 +274,9 @@ struct AscentResult {
     n_phases: usize,
 }
 
+/// Single gradient ascent phase: iterate until convergence or budget.
+/// Gradient: d(sys)/d(a_k) = (cap * d(cap)/d(a_k) - sys * d(vol)/d(a_k)) / vol
+// TODO: add [lem:sys-sensitivity] to math.tex (see gradient-correctness experiment)
 fn gradient_ascent_phase(
     start: &Polytope4D,
     t0: Instant,
@@ -410,6 +433,7 @@ fn full_ascent(
 /// the new halfspace ⟨n,x⟩ ≤ h_K(n) - ε shaves a thin sliver.
 ///
 /// Pattern from facet-splitting/run.rs.
+// TODO: add [lem:facet-addition] to math.tex (dual vertex ↔ halfspace correspondence)
 fn add_facet(
     polytope: &Polytope4D,
     direction: &Vector4<f64>,
