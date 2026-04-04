@@ -22,6 +22,10 @@ path = "lagrangian-boundary/run.rs"
 name = "hko-lagrangian-probe"
 path = "lagrangian-boundary/probe.rs"
 
+[[bin]]
+name = "hko-perturbation"
+path = "perturbation-neighborhood/run.rs"
+
 [lints]
 workspace = true
 

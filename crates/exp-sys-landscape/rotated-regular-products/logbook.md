@@ -11,8 +11,7 @@ The only known 4D counterexample to Viterbo's conjecture is a Lagrangian product
 ## How to run
 
 ```bash
-cd crates/exp-hko-local-maximum/rotation-sweep/
-cargo run --bin hko-rotation-sweep --release   # generates all JSONL datasets
+cargo run -p exp-sys-landscape --release --bin sys-rotated-regular-products
 python3 analyze.py                             # generates plots
 ```
 
@@ -57,7 +56,7 @@ For regular n-gon x m-gon, sys(theta) has period 2*pi/lcm(n,m) and mirror symmet
 
 3. **Polygon pair grid (Family 2):** All pairs (n, m) with 3 <= n <= m <= 6, at 6-degree steps over the fundamental domain. 10 pairs, one JSONL file each. Capacity computed using billiard algorithm.
 
-4. **Random Lagrangian products (Family 3):** Delegated to separate `random-product-sweep` experiment.
+4. **Random Lagrangian products (Family 3):** Delegated to separate `random-product-sample` experiment.
 
 ### Algorithm
 
@@ -103,4 +102,4 @@ Fixes applied to `crates/library/src/geom/known_polytopes.rs`:
 
 - Only regular polygons tested; irregular polygon products not explored.
 - Rotation angle step size is 6 degrees for the polygon pair grid (coarser than the 1-degree pentagon/heptagon sweeps).
-- Family 3 (random Lagrangian products) delegated to `random-product-sweep` experiment.
+- Family 3 (random Lagrangian products) delegated to `random-product-sample` experiment.

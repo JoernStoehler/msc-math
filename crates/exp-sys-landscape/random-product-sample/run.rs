@@ -1,9 +1,9 @@
-//! Random Lagrangian product sweep over polygon pairs.
+//! Random Lagrangian product sample over polygon pairs.
 //!
 //! Architecture:
-//! 1. `cargo run --bin base-random-product-sweep --release` generates dataset
+//! 1. `cargo run -p exp-sys-landscape --release --bin sys-random-product-sample` generates dataset
 //! 2. Polytopes are cached in data/polytopes.jsonl. Re-runs skip capacity.
-//! 3. Writes to random-product-sweep/random-product-sweep.jsonl
+//! 3. Writes to random-product-sample/random-product-sweep.jsonl
 //! 4. Python script plots sys vs (k,m)
 //!
 //! Dataset design:

@@ -234,8 +234,8 @@ fn name_from_record(record: &PolytopeRecord, index: usize) -> String {
 /// Derive a source dataset string from a database record's Source.
 fn source_dataset_from_record(record: &PolytopeRecord) -> String {
     match &record.source {
-        Some(Source::Random { .. }) => "random-sweep".to_string(),
-        Some(Source::LagrangianProduct { .. }) => "random-product-sweep".to_string(),
+        Some(Source::Random { .. }) => "random-sample".to_string(),
+        Some(Source::LagrangianProduct { .. }) => "random-product-sample".to_string(),
         Some(Source::Known { .. }) => "known".to_string(),
         None => "unknown".to_string(),
     }
@@ -855,7 +855,7 @@ fn main() {
     println!("  {n_polytopes} polytopes loaded from database (F <= {MAX_FACET_COUNT})\n");
 
     if n_polytopes == 0 {
-        eprintln!("ERROR: No polytopes in database. Run base-random-sweep and base-random-product-sweep first.");
+        eprintln!("ERROR: No polytopes in database. Run sys-random-sample and sys-random-product-sample first.");
         std::process::exit(1);
     }
 

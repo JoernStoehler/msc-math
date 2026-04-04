@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-Analyze sys-search results: gradient ascent with boundary-crossing strategies.
+Analyze gradient-ascent-products results: projected gradient ascent on Lagrangian products.
 
 Goal: Assess whether boundary-crossing (overshoot, wiggle) improves sys beyond
-      within-cell gradient ascent, and compare strategies.
-Input: crates/exp-sys-landscape/boundary-crossing-search/sys-search.jsonl (per-seed summaries)
-       crates/exp-sys-landscape/boundary-crossing-search/sys-search-trace.jsonl (per-iteration trace)
+      within-cell gradient ascent on Lagrangian products.
+Input: crates/exp-sys-landscape/gradient-ascent-products/gradient-ascent-products.jsonl (per-seed summaries)
+       crates/exp-sys-landscape/gradient-ascent-products/gradient-ascent-products-trace.jsonl (per-iteration trace)
 Output:
   - sys_search_distribution.png   (final sys histogram by polytope type)
   - sys_search_improvement.png    (starting vs final sys scatter)
@@ -28,8 +28,8 @@ from figure_config import setup, FIGSIZE_SINGLE, SCATTER_SIZE
 setup()
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
-SUMMARY_PATH = EXPERIMENT_DIR / "sys-search.jsonl"
-TRACE_PATH = EXPERIMENT_DIR / "sys-search-trace.jsonl"
+SUMMARY_PATH = EXPERIMENT_DIR / "gradient-ascent-products.jsonl"
+TRACE_PATH = EXPERIMENT_DIR / "gradient-ascent-products-trace.jsonl"
 
 CATEGORY_COLORS = {"general": "#2196F3", "lagrangian": "#4CAF50", "warm": "#FF9800"}
 STRATEGY_COLORS = {"within_cell": "#9E9E9E", "overshoot": "#E91E63", "wiggle": "#00BCD4", "none": "#BDBDBD"}
@@ -235,7 +235,7 @@ def plot_convergence(data):
 
 def main():
     if not SUMMARY_PATH.exists():
-        print(f"No data at {SUMMARY_PATH}. Run: cargo run -p exp-sys-landscape --release --bin opt-boundary-crossing")
+        print(f"No data at {SUMMARY_PATH}. Run: cargo run -p exp-sys-landscape --release --bin sys-gradient-ascent-products")
         return
 
     data = load_summaries()

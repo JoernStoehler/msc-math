@@ -3,8 +3,8 @@
 Plot systolic ratio summary for random Lagrangian products by polygon pair.
 
 Goal: Visualize how sys varies across (k,m) polygon pairs.
-Input: crates/exp-sys-landscape/random-product-sweep/random-product-sweep.jsonl
-Output: crates/exp-sys-landscape/random-product-sweep/random_product_sweep_sys_vs_pair.png
+Input: crates/exp-sys-landscape/random-product-sample/random-product-sweep.jsonl
+Output: crates/exp-sys-landscape/random-product-sample/random_product_sweep_sys_vs_pair.png
 """
 
 import json

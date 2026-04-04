@@ -12,7 +12,7 @@ Can random Lagrangian products approach or exceed the Viterbo threshold sys = 1?
 
 ```bash
 # Generate dataset
-cd crates/exp-sys-landscape/random-product-sweep/ && cargo run --bin base-random-product-sweep --release
+cargo run -p exp-sys-landscape --release --bin sys-random-product-sample
 
 # Plot
 python3 analyze.py
@@ -42,7 +42,7 @@ python3 analyze.py
 2. Higher polygon pairs (more facets) tend to reach higher sys: (6,6) median = 0.572, (3,3) median = 0.273.
 3. Balanced pairs (k = m) do not consistently outperform asymmetric pairs at the same total facet count. For example, (4,6) has median 0.515 vs (5,5) median 0.273.
 4. The HKO counterexample (5x5 at specific rotation angle) is not reproduced by random orientations.
-5. Random Lagrangian products reach higher sys than random generic polytopes (max 0.794 vs 0.58 in random-sweep), suggesting products are closer to the violation boundary.
+5. Random Lagrangian products reach higher sys than random generic polytopes (max 0.794 vs 0.58 in random-sample), suggesting products are closer to the violation boundary.
 
 ## Known limitations
 
@@ -52,5 +52,5 @@ python3 analyze.py
 
 ## Related experiments
 
-- `random-sweep`: Random generic polytopes (non-product). Max sys = 0.58.
+- `random-sample`: Random generic polytopes (non-product). Max sys = 0.58.
 - `lagrangian-products`: Targeted sweep of specific polygon pairs at varying rotation angles, including the HKO counterexample configuration.

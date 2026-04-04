@@ -56,7 +56,7 @@ Worktree at `.claude/worktrees/verify-numerics-math/`, branch `verify-numerics-q
 Regenerate stage 1 data:
 ```bash
 cd crates/dev-numerical-analysis/error-bounds
-cat ../../dev-capacity-validation/correctness/correctness.jsonl ../../exp-sys-landscape/random-product-sweep/random-product-sweep.jsonl ../../dev-algorithm-comparison/benchmark/benchmark.jsonl ../../dev-algorithm-comparison/ablation/ablation.jsonl > /tmp/all_polytopes.jsonl
+cat ../../dev-capacity-validation/correctness/correctness.jsonl ../../exp-sys-landscape/random-product-sample/random-product-sample.jsonl ../../dev-algorithm-comparison/benchmark/benchmark.jsonl ../../dev-algorithm-comparison/ablation/ablation.jsonl > /tmp/all_polytopes.jsonl
 cargo run -p dev-numerical-analysis --release --bin collect_poly -- --polytopes /tmp/all_polytopes.jsonl --max-facets 8
 cargo run -p dev-numerical-analysis --release --bin collect_synth
 ```

@@ -16,7 +16,7 @@ What fraction of random Lagrangian products have sys > 1?
 
 Existing data points:
 - LP(5,5) rotation sweep (lagrangian-products experiment): ~25% of rotations of *regular* pentagons have sys > 1 (9/36 at 1° resolution; θ ∈ 14°–22° of the 36° fundamental domain, `lagrangian-products-5x5.jsonl`).
-- random-product-sweep: 100 random products with 3≤k≤m≤6, max sys = 0.794. None near 1.
+- random-product-sample: 100 random products with 3≤k≤m≤6, max sys = 0.794. None near 1.
 
 These suggest regularity of the pentagon matters a lot, not just the polygon count. The question: what's the volume ratio of {sys > 1} to the full LP parameter space? If it's < 1e-4, brute-force sampling won't find it. If it's ~ 1%, a few thousand samples might.
 
@@ -42,7 +42,7 @@ If Phase 2 (or Phase 1) finds a sys > 1 polytope: is it related to HKO2024 by a 
 ## Predecessor experiments
 
 - **lagrangian-products** — systematic rotation sweep of regular polygon pairs. The 1D version of Phase 1.
-- **random-product-sweep** — 100 random products, max sys = 0.794. A small-scale version of Phase 1 with random (not regular) polygons.
+- **random-product-sample** — 100 random products, max sys = 0.794. A small-scale version of Phase 1 with random (not regular) polygons.
 - **pentagon-perturb** — 100 perturbations of HKO2024 at ε=0.01, all retain sys > 1. Shows the sys > 1 region has nonzero volume around HKO.
 - **gradient-descent** — 501 Lagrangian products optimized, best sys = 0.905.
 
@@ -69,7 +69,7 @@ python3 analyze.py
 
 ### Design
 
-Instead of random sampling across the full LP parameter space (already done by random-product-sweep with 0 hits), we measure the sys > 1 region directly by sweeping perturbation magnitude around the known counterexample.
+Instead of random sampling across the full LP parameter space (already done by random-product-sample with 0 hits), we measure the sys > 1 region directly by sweeping perturbation magnitude around the known counterexample.
 
 - **Base:** HKO2024 dual vertices (10 facets in R⁴, Lagrangian product structure)
 - **Perturbation:** Uniform[-ε, ε] on the 2 nonzero Lagrangian components of each dual vertex (20 independent coordinates). Only the nonzero components are perturbed, preserving Lagrangian product structure so billiard algorithm remains valid.
@@ -110,7 +110,7 @@ Polytope validity (bounded, irredundant, vertex-enumerable) is not the binding c
 
 **3. The sys distribution shifts and widens monotonically with ε.**
 
-At ε=0.01: mean sys = 1.033 ± 0.004 (tight cluster above 1). At ε=0.10: mean sys = 0.920 ± 0.035 (below 1 with rare exceptions). At ε=1.00: mean sys = 0.425 ± 0.180 (converging toward the random-product-sweep regime).
+At ε=0.01: mean sys = 1.033 ± 0.004 (tight cluster above 1). At ε=0.10: mean sys = 0.920 ± 0.035 (below 1 with rare exceptions). At ε=1.00: mean sys = 0.425 ± 0.180 (converging toward the random-product-sample regime).
 
 **4. Consistency with pentagon-perturb.** Pentagon-perturb used ε=0.01 per component (all 4 components of each dual vertex, not just the 2 Lagrangian ones) and found 100/100 above sys > 1 with min sys = 1.002. Our ε=0.01 level (Lagrangian-only perturbation) finds 500/500 above with min sys = 1.014, consistent and slightly tighter (fewer perturbation dimensions, so smaller effective distortion).
 
@@ -120,7 +120,7 @@ The sys > 1 region around HKO2024 is a **ball of modest radius** in Lagrangian p
 
 This explains the predecessor results:
 - **pentagon-perturb** (ε=0.01): deep inside the ball → 100% retention
-- **random-product-sweep** (fully random shapes): far outside the ball → 0% hits
+- **random-product-sample** (fully random shapes): far outside the ball → 0% hits
 - **gradient-descent** (random starts, within-cell optimization): reaches sys ≈ 0.9 but cannot cross combinatorial boundaries to reach HKO's basin
 
 The transition is smooth (no sharp boundary), the std of sys grows with ε (expected: larger perturbations explore a larger volume and hit the boundary at varying angles).

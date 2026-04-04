@@ -152,9 +152,9 @@ cargo run -p dev-numerical-analysis --release --bin verify_numerics
 python3 crates/dev-numerical-analysis/error-bounds/analyze.py
 ```
 
-The `/tmp/all_polytopes.jsonl` is a concatenation of correctness + random-product-sweep + benchmark + ablation data. Recreate with:
+The `/tmp/all_polytopes.jsonl` is a concatenation of correctness + random-product-sample + benchmark + ablation data. Recreate with:
 ```bash
-cat crates/dev-capacity-validation/correctness/correctness.jsonl crates/exp-sys-landscape/random-product-sweep/random-product-sweep.jsonl crates/dev-algorithm-comparison/benchmark/benchmark.jsonl crates/dev-algorithm-comparison/ablation/ablation.jsonl > /tmp/all_polytopes.jsonl
+cat crates/dev-capacity-validation/correctness/correctness.jsonl crates/exp-sys-landscape/random-product-sample/random-product-sample.jsonl crates/dev-algorithm-comparison/benchmark/benchmark.jsonl crates/dev-algorithm-comparison/ablation/ablation.jsonl > /tmp/all_polytopes.jsonl
 ```
 
 ## Success criteria

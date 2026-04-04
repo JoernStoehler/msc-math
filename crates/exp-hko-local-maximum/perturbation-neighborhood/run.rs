@@ -1,8 +1,8 @@
 //! Perturbations of the HK-O pentagon counterexample (10 facets).
 //!
 //! Architecture:
-//! 1. `cargo run --bin pentagon_perturb --release` generates dataset
-//! 2. Writes to pentagon-perturb/pentagon-perturb.jsonl
+//! 1. `cargo run -p exp-hko-local-maximum --release --bin hko-perturbation` generates dataset
+//! 2. Writes to perturbation-neighborhood/pentagon-perturb.jsonl
 //! 3. Python script analyzes and plots
 //!
 //! Dataset design:

@@ -1,11 +1,11 @@
-//! Lagrangian products sweeps for selected regular polygon pairs.
+//! Lagrangian products of rotated regular polygon pairs.
 //!
 //! Architecture:
-//! 1. `cargo run --bin lagrangian_products --release` generates fine sweeps
-//!    (pentagon 5x5, heptagon 7x7) and coarse polygon pair sweeps.
-//! 2. Writes to lagrangian-products/lagrangian-products-5x5.jsonl,
-//!    lagrangian-products/lagrangian-products-7x7.jsonl, and
-//!    lagrangian-products/lagrangian-products-<n>x<m>-6deg.jsonl
+//! 1. `cargo run -p exp-sys-landscape --release --bin sys-rotated-regular-products`
+//!    generates fine sweeps (pentagon 5x5, heptagon 7x7) and coarse polygon pair sweeps.
+//! 2. Writes to rotated-regular-products/lagrangian-products-5x5.jsonl,
+//!    rotated-regular-products/lagrangian-products-7x7.jsonl, and
+//!    rotated-regular-products/lagrangian-products-<n>x<m>-6deg.jsonl
 //!
 //! Capacity algorithm: billiard (fast, production default for Lagrangian products).
 // TODO: These will be re-exported from top-level `symplectic::` in wave 4 (subagent #16).

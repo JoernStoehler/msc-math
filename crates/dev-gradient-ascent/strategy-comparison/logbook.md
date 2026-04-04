@@ -2,7 +2,7 @@
 
 ## Motivation
 
-boundary-crossing-search found that wiggle (random perturbation after step) dominates overshoot (stepping past cell boundary) for improving sys. But the wiggle strength (5%) is unjustified — inherited from the deleted gradient-search experiment. This instrument systematically compares strategies on the same polytope set.
+gradient-ascent-general/gradient-ascent-products (formerly boundary-crossing-search) found that wiggle (random perturbation after step) dominates overshoot (stepping past cell boundary) for improving sys. But the wiggle strength (5%) is unjustified — inherited from the deleted gradient-search experiment. This instrument systematically compares strategies on the same polytope set.
 
 ## Status
 
@@ -23,6 +23,6 @@ cargo run -p dev-gradient-ascent --release --bin dev_strategy_comparison
 
 ## Related experiments
 
-- `exp-sys-landscape/boundary-crossing-search/` — found wiggle > overshoot, 5% strength
+- `exp-sys-landscape/gradient-ascent-general/`, `exp-sys-landscape/gradient-ascent-products/` — found wiggle > overshoot, 5% strength
 - `exp-combinatorial-cells/cell-widths/` — cell widths for calibrating wiggle strength
 - `exp-combinatorial-cells/convexity/` — random cells convex, product cells not

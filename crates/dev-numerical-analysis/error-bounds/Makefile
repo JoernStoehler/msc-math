@@ -18,7 +18,7 @@ collected_poly.jsonl: $(POLYTOPES)
 
 $(POLYTOPES):
 	cat ../correctness/correctness.jsonl \
-	    ../random-product-sweep/random-product-sweep.jsonl \
+	    ../../exp-sys-landscape/random-product-sample/random-product-sweep.jsonl \
 	    ../benchmark/benchmark.jsonl \
 	    ../ablation/ablation.jsonl > $(POLYTOPES)
 

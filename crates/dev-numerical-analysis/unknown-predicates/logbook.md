@@ -30,7 +30,7 @@ python3 analyze.py
 
 ## Design
 
-- **Input datasets:** random-sweep (70 polytopes, F=5..12) and lagrangian-products (92 polytopes, 10 regular polygon pairs).
+- **Input datasets:** random-sample (70 polytopes, F=5..12) and lagrangian-products (92 polytopes, 10 regular polygon pairs).
 - **Total:** 162 polytopes run through production algorithms with UNKNOWN logging.
 - **Metrics per polytope:** certified capacity, uncertain capacity, numerical gap, beta_min.
 - **Threshold:** epsilon = 1e-12 for the admissibility predicate.
@@ -90,5 +90,5 @@ Phase 1: Run datasets with UNKNOWN logging
 
 ## Related experiments
 
-- `random-sweep`: Source of the 70 random polytopes used as input.
+- `random-sample`: Source of the 70 random polytopes used as input.
 - `lagrangian-products`: Source of the 92 Lagrangian product polytopes used as input.

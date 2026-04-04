@@ -22,7 +22,7 @@ uncertain orbit achieves lower action than any certified orbit, meaning
 the algorithm's output depends on floating-point precision.
 
 \paragraph{Experiment.}
-We re-ran both the random-sweep dataset (70~polytopes, $F = 5, \ldots, 12$)
+We re-ran both the random-sample dataset (70~polytopes, $F = 5, \ldots, 12$)
 and the Lagrangian-products dataset (92~polytopes: pentagon $5 \times 5$ sweep
 and 10 regular polygon pairs) through the production algorithms
 (\texttt{ehz\_capacity} and \texttt{billiard\_capacity} respectively),
@@ -31,7 +31,7 @@ and minimum $\beta$ component for each polytope.
 
 \paragraph{Results.}
 Of the 162~polytopes, 29 exhibited a nonzero numerical gap, all from the
-Lagrangian-products dataset; the random-sweep dataset produced zero
+Lagrangian-products dataset; the random-sample dataset produced zero
 UNKNOWN predicates.
 The 29 nonzero gaps range from $4.4 \times 10^{-16}$ to $4.9 \times 10^{-12}$,
 all below $10^{-10}$, and are attributable to \texttt{f64} rounding in the

@@ -2,7 +2,7 @@
 
 ## Motivation
 
-boundary-crossing-search uses STEP_FRACTIONS [0.1, 0.3, 0.5, 0.7, 0.9] of t_max (distance to cell boundary). These fractions are arbitrary. cell-widths (exp-combinatorial-cells) measured per-facet cell widths of 0.12-0.26 for random polytopes. This instrument calibrates step sizes using actual cell geometry data, and compares fixed vs adaptive strategies.
+gradient-ascent-general/gradient-ascent-products (formerly boundary-crossing-search) use STEP_FRACTIONS [0.1, 0.3, 0.5, 0.7, 0.9] of t_max (distance to cell boundary). These fractions are arbitrary. cell-widths (exp-combinatorial-cells) measured per-facet cell widths of 0.12-0.26 for random polytopes. This instrument calibrates step sizes using actual cell geometry data, and compares fixed vs adaptive strategies.
 
 ## Status
 
@@ -23,4 +23,4 @@ cargo run -p dev-gradient-ascent --release --bin dev_step_calibration
 ## Related experiments
 
 - `exp-combinatorial-cells/cell-widths/` — cell width measurements
-- `exp-sys-landscape/boundary-crossing-search/` — current step fraction choices
+- `exp-sys-landscape/gradient-ascent-general/`, `exp-sys-landscape/gradient-ascent-products/` — current step fraction choices

@@ -6,4 +6,4 @@
 //!
 //! Related crates:
 //! - `dev-gradient/` — gradient correctness validation
-//! - `exp-sys-landscape/boundary-crossing-search/` — applies gradient ascent at scale
+//! - `exp-sys-landscape/gradient-ascent-general/`, `exp-sys-landscape/gradient-ascent-products/` — applies gradient ascent at scale

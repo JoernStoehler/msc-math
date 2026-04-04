@@ -528,7 +528,7 @@ fn main() {
     println!("  {n_polytopes} polytopes loaded from database (F <= {MAX_FACET_COUNT})\n");
 
     if n_polytopes == 0 {
-        eprintln!("ERROR: No polytopes in database. Run base-random-sweep and base-random-product-sweep first.");
+        eprintln!("ERROR: No polytopes in database. Run sys-random-sample and sys-random-product-sample first.");
         std::process::exit(1);
     }
 

@@ -1,6 +1,6 @@
 //! Phase 1: Check whether UNKNOWN admissibility predicates appear in practice.
 //!
-//! Regenerates the random-sweep and lagrangian-products datasets using the same
+//! Regenerates the random-sample and lagrangian-products datasets using the same
 //! seeds/parameters, then records the certified vs uncertain capacity for each
 //! polytope. If `numerical_gap > 0` for any polytope, an UNKNOWN predicate
 //! affected the capacity — meaning Phase 2 (high-precision re-solve) is needed.
@@ -131,7 +131,7 @@ fn main() {
             }
 
             let row = Row {
-                dataset: "random-sweep".to_string(),
+                dataset: "random-sample".to_string(),
                 name: format!("random_F{facet_count}_{i}"),
                 algorithm: "ehz_pruned".to_string(),
                 facet_count,

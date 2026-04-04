@@ -1,18 +1,18 @@
-% math.tex — \input'd from thesis/experiments.tex
+% math.tex — \input'd from root math.tex
 %
 % Random Lagrangian products from random polygon pairs.
 %
 % Sources:
-%   - Generated data: crates/exp-sys-landscape/random-product-sweep/random-product-sweep.jsonl
-%   - Plot script: crates/exp-sys-landscape/random-product-sweep/analyze.py
-%   - Experiment notes: crates/exp-sys-landscape/random-product-sweep/logbook.md
+%   - Generated data: crates/exp-sys-landscape/random-product-sample/random-product-sweep.jsonl
+%   - Plot script: crates/exp-sys-landscape/random-product-sample/analyze.py
+%   - Experiment notes: crates/exp-sys-landscape/random-product-sample/logbook.md
 %
 % Structure:
 %   - Sampling setup
 %   - Summary plot
 
-\subsection{Random Lagrangian Product Sweep}
-\label{sec:random-product-sweep}
+\subsection{Random Lagrangian Product Sample}
+\label{sec:random-product-sample}
 
 We generate random Lagrangian products $P \times_L Q$ by sampling two random
 2D polygons with facet counts $(k,m)$ and taking all pairs with
@@ -45,7 +45,7 @@ $(6,6)$~pairs have the highest median ($0.57$), while
 $(3,3)$~pairs have the lowest ($0.27$).
 
 Compared to the random generic sweep
-(Section~\ref{sec:random-sweep}, maximum~$\mathrm{sys} = 0.58$),
+(Section~\ref{sec:random-sample}, maximum~$\mathrm{sys} = 0.58$),
 random Lagrangian products reach higher values
 (maximum~$0.79$), suggesting that products are closer to the violation
 boundary than generic polytopes.

@@ -118,8 +118,8 @@ Reference for what results exist. See individual logbooks for full details.
 | **gradient-descent** | 995 polytopes, none reach sys>1. Step-bound barrier at combinatorial type boundary |
 | **sys-optimization** | Best sys=0.878 from 140 starts. Combinatorial type boundary is binding constraint |
 | **omega-obstacle** | Hypothesis that small abs(ω₀) increases sys **falsified**. Zero correlation (ρ=-0.02) |
-| **random-sweep** | 70 random polytopes (F=5-12), max sys=0.578. Random polytopes stay far from violation |
-| **random-product-sweep** | Random Lagrangian products max sys=0.794 (6×6). HKO requires specific rotation angle |
+| **random-sample** | 70 random polytopes (F=5-12), max sys=0.578. Random polytopes stay far from violation |
+| **random-product-sample** | Random Lagrangian products max sys=0.794 (6x6). HKO requires specific rotation angle |
 | **ablation** | All 4 pruning variants agree. A2 speedup exponential (~1078x at F=10) |
 | **correctness** | All 6 mathematical axioms pass |
 | **kkt-inertia** | Eigenvalue inertia formula holds for 6/7 polytopes. 5 mismatches are threshold artifacts |

@@ -7,28 +7,28 @@ edition = "2021"
 path = "src/lib.rs"
 
 [[bin]]
-name = "sys-rotation-sweep"
-path = "rotation-sweep/run.rs"
+name = "sys-rotated-regular-products"
+path = "rotated-regular-products/run.rs"
 
 [[bin]]
-name = "sys-perturbation"
-path = "perturbation-neighborhood/run.rs"
+name = "sys-gradient-ascent-general"
+path = "gradient-ascent-general/run.rs"
 
 [[bin]]
-name = "sys-boundary-crossing"
-path = "boundary-crossing-search/run.rs"
+name = "sys-gradient-ascent-products"
+path = "gradient-ascent-products/run.rs"
 
 [[bin]]
-name = "sys-random-sweep"
-path = "random-sweep/run.rs"
+name = "sys-random-sample"
+path = "random-sample/run.rs"
 
 [[bin]]
-name = "sys-random-product-sweep"
-path = "random-product-sweep/run.rs"
+name = "sys-random-product-sample"
+path = "random-product-sample/run.rs"
 
 [[bin]]
-name = "sys-rejection-sampling"
-path = "rejection-sampling/run.rs"
+name = "sys-rejection-calibration"
+path = "rejection-calibration/run.rs"
 
 [lints]
 workspace = true

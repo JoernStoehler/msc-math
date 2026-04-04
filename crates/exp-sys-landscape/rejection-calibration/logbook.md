@@ -2,7 +2,7 @@
 
 ## Motivation
 
-To probe Viterbo's conjecture computationally, we need large datasets of random convex polytopes in R^4. We generate these by rejection sampling: sample a candidate halfspace representation, then validate that it defines a bounded, irredundant polytope. This experiment measures acceptance rates across facet counts and height ranges, to calibrate the sampling parameters used by downstream experiments (random-sweep, random-product-sweep).
+To probe Viterbo's conjecture computationally, we need large datasets of random convex polytopes in R^4. We generate these by rejection sampling: sample a candidate halfspace representation, then validate that it defines a bounded, irredundant polytope. This experiment measures acceptance rates across facet counts and height ranges, to calibrate the sampling parameters used by downstream experiments (random-sample, random-product-sample).
 
 ## Status
 
@@ -11,7 +11,7 @@ To probe Viterbo's conjecture computationally, we need large datasets of random 
 ## How to run
 
 ```bash
-cd crates/exp-sys-landscape/rejection-sampling/ && cargo run --bin base-rejection-sampling --release
+cargo run -p exp-sys-landscape --release --bin sys-rejection-calibration
 ```
 
 No Python script or figure. The .tex writeup uses a table directly from the JSONL data.
@@ -49,5 +49,5 @@ No Python script or figure. The .tex writeup uses a table directly from the JSON
 
 ## Related experiments
 
-- `random-sweep`: Uses the calibrated parameters from this experiment to generate random polytopes.
-- `random-product-sweep`: Uses similar height range parameters.
+- `random-sample`: Uses the calibrated parameters from this experiment to generate random polytopes.
+- `random-product-sample`: Uses similar height range parameters.

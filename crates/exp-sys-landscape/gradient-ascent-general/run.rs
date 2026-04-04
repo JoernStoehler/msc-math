@@ -1,4 +1,4 @@
-//! Gradient-based search for sys > 1 with boundary-crossing strategies.
+//! Free gradient ascent in R^{4F} on general polytopes.
 //!
 //! At each iteration, computes d(sys)/d(a_k) via the library's dual-vertex
 //! derivatives, then steps directly in a-space: a_k(t) = a_k + t * d_k.
@@ -6,14 +6,17 @@
 //! perturbation of dual vertices).
 //!
 //! Architecture: single binary, inline polytope generation + optimization.
-//! Three seed sources: fresh random general polytopes, fresh Lagrangian products,
-//! and warm starts from gradient-descent's converged points.
+//! Two seed sources: fresh random general polytopes and warm starts from
+//! gradient-descent's converged points (general polytopes only).
 //!
-//! Usage: cargo run --release --bin sys_search
+//! Predecessor: boundary-crossing-search (split into gradient-ascent-general
+//! and gradient-ascent-products, 2026-04-04).
+//!
+//! Usage: cargo run -p exp-sys-landscape --release --bin sys-gradient-ascent-general
 //! Flags: --fresh  (clear existing data and rerun)
 //!        --warm-start <path>  (JSONL with final_dual_vertices for warm starts)
-//! Output: sys-search/sys-search.jsonl      (per-seed summary)
-//!         sys-search/sys-search-trace.jsonl (per-iteration trace)
+//! Output: gradient-ascent-general/gradient-ascent-general.jsonl      (per-seed summary)
+//!         gradient-ascent-general/gradient-ascent-general-trace.jsonl (per-iteration trace)
 
 use database::{DualVerticesKey, PolytopeRecord, SigmaAction};
 use nalgebra::{Matrix4, Vector4};
@@ -26,11 +29,7 @@ use std::fs::{File, OpenOptions};
 use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::path::Path;
 use std::time::Instant;
-use symplectic::algorithms::billiard::billiard_capacity;
-use symplectic::algorithms::billiard::facet_classification::{classify_facets, FacetClassification};
 use symplectic::derivatives::{capacity_derivatives_a, volume_derivatives_a};
-use symplectic::geom::lagrangian_product::lagrangian_product;
-use symplectic::geom::polygon::random_polygon_2d;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::volume::volume;
@@ -47,11 +46,7 @@ const SEED: u64 = 42;
 
 /// Development-scale counts. Increase for production runs.
 const N_GENERAL: usize = 10;
-const N_LAGRANGIAN_PER_BUCKET: usize = 4;
 const N_WARM_STARTS: usize = 20;
-
-/// Lagrangian product splits (q_facets, p_facets) summing to 10.
-const LAGRANGIAN_SPLITS: &[(usize, usize)] = &[(3, 7), (4, 6), (5, 5)];
 
 /// Facet count for fresh polytopes.
 const FACET_COUNT: usize = 10;
@@ -240,16 +235,10 @@ fn compute_step_bound_a(polytope: &Polytope4D, direction: &[Vector4<f64>]) -> f6
 // Gradient step in a-space
 // ============================================================================
 
-/// Which capacity algorithm to use.
-enum CapacityBackend {
-    Hk2017,
-    Billiard,
-}
-
-/// Compute sys = c_EHZ(K)² / (2 vol(K)) for a polytope.
-fn compute_sys(polytope: &Polytope4D, backend: &CapacityBackend) -> Option<f64> {
+/// Compute sys = c_EHZ(K)^2 / (2 vol(K)) for a polytope using HK2017.
+fn compute_sys(polytope: &Polytope4D) -> Option<f64> {
     let vol = volume(polytope).ok().filter(|&v| v > 0.0)?;
-    let cap = compute_capacity(polytope, backend)?;
+    let cap = compute_capacity(polytope)?;
     let sys = cap * cap / (2.0 * vol);
     sys.is_finite().then_some(sys)
 }
@@ -259,7 +248,6 @@ fn try_step_a(
     duals: &[Vector4<f64>],
     direction: &[Vector4<f64>],
     t: f64,
-    backend: &CapacityBackend,
 ) -> Option<(Polytope4D, f64)> {
     let new_duals: Vec<Vector4<f64>> = duals
         .iter()
@@ -267,35 +255,17 @@ fn try_step_a(
         .map(|(a, d)| a + t * d)
         .collect();
     let polytope = Polytope4D::from_f64(new_duals).ok()?;
-    let sys = compute_sys(&polytope, backend)?;
+    let sys = compute_sys(&polytope)?;
     Some((polytope, sys))
 }
 
-fn compute_capacity(polytope: &Polytope4D, backend: &CapacityBackend) -> Option<f64> {
-    match backend {
-        CapacityBackend::Hk2017 => {
-            symplectic::algorithms::hk2017::ehz_capacity(polytope).map(|r| r.result.capacity)
-        }
-        CapacityBackend::Billiard => {
-            billiard_capacity(polytope).ok()?.map(|r| r.result.capacity)
-        }
-    }
+fn compute_capacity(polytope: &Polytope4D) -> Option<f64> {
+    symplectic::algorithms::hk2017::ehz_capacity(polytope).map(|r| r.result.capacity)
 }
 
-fn compute_capacity_result(
-    polytope: &Polytope4D,
-    backend: &CapacityBackend,
-) -> Option<(f64, Vec<usize>)> {
-    match backend {
-        CapacityBackend::Hk2017 => {
-            let r = symplectic::algorithms::hk2017::ehz_capacity(polytope)?;
-            Some((r.result.capacity, r.result.best_permutation))
-        }
-        CapacityBackend::Billiard => {
-            let r = billiard_capacity(polytope).ok()??;
-            Some((r.result.capacity, r.result.best_permutation))
-        }
-    }
+fn compute_capacity_result(polytope: &Polytope4D) -> Option<(f64, Vec<usize>)> {
+    let r = symplectic::algorithms::hk2017::ehz_capacity(polytope)?;
+    Some((r.result.capacity, r.result.best_permutation))
 }
 
 // ============================================================================
@@ -313,23 +283,20 @@ struct AscentResult {
 /// Gradient ascent in dual-vertex space with overshoot at every iteration.
 ///
 /// At each step:
-/// 1. Computes d(sys)/d(a_k) = (cap · d(cap)/d(a_k) - sys · d(vol)/d(a_k)) / vol
-/// 2. For Lagrangian products: projects direction to preserve subspace structure
-/// 3. Tries STEP_FRACTIONS of t_max (within cell) and OVERSHOOT_MULTIPLIERS (crosses boundary)
-/// 4. Picks the candidate with highest sys
+/// 1. Computes d(sys)/d(a_k) = (cap * d(cap)/d(a_k) - sys * d(vol)/d(a_k)) / vol
+/// 2. Tries STEP_FRACTIONS of t_max (within cell) and OVERSHOOT_MULTIPLIERS (crosses boundary)
+/// 3. Picks the candidate with highest sys
 // TODO: add [lem:sys-sensitivity] to math.tex (see gradient-correctness experiment)
 fn gradient_ascent(
     name: &str,
     phase: usize,
     start: &Polytope4D,
-    backend: &CapacityBackend,
-    lagrangian_class: Option<&FacetClassification>,
     t0: Instant,
     budget: f64,
 ) -> Option<AscentResult> {
     let mut current = Polytope4D::from_f64(start.dual_vertices_f64().to_vec()).ok()?;
 
-    let sys_init = compute_sys(&current, backend)?;
+    let sys_init = compute_sys(&current)?;
 
     let mut current_sys = sys_init;
     let mut n_iters = 0usize;
@@ -342,7 +309,7 @@ fn gradient_ascent(
         }
 
         // 1. Capacity + KKT
-        let (cap, best_perm) = compute_capacity_result(&current, backend)?;
+        let (cap, best_perm) = compute_capacity_result(&current)?;
         let kkt = solve_kkt_for(&current, &best_perm).feasible()?;
         let vol = volume(&current).ok().filter(|&v| v > 0.0)?;
         let sys = cap * cap / (2.0 * vol);
@@ -352,23 +319,11 @@ fn gradient_ascent(
         let d_vol_a = volume_derivatives_a(&current);
         let d_cap_a =
             capacity_derivatives_a(&kkt.beta, kkt.q_corrected, &kkt.mu, &best_perm, duals);
-        let mut d_sys_a: Vec<Vector4<f64>> = d_vol_a
+        let d_sys_a: Vec<Vector4<f64>> = d_vol_a
             .iter()
             .zip(d_cap_a.iter())
             .map(|(dv, dc)| (cap * dc - sys * dv) / vol)
             .collect();
-
-        // For Lagrangian products: project direction to preserve subspace
-        if let Some(class) = lagrangian_class {
-            for &k in &class.q_indices {
-                d_sys_a[k][2] = 0.0;
-                d_sys_a[k][3] = 0.0;
-            }
-            for &k in &class.p_indices {
-                d_sys_a[k][0] = 0.0;
-                d_sys_a[k][1] = 0.0;
-            }
-        }
 
         let gradient_norm = d_sys_a
             .iter()
@@ -390,7 +345,7 @@ fn gradient_ascent(
 
         for &frac in STEP_FRACTIONS {
             let t = frac * t_max;
-            if let Some((p, new_sys)) = try_step_a(duals, &d_sys_a, t, backend) {
+            if let Some((p, new_sys)) = try_step_a(duals, &d_sys_a, t) {
                 if new_sys > sys && best.as_ref().is_none_or(|b| new_sys > b.1) {
                     best = Some((p, new_sys, "within".into(), frac, t));
                 }
@@ -400,7 +355,7 @@ fn gradient_ascent(
         if t_max < MAX_STEP_SIZE {
             for &mult in OVERSHOOT_MULTIPLIERS {
                 let t = mult * t_max;
-                if let Some((p, new_sys)) = try_step_a(duals, &d_sys_a, t, backend) {
+                if let Some((p, new_sys)) = try_step_a(duals, &d_sys_a, t) {
                     if new_sys > sys && best.as_ref().is_none_or(|b| new_sys > b.1) {
                         best = Some((p, new_sys, format!("overshoot_{mult}x"), mult, t));
                     }
@@ -483,14 +438,12 @@ fn process_seed(
     name: &str,
     polytope_type: &str,
     polytope: &Polytope4D,
-    backend: &CapacityBackend,
-    lagrangian_class: Option<&FacetClassification>,
     rng: &mut ChaCha8Rng,
 ) -> Option<SeedResult> {
     let t0 = Instant::now();
     let budget = SEED_TIME_BUDGET_SECS;
 
-    let starting_sys = compute_sys(polytope, backend)?;
+    let starting_sys = compute_sys(polytope)?;
 
     let mut best_polytope = Polytope4D::from_f64(polytope.dual_vertices_f64().to_vec()).ok()?;
     let mut best_sys = starting_sys;
@@ -502,9 +455,7 @@ fn process_seed(
     let mut all_trace = Vec::new();
 
     // Phase 0: initial gradient ascent (with overshoot at each step)
-    if let Some(result) = gradient_ascent(
-        name, n_phases, polytope, backend, lagrangian_class, t0, budget,
-    ) {
+    if let Some(result) = gradient_ascent(name, n_phases, polytope, t0, budget) {
         n_phases += 1;
         n_iters_total += result.n_iters;
         n_escape_overshoot += result.n_overshoot_improvements;
@@ -537,8 +488,6 @@ fn process_seed(
                     name,
                     n_phases,
                     &wiggled,
-                    backend,
-                    lagrangian_class,
                     t0,
                     budget,
                 ) {
@@ -614,38 +563,13 @@ fn generate_general_polytopes(rng: &mut ChaCha8Rng) -> Vec<(String, Polytope4D)>
     polytopes
 }
 
-fn generate_lagrangian_polytopes(rng: &mut ChaCha8Rng) -> Vec<(String, String, Polytope4D)> {
-    let mut polytopes = Vec::new();
-    for &(q_f, p_f) in LAGRANGIAN_SPLITS {
-        let bucket_name = format!("lagrangian_{}x{}", q_f, p_f);
-        let mut count = 0usize;
-        let mut attempts = 0usize;
-        while count < N_LAGRANGIAN_PER_BUCKET {
-            attempts += 1;
-            if attempts > N_LAGRANGIAN_PER_BUCKET * 100 {
-                eprintln!(
-                    "WARNING: gave up after {attempts} attempts for {bucket_name}, got {count}"
-                );
-                break;
-            }
-            let (qn, qh) = random_polygon_2d(q_f, H_MIN, H_MAX, rng);
-            let (pn, ph) = random_polygon_2d(p_f, H_MIN, H_MAX, rng);
-            if let Ok(p) = lagrangian_product(&qn, &qh, &pn, &ph) {
-                let name = format!("{bucket_name}_{count}");
-                polytopes.push((name, bucket_name.clone(), p));
-                count += 1;
-            }
-        }
-    }
-    polytopes
-}
-
 // ============================================================================
 // Warm-start loading
 // ============================================================================
 
 /// Load warm-start polytopes from a gradient-descent JSONL file.
-/// Picks the top N_WARM_STARTS seeds by sys_after that have final_dual_vertices.
+/// Picks the top N_WARM_STARTS general (non-Lagrangian) seeds by sys_after
+/// that have final_dual_vertices.
 fn load_warm_starts(path: &std::path::Path) -> Vec<(String, String, Polytope4D)> {
     let file = match File::open(path) {
         Ok(f) => f,
@@ -663,6 +587,10 @@ fn load_warm_starts(path: &std::path::Path) -> Vec<(String, String, Polytope4D)>
             continue;
         }
         if let Ok(row) = serde_json::from_str::<WarmStartRow>(&line) {
+            // Only general (non-Lagrangian) warm starts
+            if row.polytope_type.contains("lagrangian") {
+                continue;
+            }
             if let Some(dvs) = row.final_dual_vertices {
                 candidates.push((row.name, row.polytope_type, row.sys_after, dvs));
             }
@@ -757,11 +685,12 @@ fn write_result(
 
 fn main() {
     let t_global = Instant::now();
-    let base = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("sys-search");
-    let summary_path = base.join("sys-search.jsonl");
-    let trace_path = base.join("sys-search-trace.jsonl");
+    let base =
+        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("gradient-ascent-general");
+    let summary_path = base.join("gradient-ascent-general.jsonl");
+    let trace_path = base.join("gradient-ascent-general-trace.jsonl");
 
-    println!("sys-search: gradient ascent + boundary-crossing\n");
+    println!("gradient-ascent-general: free gradient ascent on general polytopes\n");
 
     // CLI args
     let args: Vec<String> = std::env::args().collect();
@@ -835,7 +764,7 @@ fn main() {
         }
         print!("[general {}/{}] {}: ", idx + 1, general.len(), name);
 
-        match process_seed(name, "general", polytope, &CapacityBackend::Hk2017, None, &mut rng) {
+        match process_seed(name, "general", polytope, &mut rng) {
             Some(result) => {
                 write_result(&result, &mut summary_writer, &mut trace_writer);
                 let s = &result.summary;
@@ -844,7 +773,7 @@ fn main() {
                     best_name = s.name.clone();
                 }
                 println!(
-                    "sys: {:.4}→{:.4} (Δ={:.4}), strategy={}, phases={}, {:.1}s",
+                    "sys: {:.4}->{:.4} (d={:.4}), strategy={}, phases={}, {:.1}s",
                     s.starting_sys, s.final_sys, s.total_delta, s.best_strategy,
                     s.n_ascent_phases, s.total_time_ms / 1000.0,
                 );
@@ -857,56 +786,7 @@ fn main() {
     }
 
     // =========================================================================
-    // Phase 2: Lagrangian products
-    // =========================================================================
-
-    println!(
-        "\nGenerating Lagrangian products (splits: {:?}, {} per bucket)...",
-        LAGRANGIAN_SPLITS, N_LAGRANGIAN_PER_BUCKET
-    );
-    let lagrangian = generate_lagrangian_polytopes(&mut rng);
-    println!("Generated {} Lagrangian products.\n", lagrangian.len());
-
-    for (idx, (name, bucket, polytope)) in lagrangian.iter().enumerate() {
-        insert_polytope_to_db(&mut db, polytope, None, None, None);
-
-        if completed.contains(name) {
-            continue;
-        }
-        print!("[lagrangian {}/{}] {}: ", idx + 1, lagrangian.len(), name);
-
-        let class = classify_facets(polytope).expect("should classify as Lagrangian");
-
-        match process_seed(
-            name,
-            bucket,
-            polytope,
-            &CapacityBackend::Billiard,
-            Some(&class),
-            &mut rng,
-        ) {
-            Some(result) => {
-                write_result(&result, &mut summary_writer, &mut trace_writer);
-                let s = &result.summary;
-                if s.final_sys > best_global {
-                    best_global = s.final_sys;
-                    best_name = s.name.clone();
-                }
-                println!(
-                    "sys: {:.4}→{:.4} (Δ={:.4}), strategy={}, phases={}, {:.1}s",
-                    s.starting_sys, s.final_sys, s.total_delta, s.best_strategy,
-                    s.n_ascent_phases, s.total_time_ms / 1000.0,
-                );
-                if s.final_sys > 1.0 {
-                    eprintln!("*** VITERBO VIOLATION: {} sys={:.6} ***", s.name, s.final_sys);
-                }
-            }
-            None => println!("FAILED"),
-        }
-    }
-
-    // =========================================================================
-    // Phase 3: Warm starts
+    // Phase 2: Warm starts (general only)
     // =========================================================================
 
     println!("\nLoading warm starts from {}...", warm_start_path.display());
@@ -921,20 +801,7 @@ fn main() {
         }
         print!("[warm {}/{}] {}: ", idx + 1, warm.len(), name);
 
-        // Detect backend: warm_lagrangian_* uses billiard, others HK2017
-        let is_lagrangian = ptype.contains("lagrangian");
-        let backend = if is_lagrangian {
-            CapacityBackend::Billiard
-        } else {
-            CapacityBackend::Hk2017
-        };
-        let class = if is_lagrangian {
-            classify_facets(polytope).ok()
-        } else {
-            None
-        };
-
-        match process_seed(name, ptype, polytope, &backend, class.as_ref(), &mut rng) {
+        match process_seed(name, ptype, polytope, &mut rng) {
             Some(result) => {
                 write_result(&result, &mut summary_writer, &mut trace_writer);
                 let s = &result.summary;
@@ -943,7 +810,7 @@ fn main() {
                     best_name = s.name.clone();
                 }
                 println!(
-                    "sys: {:.4}→{:.4} (Δ={:.4}), strategy={}, phases={}, {:.1}s",
+                    "sys: {:.4}->{:.4} (d={:.4}), strategy={}, phases={}, {:.1}s",
                     s.starting_sys, s.final_sys, s.total_delta, s.best_strategy,
                     s.n_ascent_phases, s.total_time_ms / 1000.0,
                 );

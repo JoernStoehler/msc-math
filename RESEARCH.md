@@ -24,11 +24,12 @@ Is it a local maximum of sys in various polytope spaces?
 The sys=1 threshold matters — this is about Viterbo's conjecture specifically.
 
 - **2a.** Which Lagrangian products of regular polygons achieve sys>1?
-  → [rotation-sweep](crates/exp-sys-landscape/rotation-sweep/)
+  → [rotated-regular-products](crates/exp-sys-landscape/rotated-regular-products/)
 - **2b.** Can gradient ascent from random starts reach sys>1?
-  → [boundary-crossing-search](crates/exp-sys-landscape/boundary-crossing-search/)
+  → [gradient-ascent-general](crates/exp-sys-landscape/gradient-ascent-general/),
+    [gradient-ascent-products](crates/exp-sys-landscape/gradient-ascent-products/)
 - **2c.** Structurally different sys>1 polytope near HKO2024?
-  → [perturbation-neighborhood](crates/exp-sys-landscape/perturbation-neighborhood/)
+  → [perturbation-neighborhood](crates/exp-hko-local-maximum/perturbation-neighborhood/)
 
 ## 3. How does sys behave as a function on polytope space?
 
@@ -43,9 +44,9 @@ No privileged threshold — sys is studied as a continuous function.
     [convexity](crates/exp-combinatorial-cells/convexity/),
     [multiple-crossings](crates/exp-combinatorial-cells/multiple-crossings/)
 - **3c.** sys distribution for random polytopes?
-  → [random-sweep](crates/exp-sys-landscape/random-sweep/),
-    [random-product-sweep](crates/exp-sys-landscape/random-product-sweep/),
-    [rejection-sampling](crates/exp-sys-landscape/rejection-sampling/)
+  → [random-sample](crates/exp-sys-landscape/random-sample/),
+    [random-product-sample](crates/exp-sys-landscape/random-product-sample/),
+    [rejection-calibration](crates/exp-sys-landscape/rejection-calibration/)
 - **3d.** Following sys gradients?
   → library `derivatives.rs`; validated by [numerics](crates/dev-gradient/numerics/),
     [numerics-edge-cases](crates/dev-gradient/numerics-edge-cases/),

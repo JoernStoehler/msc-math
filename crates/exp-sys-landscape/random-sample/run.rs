@@ -1,15 +1,15 @@
-//! Random systolic ratio sweep over random 4D polytopes.
+//! Random systolic ratio sample over random 4D polytopes.
 //!
 //! Goal: Compute systolic ratios for random 4D polytopes across facet counts F=5..12,
 //!   to probe whether random generic polytopes approach the Viterbo threshold.
 //! Input: Polytope database at data/polytopes.jsonl (created if missing).
-//! Output: crates/exp-baseline-characterization/random-sweep/random-sweep.jsonl
+//! Output: crates/exp-sys-landscape/random-sample/random-sweep.jsonl
 //!
 //! Architecture:
-//! 1. `cargo run --bin base-random-sweep --release` generates dataset
+//! 1. `cargo run -p exp-sys-landscape --release --bin sys-random-sample` generates dataset
 //! 2. Polytopes are generated via `generate_polytope` (blake3 per-attempt seeding)
 //!    and cached in the polytope database. Re-runs skip generation + capacity.
-//! 3. Writes to random-sweep/random-sweep.jsonl
+//! 3. Writes to random-sample/random-sweep.jsonl
 //! 4. Python script plots sys vs F
 //!
 //! Dataset design:

@@ -11,7 +11,7 @@ Viterbo's conjecture was disproved by Haim-Kislev and Ostrover (2024) via an exp
 ## How to run
 
 ```bash
-cd crates/exp-hko-local-maximum/perturbation-neighborhood/ && cargo run --bin hko-perturbation --release
+cargo run -p exp-hko-local-maximum --release --bin hko-perturbation
 python analyze.py
 ```
 
