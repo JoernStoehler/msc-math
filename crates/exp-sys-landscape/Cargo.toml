@@ -30,6 +30,10 @@ path = "random-product-sample/run.rs"
 name = "sys-rejection-calibration"
 path = "rejection-calibration/run.rs"
 
+[[bin]]
+name = "sys-variable-f-ascent"
+path = "variable-f-ascent/run.rs"
+
 [lints]
 workspace = true
 

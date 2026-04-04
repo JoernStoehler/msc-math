@@ -1,0 +1,861 @@
+//! Variable-F gradient ascent: test whether allowing facet count to grow
+//! (F → F+1) unlocks higher sys values than fixed-F optimization.
+//!
+//! Two research questions:
+//! - RQ1: Can F=10 local maxima be improved by embedding into F=11 space?
+//!   Take a local max, add a barely-non-redundant facet, run gradient ascent.
+//! - RQ2: Three-way comparison from the same random F=10 start:
+//!   Path A: F=10 gradient ascent
+//!   Path B: add facet → F=11 gradient ascent
+//!   Path C: random F=11 gradient ascent (baseline)
+//!
+//! Gradient ascent algorithm copied from gradient-ascent-general/run.rs
+//! (self-contained per experiment convention).
+//!
+//! Usage: cargo run -p exp-sys-landscape --release --bin sys-variable-f-ascent
+//! Flags: --fresh  (clear existing data and rerun)
+//! Output: variable-f-ascent/variable-f-ascent.jsonl
+
+use nalgebra::{Matrix4, Vector4};
+use rand::SeedableRng;
+use rand_chacha::ChaCha8Rng;
+use rand_distr::{Distribution, StandardNormal};
+use serde::{Deserialize, Serialize};
+use std::collections::HashSet;
+use std::fs::{File, OpenOptions};
+use std::io::{BufRead, BufReader, BufWriter, Write};
+use std::time::Instant;
+use symplectic::derivatives::{capacity_derivatives_a, volume_derivatives_a};
+use symplectic::geom::known_polytopes;
+use symplectic::geom::polytope::Polytope4D;
+use symplectic::geom::skeleton::Skeleton;
+use symplectic::geom::volume::volume;
+use symplectic::kkt::saddle_point_solver::solve_kkt_for;
+use symplectic::random::sample_random_polytope;
+
+// ============================================================================
+// Configuration
+// ============================================================================
+
+/// Master seed for RQ2 random polytope generation. Different from
+/// gradient-ascent-general (seed 42) to avoid overlap.
+const SEED: u64 = 43;
+
+/// Number of random facet placements per F=10 local max in RQ1.
+const N_PLACEMENTS_RQ1: usize = 5;
+
+/// Number of random starting polytopes for RQ2.
+const N_SEEDS_RQ2: usize = 10;
+
+/// Base facet count.
+const FACET_COUNT: usize = 10;
+
+/// Height range for random F=10 generation.
+const H_MIN: f64 = 0.8;
+const H_MAX: f64 = 1.2;
+
+/// Depth parameter for facet addition: a_{F+1} = n / (h_K(n) - ε).
+/// Same as facet-splitting experiment. Small enough that the (F+1)-polytope
+/// is close to the F-polytope; large enough that the new facet is robustly
+/// non-redundant at f64 precision.
+const FACET_EPSILON: f64 = 1e-3;
+
+// --- Gradient ascent parameters (copied from gradient-ascent-general) ---
+
+/// Maximum gradient ascent iterations per phase.
+const MAX_ITERATIONS: usize = 30;
+
+/// Minimum improvement per iteration to continue.
+const CONVERGENCE_THRESHOLD: f64 = 1e-6;
+
+/// Step fractions of t_max for within-bound line search.
+const STEP_FRACTIONS: &[f64] = &[0.1, 0.25, 0.5, 0.75, 0.95];
+
+/// Multipliers beyond t_max for crossing combinatorial boundaries.
+const OVERSHOOT_MULTIPLIERS: &[f64] = &[1.5, 2.0, 3.0];
+
+/// Prevents pathological steps when t_max is huge.
+const MAX_STEP_SIZE: f64 = 100.0;
+
+/// Number of random dual-vertex perturbations per escape round.
+const N_WIGGLES: usize = 5;
+
+/// ~5% perturbation of dual vertex components.
+const WIGGLE_STRENGTH: f64 = 0.05;
+
+/// Maximum rounds of escape attempts after convergence.
+const MAX_ESCAPE_ROUNDS: usize = 3;
+
+/// Per-trial time budget. 180s for F=11 (more orbits than F=10).
+const TRIAL_TIME_BUDGET_SECS: f64 = 180.0;
+
+/// Numerical zero threshold.
+const EPS: f64 = 1e-15;
+
+// ============================================================================
+// Output schema
+// ============================================================================
+
+#[derive(Debug, Serialize)]
+struct ResultRow {
+    /// "rq1" or "rq2"
+    rq: String,
+    /// "f10_localmax_then_f11", "f10_ascent", "f10_add_then_f11", "random_f11"
+    path: String,
+    /// Seed/source identifier
+    name: String,
+    /// Facet count at start of gradient ascent
+    starting_f: usize,
+    /// sys before any optimization in this trial
+    starting_sys: f64,
+    /// sys immediately after facet addition (before ascent), or null
+    sys_after_addition: Option<f64>,
+    /// sys after gradient ascent
+    final_sys: f64,
+    /// final_sys - starting_sys (of the source F=10 polytope for RQ1, of start for RQ2)
+    delta_vs_source: f64,
+    /// Total gradient iterations across all phases
+    n_iterations: usize,
+    /// Number of ascent phases (initial + escape rounds)
+    n_phases: usize,
+    /// Facet placement direction (unit vector), or null
+    placement_direction: Option<[f64; 4]>,
+    /// Whether the added facet is still non-redundant at the end
+    facet_remained_active: Option<bool>,
+    /// Wall-clock time for this trial
+    total_time_ms: f64,
+    /// Final dual vertices
+    final_dual_vertices: Vec<[f64; 4]>,
+}
+
+/// For loading gradient-ascent-general results.
+#[derive(Debug, Deserialize)]
+struct GradientAscentRow {
+    name: String,
+    final_sys: f64,
+    final_dual_vertices: Vec<[f64; 4]>,
+}
+
+// ============================================================================
+// Step bound in a-space (copied from gradient-ascent-general)
+// ============================================================================
+
+fn compute_step_bound_a(polytope: &Polytope4D, direction: &[Vector4<f64>]) -> f64 {
+    let duals = polytope.dual_vertices_f64();
+    let vertices = polytope.vertices_f64();
+    let f = polytope.facet_count();
+    let skeleton = Skeleton::compute(polytope);
+
+    let mut t_max = f64::INFINITY;
+
+    for (vi, vertex_facets) in skeleton.vertex_facets.iter().enumerate() {
+        let v = &vertices[vi];
+
+        if vertex_facets.len() == 4 {
+            let a_mat = Matrix4::from_rows(&[
+                duals[vertex_facets[0]].transpose(),
+                duals[vertex_facets[1]].transpose(),
+                duals[vertex_facets[2]].transpose(),
+                duals[vertex_facets[3]].transpose(),
+            ]);
+
+            let a_inv = match a_mat.try_inverse() {
+                Some(inv) => inv,
+                None => continue,
+            };
+
+            let w = Vector4::new(
+                direction[vertex_facets[0]].dot(v),
+                direction[vertex_facets[1]].dot(v),
+                direction[vertex_facets[2]].dot(v),
+                direction[vertex_facets[3]].dot(v),
+            );
+            let dv_dt = -(a_inv * w);
+
+            for j in 0..f {
+                if vertex_facets.contains(&j) {
+                    continue;
+                }
+                let slack = 1.0 - duals[j].dot(v);
+                let rate = -(direction[j].dot(v) + duals[j].dot(&dv_dt));
+                if rate < -EPS {
+                    let t_crit = slack / (-rate);
+                    if t_crit > 0.0 && t_crit < t_max {
+                        t_max = t_crit;
+                    }
+                }
+            }
+        } else {
+            let max_d_norm = direction.iter().map(|d| d.norm()).fold(0.0f64, f64::max);
+            if max_d_norm > EPS {
+                for j in 0..f {
+                    if vertex_facets.contains(&j) {
+                        continue;
+                    }
+                    let slack = 1.0 - duals[j].dot(v);
+                    let max_rate = max_d_norm * v.norm() * (1.0 + duals[j].norm());
+                    if max_rate > EPS {
+                        let t_crit = slack / max_rate;
+                        if t_crit > 0.0 && t_crit < t_max {
+                            t_max = t_crit;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    t_max.min(MAX_STEP_SIZE)
+}
+
+// ============================================================================
+// Gradient step in a-space (copied from gradient-ascent-general)
+// ============================================================================
+
+fn compute_sys(polytope: &Polytope4D) -> Option<f64> {
+    let vol = volume(polytope).ok().filter(|&v| v > 0.0)?;
+    let cap = compute_capacity(polytope)?;
+    let sys = cap * cap / (2.0 * vol);
+    sys.is_finite().then_some(sys)
+}
+
+fn try_step_a(
+    duals: &[Vector4<f64>],
+    direction: &[Vector4<f64>],
+    t: f64,
+) -> Option<(Polytope4D, f64)> {
+    let new_duals: Vec<Vector4<f64>> = duals
+        .iter()
+        .zip(direction)
+        .map(|(a, d)| a + t * d)
+        .collect();
+    let polytope = Polytope4D::from_f64(new_duals).ok()?;
+    let sys = compute_sys(&polytope)?;
+    Some((polytope, sys))
+}
+
+fn compute_capacity(polytope: &Polytope4D) -> Option<f64> {
+    symplectic::algorithms::hk2017::ehz_capacity(polytope).map(|r| r.result.capacity)
+}
+
+fn compute_capacity_result(polytope: &Polytope4D) -> Option<(f64, Vec<usize>)> {
+    let r = symplectic::algorithms::hk2017::ehz_capacity(polytope)?;
+    Some((r.result.capacity, r.result.best_permutation))
+}
+
+// ============================================================================
+// Gradient ascent with integrated overshoot (copied from gradient-ascent-general)
+// ============================================================================
+
+struct AscentResult {
+    final_polytope: Polytope4D,
+    final_sys: f64,
+    n_iters: usize,
+    n_phases: usize,
+}
+
+fn gradient_ascent_phase(
+    start: &Polytope4D,
+    t0: Instant,
+    budget: f64,
+) -> Option<(Polytope4D, f64, usize)> {
+    let mut current = Polytope4D::from_f64(start.dual_vertices_f64().to_vec()).ok()?;
+    let mut current_sys = compute_sys(&current)?;
+    let mut n_iters = 0usize;
+
+    for iter in 0..MAX_ITERATIONS {
+        if t0.elapsed().as_secs_f64() > budget {
+            break;
+        }
+
+        let (cap, best_perm) = compute_capacity_result(&current)?;
+        let kkt = solve_kkt_for(&current, &best_perm).feasible()?;
+        let vol = volume(&current).ok().filter(|&v| v > 0.0)?;
+        let sys = cap * cap / (2.0 * vol);
+
+        let duals = current.dual_vertices_f64();
+        let d_vol_a = volume_derivatives_a(&current);
+        let d_cap_a =
+            capacity_derivatives_a(&kkt.beta, kkt.q_corrected, &kkt.mu, &best_perm, duals);
+        let d_sys_a: Vec<Vector4<f64>> = d_vol_a
+            .iter()
+            .zip(d_cap_a.iter())
+            .map(|(dv, dc)| (cap * dc - sys * dv) / vol)
+            .collect();
+
+        let gradient_norm = d_sys_a
+            .iter()
+            .map(|d| d.norm_squared())
+            .sum::<f64>()
+            .sqrt();
+        if gradient_norm < EPS {
+            break;
+        }
+
+        let t_max = compute_step_bound_a(&current, &d_sys_a);
+        if t_max <= 0.0 {
+            break;
+        }
+
+        let mut best: Option<(Polytope4D, f64)> = None;
+
+        for &frac in STEP_FRACTIONS {
+            let t = frac * t_max;
+            if let Some((p, new_sys)) = try_step_a(duals, &d_sys_a, t) {
+                if new_sys > sys && best.as_ref().is_none_or(|b| new_sys > b.1) {
+                    best = Some((p, new_sys));
+                }
+            }
+        }
+
+        if t_max < MAX_STEP_SIZE {
+            for &mult in OVERSHOOT_MULTIPLIERS {
+                let t = mult * t_max;
+                if let Some((p, new_sys)) = try_step_a(duals, &d_sys_a, t) {
+                    if new_sys > sys && best.as_ref().is_none_or(|b| new_sys > b.1) {
+                        best = Some((p, new_sys));
+                    }
+                }
+            }
+        }
+
+        match best {
+            Some((new_polytope, new_sys)) => {
+                let delta = new_sys - sys;
+                current = new_polytope;
+                current_sys = new_sys;
+                n_iters = iter + 1;
+                if delta < CONVERGENCE_THRESHOLD {
+                    break;
+                }
+            }
+            None => break,
+        }
+    }
+
+    Some((current, current_sys, n_iters))
+}
+
+fn wiggle(polytope: &Polytope4D, rng: &mut ChaCha8Rng) -> Option<Polytope4D> {
+    let duals = polytope.dual_vertices_f64();
+    let new_duals: Vec<Vector4<f64>> = duals
+        .iter()
+        .map(|a| {
+            a.map(|c| {
+                let noise: f64 = StandardNormal.sample(rng);
+                c * (1.0 + WIGGLE_STRENGTH * noise)
+            })
+        })
+        .collect();
+    Polytope4D::from_f64(new_duals).ok()
+}
+
+/// Full gradient ascent: initial phase + escape rounds.
+fn full_ascent(
+    start: &Polytope4D,
+    rng: &mut ChaCha8Rng,
+    budget: f64,
+) -> Option<AscentResult> {
+    let t0 = Instant::now();
+
+    let (mut best_polytope, mut best_sys, mut total_iters) =
+        gradient_ascent_phase(start, t0, budget)?;
+    let mut n_phases = 1usize;
+
+    for _round in 0..MAX_ESCAPE_ROUNDS {
+        if t0.elapsed().as_secs_f64() > budget {
+            break;
+        }
+        let mut escaped = false;
+        for _ in 0..N_WIGGLES {
+            if t0.elapsed().as_secs_f64() > budget {
+                break;
+            }
+            if let Some(wiggled) = wiggle(&best_polytope, rng) {
+                if let Some((p, s, iters)) =
+                    gradient_ascent_phase(&wiggled, t0, budget)
+                {
+                    n_phases += 1;
+                    total_iters += iters;
+                    if s > best_sys + CONVERGENCE_THRESHOLD {
+                        best_sys = s;
+                        best_polytope = p;
+                        escaped = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if !escaped {
+            break;
+        }
+    }
+
+    Some(AscentResult {
+        final_polytope: best_polytope,
+        final_sys: best_sys,
+        n_iters: total_iters,
+        n_phases,
+    })
+}
+
+// ============================================================================
+// Facet addition
+// ============================================================================
+
+/// Add a barely-non-redundant facet to a polytope.
+///
+/// New dual vertex: a_{F+1} = n / (h_K(n) - ε) where h_K(n) = max_v ⟨n,v⟩.
+/// This creates an (F+1)-facet polytope that is close to the original:
+/// the new halfspace ⟨n,x⟩ ≤ h_K(n) - ε shaves a thin sliver.
+///
+/// Pattern from facet-splitting/run.rs.
+fn add_facet(
+    polytope: &Polytope4D,
+    direction: &Vector4<f64>,
+    epsilon: f64,
+) -> Option<Polytope4D> {
+    let vertices = polytope.vertices_f64();
+    let h_k_n = vertices
+        .iter()
+        .map(|v| direction.dot(v))
+        .fold(f64::NEG_INFINITY, f64::max);
+    let new_h = h_k_n - epsilon;
+    if new_h <= 0.0 {
+        return None;
+    }
+    let mut new_duals: Vec<Vector4<f64>> = polytope.dual_vertices_f64().to_vec();
+    new_duals.push(direction / new_h);
+    Polytope4D::from_f64(new_duals).ok()
+}
+
+/// Sample a random unit direction in R^4.
+/// rand_distr::UnitSphere only supports 3D, so we use 4 Gaussians + normalize
+/// (standard method for uniform sampling on S^{n-1}).
+fn random_direction(rng: &mut ChaCha8Rng) -> Vector4<f64> {
+    let x: f64 = StandardNormal.sample(rng);
+    let y: f64 = StandardNormal.sample(rng);
+    let z: f64 = StandardNormal.sample(rng);
+    let w: f64 = StandardNormal.sample(rng);
+    let v = Vector4::new(x, y, z, w);
+    v.normalize()
+}
+
+/// Check whether the last facet (index F) is still non-redundant.
+/// A facet is "active" if it has at least one incident vertex.
+fn last_facet_active(polytope: &Polytope4D) -> bool {
+    let f = polytope.facet_count();
+    let last_idx = f - 1;
+    let skeleton = Skeleton::compute(polytope);
+    skeleton
+        .vertex_facets
+        .iter()
+        .any(|facets| facets.contains(&last_idx))
+}
+
+// ============================================================================
+// Loading F=10 local maxima from gradient-ascent-general
+// ============================================================================
+
+fn load_local_maxima(
+    path: &std::path::Path,
+) -> Vec<(String, f64, Polytope4D)> {
+    let mut results = Vec::new();
+    let file = match File::open(path) {
+        Ok(f) => f,
+        Err(e) => {
+            eprintln!("WARNING: cannot load local maxima from {}: {e}", path.display());
+            return results;
+        }
+    };
+    let reader = BufReader::new(file);
+    for line in reader.lines().map_while(Result::ok) {
+        let line = line.trim().to_string();
+        if line.is_empty() {
+            continue;
+        }
+        if let Ok(row) = serde_json::from_str::<GradientAscentRow>(&line) {
+            let duals: Vec<Vector4<f64>> = row
+                .final_dual_vertices
+                .iter()
+                .map(|a| Vector4::new(a[0], a[1], a[2], a[3]))
+                .collect();
+            if let Ok(p) = Polytope4D::from_f64(duals) {
+                results.push((row.name, row.final_sys, p));
+            }
+        }
+    }
+    results
+}
+
+// ============================================================================
+// Resume support
+// ============================================================================
+
+fn load_completed_names(path: &std::path::Path) -> HashSet<String> {
+    let mut names = HashSet::new();
+    if let Ok(file) = File::open(path) {
+        let reader = BufReader::new(file);
+        for line in reader.lines().map_while(Result::ok) {
+            let line = line.trim().to_string();
+            if line.is_empty() {
+                continue;
+            }
+            if let Ok(v) = serde_json::from_str::<serde_json::Value>(&line) {
+                if let Some(name) = v.get("name").and_then(|n| n.as_str()) {
+                    names.insert(name.to_string());
+                }
+            }
+        }
+    }
+    names
+}
+
+// ============================================================================
+// Helpers
+// ============================================================================
+
+fn dvs_to_array(polytope: &Polytope4D) -> Vec<[f64; 4]> {
+    polytope
+        .dual_vertices_f64()
+        .iter()
+        .map(|a| [a[0], a[1], a[2], a[3]])
+        .collect()
+}
+
+fn write_row(row: &ResultRow, writer: &mut BufWriter<File>) {
+    serde_json::to_writer(&mut *writer, row).expect("write row");
+    writeln!(writer).expect("newline");
+}
+
+// ============================================================================
+// Main
+// ============================================================================
+
+fn main() {
+    let t_global = Instant::now();
+    let base =
+        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("variable-f-ascent");
+    let output_path = base.join("variable-f-ascent.jsonl");
+
+    println!("variable-f-ascent: variable-F gradient ascent experiment\n");
+
+    // CLI args
+    let args: Vec<String> = std::env::args().collect();
+    let fresh = args.iter().any(|a| a == "--fresh");
+
+    let completed = if fresh {
+        let _ = std::fs::remove_file(&output_path);
+        HashSet::new()
+    } else {
+        load_completed_names(&output_path)
+    };
+
+    if completed.is_empty() {
+        println!("Starting fresh run.");
+    } else {
+        println!("Resuming: {} trials already completed.", completed.len());
+    }
+
+    let output_file = OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(&output_path)
+        .expect("open output JSONL");
+    let mut writer = BufWriter::new(output_file);
+
+    let mut rng = ChaCha8Rng::seed_from_u64(SEED);
+
+    // =========================================================================
+    // RQ1: Can F=10 local maxima be improved in F=11 space?
+    // =========================================================================
+
+    println!("=== RQ1: Improving F=10 local maxima in F=11 space ===\n");
+
+    // Load local maxima from gradient-ascent-general
+    let ga_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("gradient-ascent-general/gradient-ascent-general.jsonl");
+    let mut local_maxima = load_local_maxima(&ga_path);
+    println!("Loaded {} local maxima from gradient-ascent-general.", local_maxima.len());
+
+    // Add HKO2024
+    let hko = known_polytopes::hko_pentagon().polytope.clone();
+    let hko_sys = compute_sys(&hko).expect("HKO2024 sys");
+    local_maxima.push(("hko2024".to_string(), hko_sys, hko));
+    println!("Added HKO2024 (sys={hko_sys:.4}). Total: {} starting points.\n", local_maxima.len());
+
+    let mut rq1_improved = 0usize;
+    let mut rq1_total = 0usize;
+    let mut best_rq1_sys = 0.0f64;
+
+    for (src_name, src_sys, src_polytope) in &local_maxima {
+        for placement_idx in 0..N_PLACEMENTS_RQ1 {
+            let trial_name = format!("rq1_{src_name}_p{placement_idx}");
+            if completed.contains(&trial_name) {
+                continue;
+            }
+
+            let t0 = Instant::now();
+            let dir = random_direction(&mut rng);
+
+            // Add facet
+            let f11_polytope = match add_facet(src_polytope, &dir, FACET_EPSILON) {
+                Some(p) => p,
+                None => {
+                    println!("  [{trial_name}] facet addition failed (h_K(n) - ε ≤ 0)");
+                    continue;
+                }
+            };
+
+            let sys_after_add = compute_sys(&f11_polytope);
+            let sys_after_add_val = match sys_after_add {
+                Some(s) => s,
+                None => {
+                    println!("  [{trial_name}] sys computation failed after addition");
+                    continue;
+                }
+            };
+
+            // Run gradient ascent on F=11 polytope
+            match full_ascent(&f11_polytope, &mut rng, TRIAL_TIME_BUDGET_SECS) {
+                Some(result) => {
+                    let delta = result.final_sys - src_sys;
+                    rq1_total += 1;
+                    let improved = result.final_sys > *src_sys + CONVERGENCE_THRESHOLD;
+                    if improved {
+                        rq1_improved += 1;
+                    }
+                    if result.final_sys > best_rq1_sys {
+                        best_rq1_sys = result.final_sys;
+                    }
+
+                    let active = last_facet_active(&result.final_polytope);
+
+                    let row = ResultRow {
+                        rq: "rq1".into(),
+                        path: "f10_localmax_then_f11".into(),
+                        name: trial_name.clone(),
+                        starting_f: 11,
+                        starting_sys: *src_sys,
+                        sys_after_addition: Some(sys_after_add_val),
+                        final_sys: result.final_sys,
+                        delta_vs_source: delta,
+                        n_iterations: result.n_iters,
+                        n_phases: result.n_phases,
+                        placement_direction: Some([dir[0], dir[1], dir[2], dir[3]]),
+                        facet_remained_active: Some(active),
+                        total_time_ms: t0.elapsed().as_secs_f64() * 1000.0,
+                        final_dual_vertices: dvs_to_array(&result.final_polytope),
+                    };
+                    write_row(&row, &mut writer);
+
+                    let marker = if improved { " *** IMPROVED ***" } else { "" };
+                    println!(
+                        "  [{trial_name}] src_sys={:.4} → add={:.4} → final={:.4} (Δ={delta:+.4}), \
+                         active={active}, {:.1}s{marker}",
+                        src_sys, sys_after_add_val, result.final_sys,
+                        t0.elapsed().as_secs_f64(),
+                    );
+
+                    if result.final_sys > 1.0 {
+                        eprintln!(
+                            "*** VITERBO VIOLATION: {} sys={:.6} ***",
+                            trial_name, result.final_sys
+                        );
+                    }
+                }
+                None => {
+                    println!("  [{trial_name}] gradient ascent failed");
+                }
+            }
+        }
+    }
+
+    println!("\nRQ1 summary: {rq1_improved}/{rq1_total} trials improved over F=10 local max.");
+    println!("Best RQ1 sys: {best_rq1_sys:.6}\n");
+
+    // =========================================================================
+    // RQ2: Three-way comparison from random F=10 starts
+    // =========================================================================
+
+    println!("=== RQ2: Three-way comparison (F=10 ascent vs add+F=11 vs random F=11) ===\n");
+
+    // Generate F=10 starting polytopes
+    let mut rq2_starts: Vec<(String, Polytope4D)> = Vec::new();
+    let mut attempts = 0usize;
+    while rq2_starts.len() < N_SEEDS_RQ2 {
+        attempts += 1;
+        if attempts > N_SEEDS_RQ2 * 100 {
+            eprintln!(
+                "WARNING: gave up generating F=10 polytopes after {attempts} attempts"
+            );
+            break;
+        }
+        if let Ok(p) = sample_random_polytope(FACET_COUNT, H_MIN, H_MAX, &mut rng) {
+            let name = format!("rq2_seed{}", rq2_starts.len());
+            rq2_starts.push((name, p));
+        }
+    }
+    println!("Generated {} F=10 starting polytopes.\n", rq2_starts.len());
+
+    // Generate F=11 random polytopes for Path C (same count)
+    let mut rq2_f11_random: Vec<(String, Polytope4D)> = Vec::new();
+    attempts = 0;
+    while rq2_f11_random.len() < N_SEEDS_RQ2 {
+        attempts += 1;
+        if attempts > N_SEEDS_RQ2 * 100 {
+            eprintln!(
+                "WARNING: gave up generating F=11 polytopes after {attempts} attempts"
+            );
+            break;
+        }
+        if let Ok(p) = sample_random_polytope(FACET_COUNT + 1, H_MIN, H_MAX, &mut rng) {
+            let name = format!("rq2_seed{}", rq2_f11_random.len());
+            rq2_f11_random.push((name, p));
+        }
+    }
+    println!("Generated {} F=11 random polytopes.\n", rq2_f11_random.len());
+
+    for (idx, (seed_name, start_polytope)) in rq2_starts.iter().enumerate() {
+        let start_sys = match compute_sys(start_polytope) {
+            Some(s) => s,
+            None => {
+                println!("[{seed_name}] sys computation failed, skipping");
+                continue;
+            }
+        };
+        println!("[{seed_name}] starting sys={start_sys:.4}");
+
+        // --- Path A: F=10 gradient ascent ---
+        let path_a_name = format!("{seed_name}_pathA_f10");
+        if !completed.contains(&path_a_name) {
+            let t0 = Instant::now();
+            match full_ascent(start_polytope, &mut rng, TRIAL_TIME_BUDGET_SECS) {
+                Some(result) => {
+                    let row = ResultRow {
+                        rq: "rq2".into(),
+                        path: "f10_ascent".into(),
+                        name: path_a_name.clone(),
+                        starting_f: 10,
+                        starting_sys: start_sys,
+                        sys_after_addition: None,
+                        final_sys: result.final_sys,
+                        delta_vs_source: result.final_sys - start_sys,
+                        n_iterations: result.n_iters,
+                        n_phases: result.n_phases,
+                        placement_direction: None,
+                        facet_remained_active: None,
+                        total_time_ms: t0.elapsed().as_secs_f64() * 1000.0,
+                        final_dual_vertices: dvs_to_array(&result.final_polytope),
+                    };
+                    write_row(&row, &mut writer);
+                    println!(
+                        "  [A: F=10 ascent] final_sys={:.4} (Δ={:+.4}), {:.1}s",
+                        result.final_sys,
+                        result.final_sys - start_sys,
+                        t0.elapsed().as_secs_f64(),
+                    );
+                }
+                None => println!("  [A: F=10 ascent] FAILED"),
+            }
+        }
+
+        // --- Path B: add facet → F=11 gradient ascent ---
+        let path_b_name = format!("{seed_name}_pathB_f11add");
+        if !completed.contains(&path_b_name) {
+            let t0 = Instant::now();
+            let dir = random_direction(&mut rng);
+
+            match add_facet(start_polytope, &dir, FACET_EPSILON) {
+                Some(f11_polytope) => {
+                    let sys_after_add = compute_sys(&f11_polytope);
+                    match full_ascent(&f11_polytope, &mut rng, TRIAL_TIME_BUDGET_SECS) {
+                        Some(result) => {
+                            let active = last_facet_active(&result.final_polytope);
+                            let row = ResultRow {
+                                rq: "rq2".into(),
+                                path: "f10_add_then_f11".into(),
+                                name: path_b_name.clone(),
+                                starting_f: 11,
+                                starting_sys: start_sys,
+                                sys_after_addition: sys_after_add,
+                                final_sys: result.final_sys,
+                                delta_vs_source: result.final_sys - start_sys,
+                                n_iterations: result.n_iters,
+                                n_phases: result.n_phases,
+                                placement_direction: Some([dir[0], dir[1], dir[2], dir[3]]),
+                                facet_remained_active: Some(active),
+                                total_time_ms: t0.elapsed().as_secs_f64() * 1000.0,
+                                final_dual_vertices: dvs_to_array(&result.final_polytope),
+                            };
+                            write_row(&row, &mut writer);
+                            println!(
+                                "  [B: add+F=11] add_sys={:.4} → final={:.4} (Δ={:+.4}), active={active}, {:.1}s",
+                                sys_after_add.unwrap_or(f64::NAN),
+                                result.final_sys,
+                                result.final_sys - start_sys,
+                                t0.elapsed().as_secs_f64(),
+                            );
+                        }
+                        None => println!("  [B: add+F=11] gradient ascent FAILED"),
+                    }
+                }
+                None => {
+                    // Consume the rng state that would have been used by full_ascent
+                    println!("  [B: add+F=11] facet addition FAILED");
+                }
+            }
+        }
+
+        // --- Path C: random F=11 gradient ascent ---
+        let path_c_name = format!("{seed_name}_pathC_f11rand");
+        if !completed.contains(&path_c_name) {
+            if let Some((_, f11_polytope)) = rq2_f11_random.get(idx) {
+                let t0 = Instant::now();
+                let f11_start_sys = compute_sys(f11_polytope);
+                match full_ascent(f11_polytope, &mut rng, TRIAL_TIME_BUDGET_SECS) {
+                    Some(result) => {
+                        let row = ResultRow {
+                            rq: "rq2".into(),
+                            path: "random_f11".into(),
+                            name: path_c_name.clone(),
+                            starting_f: 11,
+                            starting_sys: f11_start_sys.unwrap_or(f64::NAN),
+                            sys_after_addition: None,
+                            final_sys: result.final_sys,
+                            delta_vs_source: result.final_sys
+                                - f11_start_sys.unwrap_or(f64::NAN),
+                            n_iterations: result.n_iters,
+                            n_phases: result.n_phases,
+                            placement_direction: None,
+                            facet_remained_active: None,
+                            total_time_ms: t0.elapsed().as_secs_f64() * 1000.0,
+                            final_dual_vertices: dvs_to_array(&result.final_polytope),
+                        };
+                        write_row(&row, &mut writer);
+                        println!(
+                            "  [C: random F=11] start={:.4} → final={:.4} (Δ={:+.4}), {:.1}s",
+                            f11_start_sys.unwrap_or(f64::NAN),
+                            result.final_sys,
+                            result.final_sys - f11_start_sys.unwrap_or(f64::NAN),
+                            t0.elapsed().as_secs_f64(),
+                        );
+                    }
+                    None => println!("  [C: random F=11] FAILED"),
+                }
+            }
+        }
+
+        println!();
+    }
+
+    // =========================================================================
+    // Final summary
+    // =========================================================================
+
+    writer.flush().expect("flush output");
+
+    println!("========================================");
+    println!("Total time: {:.1}s", t_global.elapsed().as_secs_f64());
+    println!("Output: {}", output_path.display());
+}
