@@ -42,11 +42,12 @@ const SVD_CONDITION_TAU: f64 = 1e-3;
 const EPS_KKT_RESIDUAL: f64 = 1e-6;
 
 /// Maximum subset size to search. The full crosspolytope has F=16, so m ranges
-/// from 2 to 16. Scaling analysis (2026-04-04) estimates ~146M binary iterations
-/// for m=13..16 total (~2-5 hours). Growth factor of adjacent cycles declines
-/// linearly: 5.6x (m=5) → 3.4x (m=11), so m=13-16 are increasingly constrained.
-/// Running with m=16 to attempt full exhaustive certification.
-const MAX_SUBSET_SIZE: usize = 16;
+/// from 2 to 16. Empirical timing (2026-04-04): m=2..13 completes in ~19 min
+/// (31.8M iterations). m=14 has only 6 canonical subsets but depth-13 DFS per
+/// subset; estimated ~30-60 min. m=15-16 would take hours. Since the best action
+/// is found at m=4 and actions generally increase with m, stopping at m=13 gives
+/// high confidence (unproven) that c_EHZ = 4.0.
+const MAX_SUBSET_SIZE: usize = 13;
 
 // ── KKT solver (copied from crates/library/src/kkt.rs) ─────────────────────────────
 
