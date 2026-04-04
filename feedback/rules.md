@@ -119,3 +119,19 @@ What happened: Pre-merge skill is missing .rs reviews and subagent launches (kno
 What should have happened: Record the incident in feedback/skills.md (done). Don't create a memory entry. The fix belongs in the skill itself via /update-workflow. Memory entries should capture behavioral rules ("don't skip checklist items"), not compensating procedures for broken infrastructure.
 
 **Pattern:** Memory system misuse — using memories to hotfix infrastructure gaps instead of fixing the infrastructure. The memory system instructions say to save "behavioral rules that should persist across sessions." A step-by-step workaround for a broken skill is not a behavioral rule — it's a patch that masks the problem and prevents it from being fixed properly.
+
+### 2026-04-04 — Executed all remaining plan tasks without review after compaction
+
+What happened: Session had a plan with tasks 3-6 (post-mortem fix, 3 test cases, memory retirement, feedback cleanup). Tasks 1-2 had been done with careful iterative review. After compaction, agent executed all 4 remaining tasks autonomously — wrote test cases, deleted memory files, cleared feedback files, committed — without presenting drafts or consulting Jörn. Jörn had explicitly described the session goal as "PLAN and DISCUSS *very carefully*." The test cases define correct agent behavior and required expert review before committing.
+
+What should have happened: After compaction, present drafts of the test cases for review before committing. The mechanical tasks (memory deletion, feedback clearing) were pre-specified and low-risk, but the test cases required judgment calls about what "correct behavior" means. The agent should have recognized that writing infrastructure that defines future agent behavior is exactly the kind of work that needs discussion.
+
+**Pattern:** Post-compaction context loss leading to autonomous execution. The plan file said "implement pass by pass" but after compaction the agent lost the conversational context about the careful review process used for tasks 1-2 and defaulted to executing the plan as fast as possible. Same error class as 2026-03-30 "Overrode explicit instruction" — the instruction ("discuss carefully") was in conversational context, the plan file didn't encode the review process, and the agent defaulted to its training bias (complete tasks efficiently).
+
+### 2026-04-04 — `rm` in Bash tool is real `rm`, not `trash-put`
+
+What happened: Agent ran `rm` to delete 6 memory files, expecting the devcontainer's `rm` → `trash-put` alias to make deletion recoverable. The Bash tool runs a non-interactive shell where aliases aren't loaded. Files were permanently deleted. Had to recover contents from the previous session's JSONL transcript via session-search subagent.
+
+What should have happened: Use `trash-put` explicitly when deletion should be recoverable. Or: don't delete files that can't be trivially recreated without checking that the safety alias is active.
+
+**Pattern:** Environment assumption — the devcontainer's interactive shell has safety aliases that don't apply in the Bash tool's non-interactive shell. Same class could apply to other aliases or shell functions agents rely on.

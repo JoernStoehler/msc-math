@@ -1,3 +1,8 @@
+# /// script
+# requires-python = ">=3.12"
+# dependencies = ["matplotlib", "numpy"]
+# ///
+
 """
 Goal: Analyze boundary anatomy, crossing evaluation, and orbit gap.
 Input: crates/exp-combinatorial-cells/boundary-characterization/combinatorial-boundaries-{anatomy,crossing}.jsonl

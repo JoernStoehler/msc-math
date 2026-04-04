@@ -12,7 +12,7 @@ Profile the default test suite (`cargo test --lib`) to identify hot paths and tr
 
 ```bash
 cd crates/dev-algorithm-comparison/profiling/
-python3 analyze.py
+uv run analyze.py
 ```
 
 This runs the full pipeline:

@@ -11,7 +11,6 @@ paths:
 ```
 crates/
   figure_config.py         shared figure styling for all experiments
-  requirements.txt         shared Python dependencies for all experiments
   exp-<group>/             experiment group crate (e.g. exp-hko-local-maximum)
     Cargo.toml             binary registrations for the group
     <subdir>/              one experiment (e.g. gradient-search)
@@ -38,10 +37,24 @@ Experiments have open research questions. Answering them requires choosing what 
 Rust binary → .jsonl → Python script → .png → (used by thesis during assembly)
 
 - Python never calls Rust directly
+- Run Python scripts with `uv run analyze.py` (not `python3 analyze.py`). `uv` reads PEP 723 inline script metadata and auto-installs deps into a cached ephemeral venv.
 - Build one group: `cargo build -p exp-<group> --release` (from repo root)
 - Build all: `cargo build --workspace --release` (from repo root)
 - Run: `cargo run -p exp-<group> --release --bin <name>` (from repo root)
 - Add new experiment: create subdir under appropriate group, add `[[bin]]` to the group's `Cargo.toml`, write logbook
+
+## Python script deps (PEP 723)
+
+Every Python script declares its own dependencies via inline metadata at the top of the file:
+
+```python
+# /// script
+# requires-python = ">=3.12"
+# dependencies = ["matplotlib", "numpy"]
+# ///
+```
+
+When creating a new `analyze.py`, add this header with the deps that script actually uses. Common deps: `matplotlib`, `numpy`. Rare: `scipy`, `pandas`. Scripts that only use stdlib need no header.
 
 ## logbook.md — the entry point
 

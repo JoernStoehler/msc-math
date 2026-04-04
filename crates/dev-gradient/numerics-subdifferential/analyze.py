@@ -1,3 +1,8 @@
+# /// script
+# requires-python = ">=3.12"
+# dependencies = ["matplotlib", "numpy"]
+# ///
+
 """
 Goal: Analyze subdifferential prediction tests (Q5 orbit-switching, Q5b exact boundaries).
 Input:

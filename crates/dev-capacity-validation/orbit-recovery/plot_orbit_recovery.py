@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.12"
+# dependencies = ["matplotlib"]
+# ///
+
 """
 Plot orbit recovery error metrics by facet count.
 

@@ -1,3 +1,8 @@
+# /// script
+# requires-python = ">=3.12"
+# dependencies = ["matplotlib", "numpy"]
+# ///
+
 """
 Facet-splitting experiment: figures and analysis.
 

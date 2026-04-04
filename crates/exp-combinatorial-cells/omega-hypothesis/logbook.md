@@ -15,7 +15,7 @@ The mechanism: Q(beta) = sum beta_i beta_j omega_0(...), where Q is maximized su
 ```bash
 cargo run -p exp-combinatorial-cells --release --bin cell-omega   # generates omega-obstacle.jsonl
 cd crates/exp-combinatorial-cells/omega-hypothesis/
-python3 analyze.py                        # generates all figures
+uv run analyze.py                        # generates all figures
 ```
 
 ### Files

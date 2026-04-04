@@ -14,7 +14,7 @@ Per-facet cell width measurement in dual-vertex space. For each facet k, probe N
 
 ```bash
 cargo run -p exp-combinatorial-cells --release --bin cell-widths
-python3 analyze.py
+uv run analyze.py
 ```
 
 ## Results (from combinatorial-structure, 2026-03-27)

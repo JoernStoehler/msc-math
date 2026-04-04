@@ -1,3 +1,8 @@
+# /// script
+# requires-python = ">=3.12"
+# dependencies = ["matplotlib", "numpy"]
+# ///
+
 """
 Goal: Analyze gradient direction change at combinatorial boundaries.
 Input: crates/exp-combinatorial-cells/boundary-characterization/combinatorial-boundaries-gradient.jsonl

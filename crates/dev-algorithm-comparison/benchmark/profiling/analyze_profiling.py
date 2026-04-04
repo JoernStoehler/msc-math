@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.12"
+# dependencies = ["matplotlib", "numpy"]
+# ///
+
 """
 Analyze criterion benchmark results for pipeline phase breakdown.
 

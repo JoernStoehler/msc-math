@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.12"
+# dependencies = ["numpy", "scipy"]
+# ///
+
 """Phase C: LP test for 0 ∈ conv(per-orbit sys gradients) in (n,h)-space.
 
 Goal: Test whether HKO2024 satisfies the first-order necessary condition for

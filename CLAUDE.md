@@ -19,7 +19,6 @@ Cargo.toml                 workspace manifest
 Cargo.lock                 locked dependency versions
 crates/                    all Rust code (library + experiments)
   figure_config.py         shared Python figure styling for all experiments
-  requirements.txt         shared Python dependencies for all experiments
   library/                 Rust library (the core)
     Cargo.toml
     src/

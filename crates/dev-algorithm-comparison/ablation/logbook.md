@@ -17,7 +17,7 @@ cd crates/dev-algorithm-comparison/ablation/
 cargo run --bin cmp-ablation --release
 # -> ablation.jsonl (216 entries: 54 polytopes x 4 variants)
 
-python3 analyze.py
+uv run analyze.py
 # -> ablation_timing.png
 # Prints: agreement, timing, iteration tables
 ```

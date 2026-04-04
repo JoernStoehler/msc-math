@@ -13,8 +13,8 @@ The EHZ algorithm (Algorithm `alg:ehz`) returns a facet sequence S and weights b
 ```bash
 cd crates/dev-capacity-validation/orbit-recovery/
 cargo run --release --bin axioms-orbit-recovery   # generates orbit-recovery.jsonl
-python3 analyze.py                                # prints summary statistics
-python3 plot_orbit_recovery.py                    # generates error plot
+uv run analyze.py                                # prints summary statistics
+uv run plot_orbit_recovery.py                    # generates error plot
 ```
 
 ### Files

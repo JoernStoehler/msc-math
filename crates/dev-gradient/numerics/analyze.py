@@ -1,3 +1,8 @@
+# /// script
+# requires-python = ">=3.12"
+# dependencies = ["matplotlib", "numpy"]
+# ///
+
 """
 Goal: Analyze first-order prediction test for gradient correctness (Q1 generic, Q2 non-generic).
 Input:

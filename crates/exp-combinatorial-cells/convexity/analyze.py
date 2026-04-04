@@ -1,3 +1,8 @@
+# /// script
+# requires-python = ">=3.12"
+# dependencies = ["matplotlib", "numpy"]
+# ///
+
 """
 Goal: Analyze cell convexity testing results.
 Input: crates/exp-combinatorial-cells/convexity/combinatorial-boundaries-convexity.jsonl

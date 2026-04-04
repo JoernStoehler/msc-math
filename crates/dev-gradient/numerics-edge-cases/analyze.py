@@ -1,3 +1,8 @@
+# /// script
+# requires-python = ">=3.12"
+# dependencies = ["matplotlib", "numpy"]
+# ///
+
 """
 Goal: Analyze gradient correctness edge cases (Q3 near-degeneracy, Q4 barely-cutting).
 Input:

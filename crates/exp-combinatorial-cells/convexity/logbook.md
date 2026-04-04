@@ -14,7 +14,7 @@ Tests whether combinatorial-type cells in dual-vertex space are convex. Samples 
 
 ```bash
 cargo run -p exp-combinatorial-cells --release --bin cell-convexity
-python3 analyze.py
+uv run analyze.py
 ```
 
 ## Results (from combinatorial-structure, 2026-03-27)

@@ -1,3 +1,8 @@
+# /// script
+# requires-python = ">=3.12"
+# dependencies = ["matplotlib", "numpy"]
+# ///
+
 """
 Goal: Analyze per-facet cell profiling in dual-vertex space.
 Input: crates/exp-combinatorial-cells/cell-widths/combinatorial-boundaries-profiling.jsonl

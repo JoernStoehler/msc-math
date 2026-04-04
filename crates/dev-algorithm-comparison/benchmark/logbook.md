@@ -14,12 +14,12 @@ How long does the systolic ratio pipeline take, where does the time go, and whic
 # Capacity timing dataset (95 polytopes, 137 capacity computations)
 cd crates/dev-algorithm-comparison/benchmark/
 cargo run --bin cmp-benchmark --release   # -> benchmark.jsonl (~8 seconds)
-python3 analyze.py                        # -> profiling/timing_model.json, benchmark_timing.png
+uv run analyze.py                        # -> profiling/timing_model.json, benchmark_timing.png
 
 # End-to-end phase profiling (criterion benchmarks)
 cd crates/
 cargo bench --bench profiling         # -> target/criterion/ (JSON + HTML reports)
-python3 ../crates/dev-algorithm-comparison/benchmark/profiling/analyze_profiling.py  # -> phase_breakdown.png, micro_benchmarks.png
+uv run ../crates/dev-algorithm-comparison/benchmark/profiling/analyze_profiling.py  # -> phase_breakdown.png, micro_benchmarks.png
 
 # Flamegraph (requires sudo for perf)
 cd crates/dev-algorithm-comparison/benchmark/

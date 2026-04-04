@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.12"
+# dependencies = ["matplotlib", "numpy"]
+# ///
+
 """
 Analyze the omega-obstacle hypothesis: do small ω₀ values correlate with high systolic ratios?
 

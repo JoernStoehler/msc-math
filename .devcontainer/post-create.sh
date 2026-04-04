@@ -34,7 +34,7 @@ fi
 git lfs install
 
 # Pre-commit hooks (check-added-large-files blocks files >10 MB)
-pip install --break-system-packages pre-commit
+uv pip install --system pre-commit
 pre-commit install
 
 # Install Claude Code CLI

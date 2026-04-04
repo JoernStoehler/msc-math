@@ -1,3 +1,8 @@
+# /// script
+# requires-python = ">=3.12"
+# dependencies = ["matplotlib", "numpy"]
+# ///
+
 """
 Goal: Analyze multi-boundary sweep results.
 Input: crates/exp-combinatorial-cells/multiple-crossings/combinatorial-boundaries-sweep.jsonl

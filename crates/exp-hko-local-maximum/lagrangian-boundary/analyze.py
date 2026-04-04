@@ -1,3 +1,8 @@
+# /// script
+# requires-python = ">=3.12"
+# dependencies = ["matplotlib", "numpy"]
+# ///
+
 """
 Goal: Analyze dense perturbation sweep around HKO2024 in Lagrangian product space.
 Input: crates/exp-hko-local-maximum/lagrangian-boundary/lagrangian-search.jsonl (per-sample data)

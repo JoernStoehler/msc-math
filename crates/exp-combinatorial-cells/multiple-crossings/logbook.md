@@ -14,7 +14,7 @@ Multi-boundary traversal: walk along a direction for a distance budget, iterativ
 
 ```bash
 cargo run -p exp-combinatorial-cells --release --bin cell-multiple-crossings
-python3 analyze.py
+uv run analyze.py
 ```
 
 ## Results (from combinatorial-structure, 2026-03-27)

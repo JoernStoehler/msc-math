@@ -20,7 +20,7 @@ cargo run -p exp-combinatorial-cells --release --bin cell-boundary-characterizat
 Then run the analysis:
 ```bash
 cd crates/exp-combinatorial-cells/gradient-discontinuity/
-python3 analyze.py
+uv run analyze.py
 ```
 
 ## Results (from combinatorial-anatomy, 2026-03-27)

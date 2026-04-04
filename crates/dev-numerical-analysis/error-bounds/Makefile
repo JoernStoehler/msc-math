@@ -36,7 +36,7 @@ run: $(INPUT)
 	$(CARGO) verify_numerics -- verify-numerics/$(INPUT) verify-numerics/$(OUTPUT)
 
 analyze: $(RESULTS)
-	python3 analyze.py $(RESULTS)
+	uv run analyze.py $(RESULTS)
 
 # ── Shortcuts ──
 

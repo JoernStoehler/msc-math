@@ -9,7 +9,7 @@ Split from the original `gradient-is-zero/` experiment (Phase C: LP test). See `
 ## How to run
 
 ```bash
-python3 phase_c_lp_test.py
+uv run phase_c_lp_test.py
 ```
 
 Requires: `gradient-analysis/hko-neighborhood-sensitivity.jsonl` (sibling experiment data).

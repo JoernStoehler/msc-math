@@ -280,7 +280,7 @@ cargo run --release --bin num-error-bounds
 
 ## Propositions and bounds (current state, 2026-04-01)
 
-Run `python3 analyze.py` from `crates/dev-numerical-analysis/error-bounds/` for the full check output (`checks.txt`).
+Run `uv run analyze.py` from `crates/dev-numerical-analysis/error-bounds/` for the full check output (`checks.txt`).
 
 Dataset: 51,784 problems (4303 artificial + 47,481 natural from 458 polytopes F≤8). 45,476 SP-feasible (44,980 EHZ-like, 496 stress-test).
 
@@ -331,7 +331,7 @@ cd crates/dev-numerical-analysis/error-bounds/
 cargo build --release --bin num-collect-poly
 cargo run --release --bin num-error-bounds
 # Output: q_accuracy.jsonl (4303 rows, 15 families)
-python3 analyze.py
+uv run analyze.py
 # Output: q_accuracy_checks.txt + stdout
 ```
 
