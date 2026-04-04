@@ -789,6 +789,9 @@ fn main() {
         println!("[{seed_name}] starting sys={start_sys:.4}");
 
         // --- Path A: F=10 gradient ascent ---
+        // Always recomputed (even on resume) because Path D needs the in-memory
+        // polytope. With a warm cache.jsonl, capacity lookups are all hits and
+        // this takes <1s per seed (~10s total for 10 seeds).
         let path_a_name = format!("{seed_name}_pathA_f10");
         let mut path_a_result: Option<(Polytope4D, f64)> = None;
         {
