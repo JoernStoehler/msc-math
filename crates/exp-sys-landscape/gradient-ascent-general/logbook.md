@@ -6,7 +6,7 @@ Can gradient-based optimization push sys past 1 for general (non-Lagrangian) pol
 
 ## Status
 
-**Split from boundary-crossing-search (2026-04-04).** Data needs regeneration.
+**Split from boundary-crossing-search (2026-04-04).** Fresh data generated.
 
 ## Predecessor
 
@@ -28,9 +28,7 @@ cd crates/exp-sys-landscape/gradient-ascent-general/ && python3 analyze.py      
 | analyze.py | Summary table, 5 figures |
 | gradient-ascent-general.jsonl | Per-seed summary (one row per polytope) |
 | gradient-ascent-general-trace.jsonl | Per-iteration trace (diagnostic) |
-| sys-search.jsonl | Legacy data from boundary-crossing-search (mixed general+product rows, needs regeneration) |
-| sys-search-trace.jsonl | Legacy trace data from boundary-crossing-search (needs regeneration) |
-| sys_search_*.png | Figures (from legacy data) |
+| gradient_ascent_general_*.png | Figures |
 
 ## Algorithm
 
@@ -46,4 +44,4 @@ General polytopes: 10 seeds, mean sys 0.823, max sys 0.901. Warm starts from gra
 
 ## Data status
 
-Legacy data (`sys-search.jsonl`, `sys-search-trace.jsonl`) contains mixed general+Lagrangian rows from the predecessor experiment. Needs regeneration with the split binary.
+Fresh data regenerated 2026-04-04 after warm-start removal and split from boundary-crossing-search. 10 fresh general polytopes, no warm starts (warm-start source `large-scale-descent` was deleted as superseded). Polytopes use standard master seed (42), low attempt numbers, and benefit from database caching for initial capacity/volume computation.

@@ -6,15 +6,13 @@
 //! perturbation of dual vertices).
 //!
 //! Architecture: single binary, inline polytope generation + optimization.
-//! Two seed sources: fresh random general polytopes and warm starts from
-//! gradient-descent's converged points (general polytopes only).
+//! Seeds: fresh random general polytopes (standard master seed, low attempt numbers).
 //!
 //! Predecessor: boundary-crossing-search (split into gradient-ascent-general
 //! and gradient-ascent-products, 2026-04-04).
 //!
 //! Usage: cargo run -p exp-sys-landscape --release --bin sys-gradient-ascent-general
 //! Flags: --fresh  (clear existing data and rerun)
-//!        --warm-start <path>  (JSONL with final_dual_vertices for warm starts)
 //! Output: gradient-ascent-general/gradient-ascent-general.jsonl      (per-seed summary)
 //!         gradient-ascent-general/gradient-ascent-general-trace.jsonl (per-iteration trace)
 
@@ -23,7 +21,7 @@ use nalgebra::{Matrix4, Vector4};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal};
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use std::collections::{HashMap, HashSet};
 use std::fs::{File, OpenOptions};
 use std::io::{BufRead, BufReader, BufWriter, Write};
@@ -46,7 +44,6 @@ const SEED: u64 = 42;
 
 /// Development-scale counts. Increase for production runs.
 const N_GENERAL: usize = 10;
-const N_WARM_STARTS: usize = 20;
 
 /// Facet count for fresh polytopes.
 const FACET_COUNT: usize = 10;
@@ -127,16 +124,6 @@ struct TraceRow {
     sys_after: f64,
     delta_sys: f64,
     gradient_norm: f64,
-}
-
-/// Warm-start input row (reads gradient-descent JSONL).
-#[derive(Debug, Deserialize)]
-struct WarmStartRow {
-    name: String,
-    polytope_type: String,
-    #[serde(default)]
-    final_dual_vertices: Option<Vec<[f64; 4]>>,
-    sys_after: f64,
 }
 
 // ============================================================================
@@ -564,59 +551,6 @@ fn generate_general_polytopes(rng: &mut ChaCha8Rng) -> Vec<(String, Polytope4D)>
 }
 
 // ============================================================================
-// Warm-start loading
-// ============================================================================
-
-/// Load warm-start polytopes from a gradient-descent JSONL file.
-/// Picks the top N_WARM_STARTS general (non-Lagrangian) seeds by sys_after
-/// that have final_dual_vertices.
-fn load_warm_starts(path: &std::path::Path) -> Vec<(String, String, Polytope4D)> {
-    let file = match File::open(path) {
-        Ok(f) => f,
-        Err(e) => {
-            eprintln!("WARNING: cannot open warm-start file {}: {e}", path.display());
-            return Vec::new();
-        }
-    };
-
-    let mut candidates: Vec<(String, String, f64, Vec<[f64; 4]>)> = Vec::new();
-    let reader = BufReader::new(file);
-    for line in reader.lines().map_while(Result::ok) {
-        let line = line.trim().to_string();
-        if line.is_empty() {
-            continue;
-        }
-        if let Ok(row) = serde_json::from_str::<WarmStartRow>(&line) {
-            // Only general (non-Lagrangian) warm starts
-            if row.polytope_type.contains("lagrangian") {
-                continue;
-            }
-            if let Some(dvs) = row.final_dual_vertices {
-                candidates.push((row.name, row.polytope_type, row.sys_after, dvs));
-            }
-        }
-    }
-
-    // Sort by sys descending, take top N_WARM_STARTS
-    candidates.sort_by(|a, b| b.2.partial_cmp(&a.2).unwrap_or(std::cmp::Ordering::Equal));
-    candidates.truncate(N_WARM_STARTS);
-
-    candidates
-        .into_iter()
-        .enumerate()
-        .filter_map(|(i, (orig_name, orig_type, _sys, dvs))| {
-            let dual_vertices: Vec<Vector4<f64>> = dvs
-                .iter()
-                .map(|a| Vector4::new(a[0], a[1], a[2], a[3]))
-                .collect();
-            let polytope = Polytope4D::from_f64(dual_vertices).ok()?;
-            let name = format!("warm_{i}_{orig_name}");
-            Some((name, format!("warm_{orig_type}"), polytope))
-        })
-        .collect()
-}
-
-// ============================================================================
 // Resume support
 // ============================================================================
 
@@ -695,17 +629,6 @@ fn main() {
     // CLI args
     let args: Vec<String> = std::env::args().collect();
     let fresh = args.iter().any(|a| a == "--fresh");
-    let warm_start_path = args
-        .iter()
-        .position(|a| a == "--warm-start")
-        .and_then(|i| args.get(i + 1))
-        .map(std::path::PathBuf::from);
-
-    // Default warm-start path: gradient-descent data
-    let warm_start_path = warm_start_path.unwrap_or_else(|| {
-        std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("gradient-descent/gradient-descent.jsonl")
-    });
 
     // Resume support
     let completed = if fresh {
@@ -765,43 +688,6 @@ fn main() {
         print!("[general {}/{}] {}: ", idx + 1, general.len(), name);
 
         match process_seed(name, "general", polytope, &mut rng) {
-            Some(result) => {
-                write_result(&result, &mut summary_writer, &mut trace_writer);
-                let s = &result.summary;
-                if s.final_sys > best_global {
-                    best_global = s.final_sys;
-                    best_name = s.name.clone();
-                }
-                println!(
-                    "sys: {:.4}->{:.4} (d={:.4}), strategy={}, phases={}, {:.1}s",
-                    s.starting_sys, s.final_sys, s.total_delta, s.best_strategy,
-                    s.n_ascent_phases, s.total_time_ms / 1000.0,
-                );
-                if s.final_sys > 1.0 {
-                    eprintln!("*** VITERBO VIOLATION: {} sys={:.6} ***", s.name, s.final_sys);
-                }
-            }
-            None => println!("FAILED"),
-        }
-    }
-
-    // =========================================================================
-    // Phase 2: Warm starts (general only)
-    // =========================================================================
-
-    println!("\nLoading warm starts from {}...", warm_start_path.display());
-    let warm = load_warm_starts(&warm_start_path);
-    println!("Loaded {} warm-start polytopes.\n", warm.len());
-
-    for (idx, (name, ptype, polytope)) in warm.iter().enumerate() {
-        insert_polytope_to_db(&mut db, polytope, None, None, None);
-
-        if completed.contains(name) {
-            continue;
-        }
-        print!("[warm {}/{}] {}: ", idx + 1, warm.len(), name);
-
-        match process_seed(name, ptype, polytope, &mut rng) {
             Some(result) => {
                 write_result(&result, &mut summary_writer, &mut trace_writer);
                 let s = &result.summary;

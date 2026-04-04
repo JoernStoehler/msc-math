@@ -7,11 +7,11 @@ Goal: Assess whether boundary-crossing (overshoot, wiggle) improves sys beyond
 Input: crates/exp-sys-landscape/gradient-ascent-general/gradient-ascent-general.jsonl (per-seed summaries)
        crates/exp-sys-landscape/gradient-ascent-general/gradient-ascent-general-trace.jsonl (per-iteration trace)
 Output:
-  - sys_search_distribution.png   (final sys histogram by polytope type)
-  - sys_search_improvement.png    (starting vs final sys scatter)
-  - sys_search_strategy.png       (final sys by winning strategy)
-  - sys_search_escape.png         (escape success rates)
-  - sys_search_convergence.png    (iteration count by type)
+  - gradient_ascent_general_distribution.png   (final sys histogram by polytope type)
+  - gradient_ascent_general_improvement.png    (starting vs final sys scatter)
+  - gradient_ascent_general_strategy.png       (final sys by winning strategy)
+  - gradient_ascent_general_escape.png         (escape success rates)
+  - gradient_ascent_general_convergence.png    (iteration count by type)
   - stdout: summary table
 """
 
@@ -31,7 +31,7 @@ EXPERIMENT_DIR = Path(__file__).resolve().parent
 SUMMARY_PATH = EXPERIMENT_DIR / "gradient-ascent-general.jsonl"
 TRACE_PATH = EXPERIMENT_DIR / "gradient-ascent-general-trace.jsonl"
 
-CATEGORY_COLORS = {"general": "#2196F3", "lagrangian": "#4CAF50", "warm": "#FF9800"}
+CATEGORY_COLORS = {"general": "#2196F3"}
 STRATEGY_COLORS = {"within_cell": "#9E9E9E", "overshoot": "#E91E63", "wiggle": "#00BCD4", "none": "#BDBDBD"}
 
 
@@ -61,12 +61,7 @@ def load_trace():
 
 def classify_type(ptype):
     """Map polytope_type to display category."""
-    if ptype.startswith("warm_"):
-        return "warm"
-    elif ptype == "general":
-        return "general"
-    else:
-        return "lagrangian"
+    return ptype
 
 
 def summary_table(data):
@@ -78,7 +73,7 @@ def summary_table(data):
 
     print(f"{'Category':<14} {'N':>4} {'Mean sys':>9} {'Max sys':>9} {'P90 sys':>9} {'Mean Δ':>9} {'Escapes':>8}")
     print("-" * 72)
-    for cat in ["general", "lagrangian", "warm"]:
+    for cat in ["general"]:
         if cat not in by_cat:
             continue
         rows = by_cat[cat]
@@ -98,7 +93,7 @@ def plot_distribution(data):
 
     colors = CATEGORY_COLORS
 
-    for cat in ["general", "lagrangian", "warm"]:
+    for cat in ["general"]:
         finals = [r["final_sys"] for r in data if classify_type(r["polytope_type"]) == cat]
         if finals:
             ax.hist(finals, bins=15, alpha=0.6, label=cat, color=colors[cat], edgecolor="white")
@@ -109,7 +104,7 @@ def plot_distribution(data):
     ax.yaxis.set_major_locator(plt.MaxNLocator(integer=True))
     ax.legend()
 
-    path = EXPERIMENT_DIR / "sys_search_distribution.png"
+    path = EXPERIMENT_DIR / "gradient_ascent_general_distribution.png"
     fig.savefig(path)
     plt.close(fig)
     print(f"Saved {path}")
@@ -121,7 +116,7 @@ def plot_improvement(data):
 
     colors = CATEGORY_COLORS
 
-    for cat in ["general", "lagrangian", "warm"]:
+    for cat in ["general"]:
         rows = [r for r in data if classify_type(r["polytope_type"]) == cat]
         if rows:
             starts = [r["starting_sys"] for r in rows]
@@ -136,7 +131,7 @@ def plot_improvement(data):
     ax.set_ylabel(r"Final $\mathrm{sys}(K)$")
     ax.legend()
 
-    path = EXPERIMENT_DIR / "sys_search_improvement.png"
+    path = EXPERIMENT_DIR / "gradient_ascent_general_improvement.png"
     fig.savefig(path)
     plt.close(fig)
     print(f"Saved {path}")
@@ -168,7 +163,7 @@ def plot_strategy(data):
     ax.set_ylabel(r"Final $\mathrm{sys}(K)$")
     ax.set_xlabel("Winning strategy")
 
-    path = EXPERIMENT_DIR / "sys_search_strategy.png"
+    path = EXPERIMENT_DIR / "gradient_ascent_general_strategy.png"
     fig.savefig(path)
     plt.close(fig)
     print(f"Saved {path}")
@@ -198,7 +193,7 @@ def plot_escape(data):
     ax.set_xlabel("Winning strategy")
     ax.set_ylim(0, 1.05)
 
-    path = EXPERIMENT_DIR / "sys_search_escape.png"
+    path = EXPERIMENT_DIR / "gradient_ascent_general_escape.png"
     fig.savefig(path)
     plt.close(fig)
     print(f"Saved {path}")
@@ -208,7 +203,7 @@ def plot_convergence(data):
     """Box plot of total gradient iterations by polytope category."""
     fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
 
-    categories = ["general", "lagrangian", "warm"]
+    categories = ["general"]
     cat_data = {c: [] for c in categories}
     for row in data:
         cat = classify_type(row["polytope_type"])
@@ -227,7 +222,7 @@ def plot_convergence(data):
     ax.set_ylabel("Total gradient iterations")
     ax.set_xlabel("Polytope category")
 
-    path = EXPERIMENT_DIR / "sys_search_convergence.png"
+    path = EXPERIMENT_DIR / "gradient_ascent_general_convergence.png"
     fig.savefig(path)
     plt.close(fig)
     print(f"Saved {path}")

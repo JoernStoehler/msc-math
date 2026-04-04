@@ -6,7 +6,7 @@ Can gradient-based optimization push sys past 1 for Lagrangian products? Previou
 
 ## Status
 
-**Split from boundary-crossing-search (2026-04-04).** Data needs regeneration.
+**Split from boundary-crossing-search (2026-04-04).** Fresh data generated.
 
 ## Predecessor
 
@@ -43,4 +43,4 @@ Lagrangian products: 12 seeds, mean sys 0.821, max sys 0.933. Best overall sys=0
 
 ## Data status
 
-No data yet. Needs initial run with the split binary.
+Fresh data generated 2026-04-04 after warm-start removal and split from boundary-crossing-search. 12 fresh Lagrangian products (3 splits x 4 per bucket), no warm starts (warm-start source `large-scale-descent` was deleted as superseded). Polytopes use standard master seed (42), low attempt numbers, and benefit from database caching for initial capacity/volume computation.
