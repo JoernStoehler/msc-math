@@ -12,7 +12,6 @@ For targeted improvements to infrastructure that already exists. If the infrastr
 Read the relevant materials:
 - The infrastructure file(s) being updated
 - Feedback: `feedback/` entries mentioning this infrastructure
-- Test results: any existing test tasks in `test-workflow/references/test-tasks/`
 - Session logs if Jörn points to specific incidents
 
 Summarize to Jörn: what the current infrastructure says, what the observed problem is, what the gap is between them.
@@ -38,13 +37,18 @@ For the fix, prefer:
 - Concrete examples over abstract rules
 - Scripts/hooks that enforce behavior over instructions that request behavior
 
-## 4. Test
+## 4. Plan verification
 
-Run relevant test tasks from `/test-workflow` against the updated infrastructure. If no test task exists for this failure mode, write one first.
+Plan how to verify the fix works in live sessions:
+- What observable behavior should change?
+- What should a post-mortem look for to evaluate the fix?
+- Are there upcoming sessions where this infrastructure will be exercised?
+
+Document the expected behavior change and evaluation criteria in the presentation to Jörn (step 5).
 
 ## 5. Jörn reviews
 
-Present: what changed, why, test results. Get explicit approval.
+Present: what changed, why, and how you'll verify the fix in live sessions. Get explicit approval.
 
 ## Reference sources
 
