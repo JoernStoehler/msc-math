@@ -76,7 +76,7 @@ Exhaustive through m=12. Subset sizes m=13..16 are skipped because:
 ## Open questions
 
 - Does polyhedral duality preserve EHZ capacity in general, or is c_EHZ(crosspolytope) = c_EHZ(hypercube) a coincidence?
-- Phase 2 partially done: `known_polytopes.rs` already updated to capacity = 4.0 with source "computed (no literature value)". Remaining: remove exclusion from validation tests (`test_dataset.rs`), regenerate test fixture.
+- Phase 2 partially done: `known_polytopes.rs` already updated to capacity = 4.0 with source "computed (no literature value)". Remaining: remove exclusion from validation tests, integrate into test suite. Gotcha: do NOT add crosspolytope to `generate_capacity_fixtures.rs` or any test that calls `ehz_capacity()` — HK2017 on F=16 is too slow (~6 min with the standalone crate's symmetry optimizations, much longer without them).
 
 ## Related experiments
 
