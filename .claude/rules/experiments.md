@@ -75,11 +75,10 @@ Each experiment is self-contained. If it needs a variant of library code, copy i
 
 ## Data and caches in git
 
-Committed: .jsonl, .png, *_output.txt — stored in git so regressions are visible and data doesn't need regenerating in worktrees/after merges. Regenerate on the branch that changes the code. Separate commits for code changes vs data regeneration.
+We retain `.jsonl` data and cache files via Git LFS (`.gitattributes`). This is transparent — `git add` and `git commit` work normally. LFS per-file limit: 2 GB. If a binary produces output >2 GB, commit a compressed version (gzip). Git worktrees and branch merges properly retain/overwrite data.
+The main benefit of saving compute by storing data/cache artifacts is that agents can iterate faster, e.g. in follow-up experiments after a merge.
 
-**This includes cache files** (e.g. `cache.jsonl` for capacity lookups). Caches take compute to build and must survive worktree cleanup and branch merges. Never `.gitignore` a `.jsonl` file — all `.jsonl` files are LFS-tracked via `.gitattributes` and should be committed.
-
-`.jsonl` files are tracked via Git LFS (`.gitattributes`). This is transparent — `git add` and `git commit` work normally. LFS per-file limit: 2 GB. If a binary produces output >2 GB, compress (gzip) or split into multiple files before committing. A pre-commit hook blocks non-LFS files >10 MB — if it fires, `git lfs track` the pattern (do not `.gitignore` it).
+A pre-commit hook blocks non-LFS files >10 MB — if it fires, `git lfs track` the pattern (do not `.gitignore` it).
 
 ## Quality
 
