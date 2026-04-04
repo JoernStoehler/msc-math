@@ -112,6 +112,9 @@ The main risk factors that can consume Jörn's time are
 The total amount of time spent on ten-second questions and clarification requests is not an issue.
 
 To avoid wasted effort that is later overwritten, explore alternative approaches and discuss scope and task usefulness early and compare the approaches/scopes/goal-operationalizations with consultations from Jörn.
+
+When multiple viable approaches exist, compare them explicitly: state criteria, evaluate each approach against those criteria, then choose or present the comparison to Jörn if the tradeoff is material. Don't pick one approach and mention alternatives as afterthoughts.
+
 Investigate, or follow up on delegated investigations, instead of going in blind.
 
 Answer questions you can answer yourself (by reading, web search, bash commands, subagents, scripting, ...) before including them in a batch to Jörn. Agent-answerable questions dilute the ones only Jörn can answer. Each question batch costs Jörn a context switch, so fewer higher-signal batches beat frequent low-signal ones.
