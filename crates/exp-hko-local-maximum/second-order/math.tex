@@ -66,13 +66,43 @@ is the active set of orbits achieving the minimum.
 \subsubsection{Flat directions}
 
 Let $G \in \mathbb{R}^{|\mathcal{A}| \times 4F}$ be the gradient matrix
-with rows $\nabla_a \operatorname{sys}_i(K)$ for $i \in \mathcal{A}(K)$.
+with rows $\nabla_a \operatorname{sys}_i(K)^\top$ for $i \in \mathcal{A}(K)$.
 
-\begin{definition}[Flat directions]\label{def:flat-directions}
-  The \emph{flat subspace} at $K$ is $\ker(G)$. A direction $d \in \ker(G)$
-  is called \emph{flat}: it satisfies $\nabla_a \operatorname{sys}_i(K) \cdot d = 0$
-  for all $i \in \mathcal{A}(K)$, so $D_d^+ \operatorname{sys}(K) = 0$.
+\begin{definition}[Non-decreasing cone and flat directions]\label{def:flat-directions}
+  The \emph{non-decreasing cone} is
+  \[
+    C = \{d \in \mathbb{R}^{4F} : \langle \nabla\operatorname{sys}_i, d \rangle \geq 0
+    \text{ for all } i \in \mathcal{A}\},
+  \]
+  the intersection of $|\mathcal{A}|$ closed half-spaces through the origin.
+  A direction $d$ is \emph{flat} if $D_d^+ \operatorname{sys}(K) = 0$,
+  i.e., $d$ lies on the boundary of~$C$.
 \end{definition}
+
+\begin{lemma}[Non-decreasing cone collapses to kernel]\label{lem:cone-equals-kernel}
+  Suppose $0 \in \operatorname{conv}\{\nabla\operatorname{sys}_i : i \in \mathcal{A}\}$
+  with convex coefficients $\lambda_i \geq 0$, and let
+  $\mathcal{A}^+ = \{i \in \mathcal{A} : \lambda_i > 0\}$.
+  If $\operatorname{rank}(G_{\mathcal{A}^+}) = \operatorname{rank}(G)$,
+  then $C = \ker(G)$.
+  In particular, every flat direction satisfies
+  $\langle \nabla\operatorname{sys}_i, d \rangle = 0$
+  for \emph{all} $i \in \mathcal{A}$, and the set of flat directions
+  is a linear subspace.
+\end{lemma}
+\begin{proof}
+  $\ker(G) \subseteq C$ is immediate. For the reverse, let $d \in C$.
+  Then $\langle \nabla\operatorname{sys}_i, d \rangle \geq 0$ for all $i$.
+  Since $0 = \sum_i \lambda_i \nabla\operatorname{sys}_i$, we have
+  $0 = \sum_i \lambda_i \langle \nabla\operatorname{sys}_i, d \rangle$.
+  Each term is $\geq 0$ (product of $\lambda_i \geq 0$ and
+  $\langle \nabla\operatorname{sys}_i, d \rangle \geq 0$), so each term
+  equals~$0$. For $i \in \mathcal{A}^+$ ($\lambda_i > 0$), this gives
+  $\langle \nabla\operatorname{sys}_i, d \rangle = 0$, hence
+  $d \in \ker(G_{\mathcal{A}^+})$.
+  Since $\operatorname{rank}(G_{\mathcal{A}^+}) = \operatorname{rank}(G)$,
+  we have $\ker(G_{\mathcal{A}^+}) = \ker(G)$, so $d \in \ker(G)$.
+\end{proof}
 
 If $0 \in \operatorname{int}(\operatorname{conv}\{\nabla\operatorname{sys}_i\})$,
 then $\ker(G) = \{0\}$ and $K$ is a strict first-order local maximum
@@ -138,20 +168,34 @@ For HKO2024 with $F = 10$, the gradient matrix $G$ has $|\mathcal{A}| = 150$
 active orbits and lives in $\mathbb{R}^{150 \times 40}$
 (dual-vertex parameterization, $4F = 40$ dimensions, no gauge).
 
+\paragraph{First-order analysis.}
 \begin{itemize}
   \item $\operatorname{rank}(G) = 25$, so $\dim\ker(G) = 15$.
   \item The LP test confirms $0 \in \operatorname{conv}\{\nabla\operatorname{sys}_i\}$
-    (Lemma~\ref{lem:first-order-necessary} is satisfied).
-  \item For each of the $15$ flat directions $d_j$, finite differences show
-    $\operatorname{sys}(K + \varepsilon d_j) < \operatorname{sys}(K)$
-    for all $\varepsilon \neq 0$ in $[-0.04, 0.04]$.
-  \item The symmetric curvature ratio
+    with $26$ orbits having $\lambda_i > 0$ (Lemma~\ref{lem:first-order-necessary}).
+  \item $\operatorname{rank}(G_{\mathcal{A}^+}) = 25 = \operatorname{rank}(G)$,
+    so by Lemma~\ref{lem:cone-equals-kernel}, $C = \ker(G)$:
+    the flat directions form a $15$-dimensional linear subspace.
+\end{itemize}
+
+\paragraph{Second-order analysis.}
+\begin{itemize}
+  \item For $15$ orthonormal basis vectors $d_0, \ldots, d_{14}$ of $\ker(G)$
+    (from SVD), the curvature ratio
     $r(\varepsilon) = (\operatorname{sys}(K + \varepsilon d) + \operatorname{sys}(K - \varepsilon d) - 2\operatorname{sys}(K)) / \varepsilon^2$
-    is negative for all $15$ directions, with values ranging from $-0.31$ to $-0.02$
-    (second-order-curves.jsonl, analyze.py).
+    is negative for all $15$ directions, with median values ranging from
+    $-0.31$ to $-0.02$ (second-order-curves.jsonl).
+  \item Negative curvature on all basis vectors implies the diagonal of the
+    generalized Hessian $H$ restricted to $\ker(G)$ is negative in the SVD
+    basis, but does not prove negative definiteness (off-diagonal entries
+    could produce positive eigenvalues).
+  \item To test negative definiteness: $100$ random unit directions
+    in $\ker(G)$ (uniform on $S^{14}$) all have negative curvature,
+    with the least negative being $-0.06$ (second-order-random.jsonl).
 \end{itemize}
 
 Both conditions of Proposition~\ref{prop:second-order-local-max} are
-numerically verified. This constitutes numerical evidence that HKO2024 is
-a strict local maximum of $\operatorname{sys}$ among $F = 10$ polytopes
-in $\mathbb{R}^4$.
+numerically verified, with the second condition checked along $15$ basis
+directions and $100$ random directions (all negative). This constitutes
+strong numerical evidence that HKO2024 is a strict local maximum of
+$\operatorname{sys}$ among $F = 10$ polytopes in $\mathbb{R}^4$.
