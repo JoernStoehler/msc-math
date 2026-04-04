@@ -115,7 +115,7 @@ The thesis is currently a dump of results, not a coherent narrative. Experiments
 **Gradient experiment redesign (2026-03-26, Jörn; cleanup 2026-04-03):** The old gradient experiments (`sys-optimization`/sensitivity-analysis, `gradient-descent`/large-scale-descent, `gradient-search`) were superseded and deleted. Derivative lemmas relocated to `crates/library/src/algorithms/math.tex`. Three current experiments:
 1. **gradient-validation** (Q5b/Q5c complete, merged to main 2026-03-28) — Per-orbit gradient validated (slope=2.00). Q5b: 12 polytope types. Q5c: direction-filtered subdiff is a negative result. KktOutcome enum, error handling convention, code-math audit. 14 tests fail due to wrong Q error bound math (lem:q-error-bound too loose). See logbook. Directory: `crates/dev-gradient/` (split into numerics/, numerics-edge-cases/, numerics-subdifferential/).
 2. **combinatorial-structure** (complete, 2026-03-27) — Random cells convex, product cells non-convex (0% vs 100% transition failures). ~F boundaries per gradient step. Orbit facets 2× wider than non-orbit. Gradient-cell alignment favorable (r=0.52). sys continuous, gradient stable except at orbit switches (3%/boundary, up to 70° jump). See logbook. Directory: `crates/exp-combinatorial-cells/` (split into cell-widths/, boundary-characterization/, gradient-discontinuity/, convexity/, multiple-crossings/).
-3. **gradient-ascent-general + gradient-ascent-products** (split from boundary-crossing-search, 2026-04-04) — Gradient-based search for sys > 1. Dev run: 42 seeds, best sys=0.933, wiggle dominates overshoot. Next: landscape characterization and search strategy comparison. Directories: `crates/exp-sys-landscape/gradient-ascent-general/`, `crates/exp-sys-landscape/gradient-ascent-products/`.
+3. **gradient-ascent-general + gradient-ascent-products** (split from boundary-crossing-search, 2026-04-04; data regenerated 2026-04-04) — Gradient-based search for sys > 1. General: 10 seeds, best sys=0.9005, mean=0.8226. Products: 12 seeds, best sys=0.9127, mean=0.8311. Wiggle dominates overshoot, no sys > 1. Warm starts removed (source deleted). Next: landscape characterization and search strategy comparison. Directories: `crates/exp-sys-landscape/gradient-ascent-general/`, `crates/exp-sys-landscape/gradient-ascent-products/`.
 
 Dependency chain: #1 validates the gradient → #2 characterizes the obstacle → #3 applies the tool. #3 can start independently but benefits from #2's findings.
 
@@ -317,7 +317,7 @@ Evidence gathered so far (from session log analysis):
 
 **Not yet done:**
 - combinatorial-{profiling,anatomy,convexity,sweep} all use `catch_unwind` in their main loops (KKT panics)
-- gradient-ascent-general, gradient-ascent-products, and combinatorial-* data not regenerated (need full runs)
+- gradient-ascent-general, gradient-ascent-products data regenerated (2026-04-04). combinatorial-* data not regenerated (need full runs)
 - Lagrangian products use shared RNG (no blake3 equivalent), so Source-based lookup doesn't work for them — key-based only
 
 ---

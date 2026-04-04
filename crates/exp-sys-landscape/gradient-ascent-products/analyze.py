@@ -5,7 +5,6 @@ Analyze gradient-ascent-products results: projected gradient ascent on Lagrangia
 Goal: Assess whether boundary-crossing (overshoot, wiggle) improves sys beyond
       within-cell gradient ascent on Lagrangian products.
 Input: crates/exp-sys-landscape/gradient-ascent-products/gradient-ascent-products.jsonl (per-seed summaries)
-       crates/exp-sys-landscape/gradient-ascent-products/gradient-ascent-products-trace.jsonl (per-iteration trace)
 Output:
   - gradient_ascent_products_distribution.png   (final sys histogram by polytope type)
   - gradient_ascent_products_improvement.png    (starting vs final sys scatter)
@@ -29,7 +28,6 @@ setup()
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 SUMMARY_PATH = EXPERIMENT_DIR / "gradient-ascent-products.jsonl"
-TRACE_PATH = EXPERIMENT_DIR / "gradient-ascent-products-trace.jsonl"
 
 CATEGORY_COLORS = {"lagrangian": "#4CAF50"}
 STRATEGY_COLORS = {"within_cell": "#9E9E9E", "overshoot": "#E91E63", "wiggle": "#00BCD4", "none": "#BDBDBD"}
@@ -46,29 +44,11 @@ def load_summaries():
     return rows
 
 
-def load_trace():
-    """Load per-iteration trace data."""
-    rows = []
-    if not TRACE_PATH.exists():
-        return rows
-    with open(TRACE_PATH) as f:
-        for line in f:
-            line = line.strip()
-            if line:
-                rows.append(json.loads(line))
-    return rows
-
-
-def classify_type(ptype):
-    """Map polytope_type to display category."""
-    return "lagrangian"
-
-
 def summary_table(data):
     """Print summary statistics by polytope category."""
     by_cat = defaultdict(list)
     for row in data:
-        cat = classify_type(row["polytope_type"])
+        cat = "lagrangian"
         by_cat[cat].append(row)
 
     print(f"{'Category':<14} {'N':>4} {'Mean sys':>9} {'Max sys':>9} {'P90 sys':>9} {'Mean Δ':>9} {'Escapes':>8}")
@@ -94,7 +74,7 @@ def plot_distribution(data):
     colors = CATEGORY_COLORS
 
     for cat in ["lagrangian"]:
-        finals = [r["final_sys"] for r in data if classify_type(r["polytope_type"]) == cat]
+        finals = [r["final_sys"] for r in data if "lagrangian" == cat]
         if finals:
             ax.hist(finals, bins=15, alpha=0.6, label=cat, color=colors[cat], edgecolor="white")
 
@@ -117,7 +97,7 @@ def plot_improvement(data):
     colors = CATEGORY_COLORS
 
     for cat in ["lagrangian"]:
-        rows = [r for r in data if classify_type(r["polytope_type"]) == cat]
+        rows = [r for r in data if "lagrangian" == cat]
         if rows:
             starts = [r["starting_sys"] for r in rows]
             finals = [r["final_sys"] for r in rows]
@@ -206,7 +186,7 @@ def plot_convergence(data):
     categories = ["lagrangian"]
     cat_data = {c: [] for c in categories}
     for row in data:
-        cat = classify_type(row["polytope_type"])
+        cat = "lagrangian"
         cat_data[cat].append(row["n_gradient_iters_total"])
 
     plot_cats = [c for c in categories if cat_data[c]]
