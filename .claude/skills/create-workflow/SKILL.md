@@ -71,9 +71,9 @@ Present the draft with a prioritized list of spots Jörn should check (uncertain
 ## 7. Set up verification
 
 Before shipping, decide how to verify the new infrastructure works:
-- Define ≥1 test task for `/test-workflow` (concrete scenario, expected behavior, pass/fail criteria)
-- Add to post-mortem radar if relevant
-- For subagent workflows: tell subagents to write observations to `feedback/<name>.md`
+- Think about testability: what observable behavior should change in future sessions?
+- Plan how to gather feedback during live sessions — e.g. add to post-mortem radar, tell subagents to write observations to `feedback/<name>.md`
+- Identify what a post-mortem should look for to evaluate whether this infrastructure helped or hurt
 
 Do NOT write feedback into SKILL.md files. Raw observations only — analysis happens in dedicated sessions with Jörn.
 
