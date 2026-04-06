@@ -15,6 +15,9 @@ sudo chown -R "${USER}:${USER}" \
   "${HOME}/.local" \
   "${HOME}/.cache"
 
+# Fix ownership of Docker volume mounts (created as root by default)
+sudo chown "${USER}:${USER}" "${HOME}/.vscode" 2>/dev/null || true
+
 # Configure npm paths and install global packages
 if command -v npm >/dev/null 2>&1; then
   mkdir -p "${HOME}/.local/bin" "${HOME}/.cache/npm"
