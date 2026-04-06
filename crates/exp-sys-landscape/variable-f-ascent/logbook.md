@@ -25,8 +25,8 @@ The four-way comparison separates "structured entry from F-space helps" from "mo
 ## How to run
 
 ```bash
-cargo run -p exp-sys-landscape --release --bin sys-variable-f-ascent           # resume
-cargo run -p exp-sys-landscape --release --bin sys-variable-f-ascent -- --fresh # rerun
+cd crates/ && cargo run -p exp-sys-landscape --release --bin sys-variable-f-ascent           # resume
+cd crates/ && cargo run -p exp-sys-landscape --release --bin sys-variable-f-ascent -- --fresh # rerun
 cd crates/exp-sys-landscape/variable-f-ascent/ && uv run analyze.py            # figures
 ```
 

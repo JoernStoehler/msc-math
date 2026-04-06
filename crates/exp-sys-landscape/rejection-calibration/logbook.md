@@ -11,7 +11,7 @@ To probe Viterbo's conjecture computationally, we need large datasets of random 
 ## How to run
 
 ```bash
-cargo run -p exp-sys-landscape --release --bin sys-rejection-calibration
+cd crates/ && cargo run -p exp-sys-landscape --release --bin sys-rejection-calibration
 ```
 
 No Python script or figure. Acceptance rate table is in this logbook (below).

@@ -5,7 +5,7 @@ Split from the original `gradient-validation/` experiment (Q1 + Q2).
 ## How to run
 
 ```bash
-cargo run -p dev-gradient --release --bin dev_numerics
+cd crates/ && cargo run -p dev-gradient --release --bin dev_numerics
 ```
 
 Produces `gradient-correctness-q1-generic.jsonl` and `gradient-correctness-q2-nongeneric.jsonl`.

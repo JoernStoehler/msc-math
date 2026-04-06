@@ -15,8 +15,8 @@ Split from `boundary-crossing-search/` (2026-04-04). That experiment combined ge
 ## How to run
 
 ```
-cargo run -p exp-sys-landscape --release --bin sys-gradient-ascent-general           # resume from existing data
-cargo run -p exp-sys-landscape --release --bin sys-gradient-ascent-general -- --fresh # rerun from scratch
+cd crates/ && cargo run -p exp-sys-landscape --release --bin sys-gradient-ascent-general           # resume from existing data
+cd crates/ && cargo run -p exp-sys-landscape --release --bin sys-gradient-ascent-general -- --fresh # rerun from scratch
 cd crates/exp-sys-landscape/gradient-ascent-general/ && uv run analyze.py            # generate figures + summary
 ```
 

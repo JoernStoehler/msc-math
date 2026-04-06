@@ -15,7 +15,7 @@ TASKS.md `hko-local-maximality` next step #1: "Second-order analysis of flat dir
 ## How to run
 
 ```bash
-cargo run -p exp-hko-local-maximum --release --bin hko-second-order
+cd crates/ && cargo run -p exp-hko-local-maximum --release --bin hko-second-order
 cd crates/exp-hko-local-maximum/second-order && python3 analyze.py
 ```
 

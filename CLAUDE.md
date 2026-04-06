@@ -15,9 +15,9 @@ Three planned deliverables:
 ## Project Layout
 
 ```
-Cargo.toml                 workspace manifest
-Cargo.lock                 locked dependency versions
 crates/                    all Rust code (library + experiments)
+  Cargo.toml               workspace manifest
+  Cargo.lock               locked dependency versions
   figure_config.py         shared Python figure styling for all experiments
   library/                 Rust library (the core)
     Cargo.toml
@@ -220,8 +220,8 @@ cd crates/library/ && cargo clippy --lib -- -D warnings   # lint
 cd crates/library/ && cargo test --release -- --ignored   # full suite (slow)
 
 # Rust (experiments)
-cargo build -p exp-<group> --release              # build one experiment group
-cargo build --workspace --release                 # build all (library + all experiment groups)
+cd crates/ && cargo build -p exp-<group> --release              # build one experiment group
+cd crates/ && cargo build --workspace --release                 # build all (library + all experiment groups)
 
 # Thesis
 cd thesis/ && latexmk && ./check-build.sh         # build + check

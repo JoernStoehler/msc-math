@@ -97,7 +97,7 @@ Report: root cause, what you changed, test results.
 
 ```
 Regenerate data for the random-sample experiment.
-Run: `cd /workspaces/msc-math && cargo run -p exp-sys-landscape --bin random-sample --release`
+Run: `cd /workspaces/msc-math/crates/ && cargo run -p exp-sys-landscape --bin random-sample --release`
 Then run the analysis: `cd /workspaces/msc-math/crates/exp-sys-landscape/random-sample/ && uv run analyze.py`
 Report: how many records generated, any errors, figure files produced.
 ```
