@@ -186,18 +186,16 @@ Depends on: experiment-quality (thesis story), thesis-todos (math verification).
 
 ---
 
-## end-to-end-profiling
+## orchestration-pattern-test
 
-**Problem:** The existing benchmark experiment only times the capacity computation (permutation enumeration + KKT solve), not the full pipeline. `Polytope4D::new` (integer-scaled vertex enumeration, adjacency, omega signs) is not profiled but may dominate wall time for larger polytopes. There is no end-to-end breakdown showing where time goes from dual vertices to systolic ratio.
+**Goal:** Test the orchestration agent pattern on a real thesis task. Evaluate: does delegation via Agent() keep the orchestration agent's context clean? Do agents succeed at delegated tasks? Does Jörn spend less time supervising?
 
-**Work items:**
-1. Add end-to-end timing to the benchmark experiment, broken into phases:
-   - `Polytope4D::new` (construction: vertex enum, incidence, vertex_adjacency, omega signs)
-   - Permutation enumeration + adjacency pruning
-   - KKT assembly + solve (LU/SVD)
-   - Accumulator / orbit recovery
-2. Produce a figure (stacked bar or similar) showing phase breakdown vs facet count
-3. Update `benchmark/logbook.md` with findings
+**Infrastructure (2026-04-06):** `/orchestrate` skill + delegation guide + cheatsheet. Baseline commit `f8044b35`. Dry run confirmed Agent() mechanics work (foreground, background, worktree isolation).
+
+**Next steps:**
+1. Jörn picks a real task to test on (end-to-end-profiling was already done; need alternative)
+2. Run a session with `/orchestrate` loaded, observe delegation behavior
+3. Post-mortem: fill in experience section of `.claude/skills/orchestrate/references/design-space.md`
 
 ---
 
@@ -284,15 +282,7 @@ Depends on: Jörn reviews math.
 
 ## collaboration-skill
 
-**Status (2026-03-26):** Deferred. Need evidence from real work sessions before designing.
-
-Evidence gathered so far (from session log analysis):
-- 57% of agent-era sessions use zero subagents — under-delegation is the main problem
-- Sessions just stop without cleanup (0/362 self-initiated postmortems)
-- Subagent prompting is fine — subagents self-serve skills and rules via shared system prompt
-- Handoff quality is good when created, but creation is bursty not routine
-
-**Next steps:** Run real work sessions with the new procedural layer. Observe whether "use proactively" descriptions + CLAUDE.md delegation nudge address under-delegation. Collect feedback in `feedback/`. Design the skill based on observed failures, not predictions.
+**Status (2026-04-06):** Superseded by `orchestration-pattern-test`. The `/orchestrate` skill + delegation guide addresses the under-delegation problem directly. Remaining collaboration concerns (postmortem discipline, handoff discipline) are orthogonal and can be addressed after orchestration is validated.
 
 ---
 

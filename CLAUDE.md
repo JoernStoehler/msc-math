@@ -179,6 +179,13 @@ Optimize for these qualities (descending effort priority):
 
 **Vague-word ban:** Do not use "appropriate", "properly", "ensure", "good", "consider", "reasonable", "necessary", "efficient", "robust" without specifying *what* makes it so.
 
+## Terminology
+
+- **Orchestration agent**: the agent running a chat session with Jörn. Decomposes tasks and delegates via Agent(). Loaded via `/orchestrate`.
+- **Agent**: a Claude instance spawned via Agent() to do leaf work. Cannot spawn sub-agents. Returns a single result. Gets CLAUDE.md, MEMORY.md, rules, and skills automatically.
+- **Delegation**: orchestration agent spawning an agent via Agent().
+- When the distinction doesn't matter, just "agent" for both.
+
 ## Session Workflow
 
 **Scope** (Jörn + agent): Jörn scopes. Agents provide investigation findings, and suggest scope expansion/contraction, but Jörn decides. Agents ask clarifying questions to ensure they and Jörn understand the scope the same way. Agents track scope provenance in the plan file.
