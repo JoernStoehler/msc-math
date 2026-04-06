@@ -77,7 +77,7 @@ Read the function `capacity_derivatives_a()` in /workspaces/msc-math/crates/libr
 Read the existing proofs in the same math.tex file for style and notation conventions.
 
 Write the proof. Wrap in \begin{unverified}...\end{unverified} since Jörn hasn't verified it.
-Build: `cd /workspaces/msc-math && pdflatex math.tex && pdflatex math.tex` — fix any errors.
+Build: `cd /workspaces/msc-math/crates && pdflatex math.tex && pdflatex math.tex` — fix any errors.
 Report: proof approach (1-2 sentences), any gaps or assumptions you're unsure about.
 ```
 

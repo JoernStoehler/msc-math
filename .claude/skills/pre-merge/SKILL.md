@@ -16,7 +16,7 @@ cd crates/library/ && cargo test --release --lib
 cd crates/library/ && cargo clippy --lib -- -D warnings
 cd crates/ && cargo build --workspace --release
 cd thesis/ && latexmk && ./check-build.sh
-pdflatex math.tex && pdflatex math.tex
+cd crates/ && pdflatex math.tex && pdflatex math.tex
 ```
 
 ## Phase 2: Smoke-test experiment binaries

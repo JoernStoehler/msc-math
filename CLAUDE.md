@@ -43,7 +43,7 @@ crates/                    all Rust code (library + experiments)
   database/                stub library for future sigma cache
   visualization/           interactive HTML polytope viewer
 
-math.tex                   root math.tex: compiles ALL crate + experiment proofs into one PDF
+crates/math.tex            root math.tex: compiles ALL crate + experiment proofs into one PDF
                            (cross-references between experiments and crate lemmas resolve here)
 
 thesis/
@@ -227,5 +227,5 @@ cd crates/ && cargo build --workspace --release                 # build all (lib
 cd thesis/ && latexmk && ./check-build.sh         # build + check
 
 # Math (all proofs — crate + experiments)
-pdflatex math.tex && pdflatex math.tex            # root math.pdf (two passes)
+cd crates/ && pdflatex math.tex && pdflatex math.tex  # root math.pdf (two passes)
 ```
