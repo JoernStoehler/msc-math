@@ -29,7 +29,7 @@ source "$HOME/.cargo/env"
 export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK:-1}
 
 # --- Build (skip if already built) ---
-cd "$HOME/msc-math"
+cd "$HOME/msc-math/crates"
 echo "=== Building at $(date) ==="
 cargo build --workspace --release 2>&1 | tail -5
 
