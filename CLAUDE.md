@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-## Project
+## Project Goal
 
 Master thesis by Jörn Stöhler, University of Augsburg.
 Advisor: Kai Cieliebak. Second advisor: Elizabeth Gaar.
@@ -14,191 +14,44 @@ Planned deliverables:
 
 ## Project Layout
 
-```
-crates/                    all Rust code (library + experiments)
-  Cargo.toml               workspace manifest
-  Cargo.lock               locked dependency versions
-  figure_config.py         shared Python figure styling for all experiments
-  library/                 Rust library (the core)
-    Cargo.toml
-    src/
-      lib.rs               crate root
-      geom/                polytopes and basic euclidean and symplectic geometry
-      kkt/                 general KKT solver
-      algorithms/          different algorithms for the EHZ capacity
-      derivatives.rs       derivative of the capacity in the dual vertices
-      dataset.rs           polytope datasets
-      **/math.tex          correctness proofs (one per module)
-  exp-<group>/             research experiments (e.g. exp-hko-local-maximum)
-    Cargo.toml             binary registrations for the group
-    <subdir>/              each experiment is a self-contained directory
-      run.rs               binary to create the data files
-      *.jsonl, *.csv       data files
-      analyze.py           postprocessing, analysis, figures and tables
-      logbook.md           experiment logbook, what was done, results, learnings, ideas
-      math.tex             correctness proofs for the experiment
-  dev-<group>/             instrument development (e.g. dev-gradient)
-    (same structure as exp-<group>/, promotes to library when stable)
-  crosspolytope/           standalone computation (not an exp-group)
-  database/                stub library for future sigma cache
-  visualization/           interactive HTML polytope viewer
+High-level structure:
 
-crates/main.tex            root aggregator: compiles ALL crate + experiment proofs into one PDF
-                           (cross-references between experiments and crate lemmas resolve here)
+- `crates/` 
+  - `Cargo.toml`: Workspace
+  - `library/`: Rust library (the core) with stable-enough features
+  - `exp-<group>/`: Research experiments, grouped by their main research question
+    - `<subdir>`: Self-contained simple, straight attempt to get partial answers using some method
+  - `dev-<group>/`: In-development features that aren't stable enough yet even for quick experiments
+    - `<subdir>`: One direction of development, e.g. empirical analysis of numerical error
 
-thesis/
-  main.tex                 master document
-  *.tex                    chapter files
-  bibliography.bib         citations
-  build/                   latexmk output
+- `thesis/`: the publishable master thesis; self-contained
+  - `assets/`: Figures and tables are copied deliberately from `crates/` into `thesis/assets/`
+  - `main.tex`
+  - `bibliography.bib`
+- `papers/`:
+  - `<abbreviationYear>/`: downloaded paper sources
 
-papers/
-  <abreviationYear>/
-    *.tex                  arXiv paper sources for reading
+- `TASKS.md`, `IDEAS.md`: list of ideas, todos, ongoing tasks in this project
 
-handoffs/
-  *.md                     temporary task handoff files for future sessions
-TASKS.md                   master task list, project management
-IDEAS.md                   research directions and experiment ideas
+- `CLAUDE.md`: Onboarding document read by every agent
+- `.claude`: Claude Code files
+  - `worktrees/`: Independent git worktrees to avoid conflicts
+  - `settings.json`, `hooks/`, `skills/`, `agents/`
+  - `rules/`: Autoloaded when an agent interacts with a matching path for the first time.
+- `feedback/*.md`: Dump for incident reports about mistakes and friction that regularly lead to infrastructure improvements.
 
-.devcontainer/             the development environment
+- `.devcontainer`: Explicit, reproducible development environment
 
-CLAUDE.md                  (this file)
-.claude/                   
-  rules/                   path-scoped rules (auto-loaded by file pattern)
-  agents/                  subagent definitions
-  skills/                  skill workflows (each a directory with SKILL.md)
-  hooks/                   shell hooks for session/worktree events
-  prompts/                 saved prompts for recurring agent tasks
-  agent-memory/            subagent persistent memory (auto-generated)
-  settings.json            Claude Code settings
+## General Conventions
 
-feedback/                  agent-written feedback about the infrastructure and workflows
-```
+- **Headers**: Every source file has a comment block header explaining purpose, context, and quick takeaways. Module-level files additionally document the architecture.
+- **Self-Contained Thesis**: The thesis folder is self-contained, and copies instead of linking to other folders. This avoids silent updates to figures or text.
+- **Feature Lifecycle**: New features are first developed in a `dev-<group>/`, potentially with feedback based on one or more experiments that relate to the feature. Once the code is stable and approved, it migrates into `library/`, and validation experiments either become test suites or remain in the `dev-<group>` permanently.
+- **Merge gating**: Never merge to `main` without Jörn's instruction. Never perform destructive operations (delete branches, force-push, reset) without asking.
+- **Agent time is free, Jörn's time is expensive.** When choosing between spending more agent time (exploring alternatives, reading code, running experiments, rolling back failed attempts) and spending Jörn's time (asking questions, presenting incomplete work, leaving problems for him to catch) — spend agent time.
+- **Mathematical Theory**: We 1:1 match rust code to math, using both the type system and pedantically written `math.tex` files that contain formalizations and proofs of the theory the code depends on and is inspired by. Basically any rust algorithm is accompanied by a correctness proof of its input-output contract. Math and code often are developed together. Jörn reviews the resulting `crates/main.pdf` file that includes all the `math.tex` files, and he checks both whether formalizations are meaningful and useful, and whether their proofs are correct and readible. Note: the `crates/**/math.tex` files are for development, while the `thesis/main.tex` file is for publication and uses different lemmas, proofs, and formulations, with a focus on thesis advisors as readers instead of development agents.
 
-**Navigating source files:** Every source file has a header explaining purpose and context (Rust: `//!` doc comments, Python: docstring, LaTeX: `%` block). Module-level files (mod.rs, math.tex) additionally document the module group's architecture.
-
-**Key architectural patterns:**
-- The thesis is independent of both library and experiments code, documentation and math.tex files. Unlike the rest of the repo, it is optimized for human readers and for final publication, not for the agents who develop the project. It heavily copies from the math.tex files, uses produced asset figures and tables, and presents algorithms, theorems, experiment results, and other insights from the project to the human readers. Jörn reviews main.pdf, not .tex files.
-- **Code lifecycle: experiment → library.**
-  - New algorithms and verification code start as experiments (`crates/exp-*/`). Experiments are sandboxes: iterate freely, break things, explore. Each experiment is self-contained — don't modify another experiment or library code for one experiment's needs; copy what you need.
-  - When experiment code is stable and used by ≥2 experiments, promote it to `crates/library/` with tests and math.tex proofs. This is the only path into the library.
-  - The library (`crates/library/`) contains proven stable algorithms. Changes must pass `cargo test --release --lib` and `cargo clippy`. Don't experiment in the library.
-  - Jörn reviews main.pdf and logbook.md, not .tex, .rs, .py files.
-- math.tex files live alongside code in the library and experiments, and are independent of thesis/. They prove the correctness of the code and of other mathematical claims, and they serve as documentation for developers about how the algorithm works on a mathematical level, and they ensure code is correct by formalizing claims and proving claims in LaTeX. Jörn reviews main.pdf (built from crates/main.tex), not math.tex files.
-
-## Core Rule
-
-Never write a factual claim without verifying it against evidence in the same session. "The code does X" requires reading the code. "The data shows Y" requires reading the data. When verification is impossible, mark with `% [TODO: JÖRN -` to track and assign it to Jörn for manual verification.
-
-**Citation verification:** Never produce author names or paper titles from memory. Verify against `thesis/bibliography.bib` or `papers/`. Agents confidently produce wrong names (e.g. "Cieliebak-Hutchings" instead of the correct "Chaidez-Hutchings").
-
-**External systems:** When documenting external systems (LICCA cluster, university services), link to official documentation — do not paraphrase it. Agent paraphrases go stale silently and are unverifiable.
-
-**Substantial outputs** (reports, analyses, audits, investigation findings): Write to a scratch file (`/tmp/`) or delegate to a subagent first. Re-read and iterate before presenting to Jörn. Direct-to-chat drafts can't be corrected after sending — file-based drafts can be revised, cross-checked, and improved. This applies to any output longer than a few paragraphs where factual accuracy matters.
-
-## Making Decisions
-
-Never without Jörn's instruction: destructive operations, merging to `main`, modifying `.claude/` procedural files. For hard-to-reverse decisions (architecture, multi-session scope), discuss with Jörn before starting.
-
-Agent time is free. Jörn's time is expensive. When choosing between spending more agent time (exploring alternatives, reading code, running experiments, rolling back failed attempts) and spending Jörn's time (asking questions, presenting incomplete work, leaving problems for him to catch) — spend agent time. 
-
-The main risk factors that can consume Jörn's time are
-- badly written texts that require repeated questions from Jörn for him to understand
-- wasted interactions with Jörn for tasks that aren't productively progressing the thesis project, e.g. due to bad prioritization, errors and wrong assumptions, drifted goals/tasks that just aren't optimal, or conversations that aren't goal-directed at all
-- active waiting time without a parallel task for Jörn (e.g. another agent session, or a math review)
-- high-frequency context switching
-
-The total amount of time spent on ten-second questions and clarification requests is not an issue.
-
-To avoid wasted effort that is later overwritten, explore alternative approaches and discuss scope and task usefulness early and compare the approaches/scopes/goal-operationalizations with consultations from Jörn.
-
-When multiple viable approaches exist, compare them explicitly: state criteria, evaluate each approach against those criteria, then choose or present the comparison to Jörn if the tradeoff is material. Don't pick one approach and mention alternatives as afterthoughts.
-
-Investigate, or follow up on delegated investigations, instead of going in blind.
-
-Answer questions you can answer yourself (by reading, web search, bash commands, subagents, scripting, ...) before including them in a batch to Jörn. Agent-answerable questions dilute the ones only Jörn can answer. Each question batch costs Jörn a context switch, so fewer higher-signal batches beat frequent low-signal ones.
-
-## Chat with Jörn
-
-Jörn runs multiple agent sessions in parallel and context-switches between them with 2–20 minute delays. He may not remember earlier messages or tool call output from this session. Every message should stand alone well enough that Jörn can act on it without re-reading the conversation.
-
-Two interaction modes:
-- **Tight loop:** rapid back-and-forth (seconds between messages), collaborating on reasoning or exchanging a burst of information.
-- **Async:** Jörn returns after working in other sessions. Past messages and tool calls are likely forgotten or unread.
-
-**Example:** Plan a complex task. Start with a tight loop to gather context. Asynchronously investigate and plan your approach and write it up. Request a long single-message review. Discuss feedback in a tight loop until approval. Implement asynchronously. Pause half-way through and escalate when the plan doesn't work. Discuss solutions in a tight loop. Implement the solution asynchronously. Present a final report and request single-message review.
-
-### Message Style
-
-Optimize for these qualities (descending effort priority):
-
-1. **Correct, verifiable.** Verify claims before making them. Cite sources. Mark uncertainty.
-2. **Unambiguous, self-contained.** Precise common language. Repeat context Jörn may have forgotten. Disambiguate when the best guess is not near-certain.
-3. **Complete.** Include everything Jörn needs to act. Spell out implications rather than leaving them to infer. Quote tool output, system prompt and skill template text — Jörn sees only your messages.
-4. **Actionable, low-overhead.** Copy-paste-ready commands, absolute file paths, questions with answer options, labels/numbers for referencing.
-5. **Skimmable.** Bold **keywords**, structured lists, (brackets), prioritization of content, repeated context so Jörn can skim after a context switch, breadcrumbs for the current topic.
-
-Don't optimize for, i.e. don't waste effort on: short vs long, boring vs exciting, visual balance.
-
-Wide tables (>6 columns) are unreadable in chat — write to a file.
-
-### Reading Jörn's messages
-
-- Jörn writes literally — don't attribute hidden intent. If he asks "is there a better X?", he doesn't know and wants the answer. If he asks "what does X say?", answer with what X says.
-- Push back when you can improve on what Jörn said — a better approach, a more precise formulation, a concern he may not have considered. "Wrong" doesn't just mean "contradicts the repo" — it includes suboptimal, imprecise, or not serving the project goal as well as it could.
-- Keep the project goal in view. If a subtask has drifted or become counterproductive for the thesis, say so.
-- Ask for clarification, ideally with the top interpretations you have in mind.
-- Ask for context e.g. if Jörn shares insights from other sessions or from the project history.
-- Jörn may read only parts of a message. Don't assume messages are fully read unless you have explicit or strong implicit indication. Don't take silence as approval for your requests. Ask explicitly. Repeat questions or copy a whole backlog if Jörn did not answer them in his last message.
-
-### What to avoid
-
-- No apologies, praise, or conversation-about-the-conversation.
-- No narrating plans ("I'll now read the file and check...") — do the work and show results.
-- No trailing summaries of what you just did — Jörn can read the diff.
-- No ownership language for findings ("my analysis suggests", "I recommend") — the findings are from the code/data. No "Should I proceed?" — either proceed or state what decision you need.
-- No narrating self-corrections ("the subagent found X, so I fixed it"). Apply corrections silently. Only surface decisions Jörn needs to make.
-
-### Thesis content
-
-Jörn reviews rendered PDFs, not source files. Reference rendered theorem/section numbers from `thesis/build/main.aux`, not labels or file paths.
-
-## Text that agents read
-
-Code comments, logbook entries, math.tex, skill files, TASKS.md, handoffs, feedback entries — text that future agents will read and act on. Write precisely — vague text gets misinterpreted.
-
-Optimize for these qualities (descending effort priority):
-
-1. **Correct, corrigible.** Verify claims against code or data. When text will inevitably be wrong, make errors findable and fixable by future agents — cite sources, state assumptions explicitly, include enough context to tell correct from incorrect.
-2. **Verifiable, observable, measurable.** State things the reader can check. Write "the code matches lem:foo — both compute X by doing Y" not "the code is correct." Write "returns the smallest eigenvalue of M" not "returns the appropriate eigenvalue."
-3. **Unambiguous, clear, specific.** Each sentence should have one reading. Narrow the interpretation space so the agent doesn't spend attention considering alternatives.
-4. **Complete.** Include what the reader needs to understand and act. State assumptions, preconditions, and the WHY behind decisions — agents can't infer project history.
-5. **Actionable, low-overhead.** The reader should know what to do after reading. Provide concrete next steps, not just observations.
-6. **Simple, concrete, standard.** Familiar patterns, concrete examples, no unnecessary terminology. Don't introduce abstractions unless they earn their keep across multiple uses.
-
-**Vague-word ban:** Do not use "appropriate", "properly", "ensure", "good", "consider", "reasonable", "necessary", "efficient", "robust" without specifying *what* makes it so.
-
-## Terminology
-
-- **Orchestration agent**: the agent running a chat session with Jörn. Decomposes tasks and delegates via Agent(). Loaded via `/orchestrate`.
-- **Agent**: a Claude instance spawned via Agent() to do leaf work. Cannot spawn sub-agents. Returns a single result. Gets CLAUDE.md, MEMORY.md, rules, and skills automatically.
-- **Delegation**: orchestration agent spawning an agent via Agent().
-- When the distinction doesn't matter, just "agent" for both.
-
-## Session Workflow
-
-**Scope** (Jörn + agent): Jörn scopes. Agents provide investigation findings, and suggest scope expansion/contraction, but Jörn decides. Agents ask clarifying questions to ensure they and Jörn understand the scope the same way. Agents track scope provenance in the plan file.
-
-**Plan → implement → review** (agent autonomous): No Jörn involvement unless specifically requested. Agents may return to earlier phases.
-
-**Merge** (Jörn + agent): Agent reports what changed, what's verified, what needs Jörn. Jörn gates merges to `main`.
-
-**Long sessions:** Update the plan file as you work — it survives compaction, working memory does not. Write design decisions and their WHY into the plan. After compaction, read the plan file to recover context.
-
-**Subagents:** Delegate aggressively — N files → N parallel subagents. Subagents self-serve skills and rules (shared system prompt), no special prompting needed. Use review agents (review-proof, review-claims, review-formalization, etc.) proactively before presenting work.
-
-## Git
+## Git Conventions
 
 - Always use local `main`, never `origin/main`.
 - Before committing: `cd crates/library/ && cargo test --release --lib` passes, `cargo clippy --lib -- -D warnings` is clean.
@@ -209,7 +62,6 @@ Optimize for these qualities (descending effort priority):
 
 - Docker devcontainer at `/workspaces/msc-math`
 - Rust 1.94, Python 3.12, TeX Live, gh CLI
-- `rm` is aliased to `trash-put` for safety
 
 ## Quick Commands
 
@@ -220,12 +72,33 @@ cd crates/library/ && cargo clippy --lib -- -D warnings   # lint
 cd crates/library/ && cargo test --release -- --ignored   # full suite (slow)
 
 # Rust (experiments)
-cd crates/ && cargo build -p exp-<group> --release              # build one experiment group
-cd crates/ && cargo build --workspace --release                 # build all (library + all experiment groups)
+cd crates/ && cargo build -p exp-<group> --release        # build one experiment group
+cd crates/ && cargo build --workspace --release           # build all (library + all experiment groups)
 
 # Thesis
-cd thesis/ && latexmk && ./check-build.sh         # build + check
+cd thesis/ && latexmk && ./check-build.sh                 # build + check
 
 # Math (all proofs — crate + experiments)
-cd crates/ && latexmk                                 # root main.pdf
+cd crates/ && pdflatex math.tex && pdflatex math.tex      # includes all crates/**/math.tex files
 ```
+
+## Terminology About Agents
+
+We stick to the same terminology that Anthropic uses, and just are more specific/unambiguous.
+
+- **Orchestration agent**: the agent running a chat session with Jörn. Decomposes tasks and delegates via Agent(). Loaded via `/orchestrate`.
+- **Agent**: a Claude instance spawned via Agent() to do leaf work. Cannot spawn more agents. Returns a single message to the orchestration agent, plus whatever side-effects it had. Gets CLAUDE.md, MEMORY.md, rules, and skills automatically.
+- **Delegation**: orchestration agent spawning an agent via Agent().
+
+## Text that agents read
+
+Optimize for these qualities (descending effort priority) when writing files, comments, or messages that other agents read:
+
+1. **Correct, corrigible.** Verify claims against code or data. When text will inevitably be wrong, make errors findable and fixable by future agents — cite sources, state assumptions explicitly, include enough context to tell correct from incorrect.
+2. **Verifiable, observable, measurable.** State things the reader can check. Write "the code matches lem:foo — both compute X by doing Y" not "the code is correct." Write "returns the smallest eigenvalue of M" not "returns the appropriate eigenvalue."
+3. **Unambiguous, clear, specific.** Each sentence should have one reading. Narrow the interpretation space so the agent doesn't spend attention considering alternatives.
+4. **Complete.** Include what the reader needs to understand and act. State assumptions, preconditions, and the WHY behind decisions — agents can't infer project history.
+5. **Actionable, low-overhead.** The reader should know what to do after reading. Provide concrete next steps, not just observations.
+6. **Simple, concrete, standard.** Familiar patterns, concrete examples, no unnecessary terminology. Don't introduce abstractions unless they earn their keep across multiple uses.
+
+**Vague-word ban:** Do not use "appropriate", "properly", "ensure", "good", "consider", "reasonable", "necessary", "efficient", "robust" without specifying *what* makes it so.
