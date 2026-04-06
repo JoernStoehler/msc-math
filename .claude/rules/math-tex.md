@@ -9,8 +9,8 @@ math.tex files are the single source of mathematical truth for colocated code.
 
 ## Locations and build
 
-**Root:** `math.tex` at repo root compiles ALL crate + experiment math into one PDF.
-Build: `pdflatex math.tex && pdflatex math.tex` (two passes for cross-refs).
+**Root:** `crates/math.tex` compiles ALL crate + experiment math into one PDF.
+Build: `cd crates/ && pdflatex math.tex && pdflatex math.tex` (two passes for cross-refs).
 This is the authoritative build — cross-references between experiments and crate lemmas resolve here.
 
 **Crate modules:** `crates/library/src/<module>/math.tex`, `\input`'d by both root `math.tex` and `crates/library/src/math.tex`.

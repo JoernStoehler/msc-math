@@ -4,18 +4,18 @@
 % so that cross-references (e.g., experiment referencing a crate lemma)
 % resolve correctly.
 %
-% Build:  pdflatex math.tex && pdflatex math.tex   (two passes for refs)
+% Build:  cd crates/ && pdflatex math.tex && pdflatex math.tex   (two passes for refs)
 %
 % Experiment math.tex files use bare filenames for \includegraphics and
 % \input (e.g., foo.png, not ../experiments/<name>/foo.png).
 % Each experiment section sets \graphicspath to its directory.
 %
 % Structure:
-%   Part I:  Library (crates/library/src/) — geometry, KKT solver, algorithms
+%   Part I:  Library (library/src/) — geometry, KKT solver, algorithms
 %   Part II: Experiments — one section per experiment with a math.tex
 
 \documentclass{article}
-\input{crates/library/src/math-preamble}
+\input{library/src/math-preamble}
 \usepackage{xcolor}
 \usepackage{geometry}
 \geometry{margin=1in}
@@ -42,13 +42,13 @@
 % ════════════════════════════════════════════════════════════════════
 
 \section{Geometry (\texttt{geom/})}
-\input{crates/library/src/geom/math}
+\input{library/src/geom/math}
 
 \section{KKT Solver (\texttt{kkt/})}
-\input{crates/library/src/kkt/math}
+\input{library/src/kkt/math}
 
 \section{Algorithms (\texttt{algorithms/})}
-\input{crates/library/src/algorithms/math}
+\input{library/src/algorithms/math}
 
 
 % ════════════════════════════════════════════════════════════════════
@@ -56,16 +56,16 @@
 % ════════════════════════════════════════════════════════════════════
 
 \section{Gradient Analysis (\texttt{gradient-analysis/})}
-\graphicspath{{crates/exp-hko-local-maximum/gradient-analysis/}}
-\input{crates/exp-hko-local-maximum/gradient-analysis/math}
+\graphicspath{{exp-hko-local-maximum/gradient-analysis/}}
+\input{exp-hko-local-maximum/gradient-analysis/math}
 
 \section{Pentagon Perturbation (\texttt{perturbation-neighborhood/})}
-\graphicspath{{crates/exp-hko-local-maximum/perturbation-neighborhood/}}
-\input{crates/exp-hko-local-maximum/perturbation-neighborhood/math}
+\graphicspath{{exp-hko-local-maximum/perturbation-neighborhood/}}
+\input{exp-hko-local-maximum/perturbation-neighborhood/math}
 
 \section{Second-Order Analysis (\texttt{second-order/})}
-\graphicspath{{crates/exp-hko-local-maximum/second-order/}}
-\input{crates/exp-hko-local-maximum/second-order/math}
+\graphicspath{{exp-hko-local-maximum/second-order/}}
+\input{exp-hko-local-maximum/second-order/math}
 
 
 % ════════════════════════════════════════════════════════════════════
@@ -73,20 +73,20 @@
 % ════════════════════════════════════════════════════════════════════
 
 \section{Rotated Regular Products (\texttt{rotated-regular-products/})}
-\graphicspath{{crates/exp-sys-landscape/rotated-regular-products/}}
-\input{crates/exp-sys-landscape/rotated-regular-products/math}
+\graphicspath{{exp-sys-landscape/rotated-regular-products/}}
+\input{exp-sys-landscape/rotated-regular-products/math}
 
 \section{Rejection Calibration (\texttt{rejection-calibration/})}
-\graphicspath{{crates/exp-sys-landscape/rejection-calibration/}}
-\input{crates/exp-sys-landscape/rejection-calibration/math}
+\graphicspath{{exp-sys-landscape/rejection-calibration/}}
+\input{exp-sys-landscape/rejection-calibration/math}
 
 \section{Random Sample (\texttt{random-sample/})}
-\graphicspath{{crates/exp-sys-landscape/random-sample/}}
-\input{crates/exp-sys-landscape/random-sample/math}
+\graphicspath{{exp-sys-landscape/random-sample/}}
+\input{exp-sys-landscape/random-sample/math}
 
 \section{Random Product Sample (\texttt{random-product-sample/})}
-\graphicspath{{crates/exp-sys-landscape/random-product-sample/}}
-\input{crates/exp-sys-landscape/random-product-sample/math}
+\graphicspath{{exp-sys-landscape/random-product-sample/}}
+\input{exp-sys-landscape/random-product-sample/math}
 
 
 % ════════════════════════════════════════════════════════════════════
@@ -94,67 +94,67 @@
 % ════════════════════════════════════════════════════════════════════
 
 \section{Boundary Characterization (\texttt{boundary-characterization/})}
-\graphicspath{{crates/exp-combinatorial-cells/boundary-characterization/}}
-\input{crates/exp-combinatorial-cells/boundary-characterization/math}
+\graphicspath{{exp-combinatorial-cells/boundary-characterization/}}
+\input{exp-combinatorial-cells/boundary-characterization/math}
 
 \section{Omega Hypothesis (\texttt{omega-hypothesis/})}
-\graphicspath{{crates/exp-combinatorial-cells/omega-hypothesis/}}
-\input{crates/exp-combinatorial-cells/omega-hypothesis/math}
+\graphicspath{{exp-combinatorial-cells/omega-hypothesis/}}
+\input{exp-combinatorial-cells/omega-hypothesis/math}
 
 % ════════════════════════════════════════════════════════════════════
 \part{Instrument Development (\texttt{dev-*/})}
 % ════════════════════════════════════════════════════════════════════
 
 \section{Ablation (\texttt{ablation/})}
-\graphicspath{{crates/dev-algorithm-comparison/ablation/}}
-\input{crates/dev-algorithm-comparison/ablation/math}
+\graphicspath{{dev-algorithm-comparison/ablation/}}
+\input{dev-algorithm-comparison/ablation/math}
 
 \section{Benchmark (\texttt{benchmark/})}
-\graphicspath{{crates/dev-algorithm-comparison/benchmark/}}
-\input{crates/dev-algorithm-comparison/benchmark/math}
+\graphicspath{{dev-algorithm-comparison/benchmark/}}
+\input{dev-algorithm-comparison/benchmark/math}
 
 \section{Verify Numerics (\texttt{error-bounds/})}
-\graphicspath{{crates/dev-numerical-analysis/error-bounds/}}
-\input{crates/dev-numerical-analysis/error-bounds/math}
+\graphicspath{{dev-numerical-analysis/error-bounds/}}
+\input{dev-numerical-analysis/error-bounds/math}
 
 \section{Q-Error (\texttt{q-error/})}
-\graphicspath{{crates/dev-numerical-analysis/q-error/}}
-\input{crates/dev-numerical-analysis/q-error/math}
+\graphicspath{{dev-numerical-analysis/q-error/}}
+\input{dev-numerical-analysis/q-error/math}
 
 \section{KKT Inertia (\texttt{kkt-inertia/})}
-\graphicspath{{crates/dev-numerical-analysis/kkt-inertia/}}
-\input{crates/dev-numerical-analysis/kkt-inertia/math}
+\graphicspath{{dev-numerical-analysis/kkt-inertia/}}
+\input{dev-numerical-analysis/kkt-inertia/math}
 
 \section{Unknown Predicates (\texttt{unknown-predicates/})}
-\graphicspath{{crates/dev-numerical-analysis/unknown-predicates/}}
-\input{crates/dev-numerical-analysis/unknown-predicates/math}
+\graphicspath{{dev-numerical-analysis/unknown-predicates/}}
+\input{dev-numerical-analysis/unknown-predicates/math}
 
 \section{Correctness (\texttt{correctness/})}
-\graphicspath{{crates/dev-capacity-validation/correctness/}}
-\input{crates/dev-capacity-validation/correctness/math}
+\graphicspath{{dev-capacity-validation/correctness/}}
+\input{dev-capacity-validation/correctness/math}
 
 \section{Orbit Recovery (\texttt{orbit-recovery/})}
-\graphicspath{{crates/dev-capacity-validation/orbit-recovery/}}
-\input{crates/dev-capacity-validation/orbit-recovery/math}
+\graphicspath{{dev-capacity-validation/orbit-recovery/}}
+\input{dev-capacity-validation/orbit-recovery/math}
 
 \section{Basic Gradient Validation (\texttt{numerics/})}
-\graphicspath{{crates/dev-gradient/numerics/}}
-\input{crates/dev-gradient/numerics/math}
+\graphicspath{{dev-gradient/numerics/}}
+\input{dev-gradient/numerics/math}
 
 \section{Subdifferential Validation (\texttt{numerics-subdifferential/})}
-\graphicspath{{crates/dev-gradient/numerics-subdifferential/}}
-\input{crates/dev-gradient/numerics-subdifferential/math}
+\graphicspath{{dev-gradient/numerics-subdifferential/}}
+\input{dev-gradient/numerics-subdifferential/math}
 
 % ════════════════════════════════════════════════════════════════════
 \part{Standalone}
 % ════════════════════════════════════════════════════════════════════
 
 \section{Visualization (\texttt{visualization/})}
-\graphicspath{{crates/visualization/}}
-\input{crates/visualization/math}
+\graphicspath{{visualization/}}
+\input{visualization/math}
 
 \section{Crosspolytope (\texttt{crosspolytope/})}
-\graphicspath{{crates/crosspolytope/}}
-\input{crates/crosspolytope/math}
+\graphicspath{{crosspolytope/}}
+\input{crosspolytope/math}
 
 \end{document}
