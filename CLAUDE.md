@@ -4,10 +4,10 @@
 
 Master thesis by Jörn Stöhler, University of Augsburg.
 Advisor: Kai Cieliebak. Second advisor: Elizabeth Gaar.
-Deadline: mid-April 2026.
+Deadline: End of April 2026.
 Topic: Probing Viterbo's Conjecture
 
-Three planned deliverables:
+Planned deliverables:
 1. A printed-quality LaTeX thesis (`thesis/build/main.pdf`)
 2. A high-performance Rust library for symplectic geometry on polytopes (`crates/library/`)
 3. A reproducible experiment pipeline (`crates/exp-*/`)
