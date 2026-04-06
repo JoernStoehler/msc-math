@@ -9,14 +9,14 @@ math.tex files are the single source of mathematical truth for colocated code.
 
 ## Locations and build
 
-**Root:** `crates/math.tex` compiles ALL crate + experiment math into one PDF.
-Build: `cd crates/ && pdflatex math.tex && pdflatex math.tex` (two passes for cross-refs).
+**Root:** `crates/main.tex` compiles ALL crate + experiment math into one PDF.
+Build: `cd crates/ && latexmk` (produces `main.pdf`).
 This is the authoritative build — cross-references between experiments and crate lemmas resolve here.
 
-**Crate modules:** `crates/library/src/<module>/math.tex`, `\input`'d by both root `math.tex` and `crates/library/src/math.tex`.
+**Crate modules:** `crates/library/src/<module>/math.tex`, `\input`'d by both root `main.tex` and `crates/library/src/math.tex`.
 Preamble: `crates/library/src/math-preamble.tex` (packages, environments). Per-module files are pure content — no `\documentclass`.
 
-**Experiments:** `crates/exp-<group>/<subdir>/math.tex` — content files `\input`'d by root `math.tex`. No `\documentclass`. Use bare filenames for `\includegraphics` (e.g., `foo.png`, not `../crates/exp-<group>/<subdir>/foo.png`); the compile context sets `\graphicspath` per section.
+**Experiments:** `crates/exp-<group>/<subdir>/math.tex` — content files `\input`'d by root `main.tex`. No `\documentclass`. Use bare filenames for `\includegraphics` (e.g., `foo.png`, not `../crates/exp-<group>/<subdir>/foo.png`); the compile context sets `\graphicspath` per section.
 
 **Thesis:** `thesis/` is independent of math.tex files. The thesis is written for human readers (examiners) and has its own self-contained prose. It uses figures and tables produced by experiments, but does NOT `\input` experiment math.tex files.
 

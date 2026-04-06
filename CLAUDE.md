@@ -43,7 +43,7 @@ crates/                    all Rust code (library + experiments)
   database/                stub library for future sigma cache
   visualization/           interactive HTML polytope viewer
 
-crates/math.tex            root math.tex: compiles ALL crate + experiment proofs into one PDF
+crates/main.tex            root aggregator: compiles ALL crate + experiment proofs into one PDF
                            (cross-references between experiments and crate lemmas resolve here)
 
 thesis/
@@ -84,8 +84,8 @@ feedback/                  agent-written feedback about the infrastructure and w
   - New algorithms and verification code start as experiments (`crates/exp-*/`). Experiments are sandboxes: iterate freely, break things, explore. Each experiment is self-contained — don't modify another experiment or library code for one experiment's needs; copy what you need.
   - When experiment code is stable and used by ≥2 experiments, promote it to `crates/library/` with tests and math.tex proofs. This is the only path into the library.
   - The library (`crates/library/`) contains proven stable algorithms. Changes must pass `cargo test --release --lib` and `cargo clippy`. Don't experiment in the library.
-  - Jörn reviews math.pdf and logbook.md, not .tex, .rs, .py files.
-- math.tex files live alongside code in the library and experiments, and are independent of thesis/. They prove the correctness of the code and of other mathematical claims, and they serve as documentation for developers about how the algorithm works on a mathematical level, and they ensure code is correct by formalizing claims and proving claims in LaTeX. Jörn reviews math.pdf, not math.tex files.
+  - Jörn reviews main.pdf and logbook.md, not .tex, .rs, .py files.
+- math.tex files live alongside code in the library and experiments, and are independent of thesis/. They prove the correctness of the code and of other mathematical claims, and they serve as documentation for developers about how the algorithm works on a mathematical level, and they ensure code is correct by formalizing claims and proving claims in LaTeX. Jörn reviews main.pdf (built from crates/main.tex), not math.tex files.
 
 ## Core Rule
 
@@ -227,5 +227,5 @@ cd crates/ && cargo build --workspace --release                 # build all (lib
 cd thesis/ && latexmk && ./check-build.sh         # build + check
 
 # Math (all proofs — crate + experiments)
-cd crates/ && pdflatex math.tex && pdflatex math.tex  # root math.pdf (two passes)
+cd crates/ && latexmk                                 # root main.pdf
 ```

@@ -1,10 +1,10 @@
-% math.tex — root mathematical documentation for the entire project
+% main.tex — root mathematical documentation for the entire project
 %
 % Compiles all crate and experiment math.tex files into a single PDF
 % so that cross-references (e.g., experiment referencing a crate lemma)
 % resolve correctly.
 %
-% Build:  cd crates/ && pdflatex math.tex && pdflatex math.tex   (two passes for refs)
+% Build:  cd crates/ && latexmk   (produces main.pdf)
 %
 % Experiment math.tex files use bare filenames for \includegraphics and
 % \input (e.g., foo.png, not ../experiments/<name>/foo.png).
