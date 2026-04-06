@@ -1,28 +1,46 @@
 # Orchestration Cheat Sheet (Jörn)
 
 Quick-reference for running orchestration-pattern sessions.
+Baseline commit (pre-orchestration): `f8044b35`. Current infra committed on `2270ed64`.
+
+## Starting a Session
+
+1. Open a new Claude Code session
+2. Type `/orchestrate` to load the orchestration agent role
+3. Describe the task — the agent will enter Plan mode and start decomposing
+
+## `/compact` text
+
+When context gets large and you want to compact at a natural boundary:
+```
+/compact "Preserve: plan file path, task graph status, pending agent results, Jörn decisions made this session, current worktree/branch"
+```
 
 ## Agent() Dry Run Results (2026-04-06)
 
-Tested on Opus 4.6, 1M context. Commit `f8044b35`.
+| Feature | Status | Finding |
+|---------|--------|---------|
+| Foreground Agent() | **Works** | Blocks until done. ~17K tokens, ~3 min for a simple task. |
+| Background Agent() | **Works** | True parallelism. Same tools/filesystem. No awareness of being in background. |
+| Worktree isolation | **Works** | Proper git branch from local main. Auto-cleanup broken (worktree persists even if agent deletes all files it created). |
+| SendMessage to completed agent | **Silently fails** | Message accepted, no response. Process already terminated. |
+| Sub-sub-agents | **Not possible** | Agent() tool not available to agents. Enforced, not convention. |
+| Agent context | **Auto-loaded** | CLAUDE.md, MEMORY.md, rules, skills all available. |
+| Working directory | **Inherited** | Agent gets the orchestration agent's cwd at spawn time. |
+| `model` parameter | **Available** | `"sonnet"`, `"haiku"`, or `"opus"`. Default inherits parent. |
 
-| Feature | Status | Key finding |
-|---------|--------|-------------|
-| Foreground Agent() | **Works** | Returns result, blocks until done. 17K tokens, 196s. |
-| Background Agent() | **Works** | True parallelism confirmed. Same tools, same filesystem. No awareness of being in background. 14K tokens, 122s. |
-| Worktree isolation | **Works** | Proper git branch from local main, file isolation confirmed. Auto-cleanup broken (worktree persists even after agent deletes all created files). |
-| SendMessage to completed agent | **Silently fails** | Message accepted (`success: true`), but no response. Agent process already terminated. |
-| SendMessage to running bg agent | **Not tested** | Should work in theory — agent process still alive. |
-| Sub-sub-agents | **Not possible** | Agent() tool not available to subagents. Enforced by tool set, not convention. |
-| Subagent context | **Auto-loaded** | CLAUDE.md + MEMORY.md + rules + skills all available. Same system prompt as orchestration agent. |
-| Working directory | **Inherited** | Subagent gets whatever `cwd` the orchestration agent had at spawn time. Use absolute paths. |
-| Post-agent hook | **Works** | Reliability notice injected into orchestration agent context after each Agent() call. |
-| `model` parameter | **Available** | `"sonnet"` or `"haiku"` for trivial work. Default inherits parent model. |
+## Key Constraints
 
-### Implications for orchestration
+- **No follow-up to finished agents.** Put everything in the initial prompt. Pattern: spawn → notification → spawn next.
+- **Background for parallelism.** `run_in_background: true` keeps the session responsive.
+- **Worktree cleanup is manual.** After merging, remove worktrees with `git worktree remove`.
+- **Absolute paths in prompts.** Agents inherit cwd, which may not be the repo root.
 
-- **No back-and-forth with finished subagents.** Coordination pattern is: spawn → get result → spawn next. Put everything the subagent needs in the initial prompt.
-- **Background agents run truly in parallel.** Good for independent tasks. Orchestration agent gets notified on completion.
-- **Worktree isolation for parallel writers.** Use `isolation: "worktree"` when multiple subagents edit files. Manual cleanup needed (auto-cleanup broken).
-- **Use absolute paths in subagent prompts.** Don't assume subagent knows its cwd.
-- **Use cheap models for trivial work.** `model: "sonnet"` for exploration, file checks, simple edits. `model: "opus"` only for tasks needing deep reasoning (proofs, complex code, architectural decisions).
+## Decisions Made
+
+- **Agent() over Teams**: Teams add protocol overhead (idle management, shutdown) that burns agent attention. Agent() is simpler and sufficient for orchestration.
+- **"Orchestration agent" / "agent" terminology**: Matches Anthropic's naming with added specificity. "Subagent" avoided in favor of just "agent" (Jörn's preference).
+- **Delegation guide as reference file**: Agents Read() it on demand rather than loading into SKILL.md (keeps SKILL.md short, delegation guide can grow with examples).
+- **Skills deleted**: download-paper, experiment-design, project-management-partner, test-design, thesis-writing, handoff — content was either obvious to agents or captured in CLAUDE.md/rules.
+- **math.tex → main.tex**: Root aggregator renamed, build switched to latexmk.
+- **Cargo.toml moved to crates/**: All cargo commands run from `crates/`.
