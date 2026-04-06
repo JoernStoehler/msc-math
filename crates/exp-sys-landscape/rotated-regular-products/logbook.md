@@ -11,7 +11,7 @@ The only known 4D counterexample to Viterbo's conjecture is a Lagrangian product
 ## How to run
 
 ```bash
-cargo run -p exp-sys-landscape --release --bin sys-rotated-regular-products
+cd crates/ && cargo run -p exp-sys-landscape --release --bin sys-rotated-regular-products
 uv run analyze.py                             # generates plots
 ```
 

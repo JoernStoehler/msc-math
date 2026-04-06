@@ -11,7 +11,7 @@ gradient-ascent-general/gradient-ascent-products (formerly boundary-crossing-sea
 ## How to run
 
 ```bash
-cargo run -p dev-gradient-ascent --release --bin dev_strategy_comparison
+cd crates/ && cargo run -p dev-gradient-ascent --release --bin dev_strategy_comparison
 ```
 
 ## Research questions

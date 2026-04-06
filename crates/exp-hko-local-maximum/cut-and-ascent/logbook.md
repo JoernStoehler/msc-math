@@ -15,8 +15,8 @@ If any trial improves over HKO2024, it would weaken the evidence for HKO2024 bei
 ## How to run
 
 ```bash
-cargo run -p exp-hko-local-maximum --release --bin hko-cut-and-ascent           # resume
-cargo run -p exp-hko-local-maximum --release --bin hko-cut-and-ascent -- --fresh # rerun
+cd crates/ && cargo run -p exp-hko-local-maximum --release --bin hko-cut-and-ascent           # resume
+cd crates/ && cargo run -p exp-hko-local-maximum --release --bin hko-cut-and-ascent -- --fresh # rerun
 ```
 
 ## Files

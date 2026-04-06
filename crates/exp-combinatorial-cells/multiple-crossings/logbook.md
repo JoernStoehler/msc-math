@@ -13,7 +13,7 @@ Multi-boundary traversal: walk along a direction for a distance budget, iterativ
 ## How to run
 
 ```bash
-cargo run -p exp-combinatorial-cells --release --bin cell-multiple-crossings
+cd crates/ && cargo run -p exp-combinatorial-cells --release --bin cell-multiple-crossings
 uv run analyze.py
 ```
 

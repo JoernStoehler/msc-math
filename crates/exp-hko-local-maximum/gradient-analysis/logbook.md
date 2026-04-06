@@ -9,7 +9,7 @@ Split from the original `gradient-is-zero/` experiment (Phase A: sensitivity ana
 ## How to run
 
 ```bash
-cargo run -p exp-hko-local-maximum --release --bin hko-gradient-analysis
+cd crates/ && cargo run -p exp-hko-local-maximum --release --bin hko-gradient-analysis
 uv run analyze.py
 ```
 

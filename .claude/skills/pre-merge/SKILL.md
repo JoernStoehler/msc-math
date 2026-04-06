@@ -14,7 +14,7 @@ Run all of these. If a command fails, fix the issue and rerun before proceeding.
 ```bash
 cd crates/library/ && cargo test --release --lib
 cd crates/library/ && cargo clippy --lib -- -D warnings
-cargo build --workspace --release
+cd crates/ && cargo build --workspace --release
 cd thesis/ && latexmk && ./check-build.sh
 pdflatex math.tex && pdflatex math.tex
 ```

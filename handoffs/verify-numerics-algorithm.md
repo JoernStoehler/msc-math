@@ -146,9 +146,9 @@ Worktree at `.claude/worktrees/verify-numerics-q-accuracy`, branch `verify-numer
 
 To regenerate data:
 ```bash
-cargo run -p dev-numerical-analysis --release --bin collect_inputs -- artificial
-cargo run -p dev-numerical-analysis --release --bin collect_inputs -- natural --polytopes /tmp/all_polytopes.jsonl --max-facets 8
-cargo run -p dev-numerical-analysis --release --bin verify_numerics
+cd crates/ && cargo run -p dev-numerical-analysis --release --bin collect_inputs -- artificial
+cd crates/ && cargo run -p dev-numerical-analysis --release --bin collect_inputs -- natural --polytopes /tmp/all_polytopes.jsonl --max-facets 8
+cd crates/ && cargo run -p dev-numerical-analysis --release --bin verify_numerics
 uv run crates/dev-numerical-analysis/error-bounds/analyze.py
 ```
 
@@ -165,4 +165,4 @@ cat crates/dev-capacity-validation/correctness/correctness.jsonl crates/exp-sys-
 4. `analyze.py` reports zero violations on proven bounds with the new solver
 5. `logbook.md` documents the algorithm design discussion and all findings
 6. `review-proof` agent finds no issues in math.tex
-7. `cargo build --release --bin verify_numerics --bin collect_inputs` succeeds
+7. `cd crates/ && cargo build --release --bin verify_numerics --bin collect_inputs` succeeds

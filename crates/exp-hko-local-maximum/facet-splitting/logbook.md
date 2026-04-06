@@ -9,7 +9,7 @@ Split from the original `gradient-is-zero/` experiment (Phase B: facet-splitting
 ## How to run
 
 ```bash
-cargo run -p exp-hko-local-maximum --release --bin hko-facet-splitting
+cd crates/ && cargo run -p exp-hko-local-maximum --release --bin hko-facet-splitting
 uv run analyze.py
 ```
 

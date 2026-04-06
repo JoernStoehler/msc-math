@@ -1,22 +1,22 @@
 [workspace]
 members = [
-    "crates/library",
-    "crates/database",
-    "crates/exp-hko-local-maximum",
-    "crates/exp-sys-landscape",
-    "crates/exp-combinatorial-cells",
-    "crates/dev-algorithm-comparison",
-    "crates/dev-numerical-analysis",
-    "crates/dev-capacity-validation",
-    "crates/dev-gradient",
-    "crates/dev-gradient-ascent",
-    "crates/crosspolytope",
-    "crates/visualization",
+    "library",
+    "database",
+    "exp-hko-local-maximum",
+    "exp-sys-landscape",
+    "exp-combinatorial-cells",
+    "dev-algorithm-comparison",
+    "dev-numerical-analysis",
+    "dev-capacity-validation",
+    "dev-gradient",
+    "dev-gradient-ascent",
+    "crosspolytope",
+    "visualization",
 ]
 resolver = "2"
 
 [workspace.dependencies]
-symplectic = { path = "crates/library" }
+symplectic = { path = "library" }
 nalgebra = { version = "0.33", features = ["serde-serialize"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"

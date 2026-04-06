@@ -38,9 +38,9 @@ Rust binary → .jsonl → Python script → .png → (used by thesis during ass
 
 - Python never calls Rust directly
 - Run Python scripts with `uv run analyze.py` (not `python3 analyze.py`). `uv` reads PEP 723 inline script metadata and auto-installs deps into a cached ephemeral venv.
-- Build one group: `cargo build -p exp-<group> --release` (from repo root)
-- Build all: `cargo build --workspace --release` (from repo root)
-- Run: `cargo run -p exp-<group> --release --bin <name>` (from repo root)
+- Build one group: `cd crates/ && cargo build -p exp-<group> --release`
+- Build all: `cd crates/ && cargo build --workspace --release`
+- Run: `cd crates/ && cargo run -p exp-<group> --release --bin <name>`
 - Add new experiment: create subdir under appropriate group, add `[[bin]]` to the group's `Cargo.toml`, write logbook
 
 ## Python script deps (PEP 723)

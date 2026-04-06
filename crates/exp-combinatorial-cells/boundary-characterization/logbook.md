@@ -15,7 +15,7 @@ The run.rs binary also produces gradient data used by `gradient-discontinuity/`.
 ## How to run
 
 ```bash
-cargo run -p exp-combinatorial-cells --release --bin cell-boundary-characterization
+cd crates/ && cargo run -p exp-combinatorial-cells --release --bin cell-boundary-characterization
 uv run analyze.py
 ```
 

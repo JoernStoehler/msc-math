@@ -11,7 +11,7 @@ Do random generic 4D polytopes approach the Viterbo threshold sys=1? This is the
 ## How to run
 
 ```bash
-cargo run -p exp-sys-landscape --release --bin sys-random-sample
+cd crates/ && cargo run -p exp-sys-landscape --release --bin sys-random-sample
 uv run analyze.py
 ```
 
