@@ -6,6 +6,7 @@ See `.claude/rules/tasks.md` for full conventions. Run `bash scripts/tasks-toc.s
 
 **Priority:** Thesis coherence + experiment quality > code refactors. Code refactors only matter if they unblock thesis content or experiment correctness.
 **Maintenance:** Record decisions and reasons — these can't be derived later. Don't cache derivable state (build status, test counts) — run the command instead.
+**Dependencies:** thesis/ is stale and will be restructured — most thesis work is blocked on restructuring decisions. Work on crates/ (code, math.tex, experiments) is independent and can proceed now.
 
 ## [open] Q1: HKO2024 local maximality
 
@@ -167,25 +168,45 @@ Instrument development. Results promote to `crates/library/`.
 ### [future] Crosspolytope optimality proof
 - Minimizing orbit has clean structure (uniform beta, max omega). Symmetry argument may avoid exhaustive enumeration.
 
-## [open] Thesis writing + structure
+## [open] Thesis
 
-No chapter is currently publishable. Story arc decided (see `thesis/handwritten-notes.md`).
+thesis/ is stale (see `thesis/handwritten-notes.md`). Most work here is blocked on restructuring decisions.
+tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, independent of restructuring.
 
-### [active] S0: Notation restructure
+### [Jörn] Thesis restructuring
+- Current content stale. Decisions needed: chapter structure, what content survives, what gets rewritten.
+- a_i replaces (n,h). Sign conventions changed. Simplification theorem ordering changed.
+- Blocks: S0, experiment writeups, experiments chapter, introduction, conclusion.
+- See `thesis/handwritten-notes.md` for narrative notes.
+
+### [Jörn] tube-algorithm.tex (8 TODOs)
+- 5 Jörn questions (quaternionic formula, TF_ij equivalence, rotation number, closing steps, correctness proof).
+- 3 GAP markers (agent-added unverified content).
+- `handoffs/tube-algorithm.md`
+
+### [Jörn] appendix-numerical.tex (5 TODOs)
+- Continuity of c_EHZ on polytopes, simplicity assumption, billiard pruning, three-valued verdict, unverified numerical statement.
+
+### [blocked] Tube rotation formula implementation
+- Current code is a misleadingly named placeholder that is wrong (not CH2021, not any correct formula).
+- Need to implement a correct rotation formula. Not necessarily CH2021 — we have different basis vectors.
+- Performance on F>10 polytopes untested.
+- Blocked on: Jörn reviewing the math (proofs for what formula is correct given our basis).
+- `crates/library/src/algorithms/tube/mod.rs`
+
+### [blocked] S0: Notation restructure
+- Blocked on: thesis restructuring. Only applies to content that survives — new content will use a_i from the start.
 - a_i replaces (n,h). Sign convention for Lagrange multipliers changed. Simplification theorem ordering changed.
 - Propagate through all thesis .tex files.
 
-### [open] Thesis notation audit
-- Grep `thesis/**/*.tex` for stale (n,h) notation, old sign conventions, old simplification ordering.
-- Produce file-by-file checklist of what S0 needs to change. Makes S0 actionable for an agent session.
-
-### [open] Experiment writeup drafts
+### [blocked] Experiment writeup drafts
+- Blocked on: thesis restructuring (need chapter structure and framing decisions).
 - Logbooks already contain factual summaries. Agent value-add: thesis-style prose from logbook + data.
 - Agent cannot decide framing (how experiment serves thesis argument) — only Jörn can.
 - "Just try it" for 1-2 well-defined experiments first (e.g., gradient-analysis, rotated-regular-products). Trash if output is just paraphrased logbook.
 
 ### [blocked] Experiments chapter
-- Blocked on: thesis story decisions, experiment writeup quality.
+- Blocked on: thesis restructuring, experiment writeup quality.
 - `thesis/experiments.tex` has 1 TODO.
 
 ### [blocked] Introduction
@@ -195,54 +216,17 @@ No chapter is currently publishable. Story arc decided (see `thesis/handwritten-
 ### [blocked] Conclusion
 - Blocked on: stable chapter content.
 
-### [Jörn] tube-algorithm.tex (8 TODOs)
-- 5 Jörn questions (quaternionic formula, TF_ij equivalence, rotation number, closing steps, correctness proof).
-- 3 GAP markers (agent-added unverified content).
-- `handoffs/tube-algorithm.md`
-
-### [blocked] Tube rotation formula implementation
-- Current code is a misleadingly named placeholder that is wrong (not CH2021, not any correct formula).
-- Need to implement a correct rotation formula. Not necessarily CH2021 — we have different basis vectors.
-- Performance on F>10 polytopes untested.
-- Blocked on: Jörn reviewing the math (proofs for what formula is correct given our basis).
-- `crates/library/src/algorithms/tube/mod.rs`
-
-### [Jörn] appendix-numerical.tex (5 TODOs)
-- Continuity of c_EHZ on polytopes, simplicity assumption, billiard pruning, three-valued verdict, unverified numerical statement.
-
 ### [open] Thesis figure consistency check
+- Conditional: only makes sense if current thesis .tex content is kept rather than rewritten.
 - Verify every `\includegraphics` in `thesis/**/*.tex` points to an existing file in `thesis/assets/`.
 - Check whether asset files are stale copies of regenerated crates/ originals (compare timestamps/content).
 - Report broken references and stale copies. Does not decide what new figures to create — that's a thesis-writing decision.
 
-### [open] Bibliography verification
-- `thesis/bibliography.bib` line 151 has agent-produced entry flagged `[TODO: JÖRN - verify]`.
-- Tiny scope — probably a bullet under Final assembly rather than a standalone task.
-
 ### [open] Final assembly
-- Abstract, bibliography check, figure quality review, proofreading, print formatting.
+- Abstract, bibliography check (includes verifying agent-produced bib entry at `thesis/bibliography.bib` line 151), figure quality review, proofreading, print formatting.
 - After all content is stable.
 
 ## [open] Code quality + alignment
-
-### [active] Thesis-code alignment
-- Full list: `handoffs/migration-thesis-findings.md`
-- Tube rotation increment: current code is a misleadingly named placeholder, not CH2021. Need to implement a correct rotation formula (not necessarily CH2021 — we have different basis vectors).
-- KKT notation: decided — use code's symmetric convention (eigenvalue decompositions pop out). Propagate to thesis.
-- Accumulator pattern: thesis is stale, will be rewritten. Not a separate issue.
-- qp_assembly dual-vertex: decided — thesis should just use a_i (h=1, a=n). The "equivalence" is trivial: substitute h=1, confirm |n|=1 was never used. Per-proof mechanical substitution.
-- KktResult->Solution bridge: needs investigation — unclear whether this is actually a thesis-code alignment issue.
-
-### [active] Dual-vertex parameterization (a_i migration)
-- Library API done. Most experiment migration complete. Math.tex migration complete.
-- `crates/library/src/algorithms/math.tex` uses a_i throughout.
-- Remaining:
-  - Jörn verifies `[lem:cap-derivative]` and `[lem:vol-derivative]` (marked `\begin{unverified}`)
-  - Write `[lem:dual-vertex-qp]` proof (a_i vs (n,h) QP equivalence)
-
-### [open] Audit math.tex stubs for lost proofs
-- Some algorithmic lemmas lost backing during migration. Scan `[TODO: JORN -` entries.
-- Example: `lem:positive-span`, `lem:vertex-enumeration` in `geom/math.tex` proof-less since first commit.
 
 ### [active] Code cleanup (session launched 2026-04-07)
 - step_bound duplication: cell-widths vs gradient-ascent (missing omega_0 detection).
@@ -261,6 +245,26 @@ No chapter is currently publishable. Story arc decided (see `thesis/handwritten-
 - Produce ranked list of "most embarrassing if wrong."
 - No fixes — Jörn reviews the list when writing capacity frees up.
 
+### [active] Thesis-code alignment
+- Full list: `handoffs/migration-thesis-findings.md`
+- Tube rotation increment: current code is a misleadingly named placeholder, not CH2021. Need to implement a correct rotation formula (not necessarily CH2021 — we have different basis vectors).
+- KKT notation: decided — use code's symmetric convention (eigenvalue decompositions pop out). Propagate to thesis.
+- Accumulator pattern: thesis is stale, will be rewritten. Not a separate issue.
+- qp_assembly dual-vertex: decided — thesis should just use a_i (h=1, a=n). The "equivalence" is trivial: substitute h=1, confirm |n|=1 was never used. Per-proof mechanical substitution.
+- KktResult->Solution bridge: needs investigation — unclear whether this is actually a thesis-code alignment issue.
+- Note: thesis-side propagation (KKT notation, accumulator, qp_assembly) is blocked on thesis restructuring.
+
+### [active] Dual-vertex parameterization (a_i migration)
+- Library API done. Most experiment migration complete. Math.tex migration complete.
+- `crates/library/src/algorithms/math.tex` uses a_i throughout.
+- Remaining:
+  - Jörn verifies `[lem:cap-derivative]` and `[lem:vol-derivative]` (marked `\begin{unverified}`)
+  - Write `[lem:dual-vertex-qp]` proof (a_i vs (n,h) QP equivalence)
+
+### [open] Audit math.tex stubs for lost proofs
+- Some algorithmic lemmas lost backing during migration. Scan `[TODO: JORN -` entries.
+- Example: `lem:positive-span`, `lem:vertex-enumeration` in `geom/math.tex` proof-less since first commit.
+
 ### [open] Geom math.tex restructure
 - Jörn partially reviewed Defs 1–13 of `crates/library/src/geom/math.tex` (`handoff-geom-math-review.md`).
 - Consolidate Defs 1-2 (symplectic form). Add Def for HKO2024 + Thm for false Viterbo's conjecture.
@@ -272,10 +276,8 @@ No chapter is currently publishable. Story arc decided (see `thesis/handwritten-
 - Most are reference lookups (Higham chapter, GVL section, Wedin/Weyl theorem numbers).
 - Agent can look up papers and pre-verify; Jörn reviews flagged problems only.
 
-### [open] Delete superseded experiments
-- `gradient-search` and `generate-seeds` have broken APIs, superseded by `sys-search` pipeline.
-- Before deleting: check whether any logbook, math.tex, or experiment references their data/methods.
-- Report references to Jörn before removing anything.
+### [done] [2026-04-07] Delete superseded experiments
+- Directories deleted 2026-04-03. Reference cleanup done 2026-04-07: removed gradient-search from code comments (gradient-ascent-general/products run.rs), rules examples, stale handoff.
 
 ## [open] Infrastructure + tooling
 
@@ -283,6 +285,10 @@ No chapter is currently publishable. Story arc decided (see `thesis/handwritten-
 - Testing `/orchestrate` skill + delegation guide on real thesis tasks.
 - Baseline commit `f8044b35`. Dry run confirmed Agent() mechanics work.
 - Next: post-mortem in `.claude/skills/orchestrate/references/design-space.md`.
+
+### [open] variable-f-ascent merge
+- Experiment complete, logbook needs reframing (RQ2 Path D is trivial by construction, reframe as sanity check).
+- Branch at `.claude/worktrees/variable-f-ascent/`. Run `/pre-merge` then merge.
 
 ### [open] Database cleanup
 - Leftover from database implementation: combinatorial-* `catch_unwind` removal, Lagrangian product `Source` lookup, combinatorial-* data regeneration.
@@ -292,6 +298,17 @@ No chapter is currently publishable. Story arc decided (see `thesis/handwritten-
 - 4 active worktrees: `api-extract`, `dev-tube-summary` (Apr 4), `numerical-story`, `verify-numerics-part3` (Apr 4).
 - Agent investigates each: what's on the branch, is it merged, what's the diff vs main. Report to Jörn.
 - **Do not delete any worktree or branch.** Jörn decides what to keep/merge/discard.
+
+### [open] Stale branch cleanup
+- 9 branches not in worktrees: `crosspolytope-phase2`, `feedback-triage-3-6`, `hko-second-order`, `math-tex-audit`, `remove-kkt-panics`, `session-search-agent`, `update-pre-merge`, `variable-f-ascent`, `api-extract-rs`.
+- Agent checks each for unmerged work, reports. Jörn says delete or keep per branch.
+
+### [open] Evaluate api-reference/ usefulness
+- `api-reference/` + `api-extract` crate were built so agents can read stripped .rs files (no bodies/tests/privates).
+- As of 2026-04-07: zero organic agent usage found in session history. Agents prefer reading source directly.
+- Decision: keep for now, re-evaluate in ~1 week, delete if still unused.
+- Check command: `grep -rn "api-reference/library" ~/.claude/projects/-workspaces-msc-math/*.jsonl | grep -v CLAUDE.md | grep -v MEMORY.md | grep -v memory/`
+- If no new hits: delete `api-reference/`, `crates/tools/api-extract/`, pre-commit hook in `.pre-commit-config.yaml`, workspace member in `crates/Cargo.toml`, CLAUDE.md references.
 
 ### [done] [2026-04] Polytope database
 - `crates/database/`, JSONL format, 1198 entries. 6 experiments migrated.
@@ -305,21 +322,6 @@ No chapter is currently publishable. Story arc decided (see `thesis/handwritten-
 
 ### [done] [2026-04] Orchestration infrastructure
 - `/orchestrate` skill, delegation guide, cheatsheet.
-
-### [open] variable-f-ascent merge
-- Experiment complete, logbook needs reframing (RQ2 Path D is trivial by construction, reframe as sanity check).
-- Branch at `.claude/worktrees/variable-f-ascent/`. Run `/pre-merge` then merge.
-
-### [open] Stale branch cleanup
-- 9 branches not in worktrees: `crosspolytope-phase2`, `feedback-triage-3-6`, `hko-second-order`, `math-tex-audit`, `remove-kkt-panics`, `session-search-agent`, `update-pre-merge`, `variable-f-ascent`, `api-extract-rs`.
-- Agent checks each for unmerged work, reports. Jörn says delete or keep per branch.
-
-### [open] Evaluate api-reference/ usefulness
-- `api-reference/` + `api-extract` crate were built so agents can read stripped .rs files (no bodies/tests/privates).
-- As of 2026-04-07: zero organic agent usage found in session history. Agents prefer reading source directly.
-- Decision: keep for now, re-evaluate in ~1 week, delete if still unused.
-- Check command: `grep -rn "api-reference/library" ~/.claude/projects/-workspaces-msc-math/*.jsonl | grep -v CLAUDE.md | grep -v MEMORY.md | grep -v memory/`
-- If no new hits: delete `api-reference/`, `crates/tools/api-extract/`, pre-commit hook in `.pre-commit-config.yaml`, workspace member in `crates/Cargo.toml`, CLAUDE.md references.
 
 ## [done] Completed tasks (historical)
 
