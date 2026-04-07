@@ -262,8 +262,18 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
   - Write `[lem:dual-vertex-qp]` proof (a_i vs (n,h) QP equivalence)
 
 ### [open] Audit math.tex stubs for lost proofs
-- Some algorithmic lemmas lost backing during migration. Scan `[TODO: JORN -` entries.
-- Example: `lem:positive-span`, `lem:vertex-enumeration` in `geom/math.tex` proof-less since first commit.
+- Audited 2026-04-07: 53 explicit stubs + 69 unverified blocks. No proofs lost in migration — stubs were created as stubs, agent-written proofs added later.
+- **High priority** (blocks thesis or code correctness):
+  - `lem:cap-derivative` + `lem:vol-derivative` (algorithms/math.tex:709,781) — core gradient lemmas, also tracked in "Dual-vertex parameterization" below.
+  - `prop:prefilter-bound` (geom/math.tex:789) — needs restatement in terms of computable `hat_kappa`. Factor-counting issue: tight bound is 5376, not 1344.
+  - GAP in `prop:capacity-symplectic-product` (geom/math.tex:157) — `c_EHZ(A) = area(A)` for 2D convex bodies is unverified, dubious citation.
+- **Medium priority** (thesis completeness):
+  - 10 definition verifications in geom/math.tex (lines 84-325) — routine review.
+  - `thm:conformality` + `thm:sympl-invariance` (algorithms/math.tex:107,120) — standard results, need proofs or citations.
+  - 10 Higham/GVL citation numbers (geom + error-bounds) — see "Citation verification pass" below.
+  - 3 agent-written proofs needing review: `lem:positive-span`, `lem:vertex-enumeration`, `lem:bounded-triples` (geom/math.tex).
+- **Low priority** (dev math, not publication path):
+  - 11 stubs + 6 gaps in dev-gradient/ and dev-numerical-analysis/.
 
 ### [open] Geom math.tex restructure
 - Jörn partially reviewed Defs 1–13 of `crates/library/src/geom/math.tex` (`handoff-geom-math-review.md`).
