@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "library",
+    "tools/api-extract",
     "database",
     "exp-hko-local-maximum",
     "exp-sys-landscape",
