@@ -66,5 +66,13 @@
   },
   "enabledPlugins": {
     "rust-lsp@msc-math-plugins": true
+  },
+  "extraKnownMarketplaces": {
+    "msc-math-plugins": {
+      "source": {
+        "source": "directory",
+        "path": "/workspaces/msc-math/.claude/plugins"
+      }
+    }
   }
 }
