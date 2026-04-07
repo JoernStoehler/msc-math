@@ -180,9 +180,9 @@ No chapter is currently publishable. Story arc decided (see `thesis/handwritten-
 - Produce file-by-file checklist of what S0 needs to change. Makes S0 actionable for an agent session.
 
 ### [open] Experiment writeup drafts
-- For each completed experiment, draft a 1-2 page thesis-ready summary from logbook + data.
-- "Just try it" task: if a draft is good, Jörn saves hours; if bad, trash it (2 min reading cost).
-- Can run per-experiment-group in parallel. Blocked on stable story arc? Probably not — drafts can be restructured.
+- Logbooks already contain factual summaries. Agent value-add: thesis-style prose from logbook + data.
+- Agent cannot decide framing (how experiment serves thesis argument) — only Jörn can.
+- "Just try it" for 1-2 well-defined experiments first (e.g., gradient-analysis, rotated-regular-products). Trash if output is just paraphrased logbook.
 
 ### [blocked] Experiments chapter
 - Blocked on: thesis story decisions, experiment writeup quality.
@@ -210,13 +210,14 @@ No chapter is currently publishable. Story arc decided (see `thesis/handwritten-
 ### [Jörn] appendix-numerical.tex (5 TODOs)
 - Continuity of c_EHZ on polytopes, simplicity assumption, billiard pruning, three-valued verdict, unverified numerical statement.
 
-### [open] Thesis figure inventory
-- Catalog which figures exist in `thesis/assets/` vs. what each chapter needs.
-- Identify missing figures, stale figures, and figures that need regeneration after notation changes.
+### [open] Thesis figure consistency check
+- Verify every `\includegraphics` in `thesis/**/*.tex` points to an existing file in `thesis/assets/`.
+- Check whether asset files are stale copies of regenerated crates/ originals (compare timestamps/content).
+- Report broken references and stale copies. Does not decide what new figures to create — that's a thesis-writing decision.
 
 ### [open] Bibliography verification
 - `thesis/bibliography.bib` line 151 has agent-produced entry flagged `[TODO: JÖRN - verify]`.
-- Agent can check DOIs, titles, author names, year against actual papers.
+- Tiny scope — probably a bullet under Final assembly rather than a standalone task.
 
 ### [open] Final assembly
 - Abstract, bibliography check, figure quality review, proofreading, print formatting.
@@ -273,7 +274,8 @@ No chapter is currently publishable. Story arc decided (see `thesis/handwritten-
 
 ### [open] Delete superseded experiments
 - `gradient-search` and `generate-seeds` have broken APIs, superseded by `sys-search` pipeline.
-- Delete directories, remove workspace members, commit.
+- Before deleting: check whether any logbook, math.tex, or experiment references their data/methods.
+- Report references to Jörn before removing anything.
 
 ## [open] Infrastructure + tooling
 
@@ -288,7 +290,8 @@ No chapter is currently publishable. Story arc decided (see `thesis/handwritten-
 
 ### [open] Worktree audit
 - 4 active worktrees: `api-extract`, `dev-tube-summary` (Apr 4), `numerical-story`, `verify-numerics-part3` (Apr 4).
-- Check each for unmerged useful work. Clean up stale ones.
+- Agent investigates each: what's on the branch, is it merged, what's the diff vs main. Report to Jörn.
+- **Do not delete any worktree or branch.** Jörn decides what to keep/merge/discard.
 
 ### [done] [2026-04] Polytope database
 - `crates/database/`, JSONL format, 1198 entries. 6 experiments migrated.
