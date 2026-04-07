@@ -14,6 +14,7 @@ Planned deliverables:
 
 ## Project Layout
 
+- `api-reference/`: Auto-generated API reference for `crates/library/`. Path mapping: `crates/<path>.rs` → `api-reference/<path>.md`. To understand library functions (signatures, docs, math refs), read these instead of `.rs` source. Read `api-reference/library/src/lib.md` for the index.
 - `crates/`
   - `Cargo.toml`: Workspace manifest
   - `main.tex`: Compiles all per-module `math.tex` files into `main.pdf`
@@ -72,6 +73,9 @@ cd thesis/ && latexmk && ./check-build.sh                 # build + check
 
 # Math (all proofs — crate + experiments)
 cd crates/ && latexmk                                     # builds main.pdf from main.tex
+
+# API reference (regenerate after changing library signatures/docs)
+cd crates/ && cargo run -p api-extract --release           # writes api-reference/
 ```
 
 ## Terminology
