@@ -26,8 +26,8 @@ pub fn capacity_derivatives_a(beta: &[f64], q: f64, mu: &[f64], perm: &[usize], 
 Compute ∂c/∂a_k for all facets k = 0..f, where c = 1/(2Q).
 
 For facet k = σ(i₀) in the orbit:
-∂Q*/∂a_k = β_{i₀} · [J₀(2P_{i₀} + β_{i₀} a_k) + μ]
-∂c/∂a_k = −∂Q*/∂a_k / (2Q²)
+  ∂Q*/∂a_k = β_{i₀} · [J₀(2P_{i₀} + β_{i₀} a_k) + μ]
+  ∂c/∂a_k = −∂Q*/∂a_k / (2Q²)
 
 where P_{i₀} = Σ_{j < i₀} β_j · a_{σ(j)} is the partial sum of dual vertices.
 
@@ -49,13 +49,13 @@ pub fn volume_derivatives_a(polytope: &Polytope4D) -> Vec<Vector4<f64>>
 Compute ∂vol(K)/∂a_k for all facets k = 0..f.
 
 Uses the chain rule through h_k = 1/|a_k| and n_k = a_k/|a_k|:
-∂vol/∂a_k = (∂vol/∂h_k)(∂h_k/∂a_k) + (∂vol/∂n_k)^T (∂n_k/∂a_k)
+  ∂vol/∂a_k = (∂vol/∂h_k)(∂h_k/∂a_k) + (∂vol/∂n_k)^T (∂n_k/∂a_k)
 
 where:
-∂vol/∂h_k = S_k (facet volume, divergence theorem)
-∂vol/∂n_k = −S_k(x̄_k − h_k n_k) (tangent centroid)
-∂h_k/∂a_k = −a_k / |a_k|³
-∂n_k/∂a_k = (I − n_k n_k^T) / |a_k|
+  ∂vol/∂h_k = S_k (facet volume, divergence theorem)
+  ∂vol/∂n_k = −S_k(x̄_k − h_k n_k) (tangent centroid)
+  ∂h_k/∂a_k = −a_k / |a_k|³
+  ∂n_k/∂a_k = (I − n_k n_k^T) / |a_k|
 
 ## fn capacity_derivatives_a_fd
 

@@ -24,8 +24,8 @@ K bounded iff rec(K) = {0} iff normals positively span R^4, where
 
 1. Check rank(normals) = 4 via SVD.
 2. For each triple (i,j,k), compute the 1D kernel direction d via 4D cross
-product. Verify some normal outside {i,j,k} has positive and some has
-negative inner product with d.
+   product. Verify some normal outside {i,j,k} has positive and some has
+   negative inner product with d.
 
 Complexity: O(F^3) where F is the number of facets.
 

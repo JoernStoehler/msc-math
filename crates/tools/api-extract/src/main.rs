@@ -42,7 +42,9 @@ fn extract_docs(attrs: &[Attribute]) -> String {
                 }) = &nv.value
                 {
                     // Each doc comment line has a leading space: " foo" → "foo"
-                    lines.push(s.value().trim_start_matches(' ').to_string());
+                    // Strip exactly one leading space (rustdoc convention), preserve rest.
+                    let val = s.value();
+                    lines.push(val.strip_prefix(' ').unwrap_or(&val).to_string());
                 }
             }
         }
@@ -245,13 +247,17 @@ fn render_struct_fields(item: &ItemStruct) -> String {
     }
 }
 
-/// Check if an item is inside a `#[cfg(test)]` block (attribute on the item itself).
+/// Check if an item has a `#[cfg(test)]` attribute.
+/// Matches `#[cfg(test)]` exactly, not `#[cfg(not(test))]` or feature names containing "test".
 fn has_cfg_test(attrs: &[Attribute]) -> bool {
     for attr in attrs {
         if attr.path().is_ident("cfg") {
-            let ts = attr.to_token_stream().to_string();
-            if ts.contains("test") {
-                return true;
+            // Parse the cfg(...) content. We check for the token sequence `test`
+            // appearing as a direct argument, not nested inside `not(...)`.
+            if let Ok(nested) = attr.parse_args::<syn::Ident>() {
+                if nested == "test" {
+                    return true;
+                }
             }
         }
     }
@@ -570,6 +576,15 @@ fn render_module_md(module_path: &str, items: &ModuleItems) -> String {
         render_item(&mut out, item, &items.impl_methods);
     }
 
+    // Render trait impls at the end
+    if !items.trait_impls.is_empty() {
+        out.push_str("## Trait implementations\n\n");
+        for ti in &items.trait_impls {
+            let _ = writeln!(out, "- `{ti}`");
+        }
+        out.push('\n');
+    }
+
     out
 }
 
@@ -603,6 +618,12 @@ fn render_item(
             if !doc.is_empty() {
                 out.push_str(doc);
                 out.push_str("\n\n");
+            }
+            // Emit methods for this enum (same as structs)
+            if let Some(methods) = impl_methods.get(name) {
+                for m in methods {
+                    render_method(out, name, m);
+                }
             }
         }
         ExtractedItem::Trait { name, rendered, doc } => {
@@ -720,7 +741,7 @@ fn main() {
         // Check for crates/library presence to determine root.
         if cwd.join("library").exists() {
             // cwd is crates/
-            cwd.parent().unwrap().to_path_buf()
+            cwd.parent().expect("crates/ has a parent directory").to_path_buf()
         } else if cwd.join("crates/library").exists() {
             cwd.clone()
         } else {

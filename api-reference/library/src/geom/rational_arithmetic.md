@@ -30,6 +30,14 @@ Exact sign of a rational value.
 Used to classify symplectic form values ω₀(y_i, y_k) without
 floating-point ambiguity.
 
+### Sign::of
+
+```rust
+pub fn of(r: &BigRational) -> Self
+```
+
+Classify the sign of a rational number.
+
 ## fn f64_to_rational
 
 ```rust

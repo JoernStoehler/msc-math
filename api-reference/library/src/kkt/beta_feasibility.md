@@ -6,7 +6,7 @@ Max-margin LP search for beta > 0 in an affine solution set.
 Given base point beta0 in R^m and direction matrix V in R^{m x k} with
 orthonormal columns, solves the Chebyshev center problem:
 
-max_alpha  min_j  (beta0 + V * alpha)_j
+  max_alpha  min_j  (beta0 + V * alpha)_j
 
 This finds the point in the affine subspace {beta0 + V * alpha : alpha in R^k}
 with maximum clearance from all positivity constraints beta_j >= 0.

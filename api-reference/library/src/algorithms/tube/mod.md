@@ -85,3 +85,8 @@ Lagrangian 2-face found.
 
 [def:symplectic-polytope]
 
+## Trait implementations
+
+- `impl std::fmt::Display for TubeError`
+- `impl std::error::Error for TubeError`
+

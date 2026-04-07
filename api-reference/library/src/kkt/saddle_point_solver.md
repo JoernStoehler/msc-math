@@ -44,7 +44,7 @@ are O(1) and beta values from the pseudoinverse are O(1). Machine epsilon is
 - Far above machine epsilon (can't be confused with exact zero)
 - Far below typical beta values (O(0.1)--O(10)) for real candidates
 - 10x tighter than EPS_MARGIN_TRUE (1e-9) so Indeterminate verdicts are
-returned for any solution where beta is ambiguous.
+  returned for any solution where beta is ambiguous.
 
 Making it 10x larger (1e-11) would misclassify some real near-zero betas as
 positive. Making it 10x smaller (1e-13) would pass some eigensolver noise
@@ -81,6 +81,14 @@ Outcome of the saddle-point KKT solve.
 Every variant corresponds to a mathematical proposition about the orbit.
 There is no "error" variant — the solver either produces a mathematical
 result or panics (bug). See `.claude/rules/rust.md` error handling convention.
+
+### KktOutcome::feasible
+
+```rust
+pub fn feasible(self) -> Option<KktResult>
+```
+
+Extract the feasible result, or None if not feasible.
 
 ## struct KktResult
 

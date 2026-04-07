@@ -184,3 +184,7 @@ pub enum ConstructionError {
 
 Errors from [`Polytope4D`] construction when invariants are violated.
 
+## Trait implementations
+
+- `impl std::fmt::Display for ConstructionError`
+

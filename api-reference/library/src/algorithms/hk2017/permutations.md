@@ -11,7 +11,7 @@ algorithm, yielding exactly one representative per equivalence class.
 Two interfaces:
 - `cyclic_permutations`: returns all permutations as `Vec<Vec<usize>>` (allocating).
 - `for_each_cyclic_permutation`: callback-based, single-buffer, zero heap allocation
-per permutation (preferred for the capacity algorithm's inner loop).
+  per permutation (preferred for the capacity algorithm's inner loop).
 
 Mathematical correspondence: [alg:ehz] step "enumerate cyclic permutations of S"
 

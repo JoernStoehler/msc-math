@@ -46,7 +46,7 @@ pub fn omega0(u: &Vector4<f64>, v: &Vector4<f64>) -> f64
 Standard symplectic form: omega_0(u, v) = <J_0 u, v>.
 
 In coordinates (q_1, q_2, p_1, p_2), this expands to:
-omega_0(u, v) = u_q1 * v_p1 - u_p1 * v_q1 + u_q2 * v_p2 - u_p2 * v_q2
+  omega_0(u, v) = u_q1 * v_p1 - u_p1 * v_q1 + u_q2 * v_p2 - u_p2 * v_q2
 
 Implements the coordinate expansion directly for performance (no matrix multiply).
 
