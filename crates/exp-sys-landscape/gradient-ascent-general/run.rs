@@ -57,8 +57,7 @@ const MAX_ITERATIONS: usize = 30;
 
 /// Minimum improvement per iteration to continue. Well above f64 noise
 /// (~1e-15) but small enough to capture meaningful steps. Matches
-/// gradient-descent and gradient-search. If changed, re-check convergence
-/// rates in trace data.
+/// gradient-descent. If changed, re-check convergence rates in trace data.
 const CONVERGENCE_THRESHOLD: f64 = 1e-6;
 
 /// Step fractions of t_max for within-bound line search.
@@ -82,7 +81,7 @@ const WIGGLE_STRENGTH: f64 = 0.05;
 const MAX_ESCAPE_ROUNDS: usize = 3;
 
 /// Per-seed time budget. 120s is generous: most seeds converge in <30s, but
-/// F=10 with multiple escape rounds can take longer. From gradient-search.
+/// F=10 with multiple escape rounds can take longer.
 const SEED_TIME_BUDGET_SECS: f64 = 120.0;
 
 /// Numerical zero threshold for gradient norms, rates, and slack comparisons.
