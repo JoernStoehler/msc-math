@@ -1,0 +1,13 @@
+{
+    "name": "rust-lsp",
+    "description": "rust-analyzer LSP integration for semantic Rust tooling",
+    "version": "1.0.0",
+    "lspServers": {
+        "rust": {
+            "command": "rust-analyzer",
+            "extensionToLanguage": {
+                ".rs": "rust"
+            }
+        }
+    }
+}
