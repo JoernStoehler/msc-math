@@ -292,6 +292,9 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 
 ### [done] [2026-04-07] Database cleanup
 - KKT panics → TypeCViolation/ConstraintViolation variants with eprintln warnings. catch_unwind removed from 6 files. Source populated for 170 DB records. Data regenerated for 4 combinatorial-cells experiments.
+- Known TODOs left for future solver refactor:
+  - Callers use `if let Feasible(...)`, silently skipping TypeCViolation/ConstraintViolation same as Infeasible. Revisit when solver math matures and variants carry different error bound semantics.
+  - `Source::LagrangianProduct` uses 0.0 for circumradius/rotation on random products (n1/n2 are correct). No code uses these fields for reconstruction; fix when Source enum is extended.
 
 ### [open] Worktree audit
 - 4 active worktrees: `api-extract`, `dev-tube-summary` (Apr 4), `numerical-story`, `verify-numerics-part3` (Apr 4).
