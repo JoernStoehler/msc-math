@@ -271,7 +271,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - **Medium priority** (thesis completeness):
   - 10 definition verifications in geom/math.tex (lines 84-325) — routine review.
   - `thm:conformality` + `thm:sympl-invariance` (algorithms/math.tex:107,120) — standard results, need proofs or citations.
-  - 10 Higham/GVL citation numbers (geom + error-bounds) — see "Citation verification pass" below.
+  - ~~10 Higham/GVL citation numbers~~ — resolved 2026-04-07, see `papers/citation-index.md`.
   - 3 agent-written proofs needing review: `lem:positive-span`, `lem:vertex-enumeration`, `lem:bounded-triples` (geom/math.tex).
 - **Low priority** (dev math, not publication path):
   - 11 stubs + 6 gaps in dev-gradient/ and dev-numerical-analysis/.
@@ -282,10 +282,12 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Clarify H-representation irredundancy. Fix Defs 12-13 (area/volume are algorithms, not definitions).
 - Consider splitting into `math_geometry.tex`, `math_symplectic.tex`, `math_reeb.tex`.
 
-### [open] Citation verification pass
-- 54 `[TODO: JÖRN - verify]` markers across `crates/**/math.tex` files.
-- Most are reference lookups (Higham chapter, GVL section, Wedin/Weyl theorem numbers).
-- Agent can look up papers and pre-verify; Jörn reviews flagged problems only.
+### [done] [2026-04-07] Citation verification pass
+- Was 76 `[TODO: JÖRN]` markers total (not 54); 16 were citation lookups.
+- 11 citation TODOs fully resolved (theorem numbers filled in, TODO removed).
+- 6 partially resolved (wrong chapters corrected, exact theorem numbers added from PDFs).
+- Remaining ~57 `[TODO: JÖRN]` markers are mathematical verification (verify statement/proof), not citation lookups.
+- Deliverables: `papers/citation-index.md` (verified theorem index), expanded `papers/CLAUDE.md` (download/verify workflow), 4 PDFs in `papers/`.
 
 ### [done] [2026-04-07] Delete superseded experiments
 - Directories deleted 2026-04-03. Reference cleanup done 2026-04-07: removed gradient-search from code comments (gradient-ascent-general/products run.rs), rules examples, stale handoff.
