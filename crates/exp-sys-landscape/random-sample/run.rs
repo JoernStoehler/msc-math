@@ -73,7 +73,7 @@ fn main() {
     let db_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("../../data/polytopes.jsonl");
     let output_path = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("random-sweep/random-sweep.jsonl");
+        .join("random-sample/random-sweep.jsonl");
 
     let mut db = database::load(&db_path).expect("failed to load database");
     println!("Loaded database: {} entries\n", db.len());

@@ -74,7 +74,7 @@ fn main() {
     let db_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("../../data/polytopes.jsonl");
     let output_path = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("random-product-sweep/random-product-sweep.jsonl");
+        .join("random-product-sample/random-product-sweep.jsonl");
 
     let mut db: HashMap<DualVerticesKey, PolytopeRecord> =
         database::load(&db_path).expect("failed to load database");
@@ -103,7 +103,17 @@ fn main() {
             let key: DualVerticesKey = polytope.dual_vertices().to_vec();
 
             // Key-based lookup: check if this exact polytope is already cached
-            if let Some(record) = db.get(&key) {
+            if let Some(record) = db.get_mut(&key) {
+                // Backfill source for records that predate source tracking
+                if record.source.is_none() {
+                    record.source = Some(database::Source::LagrangianProduct {
+                        n1: k,
+                        n2: m,
+                        circumradius_q: 0.0,
+                        circumradius_p: 0.0,
+                        rotation_p_rad: 0.0,
+                    });
+                }
                 if let (Some(vol), Some(cap)) = (record.volume, record.capacity) {
                     let sys = cap * cap / (2.0 * vol);
 
@@ -153,6 +163,14 @@ fn main() {
 
             // Insert into database
             let mut record = PolytopeRecord::from_polytope(&polytope);
+            record.source = Some(database::Source::LagrangianProduct {
+                n1: k,
+                n2: m,
+                // Random polygon pair — no fixed circumradius or rotation.
+                circumradius_q: 0.0,
+                circumradius_p: 0.0,
+                rotation_p_rad: 0.0,
+            });
             record = record.with_computed_fields(vol, 0.0, cap, 0.0);
             record = record.with_sigmas(
                 vec![SigmaAction {

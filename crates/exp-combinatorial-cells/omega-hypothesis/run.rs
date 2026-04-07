@@ -447,8 +447,6 @@ fn main() {
     }
 
     // Known polytopes (HKO pentagon, simplex, hypercube)
-    // Wrapped in catch_unwind because the KKT solver can panic on near-singular
-    // systems (pre-existing issue in library's saddle_point_solver.rs:557).
     let known_polytopes_list: Vec<(String, Polytope4D)> = {
         let hko = known_polytopes::hko_pentagon();
         let mut list = vec![("hko_pentagon".to_string(), hko.polytope.clone())];
@@ -467,12 +465,8 @@ fn main() {
         let key: DualVerticesKey = polytope.dual_vertices().to_vec();
         let cached = db.get(&key).and_then(cached_capacity_from_record);
 
-        let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-            process_polytope(polytope, name, cached.as_ref())
-        }));
-
-        match result {
-            Ok(Some(row)) => {
+        match process_polytope(polytope, name, cached.as_ref()) {
+            Some(row) => {
                 serde_json::to_writer(&mut writer, &row).unwrap();
                 writeln!(writer).unwrap();
 
@@ -490,12 +484,8 @@ fn main() {
                 total += 1;
                 eprintln!("{}: sys = {:.6}", name, row.sys);
             }
-            Ok(None) => {
+            None => {
                 eprintln!("SKIP: {} (capacity computation returned None)", name);
-                failed += 1;
-            }
-            Err(_) => {
-                eprintln!("SKIP: {} (KKT solver panicked — pre-existing numerical issue)", name);
                 failed += 1;
             }
         }

@@ -520,8 +520,9 @@ Three types arise:
   $\leq |\hat\lambda_j| \leq \tau$.
   For discarded eigenvectors ($|\hat\lambda_j| \leq \tau = 10^{-3}$),
   this is $O(\tau)$, not $O(1)$.
-  The implementation includes a runtime assertion that panics
-  if a Type~C direction is ever encountered.
+  The implementation returns \texttt{KktOutcome::TypeCViolation}
+  with a warning if a Type~C direction is ever encountered,
+  skipping the orbit.
 \end{itemize}
 \end{remark}
 \end{unverified}

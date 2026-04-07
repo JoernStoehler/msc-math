@@ -437,23 +437,7 @@ fn construct_at_t(
 
 /// Compute sys for a polytope using standard (non-instrumented) EHZ.
 /// Returns (sys, capacity, volume, best_perm, kkt).
-/// Wrapped in catch_unwind because the KKT solver can panic on
-/// near-singular systems (pre-existing issue in saddle_point_solver).
 fn compute_sys(
-    polytope: &Polytope4D,
-) -> Option<(
-    f64,
-    f64,
-    f64,
-    Vec<usize>,
-    symplectic::kkt::saddle_point_solver::KktResult,
-)> {
-    std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-        compute_sys_inner(polytope)
-    })).ok()?
-}
-
-fn compute_sys_inner(
     polytope: &Polytope4D,
 ) -> Option<(
     f64,
@@ -619,7 +603,7 @@ fn main() {
     // Open output file
     // =========================================================================
 
-    let out_dir = base_dir.join("combinatorial-sweep");
+    let out_dir = base_dir.join("multiple-crossings");
     let sweep_file =
         File::create(out_dir.join("combinatorial-boundaries-sweep.jsonl"))
             .expect("create sweep JSONL");
@@ -641,7 +625,7 @@ fn main() {
         // Base computation: instrumented EHZ for gradient
         // =====================================================================
 
-        let base = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+        let base = (|| {
             let instrumented = ehz_capacity_instrumented(polytope)?;
             let vol = volume(polytope).ok().filter(|&v| v > 0.0)?;
             let cap = instrumented.capacity;
@@ -649,11 +633,11 @@ fn main() {
             let perm = instrumented.best_permutation;
             let kkt = solve_kkt_for(polytope, &perm).feasible()?;
             Some((cap, vol, sys, perm, kkt))
-        }));
+        })();
 
         let (cap, vol, sys, perm, kkt) = match base {
-            Ok(Some(t)) => t,
-            Ok(None) | Err(_) => {
+            Some(t) => t,
+            None => {
                 n_skipped += 1;
                 continue;
             }

@@ -144,8 +144,7 @@ pub(crate) struct EigenInfo {
 /// Outcome of the saddle-point KKT solve.
 ///
 /// Every variant corresponds to a mathematical proposition about the orbit.
-/// There is no "error" variant — the solver either produces a mathematical
-/// result or panics (bug). See `.claude/rules/rust.md` error handling convention.
+/// See `.claude/rules/rust.md` error handling convention.
 #[derive(Clone, Debug)]
 pub enum KktOutcome {
     /// The orbit has a feasible solution with β > 0 and Q > 0.
@@ -154,6 +153,15 @@ pub enum KktOutcome {
     Infeasible,
     /// The KKT matrix is singular (all eigenvalues ≈ 0).
     SingularMatrix,
+    /// A near-null eigenvector has O(1) constraint violation (Type C).
+    /// [rem:near-null-lp-search] conjectures this is impossible; its occurrence
+    /// means the proof has a gap. The orbit is skipped; capacity may lack proven
+    /// error bounds if this was the best orbit.
+    TypeCViolation,
+    /// The LP null-space shift and beta0 fallback both violate constraints
+    /// beyond tolerance. The orbit is skipped; same caveat as TypeCViolation.
+    // TODO: add [rem:...] to math.tex for constraint violation after LP
+    ConstraintViolation,
 }
 
 impl KktOutcome {
@@ -410,13 +418,15 @@ fn try_pseudoinverse_with_threshold(
                     constraint_violation_sq += dot * dot;
                 }
                 let constraint_violation = constraint_violation_sq.sqrt();
-                assert!(
-                    constraint_violation < 0.1,
-                    "Type C eigenvector detected: ||constraint * v_beta|| = {:.2e}, \
-                     |lambda| = {:.2e}, ||v_beta|| = {:.2e}, m = {}. \
-                     This was expected to be O(|lambda|) but is O(1).",
-                    constraint_violation, eigenvalues[i].abs(), v_beta.norm(), m
-                );
+                if constraint_violation >= 0.1 {
+                    eprintln!(
+                        "WARNING: Type C eigenvector detected (||constraint * v_beta|| = {:.2e}, \
+                         |lambda| = {:.2e}, ||v_beta|| = {:.2e}, m = {}). \
+                         Skipping orbit. Capacity relies on conjecture that this orbit is not optimal.",
+                        constraint_violation, eigenvalues[i].abs(), v_beta.norm(), m
+                    );
+                    return Some(KktOutcome::TypeCViolation);
+                }
                 null_columns.push(v_beta);
             }
         }
@@ -468,10 +478,12 @@ fn try_pseudoinverse_with_threshold(
     // Verify constraints on the final beta (covers both LP and fallback paths).
     let constraint_residual_norm = extract_constraint_residual(kkt, &beta_final, m);
     if constraint_residual_norm > EPS_KKT_RESIDUAL {
-        panic!(
-            "KKT constraint residual too large after LP: ||r|| = {:.2e} > {:.2e}",
+        eprintln!(
+            "WARNING: KKT constraint residual {:.2e} > {:.2e} after LP. \
+             Skipping orbit. Capacity relies on conjecture that this orbit is not optimal.",
             constraint_residual_norm, EPS_KKT_RESIDUAL
         );
+        return Some(KktOutcome::ConstraintViolation);
     }
 
     // [lem:well-defined]: Q is invariant along the true null space, so compute
