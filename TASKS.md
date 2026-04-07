@@ -175,6 +175,15 @@ No chapter is currently publishable. Story arc decided (see `thesis/handwritten-
 - a_i replaces (n,h). Sign convention for Lagrange multipliers changed. Simplification theorem ordering changed.
 - Propagate through all thesis .tex files.
 
+### [open] Thesis notation audit
+- Grep `thesis/**/*.tex` for stale (n,h) notation, old sign conventions, old simplification ordering.
+- Produce file-by-file checklist of what S0 needs to change. Makes S0 actionable for an agent session.
+
+### [open] Experiment writeup drafts
+- For each completed experiment, draft a 1-2 page thesis-ready summary from logbook + data.
+- "Just try it" task: if a draft is good, Jörn saves hours; if bad, trash it (2 min reading cost).
+- Can run per-experiment-group in parallel. Blocked on stable story arc? Probably not — drafts can be restructured.
+
 ### [blocked] Experiments chapter
 - Blocked on: thesis story decisions, experiment writeup quality.
 - `thesis/experiments.tex` has 1 TODO.
@@ -273,9 +282,16 @@ No chapter is currently publishable. Story arc decided (see `thesis/handwritten-
 - Baseline commit `f8044b35`. Dry run confirmed Agent() mechanics work.
 - Next: post-mortem in `.claude/skills/orchestrate/references/design-space.md`.
 
+### [open] Database cleanup
+- Leftover from database implementation: combinatorial-* `catch_unwind` removal, Lagrangian product `Source` lookup, combinatorial-* data regeneration.
+- Mechanical code changes + re-running data pipelines.
+
+### [open] Worktree audit
+- 4 active worktrees: `api-extract`, `dev-tube-summary` (Apr 4), `numerical-story`, `verify-numerics-part3` (Apr 4).
+- Check each for unmerged useful work. Clean up stale ones.
+
 ### [done] [2026-04] Polytope database
 - `crates/database/`, JSONL format, 1198 entries. 6 experiments migrated.
-- Not done: combinatorial-* catch_unwind removal, Lagrangian product Source lookup, combinatorial-* data regeneration.
 
 ### [done] [2026-03] Polytope4D optimization
 - 31x speedup at F=10 via integer-scaled arithmetic + f64 prefilters.
