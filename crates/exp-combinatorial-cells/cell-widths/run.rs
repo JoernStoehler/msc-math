@@ -489,15 +489,9 @@ fn main() {
         // Base computation: instrumented EHZ for orbit membership
         // =====================================================================
 
-        let base = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-            let instrumented = ehz_capacity_instrumented(polytope)?;
-            let perm = instrumented.best_permutation;
-            Some((perm,))
-        }));
-
-        let (perm,) = match base {
-            Ok(Some(t)) => t,
-            Ok(None) | Err(_) => {
+        let (perm,) = match ehz_capacity_instrumented(polytope) {
+            Some(instrumented) => (instrumented.best_permutation,),
+            None => {
                 n_skipped += 1;
                 continue;
             }

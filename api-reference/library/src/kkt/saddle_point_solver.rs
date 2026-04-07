@@ -59,13 +59,14 @@ pub const EPS_Q_POSITIVE: f64 = 1e-15;
 /// Outcome of the saddle-point KKT solve.
 ///
 /// Every variant corresponds to a mathematical proposition about the orbit.
-/// There is no "error" variant — the solver either produces a mathematical
-/// result or panics (bug). See `.claude/rules/rust.md` error handling convention.
+/// See `.claude/rules/rust.md` error handling convention.
 #[derive(Clone, Debug)]
 pub enum KktOutcome {
     Feasible(KktResult),
     Infeasible,
     SingularMatrix,
+    TypeCViolation,
+    ConstraintViolation,
 }
 
 impl KktOutcome {

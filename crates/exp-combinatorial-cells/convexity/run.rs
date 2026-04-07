@@ -559,14 +559,9 @@ fn main() {
         // to ensure polytope is valid for EHZ-based experiments.)
         // =====================================================================
 
-        let base = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-            let instrumented = ehz_capacity_instrumented(polytope)?;
-            Some(instrumented.best_permutation)
-        }));
-
-        let _perm = match base {
-            Ok(Some(p)) => p,
-            Ok(None) | Err(_) => {
+        let _perm = match ehz_capacity_instrumented(polytope) {
+            Some(instrumented) => instrumented.best_permutation,
+            None => {
                 n_skipped += 1;
                 continue;
             }

@@ -130,8 +130,6 @@ fn main() {
     let mut cache_hits = 0usize;
 
     // Phase 1: Known polytopes
-    // Wrapped in catch_unwind because the KKT solver can panic on near-singular
-    // systems (pre-existing issue in library's saddle_point_solver.rs:557).
     eprintln!("=== Known polytopes ===");
     for kp in known_polytopes::all_known() {
         if kp.polytope.facet_count() > 12 {
@@ -142,22 +140,18 @@ fn main() {
         let key: DualVerticesKey = kp.polytope.dual_vertices().to_vec();
 
         let t_cap = Instant::now();
-        let cap_result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+        let cap_result = (|| {
             if let Some(record) = db.get(&key) {
                 if let Some(r) = ehz_result_from_cache(&kp.polytope, record) {
                     return Some((r, true));
                 }
             }
             ehz_capacity(&kp.polytope).map(|r| (r, false))
-        }));
+        })();
         let (result, is_cache_hit) = match cap_result {
-            Ok(Some(pair)) => pair,
-            Ok(None) => {
+            Some(pair) => pair,
+            None => {
                 eprintln!("  SKIP {} (capacity computation failed)", kp.name);
-                continue;
-            }
-            Err(_) => {
-                eprintln!("  SKIP {} (KKT solver panicked — pre-existing numerical issue)", kp.name);
                 continue;
             }
         };
