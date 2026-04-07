@@ -127,7 +127,7 @@ The capacity algorithm iterates over all subsets S ⊆ {1,...,F} and all cyclic 
 
 - **"Continuity of variables":** Every numerical test should be a continuous function of input. Rank, eigenvalue signs, β > 0 are discontinuous → use trinary TRUE/FALSE/INDETERMINATE with continuous buffer zones.
 - **Seeds are fragile:** Don't use seeded RNG for reproducibility. Generate once, store as JSONL, commit. The artificial.jsonl is the source of truth, not the generation code.
-- **SingularMatrix is garbage input:** All eigenvalues ≈ 0 means H ≈ 0 AND C ≈ 0. Not a QP outcome. Now a panic, not a KktOutcome variant.
+- **SingularMatrix represents a real case:** All eigenvalues ≈ 0 is a valid mathematical outcome (not garbage input). Stays as a KktOutcome variant. Callers handle it as non-feasible. (Overruled by Jörn 2026-04-07; previously said "garbage input, now a panic.")
 - **Rank is not numerically testable:** For matrices H, H* with ‖H − H*‖ < δ, rank(H) and rank(H*) can differ. No finite-precision computation distinguishes eigenvalue 0 from eigenvalue 1e-15.
 
 ### Scope and iteration guidance

@@ -847,7 +847,7 @@ fn main() {
     // Open output files
     // =========================================================================
 
-    let out_dir = base_dir.join("combinatorial-anatomy");
+    let out_dir = base_dir.join("boundary-characterization");
 
     let anatomy_file =
         File::create(out_dir.join("combinatorial-boundaries-anatomy.jsonl")).expect("create anatomy JSONL");

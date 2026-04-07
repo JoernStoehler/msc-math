@@ -468,7 +468,7 @@ fn main() {
     // Open output file
     // =========================================================================
 
-    let out_dir = base_dir.join("combinatorial-profiling");
+    let out_dir = base_dir.join("cell-widths");
     let profiling_file =
         File::create(out_dir.join("combinatorial-boundaries-profiling.jsonl"))
             .expect("create profiling JSONL");

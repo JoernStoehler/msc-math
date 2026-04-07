@@ -603,7 +603,7 @@ fn main() {
     // Open output file
     // =========================================================================
 
-    let out_dir = base_dir.join("combinatorial-sweep");
+    let out_dir = base_dir.join("multiple-crossings");
     let sweep_file =
         File::create(out_dir.join("combinatorial-boundaries-sweep.jsonl"))
             .expect("create sweep JSONL");

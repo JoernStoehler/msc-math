@@ -74,7 +74,7 @@ fn main() {
     let db_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("../../data/polytopes.jsonl");
     let output_path = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("random-product-sweep/random-product-sweep.jsonl");
+        .join("random-product-sample/random-product-sweep.jsonl");
 
     let mut db: HashMap<DualVerticesKey, PolytopeRecord> =
         database::load(&db_path).expect("failed to load database");
