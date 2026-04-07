@@ -1,6 +1,6 @@
 {
-  "includeGitInstructions": false,
   "env": {},
+  "includeGitInstructions": false,
   "hooks": {
     "SessionStart": [
       {
@@ -63,5 +63,8 @@
         ]
       }
     ]
+  },
+  "enabledPlugins": {
+    "rust-lsp@msc-math-plugins": true
   }
 }
