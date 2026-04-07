@@ -25,6 +25,7 @@ use symplectic::derivatives::{capacity_derivatives_a, volume_derivatives_a};
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
+use symplectic::geom::symplectic_form::omega0;
 use symplectic::geom::volume::volume;
 use symplectic::kkt::saddle_point_solver::solve_kkt_for;
 
@@ -67,10 +68,16 @@ const MAX_STEP_SIZE: f64 = 100.0;
 /// Number of random dual-vertex perturbations per escape round.
 const N_WIGGLES: usize = 5;
 
-/// ~5% perturbation of dual vertex components. Small enough to stay near the
-/// current optimum, large enough to cross combinatorial boundaries.
-/// Inherited from gradient-ascent-general (unjustified, see
-/// dev-gradient-ascent/strategy-comparison for planned calibration).
+/// Multiplicative perturbation scale for dual vertex components: a_k[i] -> a_k[i] * (1 + 0.05 * N(0,1)).
+/// Per-facet displacement has expected norm ~0.05 * |a_k| (unit-scale dual vertices: ~0.05).
+/// Cell-widths data (cell-widths/logbook.md): median non-orbit cell width = 0.124, median
+/// orbit cell width = 0.258. So per-facet displacement ~0.05 is ~40% of the narrowest
+/// median cell width. With F=11 facets all perturbed simultaneously, boundary crossing
+/// is highly likely — confirmed by data: wiggle dominated overshoot as escape strategy
+/// (gradient-ascent-general/logbook.md, gradient-ascent-products/logbook.md).
+/// If changed: much smaller (e.g. 0.01) reduces boundary-crossing probability and escape
+/// effectiveness. Much larger (e.g. 0.2) risks producing degenerate polytopes
+/// (Polytope4D::from_f64 failure) or landing too far from the current optimum.
 const WIGGLE_STRENGTH: f64 = 0.05;
 
 /// Maximum rounds of escape attempts after convergence.
@@ -104,13 +111,21 @@ struct ResultRow {
 }
 
 // ============================================================================
-// Step bound in a-space (copied from gradient-ascent-general)
+// Step bound in a-space (enriched, from exp-combinatorial-cells/cell-widths)
 // ============================================================================
 
-/// Maximum step t > 0 along direction d_k in dual-vertex space before the
-/// combinatorial type changes.
-// TODO: add [lem:step-bound-a] to math.tex (see combinatorial-boundaries experiment)
-fn compute_step_bound_a(polytope: &Polytope4D, direction: &[Vector4<f64>]) -> f64 {
+/// Compute the first boundary event along a direction in dual-vertex space.
+/// [lem:step-bound-incidence] incidence flip detection, [lem:step-bound-omega] omega_0 flip detection
+///
+/// For step a'_k(t) = a_k + t*d_k, the combinatorial type changes when:
+/// 1. **Incidence flip:** a vertex's slack w.r.t. a non-incident facet reaches zero.
+/// 2. **omega_0 flip:** sign(omega_0(a_i, a_j)) changes for ridge-adjacent facets.
+/// 3. **Dual vertex degeneration:** |a_k + t*d_k| -> 0.
+///
+/// Copied from exp-sys-landscape/src/lib.rs (cannot cross-crate import from
+/// exp-sys-landscape). Cell-widths data shows omega_0 flips account for 30.5%
+/// of boundary events in per-facet probes (cell-widths/logbook.md).
+fn compute_step_bound(polytope: &Polytope4D, direction: &[Vector4<f64>]) -> f64 {
     let duals = polytope.dual_vertices_f64();
     let vertices = polytope.vertices_f64();
     let f = polytope.facet_count();
@@ -118,6 +133,7 @@ fn compute_step_bound_a(polytope: &Polytope4D, direction: &[Vector4<f64>]) -> f6
 
     let mut t_max = f64::INFINITY;
 
+    // --- Vertex-facet incidence checks ---
     for (vi, vertex_facets) in skeleton.vertex_facets.iter().enumerate() {
         let v = &vertices[vi];
 
@@ -134,20 +150,21 @@ fn compute_step_bound_a(polytope: &Polytope4D, direction: &[Vector4<f64>]) -> f6
                 None => continue,
             };
 
-            let w = Vector4::new(
+            let rhs = Vector4::new(
                 direction[vertex_facets[0]].dot(v),
                 direction[vertex_facets[1]].dot(v),
                 direction[vertex_facets[2]].dot(v),
                 direction[vertex_facets[3]].dot(v),
             );
-            let dv_dt = -(a_inv * w);
+
+            let dv_dt = -(a_inv * rhs);
 
             for j in 0..f {
                 if vertex_facets.contains(&j) {
                     continue;
                 }
                 let slack = 1.0 - duals[j].dot(v);
-                let rate = -(direction[j].dot(v) + duals[j].dot(&dv_dt));
+                let rate = -direction[j].dot(v) - duals[j].dot(&dv_dt);
                 if rate < -EPS {
                     let t_crit = slack / (-rate);
                     if t_crit > 0.0 && t_crit < t_max {
@@ -156,20 +173,71 @@ fn compute_step_bound_a(polytope: &Polytope4D, direction: &[Vector4<f64>]) -> f6
                 }
             }
         } else {
-            let max_d_norm = direction.iter().map(|d| d.norm()).fold(0.0f64, f64::max);
-            if max_d_norm > EPS {
-                for j in 0..f {
-                    if vertex_facets.contains(&j) {
-                        continue;
+            // Non-simple vertex (>4 incident facets). Conservative bound.
+            let max_d = direction
+                .iter()
+                .map(|dk| dk.norm())
+                .fold(0.0f64, f64::max);
+            for (j, a_j) in duals.iter().enumerate() {
+                if vertex_facets.contains(&j) {
+                    continue;
+                }
+                let slack = 1.0 - a_j.dot(v);
+                let max_rate = max_d * v.norm() + a_j.norm() * max_d * v.norm();
+                if max_rate > EPS {
+                    let t_crit = slack / max_rate;
+                    if t_crit > 0.0 && t_crit < t_max {
+                        t_max = t_crit;
                     }
-                    let slack = 1.0 - duals[j].dot(v);
-                    let max_rate = max_d_norm * v.norm() * (1.0 + duals[j].norm());
-                    if max_rate > EPS {
-                        let t_crit = slack / max_rate;
-                        if t_crit > 0.0 && t_crit < t_max {
-                            t_max = t_crit;
-                        }
-                    }
+                }
+            }
+        }
+    }
+
+    // --- omega_0 sign preservation for ridge-adjacent pairs ---
+    for ridge in &skeleton.ridges {
+        let i = ridge.facets[0];
+        let j = ridge.facets[1];
+        let c = omega0(&duals[i], &duals[j]);
+        let b = omega0(&direction[i], &duals[j]) + omega0(&duals[i], &direction[j]);
+        let a_coeff = omega0(&direction[i], &direction[j]);
+
+        let roots = if a_coeff.abs() > EPS {
+            let disc = b * b - 4.0 * a_coeff * c;
+            if disc < 0.0 {
+                vec![]
+            } else {
+                let sqrt_disc = disc.sqrt();
+                vec![
+                    (-b - sqrt_disc) / (2.0 * a_coeff),
+                    (-b + sqrt_disc) / (2.0 * a_coeff),
+                ]
+            }
+        } else if b.abs() > EPS {
+            vec![-c / b]
+        } else {
+            vec![]
+        };
+
+        for t_flip in roots {
+            if t_flip > EPS && t_flip < t_max {
+                t_max = t_flip;
+            }
+        }
+    }
+
+    // --- Dual vertex degeneration: |a_k + t*d_k| -> 0 ---
+    for k in 0..f {
+        let a_coeff = direction[k].norm_squared();
+        let b = 2.0 * duals[k].dot(&direction[k]);
+        let c = duals[k].norm_squared();
+        let disc = b * b - 4.0 * a_coeff * c;
+        if disc >= 0.0 && a_coeff > EPS {
+            let sqrt_disc = disc.sqrt();
+            for &sign in &[-1.0, 1.0] {
+                let t_crit = (-b + sign * sqrt_disc) / (2.0 * a_coeff);
+                if t_crit > EPS && t_crit < t_max {
+                    t_max = t_crit;
                 }
             }
         }
@@ -254,7 +322,7 @@ fn gradient_ascent_phase(
             break;
         }
 
-        let t_max = compute_step_bound_a(&current, &d_sys_a);
+        let t_max = compute_step_bound(&current, &d_sys_a);
         if t_max <= 0.0 {
             break;
         }
