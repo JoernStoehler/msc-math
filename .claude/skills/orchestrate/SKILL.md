@@ -49,13 +49,26 @@ Avoid:
 ## Example Subtasks
 
 Tasks a single Agent() call can accomplish:
-- TODO
+- "Implement the visualization script, see `~/.claude/plan/decisive-pink-flamingo.md`. Scope: python and rust scripts, design figures. No latex, use logbook.md for writeup."
+- "Review `exp-sys-landscape/random-sample/`. Scope: whether the interpretation is wrong anywhere, unspecific, missing anything, and whether there's refactoring or extensions to be made to help the interpretation."
+- "Do a preliminary review of `math.tex` for proof correctness. Don't worry about the context, take the statement as written. Be pedantic and rigorous, flag unclear passages and potential gloss. Err towards false positives - we will verify the preliminary review with Jörn anyway."
+- "Refactor experiment #12 as per plan file to use the new database api. Identify what data flow the experiment currently has, compare approaches for what to do instead, including changing nothing, and pick the best one. Implement, verify, iterate, simplify, document."
+- "Do a literature search for whether anyone has conjectured or proven that HKO2024 is a local maximum. Gather also related statements about local maximality, even if inapplicable to polytopes."
+- "Scaffold a new experiment as per idea #5 from RESEARCH.md. Don't spend time on the math and methodology, just pick a simple standard architecture and use dummy data. Another agent will rewrite and fill in the actual experiment."
+- "Read the code changes made in this branch, and point out any quality issues, wrt clarity, maintainability, unnecessary complexity, non-standard patterns where standard patterns would do, and so on. Consult the `.claude/rules/*.md` files for more detailed project-specific rules."
+- "Debug why the new gradient ascent algorithm converges early. Reproduce, form and expand and update a ranked list of hypotheses until you narrowed down the root cause. Fix minor issues if you like, but just report more complex problems. Verify you found the root cause by distinguishing from all other hypotheses."
 
 Tasks an orchestration agent decomposed and executed via delegation:
-- TODO
+- "Let's take idea #5 from RESEARCH.md and work through it. Jörn can help with evaluating what possible methods/experiment design(s) are promising. Jörn can proofread any mathematical assumptions we rely on. Jörn can think through the interpretation(s) of experiments and help decide what to do next / how to adjust experiments to be more informative. For now, give it a shot yourself and gather preliminary data fast."
+- "We need to refactor the database to filter polytopes more efficiently. What should we put in scope for this task? How is the database used, what new uses could we open up, what are the standard data flow patterns we can choose and mix from? Compare them and explain them to Jörn so he can give long-term projected usefulness assessments, e.g. for future experiment ideas as well."
+- "There's a problem in one of our math proofs, we need to adjust the statement to handle edge cases properly. Probably investigate / set up regression tests if the algorithm or experiments were affected as well."
 
 Tasks that need Jörn (agents can attempt a preliminary version to accelerate Jörn's work):
-- TODO
+- "Check the proof of crates/main.pdf:Lemma 78."
+- "Assess what research questions are how interesting for the final thesis."
+- "Assess how much effort it'd take, with agent help, to compute the higher-order derivatives at hko2024."
+- "Think through whether we can cheaply compute the first order perturbations to hko2024 in F=11 polytope space from the gradients in F=10 space."
+- "Check whether the interpretation in logbook.md is clear, specific, correct and verifyable, complete, and prioritizes relevance. Any new open questions?"
 
 ## Rules of Thumb
 
@@ -63,11 +76,16 @@ Tasks that need Jörn (agents can attempt a preliminary version to accelerate J�
 
 **Start with cheap models.** `model: "sonnet"` is faster than `"opus"`. If Sonnet fails, the attempt still reveals where the difficulties are, which helps construct a better prompt for `Agent(model="opus")`.
 
+**Verification is key.** Agents are more productive when given an observable definition of done, and ideally even a feedback loop for progress/completion. They can iterate, correct mistakes using their already available understanding, and are less likely to cut corners or deliver incomplete work with overconfidence. Make frequently needed verification methods available for convenience, e.g. add tests, write prompt snippets, provide context about who uses the agents' deliverables and what they need to be true for that use.
+
+**Sanity check.** Check agents' deliverables for corner-cutting, overconfident unsourced claims, and red flags in general that hint at subpar work. Don't waste time on resolving a misunderstanding and salvaging work, just rollback and retry with stronger instructions, clarifications and learnings.
+
 **Practical tips:**
 - Use absolute paths in agent prompts — agents inherit your cwd, which may surprise.
 - Use `isolation: "worktree"` when multiple agents edit files in parallel.
 - Use `run_in_background: true` for independent agents. You get a notification on completion with the result. Put everything the agent needs in the initial prompt — you cannot follow up after it finishes.
 - Agents cannot spawn further agents. Agent() is not available to them. You delegate leaf work only.
+- Use `EnterPlanMode()` to escalate to Jörn and enter a tight discussion loop. Don't hesitate to take a 30s break this way, to avoid a 1h detour.
 
 ## Session Boundaries
 

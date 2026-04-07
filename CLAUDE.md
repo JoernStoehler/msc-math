@@ -28,7 +28,8 @@ Planned deliverables:
   - `main.tex`, `bibliography.bib`
 - `papers/<abbreviationYear>/`: Downloaded arXiv paper sources
 
-- `TASKS.md`, `IDEAS.md`: Project tasks and research ideas
+- `TASKS.md`: Unified project tracker (tasks, research questions, experiments, ideas). Run `bash scripts/tasks-toc.sh` for a section index with line ranges.
+- `thesis/handwritten-notes.md`: Jörn's thesis narrative notes (story arc, conjectures, evaluation criteria)
 - `feedback/*.md`: Incident reports; processed during `/update-workflow` sessions
 - `CLAUDE.md`: This file — read by every agent
 - `.claude/`: Settings, hooks, skills, agents, rules, worktrees
