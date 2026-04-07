@@ -17,7 +17,8 @@
 //!         gradient-ascent-general/gradient-ascent-general-trace.jsonl (per-iteration trace)
 
 use database::{DualVerticesKey, PolytopeRecord};
-use nalgebra::{Matrix4, Vector4};
+use exp_sys_landscape::compute_step_bound;
+use nalgebra::Vector4;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal};
@@ -29,7 +30,6 @@ use std::path::Path;
 use std::time::Instant;
 use symplectic::derivatives::{capacity_derivatives_a, volume_derivatives_a};
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::volume::volume;
 use symplectic::kkt::saddle_point_solver::solve_kkt_for;
 use symplectic::random::sample_random_polytope;
@@ -73,8 +73,16 @@ const MAX_STEP_SIZE: f64 = 100.0;
 /// Number of random dual-vertex perturbations per escape round.
 const N_WIGGLES: usize = 5;
 
-/// ~5% perturbation of dual vertex components. Small enough to stay near the
-/// current optimum, large enough to cross combinatorial boundaries.
+/// Multiplicative perturbation scale for dual vertex components: a_k[i] -> a_k[i] * (1 + 0.05 * N(0,1)).
+/// Per-facet displacement has expected norm ~0.05 * |a_k| (unit-scale dual vertices: ~0.05).
+/// Cell-widths data (cell-widths/logbook.md): median non-orbit cell width = 0.124, median
+/// orbit cell width = 0.258. So per-facet displacement ~0.05 is ~40% of the narrowest
+/// median cell width. With F=10 facets all perturbed simultaneously, boundary crossing
+/// is highly likely — confirmed by data: wiggle dominated overshoot as escape strategy
+/// (41/42 seeds, gradient-ascent-general/logbook.md).
+/// If changed: much smaller (e.g. 0.01) reduces boundary-crossing probability and escape
+/// effectiveness. Much larger (e.g. 0.2) risks producing degenerate polytopes
+/// (Polytope4D::from_f64 failure) or landing too far from the current optimum.
 const WIGGLE_STRENGTH: f64 = 0.05;
 
 /// Maximum rounds of escape attempts after convergence.
@@ -123,98 +131,6 @@ struct TraceRow {
     sys_after: f64,
     delta_sys: f64,
     gradient_norm: f64,
-}
-
-// ============================================================================
-// Step bound in a-space (linearized)
-// ============================================================================
-
-/// Maximum step t > 0 along direction d_k in dual-vertex space before the
-/// combinatorial type changes.
-///
-/// For a vertex v defined by 4 facets D = {d_1, ..., d_4} with a_{d_i} · v = 1,
-/// the linearized vertex velocity is:
-///   dv/dt = -A_D^{-1} · w,  where w_i = d_{d_i} · v
-///
-/// The slack for non-defining facet j is s_j = 1 - a_j · v, with rate:
-///   ds_j/dt = -(d_j · v + a_j · dv/dt)
-///
-/// The step bound is t_max = min(s_j / |rate_j|) over all (vertex, facet)
-/// pairs where rate < 0.
-// TODO: add [lem:step-bound-a] to math.tex (see combinatorial-boundaries experiment)
-fn compute_step_bound_a(polytope: &Polytope4D, direction: &[Vector4<f64>]) -> f64 {
-    let duals = polytope.dual_vertices_f64();
-    let vertices = polytope.vertices_f64();
-    let f = polytope.facet_count();
-    let skeleton = Skeleton::compute(polytope);
-
-    let mut t_max = f64::INFINITY;
-
-    for (vi, vertex_facets) in skeleton.vertex_facets.iter().enumerate() {
-        let v = &vertices[vi];
-
-        if vertex_facets.len() == 4 {
-            // Simple vertex: exact linearization via A_D^{-1}
-            let a_mat = Matrix4::from_rows(&[
-                duals[vertex_facets[0]].transpose(),
-                duals[vertex_facets[1]].transpose(),
-                duals[vertex_facets[2]].transpose(),
-                duals[vertex_facets[3]].transpose(),
-            ]);
-
-            let a_inv = match a_mat.try_inverse() {
-                Some(inv) => inv,
-                None => continue,
-            };
-
-            // w_i = d_{d_i} · v
-            let w = Vector4::new(
-                direction[vertex_facets[0]].dot(v),
-                direction[vertex_facets[1]].dot(v),
-                direction[vertex_facets[2]].dot(v),
-                direction[vertex_facets[3]].dot(v),
-            );
-            let dv_dt = -(a_inv * w);
-
-            for j in 0..f {
-                if vertex_facets.contains(&j) {
-                    continue;
-                }
-                // s_j = 1 - a_j · v
-                let slack = 1.0 - duals[j].dot(v);
-                // ds_j/dt = -(d_j · v + a_j · dv/dt)
-                let rate = -(direction[j].dot(v) + duals[j].dot(&dv_dt));
-                if rate < -EPS {
-                    let t_crit = slack / (-rate);
-                    if t_crit > 0.0 && t_crit < t_max {
-                        t_max = t_crit;
-                    }
-                }
-            }
-        } else {
-            // Non-simple vertex: conservative bound using max rates
-            let max_d_norm = direction.iter().map(|d| d.norm()).fold(0.0f64, f64::max);
-            if max_d_norm > EPS {
-                for j in 0..f {
-                    if vertex_facets.contains(&j) {
-                        continue;
-                    }
-                    let slack = 1.0 - duals[j].dot(v);
-                    // Conservative: |ds_j/dt| ≤ |d_j| · |v| + |a_j| · |dv/dt|
-                    // Upper bound |dv/dt| by max_d_norm · |v| (rough)
-                    let max_rate = max_d_norm * v.norm() * (1.0 + duals[j].norm());
-                    if max_rate > EPS {
-                        let t_crit = slack / max_rate;
-                        if t_crit > 0.0 && t_crit < t_max {
-                            t_max = t_crit;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    t_max.min(MAX_STEP_SIZE)
 }
 
 // ============================================================================
@@ -321,7 +237,7 @@ fn gradient_ascent(
         }
 
         // 3. Step bound
-        let t_max = compute_step_bound_a(&current, &d_sys_a);
+        let t_max = compute_step_bound(&current, &d_sys_a);
         if t_max <= 0.0 {
             break;
         }
