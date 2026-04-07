@@ -160,6 +160,7 @@ pub enum KktOutcome {
     TypeCViolation,
     /// The LP null-space shift and beta0 fallback both violate constraints
     /// beyond tolerance. The orbit is skipped; same caveat as TypeCViolation.
+    // TODO: add [rem:...] to math.tex for constraint violation after LP
     ConstraintViolation,
 }
 
