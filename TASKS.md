@@ -201,6 +201,14 @@ No chapter is currently publishable. Story arc decided (see `thesis/handwritten-
 ### [Jörn] appendix-numerical.tex (5 TODOs)
 - Continuity of c_EHZ on polytopes, simplicity assumption, billiard pruning, three-valued verdict, unverified numerical statement.
 
+### [open] Thesis figure inventory
+- Catalog which figures exist in `thesis/assets/` vs. what each chapter needs.
+- Identify missing figures, stale figures, and figures that need regeneration after notation changes.
+
+### [open] Bibliography verification
+- `thesis/bibliography.bib` line 151 has agent-produced entry flagged `[TODO: JÖRN - verify]`.
+- Agent can check DOIs, titles, author names, year against actual papers.
+
 ### [open] Final assembly
 - Abstract, bibliography check, figure quality review, proofreading, print formatting.
 - After all content is stable.
@@ -243,6 +251,21 @@ No chapter is currently publishable. Story arc decided (see `thesis/handwritten-
 - Produce ranked list of "most embarrassing if wrong."
 - No fixes — Jörn reviews the list when writing capacity frees up.
 
+### [open] Geom math.tex restructure
+- Jörn partially reviewed Defs 1–13 of `crates/library/src/geom/math.tex` (`handoff-geom-math-review.md`).
+- Consolidate Defs 1-2 (symplectic form). Add Def for HKO2024 + Thm for false Viterbo's conjecture.
+- Clarify H-representation irredundancy. Fix Defs 12-13 (area/volume are algorithms, not definitions).
+- Consider splitting into `math_geometry.tex`, `math_symplectic.tex`, `math_reeb.tex`.
+
+### [open] Citation verification pass
+- 54 `[TODO: JÖRN - verify]` markers across `crates/**/math.tex` files.
+- Most are reference lookups (Higham chapter, GVL section, Wedin/Weyl theorem numbers).
+- Agent can look up papers and pre-verify; Jörn reviews flagged problems only.
+
+### [open] Delete superseded experiments
+- `gradient-search` and `generate-seeds` have broken APIs, superseded by `sys-search` pipeline.
+- Delete directories, remove workspace members, commit.
+
 ## [open] Infrastructure + tooling
 
 ### [active] Orchestration pattern test
@@ -263,6 +286,14 @@ No chapter is currently publishable. Story arc decided (see `thesis/handwritten-
 
 ### [done] [2026-04] Orchestration infrastructure
 - `/orchestrate` skill, delegation guide, cheatsheet.
+
+### [open] variable-f-ascent merge
+- Experiment complete, logbook needs reframing (RQ2 Path D is trivial by construction, reframe as sanity check).
+- Branch at `.claude/worktrees/variable-f-ascent/`. Run `/pre-merge` then merge.
+
+### [open] Stale branch cleanup
+- 9 branches not in worktrees: `crosspolytope-phase2`, `feedback-triage-3-6`, `hko-second-order`, `math-tex-audit`, `remove-kkt-panics`, `session-search-agent`, `update-pre-merge`, `variable-f-ascent`, `api-extract-rs`.
+- Agent checks each for unmerged work, reports. Jörn says delete or keep per branch.
 
 ### [open] Evaluate api-reference/ usefulness
 - `api-reference/` + `api-extract` crate were built so agents can read stripped .rs files (no bodies/tests/privates).
