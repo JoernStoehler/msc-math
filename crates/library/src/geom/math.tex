@@ -719,10 +719,11 @@ $\|M\|_F^2 = \sum_i \sigma_i(M)^2 \le n\sigma_1(M)^2
 \end{fact}
 \end{unverified}
 
-% [TODO: JÖRN - verify exact theorem number in Higham Ch. 5]
+% Verified from PDF: GVL4 §8.6, Algorithm 8.6.2 preamble (p. 492). No numbered theorem.
+% Was "Higham Ch. 5" but Ch. 5 = Polynomials.
 \begin{unverified}
 \begin{fact}[SVD backward stability;
-  {Higham~(2002), Ch.~5}]\label{fact:prefilter-svd}
+  {Golub \& Van~Loan~(2013), \S8.6}]\label{fact:prefilter-svd}
 The computed SVD of $B \in \mathbb{R}^{n \times n}$ produces
 factors $\hat{U}, \hat{\Sigma}, \hat{V}$ satisfying
 $B + E_{\mathrm{svd}} = \hat{U}\hat{\Sigma}\hat{V}^\top$
@@ -731,10 +732,11 @@ where $c_{\mathrm{svd}} = O(n)$.
 \end{fact}
 \end{unverified}
 
-% [TODO: JÖRN - verify exact section numbers in Higham]
+% Verified from PDF: Higham Thm. 8.5 (p. 171) for triangular solve; GVL4 §8.6 for SVD.
+% Was "Higham Ch. 3, 5" but Ch. 5 = Polynomials.
 \begin{unverified}
 \begin{fact}[SVD-based solve backward stability;
-  {Higham~(2002), Ch.~3, 5}]\label{fact:prefilter-solve}
+  {Higham~(2002), Thm.~8.5; Golub \& Van~Loan~(2013), \S8.6}]\label{fact:prefilter-solve}
 Solving $Bx = b$ via computed SVD factors in f64 gives $\hat{x}$
 satisfying $(B + E)\hat{x} = b + e$ with
 $\|E\| \le p\emach\|B\|$ and $\|e\| \le p\emach\|b\|$,
@@ -746,19 +748,21 @@ $\hat{V}(\cdot)$.)
 \end{fact}
 \end{unverified}
 
-% [TODO: JÖRN - verify exact corollary number in GVL Ch. 8]
+% Verified from PDF: GVL4 Corollary 8.6.2 (p. 487) for singular values.
+% Eigenvalue version is Corollary 8.1.6 (p. 442).
 \begin{unverified}
 \begin{fact}[Weyl's singular value perturbation theorem;
-  {Golub \& Van~Loan~(2013), Ch.~8}]\label{fact:prefilter-weyl}
+  {Golub \& Van~Loan~(2013), Cor.~8.6.2}]\label{fact:prefilter-weyl}
 For any $B, B' \in \mathbb{R}^{n \times n}$:
 $|\sigma_i(B) - \sigma_i(B')| \le \|B - B'\|$.
 \end{fact}
 \end{unverified}
 
-% [TODO: JÖRN - verify exact lemma number in Higham Ch. 2]
+% Verified from PDF: Banach lemma is not a standalone lemma in Higham; used inline in
+% Ch. 7 proofs (e.g. Thm 7.2). Was "Higham Ch. 2" but Ch. 2 = FP Arithmetic.
 \begin{unverified}
 \begin{fact}[Banach perturbation lemma;
-  {Higham~(2002), Ch.~2}]\label{fact:prefilter-banach}
+  {Higham~(2002), Ch.~7, \S7.4}]\label{fact:prefilter-banach}
 If $B$ is invertible and $\|B^{-1}\|\|E\| < 1$, then
 $B + E$ is invertible and
 $\|(B+E)^{-1}\| \le \|B^{-1}\|/(1 - \|B^{-1}\|\|E\|)$.
@@ -772,10 +776,10 @@ by the geometric series bound. \qed
 \end{fact}
 \end{unverified}
 
-% [TODO: JÖRN - verify exact theorem number in Higham Ch. 3]
+% Verified: Higham (2002), §3.1, Lemma 3.1 (γₙ bound for inner products).
 \begin{unverified}
 \begin{fact}[Dot product rounding;
-  {Higham~(2002), Ch.~3}]\label{fact:prefilter-dot}
+  {Higham~(2002), \S3.1, Lem.~3.1}]\label{fact:prefilter-dot}
 For $x, y \in \mathbb{F}^n$, the f64-computed inner product
 $\hat{s} = \mathrm{fl}(x^\top y)$ satisfies
 $|x^\top y - \hat{s}| \le \gamma_n\, |x|^\top|y|$,

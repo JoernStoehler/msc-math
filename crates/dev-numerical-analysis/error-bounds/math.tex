@@ -119,7 +119,8 @@ The EHZ capacity is $c_{\mathrm{EHZ}}(K) = 1/(2\, Q_{\max})$.
 \end{definition}
 
 \begin{fact}[HK2017]\label{fact:hk2017}
-% [TODO: JÖRN - cite HK2017 theorem precisely; which theorem number?]
+% Citation: HK2017 Theorems 1.1 (formula_theorem: capacity = max of QP) and
+%   1.5 (simple_loop_theorem: minimizer is simple). Note: HK2017 1.4 is a Remark, not a Theorem.
 Any global maximizer $(\sigma^*, \beta^*)$
 of~\eqref{eq:hk2017-problem}
 corresponds to a minimum-action simple closed Reeb orbit on
@@ -742,10 +743,8 @@ so $\|\delta C\|$ and $\|\delta H\|$ are $O(\varepsilon_{\mathrm{mach}})$.
 
 
 \begin{lemma}[Link 2: Null-space basis via SVD]\label{lem:link-svd}
-% [TODO: JÖRN - cite specific theorem from Higham or GVL
-% for backward stability of SVD and null-space computation.
-% Standard result: computed SVD is exact SVD of C + delta C
-% with ||delta C|| <= c * eps_mach * ||C||.]
+% Citation: Golub \& Van Loan (2013), §8.6 (Computing the SVD) for backward stability.
+%   Exact theorem number within §8.6 not confirmed — verify at library if needed.
 The SVD of~$\tilde C$ is backward stable: the computed
 $\tilde U \tilde\Sigma \tilde V_{\mathrm{full}}^\top$
 is the exact SVD of $\tilde C + \delta C_{\mathrm{SVD}}$
@@ -787,10 +786,8 @@ Since $C$ has full row rank, $C^+ = C^\top(C C^\top)^{-1}$
 and $\|C^+\| = 1/\sigma_{\min}(C)$.
 The standard pseudoinverse perturbation bound
 for full-row-rank matrices gives:
-% [TODO: JÖRN - cite Wedin 1973 or Stewart 1977 for pseudoinverse
-% perturbation.  Standard result for rank-preserving perturbations:
-% ||(C + delta C)^+ - C^+|| <= sqrt(2) ||C^+||^2 ||delta C||
-% + O(||delta C||^2).]
+% Citation: Wedin (1973), "Perturbation theory for pseudo-inverses", BIT 13, 217--232.
+%   Also Stewart (1977), SIAM Review 19, 634--662 (survey). The sqrt(2) bound is Wedin's central result.
 \[
   \|\delta\beta_0\|
   = \|\tilde\beta_0 - \beta_0\|
@@ -895,7 +892,8 @@ from Lemmas~\ref{lem:link-assembly}--\ref{lem:link-svd}:
 
 \begin{lemma}[Link 4: Eigenvalues of the reduced Hessian]%
 \label{lem:link-eigenvalues}
-% [TODO: JÖRN - cite Weyl's theorem precisely]
+% Citation: Weyl (1912), Math. Annalen 71, 441--479. Modern: Horn \& Johnson (2013),
+%   Matrix Analysis, Theorem 4.3.1. For singular values: follows from eigenvalue version.
 By Weyl's eigenvalue perturbation theorem,
 the computed eigenvalues $\tilde\gamma_j$ of~$\tilde H'$
 satisfy
@@ -939,9 +937,8 @@ Let $w_1, \ldots, w_k$ be orthonormal eigenvectors of~$H'$
 $\alpha^*_j = -g_j / \gamma_j$).
 The computed $\tilde\alpha = -(\tilde H')^{-1} \tilde g$ has
 first-order error:
-% [TODO: JÖRN - cite GVL \S2.6.2 or Higham \S7.2 for the standard
-% perturbation bound $(A+\delta A)^{-1}(b+\delta b) - A^{-1}b
-% = -A^{-1}(\delta A \cdot x + \delta b) + O(\|\delta A\|^2)$.]
+% Citation: GVL (2013), §2.6 (Sensitivity of Square Systems) confirmed.
+%   Higham §7.2 is componentwise; the normwise identity is in §7.1. Use GVL §2.6 as primary.
 \begin{equation}\label{eq:alpha-perturbation}
   \delta\alpha
   = \tilde\alpha - \alpha^*

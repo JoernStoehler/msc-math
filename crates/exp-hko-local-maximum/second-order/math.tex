@@ -25,9 +25,10 @@ The systolic ratio is
 \[
   \operatorname{sys}(K) = \frac{c_{\mathrm{EHZ}}(K)^2}{2\,\operatorname{vol}(K)}.
 \]
-% [TODO: JÖRN - verify correct citation for capacity = min action over orbits.
-% HK2017 Thm 1.4 gives c_EHZ via billiard orbits for Lagrangian products;
-% the general polytope formulation (via KKT) is developed in our library.]
+% Citation: HK2017 Theorem 1.1 (formula_theorem) gives c_EHZ as the maximum of a QP
+% for general polytopes. Note: HK2017 1.4 is a Remark, not a Theorem. The billiard
+% characterization is from Artstein-Avidan \& Ostrover (2014), not HK2017.
+% The KKT reformulation is developed in our library.
 The EHZ capacity is the minimum action over all closed characteristics (Reeb orbits):
 \[
   c_{\mathrm{EHZ}}(K) = \min_{i \in \mathcal{I}} c_i(K),
