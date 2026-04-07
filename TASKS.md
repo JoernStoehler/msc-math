@@ -189,8 +189,14 @@ No chapter is currently publishable. Story arc decided (see `thesis/handwritten-
 ### [Jörn] tube-algorithm.tex (8 TODOs)
 - 5 Jörn questions (quaternionic formula, TF_ij equivalence, rotation number, closing steps, correctness proof).
 - 3 GAP markers (agent-added unverified content).
-- Rotation increment is a heuristic, not real CH2021 formula. Performance on F>10 polytopes untested.
 - `handoffs/tube-algorithm.md`
+
+### [blocked] Tube rotation formula implementation
+- Current code is a misleadingly named placeholder that is wrong (not CH2021, not any correct formula).
+- Need to implement a correct rotation formula. Not necessarily CH2021 — we have different basis vectors.
+- Performance on F>10 polytopes untested.
+- Blocked on: Jörn reviewing the math (proofs for what formula is correct given our basis).
+- `crates/library/src/algorithms/tube/mod.rs`
 
 ### [Jörn] appendix-numerical.tex (5 TODOs)
 - Continuity of c_EHZ on polytopes, simplicity assumption, billiard pruning, three-valued verdict, unverified numerical statement.
@@ -203,12 +209,11 @@ No chapter is currently publishable. Story arc decided (see `thesis/handwritten-
 
 ### [active] Thesis-code alignment
 - Full list: `handoffs/migration-thesis-findings.md`
-- Tube rotation increment: code is heuristic, thesis claims `[def:rotation-increment]`.
-- KKT notation: unify (lambda,nu) vs (mu,xi).
-- Accumulator pattern: two-tier certified/uncertain not in main thesis.
-- qp_assembly dual-vertex formulation: unverified mathematical equivalence.
-- KktResult->Solution bridge: margin = min(beta) + classify_margin(). Right mapping?
-- Depends on Jörn deciding which side to fix per item.
+- Tube rotation increment: current code is a misleadingly named placeholder, not CH2021. Need to implement a correct rotation formula (not necessarily CH2021 — we have different basis vectors).
+- KKT notation: decided — use code's symmetric convention (eigenvalue decompositions pop out). Propagate to thesis.
+- Accumulator pattern: thesis is stale, will be rewritten. Not a separate issue.
+- qp_assembly dual-vertex: decided — thesis should just use a_i (h=1, a=n). The "equivalence" is trivial: substitute h=1, confirm |n|=1 was never used. Per-proof mechanical substitution.
+- KktResult->Solution bridge: needs investigation — unclear whether this is actually a thesis-code alignment issue.
 
 ### [active] Dual-vertex parameterization (a_i migration)
 - Library API done. Most experiment migration complete. Math.tex migration complete.
@@ -221,11 +226,22 @@ No chapter is currently publishable. Story arc decided (see `thesis/handwritten-
 - Some algorithmic lemmas lost backing during migration. Scan `[TODO: JORN -` entries.
 - Example: `lem:positive-span`, `lem:vertex-enumeration` in `geom/math.tex` proof-less since first commit.
 
-### [open] Cross-experiment code cleanup
+### [active] Code cleanup (session launched 2026-04-07)
 - step_bound duplication: cell-widths vs gradient-ascent (missing omega_0 detection).
 - Products-vs-random split: every gradient experiment should split analysis by source dataset.
 - Wiggle strength justification: 5% from gradient-search (unjustified). cell-widths has per-facet data.
 - gradient-ascent + multiple-crossings overlap: consider deduplication.
+- math.tex stubs audit: scan `[TODO: JÖRN -` entries for lost proofs.
+- Draft `[lem:dual-vertex-qp]` proof (mechanical: substitute h=1, confirm |n|=1 never used).
+
+### [active] Paranoia: numerical claims (session launched 2026-04-07)
+- Verify every numerical claim in experiment logbooks against actual JSONL data and code output.
+- Flag mismatches, fix obvious ones, report the rest.
+
+### [active] Paranoia: conjectures + interpretations (session launched 2026-04-07)
+- Flag-only. Audit all conjectures, "we believe" statements, causal claims, unhedged conclusions.
+- Produce ranked list of "most embarrassing if wrong."
+- No fixes — Jörn reviews the list when writing capacity frees up.
 
 ## [open] Infrastructure + tooling
 
