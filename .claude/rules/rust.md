@@ -58,4 +58,6 @@ Standard Rust error handling, plus:
 
 ## Experiment binaries
 
-For `crates/exp-*/<subdir>/run.rs`: copy library code into the binary rather than modifying `crates/library/` for experiment-specific behavior. Only stable, validated code lives in `crates/library/`.
+Only stable, validated code lives in `crates/library/`. Don't modify the library for experiment-specific behavior.
+
+Within an experiment crate (`crates/exp-<group>/`), shared helpers belong in `src/lib.rs` when multiple binaries need the same function. This avoids copy-paste duplication and lets improvements propagate. Per-binary helpers that only one experiment uses stay in that binary's `run.rs`.
