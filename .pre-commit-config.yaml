@@ -4,3 +4,11 @@ repos:
     hooks:
       - id: check-added-large-files
         args: ['--maxkb=10240']
+  - repo: local
+    hooks:
+      - id: api-extract
+        name: regenerate api-reference
+        entry: bash -c 'cargo run --manifest-path crates/tools/api-extract/Cargo.toml --release --quiet 2>/dev/null && git add api-reference/'
+        language: system
+        pass_filenames: false
+        always_run: true
