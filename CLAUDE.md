@@ -14,7 +14,7 @@ Planned deliverables:
 
 ## Project Layout
 
-- `api-reference/`: Auto-generated API reference for `crates/library/`. Path mapping: `crates/<path>.rs` → `api-reference/<path>.md`. To understand library functions (signatures, docs, math refs), read these instead of `.rs` source. Read `api-reference/library/src/lib.md` for the index.
+- `api-reference/`: Auto-generated API reference for `crates/library/`. Path mapping: `crates/<path>.rs` → `api-reference/<path>.rs`. To understand library functions (signatures, docs, math refs), read these instead of source. Read `api-reference/library/src/lib.rs` for the index.
 - `crates/`
   - `Cargo.toml`: Workspace manifest
   - `main.tex`: Compiles all per-module `math.tex` files into `main.pdf`
