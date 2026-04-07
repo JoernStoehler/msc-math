@@ -248,6 +248,13 @@ No chapter is currently publishable. Story arc decided (see `thesis/handwritten-
 ### [done] [2026-04] Orchestration infrastructure
 - `/orchestrate` skill, delegation guide, cheatsheet.
 
+### [open] Evaluate api-reference/ usefulness
+- `api-reference/` + `api-extract` crate were built so agents can read stripped .rs files (no bodies/tests/privates).
+- As of 2026-04-07: zero organic agent usage found in session history. Agents prefer reading source directly.
+- Decision: keep for now, re-evaluate in ~1 week, delete if still unused.
+- Check command: `grep -rn "api-reference/library" ~/.claude/projects/-workspaces-msc-math/*.jsonl | grep -v CLAUDE.md | grep -v MEMORY.md | grep -v memory/`
+- If no new hits: delete `api-reference/`, `crates/tools/api-extract/`, pre-commit hook in `.pre-commit-config.yaml`, workspace member in `crates/Cargo.toml`, CLAUDE.md references.
+
 ## [done] Completed tasks (historical)
 
 ### [done] [2026-03-19] migration-merge (commit 6680d0e)
