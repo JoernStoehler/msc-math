@@ -13,7 +13,7 @@ Combines the old `recover_base_point` and `verify_orbit` into a single
 A simple orbit with parameters (sigma, tau) has piecewise-constant velocity
 R_{sigma(k)} = 2 J_0 a_{sigma(k)} on each segment. The position during segment k is:
 
-gamma(t) = b + v_k + (t - t_k) * R_{sigma(k)}
+  gamma(t) = b + v_k + (t - t_k) * R_{sigma(k)}
 
 where v_k = sum_{j<k} tau_j R_{sigma(j)} is the accumulated displacement.
 
@@ -21,7 +21,7 @@ For gamma(t) to lie on facet F_{sigma(k)}, we need <a_{sigma(k)}, gamma(t)> = 1.
 Since R_{sigma(k)} is tangent to F_{sigma(k)} (<a_{sigma(k)}, R_{sigma(k)}> = 0),
 this reduces to a linear system in b:
 
-<a_{sigma(k)}, b> = 1 - <a_{sigma(k)}, v_k>   for each active k
+  <a_{sigma(k)}, b> = 1 - <a_{sigma(k)}, v_k>   for each active k
 
 The system has m equations and 4 unknowns (b in R^4). We solve via SVD
 (least-norm solution when underdetermined), then optimize in the null space
@@ -63,7 +63,7 @@ Recover a Reeb orbit from an EHZ capacity result and verify its validity.
 Performs three stages:
 1. **Beta-to-tau conversion**: dwell times tau_k = capacity * h_{sigma(k)} * beta_k.
 2. **Base point recovery**: solve the linear system N_S b = r via SVD, then
-optimize in the null space to minimize halfspace violations.
+   optimize in the null space to minimize halfspace violations.
 3. **Orbit verification**: check closure, on-facet, inside-K, and action consistency.
 
 Returns `None` if the linear system has no active equations (all dwell times

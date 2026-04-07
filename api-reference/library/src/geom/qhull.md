@@ -25,3 +25,8 @@ pub enum QhullError {
 
 Errors from qhull subprocess interaction.
 
+## Trait implementations
+
+- `impl std::fmt::Display for QhullError`
+- `impl std::error::Error for QhullError`
+

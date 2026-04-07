@@ -7,9 +7,9 @@ Bridges geometry (dual vertices, normals, heights) to the solver's abstract
 matrix inputs. Two assembly modes:
 
 - `build_qp`: assembles the QP struct {C, d, H} using dual vertices directly.
-Used by the projection solver path.
+  Used by the projection solver path.
 - `build_augmented_system`: assembles the (m+5)x(m+5) saddle-point system
-using normals and heights. Used by the eigendecomposition solver path.
+  using normals and heights. Used by the eigendecomposition solver path.
 
 Mathematical correspondence: [lem:kkt]
 
@@ -26,15 +26,15 @@ permutation sigma of m facet
 indices, assembles:
 
 - **C** (5 x m): closure constraints (sum a_{sigma(i)} beta_i = 0, four rows)
-plus normalization (sum beta_i = 1, one row). Note: when using dual vertices
-directly, the closure constraint is sum a_{sigma(i)} beta_i = 0 (not normals).
+  plus normalization (sum beta_i = 1, one row). Note: when using dual vertices
+  directly, the closure constraint is sum a_{sigma(i)} beta_i = 0 (not normals).
 - **d** (5 x 1): [0, 0, 0, 0, 1]^T
 - **H** (m x m): action matrix, symmetrized. For i < j:
-H_{ij} = H_{ji} = omega_0(a_{sigma(i)}, a_{sigma(j)}).
-H_{ii} = 0 (since omega_0(a, a) = 0 by antisymmetry of omega_0).
-Note: H is symmetric by construction (both entries set to the same value),
-not because omega_0 is symmetric (it is antisymmetric: omega_0(a_j, a_i) = -omega_0(a_i, a_j)).
-The quadratic form (1/2) beta^T H beta equals the symplectic action sum.
+  H_{ij} = H_{ji} = omega_0(a_{sigma(i)}, a_{sigma(j)}).
+  H_{ii} = 0 (since omega_0(a, a) = 0 by antisymmetry of omega_0).
+  Note: H is symmetric by construction (both entries set to the same value),
+  not because omega_0 is symmetric (it is antisymmetric: omega_0(a_j, a_i) = -omega_0(a_i, a_j)).
+  The quadratic form (1/2) beta^T H beta equals the symplectic action sum.
 
 Uses dual vertices directly (not normalized normals), which simplifies the
 constraint structure: the closure + normalization constraints become a single

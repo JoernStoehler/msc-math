@@ -78,7 +78,7 @@ simulation we only need the direction J_0 a (the factor 2 rescales
 the time parametrization without changing the trajectory shape).
 
 In coordinates (q_1, q_2, p_1, p_2) with J_0 = [[0, -I_2], [I_2, 0]]:
-J_0 (a, b, c, d) = (-c, -d, a, b)
+  J_0 (a, b, c, d) = (-c, -d, a, b)
 
 [def:reeb-vector-field]: Reeb direction on facet F_i is J_0 a_i (tangent to F_i).
 
@@ -111,11 +111,11 @@ of the starting point.
 # Algorithm
 
 On facet F_i with Reeb direction d_i = J_0 a_i, the trajectory is:
-x(t) = x_0 + t * d_i
+  x(t) = x_0 + t * d_i
 
 The trajectory exits F_i when it hits a neighboring facet F_j:
-a_j . (x_0 + t * d_i) = 1
-t = (1 - a_j . x_0) / (a_j . d_i)
+  a_j . (x_0 + t * d_i) = 1
+  t = (1 - a_j . x_0) / (a_j . d_i)
 
 Take the smallest positive t among all facets j != i.
 

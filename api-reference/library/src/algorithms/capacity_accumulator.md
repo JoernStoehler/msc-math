@@ -14,7 +14,7 @@ Mathematical correspondence: [alg:ehz], [thm:billiard-characterization]
 
 - **Certified**: `Verdict::True` — all beta_k > +EPS. Trustworthy.
 - **Uncertain**: `Verdict::True` or `Verdict::Indeterminate` — all beta_k > -EPS.
-Might be valid solutions with floating-point sign ambiguity.
+  Might be valid solutions with floating-point sign ambiguity.
 
 The gap invariant (certified action - uncertain action <= GAP_TOLERANCE) is
 asserted at finalization: if an uncertain candidate achieves significantly lower
@@ -60,7 +60,7 @@ Accumulates capacity candidates across a permutation enumeration.
 Two tiers:
 - Certified: `Verdict::True` (all beta_k > +EPS). Trustworthy.
 - Uncertain: `Verdict::True` or `Verdict::Indeterminate` (all beta_k > -EPS).
-Might be valid solutions with floating-point sign ambiguity.
+  Might be valid solutions with floating-point sign ambiguity.
 
 `finalize()` asserts the gap invariant (certified - uncertain <= GAP_TOLERANCE)
 and returns the best certified result.
@@ -70,9 +70,9 @@ and returns the best certified result.
 ```ignore
 let mut acc = CapacityAccumulator::new();
 for perm in permutations {
-if let Some(solution) = solver(&perm) {
-acc.submit(&perm, &solution);
-}
+    if let Some(solution) = solver(&perm) {
+        acc.submit(&perm, &solution);
+    }
 }
 let result = acc.finalize();
 ```
@@ -138,4 +138,8 @@ pub fn has_uncertain(&self) -> bool
 ```
 
 Whether any uncertain candidate has been found.
+
+## Trait implementations
+
+- `impl Default for CapacityAccumulator`
 

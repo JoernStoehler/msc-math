@@ -72,3 +72,8 @@ Lagrangian products, but guards against degenerate input).
 [thm:billiard-characterization], [thm:bounce-bound]: enumerates block permutations
 sigma = (Q_1 P_1 ... Q_k P_k) for k in {2, 3}.
 
+## Trait implementations
+
+- `impl std::fmt::Display for BilliardError`
+- `impl std::error::Error for BilliardError`
+
