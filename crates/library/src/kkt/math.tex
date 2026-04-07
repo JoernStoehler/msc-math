@@ -3,6 +3,7 @@
 %
 % Labels defined here:
 %   lem:kkt, lem:H-quadratic, lem:well-defined,
+%   lem:dual-vertex-qp,
 %   lem:numerical-transition-feasibility, lem:q-error-bound,
 %   rem:near-null-lp-search
 %
@@ -154,6 +155,66 @@ Therefore
 \]
 \end{proof}
 \end{notationupdated}
+
+
+\begin{unverified}
+\begin{lemma}[Dual-vertex QP formulation]%
+\label{lem:dual-vertex-qp}
+% Source: qp_assembly.rs build_qp
+Let $K = \{x : \langle a_i, x \rangle \leq 1\}$ with dual
+vertices~$a_i \in \mathbb{R}^4$.
+For a cyclic permutation~$\sigma$ of $|S|$~facet indices,
+define the constraint matrix~$A$ and action matrix~$H$ as in the
+linear system (see header), and let $\mathbf{1} \in \mathbb{R}^{|S|}$
+be the all-ones vector.
+Then the QP
+\[
+  \min_{\beta}\; \tfrac{1}{2}\,\beta^\top H\,\beta
+  \quad\text{s.t.}\quad
+  A^\top \beta = 0,\quad
+  \mathbf{1}^\top \beta = 1
+\]
+correctly computes the EHZ symplectic action for~$(S, \sigma)$.
+In particular, the factorization $a_i = h_i\, n_i$
+into unit normal~$n_i$ and support value~$h_i$ plays no role:
+the constraints and objective depend only on the dual
+vertices~$a_i$ and the bilinearity of~$\omega_0$.
+\end{lemma}
+
+\begin{proof}
+The Reeb vector on facet~$i$ is
+$R_i = 2\, J_0\, a_i$, where $J_0$ is the standard
+complex structure.
+For a closed Reeb orbit visiting facets
+$\sigma(1), \ldots, \sigma(|S|)$ with dwell times
+$\beta_i > 0$ summing to~$1$:
+
+\emph{Closure.}
+The orbit closes iff
+$\sum_i \beta_i\, R_{\sigma(i)} = 0$.
+Since $R_i = 2\, J_0\, a_i$ and $J_0$ is invertible, this is equivalent to
+$\sum_i a_{\sigma(i)}\, \beta_i = 0$,
+which is $A^\top \beta = 0$.
+
+\emph{Normalization.}
+The dwell-time fractions sum to one:
+$\mathbf{1}^\top \beta = 1$.
+
+\emph{Action.}
+The symplectic action contribution from the transition
+$\sigma(i) \to \sigma(j)$ is
+$\beta_i\,\beta_j\,\omega_0(a_{\sigma(j)}, a_{\sigma(i)})$
+for $i > j$.
+By Lemma~\ref{lem:H-quadratic}, the total action equals
+$\tfrac{1}{2}\,\beta^\top H\,\beta$,
+where $H_{ij} = \omega_0(a_{\sigma(i)}, a_{\sigma(j)})$.
+
+All three ingredients --- closure, normalization, action ---
+are stated purely in terms of the dual vertices~$a_i$.
+The factorization $a_i = h_i\, n_i$ is never used, and
+$\|n_i\| = 1$ is never assumed.
+\end{proof}
+\end{unverified}
 
 
 \begin{unverified}

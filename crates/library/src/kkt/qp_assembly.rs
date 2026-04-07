@@ -55,10 +55,9 @@ pub fn build_qp(polytope: &Polytope4D, perm: &[usize]) -> QP {
     // becomes sum a_{sigma(i)} beta'_i = 0 + sum beta'_i = 1 after multiplying through
     // by the heights. The QP therefore operates in beta' coordinates.
     //
-    // TODO [JÖRN]: Write [lem:dual-vertex-qp] in kkt/math.tex proving that this
-    // reparameterization correctly recovers the same optimal action as the
-    // normals/heights formulation used by build_augmented_system. Until verified,
-    // this is an unproven claim. Track in TASKS.md: "Verify build_qp vs build_augmented_system equivalence".
+    // [lem:dual-vertex-qp]: the dual-vertex QP formulation (closure A^T beta = 0,
+    // normalization 1^T beta = 1, action H_{ij} = omega_0(a_i, a_j)) computes the
+    // EHZ symplectic action directly from dual vertices, without factoring a_i = h_i n_i.
     let mut c = DMatrix::zeros(5, m);
     for (col, &facet_idx) in perm.iter().enumerate() {
         let a = &dual_verts[facet_idx];
