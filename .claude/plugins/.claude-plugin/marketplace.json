@@ -1,0 +1,14 @@
+{
+    "name": "msc-math-plugins",
+    "owner": {
+        "name": "Jörn Stöhler"
+    },
+    "plugins": [
+        {
+            "name": "rust-lsp",
+            "source": "./rust-lsp",
+            "description": "rust-analyzer LSP integration for semantic Rust tooling",
+            "version": "1.0.0"
+        }
+    ]
+}
