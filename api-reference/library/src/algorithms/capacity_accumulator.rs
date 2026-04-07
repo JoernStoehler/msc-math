@@ -24,6 +24,7 @@
 ///
 /// Returned by [`CapacityAccumulator::finalize`]. Contains the best certified
 /// capacity (minimum action over all certified candidates) plus diagnostic fields.
+#[derive(Clone, Debug)]
 pub struct CapacityResult {
     pub capacity: f64,
     pub capacity_uncertain: f64,

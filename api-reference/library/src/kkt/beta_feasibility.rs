@@ -27,6 +27,7 @@
 /// - margin > +eps -> certified feasible (all beta_j > 0)
 /// - margin < -eps -> certified infeasible (no beta > 0 in the subspace)
 /// - |margin| <= eps -> ambiguous (Indeterminate)
+#[derive(Clone, Debug)]
 pub struct MarginResult {
     pub margin: f64,
     pub alpha: DVector<f64>,

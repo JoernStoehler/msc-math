@@ -28,6 +28,7 @@
 /// f64 approximation of Q for comparison with the numerical solver.
 ///
 /// Mathematical correspondence: [lem:kkt]
+#[derive(Clone, Debug)]
 pub struct ExactKktResult {
     pub beta: Vec<BigRational>,
     pub q_exact: BigRational,

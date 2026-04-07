@@ -30,6 +30,7 @@
 /// Exact rational data (`dual_vertices`, `vertices`, `incidence`, `adjacency`,
 /// `omega_signs`) is the source of truth for all discrete/combinatorial decisions.
 /// The f64 data (`dual_vertices_f64`, `vertices_f64`) is for numerical algorithms.
+#[derive(Clone, Debug)]
 pub struct Polytope4D {
     /* private fields */
 }
@@ -106,6 +107,7 @@ impl Polytope4D {
 }
 
 /// Errors from [`Polytope4D`] construction when invariants are violated.
+#[derive(Clone, Debug, PartialEq)]
 pub enum ConstructionError {
     TooFewFacets(usize),
     ZeroDualVertex(usize),

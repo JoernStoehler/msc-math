@@ -52,6 +52,21 @@ fn extract_docs(attrs: &[Attribute]) -> String {
     lines.join("\n")
 }
 
+/// Extract `#[derive(...)]` attributes, rendered as `#[derive(Trait1, Trait2)]`.
+fn extract_derives(attrs: &[Attribute]) -> String {
+    let mut derives = Vec::new();
+    for attr in attrs {
+        if attr.path().is_ident("derive") {
+            // Parse the token list inside derive(...) and render cleanly
+            if let syn::Meta::List(list) = &attr.meta {
+                let inner = normalise_tokens(&list.tokens.to_string());
+                derives.push(format!("#[derive({inner})]"));
+            }
+        }
+    }
+    derives.join("\n")
+}
+
 /// Render a syn::Signature to string via its ToTokens impl, then normalise whitespace.
 fn render_sig(sig: &syn::Signature) -> String {
     let ts: TokenStream = sig.to_token_stream();
@@ -398,8 +413,10 @@ impl<'ast> Visit<'ast> for Extractor {
         }
         let name = s.ident.to_string();
         let doc = extract_docs(&s.attrs);
+        let derives = extract_derives(&s.attrs);
         let fields = render_struct_fields(s);
-        let rendered = format!("pub struct {name} {{\n{fields}}}");
+        let derives_prefix = if derives.is_empty() { String::new() } else { format!("{derives}\n") };
+        let rendered = format!("{derives_prefix}pub struct {name} {{\n{fields}}}");
         self.result
             .items
             .push(ExtractedItem::Struct { name, rendered, doc });
@@ -414,8 +431,10 @@ impl<'ast> Visit<'ast> for Extractor {
         }
         let name = e.ident.to_string();
         let doc = extract_docs(&e.attrs);
+        let derives = extract_derives(&e.attrs);
         let variants = render_enum_variants(e);
-        let rendered = format!("pub enum {name} {{\n{variants}}}");
+        let derives_prefix = if derives.is_empty() { String::new() } else { format!("{derives}\n") };
+        let rendered = format!("{derives_prefix}pub enum {name} {{\n{variants}}}");
         self.result
             .items
             .push(ExtractedItem::Enum { name, rendered, doc });

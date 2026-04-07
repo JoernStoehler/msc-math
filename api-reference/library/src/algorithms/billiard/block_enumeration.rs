@@ -18,6 +18,7 @@
 /// Single blocks correspond to edge interiors of a polygon, pair blocks to vertices.
 /// [lem:sigma-structure]: each "bounce" consists of one or two consecutive facets
 /// of the same type (q or p).
+#[derive(Debug, Clone, Copy)]
 pub enum Block {
     Single(usize),
     Pair(usize, usize),

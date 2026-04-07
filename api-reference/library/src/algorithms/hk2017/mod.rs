@@ -33,6 +33,7 @@
 /// Access capacity fields via `.result.capacity` (no Deref — explicit field access).
 ///
 /// [alg:ehz]: result of exhaustive (S, sigma) enumeration.
+#[derive(Clone, Debug)]
 pub struct EhzResult {
     pub result: CapacityResult,
     pub best_subset: Vec<usize>,

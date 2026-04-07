@@ -38,6 +38,7 @@
 /// and error metrics for geometric validity.
 ///
 /// [lem:base-point-recovery]: recovery of base point b = gamma(0).
+#[derive(Clone, Debug)]
 pub struct OrbitRecovery {
     pub breakpoints: Vec<Vector4<f64>>,
     pub dwell_times: Vec<f64>,

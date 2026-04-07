@@ -26,6 +26,7 @@
 ///
 /// Returned when the polytope is not a valid Lagrangian product: either a facet
 /// has mixed q/p normal components, or there are too few facets of one type.
+#[derive(Debug, Clone)]
 pub enum BilliardError {
     NotLagrangianProduct { facet: usize, normal: [f64; 4], },
     TooFewFacets { facet_type: &'static str, count: usize, },
@@ -40,6 +41,7 @@ pub enum BilliardError {
 /// Access capacity fields via `.result.capacity` (no Deref -- explicit field access).
 ///
 /// [thm:billiard-characterization]: result of block-structured enumeration.
+#[derive(Clone, Debug)]
 pub struct BilliardResult {
     pub result: crate::algorithms::capacity_accumulator::CapacityResult,
     pub bounce_count: usize,

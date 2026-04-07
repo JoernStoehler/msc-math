@@ -18,6 +18,7 @@
 ///
 /// Contains vertex-facet incidence, edges, and ridges. Computed from the
 /// exact rational incidence matrix on [`Polytope4D`].
+#[derive(Clone, Debug)]
 pub struct Skeleton {
     pub vertex_facets: Vec<Vec<usize>>,
     pub edges: Vec<[usize; 2]>,
@@ -52,6 +53,7 @@ impl Skeleton {
 ///
 /// The intersection of two facets, forming a convex polygon in R^4.
 /// Vertices are sorted into convex polygon order within their 2D affine hull.
+#[derive(Clone, Debug)]
 pub struct Ridge {
     pub facets: [usize; 2],
     pub vertices: Vec<usize>,

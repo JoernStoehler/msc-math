@@ -61,6 +61,7 @@ pub const EPS_Q_POSITIVE: f64 = 1e-15;
 /// Every variant corresponds to a mathematical proposition about the orbit.
 /// There is no "error" variant — the solver either produces a mathematical
 /// result or panics (bug). See `.claude/rules/rust.md` error handling convention.
+#[derive(Clone, Debug)]
 pub enum KktOutcome {
     Feasible(KktResult),
     Infeasible,
@@ -93,6 +94,7 @@ impl KktOutcome {
 /// equivalently ∂A/∂h_k = ν·β_k/(2Q²) in the asymmetric convention.
 ///
 /// See [lem:q-error-bound]: |Q(beta_0) - q_corrected| <= q_error_bound.
+#[derive(Clone, Debug)]
 pub struct KktResult {
     pub beta: Vec<f64>,
     pub mu: Vec<f64>,

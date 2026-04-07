@@ -19,6 +19,7 @@
 ///
 /// Used to classify symplectic form values ω₀(y_i, y_k) without
 /// floating-point ambiguity.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum Sign {
     Plus,
     Minus,

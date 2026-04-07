@@ -15,6 +15,7 @@
 //! Mathematical correspondence: [def:ehz-capacity], [thm:hko-counterexample]
 
 /// A polytope with a known capacity value and source reference.
+#[derive(Clone, Debug)]
 pub struct KnownPolytope {
     pub polytope: Polytope4D,
     pub capacity: f64,

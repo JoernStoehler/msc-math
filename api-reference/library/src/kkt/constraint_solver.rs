@@ -18,6 +18,7 @@
 ///
 /// The full solution set is the affine subspace { x0 + V alpha : alpha in R^k },
 /// where k = m - rank(C).
+#[derive(Clone, Debug)]
 pub struct ConstraintSolution {
     pub x0: DVector<f64>,
     pub null_basis: DMatrix<f64>,

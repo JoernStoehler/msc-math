@@ -30,6 +30,7 @@ pub const DEFAULT_MAX_SEGMENTS: usize = 50;
 pub const DEFAULT_CLOSURE_TOL: f64 = 1e-6;
 
 /// A single linear segment of a Reeb trajectory, lying on one facet.
+#[derive(Clone, Debug)]
 pub struct ReebSegment {
     pub start: Vector4<f64>,
     pub end: Vector4<f64>,
@@ -40,6 +41,7 @@ pub struct ReebSegment {
 ///
 /// Each segment follows the Reeb direction J_0 a_i on its facet. Consecutive
 /// segments share endpoints (continuity at ridges).
+#[derive(Clone, Debug)]
 pub struct ReebTrajectory {
     pub segments: Vec<ReebSegment>,
     pub closed: bool,

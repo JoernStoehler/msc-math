@@ -17,6 +17,7 @@
 ///
 /// [lem:lagrangian-facets]: every facet of a Lagrangian product K_q x_L K_p
 /// is either a q-facet or a p-facet.
+#[derive(Debug, Clone)]
 pub struct FacetClassification {
     pub q_indices: Vec<usize>,
     pub p_indices: Vec<usize>,

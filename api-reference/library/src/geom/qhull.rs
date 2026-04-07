@@ -11,6 +11,7 @@
 //! Mathematical correspondence: [def:volume]
 
 /// Errors from qhull subprocess interaction.
+#[derive(Debug)]
 pub enum QhullError {
     ComputationFailed(String),
     QhullNotInstalled,

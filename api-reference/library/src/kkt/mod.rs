@@ -42,6 +42,7 @@ pub struct QP {
 /// **Critical invariant:** False is never returned unless certified infeasible.
 /// When in doubt, return Indeterminate. The accumulator handles resolution
 /// (e.g. via rational fallback).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Verdict {
     True,
     False,
@@ -52,6 +53,7 @@ pub enum Verdict {
 ///
 /// Q is always valid when verdict != False. beta is the best point found.
 /// margin = min_k beta_k quantifies clearance from the positivity boundary.
+#[derive(Clone, Debug)]
 pub struct Solution {
     pub verdict: Verdict,
     pub q: f64,

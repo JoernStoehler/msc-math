@@ -28,6 +28,7 @@
 //! Mathematical correspondence: [thm:sympl-invariance], [thm:conformality]
 
 /// Entry in the polytope catalog (no computed values yet).
+#[derive(Clone, Debug)]
 pub struct CatalogEntry {
     pub name: String,
     pub polytope: Polytope4D,
@@ -36,6 +37,7 @@ pub struct CatalogEntry {
 }
 
 /// Test polytope with precomputed volume and capacity values.
+#[derive(Clone, Debug)]
 pub struct TestPolytope {
     pub name: String,
     pub polytope: Polytope4D,

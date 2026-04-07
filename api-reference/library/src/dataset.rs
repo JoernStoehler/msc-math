@@ -15,6 +15,7 @@
 ///
 /// Contains the polytope definition (normals, heights), computed geometric
 /// quantities (volume, capacity, systolic ratio), and timing information.
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PolytopeRow {
     pub source: String,
     pub facet_count: usize,
@@ -45,6 +46,7 @@ impl PolytopeRow {
 ///
 /// Records rejection sampling statistics for random polytope generation
 /// at a given facet count and height range.
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AcceptanceRow {
     pub facet_count: usize,
     pub h_min: f64,

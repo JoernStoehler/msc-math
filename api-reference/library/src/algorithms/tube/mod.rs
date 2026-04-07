@@ -24,6 +24,7 @@
 /// Error type for the tube algorithm.
 ///
 /// Returned when the input polytope violates the algorithm's preconditions.
+#[derive(Debug, Clone)]
 pub enum TubeError {
     HasLagrangian2Face { facet_i: usize, facet_j: usize, },
     TooFewFacets(usize),
@@ -35,6 +36,7 @@ pub enum TubeError {
 /// diagnostic information about the search.
 ///
 /// Mathematical correspondence: [alg:tube]
+#[derive(Clone, Debug)]
 pub struct TubeResult {
     pub capacity: f64,
     pub best_sequence: Vec<usize>,
