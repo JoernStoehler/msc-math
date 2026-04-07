@@ -229,12 +229,12 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 ## [open] Code quality + alignment
 
 ### [active] Code cleanup (session launched 2026-04-07)
-- step_bound duplication: cell-widths vs gradient-ascent (missing omega_0 detection).
-- Products-vs-random split: every gradient experiment should split analysis by source dataset.
-- Wiggle strength justification: 5% from gradient-search (unjustified). cell-widths has per-facet data.
+- [done] step_bound duplication: enriched version (omega_0 + degeneration detection) extracted to exp-sys-landscape/src/lib.rs. cut-and-ascent gets inline copy.
+- [done] Products-vs-random split: already done — separate experiments each process one source dataset.
+- [done] Wiggle strength justification: 0.05 justified (~40% of narrowest median cell width 0.124, deliberately strong). Documented on all 4 constants.
+- [done] Draft `[lem:dual-vertex-qp]` proof: Lemma 37 in crates/main.pdf p11, wrapped in `\begin{unverified}`. Jörn review pending.
+- [done] math.tex stubs audit: 53 explicit stubs + 69 unverified blocks. No proofs lost in migration — stubs were created as stubs. Priority items: lem:cap-derivative, lem:vol-derivative, prop:prefilter-bound, GAP in prop:capacity-symplectic-product.
 - gradient-ascent + multiple-crossings overlap: consider deduplication.
-- math.tex stubs audit: scan `[TODO: JÖRN -` entries for lost proofs.
-- Draft `[lem:dual-vertex-qp]` proof (mechanical: substitute h=1, confirm |n|=1 never used).
 
 ### [active] Paranoia: numerical claims (session launched 2026-04-07)
 - Verify every numerical claim in experiment logbooks against actual JSONL data and code output.

@@ -42,6 +42,12 @@ Labels must be unique across all math.tex files in the repo.
 - Lagrange multipliers: μ (closure), ξ (normalization)
 - β ∈ R^S (facet-indexed)
 
+## Navigating the PDF
+
+After `latexmk`, `main.aux` maps labels to rendered numbers and pages:
+`grep 'lem:foo' main.aux` → `\newlabel{lem:foo}{{37}{11}{...}}` means Lemma 37, page 11.
+Use this to give Jörn precise PDF coordinates (absolute path + page + lemma number).
+
 ## Agent rules
 
 - Read math.tex before editing .rs files in the same module
