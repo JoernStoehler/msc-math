@@ -232,9 +232,10 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - [done] step_bound duplication: enriched version (omega_0 + degeneration detection) extracted to exp-sys-landscape/src/lib.rs. cut-and-ascent gets inline copy.
 - [done] Products-vs-random split: already done — separate experiments each process one source dataset.
 - [done] Wiggle strength justification: 0.05 justified (~40% of narrowest median cell width 0.124, deliberately strong). Documented on all 4 constants.
-- [done] Draft `[lem:dual-vertex-qp]` proof: Lemma 37 in crates/main.pdf p11, wrapped in `\begin{unverified}`. Jörn review pending.
+- [done] Draft `[lem:dual-vertex-qp]` proof: Lemma 37 in crates/main.pdf p11. Jörn approved, promoted from unverified.
 - [done] math.tex stubs audit: 53 explicit stubs + 69 unverified blocks. No proofs lost in migration — stubs were created as stubs. Priority items: lem:cap-derivative, lem:vol-derivative, prop:prefilter-bound, GAP in prop:capacity-symplectic-product.
-- gradient-ascent + multiple-crossings overlap: consider deduplication.
+- [future] gradient-ascent + multiple-crossings overlap: dedup blocked until gradient ascent stabilizes into library. Until then, copy-edit between experiments is correct.
+- Note: step_bound upgrade (omega_0 detection) changes experiment behavior if re-run. Existing JSONL not regenerated.
 
 ### [active] Paranoia: numerical claims (session launched 2026-04-07)
 - Verify every numerical claim in experiment logbooks against actual JSONL data and code output.
