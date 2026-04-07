@@ -7,6 +7,12 @@
             "command": "rust-analyzer",
             "extensionToLanguage": {
                 ".rs": "rust"
+            },
+            "initializationOptions": {
+                "diagnostics": {
+                    "enable": false
+                },
+                "checkOnSave": false
             }
         }
     }
