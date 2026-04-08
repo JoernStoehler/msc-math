@@ -42,7 +42,7 @@ struct TestCase {
 
 fn load_testdata(filename: &str) -> Vec<TestCase> {
     let path = format!(
-        "{}/verify-numerics/testdata/{}",
+        "{}/error-bounds/testdata/{}",
         env!("CARGO_MANIFEST_DIR"),
         filename,
     );

@@ -54,13 +54,13 @@ For each polytope: c_EHZ via instrumented HK2017 (returns optimal beta, lambda, 
 
 ## Findings
 
-1. **Ridge min|omega| vs sys: weak negative correlation (rho = -0.22, p = 8e-12).** Polytopes with smaller global min|omega| tend to have slightly higher sys. However, the scatter is very wide, and this is likely confounded by facet count: more facets produce more ridge pairs (more chances for small |omega| by chance), and facet count itself correlates positively with sys (rho = +0.37).
+1. **Ridge min|omega| vs sys: weak negative correlation (rho = -0.20, p = 6e-10).** Polytopes with smaller global min|omega| tend to have slightly higher sys. However, the scatter is very wide, and this is likely confounded by facet count: more facets produce more ridge pairs (more chances for small |omega| by chance), and facet count itself correlates positively with sys (rho = +0.37).
 
-2. **Orbit-specific omega features: NO correlation with sys.** orbit_omega_min vs sys: rho = -0.02, p = 0.61 (not significant). orbit_omega_mean vs sys: rho = +0.00, p = 0.99 (not significant). The omega values on the optimal orbit do not predict sys.
+2. **Orbit-specific omega features: NO correlation with sys.** orbit_omega_min vs sys: rho = -0.01, p = 0.82 (not significant). orbit_omega_mean vs sys: rho = +0.00, p = 0.99 (not significant). The omega values on the optimal orbit do not predict sys.
 
 3. **Orbit prefers LARGE omega transitions (opposite of hypothesis).** Orbit ridges |omega|: median = 0.54, mean = 0.52. Non-orbit ridges |omega|: median = 0.36, mean = 0.40. The orbit preferentially uses transitions with large |omega|, consistent with Q-maximization: the optimizer seeks large omega terms to maximize Q.
 
-4. **Gradient analysis: no directional signal.** <grad_{n_k} sys, grad_{n_k} omega_0(n_k, n_i)> for orbit facets: median = +0.0006, fraction negative = 49.5%. Essentially symmetric around zero. The |omega| vs dot product scatter shows a "trumpet" shape (variance increases at small |omega|), but remains centered on zero.
+4. **Gradient analysis: no directional signal.** <grad_{n_k} sys, grad_{n_k} omega_0(n_k, n_i)> for orbit facets: median = +0.0002, fraction negative = 49.8%. Essentially symmetric around zero. The |omega| vs dot product scatter shows a "trumpet" shape (variance increases at small |omega|), but remains centered on zero.
 
 5. **Why the hypothesis fails:** The KKT optimizer compensates — it adjusts beta* and selects orbits that maximize Q despite small individual omega_0 contributions. Small omega_0 values on individual ridges do not translate into small Q (or large capacity) because the optimizer redistributes weight across the orbit's transitions.
 

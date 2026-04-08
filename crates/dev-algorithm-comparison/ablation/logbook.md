@@ -81,7 +81,7 @@ The binary copies `solve_kkt_svd_path` using the old gap-ratio approach (SVD_GAP
 
 5. **Lagrangian products**: Similar but less dramatic A2 speedup (~33x at F=8) due to structured normals having more omega_0 = 0 pairs.
 
-6. **Regression cases all pass**: Degenerate KKT (null-space search), LU fast path, non-simple polytope handling all verified. Expected capacity values: cut simplex 1.650485, hypercube 4.0, lag △×□ 1.5, lag □×□ 2.0.
+6. **Regression cases all pass**: Degenerate KKT (null-space search), LU fast path, non-simple polytope handling all verified. Expected capacity values: cut simplex 1.650485, hypercube 4.0, lag △×□ 2.121 (= 3√2/2, run.rs line 902), lag □×□ 2.0.
 
 ### Iteration count tables
 

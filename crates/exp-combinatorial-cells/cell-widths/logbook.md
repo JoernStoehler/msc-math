@@ -25,16 +25,16 @@ uv run analyze.py
 
 | Metric | Orbit facets | Non-orbit facets |
 |--------|-------------|-----------------|
-| Probes | 8387 | 2810 |
-| Median t_max | 0.258 | 0.124 |
+| Probes | 8389 | 2810 |
+| Median t_max | 0.257 | 0.121 |
 
 (profiling JSONL, t_max < 100, cell_orbit_vs_nonorbit.png)
 
 **Orbit facets have 2x wider cells than non-orbit facets.** Non-orbit facets are not constrained by the optimal Reeb orbit and can be closer to degeneracy.
 
-**Cells are highly anisotropic:** median max/min t_max ratio within a facet's R^4 is 8.3x, with extreme outliers up to 9051x (cell_anisotropy.png).
+**Cells are highly anisotropic:** median max/min t_max ratio within a facet's R^4 is 8.4x, with extreme outliers up to 7040x (cell_anisotropy.png).
 
-**Event types in per-facet probes:** incidence flips dominate (69.5%), omega_0 flips 30.5% (profiling_event_types.png). Per-facet directions move only one dual vertex, so incidence flips are more common than in global probes.
+**Event types in per-facet probes:** incidence flips dominate (69.1%), omega_0 flips 30.9% (profiling_event_types.png). Per-facet directions move only one dual vertex, so incidence flips are more common than in global probes.
 
 **Cell width decreases with F** for both orbit and non-orbit facets (cell_width_by_F.png).
 

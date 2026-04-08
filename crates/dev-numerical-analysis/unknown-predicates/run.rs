@@ -131,7 +131,7 @@ fn main() {
             }
 
             let row = Row {
-                dataset: "random-sample".to_string(),
+                dataset: "random-sweep".to_string(),
                 name: format!("random_F{facet_count}_{i}"),
                 algorithm: "ehz_pruned".to_string(),
                 facet_count,

@@ -25,16 +25,16 @@ uv run analyze.py
 
 | Event type | Count | Fraction |
 |------------|-------|----------|
-| Incidence flip | 556 | 56.7% |
-| omega_0 flip | 424 | 43.3% |
+| Incidence flip | 578 | 59.0% |
+| omega_0 flip | 402 | 41.0% |
 
 (anatomy JSONL, 980 rows, 0 unbounded)
 
 ### RQ2: sys is continuous; orbits switch at 3% of boundaries
 
-sys is continuous at all 882 tested boundaries: max |delta_sys| = 2.91e-4 (crossing JSONL, boundary_sys_continuity.png).
+sys is continuous at all 882 tested boundaries: max |delta_sys| = 8.69e-5 (crossing JSONL, boundary_sys_continuity.png).
 
-Orbit switch rate: 26/882 (2.9%).
+Orbit switch rate: 28/882 (3.2%).
 
 ### RQ4: Boundary density
 

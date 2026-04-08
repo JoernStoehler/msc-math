@@ -66,4 +66,4 @@ Output is printed to stdout. Captured output is stored in `kkt_inertia_output.tx
 
 ## Data regeneration (2026-03-26)
 
-Regenerated against current library (post dual-vertex migration). Now 8 mismatches (was 5), all in hko_pentagon, all at machine-epsilon eigenvalue thresholds. Same pattern as before — no new failure mode.
+Regenerated against current library (post dual-vertex migration). Now 5 mismatches, all in hko_pentagon, all at machine-epsilon eigenvalue thresholds. Same pattern as before — no new failure mode.
