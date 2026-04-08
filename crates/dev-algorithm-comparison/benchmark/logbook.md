@@ -148,16 +148,16 @@ Fitted exponential T(F) = a · b^F on capacity-only timing (from `benchmark.json
 
 | Algorithm | a | b | R² |
 |-----------|---|---|-----|
-| HK2017 pruned (random) | 1.92e-8 | 4.26 | 0.979 |
-| HK2017 pruned (Lagrangian) | 2.16e-7 | 3.55 | 0.992 |
-| HK2017 unpruned (random, F ≤ 7) | 2.82e-8 | 6.74 | 1.000 |
-| Billiard (Lagrangian) | 5.72e-8 | 3.74 | 0.997 |
+| HK2017 pruned (random) | 3.16e-5 | 3.87 | 0.973 |
+| HK2017 pruned (Lagrangian) | 7.03e-5 | 4.46 | 0.994 |
+| HK2017 unpruned (random, F ≤ 7) | 2.63e-5 | 6.73 | 1.000 |
+| Billiard (Lagrangian) | 2.57e-5 | 4.31 | 0.997 |
 
-Growth rates: ~4x/facet (pruned random), ~3.5-3.7x/facet (Lagrangian/billiard), ~7x/facet (unpruned).
+Growth rates: ~3.9x/facet (pruned random), ~4.3-4.5x/facet (Lagrangian/billiard), ~6.7x/facet (unpruned).
 
-Pruned vs unpruned speedup (median-based): 9.3x (F=5), 17.3x (F=6), 43.4x (F=7). (benchmark.jsonl, median-based)
+Pruned vs unpruned speedup (median-based): 8.9x (F=5), 17.0x (F=6), 43.5x (F=7). (benchmark.jsonl, median-based)
 
-Billiard vs HK2017 pruned on Lagrangian products: billiard is 2-3x faster (ratio 0.32-0.50). (benchmark.jsonl) Used for its polynomial-time guarantee on larger Lagrangian products.
+Billiard vs HK2017 pruned on Lagrangian products: billiard is 3-6x faster (ratio 0.17-0.33). (benchmark.jsonl) Used for its polynomial-time guarantee on larger Lagrangian products.
 
 ### Practical limits
 

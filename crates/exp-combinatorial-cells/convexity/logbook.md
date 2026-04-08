@@ -8,7 +8,7 @@ Tests whether combinatorial-type cells in dual-vertex space are convex. Samples 
 
 ## Status
 
-**Complete (2026-03-27).** 140 polytopes, 2721 successful midpoint constructions out of 2800 tests. Split into standalone experiment.
+**Complete (2026-03-27).** 140 polytopes, 2711 successful midpoint constructions out of 2800 tests. Split into standalone experiment.
 
 ## How to run
 
@@ -23,18 +23,18 @@ uv run analyze.py
 
 | Check | Failure rate |
 |-------|-------------|
-| Incidence change | 0.8% |
-| omega_0 sign change | 52.5% |
-| Transition matrix change | 57.5% |
+| Incidence change | 0.85% |
+| omega_0 sign change | 52.6% |
+| Transition matrix change | 57.6% |
 
 (convexity JSONL, midpoint_construction_ok=true rows, cell_convexity.png)
 
-**Cells are NOT convex.** 57.5% of midpoints have a different transition matrix. The transition matrix determines which cycles are feasible in HK2017.
+**Cells are NOT convex.** 57.6% of midpoints have a different transition matrix. The transition matrix determines which cycles are feasible in HK2017.
 
-Incidence is almost always preserved (99.2%) -- incidence boundaries are approximately hyperplanes.
+Incidence is almost always preserved (99.15%) -- incidence boundaries are approximately hyperplanes.
 
-**Failure rate increases sharply with F:** ~0% at F=5, ~50% at F=6, ~65% at F>=8.
+**Failure rate increases sharply with F:** ~0% at F=5, ~50% at F=6-7, ~67% at F>=8.
 
-**Non-convexity is entirely a product phenomenon.** Random polytopes: 0/1156 (0%) transition failures. Lagrangian products: 1565/1565 (100%). Products have special omega_0 relationships between cross-factor facet pairs (near-zero values that flip easily under perturbation).
+**Non-convexity is entirely a product phenomenon.** Random polytopes: 1/1150 (0.1%) transition failures. Lagrangian products: 1561/1561 (100%). Products have special omega_0 relationships between cross-factor facet pairs (near-zero values that flip easily under perturbation).
 
 **Implications for optimization:** Non-convexity means line searches cannot assume the combinatorial type is constant along a straight-line interpolation between two interior points.
