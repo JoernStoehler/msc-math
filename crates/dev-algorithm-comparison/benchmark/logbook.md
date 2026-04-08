@@ -148,12 +148,12 @@ Fitted exponential T(F) = a · b^F on capacity-only timing (from `benchmark.json
 
 | Algorithm | a | b | R² |
 |-----------|---|---|-----|
-| HK2017 pruned (random) | 3.16e-5 | 3.87 | 0.973 |
-| HK2017 pruned (Lagrangian) | 7.03e-5 | 4.46 | 0.994 |
+| HK2017 pruned (random) | 1.85e-5 | 4.21 | 0.978 |
+| HK2017 pruned (Lagrangian) | 6.74e-5 | 4.46 | 0.999 |
 | HK2017 unpruned (random, F ≤ 7) | 2.63e-5 | 6.73 | 1.000 |
-| Billiard (Lagrangian) | 2.57e-5 | 4.31 | 0.997 |
+| Billiard (Lagrangian) | 2.56e-5 | 4.32 | 0.998 |
 
-Growth rates: ~3.9x/facet (pruned random), ~4.3-4.5x/facet (Lagrangian/billiard), ~6.7x/facet (unpruned).
+Growth rates: ~4.2x/facet (pruned random), ~4.3-4.5x/facet (Lagrangian/billiard), ~6.7x/facet (unpruned).
 
 Pruned vs unpruned speedup (median-based): 8.9x (F=5), 17.0x (F=6), 43.5x (F=7). (benchmark.jsonl, median-based)
 

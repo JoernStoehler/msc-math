@@ -95,7 +95,7 @@ Candidate orderings (S, sigma) admitted by each adjacency filter (simple polytop
 | Lagrangian 4x4 (F=8, mean) | 6,779 | 5,556 | 569 | 569 |
 | Hypercube (F=8) | 15,584 | 5,556 | 1,970 | 1,970 |
 
-A1 provides moderate pruning; the directed omega_0 condition (A2) eliminates 79-99.7% of remaining candidates. A2 and A3 agree on all simple polytopes.
+A1 provides moderate pruning; the directed omega_0 condition (A2) eliminates 65-99.7% of remaining candidates. A2 and A3 agree on all simple polytopes.
 
 A2 vs A3 candidate orderings for non-simple polytopes:
 
