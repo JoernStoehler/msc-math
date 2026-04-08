@@ -73,13 +73,13 @@ The binary copies `solve_kkt_svd_path` using the old gap-ratio approach (SVD_GAP
 
 1. **Agreement**: All four variants agree on all 54 polytopes (max absolute difference < 1e-8).
 
-2. **Timing (random generic polytopes)**: A2 speedup over A0 grows exponentially with F: ~8x at F=5, ~133x at F=8, ~1078x at F=10. The A2/A0 iteration ratio fits 28.3 * exp(-1.05 * F) with R^2 = 0.96, meaning each additional facet reduces the pruned search space by ~2.9x.
+2. **Timing (random generic polytopes)**: A2 speedup over A0 grows exponentially with F: ~9x at F=5, ~94x at F=8, ~592x at F=10. The A0/A2 time speedup fits 0.08 * exp(0.88 * F) with R^2 = 0.99, meaning each additional facet multiplies the speedup by ~2.4x.
 
 3. **A3 = A2 on simple polytopes**: On all 48 simple test polytopes, A3 provides zero additional pruning beyond A2. By Ridge Sufficiency (Corollary in math.tex), vertex-adjacent facets of simple polytopes share ridges, making the LP check redundant.
 
 4. **A3 != A2 on non-simple polytopes**: All 6 non-simple polytopes (5 in Non-simple group + 1 regression cut simplex) show A3 pruning beyond A2. Cut simplices (F=6): 15% reduction (39 -> 33 candidates). Bipyramids (F=10): 96-98% reduction (5-14k -> 213 candidates), because bipyramid apices lie on 5 facets, creating many vertex-adjacent but infeasible transitions.
 
-5. **Lagrangian products**: Similar but less dramatic A2 speedup (~33x at F=8) due to structured normals having more omega_0 = 0 pairs.
+5. **Lagrangian products**: Similar but less dramatic A2 speedup (~63x at F=8) due to structured normals having more omega_0 = 0 pairs.
 
 6. **Regression cases all pass**: Degenerate KKT (null-space search), LU fast path, non-simple polytope handling all verified. Expected capacity values: cut simplex 1.650485, hypercube 4.0, lag △×□ 2.121 (= 3√2/2, run.rs line 902), lag □×□ 2.0.
 
@@ -89,13 +89,13 @@ Candidate orderings (S, sigma) admitted by each adjacency filter (simple polytop
 
 | Polytope | A0 | A1 | A2 | A3 |
 |----------|---:|---:|---:|---:|
-| Random generic (F=8, mean) | 16,064 | 5,347 | 136 | 136 |
-| Random generic (F=9, mean) | 125,664 | 31,633 | 391 | 391 |
-| Random generic (F=10, mean) | 1,112,073 | 68,985 | 531 | 531 |
-| Lagrangian 4x4 (F=8) | 16,064 | 5,556 | 569 | 569 |
-| Hypercube (F=8) | 16,064 | 5,556 | 1,970 | 1,970 |
+| Random generic (F=8, mean) | 1,023 | 5,347 | 136 | 136 |
+| Random generic (F=9, mean) | 5,964 | 31,633 | 391 | 391 |
+| Random generic (F=10, mean) | 14,707 | 68,985 | 531 | 531 |
+| Lagrangian 4x4 (F=8, mean) | 6,779 | 5,556 | 569 | 569 |
+| Hypercube (F=8) | 15,584 | 5,556 | 1,970 | 1,970 |
 
-A1 provides moderate pruning; the directed omega_0 condition (A2) eliminates 87-99.95% of remaining candidates. A2 and A3 agree on all simple polytopes.
+A1 provides moderate pruning; the directed omega_0 condition (A2) eliminates 79-99.7% of remaining candidates. A2 and A3 agree on all simple polytopes.
 
 A2 vs A3 candidate orderings for non-simple polytopes:
 
