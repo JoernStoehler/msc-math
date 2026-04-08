@@ -8,11 +8,72 @@ Reader: thesis advisors (Kai Cieliebak, Elizabeth Gaar) — mathematicians famil
 
 ## Part 0: Problem Statement
 
-### 0a: Notation and prerequisites
+### 0a: Standard Symplectic Geometry Setup
 - Define ω₀ (standard symplectic form on R⁴), J₀
-- Define polytope K via dual vertex set a_1,...,a_F ∈ R⁴; irredundant, 0 ∈ int(K)
-- K = {x : a_i^T x ≤ 1}
-- State EHZ capacity definition: c_EHZ(K) = min action over closed Reeb orbits on ∂K (cite Clarke, HZ)
+- State EHZ capacity definition for smooth convex bodies
+  - Reeb vector field on \partial K
+  - Reeb orbits: closed trajectories of the Reeb flow
+  - Action of an orbit = ∫_{orbit} λ, where λ is the Liouville 1-form
+  - c_EHZ(K) = minimum of actions of Reeb orbits on \partial K
+  - Theorem: there is at least one Reeb orbit, the minimum is achieved
+- State Viterbo Conjecture: sys(K) := c_EHZ(K)^2 / (2 vol(K)) \leq 1
+  - made in 2000 [TODO: check]
+  - disproven in HKO2024 via example for a polytope (which has smoothings, so smooth counterexamples also exist)
+
+- Define polytope K via dual vertex set a_1,...,a_F ∈ R⁴
+  - star-shaped with respect to 0, i.e. 0 \in int(K), automatically satisfied in this definition
+  - bounded, which is equivalent to 0 \in int(K^o); 0 \in boundary(K^o) would be unbounded
+  - no a_i is redundant, i.e. the a_i are the vertices of the dual polytope K^o
+  - K = {x : a_i^T x ≤ 1} \subset R^4
+- Define dual polytope K^o = conv{a_1,...,a_F}
+  - vertices <-> dual vertices
+- Define 0,1,2,3-faces
+- Define gauge function g_K(x) = min{λ ≥ 0 : x ∈ λK} = max_i=1^F a_i^T x
+- Define support function h_K(v) = max_{x∈K} v^T x = g_{K^o}(v)
+
+- State EHZ capacity definition for polytopes
+  - constant Reeb vectors on polytope facets, multiple vectors on 0,1,2-faces where multiple 3-facets meet, use the convex hull as Reeb vector set
+  - generalized Reeb trajectories/orbits: take velocities from the Reeb vector set available at each point in time, curves are now absolutely continuous in W^{1,2}, not necessarily smooth, not necessarily piecewise linear
+  - action = ∫ λ as before, well-defined
+  - c_EHZ(K) = minimum action of a generalized Reeb orbit on \partial K
+  - Theorem (implied by another, later theorem): there is a generalized Reeb orbit, the minimum is taken
+
+- HK2017 theorem (in our notation):
+  A_min = 1/2 * 1/ max_{σ} max_{β≥0, \sum_i a_i β_i = 0 (closed), \sum_i β_i = 1 (normalized)} Q(\beta,\sigma)
+  Q(\beta,\sigma) = \sum_{i < j} β_σ(i) β_σ(j) \omega_0(a_{σ(i)}, a_{σ(j)}) (action)
+- Theorem (ours): Any argmax can be turned into a minimum action Reeb orbit:
+  \dot\gamma(t \in [t_i, t_{i+1}]) = 2 J_0 a_{σ(i)} for i=1,...,F (constant velocity = Reeb vector of facet σ(i))
+  t_{i+1} - t_i = β_σ(i) (time increment)
+  gamma(0) = ... [TODO: look up formula we derived (new result)]
+
+- Proof of the HK2017 theorem: reproduced and simplified/written up more nicely
+  - clarke dual action principle -> surprising theorem: there is a minimizer \gamma which is piecewise linear, with pure Reeb vectors as velocities instead of convex combinations, and each Reeb vector is used for a single contiguous time interval or for zero time.
+  - define: simple Reeb orbit = ...
+  - Lemma: action(Reeb orbit) = period(Reeb orbit)
+  - Lemma: shoelace formula: action(piecewise linear curve) $= sum_{i<j} 1/2 (t_{i+1}-t_i)(t_{j+1}-t_j) ω₀(velocity_i, velocity_j)$
+  - Our Theorem: given simple Reeb orbit \gamma, define (\sigma,\beta):
+    - wlog t=0 is a breakpoint
+    - call breakpoints t_1 \leq t_2 \leq ... ≤ t_F = T ; insert zero-length intervals to reach the full count F for convenience in notation
+    - σ(i) = Reeb vector index on (t_i, t_{i+1})
+    - β_σ(i) = (t_{i+1} - t_i) / T
+    - thus: \sum_i \beta_i = 1 (normalization)
+    - thus: \sum_i a_i β_i = 1/T \sum_i a_i (t_{i+1} - t_i) = 1/T \int_0^T 1/2 J_0^{-1} \dot\gamma(t) dt = 0 (closed)
+    - then A(gamma)=T [lemma]
+    - $Q(β,σ) = 1/T^2 sum_{i<j} (t_{i+1}-t_i)(t_{j+1}-t_j) 1/4 ω₀(2 J_0 a_{σ(i)}, 2 J_0 a_{σ(j)}) = 1/T^2 1/2 A(gamma) = 1/2 / A(gamma)$
+    - Thus: $A(gamma) = 1/2 * 1/Q(β,σ)$
+  - Our Theorem: reverse: given (σ,β), with Q(β,σ) > 0, define \gamma:
+    - T = 1/2 * 1/Q(β,σ)
+    - t_{i+1} - t_i = T β_σ(i)
+    - \dot\gamma(t ∈ [t_i, t_{i+1}]) = 2 J_0 a_{σ(i)}
+    - we get closedness: \sum_i a_i β_i = 0 → \int_0^T 1/2 J_0^{-1} \dot\gamma(t) dt = 0 → gamma(T) = gamma(0)
+    - we get per shoelace formula the action: A(gamma) = 1/2 * 1/Q(β,σ) = T
+    - tricky part: picking gamma(0), and showing \gamma(t) \in \partial(K) ; requires that (σ,β) is a maximizer, not just any (σ,β) with Q(β,σ) > 0
+    - Clarke dual action principle -> 
+    
+
+
+- Our algorithm
+
 - State HK2017 theorem (with citation, without proof): the minimum-action simple Reeb orbit achieves c_EHZ, and corresponds to a maximizer of the combinatorial QP below
 
 ### 0b: The combinatorial QP
