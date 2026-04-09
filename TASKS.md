@@ -52,6 +52,11 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 - Non-smooth second-order sufficiency proof sketch needs rigor check.
 - `crates/exp-hko-local-maximum/second-order/math.tex`
 
+### [future] Higher-F perturbation validation (F=10→12, F=10→13)
+- RESULTS.md claims empirical validation "up to 13-facet" — currently aspirational, only 11-facet done
+- Extends facet-splitting and cut-and-ascent to add 2-3 facets simultaneously
+- Suggested in `crates/exp-hko-local-maximum/cut-and-ascent/logbook.md` line 40
+
 ### [future] F-refinement convergence (increasing F as smooth approximation)
 
 ### [future] Convex-body direction (Minkowski smoothing K + eps*B^4)
