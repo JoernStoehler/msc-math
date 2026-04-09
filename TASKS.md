@@ -4,11 +4,12 @@ Unified tracker for thesis, experiments, and infrastructure.
 Format: `## [status] Group` / `### [status] [date] Item`. Body only when header isn't enough.
 See `.claude/rules/tasks.md` for full conventions. Run `bash scripts/tasks-toc.sh` for section index.
 
+**What the thesis should say:** `RESULTS.md`.
 **Priority:** Thesis coherence + experiment quality > code refactors. Code refactors only matter if they unblock thesis content or experiment correctness.
 **Maintenance:** Record decisions and reasons — these can't be derived later. Don't cache derivable state (build status, test counts) — run the command instead.
 **Dependencies:** thesis/ is stale and will be restructured — most thesis work is blocked on restructuring decisions. Work on crates/ (code, math.tex, experiments) is independent and can proceed now.
 
-## [open] Q1: HKO2024 local maximality
+## [open] HKO2024 local maximality
 
 Main conjecture: HKO2024 is a local maximum of the systolic ratio. Potentially publishable alongside thesis.
 Key files: `crates/exp-hko-local-maximum/`, `thesis/handwritten-notes.md`.
@@ -59,7 +60,7 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 ### [future] Structural explanation for 0 in conv
 - Why does pentagon geometry force this? Golden ratio, order-10 symmetry.
 
-## [open] Q2: Novel sys>1 polytopes
+## [open] Novel sys>1 polytopes
 
 Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the only sys>1 case.
 
@@ -94,7 +95,7 @@ Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the o
 ### [future] Analytical formula for sys(P_5 x R(theta) P_5)
 - Kai asked for this. Requires by-hand orbit analysis guided by empirical data.
 
-## [open] Q3: sys landscape structure
+## [open] sys landscape structure
 
 sys as a continuous function on polytope space, no privileged threshold.
 
@@ -121,7 +122,7 @@ sys as a continuous function on polytope space, no privileged threshold.
 - Gradient flow convergence, local maxima below sys=1, random noise effects.
 - Partial data in gradient-ascent experiments.
 
-## [open] Q4: Computing capacity better
+## [open] Computing capacity
 
 Instrument development. Results promote to `crates/library/`.
 
@@ -240,6 +241,9 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 ### [active] Paranoia: numerical claims (session launched 2026-04-07)
 - Verify every numerical claim in experiment logbooks against actual JSONL data and code output.
 - Flag mismatches, fix obvious ones, report the rest.
+- Remaining (needs Jörn decision, then handoff to agent):
+  - `dev-capacity-validation/orbit-recovery/`: 4 polytopes missing from dataset (112→108), `solution_dim` hardcoded to 0 in run.rs, error magnitudes from different algorithm version
+  - `dev-algorithm-comparison/profiling/`: per-test durations zeroed in JSONL, 3 historical runs absent — data pipeline broken
 
 ### [active] Paranoia: conjectures + interpretations (session launched 2026-04-07)
 - Flag-only. Audit all conjectures, "we believe" statements, causal claims, unhedged conclusions.
@@ -338,27 +342,9 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 ### [done] [2026-04] Orchestration infrastructure
 - `/orchestrate` skill, delegation guide, cheatsheet.
 
-## [done] Completed tasks (historical)
+## [done] Historical
 
-### [done] [2026-03-19] migration-merge (commit 6680d0e)
-### [done] [2026-03-22] test-data-pipeline
-### [done] [2026-03-22] logbook-migration
-### [done] [2026-03-22] migration-cleanup (commit f073e13)
-### [done] [2026-03-17] convention-contradiction
-### [done] [2026-03-14] reeb-vector-audit
-### [done] [2026-03-22] review-agent-split
-### [done] [2026-03-22] experiment-code-extraction (~2035 LOC removed from 4 experiments)
-### [done] [2026-03-23] reproduce-decentralization (deleted reproduce.sh, 19 logbooks have "How to run")
-### [done] [2026-03-24] meta-layer-refactor
-### [done] [2026-03-26] procedural-rewrite (5 rules, 1 output style, 8 skills, 9 agents)
-### [done] [2026-03-28] code-math-correspondence-audit (170 cross-refs, 3 mismatches in saddle_point_solver.rs)
-### [done] [2026-03-28] q-error-threshold (subsumed by verify-numerics)
-### [done] [2026-03-28] convention-violations (catch_unwind removed, panic comments rewritten)
-### [done] [2026-04-03] experiment-reorg (dev-*/exp-* lifecycle split, 3 experiments -> 10 focused units)
-### [done] [2026-04-04] math.tex content audit (13 files audited, 9 stubbed, 4 trimmed, -1142 lines)
-### [done] [2026-04-06] collaboration-skill (superseded by orchestration-pattern-test)
-### [done] [2026-04-03] gradient-search, sensitivity-analysis, large-scale-descent (deleted, superseded)
-### [done] [2026-04-04] boundary-crossing-search (split into gradient-ascent-general + gradient-ascent-products)
+19 infrastructure and cleanup tasks completed March-April 2026 (migrations, audits, reorgs, convention fixes). Details in git history.
 
 ## [future] Ideas
 
