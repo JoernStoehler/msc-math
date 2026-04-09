@@ -2,7 +2,7 @@
 
 <!-- How this file works:
 Answers "what should the thesis say?" — not a repo inventory.
-Top-level = takeaways. Sub-items = support the reader needs.
+Items are takeaways, grouped by theme. Sub-items are support or related takeaways.
 Inclusion: (1) Kai needs for "is thesis done?" (2) worth bragging about?
 (3) impacts thesis structure? (4) natural dependency cluster?
 Stubs and aspirational items belong. Working-notes style. -->
