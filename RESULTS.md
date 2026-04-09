@@ -2,76 +2,38 @@
 
 <!-- How this file works:
 Answers "what should the thesis say?" — not a repo inventory.
-Sections group related takeaways by theme (methods, results, rejected, open, ...).
-Within sections, nesting mixes support (evidence for a claim) with related sub-takeaways.
+Sections group related takeaways by theme.
 An item belongs if: (1) Kai needs it for "is thesis done?" (2) worth bragging about,
 (3) impacts thesis structure, or (4) natural dependency cluster.
 Stubs and aspirational items belong. Working-notes style. -->
 
-Developed Methods:
-- Capacity: three algorithms — hk2017 (general, exponential), billiard (Lagrangian products, polynomial), tube (symplectic, aspirational)
-- Adjacency pruning: orders-of-magnitude speedup [cor:adjacency-pruning]; empirically equals full search on simple polytopes [cor:ridge-sufficiency, unverified]
-- Orbit recovery from KKT dual [lem:base-point-recovery]
-- Exact rational arithmetic; three-valued solver (certified/uncertain/infeasible)
-- Analytical derivatives ∂c/∂a_k, ∂vol/∂a_k; gradient ascent on sys
-- Random sampling: normals on S³ with rejection; Lagrangian products from random polygons
-- Validation: capacity axioms, orbit recovery, literature matches pass; numerical errors negligible
+[main result]
+- the standard data scientist's toolkit fails to find new sys>1 examples.
+- the shared reasons for this are that a) the sys function on polytope space has many local maxima, and each has a tiny attractor space, and all except the 1 known counterexample HKO2024 have sys<=1; and b) there is very little euclidean and symplectic data we have about polytopes that we can use to search for patterns among the local maxima / among the non-local-maxima polytopes ; the entire data scientist's toolkit relies on either having globally relevant local behavior or rich enough data to exploit, and evidently we just don't have either
 
-Results:
-- HKO2024 is a local maximum ...
-  - Proven: ... for 10-facet polytopes (1st and 2nd order)
-    - No improving direction exists [lem:first-order-necessary, lem:cone-equals-kernel]
-    - All flat-direction curvatures strictly negative [prop:second-order-local-max] — awaiting Jörn verification
-    - Random perturbations retain sys>1, none exceed sys ≈ 1.0472
-  - Conjecture: ... for higher F
-    - Facet-splitting (F→F+1): all decrease sys
-    - Cut-and-ascent: converges back to HKO
-    - Variable-F: most F=10 maxima improve at F=11, none reach sys>1
-  - Speculation: ... for convex bodies (no evidence, but F-refinement consistent)
-- No novel sys>1 examples found
-  - Random sampling and gradient ascent: best results well below 1
-  - sys>1 region: volume ~10^{-31} — random search hopeless
-  - Among rotated regular products (3≤n≤m≤6, plus 7×7): only pentagon×pentagon exceeds 1
-    - Pentagon×pentagon at θ=18° IS the HKO2024 polytope (sys ≈ 1.0472)
-    - Violation region: θ ∈ (13°,23°), ~25% of fundamental domain
-    - sys(θ) is periodic and symmetric [lem:rotation-fundamental-domain] — awaiting Jörn verification
-    - Open: closed formula for sys(P₅ × R(θ)P₅) — Kai asked; symmetry reduces domain, formula open
-    - 3×6, 4×4 reach sys≈1 at coarse resolution — finer sweeps warranted
-    - Right isosceles triangle ×_L square: sys=1 exactly (Schlenk)
-  - Bet: density 10^{-F} to 10^{-4F}, far beyond feasible
-- Crosspolytope: c_EHZ = 4.0, sys = 3/4 — satisfies Viterbo (new: not previously computed)
-  - Same capacity as hypercube — duality coincidence?
-- Visualizing ∂K yielded no new insights
+[main result]
+- for the one sys>1 example HKO2024 we know, we conjecture it's a local maximum in polytope space
+- we proved this for the subspace of 10-facet polytopes and empirically validated the conjecture for up to 13-facet perturbations, so we have some reason at least to believe this
+- relating to the first point: the attractor of HKO2024 is tiny as well
 
-Rejected ideas:
-- ML: gap between HKO and everything else suggests qualitatively different behavior
-- Omega hypothesis falsified: no ω₀–sys correlation; orbit ridges prefer large ω₀ (opposite)
-- Direction-filtered subdifferential: negative result
-- Richer regression data: nothing to add
-- More compute: density 10^{-F} or worse, far beyond feasible
+[methods]
+- in order to do the above investigations we
+  - developed algorithms for capacity, minimum action simple reeb orbits, 1st and 2nd order perturbations, a 1st order "gradient ascent"-like method with standard tricks to escape saddle points
+  - proved correctness of the algorithms in an idealized version, proved or at least empirically measured error bounds for their floating point implementations, and used slower but exact rational arithmetic to get exact values where needed / as a fallback
+  - optimized performance until we could get large enough datasets
+  - developed random polytope distributions we believe to be representative for our purposes of the full polytope space
+  - fleshed out mathematical literature to be more accessible to master students, and added own results to close minor gaps
 
-Open Ideas:
-- Analytical formula for sys(P₅ × R(θ)P₅) — Kai asked; symmetry lemma reduces domain, formula open
-- Crosspolytope optimality proof (m≥14 cannot improve c_EHZ=4.0)
-- F-refinement convergence (increasing F → convex-body sys?)
-- Convex-body direction (Minkowski smoothing K + εB⁴)
-- Structural explanation for 0 ∈ conv(gradients) at HKO (golden ratio? C₅×Z₂?)
-- Massive random search on LICCA
-- Systematic landscape analysis (gradient flow, local maxima distribution)
-- Dimension scaling (max sys vs F)
+[minor, standalone]
+- crosspolytope capacity: c_EHZ = 4.0, sys = 3/4 — new computation, satisfies Viterbo. Same capacity as hypercube despite different volumes
+- a closed formula for sys(pentagon x rotated pentagon) with proof [aspirational]
+- a visualization of the 4d geometry on a computer screen
 
-Datasets:
-- ~10^5 polytopes, up to F=16
-- Seeds: generic, products, regular products (with rotation), literature
-- Transformations: perturbations, gradient ascent (intermediate + final), extra facets
-
-Quality:
-- Proofs: algorithms rigorously proven
-- Validation: axioms, literature, orbit recovery
-- Numerics: error bounds proven, exact rational for combinatorial decisions
-
-Project:
-- Reproducibility: complete project reproducible from git
-- Documentation: self-documenting with research notes
-- Library: polished Rust library
-- AI Agents: usage patterns documented
+[non-math deliverables]
+- the project is available for future research
+  - with a library of our algorithms, development tests, documentation
+  - the full data analysis pipelines and research notes
+  - the complete development environment used
+  - notes about workflows, conventions and how we involved AI
+  - the majority of the history of the project, e.g. if earlier results / if the methodology we used is interesting to a future researcher
+- we analyzed what AI contributed to this project, and speculate what counterfactual impact it had and what lessons to draw from that
