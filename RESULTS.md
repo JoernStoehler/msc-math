@@ -1,72 +1,76 @@
 # Results
 
-What this project found and built.
-Written in a terse bullet-list style for easy maintainability.
-Not intended to be complete/detailed - consult the repo folders for that.
-No particular order or grouping.
+<!-- How this file works:
+Answers "what should the thesis say?" — not a repo inventory.
+Top-level = takeaways. Sub-items = support the reader needs.
+Inclusion: (1) Kai needs for "is thesis done?" (2) worth bragging about?
+(3) impacts thesis structure? (4) natural dependency cluster?
+Stubs and aspirational items belong. Working-notes style. -->
 
 Developed Methods:
-- Capacity: We can compute the systolic ratio of polytopes in R^4, two algorithms based on HK2017, CH2021
-- Reeb orbits: We get the set of simple minimum action Reeb orbits
-- Perturbations: We can compute 1st and 2nd order perturbations
-- Gradient Ascent: We can do gradient ascent on the systolic ratio, with some tricks
-- Random Polytopes: We can sample polytopes with a distribution that looks representative to us
+- Capacity: three algorithms — hk2017 (general, exponential), billiard (Lagrangian products, polynomial), tube (symplectic, aspirational)
+- Adjacency pruning: orders-of-magnitude speedup [cor:adjacency-pruning]; empirically equals full search on simple polytopes [cor:ridge-sufficiency, unverified]
+- Orbit recovery from KKT dual [lem:base-point-recovery]
+- Exact rational arithmetic; three-valued solver (certified/uncertain/infeasible)
+- Analytical derivatives ∂c/∂a_k, ∂vol/∂a_k; gradient ascent on sys
+- Random sampling: normals on S³ with rejection; Lagrangian products from random polygons
+- Validation: capacity axioms, orbit recovery, literature matches pass; numerical errors negligible
 
 Results:
 - HKO2024 is a local maximum ...
-  - Proven: ... for 10-facet polytopes
-    - Uses 1st and 2nd order perturbation methods
-  - Conjecture: ... for 11,12,13-facet polytopes
-    - Empirics: random perturbations that add facets reduce $sys$
-    - Empirics: gradients point back to HKO2024
-  - Speculation: ... for convex bodies
-- No novel $sys>1$ examples found
-  - Empirics: Random sampling and gradient ascent
-    - Find local maxima with $sys < 1$ only
-    - Attractors are exponentially small wrt the dimension $4F$
-    - The one known $sys>1$ attractor of HKO2024 is also small
-    - Most ideas we have for guided search are local, and covered by gradient ascent
-    - Some polytope spaces (e.g. products, symmetries) are lower dimensional, but still too big
-    - Empirics: a histogram fit of $sys$ predicts exponentially few $sys>1$ cases
-  - Regressions against euclidean polytope data yielded no insights
-  - Among products of regular polygons, HKO2024 is the only $sys > 1$ case
-    - Proven: A closed formula for the systolic ratio of pentagon x rotated pentagon
-    - Empirics: no other m-gon x rotated n-gon we visited is $sys > 1$
-    - Theory: some arguments for why a large lcm(m,n) rules out $sys > 1$
-- Visualizing the \partial K setting yielded no new insights
+  - Proven: ... for 10-facet polytopes (1st and 2nd order)
+    - No improving direction exists [lem:first-order-necessary, lem:cone-equals-kernel]
+    - All flat-direction curvatures strictly negative [prop:second-order-local-max] — awaiting Jörn verification
+    - Random perturbations retain sys>1, none exceed sys ≈ 1.0472
+  - Conjecture: ... for higher F
+    - Facet-splitting (F→F+1): all decrease sys
+    - Cut-and-ascent: converges back to HKO
+    - Variable-F: most F=10 maxima improve at F=11, none reach sys>1
+  - Speculation: ... for convex bodies (no evidence, but F-refinement consistent)
+- No novel sys>1 examples found
+  - Random sampling and gradient ascent: best results well below 1
+  - sys>1 region: volume ~10^{-31} — random search hopeless
+  - Among rotated regular products (3≤n≤m≤6, plus 7×7): only pentagon×pentagon exceeds 1
+    - Pentagon×pentagon at θ=18° IS the HKO2024 polytope (sys ≈ 1.0472)
+    - Violation region: θ ∈ (13°,23°), ~25% of fundamental domain
+    - sys(θ) is periodic and symmetric [lem:rotation-fundamental-domain] — awaiting Jörn verification
+    - Open: closed formula for sys(P₅ × R(θ)P₅) — Kai asked; symmetry reduces domain, formula open
+    - 3×6, 4×4 reach sys≈1 at coarse resolution — finer sweeps warranted
+    - Right isosceles triangle ×_L square: sys=1 exactly (Schlenk)
+  - Bet: density 10^{-F} to 10^{-4F}, far beyond feasible
+- Crosspolytope: c_EHZ = 4.0, sys = 3/4 — satisfies Viterbo (new: not previously computed)
+  - Same capacity as hypercube — duality coincidence?
+- Visualizing ∂K yielded no new insights
 
 Rejected ideas:
-- Machine Learning to produce candidates
-  - The gap between HKO2024 and all other $sys<1$ examples suggests qualitatively different behavior
-  - Bet: ML would just learn minor improvements in the $sys < 1$ region, e.g. ascent in fewer steps, memorizing an especially good $sys \approx 1$ polytope or the region around it, a non-expential reduction in what minima to look at
-- Richer data for regressions: what data is there to add?
-- Throw more compute at it:
-  - We can cover maybe densities like $10^{-6}$, but the hypothesis is now that we're in the $10^{-F}$ to $10^{-4F}$ regime (depending on how one models sys as a random distribution)
+- ML: gap between HKO and everything else suggests qualitatively different behavior
+- Omega hypothesis falsified: no ω₀–sys correlation; orbit ridges prefer large ω₀ (opposite)
+- Direction-filtered subdifferential: negative result
+- Richer regression data: nothing to add
+- More compute: density 10^{-F} or worse, far beyond feasible
 
 Open Ideas:
-- TODO
+- Analytical formula for sys(P₅ × R(θ)P₅) — Kai asked; symmetry lemma reduces domain, formula open
+- Crosspolytope optimality proof (m≥14 cannot improve c_EHZ=4.0)
+- F-refinement convergence (increasing F → convex-body sys?)
+- Convex-body direction (Minkowski smoothing K + εB⁴)
+- Structural explanation for 0 ∈ conv(gradients) at HKO (golden ratio? C₅×Z₂?)
+- Massive random search on LICCA
+- Systematic landscape analysis (gradient flow, local maxima distribution)
+- Dimension scaling (max sys vs F)
 
 Datasets:
-- Size: we used optimized Rust code to run 10^5 polytopes with up to 12 facets
-- Families (Seed):
-  - Generic: random dual vertices in R^4
-  - Product: lagrangian products of random polygons in R^2
-  - Regular Product: lagrangian products of regular polygons with free rotation between them
-  - Literature: polytopes with known/conjectured capacity from the literature
-- Transformations:
-  - Random finite perturbations, including random extra facets
-  - Gradient ascent, intermediate steps
-  - Gradient ascent, final local maxima
-- Various tiny custom datasets e.g. for capacity axioms validation, regression tests, edge cases
+- ~10^5 polytopes, up to F=16
+- Seeds: generic, products, regular products (with rotation), literature
+- Transformations: perturbations, gradient ascent (intermediate + final), extra facets
 
 Quality:
-- Performance: E2E profiled, benchmarked; bottlenecks are now in the theory and eigendecompositions of small matrices
-- Proofs: idealized algorithms are rigorously proven correct, we cite standard literature in a few places
-- Validation: we validated our methods using as many propositions and test cases as possible
-- Numerics: we have error bounds with proofs, we have empirical errors compared to exact rational arithmetic
+- Proofs: algorithms rigorously proven
+- Validation: axioms, literature, orbit recovery
+- Numerics: error bounds proven, exact rational for combinatorial decisions
 
 Project:
-- Reproducibility: The complete project is reproducible, and the majority of the project's history is stored in the git repo
-- Documentation: the project is self-documenting, including research notes and workflows
-- Library: our methods are available as a polished Rust library for further use
-- AI Agents: Usage patterns of AI agents and experiences are documented for future research
+- Reproducibility: complete project reproducible from git
+- Documentation: self-documenting with research notes
+- Library: polished Rust library
+- AI Agents: usage patterns documented
