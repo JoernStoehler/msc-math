@@ -91,7 +91,7 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 ### [active] [group:licca] LICCA-scale F=10 neighborhood falsification
 - Scale the 100-seed perturbation-neighborhood experiment to 10k+ perturbations with multiple step-size buckets (small/medium/large). Honest falsification attempt.
 - In-flight on `.claude/worktrees/licca-bundle` branch `licca-bundle @ e741dc1a` (commit `perturbation-neighborhood: refactor for LICCA (CLI + 3 eps buckets)`). Refactor is in place on the original experiment dir (Jörn-approved, overriding the earlier sibling-dir plan).
-- **Owned by the licca-bundle agent (still running as of 2026-04-12 late-session):** refactor, local smoke tests, reviewer subagent (set up via `REVIEWER_PROMPT.md`), `job.sh` slurm prep. Bundled with the sibling LICCA ascent-sampling item below; both ship out of the same `licca-bundle` worktree.
+- **Owned by the licca-bundle agent:** refactor, local smoke tests, reviewer subagent (set up via `REVIEWER_PROMPT.md`), `job.sh` slurm prep. Bundled with the sibling LICCA ascent-sampling item below; both ship out of the same `licca-bundle` worktree.
 - **Owned by the co-project-owner (follow-up after licca-bundle agent finishes):**
   1. After Jörn scp + slurm submits + LICCA returns `data/licca.jsonl` (git LFS): run `analyze.py`, update `perturbation-neighborhood/logbook.md`, update RESULTS.md density/falsification claims, mark re-plan trigger at `TASKS.md:44` ("After LICCA Sunday runs return → re-evaluate density / falsification claims").
   2. Pre-merge check + merge to main.
@@ -405,6 +405,12 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Testing `/orchestrate` skill + delegation guide on real thesis tasks.
 - Baseline commit `f8044b35`. Dry run confirmed Agent() mechanics work.
 - Next: post-mortem in `.claude/skills/orchestrate/references/design-space.md`.
+
+### [open] [group:codex-migration] Codex CLI migration
+- Port msc-math workflow to OpenAI Codex CLI alongside Claude Code. Scaffold merged into main; Steps 1–2 done; Step 3 (plumbing verification) is the pickup point.
+- Handoff doc: `.claude/worktrees/codex-migration/HANDOFF.md`
+- Plan: `~/.claude/plans/elegant-dreaming-wind.md`
+- Worktree `codex-migration` exists, ready for post-rebuild session pickup.
 
 ### [done] [2026-04-12] variable-f-ascent merge (closed as stale)
 - Experiment 2d results are on main per the `[done] [2026-04]` entry in "Novel sys>1 polytopes". No `variable-f-ascent` branch or worktree exists at 2026-04-12.
