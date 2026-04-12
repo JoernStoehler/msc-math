@@ -39,7 +39,7 @@ Planned deliverables:
 - **File headers**: Every source file starts with a comment block stating purpose and context. Module-level files additionally document the module's architecture.
 - **Self-contained thesis**: `thesis/` copies figures and tables from `crates/` into `thesis/assets/` instead of linking. Never modify `thesis/` content from experiment code.
 - **Feature lifecycle**: New code starts in `dev-<group>/`, informed by experiment results. Once stable and approved by Jörn, it migrates into `library/`. Validation experiments either become library tests or remain in `dev-<group>/`.
-- **Merge gating**: Never merge to `main` without Jörn's instruction. Never perform destructive operations (delete branches, force-push, reset) without asking.
+- **Merge gating**: Agents may merge to `main` after a `/pre-merge` check reports no blockers. Destructive operations (delete branches on main, force-push, reset) still require asking.
 - **Agent time is free, Jörn's time is expensive.** When choosing between spending more agent time (exploring alternatives, reading code, running experiments, rolling back failed attempts) and spending Jörn's time (asking questions, presenting incomplete work, leaving problems for him to catch) — spend agent time.
 - **Math-code correspondence**: Every non-trivial Rust algorithm has a correctness proof in its module's `math.tex`. Code and math are developed together and cross-referenced (`[lem:label]` in code, `\label{lem:label}` in math.tex). Jörn reviews `crates/main.pdf` for correctness and readability. The `crates/**/math.tex` files are for development agents; `thesis/main.tex` is for publication with thesis advisors as readers.
 
