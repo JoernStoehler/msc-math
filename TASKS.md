@@ -89,13 +89,16 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 - `crates/exp-hko-local-maximum/perturbation-neighborhood/`
 
 ### [active] [group:licca] LICCA-scale F=10 neighborhood falsification
-- Scale the 100-seed perturbation-neighborhood experiment to 10k+ perturbations with multiple step-size buckets (small/medium/large). Honest falsification attempt.
-- In-flight on `.claude/worktrees/licca-bundle` branch `licca-bundle @ e741dc1a` (commit `perturbation-neighborhood: refactor for LICCA (CLI + 3 eps buckets)`). Refactor is in place on the original experiment dir (Jörn-approved, overriding the earlier sibling-dir plan).
-- **Owned by the licca-bundle agent:** refactor, local smoke tests, reviewer subagent (set up via `REVIEWER_PROMPT.md`), `job.sh` slurm prep. Bundled with the sibling LICCA ascent-sampling item below; both ship out of the same `licca-bundle` worktree.
-- **Post-LICCA follow-up** (pending LICCA data return, unowned — next session picks up):
-  1. After Jörn scp + slurm submits + LICCA returns `data/licca.jsonl` (git LFS): run `analyze.py`, update `perturbation-neighborhood/logbook.md`, update RESULTS.md density/falsification claims, mark re-plan trigger at `TASKS.md:44` ("After LICCA Sunday runs return → re-evaluate density / falsification claims").
-  2. Pre-merge check + merge to main.
-- Expected outcome: no sys>HKO (strengthens conjecture). Real outcome: whatever the data says.
+- Scale the 100-seed perturbation-neighborhood experiment to 10k+ perturbations with 3 step-size buckets (small/medium/large). Honest falsification attempt. Expected: no sys>HKO (strengthens conjecture). Real outcome: whatever the data says.
+- **Worktree pointer:** `.claude/worktrees/licca-bundle @ 786de68c`. Contains phase 4 (A→B refactor: rayon `par_iter` + shared helpers in `exp-sys-landscape/src/lib.rs`) + phase 4.5 (crash-safe trace-first write + deterministic `finalize_ascent_output`) + V8 NIT / V6 finding polish. Third-party reviewer ("V8") returned READY for phases 4 and 4.5.
+- **Best guess as of 2026-04-12 (not binding — verify before trusting):** the worktree is probably a net-positive starting point. The refactor is the main reproduction cost and has a READY verdict; rebuilding might be better if you find structural problems the V8 reviewer missed, but our rough estimate is that auditing + fixing the known issues below is cheaper than rebuilding from `main`.
+- **Known issues found in spot-checks 2026-04-12 (verify still apply before acting):**
+  1. All 3 `job.sh` files use `./target/release/<bin>` but set `CARGO_TARGET_DIR=/hpc/gpfs2/scratch/u/stoehljo/cargo-target`, which looks like it makes the binary path wrong. Likely fix: `"$CARGO_TARGET_DIR/release/<bin>"`. Spot-checked on `gradient-ascent-general/job.sh`; not verified on the other two.
+  2. No `cargo build` step in any `job.sh`. Unclear whether Jörn prebuilds on LICCA or this is an oversight.
+  3. `--time=00:00:01` tripwire with CLI-override ritual. Open question whether to keep or bake in real values; smoke n=3 gives a rough ~3h for `sys-*`, ~30m for perturbation, but that's a thin sample.
+  4. `logs/` directory created inside the script but SLURM opens its log file at submit time — possible timing bug, unverified on actual LICCA submission.
+- **Ownership (Jörn override 2026-04-12):** the prior "Owned by licca-bundle agent" / "Post-LICCA follow-up unowned" split is superseded — one session now owns end-to-end (audit → fix → smoke → present scp+sbatch → wait → `analyze.py` → figures → logbook → `RESULTS.md` updates → `/pre-merge` → merge). Previous split was producing failed handoffs.
+- Re-plan trigger: after LICCA runs return, re-evaluate density/falsification claims (`TASKS.md:44`).
 
 ### [Jörn] [group:hko] Verify h-space proof
 - Danskin + symmetry + Euler homogeneity argument. ~15 min.
@@ -147,12 +150,12 @@ Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the o
 - Partial data in `crates/exp-sys-landscape/rotated-regular-products/`
 
 ### [active] [group:licca] LICCA-scale massive ascent sampling (density probe)
-- Scale `gradient-ascent-general/` (10 seeds → 10k+) and `gradient-ascent-products/` (12 seeds → 10k+) on LICCA.
-- **Research question**: does the density of sys>1 local maxima in M_F actually support "no new examples"? Current seed counts are too small to claim the density is low.
-- In-flight on `.claude/worktrees/licca-bundle` branch `licca-bundle @ e741dc1a` (commit `ascent-{general,products}: refactor for LICCA (CLI + per-seed RNG + no-db-update)`). In-place refactor on the original experiment dirs (Jörn-approved).
-- Same split as the F=10 item above: licca-bundle agent owns refactor + smoke + reviewer + job.sh. Post-LICCA follow-up (analyze + logbook/RESULTS updates + pre-merge + merge) is pending LICCA data return and unowned — next session picks up. Shares the worktree and reviewer subagent with the F=10 item.
+- Scale `gradient-ascent-general/` (10 → 10k+ seeds) and `gradient-ascent-products/` (12 → 10k+ seeds).
+- **Research question (load-bearing for RESULTS.md main-result-1 at `RESULTS.md:9–10`):** does the density of sys>1 local maxima in M_F actually support "no new examples"? Current seed counts are too small to claim the density is low.
+- **Worktree pointer:** same as the F=10 item above — `.claude/worktrees/licca-bundle @ 786de68c`. The refactor covers both `sys-*` binaries (V8 READY for phases 4+4.5 + polish).
+- **Best guess + known issues + ownership override:** same as the F=10 item above. Same 4 `job.sh` bugs apply to `sys-gradient-ascent-general` and `sys-gradient-ascent-products`. Verify before acting. Rebuild is still on the table if the worktree turns out to be in worse shape than the F=10 entry's spot-checks suggest.
 - Each family produces histogram + bucket counts at sys>0.95/0.99/1.00.
-- Re-plan trigger: results back → update RESULTS.md density claim, evaluate whether any further sampling is worthwhile.
+- Re-plan trigger: results back → update `RESULTS.md` density claim.
 
 ### [future] [group:licca] Combinatoric-changing step sizes on LICCA
 - Beyond fixed-F ascent — let random walks flip facet combinatorics mid-trajectory.

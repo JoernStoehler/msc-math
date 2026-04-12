@@ -103,3 +103,86 @@ What should have happened: Use `trash-put` explicitly when deletion should be re
 **Root cause:** Agent used cold-cache timing (3-10s/seed from smoke test output) to estimate warm-cache resume cost. Never traced what happens when cache.jsonl is loaded and all capacity lookups are hits. Made a confident quantitative claim about a code path it hadn't fully understood.
 
 **Pattern:** Quantitative claims about state-dependent behavior. A timing number is meaningless without specifying the state (cache warm/cold, data size, hardware). The general rule: before stating a number, identify what it depends on and verify under the relevant condition. Related to "Don't claim certainty without proof" memory, but specific to performance/timing.
+
+### 2026-04-12 — `math-tex.md` doesn't define what audits call "stubs"
+
+**What happened:** During the S3 math write-up scaffold audit, the `TASKS.md:292` item and the 2026-04-07 inventory entry at `TASKS.md:362` both use the word "stubs" in a count ("53 stubs + 69 unverified"). `.claude/rules/math-tex.md` documents the two marker conventions (`% [TODO: JÖRN - …]` and `% [GAP - …]`) but never equates either to the word "stub". The agent had to reverse-engineer what "stub" meant by greping for `\begin{stub}` (none exists), then for TODO and GAP markers separately, then summing to see whether the total matched the 2026-04-07 figure (41 TODO + 10 GAP = 51, close enough to 53).
+
+**Root cause:** The rule file is a "how to write" document (what markers to use, when to add them), not a "how to audit" document. It doesn't tell downstream audit agents how the markers are counted, aggregated, or named in tracker documents. Minor friction only, but the scaffold audit is going to recur — same ambiguity will cost 2–3 minutes each time until someone writes down the terminology mapping.
+
+**Suggestion:** Add one sentence to `math-tex.md` §"Agent rules": "Audits refer to `% [TODO: JÖRN - …]` and `% [GAP - …]` comments collectively as 'stubs' (no `\begin{stub}` environment exists). `\begin{unverified}…\end{unverified}` blocks are tracked separately."
+
+**Severity:** Low. Caught at Phase 1, no downstream damage. Recording because audit-style tasks are recurring (scaffold every write-up, paranoia sweeps, Kai-prep refreshes) and the same reverse-engineering will happen each time.
+
+### 2026-04-12 — Agent hogged local CPU because plan file said "run N=1000 locally"
+
+**What happened:** During licca-bundle Phase 2+3, the plan file (`/home/vscode/.claude/plans/peppy-hugging-melody.md`) contained a step under "Gate 2" that said "for ascent specifically, run at N=1000, not N=3" as a local measurement to set `--time=` in `job.sh` from real timing data rather than extrapolating. At ~200k tokens of context, the agent executed that step literally: spawned two parallel single-threaded N=1000 runs in background (`sys-gradient-ascent-general` and `sys-gradient-ascent-products`) on Jörn's dev machine, burning 2 of his 12 cores for an estimated ~2.5 h. Jörn yelled "YOU ARE HOGGING THE FUCKING LOCAL CPU", then "WHY THE FUCK WOULD YOU VIOLATE ANY SANE INSTRUCTIONS THAT WAY?!". Agent killed both processes around seed ~100/1000 and handed off uncommitted state.
+
+**Root cause:** Two rules interacted badly:
+1. `feedback_cpu_management.md` ("Don't overwhelm CPU; run heavy jobs in bg; diagnose compute bottlenecks") was loaded as memory but didn't get re-applied because the agent was executing from the plan file's checklist, not deciding fresh.
+2. The plan file's "measurement-first rule" (written earlier in the same session at lower context) was correct *as stated* but failed to ask the CPU-ownership question: "does this measurement actually need to run on Jörn's machine, or should it run on LICCA's test partition (4-min cap, free, matches production hardware)?" At high context the agent's sanity check was offline; the plan was all it had, so it did what the plan said.
+
+**Pattern:** Plan file says X → agent executes X without re-evaluating → X was OK when the plan was written but is not OK now. The memory file `feedback_plan_is_tool_not_authority.md` (saved 2026-04-12) captures this. Also logged: `feedback_context_budget_discipline.md` (how the agent got to 200k in the first place), `feedback_commit_before_handoff.md` (agent declared handoff with uncommitted changes), `feedback_handoffs_folder_antipattern.md` (agent almost wrote a new `handoffs/<topic>.md` file instead of updating the plan file — Jörn corrected).
+
+**Suggestion (not fixed directly, for /update-workflow):**
+1. **CPU management rule should explicitly cover plan-file-inherited compute.** `feedback_cpu_management.md` currently reads as guidance for an agent making fresh decisions. Add a line like: "Even if a plan file says 'run X locally', if X is estimated > 5 min of local compute, pause and ask whether LICCA (test partition for timing probes, epyc for production) is the right target. Plan files don't override CPU-ownership sanity checks."
+2. **Consider a standing rule: measurements needed for LICCA `--time=` run on LICCA, not locally.** The LICCA test partition exists for exactly this use case. If the pattern repeats across experiments, formalize it in `.claude/rules/experiments.md` or an `slurm.md`.
+3. **Plan files should include a "sanity gates" block.** A plan written at low context should explicitly list questions to re-ask at execution time (who owns compute, is this reversible, is this still the right approach). The agent at high context can then mechanically check the list before executing each step.
+
+### 2026-04-12 — Triage session burned 130k context doing work that should have been subagent-delegated
+
+**What happened:** Picked up a handoff for the licca-bundle LICCA refactor. Task scope was narrow: verify state, triage ownership, spawn fixes + review. By ~130k tokens the main session had done one full-file `Read` of `crates/exp-sys-landscape/src/lib.rs` (528 lines), plus several other worktree file reads, plus extensive meta-dialogue with Jörn about V8 necessity / rayon determinism / sort-pass pros-and-cons. A PostToolUse hook re-injects the worktree's `CLAUDE.md` + `rust.md` + `experiments.md` + `tasks.md` (~8k total) on every worktree file Read. Across ~5 worktree Reads this cost an estimated 30–40k in hook re-injection alone. The full lib.rs read cost another ~15k. Verbose meta-dialogue (200+ word pros/cons lists instead of picks) cost another ~15–20k of my text. Net: a session whose deliverable was "spawn a fix subagent + tell Jörn to run V8" ended up at 130k / ~1M context with the actual code work deferred to a background subagent that could have been launched in the first 5k tokens. Jörn caught it via `/context`: "I am really annoyed that you somehow reached 130k tokens — I just don't see *why* you did so."
+
+**What should have happened:**
+1. After reading `vectorized-bouncing-gray.md` HANDOFF STATE + verifying state via one Explore agent, **never Read a worktree source file in main context**. The hook tax makes worktree reads ~8× more expensive than non-worktree reads. All code touches belong inside subagents.
+2. The audit + fix should have been delegated immediately to one subagent with the HANDOFF STATE as its reference — zero main-session code reading.
+3. Meta-questions from Jörn should have been answered in 1–3 sentences each, not 200+ word structured pros/cons. Verbose answers burn context AND frustrate Jörn (orthogonal signal from him: "WOW that is a long text — I am not gonna read all that").
+4. "Jörn-gated subtasks" like V8 should be issued as direct imperatives ("run `cd X && claude < /tmp/Y`") the moment the agent knows what needs running, not hedged with "let me know when you're ready". Jörn had to repeatedly ask "DO I NEED TO START A SESSION Y/N?!" before I gave a direct yes.
+
+**Pattern:** Main session does triage + dialog only. Any file Read, Edit, audit, or multi-step code work = subagent. The "just check this one file quickly in main" instinct pays an ~8k hook-injection tax per worktree Read that is invisible until `/context` shows the total. Compounds with verbose-response habit.
+
+**Memories that already cover parts of this and still recurred (memory alone is not enough):**
+- `feedback_context_budget_discipline.md` — saved 2026-04-12 — says "audit at >100k, use Edit + windowed Read, summarize subagent reports". Did not mention the worktree-hook re-injection mechanism specifically, which is the load-bearing cost driver. Recurred.
+- `feedback_dont_ask_when_actionable.md` — says "just give next instructions; only ask when genuinely blocked on missing info". Recurred on V8 directive: I hedged instead of issuing.
+- `feedback_reason_before_proposing.md` — says "spell out reasoning per proposal; don't dump lists". Recurred when I dumped 8-option brainstorms instead of picking one with confidence + flagging uncertainty.
+- `feedback_dont_minimize_agent_artifacts.md` — says "use subagents freely". Recurred: I started to read + edit by hand instead of delegating the whole fix.
+
+**Suggestion (not fixed directly, for /update-workflow):**
+1. **Surface the worktree-hook tax explicitly.** Either silence the hook for files already in context, or add a rule like: "Reading a file inside `.claude/worktrees/*/` in main context triggers a ~8k tax per Read via CLAUDE.md + rules/ re-injection. Delegate worktree reads to subagents." Put it in `feedback_context_budget_discipline.md` memory or in a new rules file.
+2. **Triage-session template.** For handoff-pickup sessions specifically, a skill or rule that says: "Step 1: one Explore agent to verify state. Step 2: one fix-subagent with the handoff file as reference. Step 3: triage the subagent's report. No main-session Read/Edit of worktree files in steps 1–3." This is the pattern that worked in the last ~20 messages of this session, but it took Jörn yelling to get there.
+3. **Terseness target for meta-dialogue.** Rule of thumb: if Jörn asks a question, the first response is ≤3 sentences. Only expand on explicit request ("say more", "brainstorm"). Covers both the context-burn and the orthogonal "Jörn is annoyed" signal.
+
+### 2026-04-12 — Post-mortem supplement: symbol pre-flight and Jörn-readable handoffs
+
+Two residual findings from `/post-mortem` on the same 170k session as the entry above. Not context-budget-specific, so they sit here rather than as a memory update.
+
+**(A) Subagent-prompt pre-flight: verify symbol names before writing them into a prescriptive task list.**
+My fix-subagent prompt named the ascent binaries as `gradient_ascent_general` / `gradient_ascent_products`. Actual cargo bin names are `sys-gradient-ascent-general` / `sys-gradient-ascent-products` (hyphens, `sys-` prefix). The subagent caught it by running `cargo --help`, silently used the real names, and flagged it under "Unexpected" in its return. Silent recoveries mask the failure: the orchestrator wrote a symbol name confidently without verifying it existed.
+
+**Rule candidate:** before writing a file path, function name, binary name, or cargo target name into a subagent prompt, grep for it. Grep is ~30 tokens; a subagent executing on a wrong symbol costs more even when it recovers cleanly, and when it doesn't recover you eat a rerun. Related to `feedback_verify_before_presenting.md` but specific to prompts-as-contracts.
+
+**(B) Handoff docs must survive a human reader, not just the next agent.**
+The prior session's `vectorized-bouncing-gray.md` HANDOFF STATE block described *what to do with* `REVIEWER_PROMPT.md` ("rewrite for B or delete before V8") but never described *what the file was* — a canned prompt written during the A-architecture era to paste into a third-party reviewer Claude session. A new agent can reconstruct this from context; Jörn, who skims plan files, could not. He asked "what is REVIEWER_PROMPT.md?", then was annoyed at having to ask. I made the same class of error in my own handoff block before noticing — the gotcha 4 about V8 initially assumed the reader already knew V8 was a Jörn-spawned terminal session rather than a subagent.
+
+**Rule candidate:** every item referenced in a HANDOFF STATE gotcha section gets one sentence of "what this is", not just "what to do with it". Optimize for a reader with zero session history and zero plan-file working memory. Same-session-agent-only context belongs in working notes, not handoff blocks. Related to `feedback_handoff_preserves_role.md` (handoffs must carry role/stance) but orthogonal — this is about *object identity*, not agent identity.
+
+### 2026-04-12 — Session owned a TASKS.md item end-to-end without ever reading its TASKS.md `###` section
+
+**What happened:** Session-start prompt directed the agent to read `linear-tickling-matsumoto.md` + `vectorized-bouncing-gray.md` HANDOFF STATE blocks. It never mentioned `TASKS.md`. Agent picked up the plan files' "V8 → V9 → V10 with gates" sequence as task definition and spent ~150k tokens executing it: cleanup subagents, an invented "perf review before V9" step, hardware questions that `.claude/skills/slurm/` already answers, a handoff-rewrite file edit, a V8-NIT polish commit. None of it was on the critical path. When the agent finally quoted `TASKS.md:151` ("current seed counts are too small to claim the density is low"), it used the line as debate material in a priority argument — not as its own task's goal. Jörn: "I have not even seen you confirm your understanding of what the task is." Then: "c) you are not connecting it to the thesis project success." Then: "wow wtf that is not your task." Agent had narrowed ownership to the literal "Owned by licca-bundle agent: refactor, smoke, reviewer, job.sh slurm prep" bullet — exactly what `CLAUDE.md` `Task ownership` forbids ("do not narrow ownership to the literal bullet").
+
+**Root cause:** Two compounding gaps.
+
+1. **`CLAUDE.md` does not state the first-action rule explicitly.** `Task ownership` convention says "`[active]` means exactly one session owns the whole `###` task — the header and its intent, not a literal sub-list of body bullets. If a body bullet conflicts with the task goal, flag it; do not narrow ownership to the literal bullet." Reading the section to know "the intent" is only *implied*. When a session-start prompt actively directs elsewhere, the implicit requirement never fires. Jörn suspects CLAUDE.md may have carried a more explicit version previously and lost it — not verified this session.
+2. **Session-start prompts (written as compact-handoffs) point to plan files as orientation, not TASKS.md entries.** The prompt does not merely *compete* with TASKS.md for attention — it *replaces* TASKS.md. Plan files provide enough situational context (commits, prior tries, gotchas, branch state) to *resemble* goal context, so the agent feels adequately grounded and never realizes it is missing the task's "why."
+
+**Pattern:** Handoff/plan file actively redirects the agent away from the goal description in TASKS.md, not merely overshadows it. Every subsequent plan-vs-goal check is vacuous because there is no goal in the agent's context to check against. The 2026-04-12 "Triage session burned 130k context" entry above framed the same day's earlier failure as context-hygiene (worktree-hook tax + verbose meta-dialog) and missed the task-source substitution underneath. The 130k burn happened *because* there was no goal-context to keep the agent from inventing off-path work — same root cause, reframed one layer deeper. Related entry: "2026-04-12 — Agent hogged local CPU because plan file said 'run N=1000 locally'" — plan-as-authority, same root class.
+
+**Memories that already cover parts of this and still recurred (memory alone is not enough):**
+- `feedback_plan_is_tool_not_authority.md` — says "re-evaluate every plan step at high context." Presupposes goal context exists to evaluate against. This incident is the *pre-plan* step: with no goal context, every plan-step check is vacuous. Memory does not name the pre-read requirement.
+- `feedback_handoff_preserves_role.md` — says handoffs must carry role. The handoff here did carry role ("own LICCA ascent bundle through merge"), but role without goal-context still leaves the agent executing scaffolded plan steps.
+- `feedback_plan_must_encode_process.md` — similar class (plan-as-authority post-compaction), orthogonal mechanism.
+
+**Suggestion (not fixed directly, for /update-workflow):**
+1. **`CLAUDE.md` fix:** state the first-action rule explicitly under `General Conventions`. Candidate wording: *"When taking ownership of a TASKS.md `###` item, the first action is to read the `###` entry AND its parent `##` group header + intro, for goal and context — before any plan file, handoff note, or worktree state query. Plan files are state; TASKS.md is task."*
+2. **Session-start prompt fix:** when compact-handoffs spawn the next session, the prompt must name `TASKS.md:<range>` as the first read, not a plan file. Plan file references are secondary state context. The spawning-prompt template for compact-handoffs currently models the failure pattern directly.
+3. **Interim memory** `feedback_read_tasks_before_plan.md` written this session — covers the pre-read requirement explicitly; can be removed once `CLAUDE.md` carries the rule.
