@@ -22,6 +22,11 @@
 #
 # Production submission: `sbatch --time=02:00:00 job.sh` (CLI --time overrides the
 # 1-second directive per slurm precedence: CLI > #SBATCH > env > default).
+# Caveat: precedence is documented slurm behavior but is site-config dependent
+# (some sites wire lua job_submit plugins that rewrite or clamp --time). Before
+# first production submit, verify on this cluster with a 1-seed test-partition
+# run: `sbatch -p test --time=00:03:00 --export=ALL,N=1 job.sh` should hit its
+# own 3-minute limit, not the 1-second #SBATCH directive.
 # Test-partition dry run: `sbatch -p test --time=00:03:00 --export=ALL,N=3 job.sh`.
 
 set -euo pipefail

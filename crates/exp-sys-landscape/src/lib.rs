@@ -512,7 +512,10 @@ pub fn write_result(
 /// Invariants:
 /// - Seed i is identified by global index; the closure MUST use `seed_i`
 ///   (= `args.seed.wrapping_add(i as u64)`) to construct its RNG and do all
-///   per-seed work. The per-seed JSON payloads for index i are byte-reproducible
+///   per-seed work. Precondition: `args.seed + args.n_start + args.n` must not
+///   overflow u64; `wrapping_add` only aliases seed streams across the global
+///   batch at `seed ≈ u64::MAX`, far above any realistic ascent run.
+///   The per-seed JSON payloads for index i are byte-reproducible
 ///   regardless of which thread processes it. **File-level byte reproducibility
 ///   requires the caller to invoke `finalize_ascent_output` after this function
 ///   returns** — rayon scheduling determines the append order within both
@@ -524,6 +527,22 @@ pub fn write_result(
 ///   against per-seed ascent cost (~seconds).
 /// - Seed name format is `"{prefix}_{i}"`, matching the historical naming
 ///   used by both ascent binaries before the refactor.
+///
+/// Lock acquisition order inside the rayon closure is strictly:
+/// `db` (outside `write_result`, in the per-experiment closure) → `trace`
+/// (inside `write_result`) → `summary` (inside `write_result`) → `best`
+/// (here, after `write_result` returns). Each lock is released before the
+/// next is acquired — no nesting — so two threads cannot form a deadlock
+/// cycle regardless of which seed each is processing.
+///
+/// Panic propagation: a panic inside `process` (or inside `write_result`)
+/// poisons any mutex held across the panic point. Subsequent seeds that
+/// call `.lock().expect("... poisoned")` will then fan the panic out and
+/// crash the binary. This is **intended**: on LICCA, a panicking seed
+/// crashes the slurm job, which requeues, and `load_completed_names`
+/// resumes by skipping seeds already written to the summary file. Do not
+/// convert these `.expect` calls to recover-and-continue without also
+/// updating the resume story.
 pub fn run_parallel_seeds<F>(
     args: &AscentArgs,
     completed: &HashSet<String>,
@@ -546,6 +565,12 @@ pub fn run_parallel_seeds<F>(
         if let Some(result) = process(i, seed_i) {
             write_result(&result, &writers.0, &writers.1);
             let mut b = best.lock().expect("best-tracker mutex poisoned");
+            // Strict `>`: on ties, the first-to-arrive winner is kept. With rayon
+            // scheduling the arrival order is non-deterministic, so the reported
+            // "best" name can vary between runs when multiple seeds hit the same
+            // `final_sys`. Cosmetic only — `best` is printed to stdout and never
+            // written to JSONL. The canonicalized summary file (sorted by name
+            // in `finalize_ascent_output`) remains byte-reproducible.
             if result.summary.final_sys > b.0 {
                 *b = (result.summary.final_sys, result.summary.name.clone());
             }
@@ -576,6 +601,14 @@ pub fn run_parallel_seeds<F>(
 /// After this function returns, both files are byte-identical across runs
 /// that processed the same seed set, regardless of thread count or crash/resume
 /// history (modulo per-seed `total_time_ms` which is wall-clock noise).
+///
+/// Sort convention: row order in both files is **lexicographic on `name`**
+/// (trace additionally by `phase`, `iteration` within a name). Because seed
+/// names are `{prefix}_{i}` with `i` rendered as a decimal string, the row
+/// order is NOT numeric: e.g. `general_10` < `general_2` < `general_20` <
+/// `general_3`. Downstream `analyze.py` must parse the integer out of the
+/// name if it needs numeric ordering; it must not assume JSONL row index
+/// equals seed index.
 pub fn finalize_ascent_output(
     summary_path: &Path,
     trace_path: &Path,
