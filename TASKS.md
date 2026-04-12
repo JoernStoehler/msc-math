@@ -222,12 +222,8 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 ### [blocked] Conclusion
 - Blocked on: stable chapter content.
 
-### [open] Thesis figure consistency check
-- Conditional: only makes sense if current thesis .tex content is kept rather than rewritten.
-- Verify every `\includegraphics` in `thesis/**/*.tex` points to an existing file in `thesis/assets/`.
-- Check whether asset files are stale copies of regenerated crates/ originals (compare timestamps/content).
-- Report broken references and stale copies. Does not decide what new figures to create — that's a thesis-writing decision.
-- **DoD**: new file `handoffs/thesis-figures-audit-2026-04-12.md` with three sections: (a) broken `\includegraphics` refs (source file:line → missing asset path); (b) stale assets (asset path → crates/ source path → staleness reason: newer mtime and/or content hash mismatch); (c) advisory caveat that results may be moot after thesis restructuring. No file under `thesis/assets/` or `thesis/*.tex` is modified. Git shows exactly one new file under `handoffs/`.
+### [done] [2026-04-12] Thesis figure consistency check
+- Handoff: `handoffs/thesis-figures-audit-2026-04-12.md`. Degenerate baseline: 0 `\includegraphics` refs across 16 `thesis/**/*.tex` files, `thesis/assets/` does not exist. Rerun after experiment writeups and thesis restructuring land; before first figure, decide asset-provenance convention (manifest vs sidecar vs script).
 
 ### [open] Final assembly
 - Abstract, bibliography check (includes verifying agent-produced bib entry at `thesis/bibliography.bib` line 151), figure quality review, proofreading, print formatting.
@@ -319,16 +315,11 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
   - Callers use `if let Feasible(...)`, silently skipping TypeCViolation/ConstraintViolation same as Infeasible. Revisit when solver math matures and variants carry different error bound semantics.
   - `Source::LagrangianProduct` uses 0.0 for circumradius/rotation on random products (n1/n2 are correct). No code uses these fields for reconstruction; fix when Source enum is extended.
 
-### [open] Worktree audit
-- At 2026-04-12: one worktree besides main — `.claude/worktrees/paranoia-numerics` (branch `paranoia-numerics`). Enumerate live via `git worktree list` rather than trusting this list.
-- Agent investigates each: what's on the branch, is it merged, what's the diff vs main. Report to Jörn.
-- **Do not delete any worktree or branch.** Jörn decides what to keep/merge/discard.
-- **DoD**: new file `handoffs/worktree-audit-2026-04-12.md`. One section per worktree (excluding `main` itself) containing: path, branch name, commits ahead/behind `main`, last commit date + author, number of changed files vs `main`, 1-line diff summary, merge-status verdict (`merged` / `unmerged-wip` / `unmerged-dead`), 1-line purpose guess (from branch name + most-recent commit message + any top-level CLAUDE.md note). No `git branch -D`, `git worktree remove`, `git reset`, or force operations. Git shows exactly one new file under `handoffs/`.
+### [done] [2026-04-12] Worktree audit
+- Handoff: `handoffs/worktree-audit-2026-04-12.md`. One non-main worktree: `paranoia-numerics` — `unmerged-wip`, 5 ahead / 37 behind main, 19 files, matches `[active]` Paranoia numerics session. Jörn to decide rebase-and-merge vs continue-accumulating.
 
-### [open] Stale branch cleanup
-- At 2026-04-12: local branches not in a worktree (besides `main`): `citation-verification`, `citation-verification-d`, `database-cleanup`, `delete-api-reference`, `housekeeping-triage`, `numerical-story-expand`. Enumerate live via `git branch --format='%(refname:short)'` (excluding `main` and any branch with an active worktree).
-- Agent checks each for unmerged work, reports. Jörn says delete or keep per branch.
-- **DoD**: new file `handoffs/branch-audit-2026-04-12.md`. One entry per branch: commits ahead of `main`, commits behind `main`, last commit date + author, `merged-into-main?` verdict (`git branch --merged main` is authoritative), 1-line purpose guess (from branch name + first commit message on the branch). No `git branch -D`, `git push --force`, or destructive ops. Git shows exactly one new file under `handoffs/`.
+### [done] [2026-04-12] Stale branch cleanup
+- Handoff: `handoffs/branch-audit-2026-04-12.md`. 5 branches fully merged with 0-file diffs (`citation-verification`, `citation-verification-d`, `database-cleanup`, `delete-api-reference`, `housekeeping-triage`) — safe `git branch -d` candidates. 1 unmerged: `numerical-story-expand` (1 ahead / 9 behind, +458/-160 in `thesis/numerical-story.md`). Jörn decides per-branch.
 
 ### [done] [2026-04-12] Delete api-reference/
 - Never used organically by agents; agents read source directly. Removed `api-reference/`, `crates/tools/api-extract/`, pre-commit hook, workspace member, CLAUDE.md references.
