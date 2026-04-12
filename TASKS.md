@@ -227,6 +227,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Verify every `\includegraphics` in `thesis/**/*.tex` points to an existing file in `thesis/assets/`.
 - Check whether asset files are stale copies of regenerated crates/ originals (compare timestamps/content).
 - Report broken references and stale copies. Does not decide what new figures to create — that's a thesis-writing decision.
+- **DoD**: new file `handoffs/thesis-figures-audit-2026-04-12.md` with three sections: (a) broken `\includegraphics` refs (source file:line → missing asset path); (b) stale assets (asset path → crates/ source path → staleness reason: newer mtime and/or content hash mismatch); (c) advisory caveat that results may be moot after thesis restructuring. No file under `thesis/assets/` or `thesis/*.tex` is modified. Git shows exactly one new file under `handoffs/`.
 
 ### [open] Final assembly
 - Abstract, bibliography check (includes verifying agent-produced bib entry at `thesis/bibliography.bib` line 151), figure quality review, proofreading, print formatting.
@@ -269,7 +270,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - `crates/library/src/algorithms/math.tex` uses a_i throughout.
 - Remaining:
   - Jörn verifies `[lem:cap-derivative]` and `[lem:vol-derivative]` (marked `\begin{unverified}`)
-  - Write `[lem:dual-vertex-qp]` proof (a_i vs (n,h) QP equivalence)
+  - (`[lem:dual-vertex-qp]` proof was completed under Code cleanup 2026-04; see line 241.)
 
 ### [open] Audit math.tex stubs for lost proofs
 - Audited 2026-04-07: 53 explicit stubs + 69 unverified blocks. No proofs lost in migration — stubs were created as stubs, agent-written proofs added later.
@@ -319,13 +320,15 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
   - `Source::LagrangianProduct` uses 0.0 for circumradius/rotation on random products (n1/n2 are correct). No code uses these fields for reconstruction; fix when Source enum is extended.
 
 ### [open] Worktree audit
-- 4 active worktrees: `api-extract`, `dev-tube-summary` (Apr 4), `numerical-story`, `verify-numerics-part3` (Apr 4).
+- At 2026-04-12: one worktree besides main — `.claude/worktrees/paranoia-numerics` (branch `paranoia-numerics`). Enumerate live via `git worktree list` rather than trusting this list.
 - Agent investigates each: what's on the branch, is it merged, what's the diff vs main. Report to Jörn.
 - **Do not delete any worktree or branch.** Jörn decides what to keep/merge/discard.
+- **DoD**: new file `handoffs/worktree-audit-2026-04-12.md`. One section per worktree (excluding `main` itself) containing: path, branch name, commits ahead/behind `main`, last commit date + author, number of changed files vs `main`, 1-line diff summary, merge-status verdict (`merged` / `unmerged-wip` / `unmerged-dead`), 1-line purpose guess (from branch name + most-recent commit message + any top-level CLAUDE.md note). No `git branch -D`, `git worktree remove`, `git reset`, or force operations. Git shows exactly one new file under `handoffs/`.
 
 ### [open] Stale branch cleanup
-- 9 branches not in worktrees: `crosspolytope-phase2`, `feedback-triage-3-6`, `hko-second-order`, `math-tex-audit`, `remove-kkt-panics`, `session-search-agent`, `update-pre-merge`, `variable-f-ascent`, `api-extract-rs`.
+- At 2026-04-12: local branches not in a worktree (besides `main`): `citation-verification`, `citation-verification-d`, `database-cleanup`, `delete-api-reference`, `housekeeping-triage`, `numerical-story-expand`. Enumerate live via `git branch --format='%(refname:short)'` (excluding `main` and any branch with an active worktree).
 - Agent checks each for unmerged work, reports. Jörn says delete or keep per branch.
+- **DoD**: new file `handoffs/branch-audit-2026-04-12.md`. One entry per branch: commits ahead of `main`, commits behind `main`, last commit date + author, `merged-into-main?` verdict (`git branch --merged main` is authoritative), 1-line purpose guess (from branch name + first commit message on the branch). No `git branch -D`, `git push --force`, or destructive ops. Git shows exactly one new file under `handoffs/`.
 
 ### [done] [2026-04-12] Delete api-reference/
 - Never used organically by agents; agents read source directly. Removed `api-reference/`, `crates/tools/api-extract/`, pre-commit hook, workspace member, CLAUDE.md references.
