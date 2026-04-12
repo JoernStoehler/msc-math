@@ -44,7 +44,7 @@ Generate a curated dataset where we know what the correct answers MUST be, then 
 | Literature | 7 | Known polytopes with published capacity values | Test 2 |
 | Scaled | 10 | Base polytopes scaled by random alpha in [0.5, 2.0] | Test 3 (conformality) |
 | Transformed | 10 | Base polytopes transformed by random M in Sp(4) | Test 4 (symplectic invariance) |
-| Perturbed | 10 | Base polytopes with 1% height perturbation | Test 5 (continuity) |
+| Perturbed | 10 | Base polytopes with 0.5% max height perturbation | Test 5 (continuity) |
 
 ### Capacity computations
 
@@ -56,7 +56,7 @@ Generate a curated dataset where we know what the correct answers MUST be, then 
 2. **Literature agreement**: 7 known polytopes (simplex, hypercube, HK-O pentagon, 4 products) against published values. Billiard computed for 4 of the 7 (hypercube, pentagon, lag triangle x triangle, lag triangle x square).
 3. **Conformality**: c(alpha*K) = alpha^2 * c(K) for 10 scaled polytopes.
 4. **Symplectic invariance**: c(M*K) = c(K) for 10 transformed polytopes (M via Cayley transform).
-5. **Continuity**: 1% height perturbation produces < 10% relative capacity change.
+5. **Continuity**: 0.5% max height perturbation produces < 10% relative capacity change.
 6. **Monotonicity**: For all pairs (K1, K2) with non-trivial containment (alpha > 0.1), verify alpha^2 * c(K1) <= c(K2). Asserts >= 20 pairs tested.
 
 ## Findings
@@ -112,7 +112,7 @@ Test 1 generates 10 base polytopes (5 random generic, 5 Lagrangian products). Te
 
 ## Open questions
 
-1. **math.tex says "facet normals" but code perturbs heights.** Test 5 (continuity) applies a 1% height perturbation (`h * (1 + 0.01 * uniform)`) — confirmed in run.rs. But math.tex (Jörn-approved 2026-02-16) describes it as "a small random perturbation of the facet normals." One source is wrong. Needs Jörn.
+1. **math.tex says "facet normals" but code perturbs heights.** Test 5 (continuity) applies a height perturbation via `a / (1.0 + epsilon * delta)` where `epsilon = 0.01` and `delta` is uniform in [-0.5, 0.5], giving a maximum perturbation of 0.5% per height — confirmed in run.rs. But math.tex (Jörn-approved 2026-02-16) describes it as "a small random perturbation of the facet normals." One source is wrong. Needs Jörn.
 
 ## Related experiments
 

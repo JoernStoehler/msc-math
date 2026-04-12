@@ -6,7 +6,7 @@ The capacity algorithm uses a three-valued admissibility predicate: certified, r
 
 ## Status
 
-**Complete (Phase 1).** Phase 2 not needed: all 29 observed UNKNOWNs are f64 rounding noise.
+**Complete (Phase 1).** Phase 2 not needed: all 30 observed UNKNOWNs are f64 rounding noise.
 
 ## How to run
 
@@ -37,19 +37,19 @@ uv run analyze.py
 
 ## Findings
 
-1. **29 UNKNOWNs found, all in Lagrangian products, all f64 rounding noise.** Numerical gaps range from 4.44e-16 to 4.93e-12, all below 1e-10.
+1. **30 UNKNOWNs found, all in Lagrangian products, all f64 rounding noise.** Numerical gaps range from 4.44e-16 to 2.66e-15, all below 1e-10.
 2. **Random-sweep polytopes: zero UNKNOWNs.**
 3. Beta_min (margin from the uncertain threshold) is well above epsilon=1e-12 for all polytopes:
-   - Random: median 4.54e-2, range [6.74e-4, 1.21e-1]
-   - Lagrangian: median 1.71e-1, range [5.46e-2, 3.54e-1]
+   - Random: median 4.33e-2, range [7.83e-4, 1.34e-1]
+   - Lagrangian: median 1.38e-1, range [6.91e-2, 2.50e-1]
 4. The algorithm is empirically exact up to machine-precision rounding at f64 on our datasets.
-5. In all 29 UNKNOWN cases, the certified and uncertain capacities agree to full f64 precision.
+5. In all 30 UNKNOWN cases, the certified and uncertain capacities agree to full f64 precision.
 
 ## Known limitations
 
 - Only tested on polytopes with F <= 12; higher facet counts untested.
-- Phase 2 (re-solve at higher precision) not performed for the 29 UNKNOWN cases.
-- The 29 UNKNOWNs appear benign but are not individually confirmed resolved.
+- Phase 2 (re-solve at higher precision) not performed for the 30 UNKNOWN cases.
+- The 30 UNKNOWNs appear benign but are not individually confirmed resolved.
 
 ## Dead ends / deferred directions
 

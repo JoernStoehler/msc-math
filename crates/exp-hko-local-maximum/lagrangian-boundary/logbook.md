@@ -112,7 +112,7 @@ Polytope validity (bounded, irredundant, vertex-enumerable) is not the binding c
 
 At ε=0.01: mean sys = 1.033 ± 0.004 (tight cluster above 1). At ε=0.10: mean sys = 0.920 ± 0.035 (below 1 with rare exceptions). At ε=1.00: mean sys = 0.425 ± 0.180 (converging toward the random-product-sample regime).
 
-**4. Consistency with pentagon-perturb.** Pentagon-perturb used ε=0.01 per component (all 4 components of each dual vertex, not just the 2 Lagrangian ones) and found 100/100 above sys > 1 with min sys = 1.002. Our ε=0.01 level (Lagrangian-only perturbation) finds 500/500 above with min sys = 1.014, consistent and slightly tighter (fewer perturbation dimensions, so smaller effective distortion).
+**4. Consistency with pentagon-perturb.** Pentagon-perturb used ε=0.01 per component (all 4 components of each dual vertex, not just the 2 Lagrangian ones) and found 100/100 above sys > 1 with min sys = 1.014. Our ε=0.01 level (Lagrangian-only perturbation) finds 500/500 above with min sys = 1.014, consistent and slightly tighter (fewer perturbation dimensions, so smaller effective distortion).
 
 ### Interpretation
 
@@ -233,7 +233,7 @@ The per-component radius 0.036 matches ε* ≈ 0.035 from the fraction-vs-ε cur
 
 **3. The anisotropy is not attributable to known geometric directions.**
 
-- Scaling direction: r = 0.114 correlation with radius (3.8% R²)
+- Scaling direction: r = 0.114 correlation with radius (1.3% R²; joint with rotation: 3.8%)
 - Joint rotation direction: r = 0.151 correlation (marginal effect)
 - All 20 direction components together: R² = 0.066
 

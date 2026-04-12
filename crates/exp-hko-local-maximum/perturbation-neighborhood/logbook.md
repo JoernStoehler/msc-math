@@ -30,9 +30,9 @@ python analyze.py
 ## Design
 
 - **Base polytope:** `known_polytopes::hko_pentagon()` (10 facets, the HKO2024 counterexample)
-- **Perturbation method:** Uniform noise per component
-  - Normals: each component in [-0.01, 0.01], then renormalized to unit length
-  - Heights: each component in [-0.01, 0.01]
+- **Perturbation method:** Uniform noise per component of the 4D dual vertices
+  - Each of the 4 components of each dual vertex a_i perturbed by delta ~ Uniform[-0.01, 0.01]
+  - No renormalization; the perturbed vertices define the new polytope directly via `Polytope4D::from_f64`
 - **Sample count:** 100 perturbed + 1 unperturbed baseline
 - **Algorithm:** HK2017 pruned only
 - **Seed:** 41
@@ -43,9 +43,9 @@ python analyze.py
 All verified against `pentagon-perturb.jsonl` (101 rows).
 
 1. **All 100 perturbations retain sys > 1.** The counterexample is robust under small perturbations.
-2. **Summary statistics of perturbed sys:** min = 1.0022, max = 1.0333, mean = 1.0205, std = 0.0064.
+2. **Summary statistics of perturbed sys:** min = 1.0142, max = 1.0385, mean = 1.0287, std = 0.0048.
 3. **Base (unperturbed) sys = 1.0472 is highest**, indicating HKO2024 is a local maximum of sys in this perturbation space (among the 101 sampled points; not a proof of local maximality).
-4. **PCA on the 50-dimensional perturbation vector** (5 components per facet x 10 facets) shows no dominant direction: top 5 components explain 5.95%, 5.59%, 5.43%, 5.27%, 5.00% of variance respectively. Uniform baseline would be 1/50 = 2% per component; the top components are 2.5-3x this, so there is mild anisotropy but no single dominant direction.
+4. **PCA on the 40-dimensional perturbation vector** (4 components per facet x 10 facets) shows no dominant direction: top 5 components explain 6.51%, 6.07%, 5.79%, 5.40%, 4.96% of variance respectively. Uniform baseline would be 1/40 = 2.5% per component; the top components are 2-2.6x this, so there is mild anisotropy but no single dominant direction.
 
 ## Known limitations
 

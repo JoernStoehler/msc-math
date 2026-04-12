@@ -38,12 +38,12 @@ Walk along a direction for distance 1.0. 560 sweeps (140 polytopes x 4 direction
 
 **Event type distribution in sweeps:** incidence flips 75.6%, omega_0 flips 24.4%.
 
-**36% of sweeps end by construction failure** before exhausting the distance budget. Failure modes: 84% "unbounded" (lost positive spanning), 16% "facet redundant".
+**35.7% of sweeps end by construction failure** before exhausting the distance budget. Failure modes: 83.5% "unbounded" (lost positive spanning), 16.5% "facet redundant".
 
-**sys increases along gradient sweeps despite boundary crossings.** 71% of gradient sweeps end with higher sys than they started (median improvement 65%). 0% of neg-gradient sweeps increase sys (sanity check). The path is not monotonic (only 28% non-decreasing) -- sys oscillates across boundaries.
+**sys increases along gradient sweeps despite boundary crossings.** 73% of gradient sweeps end with higher sys than they started (median improvement 65%). 0% of neg-gradient sweeps increase sys (sanity check). The path is not monotonic (only 28% non-decreasing) -- sys oscillates across boundaries.
 
 **Orbit switches in the gradient direction tend to increase sys.** At single-boundary crossings: 4/5 gradient-direction orbit switches had positive delta_sys.
 
 ## Open questions
 
-1. **Construction failure after multi-boundary crossing:** 36% of sweeps fail. Sys-search should detect and backtrack.
+1. **Construction failure after multi-boundary crossing:** 35.7% of sweeps fail. Sys-search should detect and backtrack.

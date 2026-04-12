@@ -47,7 +47,7 @@ The binary cannot use the library's public API because it lacks hooks for symmet
 
 1. **Backtracking permutation search**: DFS through the directed adjacency graph instead of generating all (m-1)! cyclic permutations. Avoids the 15! ~ 1.3 trillion iteration problem for m=16.
 
-2. **Symmetry reduction**: Computes Aut(crosspolytope) intersect Sp(4,R) (order 32, both analytically and by Rust enumeration). Only processes one canonical representative per orbit of subsets. Reduction factor: ~27-30x per subset size.
+2. **Symmetry reduction**: Computes Aut(crosspolytope) intersect Sp(4,R) (order 32, both analytically and by Rust enumeration). Only processes one canonical representative per orbit of subsets. Reduction factor: ~20-30x per subset size.
 
 3. **Checkpointing**: Saves progress after each subset size m to a JSON file. On restart, resumes from last completed m.
 
