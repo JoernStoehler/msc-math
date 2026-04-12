@@ -412,6 +412,12 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Plan: `~/.claude/plans/elegant-dreaming-wind.md`
 - Worktree `codex-migration` exists, ready for post-rebuild session pickup.
 
+### [open] Design co-project-owner / coordinator skill
+- Goal: `.claude/skills/<name>/SKILL.md` for the task-graph-clerk role. Name, scope, content all TBD with Jörn.
+- **Starting constraint:** ASK JÖRN about the role/workflow before guessing. Do not design from priors or this session's tentative core.
+- Context: `feedback/2026-04-12-co-ownership-v2-postmortem.md` — enumerated failure modes if you design from guesses, plus one load-bearing insight (verification mechanism for coordinator work = asking Jörn, not an external check).
+- Output: minimal skill file, stable core only.
+
 ### [done] [2026-04-12] variable-f-ascent merge (closed as stale)
 - Experiment 2d results are on main per the `[done] [2026-04]` entry in "Novel sys>1 polytopes". No `variable-f-ascent` branch or worktree exists at 2026-04-12.
 - The logbook-reframing sub-task (RQ2 Path D should read as a sanity check, not a positive finding) is a small copy-edit that can happen as part of experiment writeup or ad hoc; not worth tracking as its own item in the 18-day push.
