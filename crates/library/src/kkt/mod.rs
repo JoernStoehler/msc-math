@@ -8,14 +8,29 @@
 //!
 //! Mathematical correspondence: [lem:kkt], [lem:q-error-bound]
 //!
+//! ## Two f64 solver strategies
+//!
+//! Two f64 solvers attack the same QP from different directions:
+//!
+//! - `saddle_point_solver` — solves the (m+5)x(m+5) augmented KKT system
+//!   via eigendecomposition. Default path used by `hk2017` and `billiard`
+//!   (see `solve_kkt_for`).
+//! - `projection_solver` — projects onto `ker(C)`, reduces to the k-dim
+//!   Hessian `H' = V^T H V`, then runs a max-margin search. Used when the
+//!   saddle-point path needs a cross-check or when beta>0 feasibility is
+//!   the bottleneck.
+//!
+//! `rational_solver` is a separate exact-arithmetic track (see below); it
+//! is NOT a third strategy on the f64 hot path.
+//!
 //! ## Submodules
 //!
 //! - `qp_assembly` — Polytope4D + permutation -> QP matrices or augmented system
-//! - `saddle_point_solver` — (m+5)x(m+5) eigendecomposition solver
+//! - `saddle_point_solver` — (m+5)x(m+5) eigendecomposition solver (main path)
 //! - `constraint_solver` — Solve Cx=d for particular solution + null space basis via SVD
 //! - `beta_feasibility` — Max-margin LP search for beta>0 in affine solution set
 //! - `projection_solver` — Project to constraint null space, optimize reduced objective
-//! - `rational_solver` — Exact rational KKT solver
+//! - `rational_solver` — Exact rational KKT solver (validation/ground-truth only; NOT used in main capacity enumeration)
 
 pub mod qp_assembly;
 pub mod saddle_point_solver;

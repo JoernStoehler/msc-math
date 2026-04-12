@@ -1,9 +1,14 @@
-% math.tex — combined mathematical documentation for crates/src/
+% math.tex — library-only mathematical documentation aggregator.
 %
-% Compiles to one PDF with all lemma statements, proofs, and definitions
-% supporting the Rust crate. Each section corresponds to a module.
+% Compiles the per-module math.tex files under crates/library/src/ into a
+% single PDF with lemma statements, proofs, and definitions supporting the
+% Rust library. Each section corresponds to a module.
 %
-% Build: cd crates/src && pdflatex math.tex
+% NOT the authoritative build. The authoritative build is
+%   cd crates/ && latexmk
+% which produces crates/main.pdf from crates/main.tex and resolves
+% cross-references against the experiment math.tex files as well. Use this
+% file only when you specifically want a library-subset PDF.
 
 \documentclass{article}
 \input{math-preamble}
