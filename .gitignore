@@ -35,6 +35,9 @@ crates/library/src/**/*.out
 # Data
 # crates/visualization/viz/data/ stores generated polytope JSON (tracked)
 
+# LICCA slurm stdout/stderr (regenerated each run, per-job)
+crates/**/logs/
+
 # Node (Playwright screenshots, dev tooling)
 node_modules/
 package.json

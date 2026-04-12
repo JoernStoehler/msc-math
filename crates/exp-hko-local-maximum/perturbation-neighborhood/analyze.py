@@ -54,13 +54,20 @@ def pick_jsonl_files(data_dir: Path) -> list[Path]:
 
 
 def load_grouped_by_eps(files: list[Path]) -> dict[float, list[dict]]:
+    """Load rows grouped by eps. Malformed lines are skipped: a partial write
+    from a concurrent writer (measurement run, crashed shard) must not derail
+    the analyzer.
+    """
     groups: dict[float, list[dict]] = {}
     for path in files:
         with open(path) as f:
             for line in f:
                 if not line.strip():
                     continue
-                row = json.loads(line)
+                try:
+                    row = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
                 eps = round(float(row["eps"]), 10)
                 groups.setdefault(eps, []).append(row)
     if not groups:
@@ -128,9 +135,13 @@ def plot_histogram_grid(
     output_path: Path,
 ) -> None:
     n_buckets = len(bucket_sys)
+    # Stack n_buckets single-panel plots vertically. Height is the full
+    # FIGSIZE_SINGLE[1] per panel (no magic multiplier); a 3-panel layout
+    # fits comfortably in \textwidth * 3 inches of vertical space in the
+    # thesis float it lands in.
     fig, axes = plt.subplots(
         n_buckets, 1,
-        figsize=(FIGSIZE_SINGLE[0], FIGSIZE_SINGLE[1] * n_buckets * 0.75),
+        figsize=(FIGSIZE_SINGLE[0], FIGSIZE_SINGLE[1] * n_buckets),
         sharex=False,
     )
     if n_buckets == 1:
