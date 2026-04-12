@@ -370,6 +370,106 @@ mod tests {
         );
     }
 
+    /// Regression test for the reduced-gradient sign.
+    ///
+    /// Prop: `solve_projected` computes `alpha0 = -(H')^{-1} V^T H beta0`, i.e.
+    /// the Lagrange critical point of `(1/2) beta^T H beta` on `{C beta = d}`.
+    /// Reference: [lem:kkt] — stationarity condition of the reduced objective
+    /// `f(alpha) = const + alpha^T (V^T H beta0) + (1/2) alpha^T H' alpha`.
+    ///
+    /// # Why this test exists
+    ///
+    /// Before 2026-04-12, line 95 of this file computed `b_prime = +V^T H beta0`
+    /// (missing minus sign), so `alpha0` had the wrong sign and `beta` was
+    /// reflected across `beta0` in the null-space direction. All other
+    /// projection-solver tests in this module passed under both signs because
+    /// their particular solution `beta0 = C^+ d` is minimum-norm and satisfies
+    /// `V^T H beta0 ~ 0` in the reduced-space sense (e.g. for H = I, `V^T beta0 = 0`
+    /// because `beta0 in row(C)` and `V` is orthogonal to `row(C)`; verified
+    /// numerically `V^T H beta0 ~ 3.3e-16` for the `one_free_variable` fixture).
+    /// Consequently `alpha0 ~ 0` and the sign was unobservable.
+    ///
+    /// This test uses H with non-zero off-diagonal entries so that
+    /// `H beta0` is NOT in `row(C)` and the reduced gradient is non-zero.
+    ///
+    /// # Construction (hand-checked)
+    ///
+    /// Variables m = 3, constraints p = 2, null dimension k = 1.
+    /// - C = [[1,0,1],[0,1,1]], d = [1,1]. Minimum-norm particular solution:
+    ///   `beta0 = C^T (C C^T)^{-1} d = (1/3, 1/3, 2/3)`.
+    /// - Null-space basis (orthonormal): `V = (-1, -1, 1)^T / sqrt(3)`.
+    /// - H = [[0,1,0],[1,0,0],[0,0,0]]. Then `H beta0 = (1/3, 1/3, 0)` and
+    ///   `V^T H beta0 = (-1/3 - 1/3 + 0)/sqrt(3) = -2/(3 sqrt(3)) != 0`.
+    /// - Reduced Hessian: `H V = (-1, -1, 0)^T / sqrt(3)`,
+    ///   `H' = V^T H V = 2/3`.
+    /// - Stationarity: `alpha = -(V^T H beta0) / H' = (2/(3 sqrt(3))) / (2/3) = 1/sqrt(3)`.
+    /// - `beta* = beta0 + V alpha = (1/3, 1/3, 2/3) + (-1/3, -1/3, 1/3) = (0, 0, 1)`.
+    /// - `Q* = (1/2) beta*^T H beta* = beta*_0 * beta*_1 = 0`.
+    ///
+    /// Under the buggy sign `alpha = +(V^T H beta0) / H' = -1/sqrt(3)`:
+    /// - `beta_buggy = (2/3, 2/3, 1/3)`, `Q_buggy = (2/3)(2/3) = 4/9`.
+    ///
+    /// Step 4 (max-margin LP) cannot mask the difference: `H' = 2/3` is the
+    /// single retained eigenvalue (above `EPS_EIGEN_THRESHOLD * lambda_max`),
+    /// so `v_search` has zero columns and the LP returns `beta_base` unchanged.
+    ///
+    /// # Assertions
+    ///
+    /// - `Q` matches the fixed-sign value `0` (buggy sign gives `4/9`).
+    /// - `beta` matches `(0, 0, 1)` component-wise (buggy sign gives `(2/3, 2/3, 1/3)`).
+    #[test]
+    fn reduced_gradient_sign_distinguishes_fix() {
+        #[rustfmt::skip]
+        let c = DMatrix::from_row_slice(2, 3, &[
+            1.0, 0.0, 1.0,
+            0.0, 1.0, 1.0,
+        ]);
+        let d = DVector::from_column_slice(&[1.0, 1.0]);
+        #[rustfmt::skip]
+        let h = DMatrix::from_row_slice(3, 3, &[
+            0.0, 1.0, 0.0,
+            1.0, 0.0, 0.0,
+            0.0, 0.0, 0.0,
+        ]);
+        let qp = QP { c, d, h };
+
+        let sol = solve_projected(&qp);
+
+        // Expected Q under the fixed sign is 0; the buggy sign gives 4/9 ~ 0.444.
+        // Tolerance 1e-10 is ~10^8 times smaller than the 4/9 gap.
+        assert!(
+            sol.q.abs() < 1e-10,
+            "Q = {}, expected 0 (fixed sign). \
+             Buggy sign would give Q = 4/9 ~ 0.4444. \
+             If this fails with Q ~ 0.4444, the reduced-gradient sign at \
+             projection_solver.rs:95 has been reverted.",
+            sol.q
+        );
+
+        // Expected beta under the fixed sign is (0, 0, 1); buggy sign gives (2/3, 2/3, 1/3).
+        // The L2 gap between the two is sqrt(2 * (2/3)^2 + (2/3)^2) = sqrt(12/9) ~ 1.155.
+        let expected_beta = [0.0, 0.0, 1.0];
+        for (i, &exp) in expected_beta.iter().enumerate() {
+            assert!(
+                (sol.beta[i] - exp).abs() < 1e-10,
+                "beta[{}] = {}, expected {} (fixed sign). \
+                 Buggy sign would give beta = (2/3, 2/3, 1/3).",
+                i,
+                sol.beta[i],
+                exp
+            );
+        }
+
+        // Constraint satisfaction sanity check (C beta = d).
+        let beta_dv = DVector::from_column_slice(&sol.beta);
+        let residual = (&qp.c * &beta_dv - &qp.d).norm();
+        assert!(
+            residual < 1e-10,
+            "||C beta - d|| = {:.2e}",
+            residual
+        );
+    }
+
     // ── Cross-variant tests: projection solver vs saddle-point solver ──
 
     /// Both solvers agree on capacity for the simplex.
