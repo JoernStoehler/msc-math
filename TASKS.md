@@ -327,12 +327,8 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - 9 branches not in worktrees: `crosspolytope-phase2`, `feedback-triage-3-6`, `hko-second-order`, `math-tex-audit`, `remove-kkt-panics`, `session-search-agent`, `update-pre-merge`, `variable-f-ascent`, `api-extract-rs`.
 - Agent checks each for unmerged work, reports. Jörn says delete or keep per branch.
 
-### [open] Evaluate api-reference/ usefulness
-- `api-reference/` + `api-extract` crate were built so agents can read stripped .rs files (no bodies/tests/privates).
-- As of 2026-04-07: zero organic agent usage found in session history. Agents prefer reading source directly.
-- Decision: keep for now, re-evaluate in ~1 week, delete if still unused.
-- Check command: `grep -rn "api-reference/library" ~/.claude/projects/-workspaces-msc-math/*.jsonl | grep -v CLAUDE.md | grep -v MEMORY.md | grep -v memory/`
-- If no new hits: delete `api-reference/`, `crates/tools/api-extract/`, pre-commit hook in `.pre-commit-config.yaml`, workspace member in `crates/Cargo.toml`, CLAUDE.md references.
+### [done] [2026-04-12] Delete api-reference/
+- Never used organically by agents; agents read source directly. Removed `api-reference/`, `crates/tools/api-extract/`, pre-commit hook, workspace member, CLAUDE.md references.
 
 ### [done] [2026-04] Polytope database
 - `crates/database/`, JSONL format, 1198 entries. 6 experiments migrated.
