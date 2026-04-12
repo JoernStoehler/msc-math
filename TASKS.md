@@ -45,7 +45,13 @@ Rough shape of Jörn's plan as of 2026-04-12. Ordering is by hard dependencies, 
 - **After math write-up scaffold lands** → Jörn breaks hard-labor items into agent-doable sub-tasks
 
 ### Conventions for LICCA experiments
-Same code runs locally and on LICCA (differs only in path + cutoffs). Outputs: a locally-regenerable JSONL + a LICCA-made JSONL (slurm job output, scp'd back and committed via git LFS) + the slurm script that regenerates the LICCA JSONL.
+Same binary runs locally and on LICCA. The binary takes explicit CLI args (`--n`, `--out`, ...); no `--mode` flag, no Rust-side `if licca {}` branching — all configuration lives in the shell scripts.
+
+Each LICCA-bound experiment ships two scripts in its directory:
+- `job-smoke.sh` — plain bash, no `#SBATCH`. Small N. Output path under the experiment dir (e.g. `data/smoke.jsonl`). Runs in this devcontainer. Agents run this as their own verification step before handing off.
+- `job.sh` — `#SBATCH` headers, LICCA paths, production N. Jörn scps and submits; the slurm skill (`.claude/skills/slurm/`) has the template + resource-table requirement.
+
+Artifacts per experiment: `job.sh` + `job-smoke.sh` + `data/smoke.jsonl` (locally-regenerable, committed) + `data/licca.jsonl` (produced on LICCA, scp'd back, committed via git LFS). Analyze.py reads whichever is newer / whichever is specified.
 
 ## [open] HKO2024 local maximality
 
@@ -84,7 +90,8 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 
 ### [open] [group:licca] LICCA-scale F=10 neighborhood falsification
 - Scale the 100-seed perturbation-neighborhood experiment to 10k+ perturbations with multiple step-size buckets (small/medium/large). Honest falsification attempt — current 100-seed baseline is suggestive but thin.
-- Plan: new sibling `crates/exp-hko-local-maximum/perturbation-neighborhood-licca/` to preserve the baseline artifact.
+- New sibling `crates/exp-hko-local-maximum/perturbation-neighborhood-licca/` preserves the baseline artifact. Copy-paste + edit is fine, not a refactor of the original.
+- Bundled with the sibling [group:licca] massive ascent sampling item into **one session** (shared slurm pattern work — see "Conventions for LICCA experiments" above).
 - Scheduled: Sunday 2026-04-12 LICCA window.
 - Expected outcome: no sys>HKO (strengthens conjecture). Real outcome: whatever the data says.
 - Re-plan trigger: results back → evaluate whether falsification succeeded or conjecture is strengthened.
@@ -141,8 +148,9 @@ Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the o
 ### [open] [group:licca] LICCA-scale massive ascent sampling (density probe)
 - Scale `exp-sys-landscape/gradient-ascent-general/` (10 seeds → 10k+) and `gradient-ascent-products/` (12 seeds → 10k+) on LICCA.
 - **Research question**: does the density of sys>1 local maxima in M_F actually support "no new examples"? Current seed counts are too small to claim the density is low.
-- Both families run in parallel — products is where HKO2024 lives (direct question), general is the broader baseline.
-- New subdir(s) under `crates/exp-sys-landscape/`, each producing histogram + bucket counts at sys>0.95/0.99/1.00.
+- Both families run — products is where HKO2024 lives (direct question), general is the broader baseline. Agent may ship them as one sibling dir or two; whichever is cleaner. Copy-paste from originals, not refactor.
+- Each family produces histogram + bucket counts at sys>0.95/0.99/1.00.
+- Bundled with the sibling [group:licca] F=10 falsification item into **one session** (shared slurm pattern work — see "Conventions for LICCA experiments" above).
 - Scheduled: Sunday 2026-04-12 LICCA window.
 - Re-plan trigger: results back → update RESULTS.md density claim, evaluate whether any further sampling is worthwhile.
 
@@ -197,7 +205,7 @@ Instrument development. Results promote to `crates/library/`.
 - Eigenvalue inertia formula holds for 6/7 polytopes, 5 mismatches are threshold artifacts.
 - `crates/dev-numerical-analysis/q-error/`, `kkt-inertia/`
 
-### [active] [group:numerics] 4b. Numerical error bounds (verify-numerics)
+### [open] [group:numerics] 4b. Numerical error bounds (verify-numerics)
 - math.tex Parts I+II complete. Proven Q error bound, eta bound for well-conditioned problems.
 - 14 previously-failing tests now pass (329 pass, 0 fail).
 - Rationale for current state: degenerate orbits are never capacity-achieving, so final capacity comes from well-conditioned orbits with proven low error. Gap remains for publication.
@@ -281,11 +289,11 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 ### [blocked] [group:writeup] Conclusion
 - Blocked on: stable chapter content.
 
-### [open] [group:writeup] Math write-up scaffold (precursor for write-up pass)
-- One session audits every `math.tex` (library + experiments). Produces: (a) theorem dependency graph, (b) refreshed stub / unverified-block inventory (last audit 2026-04-07 found 53 stubs + 69 unverified; refresh is cheap), (c) **ranked hard-labor list** per Jörn's framing: theorem statements with awkward edge cases, missing error bounds, unproven gaps, places where a cleave-of-statement would naturally handle edges.
-- Output: `handoffs/math-writeup-scaffold-YYYY-MM-DD.md`. Jörn uses it to drive the two-phase write-up (high-level notes → paragraph-level structure).
-- Also feeds Kai meeting prep.
-- Scheduled: 2026-04-13 Mon.
+### [done] [2026-04-12] [group:writeup] Math write-up scaffold
+- Handoff: `handoffs/math-writeup-scaffold-2026-04-12.md` (778 lines, grep-verified).
+- Counts: 69 unverified blocks (unchanged from 2026-04-07), 41 `TODO: JÖRN` markers, 10 GAP markers, 100 theorem-like environments across 18 files.
+- Top 4 ranked hard-labor items: `prop:capacity-piecewise-smooth`, `lem:cap-derivative`+`lem:vol-derivative`, `prop:prefilter-bound`, `prop:capacity-symplectic-product` (library GAP).
+- Ahead of 2026-04-13 schedule. Kai briefing item (below) can consume it once LICCA Sunday preliminaries are back.
 
 ### [open] [group:writeup] Kai meeting prep briefing (Tuesday 2026-04-14)
 - Terse `.md` with checkpoints Jörn reads ~10 min before the Kai call and drives the meeting from. Not a prose doc for Kai — Jörn drives verbally.
@@ -330,12 +338,12 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
   - `dev-capacity-validation/orbit-recovery/`: 4 polytopes missing from dataset (112→108), `solution_dim` hardcoded to 0 in run.rs, error magnitudes from different algorithm version
   - `dev-algorithm-comparison/profiling/`: per-test durations zeroed in JSONL, 3 historical runs absent — data pipeline broken
 
-### [active] [group:paranoia] Paranoia: conjectures + interpretations (session launched 2026-04-07)
+### [open] [group:paranoia] Paranoia: conjectures + interpretations
 - Flag-only. Audit all conjectures, "we believe" statements, causal claims, unhedged conclusions.
 - Produce ranked list of "most embarrassing if wrong."
 - No fixes — Jörn reviews the list when writing capacity frees up.
 
-### [active] [group:writeup] Thesis-code alignment
+### [open] [group:writeup] Thesis-code alignment
 - Full list: `handoffs/migration-thesis-findings.md`
 - Tube rotation increment: current code is a misleadingly named placeholder, not CH2021. Need to implement a correct rotation formula (not necessarily CH2021 — we have different basis vectors).
 - KKT notation: decided — use code's symmetric convention (eigenvalue decompositions pop out). Propagate to thesis.
@@ -344,7 +352,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - KktResult->Solution bridge: needs investigation — unclear whether this is actually a thesis-code alignment issue.
 - Note: thesis-side propagation (KKT notation, accumulator, qp_assembly) is blocked on thesis restructuring.
 
-### [active] [group:writeup] Dual-vertex parameterization (a_i migration)
+### [open] [group:writeup] Dual-vertex parameterization (a_i migration)
 - Library API done. Most experiment migration complete. Math.tex migration complete.
 - `crates/library/src/algorithms/math.tex` uses a_i throughout.
 - Remaining:
@@ -371,12 +379,10 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Clarify H-representation irredundancy. Fix Defs 12-13 (area/volume are algorithms, not definitions).
 - Consider splitting into `math_geometry.tex`, `math_symplectic.tex`, `math_reeb.tex`.
 
-### [open] [group:docs] Library architecture docs audit
-- Tests Jörn's hypothesis that existing state (file headers + doccomments + per-module `math.tex`) already covers library architecture, or whether there are real gaps.
-- One session reads each `crates/library/src/<module>/`, produces a per-module gap report with severity. **Zero source edits on first pass** — audit only.
-- Jörn reads the report and decides per module: fix-in-place / extract architecture.md / "already fine".
-- Output: `handoffs/library-docs-audit-YYYY-MM-DD.md`.
-- Scheduled: can run Sunday 2026-04-12 or Monday — no LICCA dependency, independent of tube work.
+### [done] [2026-04-12] [group:docs] Library architecture docs audit
+- Handoff: `handoffs/library-docs-audit-2026-04-12.md`. Hypothesis (existing headers + per-module math.tex cover architecture) mostly held: 0 blockers, 7 gaps, 3 nits across `lib.rs`, `kkt/`, `algorithms/` umbrella, `algorithms/tube/`.
+- 5 doc-only fixes applied and merged to main (no source/algorithm changes). Notable: `algorithms/mod.rs` tube description rewritten from "(placeholder)" to an explicit wrong-rotation-formula warning; `algorithms/` umbrella gained a "correctness invariant" paragraph (overlapping algorithms must agree).
+- Skipped as marginal: `derivatives.rs` cross-directory lemma cite (findable via absolute path), `kkt/mod.rs` formula-location nit, umbrella missing utility math-label cross-refs.
 
 ### [future] [group:polish] SWE polish (post-thesis-draft-stability bucket)
 - Covers: `dev-*/exp-*` stable code → `library/` promotion, test suite completion + perf, documentation gaps, code simplifications (adopt standard patterns, pull in overlooked libraries, abstract/unabstract as helpful).
@@ -396,7 +402,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 
 ## [open] Infrastructure + tooling
 
-### [active] Orchestration pattern test
+### [open] Orchestration pattern test
 - Testing `/orchestrate` skill + delegation guide on real thesis tasks.
 - Baseline commit `f8044b35`. Dry run confirmed Agent() mechanics work.
 - Next: post-mortem in `.claude/skills/orchestrate/references/design-space.md`.
