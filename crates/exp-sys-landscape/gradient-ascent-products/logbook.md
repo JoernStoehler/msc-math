@@ -12,12 +12,16 @@ index `i` runs with its own RNG stream `ChaCha8Rng::seed_from_u64(SEED + i)`
 and is named `products_{i}`. Bucket `(q,p)` is determined by `i mod 3` where
 `LAGRANGIAN_SPLITS = [(3,7),(4,6),(5,5)]`, so contiguous index ranges are
 evenly distributed across buckets (10k total -> ~3333 per bucket).
-`--no-db-update` disables shared-database load/save, required for concurrent
-LICCA shards because the old code load-modify-saved `crates/data/polytopes.jsonl`.
+`--no-db-update` disables shared-database load/save, required under rayon
+par_iter because the old code load-modify-saved `crates/data/polytopes.jsonl`.
 
-Production target: 10k seeds via `--array=0-9` on the epyc partition, N_PER_SHARD=1000.
-Wall-time budget in `job.sh` will be set from the local N=1000 measurement
-(see "Findings" once complete).
+Production target: 10k seeds via `rayon::par_iter` on a single slurm task with
+`--cpus-per-task=10` on the epyc partition. One output file `data/licca.jsonl`.
+
+Architecture B (2026-04-12): rayon par_iter on one LICCA task,
+`--cpus-per-task=10`. One output file (`licca.jsonl`). See
+`vectorized-bouncing-gray.md` for the A→B decision rationale and
+`peppy-hugging-melody.md` HANDOFF STATE for session history.
 
 The old committed `gradient-ascent-products.jsonl` (N=12, 3 buckets × 4) is
 **not** byte-reproducible under the new per-seed RNG scheme and has been
@@ -47,21 +51,30 @@ uv run analyze.py
 Expect ~15 s compute. Produces `data/smoke.jsonl`, `data/smoke-trace.jsonl`,
 and the six figure files. Seed 0 lands in bucket `lagrangian_3x7`, seed 1 in
 `lagrangian_4x6`, seed 2 in `lagrangian_5x5`. `analyze.py` picks up
-`data/licca-shard-*.jsonl` > `data/measure.jsonl` > `data/smoke.jsonl` in
-priority order.
+`data/licca.jsonl` > `data/licca-shard-*.jsonl` (legacy) > `data/smoke.jsonl`
+in priority order.
 
-### Local measurement run (pre-submission, N=1000)
+### Wall-time budget
+
+`#SBATCH --time=` in `job.sh` is a 1-second tripwire (`00:00:01`); bare
+`sbatch job.sh` dies in 1 second with slurm reason `TIMEOUT`, forcing the
+submitter to set the real wall time on the CLI. Real wall time is set from
+the LICCA test-partition dry run (3 seeds, ~1 min) and passed via
+`sbatch --time=HH:MM:SS job.sh` (CLI `--time` overrides the `#SBATCH`
+directive per slurm precedence: CLI > `#SBATCH` > env > default).
+
+No local N=1000 run — that burns Jörn's dev-machine CPU for >2h and was
+explicitly forbidden after a prior incident (see `peppy-hugging-melody.md`
+HANDOFF STATE, session failure modes #1 and #2).
+
+### Byte-reproducibility re-verify
 
 ```bash
-./target/release/sys-gradient-ascent-products \
-    --fresh --n 1000 --n-start 0 --no-db-update \
-    --out data/measure.jsonl > /tmp/measure-products.log 2>&1 &
+./target/release/sys-gradient-ascent-products --n 1 --n-start 5 --fresh --out /tmp/r1.jsonl
+./target/release/sys-gradient-ascent-products --n 10 --n-start 0 --fresh --out /tmp/r2.jsonl
+diff <(jq -c 'select(.name=="products_5")' /tmp/r1.jsonl) <(jq -c 'select(.name=="products_5")' /tmp/r2.jsonl)
+# expected: no output (byte-identical row for products_5 regardless of shard range)
 ```
-
-Expected wall time: ~1.2 h (single-threaded, ~4 s mean per seed).  Extract
-`total_time_ms` distribution from `data/measure.jsonl`, compute mean + 99th
-percentile + `SEED_TIME_BUDGET_SECS=120` cap-hit rate, use them to set
-`--time=` in `job.sh`. See "Findings" for the recorded numbers.
 
 ### LICCA (production, 10k seeds)
 
@@ -72,15 +85,15 @@ export CARGO_TARGET_DIR=/hpc/gpfs2/scratch/u/stoehljo/cargo-target
 cargo build --release -p exp-sys-landscape --bin sys-gradient-ascent-products
 cd exp-sys-landscape/gradient-ascent-products
 
-# Test-partition dry run (1 shard x 3 seeds, ~3 min):
-sbatch -p test --time=00:03:00 --array=0-0 --export=ALL,N_PER_SHARD=3 job.sh
+# Test-partition dry run (single task x 3 seeds, ~3 min):
+sbatch -p test --time=00:03:00 --export=ALL,N=3 job.sh
 squeue -u stoehljo
-cat logs/ascent-products-*_0.out
-head data/licca-shard-0.jsonl
-rm data/licca-shard-0.jsonl  # clean up dry-run data
+cat logs/ascent-products-*.out
+head data/licca.jsonl
+rm data/licca.jsonl  # clean up dry-run data
 
-# Production:
-sbatch job.sh
+# Production (CLI --time overrides the 1-second tripwire):
+sbatch --time=02:00:00 job.sh
 squeue -u stoehljo
 sacct -j <jobid> --format=JobID,State,Elapsed,MaxRSS
 ```
@@ -88,20 +101,17 @@ sacct -j <jobid> --format=JobID,State,Elapsed,MaxRSS
 Retrieve from devcontainer:
 ```bash
 scp -J stoehljo@xlogin.uni-augsburg.de \
-    stoehljo@licca-li-01.rz.uni-augsburg.de:'~/msc-math/crates/exp-sys-landscape/gradient-ascent-products/data/licca-shard-*.jsonl' \
+    stoehljo@licca-li-01.rz.uni-augsburg.de:'~/msc-math/crates/exp-sys-landscape/gradient-ascent-products/data/licca.jsonl' \
     crates/exp-sys-landscape/gradient-ascent-products/data/
 ```
 
 Then run `uv run analyze.py` locally.
 
-### Resuming a crashed shard
+### Resuming a crashed job
 
-Resubmit a single shard with its array id; it resumes from whichever
-rows are already in `licca-shard-<i>.jsonl`:
-```bash
-sbatch --array=<shard-id> job.sh
-```
-Do NOT pass `--fresh` — that would delete the partial output.
+Resubmit `sbatch --time=HH:MM:SS job.sh`; `load_completed_names` reads the
+existing `licca.jsonl` and skips already-completed seeds. Do NOT pass
+`--fresh` — that would delete the partial output.
 
 ### Files
 
@@ -109,10 +119,10 @@ Do NOT pass `--fresh` — that would delete the partial output.
 |------|------|
 | `run.rs` | Binary: per-seed RNG projected ascent + overshoot + wiggle |
 | `analyze.py` | Per-bucket summary + 6 figures + Bayesian bound |
-| `job.sh` | Slurm submission script (epyc, array 0-9, 1 core) |
+| `job.sh` | Slurm submission script (epyc, single task, 10 cores, 1-second tripwire --time) |
 | `data/smoke.jsonl` | Local smoke output, 3 seeds (LFS) |
-| `data/measure.jsonl` | Local N=1000 measurement for wall-time budgeting (LFS) |
-| `data/licca-shard-*.jsonl` | LICCA production shard outputs (LFS) |
+| `data/licca.jsonl` | LICCA production output (N=10000, LFS) |
+| `data/licca-shard-*.jsonl` | Legacy architecture-A shard outputs (LFS) — kept for post-merge reads, not produced by current `job.sh` |
 | `gradient-ascent-products.jsonl` | Historical N=12 dataset from before the refactor — superseded, not read by the current `analyze.py` |
 | `gradient_ascent_products_*.png` | Figures |
 

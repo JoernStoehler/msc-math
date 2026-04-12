@@ -19,25 +19,27 @@
 //! - `--no-db-update`     do not load or save the shared polytope database
 //!                        (set by LICCA shards to avoid concurrent write races)
 //!
-//! Seed i (global index) is processed with its own RNG stream
-//! `ChaCha8Rng::seed_from_u64(seed + i)` and named `products_{i}`. Bucket is
-//! determined by `i % LAGRANGIAN_SPLITS.len()` so a contiguous range of global
-//! indices is evenly distributed across all buckets. Two shards covering
-//! disjoint `[n_start, n_start+n)` ranges therefore produce disjoint,
-//! byte-reproducible rows with balanced bucket coverage. `N_PER_SHARD` in
-//! LICCA `job.sh` is immutable once first submitted.
+//! Architecture B (2026-04-12): rayon `par_iter` over `[n_start, n_start+n)`
+//! at the dataset level. Seed i uses its own RNG stream
+//! `ChaCha8Rng::seed_from_u64(seed + i)`, is named `products_{i}`, and has
+//! bucket `i mod LAGRANGIAN_SPLITS.len()`. The output for index i is
+//! byte-reproducible regardless of thread assignment. Shared CLI / writer /
+//! resume plumbing lives in `exp_sys_landscape::{parse_ascent_args,
+//! open_ascent_writers, run_parallel_seeds, ...}`.
 
 use database::{DualVerticesKey, PolytopeRecord};
-use exp_sys_landscape::compute_step_bound;
+use exp_sys_landscape::{
+    compute_step_bound, open_ascent_writers, parse_ascent_args, run_parallel_seeds,
+    trace_path_for, AscentArgs, SeedResult, SummaryRow, TraceRow, MAX_STEP_SIZE,
+};
 use nalgebra::Vector4;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal};
-use serde::Serialize;
-use std::collections::{HashMap, HashSet};
-use std::fs::{File, OpenOptions};
-use std::io::{BufRead, BufReader, BufWriter, Write};
-use std::path::{Path, PathBuf};
+use std::collections::HashMap;
+use std::io::Write;
+use std::path::Path;
+use std::sync::{Arc, Mutex};
 use std::time::Instant;
 use symplectic::algorithms::billiard::billiard_capacity;
 use symplectic::algorithms::billiard::facet_classification::{classify_facets, FacetClassification};
@@ -53,8 +55,6 @@ use symplectic::kkt::saddle_point_solver::solve_kkt_for;
 // ============================================================================
 
 const DEFAULT_SEED: u64 = 42;
-const DEFAULT_N: usize = 12;
-const DEFAULT_N_START: usize = 0;
 
 /// Lagrangian product splits (q_facets, p_facets) summing to 10.
 const LAGRANGIAN_SPLITS: &[(usize, usize)] = &[(3, 7), (4, 6), (5, 5)];
@@ -83,9 +83,6 @@ const STEP_FRACTIONS: &[f64] = &[0.1, 0.25, 0.5, 0.75, 0.95];
 /// Land in neighboring combinatorial cells.
 const OVERSHOOT_MULTIPLIERS: &[f64] = &[1.5, 2.0, 3.0];
 
-/// Prevents pathological steps when t_max is huge.
-const MAX_STEP_SIZE: f64 = 100.0;
-
 /// Number of random dual-vertex perturbations per escape round.
 const N_WIGGLES: usize = 5;
 
@@ -111,44 +108,6 @@ const SEED_TIME_BUDGET_SECS: f64 = 120.0;
 /// Numerical zero threshold for gradient norms, rates, and slack comparisons.
 /// Near machine epsilon for unit-scale f64. Matches gradient-descent.
 const EPS: f64 = 1e-15;
-
-// ============================================================================
-// Output schemas
-// ============================================================================
-
-/// One row per seed — the main analysis dataset.
-#[derive(Debug, Serialize)]
-struct SummaryRow {
-    name: String,
-    seed_index: usize,
-    polytope_type: String,
-    facet_count: usize,
-    starting_sys: f64,
-    final_sys: f64,
-    total_delta: f64,
-    n_ascent_phases: usize,
-    n_gradient_iters_total: usize,
-    n_escape_overshoot: usize,
-    n_escape_wiggle: usize,
-    best_strategy: String,
-    total_time_ms: f64,
-    final_dual_vertices: Vec<[f64; 4]>,
-}
-
-/// One row per iteration per ascent phase — diagnostic trace.
-#[derive(Debug, Serialize)]
-struct TraceRow {
-    name: String,
-    phase: usize,
-    iteration: usize,
-    step_type: String,
-    t_fraction: f64,
-    t_actual: f64,
-    sys_before: f64,
-    sys_after: f64,
-    delta_sys: f64,
-    gradient_norm: f64,
-}
 
 // ============================================================================
 // Gradient step in a-space
@@ -362,11 +321,6 @@ fn wiggle(polytope: &Polytope4D, rng: &mut ChaCha8Rng) -> Option<Polytope4D> {
 // Per-seed processing
 // ============================================================================
 
-struct SeedResult {
-    summary: SummaryRow,
-    trace: Vec<TraceRow>,
-}
-
 fn process_seed(
     name: &str,
     seed_index: usize,
@@ -476,115 +430,6 @@ fn process_seed(
     })
 }
 
-// ============================================================================
-// Resume support
-// ============================================================================
-
-fn load_completed_names(path: &std::path::Path) -> HashSet<String> {
-    let mut names = HashSet::new();
-    if let Ok(file) = File::open(path) {
-        let reader = BufReader::new(file);
-        for line in reader.lines().map_while(Result::ok) {
-            let line = line.trim().to_string();
-            if line.is_empty() {
-                continue;
-            }
-            if let Ok(v) = serde_json::from_str::<serde_json::Value>(&line) {
-                if let Some(name) = v.get("name").and_then(|n| n.as_str()) {
-                    names.insert(name.to_string());
-                }
-            }
-        }
-    }
-    names
-}
-
-// ============================================================================
-// CLI
-// ============================================================================
-
-struct Args {
-    n: usize,
-    n_start: usize,
-    seed: u64,
-    out: PathBuf,
-    fresh: bool,
-    no_db_update: bool,
-}
-
-fn parse_args() -> Args {
-    let argv: Vec<String> = std::env::args().collect();
-    let default_out = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("gradient-ascent-products/gradient-ascent-products.jsonl");
-
-    let mut n = DEFAULT_N;
-    let mut n_start = DEFAULT_N_START;
-    let mut seed = DEFAULT_SEED;
-    let mut out: Option<PathBuf> = None;
-    let mut fresh = false;
-    let mut no_db_update = false;
-
-    let mut i = 1;
-    while i < argv.len() {
-        let arg = argv[i].as_str();
-        let value = || -> &str {
-            argv.get(i + 1)
-                .map(|s| s.as_str())
-                .unwrap_or_else(|| panic!("{arg} requires a value"))
-        };
-        match arg {
-            "--n" => {
-                n = value().parse().expect("--n must be a non-negative integer");
-                i += 2;
-            }
-            "--n-start" => {
-                n_start = value().parse().expect("--n-start must be a non-negative integer");
-                i += 2;
-            }
-            "--seed" => {
-                seed = value().parse().expect("--seed must be a u64");
-                i += 2;
-            }
-            "--out" => {
-                out = Some(PathBuf::from(value()));
-                i += 2;
-            }
-            "--fresh" => {
-                fresh = true;
-                i += 1;
-            }
-            "--no-db-update" => {
-                no_db_update = true;
-                i += 1;
-            }
-            other => panic!("unknown argument: {other}"),
-        }
-    }
-
-    Args {
-        n,
-        n_start,
-        seed,
-        out: out.unwrap_or(default_out),
-        fresh,
-        no_db_update,
-    }
-}
-
-fn trace_path_for(summary_path: &Path) -> PathBuf {
-    let stem = summary_path
-        .file_stem()
-        .expect("summary path must have a file name")
-        .to_string_lossy()
-        .into_owned();
-    let ext = summary_path
-        .extension()
-        .map(|e| e.to_string_lossy().into_owned())
-        .unwrap_or_else(|| "jsonl".to_string());
-    let parent = summary_path.parent().unwrap_or_else(|| Path::new("."));
-    parent.join(format!("{stem}-trace.{ext}"))
-}
-
 /// Generate a Lagrangian product for global seed index i from its own RNG
 /// stream. Bucket (q_f, p_f) is determined by `i mod LAGRANGIAN_SPLITS.len()`,
 /// so contiguous index ranges are evenly spread across buckets (10k total ->
@@ -625,32 +470,14 @@ fn insert_polytope_to_db(
     db.insert(key, record);
 }
 
-/// Write a seed result to the summary and trace JSONL files.
-fn write_result(
-    result: &SeedResult,
-    summary_writer: &mut BufWriter<File>,
-    trace_writer: &mut BufWriter<File>,
-) {
-    serde_json::to_writer(&mut *summary_writer, &result.summary).expect("write summary");
-    writeln!(summary_writer).expect("newline");
-    for row in &result.trace {
-        serde_json::to_writer(&mut *trace_writer, row).expect("write trace");
-        writeln!(trace_writer).expect("newline");
-    }
-}
-
 fn main() {
-    let args = parse_args();
+    let default_out = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("gradient-ascent-products/gradient-ascent-products.jsonl");
+    let args: AscentArgs = parse_ascent_args(DEFAULT_SEED, default_out, "products");
     let t_global = Instant::now();
 
     let summary_path = args.out.clone();
     let trace_path = trace_path_for(&summary_path);
-
-    if let Some(parent) = summary_path.parent() {
-        if !parent.as_os_str().is_empty() {
-            std::fs::create_dir_all(parent).expect("create output directory");
-        }
-    }
 
     println!("gradient-ascent-products: projected gradient ascent on Lagrangian products");
     println!("  n:            {}", args.n);
@@ -662,13 +489,10 @@ fn main() {
     println!("  no-db-update: {}", args.no_db_update);
     println!("  buckets:      {LAGRANGIAN_SPLITS:?}\n");
 
-    // Resume support
     let completed = if args.fresh {
-        let _ = std::fs::remove_file(&summary_path);
-        let _ = std::fs::remove_file(&trace_path);
-        HashSet::new()
+        std::collections::HashSet::new()
     } else {
-        load_completed_names(&summary_path)
+        exp_sys_landscape::load_completed_names(&summary_path)
     };
 
     if completed.is_empty() {
@@ -677,109 +501,87 @@ fn main() {
         println!("Resuming: {} seeds already completed.", completed.len());
     }
 
-    let summary_file = OpenOptions::new()
-        .create(true)
-        .append(true)
-        .open(&summary_path)
-        .expect("open summary JSONL");
-    let mut summary_writer = BufWriter::new(summary_file);
+    let writers = open_ascent_writers(&summary_path, &trace_path, args.fresh);
+    let best = Arc::new(Mutex::new((0.0f64, String::new())));
 
-    let trace_file = OpenOptions::new()
-        .create(true)
-        .append(true)
-        .open(&trace_path)
-        .expect("open trace JSONL");
-    let mut trace_writer = BufWriter::new(trace_file);
-
-    // Load polytope database for caching. Skipped entirely when --no-db-update
-    // is set: LICCA shards neither read nor write the shared database, which
-    // avoids the concurrent-write race on crates/data/polytopes.jsonl.
+    // DB state: loaded once, shared across threads under a Mutex when !no_db_update.
+    // On LICCA (--no-db-update), both load and insertion are skipped entirely.
     let db_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("../../data/polytopes.jsonl");
-    let mut db: HashMap<DualVerticesKey, PolytopeRecord> = if args.no_db_update {
-        HashMap::new()
+    let db_arc: Arc<Mutex<HashMap<DualVerticesKey, PolytopeRecord>>> = if args.no_db_update {
+        Arc::new(Mutex::new(HashMap::new()))
     } else {
         let db = database::load(&db_path).expect("failed to load database");
         println!("Loaded database: {} entries", db.len());
-        db
+        Arc::new(Mutex::new(db))
     };
 
-    let mut best_global = 0.0f64;
-    let mut best_name = String::new();
-    let mut n_processed = 0usize;
+    let no_db_update = args.no_db_update;
+    let db_for_closure = Arc::clone(&db_arc);
 
-    // ------------------------------------------------------------------------
-    // Per-seed-index loop with per-seed RNG streams.
-    //
-    // Seed i is driven by ChaCha8Rng::seed_from_u64(seed + i). Bucket is
-    // i mod LAGRANGIAN_SPLITS.len(). Polytope generation and wiggle() share
-    // the stream, so output for index i is byte-reproducible regardless of
-    // which shard processes it.
-    // ------------------------------------------------------------------------
-    let end = args.n_start + args.n;
-    for i in args.n_start..end {
-        let name = format!("products_{i}");
-        let mut rng_i = ChaCha8Rng::seed_from_u64(args.seed.wrapping_add(i as u64));
+    run_parallel_seeds(&args, &completed, &writers, &best, move |i, seed_i| {
+        let mut rng_i = ChaCha8Rng::seed_from_u64(seed_i);
 
-        let (bucket_name, polytope) = match generate_for_seed(i, &mut rng_i) {
-            Some(pair) => pair,
-            None => {
-                eprintln!(
-                    "WARNING: seed {i}: no valid Lagrangian product after {MAX_POLYTOPE_ATTEMPTS} attempts, skipping"
-                );
-                continue;
-            }
-        };
+        let (bucket_name, polytope) = generate_for_seed(i, &mut rng_i)?;
 
-        if !args.no_db_update {
+        if !no_db_update {
+            let mut db = db_for_closure.lock().expect("lock db for insert");
             insert_polytope_to_db(&mut db, &polytope);
-        }
-
-        if completed.contains(&name) {
-            continue;
         }
 
         let class = classify_facets(&polytope).expect("should classify as Lagrangian");
 
-        n_processed += 1;
-        print!("[seed {i}] {name} ({bucket_name}): ");
+        let name = format!("products_{i}");
+        let result = process_seed(&name, i, &bucket_name, &polytope, &class, &mut rng_i)?;
 
-        match process_seed(&name, i, &bucket_name, &polytope, &class, &mut rng_i) {
-            Some(result) => {
-                write_result(&result, &mut summary_writer, &mut trace_writer);
-                let s = &result.summary;
-                if s.final_sys > best_global {
-                    best_global = s.final_sys;
-                    best_name = s.name.clone();
-                }
-                println!(
-                    "sys: {:.4}->{:.4} (d={:.4}), strategy={}, phases={}, {:.1}s",
-                    s.starting_sys,
-                    s.final_sys,
-                    s.total_delta,
-                    s.best_strategy,
-                    s.n_ascent_phases,
-                    s.total_time_ms / 1000.0,
-                );
-                if s.final_sys > 1.0 {
-                    eprintln!("*** VITERBO VIOLATION: {} sys={:.6} ***", s.name, s.final_sys);
-                }
-            }
-            None => println!("FAILED"),
+        // Per-seed progress print from inside the closure. Writing to stdout
+        // via println! is thread-safe (line-buffered, each call flushes its
+        // own line), so two threads cannot interleave within a single line.
+        let s = &result.summary;
+        println!(
+            "[seed {i}] {name} ({bucket_name}): sys: {:.4}->{:.4} (d={:.4}), strategy={}, phases={}, {:.1}s",
+            s.starting_sys,
+            s.final_sys,
+            s.total_delta,
+            s.best_strategy,
+            s.n_ascent_phases,
+            s.total_time_ms / 1000.0,
+        );
+        if s.final_sys > 1.0 {
+            eprintln!("*** VITERBO VIOLATION: {} sys={:.6} ***", s.name, s.final_sys);
         }
+
+        Some(result)
+    });
+
+    // All parallel closures have returned by now; flush writers explicitly
+    // so buffered output reaches disk before database::save or the final
+    // summary prints.
+    {
+        let mut w = writers.0.lock().expect("flush summary");
+        w.flush().expect("failed to flush summary writer");
+    }
+    {
+        let mut w = writers.1.lock().expect("flush trace");
+        w.flush().expect("failed to flush trace writer");
     }
 
-    summary_writer.flush().expect("flush summary");
-    trace_writer.flush().expect("flush trace");
-
-    if !args.no_db_update {
+    if !no_db_update {
+        let db = db_arc.lock().expect("lock db for save");
         database::save(&db_path, &db).expect("failed to save database");
     }
 
+    let (best_sys, best_name) = {
+        let b = best.lock().expect("lock best for report");
+        (b.0, b.1.clone())
+    };
+
+    let end = args.n_start + args.n;
     println!("\n========================================");
-    println!("Processed: {n_processed} seeds (indices {}..{end})", args.n_start);
-    println!("Best sys: {best_global:.6} ({best_name})");
-    if !args.no_db_update {
+    println!("Processed indices: {}..{end}", args.n_start);
+    println!("Best sys: {best_sys:.6} ({best_name})");
+    if !no_db_update {
+        let db = db_arc.lock().expect("lock db for count");
         println!("Database: {} entries", db.len());
     }
     println!("Total time: {:.1}s", t_global.elapsed().as_secs_f64());

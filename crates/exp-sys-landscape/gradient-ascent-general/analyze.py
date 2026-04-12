@@ -10,7 +10,7 @@ Goal: Assess whether gradient ascent + escape rounds push sys above
       and build a distribution of ascent endpoints. Bayesian update on
       the conjecture that no hit exists uses 3/N upper credible bound.
 Input: crates/exp-sys-landscape/gradient-ascent-general/data/*.jsonl (per-seed summaries).
-       Preference order: licca-shard-*.jsonl > measure.jsonl > smoke.jsonl.
+       Preference order: licca.jsonl > licca-shard-*.jsonl (legacy architecture-A) > smoke.jsonl.
 Output:
   - gradient_ascent_general_distribution.png   (final sys histogram; linear)
   - gradient_ascent_general_tail.png           (final sys histogram; log-y tail)
@@ -44,19 +44,22 @@ STRATEGY_COLORS = {"within_cell": "#9E9E9E", "overshoot": "#E91E63", "wiggle": "
 
 
 def pick_jsonl_files() -> list[Path]:
-    """Prefer licca shards, then measurement run, then smoke, then legacy.
+    """Prefer architecture-B licca.jsonl, then legacy architecture-A shards,
+    then smoke, then pre-refactor legacy file.
 
     Returns all files matching the highest-priority tier that has data. This
-    keeps the analyzer stable across the local smoke / measurement / LICCA
-    production lifecycle described in the logbook.
+    keeps the analyzer stable across the local smoke / LICCA production
+    lifecycle described in the logbook. The legacy `licca-shard-*.jsonl` tier
+    is retained so old committed architecture-A data still loads after merge;
+    the current `job.sh` does not produce shard files.
     """
     if DATA_DIR.exists():
-        licca = sorted(DATA_DIR.glob("licca-shard-*.jsonl"))
-        if licca:
-            return licca
-        measure = sorted(DATA_DIR.glob("measure.jsonl"))
-        if measure:
-            return measure
+        licca = DATA_DIR / "licca.jsonl"
+        if licca.exists():
+            return [licca]
+        shards = sorted(DATA_DIR.glob("licca-shard-*.jsonl"))
+        if shards:
+            return shards
         smoke = sorted(DATA_DIR.glob("smoke.jsonl"))
         if smoke:
             return smoke
@@ -73,9 +76,9 @@ def pick_jsonl_files() -> list[Path]:
 def load_summaries(files: list[Path]):
     """Load per-seed summary data from one or more JSONL files.
 
-    Malformed lines are skipped: a partial write from a concurrent writer
-    (measure.jsonl during the local N=1000 run, or a crashed shard) must
-    not derail the analyzer.
+    Malformed lines are skipped: a partial write from a crashed LICCA job
+    (tail-truncated last row, or interleaved bytes from a concurrent rayon
+    writer) must not derail the analyzer.
     """
     rows = []
     for path in files:

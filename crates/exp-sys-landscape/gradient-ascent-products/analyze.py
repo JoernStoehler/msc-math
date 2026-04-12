@@ -10,7 +10,7 @@ Goal: Assess whether projected gradient ascent on Lagrangian products reaches
       ascent endpoints per (q,p) split. Bayesian update uses 3/N upper
       credible bound on hit density under 0 hits.
 Input: crates/exp-sys-landscape/gradient-ascent-products/data/*.jsonl (per-seed summaries).
-       Preference order: licca-shard-*.jsonl > measure.jsonl > smoke.jsonl.
+       Preference order: licca.jsonl > licca-shard-*.jsonl (legacy architecture-A) > smoke.jsonl.
 Output:
   - gradient_ascent_products_distribution.png   (final sys histogram; linear)
   - gradient_ascent_products_tail.png           (final sys histogram; log-y tail)
@@ -49,14 +49,20 @@ STRATEGY_COLORS = {"within_cell": "#9E9E9E", "overshoot": "#E91E63", "wiggle": "
 
 
 def pick_jsonl_files() -> list[Path]:
-    """Prefer licca shards, then measurement run, then smoke, then legacy."""
+    """Prefer architecture-B licca.jsonl, then legacy architecture-A shards,
+    then smoke, then pre-refactor legacy file.
+
+    The legacy `licca-shard-*.jsonl` tier is retained so old committed
+    architecture-A data still loads after merge; the current `job.sh` does
+    not produce shard files.
+    """
     if DATA_DIR.exists():
-        licca = sorted(DATA_DIR.glob("licca-shard-*.jsonl"))
-        if licca:
-            return licca
-        measure = sorted(DATA_DIR.glob("measure.jsonl"))
-        if measure:
-            return measure
+        licca = DATA_DIR / "licca.jsonl"
+        if licca.exists():
+            return [licca]
+        shards = sorted(DATA_DIR.glob("licca-shard-*.jsonl"))
+        if shards:
+            return shards
         smoke = sorted(DATA_DIR.glob("smoke.jsonl"))
         if smoke:
             return smoke
@@ -73,8 +79,8 @@ def pick_jsonl_files() -> list[Path]:
 def load_summaries(files: list[Path]):
     """Load per-seed summary data from one or more JSONL files.
 
-    Malformed lines are skipped to tolerate concurrent writers (local measure
-    run or crashed shard).
+    Malformed lines are skipped to tolerate a crashed LICCA job (tail-truncated
+    last row, or interleaved bytes from a concurrent rayon writer).
     """
     rows = []
     for path in files:

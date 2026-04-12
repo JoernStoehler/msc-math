@@ -30,6 +30,24 @@ uv run analyze.py
 
 Expect ~3 seconds total compute. Produces `data/smoke-eps-*.jsonl` (three files, 21 rows each = 20 perturbed + 1 baseline), a 3-panel histogram, stats table, and PCA table.
 
+### Resume semantics
+
+`job.sh` wipes all three bucket files via `File::create` in `run.rs`;
+resubmit restarts from scratch. No `--fresh` flag; no
+`load_completed_names`. If a LICCA run is killed partway, resubmitting
+throws out whatever partial output exists and starts over.
+
+### Seed policy
+
+Three buckets share `--seed=41`. Bucket i starts from the same ChaCha8
+state, but `try_perturb` retries on `Polytope4D::from_f64` failure (rare
+at eps=0.001, more frequent at eps=0.1), so the u64 streams desynchronize
+after the first rejection. Samples are not guaranteed to share directions
+across buckets — treat the three buckets as independent draws at three
+magnitudes. Historical artifact of single-eps code that was parameterized
+post-hoc; not a correctness issue, but callers must not assume paired
+samples.
+
 ### LICCA (production, 10k per bucket)
 
 On LICCA (login node):
