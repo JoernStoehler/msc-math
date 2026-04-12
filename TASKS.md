@@ -240,10 +240,9 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - [future] gradient-ascent + multiple-crossings overlap: dedup blocked until gradient ascent stabilizes into library. Until then, copy-edit between experiments is correct.
 - Note: step_bound upgrade (omega_0 detection) changes experiment behavior if re-run. Existing JSONL not regenerated.
 
-### [active] Paranoia: numerical claims (session launched 2026-04-07)
-- Verify every numerical claim in experiment logbooks against actual JSONL data and code output.
-- Flag mismatches, fix obvious ones, report the rest.
-- Remaining (needs Jörn decision, then handoff to agent):
+### [open] Paranoia: numerical claims (first pass merged 2026-04-12)
+- First pass merged: `paranoia-numerics` branch, 19 files fixed across experiment logbooks + `dev-numerical-analysis/error-bounds/tests.rs` + `unknown-predicates/run.rs`. Session report at `paranoia-numerics-report.md`.
+- Remaining sub-items (needs Jörn decision, then handoff to agent):
   - `dev-capacity-validation/orbit-recovery/`: 4 polytopes missing from dataset (112→108), `solution_dim` hardcoded to 0 in run.rs, error magnitudes from different algorithm version
   - `dev-algorithm-comparison/profiling/`: per-test durations zeroed in JSONL, 3 historical runs absent — data pipeline broken
 
@@ -305,9 +304,9 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Baseline commit `f8044b35`. Dry run confirmed Agent() mechanics work.
 - Next: post-mortem in `.claude/skills/orchestrate/references/design-space.md`.
 
-### [open] variable-f-ascent merge
+### [Jörn] variable-f-ascent merge (item is stale as of 2026-04-12)
 - Experiment complete, logbook needs reframing (RQ2 Path D is trivial by construction, reframe as sanity check).
-- Branch at `.claude/worktrees/variable-f-ascent/`. Run `/pre-merge` then merge.
+- **Staleness**: no `variable-f-ascent` branch or worktree exists at 2026-04-12 (`git branch -a` + `git worktree list` both empty). Either already merged (and this item forgotten) or deleted. Jörn to verify + close or rewrite.
 
 ### [done] [2026-04-07] Database cleanup
 - KKT panics → TypeCViolation/ConstraintViolation variants with eprintln warnings. catch_unwind removed from 6 files. Source populated for 170 DB records. Data regenerated for 4 combinatorial-cells experiments.
