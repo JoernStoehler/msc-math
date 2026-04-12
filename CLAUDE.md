@@ -48,7 +48,7 @@ Planned deliverables:
 
 - Always use local `main`, never `origin/main`.
 - Before merging to `main` (via `/pre-merge`): `cd crates/library/ && cargo test --release --lib` passes, `cargo clippy --lib -- -D warnings` is clean. Tests gate merges, not commits.
-- **Commits are free.** Do not ask permission to commit. If you need to ask about something commit-related, ask about the merge, not the commit.
+- **Commits are free.** Do not ask permission, and do not narrate commit decisions to Jörn (why you split into N commits, what concerns mixed, apologies for hygiene) — he does not read them. Commit and move on. If you need to ask about something commit-related, ask about the merge, not the commit.
 - Work in a worktree (separate branch) unless Jörn says otherwise.
 - **Git LFS** tracks `.jsonl` files (configured in `.gitattributes`). `git add`/`commit`/`push` work normally. Limits: 2 GB per file, 10 GiB storage, 10 GiB bandwidth/month ([docs](https://docs.github.com/en/billing/managing-billing-for-git-large-file-storage/about-billing-for-git-large-file-storage)). A pre-commit hook blocks files >10 MB that aren't LFS-tracked.
 
