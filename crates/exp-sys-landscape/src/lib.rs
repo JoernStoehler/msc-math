@@ -455,7 +455,17 @@ pub fn open_ascent_writers(
     )
 }
 
-/// Append one seed's summary + trace rows to the shared writers.
+/// Append one seed's trace rows, then its summary row, to the shared writers.
+///
+/// Crash-safety invariant: **trace rows for a seed are on disk before that
+/// seed's summary row is on disk**. Write order is trace (+ flush) → summary
+/// (+ flush). `load_completed_names` reads only the summary file, so a seed
+/// counts as "completed" only after its summary row is flushed, which by this
+/// invariant implies all its trace rows are already flushed. A SIGKILL between
+/// the two flushes leaves orphan trace rows with no matching summary row:
+/// resume re-runs the seed and appends a second copy of its trace rows. The
+/// duplicates are removed by `finalize_ascent_output` (sort + dedup on
+/// `(name, phase, iteration)`).
 ///
 /// Locks summary and trace independently — NEVER holds both locks at the same
 /// time — so two threads writing different seeds cannot deadlock. Each lock is
@@ -466,13 +476,8 @@ pub fn write_result(
     summary_writer: &Arc<Mutex<BufWriter<File>>>,
     trace_writer: &Arc<Mutex<BufWriter<File>>>,
 ) {
-    let summary_json = serde_json::to_string(&result.summary)
-        .expect("SummaryRow serialization is infallible for f64/String fields");
-    {
-        let mut w = summary_writer.lock().expect("summary writer mutex poisoned");
-        writeln!(w, "{summary_json}").expect("failed to write summary row");
-        w.flush().expect("failed to flush summary row");
-    }
+    // Trace rows first — must be on disk before the summary row that marks
+    // the seed as completed (see crash-safety invariant above).
     {
         let mut w = trace_writer.lock().expect("trace writer mutex poisoned");
         for row in &result.trace {
@@ -482,6 +487,14 @@ pub fn write_result(
         }
         w.flush().expect("failed to flush trace rows");
     }
+    // Summary row second — only after trace is durable.
+    let summary_json = serde_json::to_string(&result.summary)
+        .expect("SummaryRow serialization is infallible for f64/String fields");
+    {
+        let mut w = summary_writer.lock().expect("summary writer mutex poisoned");
+        writeln!(w, "{summary_json}").expect("failed to write summary row");
+        w.flush().expect("failed to flush summary row");
+    }
 }
 
 /// Parallel seed loop with per-seed RNG streams.
@@ -489,10 +502,14 @@ pub fn write_result(
 /// Invariants:
 /// - Seed i is identified by global index; the closure MUST use `seed_i`
 ///   (= `args.seed.wrapping_add(i as u64)`) to construct its RNG and do all
-///   per-seed work. The output for index i is byte-reproducible regardless
-///   of which thread processes it.
+///   per-seed work. The per-seed JSON payloads for index i are byte-reproducible
+///   regardless of which thread processes it. **File-level byte reproducibility
+///   requires the caller to invoke `finalize_ascent_output` after this function
+///   returns** — rayon scheduling determines the append order within both
+///   output files, and `finalize_ascent_output` is what canonicalizes row order.
 /// - `completed` is checked before calling `process`; resume semantics
-///   therefore hold across crashes.
+///   therefore hold across crashes (see `write_result` for the on-disk
+///   ordering invariant that backs this).
 /// - Writers are locked only during append (ms); contention is negligible
 ///   against per-seed ascent cost (~seconds).
 /// - Seed name format is `"{prefix}_{i}"`, matching the historical naming
@@ -524,4 +541,108 @@ pub fn run_parallel_seeds<F>(
             }
         }
     });
+}
+
+/// Canonicalize both output files after a parallel run.
+///
+/// Takes `writers` by value so the `Arc<Mutex<BufWriter<File>>>` pair is
+/// dropped at the top of this function — that drop flushes the BufWriters and
+/// closes the underlying files before we re-open them for reading. The caller
+/// must not clone the writers elsewhere; after `run_parallel_seeds` returns,
+/// the writer tuple is the sole owner and passing it here releases it.
+///
+/// Behavior:
+/// 1. Parse `summary_path` line-by-line as `SummaryRow`, tolerating malformed
+///    lines (same style as `load_completed_names`). Sort by `name` lexicographic.
+///    Write to `summary_path.with_extension("jsonl.tmp")` then atomic-rename.
+/// 2. Parse `trace_path` as `TraceRow`, sort by `(name, phase, iteration)`,
+///    then dedup adjacent rows by the same key. The dedup step removes
+///    duplicate trace rows introduced by crash-resume: `write_result` writes
+///    trace before summary, so a crash between the two flushes leaves orphan
+///    trace rows that get rewritten when the seed is re-run. Sort + dedup
+///    reduces these to a single copy.
+/// 3. Atomic-rename trace tempfile.
+///
+/// After this function returns, both files are byte-identical across runs
+/// that processed the same seed set, regardless of thread count or crash/resume
+/// history (modulo per-seed `total_time_ms` which is wall-clock noise).
+pub fn finalize_ascent_output(
+    summary_path: &Path,
+    trace_path: &Path,
+    writers: (Arc<Mutex<BufWriter<File>>>, Arc<Mutex<BufWriter<File>>>),
+) {
+    // Drop writers first so the BufWriters flush and the files are closed
+    // before we re-open them below. Explicit drop (not just letting it fall
+    // out of scope) to make the ordering requirement legible.
+    drop(writers);
+
+    // --- Summary file: sort by name, atomic-rename. ---
+    let mut summary_rows: Vec<SummaryRow> = Vec::new();
+    if let Ok(file) = File::open(summary_path) {
+        let reader = BufReader::new(file);
+        for line in reader.lines().map_while(Result::ok) {
+            let line = line.trim();
+            if line.is_empty() {
+                continue;
+            }
+            if let Ok(row) = serde_json::from_str::<SummaryRow>(line) {
+                summary_rows.push(row);
+            }
+        }
+    }
+    summary_rows.sort_by(|a, b| a.name.cmp(&b.name));
+    let summary_tmp = summary_path.with_extension("jsonl.tmp");
+    {
+        let f = File::create(&summary_tmp)
+            .unwrap_or_else(|e| panic!("failed to create {summary_tmp:?}: {e}"));
+        let mut w = BufWriter::new(f);
+        for row in &summary_rows {
+            let s = serde_json::to_string(row)
+                .expect("SummaryRow serialization is infallible for f64/String fields");
+            writeln!(w, "{s}").expect("failed to write summary tmp row");
+        }
+        w.flush().expect("failed to flush summary tmp");
+    }
+    std::fs::rename(&summary_tmp, summary_path)
+        .unwrap_or_else(|e| panic!("failed to rename {summary_tmp:?} -> {summary_path:?}: {e}"));
+
+    // --- Trace file: sort by (name, phase, iteration), dedup, atomic-rename. ---
+    let mut trace_rows: Vec<TraceRow> = Vec::new();
+    if let Ok(file) = File::open(trace_path) {
+        let reader = BufReader::new(file);
+        for line in reader.lines().map_while(Result::ok) {
+            let line = line.trim();
+            if line.is_empty() {
+                continue;
+            }
+            if let Ok(row) = serde_json::from_str::<TraceRow>(line) {
+                trace_rows.push(row);
+            }
+        }
+    }
+    trace_rows.sort_by(|a, b| {
+        a.name
+            .cmp(&b.name)
+            .then_with(|| a.phase.cmp(&b.phase))
+            .then_with(|| a.iteration.cmp(&b.iteration))
+    });
+    // Remove duplicates from crash-resume (see doc comment on `write_result`).
+    // dedup_by keeps the first of each adjacent run of equal keys.
+    trace_rows.dedup_by(|a, b| {
+        a.name == b.name && a.phase == b.phase && a.iteration == b.iteration
+    });
+    let trace_tmp = trace_path.with_extension("jsonl.tmp");
+    {
+        let f = File::create(&trace_tmp)
+            .unwrap_or_else(|e| panic!("failed to create {trace_tmp:?}: {e}"));
+        let mut w = BufWriter::new(f);
+        for row in &trace_rows {
+            let s = serde_json::to_string(row)
+                .expect("TraceRow serialization is infallible for f64/String fields");
+            writeln!(w, "{s}").expect("failed to write trace tmp row");
+        }
+        w.flush().expect("failed to flush trace tmp");
+    }
+    std::fs::rename(&trace_tmp, trace_path)
+        .unwrap_or_else(|e| panic!("failed to rename {trace_tmp:?} -> {trace_path:?}: {e}"));
 }

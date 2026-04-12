@@ -26,7 +26,8 @@
 
 use database::{DualVerticesKey, PolytopeRecord};
 use exp_sys_landscape::{
-    compute_step_bound, open_ascent_writers, parse_ascent_args, run_parallel_seeds,
+    compute_step_bound, finalize_ascent_output, open_ascent_writers, parse_ascent_args,
+    run_parallel_seeds,
     trace_path_for, AscentArgs, SeedResult, SummaryRow, TraceRow, MAX_STEP_SIZE,
 };
 use nalgebra::Vector4;
@@ -34,7 +35,6 @@ use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal};
 use std::collections::HashMap;
-use std::io::Write;
 use std::path::Path;
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
@@ -526,17 +526,10 @@ fn main() {
         Some(result)
     });
 
-    // All parallel closures have returned by now; flush writers explicitly
-    // so buffered output reaches disk before database::save or the final
-    // summary prints.
-    {
-        let mut w = writers.0.lock().expect("flush summary");
-        w.flush().expect("failed to flush summary writer");
-    }
-    {
-        let mut w = writers.1.lock().expect("flush trace");
-        w.flush().expect("failed to flush trace writer");
-    }
+    // Drop writers (consumed by finalize), sort + rewrite both output files
+    // so row order is deterministic regardless of rayon thread scheduling and
+    // any crash-resume history. See `finalize_ascent_output` for details.
+    finalize_ascent_output(&summary_path, &trace_path, writers);
 
     if !no_db_update {
         let db = db_arc.lock().expect("lock db for save");
