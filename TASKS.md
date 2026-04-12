@@ -82,32 +82,32 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 - 100 random perturbations all retain sys>1 (min 1.002, max 1.033). HKO highest.
 - `crates/exp-hko-local-maximum/perturbation-neighborhood/`
 
-### [open] LICCA-scale F=10 neighborhood falsification
+### [open] [group:licca] LICCA-scale F=10 neighborhood falsification
 - Scale the 100-seed perturbation-neighborhood experiment to 10k+ perturbations with multiple step-size buckets (small/medium/large). Honest falsification attempt — current 100-seed baseline is suggestive but thin.
 - Plan: new sibling `crates/exp-hko-local-maximum/perturbation-neighborhood-licca/` to preserve the baseline artifact.
 - Scheduled: Sunday 2026-04-12 LICCA window.
 - Expected outcome: no sys>HKO (strengthens conjecture). Real outcome: whatever the data says.
 - Re-plan trigger: results back → evaluate whether falsification succeeded or conjecture is strengthened.
 
-### [Jörn] Verify h-space proof
+### [Jörn] [group:hko] Verify h-space proof
 - Danskin + symmetry + Euler homogeneity argument. ~15 min.
 - `crates/exp-hko-local-maximum/gradient-analysis/logbook.md` lines 151-156
 
-### [Jörn] Verify second-order math.tex proposition
+### [Jörn] [group:hko] Verify second-order math.tex proposition
 - Non-smooth second-order sufficiency proof sketch needs rigor check.
 - `crates/exp-hko-local-maximum/second-order/math.tex`
 
-### [future] Higher-F perturbation validation (F=10→12, F=10→13)
+### [future] [group:hko] Higher-F perturbation validation (F=10→12, F=10→13)
 - RESULTS.md claims empirical validation "up to 13-facet" — currently aspirational, only 11-facet done
 - Extends facet-splitting and cut-and-ascent to add 2-3 facets simultaneously
 - Suggested in `crates/exp-hko-local-maximum/cut-and-ascent/logbook.md` line 40
 
-### [future] F-refinement convergence (increasing F as smooth approximation)
+### [future] [group:hko] F-refinement convergence (increasing F as smooth approximation)
 
-### [future] Convex-body direction (Minkowski smoothing K + eps*B^4)
+### [future] [group:hko] Convex-body direction (Minkowski smoothing K + eps*B^4)
 - Needs scoping: can billiard algorithm handle non-polyhedral bodies?
 
-### [future] Structural explanation for 0 in conv
+### [future] [group:hko] Structural explanation for 0 in conv
 - Why does pentagon geometry force this? Golden ratio, order-10 symmetry.
 
 ## [open] Novel sys>1 polytopes
@@ -138,7 +138,7 @@ Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the o
 - Dense (n, m, theta) sweep. Fit sys(n, m, theta). Does formula predict sys>1 only for 5x5?
 - Partial data in `crates/exp-sys-landscape/rotated-regular-products/`
 
-### [open] LICCA-scale massive ascent sampling (density probe)
+### [open] [group:licca] LICCA-scale massive ascent sampling (density probe)
 - Scale `exp-sys-landscape/gradient-ascent-general/` (10 seeds → 10k+) and `gradient-ascent-products/` (12 seeds → 10k+) on LICCA.
 - **Research question**: does the density of sys>1 local maxima in M_F actually support "no new examples"? Current seed counts are too small to claim the density is low.
 - Both families run in parallel — products is where HKO2024 lives (direct question), general is the broader baseline.
@@ -146,7 +146,7 @@ Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the o
 - Scheduled: Sunday 2026-04-12 LICCA window.
 - Re-plan trigger: results back → update RESULTS.md density claim, evaluate whether any further sampling is worthwhile.
 
-### [future] Combinatoric-changing step sizes on LICCA
+### [future] [group:licca] Combinatoric-changing step sizes on LICCA
 - Beyond fixed-F ascent — let random walks flip facet combinatorics mid-trajectory.
 - Deprioritized until fixed-F LICCA sampling returns; if fixed-F finds nothing, this is the natural next step.
 
@@ -197,7 +197,7 @@ Instrument development. Results promote to `crates/library/`.
 - Eigenvalue inertia formula holds for 6/7 polytopes, 5 mismatches are threshold artifacts.
 - `crates/dev-numerical-analysis/q-error/`, `kkt-inertia/`
 
-### [active] 4b. Numerical error bounds (verify-numerics)
+### [active] [group:numerics] 4b. Numerical error bounds (verify-numerics)
 - math.tex Parts I+II complete. Proven Q error bound, eta bound for well-conditioned problems.
 - 14 previously-failing tests now pass (329 pass, 0 fail).
 - Rationale for current state: degenerate orbits are never capacity-achieving, so final capacity comes from well-conditioned orbits with proven low error. Gap remains for publication.
@@ -205,18 +205,18 @@ Instrument development. Results promote to `crates/library/`.
 - Known bug: projection solver sign bug at `kkt/projection_solver.rs:93`.
 - `crates/dev-numerical-analysis/error-bounds/`, `handoffs/verify-numerics-algorithm.md`
 
-### [open] Projection solver
+### [open] [group:numerics] Projection solver
 - 5-step algorithm: (1) solve equality constraints → (m-5)-dim affine space, (2) project H → reduced Hessian, (3) eigendecompose → null directions, (4) beta>0 as LP on projected null space, (5) recover multipliers.
 - Basic implementation in `kkt/projection_solver.rs`. Needs mathematical rigor + ablation comparison.
 - `handoffs/verify-numerics-algorithm.md`
 
-### [open] Beta-LP unification
+### [open] [group:numerics] Beta-LP unification
 - Replace `find_positive_beta_1d`/`find_positive_beta_nd` with single LP: maximize min_j beta_j subject to beta = beta_0 + V*alpha.
 - Previous branch deleted (tip `7ca81b53` has salvageable design: unified function, Type A/B/C eigenvector classification).
 - Thesis/code tension: thesis proves rank-deficient pairs are redundant (discard); code searches null space for beta>0 on *near*-singular systems (pseudoinverse beta_0 may have beta_i < 0 from noise; null-space shift recovers feasibility without changing Q). Not contradictory but needs explicit documentation.
 - Open question for Jörn: is filtering Type A directions mathematically justified?
 
-### [open] Solver numerical math.tex
+### [open] [group:numerics] Solver numerical math.tex
 - Per-module math.tex for SVD, condition numbers, LU, eigendecomposition stability.
 - Multiple modules use SVD without shared error analysis.
 
@@ -227,7 +227,7 @@ Instrument development. Results promote to `crates/library/`.
 ### [future] Crosspolytope optimality proof
 - Minimizing orbit has clean structure (uniform beta, max omega). Symmetry argument may avoid exhaustive enumeration.
 
-### [blocked] Tube vs HK2017 benchmark
+### [blocked] [group:tube] Tube vs HK2017 benchmark
 - Blocked on: Jörn writing down the tube algorithm + rotation formula + correctness proof (first task in the tube subtree).
 - Once formula + proof exist: one session wires the formula into `crates/library/src/algorithms/tube/mod.rs` (the current file is a misleadingly-named wrong placeholder), then a sibling session runs a benchmark harness that reads the polytope database, runs tube + HK2017 per entry, compares c_EHZ values + wallclock + memory, produces a report.
 - Goal: empirically decide "switch to tube if/where it beats HK2017" and cross-compare excessively for correctness verification.
@@ -238,56 +238,56 @@ Instrument development. Results promote to `crates/library/`.
 thesis/ is stale (see `thesis/handwritten-notes.md`). Most work here is blocked on restructuring decisions.
 tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, independent of restructuring.
 
-### [Jörn] Thesis restructuring
+### [Jörn] [group:writeup] Thesis restructuring
 - Current content stale. Decisions needed: chapter structure, what content survives, what gets rewritten.
 - a_i replaces (n,h). Sign conventions changed. Simplification theorem ordering changed.
 - Blocks: S0, experiment writeups, experiments chapter, introduction, conclusion.
 - See `thesis/handwritten-notes.md` for narrative notes.
 
-### [Jörn] tube-algorithm.tex (8 TODOs)
+### [Jörn] [group:tube] tube-algorithm.tex (8 TODOs)
 - 5 Jörn questions (quaternionic formula, TF_ij equivalence, rotation number, closing steps, correctness proof).
 - 3 GAP markers (agent-added unverified content).
 - `handoffs/tube-algorithm.md`
 
-### [Jörn] appendix-numerical.tex (5 TODOs)
+### [Jörn] [group:numerics] appendix-numerical.tex (5 TODOs)
 - Continuity of c_EHZ on polytopes, simplicity assumption, billiard pruning, three-valued verdict, unverified numerical statement.
 
-### [blocked] Tube rotation formula implementation
+### [blocked] [group:tube] Tube rotation formula implementation
 - Current code is a misleadingly named placeholder that is wrong (not CH2021, not any correct formula).
 - Need to implement a correct rotation formula. Not necessarily CH2021 — we have different basis vectors.
 - Performance on F>10 polytopes untested.
 - Blocked on: Jörn reviewing the math (proofs for what formula is correct given our basis).
 - `crates/library/src/algorithms/tube/mod.rs`
 
-### [blocked] S0: Notation restructure
+### [blocked] [group:writeup] S0: Notation restructure
 - Blocked on: thesis restructuring. Only applies to content that survives — new content will use a_i from the start.
 - a_i replaces (n,h). Sign convention for Lagrange multipliers changed. Simplification theorem ordering changed.
 - Propagate through all thesis .tex files.
 
-### [blocked] Experiment writeup drafts
+### [blocked] [group:writeup] Experiment writeup drafts
 - Blocked on: thesis restructuring (need chapter structure and framing decisions).
 - Logbooks already contain factual summaries. Agent value-add: thesis-style prose from logbook + data.
 - Agent cannot decide framing (how experiment serves thesis argument) — only Jörn can.
 - "Just try it" for 1-2 well-defined experiments first (e.g., gradient-analysis, rotated-regular-products). Trash if output is just paraphrased logbook.
 
-### [blocked] Experiments chapter
+### [blocked] [group:writeup] Experiments chapter
 - Blocked on: thesis restructuring, experiment writeup quality.
 - `thesis/experiments.tex` has 1 TODO.
 
-### [blocked] Introduction
+### [blocked] [group:writeup] Introduction
 - `thesis/main.tex` has 1 TODO (write introduction).
 - Blocked on: stable chapter content.
 
-### [blocked] Conclusion
+### [blocked] [group:writeup] Conclusion
 - Blocked on: stable chapter content.
 
-### [open] Math write-up scaffold (precursor for write-up pass)
+### [open] [group:writeup] Math write-up scaffold (precursor for write-up pass)
 - One session audits every `math.tex` (library + experiments). Produces: (a) theorem dependency graph, (b) refreshed stub / unverified-block inventory (last audit 2026-04-07 found 53 stubs + 69 unverified; refresh is cheap), (c) **ranked hard-labor list** per Jörn's framing: theorem statements with awkward edge cases, missing error bounds, unproven gaps, places where a cleave-of-statement would naturally handle edges.
 - Output: `handoffs/math-writeup-scaffold-YYYY-MM-DD.md`. Jörn uses it to drive the two-phase write-up (high-level notes → paragraph-level structure).
 - Also feeds Kai meeting prep.
 - Scheduled: 2026-04-13 Mon.
 
-### [open] Kai meeting prep briefing (Tuesday 2026-04-14)
+### [open] [group:writeup] Kai meeting prep briefing (Tuesday 2026-04-14)
 - Terse `.md` with checkpoints Jörn reads ~10 min before the Kai call and drives the meeting from. Not a prose doc for Kai — Jörn drives verbally.
 - Organized by decision: locked / empirically strong but unproven / genuinely open / options for closing each gap / recommended priority.
 - Synthesizes RESULTS.md + TASKS.md + logbooks + math write-up scaffold + any LICCA Sunday preliminaries.
@@ -298,20 +298,20 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Handoff: `handoffs/thesis-figures-audit-2026-04-12.md`. Degenerate baseline: 0 `\includegraphics` refs across 16 `thesis/**/*.tex` files, `thesis/assets/` does not exist. Rerun after experiment writeups and thesis restructuring land.
 - Note: before the first figure lands, Jörn picks an asset-provenance convention (sidecar `.source` files / manifest / sync script) and adds to CLAUDE.md. See "Hand-drawn figures" + "Figure inventory" below.
 
-### [future] Hand-drawn figures (Jörn)
+### [future] [group:figures] Hand-drawn figures (Jörn)
 - Concept illustrations: polar of 2D polytope; 0/1/2/3-facets; fake 3D polytope with Reeb vectors and closed/open trajectories; decompositions of `gamma: R → R^4` drawn as `gamma: R → R`; etc.
 - Agent role: figure inventory only (list, not produce), and only after narrative structure stabilizes so we know which concepts get illustrations and where.
 
-### [future] 4D → R^3 projection viz tool
+### [future] [group:figures] 4D → R^3 projection viz tool
 - RESULTS.md minor deliverable ("a visualization of the 4d geometry on a computer screen").
 - Agent scaffolds the tool (reads a polytope + Reeb orbit data, outputs rendered view); Jörn drives design decisions (interactive vs static, rendering backend, which projection).
 - Not urgent — post-Kai, after thesis narrative structure stabilizes enough to know what needs illustrating.
 
-### [future] Figure inventory
+### [future] [group:figures] Figure inventory
 - Compile per-chapter list of figures with provenance tags (hand-drawn / code-generated / viz-tool / whiteboard photo).
 - Blocked on: Jörn picking which concepts get illustrations and where they go. Agent role is mechanical inventory after those calls exist.
 
-### [open] Final assembly (checklist-driven, ≤2026-04-30)
+### [open] [group:submission] Final assembly (checklist-driven, ≤2026-04-30)
 - Abstract, bibliography check (includes verifying agent-produced bib entry at `thesis/bibliography.bib` line 151), figure quality review, proofreading, print formatting.
 - Pre-submission slice (agent-doable): repo freeze + tag, build reproducibility verification, bibliography citation-to-key integrity, figure presence check, university format compliance if documented anywhere.
 - Submission slice (Jörn): physical print, university portal upload (credentials), handin signatures. **No defense.**
@@ -324,18 +324,18 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Remaining future note: gradient-ascent + multiple-crossings overlap dedup is blocked until gradient ascent stabilizes into library. Until then, copy-edit between experiments is correct.
 - Known side effect: step_bound upgrade (omega_0 detection) changes experiment behavior if re-run. Existing JSONL not regenerated.
 
-### [open] Paranoia: numerical claims (first pass merged 2026-04-12)
+### [open] [group:paranoia] Paranoia: numerical claims (first pass merged 2026-04-12)
 - First pass merged: `paranoia-numerics` branch, 19 files fixed across experiment logbooks + `dev-numerical-analysis/error-bounds/tests.rs` + `unknown-predicates/run.rs`. Session report at `paranoia-numerics-report.md`.
 - Remaining sub-items (needs Jörn decision, then handoff to agent):
   - `dev-capacity-validation/orbit-recovery/`: 4 polytopes missing from dataset (112→108), `solution_dim` hardcoded to 0 in run.rs, error magnitudes from different algorithm version
   - `dev-algorithm-comparison/profiling/`: per-test durations zeroed in JSONL, 3 historical runs absent — data pipeline broken
 
-### [active] Paranoia: conjectures + interpretations (session launched 2026-04-07)
+### [active] [group:paranoia] Paranoia: conjectures + interpretations (session launched 2026-04-07)
 - Flag-only. Audit all conjectures, "we believe" statements, causal claims, unhedged conclusions.
 - Produce ranked list of "most embarrassing if wrong."
 - No fixes — Jörn reviews the list when writing capacity frees up.
 
-### [active] Thesis-code alignment
+### [active] [group:writeup] Thesis-code alignment
 - Full list: `handoffs/migration-thesis-findings.md`
 - Tube rotation increment: current code is a misleadingly named placeholder, not CH2021. Need to implement a correct rotation formula (not necessarily CH2021 — we have different basis vectors).
 - KKT notation: decided — use code's symmetric convention (eigenvalue decompositions pop out). Propagate to thesis.
@@ -344,14 +344,14 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - KktResult->Solution bridge: needs investigation — unclear whether this is actually a thesis-code alignment issue.
 - Note: thesis-side propagation (KKT notation, accumulator, qp_assembly) is blocked on thesis restructuring.
 
-### [active] Dual-vertex parameterization (a_i migration)
+### [active] [group:writeup] Dual-vertex parameterization (a_i migration)
 - Library API done. Most experiment migration complete. Math.tex migration complete.
 - `crates/library/src/algorithms/math.tex` uses a_i throughout.
 - Remaining:
   - Jörn verifies `[lem:cap-derivative]` and `[lem:vol-derivative]` (marked `\begin{unverified}`)
   - (`[lem:dual-vertex-qp]` proof was completed under Code cleanup 2026-04; see line 241.)
 
-### [open] math.tex stub / unverified inventory (baseline for write-up scaffold)
+### [open] [group:docs] math.tex stub / unverified inventory (baseline for write-up scaffold)
 - Audited 2026-04-07: 53 explicit stubs + 69 unverified blocks. No proofs lost in migration — stubs were created as stubs, agent-written proofs added later.
 - Refresh is Bundle G precursor (see "Math write-up scaffold" in Thesis section); that item also re-categorizes by hard-labor framing and adds theorem dependency graph.
 - **High priority** (blocks thesis or code correctness):
@@ -365,20 +365,20 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - **Low priority** (dev math, not publication path):
   - 11 stubs + 6 gaps in dev-gradient/ and dev-numerical-analysis/.
 
-### [open] Geom math.tex restructure
+### [open] [group:docs] Geom math.tex restructure
 - Jörn partially reviewed Defs 1–13 of `crates/library/src/geom/math.tex` (`handoff-geom-math-review.md`).
 - Consolidate Defs 1-2 (symplectic form). Add Def for HKO2024 + Thm for false Viterbo's conjecture.
 - Clarify H-representation irredundancy. Fix Defs 12-13 (area/volume are algorithms, not definitions).
 - Consider splitting into `math_geometry.tex`, `math_symplectic.tex`, `math_reeb.tex`.
 
-### [open] Library architecture docs audit
+### [open] [group:docs] Library architecture docs audit
 - Tests Jörn's hypothesis that existing state (file headers + doccomments + per-module `math.tex`) already covers library architecture, or whether there are real gaps.
 - One session reads each `crates/library/src/<module>/`, produces a per-module gap report with severity. **Zero source edits on first pass** — audit only.
 - Jörn reads the report and decides per module: fix-in-place / extract architecture.md / "already fine".
 - Output: `handoffs/library-docs-audit-YYYY-MM-DD.md`.
 - Scheduled: can run Sunday 2026-04-12 or Monday — no LICCA dependency, independent of tube work.
 
-### [future] SWE polish (post-thesis-draft-stability bucket)
+### [future] [group:polish] SWE polish (post-thesis-draft-stability bucket)
 - Covers: `dev-*/exp-*` stable code → `library/` promotion, test suite completion + perf, documentation gaps, code simplifications (adopt standard patterns, pull in overlooked libraries, abstract/unabstract as helpful).
 - **Do not start during the 18-day push**: rerunning experiments invalidates logbook numbers Jörn is about to write up, and abstraction changes break silent invariants nobody's testing.
 - Subsumes (or overlaps with) existing `[open] Projection solver`, `[open] Beta-LP unification`, `[active] Thesis-code alignment` code-side items — those can all be folded into this bucket after Tuesday's Kai meeting clarifies must-ship scope.

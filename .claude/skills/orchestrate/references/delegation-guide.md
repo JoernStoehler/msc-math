@@ -2,6 +2,22 @@
 
 Reference for orchestration agents. Read to decide what and how to delegate.
 
+## Session-level model selection (delegated sessions)
+
+When handing a full session to a fresh Claude Code tab (or spawning via Agent()), pick model per *phase* rather than assuming one model fits the whole session.
+
+| Session shape | Plan phase | Impl phase | When |
+|---------------|-----------|------------|------|
+| **opusplan (default)** | opus | sonnet | Default for delegated sessions. Opus where scoping involves real tradeoffs (math structure, architectural choice, interleaved decisions); sonnet for faithful execution of the landed plan. |
+| **pure sonnet** | sonnet | sonnet | When TASKS.md already nails scope + DoD is mechanical: audits, data-pipeline fixes, isolated bug fixes, report generation. Opus plan-phase is overhead-only. |
+| **pure opus** | opus | opus | Only when the implementation *itself* requires sustained research taste — drafting novel math, thesis prose, new API design where every step needs judgment. Rare for delegated work. |
+
+**Subagent depth axis** (separate from reasoning token budget — this is about the *complexity of thought the model can hold at one time*, not how many tokens it spends):
+
+- **Haiku** — structural enumeration, grep results, file-exists checks, "what's in this directory", short-file paraphrase, mechanical edits with a pre-specified pattern.
+- **Sonnet** — applying written criteria to content, triage with clear inputs, multi-step "search → understand → report", verification-against-data, most content-reading tasks.
+- **Opus** — open-ended research taste ("reframe this [Jörn] verification item into an agent-checkable precursor"), math-proof understanding, architectural tradeoffs that require holding multiple constraints simultaneously, "is this math rigorous enough to publish".
+
 ## Agent types
 
 | Type | Model | Use for |
