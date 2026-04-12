@@ -261,7 +261,10 @@ pub fn compute_step_bound(polytope: &Polytope4D, direction: &[Vector4<f64>]) -> 
 ///
 /// Schema is byte-identical between `gradient-ascent-general` and
 /// `gradient-ascent-products`. `polytope_type` is set by the experiment:
-/// general sets `"general"`, products sets `"products_split_{q}_{p}"`.
+/// general passes the literal `"general"` (see `gradient-ascent-general/run.rs`
+/// line 507); products passes `lagrangian_{q_f}x{p_f}` where `q_f` and `p_f`
+/// are the facet counts of the two Lagrangian factors (see
+/// `gradient-ascent-products/run.rs` line 443, `bucket_name`).
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SummaryRow {
     pub name: String,
@@ -466,6 +469,13 @@ pub fn open_ascent_writers(
 /// resume re-runs the seed and appends a second copy of its trace rows. The
 /// duplicates are removed by `finalize_ascent_output` (sort + dedup on
 /// `(name, phase, iteration)`).
+///
+/// Caveat: `BufWriter::flush` only pushes bytes to the OS page cache — it does
+/// not `fsync`. The invariant therefore holds against process-level kills
+/// (SIGKILL, slurm SIGTERM) where the kernel survives and the page cache drains
+/// to disk normally. It does NOT hold against a kernel panic or node hard
+/// crash, which can lose page-cache bytes in either order. LICCA's real failure
+/// mode is slurm SIGTERM, so page-cache flush is enough in practice.
 ///
 /// Locks summary and trace independently — NEVER holds both locks at the same
 /// time — so two threads writing different seeds cannot deadlock. Each lock is
