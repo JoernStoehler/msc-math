@@ -337,10 +337,10 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
   - `dev-capacity-validation/orbit-recovery/`: 4 polytopes missing from dataset (112→108), `solution_dim` hardcoded to 0 in run.rs, error magnitudes from different algorithm version
   - `dev-algorithm-comparison/profiling/`: per-test durations zeroed in JSONL, 3 historical runs absent — data pipeline broken
 
-### [open] [group:paranoia] Paranoia: conjectures + interpretations
-- Flag-only. Audit all conjectures, "we believe" statements, causal claims, unhedged conclusions.
-- Produce ranked list of "most embarrassing if wrong."
-- No fixes — Jörn reviews the list when writing capacity frees up.
+### [done] [2026-04-12] [group:paranoia] Paranoia: conjectures + interpretations
+- Flag-only audit merged: `handoffs/paranoia-conjectures-2026-04-12.md`. 42 ranked flags (belief 5 / causal 11 / unhedged 12 / interpretation 13 / conjecture 1).
+- Top flags cluster in `library/src/{geom,algorithms}/math.tex` and unverified lemmas in `dev-algorithm-comparison/ablation/math.tex` + `dev-gradient/numerics-subdifferential/math.tex`.
+- Jörn reads async when write-up capacity frees up.
 
 ### [open] [group:writeup] Thesis-code alignment
 - Full list: `handoffs/migration-thesis-findings.md`
