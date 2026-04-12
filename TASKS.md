@@ -90,7 +90,7 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 
 ### [active] [group:licca] LICCA-scale F=10 neighborhood falsification
 - Scale the 100-seed perturbation-neighborhood experiment to 10k+ perturbations with multiple step-size buckets (small/medium/large). Honest falsification attempt.
-- In-flight on `.claude/worktrees/licca-bundle` branch `licca-bundle @ e741dc1a` (commit `perturbation-neighborhood: refactor for LICCA (CLI + 3 eps buckets)`). **Scope deviation to surface with Jörn**: the earlier plan said "new sibling `perturbation-neighborhood-licca/`, copy-paste + edit, not refactor of the original." The agent instead refactored the original in place. Next session: decide with Jörn whether to accept the in-place refactor or redo as sibling.
+- In-flight on `.claude/worktrees/licca-bundle` branch `licca-bundle @ e741dc1a` (commit `perturbation-neighborhood: refactor for LICCA (CLI + 3 eps buckets)`). Refactor is in place on the original experiment dir (Jörn-approved, overriding the earlier sibling-dir plan).
 - Pipeline remaining for the owning session:
   1. Confirm smoke tests pass locally (`job-smoke.sh`, output under `data/smoke-eps-{0.001,0.01,0.1}.jsonl`) — the worktree already has smoke artifacts committed in the refactor commit.
   2. Reviewer subagent set up via `REVIEWER_PROMPT.md` on the worktree — wait for / collect its output, address FATAL/SIMPLIFY findings.
@@ -152,7 +152,7 @@ Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the o
 ### [active] [group:licca] LICCA-scale massive ascent sampling (density probe)
 - Scale `gradient-ascent-general/` (10 seeds → 10k+) and `gradient-ascent-products/` (12 seeds → 10k+) on LICCA.
 - **Research question**: does the density of sys>1 local maxima in M_F actually support "no new examples"? Current seed counts are too small to claim the density is low.
-- In-flight on `.claude/worktrees/licca-bundle` branch `licca-bundle @ e741dc1a` (commit `ascent-{general,products}: refactor for LICCA (CLI + per-seed RNG + no-db-update)`). **Same scope deviation as the F=10 item**: agent refactored in place instead of creating sibling dirs. Surface with Jörn.
+- In-flight on `.claude/worktrees/licca-bundle` branch `licca-bundle @ e741dc1a` (commit `ascent-{general,products}: refactor for LICCA (CLI + per-seed RNG + no-db-update)`). In-place refactor on the original experiment dirs (Jörn-approved).
 - Follow the pipeline in the F=10 item above (smoke → reviewer → job.sh → scp → analyze → merge). This item shares the same worktree and the same reviewer subagent.
 - Each family produces histogram + bucket counts at sys>0.95/0.99/1.00.
 - Re-plan trigger: results back → update RESULTS.md density claim, evaluate whether any further sampling is worthwhile.
