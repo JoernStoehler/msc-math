@@ -88,9 +88,11 @@ pub fn solve_projected(qp: &QP) -> Solution {
     let hv = &qp.h * v;
     let h_prime = v.transpose() * &hv;
 
-    // Reduced gradient: b' = V^T H beta0 (k x 1).
+    // Reduced gradient: b' = -V^T H beta0 (k x 1).
+    // Sign: solving H' alpha + V^T H beta0 = 0 for alpha => alpha = (H')^{-1} b'
+    // with b' = -V^T H beta0.
     let h_beta0 = &qp.h * beta0;
-    let b_prime = v.transpose() * &h_beta0;
+    let b_prime = -(v.transpose() * &h_beta0);
 
     // Eigendecompose H' = P Lambda P^T.
     let eig = h_prime.clone().symmetric_eigen();
