@@ -40,6 +40,12 @@
   // Bind mounts: Jörn's specific host paths for cache persistence.
   "mounts": [
     "source=/srv/devhome/.claude,target=/home/vscode/.claude,type=bind,consistency=cached",
+    // Codex CLI auth + runtime state (mirrors the ~/.claude pattern).
+    // Keeps auth.json, history.jsonl, sessions/, log/ outside any git tree
+    // so they can't be accidentally committed. Tracked config (config.toml,
+    // prompts/, skills/, agents/) lives in the repo's .codex/ directory and
+    // is symlinked into here by post-create.sh.
+    "source=/srv/devhome/.codex,target=/home/vscode/.codex,type=bind,consistency=cached",
     "source=/srv/devhome/.config/gh,target=/home/vscode/.config/gh,type=bind,consistency=cached",
     "source=/srv/devhome/.cache/uv,target=/home/vscode/.cache/uv,type=bind,consistency=cached",
     "source=/srv/devhome/.texlive2023,target=/home/vscode/.texlive2023,type=bind,consistency=cached",

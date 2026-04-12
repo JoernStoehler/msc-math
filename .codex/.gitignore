@@ -1,0 +1,17 @@
+# Safety net. Runtime state (auth.json, history.jsonl, log/, sessions/)
+# should never land here: Codex reads and writes runtime state under
+# ~/.codex (bind-mounted from /srv/devhome/.codex), not in this repo dir.
+# The files in this directory are symlinked into ~/.codex at container
+# post-create; Codex then follows the symlinks for config/prompts/skills/
+# agents only. If any runtime-state file nevertheless appears here, this
+# .gitignore keeps it out of commits — treat its presence as a bug and
+# investigate why codex wrote here instead of ~/.codex.
+auth.json
+auth.*.json
+history.jsonl
+log/
+sessions/
+themes/
+cache/
+tmp/
+state/

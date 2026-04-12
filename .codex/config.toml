@@ -1,0 +1,36 @@
+# Codex CLI project config for the msc-math repo.
+#
+# How Codex finds this file (no symlinks, no env vars):
+# - Codex walks from the git project root DOWN to the current working
+#   directory, reading every .codex/config.toml it encounters. Closest to
+#   cwd wins on key conflicts. This file is at the project root so its
+#   settings apply repo-wide unless a deeper .codex/config.toml overrides.
+# - The walk only runs when the project is trusted. Trust is set in the
+#   machine-local ~/.codex/config.toml via
+#     [projects."/workspaces/msc-math"]
+#     trust_level = "trusted"
+#   which .devcontainer/post-create.sh seeds idempotently on rebuild.
+#
+# Runtime state (auth.json, history, sessions, log/) lives in ~/.codex/,
+# which is bind-mounted from /srv/devhome/.codex/ on the host. It is never
+# inside any git tree, so auth tokens cannot be accidentally committed.
+# This mirrors the ~/.claude (runtime) vs .claude/ (tracked) split already
+# used by Claude Code on this machine.
+
+# Read CLAUDE.md as the project-instructions document instead of AGENTS.md.
+# This avoids duplicating or renaming CLAUDE.md. The fallback fires only when
+# AGENTS.md is missing, which is the case here.
+project_doc_fallback_filenames = ["CLAUDE.md"]
+
+# CLAUDE.md is ~5 KB today but may grow, and .claude/rules/*.md are pulled
+# in via Read by the agent. Bump well above the 32 KiB default just in case.
+project_doc_max_bytes = 65536
+
+# Sandbox posture: match Claude Code's bypassPermissions mode. The devcontainer
+# already isolates the host; adding Landlock inside Docker is unreliable
+# (openai/codex#1039) and the reward is negligible. See also `approval_policy`.
+sandbox_mode = "danger-full-access"
+
+# Model decides when to ask the user. Matches Jörn's CC flow where the agent
+# is trusted for routine work and asks before risky/destructive actions.
+approval_policy = "on-request"
