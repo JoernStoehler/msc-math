@@ -210,7 +210,6 @@ Instrument development. Results promote to `crates/library/`.
 - 14 previously-failing tests now pass (329 pass, 0 fail).
 - Rationale for current state: degenerate orbits are never capacity-achieving, so final capacity comes from well-conditioned orbits with proven low error. Gap remains for publication.
 - Open: Part III (f64 algorithm description), eta bound for LP null-space search (39 violations on natural data with near-zero eigenvalues), GAP in cor:taylor-structure proof (needs Jörn).
-- Known bug: projection solver sign bug at `kkt/projection_solver.rs:93`.
 - `crates/dev-numerical-analysis/error-bounds/`, `handoffs/verify-numerics-algorithm.md`
 
 ### [open] [group:numerics] Projection solver

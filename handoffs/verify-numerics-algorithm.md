@@ -42,7 +42,7 @@ The verify-numerics experiment has proven Q error bounds and empirically validat
   - `collected.jsonl` — 1.66M polytope σ-nodes (gitignored, regenerate with collect_inputs.rs)
   - `results.jsonl` — 51K problems with exact ground truth (committed)
   - `checks.txt` — latest analysis output
-- `crates/library/src/kkt/projection_solver.rs` — library sign bug (unfixed)
+- `crates/library/src/kkt/projection_solver.rs` — reduced-gradient sign fixed in `e56cf161` (2026-04-12), with regression test `reduced_gradient_sign_distinguishes_fix`
 - `crates/library/src/kkt/qp_assembly.rs` — matrix assembly reference
 
 ## Prior findings
