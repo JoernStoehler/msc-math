@@ -91,13 +91,10 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 ### [active] [group:licca] LICCA-scale F=10 neighborhood falsification
 - Scale the 100-seed perturbation-neighborhood experiment to 10k+ perturbations with multiple step-size buckets (small/medium/large). Honest falsification attempt.
 - In-flight on `.claude/worktrees/licca-bundle` branch `licca-bundle @ e741dc1a` (commit `perturbation-neighborhood: refactor for LICCA (CLI + 3 eps buckets)`). Refactor is in place on the original experiment dir (Jörn-approved, overriding the earlier sibling-dir plan).
-- Pipeline remaining for the owning session:
-  1. Confirm smoke tests pass locally (`job-smoke.sh`, output under `data/smoke-eps-{0.001,0.01,0.1}.jsonl`) — the worktree already has smoke artifacts committed in the refactor commit.
-  2. Reviewer subagent set up via `REVIEWER_PROMPT.md` on the worktree — wait for / collect its output, address FATAL/SIMPLIFY findings.
-  3. Prepare `job.sh` for Jörn's scp + slurm submission. Slurm skill: `.claude/skills/slurm/`.
-  4. After Jörn runs on LICCA and `data/licca.jsonl` returns (git LFS): run `analyze.py`, update `perturbation-neighborhood/logbook.md`, update RESULTS.md density/falsification claims, mark re-plan trigger at `TASKS.md:44` ("After LICCA Sunday runs return → re-evaluate density / falsification claims").
-  5. Pre-merge check + merge to main.
-- Bundled with the sibling LICCA ascent-sampling item below; both ship out of the same `licca-bundle` worktree.
+- **Owned by the licca-bundle agent (still running as of 2026-04-12 late-session):** refactor, local smoke tests, reviewer subagent (set up via `REVIEWER_PROMPT.md`), `job.sh` slurm prep. Bundled with the sibling LICCA ascent-sampling item below; both ship out of the same `licca-bundle` worktree.
+- **Owned by the co-project-owner (follow-up after licca-bundle agent finishes):**
+  1. After Jörn scp + slurm submits + LICCA returns `data/licca.jsonl` (git LFS): run `analyze.py`, update `perturbation-neighborhood/logbook.md`, update RESULTS.md density/falsification claims, mark re-plan trigger at `TASKS.md:44` ("After LICCA Sunday runs return → re-evaluate density / falsification claims").
+  2. Pre-merge check + merge to main.
 - Expected outcome: no sys>HKO (strengthens conjecture). Real outcome: whatever the data says.
 
 ### [Jörn] [group:hko] Verify h-space proof
@@ -153,7 +150,7 @@ Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the o
 - Scale `gradient-ascent-general/` (10 seeds → 10k+) and `gradient-ascent-products/` (12 seeds → 10k+) on LICCA.
 - **Research question**: does the density of sys>1 local maxima in M_F actually support "no new examples"? Current seed counts are too small to claim the density is low.
 - In-flight on `.claude/worktrees/licca-bundle` branch `licca-bundle @ e741dc1a` (commit `ascent-{general,products}: refactor for LICCA (CLI + per-seed RNG + no-db-update)`). In-place refactor on the original experiment dirs (Jörn-approved).
-- Follow the pipeline in the F=10 item above (smoke → reviewer → job.sh → scp → analyze → merge). This item shares the same worktree and the same reviewer subagent.
+- Same ownership split as the F=10 item above: licca-bundle agent owns refactor + smoke + reviewer + job.sh; co-project-owner owns post-licca analyze + logbook/RESULTS updates + pre-merge + merge. Shares the worktree and reviewer subagent with the F=10 item.
 - Each family produces histogram + bucket counts at sys>0.95/0.99/1.00.
 - Re-plan trigger: results back → update RESULTS.md density claim, evaluate whether any further sampling is worthwhile.
 
