@@ -5,16 +5,18 @@
 # ///
 
 """
-Analyze perturbations of the HK-O pentagon counterexample.
-
-Goal: Plot histogram of systolic ratios under small facet perturbations,
-      summarize stats, and compute PCA directions of the perturbation space.
-Input: crates/exp-hko-local-maximum/perturbation-neighborhood/pentagon-perturb.jsonl
+Goal: Plot histogram of systolic ratios under HK-O pentagon dual-vertex perturbations
+      across multiple eps buckets, summarize stats per bucket, compute PCA on the
+      canonical eps=0.01 bucket.
+Input: crates/exp-hko-local-maximum/perturbation-neighborhood/data/{licca,smoke}-eps-*.jsonl
 Output: crates/exp-hko-local-maximum/perturbation-neighborhood/pentagon_perturb_sys_hist.png
-    crates/exp-hko-local-maximum/perturbation-neighborhood/pentagon_perturb_stats.md
-    crates/exp-hko-local-maximum/perturbation-neighborhood/pentagon_perturb_stats.tex
-    crates/exp-hko-local-maximum/perturbation-neighborhood/pentagon_perturb_pca.md
-    crates/exp-hko-local-maximum/perturbation-neighborhood/pentagon_perturb_pca.tex
+        crates/exp-hko-local-maximum/perturbation-neighborhood/pentagon_perturb_stats.md
+        crates/exp-hko-local-maximum/perturbation-neighborhood/pentagon_perturb_stats.tex
+        crates/exp-hko-local-maximum/perturbation-neighborhood/pentagon_perturb_pca.md
+        crates/exp-hko-local-maximum/perturbation-neighborhood/pentagon_perturb_pca.tex
+
+Row identity across buckets is (eps, name). Buckets are grouped by the eps field
+on each row, not by filename — filenames are informational only.
 """
 
 import json
@@ -28,20 +30,43 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from figure_config import setup, FIGSIZE_SINGLE
 setup()
 
-REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 EXPERIMENT_DIR = Path(__file__).resolve().parent
-DATA_PATH = EXPERIMENT_DIR / "pentagon-perturb.jsonl"
+DATA_DIR = EXPERIMENT_DIR / "data"
 FIGURES_DIR = EXPERIMENT_DIR
 N_PCA_COMPONENTS = 5
+PCA_BUCKET_EPS = 0.01
 
 
-def load_jsonl(path: Path) -> list[dict]:
-    if not path.exists():
-        print(f"ERROR: data file not found: {path}", file=sys.stderr)
-        print("Run: cargo run --bin pentagon_perturb --release", file=sys.stderr)
+def pick_jsonl_files(data_dir: Path) -> list[Path]:
+    """Prefer LICCA data if present, else fall back to smoke data."""
+    if not data_dir.exists():
+        print(f"ERROR: data directory not found: {data_dir}", file=sys.stderr)
+        print("Run the binary first (see logbook.md 'How to run').", file=sys.stderr)
         sys.exit(1)
-    with open(path) as f:
-        return [json.loads(line) for line in f if line.strip()]
+    licca_files = sorted(data_dir.glob("licca-eps-*.jsonl"))
+    if licca_files:
+        return licca_files
+    smoke_files = sorted(data_dir.glob("smoke-eps-*.jsonl"))
+    if smoke_files:
+        return smoke_files
+    print(f"ERROR: no data files in {data_dir}", file=sys.stderr)
+    sys.exit(1)
+
+
+def load_grouped_by_eps(files: list[Path]) -> dict[float, list[dict]]:
+    groups: dict[float, list[dict]] = {}
+    for path in files:
+        with open(path) as f:
+            for line in f:
+                if not line.strip():
+                    continue
+                row = json.loads(line)
+                eps = round(float(row["eps"]), 10)
+                groups.setdefault(eps, []).append(row)
+    if not groups:
+        print("ERROR: no rows loaded", file=sys.stderr)
+        sys.exit(1)
+    return groups
 
 
 def compute_stats(values: np.ndarray) -> dict:
@@ -57,31 +82,69 @@ def compute_stats(values: np.ndarray) -> dict:
     }
 
 
-def format_stats_table(stats: dict, base_sys: float) -> str:
+def format_stats_table_md(bucket_stats: list[tuple[float, dict]], base_sys: float) -> str:
     def fmt(x: float) -> str:
         return f"{x:.4f}"
-
     lines = [
-        "| N | mean | median | std | min | max | base sys |",
-        "|---|---|---|---|---|---|---|",
-        f"| {stats['N']} | {fmt(stats['mean'])} | {fmt(stats['median'])} | {fmt(stats['std'])} | {fmt(stats['min'])} | {fmt(stats['max'])} | {fmt(base_sys)} |",
+        "| eps | N | mean | median | std | min | max | base sys |",
+        "|---|---|---|---|---|---|---|---|",
     ]
+    for eps, s in bucket_stats:
+        lines.append(
+            f"| {eps:.4g} | {s['N']} | {fmt(s['mean'])} | {fmt(s['median'])} | "
+            f"{fmt(s['std'])} | {fmt(s['min'])} | {fmt(s['max'])} | {fmt(base_sys)} |"
+        )
     return "\n".join(lines)
 
 
-def plot_histogram(sys_vals: np.ndarray, base_sys: float, output_path: Path) -> None:
-    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+def format_stats_table_tex(bucket_stats: list[tuple[float, dict]], base_sys: float) -> str:
+    lines = [
+        "\\begin{table}[h]",
+        "\\centering",
+        "\\begin{tabular}{rrrrrrrr}",
+        "\\toprule",
+        "$\\varepsilon$ & $N$ & Mean & Median & Std & Min & Max & Base sys \\\\",
+        "\\midrule",
+    ]
+    for eps, s in bucket_stats:
+        lines.append(
+            f"{eps:.4g} & {s['N']} & {s['mean']:.4f} & {s['median']:.4f} & "
+            f"{s['std']:.4f} & {s['min']:.4f} & {s['max']:.4f} & {base_sys:.4f} \\\\"
+        )
+    lines.extend([
+        "\\bottomrule",
+        "\\end{tabular}",
+        "\\caption{HK-O pentagon perturbations: summary statistics of the perturbed"
+        " systolic ratios, grouped by perturbation magnitude $\\varepsilon$.}",
+        "\\label{tab:pentagon-perturb-stats}",
+        "\\end{table}",
+    ])
+    return "\n".join(lines)
 
-    fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
-    ax.hist(sys_vals, bins=18, color="#3b6ea8", alpha=0.75, edgecolor="white")
-    ax.axvline(1.0, color="#c0392b", linestyle="--", alpha=0.7, label="sys = 1")
-    ax.axvline(base_sys, color="#2d6a4f", linestyle="-", alpha=0.9, label="base sys")
 
-    ax.set_xlabel("Systolic ratio sys")
-    ax.set_ylabel("Count")
-    ax.set_title("HK-O pentagon perturbations: sys histogram (pruned)")
-    ax.legend(loc="best")
+def plot_histogram_grid(
+    bucket_sys: list[tuple[float, np.ndarray]],
+    base_sys: float,
+    output_path: Path,
+) -> None:
+    n_buckets = len(bucket_sys)
+    fig, axes = plt.subplots(
+        n_buckets, 1,
+        figsize=(FIGSIZE_SINGLE[0], FIGSIZE_SINGLE[1] * n_buckets * 0.75),
+        sharex=False,
+    )
+    if n_buckets == 1:
+        axes = [axes]
 
+    for ax, (eps, sys_vals) in zip(axes, bucket_sys):
+        ax.hist(sys_vals, bins=40, color="#3b6ea8", alpha=0.75, edgecolor="white")
+        ax.axvline(1.0, color="#c0392b", linestyle="--", alpha=0.7, label=r"sys $= 1$")
+        ax.axvline(base_sys, color="#2d6a4f", linestyle="-", alpha=0.9, label="base sys")
+        ax.set_ylabel("Count")
+        ax.set_title(rf"$\varepsilon = {eps:.4g}$, $N = {sys_vals.size}$")
+        ax.legend(loc="best", fontsize="small")
+
+    axes[-1].set_xlabel(r"Systolic ratio sys")
     fig.tight_layout()
     fig.savefig(output_path)
     plt.close(fig)
@@ -89,10 +152,6 @@ def plot_histogram(sys_vals: np.ndarray, base_sys: float, output_path: Path) -> 
 
 
 def build_delta_matrix(rows: list[dict]) -> np.ndarray:
-    """Build matrix of perturbation vectors from dual vertex deltas.
-
-    Each row becomes a 40D vector (10 facets * 4 components of delta a_i).
-    """
     vectors = []
     for r in rows:
         delta_duals = r.get("delta_dual_vertices")
@@ -180,88 +239,94 @@ def format_pca_table_tex(rows: list[list[str]]) -> str:
     ]
     for row in rows:
         lines.append(" " + " & ".join(row) + " \\\\")
-    lines.extend(
-        [
-            "\\bottomrule",
-            "\\end{tabular}",
-            "\\caption{HK-O pentagon perturbations: PCA components of the 40D"
-            " perturbation space, listed per facet as $\\Delta a_i \\in"
-            " \\mathbb{R}^4$. The last column shows explained variance ratio for"
-            " each component, and the base row reports the unperturbed dual"
-            " vertices and systolic ratio.}",
-            "\\label{tab:pentagon-perturb-pca}",
-            "\\end{table}",
-        ]
-    )
+    lines.extend([
+        "\\bottomrule",
+        "\\end{tabular}",
+        "\\caption{HK-O pentagon perturbations: PCA components of the 40D"
+        " perturbation space at $\\varepsilon = 0.01$, listed per facet as"
+        " $\\Delta a_i \\in \\mathbb{R}^4$. The last column shows explained variance"
+        " ratio for each component, and the base row reports the unperturbed dual"
+        " vertices and systolic ratio.}",
+        "\\label{tab:pentagon-perturb-pca}",
+        "\\end{table}",
+    ])
     return "\n".join(lines)
 
 
 def main() -> None:
-    rows = load_jsonl(DATA_PATH)
-    base_rows = [r for r in rows if r.get("is_base")]
-    if len(base_rows) != 1:
-        print("ERROR: expected exactly one base row in dataset", file=sys.stderr)
-        sys.exit(1)
+    files = pick_jsonl_files(DATA_DIR)
+    print(f"Using {len(files)} data file(s):")
+    for p in files:
+        print(f"  {p.name}")
+    groups = load_grouped_by_eps(files)
 
-    base_sys = float(base_rows[0]["sys"])
-    sys_vals = np.array([r["sys"] for r in rows if not r.get("is_base")], dtype=float)
-    if sys_vals.size == 0:
-        print("ERROR: no perturbed samples found in dataset", file=sys.stderr)
+    base_row: dict | None = None
+    for rows in groups.values():
+        for r in rows:
+            if r.get("is_base"):
+                base_row = r
+                break
+        if base_row is not None:
+            break
+    if base_row is None:
+        print("ERROR: no base row in any bucket", file=sys.stderr)
         sys.exit(1)
+    base_sys = float(base_row["sys"])
 
-    stats = compute_stats(sys_vals)
-    table_md = format_stats_table(stats, base_sys)
+    bucket_stats: list[tuple[float, dict]] = []
+    bucket_sys: list[tuple[float, np.ndarray]] = []
+    for eps in sorted(groups.keys()):
+        perturbed = [r for r in groups[eps] if not r.get("is_base")]
+        sys_vals = np.array([r["sys"] for r in perturbed], dtype=float)
+        if sys_vals.size == 0:
+            print(f"WARN: eps={eps} bucket has no perturbed rows, skipping", file=sys.stderr)
+            continue
+        bucket_stats.append((eps, compute_stats(sys_vals)))
+        bucket_sys.append((eps, sys_vals))
 
     FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+
+    table_md = format_stats_table_md(bucket_stats, base_sys)
     table_path = FIGURES_DIR / "pentagon_perturb_stats.md"
     table_path.write_text(table_md + "\n")
     print(f"Saved: {table_path}")
 
+    stats_tex = format_stats_table_tex(bucket_stats, base_sys)
     stats_tex_path = FIGURES_DIR / "pentagon_perturb_stats.tex"
-    stats_tex = "\n".join(
-        [
-            "\\begin{table}[h]",
-            "\\centering",
-            "\\begin{tabular}{rrrrrrr}",
-            "\\toprule",
-            "$N$ & Mean & Median & Std & Min & Max & Base sys \\\\",
-            "\\midrule",
-            f"{stats['N']} & {stats['mean']:.4f} & {stats['median']:.4f} & {stats['std']:.4f} "
-            f"& {stats['min']:.4f} & {stats['max']:.4f} & {base_sys:.4f} \\\\",
-            "\\bottomrule",
-            "\\end{tabular}",
-            "\\caption{HK-O pentagon perturbations: summary statistics for the"
-            " perturbed systolic ratios.}",
-            "\\label{tab:pentagon-perturb-stats}",
-            "\\end{table}",
-        ]
-    )
     stats_tex_path.write_text(stats_tex + "\n")
     print(f"Saved: {stats_tex_path}")
 
-    plot_histogram(sys_vals, base_sys, FIGURES_DIR / "pentagon_perturb_sys_hist.png")
+    plot_histogram_grid(
+        bucket_sys, base_sys, FIGURES_DIR / "pentagon_perturb_sys_hist.png"
+    )
 
-    perturbed_rows = [r for r in rows if not r.get("is_base")]
-    delta_matrix = build_delta_matrix(perturbed_rows)
-    components, variances, explained_ratio = pca_components(delta_matrix)
+    pca_eps = min(groups.keys(), key=lambda e: abs(e - PCA_BUCKET_EPS))
+    pca_rows_raw = [r for r in groups[pca_eps] if not r.get("is_base")]
+    if len(pca_rows_raw) < 2:
+        print(
+            f"WARN: PCA bucket eps={pca_eps} has <2 perturbed rows, skipping PCA",
+            file=sys.stderr,
+        )
+    else:
+        delta_matrix = build_delta_matrix(pca_rows_raw)
+        components, _variances, explained_ratio = pca_components(delta_matrix)
+        strengths = explained_ratio[:N_PCA_COMPONENTS]
+        pca_rows = build_pca_rows(base_row, components, strengths, N_PCA_COMPONENTS)
 
-    strengths = explained_ratio[:N_PCA_COMPONENTS]
-    pca_rows = build_pca_rows(base_rows[0], components, strengths, N_PCA_COMPONENTS)
+        pca_md = format_pca_table_md(pca_rows)
+        pca_md_path = FIGURES_DIR / "pentagon_perturb_pca.md"
+        pca_md_path.write_text(pca_md + "\n")
+        print(f"Saved: {pca_md_path}")
 
-    pca_md = format_pca_table_md(pca_rows)
-    pca_md_path = FIGURES_DIR / "pentagon_perturb_pca.md"
-    pca_md_path.write_text(pca_md + "\n")
-    print(f"Saved: {pca_md_path}")
+        pca_tex = format_pca_table_tex(pca_rows)
+        pca_tex_path = FIGURES_DIR / "pentagon_perturb_pca.tex"
+        pca_tex_path.write_text(pca_tex + "\n")
+        print(f"Saved: {pca_tex_path}")
 
-    pca_tex = format_pca_table_tex(pca_rows)
-    pca_tex_path = FIGURES_DIR / "pentagon_perturb_pca.tex"
-    pca_tex_path.write_text(pca_tex + "\n")
-    print(f"Saved: {pca_tex_path}")
+        print(f"\nPCA computed on eps={pca_eps} bucket, N={len(pca_rows_raw)}")
 
     print("\nStats table:\n")
     print(table_md)
-    print("\nPCA table:\n")
-    print(pca_md)
 
 
 if __name__ == "__main__":
