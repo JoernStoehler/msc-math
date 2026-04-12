@@ -88,13 +88,17 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 - 100 random perturbations all retain sys>1 (min 1.002, max 1.033). HKO highest.
 - `crates/exp-hko-local-maximum/perturbation-neighborhood/`
 
-### [open] [group:licca] LICCA-scale F=10 neighborhood falsification
-- Scale the 100-seed perturbation-neighborhood experiment to 10k+ perturbations with multiple step-size buckets (small/medium/large). Honest falsification attempt — current 100-seed baseline is suggestive but thin.
-- New sibling `crates/exp-hko-local-maximum/perturbation-neighborhood-licca/` preserves the baseline artifact. Copy-paste + edit is fine, not a refactor of the original.
-- Bundled with the sibling [group:licca] massive ascent sampling item into **one session** (shared slurm pattern work — see "Conventions for LICCA experiments" above).
-- Scheduled: Sunday 2026-04-12 LICCA window.
+### [active] [group:licca] LICCA-scale F=10 neighborhood falsification
+- Scale the 100-seed perturbation-neighborhood experiment to 10k+ perturbations with multiple step-size buckets (small/medium/large). Honest falsification attempt.
+- In-flight on `.claude/worktrees/licca-bundle` branch `licca-bundle @ e741dc1a` (commit `perturbation-neighborhood: refactor for LICCA (CLI + 3 eps buckets)`). **Scope deviation to surface with Jörn**: the earlier plan said "new sibling `perturbation-neighborhood-licca/`, copy-paste + edit, not refactor of the original." The agent instead refactored the original in place. Next session: decide with Jörn whether to accept the in-place refactor or redo as sibling.
+- Pipeline remaining for the owning session:
+  1. Confirm smoke tests pass locally (`job-smoke.sh`, output under `data/smoke-eps-{0.001,0.01,0.1}.jsonl`) — the worktree already has smoke artifacts committed in the refactor commit.
+  2. Reviewer subagent set up via `REVIEWER_PROMPT.md` on the worktree — wait for / collect its output, address FATAL/SIMPLIFY findings.
+  3. Prepare `job.sh` for Jörn's scp + slurm submission. Slurm skill: `.claude/skills/slurm/`.
+  4. After Jörn runs on LICCA and `data/licca.jsonl` returns (git LFS): run `analyze.py`, update `perturbation-neighborhood/logbook.md`, update RESULTS.md density/falsification claims, mark re-plan trigger at `TASKS.md:44` ("After LICCA Sunday runs return → re-evaluate density / falsification claims").
+  5. Pre-merge check + merge to main.
+- Bundled with the sibling LICCA ascent-sampling item below; both ship out of the same `licca-bundle` worktree.
 - Expected outcome: no sys>HKO (strengthens conjecture). Real outcome: whatever the data says.
-- Re-plan trigger: results back → evaluate whether falsification succeeded or conjecture is strengthened.
 
 ### [Jörn] [group:hko] Verify h-space proof
 - Danskin + symmetry + Euler homogeneity argument. ~15 min.
@@ -145,13 +149,12 @@ Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the o
 - Dense (n, m, theta) sweep. Fit sys(n, m, theta). Does formula predict sys>1 only for 5x5?
 - Partial data in `crates/exp-sys-landscape/rotated-regular-products/`
 
-### [open] [group:licca] LICCA-scale massive ascent sampling (density probe)
-- Scale `exp-sys-landscape/gradient-ascent-general/` (10 seeds → 10k+) and `gradient-ascent-products/` (12 seeds → 10k+) on LICCA.
+### [active] [group:licca] LICCA-scale massive ascent sampling (density probe)
+- Scale `gradient-ascent-general/` (10 seeds → 10k+) and `gradient-ascent-products/` (12 seeds → 10k+) on LICCA.
 - **Research question**: does the density of sys>1 local maxima in M_F actually support "no new examples"? Current seed counts are too small to claim the density is low.
-- Both families run — products is where HKO2024 lives (direct question), general is the broader baseline. Agent may ship them as one sibling dir or two; whichever is cleaner. Copy-paste from originals, not refactor.
+- In-flight on `.claude/worktrees/licca-bundle` branch `licca-bundle @ e741dc1a` (commit `ascent-{general,products}: refactor for LICCA (CLI + per-seed RNG + no-db-update)`). **Same scope deviation as the F=10 item**: agent refactored in place instead of creating sibling dirs. Surface with Jörn.
+- Follow the pipeline in the F=10 item above (smoke → reviewer → job.sh → scp → analyze → merge). This item shares the same worktree and the same reviewer subagent.
 - Each family produces histogram + bucket counts at sys>0.95/0.99/1.00.
-- Bundled with the sibling [group:licca] F=10 falsification item into **one session** (shared slurm pattern work — see "Conventions for LICCA experiments" above).
-- Scheduled: Sunday 2026-04-12 LICCA window.
 - Re-plan trigger: results back → update RESULTS.md density claim, evaluate whether any further sampling is worthwhile.
 
 ### [future] [group:licca] Combinatoric-changing step sizes on LICCA
