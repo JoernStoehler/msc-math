@@ -63,6 +63,9 @@ import scipy
 print("Python analysis imports warmed:", numpy.__version__, matplotlib.__version__, scipy.__version__)
 PY
 
+echo "[codex-cloud-setup] Warming Rust validation path..."
+bash "${ROOT_DIR}/scripts/codex-cloud-rust-warmup.sh"
+
 echo "[codex-cloud-setup] Verifying toolchain..."
 python3 --version
 cargo --version

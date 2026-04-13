@@ -29,6 +29,14 @@ That script is the source of truth for:
 
 Do not maintain a second handwritten setup recipe in the Codex UI.
 
+Use the committed maintenance script directly:
+
+```bash
+bash scripts/codex-cloud-maintenance.sh
+```
+
+That script is the source of truth for resumed cached-container refresh.
+
 ## Canonical Smoke Test
 
 Use the committed smoke script directly:
@@ -59,6 +67,20 @@ The setup script also pre-caches:
 
 so normal Python analysis does not repeatedly spend time downloading them at
 the start of a session.
+
+The setup script also precompiles the Rust validation path used by the cloud
+smoke workflow:
+
+- library release test artifacts via `cargo test --release --lib --no-run`
+- library clippy artifacts via `cargo clippy --lib --no-deps -- -D warnings`
+- the representative experiment binary `sys-random-sample`
+
+This moves the expensive Rust cold-start cost into environment setup so the
+first real cloud session is much closer to ready-to-use.
+
+The maintenance script reruns that same Rust warm-up on resumed cached
+containers after Codex checks out the task branch. This keeps follow-up tasks
+from paying the full compile cost again after branch or dependency drift.
 
 ## What V1 Does Not Cover
 
@@ -95,7 +117,13 @@ for you. In the cloud environment configuration:
 bash scripts/codex-cloud-setup.sh
 ```
 
-4. After the environment is created, run:
+4. Set the maintenance command to:
+
+```bash
+bash scripts/codex-cloud-maintenance.sh
+```
+
+5. After the environment is created, run:
 
 ```bash
 bash scripts/codex-cloud-smoke.sh
