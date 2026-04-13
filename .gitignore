@@ -40,13 +40,14 @@ node_modules/
 package.json
 package-lock.json
 
-# Claude Code worktrees (created by --worktree / EnterWorktree)
+# Local nested agent worktrees
 .claude/worktrees/
+.codex/worktrees/
 
-# Claude Code agent memory (auto-generated, session-specific)
+# Legacy local agent memory (session-specific, not shared)
 **/.claude/agent-memory/
 
-# Claude Code local settings (machine-specific permissions, not shared)
+# Legacy local agent settings (machine-specific, not shared)
 .claude/settings.local.json
 
 # Profiling artifacts

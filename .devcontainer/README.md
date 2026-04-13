@@ -1,8 +1,8 @@
 # Devcontainer Setup
 
 Local devcontainer on Jörn's Ubuntu desktop. Provides OS-level isolation for
-Claude Code sessions (`--dangerously-skip-permissions` is safe because Docker
-is the security boundary, not CC's permission rules).
+Codex CLI sessions (`danger-full-access` is safe because Docker
+is the security boundary, not Codex's in-tool sandbox rules).
 
 ## Architecture
 
@@ -12,26 +12,26 @@ is the security boundary, not CC's permission rules).
 - Tailscale for mesh networking across devices
 - SSH server (socket-activated — starts on first connection)
 - `devcontainer` CLI to build/start/exec into the container
-- gnome-terminal for host-direct CC sessions and tunnel management
+- gnome-terminal for host-direct Codex sessions and tunnel management
 
 **Container** (Docker) runs:
 - VS Code tunnel server (for browser IDE access via vscode.dev)
 - bash sessions (entered via `devcontainer exec` from host, or VSCode terminal)
 - tmux (session persistence across disconnects; `set -g mouse on` for scroll)
-- Claude Code CLI processes
-- Everything CC spawns: Bash() commands, cargo, python, latexmk, etc.
+- Codex CLI processes
+- Everything Codex spawns: shell commands, cargo, python, latexmk, etc.
 
 ### Access paths
 
-1. **VS Code tunnel (desktop):** Chrome → vscode.dev → tunnel → container → bash → tmux → claude
-2. **SSH (mobile):** Android → Termux → SSH → Tailscale → host → devcontainer exec → container → bash → tmux → claude
+1. **VS Code tunnel (desktop):** Chrome → vscode.dev → tunnel → container → bash → tmux → codex
+2. **SSH (mobile):** Android → Termux → SSH → Tailscale → host → devcontainer exec → container → bash → tmux → codex
 
 ### Why this stack
 
 | Component | Why |
 |-----------|-----|
-| Docker container | OS-level isolation — CC can't touch host filesystem, SSH keys, etc. |
-| `--dangerously-skip-permissions` | Safe because Docker provides isolation. Eliminates all permission prompts. |
+| Docker container | OS-level isolation — Codex can't touch host filesystem, SSH keys, etc. |
+| `danger-full-access` | Safe because Docker provides isolation. Eliminates in-tool permission prompts. |
 | tmux | Session persistence across disconnects. Bell passthrough configured for notifications. |
 | SSH + Tailscale | Access from any device (currently: Termux on Android). |
 | VS Code tunnel | Browser IDE for file browsing + terminal. Primary access path from desktop. |
@@ -50,7 +50,7 @@ Then open Chrome → vscode.dev/tunnel/msc-math → open terminal:
 
 ```bash
 tmux new -s cc        # create a tmux session
-claude                # start CC
+codex                 # start Codex
 # /resume, /add-dir, etc.
 ```
 
@@ -82,7 +82,7 @@ cd ~/workspaces/msc-math && dc
 
 # Inside the container:
 tmux new -s cc
-claude
+codex
 ```
 
 Access methods (see Architecture section above):
@@ -103,7 +103,7 @@ Persistent state survives container rebuilds via bind mounts from `/srv/devhome/
 
 | Host path | Container path | Purpose |
 |-----------|---------------|---------|
-| `/srv/devhome/.claude` | `~/.claude` | CC config, sessions, credentials |
+| `/srv/devhome/.codex` | `~/.codex` | Codex config, sessions, credentials |
 | `/srv/devhome/.config/gh` | `~/.config/gh` | GitHub CLI auth |
 | `/srv/devhome/.cache/uv` | `~/.cache/uv` | Python dependency cache |
 | `/srv/devhome/.texlive2023` | `~/.texlive2023` | TeX cache |

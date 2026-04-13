@@ -23,7 +23,7 @@ For each situation Jörn wants to address, gather and present:
 
 - **Existing patterns:** What common practices exist for this kind of situation? (Agents have broad training-data recall here — use it.) Rank, triage, explain each to Jörn.
 - **Causal chain:** What leads to the situation? Look at real cases. Brainstorm interventions.
-- **Official docs:** What does the scaffold officially support? Prefer official Codex docs and official examples for Codex artifacts. Use Claude docs only for Claude-specific files.
+- **Official docs:** What does the scaffold officially support? Prefer official Codex docs and official examples for Codex artifacts. Use archived Claude docs only for legacy Claude artifacts that live outside the tracked repo.
 - **Detection:** How can the situation be detected? Skill descriptions, hooks, and review subagents.
 - **Costs:** One-time setup, ongoing maintenance/staleness, attention budget consumed, runtime costs.
 

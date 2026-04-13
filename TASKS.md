@@ -49,7 +49,7 @@ Same binary runs locally and on LICCA. The binary takes explicit CLI args (`--n`
 
 Each LICCA-bound experiment ships two scripts in its directory:
 - `job-smoke.sh` — plain bash, no `#SBATCH`. Small N. Output path under the experiment dir (e.g. `data/smoke.jsonl`). Runs in this devcontainer. Agents run this as their own verification step before handing off.
-- `job.sh` — `#SBATCH` headers, LICCA paths, production N. Jörn scps and submits; the slurm skill (`.claude/skills/slurm/`) has the template + resource-table requirement.
+- `job.sh` — `#SBATCH` headers, LICCA paths, production N. Jörn scps and submits; the slurm skill (`.agents/skills/slurm/`) has the template + resource-table requirement.
 
 Artifacts per experiment: `job.sh` + `job-smoke.sh` + `data/smoke.jsonl` (locally-regenerable, committed) + `data/licca.jsonl` (produced on LICCA, scp'd back, committed via git LFS). Analyze.py reads whichever is newer / whichever is specified.
 
@@ -90,7 +90,7 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 
 ### [active] [group:licca] LICCA-scale F=10 neighborhood falsification
 - Scale the 100-seed perturbation-neighborhood experiment to 10k+ perturbations with 3 step-size buckets (small/medium/large). Honest falsification attempt. Expected: no sys>HKO (strengthens conjecture). Real outcome: whatever the data says.
-- **Worktree pointer:** `.claude/worktrees/licca-bundle @ 786de68c`. Contains phase 4 (A→B refactor: rayon `par_iter` + shared helpers in `exp-sys-landscape/src/lib.rs`) + phase 4.5 (crash-safe trace-first write + deterministic `finalize_ascent_output`) + V8 NIT / V6 finding polish. Third-party reviewer ("V8") returned READY for phases 4 and 4.5.
+- **Worktree pointer:** `licca-bundle @ 786de68c`. Contains phase 4 (A→B refactor: rayon `par_iter` + shared helpers in `exp-sys-landscape/src/lib.rs`) + phase 4.5 (crash-safe trace-first write + deterministic `finalize_ascent_output`) + V8 NIT / V6 finding polish. Third-party reviewer ("V8") returned READY for phases 4 and 4.5.
 - **Best guess as of 2026-04-12 (not binding — verify before trusting):** the worktree is probably a net-positive starting point. The refactor is the main reproduction cost and has a READY verdict; rebuilding might be better if you find structural problems the V8 reviewer missed, but our rough estimate is that auditing + fixing the known issues below is cheaper than rebuilding from `main`.
 - **Known issues found in spot-checks 2026-04-12 (verify still apply before acting):**
   1. All 3 `job.sh` files use `./target/release/<bin>` but set `CARGO_TARGET_DIR=/hpc/gpfs2/scratch/u/stoehljo/cargo-target`, which looks like it makes the binary path wrong. Likely fix: `"$CARGO_TARGET_DIR/release/<bin>"`. Spot-checked on `gradient-ascent-general/job.sh`; not verified on the other two.
@@ -152,7 +152,7 @@ Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the o
 ### [active] [group:licca] LICCA-scale massive ascent sampling (density probe)
 - Scale `gradient-ascent-general/` (10 → 10k+ seeds) and `gradient-ascent-products/` (12 → 10k+ seeds).
 - **Research question (load-bearing for RESULTS.md main-result-1 at `RESULTS.md:9–10`):** does the density of sys>1 local maxima in M_F actually support "no new examples"? Current seed counts are too small to claim the density is low.
-- **Worktree pointer:** same as the F=10 item above — `.claude/worktrees/licca-bundle @ 786de68c`. The refactor covers both `sys-*` binaries (V8 READY for phases 4+4.5 + polish).
+- **Worktree pointer:** same as the F=10 item above — `licca-bundle @ 786de68c`. The refactor covers both `sys-*` binaries (V8 READY for phases 4+4.5 + polish).
 - **Best guess + known issues + ownership override:** same as the F=10 item above. Same 4 `job.sh` bugs apply to `sys-gradient-ascent-general` and `sys-gradient-ascent-products`. Verify before acting. Rebuild is still on the table if the worktree turns out to be in worse shape than the F=10 entry's spot-checks suggest.
 - Each family produces histogram + bucket counts at sys>0.95/0.99/1.00.
 - Re-plan trigger: results back → update `RESULTS.md` density claim.
@@ -410,13 +410,11 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Next: post-mortem on orchestration workflow and whether the Codex-first split changed anything that future sessions should preserve.
 
 ### [open] [group:codex-migration] Codex CLI migration
-- Port msc-math workflow to OpenAI Codex CLI alongside Claude Code. Scaffold merged into main; Steps 1–2 done; Step 3 (plumbing verification) is the pickup point.
-- Handoff doc: `.claude/worktrees/codex-migration/HANDOFF.md`
-- Plan: `~/.claude/plans/elegant-dreaming-wind.md`
-- Worktree `codex-migration` exists, ready for post-rebuild session pickup.
+- Port msc-math workflow into native Codex repo paths. Scaffold merged into main; the remaining work is cleanup and verification of the Codex-first state.
+- Old `codex-migration` worktree notes are now archival, not the active source of truth.
 
 ### [open] Design co-project-owner / coordinator skill
-- Goal: `.claude/skills/<name>/SKILL.md` for the task-graph-clerk role. Name, scope, content all TBD with Jörn.
+- Goal: `.agents/skills/<name>/SKILL.md` for the task-graph-clerk role. Name, scope, content all TBD with Jörn.
 - **Starting constraint:** ASK JÖRN about the role/workflow before guessing. Do not design from priors or this session's tentative core.
 - Context: `feedback/2026-04-12-co-ownership-v2-postmortem.md` — enumerated failure modes if you design from guesses, plus one load-bearing insight (verification mechanism for coordinator work = asking Jörn, not an external check).
 - Output: minimal skill file, stable core only.
