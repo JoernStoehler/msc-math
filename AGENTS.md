@@ -68,8 +68,24 @@ Planned deliverables:
 
 ## Environment
 
+Two supported environments exist:
+
+- **Local devcontainer**: full baseline environment. See `.devcontainer/`.
+- **Codex cloud**: lower-complexity travel/mobile environment for code work.
+  See `codex-cloud.md`.
+
+Local devcontainer baseline:
+
 - Docker devcontainer at `/workspaces/msc-math`
 - Rust 1.94, Python 3.12, TeX Live, gh CLI
+
+Codex cloud v1 baseline:
+
+- Default Codex `universal` image plus `bash scripts/codex-cloud-setup.sh`
+- Rust build/test/clippy must work
+- Normal Python analysis must work
+- Git LFS data may be used
+- TeX is intentionally out of scope in cloud v1
 
 ## Quick Commands
 
