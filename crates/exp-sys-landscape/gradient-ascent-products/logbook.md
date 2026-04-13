@@ -21,7 +21,7 @@ Production target: 10k seeds via `rayon::par_iter` on a single slurm task with
 Architecture B (2026-04-12): rayon par_iter on one LICCA task,
 `--cpus-per-task=10`. One output file (`licca.jsonl`). See
 `vectorized-bouncing-gray.md` for the A→B decision rationale and
-`peppy-hugging-melody.md` HANDOFF STATE for session history.
+`peppy-hugging-melody.md` session state for history.
 
 The old committed `gradient-ascent-products.jsonl` (N=12, 3 buckets × 4) is
 **not** byte-reproducible under the new per-seed RNG scheme and has been
@@ -65,7 +65,7 @@ directive per slurm precedence: CLI > `#SBATCH` > env > default).
 
 No local N=1000 run — that burns Jörn's dev-machine CPU for >2h and was
 explicitly forbidden after a prior incident (see `peppy-hugging-melody.md`
-HANDOFF STATE, session failure modes #1 and #2).
+session state, failure modes #1 and #2).
 
 ### Byte-reproducibility re-verify
 

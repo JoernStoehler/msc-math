@@ -637,7 +637,7 @@ Dev (lower priority, thesis-optional):
 ## 5. Verification (sampling check)
 
 Per the scaffold task requirement, I re-ran raw counts and sampled random
-entries from the inventory to confirm the handoff's numbers match the
+entries from the inventory to confirm the inventory numbers match the
 actual `math.tex` files.
 
 ### 5.1  Raw-count reconciliation
@@ -769,7 +769,7 @@ sampled entries to verify (section 5).
   gives the priority queue.
 - Kai briefing 2026-04-14 (`TASKS.md:298`): the top-10 list in §4 is the
   "what's still math-fragile" slice of that briefing. Jörn also has
-  `handoffs/handoff-geom-math-review.md` (2026-03-24 top-to-bottom geom
+  `crates/library/src/geom/review-notes.md` (2026-03-24 top-to-bottom geom
   review, Defs 1–13) as historical context — several of its structural
   suggestions map onto §4 items 3 and 4 here.
 

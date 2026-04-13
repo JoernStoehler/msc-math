@@ -1,4 +1,4 @@
-# Handoff: geom/math.tex review feedback
+# Geom/math.tex review feedback
 
 **Source:** Jörn's top-to-bottom review of `crates/library/src/math.pdf` (session 2026-03-24)
 **Branch:** `remove-unit-normals` (worktree `.claude/worktrees/remove-unit-normals/`)

@@ -1,4 +1,4 @@
-# Appendix A Rewrite — Handoff Note
+# Appendix A Rewrite Notes
 
 ## Origin of this task
 
@@ -8,7 +8,7 @@ During the cleanup-loose-ends session (2026-02-24), Jörn reviewed Section A.1 i
 
 An exploration agent searched all thesis and code files for this claim. **Finding: no such theorem or assumption exists in the current thesis or code.** The combinatorial structure is inferred numerically from floating-point coordinates (tolerance-based incidence checks), not assumed known in advance. There is no contradiction because the claim was never made — but Jörn wants it to be made, which requires new mathematical content.
 
-This led to a broader discussion about restructuring the entire appendix. Jörn sketched a new outline and asked for my thoughts. The discussion was interrupted (Jörn had to context-switch to other sessions), and we agreed to write this handoff note.
+This led to a broader discussion about restructuring the entire appendix. Jörn sketched a new outline and asked for my thoughts. The discussion was interrupted (Jörn had to context-switch to other sessions), and we agreed to write this note.
 
 ## Why the current structure is inadequate
 

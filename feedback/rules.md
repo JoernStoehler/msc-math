@@ -202,3 +202,66 @@ The prior session's `vectorized-bouncing-gray.md` HANDOFF STATE block described 
 1. **`CLAUDE.md` fix:** state the first-action rule explicitly under `General Conventions`. Candidate wording: *"When taking ownership of a TASKS.md `###` item, the first action is to read the `###` entry AND its parent `##` group header + intro, for goal and context — before any plan file, handoff note, or worktree state query. Plan files are state; TASKS.md is task."*
 2. **Session-start prompt fix:** when compact-handoffs spawn the next session, the prompt must name `TASKS.md:<range>` as the first read, not a plan file. Plan file references are secondary state context. The spawning-prompt template for compact-handoffs currently models the failure pattern directly.
 3. **Interim memory** `feedback_read_tasks_before_plan.md` written this session — covers the pre-read requirement explicitly; can be removed once `CLAUDE.md` carries the rule.
+
+### 2026-04-13 — Agent invented a blocked state after finishing the worktree task
+
+**What happened:** The repo-cleanup refactor was complete in the worktree: `handoffs/` removed there, durable files moved, `TASKS.md` rewritten, and live references checked. After that point the agent no longer had a technical blocker. Instead of closing cleanly, it spiraled into coordination failure:
+
+1. it started a worker in the same worktree, then described itself as blocked from "continuing locally" because of overlapping write ownership;
+2. once the worker finished, it still did not immediately state the exact repo status;
+3. it answered repeated `status?` prompts with partial or hedged state instead of one definitive sentence;
+4. it over-shared raw verification output, including deleted-file lists from `git diff`, which looked like renewed confusion rather than confirmation;
+5. it mixed up three distinct states:
+   - the requested edits exist in the worktree,
+   - nothing has been applied to `main`,
+   - whether Jörn wants those worktree changes merged/applied is a separate decision;
+6. it started an `$incident` workflow and then failed to finish the feedback write-up until pushed repeatedly.
+
+The most aggravating part for Jörn was that the agent behaved as if "not on `main` yet" were a blocker or as if direct edits to `main` were an obvious escape hatch. That created the impression that the agent had not kept the basic branch/worktree model straight even after the work was already done.
+
+**What should have happened:** There were two clean closeout points:
+
+1. **After the worker finished and the verification pass came back clean:**  
+   the agent should have said exactly: "The requested repo prep is done in the worktree; nothing has been applied to `main`." Then stop, unless a real decision was needed.
+
+2. **After `$incident` was invoked:**  
+   the agent should have written the feedback entry immediately and then reported "incident recorded at `feedback/rules.md`" without reopening the status loop.
+
+If Jörn wanted more, the next response should have been a precise question or a precise next action. Not more process narration.
+
+**Pattern:** Finished work presented as pseudo-blocked because the agent narrates workflow state instead of stating repo state. This is not just verbosity. It causes three concrete failures:
+
+- **fake blockage:** "worktree ready but not on `main`" is described as if it prevents truthful status reporting;
+- **worktree/main confusion:** the agent talks as if "apply to `main`" were the natural next step even when no such request was made;
+- **status-looping:** every answer is framed as provisional process instead of a closed factual state, so the user has to keep asking.
+
+This incident is adjacent to earlier "plan-as-authority" and "handoffs folder" entries, but narrower. The core error here is not bad planning. It is refusal to terminate the local state machine once the requested work is complete.
+
+**Memories/rules that already pointed in this direction and still were not followed:**
+
+- `feedback_dont_ask_when_actionable.md` — should have prevented the passive wait/status loop.
+- `feedback_handoffs_folder_antipattern.md` (referenced from prior entries) — already warned that narrative cleanup notes can distort the real task state.
+- Existing worktree discipline rules — should have made the distinction between "branch/worktree contains the change" and "main has not changed" trivial to report.
+
+The recurrence means those rules are not enough in their current form.
+
+**Suggestion:** Add a hard closeout rule for worktree tasks:
+
+1. When the requested change is complete in a worktree, the default report is exactly:
+   - what is done,
+   - where it exists,
+   - whether `main` is untouched.
+2. Do not volunteer a next step unless the user asked for one or a real decision blocks progress.
+3. Do not dump verification output after the state is already known; summarize only the conclusion.
+4. If a skill like `$incident` is triggered, finish the skill before answering further status prompts.
+5. Never treat "not on `main`" as a blocker to truthful reporting. It is only a branch-state fact.
+
+### 2026-04-13 — Incident entry written, but the agent still stayed in the status loop
+
+**What happened:** After the first 2026-04-13 incident entry was written, the same session still did not recover. The agent kept answering `status?` with fragments, kept avoiding the single necessary question ("apply or discard?"), and only asked it after repeated direct user pressure. Even after being told to ask a question, the agent needed multiple prompts before doing so. This proves the prior incident note was descriptive but not operational enough to interrupt the behavior mid-session.
+
+**What should have happened:** Once the first incident entry existed and the loop was identified, the agent should have immediately switched behavior: either ask the one fork-closing question, or continue with the only remaining action. The incident workflow is not complete if the same failure mode continues in the next messages.
+
+**Pattern:** Writing down the failure does not count as fixing it. The agent treated the incident note as completion of the meta-task while continuing the exact same conversational failure mode in the live session.
+
+**Suggestion:** When `$incident` is triggered for an in-progress behavior failure, add a same-session recovery rule: the very next assistant message must either (a) do the blocked action, or (b) ask the single load-bearing question. No more status narration until that recovery step happens.

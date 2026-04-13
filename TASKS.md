@@ -97,7 +97,7 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
   2. No `cargo build` step in any `job.sh`. Unclear whether Jörn prebuilds on LICCA or this is an oversight.
   3. `--time=00:00:01` tripwire with CLI-override ritual. Open question whether to keep or bake in real values; smoke n=3 gives a rough ~3h for `sys-*`, ~30m for perturbation, but that's a thin sample.
   4. `logs/` directory created inside the script but SLURM opens its log file at submit time — possible timing bug, unverified on actual LICCA submission.
-- **Ownership (Jörn override 2026-04-12):** the prior "Owned by licca-bundle agent" / "Post-LICCA follow-up unowned" split is superseded — one session now owns end-to-end (audit → fix → smoke → present scp+sbatch → wait → `analyze.py` → figures → logbook → `RESULTS.md` updates → `/pre-merge` → merge). Previous split was producing failed handoffs.
+- **Ownership (Jörn override 2026-04-12):** the prior "Owned by licca-bundle agent" / "Post-LICCA follow-up unowned" split is superseded — one session now owns end-to-end (audit → fix → smoke → present scp+sbatch → wait → `analyze.py` → figures → logbook → `RESULTS.md` updates → `/pre-merge` → merge). Previous split was producing failed transfers.
 - Re-plan trigger: after LICCA runs return, re-evaluate density/falsification claims (`TASKS.md:44`).
 
 ### [Jörn] [group:hko] Verify h-space proof
@@ -140,6 +140,38 @@ Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the o
 ### [done] [2026-04] 2d. Variable-F ascent (F to F+1)
 - 90 trials. F=10 local maxima often improve at F=11 but marginal; no sys>1.
 - `crates/exp-sys-landscape/variable-f-ascent/`
+- Successor baseline for the next continuation line: `docs/sys-search-program-2026-04-13.md:67-75`
+
+### [open] [group:witness-search] Witness oracle instrumentation + benchmark bank
+- Upgrade exact witness search from "best permutation only" to a reusable local-structure oracle: top-`m` / within-gap returns, incumbent warm starts, near-active witness metadata, runtime diagnostics.
+- Bundle the benchmark bank into the same session; do not track it as a separate item.
+- Pointer: `docs/sys-search-program-2026-04-13.md:22-38`
+
+### [future] [group:witness-search] Witness reuse + safe prefilter calibration
+- Quantify trust radius for local witness caches and benchmark safe pruning via `U_A(K) < 1`.
+- Compare minimizer-only, top-`m`, within-gap, parent-cache, and hybrid witness sets.
+- Fold permutation-neighborhood search and warm-start benchmarking into this line, not separate tracker headers.
+- Pointer: `docs/sys-search-program-2026-04-13.md:40-53`
+
+### [future] [group:witness-search] Reduced-model ascent on witness sets
+- Soft-min / log-sum-exp reduced-model ascent first; min-norm convex-hull QP second if the first pass is promising.
+- Acceptance criterion: compare against exact-evaluate-every-step on the same seeds; report best exact `sys`, exact-call count, and wall-clock.
+- Pointer: `docs/sys-search-program-2026-04-13.md:55-65`
+
+### [future] [group:witness-search] Witness-guided F→F+1 continuation
+- Replace random facet addition with witness-guided vertex splitting and witness lifting into the child problem.
+- Compare directly against `variable-f-ascent/` and `exp-hko-local-maximum/cut-and-ascent/`.
+- Pointer: `docs/sys-search-program-2026-04-13.md:67-75`
+
+### [future] [group:witness-search] Symmetry-family search
+- Search low-dimensional orbit-union families instead of only generic iid proposals.
+- Use the reuse, prefilter, and reduced-model machinery inside those families.
+- Keep combinatorial/order-type diagnostics as supporting logging inside this line.
+- Pointer: `docs/sys-search-program-2026-04-13.md:77-83`
+
+### [future] [group:witness-search] Box-pruning on structured families
+- Downstream of the symmetry-family line: use witness upper bounds to prune parameter boxes once a productive family exists.
+- Pointer: `docs/sys-search-program-2026-04-13.md:77-83`
 
 ### [done] [2026-03] Random sampling (general + products + calibration)
 - Random polytopes max sys=0.578. Random products max sys=0.794 (6x6).
@@ -190,6 +222,7 @@ sys as a continuous function on polytope space, no privileged threshold.
 ### [future] Systematic landscape analysis
 - Gradient flow convergence, local maxima below sys=1, random noise effects.
 - Partial data in gradient-ascent experiments.
+- Witness-search successor line: `docs/sys-search-program-2026-04-13.md:55-83`
 
 ## [open] Computing capacity
 
@@ -213,12 +246,12 @@ Instrument development. Results promote to `crates/library/`.
 - 14 previously-failing tests now pass (329 pass, 0 fail).
 - Rationale for current state: degenerate orbits are never capacity-achieving, so final capacity comes from well-conditioned orbits with proven low error. Gap remains for publication.
 - Open: Part III (f64 algorithm description), eta bound for LP null-space search (39 violations on natural data with near-zero eigenvalues), GAP in cor:taylor-structure proof (needs Jörn).
-- `crates/dev-numerical-analysis/error-bounds/`, `handoffs/verify-numerics-algorithm.md`
+- `crates/dev-numerical-analysis/error-bounds/`, `crates/dev-numerical-analysis/error-bounds/algorithm-notes.md`
 
 ### [open] [group:numerics] Projection solver
 - 5-step algorithm: (1) solve equality constraints → (m-5)-dim affine space, (2) project H → reduced Hessian, (3) eigendecompose → null directions, (4) beta>0 as LP on projected null space, (5) recover multipliers.
 - Basic implementation in `kkt/projection_solver.rs`. Needs mathematical rigor + ablation comparison.
-- `handoffs/verify-numerics-algorithm.md`
+- `crates/dev-numerical-analysis/error-bounds/algorithm-notes.md`
 
 ### [open] [group:numerics] Beta-LP unification
 - Replace `find_positive_beta_1d`/`find_positive_beta_nd` with single LP: maximize min_j beta_j subject to beta = beta_0 + V*alpha.
@@ -257,7 +290,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 ### [Jörn] [group:tube] tube-algorithm.tex (8 TODOs)
 - 5 Jörn questions (quaternionic formula, TF_ij equivalence, rotation number, closing steps, correctness proof).
 - 3 GAP markers (agent-added unverified content).
-- `handoffs/tube-algorithm.md`
+- `thesis/tube-algorithm-notes.md`
 
 ### [Jörn] [group:numerics] appendix-numerical.tex (5 TODOs)
 - Continuity of c_EHZ on polytopes, simplicity assumption, billiard pruning, three-valued verdict, unverified numerical statement.
@@ -292,7 +325,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Blocked on: stable chapter content.
 
 ### [done] [2026-04-12] [group:writeup] Math write-up scaffold
-- Handoff: `handoffs/math-writeup-scaffold-2026-04-12.md` (778 lines, grep-verified).
+- Scaffold note: `crates/math-writeup-scaffold.md` (778 lines, grep-verified).
 - Counts: 69 unverified blocks (unchanged from 2026-04-07), 41 `TODO: JÖRN` markers, 10 GAP markers, 100 theorem-like environments across 18 files.
 - Top 4 ranked hard-labor items: `prop:capacity-piecewise-smooth`, `lem:cap-derivative`+`lem:vol-derivative`, `prop:prefilter-bound`, `prop:capacity-symplectic-product` (library GAP).
 - Ahead of 2026-04-13 schedule. Kai briefing item (below) can consume it once LICCA Sunday preliminaries are back.
@@ -301,11 +334,11 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Terse `.md` with checkpoints Jörn reads ~10 min before the Kai call and drives the meeting from. Not a prose doc for Kai — Jörn drives verbally.
 - Organized by decision: locked / empirically strong but unproven / genuinely open / options for closing each gap / recommended priority.
 - Synthesizes RESULTS.md + TASKS.md + logbooks + math write-up scaffold + any LICCA Sunday preliminaries.
-- Output: `handoffs/kai-briefing-2026-04-14.md`.
+- Output: `docs/kai-briefing-2026-04-14.md`.
 - Scheduled: 2026-04-13 Mon, after the math write-up scaffold lands.
 
 ### [done] [2026-04-12] Thesis figure consistency check
-- Handoff: `handoffs/thesis-figures-audit-2026-04-12.md`. Degenerate baseline: 0 `\includegraphics` refs across 16 `thesis/**/*.tex` files, `thesis/assets/` does not exist. Rerun after experiment writeups and thesis restructuring land.
+- Thesis figure audit: 0 `\includegraphics` refs across 16 `thesis/**/*.tex` files, `thesis/assets/` does not exist. Rerun after experiment writeups and thesis restructuring land.
 - Note: before the first figure lands, Jörn picks an asset-provenance convention (sidecar `.source` files / manifest / sync script) and adds it to `AGENTS.md`. See "Hand-drawn figures" + "Figure inventory" below.
 
 ### [future] [group:figures] Hand-drawn figures (Jörn)
@@ -336,17 +369,17 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 
 ### [open] [group:paranoia] Paranoia: numerical claims (first pass merged 2026-04-12)
 - First pass merged: `paranoia-numerics` branch, 19 files fixed across experiment logbooks + `dev-numerical-analysis/error-bounds/tests.rs` + `unknown-predicates/run.rs`. Session report at `paranoia-numerics-report.md`.
-- Remaining sub-items (needs Jörn decision, then handoff to agent):
+- Remaining sub-items (needs Jörn decision, then follow-up to agent):
   - `dev-capacity-validation/orbit-recovery/`: 4 polytopes missing from dataset (112→108), `solution_dim` hardcoded to 0 in run.rs, error magnitudes from different algorithm version
   - `dev-algorithm-comparison/profiling/`: per-test durations zeroed in JSONL, 3 historical runs absent — data pipeline broken
 
 ### [done] [2026-04-12] [group:paranoia] Paranoia: conjectures + interpretations
-- Flag-only audit merged: `handoffs/paranoia-conjectures-2026-04-12.md`. 42 ranked flags (belief 5 / causal 11 / unhedged 12 / interpretation 13 / conjecture 1).
+- Flag-only audit merged: 42 ranked flags (belief 5 / causal 11 / unhedged 12 / interpretation 13 / conjecture 1).
 - Top flags cluster in `library/src/{geom,algorithms}/math.tex` and unverified lemmas in `dev-algorithm-comparison/ablation/math.tex` + `dev-gradient/numerics-subdifferential/math.tex`.
 - Jörn reads async when write-up capacity frees up.
 
 ### [open] [group:writeup] Thesis-code alignment
-- Full list: `handoffs/migration-thesis-findings.md`
+- Full list: `thesis/migration-findings.md`
 - Tube rotation increment: current code is a misleadingly named placeholder, not CH2021. Need to implement a correct rotation formula (not necessarily CH2021 — we have different basis vectors).
 - KKT notation: decided — use code's symmetric convention (eigenvalue decompositions pop out). Propagate to thesis.
 - Accumulator pattern: thesis is stale, will be rewritten. Not a separate issue.
@@ -376,13 +409,13 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
   - 11 stubs + 6 gaps in dev-gradient/ and dev-numerical-analysis/.
 
 ### [open] [group:docs] Geom math.tex restructure
-- Jörn partially reviewed Defs 1–13 of `crates/library/src/geom/math.tex` (`handoff-geom-math-review.md`).
+- Jörn partially reviewed Defs 1–13 of `crates/library/src/geom/math.tex` (`crates/library/src/geom/review-notes.md`).
 - Consolidate Defs 1-2 (symplectic form). Add Def for HKO2024 + Thm for false Viterbo's conjecture.
 - Clarify H-representation irredundancy. Fix Defs 12-13 (area/volume are algorithms, not definitions).
 - Consider splitting into `math_geometry.tex`, `math_symplectic.tex`, `math_reeb.tex`.
 
 ### [done] [2026-04-12] [group:docs] Library architecture docs audit
-- Handoff: `handoffs/library-docs-audit-2026-04-12.md`. Hypothesis (existing headers + per-module math.tex cover architecture) mostly held: 0 blockers, 7 gaps, 3 nits across `lib.rs`, `kkt/`, `algorithms/` umbrella, `algorithms/tube/`.
+- Library docs audit: existing headers + per-module math.tex cover architecture mostly held; 0 blockers, 7 gaps, 3 nits across `lib.rs`, `kkt/`, `algorithms/` umbrella, `algorithms/tube/`.
 - 5 doc-only fixes applied and merged to main (no source/algorithm changes). Notable: `algorithms/mod.rs` tube description rewritten from "(placeholder)" to an explicit wrong-rotation-formula warning; `algorithms/` umbrella gained a "correctness invariant" paragraph (overlapping algorithms must agree).
 - Skipped as marginal: `derivatives.rs` cross-directory lemma cite (findable via absolute path), `kkt/mod.rs` formula-location nit, umbrella missing utility math-label cross-refs.
 
@@ -400,7 +433,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Deliverables: `papers/citation-index.md` (verified theorem index), expanded `papers/AGENTS.md` (download/verify workflow), 4 PDFs in `papers/`.
 
 ### [done] [2026-04-07] Delete superseded experiments
-- Directories deleted 2026-04-03. Reference cleanup done 2026-04-07: removed gradient-search from code comments (gradient-ascent-general/products run.rs), rules examples, stale handoff.
+- Directories deleted 2026-04-03. Reference cleanup done 2026-04-07: removed gradient-search from code comments (gradient-ascent-general/products run.rs), rules examples, stale cleanup note.
 
 ## [open] Infrastructure + tooling
 
@@ -430,10 +463,10 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
   - `Source::LagrangianProduct` uses 0.0 for circumradius/rotation on random products (n1/n2 are correct). No code uses these fields for reconstruction; fix when Source enum is extended.
 
 ### [done] [2026-04-12] Worktree audit
-- Handoff: `handoffs/worktree-audit-2026-04-12.md`. One non-main worktree: `paranoia-numerics` — `unmerged-wip`, 5 ahead / 37 behind main, 19 files, matches `[active]` Paranoia numerics session. Jörn to decide rebase-and-merge vs continue-accumulating.
+- Worktree audit: one non-main worktree, `paranoia-numerics` — `unmerged-wip`, 5 ahead / 37 behind main, 19 files, matches `[active]` Paranoia numerics session. Jörn to decide rebase-and-merge vs continue-accumulating.
 
 ### [done] [2026-04-12] Stale branch cleanup
-- Handoff: `handoffs/branch-audit-2026-04-12.md`. 5 branches fully merged with 0-file diffs (`citation-verification`, `citation-verification-d`, `database-cleanup`, `delete-api-reference`, `housekeeping-triage`) — safe `git branch -d` candidates. 1 unmerged: `numerical-story-expand` (1 ahead / 9 behind, +458/-160 in `thesis/numerical-story.md`). Jörn decides per-branch.
+- Branch audit: 5 branches fully merged with 0-file diffs (`citation-verification`, `citation-verification-d`, `database-cleanup`, `delete-api-reference`, `housekeeping-triage`) — safe `git branch -d` candidates. 1 unmerged: `numerical-story-expand` (1 ahead / 9 behind, +458/-160 in `thesis/numerical-story.md`). Jörn decides per-branch.
 
 ### [done] [2026-04-12] Delete api-reference/
 - Never used organically by agents; agents read source directly. Removed `api-reference/`, `crates/tools/api-extract/`, pre-commit hook, workspace member, and stale project-doc references.

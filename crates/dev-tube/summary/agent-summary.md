@@ -342,7 +342,7 @@ way past what CH2021 did, and most of the knowledge isn't really in the repo":
   implemented. The knowledge of what went wrong is in Jörn's head, not written up.
 
 - **Deleted spec files** — `tube-spec.md` and `tube-algorithm-plan.md` (referenced
-  in `handoffs/tube-algorithm.md`) were deleted. They contained detailed specs
+  in the old tube note) were deleted. They contained detailed specs
   with open questions (`<q>` markers).
 
 - **Deleted dictation notes** — `tube-notes.md` (Jörn's raw dictation, 2026-02-18)
