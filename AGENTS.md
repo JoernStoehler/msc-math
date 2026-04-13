@@ -83,8 +83,8 @@ Codex cloud v1 baseline:
 
 - Default Codex `universal` image plus `bash scripts/codex-cloud-setup.sh`
 - Rust build/test/clippy must work
-- Normal Python analysis must work
-- Git LFS data may be used
+- Python analysis must work on smoke-generated or otherwise hydrated inputs
+- `git-lfs` is installed, but committed LFS files may still be pointer files in cloud
 - TeX is intentionally out of scope in cloud v1
 
 ## Quick Commands

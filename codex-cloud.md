@@ -8,8 +8,9 @@ creation. It is not a replacement for the local devcontainer.
 ## V1 Guarantees
 
 - Rust binaries, tests, and clippy should run in cloud.
-- Normal Python analysis scripts should run in cloud.
-- Git LFS data may be used in cloud.
+- Python analysis should run in cloud on smoke-generated or otherwise hydrated inputs.
+- Git LFS is installed in cloud, but this checkout mode does not guarantee hydrated LFS payloads.
+- Cloud tasks must not assume committed LFS files are real data.
 - Agent internet access should be unrestricted.
 - TeX is intentionally out of scope in v1.
 
@@ -51,7 +52,7 @@ This script checks:
 - `cd crates/library/ && cargo test --release --lib`
 - `cd crates/library/ && cargo clippy --lib -- -D warnings`
 - one representative experiment build
-- one representative `uv run analyze.py`
+- one representative Python analysis run on self-generated smoke data
 
 ## What The Setup Adds
 
@@ -68,12 +69,16 @@ The setup script also pre-caches:
 so normal Python analysis does not repeatedly spend time downloading them at
 the start of a session.
 
+The setup script pre-caches Python packages. It does not hydrate Git LFS
+payloads.
+
 The setup script also precompiles the Rust validation path used by the cloud
 smoke workflow:
 
 - library release test artifacts via `cargo test --release --lib --no-run`
 - library clippy artifacts via `cargo clippy --lib --no-deps -- -D warnings`
 - the representative experiment binary `sys-random-sample`
+- the representative experiment binaries used by the cloud smoke workflow
 
 This moves the expensive Rust cold-start cost into environment setup so the
 first real cloud session is much closer to ready-to-use.
@@ -81,6 +86,19 @@ first real cloud session is much closer to ready-to-use.
 The maintenance script reruns that same Rust warm-up on resumed cached
 containers after Codex checks out the task branch. This keeps follow-up tasks
 from paying the full compile cost again after branch or dependency drift.
+
+## Git LFS In This Cloud Mode
+
+In the observed Codex cloud checkout mode for this repo:
+
+- `git-lfs` is installed
+- LFS tracking metadata is present
+- committed LFS files can still appear as pointer files
+- the checkout may have no git remote, so missing LFS payloads cannot be fetched in-session
+
+So dataset-backed analysis on committed `.jsonl` files is not a safe cloud
+assumption. The canonical smoke script therefore uses a self-generated Python
+smoke dataset instead of relying on committed LFS payloads.
 
 ## What V1 Does Not Cover
 
