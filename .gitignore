@@ -23,6 +23,19 @@ thesis/*.synctex.gz
 thesis/*.pdf
 
 # LaTeX (crate math docs)
+crates/main.aux
+crates/main.bbl
+crates/main.bcf
+crates/main.blg
+crates/main.fdb_latexmk
+crates/main.fls
+crates/main.log
+crates/main.out
+crates/main.pdf
+crates/main.run.xml
+crates/main.synctex(busy)
+crates/main.synctex.gz
+crates/main.toc
 crates/library/src/*.aux
 crates/library/src/*.log
 crates/library/src/*.out
