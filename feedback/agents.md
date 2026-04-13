@@ -185,3 +185,73 @@ Required a SendMessage round-trip to the aggregator to strip the wrapper and rew
 
 - `SendMessage` tool docs say "Refer to teammates by name, never by UUID" but the `Agent` return hint explicitly tells you to use the UUID (`use SendMessage with to: 'a6ebc2d30b209ca82'`). These contradict. Used the UUID and it worked. Low-priority doc cleanup.
 - Early in the session, `Read` on `/tmp/paranoia-prompt.md` returned "File unchanged since last read" even though nothing in this session had read it. Fell back to `Bash cat`. Probably a harness cache keyed on path rather than conversation — not worth chasing.
+
+## 2026-04-13: codex-migration / dirty-main cleanup — wrong scope tracking + acting under ambiguity
+
+Session: migrate repo from Claude scaffold to Codex scaffold, then purge Claude from tracked repo state while keeping container/runtime convenience. The session eventually finished, but only after repeated friction, one merge incident, one lost-and-recovered deliverable, and a long cleanup tail caused by poor state handling from the main agent.
+
+### What went wrong
+
+1. **Tracked the wrong definition of done after the user changed the goal.**
+   - Early in the session, the agent formed a reasonable "coexistence" definition of done.
+   - Later, the user changed the goal to "purge Claude from the repo, but leave it in the container."
+   - The agent kept answering from the old or half-updated notion of done instead of re-deriving the target from the user's latest rule. This caused repeated confusion about whether Claude-related devcontainer/editor files were bugs or intended convenience.
+
+2. **Touched dirty `main` before doing a proper file-by-file audit.**
+   - The agent attempted to merge migration work into a dirty `main` checkout.
+   - That created a conflict state and temporarily blocked another agent from committing unrelated work.
+   - Even after the merge was aborted, the agent kept speaking about the dirty state in aggregate instead of classifying each file by intended fate.
+
+3. **Acted on plausible guesses where user intent was required.**
+   - The clearest example was restoring `thesis/handwritten-notes.md` without asking.
+   - The file looked important because `TASKS.md` still referenced it, but "important" is not the same as "restore now."
+   - The right move was to present the dependency and ask, not infer the action.
+
+4. **Asked bad questions because the user lacked the local context the agent had.**
+   - The agent initially asked for actions on raw path lists without enough context or stable labels.
+   - Jörn had to repeatedly ask for better framing.
+   - Only after that did the agent provide concise labels (`A`–`G`) and short explanations of what each file represented.
+
+5. **Lost time by staying in generic reasoning instead of either auditing or asking.**
+   - Several turns were spent re-explaining abstract categories ("migration vs unrelated work", "repo vs container") instead of checking the file or asking a concrete question.
+   - This made the agent look indecisive and evasive, even when the underlying repo state was recoverable.
+
+6. **Context handling was poor under incident pressure.**
+   - The agent used an over-broad log extraction while trying to recover the lost handoff, wasting context and forcing more repair work.
+   - The correct recovery approach was narrow extraction around known anchors or reusing the original authoring agent immediately.
+
+### What worked
+
+- Tagging the last Claude-containing state before the purge was correct and valuable.
+- Once the agent finally switched to per-file triage with explicit labels, cleanup moved quickly.
+- Asking the original authoring agent to recreate the lost high-value handoff was the right recovery mechanism.
+- The final cleanup of dirty files succeeded once decisions were taken per file instead of globally.
+
+### Actionable rules
+
+1. **When the user changes the goal, restate the new definition of done in one compact block and treat the old one as obsolete.**
+   - Do not continue answering from an earlier synthesis once the user has overridden it.
+
+2. **Dirty working trees must be triaged per file before any merge/cherry-pick/cleanup action.**
+   - For each dirty file, classify: commit, restore, keep deleted, leave dirty, or ask user.
+   - Never talk about "the dirty state" as if it were one decision.
+
+3. **If a file's correct fate depends on user intent rather than repo evidence, ask before changing it.**
+   - Dependency evidence (`TASKS.md` points at file X) is enough to explain the risk.
+   - It is not enough to authorize the action.
+
+4. **Questions must include enough context that Jörn can answer without reconstructing state himself.**
+   - Give short labels.
+   - For each label: what changed, why it matters, and what the decision controls.
+
+5. **Under incident recovery, prefer one of two moves only:**
+   - narrow audit with concrete evidence
+   - direct question to the user
+   - Avoid long theoretical explanations in the middle of operational cleanup.
+
+### Process checks
+
+- **Assumed Jörn read something he may not have?** Yes. Early questions and summaries assumed the user could map raw filenames to intended actions without enough context.
+- **Iterated in front of user instead of internally or via subagents?** Yes. Too much visible re-thinking about scope and "done state" after the user had already supplied the key policy.
+- **Fabrications slipped through?** No fabrication of facts, but there was repeated overstatement of certainty about what was or was not part of the goal.
+- **Regression test candidate:** Any future "dirty worktree triage" workflow should force a table with columns: `path`, `change type`, `why dirty`, `repo evidence`, `needs user intent?`, `proposed action`. The agent should not be allowed to mutate ambiguous files before filling that table.
