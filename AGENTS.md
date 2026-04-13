@@ -34,16 +34,17 @@ Planned deliverables:
 - `AGENTS.md`: Codex-native project instructions
 - `.agents/`: Codex-native skills and rules
 - `.codex/`: Codex config and subagents
-- `.codex/worktrees/`: repo-local Codex worktrees created by `scripts/codex-worktree.sh`
+- `.codex/worktrees/`: repo-local git worktrees for Codex sessions
 
 ## General Conventions
 
 - **File headers**: Every source file starts with a comment block stating purpose and context. Module-level files additionally document the module's architecture.
 - **Self-contained thesis**: `thesis/` copies figures and tables from `crates/` into `thesis/assets/` instead of linking. Never modify `thesis/` content from experiment code.
 - **Feature lifecycle**: New code starts in `dev-<group>/`, informed by experiment results. Once stable and approved by Jörn, it migrates into `library/`. Validation experiments either become library tests or remain in `dev-<group>/`.
-- **Merge gating**: Agents may merge to `main` after a pre-merge check reports no blockers. Destructive operations (delete branches on main, force-push, reset) still require asking.
+- **Merge gating**: Agents may merge to `main` only after the pre-merge workflow reports no blockers and Jörn has explicitly approved the merge. Destructive operations (delete branches on main, force-push, reset) still require asking.
 - **Task ownership**: `[active]` means exactly one session owns the whole `###` task — the header and its intent, not a literal sub-list of body bullets. If a body bullet conflicts with the task goal, flag it; do not narrow ownership to the literal bullet.
 - **Agent time is free, Jörn's time is expensive.** When choosing between spending more agent time (exploring alternatives, reading code, running experiments, rolling back failed attempts) and spending Jörn's time (asking questions, presenting incomplete work, leaving problems for him to catch) — spend agent time.
+- **Do not promise a next step and then stop.** If you say you will run a review, make an edit, or fetch a diff, do it before sending another user-facing message. If you are blocked, say what blocked you instead of promising action you have not taken.
 - **Math-code correspondence**: Every non-trivial Rust algorithm has a correctness proof in its module's `math.tex`. Code and math are developed together and cross-referenced (`[lem:label]` in code, `\label{lem:label}` in math.tex). Jörn reviews `crates/main.pdf` for correctness and readability. The `crates/**/math.tex` files are for development agents; `thesis/main.tex` is for publication with thesis advisors as readers.
 
 ## Git Conventions
@@ -53,6 +54,17 @@ Planned deliverables:
 - **Commits are free.** Do not ask permission to commit. If you need to ask about something commit-related, ask about the merge, not the commit.
 - Work in a worktree (separate branch) unless Jörn says otherwise.
 - **Git LFS** tracks `.jsonl` files (configured in `.gitattributes`). `git add`/`commit`/`push` work normally. Limits: 2 GB per file, 10 GiB storage, 10 GiB bandwidth/month ([docs](https://docs.github.com/en/billing/managing-billing-for-git-large-file-storage/about-billing-for-git-large-file-storage)). A pre-commit hook blocks files >10 MB that aren't LFS-tracked.
+
+## Git Worktrees
+
+- **Worktree default**: If you need to edit any tracked file outside `TASKS.md`, `AGENTS.md`, `.agents/`, `.codex/`, and `feedback/`, create a fresh worktree first.
+- **Subagent default**: A subagent keeps using the repository copy it already has. It does not create a worktree unless the parent asks. It does not merge branches unless the parent asks.
+- **Parent wording**: If the parent session wants a subagent to create a worktree or merge a branch, it must say that explicitly. Otherwise, the subagent should not do either.
+- **Create command**: `git worktree add -b <branch> .codex/worktrees/<branch> main`
+- **Reuse command**: `git worktree add .codex/worktrees/<branch> <branch>`
+- **Enter a worktree**: `cd /workspaces/msc-math/.codex/worktrees/<branch>`
+- **Remove a worktree after merge**: `git worktree remove .codex/worktrees/<branch>` then `git branch -d <branch>`
+- **Branch base**: New worktree branches start from local `main`, not `origin/main`.
 
 ## Environment
 
