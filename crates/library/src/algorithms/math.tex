@@ -11,6 +11,7 @@
 %   lem:prune-action, lem:prune-empty, lem:prune-rotation, lem:prune-simple,
 %   lem:shoelace (cross-ref to geom/math.tex),
 %   lem:sigma-structure,
+%   def:simple-reeb-orbit,
 %   prop:capacity-piecewise-smooth,
 %   rem:beta-to-tau, rem:simplicity-generic,
 %   cor:sys-derivative,
@@ -131,6 +132,17 @@ $M \in \operatorname{Sp}(4)$ and $b \in \mathbb{R}^4$,
 % ====================================================================
 % Part 2: Orbit recovery
 % ====================================================================
+
+\begin{definition}[Simple Reeb orbit]\label{def:simple-reeb-orbit}
+% Source: thesis/simple-minimizer-existence.tex
+A generalized Reeb orbit $\gamma$ on a polytope $K$ is \emph{simple} if
+its velocity is piecewise constant, each constant value is a facet Reeb
+vector $R_i$, and for each facet index $i$ the set
+\[
+  \{ t \in [0,T] : \dot{\gamma}(t) = R_i \}
+\]
+is a single interval, possibly empty.
+\end{definition}
 
 \begin{lemma}[Base point recovery]\label{lem:base-point-recovery}
 % Jörn: math approved (f7d26ea)
@@ -935,4 +947,3 @@ where the partial derivatives of $\mathrm{vol}$ and $c_{\mathrm{EHZ}}$ are
 given by Lemmas~\ref{lem:vol-derivative} and~\ref{lem:cap-derivative}.
 \end{corollary}
 \end{unverified}
-
