@@ -2,7 +2,7 @@
 
 Unified tracker for thesis, experiments, and infrastructure.
 Format: `## [status] Group` / `### [status] [date] Item`. Body only when header isn't enough.
-See `.claude/rules/tasks.md` for full conventions. Run `bash scripts/tasks-toc.sh` for section index.
+See `.agents/rules/tasks.md` for the Codex-first task conventions and `.claude/rules/tasks.md` for the Claude twin. Run `bash scripts/tasks-toc.sh` for section index.
 
 **What the thesis should say:** `RESULTS.md`.
 **Priority:** Thesis coherence + experiment quality > code refactors. Code refactors only matter if they unblock thesis content or experiment correctness.
@@ -306,7 +306,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 
 ### [done] [2026-04-12] Thesis figure consistency check
 - Handoff: `handoffs/thesis-figures-audit-2026-04-12.md`. Degenerate baseline: 0 `\includegraphics` refs across 16 `thesis/**/*.tex` files, `thesis/assets/` does not exist. Rerun after experiment writeups and thesis restructuring land.
-- Note: before the first figure lands, Jörn picks an asset-provenance convention (sidecar `.source` files / manifest / sync script) and adds to CLAUDE.md. See "Hand-drawn figures" + "Figure inventory" below.
+- Note: before the first figure lands, Jörn picks an asset-provenance convention (sidecar `.source` files / manifest / sync script) and adds it to the shared project instructions (`AGENTS.md`, and `CLAUDE.md` if Claude-specific wording is needed). See "Hand-drawn figures" + "Figure inventory" below.
 
 ### [future] [group:figures] Hand-drawn figures (Jörn)
 - Concept illustrations: polar of 2D polytope; 0/1/2/3-facets; fake 3D polytope with Reeb vectors and closed/open trajectories; decompositions of `gamma: R → R^4` drawn as `gamma: R → R`; etc.
@@ -397,7 +397,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - 11 citation TODOs fully resolved (theorem numbers filled in, TODO removed).
 - 6 partially resolved (wrong chapters corrected, exact theorem numbers added from PDFs).
 - Remaining ~57 `[TODO: JÖRN]` markers are mathematical verification (verify statement/proof), not citation lookups.
-- Deliverables: `papers/citation-index.md` (verified theorem index), expanded `papers/CLAUDE.md` (download/verify workflow), 4 PDFs in `papers/`.
+- Deliverables: `papers/citation-index.md` (verified theorem index), expanded `papers/AGENTS.md` (download/verify workflow), 4 PDFs in `papers/`.
 
 ### [done] [2026-04-07] Delete superseded experiments
 - Directories deleted 2026-04-03. Reference cleanup done 2026-04-07: removed gradient-search from code comments (gradient-ascent-general/products run.rs), rules examples, stale handoff.
@@ -406,8 +406,8 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 
 ### [open] Orchestration pattern test
 - Testing `/orchestrate` skill + delegation guide on real thesis tasks.
-- Baseline commit `f8044b35`. Dry run confirmed Agent() mechanics work.
-- Next: post-mortem in `.claude/skills/orchestrate/references/design-space.md`.
+- Baseline commit `f8044b35`. Dry run confirmed delegated-agent mechanics work.
+- Next: post-mortem on orchestration workflow and whether the Codex-first split changed anything that future sessions should preserve.
 
 ### [open] [group:codex-migration] Codex CLI migration
 - Port msc-math workflow to OpenAI Codex CLI alongside Claude Code. Scaffold merged into main; Steps 1–2 done; Step 3 (plumbing verification) is the pickup point.
@@ -438,7 +438,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Handoff: `handoffs/branch-audit-2026-04-12.md`. 5 branches fully merged with 0-file diffs (`citation-verification`, `citation-verification-d`, `database-cleanup`, `delete-api-reference`, `housekeeping-triage`) — safe `git branch -d` candidates. 1 unmerged: `numerical-story-expand` (1 ahead / 9 behind, +458/-160 in `thesis/numerical-story.md`). Jörn decides per-branch.
 
 ### [done] [2026-04-12] Delete api-reference/
-- Never used organically by agents; agents read source directly. Removed `api-reference/`, `crates/tools/api-extract/`, pre-commit hook, workspace member, CLAUDE.md references.
+- Never used organically by agents; agents read source directly. Removed `api-reference/`, `crates/tools/api-extract/`, pre-commit hook, workspace member, and stale project-doc references.
 
 ### [done] [2026-04] Polytope database
 - `crates/database/`, JSONL format, 1198 entries. 6 experiments migrated.
@@ -448,7 +448,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Remaining: Jörn verifies `prop:integer-cramer`, f64 threshold soundness.
 
 ### [done] [2026-03] Slurm skill
-- `.claude/skills/slurm/SKILL.md`
+- `.agents/skills/slurm/SKILL.md` and `.claude/skills/slurm/SKILL.md`
 
 ### [done] [2026-04] Orchestration infrastructure
 - `/orchestrate` skill, delegation guide, cheatsheet.

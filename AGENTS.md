@@ -1,6 +1,4 @@
-# CLAUDE.md
-
-Claude Code project instructions for this repo. `AGENTS.md` is the Codex-first twin; keep shared project policy aligned between the two files and keep Claude-specific workflow details here.
+# AGENTS.md
 
 ## Project Goal
 
@@ -21,9 +19,9 @@ Planned deliverables:
   - `main.tex`: Compiles all per-module `math.tex` files into `main.pdf`
   - `library/`: Rust library — proven algorithms with tests and math.tex proofs
   - `exp-<group>/`: Research experiments, grouped by research question
-    - `<subdir>/`: One self-contained experiment (run.rs, analyze.py, logbook.md, math.tex)
+    - `<subdir>/`: One self-contained experiment (`run.rs`, `analyze.py`, `logbook.md`, `math.tex`)
   - `dev-<group>/`: Unstable features not yet ready for library or experiments
-    - `<subdir>/`: One development direction, e.g. numerical analysis (run.rs, analyze.py, logbook.md, math.tex)
+    - `<subdir>/`: One development direction, e.g. numerical analysis (`run.rs`, `analyze.py`, `logbook.md`, `math.tex`)
 
 - `thesis/`: Publishable master thesis; self-contained, does not link to `crates/`
   - `assets/`: Figures and tables copied from `crates/` (not symlinked)
@@ -66,27 +64,27 @@ Planned deliverables:
 
 ```bash
 # Rust (library)
-cd crates/library/ && cargo test --release --lib          # default test suite (<5s)
-cd crates/library/ && cargo clippy --lib -- -D warnings   # lint
-cd crates/library/ && cargo test --release -- --ignored   # full suite (slow)
+cd crates/library/ && cargo test --release --lib
+cd crates/library/ && cargo clippy --lib -- -D warnings
+cd crates/library/ && cargo test --release -- --ignored
 
 # Rust (experiments)
-cd crates/ && cargo build -p exp-<group> --release        # build one experiment group
-cd crates/ && cargo build --workspace --release           # build all
+cd crates/ && cargo build -p exp-<group> --release
+cd crates/ && cargo build --workspace --release
 
 # Thesis
-cd thesis/ && latexmk && ./check-build.sh                 # build + check
+cd thesis/ && latexmk && ./check-build.sh
 
 # Math (all proofs — crate + experiments)
-cd crates/ && latexmk                                     # builds main.pdf from main.tex
+cd crates/ && latexmk
 ```
 
 ## Terminology
 
-- **Orchestration session**: the top-level session that talks with Jörn, decomposes tasks, and delegates when delegation is useful.
+- **Orchestration session**: the top-level agent session that talks with Jörn, decomposes tasks, and delegates when delegation is useful.
+- **Subagent**: a Codex subagent declared under `.codex/agents/` and invoked through Codex delegation tools.
 - **Claude agent**: a Claude Code agent declared under `.claude/agents/`.
-- **Codex subagent**: a Codex subagent declared under `.codex/agents/`.
-- **Delegation**: top-level session spawning a Claude agent or a Codex subagent to do leaf work.
+- **Delegation**: top-level session spawning a subagent or worker to do leaf work.
 
 ## Text that agents read
 
@@ -99,4 +97,4 @@ Optimize for these qualities (descending effort priority) when writing files, co
 5. **Actionable, low-overhead.** The reader should know what to do after reading.
 6. **Simple, concrete, standard.** Familiar patterns, concrete examples, no unnecessary abstractions.
 
-**Vague-word ban:** Do not use "appropriate", "properly", "ensure", "good", "consider", "reasonable", "necessary", "efficient", "robust" without specifying *what* makes it so.
+**Vague-word ban:** Do not use "appropriate", "properly", "ensure", "good", "consider", "reasonable", "necessary", "efficient", "robust" without specifying what makes it so.

@@ -17,13 +17,14 @@
 # This mirrors the ~/.claude (runtime) vs .claude/ (tracked) split already
 # used by Claude Code on this machine.
 
-# Read CLAUDE.md as the project-instructions document instead of AGENTS.md.
-# This avoids duplicating or renaming CLAUDE.md. The fallback fires only when
-# AGENTS.md is missing, which is the case here.
+# AGENTS.md is now the primary Codex project document.
+# Keep CLAUDE.md as a fallback for any directory that has not yet grown its
+# own AGENTS.md twin.
 project_doc_fallback_filenames = ["CLAUDE.md"]
 
-# CLAUDE.md is ~5 KB today but may grow, and .claude/rules/*.md are pulled
-# in via Read by the agent. Bump well above the 32 KiB default just in case.
+# AGENTS.md is small today but may grow, and agents may also read
+# `.agents/rules/*.md` or `.claude/rules/*.md` during a session.
+# Bump well above the 32 KiB default just in case.
 project_doc_max_bytes = 65536
 
 # Sandbox posture: match Claude Code's bypassPermissions mode. The devcontainer

@@ -7,12 +7,13 @@
 # trust entry in ~/.codex/config.toml so Codex will load that worktree's
 # .codex/config.toml and project skills, and (3) starts Codex there.
 #
-# Matches the .claude/worktrees/<name> layout so Claude Code and Codex can
-# coexist in the same worktree dirs without stepping on each other.
+# Uses the shared .claude/worktrees/<name> layout so Claude Code and Codex can
+# coexist in the same physical worktree directories without separate layout
+# conventions.
 #
 # Usage:
 #   scripts/codex-worktree.sh <name> [branch]
-#     <name>   required — directory under .claude/worktrees/
+#     <name>   required — directory under the shared .claude/worktrees/
 #     [branch] optional — branch to check out; defaults to <name>
 #
 # Example: scripts/codex-worktree.sh lemma-cleanup
