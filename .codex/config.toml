@@ -20,11 +20,55 @@
 # Bump well above the 32 KiB default just in case.
 project_doc_max_bytes = 65536
 
-# Sandbox posture: match the repo's autonomous devcontainer workflow. The
-# devcontainer already isolates the host; adding Landlock inside Docker is unreliable
-# (openai/codex#1039) and the reward is negligible. See also `approval_policy`.
+# Security
 sandbox_mode = "danger-full-access"
-
-# Model decides when to ask the user. The agent is trusted for routine work
-# and asks before risky or destructive actions.
 approval_policy = "on-request"
+web_search = "live"
+
+# We pick a default profile
+profile = "code"
+
+file_opener = "vscode"
+[tui]
+theme = "github"
+terminal_title = ["spinner", "thread"]
+status_line = ["model-with-reasoning", "current-dir", "context-usage", "five-hour-limit"]
+
+[features]
+apps = false
+shell_snapshot = true
+codex_hooks = true
+
+# Subagents: we allow recursion
+[agents]
+max_threads = 10
+max_depth = 2
+job_max_runtime_seconds = 3600
+
+# Used for coding tasks
+[profiles.code]
+model = "gpt-5.4"
+model_reasoning_effort = "medium"
+plan_mode_reasoning_effort = "xhigh"
+model_reasoning_summary = "none"
+model_verbosity = "low"
+personality = "pragmatic"
+approval_policy = "never"
+
+# Used for writing tasks
+[profiles.write]
+model = "gpt-5.4"
+model_reasoning_effort = "medium"
+plan_mode_reasoning_effort = "xhigh"
+model_reasoning_summary = "detailed"
+model_verbosity = "high"
+personality = "pragmatic"
+
+# Force Git subprocesses to stay non-interactive.
+[shell_environment_policy.set]
+GCM_INTERACTIVE = "Never"
+GIT_ASKPASS = "/bin/true"
+GIT_EDITOR = "true"
+GIT_PAGER = "cat"
+GIT_SSH_COMMAND = "ssh -oBatchMode=yes"
+GIT_TERMINAL_PROMPT = "0"

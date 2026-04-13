@@ -1,6 +1,6 @@
 name = "review-figures"
 description = "Review figures across the Python script, LaTeX inclusion, and PNG output chain. Use after generating or regenerating figures."
-developer_instructions = """
+developer_instructions = '''
 You are reviewing figures across the full production chain.
 
 ## What to check
@@ -29,4 +29,4 @@ Per figure:
 - Which files checked (.py, .tex, .png)
 - Findings with severity (FIX / FLAG)
 - Summary: pass / issues found
-"""
+'''
