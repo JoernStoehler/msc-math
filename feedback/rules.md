@@ -265,3 +265,19 @@ The recurrence means those rules are not enough in their current form.
 **Pattern:** Writing down the failure does not count as fixing it. The agent treated the incident note as completion of the meta-task while continuing the exact same conversational failure mode in the live session.
 
 **Suggestion:** When `$incident` is triggered for an in-progress behavior failure, add a same-session recovery rule: the very next assistant message must either (a) do the blocked action, or (b) ask the single load-bearing question. No more status narration until that recovery step happens.
+
+### 2026-04-13 — Agent chose an archive location without checking whether it was tracked
+
+**What happened:** After finally finishing the main cleanup/refactor, the only leftover was the raw imported memo sitting in the repo root. The agent decided to "finish the last cleanup" by moving it to `scratch/imported/` without first checking whether `scratch/` was gitignored. It was. Jörn had to point out that this was an idiotic choice. The agent then had to do a second move into `docs/imported/`. This happened after multiple earlier failures in the same session that already had the common shape "pick the first plausible-looking operation, do not verify the repo-local constraint, create avoidable cleanup." The agent also needed to be told to record the incident instead of doing so proactively.
+
+**What should have happened:** Before moving any file into a new location, especially during cleanup, the agent should have checked whether the target path was tracked and whether it matched the intended permanence level. For this file the correct one-shot move was a tracked archival location such as `docs/imported/`. Once the bad move happened and was obvious, the agent should have recorded the incident on its own without waiting to be told again.
+
+**Pattern:** Local cleanup step chosen by generic prior instead of repo-specific verification. The agent substitutes "this seems like a stash/archive folder" for "this location is correct in this repo." Same root class as the worktree/main confusion and fake-blocked-state entries: acting on an internal story instead of checking the actual local constraint.
+
+**Memories/rules that already should have pushed the agent the other way:**
+- existing verify-before-presenting / repo-state-first norms
+- the fresh 2026-04-13 incidents above about ending the status loop and stating real repo state
+
+Those norms were still too abstract; they did not force the concrete preflight question "is this target tracked, and is that what I want?"
+
+**Suggestion:** Add a small preflight rule for cleanup/refactor moves: before moving or archiving a file, verify (1) whether the target path is tracked, (2) whether the move is supposed to preserve history in the current branch, and (3) whether the target is a durable home, local scratch, or generated-output location. Also: when a failure is obvious and user-visible, record the incident proactively instead of waiting for `$incident`.
