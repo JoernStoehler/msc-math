@@ -1,17 +1,18 @@
 //! Perturbations of the HK-O pentagon counterexample (10 facets).
 //!
-//! Architecture:
-//! 1. `cargo run -p exp-hko-local-maximum --release --bin hko-perturbation` generates dataset
-//! 2. Writes to perturbation-neighborhood/pentagon-perturb.jsonl
-//! 3. Python script analyzes and plots
+//! The binary generates N random dual-vertex perturbations of the HK-O pentagon
+//! at a given eps magnitude, computes sys for each, and writes one row per sample
+//! plus one unperturbed baseline row to an output .jsonl path.
 //!
-//! Dataset design:
-//! - Start from the HK-O 2024 pentagon product (10 facets)
-//! - Apply small random perturbations to dual vertices a_i directly
-//! - 100 perturbed samples + 1 unperturbed baseline
-//! - HK2017 pruned algorithm only
+//! CLI (all optional; defaults match the original hardcoded run):
+//! - `--n <count>`   number of perturbed samples               (default: 100)
+//! - `--eps <f64>`   perturbation magnitude per component      (default: 0.01)
+//! - `--seed <u64>`  base RNG seed                             (default: 41)
+//! - `--out <path>`  output .jsonl path                        (default: pentagon-perturb.jsonl in CWD)
+//!
+//! Row identity across eps buckets is `(eps, name)` — `name` alone is not unique
+//! between files generated at different eps. Analysis code must group by eps first.
 
-// TODO: These will be re-exported from top-level `symplectic::` in wave 4 (subagent #16).
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::volume::volume;
@@ -23,12 +24,15 @@ use rand_chacha::ChaCha8Rng;
 use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
+use std::path::PathBuf;
 use std::time::Instant;
 
-const SEED: u64 = 41;
-const N_SAMPLES: usize = 100;
-const EPS: f64 = 0.01;
-const MAX_ATTEMPTS: usize = 2000;
+const DEFAULT_SEED: u64 = 41;
+const DEFAULT_N_SAMPLES: usize = 100;
+const DEFAULT_EPS: f64 = 0.01;
+/// Expected attempts per accepted sample is ~1 (rejection rate is negligible
+/// at eps <= 0.1 for the HK-O pentagon). 20 gives headroom for larger eps.
+const MAX_ATTEMPTS_PER_SAMPLE: usize = 20;
 
 #[derive(Debug, Serialize)]
 struct PentagonPerturbRow {
@@ -52,9 +56,6 @@ struct PerturbedPolytope {
     delta_dual_vertices: Vec<Vector4<f64>>,
 }
 
-/// Add a small random perturbation to each dual vertex a_i.
-///
-/// Returns (perturbed_vertices, deltas) where delta_i = perturbed_i - base_i.
 fn jitter_dual_vertices(
     base: &[Vector4<f64>],
     rng: &mut ChaCha8Rng,
@@ -81,8 +82,9 @@ fn jitter_dual_vertices(
 fn try_perturb(
     base_duals: &[Vector4<f64>],
     rng: &mut ChaCha8Rng,
+    eps: f64,
 ) -> Option<PerturbedPolytope> {
-    let (dual_vertices, delta_dual_vertices) = jitter_dual_vertices(base_duals, rng, EPS);
+    let (dual_vertices, delta_dual_vertices) = jitter_dual_vertices(base_duals, rng, eps);
 
     let polytope = Polytope4D::from_f64(dual_vertices.clone()).ok()?;
 
@@ -97,17 +99,76 @@ fn v4_to_array(v: &Vector4<f64>) -> [f64; 4] {
     [v[0], v[1], v[2], v[3]]
 }
 
+struct Args {
+    n: usize,
+    eps: f64,
+    seed: u64,
+    out: PathBuf,
+}
+
+fn parse_args() -> Args {
+    let argv: Vec<String> = std::env::args().collect();
+    let mut n = DEFAULT_N_SAMPLES;
+    let mut eps = DEFAULT_EPS;
+    let mut seed = DEFAULT_SEED;
+    let mut out: Option<PathBuf> = None;
+
+    let mut i = 1;
+    while i < argv.len() {
+        let arg = argv[i].as_str();
+        let need_value = |flag: &str| -> &str {
+            argv.get(i + 1)
+                .map(|s| s.as_str())
+                .unwrap_or_else(|| panic!("{flag} requires a value"))
+        };
+        match arg {
+            "--n" => {
+                n = need_value("--n").parse().expect("--n must be a non-negative integer");
+                i += 2;
+            }
+            "--eps" => {
+                eps = need_value("--eps").parse().expect("--eps must be a finite f64");
+                assert!(eps.is_finite() && eps > 0.0, "--eps must be positive and finite");
+                i += 2;
+            }
+            "--seed" => {
+                seed = need_value("--seed").parse().expect("--seed must be a u64");
+                i += 2;
+            }
+            "--out" => {
+                out = Some(PathBuf::from(need_value("--out")));
+                i += 2;
+            }
+            other => panic!("unknown argument: {other}"),
+        }
+    }
+
+    Args {
+        n,
+        eps,
+        seed,
+        out: out.unwrap_or_else(|| PathBuf::from("pentagon-perturb.jsonl")),
+    }
+}
+
 fn main() {
+    let args = parse_args();
     let t0 = Instant::now();
-    let mut rng = ChaCha8Rng::seed_from_u64(SEED);
+    let mut rng = ChaCha8Rng::seed_from_u64(args.seed);
 
-    let output_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("pentagon-perturb/pentagon-perturb.jsonl");
+    if let Some(parent) = args.out.parent() {
+        if !parent.as_os_str().is_empty() {
+            std::fs::create_dir_all(parent).expect("create output directory");
+        }
+    }
 
-    println!("Generating HK-O pentagon perturbation dataset...\n");
-    println!("Perturbation eps: {EPS:.4}");
+    println!("HK-O pentagon perturbation dataset");
+    println!("  n:    {}", args.n);
+    println!("  eps:  {:.6}", args.eps);
+    println!("  seed: {}", args.seed);
+    println!("  out:  {}", args.out.display());
 
-    let file = File::create(&output_path).expect("failed to create output file");
+    let file = File::create(&args.out).expect("failed to create output file");
     let mut writer = BufWriter::new(file);
 
     let base = known_polytopes::hko_pentagon();
@@ -131,7 +192,7 @@ fn main() {
         is_base: true,
         dual_vertices: base_duals.iter().map(v4_to_array).collect(),
         delta_dual_vertices: vec![[0.0; 4]; n_facets],
-        eps: EPS,
+        eps: args.eps,
         volume: base_vol,
         capacity: base_result.result.capacity,
         sys: base_sys,
@@ -144,16 +205,18 @@ fn main() {
     writeln!(writer, "{line}").expect("write line");
 
     let mut accepted = 0usize;
-    let mut attempts = 0usize;
-    while accepted < N_SAMPLES {
-        if attempts >= MAX_ATTEMPTS {
+    let mut total_attempts = 0usize;
+    let max_total_attempts = args.n.saturating_mul(MAX_ATTEMPTS_PER_SAMPLE).max(2000);
+    while accepted < args.n {
+        if total_attempts >= max_total_attempts {
             panic!(
-                "failed to generate {N_SAMPLES} valid perturbations after {MAX_ATTEMPTS} attempts"
+                "failed to generate {} valid perturbations after {max_total_attempts} attempts",
+                args.n
             );
         }
-        attempts += 1;
+        total_attempts += 1;
 
-        let perturbed = match try_perturb(&base_duals, &mut rng) {
+        let perturbed = match try_perturb(&base_duals, &mut rng, args.eps) {
             Some(p) => p,
             None => continue,
         };
@@ -176,7 +239,7 @@ fn main() {
             is_base: false,
             dual_vertices: perturbed.dual_vertices.iter().map(v4_to_array).collect(),
             delta_dual_vertices: perturbed.delta_dual_vertices.iter().map(v4_to_array).collect(),
-            eps: EPS,
+            eps: args.eps,
             volume: vol,
             capacity: cap,
             sys,
@@ -191,6 +254,11 @@ fn main() {
     }
 
     writer.flush().expect("flush output");
-    println!("\nWrote {} entries to {}", N_SAMPLES + 1, output_path.display());
+    println!(
+        "Wrote {} entries ({} perturbed + 1 base) to {}",
+        args.n + 1,
+        args.n,
+        args.out.display()
+    );
     println!("Total time: {:.1}s", t0.elapsed().as_secs_f64());
 }

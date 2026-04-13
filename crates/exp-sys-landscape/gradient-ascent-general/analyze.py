@@ -5,18 +5,20 @@
 # ///
 
 """
-Analyze gradient-ascent-general results: free gradient ascent on general polytopes.
-
-Goal: Assess whether boundary-crossing (overshoot, wiggle) improves sys beyond
-      within-cell gradient ascent on general (non-Lagrangian) polytopes.
-Input: crates/exp-sys-landscape/gradient-ascent-general/gradient-ascent-general.jsonl (per-seed summaries)
+Goal: Assess whether gradient ascent + escape rounds push sys above
+      sys(HKO2024) = 1.0472 on general (non-Lagrangian) F=10 polytopes,
+      and build a distribution of ascent endpoints. Bayesian update on
+      the conjecture that no hit exists uses 3/N upper credible bound.
+Input: crates/exp-sys-landscape/gradient-ascent-general/data/*.jsonl (per-seed summaries).
+       Preference order: licca.jsonl > licca-shard-*.jsonl (legacy architecture-A) > smoke.jsonl.
 Output:
-  - gradient_ascent_general_distribution.png   (final sys histogram by polytope type)
+  - gradient_ascent_general_distribution.png   (final sys histogram; linear)
+  - gradient_ascent_general_tail.png           (final sys histogram; log-y tail)
   - gradient_ascent_general_improvement.png    (starting vs final sys scatter)
   - gradient_ascent_general_strategy.png       (final sys by winning strategy)
   - gradient_ascent_general_escape.png         (escape success rates)
   - gradient_ascent_general_convergence.png    (iteration count by type)
-  - stdout: summary table
+  - stdout: per-category summary + high-sys bucket counts + Bayesian bound
 """
 
 import json
@@ -32,20 +34,63 @@ from figure_config import setup, FIGSIZE_SINGLE, SCATTER_SIZE
 setup()
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
-SUMMARY_PATH = EXPERIMENT_DIR / "gradient-ascent-general.jsonl"
+DATA_DIR = EXPERIMENT_DIR / "data"
+LEGACY_SUMMARY_PATH = EXPERIMENT_DIR / "gradient-ascent-general.jsonl"
+HKO_SYS = 1.0472
+HIGH_SYS_THRESHOLDS = [0.95, 0.99, 1.00, HKO_SYS]
 
 CATEGORY_COLORS = {"general": "#2196F3"}
 STRATEGY_COLORS = {"within_cell": "#9E9E9E", "overshoot": "#E91E63", "wiggle": "#00BCD4", "none": "#BDBDBD"}
 
 
-def load_summaries():
-    """Load per-seed summary data."""
+def pick_jsonl_files() -> list[Path]:
+    """Prefer architecture-B licca.jsonl, then legacy architecture-A shards,
+    then smoke, then pre-refactor legacy file.
+
+    Returns all files matching the highest-priority tier that has data. This
+    keeps the analyzer stable across the local smoke / LICCA production
+    lifecycle described in the logbook. The legacy `licca-shard-*.jsonl` tier
+    is retained so old committed architecture-A data still loads after merge;
+    the current `job.sh` does not produce shard files.
+    """
+    if DATA_DIR.exists():
+        licca = DATA_DIR / "licca.jsonl"
+        if licca.exists():
+            return [licca]
+        shards = sorted(DATA_DIR.glob("licca-shard-*.jsonl"))
+        if shards:
+            return shards
+        smoke = sorted(DATA_DIR.glob("smoke.jsonl"))
+        if smoke:
+            return smoke
+    if LEGACY_SUMMARY_PATH.exists():
+        return [LEGACY_SUMMARY_PATH]
+    print(
+        f"ERROR: no data in {DATA_DIR} or at {LEGACY_SUMMARY_PATH}. "
+        "See logbook.md 'How to run'.",
+        file=sys.stderr,
+    )
+    sys.exit(1)
+
+
+def load_summaries(files: list[Path]):
+    """Load per-seed summary data from one or more JSONL files.
+
+    Malformed lines are skipped: a partial write from a crashed LICCA job
+    (tail-truncated last row, or interleaved bytes from a concurrent rayon
+    writer) must not derail the analyzer.
+    """
     rows = []
-    with open(SUMMARY_PATH) as f:
-        for line in f:
-            line = line.strip()
-            if line:
-                rows.append(json.loads(line))
+    for path in files:
+        with open(path) as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    rows.append(json.loads(line))
+                except json.JSONDecodeError:
+                    continue
     return rows
 
 
@@ -73,23 +118,49 @@ def summary_table(data):
 
 
 def plot_distribution(data):
-    """Histogram of final sys values by polytope category."""
+    """Histogram of final sys values (linear y-scale)."""
     fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
 
-    colors = CATEGORY_COLORS
-
-    for cat in ["general"]:
-        finals = [r["final_sys"] for r in data if r["polytope_type"] == cat]
-        if finals:
-            ax.hist(finals, bins=15, alpha=0.6, label=cat, color=colors[cat], edgecolor="white")
+    finals = np.array([r["final_sys"] for r in data], dtype=float)
+    if finals.size:
+        n_bins = 40 if finals.size >= 200 else 15
+        ax.hist(
+            finals, bins=n_bins, alpha=0.7,
+            color=CATEGORY_COLORS["general"], edgecolor="white",
+        )
 
     ax.axvline(x=1.0, color="red", linestyle="--", linewidth=1, label=r"$\mathrm{sys} = 1$")
+    ax.axvline(x=HKO_SYS, color="#2d6a4f", linestyle="-", linewidth=1, label=r"$\mathrm{sys}(K_{\mathrm{HKO}})$")
     ax.set_xlabel(r"Final $\mathrm{sys}(K)$")
     ax.set_ylabel("Count")
-    ax.yaxis.set_major_locator(plt.MaxNLocator(integer=True))
     ax.legend()
 
     path = EXPERIMENT_DIR / "gradient_ascent_general_distribution.png"
+    fig.savefig(path)
+    plt.close(fig)
+    print(f"Saved {path}")
+
+
+def plot_tail(data):
+    """Log-y histogram of final sys values; makes the tail near sys=1 visible."""
+    fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
+
+    finals = np.array([r["final_sys"] for r in data], dtype=float)
+    if finals.size:
+        n_bins = 60 if finals.size >= 500 else 25
+        ax.hist(
+            finals, bins=n_bins, alpha=0.7,
+            color=CATEGORY_COLORS["general"], edgecolor="white",
+        )
+
+    ax.axvline(x=1.0, color="red", linestyle="--", linewidth=1, label=r"$\mathrm{sys} = 1$")
+    ax.axvline(x=HKO_SYS, color="#2d6a4f", linestyle="-", linewidth=1, label=r"$\mathrm{sys}(K_{\mathrm{HKO}})$")
+    ax.set_yscale("log")
+    ax.set_xlabel(r"Final $\mathrm{sys}(K)$")
+    ax.set_ylabel(r"Count (log)")
+    ax.legend()
+
+    path = EXPERIMENT_DIR / "gradient_ascent_general_tail.png"
     fig.savefig(path)
     plt.close(fig)
     print(f"Saved {path}")
@@ -215,31 +286,49 @@ def plot_convergence(data):
 
 
 def main():
-    if not SUMMARY_PATH.exists():
-        print(f"No data at {SUMMARY_PATH}. Run: cargo run -p exp-sys-landscape --release --bin sys-gradient-ascent-general")
-        return
-
-    data = load_summaries()
+    files = pick_jsonl_files()
+    print(f"Using {len(files)} data file(s):")
+    for p in files:
+        print(f"  {p.relative_to(EXPERIMENT_DIR)}")
+    data = load_summaries(files)
     if not data:
         print("No data rows found.")
         return
 
-    print(f"\nLoaded {len(data)} seeds from {SUMMARY_PATH}\n")
+    print(f"\nLoaded {len(data)} seeds\n")
 
     summary_table(data)
     print()
 
     plot_distribution(data)
+    plot_tail(data)
     plot_improvement(data)
     plot_strategy(data)
     plot_escape(data)
     plot_convergence(data)
 
-    # Overall stats
+    finals = np.array([r["final_sys"] for r in data], dtype=float)
     best = max(data, key=lambda r: r["final_sys"])
     print(f"\nBest sys: {best['final_sys']:.6f} ({best['name']})")
-    print(f"Seeds with sys > 0.9: {sum(1 for r in data if r['final_sys'] > 0.9)}/{len(data)}")
-    print(f"Seeds with sys > 1.0: {sum(1 for r in data if r['final_sys'] > 1.0)}/{len(data)}")
+    print(f"\nHigh-sys bucket counts (N = {len(data)}):")
+    counts = {thr: int((finals > thr).sum()) for thr in HIGH_SYS_THRESHOLDS}
+    for thr in HIGH_SYS_THRESHOLDS:
+        print(f"  sys > {thr:.4f}: {counts[thr]}/{len(data)}")
+
+    if counts[HKO_SYS] == 0 and len(data) > 0:
+        # Under a uniform Beta(1,1) prior, the posterior after 0 hits in N
+        # trials is Beta(1, N+1). The exact 95% upper quantile is
+        # 1 - 0.05 ** (1 / (N+1)); the rule-of-three approximation 3/N is
+        # accurate to <1% for N >= 100 and is what we print for readability.
+        n = len(data)
+        exact_bound = 1.0 - 0.05 ** (1.0 / (n + 1))
+        rule_of_three = 3.0 / n
+        print(
+            f"\n0 hits above sys(HKO) in N={n}. "
+            f"95% upper credible bound on hit density p: "
+            f"~{rule_of_three:.2e} (rule of three); "
+            f"exact Beta(1,{n+1}) quantile: {exact_bound:.2e}."
+        )
 
 
 if __name__ == "__main__":

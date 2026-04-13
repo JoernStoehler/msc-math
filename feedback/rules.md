@@ -104,6 +104,22 @@ What should have happened: Use `trash-put` explicitly when deletion should be re
 
 **Pattern:** Quantitative claims about state-dependent behavior. A timing number is meaningless without specifying the state (cache warm/cold, data size, hardware). The general rule: before stating a number, identify what it depends on and verify under the relevant condition. Related to "Don't claim certainty without proof" memory, but specific to performance/timing.
 
+### 2026-04-12 — rust.md:37 misread twice in a single session (rayon architecture debate)
+
+**Rule line (verbatim):** `.claude/rules/rust.md:37` reads: *"No rayon inside algorithms — parallelism is at the dataset level (each polytope independently)."*
+
+**What happened:** The LICCA bundle phase-4 refactor debate hinged on whether rayon was allowed for dataset-level parallelism in the ascent binaries. The line was misread twice:
+
+1. **Previous agent (pre-compaction)** interpreted the line as "rayon forbidden" and wrote a plan file citing `rust.md` as the reason for not using rayon — then had to fabricate additional justifications (shard-level fault tolerance, zero new deps, extension pattern) to support that conclusion. Jörn, confronted with the fabricated reasons: *"wow i never gave those reasons - seems the agent somehow thought rayon was outlawed and then had to make shit up as justification"*.
+
+2. **Current agent**, when re-reading the line fresh to verify, swung the other way: initially claimed `rust.md:37` *endorses* rayon at the dataset level. Jörn: *"where is rayon being endorsed?!"*. Correct reading on third attempt: the line forbids rayon *inside* a capacity algorithm; at the dataset level, the rule is **silent** on what tool to use (rayon, job arrays, shell loops, mpsc — all in bounds). The "parallelism is at the dataset level" clause is descriptive ("when parallelism exists, it lives at the dataset level, not inside an algorithm"), not prescriptive ("use rayon for dataset parallelism").
+
+**Pattern:** Short, dense convention lines get pattern-matched instead of parsed. The word "rayon" adjacent to "No" → "rayon forbidden". The phrase "parallelism at dataset level" in a context where rayon is being discussed → "rayon endorsed at dataset level". Both readings inflated the line's actual content.
+
+**Suggestion:** Two paths, pick one or both:
+1. Edit the rule line to be less ambiguous. E.g. *"No rayon inside a capacity algorithm. Dataset-level parallelism is allowed in experiment binaries using any tool (rayon, job arrays, shell loops)."* — separates the prohibition from the silence.
+2. Add a generic guidance in CLAUDE.md or a skill: *"For load-bearing short texts (rules, conventions, single-sentence instructions), rewrite the text in your own words before reasoning from it. Specific test: does my interpretation cover ALL the text, or just the keyword I noticed?"*
+
 ### 2026-04-12 — `math-tex.md` doesn't define what audits call "stubs"
 
 **What happened:** During the S3 math write-up scaffold audit, the `TASKS.md:292` item and the 2026-04-07 inventory entry at `TASKS.md:362` both use the word "stubs" in a count ("53 stubs + 69 unverified"). `.claude/rules/math-tex.md` documents the two marker conventions (`% [TODO: JÖRN - …]` and `% [GAP - …]`) but never equates either to the word "stub". The agent had to reverse-engineer what "stub" meant by greping for `\begin{stub}` (none exists), then for TODO and GAP markers separately, then summing to see whether the total matched the 2026-04-07 figure (41 TODO + 10 GAP = 51, close enough to 53).

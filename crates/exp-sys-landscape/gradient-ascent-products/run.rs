@@ -7,28 +7,39 @@
 //! Boundary-crossing via overshoot (multiples of t_max) and wiggle (random
 //! perturbation of dual vertices).
 //!
-//! Architecture: single binary, inline polytope generation + optimization.
-//! Seeds: fresh random Lagrangian products (standard master seed, low attempt numbers).
-//!
 //! Predecessor: boundary-crossing-search (split into gradient-ascent-general
 //! and gradient-ascent-products, 2026-04-04).
 //!
-//! Usage: cargo run -p exp-sys-landscape --release --bin sys-gradient-ascent-products
-//! Flags: --fresh  (clear existing data and rerun)
-//! Output: gradient-ascent-products/gradient-ascent-products.jsonl      (per-seed summary)
-//!         gradient-ascent-products/gradient-ascent-products-trace.jsonl (per-iteration trace)
+//! CLI (all optional):
+//! - `--n <count>`        number of seeds this invocation processes   (default: 12)
+//! - `--n-start <offset>` starting global seed index                  (default: 0)
+//! - `--seed <u64>`       base RNG seed                               (default: 42)
+//! - `--out <path>`       output summary .jsonl                       (default: gradient-ascent-products/gradient-ascent-products.jsonl)
+//! - `--fresh`            delete existing summary + trace files before running
+//! - `--no-db-update`     do not load or save the shared polytope database
+//!                        (set by LICCA shards to avoid concurrent write races)
+//!
+//! Architecture B (2026-04-12): rayon `par_iter` over `[n_start, n_start+n)`
+//! at the dataset level. Seed i uses its own RNG stream
+//! `ChaCha8Rng::seed_from_u64(seed + i)`, is named `products_{i}`, and has
+//! bucket `i mod LAGRANGIAN_SPLITS.len()`. The output for index i is
+//! byte-reproducible regardless of thread assignment. Shared CLI / writer /
+//! resume plumbing lives in `exp_sys_landscape::{parse_ascent_args,
+//! open_ascent_writers, run_parallel_seeds, ...}`.
 
 use database::{DualVerticesKey, PolytopeRecord};
-use exp_sys_landscape::compute_step_bound;
+use exp_sys_landscape::{
+    compute_step_bound, finalize_ascent_output, open_ascent_writers, parse_ascent_args,
+    run_parallel_seeds, trace_path_for, AscentArgs, SeedResult, SummaryRow, TraceRow,
+    MAX_STEP_SIZE,
+};
 use nalgebra::Vector4;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal};
-use serde::Serialize;
-use std::collections::{HashMap, HashSet};
-use std::fs::{File, OpenOptions};
-use std::io::{BufRead, BufReader, BufWriter, Write};
+use std::collections::HashMap;
 use std::path::Path;
+use std::sync::{Arc, Mutex};
 use std::time::Instant;
 use symplectic::algorithms::billiard::billiard_capacity;
 use symplectic::algorithms::billiard::facet_classification::{classify_facets, FacetClassification};
@@ -43,12 +54,7 @@ use symplectic::kkt::saddle_point_solver::solve_kkt_for;
 // Configuration
 // ============================================================================
 
-/// Reproducible RNG seed. Arbitrary choice; re-run with different seeds to
-/// check robustness of findings.
-const SEED: u64 = 42;
-
-/// Development-scale counts. Increase for production runs.
-const N_LAGRANGIAN_PER_BUCKET: usize = 4;
+const DEFAULT_SEED: u64 = 42;
 
 /// Lagrangian product splits (q_facets, p_facets) summing to 10.
 const LAGRANGIAN_SPLITS: &[(usize, usize)] = &[(3, 7), (4, 6), (5, 5)];
@@ -56,6 +62,11 @@ const LAGRANGIAN_SPLITS: &[(usize, usize)] = &[(3, 7), (4, 6), (5, 5)];
 /// Height range for random generation.
 const H_MIN: f64 = 0.8;
 const H_MAX: f64 = 1.2;
+
+/// Maximum attempts per seed index to generate a valid Lagrangian product
+/// before giving up on that index. Retries draw new numbers from the same
+/// per-seed RNG stream, so output remains byte-reproducible.
+const MAX_POLYTOPE_ATTEMPTS: usize = 100;
 
 /// Maximum gradient ascent iterations per phase.
 const MAX_ITERATIONS: usize = 30;
@@ -71,9 +82,6 @@ const STEP_FRACTIONS: &[f64] = &[0.1, 0.25, 0.5, 0.75, 0.95];
 /// Multipliers beyond t_max for crossing combinatorial boundaries.
 /// Land in neighboring combinatorial cells.
 const OVERSHOOT_MULTIPLIERS: &[f64] = &[1.5, 2.0, 3.0];
-
-/// Prevents pathological steps when t_max is huge.
-const MAX_STEP_SIZE: f64 = 100.0;
 
 /// Number of random dual-vertex perturbations per escape round.
 const N_WIGGLES: usize = 5;
@@ -100,43 +108,6 @@ const SEED_TIME_BUDGET_SECS: f64 = 120.0;
 /// Numerical zero threshold for gradient norms, rates, and slack comparisons.
 /// Near machine epsilon for unit-scale f64. Matches gradient-descent.
 const EPS: f64 = 1e-15;
-
-// ============================================================================
-// Output schemas
-// ============================================================================
-
-/// One row per seed — the main analysis dataset.
-#[derive(Debug, Serialize)]
-struct SummaryRow {
-    name: String,
-    polytope_type: String,
-    facet_count: usize,
-    starting_sys: f64,
-    final_sys: f64,
-    total_delta: f64,
-    n_ascent_phases: usize,
-    n_gradient_iters_total: usize,
-    n_escape_overshoot: usize,
-    n_escape_wiggle: usize,
-    best_strategy: String,
-    total_time_ms: f64,
-    final_dual_vertices: Vec<[f64; 4]>,
-}
-
-/// One row per iteration per ascent phase — diagnostic trace.
-#[derive(Debug, Serialize)]
-struct TraceRow {
-    name: String,
-    phase: usize,
-    iteration: usize,
-    step_type: String,
-    t_fraction: f64,
-    t_actual: f64,
-    sys_before: f64,
-    sys_after: f64,
-    delta_sys: f64,
-    gradient_norm: f64,
-}
 
 // ============================================================================
 // Gradient step in a-space
@@ -350,13 +321,9 @@ fn wiggle(polytope: &Polytope4D, rng: &mut ChaCha8Rng) -> Option<Polytope4D> {
 // Per-seed processing
 // ============================================================================
 
-struct SeedResult {
-    summary: SummaryRow,
-    trace: Vec<TraceRow>,
-}
-
 fn process_seed(
     name: &str,
+    seed_index: usize,
     polytope_type: &str,
     polytope: &Polytope4D,
     lagrangian_class: &FacetClassification,
@@ -445,6 +412,7 @@ fn process_seed(
     Some(SeedResult {
         summary: SummaryRow {
             name: name.to_string(),
+            seed_index,
             polytope_type: polytope_type.to_string(),
             facet_count: best_polytope.facet_count(),
             starting_sys,
@@ -462,57 +430,26 @@ fn process_seed(
     })
 }
 
-// ============================================================================
-// Polytope generation
-// ============================================================================
+/// Generate a Lagrangian product for global seed index i from its own RNG
+/// stream. Bucket (q_f, p_f) is determined by `i mod LAGRANGIAN_SPLITS.len()`,
+/// so contiguous index ranges are evenly spread across buckets (10k total ->
+/// ~3333 per bucket for a 3-way split).
+fn generate_for_seed(
+    i: usize,
+    rng: &mut ChaCha8Rng,
+) -> Option<(String, Polytope4D)> {
+    let bucket_idx = i % LAGRANGIAN_SPLITS.len();
+    let (q_f, p_f) = LAGRANGIAN_SPLITS[bucket_idx];
+    let bucket_name = format!("lagrangian_{q_f}x{p_f}");
 
-fn generate_lagrangian_polytopes(rng: &mut ChaCha8Rng) -> Vec<(String, String, Polytope4D)> {
-    let mut polytopes = Vec::new();
-    for &(q_f, p_f) in LAGRANGIAN_SPLITS {
-        let bucket_name = format!("lagrangian_{}x{}", q_f, p_f);
-        let mut count = 0usize;
-        let mut attempts = 0usize;
-        while count < N_LAGRANGIAN_PER_BUCKET {
-            attempts += 1;
-            if attempts > N_LAGRANGIAN_PER_BUCKET * 100 {
-                eprintln!(
-                    "WARNING: gave up after {attempts} attempts for {bucket_name}, got {count}"
-                );
-                break;
-            }
-            let (qn, qh) = random_polygon_2d(q_f, H_MIN, H_MAX, rng);
-            let (pn, ph) = random_polygon_2d(p_f, H_MIN, H_MAX, rng);
-            if let Ok(p) = lagrangian_product(&qn, &qh, &pn, &ph) {
-                let name = format!("{bucket_name}_{count}");
-                polytopes.push((name, bucket_name.clone(), p));
-                count += 1;
-            }
+    for _ in 0..MAX_POLYTOPE_ATTEMPTS {
+        let (qn, qh) = random_polygon_2d(q_f, H_MIN, H_MAX, rng);
+        let (pn, ph) = random_polygon_2d(p_f, H_MIN, H_MAX, rng);
+        if let Ok(p) = lagrangian_product(&qn, &qh, &pn, &ph) {
+            return Some((bucket_name, p));
         }
     }
-    polytopes
-}
-
-// ============================================================================
-// Resume support
-// ============================================================================
-
-fn load_completed_names(path: &std::path::Path) -> HashSet<String> {
-    let mut names = HashSet::new();
-    if let Ok(file) = File::open(path) {
-        let reader = BufReader::new(file);
-        for line in reader.lines().map_while(Result::ok) {
-            let line = line.trim().to_string();
-            if line.is_empty() {
-                continue;
-            }
-            if let Ok(v) = serde_json::from_str::<serde_json::Value>(&line) {
-                if let Some(name) = v.get("name").and_then(|n| n.as_str()) {
-                    names.insert(name.to_string());
-                }
-            }
-        }
-    }
-    names
+    None
 }
 
 // ============================================================================
@@ -533,40 +470,29 @@ fn insert_polytope_to_db(
     db.insert(key, record);
 }
 
-/// Write a seed result to the summary and trace JSONL files.
-fn write_result(
-    result: &SeedResult,
-    summary_writer: &mut BufWriter<File>,
-    trace_writer: &mut BufWriter<File>,
-) {
-    serde_json::to_writer(&mut *summary_writer, &result.summary).expect("write summary");
-    writeln!(summary_writer).expect("newline");
-    for row in &result.trace {
-        serde_json::to_writer(&mut *trace_writer, row).expect("write trace");
-        writeln!(trace_writer).expect("newline");
-    }
-}
-
 fn main() {
+    let default_out = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("gradient-ascent-products/gradient-ascent-products.jsonl");
+    let args: AscentArgs = parse_ascent_args(DEFAULT_SEED, default_out, "products");
     let t_global = Instant::now();
-    let base =
-        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("gradient-ascent-products");
-    let summary_path = base.join("gradient-ascent-products.jsonl");
-    let trace_path = base.join("gradient-ascent-products-trace.jsonl");
 
-    println!("gradient-ascent-products: projected gradient ascent on Lagrangian products\n");
+    let summary_path = args.out.clone();
+    let trace_path = trace_path_for(&summary_path);
 
-    // CLI args
-    let args: Vec<String> = std::env::args().collect();
-    let fresh = args.iter().any(|a| a == "--fresh");
+    println!("gradient-ascent-products: projected gradient ascent on Lagrangian products");
+    println!("  n:            {}", args.n);
+    println!("  n-start:      {}", args.n_start);
+    println!("  seed:         {}", args.seed);
+    println!("  out:          {}", summary_path.display());
+    println!("  trace:        {}", trace_path.display());
+    println!("  fresh:        {}", args.fresh);
+    println!("  no-db-update: {}", args.no_db_update);
+    println!("  buckets:      {LAGRANGIAN_SPLITS:?}\n");
 
-    // Resume support
-    let completed = if fresh {
-        let _ = std::fs::remove_file(&summary_path);
-        let _ = std::fs::remove_file(&trace_path);
-        HashSet::new()
+    let completed = if args.fresh {
+        std::collections::HashSet::new()
     } else {
-        load_completed_names(&summary_path)
+        exp_sys_landscape::load_completed_names(&summary_path)
     };
 
     if completed.is_empty() {
@@ -575,84 +501,82 @@ fn main() {
         println!("Resuming: {} seeds already completed.", completed.len());
     }
 
-    let summary_file = OpenOptions::new()
-        .create(true)
-        .append(true)
-        .open(&summary_path)
-        .expect("open summary JSONL");
-    let mut summary_writer = BufWriter::new(summary_file);
+    let writers = open_ascent_writers(&summary_path, &trace_path, args.fresh);
+    let best = Arc::new(Mutex::new((0.0f64, String::new())));
 
-    let trace_file = OpenOptions::new()
-        .create(true)
-        .append(true)
-        .open(&trace_path)
-        .expect("open trace JSONL");
-    let mut trace_writer = BufWriter::new(trace_file);
-
-    let mut rng = ChaCha8Rng::seed_from_u64(SEED);
-    let mut best_global = 0.0f64;
-    let mut best_name = String::new();
-
-    // Load polytope database for caching
+    // DB state: loaded once, shared across threads under a Mutex when !no_db_update.
+    // On LICCA (--no-db-update), both load and insertion are skipped entirely.
     let db_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("../../data/polytopes.jsonl");
-    let mut db: HashMap<DualVerticesKey, PolytopeRecord> =
-        database::load(&db_path).expect("failed to load database");
-    println!("Loaded database: {} entries\n", db.len());
+    let db_arc: Arc<Mutex<HashMap<DualVerticesKey, PolytopeRecord>>> = if args.no_db_update {
+        Arc::new(Mutex::new(HashMap::new()))
+    } else {
+        let db = database::load(&db_path).expect("failed to load database");
+        println!("Loaded database: {} entries", db.len());
+        Arc::new(Mutex::new(db))
+    };
 
-    // =========================================================================
-    // Phase 1: Lagrangian products
-    // =========================================================================
+    let no_db_update = args.no_db_update;
+    let db_for_closure = Arc::clone(&db_arc);
 
-    println!(
-        "Generating Lagrangian products (splits: {:?}, {} per bucket)...",
-        LAGRANGIAN_SPLITS, N_LAGRANGIAN_PER_BUCKET
-    );
-    let lagrangian = generate_lagrangian_polytopes(&mut rng);
-    println!("Generated {} Lagrangian products.\n", lagrangian.len());
+    run_parallel_seeds(&args, &completed, &writers, &best, move |i, seed_i| {
+        let mut rng_i = ChaCha8Rng::seed_from_u64(seed_i);
 
-    for (idx, (name, bucket, polytope)) in lagrangian.iter().enumerate() {
-        insert_polytope_to_db(&mut db, polytope);
+        let (bucket_name, polytope) = generate_for_seed(i, &mut rng_i)?;
 
-        if completed.contains(name) {
-            continue;
+        if !no_db_update {
+            let mut db = db_for_closure.lock().expect("lock db for insert");
+            insert_polytope_to_db(&mut db, &polytope);
         }
-        print!("[lagrangian {}/{}] {}: ", idx + 1, lagrangian.len(), name);
 
-        let class = classify_facets(polytope).expect("should classify as Lagrangian");
+        let class = classify_facets(&polytope).expect("should classify as Lagrangian");
 
-        match process_seed(name, bucket, polytope, &class, &mut rng) {
-            Some(result) => {
-                write_result(&result, &mut summary_writer, &mut trace_writer);
-                let s = &result.summary;
-                if s.final_sys > best_global {
-                    best_global = s.final_sys;
-                    best_name = s.name.clone();
-                }
-                println!(
-                    "sys: {:.4}->{:.4} (d={:.4}), strategy={}, phases={}, {:.1}s",
-                    s.starting_sys, s.final_sys, s.total_delta, s.best_strategy,
-                    s.n_ascent_phases, s.total_time_ms / 1000.0,
-                );
-                if s.final_sys > 1.0 {
-                    eprintln!("*** VITERBO VIOLATION: {} sys={:.6} ***", s.name, s.final_sys);
-                }
-            }
-            None => println!("FAILED"),
+        let name = format!("products_{i}");
+        let result = process_seed(&name, i, &bucket_name, &polytope, &class, &mut rng_i)?;
+
+        // Per-seed progress print from inside the closure. Writing to stdout
+        // via println! is thread-safe (line-buffered, each call flushes its
+        // own line), so two threads cannot interleave within a single line.
+        let s = &result.summary;
+        println!(
+            "[seed {i}] {name} ({bucket_name}): sys: {:.4}->{:.4} (d={:.4}), strategy={}, phases={}, {:.1}s",
+            s.starting_sys,
+            s.final_sys,
+            s.total_delta,
+            s.best_strategy,
+            s.n_ascent_phases,
+            s.total_time_ms / 1000.0,
+        );
+        if s.final_sys > 1.0 {
+            eprintln!("*** VITERBO VIOLATION: {} sys={:.6} ***", s.name, s.final_sys);
         }
+
+        Some(result)
+    });
+
+    // Drop writers (consumed by finalize), sort + rewrite both output files
+    // so row order is deterministic regardless of rayon thread scheduling and
+    // any crash-resume history. See `finalize_ascent_output` for details.
+    finalize_ascent_output(&summary_path, &trace_path, writers);
+
+    if !no_db_update {
+        let db = db_arc.lock().expect("lock db for save");
+        database::save(&db_path, &db).expect("failed to save database");
     }
 
-    // =========================================================================
-    // Final summary
-    // =========================================================================
+    let (best_sys, best_name) = {
+        let b = best.lock().expect("lock best for report");
+        (b.0, b.1.clone())
+    };
 
-    summary_writer.flush().expect("flush summary");
-    trace_writer.flush().expect("flush trace");
-    database::save(&db_path, &db).expect("failed to save database");
-
+    let end = args.n_start + args.n;
     println!("\n========================================");
-    println!("Best sys: {:.6} ({})", best_global, best_name);
-    println!("Database: {} entries", db.len());
+    println!("Processed indices: {}..{end}", args.n_start);
+    println!("Best sys: {best_sys:.6} ({best_name})");
+    if !no_db_update {
+        let db = db_arc.lock().expect("lock db for count");
+        println!("Database: {} entries", db.len());
+    }
     println!("Total time: {:.1}s", t_global.elapsed().as_secs_f64());
     println!("Output: {}", summary_path.display());
     println!("Trace: {}", trace_path.display());

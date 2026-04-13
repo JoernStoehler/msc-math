@@ -5,28 +5,38 @@
 //! Boundary-crossing via overshoot (multiples of t_max) and wiggle (random
 //! perturbation of dual vertices).
 //!
-//! Architecture: single binary, inline polytope generation + optimization.
-//! Seeds: fresh random general polytopes (standard master seed, low attempt numbers).
-//!
 //! Predecessor: boundary-crossing-search (split into gradient-ascent-general
 //! and gradient-ascent-products, 2026-04-04).
 //!
-//! Usage: cargo run -p exp-sys-landscape --release --bin sys-gradient-ascent-general
-//! Flags: --fresh  (clear existing data and rerun)
-//! Output: gradient-ascent-general/gradient-ascent-general.jsonl      (per-seed summary)
-//!         gradient-ascent-general/gradient-ascent-general-trace.jsonl (per-iteration trace)
+//! CLI (all optional):
+//! - `--n <count>`        number of seeds this invocation processes   (default: 10)
+//! - `--n-start <offset>` starting global seed index                  (default: 0)
+//! - `--seed <u64>`       base RNG seed                               (default: 42)
+//! - `--out <path>`       output summary .jsonl                       (default: gradient-ascent-general/gradient-ascent-general.jsonl)
+//! - `--fresh`            delete existing summary + trace files before running
+//! - `--no-db-update`     do not load or save the shared polytope database
+//!                        (set by LICCA to avoid concurrent write races)
+//!
+//! Architecture B (2026-04-12): rayon `par_iter` over `[n_start, n_start+n)`
+//! at the dataset level. Seed i uses its own RNG stream
+//! `ChaCha8Rng::seed_from_u64(seed + i)`, so the output for index i is
+//! byte-reproducible regardless of thread assignment. Shared CLI / writer /
+//! resume plumbing lives in `exp_sys_landscape::{parse_ascent_args,
+//! open_ascent_writers, run_parallel_seeds, ...}`.
 
 use database::{DualVerticesKey, PolytopeRecord};
-use exp_sys_landscape::compute_step_bound;
+use exp_sys_landscape::{
+    compute_step_bound, finalize_ascent_output, open_ascent_writers, parse_ascent_args,
+    run_parallel_seeds,
+    trace_path_for, AscentArgs, SeedResult, SummaryRow, TraceRow, MAX_STEP_SIZE,
+};
 use nalgebra::Vector4;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal};
-use serde::Serialize;
-use std::collections::{HashMap, HashSet};
-use std::fs::{File, OpenOptions};
-use std::io::{BufRead, BufReader, BufWriter, Write};
+use std::collections::HashMap;
 use std::path::Path;
+use std::sync::{Arc, Mutex};
 use std::time::Instant;
 use symplectic::derivatives::{capacity_derivatives_a, volume_derivatives_a};
 use symplectic::geom::polytope::Polytope4D;
@@ -38,12 +48,7 @@ use symplectic::random::sample_random_polytope;
 // Configuration
 // ============================================================================
 
-/// Reproducible RNG seed. Arbitrary choice; re-run with different seeds to
-/// check robustness of findings.
-const SEED: u64 = 42;
-
-/// Development-scale counts. Increase for production runs.
-const N_GENERAL: usize = 10;
+const DEFAULT_SEED: u64 = 42;
 
 /// Facet count for fresh polytopes.
 const FACET_COUNT: usize = 10;
@@ -51,6 +56,11 @@ const FACET_COUNT: usize = 10;
 /// Height range for random generation.
 const H_MIN: f64 = 0.8;
 const H_MAX: f64 = 1.2;
+
+/// Maximum attempts per seed index to generate a valid polytope before giving up
+/// on that index. Each retry draws new numbers from the same per-seed RNG stream,
+/// so output for a given global index is still byte-reproducible.
+const MAX_POLYTOPE_ATTEMPTS: usize = 100;
 
 /// Maximum gradient ascent iterations per phase.
 const MAX_ITERATIONS: usize = 30;
@@ -66,9 +76,6 @@ const STEP_FRACTIONS: &[f64] = &[0.1, 0.25, 0.5, 0.75, 0.95];
 /// Multipliers beyond t_max for crossing combinatorial boundaries.
 /// Land in neighboring combinatorial cells.
 const OVERSHOOT_MULTIPLIERS: &[f64] = &[1.5, 2.0, 3.0];
-
-/// Prevents pathological steps when t_max is huge.
-const MAX_STEP_SIZE: f64 = 100.0;
 
 /// Number of random dual-vertex perturbations per escape round.
 const N_WIGGLES: usize = 5;
@@ -95,43 +102,6 @@ const SEED_TIME_BUDGET_SECS: f64 = 120.0;
 /// Numerical zero threshold for gradient norms, rates, and slack comparisons.
 /// Near machine epsilon for unit-scale f64. Matches gradient-descent.
 const EPS: f64 = 1e-15;
-
-// ============================================================================
-// Output schemas
-// ============================================================================
-
-/// One row per seed — the main analysis dataset.
-#[derive(Debug, Serialize)]
-struct SummaryRow {
-    name: String,
-    polytope_type: String,
-    facet_count: usize,
-    starting_sys: f64,
-    final_sys: f64,
-    total_delta: f64,
-    n_ascent_phases: usize,
-    n_gradient_iters_total: usize,
-    n_escape_overshoot: usize,
-    n_escape_wiggle: usize,
-    best_strategy: String,
-    total_time_ms: f64,
-    final_dual_vertices: Vec<[f64; 4]>,
-}
-
-/// One row per iteration per ascent phase — diagnostic trace.
-#[derive(Debug, Serialize)]
-struct TraceRow {
-    name: String,
-    phase: usize,
-    iteration: usize,
-    step_type: String,
-    t_fraction: f64,
-    t_actual: f64,
-    sys_before: f64,
-    sys_after: f64,
-    delta_sys: f64,
-    gradient_norm: f64,
-}
 
 // ============================================================================
 // Gradient step in a-space
@@ -331,13 +301,9 @@ fn wiggle(polytope: &Polytope4D, rng: &mut ChaCha8Rng) -> Option<Polytope4D> {
 // Per-seed processing
 // ============================================================================
 
-struct SeedResult {
-    summary: SummaryRow,
-    trace: Vec<TraceRow>,
-}
-
 fn process_seed(
     name: &str,
+    seed_index: usize,
     polytope_type: &str,
     polytope: &Polytope4D,
     rng: &mut ChaCha8Rng,
@@ -424,6 +390,7 @@ fn process_seed(
     Some(SeedResult {
         summary: SummaryRow {
             name: name.to_string(),
+            seed_index,
             polytope_type: polytope_type.to_string(),
             facet_count: best_polytope.facet_count(),
             starting_sys,
@@ -442,54 +409,7 @@ fn process_seed(
 }
 
 // ============================================================================
-// Polytope generation
-// ============================================================================
-
-fn generate_general_polytopes(rng: &mut ChaCha8Rng) -> Vec<(String, Polytope4D)> {
-    let mut polytopes = Vec::new();
-    let mut attempts = 0usize;
-    while polytopes.len() < N_GENERAL {
-        attempts += 1;
-        if attempts > N_GENERAL * 100 {
-            eprintln!(
-                "WARNING: gave up after {attempts} attempts, got {} general polytopes",
-                polytopes.len()
-            );
-            break;
-        }
-        if let Ok(p) = sample_random_polytope(FACET_COUNT, H_MIN, H_MAX, rng) {
-            let name = format!("general_{}", polytopes.len());
-            polytopes.push((name, p));
-        }
-    }
-    polytopes
-}
-
-// ============================================================================
-// Resume support
-// ============================================================================
-
-fn load_completed_names(path: &std::path::Path) -> HashSet<String> {
-    let mut names = HashSet::new();
-    if let Ok(file) = File::open(path) {
-        let reader = BufReader::new(file);
-        for line in reader.lines().map_while(Result::ok) {
-            let line = line.trim().to_string();
-            if line.is_empty() {
-                continue;
-            }
-            if let Ok(v) = serde_json::from_str::<serde_json::Value>(&line) {
-                if let Some(name) = v.get("name").and_then(|n| n.as_str()) {
-                    names.insert(name.to_string());
-                }
-            }
-        }
-    }
-    names
-}
-
-// ============================================================================
-// Main
+// Polytope database helper
 // ============================================================================
 
 /// Insert a polytope into the database if not already present.
@@ -506,40 +426,32 @@ fn insert_polytope_to_db(
     db.insert(key, record);
 }
 
-/// Write a seed result to the summary and trace JSONL files.
-fn write_result(
-    result: &SeedResult,
-    summary_writer: &mut BufWriter<File>,
-    trace_writer: &mut BufWriter<File>,
-) {
-    serde_json::to_writer(&mut *summary_writer, &result.summary).expect("write summary");
-    writeln!(summary_writer).expect("newline");
-    for row in &result.trace {
-        serde_json::to_writer(&mut *trace_writer, row).expect("write trace");
-        writeln!(trace_writer).expect("newline");
-    }
-}
+// ============================================================================
+// Main
+// ============================================================================
 
 fn main() {
+    let default_out = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("gradient-ascent-general/gradient-ascent-general.jsonl");
+    let args: AscentArgs = parse_ascent_args(DEFAULT_SEED, default_out, "general");
     let t_global = Instant::now();
-    let base =
-        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("gradient-ascent-general");
-    let summary_path = base.join("gradient-ascent-general.jsonl");
-    let trace_path = base.join("gradient-ascent-general-trace.jsonl");
 
-    println!("gradient-ascent-general: free gradient ascent on general polytopes\n");
+    let summary_path = args.out.clone();
+    let trace_path = trace_path_for(&summary_path);
 
-    // CLI args
-    let args: Vec<String> = std::env::args().collect();
-    let fresh = args.iter().any(|a| a == "--fresh");
+    println!("gradient-ascent-general: free gradient ascent on general polytopes");
+    println!("  n:            {}", args.n);
+    println!("  n-start:      {}", args.n_start);
+    println!("  seed:         {}", args.seed);
+    println!("  out:          {}", summary_path.display());
+    println!("  trace:        {}", trace_path.display());
+    println!("  fresh:        {}", args.fresh);
+    println!("  no-db-update: {}\n", args.no_db_update);
 
-    // Resume support
-    let completed = if fresh {
-        let _ = std::fs::remove_file(&summary_path);
-        let _ = std::fs::remove_file(&trace_path);
-        HashSet::new()
+    let completed = if args.fresh {
+        std::collections::HashSet::new()
     } else {
-        load_completed_names(&summary_path)
+        exp_sys_landscape::load_completed_names(&summary_path)
     };
 
     if completed.is_empty() {
@@ -548,80 +460,95 @@ fn main() {
         println!("Resuming: {} seeds already completed.", completed.len());
     }
 
-    let summary_file = OpenOptions::new()
-        .create(true)
-        .append(true)
-        .open(&summary_path)
-        .expect("open summary JSONL");
-    let mut summary_writer = BufWriter::new(summary_file);
+    let writers = open_ascent_writers(&summary_path, &trace_path, args.fresh);
+    let best = Arc::new(Mutex::new((0.0f64, String::new())));
 
-    let trace_file = OpenOptions::new()
-        .create(true)
-        .append(true)
-        .open(&trace_path)
-        .expect("open trace JSONL");
-    let mut trace_writer = BufWriter::new(trace_file);
-
-    let mut rng = ChaCha8Rng::seed_from_u64(SEED);
-    let mut best_global = 0.0f64;
-    let mut best_name = String::new();
-
-    // Load polytope database for caching
+    // DB state: loaded once, shared across threads under a Mutex when !no_db_update.
+    // On LICCA (--no-db-update), both load and insertion are skipped entirely.
     let db_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("../../data/polytopes.jsonl");
-    let mut db: HashMap<DualVerticesKey, PolytopeRecord> =
-        database::load(&db_path).expect("failed to load database");
-    println!("Loaded database: {} entries\n", db.len());
+    let db_arc: Arc<Mutex<HashMap<DualVerticesKey, PolytopeRecord>>> = if args.no_db_update {
+        Arc::new(Mutex::new(HashMap::new()))
+    } else {
+        let db = database::load(&db_path).expect("failed to load database");
+        println!("Loaded database: {} entries", db.len());
+        Arc::new(Mutex::new(db))
+    };
 
-    // =========================================================================
-    // Phase 1: General random polytopes
-    // =========================================================================
+    let no_db_update = args.no_db_update;
+    let db_for_closure = Arc::clone(&db_arc);
 
-    println!("Generating {N_GENERAL} general random F={FACET_COUNT} polytopes...");
-    let general = generate_general_polytopes(&mut rng);
-    println!("Generated {} polytopes.\n", general.len());
+    run_parallel_seeds(&args, &completed, &writers, &best, move |i, seed_i| {
+        let mut rng_i = ChaCha8Rng::seed_from_u64(seed_i);
 
-    for (idx, (name, polytope)) in general.iter().enumerate() {
-        // Insert starting seed into database
-        insert_polytope_to_db(&mut db, polytope);
-
-        if completed.contains(name) {
-            continue;
-        }
-        print!("[general {}/{}] {}: ", idx + 1, general.len(), name);
-
-        match process_seed(name, "general", polytope, &mut rng) {
-            Some(result) => {
-                write_result(&result, &mut summary_writer, &mut trace_writer);
-                let s = &result.summary;
-                if s.final_sys > best_global {
-                    best_global = s.final_sys;
-                    best_name = s.name.clone();
-                }
-                println!(
-                    "sys: {:.4}->{:.4} (d={:.4}), strategy={}, phases={}, {:.1}s",
-                    s.starting_sys, s.final_sys, s.total_delta, s.best_strategy,
-                    s.n_ascent_phases, s.total_time_ms / 1000.0,
-                );
-                if s.final_sys > 1.0 {
-                    eprintln!("*** VITERBO VIOLATION: {} sys={:.6} ***", s.name, s.final_sys);
-                }
+        let mut polytope_opt: Option<Polytope4D> = None;
+        for _ in 0..MAX_POLYTOPE_ATTEMPTS {
+            if let Ok(p) = sample_random_polytope(FACET_COUNT, H_MIN, H_MAX, &mut rng_i) {
+                polytope_opt = Some(p);
+                break;
             }
-            None => println!("FAILED"),
         }
+        let polytope = match polytope_opt {
+            Some(p) => p,
+            None => {
+                eprintln!(
+                    "WARNING: seed {i}: no valid polytope after {MAX_POLYTOPE_ATTEMPTS} attempts, skipping"
+                );
+                return None;
+            }
+        };
+
+        if !no_db_update {
+            let mut db = db_for_closure.lock().expect("lock db for insert");
+            insert_polytope_to_db(&mut db, &polytope);
+        }
+
+        let name = format!("general_{i}");
+        let result = process_seed(&name, i, "general", &polytope, &mut rng_i)?;
+
+        // Per-seed progress print from inside the closure. Writing to stdout
+        // via println! is thread-safe (line-buffered, each call flushes its
+        // own line), so two threads cannot interleave within a single line.
+        let s = &result.summary;
+        println!(
+            "[seed {i}] {name}: sys: {:.4}->{:.4} (d={:.4}), strategy={}, phases={}, {:.1}s",
+            s.starting_sys,
+            s.final_sys,
+            s.total_delta,
+            s.best_strategy,
+            s.n_ascent_phases,
+            s.total_time_ms / 1000.0,
+        );
+        if s.final_sys > 1.0 {
+            eprintln!("*** VITERBO VIOLATION: {} sys={:.6} ***", s.name, s.final_sys);
+        }
+
+        Some(result)
+    });
+
+    // Drop writers (consumed by finalize), sort + rewrite both output files
+    // so row order is deterministic regardless of rayon thread scheduling and
+    // any crash-resume history. See `finalize_ascent_output` for details.
+    finalize_ascent_output(&summary_path, &trace_path, writers);
+
+    if !no_db_update {
+        let db = db_arc.lock().expect("lock db for save");
+        database::save(&db_path, &db).expect("failed to save database");
     }
 
-    // =========================================================================
-    // Final summary
-    // =========================================================================
+    let (best_sys, best_name) = {
+        let b = best.lock().expect("lock best for report");
+        (b.0, b.1.clone())
+    };
 
-    summary_writer.flush().expect("flush summary");
-    trace_writer.flush().expect("flush trace");
-    database::save(&db_path, &db).expect("failed to save database");
-
+    let end = args.n_start + args.n;
     println!("\n========================================");
-    println!("Best sys: {:.6} ({})", best_global, best_name);
-    println!("Database: {} entries", db.len());
+    println!("Processed indices: {}..{end}", args.n_start);
+    println!("Best sys: {best_sys:.6} ({best_name})");
+    if !no_db_update {
+        let db = db_arc.lock().expect("lock db for count");
+        println!("Database: {} entries", db.len());
+    }
     println!("Total time: {:.1}s", t_global.elapsed().as_secs_f64());
     println!("Output: {}", summary_path.display());
     println!("Trace: {}", trace_path.display());
