@@ -76,6 +76,12 @@ The local environment currently uses Rust `1.94.0`. The published Codex
 smoke script as the actual compatibility check before trusting cloud Rust
 execution for a task.
 
+Some Codex cloud environment modes may also block `apt` access behind a proxy.
+The setup script now checks for `qconvex` before touching `apt`. If `qconvex`
+is already present, setup proceeds without package installation. If `qconvex`
+is absent and `apt` is blocked, the script fails with a targeted message
+explaining that Rust validation cannot meet the cloud smoke contract there.
+
 ## What You Still Need To Configure In Codex Cloud
 
 I can commit the scripts and docs here, but I cannot click the Codex web UI

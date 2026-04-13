@@ -22,7 +22,17 @@ require_cmd() {
 require_cmd cargo
 require_cmd uv
 require_cmd git
-require_cmd qconvex
+
+if ! command -v qconvex >/dev/null 2>&1; then
+  cat >&2 <<'EOF'
+[codex-cloud-smoke] missing command: qconvex
+
+This repo's Rust validation path depends on qhull. Run
+`bash scripts/codex-cloud-setup.sh` first in an environment where qhull can be
+installed, or use an environment that already ships qconvex.
+EOF
+  exit 1
+fi
 
 echo "[codex-cloud-smoke] Verifying Git LFS..."
 git lfs version >/dev/null
