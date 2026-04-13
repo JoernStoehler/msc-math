@@ -3,6 +3,7 @@
 		"anthropic.claude-code",
 		// "efoerster.texlab",  // disabled with chktex settings above
 		"mathematic.vscode-pdf",
-		"miguelsolorio.symbols"
+		"miguelsolorio.symbols",
+		"openai.chatgpt"
 	]
 }
