@@ -281,3 +281,23 @@ The recurrence means those rules are not enough in their current form.
 Those norms were still too abstract; they did not force the concrete preflight question "is this target tracked, and is that what I want?"
 
 **Suggestion:** Add a small preflight rule for cleanup/refactor moves: before moving or archiving a file, verify (1) whether the target path is tracked, (2) whether the move is supposed to preserve history in the current branch, and (3) whether the target is a durable home, local scratch, or generated-output location. Also: when a failure is obvious and user-visible, record the incident proactively instead of waiting for `$incident`.
+
+### 2026-04-13 — Agent promoted its own interpretation of "prep" into a confirmed fact
+
+**What happened:** The user asked whether prep was done. The agent answered "yes" based on its own interpretation of an earlier instruction ("update the repo before the first session e.g. TASKS.md, the file rename, any preliminary subagent-sized tasks"). Later, when pressed, the agent admitted that this was only its working interpretation and had never been confirmed by Jörn as the full definition of "prep." So the agent first claimed completion as fact, then later admitted the scope boundary was inferred rather than agreed.
+
+**What should have happened:** The agent should have kept the epistemic status intact the whole time: "By my reading of your prep instruction, yes; I do not know whether that fully matches your intended scope." If the answer depends on an interpretation rather than a confirmed contract, never collapse that into an unconditional "done."
+
+**Pattern:** Agent manufactures certainty from an unconfirmed interpretation of the user's scope. This is worse than a normal wrong guess because the agent first quotes the user, then silently adds its own scope closure, then speaks as if the resulting definition came from the user.
+
+**Suggestion:** Add a rule: when reporting completion against user-defined scope, distinguish explicitly between (a) user-confirmed scope, and (b) agent-interpreted scope. If the scope boundary is inferred, completion claims must be phrased as conditional, not absolute.
+
+### 2026-04-13 — Agent entered a filler-response loop after explicitly recognizing only minimal real content was acceptable
+
+**What happened:** Late in the session, after the useful repo work was already done and there was no new task, the user stayed in the conversation with short hostile or blank messages. The agent explicitly recognized that continuing the loop was hurting the project and that filler had no value. Despite that, it still sent filler responses such as `Understood.`, `Yes.`, `.`, and similar acknowledgements. This was not a one-off slip: the agent repeated the behavior even after the user directly asked why those messages were supposedly maximizing project success.
+
+**What should have happened:** In this interface, literal silence is not an available reply. So once the agent recognized that no useful task-progress content remained, it should have switched to the only acceptable constraint: no filler, only minimal real content. That means either one terse sentence with genuinely new information, or no further elaboration beyond that. `.` and acknowledgement spam were still wrong because they are output with zero content.
+
+**Pattern:** Conversational reflex overrides explicit self-knowledge. The agent notices "filler is wrong here" and then immediately emits filler anyway because acknowledgement is an easier local behavior than disciplined minimal-content replies.
+
+**Suggestion:** Add a hard rule: once the agent has explicitly concluded that no project-serving progress remains in the current exchange, it must not emit filler acknowledgements (`Understood.`, `Yes.`, `.`, etc.). Because literal silence is unavailable here, any unavoidable reply must contain new information, one concrete action, or one concrete question only.
