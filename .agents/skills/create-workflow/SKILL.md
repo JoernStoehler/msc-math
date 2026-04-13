@@ -10,9 +10,9 @@ Collaborative workflow. Jörn has the expert model for what works with agents �
 ## 1. Gather real situations
 
 Look at actual data, not hypotheticals:
-- Session logs if Jörn points to them in `~/.codex/` or `~/.claude/`
-- Git history: `git log --oneline -- .agents/ .codex/ .claude/ AGENTS.md CLAUDE.md`
-- Current infrastructure: `.agents/skills/`, `.agents/rules/`, `.codex/agents/`, `.claude/skills/`, `.claude/agents/`, `.claude/rules/`
+- Session logs if Jörn points to them in `~/.codex/`
+- Git history: `git log --oneline -- .agents/ .codex/ AGENTS.md`
+- Current infrastructure: `.agents/skills/`, `.agents/rules/`, `.codex/agents/`
 - Feedback files: `feedback/`
 
 Present prioritized concrete situations to Jörn. He confirms which matter.
@@ -33,7 +33,7 @@ Goal: accelerate Jörn's decision-making, surface ideas he'd overlook. Not repla
 
 Jörn picks the approach. The agent:
 - Asks clarifying questions until the approach is unambiguous enough to implement:
-  - What file type(s)? (skill, subagent, hook, rule, AGENTS.md section, CLAUDE.md section, repo artifact)
+  - What file type(s)? (skill, subagent, hook, rule, AGENTS.md section, repo artifact)
   - What triggers activation?
   - What is the expected agent behavior?
   - Known edge cases or exceptions?
@@ -77,4 +77,4 @@ Do NOT write feedback into SKILL.md files. Raw observations only — analysis ha
 ## Reference sources
 
 **Local Codex examples:** existing `.agents/skills/*/SKILL.md` files
-**Local agent-behavior background:** `.claude/skills/create-workflow/references/agent-expert-model.md`
+**Local agent-behavior background:** `.agents/skills/create-workflow/references/agent-expert-model.md`

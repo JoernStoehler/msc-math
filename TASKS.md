@@ -2,7 +2,7 @@
 
 Unified tracker for thesis, experiments, and infrastructure.
 Format: `## [status] Group` / `### [status] [date] Item`. Body only when header isn't enough.
-See `.agents/rules/tasks.md` for the Codex-first task conventions and `.claude/rules/tasks.md` for the Claude twin. Run `bash scripts/tasks-toc.sh` for section index.
+See `.agents/rules/tasks.md` for full conventions. Run `bash scripts/tasks-toc.sh` for section index.
 
 **What the thesis should say:** `RESULTS.md`.
 **Priority:** Thesis coherence + experiment quality > code refactors. Code refactors only matter if they unblock thesis content or experiment correctness.
@@ -306,7 +306,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 
 ### [done] [2026-04-12] Thesis figure consistency check
 - Handoff: `handoffs/thesis-figures-audit-2026-04-12.md`. Degenerate baseline: 0 `\includegraphics` refs across 16 `thesis/**/*.tex` files, `thesis/assets/` does not exist. Rerun after experiment writeups and thesis restructuring land.
-- Note: before the first figure lands, Jörn picks an asset-provenance convention (sidecar `.source` files / manifest / sync script) and adds it to the shared project instructions (`AGENTS.md`, and `CLAUDE.md` if Claude-specific wording is needed). See "Hand-drawn figures" + "Figure inventory" below.
+- Note: before the first figure lands, Jörn picks an asset-provenance convention (sidecar `.source` files / manifest / sync script) and adds it to `AGENTS.md`. See "Hand-drawn figures" + "Figure inventory" below.
 
 ### [future] [group:figures] Hand-drawn figures (Jörn)
 - Concept illustrations: polar of 2D polytope; 0/1/2/3-facets; fake 3D polytope with Reeb vectors and closed/open trajectories; decompositions of `gamma: R → R^4` drawn as `gamma: R → R`; etc.
@@ -448,7 +448,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Remaining: Jörn verifies `prop:integer-cramer`, f64 threshold soundness.
 
 ### [done] [2026-03] Slurm skill
-- `.agents/skills/slurm/SKILL.md` and `.claude/skills/slurm/SKILL.md`
+- `.agents/skills/slurm/SKILL.md`
 
 ### [done] [2026-04] Orchestration infrastructure
 - `/orchestrate` skill, delegation guide, cheatsheet.

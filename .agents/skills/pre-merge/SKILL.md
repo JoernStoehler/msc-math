@@ -50,7 +50,7 @@ Launch all review subagents in parallel on the branch diff:
 | review-python | Changed `.py` files |
 | review-figures | Changed `analyze.py` files or changed `.png` files |
 
-For Codex sessions, use the `.codex/agents/review-*.toml` subagents. For Claude sessions, use the `.claude/agents/review-*.md` agents. Launch all review subagents. If a subagent finds no files in scope, it reports "no files in scope" — that is the expected outcome, not a reason to skip launching it.
+Use the `.codex/agents/review-*.toml` subagents. Launch all review subagents. If a subagent finds no files in scope, it reports "no files in scope" — that is the expected outcome, not a reason to skip launching it.
 
 ### Cross-check subagent findings
 

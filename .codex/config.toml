@@ -14,24 +14,17 @@
 # Runtime state (auth.json, history, sessions, log/) lives in ~/.codex/,
 # which is bind-mounted from /srv/devhome/.codex/ on the host. It is never
 # inside any git tree, so auth tokens cannot be accidentally committed.
-# This mirrors the ~/.claude (runtime) vs .claude/ (tracked) split already
-# used by Claude Code on this machine.
-
-# AGENTS.md is now the primary Codex project document.
-# Keep CLAUDE.md as a fallback for any directory that has not yet grown its
-# own AGENTS.md twin.
-project_doc_fallback_filenames = ["CLAUDE.md"]
 
 # AGENTS.md is small today but may grow, and agents may also read
-# `.agents/rules/*.md` or `.claude/rules/*.md` during a session.
+# `.agents/rules/*.md` during a session.
 # Bump well above the 32 KiB default just in case.
 project_doc_max_bytes = 65536
 
-# Sandbox posture: match Claude Code's bypassPermissions mode. The devcontainer
-# already isolates the host; adding Landlock inside Docker is unreliable
+# Sandbox posture: match the repo's autonomous devcontainer workflow. The
+# devcontainer already isolates the host; adding Landlock inside Docker is unreliable
 # (openai/codex#1039) and the reward is negligible. See also `approval_policy`.
 sandbox_mode = "danger-full-access"
 
-# Model decides when to ask the user. Matches Jörn's CC flow where the agent
-# is trusted for routine work and asks before risky/destructive actions.
+# Model decides when to ask the user. The agent is trusted for routine work
+# and asks before risky or destructive actions.
 approval_policy = "on-request"

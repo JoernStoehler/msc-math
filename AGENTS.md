@@ -32,10 +32,9 @@ Planned deliverables:
 - `TASKS.md`: Unified project tracker (tasks, experiments, ideas). Run `bash scripts/tasks-toc.sh` for a section index with line ranges.
 - `feedback/*.md`: Incident reports; processed during workflow-update sessions
 - `AGENTS.md`: Codex-native project instructions
-- `CLAUDE.md`: Claude Code project instructions
 - `.agents/`: Codex-native skills and rules
 - `.codex/`: Codex config and subagents
-- `.claude/`: Claude-specific settings, hooks, skills, agents, rules, worktrees
+- `.codex/worktrees/`: repo-local Codex worktrees created by `scripts/codex-worktree.sh`
 
 ## General Conventions
 
@@ -83,7 +82,6 @@ cd crates/ && latexmk
 
 - **Orchestration session**: the top-level agent session that talks with Jörn, decomposes tasks, and delegates when delegation is useful.
 - **Subagent**: a Codex subagent declared under `.codex/agents/` and invoked through Codex delegation tools.
-- **Claude agent**: a Claude Code agent declared under `.claude/agents/`.
 - **Delegation**: top-level session spawning a subagent or worker to do leaf work.
 
 ## Text that agents read

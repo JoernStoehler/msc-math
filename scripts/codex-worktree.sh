@@ -7,18 +7,16 @@
 # trust entry in ~/.codex/config.toml so Codex will load that worktree's
 # .codex/config.toml and project skills, and (3) starts Codex there.
 #
-# Uses the shared .claude/worktrees/<name> layout so Claude Code and Codex can
-# coexist in the same physical worktree directories without separate layout
-# conventions.
+# Creates Codex worktrees under .codex/worktrees/<name>.
 #
 # Usage:
 #   scripts/codex-worktree.sh <name> [branch]
-#     <name>   required — directory under the shared .claude/worktrees/
+#     <name>   required — directory under .codex/worktrees/
 #     [branch] optional — branch to check out; defaults to <name>
 #
 # Example: scripts/codex-worktree.sh lemma-cleanup
-#   → git worktree add .claude/worktrees/lemma-cleanup lemma-cleanup
-#   → appends trust entry for /workspaces/msc-math/.claude/worktrees/lemma-cleanup
+#   → git worktree add .codex/worktrees/lemma-cleanup lemma-cleanup
+#   → appends trust entry for /workspaces/msc-math/.codex/worktrees/lemma-cleanup
 #   → cd there, exec codex
 
 set -euo pipefail
@@ -32,7 +30,7 @@ NAME=$1
 BRANCH=${2:-$NAME}
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
-WORKTREE_REL=".claude/worktrees/${NAME}"
+WORKTREE_REL=".codex/worktrees/${NAME}"
 WORKTREE_ABS="${REPO_ROOT}/${WORKTREE_REL}"
 
 if [[ ! -d "$WORKTREE_ABS" ]]; then

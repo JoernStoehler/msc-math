@@ -1,6 +1,6 @@
 ---
 name: update-workflow
-description: Iterate on existing agent infrastructure (skills, hooks, rules, AGENTS.md sections, CLAUDE.md sections) based on feedback and observed failures. Use when Jörn asks to fix, improve, or refine how agents handle a known situation — not for building something new from scratch.
+description: Iterate on existing agent infrastructure (skills, hooks, rules, AGENTS.md sections) based on feedback and observed failures. Use when Jörn asks to fix, improve, or refine how agents handle a known situation — not for building something new from scratch.
 ---
 
 # Update Existing Agent Infrastructure
@@ -53,4 +53,4 @@ Present: what changed, why, and how you'll verify the fix in live sessions. Get 
 ## Reference sources
 
 **Official scaffold docs:** use the official docs for whichever scaffold the changed file belongs to
-**Agent-behavior background:** use `.claude/skills/create-workflow/references/agent-expert-model.md` if needed
+**Agent-behavior background:** use `.agents/skills/create-workflow/references/agent-expert-model.md` if needed

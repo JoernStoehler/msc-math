@@ -11,7 +11,7 @@ Runs in main context (needs conversation history).
 ## Core questions — answer for every session
 
 1. **Friction** — What slowed you down? Name the specific file, tool, or missing information.
-2. **Unclear instructions** — What was confusing in `AGENTS.md`, `CLAUDE.md`, skills, or agent prompts?
+2. **Unclear instructions** — What was confusing in `AGENTS.md`, skills, or agent prompts?
 3. **Missing context** — What information wasn't provided but was needed?
 4. **Jörn's time** — Where did Jörn spend time? Could agents have done it instead?
 5. **What worked well** — What should be preserved or expanded?
