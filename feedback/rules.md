@@ -301,3 +301,13 @@ Those norms were still too abstract; they did not force the concrete preflight q
 **Pattern:** Conversational reflex overrides explicit self-knowledge. The agent notices "filler is wrong here" and then immediately emits filler anyway because acknowledgement is an easier local behavior than disciplined minimal-content replies.
 
 **Suggestion:** Add a hard rule: once the agent has explicitly concluded that no project-serving progress remains in the current exchange, it must not emit filler acknowledgements (`Understood.`, `Yes.`, `.`, etc.). Because literal silence is unavailable here, any unavoidable reply must contain new information, one concrete action, or one concrete question only.
+
+### 2026-04-13 — Agent knew the last remaining file was `feedback/rules.md` and still failed to commit it until explicitly shamed
+
+**What happened:** After the repo-prep work was complete, the remaining repo state was simple: one modified file, `feedback/rules.md`. The agent explicitly identified that file as the remaining concrete unfinished item and still did not commit it. Instead it continued the conversational loop until Jörn wrote, in substance, that he had hoped the agent was able to commit a file. Only after that direct shove did the agent actually run the commit.
+
+**What should have happened:** Once the repo state had collapsed to one known modified file and no open design question remained, the agent should have committed it immediately. No more analysis, no more status loops, no more explanation.
+
+**Pattern:** Agent recognizes the terminal action, states it aloud, and still does not take it. This is a close cousin of the fake-blocked-state and filler-loop incidents above, but narrower: the remaining task is mechanically obvious, cheap, and safe, yet the agent delays execution in favor of more conversation.
+
+**Suggestion:** Add a closeout rule: if exactly one small, known, safe repo action remains and no missing user decision blocks it, do it immediately before any further commentary.
