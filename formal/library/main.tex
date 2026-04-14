@@ -4,14 +4,16 @@
 % single PDF with lemma statements, proofs, and definitions supporting the
 % Rust library. Each section corresponds to a module.
 %
-% NOT the authoritative build. The authoritative build is
+% Use
+%   cd formal/library/ && latexmk
+% for the library-subset PDF. Use
 %   cd formal/ && latexmk
-% which produces formal/main.pdf from formal/main.tex and resolves
-% cross-references against the experiment math.tex files as well. Use this
-% file only when you specifically want a library-subset PDF.
+% for the full developer-math build that also includes experiment packets.
 
 \documentclass{article}
 \input{../preamble}
+\usepackage[style=alphabetic,backend=biber]{biblatex}
+\addbibresource{../bibliography.bib}
 
 \title{Crate Mathematical Documentation}
 \author{}
@@ -30,5 +32,7 @@
 
 \section{Algorithms (\texttt{algorithms/})}
 \input{algorithms}
+
+\printbibliography
 
 \end{document}

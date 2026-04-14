@@ -70,6 +70,7 @@ Current verified progress on 2026-04-14:
 - canonical packet entrypoints have been renamed to `main.rs`
 - live Python/shell/tooling path repair is done
 - `formal/main.tex`, `formal/.latexmkrc`, and `formal/bibliography.bib` now exist and `cd formal && latexmk` succeeds
+- `formal/library/main.tex` now has a local `.latexmkrc` and bibliography support, and `cd formal/library && latexmk` succeeds
 - multi-file JSONL merge semantics are implemented in `library/src/database.rs`
 - affected binaries now write only to owned family/experiment caches
 - owned caches have been materialized at `experiments/sys-landscape/cache.jsonl`, `experiments/combinatorial-cells/polytopes.jsonl`, and `experiments/verification/orbit-recovery/polytopes.jsonl`
@@ -78,6 +79,7 @@ Current verified progress on 2026-04-14:
 - `cd thesis && latexmk && ./check-build.sh` passes
 - dead old-root shims have been removed; `crates/` now only contains the explicitly deferred `dev-tube/` subtree
 - remaining stale old-layout references are historical/provenance only and are listed in `scratch/migration/stale-path-allowlist.txt`
+- `experiments/numerics/gradient/numerics-edge-cases/` is not missing a migrated formal packet: no pre-migration `math.tex` exists in git history, so `formal/numerics/gradient/numerics-edge-cases.tex` is a no-source exception rather than unfinished migration work
 
 ## Evidence Rules
 
@@ -276,6 +278,7 @@ Required checks:
 - moved content still matches `scratch/migration/content-inventory.json` where files were moved without rewriting
 - every moved experiment directory that contains `run.rs` during migration or `main.rs` in the target has a matching `research/.../design/*.md` note; explicit no-runnable-pair exceptions are the notes `research/hko-local-maximum/design/subdifferential-lp.md`, `research/sys-landscape/design/witness-search-program.md`, `research/sys-landscape/design/imported-sys-search-chatgpt-pro-extended-2026-04-13.md`, `research/verification/design/algorithm-comparison/profiling.md`, and `research/combinatorial-cells/design/gradient-discontinuity.md`; among those, the analysis-only experiment directories are `experiments/hko-local-maximum/subdifferential-lp/`, `experiments/combinatorial-cells/gradient-discontinuity/`, and `experiments/verification/algorithm-comparison/profiling/`
 - every moved former packet-level `math.tex` has a matching `formal/.../*.tex`; explicit exclusions are `crates/main.tex`, `crates/library/src/math.tex`, and `crates/library/src/math-preamble.tex`
+- packet directories that never had a pre-migration `math.tex` are not required to gain a new `formal/.../*.tex`; current confirmed example: `crates/dev-gradient/numerics-edge-cases/`
 - no unallowlisted live references to top-level `docs/` remain
 - no live runtime/build dependency on the old `crates/` layout remains
 - no loader still assumes the old single global cache architecture

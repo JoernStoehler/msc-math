@@ -78,6 +78,11 @@ Decision:
 - `formal/` becomes the canonical developer math area
 - migration moves existing `math.tex` packets into `formal/` largely as-is
 - later work may reorganize them thematically, but that is explicitly post-migration
+- a directory that did not have a pre-migration `math.tex` does not gain a new
+  `formal/.../*.tex` packet during migration
+- current explicit no-source example: `experiments/numerics/gradient/numerics-edge-cases/`
+  has experiment and research packets but no historical `math.tex`, so migration
+  does not require `formal/numerics/gradient/numerics-edge-cases.tex`
 
 ### 3a. `formal/` owns its own build support files
 

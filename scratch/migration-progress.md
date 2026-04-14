@@ -61,6 +61,14 @@ Latest local check:
 - `cargo build --workspace --release` passes from repo root.
 - `cd library && cargo test --release --lib` passes.
 - `cd library && cargo clippy --lib -- -D warnings` passes.
+- `cd formal && latexmk` passes.
+- `cd formal/library && latexmk` passes after adding `formal/library/.latexmkrc`,
+  moving the shared theorem/color setup into `formal/preamble.tex`, and adding
+  bibliography support to `formal/library/main.tex`.
+- `experiments/numerics/gradient/numerics-edge-cases/` has no missing migrated
+  formal packet: there is no pre-migration `math.tex` for that packet in git history,
+  so `formal/numerics/gradient/numerics-edge-cases.tex` is now tracked as a
+  no-source exception, not unfinished migration work.
 
 ## Phase 1 result
 
