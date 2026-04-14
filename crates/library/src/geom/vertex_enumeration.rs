@@ -12,6 +12,17 @@
 //!
 //! Mathematical correspondence: [lem:vertex-enumeration], [lem:positive-span]
 
+//! Architecture: `core` orchestrates boundedness -> enumeration -> irredundancy; `linear_solver` owns exact linear algebra kernels; `test_helpers` owns reusable fixture constructors.
+mod core;
+mod linear_solver;
+mod test_helpers;
+#[allow(unused_imports)]
+pub(super) use core::*;
+#[allow(unused_imports)]
+pub(super) use linear_solver::*;
+#[allow(unused_imports)]
+pub(super) use test_helpers::*;
+
 use num_bigint::BigInt;
 use num_rational::BigRational;
 use num_traits::{Signed, Zero};
@@ -24,8 +35,7 @@ use super::polytope::ConstructionError;
 /// Determinant of a 3x3 rational matrix (Sarrus' rule).
 #[cfg(test)]
 fn det3(r0: &[BigRational], r1: &[BigRational], r2: &[BigRational]) -> BigRational {
-    &r0[0] * (&r1[1] * &r2[2] - &r1[2] * &r2[1])
-        - &r0[1] * (&r1[0] * &r2[2] - &r1[2] * &r2[0])
+    &r0[0] * (&r1[1] * &r2[2] - &r1[2] * &r2[1]) - &r0[1] * (&r1[0] * &r2[2] - &r1[2] * &r2[0])
         + &r0[2] * (&r1[0] * &r2[1] - &r1[1] * &r2[0])
 }
 
@@ -281,9 +291,7 @@ fn combinations4(n: usize) -> Vec<[usize; 4]> {
 ///
 /// Mathematical correspondence: preprocessing step for [prop:integer-cramer] (scaling
 /// eliminates GCD normalization by lifting the system to integer arithmetic).
-fn integer_scale_dual_vertices(
-    dual_vertices: &[[BigRational; 4]],
-) -> (Vec<[BigInt; 4]>, BigInt) {
+fn integer_scale_dual_vertices(dual_vertices: &[[BigRational; 4]]) -> (Vec<[BigInt; 4]>, BigInt) {
     // Compute D = lcm of all denominators.
     let mut d = BigInt::from(1);
     for y in dual_vertices {
@@ -465,7 +473,12 @@ fn enumerate_vertices_int(
     use super::rational_arithmetic::rational_to_f64;
 
     let f = dual_vertices.len();
-    let one_int = [BigInt::from(1), BigInt::from(1), BigInt::from(1), BigInt::from(1)];
+    let one_int = [
+        BigInt::from(1),
+        BigInt::from(1),
+        BigInt::from(1),
+        BigInt::from(1),
+    ];
 
     // Precompute f64 versions for the prefilter.
     let dv_f64: Vec<[f64; 4]> = dual_vertices
@@ -504,7 +517,12 @@ fn enumerate_vertices_int(
         let delta_positive = delta.is_positive();
 
         // Step 2: Cramer numerator dets ν_j (M_S with col j = [1,1,1,1])
-        let mut nu = [BigInt::from(0), BigInt::from(0), BigInt::from(0), BigInt::from(0)];
+        let mut nu = [
+            BigInt::from(0),
+            BigInt::from(0),
+            BigInt::from(0),
+            BigInt::from(0),
+        ];
         for j in 0..4 {
             let mut modified = m_s_owned.clone();
             for row in 0..4 {
@@ -540,9 +558,8 @@ fn enumerate_vertices_int(
         // Step 4: vertex confirmed. Compute exact rational coordinates.
         // v[j] = D · ν_j / δ  (reduced form — needed for reliable f64 conversion
         // in the irredundancy check; unreduced ~240-bit numerators overflow f64).
-        let v: [BigRational; 4] = std::array::from_fn(|j| {
-            BigRational::new(common_denom * &nu[j], delta.clone())
-        });
+        let v: [BigRational; 4] =
+            std::array::from_fn(|j| BigRational::new(common_denom * &nu[j], delta.clone()));
 
         // Deduplicate
         let already_found = vertices
@@ -675,9 +692,7 @@ fn check_irredundancy_f64_first(
             'outer: for base_idx in 0..inc_f64.len() {
                 let base = &inc_f64[base_idx];
                 // Try all triples of other vertices as the 3 difference vectors.
-                let others: Vec<usize> = (0..inc_f64.len())
-                    .filter(|&j| j != base_idx)
-                    .collect();
+                let others: Vec<usize> = (0..inc_f64.len()).filter(|&j| j != base_idx).collect();
                 for a in 0..others.len() {
                     for b in (a + 1)..others.len() {
                         for c in (b + 1)..others.len() {
@@ -688,8 +703,7 @@ fn check_irredundancy_f64_first(
                             ];
                             // Check any 3x3 minor
                             for skip_col in 0..4 {
-                                let cols: Vec<usize> =
-                                    (0..4).filter(|&d| d != skip_col).collect();
+                                let cols: Vec<usize> = (0..4).filter(|&d| d != skip_col).collect();
                                 let det = rows[0][cols[0]]
                                     * (rows[1][cols[1]] * rows[2][cols[2]]
                                         - rows[1][cols[2]] * rows[2][cols[1]])
@@ -817,14 +831,22 @@ fn f64_prefilter_rejects(dv_f64: &[[f64; 4]], subset: &[usize; 4], f: usize) -> 
 
     // Step 1: Build 4×4 matrix from subset rows.
     let a = Matrix4::new(
-        dv_f64[subset[0]][0], dv_f64[subset[0]][1],
-        dv_f64[subset[0]][2], dv_f64[subset[0]][3],
-        dv_f64[subset[1]][0], dv_f64[subset[1]][1],
-        dv_f64[subset[1]][2], dv_f64[subset[1]][3],
-        dv_f64[subset[2]][0], dv_f64[subset[2]][1],
-        dv_f64[subset[2]][2], dv_f64[subset[2]][3],
-        dv_f64[subset[3]][0], dv_f64[subset[3]][1],
-        dv_f64[subset[3]][2], dv_f64[subset[3]][3],
+        dv_f64[subset[0]][0],
+        dv_f64[subset[0]][1],
+        dv_f64[subset[0]][2],
+        dv_f64[subset[0]][3],
+        dv_f64[subset[1]][0],
+        dv_f64[subset[1]][1],
+        dv_f64[subset[1]][2],
+        dv_f64[subset[1]][3],
+        dv_f64[subset[2]][0],
+        dv_f64[subset[2]][1],
+        dv_f64[subset[2]][2],
+        dv_f64[subset[2]][3],
+        dv_f64[subset[3]][0],
+        dv_f64[subset[3]][1],
+        dv_f64[subset[3]][2],
+        dv_f64[subset[3]][3],
     );
 
     // Step 2: Compute SVD of Â.
@@ -869,13 +891,10 @@ fn f64_prefilter_rejects(dv_f64: &[[f64; 4]], subset: &[usize; 4], f: usize) -> 
         }
 
         // ŝ = ŷᵢᵀv̂
-        let s_hat = y_i[0] * v_hat[0] + y_i[1] * v_hat[1]
-            + y_i[2] * v_hat[2] + y_i[3] * v_hat[3];
+        let s_hat = y_i[0] * v_hat[0] + y_i[1] * v_hat[1] + y_i[2] * v_hat[2] + y_i[3] * v_hat[3];
 
         // ‖ŷᵢ‖₂
-        let y_norm = (y_i[0] * y_i[0] + y_i[1] * y_i[1]
-            + y_i[2] * y_i[2] + y_i[3] * y_i[3])
-            .sqrt();
+        let y_norm = (y_i[0] * y_i[0] + y_i[1] * y_i[1] + y_i[2] * y_i[2] + y_i[3] * y_i[3]).sqrt();
 
         // δ = C · κ̂ · ε_mach · ‖v̂‖ · ‖ŷᵢ‖
         let delta = C * kappa_hat * EPS_MACH * v_norm * y_norm;
@@ -993,10 +1012,7 @@ mod tests {
 
         for vd in &vds {
             assert_eq!(vd.len(), 4, "simplex vertex should lie on exactly 4 facets");
-            assert!(
-                vd.iter().all(|&i| i < 5),
-                "facet indices should be in 0..5"
-            );
+            assert!(vd.iter().all(|&i| i < 5), "facet indices should be in 0..5");
         }
 
         // Each vertex descriptor is {0..4} minus one element
@@ -1151,8 +1167,7 @@ mod tests {
             .zip(heights.iter())
             .map(|(n, h)| std::array::from_fn(|c| &n[c] / h))
             .collect();
-        let p =
-            Polytope4D::new(dual_vertices).expect("non-simple polytope should succeed");
+        let p = Polytope4D::new(dual_vertices).expect("non-simple polytope should succeed");
 
         let vds = vertex_descriptors_from_incidence(&p);
         assert_eq!(vds.len(), 15, "cut hypercube should have 15 vertices");
@@ -1314,9 +1329,21 @@ mod tests {
         let c = [rat(0), rat(3), rat(-2), rat(1)];
         let d = cross_product_4d_rational(&a, &b, &c);
 
-        assert!(dot4(&d, &a).is_zero(), "d . a = {} should be 0", dot4(&d, &a));
-        assert!(dot4(&d, &b).is_zero(), "d . b = {} should be 0", dot4(&d, &b));
-        assert!(dot4(&d, &c).is_zero(), "d . c = {} should be 0", dot4(&d, &c));
+        assert!(
+            dot4(&d, &a).is_zero(),
+            "d . a = {} should be 0",
+            dot4(&d, &a)
+        );
+        assert!(
+            dot4(&d, &b).is_zero(),
+            "d . b = {} should be 0",
+            dot4(&d, &b)
+        );
+        assert!(
+            dot4(&d, &c).is_zero(),
+            "d . c = {} should be 0",
+            dot4(&d, &c)
+        );
         assert!(
             !d.iter().all(|x| x.is_zero()),
             "cross product should be nonzero for independent inputs"
@@ -1365,9 +1392,16 @@ mod tests {
             [rat(1), rat(1), rat(-1), rat(-1)], // 9: x_1+x_2-x_3-x_4 <= 2
         ];
         let heights = vec![
-            rat(1), rat(1), rat(1), rat(1),
-            rat(1), rat(1), rat(1), rat(1),
-            rat(2), rat(2),
+            rat(1),
+            rat(1),
+            rat(1),
+            rat(1),
+            rat(1),
+            rat(1),
+            rat(1),
+            rat(1),
+            rat(2),
+            rat(2),
         ];
         let dual_vertices: Vec<[BigRational; 4]> = normals
             .iter()

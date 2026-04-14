@@ -8,6 +8,17 @@
 //!
 //! Mathematical correspondence: [def:polytope-dual], [def:polar-body]
 
+//! Architecture: `construction` validates inputs and assembles invariants; `queries` exposes immutable accessors; `conversions` owns rational<->f64 adapters and conversion checks.
+mod construction;
+mod conversions;
+mod queries;
+#[allow(unused_imports)]
+pub(super) use construction::*;
+#[allow(unused_imports)]
+pub(super) use conversions::*;
+#[allow(unused_imports)]
+pub(super) use queries::*;
+
 use nalgebra::{DMatrix, Vector4};
 use num_rational::BigRational;
 use std::collections::BTreeSet;
@@ -106,7 +117,10 @@ impl std::fmt::Display for ConstructionError {
                 write!(f, "halfspaces[{i}] and [{j}] are duplicates")
             }
             Self::Unbounded => {
-                write!(f, "polytope is unbounded (dual vertices do not positively span R^4)")
+                write!(
+                    f,
+                    "polytope is unbounded (dual vertices do not positively span R^4)"
+                )
             }
             Self::NoVertices => write!(f, "no vertices found (inconsistent halfspaces)"),
             Self::RedundantFacet(i) => write!(f, "facet {i} is redundant"),
@@ -177,9 +191,7 @@ impl Polytope4D {
     ///
     /// Each dual vertex defines a halfspace a_i^T x <= 1. Runs the exact
     /// rational pipeline: vertex enumeration, incidence, adjacency, omega signs.
-    pub fn new(
-        dual_vertices: Vec<[BigRational; 4]>,
-    ) -> Result<Self, ConstructionError> {
+    pub fn new(dual_vertices: Vec<[BigRational; 4]>) -> Result<Self, ConstructionError> {
         Self::build(dual_vertices, None)
     }
 
@@ -221,9 +233,7 @@ impl Polytope4D {
         // incidence, omega signs). f64 cannot reliably decide these near zero.
         let dual_vertices: Vec<[BigRational; 4]> = dual_vertices_f64
             .iter()
-            .map(|a| {
-                std::array::from_fn(|c| super::rational_arithmetic::f64_to_rational(a[c]))
-            })
+            .map(|a| std::array::from_fn(|c| super::rational_arithmetic::f64_to_rational(a[c])))
             .collect();
 
         Self::build(dual_vertices, Some(dual_vertices_f64))
@@ -310,10 +320,7 @@ impl Polytope4D {
             .map(|y| {
                 std::array::from_fn(|c| {
                     &y[c]
-                        + super::rational_arithmetic::random_small_rational(
-                            rng,
-                            perturbation_bits,
-                        )
+                        + super::rational_arithmetic::random_small_rational(rng, perturbation_bits)
                 })
             })
             .collect();
@@ -351,9 +358,8 @@ impl Polytope4D {
         let f_count = dual_vertices.len();
 
         // Build vertex-facet incidence from the descriptor sets
-        let incidence = DMatrix::from_fn(v_count, f_count, |v, f| {
-            vertex_descriptors[v].contains(&f)
-        });
+        let incidence =
+            DMatrix::from_fn(v_count, f_count, |v, f| vertex_descriptors[v].contains(&f));
 
         // Facets are adjacent iff they share at least one vertex
         let vertex_adjacency = DMatrix::from_fn(f_count, f_count, |i, k| {
@@ -437,7 +443,6 @@ impl Polytope4D {
     pub fn facet_count(&self) -> usize {
         self.dual_vertices.len()
     }
-
 }
 
 /// Convert exact rational 4-vector to f64.
@@ -486,7 +491,10 @@ mod tests {
         let p = Polytope4D::from_f64(halfspaces).unwrap();
         assert_eq!(p.facet_count(), 5);
         assert_eq!(p.dual_vertices_f64().len(), 5);
-        assert!(!p.vertices_f64().is_empty(), "vertices should be precomputed");
+        assert!(
+            !p.vertices_f64().is_empty(),
+            "vertices should be precomputed"
+        );
     }
 
     /// Verify every vertex satisfies all halfspace inequalities a_i . v <= 1.
@@ -630,12 +638,7 @@ mod tests {
             let f = p.facet_count();
 
             for i in 0..f {
-                assert!(
-                    !adj[(i, i)],
-                    "{}: facet {} is self-adjacent",
-                    kp.name,
-                    i
-                );
+                assert!(!adj[(i, i)], "{}: facet {} is self-adjacent", kp.name, i);
                 for j in (i + 1)..f {
                     assert_eq!(
                         adj[(i, j)],
@@ -960,8 +963,13 @@ mod tests {
         ];
         let heights = vec![1.0; 8];
         let p = Polytope4D::from_f64(
-            normals.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect(),
-        ).unwrap();
+            normals
+                .iter()
+                .zip(heights.iter())
+                .map(|(n, &h)| n / h)
+                .collect(),
+        )
+        .unwrap();
         assert_eq!(p.facet_count(), 8);
     }
 
@@ -991,7 +999,10 @@ mod tests {
         assert_eq!(original.vertices().len(), reconstructed.vertices().len());
         assert_eq!(original.incidence(), reconstructed.incidence());
         assert_eq!(original.omega_signs(), reconstructed.omega_signs());
-        assert_eq!(original.vertex_adjacency(), reconstructed.vertex_adjacency());
+        assert_eq!(
+            original.vertex_adjacency(),
+            reconstructed.vertex_adjacency()
+        );
     }
 
     /// from_rational_parts on the crosspolytope (non-simple, 16 facets).
@@ -1009,6 +1020,9 @@ mod tests {
         assert_eq!(original.vertices().len(), reconstructed.vertices().len());
         assert_eq!(original.incidence(), reconstructed.incidence());
         assert_eq!(original.omega_signs(), reconstructed.omega_signs());
-        assert_eq!(original.vertex_adjacency(), reconstructed.vertex_adjacency());
+        assert_eq!(
+            original.vertex_adjacency(),
+            reconstructed.vertex_adjacency()
+        );
     }
 }

@@ -22,11 +22,22 @@
 //!
 //! Mathematical correspondence: [lem:kkt], [lem:q-error-bound]
 
-use crate::geom::polytope::Polytope4D;
-use crate::geom::symplectic_form::omega0;
+//! Architecture: `numerical_assembly` handles eigendecomposition/pseudoinverse assembly, `feasibility` handles beta/null-space feasibility checks, and `post_processing` computes Q/error diagnostics and outcomes.
+mod feasibility;
+mod numerical_assembly;
+mod post_processing;
+#[allow(unused_imports)]
+pub(super) use feasibility::*;
+#[allow(unused_imports)]
+pub(super) use numerical_assembly::*;
+#[allow(unused_imports)]
+pub(super) use post_processing::*;
+
 use super::beta_feasibility;
 use super::qp_assembly::build_augmented_system;
 use super::EPS_EIGEN_FLOOR;
+use crate::geom::polytope::Polytope4D;
+use crate::geom::symplectic_form::omega0;
 use nalgebra::{DMatrix, DVector, Vector4};
 
 // ── Public constants ──
@@ -238,15 +249,16 @@ pub struct KktResult {
 /// and inertia, or a non-feasible variant explaining why no solution was found.
 ///
 /// [lem:kkt]: KKT conditions characterize the EHZ capacity optimum as a saddle point.
-pub fn solve_saddle_point(
-    kkt_matrix: &DMatrix<f64>,
-    rhs: &DVector<f64>,
-) -> KktOutcome {
+pub fn solve_saddle_point(kkt_matrix: &DMatrix<f64>, rhs: &DVector<f64>) -> KktOutcome {
     let m = rhs.len() - 5;
     let size = rhs.len();
 
     let eig = kkt_matrix.clone().symmetric_eigen();
-    let max_abs_ev = eig.eigenvalues.iter().map(|e| e.abs()).fold(0.0f64, f64::max);
+    let max_abs_ev = eig
+        .eigenvalues
+        .iter()
+        .map(|e| e.abs())
+        .fold(0.0f64, f64::max);
     if max_abs_ev < EPS_EIGEN_FLOOR {
         return KktOutcome::SingularMatrix;
     }
@@ -257,19 +269,35 @@ pub fn solve_saddle_point(
     // so n_negative can exceed 5. Empirically validated by q_error experiment (Tables 8-9).
     let strict_threshold = max_abs_ev * EIGEN_CONDITION_TAU;
     let eigen_info = EigenInfo {
-        n_positive: eig.eigenvalues.iter().filter(|&&e| e > strict_threshold).count(),
-        n_negative: eig.eigenvalues.iter().filter(|&&e| e < -strict_threshold).count(),
-        n_zero: size - eig.eigenvalues.iter().filter(|&&e| e > strict_threshold).count()
-            - eig.eigenvalues.iter().filter(|&&e| e < -strict_threshold).count(),
+        n_positive: eig
+            .eigenvalues
+            .iter()
+            .filter(|&&e| e > strict_threshold)
+            .count(),
+        n_negative: eig
+            .eigenvalues
+            .iter()
+            .filter(|&&e| e < -strict_threshold)
+            .count(),
+        n_zero: size
+            - eig
+                .eigenvalues
+                .iter()
+                .filter(|&&e| e > strict_threshold)
+                .count()
+            - eig
+                .eigenvalues
+                .iter()
+                .filter(|&&e| e < -strict_threshold)
+                .count(),
         eigenvalues: eig.eigenvalues,
         eigenvectors: eig.eigenvectors,
     };
 
     // Tier 1: Permissive threshold — retain all eigenvalues above machine-epsilon floor.
-    if let Some(outcome) = try_pseudoinverse_with_threshold(
-        kkt_matrix, rhs, m,
-        &eigen_info, EPS_EIGEN_FLOOR,
-    ) {
+    if let Some(outcome) =
+        try_pseudoinverse_with_threshold(kkt_matrix, rhs, m, &eigen_info, EPS_EIGEN_FLOOR)
+    {
         if let KktOutcome::Feasible(_) = &outcome {
             return outcome;
         }
@@ -277,10 +305,8 @@ pub fn solve_saddle_point(
 
     // Tier 2: Strict threshold — treat small eigenvalues as null space.
     // If Tier 2 also fails (None), the solver couldn't classify this orbit.
-    try_pseudoinverse_with_threshold(
-        kkt_matrix, rhs, m,
-        &eigen_info, strict_threshold,
-    ).unwrap_or(KktOutcome::Infeasible)
+    try_pseudoinverse_with_threshold(kkt_matrix, rhs, m, &eigen_info, strict_threshold)
+        .unwrap_or(KktOutcome::Infeasible)
 }
 
 /// Convenience: solve KKT for a polytope and permutation in one call.
@@ -304,11 +330,7 @@ pub fn solve_kkt_for(polytope: &Polytope4D, perm: &[usize]) -> KktOutcome {
 ///
 /// [lem:H-quadratic]: Q(beta) = sum_{i>j} beta_i beta_j omega_0(a_{sigma(j)}, a_{sigma(i)}).
 #[allow(dead_code)]
-pub(crate) fn q_from_beta(
-    dual_vertices: &[Vector4<f64>],
-    perm: &[usize],
-    beta: &[f64],
-) -> f64 {
+pub(crate) fn q_from_beta(dual_vertices: &[Vector4<f64>], perm: &[usize], beta: &[f64]) -> f64 {
     let m = beta.len();
     (1..m)
         .flat_map(|i| (0..i).map(move |j| (i, j)))
@@ -352,7 +374,7 @@ fn try_pseudoinverse_with_threshold(
     let residual_vec = kkt * &x0 - rhs;
     let residual_norm = residual_vec.norm();
     if residual_norm > EPS_KKT_RESIDUAL {
-        return None;  // Tier fallback: try next threshold.
+        return None; // Tier fallback: try next threshold.
     }
 
     // Q error bound computation ([lem:q-error-bound]).
@@ -383,14 +405,34 @@ fn try_pseudoinverse_with_threshold(
 
     // If already feasible (all beta > EPS), compute error bound and return.
     if beta0.iter().all(|&b| b > EPS_BETA_POSITIVE) {
-        return Some(finalize_result(&beta0, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info));
+        return Some(finalize_result(
+            &beta0,
+            mu0,
+            xi0,
+            kkt,
+            m,
+            q_correction,
+            residual_norm,
+            abs_lambda_min,
+            eigen_info,
+        ));
     }
 
     // Full rank at this threshold: unique solution. If some beta near zero,
     // still accept as uncertain candidate for the accumulator.
     if rank == size {
         if beta0.iter().all(|&b| b > -EPS_BETA_POSITIVE) {
-            return Some(finalize_result(&beta0, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info));
+            return Some(finalize_result(
+                &beta0,
+                mu0,
+                xi0,
+                kkt,
+                m,
+                q_correction,
+                residual_norm,
+                abs_lambda_min,
+                eigen_info,
+            ));
         }
         return Some(KktOutcome::Infeasible);
     }
@@ -439,7 +481,17 @@ fn try_pseudoinverse_with_threshold(
     // allocations on the hot path for degenerate polytopes.
     if k_eff == 0 {
         if beta0.iter().all(|&b| b > -EPS_BETA_POSITIVE) {
-            return Some(finalize_result(&beta0, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info));
+            return Some(finalize_result(
+                &beta0,
+                mu0,
+                xi0,
+                kkt,
+                m,
+                q_correction,
+                residual_norm,
+                abs_lambda_min,
+                eigen_info,
+            ));
         } else {
             return Some(KktOutcome::Infeasible);
         }
@@ -491,13 +543,25 @@ fn try_pseudoinverse_with_threshold(
     // Q is computed from beta0 (pseudoinverse solution), not beta_final (LP-shifted).
     // beta_final is only used for feasibility (margin classification) and downstream
     // beta values (orbit reconstruction, gradients).
-    Some(match finalize_result(&beta0_ref, mu0, xi0, kkt, m, q_correction, residual_norm, abs_lambda_min, eigen_info) {
-        KktOutcome::Feasible(mut result) => {
-            result.beta = beta_final;
-            KktOutcome::Feasible(result)
-        }
-        other => other,
-    })
+    Some(
+        match finalize_result(
+            &beta0_ref,
+            mu0,
+            xi0,
+            kkt,
+            m,
+            q_correction,
+            residual_norm,
+            abs_lambda_min,
+            eigen_info,
+        ) {
+            KktOutcome::Feasible(mut result) => {
+                result.beta = beta_final;
+                KktOutcome::Feasible(result)
+            }
+            other => other,
+        },
+    )
 }
 
 /// Compute the constraint residual for the beta vector using the KKT matrix structure.
@@ -576,8 +640,8 @@ fn finalize_result(
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use super::super::qp_assembly::build_augmented_system;
+    use super::*;
     use crate::geom::known_polytopes;
     use nalgebra::{DMatrix, DVector};
 
@@ -596,7 +660,11 @@ mod tests {
         assert!(
             (a - b).abs() < tol,
             "{}: |{} - {}| = {} >= {}",
-            msg, a, b, (a - b).abs(), tol
+            msg,
+            a,
+            b,
+            (a - b).abs(),
+            tol
         );
     }
 
@@ -704,7 +772,8 @@ mod tests {
         assert!(
             (capacity - simplex.capacity).abs() < 1e-4 * simplex.capacity,
             "simplex capacity mismatch: got {}, expected {}",
-            capacity, simplex.capacity
+            capacity,
+            simplex.capacity
         );
     }
 
@@ -714,12 +783,16 @@ mod tests {
         let tri_prod = known_polytopes::lagrangian_triangle_product();
         let (best_q, found) = find_best_q_exhaustive(&tri_prod.polytope);
 
-        assert!(found, "should find at least one valid candidate on triangle product");
+        assert!(
+            found,
+            "should find at least one valid candidate on triangle product"
+        );
         let capacity = 0.5 / best_q;
         assert!(
             (capacity - tri_prod.capacity).abs() < 1e-4 * tri_prod.capacity,
             "triangle product capacity mismatch: got {}, expected {}",
-            capacity, tri_prod.capacity
+            capacity,
+            tri_prod.capacity
         );
     }
 
@@ -781,7 +854,10 @@ mod tests {
                 }
             });
         }
-        assert!(checked > 0, "should have found at least one solution to check");
+        assert!(
+            checked > 0,
+            "should have found at least one solution to check"
+        );
     }
 
     // ── Inertia tests ──
@@ -814,7 +890,10 @@ mod tests {
         let size = 8;
         let kkt = DMatrix::zeros(size, size);
         let rhs = DVector::zeros(size);
-        assert!(matches!(solve_saddle_point(&kkt, &rhs), KktOutcome::SingularMatrix));
+        assert!(matches!(
+            solve_saddle_point(&kkt, &rhs),
+            KktOutcome::SingularMatrix
+        ));
     }
 
     /// Identity matrix with standard RHS: verify it doesn't panic.
@@ -861,7 +940,12 @@ mod tests {
             .enumerate()
             .map(|(i, a)| {
                 let s = 1e-4 * ((i + 1) as f64);
-                nalgebra::Vector4::new(a[0] + s * 0.3, a[1] - s * 0.7, a[2] + s * 0.5, a[3] - s * 0.1)
+                nalgebra::Vector4::new(
+                    a[0] + s * 0.3,
+                    a[1] - s * 0.7,
+                    a[2] + s * 0.5,
+                    a[3] - s * 0.1,
+                )
             })
             .collect();
         let perturbed_poly =
@@ -901,12 +985,20 @@ mod tests {
             .enumerate()
             .map(|(i, a)| {
                 let s = 0.01 * ((i + 1) as f64);
-                nalgebra::Vector4::new(a[0] + s * 0.3, a[1] - s * 0.7, a[2] + s * 0.5, a[3] - s * 0.1)
+                nalgebra::Vector4::new(
+                    a[0] + s * 0.3,
+                    a[1] - s * 0.7,
+                    a[2] + s * 0.5,
+                    a[3] - s * 0.1,
+                )
             })
             .collect();
         let pp = crate::geom::polytope::Polytope4D::from_f64(perturbed).expect("perturbed LP(4,4)");
         let result = crate::algorithms::hk2017::ehz_capacity(&pp);
-        assert!(result.is_some(), "ehz_capacity should succeed on perturbed LP(4,4)");
+        assert!(
+            result.is_some(),
+            "ehz_capacity should succeed on perturbed LP(4,4)"
+        );
     }
 
     // ── Constraint satisfaction ──
@@ -928,7 +1020,8 @@ mod tests {
                     assert!(
                         (sum_beta - 1.0).abs() < 1e-6,
                         "normalization violated: sum(beta) = {}, expected 1.0 (perm {:?})",
-                        sum_beta, perm
+                        sum_beta,
+                        perm
                     );
                     checked += 1;
                 }
@@ -953,13 +1046,18 @@ mod tests {
                 if let KktOutcome::Feasible(result) = solve_saddle_point(&kkt, &rhs) {
                     #[allow(clippy::needless_range_loop)]
                     for d in 0..4 {
-                        let sum: f64 = result.beta.iter().enumerate()
+                        let sum: f64 = result
+                            .beta
+                            .iter()
+                            .enumerate()
                             .map(|(idx, &b)| b * dual_verts[perm[idx]][d])
                             .sum();
                         assert!(
                             sum.abs() < 1e-6,
                             "closure[{}] violated: sum = {:.2e} (perm {:?})",
-                            d, sum, perm
+                            d,
+                            sum,
+                            perm
                         );
                     }
                     checked += 1;
