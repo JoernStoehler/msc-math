@@ -1,8 +1,9 @@
 //! Polytope boundedness check for R^4 polytopes (f64 fast-fail pre-filter).
 //!
 //! Provides a floating-point boundedness check that runs before the expensive
-//! exact rational pipeline. The rational pipeline in `vertex_enumeration.rs`
-//! performs the authoritative boundedness and irredundancy checks over Q.
+//! exact rational pipeline. The rational pipeline in
+//! `vertex_enumeration/{boundedness,irredundancy}.rs` performs the
+//! authoritative boundedness and irredundancy checks over Q.
 //!
 //! Mathematical correspondence: [lem:positive-span]
 
