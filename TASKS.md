@@ -18,7 +18,7 @@ Rough shape of Jörn's plan as of 2026-04-12. Ordering is by hard dependencies, 
 ### Today + tomorrow (2026-04-12 Sun + 2026-04-13 Mon)
 - **Tube algorithm write-up** (Jörn): first sketch a correct rotation formula + proof → unblocks tube benchmark work. Agents can't do useful tube work before this.
 - **Research results strengthening** (both): more experiment ideas, empirical falsification of conclusions, cleaner evidence presentations, extra evidence types even for high-confidence conclusions.
-- **Library docs/architecture shape decision** (Jörn + agent): pick form (colocated README vs architecture.md vs beefed-up file headers vs just math.tex). Agent runs a docs audit to test whether existing state already covers it.
+- **Library documentation/architecture shape decision** (Jörn + agent): pick form (colocated README vs architecture.md vs beefed-up file headers vs just math.tex). Agent runs a docs audit to test whether existing state already covers it.
 - **LICCA Sunday compute window** (agent): massive ascent sampling + HKO2024 neighborhood falsification as large-N experiments.
 
 ### Tuesday 2026-04-14 — Kai meeting (hard gate)
@@ -217,7 +217,7 @@ sys as a continuous function on polytope space, no privileged threshold.
 ### [done] [2026-03] 3d. Gradient validation
 - Per-orbit gradient validated (slope=2.00) across 12 polytope types.
 - Direction-filtered subdifferential is a negative result.
-- `crates/dev-gradient/numerics/`, `numerics-edge-cases/`, `numerics-subdifferential/`
+- `experiments/numerics/gradient/` (`numerics/`, `numerics-edge-cases/`, `numerics-subdifferential/`)
 
 ### [future] Systematic landscape analysis
 - Gradient flow convergence, local maxima below sys=1, random noise effects.
@@ -334,7 +334,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Terse `.md` with checkpoints Jörn reads ~10 min before the Kai call and drives the meeting from. Not a prose doc for Kai — Jörn drives verbally.
 - Organized by decision: locked / empirically strong but unproven / genuinely open / options for closing each gap / recommended priority.
 - Synthesizes RESULTS.md + TASKS.md + logbooks + math write-up scaffold + any LICCA Sunday preliminaries.
-- Output: briefing note at a migrated `.md` path outside `docs/`.
+- Output: `kai-briefing-2026-04-14.md` at a migrated repo path outside the deleted documentation root.
 - Scheduled: 2026-04-13 Mon, after the math write-up scaffold lands.
 
 ### [done] [2026-04-12] Thesis figure consistency check
@@ -433,7 +433,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Deliverables: `papers/citation-index.md` (verified theorem index), expanded `papers/AGENTS.md` (download/verify workflow), 4 PDFs in `papers/`.
 
 ### [done] [2026-04-07] Delete superseded experiments
-- Directories deleted 2026-04-03. Reference cleanup done 2026-04-07: removed gradient-search from code comments (gradient-ascent-general/products run.rs), rules examples, stale cleanup note.
+- Directories deleted 2026-04-03. Reference cleanup done 2026-04-07: removed gradient-search from gradient-ascent-general/products code comments, rules examples, stale cleanup note.
 
 ## [open] Infrastructure + tooling
 
@@ -469,7 +469,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Branch audit: 5 branches fully merged with 0-file diffs (`citation-verification`, `citation-verification-d`, `database-cleanup`, `delete-api-reference`, `housekeeping-triage`) — safe `git branch -d` candidates. 1 unmerged: `numerical-story-expand` (1 ahead / 9 behind, +458/-160 in `thesis/numerical-story.md`). Jörn decides per-branch.
 
 ### [done] [2026-04-12] Delete api-reference/
-- Never used organically by agents; agents read source directly. Removed `api-reference/`, `crates/tools/api-extract/`, pre-commit hook, workspace member, and stale project-doc references.
+- Never used organically by agents; agents read source directly. Removed `api-reference/`, the old API extract workspace member, the pre-commit hook, and stale project-doc references.
 
 ### [done] [2026-04] Polytope database
 - `library/src/database.rs`, JSONL format, 1198 entries. 6 experiments migrated.

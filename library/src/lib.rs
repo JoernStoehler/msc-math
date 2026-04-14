@@ -34,8 +34,6 @@
 //! the one place that crosses the `geom` ↔ `kkt` boundary.
 //!
 //! Mathematical proofs live in per-module `math.tex` files under `formal/`.
-//! During migration, the canonical developer-math root is being repaired
-//! from the old `crates/` build layout to `formal/`.
 
 pub mod geom;
 pub mod kkt;

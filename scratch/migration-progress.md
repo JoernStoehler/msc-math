@@ -41,6 +41,21 @@ Residual-scope audit (2026-04-14, after checkpoint `f6a40a21`) found:
   - `dev-tube/` (target file marks as follow-up decision, not silent assignment)
   - `math-writeup-scaffold.md` (still needs a non-`crates/` home)
 
+Residual-scope audit result after cleanup:
+- `.devcontainer/warmup-cache.sh` fixed to warm the repo-root workspace
+- `.codex/agents/review-python.toml` fixed to point at `experiments/figure_config.py`
+- `TASKS.md` stale live pointers repaired
+- `crates/math-writeup-scaffold.md` moved to `scratch/math-writeup-scaffold.md`
+- dead old-root shims deleted:
+  - `crates/.gitignore`
+  - `crates/.latexmkrc`
+  - `crates/Cargo.lock`
+  - `crates/Cargo.toml`
+  - `crates/bibliography.bib`
+  - `crates/database/Cargo.toml`
+  - `crates/main.tex`
+- the remaining `crates/`, `run.rs`, `docs/`, and `data/polytopes.jsonl` scan hits are historical/provenance files only, and are now listed in `scratch/migration/stale-path-allowlist.txt`
+
 Latest local check:
 - `cargo metadata --format-version 1 --no-deps` passes from repo root.
 - `cargo build --workspace --release` passes from repo root.
@@ -92,10 +107,8 @@ Phases 2-4 completed:
   - `cd formal && latexmk` succeeds
 
 Next:
-- finish the residual cleanup listed above
-- rerun the stale-path scan
-- update the exception list/handoff if any historical leftovers remain intentionally
-- checkpoint again before any context compaction or session end
+- commit the residual-scope cleanup
+- then the migration handoff can honestly say: live migration done, remaining leftovers are explicit historical exceptions or separately-deferred follow-up decisions
 
 Do not assume every historical note should be rewritten: the remaining `data/polytopes.jsonl` mentions in `research/` are historical descriptions of the old behavior, not live instructions.
 

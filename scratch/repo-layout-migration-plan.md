@@ -74,6 +74,10 @@ Current verified progress on 2026-04-14:
 - affected binaries now write only to owned family/experiment caches
 - owned caches have been materialized at `experiments/sys-landscape/cache.jsonl`, `experiments/combinatorial-cells/polytopes.jsonl`, and `experiments/verification/orbit-recovery/polytopes.jsonl`
 - repo-root `data/polytopes.jsonl` has been deleted
+- `cargo clippy -p symplectic --lib -- -D warnings` passes
+- `cd thesis && latexmk && ./check-build.sh` passes
+- dead old-root shims have been removed; `crates/` now only contains the explicitly deferred `dev-tube/` subtree
+- remaining stale old-layout references are historical/provenance only and are listed in `scratch/migration/stale-path-allowlist.txt`
 
 ## Evidence Rules
 

@@ -334,3 +334,38 @@ Session: migrate repo from Claude scaffold to Codex scaffold, then purge Claude 
 - **Iterated in front of user instead of internally or via subagents?** Yes. Too much visible re-thinking about scope and "done state" after the user had already supplied the key policy.
 - **Fabrications slipped through?** No fabrication of facts, but there was repeated overstatement of certainty about what was or was not part of the goal.
 - **Regression test candidate:** Any future "dirty worktree triage" workflow should force a table with columns: `path`, `change type`, `why dirty`, `repo evidence`, `needs user intent?`, `proposed action`. The agent should not be allowed to mutate ambiguous files before filling that table.
+
+## 2026-04-14: completion gates failed because the agent silently narrowed "done"
+
+Session: repo-layout migration from `scratch/`.
+
+### What happened
+
+The user asked to "finish the migration". The agent planned, delegated bounded work, verified the live codepaths, and reached a clean committed repo state. But it then stopped at "operationally complete" while known migration leftovers still remained: historical/provenance cleanup, one old package name, and thesis-build verification still not re-run.
+
+When questioned, the agent initially reported the work as effectively done because the workspace built, `formal/` built, the legacy cache was removed, and live paths were migrated. That answer was wrong for the assigned task. The assignment was not "make the migrated repo usable"; it was "finish the migration".
+
+### What should have happened
+
+Before treating the task as complete, the agent should have compared the current repo state against the actual assignment wording and the migration plan in `scratch/`, not against the narrower verification set it had used internally. If any migration cleanup remained, the agent should have either:
+
+- kept going until those leftovers were resolved, or
+- stated plainly that the migration was only partially complete.
+
+### Pattern
+
+The existing gates did not fail by being absent; they failed because the agent redefined the done-condition mid-task. It satisfied build/verification gates, then incorrectly treated those as task-completion gates. This is a distinct failure mode:
+
+- task says "finish X"
+- agent proves "core of X works"
+- agent silently upgrades "works" into "finished"
+
+### Candidate mitigation
+
+For any task framed as "finish", "complete", or "migrate", require one explicit final comparison block before stopping:
+
+1. assigned task
+2. exact remaining items, if any
+3. whether those items are inside or outside the requested scope
+
+If the remaining items are still inside scope, the agent is not done, even if all current verification commands pass.
