@@ -17,13 +17,13 @@
 //! - Action: computed action matches capacity
 //! - Solution dimension: how many free parameters in b
 
-use database::{DualVerticesKey, PolytopeRecord, SigmaAction, Source};
 use serde::Serialize;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::Path;
 use std::time::Instant;
+use symplectic::database::{self, DualVerticesKey, PolytopeRecord, SigmaAction, Source};
 use symplectic::algorithms::capacity_accumulator::CapacityResult;
 use symplectic::algorithms::hk2017::orbit_recovery::{recover_and_verify, OrbitRecovery};
 use symplectic::algorithms::hk2017::{ehz_capacity, EhzResult};

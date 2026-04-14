@@ -17,7 +17,6 @@
 //! Output: combinatorial-boundaries-anatomy.jsonl, combinatorial-boundaries-crossing.jsonl,
 //!         combinatorial-boundaries-gradient.jsonl
 
-use database::{PolytopeRecord, Source};
 use nalgebra::{Matrix4, Vector4};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
@@ -27,6 +26,7 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::Path;
 use std::time::Instant;
+use symplectic::database::{self, PolytopeRecord, Source};
 use symplectic::algorithms::facet_adjacency::{build_transition_matrix, is_feasible_cycle};
 use symplectic::algorithms::hk2017::combinations;
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;

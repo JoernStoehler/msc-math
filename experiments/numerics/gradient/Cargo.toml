@@ -22,7 +22,6 @@ path = "numerics-subdifferential/run.rs"
 workspace = true
 
 [dependencies]
-database = { path = "../database" }
 symplectic.workspace = true
 nalgebra.workspace = true
 serde.workspace = true

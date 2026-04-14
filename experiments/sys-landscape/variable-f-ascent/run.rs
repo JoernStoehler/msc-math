@@ -17,9 +17,9 @@
 //! Flags: --fresh  (clear existing data and rerun)
 //! Output: variable-f-ascent/variable-f-ascent.jsonl
 
-use database::{DualVerticesKey, PolytopeRecord};
 use exp_sys_landscape::compute_step_bound;
 use nalgebra::Vector4;
+use symplectic::database::{load, save, DualVerticesKey, PolytopeRecord, SigmaAction};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal};
@@ -222,7 +222,7 @@ fn compute_capacity_result(polytope: &Polytope4D, db: &mut Db) -> Option<(f64, V
         .entry(key)
         .or_insert_with(|| PolytopeRecord::from_polytope(polytope));
     record.capacity = Some(cap);
-    record.sigmas = Some(vec![database::SigmaAction {
+    record.sigmas = Some(vec![SigmaAction {
         perm: perm.clone(),
         action: cap,
     }]);
@@ -562,7 +562,7 @@ fn main() {
     // Separate from the shared data/polytopes.jsonl to avoid bloating it
     // with thousands of intermediate gradient-step polytopes.
     let cache_path = base.join("cache.jsonl");
-    let mut db: Db = database::load(&cache_path).expect("load cache");
+    let mut db: Db = load(&cache_path).expect("load cache");
     println!("Cache: {} entries\n", db.len());
 
     // =========================================================================
@@ -900,7 +900,7 @@ fn main() {
     // =========================================================================
 
     writer.flush().expect("flush output");
-    database::save(&cache_path, &db).expect("save cache");
+    save(&cache_path, &db).expect("save cache");
 
     println!("========================================");
     println!("Cache: {} entries (saved to {})", db.len(), cache_path.display());

@@ -33,15 +33,15 @@
 //! of QP inputs from `Polytope4D` lives in `kkt::qp_assembly`, which is
 //! the one place that crosses the `geom` ↔ `kkt` boundary.
 //!
-//! Mathematical proofs live in per-module `math.tex` files. The
-//! authoritative build is `cd crates/ && latexmk` (produces
-//! `crates/main.pdf`); `crates/library/src/math.tex` is a library-only
-//! subset.
+//! Mathematical proofs live in per-module `math.tex` files under `formal/`.
+//! During migration, the canonical developer-math root is being repaired
+//! from the old `crates/` build layout to `formal/`.
 
 pub mod geom;
 pub mod kkt;
 pub mod algorithms;
 pub mod constants;
+pub mod database;
 pub mod dataset;
 pub mod derivatives;
 pub mod random;
@@ -66,4 +66,3 @@ pub use geom::polygon::{regular_polygon_2d, rotate_polygon_2d};
 // Geometry utility submodules
 pub use geom::known_polytopes;
 pub use geom::test_utils;
-

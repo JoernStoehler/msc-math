@@ -17,9 +17,9 @@
 //! - Height range h in [0.8, 1.2]
 //! - HK2017 pruned only (production algorithm)
 
-use database::{DualVerticesKey, PolytopeRecord, SigmaAction, Source};
 use std::collections::HashMap;
 use symplectic::algorithms::hk2017::ehz_capacity;
+use symplectic::database::{load, save, DualVerticesKey, PolytopeRecord, SigmaAction, Source};
 use symplectic::geom::volume::volume;
 use symplectic::random::generate_polytope;
 use serde::Serialize;
@@ -75,7 +75,7 @@ fn main() {
     let output_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("random-sample/random-sweep.jsonl");
 
-    let mut db = database::load(&db_path).expect("failed to load database");
+    let mut db = load(&db_path).expect("failed to load database");
     println!("Loaded database: {} entries\n", db.len());
 
     let file = File::create(&output_path).expect("failed to create output file");
@@ -188,7 +188,7 @@ fn main() {
     }
 
     writer.flush().expect("flush output");
-    database::save(&db_path, &db).expect("failed to save database");
+    save(&db_path, &db).expect("failed to save database");
 
     println!("\nWrote {total} entries to {}", output_path.display());
     println!("Database: {} entries (saved to {})", db.len(), db_path.display());

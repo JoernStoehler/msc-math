@@ -24,13 +24,13 @@
 //! resume plumbing lives in `exp_sys_landscape::{parse_ascent_args,
 //! open_ascent_writers, run_parallel_seeds, ...}`.
 
-use database::{DualVerticesKey, PolytopeRecord};
 use exp_sys_landscape::{
     compute_step_bound, finalize_ascent_output, open_ascent_writers, parse_ascent_args,
     run_parallel_seeds,
     trace_path_for, AscentArgs, SeedResult, SummaryRow, TraceRow, MAX_STEP_SIZE,
 };
 use nalgebra::Vector4;
+use symplectic::database::{load, save, DualVerticesKey, PolytopeRecord};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal};
@@ -470,7 +470,7 @@ fn main() {
     let db_arc: Arc<Mutex<HashMap<DualVerticesKey, PolytopeRecord>>> = if args.no_db_update {
         Arc::new(Mutex::new(HashMap::new()))
     } else {
-        let db = database::load(&db_path).expect("failed to load database");
+        let db = load(&db_path).expect("failed to load database");
         println!("Loaded database: {} entries", db.len());
         Arc::new(Mutex::new(db))
     };
@@ -533,7 +533,7 @@ fn main() {
 
     if !no_db_update {
         let db = db_arc.lock().expect("lock db for save");
-        database::save(&db_path, &db).expect("failed to save database");
+        save(&db_path, &db).expect("failed to save database");
     }
 
     let (best_sys, best_name) = {

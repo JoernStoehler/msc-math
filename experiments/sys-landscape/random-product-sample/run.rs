@@ -17,9 +17,9 @@
 //! generate_polytope equivalent for Lagrangian products. Database lookup is
 //! key-based (BigRational dual vertices), not Source-based.
 
-use database::{DualVerticesKey, PolytopeRecord, SigmaAction};
 use std::collections::HashMap;
 use symplectic::algorithms::billiard::billiard_capacity;
+use symplectic::database::{load, save, DualVerticesKey, PolytopeRecord, SigmaAction, Source};
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::random_polygon_2d;
 use symplectic::geom::volume::volume;
@@ -77,7 +77,7 @@ fn main() {
         .join("random-product-sample/random-product-sweep.jsonl");
 
     let mut db: HashMap<DualVerticesKey, PolytopeRecord> =
-        database::load(&db_path).expect("failed to load database");
+        load(&db_path).expect("failed to load database");
     println!("Loaded database: {} entries\n", db.len());
 
     let file = File::create(&output_path).expect("failed to create output file");
@@ -106,7 +106,7 @@ fn main() {
             if let Some(record) = db.get_mut(&key) {
                 // Backfill source for records that predate source tracking
                 if record.source.is_none() {
-                    record.source = Some(database::Source::LagrangianProduct {
+                    record.source = Some(Source::LagrangianProduct {
                         n1: k,
                         n2: m,
                         circumradius_q: 0.0,
@@ -163,7 +163,7 @@ fn main() {
 
             // Insert into database
             let mut record = PolytopeRecord::from_polytope(&polytope);
-            record.source = Some(database::Source::LagrangianProduct {
+            record.source = Some(Source::LagrangianProduct {
                 n1: k,
                 n2: m,
                 // Random polygon pair — no fixed circumradius or rotation.
@@ -210,7 +210,7 @@ fn main() {
     }
 
     writer.flush().expect("flush output");
-    database::save(&db_path, &db).expect("failed to save database");
+    save(&db_path, &db).expect("failed to save database");
 
     println!("\nWrote {total} entries to {}", output_path.display());
     println!("Database: {} entries (saved to {})", db.len(), db_path.display());

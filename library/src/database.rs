@@ -1,18 +1,10 @@
-//! Polytope database: shared cache of (polytope, capacity, sigmas) across experiments.
+//! Polytope JSONL storage for experiment-owned caches and datasets.
 //!
 //! # Why
 //!
-//! Multiple experiments compute the same expensive operations on the same polytopes:
-//! vertex enumeration (O(C(F,4))), EHZ capacity, volume, sigma lists. The database
-//! caches these results in a JSONL file committed to git, so they are computed once
-//! and reused across experiments, worktrees, and reruns.
-//!
-//! New worktrees inherit cached data from `main`. JSONL is one-record-per-line, so
-//! git merges work automatically when two branches append different records.
-//!
-//! The database also enables regression testing: compare `data/polytopes.jsonl`
-//! across commits to detect changes in capacity values or sigma lists after
-//! algorithm modifications.
+//! Experiments store rational polytope records in one or more local JSONL files.
+//! The helpers in this module read and write those files, but the caller owns
+//! the path policy: there is no canonical mutable shared cache path here.
 //!
 //! # Public API
 //!
@@ -66,7 +58,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::io::{self, BufRead, Write};
 use std::path::Path;
-use symplectic::{ConstructionError, Polytope4D};
+use crate::{ConstructionError, Polytope4D};
 
 /// The key type: rational dual vertices.
 /// BigRational implements Hash + Eq, so this works as a HashMap key.

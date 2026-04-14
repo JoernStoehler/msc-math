@@ -19,13 +19,13 @@
 //! 3. Writes to omega-obstacle/omega-obstacle.jsonl
 //! 4. Python script reads JSONL, produces figures
 
-use database::{DualVerticesKey, PolytopeRecord, SigmaAction, Source};
 use nalgebra::Vector4;
 use serde::Serialize;
 use std::collections::HashMap;
 use std::io::{BufWriter, Write};
 use std::path::Path;
 use std::time::Instant;
+use symplectic::database::{self, DualVerticesKey, PolytopeRecord, SigmaAction, Source};
 use symplectic::derivatives::{
     capacity_derivatives_a, volume_derivatives_a,
 };
