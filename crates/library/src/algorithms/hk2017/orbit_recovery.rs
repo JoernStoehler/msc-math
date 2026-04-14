@@ -83,10 +83,7 @@ pub struct OrbitRecovery {
 /// are zero), which should not happen for valid algorithm output.
 ///
 /// [lem:base-point-recovery], [rem:beta-to-tau]
-pub fn recover_and_verify(
-    polytope: &Polytope4D,
-    result: &EhzResult,
-) -> Option<OrbitRecovery> {
+pub fn recover_and_verify(polytope: &Polytope4D, result: &EhzResult) -> Option<OrbitRecovery> {
     let duals = polytope.dual_vertices_f64();
     let sigma = &result.result.best_permutation;
     let beta = &result.result.best_beta;
@@ -97,9 +94,7 @@ pub fn recover_and_verify(
     //
     // tau_k = T * beta_k, where T = capacity.
     // [rem:beta-to-tau]
-    let dwell_times: Vec<f64> = (0..m)
-        .map(|k| capacity * beta[k])
-        .collect();
+    let dwell_times: Vec<f64> = (0..m).map(|k| capacity * beta[k]).collect();
 
     // ── Stage 2: recover base point ──
     //
@@ -165,34 +160,21 @@ pub fn recover_and_verify(
     if solution_dim > 0 {
         if let Some(v_mat) = &svd.v_t {
             let null_vecs: Vec<Vector4<f64>> = (rank..4)
-                .map(|i| {
-                    Vector4::new(v_mat[(i, 0)], v_mat[(i, 1)], v_mat[(i, 2)], v_mat[(i, 3)])
-                })
+                .map(|i| Vector4::new(v_mat[(i, 0)], v_mat[(i, 1)], v_mat[(i, 2)], v_mat[(i, 3)]))
                 .collect();
-            base_point = optimize_in_null_space(
-                base_point,
-                &null_vecs,
-                &displacements,
-                duals,
-            );
+            base_point = optimize_in_null_space(base_point, &null_vecs, &displacements, duals);
         }
     }
 
     // ── Stage 3: compute breakpoints and verify ──
     //
     // Breakpoints: b + v_k for k = 0..=m.
-    let breakpoints: Vec<Vector4<f64>> = (0..=m)
-        .map(|k| base_point + displacements[k])
-        .collect();
+    let breakpoints: Vec<Vector4<f64>> = (0..=m).map(|k| base_point + displacements[k]).collect();
 
     // Max violation: max_{j,k} (<a_j, breakpoint_k> - 1).
     let max_violation = breakpoints
         .iter()
-        .flat_map(|p| {
-            duals
-                .iter()
-                .map(move |a| a.dot(p) - 1.0)
-        })
+        .flat_map(|p| duals.iter().map(move |a| a.dot(p) - 1.0))
         .fold(f64::NEG_INFINITY, f64::max);
 
     // Closure error: ||breakpoints[m] - breakpoints[0]||.
@@ -234,9 +216,7 @@ fn max_violation_for(
         .iter()
         .flat_map(|v| {
             let p = b + v;
-            dual_vertices
-                .iter()
-                .map(move |a| a.dot(&p) - 1.0)
+            dual_vertices.iter().map(move |a| a.dot(&p) - 1.0)
         })
         .fold(f64::NEG_INFINITY, f64::max)
 }
@@ -373,8 +353,7 @@ mod tests {
 
         // Facet sequence matches the best permutation.
         assert_eq!(
-            recovery.facet_sequence,
-            result.result.best_permutation,
+            recovery.facet_sequence, result.result.best_permutation,
             "{name}: facet_sequence does not match best_permutation"
         );
 
@@ -394,11 +373,7 @@ mod tests {
     }
 
     /// Helper to verify on-facet property: each breakpoint k lies on facet sigma(k).
-    fn check_on_facet(
-        name: &str,
-        polytope: &Polytope4D,
-        result: &EhzResult,
-    ) {
+    fn check_on_facet(name: &str, polytope: &Polytope4D, result: &EhzResult) {
         let duals = polytope.dual_vertices_f64();
         let sigma = &result.result.best_permutation;
 

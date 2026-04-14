@@ -28,9 +28,9 @@ use crate::geom::known_polytopes;
 use crate::geom::polytope::Polytope4D;
 use nalgebra::{Matrix4, Vector4};
 use rand::Rng;
+use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::StandardNormal;
-use rand::SeedableRng;
 
 /// Entry in the polytope catalog (no computed values yet).
 #[derive(Clone, Debug)]
@@ -160,7 +160,10 @@ struct DatasetFile {
 pub(crate) fn save_test_dataset(path: &std::path::Path, dataset: &[TestPolytope]) {
     let file = DatasetFile {
         catalog_version: CATALOG_VERSION,
-        entries: dataset.iter().map(DatasetEntry::from_test_polytope).collect(),
+        entries: dataset
+            .iter()
+            .map(DatasetEntry::from_test_polytope)
+            .collect(),
     };
     let json = serde_json::to_string_pretty(&file).expect("serialize dataset");
     if let Some(parent) = path.parent() {
@@ -337,16 +340,18 @@ pub fn generate_test_dataset() -> Vec<TestPolytope> {
         if gap > 0.0 {
             eprintln!(
                 "  {} -- NUMERICAL GAP: certified={:.6} uncertain={:.6} gap={:.2e}",
-                entry.name, pruned_result.result.capacity, pruned_result.result.capacity_uncertain, gap
+                entry.name,
+                pruned_result.result.capacity,
+                pruned_result.result.capacity_uncertain,
+                gap
             );
         }
 
         let cap_unpruned = if entry.base_index.is_none() {
             // Base polytope: also compute unpruned, verify agreement.
-            let unpruned_result = ehz_capacity_unpruned(&entry.polytope)
-                .unwrap_or_else(|| {
-                    panic!("'{}': ehz_capacity_unpruned() returned None", entry.name)
-                });
+            let unpruned_result = ehz_capacity_unpruned(&entry.polytope).unwrap_or_else(|| {
+                panic!("'{}': ehz_capacity_unpruned() returned None", entry.name)
+            });
             let unpruned = unpruned_result.result.capacity;
 
             let rel_err = (cap_pruned - unpruned).abs() / unpruned;
@@ -365,30 +370,29 @@ pub fn generate_test_dataset() -> Vec<TestPolytope> {
         };
 
         // Try billiard algorithm (succeeds only for Lagrangian products).
-        let cap_billiard =
-            match crate::algorithms::billiard::billiard_capacity(&entry.polytope) {
-                Ok(Some(result)) => {
-                    let rel_err = (result.result.capacity - cap_pruned).abs() / cap_pruned;
-                    assert!(
-                        rel_err < 1e-6,
-                        "FAIL-FAST '{}': billiard ({}) != HK2017 ({}) capacity, rel_error = {:.2e}",
-                        entry.name,
-                        result.result.capacity,
-                        cap_pruned,
-                        rel_err
-                    );
-                    eprintln!(
-                        "  {} -- billiard={:.6} (agrees with HK2017)",
-                        entry.name, result.result.capacity
-                    );
-                    Some(result.result.capacity)
-                }
-                Ok(None) => {
-                    eprintln!("  {} -- billiard returned None", entry.name);
-                    None
-                }
-                Err(_) => None, // Not a Lagrangian product.
-            };
+        let cap_billiard = match crate::algorithms::billiard::billiard_capacity(&entry.polytope) {
+            Ok(Some(result)) => {
+                let rel_err = (result.result.capacity - cap_pruned).abs() / cap_pruned;
+                assert!(
+                    rel_err < 1e-6,
+                    "FAIL-FAST '{}': billiard ({}) != HK2017 ({}) capacity, rel_error = {:.2e}",
+                    entry.name,
+                    result.result.capacity,
+                    cap_pruned,
+                    rel_err
+                );
+                eprintln!(
+                    "  {} -- billiard={:.6} (agrees with HK2017)",
+                    entry.name, result.result.capacity
+                );
+                Some(result.result.capacity)
+            }
+            Ok(None) => {
+                eprintln!("  {} -- billiard returned None", entry.name);
+                None
+            }
+            Err(_) => None, // Not a Lagrangian product.
+        };
 
         // Fail-fast: literature values.
         for (lit_name, lit_cap) in literature_values() {
@@ -505,10 +509,22 @@ fn random_sp4_matrix(rng: &mut impl Rng) -> Matrix4<f64> {
     // Scale down to keep Cayley transform well-conditioned.
     let scale = 0.3;
     let a_mat = Matrix4::new(
-        p11 * scale, p12 * scale, q11 * scale, q12 * scale,
-        p21 * scale, p22 * scale, q12 * scale, q22 * scale,
-        r11 * scale, r12 * scale, -p11 * scale, -p21 * scale,
-        r12 * scale, r22 * scale, -p12 * scale, -p22 * scale,
+        p11 * scale,
+        p12 * scale,
+        q11 * scale,
+        q12 * scale,
+        p21 * scale,
+        p22 * scale,
+        q12 * scale,
+        q22 * scale,
+        r11 * scale,
+        r12 * scale,
+        -p11 * scale,
+        -p21 * scale,
+        r12 * scale,
+        r22 * scale,
+        -p12 * scale,
+        -p22 * scale,
     );
 
     // Cayley transform: M = (I - A)(I + A)^{-1}.
@@ -531,10 +547,7 @@ fn apply_symplectomorphism(
     m: &Matrix4<f64>,
     b: &Vector4<f64>,
 ) -> Polytope4D {
-    let m_inv_t = m
-        .transpose()
-        .try_inverse()
-        .expect("M should be invertible");
+    let m_inv_t = m.transpose().try_inverse().expect("M should be invertible");
 
     let duals = polytope.dual_vertices_f64();
 
