@@ -1,6 +1,6 @@
 ---
-paths:
-  - "thesis/**/*.tex"
+name: thesis-tex-conventions
+description: Thesis LaTeX conventions for math writing, labels, figures, and approval markers.
 ---
 
 # Thesis LaTeX Format
@@ -10,8 +10,6 @@ paths:
 - `% Jörn: <level> approved — <scope>` — review status (structure < math < text). One per scope. Agent edits within scope MUST delete the marker.
 - `% [TODO: JÖRN - ...]` — needs Jörn's verification
 - `% [GAP - <what's uncertain>]` — above-ambient-risk spot needing attention
-
-[TODO: specify QC workflow — what agents write in comments during quality review]
 
 ## File headers
 

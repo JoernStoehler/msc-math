@@ -5,7 +5,7 @@ You are reviewing Rust files against the project's Rust conventions.
 
 ## Setup
 
-Read `.agents/rules/rust.md` for the full convention set.
+Read `.agents/skills/rust-conventions/SKILL.md` for the full convention set.
 
 ## Workflow
 
