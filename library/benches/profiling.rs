@@ -16,7 +16,8 @@ use symplectic::geom::volume::volume;
 use symplectic::kkt::saddle_point_solver::solve_kkt_for;
 use symplectic::random::generate_random_polytopes;
 
-// Same seed and height range as crates/dev-algorithm-comparison/benchmark/run.rs for consistency.
+// Same seed and height range as
+// experiments/verification/algorithm-comparison/benchmark/main.rs for consistency.
 const SEED: u64 = 42;
 const H_MIN: f64 = 0.5;
 const H_MAX: f64 = 2.0;

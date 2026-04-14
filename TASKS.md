@@ -140,38 +140,38 @@ Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the o
 ### [done] [2026-04] 2d. Variable-F ascent (F to F+1)
 - 90 trials. F=10 local maxima often improve at F=11 but marginal; no sys>1.
 - `experiments/sys-landscape/variable-f-ascent/`
-- Successor baseline for the next continuation line: `docs/sys-search-program-2026-04-13.md:67-75`
+- Successor baseline for the next continuation line: `research/sys-landscape/design/witness-search-program.md:67-75`
 
 ### [open] [group:witness-search] Witness oracle instrumentation + benchmark bank
 - Upgrade exact witness search from "best permutation only" to a reusable local-structure oracle: top-`m` / within-gap returns, incumbent warm starts, near-active witness metadata, runtime diagnostics.
 - Bundle the benchmark bank into the same session; do not track it as a separate item.
-- Pointer: `docs/sys-search-program-2026-04-13.md:22-38`
+- Pointer: `research/sys-landscape/design/witness-search-program.md:22-38`
 
 ### [future] [group:witness-search] Witness reuse + safe prefilter calibration
 - Quantify trust radius for local witness caches and benchmark safe pruning via `U_A(K) < 1`.
 - Compare minimizer-only, top-`m`, within-gap, parent-cache, and hybrid witness sets.
 - Fold permutation-neighborhood search and warm-start benchmarking into this line, not separate tracker headers.
-- Pointer: `docs/sys-search-program-2026-04-13.md:40-53`
+- Pointer: `research/sys-landscape/design/witness-search-program.md:40-53`
 
 ### [future] [group:witness-search] Reduced-model ascent on witness sets
 - Soft-min / log-sum-exp reduced-model ascent first; min-norm convex-hull QP second if the first pass is promising.
 - Acceptance criterion: compare against exact-evaluate-every-step on the same seeds; report best exact `sys`, exact-call count, and wall-clock.
-- Pointer: `docs/sys-search-program-2026-04-13.md:55-65`
+- Pointer: `research/sys-landscape/design/witness-search-program.md:55-65`
 
 ### [future] [group:witness-search] Witness-guided F→F+1 continuation
 - Replace random facet addition with witness-guided vertex splitting and witness lifting into the child problem.
 - Compare directly against `variable-f-ascent/` and `exp-hko-local-maximum/cut-and-ascent/`.
-- Pointer: `docs/sys-search-program-2026-04-13.md:67-75`
+- Pointer: `research/sys-landscape/design/witness-search-program.md:67-75`
 
 ### [future] [group:witness-search] Symmetry-family search
 - Search low-dimensional orbit-union families instead of only generic iid proposals.
 - Use the reuse, prefilter, and reduced-model machinery inside those families.
 - Keep combinatorial/order-type diagnostics as supporting logging inside this line.
-- Pointer: `docs/sys-search-program-2026-04-13.md:77-83`
+- Pointer: `research/sys-landscape/design/witness-search-program.md:77-83`
 
 ### [future] [group:witness-search] Box-pruning on structured families
 - Downstream of the symmetry-family line: use witness upper bounds to prune parameter boxes once a productive family exists.
-- Pointer: `docs/sys-search-program-2026-04-13.md:77-83`
+- Pointer: `research/sys-landscape/design/witness-search-program.md:77-83`
 
 ### [done] [2026-03] Random sampling (general + products + calibration)
 - Random polytopes max sys=0.578. Random products max sys=0.794 (6x6).
@@ -222,7 +222,7 @@ sys as a continuous function on polytope space, no privileged threshold.
 ### [future] Systematic landscape analysis
 - Gradient flow convergence, local maxima below sys=1, random noise effects.
 - Partial data in gradient-ascent experiments.
-- Witness-search successor line: `docs/sys-search-program-2026-04-13.md:55-83`
+- Witness-search successor line: `research/sys-landscape/design/witness-search-program.md:55-83`
 
 ## [open] Computing capacity
 
@@ -325,7 +325,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Blocked on: stable chapter content.
 
 ### [done] [2026-04-12] [group:writeup] Math write-up scaffold
-- Scaffold note: `crates/math-writeup-scaffold.md` (778 lines, grep-verified).
+- Scaffold note: `scratch/math-writeup-scaffold.md` (778 lines, grep-verified).
 - Counts: 69 unverified blocks (unchanged from 2026-04-07), 41 `TODO: JÖRN` markers, 10 GAP markers, 100 theorem-like environments across 18 files.
 - Top 4 ranked hard-labor items: `prop:capacity-piecewise-smooth`, `lem:cap-derivative`+`lem:vol-derivative`, `prop:prefilter-bound`, `prop:capacity-symplectic-product` (library GAP).
 - Ahead of 2026-04-13 schedule. Kai briefing item (below) can consume it once LICCA Sunday preliminaries are back.
@@ -334,7 +334,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Terse `.md` with checkpoints Jörn reads ~10 min before the Kai call and drives the meeting from. Not a prose doc for Kai — Jörn drives verbally.
 - Organized by decision: locked / empirically strong but unproven / genuinely open / options for closing each gap / recommended priority.
 - Synthesizes RESULTS.md + TASKS.md + logbooks + math write-up scaffold + any LICCA Sunday preliminaries.
-- Output: `docs/kai-briefing-2026-04-14.md`.
+- Output: briefing note at a migrated `.md` path outside `docs/`.
 - Scheduled: 2026-04-13 Mon, after the math write-up scaffold lands.
 
 ### [done] [2026-04-12] Thesis figure consistency check
@@ -363,7 +363,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 ## [open] Code quality + alignment
 
 ### [done] [2026-04-07] Code cleanup (session)
-- Completed: step_bound duplication extracted to exp-sys-landscape/src/lib.rs (cut-and-ascent gets inline copy); products-vs-random split; wiggle strength justified + documented; `[lem:dual-vertex-qp]` proof drafted + Jörn-approved (Lemma 37 in `crates/main.pdf` p11); math.tex stubs audited (53 stubs + 69 unverified blocks as of 2026-04-07).
+- Completed: step_bound duplication extracted to exp-sys-landscape/src/lib.rs (cut-and-ascent gets inline copy); products-vs-random split; wiggle strength justified + documented; `[lem:dual-vertex-qp]` proof drafted + Jörn-approved (Lemma 37 in `formal/main.pdf` p11); math.tex stubs audited (53 stubs + 69 unverified blocks as of 2026-04-07).
 - Remaining future note: gradient-ascent + multiple-crossings overlap dedup is blocked until gradient ascent stabilizes into library. Until then, copy-edit between experiments is correct.
 - Known side effect: step_bound upgrade (omega_0 detection) changes experiment behavior if re-run. Existing JSONL not regenerated.
 
@@ -371,11 +371,11 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - First pass merged: `paranoia-numerics` branch, 19 files fixed across experiment logbooks + `experiments/numerics/error-bounds/tests.rs` + `experiments/numerics/unknown-predicates/main.rs`. Session report at `paranoia-numerics-report.md`.
 - Remaining sub-items (needs Jörn decision, then follow-up to agent):
   - `experiments/verification/orbit-recovery/`: 4 polytopes missing from dataset (112→108), `solution_dim` hardcoded to 0 in `main.rs`, error magnitudes from different algorithm version
-  - `dev-algorithm-comparison/profiling/`: per-test durations zeroed in JSONL, 3 historical runs absent — data pipeline broken
+  - `experiments/verification/algorithm-comparison/profiling/`: per-test durations zeroed in JSONL, 3 historical runs absent — data pipeline broken
 
 ### [done] [2026-04-12] [group:paranoia] Paranoia: conjectures + interpretations
 - Flag-only audit merged: 42 ranked flags (belief 5 / causal 11 / unhedged 12 / interpretation 13 / conjecture 1).
-- Top flags cluster in `library/src/{geom,algorithms}/math.tex` and unverified lemmas in `dev-algorithm-comparison/ablation/math.tex` + `dev-gradient/numerics-subdifferential/math.tex`.
+- Top flags cluster in `formal/library/{geom,algorithms}.tex` and unverified lemmas in `formal/verification/algorithm-comparison/ablation.tex` + `formal/numerics/gradient/numerics-subdifferential.tex`.
 - Jörn reads async when write-up capacity frees up.
 
 ### [open] [group:writeup] Thesis-code alignment
@@ -472,7 +472,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Never used organically by agents; agents read source directly. Removed `api-reference/`, `crates/tools/api-extract/`, pre-commit hook, workspace member, and stale project-doc references.
 
 ### [done] [2026-04] Polytope database
-- `crates/database/`, JSONL format, 1198 entries. 6 experiments migrated.
+- `library/src/database.rs`, JSONL format, 1198 entries. 6 experiments migrated.
 
 ### [done] [2026-03] Polytope4D optimization
 - 31x speedup at F=10 via integer-scaled arithmetic + f64 prefilters.

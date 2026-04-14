@@ -11,7 +11,7 @@ Source of truth:
 
 ## Current status
 
-Active phase: checkpoint after phases 3-4 verification (live-path repair, formal root repair, dataset ownership migration)
+Active phase: residual-scope audit after the phase 4 checkpoint
 
 Confirmed repo facts:
 - Repo-root `Cargo.toml` has now been created as the workspace manifest.
@@ -23,6 +23,23 @@ Confirmed repo facts:
 Confirmed live migration blockers already seen locally:
 - The migration no longer has known live `crates/...` or canonical `run.rs` blockers in operational docs/scripts. Remaining hits are dated historical notes or copied-source provenance comments.
 - The legacy repo-root `data/polytopes.jsonl` endgame is complete: owned caches were materialized and the legacy file was deleted.
+
+Residual-scope audit (2026-04-14, after checkpoint `f6a40a21`) found:
+- verification gates now include `cargo clippy -p symplectic --lib -- -D warnings` and `cd thesis && latexmk && ./check-build.sh`; both passed in this session
+- one real live migration bug existed in `.devcontainer/warmup-cache.sh` (still warming `crates/Cargo.toml`); local fix is now in progress
+- one real live migration bug existed in `.codex/agents/review-python.toml` (still referencing `crates/figure_config.py`); local fix is now in progress
+- active tracker references in `TASKS.md` still pointed at deleted `docs/...` paths and old `crates/...` paths; local cleanup is now in progress
+- dead shims still exist under `crates/`:
+  - `.gitignore`
+  - `.latexmkrc`
+  - `Cargo.lock`
+  - `Cargo.toml`
+  - `bibliography.bib`
+  - `database/Cargo.toml`
+  - `main.tex`
+- explicit follow-up leftovers still under `crates/`:
+  - `dev-tube/` (target file marks as follow-up decision, not silent assignment)
+  - `math-writeup-scaffold.md` (still needs a non-`crates/` home)
 
 Latest local check:
 - `cargo metadata --format-version 1 --no-deps` passes from repo root.
@@ -75,8 +92,10 @@ Phases 2-4 completed:
   - `cd formal && latexmk` succeeds
 
 Next:
-- checkpoint the legacy-cache endgame in git
-- then decide whether copied-source provenance comments should be rewritten from `crates/...` to current `library/...` paths or left as historical source references
+- finish the residual cleanup listed above
+- rerun the stale-path scan
+- update the exception list/handoff if any historical leftovers remain intentionally
+- checkpoint again before any context compaction or session end
 
 Do not assume every historical note should be rewritten: the remaining `data/polytopes.jsonl` mentions in `research/` are historical descriptions of the old behavior, not live instructions.
 

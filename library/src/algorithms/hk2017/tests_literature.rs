@@ -111,8 +111,9 @@ fn symplectic_triangle_square_capacity() {
 /// This is a fast certificate test (single KKT solve + orbit recovery, ~ms).
 /// It proves c_EHZ(crosspolytope) ≤ 4.0 by exhibiting a feasible orbit with
 /// action 4.0. The full enumeration proving c_EHZ = 4.0 (minimum over all
-/// orbits) was done by `crates/crosspolytope/run.rs` using symmetry-reduced
-/// exhaustive search (see that crate's logbook for search completeness details).
+/// orbits) was done by `experiments/crosspolytope/main/main.rs` using
+/// symmetry-reduced exhaustive search (see
+/// `research/crosspolytope/design/main.md` for search completeness details).
 ///
 /// Known minimizing orbit: subset {0, 3, 12, 15}, permutation [0, 12, 15, 3],
 /// β = (0.25, 0.25, 0.25, 0.25). All transition edges have ω₀ = +1.0.

@@ -45,16 +45,16 @@ else
 fi
 
 # Rust dependencies
-if [[ -d crates ]]; then
+if [[ -f Cargo.toml ]]; then
   log "Warming Rust cache (cargo fetch + build)..."
-  if cargo fetch --manifest-path crates/Cargo.toml; then
+  if cargo fetch; then
     log "Rust fetch complete."
   else
     log "WARNING: Rust fetch failed (non-fatal)."
   fi
 
   # Debug build to populate target cache
-  if cargo build --manifest-path crates/Cargo.toml; then
+  if cargo build; then
     log "Rust build complete."
   else
     log "WARNING: Rust build failed (non-fatal)."

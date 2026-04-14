@@ -76,7 +76,8 @@ pub struct BoundaryEvent {
 /// 2. **omega_0 flip:** sign(omega_0(a_i, a_j)) changes for ridge-adjacent facets.
 /// 3. **Dual vertex degeneration:** |a_k + t*d_k| -> 0.
 ///
-/// Source: `exp-combinatorial-cells/cell-widths/run.rs` (enriched version with omega_0 detection).
+/// Source: `experiments/combinatorial-cells/cell-widths/main.rs` (enriched
+/// version with omega_0 detection).
 /// Cell-widths data shows omega_0 flips account for 30.5% of boundary events in per-facet probes
 /// (cell-widths/logbook.md). The old `compute_step_bound_a` missed these entirely.
 pub fn compute_step_bound_detailed(
