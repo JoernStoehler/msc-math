@@ -32,7 +32,7 @@ Planned deliverables:
 - `TASKS.md`: Unified project tracker (tasks, experiments, ideas). Run `bash scripts/tasks-toc.sh` for a section index with line ranges.
 - `feedback/*.md`: Incident reports; processed during workflow-update sessions
 - `AGENTS.md`: Codex-native project instructions
-- `.agents/`: Codex-native skills and rules
+- `.agents/`: Codex-native skills (workflows and conventions)
 - `.codex/`: Codex config and subagents
 - `.codex/worktrees/`: repo-local git worktrees for Codex sessions
 
@@ -52,19 +52,33 @@ Planned deliverables:
 - Always use local `main`, never `origin/main`.
 - Before merging to `main` (via pre-merge): `cd crates/library/ && cargo test --release --lib` passes, `cargo clippy --lib -- -D warnings` is clean. Tests gate merges, not commits.
 - **Commits are free.** Do not ask permission to commit. If you need to ask about something commit-related, ask about the merge, not the commit.
-- Work in a worktree (separate branch) unless Jörn says otherwise.
 - **Git LFS** tracks `.jsonl` files (configured in `.gitattributes`). `git add`/`commit`/`push` work normally. Limits: 2 GB per file, 10 GiB storage, 10 GiB bandwidth/month ([docs](https://docs.github.com/en/billing/managing-billing-for-git-large-file-storage/about-billing-for-git-large-file-storage)). A pre-commit hook blocks files >10 MB that aren't LFS-tracked.
 
 ## Git Worktrees
 
-- **Worktree default**: If you need to edit any tracked file outside `TASKS.md`, `AGENTS.md`, `.agents/`, `.codex/`, and `feedback/`, create a fresh worktree first.
-- **Subagent default**: A subagent keeps using the repository copy it already has. It does not create a worktree unless the parent asks. It does not merge branches unless the parent asks.
-- **Parent wording**: If the parent session wants a subagent to create a worktree or merge a branch, it must say that explicitly. Otherwise, the subagent should not do either.
-- **Create command**: `git worktree add -b <branch> .codex/worktrees/<branch> main`
-- **Reuse command**: `git worktree add .codex/worktrees/<branch> <branch>`
-- **Enter a worktree**: `cd /workspaces/msc-math/.codex/worktrees/<branch>`
-- **Remove a worktree after merge**: `git worktree remove .codex/worktrees/<branch>` then `git branch -d <branch>`
-- **Branch base**: New worktree branches start from local `main`, not `origin/main`.
+- **Default in Codex cloud**: Stay on the current branch/repo checkout. Do not create a worktree unless the task explicitly asks for isolated parallel edits.
+- **When to use a worktree**: Two or more sessions will edit tracked files in parallel and the file ownership split is not disjoint.
+- **Subagent default**: A subagent stays in its existing checkout. It does not create a worktree unless the parent prompt explicitly asks for one.
+- **Parent wording**: If the parent session wants worktree creation, it must name the branch and path in the prompt.
+- **Create command (when needed)**: `git worktree add -b <branch> .codex/worktrees/<branch> <base-branch>`
+- **Reuse command (when needed)**: `git worktree add .codex/worktrees/<branch> <branch>`
+- **Remove after merge**: `git worktree remove .codex/worktrees/<branch>` then `git branch -d <branch>`
+
+## Planning and Verification Protocol
+
+- **Plan-first default**: For any task with more than one concrete change or one verification step, create and maintain a plan before editing.
+- **Plan content**: Each plan item must include (a) objective, (b) dependency, (c) owner (`local` or named subagent), and (d) verification command or review check.
+- **Quality as done-criteria**: Every plan must contain one explicit quality gate. Minimum gate: one subagent review pass that can return fixes or escalation, followed by local verification of the review findings.
+- **Deferred planning**: If an item is blocked on missing information from an earlier stage, add a deferred plan item that names the unblock condition and the follow-up action.
+- **Delegation planning**: Mark plan items that are encapsulated enough for delegation. For independent items, launch subagents in parallel and keep local work moving on non-dependent items.
+- **Plan maintenance**: Update statuses after each meaningful result (new evidence, failed test, completed edit, delegate return). Do not leave stale plan state.
+
+## JSONL / LFS Safety in Codex Cloud
+
+- `.jsonl` files are generated artifacts and are LFS-tracked. Do not edit `.jsonl` with patch-style line edits.
+- For smoke or warmup workflows, write temporary datasets under an untracked temp directory and delete them after the run.
+- If a script must touch tracked outputs for compatibility, use `git restore --worktree -- <path>` before exit.
+- If a tracked `.jsonl` file changes unexpectedly during setup/maintenance, stop and report the exact file and command that changed it.
 
 ## Environment
 

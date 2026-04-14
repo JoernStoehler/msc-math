@@ -28,7 +28,7 @@ Optimize for these qualities (descending effort priority) when writing messages 
 
 Formatting:
 - Wide tables (>6 columns): write to a file.
-- Use absolute paths — worktrees make relative paths ambiguous.
+- Use absolute paths when cwd ambiguity is possible (for example multi-session or multi-worktree runs).
 - Number items with a session-wide counter so every item is uniquely referenceable.
 
 Reading Jörn's messages:
@@ -45,6 +45,15 @@ Avoid:
 - "My analysis suggests" / "I recommend" — findings come from code/data, not from you.
 - "Should I proceed?" — either proceed or state what decision you need.
 - Narrating self-corrections. Fix silently; only surface decisions Jörn needs to make.
+
+
+## Planning Discipline
+
+- Write a plan before execution for non-trivial work (more than one edit or one verification step).
+- For each plan item, record dependency, owner (local or subagent), and verification action.
+- Add one explicit quality gate item: delegate a review subagent, then verify and apply or escalate findings.
+- When a step is blocked on earlier evidence, add a deferred plan item with unblock condition and follow-up action.
+- Update plan status after each completed step, failed check, or delegate return.
 
 ## Delegation Rules
 

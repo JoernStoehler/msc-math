@@ -12,7 +12,7 @@ Collaborative workflow. Jörn has the expert model for what works with agents �
 Look at actual data, not hypotheticals:
 - Session logs if Jörn points to them in `~/.codex/`
 - Git history: `git log --oneline -- .agents/ .codex/ AGENTS.md`
-- Current infrastructure: `.agents/skills/`, `.agents/rules/`, `.codex/agents/`
+- Current infrastructure: `.agents/skills/` and `.codex/agents/`
 - Feedback files: `feedback/`
 
 Present prioritized concrete situations to Jörn. He confirms which matter.

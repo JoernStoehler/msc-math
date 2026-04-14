@@ -1,6 +1,6 @@
 ---
-paths:
-  - "**/*.py"
+name: python-conventions
+description: Python experiment-script conventions for analysis and figure generation.
 ---
 
 # Python Conventions
