@@ -15,10 +15,8 @@
 //! Architecture:
 //! 1. `cargo run -p exp-combinatorial-cells --bin cell-omega --release` generates dataset
 //! 2. Polytopes cached in experiments/combinatorial-cells/polytopes.jsonl.
-//!    The owned cache is loaded first and merged with the legacy repo-root
-//!    data/polytopes.jsonl as a read-only fallback during migration. When
-//!    capacity + sigmas are cached, skips full EHZ (exponential) and only runs
-//!    single-perm KKT solve for beta.
+//!    When capacity + sigmas are cached, skips full EHZ (exponential) and only
+//!    runs single-perm KKT solve for beta.
 //! 3. Writes to omega-obstacle/omega-obstacle.jsonl
 //! 4. Python script reads JSONL, produces figures
 
@@ -365,10 +363,8 @@ fn main() {
     let mut writer = BufWriter::new(file);
 
     let owned_db_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("polytopes.jsonl");
-    let legacy_db_path = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("../../data/polytopes.jsonl");
     let mut db: HashMap<DualVerticesKey, PolytopeRecord> =
-        database::load_many(&[owned_db_path.as_path(), legacy_db_path.as_path()])
+        database::load_many(&[owned_db_path.as_path()])
             .expect("failed to load database");
     eprintln!("Loaded database: {} entries", db.len());
 

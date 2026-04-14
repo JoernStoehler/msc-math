@@ -72,15 +72,13 @@ fn main() {
     let mut rng = ChaCha8Rng::seed_from_u64(SEED);
 
     let family_cache_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("cache.jsonl");
-    let legacy_cache_path = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("../../data/polytopes.jsonl");
     let output_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("random-product-sample/random-product-sweep.jsonl");
 
     let mut db: HashMap<DualVerticesKey, PolytopeRecord> =
-        load_many(&[family_cache_path.as_path(), legacy_cache_path.as_path()])
-            .expect("failed to load sys-landscape cache inputs");
-    println!("Loaded cache inputs: {} entries\n", db.len());
+        load_many(&[family_cache_path.as_path()])
+            .expect("failed to load sys-landscape family cache");
+    println!("Loaded family cache: {} entries\n", db.len());
 
     let file = File::create(&output_path).expect("failed to create output file");
     let mut writer = BufWriter::new(file);

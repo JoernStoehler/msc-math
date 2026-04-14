@@ -37,7 +37,6 @@ Completed in the partial move pass:
 
 Not yet done:
 
-- legacy-cache endgame: remove repo-root `data/polytopes.jsonl` from live fallback paths and delete it only after owned caches are confirmed complete
 - final historical/provenance audit for remaining `crates/...` mentions
 - semantic validation and shim cleanup
 
@@ -72,7 +71,9 @@ Current verified progress on 2026-04-14:
 - live Python/shell/tooling path repair is done
 - `formal/main.tex`, `formal/.latexmkrc`, and `formal/bibliography.bib` now exist and `cd formal && latexmk` succeeds
 - multi-file JSONL merge semantics are implemented in `library/src/database.rs`
-- affected binaries now write only to owned family/experiment caches and use repo-root `data/polytopes.jsonl` only as read-only fallback during migration
+- affected binaries now write only to owned family/experiment caches
+- owned caches have been materialized at `experiments/sys-landscape/cache.jsonl`, `experiments/combinatorial-cells/polytopes.jsonl`, and `experiments/verification/orbit-recovery/polytopes.jsonl`
+- repo-root `data/polytopes.jsonl` has been deleted
 
 ## Evidence Rules
 

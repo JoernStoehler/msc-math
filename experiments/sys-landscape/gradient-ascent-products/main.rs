@@ -507,14 +507,12 @@ fn main() {
     // DB state: loaded once, shared across threads under a Mutex when !no_db_update.
     // On LICCA (--no-db-update), both load and insertion are skipped entirely.
     let family_cache_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("cache.jsonl");
-    let legacy_cache_path = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("../../data/polytopes.jsonl");
     let db_arc: Arc<Mutex<HashMap<DualVerticesKey, PolytopeRecord>>> = if args.no_db_update {
         Arc::new(Mutex::new(HashMap::new()))
     } else {
-        let db = load_many(&[family_cache_path.as_path(), legacy_cache_path.as_path()])
-            .expect("failed to load sys-landscape cache inputs");
-        println!("Loaded cache inputs: {} entries", db.len());
+        let db = load_many(&[family_cache_path.as_path()])
+            .expect("failed to load sys-landscape family cache");
+        println!("Loaded family cache: {} entries", db.len());
         Arc::new(Mutex::new(db))
     };
 

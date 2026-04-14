@@ -558,9 +558,9 @@ fn main() {
 
     let mut rng = ChaCha8Rng::seed_from_u64(SEED);
 
-    // Local capacity cache — avoids recomputing ehz_capacity on reruns.
-    // Separate from the shared data/polytopes.jsonl to avoid bloating it
-    // with thousands of intermediate gradient-step polytopes.
+    // Local capacity cache — avoids recomputing ehz_capacity on reruns
+    // without bloating the shared sys-landscape family cache with thousands
+    // of intermediate gradient-step polytopes.
     let cache_path = base.join("cache.jsonl");
     let mut db: Db = load(&cache_path).expect("load cache");
     println!("Cache: {} entries\n", db.len());

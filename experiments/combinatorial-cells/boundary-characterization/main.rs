@@ -12,8 +12,7 @@
 //!
 //! Split from combinatorial-structure (Pass 2).
 //!
-//! Input: experiments/combinatorial-cells/polytopes.jsonl (owned cache;
-//! legacy repo-root data/polytopes.jsonl is a read-only fallback during migration)
+//! Input: experiments/combinatorial-cells/polytopes.jsonl (owned cache)
 //! Filter: F <= 10 (HK2017 is exponential in F)
 //! Output: experiments/combinatorial-cells/boundary-characterization/combinatorial-boundaries-anatomy.jsonl,
 //!         experiments/combinatorial-cells/boundary-characterization/combinatorial-boundaries-crossing.jsonl,
@@ -815,9 +814,7 @@ fn main() {
     println!("Loading starting polytopes from owned cache (F <= {MAX_FACET_COUNT})...");
 
     let owned_db_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("polytopes.jsonl");
-    let legacy_db_path = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("../../data/polytopes.jsonl");
-    let db = database::load_many(&[owned_db_path.as_path(), legacy_db_path.as_path()])
+    let db = database::load_many(&[owned_db_path.as_path()])
         .expect("failed to load database");
 
     let mut polytopes: Vec<(String, String, Polytope4D)> = Vec::new();

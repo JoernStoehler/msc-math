@@ -22,7 +22,7 @@ Confirmed repo facts:
 
 Confirmed live migration blockers already seen locally:
 - The migration no longer has known live `crates/...` or canonical `run.rs` blockers in operational docs/scripts. Remaining hits are dated historical notes or copied-source provenance comments.
-- The legacy repo-root `data/polytopes.jsonl` still exists as a read-only fallback in several binaries. Endgame deletion is still pending; do not treat it as canonical mutable state.
+- The legacy repo-root `data/polytopes.jsonl` endgame is complete: owned caches were materialized and the legacy file was deleted.
 
 Latest local check:
 - `cargo metadata --format-version 1 --no-deps` passes from repo root.
@@ -55,9 +55,14 @@ Phases 2-4 completed:
 - live operational-doc references were repaired across `AGENTS.md`, `.agents/skills/**`, `TASKS.md`, `research/**`, `experiments/**/*.py|*.md|*.sh`, and `formal/**/*.tex`
 - `formal/main.tex`, `formal/.latexmkrc`, and `formal/bibliography.bib` now exist and `cd formal && latexmk` succeeds
 - `library/src/database.rs` now provides `load_many()` with conflict detection, plus tests covering merge-fill and conflict rejection
-- sys-landscape binaries now load the family cache `experiments/sys-landscape/cache.jsonl` first and treat the legacy repo-root cache as read-only fallback
-- combinatorial-cells binaries now load `experiments/combinatorial-cells/polytopes.jsonl` first and treat the legacy repo-root cache as read-only fallback
-- verification orbit-recovery now loads and saves `experiments/verification/orbit-recovery/polytopes.jsonl`, with legacy repo-root cache as read-only fallback
+- owned caches were materialized:
+  - `experiments/sys-landscape/cache.jsonl`
+  - `experiments/combinatorial-cells/polytopes.jsonl`
+  - `experiments/verification/orbit-recovery/polytopes.jsonl`
+- sys-landscape binaries now load only `experiments/sys-landscape/cache.jsonl`
+- combinatorial-cells binaries now load only `experiments/combinatorial-cells/polytopes.jsonl`
+- verification orbit-recovery now loads and saves only `experiments/verification/orbit-recovery/polytopes.jsonl`
+- repo-root `data/polytopes.jsonl` has been deleted
 - verification:
   - `rg -n 'path = ".*/run\.rs"' experiments -g 'Cargo.toml'` returned no matches
   - `find experiments -name run.rs` returned no remaining canonical packet entrypoints
@@ -70,11 +75,10 @@ Phases 2-4 completed:
   - `cd formal && latexmk` succeeds
 
 Next:
-- checkpoint the verified migration state in git
-- then decide the endgame for the legacy repo-root `data/polytopes.jsonl` file and fallback paths
+- checkpoint the legacy-cache endgame in git
 - then decide whether copied-source provenance comments should be rewritten from `crates/...` to current `library/...` paths or left as historical source references
 
-Do not assume the migration is fully complete: the legacy fallback file still exists and the final deletion/removal pass remains open.
+Do not assume every historical note should be rewritten: the remaining `data/polytopes.jsonl` mentions in `research/` are historical descriptions of the old behavior, not live instructions.
 
 ## Plan snapshot
 
@@ -95,4 +99,4 @@ Read-only subagents launched:
 Instruction to later agents:
 - Treat subagent output as hints only until locally verified against files/commands.
 - Update this file after each meaningful phase result or failure.
-- Do not reintroduce writes to repo-root `data/polytopes.jsonl`; if a binary still mentions it, it must be read-only fallback only unless the target policy is revised explicitly.
+- Do not recreate repo-root `data/polytopes.jsonl`; each family/experiment now owns its own cache file.
