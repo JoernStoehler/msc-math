@@ -9,7 +9,7 @@ Goal: Assess whether gradient ascent + escape rounds push sys above
       sys(HKO2024) = 1.0472 on general (non-Lagrangian) F=10 polytopes,
       and build a distribution of ascent endpoints. Bayesian update on
       the conjecture that no hit exists uses 3/N upper credible bound.
-Input: crates/exp-sys-landscape/gradient-ascent-general/data/*.jsonl (per-seed summaries).
+Input: experiments/sys-landscape/gradient-ascent-general/data/*.jsonl (per-seed summaries).
        Preference order: licca.jsonl > licca-shard-*.jsonl (legacy architecture-A) > smoke.jsonl.
 Output:
   - gradient_ascent_general_distribution.png   (final sys histogram; linear)

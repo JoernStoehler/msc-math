@@ -11,9 +11,9 @@ Before using computed capacities for scientific conclusions, we need high confid
 ## How to run
 
 ```bash
-cd crates/dev-capacity-validation/correctness/
-cargo run --bin axioms-correctness --release   # Generates correctness.jsonl
-cargo test --bin axioms-correctness --release   # Verifies all 6 properties
+cargo run -p dev-capacity-validation --release --bin axioms-correctness
+cargo run -p dev-capacity-validation --release --bin axioms-correctness   # Generates correctness.jsonl
+cargo test -p dev-capacity-validation --bin axioms-correctness --release   # Verifies all 6 properties
 ```
 
 If tests fail after algorithm changes, investigate before merging. Failure triage: (1) implementation bug, (2) test assumption violated, (3) numeric precision issue.
@@ -24,7 +24,7 @@ Different seeds may expose edge cases not covered by seed 42.
 
 | File | Role |
 |------|------|
-| `run.rs` | Rust binary: dataset generator + test harness (6 property tests) |
+| `main.rs` | Rust binary: dataset generator + test harness (6 property tests) |
 | `math.tex` | Empty — no formal mathematics in this experiment |
 | `correctness.jsonl` | Dataset: 47 polytopes, 71 capacity values across 3 algorithms |
 
@@ -112,7 +112,7 @@ Test 1 generates 10 base polytopes (5 random generic, 5 Lagrangian products). Te
 
 ## Open questions
 
-1. **math.tex says "facet normals" but code perturbs heights.** Test 5 (continuity) applies a height perturbation via `a / (1.0 + epsilon * delta)` where `epsilon = 0.01` and `delta` is uniform in [-0.5, 0.5], giving a maximum perturbation of 0.5% per height — confirmed in run.rs. But math.tex (Jörn-approved 2026-02-16) describes it as "a small random perturbation of the facet normals." One source is wrong. Needs Jörn.
+1. **math.tex says "facet normals" but code perturbs heights.** Test 5 (continuity) applies a height perturbation via `a / (1.0 + epsilon * delta)` where `epsilon = 0.01` and `delta` is uniform in [-0.5, 0.5], giving a maximum perturbation of 0.5% per height — confirmed in main.rs. But math.tex (Jörn-approved 2026-02-16) describes it as "a small random perturbation of the facet normals." One source is wrong. Needs Jörn.
 
 ## Related experiments
 

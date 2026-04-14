@@ -8,12 +8,12 @@
 Goal: Plot histogram of systolic ratios under HK-O pentagon dual-vertex perturbations
       across multiple eps buckets, summarize stats per bucket, compute PCA on the
       canonical eps=0.01 bucket.
-Input: crates/exp-hko-local-maximum/perturbation-neighborhood/data/{licca,smoke}-eps-*.jsonl
-Output: crates/exp-hko-local-maximum/perturbation-neighborhood/pentagon_perturb_sys_hist.png
-        crates/exp-hko-local-maximum/perturbation-neighborhood/pentagon_perturb_stats.md
-        crates/exp-hko-local-maximum/perturbation-neighborhood/pentagon_perturb_stats.tex
-        crates/exp-hko-local-maximum/perturbation-neighborhood/pentagon_perturb_pca.md
-        crates/exp-hko-local-maximum/perturbation-neighborhood/pentagon_perturb_pca.tex
+Input: experiments/hko-local-maximum/perturbation-neighborhood/data/{licca,smoke}-eps-*.jsonl
+Output: experiments/hko-local-maximum/perturbation-neighborhood/pentagon_perturb_sys_hist.png
+        experiments/hko-local-maximum/perturbation-neighborhood/pentagon_perturb_stats.md
+        experiments/hko-local-maximum/perturbation-neighborhood/pentagon_perturb_stats.tex
+        experiments/hko-local-maximum/perturbation-neighborhood/pentagon_perturb_pca.md
+        experiments/hko-local-maximum/perturbation-neighborhood/pentagon_perturb_pca.tex
 
 Row identity across buckets is (eps, name). Buckets are grouped by the eps field
 on each row, not by filename — filenames are informational only.

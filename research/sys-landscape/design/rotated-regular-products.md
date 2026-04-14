@@ -11,7 +11,7 @@ The only known 4D counterexample to Viterbo's conjecture is a Lagrangian product
 ## How to run
 
 ```bash
-cd crates/ && cargo run -p exp-sys-landscape --release --bin sys-rotated-regular-products
+cargo run -p exp-sys-landscape --release --bin sys-rotated-regular-products
 uv run analyze.py                             # generates plots
 ```
 
@@ -19,7 +19,7 @@ uv run analyze.py                             # generates plots
 
 | File | Role |
 |------|------|
-| `run.rs` | Rust binary: generates all sweep datasets |
+| `main.rs` | Rust binary: generates all sweep datasets |
 | `analyze.py` | Python: plots sys(theta) curves |
 | `math.tex` | Formal proofs and definitions (rotation setup, symmetry lemma) |
 | `lagrangian-products-5x5.jsonl` | Pentagon rotation curve (37 rows) |
@@ -94,7 +94,7 @@ Key numerical results (billiard computation, verified at time of investigation):
 % The numerical values above are from the original investigation but are no longer reproducible
 % from the current codebase. Decide whether to restore the test fixtures or remove this section.]
 
-Fixes applied to `crates/library/src/geom/known_polytopes.rs`:
+Fixes applied to `library/src/geom/known_polytopes.rs`:
 - Renamed function to `lagrangian_triangle_square()` with correct capacity 1.5
 - Added separate `symplectic_triangle_square()` with capacity 1.0
 

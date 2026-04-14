@@ -4,7 +4,7 @@
 //!   (direct comparison, literature agreement, conformality, symplectic invariance,
 //!   continuity, monotonicity).
 //! Input: None (generates polytopes from hardcoded seeds and literature definitions).
-//! Output: crates/dev-capacity-validation/correctness/correctness.jsonl (47 polytopes, 71 capacity values).
+//! Output: experiments/verification/correctness/correctness.jsonl (47 polytopes, 71 capacity values).
 //!
 //! Architecture:
 //! 1. `cargo run --bin correctness --release` generates 47 polytopes, computes 71 capacities

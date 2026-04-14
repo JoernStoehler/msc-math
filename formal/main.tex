@@ -1,0 +1,156 @@
+% main.tex — root mathematical documentation for the migrated developer math tree
+%
+% Compiles the developer-facing formalization packets under `formal/` into one PDF
+% so cross-references resolve across library and experiment material.
+%
+% Build: `cd formal/ && latexmk` (produces `main.pdf`)
+%
+% Experiment packets use bare filenames for figures. Each section below sets
+% `\graphicspath` to the matching directory under `../experiments/`.
+
+\documentclass{article}
+\input{preamble}
+\usepackage{xcolor}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage[style=alphabetic,backend=biber]{biblatex}
+\addbibresource{bibliography.bib}
+
+\newtheorem{example}[theorem]{Example}
+\newtheorem*{theorem*}{Theorem}
+
+\title{Mathematical Documentation\\[0.5em]
+  \large Probing Viterbo's Conjecture}
+\author{}
+\date{\today}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+
+\part{Library (\texttt{formal/library/})}
+
+\section{Geometry (\texttt{library/geom.tex})}
+\input{library/geom}
+
+\section{KKT Solver (\texttt{library/kkt.tex})}
+\input{library/kkt}
+
+\section{Algorithms (\texttt{library/algorithms.tex})}
+\label{sec:algorithms}
+\input{library/algorithms}
+
+\part{HKO Local Maximum}
+
+\section{Gradient Analysis}
+\graphicspath{{../experiments/hko-local-maximum/gradient-analysis/}}
+\input{hko-local-maximum/gradient-analysis}
+
+\section{Pentagon Perturbation}
+\graphicspath{{../experiments/hko-local-maximum/perturbation-neighborhood/}}
+\input{hko-local-maximum/perturbation-neighborhood}
+
+\section{Second-Order Analysis}
+\graphicspath{{../experiments/hko-local-maximum/second-order/}}
+\input{hko-local-maximum/second-order}
+
+\part{Sys Landscape}
+
+\section{Rotated Regular Products}
+\graphicspath{{../experiments/sys-landscape/rotated-regular-products/}}
+\input{sys-landscape/rotated-regular-products}
+
+\section{Rejection Calibration}
+\graphicspath{{../experiments/sys-landscape/rejection-calibration/}}
+\input{sys-landscape/rejection-calibration}
+
+\section{Random Sample}
+\graphicspath{{../experiments/sys-landscape/random-sample/}}
+\input{sys-landscape/random-sample}
+
+\section{Random Product Sample}
+\label{sec:random-product-sample}
+\graphicspath{{../experiments/sys-landscape/random-product-sample/}}
+\input{sys-landscape/random-product-sample}
+
+\part{Combinatorial Cells}
+
+\section{Boundary Characterization}
+\graphicspath{{../experiments/combinatorial-cells/boundary-characterization/}}
+\input{combinatorial-cells/boundary-characterization}
+
+\section{Cell Widths}
+\graphicspath{{../experiments/combinatorial-cells/cell-widths/}}
+\input{combinatorial-cells/cell-widths}
+
+\section{Convexity}
+\graphicspath{{../experiments/combinatorial-cells/convexity/}}
+\input{combinatorial-cells/convexity}
+
+\section{Multiple Crossings}
+\graphicspath{{../experiments/combinatorial-cells/multiple-crossings/}}
+\input{combinatorial-cells/multiple-crossings}
+
+\section{Omega Hypothesis}
+\graphicspath{{../experiments/combinatorial-cells/omega-hypothesis/}}
+\input{combinatorial-cells/omega-hypothesis}
+
+\part{Verification and Numerics}
+
+\section{Ablation}
+\graphicspath{{../experiments/verification/algorithm-comparison/ablation/}}
+\input{verification/algorithm-comparison/ablation}
+
+\section{Benchmark}
+\graphicspath{{../experiments/verification/algorithm-comparison/benchmark/}}
+\input{verification/algorithm-comparison/benchmark}
+
+\section{Error Bounds}
+\graphicspath{{../experiments/numerics/error-bounds/}}
+\input{numerics/error-bounds}
+
+\section{Q-Error}
+\graphicspath{{../experiments/numerics/q-error/}}
+\input{numerics/q-error}
+
+\section{KKT Inertia}
+\graphicspath{{../experiments/numerics/kkt-inertia/}}
+\input{numerics/kkt-inertia}
+
+\section{Unknown Predicates}
+\graphicspath{{../experiments/numerics/unknown-predicates/}}
+\input{numerics/unknown-predicates}
+
+\section{Correctness}
+\graphicspath{{../experiments/verification/correctness/}}
+\input{verification/correctness}
+
+\section{Orbit Recovery}
+\graphicspath{{../experiments/verification/orbit-recovery/}}
+\input{verification/orbit-recovery}
+
+\section{Basic Gradient Validation}
+\graphicspath{{../experiments/numerics/gradient/numerics/}}
+\input{numerics/gradient/numerics}
+
+\section{Subdifferential Validation}
+\graphicspath{{../experiments/numerics/gradient/numerics-subdifferential/}}
+\input{numerics/gradient/numerics-subdifferential}
+
+\part{Standalone}
+
+\section{Visualization}
+\graphicspath{{../experiments/visualization/main/}}
+\input{visualization/main}
+
+\section{Crosspolytope}
+\graphicspath{{../experiments/crosspolytope/main/}}
+\input{crosspolytope/main}
+
+\printbibliography
+
+\end{document}

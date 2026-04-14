@@ -15,7 +15,7 @@ This experiment validates the formula empirically, since the lemma is used (via 
 ## How to run
 
 ```bash
-cd crates/dev-numerical-analysis/kkt-inertia/ && cargo run --release --bin num-kkt-inertia
+cargo run -p dev-numerical-analysis --release --bin num-kkt-inertia
 ```
 
 Output is printed to stdout. Captured output is stored in `kkt_inertia_output.txt`.
@@ -24,7 +24,7 @@ Output is printed to stdout. Captured output is stored in `kkt_inertia_output.tx
 
 | File | Role |
 |------|------|
-| `run.rs` | Rust binary: census of H\|_T definiteness + inertia formula check |
+| `main.rs` | Rust binary: census of H\|_T definiteness + inertia formula check |
 | `math.tex` | Formal writeup (table, mismatch analysis) |
 | `kkt_inertia_output.txt` | Captured stdout with tables and eigenvalue diagnostics (67 lines) |
 

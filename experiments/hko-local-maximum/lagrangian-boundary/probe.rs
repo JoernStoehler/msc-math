@@ -10,7 +10,7 @@
 //! crosses 1 along the ray δ = t·u from HKO2024.
 //!
 //! This directly measures the shape of the sys > 1 boundary without
-//! model assumptions, unlike the L∞-box sweep in run.rs which measures
+//! model assumptions, unlike the L∞-box sweep in main.rs which measures
 //! only the average size.
 
 use nalgebra::Vector4;

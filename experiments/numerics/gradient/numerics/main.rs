@@ -7,7 +7,7 @@
 //! Q1: Generic random polytopes -- convergence rates, dimension scaling
 //! Q2: Non-generic geometry -- Lagrangian products with symmetry-degenerate orbits
 //!
-//! Split from gradient-validation/run.rs (Q1-Q4 shared the first_order_test framework;
+//! Split from gradient-validation/main.rs (Q1-Q4 shared the first_order_test framework;
 //! Q1+Q2 are the basic validation cases with no special polytope construction).
 //!
 //! Methodology:
@@ -20,11 +20,11 @@
 //!
 //! Mathematical correspondence:
 //! - [lem:cap-derivative] (unverified): envelope theorem formula for dc/da_k.
-//!   In crates/library/src/algorithms/math.tex.
+//!   In library/src/algorithms/math.tex.
 //! - [lem:vol-derivative] (unverified): chain rule formula for dvol/da_k.
-//!   In crates/library/src/algorithms/math.tex.
+//!   In library/src/algorithms/math.tex.
 //! - [prop:capacity-piecewise-smooth] (unverified): piecewise C^inf, generic differentiability.
-//!   In crates/library/src/algorithms/math.tex.
+//!   In library/src/algorithms/math.tex.
 //!
 //! Architecture:
 //! 1. `cargo run --release --bin gradient-basic-validation` -> JSONL files
@@ -153,7 +153,7 @@ fn solve_kkt_safe(polytope: &Polytope4D, perm: &[usize]) -> Option<KktResult> {
 /// Compute dsys/da_k via quotient rule: sys = c^2/(2*vol).
 /// dsys/da_k = (c*dc/da_k - sys*dvol/da_k) / vol.
 /// [cor:sys-derivative] quotient-rule derivative of the systolic ratio.
-/// In crates/library/src/algorithms/math.tex.
+/// In library/src/algorithms/math.tex.
 fn sys_derivatives_a(
     d_cap: &[Vector4<f64>],
     d_vol: &[Vector4<f64>],

@@ -2,7 +2,7 @@
 
 ## Motivation
 
-The 4D crosspolytope (hyperoctahedron, dual to the hypercube) has 16 facets and no known literature value for c_EHZ. Computing its capacity fills a placeholder in `crates/library/src/geom/known_polytopes.rs` and provides a data point for Viterbo's conjecture on a highly symmetric, non-simple polytope.
+The 4D crosspolytope (hyperoctahedron, dual to the hypercube) has 16 facets and no known literature value for c_EHZ. Computing its capacity fills a placeholder in `library/src/geom/known_polytopes.rs` and provides a data point for Viterbo's conjecture on a highly symmetric, non-simple polytope.
 
 ## Status
 
@@ -11,7 +11,7 @@ The 4D crosspolytope (hyperoctahedron, dual to the hypercube) has 16 facets and 
 ## How to run
 
 ```bash
-cd crates/crosspolytope/ && cargo run --release --bin crosspolytope
+cargo run -p crosspolytope --release --bin crosspolytope
 # Resumes from checkpoint if one exists.
 # Writes crosspolytope/crosspolytope.jsonl on completion.
 ```
@@ -22,7 +22,7 @@ Release mode required (debug mode is infeasible at F=16).
 
 | File | Role |
 |------|------|
-| `run.rs` | Rust binary: backtracking + symmetry + checkpointing capacity computation |
+| `main.rs` | Rust binary: backtracking + symmetry + checkpointing capacity computation |
 | `math.tex` | Formal writeup: symmetry reduction, result, hypercube comparison |
 | `crosspolytope.jsonl` | Output: 1 entry with computed capacity and metadata |
 
@@ -43,7 +43,7 @@ Extrapolated from the benchmark timing model (F=5..12):
 
 ### Three optimizations over the library's ehz_capacity()
 
-The binary cannot use the library's public API because it lacks hooks for symmetry reduction and checkpointing. It copies KKT solver internals from `crates/library/src/kkt.rs` and combinatorics from `crates/library/src/algorithms/hk2017/`.
+The binary cannot use the library's public API because it lacks hooks for symmetry reduction and checkpointing. It copies KKT solver internals from `library/src/kkt.rs` and combinatorics from `library/src/algorithms/hk2017/`.
 
 1. **Backtracking permutation search**: DFS through the directed adjacency graph instead of generating all (m-1)! cyclic permutations. Avoids the 15! ~ 1.3 trillion iteration problem for m=16.
 

@@ -1,14 +1,14 @@
 % math.tex — basic gradient validation (Q1 generic, Q2 non-generic)
 %
 % Smoothness analysis of the EHZ capacity as a function of dual vertices.
-% Refines [prop:capacity-piecewise-smooth] from crates/library/src/algorithms/math.tex
+% Refines [prop:capacity-piecewise-smooth] from library/src/algorithms/math.tex
 % with per-orbit feasibility analysis and precise smoothness classification.
 %
 % Sources:
-%   - Generated data: crates/dev-gradient/numerics/*.jsonl
-%   - Developer notes: crates/dev-gradient/numerics/logbook.md
-%   - KKT formulation: crates/library/src/kkt/math.tex
-%   - Existing proposition: crates/library/src/algorithms/math.tex
+%   - Generated data: experiments/numerics/gradient/numerics/*.jsonl
+%   - Developer notes: experiments/numerics/gradient/numerics/logbook.md
+%   - KKT formulation: library/src/kkt/math.tex
+%   - Existing proposition: library/src/algorithms/math.tex
 %
 % Structure:
 %   §1 Setup and notation
@@ -34,7 +34,7 @@ $c(a)$ depends on it.
 
 For a cyclic permutation $\sigma = (\sigma_1, \ldots, \sigma_m)$
 of a subset of~$\{1, \ldots, F\}$,
-the KKT system (see \texttt{crates/library/src/kkt/math.tex}) is
+the KKT system (see \texttt{library/src/kkt/math.tex}) is
 \begin{equation}\label{eq:kkt-system}
   M_\sigma(a)\, x = b,
   \qquad

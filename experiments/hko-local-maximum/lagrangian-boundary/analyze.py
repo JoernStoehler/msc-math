@@ -5,10 +5,10 @@
 
 """
 Goal: Analyze dense perturbation sweep around HKO2024 in Lagrangian product space.
-Input: crates/exp-hko-local-maximum/lagrangian-boundary/lagrangian-search.jsonl (per-sample data)
-       crates/exp-hko-local-maximum/lagrangian-boundary/lagrangian-search-levels.jsonl (per-level summary)
-Output: crates/exp-hko-local-maximum/lagrangian-boundary/lagrangian_search_fraction.png (fraction sys>1 vs epsilon)
-        crates/exp-hko-local-maximum/lagrangian-boundary/lagrangian_search_sys_vs_eps.png (sys distribution per epsilon)
+Input: experiments/hko-local-maximum/lagrangian-boundary/lagrangian-search.jsonl (per-sample data)
+       experiments/hko-local-maximum/lagrangian-boundary/lagrangian-search-levels.jsonl (per-level summary)
+Output: experiments/hko-local-maximum/lagrangian-boundary/lagrangian_search_fraction.png (fraction sys>1 vs epsilon)
+        experiments/hko-local-maximum/lagrangian-boundary/lagrangian_search_sys_vs_eps.png (sys distribution per epsilon)
 """
 
 import json

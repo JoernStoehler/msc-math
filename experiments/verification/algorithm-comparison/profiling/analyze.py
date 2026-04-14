@@ -7,7 +7,7 @@
 """Profile the default test suite and identify slow tests.
 
 Goal: Identify hot paths in the test suite and track performance over time.
-Input: No data file; runs cargo test on crates/.
+Input: No data file; runs `cargo test --lib` from `library/`.
 Output: profile.jsonl, logbook.jsonl, test_timing.png.
 
 Pipeline:
@@ -26,7 +26,7 @@ from datetime import date
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
-CRATE_DIR = REPO_ROOT / "crates"
+CRATE_DIR = REPO_ROOT / "library"
 OUT_DIR = Path(__file__).resolve().parent
 PROFILE_JSONL = OUT_DIR / "profile.jsonl"
 LOGBOOK_JSONL = OUT_DIR / "logbook.jsonl"
@@ -153,7 +153,7 @@ def generate_figure(per_test: list[dict]):
         import matplotlib
         matplotlib.use("Agg")
         import matplotlib.pyplot as plt
-        sys.path.insert(0, str(REPO_ROOT / "crates"))
+        sys.path.insert(0, str(REPO_ROOT / "experiments"))
         from figure_config import setup, FIGSIZE_SINGLE
         setup()
     except ImportError:

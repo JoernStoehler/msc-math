@@ -444,7 +444,7 @@ fn full_ascent(
 /// New dual vertex: a_{F+1} = n / (h_K(n) - ε) where h_K(n) = max_v ⟨n,v⟩.
 /// This creates an (F+1)-facet polytope that is close to the original.
 ///
-/// Pattern from facet-splitting/run.rs.
+/// Pattern from facet-splitting/main.rs.
 // TODO: add [lem:facet-addition] to math.tex (dual vertex ↔ halfspace correspondence)
 fn add_facet(
     polytope: &Polytope4D,

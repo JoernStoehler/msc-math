@@ -14,9 +14,9 @@ Use this file for tracker pointers and session prep; do not cite the raw import 
 - Treat the search as a finite minimax problem `sys(K) = min_{c in S_F} s_c(K)`.
 - Fixed-witness branch evaluation is cheap; exact witness search is the factorial bottleneck.
 - Existing repo evidence already covers the generic-interior regime:
-  - random sampling stayed below `sys = 1`: `crates/exp-sys-landscape/random-sample/logbook.md`
-  - fixed-F ascent improved tails but found no new `sys > 1`: `crates/exp-sys-landscape/gradient-ascent-general/logbook.md`
-  - random `F -> F+1` continuation gave only marginal gains: `crates/exp-sys-landscape/variable-f-ascent/logbook.md`
+  - random sampling stayed below `sys = 1`: `experiments/sys-landscape/random-sample/logbook.md`
+  - fixed-F ascent improved tails but found no new `sys > 1`: `experiments/sys-landscape/gradient-ascent-general/logbook.md`
+  - random `F -> F+1` continuation gave only marginal gains: `experiments/sys-landscape/variable-f-ascent/logbook.md`
 - The new program focuses on small active witness sets, exact-search warm starts, and structured continuation.
 
 ## 2. Witness Oracle Instrumentation
@@ -70,8 +70,8 @@ Use this file for tracker pointers and session prep; do not cite the raw import 
 - Use branch-gradient disagreement to choose which dual vertex to split and in which direction.
 - Lift parent witnesses into the child `F+1` problem instead of restarting from scratch.
 - Compare directly against current random-addition baselines:
-  - `crates/exp-sys-landscape/variable-f-ascent/`
-  - `crates/exp-hko-local-maximum/cut-and-ascent/`
+  - `experiments/sys-landscape/variable-f-ascent/`
+  - `experiments/hko-local-maximum/cut-and-ascent/`
 - This is the natural successor to the current continuation baseline, not a side quest.
 
 ## 6. Structured Families

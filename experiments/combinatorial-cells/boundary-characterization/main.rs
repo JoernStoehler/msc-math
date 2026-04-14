@@ -1,6 +1,6 @@
 //! Boundary Characterization: full EHZ at boundaries + crossing analysis + gradient measurement.
 //!
-//! Location: crates/exp-combinatorial-cells/boundary-characterization/run.rs
+//! Location: experiments/combinatorial-cells/boundary-characterization/main.rs
 //!
 //! For polytopes K = {x : a_k . x <= 1}, probes the gradient direction, negative gradient,
 //! and N_GLOBAL_DENSE random directions. At each boundary:
@@ -12,10 +12,12 @@
 //!
 //! Split from combinatorial-structure (Pass 2).
 //!
-//! Input: data/polytopes.jsonl (polytope database)
+//! Input: experiments/combinatorial-cells/polytopes.jsonl (owned cache;
+//! legacy repo-root data/polytopes.jsonl is a read-only fallback during migration)
 //! Filter: F <= 10 (HK2017 is exponential in F)
-//! Output: combinatorial-boundaries-anatomy.jsonl, combinatorial-boundaries-crossing.jsonl,
-//!         combinatorial-boundaries-gradient.jsonl
+//! Output: experiments/combinatorial-cells/boundary-characterization/combinatorial-boundaries-anatomy.jsonl,
+//!         experiments/combinatorial-cells/boundary-characterization/combinatorial-boundaries-crossing.jsonl,
+//!         experiments/combinatorial-cells/boundary-characterization/combinatorial-boundaries-gradient.jsonl
 
 use nalgebra::{Matrix4, Vector4};
 use rand::SeedableRng;
@@ -810,11 +812,13 @@ fn main() {
     // Load starting polytopes from database
     // =========================================================================
 
-    println!("Loading starting polytopes from database (F <= {MAX_FACET_COUNT})...");
+    println!("Loading starting polytopes from owned cache (F <= {MAX_FACET_COUNT})...");
 
-    let db_path = Path::new(env!("CARGO_MANIFEST_DIR"))
+    let owned_db_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("polytopes.jsonl");
+    let legacy_db_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("../../data/polytopes.jsonl");
-    let db = database::load(&db_path).expect("failed to load database");
+    let db = database::load_many(&[owned_db_path.as_path(), legacy_db_path.as_path()])
+        .expect("failed to load database");
 
     let mut polytopes: Vec<(String, String, Polytope4D)> = Vec::new();
 

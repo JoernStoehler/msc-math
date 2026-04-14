@@ -24,15 +24,15 @@ The verify-numerics experiment has proven Q error bounds and empirically validat
 
 ## Out of scope
 
-- Library promotion (crates/library/src/kkt/ changes) — do after the algorithm is settled.
+- Library promotion (library/src/kkt/ changes) — do after the algorithm is settled.
 - Thesis chapter writing — the experiment's math.tex is the source; thesis copies from it later.
 - Merging to main — Jörn gates merges.
 - Rational solver fallback for INDETERMINATE cases — design decision for later.
 
 ## Key files
 
-- `crates/dev-numerical-analysis/error-bounds/` — all experiment files
-  - `run.rs` — stage 2 binary (loads JSONL, exact + f64 solver, diagnostics)
+- `experiments/numerics/error-bounds/` — all experiment files
+  - `main.rs` — stage 2 binary (loads JSONL, exact + f64 solver, diagnostics)
   - `collect_inputs.rs` — stage 1 binary (generates artificial.jsonl + collected.jsonl)
   - `solvers.rs` — f64 solver copy (sign-fixed, no panics, LP-then-project fix)
   - `analyze.py` — stage 3 checks (propositions, bounds, β > 0 classification)
@@ -42,8 +42,8 @@ The verify-numerics experiment has proven Q error bounds and empirically validat
   - `collected.jsonl` — 1.66M polytope σ-nodes (gitignored, regenerate with collect_inputs.rs)
   - `results.jsonl` — 51K problems with exact ground truth (committed)
   - `checks.txt` — latest analysis output
-- `crates/library/src/kkt/projection_solver.rs` — reduced-gradient sign fixed in `e56cf161` (2026-04-12), with regression test `reduced_gradient_sign_distinguishes_fix`
-- `crates/library/src/kkt/qp_assembly.rs` — matrix assembly reference
+- `library/src/kkt/projection_solver.rs` — reduced-gradient sign fixed in `e56cf161` (2026-04-12), with regression test `reduced_gradient_sign_distinguishes_fix`
+- `library/src/kkt/qp_assembly.rs` — matrix assembly reference
 
 ## Prior findings
 
@@ -132,7 +132,7 @@ The capacity algorithm iterates over all subsets S ⊆ {1,...,F} and all cyclic 
 
 ### Scope and iteration guidance
 
-**Agent owns:** All experiment files (run.rs, solvers.rs, collect_inputs.rs, analyze.py, math.tex, logbook.md), JSONL data, TASKS.md updates, solver algorithm changes.
+**Agent owns:** All experiment files (main.rs, solvers.rs, collect_inputs.rs, analyze.py, math.tex, logbook.md), JSONL data, TASKS.md updates, solver algorithm changes.
 
 **Needs Jörn:** GAP in cor:taylor-structure proof, mathematical review of new bounds, merge to main, scope decisions.
 
@@ -146,15 +146,15 @@ Worktree at `.claude/worktrees/verify-numerics-q-accuracy`, branch `verify-numer
 
 To regenerate data:
 ```bash
-cd crates/ && cargo run -p dev-numerical-analysis --release --bin collect_inputs -- artificial
-cd crates/ && cargo run -p dev-numerical-analysis --release --bin collect_inputs -- natural --polytopes /tmp/all_polytopes.jsonl --max-facets 8
-cd crates/ && cargo run -p dev-numerical-analysis --release --bin verify_numerics
-uv run crates/dev-numerical-analysis/error-bounds/analyze.py
+cargo run -p dev-numerical-analysis --release --bin collect_inputs -- artificial
+cargo run -p dev-numerical-analysis --release --bin collect_inputs -- natural --polytopes /tmp/all_polytopes.jsonl --max-facets 8
+cargo run -p dev-numerical-analysis --release --bin verify_numerics
+uv run experiments/numerics/error-bounds/analyze.py
 ```
 
 The `/tmp/all_polytopes.jsonl` is a concatenation of correctness + random-product-sample + benchmark + ablation data. Recreate with:
 ```bash
-cat crates/dev-capacity-validation/correctness/correctness.jsonl crates/exp-sys-landscape/random-product-sample/random-product-sample.jsonl crates/dev-algorithm-comparison/benchmark/benchmark.jsonl crates/dev-algorithm-comparison/ablation/ablation.jsonl > /tmp/all_polytopes.jsonl
+cat experiments/verification/correctness/correctness.jsonl experiments/sys-landscape/random-product-sample/random-product-sample.jsonl experiments/verification/algorithm-comparison/benchmark/benchmark.jsonl experiments/verification/algorithm-comparison/ablation/ablation.jsonl > /tmp/all_polytopes.jsonl
 ```
 
 ## Success criteria
@@ -165,4 +165,4 @@ cat crates/dev-capacity-validation/correctness/correctness.jsonl crates/exp-sys-
 4. `analyze.py` reports zero violations on proven bounds with the new solver
 5. `logbook.md` documents the algorithm design discussion and all findings
 6. `review-proof` agent finds no issues in math.tex
-7. `cd crates/ && cargo build --release --bin verify_numerics --bin collect_inputs` succeeds
+7. `cargo build --release --bin verify_numerics --bin collect_inputs` succeeds

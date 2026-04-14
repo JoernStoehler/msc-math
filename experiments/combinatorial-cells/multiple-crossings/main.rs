@@ -1,6 +1,6 @@
 //! Multiple Crossings: multi-boundary traversal along gradient and random directions.
 //!
-//! Location: crates/exp-combinatorial-cells/multiple-crossings/run.rs
+//! Location: experiments/combinatorial-cells/multiple-crossings/main.rs
 //!
 //! Walks along a direction in dual-vertex space, iteratively stepping past each
 //! combinatorial boundary for a total distance budget. Tracks sys at each step to
@@ -11,9 +11,10 @@
 //!
 //! Split from combinatorial-structure (Pass 4).
 //!
-//! Input: data/polytopes.jsonl (polytope database)
+//! Input: experiments/combinatorial-cells/polytopes.jsonl (owned cache;
+//! legacy repo-root data/polytopes.jsonl is a read-only fallback during migration)
 //! Filter: F <= 10 (HK2017 is exponential in F)
-//! Output: combinatorial-boundaries-sweep.jsonl
+//! Output: experiments/combinatorial-cells/multiple-crossings/combinatorial-boundaries-sweep.jsonl
 
 use nalgebra::{Matrix4, Vector4};
 use rand::SeedableRng;
@@ -567,11 +568,13 @@ fn main() {
     // Load starting polytopes from database
     // =========================================================================
 
-    println!("Loading starting polytopes from database (F <= {MAX_FACET_COUNT})...");
+    println!("Loading starting polytopes from owned cache (F <= {MAX_FACET_COUNT})...");
 
-    let db_path = Path::new(env!("CARGO_MANIFEST_DIR"))
+    let owned_db_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("polytopes.jsonl");
+    let legacy_db_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("../../data/polytopes.jsonl");
-    let db = database::load(&db_path).expect("failed to load database");
+    let db = database::load_many(&[owned_db_path.as_path(), legacy_db_path.as_path()])
+        .expect("failed to load database");
 
     let mut polytopes: Vec<(String, Polytope4D)> = Vec::new();
 

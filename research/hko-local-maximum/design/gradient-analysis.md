@@ -9,7 +9,7 @@ Split from the original `gradient-is-zero/` experiment (Phase A: sensitivity ana
 ## How to run
 
 ```bash
-cd crates/ && cargo run -p exp-hko-local-maximum --release --bin hko-gradient-analysis
+cargo run -p exp-hko-local-maximum --release --bin hko-gradient-analysis
 uv run analyze.py
 ```
 
@@ -17,7 +17,7 @@ uv run analyze.py
 
 | File | Role |
 |---|---|
-| `run.rs` | Rust binary: sensitivity analysis + gradient ascent |
+| `main.rs` | Rust binary: sensitivity analysis + gradient ascent |
 | `analyze.py` | Python figures + analysis |
 | `hko-neighborhood-sensitivity.jsonl` | Gradients at HKO2024 (1 row, all 44 orbit gradients inline) |
 | `hko-neighborhood-ascent.jsonl` | Gradient ascent trajectory (1 row) |

@@ -2,13 +2,13 @@
 //!
 //! Goal: Compute systolic ratios for random 4D polytopes across facet counts F=5..12,
 //!   to probe whether random generic polytopes approach the Viterbo threshold.
-//! Input: Polytope database at data/polytopes.jsonl (created if missing).
-//! Output: crates/exp-sys-landscape/random-sample/random-sweep.jsonl
+//! Input: sys-landscape family cache at experiments/sys-landscape/cache.jsonl.
+//! Output: experiments/sys-landscape/random-sample/random-sweep.jsonl
 //!
 //! Architecture:
 //! 1. `cargo run -p exp-sys-landscape --release --bin sys-random-sample` generates dataset
 //! 2. Polytopes are generated via `generate_polytope` (blake3 per-attempt seeding)
-//!    and cached in the polytope database. Re-runs skip generation + capacity.
+//!    and cached in the sys-landscape family cache. Re-runs skip generation + capacity.
 //! 3. Writes to random-sample/random-sweep.jsonl
 //! 4. Python script plots sys vs F
 //!
@@ -19,7 +19,7 @@
 
 use std::collections::HashMap;
 use symplectic::algorithms::hk2017::ehz_capacity;
-use symplectic::database::{load, save, DualVerticesKey, PolytopeRecord, SigmaAction, Source};
+use symplectic::database::{load_many, save, DualVerticesKey, PolytopeRecord, SigmaAction, Source};
 use symplectic::geom::volume::volume;
 use symplectic::random::generate_polytope;
 use serde::Serialize;
@@ -70,13 +70,15 @@ fn find_by_source<'a>(
 fn main() {
     let t0 = Instant::now();
 
-    let db_path = Path::new(env!("CARGO_MANIFEST_DIR"))
+    let family_cache_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("cache.jsonl");
+    let legacy_cache_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("../../data/polytopes.jsonl");
     let output_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("random-sample/random-sweep.jsonl");
 
-    let mut db = load(&db_path).expect("failed to load database");
-    println!("Loaded database: {} entries\n", db.len());
+    let mut db = load_many(&[family_cache_path.as_path(), legacy_cache_path.as_path()])
+        .expect("failed to load sys-landscape cache inputs");
+    println!("Loaded cache inputs: {} entries\n", db.len());
 
     let file = File::create(&output_path).expect("failed to create output file");
     let mut writer = BufWriter::new(file);
@@ -188,10 +190,14 @@ fn main() {
     }
 
     writer.flush().expect("flush output");
-    save(&db_path, &db).expect("failed to save database");
+    save(&family_cache_path, &db).expect("failed to save sys-landscape family cache");
 
     println!("\nWrote {total} entries to {}", output_path.display());
-    println!("Database: {} entries (saved to {})", db.len(), db_path.display());
+    println!(
+        "Cache: {} entries (saved to {})",
+        db.len(),
+        family_cache_path.display()
+    );
     println!("Cache hits: {cache_hits}/{total}");
     println!("Total time: {:.1}s", t0.elapsed().as_secs_f64());
 }

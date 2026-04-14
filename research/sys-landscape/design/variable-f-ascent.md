@@ -25,16 +25,16 @@ The four-way comparison separates "structured entry from F-space helps" from "mo
 ## How to run
 
 ```bash
-cd crates/ && cargo run -p exp-sys-landscape --release --bin sys-variable-f-ascent           # resume
-cd crates/ && cargo run -p exp-sys-landscape --release --bin sys-variable-f-ascent -- --fresh # rerun
-cd crates/exp-sys-landscape/variable-f-ascent/ && uv run analyze.py            # figures
+cargo run -p exp-sys-landscape --release --bin sys-variable-f-ascent           # resume
+cargo run -p exp-sys-landscape --release --bin sys-variable-f-ascent -- --fresh # rerun
+cd experiments/sys-landscape/variable-f-ascent/ && uv run analyze.py            # figures
 ```
 
 ## Files
 
 | File | Role |
 |------|------|
-| run.rs | Binary: variable-F gradient ascent (RQ1 + RQ2) |
+| main.rs | Binary: variable-F gradient ascent (RQ1 + RQ2) |
 | analyze.py | Figures + summary statistics |
 | variable-f-ascent.jsonl | Per-trial results |
 | logbook.md | This file |

@@ -6,12 +6,12 @@
 """
 Goal: Analyze first-order prediction test for gradient correctness (Q1 generic, Q2 non-generic).
 Input:
-  - crates/dev-gradient/numerics/gradient-correctness-q1-generic.jsonl
-  - crates/dev-gradient/numerics/gradient-correctness-q2-nongeneric.jsonl
+  - experiments/numerics/gradient/numerics/gradient-correctness-q1-generic.jsonl
+  - experiments/numerics/gradient/numerics/gradient-correctness-q2-nongeneric.jsonl
 Output:
-  - crates/dev-gradient/numerics/gc_convergence.png    (Q1 log-log convergence)
-  - crates/dev-gradient/numerics/gc_slopes.png         (slope distributions Q1+Q2)
-  - crates/dev-gradient/numerics/gc_summary.tex        (summary table)
+  - experiments/numerics/gradient/numerics/gc_convergence.png    (Q1 log-log convergence)
+  - experiments/numerics/gradient/numerics/gc_slopes.png         (slope distributions Q1+Q2)
+  - experiments/numerics/gradient/numerics/gc_summary.tex        (summary table)
 """
 
 import json
@@ -22,7 +22,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent.parent))
 from figure_config import (
     setup,
     FIGSIZE_TRIPLE,

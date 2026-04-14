@@ -2,12 +2,12 @@
 
 Unified tracker for thesis, experiments, and infrastructure.
 Format: `## [status] Group` / `### [status] [date] Item`. Body only when header isn't enough.
-See `.agents/rules/tasks.md` for full conventions. Run `bash scripts/tasks-toc.sh` for section index.
+Run `bash scripts/tasks-toc.sh` for section index.
 
 **What the thesis should say:** `RESULTS.md`.
 **Priority:** Thesis coherence + experiment quality > code refactors. Code refactors only matter if they unblock thesis content or experiment correctness.
 **Maintenance:** Record decisions and reasons — these can't be derived later. Don't cache derivable state (build status, test counts) — run the command instead.
-**Dependencies:** thesis/ is stale and will be restructured — most thesis work is blocked on restructuring decisions. Work on crates/ (code, math.tex, experiments) is independent and can proceed now.
+**Dependencies:** thesis/ is stale and will be restructured — most thesis work is blocked on restructuring decisions. Work on `library/`, `formal/`, and `experiments/` is independent and can proceed now.
 
 ## Schedule — 18 days to deadline (2026-04-30)
 
@@ -56,37 +56,37 @@ Artifacts per experiment: `job.sh` + `job-smoke.sh` + `data/smoke.jsonl` (locall
 ## [open] HKO2024 local maximality
 
 Main conjecture: HKO2024 is a local maximum of the systolic ratio. Potentially publishable alongside thesis.
-Key files: `crates/exp-hko-local-maximum/`, `thesis/handwritten-notes.md`.
+Key files: `experiments/hko-local-maximum/`, `thesis/handwritten-notes.md`.
 Literature: BBLM2023 classifies smooth local maximizers (only ball for k=1). Polytope case genuinely open.
 HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex bodies) — local max in one space != local max in a larger space.
 
 ### [done] [2026-04] 1a. First-order analysis in a_i space (gradient-analysis)
 - Rank 25 in R^40, 15 flat directions. LP confirms 0 in conv(150 per-orbit gradients).
-- `crates/exp-hko-local-maximum/gradient-analysis/logbook.md`
+- `experiments/hko-local-maximum/gradient-analysis/logbook.md`
 
 ### [done] [2026-04] 1e. Second-order analysis along flat directions
 - All 15 basis + 100 random curvatures negative (-0.31 to -0.02). Supports local maximality.
-- `crates/exp-hko-local-maximum/second-order/`
+- `experiments/hko-local-maximum/second-order/`
 
 ### [done] [2026-03] 1b. Facet-splitting (F=10 to F=11)
 - 536 cuts, all decrease sys.
-- `crates/exp-hko-local-maximum/facet-splitting/`
+- `experiments/hko-local-maximum/facet-splitting/`
 
 ### [done] [2026-03] 1b. Cut-and-ascent (cut then gradient ascent)
 - 0/20 trials improved over HKO2024.
-- `crates/exp-hko-local-maximum/cut-and-ascent/`
+- `experiments/hko-local-maximum/cut-and-ascent/`
 
 ### [done] [2026-03] 1c. Subdifferential LP in (n,h)-space
 - Phase C LP confirms 0 in conv(per-orbit gradients). Superseded by 1a (a_i space, no gauge).
-- `crates/exp-hko-local-maximum/subdifferential-lp/`
+- `experiments/hko-local-maximum/subdifferential-lp/`
 
 ### [done] [2026-03] 1d. Lagrangian boundary mapping
 - Characteristic radius ~0.035, anisotropic (7x aspect ratio), ~10^-31 volume fraction.
-- `crates/exp-hko-local-maximum/lagrangian-boundary/logbook.md`
+- `experiments/hko-local-maximum/lagrangian-boundary/logbook.md`
 
 ### [done] [2026-03] Perturbation neighborhood (LP(5,5) random perturbations)
 - 100 random perturbations all retain sys>1 (min 1.002, max 1.033). HKO highest.
-- `crates/exp-hko-local-maximum/perturbation-neighborhood/`
+- `experiments/hko-local-maximum/perturbation-neighborhood/`
 
 ### [active] [group:licca] LICCA-scale F=10 neighborhood falsification
 - Scale the 100-seed perturbation-neighborhood experiment to 10k+ perturbations with 3 step-size buckets (small/medium/large). Honest falsification attempt. Expected: no sys>HKO (strengthens conjecture). Real outcome: whatever the data says.
@@ -102,16 +102,16 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 
 ### [Jörn] [group:hko] Verify h-space proof
 - Danskin + symmetry + Euler homogeneity argument. ~15 min.
-- `crates/exp-hko-local-maximum/gradient-analysis/logbook.md` lines 151-156
+- `experiments/hko-local-maximum/gradient-analysis/logbook.md` lines 151-156
 
 ### [Jörn] [group:hko] Verify second-order math.tex proposition
 - Non-smooth second-order sufficiency proof sketch needs rigor check.
-- `crates/exp-hko-local-maximum/second-order/math.tex`
+- `formal/hko-local-maximum/second-order.tex`
 
 ### [future] [group:hko] Higher-F perturbation validation (F=10→12, F=10→13)
 - RESULTS.md claims empirical validation "up to 13-facet" — currently aspirational, only 11-facet done
 - Extends facet-splitting and cut-and-ascent to add 2-3 facets simultaneously
-- Suggested in `crates/exp-hko-local-maximum/cut-and-ascent/logbook.md` line 40
+- Suggested in `experiments/hko-local-maximum/cut-and-ascent/logbook.md` line 40
 
 ### [future] [group:hko] F-refinement convergence (increasing F as smooth approximation)
 
@@ -127,19 +127,19 @@ Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the o
 
 ### [done] [2026-04] 2a. Rotated regular products
 - Only 5x5 at theta=18deg achieves sys>1 among 3<=n,m<=6 (6deg resolution) + 7x7 separately. 7x7 peaks at 0.917. Mixed 7-pairs not tested.
-- `crates/exp-sys-landscape/rotated-regular-products/`
+- `experiments/sys-landscape/rotated-regular-products/`
 
 ### [done] [2026-04] 2b. Gradient ascent from random starts
 - General: 10 seeds, best sys=0.9005. Products: 12 seeds, best sys=0.9127. No sys>1.
-- `crates/exp-sys-landscape/gradient-ascent-general/`, `gradient-ascent-products/`
+- `experiments/sys-landscape/gradient-ascent-general/`, `experiments/sys-landscape/gradient-ascent-products/`
 
 ### [done] [2026-03] 2c. Perturbation neighborhood (structurally different sys>1?)
 - 100 random perturbations all retain sys>1 but none exceed HKO2024.
-- `crates/exp-hko-local-maximum/perturbation-neighborhood/`
+- `experiments/hko-local-maximum/perturbation-neighborhood/`
 
 ### [done] [2026-04] 2d. Variable-F ascent (F to F+1)
 - 90 trials. F=10 local maxima often improve at F=11 but marginal; no sys>1.
-- `crates/exp-sys-landscape/variable-f-ascent/`
+- `experiments/sys-landscape/variable-f-ascent/`
 - Successor baseline for the next continuation line: `docs/sys-search-program-2026-04-13.md:67-75`
 
 ### [open] [group:witness-search] Witness oracle instrumentation + benchmark bank
@@ -175,11 +175,11 @@ Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the o
 
 ### [done] [2026-03] Random sampling (general + products + calibration)
 - Random polytopes max sys=0.578. Random products max sys=0.794 (6x6).
-- `crates/exp-sys-landscape/random-sample/`, `random-product-sample/`, `rejection-calibration/`
+- `experiments/sys-landscape/random-sample/`, `experiments/sys-landscape/random-product-sample/`, `experiments/sys-landscape/rejection-calibration/`
 
 ### [future] Regular Lagrangian product formula fitting
 - Dense (n, m, theta) sweep. Fit sys(n, m, theta). Does formula predict sys>1 only for 5x5?
-- Partial data in `crates/exp-sys-landscape/rotated-regular-products/`
+- Partial data in `experiments/sys-landscape/rotated-regular-products/`
 
 ### [active] [group:licca] LICCA-scale massive ascent sampling (density probe)
 - Scale `gradient-ascent-general/` (10 → 10k+ seeds) and `gradient-ascent-products/` (12 → 10k+ seeds).
@@ -202,17 +202,17 @@ sys as a continuous function on polytope space, no privileged threshold.
 
 ### [done] [2026-03] 3a. Omega hypothesis (small symplectic area -> high sys?)
 - Falsified. Zero correlation (rho=-0.02).
-- `crates/exp-combinatorial-cells/omega-hypothesis/`
+- `experiments/combinatorial-cells/omega-hypothesis/`
 
 ### [done] [2026-03] 3b. Combinatorial boundary behavior
 - Random cells convex, product cells non-convex (0% vs 100% transition failures).
 - ~F boundaries per gradient step. Orbit facets 2x wider than non-orbit.
 - sys continuous, gradient jumps up to 70deg at orbit switches (3%/boundary).
-- `crates/exp-combinatorial-cells/` (cell-widths, boundary-characterization, gradient-discontinuity, convexity, multiple-crossings)
+- `experiments/combinatorial-cells/` (cell-widths, boundary-characterization, gradient-discontinuity, convexity, multiple-crossings)
 
 ### [done] [2026-03] 3c. sys distribution for random polytopes
 - No random polytope exceeded sys=0.80.
-- `crates/exp-sys-landscape/random-sample/`, `random-product-sample/`
+- `experiments/sys-landscape/random-sample/`, `experiments/sys-landscape/random-product-sample/`
 
 ### [done] [2026-03] 3d. Gradient validation
 - Per-orbit gradient validated (slope=2.00) across 12 polytope types.
@@ -226,32 +226,32 @@ sys as a continuous function on polytope space, no privileged threshold.
 
 ## [open] Computing capacity
 
-Instrument development. Results promote to `crates/library/`.
+Instrument development. Results promote to `library/`.
 
 ### [done] [2026-03] 4a. Algorithm comparison (ablation, benchmark, profiling)
 - A2 pruning: ~1078x speedup at F=10. Construction dominates for F<=10 (80-92%).
-- `crates/dev-algorithm-comparison/`
+- `experiments/verification/algorithm-comparison/`
 
 ### [done] [2026-03] 4c. Capacity axiom validation
 - All 6 axioms pass. 112/112 orbit-recovery polytopes pass.
-- `crates/dev-capacity-validation/`
+- `experiments/verification/correctness/`
 
 ### [done] [2026-03] 4b-partial. Q error and KKT inertia
 - 1.13M nodes, worst E=2.9e-11. Empirically exact at f64.
 - Eigenvalue inertia formula holds for 6/7 polytopes, 5 mismatches are threshold artifacts.
-- `crates/dev-numerical-analysis/q-error/`, `kkt-inertia/`
+- `experiments/numerics/q-error/`, `experiments/numerics/kkt-inertia/`
 
 ### [open] [group:numerics] 4b. Numerical error bounds (verify-numerics)
 - math.tex Parts I+II complete. Proven Q error bound, eta bound for well-conditioned problems.
 - 14 previously-failing tests now pass (329 pass, 0 fail).
 - Rationale for current state: degenerate orbits are never capacity-achieving, so final capacity comes from well-conditioned orbits with proven low error. Gap remains for publication.
 - Open: Part III (f64 algorithm description), eta bound for LP null-space search (39 violations on natural data with near-zero eigenvalues), GAP in cor:taylor-structure proof (needs Jörn).
-- `crates/dev-numerical-analysis/error-bounds/`, `crates/dev-numerical-analysis/error-bounds/algorithm-notes.md`
+- `experiments/numerics/error-bounds/`, `experiments/numerics/error-bounds/algorithm-notes.md`
 
 ### [open] [group:numerics] Projection solver
 - 5-step algorithm: (1) solve equality constraints → (m-5)-dim affine space, (2) project H → reduced Hessian, (3) eigendecompose → null directions, (4) beta>0 as LP on projected null space, (5) recover multipliers.
 - Basic implementation in `kkt/projection_solver.rs`. Needs mathematical rigor + ablation comparison.
-- `crates/dev-numerical-analysis/error-bounds/algorithm-notes.md`
+- `experiments/numerics/error-bounds/algorithm-notes.md`
 
 ### [open] [group:numerics] Beta-LP unification
 - Replace `find_positive_beta_1d`/`find_positive_beta_nd` with single LP: maximize min_j beta_j subject to beta = beta_0 + V*alpha.
@@ -265,14 +265,14 @@ Instrument development. Results promote to `crates/library/`.
 
 ### [done] [2026-04] Crosspolytope capacity
 - c_EHZ = 4.0 (same as hypercube), sys=0.75. Exhaustive search through m=13.
-- `crates/crosspolytope/`
+- `experiments/crosspolytope/`
 
 ### [future] Crosspolytope optimality proof
 - Minimizing orbit has clean structure (uniform beta, max omega). Symmetry argument may avoid exhaustive enumeration.
 
 ### [blocked] [group:tube] Tube vs HK2017 benchmark
 - Blocked on: Jörn writing down the tube algorithm + rotation formula + correctness proof (first task in the tube subtree).
-- Once formula + proof exist: one session wires the formula into `crates/library/src/algorithms/tube/mod.rs` (the current file is a misleadingly-named wrong placeholder), then a sibling session runs a benchmark harness that reads the polytope database, runs tube + HK2017 per entry, compares c_EHZ values + wallclock + memory, produces a report.
+- Once formula + proof exist: one session wires the formula into `library/src/algorithms/tube/mod.rs` (the current file is a misleadingly-named wrong placeholder), then a sibling session runs a benchmark harness that reads the polytope database, runs tube + HK2017 per entry, compares c_EHZ values + wallclock + memory, produces a report.
 - Goal: empirically decide "switch to tube if/where it beats HK2017" and cross-compare excessively for correctness verification.
 - Re-plan trigger: Jörn's write-up lands → stage the wire-in and harness work as concrete items.
 
@@ -300,7 +300,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Need to implement a correct rotation formula. Not necessarily CH2021 — we have different basis vectors.
 - Performance on F>10 polytopes untested.
 - Blocked on: Jörn reviewing the math (proofs for what formula is correct given our basis).
-- `crates/library/src/algorithms/tube/mod.rs`
+- `library/src/algorithms/tube/mod.rs`
 
 ### [blocked] [group:writeup] S0: Notation restructure
 - Blocked on: thesis restructuring. Only applies to content that survives — new content will use a_i from the start.
@@ -368,9 +368,9 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Known side effect: step_bound upgrade (omega_0 detection) changes experiment behavior if re-run. Existing JSONL not regenerated.
 
 ### [open] [group:paranoia] Paranoia: numerical claims (first pass merged 2026-04-12)
-- First pass merged: `paranoia-numerics` branch, 19 files fixed across experiment logbooks + `dev-numerical-analysis/error-bounds/tests.rs` + `unknown-predicates/run.rs`. Session report at `paranoia-numerics-report.md`.
+- First pass merged: `paranoia-numerics` branch, 19 files fixed across experiment logbooks + `experiments/numerics/error-bounds/tests.rs` + `experiments/numerics/unknown-predicates/main.rs`. Session report at `paranoia-numerics-report.md`.
 - Remaining sub-items (needs Jörn decision, then follow-up to agent):
-  - `dev-capacity-validation/orbit-recovery/`: 4 polytopes missing from dataset (112→108), `solution_dim` hardcoded to 0 in run.rs, error magnitudes from different algorithm version
+  - `experiments/verification/orbit-recovery/`: 4 polytopes missing from dataset (112→108), `solution_dim` hardcoded to 0 in `main.rs`, error magnitudes from different algorithm version
   - `dev-algorithm-comparison/profiling/`: per-test durations zeroed in JSONL, 3 historical runs absent — data pipeline broken
 
 ### [done] [2026-04-12] [group:paranoia] Paranoia: conjectures + interpretations
@@ -389,7 +389,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 
 ### [open] [group:writeup] Dual-vertex parameterization (a_i migration)
 - Library API done. Most experiment migration complete. Math.tex migration complete.
-- `crates/library/src/algorithms/math.tex` uses a_i throughout.
+- `formal/library/algorithms.tex` uses a_i throughout.
 - Remaining:
   - Jörn verifies `[lem:cap-derivative]` and `[lem:vol-derivative]` (marked `\begin{unverified}`)
   - (`[lem:dual-vertex-qp]` proof was completed under Code cleanup 2026-04; see line 241.)
@@ -409,7 +409,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
   - 11 stubs + 6 gaps in dev-gradient/ and dev-numerical-analysis/.
 
 ### [open] [group:docs] Geom math.tex restructure
-- Jörn partially reviewed Defs 1–13 of `crates/library/src/geom/math.tex` (`crates/library/src/geom/review-notes.md`).
+- Jörn partially reviewed Defs 1–13 of `formal/library/geom.tex` (`library/src/geom/review-notes.md`).
 - Consolidate Defs 1-2 (symplectic form). Add Def for HKO2024 + Thm for false Viterbo's conjecture.
 - Clarify H-representation irredundancy. Fix Defs 12-13 (area/volume are algorithms, not definitions).
 - Consider splitting into `math_geometry.tex`, `math_symplectic.tex`, `math_reeb.tex`.
@@ -490,7 +490,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 
 ## [future] Ideas
 
-Items not tied to a specific research question. See also `crates/dev-algorithm-comparison/ablation/ideas-future.md`.
+Items not tied to a specific research question. See also `experiments/verification/algorithm-comparison/ablation/`.
 
 ### [future] Symplectic classification of simplices
 - Source: Fickel (supervised by Cieliebak). Two 2n-simplices equivalent under affine symplectomorphism iff 2D subsimplices have identical symplectic areas.
@@ -506,4 +506,4 @@ Items not tied to a specific research question. See also `crates/dev-algorithm-c
 - How does max-achievable-sys scale with F for random polytopes? Scattered data exists, no systematic study.
 
 ### [future] dev-gradient-ascent scaffolds (step-calibration, strategy-comparison)
-- Scaffolded, not implemented. `crates/dev-gradient-ascent/`
+- Scaffolded, not implemented. `experiments/sys-landscape/gradient-ascent-dev/`

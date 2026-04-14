@@ -56,8 +56,9 @@
 use num_rational::BigRational;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use std::fmt;
 use std::io::{self, BufRead, Write};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use crate::{ConstructionError, Polytope4D};
 
 /// The key type: rational dual vertices.
@@ -141,7 +142,7 @@ pub struct PolytopeRecord {
 }
 
 /// A near-optimal cyclic permutation and its action value.
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, PartialEq)]
 pub struct SigmaAction {
     /// Cyclic permutation of facet indices into `dual_vertices_rational`.
     /// Normalized: perm[0] = min(perm). Represents the facet visit order
@@ -173,6 +174,49 @@ pub enum Source {
     },
     #[serde(rename = "known")]
     Known { name: String },
+}
+
+#[derive(Debug)]
+pub enum MergeError {
+    Io {
+        path: PathBuf,
+        source: io::Error,
+    },
+    Conflict {
+        first_path: PathBuf,
+        second_path: PathBuf,
+        field: &'static str,
+    },
+}
+
+impl fmt::Display for MergeError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            MergeError::Io { path, source } => {
+                write!(f, "{}: {}", path.display(), source)
+            }
+            MergeError::Conflict {
+                first_path,
+                second_path,
+                field,
+            } => write!(
+                f,
+                "conflicting field '{}' while merging {} and {}",
+                field,
+                first_path.display(),
+                second_path.display()
+            ),
+        }
+    }
+}
+
+impl std::error::Error for MergeError {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            MergeError::Io { source, .. } => Some(source),
+            MergeError::Conflict { .. } => None,
+        }
+    }
 }
 
 impl PolytopeRecord {
@@ -261,6 +305,113 @@ pub fn load(path: &Path) -> io::Result<HashMap<DualVerticesKey, PolytopeRecord>>
     }
 
     Ok(db)
+}
+
+fn merge_option_field<T: Clone + PartialEq>(
+    dest: &mut Option<T>,
+    src: &Option<T>,
+    first_path: &Path,
+    second_path: &Path,
+    field: &'static str,
+) -> Result<(), MergeError> {
+    match (dest.as_ref(), src.as_ref()) {
+        (None, Some(value)) => *dest = Some(value.clone()),
+        (Some(left), Some(right)) if left != right => {
+            return Err(MergeError::Conflict {
+                first_path: first_path.to_path_buf(),
+                second_path: second_path.to_path_buf(),
+                field,
+            });
+        }
+        _ => {}
+    }
+    Ok(())
+}
+
+fn merge_record(
+    dest: &mut PolytopeRecord,
+    src: &PolytopeRecord,
+    first_path: &Path,
+    second_path: &Path,
+) -> Result<(), MergeError> {
+    if dest.dual_vertices_rational != src.dual_vertices_rational {
+        return Err(MergeError::Conflict {
+            first_path: first_path.to_path_buf(),
+            second_path: second_path.to_path_buf(),
+            field: "dual_vertices_rational",
+        });
+    }
+    if dest.vertices_rational != src.vertices_rational {
+        return Err(MergeError::Conflict {
+            first_path: first_path.to_path_buf(),
+            second_path: second_path.to_path_buf(),
+            field: "vertices_rational",
+        });
+    }
+
+    merge_option_field(&mut dest.source, &src.source, first_path, second_path, "source")?;
+    merge_option_field(&mut dest.volume, &src.volume, first_path, second_path, "volume")?;
+    merge_option_field(
+        &mut dest.volume_err,
+        &src.volume_err,
+        first_path,
+        second_path,
+        "volume_err",
+    )?;
+    merge_option_field(
+        &mut dest.capacity,
+        &src.capacity,
+        first_path,
+        second_path,
+        "capacity",
+    )?;
+    merge_option_field(
+        &mut dest.capacity_err,
+        &src.capacity_err,
+        first_path,
+        second_path,
+        "capacity_err",
+    )?;
+    merge_option_field(
+        &mut dest.sigma_gap_cutoff,
+        &src.sigma_gap_cutoff,
+        first_path,
+        second_path,
+        "sigma_gap_cutoff",
+    )?;
+    merge_option_field(&mut dest.sigmas, &src.sigmas, first_path, second_path, "sigmas")?;
+    Ok(())
+}
+
+/// Load and fieldwise-merge multiple JSONL files.
+///
+/// Later files may fill missing fields in earlier records for the same polytope.
+/// If two files disagree on a concrete field value for the same polytope, this
+/// returns a conflict error instead of silently choosing one.
+pub fn load_many(paths: &[&Path]) -> Result<HashMap<DualVerticesKey, PolytopeRecord>, MergeError> {
+    let mut merged: HashMap<DualVerticesKey, PolytopeRecord> = HashMap::new();
+    let mut origins: HashMap<DualVerticesKey, PathBuf> = HashMap::new();
+
+    for path in paths {
+        let db = load(path).map_err(|source| MergeError::Io {
+            path: (*path).to_path_buf(),
+            source,
+        })?;
+        for (key, record) in db {
+            if let Some(existing) = merged.get_mut(&key) {
+                let first_path = origins
+                    .get(&key)
+                    .expect("origin should exist for merged record")
+                    .clone();
+                merge_record(existing, &record, &first_path, path)?;
+            } else {
+                origins.insert(key.clone(), (*path).to_path_buf());
+                merged.insert(key, record);
+            }
+        }
+    }
+
+    Ok(merged)
 }
 
 /// Save HashMap → JSONL file (atomic: write tmp file, then rename).
@@ -435,5 +586,64 @@ mod tests {
         assert_eq!(map.len(), 2);
         assert_eq!(map[&key1], "a");
         assert_eq!(map[&key2], "b");
+    }
+
+    /// load_many() fills missing fields from later files.
+    #[test]
+    fn load_many_merges_missing_fields() {
+        let p = test_polytope();
+        let key = p.dual_vertices().to_vec();
+        let base = PolytopeRecord::from_polytope(&p);
+        let mut enriched = base.clone();
+        enriched.capacity = Some(4.5);
+
+        let dir = tempfile::tempdir().unwrap();
+        let path_a = dir.path().join("a.jsonl");
+        let path_b = dir.path().join("b.jsonl");
+
+        let mut db_a = HashMap::new();
+        db_a.insert(key.clone(), base);
+        save(&path_a, &db_a).unwrap();
+
+        let mut db_b = HashMap::new();
+        db_b.insert(key.clone(), enriched);
+        save(&path_b, &db_b).unwrap();
+
+        let merged = load_many(&[path_a.as_path(), path_b.as_path()]).unwrap();
+        assert_eq!(merged.len(), 1);
+        assert_eq!(merged[&key].capacity, Some(4.5));
+    }
+
+    /// load_many() fails loudly when two files disagree on a concrete field.
+    #[test]
+    fn load_many_rejects_conflicting_fields() {
+        let p = test_polytope();
+        let key = p.dual_vertices().to_vec();
+
+        let mut left = PolytopeRecord::from_polytope(&p);
+        left.capacity = Some(4.5);
+        let mut right = left.clone();
+        right.capacity = Some(5.5);
+
+        let dir = tempfile::tempdir().unwrap();
+        let path_a = dir.path().join("a.jsonl");
+        let path_b = dir.path().join("b.jsonl");
+
+        let mut db_a = HashMap::new();
+        db_a.insert(key.clone(), left);
+        save(&path_a, &db_a).unwrap();
+
+        let mut db_b = HashMap::new();
+        db_b.insert(key, right);
+        save(&path_b, &db_b).unwrap();
+
+        let err = match load_many(&[path_a.as_path(), path_b.as_path()]) {
+            Ok(_) => panic!("expected merge conflict"),
+            Err(err) => err,
+        };
+        match err {
+            MergeError::Conflict { field, .. } => assert_eq!(field, "capacity"),
+            other => panic!("expected conflict, got {other}"),
+        }
     }
 }

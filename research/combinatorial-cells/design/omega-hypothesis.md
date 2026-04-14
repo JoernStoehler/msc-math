@@ -13,8 +13,8 @@ The mechanism: Q(beta) = sum beta_i beta_j omega_0(...), where Q is maximized su
 ## How to run
 
 ```bash
-cd crates/ && cargo run -p exp-combinatorial-cells --release --bin cell-omega   # generates omega-obstacle.jsonl
-cd crates/exp-combinatorial-cells/omega-hypothesis/
+cargo run -p exp-combinatorial-cells --release --bin cell-omega   # generates omega-obstacle.jsonl
+cd experiments/combinatorial-cells/omega-hypothesis/
 uv run analyze.py                        # generates all figures
 ```
 
@@ -22,7 +22,7 @@ uv run analyze.py                        # generates all figures
 
 | File | Role |
 |------|------|
-| `run.rs` | Rust binary: generates JSONL dataset with omega features and gradients |
+| `main.rs` | Rust binary: generates JSONL dataset with omega features and gradients |
 | `analyze.py` | Python: correlation analysis and figure generation |
 | `math.tex` | Formal writeup (hypothesis, Phase A/B, conclusion) |
 | `omega-obstacle.jsonl` | Dataset (953 rows) |

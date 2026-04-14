@@ -42,7 +42,7 @@ EOF
 [codex-cloud-setup] qhull-bin install failed.
 
 The repo's Rust validation path depends on `qconvex`
-(`crates/library/src/geom/qhull.rs`). This environment is therefore not ready
+(`library/src/geom/qhull.rs`). This environment is therefore not ready
 for the intended cloud smoke workflow.
 EOF
     exit 100

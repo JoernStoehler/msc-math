@@ -11,7 +11,7 @@ To probe Viterbo's conjecture computationally, we need large datasets of random 
 ## How to run
 
 ```bash
-cd crates/ && cargo run -p exp-sys-landscape --release --bin sys-rejection-calibration
+cargo run -p exp-sys-landscape --release --bin sys-rejection-calibration
 ```
 
 No Python script or figure. Acceptance rate table is in this logbook (below).
@@ -20,7 +20,7 @@ No Python script or figure. Acceptance rate table is in this logbook (below).
 
 | File | Role |
 |------|------|
-| `run.rs` | Rust binary: generates dataset |
+| `main.rs` | Rust binary: generates dataset |
 | `acceptance_sweep_test.rs` | Unit tests for the sweep function |
 | `math.tex` | Formal writeup (sampling procedure, boundedness proposition + proof) |
 | `acceptance.jsonl` | Dataset (18 rows: 6 facet counts x 3 height ranges) |

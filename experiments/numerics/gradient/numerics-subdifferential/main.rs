@@ -6,7 +6,7 @@
 //! Q5: Orbit-switching -- subdifferential prediction at near-tied orbits
 //! Q5b: Exact switching boundaries -- subdifferential at symmetric/degenerate polytopes
 //!
-//! Split from gradient-validation/run.rs. Q5/Q5b use full ehz_capacity on
+//! Split from gradient-validation/main.rs. Q5/Q5b use full ehz_capacity on
 //! perturbed polytopes (unlike Q1-Q4 which use fixed-orbit solve_kkt_for).
 //!
 //! Methodology (Q5):
@@ -16,7 +16,7 @@
 //! - Compare against actual capacity change via full ehz_capacity on perturbed polytope
 //! - Records orbit switching (which orbit wins in the perturbed polytope)
 //! - [prop:capacity-smoothness-classification](b): at switching boundaries, D_d c = min_i(nabla A_i . d).
-//!   In crates/dev-gradient/numerics/math.tex.
+//!   In experiments/numerics/gradient/numerics/math.tex.
 //!
 //! Methodology (Q5b):
 //! - Use LP(n,n) (regular Lagrangian products) where symmetry forces exact orbit ties
@@ -28,13 +28,13 @@
 //!
 //! Mathematical correspondence:
 //! - [lem:cap-derivative] (unverified): envelope theorem formula for dc/da_k.
-//!   In crates/library/src/algorithms/math.tex.
+//!   In library/src/algorithms/math.tex.
 //! - [prop:capacity-smoothness-classification] (unverified): refined decomposition into
 //!   per-orbit feasibility/smoothness and capacity-level min structure.
-//!   In crates/dev-gradient/numerics/math.tex.
+//!   In experiments/numerics/gradient/numerics/math.tex.
 //! - [thm:subdiff-with-appearance] (unverified): direction-filtered subdifferential
 //!   extending the formula to orbits at the feasibility boundary.
-//!   In crates/dev-gradient/numerics-subdifferential/math.tex.
+//!   In experiments/numerics/gradient/numerics-subdifferential/math.tex.
 //!
 //! Architecture:
 //! 1. `cargo run --release --bin gradient-subdifferential` -> JSONL files

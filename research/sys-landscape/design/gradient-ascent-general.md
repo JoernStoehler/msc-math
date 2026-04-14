@@ -15,7 +15,7 @@ byte-reproducible rows (verified locally: running `--n 1 --n-start 5`
 reproduces row `general_5` byte-for-byte from an `--n 10 --n-start 0` run;
 see "Byte-reproducibility re-verify" below). `--no-db-update` disables
 shared-database load/save, which is required under rayon par_iter because
-the old code load-modify-saved `crates/data/polytopes.jsonl` at each run.
+the old code load-modify-saved `data/polytopes.jsonl` at each run.
 
 Production target: 10k seeds via `rayon::par_iter` on a single slurm task with
 `--cpus-per-task=10` on the epyc partition. One output file `data/licca.jsonl`.
@@ -39,7 +39,7 @@ product part is now in `gradient-ascent-products/`.
 ### Local smoke (devcontainer)
 
 ```bash
-cd crates/
+cargo run -p exp-sys-landscape --release --bin sys-gradient-ascent-general
 cargo build --release -p exp-sys-landscape --bin sys-gradient-ascent-general
 cd exp-sys-landscape/gradient-ascent-general
 mkdir -p data
@@ -101,8 +101,8 @@ sacct -j <jobid> --format=JobID,State,Elapsed,MaxRSS
 Retrieve from devcontainer:
 ```bash
 scp -J stoehljo@xlogin.uni-augsburg.de \
-    stoehljo@licca-li-01.rz.uni-augsburg.de:'~/msc-math/crates/exp-sys-landscape/gradient-ascent-general/data/licca.jsonl' \
-    crates/exp-sys-landscape/gradient-ascent-general/data/
+    stoehljo@licca-li-01.rz.uni-augsburg.de:'~/msc-math/experiments/sys-landscape/gradient-ascent-general/data/licca.jsonl' \
+    experiments/sys-landscape/gradient-ascent-general/data/
 ```
 
 Then run `uv run analyze.py` locally.
@@ -117,7 +117,7 @@ existing `licca.jsonl` and skips already-completed seeds. Do NOT pass
 
 | File | Role |
 |------|------|
-| `run.rs` | Binary: per-seed RNG ascent + overshoot + wiggle |
+| `main.rs` | Binary: per-seed RNG ascent + overshoot + wiggle |
 | `analyze.py` | Summary table + 6 figures + Bayesian bound |
 | `job.sh` | Slurm submission script (epyc, single task, 10 cores, 1-second tripwire --time) |
 | `data/smoke.jsonl` | Local smoke output, 3 seeds (LFS) |

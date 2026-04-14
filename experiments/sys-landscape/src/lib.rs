@@ -261,10 +261,10 @@ pub fn compute_step_bound(polytope: &Polytope4D, direction: &[Vector4<f64>]) -> 
 ///
 /// Schema is byte-identical between `gradient-ascent-general` and
 /// `gradient-ascent-products`. `polytope_type` is set by the experiment:
-/// general passes the literal `"general"` (see `gradient-ascent-general/run.rs`
+/// general passes the literal `"general"` (see `gradient-ascent-general/main.rs`
 /// line 507); products passes `lagrangian_{q_f}x{p_f}` where `q_f` and `p_f`
 /// are the facet counts of the two Lagrangian factors (see
-/// `gradient-ascent-products/run.rs` line 443, `bucket_name`).
+/// `gradient-ascent-products/main.rs` line 443, `bucket_name`).
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SummaryRow {
     pub name: String,

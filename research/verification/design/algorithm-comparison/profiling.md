@@ -11,7 +11,6 @@ Profile the default test suite (`cargo test --lib`) to identify hot paths and tr
 ## How to run
 
 ```bash
-cd crates/dev-algorithm-comparison/profiling/
 uv run analyze.py
 ```
 
@@ -40,7 +39,7 @@ Runs `cargo test --lib` wrapped in `bash -c "time ..."` to capture both wall-clo
 
 Profiles 18 candidate slow tests individually, running each in isolation via `cargo test --lib -- <test_name>` with a 300-second timeout. Sequential execution avoids contention effects. The candidate list is maintained manually in `analyze.py` and should be updated when the test suite changes.
 
-Current candidates (all from `crates/`):
+Current candidates (all from `library/`):
 - `algorithms::hk2017::literature_test::*` (8 tests)
 - `algorithms::hk2017::orbit_recovery_test::*` (4 tests)
 - `algorithms::hk2017::conformality_test::capacity_conformality`

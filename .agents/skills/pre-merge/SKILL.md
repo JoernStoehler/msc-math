@@ -12,26 +12,26 @@ Run all phases in order before telling Jörn work is ready. Every phase runs on 
 Run all of these. If a command fails, fix the issue and rerun before proceeding.
 
 ```bash
-cd crates/library/ && cargo test --release --lib
-cd crates/library/ && cargo clippy --lib -- -D warnings
-cd crates/ && cargo build --workspace --release
+cd library/ && cargo test --release --lib
+cd library/ && cargo clippy --lib -- -D warnings
+cargo build --workspace --release
 cd thesis/ && latexmk && ./check-build.sh
-cd crates/ && latexmk
+cd formal/library/ && latexmk
 ```
 
 ## Phase 2: Smoke-test experiment binaries
 
-List all `run.rs` files on this branch. For each, compile and run with the fewest polytopes the binary accepts (typically 1). If the binary takes no dataset argument, run `--help` or the default invocation. Goal: catch panics and import errors early. The polytope database caches results, so hot runs are fast.
+List all experiment `main.rs` files on this branch. For each, compile and run with the fewest polytopes the binary accepts (typically 1). If the binary takes no dataset argument, run `--help` or the default invocation. Goal: catch panics and import errors early. The polytope database caches results, so hot runs are fast.
 
-No `run.rs` files on the branch → nothing to do (empty set, not a skip).
+No experiment `main.rs` files on the branch → nothing to do (empty set, not a skip).
 
 ## Phase 3: Data freshness
 
 For experiments with committed data (`.jsonl`, `.csv`), compare code and data commit dates:
 
 ```bash
-git log -1 --format='%H %ci' -- crates/exp-<group>/<subdir>/run.rs
-git log -1 --format='%H %ci' -- crates/exp-<group>/<subdir>/*.jsonl
+git log -1 --format='%H %ci' -- experiments/<group>/<subdir>/main.rs
+git log -1 --format='%H %ci' -- experiments/<group>/<subdir>/*.jsonl
 ```
 
 If code is newer than data, regenerate on this branch.

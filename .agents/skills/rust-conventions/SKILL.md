@@ -7,7 +7,7 @@ description: Rust project conventions for library and experiment code reviews.
 
 ## Coordinate convention
 
-(q₁, q₂, p₁, p₂) — components [0,1] = q-space, [2,3] = p-space, [0,2] and [1,3] = symplectic planes. Defined in `geom/symplectic_form.rs`. Common mistake: assuming (q₁, p₁, q₂, p₂).
+(q₁, q₂, p₁, p₂) — components [0,1] = q-space, [2,3] = p-space, [0,2] and [1,3] = symplectic planes. Defined in `library/src/geom/symplectic_form.rs`. Common mistake: assuming (q₁, p₁, q₂, p₂).
 
 ## Math-code correspondence
 
@@ -55,6 +55,6 @@ Standard Rust error handling, plus:
 
 ## Experiment binaries
 
-Only stable, validated code lives in `crates/library/`. Don't modify the library for experiment-specific behavior.
+Only stable, validated code lives in `library/`. Don't modify the library for experiment-specific behavior.
 
-Within an experiment crate (`crates/exp-<group>/`), shared helpers belong in `src/lib.rs` when multiple binaries need the same function. This avoids copy-paste duplication and lets improvements propagate. Per-binary helpers that only one experiment uses stay in that binary's `run.rs`.
+Within an experiment package (`experiments/<group>/`), shared helpers belong in `src/lib.rs` when multiple binaries need the same function. This avoids copy-paste duplication and lets improvements propagate. Per-binary helpers that only one experiment uses stay in that binary's `main.rs`.

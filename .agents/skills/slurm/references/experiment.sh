@@ -6,9 +6,9 @@
 #
 # Usage:
 #   cd ~/msc-math
-#   sbatch crates/exp-<group>/<subdir>/job.sh
+#   sbatch experiments/<group>/<subdir>/job.sh
 #
-# Copy this template to crates/exp-<group>/<subdir>/job.sh and fill in the
+# Copy this template to experiments/<group>/<subdir>/job.sh and fill in the
 # variables marked with TODO.
 #===============================================================================
 
@@ -29,7 +29,7 @@ source "$HOME/.cargo/env"
 export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK:-1}
 
 # --- Build (skip if already built) ---
-cd "$HOME/msc-math/crates"
+cd "$HOME/msc-math"
 echo "=== Building at $(date) ==="
 cargo build --workspace --release 2>&1 | tail -5
 
@@ -38,7 +38,7 @@ echo "=== Running at $(date) ==="
 echo "Node: $(hostname), CPUs: $SLURM_CPUS_PER_TASK"
 
 # TODO: Replace with the actual binary name and arguments.
-# Binary names are defined in experiments/Cargo.toml [[bin]] sections.
+# Binary names are defined in `experiments/<group>/Cargo.toml` `[[bin]]` sections.
 # Use the compiled binary directly (cargo build already ran above).
 srun "$CARGO_TARGET_DIR/release/TODO_BIN_NAME"
 

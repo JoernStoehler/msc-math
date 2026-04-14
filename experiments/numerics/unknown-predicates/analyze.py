@@ -9,8 +9,8 @@ Analyze UNKNOWN admissibility predicate prevalence across datasets.
 
 Goal: Determine whether the EHZ capacity algorithm ever produces UNKNOWN
       (inconclusive) admissibility verdicts on our polytope datasets.
-Input: crates/dev-numerical-analysis/unknown-predicates/unknown-predicates.jsonl
-Output: crates/dev-numerical-analysis/unknown-predicates/unknown_predicates_beta_min.png
+Input: experiments/numerics/unknown-predicates/unknown-predicates.jsonl
+Output: experiments/numerics/unknown-predicates/unknown_predicates_beta_min.png
         Summary statistics to stdout
 """
 

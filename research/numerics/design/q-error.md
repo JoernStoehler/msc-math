@@ -11,7 +11,7 @@ All experiments in this thesis depend on the numerical KKT solver producing accu
 ## How to run
 
 ```bash
-cd crates/dev-numerical-analysis/q-error/ && cargo run --release --bin num-q-error
+cargo run -p dev-numerical-analysis --release --bin num-q-error
 ```
 
 Output goes to stdout and is captured in `q_error_output.txt`. The binary panics on any violation.
@@ -20,7 +20,7 @@ Output goes to stdout and is captured in `q_error_output.txt`. The binary panics
 
 | File | Role |
 |------|------|
-| `run.rs` | Rust binary: all-node error bound sweep + exact rational comparison |
+| `main.rs` | Rust binary: all-node error bound sweep + exact rational comparison |
 | `math.tex` | Formal writeup (two tables, discussion paragraph) |
 | `q_error_output.txt` | Captured stdout output (40 lines) with summary tables |
 

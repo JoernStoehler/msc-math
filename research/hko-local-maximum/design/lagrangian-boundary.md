@@ -49,7 +49,7 @@ If Phase 2 (or Phase 1) finds a sys > 1 polytope: is it related to HKO2024 by a 
 ## How to run
 
 ```bash
-cd crates/exp-hko-local-maximum/lagrangian-boundary/
+cd experiments/hko-local-maximum/lagrangian-boundary/
 cargo run --release --bin hko-lagrangian-boundary
 uv run analyze.py
 ```
@@ -58,7 +58,7 @@ uv run analyze.py
 
 | File | Role |
 |------|------|
-| `run.rs` | Rust binary: dense perturbation sweep of HKO2024 dual vertices |
+| `main.rs` | Rust binary: dense perturbation sweep of HKO2024 dual vertices |
 | `analyze.py` | Python: fraction-vs-epsilon curve, strip plot, summary table |
 | `lagrangian-search.jsonl` | Per-sample data (6501 rows: 1 base + 500 per ε level × 13 levels) |
 | `lagrangian-search-levels.jsonl` | Per-level summary (13 rows) |
@@ -189,7 +189,7 @@ The L∞-box sweep measures the average size of the sys > 1 region but can't res
 ### How to run
 
 ```bash
-cd crates/exp-hko-local-maximum/lagrangian-boundary/
+cd experiments/hko-local-maximum/lagrangian-boundary/
 cargo run --release --bin hko-lagrangian-probe
 uv run analyze.py
 ```

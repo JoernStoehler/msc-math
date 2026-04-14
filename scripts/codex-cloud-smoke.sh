@@ -48,32 +48,32 @@ git lfs version >/dev/null
 
 echo "[codex-cloud-smoke] Running library tests..."
 (
-  cd "${ROOT_DIR}/crates/library"
+  cd "${ROOT_DIR}/library"
   cargo test --release --lib
 )
 
 echo "[codex-cloud-smoke] Running library clippy..."
 (
-  cd "${ROOT_DIR}/crates/library"
+  cd "${ROOT_DIR}/library"
   cargo clippy --lib -- -D warnings
 )
 
 echo "[codex-cloud-smoke] Building representative experiment binary..."
 (
-  cd "${ROOT_DIR}/crates"
+  cd "${ROOT_DIR}"
   cargo build -p exp-hko-local-maximum --release --bin hko-perturbation
 )
 
 echo "[codex-cloud-smoke] Running representative Python analysis in temp workspace..."
 TMP_DIR="$(mktemp -d)"
-TMP_EXP_DIR="${TMP_DIR}/crates/exp-hko-local-maximum/perturbation-neighborhood"
+TMP_EXP_DIR="${TMP_DIR}/experiments/hko-local-maximum/perturbation-neighborhood"
 mkdir -p "${TMP_EXP_DIR}/data"
-mkdir -p "${TMP_DIR}/crates"
-cp "${ROOT_DIR}/crates/figure_config.py" "${TMP_DIR}/crates/figure_config.py"
-cp "${ROOT_DIR}/crates/exp-hko-local-maximum/perturbation-neighborhood/analyze.py" "${TMP_EXP_DIR}/analyze.py"
+mkdir -p "${TMP_DIR}/experiments"
+cp "${ROOT_DIR}/experiments/figure_config.py" "${TMP_DIR}/experiments/figure_config.py"
+cp "${ROOT_DIR}/experiments/hko-local-maximum/perturbation-neighborhood/analyze.py" "${TMP_EXP_DIR}/analyze.py"
 
 for eps in 0.001 0.01 0.1; do
-  "${ROOT_DIR}/crates/target/release/hko-perturbation" \
+  "${ROOT_DIR}/target/release/hko-perturbation" \
     --eps "${eps}" \
     --n 20 \
     --out "${TMP_EXP_DIR}/data/smoke-eps-${eps}.jsonl"

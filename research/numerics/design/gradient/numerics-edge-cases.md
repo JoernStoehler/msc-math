@@ -5,7 +5,7 @@ Split from the original `gradient-validation/` experiment (Q3 + Q4).
 ## How to run
 
 ```bash
-cd crates/ && cargo run -p dev-gradient --release --bin dev_numerics_edge_cases
+cargo run -p dev-gradient --release --bin dev_numerics_edge_cases
 ```
 
 Produces `gradient-correctness-q3-degeneracy.jsonl` and `gradient-correctness-q4-redundant.jsonl`.

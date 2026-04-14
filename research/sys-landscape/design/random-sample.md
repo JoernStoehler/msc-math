@@ -11,7 +11,7 @@ Do random generic 4D polytopes approach the Viterbo threshold sys=1? This is the
 ## How to run
 
 ```bash
-cd crates/ && cargo run -p exp-sys-landscape --release --bin sys-random-sample
+cargo run -p exp-sys-landscape --release --bin sys-random-sample
 uv run analyze.py
 ```
 
@@ -19,7 +19,7 @@ uv run analyze.py
 
 | File | Role |
 |---|---|
-| `run.rs` | Rust binary: generates random polytopes, computes sys for each |
+| `main.rs` | Rust binary: generates random polytopes, computes sys for each |
 | `analyze.py` | Python: scatter plot of sys vs F with median and std error bars |
 | `math.tex` | Formal writeup: sampling setup, figure, interpretation |
 | `random-sweep.jsonl` | Dataset (70 rows: polytope geometry, capacity, volume, sys) |

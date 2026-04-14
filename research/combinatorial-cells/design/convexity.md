@@ -13,7 +13,7 @@ Tests whether combinatorial-type cells in dual-vertex space are convex. Samples 
 ## How to run
 
 ```bash
-cd crates/ && cargo run -p exp-combinatorial-cells --release --bin cell-convexity
+cargo run -p exp-combinatorial-cells --release --bin cell-convexity
 uv run analyze.py
 ```
 

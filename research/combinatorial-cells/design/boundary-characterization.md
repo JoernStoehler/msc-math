@@ -6,7 +6,7 @@ Split from the original `combinatorial-structure/` experiment (Pass 2: boundary 
 
 Full EHZ at boundaries + crossing analysis + gradient measurement. For each polytope, probes the gradient direction, negative gradient, and 5 dense random directions. At each boundary: records anatomy (event type, t_max, orbit gap), evaluates crossing (sys before/after, orbit switch), and measures gradient change.
 
-The run.rs binary also produces gradient data used by `gradient-discontinuity/`.
+The main.rs binary also produces gradient data used by `gradient-discontinuity/`.
 
 ## Status
 
@@ -15,7 +15,7 @@ The run.rs binary also produces gradient data used by `gradient-discontinuity/`.
 ## How to run
 
 ```bash
-cd crates/ && cargo run -p exp-combinatorial-cells --release --bin cell-boundary-characterization
+cargo run -p exp-combinatorial-cells --release --bin cell-boundary-characterization
 uv run analyze.py
 ```
 
@@ -55,7 +55,7 @@ Orbit gap predicts orbit switches (orbit_gap_vs_switch.png): lowest gap quartile
 
 ## Related experiments
 
-- **gradient-discontinuity** -- analyzes gradient angle change and gradient-cell alignment using data from this experiment's run.rs
+- **gradient-discontinuity** -- analyzes gradient angle change and gradient-cell alignment using data from this experiment's main.rs
 - **cell-widths** -- per-facet cell width data used for gradient-cell alignment analysis (in gradient-discontinuity)
 - **gradient-correctness** -- validates gradient formula; this experiment studies what happens when the gradient changes
 - **gradient-ascent-general**, **gradient-ascent-products** (exp-sys-landscape) -- use boundary-crossing strategies; this experiment characterizes the boundaries

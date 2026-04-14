@@ -3,7 +3,7 @@
 //! A-axis variants: A0 (unpruned), A1 (vertex adjacency),
 //! A2 (directed ω₀), A3 (Reeb-flow feasibility).
 //!
-//! Convention: The library (crates/) is stable. New variants are implemented as
+//! Convention: The library (`library/`) is stable. New variants are implemented as
 //! self-contained code in this binary. Library internals needed by the new variants
 //! are copied here (marked with source references). If a variant is later promoted
 //! to production, it enters the library then.

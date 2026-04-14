@@ -11,7 +11,7 @@ gradient-ascent-general/gradient-ascent-products (formerly boundary-crossing-sea
 ## How to run
 
 ```bash
-cd crates/ && cargo run -p dev-gradient-ascent --release --bin dev_step_calibration
+cargo run -p dev-gradient-ascent --release --bin dev_step_calibration
 ```
 
 ## Research questions

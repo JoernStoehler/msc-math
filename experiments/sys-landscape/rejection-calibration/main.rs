@@ -3,7 +3,7 @@
 //! Goal: Measure rejection sampling acceptance rates across a grid of facet counts
 //!   and height ranges, to characterize the efficiency of random polytope generation.
 //! Input: None (generates candidates from hardcoded parameter grid and seed).
-//! Output: crates/exp-sys-landscape/rejection-calibration/acceptance.jsonl (acceptance rates per config).
+//! Output: experiments/sys-landscape/rejection-calibration/acceptance.jsonl (acceptance rates per config).
 
 use symplectic::dataset::AcceptanceRow;
 use symplectic::random::sample_random_polytope;

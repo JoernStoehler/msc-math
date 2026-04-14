@@ -6,11 +6,11 @@
 """
 Goal: Analyze gradient correctness edge cases (Q3 near-degeneracy, Q4 barely-cutting).
 Input:
-  - crates/dev-gradient/numerics-edge-cases/gradient-correctness-q3-degeneracy.jsonl
-  - crates/dev-gradient/numerics-edge-cases/gradient-correctness-q4-redundant.jsonl
+  - experiments/numerics/gradient/numerics-edge-cases/gradient-correctness-q3-degeneracy.jsonl
+  - experiments/numerics/gradient/numerics-edge-cases/gradient-correctness-q4-redundant.jsonl
 Output:
-  - crates/dev-gradient/numerics-edge-cases/gc_q3_gap.png    (Q3 action gap vs slope)
-  - crates/dev-gradient/numerics-edge-cases/gc_q4_delta.png  (Q4 delta vs slope)
+  - experiments/numerics/gradient/numerics-edge-cases/gc_q3_gap.png    (Q3 action gap vs slope)
+  - experiments/numerics/gradient/numerics-edge-cases/gc_q4_delta.png  (Q4 delta vs slope)
 """
 
 import json

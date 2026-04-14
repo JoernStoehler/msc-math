@@ -16,7 +16,7 @@
 //! - `--seed <u64>`       base RNG seed                               (default: 42)
 //! - `--out <path>`       output summary .jsonl                       (default: gradient-ascent-products/gradient-ascent-products.jsonl)
 //! - `--fresh`            delete existing summary + trace files before running
-//! - `--no-db-update`     do not load or save the shared polytope database
+//! - `--no-db-update`     do not load or save the sys-landscape family cache
 //!                        (set by LICCA shards to avoid concurrent write races)
 //!
 //! Architecture B (2026-04-12): rayon `par_iter` over `[n_start, n_start+n)`
@@ -33,7 +33,7 @@ use exp_sys_landscape::{
     MAX_STEP_SIZE,
 };
 use nalgebra::Vector4;
-use symplectic::database::{load, save, DualVerticesKey, PolytopeRecord};
+use symplectic::database::{load_many, save, DualVerticesKey, PolytopeRecord};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal};
@@ -506,13 +506,15 @@ fn main() {
 
     // DB state: loaded once, shared across threads under a Mutex when !no_db_update.
     // On LICCA (--no-db-update), both load and insertion are skipped entirely.
-    let db_path = Path::new(env!("CARGO_MANIFEST_DIR"))
+    let family_cache_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("cache.jsonl");
+    let legacy_cache_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("../../data/polytopes.jsonl");
     let db_arc: Arc<Mutex<HashMap<DualVerticesKey, PolytopeRecord>>> = if args.no_db_update {
         Arc::new(Mutex::new(HashMap::new()))
     } else {
-        let db = load(&db_path).expect("failed to load database");
-        println!("Loaded database: {} entries", db.len());
+        let db = load_many(&[family_cache_path.as_path(), legacy_cache_path.as_path()])
+            .expect("failed to load sys-landscape cache inputs");
+        println!("Loaded cache inputs: {} entries", db.len());
         Arc::new(Mutex::new(db))
     };
 
@@ -561,7 +563,7 @@ fn main() {
 
     if !no_db_update {
         let db = db_arc.lock().expect("lock db for save");
-        save(&db_path, &db).expect("failed to save database");
+        save(&family_cache_path, &db).expect("failed to save sys-landscape family cache");
     }
 
     let (best_sys, best_name) = {
@@ -575,7 +577,11 @@ fn main() {
     println!("Best sys: {best_sys:.6} ({best_name})");
     if !no_db_update {
         let db = db_arc.lock().expect("lock db for count");
-        println!("Database: {} entries", db.len());
+        println!(
+            "Cache: {} entries ({})",
+            db.len(),
+            family_cache_path.display()
+        );
     }
     println!("Total time: {:.1}s", t_global.elapsed().as_secs_f64());
     println!("Output: {}", summary_path.display());

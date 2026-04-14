@@ -13,7 +13,7 @@ and is named `products_{i}`. Bucket `(q,p)` is determined by `i mod 3` where
 `LAGRANGIAN_SPLITS = [(3,7),(4,6),(5,5)]`, so contiguous index ranges are
 evenly distributed across buckets (10k total -> ~3333 per bucket).
 `--no-db-update` disables shared-database load/save, required under rayon
-par_iter because the old code load-modify-saved `crates/data/polytopes.jsonl`.
+par_iter because the old code load-modify-saved `data/polytopes.jsonl`.
 
 Production target: 10k seeds via `rayon::par_iter` on a single slurm task with
 `--cpus-per-task=10` on the epyc partition. One output file `data/licca.jsonl`.
@@ -38,7 +38,7 @@ polytope part is now in `gradient-ascent-general/`.
 ### Local smoke (devcontainer)
 
 ```bash
-cd crates/
+cargo run -p exp-sys-landscape --release --bin sys-gradient-ascent-products
 cargo build --release -p exp-sys-landscape --bin sys-gradient-ascent-products
 cd exp-sys-landscape/gradient-ascent-products
 mkdir -p data
@@ -101,8 +101,8 @@ sacct -j <jobid> --format=JobID,State,Elapsed,MaxRSS
 Retrieve from devcontainer:
 ```bash
 scp -J stoehljo@xlogin.uni-augsburg.de \
-    stoehljo@licca-li-01.rz.uni-augsburg.de:'~/msc-math/crates/exp-sys-landscape/gradient-ascent-products/data/licca.jsonl' \
-    crates/exp-sys-landscape/gradient-ascent-products/data/
+    stoehljo@licca-li-01.rz.uni-augsburg.de:'~/msc-math/experiments/sys-landscape/gradient-ascent-products/data/licca.jsonl' \
+    experiments/sys-landscape/gradient-ascent-products/data/
 ```
 
 Then run `uv run analyze.py` locally.
@@ -117,7 +117,7 @@ existing `licca.jsonl` and skips already-completed seeds. Do NOT pass
 
 | File | Role |
 |------|------|
-| `run.rs` | Binary: per-seed RNG projected ascent + overshoot + wiggle |
+| `main.rs` | Binary: per-seed RNG projected ascent + overshoot + wiggle |
 | `analyze.py` | Per-bucket summary + 6 figures + Bayesian bound |
 | `job.sh` | Slurm submission script (epyc, single task, 10 cores, 1-second tripwire --time) |
 | `data/smoke.jsonl` | Local smoke output, 3 seeds (LFS) |

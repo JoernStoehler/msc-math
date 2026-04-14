@@ -12,7 +12,7 @@ The capacity algorithm uses a three-valued admissibility predicate: certified, r
 
 ```bash
 # Generate dataset
-cd crates/dev-numerical-analysis/unknown-predicates/ && cargo run --bin num-unknown-predicates --release
+cargo run --bin num-unknown-predicates --release
 
 # Plot beta_min histogram
 uv run analyze.py
@@ -22,7 +22,7 @@ uv run analyze.py
 
 | File | Role |
 |------|------|
-| `run.rs` | Rust binary: runs datasets with UNKNOWN logging |
+| `main.rs` | Rust binary: runs datasets with UNKNOWN logging |
 | `analyze.py` | Python: beta_min distribution histogram |
 | `math.tex` | Formal writeup (experiment, results, conclusion) |
 | `unknown-predicates.jsonl` | Dataset (162 rows: certified vs uncertain capacity per polytope) |

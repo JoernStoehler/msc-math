@@ -18,7 +18,7 @@ Given:
 - d: constraint RHS
 - β≥0: componentwise positivity
 
-The current codebase has solvers for this in `crates/library/src/kkt/`. Read them. They are one candidate approach, not the answer.
+The current codebase has solvers for this in `library/src/kkt/`. Read them. They are one candidate approach, not the answer.
 
 ## Generic Numerics Framework
 
@@ -43,7 +43,7 @@ Sub-subroutines each get their own `run_*.rs` file and the same treatment.
 
 ## Context from the codebase
 
-The current solvers live in `crates/library/src/kkt/`. Key files:
+The current solvers live in `library/src/kkt/`. Key files:
 - `saddle_point_solver.rs` — eigendecomposition-based KKT solver (main production solver)
 - `projection_solver.rs` — alternative QP solver via projection onto constraint null space
 - `rational_solver.rs` — exact rational arithmetic solver (ground truth)
@@ -87,7 +87,7 @@ Measure actual Q error of both f64 solvers against exact rational arithmetic on 
 
 ### Finding: Sign Error in projection_solver.rs
 
-**The library's projection solver (`crates/library/src/kkt/projection_solver.rs`) has a sign error that causes Q errors up to 0.57 (57% of Q).**
+**The library's projection solver (`library/src/kkt/projection_solver.rs`) has a sign error that causes Q errors up to 0.57 (57% of Q).**
 
 The stationarity condition for the reduced QP is H'α + g = 0 where g = V^T H β₀ and H' = V^T H V. The solution is α₀ = -(H')⁺g. The code at lines 108–116 computes α₀ = +(H')⁺g (no negation). The comment says "Solve H' alpha = b'" when the correct equation is "Solve H' alpha = -b'."
 
@@ -105,7 +105,7 @@ The corrected projection solver matches machine epsilon. The library version is 
 
 **Impact on production code:** None currently. The production pipeline uses the saddle-point solver. The projection solver is an alternative that's never called in the capacity algorithms.
 
-**Action needed:** Fix the sign in `crates/library/src/kkt/projection_solver.rs` line ~113: change `pi.dot(&b_prime) / eigenvalues[i]` to `-pi.dot(&b_prime) / eigenvalues[i]`.
+**Action needed:** Fix the sign in `library/src/kkt/projection_solver.rs` line ~113: change `pi.dot(&b_prime) / eigenvalues[i]` to `-pi.dot(&b_prime) / eigenvalues[i]`.
 
 ### Finding: Saddle-point Solver Accuracy
 
@@ -116,7 +116,7 @@ No panics occurred on these abstract matrix problems (unlike the polytope-specif
 ### How to run
 
 ```bash
-cd crates/dev-numerical-analysis/error-bounds/ && cargo build --release --bin num-collect-poly
+cargo build -p dev-numerical-analysis --release --bin num-collect-poly
 cargo run --release --bin num-error-bounds
 # Output: q_accuracy.jsonl (3203 rows)
 ```
@@ -273,14 +273,14 @@ Validated on 477 SP-feasible cases across 15 matrix families (4303 problems tota
 ### How to run
 
 ```bash
-cd crates/dev-numerical-analysis/error-bounds/ && cargo build --release --bin num-collect-poly
+cargo build -p dev-numerical-analysis --release --bin num-collect-poly
 cargo run --release --bin num-error-bounds
 # Output: q_accuracy.jsonl (4303 rows, 15 families)
 ```
 
 ## Propositions and bounds (current state, 2026-04-01)
 
-Run `uv run analyze.py` from `crates/dev-numerical-analysis/error-bounds/` for the full check output (`checks.txt`).
+Run `uv run analyze.py` from `experiments/numerics/error-bounds/` for the full check output (`checks.txt`).
 
 Dataset: 51,784 problems (4303 artificial + 47,481 natural from 458 polytopes F≤8). 45,476 SP-feasible (44,980 EHZ-like, 496 stress-test).
 
@@ -327,7 +327,7 @@ All quantities in the bound are already computed by the solver: ‖H‖ from eig
 ## How to run
 
 ```bash
-cd crates/dev-numerical-analysis/error-bounds/
+cd experiments/numerics/error-bounds/
 cargo build --release --bin num-collect-poly
 cargo run --release --bin num-error-bounds
 # Output: q_accuracy.jsonl (4303 rows, 15 families)
@@ -341,7 +341,7 @@ uv run analyze.py
 
 Three-stage pipeline replaces the monolithic binary:
 1. `collect_inputs.rs` generates `artificial.jsonl` (15 synthetic families, 4303 problems) and `collected.jsonl` (polytope σ-nodes from correctness.jsonl, F≤8, 70K rows)
-2. `run.rs` loads both datasets, filters in-memory, runs f64 + exact rational solver, writes `results.jsonl`
+2. `main.rs` loads both datasets, filters in-memory, runs f64 + exact rational solver, writes `results.jsonl`
 3. `analyze.py` reads `results.jsonl`, checks propositions, bounds, β > 0 classification
 
 ### Solver fix: Q ≤ 0 conflation
@@ -417,8 +417,8 @@ Deliverables:
 5. **analyze.py** with full proposition/bound/classification validation
 
 Open:
-- Library promotion: move proven bound + asserts into `crates/library/src/kkt/`
-- Fix projection solver sign in library (`crates/library/src/kkt/projection_solver.rs:93`)
+- Library promotion: move proven bound + asserts into `library/src/kkt/`
+- Fix projection solver sign in library (`library/src/kkt/projection_solver.rs:93`)
 - P5 conjecture: remove or replace (ratio unbounded on natural inputs)
 - P6 threshold: increase or gate on full-rank M
 - False-negative solver improvement: eigenvalue threshold too aggressive for m=6 rank-deficient
@@ -434,7 +434,7 @@ Stage 1: collect_poly.rs → collected_poly.jsonl (1.66M rows, gitignored)
 Stage 2: filter_poly_smoke.rs → filtered_poly_smoke.jsonl (~6 rows)
          filter_poly_diverse.rs → filtered_poly_diverse.jsonl (~1500 rows)
          filter_synth_all.rs → filtered_synth_all.jsonl (4303 rows)
-Stage 3: run.rs <input> <output> → results_*.jsonl (f64 + exact + diagnostics)
+Stage 3: main.rs <input> <output> → results_*.jsonl (f64 + exact + diagnostics)
 Stage 4: analyze.py <results1> [results2 ...] → checks.txt
 ```
 
@@ -486,7 +486,7 @@ Open:
 ### Infrastructure simplification (2026-04-01)
 
 Split solvers.rs into projection_solver.rs (active) and saddle_point_solver.rs (dead code, reference).
-Removed saddle-point code from run.rs (~20 fields, ~150 lines). Extracted exact rational solver
+Removed saddle-point code from main.rs (~20 fields, ~150 lines). Extracted exact rational solver
 into shared exact_solver.rs.
 
 Deleted 4 filter binaries (filter_poly_smoke, filter_poly_diverse, filter_synth_all) and
@@ -504,7 +504,7 @@ exact solvers, and check the conjecture properties. Both pass:
 Simplified analyze.py (499→147 lines): removed bound-checking (now in Rust tests),
 kept exploratory summaries. Simplified Makefile to just collect + ad-hoc run/analyze.
 
-Run tests: `cd crates/dev-numerical-analysis/error-bounds/ && cargo test --test verify_numerics_tests`
+Run tests: `cargo test --test verify_numerics_tests`
 
 ## Git LFS tracking (2026-04-03)
 

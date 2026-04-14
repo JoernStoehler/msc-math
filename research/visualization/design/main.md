@@ -11,15 +11,15 @@ To build geometric intuition about Reeb flows on polytope boundaries, this exper
 ## How to run
 
 ```bash
-cd crates/visualization/
+cargo run -p visualization --release --bin visualization
 
 # Export all polytopes
 for name in simplex hypercube hko_pentagon lagrangian_triangle_product symplectic_triangle_product lagrangian_tri_sq symplectic_tri_sq crosspolytope; do
-  cargo run --release --bin visualization -- "$name" "viz/data/$name.json"
+  cargo run -p visualization --release --bin visualization -- "$name" "viz/data/$name.json"
 done
 
 # Embed into data.js
-cd visualization/viz && bash embed-data.sh > data.js
+cd experiments/visualization/main/viz && bash embed-data.sh > data.js
 
 # Generate thesis figures (requires Playwright)
 npm install playwright
@@ -31,7 +31,7 @@ node screenshot-figures.mjs
 
 | File | Role |
 |------|------|
-| `run.rs` | Rust binary: exports polytope JSON with Reeb orbits |
+| `main.rs` | Rust binary: exports polytope JSON with Reeb orbits |
 | `math.tex` | Formal writeup (input'd from `thesis/experiments.tex`) |
 | `viz/` | Interactive Three.js viewer (index.html, viz.js, data files, screenshot automation) |
 | `viz/data/*.json` | Per-polytope JSON data (intermediate, regenerated) |
@@ -50,7 +50,7 @@ node screenshot-figures.mjs
 ### Pipeline
 
 ```
-run.rs (Rust) -> data.js -> viz/index.html (Three.js) -> screenshot-figures.mjs (Playwright) -> figures
+main.rs (Rust) -> data.js -> viz/index.html (Three.js) -> screenshot-figures.mjs (Playwright) -> figures
 ```
 
 ### Projection

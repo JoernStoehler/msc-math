@@ -10,7 +10,7 @@
 //!   Path C: random F=11 gradient ascent (baseline)
 //!   Path D: F=10 ascent → add facet → F=11 ascent (optimize first, then expand)
 //!
-//! Gradient ascent algorithm copied from gradient-ascent-general/run.rs
+//! Gradient ascent algorithm copied from gradient-ascent-general/main.rs
 //! (self-contained per experiment convention).
 //!
 //! Usage: cargo run -p exp-sys-landscape --release --bin sys-variable-f-ascent
@@ -400,7 +400,7 @@ fn full_ascent(
 /// This creates an (F+1)-facet polytope that is close to the original:
 /// the new halfspace ⟨n,x⟩ ≤ h_K(n) - ε shaves a thin sliver.
 ///
-/// Pattern from facet-splitting/run.rs.
+/// Pattern from facet-splitting/main.rs.
 // TODO: add [lem:facet-addition] to math.tex (dual vertex ↔ halfspace correspondence)
 fn add_facet(
     polytope: &Polytope4D,

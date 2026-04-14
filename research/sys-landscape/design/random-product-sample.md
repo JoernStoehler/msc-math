@@ -12,7 +12,7 @@ Can random Lagrangian products approach or exceed the Viterbo threshold sys = 1?
 
 ```bash
 # Generate dataset
-cd crates/ && cargo run -p exp-sys-landscape --release --bin sys-random-product-sample
+cargo run -p exp-sys-landscape --release --bin sys-random-product-sample
 
 # Plot
 uv run analyze.py
@@ -22,7 +22,7 @@ uv run analyze.py
 
 | File | Role |
 |------|------|
-| `run.rs` | Rust binary: generates random Lagrangian products, computes sys |
+| `main.rs` | Rust binary: generates random Lagrangian products, computes sys |
 | `analyze.py` | Python: scatter plot with median and std error bars per pair |
 | `math.tex` | Formal writeup (figure, observations) |
 | `random-product-sweep.jsonl` | Dataset (100 rows) |

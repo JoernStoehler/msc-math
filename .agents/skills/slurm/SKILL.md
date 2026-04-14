@@ -9,8 +9,8 @@ description: LICCA cluster job submission. Load when an experiment needs more co
 
 ## Steps
 
-1. **Write/update the experiment binary** in `crates/exp-<group>/<subdir>/run.rs`
-2. **Copy the template** from `references/experiment.sh` to `crates/exp-<group>/<subdir>/job.sh`
+1. **Write/update the experiment entrypoint** in `experiments/<group>/<subdir>/main.rs`
+2. **Copy the template** from `references/experiment.sh` to `experiments/<group>/<subdir>/job.sh`
 3. **Fill in the TODOs** in the job script (binary name, resources, arguments)
 4. **Write resource justification table** (mandatory):
 

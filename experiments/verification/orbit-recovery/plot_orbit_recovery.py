@@ -8,8 +8,8 @@
 Plot orbit recovery error metrics by facet count.
 
 Goal: Visualize how recovery errors scale with polytope complexity (F).
-Input: crates/dev-capacity-validation/orbit-recovery/orbit-recovery.jsonl
-Output: crates/dev-capacity-validation/orbit-recovery/orbit_recovery_errors.png
+Input: experiments/verification/orbit-recovery/orbit-recovery.jsonl
+Output: experiments/verification/orbit-recovery/orbit_recovery_errors.png
 """
 
 import json

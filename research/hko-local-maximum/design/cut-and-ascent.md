@@ -15,15 +15,15 @@ If any trial improves over HKO2024, it would weaken the evidence for HKO2024 bei
 ## How to run
 
 ```bash
-cd crates/ && cargo run -p exp-hko-local-maximum --release --bin hko-cut-and-ascent           # resume
-cd crates/ && cargo run -p exp-hko-local-maximum --release --bin hko-cut-and-ascent -- --fresh # rerun
+cargo run -p exp-hko-local-maximum --release --bin hko-cut-and-ascent           # resume
+cargo run -p exp-hko-local-maximum --release --bin hko-cut-and-ascent -- --fresh # rerun
 ```
 
 ## Files
 
 | File | Role |
 |------|------|
-| run.rs | Binary: cut HKO2024 + gradient ascent on F=11 polytope |
+| main.rs | Binary: cut HKO2024 + gradient ascent on F=11 polytope |
 | logbook.md | This file |
 
 ## Preliminary findings (from variable-f-ascent, 2026-04-04)

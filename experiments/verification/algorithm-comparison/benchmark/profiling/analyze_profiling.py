@@ -9,8 +9,8 @@ Analyze criterion benchmark results for pipeline phase breakdown.
 
 Goal: Show where wall-clock time goes at each facet count (construction vs
       capacity vs volume), and how the balance shifts as F grows.
-Input: crates/target/criterion/*/N/new/estimates.json (criterion output)
-Output: crates/dev-algorithm-comparison/benchmark/profiling/phase_breakdown.png
+Input: target/criterion/*/N/new/estimates.json (criterion output)
+Output: experiments/verification/algorithm-comparison/benchmark/profiling/phase_breakdown.png
 """
 
 import json
@@ -23,12 +23,12 @@ import numpy as np
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 
-sys.path.insert(0, str(REPO_ROOT / "crates"))
+sys.path.insert(0, str(REPO_ROOT / "experiments"))
 from figure_config import setup, FIGSIZE_SINGLE, FIGSIZE_DUAL
 
 setup()
 
-CRITERION_DIR = REPO_ROOT / "crates" / "target" / "criterion"
+CRITERION_DIR = REPO_ROOT / "target" / "criterion"
 
 # Benchmark groups and their display names
 GROUPS = {

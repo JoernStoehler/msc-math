@@ -5,8 +5,8 @@
 
 """
 Goal: Analyze cell convexity testing results.
-Input: crates/exp-combinatorial-cells/convexity/combinatorial-boundaries-convexity.jsonl
-Output: crates/exp-combinatorial-cells/convexity/*.png
+Input: experiments/combinatorial-cells/convexity/combinatorial-boundaries-convexity.jsonl
+Output: experiments/combinatorial-cells/convexity/*.png
 """
 
 import json

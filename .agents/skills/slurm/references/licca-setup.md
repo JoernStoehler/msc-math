@@ -45,8 +45,8 @@ Two-hop scp via university SSH gateway (no VPN needed):
 ```bash
 # From devcontainer:
 scp -J stoehljo@xlogin.uni-augsburg.de \
-    stoehljo@licca-li-01.rz.uni-augsburg.de:~/msc-math/crates/exp-<group>/<subdir>/results.jsonl \
-    /workspaces/msc-math/crates/exp-<group>/<subdir>/
+    stoehljo@licca-li-01.rz.uni-augsburg.de:~/msc-math/experiments/<group>/<subdir>/results.jsonl \
+    /workspaces/msc-math/experiments/<group>/<subdir>/
 ```
 
 - `xlogin.uni-augsburg.de` is the official university SSH gateway

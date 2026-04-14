@@ -3,7 +3,7 @@
 //! Adds a cutting halfspace to HKO2024 (10 facets) to create an 11-facet polytope
 //! K' ⊊ K, and checks whether sys(K') > sys(K) for any cutting direction.
 //!
-//! Split from gradient-is-zero/run.rs (Phase B).
+//! Split from gradient-is-zero/main.rs (Phase B).
 //!
 //! Architecture:
 //! 1. `cargo run --bin hko-facet-splitting --release` generates dataset

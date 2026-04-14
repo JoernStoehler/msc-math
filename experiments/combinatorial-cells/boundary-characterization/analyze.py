@@ -5,8 +5,8 @@
 
 """
 Goal: Analyze boundary anatomy, crossing evaluation, and orbit gap.
-Input: crates/exp-combinatorial-cells/boundary-characterization/combinatorial-boundaries-{anatomy,crossing}.jsonl
-Output: crates/exp-combinatorial-cells/boundary-characterization/*.png
+Input: experiments/combinatorial-cells/boundary-characterization/combinatorial-boundaries-{anatomy,crossing}.jsonl
+Output: experiments/combinatorial-cells/boundary-characterization/*.png
 """
 
 import json

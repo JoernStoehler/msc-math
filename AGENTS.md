@@ -9,22 +9,20 @@ Topic: Probing Viterbo's Conjecture
 
 Planned deliverables:
 1. A printed-quality LaTeX thesis (`thesis/build/main.pdf`)
-2. A high-performance Rust library for symplectic geometry on polytopes (`crates/library/`)
-3. A reproducible experiment pipeline (`crates/exp-*/`)
+2. A high-performance Rust library for symplectic geometry on polytopes (`library/`)
+3. A reproducible experiment pipeline (`experiments/`)
 
 ## Project Layout
 
-- `crates/`
-  - `Cargo.toml`: Workspace manifest
-  - `main.tex`: Compiles all per-module `math.tex` files into `main.pdf`
-  - `library/`: Rust library — proven algorithms with tests and math.tex proofs
-  - `exp-<group>/`: Research experiments, grouped by research question
-    - `<subdir>/`: One self-contained experiment (`run.rs`, `analyze.py`, `logbook.md`, `math.tex`)
-  - `dev-<group>/`: Unstable features not yet ready for library or experiments
-    - `<subdir>/`: One development direction, e.g. numerical analysis (`run.rs`, `analyze.py`, `logbook.md`, `math.tex`)
-
-- `thesis/`: Publishable master thesis; self-contained, does not link to `crates/`
-  - `assets/`: Figures and tables copied from `crates/` (not symlinked)
+- `library/`: Rust library -- proven algorithms with tests and `math.tex` proofs
+- `experiments/`: Research experiments, grouped by research question
+  - `<group>/`: Experiment package
+    - `<subdir>/`: One self-contained experiment (`main.rs`, `analyze.py`, `logbook.md`, `math.tex`)
+  - Development subtrees stay inside the relevant group until they are stable.
+- `formal/`: Developer-facing mathematical sources for `library/` and `experiments/`
+- `research/`: Design notes, method selection, and experiment plans
+- `thesis/`: Publishable master thesis; self-contained, does not link to `library/`, `experiments/`, or `formal/`
+  - `assets/`: Figures and tables copied from `experiments/` (not symlinked)
   - `main.tex`, `bibliography.bib`
 - `papers/<abbreviationYear>/`: Downloaded arXiv paper sources
 
@@ -42,8 +40,8 @@ Planned deliverables:
 ## General Conventions
 
 - **File headers**: Every source file starts with a comment block stating purpose and context. Module-level files additionally document the module's architecture.
-- **Self-contained thesis**: `thesis/` copies figures and tables from `crates/` into `thesis/assets/` instead of linking. Never modify `thesis/` content from experiment code.
-- **Feature lifecycle**: New code starts in `dev-<group>/`, informed by experiment results. Once stable and approved by Jörn, it migrates into `library/`. Validation experiments either become library tests or remain in `dev-<group>/`.
+- **Self-contained thesis**: `thesis/` copies figures and tables from `experiments/` into `thesis/assets/` instead of linking. Never modify `thesis/` content from experiment code.
+- **Feature lifecycle**: New code starts in the relevant `experiments/` subtree, informed by experiment results. Once stable and approved by Jörn, it migrates into `library/`. Validation experiments either become library tests or remain in `experiments/`.
 - **Merge gating**: Agents may merge to `main` only after the pre-merge workflow reports no blockers and Jörn has explicitly approved the merge. Destructive operations (delete branches on main, force-push, reset) still require asking.
 - **Task ownership**: `[active]` means exactly one session owns the whole `###` task — the header and its intent, not a literal sub-list of body bullets. If a body bullet conflicts with the task goal, flag it; do not narrow ownership to the literal bullet.
 - **Agent time is free, Jörn's time is expensive.** When choosing between spending more agent time (exploring alternatives, reading code, running experiments, rolling back failed attempts) and spending Jörn's time (asking questions, presenting incomplete work, leaving problems for him to catch) — spend agent time.
@@ -51,12 +49,12 @@ Planned deliverables:
 - **Do the agent-reviewable passes before pinging Jörn.** Before asking Jörn to review a draft, packet, proof sketch, experiment write-up, or conclusion, first review it yourself and, when useful, with subagents for: clarity of language, document structure, skimmability, internal consistency, contradiction checks, factual claim vs code/data/source verification, fact-checkability, source attribution, explicit assumptions, explicit caveats, alignment with `RESULTS.md`, alignment with `TASKS.md`, alignment between thesis text and logbooks, alignment between thesis text and `math.tex`, alignment between text and code behavior, alignment between figures and the text that cites them, alignment between citations and bibliography keys, missing tests, missing verification steps, missing labels, missing cross-references, missing definitions, missing figure provenance, missing bibliography data, formatting, buildability, reproducibility, obvious edge cases, obvious counterexamples, obvious alternative interpretations, and scope drift. Ask Jörn only for the remainder that actually needs him: mathematical judgment, thesis-scope cuts, publication-facing emphasis, advisor-facing framing, taste, or external-world actions and decisions only he can take.
 - **Do not promise a next step and then stop.** If you say you will run a review, make an edit, or fetch a diff, do it before sending another user-facing message. If you are blocked, say what blocked you instead of promising action you have not taken.
 - **Do not hand back the turn with only status.** Not allowed: "I need to do X", "not done", "no blockers", "I guessed". Before replying, do the next step, ask one Jörn-only question, or report a real blocker.
-- **Math-code correspondence**: Every non-trivial Rust algorithm has a correctness proof in its module's `math.tex`. Code and math are developed together and cross-referenced (`[lem:label]` in code, `\label{lem:label}` in math.tex). Jörn reviews `crates/main.pdf` for correctness and readability. The `crates/**/math.tex` files are for development agents; `thesis/main.tex` is for publication with thesis advisors as readers.
+- **Math-code correspondence**: Every non-trivial Rust algorithm has a correctness proof in its module's `math.tex`. Code and math are developed together and cross-referenced (`[lem:label]` in code, `\label{lem:label}` in math.tex). Jörn reviews the compiled math PDF for correctness and readability. The `formal/` files are for development agents; `thesis/main.tex` is for publication with thesis advisors as readers.
 
 ## Git Conventions
 
 - Always use local `main`, never `origin/main`.
-- Before merging to `main` (via pre-merge): `cd crates/library/ && cargo test --release --lib` passes, `cargo clippy --lib -- -D warnings` is clean. Tests gate merges, not commits.
+- Before merging to `main` (via pre-merge): `cargo test -p symplectic --release --lib` passes, `cargo clippy -p symplectic --lib -- -D warnings` is clean. Tests gate merges, not commits.
 - **Commits are free.** Do not ask permission to commit. If you need to ask about something commit-related, ask about the merge, not the commit.
 - **Git LFS** tracks `.jsonl` files (configured in `.gitattributes`). `git add`/`commit`/`push` work normally. Limits: 2 GB per file, 10 GiB storage, 10 GiB bandwidth/month ([docs](https://docs.github.com/en/billing/managing-billing-for-git-large-file-storage/about-billing-for-git-large-file-storage)). A pre-commit hook blocks files >10 MB that aren't LFS-tracked.
 
@@ -111,19 +109,19 @@ Codex cloud v1 baseline:
 
 ```bash
 # Rust (library)
-cd crates/library/ && cargo test --release --lib
-cd crates/library/ && cargo clippy --lib -- -D warnings
-cd crates/library/ && cargo test --release -- --ignored
+cargo test -p symplectic --release --lib
+cargo clippy -p symplectic --lib -- -D warnings
+cargo test -p symplectic --release -- --ignored
 
 # Rust (experiments)
-cd crates/ && cargo build -p exp-<group> --release
-cd crates/ && cargo build --workspace --release
+cargo build -p exp-<group> --release
+cargo build --workspace --release
 
 # Thesis
 cd thesis/ && latexmk && ./check-build.sh
 
-# Math (all proofs — crate + experiments)
-cd crates/ && latexmk
+# Math (formal library build)
+cd formal/library/ && latexmk
 ```
 
 ## Terminology
@@ -159,8 +157,7 @@ Each block below is a verbatim copy of a deleted source file unless it is fenced
 
 ---
 paths:
-  - "crates/exp-*/**/*"
-  - "crates/dev-*/**/*"
+  - "experiments/**"
 ---
 
 # Experiment Conventions
@@ -168,24 +165,24 @@ paths:
 ## Directory layout
 
 ```
-crates/
+experiments/
   figure_config.py         shared figure styling for all experiments
-  exp-<group>/             experiment group crate (e.g. exp-hko-local-maximum)
+  <group>/                 experiment group (e.g. hko-local-maximum)
     Cargo.toml             binary registrations for the group
     <subdir>/              one experiment (e.g. random-sample)
       logbook.md           Prose: motivation, status, how to run, results, interpretation
       math.tex             Formal: proofs, definitions, derivations
-      run.rs               Rust binary source (multi-binary experiments may have additional .rs files)
+      main.rs              Rust binary entrypoint (multi-binary packages may have additional .rs files)
       analyze.py           Python analysis script
       *.jsonl              Datasets (generated by Rust binaries)
       *.png                Figures (generated by Python script)
 ```
 
-Role-based file names (`run.rs`, `analyze.py`, `logbook.md`, `math.tex`). Data and figure files use content-based names. The subdir name is the namespace. Note: subdir names use hyphens (`random-sample`), Cargo binary names use underscores (`random_sample`).
+Role-based file names (`main.rs`, `analyze.py`, `logbook.md`, `math.tex`). Data and figure files use content-based names. The subdir name is the namespace. Note: subdir names use hyphens (`random-sample`), Cargo binary names use underscores (`random_sample`).
 
 Not all experiments have all files — some are Rust-only (no analyze.py/figures), some have multiple binaries.
 
-**Experiment locations:** `crates/exp-<group>/<subdir>/` for grouped experiments, `crates/<name>/` for standalone ones (crosspolytope, visualization). Before adding or editing an experiment, scan the other experiments in the group for context — shared patterns, naming conventions, and what's already been tried.
+**Experiment locations:** `experiments/<group>/<subdir>/` for grouped experiments, `experiments/<name>/` for standalone ones (crosspolytope, visualization). Before adding or editing an experiment, scan the other experiments in the group for context — shared patterns, naming conventions, and what's already been tried.
 
 ## Methodology comes before implementation
 
@@ -197,10 +194,10 @@ Rust binary → .jsonl → Python script → .png → (used by thesis during ass
 
 - Python never calls Rust directly
 - Run Python scripts with `uv run analyze.py` (not `python3 analyze.py`). `uv` reads PEP 723 inline script metadata and auto-installs deps into a cached ephemeral venv.
-- Build one group: `cd crates/ && cargo build -p exp-<group> --release`
-- Build all: `cd crates/ && cargo build --workspace --release`
-- Run: `cd crates/ && cargo run -p exp-<group> --release --bin <name>`
-- Add new experiment: create subdir under appropriate group, add `[[bin]]` to the group's `Cargo.toml`, write logbook
+- Build one package: `cargo build -p <package> --release`
+- Build all: `cargo build --workspace --release`
+- Run: `cargo run -p <package> --release --bin <name>`
+- Add new experiment: create subdir under appropriate group, add `[[bin]]` to the package's `Cargo.toml`, write logbook
 
 ## Python script deps (PEP 723)
 
@@ -230,7 +227,7 @@ Staleness: old entries are kept (don't update, don't delete). Current state is a
 
 ## Self-containment
 
-Each experiment is self-contained. If it needs a variant of library code, copy into the experiment binary — don't modify `crates/library/`.
+Each experiment is self-contained. If it needs a variant of library code, copy into the experiment binary — don't modify `library/`.
 
 ## Data and caches in git
 
@@ -263,14 +260,14 @@ math.tex files are the single source of mathematical truth for colocated code.
 
 ## Locations and build
 
-**Root:** `crates/main.tex` compiles ALL crate + experiment math into one PDF.
-Build: `cd crates/ && latexmk` (produces `main.pdf`).
-This is the authoritative build — cross-references between experiments and crate lemmas resolve here.
+**Library root:** `formal/library/main.tex` compiles the library math files into one PDF.
+Build: `cd formal/library/ && latexmk` (produces `main.pdf`).
+This is the authoritative library math build — cross-references between library modules resolve here.
 
-**Crate modules:** `crates/library/src/<module>/math.tex`, `\input`'d by both root `main.tex` and `crates/library/src/math.tex`.
-Preamble: `crates/library/src/math-preamble.tex` (packages, environments). Per-module files are pure content — no `\documentclass`.
+**Library modules:** `formal/library/<module>.tex`, `\input`'d by both `formal/library/main.tex` and the module's Rust code comments/docstrings.
+Preamble: `formal/preamble.tex` (packages, environments). Per-module files are pure content — no `\documentclass`.
 
-**Experiments:** `crates/exp-<group>/<subdir>/math.tex` — content files `\input`'d by root `main.tex`. No `\documentclass`. Use bare filenames for `\includegraphics` (e.g., `foo.png`, not `../crates/exp-<group>/<subdir>/foo.png`); the compile context sets `\graphicspath` per section.
+**Experiments:** `formal/<group>/<name>.tex` — content files tied to the corresponding experiment package. No `\documentclass`. Use bare filenames for `\includegraphics` (e.g., `foo.png`, not `../experiments/<group>/<subdir>/foo.png`); the compile context sets `\graphicspath` per section.
 
 **Thesis:** `thesis/` is independent of math.tex files. The thesis is written for human readers (examiners) and has its own self-contained prose. It uses figures and tables produced by experiments, but does NOT `\input` experiment math.tex files.
 
@@ -298,13 +295,13 @@ Labels must be unique across all math.tex files in the repo.
 
 ## Navigating the PDF
 
-After `latexmk`, `main.aux` maps labels to rendered numbers and pages:
+After `latexmk` on the relevant formal build, `main.aux` maps labels to rendered numbers and pages:
 `grep 'lem:foo' main.aux` → `\newlabel{lem:foo}{{37}{11}{...}}` means Lemma 37, page 11.
 Use this to give Jörn precise PDF coordinates (absolute path + page + lemma number).
 
 ## Agent rules
 
-- Read math.tex before editing .rs files in the same module
+- Read the colocated formal file before editing non-trivial `.rs` files in the same module
 - Never invent labels — use `// TODO: add [lem:...] to math.tex` in .rs
 - Mark unverified content: `% [TODO: JÖRN - ...]` (needs Jörn's verification) or `% [GAP - <what's uncertain>]` (above-ambient-risk spot)
 - Every non-trivial code function needs a corresponding math.tex entry
@@ -323,7 +320,7 @@ paths:
 
 Scripts are self-contained: read data → analyze → write output. No `__init__.py`, no shared imports between scripts — except `figure_config.py`.
 
-Shared figure config lives at `crates/figure_config.py`. Import it:
+Shared figure config lives at `experiments/figure_config.py`. Import it:
 ```python
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from figure_config import setup, FIGSIZE_SINGLE
@@ -336,8 +333,8 @@ Docstring with Goal / Input / Output:
 ```python
 """
 Goal: Identify distribution of sys values
-Input: crates/exp-<group>/<subdir>/data.jsonl
-Output: crates/exp-<group>/<subdir>/histogram.png
+Input: experiments/<group>/<subdir>/data.jsonl
+Output: experiments/<group>/<subdir>/histogram.png
 """
 ```
 
@@ -346,7 +343,7 @@ Output: crates/exp-<group>/<subdir>/histogram.png
 ```python
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 ```
-Scripts live at `crates/exp-<group>/<subdir>/analyze.py`. No hardcoded absolute paths. Define `REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent` only if referencing paths outside the experiment directory.
+Scripts live at `experiments/<group>/<subdir>/analyze.py`. No hardcoded absolute paths. Define `REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent` only if referencing paths outside the experiment directory.
 
 ## Figures
 
@@ -424,9 +421,9 @@ Standard Rust error handling, plus:
 
 ## Experiment binaries
 
-Only stable, validated code lives in `crates/library/`. Don't modify the library for experiment-specific behavior.
+Only stable, validated code lives in `library/`. Don't modify the library for experiment-specific behavior.
 
-Within an experiment crate (`crates/exp-<group>/`), shared helpers belong in `src/lib.rs` when multiple binaries need the same function. This avoids copy-paste duplication and lets improvements propagate. Per-binary helpers that only one experiment uses stay in that binary's `run.rs`.
+Within an experiment package (`experiments/<group>/`), shared helpers belong in `src/lib.rs` when multiple binaries need the same function. This avoids copy-paste duplication and lets improvements propagate. Per-binary helpers that only one experiment uses stay in that binary's `main.rs`.
 
 ### Former path: `.agents/rules/tasks.md`
 
@@ -785,26 +782,26 @@ Run all phases in order before telling Jörn work is ready. Every phase runs on 
 Run all of these. If a command fails, fix the issue and rerun before proceeding.
 
 ```bash
-cd crates/library/ && cargo test --release --lib
-cd crates/library/ && cargo clippy --lib -- -D warnings
-cd crates/ && cargo build --workspace --release
+cd library/ && cargo test --release --lib
+cd library/ && cargo clippy --lib -- -D warnings
+cargo build --workspace --release
 cd thesis/ && latexmk && ./check-build.sh
-cd crates/ && latexmk
+cd formal/library/ && latexmk
 ```
 
 ## Phase 2: Smoke-test experiment binaries
 
-List all `run.rs` files on this branch. For each, compile and run with the fewest polytopes the binary accepts (typically 1). If the binary takes no dataset argument, run `--help` or the default invocation. Goal: catch panics and import errors early. The polytope database caches results, so hot runs are fast.
+List all experiment `main.rs` files on this branch. For each, compile and run with the fewest polytopes the binary accepts (typically 1). If the binary takes no dataset argument, run `--help` or the default invocation. Goal: catch panics and import errors early. The polytope database caches results, so hot runs are fast.
 
-No `run.rs` files on the branch → nothing to do (empty set, not a skip).
+No experiment `main.rs` files on the branch → nothing to do (empty set, not a skip).
 
 ## Phase 3: Data freshness
 
 For experiments with committed data (`.jsonl`, `.csv`), compare code and data commit dates:
 
 ```bash
-git log -1 --format='%H %ci' -- crates/exp-<group>/<subdir>/run.rs
-git log -1 --format='%H %ci' -- crates/exp-<group>/<subdir>/*.jsonl
+git log -1 --format='%H %ci' -- experiments/<group>/<subdir>/main.rs
+git log -1 --format='%H %ci' -- experiments/<group>/<subdir>/*.jsonl
 ```
 
 If code is newer than data, regenerate on this branch.
@@ -884,8 +881,8 @@ description: LICCA cluster job submission. Load when an experiment needs more co
 
 ## Steps
 
-1. **Write/update the experiment binary** in `crates/exp-<group>/<subdir>/run.rs`
-2. **Copy the template** from `references/experiment.sh` to `crates/exp-<group>/<subdir>/job.sh`
+1. **Write/update the experiment binary** in `experiments/<group>/<subdir>/main.rs`
+2. **Copy the template** from `references/experiment.sh` to `experiments/<group>/<subdir>/job.sh`
 3. **Fill in the TODOs** in the job script (binary name, resources, arguments)
 4. **Write resource justification table** (mandatory):
 
@@ -915,9 +912,9 @@ Jörn scps result files into the repo, then commits: `git add <file> && git comm
 #
 # Usage:
 #   cd ~/msc-math
-#   sbatch crates/exp-<group>/<subdir>/job.sh
+#   sbatch experiments/<group>/<subdir>/job.sh
 #
-# Copy this template to crates/exp-<group>/<subdir>/job.sh and fill in the
+# Copy this template to experiments/<group>/<subdir>/job.sh and fill in the
 # variables marked with TODO.
 #===============================================================================
 
@@ -1003,8 +1000,8 @@ Two-hop scp via university SSH gateway (no VPN needed):
 ```bash
 # From devcontainer:
 scp -J stoehljo@xlogin.uni-augsburg.de \
-    stoehljo@licca-li-01.rz.uni-augsburg.de:~/msc-math/crates/exp-<group>/<subdir>/results.jsonl \
-    /workspaces/msc-math/crates/exp-<group>/<subdir>/
+    stoehljo@licca-li-01.rz.uni-augsburg.de:~/msc-math/experiments/<group>/<subdir>/results.jsonl \
+    /workspaces/msc-math/experiments/<group>/<subdir>/
 ```
 
 - `xlogin.uni-augsburg.de` is the official university SSH gateway
@@ -1230,8 +1227,8 @@ You are reviewing Python files against the project's Python conventions.
 
 ## Setup
 
-Read `.agents/rules/python.md` for the full convention set.
-Also read `crates/figure_config.py` to know the available constants.
+Read the Python conventions in this file.
+Also read `experiments/figure_config.py` to know the available constants.
 
 ## Workflow
 
@@ -1260,7 +1257,7 @@ You are reviewing Rust files against the project's Rust conventions.
 
 ## Setup
 
-Read `.agents/rules/rust.md` for the full convention set.
+Read the Rust conventions in this file.
 
 ## Workflow
 
@@ -1290,7 +1287,7 @@ You are reviewing thesis .tex files against the project's thesis conventions.
 
 ## Setup
 
-Read `.agents/rules/thesis-tex.md` for the full convention set.
+Read the thesis LaTeX conventions in this file.
 
 ## Workflow
 

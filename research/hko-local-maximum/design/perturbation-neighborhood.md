@@ -15,7 +15,7 @@ Old artifact `pentagon-perturb.jsonl` (committed N=101 dataset) is kept under it
 ### Local smoke (devcontainer)
 
 ```bash
-cd crates/
+cd experiments/hko-local-maximum
 cargo build --release -p exp-hko-local-maximum --bin hko-perturbation
 cd exp-hko-local-maximum/perturbation-neighborhood
 mkdir -p data
@@ -32,7 +32,7 @@ Expect ~3 seconds total compute. Produces `data/smoke-eps-*.jsonl` (three files,
 
 ### Resume semantics
 
-`job.sh` wipes all three bucket files via `File::create` in `run.rs`;
+`job.sh` wipes all three bucket files via `File::create` in `main.rs`;
 resubmit restarts from scratch. No `--fresh` flag; no
 `load_completed_names`. If a LICCA run is killed partway, resubmitting
 throws out whatever partial output exists and starts over.
@@ -73,8 +73,8 @@ sacct -j <jobid> --format=JobID,State,Elapsed,MaxRSS
 Retrieve from devcontainer:
 ```bash
 scp -J stoehljo@xlogin.uni-augsburg.de \
-    stoehljo@licca-li-01.rz.uni-augsburg.de:'~/msc-math/crates/exp-hko-local-maximum/perturbation-neighborhood/data/licca-eps-*.jsonl' \
-    crates/exp-hko-local-maximum/perturbation-neighborhood/data/
+    stoehljo@licca-li-01.rz.uni-augsburg.de:'~/msc-math/experiments/hko-local-maximum/perturbation-neighborhood/data/licca-eps-*.jsonl' \
+    experiments/hko-local-maximum/perturbation-neighborhood/data/
 ```
 
 Then run `uv run analyze.py` locally on the retrieved data.
@@ -83,7 +83,7 @@ Then run `uv run analyze.py` locally on the retrieved data.
 
 | File | Role |
 |------|------|
-| `run.rs` | Rust binary: generates perturbed polytopes and computes sys |
+| `main.rs` | Rust binary: generates perturbed polytopes and computes sys |
 | `analyze.py` | Python: 3-panel histogram of sys values per eps, summary stats, PCA at eps=0.01 |
 | `math.tex` | Formal writeup (input'd from `thesis/experiments.tex`) |
 | `job.sh` | Slurm submission script (epyc, 1 core, 30 min) |

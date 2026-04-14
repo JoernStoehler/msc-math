@@ -49,8 +49,8 @@ bash scripts/codex-cloud-smoke.sh
 This script checks:
 
 - `cargo`, `uv`, `git lfs`, `qconvex`
-- `cd crates/library/ && cargo test --release --lib`
-- `cd crates/library/ && cargo clippy --lib -- -D warnings`
+- `cd library/ && cargo test --release --lib`
+- `cd library/ && cargo clippy --lib -- -D warnings`
 - one representative experiment build
 - one representative Python analysis run on self-generated smoke data
 
@@ -58,7 +58,7 @@ This script checks:
 
 The default Codex `universal` image already covers most of the common stack.
 The repo-specific addition we currently need is `qhull-bin`, because the Rust
-library shells out to `qconvex` in `crates/library/src/geom/qhull.rs`.
+library shells out to `qconvex` in `library/src/geom/qhull.rs`.
 
 The setup script also pre-caches:
 
@@ -103,7 +103,7 @@ smoke dataset instead of relying on committed LFS payloads.
 ## What V1 Does Not Cover
 
 - `thesis/` TeX builds
-- `cd crates/ && latexmk`
+- `cd formal/ && latexmk`
 - LICCA / slurm submission and retrieval
 - local host workflows documented in `.devcontainer/`
 

@@ -37,12 +37,8 @@ Completed in the partial move pass:
 
 Not yet done:
 
-- Cargo workspace root move and manifest repair
-- Rust import and path repair
-- entrypoint rename from `run.rs` to `main.rs`
-- Python/shell/tooling path repair
-- `formal/main.tex` creation and TeX include repair
-- `formal/.latexmkrc` and `formal/bibliography.bib` creation from the current `crates/` build support files
+- legacy-cache endgame: remove repo-root `data/polytopes.jsonl` from live fallback paths and delete it only after owned caches are confirmed complete
+- final historical/provenance audit for remaining `crates/...` mentions
 - semantic validation and shim cleanup
 
 ## Context Files For Later Agents
@@ -69,6 +65,14 @@ This migration is done only when all of these are true:
 - thesis build still works
 - migration inventories and exception checks pass
 - no future agent needs to invent path policy, dataset policy, or known exception handling to continue thesis work safely
+
+Current verified progress on 2026-04-14:
+- repo-root Cargo workspace works
+- canonical packet entrypoints have been renamed to `main.rs`
+- live Python/shell/tooling path repair is done
+- `formal/main.tex`, `formal/.latexmkrc`, and `formal/bibliography.bib` now exist and `cd formal && latexmk` succeeds
+- multi-file JSONL merge semantics are implemented in `library/src/database.rs`
+- affected binaries now write only to owned family/experiment caches and use repo-root `data/polytopes.jsonl` only as read-only fallback during migration
 
 ## Evidence Rules
 

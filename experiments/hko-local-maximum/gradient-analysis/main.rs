@@ -4,7 +4,7 @@
 //! polytope, then runs gradient ascent in joint (h, n) space. Tracks all near-optimal
 //! Reeb orbits (subdifferential structure).
 //!
-//! Split from gradient-is-zero/run.rs (Phase A).
+//! Split from gradient-is-zero/main.rs (Phase A).
 //!
 //! Architecture:
 //! 1. `cargo run --bin hko-gradient-analysis --release` generates datasets
@@ -304,7 +304,7 @@ fn compute_sensitivity(
 // ============================================================================
 // Step bounds computation (experiment-specific: topology-aware step size limits)
 // Same math as [lem:step-bound-incidence] and [lem:step-bound-omega] in
-// crates/exp-combinatorial-cells/boundary-characterization/math.tex, adapted for (h,n) space.
+// experiments/combinatorial-cells/boundary-characterization/math.tex, adapted for (h,n) space.
 // TODO: add [lem:step-bound-hn] to gradient-analysis/math.tex for the (h,n) variant.
 // ============================================================================
 

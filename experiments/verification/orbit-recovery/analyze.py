@@ -4,7 +4,7 @@ Analyze orbit recovery results across polytope dataset.
 
 Goal: Validate base point recovery algorithm across known + random polytopes.
       Identify edge cases, distribution of solution dimension, violation levels.
-Input: crates/dev-capacity-validation/orbit-recovery/orbit-recovery.jsonl
+Input: experiments/verification/orbit-recovery/orbit-recovery.jsonl
 Output: Summary statistics printed to stdout.
 """
 

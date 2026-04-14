@@ -15,8 +15,8 @@ TASKS.md `hko-local-maximality` next step #1: "Second-order analysis of flat dir
 ## How to run
 
 ```bash
-cd crates/ && cargo run -p exp-hko-local-maximum --release --bin hko-second-order
-cd crates/exp-hko-local-maximum/second-order && python3 analyze.py
+cargo run -p exp-hko-local-maximum --release --bin hko-second-order
+cd experiments/hko-local-maximum/second-order && python3 analyze.py
 ```
 
 Total runtime: ~60s (Phase 1: 0.4s, Phase 2: 18s, Phase 3: 41s).
@@ -25,7 +25,7 @@ Total runtime: ~60s (Phase 1: 0.4s, Phase 2: 18s, Phase 3: 41s).
 
 | File | Role |
 |---|---|
-| `run.rs` | Rust binary: gradient matrix, SVD, FD curves |
+| `main.rs` | Rust binary: gradient matrix, SVD, FD curves |
 | `analyze.py` | Phase C LP replacement + curvature analysis + figures |
 | `second-order-base.jsonl` | SVD data, flat directions, gradient matrix (1 row) |
 | `second-order-curves.jsonl` | sys(ε) for each flat direction (420 rows) |

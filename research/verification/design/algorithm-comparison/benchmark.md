@@ -12,17 +12,16 @@ How long does the systolic ratio pipeline take, where does the time go, and whic
 
 ```bash
 # Capacity timing dataset (95 polytopes, 137 capacity computations)
-cd crates/dev-algorithm-comparison/benchmark/
+cargo run -p dev-algorithm-comparison --release --bin cmp-benchmark
 cargo run --bin cmp-benchmark --release   # -> benchmark.jsonl (~8 seconds)
 uv run analyze.py                        # -> profiling/timing_model.json, benchmark_timing.png
 
 # End-to-end phase profiling (criterion benchmarks)
-cd crates/
 cargo bench --bench profiling         # -> target/criterion/ (JSON + HTML reports)
-uv run ../crates/dev-algorithm-comparison/benchmark/profiling/analyze_profiling.py  # -> phase_breakdown.png, micro_benchmarks.png
+uv run experiments/verification/algorithm-comparison/benchmark/profiling/analyze_profiling.py  # -> phase_breakdown.png, micro_benchmarks.png
 
 # Flamegraph (requires sudo for perf)
-cd crates/dev-algorithm-comparison/benchmark/
+cargo run -p dev-algorithm-comparison --release --bin cmp-benchmark-profile
 cargo build --release --bin cmp-benchmark-profile
 sudo env "PATH=$PATH" flamegraph -o profiling/flamegraph_F9.svg \
   -- ./target/release/cmp-benchmark-profile 9 50
@@ -32,7 +31,7 @@ sudo env "PATH=$PATH" flamegraph -o profiling/flamegraph_F9.svg \
 
 | File | Role |
 |------|------|
-| `run.rs` | Dataset generator: 95 polytopes, times all algorithm variants |
+| `main.rs` | Dataset generator: 95 polytopes, times all algorithm variants |
 | `profile.rs` | Single-polytope profiling harness (for flamegraph) |
 | `analyze.py` | Timing model fitting (exponential) + algorithm comparison figure |
 | `benchmark.jsonl` | Dataset: 95 polytopes with timing per algorithm |
@@ -64,7 +63,7 @@ Unpruned only for F ≤ 7 (prohibitively expensive beyond). Billiard only on Lag
 
 ### End-to-end phase profiling
 
-Criterion benchmarks in `crates/benches/profiling.rs`. Six benchmark groups at F = {5, 6, 7, 8, 9, 10, 11} on fixed-seed random polytopes:
+Criterion benchmarks in `library/benches/profiling.rs`. Six benchmark groups at F = {5, 6, 7, 8, 9, 10, 11} on fixed-seed random polytopes:
 - **construction**: `Polytope4D::from_normals_and_heights` (rational vertex enumeration, incidence, adjacency, omega signs)
 - **transition_matrix**: `build_transition_matrix`
 - **capacity**: `ehz_capacity` (full HK2017 pruned)
@@ -88,7 +87,7 @@ Two discarded: pre-allocated matrix buffers (no measurable speedup), skipping LU
 
 ### End-to-end phase breakdown
 
-Source: criterion bench (`crates/benches/profiling.rs`). **Pre-optimization values** — construction column superseded by "Construction optimization" section below.
+Source: criterion bench (`library/benches/profiling.rs`). **Pre-optimization values** — construction column superseded by "Construction optimization" section below.
 
 | F | Construction | Capacity | Volume | Total | Construction % |
 |---|-------------|----------|--------|-------|---------------|
@@ -112,7 +111,7 @@ Criterion 95% CIs are <1% relative width for construction and capacity (measurem
 
 **Optimization:** Replaced BigRational arithmetic with integer-scaled arithmetic (BigInt instead of BigRational) throughout polytope construction. Added f64 prefilters for the bounded-check and irredundancy steps to skip exact arithmetic on easy cases. Cleaned up the constructor call path.
 
-**Before/after timings** (construction phase only, same benchmark polytopes; criterion bench, `crates/benches/profiling.rs`):
+**Before/after timings** (construction phase only, same benchmark polytopes; criterion bench, `library/benches/profiling.rs`):
 
 | F | Before | After | Speedup |
 |---|--------|-------|---------|
@@ -132,7 +131,7 @@ Criterion 95% CIs are <1% relative width for construction and capacity (measurem
 
 ### Micro-benchmarks
 
-Source: criterion bench (`crates/benches/profiling.rs`).
+Source: criterion bench (`library/benches/profiling.rs`).
 
 | Phase | Time | Scaling |
 |-------|------|---------|

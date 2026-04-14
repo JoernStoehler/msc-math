@@ -11,8 +11,8 @@ The EHZ algorithm (Algorithm `alg:ehz`) returns a facet sequence S and weights b
 ## How to run
 
 ```bash
-cd crates/dev-capacity-validation/orbit-recovery/
-cargo run --release --bin axioms-orbit-recovery   # generates orbit-recovery.jsonl
+cargo run -p dev-capacity-validation --release --bin axioms-orbit-recovery
+cargo run -p dev-capacity-validation --release --bin axioms-orbit-recovery   # generates orbit-recovery.jsonl
 uv run analyze.py                                # prints summary statistics
 uv run plot_orbit_recovery.py                    # generates error plot
 ```
@@ -21,7 +21,7 @@ uv run plot_orbit_recovery.py                    # generates error plot
 
 | File | Role |
 |------|------|
-| `run.rs` | Rust binary: recovery + validation for each polytope |
+| `main.rs` | Rust binary: recovery + validation for each polytope |
 | `analyze.py` | Python: summary statistics (printed to stdout) |
 | `plot_orbit_recovery.py` | Python: error distribution plot by facet count |
 | `math.tex` | Formal writeup (lemma, error table, solution dimension) |

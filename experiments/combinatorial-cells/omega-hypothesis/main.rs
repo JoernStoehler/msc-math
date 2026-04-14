@@ -10,12 +10,15 @@
 //! Phase B (gradient): Compute ⟨∇_{n_k} sys, ∇_{n_k} ω(n_k, n_i)⟩ analytically.
 //! Negative dot product → sys increases when ω decreases → hypothesis supported.
 //!
-//! Location: crates/exp-combinatorial-cells/omega-hypothesis/run.rs
+//! Location: experiments/combinatorial-cells/omega-hypothesis/main.rs
 //!
 //! Architecture:
 //! 1. `cargo run -p exp-combinatorial-cells --bin cell-omega --release` generates dataset
-//! 2. Polytopes cached in data/polytopes.jsonl. When capacity + sigmas are cached,
-//!    skips full EHZ (exponential) and only runs single-perm KKT solve for beta.
+//! 2. Polytopes cached in experiments/combinatorial-cells/polytopes.jsonl.
+//!    The owned cache is loaded first and merged with the legacy repo-root
+//!    data/polytopes.jsonl as a read-only fallback during migration. When
+//!    capacity + sigmas are cached, skips full EHZ (exponential) and only runs
+//!    single-perm KKT solve for beta.
 //! 3. Writes to omega-obstacle/omega-obstacle.jsonl
 //! 4. Python script reads JSONL, produces figures
 
@@ -361,10 +364,12 @@ fn main() {
     let file = std::fs::File::create(&out_path).expect("Failed to create output file");
     let mut writer = BufWriter::new(file);
 
-    let db_path = Path::new(env!("CARGO_MANIFEST_DIR"))
+    let owned_db_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("polytopes.jsonl");
+    let legacy_db_path = Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("../../data/polytopes.jsonl");
     let mut db: HashMap<DualVerticesKey, PolytopeRecord> =
-        database::load(&db_path).expect("failed to load database");
+        database::load_many(&[owned_db_path.as_path(), legacy_db_path.as_path()])
+            .expect("failed to load database");
     eprintln!("Loaded database: {} entries", db.len());
 
     let mut total = 0usize;
@@ -492,7 +497,7 @@ fn main() {
     }
 
     writer.flush().unwrap();
-    database::save(&db_path, &db).expect("failed to save database");
+    database::save(&owned_db_path, &db).expect("failed to save database");
 
     eprintln!(
         "\nDone: {} polytopes written, {} failed, {} cache hits. Database: {} entries.",
