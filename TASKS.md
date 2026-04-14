@@ -343,7 +343,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 
 ### [future] [group:figures] Hand-drawn figures (Jörn)
 - Concept illustrations: polar of 2D polytope; 0/1/2/3-facets; fake 3D polytope with Reeb vectors and closed/open trajectories; decompositions of `gamma: R → R^4` drawn as `gamma: R → R`; etc.
-- Agent role: figure inventory only (list, not produce), and only after narrative structure stabilizes so we know which concepts get illustrations and where.
+- Agent scope: figure inventory only (list, not produce), and only after narrative structure stabilizes so we know which concepts get illustrations and where.
 
 ### [future] [group:figures] 4D → R^3 projection viz tool
 - RESULTS.md minor deliverable ("a visualization of the 4d geometry on a computer screen").
@@ -352,7 +352,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 
 ### [future] [group:figures] Figure inventory
 - Compile per-chapter list of figures with provenance tags (hand-drawn / code-generated / viz-tool / whiteboard photo).
-- Blocked on: Jörn picking which concepts get illustrations and where they go. Agent role is mechanical inventory after those calls exist.
+- Blocked on: Jörn picking which concepts get illustrations and where they go. After those calls exist, agent scope is mechanical inventory.
 
 ### [open] [group:submission] Final assembly (checklist-driven, ≤2026-04-30)
 - Abstract, bibliography check (includes verifying agent-produced bib entry at `thesis/bibliography.bib` line 151), figure quality review, proofreading, print formatting.
@@ -438,17 +438,17 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 ## [open] Infrastructure + tooling
 
 ### [open] Orchestration pattern test
-- Testing `/orchestrate` skill + delegation guide on real thesis tasks.
+- Testing orchestration / delegation guidance on real thesis tasks.
 - Baseline commit `f8044b35`. Dry run confirmed delegated-agent mechanics work.
-- Next: post-mortem on orchestration workflow and whether the Codex-first split changed anything that future sessions should preserve.
+- Next: post-mortem on the orchestration workflow and whether the Codex-first split changed anything that future sessions should preserve.
 
 ### [open] [group:codex-migration] Codex CLI migration
 - Port msc-math workflow into native Codex repo paths. Scaffold merged into main; the remaining work is cleanup and verification of the Codex-first state.
 - Old `codex-migration` worktree notes are now archival, not the active source of truth.
 
 ### [open] Design co-project-owner / coordinator skill
-- Goal: `.agents/skills/<name>/SKILL.md` for the task-graph-clerk role. Name, scope, content all TBD with Jörn.
-- **Starting constraint:** ASK JÖRN about the role/workflow before guessing. Do not design from priors or this session's tentative core.
+- Goal: `.agents/skills/<name>/SKILL.md` for the task-graph coordination workflow. Name, trigger, scope, and content all TBD with Jörn.
+- **Starting constraint:** ASK JÖRN about the workflow before guessing. Do not design from priors or this session's tentative core.
 - Context: `feedback/2026-04-12-co-ownership-v2-postmortem.md` — enumerated failure modes if you design from guesses, plus one load-bearing insight (verification mechanism for coordinator work = asking Jörn, not an external check).
 - Output: minimal skill file, stable core only.
 

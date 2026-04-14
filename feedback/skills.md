@@ -39,3 +39,19 @@ Session: fresh reviewer for licca-bundle commit `e741dc1a` at gate 5 of the LICC
 **Methodology gap I hit:** I did not audit "commit contents match the plan's Commits block" as a review step. Plan HANDOFF STATE listed specific files that commit `e741dc1a` should contain; I trusted the list instead of running `git show --stat e741dc1a`. `ls` on the experiment dirs accidentally surfaced that the pre-refactor top-level `.jsonl` files were still committed (the plan hedged this with "old data becomes historical" so it's not a bug), but I would have caught it earlier with a commit audit. Add to review checklist: before judging whether the plan was executed, `git show --stat <commit>` and compare to the plan's "Commits:" block.
 
 **What I got from the HANDOFF STATE that was load-bearing:** the explicit "Do NOT run local N=1000 measurement" with the story of why (Jörn killed the processes, plan-as-authority trap). That let me catch the logbook's "Local measurement run (pre-submission, N=1000)" block as a FATAL contradiction. Without the HANDOFF STATE I would have read the logbook as a normal prescribed step and missed it. General lesson: plan files that record forbidden steps + the reason are massively more useful to reviewers than plan files that only record intended steps. Consider making "Do NOT" blocks with rationale a standard plan section.
+
+### 2026-04-13 — Replacement skill rewrite imported unrequested historical material and expanded review surface
+
+Session: replace `orchestrate` with a clearer top-level coordination skill. The agent pulled in `feedback/` postmortems on its own, tried to encode many historical coordination failures into the replacement text, and grew the rewrite into two new skills with much larger review surface than Jörn asked for. Jörn's actual ask was to replace or rename the live skill, not to synthesize repo history into a new workflow contract.
+
+**Pattern:** overscoping a live rewrite by importing auxiliary material that the user did not ask to incorporate. This raises review surface area and error probability, especially when the auxiliary material is itself unreliable or only loosely authoritative.
+
+**What should have happened:** restrict the source set to the user's chat, the live file being replaced, and only the minimum current repo conventions needed to avoid contradiction. Do not mine `feedback/` unless Jörn explicitly asks for that synthesis.
+
+### 2026-04-13 — Level 0 session did level -1 task-discovery work instead of using the existing task and asking Jörn
+
+What happened: after already confirming that the live task was the open `TASKS.md` coordination-skill item, the agent still did broad repo discovery and diff reading to decide what to work on next. That consumed context in the level `0` execution session and blurred the boundary between level `-1` task selection and level `0` execution.
+
+What should have happened: once the live task was known, the level `0` session should have stayed on that task, used the existing repo state already in context, and asked Jörn the specific workflow questions needed to move the design forward. Broad task-discovery and source-set expansion belong to dedicated level `-1` work, not to the execution session.
+
+**Pattern:** level confusion. The agent re-opened task selection inside the execution session instead of treating task selection as separate work.

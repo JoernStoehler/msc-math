@@ -311,3 +311,47 @@ Those norms were still too abstract; they did not force the concrete preflight q
 **Pattern:** Agent recognizes the terminal action, states it aloud, and still does not take it. This is a close cousin of the fake-blocked-state and filler-loop incidents above, but narrower: the remaining task is mechanically obvious, cheap, and safe, yet the agent delays execution in favor of more conversation.
 
 **Suggestion:** Add a closeout rule: if exactly one small, known, safe repo action remains and no missing user decision blocks it, do it immediately before any further commentary.
+
+### 2026-04-13 — Workflow rewrite session failed because the agent switched to handoff mode far too late
+
+**What happened:** The live task was the open `TASKS.md` item `Design co-project-owner / coordinator skill`, but the agent did not ground itself in that tracker entry until late in the session. Instead it rewrote and split skills, imported `feedback/` material that Jörn had not asked to synthesize, argued about names and packet structure, and only gradually discovered the actual constraints through conflict with Jörn. After Jörn explicitly declared the session failed and ordered deletion plus handoff, the agent still spent many turns on self-diagnosis, weak claims such as treating "file exists" as an inode check, and needless whole-file rewrites of the handoff note before it finally produced a successor-usable handoff tied to the assigned task.
+
+**Friction:** The biggest sources of drag were:
+- not reading the live `TASKS.md` section early enough
+- not switching immediately from "finish the replacement" to "optimize the handoff"
+- answering cheap semantic uncertainty with prose instead of a 10-second check
+- not reviewing the handoff/diffs before claiming to be done
+
+**Unclear instructions:** The repo already said task ownership is by the whole `###` task intent, but there was no hard first-action rule that forced reading the live `TASKS.md` entry before broad workflow redesign. There was also no explicit closeout rule saying that once a session is redirected into failure containment, all later work should optimize for the next agent rather than for the current agent's narrative.
+
+**Missing context:** No essential context was missing from Jörn. The missing context was self-inflicted: the agent had not yet read the live tracker task, had not checked the actual remaining diff set, and had not separated "original task still open" from "containment task complete."
+
+**Jörn's time:** Jörn spent time repeatedly doing work that agents could have done:
+- forcing the switch out of plan mode
+- restating that the session had failed and needed a handoff
+- asking whether the handoff file was semantically the right file rather than merely present on disk
+- pushing for reviews, verification checklists, and an actual definition of done
+
+**What worked well:** Once the session finally switched to explicit containment, three things were useful and should be preserved:
+- deleting the failed replacement skills before handoff
+- writing one concrete handoff file for the next agent
+- explicitly listing which remaining diffs were requested by Jörn versus introduced by the failing agent
+
+**Suggested changes:**
+1. Add a first-action rule for workflow/skill rewrite tasks: read the live `TASKS.md` `###` item before broad repo synthesis or redesign.
+2. Add a handoff-mode rule: once the original task is no longer finishable in the current session and the user redirects to handoff, optimize every remaining step for successor success. The handoff must state:
+   - the live task
+   - what work is being handed off
+   - what Jörn already decided
+   - what remains unresolved
+   - the exact remaining repo fallout
+   - the verification checks actually run
+3. Add a cheap-uncertainty rule: if a claim can be checked in about 10 seconds, check it before answering.
+4. Add a closeout rule: do not say "done" without also naming the goal status and the verification steps that support that status.
+
+**Process checks:**
+- Agent splitting needed? Yes. An independent reviewer subagent for the handoff artifact or the failed-skill diff would have been cheap and would likely have caught missing task grounding and missing verification earlier.
+- Fabrications slipped through? Not hard factual fabrications, but there were repeated overclaims: treating "exists" as sufficient, and collapsing inferred scope into unconditional completion language.
+- Iterated in front of user instead of delegating? Yes. Too much visible rethinking and too little silent review.
+- Assumed Jörn read something he may not have? Yes. The session repeatedly spoke as if earlier reasoning or earlier file contents were already shared context.
+- Regression test candidate? Yes. Future workflow/handoff tasks should require a closeout block with four fields: `goal status`, `artifact path`, `verification run`, and `still open`.

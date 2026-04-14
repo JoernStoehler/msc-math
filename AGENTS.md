@@ -44,7 +44,10 @@ Planned deliverables:
 - **Merge gating**: Agents may merge to `main` only after the pre-merge workflow reports no blockers and Jörn has explicitly approved the merge. Destructive operations (delete branches on main, force-push, reset) still require asking.
 - **Task ownership**: `[active]` means exactly one session owns the whole `###` task — the header and its intent, not a literal sub-list of body bullets. If a body bullet conflicts with the task goal, flag it; do not narrow ownership to the literal bullet.
 - **Agent time is free, Jörn's time is expensive.** When choosing between spending more agent time (exploring alternatives, reading code, running experiments, rolling back failed attempts) and spending Jörn's time (asking questions, presenting incomplete work, leaving problems for him to catch) — spend agent time.
+- **Define the check first.** Before acting, decide what will prove the task is done. Tool success is not task success.
+- **Do the agent-reviewable passes before pinging Jörn.** Before asking Jörn to review a draft, packet, proof sketch, experiment write-up, or conclusion, first review it yourself and, when useful, with subagents for: clarity of language, document structure, skimmability, internal consistency, contradiction checks, factual claim vs code/data/source verification, fact-checkability, source attribution, explicit assumptions, explicit caveats, alignment with `RESULTS.md`, alignment with `TASKS.md`, alignment between thesis text and logbooks, alignment between thesis text and `math.tex`, alignment between text and code behavior, alignment between figures and the text that cites them, alignment between citations and bibliography keys, missing tests, missing verification steps, missing labels, missing cross-references, missing definitions, missing figure provenance, missing bibliography data, formatting, buildability, reproducibility, obvious edge cases, obvious counterexamples, obvious alternative interpretations, and scope drift. Ask Jörn only for the remainder that actually needs him: mathematical judgment, thesis-scope cuts, publication-facing emphasis, advisor-facing framing, taste, or external-world actions and decisions only he can take.
 - **Do not promise a next step and then stop.** If you say you will run a review, make an edit, or fetch a diff, do it before sending another user-facing message. If you are blocked, say what blocked you instead of promising action you have not taken.
+- **Do not hand back the turn with only status.** Not allowed: "I need to do X", "not done", "no blockers", "I guessed". Before replying, do the next step, ask one Jörn-only question, or report a real blocker.
 - **Math-code correspondence**: Every non-trivial Rust algorithm has a correctness proof in its module's `math.tex`. Code and math are developed together and cross-referenced (`[lem:label]` in code, `\label{lem:label}` in math.tex). Jörn reviews `crates/main.pdf` for correctness and readability. The `crates/**/math.tex` files are for development agents; `thesis/main.tex` is for publication with thesis advisors as readers.
 
 ## Git Conventions
@@ -108,7 +111,7 @@ cd crates/ && latexmk
 
 ## Terminology
 
-- **Orchestration session**: the top-level agent session that talks with Jörn, decomposes tasks, and delegates when delegation is useful.
+- **Top-level session**: the top-level agent session that talks with Jörn and coordinates or executes the current task as needed.
 - **Subagent**: a Codex subagent declared under `.codex/agents/` and invoked through Codex delegation tools.
 - **Delegation**: top-level session spawning a subagent or worker to do leaf work.
 
@@ -122,5 +125,6 @@ Optimize for these qualities (descending effort priority) when writing files, co
 4. **Complete.** Include what the reader needs to understand and act. State assumptions, preconditions, and the WHY behind decisions.
 5. **Actionable, low-overhead.** The reader should know what to do after reading.
 6. **Simple, concrete, standard.** Familiar patterns, concrete examples, no unnecessary abstractions.
+7. **Literal wording.** Use precise terms with stable meanings. Do not use metaphors, slogans, or invented labels unless you define them and they remove ambiguity.
 
 **Vague-word ban:** Do not use "appropriate", "properly", "ensure", "good", "consider", "reasonable", "necessary", "efficient", "robust" without specifying what makes it so.
