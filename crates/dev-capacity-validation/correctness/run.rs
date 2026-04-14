@@ -29,7 +29,6 @@
 //!
 //! Total: 47 pruned + 10 unpruned + 14 billiard = 71 capacity values
 
-// TODO: These will be re-exported from top-level `symplectic::` in wave 4 (subagent #16).
 use symplectic::algorithms::billiard::billiard_capacity;
 use symplectic::random::generate_random_polytopes;
 use symplectic::geom::known_polytopes::{

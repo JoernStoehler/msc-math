@@ -1643,9 +1643,9 @@ mod tests_capacity_derivative {
     /// which may introduce O(eps) systematic error for FD. The old code used
     /// `volume_divergence` (divergence theorem from H-rep) for cleaner FD.
     ///
-    /// TODO: If FD volume tests show excessive error, add a volume_divergence function
-    /// to the volume module (dropped during migration). The divergence theorem computes
-    /// vol = (1/4) sum h_i * vol_3D(F_i) directly from H-representation.
+    /// TODO: Missing H-representation volume derivative backend for finite-difference validation;
+    /// implement `volume_divergence` in crates/library/src/geom/volume.rs;
+    /// acceptance: this module's Euler finite-difference test no longer needs qhull volume.
     fn fd_volume_derivatives(normals: &[Vector4<f64>], heights: &[f64]) -> Vec<f64> {
         let f = heights.len();
         (0..f)
@@ -1729,13 +1729,14 @@ mod tests_capacity_derivative {
     ///
     /// Polytopes: simplex, hypercube. Tolerance: 0.1% relative.
     ///
-    /// TODO: This test uses qhull-based volume. The old code used `volume_divergence`
-    /// (divergence theorem from H-rep) which gives clean FD with O(eps^2) truncation error.
+    /// TODO: Missing H-representation finite-difference volume path in
+    /// crates/library/src/geom/volume.rs (`volume_divergence`);
+    /// acceptance: replace qhull-based FD here and remove `#[ignore]` from this test.
     /// Qhull computes volume from V-rep triangulation, which introduces O(eps) systematic
     /// error in FD because the triangulation topology can change with small perturbations.
     /// If this test fails on hypercube, restore `volume_divergence` in geom/volume.rs.
     #[test]
-    #[ignore] // Requires volume_divergence (dropped during migration) for clean FD
+    #[ignore] // Requires `volume_divergence` implementation in geom/volume.rs for clean FD
     fn euler_homogeneity_volume() {
         let polytopes: Vec<(&str, Polytope4D)> = vec![
             ("simplex", known_polytopes::simplex().polytope.clone()),

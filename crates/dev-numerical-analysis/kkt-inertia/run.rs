@@ -17,21 +17,15 @@
 /// Input: Known polytopes from the library (F ≤ 10).
 /// Output: Summary tables to stdout. No hard assertions (diagnostic experiment).
 use nalgebra::{DMatrix, DVector, Vector4};
-// TODO: `combinations` moved to `algorithms::hk2017::permutations::combinations` (wave 3, subagent #6)
-// TODO: `cyclic_permutations` stays at `algorithms::hk2017::permutations::cyclic_permutations` (wave 3, subagent #6)
-// TODO: `build_kkt_system` renamed to `kkt::qp_assembly::build_augmented_system` with signature
-//   change: now takes (polytope, perm) instead of (normals, heights, perm).
-//   `q_from_beta` removed from public API; replaced by `kkt::q_value(h, beta)` which takes
-//   the pre-assembled H matrix instead of (normals, perm, beta).
-//   For now, these experiments keep local copies with the old (normals, heights, perm) signatures
-//   since the experiment logic extracts normals/heights for direct manipulation.
-// TODO: `cyclic_permutations` stays at `algorithms::hk2017::permutations::cyclic_permutations`
-//   once wave 3 (subagent #6) writes permutations.rs.
+// TODO: Missing experiment wiring to library permutation/KKT helpers; implement by replacing local
+// TODO: `cyclic_permutations`, `combinations`, and `build_kkt` with public APIs in
+// TODO: crates/library/src/algorithms/hk2017/mod.rs and crates/library/src/kkt/qp_assembly.rs;
+// TODO: acceptance: this file compiles without local copies of those helpers.
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::symplectic_form::omega0;
 
-// ── Local copies of library functions (modules not yet written in migration) ──
+// ── Local copies of library functions kept for experiment compatibility ──
 
 /// Generate all cyclic permutations (fix first element, permute rest).
 /// Previously imported from `symplectic::algorithms::hk2017::permutations::cyclic_permutations`.

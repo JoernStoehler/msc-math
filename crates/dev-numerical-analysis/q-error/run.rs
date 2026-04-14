@@ -12,21 +12,17 @@
 //! Input: Known polytopes from the library (F ≤ 10).
 //! Output: Summary tables to stdout. Panics on any violation.
 use nalgebra::{DMatrix, DVector, Vector4};
-// TODO: `ehz_capacity` and `combinations` move to `algorithms::hk2017` (wave 3, subagent #6)
-// TODO: `cyclic_permutations` stays at `algorithms::hk2017::permutations::cyclic_permutations` (wave 3)
-// TODO: `build_kkt_system` renamed to `kkt::qp_assembly::build_augmented_system` with signature
-//   change: now takes (polytope, perm) instead of (normals, heights, perm).
-//   `q_from_beta` removed from public API.
-// TODO: `kkt_rational` renamed to `kkt::rational_solver` (wave 2, subagent #3)
-// TODO: ehz_capacity will be re-exported from algorithms::hk2017 once wave 3 (subagent #6) writes hk2017/mod.rs
+// TODO: Missing experiment wiring to library permutation/KKT helpers; implement by replacing local
+// TODO: `cyclic_permutations`, `combinations`, and `build_kkt` with public APIs in
+// TODO: crates/library/src/algorithms/hk2017/mod.rs and crates/library/src/kkt/qp_assembly.rs;
+// TODO: acceptance: this file compiles without local copies of those helpers.
 use symplectic::algorithms::hk2017::ehz_capacity;
-// TODO: cyclic_permutations will be available from hk2017::permutations once wave 3 (subagent #6) writes it
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::symplectic_form::omega0;
 use symplectic::kkt::rational_solver as kkt_rational;
 
-// ── Local copies of library functions (modules not yet written in migration) ──
+// ── Local copies of library functions kept for experiment compatibility ──
 
 /// Generate all cyclic permutations (fix first element, permute rest).
 /// Previously imported from `symplectic::algorithms::hk2017::permutations::cyclic_permutations`.
