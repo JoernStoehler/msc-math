@@ -356,7 +356,7 @@ the velocity changes discontinuously from $R_i$ to $R_j$.
 \begin{unverified}
 \begin{lemma}[Positive span implies boundedness]\label{lem:positive-span}
 % [TODO: JÖRN - verify statement and proof]
-% Source: check_bounded_f64_first in vertex_enumeration.rs
+% Source: check_bounded_f64_first in vertex_enumeration/boundedness.rs
 Let $a_1, \ldots, a_F \in \mathbb{R}^4 \setminus \{0\}$ and
 $K = \{x \in \mathbb{R}^4 : \langle a_i, x \rangle \leq 1 \;\forall i\}$.
 Then $K$ is bounded if and only if $\{a_1, \ldots, a_F\}$ positively
@@ -385,7 +385,7 @@ So $K$ contains the ray through~$d$ and is unbounded.
 \begin{unverified}
 \begin{lemma}[Algorithmic bounded check via triples]\label{lem:bounded-triples}
 % [TODO: JÖRN - verify statement and proof]
-% Source: check_bounded_f64_first in vertex_enumeration.rs
+% Source: check_bounded_f64_first in vertex_enumeration/boundedness.rs
 Under the hypotheses of Lemma~\ref{lem:positive-span}, assume
 $\operatorname{rank}\{a_1, \ldots, a_F\} = 4$.
 Then $\{a_i\}$ positively spans $\mathbb{R}^4$ if and only if for every
@@ -421,7 +421,7 @@ $l \neq i,j,k$ (and $\langle a_i, d \rangle = \langle a_j, d \rangle
 \begin{unverified}
 \begin{lemma}[Exact vertex enumeration]\label{lem:vertex-enumeration}
 % [TODO: JÖRN - verify statement and proof]
-% Source: enumerate_vertices_int in vertex_enumeration.rs
+% Source: enumerate_vertices_int in vertex_enumeration/enumerate.rs
 Let $K = \{x \in \mathbb{R}^4 : \langle a_i, x \rangle \leq 1 \;\forall i\}$
 be a bounded polytope with $0 \in \operatorname{int}(K)$.
 A point $v \in \mathbb{R}^4$ is a vertex of~$K$ if and only if there exists
@@ -467,7 +467,7 @@ Deduplication handles non-simple vertices found via multiple subsets.
 \begin{unverified}
 \begin{lemma}[Irredundancy check]\label{lem:irredundancy}
 % [TODO: JÖRN - verify statement and proof]
-% Source: check_irredundancy_f64_first in vertex_enumeration.rs
+% Source: check_irredundancy_f64_first in vertex_enumeration/irredundancy.rs
 Let $K$ be as above with vertices $V$ and vertex-facet incidence
 $V_i = \{v \in V : \langle a_i, v \rangle = 1\}$.
 The $i$-th constraint is irredundant if and only if
@@ -499,7 +499,7 @@ in a neighborhood of $F_i$.
 \begin{unverified}
 \begin{proposition}[Integer-scaled Cramer's rule]\label{prop:integer-cramer}
 % [TODO: JÖRN - verify statement and proof]
-% Source: optimized vertex enumeration in vertex_enumeration.rs
+% Source: optimized vertex enumeration in vertex_enumeration/enumerate.rs
 Let $a_1, \ldots, a_F \in \mathbb{Q}^4$ be the dual vertices defining
 $K = \{x \in \mathbb{R}^4 : \langle a_i, x \rangle \leq 1\}$.
 Let $D = \operatorname{lcm}$ of all denominators of all components of
