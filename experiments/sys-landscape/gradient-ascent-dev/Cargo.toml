@@ -8,11 +8,11 @@ path = "src/lib.rs"
 
 [[bin]]
 name = "dev_step_calibration"
-path = "step-calibration/run.rs"
+path = "step-calibration/main.rs"
 
 [[bin]]
 name = "dev_strategy_comparison"
-path = "strategy-comparison/run.rs"
+path = "strategy-comparison/main.rs"
 
 [lints]
 workspace = true

@@ -8,15 +8,15 @@ path = "src/lib.rs"
 
 [[bin]]
 name = "dev_numerics"
-path = "numerics/run.rs"
+path = "numerics/main.rs"
 
 [[bin]]
 name = "dev_numerics_edge_cases"
-path = "numerics-edge-cases/run.rs"
+path = "numerics-edge-cases/main.rs"
 
 [[bin]]
 name = "dev_numerics_subdifferential"
-path = "numerics-subdifferential/run.rs"
+path = "numerics-subdifferential/main.rs"
 
 [lints]
 workspace = true

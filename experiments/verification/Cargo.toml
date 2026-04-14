@@ -5,11 +5,11 @@ edition = "2021"
 
 [[bin]]
 name = "axioms-correctness"
-path = "correctness/run.rs"
+path = "correctness/main.rs"
 
 [[bin]]
 name = "axioms-orbit-recovery"
-path = "orbit-recovery/run.rs"
+path = "orbit-recovery/main.rs"
 
 [lints]
 workspace = true

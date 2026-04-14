@@ -11,7 +11,7 @@ Source of truth:
 
 ## Current status
 
-Active phase: phase 2 (`run.rs` to `main.rs` entrypoint normalization) with phase 3 live-path repair queued behind it
+Active phase: phase 3 (live-path repair across operational docs, research/design notes, experiment script headers, and formal comments)
 
 Confirmed repo facts:
 - Repo-root `Cargo.toml` has now been created as the workspace manifest.
@@ -47,10 +47,19 @@ Still pending from the target policy:
 
 ## Next safe resume point
 
-Start phase 2:
-- rename packet entrypoints from `run.rs` to `main.rs`
-- update all `Cargo.toml` `[[bin]] path = ...` entries
-- then repair live Python/shell/doc references that mention `run.rs` or old `crates/...` packet paths
+Phase 2 completed:
+- canonical experiment packet entrypoints were renamed from `run.rs` to `main.rs`
+- matching `Cargo.toml` `[[bin]] path = ...` entries were updated
+- `probe.rs`, `profile.rs`, `collect_poly.rs`, and other distinct non-canonical entrypoints were left in place
+- verification:
+  - `rg -n 'path = ".*/run\.rs"' experiments -g 'Cargo.toml'` returned no matches
+  - `find experiments -name run.rs` returned no remaining canonical packet entrypoints
+  - `cargo build --workspace --release` still passes
+
+Next:
+- repair live Python/shell/doc references that still mention `run.rs`, `crates/...`, or old cargo entrypoint commands
+- then normalize experiment-owned JSONL path policy
+- then repair the `formal/` root build and include structure
 
 Do not assume phase 1 solved the dataset-ownership policy; that still needs explicit edits after the entrypoint rename.
 

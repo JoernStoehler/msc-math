@@ -8,23 +8,23 @@ path = "src/lib.rs"
 
 [[bin]]
 name = "cell-boundary-characterization"
-path = "boundary-characterization/run.rs"
+path = "boundary-characterization/main.rs"
 
 [[bin]]
 name = "cell-widths"
-path = "cell-widths/run.rs"
+path = "cell-widths/main.rs"
 
 [[bin]]
 name = "cell-convexity"
-path = "convexity/run.rs"
+path = "convexity/main.rs"
 
 [[bin]]
 name = "cell-multiple-crossings"
-path = "multiple-crossings/run.rs"
+path = "multiple-crossings/main.rs"
 
 [[bin]]
 name = "cell-omega"
-path = "omega-hypothesis/run.rs"
+path = "omega-hypothesis/main.rs"
 
 [lints]
 workspace = true

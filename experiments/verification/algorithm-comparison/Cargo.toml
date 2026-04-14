@@ -5,11 +5,11 @@ edition = "2021"
 
 [[bin]]
 name = "cmp-ablation"
-path = "ablation/run.rs"
+path = "ablation/main.rs"
 
 [[bin]]
 name = "cmp-benchmark"
-path = "benchmark/run.rs"
+path = "benchmark/main.rs"
 
 [[bin]]
 name = "cmp-benchmark-profile"

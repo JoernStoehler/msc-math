@@ -8,15 +8,15 @@ path = "src/lib.rs"
 
 [[bin]]
 name = "hko-gradient-analysis"
-path = "gradient-analysis/run.rs"
+path = "gradient-analysis/main.rs"
 
 [[bin]]
 name = "hko-facet-splitting"
-path = "facet-splitting/run.rs"
+path = "facet-splitting/main.rs"
 
 [[bin]]
 name = "hko-lagrangian-boundary"
-path = "lagrangian-boundary/run.rs"
+path = "lagrangian-boundary/main.rs"
 
 [[bin]]
 name = "hko-lagrangian-probe"
@@ -24,15 +24,15 @@ path = "lagrangian-boundary/probe.rs"
 
 [[bin]]
 name = "hko-perturbation"
-path = "perturbation-neighborhood/run.rs"
+path = "perturbation-neighborhood/main.rs"
 
 [[bin]]
 name = "hko-second-order"
-path = "second-order/run.rs"
+path = "second-order/main.rs"
 
 [[bin]]
 name = "hko-cut-and-ascent"
-path = "cut-and-ascent/run.rs"
+path = "cut-and-ascent/main.rs"
 
 [lints]
 workspace = true

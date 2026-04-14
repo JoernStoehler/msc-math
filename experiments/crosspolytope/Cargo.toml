@@ -5,7 +5,7 @@ edition = "2021"
 
 [[bin]]
 name = "crosspolytope"
-path = "main/run.rs"
+path = "main/main.rs"
 
 [lints]
 workspace = true

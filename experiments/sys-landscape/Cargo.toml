@@ -8,31 +8,31 @@ path = "src/lib.rs"
 
 [[bin]]
 name = "sys-rotated-regular-products"
-path = "rotated-regular-products/run.rs"
+path = "rotated-regular-products/main.rs"
 
 [[bin]]
 name = "sys-gradient-ascent-general"
-path = "gradient-ascent-general/run.rs"
+path = "gradient-ascent-general/main.rs"
 
 [[bin]]
 name = "sys-gradient-ascent-products"
-path = "gradient-ascent-products/run.rs"
+path = "gradient-ascent-products/main.rs"
 
 [[bin]]
 name = "sys-random-sample"
-path = "random-sample/run.rs"
+path = "random-sample/main.rs"
 
 [[bin]]
 name = "sys-random-product-sample"
-path = "random-product-sample/run.rs"
+path = "random-product-sample/main.rs"
 
 [[bin]]
 name = "sys-rejection-calibration"
-path = "rejection-calibration/run.rs"
+path = "rejection-calibration/main.rs"
 
 [[bin]]
 name = "sys-variable-f-ascent"
-path = "variable-f-ascent/run.rs"
+path = "variable-f-ascent/main.rs"
 
 [lints]
 workspace = true
