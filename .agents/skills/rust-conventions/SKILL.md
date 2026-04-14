@@ -1,6 +1,6 @@
 ---
-paths:
-  - "**/*.rs"
+name: rust-conventions
+description: Rust project conventions for library and experiment code reviews.
 ---
 
 # Rust Conventions
@@ -49,11 +49,8 @@ Never state performance without an inline benchmark citation. "~1ms" is a claim.
 Standard Rust error handling, plus:
 
 - When math is violated, panic. Don't try to recover gracefully — the math needs to be fixed, not worked around.
-
 - Don't use `Option<T>` in math code. `None` has no canonical mathematical meaning.
-
 - In math code, use enums instead of errors or panics to classify cases (e.g. invertible vs singular, feasible vs infeasible). Each variant is a mathematical proposition.
-
 - Callers of math code must match on all variants and handle each case locally. Don't propagate with `?`. If a case is proven or conjectured to not occur, `assert!` on it.
 
 ## Experiment binaries

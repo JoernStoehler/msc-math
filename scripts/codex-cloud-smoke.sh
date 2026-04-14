@@ -8,6 +8,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+TMP_DIR=""
 
 echo "[codex-cloud-smoke] repo root: ${ROOT_DIR}"
 
@@ -24,35 +25,21 @@ require_cmd uv
 require_cmd git
 
 cleanup() {
-  local files=(
-    "${ROOT_DIR}/crates/exp-hko-local-maximum/perturbation-neighborhood/data/smoke-eps-0.001.jsonl"
-    "${ROOT_DIR}/crates/exp-hko-local-maximum/perturbation-neighborhood/data/smoke-eps-0.01.jsonl"
-    "${ROOT_DIR}/crates/exp-hko-local-maximum/perturbation-neighborhood/data/smoke-eps-0.1.jsonl"
-    "${ROOT_DIR}/crates/exp-hko-local-maximum/perturbation-neighborhood/pentagon_perturb_sys_hist.png"
-    "${ROOT_DIR}/crates/exp-hko-local-maximum/perturbation-neighborhood/pentagon_perturb_stats.md"
-    "${ROOT_DIR}/crates/exp-hko-local-maximum/perturbation-neighborhood/pentagon_perturb_stats.tex"
-    "${ROOT_DIR}/crates/exp-hko-local-maximum/perturbation-neighborhood/pentagon_perturb_pca.md"
-    "${ROOT_DIR}/crates/exp-hko-local-maximum/perturbation-neighborhood/pentagon_perturb_pca.tex"
-  )
-
-  git -C "${ROOT_DIR}" restore --source=HEAD --worktree -- "${files[@]}" 2>/dev/null || true
-  for file in "${files[@]}"; do
-    if ! git -C "${ROOT_DIR}" ls-files --error-unmatch "${file#${ROOT_DIR}/}" >/dev/null 2>&1; then
-      rm -f "${file}"
-    fi
-  done
+  if [[ -n "${TMP_DIR}" && -d "${TMP_DIR}" ]]; then
+    rm -rf "${TMP_DIR}"
+  fi
 }
 
 trap cleanup EXIT
 
 if ! command -v qconvex >/dev/null 2>&1; then
-  cat >&2 <<'EOF'
+  cat >&2 <<'EOM'
 [codex-cloud-smoke] missing command: qconvex
 
 This repo's Rust validation path depends on qhull. Run
 `bash scripts/codex-cloud-setup.sh` first in an environment where qhull can be
 installed, or use an environment that already ships qconvex.
-EOF
+EOM
   exit 1
 fi
 
@@ -77,16 +64,23 @@ echo "[codex-cloud-smoke] Building representative experiment binary..."
   cargo build -p exp-hko-local-maximum --release --bin hko-perturbation
 )
 
-echo "[codex-cloud-smoke] Running representative Python analysis..."
+echo "[codex-cloud-smoke] Running representative Python analysis in temp workspace..."
+TMP_DIR="$(mktemp -d)"
+TMP_EXP_DIR="${TMP_DIR}/crates/exp-hko-local-maximum/perturbation-neighborhood"
+mkdir -p "${TMP_EXP_DIR}/data"
+mkdir -p "${TMP_DIR}/crates"
+cp "${ROOT_DIR}/crates/figure_config.py" "${TMP_DIR}/crates/figure_config.py"
+cp "${ROOT_DIR}/crates/exp-hko-local-maximum/perturbation-neighborhood/analyze.py" "${TMP_EXP_DIR}/analyze.py"
+
+for eps in 0.001 0.01 0.1; do
+  "${ROOT_DIR}/crates/target/release/hko-perturbation" \
+    --eps "${eps}" \
+    --n 20 \
+    --out "${TMP_EXP_DIR}/data/smoke-eps-${eps}.jsonl"
+done
+
 (
-  cd "${ROOT_DIR}/crates/exp-hko-local-maximum/perturbation-neighborhood"
-  mkdir -p data
-  for eps in 0.001 0.01 0.1; do
-    ../../target/release/hko-perturbation \
-      --eps "${eps}" \
-      --n 20 \
-      --out "data/smoke-eps-${eps}.jsonl"
-  done
+  cd "${TMP_EXP_DIR}"
   uv run analyze.py
 )
 

@@ -1,9 +1,9 @@
 //! Qhull subprocess wrapper for 4D volume computation via `qconvex`.
 //!
-//! Vertex enumeration is handled by the exact rational pipeline
-//! (`vertex_enumeration.rs`). This module only provides volume computation
-//! via the `qconvex FA` command, which triangulates the convex hull and
-//! computes volume from the triangulation.
+//! Vertex enumeration is handled by the exact rational pipeline in
+//! `vertex_enumeration/`. This module only provides volume computation via
+//! the `qconvex FA` command, which triangulates the convex hull and computes
+//! volume from the triangulation.
 //!
 //! Mathematical correspondence: [def:volume]
 

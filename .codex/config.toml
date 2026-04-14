@@ -16,7 +16,7 @@
 # inside any git tree, so auth tokens cannot be accidentally committed.
 
 # AGENTS.md is small today but may grow, and agents may also read
-# `.agents/rules/*.md` during a session.
+# skills under `.agents/skills/*/SKILL.md` during a session.
 # Bump well above the 32 KiB default just in case.
 project_doc_max_bytes = 65536
 
