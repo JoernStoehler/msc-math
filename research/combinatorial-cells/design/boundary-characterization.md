@@ -58,7 +58,7 @@ Orbit gap predicts orbit switches (orbit_gap_vs_switch.png): lowest gap quartile
 - **gradient-discontinuity** -- analyzes gradient angle change and gradient-cell alignment using data from this experiment's main.rs
 - **cell-widths** -- per-facet cell width data used for gradient-cell alignment analysis (in gradient-discontinuity)
 - **gradient-correctness** -- validates gradient formula; this experiment studies what happens when the gradient changes
-- **gradient-ascent-general**, **gradient-ascent-products** (exp-sys-landscape) -- use boundary-crossing strategies; this experiment characterizes the boundaries
+- **gradient-ascent-general**, **gradient-ascent-products** (`experiments/sys-landscape/`) -- use boundary-crossing strategies; this experiment characterizes the boundaries
 
 ## Open questions
 

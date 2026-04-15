@@ -8,27 +8,22 @@ Viterbo's conjecture was disproved by Haim-Kislev and Ostrover (2024) via an exp
 
 **2026-04-12: refactored for LICCA submission.** Binary now takes CLI args (`--n --eps --out --seed`); scale target is 10k samples per eps bucket across three eps scales (0.001 / 0.01 / 0.1), run on LICCA as a single-task slurm job. Pre-refactor findings (100 samples at eps=0.01, all retained sys > 1) stand as the starting point; they are superseded by the new LICCA run when that completes.
 
-Old artifact `pentagon-perturb.jsonl` (committed N=101 dataset) is kept under its original name for historical reference but is not read by the new `analyze.py` — the analyzer globs `data/*.jsonl` instead.
+Old artifact `pentagon-perturb.jsonl` (committed N=101 dataset) is kept under its original name for historical reference but is not read by the new `analyze.py`. The analyzer reads `data/licca-eps-*.jsonl` when present and otherwise falls back to `data/smoke-eps-*.jsonl`.
 
 ## How to run
 
 ### Local smoke (devcontainer)
 
 ```bash
-cd experiments/hko-local-maximum
-cargo build --release -p exp-hko-local-maximum --bin hko-perturbation
-cd exp-hko-local-maximum/perturbation-neighborhood
-mkdir -p data
-for eps in 0.001 0.01 0.1; do
-    ../../target/release/hko-perturbation \
-        --eps "$eps" \
-        --n 20 \
-        --out "data/smoke-eps-${eps}.jsonl"
-done
+./experiments/hko-local-maximum/perturbation-neighborhood/job-smoke.sh
+cd experiments/hko-local-maximum/perturbation-neighborhood
 uv run analyze.py
 ```
 
-Expect ~3 seconds total compute. Produces `data/smoke-eps-*.jsonl` (three files, 21 rows each = 20 perturbed + 1 baseline), a 3-panel histogram, stats table, and PCA table.
+Expect ~3 seconds total compute. Produces `data/smoke-eps-*.jsonl`
+(three files, 21 rows each = 20 perturbed + 1 baseline), a 3-panel
+histogram, stats table, and PCA table. `job-smoke.sh` is plain bash with no
+SLURM directives and uses the repo-local `target/release/hko-perturbation`.
 
 ### Resume semantics
 
@@ -52,10 +47,11 @@ samples.
 
 On LICCA (login node):
 ```bash
-cd ~/msc-math/crates
+cd ~/msc-math
 export CARGO_TARGET_DIR=/hpc/gpfs2/scratch/u/stoehljo/cargo-target
 cargo build --release -p exp-hko-local-maximum --bin hko-perturbation
-cd exp-hko-local-maximum/perturbation-neighborhood
+cd experiments/hko-local-maximum/perturbation-neighborhood
+mkdir -p logs
 
 # Test-partition dry run first (~3 min, no epyc slot burnt):
 sbatch -p test --time=00:03:00 --export=ALL,N_PER_BUCKET=3 job.sh
@@ -87,6 +83,7 @@ Then run `uv run analyze.py` locally on the retrieved data.
 | `analyze.py` | Python: 3-panel histogram of sys values per eps, summary stats, PCA at eps=0.01 |
 | `formal/hko-local-maximum/perturbation-neighborhood.tex` | Formal writeup (input by `formal/main.tex`) |
 | `job.sh` | Slurm submission script (epyc, 1 core, 30 min) |
+| `job-smoke.sh` | Local smoke script (plain bash, no SLURM) |
 | `data/licca-eps-*.jsonl` | LICCA production output, 10k per bucket (LFS) |
 | `data/smoke-eps-*.jsonl` | Local smoke output, 20 per bucket (LFS) |
 | `pentagon-perturb.jsonl` | Historical N=100 dataset, not read by current analyze.py |

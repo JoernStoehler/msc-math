@@ -45,4 +45,4 @@ This is consistent with facet-splitting's finding (0/536 cuts improved sys witho
 - `facet-splitting/` — F=10→F=11 cuts without ascent; 0/536 improved
 - `gradient-analysis/` — gradient at HKO2024 is zero; 1-step convergence
 - `second-order/` — all 15 flat directions have negative curvature
-- `variable-f-ascent/` (exp-sys-landscape) — the source of the gradient ascent algorithm and preliminary HKO2024 data
+- `experiments/sys-landscape/variable-f-ascent/` — the source of the gradient ascent algorithm and preliminary HKO2024 data

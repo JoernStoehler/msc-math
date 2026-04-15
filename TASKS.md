@@ -51,7 +51,8 @@ Each LICCA-bound experiment ships two scripts in its directory:
 - `job-smoke.sh` — plain bash, no `#SBATCH`. Small N. Output path under the experiment dir (e.g. `data/smoke.jsonl`). Runs in this devcontainer. Agents run this as their own verification step before handing off.
 - `job.sh` — `#SBATCH` headers, LICCA paths, production N. Jörn scps and submits; the slurm skill (`.agents/skills/slurm/`) has the template + resource-table requirement.
 
-Artifacts per experiment: `job.sh` + `job-smoke.sh` + `data/smoke.jsonl` (locally-regenerable, committed) + `data/licca.jsonl` (produced on LICCA, scp'd back, committed via git LFS). Analyze.py reads whichever is newer / whichever is specified.
+Artifacts per experiment: `job.sh` + `job-smoke.sh` + experiment-specific smoke/licca JSONL paths. Current examples: `sys-*` uses `data/smoke.jsonl` and `data/licca.jsonl`; HKO perturbation uses `data/smoke-eps-*.jsonl` and `data/licca-eps-*.jsonl`. Analyze.py reads whichever production/smoke paths that experiment documents.
+Before `sbatch`, create the experiment-local `logs/` directory because SLURM opens `#SBATCH --output=logs/%x-%j.out` before the script body runs.
 
 ## [open] HKO2024 local maximality
 
@@ -90,13 +91,9 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 
 ### [active] [group:licca] LICCA-scale F=10 neighborhood falsification
 - Scale the 100-seed perturbation-neighborhood experiment to 10k+ perturbations with 3 step-size buckets (small/medium/large). Honest falsification attempt. Expected: no sys>HKO (strengthens conjecture). Real outcome: whatever the data says.
-- **Worktree pointer:** `licca-bundle @ 786de68c`. Contains phase 4 (A→B refactor: rayon `par_iter` + shared helpers in `exp-sys-landscape/src/lib.rs`) + phase 4.5 (crash-safe trace-first write + deterministic `finalize_ascent_output`) + V8 NIT / V6 finding polish. Third-party reviewer ("V8") returned READY for phases 4 and 4.5.
-- **Best guess as of 2026-04-12 (not binding — verify before trusting):** the worktree is probably a net-positive starting point. The refactor is the main reproduction cost and has a READY verdict; rebuilding might be better if you find structural problems the V8 reviewer missed, but our rough estimate is that auditing + fixing the known issues below is cheaper than rebuilding from `main`.
-- **Known issues found in spot-checks 2026-04-12 (verify still apply before acting):**
-  1. All 3 `job.sh` files use `./target/release/<bin>` but set `CARGO_TARGET_DIR=/hpc/gpfs2/scratch/u/stoehljo/cargo-target`, which looks like it makes the binary path wrong. Likely fix: `"$CARGO_TARGET_DIR/release/<bin>"`. Spot-checked on `gradient-ascent-general/job.sh`; not verified on the other two.
-  2. No `cargo build` step in any `job.sh`. Unclear whether Jörn prebuilds on LICCA or this is an oversight.
-  3. `--time=00:00:01` tripwire with CLI-override ritual. Open question whether to keep or bake in real values; smoke n=3 gives a rough ~3h for `sys-*`, ~30m for perturbation, but that's a thin sample.
-  4. `logs/` directory created inside the script but SLURM opens its log file at submit time — possible timing bug, unverified on actual LICCA submission.
+- **Worktree pointer:** `audit-data-freshness-licca-plan`. Current checkout uses `experiments/...` package paths, not the old `exp-*` directory paths in LICCA handoff text.
+- **Script readiness state (2026-04-15):** fixed the known `CARGO_TARGET_DIR` binary-path bug by running `"$CARGO_TARGET_DIR/release/hko-perturbation"`; added `job-smoke.sh`; kept build outside production `job.sh` with an executable preflight error that prints the exact `cargo build` command. Before LICCA submission, Jörn runs `cd ~/msc-math && CARGO_TARGET_DIR=/hpc/gpfs2/scratch/u/stoehljo/cargo-target cargo build --release -p exp-hko-local-maximum --bin hko-perturbation`, then `cd experiments/hko-local-maximum/perturbation-neighborhood && mkdir -p logs && sbatch ... job.sh`.
+- **Open LICCA-side check:** confirm that `~/msc-math` on LICCA has the same current repo layout. If it still has an old `~/msc-math/crates/exp-*` deployment copy, update that copy or switch to the current repo layout before submitting.
 - **Ownership (Jörn override 2026-04-12):** the prior "Owned by licca-bundle agent" / "Post-LICCA follow-up unowned" split is superseded — one session now owns end-to-end (audit → fix → smoke → present scp+sbatch → wait → `analyze.py` → figures → logbook → `RESULTS.md` updates → `/pre-merge` → merge). Previous split was producing failed transfers.
 - Re-plan trigger: after LICCA runs return, re-evaluate density/falsification claims (`TASKS.md:44`).
 
@@ -160,7 +157,7 @@ Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the o
 
 ### [future] [group:witness-search] Witness-guided F→F+1 continuation
 - Replace random facet addition with witness-guided vertex splitting and witness lifting into the child problem.
-- Compare directly against `variable-f-ascent/` and `exp-hko-local-maximum/cut-and-ascent/`.
+- Compare directly against `experiments/sys-landscape/variable-f-ascent/` and `experiments/hko-local-maximum/cut-and-ascent/`.
 - Pointer: `research/sys-landscape/design/witness-search-program.md:67-75`
 
 ### [future] [group:witness-search] Symmetry-family search
@@ -184,8 +181,8 @@ Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the o
 ### [active] [group:licca] LICCA-scale massive ascent sampling (density probe)
 - Scale `gradient-ascent-general/` (10 → 10k+ seeds) and `gradient-ascent-products/` (12 → 10k+ seeds).
 - **Research question (load-bearing for the `RESULTS.md` hostile-landscape main result):** does the density of sys>1 local maxima in M_F actually support "no new examples"? Current seed counts are too small to claim the density is low.
-- **Worktree pointer:** same as the F=10 item above — `licca-bundle @ 786de68c`. The refactor covers both `sys-*` binaries (V8 READY for phases 4+4.5 + polish).
-- **Best guess + known issues + ownership override:** same as the F=10 item above. Same 4 `job.sh` bugs apply to `sys-gradient-ascent-general` and `sys-gradient-ascent-products`. Verify before acting. Rebuild is still on the table if the worktree turns out to be in worse shape than the F=10 entry's spot-checks suggest.
+- **Worktree pointer:** same as the F=10 item above — `audit-data-freshness-licca-plan`.
+- **Script readiness state (2026-04-15):** fixed the known `CARGO_TARGET_DIR` binary-path bug for both `sys-*` scripts; added local `job-smoke.sh`; kept the 1-second `--time` tripwire, so Jörn must submit production with `sbatch --time=02:00:00 job.sh` after the test-partition dry run. Build commands are `cd ~/msc-math && CARGO_TARGET_DIR=/hpc/gpfs2/scratch/u/stoehljo/cargo-target cargo build --release -p exp-sys-landscape --bin sys-gradient-ascent-general --bin sys-gradient-ascent-products`, followed by `cd experiments/sys-landscape/<experiment> && mkdir -p logs && sbatch ... job.sh`.
 - Each family produces histogram + bucket counts at sys>0.95/0.99/1.00.
 - Re-plan trigger: results back → update `RESULTS.md` density claim.
 
@@ -378,7 +375,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 ## [open] Code quality + alignment
 
 ### [done] [2026-04-07] Code cleanup (session)
-- Completed: step_bound duplication extracted to exp-sys-landscape/src/lib.rs (cut-and-ascent gets inline copy); products-vs-random split; wiggle strength justified + documented; `[lem:dual-vertex-qp]` proof drafted + Jörn-approved (Lemma 37 in `formal/main.pdf` p11); formal stubs audited (53 stubs + 69 unverified blocks as of 2026-04-07).
+- Completed: step_bound duplication extracted to `experiments/sys-landscape/src/lib.rs` (cut-and-ascent gets inline copy); products-vs-random split; wiggle strength justified + documented; `[lem:dual-vertex-qp]` proof drafted + Jörn-approved (Lemma 37 in `formal/main.pdf` p11); formal stubs audited (53 stubs + 69 unverified blocks as of 2026-04-07).
 - Remaining future note: gradient-ascent + multiple-crossings overlap dedup is blocked until gradient ascent stabilizes into library. Until then, copy-edit between experiments is correct.
 - Known side effect: step_bound upgrade (omega_0 detection) changes experiment behavior if re-run. Existing JSONL not regenerated.
 
@@ -540,7 +537,7 @@ Items not tied to a specific research question. See also `experiments/verificati
 ### [future] Gradient ascent with variable facet count (F to F+1)
 - Add barely non-redundant a_{F+1}, then fixed-F gradient ascent on F+1.
 - Warm-start via sigma-list reuse rejected (complexity not worth it).
-- Partially explored: `exp-sys-landscape/variable-f-ascent/`, `exp-hko-local-maximum/cut-and-ascent/`.
+- Partially explored: `experiments/sys-landscape/variable-f-ascent/`, `experiments/hko-local-maximum/cut-and-ascent/`.
 
 ### [future] Dimension scaling study
 - How does max-achievable-sys scale with F for random polytopes? Scattered data exists, no systematic study.

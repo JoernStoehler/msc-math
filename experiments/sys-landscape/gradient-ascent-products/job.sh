@@ -27,18 +27,29 @@
 # first production submit, verify on this cluster with a 1-seed test-partition
 # run: `sbatch -p test --time=00:03:00 --export=ALL,N=1 job.sh` should hit its
 # own 3-minute limit, not the 1-second #SBATCH directive.
+# Before submission, create the log directory from the experiment directory:
+# `mkdir -p logs`.
 # Test-partition dry run: `sbatch -p test --time=00:03:00 --export=ALL,N=3 job.sh`.
 
 set -euo pipefail
-cd "$HOME/msc-math/crates"
+cd "$HOME/msc-math"
 export CARGO_TARGET_DIR=/hpc/gpfs2/scratch/u/stoehljo/cargo-target
 export RAYON_NUM_THREADS="$SLURM_CPUS_PER_TASK"
 
 N="${N:-10000}"
-EXP_DIR="exp-sys-landscape/gradient-ascent-products"
+EXP_DIR="experiments/sys-landscape/gradient-ascent-products"
+BINARY="$CARGO_TARGET_DIR/release/sys-gradient-ascent-products"
+
+if [[ ! -x "$BINARY" ]]; then
+    echo "Missing executable: $BINARY" >&2
+    echo "Build it first on LICCA with:" >&2
+    echo "  cd ~/msc-math && CARGO_TARGET_DIR=$CARGO_TARGET_DIR cargo build --release -p exp-sys-landscape --bin sys-gradient-ascent-products" >&2
+    exit 1
+fi
+
 mkdir -p "$EXP_DIR/data" "$EXP_DIR/logs"
 
-./target/release/sys-gradient-ascent-products \
+"$BINARY" \
     --no-db-update \
     --n "$N" \
     --out "$EXP_DIR/data/licca.jsonl"

@@ -39,18 +39,15 @@ product part is now in `gradient-ascent-products/`.
 ### Local smoke (devcontainer)
 
 ```bash
-cargo run -p exp-sys-landscape --release --bin sys-gradient-ascent-general
-cargo build --release -p exp-sys-landscape --bin sys-gradient-ascent-general
-cd exp-sys-landscape/gradient-ascent-general
-mkdir -p data
-../../target/release/sys-gradient-ascent-general \
-    --fresh --n 3 --n-start 0 --no-db-update \
-    --out data/smoke.jsonl
+./experiments/sys-landscape/gradient-ascent-general/job-smoke.sh
+cd experiments/sys-landscape/gradient-ascent-general
 uv run analyze.py
 ```
 
 Expect ~20 s compute. Produces `data/smoke.jsonl`, `data/smoke-trace.jsonl`,
-and the six figure files. `analyze.py` picks up
+and the six figure files. `job-smoke.sh` is plain bash with no SLURM
+directives and uses the repo-local `target/release/sys-gradient-ascent-general`.
+`analyze.py` picks up
 `data/licca.jsonl` > `data/licca-shard-*.jsonl` (legacy) > `data/smoke.jsonl`
 in priority order.
 
@@ -80,10 +77,11 @@ diff <(jq -c 'select(.name=="general_5")' /tmp/r1.jsonl) <(jq -c 'select(.name==
 
 On LICCA (login node):
 ```bash
-cd ~/msc-math/crates
+cd ~/msc-math
 export CARGO_TARGET_DIR=/hpc/gpfs2/scratch/u/stoehljo/cargo-target
 cargo build --release -p exp-sys-landscape --bin sys-gradient-ascent-general
-cd exp-sys-landscape/gradient-ascent-general
+cd experiments/sys-landscape/gradient-ascent-general
+mkdir -p logs
 
 # Test-partition dry run first (single task x 3 seeds, ~3 min, no epyc slot burnt):
 sbatch -p test --time=00:03:00 --export=ALL,N=3 job.sh
@@ -120,6 +118,7 @@ existing `licca.jsonl` and skips already-completed seeds. Do NOT pass
 | `main.rs` | Binary: per-seed RNG ascent + overshoot + wiggle |
 | `analyze.py` | Summary table + 6 figures + Bayesian bound |
 | `job.sh` | Slurm submission script (epyc, single task, 10 cores, 1-second tripwire --time) |
+| `job-smoke.sh` | Local smoke script (plain bash, no SLURM) |
 | `data/smoke.jsonl` | Local smoke output, 3 seeds (LFS) |
 | `data/licca.jsonl` | LICCA production output (N=10000, LFS) |
 | `data/licca-shard-*.jsonl` | Legacy architecture-A shard outputs (LFS) — kept for post-merge reads, not produced by current `job.sh` |

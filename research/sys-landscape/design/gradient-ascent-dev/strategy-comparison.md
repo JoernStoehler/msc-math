@@ -23,6 +23,6 @@ cargo run -p dev-gradient-ascent --release --bin dev_strategy_comparison
 
 ## Related experiments
 
-- `exp-sys-landscape/gradient-ascent-general/`, `exp-sys-landscape/gradient-ascent-products/` — found wiggle > overshoot, 5% strength
-- `exp-combinatorial-cells/cell-widths/` — cell widths for calibrating wiggle strength
-- `exp-combinatorial-cells/convexity/` — random cells convex, product cells not
+- `experiments/sys-landscape/gradient-ascent-general/`, `experiments/sys-landscape/gradient-ascent-products/` — found wiggle > overshoot, 5% strength
+- `experiments/combinatorial-cells/cell-widths/` — cell widths for calibrating wiggle strength
+- `experiments/combinatorial-cells/convexity/` — random cells convex, product cells not

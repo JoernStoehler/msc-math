@@ -84,7 +84,7 @@ F=11 gradient ascent starting from barely-perturbed F=10 local maxima **consiste
 
 Mean Δ across all 50 trials: +0.016. Max Δ: +0.057 (variable-f-ascent.jsonl, rq1_general_4_p3).
 
-HKO2024 testing (cut + ascent in F=11 space) moved to `exp-hko-local-maximum/cut-and-ascent/`.
+HKO2024 testing (cut + ascent in F=11 space) moved to `experiments/hko-local-maximum/cut-and-ascent/`.
 
 ### RQ2: Four-way comparison from random F=10 starts
 
@@ -120,5 +120,5 @@ Paired comparisons:
 ## Related experiments
 
 - `gradient-ascent-general/` — fixed-F=10 ascent, provides RQ1 starting points (best sys=0.9005)
-- `facet-splitting/` (exp-hko-local-maximum) — tested F=10→F=11 cuts on HKO2024 without subsequent ascent; all 536 cuts decreased sys
+- `experiments/hko-local-maximum/facet-splitting/` — tested F=10→F=11 cuts on HKO2024 without subsequent ascent; all 536 cuts decreased sys
 - `boundary-characterization/` (exp-combinatorial-cells) — combinatorial boundary types and density

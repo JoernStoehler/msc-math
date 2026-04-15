@@ -38,19 +38,16 @@ polytope part is now in `gradient-ascent-general/`.
 ### Local smoke (devcontainer)
 
 ```bash
-cargo run -p exp-sys-landscape --release --bin sys-gradient-ascent-products
-cargo build --release -p exp-sys-landscape --bin sys-gradient-ascent-products
-cd exp-sys-landscape/gradient-ascent-products
-mkdir -p data
-../../target/release/sys-gradient-ascent-products \
-    --fresh --n 3 --n-start 0 --no-db-update \
-    --out data/smoke.jsonl
+./experiments/sys-landscape/gradient-ascent-products/job-smoke.sh
+cd experiments/sys-landscape/gradient-ascent-products
 uv run analyze.py
 ```
 
 Expect ~15 s compute. Produces `data/smoke.jsonl`, `data/smoke-trace.jsonl`,
-and the six figure files. Seed 0 lands in bucket `lagrangian_3x7`, seed 1 in
-`lagrangian_4x6`, seed 2 in `lagrangian_5x5`. `analyze.py` picks up
+and the six figure files. `job-smoke.sh` is plain bash with no SLURM
+directives and uses the repo-local `target/release/sys-gradient-ascent-products`.
+Seed 0 lands in bucket `lagrangian_3x7`, seed 1 in `lagrangian_4x6`, seed 2
+in `lagrangian_5x5`. `analyze.py` picks up
 `data/licca.jsonl` > `data/licca-shard-*.jsonl` (legacy) > `data/smoke.jsonl`
 in priority order.
 
@@ -80,10 +77,11 @@ diff <(jq -c 'select(.name=="products_5")' /tmp/r1.jsonl) <(jq -c 'select(.name=
 
 On LICCA (login node):
 ```bash
-cd ~/msc-math/crates
+cd ~/msc-math
 export CARGO_TARGET_DIR=/hpc/gpfs2/scratch/u/stoehljo/cargo-target
 cargo build --release -p exp-sys-landscape --bin sys-gradient-ascent-products
-cd exp-sys-landscape/gradient-ascent-products
+cd experiments/sys-landscape/gradient-ascent-products
+mkdir -p logs
 
 # Test-partition dry run (single task x 3 seeds, ~3 min):
 sbatch -p test --time=00:03:00 --export=ALL,N=3 job.sh
@@ -120,6 +118,7 @@ existing `licca.jsonl` and skips already-completed seeds. Do NOT pass
 | `main.rs` | Binary: per-seed RNG projected ascent + overshoot + wiggle |
 | `analyze.py` | Per-bucket summary + 6 figures + Bayesian bound |
 | `job.sh` | Slurm submission script (epyc, single task, 10 cores, 1-second tripwire --time) |
+| `job-smoke.sh` | Local smoke script (plain bash, no SLURM) |
 | `data/smoke.jsonl` | Local smoke output, 3 seeds (LFS) |
 | `data/licca.jsonl` | LICCA production output (N=10000, LFS) |
 | `data/licca-shard-*.jsonl` | Legacy architecture-A shard outputs (LFS) — kept for post-merge reads, not produced by current `job.sh` |
