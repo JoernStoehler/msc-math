@@ -40,7 +40,7 @@ use serde::Serialize;
 use std::f64::consts::PI;
 use std::fs::File;
 use std::io::{BufWriter, Write};
-use std::time::Instant;
+use std::time::{Instant, SystemTime, UNIX_EPOCH};
 use symplectic::derivatives::{capacity_derivatives_a, volume_derivatives_a};
 use symplectic::geom::polygon::random_polygon_2d;
 use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktResult, EPS_Q_POSITIVE};
@@ -78,6 +78,15 @@ const Q1_POLYTOPES_PER_F: usize = 20;
 /// Skip Q2 polytopes with F > this to avoid slow ehz_capacity calls.
 /// LP(5,5) has F=10 (~3 min per ehz_capacity call in v1). F<=8 is tractable.
 const MAX_FACET_Q2: usize = 8;
+
+/// Smoke-test settings for Phase 2.
+const SMOKE_Q1_FACET_COUNTS: &[usize] = &[5];
+const SMOKE_Q1_POLYTOPES_PER_F: usize = 1;
+const SMOKE_Q2_REGULAR_PAIRS: &[(usize, usize)] = &[(3, 3)];
+const SMOKE_Q2_ROTATION_ANGLES: &[f64] = &[PI / 7.0];
+const SMOKE_Q2_RANDOM_PAIRS: &[(usize, usize)] = &[(3, 3)];
+const SMOKE_Q2_RANDOM_PER_PAIR: usize = 1;
+const SMOKE_N_DIRS: usize = 1;
 
 // ============================================================================
 // Output schema
@@ -245,7 +254,11 @@ fn compute_perturbed(
         _ => None,
     };
 
-    PerturbedValues { capacity: cap, volume: vol, sys }
+    PerturbedValues {
+        capacity: cap,
+        volume: vol,
+        sys,
+    }
 }
 
 // ============================================================================
@@ -290,7 +303,10 @@ fn first_order_test(
 
     for dir_idx in 0..n_dirs {
         let direction = random_direction(f, rng);
-        let gd: Vec<f64> = targets.iter().map(|(_, _, g)| dot_grad_dir(g, &direction)).collect();
+        let gd: Vec<f64> = targets
+            .iter()
+            .map(|(_, _, g)| dot_grad_dir(g, &direction))
+            .collect();
 
         for &t in T_VALUES {
             let t0 = Instant::now();
@@ -346,22 +362,68 @@ fn write_rows(writer: &mut BufWriter<File>, rows: &[PredictionRow]) {
     }
 }
 
+fn smoke_mode() -> bool {
+    std::env::args().skip(1).any(|arg| arg == "--smoke")
+}
+
+fn smoke_output_dir(label: &str) -> String {
+    let stamp = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("system clock before UNIX_EPOCH")
+        .as_millis();
+    let dir = std::env::temp_dir().join(format!("{label}-{}-{stamp}", std::process::id()));
+    std::fs::create_dir_all(&dir).expect("create smoke output dir");
+    dir.to_string_lossy().into_owned()
+}
+
+struct BasicValidationConfig {
+    q1_facet_counts: &'static [usize],
+    q1_polytopes_per_f: usize,
+    q2_regular_pairs: &'static [(usize, usize)],
+    q2_rotation_angles: &'static [f64],
+    q2_random_pairs: &'static [(usize, usize)],
+    q2_random_per_pair: usize,
+    n_dirs: usize,
+}
+
+fn basic_validation_config(smoke: bool) -> BasicValidationConfig {
+    if smoke {
+        BasicValidationConfig {
+            q1_facet_counts: SMOKE_Q1_FACET_COUNTS,
+            q1_polytopes_per_f: SMOKE_Q1_POLYTOPES_PER_F,
+            q2_regular_pairs: SMOKE_Q2_REGULAR_PAIRS,
+            q2_rotation_angles: SMOKE_Q2_ROTATION_ANGLES,
+            q2_random_pairs: SMOKE_Q2_RANDOM_PAIRS,
+            q2_random_per_pair: SMOKE_Q2_RANDOM_PER_PAIR,
+            n_dirs: SMOKE_N_DIRS,
+        }
+    } else {
+        BasicValidationConfig {
+            q1_facet_counts: &[5, 6, 7, 8, 9, 10],
+            q1_polytopes_per_f: Q1_POLYTOPES_PER_F,
+            q2_regular_pairs: &[(3, 3), (3, 4), (4, 4), (3, 5), (4, 5), (5, 5)],
+            q2_rotation_angles: &[PI / 7.0, PI / 5.0, PI / 3.0],
+            q2_random_pairs: &[(3, 3), (3, 4), (4, 4), (5, 5)],
+            q2_random_per_pair: 5,
+            n_dirs: N_DIRS,
+        }
+    }
+}
+
 // ============================================================================
 // Phases
 // ============================================================================
 
-fn run_q1(base_dir: &str) {
+fn run_q1(base_dir: &str, cfg: &BasicValidationConfig) {
     let path = format!("{}/gradient-correctness-q1-generic.jsonl", base_dir);
     let file = File::create(&path).expect("create Q1 JSONL");
     let mut writer = BufWriter::new(file);
     let mut total_rows = 0;
 
-    let facet_counts = [5, 6, 7, 8, 9, 10];
-
-    for &f_count in &facet_counts {
+    for &f_count in cfg.q1_facet_counts {
         let mut rng = ChaCha8Rng::seed_from_u64(SEED_BASE + f_count as u64);
         let polytopes =
-            generate_random_polytopes(Q1_POLYTOPES_PER_F, f_count, 0.5, 2.0, &mut rng);
+            generate_random_polytopes(cfg.q1_polytopes_per_f, f_count, 0.5, 2.0, &mut rng);
 
         for (i, polytope) in polytopes.iter().enumerate() {
             let info = match analyze_polytope(polytope) {
@@ -374,7 +436,7 @@ fn run_q1(base_dir: &str) {
 
             let id = format!("generic_F{}_{:03}", f_count, i);
             let rows = first_order_test(
-                &info, "q1", &id, "random", N_DIRS, &mut rng, None, None, None,
+                &info, "q1", &id, "random", cfg.n_dirs, &mut rng, None, None, None,
             );
             write_rows(&mut writer, &rows);
             total_rows += rows.len();
@@ -394,21 +456,16 @@ fn run_q1(base_dir: &str) {
     println!("Q1 done: {} rows written to {}", total_rows, path);
 }
 
-fn run_q2(base_dir: &str) {
+fn run_q2(base_dir: &str, cfg: &BasicValidationConfig) {
     let path = format!("{}/gradient-correctness-q2-nongeneric.jsonl", base_dir);
     let file = File::create(&path).expect("create Q2 JSONL");
     let mut writer = BufWriter::new(file);
     let mut total_rows = 0;
 
-    let regular_pairs = [(3, 3), (3, 4), (4, 4), (3, 5), (4, 5), (5, 5)];
-    let rotation_angles = [PI / 7.0, PI / 5.0, PI / 3.0];
-    let random_pairs = [(3, 3), (3, 4), (4, 4), (5, 5)];
-    let random_per_pair = 5;
-
     let mut rng = ChaCha8Rng::seed_from_u64(SEED_BASE + 200);
 
     // Regular Lagrangian products
-    for &(n1, n2) in &regular_pairs {
+    for &(n1, n2) in cfg.q2_regular_pairs {
         if n1 + n2 > MAX_FACET_Q2 {
             println!(
                 "  Q2: skipping LP({},{}) — F={} > {}",
@@ -430,7 +487,7 @@ fn run_q2(base_dir: &str) {
                 "q2",
                 &id,
                 "lagrangian_regular",
-                N_DIRS,
+                cfg.n_dirs,
                 &mut rng,
                 None,
                 None,
@@ -444,16 +501,15 @@ fn run_q2(base_dir: &str) {
     }
 
     // Rotated Lagrangian products
-    for &(n1, n2) in &regular_pairs {
+    for &(n1, n2) in cfg.q2_regular_pairs {
         if n1 + n2 > MAX_FACET_Q2 {
             continue;
         }
         let (qn, qh) = regular_polygon_2d(n1, 1.0);
-        for (ai, &theta) in rotation_angles.iter().enumerate() {
+        for (ai, &theta) in cfg.q2_rotation_angles.iter().enumerate() {
             let (pn, ph) = regular_polygon_2d(n2, 1.0);
             let (pn_rot, ph_rot) = rotate_polygon_2d(&pn, &ph, theta);
-            let polytope =
-                lagrangian_product(&qn, &qh, &pn_rot, &ph_rot).expect("rotated LP");
+            let polytope = lagrangian_product(&qn, &qh, &pn_rot, &ph_rot).expect("rotated LP");
             let id = format!("lp_rotated_{}_{}_{}", n1, n2, ai);
 
             if let Some(info) = analyze_polytope(&polytope) {
@@ -462,7 +518,7 @@ fn run_q2(base_dir: &str) {
                     "q2",
                     &id,
                     "lagrangian_rotated",
-                    N_DIRS,
+                    cfg.n_dirs,
                     &mut rng,
                     None,
                     None,
@@ -477,11 +533,11 @@ fn run_q2(base_dir: &str) {
     }
 
     // Random Lagrangian products
-    for &(n1, n2) in &random_pairs {
+    for &(n1, n2) in cfg.q2_random_pairs {
         if n1 + n2 > MAX_FACET_Q2 {
             continue;
         }
-        for j in 0..random_per_pair {
+        for j in 0..cfg.q2_random_per_pair {
             let (qn, qh) = random_polygon_2d(n1, 0.5, 2.0, &mut rng);
             let (pn, ph) = random_polygon_2d(n2, 0.5, 2.0, &mut rng);
             let polytope = match lagrangian_product(&qn, &qh, &pn, &ph) {
@@ -502,7 +558,7 @@ fn run_q2(base_dir: &str) {
                     "q2",
                     &id,
                     "lagrangian_random",
-                    N_DIRS,
+                    cfg.n_dirs,
                     &mut rng,
                     None,
                     None,
@@ -525,19 +581,31 @@ fn run_q2(base_dir: &str) {
 // ============================================================================
 
 fn main() {
-    let base_dir = ".";
+    let smoke = smoke_mode();
+    let cfg = basic_validation_config(smoke);
+    let smoke_dir;
+    let base_dir = if smoke {
+        smoke_dir = smoke_output_dir("dev-numerics-smoke");
+        println!("Smoke output: {smoke_dir}");
+        smoke_dir.as_str()
+    } else {
+        "."
+    };
 
-    println!("=== Gradient Correctness: Basic Validation (Q1 + Q2) ===\n");
+    println!(
+        "=== Gradient Correctness: Basic Validation (Q1 + Q2){} ===\n",
+        if smoke { " [smoke]" } else { "" }
+    );
     let t0 = Instant::now();
 
     println!("--- Q1: Generic random polytopes ---");
     let tp = Instant::now();
-    run_q1(base_dir);
+    run_q1(base_dir, &cfg);
     println!("  Q1 time: {:.1}s\n", tp.elapsed().as_secs_f64());
 
     println!("--- Q2: Non-generic geometry (Lagrangian products) ---");
     let tp = Instant::now();
-    run_q2(base_dir);
+    run_q2(base_dir, &cfg);
     println!("  Q2 time: {:.1}s\n", tp.elapsed().as_secs_f64());
 
     println!("=== Total time: {:.1}s ===", t0.elapsed().as_secs_f64());

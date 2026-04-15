@@ -2,8 +2,8 @@
 //!
 //! Architecture:
 //! 1. `cargo run --bin lagrangian_search --release` generates datasets
-//! 2. Writes per-sample data to lagrangian-search/lagrangian-search.jsonl
-//! 3. Writes per-level summary to lagrangian-search/lagrangian-search-levels.jsonl
+//! 2. Writes per-sample data to lagrangian-boundary/lagrangian-search.jsonl
+//! 3. Writes per-level summary to lagrangian-boundary/lagrangian-search-levels.jsonl
 //! 4. Python script analyzes and plots
 //!
 //! Dataset design:
@@ -38,6 +38,7 @@ const SAMPLES_PER_LEVEL: usize = 500;
 /// At ε=1.0: 21.3% (500/2350). 100K attempts gives headroom for ε up to ~2.0.
 /// Re-validate if adding ε > 2.0 or changing perturbation distribution.
 const MAX_ATTEMPTS_PER_LEVEL: usize = 100_000;
+const SMOKE_MAX_ATTEMPTS_PER_LEVEL: usize = 128;
 
 /// Epsilon levels: dense in the transition zone [0.02, 0.10], sparser outside.
 /// 0.01 matches pentagon-perturb baseline. Dual vertex magnitudes are ~1.24,
@@ -45,6 +46,7 @@ const MAX_ATTEMPTS_PER_LEVEL: usize = 100_000;
 const EPSILON_LEVELS: &[f64] = &[
     0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.10, 0.15, 0.20, 0.50, 1.00,
 ];
+const SMOKE_EPSILON_LEVELS: &[f64] = &[0.01];
 
 #[derive(Debug, Serialize)]
 struct SampleRow {
@@ -139,12 +141,23 @@ fn v4_to_array(v: &Vector4<f64>) -> [f64; 4] {
 fn main() {
     let t0 = Instant::now();
     let mut rng = ChaCha8Rng::seed_from_u64(SEED);
+    let smoke = std::env::args().any(|a| a == "--smoke");
 
-    let base_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("lagrangian-search");
-    let samples_path = base_dir.join("lagrangian-search.jsonl");
-    let levels_path = base_dir.join("lagrangian-search-levels.jsonl");
+    let base_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("lagrangian-boundary");
+    let samples_path = if smoke {
+        base_dir.join("lagrangian-search-smoke.jsonl")
+    } else {
+        base_dir.join("lagrangian-search.jsonl")
+    };
+    let levels_path = if smoke {
+        base_dir.join("lagrangian-search-levels-smoke.jsonl")
+    } else {
+        base_dir.join("lagrangian-search-levels.jsonl")
+    };
 
     println!("Lagrangian search: dense perturbation sweep around HKO2024\n");
+
+    std::fs::create_dir_all(&base_dir).expect("create lagrangian-boundary output dir");
 
     let samples_file = File::create(&samples_path).expect("failed to create samples file");
     let mut samples_writer = BufWriter::new(samples_file);
@@ -187,6 +200,17 @@ fn main() {
     writeln!(samples_writer, "{line}").expect("write");
 
     let mut total_rows = 1usize;
+    let epsilon_levels = if smoke {
+        SMOKE_EPSILON_LEVELS
+    } else {
+        EPSILON_LEVELS
+    };
+    let target_samples = if smoke { 1 } else { SAMPLES_PER_LEVEL };
+    let max_attempts_per_level = if smoke {
+        SMOKE_MAX_ATTEMPTS_PER_LEVEL
+    } else {
+        MAX_ATTEMPTS_PER_LEVEL
+    };
 
     // Header
     println!(
@@ -196,14 +220,14 @@ fn main() {
     println!("{}", "-".repeat(86));
 
     // Sweep epsilon levels
-    for &eps in EPSILON_LEVELS {
+    for &eps in epsilon_levels {
         let level_start = Instant::now();
         let mut accepted = 0usize;
         let mut attempts = 0usize;
         let mut n_above_1 = 0usize;
         let mut sys_values = Vec::with_capacity(SAMPLES_PER_LEVEL);
 
-        while accepted < SAMPLES_PER_LEVEL && attempts < MAX_ATTEMPTS_PER_LEVEL {
+        while accepted < target_samples && attempts < max_attempts_per_level {
             attempts += 1;
 
             let (perturbed_duals, delta_2d, l2_norm) =
@@ -269,12 +293,13 @@ fn main() {
         let (sys_min, sys_max, sys_mean, sys_std) = if !sys_values.is_empty() {
             let n = sys_values.len() as f64;
             let min = sys_values.iter().cloned().fold(f64::INFINITY, f64::min);
-            let max = sys_values
-                .iter()
-                .cloned()
-                .fold(f64::NEG_INFINITY, f64::max);
+            let max = sys_values.iter().cloned().fold(f64::NEG_INFINITY, f64::max);
             let mean = sys_values.iter().sum::<f64>() / n;
-            let var = sys_values.iter().map(|&s| (s - mean) * (s - mean)).sum::<f64>() / n;
+            let var = sys_values
+                .iter()
+                .map(|&s| (s - mean) * (s - mean))
+                .sum::<f64>()
+                / n;
             (min, max, mean, var.sqrt())
         } else {
             (0.0, 0.0, 0.0, 0.0)
@@ -299,8 +324,15 @@ fn main() {
 
         println!(
             "{:<8.2} {:>10} {:>10} {:>7.1}% {:>10} {:>7.1}% {:>8.4} {:>8.4} {:>5.1}s",
-            eps, accepted, attempts, accept_rate * 100.0, n_above_1, frac_above_1 * 100.0,
-            sys_min, sys_max, level_time
+            eps,
+            accepted,
+            attempts,
+            accept_rate * 100.0,
+            n_above_1,
+            frac_above_1 * 100.0,
+            sys_min,
+            sys_max,
+            level_time
         );
     }
 

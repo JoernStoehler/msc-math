@@ -40,6 +40,7 @@ const SEED: u64 = 44;
 /// 5 preliminary trials (2026-04-04) showed 0/5 improved. Increase to
 /// 50-100 for statistical confidence.
 const N_PLACEMENTS: usize = 20;
+const SMOKE_N_PLACEMENTS: usize = 1;
 
 /// Depth parameter for facet addition: a_{F+1} = n / (h_K(n) - ε).
 /// 1e-3 used in facet-splitting experiment (SPLITTING_EPSILONS range
@@ -85,6 +86,7 @@ const MAX_ESCAPE_ROUNDS: usize = 3;
 
 /// Per-trial time budget. 180s for F=11.
 const TRIAL_TIME_BUDGET_SECS: f64 = 180.0;
+const SMOKE_TRIAL_TIME_BUDGET_SECS: f64 = 8.0;
 
 /// Numerical zero threshold for gradient norms, rates, and slack comparisons.
 /// Near machine epsilon for unit-scale f64.
@@ -174,10 +176,7 @@ fn compute_step_bound(polytope: &Polytope4D, direction: &[Vector4<f64>]) -> f64 
             }
         } else {
             // Non-simple vertex (>4 incident facets). Conservative bound.
-            let max_d = direction
-                .iter()
-                .map(|dk| dk.norm())
-                .fold(0.0f64, f64::max);
+            let max_d = direction.iter().map(|dk| dk.norm()).fold(0.0f64, f64::max);
             for (j, a_j) in duals.iter().enumerate() {
                 if vertex_facets.contains(&j) {
                     continue;
@@ -313,11 +312,7 @@ fn gradient_ascent_phase(
             .map(|(dv, dc)| (cap * dc - sys * dv) / vol)
             .collect();
 
-        let gradient_norm = d_sys_a
-            .iter()
-            .map(|d| d.norm_squared())
-            .sum::<f64>()
-            .sqrt();
+        let gradient_norm = d_sys_a.iter().map(|d| d.norm_squared()).sum::<f64>().sqrt();
         if gradient_norm < EPS {
             break;
         }
@@ -387,11 +382,7 @@ struct AscentResult {
     n_phases: usize,
 }
 
-fn full_ascent(
-    start: &Polytope4D,
-    rng: &mut ChaCha8Rng,
-    budget: f64,
-) -> Option<AscentResult> {
+fn full_ascent(start: &Polytope4D, rng: &mut ChaCha8Rng, budget: f64) -> Option<AscentResult> {
     let t0 = Instant::now();
 
     let (mut best_polytope, mut best_sys, mut total_iters) =
@@ -408,9 +399,7 @@ fn full_ascent(
                 break;
             }
             if let Some(wiggled) = wiggle(&best_polytope, rng) {
-                if let Some((p, s, iters)) =
-                    gradient_ascent_phase(&wiggled, t0, budget)
-                {
+                if let Some((p, s, iters)) = gradient_ascent_phase(&wiggled, t0, budget) {
                     n_phases += 1;
                     total_iters += iters;
                     if s > best_sys + CONVERGENCE_THRESHOLD {
@@ -446,11 +435,7 @@ fn full_ascent(
 ///
 /// Pattern from facet-splitting/main.rs.
 // TODO: add [lem:facet-addition] to formal math (dual vertex ↔ halfspace correspondence)
-fn add_facet(
-    polytope: &Polytope4D,
-    direction: &Vector4<f64>,
-    epsilon: f64,
-) -> Option<Polytope4D> {
+fn add_facet(polytope: &Polytope4D, direction: &Vector4<f64>, epsilon: f64) -> Option<Polytope4D> {
     let vertices = polytope.vertices_f64();
     let h_k_n = vertices
         .iter()
@@ -521,16 +506,23 @@ fn dvs_to_array(polytope: &Polytope4D) -> Vec<[f64; 4]> {
 
 fn main() {
     let t_global = Instant::now();
-    let base =
-        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("cut-and-ascent");
-    let output_path = base.join("cut-and-ascent.jsonl");
+    let base = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("cut-and-ascent");
+    let args: Vec<String> = std::env::args().collect();
+    let fresh = args.iter().any(|a| a == "--fresh");
+    let smoke = args.iter().any(|a| a == "--smoke");
+    let output_path = if smoke {
+        base.join("cut-and-ascent-smoke.jsonl")
+    } else {
+        base.join("cut-and-ascent.jsonl")
+    };
 
     println!("cut-and-ascent: facet addition + gradient ascent on HKO2024\n");
 
-    let args: Vec<String> = std::env::args().collect();
-    let fresh = args.iter().any(|a| a == "--fresh");
+    std::fs::create_dir_all(&base).expect("create output dir");
 
-    let completed = if fresh {
+    let completed = if smoke {
+        HashSet::new()
+    } else if fresh {
         let _ = std::fs::remove_file(&output_path);
         HashSet::new()
     } else {
@@ -551,18 +543,35 @@ fn main() {
     let mut writer = BufWriter::new(output_file);
 
     let mut rng = ChaCha8Rng::seed_from_u64(SEED);
+    let n_placements = if smoke {
+        SMOKE_N_PLACEMENTS
+    } else {
+        N_PLACEMENTS
+    };
+    let trial_budget = if smoke {
+        SMOKE_TRIAL_TIME_BUDGET_SECS
+    } else {
+        TRIAL_TIME_BUDGET_SECS
+    };
 
     // Load HKO2024
     let hko = known_polytopes::hko_pentagon();
     let hko_polytope = &hko.polytope;
     let hko_sys = compute_sys(hko_polytope).expect("HKO2024 sys");
-    println!("HKO2024: sys={hko_sys:.6}, F={}\n", hko_polytope.facet_count());
+    println!(
+        "HKO2024: sys={hko_sys:.6}, F={}\n",
+        hko_polytope.facet_count()
+    );
 
     let mut n_improved = 0usize;
     let mut n_total = 0usize;
 
-    for i in 0..N_PLACEMENTS {
-        let trial_name = format!("hko_p{i}");
+    for i in 0..n_placements {
+        let trial_name = if smoke {
+            "smoke".to_string()
+        } else {
+            format!("hko_p{i}")
+        };
         if completed.contains(&trial_name) {
             continue;
         }
@@ -586,7 +595,7 @@ fn main() {
             }
         };
 
-        match full_ascent(&f11_polytope, &mut rng, TRIAL_TIME_BUDGET_SECS) {
+        match full_ascent(&f11_polytope, &mut rng, trial_budget) {
             Some(result) => {
                 let delta = result.final_sys - hko_sys;
                 n_total += 1;

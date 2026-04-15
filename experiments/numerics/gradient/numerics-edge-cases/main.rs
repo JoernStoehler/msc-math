@@ -39,7 +39,7 @@ use rand_distr::{Distribution, StandardNormal, Uniform};
 use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
-use std::time::Instant;
+use std::time::{Instant, SystemTime, UNIX_EPOCH};
 use symplectic::algorithms::hk2017::combinations;
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
 use symplectic::derivatives::{capacity_derivatives_a, volume_derivatives_a};
@@ -100,6 +100,17 @@ const Q3_GAP_BINS: [(f64, f64, &str); 4] = [
 /// Matches the library's EPS_MARGIN_TRUE (1e-9) from kkt/mod.rs -- orbits with
 /// beta below this are Indeterminate in the production accumulator.
 const EPS_BETA_CERTIFIED: f64 = 1e-9;
+
+/// Smoke-test settings for Phase 2.
+const SMOKE_Q3_F_COUNT: usize = 6;
+const SMOKE_Q3_MAX_CANDIDATES: usize = 30;
+const SMOKE_Q3_PER_BIN: usize = 1;
+const SMOKE_Q3_BATCH_SIZE: usize = 2;
+const SMOKE_Q3_N_DIRS: usize = 1;
+const SMOKE_Q4_F_COUNT: usize = 6;
+const SMOKE_Q4_BASE_COUNT: usize = 1;
+const SMOKE_Q4_DELTAS: &[f64] = &[1e-1, 1e-3];
+const SMOKE_Q4_N_DIRS: usize = 1;
 
 // ============================================================================
 // Output schema
@@ -267,7 +278,11 @@ fn compute_perturbed(
         _ => None,
     };
 
-    PerturbedValues { capacity: cap, volume: vol, sys }
+    PerturbedValues {
+        capacity: cap,
+        volume: vol,
+        sys,
+    }
 }
 
 // ============================================================================
@@ -312,7 +327,10 @@ fn first_order_test(
 
     for dir_idx in 0..n_dirs {
         let direction = random_direction(f, rng);
-        let gd: Vec<f64> = targets.iter().map(|(_, _, g)| dot_grad_dir(g, &direction)).collect();
+        let gd: Vec<f64> = targets
+            .iter()
+            .map(|(_, _, g)| dot_grad_dir(g, &direction))
+            .collect();
 
         for &t in T_VALUES {
             let t0 = Instant::now();
@@ -365,6 +383,60 @@ fn write_rows(writer: &mut BufWriter<File>, rows: &[PredictionRow]) {
     for row in rows {
         let json = serde_json::to_string(row).expect("serialize row");
         writeln!(writer, "{}", json).expect("write row");
+    }
+}
+
+fn smoke_mode() -> bool {
+    std::env::args().skip(1).any(|arg| arg == "--smoke")
+}
+
+fn smoke_output_dir(label: &str) -> String {
+    let stamp = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("system clock before UNIX_EPOCH")
+        .as_millis();
+    let dir = std::env::temp_dir().join(format!("{label}-{}-{stamp}", std::process::id()));
+    std::fs::create_dir_all(&dir).expect("create smoke output dir");
+    dir.to_string_lossy().into_owned()
+}
+
+struct EdgeCasesConfig {
+    q3_f_count: usize,
+    q3_max_candidates: usize,
+    q3_per_bin: usize,
+    q3_batch_size: usize,
+    q3_n_dirs: usize,
+    q4_f_count: usize,
+    q4_base_count: usize,
+    q4_deltas: &'static [f64],
+    q4_n_dirs: usize,
+}
+
+fn edge_cases_config(smoke: bool) -> EdgeCasesConfig {
+    if smoke {
+        EdgeCasesConfig {
+            q3_f_count: SMOKE_Q3_F_COUNT,
+            q3_max_candidates: SMOKE_Q3_MAX_CANDIDATES,
+            q3_per_bin: SMOKE_Q3_PER_BIN,
+            q3_batch_size: SMOKE_Q3_BATCH_SIZE,
+            q3_n_dirs: SMOKE_Q3_N_DIRS,
+            q4_f_count: SMOKE_Q4_F_COUNT,
+            q4_base_count: SMOKE_Q4_BASE_COUNT,
+            q4_deltas: SMOKE_Q4_DELTAS,
+            q4_n_dirs: SMOKE_Q4_N_DIRS,
+        }
+    } else {
+        EdgeCasesConfig {
+            q3_f_count: 6,
+            q3_max_candidates: Q3_MAX_CANDIDATES,
+            q3_per_bin: Q3_PER_BIN,
+            q3_batch_size: 10,
+            q3_n_dirs: N_DIRS,
+            q4_f_count: 6,
+            q4_base_count: Q4_BASE_COUNT,
+            q4_deltas: Q4_DELTAS,
+            q4_n_dirs: N_DIRS,
+        }
     }
 }
 
@@ -446,7 +518,7 @@ fn enumerate_all_orbits(polytope: &Polytope4D) -> Vec<(f64, Vec<usize>, KktResul
 // Phases
 // ============================================================================
 
-fn run_q3(base_dir: &str) {
+fn run_q3(base_dir: &str, cfg: &EdgeCasesConfig) {
     let path = format!("{}/gradient-correctness-q3-degeneracy.jsonl", base_dir);
     let file = File::create(&path).expect("create Q3 JSONL");
     let mut writer = BufWriter::new(file);
@@ -455,16 +527,16 @@ fn run_q3(base_dir: &str) {
     let mut generated = 0;
 
     let mut rng = ChaCha8Rng::seed_from_u64(SEED_BASE + 300);
-    let f_count = 6; // Small F for tractable orbit enumeration
+    let f_count = cfg.q3_f_count; // Small F for tractable orbit enumeration
 
     println!("  Q3: Generating candidates (F={})...", f_count);
 
-    while generated < Q3_MAX_CANDIDATES && bin_counts.iter().any(|&c| c < Q3_PER_BIN) {
-        let polytopes = generate_random_polytopes(10, f_count, 0.5, 2.0, &mut rng);
+    while generated < cfg.q3_max_candidates && bin_counts.iter().any(|&c| c < cfg.q3_per_bin) {
+        let polytopes = generate_random_polytopes(cfg.q3_batch_size, f_count, 0.5, 2.0, &mut rng);
 
         for polytope in &polytopes {
             generated += 1;
-            if bin_counts.iter().all(|&c| c >= Q3_PER_BIN) {
+            if bin_counts.iter().all(|&c| c >= cfg.q3_per_bin) {
                 break;
             }
 
@@ -481,7 +553,7 @@ fn run_q3(base_dir: &str) {
                 .iter()
                 .position(|&(lo, hi, _)| gap >= lo && gap < hi);
             let bin_idx = match bin_idx {
-                Some(idx) if bin_counts[idx] < Q3_PER_BIN => idx,
+                Some(idx) if bin_counts[idx] < cfg.q3_per_bin => idx,
                 _ => continue,
             };
 
@@ -499,7 +571,7 @@ fn run_q3(base_dir: &str) {
                 "q3",
                 &id,
                 "near_degenerate",
-                N_DIRS,
+                cfg.q3_n_dirs,
                 &mut rng,
                 Some(gap),
                 None,
@@ -525,26 +597,22 @@ fn run_q3(base_dir: &str) {
     );
 }
 
-fn run_q4(base_dir: &str) {
+fn run_q4(base_dir: &str, cfg: &EdgeCasesConfig) {
     let path = format!("{}/gradient-correctness-q4-redundant.jsonl", base_dir);
     let file = File::create(&path).expect("create Q4 JSONL");
     let mut writer = BufWriter::new(file);
     let mut total_rows = 0;
 
     let mut rng = ChaCha8Rng::seed_from_u64(SEED_BASE + 400);
-    let f_count = 6;
-    let base_polytopes =
-        generate_random_polytopes(Q4_BASE_COUNT, f_count, 0.5, 2.0, &mut rng);
+    let f_count = cfg.q4_f_count;
+    let base_polytopes = generate_random_polytopes(cfg.q4_base_count, f_count, 0.5, 2.0, &mut rng);
 
     for (i, base) in base_polytopes.iter().enumerate() {
-        for &delta in Q4_DELTAS {
+        for &delta in cfg.q4_deltas {
             let augmented = match add_barely_cutting_facet(base, delta, &mut rng) {
                 Some(p) => p,
                 None => {
-                    eprintln!(
-                        "  Q4: base {} delta={:.0e} — construction failed",
-                        i, delta
-                    );
+                    eprintln!("  Q4: base {} delta={:.0e} — construction failed", i, delta);
                     continue;
                 }
             };
@@ -568,7 +636,7 @@ fn run_q4(base_dir: &str) {
                 "q4",
                 &id,
                 "barely_cutting",
-                N_DIRS,
+                cfg.q4_n_dirs,
                 &mut rng,
                 None,
                 Some(delta),
@@ -577,7 +645,7 @@ fn run_q4(base_dir: &str) {
             write_rows(&mut writer, &rows);
             total_rows += rows.len();
         }
-        println!("  Q4: base polytope {}/{} done", i + 1, Q4_BASE_COUNT);
+        println!("  Q4: base polytope {}/{} done", i + 1, cfg.q4_base_count);
     }
 
     writer.flush().expect("flush Q4");
@@ -589,19 +657,31 @@ fn run_q4(base_dir: &str) {
 // ============================================================================
 
 fn main() {
-    let base_dir = ".";
+    let smoke = smoke_mode();
+    let cfg = edge_cases_config(smoke);
+    let smoke_dir;
+    let base_dir = if smoke {
+        smoke_dir = smoke_output_dir("dev-numerics-edge-cases-smoke");
+        println!("Smoke output: {smoke_dir}");
+        smoke_dir.as_str()
+    } else {
+        "."
+    };
 
-    println!("=== Gradient Correctness: Edge Cases (Q3 + Q4) ===\n");
+    println!(
+        "=== Gradient Correctness: Edge Cases (Q3 + Q4){} ===\n",
+        if smoke { " [smoke]" } else { "" }
+    );
     let t0 = Instant::now();
 
     println!("--- Q3: Near-degeneracy ---");
     let tp = Instant::now();
-    run_q3(base_dir);
+    run_q3(base_dir, &cfg);
     println!("  Q3 time: {:.1}s\n", tp.elapsed().as_secs_f64());
 
     println!("--- Q4: Barely-cutting facets ---");
     let tp = Instant::now();
-    run_q4(base_dir);
+    run_q4(base_dir, &cfg);
     println!("  Q4 time: {:.1}s\n", tp.elapsed().as_secs_f64());
 
     println!("=== Total time: {:.1}s ===", t0.elapsed().as_secs_f64());

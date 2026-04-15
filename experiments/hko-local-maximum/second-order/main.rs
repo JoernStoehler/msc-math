@@ -28,13 +28,15 @@ use std::io::{BufWriter, Write};
 use std::time::Instant;
 use symplectic::algorithms::facet_adjacency::{build_transition_matrix, is_feasible_cycle};
 use symplectic::algorithms::hk2017::combinations;
-use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
 use symplectic::algorithms::hk2017::ehz_capacity;
+use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
 use symplectic::derivatives::{capacity_derivatives_a, volume_derivatives_a};
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::volume::volume;
-use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktOutcome, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
+use symplectic::kkt::saddle_point_solver::{
+    solve_kkt_for, KktOutcome, EPS_BETA_POSITIVE, EPS_Q_POSITIVE,
+};
 
 /// Gap threshold for near-optimal orbits. All 150 HKO2024 orbits have gap < 1.3e-15,
 /// so any threshold well above machine epsilon includes all of them. Using 1e-10
@@ -53,9 +55,7 @@ const SVD_RANK_THRESHOLD: f64 = 1e-8;
 /// Medium range: transition zone.
 /// Coarse range: reaches characteristic radius ~0.035 per component (lagrangian-boundary experiment).
 const EPSILON_GRID: &[f64] = &[
-    5e-5, 1e-4, 2e-4, 5e-4,
-    1e-3, 2e-3, 5e-3,
-    1e-2, 1.5e-2, 2e-2, 2.5e-2, 3e-2, 3.5e-2, 4e-2,
+    5e-5, 1e-4, 2e-4, 5e-4, 1e-3, 2e-3, 5e-3, 1e-2, 1.5e-2, 2e-2, 2.5e-2, 3e-2, 3.5e-2, 4e-2,
 ];
 
 /// Number of random directions in ker(G) to sample for negative-definiteness check.
@@ -223,9 +223,7 @@ fn flatten_gradient(grad: &[Vector4<f64>]) -> Vec<f64> {
 
 /// Unflatten 40 f64s back into 10 × [f64; 4] for JSONL output.
 fn unflatten_to_arrays(flat: &[f64]) -> Vec<[f64; 4]> {
-    flat.chunks(4)
-        .map(|c| [c[0], c[1], c[2], c[3]])
-        .collect()
+    flat.chunks(4).map(|c| [c[0], c[1], c[2], c[3]]).collect()
 }
 
 // ============================================================================
@@ -297,8 +295,13 @@ fn run_phase1(polytope: &Polytope4D) -> (BaseRow, Vec<Vec<f64>>) {
     println!("  SVD: σ_max={sigma_max:.6e}, threshold={threshold:.6e}");
     println!("  Rank: {rank} (of {dim})");
     println!("  Flat directions: {n_flat}");
-    println!("  Top 10 singular values: {:?}",
-        singular_values.iter().take(10).map(|s| format!("{s:.4e}")).collect::<Vec<_>>()
+    println!(
+        "  Top 10 singular values: {:?}",
+        singular_values
+            .iter()
+            .take(10)
+            .map(|s| format!("{s:.4e}"))
+            .collect::<Vec<_>>()
     );
     if rank < dim {
         println!("  Singular values near rank boundary:");
@@ -306,7 +309,11 @@ fn run_phase1(polytope: &Polytope4D) -> (BaseRow, Vec<Vec<f64>>) {
         let end = (rank + 3).min(singular_values.len());
         for (i, &s) in singular_values[start..end].iter().enumerate() {
             let idx = start + i;
-            let marker = if idx == rank { " ← rank boundary" } else { "" };
+            let marker = if idx == rank {
+                " ← rank boundary"
+            } else {
+                ""
+            };
             println!("    σ[{idx}] = {s:.6e}{marker}");
         }
     }
@@ -437,9 +444,7 @@ fn run_phase2(
         }
 
         let dir_time = t_dir.elapsed().as_secs_f64();
-        println!(
-            "  Direction {dir_idx}: {n_ok} ok, {n_fail} failed, {dir_time:.1}s"
-        );
+        println!("  Direction {dir_idx}: {n_ok} ok, {n_fail} failed, {dir_time:.1}s");
     }
 }
 
@@ -526,7 +531,9 @@ fn run_phase3(
 
     println!(
         "\n  Sampling {} random directions in {}D flat subspace, {} ε values each",
-        N_RANDOM_DIRECTIONS, n_flat, EPSILON_RANDOM.len(),
+        N_RANDOM_DIRECTIONS,
+        n_flat,
+        EPSILON_RANDOM.len(),
     );
 
     let mut n_negative = 0;
@@ -590,19 +597,28 @@ fn run_phase3(
         if dir_idx % 20 == 19 {
             println!(
                 "  {}/{}: {} negative, {} ambiguous, {} positive, worst={:.4e}",
-                dir_idx + 1, N_RANDOM_DIRECTIONS, n_negative, n_ambiguous, n_positive, worst_curvature
+                dir_idx + 1,
+                N_RANDOM_DIRECTIONS,
+                n_negative,
+                n_ambiguous,
+                n_positive,
+                worst_curvature
             );
         }
     }
 
-    println!(
-        "\n  Summary: {n_negative} negative, {n_ambiguous} ambiguous, {n_positive} positive"
-    );
+    println!("\n  Summary: {n_negative} negative, {n_ambiguous} ambiguous, {n_positive} positive");
     println!("  Worst (most positive) curvature: {worst_curvature:.4e}");
     if n_positive == 0 {
-        println!("  → No positive curvature found among {} random directions", N_RANDOM_DIRECTIONS);
+        println!(
+            "  → No positive curvature found among {} random directions",
+            N_RANDOM_DIRECTIONS
+        );
     } else {
-        println!("  → WARNING: {} directions with positive curvature!", n_positive);
+        println!(
+            "  → WARNING: {} directions with positive curvature!",
+            n_positive
+        );
     }
 }
 
@@ -614,6 +630,7 @@ fn main() {
     let t0 = Instant::now();
     let base_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
     let out_dir = base_dir.join("second-order");
+    let smoke = std::env::args().any(|a| a == "--smoke");
 
     println!("═══════════════════════════════════════════════════════════");
     println!("Second-order analysis of flat directions at HKO2024");
@@ -635,13 +652,31 @@ fn main() {
     println!("  Phase 1 time: {:.0}ms", base_row.time_phase1_ms);
 
     // Cross-check: sys_base matches known
-    let sys_diff = (base_row.sys_base - known.capacity * known.capacity / (2.0 * base_row.volume_base)).abs();
+    let sys_diff =
+        (base_row.sys_base - known.capacity * known.capacity / (2.0 * base_row.volume_base)).abs();
     assert!(
         sys_diff < 1e-8,
         "sys_base mismatch: computed={:.10}, expected={:.10}",
         base_row.sys_base,
         known.capacity * known.capacity / (2.0 * base_row.volume_base)
     );
+
+    std::fs::create_dir_all(&out_dir).expect("create output dir");
+
+    if smoke {
+        if let Some(direction) = flat_directions.first() {
+            let eps = EPSILON_GRID[0];
+            let curv = curvature_at_epsilon(polytope, direction, eps, base_row.sys_base)
+                .expect("smoke curvature probe failed");
+            println!("  Smoke curvature at ε={eps:.1e}: {curv:.6e}");
+        } else {
+            println!("\n  Smoke mode: no flat directions, exiting after phase 1.");
+        }
+        println!("\n═══════════════════════════════════════════════════════════");
+        println!("Total time: {:.1}s", t0.elapsed().as_secs_f64());
+        println!("═══════════════════════════════════════════════════════════");
+        return;
+    }
 
     // Write base JSONL
     let base_path = out_dir.join("second-order-base.jsonl");
@@ -657,14 +692,22 @@ fn main() {
         println!("\n  No flat directions — 0 ∈ interior of conv(gradients).");
         println!("  HKO2024 is a strict first-order local max. No second-order analysis needed.");
     } else {
-        println!("\n--- Phase 2: Finite-difference curves along {} flat directions ---", flat_directions.len());
+        println!(
+            "\n--- Phase 2: Finite-difference curves along {} flat directions ---",
+            flat_directions.len()
+        );
         let t_phase2 = Instant::now();
 
         let curves_path = out_dir.join("second-order-curves.jsonl");
         let curves_file = File::create(&curves_path).expect("create curves JSONL");
         let mut curves_writer = BufWriter::new(curves_file);
 
-        run_phase2(polytope, base_row.sys_base, &flat_directions, &mut curves_writer);
+        run_phase2(
+            polytope,
+            base_row.sys_base,
+            &flat_directions,
+            &mut curves_writer,
+        );
 
         curves_writer.flush().expect("flush curves");
         let phase2_time = t_phase2.elapsed().as_secs_f64();
@@ -672,14 +715,22 @@ fn main() {
         println!("  Wrote {}", curves_path.display());
 
         // Phase 3: Random directions for negative-definiteness check
-        println!("\n--- Phase 3: Random directions in flat subspace ({} samples) ---", N_RANDOM_DIRECTIONS);
+        println!(
+            "\n--- Phase 3: Random directions in flat subspace ({} samples) ---",
+            N_RANDOM_DIRECTIONS
+        );
         let t_phase3 = Instant::now();
 
         let random_path = out_dir.join("second-order-random.jsonl");
         let random_file = File::create(&random_path).expect("create random JSONL");
         let mut random_writer = BufWriter::new(random_file);
 
-        run_phase3(polytope, base_row.sys_base, &flat_directions, &mut random_writer);
+        run_phase3(
+            polytope,
+            base_row.sys_base,
+            &flat_directions,
+            &mut random_writer,
+        );
 
         random_writer.flush().expect("flush random");
         let phase3_time = t_phase3.elapsed().as_secs_f64();
