@@ -61,11 +61,12 @@ Required project instructions live in this root map or in discoverable skills. D
 
 ## Worktrees
 
-- Default: stay in the current checkout.
+- Work only in the assigned cwd. Treat the tool default cwd as untrusted until it matches the assigned cwd.
+- Use `/workspaces/msc-math` on `main` only when the task deliberately targets the root checkout or Jörn explicitly grants main-checkout work.
 - Create a worktree when the task asks for isolated edits or when parallel sessions will edit overlapping tracked files.
 - Use local `main` unless Jörn names a different base:
   `git worktree add -b <branch> .codex/worktrees/<branch> main`
-- Subagents stay in their existing checkout unless their prompt names a worktree path and branch.
+- Every subagent prompt names the required cwd. `spawn_agent` cannot set cwd; subagents must anchor commands and edits from their own tools.
 - After merge, remove the worktree with `git worktree remove .codex/worktrees/<branch>` and delete the branch with `git branch -d <branch>`.
 
 ## Planning and Verification

@@ -95,3 +95,9 @@ Structure:
 4. **Needs Jörn** — decisions, unresolved `% [TODO: JÖRN` items, things only Jörn can verify
 5. **TASKS.md changes** — what was updated, or "no changes needed"
 6. If work is incomplete: write a handoff to `handoffs/<name>.md`
+
+## Merge Conflicts
+
+When resolving conflicts during integration, choose the content that is true for the current repository state and project conventions. Do not use timestamp, branch side, author, or apparent task ownership as a shortcut for deciding which side wins.
+
+For each conflicted hunk, identify the claim or behavior each side represents, check the surrounding files or commands when needed, then keep or combine the parts that preserve current mathematical statements, live paths, task status, and build behavior. If neither side is clearly correct, stop and ask Jörn with the concrete hunk and the missing decision.

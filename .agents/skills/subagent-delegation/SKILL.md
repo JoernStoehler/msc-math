@@ -53,6 +53,7 @@ Each subagent prompt should name:
 
 - Approved surface.
 - Objective.
+- Required cwd: usually the parent session checkout or assigned worktree; sometimes a subagent-specific worktree.
 - Scope: files, directories, or question.
 - Ownership: read-only or named write scope.
 - Known blockers or blocker-resolution step.
@@ -60,6 +61,10 @@ Each subagent prompt should name:
 - Output format.
 - Decisions reserved for the main thread or Jörn.
 - Stop condition.
+- First command: `cd <required-cwd> && pwd`. If it fails or prints a different path, stop before task work.
+- For shell commands, set `workdir` to the required cwd or use `cd <required-cwd> && ...`.
+- For edits, target files under the required cwd. Do not edit `/workspaces/msc-math` unless it is the required cwd.
+- Before final, report `pwd` and `git status --short --branch` from the required cwd when the task used repo files.
 - For workers: "You are not alone in the codebase; do not revert or overwrite changes made by others."
 
 Do not duplicate the same unresolved task across delegates.
