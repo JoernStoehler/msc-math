@@ -25,6 +25,8 @@ Delegate when the subtask is:
 - Bounded by a result the main thread can use without seeing every step.
 - Verifiable from files, commands, or source citations.
 - Bounded by a read-only surface or disjoint write scope.
+- Clear enough that the delegate can plan without guessing the task boundary.
+- Unblocked, or the blocker-resolution step is explicit in the delegate task.
 - Useful because it keeps distracting context, long logs, large source surfaces, or try-and-verify loops out of the main thread.
 
 Keep work local when:
@@ -53,6 +55,7 @@ Each subagent prompt should name:
 - Objective.
 - Scope: files, directories, or question.
 - Ownership: read-only or named write scope.
+- Known blockers or blocker-resolution step.
 - Success check.
 - Output format.
 - Decisions reserved for the main thread or Jörn.
@@ -100,6 +103,7 @@ Name the main thread as integration owner. Parallel delegates report evidence or
 When a delegate returns:
 
 - Check the referenced files or commands before accepting findings.
+- Check that the result matches the main task's actual need, not only the delegate prompt.
 - Apply or refine worker changes in the main thread if needed.
 - Record blockers as concrete missing evidence or Jörn-only decisions.
 - Close agents that are no longer needed.
