@@ -465,12 +465,16 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Do not delete in this session; first check how they are referenced by tests, docs, workflows, and thesis-support tasks.
 - Output: either a deletion patch with replacement verification commands, or a short note explaining which references still make them needed.
 
-### [open] Design session-focus skills
+### [done] [2026-04-15] Design session-focus skills
 - Goal: replace the TODO scaffolds in `.agents/skills/project-management-focus/SKILL.md` and `.agents/skills/research-focus/SKILL.md` with stable session-scope workflows.
-- Starting constraint: ask Jörn about the workflow before guessing. Do not design from priors or this session's tentative core.
 - Scope distinction: focus skills describe what the top-level session keeps active, owns directly, and surfaces to Jörn. They should not duplicate artifact conventions such as Rust, thesis TeX, formal math, Python, or experiment rules.
 - `project-management-focus` owns `TASKS.md`, task graph maintenance, PM surfaces for Jörn, decomposition, bundling, ownership, and agent/Jörn division of labor. `research-focus` owns research framing and method/evidence surfaces. `subagent-delegation` replaces the old `.agents/skills/orchestrate/SKILL.md` mechanics.
-- Output: minimal skill files, stable core only.
+- Output: ready-to-use skill files committed on 2026-04-15; future changes should come from observed use, not speculative polish.
+
+### [future] Revisit focus and delegation skills after live use
+- Trigger: after Jörn has tried `project-management-focus`, `research-focus`, and `subagent-delegation` on real thesis work.
+- Ask Jörn whether `research-focus` supported useful research sessions, whether `project-management-focus` kept `TASKS.md` useful without adding maintenance drag, and whether `subagent-delegation` kept top-level verification explicit.
+- Expected update: small wording fixes if the workflows mostly worked; larger refactor only for observed failure modes from real sessions.
 
 ### [done] [2026-04-12] variable-f-ascent merge (closed as stale)
 - Experiment 2d results are on main per the `[done] [2026-04]` entry in "Novel sys>1 polytopes". No `variable-f-ascent` branch or worktree exists at 2026-04-12.
