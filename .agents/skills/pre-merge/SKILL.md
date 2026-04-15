@@ -1,6 +1,6 @@
 ---
 name: pre-merge
-description: Mandatory workflow before presenting work for merge to main. Load when finishing a task and preparing to report to Jörn.
+description: Top-level merge-readiness workflow before asking Jörn about integration to main; subagents use assigned parts only as readiness checks and do not decide merge status or approval.
 ---
 
 # Pre-Merge Workflow
