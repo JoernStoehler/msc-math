@@ -33,6 +33,8 @@
 	},
 	"terminal.integrated.enableVisualBell": true,
 	"terminal.integrated.fontFamily": "'FiraCode Nerd Font', 'Fira Code', 'Noto Sans Mono', 'Roboto Mono', monospace",
+	"terminal.integrated.tabs.title": "${sequence}",
+	"terminal.integrated.tabs.description": "",
 	"terminal.integrated.unicodeVersion": "11",
 	"editor.fontFamily": "'FiraCode Nerd Font', 'Fira Code', 'Noto Sans Mono', 'Roboto Mono', monospace",
 	"claudeCode.selectedModel": "opus[1m]",
