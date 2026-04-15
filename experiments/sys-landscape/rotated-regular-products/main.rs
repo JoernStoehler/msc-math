@@ -8,14 +8,15 @@
 //!    rotated-regular-products/lagrangian-products-<n>x<m>-6deg.jsonl
 //!
 //! Capacity algorithm: billiard (fast, production default for Lagrangian products).
+use serde::Serialize;
+use std::fs::File;
+use std::io::{BufWriter, Write};
+use std::path::PathBuf;
+use std::time::Instant;
 use symplectic::algorithms::billiard::billiard_capacity;
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::{polygon_area, regular_polygon_2d, rotate_polygon_2d};
 use symplectic::geom::volume::volume;
-use serde::Serialize;
-use std::fs::File;
-use std::io::{BufWriter, Write};
-use std::time::Instant;
 
 const PENTAGON_START_DEG: f64 = 0.0;
 const PENTAGON_END_DEG: f64 = 36.0;
@@ -61,6 +62,12 @@ fn main() {
     generate_polygon_pairs();
 }
 
+fn experiment_output_path(file_name: &str) -> PathBuf {
+    std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("rotated-regular-products")
+        .join(file_name)
+}
+
 /// Heptagon x heptagon fine sweep over [0, 180/7] degrees.
 /// Fundamental domain from [lem:rotation-fundamental-domain].
 fn generate_heptagon_7x7() {
@@ -70,8 +77,7 @@ fn generate_heptagon_7x7() {
     let num_steps: usize = 26;
     let step_deg = end_deg / num_steps as f64;
 
-    let output_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("lagrangian-products/lagrangian-products-7x7.jsonl");
+    let output_path = experiment_output_path("lagrangian-products-7x7.jsonl");
     let file = File::create(&output_path).expect("cannot create output file");
     let mut writer = BufWriter::new(file);
 
@@ -90,8 +96,8 @@ fn generate_heptagon_7x7() {
         let theta = angle_deg.to_radians();
 
         let (pn, ph) = rotate_polygon_2d(&pn_base, &ph_base, theta);
-        let polytope = lagrangian_product(&qn, &qh, &pn, &ph)
-            .expect("heptagon product construction failed");
+        let polytope =
+            lagrangian_product(&qn, &qh, &pn, &ph).expect("heptagon product construction failed");
 
         let vol = volume(&polytope).expect("volume computation failed");
 
@@ -136,8 +142,7 @@ fn generate_heptagon_7x7() {
 /// Pentagon x pentagon fine sweep over [0, 36] degrees.
 /// Fundamental domain from [lem:rotation-fundamental-domain]: 180°/lcm(5,5) = 36°.
 fn generate_pentagon_5x5() {
-    let output_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("lagrangian-products/lagrangian-products-5x5.jsonl");
+    let output_path = experiment_output_path("lagrangian-products-5x5.jsonl");
     let file = File::create(&output_path).expect("cannot create output file");
     let mut writer = BufWriter::new(file);
 
@@ -157,8 +162,8 @@ fn generate_pentagon_5x5() {
         let theta = angle_deg.to_radians();
 
         let (pn, ph) = rotate_polygon_2d(&pn_base, &ph_base, theta);
-        let polytope = lagrangian_product(&qn, &qh, &pn, &ph)
-            .expect("pentagon product construction failed");
+        let polytope =
+            lagrangian_product(&qn, &qh, &pn, &ph).expect("pentagon product construction failed");
 
         let vol = volume(&polytope).expect("volume computation failed");
 
@@ -202,11 +207,8 @@ fn generate_pentagon_5x5() {
 
 fn generate_polygon_pairs() {
     for &(n1, n2) in PAIRS {
-        let output_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join(format!(
-                "lagrangian-products/lagrangian-products-{}x{}-6deg.jsonl",
-                n1, n2
-            ));
+        let output_path =
+            experiment_output_path(&format!("lagrangian-products-{}x{}-6deg.jsonl", n1, n2));
         let file = File::create(&output_path).expect("cannot create output file");
         let mut writer = BufWriter::new(file);
 
