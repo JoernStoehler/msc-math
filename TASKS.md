@@ -476,6 +476,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Cleaned stale post-migration references in non-onboarding Markdown, TeX, Rust comments, and scan-caught Python diagnostics; no mathematical claims or experiment conclusions changed.
 - First-pass cleanup covered `thesis/tube-algorithm-notes.md`, `thesis/appendix-rewrite-notes.md`, `library/src/geom/review-notes.md`, `experiments/numerics/error-bounds/algorithm-notes.md`, and formal headers.
 - Follow-up experiment Rust pass removed old wave/subagent migration TODO scaffolding and stale pre-migration crate-path references from experiment comments; the experiment/library migration-wording scan returns no matches.
+- Research-note migration coverage audit: `/tmp/1-answer.md` reports 33/33 live `experiments/**/main.rs` directories have live `research/**/design/*.md` notes, 0 live experiments need migration, and the only `logbook*` path is the generated profiling history file. The full matrix was a one-time audit aid; do not preserve it unless a future formal-file coverage task needs row-level evidence.
 - Preserved copied-code provenance comments and historical deletion/audit notes by marking them historical or leaving already explicit provenance wording.
 - Verification: stale-path scans now report only explicitly historical/provenance hits; changed live references point to existing `formal/`, `library/`, `research/`, `.devcontainer/`, or experiment paths.
 
