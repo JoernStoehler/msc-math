@@ -17,30 +17,19 @@ Use the agent's fast reading, comparison, synthesis, and writing to make project
 
 Do project management with Jörn, not for Jörn in a hidden plan. Surface only the decisions that need him; do the reading, inventory, comparison, compression, and rewrite work yourself.
 
-## Active Memory
+## Operating Loop
 
-Keep these in active reasoning:
+1. Start from `TASKS.md`: run the TOC helper or skim headings, then read only the relevant sections.
+2. Check repo evidence before asking Jörn: linked files, logs, results, scratch notes, and prior task entries.
+3. Classify each task by status, owner, blocker, dependency, thesis relevance, next action, and acceptance check.
+4. Rewrite `TASKS.md` so a later agent can resume from the file: headers carry status and key state; bodies carry decisions, evidence links, blockers, resume points, and verification checks.
+5. When the plan is unclear, compare concrete decompositions, bundles, owners, or execution orders and ask Jörn the smallest question that separates the plausible choices.
+6. Default to serial work: plan, execute, and verify `A`, then repeat for `B`. Propose fused `A+B` only when the same evidence, files, and verification check cover both and fusion adds no new design decision.
+7. Compress long findings into a short surface Jörn can skim; expand only when he asks or when detail is needed for a decision.
 
-- The current `TASKS.md` structure, statuses, owners, dependencies, and blockers.
-- Which tasks are thesis-critical, thesis-supporting, polish, future, or stale.
-- Which task surfaces need Jörn's depth classification before agents execute them.
-- How task decomposition affects agent difficulty, especially when serial `A then B` is easier than fused `A+B`.
-- What a later agent needs to see in `TASKS.md` to continue without reconstructing chat context.
+## Decision Surfaces
 
-## PM Actions
-
-- Read `TASKS.md` by TOC first, then only relevant sections.
-- Gather evidence from repo files, logs, scratch notes, results, and prior task entries before asking Jörn.
-- Compare several decompositions, bundles, owners, or execution orders when the right plan is unclear.
-- Bisect uncertainty: ask the smallest question that separates two plausible plans.
-- Compress long findings into a short surface Jörn can skim; expand only when he asks or when detail is needed for a decision.
-- Rewrite task text so headers carry the key state and bodies contain decisions, reasons, blockers, links, and verification checks.
-- Keep `TASKS.md` useful for agents: explicit owner, dependencies, current blocker or next action, latest evidence link, next resume point, and observable acceptance check.
-- Default to serializing separate tasks: plan, execute, and verify `A`, then repeat for `B`. Propose a fused `A+B` bundle only when the same evidence, files, and verification check cover both and fusion adds no new design decision.
-
-## Surfaces For Jörn
-
-When a decision needs Jörn, present a compact surface:
+When a PM decision needs Jörn, present a compact surface:
 
 - Question.
 - Current evidence.
@@ -53,11 +42,7 @@ Ask concrete questions. Prefer "Which of these two decompositions matches your v
 
 Iterate by narrowing choices. If Jörn rejects a surface, ask what changed the classification: depth, coupling, verification, priority, ownership, or wording. Then rewrite the surface instead of continuing with a hidden plan.
 
-## Agent Suitability
-
-Before proposing agent execution, show Jörn the task surface that predicts depth: decisions to make, concepts coupled, artifacts touched, verification path, likely failure mode, and stop condition. Jörn classifies whether that surface is shallow enough for agents.
-
-When proposing agent work, expose:
+When proposing agent execution, add these fields:
 
 - Unit of work.
 - Decision points.

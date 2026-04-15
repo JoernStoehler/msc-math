@@ -1,13 +1,13 @@
 ---
 name: subagent-delegation
-description: "Subagent delegation workflow: proactively move bounded, verifiable side work to explorer/worker/reviewer subagents while keeping the top-level session responsible for integration and verification. Use when a task has independent read-only searches, disjoint implementation slices, review surfaces, or parallel checks; load before spawning or managing subagents."
+description: "Subagent delegation workflow: proactively move bounded, verifiable side work to explorer/worker/reviewer subagents while keeping the top-level session responsible for integration and verification. Use when a task has independent read-only searches, disjoint implementation slices, review surfaces, or parallel checks; load before spawning or managing multiple subagents."
 ---
 
 # Subagent Delegation
 
-Use subagents to move bounded work out of the main thread after the active task or focus surface is clear. Do not use delegation to choose the focus, hide unclear scope, bypass Jörn gates, or outsource conceptual depth without an output contract.
+Use subagents for bounded first-pass labor after the active task or focus surface is clear. The top-level session keeps integration and correctness ownership.
 
-Delegation changes who does first-pass labor. It does not change who is responsible for correctness. Treat delegate output as untrusted input until the top-level session verifies it against files, commands, sources, tests, or a bounded review result.
+Treat delegate output as evidence to check. Before presenting a delegate claim as fact, verify it against files, commands, sources, tests, or a bounded review result.
 
 ## Delegate Or Keep Local
 
@@ -23,24 +23,26 @@ Keep work local when:
 
 - The next action depends on the result.
 - The task needs tight context, mathematical judgment, thesis-scope judgment, or taste.
-- The prompt would combine several concepts into one fused objective.
+- The subtask has no bounded output contract, or the delegate would have to choose the task boundary.
 - The result cannot be verified cheaply enough for the top-level session to own it.
 - A failed or confused delegate would cost more than doing the work locally.
 
-Do not wait for Jörn to request subagents for narrow, low-risk side work. Do ask Jörn before delegation changes the approved task surface, task ownership, thesis/research direction, or merge readiness.
+Use narrow subagents proactively for low-risk side work.
+
+Ask Jörn before delegation changes the approved task surface, task ownership, thesis/research direction, or merge readiness.
 
 ## Delegate Brief
 
 Each subagent prompt should name:
 
-- Approved surface this subtask belongs to.
+- Approved surface.
 - Objective.
-- Files, directories, or question scope.
-- Read-only or write ownership.
-- Success condition and verification command or check.
-- Output format needed by the main thread.
-- What the delegate must not decide.
-- Stop condition that requires returning to the main thread.
+- Scope: files, directories, or question.
+- Ownership: read-only or named write scope.
+- Success check.
+- Output format.
+- Decisions reserved for the main thread or Jörn.
+- Stop condition.
 - For workers: "You are not alone in the codebase; do not revert or overwrite changes made by others."
 
 Do not duplicate the same unresolved task across delegates.
@@ -52,7 +54,7 @@ Do not duplicate the same unresolved task across delegates.
 - While delegates run, continue useful non-overlapping local work.
 - Wait only when their result is needed for the next step.
 - Verify delegate claims against files, commands, or sources before presenting them as facts.
-- For multiple tasks, prefer a serial queue unless the subtasks are independent: brief A, integrate and verify A, then brief B. Do not fuse A+B into one delegate prompt merely because both are available in the same session.
+- For multiple tasks, default to a serial queue: brief A, integrate and verify A, then brief B. Parallelize only independent subtasks.
 
 ## Verification Labor
 
@@ -65,7 +67,7 @@ Good delegated verification tasks:
 - Compare a claim against `RESULTS.md`, `TASKS.md`, formal sources, downloaded papers, or generated data.
 - Inspect a patch for a named risk surface.
 
-The top-level session decides whether that evidence is enough. Do not say "verified" merely because a subagent said so. Say what evidence the top-level session checked, or state the residual risk.
+The top-level session decides whether the evidence is enough. When reporting verification, name the evidence the top-level session checked and state any residual risk.
 
 ## Parallel Delegation
 
@@ -76,7 +78,7 @@ Parallelize for speed only when the subtasks are independent:
 - Disjoint write scopes with named file ownership.
 - Independent verification checks that can return in any order.
 
-Do not parallelize tasks that share a design decision, write the same files, or require one delegate's result before another can start. Split by surface first; merge results only after local verification.
+Do not parallelize shared design decisions, shared write scopes, or dependent tasks. Split by independent surface, then merge results only after local verification.
 
 Name the main thread as integration owner. Parallel delegates report evidence or patches; they do not reconcile conflicts, choose priorities, or change the approved surface.
 
