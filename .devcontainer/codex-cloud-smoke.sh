@@ -17,11 +17,34 @@ and later ordinary cargo commands use the same cached target directory.
 EOF
   exit 101
 fi
-mkdir -p "${CARGO_TARGET_DIR}"
+if [[ "${CARGO_TARGET_DIR}" == *'$'* || "${CARGO_TARGET_DIR}" != /* ]]; then
+  cat >&2 <<EOF
+[codex-cloud-smoke] CARGO_TARGET_DIR must be an absolute expanded path.
+
+Current value: ${CARGO_TARGET_DIR}
+
+Set the Codex web environment variable to a literal absolute path such as
+/home/oai/.cache/cargo-target/msc-math. Do not use \$HOME in the UI value.
+EOF
+  exit 101
+fi
 if command -v realpath >/dev/null 2>&1; then
   CARGO_TARGET_DIR="$(realpath -m "${CARGO_TARGET_DIR}")"
   export CARGO_TARGET_DIR
 fi
+case "${CARGO_TARGET_DIR}" in
+  "${ROOT_DIR}" | "${ROOT_DIR}"/*)
+    cat >&2 <<EOF
+[codex-cloud-smoke] CARGO_TARGET_DIR must not be inside the repo checkout.
+
+Current value: ${CARGO_TARGET_DIR}
+
+Use a cached user directory such as /home/oai/.cache/cargo-target/msc-math.
+EOF
+    exit 101
+    ;;
+esac
+mkdir -p "${CARGO_TARGET_DIR}"
 TMP_DIR=""
 
 echo "[codex-cloud-smoke] repo root: ${ROOT_DIR}"

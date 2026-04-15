@@ -84,13 +84,17 @@ CARGO_TARGET_DIR=/home/oai/.cache/cargo-target/msc-math
 ```
 
 Use the absolute home path for the Codex web user if it differs from
-`/home/oai`. Do not set this in `.devcontainer/devcontainer.json`; the local
-devcontainer should keep Cargo's default repo-local `target/` behavior.
+`/home/oai`. Enter the expanded absolute path in the Codex web UI; do not enter
+`$HOME/.cache/cargo-target/msc-math`, because UI environment values are passed
+literally and the scripts reject values containing `$`. Do not set this in
+`.devcontainer/devcontainer.json`; the local devcontainer should keep Cargo's
+default repo-local `target/` behavior.
 
 This makes setup, maintenance, smoke tests, and ordinary later `cargo ...`
 commands use the same warmed cache without requiring agents to remember a
 command prefix. The Rust warmup and smoke scripts fail with a targeted message
-if this variable is absent. The target directory stays outside the repository
+if this variable is absent, non-absolute, still contains a shell variable, or
+points inside the repository checkout. The target directory stays outside the
 checkout, where Codex web tasks can discard uncommitted files, and inside the
 standard user cache tree that cached containers preserve.
 
