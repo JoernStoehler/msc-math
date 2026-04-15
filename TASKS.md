@@ -382,11 +382,17 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Remaining future note: gradient-ascent + multiple-crossings overlap dedup is blocked until gradient ascent stabilizes into library. Until then, copy-edit between experiments is correct.
 - Known side effect: step_bound upgrade (omega_0 detection) changes experiment behavior if re-run. Existing JSONL not regenerated.
 
-### [open] [group:paranoia] Paranoia: numerical claims (first pass merged 2026-04-12)
-- First pass merged: `paranoia-numerics` branch, 19 files fixed across experiment logbooks + `experiments/numerics/error-bounds/tests.rs` + `experiments/numerics/unknown-predicates/main.rs`. Session report at `paranoia-numerics-report.md`.
-- Remaining sub-items (needs Jörn decision, then follow-up to agent):
-  - `experiments/verification/orbit-recovery/`: 4 polytopes missing from dataset (112→108), `solution_dim` hardcoded to 0 in `main.rs`, error magnitudes from different algorithm version
-  - `experiments/verification/algorithm-comparison/profiling/`: per-test durations zeroed in JSONL, 3 historical runs absent — data pipeline broken
+### [open] [group:paranoia] Paranoia: numerical claims (closure pass 2026-04-15)
+- First pass merged: `paranoia-numerics` branch, 19 files fixed across experiment logbooks + `experiments/numerics/error-bounds/tests.rs` + `experiments/numerics/unknown-predicates/main.rs`. Closure pass recorded at `paranoia-numerics-report.md`.
+- Profiling closed as a live issue: `experiments/verification/algorithm-comparison/profiling/logbook.jsonl` keeps the bad 2026-04-04 zero-duration row as history, but the 2026-04-15 `f5d4ba18` row + `profile.jsonl` are the first usable post-fixture-removal baseline.
+- Live follow-up packets:
+  - `experiments/verification/orbit-recovery/`: choose dataset scope (170 cached vs 112 historical vs smaller validation set), compute real `solution_dim`, regenerate `orbit-recovery.jsonl` + figure, and refresh `research/verification/design/orbit-recovery.md` plus the stale historical capacity-axiom summary above. Jörn only if dataset scope is thesis-facing.
+  - `experiments/hko-local-maximum/perturbation-neighborhood/`: split historical `pentagon-perturb.jsonl` findings from current `data/{smoke,licca}-eps-*.jsonl` analyzer outputs; update stale task/design min/max wording.
+  - `experiments/combinatorial-cells/convexity/`: refresh design-note counts against committed JSONL (2800 rows, 2661 successful midpoint constructions, 1558/1558 product transition failures, 0/1103 random transition failures) and rerun `uv run analyze.py` if the figure is refreshed.
+  - `research/numerics/design/error-bounds.md`: mark old M1 retained-eigenvalue text historical or replace it with current status; replace stale `make smoke` / `make full` commands.
+  - `research/crosspolytope/design/main.md`: reconcile elapsed time (`1112.8s` text vs `1095.1s` in JSONL) or label the text as historical console output.
+  - `research/hko-local-maximum/design/cut-and-ascent.md`: update or delete the stale `~10s per trial` scale-up estimate.
+- Stop condition for this closure bundle was reached: more than 2-3 live fixes remain, so they are split as packets instead of being fixed in this reconciliation task.
 
 ### [done] [2026-04-12] [group:paranoia] Paranoia: conjectures + interpretations
 - Flag-only audit merged: 42 ranked flags (belief 5 / causal 11 / unhedged 12 / interpretation 13 / conjecture 1).
