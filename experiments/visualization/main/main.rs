@@ -2,7 +2,7 @@
 ///
 /// Exports the full combinatorial skeleton (vertices, edges, ridges),
 /// Reeb vectors, and Reeb orbit trajectories as a single JSON file
-/// consumed by the Three.js viewer in `experiments/visualization/viz/`.
+/// consumed by the Three.js viewer in `experiments/visualization/main/viz/`.
 ///
 /// Trajectories include:
 /// - All closed Reeb orbits found by the HK2017 algorithm (min-action and others)

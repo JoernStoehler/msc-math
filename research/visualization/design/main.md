@@ -97,7 +97,7 @@ Qualitative observations:
 
 ## Changes (2026-03-28)
 
-- `serve.sh` data path changed from `docs/viz/data` to local `viz/data` (after `docs/` deletion). **Untested** — visualization binary doesn't compile (KktOutcome API change).
+- `serve.sh` data path changed from `docs/viz/data` to local `viz/data` (after `docs/` deletion). Current compile check passes: `cargo build -p visualization --release --bin visualization` (2026-04-15).
 - `docs/viz/` deleted (was stale copy of `viz/`, formerly used as GitHub Pages deployment target — no longer used).
 - GitHub Pages URL removed from the deleted experiment logbook and formal writeup.
 
