@@ -53,7 +53,7 @@ Use this template:
   - Done. Jörn was not needed for the audit or the tracker propagation.
 - Calibration takeaway:
   - This was easier than requiring top-level/Jörn coordination. Similar read-only migration coverage matrices can be delegated end-to-end; the top-level session only needs to verify any small `TASKS.md` propagation.
-  - The delegate used nested subagents. That was acceptable in this repo because nested work is enabled; nesting was not a blocker for this read-only audit.
+  - The delegate used level 1 subagents from a level 0 session. In hindsight, a top-level session could likely have started this as a level 1 subagent task; the delegate's nested helpers would then have been level 2, still below the nesting cutoff. The task did not rely on level 0 access, did not need Jörn interaction that the top-level session could not handle, and finished in a few minutes.
 
 ## 2026-04-15 - RESULTS.md Freshness Audit
 
@@ -75,4 +75,4 @@ Use this template:
   - Substantively done, but wrong execution context. The useful patch was small and relevant; the process violated the intended worktree isolation.
 - Calibration takeaway:
   - Freshness audits can be delegated, but prompts must make cwd/worktree discipline explicit. Include: run `pwd` first; if it is not the assigned worktree, stop before editing. Also distinguish audit output from optional patch output so agents do not overrun into full pre-merge work for tiny comment fixes.
-  - The delegate used nested subagents. That did not block the work; the observed failure was cwd discipline, not nesting.
+  - The delegate used level 1 subagents from a level 0 session. In hindsight, a top-level session could likely have started this as a level 1 subagent task; the delegate's nested helpers would then have been level 2, still below the nesting cutoff. The task did not rely on level 0 access, did not need Jörn interaction that the top-level session could not handle, and finished in a few minutes. The observed failure was cwd discipline, not nesting.
