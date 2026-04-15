@@ -20,7 +20,7 @@ The verify-numerics experiment has proven Q error bounds and empirically validat
 
 4. **Iterate** using the autonomous loop: change solver → regenerate → analyze → check violations → repeat.
 
-5. **Use review-proof and review-formalization agents** proactively after writing math.tex.
+5. **Use the generic `reviewer` subagent with `$review` formal-math checks** proactively after writing the formal source.
 
 ## Out of scope
 
@@ -138,7 +138,7 @@ The capacity algorithm iterates over all subsets S ⊆ {1,...,F} and all cyclic 
 
 **Iteration scope (things to consider changing):** Filter criteria, diagnostic fields, proposition thresholds, new propositions/bounds, polytope sources, analyze.py checks, algorithms in solvers.rs (new error correction, margin optimization, diagnostic variables).
 
-**Iteration feedback:** checks.txt violations/ranges, diff from previous run, correlation hunting, coverage gaps, tightness of bounds approaching 1.0, natural vs artificial comparison, independent audit via review-proof/review-formalization subagents.
+**Iteration feedback:** checks.txt violations/ranges, diff from previous run, correlation hunting, coverage gaps, tightness of bounds approaching 1.0, natural vs artificial comparison, independent audit via the generic `reviewer` subagent with `$review` formal-math checks.
 
 ## Branch state
 
@@ -164,5 +164,5 @@ cat experiments/verification/correctness/correctness.jsonl experiments/sys-lands
 3. `solvers.rs` has projection solver implementation matching the specification
 4. `analyze.py` reports zero violations on proven bounds with the new solver
 5. `logbook.md` documents the algorithm design discussion and all findings
-6. `review-proof` agent finds no issues in math.tex
+6. Generic `reviewer` subagent finds no blocking formal-math issues
 7. `cargo build --release --bin verify_numerics --bin collect_inputs` succeeds
