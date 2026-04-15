@@ -64,6 +64,23 @@ Each subagent prompt should name:
 
 Do not duplicate the same unresolved task across delegates.
 
+For a delegation surface that Jörn may copy into new worktree sessions, use numbered work packets. Keep each packet self-contained enough that the receiving session can start without reconstructing the conversation:
+
+```markdown
+1. **Unit of work**
+   - Worktree: `short-branch-name`
+   - Tracked at: `TASKS.md` entry or "untracked cleanup"
+   - Scope: files, directories, or question.
+   - Context: why this work matters now and what evidence led to it.
+   - Why shallow: what makes this likely agent-doable, or where it may become deep.
+   - Decision points: choices reserved for the main thread or Jörn.
+   - Expected output: patch, note, report, data file, or finding.
+   - Verification: exact command, scan, build, or review check.
+   - Stop condition: when to hand back instead of guessing.
+```
+
+Use the packet format when proposing several independent tasks, when Jörn is likely to launch sessions manually, or when the top-level session is producing a queue rather than a single subagent prompt. Omit fields only when the answer is obvious from the surrounding packet.
+
 ## Running Delegates
 
 - Start sidecar delegates for non-blocking search, review, verification, or disjoint edits.
