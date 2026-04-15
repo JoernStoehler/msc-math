@@ -464,6 +464,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 ### [done] [2026-04-15] [group:repo-layout] Mechanical stale-path cleanup outside onboarding
 - Cleaned stale post-migration references in non-onboarding Markdown, TeX, Rust comments, and scan-caught Python diagnostics; no mathematical claims or experiment conclusions changed.
 - First-pass cleanup covered `thesis/tube-algorithm-notes.md`, `thesis/appendix-rewrite-notes.md`, `library/src/geom/review-notes.md`, `experiments/numerics/error-bounds/algorithm-notes.md`, and formal headers.
+- Follow-up experiment Rust pass removed old wave/subagent migration TODO scaffolding and stale pre-migration crate-path references from experiment comments; the experiment/library migration-wording scan returns no matches.
 - Preserved copied-code provenance comments and historical deletion/audit notes by marking them historical or leaving already explicit provenance wording.
 - Verification: stale-path scans now report only explicitly historical/provenance hits; changed live references point to existing `formal/`, `library/`, `research/`, `.devcontainer/`, or experiment paths.
 
