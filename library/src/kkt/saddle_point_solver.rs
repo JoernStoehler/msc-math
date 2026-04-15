@@ -144,7 +144,7 @@ pub(crate) struct EigenInfo {
 /// Outcome of the saddle-point KKT solve.
 ///
 /// Every variant corresponds to a mathematical proposition about the orbit.
-/// See `.agents/rules/rust.md` error handling convention.
+/// See `.agents/skills/rust-conventions/SKILL.md` error handling convention.
 #[derive(Clone, Debug)]
 pub enum KktOutcome {
     /// The orbit has a feasible solution with β > 0 and Q > 0.
