@@ -75,13 +75,33 @@ the start of a session.
 The setup script pre-caches Python packages. It does not hydrate Git LFS
 payloads.
 
-The setup script also precompiles the Rust validation path used by the web
-smoke workflow:
+## Required Web Environment Variables
+
+Set this variable in the Codex web environment, not in the local devcontainer:
+
+```bash
+CARGO_TARGET_DIR=/home/oai/.cache/cargo-target/msc-math
+```
+
+Use the absolute home path for the Codex web user if it differs from
+`/home/oai`. Do not set this in `.devcontainer/devcontainer.json`; the local
+devcontainer should keep Cargo's default repo-local `target/` behavior.
+
+This makes setup, maintenance, smoke tests, and ordinary later `cargo ...`
+commands use the same warmed cache without requiring agents to remember a
+command prefix. The Rust warmup and smoke scripts fail with a targeted message
+if this variable is absent. The target directory stays outside the repository
+checkout, where Codex web tasks can discard uncommitted files, and inside the
+standard user cache tree that cached containers preserve.
+
+The setup script also precompiles the Rust validation and experiment build
+paths used by web tasks:
 
 - library release test artifacts via `cargo test --release --lib --no-run`
+- library debug test artifacts via `cargo test --lib --no-run`
 - library clippy artifacts via `cargo clippy --lib --no-deps -- -D warnings`
-- the representative experiment binary `sys-random-sample`
-- the representative experiment binaries used by the cloud smoke workflow
+- workspace release binaries via `cargo build --workspace --release --bins`
+- workspace debug binaries via `cargo build --workspace --bins`
 
 This moves the expensive Rust cold-start cost into environment setup so the
 first real web session is much closer to ready-to-use.

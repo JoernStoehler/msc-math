@@ -8,9 +8,24 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+if [[ -z "${CARGO_TARGET_DIR:-}" ]]; then
+  cat >&2 <<'EOF'
+[codex-cloud-smoke] CARGO_TARGET_DIR is not set.
+
+Set CARGO_TARGET_DIR as a Codex web environment variable so setup, maintenance,
+and later ordinary cargo commands use the same cached target directory.
+EOF
+  exit 101
+fi
+mkdir -p "${CARGO_TARGET_DIR}"
+if command -v realpath >/dev/null 2>&1; then
+  CARGO_TARGET_DIR="$(realpath -m "${CARGO_TARGET_DIR}")"
+  export CARGO_TARGET_DIR
+fi
 TMP_DIR=""
 
 echo "[codex-cloud-smoke] repo root: ${ROOT_DIR}"
+echo "[codex-cloud-smoke] Cargo target dir: ${CARGO_TARGET_DIR}"
 
 require_cmd() {
   local cmd="$1"
@@ -73,7 +88,7 @@ cp "${ROOT_DIR}/experiments/figure_config.py" "${TMP_DIR}/experiments/figure_con
 cp "${ROOT_DIR}/experiments/hko-local-maximum/perturbation-neighborhood/analyze.py" "${TMP_EXP_DIR}/analyze.py"
 
 for eps in 0.001 0.01 0.1; do
-  "${ROOT_DIR}/target/release/hko-perturbation" \
+  "${CARGO_TARGET_DIR}/release/hko-perturbation" \
     --eps "${eps}" \
     --n 20 \
     --out "${TMP_EXP_DIR}/data/smoke-eps-${eps}.jsonl"
