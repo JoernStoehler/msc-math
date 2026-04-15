@@ -21,7 +21,7 @@ uv run analyze.py                             # generates plots
 |------|------|
 | `main.rs` | Rust binary: generates all sweep datasets |
 | `analyze.py` | Python: plots sys(theta) curves |
-| `math.tex` | Formal proofs and definitions (rotation setup, symmetry lemma) |
+| `formal/sys-landscape/rotated-regular-products.tex` | Formal proofs and definitions (rotation setup, symmetry lemma) |
 | `lagrangian-products-5x5.jsonl` | Pentagon rotation curve (37 rows) |
 | `lagrangian-products-7x7.jsonl` | Heptagon rotation curve (27 rows) |
 | `lagrangian-products-3x3-6deg.jsonl` | Triangle x triangle sweep (11 rows) |
@@ -46,7 +46,7 @@ Fix polygons P in q-space and Q in p-space. Rotate Q by angle theta. The Lagrang
 
 ### Symmetry reduction
 
-For regular n-gon x m-gon, sys(theta) has period 2*pi/lcm(n,m) and mirror symmetry sys(theta) = sys(-theta), so the fundamental domain is [0, pi/lcm(n,m)]. (See Lemma `lem:rotation-fundamental-domain` in math.tex for the proof.)
+For regular n-gon x m-gon, sys(theta) has period 2*pi/lcm(n,m) and mirror symmetry sys(theta) = sys(-theta), so the fundamental domain is [0, pi/lcm(n,m)]. (See Lemma `lem:rotation-fundamental-domain` in `formal/sys-landscape/rotated-regular-products.tex` for the proof.)
 
 ### Families
 
@@ -90,9 +90,9 @@ Key numerical results (billiard computation, verified at time of investigation):
 - Equilateral triangle x_L square: capacity = 1.5, sys = sqrt(3)/2 ≈ 0.866 (scale-and-ratio-invariant for any equilateral triangle x_L square)
 - Right isosceles triangle x_L square: capacity = 1.0, sys = 1.0
 - True symplectic triangle x_S square: capacity = 1.0, sys = 0.385
-% [TODO: JÖRN - the known_polytopes functions referenced here were removed in a later refactor.
-% The numerical values above are from the original investigation but are no longer reproducible
-% from the current codebase. Decide whether to restore the test fixtures or remove this section.]
+% [TODO: JÖRN - decide whether this historical investigation still belongs in the
+% current write-up. The named polytopes exist in library/src/geom/known_polytopes.rs,
+% and broad capacity validation now lives in experiments/verification/correctness/.]
 
 Fixes applied to `library/src/geom/known_polytopes.rs`:
 - Renamed function to `lagrangian_triangle_square()` with correct capacity 1.5

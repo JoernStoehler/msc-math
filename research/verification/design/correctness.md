@@ -4,6 +4,8 @@
 
 Before using computed capacities for scientific conclusions, we need high confidence that the implementation is correct. Standard unit tests are insufficient -- we need to verify that the code satisfies the mathematical axioms that define EHZ capacity (conformality, symplectic invariance, monotonicity, continuity) and agrees with published literature values.
 
+This experiment is the broad validation surface for HK2017-style correctness evidence. Library tests keep small live smoke/regression checks for fast developer feedback; this experiment owns the slower generated dataset and mathematical edge-case coverage.
+
 ## Status
 
 **Complete.** All 6 test propositions pass. Jörn approved the thesis writeup (2026-02-16).
@@ -25,7 +27,7 @@ Different seeds may expose edge cases not covered by seed 42.
 | File | Role |
 |------|------|
 | `main.rs` | Rust binary: dataset generator + test harness (6 property tests) |
-| `math.tex` | Empty — no formal mathematics in this experiment |
+| `formal/verification/correctness.tex` | Empty — no formal mathematics in this experiment |
 | `correctness.jsonl` | Dataset: 47 polytopes, 71 capacity values across 3 algorithms |
 
 ## Design
@@ -112,7 +114,7 @@ Test 1 generates 10 base polytopes (5 random generic, 5 Lagrangian products). Te
 
 ## Open questions
 
-1. **math.tex says "facet normals" but code perturbs heights.** Test 5 (continuity) applies a height perturbation via `a / (1.0 + epsilon * delta)` where `epsilon = 0.01` and `delta` is uniform in [-0.5, 0.5], giving a maximum perturbation of 0.5% per height — confirmed in main.rs. But math.tex (Jörn-approved 2026-02-16) describes it as "a small random perturbation of the facet normals." One source is wrong. Needs Jörn.
+None for the current artifact. Historical formal text approved on 2026-02-16 described the continuity check as a perturbation of facet normals, but the current implementation perturbs heights by at most 0.5% and `formal/verification/correctness.tex` no longer contains empirical propositions.
 
 ## Related experiments
 

@@ -45,6 +45,20 @@ crates/library/src/**/*.aux
 crates/library/src/**/*.log
 crates/library/src/**/*.out
 
+# LaTeX (formal math docs)
+formal/**/main.aux
+formal/**/main.bbl
+formal/**/main.bcf
+formal/**/main.blg
+formal/**/main.fdb_latexmk
+formal/**/main.fls
+formal/**/main.log
+formal/**/main.out
+formal/**/main.pdf
+formal/**/main.run.xml
+formal/**/main.synctex.gz
+formal/**/main.toc
+
 # Data
 # crates/visualization/viz/data/ stores generated polytope JSON (tracked)
 

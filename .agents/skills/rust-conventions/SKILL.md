@@ -42,6 +42,12 @@ Three capacity algorithms: `hk2017` (general, exponential), `billiard` (Lagrangi
 
 No rayon inside algorithms — parallelism is at the dataset level (each polytope independently).
 
+## Tests
+
+Library tests should give fast, live feedback while editing Rust code. Prefer small deterministic examples, named known polytopes, exact invariants, and narrowly scoped regression cases.
+
+Do not add broad generated datasets, expensive random sweeps, or cached validation fixtures to `library/` to make default tests pass quickly. Put slow mathematical validation, edge-case searches, and generated evidence datasets under `experiments/`, then keep only small smoke/regression checks in the crate.
+
 ## Magic numbers
 
 Empirically chosen constants: document rationale, motivating data point, limitations, and what to re-validate if changed. All in a comment on the constant definition.

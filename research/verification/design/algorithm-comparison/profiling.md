@@ -6,7 +6,7 @@ Profile the default test suite (`cargo test --lib`) to identify hot paths and tr
 
 ## Status
 
-**Active** — run after any change to `Polytope4D::new()`, test fixtures, or the capacity algorithm.
+**Active** — run after any change to `Polytope4D::new()`, HK2017 smoke tests, or the capacity algorithm.
 
 ## How to run
 
@@ -37,26 +37,26 @@ Runs `cargo test --lib` wrapped in `bash -c "time ..."` to capture both wall-clo
 
 ### Per-test profiling
 
-Profiles 18 candidate slow tests individually, running each in isolation via `cargo test --lib -- <test_name>` with a 300-second timeout. Sequential execution avoids contention effects. The candidate list is maintained manually in `analyze.py` and should be updated when the test suite changes.
+Profiles 15 candidate slow tests individually, running each in isolation via `cargo test --lib -- <test_name>` with a 300-second timeout. Sequential execution avoids contention effects. The candidate list is maintained manually in `analyze.py` and should be updated when the test suite changes.
 
 Current candidates (all from `library/`):
-- `algorithms::hk2017::literature_test::*` (8 tests)
-- `algorithms::hk2017::orbit_recovery_test::*` (4 tests)
-- `algorithms::hk2017::conformality_test::capacity_conformality`
-- `algorithms::hk2017::symplectic_invariance_test::*` (2 tests)
-- `algorithms::hk2017::pruning_test::pruned_matches_unpruned_from_fixture`
-- `geom::volume_test::proptests::volume_scales_with_fourth_power`
-- `random_test::proptests::random_polytopes_pass_validation`
+- `algorithms::hk2017::tests_literature::*` (6 tests)
+- `algorithms::hk2017::orbit_recovery::tests::*` (4 tests)
+- `algorithms::hk2017::tests_conformality::capacity_conformality_simplex`
+- `algorithms::hk2017::tests_symplectic_invariance::capacity_symplectomorphism_invariance_simplex`
+- `algorithms::hk2017::tests_pruning::pruned_matches_unpruned_simplex`
+- `geom::volume::tests::proptests::volume_scales_with_fourth_power`
+- `random::tests::proptests::random_polytopes_pass_validation`
 
 ### Figure generation
 
-Horizontal bar chart of the top 15 slowest tests, annotated with module paths. Uses matplotlib (skipped gracefully if unavailable).
+Horizontal bar chart of the top 15 slowest tests. Uses matplotlib (skipped gracefully if unavailable).
 
 ### Logbook format
 
 Each `logbook.jsonl` entry records:
 ```json
-{"date": "2026-03-20", "commit": "c104340", "wall_s": 20.98, "cpu_s": 164.63, "n_tests": 317, "cores": 12, "top5": [{"test": "catalog_determinism", "s": 11.03}, ...]}
+{"date": "2026-04-15", "commit": "abc1234", "wall_s": 20.98, "cpu_s": 164.63, "n_tests": 337, "cores": 12, "top5": [{"test": "hypercube_capacity", "s": 10.39}, ...]}
 ```
 
 Compare across entries to detect performance regressions.
@@ -64,27 +64,27 @@ Compare across entries to detect performance regressions.
 ## When to run
 
 - After optimizing `Polytope4D::new()` or the rational pipeline
-- After changing test fixtures or fixture loading
+- After changing HK2017 smoke-test structure
 - After adding/removing `#[ignore]` annotations
 - Before reporting performance to Jörn
 
 ## Findings
 
-### Most recent run (2026-03-20, commit c104340)
+### Most recent run (2026-04-15, commit f5d4ba18)
 
-Full suite: 21.0s wall, 164.6s CPU, 317 tests passed, 12 cores.
+Full suite: 53.22s wall, 238.41s CPU, 337 tests passed, 24 ignored, 12 cores.
 
 Top 5 slowest tests (sequential, no contention):
 
 | Test | Duration |
 |------|----------|
-| `catalog_determinism` | 11.03s |
-| `fixture_staleness_check` | 10.78s |
-| `dwell_times_positive` | 10.53s |
-| `breakpoint_count_consistency` | 10.51s |
-| `hypercube_capacity` | 10.39s |
+| `hypercube_capacity` | 27.77s |
+| `breakpoint_count_consistency` | 15.74s |
+| `dwell_times_positive` | 15.70s |
+| `hko_pentagon_recovery` | 12.34s |
+| `billiard_agrees_with_hk2017_on_small_lagrangian_products` | 4.09s |
 
-All top-5 are in `algorithms::hk2017::literature_test` or `algorithms::hk2017::orbit_recovery_test`. These tests compute EHZ capacity on multiple polytopes and are inherently expensive.
+All top-5 are HK2017 live computation smoke/regression tests. The deleted fixture tests no longer appear in the profiler candidate list.
 
 ### Historical trend (3 runs)
 
@@ -93,8 +93,9 @@ All top-5 are in `algorithms::hk2017::literature_test` or `algorithms::hk2017::o
 | 2026-03-19 | 7c64e76 | 21.88 | 167.6 | 317 |
 | 2026-03-20 | 0c3c3d3 | 22.16 | 164.5 | 317 |
 | 2026-03-20 | c104340 | 20.98 | 164.6 | 317 |
+| 2026-04-15 | f5d4ba18 | 53.22 | 238.41 | 337 |
 
-Performance is stable across these commits (~21s wall, ~165s CPU).
+The 2026-04-15 run uses the post-fixture-removal candidate list and a different test count, so compare it to future runs rather than the March baseline.
 
 ## Known limitations
 

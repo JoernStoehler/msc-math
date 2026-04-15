@@ -4,92 +4,48 @@
 
 use super::*;
 
-use std::path::PathBuf;
-use std::sync::LazyLock;
+// ── Direct computation ──
 
-use super::generate_capacity_fixtures::{load_dataset_entries, DatasetEntry, FIXTURE_PATH};
-
-/// Shared dataset loaded from cached fixture (scalar-only, no Polytope4D construction).
-static DATASET: LazyLock<Vec<DatasetEntry>> = LazyLock::new(|| {
-    let path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(FIXTURE_PATH);
-    load_dataset_entries(&path)
-});
-
-// ── Fixture-based conformality ──
-
-/// Verify conformality c(alpha*K) = alpha^2 * c(K) from fixture data.
+/// Verify conformality c(alpha*K) = alpha^2 * c(K) on the simplex.
 ///
-/// Checks all entries with transform "conform:{alpha}" against their base polytope.
-/// Also verifies volume scaling: vol(alpha*K) = alpha^4 * vol(K).
+/// This is a small live smoke test for the current HK2017 implementation.
+/// Broad conformality validation lives in `experiments/verification/correctness/`.
 #[test]
-fn capacity_conformality() {
-    let dataset = &*DATASET;
+fn capacity_conformality_simplex() {
+    let scale = 1.7;
+    let kp = crate::geom::known_polytopes::simplex();
+    let scaled = crate::geom::polytope::Polytope4D::from_f64(
+        kp.polytope
+            .dual_vertices_f64()
+            .iter()
+            .map(|a| a / scale)
+            .collect(),
+    )
+    .expect("scaled simplex");
 
-    let conformality_tests: Vec<_> = dataset
-        .iter()
-        .filter(|e| {
-            e.transform
-                .as_ref()
-                .is_some_and(|t| t.starts_with("conform:"))
-        })
-        .collect();
-
-    for entry in &conformality_tests {
-        let base_idx = entry
-            .base_index
-            .expect("conformality variant has base_index");
-        let base = &dataset[base_idx];
-
-        // Extract scale factor from transform string "conform:1.50".
-        let alpha: f64 = entry
-            .transform
-            .as_ref()
-            .and_then(|t| t.strip_prefix("conform:"))
-            .and_then(|s| s.parse().ok())
-            .expect("valid scale factor");
-
-        // Capacity conformality: c(alpha*K) = alpha^2 * c(K).
-        let expected_cap = alpha * alpha * base.capacity;
-        let cap_error = (entry.capacity - expected_cap).abs() / expected_cap;
-        assert!(
-            cap_error < 1e-6,
-            "{}: conformality failed: c({:.2}*{}) = {}, expected {:.2}^2 * c({}) = {}, \
-             rel_error = {:.2e}",
-            entry.name,
-            alpha,
-            base.name,
-            entry.capacity,
-            alpha,
-            base.name,
-            expected_cap,
-            cap_error
-        );
-
-        // Volume scaling: vol(alpha*K) = alpha^4 * vol(K).
-        let expected_vol = alpha.powi(4) * base.volume;
-        let vol_error = (entry.volume - expected_vol).abs() / expected_vol;
-        assert!(
-            vol_error < 1e-6,
-            "{}: volume conformality failed: rel_error = {:.2e}",
-            entry.name,
-            vol_error
-        );
-    }
-
+    let base_cap = ehz_capacity_unpruned(&kp.polytope)
+        .expect("simplex capacity")
+        .result
+        .capacity;
+    let scaled_cap = ehz_capacity_unpruned(&scaled)
+        .expect("scaled simplex capacity")
+        .result
+        .capacity;
+    let expected = scale * scale * base_cap;
+    let relative_error = ((scaled_cap - expected) / expected).abs();
     assert!(
-        !conformality_tests.is_empty(),
-        "expected at least one conformality variant in fixture"
+        relative_error < 1e-6,
+        "simplex conformality failed: scale={scale}, base_cap={base_cap}, \
+         scaled_cap={scaled_cap}, expected={expected}, relative_error={relative_error}"
     );
 }
-
-// ── Direct computation ──
 
 /// Verify conformality on hypercube scaled by e (transcendental).
 ///
 /// Uses lambda = e (transcendental) to ensure numerical coincidences are impossible.
 /// Expected: c(e * K) = e^2 * c(K).
 ///
-/// Why #[ignore]: F=8 unpruned x 2 = ~48s debug, ~0.6s release.
+/// Why #[ignore]: F=8 unpruned x 2 is slower than the simplex smoke test.
 /// Run: `cargo test --release capacity_scales_quadratically -- --ignored`
 #[test]
 #[ignore] // ~48s debug, ~0.6s release

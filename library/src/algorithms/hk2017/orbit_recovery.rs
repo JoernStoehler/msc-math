@@ -312,7 +312,7 @@ mod tests {
     //
     // Reference: [lem:base-point-recovery], [rem:beta-to-tau], [lem:shoelace]
     //
-    // Strategy: fixture-based on known polytopes from `known_polytopes`.
+    // Strategy: known-polytope-based checks from `known_polytopes`.
 
     /// Tolerance for floating-point comparisons (closure, on-facet, action).
     const TOL: f64 = 1e-8;

@@ -460,10 +460,12 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Preserve provenance comments when they identify copied code history; update only paths that a future agent would treat as live instructions.
 - Acceptance: scan has no live stale-path hits outside explicitly historical/provenance wording; changed Markdown/TeX/Rust comments still point to existing files or clearly say the referenced source is historical.
 
-### [open] [group:library] Decide whether to remove library benches and fixtures
-- Goal: investigate whether `library/benches/` and `library/tests/fixtures/` can be deleted outright.
-- Do not delete in this session; first check how they are referenced by tests, docs, workflows, and thesis-support tasks.
-- Output: either a deletion patch with replacement verification commands, or a short note explaining which references still make them needed.
+### [done] [2026-04-15] [group:library] Remove HK2017 capacity fixture, keep profiling bench
+- Decision: delete `library/tests/fixtures/capacity_dataset.json` and `library/src/algorithms/hk2017/generate_capacity_fixtures.rs`. Broad HK2017 validation belongs in `experiments/verification/correctness/`; library tests keep small live smoke/regression checks for literature values, conformality, symplectic invariance, pruning agreement, and billiard agreement.
+- `library/benches/profiling.rs` is still the Criterion source cited by `research/verification/design/algorithm-comparison/benchmark.md` for phase profiling and micro-benchmarks; keep `library/Cargo.toml` bench metadata unchanged.
+- Updated `experiments/verification/algorithm-comparison/profiling/analyze.py` and refreshed its generated profiling artifacts so the benchmark design notes no longer point at deleted fixture tests.
+- Convention update: `AGENTS.md`, `$rust-conventions`, and `$experiment-conventions` now state the boundary between fast crate tests and slow validation experiments.
+- Verification for the branch: `cargo test -p symplectic --release --lib`; `cd library/ && cargo clippy --lib -- -D warnings`; `cargo test -p dev-capacity-validation --bin axioms-correctness --release`; `cargo build --workspace --release`; `uv run analyze.py` in `experiments/verification/algorithm-comparison/profiling/`; `cd thesis/ && latexmk && ./check-build.sh`; `cd formal/ && latexmk`. No bench metadata changed, so `cargo bench -p symplectic --bench profiling --no-run` is not required.
 
 ### [done] [2026-04-15] Design session-focus skills
 - Goal: replace the TODO scaffolds in `.agents/skills/project-management-focus/SKILL.md` and `.agents/skills/research-focus/SKILL.md` with stable session-scope workflows.
