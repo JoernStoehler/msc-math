@@ -28,17 +28,20 @@ The harness is:
 - Split a subagent only when the role, permissions, or output contract differs.
 - Do not edit harness files during unrelated task work. Harness edits require a direct Jörn request in the current turn.
 - Use `$post-mortem` for advisory reflection requested by Jörn. It suggests changes but does not execute them.
+- When removing stale top-level artifacts, prefer deletion or relocation over adding warnings around them.
+- Before deleting a tracked file or directory, check that git has captured the current state. If the path is untracked or has uncommitted edits, stop and either commit the state first or ask Jörn. Rollback should be possible through git.
 
 ## Editing Workflow
 
 1. Confirm Jörn asked for harness edits, not only reflection or normal task work.
 2. Identify whether the change affects always-loaded context, skill routing, skill body procedure, subagent role, or runtime setup.
-3. Remove obsolete text instead of preserving it as another path.
-4. If editing a skill, follow `$skill-creator`: frontmatter has only `name` and `description`; the description carries trigger conditions.
-5. If moving content out of `AGENTS.md`, add it to the skill whose description should trigger for that work.
-6. Check for stale path assumptions with `rg`, especially `crates/`, `.agents/rules`, `math.tex`, `logbook.md`, and old review-agent names.
-7. For Codex product behavior claims, cite the official OpenAI source or say the claim is based on local observed behavior.
-8. Run validation:
+3. Keep a short decision ledger in the conversation before editing: decision, rejected alternative, and affected files.
+4. Remove obsolete text instead of preserving it as another path.
+5. If editing a skill, follow `$skill-creator`: frontmatter has only `name` and `description`; the description carries trigger conditions.
+6. If moving content out of `AGENTS.md`, add it to the skill whose description should trigger for that work.
+7. Check for stale path assumptions with `rg`, especially `crates/`, `.agents/rules`, `math.tex`, `logbook.md`, and old review-agent names.
+8. For Codex product behavior claims, cite the official OpenAI source or say the claim is based on local observed behavior.
+9. Run validation:
 
 ```bash
 uv run --with pyyaml python /home/vscode/.codex/skills/.system/skill-creator/scripts/quick_validate.py .agents/skills/<skill-name>

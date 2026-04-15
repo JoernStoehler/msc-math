@@ -468,6 +468,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 ### [open] Design session-role skills
 - Goal: replace the TODO scaffolds in `.agents/skills/role-coordinator/SKILL.md` and `.agents/skills/role-research-lead/SKILL.md` with stable session-role workflows.
 - Starting constraint: ask Jörn about the workflow before guessing. Do not design from priors or this session's tentative core.
+- Scope distinction: role skills describe session mode, task ownership, delegation, communication, and Jörn gates. They should not duplicate artifact conventions such as Rust, thesis TeX, formal math, Python, or experiment rules.
 - Keep `.agents/skills/orchestrate/SKILL.md` live until a role skill or delegation skill explicitly supersedes it.
 - Output: minimal skill files, stable core only.
 
