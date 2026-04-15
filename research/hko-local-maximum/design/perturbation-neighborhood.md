@@ -85,7 +85,7 @@ Then run `uv run analyze.py` locally on the retrieved data.
 |------|------|
 | `main.rs` | Rust binary: generates perturbed polytopes and computes sys |
 | `analyze.py` | Python: 3-panel histogram of sys values per eps, summary stats, PCA at eps=0.01 |
-| `math.tex` | Formal writeup (input'd from `thesis/experiments.tex`) |
+| `formal/hko-local-maximum/perturbation-neighborhood.tex` | Formal writeup (input by `formal/main.tex`) |
 | `job.sh` | Slurm submission script (epyc, 1 core, 30 min) |
 | `data/licca-eps-*.jsonl` | LICCA production output, 10k per bucket (LFS) |
 | `data/smoke-eps-*.jsonl` | Local smoke output, 20 per bucket (LFS) |

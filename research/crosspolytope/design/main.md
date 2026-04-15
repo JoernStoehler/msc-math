@@ -23,7 +23,7 @@ Release mode required (debug mode is infeasible at F=16).
 | File | Role |
 |------|------|
 | `main.rs` | Rust binary: backtracking + symmetry + checkpointing capacity computation |
-| `math.tex` | Formal writeup: symmetry reduction, result, hypercube comparison |
+| `formal/crosspolytope/main.tex` | Formal writeup: symmetry reduction, result, hypercube comparison |
 | `crosspolytope.jsonl` | Output: 1 entry with computed capacity and metadata |
 
 ## Design

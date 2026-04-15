@@ -2,7 +2,7 @@
 //!
 //! Architecture:
 //! 1. `cargo run --bin lagrangian_probe --release` generates dataset
-//! 2. Writes to lagrangian-search/lagrangian-probe.jsonl
+//! 2. Writes to lagrangian-boundary/lagrangian-probe.jsonl
 //! 3. Python script (analyze.py) reads and plots
 //!
 //! For each random direction u on S^19 (unit sphere in 20D Lagrangian
@@ -31,6 +31,7 @@ const SEED: u64 = 43;
 /// Number of random directions to probe.
 /// 500 directions × ~15 bisection steps × ~30ms/eval ≈ 225s.
 const N_DIRECTIONS: usize = 500;
+const SMOKE_N_DIRECTIONS: usize = 1;
 
 /// Bisection tolerance: stop when the interval [lo, hi] satisfies hi - lo < TOL.
 /// At ~0.09 mean radius, 1e-4 gives ~0.1% relative precision.
@@ -65,7 +66,7 @@ struct ProbeRow {
 
 /// Identify which 2D components are nonzero for each dual vertex.
 /// Returns (i0, i1) index pairs: [0,1] for q-facets, [2,3] for p-facets.
-// TODO: add [def:lagrangian-facet-type] to math.tex (trivial from the LP definition)
+// TODO: add [def:lagrangian-facet-type] to formal math (trivial from the LP definition)
 fn lagrangian_component_indices(duals: &[Vector4<f64>]) -> Vec<(usize, usize)> {
     duals
         .iter()
@@ -200,8 +201,8 @@ fn bisect_range(
 
     let radius = (lo + hi) / 2.0;
     // Evaluate sys at the final radius for reporting
-    let sys_final = eval_sys_at_ray(base_duals, indices, direction_flat, radius)
-        .unwrap_or(last_sys);
+    let sys_final =
+        eval_sys_at_ray(base_duals, indices, direction_flat, radius).unwrap_or(last_sys);
 
     (radius, sys_final, iters, true, String::new())
 }
@@ -209,11 +210,23 @@ fn bisect_range(
 fn main() {
     let t0 = Instant::now();
     let mut rng = ChaCha8Rng::seed_from_u64(SEED);
+    let smoke = std::env::args().any(|a| a == "--smoke");
+    let n_directions = if smoke {
+        SMOKE_N_DIRECTIONS
+    } else {
+        N_DIRECTIONS
+    };
 
-    let base_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("lagrangian-search");
-    let output_path = base_dir.join("lagrangian-probe.jsonl");
+    let base_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("lagrangian-boundary");
+    let output_path = if smoke {
+        base_dir.join("lagrangian-probe-smoke.jsonl")
+    } else {
+        base_dir.join("lagrangian-probe.jsonl")
+    };
 
     println!("Directional boundary probing of sys > 1 region around HKO2024\n");
+
+    std::fs::create_dir_all(&base_dir).expect("create lagrangian-boundary output dir");
 
     let file = File::create(&output_path).expect("failed to create output file");
     let mut writer = BufWriter::new(file);
@@ -232,13 +245,13 @@ fn main() {
         .expect("billiard None");
     let base_sys = base_billiard.result.capacity.powi(2) / (2.0 * base_vol);
     println!("Base sys = {base_sys:.6} (should be ~1.047)");
-    println!("Probing {N_DIRECTIONS} random directions...\n");
+    println!("Probing {n_directions} random directions...\n");
 
-    let mut radii = Vec::with_capacity(N_DIRECTIONS);
+    let mut radii = Vec::with_capacity(n_directions);
     let mut n_success = 0usize;
     let mut n_fail = 0usize;
 
-    for i in 0..N_DIRECTIONS {
+    for i in 0..n_directions {
         let dir = random_direction(d, &mut rng);
         let (radius, sys_at_boundary, bisect_iters, success, failure_reason) =
             bisect_boundary(&base_duals, &indices, &dir);
@@ -298,6 +311,6 @@ fn main() {
         );
     }
 
-    println!("\nWrote {} rows to {}", N_DIRECTIONS, output_path.display());
+    println!("\nWrote {} rows to {}", n_directions, output_path.display());
     println!("Total time: {:.1}s", t0.elapsed().as_secs_f64());
 }

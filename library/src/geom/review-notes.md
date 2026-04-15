@@ -1,9 +1,9 @@
-# Geom/math.tex review feedback
+# formal/library/geom.tex review feedback
 
 **Source:** Jörn's top-to-bottom review of the former library math PDF (session 2026-03-24).
 Current source: `formal/library/geom.tex`.
 **Branch:** `remove-unit-normals` (worktree `.claude/worktrees/remove-unit-normals/`)
-**Status:** Jörn reviewed Defs 1–13, then stopped. Review incomplete — covers only geom/math.tex, not kkt/ or algorithms/.
+**Status:** Jörn reviewed Defs 1–13, then stopped. Review incomplete — covers only `formal/library/geom.tex`, not `formal/library/kkt.tex` or `formal/library/algorithms.tex`.
 
 ## Jörn's verbatim feedback
 
@@ -29,7 +29,7 @@ Worth to talk about symplectic subspaces (standard terminology) S_1, S_2 maybe f
 
 ### Prop 7 (capacity of symplectic product)
 
-Rename Thm 7. No need to require "origin in interior" here — that is an unused assumption. Proof is well written, starts with Proof idea, then executes step by step. Unsure whether the proof can be made shorter without making it harder to verify — since we are however in math.tex and not thesis/, clarity & correctness & verifiability are more important than educational value/readability/style. So this is probably the right balance!
+Rename Thm 7. No need to require "origin in interior" here — that is an unused assumption. Proof is well written, starts with Proof idea, then executes step by step. Unsure whether the proof can be made shorter without making it harder to verify — since we are however in developer-facing formal notes and not thesis/, clarity & correctness & verifiability are more important than educational value/readability/style. So this is probably the right balance!
 
 ### Def 8 (polytope dual / H-representation)
 
@@ -61,7 +61,7 @@ Same issue as Def 12.
 
 ### Structural feedback
 
-Maybe it's worth splitting math.tex into math_<topic>.tex already here, since we have so much ground to cover. Probably worth to have:
+Maybe it's worth splitting `formal/library/geom.tex` into topic files already here, since we have so much ground to cover. Probably worth to have:
 1. Euclidean geometry of polytopes
 2. Symplectic geometry standard setting
 3. Reeb orbits starting with the Reeb vectors on a polytope (not a vector field since there's no unique vector for points on the interior of 0,1,2-faces)

@@ -30,20 +30,19 @@ Final verification: `tube_capacity(K) == ehz_capacity(K)` on all test polytopes 
 ## Key files
 
 Spec and plan:
-- `/workspaces/msc-math/tube-spec.md` — detailed algorithmic spec (has open questions marked `<q>`)
-- `/workspaces/msc-math/tube-algorithm-plan.md` — 9-step implementation plan with test criteria
+- (deleted) `tube-spec.md` — detailed algorithmic spec with open questions marked `<q>` (removed before the Codex migration)
+- (deleted) `tube-algorithm-plan.md` — 9-step implementation plan with test criteria (removed before the Codex migration)
 - (deleted) `tube-notes.md` — Jörn's raw dictation notes (removed in post-migration cleanup)
 
 Current placeholder:
-- `/workspaces/msc-math/crates/library/src/algorithms/tube/mod.rs` (placeholder)
-- `/workspaces/msc-math/crates/library/src/algorithms/tube/tube_test.rs` (placeholder test)
+- `/workspaces/msc-math/library/src/algorithms/tube/mod.rs` (blocked implementation with inline tests)
 
 Existing infrastructure to reuse:
-- `/workspaces/msc-math/crates/library/src/geom/polytope.rs` — Polytope4D, H-rep
-- `/workspaces/msc-math/crates/library/src/geom/symplectic_form.rs` — ω₀, J₀
-- `/workspaces/msc-math/crates/library/src/geom/reeb_trajectory.rs` — Reeb vector (direction only; R = (2/h) J₀ n)
-- `/workspaces/msc-math/crates/library/src/geom/skeleton.rs` — ridge enumeration
-- `/workspaces/msc-math/crates/library/src/algorithms/hk2017/mod.rs` — directed adjacency builder (pub(crate))
+- `/workspaces/msc-math/library/src/geom/polytope.rs` — Polytope4D, H-rep
+- `/workspaces/msc-math/library/src/geom/symplectic_form.rs` — ω₀, J₀
+- `/workspaces/msc-math/library/src/geom/reeb_trajectory.rs` — Reeb vector (direction only; R = (2/h) J₀ n)
+- `/workspaces/msc-math/library/src/geom/skeleton.rs` — ridge enumeration
+- `/workspaces/msc-math/library/src/algorithms/hk2017/mod.rs` — directed adjacency builder (pub(crate))
 
 Archaeology (untrusted, reference only):
 - `/workspaces/msc-math/archaeology/raw/code/archive__tube.rs` (39KB, prior attempt with known bugs)

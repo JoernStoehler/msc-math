@@ -25,7 +25,7 @@ Output is printed to stdout. Captured output is stored in `kkt_inertia_output.tx
 | File | Role |
 |------|------|
 | `main.rs` | Rust binary: census of H\|_T definiteness + inertia formula check |
-| `math.tex` | Formal writeup (table, mismatch analysis) |
+| `formal/numerics/kkt-inertia.tex` | Formal writeup (table, mismatch analysis) |
 | `kkt_inertia_output.txt` | Captured stdout with tables and eigenvalue diagnostics (67 lines) |
 
 ## Design
@@ -43,7 +43,7 @@ Output is printed to stdout. Captured output is stored in `kkt_inertia_output.tx
 
 3. **5 mismatches in hko_pentagon:** All share the same pattern: tangent_dim = 3, p = 5, with H|_T eigenvalues {-a, epsilon, +a} where a ~ 0.4--1.1 and epsilon ~ 1e-16 (machine epsilon). Since n_-(H|_T) = 1, the lemma predicts n_-(M) = 6, but the threshold-based classifier reports n_-(M) = 5 because M has three eigenvalues at ~1e-16 whose signs cannot be resolved. The inertia formula itself is not violated; the mismatch is a classification artifact.
 
-4. **Part 2 inertia decomposition check** (from math.tex table, moved here during audit 2026-04-04):
+4. **Part 2 inertia decomposition check** (from formal/numerics/kkt-inertia.tex table, moved here during audit 2026-04-04):
 
    | Polytope | Total | n_-=p | n_->p | PD | ND | Indef | Match |
    |----------|------:|------:|------:|---:|---:|------:|-------|

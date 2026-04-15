@@ -16,7 +16,7 @@
 //! - Compare against actual capacity change via full ehz_capacity on perturbed polytope
 //! - Records orbit switching (which orbit wins in the perturbed polytope)
 //! - [prop:capacity-smoothness-classification](b): at switching boundaries, D_d c = min_i(nabla A_i . d).
-//!   In experiments/numerics/gradient/numerics/math.tex.
+//!   In formal/numerics/gradient/numerics.tex.
 //!
 //! Methodology (Q5b):
 //! - Use LP(n,n) (regular Lagrangian products) where symmetry forces exact orbit ties
@@ -28,13 +28,13 @@
 //!
 //! Mathematical correspondence:
 //! - [lem:cap-derivative] (unverified): envelope theorem formula for dc/da_k.
-//!   In library/src/algorithms/math.tex.
+//!   In formal/library/algorithms.tex.
 //! - [prop:capacity-smoothness-classification] (unverified): refined decomposition into
 //!   per-orbit feasibility/smoothness and capacity-level min structure.
-//!   In experiments/numerics/gradient/numerics/math.tex.
+//!   In formal/numerics/gradient/numerics.tex.
 //! - [thm:subdiff-with-appearance] (unverified): direction-filtered subdifferential
 //!   extending the formula to orbits at the feasibility boundary.
-//!   In experiments/numerics/gradient/numerics-subdifferential/math.tex.
+//!   In formal/numerics/gradient/numerics-subdifferential.tex.
 //!
 //! Architecture:
 //! 1. `cargo run --release --bin gradient-subdifferential` -> JSONL files
@@ -50,7 +50,7 @@ use serde::Serialize;
 use std::f64::consts::PI;
 use std::fs::File;
 use std::io::{BufWriter, Write};
-use std::time::Instant;
+use std::time::{Instant, SystemTime, UNIX_EPOCH};
 use symplectic::algorithms::hk2017::combinations;
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
 use symplectic::derivatives::capacity_derivatives_a;
@@ -58,8 +58,8 @@ use symplectic::geom::symplectic_form::omega0;
 use symplectic::kkt::qp_assembly::build_augmented_system;
 use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktResult, EPS_Q_POSITIVE};
 use symplectic::random::generate_random_polytopes;
-use symplectic::{ehz_capacity, lagrangian_product, regular_polygon_2d};
 use symplectic::Polytope4D;
+use symplectic::{ehz_capacity, lagrangian_product, regular_polygon_2d};
 
 // ============================================================================
 // Constants
@@ -131,6 +131,22 @@ const Q5B_TIE_RTOL: f64 = 1e-8;
 /// risks capturing only one sub-case. LP(5,5) uses 5 dirs due to ehz_capacity
 /// cost (~70s per orbit enumeration).
 const Q5B_N_DIRS: usize = 10;
+
+/// Smoke-test settings for Phase 2.
+const SMOKE_Q5_FACET_COUNTS: &[usize] = &[6];
+const SMOKE_Q5_PER_BIN: usize = 1;
+const SMOKE_Q5_MAX_CANDIDATES: usize = 30;
+const SMOKE_Q5_GAP_THRESHOLD: f64 = 0.05;
+const SMOKE_Q5_N_DIRS: usize = 1;
+const SMOKE_Q5_T_VALUES: &[f64] = &[1e-2, 1e-4];
+const SMOKE_Q5B_REGULAR_NS: &[usize] = &[3];
+const SMOKE_Q5B_N_DIRS: usize = 3;
+const SMOKE_Q5B_INCLUDE_SIMPLEX: bool = true;
+const SMOKE_Q5B_INCLUDE_HYPERCUBE: bool = false;
+const SMOKE_Q5B_INCLUDE_HKO: bool = false;
+const SMOKE_Q5B_INCLUDE_GORBITS: bool = false;
+const SMOKE_Q5B_GORBIT_ORDERS: &[usize] = &[];
+const SMOKE_Q5B_GORBIT_ATTEMPTS: usize = 0;
 
 // ============================================================================
 // Output schema
@@ -251,6 +267,20 @@ fn solve_kkt_safe(polytope: &Polytope4D, perm: &[usize]) -> Option<KktResult> {
     solve_kkt_for(polytope, perm).feasible()
 }
 
+fn smoke_mode() -> bool {
+    std::env::args().skip(1).any(|arg| arg == "--smoke")
+}
+
+fn smoke_output_dir(label: &str) -> String {
+    let stamp = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("system clock before UNIX_EPOCH")
+        .as_millis();
+    let dir = std::env::temp_dir().join(format!("{label}-{}-{stamp}", std::process::id()));
+    std::fs::create_dir_all(&dir).expect("create smoke output dir");
+    dir.to_string_lossy().into_owned()
+}
+
 /// Compute nabla_a beta_k . d for each orbit position k, given a perturbation direction d.
 ///
 /// Returns a Vec<f64> of length m where entry k = (d_beta_k/d_a) . d, the rate of change
@@ -361,24 +391,45 @@ fn enumerate_orbits_inner(
 // Q5: Orbit-switching and subdifferential prediction
 // ============================================================================
 
-fn run_q5(base_dir: &str) {
+fn run_q5(base_dir: &str, smoke: bool) {
     let path = format!("{}/gradient-correctness-q5-subdiff.jsonl", base_dir);
     let file = File::create(&path).expect("create Q5 JSONL");
     let mut writer = BufWriter::new(file);
     let mut total_rows = 0;
 
-    let facet_counts = [6, 7];
+    let facet_counts: &[usize] = if smoke {
+        SMOKE_Q5_FACET_COUNTS
+    } else {
+        &[6, 7]
+    };
+    let q5_per_bin = if smoke { SMOKE_Q5_PER_BIN } else { Q5_PER_BIN };
+    let q5_max_candidates = if smoke {
+        SMOKE_Q5_MAX_CANDIDATES
+    } else {
+        Q5_MAX_CANDIDATES
+    };
+    let q5_gap_threshold = if smoke {
+        SMOKE_Q5_GAP_THRESHOLD
+    } else {
+        Q5_GAP_THRESHOLD
+    };
+    let q5_n_dirs = if smoke { SMOKE_Q5_N_DIRS } else { N_DIRS };
+    let t_values: &[f64] = if smoke { SMOKE_Q5_T_VALUES } else { T_VALUES };
 
-    for &f_count in &facet_counts {
+    for &f_count in facet_counts {
         // Benchmark ehz_capacity at this F
         let mut bench_rng = ChaCha8Rng::seed_from_u64(SEED_BASE + 550 + f_count as u64);
-        let bench_polys = generate_random_polytopes(5, f_count, 0.5, 2.0, &mut bench_rng);
+        let bench_polys =
+            generate_random_polytopes(if smoke { 1 } else { 5 }, f_count, 0.5, 2.0, &mut bench_rng);
         let t0 = Instant::now();
         for p in &bench_polys {
             ehz_capacity_safe(p);
         }
         let bench_ms = t0.elapsed().as_secs_f64() * 1000.0 / bench_polys.len() as f64;
-        println!("  Q5: F={} ehz_capacity benchmark: {:.2}ms/call", f_count, bench_ms);
+        println!(
+            "  Q5: F={} ehz_capacity benchmark: {:.2}ms/call",
+            f_count, bench_ms
+        );
 
         // Fill gap bins: find polytopes with different action gap levels
         let mut rng = ChaCha8Rng::seed_from_u64(SEED_BASE + 500 + f_count as u64);
@@ -392,14 +443,18 @@ fn run_q5(base_dir: &str) {
         }
         let mut polytope_data: Vec<PolytopeWithOrbits> = Vec::new();
 
-        println!("  Q5: Finding polytopes with near-tied orbits at F={}...", f_count);
+        println!(
+            "  Q5: Finding polytopes with near-tied orbits at F={}...",
+            f_count
+        );
 
-        while generated < Q5_MAX_CANDIDATES && bin_counts.iter().any(|&c| c < Q5_PER_BIN) {
-            let polytopes = generate_random_polytopes(10, f_count, 0.5, 2.0, &mut rng);
+        while generated < q5_max_candidates && bin_counts.iter().any(|&c| c < q5_per_bin) {
+            let polytopes =
+                generate_random_polytopes(if smoke { 2 } else { 10 }, f_count, 0.5, 2.0, &mut rng);
 
             for polytope in &polytopes {
                 generated += 1;
-                if bin_counts.iter().all(|&c| c >= Q5_PER_BIN) {
+                if bin_counts.iter().all(|&c| c >= q5_per_bin) {
                     break;
                 }
 
@@ -418,14 +473,14 @@ fn run_q5(base_dir: &str) {
                     .iter()
                     .position(|&(lo, hi, _)| gap >= lo && gap < hi);
                 let bin_idx = match bin_idx {
-                    Some(idx) if bin_counts[idx] < Q5_PER_BIN => idx,
+                    Some(idx) if bin_counts[idx] < q5_per_bin => idx,
                     _ => continue,
                 };
 
                 // Keep only orbits within generous gap threshold
                 let filtered: Vec<_> = all_orbits
                     .into_iter()
-                    .filter(|(action, _, _)| *action <= best_action + Q5_GAP_THRESHOLD)
+                    .filter(|(action, _, _)| *action <= best_action + q5_gap_threshold)
                     .collect();
 
                 polytope_data.push(PolytopeWithOrbits {
@@ -438,11 +493,7 @@ fn run_q5(base_dir: &str) {
                 if generated % 200 == 0 {
                     println!(
                         "    {} candidates, bins: large={}, medium={}, small={}, tiny={}",
-                        generated,
-                        bin_counts[0],
-                        bin_counts[1],
-                        bin_counts[2],
-                        bin_counts[3],
+                        generated, bin_counts[0], bin_counts[1], bin_counts[2], bin_counts[3],
                     );
                 }
             }
@@ -467,11 +518,7 @@ fn run_q5(base_dir: &str) {
             let best_perm = &pd.orbits[0].1;
             let best_kkt = &pd.orbits[0].2;
             let c_base = pd.orbits[0].0; // capacity = action of best orbit
-            let min_beta = best_kkt
-                .beta
-                .iter()
-                .copied()
-                .fold(f64::INFINITY, f64::min);
+            let min_beta = best_kkt.beta.iter().copied().fold(f64::INFINITY, f64::min);
 
             // Compute per-orbit gradients
             let orbit_grads: Vec<Vec<Vector4<f64>>> = pd
@@ -485,7 +532,7 @@ fn run_q5(base_dir: &str) {
             let id = format!("q5_F{}_{:03}", f_count, pi);
             let base_perm_str = serde_json::to_string(best_perm).unwrap();
 
-            for dir_idx in 0..N_DIRS {
+            for dir_idx in 0..q5_n_dirs {
                 let direction = random_direction(duals.len(), &mut dir_rng);
 
                 // g_i . d for each orbit
@@ -496,10 +543,7 @@ fn run_q5(base_dir: &str) {
 
                 // [prop:capacity-smoothness-classification](b): at switching boundaries,
                 // the directional derivative D_d c = min_i(nabla_a A_i . d).
-                let subdiff_gd = orbit_gd
-                    .iter()
-                    .copied()
-                    .fold(f64::INFINITY, f64::min);
+                let subdiff_gd = orbit_gd.iter().copied().fold(f64::INFINITY, f64::min);
                 // [lem:cap-derivative]: single best-orbit gradient prediction.
                 let single_gd = orbit_gd[0];
 
@@ -515,7 +559,7 @@ fn run_q5(base_dir: &str) {
                     .collect();
                 let orbit_grads_json = serde_json::to_string(&orbit_info).unwrap();
 
-                for &t in T_VALUES {
+                for &t in t_values {
                     let t0 = Instant::now();
 
                     // Perturb dual vertices
@@ -651,7 +695,10 @@ fn q5b_process_polytope(
 
     // Inclusive enumeration: beta >= 0 (picks up boundary orbits with beta_k = 0).
     // [thm:subdiff-with-appearance] needs these to compute the direction-filtered subdiff.
-    println!("  Q5b: {} — F={}, enumerating orbits (inclusive beta >= 0)...", id, f_count);
+    println!(
+        "  Q5b: {} — F={}, enumerating orbits (inclusive beta >= 0)...",
+        id, f_count
+    );
     let t_enum = Instant::now();
     let all_orbits = enumerate_all_orbits_inclusive(polytope);
     let enum_secs = t_enum.elapsed().as_secs_f64();
@@ -682,11 +729,7 @@ fn q5b_process_polytope(
     // Boundary orbits need the direction filter from [thm:subdiff-with-appearance].
     let is_interior: Vec<bool> = tied_orbits
         .iter()
-        .map(|(_, _, kkt)| {
-            kkt.beta
-                .iter()
-                .all(|&b| b > EPS_BETA_CERTIFIED)
-        })
+        .map(|(_, _, kkt)| kkt.beta.iter().all(|&b| b > EPS_BETA_CERTIFIED))
         .collect();
     let n_interior_tied = is_interior.iter().filter(|&&b| b).count();
     let n_boundary = n_inclusive_tied - n_interior_tied;
@@ -781,7 +824,10 @@ fn q5b_process_polytope(
             (f64::NAN, false)
         } else {
             (
-                dir_feasible_gd.iter().copied().fold(f64::INFINITY, f64::min),
+                dir_feasible_gd
+                    .iter()
+                    .copied()
+                    .fold(f64::INFINITY, f64::min),
                 true,
             )
         };
@@ -819,8 +865,9 @@ fn q5b_process_polytope(
             let c_perturbed = perturbed_ehz.result.capacity;
             let perturbed_perm = &perturbed_ehz.result.best_permutation;
             let perturbed_perm_str = serde_json::to_string(perturbed_perm).unwrap();
-            let orbit_switched =
-                !tied_orbits.iter().any(|(_, perm, _)| perm == perturbed_perm);
+            let orbit_switched = !tied_orbits
+                .iter()
+                .any(|(_, perm, _)| perm == perturbed_perm);
 
             let actual = c_perturbed - best_action;
 
@@ -834,8 +881,8 @@ fn q5b_process_polytope(
             // computed at the perturbed point where it IS feasible.
             let (aug_gd, aug_pred, aug_res, aug_log_res) = if orbit_switched {
                 let perturbed_duals_vec = perturbed_polytope.dual_vertices_f64();
-                let appearing_grad = solve_kkt_safe(&perturbed_polytope, perturbed_perm)
-                    .map(|kkt| {
+                let appearing_grad =
+                    solve_kkt_safe(&perturbed_polytope, perturbed_perm).map(|kkt| {
                         capacity_derivatives_a(
                             &kkt.beta,
                             kkt.q_corrected,
@@ -854,7 +901,12 @@ fn q5b_process_polytope(
                     (f64::NAN, f64::NAN, f64::NAN, f64::NAN)
                 }
             } else {
-                (subdiff_gd, subdiff_pred, subdiff_res, subdiff_res.max(1e-300).log10())
+                (
+                    subdiff_gd,
+                    subdiff_pred,
+                    subdiff_res,
+                    subdiff_res.max(1e-300).log10(),
+                )
             };
 
             // Direction-filtered subdiff prediction
@@ -917,7 +969,7 @@ fn q5b_process_polytope(
     rows_written
 }
 
-fn run_q5b(base_dir: &str) {
+fn run_q5b(base_dir: &str, smoke: bool) {
     let path = format!("{}/gradient-correctness-q5b-symmetric.jsonl", base_dir);
     let file = File::create(&path).expect("create Q5b JSONL");
     let mut writer = BufWriter::new(file);
@@ -926,33 +978,54 @@ fn run_q5b(base_dir: &str) {
     let mut rng = ChaCha8Rng::seed_from_u64(SEED_BASE + 700);
 
     // -- Part 1: Regular Lagrangian products LP(n,n) --
-    for &n in &[3, 4, 5] {
+    let regular_ns: &[usize] = if smoke {
+        SMOKE_Q5B_REGULAR_NS
+    } else {
+        &[3, 4, 5]
+    };
+    let q5b_n_dirs = if smoke { SMOKE_Q5B_N_DIRS } else { Q5B_N_DIRS };
+    for &n in regular_ns {
         let (qn, qh) = regular_polygon_2d(n, 1.0);
         let (pn, ph) = regular_polygon_2d(n, 1.0);
         let polytope = lagrangian_product(&qn, &qh, &pn, &ph).expect("regular LP");
-        let n_dirs = if polytope.facet_count() <= 8 { Q5B_N_DIRS } else { 5 };
+        let n_dirs = if smoke {
+            q5b_n_dirs
+        } else if polytope.facet_count() <= 8 {
+            Q5B_N_DIRS
+        } else {
+            5
+        };
         let id = format!("q5b_lp{}_{}", n, n);
         total_rows += q5b_process_polytope(&polytope, &id, n_dirs, &mut rng, &mut writer);
     }
 
     // -- Part 2: hko2024 (Viterbo counterexample, rotated LP(5,5)) --
-    {
+    if !smoke || SMOKE_Q5B_INCLUDE_HKO {
         let kp = symplectic::known_polytopes::hko_pentagon();
         // F=10, expensive -- use 5 directions like LP(5,5)
-        total_rows +=
-            q5b_process_polytope(&kp.polytope, "q5b_hko2024", 5, &mut rng, &mut writer);
+        total_rows += q5b_process_polytope(&kp.polytope, "q5b_hko2024", 5, &mut rng, &mut writer);
     }
 
     // -- Part 3: Non-product polytopes (simplex, hypercube) --
-    {
+    if !smoke || SMOKE_Q5B_INCLUDE_SIMPLEX {
         let kp = symplectic::known_polytopes::simplex();
-        total_rows +=
-            q5b_process_polytope(&kp.polytope, "q5b_simplex", Q5B_N_DIRS, &mut rng, &mut writer);
+        total_rows += q5b_process_polytope(
+            &kp.polytope,
+            "q5b_simplex",
+            q5b_n_dirs,
+            &mut rng,
+            &mut writer,
+        );
     }
-    {
+    if !smoke || SMOKE_Q5B_INCLUDE_HYPERCUBE {
         let kp = symplectic::known_polytopes::hypercube();
-        total_rows +=
-            q5b_process_polytope(&kp.polytope, "q5b_hypercube", Q5B_N_DIRS, &mut rng, &mut writer);
+        total_rows += q5b_process_polytope(
+            &kp.polytope,
+            "q5b_hypercube",
+            q5b_n_dirs,
+            &mut rng,
+            &mut writer,
+        );
     }
 
     // -- Part 4: G-orbit polytopes --
@@ -967,71 +1040,82 @@ fn run_q5b(base_dir: &str) {
     // With a single seed, the orbit lives in a 2D subspace if the seed has
     // matching q/p phase -- so we use two seeds with different phases to ensure
     // the dual vertices positively span R^4. Failing that, we reject.
-    println!("  Q5b: Generating G-orbit polytopes...");
-    // Rotation orders: 2 seeds per order -> F = 2*order facets.
-    // F <= 10 is tractable for enumerate_all_orbits; F = 14+ takes hours.
-    let gorbit_orders = [3, 4, 5]; // F = 6, 8, 10
-    let gorbit_attempts = 50; // Random seeds per order
+    if !smoke || SMOKE_Q5B_INCLUDE_GORBITS {
+        println!("  Q5b: Generating G-orbit polytopes...");
+        // Rotation orders: 2 seeds per order -> F = 2*order facets.
+        // F <= 10 is tractable for enumerate_all_orbits; F = 14+ takes hours.
+        let gorbit_orders: &[usize] = if smoke {
+            SMOKE_Q5B_GORBIT_ORDERS
+        } else {
+            &[3, 4, 5]
+        };
+        let gorbit_attempts = if smoke { SMOKE_Q5B_GORBIT_ATTEMPTS } else { 50 };
 
-    for &order in &gorbit_orders {
-        let theta = 2.0 * PI / order as f64;
-        let (c, s) = (theta.cos(), theta.sin());
-        // M = diag(R(theta), R(theta)) -- simultaneous rotation in q and p planes
-        let gen = nalgebra::Matrix4::new(
-            c, -s, 0.0, 0.0, s, c, 0.0, 0.0, 0.0, 0.0, c, -s, 0.0, 0.0, s, c,
-        );
-
-        let mut found = 0;
-        for attempt in 0..gorbit_attempts {
-            // Two random seeds, concatenate orbits
-            let seed1 = Vector4::new(
-                StandardNormal.sample(&mut rng),
-                StandardNormal.sample(&mut rng),
-                StandardNormal.sample(&mut rng),
-                StandardNormal.sample(&mut rng),
-            );
-            let seed2 = Vector4::new(
-                StandardNormal.sample(&mut rng),
-                StandardNormal.sample(&mut rng),
-                StandardNormal.sample(&mut rng),
-                StandardNormal.sample(&mut rng),
+        for &order in gorbit_orders {
+            let theta = 2.0 * PI / order as f64;
+            let (c, s) = (theta.cos(), theta.sin());
+            // M = diag(R(theta), R(theta)) -- simultaneous rotation in q and p planes
+            let gen = nalgebra::Matrix4::new(
+                c, -s, 0.0, 0.0, s, c, 0.0, 0.0, 0.0, 0.0, c, -s, 0.0, 0.0, s, c,
             );
 
-            // Build orbit from both seeds
-            let mut duals = Vec::new();
-            for seed in &[seed1, seed2] {
-                let mut current = *seed;
-                for _ in 0..order {
-                    let is_dup =
-                        duals.iter().any(|v: &Vector4<f64>| (v - current).norm() < 1e-10);
-                    if is_dup {
-                        break;
+            let mut found = 0;
+            for attempt in 0..gorbit_attempts {
+                // Two random seeds, concatenate orbits
+                let seed1 = Vector4::new(
+                    StandardNormal.sample(&mut rng),
+                    StandardNormal.sample(&mut rng),
+                    StandardNormal.sample(&mut rng),
+                    StandardNormal.sample(&mut rng),
+                );
+                let seed2 = Vector4::new(
+                    StandardNormal.sample(&mut rng),
+                    StandardNormal.sample(&mut rng),
+                    StandardNormal.sample(&mut rng),
+                    StandardNormal.sample(&mut rng),
+                );
+
+                // Build orbit from both seeds
+                let mut duals = Vec::new();
+                for seed in &[seed1, seed2] {
+                    let mut current = *seed;
+                    for _ in 0..order {
+                        let is_dup = duals
+                            .iter()
+                            .any(|v: &Vector4<f64>| (v - current).norm() < 1e-10);
+                        if is_dup {
+                            break;
+                        }
+                        duals.push(current);
+                        current = &gen * current;
                     }
-                    duals.push(current);
-                    current = &gen * current;
+                }
+
+                let polytope = match Polytope4D::from_f64(duals) {
+                    Ok(p) => p,
+                    Err(_) => continue, // Unbounded, degenerate, etc.
+                };
+
+                let id = format!("q5b_gorbit_n{}_{:02}", order, attempt);
+                let n_dirs = if polytope.facet_count() <= 8 {
+                    q5b_n_dirs
+                } else {
+                    5
+                };
+                let rows = q5b_process_polytope(&polytope, &id, n_dirs, &mut rng, &mut writer);
+                if rows > 0 {
+                    found += 1;
+                }
+                // Keep up to 3 successful polytopes per order
+                if found >= 3 {
+                    break;
                 }
             }
-
-            let polytope = match Polytope4D::from_f64(duals) {
-                Ok(p) => p,
-                Err(_) => continue, // Unbounded, degenerate, etc.
-            };
-
-            let id = format!("q5b_gorbit_n{}_{:02}", order, attempt);
-            let n_dirs = if polytope.facet_count() <= 8 { Q5B_N_DIRS } else { 5 };
-            let rows = q5b_process_polytope(&polytope, &id, n_dirs, &mut rng, &mut writer);
-            if rows > 0 {
-                found += 1;
-            }
-            // Keep up to 3 successful polytopes per order
-            if found >= 3 {
-                break;
-            }
+            println!(
+                "  Q5b: G-orbit order {} — {} polytopes with tied orbits (from {} attempts)",
+                order, found, gorbit_attempts,
+            );
         }
-        println!(
-            "  Q5b: G-orbit order {} — {} polytopes with tied orbits (from {} attempts)",
-            order, found, gorbit_attempts,
-        );
     }
 
     writer.flush().expect("flush Q5b");
@@ -1043,19 +1127,30 @@ fn run_q5b(base_dir: &str) {
 // ============================================================================
 
 fn main() {
-    let base_dir = ".";
+    let smoke = smoke_mode();
+    let smoke_dir;
+    let base_dir = if smoke {
+        smoke_dir = smoke_output_dir("dev-numerics-subdifferential-smoke");
+        println!("Smoke output: {smoke_dir}");
+        smoke_dir.as_str()
+    } else {
+        "."
+    };
 
-    println!("=== Gradient Correctness: Subdifferential (Q5 + Q5b) ===\n");
+    println!(
+        "=== Gradient Correctness: Subdifferential (Q5 + Q5b){} ===\n",
+        if smoke { " [smoke]" } else { "" }
+    );
     let t0 = Instant::now();
 
     println!("--- Q5: Orbit-switching (subdifferential prediction) ---");
     let tp = Instant::now();
-    run_q5(base_dir);
+    run_q5(base_dir, smoke);
     println!("  Q5 time: {:.1}s\n", tp.elapsed().as_secs_f64());
 
     println!("--- Q5b: Subdifferential at exact boundaries (symmetric polytopes) ---");
     let tp = Instant::now();
-    run_q5b(base_dir);
+    run_q5b(base_dir, smoke);
     println!("  Q5b time: {:.1}s\n", tp.elapsed().as_secs_f64());
 
     println!("=== Total time: {:.1}s ===", t0.elapsed().as_secs_f64());

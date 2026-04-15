@@ -24,7 +24,7 @@ uv run analyze.py                        # generates all figures
 |------|------|
 | `main.rs` | Rust binary: generates JSONL dataset with omega features and gradients |
 | `analyze.py` | Python: correlation analysis and figure generation |
-| `math.tex` | Formal writeup (hypothesis, Phase A/B, conclusion) |
+| `formal/combinatorial-cells/omega-hypothesis.tex` | Formal writeup (hypothesis, Phase A/B, conclusion) |
 | `omega-obstacle.jsonl` | Dataset (953 rows) |
 | `omega_obstacle_ridge_min_vs_sys.png` | Ridge min\|omega\| vs sys scatter plot |
 | `omega_obstacle_orbit_min_vs_sys.png` | Orbit min\|omega\| vs sys scatter plot |

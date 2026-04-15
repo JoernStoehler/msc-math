@@ -2,7 +2,7 @@
 
 ## Motivation
 
-All experiments in this thesis depend on the numerical KKT solver producing accurate capacity values. This experiment validates that f64 numerical errors stay within the proven error bounds (Lemma `lem:q-error-bound` in math.tex), both by sweeping all (S, sigma) nodes and by exact comparison with rational arithmetic. If the error bounds were violated, every capacity value computed in the thesis would be suspect.
+All experiments in this thesis depend on the numerical KKT solver producing accurate capacity values. This experiment validates that f64 numerical errors stay within the proven error bounds (Lemma `lem:q-error-bound` in formal/numerics/q-error.tex), both by sweeping all (S, sigma) nodes and by exact comparison with rational arithmetic. If the error bounds were violated, every capacity value computed in the thesis would be suspect.
 
 ## Status
 
@@ -21,7 +21,7 @@ Output goes to stdout and is captured in `q_error_output.txt`. The binary panics
 | File | Role |
 |------|------|
 | `main.rs` | Rust binary: all-node error bound sweep + exact rational comparison |
-| `math.tex` | Formal writeup (two tables, discussion paragraph) |
+| `formal/numerics/q-error.tex` | Formal writeup (two tables, discussion paragraph) |
 | `q_error_output.txt` | Captured stdout output (40 lines) with summary tables |
 
 ## Design

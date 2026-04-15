@@ -73,12 +73,12 @@ And about input validation:
 
 **What currently exists in the codebase:**
 - Adjacency three-valued predicate: `appendix-numerical-three-valued.tex:76-109`
-- Skeleton computation: `crates/src/geom/skeleton.rs` (uses `EPS_FACET_INCIDENCE = 1e-8`)
-- Directed adjacency (ω₀): `hk2017/mod.rs:218-241` — uses hard `>= 0.0` cutoff, NO three-valued handling
+- Skeleton computation: `library/src/geom/skeleton.rs` (uses `EPS_FACET_INCIDENCE = 1e-8`)
+- Directed adjacency (ω₀): `library/src/algorithms/hk2017/mod.rs:218-241` — uses hard `>= 0.0` cutoff, NO three-valued handling
 
 **Known gap**: The ω₀ ≥ 0 test in the code is a hard boolean cutoff, not three-valued. Near-Lagrangian 2-faces could be misclassified. This must either get three-valued treatment or the theorem must explain why it's safe.
 
-**Related prior work**: Jörn's note in `experiments/ablation/ideas-future.md:45-54` (dated 2026-02-22): "Replace three-valued predicates (TRUE/FALSE/UNKNOWN) in skeleton computation with deterministic rounding: if ω₀(n_i,n_j) ≈ 0, round to TRUE or FALSE and argue via small perturbation that the capacity changes by at most the perturbation. This separates exact combinatorial decisions (skeleton) from approximate numerical decisions (KKT solver). Requires careful analysis of when the perturbation direction matters." This is a related but different approach (rounding + perturbation argument vs. the consistency theorem Jörn is now proposing).
+**Related prior work**: historical Jörn note in deleted `experiments/ablation/ideas-future.md:45-54` (dated 2026-02-22): "Replace three-valued predicates (TRUE/FALSE/UNKNOWN) in skeleton computation with deterministic rounding: if ω₀(n_i,n_j) ≈ 0, round to TRUE or FALSE and argue via small perturbation that the capacity changes by at most the perturbation. This separates exact combinatorial decisions (skeleton) from approximate numerical decisions (KKT solver). Requires careful analysis of when the perturbation direction matters." This is a related but different approach (rounding + perturbation argument vs. the consistency theorem Jörn is now proposing).
 
 ### A.3 SVD Step (given S, σ)
 
@@ -150,10 +150,10 @@ The exploration agent (`a5fe055ee1e528c3e`) searched all thesis .tex files, all 
 | `thesis/experiments.tex` | Experiments chapter | Add `\input` for unknown-predicates and ablation (moved from appendix) |
 | NEW file | — | A.1 general approach framework |
 | NEW file | — | A.2 polytope combinatorics (new math: the consistency theorem) |
-| `crates/src/geom/skeleton.rs` | Skeleton computation | May need updates if the combinatorics theorem changes assumptions |
-| `crates/src/algorithms/hk2017/mod.rs:237` | ω₀ hard cutoff | May need three-valued treatment |
+| `library/src/geom/skeleton.rs` | Skeleton computation | May need updates if the combinatorics theorem changes assumptions |
+| `library/src/algorithms/hk2017/mod.rs:237` | ω₀ hard cutoff | May need three-valued treatment |
 | ~~`experiments/dismissal-error/`~~ | ~~Deleted~~ | ~~Replaced by q-error experiment~~ |
-| `experiments/ablation/ideas-future.md:45-54` | Jörn's perturbation idea | Related prior thinking, should inform A.2 |
+| Deleted `experiments/ablation/ideas-future.md:45-54` | Jörn's perturbation idea | Historical prior thinking, should inform A.2 |
 
 ## Scope and effort estimate
 
@@ -172,5 +172,5 @@ Estimated: 1-2 full agent sessions, with Jörn designing the combinatorics theor
 - No new undefined references
 - All `\ref{}` and `\label{}` updated for the new section structure
 - Cross-references from main chapters still resolve: grep for `\ref{app:near-singular}`, `\ref{app:three-valued}`, `\ref{app:error-tracking}` and update
-- Grep `crates/src/` for `[alg:]` or `[lem:]` references to appendix labels — update if labels changed
+- Grep `library/src/` for `[alg:]` or `[lem:]` references to appendix labels — update if labels changed
 - The experiment sections render correctly in their new location in the experiments chapter

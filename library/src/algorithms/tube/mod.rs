@@ -1,10 +1,10 @@
 //! Tube algorithm for EHZ capacity of symplectic polytopes.
 //!
 //! **Status: blocked, do not use.** The rotation-increment formula is
-//! incorrect and the supporting math in `algorithms/math.tex` contains
+//! incorrect and the supporting math in `formal/library/algorithms.tex` contains
 //! unverified `[TODO: JÖRN]` markers in the tube section
 //! (`def:tube-data` through `alg:tube`, around lines 307, 375, 533, 597
-//! of `algorithms/math.tex`). `tube_capacity` is not re-exported from
+//! of `formal/library/algorithms.tex`). `tube_capacity` is not re-exported from
 //! `lib.rs`; callers should use `hk2017::ehz_capacity` instead. Tracked
 //! under TASKS.md `[blocked] [group:tube] Tube rotation formula
 //! implementation` and `[Jörn] [group:tube] tube-algorithm.tex`.
@@ -346,7 +346,7 @@ fn compute_rotation_increment(
         return ROTATION_INCREMENT_FALLBACK;
     }
     // TODO [JÖRN]: The formula below (angle between Reeb vectors) is NOT the CH2021
-    // transition matrix trace formula. [def:rotation-increment] in algorithms/math.tex
+    // transition matrix trace formula. [def:rotation-increment] in formal/library/algorithms.tex
     // defines Delta_rho via psi_{jl}, but the psi_{jl} computation was abandoned
     // (Sherman-Morrison singular). The angle heuristic below is a placeholder that
     // preserves the (0, 1/2) range but may give incorrect pruning bounds.

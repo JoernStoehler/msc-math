@@ -15,11 +15,12 @@
 //!
 //! Usage: cargo run -p exp-sys-landscape --release --bin sys-variable-f-ascent
 //! Flags: --fresh  (clear existing data and rerun)
+//!        --smoke  (run one bounded probe against temp output/cache)
+//!        --out <path>  (override output JSONL path)
 //! Output: variable-f-ascent/variable-f-ascent.jsonl
 
 use exp_sys_landscape::compute_step_bound;
 use nalgebra::Vector4;
-use symplectic::database::{load, save, DualVerticesKey, PolytopeRecord, SigmaAction};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal};
@@ -27,7 +28,9 @@ use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 use std::fs::{File, OpenOptions};
 use std::io::{BufRead, BufReader, BufWriter, Write};
-use std::time::Instant;
+use std::path::PathBuf;
+use std::time::{Instant, SystemTime, UNIX_EPOCH};
+use symplectic::database::{load, save, DualVerticesKey, PolytopeRecord, SigmaAction};
 use symplectic::derivatives::{capacity_derivatives_a, volume_derivatives_a};
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
@@ -95,11 +98,11 @@ const N_WIGGLES: usize = 5;
 
 /// Multiplicative perturbation scale for dual vertex components: a_k[i] -> a_k[i] * (1 + 0.05 * N(0,1)).
 /// Per-facet displacement has expected norm ~0.05 * |a_k| (unit-scale dual vertices: ~0.05).
-/// Cell-widths data (cell-widths/logbook.md): median non-orbit cell width = 0.124, median
+/// Cell-widths data (research/combinatorial-cells/design/cell-widths.md): median non-orbit cell width = 0.124, median
 /// orbit cell width = 0.258. So per-facet displacement ~0.05 is ~40% of the narrowest
 /// median cell width. With F=10-11 facets all perturbed simultaneously, boundary crossing
 /// is highly likely — confirmed by data: wiggle dominated overshoot as escape strategy
-/// (gradient-ascent-general/logbook.md, gradient-ascent-products/logbook.md).
+/// (research/sys-landscape/design/gradient-ascent-general.md, research/sys-landscape/design/gradient-ascent-products.md).
 /// If changed: much smaller (e.g. 0.01) reduces boundary-crossing probability and escape
 /// effectiveness. Much larger (e.g. 0.2) risks producing degenerate polytopes
 /// (Polytope4D::from_f64 failure) or landing too far from the current optimum.
@@ -113,6 +116,9 @@ const MAX_ESCAPE_ROUNDS: usize = 3;
 /// (C(11,4)/C(10,4) = 330/210 ≈ 1.57). Initial run (2026-04-04):
 /// max trial time was ~59s, so 180s is generous.
 const TRIAL_TIME_BUDGET_SECS: f64 = 180.0;
+
+/// Smoke runs are bounded to one gradient-ascent iteration and no escape rounds.
+const SMOKE_TRIAL_TIME_BUDGET_SECS: f64 = 30.0;
 
 /// Numerical zero threshold for gradient norms, rates, and slack comparisons.
 /// Near machine epsilon for unit-scale f64. Matches gradient-ascent-general.
@@ -242,18 +248,28 @@ struct AscentResult {
 
 /// Single gradient ascent phase: iterate until convergence or budget.
 /// Gradient: d(sys)/d(a_k) = (cap * d(cap)/d(a_k) - sys * d(vol)/d(a_k)) / vol
-// TODO: add [lem:sys-sensitivity] to math.tex (see gradient-correctness experiment)
+// TODO: add [lem:sys-sensitivity] to formal math (see gradient-correctness experiment)
 fn gradient_ascent_phase(
     start: &Polytope4D,
     t0: Instant,
     budget: f64,
     db: &mut Db,
 ) -> Option<(Polytope4D, f64, usize)> {
+    gradient_ascent_phase_limited(start, t0, budget, db, MAX_ITERATIONS)
+}
+
+fn gradient_ascent_phase_limited(
+    start: &Polytope4D,
+    t0: Instant,
+    budget: f64,
+    db: &mut Db,
+    max_iterations: usize,
+) -> Option<(Polytope4D, f64, usize)> {
     let mut current = Polytope4D::from_f64(start.dual_vertices_f64().to_vec()).ok()?;
     let mut current_sys = compute_sys(&current, db)?;
     let mut n_iters = 0usize;
 
-    for iter in 0..MAX_ITERATIONS {
+    for iter in 0..max_iterations {
         if t0.elapsed().as_secs_f64() > budget {
             break;
         }
@@ -273,11 +289,7 @@ fn gradient_ascent_phase(
             .map(|(dv, dc)| (cap * dc - sys * dv) / vol)
             .collect();
 
-        let gradient_norm = d_sys_a
-            .iter()
-            .map(|d| d.norm_squared())
-            .sum::<f64>()
-            .sqrt();
+        let gradient_norm = d_sys_a.iter().map(|d| d.norm_squared()).sum::<f64>().sqrt();
         if gradient_norm < EPS {
             break;
         }
@@ -347,24 +359,44 @@ fn full_ascent(
     budget: f64,
     db: &mut Db,
 ) -> Option<AscentResult> {
+    full_ascent_limited(
+        start,
+        rng,
+        budget,
+        db,
+        MAX_ITERATIONS,
+        MAX_ESCAPE_ROUNDS,
+        N_WIGGLES,
+    )
+}
+
+fn full_ascent_limited(
+    start: &Polytope4D,
+    rng: &mut ChaCha8Rng,
+    budget: f64,
+    db: &mut Db,
+    max_iterations: usize,
+    max_escape_rounds: usize,
+    n_wiggles: usize,
+) -> Option<AscentResult> {
     let t0 = Instant::now();
 
     let (mut best_polytope, mut best_sys, mut total_iters) =
-        gradient_ascent_phase(start, t0, budget, db)?;
+        gradient_ascent_phase_limited(start, t0, budget, db, max_iterations)?;
     let mut n_phases = 1usize;
 
-    for _round in 0..MAX_ESCAPE_ROUNDS {
+    for _round in 0..max_escape_rounds {
         if t0.elapsed().as_secs_f64() > budget {
             break;
         }
         let mut escaped = false;
-        for _ in 0..N_WIGGLES {
+        for _ in 0..n_wiggles {
             if t0.elapsed().as_secs_f64() > budget {
                 break;
             }
             if let Some(wiggled) = wiggle(&best_polytope, rng) {
                 if let Some((p, s, iters)) =
-                    gradient_ascent_phase(&wiggled, t0, budget, db)
+                    gradient_ascent_phase_limited(&wiggled, t0, budget, db, max_iterations)
                 {
                     n_phases += 1;
                     total_iters += iters;
@@ -401,12 +433,8 @@ fn full_ascent(
 /// the new halfspace ⟨n,x⟩ ≤ h_K(n) - ε shaves a thin sliver.
 ///
 /// Pattern from facet-splitting/main.rs.
-// TODO: add [lem:facet-addition] to math.tex (dual vertex ↔ halfspace correspondence)
-fn add_facet(
-    polytope: &Polytope4D,
-    direction: &Vector4<f64>,
-    epsilon: f64,
-) -> Option<Polytope4D> {
+// TODO: add [lem:facet-addition] to formal math (dual vertex ↔ halfspace correspondence)
+fn add_facet(polytope: &Polytope4D, direction: &Vector4<f64>, epsilon: f64) -> Option<Polytope4D> {
     let vertices = polytope.vertices_f64();
     let h_k_n = vertices
         .iter()
@@ -449,14 +477,15 @@ fn last_facet_active(polytope: &Polytope4D) -> bool {
 // Loading F=10 local maxima from gradient-ascent-general
 // ============================================================================
 
-fn load_local_maxima(
-    path: &std::path::Path,
-) -> Vec<(String, f64, Polytope4D)> {
+fn load_local_maxima(path: &std::path::Path) -> Vec<(String, f64, Polytope4D)> {
     let mut results = Vec::new();
     let file = match File::open(path) {
         Ok(f) => f,
         Err(e) => {
-            eprintln!("WARNING: cannot load local maxima from {}: {e}", path.display());
+            eprintln!(
+                "WARNING: cannot load local maxima from {}: {e}",
+                path.display()
+            );
             return results;
         }
     };
@@ -520,23 +549,148 @@ fn write_row(row: &ResultRow, writer: &mut BufWriter<File>) {
     writeln!(writer).expect("newline");
 }
 
+fn smoke_paths() -> (PathBuf, PathBuf) {
+    let stamp = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("system clock before UNIX_EPOCH")
+        .as_millis();
+    let smoke_dir = std::env::temp_dir().join(format!(
+        "sys-variable-f-ascent-smoke-{}-{stamp}",
+        std::process::id()
+    ));
+    std::fs::create_dir_all(&smoke_dir).expect("create smoke temp dir");
+    (
+        smoke_dir.join("variable-f-ascent-smoke.jsonl"),
+        smoke_dir.join("cache.jsonl"),
+    )
+}
+
+fn smoke_run(
+    package_root: &std::path::Path,
+    output_path: &std::path::Path,
+    cache_path: &std::path::Path,
+    writer: &mut BufWriter<File>,
+    rng: &mut ChaCha8Rng,
+    db: &mut Db,
+) {
+    println!("Smoke mode: temp output {}", output_path.display());
+    println!("Smoke mode: temp cache   {}", cache_path.display());
+
+    let ga_path = package_root.join("gradient-ascent-general/gradient-ascent-general.jsonl");
+    let local_maxima = load_local_maxima(&ga_path);
+    println!(
+        "Smoke mode: loaded {} local maxima from {}",
+        local_maxima.len(),
+        ga_path.display()
+    );
+
+    let (trial_name, source_sys, start_polytope) =
+        if let Some((src_name, src_sys, src_polytope)) = local_maxima.first() {
+            (format!("smoke_{src_name}"), *src_sys, src_polytope.clone())
+        } else {
+            println!("Smoke mode: no local maxima found, sampling a random F=10 polytope.");
+            let mut sampled = None;
+            for _ in 0..100 {
+                if let Ok(p) = sample_random_polytope(FACET_COUNT, H_MIN, H_MAX, rng) {
+                    sampled = Some(p);
+                    break;
+                }
+            }
+            let polytope = sampled.expect("smoke fallback polytope generation");
+            let sys = compute_sys(&polytope, db).expect("compute smoke start sys");
+            ("smoke_random_f10".to_string(), sys, polytope)
+        };
+
+    let start_sys = compute_sys(&start_polytope, db).expect("compute smoke start sys");
+    let dir = random_direction(rng);
+    let f11_polytope =
+        add_facet(&start_polytope, &dir, FACET_EPSILON).expect("smoke facet addition");
+    let sys_after_add = compute_sys(&f11_polytope, db);
+    let t0 = Instant::now();
+    let result = full_ascent_limited(
+        &f11_polytope,
+        rng,
+        SMOKE_TRIAL_TIME_BUDGET_SECS,
+        db,
+        1,
+        0,
+        0,
+    )
+    .expect("smoke ascent");
+    let active = last_facet_active(&result.final_polytope);
+
+    let row = ResultRow {
+        rq: "smoke".into(),
+        path: "smoke_probe".into(),
+        name: trial_name,
+        starting_f: 11,
+        starting_sys: start_sys,
+        sys_after_addition: sys_after_add,
+        final_sys: result.final_sys,
+        delta_vs_source: result.final_sys - source_sys,
+        n_iterations: result.n_iters,
+        n_phases: result.n_phases,
+        placement_direction: Some([dir[0], dir[1], dir[2], dir[3]]),
+        facet_remained_active: Some(active),
+        total_time_ms: t0.elapsed().as_secs_f64() * 1000.0,
+        final_dual_vertices: dvs_to_array(&result.final_polytope),
+    };
+    write_row(&row, writer);
+    writer.flush().expect("flush smoke output");
+    save(cache_path, db).expect("save smoke cache");
+}
+
 // ============================================================================
 // Main
 // ============================================================================
 
 fn main() {
     let t_global = Instant::now();
-    let base =
-        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("variable-f-ascent");
-    let output_path = base.join("variable-f-ascent.jsonl");
+    let base = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("variable-f-ascent");
+    let default_output_path = base.join("variable-f-ascent.jsonl");
 
     println!("variable-f-ascent: variable-F gradient ascent experiment\n");
 
     // CLI args
     let args: Vec<String> = std::env::args().collect();
+    let mut smoke = false;
     let fresh = args.iter().any(|a| a == "--fresh");
+    let mut out_path: Option<PathBuf> = None;
 
-    let completed = if fresh {
+    let mut i = 1usize;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--fresh" => {
+                i += 1;
+            }
+            "--smoke" => {
+                smoke = true;
+                i += 1;
+            }
+            "--out" => {
+                let value = args.get(i + 1).expect("--out requires a value");
+                out_path = Some(PathBuf::from(value));
+                i += 2;
+            }
+            other => {
+                panic!("unknown argument: {other}");
+            }
+        }
+    }
+
+    let (output_path, cache_path) = if smoke {
+        let (smoke_output_path, smoke_cache_path) = smoke_paths();
+        (out_path.unwrap_or(smoke_output_path), smoke_cache_path)
+    } else {
+        (
+            out_path.unwrap_or(default_output_path),
+            base.join("cache.jsonl"),
+        )
+    };
+
+    let completed = if smoke {
+        HashSet::new()
+    } else if fresh {
         let _ = std::fs::remove_file(&output_path);
         HashSet::new()
     } else {
@@ -547,6 +701,10 @@ fn main() {
         println!("Starting fresh run.");
     } else {
         println!("Resuming: {} trials already completed.", completed.len());
+    }
+
+    if let Some(parent) = output_path.parent() {
+        std::fs::create_dir_all(parent).expect("create output dir");
     }
 
     let output_file = OpenOptions::new()
@@ -561,9 +719,22 @@ fn main() {
     // Local capacity cache — avoids recomputing ehz_capacity on reruns
     // without bloating the shared sys-landscape family cache with thousands
     // of intermediate gradient-step polytopes.
-    let cache_path = base.join("cache.jsonl");
     let mut db: Db = load(&cache_path).expect("load cache");
     println!("Cache: {} entries\n", db.len());
+
+    if smoke {
+        smoke_run(
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")),
+            &output_path,
+            &cache_path,
+            &mut writer,
+            &mut rng,
+            &mut db,
+        );
+        println!("Smoke complete.");
+        println!("Output: {}", output_path.display());
+        return;
+    }
 
     // =========================================================================
     // RQ1: Can F=10 local maxima be improved in F=11 space?
@@ -575,7 +746,10 @@ fn main() {
     let ga_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("gradient-ascent-general/gradient-ascent-general.jsonl");
     let local_maxima = load_local_maxima(&ga_path);
-    println!("Loaded {} local maxima from gradient-ascent-general.\n", local_maxima.len());
+    println!(
+        "Loaded {} local maxima from gradient-ascent-general.\n",
+        local_maxima.len()
+    );
 
     let mut rq1_improved = 0usize;
     let mut rq1_total = 0usize;
@@ -679,9 +853,7 @@ fn main() {
     while rq2_starts.len() < N_SEEDS_RQ2 {
         attempts += 1;
         if attempts > N_SEEDS_RQ2 * 100 {
-            eprintln!(
-                "WARNING: gave up generating F=10 polytopes after {attempts} attempts"
-            );
+            eprintln!("WARNING: gave up generating F=10 polytopes after {attempts} attempts");
             break;
         }
         if let Ok(p) = sample_random_polytope(FACET_COUNT, H_MIN, H_MAX, &mut rng) {
@@ -697,9 +869,7 @@ fn main() {
     while rq2_f11_random.len() < N_SEEDS_RQ2 {
         attempts += 1;
         if attempts > N_SEEDS_RQ2 * 100 {
-            eprintln!(
-                "WARNING: gave up generating F=11 polytopes after {attempts} attempts"
-            );
+            eprintln!("WARNING: gave up generating F=11 polytopes after {attempts} attempts");
             break;
         }
         if let Ok(p) = sample_random_polytope(FACET_COUNT + 1, H_MIN, H_MAX, &mut rng) {
@@ -707,7 +877,10 @@ fn main() {
             rq2_f11_random.push((name, p));
         }
     }
-    println!("Generated {} F=11 random polytopes.\n", rq2_f11_random.len());
+    println!(
+        "Generated {} F=11 random polytopes.\n",
+        rq2_f11_random.len()
+    );
 
     for (idx, (seed_name, start_polytope)) in rq2_starts.iter().enumerate() {
         let start_sys = match compute_sys(start_polytope, &mut db) {
@@ -770,7 +943,8 @@ fn main() {
                 match add_facet(a_polytope, &dir, FACET_EPSILON) {
                     Some(f11_polytope) => {
                         let sys_after_add = compute_sys(&f11_polytope, &mut db);
-                        match full_ascent(&f11_polytope, &mut rng, TRIAL_TIME_BUDGET_SECS, &mut db) {
+                        match full_ascent(&f11_polytope, &mut rng, TRIAL_TIME_BUDGET_SECS, &mut db)
+                        {
                             Some(result) => {
                                 let active = last_facet_active(&result.final_polytope);
                                 let row = ResultRow {
@@ -869,8 +1043,7 @@ fn main() {
                             starting_sys: f11_start_sys.unwrap_or(f64::NAN),
                             sys_after_addition: None,
                             final_sys: result.final_sys,
-                            delta_vs_source: result.final_sys
-                                - f11_start_sys.unwrap_or(f64::NAN),
+                            delta_vs_source: result.final_sys - f11_start_sys.unwrap_or(f64::NAN),
                             n_iterations: result.n_iters,
                             n_phases: result.n_phases,
                             placement_direction: None,
@@ -903,7 +1076,11 @@ fn main() {
     save(&cache_path, &db).expect("save cache");
 
     println!("========================================");
-    println!("Cache: {} entries (saved to {})", db.len(), cache_path.display());
+    println!(
+        "Cache: {} entries (saved to {})",
+        db.len(),
+        cache_path.display()
+    );
     println!("Total time: {:.1}s", t_global.elapsed().as_secs_f64());
     println!("Output: {}", output_path.display());
 }

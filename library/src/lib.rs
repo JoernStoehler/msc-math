@@ -33,7 +33,7 @@
 //! of QP inputs from `Polytope4D` lives in `kkt::qp_assembly`, which is
 //! the one place that crosses the `geom` ↔ `kkt` boundary.
 //!
-//! Mathematical proofs live in per-module `math.tex` files under `formal/`.
+//! Mathematical proofs live in per-module `.tex` files under `formal/`.
 
 pub mod geom;
 pub mod kkt;

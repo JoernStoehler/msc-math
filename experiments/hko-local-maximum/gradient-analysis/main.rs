@@ -23,16 +23,16 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
 use symplectic::algorithms::facet_adjacency::{build_transition_matrix, is_feasible_cycle};
-use symplectic::algorithms::hk2017::{combinations, ehz_capacity};
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
-use symplectic::derivatives::{
-    capacity_derivatives_a, volume_derivatives_a,
-};
+use symplectic::algorithms::hk2017::{combinations, ehz_capacity};
+use symplectic::derivatives::{capacity_derivatives_a, volume_derivatives_a};
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::volume::volume;
-use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktOutcome, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
+use symplectic::kkt::saddle_point_solver::{
+    solve_kkt_for, KktOutcome, EPS_BETA_POSITIVE, EPS_Q_POSITIVE,
+};
 use symplectic::omega0;
 
 /// Gap threshold for near-optimal orbits: collect orbits within δ of best.
@@ -253,7 +253,8 @@ fn compute_sensitivity(
     let mu: Vec<f64> = orbit.lambda.iter().map(|&l| -l).collect();
 
     let d_vol_a = volume_derivatives_a(polytope);
-    let d_cap_a = capacity_derivatives_a(&orbit.beta, orbit.q_value, &mu, &orbit.permutation, duals);
+    let d_cap_a =
+        capacity_derivatives_a(&orbit.beta, orbit.q_value, &mu, &orbit.permutation, duals);
 
     let d_sys_a: Vec<Vector4<f64>> = d_vol_a
         .iter()
@@ -262,32 +263,28 @@ fn compute_sensitivity(
         .collect();
 
     // Derive h/n gradients from dual vertex gradient
-    let d_sys_h: Vec<f64> = (0..f).map(|k| {
-        let a_norm = duals[k].norm();
-        let n = duals[k] / a_norm;
-        let h = 1.0 / a_norm;
-        d_sys_a[k].dot(&(-n / (h * h)))
-    }).collect();
+    let d_sys_h: Vec<f64> = (0..f)
+        .map(|k| {
+            let a_norm = duals[k].norm();
+            let n = duals[k] / a_norm;
+            let h = 1.0 / a_norm;
+            d_sys_a[k].dot(&(-n / (h * h)))
+        })
+        .collect();
 
-    let gradient_norm_h = d_sys_h
-        .iter()
-        .map(|x| x * x)
-        .sum::<f64>()
-        .sqrt();
+    let gradient_norm_h = d_sys_h.iter().map(|x| x * x).sum::<f64>().sqrt();
 
-    let d_sys_n: Vec<Vector4<f64>> = (0..f).map(|k| {
-        let a_norm = duals[k].norm();
-        let n = duals[k] / a_norm;
-        let h = 1.0 / a_norm;
-        let proj = d_sys_a[k] / h - (d_sys_a[k].dot(&n) / h) * n;
-        proj
-    }).collect();
+    let d_sys_n: Vec<Vector4<f64>> = (0..f)
+        .map(|k| {
+            let a_norm = duals[k].norm();
+            let n = duals[k] / a_norm;
+            let h = 1.0 / a_norm;
+            let proj = d_sys_a[k] / h - (d_sys_a[k].dot(&n) / h) * n;
+            proj
+        })
+        .collect();
 
-    let gradient_norm_n = d_sys_n
-        .iter()
-        .map(|v| v.norm_squared())
-        .sum::<f64>()
-        .sqrt();
+    let gradient_norm_n = d_sys_n.iter().map(|v| v.norm_squared()).sum::<f64>().sqrt();
 
     let gradient_norm_hn =
         (gradient_norm_h * gradient_norm_h + gradient_norm_n * gradient_norm_n).sqrt();
@@ -304,8 +301,8 @@ fn compute_sensitivity(
 // ============================================================================
 // Step bounds computation (experiment-specific: topology-aware step size limits)
 // Same math as [lem:step-bound-incidence] and [lem:step-bound-omega] in
-// experiments/combinatorial-cells/boundary-characterization/math.tex, adapted for (h,n) space.
-// TODO: add [lem:step-bound-hn] to gradient-analysis/math.tex for the (h,n) variant.
+// formal/combinatorial-cells/boundary-characterization.tex, adapted for (h,n) space.
+// TODO: add [lem:step-bound-hn] to formal/hko-local-maximum/gradient-analysis.tex for the (h,n) variant.
 // ============================================================================
 
 fn compute_step_bound(polytope: &Polytope4D, direction: &[f64]) -> f64 {
@@ -393,11 +390,7 @@ fn compute_step_bound(polytope: &Polytope4D, direction: &[f64]) -> f64 {
     t_max.min(MAX_STEP_SIZE)
 }
 
-fn compute_step_bound_hn(
-    polytope: &Polytope4D,
-    g_h: &[f64],
-    g_n: &[Vector4<f64>],
-) -> f64 {
+fn compute_step_bound_hn(polytope: &Polytope4D, g_h: &[f64], g_n: &[Vector4<f64>]) -> f64 {
     let duals = polytope.dual_vertices_f64();
     let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
     let heights: Vec<f64> = duals.iter().map(|a| 1.0 / a.norm()).collect();
@@ -524,8 +517,13 @@ fn try_step_h(
     let new_heights: Vec<f64> = (0..f).map(|k| heights[k] + t * direction[k]).collect();
 
     let new_polytope = Polytope4D::from_f64(
-        normals.iter().zip(new_heights.iter()).map(|(n, &h)| n / h).collect(),
-    ).ok()?;
+        normals
+            .iter()
+            .zip(new_heights.iter())
+            .map(|(n, &h)| n / h)
+            .collect(),
+    )
+    .ok()?;
     let (sys, vol, cap) = safe_sys(&new_polytope)?;
     Some((new_polytope, sys, vol, cap))
 }
@@ -547,8 +545,13 @@ fn try_step_hn(
         .collect();
 
     let new_polytope = Polytope4D::from_f64(
-        new_normals.iter().zip(new_heights.iter()).map(|(n, &h)| n / h).collect(),
-    ).ok()?;
+        new_normals
+            .iter()
+            .zip(new_heights.iter())
+            .map(|(n, &h)| n / h)
+            .collect(),
+    )
+    .ok()?;
     let (sys, vol, cap) = safe_sys(&new_polytope)?;
     Some((new_polytope, sys, vol, cap))
 }
@@ -615,7 +618,7 @@ fn armijo_step_hn(
 // Phase A: Main analysis
 // ============================================================================
 
-fn run_phase_a(base_dir: &std::path::Path) {
+fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
     println!("═══════════════════════════════════════════════════════════");
     println!("Phase A: HKO2024 sensitivity + gradient ascent (F=10)");
     println!("═══════════════════════════════════════════════════════════\n");
@@ -670,7 +673,11 @@ fn run_phase_a(base_dir: &std::path::Path) {
         .collect();
 
     println!("\n--- Near-optimal orbits (gap < {NEAR_OPTIMAL_GAP}) ---");
-    println!("  Count: {} (of {} total)", near_optimal.len(), instrumented.orbits.len());
+    println!(
+        "  Count: {} (of {} total)",
+        near_optimal.len(),
+        instrumented.orbits.len()
+    );
     for (i, orbit) in near_optimal.iter().enumerate() {
         let gap = (orbit.action - best_action) / best_action;
         println!(
@@ -702,10 +709,7 @@ fn run_phase_a(base_dir: &std::path::Path) {
 
     println!("  ∂sys/∂h:");
     for k in 0..f {
-        println!(
-            "    k={}: d_sys={:.6e}",
-            k, sensitivity.d_sys_h[k]
-        );
+        println!("    k={}: d_sys={:.6e}", k, sensitivity.d_sys_h[k]);
     }
     println!("  |∇sys_h| = {:.6e}", sensitivity.gradient_norm_h);
     println!("  |∇sys_n| = {:.6e}", sensitivity.gradient_norm_n);
@@ -722,6 +726,11 @@ fn run_phase_a(base_dir: &std::path::Path) {
             "NO — gradient is nonzero"
         }
     );
+
+    if smoke {
+        println!("\n  Smoke mode: stopping after sensitivity computation.");
+        return;
+    }
 
     // Step bounds
     let t_max_h = if sensitivity.gradient_norm_h > EPS_NUMERICAL_ZERO {
@@ -749,7 +758,11 @@ fn run_phase_a(base_dir: &std::path::Path) {
             "  Orbit #{}: |∇sys_h| = {:.6e}, d_sys_h = {:?}",
             i,
             norm,
-            orbit_sens.d_sys_h.iter().map(|x| format!("{:.4e}", x)).collect::<Vec<_>>()
+            orbit_sens
+                .d_sys_h
+                .iter()
+                .map(|x| format!("{:.4e}", x))
+                .collect::<Vec<_>>()
         );
         per_orbit_d_sys_h.push(orbit_sens.d_sys_h);
         per_orbit_gradient_norm_h.push(norm);
@@ -760,8 +773,16 @@ fn run_phase_a(base_dir: &std::path::Path) {
     let sens_file = File::create(&sens_path).expect("create sensitivity JSONL");
     let mut sens_writer = BufWriter::new(sens_file);
 
-    let duals_raw: Vec<[f64; 4]> = polytope.dual_vertices_f64().iter().map(|a| [a[0], a[1], a[2], a[3]]).collect();
-    let d_sys_n_raw: Vec<[f64; 4]> = sensitivity.d_sys_n.iter().map(|v| [v[0], v[1], v[2], v[3]]).collect();
+    let duals_raw: Vec<[f64; 4]> = polytope
+        .dual_vertices_f64()
+        .iter()
+        .map(|a| [a[0], a[1], a[2], a[3]])
+        .collect();
+    let d_sys_n_raw: Vec<[f64; 4]> = sensitivity
+        .d_sys_n
+        .iter()
+        .map(|v| [v[0], v[1], v[2], v[3]])
+        .collect();
 
     let orbit_infos: Vec<OrbitInfo> = near_optimal
         .iter()
@@ -813,10 +834,8 @@ fn run_phase_a(base_dir: &std::path::Path) {
     let ascent_file = File::create(&ascent_path).expect("create ascent JSONL");
     let mut ascent_writer = BufWriter::new(ascent_file);
 
-    let mut current = Polytope4D::from_f64(
-        polytope.dual_vertices_f64().to_vec(),
-    )
-    .expect("reconstruct HKO2024");
+    let mut current =
+        Polytope4D::from_f64(polytope.dual_vertices_f64().to_vec()).expect("reconstruct HKO2024");
     let mut current_sys = sys;
     let mut prev_subset = instrumented.orbits[0].subset.clone();
     let mut prev_perm = instrumented.orbits[0].permutation.clone();
@@ -838,7 +857,8 @@ fn run_phase_a(base_dir: &std::path::Path) {
         let best_orbit = &instr.orbits[0];
 
         // Orbit switch detection
-        let orbit_switched = best_orbit.subset != prev_subset || best_orbit.permutation != prev_perm;
+        let orbit_switched =
+            best_orbit.subset != prev_subset || best_orbit.permutation != prev_perm;
 
         // Sensitivity
         let sens = compute_sensitivity(&current, vol, cap, sys_now, best_orbit);
@@ -906,7 +926,11 @@ fn run_phase_a(base_dir: &std::path::Path) {
                         n_near_optimal: n_near,
                         gradient_norm_h: sens.gradient_norm_h,
                         gradient_norm_hn: sens.gradient_norm_hn,
-                        dual_vertices: current.dual_vertices_f64().iter().map(|a| [a[0], a[1], a[2], a[3]]).collect(),
+                        dual_vertices: current
+                            .dual_vertices_f64()
+                            .iter()
+                            .map(|a| [a[0], a[1], a[2], a[3]])
+                            .collect(),
                         time_ms: t_iter.elapsed().as_secs_f64() * 1000.0,
                     };
                     serde_json::to_writer(&mut ascent_writer, &row).expect("write ascent");
@@ -962,7 +986,11 @@ fn run_phase_a(base_dir: &std::path::Path) {
             n_near_optimal: n_near,
             gradient_norm_h: sens.gradient_norm_h,
             gradient_norm_hn: sens.gradient_norm_hn,
-            dual_vertices: new_poly.dual_vertices_f64().iter().map(|a| [a[0], a[1], a[2], a[3]]).collect(),
+            dual_vertices: new_poly
+                .dual_vertices_f64()
+                .iter()
+                .map(|a| [a[0], a[1], a[2], a[3]])
+                .collect(),
             time_ms,
         };
         serde_json::to_writer(&mut ascent_writer, &row).expect("write ascent");
@@ -980,9 +1008,7 @@ fn run_phase_a(base_dir: &std::path::Path) {
     }
 
     let total_improvement = current_sys - sys;
-    println!(
-        "\n  Ascent summary: sys {sys:.10} → {current_sys:.10} (Δ={total_improvement:.6e})"
-    );
+    println!("\n  Ascent summary: sys {sys:.10} → {current_sys:.10} (Δ={total_improvement:.6e})");
     ascent_writer.flush().expect("flush ascent");
     println!("  Wrote {}", ascent_path.display());
 }
@@ -994,10 +1020,14 @@ fn run_phase_a(base_dir: &std::path::Path) {
 fn main() {
     let t0 = Instant::now();
     let base_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+    let smoke = std::env::args().any(|a| a == "--smoke");
+
+    std::fs::create_dir_all(base_dir.join("gradient-analysis"))
+        .expect("create gradient-analysis output dir");
 
     println!("Gradient Analysis: HKO2024 sensitivity + gradient ascent\n");
 
-    run_phase_a(base_dir);
+    run_phase_a(base_dir, smoke);
 
     let elapsed = t0.elapsed().as_secs_f64();
     println!("\n═══════════════════════════════════════════════════════════");

@@ -21,7 +21,7 @@ uv run analyze.py
 |---|---|
 | `main.rs` | Rust binary: generates random polytopes, computes sys for each |
 | `analyze.py` | Python: scatter plot of sys vs F with median and std error bars |
-| `math.tex` | Formal writeup: sampling setup, figure, interpretation |
+| `formal/sys-landscape/random-sample.tex` | Formal writeup: sampling setup, figure, interpretation |
 | `random-sweep.jsonl` | Dataset (70 rows: polytope geometry, capacity, volume, sys) |
 | `random_sweep_sys_vs_f.png` | Figure: sys vs F scatter with median trend |
 

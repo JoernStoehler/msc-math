@@ -24,7 +24,7 @@ cargo run -p exp-hko-local-maximum --release --bin hko-cut-and-ascent -- --fresh
 | File | Role |
 |------|------|
 | main.rs | Binary: cut HKO2024 + gradient ascent on F=11 polytope |
-| logbook.md | This file |
+| research/hko-local-maximum/design/cut-and-ascent.md | This file |
 
 ## Preliminary findings (from variable-f-ascent, 2026-04-04)
 

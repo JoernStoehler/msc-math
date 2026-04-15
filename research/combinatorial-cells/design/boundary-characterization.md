@@ -62,5 +62,5 @@ Orbit gap predicts orbit switches (orbit_gap_vs_switch.png): lowest gap quartile
 
 ## Open questions
 
-1. **Continuity of sys:** math.tex has a proof sketch (Prop. prop:sys-continuous). Full continuity may require citing general c_EHZ continuity on convex bodies.
+1. **Continuity of sys:** `formal/combinatorial-cells/boundary-characterization.tex` has a proof sketch (Prop. prop:sys-continuous). Full continuity may require citing general c_EHZ continuity on convex bodies.
 2. **sys-search omega_0 gap:** sys-search step bound doesn't detect omega_0 flips. Missing 43% of boundaries.

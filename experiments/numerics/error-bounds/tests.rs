@@ -206,7 +206,7 @@ fn eta_bound_validity() {
         let m = case.m;
 
         // Skip cases with null eigenvalues (LP null-space search shifts beta
-        // by O(1), which the bound doesn't cover — see math.tex discussion).
+        // by O(1), which the bound doesn't cover — see formal/numerics/error-bounds.tex).
         // Thresholds match EPS_EIGEN_FLOOR and EPS_EIGEN_THRESHOLD in projection_solver.rs.
         let has_null_eigenvalues = diag.eigenvalues.iter().any(|&g| {
             let lambda_max = diag.eigenvalues.iter().map(|e| e.abs()).fold(0.0f64, f64::max);

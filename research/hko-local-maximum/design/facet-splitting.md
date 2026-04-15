@@ -1,6 +1,6 @@
 # Facet-Splitting: Logbook
 
-Split from the original `gradient-is-zero/` experiment (Phase B: facet-splitting). See `../gradient-analysis/logbook.md` for full history including motivation, interpretation, and theoretical framework.
+Split from the original `gradient-is-zero/` experiment (Phase B: facet-splitting). See `research/hko-local-maximum/design/gradient-analysis.md` for full history including motivation, interpretation, and theoretical framework.
 
 ## Status
 
