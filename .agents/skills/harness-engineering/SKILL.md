@@ -23,6 +23,7 @@ The harness is:
 - Put "when to use this" trigger text in the skill description, not in `AGENTS.md` and not only in the skill body.
 - Do not maintain a skill inventory or routing table in `AGENTS.md`; skill names and descriptions are already visible through the skill system, and duplicated triggers drift.
 - Do not rely on nested settings or nested `AGENTS.md` files for required project behavior. Root-launched sessions may not load them.
+- Name top-level session-scope skills `*-focus`, not `role-*` or `*-scope`. "Focus" says what the session keeps active and reasons about directly; "role" is vague, and "scope" is overloaded with file/write scopes and sounds like a restriction. Prefer concrete focus names such as `project-management-focus` over abstract labels such as `coordination-focus`.
 - When a harness decision depends on Codex mechanics, compare Jörn's proposed model with current official OpenAI docs. If they differ, state the difference explicitly and explain whether the docs describe a hard product constraint, a recommendation, or a default that local experience may override.
 - Use one subagent role with loaded checklists when the role is stable and only the review surface changes.
 - Split a subagent only when the role, permissions, or output contract differs.
