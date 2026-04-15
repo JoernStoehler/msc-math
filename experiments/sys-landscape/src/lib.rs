@@ -3,7 +3,7 @@
 //! Experiments studying the systolic ratio as a global function on polytope space:
 //! random-sample, random-product-sample, gradient-ascent-general,
 //! gradient-ascent-products, rotated-regular-products, rejection-calibration.
-//! Local cell geometry experiments moved to exp-combinatorial-cells.
+//! Local cell geometry experiments now live in exp-combinatorial-cells.
 
 use nalgebra::{Matrix4, Vector4};
 use rayon::prelude::*;

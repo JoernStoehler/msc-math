@@ -14,17 +14,11 @@ use std::io::BufWriter;
 use std::path::Path;
 use symplectic::algorithms::hk2017::orbit_recovery::recover_and_verify;
 use symplectic::algorithms::facet_adjacency::build_transition_matrix;
-// TODO: `combinations` moves to `algorithms::hk2017::permutations::combinations` (wave 3, subagent #6)
-// TODO: `EhzResult` moves to `algorithms::hk2017::EhzResult` (wave 3, subagent #6)
 use symplectic::algorithms::hk2017::{combinations, EhzResult};
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
 use symplectic::geom::reeb_trajectory;
-// TODO: `known_polytopes` will be re-exported from `symplectic::known_polytopes` (wave 4, subagent #16)
 use symplectic::geom::known_polytopes::{self, KnownPolytope};
-// TODO: `solve_kkt` moves to `kkt::saddle_point_solver::solve_kkt` (wave 2, subagent #2)
-// TODO: `EPS_BETA_POSITIVE` and `EPS_Q_POSITIVE` move to `kkt::saddle_point_solver` (wave 2, subagent #2)
 use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktOutcome, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
-// TODO: `Skeleton` will be re-exported from `symplectic::Skeleton` (wave 4, subagent #16)
 use symplectic::geom::skeleton::Skeleton;
 
 /// Maximum number of orbits to export per polytope (keeps data.js manageable).
@@ -105,7 +99,7 @@ struct CollectedOrbit {
 }
 
 /// Check if a cyclic permutation forms an adjacent cycle.
-/// Copied from crates/library/src/algorithms/hk2017/mod.rs (3 lines, not pub).
+/// Local predicate because HK2017 enumeration keeps this helper internal.
 fn is_adjacent_cycle(perm: &[usize], adj: &DMatrix<bool>) -> bool {
     let m = perm.len();
     (0..m).all(|k| adj[(perm[k], perm[(k + 1) % m])])

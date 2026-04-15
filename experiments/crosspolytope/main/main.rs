@@ -29,11 +29,10 @@ use std::path::PathBuf;
 use std::time::Instant;
 use symplectic::algorithms::facet_adjacency::build_transition_matrix;
 use symplectic::geom::known_polytopes;
-// TODO: These will be re-exported from top-level `symplectic::` in wave 4 (subagent #16).
 use symplectic::geom::symplectic_form::omega0;
 use symplectic::geom::volume::volume;
 
-// ── Constants (copied from crates/library/src/kkt.rs and crates/library/src/constants.rs) ───
+// ── Historical KKT constants retained for this symmetry-reduced search ───
 
 const EPS_BETA_POSITIVE: f64 = 1e-12;
 const EPS_Q_POSITIVE: f64 = 1e-15;
@@ -51,7 +50,7 @@ const EPS_KKT_RESIDUAL: f64 = 1e-6;
 /// If changed: re-run binary and update timing, verify best action still at m=4.
 const MAX_SUBSET_SIZE: usize = 13;
 
-// ── KKT solver (copied from crates/library/src/kkt.rs) ─────────────────────────────
+// ── Historical normalized-normal KKT solver retained for this experiment ──
 
 fn q_from_beta(normals: &[Vector4<f64>], perm: &[usize], beta: &[f64]) -> f64 {
     let m = beta.len();

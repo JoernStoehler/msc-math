@@ -12,24 +12,21 @@
 //! Input: Known polytopes from the library (F ≤ 10).
 //! Output: Summary tables to stdout. Panics on any violation.
 use nalgebra::{DMatrix, DVector, Vector4};
-// TODO: `ehz_capacity` and `combinations` move to `algorithms::hk2017` (wave 3, subagent #6)
-// TODO: `cyclic_permutations` stays at `algorithms::hk2017::permutations::cyclic_permutations` (wave 3)
-// TODO: `build_kkt_system` renamed to `kkt::qp_assembly::build_augmented_system` with signature
-//   change: now takes (polytope, perm) instead of (normals, heights, perm).
-//   `q_from_beta` removed from public API.
-// TODO: `kkt_rational` renamed to `kkt::rational_solver` (wave 2, subagent #3)
-// TODO: ehz_capacity will be re-exported from algorithms::hk2017 once wave 3 (subagent #6) writes hk2017/mod.rs
 use symplectic::algorithms::hk2017::ehz_capacity;
-// TODO: cyclic_permutations will be available from hk2017::permutations once wave 3 (subagent #6) writes it
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::symplectic_form::omega0;
 use symplectic::kkt::rational_solver as kkt_rational;
 
-// ── Local copies of library functions (modules not yet written in migration) ──
+// ── Local KKT enumeration helpers ──
+//
+// This diagnostic works in the normalized-normal and height parameterization
+// used by the q-error derivation. The library's current public assembly API
+// operates on `(polytope, perm)` in dual-vertex coordinates, so the experiment
+// keeps these small local helpers to expose the intermediate matrices directly.
 
 /// Generate all cyclic permutations (fix first element, permute rest).
-/// Previously imported from `symplectic::algorithms::hk2017::permutations::cyclic_permutations`.
+/// Local Vec-returning wrapper for the library's callback-style traversal.
 fn cyclic_permutations(elements: &[usize]) -> Vec<Vec<usize>> {
     let mut result = Vec::new();
     for_each_cyclic_permutation_local(elements, &mut |p| result.push(p.to_vec()));
@@ -71,7 +68,7 @@ fn heap_perms_buf_local(
 }
 
 /// Generate all C(n,k) combinations in lexicographic order.
-/// Previously imported from `symplectic::algorithms::hk2017::combinations`.
+/// Mirrors `symplectic::algorithms::hk2017::combinations`.
 fn combinations(n: usize, k: usize) -> Vec<Vec<usize>> {
     let mut result = Vec::new();
     let mut combo = vec![0usize; k];
@@ -98,7 +95,7 @@ fn combinations_rec(
 }
 
 /// Build the (m+5)x(m+5) augmented KKT system from normals, heights, and permutation.
-/// Previously imported as `symplectic::kkt::augmented::build_kkt_system`.
+/// Uses the normalized-normal/height form needed by this error-bound check.
 fn build_kkt(
     normals: &[Vector4<f64>],
     heights: &[f64],
@@ -132,7 +129,7 @@ fn build_kkt(
 }
 
 /// Q(beta) = sum_{i>j} beta_i beta_j omega_0(n_{sigma(j)}, n_{sigma(i)}).
-/// Previously imported as `symplectic::kkt::augmented::q_from_beta`.
+/// Uses normalized normals to match `build_kkt`.
 fn q_from_beta(normals: &[Vector4<f64>], perm: &[usize], beta: &[f64]) -> f64 {
     let m = beta.len();
     (1..m)
@@ -280,7 +277,7 @@ fn error_bound_sweep(polytope: &Polytope4D) -> SweepResult {
 
 // ── Part 2: Exact value comparison ──────────────────────────────────────
 //
-// Uses symplectic::kkt_rational::solve_kkt_exact for the rational solve.
+// Uses symplectic::kkt::rational_solver::solve_kkt_exact for the rational solve.
 // The local duplicate code (f64_to_rational, build_kkt_rational, gauss_solve,
 // q_from_beta_rational) was removed in favor of the library implementation.
 

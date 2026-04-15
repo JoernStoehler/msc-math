@@ -18,7 +18,6 @@ use std::io::{BufWriter, Write};
 use std::time::Instant;
 use symplectic::geom::polygon::{regular_polygon_2d, rotate_polygon_2d};
 use symplectic::random::generate_random_polytopes;
-// TODO: These will be re-exported from top-level `symplectic::` in wave 4 (subagent #16).
 use symplectic::algorithms::billiard::billiard_capacity;
 use symplectic::algorithms::hk2017::ehz_capacity;
 use symplectic::geom::lagrangian_product::lagrangian_product;

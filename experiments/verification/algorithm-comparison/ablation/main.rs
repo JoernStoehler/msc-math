@@ -37,7 +37,6 @@ use std::io::{BufWriter, Write};
 use std::time::Instant;
 use symplectic::geom::polygon::{random_polygon_2d, regular_polygon_2d};
 use symplectic::random::generate_random_polytopes;
-// TODO: These will be re-exported from top-level `symplectic::` in wave 4 (subagent #16).
 use symplectic::algorithms::hk2017::{ehz_capacity_unpruned, EhzResult};
 use symplectic::geom::known_polytopes;
 use symplectic::geom::lagrangian_product::lagrangian_product;
@@ -66,34 +65,35 @@ struct AblationEntry {
 }
 
 // ============================================================================
-// Copied from library — KKT solver (crates/library/src/kkt.rs)
+// Historical copy from the pre-module-split library KKT solver.
 //
 // These are exact copies of pub(crate) functions that can't be imported from
-// the experiment binary. Source commit: see crates/library/src/kkt.rs header.
+// the experiment binary. They intentionally retain the old gap-ratio solver
+// so all ablation variants use the same KKT path.
 // ============================================================================
 
 /// Minimum β_i value to consider a solution valid.
-/// Copied from crates/library/src/kkt.rs:12
+/// Historical copy from the pre-module-split KKT solver.
 const EPS_BETA_POSITIVE: f64 = 1e-12;
 
 /// Minimum Q(β) value to consider a solution valid.
-/// Copied from crates/library/src/kkt.rs:15
+/// Historical copy from the pre-module-split KKT solver.
 const EPS_Q_POSITIVE: f64 = 1e-15;
 
 /// Floor for SVD singular values.
-/// Copied from crates/library/src/kkt.rs:18
+/// Historical copy from the pre-module-split KKT solver.
 const EPS_SVD_FLOOR: f64 = 1e-12;
 
 /// Gap ratio threshold for rank detection.
-/// Copied from crates/library/src/kkt.rs:46
+/// Historical copy from the pre-module-split KKT solver.
 const SVD_GAP_THRESHOLD: f64 = 100.0;
 
 /// Maximum acceptable residual norm.
-/// Copied from crates/library/src/kkt.rs:49
+/// Historical copy from the pre-module-split KKT solver.
 const EPS_KKT_RESIDUAL: f64 = 1e-6;
 
 /// Facet incidence tolerance.
-/// Copied from crates/library/src/constants.rs
+/// Mirrors `symplectic::constants::EPS_FACET_INCIDENCE`.
 const EPS_FACET_INCIDENCE: f64 = 1e-8;
 
 /// Tolerance for directed adjacency ω₀ check. Conservative: allow transitions
@@ -101,13 +101,13 @@ const EPS_FACET_INCIDENCE: f64 = 1e-8;
 const EPS_DIRECTED: f64 = 1e-8;
 
 /// ω₀(u, v) = u_q1·v_p1 - u_p1·v_q1 + u_q2·v_p2 - u_p2·v_q2
-/// Copied from crates/library/src/geom/symplectic.rs:28
+/// Mirrors `symplectic::geom::symplectic_form::omega0`.
 fn omega0(u: &Vector4<f64>, v: &Vector4<f64>) -> f64 {
     u[0] * v[2] - u[2] * v[0] + u[1] * v[3] - u[3] * v[1]
 }
 
 /// Q(β) = Σ_{i>j} β_i β_j ω₀(n_{σ(j)}, n_{σ(i)}) = (1/2) β^T H β
-/// Copied from crates/library/src/kkt.rs — Q > 0 for permutations in positive Reeb direction.
+/// Historical normalized-normal version; Q > 0 for permutations in positive Reeb direction.
 fn q_from_beta(normals: &[Vector4<f64>], perm: &[usize], beta: &[f64]) -> f64 {
     let m = beta.len();
     (1..m)
@@ -117,7 +117,7 @@ fn q_from_beta(normals: &[Vector4<f64>], perm: &[usize], beta: &[f64]) -> f64 {
 }
 
 /// Search 1D null space for β > 0 solution.
-/// Copied from crates/library/src/kkt.rs:75-116
+/// Historical copy from the pre-module-split KKT solver.
 fn find_positive_beta_1d(beta0: &[f64], v: &[f64]) -> Option<Vec<f64>> {
     let m = beta0.len();
     let (mut lo, mut hi) = (f64::NEG_INFINITY, f64::INFINITY);
@@ -156,7 +156,7 @@ fn find_positive_beta_1d(beta0: &[f64], v: &[f64]) -> Option<Vec<f64>> {
 }
 
 /// Search multi-dimensional null space for β > 0 solution.
-/// Copied from crates/library/src/kkt.rs:121-166
+/// Historical copy from the pre-module-split KKT solver.
 fn find_positive_beta_nd(beta0: &[f64], null_vecs: &[Vec<f64>]) -> Option<Vec<f64>> {
     let m = beta0.len();
     let k = null_vecs.len();
@@ -194,7 +194,7 @@ fn find_positive_beta_nd(beta0: &[f64], null_vecs: &[Vec<f64>]) -> Option<Vec<f6
 }
 
 /// Build KKT matrix and RHS vector.
-/// Copied from crates/library/src/kkt.rs:178-217
+/// Historical normalized-normal/height assembly retained for this ablation.
 fn build_kkt_system(
     normals: &[Vector4<f64>],
     heights: &[f64],
@@ -228,7 +228,7 @@ fn build_kkt_system(
 }
 
 /// SVD path with gap-based rank detection.
-/// Copied from crates/library/src/kkt.rs:231-325
+/// Historical copy from the pre-module-split KKT solver.
 fn solve_kkt_svd_path(
     kkt: &DMatrix<f64>,
     rhs: &DVector<f64>,
@@ -303,7 +303,7 @@ fn solve_kkt_svd_path(
 }
 
 /// LU fast path + SVD fallback. Used by A2 and A3.
-/// Copied from crates/library/src/kkt.rs:346-373
+/// Historical copy from the pre-module-split KKT solver.
 fn solve_kkt_full(
     normals: &[Vector4<f64>],
     heights: &[f64],
@@ -328,12 +328,11 @@ fn solve_kkt_full(
 }
 
 // ============================================================================
-// Copied from library — combinatorial infrastructure
-// (crates/library/src/algorithms/hk2017/mod.rs, permutations.rs)
+// Local combinatorial infrastructure used by the parameterized ablation loop.
 // ============================================================================
 
 /// Generate all C(n,k) combinations in lexicographic order.
-/// Copied from crates/library/src/algorithms/hk2017/mod.rs:135-158
+/// Mirrors `symplectic::algorithms::hk2017::combinations`.
 fn combinations(n: usize, k: usize) -> Vec<Vec<usize>> {
     let mut result = Vec::new();
     let mut combo = vec![0usize; k];
@@ -360,7 +359,7 @@ fn combinations_rec(
 }
 
 /// Call callback once for each cyclic permutation of elements.
-/// Copied from crates/library/src/algorithms/hk2017/permutations.rs:22-35
+/// Mirrors `symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation`.
 fn for_each_cyclic_permutation(elements: &[usize], callback: &mut impl FnMut(&[usize])) {
     if elements.len() <= 1 {
         callback(elements);
@@ -372,7 +371,6 @@ fn for_each_cyclic_permutation(elements: &[usize], callback: &mut impl FnMut(&[u
 }
 
 /// Heap's algorithm on buf[offset..offset+k].
-/// Copied from crates/library/src/algorithms/hk2017/permutations.rs:38-57
 fn heap_perms_buf(
     buf: &mut [usize],
     offset: usize,
@@ -404,7 +402,7 @@ fn dmatrix_to_vec(adj: &DMatrix<bool>) -> Vec<Vec<bool>> {
 }
 
 /// Check if a cyclic permutation forms an adjacent cycle in the given graph.
-/// Copied from crates/library/src/algorithms/hk2017/mod.rs:185-188
+/// Local adjacency predicate for the ablation-specific adjacency matrices.
 fn is_adjacent_cycle(perm: &[usize], adj: &[Vec<bool>]) -> bool {
     let m = perm.len();
     (0..m).all(|k| adj[perm[k]][perm[(k + 1) % m]])

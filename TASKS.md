@@ -448,6 +448,9 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 
 ### [open] [group:repo-layout] Mechanical stale-path cleanup outside onboarding
 - Goal: clean stale post-migration references in non-onboarding files; do not change mathematical claims or experiment conclusions.
+- 2026-04-15 experiment Rust pass: removed old wave/subagent migration TODO scaffolding and stale `crates/library/src` references from changed experiment comments plus `library/src/geom/review-notes.md`. Verification:
+  `rg -n 'wave [0-9]|subagent #[0-9]|crates/library/src|crates/src' experiments library`
+  and broader migration-wording grep both return no matches.
 - Search first:
   - `rg -n 'crates/|docs/|thesis/assets|AGENTS\.new\.rules\.md|scripts/codex-cloud|codex-cloud\.md|review-(rust|python|thesis|claims|figures|proof|formalization)' thesis formal experiments library research TASKS.md RESULTS.md .devcontainer scripts`
   - `rg -n 'logbook\.md|math\.tex' thesis formal experiments library research TASKS.md RESULTS.md`

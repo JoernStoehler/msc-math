@@ -1,6 +1,7 @@
 # Geom/math.tex review feedback
 
-**Source:** Jörn's top-to-bottom review of `crates/library/src/math.pdf` (session 2026-03-24)
+**Source:** Jörn's top-to-bottom review of the former library math PDF (session 2026-03-24).
+Current source: `formal/library/geom.tex`.
 **Branch:** `remove-unit-normals` (worktree `.claude/worktrees/remove-unit-normals/`)
 **Status:** Jörn reviewed Defs 1–13, then stopped. Review incomplete — covers only geom/math.tex, not kkt/ or algorithms/.
 
@@ -67,6 +68,6 @@ Maybe it's worth splitting math.tex into math_<topic>.tex already here, since we
 
 ## Goal
 
-Go through the entire crate math PDF (`crates/library/src/math.pdf`) top to bottom, fix everything, and get our math in order. The PDF has red/orange approval bars — red = unapproved, orange = notation-updated. The goal is to eliminate all red bars by the end.
+Go through `formal/library/geom.tex` top to bottom, fix everything, and get our math in order. The reviewed PDF had red/orange approval bars — red = unapproved, orange = notation-updated. The goal is to eliminate all red bars by the end.
 
 Follow-up task (separate session): get the Rust code in order as well.
