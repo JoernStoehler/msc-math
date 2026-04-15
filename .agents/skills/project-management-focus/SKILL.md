@@ -56,6 +56,8 @@ When proposing agent execution, add these fields:
 
 Load `$subagent-delegation` when drafting a PM surface that may involve explorers, workers, reviewers, serial queues, or parallel work. After Jörn approves the surface, use it to write bounded subagent briefs and integrate results.
 
+When choosing whether a candidate task is shallow enough to delegate, read `references/delegation-calibration.md` if recent examples would help. It records past work packets whose actual difficulty differed from expectation.
+
 ## TASKS.md Rules
 
 - Use the existing status vocabulary: `[done]`, `[active]`, `[blocked]`, `[open]`, `[Jörn]`, `[future]`.
