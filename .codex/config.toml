@@ -45,21 +45,19 @@ max_threads = 10
 max_depth = 2
 job_max_runtime_seconds = 3600
 
-# Used for coding tasks
+# Used for coding tasks.
+# Model and reasoning-budget choices live in ~/.codex/config.toml so the
+# VS Code Codex picker remains the source of truth for this machine.
 [profiles.code]
-model = "gpt-5.4"
-model_reasoning_effort = "medium"
-plan_mode_reasoning_effort = "xhigh"
 model_reasoning_summary = "none"
 model_verbosity = "low"
 personality = "pragmatic"
 approval_policy = "never"
 
-# Used for writing tasks
+# Used for writing tasks.
+# Do not pin model, model_reasoning_effort, or plan_mode_reasoning_effort
+# here; those are user-local preferences for the active Codex client.
 [profiles.write]
-model = "gpt-5.4"
-model_reasoning_effort = "medium"
-plan_mode_reasoning_effort = "xhigh"
 model_reasoning_summary = "detailed"
 model_verbosity = "high"
 personality = "pragmatic"
