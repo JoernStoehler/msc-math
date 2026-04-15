@@ -150,14 +150,19 @@ Decision:
 - `dev-tube/`, `AGENTS.new.rules.md`, and `paranoia-numerics-report.md` are follow-up decisions, not silent target assignments
 - any other path not explicitly assigned in this target description must not be assigned by guessing
 
-### 9. Infrastructure roots stay top-level
+### 9. Infrastructure roots
 
 Reason:
 - agent/runtime infrastructure is cross-cutting and should not be folded into research, experiments, library, or formal material
 - the migration changes research/code/formal layout, not the basic operational tooling roots
+- local devcontainer and Codex web environment setup belong together because both define runtime environments
 
 Decision:
-- `.agents/`, `.codex/`, `.devcontainer/`, `scripts/`, `feedback/`, and `codex-cloud.md` remain top-level
+- `.agents/`, `.codex/`, `.devcontainer/`, `scripts/`, and `feedback/` remain top-level
+- `.devcontainer/` owns both local devcontainer files and Codex web environment setup/docs
+- `.devcontainer/codex-cloud.md` is the Codex web environment documentation
+- `.devcontainer/codex-cloud-*.sh` are Codex web environment setup, maintenance, smoke, and warm-up scripts
+- `scripts/` keeps repo helper scripts that are not tied to one runtime environment
 - `.codex/reference/` is the target home for the moved Codex CLI reference note
 
 ## Intended Target Tree
@@ -172,9 +177,13 @@ Cargo.toml
   reference/
     codex-cli-config-reference.md
 .devcontainer/
+  codex-cloud.md
+  codex-cloud-setup.sh
+  codex-cloud-maintenance.sh
+  codex-cloud-smoke.sh
+  codex-cloud-rust-warmup.sh
 feedback/
 scripts/
-codex-cloud.md
 data/
   ...
 scratch/

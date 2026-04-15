@@ -1,31 +1,34 @@
 ---
 name: post-mortem
-description: End-of-session reflection workflow. Run at Jörn's request or after a session with significant friction, mistakes, or wasted time. Produces actionable findings (feedback/ entries, convention changes, decision records) — not just observations.
-user-invocable: true
+description: Top-level, Jörn-invoked post-session reflection and blameless incident analysis. Use only when Jörn explicitly invokes `$post-mortem` or asks the top-level session for a post-session reflection; do not use from subagents, routine reviews, pre-merge checks, or normal task completion.
 ---
 
 # Post-Mortem
 
-Runs in main context (needs conversation history).
+Use this skill only in the top-level session. It needs the conversation history and Jörn's framing.
 
-## Core questions — answer for every session
+The output is advisory. Do not edit files, create archival notes, update skills, or create commits unless Jörn separately asks for edits in the same turn.
 
-1. **Friction** — What slowed you down? Name the specific file, tool, or missing information.
-2. **Unclear instructions** — What was confusing in `AGENTS.md`, skills, or agent prompts?
-3. **Missing context** — What information wasn't provided but was needed?
-4. **Jörn's time** — Where did Jörn spend time? Could agents have done it instead?
-5. **What worked well** — What should be preserved or expanded?
-6. **Suggested changes** — Specific, actionable improvements.
+## Questions
 
-## Process checks — report only items that apply
+Answer only the questions that apply:
 
-1. Agent splitting needed? Multi-responsibility agent failed to cover all checks?
-2. Fabrications slipped through to Jörn?
-3. Iterated in front of user instead of delegating to subagents?
-4. False attribution of mathematical results?
-5. Assumed Jörn read something he may not have?
-6. Regression test candidate? Concrete input→output pair worth preserving?
+1. What happened? Name the concrete prompt, tool action, file, or instruction surface.
+2. What slowed the session down?
+3. Which instruction, skill trigger, subagent prompt, or repo convention contributed?
+4. Where did Jörn spend time that an agent could have spent?
+5. What future agent behavior should change?
+6. What wording or structural changes should a future guide-editing session try?
+7. What conflicts, stale assumptions, or risks should that future session check?
+8. What alternatives were considered and why were they not preferred?
 
 ## Output
 
-Persist to matching `feedback/` file (rules.md, skills.md, agents.md, output-style.md). Don't fix procedural files directly — a future `/update-workflow` session acts on feedback with Jörn. A postmortem that produces zero repo changes is fine if nothing actionable emerged.
+Use this structure:
+
+1. **Incident or friction:** one short paragraph.
+2. **Likely cause:** concrete instruction or process mismatch.
+3. **Suggested changes:** bullets that Jörn can approve, reject, or copy into a focused editing session.
+4. **Checks for the editing session:** conflicts, files to inspect, and validation commands.
+
+Keep it concise. Do not turn reflection into implementation.

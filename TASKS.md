@@ -430,7 +430,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - 11 citation TODOs fully resolved (theorem numbers filled in, TODO removed).
 - 6 partially resolved (wrong chapters corrected, exact theorem numbers added from PDFs).
 - Remaining ~57 `[TODO: JÖRN]` markers are mathematical verification (verify statement/proof), not citation lookups.
-- Deliverables: `papers/citation-index.md` (verified theorem index), expanded `papers/AGENTS.md` (download/verify workflow), 4 PDFs in `papers/`.
+- Deliverables: `papers/citation-index.md` (verified theorem index), paper download workflow now lives in `.agents/skills/paper-download/SKILL.md`, 4 PDFs in `papers/`.
 
 ### [done] [2026-04-07] Delete superseded experiments
 - Directories deleted 2026-04-03. Reference cleanup done 2026-04-07: removed gradient-search from gradient-ascent-general/products code comments, rules examples, stale cleanup note.
@@ -446,11 +446,30 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Port msc-math workflow into native Codex repo paths. Scaffold merged into main; the remaining work is cleanup and verification of the Codex-first state.
 - Old `codex-migration` worktree notes are now archival, not the active source of truth.
 
-### [open] Design co-project-owner / coordinator skill
-- Goal: `.agents/skills/<name>/SKILL.md` for the task-graph coordination workflow. Name, trigger, scope, and content all TBD with Jörn.
-- **Starting constraint:** ASK JÖRN about the workflow before guessing. Do not design from priors or this session's tentative core.
-- Context: `feedback/2026-04-12-co-ownership-v2-postmortem.md` — enumerated failure modes if you design from guesses, plus one load-bearing insight (verification mechanism for coordinator work = asking Jörn, not an external check).
-- Output: minimal skill file, stable core only.
+### [open] [group:repo-layout] Mechanical stale-path cleanup outside onboarding
+- Goal: clean stale post-migration references in non-onboarding files; do not change mathematical claims or experiment conclusions.
+- Search first:
+  - `rg -n 'crates/|docs/|thesis/assets|AGENTS\.new\.rules\.md|scripts/codex-cloud|codex-cloud\.md|review-(rust|python|thesis|claims|figures|proof|formalization)' thesis formal experiments library research TASKS.md RESULTS.md .devcontainer scripts`
+  - `rg -n 'logbook\.md|math\.tex' thesis formal experiments library research TASKS.md RESULTS.md`
+- Likely first-pass files from 2026-04-15 scan:
+  - `thesis/tube-algorithm-notes.md`
+  - `thesis/appendix-rewrite-notes.md`
+  - `library/src/geom/review-notes.md`
+  - `experiments/numerics/error-bounds/algorithm-notes.md`
+  - `formal/**/*.tex` headers that still say root `math.tex`, colocated `math.tex`, or missing `logbook.md`
+- Preserve provenance comments when they identify copied code history; update only paths that a future agent would treat as live instructions.
+- Acceptance: scan has no live stale-path hits outside explicitly historical/provenance wording; changed Markdown/TeX/Rust comments still point to existing files or clearly say the referenced source is historical.
+
+### [open] [group:library] Decide whether to remove library benches and fixtures
+- Goal: investigate whether `library/benches/` and `library/tests/fixtures/` can be deleted outright.
+- Do not delete in this session; first check how they are referenced by tests, docs, workflows, and thesis-support tasks.
+- Output: either a deletion patch with replacement verification commands, or a short note explaining which references still make them needed.
+
+### [open] Design session-role skills
+- Goal: replace the TODO scaffolds in `.agents/skills/role-coordinator/SKILL.md` and `.agents/skills/role-research-lead/SKILL.md` with stable session-role workflows.
+- Starting constraint: ask Jörn about the workflow before guessing. Do not design from priors or this session's tentative core.
+- Keep `.agents/skills/orchestrate/SKILL.md` live until a role skill or delegation skill explicitly supersedes it.
+- Output: minimal skill files, stable core only.
 
 ### [done] [2026-04-12] variable-f-ascent merge (closed as stale)
 - Experiment 2d results are on main per the `[done] [2026-04]` entry in "Novel sys>1 polytopes". No `variable-f-ascent` branch or worktree exists at 2026-04-12.

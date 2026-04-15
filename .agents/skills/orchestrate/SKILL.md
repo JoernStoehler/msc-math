@@ -1,7 +1,6 @@
 ---
 name: orchestrate
 description: Orchestration session role. Decompose tasks into subagent or worker delegations, delegate execution, and synthesize results. Use when Jörn wants a session that coordinates parallel work rather than doing everything directly.
-user-invocable: true
 ---
 
 # Orchestration Session

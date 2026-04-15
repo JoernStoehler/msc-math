@@ -1,8 +1,12 @@
-# Devcontainer Setup
+# Devcontainer And Codex Web Environment
 
 Local devcontainer on Jörn's Ubuntu desktop. Provides OS-level isolation for
 Codex CLI sessions (`danger-full-access` is safe because Docker
 is the security boundary, not Codex's in-tool sandbox rules).
+
+This directory also contains the Codex web environment setup and smoke-test
+documentation in `codex-cloud.md`. The script names keep the historical
+`codex-cloud-*` prefix.
 
 ## Architecture
 
@@ -96,6 +100,10 @@ Access methods (see Architecture section above):
 | `host-devcontainer-rebuild.sh` | Rebuild image + recreate container |
 | `host-vscode-tunnel.sh` | Start VS Code tunnel into container |
 | `warmup-cache.sh` | Background cache warmer (Rust + Python deps) |
+| `codex-cloud-setup.sh` | Setup command for the Codex web environment |
+| `codex-cloud-maintenance.sh` | Maintenance command for cached Codex web containers |
+| `codex-cloud-smoke.sh` | Acceptance smoke test for the Codex web environment |
+| `codex-cloud-rust-warmup.sh` | Shared Rust warm-up used by setup and maintenance |
 
 ## Bind mounts
 

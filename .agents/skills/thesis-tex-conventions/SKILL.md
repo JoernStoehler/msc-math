@@ -1,6 +1,6 @@
 ---
 name: thesis-tex-conventions
-description: Thesis LaTeX conventions for math writing, labels, figures, and approval markers.
+description: Thesis LaTeX conventions for `thesis/**/*.tex`, including self-contained thesis prose, approval markers, theorem environments, labels, bibliography, figures, tables, and build checks. Use before editing or reviewing thesis sources.
 ---
 
 # Thesis LaTeX Format

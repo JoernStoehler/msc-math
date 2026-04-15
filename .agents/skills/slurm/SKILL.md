@@ -1,6 +1,6 @@
 ---
 name: slurm
-description: LICCA cluster job submission. Load when an experiment needs more compute than the devcontainer provides (>10 min, large sweeps, dataset generation).
+description: LICCA cluster job submission. Load when an experiment needs more compute than the devcontainer provides, such as runs longer than 10 minutes, large sweeps, or dataset generation.
 ---
 
 # LICCA Cluster Workflow
@@ -9,8 +9,8 @@ description: LICCA cluster job submission. Load when an experiment needs more co
 
 ## Steps
 
-1. **Write/update the experiment entrypoint** in `experiments/<group>/<subdir>/main.rs`
-2. **Copy the template** from `references/experiment.sh` to `experiments/<group>/<subdir>/job.sh`
+1. **Write/update the experiment entrypoint** in `experiments/<topic>/<experiment>/main.rs`
+2. **Copy the template** from `references/experiment.sh` to `experiments/<topic>/<experiment>/job.sh`
 3. **Fill in the TODOs** in the job script (binary name, resources, arguments)
 4. **Write resource justification table** (mandatory):
 

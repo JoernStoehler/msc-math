@@ -1,6 +1,6 @@
 ---
 name: python-conventions
-description: Python experiment-script conventions for analysis and figure generation.
+description: Python conventions for `experiments/**/analyze.py`, generated figures, generated tables, and analysis scripts using `experiments/figure_config.py`. Use before editing or reviewing Python analysis, plot generation, figure/table output, or PEP 723 script metadata.
 ---
 
 # Python Conventions
@@ -22,8 +22,8 @@ Docstring with Goal / Input / Output:
 ```python
 """
 Goal: Identify distribution of sys values
-Input: experiments/<group>/<subdir>/data.jsonl
-Output: experiments/<group>/<subdir>/histogram.png
+Input: experiments/<topic>/<experiment>/data.jsonl
+Output: experiments/<topic>/<experiment>/histogram.png
 """
 ```
 
@@ -32,7 +32,7 @@ Output: experiments/<group>/<subdir>/histogram.png
 ```python
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 ```
-Scripts live at `experiments/<group>/<subdir>/analyze.py`. No hardcoded absolute paths. Define `REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent` only if referencing paths outside the experiment directory.
+Scripts live at `experiments/<topic>/<experiment>/analyze.py`. No hardcoded absolute paths. Define `REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent` only if referencing paths outside the experiment directory.
 
 ## Figures
 

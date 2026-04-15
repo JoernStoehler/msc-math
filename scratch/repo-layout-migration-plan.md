@@ -240,13 +240,13 @@ Objective:
 
 Required changes:
 - update `figure_config` imports to point to `experiments/figure_config.py`
-- update cloud/devcontainer scripts under `scripts/` and `.devcontainer/`
+- update Codex web and local devcontainer scripts under `.devcontainer/`
 - update `.agents/skills/*`, `.codex/*`, and `AGENTS.md` command paths
 - update LICCA job and scp path examples
 - update remaining live references to `docs/` and moved paper paths
 
 Verification:
-- `rg -n 'crates/|docs/' AGENTS.md .agents .codex scripts .devcontainer codex-cloud.md thesis formal experiments library`
+- `rg -n 'crates/|docs/' AGENTS.md .agents .codex scripts .devcontainer thesis formal experiments library`
 - smoke-run changed shell scripts where cheap and safe
 
 ### 4. Formal and thesis path repair

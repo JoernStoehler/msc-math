@@ -6,9 +6,9 @@
 #
 # Usage:
 #   cd ~/msc-math
-#   sbatch experiments/<group>/<subdir>/job.sh
+#   sbatch experiments/<topic>/<experiment>/job.sh
 #
-# Copy this template to experiments/<group>/<subdir>/job.sh and fill in the
+# Copy this template to experiments/<topic>/<experiment>/job.sh and fill in the
 # variables marked with TODO.
 #===============================================================================
 

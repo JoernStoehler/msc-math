@@ -111,7 +111,7 @@ Phases 2-4 completed:
   - `cargo build -p exp-sys-landscape --release` passes
   - `cargo build -p exp-combinatorial-cells --release` passes
   - `cargo build -p dev-capacity-validation --release` passes
-  - `bash -n scripts/codex-cloud-smoke.sh scripts/codex-cloud-rust-warmup.sh scripts/codex-cloud-setup.sh` passes
+  - `bash -n .devcontainer/codex-cloud-smoke.sh .devcontainer/codex-cloud-rust-warmup.sh .devcontainer/codex-cloud-setup.sh` passes
   - `cd formal && latexmk` succeeds
 
 Next:

@@ -1,6 +1,6 @@
 ---
 name: rust-conventions
-description: Rust project conventions for library and experiment code reviews.
+description: Rust conventions for `library/**/*.rs` and `experiments/**/*.rs`, including coordinate order, mathematical invariants, formal label references, algorithm boundaries, tests, error handling, and performance claims. Use before editing or reviewing Rust code.
 ---
 
 # Rust Conventions
@@ -18,17 +18,23 @@ Types, function signatures, and function bodies have 1:1 structural corresponden
 - Properties stated in doc comments have corresponding tests
 - Types encode mathematical invariants, validated in `::new()`
 
-## Cross-references to math.tex
+## Cross-references to formal math
 
-Format: `[lem:label]`, `[thm:label]`, `[def:label]` — matching `\label{}` in the module's math.tex.
+Format: `[lem:label]`, `[thm:label]`, `[def:label]` -- matching `\label{}` in `formal/**/*.tex`.
 
 - Include a one-line English description of the referenced result
-- Never duplicate proofs — math.tex is the single maintained source of truth
-- Never invent labels — use `// TODO: add [lem:...] to math.tex` if the lemma isn't written
-- In source code, never use rendered numbers like "Lemma 3.2" — always use the label
-- Every non-trivial code block must map to a math.tex lemma
+- Never duplicate proofs -- formal math is the single maintained source of truth
+- Never invent labels -- use `// TODO: add [lem:...] to formal math` if the lemma isn't written
+- In source code, never use rendered numbers like "Lemma 3.2" -- always use the label
+- Every non-trivial code block must map to a formal statement
 
-Read the module's math.tex before editing .rs files in that module.
+Read the matching formal file before editing non-trivial `.rs` files:
+- `library/src/geom/**` -> `formal/library/geom.tex`
+- `library/src/kkt/**` -> `formal/library/kkt.tex`
+- `library/src/algorithms/**` -> `formal/library/algorithms.tex`
+- `experiments/<topic>/<experiment>/**` -> `formal/<topic>/*.tex` when a formal file exists
+
+Load `$formal-math-conventions` when editing a formal label, adding a new reference, or changing a mathematical algorithm.
 
 ## Algorithms
 

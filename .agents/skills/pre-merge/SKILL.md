@@ -30,40 +30,39 @@ No experiment `main.rs` files on the branch → nothing to do (empty set, not a 
 For experiments with committed data (`.jsonl`, `.csv`), compare code and data commit dates:
 
 ```bash
-git log -1 --format='%H %ci' -- experiments/<group>/<subdir>/main.rs
-git log -1 --format='%H %ci' -- experiments/<group>/<subdir>/*.jsonl
+git log -1 --format='%H %ci' -- experiments/<topic>/<experiment>/main.rs
+git log -1 --format='%H %ci' -- experiments/<topic>/<experiment>/*.jsonl
 ```
 
 If code is newer than data, regenerate on this branch.
 
-## Phase 4: Review subagents
+## Phase 4: Review
 
-Launch all review subagents in parallel on the branch diff:
+Use the `reviewer` subagent plus `$review`. Launch separate reviewer instances for independent review surfaces, not separate agent definitions for every file type.
 
-| Subagent | Scope |
-|----------|-------|
-| review-rust | Changed `.rs` files |
-| review-proof | Changed `math.tex` files |
-| review-formalization | Modules with both `.rs` and `math.tex` changes |
-| review-claims | Changed `logbook.md`, thesis `.tex` with claims, `math.tex` |
-| review-thesis | Changed thesis `.tex` files |
-| review-python | Changed `.py` files |
-| review-figures | Changed `analyze.py` files or changed `.png` files |
+Default review surfaces:
 
-Use the `.codex/agents/review-*.toml` subagents. Launch all review subagents. If a subagent finds no files in scope, it reports "no files in scope" — that is the expected outcome, not a reason to skip launching it.
+| Surface | Scope | Skills / review references |
+|----------|-------|----------------------------|
+| Rust | Changed `.rs` files | `$rust-conventions`, `review/references/rust.md` |
+| Formal math | Changed `formal/**/*.tex` files and Rust-linked labels | `$formal-math-conventions`, `review/references/formal-math.md` |
+| Claims | Changed result summaries, thesis text, captions, formal commentary | `review/references/claims.md` |
+| Thesis | Changed `thesis/**/*.tex` files | `$thesis-tex-conventions`, `review/references/thesis.md` |
+| Python | Changed `.py` files | `$python-conventions`, `review/references/python.md` |
+| Figures | Changed `analyze.py`, `.png`, or generated figure/table `.tex` files | `review/references/figures.md` |
+
+If a surface has no files in scope, record "no files in scope" in the local notes. Do not launch an empty reviewer solely to prove the absence.
 
 ### Cross-check subagent findings
 
 Before including any finding in the report to Jörn, read the file at the location the subagent references and confirm the finding matches what the code or text actually says.
 
-**Trust without re-checking:** quotes and file:line references (agents are trained on these; low error rate).
-
-**Verify with priority:**
+Verify with priority:
 1. **Cost-benefit recommendations** the subagent made — subagents lack context for cost-benefit judgments about the larger task. Severity ratings (FIX vs FLAG) reflect the subagent's limited view: it may escalate minor issues or downplay significant ones.
-2. **Interpretive conclusions** where the subagent inferred meaning from limited context — e.g., "this lemma is orphaned" (may be used by other modules) or "this reference dangles" (may resolve via root `math.tex`).
-3. **Specific claim types:** "dangling reference" → check if it resolves via root `math.tex` (cross-module refs do). "Orphaned lemma" → check if used elsewhere or is standalone valid math. "Missing entry" → check logbook/TASKS.md for "Part N not written" (known gap, not discovery).
+2. **Interpretive conclusions** where the subagent inferred meaning from limited context — e.g., "this lemma is orphaned" (may be used by other modules) or "this reference dangles" (may resolve through `formal/main.tex` or `formal/library/main.tex`).
+3. **Specific claim types:** "dangling reference" → check if it resolves through the relevant formal or thesis build. "Orphaned lemma" → check if used elsewhere or is standalone valid math. "Missing entry" → check `TASKS.md`, `RESULTS.md`, or the relevant research note for a known gap before treating it as newly discovered.
 
-A verification subagent can cross-check the combined findings — it has fresh eyes and no sunk-cost bias toward the original findings.
+A verification subagent can cross-check the combined findings when the task has high blast radius or the first reviewer reports subtle findings.
 
 The Phase 8 report contains only verified findings, not the review/cross-check process.
 
