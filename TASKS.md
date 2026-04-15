@@ -28,7 +28,7 @@ Rough shape of Jörn's plan as of 2026-04-12. Ordering is by hard dependencies, 
 ### Eventually (Wed 2026-04-15 → mid-Apr)
 - **Full math write-up pass** (Jörn-driven two-phase: high-level notes → paragraph structure + flag hard labor). Agents prep scaffolds, run empirical precursors for hard-labor items when possible.
 - **Hand-drawn figures** (Jörn: polar of 2D polytope, 0/1/2/3-facets, fake 3D polytope with Reeb vectors, gamma: R→R^4 decompositions, ...).
-- **4D→R³ projection viz tool** (agent: matches RESULTS.md minor deliverable).
+- **3D visualization figure integration** (agent: existing visualization pipeline + thesis figure/write-up integration; Jörn decides what the figures should show).
 
 ### Post-draft stability (late Apr)
 - **SWE polish** (agent): dev/exp stable code → library promotion, test completion + perf, documentation gaps, simplifications. Only after thesis draft is stable so experiment numbers aren't moving mid-write-up.
@@ -109,7 +109,7 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 - `formal/hko-local-maximum/second-order.tex`
 
 ### [future] [group:hko] Higher-F perturbation validation (F=10→12, F=10→13)
-- RESULTS.md claims empirical validation "up to 13-facet" — currently aspirational, only 11-facet done
+- `RESULTS.md` records F=12/F=13 validation as pending/future evidence for the broad HKO2024 local-maximality conjecture; only F=11 checks are currently done.
 - Extends facet-splitting and cut-and-ascent to add 2-3 facets simultaneously
 - Suggested in `experiments/hko-local-maximum/cut-and-ascent/logbook.md` line 40
 
@@ -183,7 +183,7 @@ Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the o
 
 ### [active] [group:licca] LICCA-scale massive ascent sampling (density probe)
 - Scale `gradient-ascent-general/` (10 → 10k+ seeds) and `gradient-ascent-products/` (12 → 10k+ seeds).
-- **Research question (load-bearing for RESULTS.md main-result-1 at `RESULTS.md:9–10`):** does the density of sys>1 local maxima in M_F actually support "no new examples"? Current seed counts are too small to claim the density is low.
+- **Research question (load-bearing for the `RESULTS.md` hostile-landscape main result):** does the density of sys>1 local maxima in M_F actually support "no new examples"? Current seed counts are too small to claim the density is low.
 - **Worktree pointer:** same as the F=10 item above — `licca-bundle @ 786de68c`. The refactor covers both `sys-*` binaries (V8 READY for phases 4+4.5 + polish).
 - **Best guess + known issues + ownership override:** same as the F=10 item above. Same 4 `job.sh` bugs apply to `sys-gradient-ascent-general` and `sys-gradient-ascent-products`. Verify before acting. Rebuild is still on the table if the worktree turns out to be in worse shape than the F=10 entry's spot-checks suggest.
 - Each family produces histogram + bucket counts at sys>0.95/0.99/1.00.
@@ -194,7 +194,9 @@ Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the o
 - Deprioritized until fixed-F LICCA sampling returns; if fixed-F finds nothing, this is the natural next step.
 
 ### [future] Analytical formula for sys(P_5 x R(theta) P_5)
-- Kai asked for this. Requires by-hand orbit analysis guided by empirical data.
+- Standalone mathematical result in `RESULTS.md`: explain the shape of the pentagon rotation curve.
+- Jörn knows the symbolic enumeration algorithm. Missing work: run it in a CAS over a field such as `Q(sin(theta), cos(theta), sqrt(5))`, then write the proof cleanly.
+- Scope target is `P_5 x R(theta) P_5`; no general formula for higher `(n,m)` pairs is required. Higher-pair function fitting remains useful only if it reveals recognizable shapes and later conjectures.
 
 ## [open] sys landscape structure
 
@@ -218,6 +220,14 @@ sys as a continuous function on polytope space, no privileged threshold.
 - Per-orbit gradient validated (slope=2.00) across 12 polytope types.
 - Direction-filtered subdifferential is a negative result.
 - `experiments/numerics/gradient/` (`numerics/`, `numerics-edge-cases/`, `numerics-subdifferential/`)
+
+### [open] [group:landscape] Feature regression + local-maxima pattern search
+- Load-bearing for the `RESULTS.md` hostile-landscape main result: a negative search story needs failed pattern-finding, not only failed random/ascent search.
+- Run regression/classifier methods on random polytopes using Euclidean and symplectic feature data. More importantly, run the same checks on local maxima found by ascent.
+- Candidate outcomes: a transferable signal gives a conjecture or guided search strategy; no signal or only non-transferable structure supports the hostile-landscape conclusion.
+- Dependencies: random/polytope datasets are available; the strongest local-maxima dataset depends on LICCA-scale ascent results returning.
+- Acceptance: report cross-validated predictive performance, feature importance or failure mode, and whether the signal transfers from random samples to ascent-found local maxima; update `RESULTS.md`.
+- Stop condition: if a real signal appears, surface it for Jörn's mathematical interpretation before turning it into a conjecture.
 
 ### [future] Systematic landscape analysis
 - Gradient flow convergence, local maxima below sys=1, random noise effects.
@@ -324,6 +334,11 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 ### [blocked] [group:writeup] Conclusion
 - Blocked on: stable chapter content.
 
+### [future] [group:writeup] AI/process reflection
+- `RESULTS.md` process result: analyze how AI agents contributed to the project, including counterfactual impact, useful failure modes, and lessons for future mathematical software work.
+- Jörn owns the framing and counterfactual judgment. Agents can gather repo history, session notes, task records, and concrete examples once the main thesis content is stable.
+- Acceptance: thesis section/appendix draft exists with evidence-backed examples, or Jörn explicitly cuts the process reflection from the thesis.
+
 ### [done] [2026-04-12] [group:writeup] Math write-up scaffold
 - Scaffold note: `scratch/math-writeup-scaffold.md` (778 lines, grep-verified).
 - Counts: 69 unverified blocks (unchanged from 2026-04-07), 41 `TODO: JÖRN` markers, 10 GAP markers, 100 theorem-like environments across 18 files.
@@ -345,9 +360,9 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Concept illustrations: polar of 2D polytope; 0/1/2/3-facets; fake 3D polytope with Reeb vectors and closed/open trajectories; decompositions of `gamma: R → R^4` drawn as `gamma: R → R`; etc.
 - Agent scope: figure inventory only (list, not produce), and only after narrative structure stabilizes so we know which concepts get illustrations and where.
 
-### [future] [group:figures] 4D → R^3 projection viz tool
-- RESULTS.md minor deliverable ("a visualization of the 4d geometry on a computer screen").
-- Agent scaffolds the tool (reads a polytope + Reeb orbit data, outputs rendered view); Jörn drives design decisions (interactive vs static, rendering backend, which projection).
+### [future] [group:figures] 3D visualization write-up + figure integration
+- `RESULTS.md` standalone mathematical result: visual inspection of 3D projections of 4D polytope geometry and Reeb dynamics did not reveal a usable geometric pattern.
+- Tooling exists in the visualization pipeline; remaining work is choosing which screenshots/assets belong in the thesis and writing the negative-result/communication framing.
 - Not urgent — post-Kai, after thesis narrative structure stabilizes enough to know what needs illustrating.
 
 ### [future] [group:figures] Figure inventory
