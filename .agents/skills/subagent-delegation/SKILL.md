@@ -11,21 +11,35 @@ Treat delegate output as evidence to check. Before presenting a delegate claim a
 
 ## Delegate Or Keep Local
 
+Delegate only when the result matters. If the result would not change the main task, skip the subtask.
+
+Then check whether the path matters:
+
+- If only the final result matters, delegate a bounded task with a clear output contract.
+- If the path matters for the main thread's reasoning, keep it local or split the work so the main thread sees the needed intermediate state.
+- If part of the path matters, make that intermediate state part of the delegate's required output.
+
 Delegate when the subtask is:
 
 - Concrete, self-contained, and easy to state.
-- Not the immediate blocking step on the critical path.
+- Bounded by a result the main thread can use without seeing every step.
 - Verifiable from files, commands, or source citations.
 - Bounded by a read-only surface or disjoint write scope.
-- Useful even if it returns after you make local progress.
+- Useful because it keeps distracting context, long logs, large source surfaces, or try-and-verify loops out of the main thread.
 
 Keep work local when:
 
-- The next action depends on the result.
+- The path to the result matters and cannot be summarized as required intermediate output.
 - The task needs tight context, mathematical judgment, thesis-scope judgment, or taste.
 - The subtask has no bounded output contract, or the delegate would have to choose the task boundary.
 - The result cannot be verified cheaply enough for the top-level session to own it.
 - A failed or confused delegate would cost more than doing the work locally.
+
+When the path matters but still contains delegable labor, split the task:
+
+- Have the main thread choose the path, then delegate execution.
+- Delegate the first part, require the intermediate state in the output, then continue locally or delegate the second part.
+- Redefine the delegate output to include the final result plus the intermediate evidence the main thread needs.
 
 Use narrow subagents proactively for low-risk side work.
 
@@ -49,7 +63,6 @@ Do not duplicate the same unresolved task across delegates.
 
 ## Running Delegates
 
-- Do the immediate blocking local work yourself.
 - Start sidecar delegates for non-blocking search, review, verification, or disjoint edits.
 - While delegates run, continue useful non-overlapping local work.
 - Wait only when their result is needed for the next step.
