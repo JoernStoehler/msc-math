@@ -12,6 +12,28 @@ Generated 2026-04-07 by review-claims agents (sonnet) across 29 experiment logbo
 - **3 severe** (completely stale or factually wrong data descriptions)
 - **3 code bugs** found incidentally (not numerical claims, but broken paths/labels)
 
+## Closure Pass 2026-04-15
+
+This pass reconciles the 2026-04-07 findings against the post-migration `research/**/design/*.md` notes, current experiment code, and committed generated artifacts. It does not regenerate JSONL.
+
+Live follow-up shortlist:
+
+1. **`experiments/verification/orbit-recovery/` — live follow-up, Jörn decision on dataset scope.** `research/verification/design/orbit-recovery.md` still claims 112 rows, 112/112 pass, old error magnitudes, and 0.025ms/4.7ms timing; `TASKS.md` still repeats `112/112 orbit-recovery polytopes pass` in the historical capacity-axiom summary; `experiments/verification/orbit-recovery/main.rs` still writes `solution_dim: 0`; committed `polytopes.jsonl` has 170 rows. Next packet: choose 170 cached polytopes vs 112 historical polytopes vs a smaller validation set, compute real `solution_dim`, then regenerate `orbit-recovery.jsonl`, the figure, and the design note/task summary.
+2. **`experiments/hko-local-maximum/perturbation-neighborhood/` — live follow-up.** The design note correctly documents the new smoke/LICCA file layout and dual-vertex perturbation method, but its Findings section still reports the historical `pentagon-perturb.jsonl` N=101 result while the current analyzer reads `data/{smoke,licca}-eps-*.jsonl`; `TASKS.md` still repeats the old min/max values. Next packet: split historical findings from current smoke/LICCA findings, then update the task summary.
+3. **`experiments/combinatorial-cells/convexity/` — live follow-up.** The old "zero product polytopes" finding is obsolete: current JSONL has product and random rows. Current docs are still numerically stale: committed data has 2800 rows, 2661 successful midpoint constructions, 1558/1558 product transition failures, and 0/1103 random transition failures, while `research/combinatorial-cells/design/convexity.md` reports 2711 successful constructions, 1561/1561 products, and 1/1150 random failures. Next packet: refresh the design-note counts and rerun `uv run analyze.py` if the figure needs the same numbers.
+4. **`research/numerics/design/error-bounds.md` — live follow-up.** The code bug is closed (`experiments/numerics/error-bounds/tests.rs` uses `error-bounds/testdata/`), but the design note still contains historical/currently confusing text: the old M1 retained-eigenvalue mismatch and `make smoke`/`make full` commands. Next packet: mark the M1 paragraph historical or replace it with the current status, and replace the Makefile commands with the current run commands.
+5. **`research/crosspolytope/design/main.md` — live follow-up, minor.** The reduction-factor wording was fixed to `~20-30x`, but elapsed time still disagrees with committed JSONL: the design note says 1112.8s, while `experiments/crosspolytope/main/crosspolytope.jsonl` records `time_capacity_ms = 1095119.632531` (1095.1s). Next packet: update the timing line or state that the 1112.8s table sum is historical console output.
+6. **`research/hko-local-maximum/design/cut-and-ascent.md` — live follow-up, minor.** The scale-up estimate still says `~10s per trial`; the old audit measured about 16s/trial. Next packet: update or delete the stale estimate when the cut-and-ascent plan is next touched.
+
+Closed by current evidence:
+
+- **Profiling:** closed as a data-pipeline break. `experiments/verification/algorithm-comparison/profiling/logbook.jsonl` still contains the bad 2026-04-04 zero-duration row, but also has a usable 2026-04-15 `f5d4ba18` row; `profile.jsonl` has 15 nonzero/zero per-test rows from the refreshed candidate list. Treat 2026-04-15 as the first usable post-fixture-removal baseline.
+- **Combinatorial cells except convexity:** `cell-widths`, `omega-hypothesis`, `boundary-characterization`, `gradient-discontinuity`, and `multiple-crossings` design notes now match the corrected current numbers found in the pass.
+- **Verification algorithm-comparison benchmark/ablation:** current design notes contain the corrected growth rates, speedups, and `lag triangle x square = 3*sqrt(2)/2` expected capacity; ablation documents A0 as the agreement baseline.
+- **Numerics except error-bounds:** `unknown-predicates`, `kkt-inertia`, `correctness`, and `q-error` current notes/code match the corrected counts, paths, or magnitudes relevant to the old flags.
+- **HKO local-maximum except perturbation/cut-and-ascent:** `lagrangian-boundary` and `second-order` contain the corrected min-sys cross-reference and current curvature/random-direction findings.
+- **Sys-landscape and rotated products:** `rejection-calibration`, `random-sample`, and `rotated-regular-products` match the corrected numbers/paths; the rotated-products output path code now writes under `rotated-regular-products/`.
+
 ---
 
 ## Severity: SEVERE
