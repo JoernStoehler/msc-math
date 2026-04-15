@@ -84,7 +84,7 @@ struct LevelRow {
 ///
 /// For a Lagrangian product, each dual vertex lies entirely in q-space or p-space.
 /// We classify by comparing the squared norms of the q and p components.
-// TODO: add [def:lagrangian-facet-type] to math.tex (trivial from the LP definition)
+// TODO: add [def:lagrangian-facet-type] to formal math (trivial from the LP definition)
 fn lagrangian_component_indices(duals: &[Vector4<f64>]) -> Vec<(usize, usize)> {
     duals
         .iter()
@@ -105,7 +105,7 @@ fn lagrangian_component_indices(duals: &[Vector4<f64>]) -> Vec<(usize, usize)> {
 ///
 /// Only the nonzero 2D components are perturbed, so the result remains a
 /// valid Lagrangian product (q-facets stay in q-space, p-facets in p-space).
-// TODO: add [lem:lagrangian-perturbation-closure] to math.tex
+// TODO: add [lem:lagrangian-perturbation-closure] to formal math
 fn perturb_lagrangian(
     base: &[Vector4<f64>],
     indices: &[(usize, usize)],

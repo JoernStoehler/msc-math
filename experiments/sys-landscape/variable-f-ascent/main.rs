@@ -95,11 +95,11 @@ const N_WIGGLES: usize = 5;
 
 /// Multiplicative perturbation scale for dual vertex components: a_k[i] -> a_k[i] * (1 + 0.05 * N(0,1)).
 /// Per-facet displacement has expected norm ~0.05 * |a_k| (unit-scale dual vertices: ~0.05).
-/// Cell-widths data (cell-widths/logbook.md): median non-orbit cell width = 0.124, median
+/// Cell-widths data (research/combinatorial-cells/design/cell-widths.md): median non-orbit cell width = 0.124, median
 /// orbit cell width = 0.258. So per-facet displacement ~0.05 is ~40% of the narrowest
 /// median cell width. With F=10-11 facets all perturbed simultaneously, boundary crossing
 /// is highly likely — confirmed by data: wiggle dominated overshoot as escape strategy
-/// (gradient-ascent-general/logbook.md, gradient-ascent-products/logbook.md).
+/// (research/sys-landscape/design/gradient-ascent-general.md, research/sys-landscape/design/gradient-ascent-products.md).
 /// If changed: much smaller (e.g. 0.01) reduces boundary-crossing probability and escape
 /// effectiveness. Much larger (e.g. 0.2) risks producing degenerate polytopes
 /// (Polytope4D::from_f64 failure) or landing too far from the current optimum.
@@ -242,7 +242,7 @@ struct AscentResult {
 
 /// Single gradient ascent phase: iterate until convergence or budget.
 /// Gradient: d(sys)/d(a_k) = (cap * d(cap)/d(a_k) - sys * d(vol)/d(a_k)) / vol
-// TODO: add [lem:sys-sensitivity] to math.tex (see gradient-correctness experiment)
+// TODO: add [lem:sys-sensitivity] to formal math (see gradient-correctness experiment)
 fn gradient_ascent_phase(
     start: &Polytope4D,
     t0: Instant,
@@ -401,7 +401,7 @@ fn full_ascent(
 /// the new halfspace ⟨n,x⟩ ≤ h_K(n) - ε shaves a thin sliver.
 ///
 /// Pattern from facet-splitting/main.rs.
-// TODO: add [lem:facet-addition] to math.tex (dual vertex ↔ halfspace correspondence)
+// TODO: add [lem:facet-addition] to formal math (dual vertex ↔ halfspace correspondence)
 fn add_facet(
     polytope: &Polytope4D,
     direction: &Vector4<f64>,

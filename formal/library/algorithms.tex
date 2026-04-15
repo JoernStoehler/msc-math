@@ -1,4 +1,4 @@
-% math.tex — algorithms module
+% formal/library/algorithms.tex — algorithms module
 % Mathematical results supporting library/src/algorithms/
 %
 % Labels defined here:
@@ -9,7 +9,7 @@
 %   lem:base-point-recovery, lem:fixed-point, lem:lagrangian-facets,
 %   lem:cap-derivative, lem:vol-derivative,
 %   lem:prune-action, lem:prune-empty, lem:prune-rotation, lem:prune-simple,
-%   lem:shoelace (cross-ref to geom/math.tex),
+%   lem:shoelace (cross-ref to formal/library/geom.tex),
 %   lem:sigma-structure,
 %   def:simple-reeb-orbit,
 %   prop:capacity-piecewise-smooth,
@@ -19,10 +19,10 @@
 %   thm:conformality, thm:sympl-invariance
 %
 % Labels referenced but defined elsewhere (do NOT redefine):
-%   lem:kkt (kkt/math.tex), def:ehz-capacity (geom/math.tex),
-%   thm:hko-counterexample (geom/math.tex),
-%   lem:numerical-transition-feasibility (kkt/math.tex),
-%   lem:q-error-bound (kkt/math.tex)
+%   lem:kkt (formal/library/kkt.tex), def:ehz-capacity (formal/library/geom.tex),
+%   thm:hko-counterexample (formal/library/geom.tex),
+%   lem:numerical-transition-feasibility (formal/library/kkt.tex),
+%   lem:q-error-bound (formal/library/kkt.tex)
 %
 % Sources: thesis/general-case-algorithm.tex,
 %   thesis/pruned-general-case-algorithm.tex,
@@ -32,7 +32,7 @@
 %   thesis/simple-minimizer-existence.tex,
 %   .rs doc comments (stubs for labels not yet in thesis)
 
-% \input'd from library/src/math.tex — do not add \documentclass or \begin{document}
+% input by formal/library/main.tex and formal/main.tex — do not add \documentclass or \begin{document}
 
 % ====================================================================
 % Part 1: General-case algorithm (HK2017)
@@ -685,11 +685,11 @@ Return $c^*$.
 % ====================================================================
 % Part 5: Derivatives of capacity, volume, and systolic ratio
 % ====================================================================
-% Relocated from exp-sys-landscape/sensitivity-analysis/math.tex
+% Relocated from historical exp-sys-landscape/sensitivity-analysis/math.tex
 % (experiment deleted 2026-04-03, superseded by gradient-ascent-general/gradient-ascent-products).
 % These lemmas document library/src/derivatives.rs.
 % Label sec:sys-optimization kept for backward compatibility with
-% cross-references in gradient-analysis/math.tex.
+% cross-references in formal/hko-local-maximum/gradient-analysis.tex.
 
 \subsection{Derivatives of the Systolic Ratio}
 \label{sec:sys-optimization}

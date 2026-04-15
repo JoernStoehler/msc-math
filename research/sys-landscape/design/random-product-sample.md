@@ -24,7 +24,7 @@ uv run analyze.py
 |------|------|
 | `main.rs` | Rust binary: generates random Lagrangian products, computes sys |
 | `analyze.py` | Python: scatter plot with median and std error bars per pair |
-| `math.tex` | Formal writeup (figure, observations) |
+| `formal/sys-landscape/random-product-sample.tex` | Formal writeup (figure, observations) |
 | `random-product-sweep.jsonl` | Dataset (100 rows) |
 | `random_product_sweep_sys_vs_pair.png` | Figure: sys vs polygon pair |
 

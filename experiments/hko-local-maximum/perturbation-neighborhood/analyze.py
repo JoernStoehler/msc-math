@@ -41,7 +41,10 @@ def pick_jsonl_files(data_dir: Path) -> list[Path]:
     """Prefer LICCA data if present, else fall back to smoke data."""
     if not data_dir.exists():
         print(f"ERROR: data directory not found: {data_dir}", file=sys.stderr)
-        print("Run the binary first (see logbook.md 'How to run').", file=sys.stderr)
+        print(
+            "Run the binary first (see research/hko-local-maximum/design/perturbation-neighborhood.md 'How to run').",
+            file=sys.stderr,
+        )
         sys.exit(1)
     licca_files = sorted(data_dir.glob("licca-eps-*.jsonl"))
     if licca_files:

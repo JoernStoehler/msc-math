@@ -304,8 +304,8 @@ fn compute_sensitivity(
 // ============================================================================
 // Step bounds computation (experiment-specific: topology-aware step size limits)
 // Same math as [lem:step-bound-incidence] and [lem:step-bound-omega] in
-// experiments/combinatorial-cells/boundary-characterization/math.tex, adapted for (h,n) space.
-// TODO: add [lem:step-bound-hn] to gradient-analysis/math.tex for the (h,n) variant.
+// formal/combinatorial-cells/boundary-characterization.tex, adapted for (h,n) space.
+// TODO: add [lem:step-bound-hn] to formal/hko-local-maximum/gradient-analysis.tex for the (h,n) variant.
 // ============================================================================
 
 fn compute_step_bound(polytope: &Polytope4D, direction: &[f64]) -> f64 {

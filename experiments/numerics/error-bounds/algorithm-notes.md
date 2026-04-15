@@ -1,14 +1,14 @@
-# Task: Write up KKT solver algorithm specification + correctness proofs in math.tex
+# Task: Write up KKT solver algorithm specification + correctness proofs in formal/numerics/error-bounds.tex
 
 ## Context
 
-The verify-numerics experiment has proven Q error bounds and empirically validated β > 0 classification across 51K problems (458 polytopes + 15 synthetic families). A discussion on 2026-04-01 with Jörn produced a clean mathematical specification for what the KKT solver should do, separating concerns that the current saddle-point solver conflates. The next step is to formalize this specification in math.tex, prove correctness of the error bounds within this framework, and iterate on the algorithm in solvers.rs.
+The verify-numerics experiment has proven Q error bounds and empirically validated β > 0 classification across 51K problems (458 polytopes + 15 synthetic families). A discussion on 2026-04-01 with Jörn produced a clean mathematical specification for what the KKT solver should do, separating concerns that the current saddle-point solver conflates. The next step is to formalize this specification in `formal/numerics/error-bounds.tex`, prove correctness of the error bounds within this framework, and iterate on the solver copy in this experiment.
 
 ## Scope
 
-1. **Update logbook.md** with the algorithm design discussion (the specification below, the vertex-enumeration dead end, the projection solver insight).
+1. **Update `research/numerics/design/error-bounds.md`** with the algorithm design discussion (the specification below, the vertex-enumeration dead end, the projection solver insight).
 
-2. **Write math.tex** formalizing:
+2. **Write `formal/numerics/error-bounds.tex`** formalizing:
    - The solver specification (inputs, outputs, trinary classification)
    - The projection solver algorithm (SVD of C → eigendecompose H' → classify → check β → compute Q)
    - Direction-dependent β error bounds (1/|λ_i| amplification in eigenvector directions of H')
@@ -16,7 +16,7 @@ The verify-numerics experiment has proven Q error bounds and empirically validat
    - The backward stability bound: ‖r‖ ≤ ‖P_D b‖ + O(ε_mach ‖M‖ ‖x̃‖) (cite Higham 2002 Ch 8, Golub & Van Loan 2013 §8.1)
    - The connection to the capacity algorithm (minimum-length minimum-action orbit passes adjacency, so false negatives on boundary cases don't affect capacity)
 
-3. **Implement the projection solver algorithm** in solvers.rs, following the specification. Test against the 51K-problem dataset. Compare results with the saddle-point solver.
+3. **Implement the projection solver algorithm** in `projection_solver.rs`, following the specification. Test against the 51K-problem dataset. Compare results with the saddle-point solver.
 
 4. **Iterate** using the autonomous loop: change solver → regenerate → analyze → check violations → repeat.
 
@@ -25,7 +25,7 @@ The verify-numerics experiment has proven Q error bounds and empirically validat
 ## Out of scope
 
 - Library promotion (library/src/kkt/ changes) — do after the algorithm is settled.
-- Thesis chapter writing — the experiment's math.tex is the source; thesis copies from it later.
+- Thesis chapter writing — `formal/numerics/error-bounds.tex` is the source; thesis copies from it later.
 - Merging to main — Jörn gates merges.
 - Rational solver fallback for INDETERMINATE cases — design decision for later.
 
@@ -33,15 +33,12 @@ The verify-numerics experiment has proven Q error bounds and empirically validat
 
 - `experiments/numerics/error-bounds/` — all experiment files
   - `main.rs` — stage 2 binary (loads JSONL, exact + f64 solver, diagnostics)
-  - `collect_inputs.rs` — stage 1 binary (generates artificial.jsonl + collected.jsonl)
-  - `solvers.rs` — f64 solver copy (sign-fixed, no panics, LP-then-project fix)
+  - `collect_poly.rs` — stage 1 binary for polytope σ-node collection
+  - `projection_solver.rs` and `saddle_point_solver.rs` — f64 solver copies
   - `analyze.py` — stage 3 checks (propositions, bounds, β > 0 classification)
-  - `math.tex` — proven bounds (3 lemmas, 2 corollaries, 1 remark, 1 GAP)
-  - `logbook.md` — full findings and status
-  - `artificial.jsonl` — 4303 synthetic problems (committed)
-  - `collected.jsonl` — 1.66M polytope σ-nodes (gitignored, regenerate with collect_inputs.rs)
-  - `results.jsonl` — 51K problems with exact ground truth (committed)
-  - `checks.txt` — latest analysis output
+  - `formal/numerics/error-bounds.tex` — proven bounds and solver specification
+  - `research/numerics/design/error-bounds.md` — full findings and status
+  - `testdata/*.jsonl` — committed regression fixtures
 - `library/src/kkt/projection_solver.rs` — reduced-gradient sign fixed in `e56cf161` (2026-04-12), with regression test `reduced_gradient_sign_distinguishes_fix`
 - `library/src/kkt/qp_assembly.rs` — matrix assembly reference
 
@@ -132,7 +129,7 @@ The capacity algorithm iterates over all subsets S ⊆ {1,...,F} and all cyclic 
 
 ### Scope and iteration guidance
 
-**Agent owns:** All experiment files (main.rs, solvers.rs, collect_inputs.rs, analyze.py, math.tex, logbook.md), JSONL data, TASKS.md updates, solver algorithm changes.
+**Agent owns:** All experiment files (`main.rs`, `projection_solver.rs`, `saddle_point_solver.rs`, `collect_poly.rs`, `analyze.py`), `formal/numerics/error-bounds.tex`, `research/numerics/design/error-bounds.md`, JSONL data, TASKS.md updates, solver algorithm changes.
 
 **Needs Jörn:** GAP in cor:taylor-structure proof, mathematical review of new bounds, merge to main, scope decisions.
 
@@ -146,23 +143,22 @@ Worktree at `.claude/worktrees/verify-numerics-q-accuracy`, branch `verify-numer
 
 To regenerate data:
 ```bash
-cargo run -p dev-numerical-analysis --release --bin collect_inputs -- artificial
-cargo run -p dev-numerical-analysis --release --bin collect_inputs -- natural --polytopes /tmp/all_polytopes.jsonl --max-facets 8
-cargo run -p dev-numerical-analysis --release --bin verify_numerics
+cargo run -p dev-numerical-analysis --release --bin num-collect-poly -- --polytopes /tmp/all_polytopes.jsonl --max-facets 8
+cargo run -p dev-numerical-analysis --release --bin num-error-bounds -- <input.jsonl> <output.jsonl>
 uv run experiments/numerics/error-bounds/analyze.py
 ```
 
 The `/tmp/all_polytopes.jsonl` is a concatenation of correctness + random-product-sample + benchmark + ablation data. Recreate with:
 ```bash
-cat experiments/verification/correctness/correctness.jsonl experiments/sys-landscape/random-product-sample/random-product-sample.jsonl experiments/verification/algorithm-comparison/benchmark/benchmark.jsonl experiments/verification/algorithm-comparison/ablation/ablation.jsonl > /tmp/all_polytopes.jsonl
+cat experiments/verification/correctness/correctness.jsonl experiments/sys-landscape/random-product-sample/random-product-sweep.jsonl experiments/verification/algorithm-comparison/benchmark/benchmark.jsonl experiments/verification/algorithm-comparison/ablation/ablation.jsonl > /tmp/all_polytopes.jsonl
 ```
 
 ## Success criteria
 
-1. `math.tex` has the solver specification formalized as definitions + lemmas
-2. `math.tex` has direction-dependent β error bound proven (or marked GAP with clear statement)
-3. `solvers.rs` has projection solver implementation matching the specification
+1. `formal/numerics/error-bounds.tex` has the solver specification formalized as definitions + lemmas
+2. `formal/numerics/error-bounds.tex` has direction-dependent β error bound proven (or marked GAP with clear statement)
+3. `projection_solver.rs` has projection solver implementation matching the specification
 4. `analyze.py` reports zero violations on proven bounds with the new solver
-5. `logbook.md` documents the algorithm design discussion and all findings
+5. `research/numerics/design/error-bounds.md` documents the algorithm design discussion and all findings
 6. Generic `reviewer` subagent finds no blocking formal-math issues
-7. `cargo build --release --bin verify_numerics --bin collect_inputs` succeeds
+7. `cargo build -p dev-numerical-analysis --release --bin num-error-bounds --bin num-collect-poly` succeeds

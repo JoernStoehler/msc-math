@@ -24,7 +24,7 @@ uv run plot_orbit_recovery.py                    # generates error plot
 | `main.rs` | Rust binary: recovery + validation for each polytope |
 | `analyze.py` | Python: summary statistics (printed to stdout) |
 | `plot_orbit_recovery.py` | Python: error distribution plot by facet count |
-| `math.tex` | Formal writeup (lemma, error table, solution dimension) |
+| `formal/verification/orbit-recovery.tex` | Formal writeup (lemma, error table, solution dimension) |
 | `orbit-recovery.jsonl` | Dataset (112 rows) |
 | `orbit_recovery_errors.png` | Error distribution by facet count figure |
 
@@ -39,7 +39,7 @@ uv run plot_orbit_recovery.py                    # generates error plot
 
 ### Validation procedure
 
-For each polytope: compute c_EHZ, recover base point b from optimal (S, beta), reconstruct the orbit gamma, and measure four error metrics (per Lemma `lem:finite-orbit-verification` in math.tex):
+For each polytope: compute c_EHZ, recover base point b from optimal (S, beta), reconstruct the orbit gamma, and measure four error metrics (per Lemma `lem:finite-orbit-verification` in formal/verification/orbit-recovery.tex):
 1. **Closure error:** ||gamma(T) - gamma(0)||
 2. **On-facet error:** max distance of any breakpoint from its assigned facet
 3. **Inequality violation:** max violation of <n_i, gamma(t_j)> <= h_i across all facets and breakpoints

@@ -32,7 +32,7 @@ Total runtime: ~60s (Phase 1: 0.4s, Phase 2: 18s, Phase 3: 41s).
 | `second_order_curves.png` | sys(ε) − sys(0) curves for all 15 directions |
 | `second_order_curvatures.png` | Bar chart of curvatures by direction |
 | `second_order_curvatures.tex` | LaTeX table of curvature values |
-| `math.tex` | Second-order sufficiency conditions |
+| `formal/hko-local-maximum/second-order.tex` | Second-order sufficiency conditions |
 
 ## Methodology
 
@@ -139,7 +139,7 @@ This constitutes strong numerical evidence for negative definiteness of the gene
 Discussion with Jörn clarified the mathematical structure. Key points:
 
 **Why flat directions form a subspace (not just a cone):**
-The Danskin directional derivative D_d⁺ sys = min_{i ∈ A} ⟨∇sys_i, d⟩ is piecewise linear in d (min of 150 linear functions). A direction is "flat" if this min equals 0, which a priori defines the boundary of the non-decreasing cone C = {d : ⟨∇sys_i, d⟩ ≥ 0 for all i ∈ A} — not necessarily a subspace. But Lemma `lem:cone-equals-kernel` (math.tex) shows C = ker(G) when two conditions hold: (a) 0 ∈ conv(gradients), and (b) rank(G_active) = rank(G_all). Condition (b) says the 26 LP-active orbits (those with λ_i > 0) span the same row space as all 150 orbits. Verified: both have rank 25. So C collapses to a 15D linear subspace.
+The Danskin directional derivative D_d⁺ sys = min_{i ∈ A} ⟨∇sys_i, d⟩ is piecewise linear in d (min of 150 linear functions). A direction is "flat" if this min equals 0, which a priori defines the boundary of the non-decreasing cone C = {d : ⟨∇sys_i, d⟩ ≥ 0 for all i ∈ A} — not necessarily a subspace. But Lemma `lem:cone-equals-kernel` (formal/hko-local-maximum/second-order.tex) shows C = ker(G) when two conditions hold: (a) 0 ∈ conv(gradients), and (b) rank(G_active) = rank(G_all). Condition (b) says the 26 LP-active orbits (those with λ_i > 0) span the same row space as all 150 orbits. Verified: both have rank 25. So C collapses to a 15D linear subspace.
 
 **No improving direction exists:**
 0 ∈ conv(gradients) means D_d⁺ sys ≤ 0 for every d ∈ R^40. Combined with C = ker(G): every direction either has D_d⁺ sys < 0 (the 25D complement of ker(G)) or D_d⁺ sys = 0 (the 15D flat subspace). There is no direction where sys increases to first order.

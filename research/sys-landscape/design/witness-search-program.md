@@ -14,9 +14,9 @@ Use this file for tracker pointers and session prep; do not cite the raw import 
 - Treat the search as a finite minimax problem `sys(K) = min_{c in S_F} s_c(K)`.
 - Fixed-witness branch evaluation is cheap; exact witness search is the factorial bottleneck.
 - Existing repo evidence already covers the generic-interior regime:
-  - random sampling stayed below `sys = 1`: `experiments/sys-landscape/random-sample/logbook.md`
-  - fixed-F ascent improved tails but found no new `sys > 1`: `experiments/sys-landscape/gradient-ascent-general/logbook.md`
-  - random `F -> F+1` continuation gave only marginal gains: `experiments/sys-landscape/variable-f-ascent/logbook.md`
+  - random sampling stayed below `sys = 1`: `research/sys-landscape/design/random-sample.md`
+  - fixed-F ascent improved tails but found no new `sys > 1`: `research/sys-landscape/design/gradient-ascent-general.md`
+  - random `F -> F+1` continuation gave only marginal gains: `research/sys-landscape/design/variable-f-ascent.md`
 - The new program focuses on small active witness sets, exact-search warm starts, and structured continuation.
 
 ## 2. Witness Oracle Instrumentation

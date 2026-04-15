@@ -16,7 +16,7 @@
 //! Mathematical basis: Danskin's theorem gives D_d⁺ sys = min_i (∇sys_i · d).
 //! Flat directions d satisfy ∇sys_i · d = 0 for all active orbits i.
 //! Second-order analysis: if sys(K + εd) < sys(K) for all ε ≠ 0 and all flat d,
-//! then K is a strict local maximum. See math.tex for formal statement.
+//! then K is a strict local maximum. See formal/hko-local-maximum/second-order.tex for formal statement.
 
 use nalgebra::{DMatrix, Vector4};
 use rand::Rng as _;
@@ -179,7 +179,7 @@ fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult
 /// This is the quotient rule applied to sys = c²/(2·vol):
 /// ∂sys/∂a_k = (c/vol) · ∂c/∂a_k − (sys/vol) · ∂vol/∂a_k.
 /// Per-orbit: uses ∂c_i/∂a_k from [lem:cap-derivative] and ∂vol/∂a_k from [lem:vol-derivative].
-/// // TODO: add [lem:sys-derivative] to math.tex — quotient rule for sys = c²/(2vol)
+/// // TODO: add [lem:sys-derivative] to formal math — quotient rule for sys = c²/(2vol)
 ///
 /// Requires re-solving KKT to obtain the multiplier μ (not stored in JSONL).
 fn orbit_sys_gradient_a(

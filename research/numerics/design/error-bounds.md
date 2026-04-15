@@ -51,7 +51,7 @@ The current solvers live in `library/src/kkt/`. Key files:
 - `beta_feasibility.rs` — Chebyshev center LP for max-min-component (subroutine)
 - `qp_assembly.rs` — builds QP matrices from polytope data (two formulations, equivalence unproven)
 - `mod.rs` — types, constants, verdict classification
-- `math.tex` — existing correctness proofs (some unverified, some known loose)
+- `formal/numerics/error-bounds.tex` — existing correctness proofs (some unverified, some known loose)
 
 The problem arises in the context of computing the EHZ capacity of 4D convex polytopes. β are dwell-time coefficients, Q encodes symplectic action, C enforces closure + normalization. But the QP solver itself is context-free — it takes matrices and returns solutions.
 
@@ -175,7 +175,7 @@ The existing bound E ~ 1e-28 for well-conditioned problems is a bound on |Q(β�
 
 **Why Candidate A appeared to work:** the ill_cond_c family uses well-conditioned H (||H|| ~ 4), so the ||H||·||β||/σ_max(C) factor is ≈ 0.3, absorbed by the constant. When ||H|| increases to 98, the factor jumps to 7.7 and the bound nearly breaks.
 
-### Proof ([lem:q-error-first-order] in math.tex)
+### Proof ([lem:q-error-first-order] in formal/numerics/error-bounds.tex)
 
 **Theorem.** At a KKT point β* with multiplier λ*:
 
@@ -445,7 +445,7 @@ Filter binaries coexist — edit/add filters without churn.
 
 ## Perturbation chain and β certification bound (2026-04-01)
 
-Added to math.tex:
+Added to formal/numerics/error-bounds.tex:
 - lem:link-beta0: β₀ perturbation bound, O(ε_mach/σ_min(C)²)
 - lem:link-gradient: reduced gradient perturbation
 - rem:conditioning-precondition: σ_min(C) gates the chain
@@ -472,14 +472,14 @@ The product |δα_j| · |γ_j| is ~10^{-16} to 10^{-17} across 15 orders of magn
 The componentwise β error follows via:
 |δβ_k| ≈ ε_mach · Σ_j |(Vw_j)_k| / |γ_j|
 
-This is the shape of the η_k bound (eq:eta-computable in math.tex). The bound is valid
+This is the shape of the η_k bound (eq:eta-computable in formal/numerics/error-bounds.tex). The bound is valid
 with safety constant c = m² (zero violations on well-separated eigenvalues).
 
 Outlier: |γ_j| ≈ 10^{-15} gives |δα_j| ≈ 0.05 — same root cause as the 39 bound violations
 (null eigenvalue, solver retains it, 1/γ amplification produces O(1) error).
 
 Open:
-- Write the f64 algorithm (Part III of math.tex)
+- Write the f64 algorithm (Part III of formal/numerics/error-bounds.tex)
 - Extend η_k bound for null-eigenvalue LP search
 - GAP in cor:taylor-structure proof (needs Jörn)
 

@@ -37,7 +37,7 @@ cd experiments/sys-landscape/variable-f-ascent/ && uv run analyze.py            
 | main.rs | Binary: variable-F gradient ascent (RQ1 + RQ2) |
 | analyze.py | Figures + summary statistics |
 | variable-f-ascent.jsonl | Per-trial results |
-| logbook.md | This file |
+| research/sys-landscape/design/variable-f-ascent.md | This file |
 
 ## Methodology
 

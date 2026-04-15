@@ -20,11 +20,11 @@
 //!
 //! Mathematical correspondence:
 //! - [lem:cap-derivative] (unverified): envelope theorem formula for dc/da_k.
-//!   In library/src/algorithms/math.tex.
+//!   In formal/library/algorithms.tex.
 //! - [lem:vol-derivative] (unverified): chain rule formula for dvol/da_k.
-//!   In library/src/algorithms/math.tex.
+//!   In formal/library/algorithms.tex.
 //! - [prop:capacity-piecewise-smooth] (unverified): piecewise C^inf, generic differentiability.
-//!   In library/src/algorithms/math.tex.
+//!   In formal/library/algorithms.tex.
 //!
 //! Architecture:
 //! 1. `cargo run --release --bin gradient-basic-validation` -> JSONL files
@@ -153,7 +153,7 @@ fn solve_kkt_safe(polytope: &Polytope4D, perm: &[usize]) -> Option<KktResult> {
 /// Compute dsys/da_k via quotient rule: sys = c^2/(2*vol).
 /// dsys/da_k = (c*dc/da_k - sys*dvol/da_k) / vol.
 /// [cor:sys-derivative] quotient-rule derivative of the systolic ratio.
-/// In library/src/algorithms/math.tex.
+/// In formal/library/algorithms.tex.
 fn sys_derivatives_a(
     d_cap: &[Vector4<f64>],
     d_vol: &[Vector4<f64>],

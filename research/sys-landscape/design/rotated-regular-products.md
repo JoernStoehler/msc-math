@@ -21,7 +21,7 @@ uv run analyze.py                             # generates plots
 |------|------|
 | `main.rs` | Rust binary: generates all sweep datasets |
 | `analyze.py` | Python: plots sys(theta) curves |
-| `math.tex` | Formal proofs and definitions (rotation setup, symmetry lemma) |
+| `formal/sys-landscape/rotated-regular-products.tex` | Formal proofs and definitions (rotation setup, symmetry lemma) |
 | `lagrangian-products-5x5.jsonl` | Pentagon rotation curve (37 rows) |
 | `lagrangian-products-7x7.jsonl` | Heptagon rotation curve (27 rows) |
 | `lagrangian-products-3x3-6deg.jsonl` | Triangle x triangle sweep (11 rows) |
@@ -46,7 +46,7 @@ Fix polygons P in q-space and Q in p-space. Rotate Q by angle theta. The Lagrang
 
 ### Symmetry reduction
 
-For regular n-gon x m-gon, sys(theta) has period 2*pi/lcm(n,m) and mirror symmetry sys(theta) = sys(-theta), so the fundamental domain is [0, pi/lcm(n,m)]. (See Lemma `lem:rotation-fundamental-domain` in math.tex for the proof.)
+For regular n-gon x m-gon, sys(theta) has period 2*pi/lcm(n,m) and mirror symmetry sys(theta) = sys(-theta), so the fundamental domain is [0, pi/lcm(n,m)]. (See Lemma `lem:rotation-fundamental-domain` in formal/sys-landscape/rotated-regular-products.tex for the proof.)
 
 ### Families
 

@@ -31,7 +31,7 @@ Python exits with code 1 if any disagreements found in the JSONL.
 |------|------|
 | `main.rs` | Rust binary: generates dataset, runs all 4 variants, checks agreement |
 | `analyze.py` | Python analysis: agreement/timing/iteration tables, timing figure |
-| `math.tex` | Formal writeup: pruning variants, transition feasibility lemma, results |
+| `formal/verification/algorithm-comparison/ablation.tex` | Formal writeup: pruning variants, transition feasibility lemma, results |
 | `ablation.jsonl` | Dataset: 216 entries (54 polytopes x 4 variants) |
 | `ablation_timing.png` | Figure: timing per group and facet count |
 
@@ -75,7 +75,7 @@ The binary copies `solve_kkt_svd_path` using the old gap-ratio approach (SVD_GAP
 
 2. **Timing (random generic polytopes)**: A2 speedup over A0 grows exponentially with F: ~9x at F=5, ~94x at F=8, ~592x at F=10. The A0/A2 time speedup fits 0.08 * exp(0.88 * F) with R^2 = 0.99, meaning each additional facet multiplies the speedup by ~2.4x.
 
-3. **A3 = A2 on simple polytopes**: On all 48 simple test polytopes, A3 provides zero additional pruning beyond A2. By Ridge Sufficiency (Corollary in math.tex), vertex-adjacent facets of simple polytopes share ridges, making the LP check redundant.
+3. **A3 = A2 on simple polytopes**: On all 48 simple test polytopes, A3 provides zero additional pruning beyond A2. By Ridge Sufficiency (Corollary in formal/verification/algorithm-comparison/ablation.tex), vertex-adjacent facets of simple polytopes share ridges, making the LP check redundant.
 
 4. **A3 != A2 on non-simple polytopes**: All 6 non-simple polytopes (5 in Non-simple group + 1 regression cut simplex) show A3 pruning beyond A2. Cut simplices (F=6): 15% reduction (39 -> 33 candidates). Bipyramids (F=10): 96-98% reduction (5-14k -> 213 candidates), because bipyramid apices lie on 5 facets, creating many vertex-adjacent but infeasible transitions.
 

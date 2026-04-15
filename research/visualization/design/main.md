@@ -32,7 +32,7 @@ node screenshot-figures.mjs
 | File | Role |
 |------|------|
 | `main.rs` | Rust binary: exports polytope JSON with Reeb orbits |
-| `math.tex` | Formal writeup (input'd from `thesis/experiments.tex`) |
+| `formal/visualization/main.tex` | Formal writeup (input by `formal/main.tex`) |
 | `viz/` | Interactive Three.js viewer (index.html, viz.js, data files, screenshot automation) |
 | `viz/data/*.json` | Per-polytope JSON data (intermediate, regenerated) |
 | `viz/data.js` | Embedded data for viewer (auto-generated) |
@@ -99,7 +99,7 @@ Qualitative observations:
 
 - `serve.sh` data path changed from `docs/viz/data` to local `viz/data` (after `docs/` deletion). **Untested** — visualization binary doesn't compile (KktOutcome API change).
 - `docs/viz/` deleted (was stale copy of `viz/`, formerly used as GitHub Pages deployment target — no longer used).
-- GitHub Pages URL removed from logbook and math.tex.
+- GitHub Pages URL removed from the deleted experiment logbook and formal writeup.
 
 ## Known limitations
 

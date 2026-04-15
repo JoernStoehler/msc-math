@@ -65,7 +65,7 @@ struct ProbeRow {
 
 /// Identify which 2D components are nonzero for each dual vertex.
 /// Returns (i0, i1) index pairs: [0,1] for q-facets, [2,3] for p-facets.
-// TODO: add [def:lagrangian-facet-type] to math.tex (trivial from the LP definition)
+// TODO: add [def:lagrangian-facet-type] to formal math (trivial from the LP definition)
 fn lagrangian_component_indices(duals: &[Vector4<f64>]) -> Vec<(usize, usize)> {
     duals
         .iter()

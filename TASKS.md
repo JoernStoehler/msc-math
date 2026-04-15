@@ -18,7 +18,7 @@ Rough shape of Jörn's plan as of 2026-04-12. Ordering is by hard dependencies, 
 ### Today + tomorrow (2026-04-12 Sun + 2026-04-13 Mon)
 - **Tube algorithm write-up** (Jörn): first sketch a correct rotation formula + proof → unblocks tube benchmark work. Agents can't do useful tube work before this.
 - **Research results strengthening** (both): more experiment ideas, empirical falsification of conclusions, cleaner evidence presentations, extra evidence types even for high-confidence conclusions.
-- **Library documentation/architecture shape decision** (Jörn + agent): pick form (colocated README vs architecture.md vs beefed-up file headers vs just math.tex). Agent runs a docs audit to test whether existing state already covers it.
+- **Library documentation/architecture shape decision** (Jörn + agent): pick form (colocated README vs architecture.md vs beefed-up file headers vs just formal library files). Agent runs a docs audit to test whether existing state already covers it.
 - **LICCA Sunday compute window** (agent): massive ascent sampling + HKO2024 neighborhood falsification as large-N experiments.
 
 ### Tuesday 2026-04-14 — Kai meeting (hard gate)
@@ -62,7 +62,7 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 
 ### [done] [2026-04] 1a. First-order analysis in a_i space (gradient-analysis)
 - Rank 25 in R^40, 15 flat directions. LP confirms 0 in conv(150 per-orbit gradients).
-- `experiments/hko-local-maximum/gradient-analysis/logbook.md`
+- `research/hko-local-maximum/design/gradient-analysis.md`
 
 ### [done] [2026-04] 1e. Second-order analysis along flat directions
 - All 15 basis + 100 random curvatures negative (-0.31 to -0.02). Supports local maximality.
@@ -82,7 +82,7 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 
 ### [done] [2026-03] 1d. Lagrangian boundary mapping
 - Characteristic radius ~0.035, anisotropic (7x aspect ratio), ~10^-31 volume fraction.
-- `experiments/hko-local-maximum/lagrangian-boundary/logbook.md`
+- `research/hko-local-maximum/design/lagrangian-boundary.md`
 
 ### [done] [2026-03] Perturbation neighborhood (LP(5,5) random perturbations)
 - 100 random perturbations all retain sys>1 (min 1.002, max 1.033). HKO highest.
@@ -102,16 +102,16 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 
 ### [Jörn] [group:hko] Verify h-space proof
 - Danskin + symmetry + Euler homogeneity argument. ~15 min.
-- `experiments/hko-local-maximum/gradient-analysis/logbook.md` lines 151-156
+- `research/hko-local-maximum/design/gradient-analysis.md`
 
-### [Jörn] [group:hko] Verify second-order math.tex proposition
+### [Jörn] [group:hko] Verify second-order formal proposition
 - Non-smooth second-order sufficiency proof sketch needs rigor check.
 - `formal/hko-local-maximum/second-order.tex`
 
 ### [future] [group:hko] Higher-F perturbation validation (F=10→12, F=10→13)
 - RESULTS.md claims empirical validation "up to 13-facet" — currently aspirational, only 11-facet done
 - Extends facet-splitting and cut-and-ascent to add 2-3 facets simultaneously
-- Suggested in `experiments/hko-local-maximum/cut-and-ascent/logbook.md` line 40
+- Suggested in `research/hko-local-maximum/design/cut-and-ascent.md`
 
 ### [future] [group:hko] F-refinement convergence (increasing F as smooth approximation)
 
@@ -242,7 +242,7 @@ Instrument development. Results promote to `library/`.
 - `experiments/numerics/q-error/`, `experiments/numerics/kkt-inertia/`
 
 ### [open] [group:numerics] 4b. Numerical error bounds (verify-numerics)
-- math.tex Parts I+II complete. Proven Q error bound, eta bound for well-conditioned problems.
+- `formal/numerics/error-bounds.tex` Parts I+II complete. Proven Q error bound, eta bound for well-conditioned problems.
 - 14 previously-failing tests now pass (329 pass, 0 fail).
 - Rationale for current state: degenerate orbits are never capacity-achieving, so final capacity comes from well-conditioned orbits with proven low error. Gap remains for publication.
 - Open: Part III (f64 algorithm description), eta bound for LP null-space search (39 violations on natural data with near-zero eigenvalues), GAP in cor:taylor-structure proof (needs Jörn).
@@ -259,8 +259,8 @@ Instrument development. Results promote to `library/`.
 - Thesis/code tension: thesis proves rank-deficient pairs are redundant (discard); code searches null space for beta>0 on *near*-singular systems (pseudoinverse beta_0 may have beta_i < 0 from noise; null-space shift recovers feasibility without changing Q). Not contradictory but needs explicit documentation.
 - Open question for Jörn: is filtering Type A directions mathematically justified?
 
-### [open] [group:numerics] Solver numerical math.tex
-- Per-module math.tex for SVD, condition numbers, LU, eigendecomposition stability.
+### [open] [group:numerics] Solver numerical formal writeup
+- Per-module formal files for SVD, condition numbers, LU, eigendecomposition stability.
 - Multiple modules use SVD without shared error analysis.
 
 ### [done] [2026-04] Crosspolytope capacity
@@ -363,7 +363,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 ## [open] Code quality + alignment
 
 ### [done] [2026-04-07] Code cleanup (session)
-- Completed: step_bound duplication extracted to exp-sys-landscape/src/lib.rs (cut-and-ascent gets inline copy); products-vs-random split; wiggle strength justified + documented; `[lem:dual-vertex-qp]` proof drafted + Jörn-approved (Lemma 37 in `formal/main.pdf` p11); math.tex stubs audited (53 stubs + 69 unverified blocks as of 2026-04-07).
+- Completed: step_bound duplication extracted to exp-sys-landscape/src/lib.rs (cut-and-ascent gets inline copy); products-vs-random split; wiggle strength justified + documented; `[lem:dual-vertex-qp]` proof drafted + Jörn-approved (Lemma 37 in `formal/main.pdf` p11); formal stubs audited (53 stubs + 69 unverified blocks as of 2026-04-07).
 - Remaining future note: gradient-ascent + multiple-crossings overlap dedup is blocked until gradient ascent stabilizes into library. Until then, copy-edit between experiments is correct.
 - Known side effect: step_bound upgrade (omega_0 detection) changes experiment behavior if re-run. Existing JSONL not regenerated.
 
@@ -394,28 +394,28 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
   - Jörn verifies `[lem:cap-derivative]` and `[lem:vol-derivative]` (marked `\begin{unverified}`)
   - (`[lem:dual-vertex-qp]` proof was completed under Code cleanup 2026-04; see line 241.)
 
-### [open] [group:docs] math.tex stub / unverified inventory (baseline for write-up scaffold)
+### [open] [group:docs] Formal stub / unverified inventory (baseline for write-up scaffold)
 - Audited 2026-04-07: 53 explicit stubs + 69 unverified blocks. No proofs lost in migration — stubs were created as stubs, agent-written proofs added later.
 - Refresh is Bundle G precursor (see "Math write-up scaffold" in Thesis section); that item also re-categorizes by hard-labor framing and adds theorem dependency graph.
 - **High priority** (blocks thesis or code correctness):
-  - `lem:cap-derivative` + `lem:vol-derivative` (algorithms/math.tex:709,781) — core gradient lemmas, also tracked in "Dual-vertex parameterization" below.
-  - `prop:prefilter-bound` (geom/math.tex:789) — needs restatement in terms of computable `hat_kappa`. Factor-counting issue: tight bound is 5376, not 1344.
-  - GAP in `prop:capacity-symplectic-product` (geom/math.tex:157) — `c_EHZ(A) = area(A)` for 2D convex bodies is unverified, dubious citation.
+  - `lem:cap-derivative` + `lem:vol-derivative` (`formal/library/algorithms.tex`:709,781) — core gradient lemmas, also tracked in "Dual-vertex parameterization" below.
+  - `prop:prefilter-bound` (`formal/library/geom.tex`:789) — needs restatement in terms of computable `hat_kappa`. Factor-counting issue: tight bound is 5376, not 1344.
+  - GAP in `prop:capacity-symplectic-product` (`formal/library/geom.tex`:157) — `c_EHZ(A) = area(A)` for 2D convex bodies is unverified, dubious citation.
 - **Medium priority** (thesis completeness):
-  - 10 definition verifications in geom/math.tex (lines 84-325) — routine review.
-  - `thm:conformality` + `thm:sympl-invariance` (algorithms/math.tex:107,120) — standard results, need proofs or citations.
-  - 3 agent-written proofs needing review: `lem:positive-span`, `lem:vertex-enumeration`, `lem:bounded-triples` (geom/math.tex).
+  - 10 definition verifications in `formal/library/geom.tex` (lines 84-325) — routine review.
+  - `thm:conformality` + `thm:sympl-invariance` (`formal/library/algorithms.tex`:107,120) — standard results, need proofs or citations.
+  - 3 agent-written proofs needing review: `lem:positive-span`, `lem:vertex-enumeration`, `lem:bounded-triples` (`formal/library/geom.tex`).
 - **Low priority** (dev math, not publication path):
   - 11 stubs + 6 gaps in dev-gradient/ and dev-numerical-analysis/.
 
-### [open] [group:docs] Geom math.tex restructure
+### [open] [group:docs] Geom formal file restructure
 - Jörn partially reviewed Defs 1–13 of `formal/library/geom.tex` (`library/src/geom/review-notes.md`).
 - Consolidate Defs 1-2 (symplectic form). Add Def for HKO2024 + Thm for false Viterbo's conjecture.
 - Clarify H-representation irredundancy. Fix Defs 12-13 (area/volume are algorithms, not definitions).
 - Consider splitting into `math_geometry.tex`, `math_symplectic.tex`, `math_reeb.tex`.
 
 ### [done] [2026-04-12] [group:docs] Library architecture docs audit
-- Library docs audit: existing headers + per-module math.tex cover architecture mostly held; 0 blockers, 7 gaps, 3 nits across `lib.rs`, `kkt/`, `algorithms/` umbrella, `algorithms/tube/`.
+- Library docs audit: existing headers + per-module formal files cover architecture mostly held; 0 blockers, 7 gaps, 3 nits across `lib.rs`, `kkt/`, `algorithms` umbrella, `algorithms/tube`.
 - 5 doc-only fixes applied and merged to main (no source/algorithm changes). Notable: `algorithms/mod.rs` tube description rewritten from "(placeholder)" to an explicit wrong-rotation-formula warning; `algorithms/` umbrella gained a "correctness invariant" paragraph (overlapping algorithms must agree).
 - Skipped as marginal: `derivatives.rs` cross-directory lemma cite (findable via absolute path), `kkt/mod.rs` formula-location nit, umbrella missing utility math-label cross-refs.
 
@@ -446,19 +446,11 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Port msc-math workflow into native Codex repo paths. Scaffold merged into main; the remaining work is cleanup and verification of the Codex-first state.
 - Old `codex-migration` worktree notes are now archival, not the active source of truth.
 
-### [open] [group:repo-layout] Mechanical stale-path cleanup outside onboarding
-- Goal: clean stale post-migration references in non-onboarding files; do not change mathematical claims or experiment conclusions.
-- Search first:
-  - `rg -n 'crates/|docs/|thesis/assets|AGENTS\.new\.rules\.md|scripts/codex-cloud|codex-cloud\.md|review-(rust|python|thesis|claims|figures|proof|formalization)' thesis formal experiments library research TASKS.md RESULTS.md .devcontainer scripts`
-  - `rg -n 'logbook\.md|math\.tex' thesis formal experiments library research TASKS.md RESULTS.md`
-- Likely first-pass files from 2026-04-15 scan:
-  - `thesis/tube-algorithm-notes.md`
-  - `thesis/appendix-rewrite-notes.md`
-  - `library/src/geom/review-notes.md`
-  - `experiments/numerics/error-bounds/algorithm-notes.md`
-  - `formal/**/*.tex` headers that still say root `math.tex`, colocated `math.tex`, or missing `logbook.md`
-- Preserve provenance comments when they identify copied code history; update only paths that a future agent would treat as live instructions.
-- Acceptance: scan has no live stale-path hits outside explicitly historical/provenance wording; changed Markdown/TeX/Rust comments still point to existing files or clearly say the referenced source is historical.
+### [done] [2026-04-15] [group:repo-layout] Mechanical stale-path cleanup outside onboarding
+- Cleaned stale post-migration references in non-onboarding Markdown, TeX, Rust comments, and scan-caught Python diagnostics; no mathematical claims or experiment conclusions changed.
+- First-pass cleanup covered `thesis/tube-algorithm-notes.md`, `thesis/appendix-rewrite-notes.md`, `library/src/geom/review-notes.md`, `experiments/numerics/error-bounds/algorithm-notes.md`, and formal headers.
+- Preserved copied-code provenance comments and historical deletion/audit notes by marking them historical or leaving already explicit provenance wording.
+- Verification: stale-path scans now report only explicitly historical/provenance hits; changed live references point to existing `formal/`, `library/`, `research/`, `.devcontainer/`, or experiment paths.
 
 ### [open] [group:library] Decide whether to remove library benches and fixtures
 - Goal: investigate whether `library/benches/` and `library/tests/fixtures/` can be deleted outright.

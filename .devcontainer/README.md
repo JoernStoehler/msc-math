@@ -5,8 +5,8 @@ Codex CLI sessions (`danger-full-access` is safe because Docker
 is the security boundary, not Codex's in-tool sandbox rules).
 
 This directory also contains the Codex web environment setup and smoke-test
-documentation in `codex-cloud.md`. The script names keep the historical
-`codex-cloud-*` prefix.
+documentation in the Codex cloud notes. The helper script names keep their
+historical cloud prefix.
 
 ## Architecture
 

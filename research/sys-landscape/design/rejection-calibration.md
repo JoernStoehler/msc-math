@@ -22,7 +22,7 @@ No Python script or figure. Acceptance rate table is in this logbook (below).
 |------|------|
 | `main.rs` | Rust binary: generates dataset |
 | `acceptance_sweep_test.rs` | Unit tests for the sweep function |
-| `math.tex` | Formal writeup (sampling procedure, boundedness proposition + proof) |
+| `formal/sys-landscape/rejection-calibration.tex` | Formal writeup (sampling procedure, boundedness proposition + proof) |
 | `acceptance.jsonl` | Dataset (18 rows: 6 facet counts x 3 height ranges) |
 
 ## Design

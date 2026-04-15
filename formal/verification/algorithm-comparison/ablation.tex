@@ -1,8 +1,8 @@
-% math.tex — \input'd from thesis/experiments.tex
+% formal/verification/algorithm-comparison/ablation.tex — input by formal/main.tex
 %
 % Status: A-axis complete. Four variants: A0 (unpruned), A1 (vertex adjacency),
 %   A2 (directed ω₀), A3 (Reeb-flow feasibility).
-% Empirical results (datasets, iteration counts, timing): see logbook.md.
+% Empirical results (datasets, iteration counts, timing): see research/verification/design/algorithm-comparison/ablation.md.
 %
 % Mathematical references used here (all Jörn-approved in commit 0839595):
 %   lem:adjacency-constraint — consecutive facets with positive dwell time are adjacent
@@ -179,4 +179,3 @@ the only point of $F_1 \cap F_5$ is tight on the blocking facet.
 Condition~(2) fails, and A3 correctly prunes this transition.
 In total, A3 admits $33$ candidate orderings versus $39$ for~A2.
 \end{example}
-

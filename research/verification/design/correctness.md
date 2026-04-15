@@ -25,7 +25,7 @@ Different seeds may expose edge cases not covered by seed 42.
 | File | Role |
 |------|------|
 | `main.rs` | Rust binary: dataset generator + test harness (6 property tests) |
-| `math.tex` | Empty — no formal mathematics in this experiment |
+| `formal/verification/correctness.tex` | Empty — no formal mathematics in this experiment |
 | `correctness.jsonl` | Dataset: 47 polytopes, 71 capacity values across 3 algorithms |
 
 ## Design
@@ -112,7 +112,7 @@ Test 1 generates 10 base polytopes (5 random generic, 5 Lagrangian products). Te
 
 ## Open questions
 
-1. **math.tex says "facet normals" but code perturbs heights.** Test 5 (continuity) applies a height perturbation via `a / (1.0 + epsilon * delta)` where `epsilon = 0.01` and `delta` is uniform in [-0.5, 0.5], giving a maximum perturbation of 0.5% per height — confirmed in main.rs. But math.tex (Jörn-approved 2026-02-16) describes it as "a small random perturbation of the facet normals." One source is wrong. Needs Jörn.
+1. **formal/verification/correctness.tex says "facet normals" but code perturbs heights.** Test 5 (continuity) applies a height perturbation via `a / (1.0 + epsilon * delta)` where `epsilon = 0.01` and `delta` is uniform in [-0.5, 0.5], giving a maximum perturbation of 0.5% per height — confirmed in main.rs. But formal/verification/correctness.tex (Jörn-approved 2026-02-16) describes it as "a small random perturbation of the facet normals." One source is wrong. Needs Jörn.
 
 ## Related experiments
 

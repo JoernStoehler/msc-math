@@ -24,7 +24,7 @@ uv run analyze.py
 |------|------|
 | `main.rs` | Rust binary: runs datasets with UNKNOWN logging |
 | `analyze.py` | Python: beta_min distribution histogram |
-| `math.tex` | Formal writeup (experiment, results, conclusion) |
+| `formal/numerics/unknown-predicates.tex` | Formal writeup (experiment, results, conclusion) |
 | `unknown-predicates.jsonl` | Dataset (162 rows: certified vs uncertain capacity per polytope) |
 | `unknown_predicates_beta_min.png` | Figure: beta_min distribution histogram |
 
