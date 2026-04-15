@@ -78,7 +78,7 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 
 ### [done] [2026-03] 1c. Subdifferential LP in (n,h)-space
 - Phase C LP confirms 0 in conv(per-orbit gradients). Superseded by 1a (a_i space, no gauge).
-- `experiments/hko-local-maximum/subdifferential-lp/`
+- `research/hko-local-maximum/design/subdifferential-lp.md`
 
 ### [done] [2026-03] 1d. Lagrangian boundary mapping
 - Characteristic radius ~0.035, anisotropic (7x aspect ratio), ~10^-31 volume fraction.
