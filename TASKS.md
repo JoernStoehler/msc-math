@@ -91,9 +91,10 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 
 ### [active] [group:licca] LICCA-scale F=10 neighborhood falsification
 - Scale the 100-seed perturbation-neighborhood experiment to 10k+ perturbations with 3 step-size buckets (small/medium/large). Honest falsification attempt. Expected: no sys>HKO (strengthens conjecture). Real outcome: whatever the data says.
-- **Worktree pointer:** `audit-data-freshness-licca-plan`. Current checkout uses `experiments/...` package paths, not the old `exp-*` directory paths in LICCA handoff text.
+- **Handoff commit:** `fc7991e6` fixed the LICCA script readiness layer from the data-freshness packet; current checkout uses `experiments/...` package paths, not old `exp-*` deployment paths.
 - **Script readiness state (2026-04-15):** fixed the known `CARGO_TARGET_DIR` binary-path bug by running `"$CARGO_TARGET_DIR/release/hko-perturbation"`; added `job-smoke.sh`; kept build outside production `job.sh` with an executable preflight error that prints the exact `cargo build` command. Before LICCA submission, Jörn runs `cd ~/msc-math && CARGO_TARGET_DIR=/hpc/gpfs2/scratch/u/stoehljo/cargo-target cargo build --release -p exp-hko-local-maximum --bin hko-perturbation`, then `cd experiments/hko-local-maximum/perturbation-neighborhood && mkdir -p logs && sbatch ... job.sh`.
 - **Open LICCA-side check:** confirm that `~/msc-math` on LICCA has the same current repo layout. If it still has an old `~/msc-math/crates/exp-*` deployment copy, update that copy or switch to the current repo layout before submitting.
+- **PM caveat:** the data-freshness packet that produced `fc7991e6` shifted productively into LICCA script fixes and smoke checks; it did not produce the full cross-experiment freshness/rerun matrix. See the open data freshness task below before treating all stale-evidence questions as planned.
 - **Ownership (Jörn override 2026-04-12):** the prior "Owned by licca-bundle agent" / "Post-LICCA follow-up unowned" split is superseded — one session now owns end-to-end (audit → fix → smoke → present scp+sbatch → wait → `analyze.py` → figures → logbook → `RESULTS.md` updates → `/pre-merge` → merge). Previous split was producing failed transfers.
 - Re-plan trigger: after LICCA runs return, re-evaluate density/falsification claims (`TASKS.md:44`).
 
@@ -181,7 +182,7 @@ Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the o
 ### [active] [group:licca] LICCA-scale massive ascent sampling (density probe)
 - Scale `gradient-ascent-general/` (10 → 10k+ seeds) and `gradient-ascent-products/` (12 → 10k+ seeds).
 - **Research question (load-bearing for the `RESULTS.md` hostile-landscape main result):** does the density of sys>1 local maxima in M_F actually support "no new examples"? Current seed counts are too small to claim the density is low.
-- **Worktree pointer:** same as the F=10 item above — `audit-data-freshness-licca-plan`.
+- **Handoff commit:** same as the F=10 item above, `fc7991e6`; the data-freshness packet landed LICCA script fixes and smoke runners, not a full data-rerun matrix.
 - **Script readiness state (2026-04-15):** fixed the known `CARGO_TARGET_DIR` binary-path bug for both `sys-*` scripts; added local `job-smoke.sh`; kept the 1-second `--time` tripwire, so Jörn must submit production with `sbatch --time=02:00:00 job.sh` after the test-partition dry run. Build commands are `cd ~/msc-math && CARGO_TARGET_DIR=/hpc/gpfs2/scratch/u/stoehljo/cargo-target cargo build --release -p exp-sys-landscape --bin sys-gradient-ascent-general --bin sys-gradient-ascent-products`, followed by `cd experiments/sys-landscape/<experiment> && mkdir -p logs && sbatch ... job.sh`.
 - Each family produces histogram + bucket counts at sys>0.95/0.99/1.00.
 - Re-plan trigger: results back → update `RESULTS.md` density claim.
@@ -390,6 +391,13 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
   - `research/crosspolytope/design/main.md`: reconcile elapsed time (`1112.8s` text vs `1095.1s` in JSONL) or label the text as historical console output.
   - `research/hko-local-maximum/design/cut-and-ascent.md`: update or delete the stale `~10s per trial` scale-up estimate.
 - Stop condition for this closure bundle was reached: more than 2-3 live fixes remain, so they are split as packets instead of being fixed in this reconciliation task.
+
+### [open] [group:paranoia] Data freshness and rerun matrix
+- Source packet: `/tmp/4.md` asked for a prioritized table of evidence gaps with columns `claim`, `current data`, `missing data`, `local vs LICCA`, `estimated runtime`, `job/script readiness`, and `thesis impact`. The finished work instead landed the useful LICCA script-readiness commit `fc7991e6` and did not create the full matrix.
+- Do not redo the LICCA script audit first: `fc7991e6` added `job-smoke.sh`, fixed `CARGO_TARGET_DIR` binary paths, ran the three smoke scripts, and updated the active LICCA handoff notes. Remaining LICCA-side check is external: current repo layout under `~/msc-math` on LICCA before `sbatch`.
+- Next PM action: build the missing matrix from `RESULTS.md`, `TASKS.md`, `paranoia-numerics-report.md`, committed `.jsonl`, `analyze.py`, `job.sh`, `job-smoke.sh`, and research notes. Classify each row as `rerun locally`, `needs LICCA`, `do not rerun because it would move thesis numbers`, or `weaken/reword claim instead`.
+- Seed rows from the paranoia closure shortlist: orbit recovery, perturbation neighborhood, combinatorial-cells convexity, numerics error-bounds note, crosspolytope timing, and cut-and-ascent timing. Add non-paranoia stale evidence only when it affects `RESULTS.md` or an active thesis claim.
+- Stop condition: if the matrix recommends a new large experiment family rather than a rerun of an existing package, stop for Jörn's thesis-priority decision.
 
 ### [done] [2026-04-12] [group:paranoia] Paranoia: conjectures + interpretations
 - Flag-only audit merged: 42 ranked flags (belief 5 / causal 11 / unhedged 12 / interpretation 13 / conjecture 1).
