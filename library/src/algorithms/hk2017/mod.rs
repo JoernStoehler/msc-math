@@ -13,7 +13,6 @@
 //! - Add regression or property tests in dedicated `tests_*.rs` files in this
 //!   directory, not in this router module.
 
-pub mod generate_capacity_fixtures;
 pub mod orbit_recovery;
 pub mod permutations;
 

@@ -1,8 +1,8 @@
 //! Named polytope constructors with known EHZ capacity values from the literature.
 //!
 //! Single source of truth for polytope definitions and their known capacity values.
-//! Used by: test fixtures (`test_utils`), dataset generation, and capacity
-//! validation (`hk2017` property tests).
+//! Used by: test utilities, dataset generation, and capacity validation
+//! (`hk2017` smoke tests and verification experiments).
 //!
 //! Each polytope is constructed once (on first access) and cached via `LazyLock`.
 //! Constructors return `&'static KnownPolytope` — zero-cost after first call.

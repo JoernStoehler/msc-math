@@ -5,17 +5,6 @@
 use super::*;
 use crate::geom::known_polytopes;
 
-use std::path::PathBuf;
-use std::sync::LazyLock;
-
-use super::generate_capacity_fixtures::{load_dataset_entries, DatasetEntry, FIXTURE_PATH};
-
-/// Shared dataset loaded from cached fixture (scalar-only, no Polytope4D construction).
-static DATASET: LazyLock<Vec<DatasetEntry>> = LazyLock::new(|| {
-    let path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join(FIXTURE_PATH);
-    load_dataset_entries(&path)
-});
-
 // ── Combinatorics utility ──
 
 /// Verify combinations(n, k) produces the correct count.
@@ -29,41 +18,22 @@ fn combinations_basic() {
     assert_eq!(combinations(5, 5).len(), 1); // C(5,5) = 1
 }
 
-// ── Fixture-based pruning agreement ──
+// ── Direct pruning agreement ──
 
-/// Verify pruned == unpruned agreement from fixture data (~0 cost).
+/// Verify pruned and unpruned produce identical capacity on the simplex.
 ///
-/// Only checks entries that have `capacity_unpruned` (base polytopes, not
-/// symplectomorphism/conformality variants). The fixture was generated with
-/// inline fail-fast checks, so this test is a regression guard.
+/// This keeps a fast live pruning smoke test in the library. Broad pruned vs
+/// unpruned validation lives in `experiments/verification/correctness/`.
 #[test]
-fn pruned_matches_unpruned_from_fixture() {
-    let dataset = &*DATASET;
-    let mut checked = 0;
-
-    for tp in dataset.iter() {
-        if let Some(cap_unpruned) = tp.capacity_unpruned {
-            let rel_err = (tp.capacity - cap_unpruned).abs() / cap_unpruned;
-            assert!(
-                rel_err < 1e-6,
-                "'{}': pruned ({}) != unpruned ({}) from fixture, rel_error = {:.2e}",
-                tp.name,
-                tp.capacity,
-                cap_unpruned,
-                rel_err
-            );
-            checked += 1;
-        }
-    }
-
-    eprintln!(
-        "Verified pruned == unpruned for {}/{} fixture entries",
-        checked,
-        dataset.len()
+fn pruned_matches_unpruned_simplex() {
+    let kp = known_polytopes::simplex();
+    let result_unpruned = ehz_capacity_unpruned(&kp.polytope).expect("unpruned capacity");
+    let result_pruned = ehz_capacity(&kp.polytope).expect("pruned capacity");
+    assert!(
+        (result_unpruned.result.capacity - result_pruned.result.capacity).abs() < 1e-6,
+        "simplex: pruned and unpruned capacities differ"
     );
 }
-
-// ── Direct computation ──
 
 /// Verify pruned and unpruned produce identical capacity on the hypercube (8 facets).
 ///
@@ -98,8 +68,8 @@ fn pruned_matches_unpruned() {
 
 /// Property: pruned and unpruned return the same capacity on random polytopes.
 ///
-/// Why #[ignore]: redundant with fixture test which checks 27+ polytopes.
-/// Retained as an independent validation path with different polytope generation.
+/// Why #[ignore]: broad randomized agreement belongs in validation runs, not
+/// the default library smoke suite.
 ///
 /// `cargo test --release pruned_matches_unpruned_random -- --ignored`
 #[test]

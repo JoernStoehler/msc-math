@@ -25,7 +25,8 @@ import time
 from datetime import date
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
+# This experiment is nested one level deeper than experiments/<topic>/<experiment>.
+REPO_ROOT = Path(__file__).resolve().parents[4]
 CRATE_DIR = REPO_ROOT / "library"
 OUT_DIR = Path(__file__).resolve().parent
 PROFILE_JSONL = OUT_DIR / "profile.jsonl"
@@ -35,24 +36,21 @@ FIGURE_PATH = OUT_DIR / "test_timing.png"
 # Tests known to be potentially slow. Updated manually when the test suite changes.
 # An agent updating this experiment should review and extend this list.
 CANDIDATE_SLOW_TESTS = [
-    "algorithms::hk2017::literature_test::catalog_determinism",
-    "algorithms::hk2017::literature_test::literature_capacity_values",
-    "algorithms::hk2017::literature_test::fixture_staleness_check",
-    "algorithms::hk2017::literature_test::simplex_capacity",
-    "algorithms::hk2017::literature_test::hypercube_capacity",
-    "algorithms::hk2017::literature_test::lagrangian_triangle_product_capacity",
-    "algorithms::hk2017::literature_test::triangle_square_capacity",
-    "algorithms::hk2017::literature_test::symplectic_triangle_square_capacity",
-    "algorithms::hk2017::orbit_recovery_test::hko_pentagon_recovery",
-    "algorithms::hk2017::orbit_recovery_test::hypercube_recovery",
-    "algorithms::hk2017::orbit_recovery_test::dwell_times_positive",
-    "algorithms::hk2017::orbit_recovery_test::breakpoint_count_consistency",
-    "algorithms::hk2017::conformality_test::capacity_conformality",
-    "algorithms::hk2017::symplectic_invariance_test::capacity_symplectomorphism_invariance",
-    "algorithms::hk2017::symplectic_invariance_test::capacity_monotonicity",
-    "algorithms::hk2017::pruning_test::pruned_matches_unpruned_from_fixture",
-    "geom::volume_test::proptests::volume_scales_with_fourth_power",
-    "random_test::proptests::random_polytopes_pass_validation",
+    "algorithms::hk2017::tests_literature::simplex_capacity",
+    "algorithms::hk2017::tests_literature::hypercube_capacity",
+    "algorithms::hk2017::tests_literature::lagrangian_triangle_product_capacity",
+    "algorithms::hk2017::tests_literature::triangle_square_capacity",
+    "algorithms::hk2017::tests_literature::symplectic_triangle_square_capacity",
+    "algorithms::hk2017::tests_literature::billiard_agrees_with_hk2017_on_small_lagrangian_products",
+    "algorithms::hk2017::orbit_recovery::tests::hko_pentagon_recovery",
+    "algorithms::hk2017::orbit_recovery::tests::hypercube_recovery",
+    "algorithms::hk2017::orbit_recovery::tests::dwell_times_positive",
+    "algorithms::hk2017::orbit_recovery::tests::breakpoint_count_consistency",
+    "algorithms::hk2017::tests_conformality::capacity_conformality_simplex",
+    "algorithms::hk2017::tests_symplectic_invariance::capacity_symplectomorphism_invariance_simplex",
+    "algorithms::hk2017::tests_pruning::pruned_matches_unpruned_simplex",
+    "geom::volume::tests::proptests::volume_scales_with_fourth_power",
+    "random::tests::proptests::random_polytopes_pass_validation",
 ]
 
 
@@ -174,12 +172,6 @@ def generate_figure(per_test: list[dict]):
     ax.set_xlabel("Duration (seconds)")
     ax.set_title("Test Suite: Slowest Tests (sequential, no contention)")
     ax.invert_yaxis()
-
-    # Annotate with module
-    for i, t in enumerate(top):
-        module = "::".join(t["test"].split("::")[:-1])
-        ax.annotate(f"  {module}", (durations[i], i), fontsize=7, color="gray",
-                     va="center")
 
     plt.tight_layout()
     plt.savefig(str(FIGURE_PATH))

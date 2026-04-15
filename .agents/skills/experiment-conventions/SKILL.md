@@ -46,6 +46,12 @@ For new experiments or changed measurements, write down:
 
 Do this before implementation. If the method choice changes the thesis direction or compute budget, ask Jörn after preparing concrete options.
 
+## Validation Experiments
+
+Use experiments for slow or broad mathematical checks: algorithm agreement across datasets, random or seeded edge-case searches, validation against literature values, invariant sweeps such as conformality or symplectic invariance, and generated evidence files.
+
+When a validation experiment replaces library fixture coverage, record the boundary explicitly: library tests keep small live smoke/regression checks, while the experiment owns broad evidence and data freshness. The experiment logbook or design note should state the command that regenerates data and the command that verifies the committed artifact.
+
 ## Rust Pipeline
 
 - Register binaries in `experiments/<topic>/Cargo.toml`.

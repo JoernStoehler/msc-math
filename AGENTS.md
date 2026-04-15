@@ -45,6 +45,7 @@ Required project instructions live in this root map or in discoverable skills. D
 - **File headers:** Every source file starts with a comment block stating purpose and context. Module-level files also state the module architecture.
 - **Self-contained thesis:** Thesis sources copy or own their publication assets. Experiment code must not make thesis correctness depend on links into `experiments/`, `formal/`, or `library/`.
 - **Feature lifecycle:** New code starts in the relevant `experiments/` subtree when it is still exploratory. Stable, approved algorithms migrate into `library/`. Validation experiments either become library tests or remain in `experiments/`.
+- **Test/validation boundary:** Library tests are fast live checks for developer feedback and ordinary regressions. Slow mathematical validation, edge-case searches, broad random sweeps, and generated evidence datasets live in `experiments/`.
 - **Math-code correspondence:** Non-trivial Rust algorithms must cross-reference formal mathematics with labels such as `[lem:label]`, `[thm:label]`, or `[def:label]`. The matching `\label{...}` lives in `formal/library/*.tex` or the relevant `formal/<topic>/*.tex` file.
 - **Jörn's time:** Spend agent time on exploration, verification, and local review before asking Jörn. Ask Jörn only for mathematical judgment, thesis-scope decisions, advisor-facing framing, taste, or external-world actions.
 - **Define the check first:** Before acting, decide what result would prove the task is done. Tool success is not task success.
