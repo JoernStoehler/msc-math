@@ -2,8 +2,8 @@
 """
 Analyze orbit recovery results across polytope dataset.
 
-Goal: Validate base point recovery algorithm across known + random polytopes.
-      Identify edge cases, distribution of solution dimension, violation levels.
+Goal: Summarize the curated orbit-recovery validation dataset.
+      Identify pass/fail counts, resolution-path coverage, and worst margins.
 Input: experiments/verification/orbit-recovery/orbit-recovery.jsonl
 Output: Summary statistics printed to stdout.
 """
@@ -15,6 +15,8 @@ from collections import Counter
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 DATA_FILE = EXPERIMENT_DIR / "orbit-recovery.jsonl"
+GEOMETRY_TOL = 1e-6
+ACTION_TOL = 1e-5
 
 
 def load_data():
@@ -34,28 +36,37 @@ def load_data():
 
 def print_summary(rows):
     n = len(rows)
-    known = [r for r in rows if r["source"] == "known"]
-    random = [r for r in rows if r["source"] == "random"]
+    families = Counter(r["family"] for r in rows)
+    known = [r for r in rows if r["family"] == "known"]
+    random = [r for r in rows if r["family"] == "random"]
+    lagrangian = [r for r in rows if r["family"] == "lagrangian_product"]
 
     print(f"{'='*60}")
     print(f"Orbit Recovery Validation Summary")
     print(f"{'='*60}")
-    print(f"Total polytopes: {n} ({len(known)} known, {len(random)} random)")
+    print(f"Total polytopes: {n}")
+    for family in sorted(families):
+        print(f"  {family:20s} {families[family]:4d}")
     print()
 
     # Overall pass/fail
-    tol_eq = 1e-8
-    tol_ineq = 1e-6
     n_pass = sum(
         1 for r in rows
-        if r["closure_error"] < tol_eq
-        and r["on_facet_error"] < tol_eq
-        and r["max_violation"] < tol_ineq
-        and r["action_error"] < tol_eq
+        if r["closure_error"] < GEOMETRY_TOL
+        and r["on_facet_error"] < GEOMETRY_TOL
+        and r["inside_k_error"] < GEOMETRY_TOL
+        and r["action_error"] < ACTION_TOL
     )
     n_fail = n - n_pass
     print(f"Pass: {n_pass}/{n} ({100*n_pass/n:.1f}%)")
     print(f"Fail: {n_fail}/{n}")
+    print()
+
+    print("Resolution path distribution:")
+    resolution_counts = Counter(r["resolution"] for r in rows)
+    for resolution in sorted(resolution_counts.keys()):
+        pct = 100 * resolution_counts[resolution] / n
+        print(f"  {resolution:20s} {resolution_counts[resolution]:4d} ({pct:5.1f}%)")
     print()
 
     # Solution dimension distribution
@@ -88,26 +99,30 @@ def print_summary(rows):
 
     # Known polytopes detail
     print("Known polytopes detail:")
-    print(f"  {'Name':35s} {'F':>3s} {'dim':>4s} {'violation':>12s} {'closure':>12s} {'action_err':>12s}")
+    print(f"  {'Name':35s} {'F':>3s} {'dim':>4s} {'resolution':>14s} {'violation':>12s} {'closure':>12s} {'action_err':>12s}")
     for r in known:
         print(
-            f"  {r['name']:35s} {r['facet_count']:3d} {r['solution_dim']:4d} "
+            f"  {r['name']:35s} {r['facet_count']:3d} {r['solution_dim']:4d} {r['resolution']:>14s} "
             f"{r['max_violation']:12.2e} {r['closure_error']:12.2e} {r['action_error']:12.2e}"
         )
+    print()
+
+    print(f"Random rows: {len(random)}")
+    print(f"Lagrangian-product rows: {len(lagrangian)}")
     print()
 
     # Failures detail
     failures = [
         r for r in rows
-        if r["closure_error"] >= tol_eq
-        or r["on_facet_error"] >= tol_eq
-        or r["max_violation"] >= tol_ineq
-        or r["action_error"] >= tol_eq
+        if r["closure_error"] >= GEOMETRY_TOL
+        or r["on_facet_error"] >= GEOMETRY_TOL
+        or r["inside_k_error"] >= GEOMETRY_TOL
+        or r["action_error"] >= ACTION_TOL
     ]
     if failures:
         print(f"FAILURES ({len(failures)}):")
         for r in failures:
-            print(f"  {r['name']}: viol={r['max_violation']:.2e}, "
+            print(f"  {r['name']} [{r['family']}|{r['resolution']}]: viol={r['inside_k_error']:.2e}, "
                   f"close={r['closure_error']:.2e}, "
                   f"action_err={r['action_error']:.2e}")
     else:

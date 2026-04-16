@@ -7,7 +7,8 @@
 """
 Plot orbit recovery error metrics by facet count.
 
-Goal: Visualize how recovery errors scale with polytope complexity (F).
+Goal: Visualize how recovery errors scale with facet count for cache-sourced
+      non-known rows in the curated validation dataset.
 Input: experiments/verification/orbit-recovery/orbit-recovery.jsonl
 Output: experiments/verification/orbit-recovery/orbit_recovery_errors.png
 """
@@ -46,8 +47,8 @@ def main():
     setup()
     rows = load_data()
 
-    # Filter to random polytopes only (known have machine-epsilon errors)
-    random_rows = [r for r in rows if r["source"] == "random"]
+    # Plot only non-known rows; the known rows are primarily degeneracy checks.
+    random_rows = [r for r in rows if r["family"] != "known"]
 
     # Group by facet count
     by_f = defaultdict(list)
