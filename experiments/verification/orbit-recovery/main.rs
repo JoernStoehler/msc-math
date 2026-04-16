@@ -24,14 +24,13 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::{Path, PathBuf};
 use std::time::Instant;
-use symplectic::algorithms::capacity_accumulator::CapacityResult;
 use symplectic::algorithms::hk2017::orbit_recovery::{recover_and_verify, OrbitRecovery};
-use symplectic::algorithms::hk2017::{ehz_capacity, EhzResult};
 use symplectic::database::{self, DualVerticesKey, PolytopeRecord, SigmaAction, Source};
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::kkt::saddle_point_solver::solve_kkt_for;
 use symplectic::random::generate_polytope;
+use symplectic::{ehz_capacity, EhzResult};
 
 const SEED: u64 = 42;
 const H_MIN: f64 = 0.8;
@@ -109,7 +108,8 @@ fn main() {
     let extension_db_path = run_paths.extension_db_path.clone();
     let output_path = run_paths.output_path.clone();
     let merged_db = load_merged_database(manifest_dir, &extension_db_path);
-    let mut extension_db = database::load(&extension_db_path).expect("failed to load extension cache");
+    let mut extension_db =
+        database::load(&extension_db_path).expect("failed to load extension cache");
     let targets = build_target_pool(&merged_db);
 
     eprintln!(
@@ -163,7 +163,8 @@ fn main() {
         };
         let time_recovery_ms = t_rec.elapsed().as_secs_f64() * 1000.0;
 
-        let on_facet_error = compute_on_facet_error(&polytope, &result.result.best_permutation, &recovery);
+        let on_facet_error =
+            compute_on_facet_error(&polytope, &result.result.best_permutation, &recovery);
         let action_error = (recovery.action - result.result.capacity).abs();
         let active_facets = recovery.dwell_times.iter().filter(|&&t| t > 0.0).count();
 
@@ -204,7 +205,8 @@ fn main() {
         );
 
         if let Some(source) = persist_source {
-            extension_db_dirty |= persist_extension_row(&mut extension_db, &polytope, source, &result);
+            extension_db_dirty |=
+                persist_extension_row(&mut extension_db, &polytope, source, &result);
         }
 
         *by_resolution.entry(resolution).or_insert(0) += 1;
@@ -338,7 +340,8 @@ fn build_random_targets(db: &HashMap<DualVerticesKey, PolytopeRecord>) -> Vec<Ta
             facet_count_target,
             h_min,
             h_max,
-        }) = record.source.clone() else {
+        }) = record.source.clone()
+        else {
             continue;
         };
 
@@ -401,12 +404,14 @@ fn build_lagrangian_product_targets(
 
     by_pair
         .into_iter()
-        .map(|((n1, n2), (_, key, facet_count))| TargetSpec::CatalogByKey {
-            name: format!("lagrangian_product_{n1}x{n2}"),
-            family: "lagrangian_product",
-            facet_count,
-            key,
-        })
+        .map(
+            |((n1, n2), (_, key, facet_count))| TargetSpec::CatalogByKey {
+                name: format!("lagrangian_product_{n1}x{n2}"),
+                family: "lagrangian_product",
+                facet_count,
+                key,
+            },
+        )
         .collect()
 }
 
@@ -439,9 +444,7 @@ fn resolve_target(
 ) -> Result<ResolvedTarget, String> {
     match target {
         TargetSpec::Known {
-            polytope,
-            source,
-            ..
+            polytope, source, ..
         } => resolve_known_target(polytope, source.clone(), db),
         TargetSpec::RandomBySource {
             facet_count,
@@ -499,7 +502,8 @@ fn resolve_random_target(
         h_min,
         h_max,
         ..
-    } = source else {
+    } = source
+    else {
         return Err("non-random source passed to random target".to_string());
     };
 
@@ -532,8 +536,8 @@ fn resolve_catalog_key_target(
 
 fn compute_target_locally(polytope: Polytope4D, source: Source) -> Result<ResolvedTarget, String> {
     let t_cap = Instant::now();
-    let result = ehz_capacity(&polytope)
-        .ok_or_else(|| "capacity computation failed".to_string())?;
+    let result =
+        ehz_capacity(&polytope).ok_or_else(|| "capacity computation failed".to_string())?;
     Ok(ResolvedTarget {
         polytope,
         result,
@@ -554,24 +558,23 @@ fn persist_extension_row(
         return false;
     }
 
-    let mut record = PolytopeRecord::from_polytope(polytope);
-    record.source = Some(source);
-    record.capacity = Some(result.result.capacity);
-    record.capacity_err = Some(0.0);
-    record.sigmas = Some(vec![SigmaAction {
-        perm: result.result.best_permutation.clone(),
-        action: result.result.capacity,
-    }]);
-    record.sigma_gap_cutoff = Some(0.0);
+    let record = PolytopeRecord {
+        source: Some(source),
+        capacity: Some(result.result.capacity),
+        capacity_err: Some(0.0),
+        ..PolytopeRecord::from_polytope(polytope).with_sigmas(
+            vec![SigmaAction {
+                perm: result.result.best_permutation.clone(),
+                action: result.result.capacity,
+            }],
+            0.0,
+        )
+    };
     extension_db.insert(key, record);
     true
 }
 
-fn compute_on_facet_error(
-    polytope: &Polytope4D,
-    perm: &[usize],
-    recovery: &OrbitRecovery,
-) -> f64 {
+fn compute_on_facet_error(polytope: &Polytope4D, perm: &[usize], recovery: &OrbitRecovery) -> f64 {
     let duals = polytope.dual_vertices_f64();
     (0..perm.len())
         .filter(|&k| recovery.dwell_times[k] > 0.0)
@@ -586,13 +589,17 @@ fn find_by_source<'a>(
     db: &'a HashMap<DualVerticesKey, PolytopeRecord>,
     source: &Source,
 ) -> Option<(&'a DualVerticesKey, &'a PolytopeRecord)> {
-    db.iter().find(|(_, record)| record.source.as_ref() == Some(source))
+    db.iter()
+        .find(|(_, record)| record.source.as_ref() == Some(source))
 }
 
 fn ehz_result_from_cache(
     polytope: &Polytope4D,
     record: &PolytopeRecord,
 ) -> Result<EhzResult, String> {
+    // Cache rows store the minimum-action value and a sigma, but not the beta
+    // needed by orbit recovery, so this experiment must still rebuild an
+    // EhzResult by re-solving KKT for that cached minimizer.
     let capacity = record
         .capacity
         .ok_or_else(|| "cached row missing capacity".to_string())?;
@@ -606,9 +613,7 @@ fn ehz_result_from_cache(
     if (best_sigma.action - capacity).abs() > CACHE_ACTION_TOL {
         return Err(format!(
             "cached sigma/capacity mismatch: |{} - {}| > {}",
-            best_sigma.action,
-            capacity,
-            CACHE_ACTION_TOL,
+            best_sigma.action, capacity, CACHE_ACTION_TOL,
         ));
     }
 
@@ -617,10 +622,10 @@ fn ehz_result_from_cache(
         .ok_or_else(|| "KKT solve failed for cached best permutation".to_string())?;
 
     let mut best_subset = best_sigma.perm.clone();
-    best_subset.sort();
+    best_subset.sort_unstable();
 
     Ok(EhzResult {
-        result: CapacityResult {
+        result: symplectic::algorithms::capacity_accumulator::CapacityResult {
             capacity,
             capacity_uncertain: capacity,
             best_permutation: best_sigma.perm.clone(),
