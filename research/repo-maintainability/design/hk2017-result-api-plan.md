@@ -4,20 +4,28 @@ by hk2017, hk2017_unpruned, and billiard.
 Context: created during the repo-maintainability program after Jörn/top-level
 discussion of the current result layering. This note records what is already
 settled, what remains open, and what later implementation sessions should
-change. It is a design handoff, not a promise that the implementation already
-matches the target API.
+change. It is a design handoff; later status bullets record which pieces of the
+target API have already landed in code.
 -->
 
 # Capacity/Orbit Result API Plan
 
 ## Status
 
-- State: first design pass from chat discussion on 2026-04-16.
+- State: first design pass from chat discussion on 2026-04-16, then Packet 1
+  scaffold work on `capacity-result-api-exec`.
 - Scope: shared capacity/orbit result layering for `hk2017`,
   `hk2017_unpruned`, and `billiard`; orbit/KKT payloads; orbit recovery;
   derivatives; and Clarke-subdifferential support.
 - Out of scope here: broad data-flow cleanup, thesis prose, and the full
   execution DAG for all maintainability work.
+- Landed code scaffold:
+  - `library/src/algorithms/orbit_search.rs` now defines the shared public
+    types `OrbitAdmissibility`, `OrbitGuaranteeMode`, `OrbitSolveBackend`,
+    `OrbitKktData`, `OrbitSearchResult`, `OrbitSearchError`, and
+    `GeometricOrbitError`.
+  - These types are re-exported from `library/src/algorithms/mod.rs` and
+    `library/src/lib.rs`.
 
 ## Goal
 
@@ -192,7 +200,7 @@ pub struct OrbitKktData {
     pub admissibility: OrbitAdmissibility,
 }
 
-pub struct Hk2017OrbitSearchResult {
+pub struct OrbitSearchResult {
     /// Nonempty and sorted by lower action bound ascending.
     pub orbits: Vec<OrbitKktData>,
     /// Canonical single-f64 summary chosen from admissible returned orbits.
@@ -204,7 +212,7 @@ pub struct Hk2017OrbitSearchResult {
     pub iterations: u64,
 }
 
-pub enum Hk2017SearchError {
+pub enum OrbitSearchError {
     NoAdmissibleOrbit,
     NumericalFailure,
     ExactFallbackFailure,
@@ -315,14 +323,14 @@ pub fn hk2017_minimum_orbits(
     gap: f64,
     mode: OrbitGuaranteeMode,
     backend: OrbitSolveBackend,
-) -> Result<Hk2017OrbitSearchResult, Hk2017SearchError>;
+) -> Result<OrbitSearchResult, OrbitSearchError>;
 
 pub fn hk2017_minimum_orbits_unpruned(
     polytope: &Polytope4D,
     gap: f64,
     mode: OrbitGuaranteeMode,
     backend: OrbitSolveBackend,
-) -> Result<Hk2017OrbitSearchResult, Hk2017SearchError>;
+) -> Result<OrbitSearchResult, OrbitSearchError>;
 ```
 
 ```rust
@@ -331,7 +339,7 @@ pub fn billiard_minimum_orbits(
     gap: f64,
     mode: OrbitGuaranteeMode,
     backend: OrbitSolveBackend,
-) -> Result<Hk2017OrbitSearchResult, BilliardError>;
+) -> Result<OrbitSearchResult, BilliardError>;
 ```
 
 Notes on the frontend split:
@@ -430,7 +438,7 @@ particular wrapper functions.
   no longer assumes a separate query-time `OrbitClass` filter is the right
   primary split.
 - `min_action` should be the producer-chosen scalar summary, not a caller-chosen
-  heuristic. Current lean: use `min_action_upper`, not midpoint or lower bound.
+  heuristic. Current rule: `min_action = min(action[k] for admissible returned k)`.
 - The aggregate minimum-action interval is computed orbitwise, not by coupling
   intervals as if they estimated the same latent variable:
   - `min_action_lower = min_k action_lower[k]`
@@ -531,7 +539,7 @@ These points are not yet fully settled.
    - `ARCHITECTURE.md` if the public/result boundary described there changes
    - this note or its successor if implementation choices differ from the
      current design draft
-7. Keep search diagnostics out of `Hk2017OrbitSearchResult` unless a stable,
+7. Keep search diagnostics out of `OrbitSearchResult` unless a stable,
    shared metric surface emerges. Experiments that need diagnostics should own
    their local loop/result types.
 

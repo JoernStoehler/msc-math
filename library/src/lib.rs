@@ -54,6 +54,15 @@ pub use geom::QhullError;
 // Capacity algorithms
 pub use algorithms::hk2017::{ehz_capacity, ehz_capacity_unpruned, EhzResult};
 pub use algorithms::billiard::{billiard_capacity, BilliardError, BilliardResult};
+pub use algorithms::{
+    GeometricOrbitError,
+    OrbitAdmissibility,
+    OrbitGuaranteeMode,
+    OrbitKktData,
+    OrbitSearchError,
+    OrbitSearchResult,
+    OrbitSolveBackend,
+};
 
 // Geometry utility functions
 pub use geom::volume::volume;

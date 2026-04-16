@@ -15,6 +15,11 @@ queue. It is intentionally incremental: only the first packets are defined.
   `research/repo-maintainability/design/hk2017-result-api-plan.md`
 - Planning rule: do not freeze the whole DAG up front. Add packets as earlier
   packets land and expose the next dependency surface.
+- Current progress:
+  - Packet 1 scaffold landed: shared `algorithms::orbit_search` module plus
+    public re-exports from `algorithms/mod.rs` and `lib.rs`.
+  - Verification so far: `cargo build -p symplectic --release` passes on this
+    branch after the scaffold landed.
 
 ## Integration Model
 
@@ -34,6 +39,14 @@ queue. It is intentionally incremental: only the first packets are defined.
        orbit payload, and search result
      - add/co-locate the shared error enums
      - no broad caller migration yet
+   - Landed so far:
+     - `OrbitAdmissibility`
+     - `OrbitGuaranteeMode`
+     - `OrbitSolveBackend`
+     - `OrbitKktData`
+     - `OrbitSearchResult`
+     - `OrbitSearchError`
+     - `GeometricOrbitError`
    - Why first:
      - every later packet depends on the names and field shapes existing in
        code
@@ -43,6 +56,9 @@ queue. It is intentionally incremental: only the first packets are defined.
        updates
    - Stop condition:
      - if `mu`/`xi` optionality or public-module placement becomes unclear
+   - Status:
+     - complete for the current packet goal; later packets may still rename or
+       extend these types if the rewired frontends expose a missing field
 
 2. **Shared search frontend surface**
    - Scope:
@@ -88,6 +104,9 @@ queue. It is intentionally incremental: only the first packets are defined.
 
 ## Immediate Next Action
 
-- Start Packet 1 in this worktree.
+- Start Packet 2 in this worktree by tracing the current shared
+  enumerate -> solve -> classify -> track loop in `hk2017`, `hk2017_unpruned`,
+  and `billiard`, then introducing one shared collector seam without deleting
+  the old wrappers prematurely.
 - Once Packet 1 is scoped precisely, branch subagent worktrees from this branch
   only if the packet splits into disjoint write scopes.
