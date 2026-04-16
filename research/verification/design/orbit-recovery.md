@@ -6,7 +6,12 @@ The EHZ algorithm (Algorithm `alg:ehz`) returns a facet sequence S and weights b
 
 ## Status
 
-**Complete.** 112/112 polytopes pass all validation checks. Recovery is fast (~0.025ms) and numerically stable up to F = 10.
+**Historical run recorded; refresh pending.** This note still describes the old
+112-row validation run. The current shared cache has 170 polytopes, no
+committed `orbit-recovery.jsonl` is present in this checkout, and
+`experiments/verification/orbit-recovery/main.rs` still writes
+`solution_dim: 0`. Treat the numbers below as historical until the dataset
+scope is chosen and the experiment is rerun.
 
 ## How to run
 
@@ -25,12 +30,14 @@ uv run plot_orbit_recovery.py                    # generates error plot
 | `analyze.py` | Python: summary statistics (printed to stdout) |
 | `plot_orbit_recovery.py` | Python: error distribution plot by facet count |
 | `formal/verification/orbit-recovery.tex` | Formal writeup (lemma, error table, solution dimension) |
-| `orbit-recovery.jsonl` | Dataset (112 rows) |
+| `orbit-recovery.jsonl` | Intended dataset output from the historical 112-row run; not currently committed in this checkout |
 | `orbit_recovery_errors.png` | Error distribution by facet count figure |
 
 ## Design
 
 ### Dataset
+
+Historical run described by this note:
 
 - 7 known polytopes from the literature.
 - 105 random polytopes: 20 each for F = 5..8, 15 for F = 9, 10 for F = 10.
@@ -55,6 +62,8 @@ For each polytope: compute c_EHZ, recover base point b from optimal (S, beta), r
 Base point recovery solves N_S b = r, where N_S collects outward normals of active facets. dim = 4 - rank(N_S). When active normals are linearly independent, b is unique.
 
 ## Findings
+
+Historical 112-row run only:
 
 1. **112/112 polytopes pass** all validation checks.
 
