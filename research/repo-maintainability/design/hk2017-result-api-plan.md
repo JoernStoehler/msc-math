@@ -52,6 +52,10 @@ target API have already landed in code.
     `experiments/numerics/gradient/numerics-subdifferential/main.rs`, now uses
     the library Clarke/directional-derivative helpers for the all-orbit
     directional-derivative path rather than local glue.
+  - Packet 3 fourth slice: the sibling binaries in the same `dev-gradient`
+    package (`numerics/main.rs` and `numerics-edge-cases/main.rs`) now use the
+    same helper seam, so the package no longer mixes old and new
+    derivative-glue styles.
 
 ## Goal
 

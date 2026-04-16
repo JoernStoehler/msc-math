@@ -62,6 +62,10 @@ queue. It is intentionally incremental: only the first packets are defined.
       `directional_derivative_a(...)`, and
       `clarke_directional_derivative_a(...)` instead of local glue for the
       all-orbit directional-derivative path
+  - Packet 3 slice 4 landed:
+    - finished the sibling `dev-gradient` package migration so
+      `dev_numerics` and `dev_numerics_edge_cases` now use the same
+      derivative/directional-derivative helper seam
   - Verification after Packet 2 slice 1:
     - `cargo build -p symplectic --release`
     - `cargo test -p symplectic --release --lib`
@@ -82,6 +86,8 @@ queue. It is intentionally incremental: only the first packets are defined.
     - `cargo build -p exp-hko-local-maximum --release`
   - Verification after Packet 3 slice 3:
     - `cargo build -p dev-gradient --release --bin dev_numerics_subdifferential`
+  - Verification after Packet 3 slice 4:
+    - `cargo build -p dev-gradient --release`
 
 ## Integration Model
 
@@ -178,7 +184,7 @@ queue. It is intentionally incremental: only the first packets are defined.
     - in progress
     - first slices landed: helper aliases/errors plus migrated
       `KktResult`-level consumers across the main buildable ascent packages
-      and the first truly subdifferential-heavy binary
+      and the full `dev-gradient` package
 
 4. **First consumer migrations**
    - Scope:
@@ -197,8 +203,8 @@ queue. It is intentionally incremental: only the first packets are defined.
 
 - Decide whether the next highest-value seam is:
   - orbit-payload consumers via `capacity_derivatives_a_from_orbit(...)`, or
-  - finishing the gradient/numerics package migration so sibling binaries use
-    the same helper surface consistently.
+  - package-local helper cleanup in `experiments/numerics/gradient/src/lib.rs`
+    if more repetition remains after the package-wide migration.
 - Keep projected-backend support out of Packet 3 unless the derivative packet
   directly needs it; it is a separate solver-contract follow-up.
 - Branch subagent worktrees from this branch only if Packet 3 splits into
