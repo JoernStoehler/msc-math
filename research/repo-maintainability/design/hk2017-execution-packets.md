@@ -118,6 +118,35 @@ queue. It is intentionally incremental: only the first packets are defined.
       `enumerate_all_orbits(...)` helper is also shared where its semantics
       match, while the subdifferential binary keeps its inclusive/boundary
       enumeration logic local
+  - Packet 3 slice 11 landed:
+    - ordinary scalar/best-permutation experiment consumers now route through
+      the root auto wrapper `symplectic::ehz_capacity(...)`
+    - migrated surfaces:
+      - `exp-sys-landscape`: `gradient-ascent-general`,
+        `variable-f-ascent`, `random-sample`, `gradient-ascent-products`
+      - `exp-hko-local-maximum`: `cut-and-ascent`, `gradient-analysis`,
+        `second-order`, `perturbation-neighborhood`, `facet-splitting`
+      - `exp-combinatorial-cells`: `boundary-characterization`,
+        `multiple-crossings`
+    - synced `ARCHITECTURE.md` and the maintainability discovery notes with the
+      new root scalar API family:
+      - `ehz_capacity` = auto
+      - `ehz_capacity_pruned`
+      - `ehz_capacity_unpruned`
+      - `ehz_capacity_billiard`
+    - product-reporting and verification surfaces that still need
+      `billiard_capacity` or explicit HK2017 variants were left explicit on
+      purpose because they consume native outputs such as `bounce_count` or
+      compare algorithms directly
+  - Parallel follow-up now in flight on sub-worktrees branched from this
+    integration trunk:
+    - `capacity-orbit-recovery-refactor`:
+      `experiments/verification/orbit-recovery/**`
+    - `capacity-lagrangian-boundary-refactor`:
+      `experiments/hko-local-maximum/lagrangian-boundary/**`
+    - `capacity-product-reporting-refactor`:
+      `experiments/sys-landscape/random-product-sample/**` and
+      `experiments/sys-landscape/rotated-regular-products/**`
   - Verification after Packet 2 slice 1:
     - `cargo build -p symplectic --release`
     - `cargo test -p symplectic --release --lib`
@@ -155,6 +184,11 @@ queue. It is intentionally incremental: only the first packets are defined.
     - `cargo build -p exp-hko-local-maximum --release`
   - Verification after Packet 3 slice 10:
     - `cargo build -p dev-gradient --release`
+  - Verification after Packet 3 slice 11:
+    - `cargo build -p exp-sys-landscape --release`
+    - `cargo build -p exp-hko-local-maximum --release`
+    - `cargo build -p exp-combinatorial-cells --release`
+    - `git diff --check`
 
 ## Integration Model
 
