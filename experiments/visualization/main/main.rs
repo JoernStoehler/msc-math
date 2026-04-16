@@ -12,9 +12,10 @@ use serde::Serialize;
 use std::fs::File;
 use std::io::BufWriter;
 use std::path::Path;
+use symplectic::algorithms::{OrbitAdmissibility, OrbitKktData};
 use symplectic::algorithms::hk2017::orbit_recovery::recover_and_verify;
 use symplectic::algorithms::facet_adjacency::build_transition_matrix;
-use symplectic::algorithms::hk2017::{combinations, EhzResult};
+use symplectic::algorithms::hk2017::combinations;
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
 use symplectic::geom::reeb_trajectory;
 use symplectic::geom::known_polytopes::{self, KnownPolytope};
@@ -157,17 +158,20 @@ fn collect_all_orbits(polytope: &symplectic::geom::polytope::Polytope4D) -> Vec<
 // Orbit → VizTrajectory conversion
 // ============================================================================
 
-/// Convert a collected orbit into an EhzResult for use with recover_base_point.
-fn orbit_to_ehz_result(orbit: &CollectedOrbit) -> EhzResult {
-    EhzResult {
-        result: symplectic::algorithms::capacity_accumulator::CapacityResult {
-            capacity: orbit.action,
-            capacity_uncertain: orbit.action,
-            best_permutation: orbit.permutation.clone(),
-            best_beta: orbit.beta.clone(),
-            iterations: 0,
-        },
-        best_subset: orbit.subset.clone(),
+/// Convert a collected orbit into the solved-orbit payload used by recovery.
+fn orbit_to_orbit_kkt_data(orbit: &CollectedOrbit) -> OrbitKktData {
+    OrbitKktData {
+        sigma: orbit.permutation.clone(),
+        beta: orbit.beta.clone(),
+        beta_margin: orbit.beta.iter().copied().fold(f64::INFINITY, f64::min),
+        action: orbit.action,
+        action_lower: orbit.action,
+        action_upper: orbit.action,
+        q: 0.5 / orbit.action,
+        q_error_bound: 0.0,
+        mu: None,
+        xi: None,
+        admissibility: OrbitAdmissibility::AdmissibleF64,
     }
 }
 
@@ -179,8 +183,8 @@ fn orbit_to_viz_trajectory(
     orbit: &CollectedOrbit,
     label: String,
 ) -> Option<VizTrajectory> {
-    let result = orbit_to_ehz_result(orbit);
-    let recovery = recover_and_verify(polytope, &result)?;
+    let orbit_data = orbit_to_orbit_kkt_data(orbit);
+    let recovery = recover_and_verify(polytope, &orbit_data)?;
 
     // Validate orbit quality
     if recovery.closure_error > 1e-6 {
@@ -198,7 +202,7 @@ fn orbit_to_viz_trajectory(
         return None;
     }
 
-    let sigma = &result.result.best_permutation;
+    let sigma = &orbit_data.sigma;
     let m = sigma.len();
 
     // breakpoints[k] → breakpoints[k+1] is a segment on facet σ[k]
@@ -277,13 +281,13 @@ fn generate_displaced_trajectories(
     orbit: &CollectedOrbit,
     skeleton: &Skeleton,
 ) -> Vec<VizTrajectory> {
-    let result = orbit_to_ehz_result(orbit);
-    let recovery = match recover_and_verify(polytope, &result) {
+    let orbit_data = orbit_to_orbit_kkt_data(orbit);
+    let recovery = match recover_and_verify(polytope, &orbit_data) {
         Some(r) => r,
         None => return vec![],
     };
 
-    let perm = &result.result.best_permutation;
+    let perm = &orbit_data.sigma;
     let start_facet = perm[0];
     let last_facet = perm[perm.len() - 1];
     let directions = ridge_displacement_directions(polytope, start_facet, last_facet);

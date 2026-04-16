@@ -150,7 +150,7 @@ fn main() {
             let ehz = ehz_capacity(&p).expect("capacity computation failed");
             let time_capacity_ms = start_cap.elapsed().as_secs_f64() * 1000.0;
 
-            let cap = ehz.result.capacity;
+            let cap = ehz.capacity();
             let sys = cap * cap / (2.0 * vol);
 
             // Insert into database
@@ -159,7 +159,7 @@ fn main() {
             record = record.with_computed_fields(vol, 0.0, cap, 0.0);
             record = record.with_sigmas(
                 vec![SigmaAction {
-                    perm: ehz.result.best_permutation.clone(),
+                    perm: ehz.best_sigma().to_vec(),
                     action: cap,
                 }],
                 0.0, // gap_cutoff: only storing the best sigma
@@ -175,7 +175,7 @@ fn main() {
                 volume: vol,
                 capacity: cap,
                 sys,
-                iterations: ehz.result.iterations,
+                iterations: ehz.iterations,
                 time_volume_ms,
                 time_capacity_ms,
             };

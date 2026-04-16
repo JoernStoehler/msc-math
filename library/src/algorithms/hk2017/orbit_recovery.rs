@@ -1,6 +1,6 @@
 //! Base point recovery and orbit verification for Reeb orbits on polytopes.
 //!
-//! Given an EHZ capacity result (sigma, beta, capacity), recovers the primal
+//! Given solved orbit data (sigma, beta, action), recovers the primal
 //! Reeb orbit gamma on the boundary of K and verifies its geometric validity.
 //! Combines the old `recover_base_point` and `verify_orbit` into a single
 //! `recover_and_verify` function, since they are always called together.
@@ -28,7 +28,7 @@
 //!
 //! Mathematical correspondence: [lem:base-point-recovery], [rem:beta-to-tau]
 
-use super::EhzResult;
+use crate::algorithms::OrbitKktData;
 use crate::geom::polytope::Polytope4D;
 use crate::geom::symplectic_form::omega0;
 use nalgebra::{DMatrix, DVector, Vector4};
@@ -75,7 +75,7 @@ pub struct OrbitRecovery {
     pub facet_sequence: Vec<usize>,
 }
 
-/// Recover a Reeb orbit from an EHZ capacity result and verify its validity.
+/// Recover a Reeb orbit from solved orbit/KKT data and verify its validity.
 ///
 /// Performs three stages:
 /// 1. **Beta-to-tau conversion**: dwell times tau_k = capacity * h_{sigma(k)} * beta_k.
@@ -89,12 +89,12 @@ pub struct OrbitRecovery {
 /// [lem:base-point-recovery], [rem:beta-to-tau]
 pub fn recover_and_verify(
     polytope: &Polytope4D,
-    result: &EhzResult,
+    orbit: &OrbitKktData,
 ) -> Option<OrbitRecovery> {
     let duals = polytope.dual_vertices_f64();
-    let sigma = &result.result.best_permutation;
-    let beta = &result.result.best_beta;
-    let capacity = result.result.capacity;
+    let sigma = &orbit.sigma;
+    let beta = &orbit.beta;
+    let capacity = orbit.action;
     let m = sigma.len();
 
     // ── Stage 1: convert beta to dwell times ──
@@ -307,6 +307,7 @@ fn optimize_in_null_space(
 mod tests {
     use super::*;
     use crate::algorithms::hk2017::{ehz_capacity, EhzResult};
+    use crate::algorithms::{OrbitAdmissibility, OrbitKktData};
     use crate::geom::known_polytopes;
 
     // Tests for orbit_recovery: base point recovery and orbit verification.
@@ -326,6 +327,28 @@ mod tests {
     /// Slightly positive to allow numerical noise at breakpoints.
     const INEQ_TOL: f64 = 1e-6;
 
+    fn legacy_best_orbit(result: &EhzResult) -> OrbitKktData {
+        let beta_margin = result
+            .result
+            .best_beta
+            .iter()
+            .copied()
+            .fold(f64::INFINITY, f64::min);
+        OrbitKktData {
+            sigma: result.result.best_permutation.clone(),
+            beta: result.result.best_beta.clone(),
+            beta_margin,
+            action: result.result.capacity,
+            action_lower: result.result.capacity,
+            action_upper: result.result.capacity,
+            q: 0.5 / result.result.capacity,
+            q_error_bound: 0.0,
+            mu: None,
+            xi: None,
+            admissibility: OrbitAdmissibility::AdmissibleF64,
+        }
+    }
+
     /// Run the full recovery + verification pipeline on a known polytope and
     /// check all error metrics against tolerances.
     fn test_recovery(name: &str, polytope: &Polytope4D, expected_capacity: f64) {
@@ -338,7 +361,8 @@ mod tests {
             result.result.capacity
         );
 
-        let recovery = recover_and_verify(polytope, &result).unwrap_or_else(|| {
+        let orbit = legacy_best_orbit(&result);
+        let recovery = recover_and_verify(polytope, &orbit).unwrap_or_else(|| {
             panic!("{name}: orbit recovery failed");
         });
 
@@ -346,7 +370,7 @@ mod tests {
             "{name}: max_violation={:.2e}, closure={:.2e}, action_err={:.2e}, segments={}",
             recovery.max_violation,
             recovery.closure_error,
-            (recovery.action - result.result.capacity).abs(),
+            (recovery.action - orbit.action).abs(),
             recovery.facet_sequence.len(),
         );
 
@@ -367,19 +391,19 @@ mod tests {
         );
 
         // Action: computed action matches capacity.
-        let action_error = (recovery.action - result.result.capacity).abs();
+        let action_error = (recovery.action - orbit.action).abs();
         assert!(
             action_error < TOL,
             "{name}: action error {:.2e} (computed {}, expected {})",
             action_error,
             recovery.action,
-            result.result.capacity,
+            orbit.action,
         );
 
         // Facet sequence matches the best permutation.
         assert_eq!(
             recovery.facet_sequence,
-            result.result.best_permutation,
+            orbit.sigma,
             "{name}: facet_sequence does not match best_permutation"
         );
 
@@ -405,9 +429,10 @@ mod tests {
         result: &EhzResult,
     ) {
         let duals = polytope.dual_vertices_f64();
-        let sigma = &result.result.best_permutation;
+        let orbit = legacy_best_orbit(result);
+        let sigma = &orbit.sigma;
 
-        let recovery = recover_and_verify(polytope, result).unwrap();
+        let recovery = recover_and_verify(polytope, &orbit).unwrap();
 
         // For each active segment k (dwell_times[k] > 0), breakpoint[k] should lie
         // on facet sigma(k): <a_{sigma(k)}, breakpoint[k]> ~ 1.
@@ -517,7 +542,8 @@ mod tests {
                 continue;
             }
             let result = ehz_capacity(&kp.polytope).unwrap();
-            let recovery = recover_and_verify(&kp.polytope, &result).unwrap();
+            let orbit = legacy_best_orbit(&result);
+            let recovery = recover_and_verify(&kp.polytope, &orbit).unwrap();
 
             for (k, &tau) in recovery.dwell_times.iter().enumerate() {
                 assert!(
@@ -540,7 +566,8 @@ mod tests {
                 continue;
             }
             let result = ehz_capacity(&kp.polytope).unwrap();
-            let recovery = recover_and_verify(&kp.polytope, &result).unwrap();
+            let orbit = legacy_best_orbit(&result);
+            let recovery = recover_and_verify(&kp.polytope, &orbit).unwrap();
 
             assert_eq!(
                 recovery.breakpoints.len(),
@@ -566,8 +593,10 @@ mod tests {
         let result_pruned = ehz_capacity(&kp.polytope).unwrap();
         let result_unpruned = ehz_capacity_unpruned(&kp.polytope).unwrap();
 
-        let recovery_pruned = recover_and_verify(&kp.polytope, &result_pruned).unwrap();
-        let recovery_unpruned = recover_and_verify(&kp.polytope, &result_unpruned).unwrap();
+        let orbit_pruned = legacy_best_orbit(&result_pruned);
+        let orbit_unpruned = legacy_best_orbit(&result_unpruned);
+        let recovery_pruned = recover_and_verify(&kp.polytope, &orbit_pruned).unwrap();
+        let recovery_unpruned = recover_and_verify(&kp.polytope, &orbit_unpruned).unwrap();
 
         // Both should have valid orbits.
         assert!(recovery_pruned.closure_error < TOL);

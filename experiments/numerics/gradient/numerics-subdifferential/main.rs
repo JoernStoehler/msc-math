@@ -546,8 +546,8 @@ fn run_q5(base_dir: &str, smoke: bool) {
                         None => continue,
                     };
 
-                    let c_perturbed = perturbed_ehz.result.capacity;
-                    let perturbed_perm = &perturbed_ehz.result.best_permutation;
+                    let c_perturbed = perturbed_ehz.capacity();
+                    let perturbed_perm = perturbed_ehz.best_sigma();
                     let perturbed_perm_str = serde_json::to_string(perturbed_perm).unwrap();
                     let orbit_switched = perturbed_perm != best_perm;
 
@@ -830,8 +830,8 @@ fn q5b_process_polytope(
                 None => continue,
             };
 
-            let c_perturbed = perturbed_ehz.result.capacity;
-            let perturbed_perm = &perturbed_ehz.result.best_permutation;
+            let c_perturbed = perturbed_ehz.capacity();
+            let perturbed_perm = perturbed_ehz.best_sigma();
             let perturbed_perm_str = serde_json::to_string(perturbed_perm).unwrap();
             let orbit_switched = !tied_orbits
                 .iter()

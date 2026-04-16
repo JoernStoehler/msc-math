@@ -281,10 +281,10 @@ fn process_polytope(
     } else {
         // No cache: full EHZ computation
         vol = volume(polytope).ok()?;
-        let ehz_result = symplectic::ehz_capacity(polytope)?;
-        cap = ehz_result.result.capacity;
-        iterations = ehz_result.result.iterations;
-        best_perm = ehz_result.result.best_permutation;
+        let ehz_result = symplectic::ehz_capacity(polytope).ok()?;
+        cap = ehz_result.capacity();
+        iterations = ehz_result.iterations;
+        best_perm = ehz_result.best_sigma().to_vec();
     }
 
     let sys = cap * cap / (2.0 * vol);

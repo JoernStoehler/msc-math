@@ -149,6 +149,22 @@ queue. It is intentionally incremental: only the first packets are defined.
       - `experiments/verification/correctness/main.rs`
     - those files stay explicit because they validate or profile specific
       algorithm paths rather than the root auto wrapper
+  - Packet 3 slice 13 landed:
+    - the root `ehz_capacity*` family now returns the shared
+      `OrbitSearchResult` surface instead of the legacy thin `EhzResult`
+    - added scalar convenience accessors on `OrbitSearchResult`
+      (`capacity()`, `best_sigma()`, `best_beta()`, `best_subset()`) so
+      ordinary callers stayed readable during migration
+    - migrated the remaining root-wrapper experiment consumers to those
+      accessors, including the HKO, sys-landscape, combinatorial-cells, and
+      `dev-gradient` surfaces touched by the root auto wrapper
+    - `orbit_recovery::recover_and_verify(...)` now consumes `OrbitKktData`,
+      and the remaining experiment adapters (`axioms-orbit-recovery`,
+      `visualization`) now rebuild that payload directly instead of pretending
+      the root result is still `EhzResult`
+    - `ARCHITECTURE.md` now describes the root capacity family in terms of
+      `OrbitSearchResult` / `OrbitKktData`, while keeping the deeper HK2017
+      `EhzResult` path marked as a migration-era legacy surface
   - Parallel follow-up now in flight on sub-worktrees branched from this
     integration trunk:
     - `capacity-orbit-recovery-refactor`:
@@ -204,6 +220,16 @@ queue. It is intentionally incremental: only the first packets are defined.
     - `cargo build -p dev-numerical-analysis --release --bin num-q-error --bin num-unknown-predicates`
     - `cargo build -p dev-capacity-validation --release --bin axioms-correctness`
     - `cargo build -p dev-algorithm-comparison --release --bin cmp-benchmark-profile`
+    - `git diff --check`
+  - Verification after Packet 3 slice 13:
+    - `cargo build -p symplectic --release`
+    - `cargo test -p symplectic --release --lib`
+    - `cargo build -p exp-hko-local-maximum --release`
+    - `cargo build -p exp-combinatorial-cells --release`
+    - `cargo build -p exp-sys-landscape --release`
+    - `cargo build -p dev-gradient --release`
+    - `cargo build -p dev-capacity-validation --release --bin axioms-orbit-recovery`
+    - `cargo build -p visualization --release`
     - `git diff --check`
 
 ## Integration Model

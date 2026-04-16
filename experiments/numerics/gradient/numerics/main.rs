@@ -160,13 +160,13 @@ struct PolytopeInfo {
 /// Compute capacity, volume, sys, and KKT for a polytope's best orbit.
 fn analyze_polytope(polytope: &Polytope4D) -> Option<PolytopeInfo> {
     let ehz = ehz_capacity_safe(polytope)?;
-    let cap = ehz.result.capacity;
+    let cap = ehz.capacity();
     let vol = volume(polytope).ok()?;
     if vol <= 0.0 {
         return None;
     }
     let sys = cap * cap / (2.0 * vol);
-    let best_perm = ehz.result.best_permutation.clone();
+    let best_perm = ehz.best_sigma().to_vec();
     let kkt = solve_kkt_safe(polytope, &best_perm)?;
     Some(PolytopeInfo {
         polytope: polytope.clone(),

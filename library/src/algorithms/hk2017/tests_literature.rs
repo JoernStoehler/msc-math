@@ -144,7 +144,6 @@ fn simplex_minimum_orbits_projected_backend_unsupported() {
 /// β = (0.25, 0.25, 0.25, 0.25). All transition edges have ω₀ = +1.0.
 #[test]
 fn crosspolytope_upper_bound() {
-    use crate::algorithms::capacity_accumulator::CapacityResult;
     use crate::algorithms::hk2017::orbit_recovery::recover_and_verify;
     use crate::kkt::saddle_point_solver::KktOutcome;
 
@@ -172,19 +171,21 @@ fn crosspolytope_upper_bound() {
         "action = {action}, expected 4.0"
     );
 
-    // Orbit recovery: construct EhzResult and verify geometric validity.
-    let ehz_result = EhzResult {
-        result: CapacityResult {
-            capacity: action,
-            capacity_uncertain: action,
-            best_permutation: perm.to_vec(),
-            best_beta: kkt_result.beta.clone(),
-            iterations: 1,
-        },
-        best_subset: vec![0, 3, 12, 15],
+    let orbit = crate::algorithms::OrbitKktData {
+        sigma: perm.to_vec(),
+        beta: kkt_result.beta.clone(),
+        beta_margin: kkt_result.beta.iter().copied().fold(f64::INFINITY, f64::min),
+        action,
+        action_lower: action,
+        action_upper: action,
+        q: kkt_result.q_corrected,
+        q_error_bound: 0.0,
+        mu: None,
+        xi: Some(kkt_result.xi),
+        admissibility: crate::algorithms::OrbitAdmissibility::AdmissibleF64,
     };
 
-    let recovery = recover_and_verify(&kp.polytope, &ehz_result).expect("orbit recovery failed");
+    let recovery = recover_and_verify(&kp.polytope, &orbit).expect("orbit recovery failed");
 
     assert!(
         recovery.closure_error < 1e-8,

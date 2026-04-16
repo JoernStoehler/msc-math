@@ -24,13 +24,14 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::{Path, PathBuf};
 use std::time::Instant;
+use symplectic::algorithms::{OrbitAdmissibility, OrbitKktData};
 use symplectic::algorithms::hk2017::orbit_recovery::{recover_and_verify, OrbitRecovery};
 use symplectic::database::{self, DualVerticesKey, PolytopeRecord, SigmaAction, Source};
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::kkt::saddle_point_solver::solve_kkt_for;
 use symplectic::random::generate_polytope;
-use symplectic::{ehz_capacity, EhzResult};
+use symplectic::ehz_capacity;
 
 const SEED: u64 = 42;
 const H_MIN: f64 = 0.8;
@@ -84,7 +85,7 @@ struct OrbitRecoveryRow {
 
 struct ResolvedTarget {
     polytope: Polytope4D,
-    result: EhzResult,
+    orbit: OrbitKktData,
     resolution: &'static str,
     time_capacity_ms: f64,
     persist_source: Option<Source>,
@@ -137,7 +138,7 @@ fn main() {
         let resolved = resolve_target(target, &merged_db);
         let ResolvedTarget {
             polytope,
-            result,
+            orbit,
             resolution,
             time_capacity_ms,
             persist_source,
@@ -152,7 +153,7 @@ fn main() {
         };
 
         let t_rec = Instant::now();
-        let recovery = match recover_and_verify(&polytope, &result) {
+        let recovery = match recover_and_verify(&polytope, &orbit) {
             Some(value) => value,
             None => {
                 eprintln!("  FAIL {name} (orbit recovery failed)");
@@ -163,9 +164,8 @@ fn main() {
         };
         let time_recovery_ms = t_rec.elapsed().as_secs_f64() * 1000.0;
 
-        let on_facet_error =
-            compute_on_facet_error(&polytope, &result.result.best_permutation, &recovery);
-        let action_error = (recovery.action - result.result.capacity).abs();
+        let on_facet_error = compute_on_facet_error(&polytope, &orbit.sigma, &recovery);
+        let action_error = (recovery.action - orbit.action).abs();
         let active_facets = recovery.dwell_times.iter().filter(|&&t| t > 0.0).count();
 
         let row = OrbitRecoveryRow {
@@ -173,9 +173,9 @@ fn main() {
             family: family.clone(),
             resolution: resolution.to_string(),
             facet_count: polytope.facet_count(),
-            capacity: result.result.capacity,
+            capacity: orbit.action,
             active_facets,
-            total_segments: result.result.best_permutation.len(),
+            total_segments: orbit.sigma.len(),
             solution_dim: recovery.solution_dim,
             max_violation: recovery.max_violation,
             closure_error: recovery.closure_error,
@@ -206,7 +206,7 @@ fn main() {
 
         if let Some(source) = persist_source {
             extension_db_dirty |=
-                persist_extension_row(&mut extension_db, &polytope, source, &result);
+                persist_extension_row(&mut extension_db, &polytope, source, &orbit);
         }
 
         *by_resolution.entry(resolution).or_insert(0) += 1;
@@ -463,10 +463,10 @@ fn resolve_known_target(
     let key = polytope.dual_vertices().to_vec();
     if let Some(record) = db.get(&key) {
         let t_cap = Instant::now();
-        let result = ehz_result_from_cache(polytope, record)?;
+        let orbit = orbit_from_cache(polytope, record)?;
         return Ok(ResolvedTarget {
             polytope: polytope.clone(),
-            result,
+            orbit,
             resolution: "key_hit",
             time_capacity_ms: t_cap.elapsed().as_secs_f64() * 1000.0,
             persist_source: None,
@@ -486,10 +486,10 @@ fn resolve_random_target(
             .to_polytope()
             .map_err(|err| format!("failed to reconstruct cached random polytope: {err}"))?;
         let t_cap = Instant::now();
-        let result = ehz_result_from_cache(&polytope, record)?;
+        let orbit = orbit_from_cache(&polytope, record)?;
         return Ok(ResolvedTarget {
             polytope,
-            result,
+            orbit,
             resolution: "source_hit",
             time_capacity_ms: t_cap.elapsed().as_secs_f64() * 1000.0,
             persist_source: None,
@@ -523,11 +523,11 @@ fn resolve_catalog_key_target(
         .to_polytope()
         .map_err(|err| format!("failed to reconstruct cached catalog polytope: {err}"))?;
     let t_cap = Instant::now();
-    let result = ehz_result_from_cache(&polytope, record)?;
+    let orbit = orbit_from_cache(&polytope, record)?;
 
     Ok(ResolvedTarget {
         polytope,
-        result,
+        orbit,
         resolution: "key_hit",
         time_capacity_ms: t_cap.elapsed().as_secs_f64() * 1000.0,
         persist_source: None,
@@ -537,10 +537,10 @@ fn resolve_catalog_key_target(
 fn compute_target_locally(polytope: Polytope4D, source: Source) -> Result<ResolvedTarget, String> {
     let t_cap = Instant::now();
     let result =
-        ehz_capacity(&polytope).ok_or_else(|| "capacity computation failed".to_string())?;
+        ehz_capacity(&polytope).map_err(|err| format!("capacity computation failed: {err:?}"))?;
     Ok(ResolvedTarget {
         polytope,
-        result,
+        orbit: result.best_orbit().clone(),
         resolution: "local_compute",
         time_capacity_ms: t_cap.elapsed().as_secs_f64() * 1000.0,
         persist_source: Some(source),
@@ -551,7 +551,7 @@ fn persist_extension_row(
     extension_db: &mut HashMap<DualVerticesKey, PolytopeRecord>,
     polytope: &Polytope4D,
     source: Source,
-    result: &EhzResult,
+    orbit: &OrbitKktData,
 ) -> bool {
     let key = polytope.dual_vertices().to_vec();
     if extension_db.contains_key(&key) {
@@ -560,12 +560,12 @@ fn persist_extension_row(
 
     let record = PolytopeRecord {
         source: Some(source),
-        capacity: Some(result.result.capacity),
+        capacity: Some(orbit.action),
         capacity_err: Some(0.0),
         ..PolytopeRecord::from_polytope(polytope).with_sigmas(
             vec![SigmaAction {
-                perm: result.result.best_permutation.clone(),
-                action: result.result.capacity,
+                perm: orbit.sigma.clone(),
+                action: orbit.action,
             }],
             0.0,
         )
@@ -593,13 +593,13 @@ fn find_by_source<'a>(
         .find(|(_, record)| record.source.as_ref() == Some(source))
 }
 
-fn ehz_result_from_cache(
+fn orbit_from_cache(
     polytope: &Polytope4D,
     record: &PolytopeRecord,
-) -> Result<EhzResult, String> {
+) -> Result<OrbitKktData, String> {
     // Cache rows store the minimum-action value and a sigma, but not the beta
-    // needed by orbit recovery, so this experiment must still rebuild an
-    // EhzResult by re-solving KKT for that cached minimizer.
+    // needed by orbit recovery, so this experiment must still rebuild one
+    // solved orbit payload by re-solving KKT for that cached minimizer.
     let capacity = record
         .capacity
         .ok_or_else(|| "cached row missing capacity".to_string())?;
@@ -621,17 +621,18 @@ fn ehz_result_from_cache(
         .feasible()
         .ok_or_else(|| "KKT solve failed for cached best permutation".to_string())?;
 
-    let mut best_subset = best_sigma.perm.clone();
-    best_subset.sort_unstable();
-
-    Ok(EhzResult {
-        result: symplectic::algorithms::capacity_accumulator::CapacityResult {
-            capacity,
-            capacity_uncertain: capacity,
-            best_permutation: best_sigma.perm.clone(),
-            best_beta: kkt.beta,
-            iterations: 0,
-        },
-        best_subset,
+    let beta_margin = kkt.beta.iter().copied().fold(f64::INFINITY, f64::min);
+    Ok(OrbitKktData {
+        sigma: best_sigma.perm.clone(),
+        beta: kkt.beta,
+        beta_margin,
+        action: capacity,
+        action_lower: capacity,
+        action_upper: capacity,
+        q: kkt.q_corrected,
+        q_error_bound: 0.0,
+        mu: Some([kkt.mu[0], kkt.mu[1], kkt.mu[2], kkt.mu[3]]),
+        xi: Some(kkt.xi),
+        admissibility: OrbitAdmissibility::AdmissibleF64,
     })
 }

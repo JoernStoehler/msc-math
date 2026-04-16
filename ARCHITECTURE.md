@@ -131,9 +131,11 @@ Current recurring code-level entities:
 | Entity | Current role | Main surface |
 | --- | --- | --- |
 | `Polytope4D` | central polytope object for geometry and algorithms | `library/src/lib.rs`, `geom` |
-| `EhzResult` | HK2017 top-level result: wraps a shared capacity result plus `best_subset` | `library/src/algorithms/hk2017/api.rs` |
-| `CapacityResult` | minimum-action result container with `capacity`, `capacity_uncertain`, `best_permutation`, `best_beta`, `iterations` | `library/src/algorithms/capacity_accumulator.rs` |
-| `OrbitRecovery` | recovered geometric trajectory/orbit data derived from an `EhzResult` | `library/src/algorithms/hk2017/orbit_recovery.rs` |
+| `OrbitSearchResult` | shared capacity/orbit search result used by the root `ehz_capacity*` family; contains the returned orbit list plus `min_action` bounds and iterations | `library/src/algorithms/orbit_search.rs`, `library/src/lib.rs` |
+| `OrbitKktData` | one solved orbit payload: `sigma`, `beta`, action interval, `q`, optional multipliers, admissibility | `library/src/algorithms/orbit_search.rs` |
+| `EhzResult` | legacy HK2017-only result kept by the deeper `algorithms::hk2017::*` API during migration | `library/src/algorithms/hk2017/api.rs` |
+| `CapacityResult` | legacy minimum-action summary container with `capacity`, `capacity_uncertain`, `best_permutation`, `best_beta`, `iterations` | `library/src/algorithms/capacity_accumulator.rs` |
+| `OrbitRecovery` | recovered geometric trajectory/orbit data derived from an `OrbitKktData` payload | `library/src/algorithms/hk2017/orbit_recovery.rs` |
 | `PolytopeRecord` | persisted JSONL row, including optional `Source` provenance and optional `SigmaAction` orbit summaries | `library/src/database.rs` |
 
 Current observed transformation chain:
@@ -141,38 +143,38 @@ Current observed transformation chain:
 ```mermaid
 flowchart LR
     P["Polytope4D"]
-    E["EhzResult"]
-    C["CapacityResult"]
+    S["OrbitSearchResult"]
+    K["OrbitKktData"]
     O["OrbitRecovery"]
     R["PolytopeRecord"]
     D["derivative vectors"]
 
-    P --> E
-    E --> C
-    E --> O
+    P --> S
+    S --> K
+    K --> O
     P --> R
-    E -. selected fields .-> R
+    K -. selected sigma/action fields .-> R
     P --> D
-    C -. best_perm/beta .-> D
+    K -. sigma/beta/q/mu .-> D
     O -. geometric orbit checks / trajectory .- P
 ```
 
 Important current-state nuance:
 
 - The repo currently has two orbit-side layers:
-  - `CapacityResult` / `EhzResult` for the minimum-action search output
+  - `OrbitSearchResult` / `OrbitKktData` for the shared root search output
   - `OrbitRecovery` for recovered geometric trajectories and verification data
-- `recover_and_verify(polytope, &ehz_result)` is a real library-level
-  transformation from capacity result to recovered orbit.
+- `recover_and_verify(polytope, &orbit)` is a real library-level
+  transformation from solved orbit payload to recovered orbit.
 - The derivatives layer is lower-level: experiments call
   `capacity_derivatives_a(...)` and `volume_derivatives_a(polytope)` directly.
 - Capacity derivatives currently consume orbit/KKT ingredients such as
-  `best_beta`, `best_permutation`, `q`, and `mu`; there is no dedicated
+  `beta`, `sigma`, `q`, and `mu`; there is no dedicated
   derivatives object.
 - Persisted `sigmas` in `PolytopeRecord` are summary data for reuse/caching, not
   a full replacement for `OrbitRecovery`.
 - There is not yet a single top-level library API of the form
-  `EhzResult -> derivatives object`.
+  `OrbitSearchResult -> derivatives object`.
 
 ## Library API Tiers
 

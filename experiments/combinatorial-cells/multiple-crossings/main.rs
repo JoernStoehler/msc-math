@@ -375,14 +375,14 @@ fn compute_sys(
         return None;
     }
 
-    let ehz = symplectic::ehz_capacity(polytope)?;
+    let ehz = symplectic::ehz_capacity(polytope).ok()?;
 
-    let cap = ehz.result.capacity;
+    let cap = ehz.capacity();
     if !cap.is_finite() || cap <= 0.0 {
         return None;
     }
 
-    let perm = ehz.result.best_permutation;
+    let perm = ehz.best_sigma().to_vec();
     let kkt = solve_kkt_for(polytope, &perm).feasible()?;
     let sys = cap * cap / (2.0 * vol);
 

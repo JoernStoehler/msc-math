@@ -87,6 +87,15 @@ pub struct OrbitKktData {
     pub admissibility: OrbitAdmissibility,
 }
 
+impl OrbitKktData {
+    /// Unordered participating facet set derived from `sigma`.
+    pub fn best_subset(&self) -> Vec<usize> {
+        let mut subset = self.sigma.clone();
+        subset.sort_unstable();
+        subset
+    }
+}
+
 /// Shared result of collecting near-minimum solved orbits.
 #[derive(Clone, Debug, PartialEq)]
 pub struct OrbitSearchResult {
@@ -100,6 +109,36 @@ pub struct OrbitSearchResult {
     pub min_action_upper: f64,
     /// Number of sigma candidates examined by the search frontend.
     pub iterations: u64,
+}
+
+impl OrbitSearchResult {
+    /// Canonical best/minimum orbit used by scalar-style consumers.
+    ///
+    /// The constructor guarantees `orbits` is nonempty.
+    pub fn best_orbit(&self) -> &OrbitKktData {
+        &self.orbits[0]
+    }
+
+    /// Convenience scalar alias for ordinary callers that still think in terms
+    /// of one returned capacity value.
+    pub fn capacity(&self) -> f64 {
+        self.min_action
+    }
+
+    /// Convenience access to the best orbit's sigma.
+    pub fn best_sigma(&self) -> &[usize] {
+        &self.best_orbit().sigma
+    }
+
+    /// Convenience access to the best orbit's beta vector.
+    pub fn best_beta(&self) -> &[f64] {
+        &self.best_orbit().beta
+    }
+
+    /// Unordered participating facet set of the best orbit.
+    pub fn best_subset(&self) -> Vec<usize> {
+        self.best_orbit().best_subset()
+    }
 }
 
 /// Search-level failure classification for the shared orbit collectors.

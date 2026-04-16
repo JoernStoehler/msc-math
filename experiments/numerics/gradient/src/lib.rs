@@ -9,7 +9,7 @@ use rand_distr::{Distribution, StandardNormal};
 use symplectic::algorithms::hk2017::combinations;
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
 use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktResult, EPS_Q_POSITIVE};
-use symplectic::{ehz_capacity, Polytope4D};
+use symplectic::{ehz_capacity, OrbitSearchResult, Polytope4D};
 
 /// Shared strict beta-threshold for certified-orbit enumeration in the gradient package.
 ///
@@ -37,8 +37,8 @@ pub fn random_direction(f: usize, rng: &mut ChaCha8Rng) -> Vec<Vector4<f64>> {
     dir
 }
 
-pub fn ehz_capacity_safe(polytope: &Polytope4D) -> Option<symplectic::EhzResult> {
-    ehz_capacity(polytope)
+pub fn ehz_capacity_safe(polytope: &Polytope4D) -> Option<OrbitSearchResult> {
+    ehz_capacity(polytope).ok()
 }
 
 pub fn solve_kkt_safe(polytope: &Polytope4D, perm: &[usize]) -> Option<KktResult> {

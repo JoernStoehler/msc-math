@@ -55,10 +55,7 @@ pub use geom::QhullError;
 pub use algorithms::hk2017::{
     hk2017_minimum_orbits,
     hk2017_minimum_orbits_unpruned,
-    EhzResult,
 };
-pub use algorithms::hk2017::ehz_capacity as ehz_capacity_pruned;
-pub use algorithms::hk2017::ehz_capacity_unpruned;
 pub use algorithms::billiard::{
     billiard_capacity,
     billiard_minimum_orbits,
@@ -66,7 +63,6 @@ pub use algorithms::billiard::{
     BilliardOrbitSearchError,
     BilliardResult,
 };
-pub use algorithms::billiard::billiard_capacity as ehz_capacity_billiard;
 pub use algorithms::{
     GeometricOrbitError,
     OrbitAdmissibility,
@@ -89,32 +85,54 @@ pub use geom::polygon::{regular_polygon_2d, rotate_polygon_2d};
 pub use geom::known_polytopes;
 pub use geom::test_utils;
 
-/// Default capacity wrapper.
+/// Explicit pruned HK2017 frontend on the shared orbit/result surface.
+pub fn ehz_capacity_pruned(polytope: &Polytope4D) -> Result<OrbitSearchResult, OrbitSearchError> {
+    hk2017_minimum_orbits(
+        polytope,
+        0.0,
+        OrbitGuaranteeMode::MinimaSafe,
+        OrbitSolveBackend::SaddlePoint,
+    )
+}
+
+/// Explicit unpruned HK2017 frontend on the shared orbit/result surface.
+pub fn ehz_capacity_unpruned(
+    polytope: &Polytope4D,
+) -> Result<OrbitSearchResult, OrbitSearchError> {
+    hk2017_minimum_orbits_unpruned(
+        polytope,
+        0.0,
+        OrbitGuaranteeMode::MinimaSafe,
+        OrbitSolveBackend::SaddlePoint,
+    )
+}
+
+/// Explicit billiard frontend on the shared orbit/result surface.
+pub fn ehz_capacity_billiard(
+    polytope: &Polytope4D,
+) -> Result<OrbitSearchResult, algorithms::billiard::BilliardOrbitSearchError> {
+    billiard_minimum_orbits(
+        polytope,
+        0.0,
+        OrbitGuaranteeMode::MinimaSafe,
+        OrbitSolveBackend::SaddlePoint,
+    )
+}
+
+/// Default capacity wrapper on the shared orbit/result surface.
 ///
 /// Uses the billiard algorithm on inputs that pass the Lagrangian-product
 /// structure test, and otherwise uses the pruned HK2017 path.
-pub fn ehz_capacity(polytope: &Polytope4D) -> Option<EhzResult> {
-    ehz_capacity_auto(polytope)
-}
-
-/// Convenience wrapper that chooses the fast specialized algorithm on
-/// Lagrangian products and falls back to the pruned HK2017 path otherwise.
-pub fn ehz_capacity_auto(polytope: &Polytope4D) -> Option<EhzResult> {
+pub fn ehz_capacity(polytope: &Polytope4D) -> Result<OrbitSearchResult, OrbitSearchError> {
     if algorithms::billiard::facet_classification::classify_facets(polytope).is_ok() {
-        if let Ok(Some(result)) = ehz_capacity_billiard(polytope) {
-            return Some(ehz_result_from_billiard(result));
-        }
+        return ehz_capacity_billiard(polytope).map_err(|err| match err {
+            algorithms::billiard::BilliardOrbitSearchError::InvalidInput(_) => {
+                OrbitSearchError::NumericalFailure
+            }
+            algorithms::billiard::BilliardOrbitSearchError::Search(err) => err,
+        });
     }
     ehz_capacity_pruned(polytope)
-}
-
-fn ehz_result_from_billiard(result: BilliardResult) -> EhzResult {
-    let mut best_subset = result.result.best_permutation.clone();
-    best_subset.sort_unstable();
-    EhzResult {
-        result: result.result,
-        best_subset,
-    }
 }
 
 #[cfg(test)]
@@ -126,16 +144,15 @@ mod auto_dispatch_tests {
         let kp = known_polytopes::lagrangian_triangle_product();
         let auto = ehz_capacity(&kp.polytope).expect("auto capacity");
         let billiard = ehz_capacity_billiard(&kp.polytope)
-            .expect("billiard should accept Lagrangian product")
-            .expect("billiard capacity");
+            .expect("billiard should accept Lagrangian product");
 
         assert!(
-            (auto.result.capacity - billiard.result.capacity).abs() < 1e-10,
+            (auto.capacity() - billiard.capacity()).abs() < 1e-10,
             "auto wrapper should agree with billiard on product inputs"
         );
         assert_eq!(
-            auto.result.best_permutation,
-            billiard.result.best_permutation,
+            auto.best_sigma(),
+            billiard.best_sigma(),
             "auto wrapper should preserve the chosen billiard minimizer"
         );
     }
@@ -147,12 +164,12 @@ mod auto_dispatch_tests {
         let hk = ehz_capacity_pruned(&kp.polytope).expect("hk2017 capacity");
 
         assert!(
-            (auto.result.capacity - hk.result.capacity).abs() < 1e-10,
+            (auto.capacity() - hk.capacity()).abs() < 1e-10,
             "auto wrapper should fall back to pruned HK2017 on non-products"
         );
         assert_eq!(
-            auto.result.best_permutation,
-            hk.result.best_permutation,
+            auto.best_sigma(),
+            hk.best_sigma(),
             "auto wrapper should preserve the pruned HK2017 minimizer on non-products"
         );
     }

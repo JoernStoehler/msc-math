@@ -143,12 +143,12 @@ fn try_step_a(
 }
 
 fn compute_capacity(polytope: &Polytope4D) -> Option<f64> {
-    ehz_capacity(polytope).map(|r| r.result.capacity)
+    ehz_capacity(polytope).ok().map(|r| r.capacity())
 }
 
 fn compute_capacity_result(polytope: &Polytope4D) -> Option<(f64, Vec<usize>)> {
-    let r = ehz_capacity(polytope)?;
-    Some((r.result.capacity, r.result.best_permutation))
+    let r = ehz_capacity(polytope).ok()?;
+    Some((r.capacity(), r.best_sigma().to_vec()))
 }
 
 // ============================================================================

@@ -332,8 +332,8 @@ fn run_phase2(
 
                 // Compute capacity
                 let cap = match ehz_capacity(&perturbed_poly) {
-                    Some(r) => r.result.capacity,
-                    None => {
+                    Ok(r) => r.capacity(),
+                    Err(_) => {
                         n_fail += 1;
                         continue;
                     }
@@ -421,7 +421,7 @@ fn curvature_at_epsilon(
             })
             .collect();
         let poly = Polytope4D::from_f64(perturbed).ok()?;
-        let cap = ehz_capacity(&poly)?.result.capacity;
+        let cap = ehz_capacity(&poly).ok()?.capacity();
         let vol = volume(&poly).ok().filter(|&v| v > 0.0)?;
         Some(cap * cap / (2.0 * vol))
     };

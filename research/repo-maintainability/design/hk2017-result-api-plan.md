@@ -99,6 +99,8 @@ target API have already landed in code.
 
 - Give `hk2017`, `hk2017_unpruned`, and `billiard` one shared orbit/result
   layer in `library/`, while keeping their search frontends separate.
+- Make the public `ehz_capacity*` family glue those frontends onto the shared
+  orbit collector instead of translating back into a second thin result type.
 - Make the richer HK2017-family algorithm output available from `library/`
   without forcing every caller onto a heavy report surface.
 - Remove repeated experiment-local instrumentation for "collect all minimum or
@@ -111,6 +113,11 @@ target API have already landed in code.
 ## Current Code State
 
 - `ehz_capacity` / `ehz_capacity_unpruned` still return `Option<EhzResult>`.
+- The next refactor packet should remove that public/root thin result layer:
+  the `ehz_capacity*` family should return `OrbitSearchResult`, while any
+  remaining legacy/scalar-only or verification-local helpers move behind
+  narrower internal names rather than keeping `EhzResult` as a public-facing
+  type.
 - The root API now treats these as a family:
   - `ehz_capacity(...)` = auto wrapper
   - `ehz_capacity_pruned(...)` = explicit pruned HK2017
@@ -193,6 +200,9 @@ new repo evidence contradicts them.
 - Keep one thin scalar/default API in addition to the richer collectors; do not
   force every caller to pay for eager all-orbit collection or eager geometric
   orbit recovery.
+- The thin part should be a function/interface choice, not a second public
+  result type. `OrbitSearchResult` should be the shared returned object for the
+  `ehz_capacity*` family, with convenience accessors for ordinary consumers.
 - The root scalar API should read as a family rather than a grab bag of
   unrelated names:
   - `ehz_capacity` = auto
@@ -226,6 +236,12 @@ new repo evidence contradicts them.
   convenience scalar for admissibility/debugging/logging consumers.
 - The richer search API should take an explicit guarantee-mode parameter so the
   search layer knows which indeterminate candidates require exact resolution.
+- The clean decomposition is:
+  - sigma generation frontend (`hk2017_unpruned`, `hk2017_pruned`, `billiard`)
+  - one-sigma solver backend (`solve_orbit_sigma`)
+  - shared collector/finalizer (`collect_orbits`)
+  - thin public frontends `ehz_capacity_unpruned`, `ehz_capacity_pruned`,
+    `ehz_capacity_billiard`, and auto-routing `ehz_capacity`
 - `subset` should not be stored in the richer orbit payload. It is derived from
   `sigma` by sorting.
 - Clarke-subdifferential support should move into `library/`; a primitive data
