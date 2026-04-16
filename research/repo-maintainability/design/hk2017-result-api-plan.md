@@ -63,6 +63,11 @@ target API have already landed in code.
     symmetric/asymmetric multiplier adapter. That binary still owns its
     stricter `beta > EPS_BETA_POSITIVE` “valid orbit” policy and local search
     loop.
+  - Packet 3 sixth slice:
+    `experiments/hko-local-maximum/second-order/main.rs` now also stores
+    `OrbitKktData` and uses `capacity_derivatives_a_from_orbit(...)`, so it no
+    longer re-solves KKT per orbit just to recover multiplier data that the
+    shared payload already carries.
 
 ## Goal
 

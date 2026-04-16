@@ -72,6 +72,11 @@ queue. It is intentionally incremental: only the first packets are defined.
     - that experiment still owns its stricter `beta > EPS_BETA_POSITIVE`
       “valid orbit” threshold and local instrumented search loop, but it no
       longer owns a second orbit/KKT data shape or a local derivative adapter
+  - Packet 3 slice 6 landed:
+    - migrated `experiments/hko-local-maximum/second-order/main.rs`
+      off its local `ValidOrbit` payload and onto `OrbitKktData`
+    - that binary now uses `capacity_derivatives_a_from_orbit(...)` directly,
+      so it no longer re-solves KKT just to recover `mu` for each stored orbit
   - Verification after Packet 2 slice 1:
     - `cargo build -p symplectic --release`
     - `cargo test -p symplectic --release --lib`
@@ -95,6 +100,8 @@ queue. It is intentionally incremental: only the first packets are defined.
   - Verification after Packet 3 slice 4:
     - `cargo build -p dev-gradient --release`
   - Verification after Packet 3 slice 5:
+    - `cargo build -p exp-hko-local-maximum --release`
+  - Verification after Packet 3 slice 6:
     - `cargo build -p exp-hko-local-maximum --release`
 
 ## Integration Model
@@ -197,6 +204,10 @@ queue. It is intentionally incremental: only the first packets are defined.
       `experiments/hko-local-maximum/gradient-analysis/main.rs`
       while intentionally preserving that binary's local stricter
       admissibility threshold
+    - a second `OrbitKktData` consumer migration landed in
+      `experiments/hko-local-maximum/second-order/main.rs`, removing a
+      per-orbit KKT re-solve that had existed only because the old local
+      payload dropped multiplier data
 
 4. **First consumer migrations**
    - Scope:

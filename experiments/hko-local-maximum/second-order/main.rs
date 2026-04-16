@@ -30,8 +30,9 @@ use symplectic::algorithms::facet_adjacency::{build_transition_matrix, is_feasib
 use symplectic::algorithms::hk2017::combinations;
 use symplectic::algorithms::hk2017::ehz_capacity;
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
+use symplectic::algorithms::{OrbitAdmissibility, OrbitKktData};
 use symplectic::derivatives::{
-    capacity_derivatives_a_from_kkt_result,
+    capacity_derivatives_a_from_orbit,
     volume_derivatives_a,
 };
 use symplectic::geom::known_polytopes;
@@ -112,25 +113,28 @@ struct CurveRow {
 // Instrumented HK2017 — collects ALL valid orbits (copied from gradient-analysis)
 // ============================================================================
 
-#[derive(Debug, Clone)]
-struct ValidOrbit {
-    action: f64,
-    subset: Vec<usize>,
-    permutation: Vec<usize>,
-    beta: Vec<f64>,
-    q_value: f64,
-}
-
 struct InstrumentedResult {
     capacity: f64,
-    orbits: Vec<ValidOrbit>,
+    orbits: Vec<OrbitKktData>,
+}
+
+fn action_bounds_from_q(q: f64, q_error_bound: f64) -> (f64, f64) {
+    let q_upper = q + q_error_bound;
+    let action_lower = 0.5 / q_upper;
+    let q_lower = q - q_error_bound;
+    let action_upper = if q_lower > EPS_Q_POSITIVE {
+        0.5 / q_lower
+    } else {
+        f64::INFINITY
+    };
+    (action_lower, action_upper)
 }
 
 fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult> {
     let f = polytope.facet_count();
     let adj = build_transition_matrix(polytope);
 
-    let mut orbits: Vec<ValidOrbit> = Vec::new();
+    let mut orbits: Vec<OrbitKktData> = Vec::new();
 
     for m in 2..=f {
         for subset in combinations(f, m) {
@@ -146,14 +150,28 @@ fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult
                     }
                     let beta = &kkt_result.beta;
                     let beta_min = beta.iter().cloned().fold(f64::INFINITY, f64::min);
+                    let (action_lower, action_upper) =
+                        action_bounds_from_q(q_val, kkt_result.q_error_bound);
 
                     if beta_min > EPS_BETA_POSITIVE {
-                        orbits.push(ValidOrbit {
-                            action: 0.5 / q_val,
-                            subset: subset.clone(),
-                            permutation: perm.to_vec(),
+                        orbits.push(OrbitKktData {
+                            sigma: perm.to_vec(),
                             beta: beta.clone(),
-                            q_value: q_val,
+                            beta_margin: beta_min,
+                            action: 0.5 / q_val,
+                            action_lower,
+                            action_upper,
+                            q: q_val,
+                            q_error_bound: kkt_result.q_error_bound,
+                            mu: Some(
+                                kkt_result
+                                    .mu
+                                    .as_slice()
+                                    .try_into()
+                                    .expect("closure multiplier must stay 4D"),
+                            ),
+                            xi: Some(kkt_result.xi),
+                            admissibility: OrbitAdmissibility::AdmissibleF64,
                         });
                     }
                 }
@@ -187,27 +205,14 @@ fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult
 /// Requires re-solving KKT to obtain the multiplier μ (not stored in JSONL).
 fn orbit_sys_gradient_a(
     polytope: &Polytope4D,
-    orbit: &ValidOrbit,
+    orbit: &OrbitKktData,
     vol: f64,
     cap: f64,
     sys: f64,
     d_vol_a: &[Vector4<f64>],
 ) -> Vec<Vector4<f64>> {
-    // Re-solve KKT to get mu (symmetric convention)
-    let kkt_outcome = solve_kkt_for(polytope, &orbit.permutation);
-    let kkt_result = match kkt_outcome {
-        KktOutcome::Feasible(r) => r,
-        other => panic!(
-            "KKT re-solve failed for orbit {:?}: {:?}",
-            orbit.permutation, other
-        ),
-    };
-
-    let d_cap_a = capacity_derivatives_a_from_kkt_result(
-        polytope,
-        &orbit.permutation,
-        &kkt_result,
-    );
+    let d_cap_a = capacity_derivatives_a_from_orbit(polytope, orbit)
+        .expect("second-order stores orbit payloads with closure multipliers");
 
     d_vol_a
         .iter()
@@ -246,7 +251,7 @@ fn run_phase1(polytope: &Polytope4D) -> (BaseRow, Vec<Vec<f64>>) {
 
     // Filter near-optimal
     let best_action = instr.orbits[0].action;
-    let near_optimal: Vec<&ValidOrbit> = instr
+    let near_optimal: Vec<&OrbitKktData> = instr
         .orbits
         .iter()
         .filter(|o| {
