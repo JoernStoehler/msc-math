@@ -77,6 +77,14 @@ queue. It is intentionally incremental: only the first packets are defined.
       off its local `ValidOrbit` payload and onto `OrbitKktData`
     - that binary now uses `capacity_derivatives_a_from_orbit(...)` directly,
       so it no longer re-solves KKT just to recover `mu` for each stored orbit
+  - Packet 3 slice 7 landed:
+    - migrated `experiments/combinatorial-cells/omega-hypothesis/main.rs`
+      off the raw `capacity_derivatives_a(...)` call and onto the
+      `capacity_derivatives_a_from_kkt_result(...)` seam
+    - this is intentionally a local-helper cleanup, not a collector migration:
+      the remaining all-valid-orbit experiment binaries still need a separate
+      decision about whether the library should expose their count/report
+      semantics
   - Verification after Packet 2 slice 1:
     - `cargo build -p symplectic --release`
     - `cargo test -p symplectic --release --lib`
@@ -103,6 +111,8 @@ queue. It is intentionally incremental: only the first packets are defined.
     - `cargo build -p exp-hko-local-maximum --release`
   - Verification after Packet 3 slice 6:
     - `cargo build -p exp-hko-local-maximum --release`
+  - Verification after Packet 3 slice 7:
+    - `cargo build -p exp-combinatorial-cells --release`
 
 ## Integration Model
 
@@ -208,6 +218,10 @@ queue. It is intentionally incremental: only the first packets are defined.
       `experiments/hko-local-maximum/second-order/main.rs`, removing a
       per-orbit KKT re-solve that had existed only because the old local
       payload dropped multiplier data
+    - one remaining raw derivative-glue site,
+      `experiments/combinatorial-cells/omega-hypothesis/main.rs`, now uses the
+      helper seam too, leaving the remaining Packet 3 work mostly on the
+      collector/report side rather than the derivative-helper side
 
 4. **First consumer migrations**
    - Scope:

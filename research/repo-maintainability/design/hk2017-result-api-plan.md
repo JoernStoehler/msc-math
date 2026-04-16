@@ -68,6 +68,11 @@ target API have already landed in code.
     `OrbitKktData` and uses `capacity_derivatives_a_from_orbit(...)`, so it no
     longer re-solves KKT per orbit just to recover multiplier data that the
     shared payload already carries.
+  - Packet 3 seventh slice:
+    `experiments/combinatorial-cells/omega-hypothesis/main.rs` now uses
+    `capacity_derivatives_a_from_kkt_result(...)` instead of a raw
+    `capacity_derivatives_a(...)` call with manually threaded
+    `beta/q/mu/sigma` inputs.
 
 ## Goal
 
