@@ -6,11 +6,6 @@
 //! - orbit payload data (`OrbitKktData`)
 //! - search-level guarantees and backend choice
 //! - search/recovery error classification
-//!
-//! The current implementation still has one older algorithm-specific scalar
-//! result type (`BilliardResult`). This module exists so later refactor
-//! packets can migrate the remaining scalar frontends onto one shared surface
-//! without further renaming churn.
 
 use crate::algorithms::capacity_accumulator::{CapacityAccumulator, CapacityResult};
 use crate::geom::polytope::Polytope4D;
@@ -602,12 +597,12 @@ fn legacy_solution_from_orbit(orbit: OrbitKktData) -> Solution {
     }
 }
 
-/// Shared collector seam for the current legacy capacity frontends.
+/// Shared collector seam for algorithm-specific scalar frontends.
 ///
-/// This helper deliberately sits below frontend-specific sigma generation and
-/// above frontend-specific metadata such as HK2017 subsets or billiard bounce
-/// counts. It lets Packet 2 share the solve/classify/track/finalize loop
-/// without prematurely forcing all candidate generators into one abstraction.
+/// This helper sits below frontend-specific sigma generation and above
+/// frontend-specific metadata such as billiard bounce counts. It shares the
+/// solve/classify/track/finalize loop without forcing all candidate
+/// generators into one abstraction.
 pub(crate) fn collect_legacy_capacity<M: Clone>(
     polytope: &Polytope4D,
     backend: OrbitSolveBackend,

@@ -9,8 +9,9 @@
 //! billiard trajectory in K_q, and [thm:bounce-bound]: the minimiser has at most
 //! 3 bounces.
 //!
-//! Uses `CapacityAccumulator` for the enumerate -> solve -> track pattern,
-//! mirroring the hk2017 module's accumulator usage.
+//! Uses `CapacityAccumulator` for the billiard-native scalar output path
+//! (`billiard_capacity`), while the shared `ehz_capacity*` family routes
+//! through the common orbit/result surface.
 //!
 //! Submodules:
 //! - `block_enumeration` — block structure enumeration for Q/P facets
