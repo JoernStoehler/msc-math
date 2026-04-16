@@ -28,6 +28,7 @@ Planned deliverables:
 - `thesis/`: Publishable thesis sources. The thesis is self-contained and does not `\input` files from `formal/`, `experiments/`, or `library/`.
 - `papers/<abbreviationYear>/`: Downloaded arXiv paper sources.
 - `RESULTS.md`: Thesis content plan and project findings.
+- `ARCHITECTURE.md`: Repo-level architecture map: component boundaries, core entities, library subsystems, and persisted-data architecture.
 - `TASKS.md`: Unified project tracker. Run `bash scripts/tasks-toc.sh` for section line ranges.
 - `scratch/`: Undocumented scratch notes, migration notes, and temporary working material. Do not treat it as current convention text.
 - `scripts/`: Repo helper scripts that are not tied to one runtime environment.
@@ -38,7 +39,7 @@ Planned deliverables:
 
 ## Current Instruction Sources
 
-Required project instructions live in this root map or in discoverable skills. Do not add nested `AGENTS.md` files as required instruction maps; root-launched Codex sessions will not reliably load them.
+Required project instructions live in this root map or in discoverable skills. `ARCHITECTURE.md` is a descriptive repo map, not an always-loaded instruction surface. Do not add nested `AGENTS.md` files as required instruction maps; root-launched Codex sessions will not reliably load them.
 
 ## General Conventions
 

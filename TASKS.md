@@ -229,12 +229,12 @@ sys as a continuous function on polytope space, no privileged threshold.
 - `experiments/numerics/gradient/` (`numerics/`, `numerics-edge-cases/`, `numerics-subdifferential/`)
 
 ### [open] [group:landscape] Feature regression + local-maxima pattern search
-- Post-Kai priority: optional publication-polish support for the hostile-landscape story. Kai accepted the two main result blocks as thesis-sufficient; this task can strengthen the story but should not block thesis completion.
+- Post-Kai priority: closure-blocking for the hostile-landscape thesis wording, but bounded in method scope and effort. Do not invent novel tools here; throw standard data-science methods at the available datasets and see whether any transferable signal actually appears.
 - Run regression/classifier methods on random polytopes using Euclidean and symplectic feature data. More importantly, run the same checks on local maxima found by ascent.
 - Candidate outcomes: a transferable signal gives a conjecture or guided search strategy; no signal or only non-transferable structure supports the hostile-landscape conclusion.
-- Dependencies: random/polytope datasets are available; the strongest local-maxima dataset depends on LICCA-scale ascent results returning, but the first polish pass should use local data and returned artifacts only.
-- Acceptance: report cross-validated predictive performance, feature importance or failure mode, and whether the signal transfers from random samples to ascent-found local maxima; update `RESULTS.md`.
-- Stop condition: if a real signal appears, surface it for Jörn's mathematical interpretation before turning it into a conjecture; if no useful artifact appears before about 2026-04-21, defer.
+- Dependencies: random/polytope datasets are available now; use current local-maxima datasets immediately and extend to LICCA-returned local maxima if those artifacts arrive in time.
+- Acceptance: produce a bounded standard-method pass over random samples and ascent-found local maxima, report cross-validated predictive performance plus feature importance or failure mode, state whether any signal transfers between the two regimes, and update `RESULTS.md`.
+- Stop condition: if a real signal appears, surface it for Jörn's mathematical interpretation before turning it into a conjecture; if the standard-method pass yields no transferable signal, record that negative result and stop; do not open a novel method-development line here.
 
 ### [future] Systematic landscape analysis
 - Gradient flow convergence, local maxima below sys=1, random noise effects.
@@ -255,9 +255,11 @@ Instrument development. Results promote to `library/`.
 
 ### [open] [group:library] Capacity/orbit result API architecture
 - Problem: the public library API exposes capacity-focused entry points (`ehz_capacity`, `ehz_capacity_unpruned`, `billiard_capacity`) whose result stores one certified best permutation and beta. Several experiments need richer algorithm output: all certified candidate orbits, all minimum-action simple orbits within tolerance, near-active witnesses, pruning/solver diagnostics, and recovered primal trajectories. Today that richer output exists only as copied experiment instrumentation or module-internal traversal.
+- Architecture note from the first repo-level doc pass: the current layering is also conceptually messy. `EhzResult` wraps `CapacityResult`; orbit recovery is a separate `OrbitRecovery` pass; derivatives are separate low-level functions consuming orbit/KKT ingredients rather than a named report object. Later cleanup should decide whether this layering is intentional or accidental complexity.
+- Specific follow-up to keep in scope: move Clarke-subdifferential support into the library. The required operation is the directional derivative surface `d -> D_d capacity = min_i <d, grad capacity_sigma_i>` for a supplied list of minimum-action orbits. The data type may stay primitive for now, e.g. a list of per-orbit `grad capacity_sigma_i` objects in the same order as the input sigma list, rather than a heavyweight abstract subdifferential type.
 - Post-Kai priority: discuss/design before implementing broad library changes. A small API design session is useful before the all-minimum-orbit validation task; full implementation is optional polish before about 2026-04-21 and future work after that unless it fixes thesis reproducibility.
 - Candidate design surface: keep `ehz_capacity` as the stable simple API; add a separate explicit API such as `ehz_capacity_with_report` / `enumerate_ehz_candidates` / `minimum_action_orbits` that returns structured candidates and diagnostics without forcing every caller to pay for large outputs.
-- Decisions to make: which data belongs in `library/` result types vs experiment-owned report rows; whether recovered primal trajectories belong in capacity results or in a separate recovery pass; how tolerance for "all minimum" is represented; whether billiard and HK2017 share a common `CapacityCandidate`/`AlgorithmReport` type; and which APIs are public vs `pub(crate)` until stabilized.
+- Decisions to make: which data belongs in `library/` result types vs experiment-owned report rows; whether recovered primal trajectories belong in capacity results or in a separate recovery pass; whether derivatives should stay as low-level functions or gain a higher-level report surface; whether Clarke-subdifferential support should operate on gradients only or also evaluate `d -> min_i <d, g_i>` directly; how tolerance for "all minimum" is represented; whether billiard and HK2017 share a common `CapacityCandidate`/`AlgorithmReport` type; and which APIs are public vs `pub(crate)` until stabilized.
 - Acceptance check for the design session: a short architecture note or `TASKS.md` packet names the proposed public functions/types, migration path for copied experiment instrumentation, verification commands, and explicit non-goals for the thesis push.
 - Stop condition: if the design requires resolving tube correctness, changing solver semantics, or committing to a long-term public API guarantee, defer the implementation and keep validation experiment-local.
 
@@ -446,7 +448,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 ### [open] [group:pm] Repo maintainability / architecture program
 - Durable planning note: `research/repo-maintainability/design/main.md`
 - Purpose: gather repo facts first, then prepare the Jörn review surface for the broad maintainability refactor. Separate `observed facts`, `open architecture decisions`, and `candidate execution packets` before freezing a multi-session DAG.
-- Seeded facts already recorded in the note: no top-level `ARCHITECTURE.md`; experiments already depend on deep library paths; topic packages already have `src/lib.rs` helper crates; the 170-row polytope cache is mirrored in three identical files; `variable-f-ascent` cache is intentionally local.
+- Seeded facts already recorded in the note: before this session there was no top-level `ARCHITECTURE.md`; experiments already depend on deep library paths; topic packages already have `src/lib.rs` helper crates; the 170-row polytope cache is mirrored in three identical files; `variable-f-ascent` cache is intentionally local.
 - Discovery artifacts now written:
   - `research/repo-maintainability/design/repo-facts.md`
   - `research/repo-maintainability/design/import-surface-inventory.md`
@@ -454,11 +456,11 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
   - `research/repo-maintainability/design/data-flow-inventory.md`
   - `research/repo-maintainability/design/docs-navigation-inventory.md`
   - `research/repo-maintainability/design/execution-constraints-inventory.md`
-- Current documentation method: facts first, architecture prose second. The consolidated current-state fact base is `research/repo-maintainability/design/repo-facts.md`; later `ARCHITECTURE.md` / data-flow docs should be derived from it instead of mixing discovery with policy.
-- `ARCHITECTURE.md` and `DATAFLOW.md` now exist as separate first-pass current-state skeletons derived from the consolidated fact note. `AGENTS.md` remains the short repo map; the new docs are intentionally descriptive and still light on policy where the repo has not decided it yet.
-- Current phase: first two-doc skeleton pass written. Next step is readability/scope review, then fill the two docs from the discovery notes without quietly settling API or cache-policy questions. Do not yet treat the draft execution packet families in the note as approved implementation work.
+- Current documentation method: facts first, architecture prose second. The consolidated current-state fact base is `research/repo-maintainability/design/repo-facts.md`; `ARCHITECTURE.md` should be derived from it instead of mixing discovery with policy.
+- `ARCHITECTURE.md` now carries both the component/code architecture and the current persisted-data architecture. The separate `DATAFLOW.md` trial was dropped as unnecessary structure for the current repo size. `AGENTS.md` remains the short repo map; `ARCHITECTURE.md` is intentionally descriptive and still light on policy where the repo has not decided it yet.
+- Current phase: architecture-doc first pass reviewed. Next step is the first real decision family: library API/result layering (`EhzResult`, `CapacityResult`, `OrbitRecovery`, derivatives, Clarke-subdifferential support). Keep filling `ARCHITECTURE.md` descriptive-only; do not quietly settle API or cache-policy questions there. Do not yet treat the draft execution packet families in the note as approved implementation work.
 - Discussion order for the next phase: first align on the current repo-state picture, then align on what the architecture must define/describe, then handle one decision family per message, and only after that write the execution DAG.
-- Next PM action: review the section shape of `ARCHITECTURE.md` and `DATAFLOW.md`, then gather section-specific evidence and fill the approved skeletons.
+- Next PM action: discuss the library API/result layering decision surface, then continue filling `ARCHITECTURE.md` from the discovery notes once the key abstractions are clearer.
 - Acceptance check: later sessions can resume from `TASKS.md` plus the note without chat history; the note names discovery packets, Jörn decision points, execution-packet template, and the current safe resume point.
 - Stop condition: if the note starts implying API or data decisions that Jörn has not reviewed, keep them as options in the note instead of promoting them to tracker facts.
 

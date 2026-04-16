@@ -1,77 +1,48 @@
 <!--
 Purpose: repo-level component and code-architecture map for humans and agents.
 Context: this file describes the current component structure first. It is not a
-progress tracker, migration plan, or data-catalog policy note. For the fact
-base behind this file, see `research/repo-maintainability/design/repo-facts.md`.
+progress tracker or migration plan. For the fact base behind this file, see
+`research/repo-maintainability/design/repo-facts.md`.
+It answers these recurring questions:
+- which repo areas own which kinds of code and mathematics
+- how `library/`, `experiments/`, `formal/`, `thesis/`, and `research/` relate
+- which core entities and result containers recur across the repo
+- what the current library-facing API tiers look like for experiment code
+- what topic helper crates currently are and are not
+- how persisted polytope/cache/output data currently fits into the architecture
+- which boundaries are clear today and which are still open design questions
+Writing/update rules:
+- prefer current-state description over cleanup proposals
+- cite stable surfaces such as file paths, section headers, Rust symbols, and
+  formal labels rather than brittle line references when possible
+- keep this file at the boundary level; local implementation details belong in
+  local file headers
+- if a statement depends on a still-open architecture choice, mark it as open
+  instead of promoting it to a fact
+Freshness rules:
+- if code or docs contradict this file, either update this file or mark the
+  section `stale`
+- if a component boundary changes, update this file together with the affected
+  local headers or top-level docs
+- if this file starts duplicating detailed local docs, delete the duplicate
+  prose and link outward instead
+Diagram rule:
+- use Mermaid when the component graph is clearer visually than in bullets, but
+  keep each graph small enough that the raw source remains readable in Git diff
 -->
 
 # ARCHITECTURE.md
-
-## What This File Is
-
-This file describes the current code/component architecture of the repo.
-
-It answers these recurring high-level questions:
-
-- which repo areas own which kinds of code and mathematics
-- how `library/`, `experiments/`, `formal/`, `thesis/`, and `research/` relate
-- what the current library-facing API tiers look like for experiment code
-- what topic helper crates currently are and are not
-- which boundaries are clear today and which are still open design questions
-
-This file is current-state-first. If the repo is transitional, the document
-should say so explicitly rather than smoothing it into a cleaner target state.
-
-This file is not:
-
-- a progress tracker
-- a decision-history log
-- a broad placement-rules manual
-- a detailed data-flow catalog
-- a replacement for local file/module headers
-
-For those other surfaces:
-
-- `AGENTS.md`: short repo map, operating rules, quick commands
-- `DATAFLOW.md`: dataset classes, producer/consumer structure, cache roles
-- `TASKS.md`: active work and resume points
-- `research/repo-maintainability/design/*.md`: discovery notes and open design
-  questions
-
-## How To Read And Update This File
-
-### Writing rules
-
-- Prefer current-state description over cleanup proposals.
-- Cite stable surfaces such as file paths, section headers, Rust symbols, and
-  formal labels rather than brittle line references when possible.
-- Keep this file at the boundary level. Local implementation details belong in
-  local file headers.
-- If a statement depends on a still-open architecture choice, mark it as open
-  instead of promoting it to a fact.
-
-### Freshness rules
-
-- If code or docs contradict this file, either update this file or mark the
-  section `stale`.
-- If a component boundary changes, update this file together with the affected
-  local headers or top-level docs.
-- If this file starts duplicating detailed local docs, delete the duplicate
-  prose and link outward instead.
-
-### Diagram rules
-
-- Use Mermaid when the component graph is clearer visually than in bullets.
-- Keep each graph small enough that the raw source remains readable in Git
-  diff.
 
 ## Status
 
 - State: first current-state pass.
 - Last updated: 2026-04-16.
 - Source note: [repo-facts.md](/workspaces/msc-math/research/repo-maintainability/design/repo-facts.md:1).
-- Known limit: API tiering and helper boundaries are partly descriptive today
-  and partly still open design questions.
+- Known limits:
+  - API tiering and helper boundaries are partly descriptive today and partly
+    still open design questions.
+  - Shared-catalog path policy is still open even though the current mirror
+    cluster is documented here.
 
 ## Component Boundaries
 
@@ -113,6 +84,96 @@ Current boundary facts:
 - `thesis/` must not depend on runtime links into `library/`, `experiments/`,
   or `formal/`.
 
+## Library Subsystems
+
+Current library-internal subsystem split:
+
+| Subsystem | Current role | Notes |
+| --- | --- | --- |
+| `geom` | single-polytope geometry layer | owns `Polytope4D`, exact/rational geometry utilities, symplectic form helpers, volume/facet helpers, constructors, and related geometry routines |
+| `kkt` | context-free constrained-QP solver layer | operates on abstract matrices `(C, d, H)`; `qp_assembly` is the main crossing point from polytope geometry into solver inputs |
+| `algorithms` | symplectic/capacity algorithm layer | owns HK2017, billiard, shared capacity-accumulator logic, and related pruning/combinatorics |
+| `database` / `dataset` | persistence/schema support layer | owns JSONL storage helpers and row schemas |
+| `derivatives` | differential support layer | analytical derivatives with respect to dual vertices `a_i` |
+| `random` | sampling/generation support layer | seeded random polytope generation for experiments |
+
+Current high-level library shape:
+
+```mermaid
+flowchart LR
+    G["geom"]
+    K["kkt"]
+    A["algorithms"]
+    S["database / dataset / derivatives / random"]
+
+    G --> A
+    K --> A
+    G -. Polytope4D -> QP assembly .-> K
+    G --> S
+    A --> S
+```
+
+Agent-facing navigation shortcuts:
+
+| If you need... | Start here |
+| --- | --- |
+| geometry of one polytope | `geom` |
+| one orbit candidate / KKT solve | `kkt` |
+| capacity computation | `algorithms` |
+| recovered primal orbit / trajectory | `algorithms::hk2017::orbit_recovery` |
+| derivatives with respect to dual vertices | `derivatives` |
+| JSONL polytope caches and stored records | `database` |
+
+## Core Entities And Transformations
+
+Current recurring code-level entities:
+
+| Entity | Current role | Main surface |
+| --- | --- | --- |
+| `Polytope4D` | central polytope object for geometry and algorithms | `library/src/lib.rs`, `geom` |
+| `EhzResult` | HK2017 top-level result: wraps a shared capacity result plus `best_subset` | `library/src/algorithms/hk2017/api.rs` |
+| `CapacityResult` | minimum-action result container with `capacity`, `capacity_uncertain`, `best_permutation`, `best_beta`, `iterations` | `library/src/algorithms/capacity_accumulator.rs` |
+| `OrbitRecovery` | recovered geometric trajectory/orbit data derived from an `EhzResult` | `library/src/algorithms/hk2017/orbit_recovery.rs` |
+| `PolytopeRecord` | persisted JSONL row, including optional `Source` provenance and optional `SigmaAction` orbit summaries | `library/src/database.rs` |
+
+Current observed transformation chain:
+
+```mermaid
+flowchart LR
+    P["Polytope4D"]
+    E["EhzResult"]
+    C["CapacityResult"]
+    O["OrbitRecovery"]
+    R["PolytopeRecord"]
+    D["derivative vectors"]
+
+    P --> E
+    E --> C
+    E --> O
+    P --> R
+    E -. selected fields .-> R
+    P --> D
+    C -. best_perm/beta .-> D
+    O -. geometric orbit checks / trajectory .- P
+```
+
+Important current-state nuance:
+
+- The repo currently has two orbit-side layers:
+  - `CapacityResult` / `EhzResult` for the minimum-action search output
+  - `OrbitRecovery` for recovered geometric trajectories and verification data
+- `recover_and_verify(polytope, &ehz_result)` is a real library-level
+  transformation from capacity result to recovered orbit.
+- The derivatives layer is lower-level: experiments call
+  `capacity_derivatives_a(...)` and `volume_derivatives_a(polytope)` directly.
+- Capacity derivatives currently consume orbit/KKT ingredients such as
+  `best_beta`, `best_permutation`, `q`, and `mu`; there is no dedicated
+  derivatives object.
+- Persisted `sigmas` in `PolytopeRecord` are summary data for reuse/caching, not
+  a full replacement for `OrbitRecovery`.
+- There is not yet a single top-level library API of the form
+  `EhzResult -> derivatives object`.
+
 ## Library API Tiers
 
 Current observed API tiers for experiment code:
@@ -152,13 +213,107 @@ Current helper families recorded in discovery:
 | orbit-enumeration wrappers | repeated in numerics binaries while `experiments/numerics/gradient/src/lib.rs` remains mostly empty |
 | solver instrumentation helpers | shared core exists, but result payloads differ enough that the boundary is still open |
 
+## Persisted Records And Data Products
+
+Current storage/persistence architecture:
+
+- `library/src/database.rs` provides JSONL storage machinery.
+- Callers choose paths and path policy; the storage layer does not define a
+  canonical mutable shared cache path.
+- `PolytopeRecord` stores defining rational geometry plus optional computed
+  fields such as `source`, `volume`, `capacity`, `sigma_gap_cutoff`, and
+  `sigmas`.
+
+Current observed persisted-data classes:
+
+| Class | Current meaning |
+| --- | --- |
+| shared polytope catalog rows | reusable polytope records with dual vertices, vertices, source, volume, capacity, and best-sigma-style data |
+| mirror catalogs | byte-identical copies of the same shared catalog content in different experiment areas |
+| topic-local transient caches | local caches that store intermediate search states and are not intended as shared catalogs |
+| analysis outputs | experiment-owned JSONL files consumed by nearby `analyze.py` scripts |
+| resume artifacts | outputs that also serve as later-run inputs or resume sources |
+
+Current observed shared-catalog mirror cluster:
+
+| Path | Current observed role |
+| --- | --- |
+| `experiments/combinatorial-cells/polytopes.jsonl` | shared-catalog candidate currently read and written within combinatorial-cells |
+| `experiments/sys-landscape/cache.jsonl` | mirror candidate |
+| `experiments/verification/orbit-recovery/polytopes.jsonl` | mirror candidate |
+
+Observed fact:
+
+- These three files were byte-identical on 2026-04-16.
+- Shared SHA-256:
+  `8679b89763a10bf1380410f288845f03bcdc8e365035aa31235ff00c9cc07363`
+- Byte identity is an observation, not yet a settled canonical-path policy.
+
+Current local-cache exception:
+
+- `experiments/sys-landscape/variable-f-ascent/cache.jsonl` is intentionally
+  local and stores intermediate search states rather than acting as part of the
+  shared catalog.
+
+Current producer/consumer shape:
+
+```mermaid
+flowchart LR
+    B["experiment binary"]
+    C["catalog or local cache JSONL"]
+    O["analysis-output JSONL"]
+    A["nearby analyze.py"]
+    R["later run / resume path"]
+
+    B --> C
+    B --> O
+    C --> B
+    O --> A
+    O --> R
+```
+
+Current fragile consumer assumptions:
+
+- Some experiment code trusts cached `capacity`.
+- Some fast paths also trust `sigmas.first().perm`.
+- Some analyzers depend on stable `source` conventions.
+- Some outputs are only useful if the row schema stays aligned with the nearby
+  analyzer.
+
+## Representation And Numerics Boundary
+
+Current boundary between exact-style data and floating computations:
+
+- Defining polytope geometry is stored and keyed in rational form in
+  `PolytopeRecord`.
+- `geom` includes exact/rational utilities such as rational arithmetic and
+  vertex enumeration.
+- Many algorithmic computations run in `f64`, including:
+  - capacity algorithms on the normal hot path
+  - orbit recovery
+  - derivatives
+  - volume via qhull-backed floating computation
+- `kkt::rational_solver` exists as an exact-validation track, not as the main
+  capacity hot path.
+- Persisted records sit across this boundary: rational geometry plus optional
+  floating computed fields like `volume`, `capacity`, and `sigmas`.
+
+Architecturally, this means:
+
+- “exact polytope identity” and “floating algorithm output” are intentionally
+  not the same layer
+- experiments often move from rationally identified polytopes to floating
+  computation and then back to persisted summary fields
+- many confusing edges in the repo are representation-boundary issues rather
+  than algorithm-boundary issues
+
 ## Documentation And Math Surfaces
 
 Current documentation split:
 
 - `AGENTS.md` owns the short repo map and always-loaded operating rules.
-- `ARCHITECTURE.md` owns repo-level component boundaries and API-tier summary.
-- `DATAFLOW.md` owns dataset classes and producer/consumer structure.
+- `ARCHITECTURE.md` owns repo-level component boundaries, entity-level summary,
+  API-tier summary, and the high-level persisted-data architecture.
 - local `src/lib.rs` headers own package-local intent and local architecture.
 - `formal/` owns developer-facing mathematics and formal labels for
   math-code correspondence.
@@ -173,6 +328,8 @@ but before this session there was no dedicated repo-level architecture file.
 - The simple root library surface is smaller than the surface experiments
   actually use.
 - Topic helper crates exist, but extraction is incomplete.
+- The repo has a clean observed mirror cluster, but not yet an explicit
+  canonical-path policy.
 - Some missing explanations are doc gaps; others are real unresolved boundary
   questions.
 - The current file does not yet settle whether some deep public paths are
@@ -184,5 +341,9 @@ These are open questions, not current architecture facts:
 
 - Which deep public paths should remain supported experiment-facing imports?
 - Which repeated helpers belong in topic helper crates versus `library/`?
+- Which path, if any, should become the explicitly canonical shared polytope
+  catalog?
+- Which reusable stored fields should downstream consumers be allowed to trust
+  as a stable cache contract?
 - Should experiment code standardize more strongly on root reexports, or is the
   deep expert-public form acceptable during the thesis push?

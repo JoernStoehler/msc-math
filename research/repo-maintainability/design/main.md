@@ -11,7 +11,7 @@ the committed docs/code they govern.
 
 ## Status
 
-- Phase: first two-doc skeleton pass written.
+- Phase: architecture-doc first pass reviewed; decision-surface discussion next.
 - Last updated: 2026-04-16.
 - Planning rule: do not freeze the full execution DAG until the discovery
   packets are written and Jörn reviews the architecture decision surface.
@@ -43,8 +43,8 @@ the committed docs/code they govern.
 
 These are observed facts as of 2026-04-16, not design decisions.
 
-- No top-level `ARCHITECTURE.md` exists.
-  Evidence: `rg --files -g 'ARCHITECTURE.md' -g 'README.md'`.
+- Before this session, no top-level `ARCHITECTURE.md` existed.
+  Evidence from the initial discovery pass: `rg --files -g 'ARCHITECTURE.md' -g 'README.md'`.
 - Repo orientation is currently split across `AGENTS.md`, `TASKS.md`,
   `library/src/lib.rs`, `library/src/database.rs`, and per-package
   `experiments/<topic>/src/lib.rs` headers.
@@ -89,8 +89,6 @@ These are observed facts as of 2026-04-16, not design decisions.
   `experiments/<topic>/src/lib.rs`, or stay per-binary?
 - Which dataset is the canonical shared polytope catalog, and which paths are
   mirrors or transient outputs?
-- Should the architecture surface be split into a component/code architecture
-  doc plus a separate experiment/data-flow doc?
 - What should `ARCHITECTURE.md` explain directly, and what should it link to
   instead of duplicating?
 - What is the minimal safe migration path from the current repo to the desired
@@ -125,6 +123,8 @@ Use one conceptual unit per chat message to avoid mixing design layers.
 3. Individual decision units:
    discuss one decision family at a time, compare approaches, and converge on a
    target state.
+   Start with the library API/result layering around capacity, orbit recovery,
+   derivatives, and Clarke-subdifferential support.
 4. Execution planning:
    only after the target state is chosen, break the work into a DAG of
    Codex-managed sessions, subagents, worktrees, and verification gates.
@@ -133,11 +133,13 @@ Use one conceptual unit per chat message to avoid mixing design layers.
 
 - Current-state fact note now exists at
   `research/repo-maintainability/design/repo-facts.md`.
-- First two-doc skeleton pass now exists:
-  - `ARCHITECTURE.md` for component/code architecture
-  - `DATAFLOW.md` for dataset classes and producer/consumer structure
-- Review gate: Jörn reviews the section shape and readability before either
-  file is filled much more aggressively.
+- Current merged top-level doc pass now exists:
+  - `ARCHITECTURE.md` for component/code architecture plus the current
+    persisted-data architecture
+- Review result: Jörn read the file and accepted the section shape as useful.
+- Next discussion unit: library API/result layering around `EhzResult`,
+  `CapacityResult`, `OrbitRecovery`, derivatives, and Clarke-subdifferential
+  support.
 - Evidence source for later fill:
   - consolidated current-state fact note
     `research/repo-maintainability/design/repo-facts.md`
@@ -249,8 +251,8 @@ decision surface should cover these questions explicitly:
    `library/` versus `experiments/<topic>/src/lib.rs`?
 3. Data policy: what is the canonical shared catalog and what counts as a
    mirror or transient analysis artifact?
-4. Architecture-doc split and scope: what belongs in `AGENTS.md`,
-   `ARCHITECTURE.md`, `DATAFLOW.md`, or local file headers?
+4. Architecture-doc scope: what belongs in `AGENTS.md`,
+   `ARCHITECTURE.md`, or local file headers?
 5. Execution shape: which packets are safe for agent-only execution and which
    packets require Jörn review before implementation?
 
@@ -265,8 +267,8 @@ These are placeholders only. Do not treat them as approved work packets yet.
 - E4. Data-flow policy note plus any non-destructive mirror-refresh tooling.
 - E5. Deep-import cleanup or documentation patches after the intended tiers are
   explicit.
-- E6. Top-level architecture docs (`ARCHITECTURE.md`, `DATAFLOW.md`) plus
-  targeted local doc fixes.
+- E6. Top-level architecture docs (`ARCHITECTURE.md`) plus targeted local doc
+  fixes.
 - E7. Residual future bucket for work that is maintainability-positive but not
   worth doing before thesis submission.
 
