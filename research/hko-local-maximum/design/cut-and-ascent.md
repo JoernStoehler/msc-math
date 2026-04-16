@@ -34,7 +34,7 @@ This is consistent with facet-splitting's finding (0/536 cuts improved sys witho
 
 ## Ideas to flesh this out
 
-1. **Scale up:** 50-100 random placements for statistical confidence. At ~10s per trial, 100 trials ≈ 17 min.
+1. **Scale up:** 50-100 random placements for statistical confidence. The old `~10s per trial` estimate was stale; rerun or time the current binary before using this as a scheduling number.
 2. **Gradient-informed placement:** Use the subdifferential analysis from `second-order/` to place the new facet near directions where the gradient is flat (subdifferential directions). These are the directions where adding a new degree of freedom could break the flat barrier.
 3. **Larger ε:** Try ε = 1e-2 and 1e-1 for deeper cuts. The thin-sliver problem observed in variable-f-ascent RQ2 suggests shallow cuts may not provide enough room for the optimizer.
 4. **Multiple cuts:** Add 2-3 facets simultaneously (F=10→F=12 or F=13) for more degrees of freedom.

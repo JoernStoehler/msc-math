@@ -5,9 +5,11 @@ Format: `## [status] Group` / `### [status] [date] Item`. Body only when header 
 Run `bash scripts/tasks-toc.sh` for section index.
 
 **What the thesis should say:** `RESULTS.md`.
+**How thesis success is measured:** `VERIFICATION.md`.
 **Priority:** Thesis coherence + experiment quality > code refactors. Code refactors only matter if they unblock thesis content or experiment correctness.
 **Maintenance:** Record decisions and reasons — these can't be derived later. Don't cache derivable state (build status, test counts) — run the command instead.
 **Dependencies:** thesis/ is stale and will be restructured — most thesis work is blocked on restructuring decisions. Work on `library/`, `formal/`, and `experiments/` is independent and can proceed now.
+**Post-Kai scope (2026-04-15):** Kai agreed on 2026-04-14 that the two main result blocks in `RESULTS.md` are sufficient to finish the thesis project. Extra polish mainly decides whether the project also has publication-grade insights others will want in written form. Jörn wants focused polish and agent-pattern trials, not an obligation to cover every remaining surface. Development work is worth doing through about 2026-04-21; after that, stop expanding and prioritize thesis completion, assembly, and submission.
 
 ## Schedule — 18 days to deadline (2026-04-30)
 
@@ -21,17 +23,22 @@ Rough shape of Jörn's plan as of 2026-04-12. Ordering is by hard dependencies, 
 - **Library documentation/architecture shape decision** (Jörn + agent): pick form (colocated README vs architecture.md vs beefed-up file headers vs just formal library files). Agent runs a docs audit to test whether existing state already covers it.
 - **LICCA Sunday compute window** (agent): massive ascent sampling + HKO2024 neighborhood falsification as large-N experiments.
 
-### Tuesday 2026-04-14 — Kai meeting (hard gate)
-- Monday agent prep: **math write-up scaffold** (theorem dependency graph, stub inventory refresh, hard-labor list) + **Kai briefing** (terse checkpoints for Jörn to drive the meeting from).
-- Tuesday: Kai meeting decides "how to finish/wrap up the thesis". **Re-plan thesis completion scope after.**
+### Tuesday 2026-04-14 — Kai meeting (gate closed)
+- Meeting happened. Kai agreed the two main results are sufficient for the thesis; remaining development/polish is optional upside, not required coverage.
+- Development cutoff: spend at most until about 2026-04-21 on code/experiment polish or AI-work-pattern trials. After that, only development that directly fixes thesis correctness or submission blockers should continue.
+- The planned Kai briefing file was not produced and is now obsolete; preserve the decision above instead of reconstructing the briefing.
 
 ### Eventually (Wed 2026-04-15 → mid-Apr)
 - **Full math write-up pass** (Jörn-driven two-phase: high-level notes → paragraph structure + flag hard labor). Agents prep scaffolds, run empirical precursors for hard-labor items when possible.
 - **Hand-drawn figures** (Jörn: polar of 2D polytope, 0/1/2/3-facets, fake 3D polytope with Reeb vectors, gamma: R→R^4 decompositions, ...).
 - **3D visualization figure integration** (agent: existing visualization pipeline + thesis figure/write-up integration; Jörn decides what the figures should show).
 
-### Post-draft stability (late Apr)
-- **SWE polish** (agent): dev/exp stable code → library promotion, test completion + perf, documentation gaps, simplifications. Only after thesis draft is stable so experiment numbers aren't moving mid-write-up.
+### Polish window (2026-04-15 → about 2026-04-21)
+- **Agent-attacked polish surface:** evidence hygiene, local validation experiments, code/thesis alignment pruning, and bounded AI-work-pattern trials. Goal is not full coverage; goal is to see which remaining surfaces Codex can close without high Jörn load.
+- **Development constraint:** avoid new research branches that need Jörn to interpret before they can be written. Prefer self-verifying outputs: refreshed notes, small validation datasets, figures/tables, and failing/succeeding checks.
+
+### Post-polish stability (after about 2026-04-21)
+- **SWE polish becomes freeze-only:** code changes should fix correctness, reproducibility, or submission blockers. Defer broad library promotion, performance refactors, and abstractions unless they unblock thesis text.
 - **Figure inventory + QA** (agent after Jörn picks figures per chapter).
 
 ### Finally (by 2026-04-30)
@@ -39,7 +46,6 @@ Rough shape of Jörn's plan as of 2026-04-12. Ordering is by hard dependencies, 
 - Pre-submission checklist (agent): repo freeze + tag, build reproducibility, bibliography sanity, format compliance.
 
 ### Re-plan triggers
-- **After Tuesday Kai meeting** → re-scope thesis completion, decide must-haves vs cuts
 - **After tube rotation formula + proof land** → wire up tube benchmark harness + run cross-compare against HK2017
 - **After LICCA Sunday runs return** → re-evaluate density / falsification claims
 - **After math write-up scaffold lands** → Jörn breaks hard-labor items into agent-doable sub-tasks
@@ -91,6 +97,7 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 
 ### [active] [group:licca] LICCA-scale F=10 neighborhood falsification
 - Scale the 100-seed perturbation-neighborhood experiment to 10k+ perturbations with 3 step-size buckets (small/medium/large). Honest falsification attempt. Expected: no sys>HKO (strengthens conjecture). Real outcome: whatever the data says.
+- **Post-Kai priority:** optional publication-grade polish, not required for thesis sufficiency. If LICCA results are back before about 2026-04-21, integrate them; if not, keep the existing local evidence and state the large-scale run as pending/future.
 - **Handoff commit:** `fc7991e6` fixed the LICCA script readiness layer from the data-freshness packet; current checkout uses `experiments/...` package paths, not old `exp-*` deployment paths.
 - **Script readiness state (2026-04-15):** fixed the known `CARGO_TARGET_DIR` binary-path bug by running `"$CARGO_TARGET_DIR/release/hko-perturbation"`; added `job-smoke.sh`; kept build outside production `job.sh` with an executable preflight error that prints the exact `cargo build` command. Before LICCA submission, Jörn runs `cd ~/msc-math && CARGO_TARGET_DIR=/hpc/gpfs2/scratch/u/stoehljo/cargo-target cargo build --release -p exp-hko-local-maximum --bin hko-perturbation`, then `cd experiments/hko-local-maximum/perturbation-neighborhood && mkdir -p logs && sbatch ... job.sh`.
 - **Open LICCA-side check:** confirm that `~/msc-math` on LICCA has the same current repo layout. If it still has an old `~/msc-math/crates/exp-*` deployment copy, update that copy or switch to the current repo layout before submitting.
@@ -143,6 +150,7 @@ Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the o
 ### [open] [group:witness-search] Witness oracle instrumentation + benchmark bank
 - Upgrade exact witness search from "best permutation only" to a reusable local-structure oracle: top-`m` / within-gap returns, incumbent warm starts, near-active witness metadata, runtime diagnostics.
 - Bundle the benchmark bank into the same session; do not track it as a separate item.
+- Post-Kai priority: optional AI-work-pattern / publication-polish trial through about 2026-04-21. Do not treat this as required thesis coverage. Stop if the first session does not produce a reusable oracle surface, benchmark report, or clear negative finding without high Jörn interpretation load.
 - Pointer: `research/sys-landscape/design/witness-search-program.md:22-38`
 
 ### [future] [group:witness-search] Witness reuse + safe prefilter calibration
@@ -181,7 +189,8 @@ Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the o
 
 ### [active] [group:licca] LICCA-scale massive ascent sampling (density probe)
 - Scale `gradient-ascent-general/` (10 → 10k+ seeds) and `gradient-ascent-products/` (12 → 10k+ seeds).
-- **Research question (load-bearing for the `RESULTS.md` hostile-landscape main result):** does the density of sys>1 local maxima in M_F actually support "no new examples"? Current seed counts are too small to claim the density is low.
+- **Research question:** does the density of sys>1 local maxima in M_F actually support "no new examples"? Current seed counts are too small for a strong density claim.
+- **Post-Kai priority:** optional strengthening of a thesis-sufficient result, not required to finish the thesis. If results are back before about 2026-04-21, integrate them; otherwise weaken density wording and leave the run as pending/future.
 - **Handoff commit:** same as the F=10 item above, `fc7991e6`; the data-freshness packet landed LICCA script fixes and smoke runners, not a full data-rerun matrix.
 - **Script readiness state (2026-04-15):** fixed the known `CARGO_TARGET_DIR` binary-path bug for both `sys-*` scripts; added local `job-smoke.sh`; kept the 1-second `--time` tripwire, so Jörn must submit production with `sbatch --time=02:00:00 job.sh` after the test-partition dry run. Build commands are `cd ~/msc-math && CARGO_TARGET_DIR=/hpc/gpfs2/scratch/u/stoehljo/cargo-target cargo build --release -p exp-sys-landscape --bin sys-gradient-ascent-general --bin sys-gradient-ascent-products`, followed by `cd experiments/sys-landscape/<experiment> && mkdir -p logs && sbatch ... job.sh`.
 - Each family produces histogram + bucket counts at sys>0.95/0.99/1.00.
@@ -189,7 +198,7 @@ Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the o
 
 ### [future] [group:licca] Combinatoric-changing step sizes on LICCA
 - Beyond fixed-F ascent — let random walks flip facet combinatorics mid-trajectory.
-- Deprioritized until fixed-F LICCA sampling returns; if fixed-F finds nothing, this is the natural next step.
+- Post-Kai: defer beyond thesis unless Jörn explicitly reopens research development before the 2026-04-21 cutoff. If fixed-F LICCA finds nothing, this remains a future-research next step, not a thesis blocker.
 
 ### [future] Analytical formula for sys(P_5 x R(theta) P_5)
 - Standalone mathematical result in `RESULTS.md`: explain the shape of the pentagon rotation curve.
@@ -220,12 +229,12 @@ sys as a continuous function on polytope space, no privileged threshold.
 - `experiments/numerics/gradient/` (`numerics/`, `numerics-edge-cases/`, `numerics-subdifferential/`)
 
 ### [open] [group:landscape] Feature regression + local-maxima pattern search
-- Load-bearing for the `RESULTS.md` hostile-landscape main result: a negative search story needs failed pattern-finding, not only failed random/ascent search.
+- Post-Kai priority: optional publication-polish support for the hostile-landscape story. Kai accepted the two main result blocks as thesis-sufficient; this task can strengthen the story but should not block thesis completion.
 - Run regression/classifier methods on random polytopes using Euclidean and symplectic feature data. More importantly, run the same checks on local maxima found by ascent.
 - Candidate outcomes: a transferable signal gives a conjecture or guided search strategy; no signal or only non-transferable structure supports the hostile-landscape conclusion.
-- Dependencies: random/polytope datasets are available; the strongest local-maxima dataset depends on LICCA-scale ascent results returning.
+- Dependencies: random/polytope datasets are available; the strongest local-maxima dataset depends on LICCA-scale ascent results returning, but the first polish pass should use local data and returned artifacts only.
 - Acceptance: report cross-validated predictive performance, feature importance or failure mode, and whether the signal transfers from random samples to ascent-found local maxima; update `RESULTS.md`.
-- Stop condition: if a real signal appears, surface it for Jörn's mathematical interpretation before turning it into a conjecture.
+- Stop condition: if a real signal appears, surface it for Jörn's mathematical interpretation before turning it into a conjecture; if no useful artifact appears before about 2026-04-21, defer.
 
 ### [future] Systematic landscape analysis
 - Gradient flow convergence, local maxima below sys=1, random noise effects.
@@ -241,8 +250,24 @@ Instrument development. Results promote to `library/`.
 - `experiments/verification/algorithm-comparison/`
 
 ### [done] [2026-03] 4c. Capacity axiom validation
-- All 6 axioms pass. 112/112 orbit-recovery polytopes pass.
+- All 6 axioms pass. Orbit-recovery validation exists, but its historical 112-row summary is stale against the current shared cache; see the open orbit-recovery packet in the paranoia section below.
 - `experiments/verification/correctness/`
+
+### [open] [group:library] Capacity/orbit result API architecture
+- Problem: the public library API exposes capacity-focused entry points (`ehz_capacity`, `ehz_capacity_unpruned`, `billiard_capacity`) whose result stores one certified best permutation and beta. Several experiments need richer algorithm output: all certified candidate orbits, all minimum-action simple orbits within tolerance, near-active witnesses, pruning/solver diagnostics, and recovered primal trajectories. Today that richer output exists only as copied experiment instrumentation or module-internal traversal.
+- Post-Kai priority: discuss/design before implementing broad library changes. A small API design session is useful before the all-minimum-orbit validation task; full implementation is optional polish before about 2026-04-21 and future work after that unless it fixes thesis reproducibility.
+- Candidate design surface: keep `ehz_capacity` as the stable simple API; add a separate explicit API such as `ehz_capacity_with_report` / `enumerate_ehz_candidates` / `minimum_action_orbits` that returns structured candidates and diagnostics without forcing every caller to pay for large outputs.
+- Decisions to make: which data belongs in `library/` result types vs experiment-owned report rows; whether recovered primal trajectories belong in capacity results or in a separate recovery pass; how tolerance for "all minimum" is represented; whether billiard and HK2017 share a common `CapacityCandidate`/`AlgorithmReport` type; and which APIs are public vs `pub(crate)` until stabilized.
+- Acceptance check for the design session: a short architecture note or `TASKS.md` packet names the proposed public functions/types, migration path for copied experiment instrumentation, verification commands, and explicit non-goals for the thesis push.
+- Stop condition: if the design requires resolving tube correctness, changing solver semantics, or committing to a long-term public API guarantee, defer the implementation and keep validation experiment-local.
+
+### [open] [group:verification] All-minimum simple-orbit validation (local-first)
+- Goal: empirically verify the method that recovers all simple minimum-action orbits, not only the capacity value or one best permutation. This is a verification/polish task for the post-Kai polish window, not a LICCA-bound search by default.
+- Current code state: public `hk2017::ehz_capacity` returns one best permutation; several experiments have copied instrumented enumeration code that collects all valid or near-optimal orbits. `orbit_recovery::recover_and_verify` validates one `(sigma, beta, capacity)` result at a time, so the validation session depends on either an experiment-local adapter or the library API design task above.
+- Local dataset default: use diversity from existing local artifacts before inventing new data: known polytopes, `experiments/verification/correctness/correctness.jsonl`, cached experiment polytopes with rational dual vertices, and a small stratified F<=10 sample. LICCA is only relevant if Jörn explicitly asks for rare-event or high-F stress, not for the first validation pass.
+- Acceptance check: for each selected polytope, enumerate certified simple orbits, identify all minimum-action orbits within an explicit tolerance, cross-check the minimum action with `ehz_capacity`, recover each minimum orbit, and report counts plus max closure/on-facet/inside/action errors. Known symmetric cases should record expected multiplicities when they are already known from local evidence.
+- Stress-test escalation: if this becomes a stress test, broaden it into a capacity-and-lemma validation bundle instead of stressing only orbits. The broader bundle should cover capacity agreement, all-minimum orbit recovery, pruning/adjacency assumptions, beta-positivity classification, and the intermediate lemmas used by the capacity pipeline.
+- Stop condition: if tolerance choice changes the minimum-orbit count, if a recovered minimum orbit fails geometry checks, or if the required helper API would become a library design decision, stop and surface the evidence for Jörn.
 
 ### [done] [2026-03] 4b-partial. Q error and KKT inertia
 - 1.13M nodes, worst E=2.9e-11. Empirically exact at f64.
@@ -254,11 +279,13 @@ Instrument development. Results promote to `library/`.
 - 14 previously-failing tests now pass (329 pass, 0 fail).
 - Rationale for current state: degenerate orbits are never capacity-achieving, so final capacity comes from well-conditioned orbits with proven low error. Gap remains for publication.
 - Open: Part III (f64 algorithm description), eta bound for LP null-space search (39 violations on natural data with near-zero eigenvalues), GAP in cor:taylor-structure proof (needs Jörn).
+- Post-Kai priority: publication polish and thesis confidence, not a prerequisite for the two main thesis results. Before about 2026-04-21, agents may close self-verifying pieces such as stale notes/tests; after that, leave explicit caveats or cut proof ambitions rather than opening new solver work.
 - `experiments/numerics/error-bounds/`, `experiments/numerics/error-bounds/algorithm-notes.md`
 
 ### [open] [group:numerics] Projection solver
 - 5-step algorithm: (1) solve equality constraints → (m-5)-dim affine space, (2) project H → reduced Hessian, (3) eigendecompose → null directions, (4) beta>0 as LP on projected null space, (5) recover multipliers.
 - Basic implementation in `kkt/projection_solver.rs`. Needs mathematical rigor + ablation comparison.
+- Post-Kai: defer broad promotion/refactor unless it becomes part of the local validation or stale-note cleanup before about 2026-04-21.
 - `experiments/numerics/error-bounds/algorithm-notes.md`
 
 ### [open] [group:numerics] Beta-LP unification
@@ -266,10 +293,12 @@ Instrument development. Results promote to `library/`.
 - Previous branch deleted (tip `7ca81b53` has salvageable design: unified function, Type A/B/C eigenvector classification).
 - Thesis/code tension: thesis proves rank-deficient pairs are redundant (discard); code searches null space for beta>0 on *near*-singular systems (pseudoinverse beta_0 may have beta_i < 0 from noise; null-space shift recovers feasibility without changing Q). Not contradictory but needs explicit documentation.
 - Open question for Jörn: is filtering Type A directions mathematically justified?
+- Post-Kai: documentation of the tension is useful polish; implementation unification is deferable unless a bounded session can finish and verify it before about 2026-04-21.
 
 ### [open] [group:numerics] Solver numerical formal writeup
 - Per-module formal files for SVD, condition numbers, LU, eigendecomposition stability.
 - Multiple modules use SVD without shared error analysis.
+- Post-Kai: write only the pieces that directly support thesis text or current validation. Defer full per-module numerical formalization after about 2026-04-21.
 
 ### [done] [2026-04] Crosspolytope capacity
 - c_EHZ = 4.0 (same as hypercube), sys=0.75. Exhaustive search through m=13.
@@ -343,12 +372,9 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Top 4 ranked hard-labor items: `prop:capacity-piecewise-smooth`, `lem:cap-derivative`+`lem:vol-derivative`, `prop:prefilter-bound`, `prop:capacity-symplectic-product` (library GAP).
 - Ahead of 2026-04-13 schedule. Kai briefing item (below) can consume it once LICCA Sunday preliminaries are back.
 
-### [open] [group:writeup] Kai meeting prep briefing (Tuesday 2026-04-14)
-- Terse `.md` with checkpoints Jörn reads ~10 min before the Kai call and drives the meeting from. Not a prose doc for Kai — Jörn drives verbally.
-- Organized by decision: locked / empirically strong but unproven / genuinely open / options for closing each gap / recommended priority.
-- Synthesizes RESULTS.md + TASKS.md + logbooks + math write-up scaffold + any LICCA Sunday preliminaries.
-- Output: `kai-briefing-2026-04-14.md` at a migrated repo path outside the deleted documentation root.
-- Scheduled: 2026-04-13 Mon, after the math write-up scaffold lands.
+### [done] [2026-04-15] [group:writeup] Kai meeting gate closed; briefing obsolete
+- The planned `kai-briefing-2026-04-14.md` was not produced before the meeting. Do not reconstruct it after the fact.
+- Outcome recorded in the schedule section: Kai agreed the two main `RESULTS.md` result blocks are sufficient for thesis completion; optional polish runs only through about 2026-04-21 unless it fixes thesis correctness or submission blockers.
 
 ### [done] [2026-04-12] Thesis figure consistency check
 - Thesis figure audit: 0 `\includegraphics` refs across 16 `thesis/**/*.tex` files, `thesis/assets/` does not exist. Rerun after experiment writeups and thesis restructuring land.
@@ -381,23 +407,26 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Known side effect: step_bound upgrade (omega_0 detection) changes experiment behavior if re-run. Existing JSONL not regenerated.
 
 ### [open] [group:paranoia] Paranoia: numerical claims (closure pass 2026-04-15)
-- First pass merged: `paranoia-numerics` branch, 19 files fixed across experiment logbooks + `experiments/numerics/error-bounds/tests.rs` + `experiments/numerics/unknown-predicates/main.rs`. Closure pass recorded at `paranoia-numerics-report.md`.
+- First pass merged: `paranoia-numerics` branch, 19 files fixed across experiment logbooks + `experiments/numerics/error-bounds/tests.rs` + `experiments/numerics/unknown-predicates/main.rs`.
+- The old top-level audit report has been retired after migration into current tracker/design-note ownership. The long pre-migration body was mostly stale: the rotated-products path bug, numerics testdata path bug, and unknown-predicates dataset-label bug are fixed; most other old flags are either closed in current design notes or reduced to the six live packets below.
 - Profiling closed as a live issue: `experiments/verification/algorithm-comparison/profiling/logbook.jsonl` keeps the bad 2026-04-04 zero-duration row as history, but the 2026-04-15 `f5d4ba18` row + `profile.jsonl` are the first usable post-fixture-removal baseline.
 - Live follow-up packets:
-  - `experiments/verification/orbit-recovery/`: choose dataset scope (170 cached vs 112 historical vs smaller validation set), compute real `solution_dim`, regenerate `orbit-recovery.jsonl` + figure, and refresh `research/verification/design/orbit-recovery.md` plus the stale historical capacity-axiom summary above. Jörn only if dataset scope is thesis-facing.
+  - `experiments/verification/orbit-recovery/`: choose dataset scope (170 cached vs 112 historical vs smaller validation set), compute real `solution_dim`, regenerate `orbit-recovery.jsonl` + figure, and refresh `research/verification/design/orbit-recovery.md` plus the stale historical capacity-axiom summary above. Cross-check this against the shared-cache/data-flow audit below before deciding that the 170-row mirror should become the thesis-facing baseline. Jörn only if dataset scope is thesis-facing.
   - `experiments/hko-local-maximum/perturbation-neighborhood/`: split historical `pentagon-perturb.jsonl` findings from current `data/{smoke,licca}-eps-*.jsonl` analyzer outputs; update stale task/design min/max wording.
   - `experiments/combinatorial-cells/convexity/`: refresh design-note counts against committed JSONL (2800 rows, 2661 successful midpoint constructions, 1558/1558 product transition failures, 0/1103 random transition failures) and rerun `uv run analyze.py` if the figure is refreshed.
   - `research/numerics/design/error-bounds.md`: mark old M1 retained-eigenvalue text historical or replace it with current status; replace stale `make smoke` / `make full` commands.
   - `research/crosspolytope/design/main.md`: reconcile elapsed time (`1112.8s` text vs `1095.1s` in JSONL) or label the text as historical console output.
   - `research/hko-local-maximum/design/cut-and-ascent.md`: update or delete the stale `~10s per trial` scale-up estimate.
 - Stop condition for this closure bundle was reached: more than 2-3 live fixes remain, so they are split as packets instead of being fixed in this reconciliation task.
+- Post-Kai priority: high-value polish because it protects thesis claims. Before about 2026-04-21, prefer shallow evidence repairs and stale-note fixes; after that, weaken or qualify claims instead of rerunning broad experiments.
 
 ### [open] [group:paranoia] Data freshness and rerun matrix
 - Source packet: `/tmp/4.md` asked for a prioritized table of evidence gaps with columns `claim`, `current data`, `missing data`, `local vs LICCA`, `estimated runtime`, `job/script readiness`, and `thesis impact`. The finished work instead landed the useful LICCA script-readiness commit `fc7991e6` and did not create the full matrix.
 - Do not redo the LICCA script audit first: `fc7991e6` added `job-smoke.sh`, fixed `CARGO_TARGET_DIR` binary paths, ran the three smoke scripts, and updated the active LICCA handoff notes. Remaining LICCA-side check is external: current repo layout under `~/msc-math` on LICCA before `sbatch`.
-- Next PM action: build the missing matrix from `RESULTS.md`, `TASKS.md`, `paranoia-numerics-report.md`, committed `.jsonl`, `analyze.py`, `job.sh`, `job-smoke.sh`, and research notes. Classify each row as `rerun locally`, `needs LICCA`, `do not rerun because it would move thesis numbers`, or `weaken/reword claim instead`.
+- Next PM action: build the missing matrix from `RESULTS.md`, `TASKS.md`, committed `.jsonl`, `analyze.py`, `job.sh`, `job-smoke.sh`, and research notes. Classify each row as `rerun locally`, `needs LICCA`, `do not rerun because it would move thesis numbers`, or `weaken/reword claim instead`.
 - Seed rows from the paranoia closure shortlist: orbit recovery, perturbation neighborhood, combinatorial-cells convexity, numerics error-bounds note, crosspolytope timing, and cut-and-ascent timing. Add non-paranoia stale evidence only when it affects `RESULTS.md` or an active thesis claim.
 - Stop condition: if the matrix recommends a new large experiment family rather than a rerun of an existing package, stop for Jörn's thesis-priority decision.
+- Post-Kai deadline rule: the matrix should classify rows into `fix before 2026-04-21`, `weaken/reword`, or `defer/future` in addition to local vs LICCA. Do not let the matrix create a new required coverage obligation.
 
 ### [done] [2026-04-12] [group:paranoia] Paranoia: conjectures + interpretations
 - Flag-only audit merged: 42 ranked flags (belief 5 / causal 11 / unhedged 12 / interpretation 13 / conjecture 1).
@@ -412,6 +441,69 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - qp_assembly dual-vertex: decided — thesis should just use a_i (h=1, a=n). The "equivalence" is trivial: substitute h=1, confirm |n|=1 was never used. Per-proof mechanical substitution.
 - KktResult->Solution bridge: needs investigation — unclear whether this is actually a thesis-code alignment issue.
 - Note: thesis-side propagation (KKT notation, accumulator, qp_assembly) is blocked on thesis restructuring.
+- Post-Kai: use the polish window for pruning and correctness alignment. After about 2026-04-21, only fix items that would make the thesis wrong or unreproducible; leave code-side cleanup as future work.
+
+### [open] [group:pm] Repo maintainability / architecture program
+- Durable planning note: `research/repo-maintainability/design/main.md`
+- Purpose: gather repo facts first, then prepare the Jörn review surface for the broad maintainability refactor. Separate `observed facts`, `open architecture decisions`, and `candidate execution packets` before freezing a multi-session DAG.
+- Seeded facts already recorded in the note: no top-level `ARCHITECTURE.md`; experiments already depend on deep library paths; topic packages already have `src/lib.rs` helper crates; the 170-row polytope cache is mirrored in three identical files; `variable-f-ascent` cache is intentionally local.
+- Discovery artifacts now written:
+  - `research/repo-maintainability/design/repo-facts.md`
+  - `research/repo-maintainability/design/import-surface-inventory.md`
+  - `research/repo-maintainability/design/shared-helper-inventory.md`
+  - `research/repo-maintainability/design/data-flow-inventory.md`
+  - `research/repo-maintainability/design/docs-navigation-inventory.md`
+  - `research/repo-maintainability/design/execution-constraints-inventory.md`
+- Current documentation method: facts first, architecture prose second. The consolidated current-state fact base is `research/repo-maintainability/design/repo-facts.md`; later `ARCHITECTURE.md` / data-flow docs should be derived from it instead of mixing discovery with policy.
+- `ARCHITECTURE.md` and `DATAFLOW.md` now exist as separate first-pass current-state skeletons derived from the consolidated fact note. `AGENTS.md` remains the short repo map; the new docs are intentionally descriptive and still light on policy where the repo has not decided it yet.
+- Current phase: first two-doc skeleton pass written. Next step is readability/scope review, then fill the two docs from the discovery notes without quietly settling API or cache-policy questions. Do not yet treat the draft execution packet families in the note as approved implementation work.
+- Discussion order for the next phase: first align on the current repo-state picture, then align on what the architecture must define/describe, then handle one decision family per message, and only after that write the execution DAG.
+- Next PM action: review the section shape of `ARCHITECTURE.md` and `DATAFLOW.md`, then gather section-specific evidence and fill the approved skeletons.
+- Acceptance check: later sessions can resume from `TASKS.md` plus the note without chat history; the note names discovery packets, Jörn decision points, execution-packet template, and the current safe resume point.
+- Stop condition: if the note starts implying API or data decisions that Jörn has not reviewed, keep them as options in the note instead of promoting them to tracker facts.
+
+### [open] [group:library] Experiment-to-library algorithm surface audit
+- Purpose: decide which experiment-grown algorithms are stable enough to promote, wrap, extract to a topic-local helper, or explicitly leave experiment-owned before the 2026-04-21 development cutoff. This is a triage/design task, not a broad refactor permission.
+- Evidence surface:
+  - Rich HK2017 enumeration appears repeatedly as copied `ehz_capacity_instrumented` / `enumerate_all_orbits` code in HKO, combinatorial-cells, and gradient-validation experiments. This is the highest-value library API gap and is tracked directly by the "Capacity/orbit result API architecture" task.
+  - `sys = c^2/(2 vol)` and `d_sys/da` are recomputed in several experiments using library `capacity_derivatives_a` and `volume_derivatives_a`. A small `systolic_ratio` / `sys_derivatives_a` helper could reduce drift, but only after Jörn is comfortable with the derivative lemma status.
+  - Combinatorial-cell step-bound detection (`compute_step_bound_detailed`, including incidence, omega_0 sign, and dual-vertex degeneration events) is stable enough for shared experiment code; library promotion should wait until there is a public "combinatorial type/cell" API design.
+  - Topic packages already have `src/lib.rs` entry points (`exp-combinatorial-cells`, `exp-hko-local-maximum`, `exp-numerics-gradient`), but some of those helper crates are still empty while shared routines remain copied across binaries. Extracting to `experiments/<topic>/src/lib.rs` is often cheaper and safer than immediate library promotion.
+  - Projection-solver diagnostics and exact-QP validation are richer in `experiments/numerics/error-bounds/` than in the public library API. The library now has the fixed projection solver and exact KKT solver; stale experiment-local comments/copies should be pruned or relabeled before adding more solver APIs.
+  - Experiments already import deep library paths such as `hk2017::permutations`, `hk2017::orbit_recovery`, and `kkt::saddle_point_solver`, so the audit should record which deep paths are intended expert surfaces versus accidental internals that later agents should avoid depending on.
+  - Gradient ascent, wiggle/overshoot escape, add-facet/variable-F ascent, rotated-product sweeps, and crosspolytope symmetry reduction are publishable experimental methods or special computations, not general library algorithms for the thesis push.
+- Recommended before about 2026-04-21: do a short design pass for rich capacity/orbit reports; optionally add a tiny `sys` helper if it unblocks validation or write-up; classify repeated helpers as `library`, `topic-local helper`, or `per-binary local`; and clean stale duplicate solver comments if they risk confusing agents. Defer broad migration of ascent/search heuristics, combinatorial-cell APIs, and crosspolytope-specific symmetry code.
+- Acceptance check: a design note or short patch names each candidate as `promote now`, `extract to topic lib`, `experiment helper only`, `document stale copy`, or `future`, records the intended stable import path for anything shared, and gives one verification command per promoted or extracted API. If no code is promoted, close by linking this audit from the broad SWE polish bucket.
+- Stop condition: if a candidate changes mathematical claims, proof obligations, or public solver semantics, stop for Jörn rather than promoting it as polish.
+
+### [open] [group:data] Experiment data-flow audit and cache plan
+- Purpose: map which experiments can reuse polytope/capacity/sigma datasets and which ones need experiment-owned intermediate data. This is the data-flow analogue of the algorithm-surface audit; do not start by moving `.jsonl` files.
+- Current cache evidence:
+  - `library/src/database.rs` defines `PolytopeRecord` with rational dual vertices, rational vertices, optional volume/capacity, and optional `sigmas`; callers own path policy and there is no canonical mutable shared cache.
+  - `experiments/sys-landscape/cache.jsonl`, `experiments/combinatorial-cells/polytopes.jsonl`, and `experiments/verification/orbit-recovery/polytopes.jsonl` are byte-identical on 2026-04-15 (`sha256sum` `8679b89763a10bf1380410f288845f03bcdc8e365035aa31235ff00c9cc07363`), 170 rows each, with volume, capacity, and one best sigma (`sigma_gap_cutoff = 0.0`).
+  - `experiments/sys-landscape/variable-f-ascent/cache.jsonl` is larger (1685 rows) and intentionally local: it stores many intermediate gradient-step polytopes so the shared family cache does not become a transient search log.
+- Data-shape classes:
+  - **Minimum action only:** random/product sampling, perturbation sweeps, rotated-product sweeps, correctness smoke data, and many landscape plots can reuse rows with dual vertices, volume, capacity, and sys.
+  - **Best sigma at the minimum:** orbit recovery, omega-obstacle gradients, gradient-ascent derivative steps, and some combinatorial-cell experiments can use a cached best permutation plus a cheap single-perm KKT solve for beta.
+  - **All tied or near-minimum sigmas:** HKO sensitivity/second-order work, subdifferential experiments, all-minimum-orbit validation, and witness-oracle work cannot be served by the current one-sigma cache; they need the richer capacity/orbit report API or an experiment-owned extension with a nonzero gap cutoff.
+  - **Non-minimum intermediate nodes:** numerical error-bounds, Q-error/inertia, algorithm ablation, and solver benchmarks need per-`(S, sigma)` matrices, solver verdicts, or timing variants. These should stay in custom datasets rather than a shared polytope catalog.
+  - **Path-dependent search traces:** gradient-ascent traces, variable-F paths, and LICCA shard outputs are analysis artifacts, not reusable polytope catalogs except for their final polytopes.
+- Recommended before about 2026-04-21: write a short data-flow note or tracker packet naming one canonical source for the 170-row polytope catalog, the allowed consumer paths, and the fields each consumer may trust. Prefer documenting or scripting mirror refresh over changing all experiments at once.
+- Acceptance check: produce a table with columns `experiment`, `input polytopes`, `reusable fields`, `missing fields`, `source dataset/cache`, `output dataset`, `reuse allowed?`, and `stale/drift risk`; verify identical cache mirrors with `sha256sum`; name any `.jsonl` files that should be future-only, mirrored, or regenerated.
+- Stop condition: if an optimization would change committed data values, alter thesis-facing figures, or merge transient search states into a shared cache, stop for Jörn's thesis-priority decision.
+
+### [open] [group:docs] Agent-facing architecture and navigation guide
+- Goal: give future agents a repo-level map for the common "where does this live?" questions across `library/`, `experiments/`, datasets, and verification commands. Current orientation is split across `AGENTS.md`, `TASKS.md`, `library/src/lib.rs`, `library/src/database.rs`, and per-package `src/lib.rs` headers; there is no top-level architecture guide today.
+- Preferred output: top-level `ARCHITECTURE.md` that answers the frequent navigation questions first and links outward to module headers, formal files, and tracker packets instead of duplicating them. This is documentation and boundary-setting work, not a broad refactor task.
+- Minimum contents:
+  - workspace map (`library/`, `experiments/`, `formal/`, `research/`, `thesis/`) with which surfaces are thesis-facing, experiment-owned, or infrastructure.
+  - stable/simple library entry points versus expert deep import paths versus intentionally experiment-local helpers.
+  - data-flow map: canonical shared polytope catalog, mirrored caches, experiment-owned transient datasets, and JSONL/LFS rules.
+  - code-placement rules: when to promote to `library/`, when to extract to `experiments/<topic>/src/lib.rs`, and when to keep logic per-binary.
+  - "start here" verification commands for common agent tasks (build one package, run one experiment smoke, check a data mirror).
+- Dependency note: this guide should consume conclusions from "Capacity/orbit result API architecture", "Experiment-to-library algorithm surface audit", and "Experiment data-flow audit and cache plan". A first draft may land earlier only if it marks open decisions explicitly instead of guessing them.
+- Acceptance check: a new agent can answer the common navigation questions without source spelunking: where to compute capacity/volume/sys, where shared experiment helpers belong, which caches are canonical, which import paths are intended to be stable, and which artifacts are generated-only.
+- Stop condition: if the guide starts freezing undecided API or data policy, link the open task packet instead of inventing a rule.
 
 ### [open] [group:writeup] Dual-vertex parameterization (a_i migration)
 - Library API done. Most experiment migration complete. Math.tex migration complete.
@@ -433,12 +525,14 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
   - 3 agent-written proofs needing review: `lem:positive-span`, `lem:vertex-enumeration`, `lem:bounded-triples` (`formal/library/geom.tex`).
 - **Low priority** (dev math, not publication path):
   - 11 stubs + 6 gaps in dev-gradient/ and dev-numerical-analysis/.
+- Post-Kai: before about 2026-04-21, agents may close routine verifications or convert stale claims into explicit caveats. After that, do not chase full formal coverage; make remaining unverified blocks visible to thesis writing or cut them from the publication path.
 
 ### [open] [group:docs] Geom formal file restructure
 - Jörn partially reviewed Defs 1–13 of `formal/library/geom.tex` (`library/src/geom/review-notes.md`).
 - Consolidate Defs 1-2 (symplectic form). Add Def for HKO2024 + Thm for false Viterbo's conjecture.
 - Clarify H-representation irredundancy. Fix Defs 12-13 (area/volume are algorithms, not definitions).
 - Consider splitting into `math_geometry.tex`, `math_symplectic.tex`, `math_reeb.tex`.
+- Post-Kai: do not perform a broad split unless it directly helps the thesis by 2026-04-21. Prefer narrow corrections to definitions and labels.
 
 ### [done] [2026-04-12] [group:docs] Library architecture docs audit
 - Library docs audit: existing headers + per-module formal files cover architecture mostly held; 0 blockers, 7 gaps, 3 nits across `lib.rs`, `kkt/`, `algorithms` umbrella, `algorithms/tube`.
@@ -447,9 +541,9 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 
 ### [future] [group:polish] SWE polish (post-thesis-draft-stability bucket)
 - Covers: `dev-*/exp-*` stable code → `library/` promotion, test suite completion + perf, documentation gaps, code simplifications (adopt standard patterns, pull in overlooked libraries, abstract/unabstract as helpful).
-- **Do not start during the 18-day push**: rerunning experiments invalidates logbook numbers Jörn is about to write up, and abstraction changes break silent invariants nobody's testing.
-- Subsumes (or overlaps with) existing `[open] Projection solver`, `[open] Beta-LP unification`, `[active] Thesis-code alignment` code-side items — those can all be folded into this bucket after Tuesday's Kai meeting clarifies must-ship scope.
-- Schedule: dedicated closeout phase after draft is stable enough that experiment numbers aren't moving.
+- **Do not start broad polish during the thesis push**: rerunning experiments invalidates logbook numbers Jörn is about to write up, and abstraction changes break silent invariants nobody's testing.
+- Post-Kai cutoff: through about 2026-04-21, allow bounded polish that yields a self-verifying artifact. After that, this bucket becomes future work except for correctness, reproducibility, or submission blockers.
+- Subsumes (or overlaps with) existing `[open] Projection solver`, `[open] Beta-LP unification`, and code-side thesis-alignment items once thesis submission is no longer at risk.
 
 ### [done] [2026-04-07] Citation verification pass
 - Was 76 `[TODO: JÖRN]` markers total (not 54); 16 were citation lookups.

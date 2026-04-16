@@ -69,7 +69,7 @@ Important domain context: β_k=0 boundary cases are handled by the caller runnin
 
 Earlier cross-reference audit found 3 mismatches, all in `saddle_point_solver.rs`:
 
-- **M1 (critical):** `lem:q-error-bound` uses |λ_min| over ALL eigenvalues, code uses |λ_min| of RETAINED eigenvalues (after threshold τ=10⁻³). Bound is too loose — panics on basic polytopes. Already tracked in TASKS.md.
+- **M1 (historical, stale against current code):** the original audit compared `lem:q-error-bound` against an older retained-eigenvalue implementation. Keep this as provenance only; do not treat it as the current code state without re-auditing the present solver.
 - **M2 (high):** Q is computed from β₀ (pseudoinverse solution) but the returned `result.beta` is β_final (LP-shifted). These don't correspond — the structural contract "result.beta and result.q come from the same solution" is broken. Incomplete TODO at line 479.
 - **M3 (medium):** Code comment at lines 534-544 oversimplifies the lem:q-error-bound proof. The 9/2 constant is correct but the explanation ("removes the ||H||/|λ_min|² term") is misleading.
 
@@ -438,7 +438,10 @@ Stage 3: main.rs <input> <output> → results_*.jsonl (f64 + exact + diagnostics
 Stage 4: analyze.py <results1> [results2 ...] → checks.txt
 ```
 
-Run: `make smoke` (<1s), `make full` (~3.5 min). See Makefile.
+Run from `experiments/numerics/error-bounds/` with the current binaries:
+`cargo build --release --bin num-collect-poly`
+`cargo run --release --bin num-error-bounds`
+`uv run analyze.py`
 
 Stage 1 now saves raw β, λ vectors (not just summary stats).
 Filter binaries coexist — edit/add filters without churn.

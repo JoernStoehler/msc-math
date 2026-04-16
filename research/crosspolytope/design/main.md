@@ -78,7 +78,9 @@ Transition graph: directed, vertex adjacency AND ω₀(nᵢ,nⱼ) ≥ 0. Uniform
 | 12 | 1820    | 68        | 8,492,172   | 31,617        | 278.34   | 3.2x           |
 | 13 | 560     | 21        | 19,565,504  | 43,756        | 732.18   | 2.3x           |
 
-Total: 31,779,448 adj_perms evaluated, 1112.8s elapsed.
+Total: 31,779,448 adj_perms evaluated. The committed `crosspolytope.jsonl`
+records `time_capacity_ms = 1095119.632531`, i.e. 1095.1s elapsed for the final
+run; the older 1112.8s figure was a historical table sum / console total.
 
 The iteration growth factor declines ~0.4/step from m=9 onward.
 Exact adjacent cycle counts (all subsets, no symmetry) for m=2..11 were computed

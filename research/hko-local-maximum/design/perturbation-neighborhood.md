@@ -105,12 +105,27 @@ Then run `uv run analyze.py` locally on the retrieved data.
 
 ## Findings
 
-All verified against `pentagon-perturb.jsonl` (101 rows).
+### Historical single-eps dataset (`pentagon-perturb.jsonl`)
 
-1. **All 100 perturbations retain sys > 1.** The counterexample is robust under small perturbations.
-2. **Summary statistics of perturbed sys:** min = 1.0142, max = 1.0385, mean = 1.0287, std = 0.0048.
-3. **Base (unperturbed) sys = 1.0472 is highest**, indicating HKO2024 is a local maximum of sys in this perturbation space (among the 101 sampled points; not a proof of local maximality).
-4. **PCA on the 40-dimensional perturbation vector** (4 components per facet x 10 facets) shows no dominant direction: top 5 components explain 6.51%, 6.07%, 5.79%, 5.40%, 4.96% of variance respectively. Uniform baseline would be 1/40 = 2.5% per component; the top components are 2-2.6x this, so there is mild anisotropy but no single dominant direction.
+These findings are historical only. They are verified against the committed
+`pentagon-perturb.jsonl` artifact (101 rows) and are not what the current
+`analyze.py` reads.
+
+1. **All recorded perturbations retain sys > 1.** The committed historical dataset stays above the conjectural threshold.
+2. **Historical summary statistics:** min = 1.0142, max = 1.0472, mean = 1.0289, std = 0.0051.
+3. **The best recorded value matches the unperturbed HKO2024 value**, which is consistent with local-maximality heuristics in this sampled neighborhood but is not a proof.
+4. **Historical PCA on the 40-dimensional perturbation vector** (4 components per facet x 10 facets) shows no dominant direction: top 5 components explain 6.51%, 6.07%, 5.79%, 5.40%, 4.96% of variance respectively.
+
+### Current committed smoke pipeline (`data/smoke-eps-*.jsonl`)
+
+The current analyzer reads the smoke or LICCA bucket files, not
+`pentagon-perturb.jsonl`. The committed smoke files are sanity-check artifacts,
+not thesis-facing production evidence.
+
+1. `eps = 0.001` smoke rows stay close to HKO2024: min 1.0446, max 1.0472 over 21 perturbed rows.
+2. `eps = 0.01` smoke rows remain above 1 in the committed sample: min 1.0210, max 1.0472 over 21 perturbed rows.
+3. `eps = 0.1` smoke rows cross below 1 in the committed sample: min 0.8142, max 1.0472 over 21 perturbed rows.
+4. The intended production result is still the LICCA 10k-per-bucket run; until that exists, keep historical and smoke findings explicitly separate.
 
 ## Known limitations
 
