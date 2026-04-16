@@ -31,6 +31,27 @@ This file does not replace:
 - `experiments/`: evidence-producing protocols and generated artifacts.
 - `thesis/`: the actual submitted text.
 
+## Authority And Conflict Rule
+
+When project surfaces disagree, do not silently pick the version that makes a
+gate easier to pass.
+
+Use local context first:
+
+- `RESULTS.md` answers what the thesis should claim and with what strength.
+- `TASKS.md` answers ownership, sequencing, deadline, and stop-condition
+  choices.
+- `VERIFICATION.md` answers what would make the thesis project finished.
+- The submitted thesis artifact answers what the thesis actually says.
+- The cited formal note, library module, experiment package, or preserved
+  artifact answers what that source actually contains.
+
+If that local context already determines which surface is authoritative for the
+question at hand, follow it.
+
+If the conflict is still unresolved after that, escalate to Jorn instead of
+guessing.
+
 ## Reading Rule
 
 Each parent node claims that its listed children are jointly sufficient for the
@@ -219,6 +240,9 @@ Sufficient children:
 - T2.1.4.b [observable] If the LICCA-scale F=10 perturbation run is not
   integrated, the thesis cites only the smaller existing evidence and labels
   the larger run as pending/future or omits it.
+- T2.1.4.d [observable] If the LICCA-scale F=10 perturbation run is not
+  integrated, the remaining HKO stress-test wording states only the empirical
+  conclusion that the smaller existing evidence supports.
 - T2.1.4.c [observable] Higher-F validation appears only as future work unless
   supporting evidence is included.
 
@@ -333,6 +357,8 @@ Sufficient children:
 
 - T2.3.3.a [observable] If a pentagon-rotation formula is claimed, a written
   proof or source exists.
+- T2.3.3.c [observable] [Jorn] If a pentagon-rotation formula is claimed, Jorn
+  says the available proof or source licenses the exact thesis statement.
 - T2.3.3.b [observable] If no proof or source exists, the formula appears only
   as future work or is omitted.
 
@@ -388,6 +414,9 @@ Sufficient children:
 - T2.4.3.b [observable] Every thesis-facing numerical error bound, tolerance,
   accuracy claim, or numerical-stability claim cites support that exists and
   matches the exact claim strength being used.
+- T2.4.3.d [observable] No thesis-facing numerical claim presents an empirical
+  cross-check, exact fallback, or weaker support mode as if it were an
+  analytic bound or stronger support mode.
 - T2.4.3.c [observable] [negative-example] No thesis-facing numerical claim is
   treated as licensed only because an old solver-contract comment or stale
   numerical note once said something compatible.
@@ -402,6 +431,9 @@ Sufficient children:
 - T2.4.4.b [observable] If the thesis makes a projection-solver behavior,
   guarantee, or limitation claim, that claim matches the current solver path
   being described.
+- T2.4.4.c [observable] If the thesis makes a projection-solver behavior,
+  guarantee, or limitation claim, a proof source, validation artifact, or
+  explicit caveat exists that matches the exact claim strength.
 
 ### T2.4.5. Tube-algorithm claims are licensed or removed.
 
@@ -419,6 +451,9 @@ Sufficient children:
 - T2.4.6.a [observable] If billiard or product methods are discussed, the
   thesis says exactly which parts are proved, implemented, benchmarked, or used
   only as comparison methods.
+- T2.4.6.b [observable] Any thesis-facing correctness, benchmark, or comparison
+  claim about billiard or product methods cites support that matches the
+  category and strength named in T2.4.6.a.
 
 ### T2.4.7. Derivative-based claims are licensed.
 
@@ -443,12 +478,14 @@ correctly.
 Sufficient children:
 
 - T2.5.1. Every thesis-facing experiment has a named source of truth.
-- T2.5.2. Every thesis-facing dataset has wording that matches its freshness
-  status.
+- T2.5.2. Every thesis-facing dataset has wording that matches its rerun or
+  preserved-record status.
 - T2.5.3. Caches are not overread.
 - T2.5.4. Intermediate numerical data and search traces are not misinterpreted.
 - T2.5.5. LICCA artifacts cited in support are either present or marked
   pending/future.
+- T2.5.6. Thesis-facing experiment and dataset interpretations match the cited
+  artifacts.
 
 ### T2.5.1. Every thesis-facing experiment has a named source of truth.
 
@@ -458,15 +495,17 @@ Sufficient children:
   is named: generator or protocol, preserved artifact, recomputation command,
   or explicitly external artifact.
 
-### T2.5.2. Every thesis-facing dataset has wording that matches its freshness
-status.
+### T2.5.2. Every thesis-facing dataset has wording that matches its rerun or
+preserved-record status.
 
 Sufficient children:
 
 - T2.5.2.a [observable] For each thesis-facing dataset, the thesis wording
-  matches whether the dataset is current enough, rerun, or historical.
-- T2.5.2.b [observable] No stale dataset is used without either rerun,
-  historical labeling, or weaker wording.
+  matches whether the dataset was rerun in the recorded final repo state,
+  treated as a preserved historical record, or omitted.
+- T2.5.2.b [observable] No dataset that was not rerun in the recorded final
+  repo state is presented as freshly regenerated without explicit preserved-
+  record wording or weaker wording.
 
 ### T2.5.3. Caches are not overread.
 
@@ -496,6 +535,15 @@ Sufficient children:
   identified.
 - T2.5.5.b [observable] Any LICCA work not present is marked pending/future or
   omitted from the thesis-facing support story.
+
+### T2.5.6. Thesis-facing experiment and dataset interpretations match the
+cited artifacts.
+
+Sufficient children:
+
+- T2.5.6.a [observable] [Jorn] Jorn compares each thesis-facing experiment or
+  dataset interpretation against the cited artifact and says the interpretation
+  does not outrun what that artifact supports.
 
 ### T2.6. Global thesis wording does not outrun support.
 
@@ -712,6 +760,9 @@ Sufficient children:
   experiment pipeline, `experiments/` contains the thesis-facing experiment
   packages, scripts, and cited outputs or preserved artifacts that the thesis
   relies on.
+- T5.1.c [observable] Any other repo surface or top-level artifact that the
+  thesis explicitly promises, such as `formal/`, thesis-owned assets, or named
+  preserved artifacts, exists and is identifiable where the thesis says it is.
 
 ### T5.2. Promised commands build and run at the stated scope.
 
@@ -724,6 +775,10 @@ Sufficient children:
   build path, formal build path, smoke path, regeneration path, and experiment
   rerun path succeeds at the promised scope in the recorded final repo state, or
   the thesis explicitly uses preserved-artifact wording instead.
+- T5.2.c [observable] Any prerequisite for a thesis-promised command path,
+  including required environment variables, cache state, cluster dependency,
+  external tool, or preserved input artifact, is stated explicitly wherever the
+  thesis makes that command path part of its promise.
 
 ### T5.3. Promised reproduced or preserved computational results match the
 thesis-facing record.
@@ -733,7 +788,8 @@ Sufficient children:
 - T5.3.a [observable] For each thesis-facing computational artifact that the
   thesis treats as rerunnable, rerunning from the recorded final repo state
   reproduces the figure, table, dataset values, or quantitative conclusion that
-  the thesis relies on, or any accepted difference is recorded explicitly.
+  the thesis relies on, or any accepted difference is recorded explicitly in the
+  thesis-facing record or the thesis switches to preserved-artifact wording.
 - T5.3.b [observable] For each thesis-facing computational artifact that the
   thesis treats as a preserved record rather than rerunnable output, the
   preserved figure, table, dataset values, or quantitative conclusion matches
@@ -746,13 +802,17 @@ Sufficient children:
 
 Sufficient children:
 
-- T5.4.a [observable] No thesis claim silently depends on a cache, helper, or
-  internal routine whose actual semantics are weaker than the thesis wording.
+- T5.4.a [observable] No thesis claim silently depends on a cache, helper,
+  internal routine, public API, or command whose actual semantics are weaker
+  than the thesis wording.
 - T5.4.b [observable] Search traces, intermediate numerical data, and
   one-sigma caches are not used as if they proved stronger facts than they
   actually support.
 - T5.4.c [observable] Any thesis-facing summary of a generated output, cache,
   or preserved artifact matches what that artifact actually records.
+- T5.4.d [observable] If the thesis attributes a behavior, guarantee, or limit
+  to a public API or thesis-facing command, that attributed behavior, guarantee,
+  or limit matches what the repo surface actually provides.
 
 ### T5.5. Math-code correspondence promised by the repo is truthful.
 
@@ -764,6 +824,10 @@ Sufficient children:
 - T5.5.b [observable] If a thesis-critical algorithm lacks the formal source
   its code comments suggest, the comments are relabeled or the formal source is
   added.
+- T5.5.c [observable] If the thesis or repo says an implemented algorithm
+  realizes a cited formal object, the implemented assumptions, invariants, and
+  stated behavior match that cited formal object at the claim strength being
+  used.
 
 ## T6 Tree
 
