@@ -11,10 +11,12 @@ the committed docs/code they govern.
 
 ## Status
 
-- Phase: architecture-doc first pass reviewed; decision-surface discussion next.
+- Phase: architecture/API decision surface reviewed; next step is execution
+  packet planning from a dedicated feature worktree.
 - Last updated: 2026-04-16.
-- Planning rule: do not freeze the full execution DAG until the discovery
-  packets are written and Jörn reviews the architecture decision surface.
+- Planning rule: write execution packets incrementally from the approved design
+  notes; do not treat the full DAG as fixed before early packets are tested in
+  code.
 - Tracker anchor: `TASKS.md` entry "Repo maintainability / architecture program".
 - Deliverable of this phase: a reviewed program note that survives chat
   compactification and can seed later worktree sessions.
@@ -140,6 +142,8 @@ Use one conceptual unit per chat message to avoid mixing design layers.
 - Next discussion unit: library API/result layering around `EhzResult`,
   `CapacityResult`, `OrbitRecovery`, derivatives, and Clarke-subdifferential
   support.
+- Dedicated design note for that unit now exists at
+  `research/repo-maintainability/design/hk2017-result-api-plan.md`.
 - Evidence source for later fill:
   - consolidated current-state fact note
     `research/repo-maintainability/design/repo-facts.md`
