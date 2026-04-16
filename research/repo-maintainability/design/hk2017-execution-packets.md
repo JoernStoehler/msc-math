@@ -26,6 +26,11 @@ queue. It is intentionally incremental: only the first packets are defined.
     - shared `solve_orbit_sigma(...)` primitive for the saddle-point path
     - current HK2017 and billiard solver bridges now route through that
       primitive
+  - Packet 2 slice 2 landed:
+    - shared `collect_legacy_capacity(...)` seam for the current
+      solve/classify/track/finalize loop
+    - HK2017 and billiard now share that collector while still owning their
+      own sigma generation and winner-side metadata
   - Verification after Packet 2 slice 1:
     - `cargo build -p symplectic --release`
     - `cargo test -p symplectic --release --lib`
@@ -81,7 +86,9 @@ queue. It is intentionally incremental: only the first packets are defined.
      - shared seam identified: extract below frontend sigma generation and
        above frontend-local certified-winner metadata
      - `solve_orbit_sigma(...)` is the first shared primitive on that seam
-     - existing HK2017/billiard bridges now depend on the shared primitive
+     - `collect_legacy_capacity(...)` now owns the current shared
+       solve/classify/track/finalize loop
+     - existing HK2017/billiard frontends now depend on both shared seams
    - Known blocker discovered in this packet:
      - `OrbitSolveBackend::Projected` is still unsupported at the shared
        payload boundary because `library/src/kkt/projection_solver.rs` does not
@@ -127,6 +134,8 @@ queue. It is intentionally incremental: only the first packets are defined.
 - Continue Packet 2 by introducing the shared collector/finalization surface
   under the existing sigma generators, using the seam described in
   `packet-2-search-frontend-seam-report.md`, without deleting the old wrappers
-  prematurely.
+  prematurely. Current next likely slice: add the actual shared
+  `OrbitSearchResult`-returning collector entrypoints on top of the internal
+  collector seam.
 - Once Packet 1 is scoped precisely, branch subagent worktrees from this branch
   only if the packet splits into disjoint write scopes.

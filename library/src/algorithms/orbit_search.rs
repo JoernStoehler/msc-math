@@ -12,9 +12,10 @@
 //! packets can migrate those frontends onto one shared surface without further
 //! renaming churn.
 
+use crate::algorithms::capacity_accumulator::{CapacityAccumulator, CapacityResult};
 use crate::geom::polytope::Polytope4D;
 use crate::kkt::saddle_point_solver::{solve_kkt_for, KktOutcome, KktResult, EPS_Q_POSITIVE};
-use crate::kkt::classify_margin;
+use crate::kkt::{classify_margin, Solution, Verdict};
 
 /// Admissibility status of a numerically solved orbit candidate.
 ///
@@ -147,6 +148,11 @@ pub fn solve_orbit_sigma(
     backend: OrbitSolveBackend,
 ) -> Result<OrbitKktData, OrbitSolveError> {
     match backend {
+        // TODO(capacity-result-api): Replace this with a real projection-backed
+        // orbit payload once `library/src/kkt/projection_solver.rs` exposes the
+        // Q-bound contract needed by `OrbitKktData` (`q_error_bound`,
+        // interval-aware action fields, and any multiplier reconstruction we
+        // decide to support there).
         OrbitSolveBackend::Projected => Err(OrbitSolveError::UnsupportedBackend),
         OrbitSolveBackend::SaddlePoint => {
             let outcome = solve_kkt_for(polytope, sigma);
@@ -221,4 +227,65 @@ fn action_bounds_from_q(q: f64, q_error_bound: f64) -> (f64, f64) {
         f64::INFINITY
     };
     (action_lower, action_upper)
+}
+
+fn legacy_solution_from_orbit(orbit: OrbitKktData) -> Solution {
+    let verdict = match orbit.admissibility {
+        OrbitAdmissibility::AdmissibleF64 | OrbitAdmissibility::AdmissibleExact => Verdict::True,
+        OrbitAdmissibility::IndeterminateF64 => Verdict::Indeterminate,
+    };
+
+    Solution {
+        verdict,
+        q: orbit.q,
+        beta: orbit.beta,
+        margin: orbit.beta_margin,
+    }
+}
+
+/// Shared collector seam for the current legacy capacity frontends.
+///
+/// This helper deliberately sits below frontend-specific sigma generation and
+/// above frontend-specific metadata such as HK2017 subsets or billiard bounce
+/// counts. It lets Packet 2 share the solve/classify/track/finalize loop
+/// without prematurely forcing all candidate generators into one abstraction.
+pub(crate) fn collect_legacy_capacity<M: Clone>(
+    polytope: &Polytope4D,
+    backend: OrbitSolveBackend,
+    mut emit_sigma: impl FnMut(&mut dyn FnMut(&[usize], M)),
+    fallback_metadata: impl FnOnce(&CapacityResult) -> M,
+) -> Option<(CapacityResult, M)> {
+    let mut acc = CapacityAccumulator::new();
+    let mut best_certified: Option<(f64, M)> = None;
+
+    let mut visit = |sigma: &[usize], metadata: M| {
+        let orbit = match solve_orbit_sigma(polytope, sigma, backend) {
+            Ok(orbit) => orbit,
+            Err(_) => return,
+        };
+
+        if matches!(
+            orbit.admissibility,
+            OrbitAdmissibility::AdmissibleF64 | OrbitAdmissibility::AdmissibleExact
+        ) && orbit.q > EPS_Q_POSITIVE
+        {
+            let update = best_certified
+                .as_ref()
+                .is_none_or(|(best, _)| orbit.action < *best);
+            if update {
+                best_certified = Some((orbit.action, metadata.clone()));
+            }
+        }
+
+        let solution = legacy_solution_from_orbit(orbit);
+        acc.submit(sigma, &solution);
+    };
+
+    emit_sigma(&mut visit);
+
+    let result = acc.finalize()?;
+    let metadata = best_certified
+        .map(|(_, metadata)| metadata)
+        .unwrap_or_else(|| fallback_metadata(&result));
+    Some((result, metadata))
 }

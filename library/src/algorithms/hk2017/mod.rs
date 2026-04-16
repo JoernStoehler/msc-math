@@ -8,7 +8,6 @@
 //! - Add HK2017 algorithm behavior in:
 //!   - [`api`] for public entry points and result types,
 //!   - [`enumeration`] for subset/permutation traversal,
-//!   - [`solver_bridge`] for KKT-to-`Solution` conversion,
 //!   - [`combinatorics`] for combination generation.
 //! - Add regression or property tests in dedicated `tests_*.rs` files in this
 //!   directory, not in this router module.
@@ -19,7 +18,6 @@ pub mod permutations;
 mod api;
 mod combinatorics;
 mod enumeration;
-mod solver_bridge;
 
 pub use api::{ehz_capacity, ehz_capacity_unpruned, EhzResult};
 pub use combinatorics::combinations;

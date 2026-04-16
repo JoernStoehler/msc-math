@@ -23,14 +23,11 @@ pub mod block_enumeration;
 pub mod facet_classification;
 pub mod kkt_benchmark;
 
-use crate::algorithms::capacity_accumulator::CapacityAccumulator;
 use crate::algorithms::facet_adjacency::{
     build_transition_matrix, is_feasible_cycle,
 };
-use crate::algorithms::orbit_search::{solve_orbit_sigma, OrbitAdmissibility, OrbitSolveBackend};
+use crate::algorithms::orbit_search::{collect_legacy_capacity, OrbitSolveBackend};
 use crate::geom::polytope::Polytope4D;
-use crate::kkt::saddle_point_solver::EPS_Q_POSITIVE;
-use crate::kkt::{classify_margin, Solution};
 use block_enumeration::{enumerate_blocks, enumerate_k_bounce_sigmas};
 use facet_classification::classify_facets;
 
@@ -124,66 +121,30 @@ pub fn billiard_capacity(
     let p_blocks = enumerate_blocks(&classification.p_indices, adj);
 
     // Step 4: for k = 2, 3, enumerate sigma sequences and solve KKT.
-    let mut acc = CapacityAccumulator::new();
-    // Track bounce count for certified candidates (accumulator doesn't track this).
-    let mut best_bounce_certified: Option<(f64, usize)> = None;
-
-    for k in 2..=3 {
-        enumerate_k_bounce_sigmas(k, &q_blocks, &p_blocks, |sigma| {
-            // Directed adjacency pruning: skip cycles violating omega_0 condition.
-            if !is_feasible_cycle(sigma, &directed_adj) {
-                return;
-            }
-
-            if let Some(solution) = solve_and_convert(polytope, sigma) {
-                // Track bounce count for certified candidates.
-                if solution.verdict == crate::kkt::Verdict::True
-                    && solution.q > EPS_Q_POSITIVE
-                {
-                    let action = 0.5 / solution.q;
-                    let update = best_bounce_certified
-                        .as_ref()
-                        .is_none_or(|(best, _)| action < *best);
-                    if update {
-                        best_bounce_certified = Some((action, k));
+    let (result, bounce_count) = match collect_legacy_capacity(
+        polytope,
+        OrbitSolveBackend::SaddlePoint,
+        |visit| {
+            for k in 2..=3 {
+                enumerate_k_bounce_sigmas(k, &q_blocks, &p_blocks, |sigma| {
+                    // Directed adjacency pruning: skip cycles violating omega_0 condition.
+                    if !is_feasible_cycle(sigma, &directed_adj) {
+                        return;
                     }
-                }
-                acc.submit(sigma, &solution);
+                    visit(sigma, k);
+                });
             }
-        });
-    }
-
-    let result = match acc.finalize() {
-        Some(r) => r,
+        },
+        |_result| 2,
+    ) {
+        Some(outcome) => outcome,
         None => return Ok(None),
     };
-
-    let bounce_count = best_bounce_certified.map_or(2, |(_, k)| k);
 
     Ok(Some(BilliardResult {
         result,
         bounce_count,
     }))
-}
-
-/// Solve the KKT system for a (polytope, permutation) pair and convert the
-/// result into a `Solution` for the accumulator.
-///
-/// Same conversion logic as `hk2017::solve_and_convert`.
-fn solve_and_convert(polytope: &Polytope4D, perm: &[usize]) -> Option<Solution> {
-    let orbit = solve_orbit_sigma(polytope, perm, OrbitSolveBackend::SaddlePoint).ok()?;
-    let verdict = match orbit.admissibility {
-        OrbitAdmissibility::AdmissibleF64 | OrbitAdmissibility::AdmissibleExact => {
-            classify_margin(orbit.beta_margin)
-        }
-        OrbitAdmissibility::IndeterminateF64 => classify_margin(orbit.beta_margin),
-    };
-    Some(Solution {
-        verdict,
-        q: orbit.q,
-        beta: orbit.beta,
-        margin: orbit.beta_margin,
-    })
 }
 
 // Tests for billiard capacity: correctness and cross-validation with hk2017.

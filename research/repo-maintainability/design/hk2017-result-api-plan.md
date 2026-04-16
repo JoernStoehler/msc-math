@@ -290,7 +290,7 @@ consumers found this concrete demand surface:
   - `beta_margin`
     - current code computes `min(beta)` locally where needed
       ([billiard/mod.rs](</workspaces/msc-math/library/src/algorithms/billiard/mod.rs:181>),
-      [solver_bridge.rs](</workspaces/msc-math/library/src/algorithms/hk2017/solver_bridge.rs:17>),
+      [orbit_search.rs](</workspaces/msc-math/library/src/algorithms/orbit_search.rs:167>),
       [beta_feasibility.rs](</workspaces/msc-math/library/src/kkt/beta_feasibility.rs:49>))
   - `q_error_bound`
     - strong evidence on the producer/proof side, but no current downstream
