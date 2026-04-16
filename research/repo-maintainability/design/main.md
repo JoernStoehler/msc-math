@@ -51,9 +51,10 @@ These are observed facts as of 2026-04-16, not design decisions.
   `library/src/lib.rs`, `library/src/database.rs`, and per-package
   `experiments/<topic>/src/lib.rs` headers.
 - The simple public library surface in `library/src/lib.rs` re-exports only a
-  small set of entry points: `ehz_capacity`, `ehz_capacity_unpruned`,
-  `billiard_capacity`, `volume`, `omega0`, `lagrangian_product`, polygon
-  builders, known polytopes, and test utils.
+  small set of entry points: `ehz_capacity` (auto), `ehz_capacity_pruned`,
+  `ehz_capacity_unpruned`, `ehz_capacity_billiard`, `billiard_capacity`,
+  `volume`, `omega0`, `lagrangian_product`, polygon builders, known
+  polytopes, and test utils.
 - Experiments already depend on deep library paths beyond that simple surface.
   Evidence: `rg -n "use symplectic::" experiments`.
   Examples seen on 2026-04-16:

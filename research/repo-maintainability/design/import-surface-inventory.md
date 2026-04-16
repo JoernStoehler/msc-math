@@ -50,11 +50,11 @@ boundary questions that still need a Jörn decision.
 
 ### Simple public
 
-- `symplectic::ehz_capacity`, `symplectic::ehz_capacity_unpruned`, `symplectic::EhzResult`, `symplectic::billiard_capacity`, `symplectic::BilliardError`, `symplectic::BilliardResult`, `symplectic::volume`, `symplectic::omega0`, `symplectic::lagrangian_product`, `symplectic::regular_polygon_2d`, `symplectic::rotate_polygon_2d`, `symplectic::known_polytopes`, `symplectic::test_utils`, `symplectic::Polytope4D`, `symplectic::ConstructionError`, `symplectic::Skeleton`, `symplectic::QhullError`.
+- `symplectic::ehz_capacity`, `symplectic::ehz_capacity_pruned`, `symplectic::ehz_capacity_unpruned`, `symplectic::ehz_capacity_billiard`, `symplectic::EhzResult`, `symplectic::billiard_capacity`, `symplectic::BilliardError`, `symplectic::BilliardResult`, `symplectic::volume`, `symplectic::omega0`, `symplectic::lagrangian_product`, `symplectic::regular_polygon_2d`, `symplectic::rotate_polygon_2d`, `symplectic::known_polytopes`, `symplectic::test_utils`, `symplectic::Polytope4D`, `symplectic::ConstructionError`, `symplectic::Skeleton`, `symplectic::QhullError`.
 - Why: these are the root reexports in `library/src/lib.rs` and read like the intended short path for routine experiment code.
 - Examples of current callers:
   - `experiments/combinatorial-cells/omega-hypothesis/main.rs` uses `symplectic::ehz_capacity`.
-  - `experiments/hko-local-maximum/cut-and-ascent/main.rs` uses `symplectic::algorithms::hk2017::ehz_capacity` today, but the root reexport exists for the shorter path.
+  - `experiments/hko-local-maximum/cut-and-ascent/main.rs` and `experiments/sys-landscape/random-sample/main.rs` use the root auto wrapper.
   - `experiments/verification/correctness/main.rs` and `experiments/sys-landscape/random-product-sample/main.rs` use the root-style geometry helpers via the deep module path instead of the root reexport.
 
 ### Expert public

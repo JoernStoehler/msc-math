@@ -27,12 +27,12 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
 use exp_hko_local_maximum::ehz_capacity_instrumented;
-use symplectic::algorithms::hk2017::ehz_capacity;
 use symplectic::algorithms::OrbitKktData;
 use symplectic::derivatives::{
     capacity_derivatives_a_from_orbit,
     volume_derivatives_a,
 };
+use symplectic::ehz_capacity;
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::volume::volume;

@@ -16,7 +16,7 @@
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::volume::volume;
-use symplectic::algorithms::hk2017::ehz_capacity;
+use symplectic::ehz_capacity;
 use nalgebra::Vector4;
 use rand::Rng;
 use rand::SeedableRng;
