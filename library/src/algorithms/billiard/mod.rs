@@ -20,9 +20,9 @@
 //!
 //! Mathematical correspondence: [thm:billiard-characterization], [thm:bounce-bound]
 
-pub mod block_enumeration;
+mod block_enumeration;
 pub mod facet_classification;
-pub mod kkt_benchmark;
+mod kkt_benchmark;
 
 use crate::algorithms::facet_adjacency::{
     build_transition_matrix, is_feasible_cycle,
