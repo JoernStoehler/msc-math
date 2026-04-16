@@ -28,6 +28,10 @@
 //! - Perturbed: 10 pruned
 //!
 //! Total: 47 pruned + 10 unpruned + 14 billiard = 71 capacity values
+//!
+//! Capacity routing is intentionally explicit in this file because the dataset
+//! compares pruned, unpruned, and billiard outputs on the same verification
+//! fixtures. The root auto wrapper would hide those per-algorithm checks.
 
 use symplectic::algorithms::billiard::billiard_capacity;
 use symplectic::random::generate_random_polytopes;

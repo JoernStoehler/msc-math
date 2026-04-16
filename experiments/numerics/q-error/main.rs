@@ -11,6 +11,10 @@
 //!
 //! Input: Known polytopes from the library (F ≤ 10).
 //! Output: Summary tables to stdout. Panics on any violation.
+//!
+//! The explicit HK2017 import below is intentional: this diagnostic validates
+//! the current general HK2017/KKT pipeline and its Q-side error story, not the
+//! root auto-dispatch wrapper.
 use nalgebra::{DMatrix, DVector, Vector4};
 use symplectic::algorithms::hk2017::ehz_capacity;
 use symplectic::geom::known_polytopes;

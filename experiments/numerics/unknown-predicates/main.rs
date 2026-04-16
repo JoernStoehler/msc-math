@@ -9,6 +9,12 @@
 //! 1. `cargo run --bin unknown_predicates --release` generates dataset
 //! 2. Writes to unknown-predicates/unknown-predicates.jsonl
 //! 3. Python script reads JSONL, summarizes findings
+//!
+//! Capacity routing is intentionally explicit here:
+//! - random generic polytopes use pruned HK2017
+//! - Lagrangian products use billiard
+//! This experiment measures UNKNOWN/uncertain predicates on each concrete
+//! algorithm path rather than the root auto wrapper.
 
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;

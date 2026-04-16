@@ -5,6 +5,9 @@
 //!   iterations: repeat count for profiler sampling (default 10)
 //!
 //! Designed for use with `cargo flamegraph` or `perf record`.
+//!
+//! The explicit HK2017 import is intentional: this profiling harness targets
+//! the general HK2017 path specifically rather than the root auto wrapper.
 
 use nalgebra::Vector4;
 use rand::SeedableRng;

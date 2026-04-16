@@ -138,6 +138,16 @@ queue. It is intentionally incremental: only the first packets are defined.
       `billiard_capacity` or explicit HK2017 variants were left explicit on
       purpose because they consume native outputs such as `bounce_count` or
       compare algorithms directly
+  - Packet 3 slice 12 landed:
+    - documented the remaining explicit algorithm imports in verification and
+      numerics surfaces so they no longer look like stale migrations
+    - clarified intent in:
+      - `experiments/numerics/unknown-predicates/main.rs`
+      - `experiments/numerics/q-error/main.rs`
+      - `experiments/verification/algorithm-comparison/benchmark/profile.rs`
+      - `experiments/verification/correctness/main.rs`
+    - those files stay explicit because they validate or profile specific
+      algorithm paths rather than the root auto wrapper
   - Parallel follow-up now in flight on sub-worktrees branched from this
     integration trunk:
     - `capacity-orbit-recovery-refactor`:
@@ -188,6 +198,11 @@ queue. It is intentionally incremental: only the first packets are defined.
     - `cargo build -p exp-sys-landscape --release`
     - `cargo build -p exp-hko-local-maximum --release`
     - `cargo build -p exp-combinatorial-cells --release`
+    - `git diff --check`
+  - Verification after Packet 3 slice 12:
+    - `cargo build -p dev-numerical-analysis --release --bin num-q-error --bin num-unknown-predicates`
+    - `cargo build -p dev-capacity-validation --release --bin axioms-correctness`
+    - `cargo build -p dev-algorithm-comparison --release --bin cmp-benchmark-profile`
     - `git diff --check`
 
 ## Integration Model
