@@ -19,6 +19,7 @@
 
 use serde::Serialize;
 use std::collections::{BTreeMap, HashMap};
+use std::env;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::{Path, PathBuf};
@@ -38,6 +39,7 @@ const H_MAX: f64 = 1.2;
 const GEOMETRY_TOL: f64 = 1e-6;
 const ACTION_TOL: f64 = 1e-5;
 const CACHE_ACTION_TOL: f64 = 1e-10;
+const EXCLUDED_KNOWN_NAMES: &[&str] = &["crosspolytope"];
 
 #[derive(Clone)]
 enum TargetSpec {
@@ -89,15 +91,34 @@ struct ResolvedTarget {
     persist_source: Option<Source>,
 }
 
+enum RunMode {
+    Smoke,
+    CommitOutput,
+}
+
+struct RunPaths {
+    extension_db_path: PathBuf,
+    output_path: PathBuf,
+    mode: RunMode,
+}
+
 fn main() {
     let t0 = Instant::now();
     let manifest_dir = Path::new(env!("CARGO_MANIFEST_DIR"));
-    let extension_db_path = manifest_dir.join("orbit-recovery/cache-extension.jsonl");
-    let output_path = manifest_dir.join("orbit-recovery/orbit-recovery.jsonl");
+    let run_paths = parse_run_paths(manifest_dir);
+    let extension_db_path = run_paths.extension_db_path.clone();
+    let output_path = run_paths.output_path.clone();
     let merged_db = load_merged_database(manifest_dir, &extension_db_path);
     let mut extension_db = database::load(&extension_db_path).expect("failed to load extension cache");
     let targets = build_target_pool(&merged_db);
 
+    eprintln!(
+        "Mode: {}",
+        match run_paths.mode {
+            RunMode::Smoke => "smoke",
+            RunMode::CommitOutput => "commit-output",
+        }
+    );
     eprintln!("Loaded merged cache: {} entries", merged_db.len());
     eprintln!("Target pool: {} rows", targets.len());
 
@@ -107,6 +128,7 @@ fn main() {
     let mut total = 0usize;
     let mut failures = 0usize;
     let mut by_resolution: BTreeMap<&'static str, usize> = BTreeMap::new();
+    let mut extension_db_dirty = false;
 
     for target in &targets {
         let name = target_name(target).to_string();
@@ -182,7 +204,7 @@ fn main() {
         );
 
         if let Some(source) = persist_source {
-            persist_extension_row(&mut extension_db, &polytope, source, &result);
+            extension_db_dirty |= persist_extension_row(&mut extension_db, &polytope, source, &result);
         }
 
         *by_resolution.entry(resolution).or_insert(0) += 1;
@@ -196,7 +218,9 @@ fn main() {
     }
 
     writer.flush().expect("flush output writer");
-    database::save(&extension_db_path, &extension_db).expect("failed to save extension cache");
+    if extension_db_dirty {
+        database::save(&extension_db_path, &extension_db).expect("failed to save extension cache");
+    }
 
     let elapsed = t0.elapsed();
     eprintln!("\nResolution counts:");
@@ -216,6 +240,46 @@ fn main() {
     if failures > 0 {
         std::process::exit(1);
     }
+}
+
+fn parse_run_paths(manifest_dir: &Path) -> RunPaths {
+    let mut args = env::args().skip(1);
+    let mut commit_output = false;
+
+    while let Some(arg) = args.next() {
+        match arg.as_str() {
+            "--commit-output" => commit_output = true,
+            "--help" | "-h" => {
+                print_help_and_exit();
+            }
+            other => {
+                eprintln!("unknown argument: {other}");
+                print_help_and_exit();
+            }
+        }
+    }
+
+    let orbit_dir = manifest_dir.join("orbit-recovery");
+    if commit_output {
+        RunPaths {
+            extension_db_path: orbit_dir.join("cache-extension.jsonl"),
+            output_path: orbit_dir.join("orbit-recovery.jsonl"),
+            mode: RunMode::CommitOutput,
+        }
+    } else {
+        RunPaths {
+            extension_db_path: orbit_dir.join("smoke-cache-extension.jsonl"),
+            output_path: orbit_dir.join("smoke-orbit-recovery.jsonl"),
+            mode: RunMode::Smoke,
+        }
+    }
+}
+
+fn print_help_and_exit() -> ! {
+    eprintln!("Usage: cargo run -p dev-capacity-validation --release --bin axioms-orbit-recovery [--commit-output]");
+    eprintln!("  default: write smoke-orbit-recovery.jsonl and smoke-cache-extension.jsonl");
+    eprintln!("  --commit-output: refresh orbit-recovery.jsonl and cache-extension.jsonl");
+    std::process::exit(2);
 }
 
 fn shared_cache_paths(manifest_dir: &Path) -> [PathBuf; 3] {
@@ -251,7 +315,7 @@ fn build_target_pool(db: &HashMap<DualVerticesKey, PolytopeRecord>) -> Vec<Targe
 fn build_known_targets() -> Vec<TargetSpec> {
     known_polytopes::all_known()
         .into_iter()
-        .filter(|kp| kp.source != "computed (no literature value)")
+        .filter(|kp| !EXCLUDED_KNOWN_NAMES.contains(&kp.name))
         .filter(|kp| kp.polytope.facet_count() <= 12)
         .map(|kp| TargetSpec::Known {
             name: kp.name.to_string(),
@@ -484,10 +548,10 @@ fn persist_extension_row(
     polytope: &Polytope4D,
     source: Source,
     result: &EhzResult,
-) {
+) -> bool {
     let key = polytope.dual_vertices().to_vec();
     if extension_db.contains_key(&key) {
-        return;
+        return false;
     }
 
     let mut record = PolytopeRecord::from_polytope(polytope);
@@ -500,6 +564,7 @@ fn persist_extension_row(
     }]);
     record.sigma_gap_cutoff = Some(0.0);
     extension_db.insert(key, record);
+    true
 }
 
 fn compute_on_facet_error(

@@ -438,6 +438,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 
 - Seed rows from the paranoia closure shortlist: orbit recovery, perturbation neighborhood, combinatorial-cells convexity, numerics error-bounds note, crosspolytope timing, and cut-and-ascent timing. Add non-paranoia stale evidence only when it affects `RESULTS.md` or an active thesis claim.
 - Immediate PM consequence from the matrix: only two rows still need action in the paranoia bundle. Orbit recovery needs a scope decision plus a local rerun path; perturbation neighborhood needs the external LICCA submission step. The remaining four rows should not absorb another rerun session unless a separate research reason appears.
+- Repo-wide follow-up discovered during pre-merge on 2026-04-16: sweep other experiment binaries for default or `--smoke` code paths that still overwrite production `.jsonl` outputs or production-side cache overlays. Target outcome: smoke reruns write to untracked `smoke-*.jsonl` / `smoke-*.csv` style outputs unless the caller explicitly requests a canonical refresh.
 - Stop condition: if the matrix recommends a new large experiment family rather than a rerun of an existing package, stop for Jörn's thesis-priority decision.
 - Post-Kai deadline rule: the matrix should classify rows into `fix before 2026-04-21`, `weaken/reword`, or `defer/future` in addition to local vs LICCA. Do not let the matrix create a new required coverage obligation.
 

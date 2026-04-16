@@ -61,6 +61,7 @@ formal/**/main.toc
 
 # Data
 # crates/visualization/viz/data/ stores generated polytope JSON (tracked)
+experiments/verification/orbit-recovery/smoke-*.jsonl
 
 # LICCA slurm stdout/stderr (regenerated each run, per-job)
 crates/**/logs/

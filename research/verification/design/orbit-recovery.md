@@ -14,9 +14,15 @@ to a curated 25-row target pool:
 - 10 lagrangian-product shared-cache rows (one per polygon-pair stratum).
 
 The binary loads the three 170-row mirror candidates as read-only inputs,
-writes any locally produced rows to `cache-extension.jsonl`, and records real
-`solution_dim` values. The most recent local run on 2026-04-16 passed all
-25/25 rows.
+records real `solution_dim` values, and now distinguishes smoke runs from
+canonical refreshes:
+
+- default invocation writes `smoke-orbit-recovery.jsonl` and
+  `smoke-cache-extension.jsonl`,
+- `--commit-output` refreshes `orbit-recovery.jsonl` and
+  `cache-extension.jsonl`.
+
+The most recent canonical run on 2026-04-16 passed all 25/25 rows.
 
 The older 112-row known+random run is no longer the default experiment
 identity.
@@ -25,7 +31,7 @@ identity.
 
 ```bash
 cargo run -p dev-capacity-validation --release --bin axioms-orbit-recovery
-cargo run -p dev-capacity-validation --release --bin axioms-orbit-recovery   # generates orbit-recovery.jsonl
+cargo run -p dev-capacity-validation --release --bin axioms-orbit-recovery --commit-output
 uv run analyze.py                                # prints summary statistics
 uv run plot_orbit_recovery.py                    # generates error plot
 ```
@@ -38,6 +44,8 @@ uv run plot_orbit_recovery.py                    # generates error plot
 | `analyze.py` | Python: summary statistics (printed to stdout) |
 | `plot_orbit_recovery.py` | Python: error distribution plot for non-known rows |
 | `formal/verification/orbit-recovery.tex` | Formal writeup (lemma, error table, solution dimension) |
+| `smoke-cache-extension.jsonl` | Untracked smoke-run cache overlay |
+| `smoke-orbit-recovery.jsonl` | Untracked smoke-run validation dataset |
 | `cache-extension.jsonl` | Experiment-owned cache overlay for locally produced rows |
 | `orbit-recovery.jsonl` | Validation dataset output for the current curated target pool |
 | `orbit_recovery_errors.png` | Error distribution by facet count figure |
