@@ -514,7 +514,7 @@ fn compute_sys_gradient_a(
         .collect()
 }
 
-/// Compute sys for a polytope using standard (non-instrumented) EHZ.
+/// Compute sys for a polytope using the default root capacity wrapper.
 /// Returns (sys, capacity, volume, best_perm, kkt).
 fn compute_sys(
     polytope: &Polytope4D,
@@ -530,7 +530,7 @@ fn compute_sys(
         return None;
     }
 
-    let ehz = symplectic::algorithms::hk2017::ehz_capacity(polytope)?;
+    let ehz = symplectic::ehz_capacity(polytope)?;
 
     let cap = ehz.result.capacity;
     if !cap.is_finite() || cap <= 0.0 {
