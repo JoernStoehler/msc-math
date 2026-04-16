@@ -149,9 +149,18 @@ target API have already landed in code.
   - `BilliardResult`
   - `BilliardOrbitSearchError`
   - `collect_legacy_capacity(...)`
+  - `legacy_solution_from_orbit(...)`
   This stack is now deletion-candidate plumbing because the same information is
   available from `ehz_capacity_billiard(...) -> OrbitSearchResult` plus
   `bounce_count_from_sigma(...)`.
+- The dependent legacy tail behind that stack is also deletion-candidate
+  plumbing once the callers are migrated:
+  - `CapacityResult`
+  - `CapacityAccumulator`
+  - the current ablation experiment dependency on `CapacityResult`
+  Today these survive only because the legacy billiard scalar path still wraps
+  them and `experiments/verification/algorithm-comparison/ablation/main.rs`
+  still stores a `CapacityResult` inside its experiment-local row type.
 - `CapacityResult` currently stores:
   - `capacity`
   - `capacity_uncertain`
@@ -697,21 +706,29 @@ These points are not yet fully settled.
    - replace `result.bounce_count` with
      `bounce_count_from_sigma(polytope, result.best_sigma())`
    - then delete `BilliardResult`, `BilliardOrbitSearchError`, and the
-     now-unnecessary `collect_legacy_capacity(...)` seam if no other caller
-     needs it
-4. Re-implement or adapt existing experiment-local collectors to use the new
+     now-unnecessary legacy adapter seams
+     (`collect_legacy_capacity(...)`, `legacy_solution_from_orbit(...)`) if no
+     other caller needs them
+4. Delete the dependent legacy scalar tail once the billiard adapter stack is
+   gone:
+   - replace experiment-local `CapacityResult` usage with experiment-local row
+     fields where needed, especially in
+     `experiments/verification/algorithm-comparison/ablation/main.rs`
+   - then delete `CapacityResult` and `CapacityAccumulator` if no other caller
+     still needs them
+5. Re-implement or adapt existing experiment-local collectors to use the new
    library API.
-5. Add library-level Clarke-subdifferential helpers on lists of
+6. Add library-level Clarke-subdifferential helpers on lists of
    `OrbitKktData`.
-6. Keep experiment-local variant-report rows local. Do not reintroduce a shared
+7. Keep experiment-local variant-report rows local. Do not reintroduce a shared
    thin library result type like `EhzResult` just to avoid defining a
    specialized experiment-owned struct.
-6. Update the durable repo docs after the code shape settles:
+8. Update the durable repo docs after the code shape settles:
    - `TASKS.md` for the tracker state and remaining follow-ups
    - `ARCHITECTURE.md` if the public/result boundary described there changes
    - this note or its successor if implementation choices differ from the
      current design draft
-7. Keep search diagnostics out of `OrbitSearchResult` unless a stable,
+9. Keep search diagnostics out of `OrbitSearchResult` unless a stable,
    shared metric surface emerges. Experiments that need diagnostics should own
    their local loop/result types.
 
