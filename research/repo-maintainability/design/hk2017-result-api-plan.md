@@ -109,6 +109,18 @@ target API have already landed in code.
   orbits, compute derivatives, and build Clarke-subdifferential data without
   re-solving when the data is already known.
 
+## Cleanup Rule
+
+- Delete plumbing once the shared result type plus small helper functions make
+  it redundant. Do not preserve a legacy adapter layer just because migrating a
+  few callers is mildly inconvenient.
+- In particular, avoid keeping algorithm-specific scalar result wrappers once
+  the same information is available from:
+  - `OrbitSearchResult` convenience accessors, and
+  - a narrow helper such as `bounce_count_from_sigma(...)`
+- Optimize for lower reader/refactor complexity, not for minimizing immediate
+  migration churn.
+
 ## Current Code State
 
 - The root and explicit `ehz_capacity*` family now return `OrbitSearchResult`.
@@ -132,6 +144,14 @@ target API have already landed in code.
 - The extra `*_minimum_orbits*` assembled collector family was a migration
   artifact. The target is one `ehz_capacity*` router family plus explicit
   building blocks for traversal, one-sigma solve, and aggregation.
+- The remaining known legacy pocket is the billiard scalar stack:
+  - `billiard_capacity(...)`
+  - `BilliardResult`
+  - `BilliardOrbitSearchError`
+  - `collect_legacy_capacity(...)`
+  This stack is now deletion-candidate plumbing because the same information is
+  available from `ehz_capacity_billiard(...) -> OrbitSearchResult` plus
+  `bounce_count_from_sigma(...)`.
 - `CapacityResult` currently stores:
   - `capacity`
   - `capacity_uncertain`
@@ -667,11 +687,23 @@ These points are not yet fully settled.
    - one-sigma solve
    - aggregation into `OrbitSearchResult`
    Keep the `ehz_capacity*` family as trivial preset routers on top.
-3. Re-implement or adapt existing experiment-local collectors to use the new
+3. Delete the remaining billiard scalar adapter stack once the shared result
+   type plus `bounce_count_from_sigma(...)` covers its information:
+   - migrate callers from `billiard_capacity(...) -> BilliardResult` to
+     `ehz_capacity_billiard(...) -> OrbitSearchResult`
+   - replace `result.result.capacity` with `result.capacity()`
+   - replace `result.result.iterations` with `result.iterations`
+   - replace `result.result.best_beta` with `result.best_beta()`
+   - replace `result.bounce_count` with
+     `bounce_count_from_sigma(polytope, result.best_sigma())`
+   - then delete `BilliardResult`, `BilliardOrbitSearchError`, and the
+     now-unnecessary `collect_legacy_capacity(...)` seam if no other caller
+     needs it
+4. Re-implement or adapt existing experiment-local collectors to use the new
    library API.
-4. Add library-level Clarke-subdifferential helpers on lists of
+5. Add library-level Clarke-subdifferential helpers on lists of
    `OrbitKktData`.
-5. Keep experiment-local variant-report rows local. Do not reintroduce a shared
+6. Keep experiment-local variant-report rows local. Do not reintroduce a shared
    thin library result type like `EhzResult` just to avoid defining a
    specialized experiment-owned struct.
 6. Update the durable repo docs after the code shape settles:
