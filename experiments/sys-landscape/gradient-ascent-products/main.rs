@@ -45,8 +45,8 @@ use symplectic::derivatives::{
     capacity_derivatives_a_from_kkt_result,
     volume_derivatives_a,
 };
-use symplectic::algorithms::billiard::billiard_capacity;
 use symplectic::algorithms::billiard::facet_classification::{classify_facets, FacetClassification};
+use symplectic::ehz_capacity;
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::random_polygon_2d;
 use symplectic::geom::polytope::Polytope4D;
@@ -116,7 +116,9 @@ const EPS: f64 = 1e-15;
 // Gradient step in a-space
 // ============================================================================
 
-/// Compute sys = c_EHZ(K)^2 / (2 vol(K)) for a polytope using billiard capacity.
+/// Compute sys = c_EHZ(K)^2 / (2 vol(K)) for a polytope using the default
+/// root wrapper. On this experiment's Lagrangian products, that wrapper
+/// auto-routes to billiard.
 fn compute_sys(polytope: &Polytope4D) -> Option<f64> {
     let vol = volume(polytope).ok().filter(|&v| v > 0.0)?;
     let cap = compute_capacity(polytope)?;
@@ -141,11 +143,11 @@ fn try_step_a(
 }
 
 fn compute_capacity(polytope: &Polytope4D) -> Option<f64> {
-    billiard_capacity(polytope).ok()?.map(|r| r.result.capacity)
+    ehz_capacity(polytope).map(|r| r.result.capacity)
 }
 
 fn compute_capacity_result(polytope: &Polytope4D) -> Option<(f64, Vec<usize>)> {
-    let r = billiard_capacity(polytope).ok()??;
+    let r = ehz_capacity(polytope)?;
     Some((r.result.capacity, r.result.best_permutation))
 }
 
