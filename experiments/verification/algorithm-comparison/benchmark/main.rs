@@ -11,6 +11,10 @@
 //! - Smaller counts at high F for practical runtime
 //!
 //! Total: ~85 polytopes, ~100 capacity computations
+//!
+//! Capacity routing is intentionally explicit in this file because the dataset
+//! compares pruned HK2017, unpruned HK2017, and billiard timings on the same
+//! fixtures. The root auto wrapper would hide that per-algorithm comparison.
 
 use symplectic::algorithms::billiard::billiard_capacity;
 use symplectic::random::generate_random_polytopes;

@@ -144,6 +144,7 @@ queue. It is intentionally incremental: only the first packets are defined.
     - clarified intent in:
       - `experiments/numerics/unknown-predicates/main.rs`
       - `experiments/numerics/q-error/main.rs`
+      - `experiments/verification/algorithm-comparison/benchmark/main.rs`
       - `experiments/verification/algorithm-comparison/benchmark/profile.rs`
       - `experiments/verification/correctness/main.rs`
     - those files stay explicit because they validate or profile specific
