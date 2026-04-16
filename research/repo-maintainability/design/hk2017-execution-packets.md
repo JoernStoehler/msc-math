@@ -239,9 +239,14 @@ queue. It is intentionally incremental: only the first packets are defined.
 ## Immediate Next Action
 
 - Decide whether the next highest-value seam is:
-  - orbit-payload consumers via `capacity_derivatives_a_from_orbit(...)`, or
-  - package-local helper cleanup in `experiments/numerics/gradient/src/lib.rs`
-    if more repetition remains after the package-wide migration.
+  - collector/report migration for binaries whose semantics already match
+    `hk2017_minimum_orbits(...)`, or
+  - intentionally keeping experiment-local all-valid-orbit loops where the
+    binary still reports counts/distributions outside the near-minimum window.
+- Current caution from the latest migration sweep:
+  `hko-gradient-analysis` and `hko-second-order` are not yet clean
+  `hk2017_minimum_orbits(...)` migrations because they still report local
+  all-valid-orbit metrics, not only near-minimum orbit sets.
 - Keep projected-backend support out of Packet 3 unless the derivative packet
   directly needs it; it is a separate solver-contract follow-up.
 - Branch subagent worktrees from this branch only if Packet 3 splits into
