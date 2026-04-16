@@ -51,6 +51,9 @@ queue. It is intentionally incremental: only the first packets are defined.
     - the auto wrapper dispatches to billiard on inputs that pass the
       Lagrangian-product structure test and otherwise falls back to pruned
       HK2017
+    - policy: ordinary consumers use the auto wrapper; explicit HK2017 on
+      Lagrangian products is now mainly for verification/debugging rather than
+      normal consumption
   - Packet 3 slice 1 landed:
     - `library/src/derivatives.rs` now defines `OrbitGradientA`,
       `ClarkeSubdiffA`, and `DerivativeError`

@@ -116,6 +116,11 @@ target API have already landed in code.
   - `ehz_capacity_pruned(...)` = explicit pruned HK2017
   - `ehz_capacity_unpruned(...)` = explicit unpruned HK2017
   - `ehz_capacity_billiard(...)` = explicit billiard path
+- Intended consumer policy:
+  - ordinary callers use `ehz_capacity(...)`
+  - Lagrangian products therefore route to billiard by default
+  - explicit HK2017-on-products is mainly for verification, debugging, and
+    cross-algorithm comparison
 - The richer public collector entrypoints now exist:
   - `hk2017_minimum_orbits(...)`
   - `hk2017_minimum_orbits_unpruned(...)`
@@ -194,6 +199,9 @@ new repo evidence contradicts them.
   - `ehz_capacity_pruned`
   - `ehz_capacity_unpruned`
   - `ehz_capacity_billiard`
+- The auto wrapper should be the normal public recommendation. Explicit choice
+  among the family members is primarily for verification, benchmarking, or
+  debugging.
 - The richer HK2017 surface should return a sorted list of solved orbit/KKT
   payloads, not only one best orbit.
 - Returning only one best orbit is the wrong boundary for the richer
