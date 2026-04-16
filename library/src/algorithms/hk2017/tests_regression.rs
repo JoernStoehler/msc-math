@@ -72,9 +72,8 @@ fn kkt_nullspace_square_square_45deg() {
 
     let result_hk =
         ehz_capacity_unpruned(&polytope).expect("(4,4) at theta=45: HK2017 should have capacity");
-    let result_bil = crate::algorithms::billiard::billiard_capacity(&polytope)
-        .expect("billiard should not error")
-        .expect("billiard should find capacity");
+    let result_bil =
+        crate::ehz_capacity_billiard(&polytope).expect("billiard should have capacity");
 
     let sqrt2_times2 = 2.0 * std::f64::consts::SQRT_2;
     assert!(
@@ -84,9 +83,9 @@ fn kkt_nullspace_square_square_45deg() {
         sqrt2_times2
     );
     assert!(
-        (result_bil.result.capacity - sqrt2_times2).abs() < 1e-6,
+        (result_bil.capacity() - sqrt2_times2).abs() < 1e-6,
         "(4,4) at theta=45 billiard: got {} (was 5.657 before fix), expected 2*sqrt(2) ~ {}",
-        result_bil.result.capacity,
+        result_bil.capacity(),
         sqrt2_times2
     );
 }

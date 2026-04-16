@@ -7,12 +7,11 @@
 //! - search-level guarantees and backend choice
 //! - search/recovery error classification
 
-use crate::algorithms::capacity_accumulator::{CapacityAccumulator, CapacityResult};
 use crate::geom::polytope::Polytope4D;
 use crate::geom::rational_arithmetic::rational_to_f64;
 use crate::kkt::rational_solver::solve_kkt_exact;
 use crate::kkt::saddle_point_solver::{solve_kkt_for, KktOutcome, KktResult, EPS_Q_POSITIVE};
-use crate::kkt::{classify_margin, Solution, Verdict};
+use crate::kkt::classify_margin;
 
 /// Admissibility status of a numerically solved orbit candidate.
 ///
@@ -581,67 +580,6 @@ pub(crate) fn aggregate_orbits_f64_only(
     trim_orbits_to_gap(&mut orbits, gap)?;
     sort_orbits_by_lower_action(&mut orbits);
     summarize_orbits(orbits, iterations)
-}
-
-fn legacy_solution_from_orbit(orbit: OrbitKktData) -> Solution {
-    let verdict = match orbit.admissibility {
-        OrbitAdmissibility::AdmissibleF64 | OrbitAdmissibility::AdmissibleExact => Verdict::True,
-        OrbitAdmissibility::IndeterminateF64 => Verdict::Indeterminate,
-    };
-
-    Solution {
-        verdict,
-        q: orbit.q,
-        beta: orbit.beta,
-        margin: orbit.beta_margin,
-    }
-}
-
-/// Shared collector seam for algorithm-specific scalar frontends.
-///
-/// This helper sits below frontend-specific sigma generation and above
-/// frontend-specific metadata such as billiard bounce counts. It shares the
-/// solve/classify/track/finalize loop without forcing all candidate
-/// generators into one abstraction.
-pub(crate) fn collect_legacy_capacity<M: Clone>(
-    polytope: &Polytope4D,
-    backend: OrbitSolveBackend,
-    mut emit_sigma: impl FnMut(&mut dyn FnMut(&[usize], M)),
-    fallback_metadata: impl FnOnce(&CapacityResult) -> M,
-) -> Option<(CapacityResult, M)> {
-    let mut acc = CapacityAccumulator::new();
-    let mut best_certified: Option<(f64, M)> = None;
-
-    let mut visit = |sigma: &[usize], metadata: M| {
-        let orbit = match solve_orbit_sigma(polytope, sigma, backend) {
-            Ok(orbit) => orbit,
-            Err(_) => return,
-        };
-
-        if matches!(
-            orbit.admissibility,
-            OrbitAdmissibility::AdmissibleF64 | OrbitAdmissibility::AdmissibleExact
-        ) && orbit.q > EPS_Q_POSITIVE
-        {
-            let update = best_certified
-                .as_ref()
-                .is_none_or(|(best, _)| orbit.action < *best);
-            if update {
-                best_certified = Some((orbit.action, metadata.clone()));
-            }
-        }
-
-        let solution = legacy_solution_from_orbit(orbit);
-        acc.submit(sigma, &solution);
-    };
-
-    emit_sigma(&mut visit);
-
-    let result = acc.finalize()?;
-    let metadata = best_certified
-        .map(|(_, metadata)| metadata)
-        .unwrap_or_else(|| fallback_metadata(&result));
-    Some((result, metadata))
 }
 
 #[cfg(test)]

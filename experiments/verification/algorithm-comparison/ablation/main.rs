@@ -35,7 +35,6 @@ use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
-use symplectic::algorithms::capacity_accumulator::CapacityResult;
 use symplectic::geom::polygon::{random_polygon_2d, regular_polygon_2d};
 use symplectic::random::generate_random_polytopes;
 use symplectic::geom::known_polytopes;
@@ -66,8 +65,17 @@ struct AblationEntry {
 }
 
 #[derive(Debug)]
+struct AblationCapacityResult {
+    capacity: f64,
+    capacity_uncertain: f64,
+    best_permutation: Vec<usize>,
+    best_beta: Vec<f64>,
+    iterations: u64,
+}
+
+#[derive(Debug)]
 struct AblationResult {
-    result: CapacityResult,
+    result: AblationCapacityResult,
     best_subset: Vec<usize>,
 }
 
@@ -518,7 +526,7 @@ fn ehz_capacity_unpruned_with(
     let certified = best_certified?;
     let uncertain_cap = best_uncertain.map_or(certified.0, |b| b.0);
     Some(AblationResult {
-        result: CapacityResult {
+        result: AblationCapacityResult {
             capacity: certified.0,
             capacity_uncertain: uncertain_cap,
             best_permutation: certified.2,
@@ -531,7 +539,7 @@ fn ehz_capacity_unpruned_with(
 
 fn ehz_capacity_unpruned_a0(polytope: &Polytope4D) -> Option<AblationResult> {
     ehz_capacity_unpruned(polytope).ok().map(|result| AblationResult {
-        result: CapacityResult {
+        result: AblationCapacityResult {
             capacity: result.capacity(),
             capacity_uncertain: result.min_action_lower,
             best_permutation: result.best_sigma().to_vec(),

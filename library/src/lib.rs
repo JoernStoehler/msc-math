@@ -53,10 +53,8 @@ pub use geom::QhullError;
 
 // Capacity algorithms
 pub use algorithms::billiard::{
-    billiard_capacity,
     BilliardError,
     BilliardOrbitSearchError,
-    BilliardResult,
 };
 pub use algorithms::{
     GeometricOrbitError,

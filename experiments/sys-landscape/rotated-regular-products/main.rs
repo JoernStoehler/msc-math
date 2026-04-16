@@ -16,10 +16,11 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::PathBuf;
 use std::time::Instant;
-use symplectic::algorithms::billiard::billiard_capacity;
+use symplectic::algorithms::billiard::bounce_count_from_sigma;
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::{polygon_area, regular_polygon_2d, rotate_polygon_2d};
 use symplectic::geom::volume::volume;
+use symplectic::{ehz_capacity_billiard, BilliardOrbitSearchError};
 
 const PENTAGON_START_DEG: f64 = 0.0;
 const PENTAGON_END_DEG: f64 = 36.0;
@@ -106,13 +107,20 @@ fn generate_heptagon_7x7() {
         let vol = volume(&polytope).expect("volume computation failed");
 
         let start = Instant::now();
-        let result = billiard_capacity(&polytope)
-            .expect("billiard failed")
-            .expect("billiard returned None");
+        let result = match ehz_capacity_billiard(&polytope) {
+            Ok(result) => result,
+            Err(BilliardOrbitSearchError::InvalidInput(_)) => continue,
+            Err(err) => panic!("billiard failed: {err}"),
+        };
         let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
-        let cap = result.result.capacity;
+        let cap = result.capacity();
         let sys = cap * cap / (2.0 * vol); // [def:systolic-ratio]: sys = c_EHZ^2 / (2 vol)
+        let Some(bounces) = bounce_count_from_sigma(&polytope, result.best_sigma())
+            .expect("billiard classification failed")
+        else {
+            continue;
+        };
 
         let row = SweepRow {
             family: "heptagon_7x7_sweep".to_string(),
@@ -126,8 +134,8 @@ fn generate_heptagon_7x7() {
             time_capacity_ms: time_ms,
             area_q,
             area_p,
-            iterations: result.result.iterations,
-            bounces: result.bounce_count,
+            iterations: result.iterations,
+            bounces,
         };
         let line = serde_json::to_string(&row).expect("serialize");
         writeln!(writer, "{line}").expect("write");
@@ -172,13 +180,20 @@ fn generate_pentagon_5x5() {
         let vol = volume(&polytope).expect("volume computation failed");
 
         let start = Instant::now();
-        let result = billiard_capacity(&polytope)
-            .expect("billiard failed")
-            .expect("billiard returned None");
+        let result = match ehz_capacity_billiard(&polytope) {
+            Ok(result) => result,
+            Err(BilliardOrbitSearchError::InvalidInput(_)) => continue,
+            Err(err) => panic!("billiard failed: {err}"),
+        };
         let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
-        let cap = result.result.capacity;
+        let cap = result.capacity();
         let sys = cap * cap / (2.0 * vol); // [def:systolic-ratio]: sys = c_EHZ^2 / (2 vol)
+        let Some(bounces) = bounce_count_from_sigma(&polytope, result.best_sigma())
+            .expect("billiard classification failed")
+        else {
+            continue;
+        };
 
         let row = SweepRow {
             family: "pentagon_5x5_sweep".to_string(),
@@ -192,8 +207,8 @@ fn generate_pentagon_5x5() {
             time_capacity_ms: time_ms,
             area_q,
             area_p,
-            iterations: result.result.iterations,
-            bounces: result.bounce_count,
+            iterations: result.iterations,
+            bounces,
         };
         let line = serde_json::to_string(&row).expect("serialize");
         writeln!(writer, "{line}").expect("write");
@@ -238,13 +253,20 @@ fn generate_polygon_pairs() {
             let vol = volume(&polytope).expect("volume computation failed");
 
             let start = Instant::now();
-            let result = billiard_capacity(&polytope)
-                .expect("billiard failed")
-                .expect("billiard returned None");
+            let result = match ehz_capacity_billiard(&polytope) {
+                Ok(result) => result,
+                Err(BilliardOrbitSearchError::InvalidInput(_)) => continue,
+                Err(err) => panic!("billiard failed: {err}"),
+            };
             let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
-            let cap = result.result.capacity;
+            let cap = result.capacity();
             let sys = cap * cap / (2.0 * vol); // [def:systolic-ratio]: sys = c_EHZ^2 / (2 vol)
+            let Some(bounces) = bounce_count_from_sigma(&polytope, result.best_sigma())
+                .expect("billiard classification failed")
+            else {
+                continue;
+            };
 
             let row = SweepRow {
                 family: "polygon_pair".to_string(),
@@ -258,8 +280,8 @@ fn generate_polygon_pairs() {
                 time_capacity_ms: time_ms,
                 area_q,
                 area_p,
-                iterations: result.result.iterations,
-                bounces: result.bounce_count,
+                iterations: result.iterations,
+                bounces,
             };
             let line = serde_json::to_string(&row).expect("serialize");
             writeln!(writer, "{line}").expect("write");

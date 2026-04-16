@@ -228,16 +228,15 @@ fn billiard_agrees_with_hk2017_on_small_lagrangian_products() {
         known_polytopes::lagrangian_triangle_square(),
     ] {
         let hk = ehz_capacity_pruned(&kp.polytope).expect("HK2017 capacity");
-        let billiard = crate::algorithms::billiard::billiard_capacity(&kp.polytope)
-            .expect("billiard should accept Lagrangian product")
-            .expect("billiard capacity");
-        let rel_err = (hk.capacity() - billiard.result.capacity).abs() / billiard.result.capacity;
+        let billiard =
+            crate::ehz_capacity_billiard(&kp.polytope).expect("billiard should have capacity");
+        let rel_err = (hk.capacity() - billiard.capacity()).abs() / billiard.capacity();
         assert!(
             rel_err < 1e-6,
             "{}: HK2017 ({}) != billiard ({}) capacity, rel_error = {:.2e}",
             kp.name,
             hk.capacity(),
-            billiard.result.capacity,
+            billiard.capacity(),
             rel_err
         );
     }

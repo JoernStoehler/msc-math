@@ -20,11 +20,12 @@
 //! key-based (BigRational dual vertices), not Source-based.
 
 use std::collections::HashMap;
-use symplectic::algorithms::billiard::billiard_capacity;
+use symplectic::algorithms::billiard::bounce_count_from_sigma;
 use symplectic::database::{load_many, save, DualVerticesKey, PolytopeRecord, SigmaAction, Source};
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::random_polygon_2d;
 use symplectic::geom::volume::volume;
+use symplectic::{ehz_capacity_billiard, BilliardOrbitSearchError};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use serde::Serialize;
@@ -156,13 +157,20 @@ fn main() {
             let time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
 
             let start_cap = Instant::now();
-            let result = billiard_capacity(&polytope)
-                .expect("billiard failed")
-                .expect("billiard returned None");
+            let result = match ehz_capacity_billiard(&polytope) {
+                Ok(result) => result,
+                Err(BilliardOrbitSearchError::InvalidInput(_)) => continue,
+                Err(err) => panic!("billiard failed: {err}"),
+            };
             let time_capacity_ms = start_cap.elapsed().as_secs_f64() * 1000.0;
 
-            let cap = result.result.capacity;
+            let cap = result.capacity();
             let sys = cap * cap / (2.0 * vol);
+            let Some(bounces) = bounce_count_from_sigma(&polytope, result.best_sigma())
+                .expect("billiard classification failed")
+            else {
+                continue;
+            };
 
             // Insert into database
             let mut record = PolytopeRecord::from_polytope(&polytope);
@@ -177,7 +185,7 @@ fn main() {
             record = record.with_computed_fields(vol, 0.0, cap, 0.0);
             record = record.with_sigmas(
                 vec![SigmaAction {
-                    perm: result.result.best_permutation.clone(),
+                    perm: result.best_sigma().to_vec(),
                     action: cap,
                 }],
                 0.0,
@@ -199,8 +207,8 @@ fn main() {
                 volume: vol,
                 capacity: cap,
                 sys,
-                iterations: result.result.iterations,
-                bounces: result.bounce_count,
+                iterations: result.iterations,
+                bounces,
                 time_volume_ms,
                 time_capacity_ms,
             };

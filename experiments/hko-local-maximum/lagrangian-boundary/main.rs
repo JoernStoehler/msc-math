@@ -23,10 +23,11 @@ use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
-use symplectic::algorithms::billiard::billiard_capacity;
+use symplectic::algorithms::billiard::bounce_count_from_sigma;
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::volume::volume;
+use symplectic::ehz_capacity_billiard;
 
 const SEED: u64 = 42;
 
@@ -174,11 +175,12 @@ fn main() {
 
     // Compute and write base row (epsilon = 0)
     let base_vol = volume(base_polytope).expect("volume computation failed");
-    let base_billiard = billiard_capacity(base_polytope)
-        .expect("billiard classification failed")
-        .expect("billiard returned None");
-    let base_cap = base_billiard.result.capacity;
+    let base_billiard = ehz_capacity_billiard(base_polytope).expect("billiard classification failed");
+    let base_cap = base_billiard.capacity();
     let base_sys = base_cap * base_cap / (2.0 * base_vol);
+    let base_bounces = bounce_count_from_sigma(base_polytope, base_billiard.best_sigma())
+        .expect("bounce count classification failed")
+        .expect("bounce count returned None");
 
     println!(
         "Base: sys = {:.6}, cap = {:.6}, vol = {:.6}\n",
@@ -195,7 +197,7 @@ fn main() {
         volume: base_vol,
         capacity: base_cap,
         sys: base_sys,
-        bounces: base_billiard.bounce_count,
+        bounces: base_bounces,
     };
     let line = serde_json::to_string(&base_row).expect("serialize");
     writeln!(samples_writer, "{line}").expect("write");
@@ -242,9 +244,9 @@ fn main() {
 
             // Keep the explicit billiard call here because `SampleRow` stores
             // `bounces`, which is only available from the billiard-native API.
-            let billiard = match billiard_capacity(&polytope) {
-                Ok(Some(r)) => r,
-                Ok(None) | Err(_) => continue,
+            let billiard = match ehz_capacity_billiard(&polytope) {
+                Ok(r) => r,
+                Err(_) => continue,
             };
 
             let vol = match volume(&polytope) {
@@ -252,7 +254,11 @@ fn main() {
                 _ => continue,
             };
 
-            let cap = billiard.result.capacity;
+            let bounces = match bounce_count_from_sigma(&polytope, billiard.best_sigma()) {
+                Ok(Some(k)) => k,
+                _ => continue,
+            };
+            let cap = billiard.capacity();
             let sys = cap * cap / (2.0 * vol);
 
             if sys > 1.0 {
@@ -270,7 +276,7 @@ fn main() {
                 volume: vol,
                 capacity: cap,
                 sys,
-                bounces: billiard.bounce_count,
+                bounces,
             };
             let line = serde_json::to_string(&row).expect("serialize");
             writeln!(samples_writer, "{line}").expect("write");

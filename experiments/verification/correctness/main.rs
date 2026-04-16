@@ -33,7 +33,6 @@
 //! compares pruned, unpruned, and billiard outputs on the same verification
 //! fixtures. The root auto wrapper would hide those per-algorithm checks.
 
-use symplectic::algorithms::billiard::billiard_capacity;
 use symplectic::random::generate_random_polytopes;
 use symplectic::geom::known_polytopes::{
     hko_pentagon, hypercube, lagrangian_triangle_product, lagrangian_triangle_square,
@@ -42,7 +41,7 @@ use symplectic::geom::known_polytopes::{
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::random_polygon_2d;
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::{ehz_capacity_pruned, ehz_capacity_unpruned};
+use symplectic::{ehz_capacity_billiard, ehz_capacity_pruned, ehz_capacity_unpruned};
 use nalgebra::Matrix4;
 use rand::{Rng, SeedableRng};
 use rand_chacha::ChaCha8Rng;
@@ -96,7 +95,7 @@ fn main() {
         let pruned = ehz_capacity_pruned(p).expect("pruned").capacity();
         let unpruned = ehz_capacity_unpruned(p).expect("unpruned").capacity();
         let billiard = if i >= 5 {
-            billiard_capacity(p).ok().flatten().map(|r| r.result.capacity)
+            ehz_capacity_billiard(p).ok().map(|r| r.capacity())
         } else {
             None
         };
@@ -130,7 +129,7 @@ fn main() {
 
     for kp in literature {
         let pruned = ehz_capacity_pruned(&kp.polytope).expect("pruned").capacity();
-        let billiard = billiard_capacity(&kp.polytope).ok().flatten().map(|r| r.result.capacity);
+        let billiard = ehz_capacity_billiard(&kp.polytope).ok().map(|r| r.capacity());
 
         entries.push(VerificationEntry {
             name: kp.name.to_string(),
@@ -157,7 +156,7 @@ fn main() {
 
         let pruned = ehz_capacity_pruned(&scaled).expect("pruned").capacity();
         let billiard = if i >= 5 {
-            billiard_capacity(&scaled).ok().flatten().map(|r| r.result.capacity)
+            ehz_capacity_billiard(&scaled).ok().map(|r| r.capacity())
         } else {
             None
         };

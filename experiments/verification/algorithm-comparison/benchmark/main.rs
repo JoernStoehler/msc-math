@@ -16,8 +16,7 @@
 //! compares pruned HK2017, unpruned HK2017, and billiard timings on the same
 //! fixtures. The root auto wrapper would hide that per-algorithm comparison.
 
-use symplectic::algorithms::billiard::billiard_capacity;
-use symplectic::{ehz_capacity_pruned, ehz_capacity_unpruned};
+use symplectic::{ehz_capacity_billiard, ehz_capacity_pruned, ehz_capacity_unpruned};
 use symplectic::random::generate_random_polytopes;
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::random_polygon_2d;
@@ -152,9 +151,7 @@ fn main() {
 
             // Billiard
             let t_start = Instant::now();
-            let result_billiard = billiard_capacity(&p)
-                .expect("billiard failed")
-                .expect("billiard returned None");
+            let result_billiard = ehz_capacity_billiard(&p).expect("billiard failed");
             let time_billiard_ms = t_start.elapsed().as_secs_f64() * 1000.0;
 
             entries.push(BenchmarkEntry {
@@ -169,8 +166,8 @@ fn main() {
                 capacity_unpruned: None,
                 iterations_unpruned: None,
                 time_billiard_ms: Some(time_billiard_ms),
-                capacity_billiard: Some(result_billiard.result.capacity),
-                iterations_billiard: Some(result_billiard.result.iterations),
+                capacity_billiard: Some(result_billiard.capacity()),
+                iterations_billiard: Some(result_billiard.iterations),
             });
         }
         println!("done");

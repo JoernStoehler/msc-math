@@ -21,7 +21,7 @@ use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::{regular_polygon_2d, rotate_polygon_2d};
 use symplectic::geom::volume::volume;
 use symplectic::random::generate_random_polytopes;
-use symplectic::{billiard_capacity, ehz_capacity_pruned};
+use symplectic::{ehz_capacity_billiard, ehz_capacity_pruned};
 
 // ---------------------------------------------------------------------------
 // Random-sweep parameters (must match random_sweep.rs exactly)
@@ -154,7 +154,7 @@ fn main() {
     }
 
     // -----------------------------------------------------------------------
-    // Part 2: Lagrangian-products — pentagon 5×5 sweep (billiard_capacity)
+    // Part 2: Lagrangian-products — pentagon 5×5 sweep (ehz_capacity_billiard)
     // -----------------------------------------------------------------------
     println!("\n=== Part 2: Lagrangian-products ===\n");
 
@@ -175,15 +175,12 @@ fn main() {
             let vol = volume(&polytope).expect("volume computation failed");
 
             let start = Instant::now();
-            let result = billiard_capacity(&polytope)
-                .expect("billiard error")
-                .expect("billiard returned None");
+            let result = ehz_capacity_billiard(&polytope).expect("billiard error");
             let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
-            let min_action = result.result.capacity;
+            let min_action = result.capacity();
             let beta_min = result
-                .result
-                .best_beta
+                .best_beta()
                 .iter()
                 .cloned()
                 .fold(f64::INFINITY, f64::min);
@@ -236,15 +233,12 @@ fn main() {
             let vol = volume(&polytope).expect("volume computation failed");
 
             let start = Instant::now();
-            let result = billiard_capacity(&polytope)
-                .expect("billiard error")
-                .expect("billiard returned None");
+            let result = ehz_capacity_billiard(&polytope).expect("billiard error");
             let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
-            let min_action = result.result.capacity;
+            let min_action = result.capacity();
             let beta_min = result
-                .result
-                .best_beta
+                .best_beta()
                 .iter()
                 .cloned()
                 .fold(f64::INFINITY, f64::min);

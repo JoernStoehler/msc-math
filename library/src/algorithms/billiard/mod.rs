@@ -9,10 +9,6 @@
 //! billiard trajectory in K_q, and [thm:bounce-bound]: the minimiser has at most
 //! 3 bounces.
 //!
-//! Uses `CapacityAccumulator` for the billiard-native scalar output path
-//! (`billiard_capacity`), while the shared `ehz_capacity*` family routes
-//! through the common orbit/result surface.
-//!
 //! Submodules:
 //! - `block_enumeration` — block structure enumeration for Q/P facets
 //! - `facet_classification` — classify facets into q-space and p-space types
@@ -26,10 +22,6 @@ mod kkt_benchmark;
 
 use crate::algorithms::facet_adjacency::{
     build_transition_matrix, is_feasible_cycle,
-};
-use crate::algorithms::orbit_search::{
-    collect_legacy_capacity,
-    OrbitSolveBackend,
 };
 use crate::geom::polytope::Polytope4D;
 use block_enumeration::{enumerate_blocks, enumerate_k_bounce_sigmas};
@@ -100,77 +92,6 @@ impl std::fmt::Display for BilliardOrbitSearchError {
 
 impl std::error::Error for BilliardOrbitSearchError {}
 
-/// Result of the billiard capacity computation.
-///
-/// Wraps [`CapacityResult`](crate::algorithms::capacity_accumulator::CapacityResult)
-/// (shared accumulator output) plus the algorithm-specific `bounce_count` field
-/// indicating the k value (2 or 3) of the optimal orbit.
-///
-/// Access capacity fields via `.result.capacity` (no Deref -- explicit field access).
-///
-/// [thm:billiard-characterization]: result of block-structured enumeration.
-#[derive(Clone, Debug)]
-pub struct BilliardResult {
-    /// Core capacity result from the accumulator: capacity, uncertainty, best
-    /// permutation, beta vector, and iteration count.
-    pub result: crate::algorithms::capacity_accumulator::CapacityResult,
-    /// Number of bounces (k value) of the optimal orbit (2 or 3).
-    pub bounce_count: usize,
-}
-
-/// Compute c_EHZ for a Lagrangian product polytope.
-///
-/// Returns error if the polytope is not a Lagrangian product (some facet normal
-/// has both q and p components, or too few facets of one type).
-///
-/// Returns `Ok(None)` if no valid orbit is found (should not happen for valid
-/// Lagrangian products, but guards against degenerate input).
-///
-/// [thm:billiard-characterization], [thm:bounce-bound]: enumerates block permutations
-/// sigma = (Q_1 P_1 ... Q_k P_k) for k in {2, 3}.
-pub fn billiard_capacity(
-    polytope: &Polytope4D,
-) -> Result<Option<BilliardResult>, BilliardError> {
-    // Step 1: classify facets into q-type and p-type.
-    let classification = classify_facets(polytope)?;
-
-    // Step 2: build adjacency matrices.
-    // Undirected: for block building (same-type adjacent pairs).
-    let adj = polytope.vertex_adjacency();
-    // Directed: for cycle pruning (omega_0 transition feasibility).
-    let directed_adj = build_transition_matrix(polytope);
-
-    // Step 3: enumerate blocks.
-    let q_blocks = enumerate_blocks(&classification.q_indices, adj);
-    let p_blocks = enumerate_blocks(&classification.p_indices, adj);
-
-    // Step 4: for k = 2, 3, enumerate sigma sequences and solve KKT.
-    let (result, bounce_count) = match collect_legacy_capacity(
-        polytope,
-        OrbitSolveBackend::SaddlePoint,
-        |visit| {
-            for k in 2..=3 {
-                enumerate_k_bounce_sigmas(k, &q_blocks, &p_blocks, |sigma| {
-                    // Directed adjacency pruning: skip cycles violating omega_0 condition.
-                    if !is_feasible_cycle(sigma, &directed_adj) {
-                        return;
-                    }
-                    visit(sigma, k);
-                });
-            }
-        },
-        |_result| 2,
-    ) {
-        Some(outcome) => outcome,
-        None => return Ok(None),
-    };
-
-    Ok(Some(BilliardResult {
-        result,
-        bounce_count,
-    }))
-}
-
 /// Returns the billiard bounce count `k` encoded by `sigma`.
 ///
 /// The polytope must be a valid Lagrangian product. If `sigma` does not match
@@ -217,7 +138,16 @@ pub fn for_each_sigma(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::ehz_capacity_billiard;
     use crate::geom::known_polytopes;
+
+    fn billiard_result(
+        name: &str,
+        polytope: &crate::geom::polytope::Polytope4D,
+    ) -> crate::algorithms::OrbitSearchResult {
+        ehz_capacity_billiard(polytope)
+            .unwrap_or_else(|e| panic!("{name}: ehz_capacity_billiard returned error: {e:?}"))
+    }
 
     /// Helper: assert billiard capacity matches expected value within tolerance.
     fn assert_capacity(
@@ -226,16 +156,13 @@ mod tests {
         expected: f64,
         tol: f64,
     ) {
-        let result = billiard_capacity(polytope)
-            .unwrap_or_else(|e| panic!("{}: billiard_capacity returned error: {}", name, e))
-            .unwrap_or_else(|| panic!("{}: billiard_capacity returned None", name));
-
-        let diff = (result.result.capacity - expected).abs();
+        let result = billiard_result(name, polytope);
+        let diff = (result.capacity() - expected).abs();
         assert!(
             diff < tol,
             "{}: capacity {:.10} != expected {:.10} (diff {:.2e}, tol {:.2e})",
             name,
-            result.result.capacity,
+            result.capacity(),
             expected,
             diff,
             tol,
@@ -312,13 +239,13 @@ mod tests {
     #[ignore] // runs hk2017 live -- release-only cross-algorithm check
     fn agrees_with_hk2017_hypercube() {
         let kp = known_polytopes::hypercube();
-        let billiard = billiard_capacity(&kp.polytope).unwrap().unwrap();
+        let billiard = billiard_result("hypercube", &kp.polytope);
         let hk = crate::ehz_capacity(&kp.polytope).unwrap();
-        let diff = (billiard.result.capacity - hk.capacity()).abs();
+        let diff = (billiard.capacity() - hk.capacity()).abs();
         assert!(
             diff < 1e-8,
             "hypercube: billiard {:.10} != hk2017 {:.10} (diff {:.2e})",
-            billiard.result.capacity,
+            billiard.capacity(),
             hk.capacity(),
             diff,
         );
@@ -329,13 +256,13 @@ mod tests {
     #[ignore] // runs hk2017 live -- release-only cross-algorithm check
     fn agrees_with_hk2017_triangle_product() {
         let kp = known_polytopes::lagrangian_triangle_product();
-        let billiard = billiard_capacity(&kp.polytope).unwrap().unwrap();
+        let billiard = billiard_result("triangle_product", &kp.polytope);
         let hk = crate::ehz_capacity(&kp.polytope).unwrap();
-        let diff = (billiard.result.capacity - hk.capacity()).abs();
+        let diff = (billiard.capacity() - hk.capacity()).abs();
         assert!(
             diff < 1e-8,
             "triangle_product: billiard {:.10} != hk2017 {:.10} (diff {:.2e})",
-            billiard.result.capacity,
+            billiard.capacity(),
             hk.capacity(),
             diff,
         );
@@ -346,13 +273,13 @@ mod tests {
     #[ignore] // runs hk2017 live -- release-only cross-algorithm check
     fn agrees_with_hk2017_triangle_square() {
         let kp = known_polytopes::lagrangian_triangle_square();
-        let billiard = billiard_capacity(&kp.polytope).unwrap().unwrap();
+        let billiard = billiard_result("triangle_square", &kp.polytope);
         let hk = crate::ehz_capacity(&kp.polytope).unwrap();
-        let diff = (billiard.result.capacity - hk.capacity()).abs();
+        let diff = (billiard.capacity() - hk.capacity()).abs();
         assert!(
             diff < 1e-8,
             "triangle_square: billiard {:.10} != hk2017 {:.10} (diff {:.2e})",
-            billiard.result.capacity,
+            billiard.capacity(),
             hk.capacity(),
             diff,
         );
@@ -365,13 +292,13 @@ mod tests {
     #[ignore] // hk2017 on 10-facet pentagon takes ~60s; verified against known value instead
     fn agrees_with_hk2017_hko_pentagon() {
         let kp = known_polytopes::hko_pentagon();
-        let billiard = billiard_capacity(&kp.polytope).unwrap().unwrap();
+        let billiard = billiard_result("hko_pentagon", &kp.polytope);
         let hk = crate::ehz_capacity(&kp.polytope).unwrap();
-        let diff = (billiard.result.capacity - hk.capacity()).abs();
+        let diff = (billiard.capacity() - hk.capacity()).abs();
         assert!(
             diff < 1e-8,
             "hko_pentagon: billiard {:.10} != hk2017 {:.10} (diff {:.2e})",
-            billiard.result.capacity,
+            billiard.capacity(),
             hk.capacity(),
             diff,
         );
@@ -385,7 +312,7 @@ mod tests {
     #[test]
     fn rejects_non_lagrangian_product() {
         let kp = known_polytopes::simplex();
-        let result = billiard_capacity(&kp.polytope);
+        let result = for_each_sigma(&kp.polytope, |_| {});
         assert!(result.is_err(), "simplex should not be a Lagrangian product");
     }
 
@@ -394,7 +321,7 @@ mod tests {
     #[test]
     fn rejects_symplectic_triangle_product() {
         let kp = known_polytopes::symplectic_triangle_product();
-        let result = billiard_capacity(&kp.polytope);
+        let result = for_each_sigma(&kp.polytope, |_| {});
         assert!(
             result.is_err(),
             "symplectic triangle product should not be a Lagrangian product"
@@ -412,63 +339,60 @@ mod tests {
     #[ignore] // 50k KKT solves -- slow in debug, run with --release --ignored
     fn billiard_iterations_polynomial() {
         let kp = known_polytopes::hko_pentagon();
-        let result = billiard_capacity(&kp.polytope).unwrap().unwrap();
+        let result = billiard_result("hko_pentagon", &kp.polytope);
         // For 5+5 facets, expect on the order of 100k iterations.
         // If it exceeds 1M, something is wrong.
         assert!(
-            result.result.iterations < 1_000_000,
+            result.iterations < 1_000_000,
             "pentagon: {} iterations exceeds polynomial bound",
-            result.result.iterations,
+            result.iterations,
         );
     }
 
-    /// Check structural properties of a BilliardResult.
+    /// Check structural properties of the shared orbit/result surface on a
+    /// billiard-domain polytope.
     fn assert_result_properties(
         name: &str,
         polytope: &crate::geom::polytope::Polytope4D,
-        result: &BilliardResult,
+        result: &crate::algorithms::OrbitSearchResult,
     ) {
-        // bounce_count is 2 or 3.
+        let bounce_count = bounce_count_from_sigma(polytope, result.best_sigma())
+            .expect("test polytope should be Lagrangian product")
+            .expect("winning sigma should have valid billiard block structure");
         assert!(
-            result.bounce_count == 2 || result.bounce_count == 3,
+            bounce_count == 2 || bounce_count == 3,
             "{}: bounce_count = {} (expected 2 or 3)",
             name,
-            result.bounce_count,
+            bounce_count,
         );
 
         // All beta positive.
-        for (i, &b) in result.result.best_beta.iter().enumerate() {
+        for (i, &b) in result.best_beta().iter().enumerate() {
             assert!(b > 0.0, "{}: beta[{}] = {:.2e} <= 0", name, i, b);
         }
 
-        // The winning sigma should decode back to the stored bounce count.
-        let k = bounce_count_from_sigma(polytope, &result.result.best_permutation)
-        .expect("test polytope should be Lagrangian product")
-        .expect("winning sigma should have valid billiard block structure");
-        assert_eq!(
-            k, result.bounce_count,
-            "{}: decoded bounce count {} != stored {}",
-            name, k, result.bounce_count,
-        );
+        assert!(result.capacity() > 0.0, "{name}: billiard capacity should be positive");
     }
 
-    /// Verify structural properties of BilliardResult on small Lagrangian products.
+    /// Verify structural properties of the shared result surface on small
+    /// Lagrangian products.
     #[test]
     fn result_properties() {
         for (name, polytope) in lagrangian_test_cases_fast() {
-            let result = billiard_capacity(&polytope).unwrap().unwrap();
+            let result = billiard_result(name, &polytope);
             assert_result_properties(name, &polytope, &result);
         }
     }
 
-    /// Verify structural properties of BilliardResult on the HK-O pentagon.
+    /// Verify structural properties of the shared result surface on the HK-O
+    /// pentagon.
     ///
     /// **Why release mode:** ~50k KKT solves, too slow for debug suite.
     #[test]
     #[ignore] // 50k KKT solves -- slow in debug, run with --release --ignored
     fn result_properties_pentagon() {
         let kp = known_polytopes::hko_pentagon();
-        let result = billiard_capacity(&kp.polytope).unwrap().unwrap();
+        let result = billiard_result("hko_pentagon", &kp.polytope);
         assert_result_properties("hko_pentagon", &kp.polytope, &result);
     }
 

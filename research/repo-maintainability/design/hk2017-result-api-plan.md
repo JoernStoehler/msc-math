@@ -144,29 +144,20 @@ target API have already landed in code.
 - The extra `*_minimum_orbits*` assembled collector family was a migration
   artifact. The target is one `ehz_capacity*` router family plus explicit
   building blocks for traversal, one-sigma solve, and aggregation.
-- The remaining known legacy pocket is the billiard scalar stack:
+- The former legacy billiard scalar stack has been deleted:
   - `billiard_capacity(...)`
   - `BilliardResult`
-  - `BilliardOrbitSearchError`
   - `collect_legacy_capacity(...)`
   - `legacy_solution_from_orbit(...)`
-  This stack is now deletion-candidate plumbing because the same information is
-  available from `ehz_capacity_billiard(...) -> OrbitSearchResult` plus
-  `bounce_count_from_sigma(...)`.
-- The dependent legacy tail behind that stack is also deletion-candidate
-  plumbing once the callers are migrated:
+  The remaining explicit billiard-specific type is
+  `BilliardOrbitSearchError`, which still carries the real distinction between
+  invalid-input (`BilliardError`) and shared orbit-search failure on the
+  `ehz_capacity_billiard(...)` router path.
+- The dependent scalar tail has also been deleted:
   - `CapacityResult`
   - `CapacityAccumulator`
-  - the current ablation experiment dependency on `CapacityResult`
-  Today these survive only because the legacy billiard scalar path still wraps
-  them and `experiments/verification/algorithm-comparison/ablation/main.rs`
-  still stores a `CapacityResult` inside its experiment-local row type.
-- `CapacityResult` currently stores:
-  - `capacity`
-  - `capacity_uncertain`
-  - `best_permutation`
-  - `best_beta`
-  - `iterations`
+  - the ablation experiment now uses its own local result row type instead of
+    borrowing library scalar-result structs.
 - `recover_and_verify(polytope, &orbit)` is a separate pass that turns an
   `OrbitKktData` payload into geometric-orbit data (currently named
   `OrbitRecovery` in code).
@@ -696,39 +687,19 @@ These points are not yet fully settled.
    - one-sigma solve
    - aggregation into `OrbitSearchResult`
    Keep the `ehz_capacity*` family as trivial preset routers on top.
-3. Delete the remaining billiard scalar adapter stack once the shared result
-   type plus `bounce_count_from_sigma(...)` covers its information:
-   - migrate callers from `billiard_capacity(...) -> BilliardResult` to
-     `ehz_capacity_billiard(...) -> OrbitSearchResult`
-   - replace `result.result.capacity` with `result.capacity()`
-   - replace `result.result.iterations` with `result.iterations`
-   - replace `result.result.best_beta` with `result.best_beta()`
-   - replace `result.bounce_count` with
-     `bounce_count_from_sigma(polytope, result.best_sigma())`
-   - then delete `BilliardResult`, `BilliardOrbitSearchError`, and the
-     now-unnecessary legacy adapter seams
-     (`collect_legacy_capacity(...)`, `legacy_solution_from_orbit(...)`) if no
-     other caller needs them
-4. Delete the dependent legacy scalar tail once the billiard adapter stack is
-   gone:
-   - replace experiment-local `CapacityResult` usage with experiment-local row
-     fields where needed, especially in
-     `experiments/verification/algorithm-comparison/ablation/main.rs`
-   - then delete `CapacityResult` and `CapacityAccumulator` if no other caller
-     still needs them
-5. Re-implement or adapt existing experiment-local collectors to use the new
+3. Re-implement or adapt existing experiment-local collectors to use the new
    library API.
-6. Add library-level Clarke-subdifferential helpers on lists of
+4. Add library-level Clarke-subdifferential helpers on lists of
    `OrbitKktData`.
-7. Keep experiment-local variant-report rows local. Do not reintroduce a shared
+5. Keep experiment-local variant-report rows local. Do not reintroduce a shared
    thin library result type like `EhzResult` just to avoid defining a
    specialized experiment-owned struct.
-8. Update the durable repo docs after the code shape settles:
+6. Update the durable repo docs after the code shape settles:
    - `TASKS.md` for the tracker state and remaining follow-ups
    - `ARCHITECTURE.md` if the public/result boundary described there changes
    - this note or its successor if implementation choices differ from the
      current design draft
-9. Keep search diagnostics out of `OrbitSearchResult` unless a stable,
+7. Keep search diagnostics out of `OrbitSearchResult` unless a stable,
    shared metric surface emerges. Experiments that need diagnostics should own
    their local loop/result types.
 

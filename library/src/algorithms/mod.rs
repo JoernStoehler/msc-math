@@ -18,13 +18,10 @@
 //! coexist rather than being consolidated.
 //!
 //! Shared utilities:
-//! - `capacity_accumulator` — certified/uncertain candidate tracking with
-//!   gap invariant.
 //! - `facet_adjacency` — undirected and directed (ω₀-aware) facet
 //!   adjacency matrices for permutation pruning.
 //! - `orbit_search` — shared result-layer types for HK2017-family frontends.
 
-pub mod capacity_accumulator;
 pub mod facet_adjacency;
 pub mod orbit_search;
 pub mod hk2017;
