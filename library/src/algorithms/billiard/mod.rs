@@ -170,6 +170,19 @@ pub fn billiard_capacity(
     }))
 }
 
+/// Returns the billiard bounce count `k` encoded by `sigma`.
+///
+/// The polytope must be a valid Lagrangian product. If `sigma` does not match
+/// the alternating billiard block structure `Q_1 P_1 ... Q_k P_k` with each
+/// block of length 1 or 2, returns `Ok(None)`.
+pub fn bounce_count_from_sigma(
+    polytope: &Polytope4D,
+    sigma: &[usize],
+) -> Result<Option<usize>, BilliardError> {
+    let classification = classify_facets(polytope)?;
+    Ok(classification.bounce_count_for_sigma(sigma))
+}
+
 /// Visit every billiard sigma for a valid Lagrangian product polytope.
 pub fn for_each_sigma(
     polytope: &Polytope4D,
@@ -409,7 +422,11 @@ mod tests {
     }
 
     /// Check structural properties of a BilliardResult.
-    fn assert_result_properties(name: &str, result: &BilliardResult) {
+    fn assert_result_properties(
+        name: &str,
+        polytope: &crate::geom::polytope::Polytope4D,
+        result: &BilliardResult,
+    ) {
         // bounce_count is 2 or 3.
         assert!(
             result.bounce_count == 2 || result.bounce_count == 3,
@@ -423,17 +440,14 @@ mod tests {
             assert!(b > 0.0, "{}: beta[{}] = {:.2e} <= 0", name, i, b);
         }
 
-        // Permutation length matches 2k structure (between 2k and 4k).
-        let k = result.bounce_count;
-        let len = result.result.best_permutation.len();
-        assert!(
-            len >= 2 * k && len <= 4 * k,
-            "{}: permutation len {} not in [{}, {}] for k={}",
-            name,
-            len,
-            2 * k,
-            4 * k,
-            k,
+        // The winning sigma should decode back to the stored bounce count.
+        let k = bounce_count_from_sigma(polytope, &result.result.best_permutation)
+        .expect("test polytope should be Lagrangian product")
+        .expect("winning sigma should have valid billiard block structure");
+        assert_eq!(
+            k, result.bounce_count,
+            "{}: decoded bounce count {} != stored {}",
+            name, k, result.bounce_count,
         );
     }
 
@@ -442,7 +456,7 @@ mod tests {
     fn result_properties() {
         for (name, polytope) in lagrangian_test_cases_fast() {
             let result = billiard_capacity(&polytope).unwrap().unwrap();
-            assert_result_properties(name, &result);
+            assert_result_properties(name, &polytope, &result);
         }
     }
 
@@ -454,7 +468,7 @@ mod tests {
     fn result_properties_pentagon() {
         let kp = known_polytopes::hko_pentagon();
         let result = billiard_capacity(&kp.polytope).unwrap().unwrap();
-        assert_result_properties("hko_pentagon", &result);
+        assert_result_properties("hko_pentagon", &kp.polytope, &result);
     }
 
     /// Small Lagrangian products: fast in both debug and release.

@@ -34,6 +34,58 @@ pub struct FacetClassification {
     pub p_indices: Vec<usize>,
 }
 
+impl FacetClassification {
+    /// Returns the billiard bounce count `k` if `sigma` has valid alternating
+    /// q/p block structure for this classification, and `None` otherwise.
+    ///
+    /// A valid billiard sigma has the form `Q_1 P_1 ... Q_k P_k` where each
+    /// block has length 1 or 2 and contains only facet indices of the
+    /// corresponding type.
+    pub fn bounce_count_for_sigma(&self, sigma: &[usize]) -> Option<usize> {
+        if sigma.is_empty() {
+            return None;
+        }
+
+        let mut i = 0usize;
+        let mut expect_q = true;
+        let mut q_blocks = 0usize;
+        let mut p_blocks = 0usize;
+
+        while i < sigma.len() {
+            let is_expected_type = |idx: usize| {
+                if expect_q {
+                    self.q_indices.contains(&idx)
+                } else {
+                    self.p_indices.contains(&idx)
+                }
+            };
+
+            if !is_expected_type(sigma[i]) {
+                return None;
+            }
+
+            let mut block_len = 1usize;
+            if i + 1 < sigma.len() && is_expected_type(sigma[i + 1]) {
+                block_len += 1;
+                if i + 2 < sigma.len() && is_expected_type(sigma[i + 2]) {
+                    return None;
+                }
+            }
+
+            if expect_q {
+                q_blocks += 1;
+            } else {
+                p_blocks += 1;
+            }
+
+            expect_q = !expect_q;
+            i += block_len;
+        }
+
+        (q_blocks > 0 && q_blocks == p_blocks).then_some(q_blocks)
+    }
+}
+
 /// Classify facets of a polytope into q-type and p-type.
 ///
 /// Returns error if any facet normal is neither purely q-type nor purely p-type,
