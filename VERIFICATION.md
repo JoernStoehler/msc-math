@@ -52,6 +52,8 @@ Leaf-node tags used in this file:
   artifact or running a concrete command.
 - `[observable] [Name]`: a leaf that asks the named human for a specific
   judgment that is narrow enough to execute literally.
+- `[negative-example]`: a redundant guardrail leaf that names something that
+  does not count as licensing support on its own.
 - `[todo-gap]`: a missing child that still has to be written down before the
   parent can honestly be treated as covered.
 
@@ -59,6 +61,8 @@ Default fallback:
 
 - If no finer decomposition is available, a parent may end in a specific
   `[observable] [Name]` leaf.
+- Negative-example leaves are clarifying guardrails. They never replace the
+  positive leaves that actually license the parent.
 - Unspecific leaves such as "Jorn checks thesis" are too vague.
 - Specific leaves such as "Jorn verifies proof correctness" or "Jorn compares
   interpretation with the cited data and confirms the argument is valid and
@@ -70,7 +74,8 @@ Default fallback:
 
 Intended meaning: Jorn can submit the thesis and truthfully stand behind the
 mathematical, empirical, and software-facing claims that the thesis makes, and
-the remaining mechanical submission steps are already complete.
+the remaining mechanical submission steps are already complete, and the thesis
+is worth the intended audience's time.
 
 Sufficient children:
 
@@ -85,32 +90,41 @@ Sufficient children:
 - T6. Work that is not finished is explicitly cut from the claim surface or
   labeled as future work or caveated open work.
 - T7. The thesis project has been submitted and closed mechanically.
-- T0.gap.a [todo-gap] Is any top-layer aspect of "the thesis project is done"
-  still missing from T1-T7?
+- T8. The thesis is useful to its intended audience.
 
 ## T1 Tree
 
 ### T1. The thesis contains the thesis-facing result surface from `RESULTS.md`
-that is still intended for inclusion.
+that T1.0 treats as included.
 
 Sufficient children:
 
-- T1.1. Every main-result block in `RESULTS.md` that is still intended for
-  inclusion is in the thesis.
+- T1.0. `RESULTS.md` is accepted by Jorn as the current inclusion and
+  exclusion surface for thesis-facing material.
+- T1.1. Every main-result block in `RESULTS.md` that T1.0 treats as included is
+  in the thesis.
 - T1.2. Every supporting item in `RESULTS.md` that a retained thesis claim
   depends on is in the thesis.
-- T1.3. Every non-required item in `RESULTS.md` that Jorn still intends to
-  include is in the thesis.
+- T1.3. Every non-required item in `RESULTS.md` that T1.0 treats as included is
+  in the thesis.
 
-### T1.1. Every main-result block in `RESULTS.md` that is still intended for
-inclusion is in the thesis.
+### T1.0. `RESULTS.md` is accepted by Jorn as the current inclusion and
+exclusion surface for thesis-facing material.
 
 Sufficient children:
 
-- T1.1.a [observable] For each `[main result]` entry in `RESULTS.md` that Jorn
-  still intends to include, the final thesis contains corresponding thesis
-  material.
-- T1.1.b [observable] [Jorn] Jorn says no intended `[main result]` entry from
+- T1.0.a [observable] [Jorn] Jorn says the current `RESULTS.md` represents what
+  should and should not be included in the thesis-facing result surface, unless
+  a later explicit decision supersedes it.
+
+### T1.1. Every main-result block in `RESULTS.md` that T1.0 treats as included
+is in the thesis.
+
+Sufficient children:
+
+- T1.1.a [observable] For each `[main result]` entry in `RESULTS.md` that T1.0
+  treats as included, the final thesis contains corresponding thesis material.
+- T1.1.b [observable] [Jorn] Jorn says no included `[main result]` entry from
   `RESULTS.md` is missing and no included entry is only a placeholder.
 
 ### T1.2. Every supporting item in `RESULTS.md` that a retained thesis claim
@@ -125,15 +139,15 @@ Sufficient children:
 - T1.2.b [observable] [Jorn] Jorn says no retained `RESULTS.md` item depends
   on support material that is missing from the thesis artifact.
 
-### T1.3. Every non-required item in `RESULTS.md` that Jorn still intends to
-include is in the thesis.
+### T1.3. Every non-required item in `RESULTS.md` that T1.0 treats as included
+is in the thesis.
 
 Sufficient children:
 
-- T1.3.a [observable] For each non-main-result item in `RESULTS.md` that Jorn
-  still intends to include, corresponding thesis material exists.
-- T1.3.b [observable] [Jorn] Jorn says no optional `RESULTS.md` item that he
-  still intends to include is missing.
+- T1.3.a [observable] For each non-main-result item in `RESULTS.md` that T1.0
+  treats as included, corresponding thesis material exists.
+- T1.3.b [observable] [Jorn] Jorn says no included optional `RESULTS.md` item is
+  missing.
 
 ## T2 Tree
 
@@ -200,7 +214,8 @@ Sufficient children:
 Sufficient children:
 
 - T2.1.4.a [observable] If the LICCA-scale F=10 perturbation run is cited, the
-  returned artifacts exist and are integrated into the thesis-facing wording.
+  returned artifacts exist, are integrated into the thesis-facing wording, and
+  the thesis states only the empirical conclusion those artifacts support.
 - T2.1.4.b [observable] If the LICCA-scale F=10 perturbation run is not
   integrated, the thesis cites only the smaller existing evidence and labels
   the larger run as pending/future or omits it.
@@ -244,7 +259,8 @@ Sufficient children:
 Sufficient children:
 
 - T2.2.2.a [observable] If LICCA-scale ascent data is cited, the returned
-  artifacts exist and are integrated.
+  artifacts exist, are integrated, and the thesis states only the density or
+  rarity conclusion those artifacts support.
 - T2.2.2.b [observable] If LICCA-scale ascent data is not cited, the thesis
   avoids strong density claims and states the current seed-limit caveat.
 
@@ -253,7 +269,8 @@ Sufficient children:
 Sufficient children:
 
 - T2.2.3.a [observable] If regression or classifier results are cited, the
-  corresponding artifacts exist.
+  corresponding artifacts exist and the thesis states only the signal strength,
+  transferability, and limits that those artifacts support.
 - T2.2.3.b [observable] If no such results are cited, the thesis does not
   claim that no learnable structure exists.
 
@@ -264,7 +281,8 @@ Sufficient children:
 
 - T2.2.4.a [observable] Claims about narrow cells, frequent boundary
   crossings, continuity of sys, and orbit or gradient changes cite concrete
-  experiments or are weakened.
+  experiments and are stated only at the strength those experiments support, or
+  are weakened.
 - T2.2.4.b [observable] No all-minimum-orbit claim in this part of the thesis
   is supported only by a one-sigma cache.
 
@@ -295,7 +313,8 @@ Sufficient children:
 
 - T2.3.1.a [observable] If the crosspolytope result is included, the thesis
   states `c_EHZ = 4` and `sys = 3/4` with the
-  exhaustive-through-orbit-length-13 caveat.
+  exhaustive-through-orbit-length-13 caveat, and a proof, preserved computation
+  artifact, or source exists licensing that statement at that caveat level.
 - T2.3.1.b [observable] If timing is quoted, the quoted timing matches the
   cited artifact or is labeled historical console output.
 
@@ -355,6 +374,9 @@ Sufficient children:
 - T2.4.2.c [observable] Any claim about all minimum simple orbits is backed by
   a path that recomputes all tied or near-tied minimum orbits, not only one
   best sigma.
+- T2.4.2.d [observable] [Jorn] Jorn says the thesis-facing rich minimum-orbit
+  wording matches the actual validation that exists for that method or
+  experiment path.
 
 ### T2.4.3. Numerical error-bound claims are licensed.
 
@@ -363,16 +385,23 @@ Sufficient children:
 - T2.4.3.a [observable] The thesis states which numerical quantities have
   analytic error bounds, which have empirical cross-checks, and which depend
   on exact fallback or high-precision comparison.
-- T2.4.3.b [observable] The thesis does not rely on stale solver-contract
-  comments or stale numerical notes as if they were final support.
+- T2.4.3.b [observable] Every thesis-facing numerical error bound, tolerance,
+  accuracy claim, or numerical-stability claim cites support that exists and
+  matches the exact claim strength being used.
+- T2.4.3.c [observable] [negative-example] No thesis-facing numerical claim is
+  treated as licensed only because an old solver-contract comment or stale
+  numerical note once said something compatible.
 
 ### T2.4.4. The projection-solver story matches the current code.
 
 Sufficient children:
 
-- T2.4.4.a [observable] If the projection solver is discussed, the thesis or
-  formal notes describe the current solver path rather than stale
-  experiment-local copies.
+- T2.4.4.a [observable] If the projection solver is discussed in the thesis,
+  the thesis-facing description matches the current solver path rather than a
+  stale experiment-local copy.
+- T2.4.4.b [observable] If the thesis makes a projection-solver behavior,
+  guarantee, or limitation claim, that claim matches the current solver path
+  being described.
 
 ### T2.4.5. Tube-algorithm claims are licensed or removed.
 
@@ -492,6 +521,19 @@ Sufficient children:
 - T3.3. The implementation-facing part is understandable enough for a
   technically literate reader.
 - T3.4. The thesis structure makes the role of each part clear.
+- T3.5. The submitted text has been proofread enough that local prose defects
+  do not block understanding.
+- T3.6. Figures and tables are readable enough for the intended audience.
+
+For agent-based `T3` checks, the prompt should state the reader type
+explicitly, including what that reader has and has not studied, and should not
+assume repo notes, prior spoiler knowledge, or Rust knowledge unless the leaf
+for that check says otherwise.
+
+For Jorn-based `T3` clarity checks, prefer low-memory surfaces such as the
+table of contents, introduction, conclusion, and targeted section rereads over
+a full immediate reread from memory. A reread after time away from the draft is
+a stronger stale-eyes check than an immediate reread.
 
 ### T3.1. The mathematical part is understandable enough for the mathematical
 audience.
@@ -520,37 +562,88 @@ technically literate reader.
 
 Sufficient children:
 
-- T3.3.a [observable] [Jorn] Jorn says the implementation-facing explanations
-  are clear enough that a technically literate reader can follow what the code
-  and experiments do.
+- T3.3.a [observable] A `gpt-5.4` high-reasoning agent, prompted as an
+  unspoiled technically literate reader, can answer recorded comprehension
+  questions about the implementation-facing sections without a factual
+  misunderstanding that survives inspection.
+- T3.3.b [observable] A second `gpt-5.4` high-reasoning agent, prompted to list
+  low-confidence understanding gaps rather than guess silently, returns no
+  unresolved true-positive confusion about the implementation-facing sections.
+- T3.3.c [observable] A `ChatGPT Pro` pass finds no remaining point where its
+  low-confidence interpretation of the implementation-facing material is false
+  in a way that survives inspection.
+- T3.3.d [observable] [Jorn] Jorn says any remaining agent confusion is too
+  specialized to block a technically literate reader from following what the
+  code and experiments do.
+- T3.3.e [observable] [Jorn] After at least two days away from the current
+  draft, Jorn rereads the implementation-facing sections and finds no new
+  clarity problem that would likely mislead a technically literate reader.
 
 ### T3.4. The thesis structure makes the role of each part clear.
 
 Sufficient children:
 
-- T3.4.a [observable] [Jorn] Jorn says the thesis structure makes clear how
-  the background, methods, experiments, and conclusion support the two main
-  result blocks.
+- T3.4.a [observable] [Jorn] Jorn can look at the table of contents together
+  with the introduction and conclusion and tell how the background, methods,
+  experiments, and conclusion support the two main result blocks.
+- T3.4.b [observable] A `gpt-5.4` high-reasoning agent, prompted as an
+  unspoiled reader of the intended type, can read the table of contents
+  together with the introduction and conclusion and correctly describe the role
+  of each major part of the thesis.
+- T3.4.c [observable] Agent-based structure and signposting review returns no
+  unresolved true-positive confusion about what each major part of the thesis is
+  doing.
+- T3.4.d [observable] [Jorn] After at least two days away from the current
+  draft, Jorn looks again at the table of contents together with the
+  introduction and conclusion and finds no new structure or signposting problem
+  that would mislead a reader about the role of a major part.
+
+### T3.5. The submitted text has been proofread enough that local prose defects
+do not block understanding.
+
+Sufficient children:
+
+- T3.5.a [observable] No unresolved spelling, grammar, placeholder, or
+  copy-edit issue remains that changes meaning or materially disrupts reading.
+- T3.5.b [observable] [Jorn] Jorn says the submitted thesis text has received a
+  full literal proofreading pass.
+
+### T3.6. Figures and tables are readable enough for the intended audience.
+
+Sufficient children:
+
+- T3.6.a [observable] Every figure and table included in the thesis is readable
+  at the submitted scale and resolution.
+- T3.6.b [observable] [Jorn] Jorn says each cited figure or table is clear
+  enough that a reader can extract the point it is used for.
 
 ## T4 Tree
 
 ### T4. Every thesis-facing reference to proofs, code, data, experiments,
 algorithms, figures, and tables resolves to inspectable sources.
 
+This is the syntactic thesis-to-artifact match layer: when the thesis points to
+something, a reader can find that thing and inspect it.
+
 Sufficient children:
 
-- T4.1. Bibliographic citations resolve.
+- T4.1. Bibliographic citations and entries resolve.
 - T4.2. Internal thesis cross-references resolve.
 - T4.3. Theorem, definition, and proof-source references resolve.
 - T4.4. Figure and table provenance resolves.
 - T4.5. Experiment, dataset, code, and result-artifact references resolve.
+- T4.6. Algorithm and method references resolve.
 
-### T4.1. Bibliographic citations resolve.
+### T4.1. Bibliographic citations and entries resolve.
 
 Sufficient children:
 
 - T4.1.a [observable] Every citation key used in the thesis resolves to a
   bibliography entry.
+- T4.1.b [observable] Every bibliography entry cited in the thesis identifies
+  the intended source accurately enough for a reader to find it.
+- T4.1.c [observable] [Jorn] Jorn says the thesis cites the sources it actually
+  relies on for definitions, claims, comparisons, and prior work.
 
 ### T4.2. Internal thesis cross-references resolve.
 
@@ -583,49 +676,71 @@ Sufficient children:
   or external resource named in the thesis exists in the repo or is explicitly
   marked external or not included.
 
+### T4.6. Algorithm and method references resolve.
+
+Sufficient children:
+
+- T4.6.a [observable] Every named algorithm, method, or authoritative procedure
+  reference used by the thesis points to an inspectable source: thesis section,
+  formal note, library module, experiment package, or external source.
+
 ## T5 Tree
 
 ### T5. The repo artifact matches the promises that the thesis makes about it.
 
+This is the semantic thesis-to-repo match layer: once the reader reaches the
+relevant repo object, command, or artifact, it really means and does what the
+thesis says it means and does.
+
 Sufficient children:
 
-- T5.1. Library-facing promises are truthful.
-- T5.2. Experiment-pipeline promises are truthful.
-- T5.3. Reproducibility and build promises are truthful.
+- T5.1. Promised repo components exist and are identifiable.
+- T5.2. Promised commands build and run at the stated scope.
+- T5.3. Promised reproduced or preserved computational results match the
+  thesis-facing record.
 - T5.4. Repo-internal semantics do not contradict thesis promises.
 - T5.5. Math-code correspondence promised by the repo is truthful.
 
-### T5.1. Library-facing promises are truthful.
+### T5.1. Promised repo components exist and are identifiable.
 
 Sufficient children:
 
 - T5.1.a [observable] If the thesis says the project provides a Rust library,
-  `library/` exists.
-- T5.1.b [observable] Thesis-facing library claims match the APIs, modules, or
-  explicitly named internal code paths that actually exist.
-
-### T5.2. Experiment-pipeline promises are truthful.
-
-Sufficient children:
-
-- T5.2.a [observable] If the thesis says the project provides a reproducible
+  `library/` exists and the thesis-facing APIs, modules, or explicitly named
+  internal code paths actually exist.
+- T5.1.b [observable] If the thesis says the project provides a reproducible
   experiment pipeline, `experiments/` contains the thesis-facing experiment
-  packages, scripts, and outputs or preserved artifacts that the thesis relies
-  on.
-- T5.2.b [observable] Each thesis-facing experiment has either a rerunnable
-  verification path or an explicitly named preserved artifact that the thesis
-  treats as the computational record.
+  packages, scripts, and cited outputs or preserved artifacts that the thesis
+  relies on.
 
-### T5.3. Reproducibility and build promises are truthful.
+### T5.2. Promised commands build and run at the stated scope.
 
 Sufficient children:
 
-- T5.3.a [observable] Any build, test, smoke, regeneration, or formal-build
-  promise that the thesis makes is backed by a concrete command or by explicit
-  artifact-based wording instead.
-- T5.3.b [observable] If the thesis promises library tests, experiment smoke
-  runs, thesis builds, or formal builds, the corresponding command set is
-  named and the promised scope matches reality.
+- T5.2.a [observable] Any build, test, smoke, regeneration, formal-build, or
+  experiment-rerun promise that the thesis makes is backed by a concrete command
+  set or by explicit preserved-artifact wording instead.
+- T5.2.b [observable] Each thesis-promised library build/test path, thesis
+  build path, formal build path, smoke path, regeneration path, and experiment
+  rerun path succeeds at the promised scope in the recorded final repo state, or
+  the thesis explicitly uses preserved-artifact wording instead.
+
+### T5.3. Promised reproduced or preserved computational results match the
+thesis-facing record.
+
+Sufficient children:
+
+- T5.3.a [observable] For each thesis-facing computational artifact that the
+  thesis treats as rerunnable, rerunning from the recorded final repo state
+  reproduces the figure, table, dataset values, or quantitative conclusion that
+  the thesis relies on, or any accepted difference is recorded explicitly.
+- T5.3.b [observable] For each thesis-facing computational artifact that the
+  thesis treats as a preserved record rather than rerunnable output, the
+  preserved figure, table, dataset values, or quantitative conclusion matches
+  what the thesis says about it.
+- T5.3.c [observable] If a thesis-facing computational artifact is not rerun in
+  the recorded final repo state, the thesis treats it as a preserved
+  computational record rather than implying fresh regeneration.
 
 ### T5.4. Repo-internal semantics do not contradict thesis promises.
 
@@ -636,6 +751,8 @@ Sufficient children:
 - T5.4.b [observable] Search traces, intermediate numerical data, and
   one-sigma caches are not used as if they proved stronger facts than they
   actually support.
+- T5.4.c [observable] Any thesis-facing summary of a generated output, cache,
+  or preserved artifact matches what that artifact actually records.
 
 ### T5.5. Math-code correspondence promised by the repo is truthful.
 
@@ -758,10 +875,62 @@ Sufficient children:
 - T7.5.b [observable] [Jorn] Jorn says that no further mechanical handin step
   remains.
 
+## T8 Tree
+
+### T8. The thesis is useful to its intended audience.
+
+Sufficient children:
+
+- T8.1. The thesis makes its main contributions, takeaways, and limits easy to
+  extract.
+- T8.2. Included material is selected for reader value rather than because it
+  merely exists in the repo.
+- T8.3. The thesis makes clear what the reader can reuse, trust as support, and
+  treat as future work.
+
+### T8.1. The thesis makes its main contributions, takeaways, and limits easy to
+extract.
+
+Sufficient children:
+
+- T8.1.a [observable] The abstract, introduction, and conclusion each state the
+  main contribution surface, the main limits, and the intended takeaways for the
+  reader.
+- T8.1.b [observable] A fresh agent reader can read the abstract,
+  introduction, and conclusion and correctly summarize what the thesis
+  contributed, what remains limited, and why the audience should care.
+- T8.1.c [observable] [Jorn] Jorn says a reader who only reads the abstract,
+  introduction, and conclusion would still extract the right high-level picture.
+
+### T8.2. Included material is selected for reader value rather than because it
+merely exists in the repo.
+
+Sufficient children:
+
+- T8.2.a [observable] Every major retained thesis part serves at least one
+  reader-facing purpose: necessary background, method needed for interpretation,
+  support for a retained claim, or a useful final takeaway.
+- T8.2.b [observable] No major retained thesis part has scope or prominence
+  that outruns its reader-facing purpose.
+- T8.2.c [observable] [Jorn] Jorn says the thesis does not read like a dump of
+  everything the project touched.
+
+### T8.3. The thesis makes clear what the reader can reuse, trust as support, and
+treat as future work.
+
+Sufficient children:
+
+- T8.3.a [observable] The thesis distinguishes reusable methods and stable
+  artifacts from one-off diagnostics, historical routes, and future work.
+- T8.3.b [observable] A fresh agent reader can answer which parts of the thesis
+  are intended as main results, reusable methods, supporting evidence, and
+  future work.
+- T8.3.c [observable] [Jorn] Jorn says the thesis leaves the intended audience
+  with a clear sense of what is actionable, what is merely supporting context,
+  and what remains open.
+
 ## TODO(gap) Index
 
-- `T0.gap.a`: decide whether any top-layer aspect of "the thesis project is
-  done" is still missing from T1-T7.
 - `T3.1.gap.a`: if Kai is not the intended checker for T3.1, name the
   replacement checker explicitly.
 - `T3.2.gap.a`: if Elizabeth is not the intended checker for T3.2, name the
