@@ -87,6 +87,13 @@ target API have already landed in code.
     copies. This keeps the package's stricter `beta > EPS_BETA_POSITIVE`
     semantics experiment-local while reducing duplication around
     `OrbitKktData` payload construction.
+  - Packet 3 tenth slice:
+    the repeated strict-orbit enumeration and safe wrappers used by the
+    `dev-gradient` package now live in
+    `experiments/numerics/gradient/src/lib.rs` instead of being copied across
+    three binaries. The subdifferential binary still keeps its
+    inclusive/boundary enumeration local because that logic is not shared by
+    the other two binaries.
 
 ## Goal
 

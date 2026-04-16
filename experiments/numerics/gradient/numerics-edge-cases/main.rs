@@ -35,22 +35,21 @@
 use nalgebra::Vector4;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
+use dev_gradient::{ehz_capacity_safe, enumerate_all_orbits, random_direction, solve_kkt_safe};
 use rand_distr::{Distribution, StandardNormal, Uniform};
 use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
-use symplectic::algorithms::hk2017::combinations;
-use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
 use symplectic::derivatives::{
     capacity_derivatives_a_from_kkt_result,
     directional_derivative_a,
     volume_derivatives_a,
 };
 use symplectic::geom::facet_volume::facet_volume_3d;
-use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktResult, EPS_Q_POSITIVE};
+use symplectic::kkt::saddle_point_solver::{KktResult, EPS_Q_POSITIVE};
 use symplectic::random::generate_random_polytopes;
-use symplectic::{ehz_capacity, volume, Polytope4D};
+use symplectic::{volume, Polytope4D};
 
 // ============================================================================
 // Constants
@@ -152,35 +151,6 @@ struct PredictionRow {
 // ============================================================================
 // Helper functions
 // ============================================================================
-
-/// Sample a random unit vector in R^{4F} (isotropic: standard normals, then normalize).
-fn random_direction(f: usize, rng: &mut ChaCha8Rng) -> Vec<Vector4<f64>> {
-    let mut dir: Vec<Vector4<f64>> = (0..f)
-        .map(|_| {
-            Vector4::new(
-                StandardNormal.sample(rng),
-                StandardNormal.sample(rng),
-                StandardNormal.sample(rng),
-                StandardNormal.sample(rng),
-            )
-        })
-        .collect();
-    let norm = dir.iter().map(|v| v.norm_squared()).sum::<f64>().sqrt();
-    if norm > 1e-10 {
-        for v in &mut dir {
-            *v /= norm;
-        }
-    }
-    dir
-}
-
-fn ehz_capacity_safe(polytope: &Polytope4D) -> Option<symplectic::EhzResult> {
-    ehz_capacity(polytope)
-}
-
-fn solve_kkt_safe(polytope: &Polytope4D, perm: &[usize]) -> Option<KktResult> {
-    solve_kkt_for(polytope, perm).feasible()
-}
 
 /// Compute dsys/da_k via quotient rule: sys = c^2/(2*vol).
 /// dsys/da_k = (c*dc/da_k - sys*dvol/da_k) / vol.
@@ -481,30 +451,6 @@ fn add_barely_cutting_facet(
         }
     }
     None
-}
-
-/// Enumerate all certified orbits for a polytope (strict: beta > EPS, Q > EPS).
-/// Returns (action, permutation, kkt_result) sorted by action ascending.
-fn enumerate_all_orbits(polytope: &Polytope4D) -> Vec<(f64, Vec<usize>, KktResult)> {
-    let f = polytope.facet_count();
-    let mut orbits = Vec::new();
-
-    for m in 2..=f {
-        for subset in combinations(f, m) {
-            for_each_cyclic_permutation(&subset, &mut |perm| {
-                if let Some(kkt) = solve_kkt_safe(polytope, perm) {
-                    let min_beta = kkt.beta.iter().copied().fold(f64::INFINITY, f64::min);
-                    if min_beta > EPS_BETA_CERTIFIED && kkt.q_corrected > EPS_Q_POSITIVE {
-                        let action = 0.5 / kkt.q_corrected;
-                        orbits.push((action, perm.to_vec(), kkt));
-                    }
-                }
-            });
-        }
-    }
-
-    orbits.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
-    orbits
 }
 
 // ============================================================================

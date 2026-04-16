@@ -35,7 +35,7 @@
 use nalgebra::Vector4;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
-use rand_distr::{Distribution, StandardNormal};
+use dev_gradient::{ehz_capacity_safe, random_direction, solve_kkt_safe};
 use serde::Serialize;
 use std::f64::consts::PI;
 use std::fs::File;
@@ -47,9 +47,9 @@ use symplectic::derivatives::{
     volume_derivatives_a,
 };
 use symplectic::geom::polygon::random_polygon_2d;
-use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktResult, EPS_Q_POSITIVE};
+use symplectic::kkt::saddle_point_solver::{KktResult, EPS_Q_POSITIVE};
 use symplectic::random::generate_random_polytopes;
-use symplectic::{ehz_capacity, lagrangian_product, regular_polygon_2d, rotate_polygon_2d};
+use symplectic::{lagrangian_product, regular_polygon_2d, rotate_polygon_2d};
 use symplectic::{volume, Polytope4D};
 
 // ============================================================================
@@ -128,35 +128,6 @@ struct PredictionRow {
 // ============================================================================
 // Helper functions
 // ============================================================================
-
-/// Sample a random unit vector in R^{4F} (isotropic: standard normals, then normalize).
-fn random_direction(f: usize, rng: &mut ChaCha8Rng) -> Vec<Vector4<f64>> {
-    let mut dir: Vec<Vector4<f64>> = (0..f)
-        .map(|_| {
-            Vector4::new(
-                StandardNormal.sample(rng),
-                StandardNormal.sample(rng),
-                StandardNormal.sample(rng),
-                StandardNormal.sample(rng),
-            )
-        })
-        .collect();
-    let norm = dir.iter().map(|v| v.norm_squared()).sum::<f64>().sqrt();
-    if norm > 1e-10 {
-        for v in &mut dir {
-            *v /= norm;
-        }
-    }
-    dir
-}
-
-fn ehz_capacity_safe(polytope: &Polytope4D) -> Option<symplectic::EhzResult> {
-    ehz_capacity(polytope)
-}
-
-fn solve_kkt_safe(polytope: &Polytope4D, perm: &[usize]) -> Option<KktResult> {
-    solve_kkt_for(polytope, perm).feasible()
-}
 
 /// Compute dsys/da_k via quotient rule: sys = c^2/(2*vol).
 /// dsys/da_k = (c*dc/da_k - sys*dvol/da_k) / vol.

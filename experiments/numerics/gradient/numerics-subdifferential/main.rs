@@ -45,6 +45,7 @@
 use nalgebra::{DVector, Vector4};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
+use dev_gradient::{ehz_capacity_safe, enumerate_all_orbits, random_direction, solve_kkt_safe};
 use rand_distr::{Distribution, StandardNormal};
 use serde::Serialize;
 use std::f64::consts::PI;
@@ -60,10 +61,10 @@ use symplectic::derivatives::{
 };
 use symplectic::geom::symplectic_form::omega0;
 use symplectic::kkt::qp_assembly::build_augmented_system;
-use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktResult, EPS_Q_POSITIVE};
+use symplectic::kkt::saddle_point_solver::{KktResult, EPS_Q_POSITIVE};
 use symplectic::random::generate_random_polytopes;
 use symplectic::Polytope4D;
-use symplectic::{ehz_capacity, lagrangian_product, regular_polygon_2d};
+use symplectic::{lagrangian_product, regular_polygon_2d};
 
 // ============================================================================
 // Constants
@@ -237,35 +238,6 @@ struct SubdiffRow {
 // Helper functions
 // ============================================================================
 
-/// Sample a random unit vector in R^{4F} (isotropic: standard normals, then normalize).
-fn random_direction(f: usize, rng: &mut ChaCha8Rng) -> Vec<Vector4<f64>> {
-    let mut dir: Vec<Vector4<f64>> = (0..f)
-        .map(|_| {
-            Vector4::new(
-                StandardNormal.sample(rng),
-                StandardNormal.sample(rng),
-                StandardNormal.sample(rng),
-                StandardNormal.sample(rng),
-            )
-        })
-        .collect();
-    let norm = dir.iter().map(|v| v.norm_squared()).sum::<f64>().sqrt();
-    if norm > 1e-10 {
-        for v in &mut dir {
-            *v /= norm;
-        }
-    }
-    dir
-}
-
-fn ehz_capacity_safe(polytope: &Polytope4D) -> Option<symplectic::EhzResult> {
-    ehz_capacity(polytope)
-}
-
-fn solve_kkt_safe(polytope: &Polytope4D, perm: &[usize]) -> Option<KktResult> {
-    solve_kkt_for(polytope, perm).feasible()
-}
-
 fn smoke_mode() -> bool {
     std::env::args().skip(1).any(|arg| arg == "--smoke")
 }
@@ -345,12 +317,6 @@ fn beta_directional_sensitivity(
 
     // Return beta-components: w[0..m]
     (0..m).map(|k| w[k]).collect()
-}
-
-/// Enumerate all certified orbits for a polytope (strict: beta > EPS, Q > EPS).
-/// Returns (action, permutation, kkt_result) sorted by action ascending.
-fn enumerate_all_orbits(polytope: &Polytope4D) -> Vec<(f64, Vec<usize>, KktResult)> {
-    enumerate_orbits_inner(polytope, EPS_BETA_CERTIFIED)
 }
 
 /// Like enumerate_all_orbits but includes boundary orbits (beta >= 0 up to

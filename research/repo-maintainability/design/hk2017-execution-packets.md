@@ -97,6 +97,15 @@ queue. It is intentionally incremental: only the first packets are defined.
     - `hko-gradient-analysis` and `hko-second-order` now share that
       experiment-local collector instead of each owning nearly the same
       `OrbitKktData`-producing loop
+  - Packet 3 slice 10 landed:
+    - extracted the repeated strict-orbit enumeration and safe wrapper helpers
+      into `experiments/numerics/gradient/src/lib.rs`
+    - `dev_numerics`, `dev_numerics_edge_cases`, and
+      `dev_numerics_subdifferential` now share `random_direction(...)`,
+      `ehz_capacity_safe(...)`, and `solve_kkt_safe(...)`; the strict
+      `enumerate_all_orbits(...)` helper is also shared where its semantics
+      match, while the subdifferential binary keeps its inclusive/boundary
+      enumeration logic local
   - Verification after Packet 2 slice 1:
     - `cargo build -p symplectic --release`
     - `cargo test -p symplectic --release --lib`
@@ -129,6 +138,8 @@ queue. It is intentionally incremental: only the first packets are defined.
     - `cargo build -p exp-combinatorial-cells --release`
   - Verification after Packet 3 slice 9:
     - `cargo build -p exp-hko-local-maximum --release`
+  - Verification after Packet 3 slice 10:
+    - `cargo build -p dev-gradient --release`
 
 ## Integration Model
 
@@ -246,6 +257,10 @@ queue. It is intentionally incremental: only the first packets are defined.
       centralized in `src/lib.rs`, which removes another duplicated
       experiment-local search loop while preserving the package's stricter
       validity semantics
+    - the `dev-gradient` package now centralizes its strict-orbit enumeration
+      and safe-wrapper helpers in `src/lib.rs`, leaving the remaining package
+      differences concentrated in the subdifferential-only inclusive/boundary
+      logic rather than in copied boilerplate
 
 4. **First consumer migrations**
    - Scope:
