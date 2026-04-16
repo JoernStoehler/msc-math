@@ -73,6 +73,13 @@ target API have already landed in code.
     `capacity_derivatives_a_from_kkt_result(...)` instead of a raw
     `capacity_derivatives_a(...)` call with manually threaded
     `beta/q/mu/sigma` inputs.
+  - Packet 3 eighth slice:
+    the repeated all-valid-orbit summary helper used by
+    `cell-boundary-characterization`, `cell-widths`, `cell-convexity`, and
+    `cell-multiple-crossings` now lives in
+    `experiments/combinatorial-cells/src/lib.rs` instead of four binary-local
+    copies. This keeps the all-valid-orbit/report semantics experiment-local
+    while still reducing duplication.
 
 ## Goal
 

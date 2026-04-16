@@ -85,6 +85,12 @@ queue. It is intentionally incremental: only the first packets are defined.
       the remaining all-valid-orbit experiment binaries still need a separate
       decision about whether the library should expose their count/report
       semantics
+  - Packet 3 slice 8 landed:
+    - extracted the repeated all-valid-orbit HK2017 summary helper into
+      `experiments/combinatorial-cells/src/lib.rs`
+    - `cell-boundary-characterization`, `cell-widths`, `cell-convexity`, and
+      `cell-multiple-crossings` now share that experiment-local helper instead
+      of each owning the same `ehz_capacity_instrumented(...)` copy
   - Verification after Packet 2 slice 1:
     - `cargo build -p symplectic --release`
     - `cargo test -p symplectic --release --lib`
@@ -112,6 +118,8 @@ queue. It is intentionally incremental: only the first packets are defined.
   - Verification after Packet 3 slice 6:
     - `cargo build -p exp-hko-local-maximum --release`
   - Verification after Packet 3 slice 7:
+    - `cargo build -p exp-combinatorial-cells --release`
+  - Verification after Packet 3 slice 8:
     - `cargo build -p exp-combinatorial-cells --release`
 
 ## Integration Model
@@ -222,6 +230,10 @@ queue. It is intentionally incremental: only the first packets are defined.
       `experiments/combinatorial-cells/omega-hypothesis/main.rs`, now uses the
       helper seam too, leaving the remaining Packet 3 work mostly on the
       collector/report side rather than the derivative-helper side
+    - the repeated all-valid-orbit summary helper in the
+      `exp-combinatorial-cells` package is now centralized in `src/lib.rs`,
+      which reduces four copies of the same instrumentation without forcing the
+      semantics into `library/`
 
 4. **First consumer migrations**
    - Scope:
