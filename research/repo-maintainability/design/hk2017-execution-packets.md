@@ -31,8 +31,15 @@ queue. It is intentionally incremental: only the first packets are defined.
       solve/classify/track/finalize loop
     - HK2017 and billiard now share that collector while still owning their
       own sigma generation and winner-side metadata
+  - Packet 2 slice 3 landed:
+    - exact-fallback helpers for single-orbit upgrade/drop
+    - first internal guarantee-mode resolution helpers for `BoundSafe`,
+      `MinimaSafe`, and `AllSafe`
   - Verification after Packet 2 slice 1:
     - `cargo build -p symplectic --release`
+    - `cargo test -p symplectic --release --lib`
+  - Verification after Packet 2 slice 3:
+    - `cargo test -p symplectic --release algorithms::orbit_search::tests -- --nocapture`
     - `cargo test -p symplectic --release --lib`
 
 ## Integration Model
@@ -89,6 +96,9 @@ queue. It is intentionally incremental: only the first packets are defined.
      - `collect_legacy_capacity(...)` now owns the current shared
        solve/classify/track/finalize loop
      - existing HK2017/billiard frontends now depend on both shared seams
+     - the shared module now contains the first internal exact-fallback /
+       guarantee-mode machinery, but the public `OrbitSearchResult` collectors
+       are still intentionally deferred
    - Known blocker discovered in this packet:
      - `OrbitSolveBackend::Projected` is still unsupported at the shared
        payload boundary because `library/src/kkt/projection_solver.rs` does not
@@ -136,6 +146,7 @@ queue. It is intentionally incremental: only the first packets are defined.
   `packet-2-search-frontend-seam-report.md`, without deleting the old wrappers
   prematurely. Current next likely slice: add the actual shared
   `OrbitSearchResult`-returning collector entrypoints on top of the internal
-  collector seam.
+  collector seam, now that the guarantee-mode resolution building blocks
+  exist.
 - Once Packet 1 is scoped precisely, branch subagent worktrees from this branch
   only if the packet splits into disjoint write scopes.

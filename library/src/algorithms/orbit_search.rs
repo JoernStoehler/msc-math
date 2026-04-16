@@ -14,6 +14,8 @@
 
 use crate::algorithms::capacity_accumulator::{CapacityAccumulator, CapacityResult};
 use crate::geom::polytope::Polytope4D;
+use crate::geom::rational_arithmetic::rational_to_f64;
+use crate::kkt::rational_solver::solve_kkt_exact;
 use crate::kkt::saddle_point_solver::{solve_kkt_for, KktOutcome, KktResult, EPS_Q_POSITIVE};
 use crate::kkt::{classify_margin, Solution, Verdict};
 
@@ -229,6 +231,171 @@ fn action_bounds_from_q(q: f64, q_error_bound: f64) -> (f64, f64) {
     (action_lower, action_upper)
 }
 
+fn exact_orbit_from_sigma(
+    polytope: &Polytope4D,
+    sigma: &[usize],
+    old_mu: Option<[f64; 4]>,
+    old_xi: Option<f64>,
+) -> Option<OrbitKktData> {
+    let exact = solve_kkt_exact(polytope.dual_vertices(), sigma)?;
+    let beta: Vec<f64> = exact.beta.iter().map(rational_to_f64).collect();
+    let beta_margin = beta.iter().copied().fold(f64::INFINITY, f64::min);
+    let action = 0.5 / exact.q_exact_f64;
+
+    Some(OrbitKktData {
+        sigma: sigma.to_vec(),
+        beta,
+        beta_margin,
+        action,
+        action_lower: action,
+        action_upper: action,
+        q: exact.q_exact_f64,
+        q_error_bound: 0.0,
+        // TODO(capacity-result-api): If the exact fallback later computes exact
+        // multipliers, upgrade these carried-over optional fields instead of
+        // preserving the old numerical values.
+        mu: old_mu,
+        xi: old_xi,
+        admissibility: OrbitAdmissibility::AdmissibleExact,
+    })
+}
+
+fn resolve_orbit_exact(
+    polytope: &Polytope4D,
+    orbit: &OrbitKktData,
+) -> Option<OrbitKktData> {
+    exact_orbit_from_sigma(polytope, &orbit.sigma, orbit.mu, orbit.xi)
+}
+
+fn argmin_action_lower(orbits: &[OrbitKktData]) -> Option<usize> {
+    orbits
+        .iter()
+        .enumerate()
+        .min_by(|(_, a), (_, b)| a.action_lower.total_cmp(&b.action_lower))
+        .map(|(idx, _)| idx)
+}
+
+fn argmin_action_upper(orbits: &[OrbitKktData]) -> Option<usize> {
+    orbits
+        .iter()
+        .enumerate()
+        .min_by(|(_, a), (_, b)| a.action_upper.total_cmp(&b.action_upper))
+        .map(|(idx, _)| idx)
+}
+
+fn resolve_indices_exact(
+    polytope: &Polytope4D,
+    orbits: &mut Vec<OrbitKktData>,
+    mut indices: Vec<usize>,
+) -> Result<(), OrbitSearchError> {
+    indices.sort_unstable();
+    indices.dedup();
+
+    for idx in indices.into_iter().rev() {
+        let upgraded = resolve_orbit_exact(polytope, &orbits[idx]);
+        match upgraded {
+            Some(exact_orbit) => orbits[idx] = exact_orbit,
+            None => {
+                orbits.remove(idx);
+            }
+        }
+    }
+
+    if orbits.is_empty() {
+        return Err(OrbitSearchError::NoAdmissibleOrbit);
+    }
+    Ok(())
+}
+
+fn resolve_boundsafe(
+    polytope: &Polytope4D,
+    orbits: &mut Vec<OrbitKktData>,
+) -> Result<(), OrbitSearchError> {
+    loop {
+        let lower_idx = argmin_action_lower(orbits).ok_or(OrbitSearchError::NoAdmissibleOrbit)?;
+        let upper_idx = argmin_action_upper(orbits).ok_or(OrbitSearchError::NoAdmissibleOrbit)?;
+
+        let mut needs_exact = Vec::new();
+        if orbits[lower_idx].admissibility == OrbitAdmissibility::IndeterminateF64 {
+            needs_exact.push(lower_idx);
+        }
+        if orbits[upper_idx].admissibility == OrbitAdmissibility::IndeterminateF64 {
+            needs_exact.push(upper_idx);
+        }
+
+        if needs_exact.is_empty() {
+            return Ok(());
+        }
+
+        resolve_indices_exact(polytope, orbits, needs_exact)?;
+    }
+}
+
+fn resolve_minimasafe(
+    polytope: &Polytope4D,
+    orbits: &mut Vec<OrbitKktData>,
+) -> Result<(), OrbitSearchError> {
+    loop {
+        resolve_boundsafe(polytope, orbits)?;
+        let lower = orbits
+            .iter()
+            .map(|orbit| orbit.action_lower)
+            .fold(f64::INFINITY, f64::min);
+        let upper = orbits
+            .iter()
+            .map(|orbit| orbit.action_upper)
+            .fold(f64::INFINITY, f64::min);
+
+        let needs_exact: Vec<usize> = orbits
+            .iter()
+            .enumerate()
+            .filter_map(|(idx, orbit)| {
+                let intersects_minimum_window =
+                    orbit.action_lower <= upper && lower <= orbit.action_upper;
+                (orbit.admissibility == OrbitAdmissibility::IndeterminateF64
+                    && intersects_minimum_window)
+                    .then_some(idx)
+            })
+            .collect();
+
+        if needs_exact.is_empty() {
+            return Ok(());
+        }
+
+        resolve_indices_exact(polytope, orbits, needs_exact)?;
+    }
+}
+
+fn resolve_allsafe(
+    polytope: &Polytope4D,
+    orbits: &mut Vec<OrbitKktData>,
+) -> Result<(), OrbitSearchError> {
+    let needs_exact: Vec<usize> = orbits
+        .iter()
+        .enumerate()
+        .filter_map(|(idx, orbit)| {
+            (orbit.admissibility == OrbitAdmissibility::IndeterminateF64).then_some(idx)
+        })
+        .collect();
+    resolve_indices_exact(polytope, orbits, needs_exact)
+}
+
+pub(crate) fn resolve_orbits_for_guarantee(
+    polytope: &Polytope4D,
+    orbits: &mut Vec<OrbitKktData>,
+    mode: OrbitGuaranteeMode,
+) -> Result<(), OrbitSearchError> {
+    if orbits.is_empty() {
+        return Err(OrbitSearchError::NoAdmissibleOrbit);
+    }
+
+    match mode {
+        OrbitGuaranteeMode::BoundSafe => resolve_boundsafe(polytope, orbits),
+        OrbitGuaranteeMode::MinimaSafe => resolve_minimasafe(polytope, orbits),
+        OrbitGuaranteeMode::AllSafe => resolve_allsafe(polytope, orbits),
+    }
+}
+
 fn legacy_solution_from_orbit(orbit: OrbitKktData) -> Solution {
     let verdict = match orbit.admissibility {
         OrbitAdmissibility::AdmissibleF64 | OrbitAdmissibility::AdmissibleExact => Verdict::True,
@@ -288,4 +455,52 @@ pub(crate) fn collect_legacy_capacity<M: Clone>(
         .map(|(_, metadata)| metadata)
         .unwrap_or_else(|| fallback_metadata(&result));
     Some((result, metadata))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::algorithms::hk2017::ehz_capacity;
+    use crate::geom::known_polytopes;
+
+    #[test]
+    fn exact_resolution_upgrades_known_winner() {
+        let kp = known_polytopes::simplex();
+        let result = ehz_capacity(&kp.polytope).expect("ehz_capacity should succeed");
+        let orbit = solve_orbit_sigma(
+            &kp.polytope,
+            &result.result.best_permutation,
+            OrbitSolveBackend::SaddlePoint,
+        )
+        .expect("saddle-point solve should succeed");
+
+        let exact = resolve_orbit_exact(&kp.polytope, &orbit)
+            .expect("exact fallback should certify the known winner");
+
+        assert_eq!(exact.admissibility, OrbitAdmissibility::AdmissibleExact);
+        assert_eq!(exact.sigma, orbit.sigma);
+        assert_eq!(exact.q_error_bound, 0.0);
+        assert_eq!(exact.action_lower, exact.action_upper);
+    }
+
+    #[test]
+    fn boundsafe_resolves_indeterminate_argmin() {
+        let kp = known_polytopes::simplex();
+        let result = ehz_capacity(&kp.polytope).expect("ehz_capacity should succeed");
+        let mut orbit = solve_orbit_sigma(
+            &kp.polytope,
+            &result.result.best_permutation,
+            OrbitSolveBackend::SaddlePoint,
+        )
+        .expect("saddle-point solve should succeed");
+        orbit.admissibility = OrbitAdmissibility::IndeterminateF64;
+
+        let mut orbits = vec![orbit];
+        resolve_orbits_for_guarantee(&kp.polytope, &mut orbits, OrbitGuaranteeMode::BoundSafe)
+            .expect("boundsafe resolution should succeed");
+
+        assert_eq!(orbits.len(), 1);
+        assert_eq!(orbits[0].admissibility, OrbitAdmissibility::AdmissibleExact);
+        assert_eq!(orbits[0].action_lower, orbits[0].action_upper);
+    }
 }

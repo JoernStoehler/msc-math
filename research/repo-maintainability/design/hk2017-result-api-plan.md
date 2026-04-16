@@ -29,6 +29,10 @@ target API have already landed in code.
   - Packet 2 first slice: `solve_orbit_sigma(...)` now exists on the shared
     result-layer module and the current HK2017/billiard solver bridges route
     through it for the saddle-point backend.
+  - Packet 2 later slices: the current HK2017/billiard frontends now also
+    share `collect_legacy_capacity(...)`, and `orbit_search.rs` now contains
+    the first exact-fallback helpers that upgrade or drop `IndeterminateF64`
+    orbits under `BoundSafe`, `MinimaSafe`, and `AllSafe`.
 
 ## Goal
 
@@ -388,6 +392,10 @@ Notes on solver backends:
   `OrbitSolveError::UnsupportedBackend`, because the library projection solver
   does not yet expose the `q_error_bound` contract required by
   `OrbitKktData`.
+- The exact-fallback helpers are now implemented against the current rational
+  solver. They currently preserve any pre-existing numerical `mu` / `xi`
+  values because the exact fallback path does not yet compute exact
+  multipliers.
 
 ```rust
 pub fn recover_and_verify_orbit(
