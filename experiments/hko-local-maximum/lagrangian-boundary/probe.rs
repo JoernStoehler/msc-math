@@ -12,6 +12,9 @@
 //! This directly measures the shape of the sys > 1 boundary without
 //! model assumptions, unlike the L∞-box sweep in main.rs which measures
 //! only the average size.
+//!
+//! This binary only needs scalar capacity/sys values, so it uses the root
+//! `symplectic::ehz_capacity` wrapper instead of the billiard-native API.
 
 use nalgebra::Vector4;
 use rand::SeedableRng;
@@ -21,7 +24,7 @@ use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
-use symplectic::algorithms::billiard::billiard_capacity;
+use symplectic::ehz_capacity;
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::volume::volume;
@@ -90,7 +93,7 @@ fn random_direction(d: usize, rng: &mut ChaCha8Rng) -> Vec<f64> {
 }
 
 /// Evaluate sys at HKO + t * direction (in 20D Lagrangian perturbation space).
-/// Returns None if the polytope is invalid or billiard fails.
+/// Returns None if the polytope is invalid or capacity is unavailable.
 fn eval_sys_at_ray(
     base_duals: &[Vector4<f64>],
     indices: &[(usize, usize)],
@@ -106,13 +109,12 @@ fn eval_sys_at_ray(
     }
 
     let polytope = Polytope4D::from_f64(perturbed).ok()?;
-    let billiard_opt = billiard_capacity(&polytope).ok()?;
-    let billiard = billiard_opt.as_ref()?;
+    let ehz = ehz_capacity(&polytope)?;
     let vol = volume(&polytope).ok()?;
     if vol <= 0.0 {
         return None;
     }
-    let cap = billiard.result.capacity;
+    let cap = ehz.result.capacity;
     Some(cap * cap / (2.0 * vol))
 }
 
@@ -240,10 +242,8 @@ fn main() {
 
     // Verify base sys
     let base_vol = volume(base_polytope).expect("volume failed");
-    let base_billiard = billiard_capacity(base_polytope)
-        .expect("billiard failed")
-        .expect("billiard None");
-    let base_sys = base_billiard.result.capacity.powi(2) / (2.0 * base_vol);
+    let base_ehz = ehz_capacity(base_polytope).expect("capacity unavailable");
+    let base_sys = base_ehz.result.capacity.powi(2) / (2.0 * base_vol);
     println!("Base sys = {base_sys:.6} (should be ~1.047)");
     println!("Probing {n_directions} random directions...\n");
 

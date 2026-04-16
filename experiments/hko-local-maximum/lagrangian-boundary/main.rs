@@ -12,7 +12,8 @@
 //!   dual vertex (20 independent perturbation coordinates for 10 facets)
 //! - Sweep ε over geometric range: 0.01 to 2.0
 //! - 500 valid samples per ε level via rejection sampling
-//! - Billiard algorithm (fast, native for Lagrangian products)
+//! - Explicit billiard algorithm because the output schema persists bounce counts;
+//!   the root `symplectic::ehz_capacity` wrapper would hide that billiard-native data.
 
 use nalgebra::Vector4;
 use rand::Rng;
@@ -239,7 +240,8 @@ fn main() {
                 Err(_) => continue,
             };
 
-            // Compute capacity via billiard
+            // Keep the explicit billiard call here because `SampleRow` stores
+            // `bounces`, which is only available from the billiard-native API.
             let billiard = match billiard_capacity(&polytope) {
                 Ok(Some(r)) => r,
                 Ok(None) | Err(_) => continue,
