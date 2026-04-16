@@ -56,6 +56,13 @@ target API have already landed in code.
     package (`numerics/main.rs` and `numerics-edge-cases/main.rs`) now use the
     same helper seam, so the package no longer mixes old and new
     derivative-glue styles.
+  - Packet 3 fifth slice: the first local all-orbit instrumentation consumer,
+    `experiments/hko-local-maximum/gradient-analysis/main.rs`, now stores
+    `OrbitKktData` instead of a second local orbit payload and uses
+    `capacity_derivatives_a_from_orbit(...)` instead of a local
+    symmetric/asymmetric multiplier adapter. That binary still owns its
+    stricter `beta > EPS_BETA_POSITIVE` “valid orbit” policy and local search
+    loop.
 
 ## Goal
 

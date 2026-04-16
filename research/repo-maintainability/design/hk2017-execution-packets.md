@@ -66,6 +66,12 @@ queue. It is intentionally incremental: only the first packets are defined.
     - finished the sibling `dev-gradient` package migration so
       `dev_numerics` and `dev_numerics_edge_cases` now use the same
       derivative/directional-derivative helper seam
+  - Packet 3 slice 5 landed:
+    - migrated `experiments/hko-local-maximum/gradient-analysis/main.rs`
+      off its local `ValidOrbit` payload and onto `OrbitKktData`
+    - that experiment still owns its stricter `beta > EPS_BETA_POSITIVE`
+      “valid orbit” threshold and local instrumented search loop, but it no
+      longer owns a second orbit/KKT data shape or a local derivative adapter
   - Verification after Packet 2 slice 1:
     - `cargo build -p symplectic --release`
     - `cargo test -p symplectic --release --lib`
@@ -88,6 +94,8 @@ queue. It is intentionally incremental: only the first packets are defined.
     - `cargo build -p dev-gradient --release --bin dev_numerics_subdifferential`
   - Verification after Packet 3 slice 4:
     - `cargo build -p dev-gradient --release`
+  - Verification after Packet 3 slice 5:
+    - `cargo build -p exp-hko-local-maximum --release`
 
 ## Integration Model
 
@@ -185,6 +193,10 @@ queue. It is intentionally incremental: only the first packets are defined.
     - first slices landed: helper aliases/errors plus migrated
       `KktResult`-level consumers across the main buildable ascent packages
       and the full `dev-gradient` package
+    - first `OrbitKktData` consumer migration landed in
+      `experiments/hko-local-maximum/gradient-analysis/main.rs`
+      while intentionally preserving that binary's local stricter
+      admissibility threshold
 
 4. **First consumer migrations**
    - Scope:

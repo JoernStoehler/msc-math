@@ -11,11 +11,10 @@
 //! 2. Writes hko-neighborhood-sensitivity.jsonl and hko-neighborhood-ascent.jsonl
 //! 3. Python script (analyze.py) reads JSONL, produces figures
 //!
-//! KKT convention: The library's KktResult uses the **symmetric** sign convention
-//! (Hβ + Nμ + ηξ = 0). This experiment's ValidOrbit stores the **asymmetric**
-//! (Hβ = Nλ + ην) multipliers: lambda = −mu, nu = −xi. The conversion happens
-//! when populating ValidOrbit from KktResult in `ehz_capacity_instrumented`.
-//! Library derivative functions accept symmetric-convention values directly.
+//! KKT convention: this experiment now stores the shared `OrbitKktData` payload
+//! directly. That keeps the library's symmetric multiplier convention
+//! (`Hβ + Nμ + ηξ = 0`) instead of re-labeling it into a local asymmetric
+//! variant before derivative consumers use it again.
 
 use nalgebra::{Matrix4, Vector4};
 use serde::Serialize;
@@ -25,7 +24,8 @@ use std::time::Instant;
 use symplectic::algorithms::facet_adjacency::{build_transition_matrix, is_feasible_cycle};
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
 use symplectic::algorithms::hk2017::{combinations, ehz_capacity};
-use symplectic::derivatives::{capacity_derivatives_a, volume_derivatives_a};
+use symplectic::algorithms::{OrbitAdmissibility, OrbitKktData};
+use symplectic::derivatives::{capacity_derivatives_a_from_orbit, volume_derivatives_a};
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
@@ -140,30 +140,38 @@ struct AscentRow {
 // ============================================================================
 
 #[derive(Debug, Clone)]
-struct ValidOrbit {
-    action: f64,
-    subset: Vec<usize>,
-    permutation: Vec<usize>,
-    beta: Vec<f64>,
-    q_value: f64,
-    nu: f64,
-    lambda: Vec<f64>,
-}
-
 struct InstrumentedResult {
     capacity: f64,
     #[allow(dead_code)]
     capacity_uncertain: f64,
-    orbits: Vec<ValidOrbit>,
+    orbits: Vec<OrbitKktData>,
     #[allow(dead_code)]
     iterations: u64,
+}
+
+fn subset_of_sigma(sigma: &[usize]) -> Vec<usize> {
+    let mut subset = sigma.to_vec();
+    subset.sort_unstable();
+    subset
+}
+
+fn action_bounds_from_q(q: f64, q_error_bound: f64) -> (f64, f64) {
+    let q_upper = q + q_error_bound;
+    let action_lower = 0.5 / q_upper;
+    let q_lower = q - q_error_bound;
+    let action_upper = if q_lower > EPS_Q_POSITIVE {
+        0.5 / q_lower
+    } else {
+        f64::INFINITY
+    };
+    (action_lower, action_upper)
 }
 
 fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult> {
     let f = polytope.facet_count();
     let adj = build_transition_matrix(polytope);
 
-    let mut orbits: Vec<ValidOrbit> = Vec::new();
+    let mut orbits: Vec<OrbitKktData> = Vec::new();
     let mut best_uncertain_action: Option<f64> = None;
     let mut iterations: u64 = 0;
 
@@ -183,18 +191,28 @@ fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult
                     let beta = &kkt_result.beta;
                     let beta_min = beta.iter().cloned().fold(f64::INFINITY, f64::min);
                     let action = 0.5 / q_val;
+                    let (action_lower, action_upper) =
+                        action_bounds_from_q(q_val, kkt_result.q_error_bound);
 
                     if beta_min > EPS_BETA_POSITIVE {
-                        // Convert symmetric convention (mu, xi) to asymmetric (lambda, nu):
-                        // lambda = -mu, nu = -xi
-                        orbits.push(ValidOrbit {
-                            action,
-                            subset: subset.clone(),
-                            permutation: perm.to_vec(),
+                        orbits.push(OrbitKktData {
+                            sigma: perm.to_vec(),
                             beta: beta.clone(),
-                            q_value: q_val,
-                            nu: -kkt_result.xi,
-                            lambda: kkt_result.mu.iter().map(|&m| -m).collect(),
+                            beta_margin: beta_min,
+                            action,
+                            action_lower,
+                            action_upper,
+                            q: q_val,
+                            q_error_bound: kkt_result.q_error_bound,
+                            mu: Some(
+                                kkt_result
+                                    .mu
+                                    .as_slice()
+                                    .try_into()
+                                    .expect("closure multiplier must stay 4D"),
+                            ),
+                            xi: Some(kkt_result.xi),
+                            admissibility: OrbitAdmissibility::AdmissibleF64,
                         });
                     }
 
@@ -243,18 +261,14 @@ fn compute_sensitivity(
     vol: f64,
     cap: f64,
     sys: f64,
-    orbit: &ValidOrbit,
+    orbit: &OrbitKktData,
 ) -> SensitivityResult {
     let duals = polytope.dual_vertices_f64();
     let f = duals.len();
 
-    // Convert asymmetric (lambda, nu) back to symmetric (mu, xi) for library calls.
-    // ValidOrbit stores: lambda = -mu, nu = -xi. So: xi = -nu, mu = -lambda.
-    let mu: Vec<f64> = orbit.lambda.iter().map(|&l| -l).collect();
-
     let d_vol_a = volume_derivatives_a(polytope);
-    let d_cap_a =
-        capacity_derivatives_a(&orbit.beta, orbit.q_value, &mu, &orbit.permutation, duals);
+    let d_cap_a = capacity_derivatives_a_from_orbit(polytope, orbit)
+        .expect("gradient-analysis stores orbit payloads with closure multipliers");
 
     let d_sys_a: Vec<Vector4<f64>> = d_vol_a
         .iter()
@@ -666,7 +680,7 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
 
     // Near-optimal orbit analysis
     let best_action = instrumented.orbits[0].action;
-    let near_optimal: Vec<&ValidOrbit> = instrumented
+    let near_optimal: Vec<&OrbitKktData> = instrumented
         .orbits
         .iter()
         .filter(|o| (o.action - best_action) / best_action < NEAR_OPTIMAL_GAP)
@@ -682,7 +696,11 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
         let gap = (orbit.action - best_action) / best_action;
         println!(
             "  #{}: S={:?}, σ={:?}, action={:.10}, gap={:.6e}",
-            i, orbit.subset, orbit.permutation, orbit.action, gap
+            i,
+            subset_of_sigma(&orbit.sigma),
+            orbit.sigma,
+            orbit.action,
+            gap
         );
     }
 
@@ -695,8 +713,8 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
             i,
             orbit.action,
             gap,
-            orbit.subset.len(),
-            orbit.subset
+            orbit.sigma.len(),
+            subset_of_sigma(&orbit.sigma)
         );
     }
 
@@ -787,12 +805,12 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
     let orbit_infos: Vec<OrbitInfo> = near_optimal
         .iter()
         .map(|o| OrbitInfo {
-            subset: o.subset.clone(),
-            permutation: o.permutation.clone(),
+            subset: subset_of_sigma(&o.sigma),
+            permutation: o.sigma.clone(),
             action: o.action,
             relative_gap: (o.action - best_action) / best_action,
             beta: o.beta.clone(),
-            q_value: o.q_value,
+            q_value: o.q,
         })
         .collect();
 
@@ -837,8 +855,8 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
     let mut current =
         Polytope4D::from_f64(polytope.dual_vertices_f64().to_vec()).expect("reconstruct HKO2024");
     let mut current_sys = sys;
-    let mut prev_subset = instrumented.orbits[0].subset.clone();
-    let mut prev_perm = instrumented.orbits[0].permutation.clone();
+    let mut prev_subset = subset_of_sigma(&instrumented.orbits[0].sigma);
+    let mut prev_perm = instrumented.orbits[0].sigma.clone();
 
     for iter in 0..MAX_ASCENT_ITERATIONS {
         let t_iter = Instant::now();
@@ -858,7 +876,7 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
 
         // Orbit switch detection
         let orbit_switched =
-            best_orbit.subset != prev_subset || best_orbit.permutation != prev_perm;
+            subset_of_sigma(&best_orbit.sigma) != prev_subset || best_orbit.sigma != prev_perm;
 
         // Sensitivity
         let sens = compute_sensitivity(&current, vol, cap, sys_now, best_orbit);
@@ -920,8 +938,8 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
                         delta_sys: 0.0,
                         volume: vol,
                         capacity: cap,
-                        best_subset: instr.orbits[0].subset.clone(),
-                        best_permutation: instr.orbits[0].permutation.clone(),
+                        best_subset: subset_of_sigma(&instr.orbits[0].sigma),
+                        best_permutation: instr.orbits[0].sigma.clone(),
                         orbit_switched,
                         n_near_optimal: n_near,
                         gradient_norm_h: sens.gradient_norm_h,
@@ -957,11 +975,11 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
 
         let new_subset = new_instr
             .as_ref()
-            .map(|r| r.orbits[0].subset.clone())
+            .map(|r| subset_of_sigma(&r.orbits[0].sigma))
             .unwrap_or_default();
         let new_perm = new_instr
             .as_ref()
-            .map(|r| r.orbits[0].permutation.clone())
+            .map(|r| r.orbits[0].sigma.clone())
             .unwrap_or_default();
 
         println!(
