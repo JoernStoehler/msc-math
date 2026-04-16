@@ -59,7 +59,6 @@ pub use algorithms::billiard::{
     BilliardResult,
 };
 pub use algorithms::{
-    aggregate_orbits,
     GeometricOrbitError,
     OrbitAdmissibility,
     OrbitGuaranteeMode,
@@ -68,7 +67,6 @@ pub use algorithms::{
     OrbitSearchResult,
     OrbitSolveError,
     OrbitSolveBackend,
-    solve_orbit_sigma,
 };
 
 // Geometry utility functions

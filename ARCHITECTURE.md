@@ -182,7 +182,7 @@ Current observed API tiers for experiment code:
 | Tier | Current meaning | Examples |
 | --- | --- | --- |
 | simple public | short root reexports and trivial preset routers in `library/src/lib.rs` | `symplectic::ehz_capacity`, `symplectic::ehz_capacity_pruned`, `symplectic::ehz_capacity_unpruned`, `symplectic::ehz_capacity_billiard`, `symplectic::volume`, `symplectic::omega0`, `symplectic::lagrangian_product` |
-| expert public | deeper modules and building blocks used by experiments that need non-default control | `symplectic::database`, `symplectic::random`, `symplectic::derivatives`, `symplectic::solve_orbit_sigma`, `symplectic::algorithms::aggregate_orbits`, `symplectic::algorithms::hk2017`, `symplectic::algorithms::billiard`, `symplectic::kkt::saddle_point_solver`, `symplectic::algorithms::facet_adjacency` |
+| expert public | deeper modules and building blocks used by experiments that need non-default control | `symplectic::database`, `symplectic::random`, `symplectic::derivatives`, `symplectic::algorithms::solve_orbit_sigma`, `symplectic::algorithms::aggregate_orbits`, `symplectic::algorithms::hk2017`, `symplectic::algorithms::billiard`, `symplectic::kkt::saddle_point_solver`, `symplectic::algorithms::facet_adjacency` |
 | unclear | public paths whose long-term experiment-facing status is not yet explicit | `symplectic::algorithms::hk2017::orbit_recovery`, `symplectic::algorithms::billiard::facet_classification`, `symplectic::kkt::qp_assembly::build_augmented_system` |
 | accidental internal | public-in-practice helpers that experiments currently reach through | `symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation` |
 
