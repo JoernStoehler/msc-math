@@ -42,6 +42,32 @@ Three capacity algorithms: `hk2017` (general, exponential), `billiard` (Lagrangi
 
 No rayon inside algorithms — parallelism is at the dataset level (each polytope independently).
 
+## Helper boundaries
+
+Extract a helper or subfunction only when there is a clean boundary that makes
+the surrounding code easier to understand or modify.
+
+- Prefer inline code when the logic is tightly coupled to one call site and the
+  extracted helper would force readers to jump away only to recover the same
+  local context.
+- Prefer a context-specialized helper over a generic one when there is only one
+  caller and the specialized signature is simpler to read than a "future-proof"
+  abstraction.
+- Extract shared logic when multiple callers would otherwise duplicate the same
+  mathematically meaningful stage or when one boundary lets later refactors
+  change one side without re-reading the full caller body.
+- When deciding whether to extract, optimize for reader/refactor cost, not for
+  minimizing raw line count:
+  - how often will a future agent need to understand the helper body?
+  - how often will a future agent need to refactor both caller and callee
+    together?
+  - does the helper hide a real algorithm stage, or only move local glue into a
+    second file/function?
+
+Bad smell: two helpers that are only used once each, have nearly the same
+shape, and force callers to reconstruct local invariants that were clearer
+inline.
+
 ## Tests
 
 Library tests should give fast, live feedback while editing Rust code. Prefer small deterministic examples, named known polytopes, exact invariants, and narrowly scoped regression cases.
