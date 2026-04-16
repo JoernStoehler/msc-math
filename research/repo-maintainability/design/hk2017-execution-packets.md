@@ -20,6 +20,15 @@ queue. It is intentionally incremental: only the first packets are defined.
     public re-exports from `algorithms/mod.rs` and `lib.rs`.
   - Verification so far: `cargo build -p symplectic --release` passes on this
     branch after the scaffold landed.
+  - Packet 2 slice 1 landed:
+    - seam report at
+      `research/repo-maintainability/design/packet-2-search-frontend-seam-report.md`
+    - shared `solve_orbit_sigma(...)` primitive for the saddle-point path
+    - current HK2017 and billiard solver bridges now route through that
+      primitive
+  - Verification after Packet 2 slice 1:
+    - `cargo build -p symplectic --release`
+    - `cargo test -p symplectic --release --lib`
 
 ## Integration Model
 
@@ -66,6 +75,17 @@ queue. It is intentionally incremental: only the first packets are defined.
        `hk2017_unpruned`, and `billiard`
      - wire guarantee/backend parameters through the search layer
      - keep old wrappers only as staging aids if needed
+   - Planning artifact:
+     - `research/repo-maintainability/design/packet-2-search-frontend-seam-report.md`
+   - Landed so far:
+     - shared seam identified: extract below frontend sigma generation and
+       above frontend-local certified-winner metadata
+     - `solve_orbit_sigma(...)` is the first shared primitive on that seam
+     - existing HK2017/billiard bridges now depend on the shared primitive
+   - Known blocker discovered in this packet:
+     - `OrbitSolveBackend::Projected` is still unsupported at the shared
+       payload boundary because `library/src/kkt/projection_solver.rs` does not
+       yet expose `q_error_bound`
    - Why second:
      - this establishes the real architectural seam before consumer migration
    - Verification:
@@ -104,9 +124,9 @@ queue. It is intentionally incremental: only the first packets are defined.
 
 ## Immediate Next Action
 
-- Start Packet 2 in this worktree by tracing the current shared
-  enumerate -> solve -> classify -> track loop in `hk2017`, `hk2017_unpruned`,
-  and `billiard`, then introducing one shared collector seam without deleting
-  the old wrappers prematurely.
+- Continue Packet 2 by introducing the shared collector/finalization surface
+  under the existing sigma generators, using the seam described in
+  `packet-2-search-frontend-seam-report.md`, without deleting the old wrappers
+  prematurely.
 - Once Packet 1 is scoped precisely, branch subagent worktrees from this branch
   only if the packet splits into disjoint write scopes.

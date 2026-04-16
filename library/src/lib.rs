@@ -61,7 +61,9 @@ pub use algorithms::{
     OrbitKktData,
     OrbitSearchError,
     OrbitSearchResult,
+    OrbitSolveError,
     OrbitSolveBackend,
+    solve_orbit_sigma,
 };
 
 // Geometry utility functions

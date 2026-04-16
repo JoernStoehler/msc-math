@@ -12,6 +12,10 @@
 //! packets can migrate those frontends onto one shared surface without further
 //! renaming churn.
 
+use crate::geom::polytope::Polytope4D;
+use crate::kkt::saddle_point_solver::{solve_kkt_for, KktOutcome, KktResult, EPS_Q_POSITIVE};
+use crate::kkt::classify_margin;
+
 /// Admissibility status of a numerically solved orbit candidate.
 ///
 /// Known-inadmissible candidates are discarded before they become
@@ -107,6 +111,19 @@ pub enum OrbitSearchError {
     ExactFallbackFailure,
 }
 
+/// Failure classification for solving a single sigma into `OrbitKktData`.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum OrbitSolveError {
+    /// The chosen backend is not yet wired into the guaranteed orbit payload
+    /// surface.
+    UnsupportedBackend,
+    /// The sigma is certified non-admissible or has non-competitive `Q <= 0`.
+    Inadmissible,
+    /// The numerical backend failed to produce the payload required by
+    /// `OrbitKktData`.
+    NumericalFailure,
+}
+
 /// Failure classification for geometric orbit construction/verification.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum GeometricOrbitError {
@@ -117,4 +134,91 @@ pub enum GeometricOrbitError {
     LinearSolveFailure,
     /// A geometric orbit was produced, but the verification checks failed.
     VerificationFailed,
+}
+
+/// Solve one sigma into the shared orbit payload.
+///
+/// The current implementation is only complete for the saddle-point backend.
+/// The projected backend remains scaffold-only until the library projection
+/// path exposes the same `Q`-bound contract required by `OrbitKktData`.
+pub fn solve_orbit_sigma(
+    polytope: &Polytope4D,
+    sigma: &[usize],
+    backend: OrbitSolveBackend,
+) -> Result<OrbitKktData, OrbitSolveError> {
+    match backend {
+        OrbitSolveBackend::Projected => Err(OrbitSolveError::UnsupportedBackend),
+        OrbitSolveBackend::SaddlePoint => {
+            let outcome = solve_kkt_for(polytope, sigma);
+            solve_saddle_point_sigma(sigma, outcome)
+        }
+    }
+}
+
+fn solve_saddle_point_sigma(
+    sigma: &[usize],
+    outcome: KktOutcome,
+) -> Result<OrbitKktData, OrbitSolveError> {
+    let kkt = match outcome {
+        KktOutcome::Feasible(kkt) => kkt,
+        KktOutcome::Infeasible => return Err(OrbitSolveError::Inadmissible),
+        KktOutcome::SingularMatrix
+        | KktOutcome::TypeCViolation
+        | KktOutcome::ConstraintViolation => return Err(OrbitSolveError::NumericalFailure),
+    };
+    orbit_from_saddle_point_result(sigma, kkt)
+}
+
+fn orbit_from_saddle_point_result(
+    sigma: &[usize],
+    result: KktResult,
+) -> Result<OrbitKktData, OrbitSolveError> {
+    if result.q_corrected <= EPS_Q_POSITIVE {
+        return Err(OrbitSolveError::Inadmissible);
+    }
+
+    let beta_margin = result
+        .beta
+        .iter()
+        .copied()
+        .fold(f64::INFINITY, f64::min);
+    let admissibility = match classify_margin(beta_margin) {
+        crate::kkt::Verdict::True => OrbitAdmissibility::AdmissibleF64,
+        crate::kkt::Verdict::Indeterminate => OrbitAdmissibility::IndeterminateF64,
+        crate::kkt::Verdict::False => return Err(OrbitSolveError::Inadmissible),
+    };
+    let (action_lower, action_upper) =
+        action_bounds_from_q(result.q_corrected, result.q_error_bound);
+
+    let mu: [f64; 4] = result
+        .mu
+        .as_slice()
+        .try_into()
+        .map_err(|_| OrbitSolveError::NumericalFailure)?;
+
+    Ok(OrbitKktData {
+        sigma: sigma.to_vec(),
+        beta: result.beta,
+        beta_margin,
+        action: 0.5 / result.q_corrected,
+        action_lower,
+        action_upper,
+        q: result.q_corrected,
+        q_error_bound: result.q_error_bound,
+        mu: Some(mu),
+        xi: Some(result.xi),
+        admissibility,
+    })
+}
+
+fn action_bounds_from_q(q: f64, q_error_bound: f64) -> (f64, f64) {
+    let q_upper = q + q_error_bound;
+    let action_lower = 0.5 / q_upper;
+    let q_lower = q - q_error_bound;
+    let action_upper = if q_lower > EPS_Q_POSITIVE {
+        0.5 / q_lower
+    } else {
+        f64::INFINITY
+    };
+    (action_lower, action_upper)
 }

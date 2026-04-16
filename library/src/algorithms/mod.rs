@@ -38,5 +38,7 @@ pub use orbit_search::{
     OrbitKktData,
     OrbitSearchError,
     OrbitSearchResult,
+    OrbitSolveError,
     OrbitSolveBackend,
+    solve_orbit_sigma,
 };

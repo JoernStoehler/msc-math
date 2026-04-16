@@ -26,6 +26,9 @@ target API have already landed in code.
     `GeometricOrbitError`.
   - These types are re-exported from `library/src/algorithms/mod.rs` and
     `library/src/lib.rs`.
+  - Packet 2 first slice: `solve_orbit_sigma(...)` now exists on the shared
+    result-layer module and the current HK2017/billiard solver bridges route
+    through it for the saddle-point backend.
 
 ## Goal
 
@@ -358,6 +361,7 @@ Notes on the frontend split:
 
 ```rust
 pub enum OrbitSolveError {
+    UnsupportedBackend,
     Inadmissible,
     NumericalFailure,
 }
@@ -379,6 +383,11 @@ Notes on solver backends:
 - If later the projected path learns to reconstruct `mu` / `xi`, it can
   upgrade those fields from `None` to `Some(...)` without changing the payload
   shape.
+- Current implementation status differs slightly from the target shape:
+  `solve_orbit_sigma(..., OrbitSolveBackend::Projected)` currently returns
+  `OrbitSolveError::UnsupportedBackend`, because the library projection solver
+  does not yet expose the `q_error_bound` contract required by
+  `OrbitKktData`.
 
 ```rust
 pub fn recover_and_verify_orbit(
@@ -498,6 +507,9 @@ These points are not yet fully settled.
   support both projected/eigendecompose and saddle-point behind a backend
   toggle, so the repo can compare which is faster and which behaves better on
   real cases while keeping one shared result surface.
+  Current code fact after Packet 2 slice 1: only the saddle-point backend is
+  wired into `solve_orbit_sigma(...)`; projected remains blocked on exposing a
+  compatible `Q`-bound/payload surface from `library/src/kkt/projection_solver.rs`.
 - How beta-side uncertainty should be represented is deferred for now.
   Current state:
   - `beta` itself is still worth storing

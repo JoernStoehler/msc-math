@@ -27,8 +27,9 @@ use crate::algorithms::capacity_accumulator::CapacityAccumulator;
 use crate::algorithms::facet_adjacency::{
     build_transition_matrix, is_feasible_cycle,
 };
+use crate::algorithms::orbit_search::{solve_orbit_sigma, OrbitAdmissibility, OrbitSolveBackend};
 use crate::geom::polytope::Polytope4D;
-use crate::kkt::saddle_point_solver::{solve_kkt_for, KktResult, EPS_Q_POSITIVE};
+use crate::kkt::saddle_point_solver::EPS_Q_POSITIVE;
 use crate::kkt::{classify_margin, Solution};
 use block_enumeration::{enumerate_blocks, enumerate_k_bounce_sigmas};
 use facet_classification::classify_facets;
@@ -170,25 +171,19 @@ pub fn billiard_capacity(
 ///
 /// Same conversion logic as `hk2017::solve_and_convert`.
 fn solve_and_convert(polytope: &Polytope4D, perm: &[usize]) -> Option<Solution> {
-    let kkt = solve_kkt_for(polytope, perm).feasible()?;
-    Some(kkt_result_to_solution(kkt))
-}
-
-/// Convert a `KktResult` to a `Solution`.
-///
-/// Maps: q_corrected -> q, beta -> beta, min(beta) -> margin, classify_margin -> verdict.
-fn kkt_result_to_solution(result: KktResult) -> Solution {
-    let margin = result
-        .beta
-        .iter()
-        .copied()
-        .fold(f64::INFINITY, f64::min);
-    Solution {
-        verdict: classify_margin(margin),
-        q: result.q_corrected,
-        beta: result.beta,
-        margin,
-    }
+    let orbit = solve_orbit_sigma(polytope, perm, OrbitSolveBackend::SaddlePoint).ok()?;
+    let verdict = match orbit.admissibility {
+        OrbitAdmissibility::AdmissibleF64 | OrbitAdmissibility::AdmissibleExact => {
+            classify_margin(orbit.beta_margin)
+        }
+        OrbitAdmissibility::IndeterminateF64 => classify_margin(orbit.beta_margin),
+    };
+    Some(Solution {
+        verdict,
+        q: orbit.q,
+        beta: orbit.beta,
+        margin: orbit.beta_margin,
+    })
 }
 
 // Tests for billiard capacity: correctness and cross-validation with hk2017.
