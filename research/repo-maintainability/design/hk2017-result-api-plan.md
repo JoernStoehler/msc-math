@@ -80,6 +80,13 @@ target API have already landed in code.
     `experiments/combinatorial-cells/src/lib.rs` instead of four binary-local
     copies. This keeps the all-valid-orbit/report semantics experiment-local
     while still reducing duplication.
+  - Packet 3 ninth slice:
+    the repeated stricter-orbit collector used by
+    `hko-gradient-analysis` and `hko-second-order` now lives in
+    `experiments/hko-local-maximum/src/lib.rs` instead of two binary-local
+    copies. This keeps the package's stricter `beta > EPS_BETA_POSITIVE`
+    semantics experiment-local while reducing duplication around
+    `OrbitKktData` payload construction.
 
 ## Goal
 

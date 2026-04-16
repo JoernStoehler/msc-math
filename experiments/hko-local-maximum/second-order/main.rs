@@ -26,11 +26,9 @@ use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
-use symplectic::algorithms::facet_adjacency::{build_transition_matrix, is_feasible_cycle};
-use symplectic::algorithms::hk2017::combinations;
+use exp_hko_local_maximum::ehz_capacity_instrumented;
 use symplectic::algorithms::hk2017::ehz_capacity;
-use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
-use symplectic::algorithms::{OrbitAdmissibility, OrbitKktData};
+use symplectic::algorithms::OrbitKktData;
 use symplectic::derivatives::{
     capacity_derivatives_a_from_orbit,
     volume_derivatives_a,
@@ -38,9 +36,6 @@ use symplectic::derivatives::{
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::volume::volume;
-use symplectic::kkt::saddle_point_solver::{
-    solve_kkt_for, KktOutcome, EPS_BETA_POSITIVE, EPS_Q_POSITIVE,
-};
 
 /// Gap threshold for near-optimal orbits. All 150 HKO2024 orbits have gap < 1.3e-15,
 /// so any threshold well above machine epsilon includes all of them. Using 1e-10
@@ -112,82 +107,6 @@ struct CurveRow {
 // ============================================================================
 // Instrumented HK2017 — collects ALL valid orbits (copied from gradient-analysis)
 // ============================================================================
-
-struct InstrumentedResult {
-    capacity: f64,
-    orbits: Vec<OrbitKktData>,
-}
-
-fn action_bounds_from_q(q: f64, q_error_bound: f64) -> (f64, f64) {
-    let q_upper = q + q_error_bound;
-    let action_lower = 0.5 / q_upper;
-    let q_lower = q - q_error_bound;
-    let action_upper = if q_lower > EPS_Q_POSITIVE {
-        0.5 / q_lower
-    } else {
-        f64::INFINITY
-    };
-    (action_lower, action_upper)
-}
-
-fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult> {
-    let f = polytope.facet_count();
-    let adj = build_transition_matrix(polytope);
-
-    let mut orbits: Vec<OrbitKktData> = Vec::new();
-
-    for m in 2..=f {
-        for subset in combinations(f, m) {
-            for_each_cyclic_permutation(&subset, &mut |perm| {
-                if !is_feasible_cycle(perm, &adj) {
-                    return;
-                }
-
-                if let KktOutcome::Feasible(kkt_result) = solve_kkt_for(polytope, perm) {
-                    let q_val = kkt_result.q_corrected;
-                    if q_val <= EPS_Q_POSITIVE {
-                        return;
-                    }
-                    let beta = &kkt_result.beta;
-                    let beta_min = beta.iter().cloned().fold(f64::INFINITY, f64::min);
-                    let (action_lower, action_upper) =
-                        action_bounds_from_q(q_val, kkt_result.q_error_bound);
-
-                    if beta_min > EPS_BETA_POSITIVE {
-                        orbits.push(OrbitKktData {
-                            sigma: perm.to_vec(),
-                            beta: beta.clone(),
-                            beta_margin: beta_min,
-                            action: 0.5 / q_val,
-                            action_lower,
-                            action_upper,
-                            q: q_val,
-                            q_error_bound: kkt_result.q_error_bound,
-                            mu: Some(
-                                kkt_result
-                                    .mu
-                                    .as_slice()
-                                    .try_into()
-                                    .expect("closure multiplier must stay 4D"),
-                            ),
-                            xi: Some(kkt_result.xi),
-                            admissibility: OrbitAdmissibility::AdmissibleF64,
-                        });
-                    }
-                }
-            });
-        }
-    }
-
-    if orbits.is_empty() {
-        return None;
-    }
-
-    orbits.sort_by(|a, b| a.action.partial_cmp(&b.action).unwrap());
-    let capacity = orbits[0].action;
-
-    Some(InstrumentedResult { capacity, orbits })
-}
 
 // ============================================================================
 // Per-orbit sys gradient in a_i space (R^40)

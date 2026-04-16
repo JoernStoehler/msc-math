@@ -91,6 +91,12 @@ queue. It is intentionally incremental: only the first packets are defined.
     - `cell-boundary-characterization`, `cell-widths`, `cell-convexity`, and
       `cell-multiple-crossings` now share that experiment-local helper instead
       of each owning the same `ehz_capacity_instrumented(...)` copy
+  - Packet 3 slice 9 landed:
+    - extracted the repeated stricter `beta > EPS_BETA_POSITIVE` orbit-search
+      helper into `experiments/hko-local-maximum/src/lib.rs`
+    - `hko-gradient-analysis` and `hko-second-order` now share that
+      experiment-local collector instead of each owning nearly the same
+      `OrbitKktData`-producing loop
   - Verification after Packet 2 slice 1:
     - `cargo build -p symplectic --release`
     - `cargo test -p symplectic --release --lib`
@@ -121,6 +127,8 @@ queue. It is intentionally incremental: only the first packets are defined.
     - `cargo build -p exp-combinatorial-cells --release`
   - Verification after Packet 3 slice 8:
     - `cargo build -p exp-combinatorial-cells --release`
+  - Verification after Packet 3 slice 9:
+    - `cargo build -p exp-hko-local-maximum --release`
 
 ## Integration Model
 
@@ -234,6 +242,10 @@ queue. It is intentionally incremental: only the first packets are defined.
       `exp-combinatorial-cells` package is now centralized in `src/lib.rs`,
       which reduces four copies of the same instrumentation without forcing the
       semantics into `library/`
+    - the repeated stricter-orbit collector in `exp-hko-local-maximum` is now
+      centralized in `src/lib.rs`, which removes another duplicated
+      experiment-local search loop while preserving the package's stricter
+      validity semantics
 
 4. **First consumer migrations**
    - Scope:
