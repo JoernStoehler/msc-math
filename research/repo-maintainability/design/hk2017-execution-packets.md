@@ -42,6 +42,15 @@ queue. It is intentionally incremental: only the first packets are defined.
       frontend-specific `sigma` generation
     - explicit `OrbitSearchError::UnsupportedBackend` and
       `BilliardOrbitSearchError`
+  - Packet 2 slice 5 landed:
+    - the root scalar API is now an explicit family:
+      - `ehz_capacity` = auto wrapper
+      - `ehz_capacity_pruned`
+      - `ehz_capacity_unpruned`
+      - `ehz_capacity_billiard`
+    - the auto wrapper dispatches to billiard on inputs that pass the
+      Lagrangian-product structure test and otherwise falls back to pruned
+      HK2017
   - Packet 3 slice 1 landed:
     - `library/src/derivatives.rs` now defines `OrbitGradientA`,
       `ClarkeSubdiffA`, and `DerivativeError`
@@ -116,6 +125,9 @@ queue. It is intentionally incremental: only the first packets are defined.
     - `cargo build -p symplectic --release`
     - `cargo test -p symplectic --release minimum_orbits -- --nocapture`
     - `cargo test -p symplectic --release --lib`
+  - Verification after Packet 2 slice 5:
+    - `cargo build -p symplectic --release`
+    - `cargo test -p symplectic --release auto_dispatch_tests -- --nocapture`
   - Verification after Packet 3 slice 1:
     - `cargo test -p symplectic --release derivatives::tests -- --nocapture`
     - `cargo build -p exp-combinatorial-cells --release`

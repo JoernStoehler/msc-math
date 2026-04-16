@@ -111,6 +111,11 @@ target API have already landed in code.
 ## Current Code State
 
 - `ehz_capacity` / `ehz_capacity_unpruned` still return `Option<EhzResult>`.
+- The root API now treats these as a family:
+  - `ehz_capacity(...)` = auto wrapper
+  - `ehz_capacity_pruned(...)` = explicit pruned HK2017
+  - `ehz_capacity_unpruned(...)` = explicit unpruned HK2017
+  - `ehz_capacity_billiard(...)` = explicit billiard path
 - The richer public collector entrypoints now exist:
   - `hk2017_minimum_orbits(...)`
   - `hk2017_minimum_orbits_unpruned(...)`
@@ -183,10 +188,12 @@ new repo evidence contradicts them.
 - Keep one thin scalar/default API in addition to the richer collectors; do not
   force every caller to pay for eager all-orbit collection or eager geometric
   orbit recovery.
-- The current `ehz_capacity` / `ehz_capacity_unpruned` wrappers are not
-  protected as names or exact result shapes. They may be deleted or replaced
-  during migration as long as the repo still has one cheap scalar/default
-  entrypoint.
+- The root scalar API should read as a family rather than a grab bag of
+  unrelated names:
+  - `ehz_capacity` = auto
+  - `ehz_capacity_pruned`
+  - `ehz_capacity_unpruned`
+  - `ehz_capacity_billiard`
 - The richer HK2017 surface should return a sorted list of solved orbit/KKT
   payloads, not only one best orbit.
 - Returning only one best orbit is the wrong boundary for the richer
