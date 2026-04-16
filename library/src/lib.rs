@@ -52,8 +52,20 @@ pub use geom::skeleton::Skeleton;
 pub use geom::QhullError;
 
 // Capacity algorithms
-pub use algorithms::hk2017::{ehz_capacity, ehz_capacity_unpruned, EhzResult};
-pub use algorithms::billiard::{billiard_capacity, BilliardError, BilliardResult};
+pub use algorithms::hk2017::{
+    ehz_capacity,
+    ehz_capacity_unpruned,
+    hk2017_minimum_orbits,
+    hk2017_minimum_orbits_unpruned,
+    EhzResult,
+};
+pub use algorithms::billiard::{
+    billiard_capacity,
+    billiard_minimum_orbits,
+    BilliardError,
+    BilliardOrbitSearchError,
+    BilliardResult,
+};
 pub use algorithms::{
     GeometricOrbitError,
     OrbitAdmissibility,

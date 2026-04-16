@@ -107,6 +107,9 @@ pub struct OrbitSearchResult {
 pub enum OrbitSearchError {
     /// No admissible orbit remained after filtering and requested fallback.
     NoAdmissibleOrbit,
+    /// The requested backend is not yet supported at the shared collector
+    /// surface.
+    UnsupportedBackend,
     /// The numerical backend failed before the requested guarantee could be
     /// established.
     NumericalFailure,
@@ -394,6 +397,104 @@ pub(crate) fn resolve_orbits_for_guarantee(
         OrbitGuaranteeMode::MinimaSafe => resolve_minimasafe(polytope, orbits),
         OrbitGuaranteeMode::AllSafe => resolve_allsafe(polytope, orbits),
     }
+}
+
+fn sort_orbits_by_lower_action(orbits: &mut [OrbitKktData]) {
+    orbits.sort_by(|a, b| {
+        a.action_lower
+            .total_cmp(&b.action_lower)
+            .then_with(|| a.action_upper.total_cmp(&b.action_upper))
+            .then_with(|| a.action.total_cmp(&b.action))
+    });
+}
+
+fn trim_orbits_to_gap(orbits: &mut Vec<OrbitKktData>, gap: f64) -> Result<(), OrbitSearchError> {
+    let min_action_upper = orbits
+        .iter()
+        .map(|orbit| orbit.action_upper)
+        .fold(f64::INFINITY, f64::min);
+    let cutoff = min_action_upper + gap;
+    orbits.retain(|orbit| orbit.action_lower <= cutoff);
+    if orbits.is_empty() {
+        return Err(OrbitSearchError::NoAdmissibleOrbit);
+    }
+    Ok(())
+}
+
+fn summarize_orbits(orbits: Vec<OrbitKktData>, iterations: u64) -> Result<OrbitSearchResult, OrbitSearchError> {
+    let min_action = orbits
+        .iter()
+        .filter(|orbit| {
+            matches!(
+                orbit.admissibility,
+                OrbitAdmissibility::AdmissibleF64 | OrbitAdmissibility::AdmissibleExact
+            )
+        })
+        .map(|orbit| orbit.action)
+        .min_by(|a, b| a.total_cmp(b))
+        .ok_or(OrbitSearchError::NoAdmissibleOrbit)?;
+    let min_action_lower = orbits
+        .iter()
+        .map(|orbit| orbit.action_lower)
+        .fold(f64::INFINITY, f64::min);
+    let min_action_upper = orbits
+        .iter()
+        .map(|orbit| orbit.action_upper)
+        .fold(f64::INFINITY, f64::min);
+
+    Ok(OrbitSearchResult {
+        orbits,
+        min_action,
+        min_action_lower,
+        min_action_upper,
+        iterations,
+    })
+}
+
+pub(crate) fn collect_orbits(
+    polytope: &Polytope4D,
+    gap: f64,
+    mode: OrbitGuaranteeMode,
+    backend: OrbitSolveBackend,
+    mut emit_sigma: impl FnMut(&mut dyn FnMut(&[usize])),
+) -> Result<OrbitSearchResult, OrbitSearchError> {
+    let mut orbits = Vec::new();
+    let mut iterations = 0u64;
+    let mut fatal_error: Option<OrbitSearchError> = None;
+
+    let mut visit = |sigma: &[usize]| {
+        if fatal_error.is_some() {
+            return;
+        }
+        iterations += 1;
+        match solve_orbit_sigma(polytope, sigma, backend) {
+            Ok(orbit) => orbits.push(orbit),
+            Err(OrbitSolveError::Inadmissible) => {}
+            Err(OrbitSolveError::UnsupportedBackend) => {
+                fatal_error = Some(OrbitSearchError::UnsupportedBackend);
+            }
+            Err(OrbitSolveError::NumericalFailure) => {
+                fatal_error = Some(OrbitSearchError::NumericalFailure);
+            }
+        }
+    };
+
+    emit_sigma(&mut visit);
+
+    if let Some(err) = fatal_error {
+        return Err(err);
+    }
+    if orbits.is_empty() {
+        return Err(OrbitSearchError::NoAdmissibleOrbit);
+    }
+
+    resolve_orbits_for_guarantee(polytope, &mut orbits, mode)?;
+    trim_orbits_to_gap(&mut orbits, gap)?;
+    if mode == OrbitGuaranteeMode::AllSafe {
+        resolve_orbits_for_guarantee(polytope, &mut orbits, mode)?;
+    }
+    sort_orbits_by_lower_action(&mut orbits);
+    summarize_orbits(orbits, iterations)
 }
 
 fn legacy_solution_from_orbit(orbit: OrbitKktData) -> Solution {

@@ -19,7 +19,13 @@ mod api;
 mod combinatorics;
 mod enumeration;
 
-pub use api::{ehz_capacity, ehz_capacity_unpruned, EhzResult};
+pub use api::{
+    ehz_capacity,
+    ehz_capacity_unpruned,
+    hk2017_minimum_orbits,
+    hk2017_minimum_orbits_unpruned,
+    EhzResult,
+};
 pub use combinatorics::combinations;
 
 #[cfg(test)]

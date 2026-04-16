@@ -3,6 +3,7 @@
 //! Split from mod.rs to keep the module router focused on architecture.
 
 use super::*;
+use crate::algorithms::{OrbitGuaranteeMode, OrbitSearchError, OrbitSolveBackend};
 use crate::geom::known_polytopes;
 use crate::kkt::saddle_point_solver::solve_kkt_for;
 
@@ -88,6 +89,46 @@ fn symplectic_triangle_square_capacity() {
         result.result.capacity,
         kp.capacity
     );
+}
+
+/// Smoke-test the richer collector on a simple known polytope.
+#[test]
+fn simplex_minimum_orbits_collector() {
+    let kp = known_polytopes::simplex();
+    let result = hk2017_minimum_orbits(
+        &kp.polytope,
+        0.0,
+        OrbitGuaranteeMode::BoundSafe,
+        OrbitSolveBackend::SaddlePoint,
+    )
+    .expect("minimum-orbit collector should succeed on simplex");
+
+    assert!(!result.orbits.is_empty(), "collector must return at least one orbit");
+    assert!(
+        result.min_action_lower <= result.min_action_upper,
+        "minimum-action interval should be ordered"
+    );
+    assert!(
+        result
+            .orbits
+            .iter()
+            .all(|orbit| orbit.action_lower <= result.min_action_upper),
+        "gap=0 collector should only retain orbits that can still hit the minimum upper bound"
+    );
+}
+
+/// Unsupported backends should fail explicitly rather than silently degrading.
+#[test]
+fn simplex_minimum_orbits_projected_backend_unsupported() {
+    let kp = known_polytopes::simplex();
+    let err = hk2017_minimum_orbits(
+        &kp.polytope,
+        0.0,
+        OrbitGuaranteeMode::BoundSafe,
+        OrbitSolveBackend::Projected,
+    )
+    .expect_err("projected backend is not wired into the shared collector yet");
+    assert_eq!(err, OrbitSearchError::UnsupportedBackend);
 }
 
 /// Verify the known minimizing orbit of the 4D crosspolytope gives action = 4.0.

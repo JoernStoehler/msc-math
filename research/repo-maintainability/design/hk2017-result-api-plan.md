@@ -33,6 +33,12 @@ target API have already landed in code.
     share `collect_legacy_capacity(...)`, and `orbit_search.rs` now contains
     the first exact-fallback helpers that upgrade or drop `IndeterminateF64`
     orbits under `BoundSafe`, `MinimaSafe`, and `AllSafe`.
+  - Packet 2 collector slice: public `hk2017_minimum_orbits(...)`,
+    `hk2017_minimum_orbits_unpruned(...)`, and
+    `billiard_minimum_orbits(...)` now exist on top of the shared collector
+    seam. `OrbitSearchError` now includes an explicit
+    `UnsupportedBackend` variant, and billiard wraps shared search failures in
+    `BilliardOrbitSearchError`.
 
 ## Goal
 
@@ -49,7 +55,11 @@ target API have already landed in code.
 
 ## Current Code State
 
-- `ehz_capacity` / `ehz_capacity_unpruned` return `Option<EhzResult>`.
+- `ehz_capacity` / `ehz_capacity_unpruned` still return `Option<EhzResult>`.
+- The richer public collector entrypoints now exist:
+  - `hk2017_minimum_orbits(...)`
+  - `hk2017_minimum_orbits_unpruned(...)`
+  - `billiard_minimum_orbits(...)`
 - `EhzResult` currently stores:
   - `result: CapacityResult`
   - `best_subset: Vec<usize>`
@@ -190,7 +200,7 @@ pub struct OrbitKktData {
     /// Convenience scalar: min(beta).
     pub beta_margin: f64,
     /// Opinionated scalar action summary chosen by the producer.
-    /// Current lean: use the upper endpoint as the canonical single-f64 value.
+    /// Current rule: min(action[k] for admissible returned k).
     pub action: f64,
     /// Lower endpoint of the action interval, guaranteed up to minor rounding.
     pub action_lower: f64,
@@ -221,6 +231,7 @@ pub struct OrbitSearchResult {
 
 pub enum OrbitSearchError {
     NoAdmissibleOrbit,
+    UnsupportedBackend,
     NumericalFailure,
     ExactFallbackFailure,
 }
@@ -346,7 +357,7 @@ pub fn billiard_minimum_orbits(
     gap: f64,
     mode: OrbitGuaranteeMode,
     backend: OrbitSolveBackend,
-) -> Result<OrbitSearchResult, BilliardError>;
+) -> Result<OrbitSearchResult, BilliardOrbitSearchError>;
 ```
 
 Notes on the frontend split:
@@ -392,6 +403,8 @@ Notes on solver backends:
   `OrbitSolveError::UnsupportedBackend`, because the library projection solver
   does not yet expose the `q_error_bound` contract required by
   `OrbitKktData`.
+- The public shared collectors currently surface that same limitation as
+  `OrbitSearchError::UnsupportedBackend`.
 - The exact-fallback helpers are now implemented against the current rational
   solver. They currently preserve any pre-existing numerical `mu` / `xi`
   values because the exact fallback path does not yet compute exact
@@ -464,6 +477,9 @@ particular wrapper functions.
   corresponding argmin orbit(s) when they are still `IndeterminateF64`.
 - `Err(...)` should distinguish mathematical/numerical outcomes that were
   previously blurred together by `Option::None`.
+- Current public collector behavior already reflects this:
+  unsupported projected-backend calls fail explicitly rather than silently
+  degrading to the saddle-point path.
 - If the API later offers cheaper/weaker guarantee modes, ambiguity itself
   should normally not become an error in those modes. The cheaper mode should
   return the weaker result rather than fail just because exact resolution was
@@ -515,9 +531,10 @@ These points are not yet fully settled.
   support both projected/eigendecompose and saddle-point behind a backend
   toggle, so the repo can compare which is faster and which behaves better on
   real cases while keeping one shared result surface.
-  Current code fact after Packet 2 slice 1: only the saddle-point backend is
-  wired into `solve_orbit_sigma(...)`; projected remains blocked on exposing a
-  compatible `Q`-bound/payload surface from `library/src/kkt/projection_solver.rs`.
+  Current code fact after the Packet 2 collector slice: only the saddle-point
+  backend is wired through the public collector entrypoints; projected remains
+  blocked on exposing a compatible `Q`-bound/payload surface from
+  `library/src/kkt/projection_solver.rs`.
 - How beta-side uncertainty should be represented is deferred for now.
   Current state:
   - `beta` itself is still worth storing

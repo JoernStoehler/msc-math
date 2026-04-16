@@ -26,7 +26,13 @@ pub mod kkt_benchmark;
 use crate::algorithms::facet_adjacency::{
     build_transition_matrix, is_feasible_cycle,
 };
-use crate::algorithms::orbit_search::{collect_legacy_capacity, OrbitSolveBackend};
+use crate::algorithms::orbit_search::{
+    collect_legacy_capacity,
+    collect_orbits,
+    OrbitGuaranteeMode,
+    OrbitSearchResult,
+    OrbitSolveBackend,
+};
 use crate::geom::polytope::Polytope4D;
 use block_enumeration::{enumerate_blocks, enumerate_k_bounce_sigmas};
 use facet_classification::classify_facets;
@@ -75,6 +81,26 @@ impl std::fmt::Display for BilliardError {
 }
 
 impl std::error::Error for BilliardError {}
+
+/// Error from the shared billiard orbit collector.
+#[derive(Debug, Clone)]
+pub enum BilliardOrbitSearchError {
+    /// Input is not a valid Lagrangian product.
+    InvalidInput(BilliardError),
+    /// The shared orbit-search layer failed after input validation succeeded.
+    Search(crate::algorithms::OrbitSearchError),
+}
+
+impl std::fmt::Display for BilliardOrbitSearchError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::InvalidInput(err) => err.fmt(f),
+            Self::Search(err) => write!(f, "billiard orbit search failed: {err:?}"),
+        }
+    }
+}
+
+impl std::error::Error for BilliardOrbitSearchError {}
 
 /// Result of the billiard capacity computation.
 ///
@@ -147,6 +173,32 @@ pub fn billiard_capacity(
     }))
 }
 
+/// Collect near-minimum billiard orbits for a Lagrangian product polytope.
+pub fn billiard_minimum_orbits(
+    polytope: &Polytope4D,
+    gap: f64,
+    mode: OrbitGuaranteeMode,
+    backend: OrbitSolveBackend,
+) -> Result<OrbitSearchResult, BilliardOrbitSearchError> {
+    let classification = classify_facets(polytope).map_err(BilliardOrbitSearchError::InvalidInput)?;
+    let adj = polytope.vertex_adjacency();
+    let directed_adj = build_transition_matrix(polytope);
+    let q_blocks = enumerate_blocks(&classification.q_indices, adj);
+    let p_blocks = enumerate_blocks(&classification.p_indices, adj);
+
+    collect_orbits(polytope, gap, mode, backend, |visit| {
+        for k in 2..=3 {
+            enumerate_k_bounce_sigmas(k, &q_blocks, &p_blocks, |sigma| {
+                if !is_feasible_cycle(sigma, &directed_adj) {
+                    return;
+                }
+                visit(sigma);
+            });
+        }
+    })
+    .map_err(BilliardOrbitSearchError::Search)
+}
+
 // Tests for billiard capacity: correctness and cross-validation with hk2017.
 //
 // Proposition: billiard_capacity agrees with known literature values and with
@@ -205,6 +257,22 @@ mod tests {
     fn triangle_square_capacity() {
         let kp = known_polytopes::lagrangian_triangle_square();
         assert_capacity("triangle_square", &kp.polytope, 1.5, 1e-8);
+    }
+
+    /// Smoke-test the richer billiard collector on a known Lagrangian product.
+    #[test]
+    fn triangle_product_minimum_orbits_collector() {
+        let kp = known_polytopes::lagrangian_triangle_product();
+        let result = billiard_minimum_orbits(
+            &kp.polytope,
+            0.0,
+            crate::algorithms::OrbitGuaranteeMode::BoundSafe,
+            crate::algorithms::OrbitSolveBackend::SaddlePoint,
+        )
+        .expect("billiard minimum-orbit collector should succeed");
+
+        assert!(!result.orbits.is_empty(), "collector must return at least one orbit");
+        assert!(result.min_action_lower <= result.min_action_upper);
     }
 
     /// Verify billiard capacity of the HK-O pentagon counterexample matches the analytic formula.

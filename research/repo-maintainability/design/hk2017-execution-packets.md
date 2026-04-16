@@ -35,11 +35,22 @@ queue. It is intentionally incremental: only the first packets are defined.
     - exact-fallback helpers for single-orbit upgrade/drop
     - first internal guarantee-mode resolution helpers for `BoundSafe`,
       `MinimaSafe`, and `AllSafe`
+  - Packet 2 slice 4 landed:
+    - shared `OrbitSearchResult`-returning collector entrypoints for
+      `hk2017`, `hk2017_unpruned`, and `billiard`
+    - shared internal `collect_orbits(...)` collector/finalization seam above
+      frontend-specific `sigma` generation
+    - explicit `OrbitSearchError::UnsupportedBackend` and
+      `BilliardOrbitSearchError`
   - Verification after Packet 2 slice 1:
     - `cargo build -p symplectic --release`
     - `cargo test -p symplectic --release --lib`
   - Verification after Packet 2 slice 3:
     - `cargo test -p symplectic --release algorithms::orbit_search::tests -- --nocapture`
+    - `cargo test -p symplectic --release --lib`
+  - Verification after Packet 2 slice 4:
+    - `cargo build -p symplectic --release`
+    - `cargo test -p symplectic --release minimum_orbits -- --nocapture`
     - `cargo test -p symplectic --release --lib`
 
 ## Integration Model
@@ -77,9 +88,9 @@ queue. It is intentionally incremental: only the first packets are defined.
        updates
    - Stop condition:
      - if `mu`/`xi` optionality or public-module placement becomes unclear
-   - Status:
-     - complete for the current packet goal; later packets may still rename or
-       extend these types if the rewired frontends expose a missing field
+  - Status:
+    - complete for the current packet goal; later packets may still rename or
+      extend these types if consumer migration exposes a missing field
 
 2. **Shared search frontend surface**
    - Scope:
@@ -89,16 +100,19 @@ queue. It is intentionally incremental: only the first packets are defined.
      - keep old wrappers only as staging aids if needed
    - Planning artifact:
      - `research/repo-maintainability/design/packet-2-search-frontend-seam-report.md`
-   - Landed so far:
+  - Landed so far:
      - shared seam identified: extract below frontend sigma generation and
        above frontend-local certified-winner metadata
      - `solve_orbit_sigma(...)` is the first shared primitive on that seam
      - `collect_legacy_capacity(...)` now owns the current shared
        solve/classify/track/finalize loop
      - existing HK2017/billiard frontends now depend on both shared seams
-     - the shared module now contains the first internal exact-fallback /
-       guarantee-mode machinery, but the public `OrbitSearchResult` collectors
-       are still intentionally deferred
+    - the shared module now contains the first internal exact-fallback /
+      guarantee-mode machinery
+    - the public `OrbitSearchResult` collectors now exist:
+      - `hk2017_minimum_orbits(...)`
+      - `hk2017_minimum_orbits_unpruned(...)`
+      - `billiard_minimum_orbits(...)`
    - Known blocker discovered in this packet:
      - `OrbitSolveBackend::Projected` is still unsupported at the shared
        payload boundary because `library/src/kkt/projection_solver.rs` does not
@@ -108,9 +122,14 @@ queue. It is intentionally incremental: only the first packets are defined.
    - Verification:
      - `cargo build -p symplectic --release`
      - `cargo test -p symplectic --release --lib`
-   - Stop condition:
-     - if backend plumbing forces a solver-semantics change instead of an API
-       refactor
+  - Stop condition:
+    - if backend plumbing forces a solver-semantics change instead of an API
+      refactor
+  - Status:
+    - complete for the saddle-point-backed shared collector goal
+    - projected backend support remains a later packet because the projection
+      solver does not yet expose the payload/error-bound contract this packet
+      needs
 
 3. **Derivative/subdifferential library helpers**
    - Scope:
@@ -141,12 +160,10 @@ queue. It is intentionally incremental: only the first packets are defined.
 
 ## Immediate Next Action
 
-- Continue Packet 2 by introducing the shared collector/finalization surface
-  under the existing sigma generators, using the seam described in
-  `packet-2-search-frontend-seam-report.md`, without deleting the old wrappers
-  prematurely. Current next likely slice: add the actual shared
-  `OrbitSearchResult`-returning collector entrypoints on top of the internal
-  collector seam, now that the guarantee-mode resolution building blocks
-  exist.
-- Once Packet 1 is scoped precisely, branch subagent worktrees from this branch
-  only if the packet splits into disjoint write scopes.
+- Start Packet 3 by adding the derivative/subdifferential helper surface on
+  top of `OrbitKktData`, then migrate at least one derivative-heavy consumer to
+  prove the orbit payload is actually usable.
+- Keep projected-backend support out of Packet 3 unless the derivative packet
+  directly needs it; it is a separate solver-contract follow-up.
+- Branch subagent worktrees from this branch only if Packet 3 splits into
+  disjoint write scopes.
