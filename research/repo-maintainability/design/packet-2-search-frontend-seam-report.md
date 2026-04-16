@@ -27,10 +27,10 @@ abstraction.
 
 ## Files and functions in the current loop
 
-- HK2017 public wrappers:
-  [ehz_capacity_unpruned](../../../library/src/algorithms/hk2017/api.rs:18),
-  [ehz_capacity](../../../library/src/algorithms/hk2017/api.rs:26)
-  wrap the enumeration outcome into `EhzResult`.
+- HK2017 public wrappers at the time of this seam report:
+  [ehz_capacity_unpruned](../../../library/src/lib.rs:98),
+  [ehz_capacity](../../../library/src/lib.rs:124)
+  were the short router surface over HK2017 enumeration.
 - HK2017 enumeration:
   [enumerate_unpruned](../../../library/src/algorithms/hk2017/enumeration.rs:18),
   [enumerate_pruned](../../../library/src/algorithms/hk2017/enumeration.rs:22),

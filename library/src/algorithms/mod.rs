@@ -32,6 +32,7 @@ pub mod billiard;
 pub mod tube;
 
 pub use orbit_search::{
+    aggregate_orbits,
     GeometricOrbitError,
     OrbitAdmissibility,
     OrbitGuaranteeMode,

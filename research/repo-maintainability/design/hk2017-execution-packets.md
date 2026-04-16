@@ -180,6 +180,15 @@ queue. It is intentionally incremental: only the first packets are defined.
     - moved `experiments/verification/algorithm-comparison/ablation/main.rs`
       onto an experiment-local `AblationResult` so the experiment now owns its
       own variant-report schema instead of borrowing library result types
+  - Packet 3 slice 15 landed:
+    - split the root scalar family from the stronger exact-fallback collectors:
+      - `ehz_capacity*` now stays on the unresolved f64 search surface
+      - non-default guarantee-mode aggregation remains available through the
+        lower-level building blocks rather than another named router family
+    - fixed the remaining HK2017 regression/orbit-recovery failures caused by
+      exact-resolving approximate product geometries through the scalar path
+    - `OrbitSearchResult::best_orbit()` now returns the actual admissible
+      minimizer rather than the first orbit after lower-bound sorting
   - Parallel follow-up now in flight on sub-worktrees branched from this
     integration trunk:
     - `capacity-orbit-recovery-refactor`:
@@ -197,7 +206,6 @@ queue. It is intentionally incremental: only the first packets are defined.
     - `cargo test -p symplectic --release --lib`
   - Verification after Packet 2 slice 4:
     - `cargo build -p symplectic --release`
-    - `cargo test -p symplectic --release minimum_orbits -- --nocapture`
     - `cargo test -p symplectic --release --lib`
   - Verification after Packet 2 slice 5:
     - `cargo build -p symplectic --release`
@@ -303,10 +311,11 @@ queue. It is intentionally incremental: only the first packets are defined.
      - existing HK2017/billiard frontends now depend on both shared seams
     - the shared module now contains the first internal exact-fallback /
       guarantee-mode machinery
-    - the public `OrbitSearchResult` collectors now exist:
-      - `hk2017_minimum_orbits(...)`
-      - `hk2017_minimum_orbits_unpruned(...)`
-      - `billiard_minimum_orbits(...)`
+    - the public result-layer building blocks now exist:
+      - `solve_orbit_sigma(...)`
+      - `aggregate_orbits(...)`
+      - algorithm-specific sigma traversal helpers under `hk2017` and
+        `billiard`
    - Known blocker discovered in this packet:
      - `OrbitSolveBackend::Projected` is still unsupported at the shared
        payload boundary because `library/src/kkt/projection_solver.rs` does not
@@ -384,14 +393,14 @@ queue. It is intentionally incremental: only the first packets are defined.
 ## Immediate Next Action
 
 - Decide whether the next highest-value seam is:
-  - collector/report migration for binaries whose semantics already match
-    `hk2017_minimum_orbits(...)`, or
+  - building-block migration for binaries whose semantics already match the
+    sigma-traversal + solve + aggregate pipeline, or
   - intentionally keeping experiment-local all-valid-orbit loops where the
     binary still reports counts/distributions outside the near-minimum window.
 - Current caution from the latest migration sweep:
   `hko-gradient-analysis` and `hko-second-order` are not yet clean
-  `hk2017_minimum_orbits(...)` migrations because they still report local
-  all-valid-orbit metrics, not only near-minimum orbit sets.
+  building-block migrations because they still report local all-valid-orbit
+  metrics, not only near-minimum orbit sets.
 - Keep projected-backend support out of Packet 3 unless the derivative packet
   directly needs it; it is a separate solver-contract follow-up.
 - Branch subagent worktrees from this branch only if Packet 3 splits into

@@ -3,7 +3,8 @@
 //! Split from mod.rs to keep the module router focused on architecture.
 
 use super::*;
-use crate::algorithms::{OrbitGuaranteeMode, OrbitSearchError, OrbitSolveBackend};
+use crate::algorithms::orbit_search::solve_sigma_stream;
+use crate::algorithms::{aggregate_orbits, OrbitGuaranteeMode, OrbitSearchError, OrbitSolveBackend};
 use crate::geom::known_polytopes;
 use crate::kkt::saddle_point_solver::solve_kkt_for;
 use crate::{ehz_capacity_pruned, ehz_capacity_unpruned};
@@ -96,13 +97,20 @@ fn symplectic_triangle_square_capacity() {
 #[test]
 fn simplex_minimum_orbits_collector() {
     let kp = known_polytopes::simplex();
-    let result = hk2017_minimum_orbits(
+    let (orbits, iterations) = solve_sigma_stream(
         &kp.polytope,
+        OrbitSolveBackend::SaddlePoint,
+        |visit| for_each_sigma_pruned(&kp.polytope, visit),
+    )
+    .expect("sigma solve stream should succeed on simplex");
+    let result = aggregate_orbits(
+        &kp.polytope,
+        orbits,
+        iterations,
         0.0,
         OrbitGuaranteeMode::BoundSafe,
-        OrbitSolveBackend::SaddlePoint,
     )
-    .expect("minimum-orbit collector should succeed on simplex");
+    .expect("orbit aggregation should succeed on simplex");
 
     assert!(!result.orbits.is_empty(), "collector must return at least one orbit");
     assert!(
@@ -122,11 +130,10 @@ fn simplex_minimum_orbits_collector() {
 #[test]
 fn simplex_minimum_orbits_projected_backend_unsupported() {
     let kp = known_polytopes::simplex();
-    let err = hk2017_minimum_orbits(
+    let err = solve_sigma_stream(
         &kp.polytope,
-        0.0,
-        OrbitGuaranteeMode::BoundSafe,
         OrbitSolveBackend::Projected,
+        |visit| for_each_sigma_pruned(&kp.polytope, visit),
     )
     .expect_err("projected backend is not wired into the shared collector yet");
     assert_eq!(err, OrbitSearchError::UnsupportedBackend);

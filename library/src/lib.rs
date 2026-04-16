@@ -52,18 +52,14 @@ pub use geom::skeleton::Skeleton;
 pub use geom::QhullError;
 
 // Capacity algorithms
-pub use algorithms::hk2017::{
-    hk2017_minimum_orbits,
-    hk2017_minimum_orbits_unpruned,
-};
 pub use algorithms::billiard::{
     billiard_capacity,
-    billiard_minimum_orbits,
     BilliardError,
     BilliardOrbitSearchError,
     BilliardResult,
 };
 pub use algorithms::{
+    aggregate_orbits,
     GeometricOrbitError,
     OrbitAdmissibility,
     OrbitGuaranteeMode,
@@ -87,36 +83,48 @@ pub use geom::test_utils;
 
 /// Explicit pruned HK2017 frontend on the shared orbit/result surface.
 pub fn ehz_capacity_pruned(polytope: &Polytope4D) -> Result<OrbitSearchResult, OrbitSearchError> {
-    hk2017_minimum_orbits(
+    let (orbits, iterations) = algorithms::orbit_search::solve_sigma_stream(
         polytope,
-        0.0,
-        OrbitGuaranteeMode::MinimaSafe,
         OrbitSolveBackend::SaddlePoint,
-    )
+        |visit| algorithms::hk2017::for_each_sigma_pruned(polytope, visit),
+    )?;
+    algorithms::orbit_search::aggregate_orbits_f64_only(0.0, orbits, iterations)
 }
 
 /// Explicit unpruned HK2017 frontend on the shared orbit/result surface.
 pub fn ehz_capacity_unpruned(
     polytope: &Polytope4D,
 ) -> Result<OrbitSearchResult, OrbitSearchError> {
-    hk2017_minimum_orbits_unpruned(
+    let (orbits, iterations) = algorithms::orbit_search::solve_sigma_stream(
         polytope,
-        0.0,
-        OrbitGuaranteeMode::MinimaSafe,
         OrbitSolveBackend::SaddlePoint,
-    )
+        |visit| algorithms::hk2017::for_each_sigma_unpruned(polytope, visit),
+    )?;
+    algorithms::orbit_search::aggregate_orbits_f64_only(0.0, orbits, iterations)
 }
 
 /// Explicit billiard frontend on the shared orbit/result surface.
 pub fn ehz_capacity_billiard(
     polytope: &Polytope4D,
 ) -> Result<OrbitSearchResult, algorithms::billiard::BilliardOrbitSearchError> {
-    billiard_minimum_orbits(
+    let mut input_error = None;
+    let solved = algorithms::orbit_search::solve_sigma_stream(
         polytope,
-        0.0,
-        OrbitGuaranteeMode::MinimaSafe,
         OrbitSolveBackend::SaddlePoint,
-    )
+        |visit| {
+            if let Err(err) = algorithms::billiard::for_each_sigma(polytope, visit) {
+                input_error = Some(err);
+            }
+        },
+    );
+
+    if let Some(err) = input_error {
+        return Err(BilliardOrbitSearchError::InvalidInput(err));
+    }
+
+    let (orbits, iterations) = solved.map_err(BilliardOrbitSearchError::Search)?;
+    algorithms::orbit_search::aggregate_orbits_f64_only(0.0, orbits, iterations)
+        .map_err(BilliardOrbitSearchError::Search)
 }
 
 /// Default capacity wrapper on the shared orbit/result surface.

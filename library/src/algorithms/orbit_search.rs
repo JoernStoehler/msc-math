@@ -116,7 +116,16 @@ impl OrbitSearchResult {
     ///
     /// The constructor guarantees `orbits` is nonempty.
     pub fn best_orbit(&self) -> &OrbitKktData {
-        &self.orbits[0]
+        self.orbits
+            .iter()
+            .filter(|orbit| {
+                matches!(
+                    orbit.admissibility,
+                    OrbitAdmissibility::AdmissibleF64 | OrbitAdmissibility::AdmissibleExact
+                )
+            })
+            .min_by(|a, b| a.action.total_cmp(&b.action))
+            .unwrap_or(&self.orbits[0])
     }
 
     /// Convenience scalar alias for ordinary callers that still think in terms
@@ -280,6 +289,9 @@ fn exact_orbit_from_sigma(
     old_xi: Option<f64>,
 ) -> Option<OrbitKktData> {
     let exact = solve_kkt_exact(polytope.dual_vertices(), sigma)?;
+    if exact.q_exact_f64 <= EPS_Q_POSITIVE {
+        return None;
+    }
     let beta: Vec<f64> = exact.beta.iter().map(rational_to_f64).collect();
     let beta_margin = beta.iter().copied().fold(f64::INFINITY, f64::min);
     let action = 0.5 / exact.q_exact_f64;
@@ -490,13 +502,11 @@ fn summarize_orbits(orbits: Vec<OrbitKktData>, iterations: u64) -> Result<OrbitS
     })
 }
 
-pub(crate) fn collect_orbits(
+pub(crate) fn solve_sigma_stream(
     polytope: &Polytope4D,
-    gap: f64,
-    mode: OrbitGuaranteeMode,
     backend: OrbitSolveBackend,
     mut emit_sigma: impl FnMut(&mut dyn FnMut(&[usize])),
-) -> Result<OrbitSearchResult, OrbitSearchError> {
+) -> Result<(Vec<OrbitKktData>, u64), OrbitSearchError> {
     let mut orbits = Vec::new();
     let mut iterations = 0u64;
     let mut fatal_error: Option<OrbitSearchError> = None;
@@ -527,11 +537,53 @@ pub(crate) fn collect_orbits(
         return Err(OrbitSearchError::NoAdmissibleOrbit);
     }
 
+    Ok((orbits, iterations))
+}
+
+/// Aggregate solved orbit candidates with explicit admissibility guarantees.
+///
+/// This is the non-default postprocessing building block. Callers that need a
+/// stronger guarantee than the ordinary `ehz_capacity*` routers should:
+///
+/// 1. enumerate sigma candidates with the algorithm-specific traversal helper,
+/// 2. solve them with [`solve_orbit_sigma`],
+/// 3. call this function with the chosen `gap` and `mode`.
+pub fn aggregate_orbits(
+    polytope: &Polytope4D,
+    mut orbits: Vec<OrbitKktData>,
+    iterations: u64,
+    gap: f64,
+    mode: OrbitGuaranteeMode,
+) -> Result<OrbitSearchResult, OrbitSearchError> {
+    if orbits.is_empty() {
+        return Err(OrbitSearchError::NoAdmissibleOrbit);
+    }
+
     resolve_orbits_for_guarantee(polytope, &mut orbits, mode)?;
     trim_orbits_to_gap(&mut orbits, gap)?;
     if mode == OrbitGuaranteeMode::AllSafe {
         resolve_orbits_for_guarantee(polytope, &mut orbits, mode)?;
     }
+    sort_orbits_by_lower_action(&mut orbits);
+    summarize_orbits(orbits, iterations)
+}
+
+/// Shared unresolved-f64 aggregation seam for the root scalar wrappers.
+///
+/// This keeps the public `ehz_capacity*` family on the f64 search path and
+/// surfaces unresolved intervals instead of forcing exact fallback on
+/// approximate geometries. Non-default callers that want stronger guarantees
+/// use [`aggregate_orbits`] explicitly.
+pub(crate) fn aggregate_orbits_f64_only(
+    gap: f64,
+    mut orbits: Vec<OrbitKktData>,
+    iterations: u64,
+) -> Result<OrbitSearchResult, OrbitSearchError> {
+    if orbits.is_empty() {
+        return Err(OrbitSearchError::NoAdmissibleOrbit);
+    }
+
+    trim_orbits_to_gap(&mut orbits, gap)?;
     sort_orbits_by_lower_action(&mut orbits);
     summarize_orbits(orbits, iterations)
 }

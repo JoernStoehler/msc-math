@@ -28,9 +28,6 @@ use crate::algorithms::facet_adjacency::{
 };
 use crate::algorithms::orbit_search::{
     collect_legacy_capacity,
-    collect_orbits,
-    OrbitGuaranteeMode,
-    OrbitSearchResult,
     OrbitSolveBackend,
 };
 use crate::geom::polytope::Polytope4D;
@@ -173,30 +170,27 @@ pub fn billiard_capacity(
     }))
 }
 
-/// Collect near-minimum billiard orbits for a Lagrangian product polytope.
-pub fn billiard_minimum_orbits(
+/// Visit every billiard sigma for a valid Lagrangian product polytope.
+pub fn for_each_sigma(
     polytope: &Polytope4D,
-    gap: f64,
-    mode: OrbitGuaranteeMode,
-    backend: OrbitSolveBackend,
-) -> Result<OrbitSearchResult, BilliardOrbitSearchError> {
-    let classification = classify_facets(polytope).map_err(BilliardOrbitSearchError::InvalidInput)?;
+    mut visit: impl FnMut(&[usize]),
+) -> Result<(), BilliardError> {
+    let classification = classify_facets(polytope)?;
     let adj = polytope.vertex_adjacency();
     let directed_adj = build_transition_matrix(polytope);
     let q_blocks = enumerate_blocks(&classification.q_indices, adj);
     let p_blocks = enumerate_blocks(&classification.p_indices, adj);
 
-    collect_orbits(polytope, gap, mode, backend, |visit| {
-        for k in 2..=3 {
-            enumerate_k_bounce_sigmas(k, &q_blocks, &p_blocks, |sigma| {
-                if !is_feasible_cycle(sigma, &directed_adj) {
-                    return;
-                }
-                visit(sigma);
-            });
-        }
-    })
-    .map_err(BilliardOrbitSearchError::Search)
+    for k in 2..=3 {
+        enumerate_k_bounce_sigmas(k, &q_blocks, &p_blocks, |sigma| {
+            if !is_feasible_cycle(sigma, &directed_adj) {
+                return;
+            }
+            visit(sigma);
+        });
+    }
+
+    Ok(())
 }
 
 // Tests for billiard capacity: correctness and cross-validation with hk2017.
@@ -263,13 +257,20 @@ mod tests {
     #[test]
     fn triangle_product_minimum_orbits_collector() {
         let kp = known_polytopes::lagrangian_triangle_product();
-        let result = billiard_minimum_orbits(
+        let (orbits, iterations) = crate::algorithms::orbit_search::solve_sigma_stream(
             &kp.polytope,
+            crate::algorithms::OrbitSolveBackend::SaddlePoint,
+            |visit| for_each_sigma(&kp.polytope, visit).expect("valid Lagrangian product"),
+        )
+        .expect("billiard sigma solve stream should succeed");
+        let result = crate::algorithms::aggregate_orbits(
+            &kp.polytope,
+            orbits,
+            iterations,
             0.0,
             crate::algorithms::OrbitGuaranteeMode::BoundSafe,
-            crate::algorithms::OrbitSolveBackend::SaddlePoint,
         )
-        .expect("billiard minimum-orbit collector should succeed");
+        .expect("billiard orbit aggregation should succeed");
 
         assert!(!result.orbits.is_empty(), "collector must return at least one orbit");
         assert!(result.min_action_lower <= result.min_action_upper);
