@@ -11,7 +11,9 @@
 //! - Pairs with 3 <= k <= m <= 6 (10 buckets)
 //! - 10 samples per bucket
 //! - Height range h in [0.8, 1.2]
-//! - Billiard algorithm only (Lagrangian products)
+//! - Explicit billiard reporting: this dataset writes billiard-native
+//!   `iterations` and `bounces`, so the root `symplectic::ehz_capacity`
+//!   wrapper would drop required output fields.
 //!
 //! Note: Uses shared RNG (no blake3 per-attempt seeding) because there is no
 //! generate_polytope equivalent for Lagrangian products. Database lookup is
@@ -147,7 +149,8 @@ fn main() {
                 }
             }
 
-            // Cache miss: compute capacity
+            // Cache miss: compute the specialized billiard result because this
+            // dataset records billiard-native iterations and bounce counts.
             let start_vol = Instant::now();
             let vol = volume(&polytope).expect("volume computation failed");
             let time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;

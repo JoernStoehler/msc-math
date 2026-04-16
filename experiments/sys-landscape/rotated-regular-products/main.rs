@@ -7,7 +7,10 @@
 //!    rotated-regular-products/lagrangian-products-7x7.jsonl, and
 //!    rotated-regular-products/lagrangian-products-<n>x<m>-6deg.jsonl
 //!
-//! Capacity algorithm: billiard (fast, production default for Lagrangian products).
+//! Capacity algorithm: explicit billiard. These outputs intentionally keep the
+//! specialized algorithm because the JSONL rows report billiard-native
+//! `iterations` and `bounces`, which the root `symplectic::ehz_capacity`
+//! wrapper does not expose.
 use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
@@ -52,6 +55,7 @@ struct SweepRow {
     time_capacity_ms: f64,
     area_q: f64,
     area_p: f64,
+    // These fields justify the explicit billiard call sites in this file.
     iterations: u64,
     bounces: usize,
 }
