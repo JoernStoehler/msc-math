@@ -42,6 +42,15 @@ queue. It is intentionally incremental: only the first packets are defined.
       frontend-specific `sigma` generation
     - explicit `OrbitSearchError::UnsupportedBackend` and
       `BilliardOrbitSearchError`
+  - Packet 3 slice 1 landed:
+    - `library/src/derivatives.rs` now defines `OrbitGradientA`,
+      `ClarkeSubdiffA`, and `DerivativeError`
+    - added derivative helpers on both clean seams:
+      - `(polytope, sigma, KktResult) -> OrbitGradientA`
+      - `(polytope, OrbitKktData) -> Result<OrbitGradientA, DerivativeError>`
+    - added primitive Clarke directional-derivative helpers
+    - first consumer migrations landed in `exp-combinatorial-cells` and
+      `exp-hko-local-maximum` (`hko-second-order`)
   - Verification after Packet 2 slice 1:
     - `cargo build -p symplectic --release`
     - `cargo test -p symplectic --release --lib`
@@ -51,6 +60,11 @@ queue. It is intentionally incremental: only the first packets are defined.
   - Verification after Packet 2 slice 4:
     - `cargo build -p symplectic --release`
     - `cargo test -p symplectic --release minimum_orbits -- --nocapture`
+    - `cargo test -p symplectic --release --lib`
+  - Verification after Packet 3 slice 1:
+    - `cargo test -p symplectic --release derivatives::tests -- --nocapture`
+    - `cargo build -p exp-combinatorial-cells --release`
+    - `cargo build -p exp-hko-local-maximum --release`
     - `cargo test -p symplectic --release --lib`
 
 ## Integration Model
@@ -136,14 +150,18 @@ queue. It is intentionally incremental: only the first packets are defined.
      - add `OrbitGradientA`
      - add orbit-level derivative helper(s)
      - add primitive Clarke-subdifferential helpers on orbit lists
-   - Why third:
-     - this gives immediate leverage for the duplicated experiment logic
-   - Verification:
-     - derivative-related library tests
-     - build at least one derivative-heavy experiment package
-   - Stop condition:
-     - if helper shape depends on unresolved consumer ergonomics not covered by
-       the design note
+  - Why third:
+    - this gives immediate leverage for the duplicated experiment logic
+  - Verification:
+    - derivative-related library tests
+    - build at least one derivative-heavy experiment package
+  - Stop condition:
+    - if helper shape depends on unresolved consumer ergonomics not covered by
+      the design note
+  - Status:
+    - in progress
+    - first slice landed: helper aliases/errors plus the first migrated
+      `KktResult`-level consumer package
 
 4. **First consumer migrations**
    - Scope:
@@ -160,9 +178,12 @@ queue. It is intentionally incremental: only the first packets are defined.
 
 ## Immediate Next Action
 
-- Start Packet 3 by adding the derivative/subdifferential helper surface on
-  top of `OrbitKktData`, then migrate at least one derivative-heavy consumer to
-  prove the orbit payload is actually usable.
+- Continue Packet 3 by migrating at least one subdifferential-heavy consumer to
+  the new helper surface, not just `KktResult`-level gradient consumers.
+- Decide whether the next highest-value seam is:
+  - orbit-payload consumers via `capacity_derivatives_a_from_orbit(...)`, or
+  - direct Clarke-subdifferential consumers via
+    `capacity_subgradients_a(...)` / `clarke_directional_derivative_a(...)`.
 - Keep projected-backend support out of Packet 3 unless the derivative packet
   directly needs it; it is a separate solver-contract follow-up.
 - Branch subagent worktrees from this branch only if Packet 3 splits into

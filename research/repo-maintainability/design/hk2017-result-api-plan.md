@@ -39,6 +39,12 @@ target API have already landed in code.
     seam. `OrbitSearchError` now includes an explicit
     `UnsupportedBackend` variant, and billiard wraps shared search failures in
     `BilliardOrbitSearchError`.
+  - Packet 3 first slice: `library/src/derivatives.rs` now defines
+    `OrbitGradientA`, `ClarkeSubdiffA`, and `DerivativeError`, plus helper
+    functions on both the current `KktResult` seam and the new
+    `OrbitKktData` seam. The first migrated consumer packages are
+    `exp-combinatorial-cells` and `exp-hko-local-maximum`
+    (`hko-second-order`).
 
 ## Goal
 
@@ -411,6 +417,11 @@ Notes on solver backends:
   multipliers.
 
 ```rust
+pub enum DerivativeError {
+    MissingClosureMultiplier,
+    EmptySubdifferential,
+}
+
 pub fn recover_and_verify_orbit(
     polytope: &Polytope4D,
     orbit: &OrbitKktData,
@@ -418,10 +429,16 @@ pub fn recover_and_verify_orbit(
 ```
 
 ```rust
+pub fn capacity_derivatives_a_from_kkt_result(
+    polytope: &Polytope4D,
+    sigma: &[usize],
+    kkt: &KktResult,
+) -> OrbitGradientA;
+
 pub fn capacity_derivatives_a_from_orbit(
     polytope: &Polytope4D,
     orbit: &OrbitKktData,
-) -> OrbitGradientA;
+) -> Result<OrbitGradientA, DerivativeError>;
 ```
 
 ```rust
@@ -431,7 +448,7 @@ pub type ClarkeSubdiffA = Vec<OrbitGradientA>;
 pub fn capacity_subgradients_a(
     polytope: &Polytope4D,
     orbits: &[OrbitKktData],
-) -> ClarkeSubdiffA;
+) -> Result<ClarkeSubdiffA, DerivativeError>;
 
 pub fn directional_derivative_a(
     grad: &[Vector4<f64>],
@@ -441,7 +458,7 @@ pub fn directional_derivative_a(
 pub fn clarke_directional_derivative_a(
     subdiff: &ClarkeSubdiffA,
     direction: &[Vector4<f64>],
-) -> Option<f64>;
+) -> Result<f64, DerivativeError>;
 ```
 
 The current codebase has these thin wrappers:
@@ -499,6 +516,11 @@ particular wrapper functions.
   many downstream consumers want Clarke-subdifferential computations rather than
   repeated manual glue around the low-level `capacity_derivatives_a(...)`
   inputs.
+- Current implementation nuance: the orbit-level helper returns
+  `Result<..., DerivativeError>` rather than a bare gradient because
+  `OrbitKktData.mu` is optional across backends. The repo now also exposes a
+  `capacity_derivatives_a_from_kkt_result(...)` helper because many current
+  experiment consumers sit on that seam today.
 - `recover_and_verify_orbit` should stay a separate transform. Eager geometric
   recovery is not justified on the hot path by the current profiling evidence.
 

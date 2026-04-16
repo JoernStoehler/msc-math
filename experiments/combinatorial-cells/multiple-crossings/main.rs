@@ -28,7 +28,10 @@ use symplectic::database::{self, PolytopeRecord, Source};
 use symplectic::algorithms::facet_adjacency::{build_transition_matrix, is_feasible_cycle};
 use symplectic::algorithms::hk2017::combinations;
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
-use symplectic::derivatives::{capacity_derivatives_a, volume_derivatives_a};
+use symplectic::derivatives::{
+    capacity_derivatives_a_from_kkt_result,
+    volume_derivatives_a,
+};
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::symplectic_form::omega0;
@@ -405,10 +408,8 @@ fn compute_sys_gradient_a(
     kkt: &symplectic::kkt::saddle_point_solver::KktResult,
     perm: &[usize],
 ) -> Vec<Vector4<f64>> {
-    let duals = polytope.dual_vertices_f64();
-
     let d_vol_a = volume_derivatives_a(polytope);
-    let d_cap_a = capacity_derivatives_a(&kkt.beta, kkt.q_corrected, &kkt.mu, perm, duals);
+    let d_cap_a = capacity_derivatives_a_from_kkt_result(polytope, perm, kkt);
 
     d_vol_a
         .iter()

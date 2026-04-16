@@ -30,7 +30,10 @@ use symplectic::algorithms::facet_adjacency::{build_transition_matrix, is_feasib
 use symplectic::algorithms::hk2017::combinations;
 use symplectic::algorithms::hk2017::ehz_capacity;
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
-use symplectic::derivatives::{capacity_derivatives_a, volume_derivatives_a};
+use symplectic::derivatives::{
+    capacity_derivatives_a_from_kkt_result,
+    volume_derivatives_a,
+};
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::volume::volume;
@@ -200,13 +203,10 @@ fn orbit_sys_gradient_a(
         ),
     };
 
-    let duals = polytope.dual_vertices_f64();
-    let d_cap_a = capacity_derivatives_a(
-        &orbit.beta,
-        orbit.q_value,
-        &kkt_result.mu,
+    let d_cap_a = capacity_derivatives_a_from_kkt_result(
+        polytope,
         &orbit.permutation,
-        duals,
+        &kkt_result,
     );
 
     d_vol_a
