@@ -67,6 +67,10 @@ pub struct OrbitRecovery {
     /// Near zero for a valid closed orbit.
     pub closure_error: f64,
 
+    /// Dimension of the affine solution space for the recovered base point.
+    /// Computed as 4 - rank(N_S) from the active-facet linear system.
+    pub solution_dim: usize,
+
     /// Facet indices visited in order (copy of the best permutation sigma).
     pub facet_sequence: Vec<usize>,
 }
@@ -216,6 +220,7 @@ pub fn recover_and_verify(
         max_violation,
         action,
         closure_error,
+        solution_dim,
         facet_sequence: sigma.clone(),
     })
 }
