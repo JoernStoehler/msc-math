@@ -31,7 +31,10 @@ use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::path::PathBuf;
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
 use symplectic::database::{load, save, DualVerticesKey, PolytopeRecord, SigmaAction};
-use symplectic::derivatives::{capacity_derivatives_a, volume_derivatives_a};
+use symplectic::derivatives::{
+    capacity_derivatives_a_from_kkt_result,
+    volume_derivatives_a,
+};
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::volume::volume;
@@ -278,11 +281,10 @@ fn gradient_ascent_phase_limited(
         let kkt = solve_kkt_for(&current, &best_perm).feasible()?;
         let vol = volume(&current).ok().filter(|&v| v > 0.0)?;
         let sys = cap * cap / (2.0 * vol);
-
         let duals = current.dual_vertices_f64();
+
         let d_vol_a = volume_derivatives_a(&current);
-        let d_cap_a =
-            capacity_derivatives_a(&kkt.beta, kkt.q_corrected, &kkt.mu, &best_perm, duals);
+        let d_cap_a = capacity_derivatives_a_from_kkt_result(&current, &best_perm, &kkt);
         let d_sys_a: Vec<Vector4<f64>> = d_vol_a
             .iter()
             .zip(d_cap_a.iter())

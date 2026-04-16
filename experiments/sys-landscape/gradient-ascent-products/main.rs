@@ -41,9 +41,12 @@ use std::collections::HashMap;
 use std::path::Path;
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
+use symplectic::derivatives::{
+    capacity_derivatives_a_from_kkt_result,
+    volume_derivatives_a,
+};
 use symplectic::algorithms::billiard::billiard_capacity;
 use symplectic::algorithms::billiard::facet_classification::{classify_facets, FacetClassification};
-use symplectic::derivatives::{capacity_derivatives_a, volume_derivatives_a};
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::random_polygon_2d;
 use symplectic::geom::polytope::Polytope4D;
@@ -194,12 +197,11 @@ fn gradient_ascent(
         let kkt = solve_kkt_for(&current, &best_perm).feasible()?;
         let vol = volume(&current).ok().filter(|&v| v > 0.0)?;
         let sys = cap * cap / (2.0 * vol);
+        let duals = current.dual_vertices_f64();
 
         // 2. Gradient d(sys)/d(a_k)
-        let duals = current.dual_vertices_f64();
         let d_vol_a = volume_derivatives_a(&current);
-        let d_cap_a =
-            capacity_derivatives_a(&kkt.beta, kkt.q_corrected, &kkt.mu, &best_perm, duals);
+        let d_cap_a = capacity_derivatives_a_from_kkt_result(&current, &best_perm, &kkt);
         let mut d_sys_a: Vec<Vector4<f64>> = d_vol_a
             .iter()
             .zip(d_cap_a.iter())

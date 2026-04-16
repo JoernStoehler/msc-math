@@ -51,6 +51,10 @@ queue. It is intentionally incremental: only the first packets are defined.
     - added primitive Clarke directional-derivative helpers
     - first consumer migrations landed in `exp-combinatorial-cells` and
       `exp-hko-local-maximum` (`hko-second-order`)
+  - Packet 3 slice 2 landed:
+    - widened the same `KktResult`-level derivative-helper migration across the
+      remaining buildable ascent binaries in `exp-sys-landscape` and
+      `exp-hko-local-maximum` (`hko-cut-and-ascent`)
   - Verification after Packet 2 slice 1:
     - `cargo build -p symplectic --release`
     - `cargo test -p symplectic --release --lib`
@@ -66,6 +70,9 @@ queue. It is intentionally incremental: only the first packets are defined.
     - `cargo build -p exp-combinatorial-cells --release`
     - `cargo build -p exp-hko-local-maximum --release`
     - `cargo test -p symplectic --release --lib`
+  - Verification after Packet 3 slice 2:
+    - `cargo build -p exp-sys-landscape --release`
+    - `cargo build -p exp-hko-local-maximum --release`
 
 ## Integration Model
 
@@ -160,8 +167,8 @@ queue. It is intentionally incremental: only the first packets are defined.
       the design note
   - Status:
     - in progress
-    - first slice landed: helper aliases/errors plus the first migrated
-      `KktResult`-level consumer package
+    - first slices landed: helper aliases/errors plus migrated
+      `KktResult`-level consumers across the main buildable ascent packages
 
 4. **First consumer migrations**
    - Scope:

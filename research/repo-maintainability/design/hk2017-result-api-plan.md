@@ -45,6 +45,9 @@ target API have already landed in code.
     `OrbitKktData` seam. The first migrated consumer packages are
     `exp-combinatorial-cells` and `exp-hko-local-maximum`
     (`hko-second-order`).
+  - Packet 3 second slice: the same `KktResult`-level helper now backs the
+    buildable ascent binaries in `exp-sys-landscape` and
+    `exp-hko-local-maximum` (`hko-cut-and-ascent`) as well.
 
 ## Goal
 
