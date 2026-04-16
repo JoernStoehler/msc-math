@@ -165,6 +165,21 @@ queue. It is intentionally incremental: only the first packets are defined.
     - `ARCHITECTURE.md` now describes the root capacity family in terms of
       `OrbitSearchResult` / `OrbitKktData`, while keeping the deeper HK2017
       `EhzResult` path marked as a migration-era legacy surface
+  - Packet 3 slice 14 landed:
+    - deleted the deeper HK2017 `EhzResult` family and the old
+      `algorithms::hk2017::ehz_capacity*` entrypoints
+    - migrated the remaining library-test, verification, numerics, and
+      benchmark callers onto:
+      - root explicit wrappers (`ehz_capacity_pruned`,
+        `ehz_capacity_unpruned`)
+      - `OrbitSearchResult` accessors (`capacity()`, `best_sigma()`,
+        `best_beta()`, `best_subset()`, `iterations`)
+    - rewrote `experiments/numerics/unknown-predicates/**` to consume the new
+      interval-rich result surface instead of the deleted
+      `capacity_uncertain` / `numerical_gap()` contract
+    - moved `experiments/verification/algorithm-comparison/ablation/main.rs`
+      onto an experiment-local `AblationResult` so the experiment now owns its
+      own variant-report schema instead of borrowing library result types
   - Parallel follow-up now in flight on sub-worktrees branched from this
     integration trunk:
     - `capacity-orbit-recovery-refactor`:

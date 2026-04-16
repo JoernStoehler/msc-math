@@ -1,20 +1,15 @@
 //! Phase 1: Check whether UNKNOWN admissibility predicates appear in practice.
 //!
 //! Regenerates the random-sample and lagrangian-products datasets using the same
-//! seeds/parameters, then records the certified vs uncertain capacity for each
-//! polytope. If `numerical_gap > 0` for any polytope, an UNKNOWN predicate
-//! affected the capacity — meaning Phase 2 (high-precision re-solve) is needed.
+//! seeds/parameters, then records the explicit-search action interval and
+//! admissibility margin for each polytope. If the HK2017 interval is nontrivial
+//! or the returned orbits have a tiny beta margin, the explicit path is near an
+//! UNKNOWN admissibility boundary and Phase 2 (high-precision re-solve) is needed.
 //!
 //! Architecture:
 //! 1. `cargo run --bin unknown_predicates --release` generates dataset
 //! 2. Writes to unknown-predicates/unknown-predicates.jsonl
 //! 3. Python script reads JSONL, summarizes findings
-//!
-//! Capacity routing is intentionally explicit here:
-//! - random generic polytopes use pruned HK2017
-//! - Lagrangian products use billiard
-//! This experiment measures UNKNOWN/uncertain predicates on each concrete
-//! algorithm path rather than the root auto wrapper.
 
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
@@ -22,12 +17,11 @@ use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
-use symplectic::geom::polygon::{regular_polygon_2d, rotate_polygon_2d};
-use symplectic::random::generate_random_polytopes;
-use symplectic::algorithms::billiard::billiard_capacity;
-use symplectic::algorithms::hk2017::ehz_capacity;
 use symplectic::geom::lagrangian_product::lagrangian_product;
+use symplectic::geom::polygon::{regular_polygon_2d, rotate_polygon_2d};
 use symplectic::geom::volume::volume;
+use symplectic::random::generate_random_polytopes;
+use symplectic::{billiard_capacity, ehz_capacity_pruned};
 
 // ---------------------------------------------------------------------------
 // Random-sweep parameters (must match random_sweep.rs exactly)
@@ -77,15 +71,18 @@ struct Row {
     name: String,
     algorithm: String,
     facet_count: usize,
-    capacity: f64,
-    capacity_uncertain: f64,
-    numerical_gap: f64,
-    has_unknown: bool,
+    min_action: f64,
+    min_action_lower: f64,
+    min_action_upper: f64,
     beta_min: f64,
+    has_unknown: bool,
     volume: f64,
     sys: f64,
     time_ms: f64,
 }
+
+const BETA_MARGIN_TAU: f64 = 1e-12;
+const ACTION_INTERVAL_TAU: f64 = 1e-12;
 
 fn main() {
     let t0 = Instant::now();
@@ -99,7 +96,7 @@ fn main() {
     let mut total_unknowns = 0usize;
 
     // -----------------------------------------------------------------------
-    // Part 1: Random-sweep polytopes (ehz_capacity)
+    // Part 1: Random-sweep polytopes (explicit pruned HK2017 path)
     // -----------------------------------------------------------------------
     println!("=== Part 1: Random-sweep polytopes ===\n");
 
@@ -113,25 +110,24 @@ fn main() {
             let vol = volume(p).expect("volume computation failed");
 
             let start = Instant::now();
-            let result = ehz_capacity(p).expect("ehz_capacity returned None");
+            let result = ehz_capacity_pruned(p).expect("ehz_capacity_pruned failed");
             let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
-            let gap = result.result.numerical_gap();
             let beta_min = result
-                .result
-                .best_beta
+                .orbits
                 .iter()
-                .cloned()
+                .map(|orbit| orbit.beta_margin)
                 .fold(f64::INFINITY, f64::min);
-            let has_unknown = gap > 0.0;
-            let sys = result.result.capacity * result.result.capacity / (2.0 * vol);
+            let has_unknown = (result.min_action_upper - result.min_action_lower) > ACTION_INTERVAL_TAU
+                || beta_min <= BETA_MARGIN_TAU;
+            let sys = result.min_action * result.min_action / (2.0 * vol);
 
             if has_unknown {
                 total_unknowns += 1;
                 eprintln!(
-                    "  UNKNOWN: random_F{facet_count}_{i}: gap={gap:.2e}, \
-                     cap={:.8}, cap_unc={:.8}, beta_min={beta_min:.2e}",
-                    result.result.capacity, result.result.capacity_uncertain
+                    "  UNKNOWN: random_F{facet_count}_{i}: action=[{:.8}, {:.8}], \
+                     beta_min={beta_min:.2e}",
+                    result.min_action_lower, result.min_action_upper
                 );
             }
 
@@ -140,11 +136,11 @@ fn main() {
                 name: format!("random_F{facet_count}_{i}"),
                 algorithm: "ehz_pruned".to_string(),
                 facet_count,
-                capacity: result.result.capacity,
-                capacity_uncertain: result.result.capacity_uncertain,
-                numerical_gap: gap,
-                has_unknown,
+                min_action: result.min_action,
+                min_action_lower: result.min_action_lower,
+                min_action_upper: result.min_action_upper,
                 beta_min,
+                has_unknown,
                 volume: vol,
                 sys,
                 time_ms,
@@ -154,9 +150,7 @@ fn main() {
             total_rows += 1;
         }
 
-        println!(
-            "  F={facet_count:2}: {n_samples} polytopes processed"
-        );
+        println!("  F={facet_count:2}: {n_samples} polytopes processed");
     }
 
     // -----------------------------------------------------------------------
@@ -164,7 +158,6 @@ fn main() {
     // -----------------------------------------------------------------------
     println!("\n=== Part 2: Lagrangian-products ===\n");
 
-    // Pentagon 5×5 sweep
     {
         let steps =
             ((PENTAGON_END_DEG - PENTAGON_START_DEG) / PENTAGON_STEP_DEG).round() as usize;
@@ -187,22 +180,21 @@ fn main() {
                 .expect("billiard returned None");
             let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
-            let gap = result.result.capacity - result.result.capacity_uncertain;
+            let min_action = result.result.capacity;
             let beta_min = result
                 .result
                 .best_beta
                 .iter()
                 .cloned()
                 .fold(f64::INFINITY, f64::min);
-            let has_unknown = gap > 0.0;
-            let sys = result.result.capacity * result.result.capacity / (2.0 * vol);
+            let has_unknown = beta_min <= BETA_MARGIN_TAU;
+            let sys = min_action * min_action / (2.0 * vol);
 
             if has_unknown {
                 total_unknowns += 1;
                 eprintln!(
-                    "  UNKNOWN: pentagon_5x5_{angle_deg:.0}deg: gap={gap:.2e}, \
-                     cap={:.8}, cap_unc={:.8}, beta_min={beta_min:.2e}",
-                    result.result.capacity, result.result.capacity_uncertain
+                    "  UNKNOWN: pentagon_5x5_{angle_deg:.0}deg: action={min_action:.8}, \
+                     beta_min={beta_min:.2e}"
                 );
             }
 
@@ -211,11 +203,11 @@ fn main() {
                 name: format!("pentagon_5x5_{angle_deg:.0}deg"),
                 algorithm: "billiard".to_string(),
                 facet_count: 10,
-                capacity: result.result.capacity,
-                capacity_uncertain: result.result.capacity_uncertain,
-                numerical_gap: gap,
-                has_unknown,
+                min_action,
+                min_action_lower: min_action,
+                min_action_upper: min_action,
                 beta_min,
+                has_unknown,
                 volume: vol,
                 sys,
                 time_ms,
@@ -228,7 +220,6 @@ fn main() {
         println!("  pentagon 5×5: {} angles processed", steps + 1);
     }
 
-    // Polygon pair sweeps
     for &(n1, n2) in PAIRS {
         let end_deg = 180.0 / lcm(n1, n2) as f64;
         let angles = sweep_angles(0.0, end_deg, PAIR_STEP_DEG);
@@ -250,22 +241,21 @@ fn main() {
                 .expect("billiard returned None");
             let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
-            let gap = result.result.capacity - result.result.capacity_uncertain;
+            let min_action = result.result.capacity;
             let beta_min = result
                 .result
                 .best_beta
                 .iter()
                 .cloned()
                 .fold(f64::INFINITY, f64::min);
-            let has_unknown = gap > 0.0;
-            let sys = result.result.capacity * result.result.capacity / (2.0 * vol);
+            let has_unknown = beta_min <= BETA_MARGIN_TAU;
+            let sys = min_action * min_action / (2.0 * vol);
 
             if has_unknown {
                 total_unknowns += 1;
                 eprintln!(
-                    "  UNKNOWN: pair_{n1}x{n2}_{angle_deg:.0}deg: gap={gap:.2e}, \
-                     cap={:.8}, cap_unc={:.8}, beta_min={beta_min:.2e}",
-                    result.result.capacity, result.result.capacity_uncertain
+                    "  UNKNOWN: pair_{n1}x{n2}_{angle_deg:.0}deg: action={min_action:.8}, \
+                     beta_min={beta_min:.2e}"
                 );
             }
 
@@ -274,11 +264,11 @@ fn main() {
                 name: format!("pair_{n1}x{n2}_{angle_deg:.0}deg"),
                 algorithm: "billiard".to_string(),
                 facet_count: n1 + n2,
-                capacity: result.result.capacity,
-                capacity_uncertain: result.result.capacity_uncertain,
-                numerical_gap: gap,
-                has_unknown,
+                min_action,
+                min_action_lower: min_action,
+                min_action_upper: min_action,
                 beta_min,
+                has_unknown,
                 volume: vol,
                 sys,
                 time_ms,
@@ -291,9 +281,6 @@ fn main() {
         println!("  pair ({n1},{n2}): {} angles processed", angles.len());
     }
 
-    // -----------------------------------------------------------------------
-    // Summary
-    // -----------------------------------------------------------------------
     writer.flush().expect("flush output");
     let total_time = t0.elapsed().as_secs_f64();
 
@@ -305,10 +292,10 @@ fn main() {
 
     if total_unknowns == 0 {
         println!("\nResult: Algorithm is empirically exact at f64 precision.");
-        println!("No UNKNOWN predicates appeared across the full dataset.");
+        println!("No borderline admissibility cases appeared across the full dataset.");
         println!("Phase 2 (high-precision re-solve) is NOT needed.");
     } else {
-        println!("\nResult: {total_unknowns} UNKNOWN predicate(s) found.");
+        println!("\nResult: {total_unknowns} borderline admissibility case(s) found.");
         println!("Phase 2 (high-precision re-solve) is needed for affected polytopes.");
         println!("See JSONL for details (has_unknown=true entries).");
     }

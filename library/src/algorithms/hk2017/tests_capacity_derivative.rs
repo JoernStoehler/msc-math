@@ -2,7 +2,7 @@
 //!
 //! Split from mod.rs to keep module routing and docs short.
 
-use super::*;
+use crate::ehz_capacity_pruned as ehz_capacity;
 use crate::geom::known_polytopes;
 use crate::geom::polytope::Polytope4D;
 use crate::geom::volume::volume;
@@ -77,12 +77,10 @@ fn fd_capacity_derivatives(normals: &[Vector4<f64>], heights: &[f64]) -> Vec<f64
                 .expect("perturbed polytope -eps");
             let cap_plus = ehz_capacity(&p_plus)
                 .expect("capacity +eps")
-                .result
-                .capacity;
+                .capacity();
             let cap_minus = ehz_capacity(&p_minus)
                 .expect("capacity -eps")
-                .result
-                .capacity;
+                .capacity();
             (cap_plus - cap_minus) / (2.0 * FD_EPS_CAP)
         })
         .collect()
@@ -248,8 +246,7 @@ fn euler_homogeneity_capacity() {
         let (normals, heights) = normals_and_heights(&kp.polytope);
         let cap = ehz_capacity(&kp.polytope)
             .expect("capacity")
-            .result
-            .capacity;
+            .capacity();
 
         let d_cap = fd_capacity_derivatives(&normals, &heights);
         let euler_sum: f64 = heights.iter().zip(&d_cap).map(|(h, dc)| h * dc).sum();
@@ -327,8 +324,7 @@ fn fd_sys_height_euler() {
 
         let cap = ehz_capacity(&kp.polytope)
             .expect("capacity")
-            .result
-            .capacity;
+            .capacity();
         let vol = volume(&kp.polytope).expect("volume");
         let sys = cap * cap / (2.0 * vol);
 
@@ -339,8 +335,8 @@ fn fd_sys_height_euler() {
                     perturbed_polytope(&normals, &heights, k, FD_EPS_CAP).expect("perturbed +eps");
                 let p_minus =
                     perturbed_polytope(&normals, &heights, k, -FD_EPS_CAP).expect("perturbed -eps");
-                let cap_p = ehz_capacity(&p_plus).expect("cap +eps").result.capacity;
-                let cap_m = ehz_capacity(&p_minus).expect("cap -eps").result.capacity;
+                let cap_p = ehz_capacity(&p_plus).expect("cap +eps").capacity();
+                let cap_m = ehz_capacity(&p_minus).expect("cap -eps").capacity();
                 let vol_p = volume(&p_plus).expect("vol +eps");
                 let vol_m = volume(&p_minus).expect("vol -eps");
                 let sys_p = cap_p * cap_p / (2.0 * vol_p);

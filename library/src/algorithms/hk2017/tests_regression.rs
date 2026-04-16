@@ -2,7 +2,7 @@
 //!
 //! Split from mod.rs to keep long regression suites in dedicated files.
 
-use super::*;
+use crate::{ehz_capacity_pruned, ehz_capacity_unpruned};
 use crate::geom::lagrangian_product::lagrangian_product;
 use crate::geom::polygon::{regular_polygon_2d, rotate_polygon_2d};
 use crate::kkt::qp_assembly::build_augmented_system;
@@ -27,9 +27,9 @@ fn kkt_nullspace_square_square_zero() {
 
     let result = ehz_capacity_unpruned(&polytope).expect("(4,4) at theta=0 should have capacity");
     assert!(
-        (result.result.capacity - 2.0).abs() < 1e-6,
+        (result.capacity() - 2.0).abs() < 1e-6,
         "(4,4) at theta=0: got {}, expected 2.0",
-        result.result.capacity
+        result.capacity()
     );
 }
 
@@ -52,9 +52,9 @@ fn kkt_nullspace_square_square_near_zero() {
         ehz_capacity_unpruned(&polytope).expect("(4,4) at theta=0.125 should have capacity");
     // Capacity should be continuous near theta=0 -> close to 2.0.
     assert!(
-        (result.result.capacity - 2.0).abs() < 0.01,
+        (result.capacity() - 2.0).abs() < 0.01,
         "(4,4) at theta=0.125: got {}, expected ~2.0 (was 3.991 before fix)",
-        result.result.capacity
+        result.capacity()
     );
 }
 
@@ -78,9 +78,9 @@ fn kkt_nullspace_square_square_45deg() {
 
     let sqrt2_times2 = 2.0 * std::f64::consts::SQRT_2;
     assert!(
-        (result_hk.result.capacity - sqrt2_times2).abs() < 1e-6,
+        (result_hk.capacity() - sqrt2_times2).abs() < 1e-6,
         "(4,4) at theta=45 HK2017: got {}, expected 2*sqrt(2) ~ {}",
-        result_hk.result.capacity,
+        result_hk.capacity(),
         sqrt2_times2
     );
     assert!(
@@ -110,9 +110,9 @@ fn kkt_nullspace_triangle_square_zero() {
 
     let expected = 3.0 * std::f64::consts::SQRT_2 / 2.0; // 3*sqrt(2)/2 ~ 2.121
     assert!(
-        (result.result.capacity - expected).abs() < 1e-6,
+        (result.capacity() - expected).abs() < 1e-6,
         "(3,4) at theta=0: got {}, expected 3*sqrt(2)/2 ~ {} (was None before fix)",
-        result.result.capacity,
+        result.capacity(),
         expected
     );
 }
@@ -246,21 +246,21 @@ fn pentagon_capacity() {
     use crate::geom::volume::volume;
 
     let kp = known_polytopes::hko_pentagon();
-    let result = ehz_capacity(&kp.polytope).expect("pentagon capacity");
+    let result = ehz_capacity_pruned(&kp.polytope).expect("pentagon capacity");
 
     assert!(
-        (result.result.capacity - kp.capacity).abs() < 1e-6,
+        (result.capacity() - kp.capacity).abs() < 1e-6,
         "pentagon: got {}, expected {}",
-        result.result.capacity,
+        result.capacity(),
         kp.capacity
     );
 
     // Verify sys > 1 (counterexample property).
     let vol = volume(&kp.polytope).expect("volume computation failed");
-    let sys = result.result.capacity * result.result.capacity / (2.0 * vol);
+    let sys = result.capacity() * result.capacity() / (2.0 * vol);
     eprintln!(
         "Pentagon: capacity={:.6}, volume={:.6}, sys={:.6}",
-        result.result.capacity, vol, sys
+        result.capacity(), vol, sys
     );
     assert!(sys > 1.0, "pentagon should have sys > 1, got {}", sys);
 }

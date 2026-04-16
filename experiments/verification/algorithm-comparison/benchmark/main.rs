@@ -17,10 +17,10 @@
 //! fixtures. The root auto wrapper would hide that per-algorithm comparison.
 
 use symplectic::algorithms::billiard::billiard_capacity;
+use symplectic::{ehz_capacity_pruned, ehz_capacity_unpruned};
 use symplectic::random::generate_random_polytopes;
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::random_polygon_2d;
-use symplectic::algorithms::hk2017::{ehz_capacity_unpruned, ehz_capacity};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use serde::{Deserialize, Serialize};
@@ -98,7 +98,7 @@ fn main() {
         for (i, p) in polytopes.iter().enumerate() {
             // Pruned (always)
             let t_start = Instant::now();
-            let result_pruned = ehz_capacity(p).expect("pruned failed");
+            let result_pruned = ehz_capacity_pruned(p).expect("pruned failed");
             let time_pruned_ms = t_start.elapsed().as_secs_f64() * 1000.0;
 
             // Unpruned (only if F <= 7)
@@ -106,7 +106,7 @@ fn main() {
                 let t_start = Instant::now();
                 let result = ehz_capacity_unpruned(p).expect("unpruned failed");
                 let time_ms = t_start.elapsed().as_secs_f64() * 1000.0;
-                (Some(time_ms), Some(result.result.capacity), Some(result.result.iterations))
+                (Some(time_ms), Some(result.capacity()), Some(result.iterations))
             } else {
                 (None, None, None)
             };
@@ -117,8 +117,8 @@ fn main() {
                 facet_count: p.facet_count(),
                 dual_vertices: p.dual_vertices_f64().iter().map(|a| [a[0], a[1], a[2], a[3]]).collect(),
                 time_pruned_ms,
-                capacity_pruned: result_pruned.result.capacity,
-                iterations_pruned: result_pruned.result.iterations,
+                capacity_pruned: result_pruned.capacity(),
+                iterations_pruned: result_pruned.iterations,
                 time_unpruned_ms,
                 capacity_unpruned,
                 iterations_unpruned,
@@ -147,7 +147,7 @@ fn main() {
 
             // Pruned
             let t_start = Instant::now();
-            let result_pruned = ehz_capacity(&p).expect("pruned failed");
+            let result_pruned = ehz_capacity_pruned(&p).expect("pruned failed");
             let time_pruned_ms = t_start.elapsed().as_secs_f64() * 1000.0;
 
             // Billiard
@@ -163,8 +163,8 @@ fn main() {
                 facet_count: p.facet_count(),
                 dual_vertices: p.dual_vertices_f64().iter().map(|a| [a[0], a[1], a[2], a[3]]).collect(),
                 time_pruned_ms,
-                capacity_pruned: result_pruned.result.capacity,
-                iterations_pruned: result_pruned.result.iterations,
+                capacity_pruned: result_pruned.capacity(),
+                iterations_pruned: result_pruned.iterations,
                 time_unpruned_ms: None,
                 capacity_unpruned: None,
                 iterations_unpruned: None,

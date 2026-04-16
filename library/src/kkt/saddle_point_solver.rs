@@ -905,8 +905,8 @@ mod tests {
             })
             .collect();
         let pp = crate::geom::polytope::Polytope4D::from_f64(perturbed).expect("perturbed LP(4,4)");
-        let result = crate::algorithms::hk2017::ehz_capacity(&pp);
-        assert!(result.is_some(), "ehz_capacity should succeed on perturbed LP(4,4)");
+        let result = crate::ehz_capacity_pruned(&pp);
+        assert!(result.is_ok(), "ehz_capacity should succeed on perturbed LP(4,4)");
     }
 
     // ── Constraint satisfaction ──

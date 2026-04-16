@@ -6,7 +6,7 @@
 //! ## Architecture
 //!
 //! - Add HK2017 algorithm behavior in:
-//!   - [`api`] for public entry points and result types,
+//!   - [`api`] for public orbit-collector entry points,
 //!   - [`enumeration`] for subset/permutation traversal,
 //!   - [`combinatorics`] for combination generation.
 //! - Add regression or property tests in dedicated `tests_*.rs` files in this
@@ -20,11 +20,8 @@ mod combinatorics;
 mod enumeration;
 
 pub use api::{
-    ehz_capacity,
-    ehz_capacity_unpruned,
     hk2017_minimum_orbits,
     hk2017_minimum_orbits_unpruned,
-    EhzResult,
 };
 pub use combinatorics::combinations;
 

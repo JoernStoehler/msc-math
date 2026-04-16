@@ -320,10 +320,10 @@ mod tests {
     fn capacity_derivatives_from_kkt_result_matches_primitive() {
         let kp = known_polytopes::simplex();
         let polytope = &kp.polytope;
-        let sigma = crate::algorithms::hk2017::ehz_capacity(polytope)
+        let sigma = crate::ehz_capacity_pruned(polytope)
             .expect("simplex should have a certified best orbit")
-            .result
-            .best_permutation;
+            .best_sigma()
+            .to_vec();
         let kkt = solve_kkt_for(polytope, &sigma)
             .feasible()
             .expect("best simplex orbit should re-solve");
@@ -442,9 +442,9 @@ mod tests {
     fn find_best_orbit(
         polytope: &Polytope4D,
     ) -> (f64, Vec<f64>, Vec<usize>, Vec<f64>, f64) {
-        let ehz = crate::algorithms::hk2017::ehz_capacity(polytope)
+        let ehz = crate::ehz_capacity_pruned(polytope)
             .expect("ehz_capacity should find an orbit on test polytopes");
-        let perm = ehz.result.best_permutation;
+        let perm = ehz.best_sigma().to_vec();
         let kkt = solve_kkt_for(polytope, &perm)
             .feasible()
             .expect("solve_kkt_for should succeed on the best permutation");

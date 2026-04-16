@@ -6,13 +6,13 @@
 //!
 //! Designed for use with `cargo flamegraph` or `perf record`.
 //!
-//! The explicit HK2017 import is intentional: this profiling harness targets
-//! the general HK2017 path specifically rather than the root auto wrapper.
+//! The explicit root wrappers are intentional: this profiling harness targets
+//! the pruned HK2017 path directly rather than the root auto dispatcher.
 
 use nalgebra::Vector4;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
-use symplectic::algorithms::hk2017::ehz_capacity;
+use symplectic::ehz_capacity_pruned;
 use symplectic::geom::volume::volume;
 use symplectic::random::generate_random_polytopes;
 
@@ -41,18 +41,18 @@ fn main() {
         .expect("construction failed");
 
         // Phase 2: Capacity (enumeration, pruning, KKT solve, accumulation)
-        let cap_result = ehz_capacity(&p).expect("capacity failed");
+        let cap_result = ehz_capacity_pruned(&p).expect("capacity failed");
 
         // Phase 3: Volume (qhull subprocess)
         let vol = volume(&p).expect("volume failed");
 
         // Phase 4: Systolic ratio
-        let sys = cap_result.result.capacity.powi(2) / (2.0 * vol);
+        let sys = cap_result.capacity().powi(2) / (2.0 * vol);
 
         if i == 0 {
             eprintln!(
                 "  F={f}: capacity={:.6}, volume={:.6}, sys={:.6}",
-                cap_result.result.capacity, vol, sys
+                cap_result.capacity(), vol, sys
             );
         }
     }

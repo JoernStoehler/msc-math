@@ -4,6 +4,7 @@
 
 use crate::geom::polytope::Polytope4D;
 use nalgebra::Matrix4;
+use crate::ehz_capacity_unpruned;
 
 // ── Symplectomorphism invariance ──
 
@@ -19,14 +20,12 @@ fn capacity_symplectomorphism_invariance_simplex() {
     let m = rotate_q1_p1(theta);
     let transformed = apply_symplectic_linear_map(&kp.polytope, &m);
 
-    let base_cap = super::ehz_capacity_unpruned(&kp.polytope)
+    let base_cap = ehz_capacity_unpruned(&kp.polytope)
         .expect("simplex capacity")
-        .result
-        .capacity;
-    let transformed_cap = super::ehz_capacity_unpruned(&transformed)
+        .capacity();
+    let transformed_cap = ehz_capacity_unpruned(&transformed)
         .expect("transformed simplex capacity")
-        .result
-        .capacity;
+        .capacity();
     let relative_error = ((transformed_cap - base_cap) / base_cap).abs();
     assert!(
         relative_error < 1e-6,

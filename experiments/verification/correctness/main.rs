@@ -42,7 +42,7 @@ use symplectic::geom::known_polytopes::{
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::random_polygon_2d;
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::algorithms::hk2017::{ehz_capacity_unpruned, ehz_capacity};
+use symplectic::{ehz_capacity_pruned, ehz_capacity_unpruned};
 use nalgebra::Matrix4;
 use rand::{Rng, SeedableRng};
 use rand_chacha::ChaCha8Rng;
@@ -93,8 +93,8 @@ fn main() {
 
     // Compute capacities for base polytopes (10 pruned + 10 unpruned + 5 billiard)
     for (i, p) in base_polytopes.iter().enumerate() {
-        let pruned = ehz_capacity(p).expect("pruned").result.capacity;
-        let unpruned = ehz_capacity_unpruned(p).expect("unpruned").result.capacity;
+        let pruned = ehz_capacity_pruned(p).expect("pruned").capacity();
+        let unpruned = ehz_capacity_unpruned(p).expect("unpruned").capacity();
         let billiard = if i >= 5 {
             billiard_capacity(p).ok().flatten().map(|r| r.result.capacity)
         } else {
@@ -129,7 +129,7 @@ fn main() {
     ];
 
     for kp in literature {
-        let pruned = ehz_capacity(&kp.polytope).expect("pruned").result.capacity;
+        let pruned = ehz_capacity_pruned(&kp.polytope).expect("pruned").capacity();
         let billiard = billiard_capacity(&kp.polytope).ok().flatten().map(|r| r.result.capacity);
 
         entries.push(VerificationEntry {
@@ -155,7 +155,7 @@ fn main() {
             p.dual_vertices_f64().iter().map(|a| a / alpha).collect(),
         ).expect("scaled");
 
-        let pruned = ehz_capacity(&scaled).expect("pruned").result.capacity;
+        let pruned = ehz_capacity_pruned(&scaled).expect("pruned").capacity();
         let billiard = if i >= 5 {
             billiard_capacity(&scaled).ok().flatten().map(|r| r.result.capacity)
         } else {
@@ -182,7 +182,7 @@ fn main() {
     for (i, p) in base_polytopes.iter().enumerate() {
         let m = random_sp4_matrix(&mut rng);
         let transformed = apply_symplectomorphism(p, &m);
-        let pruned = ehz_capacity(&transformed).expect("pruned").result.capacity;
+        let pruned = ehz_capacity_pruned(&transformed).expect("pruned").capacity();
 
         entries.push(VerificationEntry {
             name: format!("transformed_{}", i),
@@ -210,7 +210,7 @@ fn main() {
                 a / (1.0 + epsilon * delta)
             }).collect(),
         ).expect("perturbed");
-        let pruned = ehz_capacity(&perturbed).expect("pruned").result.capacity;
+        let pruned = ehz_capacity_pruned(&perturbed).expect("pruned").capacity();
 
         entries.push(VerificationEntry {
             name: format!("perturbed_{}", i),

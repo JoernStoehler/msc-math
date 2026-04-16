@@ -7,10 +7,10 @@
 //! - search-level guarantees and backend choice
 //! - search/recovery error classification
 //!
-//! The current implementation still uses older algorithm-specific result types
-//! (`EhzResult`, `BilliardResult`). This module exists so later refactor
-//! packets can migrate those frontends onto one shared surface without further
-//! renaming churn.
+//! The current implementation still has one older algorithm-specific scalar
+//! result type (`BilliardResult`). This module exists so later refactor
+//! packets can migrate the remaining scalar frontends onto one shared surface
+//! without further renaming churn.
 
 use crate::algorithms::capacity_accumulator::{CapacityAccumulator, CapacityResult};
 use crate::geom::polytope::Polytope4D;
@@ -600,16 +600,16 @@ pub(crate) fn collect_legacy_capacity<M: Clone>(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::algorithms::hk2017::ehz_capacity;
+    use crate::ehz_capacity_pruned;
     use crate::geom::known_polytopes;
 
     #[test]
     fn exact_resolution_upgrades_known_winner() {
         let kp = known_polytopes::simplex();
-        let result = ehz_capacity(&kp.polytope).expect("ehz_capacity should succeed");
+        let result = ehz_capacity_pruned(&kp.polytope).expect("ehz_capacity should succeed");
         let orbit = solve_orbit_sigma(
             &kp.polytope,
-            &result.result.best_permutation,
+            result.best_sigma(),
             OrbitSolveBackend::SaddlePoint,
         )
         .expect("saddle-point solve should succeed");
@@ -626,10 +626,10 @@ mod tests {
     #[test]
     fn boundsafe_resolves_indeterminate_argmin() {
         let kp = known_polytopes::simplex();
-        let result = ehz_capacity(&kp.polytope).expect("ehz_capacity should succeed");
+        let result = ehz_capacity_pruned(&kp.polytope).expect("ehz_capacity should succeed");
         let mut orbit = solve_orbit_sigma(
             &kp.polytope,
-            &result.result.best_permutation,
+            result.best_sigma(),
             OrbitSolveBackend::SaddlePoint,
         )
         .expect("saddle-point solve should succeed");

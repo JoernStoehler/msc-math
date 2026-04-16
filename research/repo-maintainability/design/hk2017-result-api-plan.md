@@ -112,12 +112,10 @@ target API have already landed in code.
 
 ## Current Code State
 
-- `ehz_capacity` / `ehz_capacity_unpruned` still return `Option<EhzResult>`.
-- The next refactor packet should remove that public/root thin result layer:
-  the `ehz_capacity*` family should return `OrbitSearchResult`, while any
-  remaining legacy/scalar-only or verification-local helpers move behind
-  narrower internal names rather than keeping `EhzResult` as a public-facing
-  type.
+- The root and explicit `ehz_capacity*` family now return `OrbitSearchResult`.
+- The deeper HK2017 `EhzResult` layer has been deleted; experiments that still
+  need local variant-specific result rows should define those rows locally
+  rather than borrowing library result types.
 - The root API now treats these as a family:
   - `ehz_capacity(...)` = auto wrapper
   - `ehz_capacity_pruned(...)` = explicit pruned HK2017
@@ -132,17 +130,14 @@ target API have already landed in code.
   - `hk2017_minimum_orbits(...)`
   - `hk2017_minimum_orbits_unpruned(...)`
   - `billiard_minimum_orbits(...)`
-- `EhzResult` currently stores:
-  - `result: CapacityResult`
-  - `best_subset: Vec<usize>`
 - `CapacityResult` currently stores:
   - `capacity`
   - `capacity_uncertain`
   - `best_permutation`
   - `best_beta`
   - `iterations`
-- `recover_and_verify(polytope, &ehz_result)` is a separate pass that turns the
-  best orbit summary into geometric-orbit data (currently named
+- `recover_and_verify(polytope, &orbit)` is a separate pass that turns an
+  `OrbitKktData` payload into geometric-orbit data (currently named
   `OrbitRecovery` in code).
 - `capacity_derivatives_a(...)` is a lower-level derivative routine on
   orbit/KKT inputs (`beta`, `q`, `mu`, `sigma`, `dual_vertices`), not on
@@ -541,20 +536,17 @@ pub fn clarke_directional_derivative_a(
 ) -> Result<f64, DerivativeError>;
 ```
 
-The current codebase has these thin wrappers:
+The current codebase has this scalar family:
 
 ```rust
-pub fn ehz_capacity(polytope: &Polytope4D) -> Option<EhzResult>;
-pub fn ehz_capacity_unpruned(polytope: &Polytope4D) -> Option<EhzResult>;
+pub fn ehz_capacity(polytope: &Polytope4D) -> Result<OrbitSearchResult, OrbitSearchError>;
+pub fn ehz_capacity_pruned(polytope: &Polytope4D) -> Result<OrbitSearchResult, OrbitSearchError>;
+pub fn ehz_capacity_unpruned(polytope: &Polytope4D) -> Result<OrbitSearchResult, OrbitSearchError>;
+pub fn ehz_capacity_billiard(polytope: &Polytope4D) -> Result<OrbitSearchResult, OrbitSearchError>;
 ```
 
-They are not treated as protected names or result shapes. Jörn's current
-preference is to mark them for deletion once the richer API lands, because that
-makes migration explicit: remove the wrappers, let the build fail, then patch
-callers until green. A short transitional wrapper phase is still allowed if it
-materially simplifies a packet, but the real design goal is one cheap
-scalar/default entrypoint plus the richer collectors, not preservation of these
-particular wrapper functions.
+They are the intended scalar/default family. The deleted `EhzResult` layer was
+only a migration target, not a protected API.
 
 ## Shape/Contract Notes
 
@@ -670,9 +662,9 @@ These points are not yet fully settled.
    library API.
 4. Add library-level Clarke-subdifferential helpers on lists of
    `OrbitKktData`.
-5. Delete or aggressively de-emphasize `EhzResult` / thin `ehz_capacity`
-   wrappers once callers can migrate to the richer result surface. A short
-   wrapper phase is acceptable only as a staging tactic.
+5. Keep experiment-local variant-report rows local. Do not reintroduce a shared
+   thin library result type like `EhzResult` just to avoid defining a
+   specialized experiment-owned struct.
 6. Update the durable repo docs after the code shape settles:
    - `TASKS.md` for the tracker state and remaining follow-ups
    - `ARCHITECTURE.md` if the public/result boundary described there changes

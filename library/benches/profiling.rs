@@ -9,12 +9,13 @@ use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 
 use symplectic::algorithms::facet_adjacency::{build_transition_matrix, is_feasible_cycle};
-use symplectic::algorithms::hk2017::{combinations, ehz_capacity};
+use symplectic::algorithms::hk2017::combinations;
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::volume::volume;
-use symplectic::kkt::saddle_point_solver::solve_kkt_for;
+use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktOutcome};
 use symplectic::random::generate_random_polytopes;
+use symplectic::ehz_capacity_pruned;
 
 // Same seed and height range as
 // experiments/verification/algorithm-comparison/benchmark/main.rs for consistency.
@@ -30,8 +31,9 @@ const FACET_COUNTS: &[usize] = &[5, 6, 7, 8, 9, 10, 11];
 fn raw_inputs(f: usize) -> (Vec<Vector4<f64>>, Vec<f64>) {
     let mut rng = ChaCha8Rng::seed_from_u64(SEED);
     let polytopes = generate_random_polytopes(1, f, H_MIN, H_MAX, &mut rng);
-    let normals = polytopes[0].normals_f64().to_vec();
-    let heights = polytopes[0].heights_f64().to_vec();
+    let duals = polytopes[0].dual_vertices_f64();
+    let normals = duals.iter().map(|a| a / a.norm()).collect();
+    let heights = duals.iter().map(|a| 1.0 / a.norm()).collect();
     (normals, heights)
 }
 
@@ -55,7 +57,7 @@ fn find_valid_permutation(polytope: &Polytope4D) -> Vec<usize> {
                     return;
                 }
                 if is_feasible_cycle(perm, &adj) {
-                    if solve_kkt_for(polytope, perm).is_some() {
+                    if matches!(solve_kkt_for(polytope, perm), KktOutcome::Feasible(_)) {
                         found = Some(perm.to_vec());
                     }
                 }
@@ -101,7 +103,7 @@ fn bench_capacity(c: &mut Criterion) {
     for &f in FACET_COUNTS {
         let polytope = prebuilt_polytope(f);
         group.bench_with_input(BenchmarkId::from_parameter(f), &f, |b, _| {
-            b.iter(|| ehz_capacity(&polytope));
+            b.iter(|| ehz_capacity_pruned(&polytope));
         });
     }
     group.finish();

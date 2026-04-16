@@ -6,6 +6,7 @@ use super::*;
 use crate::algorithms::{OrbitGuaranteeMode, OrbitSearchError, OrbitSolveBackend};
 use crate::geom::known_polytopes;
 use crate::kkt::saddle_point_solver::solve_kkt_for;
+use crate::{ehz_capacity_pruned, ehz_capacity_unpruned};
 
 // ── Smoke tests: direct capacity computation on small polytopes ──
 
@@ -19,9 +20,9 @@ fn simplex_capacity() {
     let kp = known_polytopes::simplex();
     let result = ehz_capacity_unpruned(&kp.polytope).expect("simplex should have capacity");
     assert!(
-        (result.result.capacity - kp.capacity).abs() < 1e-6,
+        (result.capacity() - kp.capacity).abs() < 1e-6,
         "simplex capacity: got {}, expected {}",
-        result.result.capacity,
+        result.capacity(),
         kp.capacity
     );
 }
@@ -35,9 +36,9 @@ fn hypercube_capacity() {
     let kp = known_polytopes::hypercube();
     let result = ehz_capacity_unpruned(&kp.polytope).expect("hypercube should have capacity");
     assert!(
-        (result.result.capacity - kp.capacity).abs() < 1e-6,
+        (result.capacity() - kp.capacity).abs() < 1e-6,
         "hypercube capacity: got {}, expected {}",
-        result.result.capacity,
+        result.capacity(),
         kp.capacity
     );
 }
@@ -52,9 +53,9 @@ fn lagrangian_triangle_product_capacity() {
     let result = ehz_capacity_unpruned(&kp.polytope)
         .expect("lagrangian triangle product should have capacity");
     assert!(
-        (result.result.capacity - kp.capacity).abs() < 1e-6,
+        (result.capacity() - kp.capacity).abs() < 1e-6,
         "lagrangian triangle product capacity: got {}, expected {}",
-        result.result.capacity,
+        result.capacity(),
         kp.capacity
     );
 }
@@ -66,11 +67,11 @@ fn lagrangian_triangle_product_capacity() {
 #[test]
 fn triangle_square_capacity() {
     let kp = known_polytopes::lagrangian_triangle_square();
-    let result = ehz_capacity(&kp.polytope).expect("Lagrangian triangle x square capacity");
+    let result = ehz_capacity_pruned(&kp.polytope).expect("Lagrangian triangle x square capacity");
     assert!(
-        (result.result.capacity - kp.capacity).abs() < 1e-6,
+        (result.capacity() - kp.capacity).abs() < 1e-6,
         "Lagrangian triangle x square: got {}, expected {}",
-        result.result.capacity,
+        result.capacity(),
         kp.capacity
     );
 }
@@ -82,11 +83,11 @@ fn triangle_square_capacity() {
 #[test]
 fn symplectic_triangle_square_capacity() {
     let kp = known_polytopes::symplectic_triangle_square();
-    let result = ehz_capacity(&kp.polytope).expect("symplectic triangle x square capacity");
+    let result = ehz_capacity_pruned(&kp.polytope).expect("symplectic triangle x square capacity");
     assert!(
-        (result.result.capacity - kp.capacity).abs() < 1e-6,
+        (result.capacity() - kp.capacity).abs() < 1e-6,
         "symplectic triangle x square: got {}, expected {} (min formula)",
-        result.result.capacity,
+        result.capacity(),
         kp.capacity
     );
 }
@@ -219,17 +220,16 @@ fn billiard_agrees_with_hk2017_on_small_lagrangian_products() {
         known_polytopes::lagrangian_triangle_product(),
         known_polytopes::lagrangian_triangle_square(),
     ] {
-        let hk = ehz_capacity(&kp.polytope).expect("HK2017 capacity");
+        let hk = ehz_capacity_pruned(&kp.polytope).expect("HK2017 capacity");
         let billiard = crate::algorithms::billiard::billiard_capacity(&kp.polytope)
             .expect("billiard should accept Lagrangian product")
             .expect("billiard capacity");
-        let rel_err =
-            (hk.result.capacity - billiard.result.capacity).abs() / billiard.result.capacity;
+        let rel_err = (hk.capacity() - billiard.result.capacity).abs() / billiard.result.capacity;
         assert!(
             rel_err < 1e-6,
             "{}: HK2017 ({}) != billiard ({}) capacity, rel_error = {:.2e}",
             kp.name,
-            hk.result.capacity,
+            hk.capacity(),
             billiard.result.capacity,
             rel_err
         );

@@ -1315,7 +1315,7 @@ mod tests {
     #[test]
     #[ignore] // Some polytopes trigger large Q error bounds in hk2017 (see TASKS.md verify-numerics)
     fn tube_agrees_with_hk2017_on_all_symplectic() {
-        use crate::algorithms::hk2017::ehz_capacity;
+        use crate::ehz_capacity;
 
         for kp in known_polytopes::all_known() {
             if check_symplectic(&kp.polytope).is_err() {
@@ -1325,13 +1325,13 @@ mod tests {
             let hk_result = ehz_capacity(&kp.polytope);
             let tube_result = tube_capacity(&kp.polytope);
 
-            if let (Some(hk), Ok(Some(tb))) = (hk_result, tube_result) {
+            if let (Ok(hk), Ok(Some(tb))) = (hk_result, tube_result) {
                 assert!(
-                    (tb.capacity - hk.result.capacity).abs() < CAPACITY_TOL,
+                    (tb.capacity - hk.capacity()).abs() < CAPACITY_TOL,
                     "{}: tube {:.6} != hk2017 {:.6}",
                     kp.name,
                     tb.capacity,
-                    hk.result.capacity,
+                    hk.capacity(),
                 );
             }
         }

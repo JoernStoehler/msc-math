@@ -2,7 +2,7 @@
 //!
 //! Split from mod.rs to keep module routing and docs short.
 
-use super::*;
+use crate::ehz_capacity_unpruned;
 
 // ── Direct computation ──
 
@@ -25,12 +25,10 @@ fn capacity_conformality_simplex() {
 
     let base_cap = ehz_capacity_unpruned(&kp.polytope)
         .expect("simplex capacity")
-        .result
-        .capacity;
+        .capacity();
     let scaled_cap = ehz_capacity_unpruned(&scaled)
         .expect("scaled simplex capacity")
-        .result
-        .capacity;
+        .capacity();
     let expected = scale * scale * base_cap;
     let relative_error = ((scaled_cap - expected) / expected).abs();
     assert!(
@@ -55,10 +53,10 @@ fn capacity_scales_quadratically() {
     let scale = std::f64::consts::E;
 
     let kp = known_polytopes::hypercube();
-    let unit_cap = ehz_capacity_unpruned(&kp.polytope).unwrap().result.capacity;
+    let unit_cap = ehz_capacity_unpruned(&kp.polytope).unwrap().capacity();
 
     let scaled_cube = crate::geom::test_utils::scaled_hypercube(scale);
-    let scaled_cap = ehz_capacity_unpruned(&scaled_cube).unwrap().result.capacity;
+    let scaled_cap = ehz_capacity_unpruned(&scaled_cube).unwrap().capacity();
 
     let expected = unit_cap * scale * scale;
     let relative_error = ((scaled_cap - expected) / expected).abs();

@@ -4,6 +4,7 @@
 
 use super::*;
 use crate::geom::known_polytopes;
+use crate::{ehz_capacity_pruned, ehz_capacity_unpruned};
 
 // ── Combinatorics utility ──
 
@@ -28,9 +29,9 @@ fn combinations_basic() {
 fn pruned_matches_unpruned_simplex() {
     let kp = known_polytopes::simplex();
     let result_unpruned = ehz_capacity_unpruned(&kp.polytope).expect("unpruned capacity");
-    let result_pruned = ehz_capacity(&kp.polytope).expect("pruned capacity");
+    let result_pruned = ehz_capacity_pruned(&kp.polytope).expect("pruned capacity");
     assert!(
-        (result_unpruned.result.capacity - result_pruned.result.capacity).abs() < 1e-6,
+        (result_unpruned.capacity() - result_pruned.capacity()).abs() < 1e-6,
         "simplex: pruned and unpruned capacities differ"
     );
 }
@@ -47,22 +48,22 @@ fn pruned_matches_unpruned_simplex() {
 fn pruned_matches_unpruned() {
     let kp = known_polytopes::hypercube();
     let result_unpruned = ehz_capacity_unpruned(&kp.polytope).expect("unpruned capacity");
-    let result_pruned = ehz_capacity(&kp.polytope).expect("pruned capacity");
+    let result_pruned = ehz_capacity_pruned(&kp.polytope).expect("pruned capacity");
 
     assert!(
-        (result_unpruned.result.capacity - result_pruned.result.capacity).abs() < 1e-6,
+        (result_unpruned.capacity() - result_pruned.capacity()).abs() < 1e-6,
         "pruned and unpruned capacities differ"
     );
 
     // Pruned should do fewer iterations (adjacency filtering).
     assert!(
-        result_pruned.result.iterations <= result_unpruned.result.iterations,
+        result_pruned.iterations <= result_unpruned.iterations,
         "pruned should do <= iterations than unpruned"
     );
 
     eprintln!(
         "Hypercube: unpruned {} iters, pruned {} iters",
-        result_unpruned.result.iterations, result_pruned.result.iterations
+        result_unpruned.iterations, result_pruned.iterations
     );
 }
 
@@ -86,24 +87,24 @@ fn pruned_matches_unpruned_random() {
 
             if let Some(p) = polytopes.first() {
                 let unpruned = ehz_capacity_unpruned(p).unwrap();
-                let pruned = ehz_capacity(p).unwrap();
+                let pruned = ehz_capacity_pruned(p).unwrap();
 
                 assert!(
-                    (unpruned.result.capacity - pruned.result.capacity).abs() < 1e-6,
+                    (unpruned.capacity() - pruned.capacity()).abs() < 1e-6,
                     "F={} seed={}: pruned {} vs unpruned {}",
                     facet_count,
                     seed,
-                    pruned.result.capacity,
-                    unpruned.result.capacity
+                    pruned.capacity(),
+                    unpruned.capacity()
                 );
 
                 assert!(
-                    pruned.result.iterations <= unpruned.result.iterations,
+                    pruned.iterations <= unpruned.iterations,
                     "F={} seed={}: pruned iterations {} > unpruned {}",
                     facet_count,
                     seed,
-                    pruned.result.iterations,
-                    unpruned.result.iterations
+                    pruned.iterations,
+                    unpruned.iterations
                 );
             }
         }

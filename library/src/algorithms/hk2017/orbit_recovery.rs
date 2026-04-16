@@ -306,9 +306,9 @@ fn optimize_in_null_space(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::algorithms::hk2017::{ehz_capacity, EhzResult};
-    use crate::algorithms::{OrbitAdmissibility, OrbitKktData};
+    use crate::algorithms::{OrbitAdmissibility, OrbitKktData, OrbitSearchResult};
     use crate::geom::known_polytopes;
+    use crate::{ehz_capacity_pruned, ehz_capacity_unpruned};
 
     // Tests for orbit_recovery: base point recovery and orbit verification.
     //
@@ -327,21 +327,20 @@ mod tests {
     /// Slightly positive to allow numerical noise at breakpoints.
     const INEQ_TOL: f64 = 1e-6;
 
-    fn legacy_best_orbit(result: &EhzResult) -> OrbitKktData {
+    fn best_orbit_payload(result: &OrbitSearchResult) -> OrbitKktData {
         let beta_margin = result
-            .result
-            .best_beta
+            .best_beta()
             .iter()
             .copied()
             .fold(f64::INFINITY, f64::min);
         OrbitKktData {
-            sigma: result.result.best_permutation.clone(),
-            beta: result.result.best_beta.clone(),
+            sigma: result.best_sigma().to_vec(),
+            beta: result.best_beta().to_vec(),
             beta_margin,
-            action: result.result.capacity,
-            action_lower: result.result.capacity,
-            action_upper: result.result.capacity,
-            q: 0.5 / result.result.capacity,
+            action: result.capacity(),
+            action_lower: result.min_action_lower,
+            action_upper: result.min_action_upper,
+            q: 0.5 / result.capacity(),
             q_error_bound: 0.0,
             mu: None,
             xi: None,
@@ -352,16 +351,16 @@ mod tests {
     /// Run the full recovery + verification pipeline on a known polytope and
     /// check all error metrics against tolerances.
     fn test_recovery(name: &str, polytope: &Polytope4D, expected_capacity: f64) {
-        let result = ehz_capacity(polytope).unwrap_or_else(|| {
+        let result = ehz_capacity_pruned(polytope).unwrap_or_else(|_| {
             panic!("{name}: capacity computation failed");
         });
         assert!(
-            (result.result.capacity - expected_capacity).abs() < 1e-4,
+            (result.capacity() - expected_capacity).abs() < 1e-4,
             "{name}: capacity mismatch: got {}, expected {expected_capacity}",
-            result.result.capacity
+            result.capacity()
         );
 
-        let orbit = legacy_best_orbit(&result);
+        let orbit = best_orbit_payload(&result);
         let recovery = recover_and_verify(polytope, &orbit).unwrap_or_else(|| {
             panic!("{name}: orbit recovery failed");
         });
@@ -426,10 +425,10 @@ mod tests {
     fn check_on_facet(
         name: &str,
         polytope: &Polytope4D,
-        result: &EhzResult,
+        result: &OrbitSearchResult,
     ) {
         let duals = polytope.dual_vertices_f64();
-        let orbit = legacy_best_orbit(result);
+        let orbit = best_orbit_payload(result);
         let sigma = &orbit.sigma;
 
         let recovery = recover_and_verify(polytope, &orbit).unwrap();
@@ -465,7 +464,7 @@ mod tests {
     #[test]
     fn simplex_on_facet() {
         let kp = known_polytopes::simplex();
-        let result = ehz_capacity(&kp.polytope).unwrap();
+        let result = ehz_capacity_pruned(&kp.polytope).unwrap();
         check_on_facet("simplex", &kp.polytope, &result);
     }
 
@@ -541,8 +540,8 @@ mod tests {
             if kp.polytope.facet_count() > 10 {
                 continue;
             }
-            let result = ehz_capacity(&kp.polytope).unwrap();
-            let orbit = legacy_best_orbit(&result);
+            let result = ehz_capacity_pruned(&kp.polytope).unwrap();
+            let orbit = best_orbit_payload(&result);
             let recovery = recover_and_verify(&kp.polytope, &orbit).unwrap();
 
             for (k, &tau) in recovery.dwell_times.iter().enumerate() {
@@ -565,8 +564,8 @@ mod tests {
             if kp.polytope.facet_count() > 10 {
                 continue;
             }
-            let result = ehz_capacity(&kp.polytope).unwrap();
-            let orbit = legacy_best_orbit(&result);
+            let result = ehz_capacity_pruned(&kp.polytope).unwrap();
+            let orbit = best_orbit_payload(&result);
             let recovery = recover_and_verify(&kp.polytope, &orbit).unwrap();
 
             assert_eq!(
@@ -586,15 +585,13 @@ mod tests {
     /// computed action on the simplex (fast enough for unpruned in debug mode).
     #[test]
     fn unpruned_recovery_consistent() {
-        use crate::algorithms::hk2017::ehz_capacity_unpruned;
-
         let kp = known_polytopes::simplex();
 
-        let result_pruned = ehz_capacity(&kp.polytope).unwrap();
+        let result_pruned = ehz_capacity_pruned(&kp.polytope).unwrap();
         let result_unpruned = ehz_capacity_unpruned(&kp.polytope).unwrap();
 
-        let orbit_pruned = legacy_best_orbit(&result_pruned);
-        let orbit_unpruned = legacy_best_orbit(&result_unpruned);
+        let orbit_pruned = best_orbit_payload(&result_pruned);
+        let orbit_unpruned = best_orbit_payload(&result_unpruned);
         let recovery_pruned = recover_and_verify(&kp.polytope, &orbit_pruned).unwrap();
         let recovery_unpruned = recover_and_verify(&kp.polytope, &orbit_unpruned).unwrap();
 
