@@ -205,7 +205,7 @@ fn compute_capacity(polytope: &Polytope4D, db: &mut Db) -> Option<f64> {
             return Some(cap);
         }
     }
-    let r = symplectic::algorithms::hk2017::ehz_capacity(polytope)?;
+    let r = symplectic::ehz_capacity(polytope)?;
     let cap = r.result.capacity;
     let record = db
         .entry(key)
@@ -224,7 +224,7 @@ fn compute_capacity_result(polytope: &Polytope4D, db: &mut Db) -> Option<(f64, V
             }
         }
     }
-    let r = symplectic::algorithms::hk2017::ehz_capacity(polytope)?;
+    let r = symplectic::ehz_capacity(polytope)?;
     let cap = r.result.capacity;
     let perm = r.result.best_permutation.clone();
     let record = db

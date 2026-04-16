@@ -15,13 +15,14 @@
 //! Dataset design:
 //! - Random polytopes with facet counts F=5..12
 //! - Height range h in [0.8, 1.2]
-//! - HK2017 pruned only (production algorithm)
+//! - Default root capacity wrapper (`symplectic::ehz_capacity`), which
+//!   auto-routes Lagrangian products to billiard and other inputs to pruned HK2017
 
 use std::collections::HashMap;
-use symplectic::algorithms::hk2017::ehz_capacity;
 use symplectic::database::{load_many, save, DualVerticesKey, PolytopeRecord, SigmaAction, Source};
 use symplectic::geom::volume::volume;
 use symplectic::random::generate_polytope;
+use symplectic::ehz_capacity;
 use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
