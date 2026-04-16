@@ -55,6 +55,13 @@ queue. It is intentionally incremental: only the first packets are defined.
     - widened the same `KktResult`-level derivative-helper migration across the
       remaining buildable ascent binaries in `exp-sys-landscape` and
       `exp-hko-local-maximum` (`hko-cut-and-ascent`)
+  - Packet 3 slice 3 landed:
+    - migrated the first truly Clarke/subdifferential-heavy consumer,
+      `dev_numerics_subdifferential`, onto the library helper surface
+    - that binary now uses `capacity_derivatives_a_from_kkt_result(...)`,
+      `directional_derivative_a(...)`, and
+      `clarke_directional_derivative_a(...)` instead of local glue for the
+      all-orbit directional-derivative path
   - Verification after Packet 2 slice 1:
     - `cargo build -p symplectic --release`
     - `cargo test -p symplectic --release --lib`
@@ -73,6 +80,8 @@ queue. It is intentionally incremental: only the first packets are defined.
   - Verification after Packet 3 slice 2:
     - `cargo build -p exp-sys-landscape --release`
     - `cargo build -p exp-hko-local-maximum --release`
+  - Verification after Packet 3 slice 3:
+    - `cargo build -p dev-gradient --release --bin dev_numerics_subdifferential`
 
 ## Integration Model
 
@@ -169,6 +178,7 @@ queue. It is intentionally incremental: only the first packets are defined.
     - in progress
     - first slices landed: helper aliases/errors plus migrated
       `KktResult`-level consumers across the main buildable ascent packages
+      and the first truly subdifferential-heavy binary
 
 4. **First consumer migrations**
    - Scope:
@@ -185,12 +195,10 @@ queue. It is intentionally incremental: only the first packets are defined.
 
 ## Immediate Next Action
 
-- Continue Packet 3 by migrating at least one subdifferential-heavy consumer to
-  the new helper surface, not just `KktResult`-level gradient consumers.
 - Decide whether the next highest-value seam is:
   - orbit-payload consumers via `capacity_derivatives_a_from_orbit(...)`, or
-  - direct Clarke-subdifferential consumers via
-    `capacity_subgradients_a(...)` / `clarke_directional_derivative_a(...)`.
+  - finishing the gradient/numerics package migration so sibling binaries use
+    the same helper surface consistently.
 - Keep projected-backend support out of Packet 3 unless the derivative packet
   directly needs it; it is a separate solver-contract follow-up.
 - Branch subagent worktrees from this branch only if Packet 3 splits into

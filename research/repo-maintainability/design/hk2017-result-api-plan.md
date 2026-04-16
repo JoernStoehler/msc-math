@@ -48,6 +48,10 @@ target API have already landed in code.
   - Packet 3 second slice: the same `KktResult`-level helper now backs the
     buildable ascent binaries in `exp-sys-landscape` and
     `exp-hko-local-maximum` (`hko-cut-and-ascent`) as well.
+  - Packet 3 third slice: the first truly subdifferential-heavy consumer,
+    `experiments/numerics/gradient/numerics-subdifferential/main.rs`, now uses
+    the library Clarke/directional-derivative helpers for the all-orbit
+    directional-derivative path rather than local glue.
 
 ## Goal
 
