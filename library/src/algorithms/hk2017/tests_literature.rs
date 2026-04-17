@@ -95,7 +95,7 @@ fn symplectic_triangle_square_capacity() {
 
 /// Smoke-test the richer collector on a simple known polytope.
 #[test]
-fn simplex_minimum_orbits_collector() {
+fn simplex_orbit_aggregation() {
     let kp = known_polytopes::simplex();
     let (orbits, iterations) = solve_sigma_stream(
         &kp.polytope,
@@ -128,7 +128,7 @@ fn simplex_minimum_orbits_collector() {
 
 /// Unsupported backends should fail explicitly rather than silently degrading.
 #[test]
-fn simplex_minimum_orbits_projected_backend_unsupported() {
+fn simplex_projected_backend_unsupported() {
     let kp = known_polytopes::simplex();
     let err = solve_sigma_stream(
         &kp.polytope,

@@ -27,7 +27,7 @@ queue. It is intentionally incremental: only the first packets are defined.
     - current HK2017 and billiard solver bridges now route through that
       primitive
   - Packet 2 slice 2 landed:
-    - shared `collect_legacy_capacity(...)` seam for the current
+    - shared `aggregate_orbits(...)` seam for the current
       solve/classify/track/finalize loop
     - HK2017 and billiard now share that collector while still owning their
       own sigma generation and winner-side metadata
@@ -36,12 +36,13 @@ queue. It is intentionally incremental: only the first packets are defined.
     - first internal guarantee-mode resolution helpers for `BoundSafe`,
       `MinimaSafe`, and `AllSafe`
   - Packet 2 slice 4 landed:
-    - shared `OrbitSearchResult`-returning collector entrypoints for
-      `hk2017`, `hk2017_unpruned`, and `billiard`
+    - shared `OrbitSearchResult`-returning collector entrypoints first landed
+      for `hk2017`, `hk2017_unpruned`, and `billiard`
     - shared internal `collect_orbits(...)` collector/finalization seam above
       frontend-specific `sigma` generation
-    - explicit `OrbitSearchError::UnsupportedBackend` and
-      `BilliardOrbitSearchError`
+    - explicit `OrbitSearchError::UnsupportedBackend`; the temporary
+      `BilliardOrbitSearchError` added in that slice was deleted later once the
+      explicit billiard router moved onto the same `OrbitSearchError` surface
   - Packet 2 slice 5 landed:
     - the root scalar API is now an explicit family:
       - `ehz_capacity` = auto wrapper
@@ -135,9 +136,9 @@ queue. It is intentionally incremental: only the first packets are defined.
       - `ehz_capacity_unpruned`
       - `ehz_capacity_billiard`
     - product-reporting and verification surfaces that still need
-      `billiard_capacity` or explicit HK2017 variants were left explicit on
-      purpose because they consume native outputs such as `bounce_count` or
-      compare algorithms directly
+      `ehz_capacity_billiard` or explicit HK2017 variants were left explicit on
+      purpose because they either compute `bounce_count` from the winning
+      `sigma` or compare algorithms directly
   - Packet 3 slice 12 landed:
     - documented the remaining explicit algorithm imports in verification and
       numerics surfaces so they no longer look like stale migrations
@@ -151,7 +152,7 @@ queue. It is intentionally incremental: only the first packets are defined.
       algorithm paths rather than the root auto wrapper
   - Packet 3 slice 13 landed:
     - the root `ehz_capacity*` family now returns the shared
-      `OrbitSearchResult` surface instead of the legacy thin `EhzResult`
+      `OrbitSearchResult` surface
     - added scalar convenience accessors on `OrbitSearchResult`
       (`capacity()`, `best_sigma()`, `best_beta()`, `best_subset()`) so
       ordinary callers stayed readable during migration
@@ -160,11 +161,9 @@ queue. It is intentionally incremental: only the first packets are defined.
       `dev-gradient` surfaces touched by the root auto wrapper
     - `orbit_recovery::recover_and_verify(...)` now consumes `OrbitKktData`,
       and the remaining experiment adapters (`axioms-orbit-recovery`,
-      `visualization`) now rebuild that payload directly instead of pretending
-      the root result is still `EhzResult`
+      `visualization`) now rebuild that payload directly
     - `ARCHITECTURE.md` now describes the root capacity family in terms of
-      `OrbitSearchResult` / `OrbitKktData`, while keeping the deeper HK2017
-      `EhzResult` path marked as a migration-era legacy surface
+      `OrbitSearchResult` / `OrbitKktData`
   - Packet 3 slice 14 landed:
     - deleted the deeper HK2017 `EhzResult` family and the old
       `algorithms::hk2017::ehz_capacity*` entrypoints
@@ -189,6 +188,21 @@ queue. It is intentionally incremental: only the first packets are defined.
       exact-resolving approximate product geometries through the scalar path
     - `OrbitSearchResult::best_orbit()` now returns the actual admissible
       minimizer rather than the first orbit after lower-bound sorting
+  - Packet 3 slice 16 landed:
+    - deleted the old billiard scalar adapter stack:
+      `billiard_capacity`, `BilliardResult`,
+      `collect_legacy_capacity(...)`, and
+      `legacy_solution_from_orbit(...)`
+    - deleted the dead `capacity_accumulator` module
+    - moved remaining callers to `ehz_capacity_billiard(...)` plus
+      `bounce_count_from_sigma(...)`
+  - Packet 3 slice 17 landed:
+    - deleted `BilliardOrbitSearchError`
+    - `ehz_capacity_billiard(...)` now returns
+      `Result<OrbitSearchResult, OrbitSearchError>`, matching the other
+      router-family members
+    - callers that need to skip perturbed non-products now do that locally
+      with `classify_facets(...)`
   - Parallel follow-up now in flight on sub-worktrees branched from this
     integration trunk:
     - `capacity-orbit-recovery-refactor`:
@@ -306,7 +320,7 @@ queue. It is intentionally incremental: only the first packets are defined.
      - shared seam identified: extract below frontend sigma generation and
        above frontend-local certified-winner metadata
      - `solve_orbit_sigma(...)` is the first shared primitive on that seam
-     - `collect_legacy_capacity(...)` now owns the current shared
+     - `aggregate_orbits(...)` now owns the current shared
        solve/classify/track/finalize loop
      - existing HK2017/billiard frontends now depend on both shared seams
     - the shared module now contains the first internal exact-fallback /

@@ -108,10 +108,11 @@ pub fn for_each_sigma(
     Ok(())
 }
 
-// Tests for billiard capacity: correctness and cross-validation with hk2017.
+// Tests for the explicit billiard router: correctness and cross-validation with
+// hk2017.
 //
-// Proposition: billiard_capacity agrees with known literature values and with
-// ehz_capacity on all Lagrangian product test polytopes.
+// Proposition: `ehz_capacity_billiard` agrees with known literature values and
+// with `ehz_capacity` on all Lagrangian product test polytopes.
 // Reference: [thm:billiard-characterization], [alg:billiard]
 //
 // Strategy: fixture-based (known polytopes), cross-algorithm (billiard vs hk2017).
@@ -176,7 +177,7 @@ mod tests {
 
     /// Smoke-test the richer billiard collector on a known Lagrangian product.
     #[test]
-    fn triangle_product_minimum_orbits_collector() {
+    fn triangle_product_orbit_aggregation() {
         let kp = known_polytopes::lagrangian_triangle_product();
         let (orbits, iterations) = crate::algorithms::orbit_search::solve_sigma_stream(
             &kp.polytope,

@@ -131,9 +131,8 @@ Current recurring code-level entities:
 | Entity | Current role | Main surface |
 | --- | --- | --- |
 | `Polytope4D` | central polytope object for geometry and algorithms | `library/src/lib.rs`, `geom` |
-| `OrbitSearchResult` | shared capacity/orbit search result used by the root `ehz_capacity*` family; contains the returned orbit list plus `min_action` bounds and iterations | `library/src/algorithms/orbit_search.rs`, `library/src/lib.rs` |
+| `OrbitSearchResult` | shared capacity/orbit search result returned by the root `ehz_capacity`, `ehz_capacity_pruned`, `ehz_capacity_unpruned`, and `ehz_capacity_billiard` family; contains the orbit list plus `min_action` bounds and iterations | `library/src/algorithms/orbit_search.rs`, `library/src/lib.rs` |
 | `OrbitKktData` | one solved orbit payload: `sigma`, `beta`, action interval, `q`, optional multipliers, admissibility | `library/src/algorithms/orbit_search.rs` |
-| `CapacityResult` | legacy minimum-action summary container with `capacity`, `capacity_uncertain`, `best_permutation`, `best_beta`, `iterations` | `library/src/algorithms/capacity_accumulator.rs` |
 | `OrbitRecovery` | recovered geometric trajectory/orbit data derived from an `OrbitKktData` payload | `library/src/algorithms/hk2017/orbit_recovery.rs` |
 | `PolytopeRecord` | persisted JSONL row, including optional `Source` provenance and optional `SigmaAction` orbit summaries | `library/src/database.rs` |
 
@@ -181,7 +180,7 @@ Current observed API tiers for experiment code:
 
 | Tier | Current meaning | Examples |
 | --- | --- | --- |
-| simple public | short root reexports and trivial preset routers in `library/src/lib.rs` | `symplectic::ehz_capacity`, `symplectic::ehz_capacity_pruned`, `symplectic::ehz_capacity_unpruned`, `symplectic::ehz_capacity_billiard`, `symplectic::volume`, `symplectic::omega0`, `symplectic::lagrangian_product` |
+| simple public | short root reexports and trivial preset routers in `library/src/lib.rs` | `symplectic::ehz_capacity`, `symplectic::ehz_capacity_pruned`, `symplectic::ehz_capacity_unpruned`, `symplectic::ehz_capacity_billiard`, `symplectic::OrbitSearchResult`, `symplectic::volume`, `symplectic::omega0`, `symplectic::lagrangian_product` |
 | expert public | deeper modules and building blocks used by experiments that need non-default control | `symplectic::database`, `symplectic::random`, `symplectic::derivatives`, `symplectic::algorithms::solve_orbit_sigma`, `symplectic::algorithms::aggregate_orbits`, `symplectic::algorithms::hk2017`, `symplectic::algorithms::billiard`, `symplectic::kkt::saddle_point_solver`, `symplectic::algorithms::facet_adjacency` |
 | unclear | public paths whose long-term experiment-facing status is not yet explicit | `symplectic::algorithms::hk2017::orbit_recovery`, `symplectic::algorithms::billiard::facet_classification`, `symplectic::kkt::qp_assembly::build_augmented_system` |
 | accidental internal | public-in-practice helpers that experiments currently reach through | `symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation` |

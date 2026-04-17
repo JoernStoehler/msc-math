@@ -29,10 +29,11 @@ target API have already landed in code.
   - Packet 2 first slice: `solve_orbit_sigma(...)` now exists on the shared
     result-layer module and the current HK2017/billiard solver bridges route
     through it for the saddle-point backend.
-  - Packet 2 later slices: the current HK2017/billiard frontends now also
-    share `collect_legacy_capacity(...)`, and `orbit_search.rs` now contains
-    the first exact-fallback helpers that upgrade or drop `IndeterminateF64`
-    orbits under `BoundSafe`, `MinimaSafe`, and `AllSafe`.
+  - Packet 2 later slices: the branch first introduced a shared
+    `collect_legacy_capacity(...)` seam plus the first exact-fallback helpers
+    in `orbit_search.rs`; later cleanup deleted that legacy seam after the
+    root `ehz_capacity*` family and its callers moved fully onto
+    `OrbitSearchResult`.
   - Packet 2 collector slice: shared collector machinery landed in
     `orbit_search.rs` on top of the saddle-point backend. The refactor target
     is now to keep that machinery as building blocks rather than as a second
@@ -203,10 +204,10 @@ Target algorithm sketch:
    - upper bound = lowest orbit upper bound
    - lower bound = highest orbit lower bound among the retained list
 
-This policy is stronger than the current production `CapacityAccumulator`
-story. In particular, the current code tracks indeterminate candidates only via
-the scalar `capacity_uncertain`; it does not yet retain them as orbit payloads
-or lazily resolve them with the rational solver in the hot HK2017 path.
+This policy is stronger than the deleted `CapacityAccumulator`-era scalar
+story. That older path tracked indeterminate candidates only via the scalar
+`capacity_uncertain`; it did not retain them as orbit payloads or lazily
+resolve them with the rational solver in the hot HK2017 path.
 
 ## Settled In Discussion
 
@@ -398,7 +399,7 @@ consumers found this concrete demand surface:
       [tests_literature.rs](</workspaces/msc-math/library/src/algorithms/hk2017/tests_literature.rs:127>))
   - `action`
     - already the canonical scalar summary in result/caching code
-      ([capacity_accumulator.rs](</workspaces/msc-math/library/src/algorithms/capacity_accumulator.rs:41>),
+      ([orbit_search.rs](</workspaces/msc-math/library/src/algorithms/orbit_search.rs:128>),
       [orbit-recovery/main.rs](</workspaces/msc-math/experiments/verification/orbit-recovery/main.rs:561>))
   - `mu` when available
     - analytical derivatives and system-gradient work need it directly
@@ -764,9 +765,10 @@ Current design lean from discussion:
 ## Billiard Relation
 
 - The billiard algorithm is structurally close to the intended HK2017 richer
-  result surface: it also uses enumerate -> solve -> track via
-  `CapacityAccumulator`
-  ([billiard/mod.rs](</workspaces/msc-math/library/src/algorithms/billiard/mod.rs:1>)).
+  result surface: it also uses enumerate -> solve -> aggregate on the shared
+  orbit/result layer
+  ([billiard/mod.rs](</workspaces/msc-math/library/src/algorithms/billiard/mod.rs:1>),
+  [lib.rs](</workspaces/msc-math/library/src/lib.rs:103>)).
 - The main difference is not result shape but enumeration policy:
   billiard exploits Lagrangian-product structure and the known bounce bound, so
   it only enumerates block-structured `sigma` with bounded length rather than

@@ -33,7 +33,6 @@ boundary questions that still need a Jörn decision.
   - `sed -n '1,200p' library/src/constants.rs`
   - `sed -n '1,220p' library/src/algorithms/hk2017/orbit_recovery.rs`
   - `sed -n '1,220p' library/src/algorithms/facet_adjacency.rs`
-  - `sed -n '1,220p' library/src/algorithms/capacity_accumulator.rs`
   - `sed -n '1,220p' library/src/geom/test_utils.rs`
   - `sed -n '1,220p' library/src/geom/known_polytopes.rs`
   - `sed -n '1,260p' library/src/kkt/saddle_point_solver.rs`
@@ -50,7 +49,7 @@ boundary questions that still need a Jörn decision.
 
 ### Simple public
 
-- `symplectic::ehz_capacity`, `symplectic::ehz_capacity_pruned`, `symplectic::ehz_capacity_unpruned`, `symplectic::ehz_capacity_billiard`, `symplectic::EhzResult`, `symplectic::billiard_capacity`, `symplectic::BilliardError`, `symplectic::BilliardResult`, `symplectic::volume`, `symplectic::omega0`, `symplectic::lagrangian_product`, `symplectic::regular_polygon_2d`, `symplectic::rotate_polygon_2d`, `symplectic::known_polytopes`, `symplectic::test_utils`, `symplectic::Polytope4D`, `symplectic::ConstructionError`, `symplectic::Skeleton`, `symplectic::QhullError`.
+- `symplectic::ehz_capacity`, `symplectic::ehz_capacity_pruned`, `symplectic::ehz_capacity_unpruned`, `symplectic::ehz_capacity_billiard`, `symplectic::OrbitSearchResult`, `symplectic::volume`, `symplectic::omega0`, `symplectic::lagrangian_product`, `symplectic::regular_polygon_2d`, `symplectic::rotate_polygon_2d`, `symplectic::known_polytopes`, `symplectic::test_utils`, `symplectic::Polytope4D`, `symplectic::ConstructionError`, `symplectic::Skeleton`, `symplectic::QhullError`.
 - Why: these are the root reexports in `library/src/lib.rs` and read like the intended short path for routine experiment code.
 - Examples of current callers:
   - `experiments/combinatorial-cells/omega-hypothesis/main.rs` uses `symplectic::ehz_capacity`.
@@ -61,15 +60,15 @@ boundary questions that still need a Jörn decision.
 
 - `symplectic::geom::polytope::Polytope4D`, `symplectic::geom::known_polytopes`, `symplectic::geom::polygon::{random_polygon_2d, regular_polygon_2d, rotate_polygon_2d}`, `symplectic::geom::lagrangian_product::lagrangian_product`, `symplectic::geom::volume::volume`, `symplectic::geom::symplectic_form::omega0`.
 - `symplectic::geom::facet_volume::facet_volume_3d`, `symplectic::geom::reeb_trajectory`.
-- `symplectic::algorithms::hk2017::{ehz_capacity, ehz_capacity_unpruned, EhzResult, combinations}` and `symplectic::algorithms::billiard::billiard_capacity`.
-- `symplectic::algorithms::capacity_accumulator::CapacityResult`, `symplectic::algorithms::facet_adjacency::{build_transition_matrix, is_feasible_cycle}`.
+- `symplectic::algorithms::hk2017::{ehz_capacity, ehz_capacity_pruned, ehz_capacity_unpruned, combinations, OrbitSearchResult}` and `symplectic::algorithms::billiard::ehz_capacity_billiard`.
+- `symplectic::algorithms::facet_adjacency::{build_transition_matrix, is_feasible_cycle}`.
 - `symplectic::database::{load, load_many, save, DualVerticesKey, PolytopeRecord, SigmaAction, Source}`, `symplectic::dataset::AcceptanceRow`, `symplectic::derivatives::{capacity_derivatives_a, volume_derivatives_a}`, `symplectic::random::{sample_random_polytope, generate_polytope, generate_random_polytopes}`.
 - `symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktOutcome, KktResult, EPS_BETA_POSITIVE, EPS_Q_POSITIVE}`.
 - `symplectic::kkt::rational_solver`.
 - Why: these paths are public, documented, and used by the current experiments as normal working APIs, but they are deeper than the short root surface.
 - Examples of current callers:
   - `experiments/combinatorial-cells/boundary-characterization/main.rs`, `experiments/combinatorial-cells/cell-widths/main.rs`, and `experiments/hko-local-maximum/gradient-analysis/main.rs` import `build_transition_matrix`, `is_feasible_cycle`, `combinations`, and `for_each_cyclic_permutation`.
-  - `experiments/verification/orbit-recovery/main.rs` imports `CapacityResult`, `recover_and_verify`, `OrbitRecovery`, and `solve_kkt_for`.
+  - `experiments/verification/orbit-recovery/main.rs` imports `recover_and_verify`, `OrbitRecovery`, and `solve_kkt_for`.
   - `experiments/sys-landscape/gradient-ascent-general/main.rs`, `experiments/sys-landscape/random-sample/main.rs`, and `experiments/sys-landscape/rejection-calibration/main.rs` import `database`, `random`, and `dataset` helpers.
   - `experiments/numerics/gradient/numerics/main.rs` and `experiments/hko-local-maximum/second-order/main.rs` import `solve_kkt_for`, `KktResult`, and `EPS_Q_POSITIVE`.
   - `experiments/numerics/gradient/numerics-edge-cases/main.rs` imports `facet_volume_3d`.
@@ -100,7 +99,7 @@ boundary questions that still need a Jörn decision.
 
 ## Unresolved Questions
 
-- Should `hk2017::orbit_recovery` stay a supported public dependency, or become experiment-local code that only `ehz_capacity` and `EhzResult` consume?
+- Should `hk2017::orbit_recovery` stay a supported public dependency, or become experiment-local code that only the root `ehz_capacity*` family and `OrbitSearchResult` consume?
 - Should `hk2017::permutations::for_each_cyclic_permutation` be treated as a stable expert surface, or as an accidental helper that later code should not import directly?
 - Should `billiard::facet_classification` remain reachable from experiments, or move behind a topic-local helper once the gradient-ascent-products dependency is revisited?
 - Should `kkt::qp_assembly::build_augmented_system` remain an experiment-facing low-level tool for numerics, or be treated as internal assembly code?

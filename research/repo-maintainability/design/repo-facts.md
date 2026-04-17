@@ -72,8 +72,7 @@ policy unless the current repo already states that policy explicitly.
 
 - The simple root reexport surface in `library/src/lib.rs` is small. It
   includes:
-  - `ehz_capacity`, `ehz_capacity_unpruned`, `EhzResult`
-  - `billiard_capacity`, `BilliardError`, `BilliardResult`
+  - `ehz_capacity`, `ehz_capacity_pruned`, `ehz_capacity_unpruned`, `ehz_capacity_billiard`, `OrbitSearchResult`
   - `volume`, `omega0`, `lagrangian_product`
   - polygon helpers
   - known-polytopes helpers

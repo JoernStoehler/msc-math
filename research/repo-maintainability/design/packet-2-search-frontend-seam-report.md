@@ -2,7 +2,7 @@
 Purpose: Packet 2 planning report for the shared capacity/orbit search frontend.
 Context: maps the current common enumerate -> solve -> classify -> track seam
 across hk2017 pruned, hk2017 unpruned, and billiard before the main thread
-rewires them onto the new shared orbit-search surface.
+uses the current shared orbit-search surface.
 -->
 
 # Packet 2 Shared Search Frontend Seam Report
@@ -16,9 +16,9 @@ In current code, that seam is the point where each frontend already has a
 concrete `sigma: &[usize]` and then does the same work:
 
 1. solve `(polytope, sigma)` through the saddle-point bridge,
-2. convert `KktResult` into `Solution`,
-3. submit `Solution` into [`CapacityAccumulator`](../../../library/src/algorithms/capacity_accumulator.rs:98),
-4. finalize to a capacity summary.
+2. convert `KktResult` into `OrbitKktData`,
+3. aggregate the solved orbit(s) with [`aggregate_orbits`](../../../library/src/algorithms/orbit_search.rs:545) or [`aggregate_orbits_f64_only`](../../../library/src/algorithms/orbit_search.rs:596),
+4. finalize to an [`OrbitSearchResult`](../../../library/src/algorithms/orbit_search.rs:95).
 
 This is the smallest extraction that lets Packet 2 add shared collector
 entrypoints in [`orbit_search.rs`](../../../library/src/algorithms/orbit_search.rs:1)
@@ -27,10 +27,11 @@ abstraction.
 
 ## Files and functions in the current loop
 
-- HK2017 public wrappers at the time of this seam report:
-  [ehz_capacity_unpruned](../../../library/src/lib.rs:98),
-  [ehz_capacity](../../../library/src/lib.rs:124)
-  were the short router surface over HK2017 enumeration.
+- HK2017 public wrappers on the current surface:
+  [ehz_capacity_pruned](../../../library/src/lib.rs:80),
+  [ehz_capacity_unpruned](../../../library/src/lib.rs:90),
+  [ehz_capacity](../../../library/src/lib.rs:121)
+  route through the shared orbit-search result layer.
 - HK2017 enumeration:
   [enumerate_unpruned](../../../library/src/algorithms/hk2017/enumeration.rs:18),
   [enumerate_pruned](../../../library/src/algorithms/hk2017/enumeration.rs:22),
@@ -42,13 +43,11 @@ abstraction.
   [build_transition_matrix](../../../library/src/algorithms/facet_adjacency.rs:30) +
   [is_feasible_cycle](../../../library/src/algorithms/facet_adjacency.rs:44).
 - Shared one-sigma solve seam now used by HK2017:
-  [solve_orbit_sigma](../../../library/src/algorithms/orbit_search.rs:144)
-  called from
-  [collect_legacy_capacity](../../../library/src/algorithms/orbit_search.rs:229)
-  and wired into
-  [enumerate_impl](../../../library/src/algorithms/hk2017/enumeration.rs:24).
+  [solve_orbit_sigma](../../../library/src/algorithms/orbit_search.rs:192)
+  called from the HK2017 traversal helpers and wired into the shared result
+  surface.
 - Billiard public frontend:
-  [billiard_capacity](../../../library/src/algorithms/billiard/mod.rs:109).
+  [ehz_capacity_billiard](../../../library/src/lib.rs:102).
 - Billiard candidate preparation/generation:
   `classify_facets` from `billiard/facet_classification.rs`,
   [enumerate_blocks](../../../library/src/algorithms/billiard/block_enumeration.rs:68),
@@ -57,15 +56,13 @@ abstraction.
   [build_transition_matrix](../../../library/src/algorithms/facet_adjacency.rs:30) +
   [is_feasible_cycle](../../../library/src/algorithms/facet_adjacency.rs:44).
 - Shared one-sigma solve seam now used by billiard:
-  [solve_orbit_sigma](../../../library/src/algorithms/orbit_search.rs:144)
-  called from
-  [collect_legacy_capacity](../../../library/src/algorithms/orbit_search.rs:229)
-  and wired into
-  [billiard_capacity](../../../library/src/algorithms/billiard/mod.rs:108).
+  [solve_orbit_sigma](../../../library/src/algorithms/orbit_search.rs:192)
+  called from the billiard traversal helpers and wired into the shared result
+  surface.
 - Shared tracking/finalization:
-  [CapacityAccumulator::new](../../../library/src/algorithms/capacity_accumulator.rs:109),
-  [submit](../../../library/src/algorithms/capacity_accumulator.rs:121),
-  [finalize](../../../library/src/algorithms/capacity_accumulator.rs:177).
+  [aggregate_orbits](../../../library/src/algorithms/orbit_search.rs:545),
+  [aggregate_orbits_f64_only](../../../library/src/algorithms/orbit_search.rs:596),
+  [OrbitSearchResult](../../../library/src/algorithms/orbit_search.rs:95).
 - Shared lower solver contract:
   [solve_kkt_for](../../../library/src/kkt/saddle_point_solver.rs:292),
   [KktOutcome::feasible](../../../library/src/kkt/saddle_point_solver.rs:167),
@@ -78,21 +75,21 @@ abstraction.
 | Stage | HK2017 pruned/unpruned | Billiard | Data passed onward |
 | --- | --- | --- | --- |
 | Candidate generation | `m`, `subset`, cyclic `perm` from [enumerate_impl](../../../library/src/algorithms/hk2017/enumeration.rs:26) | `k`, block selections, `sigma` from [enumerate_k_bounce_sigmas](../../../library/src/algorithms/billiard/block_enumeration.rs:102) | Concrete `sigma: &[usize]` plus frontend-local metadata (`subset` or `k`) |
-| Cheap pruning | optional directed adjacency via [is_feasible_cycle](../../../library/src/algorithms/facet_adjacency.rs:44) | same directed adjacency check in [billiard_capacity](../../../library/src/algorithms/billiard/mod.rs:131) | surviving `sigma: &[usize]` |
-| Solve | [collect_legacy_capacity](../../../library/src/algorithms/orbit_search.rs:229) -> [solve_orbit_sigma](../../../library/src/algorithms/orbit_search.rs:144) | same helper path | `OrbitKktData` or `OrbitSolveError` |
-| Classify/convert | [legacy_solution_from_orbit](../../../library/src/algorithms/orbit_search.rs:210) maps orbit admissibility back to the current `Solution`/accumulator contract | same helper path | `Solution { verdict, q, beta, margin }` |
-| Track shared capacity state | [collect_legacy_capacity](../../../library/src/algorithms/orbit_search.rs:229) owns `acc.submit(...)` and `finalize()` | same helper path | two-tier best candidate state inside `CapacityAccumulator` |
-| Track frontend-local metadata | HK2017 tracks `best_subset_certified: Option<(action, subset)>` in [enumerate_impl](../../../library/src/algorithms/hk2017/enumeration.rs:30) | Billiard tracks `best_bounce_certified: Option<(action, k)>` in [billiard_capacity](../../../library/src/algorithms/billiard/mod.rs:128) | local wrapper metadata only |
-| Finalize | [acc.finalize()?](../../../library/src/algorithms/hk2017/enumeration.rs:57) then derive `best_subset` fallback from `best_permutation` | [acc.finalize()](../../../library/src/algorithms/billiard/mod.rs:155) then default `bounce_count` | `CapacityResult` + local wrapper fields |
+| Cheap pruning | optional directed adjacency via [is_feasible_cycle](../../../library/src/algorithms/facet_adjacency.rs:44) | same directed adjacency check in [ehz_capacity_billiard](../../../library/src/lib.rs:102) | surviving `sigma: &[usize]` |
+| Solve | [solve_orbit_sigma](../../../library/src/algorithms/orbit_search.rs:192) | same helper path | `OrbitKktData` or `OrbitSolveError` |
+| Classify/convert | `OrbitAdmissibility` is attached to each solved orbit; no separate result wrapper is involved | same helper path | `OrbitKktData { admissibility, q, beta, ... }` |
+| Track shared capacity state | `aggregate_orbits(...)` and `aggregate_orbits_f64_only(...)` own the shared trimming/sorting/finalization logic | same helper path | `OrbitSearchResult { orbits, min_action, min_action_lower, min_action_upper, iterations }` |
+| Track frontend-local metadata | HK2017 tracks `best_subset_certified: Option<(action, subset)>` in `enumerate_impl`; billiard tracks `best_bounce_certified: Option<(action, k)>` in its frontend | local wrapper metadata only |
+| Finalize | `OrbitSearchResult` plus scalar convenience accessors like `capacity()` and `best_subset()` | same | `OrbitSearchResult` + local wrapper fields |
 
 ## Why this seam is the smallest useful one
 
 - The duplicate code is not the high-level candidate generator.
   HK2017 and billiard produce sigmas in structurally different ways:
   subset/permutation traversal versus block-structured bounce enumeration.
-- The duplicate code started exactly at `sigma -> solve_and_convert -> acc.submit`;
+- The duplicate code starts at `sigma -> solve -> classify -> aggregate`;
   Packet 2 now replaces that with the shared
-  `sigma -> solve_orbit_sigma -> collect_legacy_capacity` seam.
+  `sigma -> solve_orbit_sigma -> aggregate_orbits` seam.
 - The frontend-local data that still matters after solving is small and
   different:
   HK2017 needs the certified winner's unordered subset,

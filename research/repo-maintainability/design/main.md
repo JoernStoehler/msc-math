@@ -11,9 +11,9 @@ the committed docs/code they govern.
 
 ## Status
 
-- Phase: architecture/API decision surface reviewed; next step is execution
-  packet planning from a dedicated feature worktree.
-- Last updated: 2026-04-16.
+- Phase: main execution packet landed on `capacity-result-api-exec`; this note
+  now serves mainly as durable history/index for the discovery and design pass.
+- Last updated: 2026-04-17.
 - Planning rule: write execution packets incrementally from the approved design
   notes; do not treat the full DAG as fixed before early packets are tested in
   code.
@@ -50,11 +50,12 @@ These are observed facts as of 2026-04-16, not design decisions.
 - Repo orientation is currently split across `AGENTS.md`, `TASKS.md`,
   `library/src/lib.rs`, `library/src/database.rs`, and per-package
   `experiments/<topic>/src/lib.rs` headers.
-- The simple public library surface in `library/src/lib.rs` re-exports only a
-  small set of entry points: `ehz_capacity` (auto), `ehz_capacity_pruned`,
-  `ehz_capacity_unpruned`, `ehz_capacity_billiard`, `billiard_capacity`,
-  `volume`, `omega0`, `lagrangian_product`, polygon builders, known
-  polytopes, and test utils.
+- The simple public library surface in `library/src/lib.rs` re-exports the
+  settled router family and shared result types: `ehz_capacity` (auto),
+  `ehz_capacity_pruned`, `ehz_capacity_unpruned`,
+  `ehz_capacity_billiard`, `OrbitSearchResult`, `OrbitSearchError`,
+  `OrbitKktData`, `OrbitSolveBackend`, `volume`, `omega0`,
+  `lagrangian_product`, polygon builders, known polytopes, and test utils.
 - Experiments already depend on deep library paths beyond that simple surface.
   Evidence: `rg -n "use symplectic::" experiments`.
   Examples seen on 2026-04-16:
@@ -140,9 +141,9 @@ Use one conceptual unit per chat message to avoid mixing design layers.
   - `ARCHITECTURE.md` for component/code architecture plus the current
     persisted-data architecture
 - Review result: Jörn read the file and accepted the section shape as useful.
-- Next discussion unit: library API/result layering around `EhzResult`,
-  `CapacityResult`, `OrbitRecovery`, derivatives, and Clarke-subdifferential
-  support.
+- Current follow-up unit: review and trim any remaining accidental complexity
+  after the landed router/building-block refactor, then use this note as
+  history rather than as a live design queue.
 - Dedicated design note for that unit now exists at
   `research/repo-maintainability/design/hk2017-result-api-plan.md`.
 - Evidence source for later fill:
