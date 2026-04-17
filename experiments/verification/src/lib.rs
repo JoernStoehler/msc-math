@@ -1,13 +1,19 @@
 //! Shared helpers for verification experiments.
 //!
-//! Purpose: keep target-pool selection and local dataset policy consistent
+//! Purpose: keep target-pool selection and shared run plumbing consistent
 //! across the minimum-set and orbit-recovery validation binaries.
+//!
+//! Module architecture:
+//! - target selection and cache loading
+//! - run-mode parsing and output-path helpers
+//! - shared newline-delimited JSON writers
 
 use nalgebra::Vector4;
 use serde::Deserialize;
+use serde::Serialize;
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::fs::File;
-use std::io::{BufRead, BufReader};
+use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::path::{Path, PathBuf};
 use symplectic::database::{self, DualVerticesKey, PolytopeRecord, Source};
 use symplectic::geom::known_polytopes;
@@ -41,6 +47,12 @@ pub enum RunMode {
     Full,
 }
 
+#[derive(Debug)]
+pub enum RunModeArgError {
+    Help,
+    Unknown(String),
+}
+
 #[derive(Debug, Deserialize)]
 struct CorrectnessRow {
     name: String,
@@ -68,6 +80,58 @@ pub fn target_map(manifest_dir: &Path, mode: RunMode) -> HashMap<String, Target>
         .into_iter()
         .map(|target| (target.name.clone(), target))
         .collect()
+}
+
+pub fn parse_run_mode<I>(args: I) -> Result<RunMode, RunModeArgError>
+where
+    I: IntoIterator<Item = String>,
+{
+    let mut full = false;
+
+    for arg in args {
+        match arg.as_str() {
+            "--full" => full = true,
+            "--help" | "-h" => return Err(RunModeArgError::Help),
+            other => return Err(RunModeArgError::Unknown(other.to_string())),
+        }
+    }
+
+    Ok(if full { RunMode::Full } else { RunMode::Smoke })
+}
+
+pub fn run_mode_label(mode: RunMode) -> &'static str {
+    match mode {
+        RunMode::Smoke => "smoke",
+        RunMode::Full => "full",
+    }
+}
+
+pub fn mode_output_path(
+    manifest_dir: &Path,
+    subdir: &str,
+    smoke_name: &str,
+    full_name: &str,
+    mode: RunMode,
+) -> PathBuf {
+    let output_dir = manifest_dir.join(subdir);
+    match mode {
+        RunMode::Smoke => output_dir.join(smoke_name),
+        RunMode::Full => output_dir.join(full_name),
+    }
+}
+
+pub fn create_jsonl_writer(path: &Path) -> BufWriter<File> {
+    std::fs::create_dir_all(
+        path.parent()
+            .expect("jsonl output path must have a parent directory"),
+    )
+    .expect("failed to create jsonl output directory");
+    BufWriter::new(File::create(path).expect("failed to create jsonl output"))
+}
+
+pub fn write_json_line<T: Serialize>(writer: &mut BufWriter<File>, row: &T) {
+    serde_json::to_writer(&mut *writer, row).expect("serialize jsonl row");
+    writeln!(&mut *writer).expect("write jsonl newline");
 }
 
 fn load_shared_cache(manifest_dir: &Path) -> HashMap<DualVerticesKey, PolytopeRecord> {

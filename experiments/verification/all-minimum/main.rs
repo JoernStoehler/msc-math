@@ -11,13 +11,13 @@
 //!                   experiments/verification/all-minimum/smoke-all-minimum-orbits.jsonl
 
 use dev_capacity_validation::{
-    build_target_pool, RunMode, Target, MINIMUM_ACTION_GAP_TOL, SCALAR_TOL,
+    build_target_pool, create_jsonl_writer, mode_output_path, parse_run_mode, run_mode_label,
+    write_json_line, RunMode, RunModeArgError, Target, MINIMUM_ACTION_GAP_TOL, SCALAR_TOL,
 };
 use serde::Serialize;
 use std::collections::BTreeMap;
 use std::env;
-use std::fs::{create_dir_all, File};
-use std::io::{BufWriter, Write};
+use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::time::Instant;
 use symplectic::algorithms::hk2017::for_each_sigma_pruned;
@@ -115,29 +115,10 @@ fn main() {
     let manifest_dir = Path::new(env!("CARGO_MANIFEST_DIR"));
     let run_paths = parse_run_paths(manifest_dir);
     let targets = build_target_pool(manifest_dir, run_paths.mode);
+    let mut summary_writer = create_jsonl_writer(&run_paths.summary_path);
+    let mut detail_writer = create_jsonl_writer(&run_paths.detail_path);
 
-    create_dir_all(
-        run_paths
-            .summary_path
-            .parent()
-            .expect("summary output must have a parent"),
-    )
-    .expect("failed to create all-minimum output directory");
-
-    let mut summary_writer = BufWriter::new(
-        File::create(&run_paths.summary_path).expect("failed to create summary output"),
-    );
-    let mut detail_writer = BufWriter::new(
-        File::create(&run_paths.detail_path).expect("failed to create detail output"),
-    );
-
-    eprintln!(
-        "Mode: {}",
-        match run_paths.mode {
-            RunMode::Smoke => "smoke",
-            RunMode::Full => "full",
-        }
-    );
+    eprintln!("Mode: {}", run_mode_label(run_paths.mode));
     eprintln!("Target pool: {} polytopes", targets.len());
 
     let mut families = BTreeMap::<String, usize>::new();
@@ -181,33 +162,33 @@ fn main() {
 }
 
 fn parse_run_paths(manifest_dir: &Path) -> RunPaths {
-    let mut args = env::args().skip(1);
-    let mut full = false;
+    let mode = match parse_run_mode(env::args().skip(1)) {
+        Ok(mode) => mode,
+        Err(RunModeArgError::Help) => print_help_and_exit(),
+        Err(RunModeArgError::Unknown(other)) => {
+            eprintln!("unknown argument: {other}");
+            print_help_and_exit();
+        }
+    };
+    let summary_path = mode_output_path(
+        manifest_dir,
+        "all-minimum",
+        "smoke-all-minimum.jsonl",
+        "all-minimum.jsonl",
+        mode,
+    );
+    let detail_path = mode_output_path(
+        manifest_dir,
+        "all-minimum",
+        "smoke-all-minimum-orbits.jsonl",
+        "all-minimum-orbits.jsonl",
+        mode,
+    );
 
-    while let Some(arg) = args.next() {
-        match arg.as_str() {
-            "--full" => full = true,
-            "--help" | "-h" => print_help_and_exit(),
-            other => {
-                eprintln!("unknown argument: {other}");
-                print_help_and_exit();
-            }
-        }
-    }
-
-    let output_dir = manifest_dir.join("all-minimum");
-    if full {
-        RunPaths {
-            mode: RunMode::Full,
-            summary_path: output_dir.join("all-minimum.jsonl"),
-            detail_path: output_dir.join("all-minimum-orbits.jsonl"),
-        }
-    } else {
-        RunPaths {
-            mode: RunMode::Smoke,
-            summary_path: output_dir.join("smoke-all-minimum.jsonl"),
-            detail_path: output_dir.join("smoke-all-minimum-orbits.jsonl"),
-        }
+    RunPaths {
+        mode,
+        summary_path,
+        detail_path,
     }
 }
 
@@ -458,9 +439,4 @@ fn log_summary(summary: &AllMinimumSummaryRow) {
         summary.failure_stage.as_deref().unwrap_or("unknown"),
         summary.failure_reasons.join("; "),
     );
-}
-
-fn write_json_line<T: Serialize>(writer: &mut BufWriter<File>, row: &T) {
-    serde_json::to_writer(&mut *writer, row).expect("serialize all-minimum row");
-    writeln!(&mut *writer).expect("write all-minimum newline");
 }

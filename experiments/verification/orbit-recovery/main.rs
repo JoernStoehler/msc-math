@@ -11,12 +11,15 @@
 //!                   experiments/verification/orbit-recovery/smoke-orbit-recovery.jsonl,
 //!                   experiments/verification/orbit-recovery/smoke-orbit-recovery-orbits.jsonl
 
-use dev_capacity_validation::{target_map, RunMode, Target, ACTION_TOL, GEOMETRY_TOL};
+use dev_capacity_validation::{
+    create_jsonl_writer, mode_output_path, parse_run_mode, run_mode_label, target_map,
+    write_json_line, RunMode, RunModeArgError, Target, ACTION_TOL, GEOMETRY_TOL,
+};
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap};
 use std::env;
-use std::fs::{create_dir_all, File};
-use std::io::{BufRead, BufReader, BufWriter, Write};
+use std::fs::File;
+use std::io::{BufRead, BufReader, Write};
 use std::path::{Path, PathBuf};
 use std::time::Instant;
 use symplectic::algorithms::hk2017::orbit_recovery::{recover_and_verify, GeometricOrbit};
@@ -114,29 +117,10 @@ fn main() {
     let run_paths = parse_run_paths(manifest_dir);
     let targets = target_map(manifest_dir, run_paths.mode);
     let trusted_orbits = load_trusted_orbits(&run_paths.trusted_orbits_path);
+    let mut summary_writer = create_jsonl_writer(&run_paths.summary_path);
+    let mut detail_writer = create_jsonl_writer(&run_paths.detail_path);
 
-    create_dir_all(
-        run_paths
-            .summary_path
-            .parent()
-            .expect("orbit-recovery summary output must have a parent"),
-    )
-    .expect("failed to create orbit-recovery output directory");
-
-    let mut summary_writer = BufWriter::new(
-        File::create(&run_paths.summary_path).expect("failed to create recovery summary output"),
-    );
-    let mut detail_writer = BufWriter::new(
-        File::create(&run_paths.detail_path).expect("failed to create recovery detail output"),
-    );
-
-    eprintln!(
-        "Mode: {}",
-        match run_paths.mode {
-            RunMode::Smoke => "smoke",
-            RunMode::Full => "full",
-        }
-    );
+    eprintln!("Mode: {}", run_mode_label(run_paths.mode));
     eprintln!("Trusted sigma rows: {}", trusted_orbits.values().map(Vec::len).sum::<usize>());
 
     let mut failures = 0usize;
@@ -181,36 +165,40 @@ fn main() {
 }
 
 fn parse_run_paths(manifest_dir: &Path) -> RunPaths {
-    let mut args = env::args().skip(1);
-    let mut full = false;
-
-    while let Some(arg) = args.next() {
-        match arg.as_str() {
-            "--full" => full = true,
-            "--help" | "-h" => print_help_and_exit(),
-            other => {
-                eprintln!("unknown argument: {other}");
-                print_help_and_exit();
-            }
+    let mode = match parse_run_mode(env::args().skip(1)) {
+        Ok(mode) => mode,
+        Err(RunModeArgError::Help) => print_help_and_exit(),
+        Err(RunModeArgError::Unknown(other)) => {
+            eprintln!("unknown argument: {other}");
+            print_help_and_exit();
         }
-    }
+    };
 
-    let orbit_dir = manifest_dir.join("orbit-recovery");
     let minimum_dir = manifest_dir.join("all-minimum");
-    if full {
-        RunPaths {
-            mode: RunMode::Full,
-            trusted_orbits_path: minimum_dir.join("all-minimum-orbits.jsonl"),
-            summary_path: orbit_dir.join("orbit-recovery.jsonl"),
-            detail_path: orbit_dir.join("orbit-recovery-orbits.jsonl"),
-        }
-    } else {
-        RunPaths {
-            mode: RunMode::Smoke,
-            trusted_orbits_path: minimum_dir.join("smoke-all-minimum-orbits.jsonl"),
-            summary_path: orbit_dir.join("smoke-orbit-recovery.jsonl"),
-            detail_path: orbit_dir.join("smoke-orbit-recovery-orbits.jsonl"),
-        }
+    let summary_path = mode_output_path(
+        manifest_dir,
+        "orbit-recovery",
+        "smoke-orbit-recovery.jsonl",
+        "orbit-recovery.jsonl",
+        mode,
+    );
+    let detail_path = mode_output_path(
+        manifest_dir,
+        "orbit-recovery",
+        "smoke-orbit-recovery-orbits.jsonl",
+        "orbit-recovery-orbits.jsonl",
+        mode,
+    );
+
+    RunPaths {
+        mode,
+        trusted_orbits_path: if matches!(mode, RunMode::Full) {
+            minimum_dir.join("all-minimum-orbits.jsonl")
+        } else {
+            minimum_dir.join("smoke-all-minimum-orbits.jsonl")
+        },
+        summary_path,
+        detail_path,
     }
 }
 
@@ -518,9 +506,4 @@ fn log_summary(summary: &OrbitRecoverySummaryRow) {
         summary.failure_stage.as_deref().unwrap_or("unknown"),
         summary.failure_reasons.join("; "),
     );
-}
-
-fn write_json_line<T: Serialize>(writer: &mut BufWriter<File>, row: &T) {
-    serde_json::to_writer(&mut *writer, row).expect("serialize orbit-recovery row");
-    writeln!(&mut *writer).expect("write orbit-recovery newline");
 }
