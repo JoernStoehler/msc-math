@@ -160,8 +160,7 @@ target API have already landed in code.
   - the ablation experiment now uses its own local result row type instead of
     borrowing library scalar-result structs.
 - `recover_and_verify(polytope, &orbit)` is a separate pass that turns an
-  `OrbitKktData` payload into geometric-orbit data (currently named
-  `OrbitRecovery` in code).
+  `OrbitKktData` payload into `GeometricOrbit` data.
 - `capacity_derivatives_a(...)` is a lower-level derivative routine on
   orbit/KKT inputs (`beta`, `q`, `mu`, `sigma`, `dual_vertices`), not on
   `EhzResult`.

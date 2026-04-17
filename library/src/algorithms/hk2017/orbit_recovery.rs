@@ -41,7 +41,7 @@ use nalgebra::{DMatrix, DVector, Vector4};
 ///
 /// [lem:base-point-recovery]: recovery of base point b = gamma(0).
 #[derive(Clone, Debug)]
-pub struct OrbitRecovery {
+pub struct GeometricOrbit {
     /// Points where the trajectory transitions between facets: b + v_k for k = 0..m.
     /// `breakpoints[0]` is the base point b = gamma(0).
     /// For a closed orbit, `breakpoints[m]` should be close to `breakpoints[0]`.
@@ -90,7 +90,7 @@ pub struct OrbitRecovery {
 pub fn recover_and_verify(
     polytope: &Polytope4D,
     orbit: &OrbitKktData,
-) -> Option<OrbitRecovery> {
+) -> Option<GeometricOrbit> {
     let duals = polytope.dual_vertices_f64();
     let sigma = &orbit.sigma;
     let beta = &orbit.beta;
@@ -214,7 +214,7 @@ pub fn recover_and_verify(
     }
     let action = action_sum / 2.0;
 
-    Some(OrbitRecovery {
+    Some(GeometricOrbit {
         breakpoints,
         dwell_times,
         max_violation,

@@ -133,7 +133,7 @@ Current recurring code-level entities:
 | `Polytope4D` | central polytope object for geometry and algorithms | `library/src/lib.rs`, `geom` |
 | `OrbitSearchResult` | shared capacity/orbit search result returned by the root `ehz_capacity`, `ehz_capacity_pruned`, `ehz_capacity_unpruned`, and `ehz_capacity_billiard` family; contains the orbit list plus `min_action` bounds and iterations | `library/src/algorithms/orbit_search.rs`, `library/src/lib.rs` |
 | `OrbitKktData` | one solved orbit payload: `sigma`, `beta`, action interval, `q`, optional multipliers, admissibility | `library/src/algorithms/orbit_search.rs` |
-| `OrbitRecovery` | recovered geometric trajectory/orbit data derived from an `OrbitKktData` payload | `library/src/algorithms/hk2017/orbit_recovery.rs` |
+| `GeometricOrbit` | recovered geometric trajectory/orbit data derived from an `OrbitKktData` payload | `library/src/algorithms/hk2017/orbit_recovery.rs` |
 | `PolytopeRecord` | persisted JSONL row, including optional `Source` provenance and optional `SigmaAction` orbit summaries | `library/src/database.rs` |
 
 Current observed transformation chain:
@@ -143,7 +143,7 @@ flowchart LR
     P["Polytope4D"]
     S["OrbitSearchResult"]
     K["OrbitKktData"]
-    O["OrbitRecovery"]
+    O["GeometricOrbit"]
     R["PolytopeRecord"]
     D["derivative vectors"]
 
@@ -161,7 +161,7 @@ Important current-state nuance:
 
 - The repo currently has two orbit-side layers:
   - `OrbitSearchResult` / `OrbitKktData` for the shared root search output
-  - `OrbitRecovery` for recovered geometric trajectories and verification data
+  - `GeometricOrbit` for recovered geometric trajectories and verification data
 - `recover_and_verify(polytope, &orbit)` is a real library-level
   transformation from solved orbit payload to recovered orbit.
 - The derivatives layer is lower-level: experiments call
@@ -170,7 +170,7 @@ Important current-state nuance:
   `beta`, `sigma`, `q`, and `mu`; there is no dedicated
   derivatives object.
 - Persisted `sigmas` in `PolytopeRecord` are summary data for reuse/caching, not
-  a full replacement for `OrbitRecovery`.
+  a full replacement for `GeometricOrbit`.
 - There is not yet a single top-level library API of the form
   `OrbitSearchResult -> derivatives object`.
 

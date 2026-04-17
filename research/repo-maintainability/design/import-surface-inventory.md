@@ -68,7 +68,7 @@ boundary questions that still need a Jörn decision.
 - Why: these paths are public, documented, and used by the current experiments as normal working APIs, but they are deeper than the short root surface.
 - Examples of current callers:
   - `experiments/combinatorial-cells/boundary-characterization/main.rs`, `experiments/combinatorial-cells/cell-widths/main.rs`, and `experiments/hko-local-maximum/gradient-analysis/main.rs` import `build_transition_matrix`, `is_feasible_cycle`, `combinations`, and `for_each_cyclic_permutation`.
-  - `experiments/verification/orbit-recovery/main.rs` imports `recover_and_verify`, `OrbitRecovery`, and `solve_kkt_for`.
+  - `experiments/verification/orbit-recovery/main.rs` imports `recover_and_verify`, `GeometricOrbit`, and `solve_kkt_for`.
   - `experiments/sys-landscape/gradient-ascent-general/main.rs`, `experiments/sys-landscape/random-sample/main.rs`, and `experiments/sys-landscape/rejection-calibration/main.rs` import `database`, `random`, and `dataset` helpers.
   - `experiments/numerics/gradient/numerics/main.rs` and `experiments/hko-local-maximum/second-order/main.rs` import `solve_kkt_for`, `KktResult`, and `EPS_Q_POSITIVE`.
   - `experiments/numerics/gradient/numerics-edge-cases/main.rs` imports `facet_volume_3d`.
@@ -86,7 +86,7 @@ boundary questions that still need a Jörn decision.
 
 ### Unclear
 
-- `symplectic::algorithms::hk2017::orbit_recovery::{recover_and_verify, OrbitRecovery}`.
+- `symplectic::algorithms::hk2017::orbit_recovery::{recover_and_verify, GeometricOrbit}`.
 - `symplectic::algorithms::hk2017::permutations` as a module boundary, not just the function above.
 - `symplectic::algorithms::billiard::facet_classification::{classify_facets, FacetClassification}`.
 - `symplectic::kkt::qp_assembly::build_augmented_system`.

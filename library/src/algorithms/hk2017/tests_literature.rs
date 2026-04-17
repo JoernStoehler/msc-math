@@ -141,7 +141,7 @@ fn simplex_projected_backend_unsupported() {
 
 /// Verify the known minimizing orbit of the 4D crosspolytope gives action = 4.0.
 ///
-/// This is a fast certificate test (single KKT solve + orbit recovery, ~ms).
+/// This is a fast certificate test (single KKT solve + geometric orbit recovery, ~ms).
 /// It proves c_EHZ(crosspolytope) ≤ 4.0 by exhibiting a feasible orbit with
 /// action 4.0. The full enumeration proving c_EHZ = 4.0 (minimum over all
 /// orbits) was done by `experiments/crosspolytope/main/main.rs` using
@@ -193,22 +193,23 @@ fn crosspolytope_upper_bound() {
         admissibility: crate::algorithms::OrbitAdmissibility::AdmissibleF64,
     };
 
-    let recovery = recover_and_verify(&kp.polytope, &orbit).expect("orbit recovery failed");
+    let geometric_orbit =
+        recover_and_verify(&kp.polytope, &orbit).expect("geometric orbit recovery failed");
 
     assert!(
-        recovery.closure_error < 1e-8,
+        geometric_orbit.closure_error < 1e-8,
         "closure error {:.2e} too large",
-        recovery.closure_error
+        geometric_orbit.closure_error
     );
     assert!(
-        recovery.max_violation < 1e-6,
+        geometric_orbit.max_violation < 1e-6,
         "max violation {:.2e} too large",
-        recovery.max_violation
+        geometric_orbit.max_violation
     );
     assert!(
-        (recovery.action - 4.0).abs() < 1e-8,
+        (geometric_orbit.action - 4.0).abs() < 1e-8,
         "recovered action = {}, expected 4.0",
-        recovery.action
+        geometric_orbit.action
     );
 }
 

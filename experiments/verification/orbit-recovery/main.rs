@@ -1,6 +1,6 @@
-//! Orbit recovery validation experiment on a curated local-first target pool.
+//! Geometric orbit validation experiment on a curated local-first target pool.
 //!
-//! Goal: validate minimum-action orbit recovery on a bounded target set while
+//! Goal: validate minimum-action geometric orbit recovery on a bounded target set while
 //! reusing cached capacity + minimum-sigma data from shared repo mirrors when
 //! possible.
 //!
@@ -24,14 +24,14 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::{Path, PathBuf};
 use std::time::Instant;
+use symplectic::algorithms::hk2017::orbit_recovery::{recover_and_verify, GeometricOrbit};
 use symplectic::algorithms::{OrbitAdmissibility, OrbitKktData};
-use symplectic::algorithms::hk2017::orbit_recovery::{recover_and_verify, OrbitRecovery};
 use symplectic::database::{self, DualVerticesKey, PolytopeRecord, SigmaAction, Source};
+use symplectic::ehz_capacity;
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::kkt::saddle_point_solver::solve_kkt_for;
 use symplectic::random::generate_polytope;
-use symplectic::ehz_capacity;
 
 const SEED: u64 = 42;
 const H_MIN: f64 = 0.8;
@@ -64,7 +64,7 @@ enum TargetSpec {
 }
 
 #[derive(Debug, Serialize)]
-struct OrbitRecoveryRow {
+struct GeometricOrbitRow {
     name: String,
     family: String,
     resolution: String,
@@ -153,10 +153,10 @@ fn main() {
         };
 
         let t_rec = Instant::now();
-        let recovery = match recover_and_verify(&polytope, &orbit) {
+        let geometric_orbit = match recover_and_verify(&polytope, &orbit) {
             Some(value) => value,
             None => {
-                eprintln!("  FAIL {name} (orbit recovery failed)");
+                eprintln!("  FAIL {name} (geometric orbit recovery failed)");
                 failures += 1;
                 total += 1;
                 continue;
@@ -164,11 +164,15 @@ fn main() {
         };
         let time_recovery_ms = t_rec.elapsed().as_secs_f64() * 1000.0;
 
-        let on_facet_error = compute_on_facet_error(&polytope, &orbit.sigma, &recovery);
-        let action_error = (recovery.action - orbit.action).abs();
-        let active_facets = recovery.dwell_times.iter().filter(|&&t| t > 0.0).count();
+        let on_facet_error = compute_on_facet_error(&polytope, &orbit.sigma, &geometric_orbit);
+        let action_error = (geometric_orbit.action - orbit.action).abs();
+        let active_facets = geometric_orbit
+            .dwell_times
+            .iter()
+            .filter(|&&t| t > 0.0)
+            .count();
 
-        let row = OrbitRecoveryRow {
+        let row = GeometricOrbitRow {
             name: name.clone(),
             family: family.clone(),
             resolution: resolution.to_string(),
@@ -176,12 +180,12 @@ fn main() {
             capacity: orbit.action,
             active_facets,
             total_segments: orbit.sigma.len(),
-            solution_dim: recovery.solution_dim,
-            max_violation: recovery.max_violation,
-            closure_error: recovery.closure_error,
+            solution_dim: geometric_orbit.solution_dim,
+            max_violation: geometric_orbit.max_violation,
+            closure_error: geometric_orbit.closure_error,
             on_facet_error,
-            inside_k_error: recovery.max_violation,
-            computed_action: recovery.action,
+            inside_k_error: geometric_orbit.max_violation,
+            computed_action: geometric_orbit.action,
             action_error,
             time_capacity_ms,
             time_recovery_ms,
@@ -574,13 +578,17 @@ fn persist_extension_row(
     true
 }
 
-fn compute_on_facet_error(polytope: &Polytope4D, perm: &[usize], recovery: &OrbitRecovery) -> f64 {
+fn compute_on_facet_error(
+    polytope: &Polytope4D,
+    perm: &[usize],
+    geometric_orbit: &GeometricOrbit,
+) -> f64 {
     let duals = polytope.dual_vertices_f64();
     (0..perm.len())
-        .filter(|&k| recovery.dwell_times[k] > 0.0)
+        .filter(|&k| geometric_orbit.dwell_times[k] > 0.0)
         .map(|k| {
             let a = &duals[perm[k]];
-            (a.dot(&recovery.breakpoints[k]) - 1.0).abs()
+            (a.dot(&geometric_orbit.breakpoints[k]) - 1.0).abs()
         })
         .fold(0.0_f64, f64::max)
 }
@@ -598,7 +606,7 @@ fn orbit_from_cache(
     record: &PolytopeRecord,
 ) -> Result<OrbitKktData, String> {
     // Cache rows store the minimum-action value and a sigma, but not the beta
-    // needed by orbit recovery, so this experiment must still rebuild one
+    // needed by geometric orbit recovery, so this experiment must still rebuild one
     // solved orbit payload by re-solving KKT for that cached minimizer.
     let capacity = record
         .capacity
