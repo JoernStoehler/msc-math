@@ -38,25 +38,18 @@
 //!
 //! Self-contained: generates all polytopes internally.
 
-use nalgebra::Vector4;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
-use dev_gradient::{ehz_capacity_safe, enumerate_all_orbits, random_direction, solve_kkt_safe};
+use dev_gradient::{analyze_polytope, enumerate_all_orbits, first_order_test, smoke_mode, smoke_output_dir, write_rows};
 use rand_distr::{Distribution, StandardNormal, Uniform};
-use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::PathBuf;
-use std::time::{Instant, SystemTime, UNIX_EPOCH};
-use symplectic::derivatives::{
-    capacity_derivatives_a_from_kkt_result,
-    directional_derivative_a,
-    volume_derivatives_a,
-};
+use std::time::Instant;
 use symplectic::geom::facet_volume::facet_volume_3d;
-use symplectic::kkt::saddle_point_solver::{KktResult, EPS_Q_POSITIVE};
 use symplectic::random::generate_random_polytopes;
-use symplectic::{volume, Polytope4D};
+use symplectic::Polytope4D;
+use nalgebra::Vector4;
 
 // ============================================================================
 // Constants
@@ -71,15 +64,6 @@ const SEED_BASE: u64 = 7777;
 /// would tighten the slope distribution but 5 already gives IQR width < 0.1
 /// for capacity. Decreasing below 3 risks missing direction-dependent bugs.
 const N_DIRS: usize = 5;
-
-/// Perturbation sizes for the first-order prediction test.
-/// Geometric sweep from 1e-1 to 1e-7 with half-decade spacing (13 values).
-/// Large t: tests robustness far from base point.
-/// Small t: tests convergence to zero (the defining gradient property).
-/// Below ~1e-7, floating-point cancellation in f(a+td)-f(a) dominates.
-const T_VALUES: &[f64] = &[
-    1e-1, 3e-2, 1e-2, 3e-3, 1e-3, 3e-4, 1e-4, 3e-5, 1e-5, 3e-6, 1e-6, 3e-7, 1e-7,
-];
 
 /// Q3: max candidates to generate when filling gap bins.
 /// 2000 is enough to fill all bins at F=6 (verified in v1).
@@ -106,11 +90,6 @@ const Q3_GAP_BINS: [(f64, f64, &str); 4] = [
     (0.0, 1e-4, "tiny"),
 ];
 
-/// Minimum beta for certified orbit in Q3 enumeration.
-/// Matches the library's EPS_MARGIN_TRUE (1e-9) from kkt/mod.rs -- orbits with
-/// beta below this are Indeterminate in the production accumulator.
-const EPS_BETA_CERTIFIED: f64 = 1e-9;
-
 /// Smoke-test settings for Phase 2.
 const SMOKE_Q3_F_COUNT: usize = 6;
 const SMOKE_Q3_MAX_CANDIDATES: usize = 30;
@@ -121,254 +100,6 @@ const SMOKE_Q4_F_COUNT: usize = 6;
 const SMOKE_Q4_BASE_COUNT: usize = 1;
 const SMOKE_Q4_DELTAS: &[f64] = &[1e-1, 1e-3];
 const SMOKE_Q4_N_DIRS: usize = 1;
-
-// ============================================================================
-// Output schema
-// ============================================================================
-
-#[derive(Debug, Serialize)]
-struct PredictionRow {
-    phase: String,
-    polytope_id: String,
-    facet_count: usize,
-    polytope_class: String,
-
-    target: String,
-    dir_idx: usize,
-    t: f64,
-
-    f_base: f64,
-    f_perturbed: f64,
-    grad_dot_d: f64,
-    predicted_change: f64,
-    actual_change: f64,
-    residual: f64,
-    residual_over_t: f64,
-
-    log_t: f64,
-    log_residual: f64,
-
-    action_gap: Option<f64>,
-    barely_cutting_delta: Option<f64>,
-    min_facet_volume: Option<f64>,
-
-    time_ms: f64,
-}
-
-// ============================================================================
-// Helper functions
-// ============================================================================
-
-/// Compute dsys/da_k via quotient rule: sys = c^2/(2*vol).
-/// dsys/da_k = (c*dc/da_k - sys*dvol/da_k) / vol.
-/// [cor:sys-derivative] quotient-rule derivative of the systolic ratio.
-/// In formal/library/algorithms.tex.
-fn sys_derivatives_a(
-    d_cap: &[Vector4<f64>],
-    d_vol: &[Vector4<f64>],
-    cap: f64,
-    vol: f64,
-    sys: f64,
-) -> Vec<Vector4<f64>> {
-    d_vol
-        .iter()
-        .zip(d_cap.iter())
-        .map(|(dv, dc)| (cap * dc - sys * dv) / vol)
-        .collect()
-}
-
-/// Polytope with precomputed base values and KKT solution.
-struct PolytopeInfo {
-    polytope: Polytope4D,
-    cap: f64,
-    vol: f64,
-    sys: f64,
-    best_perm: Vec<usize>,
-    kkt: KktResult,
-}
-
-/// Compute capacity, volume, sys, and KKT for a polytope's best orbit.
-fn analyze_polytope(polytope: &Polytope4D) -> Option<PolytopeInfo> {
-    let ehz = ehz_capacity_safe(polytope)?;
-    let cap = ehz.capacity();
-    let vol = volume(polytope).ok()?;
-    if vol <= 0.0 {
-        return None;
-    }
-    let sys = cap * cap / (2.0 * vol);
-    let best_perm = ehz.best_sigma().to_vec();
-    let kkt = solve_kkt_safe(polytope, &best_perm)?;
-    Some(PolytopeInfo {
-        polytope: polytope.clone(),
-        cap,
-        vol,
-        sys,
-        best_perm,
-        kkt,
-    })
-}
-
-/// Values of capacity, volume, and sys at a perturbed point a + t*d.
-struct PerturbedValues {
-    capacity: Option<f64>,
-    volume: Option<f64>,
-    sys: Option<f64>,
-}
-
-/// Compute cap, vol, sys at perturbed dual vertices a + t*d.
-///
-/// Capacity: solve_kkt_for with the base orbit on the perturbed polytope.
-/// This tests the per-orbit envelope theorem prediction (equals the capacity
-/// gradient at generic points where the minimizing orbit is unique).
-fn compute_perturbed(
-    base_duals: &[Vector4<f64>],
-    direction: &[Vector4<f64>],
-    t: f64,
-    base_perm: &[usize],
-) -> PerturbedValues {
-    let perturbed: Vec<Vector4<f64>> = base_duals
-        .iter()
-        .zip(direction.iter())
-        .map(|(a, d)| a + t * d)
-        .collect();
-
-    let polytope = match Polytope4D::from_f64(perturbed) {
-        Ok(p) => p,
-        Err(_) => {
-            return PerturbedValues {
-                capacity: None,
-                volume: None,
-                sys: None,
-            }
-        }
-    };
-
-    let cap = solve_kkt_safe(&polytope, base_perm)
-        .filter(|kkt| kkt.q_corrected > EPS_Q_POSITIVE && kkt.beta.iter().all(|&b| b > 0.0))
-        .map(|kkt| 0.5 / kkt.q_corrected);
-
-    let vol = volume(&polytope).ok().filter(|&v| v > 0.0);
-
-    let sys = match (cap, vol) {
-        (Some(c), Some(v)) => Some(c * c / (2.0 * v)),
-        _ => None,
-    };
-
-    PerturbedValues {
-        capacity: cap,
-        volume: vol,
-        sys,
-    }
-}
-
-// ============================================================================
-// Core: first-order prediction test
-// ============================================================================
-
-/// Run first-order prediction test for all three targets on a single polytope.
-/// Returns one JSONL row per (target, direction, t) combination where the
-/// perturbed value could be computed.
-fn first_order_test(
-    info: &PolytopeInfo,
-    phase: &str,
-    polytope_id: &str,
-    polytope_class: &str,
-    n_dirs: usize,
-    rng: &mut ChaCha8Rng,
-    action_gap: Option<f64>,
-    barely_cutting_delta: Option<f64>,
-    min_facet_volume: Option<f64>,
-) -> Vec<PredictionRow> {
-    let duals = info.polytope.dual_vertices_f64();
-    let f = duals.len();
-
-    // Analytical gradients for all three targets
-    let g_cap = capacity_derivatives_a_from_kkt_result(&info.polytope, &info.best_perm, &info.kkt);
-    let g_vol = volume_derivatives_a(&info.polytope);
-    let g_sys = sys_derivatives_a(&g_cap, &g_vol, info.cap, info.vol, info.sys);
-
-    let targets: [(&str, f64, &[Vector4<f64>]); 3] = [
-        ("capacity", info.cap, &g_cap),
-        ("volume", info.vol, &g_vol),
-        ("sys", info.sys, &g_sys),
-    ];
-
-    let mut rows = Vec::new();
-
-    for dir_idx in 0..n_dirs {
-        let direction = random_direction(f, rng);
-        let gd: Vec<f64> = targets
-            .iter()
-            .map(|(_, _, g)| directional_derivative_a(g, &direction))
-            .collect();
-
-        for &t in T_VALUES {
-            let t0 = Instant::now();
-            let perturbed = compute_perturbed(&duals, &direction, t, &info.best_perm);
-            let elapsed = t0.elapsed().as_secs_f64() * 1000.0;
-
-            let f_perturbed = [perturbed.capacity, perturbed.volume, perturbed.sys];
-
-            for (i, &(target_name, f_base, _)) in targets.iter().enumerate() {
-                if let Some(f_pert) = f_perturbed[i] {
-                    let actual = f_pert - f_base;
-                    let predicted = t * gd[i];
-                    let residual = (actual - predicted).abs();
-                    let rot = residual / t.abs();
-                    // Floor at 1e-300 to avoid log10(0) = -inf (not valid JSON).
-                    let log_residual = residual.max(1e-300).log10();
-
-                    rows.push(PredictionRow {
-                        phase: phase.to_string(),
-                        polytope_id: polytope_id.to_string(),
-                        facet_count: f,
-                        polytope_class: polytope_class.to_string(),
-                        target: target_name.to_string(),
-                        dir_idx,
-                        t,
-                        f_base,
-                        f_perturbed: f_pert,
-                        grad_dot_d: gd[i],
-                        predicted_change: predicted,
-                        actual_change: actual,
-                        residual,
-                        residual_over_t: rot,
-                        log_t: t.abs().log10(),
-                        log_residual,
-                        action_gap,
-                        barely_cutting_delta,
-                        min_facet_volume,
-                        time_ms: elapsed,
-                    });
-                }
-            }
-        }
-    }
-
-    rows
-}
-
-/// Write rows to a JSONL writer.
-fn write_rows(writer: &mut BufWriter<File>, rows: &[PredictionRow]) {
-    for row in rows {
-        let json = serde_json::to_string(row).expect("serialize row");
-        writeln!(writer, "{}", json).expect("write row");
-    }
-}
-
-fn smoke_mode() -> bool {
-    std::env::args().skip(1).any(|arg| arg == "--smoke")
-}
-
-fn smoke_output_dir(label: &str) -> String {
-    let stamp = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .expect("system clock before UNIX_EPOCH")
-        .as_millis();
-    let dir = std::env::temp_dir().join(format!("{label}-{}-{stamp}", std::process::id()));
-    std::fs::create_dir_all(&dir).expect("create smoke output dir");
-    dir.to_string_lossy().into_owned()
-}
 
 struct EdgeCasesConfig {
     q3_f_count: usize,
