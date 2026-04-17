@@ -1,5 +1,10 @@
 //! Directional boundary probing of the sys > 1 region around HKO2024.
 //!
+//! Goal: Probe the radial boundary of the sys > 1 region around HKO2024 along
+//! random Lagrangian perturbation directions.
+//! Input: None (starts from the hardcoded HKO2024 polytope).
+//! Output: experiments/hko-local-maximum/lagrangian-boundary/lagrangian-probe.jsonl
+//!
 //! Architecture:
 //! 1. `cargo run --bin lagrangian_probe --release` generates dataset
 //! 2. Writes to lagrangian-boundary/lagrangian-probe.jsonl

@@ -31,7 +31,7 @@ Planned deliverables:
 - `ARCHITECTURE.md`: Repo-level architecture map: component boundaries, core entities, library subsystems, and persisted-data architecture.
 - `TASKS.md`: Unified project tracker. Run `bash scripts/tasks-toc.sh` for section line ranges.
 - `scratch/`: Undocumented scratch notes, migration notes, and temporary working material. Do not treat it as current convention text.
-- `scripts/`: Repo helper scripts that are not tied to one runtime environment.
+- `scripts/`: Repo helper scripts that are not tied to one runtime environment, including `scripts/dataflow.sh` for the experiment data-flow audit.
 - `.devcontainer/`: Local devcontainer and Codex web environment documentation.
 - `.agents/skills/`: Codex skills. Detailed conventions and workflows live here.
 - `.codex/agents/`: Codex subagent definitions.
@@ -81,8 +81,10 @@ Required project instructions live in this root map or in discoverable skills. `
 
 - `.jsonl` files are generated artifacts and are LFS-tracked. Do not edit `.jsonl` with patch-style line edits.
 - For smoke or warmup runs, write temporary datasets under an untracked temp directory and delete them after the run.
+- Smoke/default experiment runs should write untracked `smoke-*.jsonl` style outputs unless the caller explicitly requests a canonical refresh path.
 - If a script touches tracked outputs only for compatibility, restore those paths before finishing.
 - If a tracked `.jsonl` changes unexpectedly, stop and report the exact file and command.
+- When auditing freshness or shared-cache drift, prefer running `scripts/dataflow.sh` over reconstructing the JSONL DAG by hand. Treat its stdout as a declared entrypoint/header audit of JSONL producers and consumers in the current worktree, not as full transitive source provenance.
 
 ## Environment
 

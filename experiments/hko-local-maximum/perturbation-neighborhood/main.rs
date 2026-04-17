@@ -1,16 +1,21 @@
 //! Perturbations of the HK-O pentagon counterexample (10 facets).
 //!
+//! Goal: Sample random dual-vertex perturbations of the HK-O pentagon and
+//! record whether the perturbed polytopes retain sys > 1.
+//! Input: None (starts from the hardcoded HK-O pentagon).
+//! Output: experiments/hko-local-maximum/perturbation-neighborhood/pentagon-perturb.jsonl
+//!
 //! The binary generates N random dual-vertex perturbations of the HK-O pentagon
 //! at a given eps magnitude, computes sys for each, and writes one row per sample
 //! plus one unperturbed baseline row to an output .jsonl path.
 //!
-//! CLI (all optional; defaults match the original hardcoded run):
+//! CLI (all optional):
 //! - `--n <count>`   number of perturbed samples               (default: 100)
 //! - `--eps <f64>`   perturbation magnitude per component      (default: 0.01)
 //! - `--seed <u64>`  base RNG seed                             (default: 41)
-//! - `--out <path>`  output .jsonl path                        (default: pentagon-perturb.jsonl in CWD)
+//! - `--out <path>`  output .jsonl path                        (default: untracked temp smoke path)
 //!
-//! Row identity across eps buckets is `(eps, name)` — `name` alone is not unique
+//! Row identity across eps buckets is `(eps, name)` - `name` alone is not unique
 //! between files generated at different eps. Analysis code must group by eps first.
 
 use symplectic::geom::known_polytopes;
@@ -25,7 +30,7 @@ use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::PathBuf;
-use std::time::Instant;
+use std::time::{Instant, SystemTime, UNIX_EPOCH};
 
 const DEFAULT_SEED: u64 = 41;
 const DEFAULT_N_SAMPLES: usize = 100;
@@ -106,6 +111,19 @@ struct Args {
     out: PathBuf,
 }
 
+fn default_smoke_output_path() -> PathBuf {
+    let stamp = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("system clock before UNIX_EPOCH")
+        .as_millis();
+    let dir = std::env::temp_dir().join(format!(
+        "hko-perturbation-smoke-{}-{stamp}",
+        std::process::id()
+    ));
+    std::fs::create_dir_all(&dir).expect("create smoke output dir");
+    dir.join("smoke-pentagon-perturb.jsonl")
+}
+
 fn parse_args() -> Args {
     let argv: Vec<String> = std::env::args().collect();
     let mut n = DEFAULT_N_SAMPLES;
@@ -147,7 +165,7 @@ fn parse_args() -> Args {
         n,
         eps,
         seed,
-        out: out.unwrap_or_else(|| PathBuf::from("pentagon-perturb.jsonl")),
+        out: out.unwrap_or_else(default_smoke_output_path),
     }
 }
 

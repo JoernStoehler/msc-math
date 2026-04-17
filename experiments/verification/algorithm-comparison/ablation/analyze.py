@@ -22,7 +22,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent.parent))
 from figure_config import setup, TEXT_WIDTH
 setup()
 
@@ -49,7 +49,7 @@ def load_dataset():
     if not DATA_PATH.exists():
         print(f"Dataset not found: {DATA_PATH}", file=sys.stderr)
         print(
-            "Run: cd experiments && cargo run --bin ablation --release",
+            "Run: cargo run -p dev-algorithm-comparison --release --bin cmp-ablation",
             file=sys.stderr,
         )
         sys.exit(1)

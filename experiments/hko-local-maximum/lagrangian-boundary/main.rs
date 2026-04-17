@@ -1,5 +1,11 @@
 //! Dense perturbation sweep around HKO2024 in Lagrangian product space.
 //!
+//! Goal: Estimate how the sys > 1 region around HKO2024 shrinks under dense
+//! Lagrangian-product perturbations across epsilon levels.
+//! Input: None (starts from the hardcoded HKO2024 polytope).
+//! Output: experiments/hko-local-maximum/lagrangian-boundary/lagrangian-search.jsonl
+//!         experiments/hko-local-maximum/lagrangian-boundary/lagrangian-search-levels.jsonl
+//!
 //! Architecture:
 //! 1. `cargo run --bin lagrangian_search --release` generates datasets
 //! 2. Writes per-sample data to lagrangian-boundary/lagrangian-search.jsonl

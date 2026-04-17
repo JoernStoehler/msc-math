@@ -1,5 +1,11 @@
 //! First-order prediction test for analytical gradients (Q1 generic + Q2 non-generic).
 //!
+//! Goal: Validate first-order gradient predictions on generic and symmetric
+//! non-generic polytopes.
+//! Input: None (generates all test polytopes internally).
+//! Output: experiments/numerics/gradient/numerics/gradient-correctness-q1-generic.jsonl
+//!         experiments/numerics/gradient/numerics/gradient-correctness-q2-nongeneric.jsonl
+//!
 //! Tests the defining property of a gradient: f(a+td) - f(a) - t*g*d = o(t).
 //! The residual r(t) = |f(a+td) - f(a) - t*g*d| should decrease as t -> 0.
 //! The log-log slope of r(t) vs t reveals smoothness: slope ~ 2 for C^2.
@@ -40,6 +46,7 @@ use serde::Serialize;
 use std::f64::consts::PI;
 use std::fs::File;
 use std::io::{BufWriter, Write};
+use std::path::PathBuf;
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
 use symplectic::derivatives::{
     capacity_derivatives_a_from_kkt_result,
@@ -547,13 +554,15 @@ fn run_q2(base_dir: &str, cfg: &BasicValidationConfig) {
 fn main() {
     let smoke = smoke_mode();
     let cfg = basic_validation_config(smoke);
-    let smoke_dir;
     let base_dir = if smoke {
-        smoke_dir = smoke_output_dir("dev-numerics-smoke");
+        let smoke_dir = smoke_output_dir("dev-numerics-smoke");
         println!("Smoke output: {smoke_dir}");
-        smoke_dir.as_str()
+        smoke_dir
     } else {
-        "."
+        PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("numerics")
+            .to_string_lossy()
+            .into_owned()
     };
 
     println!(
@@ -564,12 +573,12 @@ fn main() {
 
     println!("--- Q1: Generic random polytopes ---");
     let tp = Instant::now();
-    run_q1(base_dir, &cfg);
+    run_q1(&base_dir, &cfg);
     println!("  Q1 time: {:.1}s\n", tp.elapsed().as_secs_f64());
 
     println!("--- Q2: Non-generic geometry (Lagrangian products) ---");
     let tp = Instant::now();
-    run_q2(base_dir, &cfg);
+    run_q2(&base_dir, &cfg);
     println!("  Q2 time: {:.1}s\n", tp.elapsed().as_secs_f64());
 
     println!("=== Total time: {:.1}s ===", t0.elapsed().as_secs_f64());

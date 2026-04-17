@@ -5,7 +5,7 @@
 //! perturbation chain diagnostics, and certification bound validation.
 //!
 //! Usage:
-//!   cargo run --release --bin verify_numerics -- <input.jsonl> <output.jsonl>
+//!   cargo run -p dev-numerical-analysis --release --bin num-error-bounds -- <input.jsonl> <output.jsonl>
 
 use nalgebra::{DMatrix, DVector};
 use num_rational::BigRational;

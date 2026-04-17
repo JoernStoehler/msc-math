@@ -18,6 +18,7 @@
 //!        --smoke  (run one bounded probe against temp output/cache)
 //!        --out <path>  (override output JSONL path)
 //! Output: variable-f-ascent/variable-f-ascent.jsonl
+//!         variable-f-ascent/cache.jsonl
 
 use exp_sys_landscape::compute_step_bound;
 use nalgebra::Vector4;
@@ -562,8 +563,8 @@ fn smoke_paths() -> (PathBuf, PathBuf) {
     ));
     std::fs::create_dir_all(&smoke_dir).expect("create smoke temp dir");
     (
-        smoke_dir.join("variable-f-ascent-smoke.jsonl"),
-        smoke_dir.join("cache.jsonl"),
+        smoke_dir.join("smoke-variable-f-ascent.jsonl"),
+        smoke_dir.join("smoke-cache.jsonl"),
     )
 }
 

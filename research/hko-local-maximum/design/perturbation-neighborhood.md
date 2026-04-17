@@ -8,7 +8,7 @@ Viterbo's conjecture was disproved by Haim-Kislev and Ostrover (2024) via an exp
 
 **2026-04-12: refactored for LICCA submission.** Binary now takes CLI args (`--n --eps --out --seed`); scale target is 10k samples per eps bucket across three eps scales (0.001 / 0.01 / 0.1), run on LICCA as a single-task slurm job. Pre-refactor findings (100 samples at eps=0.01, all retained sys > 1) stand as the starting point; they are superseded by the new LICCA run when that completes.
 
-Old artifact `pentagon-perturb.jsonl` (committed N=101 dataset) is kept under its original name for historical reference but is not read by the new `analyze.py`. The analyzer reads `data/licca-eps-*.jsonl` when present and otherwise falls back to `data/smoke-eps-*.jsonl`.
+Old artifact `pentagon-perturb.jsonl` (committed N=101 dataset) remains the current local canonical dataset and is what `analyze.py` reads by default until LICCA shards replace it. The analyzer reads `data/licca-eps-*.jsonl` when present. Smoke runs are execution-only and now write temp `smoke-eps-*.jsonl` files outside the repo unless `job-smoke.sh` is told to retain them.
 
 ## How to run
 
@@ -16,14 +16,13 @@ Old artifact `pentagon-perturb.jsonl` (committed N=101 dataset) is kept under it
 
 ```bash
 ./experiments/hko-local-maximum/perturbation-neighborhood/job-smoke.sh
-cd experiments/hko-local-maximum/perturbation-neighborhood
-uv run analyze.py
 ```
 
-Expect ~3 seconds total compute. Produces `data/smoke-eps-*.jsonl`
-(three files, 21 rows each = 20 perturbed + 1 baseline), a 3-panel
-histogram, stats table, and PCA table. `job-smoke.sh` is plain bash with no
-SLURM directives and uses the repo-local `target/release/hko-perturbation`.
+Expect ~3 seconds total compute. By default `job-smoke.sh` writes three
+`smoke-eps-*.jsonl` files into a temp directory under `${TMPDIR:-/tmp}` and
+deletes that directory on exit; set `KEEP_SMOKE_OUTPUTS=1` to inspect the
+files manually after the run. `job-smoke.sh` is plain bash with no SLURM
+directives and uses the repo-local `target/release/hko-perturbation`.
 
 ### Resume semantics
 
@@ -85,8 +84,8 @@ Then run `uv run analyze.py` locally on the retrieved data.
 | `job.sh` | Slurm submission script (epyc, 1 core, 30 min) |
 | `job-smoke.sh` | Local smoke script (plain bash, no SLURM) |
 | `data/licca-eps-*.jsonl` | LICCA production output, 10k per bucket (LFS) |
-| `data/smoke-eps-*.jsonl` | Local smoke output, 20 per bucket (LFS) |
-| `pentagon-perturb.jsonl` | Historical N=100 dataset, not read by current analyze.py |
+| `data/smoke-eps-*.jsonl` | Historical local smoke path; current `job-smoke.sh` uses temp output instead |
+| `pentagon-perturb.jsonl` | Current local canonical dataset (historical N=100 run) |
 | `pentagon_perturb_sys_hist.png` | 3-panel histogram figure |
 | `pentagon_perturb_stats.tex` | LaTeX table: per-bucket summary statistics |
 | `pentagon_perturb_pca.tex` | LaTeX table: PCA components for eps=0.01 bucket |

@@ -1,5 +1,12 @@
 //! Free gradient ascent in R^{4F} on general polytopes.
 //!
+//! Goal: Run unconstrained gradient ascent on general random polytopes and
+//! record both the summary outcomes and per-step traces.
+//! Input: experiments/sys-landscape/cache.jsonl
+//! Output: experiments/sys-landscape/cache.jsonl
+//!         experiments/sys-landscape/gradient-ascent-general/gradient-ascent-general.jsonl
+//!         experiments/sys-landscape/gradient-ascent-general/gradient-ascent-general-trace.jsonl
+//!
 //! At each iteration, computes d(sys)/d(a_k) via the library's dual-vertex
 //! derivatives, then steps directly in a-space: a_k(t) = a_k + t * d_k.
 //! Boundary-crossing via overshoot (multiples of t_max) and wiggle (random
@@ -12,8 +19,9 @@
 //! - `--n <count>`        number of seeds this invocation processes   (default: 10)
 //! - `--n-start <offset>` starting global seed index                  (default: 0)
 //! - `--seed <u64>`       base RNG seed                               (default: 42)
-//! - `--out <path>`       output summary .jsonl                       (default: gradient-ascent-general/gradient-ascent-general.jsonl)
+//! - `--out <path>`       output summary .jsonl                       (default: untracked temp smoke path)
 //! - `--fresh`            delete existing summary + trace files before running
+//! - `--db-update`        load and save the sys-landscape family cache
 //! - `--no-db-update`     do not load or save the sys-landscape family cache
 //!                        (set by LICCA to avoid concurrent write races)
 //!
@@ -26,7 +34,7 @@
 
 use exp_sys_landscape::{
     compute_step_bound, finalize_ascent_output, open_ascent_writers, parse_ascent_args,
-    run_parallel_seeds,
+    run_parallel_seeds, smoke_output_path,
     trace_path_for, AscentArgs, SeedResult, SummaryRow, TraceRow, MAX_STEP_SIZE,
 };
 use nalgebra::Vector4;
@@ -433,8 +441,8 @@ fn insert_polytope_to_db(
 // ============================================================================
 
 fn main() {
-    let default_out = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("gradient-ascent-general/gradient-ascent-general.jsonl");
+    let default_out =
+        smoke_output_path("sys-gradient-ascent-general", "smoke-gradient-ascent-general.jsonl");
     let args: AscentArgs = parse_ascent_args(DEFAULT_SEED, default_out, "general");
     let t_global = Instant::now();
 

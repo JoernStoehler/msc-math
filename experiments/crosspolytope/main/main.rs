@@ -508,11 +508,14 @@ struct Checkpoint {
 }
 
 fn checkpoint_path() -> PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("crosspolytope/checkpoint.json")
+    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("main/checkpoint.json")
 }
 
 fn save_checkpoint(cp: &Checkpoint) {
     let path = checkpoint_path();
+    if let Some(parent) = path.parent() {
+        std::fs::create_dir_all(parent).expect("create checkpoint directory");
+    }
     let file = File::create(&path).expect("failed to create checkpoint");
     serde_json::to_writer_pretty(file, cp).expect("failed to write checkpoint");
     println!(
@@ -767,8 +770,7 @@ fn main() {
     );
 
     // 8. Write JSONL
-    let output_path =
-        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("crosspolytope/crosspolytope.jsonl");
+    let output_path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("main/crosspolytope.jsonl");
     let file = File::create(&output_path).expect("failed to create output file");
     let mut writer = BufWriter::new(file);
 

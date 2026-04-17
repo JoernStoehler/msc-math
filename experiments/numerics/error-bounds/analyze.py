@@ -4,7 +4,7 @@ Input: experiments/numerics/error-bounds/results_*.jsonl (CLI args)
 Output: stdout (summary tables)
 
 Bound checking and conjecture validation is in Rust tests:
-  cargo test --test verify_numerics_tests
+  cargo test -p dev-numerical-analysis --release --test verify_numerics_tests
 
 This script is for ad-hoc exploration: summaries, distributions,
 identifying interesting cases for testdata/.

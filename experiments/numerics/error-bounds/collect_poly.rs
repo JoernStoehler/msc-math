@@ -5,7 +5,7 @@
 //! and saves input matrices + raw solver output (β, λ, etc.).
 //!
 //! Usage:
-//!   cargo run --release --bin collect_poly -- --polytopes /tmp/all_polytopes.jsonl [--max-facets 8]
+//!   cargo run -p dev-numerical-analysis --release --bin num-collect-poly -- --polytopes /tmp/all_polytopes.jsonl [--max-facets 8]
 
 use nalgebra::{DMatrix, DVector, Vector4};
 use serde::Deserialize;
@@ -18,8 +18,6 @@ use common::{solve_and_record, write_jsonl, print_summary, InputRow, P};
 use symplectic::algorithms::hk2017::combinations;
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
 use symplectic::omega0;
-
-const OUTPUT_PATH: &str = "verify-numerics/collected_poly.jsonl";
 
 #[derive(Deserialize)]
 struct PolytopeInput {
@@ -131,7 +129,9 @@ fn main() {
         std::process::exit(1);
     });
 
+    let output_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("error-bounds/collected_poly.jsonl");
     let rows = generate_natural(&polytopes_path, max_facets);
-    write_jsonl(&rows, OUTPUT_PATH);
+    write_jsonl(&rows, output_path.to_str().expect("utf-8 output path"));
     print_summary(&rows, "Natural (polytope)");
 }

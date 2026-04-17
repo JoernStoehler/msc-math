@@ -197,6 +197,9 @@ def main():
 
     rows = load_data()
     print(f"Loaded {len(rows)} rows from {DATA_PATH.name}\n")
+    if not rows:
+        print("No completed data to analyze yet.")
+        return
 
     analyze_rq1(rows)
     analyze_rq2(rows)

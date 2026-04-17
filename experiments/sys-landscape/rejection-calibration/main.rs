@@ -74,7 +74,7 @@ fn main() {
     const SEED: u64 = 42;
 
     let output_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("rejection-sampling/acceptance.jsonl");
+        .join("rejection-calibration/acceptance.jsonl");
 
     println!("Running acceptance rate sweep...");
     println!("  n_attempts = {N_ATTEMPTS}");

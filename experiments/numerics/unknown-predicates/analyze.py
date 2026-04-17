@@ -48,12 +48,7 @@ def load_data(path: Path) -> list[dict]:
 
 
 def action_interval(row: dict) -> tuple[float, float]:
-    if "min_action_lower" in row and "min_action_upper" in row:
-        return row["min_action_lower"], row["min_action_upper"]
-    # TODO(capacity-result-api): remove this fallback once the committed
-    # unknown-predicates dataset is regenerated with the new interval schema.
-    capacity = row["capacity"]
-    return capacity, row.get("capacity_uncertain", capacity)
+    return row["min_action_lower"], row["min_action_upper"]
 
 
 def main():

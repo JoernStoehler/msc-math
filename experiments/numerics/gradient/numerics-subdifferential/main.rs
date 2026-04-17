@@ -1,5 +1,11 @@
 //! Subdifferential prediction at orbit-switching boundaries (Q5 + Q5b).
 //!
+//! Goal: Validate Clarke-subdifferential capacity predictions near orbit
+//! switching boundaries and exact symmetry-forced ties.
+//! Input: None (generates all test polytopes internally).
+//! Output: experiments/numerics/gradient/numerics-subdifferential/gradient-correctness-q5-subdiff.jsonl
+//!         experiments/numerics/gradient/numerics-subdifferential/gradient-correctness-q5b-symmetric.jsonl
+//!
 //! Tests whether the Clarke subdifferential (set of per-orbit gradients)
 //! correctly predicts the capacity to first order near switching boundaries.
 //!
@@ -51,6 +57,7 @@ use serde::Serialize;
 use std::f64::consts::PI;
 use std::fs::File;
 use std::io::{BufWriter, Write};
+use std::path::PathBuf;
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
 use symplectic::algorithms::hk2017::combinations;
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
@@ -1095,13 +1102,15 @@ fn run_q5b(base_dir: &str, smoke: bool) {
 
 fn main() {
     let smoke = smoke_mode();
-    let smoke_dir;
     let base_dir = if smoke {
-        smoke_dir = smoke_output_dir("dev-numerics-subdifferential-smoke");
+        let smoke_dir = smoke_output_dir("dev-numerics-subdifferential-smoke");
         println!("Smoke output: {smoke_dir}");
-        smoke_dir.as_str()
+        smoke_dir
     } else {
-        "."
+        PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("numerics-subdifferential")
+            .to_string_lossy()
+            .into_owned()
     };
 
     println!(
@@ -1112,12 +1121,12 @@ fn main() {
 
     println!("--- Q5: Orbit-switching (subdifferential prediction) ---");
     let tp = Instant::now();
-    run_q5(base_dir, smoke);
+    run_q5(&base_dir, smoke);
     println!("  Q5 time: {:.1}s\n", tp.elapsed().as_secs_f64());
 
     println!("--- Q5b: Subdifferential at exact boundaries (symmetric polytopes) ---");
     let tp = Instant::now();
-    run_q5b(base_dir, smoke);
+    run_q5b(&base_dir, smoke);
     println!("  Q5b time: {:.1}s\n", tp.elapsed().as_secs_f64());
 
     println!("=== Total time: {:.1}s ===", t0.elapsed().as_secs_f64());

@@ -1,5 +1,12 @@
 //! Projected gradient ascent on the Lagrangian product submanifold.
 //!
+//! Goal: Run projected gradient ascent on random Lagrangian products and
+//! record both the summary outcomes and per-step traces.
+//! Input: experiments/sys-landscape/cache.jsonl
+//! Output: experiments/sys-landscape/cache.jsonl
+//!         experiments/sys-landscape/gradient-ascent-products/gradient-ascent-products.jsonl
+//!         experiments/sys-landscape/gradient-ascent-products/gradient-ascent-products-trace.jsonl
+//!
 //! At each iteration, computes d(sys)/d(a_k) via the library's dual-vertex
 //! derivatives, projects the direction to preserve Lagrangian product structure
 //! (q-facets keep zero p-components, p-facets keep zero q-components), then
@@ -14,8 +21,9 @@
 //! - `--n <count>`        number of seeds this invocation processes   (default: 12)
 //! - `--n-start <offset>` starting global seed index                  (default: 0)
 //! - `--seed <u64>`       base RNG seed                               (default: 42)
-//! - `--out <path>`       output summary .jsonl                       (default: gradient-ascent-products/gradient-ascent-products.jsonl)
+//! - `--out <path>`       output summary .jsonl                       (default: untracked temp smoke path)
 //! - `--fresh`            delete existing summary + trace files before running
+//! - `--db-update`        load and save the sys-landscape family cache
 //! - `--no-db-update`     do not load or save the sys-landscape family cache
 //!                        (set by LICCA shards to avoid concurrent write races)
 //!
@@ -29,8 +37,8 @@
 
 use exp_sys_landscape::{
     compute_step_bound, finalize_ascent_output, open_ascent_writers, parse_ascent_args,
-    run_parallel_seeds, trace_path_for, AscentArgs, SeedResult, SummaryRow, TraceRow,
-    MAX_STEP_SIZE,
+    run_parallel_seeds, smoke_output_path, trace_path_for, AscentArgs, SeedResult, SummaryRow,
+    TraceRow, MAX_STEP_SIZE,
 };
 use nalgebra::Vector4;
 use symplectic::database::{load_many, save, DualVerticesKey, PolytopeRecord};
@@ -475,8 +483,8 @@ fn insert_polytope_to_db(
 }
 
 fn main() {
-    let default_out = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("gradient-ascent-products/gradient-ascent-products.jsonl");
+    let default_out =
+        smoke_output_path("sys-gradient-ascent-products", "smoke-gradient-ascent-products.jsonl");
     let args: AscentArgs = parse_ascent_args(DEFAULT_SEED, default_out, "products");
     let t_global = Instant::now();
 

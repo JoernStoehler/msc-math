@@ -8,7 +8,8 @@
 Goal: Plot histogram of systolic ratios under HK-O pentagon dual-vertex perturbations
       across multiple eps buckets, summarize stats per bucket, compute PCA on the
       canonical eps=0.01 bucket.
-Input: experiments/hko-local-maximum/perturbation-neighborhood/data/{licca,smoke}-eps-*.jsonl
+Input: experiments/hko-local-maximum/perturbation-neighborhood/pentagon-perturb.jsonl
+       or experiments/hko-local-maximum/perturbation-neighborhood/data/licca-eps-*.jsonl
 Output: experiments/hko-local-maximum/perturbation-neighborhood/pentagon_perturb_sys_hist.png
         experiments/hko-local-maximum/perturbation-neighborhood/pentagon_perturb_stats.md
         experiments/hko-local-maximum/perturbation-neighborhood/pentagon_perturb_stats.tex
@@ -32,14 +33,19 @@ setup()
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 DATA_DIR = EXPERIMENT_DIR / "data"
+CANONICAL_DATA = EXPERIMENT_DIR / "pentagon-perturb.jsonl"
 FIGURES_DIR = EXPERIMENT_DIR
 N_PCA_COMPONENTS = 5
 PCA_BUCKET_EPS = 0.01
 
 
 def pick_jsonl_files(data_dir: Path) -> list[Path]:
-    """Prefer LICCA data if present, else fall back to smoke data."""
+    """Prefer the canonical single-file dataset, else fall back to LICCA shards."""
+    if CANONICAL_DATA.exists():
+        return [CANONICAL_DATA]
+
     if not data_dir.exists():
+        print(f"ERROR: no canonical dataset at {CANONICAL_DATA}", file=sys.stderr)
         print(f"ERROR: data directory not found: {data_dir}", file=sys.stderr)
         print(
             "Run the binary first (from the repository root, see "
@@ -50,9 +56,6 @@ def pick_jsonl_files(data_dir: Path) -> list[Path]:
     licca_files = sorted(data_dir.glob("licca-eps-*.jsonl"))
     if licca_files:
         return licca_files
-    smoke_files = sorted(data_dir.glob("smoke-eps-*.jsonl"))
-    if smoke_files:
-        return smoke_files
     print(f"ERROR: no data files in {data_dir}", file=sys.stderr)
     sys.exit(1)
 

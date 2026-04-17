@@ -1,5 +1,11 @@
 //! First-order prediction test for analytical gradients (Q3 near-degeneracy + Q4 barely-cutting).
 //!
+//! Goal: Validate first-order gradient predictions near degeneracy and near
+//! redundant-facet boundaries.
+//! Input: None (generates all test polytopes internally).
+//! Output: experiments/numerics/gradient/numerics-edge-cases/gradient-correctness-q3-degeneracy.jsonl
+//!         experiments/numerics/gradient/numerics-edge-cases/gradient-correctness-q4-redundant.jsonl
+//!
 //! Tests the defining property of a gradient: f(a+td) - f(a) - t*g*d = o(t).
 //! The residual r(t) = |f(a+td) - f(a) - t*g*d| should decrease as t -> 0.
 //! The log-log slope of r(t) vs t reveals smoothness: slope ~ 2 for C^2.
@@ -40,6 +46,7 @@ use rand_distr::{Distribution, StandardNormal, Uniform};
 use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
+use std::path::PathBuf;
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
 use symplectic::derivatives::{
     capacity_derivatives_a_from_kkt_result,
@@ -598,13 +605,15 @@ fn run_q4(base_dir: &str, cfg: &EdgeCasesConfig) {
 fn main() {
     let smoke = smoke_mode();
     let cfg = edge_cases_config(smoke);
-    let smoke_dir;
     let base_dir = if smoke {
-        smoke_dir = smoke_output_dir("dev-numerics-edge-cases-smoke");
+        let smoke_dir = smoke_output_dir("dev-numerics-edge-cases-smoke");
         println!("Smoke output: {smoke_dir}");
-        smoke_dir.as_str()
+        smoke_dir
     } else {
-        "."
+        PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("numerics-edge-cases")
+            .to_string_lossy()
+            .into_owned()
     };
 
     println!(
@@ -615,12 +624,12 @@ fn main() {
 
     println!("--- Q3: Near-degeneracy ---");
     let tp = Instant::now();
-    run_q3(base_dir, &cfg);
+    run_q3(&base_dir, &cfg);
     println!("  Q3 time: {:.1}s\n", tp.elapsed().as_secs_f64());
 
     println!("--- Q4: Barely-cutting facets ---");
     let tp = Instant::now();
-    run_q4(base_dir, &cfg);
+    run_q4(&base_dir, &cfg);
     println!("  Q4 time: {:.1}s\n", tp.elapsed().as_secs_f64());
 
     println!("=== Total time: {:.1}s ===", t0.elapsed().as_secs_f64());

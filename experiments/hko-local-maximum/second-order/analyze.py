@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.12"
+# dependencies = ["matplotlib", "numpy", "scipy"]
+# ///
+
 """
 Goal: Analyze second-order behavior along flat directions at HKO2024.
       Part A: Phase C LP replacement — verify 0 ∈ conv(gradients) in a_i space.

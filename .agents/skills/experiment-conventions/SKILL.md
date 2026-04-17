@@ -60,6 +60,7 @@ When a validation experiment replaces library fixture coverage, record the bound
 - Shared helpers used by multiple binaries in the same topic belong in `experiments/<topic>/src/lib.rs`.
 - Per-experiment helpers stay in that experiment's `main.rs`.
 - Exploratory behavior stays in `experiments/`; stable approved algorithms migrate to `library/`.
+- Keep `Input:` and `Output:` headers machine-readable with repo-relative paths or experiment-relative filenames; `scripts/dataflow.sh` parses them for the repo's JSONL audit.
 
 Run examples:
 

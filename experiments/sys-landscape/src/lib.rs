@@ -317,10 +317,21 @@ pub struct AscentArgs {
     pub prefix: String,
 }
 
+pub fn smoke_output_path(label: &str, file_name: &str) -> PathBuf {
+    let stamp = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .expect("system clock before UNIX_EPOCH")
+        .as_millis();
+    let dir = std::env::temp_dir().join(format!("{label}-{}-{stamp}", std::process::id()));
+    std::fs::create_dir_all(&dir).expect("create smoke output dir");
+    dir.join(file_name)
+}
+
 /// Parse ascent CLI arguments. Callers pass the binary's default seed, default
 /// output path, and a name prefix (`"general"` or `"products"`).
 ///
-/// Recognized flags: `--n`, `--n-start`, `--seed`, `--out`, `--fresh`, `--no-db-update`.
+/// Recognized flags:
+/// `--n`, `--n-start`, `--seed`, `--out`, `--fresh`, `--db-update`, `--no-db-update`.
 pub fn parse_ascent_args(default_seed: u64, default_out: PathBuf, prefix: &str) -> AscentArgs {
     let argv: Vec<String> = std::env::args().collect();
 
@@ -329,7 +340,7 @@ pub fn parse_ascent_args(default_seed: u64, default_out: PathBuf, prefix: &str) 
     let mut seed: u64 = default_seed;
     let mut out: Option<PathBuf> = None;
     let mut fresh = false;
-    let mut no_db_update = false;
+    let mut no_db_update = true;
 
     let mut i = 1;
     while i < argv.len() {
@@ -358,6 +369,10 @@ pub fn parse_ascent_args(default_seed: u64, default_out: PathBuf, prefix: &str) 
             }
             "--fresh" => {
                 fresh = true;
+                i += 1;
+            }
+            "--db-update" => {
+                no_db_update = false;
                 i += 1;
             }
             "--no-db-update" => {

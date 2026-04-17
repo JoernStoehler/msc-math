@@ -11,13 +11,17 @@
 //! Negative dot product → sys increases when ω decreases → hypothesis supported.
 //!
 //! Location: experiments/combinatorial-cells/omega-hypothesis/main.rs
+//! Goal: Generate the shared combinatorial polytope cache plus omega-obstacle rows.
+//! Input: None (samples and known polytopes are generated from hardcoded plans and seeds).
+//! Output: experiments/combinatorial-cells/polytopes.jsonl,
+//!         experiments/combinatorial-cells/omega-hypothesis/omega-obstacle.jsonl
 //!
 //! Architecture:
 //! 1. `cargo run -p exp-combinatorial-cells --bin cell-omega --release` generates dataset
 //! 2. Polytopes cached in experiments/combinatorial-cells/polytopes.jsonl.
 //!    When capacity + sigmas are cached, skips full EHZ (exponential) and only
 //!    runs single-perm KKT solve for beta.
-//! 3. Writes to omega-obstacle/omega-obstacle.jsonl
+//! 3. Writes to omega-hypothesis/omega-obstacle.jsonl
 //! 4. Python script reads JSONL, produces figures
 
 use nalgebra::Vector4;
@@ -353,7 +357,7 @@ fn process_polytope(
 }
 
 fn main() {
-    let out_dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("omega-obstacle");
+    let out_dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("omega-hypothesis");
     let out_path = out_dir.join("omega-obstacle.jsonl");
     std::fs::create_dir_all(&out_dir).expect("Failed to create output directory");
     let file = std::fs::File::create(&out_path).expect("Failed to create output file");

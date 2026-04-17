@@ -4,6 +4,7 @@
 //!   to probe whether random generic polytopes approach the Viterbo threshold.
 //! Input: sys-landscape family cache at experiments/sys-landscape/cache.jsonl.
 //! Output: experiments/sys-landscape/random-sample/random-sweep.jsonl
+//!         experiments/sys-landscape/cache.jsonl
 //!
 //! Architecture:
 //! 1. `cargo run -p exp-sys-landscape --release --bin sys-random-sample` generates dataset

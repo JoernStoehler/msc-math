@@ -1,5 +1,10 @@
 //! Facet-splitting experiment: test HKO2024's maximality in the F=11 polytope space.
 //!
+//! Goal: Test whether facet-splitting directions around HKO2024 produce any
+//! sys increase in the 11-facet ambient space.
+//! Input: None (starts from the hardcoded HKO2024 polytope).
+//! Output: experiments/hko-local-maximum/facet-splitting/hko-neighborhood-splitting.jsonl
+//!
 //! Adds a cutting halfspace to HKO2024 (10 facets) to create an 11-facet polytope
 //! K' ⊊ K, and checks whether sys(K') > sys(K) for any cutting direction.
 //!

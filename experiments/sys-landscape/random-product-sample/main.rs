@@ -1,5 +1,11 @@
 //! Random Lagrangian product sample over polygon pairs.
 //!
+//! Goal: Sample random Lagrangian products across polygon-pair buckets and
+//! record their systolic ratios.
+//! Input: experiments/sys-landscape/cache.jsonl
+//! Output: experiments/sys-landscape/cache.jsonl
+//!         experiments/sys-landscape/random-product-sample/random-product-sweep.jsonl
+//!
 //! Architecture:
 //! 1. `cargo run -p exp-sys-landscape --release --bin sys-random-product-sample` generates dataset
 //! 2. Polytopes are cached in the sys-landscape family cache. Re-runs skip capacity.

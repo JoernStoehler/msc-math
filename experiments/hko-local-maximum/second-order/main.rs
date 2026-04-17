@@ -1,5 +1,12 @@
 //! Second-order analysis of flat directions at HKO2024.
 //!
+//! Goal: Test whether the first-order-flat directions at HKO2024 remain
+//! descending at second order, both for basis directions and random flat probes.
+//! Input: None (starts from the hardcoded HKO2024 polytope).
+//! Output: experiments/hko-local-maximum/second-order/second-order-base.jsonl
+//!         experiments/hko-local-maximum/second-order/second-order-curves.jsonl
+//!         experiments/hko-local-maximum/second-order/second-order-random.jsonl
+//!
 //! Phase 1: Compute per-orbit ∇_{a_i} sys in R^40 for all near-optimal orbits,
 //!          build gradient matrix G, SVD → flat directions (null space of G).
 //! Phase 2: For each flat direction d, evaluate sys(HKO + ε·d) at 29 points

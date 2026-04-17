@@ -1,5 +1,10 @@
 //! Phase 1: Check whether UNKNOWN admissibility predicates appear in practice.
 //!
+//! Goal: Measure whether practical datasets encounter UNKNOWN admissibility
+//! predicates or near-boundary beta/action intervals.
+//! Input: None (regenerates the comparison datasets internally from hardcoded plans).
+//! Output: experiments/numerics/unknown-predicates/unknown-predicates.jsonl
+//!
 //! Regenerates the random-sample and lagrangian-products datasets using the same
 //! seeds/parameters, then records the explicit-search action interval and
 //! admissibility margin for each polytope. If the HK2017 interval is nontrivial
@@ -7,7 +12,7 @@
 //! UNKNOWN admissibility boundary and Phase 2 (high-precision re-solve) is needed.
 //!
 //! Architecture:
-//! 1. `cargo run --bin unknown_predicates --release` generates dataset
+//! 1. `cargo run -p dev-numerical-analysis --release --bin num-unknown-predicates` generates dataset
 //! 2. Writes to unknown-predicates/unknown-predicates.jsonl
 //! 3. Python script reads JSONL, summarizes findings
 

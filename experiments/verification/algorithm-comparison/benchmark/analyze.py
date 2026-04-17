@@ -22,7 +22,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent.parent))
 from figure_config import setup, TEXT_WIDTH
 setup()
 
@@ -36,6 +36,14 @@ MODEL_PATH = PROFILING_DIR / "timing_model.json"
 
 def load_dataset():
     """Load benchmark dataset JSONL with all three algorithms."""
+    if not DATA_PATH.exists():
+        print(f"Dataset not found: {DATA_PATH}", file=sys.stderr)
+        print(
+            "Run: cargo run -p dev-algorithm-comparison --release --bin cmp-benchmark",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
     pruned_rows = []
     unpruned_rows = []
     billiard_rows = []
@@ -282,7 +290,10 @@ def print_summary(pruned_stats, unpruned_stats, billiard_stats, a, b, r_squared)
 def main():
     if not DATA_PATH.exists():
         print(f"Dataset not found: {DATA_PATH}", file=__import__("sys").stderr)
-        print("Run: cd crates && cargo run --bin benchmark --release", file=__import__("sys").stderr)
+        print(
+            "Run: cargo run -p dev-algorithm-comparison --release --bin cmp-benchmark",
+            file=__import__("sys").stderr,
+        )
         __import__("sys").exit(1)
 
     pruned_rows, unpruned_rows, billiard_rows = load_dataset()

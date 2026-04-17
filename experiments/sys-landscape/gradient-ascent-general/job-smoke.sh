@@ -1,6 +1,6 @@
 #!/bin/bash
 # Purpose: local smoke runner for the LICCA-bound general ascent job.
-# Context: plain bash, no SLURM directives; writes the committed smoke data files.
+# Context: plain bash, no SLURM directives; writes untracked smoke data.
 
 set -euo pipefail
 
@@ -14,9 +14,24 @@ if [[ ! -x "$BIN" ]]; then
 fi
 
 N="${N:-3}"
+OUT_DIR="$(mktemp -d "${TMPDIR:-/tmp}/sys-gradient-ascent-general-smoke.XXXXXX")"
+cleanup() {
+    if [[ "${KEEP_SMOKE_OUTPUTS:-0}" == "1" ]]; then
+        echo "Retained smoke output: $OUT_DIR"
+    else
+        rm -rf "$OUT_DIR"
+    fi
+}
+trap cleanup EXIT
 "$BIN" \
     --fresh \
     --n "$N" \
     --n-start 0 \
     --no-db-update \
-    --out "$SCRIPT_DIR/data/smoke.jsonl"
+    --out "$OUT_DIR/smoke-gradient-ascent-general.jsonl"
+
+if [[ "${KEEP_SMOKE_OUTPUTS:-0}" == "1" ]]; then
+    echo "Smoke output: $OUT_DIR"
+else
+    echo "Smoke output written to temp dir and deleted on exit: $OUT_DIR"
+fi
