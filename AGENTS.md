@@ -31,7 +31,7 @@ Planned deliverables:
 - `ARCHITECTURE.md`: Repo-level architecture map: component boundaries, core entities, library subsystems, and persisted-data architecture.
 - `TASKS.md`: Unified project tracker. Run `bash scripts/tasks-toc.sh` for section line ranges.
 - `scratch/`: Undocumented scratch notes, migration notes, and temporary working material. Do not treat it as current convention text.
-- `scripts/`: Repo helper scripts that are not tied to one runtime environment, including `scripts/dataflow.sh` for the experiment data-flow audit.
+- `scripts/`: Repo helper scripts that are not tied to one runtime environment, including `scripts/dataflow.sh`, which regenerates `DATAFLOW.md` for the experiment artifact-flow audit.
 - `.devcontainer/`: Local devcontainer and Codex web environment documentation.
 - `.agents/skills/`: Codex skills. Detailed conventions and workflows live here.
 - `.codex/agents/`: Codex subagent definitions.
@@ -84,7 +84,7 @@ Required project instructions live in this root map or in discoverable skills. `
 - Smoke/default experiment runs should write untracked `smoke-*.jsonl` style outputs unless the caller explicitly requests a canonical refresh path.
 - If a script touches tracked outputs only for compatibility, restore those paths before finishing.
 - If a tracked `.jsonl` changes unexpectedly, stop and report the exact file and command.
-- When auditing freshness or shared-cache drift, prefer running `scripts/dataflow.sh` over reconstructing the JSONL DAG by hand. Treat its stdout as a declared entrypoint/header audit of JSONL producers and consumers in the current worktree, not as full transitive source provenance.
+- When auditing freshness or shared-cache drift, prefer running `scripts/dataflow.sh` over reconstructing the artifact DAG by hand. It regenerates `DATAFLOW.md` from declared `Input Artifacts:` / `Output Artifacts:` headers on experiment Python scripts and Cargo binary entrypoints. Treat that audit as declared artifact ownership plus local timestamp metadata, not as full transitive source provenance.
 
 ## Environment
 

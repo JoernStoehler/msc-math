@@ -7,8 +7,8 @@
 """Profile the default test suite and identify slow tests.
 
 Goal: Identify hot paths in the test suite and track performance over time.
-Input: No data file; runs `cargo test --lib` from `library/`.
-Output: profile.jsonl, logbook.jsonl, test_timing.png.
+Input Artifacts: No data file; runs `cargo test --lib` from `library/`.
+Output Artifacts: profile.jsonl, logbook.jsonl, test_timing.png.
 
 Pipeline:
 1. Run full suite to get wall/CPU time

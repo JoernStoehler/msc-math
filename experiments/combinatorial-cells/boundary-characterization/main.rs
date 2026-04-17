@@ -12,9 +12,9 @@
 //!
 //! Split from combinatorial-structure (Pass 2).
 //!
-//! Input: experiments/combinatorial-cells/polytopes.jsonl (owned cache)
+//! Input Artifacts: experiments/combinatorial-cells/polytopes.jsonl (owned cache)
 //! Filter: F <= 10 (HK2017 is exponential in F)
-//! Output: experiments/combinatorial-cells/boundary-characterization/combinatorial-boundaries-anatomy.jsonl,
+//! Output Artifacts: experiments/combinatorial-cells/boundary-characterization/combinatorial-boundaries-anatomy.jsonl,
 //!         experiments/combinatorial-cells/boundary-characterization/combinatorial-boundaries-crossing.jsonl,
 //!         experiments/combinatorial-cells/boundary-characterization/combinatorial-boundaries-gradient.jsonl
 

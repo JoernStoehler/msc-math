@@ -11,9 +11,9 @@
 //!
 //! Split from combinatorial-structure (Pass 4).
 //!
-//! Input: experiments/combinatorial-cells/polytopes.jsonl (owned cache)
+//! Input Artifacts: experiments/combinatorial-cells/polytopes.jsonl (owned cache)
 //! Filter: F <= 10 (HK2017 is exponential in F)
-//! Output: experiments/combinatorial-cells/multiple-crossings/combinatorial-boundaries-sweep.jsonl
+//! Output Artifacts: experiments/combinatorial-cells/multiple-crossings/combinatorial-boundaries-sweep.jsonl
 
 use nalgebra::{Matrix4, Vector4};
 use rand::SeedableRng;

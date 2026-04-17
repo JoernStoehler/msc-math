@@ -2,8 +2,8 @@
 //!
 //! Goal: Validate Clarke-subdifferential capacity predictions near orbit
 //! switching boundaries and exact symmetry-forced ties.
-//! Input: None (generates all test polytopes internally).
-//! Output: experiments/numerics/gradient/numerics-subdifferential/gradient-correctness-q5-subdiff.jsonl
+//! Input Artifacts: None (generates all test polytopes internally).
+//! Output Artifacts: experiments/numerics/gradient/numerics-subdifferential/gradient-correctness-q5-subdiff.jsonl
 //!         experiments/numerics/gradient/numerics-subdifferential/gradient-correctness-q5b-symmetric.jsonl
 //!
 //! Tests whether the Clarke subdifferential (set of per-orbit gradients)

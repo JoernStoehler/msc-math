@@ -3,6 +3,12 @@
 //! Goal: validate the sigma/KKT side of the shared result layer: which minimum
 //! simple orbits are returned for each selected polytope, and does the reported
 //! minimum action agree with the root scalar route?
+//!
+//! Input Artifacts: None (builds the target pool internally).
+//! Output Artifacts: experiments/verification/all-minimum/all-minimum.jsonl,
+//!                   experiments/verification/all-minimum/all-minimum-orbits.jsonl,
+//!                   experiments/verification/all-minimum/smoke-all-minimum.jsonl,
+//!                   experiments/verification/all-minimum/smoke-all-minimum-orbits.jsonl
 
 use dev_capacity_validation::{
     build_target_pool, RunMode, Target, MINIMUM_ACTION_GAP_TOL, SCALAR_TOL,

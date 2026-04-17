@@ -2,8 +2,8 @@
 //!
 //! Goal: Test whether the first-order-flat directions at HKO2024 remain
 //! descending at second order, both for basis directions and random flat probes.
-//! Input: None (starts from the hardcoded HKO2024 polytope).
-//! Output: experiments/hko-local-maximum/second-order/second-order-base.jsonl
+//! Input Artifacts: None (starts from the hardcoded HKO2024 polytope).
+//! Output Artifacts: experiments/hko-local-maximum/second-order/second-order-base.jsonl
 //!         experiments/hko-local-maximum/second-order/second-order-curves.jsonl
 //!         experiments/hko-local-maximum/second-order/second-order-random.jsonl
 //!
@@ -16,7 +16,7 @@
 //! clean a_i-space computation. The old script reads normals/heights fields that
 //! no longer exist in the JSONL after the a_i migration.
 //!
-//! Output:
+//! Output Artifacts:
 //!   second-order-base.jsonl   — SVD, flat directions, gradient matrix
 //!   second-order-curves.jsonl — sys(ε) for each flat direction
 //!

@@ -96,3 +96,8 @@ Standard Rust error handling, plus:
 Only stable, validated code lives in `library/`. Don't modify the library for experiment-specific behavior.
 
 Within an experiment package (`experiments/<group>/`), shared helpers belong in `src/lib.rs` when multiple binaries need the same function. This avoids copy-paste duplication and lets improvements propagate. Per-binary helpers that only one experiment uses stay in that binary's `main.rs`.
+
+Cargo binary entrypoints in `experiments/**` carry machine-readable crate docs with
+`Input Artifacts:` and `Output Artifacts:`. Use repo-relative artifact paths when the
+binary owns concrete files in the repo, and `None` when the binary only prints to
+stdout or only operates on ad-hoc CLI paths outside the maintained artifact set.

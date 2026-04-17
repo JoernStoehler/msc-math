@@ -12,8 +12,8 @@
 //!
 //! Location: experiments/combinatorial-cells/omega-hypothesis/main.rs
 //! Goal: Generate the shared combinatorial polytope cache plus omega-obstacle rows.
-//! Input: None (samples and known polytopes are generated from hardcoded plans and seeds).
-//! Output: experiments/combinatorial-cells/polytopes.jsonl,
+//! Input Artifacts: None (samples and known polytopes are generated from hardcoded plans and seeds).
+//! Output Artifacts: experiments/combinatorial-cells/polytopes.jsonl,
 //!         experiments/combinatorial-cells/omega-hypothesis/omega-obstacle.jsonl
 //!
 //! Architecture:

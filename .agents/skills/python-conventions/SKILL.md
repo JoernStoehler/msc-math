@@ -18,14 +18,18 @@ setup()
 
 ## Script headers
 
-Docstring with Goal / Input / Output:
+Docstring with Goal / Input Artifacts / Output Artifacts:
 ```python
 """
 Goal: Identify distribution of sys values
-Input: experiments/<topic>/<experiment>/data.jsonl
-Output: experiments/<topic>/<experiment>/histogram.png
+Input Artifacts: experiments/<topic>/<experiment>/data.jsonl
+Output Artifacts: experiments/<topic>/<experiment>/histogram.png
 """
 ```
+
+Use exact repo-relative paths when the script owns or consumes maintained repo
+artifacts. Use `None` when the script only prints to stdout or acts as shared
+configuration without direct artifact I/O.
 
 ## Paths
 

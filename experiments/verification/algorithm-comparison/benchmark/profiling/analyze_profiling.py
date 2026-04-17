@@ -9,8 +9,9 @@ Analyze criterion benchmark results for pipeline phase breakdown.
 
 Goal: Show where wall-clock time goes at each facet count (construction vs
       capacity vs volume), and how the balance shifts as F grows.
-Input: target/criterion/*/N/new/estimates.json (criterion output)
-Output: experiments/verification/algorithm-comparison/benchmark/profiling/phase_breakdown.png
+Input Artifacts: target/criterion/*/N/new/estimates.json (criterion output)
+Output Artifacts: experiments/verification/algorithm-comparison/benchmark/profiling/phase_breakdown.png
+        experiments/verification/algorithm-comparison/benchmark/profiling/micro_benchmarks.png
 """
 
 import json

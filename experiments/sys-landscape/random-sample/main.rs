@@ -2,8 +2,8 @@
 //!
 //! Goal: Compute systolic ratios for random 4D polytopes across facet counts F=5..12,
 //!   to probe whether random generic polytopes approach the Viterbo threshold.
-//! Input: sys-landscape family cache at experiments/sys-landscape/cache.jsonl.
-//! Output: experiments/sys-landscape/random-sample/random-sweep.jsonl
+//! Input Artifacts: sys-landscape family cache at experiments/sys-landscape/cache.jsonl.
+//! Output Artifacts: experiments/sys-landscape/random-sample/random-sweep.jsonl
 //!         experiments/sys-landscape/cache.jsonl
 //!
 //! Architecture:

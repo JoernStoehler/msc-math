@@ -2,8 +2,8 @@
 //!
 //! Goal: Validate first-order gradient predictions on generic and symmetric
 //! non-generic polytopes.
-//! Input: None (generates all test polytopes internally).
-//! Output: experiments/numerics/gradient/numerics/gradient-correctness-q1-generic.jsonl
+//! Input Artifacts: None (generates all test polytopes internally).
+//! Output Artifacts: experiments/numerics/gradient/numerics/gradient-correctness-q1-generic.jsonl
 //!         experiments/numerics/gradient/numerics/gradient-correctness-q2-nongeneric.jsonl
 //!
 //! Tests the defining property of a gradient: f(a+td) - f(a) - t*g*d = o(t).

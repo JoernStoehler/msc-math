@@ -7,8 +7,8 @@
 Gradient analysis experiment: figures and analysis.
 
 Goal: Visualize sensitivity structure and gradient ascent at HKO2024.
-Input: hko-neighborhood-sensitivity.jsonl, hko-neighborhood-ascent.jsonl
-Output: hko-neighborhood-gradient.png, hko-neighborhood-orbits.png
+Input Artifacts: hko-neighborhood-sensitivity.jsonl, hko-neighborhood-ascent.jsonl
+Output Artifacts: hko-neighborhood-gradient.png, hko-neighborhood-orbits.png
 """
 
 import json

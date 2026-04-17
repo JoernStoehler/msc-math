@@ -5,8 +5,8 @@
 
 """
 Goal: Analyze per-facet cell profiling in dual-vertex space.
-Input: experiments/combinatorial-cells/cell-widths/combinatorial-boundaries-profiling.jsonl
-Output: experiments/combinatorial-cells/cell-widths/*.png
+Input Artifacts: experiments/combinatorial-cells/cell-widths/combinatorial-boundaries-profiling.jsonl
+Output Artifacts: experiments/combinatorial-cells/cell-widths/*.png
 """
 
 import json

@@ -5,10 +5,10 @@
 
 """
 Goal: Analyze subdifferential prediction tests (Q5 orbit-switching, Q5b exact boundaries).
-Input:
+Input Artifacts:
   - experiments/numerics/gradient/numerics-subdifferential/gradient-correctness-q5-subdiff.jsonl
   - experiments/numerics/gradient/numerics-subdifferential/gradient-correctness-q5b-symmetric.jsonl
-Output:
+Output Artifacts:
   - experiments/numerics/gradient/numerics-subdifferential/gc_q5_convergence.png (Q5 subdiff vs single-orbit convergence)
   - experiments/numerics/gradient/numerics-subdifferential/gc_q5_switching.png   (Q5 orbit switching rate vs t and gap)
   - experiments/numerics/gradient/numerics-subdifferential/gc_q5b_boundary.png   (Q5b subdiff at exact switching boundaries)

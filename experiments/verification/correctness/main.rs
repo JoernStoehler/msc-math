@@ -3,8 +3,8 @@
 //! Goal: Verify correctness of capacity algorithms via 6 mathematical propositions
 //!   (direct comparison, literature agreement, conformality, symplectic invariance,
 //!   continuity, monotonicity).
-//! Input: None (generates polytopes from hardcoded seeds and literature definitions).
-//! Output: experiments/verification/correctness/correctness.jsonl (47 polytopes, 71 capacity values).
+//! Input Artifacts: None (generates polytopes from hardcoded seeds and literature definitions).
+//! Output Artifacts: experiments/verification/correctness/correctness.jsonl (47 polytopes, 71 capacity values).
 //!
 //! Architecture:
 //! 1. `cargo run --bin correctness --release` generates 47 polytopes, computes 71 capacities

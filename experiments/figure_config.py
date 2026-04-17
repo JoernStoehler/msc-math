@@ -8,8 +8,8 @@ Shared figure configuration for experiment plots.
 
 Goal: All figures render at thesis text width (5.4") with readable fonts
       matching the 12pt Computer Modern thesis style.
-Input: Imported by experiment scripts.
-Output: None (configures matplotlib globals).
+Input Artifacts: None
+Output Artifacts: None
 
 Usage:
     from figure_config import setup, FIGSIZE_SINGLE, FIGSIZE_DUAL, FIGSIZE_WIDE

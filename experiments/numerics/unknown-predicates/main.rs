@@ -2,8 +2,8 @@
 //!
 //! Goal: Measure whether practical datasets encounter UNKNOWN admissibility
 //! predicates or near-boundary beta/action intervals.
-//! Input: None (regenerates the comparison datasets internally from hardcoded plans).
-//! Output: experiments/numerics/unknown-predicates/unknown-predicates.jsonl
+//! Input Artifacts: None (regenerates the comparison datasets internally from hardcoded plans).
+//! Output Artifacts: experiments/numerics/unknown-predicates/unknown-predicates.jsonl
 //!
 //! Regenerates the random-sample and lagrangian-products datasets using the same
 //! seeds/parameters, then records the explicit-search action interval and

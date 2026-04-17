@@ -2,8 +2,8 @@
 //!
 //! Goal: Measure first-order sensitivity at HKO2024 and run local gradient-ascent
 //! probes within the 10-facet space.
-//! Input: None (starts from the hardcoded HKO2024 polytope).
-//! Output: experiments/hko-local-maximum/gradient-analysis/hko-neighborhood-sensitivity.jsonl
+//! Input Artifacts: None (starts from the hardcoded HKO2024 polytope).
+//! Output Artifacts: experiments/hko-local-maximum/gradient-analysis/hko-neighborhood-sensitivity.jsonl
 //!         experiments/hko-local-maximum/gradient-analysis/hko-neighborhood-ascent.jsonl
 //!
 //! Computes analytical derivatives d_sys/d_h_k and d_sys/d_n_k at the exact HKO2024

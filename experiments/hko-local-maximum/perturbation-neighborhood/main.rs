@@ -2,8 +2,8 @@
 //!
 //! Goal: Sample random dual-vertex perturbations of the HK-O pentagon and
 //! record whether the perturbed polytopes retain sys > 1.
-//! Input: None (starts from the hardcoded HK-O pentagon).
-//! Output: experiments/hko-local-maximum/perturbation-neighborhood/pentagon-perturb.jsonl
+//! Input Artifacts: None (starts from the hardcoded HK-O pentagon).
+//! Output Artifacts: experiments/hko-local-maximum/perturbation-neighborhood/pentagon-perturb.jsonl
 //!
 //! The binary generates N random dual-vertex perturbations of the HK-O pentagon
 //! at a given eps magnitude, computes sys for each, and writes one row per sample

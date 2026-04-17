@@ -10,7 +10,8 @@
 //!
 //! Usage: cargo run -p exp-hko-local-maximum --release --bin hko-cut-and-ascent
 //! Flags: --fresh  (clear existing data and rerun)
-//! Output: cut-and-ascent/cut-and-ascent.jsonl
+//! Input Artifacts: None (starts from the hardcoded HKO2024 polytope).
+//! Output Artifacts: cut-and-ascent/cut-and-ascent.jsonl
 
 use nalgebra::{Matrix4, Vector4};
 use rand::SeedableRng;

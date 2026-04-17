@@ -9,8 +9,8 @@
 //! 2. At select nodes: compare numerical Q̃ against exact Q (rational arithmetic),
 //!    and assert |Q̃ - Q_exact| ≤ E (the error bound is valid).
 //!
-//! Input: Known polytopes from the library (F ≤ 10).
-//! Output: Summary tables to stdout. Panics on any violation.
+//! Input Artifacts: Known polytopes from the library (F ≤ 10).
+//! Output Artifacts: Summary tables to stdout. Panics on any violation.
 //!
 //! The explicit root wrapper below is intentional: this diagnostic validates
 //! the current pruned general HK2017/KKT pipeline and its Q-side error story,

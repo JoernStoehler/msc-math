@@ -10,8 +10,8 @@ Analyze the omega-obstacle hypothesis: do small ω₀ values correlate with high
 Goal: Test whether near-Lagrangian 2-faces (small |ω₀(n_i, n_j)|) between adjacent
 facets help create high systolic ratios.
 
-Input: experiments/combinatorial-cells/omega-hypothesis/omega-obstacle.jsonl
-Output: experiments/combinatorial-cells/omega-hypothesis/omega_obstacle_*.png (multiple figures)
+Input Artifacts: experiments/combinatorial-cells/omega-hypothesis/omega-obstacle.jsonl
+Output Artifacts: experiments/combinatorial-cells/omega-hypothesis/omega_obstacle_*.png (multiple figures)
 """
 
 import json

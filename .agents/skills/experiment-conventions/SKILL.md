@@ -60,7 +60,12 @@ When a validation experiment replaces library fixture coverage, record the bound
 - Shared helpers used by multiple binaries in the same topic belong in `experiments/<topic>/src/lib.rs`.
 - Per-experiment helpers stay in that experiment's `main.rs`.
 - Exploratory behavior stays in `experiments/`; stable approved algorithms migrate to `library/`.
-- Keep `Input:` and `Output:` headers machine-readable with repo-relative paths or experiment-relative filenames; `scripts/dataflow.sh` parses them for the repo's JSONL audit.
+- Every Cargo binary entrypoint `main.rs` and every experiment `.py` script declares
+  `Input Artifacts:` and `Output Artifacts:` in the top doc comment/docstring.
+- Use exact repo-relative paths when practical. Use `None` when the file does not
+  own or consume repo artifacts. If one declaration line covers a maintained
+  family, keep the family explicit and machine-readable.
+- `scripts/dataflow.sh` parses these declarations and regenerates `DATAFLOW.md` for the repo's artifact audit.
 
 Run examples:
 

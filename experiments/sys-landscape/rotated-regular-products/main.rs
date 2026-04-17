@@ -2,8 +2,8 @@
 //!
 //! Goal: Sweep rotated regular polygon pairs and record systolic-ratio curves
 //! for fine and coarse angle grids.
-//! Input: None (constructs all polygon pairs internally).
-//! Output: experiments/sys-landscape/rotated-regular-products/lagrangian-products-5x5.jsonl
+//! Input Artifacts: None (constructs all polygon pairs internally).
+//! Output Artifacts: experiments/sys-landscape/rotated-regular-products/lagrangian-products-5x5.jsonl
 //!         experiments/sys-landscape/rotated-regular-products/lagrangian-products-7x7.jsonl
 //!         experiments/sys-landscape/rotated-regular-products/lagrangian-products-{3x3,3x4,3x5,3x6,4x4,4x5,4x6,5x5,5x6,6x6}-6deg.jsonl
 //!

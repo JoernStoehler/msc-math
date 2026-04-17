@@ -6,6 +6,8 @@
 //!
 //! Usage:
 //!   cargo run -p dev-numerical-analysis --release --bin num-collect-poly -- --polytopes /tmp/all_polytopes.jsonl [--max-facets 8]
+//! Input Artifacts: None (reads the --polytopes JSONL path passed on the CLI).
+//! Output Artifacts: experiments/numerics/error-bounds/collected_poly.jsonl
 
 use nalgebra::{DMatrix, DVector, Vector4};
 use serde::Deserialize;

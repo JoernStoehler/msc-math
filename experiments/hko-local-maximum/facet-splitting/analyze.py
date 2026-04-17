@@ -7,8 +7,8 @@
 Facet-splitting experiment: figures and analysis.
 
 Goal: Visualize facet-splitting results (F=10 -> F=11) for HKO2024.
-Input: hko-neighborhood-splitting.jsonl
-Output: hko-neighborhood-splitting.png
+Input Artifacts: hko-neighborhood-splitting.jsonl
+Output Artifacts: hko-neighborhood-splitting.png
 """
 
 import json

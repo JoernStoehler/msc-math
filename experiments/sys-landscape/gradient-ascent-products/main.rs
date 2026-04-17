@@ -2,8 +2,8 @@
 //!
 //! Goal: Run projected gradient ascent on random Lagrangian products and
 //! record both the summary outcomes and per-step traces.
-//! Input: experiments/sys-landscape/cache.jsonl
-//! Output: experiments/sys-landscape/cache.jsonl
+//! Input Artifacts: experiments/sys-landscape/cache.jsonl
+//! Output Artifacts: experiments/sys-landscape/cache.jsonl
 //!         experiments/sys-landscape/gradient-ascent-products/gradient-ascent-products.jsonl
 //!         experiments/sys-landscape/gradient-ascent-products/gradient-ascent-products-trace.jsonl
 //!

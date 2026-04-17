@@ -4,6 +4,8 @@
 //! strategies on the same polytope set.
 //!
 //! Related: research/sys-landscape/design/gradient-ascent-dev/strategy-comparison.md
+//! Input Artifacts: None
+//! Output Artifacts: None
 
 fn main() {
     eprintln!("strategy-comparison: not yet implemented");

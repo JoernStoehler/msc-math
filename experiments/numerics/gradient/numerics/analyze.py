@@ -5,10 +5,10 @@
 
 """
 Goal: Analyze first-order prediction test for gradient correctness (Q1 generic, Q2 non-generic).
-Input:
+Input Artifacts:
   - experiments/numerics/gradient/numerics/gradient-correctness-q1-generic.jsonl
   - experiments/numerics/gradient/numerics/gradient-correctness-q2-nongeneric.jsonl
-Output:
+Output Artifacts:
   - experiments/numerics/gradient/numerics/gc_convergence.png    (Q1 log-log convergence)
   - experiments/numerics/gradient/numerics/gc_slopes.png         (slope distributions Q1+Q2)
   - experiments/numerics/gradient/numerics/gc_summary.tex        (summary table)

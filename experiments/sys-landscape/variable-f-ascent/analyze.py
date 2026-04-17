@@ -5,8 +5,8 @@
 
 """
 Goal: Analyze variable-F gradient ascent results (RQ1 + RQ2).
-Input: experiments/sys-landscape/variable-f-ascent/variable-f-ascent.jsonl
-Output: experiments/sys-landscape/variable-f-ascent/variable-f-rq1.png
+Input Artifacts: experiments/sys-landscape/variable-f-ascent/variable-f-ascent.jsonl
+Output Artifacts: experiments/sys-landscape/variable-f-ascent/variable-f-rq1.png
         experiments/sys-landscape/variable-f-ascent/variable-f-rq2.png
 """
 

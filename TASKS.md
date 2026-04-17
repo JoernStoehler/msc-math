@@ -438,7 +438,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - 2026-04-17 local refresh packet outcome:
   - in-scope canonical local datasets were rerun under current code and committed derived artifacts were regenerated from refreshed JSONL in the same pass;
   - smoke/default safety sweep landed for the touched binaries, so smoke runs now write untracked `smoke-*.jsonl` outputs unless the caller explicitly targets canonicals;
-  - `bash scripts/dataflow.sh` now prints the current declared-entrypoint JSONL DAG plus a worktree timestamp audit;
+  - `bash scripts/dataflow.sh` now regenerates `DATAFLOW.md` with the current declared-entrypoint artifact DAG plus a worktree timestamp audit;
   - current audit result: no declared producer/input stale edge remains in that entrypoint/header audit; the remaining non-canonical tail is tracked smoke outputs plus detached historical tracked JSONL such as `experiments/verification/orbit-recovery/polytopes.jsonl`.
 - Current matrix snapshot (2026-04-17):
 
@@ -484,7 +484,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
   - `research/repo-maintainability/design/docs-navigation-inventory.md`
   - `research/repo-maintainability/design/execution-constraints-inventory.md`
 - Current documentation method: facts first, architecture prose second. The consolidated current-state fact base is `research/repo-maintainability/design/repo-facts.md`; `ARCHITECTURE.md` should be derived from it instead of mixing discovery with policy.
-- `ARCHITECTURE.md` now carries both the component/code architecture and the current persisted-data architecture. `scripts/dataflow.sh` is the current JSONL audit surface; use its stdout for producer/consumer and timestamp questions, while `AGENTS.md` remains the short repo map and `ARCHITECTURE.md` stays descriptive.
+- `ARCHITECTURE.md` now carries both the component/code architecture and the current persisted-data architecture. `scripts/dataflow.sh` regenerates `DATAFLOW.md`, which is the current declared artifact audit surface for producer/consumer and timestamp questions, while `AGENTS.md` remains the short repo map and `ARCHITECTURE.md` stays descriptive.
 - Current phase: architecture-doc pass and capacity/orbit API decision surface reviewed. Next step is execution-packet planning and worktree setup for the approved shared result-layer direction (`hk2017`, `hk2017_unpruned`, `billiard` sharing one orbit/result layer with separate search frontends).
 - Discussion order for the next phase: keep the design note as the source of approved API direction, then write and execute bounded packets incrementally instead of freezing the whole DAG upfront.
 - Next PM action: commit the durable design notes, create a dedicated feature worktree, and start packetizing the refactor around shared core types/search frontends/consumer migration.
@@ -507,7 +507,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 
 ### [open] [group:data] Experiment data-flow audit and cache plan
 - Purpose: map which experiments can reuse polytope/capacity/sigma datasets and which ones need experiment-owned intermediate data. This is the data-flow analogue of the algorithm-surface audit; do not start by moving `.jsonl` files.
-- Current audit surface: `bash scripts/dataflow.sh`
+- Current audit surface: `bash scripts/dataflow.sh` regenerates `DATAFLOW.md`
 - Current cache evidence:
   - `library/src/database.rs` defines `PolytopeRecord` with rational dual vertices, rational vertices, optional volume/capacity, and optional `sigmas`; callers own path policy and there is no canonical mutable shared cache.
   - After the 2026-04-17 refresh packet, `experiments/combinatorial-cells/polytopes.jsonl` and `experiments/sys-landscape/cache.jsonl` are refreshed shared caches in active use. `experiments/verification/orbit-recovery/polytopes.jsonl` is no longer consumed by current orbit-recovery code and is now reported by the dataflow audit as a detached stale mirror rather than a canonical cache.
@@ -519,7 +519,7 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
   - **Non-minimum intermediate nodes:** numerical error-bounds, Q-error/inertia, algorithm ablation, and solver benchmarks need per-`(S, sigma)` matrices, solver verdicts, or timing variants. These should stay in custom datasets rather than a shared polytope catalog.
   - **Path-dependent search traces:** gradient-ascent traces, variable-F paths, and LICCA shard outputs are analysis artifacts, not reusable polytope catalogs except for their final polytopes.
 - Recommended before about 2026-04-21: keep extending header coverage so `scripts/dataflow.sh` can audit more producers automatically, and write a short note naming one canonical source for the shared polytope catalog, the allowed consumer paths, and the fields each consumer may trust.
-- Acceptance check: `scripts/dataflow.sh` shows no real stale producer/input edge for declared producers and names any `.jsonl` files that should be future-only, mirrored, detached, or regenerated.
+- Acceptance check: regenerated `DATAFLOW.md` shows no real stale producer/input edge for declared producers and names any `.jsonl` files that should be future-only, mirrored, detached, or regenerated.
 - Stop condition: if an optimization would change committed data values, alter thesis-facing figures, or merge transient search states into a shared cache, stop for Jörn's thesis-priority decision.
 
 ### [open] [group:docs] Agent-facing architecture and navigation guide

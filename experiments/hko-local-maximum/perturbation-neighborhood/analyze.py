@@ -8,9 +8,9 @@
 Goal: Plot histogram of systolic ratios under HK-O pentagon dual-vertex perturbations
       across multiple eps buckets, summarize stats per bucket, compute PCA on the
       canonical eps=0.01 bucket.
-Input: experiments/hko-local-maximum/perturbation-neighborhood/pentagon-perturb.jsonl
+Input Artifacts: experiments/hko-local-maximum/perturbation-neighborhood/pentagon-perturb.jsonl
        or experiments/hko-local-maximum/perturbation-neighborhood/data/licca-eps-*.jsonl
-Output: experiments/hko-local-maximum/perturbation-neighborhood/pentagon_perturb_sys_hist.png
+Output Artifacts: experiments/hko-local-maximum/perturbation-neighborhood/pentagon_perturb_sys_hist.png
         experiments/hko-local-maximum/perturbation-neighborhood/pentagon_perturb_stats.md
         experiments/hko-local-maximum/perturbation-neighborhood/pentagon_perturb_stats.tex
         experiments/hko-local-maximum/perturbation-neighborhood/pentagon_perturb_pca.md

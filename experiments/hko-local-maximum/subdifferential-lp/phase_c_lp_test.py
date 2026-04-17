@@ -8,8 +8,8 @@
 
 Goal: Test whether HKO2024 satisfies the first-order necessary condition for
       local maximality of sys in the full (n, h) parameter space.
-Input: experiments/hko-local-maximum/gradient-analysis/hko-neighborhood-sensitivity.jsonl
-Output: prints analysis results to stdout (no files written)
+Input Artifacts: experiments/hko-local-maximum/gradient-analysis/hko-neighborhood-sensitivity.jsonl
+Output Artifacts: None
 
 Approach:
   1. Load per-orbit data (β, Q, permutation) and polytope data (n, h) from JSONL.

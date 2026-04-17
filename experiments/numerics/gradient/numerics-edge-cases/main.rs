@@ -2,8 +2,8 @@
 //!
 //! Goal: Validate first-order gradient predictions near degeneracy and near
 //! redundant-facet boundaries.
-//! Input: None (generates all test polytopes internally).
-//! Output: experiments/numerics/gradient/numerics-edge-cases/gradient-correctness-q3-degeneracy.jsonl
+//! Input Artifacts: None (generates all test polytopes internally).
+//! Output Artifacts: experiments/numerics/gradient/numerics-edge-cases/gradient-correctness-q3-degeneracy.jsonl
 //!         experiments/numerics/gradient/numerics-edge-cases/gradient-correctness-q4-redundant.jsonl
 //!
 //! Tests the defining property of a gradient: f(a+td) - f(a) - t*g*d = o(t).

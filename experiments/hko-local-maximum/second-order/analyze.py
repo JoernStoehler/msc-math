@@ -8,9 +8,9 @@
 Goal: Analyze second-order behavior along flat directions at HKO2024.
       Part A: Phase C LP replacement — verify 0 ∈ conv(gradients) in a_i space.
       Part B: Curvature analysis — fit second-order behavior, produce figures.
-Input: second-order-base.jsonl, second-order-curves.jsonl
-Output: second_order_curves.png, second_order_curvatures.png,
-        second_order_curvatures.tex
+Input Artifacts: second-order-base.jsonl, second-order-curves.jsonl
+Output Artifacts: second_order_curves.png, second_order_curvatures.png,
+        second_order_curvatures.tex, second_order_random_hist.png
 """
 
 import json

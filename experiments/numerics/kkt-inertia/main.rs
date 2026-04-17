@@ -13,9 +13,9 @@
 //! 2. Inertia check: verify the inertia decomposition formula.
 //!    On mismatch, print eigenvalue diagnostics to identify threshold artifacts
 //!    vs genuine violations.
-///
-/// Input: Known polytopes from the library (F ≤ 10).
-/// Output: Summary tables to stdout. No hard assertions (diagnostic experiment).
+//!
+//! Input Artifacts: None (enumerates known polytopes from the library).
+//! Output Artifacts: None (prints diagnostic summary tables to stdout).
 use nalgebra::{DMatrix, DVector, Vector4};
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;

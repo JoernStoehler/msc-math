@@ -17,7 +17,8 @@
 //! Flags: --fresh  (clear existing data and rerun)
 //!        --smoke  (run one bounded probe against temp output/cache)
 //!        --out <path>  (override output JSONL path)
-//! Output: variable-f-ascent/variable-f-ascent.jsonl
+//! Input Artifacts: experiments/sys-landscape/gradient-ascent-general/gradient-ascent-general.jsonl
+//! Output Artifacts: variable-f-ascent/variable-f-ascent.jsonl
 //!         variable-f-ascent/cache.jsonl
 
 use exp_sys_landscape::compute_step_bound;

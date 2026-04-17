@@ -2,8 +2,8 @@
 //!
 //! Goal: Compare HK2017 pruning variants on a shared regression and random
 //! dataset with one JSONL row per (polytope, variant).
-//! Input: None (generates all ablation fixtures internally).
-//! Output: experiments/verification/algorithm-comparison/ablation/ablation.jsonl
+//! Input Artifacts: None (generates all ablation fixtures internally).
+//! Output Artifacts: experiments/verification/algorithm-comparison/ablation/ablation.jsonl
 //!
 //! A-axis variants: A0 (unpruned), A1 (vertex adjacency),
 //! A2 (directed ω₀), A3 (Reeb-flow feasibility).

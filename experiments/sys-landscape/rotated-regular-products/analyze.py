@@ -8,9 +8,9 @@
 Plot systolic ratio curves for pentagon 5x5 and regular polygon pairs.
 
 Goal: Visualize sys(theta) for the 5x5 pentagon sweep and selected n-gon x m-gon pairs.
-Input: experiments/sys-landscape/rotated-regular-products/lagrangian-products-5x5.jsonl,
+Input Artifacts: experiments/sys-landscape/rotated-regular-products/lagrangian-products-5x5.jsonl,
        experiments/sys-landscape/rotated-regular-products/lagrangian-products-<n>x<m>-6deg.jsonl
-Output: experiments/sys-landscape/rotated-regular-products/lagrangian_products_5x5.png,
+Output Artifacts: experiments/sys-landscape/rotated-regular-products/lagrangian_products_5x5.png,
         experiments/sys-landscape/rotated-regular-products/lagrangian_products_7x7.png,
         experiments/sys-landscape/rotated-regular-products/lagrangian_products_polygon_pairs.png
 """

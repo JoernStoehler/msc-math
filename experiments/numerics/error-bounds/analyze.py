@@ -1,7 +1,7 @@
 """
 Goal: Exploratory analysis of verify-numerics results.
-Input: experiments/numerics/error-bounds/results_*.jsonl (CLI args)
-Output: stdout (summary tables)
+Input Artifacts: experiments/numerics/error-bounds/results_*.jsonl (CLI args)
+Output Artifacts: None
 
 Bound checking and conjecture validation is in Rust tests:
   cargo test -p dev-numerical-analysis --release --test verify_numerics_tests

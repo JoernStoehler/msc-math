@@ -2,8 +2,8 @@
 //!
 //! Goal: Sample random Lagrangian products across polygon-pair buckets and
 //! record their systolic ratios.
-//! Input: experiments/sys-landscape/cache.jsonl
-//! Output: experiments/sys-landscape/cache.jsonl
+//! Input Artifacts: experiments/sys-landscape/cache.jsonl
+//! Output Artifacts: experiments/sys-landscape/cache.jsonl
 //!         experiments/sys-landscape/random-product-sample/random-product-sweep.jsonl
 //!
 //! Architecture:

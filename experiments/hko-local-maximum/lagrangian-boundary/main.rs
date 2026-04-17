@@ -2,8 +2,8 @@
 //!
 //! Goal: Estimate how the sys > 1 region around HKO2024 shrinks under dense
 //! Lagrangian-product perturbations across epsilon levels.
-//! Input: None (starts from the hardcoded HKO2024 polytope).
-//! Output: experiments/hko-local-maximum/lagrangian-boundary/lagrangian-search.jsonl
+//! Input Artifacts: None (starts from the hardcoded HKO2024 polytope).
+//! Output Artifacts: experiments/hko-local-maximum/lagrangian-boundary/lagrangian-search.jsonl
 //!         experiments/hko-local-maximum/lagrangian-boundary/lagrangian-search-levels.jsonl
 //!
 //! Architecture:

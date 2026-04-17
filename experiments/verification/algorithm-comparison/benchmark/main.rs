@@ -2,8 +2,8 @@
 //!
 //! Goal: Generate a mixed random/Lagrangian timing benchmark for pruned,
 //! unpruned, and billiard capacity algorithms.
-//! Input: None (generates all benchmark fixtures internally).
-//! Output: experiments/verification/algorithm-comparison/benchmark/benchmark.jsonl
+//! Input Artifacts: None (generates all benchmark fixtures internally).
+//! Output Artifacts: experiments/verification/algorithm-comparison/benchmark/benchmark.jsonl
 //!
 //! Architecture:
 //! 1. `cargo run --bin benchmark --release` generates benchmark dataset

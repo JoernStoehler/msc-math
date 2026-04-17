@@ -5,9 +5,9 @@
 
 """
 Goal: Summarize geometric recovery results for trusted minimum sigma rows.
-Input: experiments/verification/orbit-recovery/orbit-recovery.jsonl and
+Input Artifacts: experiments/verification/orbit-recovery/orbit-recovery.jsonl and
        experiments/verification/orbit-recovery/orbit-recovery-orbits.jsonl
-Output: Summary statistics printed to stdout.
+Output Artifacts: None
 """
 
 import json

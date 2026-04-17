@@ -8,6 +8,9 @@
 //!
 //! The explicit root wrappers are intentional: this profiling harness targets
 //! the pruned HK2017 path directly rather than the root auto dispatcher.
+//!
+//! Input Artifacts: None (generates its profiling fixture internally).
+//! Output Artifacts: None (profiling output is handled by the external profiler).
 
 use nalgebra::Vector4;
 use rand::SeedableRng;

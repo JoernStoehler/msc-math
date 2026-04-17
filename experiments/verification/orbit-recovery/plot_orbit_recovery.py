@@ -6,8 +6,8 @@
 
 """
 Goal: Plot worst trusted-minimum recovery errors by facet count.
-Input: experiments/verification/orbit-recovery/orbit-recovery.jsonl
-Output: experiments/verification/orbit-recovery/orbit_recovery_errors.png
+Input Artifacts: experiments/verification/orbit-recovery/orbit-recovery.jsonl
+Output Artifacts: experiments/verification/orbit-recovery/orbit_recovery_errors.png
 """
 
 import json

@@ -1,12 +1,15 @@
-/// JSON export of polytope geometry for the interactive visualization.
-///
-/// Exports the full combinatorial skeleton (vertices, edges, ridges),
-/// Reeb vectors, and Reeb orbit trajectories as a single JSON file
-/// consumed by the Three.js viewer in `experiments/visualization/main/viz/`.
-///
-/// Trajectories include:
-/// - All closed Reeb orbits found by the HK2017 algorithm (min-action and others)
-/// - Displaced variants of the min-action orbit to illustrate twisting
+//! JSON export of polytope geometry for the interactive visualization.
+//!
+//! Exports the full combinatorial skeleton (vertices, edges, ridges),
+//! Reeb vectors, and Reeb orbit trajectories as a single JSON file
+//! consumed by the Three.js viewer in `experiments/visualization/main/viz/`.
+//!
+//! Trajectories include:
+//! - All closed Reeb orbits found by the HK2017 algorithm (min-action and others)
+//! - Displaced variants of the min-action orbit to illustrate twisting
+//!
+//! Input Artifacts: None (exports built-in known polytopes only).
+//! Output Artifacts: None (writes the JSON path passed on the CLI).
 use nalgebra::{DMatrix, Vector4};
 use serde::Serialize;
 use std::fs::File;

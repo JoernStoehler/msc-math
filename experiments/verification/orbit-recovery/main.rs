@@ -3,6 +3,13 @@
 //! Goal: given a trusted all-minimum sigma dataset, rebuild one-sigma KKT data,
 //! recover each orbit geometrically, and validate closure / on-facet / inside-K
 //! / action propositions without retesting sigma enumeration.
+//!
+//! Input Artifacts: experiments/verification/all-minimum/all-minimum-orbits.jsonl,
+//!                  experiments/verification/all-minimum/smoke-all-minimum-orbits.jsonl
+//! Output Artifacts: experiments/verification/orbit-recovery/orbit-recovery.jsonl,
+//!                   experiments/verification/orbit-recovery/orbit-recovery-orbits.jsonl,
+//!                   experiments/verification/orbit-recovery/smoke-orbit-recovery.jsonl,
+//!                   experiments/verification/orbit-recovery/smoke-orbit-recovery-orbits.jsonl
 
 use dev_capacity_validation::{target_map, RunMode, Target, ACTION_TOL, GEOMETRY_TOL};
 use serde::{Deserialize, Serialize};

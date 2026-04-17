@@ -5,9 +5,9 @@
 
 """
 Goal: Summarize the all-minimum sigma-validation dataset.
-Input: experiments/verification/all-minimum/all-minimum.jsonl and
+Input Artifacts: experiments/verification/all-minimum/all-minimum.jsonl and
        experiments/verification/all-minimum/all-minimum-orbits.jsonl
-Output: Summary statistics printed to stdout.
+Output Artifacts: None
 """
 
 import json

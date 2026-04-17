@@ -6,6 +6,8 @@
 //!
 //! Usage:
 //!   cargo run -p dev-numerical-analysis --release --bin num-error-bounds -- <input.jsonl> <output.jsonl>
+//! Input Artifacts: None (reads the input JSONL path passed on the CLI).
+//! Output Artifacts: None (writes the output JSONL path passed on the CLI).
 
 use nalgebra::{DMatrix, DVector};
 use num_rational::BigRational;

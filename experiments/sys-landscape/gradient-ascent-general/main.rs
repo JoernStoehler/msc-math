@@ -2,8 +2,8 @@
 //!
 //! Goal: Run unconstrained gradient ascent on general random polytopes and
 //! record both the summary outcomes and per-step traces.
-//! Input: experiments/sys-landscape/cache.jsonl
-//! Output: experiments/sys-landscape/cache.jsonl
+//! Input Artifacts: experiments/sys-landscape/cache.jsonl
+//! Output Artifacts: experiments/sys-landscape/cache.jsonl
 //!         experiments/sys-landscape/gradient-ascent-general/gradient-ascent-general.jsonl
 //!         experiments/sys-landscape/gradient-ascent-general/gradient-ascent-general-trace.jsonl
 //!

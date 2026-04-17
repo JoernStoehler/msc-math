@@ -9,8 +9,8 @@ Analyze borderline admissibility prevalence across datasets.
 
 Goal: Determine whether the explicit capacity search produces a nontrivial
       action interval or a tiny beta margin on our polytope datasets.
-Input: experiments/numerics/unknown-predicates/unknown-predicates.jsonl
-Output: experiments/numerics/unknown-predicates/unknown_predicates_beta_min.png
+Input Artifacts: experiments/numerics/unknown-predicates/unknown-predicates.jsonl
+Output Artifacts: experiments/numerics/unknown-predicates/unknown_predicates_beta_min.png
         Summary statistics to stdout
 """
 
