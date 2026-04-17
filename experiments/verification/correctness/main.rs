@@ -38,6 +38,7 @@ use symplectic::geom::known_polytopes::{
     hko_pentagon, hypercube, lagrangian_triangle_product, lagrangian_triangle_square,
     simplex, symplectic_triangle_product, symplectic_triangle_square,
 };
+use symplectic::algorithms::billiard::facet_classification::classify_facets;
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::random_polygon_2d;
 use symplectic::geom::polytope::Polytope4D;
@@ -49,6 +50,17 @@ use rand_distr::StandardNormal;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::{BufWriter, Write};
+
+fn maybe_billiard_capacity(polytope: &Polytope4D) -> Option<f64> {
+    if classify_facets(polytope).is_err() {
+        return None;
+    }
+    Some(
+        ehz_capacity_billiard(polytope)
+            .expect("classification already succeeded")
+            .capacity(),
+    )
+}
 
 #[derive(Debug, Serialize, Deserialize)]
 struct VerificationEntry {
@@ -95,7 +107,7 @@ fn main() {
         let pruned = ehz_capacity_pruned(p).expect("pruned").capacity();
         let unpruned = ehz_capacity_unpruned(p).expect("unpruned").capacity();
         let billiard = if i >= 5 {
-            ehz_capacity_billiard(p).ok().map(|r| r.capacity())
+            maybe_billiard_capacity(p)
         } else {
             None
         };
@@ -129,7 +141,7 @@ fn main() {
 
     for kp in literature {
         let pruned = ehz_capacity_pruned(&kp.polytope).expect("pruned").capacity();
-        let billiard = ehz_capacity_billiard(&kp.polytope).ok().map(|r| r.capacity());
+        let billiard = maybe_billiard_capacity(&kp.polytope);
 
         entries.push(VerificationEntry {
             name: kp.name.to_string(),
@@ -156,7 +168,7 @@ fn main() {
 
         let pruned = ehz_capacity_pruned(&scaled).expect("pruned").capacity();
         let billiard = if i >= 5 {
-            ehz_capacity_billiard(&scaled).ok().map(|r| r.capacity())
+            maybe_billiard_capacity(&scaled)
         } else {
             None
         };

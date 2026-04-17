@@ -60,7 +60,7 @@ boundary questions that still need a Jörn decision.
 
 - `symplectic::geom::polytope::Polytope4D`, `symplectic::geom::known_polytopes`, `symplectic::geom::polygon::{random_polygon_2d, regular_polygon_2d, rotate_polygon_2d}`, `symplectic::geom::lagrangian_product::lagrangian_product`, `symplectic::geom::volume::volume`, `symplectic::geom::symplectic_form::omega0`.
 - `symplectic::geom::facet_volume::facet_volume_3d`, `symplectic::geom::reeb_trajectory`.
-- `symplectic::algorithms::hk2017::{ehz_capacity, ehz_capacity_pruned, ehz_capacity_unpruned, combinations, OrbitSearchResult}` and `symplectic::algorithms::billiard::ehz_capacity_billiard`.
+- `symplectic::algorithms::hk2017::{combinations, for_each_sigma_pruned, for_each_sigma_unpruned}` and `symplectic::algorithms::billiard::{for_each_sigma, bounce_count_from_sigma}`.
 - `symplectic::algorithms::facet_adjacency::{build_transition_matrix, is_feasible_cycle}`.
 - `symplectic::database::{load, load_many, save, DualVerticesKey, PolytopeRecord, SigmaAction, Source}`, `symplectic::dataset::AcceptanceRow`, `symplectic::derivatives::{capacity_derivatives_a, volume_derivatives_a}`, `symplectic::random::{sample_random_polytope, generate_polytope, generate_random_polytopes}`.
 - `symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktOutcome, KktResult, EPS_BETA_POSITIVE, EPS_Q_POSITIVE}`.

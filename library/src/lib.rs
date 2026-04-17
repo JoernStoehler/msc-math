@@ -101,17 +101,27 @@ pub fn ehz_capacity_unpruned(
 /// Explicit billiard frontend on the shared orbit/result surface.
 pub fn ehz_capacity_billiard(
     polytope: &Polytope4D,
-) -> Result<OrbitSearchResult, OrbitSearchError> {
-    algorithms::billiard::facet_classification::classify_facets(polytope)
-        .expect("ehz_capacity_billiard requires a Lagrangian product");
+) -> Result<OrbitSearchResult, BilliardError> {
+    algorithms::billiard::facet_classification::classify_facets(polytope)?;
 
     let (orbits, iterations) = algorithms::orbit_search::solve_sigma_stream(
         polytope,
         OrbitSolveBackend::SaddlePoint,
         |visit| algorithms::billiard::for_each_sigma(polytope, visit)
-            .expect("classification already succeeded"),
-    )?;
-    algorithms::orbit_search::aggregate_orbits_f64_only(0.0, orbits, iterations)
+            .expect("classify_facets already succeeded"),
+    )
+    .map_err(|err| match err {
+        OrbitSearchError::UnsupportedBackend => unreachable!("router hardcodes saddle-point backend"),
+        OrbitSearchError::NoAdmissibleOrbit => unreachable!("f64-only aggregation should return a result"),
+        OrbitSearchError::NumericalFailure => unreachable!("solve_sigma_stream does not produce NumericalFailure"),
+        OrbitSearchError::ExactFallbackFailure => unreachable!("f64-only billiard router never exact-resolves"),
+    })?;
+    algorithms::orbit_search::aggregate_orbits_f64_only(0.0, orbits, iterations).map_err(|err| match err {
+        OrbitSearchError::UnsupportedBackend => unreachable!("aggregation does not use backend selection"),
+        OrbitSearchError::NoAdmissibleOrbit => unreachable!("f64-only aggregation should return a result"),
+        OrbitSearchError::NumericalFailure => unreachable!("f64-only aggregation does not emit NumericalFailure"),
+        OrbitSearchError::ExactFallbackFailure => unreachable!("f64-only aggregation never exact-resolves"),
+    })
 }
 
 /// Default capacity wrapper on the shared orbit/result surface.
@@ -120,7 +130,9 @@ pub fn ehz_capacity_billiard(
 /// structure test, and otherwise uses the pruned HK2017 path.
 pub fn ehz_capacity(polytope: &Polytope4D) -> Result<OrbitSearchResult, OrbitSearchError> {
     if algorithms::billiard::facet_classification::classify_facets(polytope).is_ok() {
-        return ehz_capacity_billiard(polytope);
+        return ehz_capacity_billiard(polytope).map_err(|_| {
+            unreachable!("ehz_capacity only routes to billiard after successful classification")
+        });
     }
     ehz_capacity_pruned(polytope)
 }

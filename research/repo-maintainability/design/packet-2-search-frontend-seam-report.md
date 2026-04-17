@@ -79,7 +79,7 @@ abstraction.
 | Solve | [solve_orbit_sigma](../../../library/src/algorithms/orbit_search.rs:192) | same helper path | `OrbitKktData` or `OrbitSolveError` |
 | Classify/convert | `OrbitAdmissibility` is attached to each solved orbit; no separate result wrapper is involved | same helper path | `OrbitKktData { admissibility, q, beta, ... }` |
 | Track shared capacity state | `aggregate_orbits(...)` and `aggregate_orbits_f64_only(...)` own the shared trimming/sorting/finalization logic | same helper path | `OrbitSearchResult { orbits, min_action, min_action_lower, min_action_upper, iterations }` |
-| Track frontend-local metadata | HK2017 tracks `best_subset_certified: Option<(action, subset)>` in `enumerate_impl`; billiard tracks `best_bounce_certified: Option<(action, k)>` in its frontend | local wrapper metadata only |
+| Track frontend-local metadata | At planning time, HK2017 still carried winner-subset metadata and billiard still carried winner-bounce metadata in their local wrappers | local wrapper metadata only |
 | Finalize | `OrbitSearchResult` plus scalar convenience accessors like `capacity()` and `best_subset()` | same | `OrbitSearchResult` + local wrapper fields |
 
 ## Why this seam is the smallest useful one

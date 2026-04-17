@@ -47,6 +47,15 @@ def load_data(path: Path) -> list[dict]:
     return rows
 
 
+def action_interval(row: dict) -> tuple[float, float]:
+    if "min_action_lower" in row and "min_action_upper" in row:
+        return row["min_action_lower"], row["min_action_upper"]
+    # TODO(capacity-result-api): remove this fallback once the committed
+    # unknown-predicates dataset is regenerated with the new interval schema.
+    capacity = row["capacity"]
+    return capacity, row.get("capacity_uncertain", capacity)
+
+
 def main():
     rows = load_data(DATA_FILE)
     n = len(rows)
@@ -101,7 +110,8 @@ def main():
             print(f"  {label}: min={bm.min():.6e}, median={np.median(bm):.6e}, max={bm.max():.6e}")
 
     # Action interval statistics
-    all_widths = np.array([r["min_action_upper"] - r["min_action_lower"] for r in rows])
+    intervals = [action_interval(r) for r in rows]
+    all_widths = np.array([upper - lower for (lower, upper) in intervals])
     nonzero_widths = all_widths[all_widths > 0]
     print()
     print(f"Action intervals: {len(nonzero_widths)} nonzero out of {n}")
@@ -109,15 +119,23 @@ def main():
         print(
             f"  Nonzero width range: [{nonzero_widths.min():.6e}, {nonzero_widths.max():.6e}]"
         )
+    if total_unknowns > 0:
         print()
         print("Flagged polytopes:")
         for r in rows:
             if r["has_unknown"]:
-                width = r["min_action_upper"] - r["min_action_lower"]
+                action_lower, action_upper = action_interval(r)
+                width = action_upper - action_lower
+                reason_parts = []
+                if width > 0:
+                    reason_parts.append("interval-width")
+                if r["beta_min"] <= 1e-12:
+                    reason_parts.append("beta-margin")
+                reason = ",".join(reason_parts) if reason_parts else "flagged"
                 print(
                     f"  {r['name']}: width={width:.6e}, "
-                    f"action=[{r['min_action_lower']:.8f}, {r['min_action_upper']:.8f}], "
-                    f"beta_min={r['beta_min']:.6e}"
+                    f"action=[{action_lower:.8f}, {action_upper:.8f}], "
+                    f"beta_min={r['beta_min']:.6e}, reason={reason}"
                 )
 
     # Conclusion

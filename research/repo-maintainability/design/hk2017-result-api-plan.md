@@ -150,9 +150,10 @@ target API have already landed in code.
   - `BilliardResult`
   - `collect_legacy_capacity(...)`
   - `legacy_solution_from_orbit(...)`
-  The explicit billiard router now returns the same shared `OrbitSearchError`
-  surface as the other `ehz_capacity*` routers. Callers that need to skip
-  non-product inputs do that locally with `classify_facets(...)`.
+  The explicit billiard router now returns
+  `Result<OrbitSearchResult, BilliardError>`, so callers get a recoverable
+  “not a product” error instead of a panic. Callers that need to skip
+  non-product inputs can still prefilter locally with `classify_facets(...)`.
 - The dependent scalar tail has also been deleted:
   - `CapacityResult`
   - `CapacityAccumulator`
@@ -459,7 +460,7 @@ pub fn ehz_capacity_unpruned(
 
 pub fn ehz_capacity_billiard(
     polytope: &Polytope4D,
-) -> Result<OrbitSearchResult, OrbitSearchError>;
+) -> Result<OrbitSearchResult, BilliardError>;
 ```
 
 ```rust

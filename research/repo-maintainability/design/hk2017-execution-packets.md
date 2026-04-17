@@ -199,19 +199,17 @@ queue. It is intentionally incremental: only the first packets are defined.
   - Packet 3 slice 17 landed:
     - deleted `BilliardOrbitSearchError`
     - `ehz_capacity_billiard(...)` now returns
-      `Result<OrbitSearchResult, OrbitSearchError>`, matching the other
-      router-family members
+      `Result<OrbitSearchResult, BilliardError>` so explicit callers get a
+      recoverable “not a product” error instead of a panic
     - callers that need to skip perturbed non-products now do that locally
       with `classify_facets(...)`
-  - Parallel follow-up now in flight on sub-worktrees branched from this
-    integration trunk:
-    - `capacity-orbit-recovery-refactor`:
-      `experiments/verification/orbit-recovery/**`
-    - `capacity-lagrangian-boundary-refactor`:
-      `experiments/hko-local-maximum/lagrangian-boundary/**`
-    - `capacity-product-reporting-refactor`:
-      `experiments/sys-landscape/random-product-sample/**` and
-      `experiments/sys-landscape/rotated-regular-products/**`
+  - Historical note: three bounded follow-up refactors were first integrated
+    from sub-worktrees branched off this trunk:
+    - `capacity-orbit-recovery-refactor`
+    - `capacity-lagrangian-boundary-refactor`
+    - `capacity-product-reporting-refactor`
+    Those temporary worktrees are no longer expected to exist in the current
+    repo state.
   - Verification after Packet 2 slice 1:
     - `cargo build -p symplectic --release`
     - `cargo test -p symplectic --release --lib`

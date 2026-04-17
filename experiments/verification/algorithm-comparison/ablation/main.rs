@@ -541,7 +541,11 @@ fn ehz_capacity_unpruned_a0(polytope: &Polytope4D) -> Option<AblationResult> {
     ehz_capacity_unpruned(polytope).ok().map(|result| AblationResult {
         result: AblationCapacityResult {
             capacity: result.capacity(),
-            capacity_uncertain: result.min_action_lower,
+            capacity_uncertain: result
+                .orbits
+                .iter()
+                .map(|orbit| orbit.action)
+                .fold(f64::INFINITY, f64::min),
             best_permutation: result.best_sigma().to_vec(),
             best_beta: result.best_beta().to_vec(),
             iterations: result.iterations,

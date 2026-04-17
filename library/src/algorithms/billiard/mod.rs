@@ -112,7 +112,7 @@ pub fn for_each_sigma(
 // hk2017.
 //
 // Proposition: `ehz_capacity_billiard` agrees with known literature values and
-// with `ehz_capacity` on all Lagrangian product test polytopes.
+// with pruned HK2017 on all Lagrangian product test polytopes.
 // Reference: [thm:billiard-characterization], [alg:billiard]
 //
 // Strategy: fixture-based (known polytopes), cross-algorithm (billiard vs hk2017).
@@ -221,7 +221,7 @@ mod tests {
     fn agrees_with_hk2017_hypercube() {
         let kp = known_polytopes::hypercube();
         let billiard = billiard_result("hypercube", &kp.polytope);
-        let hk = crate::ehz_capacity(&kp.polytope).unwrap();
+        let hk = crate::ehz_capacity_pruned(&kp.polytope).unwrap();
         let diff = (billiard.capacity() - hk.capacity()).abs();
         assert!(
             diff < 1e-8,
@@ -238,7 +238,7 @@ mod tests {
     fn agrees_with_hk2017_triangle_product() {
         let kp = known_polytopes::lagrangian_triangle_product();
         let billiard = billiard_result("triangle_product", &kp.polytope);
-        let hk = crate::ehz_capacity(&kp.polytope).unwrap();
+        let hk = crate::ehz_capacity_pruned(&kp.polytope).unwrap();
         let diff = (billiard.capacity() - hk.capacity()).abs();
         assert!(
             diff < 1e-8,
@@ -255,7 +255,7 @@ mod tests {
     fn agrees_with_hk2017_triangle_square() {
         let kp = known_polytopes::lagrangian_triangle_square();
         let billiard = billiard_result("triangle_square", &kp.polytope);
-        let hk = crate::ehz_capacity(&kp.polytope).unwrap();
+        let hk = crate::ehz_capacity_pruned(&kp.polytope).unwrap();
         let diff = (billiard.capacity() - hk.capacity()).abs();
         assert!(
             diff < 1e-8,
@@ -274,7 +274,7 @@ mod tests {
     fn agrees_with_hk2017_hko_pentagon() {
         let kp = known_polytopes::hko_pentagon();
         let billiard = billiard_result("hko_pentagon", &kp.polytope);
-        let hk = crate::ehz_capacity(&kp.polytope).unwrap();
+        let hk = crate::ehz_capacity_pruned(&kp.polytope).unwrap();
         let diff = (billiard.capacity() - hk.capacity()).abs();
         assert!(
             diff < 1e-8,
