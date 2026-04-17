@@ -10,16 +10,14 @@
 //!
 //! Input Artifacts: None (exports built-in known polytopes only).
 //! Output Artifacts: None (writes the JSON path passed on the CLI).
-use nalgebra::{DMatrix, Vector4};
+use nalgebra::Vector4;
 use serde::Serialize;
 use std::fs::File;
 use std::io::BufWriter;
 use std::path::Path;
 use symplectic::algorithms::{OrbitAdmissibility, OrbitKktData};
 use symplectic::algorithms::hk2017::orbit_recovery::recover_and_verify;
-use symplectic::algorithms::facet_adjacency::build_transition_matrix;
-use symplectic::algorithms::hk2017::combinations;
-use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
+use symplectic::algorithms::hk2017::for_each_sigma_pruned;
 use symplectic::geom::reeb_trajectory;
 use symplectic::geom::known_polytopes::{self, KnownPolytope};
 use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktOutcome, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
@@ -102,56 +100,38 @@ struct CollectedOrbit {
     subset: Vec<usize>,
 }
 
-/// Check if a cyclic permutation forms an adjacent cycle.
-/// Local predicate because HK2017 enumeration keeps this helper internal.
-fn is_adjacent_cycle(perm: &[usize], adj: &DMatrix<bool>) -> bool {
-    let m = perm.len();
-    (0..m).all(|k| adj[(perm[k], perm[(k + 1) % m])])
-}
-
 /// Collect ALL valid Reeb orbits for the polytope.
 ///
 /// Uses the same algorithm as `ehz_capacity` (directed adjacency pruning),
 /// but collects all certified orbits instead of just the best one.
 /// Returns orbits sorted by action (ascending).
 fn collect_all_orbits(polytope: &symplectic::geom::polytope::Polytope4D) -> Vec<CollectedOrbit> {
-    let f = polytope.facet_count();
-    let adj = build_transition_matrix(polytope);
-
     let mut orbits: Vec<CollectedOrbit> = Vec::new();
 
-    for m in 2..=f {
-        for subset in combinations(f, m) {
-            for_each_cyclic_permutation(&subset, &mut |perm| {
-                if !is_adjacent_cycle(perm, &adj) {
-                    return;
-                }
+    for_each_sigma_pruned(polytope, |perm: &[usize]| {
+        if let KktOutcome::Feasible(result) = solve_kkt_for(polytope, perm) {
+            let q_val = result.q_corrected;
+            if q_val <= EPS_Q_POSITIVE {
+                return;
+            }
+            let beta_min = result
+                .beta
+                .iter()
+                .cloned()
+                .fold(f64::INFINITY, f64::min);
+            if beta_min <= EPS_BETA_POSITIVE {
+                return; // not certified
+            }
+            let action = 0.5 / q_val;
 
-                if let KktOutcome::Feasible(result) = solve_kkt_for(polytope, perm) {
-                    let q_val = result.q_corrected;
-                    if q_val <= EPS_Q_POSITIVE {
-                        return;
-                    }
-                    let beta_min = result
-                        .beta
-                        .iter()
-                        .cloned()
-                        .fold(f64::INFINITY, f64::min);
-                    if beta_min <= EPS_BETA_POSITIVE {
-                        return; // not certified
-                    }
-                    let action = 0.5 / q_val;
-
-                    orbits.push(CollectedOrbit {
-                        action,
-                        permutation: perm.to_vec(),
-                        beta: result.beta,
-                        subset: subset.clone(),
-                    });
-                }
+            orbits.push(CollectedOrbit {
+                action,
+                permutation: perm.to_vec(),
+                beta: result.beta,
+                subset: perm.to_vec(),
             });
         }
-    }
+    });
 
     orbits.sort_by(|a, b| a.action.partial_cmp(&b.action).unwrap());
     orbits
