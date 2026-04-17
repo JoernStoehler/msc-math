@@ -25,14 +25,12 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::Path;
 use std::time::Instant;
+use exp_combinatorial_cells::ehz_capacity_instrumented;
 use symplectic::database::{self, PolytopeRecord, Source};
-use symplectic::algorithms::facet_adjacency::{build_transition_matrix, is_feasible_cycle};
-use symplectic::algorithms::hk2017::combinations;
-use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
+use symplectic::algorithms::facet_adjacency::build_transition_matrix;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::symplectic_form::omega0;
-use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktOutcome, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
 
 // ============================================================================
 // Configuration
@@ -139,80 +137,6 @@ fn name_from_record(record: &PolytopeRecord, index: usize) -> String {
         Some(Source::Known { name }) => name.clone(),
         None => format!("polytope_{index}"),
     }
-}
-
-// ============================================================================
-// Instrumented EHZ capacity -- collects ALL valid orbits (for orbit membership)
-// ============================================================================
-
-#[derive(Debug, Clone)]
-struct ValidOrbit {
-    action: f64,
-    permutation: Vec<usize>,
-}
-
-struct InstrumentedResult {
-    capacity: f64,
-    best_permutation: Vec<usize>,
-    n_valid_orbits: usize,
-    orbit_gap: f64,
-}
-
-/// Enumerate all valid orbits via HK2017, return best + orbit gap.
-fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult> {
-    let f = polytope.facet_count();
-    let adj = build_transition_matrix(polytope);
-
-    let mut orbits: Vec<ValidOrbit> = Vec::new();
-
-    for m in 2..=f {
-        for subset in combinations(f, m) {
-            for_each_cyclic_permutation(&subset, &mut |perm| {
-                if !is_feasible_cycle(perm, &adj) {
-                    return;
-                }
-
-                if let KktOutcome::Feasible(kkt_result) = solve_kkt_for(polytope, perm) {
-                    let q_val = kkt_result.q_corrected;
-                    if q_val <= EPS_Q_POSITIVE {
-                        return;
-                    }
-                    let beta_min = kkt_result
-                        .beta
-                        .iter()
-                        .cloned()
-                        .fold(f64::INFINITY, f64::min);
-                    if beta_min > EPS_BETA_POSITIVE {
-                        orbits.push(ValidOrbit {
-                            action: 0.5 / q_val,
-                            permutation: perm.to_vec(),
-                        });
-                    }
-                }
-            });
-        }
-    }
-
-    if orbits.is_empty() {
-        return None;
-    }
-
-    orbits.sort_by(|a, b| a.action.partial_cmp(&b.action).unwrap());
-
-    let best = orbits[0].clone();
-    let n_valid = orbits.len();
-    let orbit_gap = if orbits.len() >= 2 {
-        orbits[1].action - orbits[0].action
-    } else {
-        f64::INFINITY
-    };
-
-    Some(InstrumentedResult {
-        capacity: best.action,
-        best_permutation: best.permutation.clone(),
-        n_valid_orbits: n_valid,
-        orbit_gap,
-    })
 }
 
 // ============================================================================

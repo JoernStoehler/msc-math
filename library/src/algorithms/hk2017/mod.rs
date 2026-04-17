@@ -1,14 +1,12 @@
 //! HK2017 algorithm for EHZ capacity of general 4D polytopes.
 //!
-//! Public API is defined in [`api`], while exhaustive traversal and KKT-bridge
-//! logic live in focused internal modules.
+//! Public building blocks live in [`enumeration`] and [`orbit_recovery`], while
+//! exhaustive traversal and KKT-bridge logic stay in focused internal modules.
 //!
 //! ## Architecture
 //!
 //! - Add HK2017 algorithm behavior in:
-//!   - [`api`] for public entry points and result types,
 //!   - [`enumeration`] for subset/permutation traversal,
-//!   - [`solver_bridge`] for KKT-to-`Solution` conversion,
 //!   - [`combinatorics`] for combination generation.
 //! - Add regression or property tests in dedicated `tests_*.rs` files in this
 //!   directory, not in this router module.
@@ -16,13 +14,11 @@
 pub mod orbit_recovery;
 pub mod permutations;
 
-mod api;
 mod combinatorics;
 mod enumeration;
-mod solver_bridge;
 
-pub use api::{ehz_capacity, ehz_capacity_unpruned, EhzResult};
 pub use combinatorics::combinations;
+pub use enumeration::{for_each_sigma_pruned, for_each_sigma_unpruned};
 
 #[cfg(test)]
 mod tests_capacity_derivative;

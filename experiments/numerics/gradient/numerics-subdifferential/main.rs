@@ -45,6 +45,7 @@
 use nalgebra::{DVector, Vector4};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
+use dev_gradient::{ehz_capacity_safe, enumerate_all_orbits, random_direction, solve_kkt_safe};
 use rand_distr::{Distribution, StandardNormal};
 use serde::Serialize;
 use std::f64::consts::PI;
@@ -53,13 +54,17 @@ use std::io::{BufWriter, Write};
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
 use symplectic::algorithms::hk2017::combinations;
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
-use symplectic::derivatives::capacity_derivatives_a;
+use symplectic::derivatives::{
+    capacity_derivatives_a_from_kkt_result,
+    clarke_directional_derivative_a,
+    directional_derivative_a,
+};
 use symplectic::geom::symplectic_form::omega0;
 use symplectic::kkt::qp_assembly::build_augmented_system;
-use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktResult, EPS_Q_POSITIVE};
+use symplectic::kkt::saddle_point_solver::{KktResult, EPS_Q_POSITIVE};
 use symplectic::random::generate_random_polytopes;
 use symplectic::Polytope4D;
-use symplectic::{ehz_capacity, lagrangian_product, regular_polygon_2d};
+use symplectic::{lagrangian_product, regular_polygon_2d};
 
 // ============================================================================
 // Constants
@@ -233,40 +238,6 @@ struct SubdiffRow {
 // Helper functions
 // ============================================================================
 
-/// Sample a random unit vector in R^{4F} (isotropic: standard normals, then normalize).
-fn random_direction(f: usize, rng: &mut ChaCha8Rng) -> Vec<Vector4<f64>> {
-    let mut dir: Vec<Vector4<f64>> = (0..f)
-        .map(|_| {
-            Vector4::new(
-                StandardNormal.sample(rng),
-                StandardNormal.sample(rng),
-                StandardNormal.sample(rng),
-                StandardNormal.sample(rng),
-            )
-        })
-        .collect();
-    let norm = dir.iter().map(|v| v.norm_squared()).sum::<f64>().sqrt();
-    if norm > 1e-10 {
-        for v in &mut dir {
-            *v /= norm;
-        }
-    }
-    dir
-}
-
-/// Dot product of gradient and direction in R^{4F}: Sigma_k g_k . d_k.
-fn dot_grad_dir(g: &[Vector4<f64>], d: &[Vector4<f64>]) -> f64 {
-    g.iter().zip(d.iter()).map(|(gk, dk)| gk.dot(dk)).sum()
-}
-
-fn ehz_capacity_safe(polytope: &Polytope4D) -> Option<symplectic::EhzResult> {
-    ehz_capacity(polytope)
-}
-
-fn solve_kkt_safe(polytope: &Polytope4D, perm: &[usize]) -> Option<KktResult> {
-    solve_kkt_for(polytope, perm).feasible()
-}
-
 fn smoke_mode() -> bool {
     std::env::args().skip(1).any(|arg| arg == "--smoke")
 }
@@ -346,12 +317,6 @@ fn beta_directional_sensitivity(
 
     // Return beta-components: w[0..m]
     (0..m).map(|k| w[k]).collect()
-}
-
-/// Enumerate all certified orbits for a polytope (strict: beta > EPS, Q > EPS).
-/// Returns (action, permutation, kkt_result) sorted by action ascending.
-fn enumerate_all_orbits(polytope: &Polytope4D) -> Vec<(f64, Vec<usize>, KktResult)> {
-    enumerate_orbits_inner(polytope, EPS_BETA_CERTIFIED)
 }
 
 /// Like enumerate_all_orbits but includes boundary orbits (beta >= 0 up to
@@ -525,7 +490,7 @@ fn run_q5(base_dir: &str, smoke: bool) {
                 .orbits
                 .iter()
                 .map(|(_action, perm, kkt)| {
-                    capacity_derivatives_a(&kkt.beta, kkt.q_corrected, &kkt.mu, perm, &duals)
+                    capacity_derivatives_a_from_kkt_result(&pd.polytope, perm, kkt)
                 })
                 .collect();
 
@@ -538,12 +503,13 @@ fn run_q5(base_dir: &str, smoke: bool) {
                 // g_i . d for each orbit
                 let orbit_gd: Vec<f64> = orbit_grads
                     .iter()
-                    .map(|g| dot_grad_dir(g, &direction))
+                    .map(|g| directional_derivative_a(g, &direction))
                     .collect();
 
                 // [prop:capacity-smoothness-classification](b): at switching boundaries,
                 // the directional derivative D_d c = min_i(nabla_a A_i . d).
-                let subdiff_gd = orbit_gd.iter().copied().fold(f64::INFINITY, f64::min);
+                let subdiff_gd = clarke_directional_derivative_a(&orbit_grads, &direction)
+                    .expect("nonempty orbit list should define Clarke directional derivative");
                 // [lem:cap-derivative]: single best-orbit gradient prediction.
                 let single_gd = orbit_gd[0];
 
@@ -580,8 +546,8 @@ fn run_q5(base_dir: &str, smoke: bool) {
                         None => continue,
                     };
 
-                    let c_perturbed = perturbed_ehz.result.capacity;
-                    let perturbed_perm = &perturbed_ehz.result.best_permutation;
+                    let c_perturbed = perturbed_ehz.capacity();
+                    let perturbed_perm = perturbed_ehz.best_sigma();
                     let perturbed_perm_str = serde_json::to_string(perturbed_perm).unwrap();
                     let orbit_switched = perturbed_perm != best_perm;
 
@@ -748,8 +714,14 @@ fn q5b_process_polytope(
     let orbit_grads: Vec<Vec<Vector4<f64>>> = tied_orbits
         .iter()
         .map(|(_action, perm, kkt)| {
-            capacity_derivatives_a(&kkt.beta, kkt.q_corrected, &kkt.mu, perm, &duals)
+            capacity_derivatives_a_from_kkt_result(polytope, perm, kkt)
         })
+        .collect();
+    let interior_orbit_grads: Vec<Vec<Vector4<f64>>> = orbit_grads
+        .iter()
+        .zip(is_interior.iter())
+        .filter(|(_, interior)| **interior)
+        .map(|(g, _)| g.clone())
         .collect();
 
     let min_beta = tied_orbits[0]
@@ -767,18 +739,14 @@ fn q5b_process_polytope(
         // Compute g_i . d for all tied orbits
         let orbit_gd: Vec<f64> = orbit_grads
             .iter()
-            .map(|g| dot_grad_dir(g, &direction))
+            .map(|g| directional_derivative_a(g, &direction))
             .collect();
 
         // subdiff_gd: min over INTERIOR orbits only (the standard formula).
         // [prop:capacity-smoothness-classification](b): D_d c = min_i(g_i . d)
         // This works when all tied orbits have beta > 0 but fails at orbit appearance.
-        let subdiff_gd = orbit_gd
-            .iter()
-            .zip(is_interior.iter())
-            .filter(|(_, &interior)| interior)
-            .map(|(&gd, _)| gd)
-            .fold(f64::INFINITY, f64::min);
+        let subdiff_gd = clarke_directional_derivative_a(&interior_orbit_grads, &direction)
+            .expect("interior tied-orbit set should be nonempty");
         let single_gd = orbit_gd
             .iter()
             .zip(is_interior.iter())
@@ -862,8 +830,8 @@ fn q5b_process_polytope(
                 None => continue,
             };
 
-            let c_perturbed = perturbed_ehz.result.capacity;
-            let perturbed_perm = &perturbed_ehz.result.best_permutation;
+            let c_perturbed = perturbed_ehz.capacity();
+            let perturbed_perm = perturbed_ehz.best_sigma();
             let perturbed_perm_str = serde_json::to_string(perturbed_perm).unwrap();
             let orbit_switched = !tied_orbits
                 .iter()
@@ -883,16 +851,15 @@ fn q5b_process_polytope(
                 let perturbed_duals_vec = perturbed_polytope.dual_vertices_f64();
                 let appearing_grad =
                     solve_kkt_safe(&perturbed_polytope, perturbed_perm).map(|kkt| {
-                        capacity_derivatives_a(
-                            &kkt.beta,
-                            kkt.q_corrected,
-                            &kkt.mu,
+                        let _ = perturbed_duals_vec;
+                        capacity_derivatives_a_from_kkt_result(
+                            &perturbed_polytope,
                             perturbed_perm,
-                            &perturbed_duals_vec,
+                            &kkt,
                         )
                     });
                 if let Some(grad) = appearing_grad {
-                    let appearing_gd = dot_grad_dir(&grad, &direction);
+                    let appearing_gd = directional_derivative_a(&grad, &direction);
                     let aug = subdiff_gd.min(appearing_gd);
                     let pred = t * aug;
                     let res = (actual - pred).abs();

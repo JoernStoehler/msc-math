@@ -37,10 +37,10 @@ use std::io::{BufWriter, Write};
 use std::time::Instant;
 use symplectic::geom::polygon::{random_polygon_2d, regular_polygon_2d};
 use symplectic::random::generate_random_polytopes;
-use symplectic::algorithms::hk2017::{ehz_capacity_unpruned, EhzResult};
 use symplectic::geom::known_polytopes;
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polytope::Polytope4D;
+use symplectic::ehz_capacity_unpruned;
 
 const SEED: u64 = 42;
 const H_MIN: f64 = 0.5;
@@ -62,6 +62,21 @@ struct AblationEntry {
     capacity_uncertain: f64,
     iterations: u64,
     time_ms: f64,
+}
+
+#[derive(Debug)]
+struct AblationCapacityResult {
+    capacity: f64,
+    capacity_uncertain: f64,
+    best_permutation: Vec<usize>,
+    best_beta: Vec<f64>,
+    iterations: u64,
+}
+
+#[derive(Debug)]
+struct AblationResult {
+    result: AblationCapacityResult,
+    best_subset: Vec<usize>,
 }
 
 // ============================================================================
@@ -459,7 +474,7 @@ fn ehz_capacity_unpruned_with(
     polytope: &Polytope4D,
     adj: &[Vec<bool>],
     solver: fn(&[Vector4<f64>], &[f64], &[usize]) -> Option<(Vec<f64>, f64)>,
-) -> Option<EhzResult> {
+) -> Option<AblationResult> {
     let f = polytope.facet_count();
     let duals = polytope.dual_vertices_f64();
     let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
@@ -510,8 +525,8 @@ fn ehz_capacity_unpruned_with(
 
     let certified = best_certified?;
     let uncertain_cap = best_uncertain.map_or(certified.0, |b| b.0);
-    Some(EhzResult {
-        result: symplectic::algorithms::capacity_accumulator::CapacityResult {
+    Some(AblationResult {
+        result: AblationCapacityResult {
             capacity: certified.0,
             capacity_uncertain: uncertain_cap,
             best_permutation: certified.2,
@@ -522,17 +537,34 @@ fn ehz_capacity_unpruned_with(
     })
 }
 
+fn ehz_capacity_unpruned_a0(polytope: &Polytope4D) -> Option<AblationResult> {
+    ehz_capacity_unpruned(polytope).ok().map(|result| AblationResult {
+        result: AblationCapacityResult {
+            capacity: result.capacity(),
+            capacity_uncertain: result
+                .orbits
+                .iter()
+                .map(|orbit| orbit.action)
+                .fold(f64::INFINITY, f64::min),
+            best_permutation: result.best_sigma().to_vec(),
+            best_beta: result.best_beta().to_vec(),
+            iterations: result.iterations,
+        },
+        best_subset: result.best_subset(),
+    })
+}
+
 /// A1: undirected vertex adjacency + standard LU/SVD solver.
 /// This is the ablation's own A1 — independent of the library's `ehz_capacity`,
 /// which was promoted to A2-level pruning. Uses `solve_kkt_full` for apples-to-apples
 /// comparison with A2 and A3.
-fn ehz_capacity_unpruned_a1(polytope: &Polytope4D) -> Option<EhzResult> {
+fn ehz_capacity_unpruned_a1(polytope: &Polytope4D) -> Option<AblationResult> {
     let vertex_adj = dmatrix_to_vec(polytope.vertex_adjacency());
     ehz_capacity_unpruned_with(polytope, &vertex_adj, solve_kkt_full)
 }
 
 /// A2: directed ω₀ adjacency + standard LU/SVD solver.
-fn ehz_capacity_unpruned_a2(polytope: &Polytope4D) -> Option<EhzResult> {
+fn ehz_capacity_unpruned_a2(polytope: &Polytope4D) -> Option<AblationResult> {
     let vertex_adj = polytope.vertex_adjacency();
     let normals: Vec<Vector4<f64>> = polytope.dual_vertices_f64().iter().map(|a| a / a.norm()).collect();
     let dir_adj = build_directed_adjacency(vertex_adj, &normals);
@@ -723,7 +755,7 @@ fn build_a3_adjacency(
 }
 
 /// A3: full Reeb-flow feasibility + standard LU/SVD solver.
-fn ehz_capacity_unpruned_a3(polytope: &Polytope4D) -> Option<EhzResult> {
+fn ehz_capacity_unpruned_a3(polytope: &Polytope4D) -> Option<AblationResult> {
     let vertex_adj = polytope.vertex_adjacency();
     let duals = polytope.dual_vertices_f64();
     let normals: Vec<Vector4<f64>> = duals.iter().map(|a| a / a.norm()).collect();
@@ -739,13 +771,13 @@ fn ehz_capacity_unpruned_a3(polytope: &Polytope4D) -> Option<EhzResult> {
 
 struct Variant {
     name: &'static str,
-    run: fn(&Polytope4D) -> Option<EhzResult>,
+    run: fn(&Polytope4D) -> Option<AblationResult>,
 }
 
 const VARIANTS: &[Variant] = &[
     Variant {
         name: "a0_unpruned",
-        run: ehz_capacity_unpruned,
+        run: ehz_capacity_unpruned_a0,
     },
     Variant {
         name: "a1_vertex_adj",

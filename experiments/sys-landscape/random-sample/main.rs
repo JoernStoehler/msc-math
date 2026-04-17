@@ -15,13 +15,14 @@
 //! Dataset design:
 //! - Random polytopes with facet counts F=5..12
 //! - Height range h in [0.8, 1.2]
-//! - HK2017 pruned only (production algorithm)
+//! - Default root capacity wrapper (`symplectic::ehz_capacity`), which
+//!   auto-routes Lagrangian products to billiard and other inputs to pruned HK2017
 
 use std::collections::HashMap;
-use symplectic::algorithms::hk2017::ehz_capacity;
 use symplectic::database::{load_many, save, DualVerticesKey, PolytopeRecord, SigmaAction, Source};
 use symplectic::geom::volume::volume;
 use symplectic::random::generate_polytope;
+use symplectic::ehz_capacity;
 use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
@@ -149,7 +150,7 @@ fn main() {
             let ehz = ehz_capacity(&p).expect("capacity computation failed");
             let time_capacity_ms = start_cap.elapsed().as_secs_f64() * 1000.0;
 
-            let cap = ehz.result.capacity;
+            let cap = ehz.capacity();
             let sys = cap * cap / (2.0 * vol);
 
             // Insert into database
@@ -158,7 +159,7 @@ fn main() {
             record = record.with_computed_fields(vol, 0.0, cap, 0.0);
             record = record.with_sigmas(
                 vec![SigmaAction {
-                    perm: ehz.result.best_permutation.clone(),
+                    perm: ehz.best_sigma().to_vec(),
                     action: cap,
                 }],
                 0.0, // gap_cutoff: only storing the best sigma
@@ -174,7 +175,7 @@ fn main() {
                 volume: vol,
                 capacity: cap,
                 sys,
-                iterations: ehz.result.iterations,
+                iterations: ehz.iterations,
                 time_volume_ms,
                 time_capacity_ms,
             };

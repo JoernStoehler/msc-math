@@ -4,25 +4,103 @@ by hk2017, hk2017_unpruned, and billiard.
 Context: created during the repo-maintainability program after Jörn/top-level
 discussion of the current result layering. This note records what is already
 settled, what remains open, and what later implementation sessions should
-change. It is a design handoff, not a promise that the implementation already
-matches the target API.
+change. It is a design handoff; later status bullets record which pieces of the
+target API have already landed in code.
 -->
 
 # Capacity/Orbit Result API Plan
 
 ## Status
 
-- State: first design pass from chat discussion on 2026-04-16.
+- State: first design pass from chat discussion on 2026-04-16, then Packet 1
+  scaffold work on `capacity-result-api-exec`.
 - Scope: shared capacity/orbit result layering for `hk2017`,
   `hk2017_unpruned`, and `billiard`; orbit/KKT payloads; orbit recovery;
   derivatives; and Clarke-subdifferential support.
 - Out of scope here: broad data-flow cleanup, thesis prose, and the full
   execution DAG for all maintainability work.
+- Landed code scaffold:
+  - `library/src/algorithms/orbit_search.rs` now defines the shared public
+    types `OrbitAdmissibility`, `OrbitGuaranteeMode`, `OrbitSolveBackend`,
+    `OrbitKktData`, `OrbitSearchResult`, `OrbitSearchError`, and
+    `GeometricOrbitError`.
+  - These types are re-exported from `library/src/algorithms/mod.rs` and
+    `library/src/lib.rs`.
+  - Packet 2 first slice: `solve_orbit_sigma(...)` now exists on the shared
+    result-layer module and the current HK2017/billiard solver bridges route
+    through it for the saddle-point backend.
+  - Packet 2 later slices: the branch first introduced a shared
+    `collect_legacy_capacity(...)` seam plus the first exact-fallback helpers
+    in `orbit_search.rs`; later cleanup deleted that legacy seam after the
+    root `ehz_capacity*` family and its callers moved fully onto
+    `OrbitSearchResult`.
+  - Packet 2 collector slice: shared collector machinery landed in
+    `orbit_search.rs` on top of the saddle-point backend. The refactor target
+    is now to keep that machinery as building blocks rather than as a second
+    overlapping top-level algorithm family.
+  - Packet 3 first slice: `library/src/derivatives.rs` now defines
+    `OrbitGradientA`, `ClarkeSubdiffA`, and `DerivativeError`, plus helper
+    functions on both the current `KktResult` seam and the new
+    `OrbitKktData` seam. The first migrated consumer packages are
+    `exp-combinatorial-cells` and `exp-hko-local-maximum`
+    (`hko-second-order`).
+  - Packet 3 second slice: the same `KktResult`-level helper now backs the
+    buildable ascent binaries in `exp-sys-landscape` and
+    `exp-hko-local-maximum` (`hko-cut-and-ascent`) as well.
+  - Packet 3 third slice: the first truly subdifferential-heavy consumer,
+    `experiments/numerics/gradient/numerics-subdifferential/main.rs`, now uses
+    the library Clarke/directional-derivative helpers for the all-orbit
+    directional-derivative path rather than local glue.
+  - Packet 3 fourth slice: the sibling binaries in the same `dev-gradient`
+    package (`numerics/main.rs` and `numerics-edge-cases/main.rs`) now use the
+    same helper seam, so the package no longer mixes old and new
+    derivative-glue styles.
+  - Packet 3 fifth slice: the first local all-orbit instrumentation consumer,
+    `experiments/hko-local-maximum/gradient-analysis/main.rs`, now stores
+    `OrbitKktData` instead of a second local orbit payload and uses
+    `capacity_derivatives_a_from_orbit(...)` instead of a local
+    symmetric/asymmetric multiplier adapter. That binary still owns its
+    stricter `beta > EPS_BETA_POSITIVE` “valid orbit” policy and local search
+    loop.
+  - Packet 3 sixth slice:
+    `experiments/hko-local-maximum/second-order/main.rs` now also stores
+    `OrbitKktData` and uses `capacity_derivatives_a_from_orbit(...)`, so it no
+    longer re-solves KKT per orbit just to recover multiplier data that the
+    shared payload already carries.
+  - Packet 3 seventh slice:
+    `experiments/combinatorial-cells/omega-hypothesis/main.rs` now uses
+    `capacity_derivatives_a_from_kkt_result(...)` instead of a raw
+    `capacity_derivatives_a(...)` call with manually threaded
+    `beta/q/mu/sigma` inputs.
+  - Packet 3 eighth slice:
+    the repeated all-valid-orbit summary helper used by
+    `cell-boundary-characterization`, `cell-widths`, `cell-convexity`, and
+    `cell-multiple-crossings` now lives in
+    `experiments/combinatorial-cells/src/lib.rs` instead of four binary-local
+    copies. This keeps the all-valid-orbit/report semantics experiment-local
+    while still reducing duplication.
+  - Packet 3 ninth slice:
+    the repeated stricter-orbit collector used by
+    `hko-gradient-analysis` and `hko-second-order` now lives in
+    `experiments/hko-local-maximum/src/lib.rs` instead of two binary-local
+    copies. This keeps the package's stricter `beta > EPS_BETA_POSITIVE`
+    semantics experiment-local while reducing duplication around
+    `OrbitKktData` payload construction.
+  - Packet 3 tenth slice:
+    the repeated strict-orbit enumeration and safe wrappers used by the
+    `dev-gradient` package now live in
+    `experiments/numerics/gradient/src/lib.rs` instead of being copied across
+    three binaries. The subdifferential binary still keeps its
+    inclusive/boundary enumeration local because that logic is not shared by
+    the other two binaries.
 
 ## Goal
 
 - Give `hk2017`, `hk2017_unpruned`, and `billiard` one shared orbit/result
   layer in `library/`, while keeping their search frontends separate.
+- Make the public `ehz_capacity*` family trivial router/preset glue on top of
+  the shared building blocks instead of translating back into a second thin
+  result type or growing a second overlapping algorithm family.
 - Make the richer HK2017-family algorithm output available from `library/`
   without forcing every caller onto a heavy report surface.
 - Remove repeated experiment-local instrumentation for "collect all minimum or
@@ -32,20 +110,57 @@ matches the target API.
   orbits, compute derivatives, and build Clarke-subdifferential data without
   re-solving when the data is already known.
 
+## Cleanup Rule
+
+- Delete plumbing once the shared result type plus small helper functions make
+  it redundant. Do not preserve a legacy adapter layer just because migrating a
+  few callers is mildly inconvenient.
+- In particular, avoid keeping algorithm-specific scalar result wrappers once
+  the same information is available from:
+  - `OrbitSearchResult` convenience accessors, and
+  - a narrow helper such as `bounce_count_from_sigma(...)`
+- Optimize for lower reader/refactor complexity, not for minimizing immediate
+  migration churn.
+
 ## Current Code State
 
-- `ehz_capacity` / `ehz_capacity_unpruned` return `Option<EhzResult>`.
-- `EhzResult` currently stores:
-  - `result: CapacityResult`
-  - `best_subset: Vec<usize>`
-- `CapacityResult` currently stores:
-  - `capacity`
-  - `capacity_uncertain`
-  - `best_permutation`
-  - `best_beta`
-  - `iterations`
-- `recover_and_verify(polytope, &ehz_result)` is a separate pass that turns the
-  best orbit summary into geometric-orbit data (currently named
+- The root and explicit `ehz_capacity*` family now return `OrbitSearchResult`.
+- The deeper HK2017 `EhzResult` layer has been deleted; experiments that still
+  need local variant-specific result rows should define those rows locally
+  rather than borrowing library result types.
+- The root API now treats these as a family:
+  - `ehz_capacity(...)` = auto wrapper
+  - `ehz_capacity_pruned(...)` = explicit pruned HK2017
+  - `ehz_capacity_unpruned(...)` = explicit unpruned HK2017
+  - `ehz_capacity_billiard(...)` = explicit billiard path
+- Intended consumer policy:
+  - ordinary callers use `ehz_capacity(...)`
+  - Lagrangian products therefore route to billiard by default
+  - explicit HK2017-on-products is mainly for verification, debugging, and
+    cross-algorithm comparison
+- The intended algorithm building blocks are:
+  - sigma traversal for each search frontend
+  - one-sigma solve via `solve_orbit_sigma(...)`
+  - aggregation into `OrbitSearchResult`
+- The extra `*_minimum_orbits*` assembled collector family was a migration
+  artifact. The target is one `ehz_capacity*` router family plus explicit
+  building blocks for traversal, one-sigma solve, and aggregation.
+- The former legacy billiard scalar stack has been deleted:
+  - `billiard_capacity(...)`
+  - `BilliardResult`
+  - `collect_legacy_capacity(...)`
+  - `legacy_solution_from_orbit(...)`
+  The explicit billiard router now returns
+  `Result<OrbitSearchResult, BilliardError>`, so callers get a recoverable
+  “not a product” error instead of a panic. Callers that need to skip
+  non-product inputs can still prefilter locally with `classify_facets(...)`.
+- The dependent scalar tail has also been deleted:
+  - `CapacityResult`
+  - `CapacityAccumulator`
+  - the ablation experiment now uses its own local result row type instead of
+    borrowing library scalar-result structs.
+- `recover_and_verify(polytope, &orbit)` is a separate pass that turns an
+  `OrbitKktData` payload into geometric-orbit data (currently named
   `OrbitRecovery` in code).
 - `capacity_derivatives_a(...)` is a lower-level derivative routine on
   orbit/KKT inputs (`beta`, `q`, `mu`, `sigma`, `dual_vertices`), not on
@@ -90,10 +205,10 @@ Target algorithm sketch:
    - upper bound = lowest orbit upper bound
    - lower bound = highest orbit lower bound among the retained list
 
-This policy is stronger than the current production `CapacityAccumulator`
-story. In particular, the current code tracks indeterminate candidates only via
-the scalar `capacity_uncertain`; it does not yet retain them as orbit payloads
-or lazily resolve them with the rational solver in the hot HK2017 path.
+This policy is stronger than the deleted `CapacityAccumulator`-era scalar
+story. That older path tracked indeterminate candidates only via the scalar
+`capacity_uncertain`; it did not retain them as orbit payloads or lazily
+resolve them with the rational solver in the hot HK2017 path.
 
 ## Settled In Discussion
 
@@ -103,10 +218,18 @@ new repo evidence contradicts them.
 - Keep one thin scalar/default API in addition to the richer collectors; do not
   force every caller to pay for eager all-orbit collection or eager geometric
   orbit recovery.
-- The current `ehz_capacity` / `ehz_capacity_unpruned` wrappers are not
-  protected as names or exact result shapes. They may be deleted or replaced
-  during migration as long as the repo still has one cheap scalar/default
-  entrypoint.
+- The thin part should be a function/interface choice, not a second public
+  result type. `OrbitSearchResult` should be the shared returned object for the
+  `ehz_capacity*` family, with convenience accessors for ordinary consumers.
+- The root scalar API should read as a family rather than a grab bag of
+  unrelated names:
+  - `ehz_capacity` = auto
+  - `ehz_capacity_pruned`
+  - `ehz_capacity_unpruned`
+  - `ehz_capacity_billiard`
+- The auto wrapper should be the normal public recommendation. Explicit choice
+  among the family members is primarily for verification, benchmarking, or
+  debugging.
 - The richer HK2017 surface should return a sorted list of solved orbit/KKT
   payloads, not only one best orbit.
 - Returning only one best orbit is the wrong boundary for the richer
@@ -131,6 +254,18 @@ new repo evidence contradicts them.
   convenience scalar for admissibility/debugging/logging consumers.
 - The richer search API should take an explicit guarantee-mode parameter so the
   search layer knows which indeterminate candidates require exact resolution.
+- The clean decomposition is:
+  - sigma generation frontend (`hk2017_unpruned`, `hk2017_pruned`, `billiard`)
+  - one-sigma solver backend (`solve_orbit_sigma`)
+  - shared aggregation building block (`aggregate_orbits`)
+  - thin public routers `ehz_capacity_unpruned`, `ehz_capacity_pruned`,
+    `ehz_capacity_billiard`, and auto-routing `ehz_capacity`
+- Consumers that need non-default aggregation policy should use the building
+  blocks directly:
+  - sigma traversal
+  - one-sigma solve
+  - `aggregate_orbits(...)`
+  rather than expecting another convenience router family.
 - `subset` should not be stored in the richer orbit payload. It is derived from
   `sigma` by sorting.
 - Clarke-subdifferential support should move into `library/`; a primitive data
@@ -175,7 +310,7 @@ pub struct OrbitKktData {
     /// Convenience scalar: min(beta).
     pub beta_margin: f64,
     /// Opinionated scalar action summary chosen by the producer.
-    /// Current lean: use the upper endpoint as the canonical single-f64 value.
+    /// Current rule: min(action[k] for admissible returned k).
     pub action: f64,
     /// Lower endpoint of the action interval, guaranteed up to minor rounding.
     pub action_lower: f64,
@@ -192,7 +327,7 @@ pub struct OrbitKktData {
     pub admissibility: OrbitAdmissibility,
 }
 
-pub struct Hk2017OrbitSearchResult {
+pub struct OrbitSearchResult {
     /// Nonempty and sorted by lower action bound ascending.
     pub orbits: Vec<OrbitKktData>,
     /// Canonical single-f64 summary chosen from admissible returned orbits.
@@ -204,8 +339,9 @@ pub struct Hk2017OrbitSearchResult {
     pub iterations: u64,
 }
 
-pub enum Hk2017SearchError {
+pub enum OrbitSearchError {
     NoAdmissibleOrbit,
+    UnsupportedBackend,
     NumericalFailure,
     ExactFallbackFailure,
 }
@@ -264,7 +400,7 @@ consumers found this concrete demand surface:
       [tests_literature.rs](</workspaces/msc-math/library/src/algorithms/hk2017/tests_literature.rs:127>))
   - `action`
     - already the canonical scalar summary in result/caching code
-      ([capacity_accumulator.rs](</workspaces/msc-math/library/src/algorithms/capacity_accumulator.rs:41>),
+      ([orbit_search.rs](</workspaces/msc-math/library/src/algorithms/orbit_search.rs:128>),
       [orbit-recovery/main.rs](</workspaces/msc-math/experiments/verification/orbit-recovery/main.rs:561>))
   - `mu` when available
     - analytical derivatives and system-gradient work need it directly
@@ -279,7 +415,7 @@ consumers found this concrete demand surface:
   - `beta_margin`
     - current code computes `min(beta)` locally where needed
       ([billiard/mod.rs](</workspaces/msc-math/library/src/algorithms/billiard/mod.rs:181>),
-      [solver_bridge.rs](</workspaces/msc-math/library/src/algorithms/hk2017/solver_bridge.rs:17>),
+      [orbit_search.rs](</workspaces/msc-math/library/src/algorithms/orbit_search.rs:167>),
       [beta_feasibility.rs](</workspaces/msc-math/library/src/kkt/beta_feasibility.rs:49>))
   - `q_error_bound`
     - strong evidence on the producer/proof side, but no current downstream
@@ -310,46 +446,53 @@ Current design consequence:
 Current leading signatures:
 
 ```rust
-pub fn hk2017_minimum_orbits(
+pub fn ehz_capacity(
     polytope: &Polytope4D,
-    gap: f64,
-    mode: OrbitGuaranteeMode,
-    backend: OrbitSolveBackend,
-) -> Result<Hk2017OrbitSearchResult, Hk2017SearchError>;
+) -> Result<OrbitSearchResult, OrbitSearchError>;
 
-pub fn hk2017_minimum_orbits_unpruned(
+pub fn ehz_capacity_pruned(
     polytope: &Polytope4D,
-    gap: f64,
-    mode: OrbitGuaranteeMode,
-    backend: OrbitSolveBackend,
-) -> Result<Hk2017OrbitSearchResult, Hk2017SearchError>;
+) -> Result<OrbitSearchResult, OrbitSearchError>;
+
+pub fn ehz_capacity_unpruned(
+    polytope: &Polytope4D,
+) -> Result<OrbitSearchResult, OrbitSearchError>;
+
+pub fn ehz_capacity_billiard(
+    polytope: &Polytope4D,
+) -> Result<OrbitSearchResult, BilliardError>;
 ```
 
 ```rust
-pub fn billiard_minimum_orbits(
+pub fn aggregate_orbits(
     polytope: &Polytope4D,
+    orbits: Vec<OrbitKktData>,
+    iterations: u64,
     gap: f64,
     mode: OrbitGuaranteeMode,
-    backend: OrbitSolveBackend,
-) -> Result<Hk2017OrbitSearchResult, BilliardError>;
+ ) -> Result<OrbitSearchResult, OrbitSearchError>;
 ```
 
 Notes on the frontend split:
 
-- `hk2017_minimum_orbits`: general search frontend.
-- `hk2017_minimum_orbits_unpruned`: same family, different pruning policy.
-- `billiard_minimum_orbits`: same result surface, but with Lagrangian-product
-  validation plus the specialized bounded-length/block-structured `sigma`
-  enumeration.
-- The shared surface is the point of the refactor. The frontends diverge in
-  input validation and candidate enumeration, not in the returned orbit/result
-  model.
-- The search frontend should also be able to toggle between the projected
-  solver and the saddle-point solver so the repo can compare correctness,
-  stability, and runtime on the same result surface.
+- `ehz_capacity`: auto router.
+- `ehz_capacity_pruned`: default explicit HK2017 path with pruning.
+- `ehz_capacity_unpruned`: baseline/reference HK2017 path.
+- `ehz_capacity_billiard`: explicit billiard path for Lagrangian products.
+- Non-default consumers should use the building blocks directly:
+  - `algorithms::hk2017::for_each_sigma_pruned(...)`
+  - `algorithms::hk2017::for_each_sigma_unpruned(...)`
+  - `algorithms::billiard::for_each_sigma(...)`
+  - `solve_orbit_sigma(...)`
+  - `aggregate_orbits(...)`
+- The routers should stay trivial presets. They should not grow into a second
+  overlapping family of assembled algorithm entrypoints.
+- The one-sigma solver should still support the projected and saddle-point
+  backends on the same payload surface once the projected path is ready.
 
 ```rust
 pub enum OrbitSolveError {
+    UnsupportedBackend,
     Inadmissible,
     NumericalFailure,
 }
@@ -371,8 +514,24 @@ Notes on solver backends:
 - If later the projected path learns to reconstruct `mu` / `xi`, it can
   upgrade those fields from `None` to `Some(...)` without changing the payload
   shape.
+- Current implementation status differs slightly from the target shape:
+  `solve_orbit_sigma(..., OrbitSolveBackend::Projected)` currently returns
+  `OrbitSolveError::UnsupportedBackend`, because the library projection solver
+  does not yet expose the `q_error_bound` contract required by
+  `OrbitKktData`.
+- The public shared collectors currently surface that same limitation as
+  `OrbitSearchError::UnsupportedBackend`.
+- The exact-fallback helpers are now implemented against the current rational
+  solver. They currently preserve any pre-existing numerical `mu` / `xi`
+  values because the exact fallback path does not yet compute exact
+  multipliers.
 
 ```rust
+pub enum DerivativeError {
+    MissingClosureMultiplier,
+    EmptySubdifferential,
+}
+
 pub fn recover_and_verify_orbit(
     polytope: &Polytope4D,
     orbit: &OrbitKktData,
@@ -380,10 +539,16 @@ pub fn recover_and_verify_orbit(
 ```
 
 ```rust
+pub fn capacity_derivatives_a_from_kkt_result(
+    polytope: &Polytope4D,
+    sigma: &[usize],
+    kkt: &KktResult,
+) -> OrbitGradientA;
+
 pub fn capacity_derivatives_a_from_orbit(
     polytope: &Polytope4D,
     orbit: &OrbitKktData,
-) -> OrbitGradientA;
+) -> Result<OrbitGradientA, DerivativeError>;
 ```
 
 ```rust
@@ -393,7 +558,7 @@ pub type ClarkeSubdiffA = Vec<OrbitGradientA>;
 pub fn capacity_subgradients_a(
     polytope: &Polytope4D,
     orbits: &[OrbitKktData],
-) -> ClarkeSubdiffA;
+) -> Result<ClarkeSubdiffA, DerivativeError>;
 
 pub fn directional_derivative_a(
     grad: &[Vector4<f64>],
@@ -403,34 +568,24 @@ pub fn directional_derivative_a(
 pub fn clarke_directional_derivative_a(
     subdiff: &ClarkeSubdiffA,
     direction: &[Vector4<f64>],
-) -> Option<f64>;
+) -> Result<f64, DerivativeError>;
 ```
 
-The current codebase has these thin wrappers:
+The current codebase has this scalar family:
 
-```rust
-pub fn ehz_capacity(polytope: &Polytope4D) -> Option<EhzResult>;
-pub fn ehz_capacity_unpruned(polytope: &Polytope4D) -> Option<EhzResult>;
-```
-
-They are not treated as protected names or result shapes. Jörn's current
-preference is to mark them for deletion once the richer API lands, because that
-makes migration explicit: remove the wrappers, let the build fail, then patch
-callers until green. A short transitional wrapper phase is still allowed if it
-materially simplifies a packet, but the real design goal is one cheap
-scalar/default entrypoint plus the richer collectors, not preservation of these
-particular wrapper functions.
+They are the intended named algorithm family. The deleted `EhzResult` layer
+was only a migration target, not a protected API.
 
 ## Shape/Contract Notes
 
-- `hk2017_minimum_orbits(..., gap, mode)` returns all minimum-action orbits when
+- `aggregate_orbits(..., gap, mode)` returns all minimum-action orbits when
   `gap == 0.0`, subject to the "complete but not exact-only" tolerance contract.
 - Orbit-level admissibility should be part of the returned payload:
   `AdmissibleF64`, `IndeterminateF64`, or `AdmissibleExact`. The current design
   no longer assumes a separate query-time `OrbitClass` filter is the right
   primary split.
 - `min_action` should be the producer-chosen scalar summary, not a caller-chosen
-  heuristic. Current lean: use `min_action_upper`, not midpoint or lower bound.
+  heuristic. Current rule: `min_action = min(action[k] for admissible returned k)`.
 - The aggregate minimum-action interval is computed orbitwise, not by coupling
   intervals as if they estimated the same latent variable:
   - `min_action_lower = min_k action_lower[k]`
@@ -439,6 +594,9 @@ particular wrapper functions.
   corresponding argmin orbit(s) when they are still `IndeterminateF64`.
 - `Err(...)` should distinguish mathematical/numerical outcomes that were
   previously blurred together by `Option::None`.
+- Current public collector behavior already reflects this:
+  unsupported projected-backend calls fail explicitly rather than silently
+  degrading to the saddle-point path.
 - If the API later offers cheaper/weaker guarantee modes, ambiguity itself
   should normally not become an error in those modes. The cheaper mode should
   return the weaker result rather than fail just because exact resolution was
@@ -458,6 +616,11 @@ particular wrapper functions.
   many downstream consumers want Clarke-subdifferential computations rather than
   repeated manual glue around the low-level `capacity_derivatives_a(...)`
   inputs.
+- Current implementation nuance: the orbit-level helper returns
+  `Result<..., DerivativeError>` rather than a bare gradient because
+  `OrbitKktData.mu` is optional across backends. The repo now also exposes a
+  `capacity_derivatives_a_from_kkt_result(...)` helper because many current
+  experiment consumers sit on that seam today.
 - `recover_and_verify_orbit` should stay a separate transform. Eager geometric
   recovery is not justified on the hot path by the current profiling evidence.
 
@@ -490,6 +653,10 @@ These points are not yet fully settled.
   support both projected/eigendecompose and saddle-point behind a backend
   toggle, so the repo can compare which is faster and which behaves better on
   real cases while keeping one shared result surface.
+  Current code fact after the Packet 2 collector slice: only the saddle-point
+  backend is wired through the public collector entrypoints; projected remains
+  blocked on exposing a compatible `Q`-bound/payload surface from
+  `library/src/kkt/projection_solver.rs`.
 - How beta-side uncertainty should be represented is deferred for now.
   Current state:
   - `beta` itself is still worth storing
@@ -516,22 +683,24 @@ These points are not yet fully settled.
 ## Migration Plan
 
 1. Introduce the shared orbit/KKT payload type and one-sigma solve helper.
-2. Introduce the shared sorted minimum-orbit collector surface, with frontend
-   entrypoints for `hk2017`, `hk2017_unpruned`, and `billiard`, each taking
-   `(gap, OrbitGuaranteeMode)`.
+2. Expose the building blocks directly:
+   - sigma traversal for `hk2017_pruned`, `hk2017_unpruned`, and `billiard`
+   - one-sigma solve
+   - aggregation into `OrbitSearchResult`
+   Keep the `ehz_capacity*` family as trivial preset routers on top.
 3. Re-implement or adapt existing experiment-local collectors to use the new
    library API.
 4. Add library-level Clarke-subdifferential helpers on lists of
    `OrbitKktData`.
-5. Delete or aggressively de-emphasize `EhzResult` / thin `ehz_capacity`
-   wrappers once callers can migrate to the richer result surface. A short
-   wrapper phase is acceptable only as a staging tactic.
+5. Keep experiment-local variant-report rows local. Do not reintroduce a shared
+   thin library result type like `EhzResult` just to avoid defining a
+   specialized experiment-owned struct.
 6. Update the durable repo docs after the code shape settles:
    - `TASKS.md` for the tracker state and remaining follow-ups
    - `ARCHITECTURE.md` if the public/result boundary described there changes
    - this note or its successor if implementation choices differ from the
      current design draft
-7. Keep search diagnostics out of `Hk2017OrbitSearchResult` unless a stable,
+7. Keep search diagnostics out of `OrbitSearchResult` unless a stable,
    shared metric surface emerges. Experiments that need diagnostics should own
    their local loop/result types.
 
@@ -597,9 +766,10 @@ Current design lean from discussion:
 ## Billiard Relation
 
 - The billiard algorithm is structurally close to the intended HK2017 richer
-  result surface: it also uses enumerate -> solve -> track via
-  `CapacityAccumulator`
-  ([billiard/mod.rs](</workspaces/msc-math/library/src/algorithms/billiard/mod.rs:1>)).
+  result surface: it also uses enumerate -> solve -> aggregate on the shared
+  orbit/result layer
+  ([billiard/mod.rs](</workspaces/msc-math/library/src/algorithms/billiard/mod.rs:1>),
+  [lib.rs](</workspaces/msc-math/library/src/lib.rs:103>)).
 - The main difference is not result shape but enumeration policy:
   billiard exploits Lagrangian-product structure and the known bounce bound, so
   it only enumerates block-structured `sigma` with bounded length rather than

@@ -12,7 +12,8 @@
 //!   dual vertex (20 independent perturbation coordinates for 10 facets)
 //! - Sweep ε over geometric range: 0.01 to 2.0
 //! - 500 valid samples per ε level via rejection sampling
-//! - Billiard algorithm (fast, native for Lagrangian products)
+//! - Explicit billiard algorithm because the output schema persists bounce counts;
+//!   the root `symplectic::ehz_capacity` wrapper would hide that billiard-native data.
 
 use nalgebra::Vector4;
 use rand::Rng;
@@ -22,10 +23,12 @@ use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
-use symplectic::algorithms::billiard::billiard_capacity;
+use symplectic::algorithms::billiard::bounce_count_from_sigma;
+use symplectic::algorithms::billiard::facet_classification::classify_facets;
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::volume::volume;
+use symplectic::ehz_capacity_billiard;
 
 const SEED: u64 = 42;
 
@@ -173,11 +176,12 @@ fn main() {
 
     // Compute and write base row (epsilon = 0)
     let base_vol = volume(base_polytope).expect("volume computation failed");
-    let base_billiard = billiard_capacity(base_polytope)
-        .expect("billiard classification failed")
-        .expect("billiard returned None");
-    let base_cap = base_billiard.result.capacity;
+    let base_billiard = ehz_capacity_billiard(base_polytope).expect("billiard classification failed");
+    let base_cap = base_billiard.capacity();
     let base_sys = base_cap * base_cap / (2.0 * base_vol);
+    let base_bounces = bounce_count_from_sigma(base_polytope, base_billiard.best_sigma())
+        .expect("bounce count classification failed")
+        .expect("bounce count returned None");
 
     println!(
         "Base: sys = {:.6}, cap = {:.6}, vol = {:.6}\n",
@@ -194,7 +198,7 @@ fn main() {
         volume: base_vol,
         capacity: base_cap,
         sys: base_sys,
-        bounces: base_billiard.bounce_count,
+        bounces: base_bounces,
     };
     let line = serde_json::to_string(&base_row).expect("serialize");
     writeln!(samples_writer, "{line}").expect("write");
@@ -238,19 +242,25 @@ fn main() {
                 Ok(p) => p,
                 Err(_) => continue,
             };
+            if classify_facets(&polytope).is_err() {
+                continue;
+            }
 
-            // Compute capacity via billiard
-            let billiard = match billiard_capacity(&polytope) {
-                Ok(Some(r)) => r,
-                Ok(None) | Err(_) => continue,
-            };
+            // Keep the explicit billiard call here because `SampleRow` stores
+            // `bounces`, which is only available from the billiard-native API.
+            let billiard =
+                ehz_capacity_billiard(&polytope).expect("classification already succeeded");
 
             let vol = match volume(&polytope) {
                 Ok(v) if v > 0.0 => v,
                 _ => continue,
             };
 
-            let cap = billiard.result.capacity;
+            let bounces = match bounce_count_from_sigma(&polytope, billiard.best_sigma()) {
+                Ok(Some(k)) => k,
+                _ => continue,
+            };
+            let cap = billiard.capacity();
             let sys = cap * cap / (2.0 * vol);
 
             if sys > 1.0 {
@@ -268,7 +278,7 @@ fn main() {
                 volume: vol,
                 capacity: cap,
                 sys,
-                bounces: billiard.bounce_count,
+                bounces,
             };
             let line = serde_json::to_string(&row).expect("serialize");
             writeln!(samples_writer, "{line}").expect("write");

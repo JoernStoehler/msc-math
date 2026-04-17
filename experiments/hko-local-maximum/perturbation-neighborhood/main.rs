@@ -16,7 +16,7 @@
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::volume::volume;
-use symplectic::algorithms::hk2017::ehz_capacity;
+use symplectic::ehz_capacity;
 use nalgebra::Vector4;
 use rand::Rng;
 use rand::SeedableRng;
@@ -184,7 +184,7 @@ fn main() {
     let base_result = ehz_capacity(base_polytope).expect("capacity computation failed");
     let base_time_capacity_ms = start_cap.elapsed().as_secs_f64() * 1000.0;
 
-    let base_sys = base_result.result.capacity * base_result.result.capacity / (2.0 * base_vol);
+    let base_sys = base_result.capacity() * base_result.capacity() / (2.0 * base_vol);
 
     let base_row = PentagonPerturbRow {
         name: "hko_pentagon_base".to_string(),
@@ -194,9 +194,9 @@ fn main() {
         delta_dual_vertices: vec![[0.0; 4]; n_facets],
         eps: args.eps,
         volume: base_vol,
-        capacity: base_result.result.capacity,
+        capacity: base_result.capacity(),
         sys: base_sys,
-        iterations: base_result.result.iterations,
+        iterations: base_result.iterations,
         time_volume_ms: base_time_volume_ms,
         time_capacity_ms: base_time_capacity_ms,
     };
@@ -230,7 +230,7 @@ fn main() {
             .expect("capacity computation failed");
         let time_capacity_ms = start_cap.elapsed().as_secs_f64() * 1000.0;
 
-        let cap = result.result.capacity;
+        let cap = result.capacity();
         let sys = cap * cap / (2.0 * vol);
 
         let row = PentagonPerturbRow {
@@ -243,7 +243,7 @@ fn main() {
             volume: vol,
             capacity: cap,
             sys,
-            iterations: result.result.iterations,
+            iterations: result.iterations,
             time_volume_ms,
             time_capacity_ms,
         };

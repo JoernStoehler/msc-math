@@ -28,17 +28,21 @@
 //! - Perturbed: 10 pruned
 //!
 //! Total: 47 pruned + 10 unpruned + 14 billiard = 71 capacity values
+//!
+//! Capacity routing is intentionally explicit in this file because the dataset
+//! compares pruned, unpruned, and billiard outputs on the same verification
+//! fixtures. The root auto wrapper would hide those per-algorithm checks.
 
-use symplectic::algorithms::billiard::billiard_capacity;
 use symplectic::random::generate_random_polytopes;
 use symplectic::geom::known_polytopes::{
     hko_pentagon, hypercube, lagrangian_triangle_product, lagrangian_triangle_square,
     simplex, symplectic_triangle_product, symplectic_triangle_square,
 };
+use symplectic::algorithms::billiard::facet_classification::classify_facets;
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::random_polygon_2d;
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::algorithms::hk2017::{ehz_capacity_unpruned, ehz_capacity};
+use symplectic::{ehz_capacity_billiard, ehz_capacity_pruned, ehz_capacity_unpruned};
 use nalgebra::Matrix4;
 use rand::{Rng, SeedableRng};
 use rand_chacha::ChaCha8Rng;
@@ -46,6 +50,17 @@ use rand_distr::StandardNormal;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::{BufWriter, Write};
+
+fn maybe_billiard_capacity(polytope: &Polytope4D) -> Option<f64> {
+    if classify_facets(polytope).is_err() {
+        return None;
+    }
+    Some(
+        ehz_capacity_billiard(polytope)
+            .expect("classification already succeeded")
+            .capacity(),
+    )
+}
 
 #[derive(Debug, Serialize, Deserialize)]
 struct VerificationEntry {
@@ -89,10 +104,10 @@ fn main() {
 
     // Compute capacities for base polytopes (10 pruned + 10 unpruned + 5 billiard)
     for (i, p) in base_polytopes.iter().enumerate() {
-        let pruned = ehz_capacity(p).expect("pruned").result.capacity;
-        let unpruned = ehz_capacity_unpruned(p).expect("unpruned").result.capacity;
+        let pruned = ehz_capacity_pruned(p).expect("pruned").capacity();
+        let unpruned = ehz_capacity_unpruned(p).expect("unpruned").capacity();
         let billiard = if i >= 5 {
-            billiard_capacity(p).ok().flatten().map(|r| r.result.capacity)
+            maybe_billiard_capacity(p)
         } else {
             None
         };
@@ -125,8 +140,8 @@ fn main() {
     ];
 
     for kp in literature {
-        let pruned = ehz_capacity(&kp.polytope).expect("pruned").result.capacity;
-        let billiard = billiard_capacity(&kp.polytope).ok().flatten().map(|r| r.result.capacity);
+        let pruned = ehz_capacity_pruned(&kp.polytope).expect("pruned").capacity();
+        let billiard = maybe_billiard_capacity(&kp.polytope);
 
         entries.push(VerificationEntry {
             name: kp.name.to_string(),
@@ -151,9 +166,9 @@ fn main() {
             p.dual_vertices_f64().iter().map(|a| a / alpha).collect(),
         ).expect("scaled");
 
-        let pruned = ehz_capacity(&scaled).expect("pruned").result.capacity;
+        let pruned = ehz_capacity_pruned(&scaled).expect("pruned").capacity();
         let billiard = if i >= 5 {
-            billiard_capacity(&scaled).ok().flatten().map(|r| r.result.capacity)
+            maybe_billiard_capacity(&scaled)
         } else {
             None
         };
@@ -178,7 +193,7 @@ fn main() {
     for (i, p) in base_polytopes.iter().enumerate() {
         let m = random_sp4_matrix(&mut rng);
         let transformed = apply_symplectomorphism(p, &m);
-        let pruned = ehz_capacity(&transformed).expect("pruned").result.capacity;
+        let pruned = ehz_capacity_pruned(&transformed).expect("pruned").capacity();
 
         entries.push(VerificationEntry {
             name: format!("transformed_{}", i),
@@ -206,7 +221,7 @@ fn main() {
                 a / (1.0 + epsilon * delta)
             }).collect(),
         ).expect("perturbed");
-        let pruned = ehz_capacity(&perturbed).expect("pruned").result.capacity;
+        let pruned = ehz_capacity_pruned(&perturbed).expect("pruned").capacity();
 
         entries.push(VerificationEntry {
             name: format!("perturbed_{}", i),

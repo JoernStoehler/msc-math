@@ -28,14 +28,14 @@ use std::path::Path;
 use std::time::Instant;
 use symplectic::database::{self, DualVerticesKey, PolytopeRecord, SigmaAction, Source};
 use symplectic::derivatives::{
-    capacity_derivatives_a, volume_derivatives_a,
+    capacity_derivatives_a_from_kkt_result, volume_derivatives_a,
 };
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::symplectic_form::omega0;
 use symplectic::geom::volume::volume;
-use symplectic::kkt::saddle_point_solver::solve_kkt_for;
+use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktResult};
 use symplectic::random::generate_polytope;
 
 // ============================================================================
@@ -119,14 +119,10 @@ fn compute_d_sys_a(
     cap: f64,
     sys: f64,
     best_perm: &[usize],
-    best_beta: &[f64],
-    best_q: f64,
-    best_mu: &[f64],
+    kkt_result: &KktResult,
 ) -> Vec<Vector4<f64>> {
-    let duals = polytope.dual_vertices_f64();
-
     let d_vol_a = volume_derivatives_a(polytope);
-    let d_cap_a = capacity_derivatives_a(best_beta, best_q, best_mu, best_perm, duals);
+    let d_cap_a = capacity_derivatives_a_from_kkt_result(polytope, best_perm, kkt_result);
 
     d_vol_a
         .iter()
@@ -285,10 +281,10 @@ fn process_polytope(
     } else {
         // No cache: full EHZ computation
         vol = volume(polytope).ok()?;
-        let ehz_result = symplectic::ehz_capacity(polytope)?;
-        cap = ehz_result.result.capacity;
-        iterations = ehz_result.result.iterations;
-        best_perm = ehz_result.result.best_permutation;
+        let ehz_result = symplectic::ehz_capacity(polytope).ok()?;
+        cap = ehz_result.capacity();
+        iterations = ehz_result.iterations;
+        best_perm = ehz_result.best_sigma().to_vec();
     }
 
     let sys = cap * cap / (2.0 * vol);
@@ -330,7 +326,7 @@ fn process_polytope(
     // Phase B: gradient dots (using library derivative functions with dual vertex parameterization)
     let d_sys_a = compute_d_sys_a(
         polytope, vol, cap, sys,
-        &best_perm, best_beta, kkt_result.q_corrected, &kkt_result.mu,
+        &best_perm, &kkt_result,
     );
     let gradient_dots = compute_gradient_dots(polytope, &skeleton, &d_sys_a, &best_perm);
 
@@ -359,6 +355,7 @@ fn process_polytope(
 fn main() {
     let out_dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("omega-obstacle");
     let out_path = out_dir.join("omega-obstacle.jsonl");
+    std::fs::create_dir_all(&out_dir).expect("Failed to create output directory");
     let file = std::fs::File::create(&out_path).expect("Failed to create output file");
     let mut writer = BufWriter::new(file);
 

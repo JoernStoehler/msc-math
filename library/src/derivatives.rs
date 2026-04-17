@@ -15,10 +15,30 @@
 //! Mathematical correspondence: [lem:cap-derivative], [lem:vol-derivative] in
 //! `formal/library/algorithms.tex`.
 
+use crate::algorithms::OrbitKktData;
 use crate::geom::facet_volume::facet_volume_and_centroid_3d_raw;
 use crate::geom::polytope::Polytope4D;
 use crate::geom::symplectic_form::j4;
+use crate::kkt::saddle_point_solver::KktResult;
 use nalgebra::Vector4;
+
+/// Gradient of one orbit/capacity-like quantity with respect to all dual
+/// vertices `a_k`.
+pub type OrbitGradientA = Vec<Vector4<f64>>;
+
+/// Primitive Clarke-subdifferential representation: one gradient per orbit.
+pub type ClarkeSubdiffA = Vec<OrbitGradientA>;
+
+/// Failure modes for derivative helpers layered above the low-level primitive.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum DerivativeError {
+    /// The supplied orbit payload does not carry the closure multiplier needed
+    /// by the current derivative formula.
+    MissingClosureMultiplier,
+    /// The directional derivative of an empty Clarke-subdifferential is
+    /// undefined.
+    EmptySubdifferential,
+}
 
 /// Compute ∂c/∂a_k for all facets k = 0..f, where c = 1/(2Q).
 ///
@@ -42,7 +62,7 @@ pub fn capacity_derivatives_a(
     mu: &[f64],
     perm: &[usize],
     dual_vertices: &[Vector4<f64>],
-) -> Vec<Vector4<f64>> {
+) -> OrbitGradientA {
     let q_sq = q * q;
     let facet_count = dual_vertices.len();
     let j0 = j4();
@@ -72,6 +92,42 @@ pub fn capacity_derivatives_a(
         .collect()
 }
 
+/// Compute ∂c/∂a_k for one saddle-point KKT solve and one sigma.
+///
+/// This helper captures the common current experiment boundary:
+/// `(polytope, sigma, KktResult) -> gradient`.
+pub fn capacity_derivatives_a_from_kkt_result(
+    polytope: &Polytope4D,
+    sigma: &[usize],
+    kkt: &KktResult,
+) -> OrbitGradientA {
+    capacity_derivatives_a(
+        &kkt.beta,
+        kkt.q_corrected,
+        &kkt.mu,
+        sigma,
+        polytope.dual_vertices_f64(),
+    )
+}
+
+/// Compute ∂c/∂a_k from the shared orbit payload.
+///
+/// Returns an explicit error when the chosen orbit payload/backend does not
+/// carry the closure multiplier required by the current derivative formula.
+pub fn capacity_derivatives_a_from_orbit(
+    polytope: &Polytope4D,
+    orbit: &OrbitKktData,
+) -> Result<OrbitGradientA, DerivativeError> {
+    let mu = orbit.mu.ok_or(DerivativeError::MissingClosureMultiplier)?;
+    Ok(capacity_derivatives_a(
+        &orbit.beta,
+        orbit.q,
+        &mu,
+        &orbit.sigma,
+        polytope.dual_vertices_f64(),
+    ))
+}
+
 /// Compute ∂vol(K)/∂a_k for all facets k = 0..f.
 ///
 /// Uses the chain rule through h_k = 1/|a_k| and n_k = a_k/|a_k|:
@@ -82,7 +138,7 @@ pub fn capacity_derivatives_a(
 ///   ∂vol/∂n_k = −S_k(x̄_k − h_k n_k) (tangent centroid)
 ///   ∂h_k/∂a_k = −a_k / |a_k|³
 ///   ∂n_k/∂a_k = (I − n_k n_k^T) / |a_k|
-pub fn volume_derivatives_a(polytope: &Polytope4D) -> Vec<Vector4<f64>> {
+pub fn volume_derivatives_a(polytope: &Polytope4D) -> OrbitGradientA {
     let duals = polytope.dual_vertices_f64();
     let vertices = polytope.vertices_f64();
     let f = polytope.facet_count();
@@ -117,6 +173,41 @@ pub fn volume_derivatives_a(polytope: &Polytope4D) -> Vec<Vector4<f64>> {
             dvol_dh * dh_da + dn_contribution
         })
         .collect()
+}
+
+/// Assemble the per-orbit capacity gradients for a Clarke-subdifferential.
+pub fn capacity_subgradients_a(
+    polytope: &Polytope4D,
+    orbits: &[OrbitKktData],
+) -> Result<ClarkeSubdiffA, DerivativeError> {
+    orbits
+        .iter()
+        .map(|orbit| capacity_derivatives_a_from_orbit(polytope, orbit))
+        .collect()
+}
+
+/// Directional derivative of one facet-indexed gradient in the perturbation
+/// direction `d`.
+pub fn directional_derivative_a(
+    grad: &[Vector4<f64>],
+    direction: &[Vector4<f64>],
+) -> f64 {
+    grad.iter()
+        .zip(direction.iter())
+        .map(|(gk, dk)| gk.dot(dk))
+        .sum()
+}
+
+/// Clarke directional derivative `min_i <g_i, d>` for a primitive gradient set.
+pub fn clarke_directional_derivative_a(
+    subdiff: &ClarkeSubdiffA,
+    direction: &[Vector4<f64>],
+) -> Result<f64, DerivativeError> {
+    subdiff
+        .iter()
+        .map(|grad| directional_derivative_a(grad, direction))
+        .min_by(|a, b| a.total_cmp(b))
+        .ok_or(DerivativeError::EmptySubdifferential)
 }
 
 /// Compute ∂c/∂a_k by finite differences (cross-check for analytical derivatives).
@@ -183,6 +274,7 @@ pub fn volume_derivatives_a_fd(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::algorithms::OrbitAdmissibility;
     use crate::geom::known_polytopes;
     use crate::geom::volume::volume;
     use crate::kkt::saddle_point_solver::solve_kkt_for;
@@ -220,6 +312,71 @@ mod tests {
                 analytical[k], fd[k]
             );
         }
+    }
+
+    /// The KKT-result convenience helper should agree with the primitive
+    /// derivative routine on the same saddle-point data.
+    #[test]
+    fn capacity_derivatives_from_kkt_result_matches_primitive() {
+        let kp = known_polytopes::simplex();
+        let polytope = &kp.polytope;
+        let sigma = crate::ehz_capacity_pruned(polytope)
+            .expect("simplex should have a certified best orbit")
+            .best_sigma()
+            .to_vec();
+        let kkt = solve_kkt_for(polytope, &sigma)
+            .feasible()
+            .expect("best simplex orbit should re-solve");
+
+        let direct = capacity_derivatives_a(
+            &kkt.beta,
+            kkt.q_corrected,
+            &kkt.mu,
+            &sigma,
+            polytope.dual_vertices_f64(),
+        );
+        let wrapped = capacity_derivatives_a_from_kkt_result(polytope, &sigma, &kkt);
+
+        assert_eq!(wrapped, direct);
+    }
+
+    /// Orbit-payload helper should fail explicitly when multiplier data is not
+    /// available on the chosen backend/path.
+    #[test]
+    fn capacity_derivatives_from_orbit_requires_mu() {
+        let kp = known_polytopes::simplex();
+        let orbit = OrbitKktData {
+            sigma: vec![0, 1],
+            beta: vec![0.5, 0.5],
+            beta_margin: 0.5,
+            action: 1.0,
+            action_lower: 1.0,
+            action_upper: 1.0,
+            q: 0.5,
+            q_error_bound: 0.0,
+            mu: None,
+            xi: None,
+            admissibility: OrbitAdmissibility::AdmissibleF64,
+        };
+
+        let err = capacity_derivatives_a_from_orbit(&kp.polytope, &orbit)
+            .expect_err("orbit without mu should fail explicitly");
+        assert_eq!(err, DerivativeError::MissingClosureMultiplier);
+    }
+
+    /// Clarke directional derivative should be the minimum directional slope
+    /// over the supplied gradients.
+    #[test]
+    fn clarke_directional_derivative_takes_minimum() {
+        let direction = vec![Vector4::new(1.0, 0.0, 0.0, 0.0)];
+        let subdiff = vec![
+            vec![Vector4::new(2.0, 0.0, 0.0, 0.0)],
+            vec![Vector4::new(-3.0, 0.0, 0.0, 0.0)],
+        ];
+
+        let value = clarke_directional_derivative_a(&subdiff, &direction)
+            .expect("nonempty subdifferential should have directional derivative");
+        assert_eq!(value, -3.0);
     }
 
     /// Analytical ∂c/∂a_k matches per-orbit FD central difference.
@@ -285,9 +442,9 @@ mod tests {
     fn find_best_orbit(
         polytope: &Polytope4D,
     ) -> (f64, Vec<f64>, Vec<usize>, Vec<f64>, f64) {
-        let ehz = crate::algorithms::hk2017::ehz_capacity(polytope)
+        let ehz = crate::ehz_capacity_pruned(polytope)
             .expect("ehz_capacity should find an orbit on test polytopes");
-        let perm = ehz.result.best_permutation;
+        let perm = ehz.best_sigma().to_vec();
         let kkt = solve_kkt_for(polytope, &perm)
             .feasible()
             .expect("solve_kkt_for should succeed on the best permutation");

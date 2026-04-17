@@ -21,7 +21,10 @@ use std::collections::HashSet;
 use std::fs::{File, OpenOptions};
 use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::time::Instant;
-use symplectic::derivatives::{capacity_derivatives_a, volume_derivatives_a};
+use symplectic::derivatives::{
+    capacity_derivatives_a_from_kkt_result,
+    volume_derivatives_a,
+};
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
@@ -272,12 +275,12 @@ fn try_step_a(
 }
 
 fn compute_capacity(polytope: &Polytope4D) -> Option<f64> {
-    symplectic::algorithms::hk2017::ehz_capacity(polytope).map(|r| r.result.capacity)
+    symplectic::ehz_capacity(polytope).ok().map(|r| r.capacity())
 }
 
 fn compute_capacity_result(polytope: &Polytope4D) -> Option<(f64, Vec<usize>)> {
-    let r = symplectic::algorithms::hk2017::ehz_capacity(polytope)?;
-    Some((r.result.capacity, r.result.best_permutation))
+    let r = symplectic::ehz_capacity(polytope).ok()?;
+    Some((r.capacity(), r.best_sigma().to_vec()))
 }
 
 /// Single gradient ascent phase: iterate until convergence or budget.
@@ -301,11 +304,10 @@ fn gradient_ascent_phase(
         let kkt = solve_kkt_for(&current, &best_perm).feasible()?;
         let vol = volume(&current).ok().filter(|&v| v > 0.0)?;
         let sys = cap * cap / (2.0 * vol);
-
         let duals = current.dual_vertices_f64();
+
         let d_vol_a = volume_derivatives_a(&current);
-        let d_cap_a =
-            capacity_derivatives_a(&kkt.beta, kkt.q_corrected, &kkt.mu, &best_perm, duals);
+        let d_cap_a = capacity_derivatives_a_from_kkt_result(&current, &best_perm, &kkt);
         let d_sys_a: Vec<Vector4<f64>> = d_vol_a
             .iter()
             .zip(d_cap_a.iter())

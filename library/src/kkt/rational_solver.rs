@@ -676,9 +676,9 @@ mod tests {
     #[test]
     fn simplex_exact_vs_numerical() {
         let simplex = crate::geom::known_polytopes::simplex();
-        let result = crate::algorithms::hk2017::ehz_capacity(&simplex.polytope)
+        let result = crate::ehz_capacity_pruned(&simplex.polytope)
             .expect("simplex should have capacity");
-        let perm = &result.result.best_permutation;
+        let perm = result.best_sigma();
         if let Some(exact) = solve_kkt_exact(simplex.polytope.dual_vertices(), perm) {
             let q_exact = exact.q_exact_f64;
             assert!(
@@ -696,9 +696,9 @@ mod tests {
     fn exact_agrees_on_known_polytopes() {
         use crate::geom::known_polytopes;
         for kp in [known_polytopes::simplex(), known_polytopes::hypercube()] {
-            let result = crate::algorithms::hk2017::ehz_capacity(&kp.polytope)
+            let result = crate::ehz_capacity_pruned(&kp.polytope)
                 .expect("known polytope should have capacity");
-            let perm = &result.result.best_permutation;
+            let perm = result.best_sigma();
             if let Some(exact) = solve_kkt_exact(kp.polytope.dual_vertices(), perm) {
                 assert!(exact.q_exact_f64 > 0.0, "exact Q should be positive");
             }
@@ -709,9 +709,9 @@ mod tests {
     #[test]
     fn winning_beta_positive_exact() {
         let simplex = crate::geom::known_polytopes::simplex();
-        let result = crate::algorithms::hk2017::ehz_capacity(&simplex.polytope)
+        let result = crate::ehz_capacity_pruned(&simplex.polytope)
             .expect("simplex should have capacity");
-        let perm = &result.result.best_permutation;
+        let perm = result.best_sigma();
         if let Some(exact) = solve_kkt_exact(simplex.polytope.dual_vertices(), perm) {
             assert!(
                 exact.beta.iter().all(|b| b.is_positive()),

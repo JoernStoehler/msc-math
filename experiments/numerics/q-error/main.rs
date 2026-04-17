@@ -11,12 +11,16 @@
 //!
 //! Input: Known polytopes from the library (F ≤ 10).
 //! Output: Summary tables to stdout. Panics on any violation.
+//!
+//! The explicit root wrapper below is intentional: this diagnostic validates
+//! the current pruned general HK2017/KKT pipeline and its Q-side error story,
+//! not the root auto-dispatch wrapper.
 use nalgebra::{DMatrix, DVector, Vector4};
-use symplectic::algorithms::hk2017::ehz_capacity;
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::symplectic_form::omega0;
 use symplectic::kkt::rational_solver as kkt_rational;
+use symplectic::ehz_capacity_pruned;
 
 // ── Local KKT enumeration helpers ──
 //
@@ -294,10 +298,8 @@ struct ExactResult {
 
 /// Compare numerical Q̃ against exact Q for the winning (S,σ) of a polytope.
 fn exact_comparison(polytope: &Polytope4D) -> Option<ExactResult> {
-    let result = ehz_capacity(polytope)?;
-
-    // best_permutation follows positive Reeb direction — same order passed to solve_kkt/build_kkt.
-    let perm = &result.result.best_permutation;
+    let result = ehz_capacity_pruned(polytope).ok()?;
+    let perm = result.best_sigma();
     let m = perm.len();
     let size = m + 5;
 

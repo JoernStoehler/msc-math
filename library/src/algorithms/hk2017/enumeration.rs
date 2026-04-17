@@ -1,33 +1,34 @@
-//! Subset/permutation traversal for HK2017 capacity enumeration.
+//! Subset/permutation traversal for HK2017 sigma generation.
 
-use crate::algorithms::capacity_accumulator::{CapacityAccumulator, CapacityResult};
 use crate::algorithms::facet_adjacency::{build_transition_matrix, is_feasible_cycle};
 use crate::geom::polytope::Polytope4D;
-use crate::kkt::saddle_point_solver::EPS_Q_POSITIVE;
-use crate::kkt::Verdict;
 
 use super::combinatorics::combinations;
 use super::permutations::for_each_cyclic_permutation;
-use super::solver_bridge::solve_and_convert;
 
-pub(super) struct EnumerationOutcome {
-    pub(super) result: CapacityResult,
-    pub(super) best_subset: Vec<usize>,
+/// Visit every HK2017 sigma without adjacency pruning.
+pub fn for_each_sigma_unpruned(
+    polytope: &Polytope4D,
+    mut visit: impl FnMut(&[usize]),
+) {
+    for_each_sigma_impl(polytope, false, &mut visit)
 }
 
-pub(super) fn enumerate_unpruned(polytope: &Polytope4D) -> Option<EnumerationOutcome> {
-    enumerate_impl(polytope, false)
+/// Visit every HK2017 sigma that survives adjacency pruning.
+pub fn for_each_sigma_pruned(
+    polytope: &Polytope4D,
+    mut visit: impl FnMut(&[usize]),
+) {
+    for_each_sigma_impl(polytope, true, &mut visit)
 }
 
-pub(super) fn enumerate_pruned(polytope: &Polytope4D) -> Option<EnumerationOutcome> {
-    enumerate_impl(polytope, true)
-}
-
-fn enumerate_impl(polytope: &Polytope4D, use_pruning: bool) -> Option<EnumerationOutcome> {
+fn for_each_sigma_impl(
+    polytope: &Polytope4D,
+    use_pruning: bool,
+    visit: &mut dyn FnMut(&[usize]),
+) {
     let f = polytope.facet_count();
     let adj = use_pruning.then(|| build_transition_matrix(polytope));
-    let mut acc = CapacityAccumulator::new();
-    let mut best_subset_certified: Option<(f64, Vec<usize>)> = None;
 
     for m in 2..=f {
         for subset in combinations(f, m) {
@@ -37,32 +38,8 @@ fn enumerate_impl(polytope: &Polytope4D, use_pruning: bool) -> Option<Enumeratio
                         return;
                     }
                 }
-
-                if let Some(solution) = solve_and_convert(polytope, perm) {
-                    if solution.verdict == Verdict::True && solution.q > EPS_Q_POSITIVE {
-                        let action = 0.5 / solution.q;
-                        let update = best_subset_certified
-                            .as_ref()
-                            .is_none_or(|(best, _)| action < *best);
-                        if update {
-                            best_subset_certified = Some((action, subset.clone()));
-                        }
-                    }
-                    acc.submit(perm, &solution);
-                }
+                visit(perm);
             });
         }
     }
-
-    let result = acc.finalize()?;
-    let best_subset = best_subset_certified.map(|(_, s)| s).unwrap_or_else(|| {
-        let mut s = result.best_permutation.clone();
-        s.sort();
-        s
-    });
-
-    Some(EnumerationOutcome {
-        result,
-        best_subset,
-    })
 }

@@ -25,7 +25,7 @@ use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
-use symplectic::algorithms::hk2017::ehz_capacity;
+use symplectic::ehz_capacity;
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::volume::volume;
@@ -82,7 +82,8 @@ fn safe_sys(polytope: &Polytope4D) -> Option<(f64, f64, f64)> {
         return None;
     }
     let cap = ehz_capacity(polytope)
-        .map(|r| r.result.capacity)
+        .ok()
+        .map(|r| r.capacity())
         .unwrap_or(f64::NAN);
     if !cap.is_finite() {
         return None;
@@ -167,7 +168,7 @@ fn run_phase_b(base_dir: &std::path::Path) {
     let vertices = polytope.vertices_f64();
 
     let vol_orig = volume(polytope).expect("volume");
-    let cap_orig = ehz_capacity(polytope).expect("ehz").result.capacity;
+    let cap_orig = ehz_capacity(polytope).expect("ehz").capacity();
     let sys_orig = cap_orig * cap_orig / (2.0 * vol_orig);
     println!("HKO2024 baseline: F={f}, sys={sys_orig:.10}");
 
@@ -219,10 +220,16 @@ fn run_phase_b(base_dir: &std::path::Path) {
                         let delta = split_sys - sys_orig;
 
                         // Use library ehz_capacity for orbit info (cheaper than instrumented)
-                        let lib_result = ehz_capacity(&split_poly);
+                        let lib_result = ehz_capacity(&split_poly).ok();
                         let n_valid = 0; // not computed (instrumented too expensive for F=11)
-                        let best_sub = lib_result.as_ref().map(|r| r.best_subset.clone()).unwrap_or_default();
-                        let best_perm = lib_result.as_ref().map(|r| r.result.best_permutation.clone()).unwrap_or_default();
+                        let best_sub = lib_result
+                            .as_ref()
+                            .map(|r| r.best_subset())
+                            .unwrap_or_default();
+                        let best_perm = lib_result
+                            .as_ref()
+                            .map(|r| r.best_sigma().to_vec())
+                            .unwrap_or_default();
                         let d_sys_d_h_new = f64::NAN; // skip per-direction gradient (too expensive)
 
                         total_ok += 1;
@@ -330,15 +337,15 @@ fn run_phase_b(base_dir: &std::path::Path) {
                 };
                 let delta = split_sys - sys_orig;
 
-                let lib_result = ehz_capacity(&split_poly);
+                let lib_result = ehz_capacity(&split_poly).ok();
                 let n_valid = 0;
                 let best_sub = lib_result
                     .as_ref()
-                    .map(|r| r.best_subset.clone())
+                    .map(|r| r.best_subset())
                     .unwrap_or_default();
                 let best_perm = lib_result
                     .as_ref()
-                    .map(|r| r.result.best_permutation.clone())
+                    .map(|r| r.best_sigma().to_vec())
                     .unwrap_or_default();
 
                 total_ok += 1;
@@ -420,10 +427,16 @@ fn run_phase_b(base_dir: &std::path::Path) {
                     };
                     let delta = split_sys - sys_orig;
 
-                    let lib_result = ehz_capacity(&split_poly);
+                    let lib_result = ehz_capacity(&split_poly).ok();
                     let n_valid = 0;
-                    let best_sub = lib_result.as_ref().map(|r| r.best_subset.clone()).unwrap_or_default();
-                    let best_perm = lib_result.as_ref().map(|r| r.result.best_permutation.clone()).unwrap_or_default();
+                    let best_sub = lib_result
+                        .as_ref()
+                        .map(|r| r.best_subset())
+                        .unwrap_or_default();
+                    let best_perm = lib_result
+                        .as_ref()
+                        .map(|r| r.best_sigma().to_vec())
+                        .unwrap_or_default();
                     let d_sys_d_h_new = f64::NAN;
 
                     total_ok += 1;

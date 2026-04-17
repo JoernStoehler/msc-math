@@ -35,17 +35,21 @@
 use nalgebra::Vector4;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
-use rand_distr::{Distribution, StandardNormal};
+use dev_gradient::{ehz_capacity_safe, random_direction, solve_kkt_safe};
 use serde::Serialize;
 use std::f64::consts::PI;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
-use symplectic::derivatives::{capacity_derivatives_a, volume_derivatives_a};
+use symplectic::derivatives::{
+    capacity_derivatives_a_from_kkt_result,
+    directional_derivative_a,
+    volume_derivatives_a,
+};
 use symplectic::geom::polygon::random_polygon_2d;
-use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktResult, EPS_Q_POSITIVE};
+use symplectic::kkt::saddle_point_solver::{KktResult, EPS_Q_POSITIVE};
 use symplectic::random::generate_random_polytopes;
-use symplectic::{ehz_capacity, lagrangian_product, regular_polygon_2d, rotate_polygon_2d};
+use symplectic::{lagrangian_product, regular_polygon_2d, rotate_polygon_2d};
 use symplectic::{volume, Polytope4D};
 
 // ============================================================================
@@ -125,40 +129,6 @@ struct PredictionRow {
 // Helper functions
 // ============================================================================
 
-/// Sample a random unit vector in R^{4F} (isotropic: standard normals, then normalize).
-fn random_direction(f: usize, rng: &mut ChaCha8Rng) -> Vec<Vector4<f64>> {
-    let mut dir: Vec<Vector4<f64>> = (0..f)
-        .map(|_| {
-            Vector4::new(
-                StandardNormal.sample(rng),
-                StandardNormal.sample(rng),
-                StandardNormal.sample(rng),
-                StandardNormal.sample(rng),
-            )
-        })
-        .collect();
-    let norm = dir.iter().map(|v| v.norm_squared()).sum::<f64>().sqrt();
-    if norm > 1e-10 {
-        for v in &mut dir {
-            *v /= norm;
-        }
-    }
-    dir
-}
-
-/// Dot product of gradient and direction in R^{4F}: Sigma_k g_k . d_k.
-fn dot_grad_dir(g: &[Vector4<f64>], d: &[Vector4<f64>]) -> f64 {
-    g.iter().zip(d.iter()).map(|(gk, dk)| gk.dot(dk)).sum()
-}
-
-fn ehz_capacity_safe(polytope: &Polytope4D) -> Option<symplectic::EhzResult> {
-    ehz_capacity(polytope)
-}
-
-fn solve_kkt_safe(polytope: &Polytope4D, perm: &[usize]) -> Option<KktResult> {
-    solve_kkt_for(polytope, perm).feasible()
-}
-
 /// Compute dsys/da_k via quotient rule: sys = c^2/(2*vol).
 /// dsys/da_k = (c*dc/da_k - sys*dvol/da_k) / vol.
 /// [cor:sys-derivative] quotient-rule derivative of the systolic ratio.
@@ -190,13 +160,13 @@ struct PolytopeInfo {
 /// Compute capacity, volume, sys, and KKT for a polytope's best orbit.
 fn analyze_polytope(polytope: &Polytope4D) -> Option<PolytopeInfo> {
     let ehz = ehz_capacity_safe(polytope)?;
-    let cap = ehz.result.capacity;
+    let cap = ehz.capacity();
     let vol = volume(polytope).ok()?;
     if vol <= 0.0 {
         return None;
     }
     let sys = cap * cap / (2.0 * vol);
-    let best_perm = ehz.result.best_permutation.clone();
+    let best_perm = ehz.best_sigma().to_vec();
     let kkt = solve_kkt_safe(polytope, &best_perm)?;
     Some(PolytopeInfo {
         polytope: polytope.clone(),
@@ -283,13 +253,7 @@ fn first_order_test(
     let f = duals.len();
 
     // Analytical gradients for all three targets
-    let g_cap = capacity_derivatives_a(
-        &info.kkt.beta,
-        info.kkt.q_corrected,
-        &info.kkt.mu,
-        &info.best_perm,
-        &duals,
-    );
+    let g_cap = capacity_derivatives_a_from_kkt_result(&info.polytope, &info.best_perm, &info.kkt);
     let g_vol = volume_derivatives_a(&info.polytope);
     let g_sys = sys_derivatives_a(&g_cap, &g_vol, info.cap, info.vol, info.sys);
 
@@ -305,7 +269,7 @@ fn first_order_test(
         let direction = random_direction(f, rng);
         let gd: Vec<f64> = targets
             .iter()
-            .map(|(_, _, g)| dot_grad_dir(g, &direction))
+            .map(|(_, _, g)| directional_derivative_a(g, &direction))
             .collect();
 
         for &t in T_VALUES {

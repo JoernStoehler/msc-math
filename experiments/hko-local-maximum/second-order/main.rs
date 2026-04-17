@@ -26,17 +26,16 @@ use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
-use symplectic::algorithms::facet_adjacency::{build_transition_matrix, is_feasible_cycle};
-use symplectic::algorithms::hk2017::combinations;
-use symplectic::algorithms::hk2017::ehz_capacity;
-use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
-use symplectic::derivatives::{capacity_derivatives_a, volume_derivatives_a};
+use exp_hko_local_maximum::ehz_capacity_instrumented;
+use symplectic::algorithms::OrbitKktData;
+use symplectic::derivatives::{
+    capacity_derivatives_a_from_orbit,
+    volume_derivatives_a,
+};
+use symplectic::ehz_capacity;
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::volume::volume;
-use symplectic::kkt::saddle_point_solver::{
-    solve_kkt_for, KktOutcome, EPS_BETA_POSITIVE, EPS_Q_POSITIVE,
-};
 
 /// Gap threshold for near-optimal orbits. All 150 HKO2024 orbits have gap < 1.3e-15,
 /// so any threshold well above machine epsilon includes all of them. Using 1e-10
@@ -109,65 +108,6 @@ struct CurveRow {
 // Instrumented HK2017 — collects ALL valid orbits (copied from gradient-analysis)
 // ============================================================================
 
-#[derive(Debug, Clone)]
-struct ValidOrbit {
-    action: f64,
-    subset: Vec<usize>,
-    permutation: Vec<usize>,
-    beta: Vec<f64>,
-    q_value: f64,
-}
-
-struct InstrumentedResult {
-    capacity: f64,
-    orbits: Vec<ValidOrbit>,
-}
-
-fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult> {
-    let f = polytope.facet_count();
-    let adj = build_transition_matrix(polytope);
-
-    let mut orbits: Vec<ValidOrbit> = Vec::new();
-
-    for m in 2..=f {
-        for subset in combinations(f, m) {
-            for_each_cyclic_permutation(&subset, &mut |perm| {
-                if !is_feasible_cycle(perm, &adj) {
-                    return;
-                }
-
-                if let KktOutcome::Feasible(kkt_result) = solve_kkt_for(polytope, perm) {
-                    let q_val = kkt_result.q_corrected;
-                    if q_val <= EPS_Q_POSITIVE {
-                        return;
-                    }
-                    let beta = &kkt_result.beta;
-                    let beta_min = beta.iter().cloned().fold(f64::INFINITY, f64::min);
-
-                    if beta_min > EPS_BETA_POSITIVE {
-                        orbits.push(ValidOrbit {
-                            action: 0.5 / q_val,
-                            subset: subset.clone(),
-                            permutation: perm.to_vec(),
-                            beta: beta.clone(),
-                            q_value: q_val,
-                        });
-                    }
-                }
-            });
-        }
-    }
-
-    if orbits.is_empty() {
-        return None;
-    }
-
-    orbits.sort_by(|a, b| a.action.partial_cmp(&b.action).unwrap());
-    let capacity = orbits[0].action;
-
-    Some(InstrumentedResult { capacity, orbits })
-}
-
 // ============================================================================
 // Per-orbit sys gradient in a_i space (R^40)
 // ============================================================================
@@ -184,30 +124,14 @@ fn ehz_capacity_instrumented(polytope: &Polytope4D) -> Option<InstrumentedResult
 /// Requires re-solving KKT to obtain the multiplier μ (not stored in JSONL).
 fn orbit_sys_gradient_a(
     polytope: &Polytope4D,
-    orbit: &ValidOrbit,
+    orbit: &OrbitKktData,
     vol: f64,
     cap: f64,
     sys: f64,
     d_vol_a: &[Vector4<f64>],
 ) -> Vec<Vector4<f64>> {
-    // Re-solve KKT to get mu (symmetric convention)
-    let kkt_outcome = solve_kkt_for(polytope, &orbit.permutation);
-    let kkt_result = match kkt_outcome {
-        KktOutcome::Feasible(r) => r,
-        other => panic!(
-            "KKT re-solve failed for orbit {:?}: {:?}",
-            orbit.permutation, other
-        ),
-    };
-
-    let duals = polytope.dual_vertices_f64();
-    let d_cap_a = capacity_derivatives_a(
-        &orbit.beta,
-        orbit.q_value,
-        &kkt_result.mu,
-        &orbit.permutation,
-        duals,
-    );
+    let d_cap_a = capacity_derivatives_a_from_orbit(polytope, orbit)
+        .expect("second-order stores orbit payloads with closure multipliers");
 
     d_vol_a
         .iter()
@@ -246,7 +170,7 @@ fn run_phase1(polytope: &Polytope4D) -> (BaseRow, Vec<Vec<f64>>) {
 
     // Filter near-optimal
     let best_action = instr.orbits[0].action;
-    let near_optimal: Vec<&ValidOrbit> = instr
+    let near_optimal: Vec<&OrbitKktData> = instr
         .orbits
         .iter()
         .filter(|o| {
@@ -408,8 +332,8 @@ fn run_phase2(
 
                 // Compute capacity
                 let cap = match ehz_capacity(&perturbed_poly) {
-                    Some(r) => r.result.capacity,
-                    None => {
+                    Ok(r) => r.capacity(),
+                    Err(_) => {
                         n_fail += 1;
                         continue;
                     }
@@ -497,7 +421,7 @@ fn curvature_at_epsilon(
             })
             .collect();
         let poly = Polytope4D::from_f64(perturbed).ok()?;
-        let cap = ehz_capacity(&poly)?.result.capacity;
+        let cap = ehz_capacity(&poly).ok()?.capacity();
         let vol = volume(&poly).ok().filter(|&v| v > 0.0)?;
         Some(cap * cap / (2.0 * vol))
     };
