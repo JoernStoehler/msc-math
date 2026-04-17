@@ -32,15 +32,20 @@ Prefer this order:
 
 1. Read enough code to find repeated glue or mixed-concern files.
 2. Write down a triaged packet list before spawning workers.
-3. Create a dedicated feature worktree for integration.
-4. Create one worktree per accepted packet.
-5. Run workers on disjoint write scopes.
-6. Review each packet before keeping it.
-7. Merge only the kept packets into the feature worktree.
-8. Re-run focused verification on the integration branch.
+3. Show Jörn the intended packet scope and notable risks before implementation.
+4. Create a dedicated feature worktree for integration.
+5. Create one worktree per accepted packet.
+6. Run workers on disjoint write scopes.
+7. Review each packet before keeping it.
+8. Merge only the kept packets into the feature worktree.
+9. Re-run focused verification on the integration branch.
 
-Do not merge improvement packets directly into `main` unless Jörn explicitly
-chooses that tradeoff in the current turn.
+Parallel worktrees are the default for this focus once the packets are real and
+their write scopes are disjoint.
+
+Do not merge improvement packets directly into `main`. Auto-merge accepted
+packets into the feature branch is fine; final merge to `main` is Jörn-initiated
+as usual.
 
 ## What To Look For
 
@@ -105,6 +110,19 @@ The worker-context file should state:
 
 This avoids forcing later workers to reconstruct the conversation.
 
+## Pre-Implementation Surface For Jörn
+
+Before spawning implementation workers, send Jörn a compact execution surface:
+
+- the `Implement Now` packets
+- the main highlights or risks worth architectural attention
+- what you expect to leave alone for now
+- the planned integration branch name
+
+Do not use this as a fake approval gate for ordinary low-risk cleanup. The goal
+is to let Jörn catch architecture-level waste early, not to make him review each
+refactor in detail before agents can move.
+
 ## Worktree Discipline
 
 Create a dedicated integration worktree first, for example:
@@ -114,7 +132,7 @@ git worktree add -b improvement-<topic>-exec .codex/worktrees/improvement-<topic
 ```
 
 Use the root checkout or local `main` only as a read-only coordination surface
- unless the task explicitly targets `main`.
+unless the task explicitly targets `main`.
 
 Then create one worktree per accepted packet from the same base branch.
 
@@ -151,7 +169,8 @@ Ask Jörn for:
   boundary
 - whether a packet is worth doing if the payoff is mostly structural
 - whether to stop after the safe wins or keep pushing into deeper refactors
-- whether to merge to a feature branch or, exceptionally, directly to `main`
+- whether any packet conflicts with major architecture considerations and should
+  be skipped before implementation
 
 Do not ask Jörn to do agent labor inside an approved improvement round:
 
@@ -202,6 +221,14 @@ Integrate accepted packets one by one into the integration worktree.
 After each merge, or after a small batch of disjoint merges, rerun the packet
 verification commands on the integration branch. Then run a final `git status`
 check before asking Jörn about the result.
+
+The default end state of an improvement round is:
+
+- reviewed packets merged into the feature branch
+- a concise report to Jörn on what landed, what was discarded, and what deeper
+  packets remain
+
+Do not self-upgrade that into a merge-to-`main` step.
 
 When the round is over:
 
