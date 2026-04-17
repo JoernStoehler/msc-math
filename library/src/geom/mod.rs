@@ -9,6 +9,7 @@
 //! - `lagrangian_product` — Lagrangian products from two 2D polygons
 //! - `cross_product_4d` — 4D cross product (vector perpendicular to three vectors)
 //! - `facet_volume` — per-facet 3D volumes and centroids
+//! - `polygon_order` — internal ridge polygon ordering helper
 //! - `validation` — boundedness check (f64 fast-fail pre-filter)
 //! - `rational_arithmetic` — exact rational arithmetic utilities
 //! - `vertex_enumeration` — exact vertex enumeration over Q
@@ -25,6 +26,7 @@ pub mod polygon;
 pub mod lagrangian_product;
 pub mod cross_product_4d;
 pub mod facet_volume;
+mod polygon_order;
 pub mod validation;
 pub mod rational_arithmetic;
 pub mod vertex_enumeration;
@@ -34,4 +36,3 @@ pub mod known_polytopes;
 pub mod test_utils;
 
 pub use qhull::QhullError;
-

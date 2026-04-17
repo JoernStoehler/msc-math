@@ -11,15 +11,12 @@
 //! Mathematical correspondence: [def:volume] (per-facet specialization)
 
 use crate::geom::cross_product_4d::cross_product_4d;
+use crate::geom::polygon_order::sort_polygon_order;
 use crate::geom::polytope::Polytope4D;
 use nalgebra::Vector4;
 
 /// Tolerance for vertex-on-facet incidence test: |a·v − 1| < EPS.
 const EPS_FACET_INCIDENCE: f64 = 1e-8;
-
-/// Tolerance for detecting degenerate (collinear) polygon vertices
-/// during angular sorting.
-const EPS_DEGENERATE: f64 = 1e-10;
 
 /// Floor for meaningful facet volume. Facets with total volume below this
 /// are treated as degenerate (zero volume, zero centroid). Prevents
@@ -37,31 +34,10 @@ pub fn sort_polygon_vertices(vertices: &[Vector4<f64>]) -> Vec<Vector4<f64>> {
         return vertices.to_vec();
     }
 
-    let n = vertices.len() as f64;
-    let centroid = vertices.iter().copied().sum::<Vector4<f64>>() / n;
-
-    let d1 = (vertices[0] - centroid).normalize();
-
-    let d2 = match vertices.iter().skip(1).find_map(|v| {
-        let rel = *v - centroid;
-        let proj = rel - d1 * rel.dot(&d1);
-        (proj.norm() > EPS_DEGENERATE).then(|| proj.normalize())
-    }) {
-        Some(d) => d,
-        None => return vertices.to_vec(),
-    };
-
-    let mut indexed: Vec<(f64, Vector4<f64>)> = vertices
-        .iter()
-        .map(|v| {
-            let rel = *v - centroid;
-            let angle = rel.dot(&d2).atan2(rel.dot(&d1));
-            (angle, *v)
-        })
-        .collect();
-
-    indexed.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
-    indexed.into_iter().map(|(_, v)| v).collect()
+    match sort_polygon_order(vertices) {
+        Some(order) => order.into_iter().map(|idx| vertices[idx]).collect(),
+        None => vertices.to_vec(),
+    }
 }
 
 /// Compute the 3D volume of facet `facet_idx` of a polytope.
@@ -101,7 +77,6 @@ pub fn facet_volume_3d_raw(
     vertices: &[Vector4<f64>],
     fi: usize,
 ) -> f64 {
-    let f = dual_vertices.len();
     let facet_verts: Vec<Vector4<f64>> = vertices
         .iter()
         .filter(|v| (dual_vertices[fi].dot(v) - 1.0).abs() < EPS_FACET_INCIDENCE)
@@ -112,32 +87,13 @@ pub fn facet_volume_3d_raw(
         return 0.0;
     }
 
-    let centroid = facet_verts.iter().copied().sum::<Vector4<f64>>() / facet_verts.len() as f64;
+    let mut total = 0.0;
 
-    (0..f)
-        .filter(|&fj| fj != fi)
-        .flat_map(|fj| {
-            let ridge_verts: Vec<Vector4<f64>> = facet_verts
-                .iter()
-                .filter(|v| (dual_vertices[fj].dot(v) - 1.0).abs() < EPS_FACET_INCIDENCE)
-                .cloned()
-                .collect();
+    for_each_facet_ridge_triangle(dual_vertices, &facet_verts, fi, |apex, a, b, c| {
+        total += cross_product_4d(a - apex, b - apex, c - apex).norm() / 6.0;
+    });
 
-            if ridge_verts.len() < 3 {
-                return Vec::new();
-            }
-
-            let sorted = sort_polygon_vertices(&ridge_verts);
-            (1..sorted.len() - 1)
-                .map(|k| {
-                    let a = sorted[0] - centroid;
-                    let b = sorted[k] - centroid;
-                    let c = sorted[k + 1] - centroid;
-                    cross_product_4d(a, b, c).norm() / 6.0
-                })
-                .collect::<Vec<_>>()
-        })
-        .sum()
+    total
 }
 
 /// Raw version of `facet_volume_and_centroid_3d` operating on slices.
@@ -158,10 +114,31 @@ pub fn facet_volume_and_centroid_3d_raw(
         return (0.0, Vector4::zeros());
     }
 
-    let apex = facet_verts.iter().copied().sum::<Vector4<f64>>() / facet_verts.len() as f64;
-
     let mut total_vol = 0.0;
     let mut weighted_centroid = Vector4::zeros();
+
+    for_each_facet_ridge_triangle(dual_vertices, &facet_verts, fi, |apex, a, b, c| {
+        let tet_vol = cross_product_4d(a - apex, b - apex, c - apex).norm() / 6.0;
+        let tet_centroid = (apex + a + b + c) / 4.0;
+        total_vol += tet_vol;
+        weighted_centroid += tet_vol * tet_centroid;
+    });
+
+    if total_vol > EPS_VOLUME_FLOOR {
+        (total_vol, weighted_centroid / total_vol)
+    } else {
+        (0.0, Vector4::zeros())
+    }
+}
+
+/// Visit each tetrahedron in the triangle fan induced by the facet's ridges.
+fn for_each_facet_ridge_triangle(
+    dual_vertices: &[Vector4<f64>],
+    facet_verts: &[Vector4<f64>],
+    fi: usize,
+    mut visit: impl FnMut(Vector4<f64>, Vector4<f64>, Vector4<f64>, Vector4<f64>),
+) {
+    let apex = facet_verts.iter().copied().sum::<Vector4<f64>>() / facet_verts.len() as f64;
 
     for (fj, a_j) in dual_vertices.iter().enumerate() {
         if fj == fi {
@@ -179,20 +156,8 @@ pub fn facet_volume_and_centroid_3d_raw(
 
         let sorted = sort_polygon_vertices(&ridge_verts);
         for k in 1..sorted.len() - 1 {
-            let a = sorted[0] - apex;
-            let b = sorted[k] - apex;
-            let c = sorted[k + 1] - apex;
-            let tet_vol = cross_product_4d(a, b, c).norm() / 6.0;
-            let tet_centroid = (apex + sorted[0] + sorted[k] + sorted[k + 1]) / 4.0;
-            total_vol += tet_vol;
-            weighted_centroid += tet_vol * tet_centroid;
+            visit(apex, sorted[0], sorted[k], sorted[k + 1]);
         }
-    }
-
-    if total_vol > EPS_VOLUME_FLOOR {
-        (total_vol, weighted_centroid / total_vol)
-    } else {
-        (0.0, Vector4::zeros())
     }
 }
 
