@@ -11,6 +11,10 @@ path = "correctness/main.rs"
 name = "axioms-orbit-recovery"
 path = "orbit-recovery/main.rs"
 
+[[bin]]
+name = "axioms-all-minimum"
+path = "all-minimum/main.rs"
+
 [lints]
 workspace = true
 
