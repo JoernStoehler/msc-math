@@ -13,9 +13,13 @@ use std::fs::{File, OpenOptions};
 use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
+use symplectic::algorithms::billiard::facet_classification::FacetClassification;
+use symplectic::derivatives::sys_gradient_a_from_kkt_result;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::symplectic_form::omega0;
+use symplectic::geom::volume::volume;
+use symplectic::kkt::saddle_point_solver::KktResult;
 
 // ============================================================================
 // Step bound constants
@@ -242,6 +246,94 @@ pub fn compute_step_bound_detailed(
 /// use `compute_step_bound_detailed` directly.
 pub fn compute_step_bound(polytope: &Polytope4D, direction: &[Vector4<f64>]) -> f64 {
     compute_step_bound_detailed(polytope, direction).t_max
+}
+
+// ============================================================================
+// Shared ascent stages
+// ============================================================================
+
+/// Shared math state for one ascent iteration.
+#[derive(Clone, Debug)]
+pub struct AscentStage {
+    pub cap: f64,
+    pub best_perm: Vec<usize>,
+    pub kkt: KktResult,
+    pub vol: f64,
+    pub sys: f64,
+}
+
+/// Mode-specific projection for the ascent direction.
+#[derive(Clone, Copy, Debug)]
+pub enum AscentMode<'a> {
+    General,
+    LagrangianProduct {
+        classification: &'a FacetClassification,
+    },
+}
+
+/// Compute the shared capacity/volume/sys stage for one polytope.
+pub fn compute_ascent_stage(polytope: &Polytope4D) -> Option<AscentStage> {
+    let (cap, best_perm) = compute_capacity_result(polytope)?;
+    let kkt = symplectic::kkt::saddle_point_solver::solve_kkt_for(polytope, &best_perm).feasible()?;
+    let vol = volume(polytope).ok().filter(|&v| v > 0.0)?;
+    let sys = cap * cap / (2.0 * vol);
+    sys.is_finite().then_some(AscentStage {
+        cap,
+        best_perm,
+        kkt,
+        vol,
+        sys,
+    })
+}
+
+/// Compute sys = c_EHZ(K)^2 / (2 vol(K)) for a polytope using HK2017.
+pub fn compute_sys(polytope: &Polytope4D) -> Option<f64> {
+    let vol = volume(polytope).ok().filter(|&v| v > 0.0)?;
+    let cap = compute_capacity_result(polytope)?.0;
+    let sys = cap * cap / (2.0 * vol);
+    sys.is_finite().then_some(sys)
+}
+
+/// Compute the capacity and its maximizing permutation.
+pub fn compute_capacity_result(polytope: &Polytope4D) -> Option<(f64, Vec<usize>)> {
+    let r = symplectic::ehz_capacity(polytope).ok()?;
+    Some((r.capacity(), r.best_sigma().to_vec()))
+}
+
+/// Build the ascent direction for a single polytope state.
+pub fn ascent_direction(
+    polytope: &Polytope4D,
+    stage: &AscentStage,
+    mode: AscentMode<'_>,
+) -> Vec<Vector4<f64>> {
+    let mut d_sys_a = sys_gradient_a_from_kkt_result(polytope, &stage.best_perm, &stage.kkt);
+
+    match mode {
+        AscentMode::General => {}
+        AscentMode::LagrangianProduct { classification } => {
+            // LP masking stays local to the mode branch so the general kernel
+            // does not learn any product-specific structure.
+            classification.mask_dual_direction_in_place(&mut d_sys_a);
+        }
+    }
+
+    d_sys_a
+}
+
+/// Try a step in dual-vertex space: a_k(t) = a_k + t * d_k.
+pub fn apply_dual_step(
+    duals: &[Vector4<f64>],
+    direction: &[Vector4<f64>],
+    t: f64,
+) -> Option<(Polytope4D, f64)> {
+    let new_duals: Vec<Vector4<f64>> = duals
+        .iter()
+        .zip(direction)
+        .map(|(a, d)| a + t * d)
+        .collect();
+    let polytope = Polytope4D::from_f64(new_duals).ok()?;
+    let sys = compute_sys(&polytope)?;
+    Some((polytope, sys))
 }
 
 // ============================================================================

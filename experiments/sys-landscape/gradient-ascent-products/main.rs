@@ -36,9 +36,10 @@
 //! open_ascent_writers, run_parallel_seeds, ...}`.
 
 use exp_sys_landscape::{
+    apply_dual_step, ascent_direction, compute_ascent_stage, compute_sys,
     compute_step_bound, finalize_ascent_output, open_ascent_writers, parse_ascent_args,
-    run_parallel_seeds, smoke_output_path, trace_path_for, AscentArgs, SeedResult, SummaryRow,
-    TraceRow, MAX_STEP_SIZE,
+    run_parallel_seeds, smoke_output_path, trace_path_for, AscentArgs, AscentMode, SeedResult,
+    SummaryRow, TraceRow, MAX_STEP_SIZE,
 };
 use nalgebra::Vector4;
 use symplectic::database::{load_many, save, DualVerticesKey, PolytopeRecord};
@@ -49,17 +50,10 @@ use std::collections::HashMap;
 use std::path::Path;
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
-use symplectic::derivatives::{
-    capacity_derivatives_a_from_kkt_result,
-    volume_derivatives_a,
-};
 use symplectic::algorithms::billiard::facet_classification::{classify_facets, FacetClassification};
-use symplectic::ehz_capacity;
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::random_polygon_2d;
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::volume::volume;
-use symplectic::kkt::saddle_point_solver::solve_kkt_for;
 
 // ============================================================================
 // Configuration
@@ -124,41 +118,6 @@ const EPS: f64 = 1e-15;
 // Gradient step in a-space
 // ============================================================================
 
-/// Compute sys = c_EHZ(K)^2 / (2 vol(K)) for a polytope using the default
-/// root wrapper. On this experiment's Lagrangian products, that wrapper
-/// auto-routes to billiard.
-fn compute_sys(polytope: &Polytope4D) -> Option<f64> {
-    let vol = volume(polytope).ok().filter(|&v| v > 0.0)?;
-    let cap = compute_capacity(polytope)?;
-    let sys = cap * cap / (2.0 * vol);
-    sys.is_finite().then_some(sys)
-}
-
-/// Try a step in dual-vertex space: a_k(t) = a_k + t * d_k.
-fn try_step_a(
-    duals: &[Vector4<f64>],
-    direction: &[Vector4<f64>],
-    t: f64,
-) -> Option<(Polytope4D, f64)> {
-    let new_duals: Vec<Vector4<f64>> = duals
-        .iter()
-        .zip(direction)
-        .map(|(a, d)| a + t * d)
-        .collect();
-    let polytope = Polytope4D::from_f64(new_duals).ok()?;
-    let sys = compute_sys(&polytope)?;
-    Some((polytope, sys))
-}
-
-fn compute_capacity(polytope: &Polytope4D) -> Option<f64> {
-    ehz_capacity(polytope).ok().map(|r| r.capacity())
-}
-
-fn compute_capacity_result(polytope: &Polytope4D) -> Option<(f64, Vec<usize>)> {
-    let r = ehz_capacity(polytope).ok()?;
-    Some((r.capacity(), r.best_sigma().to_vec()))
-}
-
 // ============================================================================
 // Gradient ascent with integrated overshoot
 // ============================================================================
@@ -202,32 +161,19 @@ fn gradient_ascent(
             break;
         }
 
-        // 1. Capacity + KKT
-        let (cap, best_perm) = compute_capacity_result(&current)?;
-        let kkt = solve_kkt_for(&current, &best_perm).feasible()?;
-        let vol = volume(&current).ok().filter(|&v| v > 0.0)?;
-        let sys = cap * cap / (2.0 * vol);
+        // 1. Shared math stage
+        let stage = compute_ascent_stage(&current)?;
+        let sys = stage.sys;
         let duals = current.dual_vertices_f64();
 
-        // 2. Gradient d(sys)/d(a_k)
-        let d_vol_a = volume_derivatives_a(&current);
-        let d_cap_a = capacity_derivatives_a_from_kkt_result(&current, &best_perm, &kkt);
-        let mut d_sys_a: Vec<Vector4<f64>> = d_vol_a
-            .iter()
-            .zip(d_cap_a.iter())
-            .map(|(dv, dc)| (cap * dc - sys * dv) / vol)
-            .collect();
-
-        // Project direction to preserve Lagrangian product structure:
-        // q-facets zero out p-components, p-facets zero out q-components
-        for &k in &lagrangian_class.q_indices {
-            d_sys_a[k][2] = 0.0;
-            d_sys_a[k][3] = 0.0;
-        }
-        for &k in &lagrangian_class.p_indices {
-            d_sys_a[k][0] = 0.0;
-            d_sys_a[k][1] = 0.0;
-        }
+        // 2. Gradient d(sys)/d(a_k) with explicit LP masking.
+        let d_sys_a = ascent_direction(
+            &current,
+            &stage,
+            AscentMode::LagrangianProduct {
+                classification: lagrangian_class,
+            },
+        );
 
         let gradient_norm = d_sys_a
             .iter()
@@ -249,7 +195,7 @@ fn gradient_ascent(
 
         for &frac in STEP_FRACTIONS {
             let t = frac * t_max;
-            if let Some((p, new_sys)) = try_step_a(duals, &d_sys_a, t) {
+            if let Some((p, new_sys)) = apply_dual_step(duals, &d_sys_a, t) {
                 if new_sys > sys && best.as_ref().is_none_or(|b| new_sys > b.1) {
                     best = Some((p, new_sys, "within".into(), frac, t));
                 }
@@ -259,7 +205,7 @@ fn gradient_ascent(
         if t_max < MAX_STEP_SIZE {
             for &mult in OVERSHOOT_MULTIPLIERS {
                 let t = mult * t_max;
-                if let Some((p, new_sys)) = try_step_a(duals, &d_sys_a, t) {
+                if let Some((p, new_sys)) = apply_dual_step(duals, &d_sys_a, t) {
                     if new_sys > sys && best.as_ref().is_none_or(|b| new_sys > b.1) {
                         best = Some((p, new_sys, format!("overshoot_{mult}x"), mult, t));
                     }

@@ -19,6 +19,7 @@ use crate::algorithms::OrbitKktData;
 use crate::geom::facet_volume::facet_volume_and_centroid_3d_raw;
 use crate::geom::polytope::Polytope4D;
 use crate::geom::symplectic_form::j4;
+use crate::geom::volume::volume;
 use crate::kkt::saddle_point_solver::KktResult;
 use nalgebra::Vector4;
 
@@ -125,6 +126,65 @@ pub fn capacity_derivatives_a_from_orbit(
         &mu,
         &orbit.sigma,
         polytope.dual_vertices_f64(),
+    ))
+}
+
+fn systolic_ratio_gradient_a_from_parts(
+    capacity: f64,
+    volume: f64,
+    d_capacity_da: &[Vector4<f64>],
+    d_volume_da: &[Vector4<f64>],
+) -> OrbitGradientA {
+    let sys = capacity * capacity / (2.0 * volume);
+    d_capacity_da
+        .iter()
+        .zip(d_volume_da.iter())
+        .map(|(dc, dv)| (capacity / volume) * dc - (sys / volume) * dv)
+        .collect()
+}
+
+/// Compute ∂sys/∂a_k for all facets k = 0..f.
+///
+/// Uses the quotient rule for `sys = c^2 / (2V)` and combines the existing
+/// capacity and volume dual-vertex gradients.
+pub fn sys_gradient_a_from_kkt_result(
+    polytope: &Polytope4D,
+    sigma: &[usize],
+    kkt: &KktResult,
+) -> OrbitGradientA {
+    let capacity = 1.0 / (2.0 * kkt.q_corrected);
+    let volume = volume(polytope).expect("volume computation failed");
+    let d_capacity_da = capacity_derivatives_a_from_kkt_result(polytope, sigma, kkt);
+    let d_volume_da = volume_derivatives_a(polytope);
+
+    systolic_ratio_gradient_a_from_parts(capacity, volume, &d_capacity_da, &d_volume_da)
+}
+
+/// Compute ∂sys/∂a_k from the shared orbit payload.
+///
+/// Returns an explicit error when the chosen orbit payload/backend does not
+/// carry the closure multiplier required by the current derivative formula.
+pub fn sys_gradient_a_from_orbit(
+    polytope: &Polytope4D,
+    orbit: &OrbitKktData,
+) -> Result<OrbitGradientA, DerivativeError> {
+    let mu = orbit.mu.ok_or(DerivativeError::MissingClosureMultiplier)?;
+    let capacity = 1.0 / (2.0 * orbit.q);
+    let volume = volume(polytope).expect("volume computation failed");
+    let d_capacity_da = capacity_derivatives_a(
+        &orbit.beta,
+        orbit.q,
+        &mu,
+        &orbit.sigma,
+        polytope.dual_vertices_f64(),
+    );
+    let d_volume_da = volume_derivatives_a(polytope);
+
+    Ok(systolic_ratio_gradient_a_from_parts(
+        capacity,
+        volume,
+        &d_capacity_da,
+        &d_volume_da,
     ))
 }
 
@@ -360,6 +420,65 @@ mod tests {
         };
 
         let err = capacity_derivatives_a_from_orbit(&kp.polytope, &orbit)
+            .expect_err("orbit without mu should fail explicitly");
+        assert_eq!(err, DerivativeError::MissingClosureMultiplier);
+    }
+
+    /// The KKT-result convenience helper should agree with the quotient-rule
+    /// combination of capacity and volume gradients.
+    #[test]
+    fn sys_gradient_a_from_kkt_result_matches_formula() {
+        let kp = known_polytopes::simplex();
+        let polytope = &kp.polytope;
+        let sigma = crate::ehz_capacity_pruned(polytope)
+            .expect("simplex should have a certified best orbit")
+            .best_sigma()
+            .to_vec();
+        let kkt = solve_kkt_for(polytope, &sigma)
+            .feasible()
+            .expect("best simplex orbit should re-solve");
+
+        let capacity = 1.0 / (2.0 * kkt.q_corrected);
+        let volume = volume(polytope).expect("simplex volume should compute");
+        let d_capacity_da = capacity_derivatives_a_from_kkt_result(polytope, &sigma, &kkt);
+        let d_volume_da = volume_derivatives_a(polytope);
+        let direct = systolic_ratio_gradient_a_from_parts(
+            capacity,
+            volume,
+            &d_capacity_da,
+            &d_volume_da,
+        );
+        let wrapped = sys_gradient_a_from_kkt_result(polytope, &sigma, &kkt);
+
+        for (k, (lhs, rhs)) in wrapped.iter().zip(direct.iter()).enumerate() {
+            let err = (lhs - rhs).norm();
+            assert!(
+                err < 1e-12,
+                "facet {k}: wrapped={lhs:?}, direct={rhs:?}, err={err}"
+            );
+        }
+    }
+
+    /// Orbit-payload helper should fail explicitly when multiplier data is not
+    /// available on the chosen backend/path.
+    #[test]
+    fn sys_gradient_a_from_orbit_requires_mu() {
+        let kp = known_polytopes::simplex();
+        let orbit = OrbitKktData {
+            sigma: vec![0, 1],
+            beta: vec![0.5, 0.5],
+            beta_margin: 0.5,
+            action: 1.0,
+            action_lower: 1.0,
+            action_upper: 1.0,
+            q: 0.5,
+            q_error_bound: 0.0,
+            mu: None,
+            xi: None,
+            admissibility: OrbitAdmissibility::AdmissibleF64,
+        };
+
+        let err = sys_gradient_a_from_orbit(&kp.polytope, &orbit)
             .expect_err("orbit without mu should fail explicitly");
         assert_eq!(err, DerivativeError::MissingClosureMultiplier);
     }

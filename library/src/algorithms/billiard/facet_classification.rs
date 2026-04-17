@@ -12,6 +12,7 @@
 
 use crate::geom::polytope::Polytope4D;
 use super::BilliardError;
+use nalgebra::Vector4;
 
 /// Tolerance for classifying facet dual vertices as q-type or p-type.
 ///
@@ -84,6 +85,38 @@ impl FacetClassification {
 
         (q_blocks > 0 && q_blocks == p_blocks).then_some(q_blocks)
     }
+
+    /// Mask a dual-vertex direction in place so it preserves Lagrangian product
+    /// structure.
+    ///
+    /// q-facets may move only in q-components; p-facets may move only in
+    /// p-components.
+    pub fn mask_dual_direction_in_place(&self, direction: &mut [Vector4<f64>]) {
+        debug_assert_eq!(
+            direction.len(),
+            self.q_indices.len() + self.p_indices.len()
+        );
+
+        for &idx in &self.q_indices {
+            if let Some(slot) = direction.get_mut(idx) {
+                slot[2] = 0.0;
+                slot[3] = 0.0;
+            }
+        }
+        for &idx in &self.p_indices {
+            if let Some(slot) = direction.get_mut(idx) {
+                slot[0] = 0.0;
+                slot[1] = 0.0;
+            }
+        }
+    }
+
+    /// Return an LP-preserving masked copy of a dual direction.
+    pub fn masked_dual_direction(&self, direction: &[Vector4<f64>]) -> Vec<Vector4<f64>> {
+        let mut masked = direction.to_vec();
+        self.mask_dual_direction_in_place(&mut masked);
+        masked
+    }
 }
 
 /// Classify facets of a polytope into q-type and p-type.
@@ -134,4 +167,45 @@ pub fn classify_facets(polytope: &Polytope4D) -> Result<FacetClassification, Bil
         q_indices,
         p_indices,
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::geom::known_polytopes;
+
+    #[test]
+    fn mask_dual_direction_preserves_allowed_components() {
+        let kp = known_polytopes::lagrangian_triangle_product();
+        let classification = classify_facets(&kp.polytope)
+            .expect("triangle product should classify as a Lagrangian product");
+        let direction: Vec<Vector4<f64>> = (0..kp.polytope.facet_count())
+            .map(|i| {
+                Vector4::new(
+                    i as f64 + 1.0,
+                    i as f64 + 11.0,
+                    i as f64 + 21.0,
+                    i as f64 + 31.0,
+                )
+            })
+            .collect();
+
+        let masked = classification.masked_dual_direction(&direction);
+        let mut masked_in_place = direction.clone();
+        classification.mask_dual_direction_in_place(&mut masked_in_place);
+
+        assert_eq!(masked, masked_in_place);
+        for &idx in &classification.q_indices {
+            assert_eq!(masked[idx][0], direction[idx][0]);
+            assert_eq!(masked[idx][1], direction[idx][1]);
+            assert_eq!(masked[idx][2], 0.0);
+            assert_eq!(masked[idx][3], 0.0);
+        }
+        for &idx in &classification.p_indices {
+            assert_eq!(masked[idx][0], 0.0);
+            assert_eq!(masked[idx][1], 0.0);
+            assert_eq!(masked[idx][2], direction[idx][2]);
+            assert_eq!(masked[idx][3], direction[idx][3]);
+        }
+    }
 }
