@@ -28,6 +28,7 @@ use std::io::{BufReader, BufWriter, Write};
 use std::path::PathBuf;
 use std::time::Instant;
 use symplectic::algorithms::facet_adjacency::build_transition_matrix;
+use symplectic::algorithms::hk2017::combinations;
 use symplectic::geom::known_polytopes;
 use symplectic::geom::symplectic_form::omega0;
 use symplectic::geom::volume::volume;
@@ -287,33 +288,6 @@ fn solve_kkt(
         }
     }
     solve_kkt_svd_path(&kkt, &rhs, normals, heights, perm)
-}
-
-// ── Combinatorics ───────────────────────────────────────────────────────────
-
-fn combinations(n: usize, k: usize) -> Vec<Vec<usize>> {
-    let mut result = Vec::new();
-    let mut combo = vec![0usize; k];
-    combinations_rec(n, k, 0, 0, &mut combo, &mut result);
-    result
-}
-
-fn combinations_rec(
-    n: usize,
-    k: usize,
-    start: usize,
-    depth: usize,
-    combo: &mut Vec<usize>,
-    result: &mut Vec<Vec<usize>>,
-) {
-    if depth == k {
-        result.push(combo.clone());
-        return;
-    }
-    for i in start..=(n - k + depth) {
-        combo[depth] = i;
-        combinations_rec(n, k, i + 1, depth + 1, combo, result);
-    }
 }
 
 // ── Backtracking permutation search ─────────────────────────────────────────
