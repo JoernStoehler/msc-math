@@ -5,10 +5,7 @@
 # ///
 
 """
-Plot orbit recovery error metrics by facet count.
-
-Goal: Visualize how recovery errors scale with facet count for cache-sourced
-      non-known rows in the curated validation dataset.
+Goal: Plot worst trusted-minimum recovery errors by facet count.
 Input: experiments/verification/orbit-recovery/orbit-recovery.jsonl
 Output: experiments/verification/orbit-recovery/orbit_recovery_errors.png
 """
@@ -20,23 +17,34 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 
-# Add parent for figure_config
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
-from figure_config import setup, FIGSIZE_SINGLE
+from figure_config import FIGSIZE_SINGLE, setup
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
-DATA_FILE = EXPERIMENT_DIR / "orbit-recovery.jsonl"
-OUTPUT_FILE = EXPERIMENT_DIR / "orbit_recovery_errors.png"
+def parse_summary_path():
+    smoke = len(sys.argv) > 1 and sys.argv[1] == "--smoke"
+    if len(sys.argv) > 2 or (len(sys.argv) == 2 and not smoke):
+        print("Usage: uv run plot_orbit_recovery.py [--smoke]")
+        sys.exit(2)
+    prefix = "smoke-" if smoke else ""
+    return (
+        smoke,
+        EXPERIMENT_DIR / f"{prefix}orbit-recovery.jsonl",
+        EXPERIMENT_DIR / f"{prefix}orbit_recovery_errors.png",
+    )
 
 
-def load_data():
-    if not DATA_FILE.exists():
-        print(f"File not found: {DATA_FILE}")
-        print("Run Rust binary first: cargo run -p dev-capacity-validation --release --bin axioms-orbit-recovery")
+def load_rows(path):
+    if not path.exists():
+        print(f"File not found: {path}")
+        print(
+            "Run Rust binary first: cargo run -p dev-capacity-validation --release --bin axioms-orbit-recovery"
+            + (" -- --full" if "smoke-" not in path.name else "")
+        )
         sys.exit(1)
 
     rows = []
-    with open(DATA_FILE) as f:
+    with open(path) as f:
         for line in f:
             if line.strip():
                 rows.append(json.loads(line))
@@ -44,38 +52,36 @@ def load_data():
 
 
 def main():
+    smoke, data_file, output_file = parse_summary_path()
+    rows = load_rows(data_file)
+
     setup()
-    rows = load_data()
+    ok_rows = [row for row in rows if row["status"] == "ok"]
+    by_facet_count = defaultdict(list)
+    for row in ok_rows:
+        by_facet_count[row["facet_count"]].append(row)
 
-    # Plot only non-known rows; the known rows are primarily degeneracy checks.
-    random_rows = [r for r in rows if r["family"] != "known"]
-
-    # Group by facet count
-    by_f = defaultdict(list)
-    for r in random_rows:
-        by_f[r["facet_count"]].append(r)
-
-    facets = sorted(by_f.keys())
-    max_closure = [max(r["closure_error"] for r in by_f[f]) for f in facets]
-    max_action = [max(r["action_error"] for r in by_f[f]) for f in facets]
+    facets = sorted(by_facet_count)
+    max_closure = [
+        max(row["worst_closure_error"] for row in by_facet_count[facet]) for facet in facets
+    ]
+    max_action = [
+        max(row["worst_action_error"] for row in by_facet_count[facet]) for facet in facets
+    ]
 
     fig, ax = plt.subplots(figsize=FIGSIZE_SINGLE)
-
-    ax.semilogy(facets, max_closure, "o-", label="Closure error")
-    ax.semilogy(facets, max_action, "s-", label="Action error")
-
-    # Thresholds
-    ax.axhline(1e-6, color="C0", linestyle="--", alpha=0.5, label="Geometric threshold ($10^{-6}$)")
-    ax.axhline(1e-5, color="C1", linestyle="--", alpha=0.5, label="Action threshold ($10^{-5}$)")
-
-    ax.set_xlabel("Facet count $F$")
+    ax.semilogy(facets, max_closure, "o-", label="Worst closure error")
+    ax.semilogy(facets, max_action, "s-", label="Worst action error")
+    ax.axhline(1e-6, color="C0", linestyle="--", alpha=0.5, label=r"Geometry threshold ($10^{-6}$)")
+    ax.axhline(1e-5, color="C1", linestyle="--", alpha=0.5, label=r"Action threshold ($10^{-5}$)")
+    ax.set_xlabel(r"Facet count $F$")
     ax.set_ylabel("Maximum error")
     ax.set_xticks(facets)
+    ax.set_title("Trusted-minimum recovery errors" + (" (smoke)" if smoke else ""))
     ax.legend()
-
-    fig.savefig(OUTPUT_FILE)
+    fig.savefig(output_file)
     plt.close(fig)
-    print(f"Saved: {OUTPUT_FILE}")
+    print(f"Saved: {output_file}")
 
 
 if __name__ == "__main__":
