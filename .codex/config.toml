@@ -41,7 +41,7 @@ codex_hooks = true
 
 # Subagents: we allow recursion
 [agents]
-max_threads = 10
+max_threads = 20
 max_depth = 2
 job_max_runtime_seconds = 3600
 
