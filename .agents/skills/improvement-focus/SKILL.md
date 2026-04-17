@@ -32,8 +32,10 @@ Prefer this order:
 
 1. Read enough code to find repeated glue or mixed-concern files.
 2. Write down a triaged packet list before spawning workers.
-3. Show Jörn the intended packet scope and notable risks before implementation.
-4. Create a dedicated feature worktree for integration.
+3. Show Jörn the intended packet scope and notable risks before implementation,
+   then stop and wait for his reply.
+4. After Jörn replies that the round should continue, create a dedicated
+   feature worktree for integration.
 5. Create one worktree per accepted packet.
 6. Run workers on disjoint write scopes.
 7. Review each packet before keeping it.
@@ -119,9 +121,16 @@ Before spawning implementation workers, send Jörn a compact execution surface:
 - what you expect to leave alone for now
 - the planned integration branch name
 
-Do not use this as a fake approval gate for ordinary low-risk cleanup. The goal
-is to let Jörn catch architecture-level waste early, not to make him review each
-refactor in detail before agents can move.
+This is a real pause point. After sending this surface, stop and wait for
+Jörn's reply before creating worktrees or spawning workers.
+
+Jörn does not need to review each refactor in detail. The point of the pause is
+to let him redirect the round, trim waste, or say "continue" once the packet
+surface is visible.
+
+If Jörn explicitly asked for a full improvement round with no intermediate
+pause, say so when presenting the surface, then continue after that note. Do
+not silently reinterpret "show Jörn" as informational-only.
 
 ## Worktree Discipline
 
@@ -165,6 +174,7 @@ because the model could not imagine them.
 
 Ask Jörn for:
 
+- whether to continue after the pre-implementation surface
 - whether an improvement round should stay experiment-local or change a library
   boundary
 - whether a packet is worth doing if the payoff is mostly structural
