@@ -25,7 +25,7 @@ use symplectic::database::{load_many, save, DualVerticesKey, PolytopeRecord, Sig
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::random_polygon_2d;
 use symplectic::geom::volume::volume;
-use symplectic::{ehz_capacity_billiard, BilliardOrbitSearchError};
+use symplectic::ehz_capacity_billiard;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use serde::Serialize;
@@ -157,11 +157,8 @@ fn main() {
             let time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
 
             let start_cap = Instant::now();
-            let result = match ehz_capacity_billiard(&polytope) {
-                Ok(result) => result,
-                Err(BilliardOrbitSearchError::InvalidInput(_)) => continue,
-                Err(err) => panic!("billiard failed: {err}"),
-            };
+            let result =
+                ehz_capacity_billiard(&polytope).expect("billiard should accept Lagrangian product");
             let time_capacity_ms = start_cap.elapsed().as_secs_f64() * 1000.0;
 
             let cap = result.capacity();

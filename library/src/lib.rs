@@ -54,7 +54,6 @@ pub use geom::QhullError;
 // Capacity algorithms
 pub use algorithms::billiard::{
     BilliardError,
-    BilliardOrbitSearchError,
 };
 pub use algorithms::{
     GeometricOrbitError,
@@ -102,25 +101,17 @@ pub fn ehz_capacity_unpruned(
 /// Explicit billiard frontend on the shared orbit/result surface.
 pub fn ehz_capacity_billiard(
     polytope: &Polytope4D,
-) -> Result<OrbitSearchResult, algorithms::billiard::BilliardOrbitSearchError> {
-    let mut input_error = None;
-    let solved = algorithms::orbit_search::solve_sigma_stream(
+) -> Result<OrbitSearchResult, OrbitSearchError> {
+    algorithms::billiard::facet_classification::classify_facets(polytope)
+        .expect("ehz_capacity_billiard requires a Lagrangian product");
+
+    let (orbits, iterations) = algorithms::orbit_search::solve_sigma_stream(
         polytope,
         OrbitSolveBackend::SaddlePoint,
-        |visit| {
-            if let Err(err) = algorithms::billiard::for_each_sigma(polytope, visit) {
-                input_error = Some(err);
-            }
-        },
-    );
-
-    if let Some(err) = input_error {
-        return Err(BilliardOrbitSearchError::InvalidInput(err));
-    }
-
-    let (orbits, iterations) = solved.map_err(BilliardOrbitSearchError::Search)?;
+        |visit| algorithms::billiard::for_each_sigma(polytope, visit)
+            .expect("classification already succeeded"),
+    )?;
     algorithms::orbit_search::aggregate_orbits_f64_only(0.0, orbits, iterations)
-        .map_err(BilliardOrbitSearchError::Search)
 }
 
 /// Default capacity wrapper on the shared orbit/result surface.
@@ -129,12 +120,7 @@ pub fn ehz_capacity_billiard(
 /// structure test, and otherwise uses the pruned HK2017 path.
 pub fn ehz_capacity(polytope: &Polytope4D) -> Result<OrbitSearchResult, OrbitSearchError> {
     if algorithms::billiard::facet_classification::classify_facets(polytope).is_ok() {
-        return ehz_capacity_billiard(polytope).map_err(|err| match err {
-            algorithms::billiard::BilliardOrbitSearchError::InvalidInput(_) => {
-                OrbitSearchError::NumericalFailure
-            }
-            algorithms::billiard::BilliardOrbitSearchError::Search(err) => err,
-        });
+        return ehz_capacity_billiard(polytope);
     }
     ehz_capacity_pruned(polytope)
 }

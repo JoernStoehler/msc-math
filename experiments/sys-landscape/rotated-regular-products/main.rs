@@ -20,7 +20,7 @@ use symplectic::algorithms::billiard::bounce_count_from_sigma;
 use symplectic::geom::lagrangian_product::lagrangian_product;
 use symplectic::geom::polygon::{polygon_area, regular_polygon_2d, rotate_polygon_2d};
 use symplectic::geom::volume::volume;
-use symplectic::{ehz_capacity_billiard, BilliardOrbitSearchError};
+use symplectic::ehz_capacity_billiard;
 
 const PENTAGON_START_DEG: f64 = 0.0;
 const PENTAGON_END_DEG: f64 = 36.0;
@@ -107,11 +107,8 @@ fn generate_heptagon_7x7() {
         let vol = volume(&polytope).expect("volume computation failed");
 
         let start = Instant::now();
-        let result = match ehz_capacity_billiard(&polytope) {
-            Ok(result) => result,
-            Err(BilliardOrbitSearchError::InvalidInput(_)) => continue,
-            Err(err) => panic!("billiard failed: {err}"),
-        };
+        let result =
+            ehz_capacity_billiard(&polytope).expect("billiard should accept Lagrangian product");
         let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
         let cap = result.capacity();
@@ -180,11 +177,8 @@ fn generate_pentagon_5x5() {
         let vol = volume(&polytope).expect("volume computation failed");
 
         let start = Instant::now();
-        let result = match ehz_capacity_billiard(&polytope) {
-            Ok(result) => result,
-            Err(BilliardOrbitSearchError::InvalidInput(_)) => continue,
-            Err(err) => panic!("billiard failed: {err}"),
-        };
+        let result =
+            ehz_capacity_billiard(&polytope).expect("billiard should accept Lagrangian product");
         let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
         let cap = result.capacity();
@@ -253,11 +247,8 @@ fn generate_polygon_pairs() {
             let vol = volume(&polytope).expect("volume computation failed");
 
             let start = Instant::now();
-            let result = match ehz_capacity_billiard(&polytope) {
-                Ok(result) => result,
-                Err(BilliardOrbitSearchError::InvalidInput(_)) => continue,
-                Err(err) => panic!("billiard failed: {err}"),
-            };
+            let result = ehz_capacity_billiard(&polytope)
+                .expect("billiard should accept Lagrangian product");
             let time_ms = start.elapsed().as_secs_f64() * 1000.0;
 
             let cap = result.capacity();

@@ -24,6 +24,7 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
 use symplectic::algorithms::billiard::bounce_count_from_sigma;
+use symplectic::algorithms::billiard::facet_classification::classify_facets;
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::volume::volume;
@@ -241,13 +242,14 @@ fn main() {
                 Ok(p) => p,
                 Err(_) => continue,
             };
+            if classify_facets(&polytope).is_err() {
+                continue;
+            }
 
             // Keep the explicit billiard call here because `SampleRow` stores
             // `bounces`, which is only available from the billiard-native API.
-            let billiard = match ehz_capacity_billiard(&polytope) {
-                Ok(r) => r,
-                Err(_) => continue,
-            };
+            let billiard =
+                ehz_capacity_billiard(&polytope).expect("classification already succeeded");
 
             let vol = match volume(&polytope) {
                 Ok(v) if v > 0.0 => v,
