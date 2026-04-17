@@ -11,30 +11,7 @@
 //!
 //! Mathematical correspondence: [def:face-lattice]
 
-/// Threshold for degenerate first basis vector in polygon vertex sorting.
-///
-/// If ||centroid -> first_vertex|| < EPS_BASIS_DEGENERATE, the centroid and
-/// first vertex coincide (degenerate polygon). Skip sorting and return unsorted.
-///
-/// **Why 1e-12:** Vertices are f64 coordinates from polytope geometry, with
-/// typical scale O(0.1)--O(10). A distance below 1e-12 is pure f64 noise and
-/// indicates a degenerate configuration. Well-formed ridge polygons have vertex
-/// spacing >> 1e-12 in practice (typically O(0.01) or larger).
-const EPS_BASIS_DEGENERATE: f64 = 1e-12;
-
-/// Threshold for detecting collinear vertices in polygon vertex sorting.
-///
-/// When building the second Gram-Schmidt basis vector, if the component
-/// perpendicular to d1 has norm < EPS_COLLINEAR, the remaining vertices are
-/// collinear with the first vertex direction. Skip sorting.
-///
-/// **Why 1e-10:** Slightly looser than EPS_BASIS_DEGENERATE (1e-12) because
-/// this involves a subtraction (Gram-Schmidt projection) that accumulates
-/// more roundoff than a simple norm. Two vertices that are genuinely non-collinear
-/// with the first will have perpendicular component >> 1e-10 (typically O(0.01)
-/// or larger for real ridge polygons).
-const EPS_COLLINEAR: f64 = 1e-10;
-
+use crate::geom::polygon_order::sort_polygon_order;
 use crate::geom::polytope::Polytope4D;
 use nalgebra::Vector4;
 
@@ -185,37 +162,10 @@ fn sort_polygon_vertices(all_vertices: &[Vector4<f64>], indices: &[usize]) -> Ve
     }
 
     let coords: Vec<Vector4<f64>> = indices.iter().map(|&i| all_vertices[i]).collect();
-    let centroid = coords.iter().sum::<Vector4<f64>>() / coords.len() as f64;
-
-    // First basis vector: centroid -> first vertex, normalized.
-    let d1_raw = coords[0] - centroid;
-    let d1_norm = d1_raw.norm();
-    if d1_norm < EPS_BASIS_DEGENERATE {
-        return indices.to_vec();
+    match sort_polygon_order(&coords) {
+        Some(order) => order.into_iter().map(|pos| indices[pos]).collect(),
+        None => indices.to_vec(),
     }
-    let d1 = d1_raw / d1_norm;
-
-    // Second basis vector via Gram-Schmidt on remaining offset vectors.
-    let d2 = match coords.iter().skip(1).find_map(|v| {
-        let rel = *v - centroid;
-        let proj = rel - d1 * rel.dot(&d1);
-        (proj.norm() > EPS_COLLINEAR).then(|| proj.normalize())
-    }) {
-        Some(d) => d,
-        None => return indices.to_vec(), // degenerate (collinear)
-    };
-
-    // Sort by polar angle in the (d1, d2) plane.
-    let mut indexed: Vec<(f64, usize)> = indices
-        .iter()
-        .map(|&idx| {
-            let rel = all_vertices[idx] - centroid;
-            let angle = rel.dot(&d2).atan2(rel.dot(&d1));
-            (angle, idx)
-        })
-        .collect();
-    indexed.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
-    indexed.into_iter().map(|(_, idx)| idx).collect()
 }
 
 #[cfg(test)]
