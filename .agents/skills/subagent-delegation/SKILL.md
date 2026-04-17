@@ -118,6 +118,10 @@ Parallelize for speed only when the subtasks are independent:
 
 Do not parallelize shared design decisions, shared write scopes, or dependent tasks. Split by independent surface, then merge results only after local verification.
 
+When running a packetized implementation round, do not spend every live agent
+slot on workers. Leave room for at least one reviewer or one bounded cleanup
+follow-up.
+
 Name the main thread as integration owner. Parallel delegates report evidence or patches; they do not reconcile conflicts, choose priorities, or change the approved surface.
 
 ## Integration

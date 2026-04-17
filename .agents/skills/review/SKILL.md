@@ -26,6 +26,21 @@ Use batched reads for independent files. Do not edit files during a review unles
 - Factual claims against data, code, figures, or bibliography: `references/claims.md`
 - Figure production chain and rendered PNGs: `references/figures.md`
 
+## Refactor Checklist
+
+When reviewing a simplification or helper-extraction patch, explicitly scan for
+these items even if most will be green:
+
+- behavior drift: changed control flow, filtering, ordering, thresholds, or
+  serialization semantics
+- lost math-code correspondence: removed formal labels, explanatory comments, or
+  stated invariants on moved non-trivial code
+- stale duplicate surfaces: old constants, helper copies, or comments left
+  behind after the shared helper moved
+- boundary widening: a local cleanup that now hides real policy differences
+- compatibility risks: output paths, checkpoint shapes, CLI behavior, or
+  tracked-artifact handling changed unintentionally
+
 ## Output Format
 
 Findings come first, ordered by severity.
