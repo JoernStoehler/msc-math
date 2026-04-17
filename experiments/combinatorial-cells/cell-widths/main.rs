@@ -16,7 +16,7 @@
 //! Filter: F <= 10 (HK2017 is exponential in F)
 //! Output Artifacts: experiments/combinatorial-cells/cell-widths/combinatorial-boundaries-profiling.jsonl
 
-use nalgebra::{Matrix4, Vector4};
+use nalgebra::Vector4;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal};
@@ -25,11 +25,11 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::Path;
 use std::time::Instant;
-use exp_combinatorial_cells::ehz_capacity_instrumented;
-use symplectic::database::{self, PolytopeRecord, Source};
+use exp_combinatorial_cells::{
+    compute_step_bound_detailed, ehz_capacity_instrumented, name_from_record,
+};
+use symplectic::database;
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::skeleton::Skeleton;
-use symplectic::geom::symplectic_form::omega0;
 
 // ============================================================================
 // Configuration
@@ -56,41 +56,6 @@ const EPS_NUMERICAL_ZERO: f64 = 1e-15;
 
 /// Random seed for reproducibility.
 const SEED: u64 = 42;
-
-// ============================================================================
-// Boundary event types
-// ============================================================================
-
-/// Classification of a combinatorial boundary event.
-#[derive(Debug, Clone)]
-enum EventType {
-    /// A vertex's slack with respect to a non-incident facet reaches zero.
-    IncidenceFlip { vertex_index: usize, new_facet: usize },
-    /// sign(omega_0(a_i, a_j)) changes for ridge-adjacent facets i, j.
-    OmegaFlip { facet_i: usize, facet_j: usize },
-    /// |a_k + t*d_k| -> 0 (dual vertex degenerates).
-    DualVertexDegen { facet: usize },
-    /// t_max was capped at MAX_STEP_SIZE (no real boundary found).
-    Unbounded,
-}
-
-impl EventType {
-    fn name(&self) -> &'static str {
-        match self {
-            EventType::IncidenceFlip { .. } => "incidence_flip",
-            EventType::OmegaFlip { .. } => "omega_flip",
-            EventType::DualVertexDegen { .. } => "dual_vertex_degen",
-            EventType::Unbounded => "unbounded",
-        }
-    }
-}
-
-/// Result of the enriched step-bound computation.
-#[derive(Debug, Clone)]
-struct BoundaryEvent {
-    t_max: f64,
-    event: EventType,
-}
 
 // ============================================================================
 // Direction types
@@ -123,188 +88,6 @@ struct ProfilingRow {
     direction_index: usize,
     t_max: f64,
     event_type: String,
-}
-
-// ============================================================================
-// Database helpers
-// ============================================================================
-
-/// Derive a human-readable name from a database record's Source.
-fn name_from_record(record: &PolytopeRecord, index: usize) -> String {
-    match &record.source {
-        Some(Source::Random { facet_count_target, attempt, .. }) => {
-            format!("random_F{facet_count_target}_a{attempt}")
-        }
-        Some(Source::LagrangianProduct { n1, n2, .. }) => {
-            format!("product_{n1}x{n2}_{index}")
-        }
-        Some(Source::Known { name }) => name.clone(),
-        None => format!("polytope_{index}"),
-    }
-}
-
-// ============================================================================
-// Enriched step-bound computation in a-space
-// ============================================================================
-
-/// Compute the first boundary event along a direction in dual-vertex space.
-/// [lem:step-bound-incidence] incidence flip detection, [lem:step-bound-omega] omega_0 flip detection
-///
-/// For step a'_k(t) = a_k + t*d_k, the combinatorial type changes when:
-/// 1. **Incidence flip:** a vertex's slack w.r.t. a non-incident facet reaches zero.
-/// 2. **omega_0 flip:** sign(omega_0(a_i, a_j)) changes for ridge-adjacent facets.
-/// 3. **Dual vertex degeneration:** |a_k + t*d_k| -> 0.
-fn compute_step_bound_detailed(
-    polytope: &Polytope4D,
-    direction: &[Vector4<f64>],
-) -> BoundaryEvent {
-    let duals = polytope.dual_vertices_f64();
-    let vertices = polytope.vertices_f64();
-    let f = polytope.facet_count();
-    let skeleton = Skeleton::compute(polytope);
-
-    let mut best = BoundaryEvent {
-        t_max: f64::INFINITY,
-        event: EventType::Unbounded,
-    };
-
-    // --- Vertex-facet incidence checks ---
-    for (vi, vertex_facets) in skeleton.vertex_facets.iter().enumerate() {
-        let v = &vertices[vi];
-
-        if vertex_facets.len() == 4 {
-            let det_facets = vertex_facets;
-            let a_mat = Matrix4::from_rows(&[
-                duals[det_facets[0]].transpose(),
-                duals[det_facets[1]].transpose(),
-                duals[det_facets[2]].transpose(),
-                duals[det_facets[3]].transpose(),
-            ]);
-
-            let a_inv = match a_mat.try_inverse() {
-                Some(inv) => inv,
-                None => continue,
-            };
-
-            let rhs = Vector4::new(
-                direction[det_facets[0]].dot(v),
-                direction[det_facets[1]].dot(v),
-                direction[det_facets[2]].dot(v),
-                direction[det_facets[3]].dot(v),
-            );
-
-            let dv_dt = -(a_inv * rhs);
-
-            for j in 0..f {
-                if vertex_facets.contains(&j) {
-                    continue;
-                }
-                let slack = 1.0 - duals[j].dot(v);
-                let rate = -direction[j].dot(v) - duals[j].dot(&dv_dt);
-                if rate < -EPS_NUMERICAL_ZERO {
-                    let t_crit = slack / (-rate);
-                    if t_crit > 0.0 && t_crit < best.t_max {
-                        best = BoundaryEvent {
-                            t_max: t_crit,
-                            event: EventType::IncidenceFlip {
-                                vertex_index: vi,
-                                new_facet: j,
-                            },
-                        };
-                    }
-                }
-            }
-        } else {
-            // Non-simple vertex (>4 incident facets). Conservative bound.
-            let max_d = direction.iter().map(|dk| dk.norm()).fold(0.0f64, f64::max);
-            for (j, a_j) in duals.iter().enumerate() {
-                if vertex_facets.contains(&j) {
-                    continue;
-                }
-                let slack = 1.0 - a_j.dot(v);
-                let max_rate = max_d * v.norm() + a_j.norm() * max_d * v.norm();
-                if max_rate > EPS_NUMERICAL_ZERO {
-                    let t_crit = slack / max_rate;
-                    if t_crit > 0.0 && t_crit < best.t_max {
-                        best = BoundaryEvent {
-                            t_max: t_crit,
-                            event: EventType::IncidenceFlip {
-                                vertex_index: vi,
-                                new_facet: j,
-                            },
-                        };
-                    }
-                }
-            }
-        }
-    }
-
-    // --- omega_0 sign preservation for ridge-adjacent pairs ---
-    for ridge in &skeleton.ridges {
-        let i = ridge.facets[0];
-        let j = ridge.facets[1];
-        let c = omega0(&duals[i], &duals[j]);
-        let b = omega0(&direction[i], &duals[j]) + omega0(&duals[i], &direction[j]);
-        let a_coeff = omega0(&direction[i], &direction[j]);
-
-        let roots = if a_coeff.abs() > EPS_NUMERICAL_ZERO {
-            let disc = b * b - 4.0 * a_coeff * c;
-            if disc < 0.0 {
-                vec![]
-            } else {
-                let sqrt_disc = disc.sqrt();
-                vec![
-                    (-b - sqrt_disc) / (2.0 * a_coeff),
-                    (-b + sqrt_disc) / (2.0 * a_coeff),
-                ]
-            }
-        } else if b.abs() > EPS_NUMERICAL_ZERO {
-            vec![-c / b]
-        } else {
-            vec![]
-        };
-
-        for t_flip in roots {
-            if t_flip > EPS_NUMERICAL_ZERO && t_flip < best.t_max {
-                best = BoundaryEvent {
-                    t_max: t_flip,
-                    event: EventType::OmegaFlip {
-                        facet_i: i,
-                        facet_j: j,
-                    },
-                };
-            }
-        }
-    }
-
-    // --- Dual vertex degeneration: |a_k + t*d_k| -> 0 ---
-    for k in 0..f {
-        let a_coeff = direction[k].norm_squared();
-        let b = 2.0 * duals[k].dot(&direction[k]);
-        let c = duals[k].norm_squared();
-        let disc = b * b - 4.0 * a_coeff * c;
-        if disc >= 0.0 && a_coeff > EPS_NUMERICAL_ZERO {
-            let sqrt_disc = disc.sqrt();
-            for &sign in &[-1.0, 1.0] {
-                let t_crit = (-b + sign * sqrt_disc) / (2.0 * a_coeff);
-                if t_crit > EPS_NUMERICAL_ZERO && t_crit < best.t_max {
-                    best = BoundaryEvent {
-                        t_max: t_crit,
-                        event: EventType::DualVertexDegen { facet: k },
-                    };
-                }
-            }
-        }
-    }
-
-    if best.t_max > MAX_STEP_SIZE {
-        best = BoundaryEvent {
-            t_max: MAX_STEP_SIZE,
-            event: EventType::Unbounded,
-        };
-    }
-
-    best
 }
 
 // ============================================================================
@@ -429,7 +212,8 @@ fn main() {
         let facet_dirs = build_facet_directions(f, &mut rng);
 
         for dir in &facet_dirs {
-            let boundary = compute_step_bound_detailed(polytope, &dir.d);
+            let boundary =
+                compute_step_bound_detailed(polytope, &dir.d, EPS_NUMERICAL_ZERO, MAX_STEP_SIZE);
             let k = dir.facet_index.unwrap();
 
             let row = ProfilingRow {
