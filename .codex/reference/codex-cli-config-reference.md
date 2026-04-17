@@ -1,6 +1,6 @@
 <!--
 Purpose: provide an auditable reference for the Codex CLI configuration surface.
-Context: this is the authoritative artifact being built for a user who wants the complete surface and wants later fact-checkers to distinguish source statements from local observations and inferences.
+Context: this is a local audit memo for a user who wants the complete surface and wants later fact-checkers to distinguish source statements from local observations and inferences. It is not an official OpenAI source; trust `Doc` claims only through the cited OpenAI pages and treat the rest as local notes.
 -->
 
 # Codex CLI configuration reference
@@ -10,7 +10,10 @@ Local binary checked: `codex-cli 0.120.0`
 
 ## Status
 
-This file is the authoritative reference artifact.
+This file is a local working reference artifact, not an official source of truth.
+
+Do not cite this file as authority when an official OpenAI page is available.
+Use it only as a map of claims plus links, local observations, and clearly marked inferences.
 
 Current coverage in this revision:
 
@@ -257,7 +260,7 @@ This section covers documented keys from the config reference that are not alrea
 
 ## Section 4A: Additional top-level keys exposed by the official JSON schema
 
-This section exists because the JSON schema exposes top-level keys that are harder to inventory from the prose config-reference page alone. These are still official sources of truth because the schema is published by OpenAI as the latest schema for `config.toml`.
+This section exists because the JSON schema exposes top-level keys that are harder to inventory from the prose config-reference page alone. The schema itself is an official OpenAI source when it is published by OpenAI; this memo is not.
 
 ### Keys surfaced in the schema
 
@@ -726,7 +729,7 @@ This appendix is a completeness checklist, not an explanatory section. It lists 
 
 - `Local`: for immediate behavior of the installed binary, trust `codex --help`, `codex exec --help`, and `codex features list`.
 - `Doc`: for the documented key inventory and examples, use the official config reference and sample config.
-- `Inference`: when doc text and local help disagree, the operationally safe rule is to record both and treat the local binary as authoritative for immediate behavior on this machine.
+- `Inference`: when doc text and local help disagree, the operationally safe rule is to record both and treat the local binary as the best evidence for immediate behavior on this machine.
 
 ## Recorded discrepancy
 
