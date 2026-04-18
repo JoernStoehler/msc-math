@@ -21,7 +21,7 @@
 //! Output Artifacts: variable-f-ascent/variable-f-ascent.jsonl
 //!         variable-f-ascent/cache.jsonl
 
-use exp_sys_landscape::compute_step_bound;
+use exp_sys_landscape::{compute_step_bound, orbit_scalars_from_result};
 use nalgebra::Vector4;
 use num_rational::BigRational;
 use rand::SeedableRng;
@@ -259,6 +259,9 @@ fn compute_capacity_result(polytope: &Polytope4D, db: &mut Db) -> Option<(f64, V
         perm: perm.clone(),
         action: cap,
     }]);
+    if record.orbit_scalars.is_none() {
+        record.orbit_scalars = Some(orbit_scalars_from_result(&r));
+    }
     Some((cap, perm))
 }
 

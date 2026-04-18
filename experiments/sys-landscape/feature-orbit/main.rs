@@ -2,7 +2,9 @@
 //!
 //! Goal: enrich the hostile-landscape normalized dataset with cheap
 //! orbit-sensitive summaries derived from cached `best_sigma` permutations plus
-//! exact polytope geometry, without rerunning KKT orbit solvers.
+//! exact polytope geometry and bounded best-orbit KKT scalars. When older
+//! cache rows lack the scalar payload, this binary falls back to one
+//! best-sigma KKT solve instead of a full capacity rerun.
 //! Input Artifacts:
 //!   - experiments/sys-landscape/normalized-dataset outputs under `--normalized-dir`
 //!     (`polytopes.jsonl` required)
@@ -20,9 +22,11 @@ use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
 use symplectic::algorithms::facet_adjacency::build_transition_matrix;
-use symplectic::database::{load_many, DualVerticesKey, PolytopeRecord};
+use symplectic::algorithms::solve_orbit_sigma;
+use symplectic::database::{load_many, DualVerticesKey, OrbitScalars, PolytopeRecord};
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::symplectic_form::omega0;
+use symplectic::{OrbitAdmissibility, OrbitSolveBackend};
 
 #[derive(Debug, Deserialize)]
 struct PolytopeInputRow {
@@ -60,6 +64,16 @@ struct OrbitFeatureRow {
     orbit_selected_out_degree_std: f64,
     orbit_selected_out_degree_min: f64,
     orbit_selected_out_degree_max: f64,
+    orbit_kkt_available: f64,
+    orbit_search_scalar_available: f64,
+    orbit_result_iterations_log1p: f64,
+    orbit_result_returned_orbit_count: f64,
+    orbit_best_beta_margin: f64,
+    orbit_best_q_error_bound: f64,
+    orbit_best_has_mu: f64,
+    orbit_best_has_xi: f64,
+    orbit_best_is_admissible_exact: f64,
+    orbit_best_is_indeterminate_f64: f64,
 }
 
 fn parse_args() -> (PathBuf, PathBuf) {
@@ -119,8 +133,10 @@ fn write_jsonl<T: Serialize>(path: &Path, rows: &[T]) {
 
 fn parse_rational(token: &str) -> BigRational {
     if let Some((numer, denom)) = token.split_once('/') {
-        let numer = BigInt::from_str(numer).unwrap_or_else(|e| panic!("bad numerator {token}: {e}"));
-        let denom = BigInt::from_str(denom).unwrap_or_else(|e| panic!("bad denominator {token}: {e}"));
+        let numer =
+            BigInt::from_str(numer).unwrap_or_else(|e| panic!("bad numerator {token}: {e}"));
+        let denom =
+            BigInt::from_str(denom).unwrap_or_else(|e| panic!("bad denominator {token}: {e}"));
         BigRational::new(numer, denom)
     } else {
         BigRational::from_integer(
@@ -188,7 +204,39 @@ fn empty_row(poly_id: &str, facet_count: usize) -> OrbitFeatureRow {
         orbit_selected_out_degree_std: 0.0,
         orbit_selected_out_degree_min: 0.0,
         orbit_selected_out_degree_max: 0.0,
+        orbit_kkt_available: 0.0,
+        orbit_search_scalar_available: 0.0,
+        orbit_result_iterations_log1p: 0.0,
+        orbit_result_returned_orbit_count: 0.0,
+        orbit_best_beta_margin: 0.0,
+        orbit_best_q_error_bound: 0.0,
+        orbit_best_has_mu: 0.0,
+        orbit_best_has_xi: 0.0,
+        orbit_best_is_admissible_exact: 0.0,
+        orbit_best_is_indeterminate_f64: 0.0,
     }
+}
+
+fn fallback_orbit_scalars(polytope: &Polytope4D, record: &PolytopeRecord) -> Option<OrbitScalars> {
+    let best_sigma = record.sigmas.as_ref()?.first()?;
+    let orbit =
+        solve_orbit_sigma(polytope, &best_sigma.perm, OrbitSolveBackend::SaddlePoint).ok()?;
+    Some(OrbitScalars {
+        iterations: 0,
+        returned_orbit_count: 0,
+        best_beta_margin: orbit.beta_margin,
+        best_q_error_bound: orbit.q_error_bound,
+        best_has_mu: orbit.mu.is_some(),
+        best_has_xi: orbit.xi.is_some(),
+        best_is_admissible_exact: matches!(
+            orbit.admissibility,
+            OrbitAdmissibility::AdmissibleExact
+        ),
+        best_is_indeterminate_f64: matches!(
+            orbit.admissibility,
+            OrbitAdmissibility::IndeterminateF64
+        ),
+    })
 }
 
 fn build_cache_index(package_root: &Path) -> HashMap<DualVerticesKey, PolytopeRecord> {
@@ -221,8 +269,9 @@ fn build_row(
         return empty_row(&poly.poly_id, poly.facet_count);
     };
 
-    let polytope = Polytope4D::from_rational_parts(dual_vertices, parse_vec4(&poly.vertices_rational))
-        .unwrap_or_else(|e| panic!("reconstruct {}: {e}", poly.poly_id));
+    let polytope =
+        Polytope4D::from_rational_parts(dual_vertices, parse_vec4(&poly.vertices_rational))
+            .unwrap_or_else(|e| panic!("reconstruct {}: {e}", poly.poly_id));
     let duals = polytope.dual_vertices_f64();
     let transition = build_transition_matrix(&polytope);
     let perm = &best_sigma.perm;
@@ -266,12 +315,31 @@ fn build_row(
         }
     }
 
-    let (orbit_selected_norm_mean, orbit_selected_norm_std, orbit_selected_norm_min, orbit_selected_norm_max) =
-        stats_or_zero(&selected_norms);
-    let (orbit_cycle_abs_omega_mean, orbit_cycle_abs_omega_std, orbit_cycle_abs_omega_min, orbit_cycle_abs_omega_max) =
-        stats_or_zero(&cycle_abs_omegas);
-    let (orbit_selected_out_degree_mean, orbit_selected_out_degree_std, orbit_selected_out_degree_min, orbit_selected_out_degree_max) =
-        stats_or_zero(&selected_out_degrees);
+    let (
+        orbit_selected_norm_mean,
+        orbit_selected_norm_std,
+        orbit_selected_norm_min,
+        orbit_selected_norm_max,
+    ) = stats_or_zero(&selected_norms);
+    let (
+        orbit_cycle_abs_omega_mean,
+        orbit_cycle_abs_omega_std,
+        orbit_cycle_abs_omega_min,
+        orbit_cycle_abs_omega_max,
+    ) = stats_or_zero(&cycle_abs_omegas);
+    let (
+        orbit_selected_out_degree_mean,
+        orbit_selected_out_degree_std,
+        orbit_selected_out_degree_min,
+        orbit_selected_out_degree_max,
+    ) = stats_or_zero(&selected_out_degrees);
+    let orbit_scalars = record
+        .orbit_scalars
+        .clone()
+        .or_else(|| fallback_orbit_scalars(&polytope, record));
+    let orbit_search_scalar_available = orbit_scalars
+        .as_ref()
+        .is_some_and(|scalars| scalars.returned_orbit_count > 0 || scalars.iterations > 0);
 
     let cycle_len = cycle_abs_omegas.len() as f64;
     OrbitFeatureRow {
@@ -317,6 +385,40 @@ fn build_row(
         orbit_selected_out_degree_std,
         orbit_selected_out_degree_min,
         orbit_selected_out_degree_max,
+        orbit_kkt_available: orbit_scalars.is_some() as u8 as f64,
+        orbit_search_scalar_available: orbit_search_scalar_available as u8 as f64,
+        orbit_result_iterations_log1p: orbit_scalars
+            .as_ref()
+            .map(|scalars| (scalars.iterations as f64).ln_1p())
+            .unwrap_or(0.0),
+        orbit_result_returned_orbit_count: orbit_scalars
+            .as_ref()
+            .map(|scalars| scalars.returned_orbit_count as f64)
+            .unwrap_or(0.0),
+        orbit_best_beta_margin: orbit_scalars
+            .as_ref()
+            .map(|scalars| scalars.best_beta_margin)
+            .unwrap_or(0.0),
+        orbit_best_q_error_bound: orbit_scalars
+            .as_ref()
+            .map(|scalars| scalars.best_q_error_bound)
+            .unwrap_or(0.0),
+        orbit_best_has_mu: orbit_scalars
+            .as_ref()
+            .map(|scalars| scalars.best_has_mu as u8 as f64)
+            .unwrap_or(0.0),
+        orbit_best_has_xi: orbit_scalars
+            .as_ref()
+            .map(|scalars| scalars.best_has_xi as u8 as f64)
+            .unwrap_or(0.0),
+        orbit_best_is_admissible_exact: orbit_scalars
+            .as_ref()
+            .map(|scalars| scalars.best_is_admissible_exact as u8 as f64)
+            .unwrap_or(0.0),
+        orbit_best_is_indeterminate_f64: orbit_scalars
+            .as_ref()
+            .map(|scalars| scalars.best_is_indeterminate_f64 as u8 as f64)
+            .unwrap_or(0.0),
     }
 }
 
@@ -335,6 +437,10 @@ fn main() {
         .filter(|row| row.orbit_sigma_available > 0.5)
         .count();
     write_jsonl(&out, &rows);
-    println!("Wrote {} orbit rows ({} with cached sigma payload)", rows.len(), available);
+    println!(
+        "Wrote {} orbit rows ({} with cached sigma payload)",
+        rows.len(),
+        available
+    );
     println!("Output path: {}", out.display());
 }

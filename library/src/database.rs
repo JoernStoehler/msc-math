@@ -14,6 +14,7 @@
 //! - [`Source`] — provenance enum: `Random { master_seed, attempt, ... }`,
 //!   `LagrangianProduct { n1, n2, ... }`, `Known { name }`
 //! - [`SigmaAction`] — one near-optimal orbit: `perm: Vec<usize>` + `action: f64`
+//! - [`OrbitScalars`] — bounded search / best-orbit scalar payload
 //!
 //! **Functions:**
 //! - [`load(path)`] → `HashMap<DualVerticesKey, PolytopeRecord>` (empty if file missing)
@@ -53,13 +54,13 @@
 //! `"numerator/denominator"` strings (e.g. `"3/7"`, `"-1/2"`) for human
 //! readability and `jq`/Python compatibility.
 
+use crate::{ConstructionError, Polytope4D};
 use num_rational::BigRational;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fmt;
 use std::io::{self, BufRead, Write};
 use std::path::{Path, PathBuf};
-use crate::{ConstructionError, Polytope4D};
 
 /// The key type: rational dual vertices.
 /// BigRational implements Hash + Eq, so this works as a HashMap key.
@@ -80,9 +81,7 @@ mod rational_vec4_serde {
     pub fn serialize<S: Serializer>(data: &Vec4, serializer: S) -> Result<S::Ok, S::Error> {
         let string_data: Vec<[String; 4]> = data
             .iter()
-            .map(|row| {
-                std::array::from_fn(|i| format!("{}/{}", row[i].numer(), row[i].denom()))
-            })
+            .map(|row| std::array::from_fn(|i| format!("{}/{}", row[i].numer(), row[i].denom())))
             .collect();
         string_data.serialize(serializer)
     }
@@ -94,11 +93,9 @@ mod rational_vec4_serde {
             .map(|row| {
                 let mut arr = [(); 4].map(|_| BigRational::default());
                 for (i, s) in row.iter().enumerate() {
-                    let (n, d) = s
-                        .split_once('/')
-                        .ok_or_else(|| serde::de::Error::custom(
-                            format!("expected 'numer/denom', got {:?}", s),
-                        ))?;
+                    let (n, d) = s.split_once('/').ok_or_else(|| {
+                        serde::de::Error::custom(format!("expected 'numer/denom', got {:?}", s))
+                    })?;
                     let numer = BigInt::from_str(n)
                         .map_err(|e| serde::de::Error::custom(format!("bad numerator: {e}")))?;
                     let denom = BigInt::from_str(d)
@@ -139,6 +136,10 @@ pub struct PolytopeRecord {
     pub sigma_gap_cutoff: Option<f64>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub sigmas: Option<Vec<SigmaAction>>,
+
+    // Orbit/KKT scalar payload — filled when a richer orbit result is available
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub orbit_scalars: Option<OrbitScalars>,
 }
 
 /// A near-optimal cyclic permutation and its action value.
@@ -151,6 +152,27 @@ pub struct SigmaAction {
     /// Action of this orbit: 0.5 / Q(beta), where Q is the KKT dual objective.
     /// Smaller action = tighter capacity bound.
     pub action: f64,
+}
+
+/// Bounded search-level and best-orbit scalar payload.
+#[derive(Serialize, Deserialize, Clone, PartialEq)]
+pub struct OrbitScalars {
+    /// Number of sigma candidates examined by the frontend.
+    pub iterations: u64,
+    /// Number of orbits retained in the shared result payload.
+    pub returned_orbit_count: usize,
+    /// Convenience scalar `min(beta)` of the best orbit.
+    pub best_beta_margin: f64,
+    /// Absolute error bound for the best orbit's `q`.
+    pub best_q_error_bound: f64,
+    /// Whether the best orbit payload carries closure multipliers.
+    pub best_has_mu: bool,
+    /// Whether the best orbit payload carries the normalization multiplier.
+    pub best_has_xi: bool,
+    /// Whether the best orbit required exact admissibility certification.
+    pub best_is_admissible_exact: bool,
+    /// Whether the best orbit remained indeterminate in the f64 path.
+    pub best_is_indeterminate_f64: bool,
 }
 
 #[derive(Serialize, Deserialize, Clone, PartialEq)]
@@ -233,6 +255,7 @@ impl PolytopeRecord {
             capacity_err: None,
             sigma_gap_cutoff: None,
             sigmas: None,
+            orbit_scalars: None,
         }
     }
 
@@ -256,6 +279,12 @@ impl PolytopeRecord {
     pub fn with_sigmas(mut self, sigmas: Vec<SigmaAction>, gap_cutoff: f64) -> PolytopeRecord {
         self.sigmas = Some(sigmas);
         self.sigma_gap_cutoff = Some(gap_cutoff);
+        self
+    }
+
+    /// Add bounded orbit/KKT scalar payload to an existing record.
+    pub fn with_orbit_scalars(mut self, scalars: OrbitScalars) -> PolytopeRecord {
+        self.orbit_scalars = Some(scalars);
         self
     }
 
@@ -349,8 +378,20 @@ fn merge_record(
         });
     }
 
-    merge_option_field(&mut dest.source, &src.source, first_path, second_path, "source")?;
-    merge_option_field(&mut dest.volume, &src.volume, first_path, second_path, "volume")?;
+    merge_option_field(
+        &mut dest.source,
+        &src.source,
+        first_path,
+        second_path,
+        "source",
+    )?;
+    merge_option_field(
+        &mut dest.volume,
+        &src.volume,
+        first_path,
+        second_path,
+        "volume",
+    )?;
     merge_option_field(
         &mut dest.volume_err,
         &src.volume_err,
@@ -379,7 +420,20 @@ fn merge_record(
         second_path,
         "sigma_gap_cutoff",
     )?;
-    merge_option_field(&mut dest.sigmas, &src.sigmas, first_path, second_path, "sigmas")?;
+    merge_option_field(
+        &mut dest.sigmas,
+        &src.sigmas,
+        first_path,
+        second_path,
+        "sigmas",
+    )?;
+    merge_option_field(
+        &mut dest.orbit_scalars,
+        &src.orbit_scalars,
+        first_path,
+        second_path,
+        "orbit_scalars",
+    )?;
     Ok(())
 }
 
@@ -424,9 +478,8 @@ pub fn save(path: &Path, db: &HashMap<DualVerticesKey, PolytopeRecord>) -> io::R
         let file = std::fs::File::create(&tmp_path)?;
         let mut writer = io::BufWriter::new(file);
         for record in db.values() {
-            serde_json::to_writer(&mut writer, record).map_err(|e| {
-                io::Error::other(format!("serialize: {}", e))
-            })?;
+            serde_json::to_writer(&mut writer, record)
+                .map_err(|e| io::Error::other(format!("serialize: {}", e)))?;
             writer.write_all(b"\n")?;
         }
         writer.flush()?;
@@ -493,8 +546,7 @@ mod tests {
     #[test]
     fn save_load_round_trip() {
         let p = test_polytope();
-        let record = PolytopeRecord::from_polytope(&p)
-            .with_computed_fields(1.23, 0.01, 4.56, 0.02);
+        let record = PolytopeRecord::from_polytope(&p).with_computed_fields(1.23, 0.01, 4.56, 0.02);
 
         let mut db = HashMap::new();
         db.insert(record.key(), record);

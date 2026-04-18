@@ -577,18 +577,23 @@ implementation starts.
      question.
 
 2. **Richer cached orbit/KKT scalar payload**
-   - Extend experiment-side cache writes so endpoint records preserve a few more
-     orbit-search scalars when they are already computed, instead of storing
-     only `best_sigma`.
-   - Candidate columns:
-     admissibility mode, action interval width, `q_error_bound`, simple `beta`
-     summaries when the payload is already available.
-   - Why next:
-     the current sigma-local orbit block was the first non-metadata block that
-     helped endpoint prediction at all.
-   - Feedback loop:
-     still strong if this stays on small scalar summaries rather than a full
-     orbit object export.
+   - Landed as optional `orbit_scalars` on `PolytopeRecord`, currently filled by
+     the fixed-`F` ascent endpoint writers and the canonical random baseline
+     packets. `feature_orbit` now reads these cached scalars when present and
+     falls back to one best-sigma KKT solve for older cache rows; at the moment
+     that fallback still covers the `variable-f-ascent` packet.
+   - Current scalar set:
+     search iterations, retained-orbit count, best-orbit `beta_margin`,
+     `q_error_bound`, and boolean `mu` / `xi` / exact-certification flags.
+   - Result:
+     the richer `orbit` block improves the random regime further
+     (`R^2=0.3222` ridge, `0.3970` RF) but leaves the endpoint regime
+     essentially unchanged (`R^2=0.1083` ridge, `0.0967` RF). Transfer remains
+     strongly negative and becomes even more negative on the random-to-endpoint
+     surface once the random packet carries search-level orbit scalars.
+   - Interpretation:
+     this strengthens the reading that cheap orbit/KKT structure is real in the
+     random packet but still not the missing transferable endpoint signal.
 
 3. **Bounded face-level Euclidean features**
    - Add a `poly_id`-keyed table with scalar summaries of facet 3-volumes, edge
@@ -634,10 +639,9 @@ These are now blocked primarily by row count, not by missing local scaffolding.
 
 If local work continues before new LICCA rows arrive, use this order:
 
-1. richer cached orbit/KKT scalar payload
-2. bounded face-level Euclidean features
-3. bounded face-level symplectic features
-4. only then revisit richer trajectory/state-graph methods
+1. bounded face-level Euclidean features
+2. bounded face-level symplectic features
+3. only then revisit richer trajectory/state-graph methods
 
 If new LICCA rows arrive first, pause local feature proliferation and refresh
 the endpoint datasets before adding more model families.

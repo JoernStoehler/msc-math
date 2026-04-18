@@ -16,7 +16,7 @@ use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 use symplectic::algorithms::billiard::facet_classification::FacetClassification;
-use symplectic::database::PolytopeRecord;
+use symplectic::database::{OrbitScalars, PolytopeRecord};
 use symplectic::derivatives::{
     clarke_directional_derivative_a, sys_subgradients_a, ClarkeSubdiffA,
 };
@@ -300,6 +300,23 @@ pub fn compute_sys(polytope: &Polytope4D) -> Option<f64> {
 /// Compute the active-orbit capacity result.
 pub fn compute_capacity_result(polytope: &Polytope4D) -> Option<OrbitSearchResult> {
     symplectic::ehz_capacity(polytope).ok()
+}
+
+pub fn orbit_scalars_from_result(result: &OrbitSearchResult) -> OrbitScalars {
+    let best = result.best_orbit();
+    OrbitScalars {
+        iterations: result.iterations,
+        returned_orbit_count: result.orbits.len(),
+        best_beta_margin: best.beta_margin,
+        best_q_error_bound: best.q_error_bound,
+        best_has_mu: best.mu.is_some(),
+        best_has_xi: best.xi.is_some(),
+        best_is_admissible_exact: matches!(best.admissibility, OrbitAdmissibility::AdmissibleExact),
+        best_is_indeterminate_f64: matches!(
+            best.admissibility,
+            OrbitAdmissibility::IndeterminateF64
+        ),
+    }
 }
 
 fn flatten_gradient(grad: &[Vector4<f64>]) -> Vec<f64> {

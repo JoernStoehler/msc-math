@@ -37,9 +37,9 @@
 
 use exp_sys_landscape::{
     apply_dual_step, ascent_direction, compute_active_sys_state, compute_step_bound, compute_sys,
-    dual_vertices_rational_strings, finalize_ascent_output, open_ascent_writers, parse_ascent_args,
-    run_parallel_seeds, smoke_output_path, trace_path_for, AscentArgs, AscentMode, SeedResult,
-    SummaryRow, TraceRow, MAX_STEP_SIZE,
+    dual_vertices_rational_strings, finalize_ascent_output, open_ascent_writers,
+    orbit_scalars_from_result, parse_ascent_args, run_parallel_seeds, smoke_output_path,
+    trace_path_for, AscentArgs, AscentMode, SeedResult, SummaryRow, TraceRow, MAX_STEP_SIZE,
 };
 use nalgebra::Vector4;
 use rand::SeedableRng;
@@ -364,6 +364,8 @@ fn process_seed(
         }],
         0.0,
     );
+    final_record =
+        final_record.with_orbit_scalars(orbit_scalars_from_result(&final_state.capacity));
     let starting_dual_vertices_rational = dual_vertices_rational_strings(polytope);
     let final_dual_vertices_rational = dual_vertices_rational_strings(&best_polytope);
     let final_dvs: Vec<[f64; 4]> = best_polytope
@@ -521,6 +523,9 @@ fn main() {
                     }
                     if record.sigmas.is_none() {
                         record.sigmas = result.final_record.sigmas.clone();
+                    }
+                    if record.orbit_scalars.is_none() {
+                        record.orbit_scalars = result.final_record.orbit_scalars.clone();
                     }
                 })
                 .or_insert_with(|| result.final_record.clone());

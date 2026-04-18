@@ -19,6 +19,7 @@
 //! - Default root capacity wrapper (`symplectic::ehz_capacity`), which
 //!   auto-routes Lagrangian products to billiard and other inputs to pruned HK2017
 
+use exp_sys_landscape::orbit_scalars_from_result;
 use num_rational::BigRational;
 use serde::Serialize;
 use std::collections::HashMap;
@@ -110,11 +111,18 @@ fn main() {
             };
 
             // Try Source-based lookup first
-            if let Some((_, record)) = find_by_source(&db, &source) {
+            if let Some(key) = find_by_source(&db, &source).map(|(key, _)| key.clone()) {
+                let record = db
+                    .get_mut(&key)
+                    .expect("source lookup key should remain valid in the cache");
                 // Cache hit: reconstruct polytope from rational data (skip vertex enumeration)
                 let p = record
                     .to_polytope()
                     .expect("failed to reconstruct polytope from database");
+                if record.orbit_scalars.is_none() {
+                    let ehz = ehz_capacity(&p).expect("capacity recomputation failed on cache hit");
+                    record.orbit_scalars = Some(orbit_scalars_from_result(&ehz));
+                }
                 let vol = record.volume.expect("cached record missing volume");
                 let cap = record.capacity.expect("cached record missing capacity");
                 let sys = cap * cap / (2.0 * vol);
@@ -182,6 +190,7 @@ fn main() {
                 }],
                 0.0, // gap_cutoff: only storing the best sigma
             );
+            record = record.with_orbit_scalars(orbit_scalars_from_result(&ehz));
             db.insert(record.key(), record);
 
             let row = RandomSweepRow {

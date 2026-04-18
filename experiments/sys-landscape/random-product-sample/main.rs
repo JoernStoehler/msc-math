@@ -25,6 +25,7 @@
 //! generate_polytope equivalent for Lagrangian products. Database lookup is
 //! key-based (BigRational dual vertices), not Source-based.
 
+use exp_sys_landscape::orbit_scalars_from_result;
 use num_rational::BigRational;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
@@ -149,6 +150,11 @@ fn main() {
                         rotation_p_rad: 0.0,
                     });
                 }
+                if record.orbit_scalars.is_none() {
+                    let result = ehz_capacity_billiard(&polytope)
+                        .expect("billiard should accept cached Lagrangian product");
+                    record.orbit_scalars = Some(orbit_scalars_from_result(&result));
+                }
                 if let (Some(vol), Some(cap)) = (record.volume, record.capacity) {
                     let sys = cap * cap / (2.0 * vol);
 
@@ -217,6 +223,7 @@ fn main() {
                 }],
                 0.0,
             );
+            record = record.with_orbit_scalars(orbit_scalars_from_result(&result));
             db.insert(key, record);
 
             let row = RandomProductRow {

@@ -542,16 +542,34 @@ def write_summary(
     orbit_available_count = sum(
         1 for row in joined_rows if row.orbit["orbit_sigma_available"] > 0.5
     )
+    orbit_kkt_available_count = sum(
+        1 for row in joined_rows if row.orbit["orbit_kkt_available"] > 0.5
+    )
+    orbit_search_scalar_available_count = sum(
+        1 for row in joined_rows if row.orbit["orbit_search_scalar_available"] > 0.5
+    )
     trajectory_available_count = sum(
         1 for row in joined_rows if row.trajectory["trajectory_trace_available"] > 0.5
     )
     orbit_available_by_dataset: dict[str, int] = {}
+    orbit_kkt_available_by_dataset: dict[str, int] = {}
+    orbit_search_scalar_available_by_dataset: dict[str, int] = {}
     trajectory_available_by_dataset: dict[str, int] = {}
     for row in joined_rows:
         if row.orbit["orbit_sigma_available"] > 0.5:
             dataset = str(row.metadata["dataset"])
             orbit_available_by_dataset[dataset] = (
                 orbit_available_by_dataset.get(dataset, 0) + 1
+            )
+        if row.orbit["orbit_kkt_available"] > 0.5:
+            dataset = str(row.metadata["dataset"])
+            orbit_kkt_available_by_dataset[dataset] = (
+                orbit_kkt_available_by_dataset.get(dataset, 0) + 1
+            )
+        if row.orbit["orbit_search_scalar_available"] > 0.5:
+            dataset = str(row.metadata["dataset"])
+            orbit_search_scalar_available_by_dataset[dataset] = (
+                orbit_search_scalar_available_by_dataset.get(dataset, 0) + 1
             )
         if row.trajectory["trajectory_trace_available"] > 0.5:
             dataset = str(row.metadata["dataset"])
@@ -571,6 +589,8 @@ def write_summary(
         f"- random rows: `{counts_by_regime['random']}`",
         f"- endpoint rows: `{counts_by_regime['endpoint']}`",
         f"- rows with cached sigma payload: `{orbit_available_count}`",
+        f"- rows with bounded best-orbit KKT payload: `{orbit_kkt_available_count}`",
+        f"- rows with cached search-level orbit scalars: `{orbit_search_scalar_available_count}`",
         f"- rows with trace-derived trajectory payload: `{trajectory_available_count}`",
         "- dataset counts:",
     ]
@@ -580,6 +600,16 @@ def write_summary(
     for dataset, count in sorted(counts_by_dataset.items()):
         lines.append(
             f"  - `{dataset}`: `{orbit_available_by_dataset.get(dataset, 0)}` / `{count}`"
+        )
+    lines.append("- bounded best-orbit KKT coverage by dataset:")
+    for dataset, count in sorted(counts_by_dataset.items()):
+        lines.append(
+            f"  - `{dataset}`: `{orbit_kkt_available_by_dataset.get(dataset, 0)}` / `{count}`"
+        )
+    lines.append("- cached search-level orbit-scalar coverage by dataset:")
+    for dataset, count in sorted(counts_by_dataset.items()):
+        lines.append(
+            f"  - `{dataset}`: `{orbit_search_scalar_available_by_dataset.get(dataset, 0)}` / `{count}`"
         )
     lines.append("- trajectory trace coverage by dataset:")
     for dataset, count in sorted(counts_by_dataset.items()):
@@ -597,7 +627,7 @@ def write_summary(
             "- `geometry`: cheap dual-vertex summaries from `polytopes.jsonl`",
             "- `skeleton`: combinatorial counts and degree summaries from the exact 4D face lattice",
             "- `omega`: ridge-local `omega_0` summaries, exact omega-sign structure, and directed transition-graph summaries",
-            "- `orbit`: cached-`best_sigma` support size plus sigma-local geometry, `omega_0`, and transition summaries",
+            "- `orbit`: cached-`best_sigma` support size plus sigma-local geometry, `omega_0`, transition summaries, and bounded best-orbit KKT scalars",
             "- `trajectory`: endpoint-keyed step-event aggregates such as overshoot mix, phase restarts, and gradient/step-size summaries",
             "- `all`: metadata, geometry, skeleton, omega, orbit, and trajectory together",
             "",
@@ -664,7 +694,7 @@ def write_summary(
             f"- within-endpoint ridge: metadata `R^2={format_metric(metadata_endpoint['r2'])}`, geometry `R^2={format_metric(geometry_endpoint['r2'])}`, skeleton `R^2={format_metric(skeleton_endpoint['r2'])}`, omega `R^2={format_metric(omega_endpoint['r2'])}`, orbit `R^2={format_metric(orbit_endpoint['r2'])}`, trajectory `R^2={format_metric(trajectory_endpoint['r2'])}`",
             f"- random-to-endpoint transfer with full ridge block: `R^2={format_metric(all_random_to_endpoint['r2'])}`",
             f"- endpoint-to-random transfer with trajectory ridge: `R^2={format_metric(trajectory_endpoint_to_random['r2'])}`",
-            "- this packet still stops before orbit recomputation; the added search-dynamics block is a scalar summary of existing fixed-F step-event logs, not a new state-graph model.",
+            "- the richer orbit block now includes bounded best-orbit KKT scalars, using cached search-level payloads where available and a one-best-sigma fallback solve on older cache rows.",
         ]
     )
 
