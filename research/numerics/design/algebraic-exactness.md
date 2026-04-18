@@ -15,9 +15,10 @@ HKO-style polytopes whose intended coordinates live in an algebraic extension of
 
 ## Method
 
-- Implement an experiment-owned exact ordered-field interface in
-  `experiments/numerics/src/algebraic/`.
-- Implement one concrete field first:
+- Use the shared `real-algebraic` scalar layer for ordered-field arithmetic.
+- Keep exact 4D geometry, selected exact KKT solves, and experiment-owned
+  catalog/reporting code under `experiments/numerics/src/algebraic/`.
+- Use one concrete field first:
   `Q[t]/(t^4 - 10 t^2 + 5)` with `t = tan(pi/5)`.
 - Construct exact 4D polytopes over that field, including HKO's dual vertices.
 - Run selected exact KKT solves on:
@@ -47,7 +48,7 @@ HKO-style polytopes whose intended coordinates live in an algebraic extension of
 
 - No migration of `library::Polytope4D`.
 - No change to `library/src/database.rs` or the mirrored rational JSONL caches.
-- No arbitrary finite-extension backend in v1.
+- No runtime-defined finite-extension backend in v1.
 - No exhaustive exact HKO sigma sweep in v1.
 
 ## Commands

@@ -296,7 +296,7 @@ fn main() {
     println!("exact-polytopes rows: {}", polytope_rows.len());
     println!("exact-kkt rows: {}", kkt_rows.len());
     println!(
-        "Output mode: {:?}\npolytope rows: {}\nkkt rows: {}",
+        "Output mode: {:?}\npolytope output: {}\nkkt output: {}",
         mode,
         polytope_output_path.display(),
         kkt_output_path.display()

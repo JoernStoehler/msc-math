@@ -19,20 +19,19 @@ mod tests {
     use crate::algebraic::field::ExactOrderedField;
 
     #[test]
-    fn generator_satisfies_minimal_polynomial_numerically() {
+    fn generator_satisfies_minimal_polynomial_exactly() {
         let t = PentagonField::generator();
         let poly = t.clone() * t.clone() * t.clone() * t.clone()
             - PentagonField::from_i64(10) * t.clone() * t.clone()
             + PentagonField::from_i64(5);
-        assert!(poly.to_f64().abs() < 1.0e-12);
+        assert_eq!(poly, PentagonField::zero());
     }
 
     #[test]
     fn multiplication_reduces_to_canonical_basis() {
         let t = PentagonField::generator();
-        let sec = (PentagonField::from_i64(3) - t.clone() * t.clone()) / PentagonField::from_i64(2);
-        let lhs = sec.clone() * sec;
-        let rhs = PentagonField::one() + t.clone() * t;
+        let lhs = t.clone() * t.clone() * t.clone() * t.clone();
+        let rhs = PentagonField::from_i64(10) * t.clone() * t - PentagonField::from_i64(5);
         assert_eq!(lhs, rhs);
     }
 

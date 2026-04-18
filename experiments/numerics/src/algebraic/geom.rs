@@ -507,7 +507,5 @@ mod tests {
 
         assert_eq!(exact.facet_count(), library.polytope.facet_count());
         assert_eq!(exact.vertices().len(), library.polytope.vertices().len());
-        let _ = same_incidence(exact.incidence(), library.polytope.incidence());
-        let _ = same_bool_matrix(exact.vertex_adjacency(), library.polytope.vertex_adjacency());
     }
 }
