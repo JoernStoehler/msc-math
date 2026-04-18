@@ -22,7 +22,7 @@ use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::symplectic_form::omega0;
 use symplectic::geom::volume::volume;
-use symplectic::OrbitSearchResult;
+use symplectic::{OrbitAdmissibility, OrbitKktData, OrbitSearchResult};
 
 // ============================================================================
 // Step bound constants
@@ -41,6 +41,12 @@ pub const MAX_STEP_SIZE: f64 = 100.0;
 /// If changed: values much larger risk missing real boundaries; much smaller risks
 /// false positives from floating-point noise.
 const EPS_NUMERICAL_ZERO: f64 = 1e-15;
+
+/// Relative tie tolerance for admissible orbit actions in the scalar capacity
+/// minimum. This keeps the nonsmooth direction model aligned with
+/// `OrbitSearchResult::capacity()`, which already ignores indeterminate
+/// candidates.
+const ACTIVE_ORBIT_RTOL: f64 = 1e-9;
 
 // ============================================================================
 // Boundary event types
@@ -365,6 +371,27 @@ fn maximin_subgradient_direction(
     (predicted > EPS_NUMERICAL_ZERO).then_some(direction)
 }
 
+fn admissible_active_orbits(result: &OrbitSearchResult) -> Vec<&OrbitKktData> {
+    let tol = ACTIVE_ORBIT_RTOL * result.min_action.abs().max(1.0);
+    let active: Vec<&OrbitKktData> = result
+        .orbits
+        .iter()
+        .filter(|orbit| {
+            matches!(
+                orbit.admissibility,
+                OrbitAdmissibility::AdmissibleF64 | OrbitAdmissibility::AdmissibleExact
+            )
+        })
+        .filter(|orbit| (orbit.action - result.min_action).abs() <= tol)
+        .collect();
+
+    if active.is_empty() {
+        vec![result.best_orbit()]
+    } else {
+        active
+    }
+}
+
 /// Build the ascent direction for a single polytope state.
 ///
 /// With a single active orbit, this reduces to that branch gradient. At
@@ -376,7 +403,11 @@ pub fn ascent_direction(
     state: &ActiveSysState,
     mode: AscentMode<'_>,
 ) -> Option<Vec<Vector4<f64>>> {
-    let subdiff = sys_subgradients_a(polytope, &state.capacity.orbits).ok()?;
+    let active_orbits: Vec<OrbitKktData> = admissible_active_orbits(&state.capacity)
+        .into_iter()
+        .cloned()
+        .collect();
+    let subdiff = sys_subgradients_a(polytope, &active_orbits).ok()?;
     match subdiff.as_slice() {
         [] => None,
         [single] => {
@@ -490,14 +521,20 @@ pub fn smoke_output_path(label: &str, file_name: &str) -> PathBuf {
 }
 
 /// Parse ascent CLI arguments. Callers pass the binary's default seed, default
-/// output path, and a name prefix (`"general"` or `"products"`).
+/// sample count, default output path, and a name prefix (`"general"` or
+/// `"products"`).
 ///
 /// Recognized flags:
 /// `--n`, `--n-start`, `--seed`, `--out`, `--fresh`, `--db-update`, `--no-db-update`.
-pub fn parse_ascent_args(default_seed: u64, default_out: PathBuf, prefix: &str) -> AscentArgs {
+pub fn parse_ascent_args(
+    default_seed: u64,
+    default_n: usize,
+    default_out: PathBuf,
+    prefix: &str,
+) -> AscentArgs {
     let argv: Vec<String> = std::env::args().collect();
 
-    let mut n: usize = 10;
+    let mut n: usize = default_n;
     let mut n_start: usize = 0;
     let mut seed: u64 = default_seed;
     let mut out: Option<PathBuf> = None;
@@ -873,6 +910,47 @@ mod tests {
     use super::*;
     use symplectic::algorithms::billiard::facet_classification::classify_facets;
     use symplectic::geom::known_polytopes;
+
+    #[test]
+    fn admissible_active_orbits_ignore_indeterminate_candidates() {
+        let admissible = OrbitKktData {
+            sigma: vec![0, 1],
+            beta: vec![0.5, 0.5],
+            beta_margin: 0.5,
+            action: 1.0,
+            action_lower: 1.0,
+            action_upper: 1.0,
+            q: 0.5,
+            q_error_bound: 0.0,
+            mu: Some([0.0; 4]),
+            xi: Some(1.0),
+            admissibility: OrbitAdmissibility::AdmissibleF64,
+        };
+        let indeterminate = OrbitKktData {
+            sigma: vec![0, 2],
+            beta: vec![1e-16, 1.0],
+            beta_margin: 1e-16,
+            action: 0.9,
+            action_lower: 0.8,
+            action_upper: 1.1,
+            q: 0.55,
+            q_error_bound: 0.1,
+            mu: Some([0.0; 4]),
+            xi: Some(1.0),
+            admissibility: OrbitAdmissibility::IndeterminateF64,
+        };
+        let result = OrbitSearchResult {
+            orbits: vec![indeterminate, admissible.clone()],
+            min_action: admissible.action,
+            min_action_lower: 0.8,
+            min_action_upper: 1.0,
+            iterations: 2,
+        };
+
+        let active = admissible_active_orbits(&result);
+        assert_eq!(active.len(), 1);
+        assert_eq!(active[0].sigma, admissible.sigma);
+    }
 
     #[test]
     fn maximin_direction_finds_improving_switch_direction() {

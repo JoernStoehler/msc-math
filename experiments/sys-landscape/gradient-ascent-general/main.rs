@@ -400,7 +400,7 @@ fn insert_polytope_to_db(
 fn main() {
     let default_out =
         smoke_output_path("sys-gradient-ascent-general", "smoke-gradient-ascent-general.jsonl");
-    let args: AscentArgs = parse_ascent_args(DEFAULT_SEED, default_out, "general");
+    let args: AscentArgs = parse_ascent_args(DEFAULT_SEED, 10, default_out, "general");
     let t_global = Instant::now();
 
     let summary_path = args.out.clone();

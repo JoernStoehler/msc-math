@@ -135,7 +135,7 @@ Stronger conjecture: HKO2024 may be (up to perturbation/symplectomorphism) the o
 - `experiments/sys-landscape/rotated-regular-products/`
 
 ### [done] [2026-04] 2b. Gradient ascent from random starts
-- General: 10 seeds, best sys=0.9005. Products: 12 seeds, best sys=0.9127. No sys>1.
+- General: 10 seeds, best sys=0.9030. Products: 12 seeds, best sys=0.8727. No sys>1.
 - `experiments/sys-landscape/gradient-ascent-general/`, `experiments/sys-landscape/gradient-ascent-products/`
 
 ### [done] [2026-03] 2c. Perturbation neighborhood (structurally different sys>1?)

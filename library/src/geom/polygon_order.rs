@@ -29,14 +29,11 @@ pub(crate) fn sort_polygon_order(vertices: &[Vector4<f64>]) -> Option<Vec<usize>
     }
     let d1 = d1_raw / d1_norm;
 
-    let d2 = match vertices.iter().skip(1).find_map(|v| {
+    let d2 = vertices.iter().skip(1).find_map(|v| {
         let rel = *v - centroid;
         let proj = rel - d1 * rel.dot(&d1);
         (proj.norm() > EPS_COLLINEAR).then(|| proj.normalize())
-    }) {
-        Some(d) => d,
-        None => return None,
-    };
+    })?;
 
     let mut indexed: Vec<(f64, usize)> = vertices
         .iter()
