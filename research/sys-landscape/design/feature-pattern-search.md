@@ -45,11 +45,19 @@ Implementation status:
   ridge-local `omega_0` summaries and directed transition-graph features help
   within the random regime (`R^2 ≈ 0.27` with ridge), but they still fail on
   the endpoint regime (`R^2 ≈ -0.03`) and do not transfer across regimes
+- 2026-04-18: fixed-`F` ascent cache writes now preserve cached `best_sigma`
+  payloads for endpoint rows, and a bounded `feature_orbit.jsonl` enrichment
+  landed via `sys-feature-orbit`
+- current orbit result:
+  sigma-local support-size, geometry, `omega_0`, and transition features help
+  the endpoint regime more than geometry/skeleton/omega alone
+  (`R^2 ≈ 0.11` with ridge), but they still underperform the metadata baseline
+  (`R^2 ≈ 0.44`) and remain strongly non-transferable
 - current implication:
   there is still no evidence for a cheap transferable pattern; the next
-  enrichment step, if pursued, should move past cheap combinatorics and
-  cheap omega summaries toward richer face-level symplectic data or
-  orbit-sensitive features rather than more provenance metadata
+  enrichment step, if pursued, should move past cached-`best_sigma` summaries
+  toward richer face-level symplectic data or full orbit/KKT payloads rather
+  than more provenance metadata
 
 The design question here is not "which regressor should we try first?" The
 durable question is "what persisted dataset shape lets us try many methods
@@ -100,7 +108,7 @@ Current committed source surfaces already cover:
   `experiments/hko-local-maximum/cut-and-ascent/cut-and-ascent.jsonl`
   with 20 rows
 - reusable rational polytope caches:
-  `experiments/sys-landscape/cache.jsonl` with 170 rows and
+  `experiments/sys-landscape/cache.jsonl` with 214 rows and
   `experiments/combinatorial-cells/polytopes.jsonl` with 953 rows
 - existing orbit/symplectic feature packet:
   `experiments/combinatorial-cells/omega-hypothesis/omega-obstacle.jsonl`
@@ -219,9 +227,9 @@ Primary source:
 
 Current exact-cache counts:
 
-- `sys-landscape/cache.jsonl`: 170 rows
+- `sys-landscape/cache.jsonl`: 214 rows
 - `combinatorial-cells/polytopes.jsonl`: 953 rows
-- `variable-f-ascent/cache.jsonl`: 12786 rows, but with weaker provenance
+- `variable-f-ascent/cache.jsonl`: 20061 rows, but with weaker provenance
   metadata than the other two caches
 
 #### `states.jsonl`
