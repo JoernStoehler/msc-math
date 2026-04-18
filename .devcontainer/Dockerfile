@@ -97,12 +97,16 @@ RUN curl -LsSf https://astral.sh/uv/${UV_VERSION}/install.sh | sh
 # this image, so we bake a Miniforge-based Sage environment into the image and
 # expose `sage` / `mamba` / `conda` via `/usr/local/bin`.
 ENV MINIFORGE_DIR=/opt/miniforge
+ENV MINIFORGE_VERSION=25.11.0-1
+ENV MINIFORGE_SHA256=be1bad9d4e67a8753eb76fb4940e9a08036786675c7adf060627e55791bf110d
+ENV SAGE_VERSION=10.7
 RUN set -eux; \
-    installer="/tmp/Miniforge3-$(uname)-$(uname -m).sh"; \
-    curl -L "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh" -o "$installer"; \
+    installer="/tmp/Miniforge3-${MINIFORGE_VERSION}-$(uname)-$(uname -m).sh"; \
+    curl -L "https://github.com/conda-forge/miniforge/releases/download/${MINIFORGE_VERSION}/Miniforge3-${MINIFORGE_VERSION}-$(uname)-$(uname -m).sh" -o "$installer"; \
+    echo "${MINIFORGE_SHA256}  ${installer}" | sha256sum -c -; \
     bash "$installer" -b -p "$MINIFORGE_DIR"; \
     rm -f "$installer"; \
-    "$MINIFORGE_DIR/bin/mamba" create -y -n sage sage; \
+    "$MINIFORGE_DIR/bin/mamba" create -y -c conda-forge -n sage "sage=${SAGE_VERSION}"; \
     ln -sf "$MINIFORGE_DIR/bin/mamba" /usr/local/bin/mamba; \
     ln -sf "$MINIFORGE_DIR/bin/conda" /usr/local/bin/conda; \
     ln -sf "$MINIFORGE_DIR/envs/sage/bin/sage" /usr/local/bin/sage; \
