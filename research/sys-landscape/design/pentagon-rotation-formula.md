@@ -169,6 +169,57 @@ The strongest useful statement would not be
 Any of those would turn the continuity idea into a usable proof mechanism
 instead of a slogan.
 
+### Formal reduction now written down
+
+The private draft now states the reduction explicitly instead of hiding it in a
+gap comment:
+
+- `lem:pentagon-rotation-three-bounce-smooth`:
+  for a fixed `3`-bounce `sigma`, the strict-feasibility set
+  `U_sigma = {theta : M_sigma non-singular, beta_sigma > 0, Q_sigma > 0}`
+  is open, and the per-orbit action `A_sigma(theta)` is smooth on each
+  connected component of `U_sigma`;
+- `lem:pentagon-rotation-three-bounce-continuity`:
+  on such a component, `A_sigma > g` almost everywhere implies
+  `A_sigma >= g` everywhere, where `g(theta)` is the explicit `2`-bounce
+  capacity;
+- `lem:pentagon-rotation-three-bounce-reduction`:
+  the global blocker is reduced to two concrete tasks:
+  1. prove the almost-everywhere strict inequality on every strict-feasibility
+     component;
+  2. control admissible endpoint or singular cases by contraction or a separate
+     nonminimality argument.
+
+So the current gap is now narrower and more honest:
+
+- interior strict-feasibility intervals need a branchwise lower bound or a
+  theta-uniform sliding/stationarity argument;
+- endpoints still need to be classified as contraction points, midpoint
+  equality cases, or impossible minimizers.
+
+### Current empirical shortlist of relevant 3-bounce families
+
+The committed legend and branch plots already isolate a small competitive
+surface, even without the missing `three-bounce-branches.jsonl` artifact:
+
+- closest open-interval competitors:
+  - `Q:0-1-23  P:2-3-01`
+  - `Q:0-1-34  P:3-4-01`
+  both appear on the full sampled open interval `0.0..17.75 degree`;
+- next visible competitor tier:
+  - `Q:0-1-3  P:0-2-3`
+  - `Q:0-1-3  P:1-3-4`
+  - `Q:0-2-34  P:0-3-12`
+  - `Q:0-2-34  P:2-4-01`
+- endpoint signal:
+  `Q:0-2-34  P:2-4-01` disappears before the midpoint, at `17.75 degree`,
+  so it is a concrete candidate for a contraction-endpoint analysis.
+
+This does not prove anything by itself, but it means a branchwise proof does not
+have to start from the full raw `sigma` soup. The first serious lower-bound or
+sliding attempt should probably target these few signatures first, then explain
+why the rest are farther away automatically.
+
 ## Session Resume Note (2026-04-18)
 
 This worktree now has an owned experiment surface, a readable figure set, and a

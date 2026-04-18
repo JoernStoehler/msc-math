@@ -33,13 +33,14 @@ Let
 and let~$P_5$ be the regular pentagon with those vertices. Since rotating both
 factors by the same angle is symplectic, the experiment convention used in
 `experiments/sys-landscape/pentagon-rotation-formula/main.rs` is symplectically
-equivalent to the standard one used here. The HKO special case, stated as a
-rotation by $90$ degrees, corresponds to $\theta = \pi/10$ in the present
-parameter because $90^\circ \equiv 18^\circ \pmod{72^\circ}$.
+equivalent to the standard one used here. The HKO special case uses the second
+pentagon with vertices at angles $-\pi/2 + 2\pi k/5$, i.e. a rotation by
+$-\pi/2$. Modulo the pentagon's $2\pi/5$ rotational symmetry this is the same
+midpoint configuration as the present parameter value $\theta=\pi/10$, up to
+the sign convention for rotating the second factor.
 
 \begin{unverified}
 \paragraph{Conjectural target.}
-\label{conj:pentagon-rotation-formula}
 Let~$P_5 \subset \mathbb{R}^2$ be the regular pentagon with circumradius~$1$
 in the angle convention used by the experiment code. For
 \[
@@ -344,14 +345,14 @@ because the support values at $w_2(\theta)$ and $w_3(\theta)$ agree there. Thus
 \end{align*}
 Hence the 2-bounce capacity candidate is
 \[
-  c_{\mathrm{EHZ}}(K_\theta)
+  c_{2\text{-bounce}}(K_\theta)
   =
   A\left(1+\cos\left(\frac{\pi}{5}\right)\right)\sec\theta
   =
   A^2 \sec\theta
   \quad \text{for } 0 \le \theta \le \frac{\pi}{10}.
 \]
-At $\theta=0$, this is $c_{\mathrm{EHZ}}(K_0)=A^2$.
+At $\theta=0$, this candidate value is $A^2$.
 
 The volume stays constant:
 \[
@@ -362,7 +363,7 @@ The volume stays constant:
 Therefore
 \[
   \mathrm{sys}(K_\theta)
-  =
+  \le
   \frac{A^4}{2\operatorname{area}(P_5)^2}\sec^2\theta.
 \]
 Using
@@ -408,9 +409,9 @@ minimizing opposite-edge parameter is
 \label{lem:pentagon-rotation-capacity}
 On the same branch,
 \[
-  c_{\mathrm{EHZ}}(K_\theta)
+  c_{2\text{-bounce}}(K_\theta)
   =
-  c_{\mathrm{EHZ}}(K_0)\sec(\theta).
+  c_{2\text{-bounce}}(K_0)\sec(\theta).
 \]
 \end{lemma}
 \end{unverified}
@@ -433,18 +434,139 @@ This is a sanity check only. It is not part of the proof.
 \end{unverified}
 
 \begin{unverified}
+\begin{lemma}[Strict-feasibility 3-bounce branches are smooth]
+\label{lem:pentagon-rotation-three-bounce-smooth}
+Fix a 3-bounce cyclic permutation~$\sigma$ from the billiard enumeration and
+define
+\[
+  U_\sigma
+  :=
+  \left\{
+    \theta \in [0,\pi/10] :
+    M_\sigma(\theta) \text{ is non-singular},\;
+    \beta_\sigma(\theta) > 0,\;
+    Q_\sigma(\theta) > 0
+  \right\}.
+\]
+Then $U_\sigma$ is open in~$[0,\pi/10]$. On each connected component
+$I \subset U_\sigma$, the per-orbit action
+\[
+  A_\sigma(\theta) := \frac{1}{2Q_\sigma(\theta)}
+\]
+is smooth, hence continuous.
+\end{lemma}
+
+\begin{proof}
+Let $a(\theta)$ denote the dual-vertex data of~$K_\theta$.
+The map $\theta \mapsto a(\theta)$ is smooth because the second factor is
+obtained from a fixed pentagon by rotation.
+If $\theta_0 \in U_\sigma$, then
+$M_\sigma(a(\theta_0))$ is non-singular,
+$\beta_\sigma(a(\theta_0)) > 0$,
+and $Q_\sigma(a(\theta_0)) > 0$.
+Lemma~\ref{lem:orbit-feasibility-open} yields an $\varepsilon > 0$ such that
+the same strict inequalities persist for
+$|\theta-\theta_0|<\varepsilon$, so $U_\sigma$ is open.
+Lemma~\ref{lem:per-orbit-smooth} applied to the smooth parameter
+$a(\theta)$ shows that $A_\sigma(\theta)$ is smooth on the same
+neighborhood. Since this holds at every point of~$U_\sigma$, the action is
+smooth on each connected component~$I \subset U_\sigma$.
+\end{proof}
+\end{unverified}
+
+\begin{unverified}
+\begin{lemma}[Continuity reduction on a strict-feasibility interval]
+\label{lem:pentagon-rotation-three-bounce-continuity}
+Let~$\sigma$ be a 3-bounce cyclic permutation and let $I \subset U_\sigma$ be
+a connected component as in
+Lemma~\ref{lem:pentagon-rotation-three-bounce-smooth}. Define
+\[
+  g(\theta)
+  :=
+  \left(1+\cos\left(\frac{\pi}{5}\right)\right)^2 \sec(\theta),
+\]
+the explicit 2-bounce capacity from
+Proposition~\ref{prop:pentagon-rotation-two-bounce}. If
+\[
+  A_\sigma(\theta) > g(\theta)
+  \qquad
+  \text{for almost every } \theta \in I,
+\]
+then
+\[
+  A_\sigma(\theta) \ge g(\theta)
+  \qquad
+  \text{for every } \theta \in I.
+\]
+\end{lemma}
+
+\begin{proof}
+By Lemma~\ref{lem:pentagon-rotation-three-bounce-smooth},
+$A_\sigma$ is continuous on~$I$, and $g$ is continuous on~$[0,\pi/10]$.
+If there were $\theta_0 \in I$ with $A_\sigma(\theta_0) < g(\theta_0)$, then
+continuity of $A_\sigma-g$ would imply $A_\sigma(\theta) < g(\theta)$ on an
+open neighborhood of~$\theta_0$ inside~$I$. That neighborhood has positive
+measure, contradicting the assumed almost-everywhere strict inequality.
+\end{proof}
+\end{unverified}
+
+\begin{unverified}
+\begin{lemma}[Reduction of the 3-bounce blocker to branch interiors and endpoints]
+\label{lem:pentagon-rotation-three-bounce-reduction}
+Assume the following.
+\begin{enumerate}
+\item For every 3-bounce cyclic permutation~$\sigma$ and every connected
+  component $I \subset U_\sigma$, one has
+  $A_\sigma(\theta) > g(\theta)$ for almost every $\theta \in I$, where
+  $g(\theta)$ is the explicit 2-bounce capacity from
+  Lemma~\ref{lem:pentagon-rotation-three-bounce-continuity}.
+\item For every admissible 3-bounce orbit at an angle
+  $\theta_0 \in [0,\pi/10]$ that does not lie in any such strict-feasibility
+  component, either:
+  \begin{enumerate}
+  \item some $\beta_k(\theta_0)=0$, so the orbit contracts to a 2-bounce orbit
+    with the same action by Lemma~\ref{lem:orbit-contraction}, and that
+    contracted 2-bounce orbit is shown to have action at least~$g(\theta_0)$;
+    or
+  \item that orbit is shown separately not to minimize.
+  \end{enumerate}
+\end{enumerate}
+Then every minimizing 3-bounce trajectory on $0 \le \theta \le \pi/10$ has
+$T^\circ$-length at least that of the minimizing 2-bounce family.
+\end{lemma}
+
+\begin{proof}
+Fix an admissible 3-bounce orbit at angle~$\theta_0$ and choose a cyclic
+permutation~$\sigma$ representing it.
+If $\theta_0 \in U_\sigma$, then $\theta_0$ lies in a connected component
+$I \subset U_\sigma$, and
+Lemma~\ref{lem:pentagon-rotation-three-bounce-continuity} gives
+$A_\sigma(\theta_0) \ge g(\theta_0)$.
+If $\theta_0 \notin U_\sigma$, then assumption~(2) applies.
+In case~(a), Lemma~\ref{lem:orbit-contraction} reduces the action to a
+2-bounce orbit with the same value, and the remaining comparison with
+$g(\theta_0)$ is part of assumption~(2a).
+In case~(b), the orbit is not minimizing by assumption.
+Thus no minimizing 3-bounce orbit can have action below~$g(\theta)$ on the
+half-domain.
+\end{proof}
+\end{unverified}
+
+\begin{unverified}
 \begin{lemma}[3-bounce exclusion: current blocker]
 \label{lem:pentagon-rotation-three-bounce}
 Every minimizing 3-bounce trajectory on $0 \le \theta \le \pi/10$ has
 $T^\circ$-length at least that of the minimizing 2-bounce family above.
 \end{lemma}
 
-% [GAP - The current best route is to prove that every minimizing 3-bounce
-% branch collapses to a boundary point of the edge-parameter domain, hence to a
-% 2-bounce comparison, by a theta-uniform adaptation of the HKO sliding or
-% first-order stationarity argument. The active support labels differ from the
-% HKO midpoint labels in the convention used here, so that reduction still
-% needs a clean write-up.]
+% [GAP - Lemma~\ref{lem:pentagon-rotation-three-bounce-reduction} isolates the
+% remaining burden. It is still open to verify the interior inequality
+% $A_\sigma > g$ on each strict-feasibility interval for the relevant
+% 3-bounce combinatorics, and to show that every admissible endpoint away from
+% the midpoint is either a contraction point or cannot minimize. The natural
+% candidate route is a theta-uniform replacement for the HKO midpoint sliding
+% sign computation, but the active support labels move with theta and the
+% midpoint equality analysis does not transplant verbatim.]
 \end{unverified}
 
 \begin{unverified}
