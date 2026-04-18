@@ -9,8 +9,10 @@ Goal: Assess whether projected gradient ascent on Lagrangian products reaches
       sys > sys(HKO2024) = 1.0472 at F=10, and build a distribution of
       ascent endpoints per (q,p) split. Bayesian update uses 3/N upper
       credible bound on hit density under 0 hits.
-Input Artifacts: experiments/sys-landscape/gradient-ascent-products/data/*.jsonl (per-seed summaries).
-       Preference order: licca.jsonl > licca-shard-*.jsonl (legacy architecture-A) > smoke.jsonl.
+Input Artifacts:
+  - experiments/sys-landscape/gradient-ascent-products/data/*.jsonl (per-seed summaries)
+  - experiments/sys-landscape/gradient-ascent-products/gradient-ascent-products.jsonl (bounded local fallback)
+       Preference order: licca.jsonl > licca-shard-*.jsonl (legacy architecture-A) > smoke.jsonl > gradient-ascent-products.jsonl.
 Output Artifacts:
   - gradient_ascent_products_distribution.png   (final sys histogram; linear)
   - gradient_ascent_products_tail.png           (final sys histogram; log-y tail)

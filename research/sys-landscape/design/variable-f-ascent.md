@@ -20,15 +20,9 @@ The four-way comparison separates "structured entry from F-space helps" from "mo
 
 ## Status
 
-**Active.** Initial implementation.
-
-Freshness note:
-
-- 2026-04-18: the tracked `variable-f-ascent.jsonl` artifact was refreshed in
-  this worktree after the fixed-`F` ascent source packets were refreshed
-- the findings section below summarizes the older 2026-04-04 packet and should
-  be treated as historical until `analyze.py` and this logbook are rerun
-  against the refreshed artifact set
+**Active.** Initial implementation. The tracked
+`variable-f-ascent.jsonl` artifact was refreshed on 2026-04-18 after the
+fixed-`F` source packets were regenerated.
 
 ## How to run
 
@@ -84,50 +78,58 @@ Starting points: 10 F=10 local maxima from gradient-ascent-general (final_dual_v
 
 10 random F=10 starting polytopes (fresh, master seed 43 to avoid overlap with gradient-ascent-general's seed 42). For each, all four paths run from the same starting polytope.
 
-## Findings (2026-04-04)
+## Findings (2026-04-18 refreshed packet)
 
-Total runtime: 1986s (~33 min), 90 trials. Cached rerun: 111s.
+Current packet: `90` completed trials (`50` for RQ1, `40` for RQ2).
 
-### RQ1: 43/50 (86%) improved over F=10 local max
+### RQ1: 45/50 (90%) improved over the source F=10 local maximum
 
-F=11 gradient ascent starting from barely-perturbed F=10 local maxima **consistently improves sys**. All added facets remained non-redundant (active) at the end of optimization — the F+1 polytope genuinely uses the extra degree of freedom.
+F=11 gradient ascent starting from a barely-perturbed F=10 local maximum still
+improves `sys` in the large majority of placements, and the added facet
+remained active in `100%` of the refreshed packet.
 
 | Source | src_sys | Improved | Best final | Best Δ |
 |--------|---------|----------|------------|--------|
-| general_0 | 0.7763 | 5/5 | 0.8231 | +0.047 |
-| general_1 | 0.8321 | 2/5 | 0.8515 | +0.019 |
-| general_2 | 0.8887 | 4/5 | 0.8945 | +0.006 |
-| general_3 | 0.8551 | 5/5 | 0.8835 | +0.028 |
-| general_4 | 0.7617 | 4/5 | 0.8191 | +0.057 |
-| general_5 | 0.8748 | 5/5 | 0.8927 | +0.018 |
-| general_6 | 0.7888 | 5/5 | 0.8219 | +0.033 |
-| general_7 | 0.9005 | 3/5 | 0.9035 | +0.003 |
-| general_8 | 0.8324 | 5/5 | 0.8752 | +0.043 |
-| general_9 | 0.7151 | 5/5 | 0.7593 | +0.044 |
+| general_0 | 0.7691 | 5/5 | 0.8211 | +0.0520 |
+| general_1 | 0.7540 | 5/5 | 0.8046 | +0.0507 |
+| general_2 | 0.8310 | 4/5 | 0.8579 | +0.0269 |
+| general_3 | 0.7905 | 5/5 | 0.8283 | +0.0379 |
+| general_4 | 0.8750 | 5/5 | 0.8759 | +0.0009 |
+| general_5 | 0.6909 | 5/5 | 0.8172 | +0.1263 |
+| general_6 | 0.7506 | 5/5 | 0.7997 | +0.0491 |
+| general_7 | 0.8582 | 4/5 | 0.8856 | +0.0274 |
+| general_8 | 0.7167 | 4/5 | 0.7590 | +0.0423 |
+| general_9 | 0.9030 | 3/5 | 0.9063 | +0.0034 |
 
-**Improvement rate correlates inversely with src_sys:** lower local maxima improve more reliably (general_0 at 0.776: 5/5) than higher ones (general_7 at 0.901: 3/5). The higher the F=10 local max, the closer it already is to the F=11 local max above it.
+The refreshed packet strengthens the same qualitative split: weaker F=10 local
+maxima can move substantially in F=11, while the strongest fixed-F seed
+`general_9` only improves in `3/5` placements and only up to `0.9063`. Mean
+`Δ` across all `50` RQ1 trials is `+0.0257`; the largest gain is
+`+0.1263` at `rq1_general_5_p2`.
 
-Mean Δ across all 50 trials: +0.016. Max Δ: +0.057 (variable-f-ascent.jsonl, rq1_general_4_p3).
-
-HKO2024 testing (cut + ascent in F=11 space) moved to `experiments/hko-local-maximum/cut-and-ascent/`.
+HKO2024-near testing stays out of this packet and lives in
+`experiments/hko-local-maximum/cut-and-ascent/`.
 
 ### RQ2: Four-way comparison from random F=10 starts
 
-Four paths from the same 10 random F=10 starting polytopes (seed 43):
+Four paths from the same `10` random F=10 starting polytopes (seed `43`):
 
 | Path | Description | Mean | Median | Max | Min |
 |------|-------------|------|--------|-----|-----|
-| **D: F=10→F=11** | F=10 ascent → add facet → F=11 ascent | **0.828** | **0.852** | **0.901** | 0.698 |
-| C: random F=11 | fresh random F=11 → ascent | 0.806 | 0.805 | 0.871 | 0.723 |
-| A: F=10 ascent | F=10 → ascent | 0.795 | 0.821 | 0.879 | 0.686 |
-| B: add+F=11 | add facet → F=11 ascent | 0.707 | 0.770 | 0.860 | 0.203 |
+| **D: F=10→F=11** | F=10 ascent → add facet → F=11 ascent | **0.8422** | **0.8371** | **0.8868** | 0.8037 |
+| A: F=10 ascent | F=10 → ascent | 0.8293 | 0.8206 | 0.8861 | 0.7744 |
+| C: random F=11 | fresh random F=11 → ascent | 0.8180 | 0.8226 | 0.9032 | 0.7224 |
+| B: add+F=11 | add facet → F=11 ascent | 0.5265 | 0.5304 | 0.8818 | 0.1205 |
 
 Paired comparisons:
-- D wins **10/10** vs A. Mean(D-A) = +0.033.
-- B wins **3/10** vs A. Mean(B-A) = -0.088.
-- B wins **1/10** vs D. Mean(B-D) = -0.121.
+- D wins **10/10** vs A. Mean(D-A) = `+0.0129`.
+- B wins **2/10** vs A. Mean(B-A) = `-0.3028`.
+- B wins **1/10** vs D. Mean(B-D) = `-0.3157`.
 
-**Ordering: D > C > A > B.** Optimize first, then expand F is strictly best. Adding a thin-sliver facet before optimization (Path B) hurts — the optimizer struggles with the pathological starting geometry. Random F=11 (Path C) slightly outperforms F=10 (Path A), showing more facets help when the geometry is natural.
+The refreshed ordering is **D > A > C > B** by mean final `sys`. The main
+conclusion survives: optimize in F=10 first, then expand to F=11. The penalty
+for adding a thin facet before any optimization is much stronger in the
+refreshed packet than in the 2026-04-04 run.
 
 ### Figures
 
@@ -144,6 +146,6 @@ Paired comparisons:
 
 ## Related experiments
 
-- `gradient-ascent-general/` — fixed-F=10 ascent, provides RQ1 starting points (best sys=0.9005)
+- `gradient-ascent-general/` — fixed-F=10 ascent, provides RQ1 starting points (current bounded packet best sys=0.9030)
 - `experiments/hko-local-maximum/facet-splitting/` — tested F=10→F=11 cuts on HKO2024 without subsequent ascent; all 536 cuts decreased sys
 - `boundary-characterization/` (exp-combinatorial-cells) — combinatorial boundary types and density
