@@ -182,6 +182,8 @@ Deliverables:
   `experiments/hko-local-maximum/exact-clarke/segment-a-gradient-reduction.json`.
 - Current billiard sigma-surface count ladder:
   `experiments/hko-local-maximum/exact-clarke/billiard-sigma-counts.json`.
+- Current exact-sigma feasibility probe:
+  `experiments/hko-local-maximum/exact-clarke/billiard-exact-probe.json`.
 
 Checks:
 - every catalog family maps to current exact-action numerical minima;

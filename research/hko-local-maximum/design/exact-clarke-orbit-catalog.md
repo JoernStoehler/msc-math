@@ -24,6 +24,8 @@ replace.
   `experiments/hko-local-maximum/exact-clarke/segment-a-gradient-reduction.json`.
 - Billiard sigma-surface count ladder:
   `experiments/hko-local-maximum/exact-clarke/billiard-sigma-counts.json`.
+- Exact-sigma feasibility probe:
+  `experiments/hko-local-maximum/exact-clarke/billiard-exact-probe.json`.
 
 ## Paper-Level Picture
 
@@ -66,6 +68,19 @@ So the practical difference between two possible theorem inputs is large:
   small multiple of the exact minima;
 - an exhaustive route starting from the theorem-native billiard sigma-word
   surface pays a much larger front-end certification cost.
+
+The current sympy probe makes this more concrete in the present environment:
+
+- one sampled directed-feasible sigma took about `8.08s` for the exact quartic
+  KKT linear solve attempt;
+- the resulting one-sample projection is about `50,438s`, roughly `14` hours,
+  for all `6240` directed-feasible sigma words;
+- that probe does not yet include exact positivity certification or exact
+  action-gap elimination, so it is a lower-bound style estimate on the full
+  theorem workload for this route.
+
+So the statement “`6240` exact checks sounds feasible” depends strongly on the
+backend. In the current sympy-based exact tooling, it does not yet look cheap.
 
 ## Symmetry-Reduced Numerical Hypothesis
 
