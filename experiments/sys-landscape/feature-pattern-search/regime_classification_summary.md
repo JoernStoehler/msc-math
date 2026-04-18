@@ -2,7 +2,7 @@
 
 ## Dataset
 
-- normalized input source: temporary refresh via `cargo run -p exp-sys-landscape --release --bin sys-normalized-dataset -- --out-dir /tmp/regime-classification-ra_v7ln5/normalized`
+- normalized input source: temporary refresh via `cargo run -p exp-sys-landscape --release --bin sys-normalized-dataset -- --out-dir <temp>`
 - joined rows: `282`
 - groups used for leakage control: `202`
 - random rows: `170`

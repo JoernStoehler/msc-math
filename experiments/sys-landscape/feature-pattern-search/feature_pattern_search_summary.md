@@ -2,7 +2,7 @@
 
 ## Dataset
 
-- normalized input source: temporary refresh via `cargo run -p exp-sys-landscape --release --bin sys-normalized-dataset -- --out-dir /tmp/feature-pattern-search-3_fok5b7/normalized`
+- normalized input source: temporary refresh via `cargo run -p exp-sys-landscape --release --bin sys-normalized-dataset -- --out-dir <temp>`
 - joined rows: `282`
 - random rows: `170`
 - endpoint rows: `112`

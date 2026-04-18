@@ -469,8 +469,8 @@ def main() -> None:
             refresh_normalized_dataset(normalized_dir)
             normalized_source_label = (
                 "temporary refresh via "
-                f"`cargo run -p exp-sys-landscape --release --bin "
-                f"sys-normalized-dataset -- --out-dir {normalized_dir}`"
+                "`cargo run -p exp-sys-landscape --release --bin "
+                "sys-normalized-dataset -- --out-dir <temp>`"
             )
             rows = load_joined_rows(normalized_dir)
             results = run_evaluations(rows)
