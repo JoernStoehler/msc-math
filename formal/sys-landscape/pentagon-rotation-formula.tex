@@ -386,7 +386,7 @@ Lemmas~\ref{lem:pentagon-rotation-three-bounce-first-family} and
 the script
 \begin{quote}\small\path{experiments/sys-landscape/pentagon-rotation-formula/cas_witnesses.py}\end{quote}
 That script starts from the reduced formulas for the branch parameters and
-actions recorded in the proofs below and checks:
+actions recorded in the proofs below and symbolically checks:
 \[
   \lambda(\theta), \quad
   \frac{d}{d\lambda}L_\theta^\pm, \quad
@@ -398,15 +398,19 @@ for the active $2$-bounce branch, and
 \[
   A_i(\theta) - g(\theta) = \text{claimed gap}_i(\theta)
 \]
-for the first two shortlisted $3$-bounce families, by exact symbolic
-simplification. The developer command is
+for the finite descriptor list of shortlisted $3$-bounce families, by exact
+symbolic simplification. In other words, the trusted statement here is not that
+the TeX proof ``reads off'' these identities, but that the external symbolic
+witness loops over the declared branch descriptors and verifies the claimed
+closed forms from the reduced setup formulas. The developer command is
 \begin{quote}\small\path{uv run experiments/sys-landscape/pentagon-rotation-formula/cas_witnesses.py}\end{quote}
 Its logical shape is:
 \begin{quote}\ttfamily
 define $\theta$ as an exact symbolic variable\\
-define the reduced formulas for the active support pattern\\
-define the claimed closed form for the branch output\\
-assert \texttt{simplify(}output-claimed\_form\texttt{) = 0}
+for each declared branch descriptor:\\
+\qquad define the reduced formulas for the active support pattern\\
+\qquad define the claimed closed form for the branch output\\
+\qquad assert \texttt{simplify(}output-claimed\_form\texttt{) = 0}
 \end{quote}
 \end{remark}
 \end{unverified}

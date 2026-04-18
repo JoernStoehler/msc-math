@@ -14,6 +14,9 @@ Output Artifacts:
   - None
 """
 
+from dataclasses import dataclass
+from typing import Callable
+
 from sympy import Matrix, cos, pi, simplify, sin, sqrt, symbols, tan
 
 
@@ -104,19 +107,45 @@ def second_family(theta):
     return action, gap
 
 
+@dataclass(frozen=True)
+class ThreeBounceWitness:
+    name: str
+    template: str
+    signature: str
+    builder: Callable
+
+
+THREE_BOUNCE_WITNESSES = [
+    ThreeBounceWitness(
+        name="first_family",
+        template="EEV/EEV",
+        signature="Q:0-1-23|P:2-3-01",
+        builder=first_family,
+    ),
+    ThreeBounceWitness(
+        name="second_family",
+        template="EEV/EEV",
+        signature="Q:0-1-34|P:3-4-01",
+        builder=second_family,
+    ),
+]
+
+
 def main():
     theta = symbols("theta", real=True)
     baseline = ((5 + sqrt(5)) / 4) ** 2 / cos(theta)
 
     two_bounce_data = two_bounce(theta)
-    first_action, first_gap = first_family(theta)
-    second_action, second_gap = second_family(theta)
-
-    assert simplify(first_action - (baseline + first_gap)) == 0
-    assert simplify(second_action - (baseline + second_gap)) == 0
+    three_bounce_outputs = []
+    for witness in THREE_BOUNCE_WITNESSES:
+        action, gap = witness.builder(theta)
+        assert simplify(action - (baseline + gap)) == 0
+        three_bounce_outputs.append((witness, action, gap))
 
     print("Verified symbolic simplifications for the active 2-bounce branch and")
-    print("the first two competitive 3-bounce branches.")
+    print("the descriptor-listed competitive 3-bounce branches.")
+    print("This script checks exact symbolic identities; interval positivity is")
+    print("a separate claim unless encoded explicitly in the asserted formula.")
     print()
     print(f"lambda(theta)      = {two_bounce_data['lambda(theta)']}")
     print(f"left_slope(theta)  = {two_bounce_data['left_slope(theta)']}")
@@ -126,11 +155,11 @@ def main():
     print(f"capacity(theta)    = {two_bounce_data['capacity(theta)']}")
     print(f"sys_prefactor      = {two_bounce_data['sys_prefactor']}")
     print()
-    print(f"first_action(theta) = {first_action}")
-    print(f"first_gap(theta)    = {first_gap}")
-    print()
-    print(f"second_action(theta) = {second_action}")
-    print(f"second_gap(theta)    = {second_gap}")
+    for witness, action, gap in three_bounce_outputs:
+        print(f"{witness.name} [{witness.template}] {witness.signature}")
+        print(f"  action(theta) = {action}")
+        print(f"  gap(theta)    = {gap}")
+        print()
 
 
 if __name__ == "__main__":

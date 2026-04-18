@@ -338,6 +338,105 @@ So the live blocker has narrowed again:
    formulas, or whether they can be handled by contraction order plus the
    already larger empirical gap.
 
+One useful correction from the next smoke classification pass:
+
+- the open interval `0 <= theta < pi/10` does not have just a couple of
+  admissible `3`-bounce affine signatures; the committed legend currently shows
+  `23` canonical open-interval signatures, grouped into `5` `Q`-types.
+- so a naive “prove the first two nearest branches and we are done” route is
+  not logically sufficient.
+- however, the same smoke pass still shows a strong separation in action size.
+  At representative angles `10 degree`, `14 degree`, and `17.75 degree`, the
+  four closest `3`-bounce signatures are always
+  `Q:0-1-23|P:2-3-01`,
+  `Q:0-1-3|P:0-2-3`,
+  `Q:0-2-34|P:2-4-01`,
+  `Q:0-1-34|P:3-4-01`.
+- near the midpoint sample `17.75 degree`, their gaps above the active
+  `2`-bounce branch are approximately
+  `0.00371`, `0.00372`, `0.00602`, and `0.00957`, while the next tier already
+  jumps to about `0.58`.
+
+That pushes the proof strategy toward a two-layer surface:
+
+1. explicit formulas for the few branches that remain genuinely close to the
+   minimum;
+2. a coarser lower bound or template argument for the much larger but clearly
+   separated remainder.
+
+There is also a clean template split stronger than the raw `Q`-type count.
+Ignoring labels and keeping only the edge/vertex block word in each factor, the
+`23` open-interval signatures fall into exactly three raw templates:
+
+- `EEV / EEV`: `16` signatures;
+- `EEE / EEE`: `4` signatures;
+- `EVV / EVV`: `3` signatures.
+
+So the natural finite-family writeup is not “23 unrelated branches,” but
+“3 template classes plus finite labeled instances.” The four near-minimum
+signatures currently identified span only the first two of these templates:
+
+- `Q:0-1-23|P:2-3-01` and its close companions lie in `EEV / EEV`;
+- `Q:0-1-3|P:0-2-3` lies in `EEE / EEE`;
+- none of the currently near-minimum signatures comes from `EVV / EVV`.
+
+That makes the next methodological target sharper:
+
+1. keep the formal proof language at the level of template setup plus a finite
+   descriptor list;
+2. let the CAS witness loop over those descriptors and certify exact symbolic
+   identities for the resulting action-minus-gap expressions;
+3. only claim a symbolic inequality check when the CAS is actually asked to
+   verify positivity under the interval assumptions, rather than merely
+   providing a factorized expression.
+
+The witness surface is now moving in exactly that direction:
+
+- `experiments/sys-landscape/pentagon-rotation-formula/cas_witnesses.py`
+  uses a finite descriptor list for the currently implemented `3`-bounce
+  branches instead of hard-coded one-off printouts;
+- the trusted statement of that script is presently:
+  “for each declared branch descriptor, the claimed exact symbolic identity was
+  verified”;
+- it does **not** yet claim a symbolic positivity proof on
+  `0 < theta < pi/10` unless such an interval check is added explicitly.
+
+For the `EEE / EEE` template, the recovered orbit at `theta = 14 degree` now
+gives a useful generic setup candidate. If the alternating facet sequence is
+
+- `q_0, p_0, q_1, p_1, q_2, p_2`
+
+with `q_i` and `p_i` all edge supports, then the affine cycle appears to obey
+the template equations
+
+\[
+  x_{i+1} = x_i - a_i\,m_{p_i}(\theta),
+  \qquad
+  y_{i+1} = y_i + b_i\,n_{q_{i+1}},
+\]
+
+cyclically modulo `3`, where `x_i \in e_{q_i}` and
+`y_i \in R(\theta)e_{p_i}`. On the tested representative
+`Q:0-1-3|P:0-2-3`, the recovered step directions match exactly that order:
+
+- `q_0 -> q_1` uses `m_{p_0}`;
+- `q_1 -> q_2` uses `m_{p_1}`;
+- `q_2 -> q_0` uses `m_{p_2}`;
+- `p_0 -> p_1` uses `n_{q_1}`;
+- `p_1 -> p_2` uses `n_{q_2}`;
+- `p_2 -> p_0` uses `n_{q_0}`.
+
+Numerically, the same example also suggests the action formula
+
+\[
+  A_{\mathrm{EEE}}(\theta)
+  =
+  \frac{\cos(\pi/5)}{2}\sum_i \bigl(a_i + b_i\bigr),
+\]
+
+but that has not yet been promoted to a proved symbolic template identity.
+This is the next reusable setup surface to formalize.
+
 ## Session Resume Note (2026-04-18)
 
 This worktree now has an owned experiment surface, a readable figure set, and a
