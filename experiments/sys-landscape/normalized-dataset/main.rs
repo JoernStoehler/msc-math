@@ -52,6 +52,8 @@ struct RandomSweepRow {
     name: String,
     facet_count: usize,
     dual_vertices: Vec<[f64; 4]>,
+    #[serde(default)]
+    dual_vertices_rational: Vec<[String; 4]>,
     capacity: f64,
     volume: f64,
     sys: f64,
@@ -65,6 +67,8 @@ struct RandomProductRow {
     m: usize,
     facet_count: usize,
     dual_vertices: Vec<[f64; 4]>,
+    #[serde(default)]
+    dual_vertices_rational: Vec<[String; 4]>,
     capacity: f64,
     volume: f64,
     sys: f64,
@@ -595,7 +599,7 @@ fn main() {
         let entry = resolve_entry_from_exact_or_f64(
             &exact_by_poly_id,
             &exact_by_facet_count,
-            &[],
+            &row.dual_vertices_rational,
             &row.dual_vertices,
             &label,
         );
@@ -643,7 +647,7 @@ fn main() {
         let entry = resolve_entry_from_exact_or_f64(
             &exact_by_poly_id,
             &exact_by_facet_count,
-            &[],
+            &row.dual_vertices_rational,
             &row.dual_vertices,
             &label,
         );
