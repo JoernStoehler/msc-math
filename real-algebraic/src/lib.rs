@@ -53,4 +53,4 @@ pub use linear::{rank_rows, solve_square, SolveResult};
 pub use named_fields::TanPiFifth;
 pub use serialize::{canonical_element, CanonicalElement};
 pub use sign::Sign;
-pub use spec::StaticFieldSpec;
+pub use spec::{validate_field_spec, FieldSpecError, StaticFieldSpec};

@@ -5,8 +5,8 @@
 
 use num_rational::BigRational;
 use real_algebraic::{
-    canonical_element, cmp_field, dot, max_field, min_field, solve_square, Algebraic, OrderedField,
-    Sign, SolveResult, StaticFieldSpec, TanPiFifth,
+    canonical_element, cmp_field, dot, max_field, min_field, solve_square, validate_field_spec,
+    Algebraic, FieldSpecError, OrderedField, Sign, SolveResult, StaticFieldSpec, TanPiFifth,
 };
 
 struct SqrtTwo;
@@ -38,6 +38,64 @@ impl StaticFieldSpec for SqrtTwo {
 
 type SqrtTwoField = Algebraic<SqrtTwo>;
 type TanPiFifthField = Algebraic<TanPiFifth>;
+
+struct EndpointRootSpec;
+
+impl StaticFieldSpec for EndpointRootSpec {
+    fn name() -> &'static str {
+        "endpoint-root"
+    }
+
+    fn generator_name() -> &'static str {
+        "x"
+    }
+
+    fn minimal_polynomial() -> Vec<BigRational> {
+        vec![
+            BigRational::from_integer((-1).into()),
+            BigRational::from_integer(0.into()),
+            BigRational::from_integer(1.into()),
+        ]
+    }
+
+    fn isolating_interval() -> (BigRational, BigRational) {
+        (
+            BigRational::from_integer(0.into()),
+            BigRational::from_integer(1.into()),
+        )
+    }
+}
+
+struct NonIsolatingSpec;
+
+impl StaticFieldSpec for NonIsolatingSpec {
+    fn name() -> &'static str {
+        "non-isolating"
+    }
+
+    fn generator_name() -> &'static str {
+        "x"
+    }
+
+    fn minimal_polynomial() -> Vec<BigRational> {
+        vec![
+            BigRational::from_integer(0.into()),
+            BigRational::from_integer((-1).into()),
+            BigRational::from_integer(0.into()),
+            BigRational::from_integer(1.into()),
+        ]
+    }
+
+    fn isolating_interval() -> (BigRational, BigRational) {
+        (
+            BigRational::from_integer((-2).into()),
+            BigRational::from_integer(2.into()),
+        )
+    }
+}
+
+type EndpointRootField = Algebraic<EndpointRootSpec>;
+type NonIsolatingField = Algebraic<NonIsolatingSpec>;
 
 #[test]
 fn consumer_defined_field_spec_supports_operator_arithmetic() {
@@ -117,4 +175,24 @@ fn provided_tan_pi_fifth_field_supports_the_hko_case_shape() {
     let t2 = t.clone() * t.clone();
     let sec36 = (TanPiFifthField::from_i64(3) - t2) / TanPiFifthField::from_i64(2);
     assert!(sec36.to_f64() > 1.0);
+}
+
+#[test]
+fn validate_field_spec_reports_common_invalid_specs() {
+    assert_eq!(
+        validate_field_spec::<EndpointRootSpec>(),
+        Err(FieldSpecError::UpperEndpointIsRoot)
+    );
+    assert_eq!(
+        validate_field_spec::<NonIsolatingSpec>(),
+        Err(FieldSpecError::IntervalDoesNotIsolateUniqueRoot { root_count: 3 })
+    );
+}
+
+#[test]
+fn constructing_elements_panics_when_the_root_interval_is_invalid() {
+    let endpoint_root = std::panic::catch_unwind(EndpointRootField::generator);
+    let non_isolating = std::panic::catch_unwind(NonIsolatingField::generator);
+    assert!(endpoint_root.is_err());
+    assert!(non_isolating.is_err());
 }

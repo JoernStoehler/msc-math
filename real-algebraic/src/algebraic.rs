@@ -4,7 +4,7 @@
 
 use crate::field::OrderedField;
 use crate::sign::Sign;
-use crate::spec::StaticFieldSpec;
+use crate::spec::{assert_valid_field_spec, StaticFieldSpec};
 use num_rational::BigRational;
 use num_traits::{One, Signed, ToPrimitive, Zero};
 use std::cmp::Ordering;
@@ -57,6 +57,7 @@ impl<S: StaticFieldSpec> Ord for Algebraic<S> {
 impl<S: StaticFieldSpec> Algebraic<S> {
     /// Construct from canonical-basis coefficients.
     pub fn from_coeffs(coeffs: Vec<BigRational>) -> Self {
+        assert_valid_field_spec::<S>();
         Self {
             coeffs: reduce_modulus::<S>(coeffs),
             _marker: PhantomData,
@@ -141,7 +142,7 @@ impl<S: StaticFieldSpec> OrderedField for Algebraic<S> {
             "isolating interval endpoints must bracket the chosen real root"
         );
 
-        for _ in 0..512 {
+        for _ in 0..sign_refinement_budget(&self.coeffs, &modulus, &lo, &hi) {
             let interval =
                 eval_interval_horner(&self.coeffs, &Interval::new(lo.clone(), hi.clone()));
             if <BigRational as Signed>::is_positive(&interval.lo) {
@@ -167,7 +168,9 @@ impl<S: StaticFieldSpec> OrderedField for Algebraic<S> {
             let _ = hi_sign;
         }
 
-        panic!("failed to determine sign after interval refinement");
+        panic!(
+            "failed to determine sign after interval refinement; the field spec may violate the irreducible-minimal-polynomial contract or the refinement budget is too small"
+        );
     }
 
     fn cmp_real(&self, other: &Self) -> Ordering {
@@ -356,6 +359,7 @@ impl<S: StaticFieldSpec> std::ops::Neg for &Algebraic<S> {
 }
 
 fn extension_degree<S: StaticFieldSpec>() -> usize {
+    assert_valid_field_spec::<S>();
     let modulus = normalize_monic::<S>(S::minimal_polynomial());
     assert!(
         modulus.len() >= 2,
@@ -504,6 +508,31 @@ fn sign_rational(value: &BigRational) -> Sign {
     }
 }
 
+fn sign_refinement_budget(
+    coeffs: &[BigRational],
+    modulus: &[BigRational],
+    lo: &BigRational,
+    hi: &BigRational,
+) -> usize {
+    let max_bits = coeffs
+        .iter()
+        .chain(modulus.iter())
+        .chain([lo, hi])
+        .map(rational_height_bits)
+        .max()
+        .unwrap_or(1);
+    64 * max_bits.max(1) + 64
+}
+
+fn rational_height_bits(value: &BigRational) -> usize {
+    bigint_height_bits(value.numer()).max(bigint_height_bits(value.denom()))
+}
+
+fn bigint_height_bits(value: &num_bigint::BigInt) -> usize {
+    let digits = value.to_str_radix(2);
+    digits.trim_start_matches('-').len().max(1)
+}
+
 fn poly_add(left: &[BigRational], right: &[BigRational]) -> Vec<BigRational> {
     let len = left.len().max(right.len());
     let mut out = vec![rat_zero(); len];
@@ -601,6 +630,7 @@ fn poly_extended_gcd(
 }
 
 fn approximate_root_f64<S: StaticFieldSpec>() -> f64 {
+    assert_valid_field_spec::<S>();
     let modulus = normalize_monic::<S>(S::minimal_polynomial());
     let (mut lo, mut hi) = S::isolating_interval();
     let mut lo_sign = sign_rational(&eval_poly(&modulus, &lo));
@@ -636,8 +666,67 @@ fn rat_one() -> BigRational {
 mod tests {
     use super::*;
     use crate::named_fields::TanPiFifth;
+    use std::cmp::Ordering;
+
+    struct SqrtTwo;
+
+    impl StaticFieldSpec for SqrtTwo {
+        fn name() -> &'static str {
+            "Q(sqrt(2))"
+        }
+
+        fn generator_name() -> &'static str {
+            "s"
+        }
+
+        fn minimal_polynomial() -> Vec<BigRational> {
+            vec![
+                BigRational::from_integer((-2).into()),
+                BigRational::from_integer(0.into()),
+                BigRational::from_integer(1.into()),
+            ]
+        }
+
+        fn isolating_interval() -> (BigRational, BigRational) {
+            (
+                BigRational::from_integer(1.into()),
+                BigRational::from_integer(2.into()),
+            )
+        }
+    }
+
+    struct NonMonicSqrtTwo;
+
+    impl StaticFieldSpec for NonMonicSqrtTwo {
+        fn name() -> &'static str {
+            "Q(sqrt(2)) with non-monic polynomial"
+        }
+
+        fn generator_name() -> &'static str {
+            "s"
+        }
+
+        fn minimal_polynomial() -> Vec<BigRational> {
+            vec![
+                BigRational::from_integer((-4).into()),
+                BigRational::from_integer(0.into()),
+                BigRational::from_integer(2.into()),
+                BigRational::from_integer(0.into()),
+                BigRational::from_integer(0.into()),
+            ]
+        }
+
+        fn isolating_interval() -> (BigRational, BigRational) {
+            (
+                BigRational::from_integer(1.into()),
+                BigRational::from_integer(2.into()),
+            )
+        }
+    }
 
     type TanPiFifthField = Algebraic<TanPiFifth>;
+    type SqrtTwoField = Algebraic<SqrtTwo>;
+    type NonMonicSqrtTwoField = Algebraic<NonMonicSqrtTwo>;
 
     #[test]
     fn tan_pi_fifth_generator_satisfies_defining_polynomial() {
@@ -695,5 +784,68 @@ mod tests {
         let right =
             TanPiFifthField::from_i64(10) * t.clone() * t.clone() - TanPiFifthField::from_i64(5);
         assert_eq!(left.coeffs(), right.coeffs());
+    }
+
+    #[test]
+    fn non_monic_polynomial_with_trailing_zeros_reduces_correctly() {
+        let s = NonMonicSqrtTwoField::generator();
+        assert_eq!(s.clone() * s.clone(), NonMonicSqrtTwoField::from_i64(2));
+
+        let overlong = NonMonicSqrtTwoField::from_coeffs(vec![
+            BigRational::from_integer(0.into()),
+            BigRational::from_integer(0.into()),
+            BigRational::from_integer(1.into()),
+            BigRational::from_integer(0.into()),
+            BigRational::from_integer(0.into()),
+        ]);
+        assert_eq!(overlong, NonMonicSqrtTwoField::from_i64(2));
+        assert_eq!(
+            overlong.coeffs(),
+            &[
+                BigRational::from_integer(2.into()),
+                BigRational::from_integer(0.into())
+            ]
+        );
+    }
+
+    #[test]
+    fn sign_handles_values_very_close_to_the_chosen_root() {
+        let s = SqrtTwoField::generator();
+        let positive = SqrtTwoField::from_i64(99) - SqrtTwoField::from_i64(70) * s.clone();
+        let negative = SqrtTwoField::from_i64(239) - SqrtTwoField::from_i64(169) * s;
+
+        assert_eq!(positive.sign(), Sign::Positive);
+        assert_eq!(negative.sign(), Sign::Negative);
+        assert_eq!(positive.cmp_real(&SqrtTwoField::zero()), Ordering::Greater);
+        assert_eq!(negative.cmp_real(&SqrtTwoField::zero()), Ordering::Less);
+    }
+
+    #[test]
+    fn sign_handles_large_convergents_without_hitting_a_fixed_iteration_ceiling() {
+        let s = SqrtTwoField::generator();
+        let (numer, denom) = sqrt_two_convergent_with_denominator_bits(700);
+        let approximation = SqrtTwoField::from_rational(BigRational::new(numer, denom));
+        let difference = s - approximation;
+        assert_eq!(difference.sign(), Sign::Positive);
+    }
+
+    fn sqrt_two_convergent_with_denominator_bits(
+        target_bits: usize,
+    ) -> (num_bigint::BigInt, num_bigint::BigInt) {
+        let mut p_prev = num_bigint::BigInt::from(1);
+        let mut p_curr = num_bigint::BigInt::from(3);
+        let mut q_prev = num_bigint::BigInt::from(1);
+        let mut q_curr = num_bigint::BigInt::from(2);
+
+        while bigint_height_bits(&q_curr) < target_bits {
+            let next_p = &p_curr * 2 + &p_prev;
+            let next_q = &q_curr * 2 + &q_prev;
+            p_prev = p_curr;
+            p_curr = next_p;
+            q_prev = q_curr;
+            q_curr = next_q;
+        }
+
+        (p_curr, q_curr)
     }
 }
