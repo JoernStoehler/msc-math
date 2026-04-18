@@ -22,6 +22,14 @@ The four-way comparison separates "structured entry from F-space helps" from "mo
 
 **Active.** Initial implementation.
 
+Freshness note:
+
+- 2026-04-18: the tracked `variable-f-ascent.jsonl` artifact was refreshed in
+  this worktree after the fixed-`F` ascent source packets were refreshed
+- the findings section below summarizes the older 2026-04-04 packet and should
+  be treated as historical until `analyze.py` and this logbook are rerun
+  against the refreshed artifact set
+
 ## How to run
 
 ```bash

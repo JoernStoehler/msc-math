@@ -27,6 +27,15 @@ The old committed `gradient-ascent-products.jsonl` (N=12, 3 buckets × 4) is
 **not** byte-reproducible under the new per-seed RNG scheme and has been
 superseded by `data/smoke.jsonl`.
 
+Freshness note:
+
+- 2026-04-18: the tracked root `gradient-ascent-products.jsonl` artifact was
+  refreshed in this worktree to the widened summary schema used by the
+  normalized dataset converter
+- any numeric claims in this note that cite the old root JSONL should be
+  treated as historical until this logbook is rerun against the refreshed
+  artifact set
+
 ## Predecessor
 
 Split from `boundary-crossing-search/` (2026-04-04). That experiment combined
