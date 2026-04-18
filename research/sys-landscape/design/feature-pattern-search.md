@@ -611,14 +611,20 @@ implementation starts.
      endpoint-only/random-only packet rather than a transferable search clue.
 
 4. **Bounded face-level symplectic features**
-   - Add a `poly_id`-keyed table with scale-normalized summaries such as ridge
-     `omega_0`/area style quantities or incidence-conditioned symplectic
-     summaries.
-   - Why next:
-     if endpoint structure exists beyond the current cheap blocks, richer
-     face-level symplectic data is the most plausible local next step.
-   - Feedback loop:
-     acceptable only if the first packet stays narrow and summary-based.
+   - Landed as `feature_face_symplectic.jsonl`, keyed by `poly_id`, with
+     summary-only ridge-polygon symplectic-area columns from ordered ridge
+     vertex cycles.
+   - Column set:
+     ridge symplectic-area mean/std/min/max/sum/max-share, plus small-area
+     threshold fractions.
+   - Result:
+     this is the strongest non-metadata endpoint-side block so far. Within
+     random it reaches `R^2=0.4883` ridge and `0.8166` RF; within endpoints it
+     reaches `0.3824` ridge and `0.2330` RF, clearly above the existing omega
+     block but still below metadata.
+   - Interpretation:
+     symplectic face summaries look substantially more informative than
+     Euclidean face summaries, but they still do not transfer across regimes.
 
 ### LICCA-Blocked Packets
 

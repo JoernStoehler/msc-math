@@ -23,6 +23,7 @@ Input Artifacts:
 Output Artifacts:
   - experiments/sys-landscape/feature-pattern-search/feature_geometry.jsonl
   - experiments/sys-landscape/feature-pattern-search/feature_face_geometry.jsonl
+  - experiments/sys-landscape/feature-pattern-search/feature_face_symplectic.jsonl
   - experiments/sys-landscape/feature-pattern-search/feature_skeleton.jsonl
   - experiments/sys-landscape/feature-pattern-search/feature_omega.jsonl
   - experiments/sys-landscape/feature-pattern-search/feature_orbit.jsonl
@@ -62,6 +63,7 @@ REPO_ROOT = EXPERIMENT_DIR.parent.parent.parent
 
 FEATURE_JSONL = EXPERIMENT_DIR / "feature_geometry.jsonl"
 FEATURE_FACE_GEOMETRY_JSONL = EXPERIMENT_DIR / "feature_face_geometry.jsonl"
+FEATURE_FACE_SYMPLECTIC_JSONL = EXPERIMENT_DIR / "feature_face_symplectic.jsonl"
 FEATURE_SKELETON_JSONL = EXPERIMENT_DIR / "feature_skeleton.jsonl"
 FEATURE_OMEGA_JSONL = EXPERIMENT_DIR / "feature_omega.jsonl"
 FEATURE_ORBIT_JSONL = EXPERIMENT_DIR / "feature_orbit.jsonl"
@@ -90,6 +92,7 @@ FEATURE_BLOCKS = [
     "metadata",
     "geometry",
     "face_geometry",
+    "face_symplectic",
     "skeleton",
     "omega",
     "orbit",
@@ -109,6 +112,7 @@ class JoinedRow:
     metadata: dict[str, str | float]
     geometry: dict[str, float]
     face_geometry: dict[str, float]
+    face_symplectic: dict[str, float]
     skeleton: dict[str, float]
     omega: dict[str, float]
     orbit: dict[str, float]
@@ -281,6 +285,24 @@ def refresh_omega_features(normalized_dir: Path, out_path: Path) -> None:
     subprocess.run(cmd, cwd=REPO_ROOT, check=True)
 
 
+def refresh_face_symplectic_features(normalized_dir: Path, out_path: Path) -> None:
+    cmd = [
+        "cargo",
+        "run",
+        "-p",
+        "exp-sys-landscape",
+        "--release",
+        "--bin",
+        "sys-feature-face-symplectic",
+        "--",
+        "--normalized-dir",
+        str(normalized_dir),
+        "--out",
+        str(out_path),
+    ]
+    subprocess.run(cmd, cwd=REPO_ROOT, check=True)
+
+
 def refresh_orbit_features(normalized_dir: Path, out_path: Path) -> None:
     cmd = [
         "cargo",
@@ -327,6 +349,7 @@ def load_joined_rows(
     list[dict],
     list[dict],
     list[dict],
+    list[dict],
 ]:
     states = load_jsonl(normalized_dir / "states.jsonl")
     capacities = {
@@ -347,6 +370,11 @@ def load_joined_rows(
     face_geometry_by_poly = {
         row["poly_id"]: {key: value for key, value in row.items() if key != "poly_id"}
         for row in face_geometry_rows
+    }
+    face_symplectic_rows = load_jsonl(FEATURE_FACE_SYMPLECTIC_JSONL)
+    face_symplectic_by_poly = {
+        row["poly_id"]: {key: value for key, value in row.items() if key != "poly_id"}
+        for row in face_symplectic_rows
     }
     skeleton_rows = load_jsonl(FEATURE_SKELETON_JSONL)
     skeleton_by_poly = {
@@ -394,6 +422,7 @@ def load_joined_rows(
                 },
                 geometry=geometry_by_poly[state["poly_id"]],
                 face_geometry=face_geometry_by_poly[state["poly_id"]],
+                face_symplectic=face_symplectic_by_poly[state["poly_id"]],
                 skeleton=skeleton_by_poly[state["poly_id"]],
                 omega=omega_by_poly[state["poly_id"]],
                 orbit=orbit_by_poly[state["poly_id"]],
@@ -404,6 +433,7 @@ def load_joined_rows(
         rows,
         geometry_rows,
         face_geometry_rows,
+        face_symplectic_rows,
         skeleton_rows,
         omega_rows,
         orbit_rows,
@@ -418,6 +448,8 @@ def build_feature_dict(row: JoinedRow, block: str) -> dict[str, float | str]:
         return dict(row.geometry)
     if block == "face_geometry":
         return dict(row.face_geometry)
+    if block == "face_symplectic":
+        return dict(row.face_symplectic)
     if block == "skeleton":
         return dict(row.skeleton)
     if block == "omega":
@@ -431,6 +463,7 @@ def build_feature_dict(row: JoinedRow, block: str) -> dict[str, float | str]:
             **row.metadata,
             **row.geometry,
             **row.face_geometry,
+            **row.face_symplectic,
             **row.skeleton,
             **row.omega,
             **row.orbit,
@@ -675,11 +708,12 @@ def write_summary(
             "- `metadata`: facet count plus dataset/family/role/search-space/optimizer/backend",
             "- `geometry`: cheap dual-vertex summaries from `polytopes.jsonl`",
             "- `face_geometry`: edge-length and facet-3-volume summaries from the exact face geometry",
+            "- `face_symplectic`: ridge-polygon symplectic-area summaries from ordered ridge vertex cycles",
             "- `skeleton`: combinatorial counts and degree summaries from the exact 4D face lattice",
             "- `omega`: ridge-local `omega_0` summaries, exact omega-sign structure, and directed transition-graph summaries",
             "- `orbit`: cached-`best_sigma` support size plus sigma-local geometry, `omega_0`, transition summaries, and bounded best-orbit KKT scalars",
             "- `trajectory`: endpoint-keyed step-event aggregates such as overshoot mix, phase restarts, and gradient/step-size summaries",
-            "- `all`: metadata, geometry, face_geometry, skeleton, omega, orbit, and trajectory together",
+            "- `all`: metadata, geometry, face_geometry, face_symplectic, skeleton, omega, orbit, and trajectory together",
             "",
             "## Metrics",
             "",
@@ -723,6 +757,7 @@ def write_summary(
     ridge_rows = { (row["surface"], row["block"]): row for row in results if row["model"] == "ridge" }
     geometry_random = ridge_rows[("within_random", "geometry")]
     face_geometry_random = ridge_rows[("within_random", "face_geometry")]
+    face_symplectic_random = ridge_rows[("within_random", "face_symplectic")]
     skeleton_random = ridge_rows[("within_random", "skeleton")]
     omega_random = ridge_rows[("within_random", "omega")]
     orbit_random = ridge_rows[("within_random", "orbit")]
@@ -730,6 +765,7 @@ def write_summary(
     metadata_random = ridge_rows[("within_random", "metadata")]
     geometry_endpoint = ridge_rows[("within_endpoint", "geometry")]
     face_geometry_endpoint = ridge_rows[("within_endpoint", "face_geometry")]
+    face_symplectic_endpoint = ridge_rows[("within_endpoint", "face_symplectic")]
     skeleton_endpoint = ridge_rows[("within_endpoint", "skeleton")]
     omega_endpoint = ridge_rows[("within_endpoint", "omega")]
     orbit_endpoint = ridge_rows[("within_endpoint", "orbit")]
@@ -742,8 +778,9 @@ def write_summary(
             "",
             "## Interpretation",
             "",
-            f"- within-random ridge: metadata `R^2={format_metric(metadata_random['r2'])}`, geometry `R^2={format_metric(geometry_random['r2'])}`, face_geometry `R^2={format_metric(face_geometry_random['r2'])}`, skeleton `R^2={format_metric(skeleton_random['r2'])}`, omega `R^2={format_metric(omega_random['r2'])}`, orbit `R^2={format_metric(orbit_random['r2'])}`, trajectory `R^2={format_metric(trajectory_random['r2'])}`",
-            f"- within-endpoint ridge: metadata `R^2={format_metric(metadata_endpoint['r2'])}`, geometry `R^2={format_metric(geometry_endpoint['r2'])}`, face_geometry `R^2={format_metric(face_geometry_endpoint['r2'])}`, skeleton `R^2={format_metric(skeleton_endpoint['r2'])}`, omega `R^2={format_metric(omega_endpoint['r2'])}`, orbit `R^2={format_metric(orbit_endpoint['r2'])}`, trajectory `R^2={format_metric(trajectory_endpoint['r2'])}`",
+            f"- within-random ridge: metadata `R^2={format_metric(metadata_random['r2'])}`, geometry `R^2={format_metric(geometry_random['r2'])}`, face_geometry `R^2={format_metric(face_geometry_random['r2'])}`, face_symplectic `R^2={format_metric(face_symplectic_random['r2'])}`, skeleton `R^2={format_metric(skeleton_random['r2'])}`, omega `R^2={format_metric(omega_random['r2'])}`, orbit `R^2={format_metric(orbit_random['r2'])}`, trajectory `R^2={format_metric(trajectory_random['r2'])}`",
+            f"- within-endpoint ridge: metadata `R^2={format_metric(metadata_endpoint['r2'])}`, geometry `R^2={format_metric(geometry_endpoint['r2'])}`, face_geometry `R^2={format_metric(face_geometry_endpoint['r2'])}`, face_symplectic `R^2={format_metric(face_symplectic_endpoint['r2'])}`, skeleton `R^2={format_metric(skeleton_endpoint['r2'])}`, omega `R^2={format_metric(omega_endpoint['r2'])}`, orbit `R^2={format_metric(orbit_endpoint['r2'])}`, trajectory `R^2={format_metric(trajectory_endpoint['r2'])}`",
+            "- random-forest strengthens the face-level picture: `face_geometry` reaches `R^2=0.6756` within random, while `face_symplectic` reaches `R^2=0.8166` within random and `0.2330` within endpoints.",
             f"- random-to-endpoint transfer with full ridge block: `R^2={format_metric(all_random_to_endpoint['r2'])}`",
             f"- endpoint-to-random transfer with trajectory ridge: `R^2={format_metric(trajectory_endpoint_to_random['r2'])}`",
             "- the richer orbit block now includes bounded best-orbit KKT scalars, using cached search-level payloads where available and a one-best-sigma fallback solve on older cache rows.",
@@ -789,6 +826,7 @@ def main() -> None:
         normalized_dir = args.normalized_dir.resolve()
         normalized_source_label = f"`{normalized_dir}`"
         refresh_face_geometry_features(normalized_dir, FEATURE_FACE_GEOMETRY_JSONL)
+        refresh_face_symplectic_features(normalized_dir, FEATURE_FACE_SYMPLECTIC_JSONL)
         refresh_skeleton_features(normalized_dir, FEATURE_SKELETON_JSONL)
         refresh_omega_features(normalized_dir, FEATURE_OMEGA_JSONL)
         refresh_orbit_features(normalized_dir, FEATURE_ORBIT_JSONL)
@@ -797,6 +835,7 @@ def main() -> None:
             joined_rows,
             geometry_rows,
             face_geometry_rows,
+            face_symplectic_rows,
             skeleton_rows,
             omega_rows,
             orbit_rows,
@@ -807,8 +846,13 @@ def main() -> None:
             normalized_dir = Path(temp_dir) / "normalized"
             normalized_dir.mkdir(parents=True, exist_ok=True)
             refresh_normalized_dataset(normalized_dir)
-            normalized_source_label = "temporary refresh via `cargo run -p exp-sys-landscape --release --bin sys-normalized-dataset`"
+            normalized_source_label = (
+                "temporary refresh via "
+                f"`cargo run -p exp-sys-landscape --release --bin "
+                f"sys-normalized-dataset -- --out-dir {normalized_dir}`"
+            )
             refresh_face_geometry_features(normalized_dir, FEATURE_FACE_GEOMETRY_JSONL)
+            refresh_face_symplectic_features(normalized_dir, FEATURE_FACE_SYMPLECTIC_JSONL)
             refresh_skeleton_features(normalized_dir, FEATURE_SKELETON_JSONL)
             refresh_omega_features(normalized_dir, FEATURE_OMEGA_JSONL)
             refresh_orbit_features(normalized_dir, FEATURE_ORBIT_JSONL)
@@ -817,6 +861,7 @@ def main() -> None:
                 joined_rows,
                 geometry_rows,
                 face_geometry_rows,
+                face_symplectic_rows,
                 skeleton_rows,
                 omega_rows,
                 orbit_rows,
@@ -826,6 +871,9 @@ def main() -> None:
             write_feature_jsonl(geometry_rows)
             with FEATURE_FACE_GEOMETRY_JSONL.open("w") as handle:
                 for row in face_geometry_rows:
+                    handle.write(json.dumps(row) + "\n")
+            with FEATURE_FACE_SYMPLECTIC_JSONL.open("w") as handle:
+                for row in face_symplectic_rows:
                     handle.write(json.dumps(row) + "\n")
             with FEATURE_SKELETON_JSONL.open("w") as handle:
                 for row in skeleton_rows:
@@ -845,6 +893,7 @@ def main() -> None:
             plot_model_results(results, "rf", RF_PNG, "Feature Pattern Search: Random forest")
             print(f"Saved {FEATURE_JSONL}")
             print(f"Saved {FEATURE_FACE_GEOMETRY_JSONL}")
+            print(f"Saved {FEATURE_FACE_SYMPLECTIC_JSONL}")
             print(f"Saved {FEATURE_SKELETON_JSONL}")
             print(f"Saved {FEATURE_OMEGA_JSONL}")
             print(f"Saved {FEATURE_ORBIT_JSONL}")
@@ -857,6 +906,9 @@ def main() -> None:
     write_feature_jsonl(geometry_rows)
     with FEATURE_FACE_GEOMETRY_JSONL.open("w") as handle:
         for row in face_geometry_rows:
+            handle.write(json.dumps(row) + "\n")
+    with FEATURE_FACE_SYMPLECTIC_JSONL.open("w") as handle:
+        for row in face_symplectic_rows:
             handle.write(json.dumps(row) + "\n")
     with FEATURE_SKELETON_JSONL.open("w") as handle:
         for row in skeleton_rows:
@@ -877,6 +929,7 @@ def main() -> None:
 
     print(f"Saved {FEATURE_JSONL}")
     print(f"Saved {FEATURE_FACE_GEOMETRY_JSONL}")
+    print(f"Saved {FEATURE_FACE_SYMPLECTIC_JSONL}")
     print(f"Saved {FEATURE_SKELETON_JSONL}")
     print(f"Saved {FEATURE_OMEGA_JSONL}")
     print(f"Saved {FEATURE_ORBIT_JSONL}")

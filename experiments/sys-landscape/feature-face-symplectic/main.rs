@@ -1,7 +1,8 @@
-//! Compute a bounded face-level Euclidean feature table keyed by `poly_id`.
+//! Compute a bounded face-level symplectic feature table keyed by `poly_id`.
 //!
-//! Goal: enrich the hostile-landscape normalized dataset with scalar summaries
-//! of edge lengths and facet 3-volumes derived from exact polytope geometry.
+//! Goal: enrich the hostile-landscape normalized dataset with ridge-local
+//! symplectic area summaries derived from ordered ridge polygons in exact 4D
+//! polytope geometry.
 //! Input Artifacts:
 //!   - experiments/sys-landscape/normalized-dataset outputs under `--normalized-dir`
 //!     (`polytopes.jsonl` required)
@@ -14,9 +15,9 @@ use std::fs::File;
 use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
-use symplectic::geom::facet_volume::facet_volume_3d;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
+use symplectic::geom::symplectic_form::omega0;
 
 #[derive(Debug, Deserialize)]
 struct PolytopeInputRow {
@@ -27,22 +28,20 @@ struct PolytopeInputRow {
 }
 
 #[derive(Debug, Serialize)]
-struct FaceGeometryFeatureRow {
+struct FaceSymplecticFeatureRow {
     poly_id: String,
     facet_count: usize,
-    vertex_count: usize,
-    edge_count: usize,
-    edge_length_mean: f64,
-    edge_length_std: f64,
-    edge_length_min: f64,
-    edge_length_max: f64,
-    edge_length_max_share: f64,
-    facet_volume_mean: f64,
-    facet_volume_std: f64,
-    facet_volume_min: f64,
-    facet_volume_max: f64,
-    facet_volume_sum: f64,
-    facet_volume_max_share: f64,
+    ridge_count: usize,
+    ridge_symp_area_abs_mean: f64,
+    ridge_symp_area_abs_std: f64,
+    ridge_symp_area_abs_min: f64,
+    ridge_symp_area_abs_max: f64,
+    ridge_symp_area_abs_sum: f64,
+    ridge_symp_area_abs_max_share: f64,
+    ridge_symp_area_zero_fraction: f64,
+    ridge_symp_area_abs_le_1e3_fraction: f64,
+    ridge_symp_area_abs_le_1e2_fraction: f64,
+    ridge_symp_area_abs_le_1e1_fraction: f64,
 }
 
 fn parse_args() -> (PathBuf, PathBuf) {
@@ -71,7 +70,7 @@ fn parse_args() -> (PathBuf, PathBuf) {
             .duration_since(std::time::UNIX_EPOCH)
             .expect("system clock before UNIX_EPOCH")
             .as_millis();
-        std::env::temp_dir().join(format!("sys-feature-face-geometry-{stamp}.jsonl"))
+        std::env::temp_dir().join(format!("sys-feature-face-symplectic-{stamp}.jsonl"))
     });
     (normalized_dir, out)
 }
@@ -149,7 +148,27 @@ fn max_share(values: &[f64]) -> f64 {
     values.iter().copied().fold(f64::NEG_INFINITY, f64::max) / total
 }
 
-fn build_row(poly: &PolytopeInputRow) -> FaceGeometryFeatureRow {
+fn fraction_at_most(values: &[f64], threshold: f64) -> f64 {
+    if values.is_empty() {
+        return 0.0;
+    }
+    values.iter().filter(|&&value| value <= threshold).count() as f64 / values.len() as f64
+}
+
+fn ridge_symplectic_area(vertices: &[nalgebra::Vector4<f64>]) -> f64 {
+    if vertices.len() < 3 {
+        return 0.0;
+    }
+    let doubled_area = (0..vertices.len())
+        .map(|idx| {
+            let next = (idx + 1) % vertices.len();
+            omega0(&vertices[idx], &vertices[next])
+        })
+        .sum::<f64>();
+    0.5 * doubled_area.abs()
+}
+
+fn build_row(poly: &PolytopeInputRow) -> FaceSymplecticFeatureRow {
     let polytope = Polytope4D::from_rational_parts(
         parse_vec4(&poly.dual_vertices_rational),
         parse_vec4(&poly.vertices_rational),
@@ -158,44 +177,40 @@ fn build_row(poly: &PolytopeInputRow) -> FaceGeometryFeatureRow {
     let skeleton = Skeleton::compute(&polytope);
     let vertices = polytope.vertices_f64();
 
-    let edge_lengths = skeleton
-        .edges
+    let ridge_symp_areas = skeleton
+        .ridges
         .iter()
-        .map(|edge| (vertices[edge[0]] - vertices[edge[1]]).norm())
-        .collect::<Vec<_>>();
-    let facet_volumes = (0..poly.facet_count)
-        .map(|facet| facet_volume_3d(&polytope, facet))
+        .map(|ridge| {
+            let ridge_vertices = ridge
+                .vertices
+                .iter()
+                .map(|&vertex| vertices[vertex])
+                .collect::<Vec<_>>();
+            ridge_symplectic_area(&ridge_vertices)
+        })
         .collect::<Vec<_>>();
 
     let (
-        edge_length_mean,
-        edge_length_std,
-        edge_length_min,
-        edge_length_max,
-    ) = stats_or_zero(&edge_lengths);
-    let (
-        facet_volume_mean,
-        facet_volume_std,
-        facet_volume_min,
-        facet_volume_max,
-    ) = stats_or_zero(&facet_volumes);
+        ridge_symp_area_abs_mean,
+        ridge_symp_area_abs_std,
+        ridge_symp_area_abs_min,
+        ridge_symp_area_abs_max,
+    ) = stats_or_zero(&ridge_symp_areas);
 
-    FaceGeometryFeatureRow {
+    FaceSymplecticFeatureRow {
         poly_id: poly.poly_id.clone(),
         facet_count: poly.facet_count,
-        vertex_count: vertices.len(),
-        edge_count: skeleton.edges.len(),
-        edge_length_mean,
-        edge_length_std,
-        edge_length_min,
-        edge_length_max,
-        edge_length_max_share: max_share(&edge_lengths),
-        facet_volume_mean,
-        facet_volume_std,
-        facet_volume_min,
-        facet_volume_max,
-        facet_volume_sum: facet_volumes.iter().sum::<f64>(),
-        facet_volume_max_share: max_share(&facet_volumes),
+        ridge_count: skeleton.ridges.len(),
+        ridge_symp_area_abs_mean,
+        ridge_symp_area_abs_std,
+        ridge_symp_area_abs_min,
+        ridge_symp_area_abs_max,
+        ridge_symp_area_abs_sum: ridge_symp_areas.iter().sum::<f64>(),
+        ridge_symp_area_abs_max_share: max_share(&ridge_symp_areas),
+        ridge_symp_area_zero_fraction: fraction_at_most(&ridge_symp_areas, 1e-12),
+        ridge_symp_area_abs_le_1e3_fraction: fraction_at_most(&ridge_symp_areas, 1e-3),
+        ridge_symp_area_abs_le_1e2_fraction: fraction_at_most(&ridge_symp_areas, 1e-2),
+        ridge_symp_area_abs_le_1e1_fraction: fraction_at_most(&ridge_symp_areas, 1e-1),
     }
 }
 
@@ -205,6 +220,6 @@ fn main() {
     let mut rows = polytopes.iter().map(build_row).collect::<Vec<_>>();
     rows.sort_by(|a, b| a.poly_id.cmp(&b.poly_id));
     write_jsonl(&out, &rows);
-    println!("Wrote {} face-geometry rows", rows.len());
+    println!("Wrote {} face-symplectic rows", rows.len());
     println!("Output path: {}", out.display());
 }
