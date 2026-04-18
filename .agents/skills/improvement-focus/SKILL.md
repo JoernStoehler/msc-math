@@ -124,6 +124,10 @@ Before spawning implementation workers, send Jörn a compact execution surface:
 This is a real pause point. After sending this surface, stop and wait for
 Jörn's reply before creating worktrees or spawning workers.
 
+If Jörn asks for an assessment, a presented assessment, or a shown packet
+surface, treat that as triage-only by default. Do not continue into execution
+unless he also says to continue or asks for a full round.
+
 Jörn does not need to review each refactor in detail. The point of the pause is
 to let him redirect the round, trim waste, or say "continue" once the packet
 surface is visible.
