@@ -239,6 +239,7 @@ sys as a continuous function on polytope space, no privileged threshold.
 - Landed in this worktree as `sys-normalized-dataset`; verified current normalized counts are `282` states / `282` capacity rows / `287` step events once the refreshed `experiments/sys-landscape/cache.jsonl` includes the fixed-`F` ascent endpoints.
 - Bounded pass landed in `experiments/sys-landscape/feature-pattern-search/` with `feature_geometry`, `feature_skeleton`, `feature_omega`, sigma-local `feature_orbit`, and state-keyed `feature_trajectory` blocks plus refreshed summary plots and markdown.
 - Follow-up packet landed: fixed-`F` endpoint and random-baseline cache rows now persist bounded `orbit_scalars`; `feature_orbit` still falls back to one best-sigma KKT solve for older rows, which currently includes the `variable-f-ascent` packet.
+- Follow-up packet landed: bounded `feature_face_geometry` adds edge-length and facet-3-volume summaries from exact face geometry; it helps within-random strongly for RF (`R^2=0.6756`) and adds only a small endpoint-only signal (`R^2=0.0835` ridge, `0.0988` RF), with transfer still strongly negative.
 - Result: cheap geometry helps within the random regime, richer orbit/KKT scalars improve the random `orbit` block further, sigma-local orbit features still help the endpoint regime more than the other non-metadata blocks, trajectory aggregates from fixed-`F` step logs stay near-null, metadata still beats every non-metadata block on endpoints, and the transfer surfaces stay strongly negative or become even more negative once the random packet carries search-level orbit scalars.
 - Closure: record the negative result in `RESULTS.md` as evidence for the hostile-landscape interpretation; do not open a novel method-development line here without a separate thesis-scope decision.
 - Next blocked direction for a future LICCA session: row count, not local code scaffolding, is now the main bottleneck if this line is reopened.
@@ -251,9 +252,8 @@ sys as a continuous function on polytope space, no privileged threshold.
 - Partial data in gradient-ascent experiments.
 - Witness-search successor line: `research/sys-landscape/design/witness-search-program.md:55-83`
 - Local unblocked queue after the bounded hostile-landscape closure:
-  1. bounded face-level Euclidean feature summaries
-  2. bounded face-level symplectic feature summaries
-  3. only after richer columns: trajectory/state-graph methods beyond the current scalar `feature_trajectory` block
+  1. bounded face-level symplectic feature summaries
+  2. only after richer columns: trajectory/state-graph methods beyond the current scalar `feature_trajectory` block
 - LICCA-blocked queue:
   1. more `gradient-ascent-general` endpoint rows
   2. more `gradient-ascent-products` endpoint rows

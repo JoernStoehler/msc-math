@@ -43,6 +43,10 @@ name = "sys-feature-skeleton"
 path = "feature-skeleton/main.rs"
 
 [[bin]]
+name = "sys-feature-face-geometry"
+path = "feature-face-geometry/main.rs"
+
+[[bin]]
 name = "sys-feature-omega"
 path = "feature-omega/main.rs"
 

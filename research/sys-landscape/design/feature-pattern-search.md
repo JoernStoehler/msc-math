@@ -596,13 +596,19 @@ implementation starts.
      random packet but still not the missing transferable endpoint signal.
 
 3. **Bounded face-level Euclidean features**
-   - Add a `poly_id`-keyed table with scalar summaries of facet 3-volumes, edge
-     lengths, ridge sizes, and incidence-matrix-derived counts.
-   - Why next:
-     exact geometry is already present and this stays within the current local
-     modeling pipeline.
-   - Feedback loop:
-     good as long as the output is summary statistics, not raw long lists.
+   - Landed as `feature_face_geometry.jsonl`, keyed by `poly_id`, with scalar
+     summaries of edge lengths and facet 3-volumes only.
+   - Column set:
+     `vertex_count`, `edge_count`, edge-length mean/std/min/max/max-share, and
+     facet-volume mean/std/min/max/sum/max-share.
+   - Result:
+     helpful but still regime-specific. Within random it is strong for RF
+     (`R^2=0.6756`) and modest for ridge (`0.1167`); within endpoints it adds
+     only a small signal (`0.0835` ridge, `0.0988` RF), still well below the
+     metadata baseline.
+   - Interpretation:
+     exact face-size summaries are not null, but they still behave like another
+     endpoint-only/random-only packet rather than a transferable search clue.
 
 4. **Bounded face-level symplectic features**
    - Add a `poly_id`-keyed table with scale-normalized summaries such as ridge

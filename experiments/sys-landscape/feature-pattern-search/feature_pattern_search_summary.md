@@ -46,11 +46,12 @@
 - `null`: train-mean predictor with no features
 - `metadata`: facet count plus dataset/family/role/search-space/optimizer/backend
 - `geometry`: cheap dual-vertex summaries from `polytopes.jsonl`
+- `face_geometry`: edge-length and facet-3-volume summaries from the exact face geometry
 - `skeleton`: combinatorial counts and degree summaries from the exact 4D face lattice
 - `omega`: ridge-local `omega_0` summaries, exact omega-sign structure, and directed transition-graph summaries
 - `orbit`: cached-`best_sigma` support size plus sigma-local geometry, `omega_0`, transition summaries, and bounded best-orbit KKT scalars
 - `trajectory`: endpoint-keyed step-event aggregates such as overshoot mix, phase restarts, and gradient/step-size summaries
-- `all`: metadata, geometry, skeleton, omega, orbit, and trajectory together
+- `all`: metadata, geometry, face_geometry, skeleton, omega, orbit, and trajectory together
 
 ## Metrics
 
@@ -61,37 +62,41 @@ Reported metrics are test-set `R^2` and RMSE. Within-regime results use grouped 
 | Surface | Block | R^2 | RMSE |
 |---------|-------|-----|------|
 | Within random | `null` | -0.0140 | 0.2068 |
-| Within random | `metadata` | 0.1906 | 0.1847 |
-| Within random | `geometry` | 0.4260 | 0.1556 |
-| Within random | `skeleton` | 0.1350 | 0.1910 |
-| Within random | `omega` | 0.2652 | 0.1760 |
-| Within random | `orbit` | 0.3222 | 0.1690 |
+| Within random | `metadata` | 0.1846 | 0.1854 |
+| Within random | `geometry` | 0.4683 | 0.1497 |
+| Within random | `face_geometry` | 0.1167 | 0.1930 |
+| Within random | `skeleton` | 0.1628 | 0.1879 |
+| Within random | `omega` | 0.2768 | 0.1746 |
+| Within random | `orbit` | 0.4495 | 0.1523 |
 | Within random | `trajectory` | -0.0140 | 0.2068 |
-| Within random | `all` | 0.4894 | 0.1467 |
+| Within random | `all` | 0.6057 | 0.1289 |
 | Within endpoint | `null` | -0.0227 | 0.1227 |
-| Within endpoint | `metadata` | 0.4367 | 0.0911 |
-| Within endpoint | `geometry` | -0.1145 | 0.1281 |
-| Within endpoint | `skeleton` | -0.1228 | 0.1285 |
-| Within endpoint | `omega` | -0.0275 | 0.1230 |
-| Within endpoint | `orbit` | 0.1083 | 0.1146 |
-| Within endpoint | `trajectory` | 0.0026 | 0.1212 |
-| Within endpoint | `all` | 0.1266 | 0.1134 |
+| Within endpoint | `metadata` | 0.4364 | 0.0911 |
+| Within endpoint | `geometry` | -0.1427 | 0.1297 |
+| Within endpoint | `face_geometry` | 0.0835 | 0.1161 |
+| Within endpoint | `skeleton` | -0.0588 | 0.1248 |
+| Within endpoint | `omega` | 0.0176 | 0.1202 |
+| Within endpoint | `orbit` | 0.1104 | 0.1144 |
+| Within endpoint | `trajectory` | 0.0066 | 0.1209 |
+| Within endpoint | `all` | 0.2801 | 0.1029 |
 | Random -> endpoint | `null` | -17.8854 | 0.5272 |
-| Random -> endpoint | `metadata` | -12.4344 | 0.4446 |
-| Random -> endpoint | `geometry` | -9.9589 | 0.4016 |
-| Random -> endpoint | `skeleton` | -12.1083 | 0.4392 |
-| Random -> endpoint | `omega` | -11.3543 | 0.4264 |
-| Random -> endpoint | `orbit` | -95.4662 | 1.1915 |
+| Random -> endpoint | `metadata` | -13.6634 | 0.4645 |
+| Random -> endpoint | `geometry` | -11.3323 | 0.4260 |
+| Random -> endpoint | `face_geometry` | -10.8728 | 0.4180 |
+| Random -> endpoint | `skeleton` | -12.5768 | 0.4470 |
+| Random -> endpoint | `omega` | -13.2314 | 0.4576 |
+| Random -> endpoint | `orbit` | -32.4641 | 0.7018 |
 | Random -> endpoint | `trajectory` | -17.8854 | 0.5272 |
-| Random -> endpoint | `all` | -62.3199 | 0.9653 |
+| Random -> endpoint | `all` | -10.7729 | 0.4162 |
 | Endpoint -> random | `null` | -6.2430 | 0.5526 |
-| Endpoint -> random | `metadata` | -8.0876 | 0.6190 |
-| Endpoint -> random | `geometry` | -5.5594 | 0.5259 |
-| Endpoint -> random | `skeleton` | -7.6995 | 0.6056 |
-| Endpoint -> random | `omega` | -6.8095 | 0.5738 |
-| Endpoint -> random | `orbit` | -6.7717 | 0.5724 |
-| Endpoint -> random | `trajectory` | -6.1597 | 0.5494 |
-| Endpoint -> random | `all` | -5.7220 | 0.5324 |
+| Endpoint -> random | `metadata` | -6.3370 | 0.5562 |
+| Endpoint -> random | `geometry` | -6.2254 | 0.5519 |
+| Endpoint -> random | `face_geometry` | -141.2712 | 2.4491 |
+| Endpoint -> random | `skeleton` | -7.3161 | 0.5921 |
+| Endpoint -> random | `omega` | -6.7102 | 0.5701 |
+| Endpoint -> random | `orbit` | -6.6180 | 0.5667 |
+| Endpoint -> random | `trajectory` | -6.1604 | 0.5494 |
+| Endpoint -> random | `all` | -57.6419 | 1.5724 |
 
 ### Random forest
 
@@ -100,35 +105,39 @@ Reported metrics are test-set `R^2` and RMSE. Within-regime results use grouped 
 | Within random | `null` | -0.0140 | 0.2068 |
 | Within random | `metadata` | 0.1345 | 0.1910 |
 | Within random | `geometry` | 0.4174 | 0.1567 |
+| Within random | `face_geometry` | 0.6756 | 0.1170 |
 | Within random | `skeleton` | 0.1103 | 0.1937 |
 | Within random | `omega` | 0.2514 | 0.1777 |
 | Within random | `orbit` | 0.3970 | 0.1594 |
 | Within random | `trajectory` | -0.0147 | 0.2068 |
-| Within random | `all` | 0.5342 | 0.1401 |
+| Within random | `all` | 0.7377 | 0.1052 |
 | Within endpoint | `null` | -0.0227 | 0.1227 |
 | Within endpoint | `metadata` | 0.4377 | 0.0910 |
 | Within endpoint | `geometry` | -0.3199 | 0.1394 |
+| Within endpoint | `face_geometry` | 0.0988 | 0.1152 |
 | Within endpoint | `skeleton` | -0.3751 | 0.1423 |
 | Within endpoint | `omega` | -0.2243 | 0.1342 |
 | Within endpoint | `orbit` | 0.0967 | 0.1153 |
 | Within endpoint | `trajectory` | 0.0003 | 0.1213 |
-| Within endpoint | `all` | 0.2324 | 0.1063 |
+| Within endpoint | `all` | 0.2401 | 0.1057 |
 | Random -> endpoint | `null` | -17.8854 | 0.5272 |
 | Random -> endpoint | `metadata` | -13.1447 | 0.4562 |
 | Random -> endpoint | `geometry` | -9.9360 | 0.4012 |
+| Random -> endpoint | `face_geometry` | -6.8727 | 0.3404 |
 | Random -> endpoint | `skeleton` | -14.8860 | 0.4835 |
 | Random -> endpoint | `omega` | -14.3213 | 0.4748 |
 | Random -> endpoint | `orbit` | -20.3696 | 0.5608 |
 | Random -> endpoint | `trajectory` | -17.7599 | 0.5254 |
-| Random -> endpoint | `all` | -10.9486 | 0.4193 |
+| Random -> endpoint | `all` | -7.2549 | 0.3485 |
 | Endpoint -> random | `null` | -6.2430 | 0.5526 |
 | Endpoint -> random | `metadata` | -6.8134 | 0.5739 |
 | Endpoint -> random | `geometry` | -3.8119 | 0.4504 |
+| Endpoint -> random | `face_geometry` | -1.6001 | 0.3311 |
 | Endpoint -> random | `skeleton` | -7.0737 | 0.5834 |
 | Endpoint -> random | `omega` | -5.8803 | 0.5386 |
 | Endpoint -> random | `orbit` | -6.5339 | 0.5636 |
 | Endpoint -> random | `trajectory` | -6.1450 | 0.5488 |
-| Endpoint -> random | `all` | -5.8719 | 0.5383 |
+| Endpoint -> random | `all` | -3.0173 | 0.4115 |
 
 ## Top States
 
@@ -142,8 +151,8 @@ Reported metrics are test-set `R^2` and RMSE. Within-regime results use grouped 
 
 ## Interpretation
 
-- within-random ridge: metadata `R^2=0.1906`, geometry `R^2=0.4260`, skeleton `R^2=0.1350`, omega `R^2=0.2652`, orbit `R^2=0.3222`, trajectory `R^2=-0.0140`
-- within-endpoint ridge: metadata `R^2=0.4367`, geometry `R^2=-0.1145`, skeleton `R^2=-0.1228`, omega `R^2=-0.0275`, orbit `R^2=0.1083`, trajectory `R^2=0.0026`
-- random-to-endpoint transfer with full ridge block: `R^2=-62.3199`
-- endpoint-to-random transfer with trajectory ridge: `R^2=-6.1597`
+- within-random ridge: metadata `R^2=0.1846`, geometry `R^2=0.4683`, face_geometry `R^2=0.1167`, skeleton `R^2=0.1628`, omega `R^2=0.2768`, orbit `R^2=0.4495`, trajectory `R^2=-0.0140`
+- within-endpoint ridge: metadata `R^2=0.4364`, geometry `R^2=-0.1427`, face_geometry `R^2=0.0835`, skeleton `R^2=-0.0588`, omega `R^2=0.0176`, orbit `R^2=0.1104`, trajectory `R^2=0.0066`
+- random-to-endpoint transfer with full ridge block: `R^2=-10.7729`
+- endpoint-to-random transfer with trajectory ridge: `R^2=-6.1604`
 - the richer orbit block now includes bounded best-orbit KKT scalars, using cached search-level payloads where available and a one-best-sigma fallback solve on older cache rows.
