@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "library",
+    "real-algebraic",
     "experiments/hko-local-maximum",
     "experiments/sys-landscape",
     "experiments/sys-landscape/gradient-ascent-dev",
