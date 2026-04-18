@@ -2,7 +2,8 @@
 //!
 //! Goal: enrich the hostile-landscape normalized dataset with cheap symplectic
 //! summaries from exact facet adjacency, omega signs, and ridge-local `omega_0`
-//! magnitudes, without orbit recomputation.
+//! magnitudes, without orbit recomputation, after rescaling each polytope to
+//! the `vol(K)=1` convention.
 //! Input Artifacts:
 //!   - experiments/sys-landscape/normalized-dataset outputs under `--normalized-dir`
 //!     (`polytopes.jsonl` required)
@@ -19,6 +20,7 @@ use symplectic::algorithms::facet_adjacency::build_transition_matrix;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::symplectic_form::omega0;
+use symplectic::geom::volume::volume;
 
 #[derive(Debug, Deserialize)]
 struct PolytopeInputRow {
@@ -32,19 +34,19 @@ struct PolytopeInputRow {
 struct OmegaFeatureRow {
     poly_id: String,
     facet_count: usize,
-    allpair_abs_omega_mean: f64,
-    allpair_abs_omega_std: f64,
-    allpair_abs_omega_min: f64,
-    allpair_abs_omega_max: f64,
+    allpair_abs_omega_vol1_mean: f64,
+    allpair_abs_omega_vol1_std: f64,
+    allpair_abs_omega_vol1_min: f64,
+    allpair_abs_omega_vol1_max: f64,
     allpair_zero_fraction: f64,
-    ridge_abs_omega_mean: f64,
-    ridge_abs_omega_std: f64,
-    ridge_abs_omega_min: f64,
-    ridge_abs_omega_max: f64,
+    ridge_abs_omega_vol1_mean: f64,
+    ridge_abs_omega_vol1_std: f64,
+    ridge_abs_omega_vol1_min: f64,
+    ridge_abs_omega_vol1_max: f64,
     ridge_zero_fraction: f64,
-    ridge_abs_omega_le_1e3_fraction: f64,
-    ridge_abs_omega_le_1e2_fraction: f64,
-    ridge_abs_omega_le_1e1_fraction: f64,
+    ridge_abs_omega_vol1_le_1em3_fraction: f64,
+    ridge_abs_omega_vol1_le_1em2_fraction: f64,
+    ridge_abs_omega_vol1_le_1em1_fraction: f64,
     transition_density: f64,
     transition_bidirectional_fraction: f64,
     transition_out_degree_mean: f64,
@@ -89,7 +91,10 @@ fn read_jsonl<T: for<'de> Deserialize<'de>>(path: &Path) -> Vec<T> {
     let reader = BufReader::new(file);
     reader
         .lines()
-        .map_while(Result::ok)
+        .enumerate()
+        .map(|(idx, line)| {
+            line.unwrap_or_else(|e| panic!("read {} line {}: {e}", path.display(), idx + 1))
+        })
         .filter(|line| !line.trim().is_empty())
         .map(|line| {
             serde_json::from_str::<T>(&line)
@@ -152,6 +157,14 @@ fn build_row(poly: &PolytopeInputRow) -> OmegaFeatureRow {
         parse_vec4(&poly.vertices_rational),
     )
     .unwrap_or_else(|e| panic!("reconstruct {}: {e}", poly.poly_id));
+    let polytope_volume =
+        volume(&polytope).unwrap_or_else(|e| panic!("volume {}: {e}", poly.poly_id));
+    let omega_scale = polytope_volume.sqrt();
+    assert!(
+        omega_scale > 0.0,
+        "volume-normalization scale must be positive for {}",
+        poly.poly_id
+    );
     let skeleton = Skeleton::compute(&polytope);
     let duals = polytope.dual_vertices_f64();
     let f = poly.facet_count;
@@ -160,18 +173,18 @@ fn build_row(poly: &PolytopeInputRow) -> OmegaFeatureRow {
     let mut allpair_zero_count = 0usize;
     for i in 0..f {
         for j in (i + 1)..f {
-            let value = omega0(&duals[i], &duals[j]);
+            let value = omega0(&duals[i], &duals[j]).abs() * omega_scale;
             if polytope.omega_signs()[(i, j)] == 0 {
                 allpair_zero_count += 1;
             }
-            allpair_abs_omegas.push(value.abs());
+            allpair_abs_omegas.push(value);
         }
     }
 
     let ridge_abs_omegas = skeleton
         .ridges
         .iter()
-        .map(|ridge| omega0(&duals[ridge.facets[0]], &duals[ridge.facets[1]]).abs())
+        .map(|ridge| omega0(&duals[ridge.facets[0]], &duals[ridge.facets[1]]).abs() * omega_scale)
         .collect::<Vec<_>>();
     let ridge_zero_count = skeleton
         .ridges
@@ -205,9 +218,9 @@ fn build_row(poly: &PolytopeInputRow) -> OmegaFeatureRow {
         }
     }
 
-    let (allpair_abs_omega_mean, allpair_abs_omega_std, allpair_abs_omega_min, allpair_abs_omega_max) =
+    let (allpair_abs_omega_vol1_mean, allpair_abs_omega_vol1_std, allpair_abs_omega_vol1_min, allpair_abs_omega_vol1_max) =
         stats(&allpair_abs_omegas);
-    let (ridge_abs_omega_mean, ridge_abs_omega_std, ridge_abs_omega_min, ridge_abs_omega_max) =
+    let (ridge_abs_omega_vol1_mean, ridge_abs_omega_vol1_std, ridge_abs_omega_vol1_min, ridge_abs_omega_vol1_max) =
         stats(&ridge_abs_omegas);
     let (transition_out_degree_mean, transition_out_degree_std, transition_out_degree_min, transition_out_degree_max) =
         stats(&out_degrees);
@@ -223,19 +236,19 @@ fn build_row(poly: &PolytopeInputRow) -> OmegaFeatureRow {
     OmegaFeatureRow {
         poly_id: poly.poly_id.clone(),
         facet_count: f,
-        allpair_abs_omega_mean,
-        allpair_abs_omega_std,
-        allpair_abs_omega_min,
-        allpair_abs_omega_max,
+        allpair_abs_omega_vol1_mean,
+        allpair_abs_omega_vol1_std,
+        allpair_abs_omega_vol1_min,
+        allpair_abs_omega_vol1_max,
         allpair_zero_fraction: allpair_zero_count as f64 / total_pairs,
-        ridge_abs_omega_mean,
-        ridge_abs_omega_std,
-        ridge_abs_omega_min,
-        ridge_abs_omega_max,
+        ridge_abs_omega_vol1_mean,
+        ridge_abs_omega_vol1_std,
+        ridge_abs_omega_vol1_min,
+        ridge_abs_omega_vol1_max,
         ridge_zero_fraction: ridge_zero_count as f64 / skeleton.ridges.len() as f64,
-        ridge_abs_omega_le_1e3_fraction: fraction_at_most(&ridge_abs_omegas, 1e-3),
-        ridge_abs_omega_le_1e2_fraction: fraction_at_most(&ridge_abs_omegas, 1e-2),
-        ridge_abs_omega_le_1e1_fraction: fraction_at_most(&ridge_abs_omegas, 1e-1),
+        ridge_abs_omega_vol1_le_1em3_fraction: fraction_at_most(&ridge_abs_omegas, 1e-3),
+        ridge_abs_omega_vol1_le_1em2_fraction: fraction_at_most(&ridge_abs_omegas, 1e-2),
+        ridge_abs_omega_vol1_le_1em1_fraction: fraction_at_most(&ridge_abs_omegas, 1e-1),
         transition_density,
         transition_bidirectional_fraction,
         transition_out_degree_mean,

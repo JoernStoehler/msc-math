@@ -1,7 +1,8 @@
 //! Compute a bounded face-level Euclidean feature table keyed by `poly_id`.
 //!
 //! Goal: enrich the hostile-landscape normalized dataset with scalar summaries
-//! of edge lengths and facet 3-volumes derived from exact polytope geometry.
+//! of edge lengths and facet 3-volumes derived from exact polytope geometry
+//! after rescaling each polytope to the `vol(K)=1` convention.
 //! Input Artifacts:
 //!   - experiments/sys-landscape/normalized-dataset outputs under `--normalized-dir`
 //!     (`polytopes.jsonl` required)
@@ -17,6 +18,7 @@ use std::str::FromStr;
 use symplectic::geom::facet_volume::facet_volume_3d;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
+use symplectic::geom::volume::volume;
 
 #[derive(Debug, Deserialize)]
 struct PolytopeInputRow {
@@ -32,17 +34,17 @@ struct FaceGeometryFeatureRow {
     facet_count: usize,
     vertex_count: usize,
     edge_count: usize,
-    edge_length_mean: f64,
-    edge_length_std: f64,
-    edge_length_min: f64,
-    edge_length_max: f64,
-    edge_length_max_share: f64,
-    facet_volume_mean: f64,
-    facet_volume_std: f64,
-    facet_volume_min: f64,
-    facet_volume_max: f64,
-    facet_volume_sum: f64,
-    facet_volume_max_share: f64,
+    edge_length_vol1_mean: f64,
+    edge_length_vol1_std: f64,
+    edge_length_vol1_min: f64,
+    edge_length_vol1_max: f64,
+    edge_length_vol1_max_share: f64,
+    facet_volume_vol1_mean: f64,
+    facet_volume_vol1_std: f64,
+    facet_volume_vol1_min: f64,
+    facet_volume_vol1_max: f64,
+    facet_volume_vol1_sum: f64,
+    facet_volume_vol1_max_share: f64,
 }
 
 fn parse_args() -> (PathBuf, PathBuf) {
@@ -155,29 +157,38 @@ fn build_row(poly: &PolytopeInputRow) -> FaceGeometryFeatureRow {
         parse_vec4(&poly.vertices_rational),
     )
     .unwrap_or_else(|e| panic!("reconstruct {}: {e}", poly.poly_id));
+    let polytope_volume =
+        volume(&polytope).unwrap_or_else(|e| panic!("volume {}: {e}", poly.poly_id));
+    let linear_scale = polytope_volume.powf(0.25);
+    let facet_scale = polytope_volume.powf(0.75);
+    assert!(
+        linear_scale > 0.0 && facet_scale > 0.0,
+        "volume-normalization scale must be positive for {}",
+        poly.poly_id
+    );
     let skeleton = Skeleton::compute(&polytope);
     let vertices = polytope.vertices_f64();
 
     let edge_lengths = skeleton
         .edges
         .iter()
-        .map(|edge| (vertices[edge[0]] - vertices[edge[1]]).norm())
+        .map(|edge| (vertices[edge[0]] - vertices[edge[1]]).norm() / linear_scale)
         .collect::<Vec<_>>();
     let facet_volumes = (0..poly.facet_count)
-        .map(|facet| facet_volume_3d(&polytope, facet))
+        .map(|facet| facet_volume_3d(&polytope, facet) / facet_scale)
         .collect::<Vec<_>>();
 
     let (
-        edge_length_mean,
-        edge_length_std,
-        edge_length_min,
-        edge_length_max,
+        edge_length_vol1_mean,
+        edge_length_vol1_std,
+        edge_length_vol1_min,
+        edge_length_vol1_max,
     ) = stats_or_zero(&edge_lengths);
     let (
-        facet_volume_mean,
-        facet_volume_std,
-        facet_volume_min,
-        facet_volume_max,
+        facet_volume_vol1_mean,
+        facet_volume_vol1_std,
+        facet_volume_vol1_min,
+        facet_volume_vol1_max,
     ) = stats_or_zero(&facet_volumes);
 
     FaceGeometryFeatureRow {
@@ -185,17 +196,17 @@ fn build_row(poly: &PolytopeInputRow) -> FaceGeometryFeatureRow {
         facet_count: poly.facet_count,
         vertex_count: vertices.len(),
         edge_count: skeleton.edges.len(),
-        edge_length_mean,
-        edge_length_std,
-        edge_length_min,
-        edge_length_max,
-        edge_length_max_share: max_share(&edge_lengths),
-        facet_volume_mean,
-        facet_volume_std,
-        facet_volume_min,
-        facet_volume_max,
-        facet_volume_sum: facet_volumes.iter().sum::<f64>(),
-        facet_volume_max_share: max_share(&facet_volumes),
+        edge_length_vol1_mean,
+        edge_length_vol1_std,
+        edge_length_vol1_min,
+        edge_length_vol1_max,
+        edge_length_vol1_max_share: max_share(&edge_lengths),
+        facet_volume_vol1_mean,
+        facet_volume_vol1_std,
+        facet_volume_vol1_min,
+        facet_volume_vol1_max,
+        facet_volume_vol1_sum: facet_volumes.iter().sum::<f64>(),
+        facet_volume_vol1_max_share: max_share(&facet_volumes),
     }
 }
 

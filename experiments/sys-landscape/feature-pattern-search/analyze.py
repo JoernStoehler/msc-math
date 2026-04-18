@@ -162,12 +162,13 @@ def centered_singular_values(vertices: list[list[float]]) -> list[float]:
     return out
 
 
-def build_geometry_features(poly: dict) -> dict[str, float]:
+def build_geometry_features(poly: dict, volume: float) -> dict[str, float]:
     dual_vertices = [
         [parse_rational(coord) for coord in row]
         for row in poly["dual_vertices_rational"]
     ]
-    arr = np.asarray(dual_vertices, dtype=float)
+    dual_scale = volume ** 0.25
+    arr = np.asarray(dual_vertices, dtype=float) * dual_scale
     norms = np.linalg.norm(arr, axis=1)
     centroid = np.mean(arr, axis=0)
     centroid_norm = float(np.linalg.norm(centroid))
@@ -184,34 +185,38 @@ def build_geometry_features(poly: dict) -> dict[str, float]:
                 cosines.append(float(np.dot(vi, vj) / denom))
             pairwise_distances.append(float(np.linalg.norm(vi - vj)))
 
-    singular_values = centered_singular_values(dual_vertices)
+    singular_values = centered_singular_values(arr.tolist())
 
     return {
-        "geom_norm_mean": float(np.mean(norms)),
-        "geom_norm_std": float(np.std(norms)),
-        "geom_norm_min": float(np.min(norms)),
-        "geom_norm_max": float(np.max(norms)),
-        "geom_centroid_norm": centroid_norm,
-        "geom_coord_std_x": float(coord_std[0]),
-        "geom_coord_std_y": float(coord_std[1]),
-        "geom_coord_std_z": float(coord_std[2]),
-        "geom_coord_std_w": float(coord_std[3]),
+        "geom_vol1_norm_mean": float(np.mean(norms)),
+        "geom_vol1_norm_std": float(np.std(norms)),
+        "geom_vol1_norm_min": float(np.min(norms)),
+        "geom_vol1_norm_max": float(np.max(norms)),
+        "geom_vol1_centroid_norm": centroid_norm,
+        "geom_vol1_coord_std_x": float(coord_std[0]),
+        "geom_vol1_coord_std_y": float(coord_std[1]),
+        "geom_vol1_coord_std_z": float(coord_std[2]),
+        "geom_vol1_coord_std_w": float(coord_std[3]),
         "geom_cosine_mean": statistics.mean(cosines) if cosines else 0.0,
         "geom_cosine_std": statistics.pstdev(cosines) if len(cosines) > 1 else 0.0,
         "geom_cosine_min": min(cosines) if cosines else 0.0,
         "geom_cosine_max": max(cosines) if cosines else 0.0,
-        "geom_pairwise_dist_mean": statistics.mean(pairwise_distances)
+        "geom_vol1_pairwise_dist_mean": statistics.mean(pairwise_distances)
         if pairwise_distances
         else 0.0,
-        "geom_pairwise_dist_std": statistics.pstdev(pairwise_distances)
+        "geom_vol1_pairwise_dist_std": statistics.pstdev(pairwise_distances)
         if len(pairwise_distances) > 1
         else 0.0,
-        "geom_pairwise_dist_min": min(pairwise_distances) if pairwise_distances else 0.0,
-        "geom_pairwise_dist_max": max(pairwise_distances) if pairwise_distances else 0.0,
-        "geom_sval_1": singular_values[0],
-        "geom_sval_2": singular_values[1],
-        "geom_sval_3": singular_values[2],
-        "geom_sval_4": singular_values[3],
+        "geom_vol1_pairwise_dist_min": min(pairwise_distances)
+        if pairwise_distances
+        else 0.0,
+        "geom_vol1_pairwise_dist_max": max(pairwise_distances)
+        if pairwise_distances
+        else 0.0,
+        "geom_vol1_sval_1": singular_values[0],
+        "geom_vol1_sval_2": singular_values[1],
+        "geom_vol1_sval_3": singular_values[2],
+        "geom_vol1_sval_4": singular_values[3],
     }
 
 
@@ -362,7 +367,7 @@ def load_joined_rows(
     geometry_rows: list[dict] = []
     geometry_by_poly: dict[str, dict[str, float]] = {}
     for poly_id, poly in polytopes.items():
-        features = build_geometry_features(poly)
+        features = build_geometry_features(poly, capacities[poly_id]["volume"])
         geometry_rows.append({"poly_id": poly_id, **features})
         geometry_by_poly[poly_id] = features
 
@@ -706,14 +711,27 @@ def write_summary(
             "",
             "- `null`: train-mean predictor with no features",
             "- `metadata`: facet count plus dataset/family/role/search-space/optimizer/backend",
-            "- `geometry`: cheap dual-vertex summaries from `polytopes.jsonl`",
-            "- `face_geometry`: edge-length and facet-3-volume summaries from the exact face geometry",
-            "- `face_symplectic`: scale-sensitive ridge-polygon symplectic-area summaries from ordered ridge vertex cycles",
+            "- `geometry`: cheap dual-vertex summaries after rescaling each polytope to the `vol(K)=1` convention",
+            "- `face_geometry`: edge-length and facet-3-volume summaries from the exact face geometry after the `vol(K)=1` rescaling",
+            "- `face_symplectic`: ridge-polygon symplectic-area summaries after volume normalization by `vol(K)^(1/2)`",
             "- `skeleton`: combinatorial counts and degree summaries from the exact 4D face lattice",
-            "- `omega`: ridge-local `omega_0` summaries, exact omega-sign structure, and directed transition-graph summaries",
+            "- `omega`: volume-normalized dual-side `omega_0` magnitude summaries, exact omega-sign structure, and directed transition-graph summaries",
             "- `orbit`: cached-`best_sigma` support size plus sigma-local geometry, `omega_0`, transition summaries, and bounded best-orbit KKT scalars",
             "- `trajectory`: endpoint-keyed step-event aggregates such as overshoot mix, phase restarts, and gradient/step-size summaries",
             "- `all`: metadata, geometry, face_geometry, face_symplectic, skeleton, omega, orbit, and trajectory together",
+            "",
+            "## Symmetry Status",
+            "",
+            "| Block | `vol(K)=1` convention | Translation invariant | `Sp(4)`-invariant | Notes |",
+            "|-------|------------------------|-----------------------|-------------------|-------|",
+            "| `metadata` | no | no | no | Search provenance and family labels, not geometry invariants. |",
+            "| `geometry` | yes | no | no | Uses dual-coordinate norms, centroids, and singular values after `vol(K)=1` rescaling. |",
+            "| `face_geometry` | yes | yes | no | Euclidean edge/facet sizes on the rescaled polytope. |",
+            "| `face_symplectic` | yes | yes | yes | Ridge-polygon symplectic areas divided by `vol(K)^(1/2)`. |",
+            "| `skeleton` | yes | yes | yes | Pure combinatorics; unaffected by translation, `Sp(4)`, or scaling. |",
+            "| `omega` | yes | no | mixed | `omega_0` magnitudes are volume-normalized, but the dual-coordinate packet still depends on translation gauge; transition graph and zero-sign structure do not. |",
+            "| `orbit` | mixed | mixed | mixed | Mixes sigma-local geometry, transition summaries, and search/KKT scalars. |",
+            "| `trajectory` | no | no | no | Search-procedure diagnostics, not geometry invariants. |",
             "",
             "## Metrics",
             "",
@@ -780,10 +798,10 @@ def write_summary(
             "",
             f"- within-random ridge: metadata `R^2={format_metric(metadata_random['r2'])}`, geometry `R^2={format_metric(geometry_random['r2'])}`, face_geometry `R^2={format_metric(face_geometry_random['r2'])}`, face_symplectic `R^2={format_metric(face_symplectic_random['r2'])}`, skeleton `R^2={format_metric(skeleton_random['r2'])}`, omega `R^2={format_metric(omega_random['r2'])}`, orbit `R^2={format_metric(orbit_random['r2'])}`, trajectory `R^2={format_metric(trajectory_random['r2'])}`",
             f"- within-endpoint ridge: metadata `R^2={format_metric(metadata_endpoint['r2'])}`, geometry `R^2={format_metric(geometry_endpoint['r2'])}`, face_geometry `R^2={format_metric(face_geometry_endpoint['r2'])}`, face_symplectic `R^2={format_metric(face_symplectic_endpoint['r2'])}`, skeleton `R^2={format_metric(skeleton_endpoint['r2'])}`, omega `R^2={format_metric(omega_endpoint['r2'])}`, orbit `R^2={format_metric(orbit_endpoint['r2'])}`, trajectory `R^2={format_metric(trajectory_endpoint['r2'])}`",
-            "- random-forest strengthens the face-level picture: `face_geometry` reaches `R^2=0.6756` within random, while `face_symplectic` reaches `R^2=0.8166` within random and `0.2330` within endpoints.",
+            "- random-forest strengthens the face-level picture: `face_geometry` remains strong within random, while volume-normalized `face_symplectic` stays the strongest non-metadata endpoint-side face block.",
             f"- random-to-endpoint transfer with full ridge block: `R^2={format_metric(all_random_to_endpoint['r2'])}`",
             f"- endpoint-to-random transfer with trajectory ridge: `R^2={format_metric(trajectory_endpoint_to_random['r2'])}`",
-            "- `face_symplectic` is currently a scale-sensitive raw-area block; treat it as bounded-dataset evidence, not as an invariant feature family yet.",
+            "- All geometric magnitude blocks in this packet now use the `vol(K)=1` convention; other symmetry-aware normalizations remain possible and are not ruled out by this packet.",
             "- the richer orbit block now includes bounded best-orbit KKT scalars, using cached search-level payloads where available and a one-best-sigma fallback solve on older cache rows.",
         ]
     )

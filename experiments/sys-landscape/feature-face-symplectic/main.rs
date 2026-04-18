@@ -1,8 +1,8 @@
 //! Compute a bounded face-level symplectic feature table keyed by `poly_id`.
 //!
-//! Goal: enrich the hostile-landscape normalized dataset with ridge-local
-//! symplectic area summaries derived from ordered ridge polygons in exact 4D
-//! polytope geometry.
+//! Goal: enrich the hostile-landscape normalized dataset with volume-normalized
+//! ridge-local symplectic area summaries derived from ordered ridge polygons in
+//! exact 4D polytope geometry.
 //! Input Artifacts:
 //!   - experiments/sys-landscape/normalized-dataset outputs under `--normalized-dir`
 //!     (`polytopes.jsonl` required)
@@ -18,6 +18,7 @@ use std::str::FromStr;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::symplectic_form::omega0;
+use symplectic::geom::volume::volume;
 
 #[derive(Debug, Deserialize)]
 struct PolytopeInputRow {
@@ -32,16 +33,16 @@ struct FaceSymplecticFeatureRow {
     poly_id: String,
     facet_count: usize,
     ridge_count: usize,
-    ridge_symp_area_abs_mean: f64,
-    ridge_symp_area_abs_std: f64,
-    ridge_symp_area_abs_min: f64,
-    ridge_symp_area_abs_max: f64,
-    ridge_symp_area_abs_sum: f64,
-    ridge_symp_area_abs_max_share: f64,
-    ridge_symp_area_zero_fraction: f64,
-    ridge_symp_area_abs_le_1em3_fraction: f64,
-    ridge_symp_area_abs_le_1em2_fraction: f64,
-    ridge_symp_area_abs_le_1em1_fraction: f64,
+    ridge_symp_area_volnorm_mean: f64,
+    ridge_symp_area_volnorm_std: f64,
+    ridge_symp_area_volnorm_min: f64,
+    ridge_symp_area_volnorm_max: f64,
+    ridge_symp_area_volnorm_sum: f64,
+    ridge_symp_area_volnorm_max_share: f64,
+    ridge_symp_area_volnorm_zero_fraction: f64,
+    ridge_symp_area_volnorm_le_1em3_fraction: f64,
+    ridge_symp_area_volnorm_le_1em2_fraction: f64,
+    ridge_symp_area_volnorm_le_1em1_fraction: f64,
 }
 
 fn parse_args() -> (PathBuf, PathBuf) {
@@ -174,6 +175,14 @@ fn build_row(poly: &PolytopeInputRow) -> FaceSymplecticFeatureRow {
         parse_vec4(&poly.vertices_rational),
     )
     .unwrap_or_else(|e| panic!("reconstruct {}: {e}", poly.poly_id));
+    let polytope_volume =
+        volume(&polytope).unwrap_or_else(|e| panic!("volume {}: {e}", poly.poly_id));
+    let volume_scale = polytope_volume.sqrt();
+    assert!(
+        volume_scale > 0.0,
+        "volume-normalization scale must be positive for {}",
+        poly.poly_id
+    );
     let skeleton = Skeleton::compute(&polytope);
     let vertices = polytope.vertices_f64();
 
@@ -186,31 +195,31 @@ fn build_row(poly: &PolytopeInputRow) -> FaceSymplecticFeatureRow {
                 .iter()
                 .map(|&vertex| vertices[vertex])
                 .collect::<Vec<_>>();
-            ridge_symplectic_area(&ridge_vertices)
+            ridge_symplectic_area(&ridge_vertices) / volume_scale
         })
         .collect::<Vec<_>>();
 
     let (
-        ridge_symp_area_abs_mean,
-        ridge_symp_area_abs_std,
-        ridge_symp_area_abs_min,
-        ridge_symp_area_abs_max,
+        ridge_symp_area_volnorm_mean,
+        ridge_symp_area_volnorm_std,
+        ridge_symp_area_volnorm_min,
+        ridge_symp_area_volnorm_max,
     ) = stats_or_zero(&ridge_symp_areas);
 
     FaceSymplecticFeatureRow {
         poly_id: poly.poly_id.clone(),
         facet_count: poly.facet_count,
         ridge_count: skeleton.ridges.len(),
-        ridge_symp_area_abs_mean,
-        ridge_symp_area_abs_std,
-        ridge_symp_area_abs_min,
-        ridge_symp_area_abs_max,
-        ridge_symp_area_abs_sum: ridge_symp_areas.iter().sum::<f64>(),
-        ridge_symp_area_abs_max_share: max_share(&ridge_symp_areas),
-        ridge_symp_area_zero_fraction: fraction_at_most(&ridge_symp_areas, 1e-12),
-        ridge_symp_area_abs_le_1em3_fraction: fraction_at_most(&ridge_symp_areas, 1e-3),
-        ridge_symp_area_abs_le_1em2_fraction: fraction_at_most(&ridge_symp_areas, 1e-2),
-        ridge_symp_area_abs_le_1em1_fraction: fraction_at_most(&ridge_symp_areas, 1e-1),
+        ridge_symp_area_volnorm_mean,
+        ridge_symp_area_volnorm_std,
+        ridge_symp_area_volnorm_min,
+        ridge_symp_area_volnorm_max,
+        ridge_symp_area_volnorm_sum: ridge_symp_areas.iter().sum::<f64>(),
+        ridge_symp_area_volnorm_max_share: max_share(&ridge_symp_areas),
+        ridge_symp_area_volnorm_zero_fraction: fraction_at_most(&ridge_symp_areas, 1e-12),
+        ridge_symp_area_volnorm_le_1em3_fraction: fraction_at_most(&ridge_symp_areas, 1e-3),
+        ridge_symp_area_volnorm_le_1em2_fraction: fraction_at_most(&ridge_symp_areas, 1e-2),
+        ridge_symp_area_volnorm_le_1em1_fraction: fraction_at_most(&ridge_symp_areas, 1e-1),
     }
 }
 

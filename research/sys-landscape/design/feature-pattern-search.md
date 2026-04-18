@@ -597,14 +597,17 @@ implementation starts.
 
 3. **Bounded face-level Euclidean features**
    - Landed as `feature_face_geometry.jsonl`, keyed by `poly_id`, with scalar
-     summaries of edge lengths and facet 3-volumes only.
+     summaries of edge lengths and facet 3-volumes only, evaluated after
+     rescaling each polytope to the `vol(K)=1` convention.
    - Column set:
-     `vertex_count`, `edge_count`, edge-length mean/std/min/max/max-share, and
-     facet-volume mean/std/min/max/sum/max-share.
+     `vertex_count`, `edge_count`, volume-normalized edge-length
+     mean/std/min/max/max-share, and volume-normalized facet-volume
+     mean/std/min/max/sum/max-share.
    - Result:
      helpful but still regime-specific. Within random it is strong for RF
-     (`R^2=0.6756`) and modest for ridge (`0.1167`); within endpoints it adds
-     only a small signal (`0.0835` ridge, `0.0988` RF), still well below the
+     (`R^2=0.7009`) and now materially positive for ridge (`0.3847`); within
+     endpoints it still adds only a small signal (`0.1030` ridge, `0.1218`
+     RF), still well below the
      metadata baseline.
    - Interpretation:
      exact face-size summaries are not null, but they still behave like another
@@ -612,20 +615,32 @@ implementation starts.
 
 4. **Bounded face-level symplectic features**
    - Landed as `feature_face_symplectic.jsonl`, keyed by `poly_id`, with
-     summary-only raw ridge-polygon symplectic-area columns from ordered ridge
-     vertex cycles.
+     summary-only ridge-polygon symplectic-area columns from ordered ridge
+     vertex cycles, normalized by `vol(K)^(1/2)` so the packet is evaluated in
+     the `vol(K)=1` convention.
    - Column set:
      ridge symplectic-area mean/std/min/max/sum/max-share, plus small-area
      threshold fractions.
    - Result:
      this is the strongest non-metadata endpoint-side block so far. Within
-     random it reaches `R^2=0.4883` ridge and `0.8166` RF; within endpoints it
-     reaches `0.3824` ridge and `0.2330` RF, clearly above the existing omega
+     random it reaches `R^2=0.5483` ridge and `0.8779` RF; within endpoints it
+     reaches `0.4000` ridge and `0.2934` RF, clearly above the existing omega
      block but still below metadata.
    - Interpretation:
      symplectic face summaries look substantially more informative than
-     Euclidean face summaries, but they are still scale-sensitive raw-area
-     features and they still do not transfer across regimes.
+     Euclidean face summaries, but they still do not transfer across regimes.
+
+5. **Symmetry-status bookkeeping for the bounded packet**
+   - The generated summary now carries an explicit per-block table for:
+     `vol(K)=1` normalization status, translation invariance, and `Sp(4)`
+     invariance.
+   - Current reading:
+     `face_symplectic` and `skeleton` are the cleanest symmetry-aware blocks;
+     `geometry` and `face_geometry` still keep Euclidean gauge dependence;
+     `omega` is mixed because the transition/sign parts are symmetry-aware while
+     the dual-coordinate magnitude packet still depends on translation gauge;
+     `orbit` and `trajectory` are mixed/search-side rather than pure geometry
+     quotients.
 
 ### LICCA-Blocked Packets
 
