@@ -34,6 +34,10 @@ path = "second-order/main.rs"
 name = "hko-cut-and-ascent"
 path = "cut-and-ascent/main.rs"
 
+[[bin]]
+name = "hko-sage-validation"
+path = "sage-validation/main.rs"
+
 [lints]
 workspace = true
 
