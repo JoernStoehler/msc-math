@@ -674,3 +674,18 @@ If local work continues before new LICCA rows arrive, use this order:
 
 If new LICCA rows arrive first, pause local feature proliferation and refresh
 the endpoint datasets before adding more model families.
+
+### Residual Endpoint Check
+
+- 2026-04-18: residual packet landed as
+  `experiments/sys-landscape/feature-pattern-search/analyze_residual.py`.
+- method:
+  metadata-first additive grouped CV on the endpoint union, with the block
+  model trained on the metadata residuals and grouped by the existing endpoint
+  `root_group_id` / `source_name` fallback.
+- current result:
+  `face_symplectic` is the clearest endpoint-side residual gain beyond
+  metadata (`Delta R^2 ≈ 0.12` ridge, `≈ 0.00` RF); `trajectory` is a small
+  positive residual on both models; `face_geometry` is marginally positive for
+  ridge only; `geometry`, `skeleton`, `omega`, `orbit`, and the full
+  non-metadata union do not improve the metadata baseline.
