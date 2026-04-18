@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Verify the widened exact-clarke seed witness in SageMath.
+Verify the widened exact-clarke representative-row witness in SageMath.
 
 Goal: reconstruct the quartic field and replay the exact geometry, symmetry,
-      and widened seed-row checks on one backend-neutral witness artifact.
+      and widened representative-row checks on one backend-neutral witness artifact.
 Input Artifacts: experiments/hko-local-maximum/exact-clarke/widened-seed-witness.json
 Output Artifacts: experiments/hko-local-maximum/exact-clarke/widened-seed-witness-verification.json
 """

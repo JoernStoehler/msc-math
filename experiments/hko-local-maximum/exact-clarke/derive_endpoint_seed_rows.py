@@ -90,7 +90,9 @@ def capacity_gradient_row(duals, permutation, beta_profile, q_value, mu_solution
         for index in range(orbit_index):
             partial_sum += simplify(beta_profile[index] * duals[permutation[index]])
         inner = simplify(2 * partial_sum + beta_profile[orbit_index] * duals[facet])
-        dq_da = simplify(beta_profile[orbit_index] * (j0 * inner + Matrix(mu_solution[:4])))
+        # Envelope theorem: dq/da_k includes the ordered symplectic-pairing term
+        # and the closure-constraint multiplier contribution.
+        dq_da = simplify(beta_profile[orbit_index] * (-j0 * inner + Matrix(mu_solution[:4])))
         row.extend([simplify(-entry / (2 * q_sq)) for entry in dq_da])
     return row
 

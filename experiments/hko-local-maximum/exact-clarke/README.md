@@ -158,19 +158,20 @@ That verifier currently passes and emits:
 - widened representative-row union rank `11`,
 - widened-seed-plus-symmetry rank `26`.
 
-Current exact warning from that same verification:
+Current exact consequence from that same verification:
 
-- the current widened representative rows annihilate all `10` linear symplectic
-  generators in the committed symmetry basis;
-- they do **not** annihilate the current `4` translation generators or the
-  current scaling generator;
-- equivalently, the current widened representative-row matrix has right-kernel dimension
-  `29`, not the target `15`, and its current affine/scaling symmetry
-  compatibility is not yet correct enough for theorem use.
+- the current widened representative rows annihilate all `15` committed
+  symmetry generators exactly, including the `4` translations, the scaling
+  direction, and the `10` linear symplectic generators;
+- the earlier affine/scaling mismatch was in the representative-row formula,
+  not in the symmetry tangent encoding;
+- the widened representative-row matrix still has right-kernel dimension `29`,
+  so the remaining Packet 3 issue is now active-row multiplicity rather than
+  affine-symmetry compatibility.
 
-So the next Packet 3 issue is now sharper than "add more active rows": first
-resolve whether the current translation/scaling tangent encoding or the
-current exact representative-row formula is missing a term or using the wrong convention.
+So the next Packet 3 issue is no longer "fix translation/scaling conventions".
+It is "widen the exact active representative surface until the final cone /
+matrix certificate becomes visible".
 
 The same witness shape is still intended to stay backend-neutral, so a future
 Rust producer should be able to emit it unchanged while Sage remains the

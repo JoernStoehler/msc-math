@@ -124,7 +124,9 @@ def main() -> None:
                 partial_sum += simplify(profile[index] * dual_vertices[permutation[index]])
 
             inner = simplify(2 * partial_sum + profile[orbit_index] * dual_vertices[facet])
-            dq_da = simplify(profile[orbit_index] * (j0 * inner + Matrix(mu_xi_solution[:4])))
+            # Envelope theorem: dq/da_k includes the ordered symplectic-pairing term
+            # and the closure-constraint multiplier contribution.
+            dq_da = simplify(profile[orbit_index] * (-j0 * inner + Matrix(mu_xi_solution[:4])))
             result.extend([simplify(-entry / (2 * q_sq)) for entry in dq_da])
         return result
 

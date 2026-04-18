@@ -3,7 +3,7 @@
 # requires-python = ">=3.12"
 # ///
 
-"""Assemble a backend-neutral widened-seed witness for the exact Clarke route.
+"""Assemble a backend-neutral widened representative-row witness.
 
 Goal: freeze the current Packet 3 widened seed surface into one self-contained
       exact witness artifact that later exact backends and Sage verifiers can
@@ -99,9 +99,9 @@ def main() -> None:
     payload = {
         "witness_version": 1,
         "witness_scope": (
-            "Current widened Packet 3 seed surface for the exact Clarke route. "
+            "Current widened Packet 3 representative-row surface for the exact Clarke route. "
             "This is not the final theorem witness because two asymmetric "
-            "seven-facet seeds remain unresolved and the active matrix itself "
+            "seven-facet representatives remain unresolved and the active matrix itself "
             "is not yet assembled."
         ),
         "source_artifacts": [
@@ -160,9 +160,9 @@ def main() -> None:
         ],
         "expected_total_seed_rows": len(all_rows),
         "current_limitations": [
-            "Two asymmetric seven-facet seeds are not included yet.",
+            "Two asymmetric seven-facet representatives are not included yet.",
             "This witness does not yet contain an active-gradient matrix, kernel basis, or symmetry-equality certificate.",
-            "The current devcontainer does not expose a runnable `sage` binary, so Sage verification must run in another environment until Sage is added.",
+            "This witness currently covers the widened representative surface, not the final theorem-facing active set.",
         ],
         "theorem_use": (
             "Use this artifact as the first backend-neutral Sage-facing witness "
