@@ -418,10 +418,10 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 - Known side effect: step_bound upgrade (omega_0 detection) changes experiment behavior if re-run. Existing JSONL not regenerated.
 
 ### [open] [group:paranoia] Paranoia: numerical claims (closure pass 2026-04-15)
-- First pass merged: `paranoia-numerics` branch, 19 files fixed across experiment logbooks + `experiments/numerics/error-bounds/tests.rs` + `experiments/numerics/unknown-predicates/main.rs`.
-- The old top-level audit report has been retired after migration into current tracker/design-note ownership. The long pre-migration body was mostly stale: the rotated-products path bug, numerics testdata path bug, and unknown-predicates dataset-label bug are fixed; most other old flags are either closed in current design notes or reduced to the six live packets below.
+- Closure note: the first pass merged `paranoia-numerics`, fixing 19 files across experiment logbooks + `experiments/numerics/error-bounds/tests.rs` + `experiments/numerics/unknown-predicates/main.rs`.
+- This row is now a closure ledger for stale-claim reconciliation, not a broad open numerics program. The old top-level audit report has been retired after migration into current tracker/design-note ownership.
 - Profiling closed as a live issue: `experiments/verification/algorithm-comparison/profiling/logbook.jsonl` keeps the bad 2026-04-04 zero-duration row as history, but the 2026-04-15 `f5d4ba18` row + `profile.jsonl` are the first usable post-fixture-removal baseline.
-- 2026-04-16 tracker reduction: the checkpoint cleanup closed the design-note-only rows for combinatorial-cells convexity, numerics error-bounds prose, crosspolytope timing wording, and cut-and-ascent timing wording. The remaining live rows are orbit recovery plus the LICCA-scale perturbation neighborhood run.
+- 2026-04-16 to 2026-04-17 tracker reduction: the checkpoint cleanup closed the design-note-only rows for combinatorial-cells convexity, numerics error-bounds prose, crosspolytope timing wording, cut-and-ascent timing wording, and the local-first orbit-recovery packet for the current thesis-facing scope.
 - Live follow-up packets:
   - `experiments/hko-local-maximum/perturbation-neighborhood/`: split historical `pentagon-perturb.jsonl` findings from current `data/{smoke,licca}-eps-*.jsonl` analyzer outputs; update stale task/design min/max wording.
 - Closed in checkpoint `9d55e7f8`:
@@ -429,11 +429,11 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
   - `research/numerics/design/error-bounds.md`: stale M1 wording marked historical; stale `make smoke` / `make full` commands removed.
   - `research/crosspolytope/design/main.md`: elapsed-time wording reconciled to the committed `1095.1s` JSONL result vs historical `1112.8s` console/table total.
   - `research/hko-local-maximum/design/cut-and-ascent.md`: stale `~10s per trial` scale-up estimate removed.
-- Stop condition for this closure bundle was reached: more than 2-3 live fixes remain, so they are split as packets instead of being fixed in this reconciliation task.
+- Stop condition for this closure bundle was reached. Keep any remaining work on dedicated packets instead of reopening this row into another broad numerics sweep.
 - Post-Kai priority: high-value polish because it protects thesis claims. Before about 2026-04-21, prefer shallow evidence repairs and stale-note fixes; after that, weaken or qualify claims instead of rerunning broad experiments.
 
 ### [open] [group:paranoia] Data freshness and rerun matrix
-- Source packet: `/tmp/4.md` asked for a prioritized table of evidence gaps with columns `claim`, `current data`, `missing data`, `local vs LICCA`, `estimated runtime`, `job/script readiness`, and `thesis impact`. The finished work instead landed the useful LICCA script-readiness commit `fc7991e6` and did not create the full matrix.
+- This row now records the finished rerun triage surface. The source packet (`/tmp/4.md`) originally asked for a prioritized table of evidence gaps with columns `claim`, `current data`, `missing data`, `local vs LICCA`, `estimated runtime`, `job/script readiness`, and `thesis impact`; the useful intermediate output was the LICCA script-readiness commit `fc7991e6`.
 - Do not redo the LICCA script audit first: `fc7991e6` added `job-smoke.sh`, fixed `CARGO_TARGET_DIR` binary paths, ran the three smoke scripts, and updated the active LICCA handoff notes. Remaining LICCA-side check is external: current repo layout under `~/msc-math` on LICCA before `sbatch`.
 - 2026-04-17 local refresh packet outcome:
   - in-scope canonical local datasets were rerun under current code and committed derived artifacts were regenerated from refreshed JSONL in the same pass;
@@ -452,8 +452,8 @@ tube-algorithm.tex and appendix-numerical.tex TODOs are about math correctness, 
 | cut-and-ascent timing | committed `cut-and-ascent.jsonl` has 20 preliminary rows; stale estimate already removed from the note | no trusted current scale-up timing estimate; bigger run would become a new experiment scope | local if reopened | binary exists; per-trial budget in code is 180s, but no current tracker requirement to measure it | current thesis use is only the empirical `0/20 improved` evidence; larger-F validation is already future work | do not rerun now; keep the current preliminary claim and defer broader sampling | defer/future |
 
 - Seed rows from the paranoia closure shortlist: orbit recovery, perturbation neighborhood, combinatorial-cells convexity, numerics error-bounds note, crosspolytope timing, and cut-and-ascent timing. Add non-paranoia stale evidence only when it affects `RESULTS.md` or an active thesis claim.
-- Immediate PM consequence from the matrix: only one row still needs action in the paranoia bundle. Perturbation neighborhood needs the external LICCA submission step. The remaining rows should not absorb another rerun session unless a separate research reason appears.
-- Repo-wide follow-up discovered during pre-merge on 2026-04-16: sweep other experiment binaries for default or `--smoke` code paths that still overwrite production `.jsonl` outputs or production-side cache overlays. Current state after the 2026-04-17 refresh packet: the touched sys-landscape + perturbation binaries now write untracked smoke outputs by default, and the current canonical DAG has header coverage. Remaining work is a broader sweep of untouched binaries, not re-debugging this convention.
+- Immediate PM consequence from the matrix: only one thesis-facing row still needs action here. Perturbation neighborhood needs the external LICCA submission step. The remaining rows should not absorb another rerun session unless a separate research reason appears.
+- Repo-wide follow-up discovered during pre-merge on 2026-04-16: sweep other experiment binaries for default or `--smoke` code paths that still overwrite production `.jsonl` outputs or production-side cache overlays. Treat that as broader data-hygiene follow-up, not as part of the remaining thesis-facing numerics evidence surface.
 - Stop condition: if the matrix recommends a new large experiment family rather than a rerun of an existing package, stop for Jörn's thesis-priority decision.
 - Post-Kai deadline rule: the matrix should classify rows into `fix before 2026-04-21`, `weaken/reword`, or `defer/future` in addition to local vs LICCA. Do not let the matrix create a new required coverage obligation.
 

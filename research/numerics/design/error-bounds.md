@@ -6,7 +6,7 @@ We discovered ancient math errors that slipped through existing verification. Th
 
 This experiment develops the right algorithms (not assumes the current ones are right), formalizes error bounds as lemmas, proves them, and empirically verifies and probes to detect falsehoods and room for improvement.
 
-**This blocks other experiment development.** All other experiments rely on this machinery. Verify it first.
+This started as the numerics-confidence prerequisite for the rest of the experiment program. In the current post-Kai thesis-close state, the remaining open items here are publication-polish and library-follow-up tasks, not a blocker for the two main thesis result blocks.
 
 ## The Problem
 
@@ -282,7 +282,7 @@ cargo run --release --bin num-error-bounds
 
 Run `uv run analyze.py` from `experiments/numerics/error-bounds/` for the full check output (`checks.txt`).
 
-Dataset: 51,784 problems (4303 artificial + 47,481 natural from 458 polytopes F≤8). 45,476 SP-feasible (44,980 EHZ-like, 496 stress-test).
+Dataset: 51,784 problems (4303 artificial + 47,481 natural from 47 polytopes F≤8). 45,476 SP-feasible (44,980 EHZ-like, 496 stress-test).
 
 Propositions:
 
