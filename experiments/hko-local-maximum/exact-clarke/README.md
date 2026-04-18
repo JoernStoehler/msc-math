@@ -21,6 +21,10 @@ Packet 1 completed:
   emitted as a dedicated Packet 3 support artifact.
 - the reduced endpoint/midpoint prototype `sys` rows are now emitted exactly in
   the Packet 3 `R^40` coordinate order.
+- the next blocker is no longer volume-row or row-assembly arithmetic; it is
+  permutation-level prototype multiplicity. One endpoint seed plus one midpoint
+  seed expand to only `20` symmetry images, so that reduced surface cannot
+  reach the target active-matrix rank `25`.
 
 ## Files
 
@@ -37,11 +41,13 @@ Packet 1 completed:
 | `derive_segment_a_gradient_reduction.py` | Exact Packet 2 certificate that the seven-facet KKT segment gives a degree-2 dual-vertex row family spanned by three prototype rows |
 | `derive_hko_volume_derivative.py` | Exact Packet 3 support script deriving the HKO dual-coordinate volume row in facet-major `R^40` order |
 | `derive_reduced_sys_prototypes.py` | Exact Packet 3 support script combining prototype capacity rows with the HKO volume row to emit exact prototype `sys` rows |
+| `classify_permutation_seed_orbits.py` | Packet 3 planning script classifying numerical representative permutations modulo HKO symmetries and cyclic relabeling |
 | `billiard-sigma-counts.json` | Generated Packet 2 count ladder for the HKO billiard combinatorics surface |
 | `billiard-exact-probe.json` | Generated timing probe for exact quartic KKT solves on sampled directed-feasible sigma words |
 | `hko-geometry.json` | Generated exact geometry record |
 | `hko-volume-derivative.json` | Generated exact HKO volume-row certificate |
 | `reduced-sys-prototypes.json` | Generated exact reduced prototype `sys` rows and their interpolation/coincidence checks |
+| `numerical-permutation-orbits.json` | Generated numerical symmetry-quotiented permutation-seed count surface for Packet 3 planning |
 | `hko-symmetry-tangent.json` | Generated exact symmetry tangent-space certificate |
 | `numerical-minima-summary.json` | Generated current numerical minima summary |
 | `numerical-family-reconciliation.json` | Generated Packet 2 bookkeeping summary of endpoint/equality-case classes |
@@ -64,6 +70,7 @@ python3 derive_segment_gradient_reduction.py
 python3 derive_segment_a_gradient_reduction.py
 python3 derive_hko_volume_derivative.py
 python3 derive_reduced_sys_prototypes.py
+python3 classify_permutation_seed_orbits.py
 ```
 
 ## Scope Boundary

@@ -37,6 +37,10 @@ exact footholds:
 - the exact HKO volume row is now committed in the checker coordinate order,
   and the corresponding reduced prototype `sys` rows are committed as exact
   Packet 3 support artifacts.
+- the next Packet 3 obstruction is now identified more sharply: one
+  endpoint-family seed plus one midpoint seed produce only `20` symmetry
+  images, so they cannot by themselves yield an active matrix of rank `25`;
+  additional symmetry-inequivalent permutation-level seeds are required.
 
 ## Research Question
 
@@ -174,7 +178,10 @@ another implementation line.
 2. Turn the current exact endpoint and KKT-segment certificates into the
    reduced active-row list used by the checker, now using the committed exact
    HKO volume row and the committed exact prototype `sys` rows.
-3. Prototype the matrix build in SageMath on the reduced prototype-row
+3. Choose the next permutation-level seeds using the new symmetry-quotiented
+   numerical planning surface in
+   `experiments/hko-local-maximum/exact-clarke/numerical-permutation-orbits.json`.
+4. Prototype the matrix build in SageMath on the widened reduced prototype-row
    surface, then compare its kernel against the committed symmetry basis.
 
 ## Related Files

@@ -131,6 +131,19 @@ Close the first-order `M_10` theorem surface:
   endpoints coincide exactly with the corresponding six-facet endpoint-family
   `sys` rows. This is recorded in
   `experiments/hko-local-maximum/exact-clarke/reduced-sys-prototypes.json`.
+- A key Packet 3 obstruction is now explicit: one six-facet endpoint seed and
+  one seven-facet midpoint seed give only `20` symmetry images under the
+  10-element HKO symplectic group, so that reduced surface can never reach the
+  target active-matrix rank `25`. The remaining work is therefore not “apply
+  the symmetry group to the current seeds,” but “identify additional
+  symmetry-inequivalent permutation-level seeds.”
+- The new planning artifact
+  `experiments/hko-local-maximum/exact-clarke/numerical-permutation-orbits.json`
+  records the current numerical hint for that multiplicity: after quotienting
+  the representative numerical minimizing permutations by HKO symmetries and
+  cyclic relabeling, the frozen surface currently shows `5` six-facet seed
+  orbits and `8` seven-facet seed orbits. This is a planning surface only, not
+  theorem input.
 - Working Packet 2 hypothesis from the current paper-plus-numerics comparison:
   modulo diagonal `72^\circ` rotation and `q/p` exchange, the minimizing-family
   catalog may reduce to one six-facet endpoint prototype together with one
@@ -218,6 +231,8 @@ Deliverables:
   `experiments/hko-local-maximum/exact-clarke/hko-volume-derivative.json`.
 - Current exact reduced prototype `sys` rows:
   `experiments/hko-local-maximum/exact-clarke/reduced-sys-prototypes.json`.
+- Current numerical permutation-seed orbit classifier:
+  `experiments/hko-local-maximum/exact-clarke/numerical-permutation-orbits.json`.
 - Current billiard sigma-surface count ladder:
   `experiments/hko-local-maximum/exact-clarke/billiard-sigma-counts.json`.
 - Current exact-sigma feasibility probe:
@@ -300,9 +315,12 @@ Checks:
 
 ## Immediate Next Steps
 
-1. Turn the current exact prototype `sys` rows into the reduced active-row list
-   used by Packet 3, including the symmetry-image expansion step.
-2. Build a first exact active-gradient matrix over the reduced family surface.
+1. Use the new permutation-orbit artifact to choose the next exact
+   permutation-level seeds beyond the current endpoint/midpoint pair.
+2. Exactify additional seed permutations and test how much row rank they add
+   beyond the current `20`-row symmetry expansion.
+3. Build the first exact active-gradient matrix over a widened reduced family
+   surface, not just the one-endpoint-plus-one-midpoint surface.
 3. Add SageMath to the devcontainer install surface or record the chosen exact
    runtime for Packet 3. If the Rust number-field backend lands first, benchmark
    it directly on the `6240` directed-feasible sigma surface before deciding
