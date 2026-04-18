@@ -18,6 +18,7 @@ wait-timeout.workspace = true
 good_lp.workspace = true
 num-integer.workspace = true
 blake3.workspace = true
+real-algebraic.workspace = true
 
 [dev-dependencies]
 proptest.workspace = true

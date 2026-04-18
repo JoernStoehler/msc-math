@@ -49,3 +49,4 @@ num-bigint.workspace = true
 num-rational.workspace = true
 num-traits.workspace = true
 good_lp.workspace = true
+real-algebraic.workspace = true

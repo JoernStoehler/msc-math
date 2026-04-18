@@ -28,9 +28,11 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
 use exp_hko_local_maximum::ehz_capacity_instrumented;
+use real_algebraic::{Algebraic, OrderedField, TanPiFifth};
 use symplectic::algorithms::OrbitKktData;
 use symplectic::derivatives::{capacity_derivatives_a_from_orbit, volume_derivatives_a};
 use symplectic::ehz_capacity;
+use symplectic::exact::{capacity_derivatives_a_exact, solve_orbit_sigma_exact, ExactPolytope4D};
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
@@ -98,6 +100,7 @@ struct SensitivityRow {
     // Per-orbit gradients (subdifferential)
     per_orbit_d_sys_h: Vec<Vec<f64>>,
     per_orbit_gradient_norm_h: Vec<f64>,
+    exact_best_sigma: Option<ExactBestSigmaDiagnostics>,
     // Timing
     time_instrumented_ms: f64,
     time_sensitivity_ms: f64,
@@ -137,6 +140,18 @@ struct AscentRow {
     time_ms: f64,
 }
 
+#[derive(Debug, Serialize)]
+struct ExactBestSigmaDiagnostics {
+    sigma: Vec<usize>,
+    q_exact_f64: f64,
+    action_exact_f64: f64,
+    max_abs_q_diff_vs_float: f64,
+    max_abs_beta_diff_vs_float: f64,
+    exact_capacity_gradient_a: Vec<[f64; 4]>,
+    float_capacity_gradient_a: Vec<[f64; 4]>,
+    max_abs_capacity_gradient_diff: f64,
+}
+
 // ============================================================================
 // Instrumented HK2017 — collects ALL valid orbits
 // ============================================================================
@@ -152,6 +167,7 @@ fn subset_of_sigma(sigma: &[usize]) -> Vec<usize> {
 // ============================================================================
 
 struct SensitivityResult {
+    d_cap_a: Vec<Vector4<f64>>,
     d_sys_h: Vec<f64>,
     gradient_norm_h: f64,
     d_sys_n: Vec<Vector4<f64>>,
@@ -207,12 +223,85 @@ fn compute_sensitivity(
         (gradient_norm_h * gradient_norm_h + gradient_norm_n * gradient_norm_n).sqrt();
 
     SensitivityResult {
+        d_cap_a,
         d_sys_h,
         gradient_norm_h,
         d_sys_n,
         gradient_norm_n,
         gradient_norm_hn,
     }
+}
+
+type TanPiFifthField = Algebraic<TanPiFifth>;
+
+fn exact_hko_polytope() -> ExactPolytope4D<TanPiFifthField> {
+    let z = TanPiFifthField::zero();
+    let one = TanPiFifthField::one();
+    let t = TanPiFifthField::generator();
+    let t2 = t.clone() * t.clone();
+    let t3 = t2.clone() * t.clone();
+
+    let a = (TanPiFifthField::one() + t2.clone()) / TanPiFifthField::from_i64(4);
+    let b = (TanPiFifthField::from_i64(7) * t.clone() - t3.clone()) / TanPiFifthField::from_i64(4);
+    let sec36 = (TanPiFifthField::from_i64(3) - t2.clone()) / TanPiFifthField::from_i64(2);
+
+    ExactPolytope4D::new(vec![
+        [one.clone(), t.clone(), z.clone(), z.clone()],
+        [-a.clone(), b.clone(), z.clone(), z.clone()],
+        [-sec36.clone(), z.clone(), z.clone(), z.clone()],
+        [-a.clone(), -b.clone(), z.clone(), z.clone()],
+        [one.clone(), -t.clone(), z.clone(), z.clone()],
+        [z.clone(), z.clone(), t.clone(), -one.clone()],
+        [z.clone(), z.clone(), b.clone(), a.clone()],
+        [z.clone(), z.clone(), z.clone(), sec36.clone()],
+        [z.clone(), z.clone(), -b, a],
+        [z.clone(), z.clone(), -t, -one],
+    ])
+    .expect("exact HKO pentagon polytope")
+}
+
+fn max_abs_vector_diff(lhs: &[Vector4<f64>], rhs: &[[f64; 4]]) -> f64 {
+    lhs.iter()
+        .zip(rhs.iter())
+        .flat_map(|(left, right)| {
+            [0usize, 1, 2, 3]
+                .into_iter()
+                .map(move |idx| (left[idx] - right[idx]).abs())
+        })
+        .fold(0.0, f64::max)
+}
+
+fn compute_exact_best_sigma_diagnostics(best_orbit: &OrbitKktData, float_d_cap_a: &[Vector4<f64>]) -> Option<ExactBestSigmaDiagnostics> {
+    let exact_polytope = exact_hko_polytope();
+    let exact_orbit = solve_orbit_sigma_exact(&exact_polytope, &best_orbit.sigma)?;
+    let exact_capacity_gradient = capacity_derivatives_a_exact(&exact_polytope, &exact_orbit);
+    let exact_capacity_gradient_f64: Vec<[f64; 4]> = exact_capacity_gradient
+        .iter()
+        .map(|grad| std::array::from_fn(|idx| grad[idx].to_f64()))
+        .collect();
+
+    let exact_beta_f64: Vec<f64> = exact_orbit.beta.iter().map(OrderedField::to_f64).collect();
+    let max_abs_beta_diff_vs_float = exact_beta_f64
+        .iter()
+        .zip(best_orbit.beta.iter())
+        .map(|(lhs, rhs)| (lhs - rhs).abs())
+        .fold(0.0, f64::max);
+    let q_exact_f64 = exact_orbit.q.to_f64();
+    let action_exact_f64 = exact_orbit.action().to_f64();
+
+    Some(ExactBestSigmaDiagnostics {
+        sigma: exact_orbit.sigma,
+        q_exact_f64,
+        action_exact_f64,
+        max_abs_q_diff_vs_float: (q_exact_f64 - best_orbit.q).abs(),
+        max_abs_beta_diff_vs_float,
+        max_abs_capacity_gradient_diff: max_abs_vector_diff(float_d_cap_a, &exact_capacity_gradient_f64),
+        exact_capacity_gradient_a: exact_capacity_gradient_f64,
+        float_capacity_gradient_a: float_d_cap_a
+            .iter()
+            .map(|grad| [grad[0], grad[1], grad[2], grad[3]])
+            .collect(),
+    })
 }
 
 // ============================================================================
@@ -627,6 +716,7 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
     let t_sens = Instant::now();
     let best_orbit = &instrumented.orbits[0];
     let sensitivity = compute_sensitivity(polytope, vol, cap, sys, best_orbit);
+    let exact_best_sigma = compute_exact_best_sigma_diagnostics(best_orbit, &sensitivity.d_cap_a);
     let time_sensitivity_ms = t_sens.elapsed().as_secs_f64() * 1000.0;
 
     println!("  ∂sys/∂h:");
@@ -636,6 +726,18 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
     println!("  |∇sys_h| = {:.6e}", sensitivity.gradient_norm_h);
     println!("  |∇sys_n| = {:.6e}", sensitivity.gradient_norm_n);
     println!("  |∇sys_hn| = {:.6e}", sensitivity.gradient_norm_hn);
+    if let Some(exact) = &exact_best_sigma {
+        println!(
+            "  exact best-sigma sidecar: q={:.15}, action={:.15}, |Δq|={:.3e}, |Δbeta|_max={:.3e}, |Δ∂c/∂a|_max={:.3e}",
+            exact.q_exact_f64,
+            exact.action_exact_f64,
+            exact.max_abs_q_diff_vs_float,
+            exact.max_abs_beta_diff_vs_float,
+            exact.max_abs_capacity_gradient_diff,
+        );
+    } else {
+        println!("  exact best-sigma sidecar: sigma not admissible / solvable in exact mode");
+    }
 
     // Critical point check
     let is_critical = sensitivity.gradient_norm_hn < 1e-6;
@@ -738,6 +840,7 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
         t_max_hn,
         per_orbit_d_sys_h,
         per_orbit_gradient_norm_h,
+        exact_best_sigma,
         time_instrumented_ms,
         time_sensitivity_ms,
     };

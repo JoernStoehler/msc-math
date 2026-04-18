@@ -42,6 +42,7 @@ pub mod constants;
 pub mod database;
 pub mod dataset;
 pub mod derivatives;
+pub mod exact;
 pub mod random;
 
 // ── Re-exports: public API surface ──
