@@ -9,6 +9,13 @@ description: "Guidance for Jörn-approved edits to this repo's agent harness: `A
 
 Edit the agent harness after Jörn has asked for harness edits. If a normal task session exposes a harness issue, propose the change at the end of the session or use `$post-mortem` when Jörn invokes it; do not edit harness files opportunistically.
 
+When the harness change is really about what "bad complexity" means for
+agent-heavy projects, read
+[`references/agent-project-delta.md`](references/agent-project-delta.md).
+That note is about the delta from ordinary human-team heuristics; do not load
+it for routine harness edits that do not touch simplification, architecture, or
+agent-facing readability.
+
 The harness is:
 - `AGENTS.md`: always-loaded project map and global invariants.
 - `.agents/skills/**`: triggerable convention and workflow bodies.
