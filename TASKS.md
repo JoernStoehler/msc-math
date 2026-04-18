@@ -228,7 +228,7 @@ sys as a continuous function on polytope space, no privileged threshold.
 - Direction-filtered subdifferential is a negative result.
 - `experiments/numerics/gradient/` (`numerics/`, `numerics-edge-cases/`, `numerics-subdifferential/`)
 
-### [open] [group:landscape] Feature regression + local-maxima pattern search
+### [done] [2026-04-18] [group:landscape] Feature regression + local-maxima pattern search
 - Post-Kai priority: closure-blocking for the hostile-landscape thesis wording, but bounded in method scope and effort. Do not invent novel tools here; throw standard data-science methods at the available datasets and see whether any transferable signal actually appears.
 - Run regression/classifier methods on random polytopes using Euclidean and symplectic feature data. More importantly, run the same checks on local maxima found by ascent.
 - Default dataset boundary: omit packets constructed near HKO2024 from the main modeling surface so the analysis does not learn the spoiler "start near the one known counterexample"; HKO-local packets may appear only as separately labeled controls or sensitivity checks.
@@ -237,8 +237,9 @@ sys as a continuous function on polytope space, no privileged threshold.
 - Dependencies: random/polytope datasets are available now; use current local-maxima datasets immediately and extend to LICCA-returned local maxima if those artifacts arrive in time.
 - First implementation packet: add a `sys-*` converter that normalizes the existing random/ascent JSONLs into core tables (`polytopes`, `states`, `capacity_results`, `step_events`) with an explicit source-priority rule. Do not start with model fitting or force intermediate-state geometry that current trace logs do not contain.
 - Landed in this worktree as `sys-normalized-dataset`; verified current normalized counts are `282` states / `282` capacity rows / `287` step events once the refreshed `experiments/sys-landscape/cache.jsonl` includes the fixed-`F` ascent endpoints.
-- Acceptance: produce a bounded standard-method pass over random samples and ascent-found local maxima, report cross-validated predictive performance plus feature importance or failure mode, state whether any signal transfers between the two regimes, and update `RESULTS.md`.
-- Stop condition: if a real signal appears, surface it for Jörn's mathematical interpretation before turning it into a conjecture; if the standard-method pass yields no transferable signal, record that negative result and stop; do not open a novel method-development line here.
+- Bounded pass landed in `experiments/sys-landscape/feature-pattern-search/` with `feature_geometry`, `feature_skeleton`, `feature_omega`, and sigma-local `feature_orbit` blocks plus refreshed summary plots and markdown.
+- Result: cheap geometry helps within the random regime, sigma-local orbit features help the endpoint regime more than the other non-metadata blocks, but metadata still beats every non-metadata block on endpoints and all transfer surfaces remain strongly negative.
+- Closure: record the negative result in `RESULTS.md` as evidence for the hostile-landscape interpretation; do not open a novel method-development line here without a separate thesis-scope decision.
 
 ### [future] Systematic landscape analysis
 - Gradient flow convergence, local maxima below sys=1, random noise effects.
