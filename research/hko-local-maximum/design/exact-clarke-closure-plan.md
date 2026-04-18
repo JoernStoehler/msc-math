@@ -49,6 +49,17 @@ Close the first-order `M_10` theorem surface:
 - The repo currently contains stale count surfaces for the minima:
   `44/10` in older writeups and `150` exact-action numerical orbit payloads
   in the current artifact.
+- Current Packet 2 bookkeeping evidence splits those `150` exact minima into
+  `44` six-facet endpoint-style orbit records and `106` seven-facet
+  equality-case orbit records. There are `10` visited six-facet subsets and
+  `10` visited seven-facet subsets; the current numerical gradient classes
+  suggest that the seven-facet surface lies on segments between neighboring
+  six-facet endpoint classes. The current reconciliation artifact records
+  `15` distinct six-facet gradient classes, `13` distinct seven-facet gradient
+  classes, and only two observed segment coefficients on the seven-facet
+  surface: `1/2` and approximately `0.129573855671`. The ten visited
+  six-facet subsets form one orbit under diagonal `72^\circ` rotation plus
+  `q/p` exchange, and the ten visited seven-facet subsets do as well.
 
 ## Work Packets
 
@@ -102,11 +113,16 @@ Deliverables:
 - written explanation of the current `44/10` versus `150/20/28` mismatch.
 - Current bookkeeping artifact:
   `experiments/hko-local-maximum/exact-clarke/numerical-minima-summary.json`.
+- Current classification artifact:
+  `experiments/hko-local-maximum/exact-clarke/numerical-family-reconciliation.json`.
 
 Checks:
 - every catalog family maps to current exact-action numerical minima;
 - every current exact-action numerical minimum is explained as either a catalog
   family instance or a duplicate representation.
+- if the paper-derived three-bounce equality cases contribute only segment
+  interiors between endpoint gradient classes, record that reduction explicitly
+  before promoting the endpoint family to theorem input.
 
 Stop condition:
 - if the HKO paper does not determine a finite theorem-facing catalog without a
