@@ -1455,9 +1455,12 @@ fn main() {
 mod tests {
     use super::{
         build_exact_bank_row, exact_bank_output_path, CliOptions, ExactBankEntry, ExactBankTarget,
-        EXACT_BANK_ENTRIES, HKO_WINNING_SIGMA, SIMPLEX_CONTROL_SIGMA,
+        EXACT_BANK_ENTRIES, HKO_FLOAT_WINNING_SIGMA, HKO_NEAR_OPTIMAL_SIGMA_A,
+        HKO_NEAR_OPTIMAL_SIGMA_B, HKO_WINNING_SIGMA, NEAR_OPTIMAL_GAP, SIMPLEX_CONTROL_SIGMA,
     };
+    use exp_hko_local_maximum::ehz_capacity_instrumented;
     use std::path::Path;
+    use symplectic::geom::known_polytopes;
 
     #[test]
     fn cli_options_parse_exact_bank_and_canonical() {
@@ -1530,6 +1533,34 @@ mod tests {
                 row.row_name
             );
         }
+    }
+
+    #[test]
+    fn hko_bank_labels_match_current_instrumented_roles() {
+        let known = known_polytopes::hko_pentagon();
+        let instrumented =
+            ehz_capacity_instrumented(&known.polytope).expect("instrumented HKO capacity");
+        let best_action = instrumented.orbits[0].action;
+        let near_optimal_sigmas: Vec<Vec<usize>> = instrumented
+            .orbits
+            .iter()
+            .filter(|orbit| (orbit.action - best_action) / best_action < NEAR_OPTIMAL_GAP)
+            .map(|orbit| orbit.sigma.clone())
+            .collect();
+
+        assert_eq!(instrumented.orbits[0].sigma, HKO_FLOAT_WINNING_SIGMA);
+        assert!(
+            near_optimal_sigmas
+                .iter()
+                .any(|sigma| sigma.as_slice() == HKO_NEAR_OPTIMAL_SIGMA_A),
+            "near-optimal bank sigma A left the live near-optimal set"
+        );
+        assert!(
+            near_optimal_sigmas
+                .iter()
+                .any(|sigma| sigma.as_slice() == HKO_NEAR_OPTIMAL_SIGMA_B),
+            "near-optimal bank sigma B left the live near-optimal set"
+        );
     }
 
     #[test]
