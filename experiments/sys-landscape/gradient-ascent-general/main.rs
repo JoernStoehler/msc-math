@@ -7,8 +7,10 @@
 //!         experiments/sys-landscape/gradient-ascent-general/gradient-ascent-general.jsonl
 //!         experiments/sys-landscape/gradient-ascent-general/gradient-ascent-general-trace.jsonl
 //!
-//! At each iteration, computes d(sys)/d(a_k) via the library's dual-vertex
-//! derivatives, then steps directly in a-space: a_k(t) = a_k + t * d_k.
+//! At each iteration, builds the active-orbit first-order model for `sys`.
+//! With one active orbit, uses that branch gradient directly; at switching
+//! points, chooses a maximin ascent direction from the active gradient family.
+//! It then steps directly in a-space: a_k(t) = a_k + t * d_k.
 //! Boundary-crossing via overshoot (multiples of t_max) and wiggle (random
 //! perturbation of dual vertices).
 //!
@@ -33,7 +35,7 @@
 //! open_ascent_writers, run_parallel_seeds, ...}`.
 
 use exp_sys_landscape::{
-    apply_dual_step, ascent_direction, compute_ascent_stage, compute_sys,
+    apply_dual_step, ascent_direction, compute_active_sys_state, compute_sys,
     compute_step_bound, finalize_ascent_output, open_ascent_writers, parse_ascent_args,
     run_parallel_seeds, smoke_output_path, trace_path_for, AscentArgs, AscentMode, SeedResult,
     SummaryRow, TraceRow, MAX_STEP_SIZE,
@@ -125,10 +127,10 @@ struct AscentResult {
     trace: Vec<TraceRow>,
 }
 
-/// Gradient ascent in dual-vertex space with overshoot at every iteration.
+/// Ascent in dual-vertex space with overshoot at every iteration.
 ///
 /// At each step:
-/// 1. Computes d(sys)/d(a_k) = (cap * d(cap)/d(a_k) - sys * d(vol)/d(a_k)) / vol
+/// 1. Builds the active-orbit first-order model of `sys`
 /// 2. Tries STEP_FRACTIONS of t_max (within cell) and OVERSHOOT_MULTIPLIERS (crosses boundary)
 /// 3. Picks the candidate with highest sys
 // TODO: add [lem:sys-sensitivity] to formal math (see gradient-correctness experiment)
@@ -153,13 +155,14 @@ fn gradient_ascent(
             break;
         }
 
-        // 1. Shared math stage
-        let stage = compute_ascent_stage(&current)?;
-        let sys = stage.sys;
+        // 1. Shared local state
+        let state = compute_active_sys_state(&current)?;
+        let sys = state.sys;
         let duals = current.dual_vertices_f64();
 
-        // 2. Gradient d(sys)/d(a_k)
-        let d_sys_a = ascent_direction(&current, &stage, AscentMode::General);
+        // 2. Ascent direction: single branch when unique, nonsmooth maximin
+        // direction when several active orbit branches tie.
+        let d_sys_a = ascent_direction(&current, &state, AscentMode::General)?;
 
         let gradient_norm = d_sys_a
             .iter()

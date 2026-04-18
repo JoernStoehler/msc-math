@@ -5,6 +5,7 @@
 //! gradient-ascent-products, rotated-regular-products, rejection-calibration.
 //! Local cell geometry experiments now live in exp-combinatorial-cells.
 
+use good_lp::{constraint, default_solver, variable, variables, Expression, Solution, SolverModel};
 use nalgebra::{Matrix4, Vector4};
 use rayon::prelude::*;
 use serde::{Deserialize, Serialize};
@@ -14,12 +15,14 @@ use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 use symplectic::algorithms::billiard::facet_classification::FacetClassification;
-use symplectic::derivatives::sys_gradient_a_from_kkt_result;
+use symplectic::derivatives::{
+    clarke_directional_derivative_a, sys_subgradients_a, ClarkeSubdiffA,
+};
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::symplectic_form::omega0;
 use symplectic::geom::volume::volume;
-use symplectic::kkt::saddle_point_solver::KktResult;
+use symplectic::OrbitSearchResult;
 
 // ============================================================================
 // Step bound constants
@@ -249,15 +252,16 @@ pub fn compute_step_bound(polytope: &Polytope4D, direction: &[Vector4<f64>]) -> 
 }
 
 // ============================================================================
-// Shared ascent stages
+// Shared ascent state and direction selection
 // ============================================================================
 
-/// Shared math state for one ascent iteration.
+/// Shared local state for one ascent iteration.
+///
+/// This packages the active-orbit capacity result together with the smooth
+/// volume term. It does not choose a single orbit branch.
 #[derive(Clone, Debug)]
-pub struct AscentStage {
-    pub cap: f64,
-    pub best_perm: Vec<usize>,
-    pub kkt: KktResult,
+pub struct ActiveSysState {
+    pub capacity: OrbitSearchResult,
     pub vol: f64,
     pub sys: f64,
 }
@@ -271,53 +275,119 @@ pub enum AscentMode<'a> {
     },
 }
 
-/// Compute the shared capacity/volume/sys stage for one polytope.
-pub fn compute_ascent_stage(polytope: &Polytope4D) -> Option<AscentStage> {
-    let (cap, best_perm) = compute_capacity_result(polytope)?;
-    let kkt = symplectic::kkt::saddle_point_solver::solve_kkt_for(polytope, &best_perm).feasible()?;
+/// Compute the active-orbit local state for one polytope.
+pub fn compute_active_sys_state(polytope: &Polytope4D) -> Option<ActiveSysState> {
+    let capacity = compute_capacity_result(polytope)?;
     let vol = volume(polytope).ok().filter(|&v| v > 0.0)?;
-    let sys = cap * cap / (2.0 * vol);
-    sys.is_finite().then_some(AscentStage {
-        cap,
-        best_perm,
-        kkt,
-        vol,
-        sys,
-    })
+    let sys = capacity.capacity() * capacity.capacity() / (2.0 * vol);
+    sys.is_finite()
+        .then_some(ActiveSysState { capacity, vol, sys })
 }
 
 /// Compute sys = c_EHZ(K)^2 / (2 vol(K)) for a polytope using HK2017.
 pub fn compute_sys(polytope: &Polytope4D) -> Option<f64> {
     let vol = volume(polytope).ok().filter(|&v| v > 0.0)?;
-    let cap = compute_capacity_result(polytope)?.0;
+    let cap = compute_capacity_result(polytope)?.capacity();
     let sys = cap * cap / (2.0 * vol);
     sys.is_finite().then_some(sys)
 }
 
-/// Compute the capacity and its maximizing permutation.
-pub fn compute_capacity_result(polytope: &Polytope4D) -> Option<(f64, Vec<usize>)> {
-    let r = symplectic::ehz_capacity(polytope).ok()?;
-    Some((r.capacity(), r.best_sigma().to_vec()))
+/// Compute the active-orbit capacity result.
+pub fn compute_capacity_result(polytope: &Polytope4D) -> Option<OrbitSearchResult> {
+    symplectic::ehz_capacity(polytope).ok()
+}
+
+fn flatten_gradient(grad: &[Vector4<f64>]) -> Vec<f64> {
+    grad.iter()
+        .flat_map(|vk| [vk[0], vk[1], vk[2], vk[3]])
+        .collect()
+}
+
+fn unflatten_direction(flat: &[f64]) -> Vec<Vector4<f64>> {
+    flat.chunks_exact(4)
+        .map(|chunk| Vector4::new(chunk[0], chunk[1], chunk[2], chunk[3]))
+        .collect()
+}
+
+fn coordinate_bounds(flat_idx: usize, mode: AscentMode<'_>) -> (f64, f64) {
+    let facet = flat_idx / 4;
+    let component = flat_idx % 4;
+
+    match mode {
+        AscentMode::General => (-1.0, 1.0),
+        AscentMode::LagrangianProduct { classification } => {
+            let q_forbidden = classification.q_indices.contains(&facet) && component >= 2;
+            let p_forbidden = classification.p_indices.contains(&facet) && component < 2;
+            if q_forbidden || p_forbidden {
+                (0.0, 0.0)
+            } else {
+                (-1.0, 1.0)
+            }
+        }
+    }
+}
+
+fn maximin_subgradient_direction(
+    subdiff: &ClarkeSubdiffA,
+    facet_count: usize,
+    mode: AscentMode<'_>,
+) -> Option<Vec<Vector4<f64>>> {
+    let dim = facet_count * 4;
+    let mut vars = variables!();
+    let direction_vars: Vec<_> = (0..dim)
+        .map(|flat_idx| {
+            let (min, max) = coordinate_bounds(flat_idx, mode);
+            vars.add(variable().min(min).max(max))
+        })
+        .collect();
+    let t_var = vars.add(variable().min(f64::NEG_INFINITY));
+
+    let mut model = vars.maximise(Expression::from(t_var)).using(default_solver);
+    for grad in subdiff {
+        let flat_grad = flatten_gradient(grad);
+        let mut lhs = Expression::from(0.0);
+        for (coeff, var) in flat_grad.iter().zip(&direction_vars) {
+            if *coeff != 0.0 {
+                lhs += *coeff * *var;
+            }
+        }
+        model = model.with(constraint!(lhs >= t_var));
+    }
+
+    let solution = model.solve().ok()?;
+    let flat_direction: Vec<f64> = direction_vars
+        .iter()
+        .map(|var| solution.value(*var))
+        .collect();
+    let direction = unflatten_direction(&flat_direction);
+    let predicted = clarke_directional_derivative_a(subdiff, &direction).ok()?;
+
+    (predicted > EPS_NUMERICAL_ZERO).then_some(direction)
 }
 
 /// Build the ascent direction for a single polytope state.
+///
+/// With a single active orbit, this reduces to that branch gradient. At
+/// switching points, it solves a maximin LP for a feasible direction `d`
+/// satisfying `max_d min_i <∇sys_i, d>` under box bounds on the ambient
+/// coordinates.
 pub fn ascent_direction(
     polytope: &Polytope4D,
-    stage: &AscentStage,
+    state: &ActiveSysState,
     mode: AscentMode<'_>,
-) -> Vec<Vector4<f64>> {
-    let mut d_sys_a = sys_gradient_a_from_kkt_result(polytope, &stage.best_perm, &stage.kkt);
-
-    match mode {
-        AscentMode::General => {}
-        AscentMode::LagrangianProduct { classification } => {
-            // LP masking stays local to the mode branch so the general kernel
-            // does not learn any product-specific structure.
-            classification.mask_dual_direction_in_place(&mut d_sys_a);
+) -> Option<Vec<Vector4<f64>>> {
+    let subdiff = sys_subgradients_a(polytope, &state.capacity.orbits).ok()?;
+    match subdiff.as_slice() {
+        [] => None,
+        [single] => {
+            let mut direction = single.clone();
+            if let AscentMode::LagrangianProduct { classification } = mode {
+                classification.mask_dual_direction_in_place(&mut direction);
+            }
+            Some(direction)
         }
+        _ => maximin_subgradient_direction(&subdiff, polytope.facet_count(), mode),
     }
-
-    d_sys_a
 }
 
 /// Try a step in dual-vertex space: a_k(t) = a_k + t * d_k.
@@ -796,4 +866,61 @@ pub fn finalize_ascent_output(
     }
     std::fs::rename(&trace_tmp, trace_path)
         .unwrap_or_else(|e| panic!("failed to rename {trace_tmp:?} -> {trace_path:?}: {e}"));
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use symplectic::algorithms::billiard::facet_classification::classify_facets;
+    use symplectic::geom::known_polytopes;
+
+    #[test]
+    fn maximin_direction_finds_improving_switch_direction() {
+        let subdiff = vec![
+            vec![Vector4::new(1.0, 0.0, 0.0, 0.0)],
+            vec![Vector4::new(0.0, 1.0, 0.0, 0.0)],
+        ];
+
+        let direction = maximin_subgradient_direction(&subdiff, 1, AscentMode::General)
+            .expect("switching pair should admit a positive maximin direction");
+        let predicted = clarke_directional_derivative_a(&subdiff, &direction)
+            .expect("nonempty subdifferential should evaluate");
+
+        assert!(predicted > 0.99, "predicted directional derivative = {predicted}");
+        assert!(direction[0][0] > 0.99, "direction = {:?}", direction[0]);
+        assert!(direction[0][1] > 0.99, "direction = {:?}", direction[0]);
+    }
+
+    #[test]
+    fn maximin_direction_respects_lp_coordinate_bounds() {
+        let kp = known_polytopes::lagrangian_triangle_product();
+        let classification = classify_facets(&kp.polytope)
+            .expect("triangle product should classify as a Lagrangian product");
+        let facet_count = kp.polytope.facet_count();
+        let q_idx = classification.q_indices[0];
+        let p_idx = classification.p_indices[0];
+
+        let mut g1 = vec![Vector4::zeros(); facet_count];
+        g1[q_idx] = Vector4::new(1.0, 2.0, 9.0, 11.0);
+        g1[p_idx] = Vector4::new(8.0, 6.0, 1.0, 2.0);
+
+        let mut g2 = vec![Vector4::zeros(); facet_count];
+        g2[q_idx] = Vector4::new(2.0, 1.0, 7.0, 5.0);
+        g2[p_idx] = Vector4::new(4.0, 3.0, 2.0, 1.0);
+
+        let subdiff = vec![g1, g2];
+        let direction = maximin_subgradient_direction(
+            &subdiff,
+            facet_count,
+            AscentMode::LagrangianProduct {
+                classification: &classification,
+            },
+        )
+        .expect("LP-bounded switching pair should admit a positive direction");
+
+        assert!(direction[q_idx][2].abs() < 1e-9, "direction = {:?}", direction[q_idx]);
+        assert!(direction[q_idx][3].abs() < 1e-9, "direction = {:?}", direction[q_idx]);
+        assert!(direction[p_idx][0].abs() < 1e-9, "direction = {:?}", direction[p_idx]);
+        assert!(direction[p_idx][1].abs() < 1e-9, "direction = {:?}", direction[p_idx]);
+    }
 }

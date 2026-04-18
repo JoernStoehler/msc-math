@@ -188,6 +188,18 @@ pub fn sys_gradient_a_from_orbit(
     ))
 }
 
+/// Assemble the per-orbit systolic-ratio gradients for a primitive
+/// Clarke-subdifferential representation.
+pub fn sys_subgradients_a(
+    polytope: &Polytope4D,
+    orbits: &[OrbitKktData],
+) -> Result<ClarkeSubdiffA, DerivativeError> {
+    orbits
+        .iter()
+        .map(|orbit| sys_gradient_a_from_orbit(polytope, orbit))
+        .collect()
+}
+
 /// Compute ∂vol(K)/∂a_k for all facets k = 0..f.
 ///
 /// Uses the chain rule through h_k = 1/|a_k| and n_k = a_k/|a_k|:
@@ -479,6 +491,30 @@ mod tests {
         };
 
         let err = sys_gradient_a_from_orbit(&kp.polytope, &orbit)
+            .expect_err("orbit without mu should fail explicitly");
+        assert_eq!(err, DerivativeError::MissingClosureMultiplier);
+    }
+
+    /// Systolic-ratio subgradient assembly should fail explicitly when any
+    /// orbit payload misses the multiplier needed by the derivative formula.
+    #[test]
+    fn sys_subgradients_a_requires_mu() {
+        let kp = known_polytopes::simplex();
+        let orbit = OrbitKktData {
+            sigma: vec![0, 1],
+            beta: vec![0.5, 0.5],
+            beta_margin: 0.5,
+            action: 1.0,
+            action_lower: 1.0,
+            action_upper: 1.0,
+            q: 0.5,
+            q_error_bound: 0.0,
+            mu: None,
+            xi: None,
+            admissibility: OrbitAdmissibility::AdmissibleF64,
+        };
+
+        let err = sys_subgradients_a(&kp.polytope, &[orbit])
             .expect_err("orbit without mu should fail explicitly");
         assert_eq!(err, DerivativeError::MissingClosureMultiplier);
     }
