@@ -26,10 +26,12 @@ Packet 1 completed:
 | `check_packet1.py` | Pure-Python sympy fallback for the Packet 1 exact geometry / symmetry certificates |
 | `summarize_numerical_minima.py` | Cross-check summary of the current numerical exact-minimum surface |
 | `classify_numerical_minima.py` | Packet 2 bookkeeping classifier for six-facet endpoint classes and seven-facet equality-case classes |
+| `derive_endpoint_prototype.py` | Exact Packet 2 certificate for one symmetry-reduced six-facet endpoint prototype |
 | `hko-geometry.json` | Generated exact geometry record |
 | `hko-symmetry-tangent.json` | Generated exact symmetry tangent-space certificate |
 | `numerical-minima-summary.json` | Generated current numerical minima summary |
 | `numerical-family-reconciliation.json` | Generated Packet 2 bookkeeping summary of endpoint/equality-case classes |
+| `endpoint-prototype-certificate.json` | Generated exact endpoint-prototype beta/action certificate |
 
 ## How To Run
 
@@ -39,6 +41,7 @@ sage check.sage
 python3 check_packet1.py
 python3 summarize_numerical_minima.py
 python3 classify_numerical_minima.py
+python3 derive_endpoint_prototype.py
 ```
 
 ## Scope Boundary
@@ -85,3 +88,10 @@ further than the raw gradient-class counts:
 - the six-facet exact minima use one beta multiset up to floating jitter;
 - the seven-facet exact minima split into exactly two beta multisets:
   one midpoint-style family and one asymmetric split family.
+- for each seven-facet class, the current reconciliation artifact also records
+  a facetwise beta-profile convex-combination witness against two neighboring
+  six-facet endpoint classes.
+
+The current symmetry-reduced prototype hypothesis is summarized in:
+
+- `research/hko-local-maximum/design/exact-clarke-orbit-catalog.md`

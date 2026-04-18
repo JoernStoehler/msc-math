@@ -76,6 +76,11 @@ Close the first-order `M_10` theorem surface:
 - These are numerical fits only. They are useful Packet 2 targets, not yet
   exact theorem input. A later exact derivation must either prove these formulas
   or replace them with the correct exact paper-derived expressions.
+- One symmetry-reduced six-facet endpoint prototype is now certified exactly:
+  beta pattern `{a, a, b, b, b, b}` with
+  `a = sqrt(5) / 10`, `b = (5 - sqrt(5)) / 20`,
+  exact closure `0`, normalization `1`, and positive-orientation action
+  `5 / (2 sqrt(5 - 2 sqrt(5)))`.
 - Working Packet 2 hypothesis from the current paper-plus-numerics comparison:
   modulo diagonal `72^\circ` rotation and `q/p` exchange, the minimizing-family
   catalog may reduce to one six-facet endpoint prototype together with two
@@ -137,6 +142,10 @@ Deliverables:
   `experiments/hko-local-maximum/exact-clarke/numerical-minima-summary.json`.
 - Current classification artifact:
   `experiments/hko-local-maximum/exact-clarke/numerical-family-reconciliation.json`.
+- Current prototype note:
+  `research/hko-local-maximum/design/exact-clarke-orbit-catalog.md`.
+- Current exact endpoint certificate:
+  `experiments/hko-local-maximum/exact-clarke/endpoint-prototype-certificate.json`.
 
 Checks:
 - every catalog family maps to current exact-action numerical minima;

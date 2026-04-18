@@ -1,0 +1,43 @@
+{
+  "endpoint_prototype": {
+    "action": "5/(2*sqrt(5 - 2*sqrt(5)))",
+    "action_float": 3.440954801177934,
+    "beta_names": {
+      "a": "sqrt(5) / 10",
+      "b": "(5 - sqrt(5)) / 20"
+    },
+    "beta_profile_formulas": [
+      "sqrt(5)/10",
+      "sqrt(5)/10",
+      "1/4 - sqrt(5)/20",
+      "1/4 - sqrt(5)/20",
+      "1/4 - sqrt(5)/20",
+      "1/4 - sqrt(5)/20"
+    ],
+    "closure_check": [
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    "normalization_check": "1",
+    "positive_permutation": [
+      9,
+      3,
+      6,
+      7,
+      1,
+      0
+    ],
+    "q_value": "sqrt(5 - 2*sqrt(5))/5",
+    "subset": [
+      0,
+      1,
+      3,
+      6,
+      7,
+      9
+    ]
+  },
+  "field_generator": "t = sqrt(5 - 2*sqrt(5)) = tan(pi/5)"
+}

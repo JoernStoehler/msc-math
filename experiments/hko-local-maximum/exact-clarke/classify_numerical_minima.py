@@ -132,6 +132,13 @@ def beta_multiset_prototypes(classes: list[dict[str, object]]) -> list[dict[str,
     return prototypes
 
 
+def beta_profile(
+    permutation: list[int], beta: list[float], facets: list[int]
+) -> list[float]:
+    by_facet = {facet: value for facet, value in zip(permutation, beta, strict=True)}
+    return [round(float(by_facet.get(facet, 0.0)), GRADIENT_ROUND_DIGITS) for facet in facets]
+
+
 def candidate_segment_relation(
     target: dict[str, object], endpoints: list[dict[str, object]]
 ) -> dict[str, object] | None:
@@ -193,11 +200,45 @@ def main() -> None:
     exact_orbits = build_exact_orbits()
     endpoint_classes = collect_classes(exact_orbits, subset_size=6)
     equality_classes = collect_classes(exact_orbits, subset_size=7)
+    endpoint_by_id = {entry["id"]: entry for entry in endpoint_classes}
 
     for equality_class in equality_classes:
         equality_class["segment_witness"] = candidate_segment_relation(
             equality_class, endpoint_classes
         )
+        witness = equality_class["segment_witness"]
+        if witness is not None:
+            first = endpoint_by_id[witness["first_endpoint_id"]]
+            second = endpoint_by_id[witness["second_endpoint_id"]]
+            facets = sorted(set(equality_class["subset"]))
+            t = float(witness["coefficient_on_second"])
+            first_profile = beta_profile(
+                first["representative_permutation"], first["representative_beta"], facets
+            )
+            second_profile = beta_profile(
+                second["representative_permutation"], second["representative_beta"], facets
+            )
+            target_profile = beta_profile(
+                equality_class["representative_permutation"],
+                equality_class["representative_beta"],
+                facets,
+            )
+            combined_profile = [
+                round((1.0 - t) * first_value + t * second_value, GRADIENT_ROUND_DIGITS)
+                for first_value, second_value in zip(first_profile, second_profile, strict=True)
+            ]
+            residual = max(
+                abs(target - combined)
+                for target, combined in zip(target_profile, combined_profile, strict=True)
+            )
+            equality_class["beta_profile_combination_witness"] = {
+                "ordered_facets": facets,
+                "first_profile": first_profile,
+                "second_profile": second_profile,
+                "target_profile": target_profile,
+                "combined_profile": combined_profile,
+                "max_abs_residual": residual,
+            }
 
     size6_subsets = sorted({tuple(entry["subset"]) for entry in endpoint_classes})
     size7_subsets = sorted({tuple(entry["subset"]) for entry in equality_classes})
@@ -223,6 +264,9 @@ def main() -> None:
         ),
         "all_size7_classes_have_segment_witness": all(
             entry["segment_witness"] is not None for entry in equality_classes
+        ),
+        "all_size7_classes_have_beta_profile_combination_witness": all(
+            "beta_profile_combination_witness" in entry for entry in equality_classes
         ),
         "segment_coefficients_on_second_endpoint": sorted(segment_coefficients),
         "size6_subsets": [list(subset) for subset in size6_subsets],
