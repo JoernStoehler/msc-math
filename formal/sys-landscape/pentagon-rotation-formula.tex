@@ -147,17 +147,17 @@ which reduces to the affine relation
 \[
   A\sin\theta + (2\lambda-1)B\cos\theta = 0.
 \]
-Thus the switch parameter is
+For fixed $\theta$, the function $L_\theta$ is affine on the two support cells
+$\lambda \le \lambda(\theta)$ and $\lambda \ge \lambda(\theta)$. The routine
+symbolic reduction is part of the exact CAS witness from
+Remark~\ref{rem:pentagon-rotation-cas-witness}, which verifies that the switch
+equation is solved on $0 \le \theta \le \pi/10$ by
 \[
   \lambda(\theta)
   =
-  \frac{1}{2} - \frac{\tan(\theta)}{2\tan(\pi/10)}.
+  \frac{1}{2} - \frac{\tan(\theta)}{2\tan(\pi/10)},
 \]
-
-For fixed $\theta$, the function $L_\theta$ is affine on the two support cells
-$\lambda \le \lambda(\theta)$ and $\lambda \ge \lambda(\theta)$. The routine
-trigonometric reduction of the corresponding derivatives is part of the exact
-CAS witness from Remark~\ref{rem:pentagon-rotation-cas-witness}, which records
+and that the one-sided slopes are
 \[
   \frac{d}{d\lambda} L_\theta^{-}
   =
@@ -173,11 +173,8 @@ $\theta=\pi/10$. Therefore $L_\theta$ decreases up to $\lambda(\theta)$ and
 then increases, so $\lambda(\theta)$ is the unique minimizing parameter on this
 family.
 
-Substituting the switch relation at the minimizing parameter gives
-\[
-  d_{\lambda(\theta)} = (-A,-A\tan\theta).
-\]
-The same exact CAS witness verifies the support values
+The same exact CAS witness verifies the support values at the minimizing
+parameter:
 \[
   h_{R(\theta)P_5}(-d_{\lambda(\theta)}) = A\sec\theta,
   \qquad
@@ -487,87 +484,24 @@ Write
 \[
   A := 1+\cos\left(\frac{\pi}{5}\right).
 \]
-The geometric reduction for this branch is the following.
-Since $z=v_{12}=(-\cos(\pi/10),-\sin(\pi/10))$ and $x \in e_0$, one has
+A direct support evaluation for the named faces reduces this branch to the
+system
 \[
-  c
-  =
-  \langle n_0, x \rangle
-  =
-  \langle n_0, z \rangle - a(\theta)\langle n_0, m_2(\theta) \rangle
-  =
-  -\sin\left(\frac{\pi}{10}\right)
-  +
-  a(\theta)\sin\left(\theta+\frac{3\pi}{10}\right).
+  a(\theta)\sin\left(\theta+\frac{3\pi}{10}\right) = \frac{\sqrt{5}}{2},
 \]
-Using
-\[
-  \cos\left(\frac{\pi}{5}\right) + \sin\left(\frac{\pi}{10}\right)
-  =
-  \frac{\sqrt{5}}{2},
-\]
-this gives
-\[
-  a(\theta)
-  =
-  \frac{\sqrt{5}}
-       {2\sin\left(\theta+\frac{3\pi}{10}\right)}.
-\]
-Also, $y \in e_4$ implies
-\begin{align*}
-  c
-  &=
-  \langle n_4, y \rangle \\
-  &=
-  \langle n_4, z \rangle
-  -
-  a(\theta)\langle n_4, m_2(\theta) \rangle
-  -
-  b(\theta)\langle n_4, m_1(\theta) \rangle \\
-  &=
-  -1
-  +
-  a(\theta)\cos\left(\theta+\frac{\pi}{5}\right)
-  +
-  b(\theta)\sin\left(\theta+\frac{3\pi}{10}\right),
-\end{align*}
-because
-\[
-  \langle n_4, z \rangle = -1,
-  \qquad
-  \langle n_4, m_2(\theta) \rangle = -\cos\left(\theta+\frac{\pi}{5}\right),
-  \qquad
-  \langle n_4, m_1(\theta) \rangle = -\sin\left(\theta+\frac{3\pi}{10}\right).
-\]
-Hence
 \[
   b(\theta)\sin\left(\theta+\frac{3\pi}{10}\right)
   =
-  A - a(\theta)\cos\left(\theta+\frac{\pi}{5}\right).
+  A - a(\theta)\cos\left(\theta+\frac{\pi}{5}\right),
 \]
-\[
-  \langle z-y, -w_{40}(\theta) \rangle
-  =
-  a(\theta) + \sin\left(\frac{\pi}{10}\right)b(\theta),
-\]
-so the affine product action reduces to
+and
 \[
   A_1(\theta)
   =
-  c\,a(\theta) + c\,b(\theta) + \langle z-y, -w_{40}(\theta) \rangle
-  =
   A\,a(\theta) + \frac{\sqrt{5}}{2}b(\theta).
 \]
-Here we used
-\[
-  \cos\left(\frac{\pi}{5}\right) + \sin\left(\frac{\pi}{10}\right)
-  =
-  \frac{\sqrt{5}}{2}.
-\]
-
-At this point the remaining elimination of $b(\theta)$ and the simplification
-of $A_1(\theta)-g(\theta)$ are routine symbolic algebra. By the exact CAS
-witness from Remark~\ref{rem:pentagon-rotation-cas-witness},
+The exact CAS witness from Remark~\ref{rem:pentagon-rotation-cas-witness}
+starts from these reduced formulas and checks
 \[
   A_1(\theta) - g(\theta)
   =
@@ -634,75 +568,22 @@ Write again
 \[
   A := 1+\cos\left(\frac{\pi}{5}\right).
 \]
-The geometric reduction is analogous. Since
-$z=v_{34}=(\cos(\pi/10),-\sin(\pi/10))$ and $x \in e_0$, one gets
+Again, a direct support evaluation reduces the branch to
 \[
-  c
-  =
-  \langle n_0, x \rangle
-  =
-  \langle n_0, z \rangle - a(\theta)\langle n_0, m_3(\theta) \rangle
-  =
-  -\sin\left(\frac{\pi}{10}\right)
-  +
-  a(\theta)\sin\left(\frac{3\pi}{10}-\theta\right).
+  a(\theta)\sin\left(\frac{3\pi}{10}-\theta\right) = \frac{\sqrt{5}}{2},
 \]
-Hence
-\[
-  a(\theta)
-  =
-  \frac{\sqrt{5}}
-       {2\sin\left(\frac{3\pi}{10}-\theta\right)}.
-\]
-Also, $y \in e_1$ gives
-\begin{align*}
-  c
-  &=
-  \langle n_1, y \rangle \\
-  &=
-  \langle n_1, z \rangle
-  -
-  a(\theta)\langle n_1, m_3(\theta) \rangle
-  -
-  b(\theta)\langle n_1, m_4(\theta) \rangle \\
-  &=
-  -1
-  +
-  a(\theta)\sin\left(\theta+\frac{3\pi}{10}\right)
-  +
-  b(\theta)\cos\left(\theta+\frac{\pi}{5}\right),
-\end{align*}
-because
-\[
-  \langle n_1, z \rangle = -1,
-  \qquad
-  \langle n_1, m_3(\theta) \rangle = -\sin\left(\theta+\frac{3\pi}{10}\right),
-  \qquad
-  \langle n_1, m_4(\theta) \rangle = -\cos\left(\theta+\frac{\pi}{5}\right).
-\]
-Therefore
 \[
   b(\theta)\cos\left(\theta+\frac{\pi}{5}\right)
   =
-  A - a(\theta)\sin\left(\theta+\frac{3\pi}{10}\right).
+  A - a(\theta)\sin\left(\theta+\frac{3\pi}{10}\right),
 \]
-\[
-  \langle z-y, -w_{01}(\theta) \rangle
-  =
-  a(\theta) + \sin\left(\frac{\pi}{10}\right)b(\theta),
-\]
-so the affine product action again reduces to
+and
 \[
   A_2(\theta)
   =
-  c\,a(\theta) + c\,b(\theta) + \langle z-y, -w_{01}(\theta) \rangle
-  =
   A\,a(\theta) + \frac{\sqrt{5}}{2}b(\theta).
 \]
-
-Again, the remaining elimination and simplification are routine symbolic
-algebra. By the exact CAS witness from
-Remark~\ref{rem:pentagon-rotation-cas-witness},
+By the exact CAS witness from Remark~\ref{rem:pentagon-rotation-cas-witness},
 \[
   A_2(\theta) - g(\theta)
   =

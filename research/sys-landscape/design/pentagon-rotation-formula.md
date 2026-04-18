@@ -321,6 +321,8 @@ private draft:
   `experiments/sys-landscape/pentagon-rotation-formula/cas_witnesses.py`.
 - the active `2`-bounce proposition has now been rewritten to the same
   “setup first, CAS for routine algebra” boundary.
+- the first two shortlisted `3`-bounce lemmas have now been tightened to that
+  same boundary too: only reduced support equations remain in the TeX proof.
 - That lemma does not yet prove branch existence from first principles; it is a
   conditional computation for the explicit affine support patterns above.
 - Within those surfaces, the comparison with the `2`-bounce candidate is done:
