@@ -692,3 +692,17 @@ the endpoint datasets before adding more model families.
   positive residual on both models; `face_geometry` is marginally positive for
   ridge only; `geometry`, `skeleton`, `omega`, `orbit`, and the full
   non-metadata union do not improve the metadata baseline.
+
+### Regime Classification Packet
+
+- 2026-04-18: endpoint-vs-random classification pass landed at
+  `experiments/sys-landscape/feature-pattern-search/analyze_regime_classification.py`
+  with grouped CV keyed by `root_group_id` / lineage fallback.
+- current reading:
+  `metadata` is the trivial separator because it includes provenance fields;
+  among non-provenance blocks, `orbit` is strongest
+  (`balanced_accuracy=0.9018` logistic, `0.9464` random forest), with
+  `face_symplectic` and `omega` the cleanest pure geometric blocks behind it.
+- implication:
+  the hostile-landscape split is still best explained by provenance/search-side
+  structure rather than a cheap pure-geometry separator.
