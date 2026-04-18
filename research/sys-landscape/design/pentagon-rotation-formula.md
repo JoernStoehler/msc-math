@@ -451,6 +451,29 @@ So the `EEE / EEE` surface is no longer just a heuristic branch note; the
 first competitive instance is now in the same setup-to-CAS style as the first
 two `EEV / EEV` families.
 
+Another new structural observation concerns the last near-minimum family
+`Q:0-2-34|P:2-4-01`.
+
+- a convenient raw representative at `theta = 14 degree` has affine support
+  word
+  `q : (e_0, v_{34}, e_2)`, `p : (w_{01}(theta), e_4, e_2)`;
+- at `10 degree`, `14 degree`, and `17.75 degree`, the owned sweep shows the
+  same raw sigma pattern up to the common cyclic relabeling used by the
+  signature normalizer;
+- in that pattern, one adjacent `q/p` beta pair shrinks steadily toward `0` as
+  `theta -> pi/10`;
+- removing that pair from the raw sigma leaves a `6`-segment alternating
+  all-edge word whose canonical affine signature is `Q:0-1-3|P:0-1-3`;
+- the owned `18 degree` row does indeed contain an admissible
+  `Q:0-1-3|P:0-1-3` orbit at the midpoint value.
+
+So the current best endpoint picture for `Q:0-2-34|P:2-4-01` is: open-interval
+`EEV / EEV` branch with a genuine strict interior orbit, but midpoint limit
+given by contraction to the midpoint-only all-edge family `Q:0-1-3|P:0-1-3`.
+That does not prove the interior inequality, but it sharpens the likely route:
+endpoint control should reduce to a known midpoint family rather than to the
+active `2`-bounce branch.
+
 ## Session Resume Note (2026-04-18)
 
 This worktree now has an owned experiment surface, a readable figure set, and a
