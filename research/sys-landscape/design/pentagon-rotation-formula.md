@@ -207,8 +207,8 @@ The readable signature notation is now direct:
 
 ### Proof status
 
-The private draft proves the active `2`-bounce branch formula and isolates the
-remaining gap. More precisely:
+The private draft writes out the active `2`-bounce branch calculation and
+isolates the remaining gap. More precisely:
 
 - `formal/sys-landscape/pentagon-rotation-formula.tex` derives the
   `lambda(theta)` formula for the vertex-to-opposite-edge branch;
@@ -216,7 +216,8 @@ remaining gap. More precisely:
 - it does not yet prove the exclusion of competing `3`-bounce branches.
 
 So the theorem statement remains conjectural, while the `2`-bounce upper-bound
-mechanism is already written in a checkable form.
+mechanism is already written in a checkable but still formally marked
+`unverified` form.
 
 ### Highest-value next step
 
