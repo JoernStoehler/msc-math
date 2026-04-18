@@ -4,12 +4,15 @@ Split from the original `gradient-is-zero/` experiment (Phase A: sensitivity ana
 
 ## Status
 
-**Active.** Data generated, figures produced.
+**Active.** Phase A data and the exact certification bank are generated.
 
 ## How to run
 
 ```bash
 cargo run -p exp-hko-local-maximum --release --bin hko-gradient-analysis
+cargo run -p exp-hko-local-maximum --release --bin hko-gradient-analysis -- --smoke
+cargo run -p exp-hko-local-maximum --release --bin hko-gradient-analysis -- --exact-bank
+cargo run -p exp-hko-local-maximum --release --bin hko-gradient-analysis -- --exact-bank --canonical
 uv run analyze.py
 ```
 
@@ -21,22 +24,22 @@ uv run analyze.py
 | `analyze.py` | Python figures + analysis |
 | `hko-neighborhood-sensitivity.jsonl` | Gradients at HKO2024 (1 row, all 44 orbit gradients inline) |
 | `hko-neighborhood-ascent.jsonl` | Gradient ascent trajectory (1 row) |
+| `exact-certification-bank.jsonl` | Canonical exact-vs-float certification bank for selected sigmas |
 | `hko-neighborhood-gradient.png` | Bar chart of d_sys/d_h_k |
 | `hko-neighborhood-orbits.png` | Orbit structure visualization |
 
-## Next Packet: Exact Certification Bank
+## Exact Certification Bank
 
-### Goal
-
-Add a small exact-certification mode to `hko-gradient-analysis` that uses the
-merged `symplectic::exact` kernel on a fixed hand-picked sigma bank and records
-continuous-value agreement against the current dyadic/`f64` path.
+Current mode:
+- `--exact-bank` writes `gradient-analysis/smoke-exact-certification-bank.jsonl`
+  for smoke/default runs.
+- `--exact-bank --canonical` refreshes
+  `gradient-analysis/exact-certification-bank.jsonl`.
 
 ### Scope
 
-- Add a fixed sigma bank for HKO2024 plus one rational control.
-- Add a CLI mode such as `--exact-bank`.
-- For each bank entry, compute on both paths when available:
+- Fixed sigma bank for HKO2024 plus one rational control.
+- For each bank entry, compute on both paths:
   - solve success / admissibility;
   - `q`;
   - action;
@@ -47,9 +50,6 @@ continuous-value agreement against the current dyadic/`f64` path.
   - `|Δaction|`;
   - `|Δbeta|_max`;
   - `|Δ∂c/∂a|_max`.
-- Write a small experiment-owned artifact:
-  - smoke/default: `gradient-analysis/smoke-exact-certification-bank.jsonl`
-  - explicit canonical refresh only: `gradient-analysis/exact-certification-bank.jsonl`
 
 ### Initial Sigma Bank
 
@@ -72,7 +72,8 @@ continuous-value agreement against the current dyadic/`f64` path.
 cargo build -p exp-hko-local-maximum --release --bin hko-gradient-analysis
 cargo run -p exp-hko-local-maximum --release --bin hko-gradient-analysis -- --smoke
 cargo run -p exp-hko-local-maximum --release --bin hko-gradient-analysis -- --exact-bank
+cargo run -p exp-hko-local-maximum --release --bin hko-gradient-analysis -- --exact-bank --canonical
 ```
 
-The packet is successful when the new mode produces a small exact bank artifact
-and the reported continuous-value comparisons are stable on the selected sigmas.
+The current mode is healthy when the exact bank artifact regenerates and the
+reported continuous-value comparisons stay stable on the selected sigmas.

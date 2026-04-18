@@ -13,10 +13,17 @@
 //!
 //! Split from gradient-is-zero/main.rs (Phase A).
 //!
-//! Architecture:
-//! 1. `cargo run --bin hko-gradient-analysis --release` generates datasets
-//! 2. Writes hko-neighborhood-sensitivity.jsonl and hko-neighborhood-ascent.jsonl
-//! 3. Python script (analyze.py) reads JSONL, produces figures
+//! Modes:
+//! 1. `cargo run --bin hko-gradient-analysis --release` generates the Phase A
+//!    sensitivity and ascent datasets.
+//! 2. `cargo run --bin hko-gradient-analysis --release -- --smoke` runs only
+//!    the sensitivity half of Phase A.
+//! 3. `cargo run --bin hko-gradient-analysis --release -- --exact-bank` writes
+//!    `smoke-exact-certification-bank.jsonl`.
+//! 4. `cargo run --bin hko-gradient-analysis --release -- --exact-bank --canonical`
+//!    refreshes `exact-certification-bank.jsonl`.
+//! 5. Python script (analyze.py) reads the Phase A JSONL outputs and produces
+//!    figures.
 //!
 //! KKT convention: this experiment now stores the shared `OrbitKktData` payload
 //! directly. That keeps the library's symmetric multiplier convention
@@ -441,6 +448,7 @@ fn arrays_from_vectors(values: &[Vector4<f64>]) -> Vec<[f64; 4]> {
 }
 
 fn max_abs_slice_diff(lhs: &[f64], rhs: &[f64]) -> f64 {
+    assert_eq!(lhs.len(), rhs.len(), "slice comparison length mismatch");
     lhs.iter()
         .zip(rhs.iter())
         .map(|(left, right)| (left - right).abs())
@@ -448,6 +456,7 @@ fn max_abs_slice_diff(lhs: &[f64], rhs: &[f64]) -> f64 {
 }
 
 fn max_abs_array4_diff(lhs: &[[f64; 4]], rhs: &[[f64; 4]]) -> f64 {
+    assert_eq!(lhs.len(), rhs.len(), "vector comparison length mismatch");
     lhs.iter()
         .zip(rhs.iter())
         .flat_map(|(left, right)| {
@@ -1445,9 +1454,10 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::{
-        build_exact_bank_row, CliOptions, ExactBankEntry, ExactBankTarget, EXACT_BANK_ENTRIES,
-        HKO_WINNING_SIGMA, SIMPLEX_CONTROL_SIGMA,
+        build_exact_bank_row, exact_bank_output_path, CliOptions, ExactBankEntry, ExactBankTarget,
+        EXACT_BANK_ENTRIES, HKO_WINNING_SIGMA, SIMPLEX_CONTROL_SIGMA,
     };
+    use std::path::Path;
 
     #[test]
     fn cli_options_parse_exact_bank_and_canonical() {
@@ -1482,6 +1492,44 @@ mod tests {
         assert!(EXACT_BANK_ENTRIES.iter().any(|entry| {
             entry.target == ExactBankTarget::SimplexControl && entry.sigma == SIMPLEX_CONTROL_SIGMA
         }));
+    }
+
+    #[test]
+    fn exact_bank_output_paths_match_smoke_and_canonical_contract() {
+        let base = Path::new("/tmp/hko");
+        assert_eq!(
+            exact_bank_output_path(base, false),
+            base.join("gradient-analysis/smoke-exact-certification-bank.jsonl")
+        );
+        assert_eq!(
+            exact_bank_output_path(base, true),
+            base.join("gradient-analysis/exact-certification-bank.jsonl")
+        );
+    }
+
+    #[test]
+    fn exact_bank_rows_cover_all_seed_entries() {
+        for entry in EXACT_BANK_ENTRIES {
+            let row = build_exact_bank_row(entry);
+            assert_eq!(
+                row.exact_status, "solved",
+                "exact row should solve: {}",
+                row.row_name
+            );
+            assert_eq!(
+                row.float_status, "solved",
+                "float row should solve: {}",
+                row.row_name
+            );
+            assert!(
+                row.max_abs_q_diff.is_some()
+                    && row.max_abs_action_diff.is_some()
+                    && row.max_abs_beta_diff.is_some()
+                    && row.max_abs_capacity_gradient_diff.is_some(),
+                "diffs should exist for {}",
+                row.row_name
+            );
+        }
     }
 
     #[test]
