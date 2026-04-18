@@ -220,6 +220,16 @@ have to start from the full raw `sigma` soup. The first serious lower-bound or
 sliding attempt should probably target these few signatures first, then explain
 why the rest are farther away automatically.
 
+Practical attack order for the next proof pass:
+
+1. try to prove an interior lower bound or sliding exclusion for
+   `Q:0-1-23  P:2-3-01`;
+2. do the same for `Q:0-1-34  P:3-4-01`;
+3. classify the endpoint loss of `Q:0-2-34  P:2-4-01` near `17.75 degree` as a
+   genuine contraction boundary or something else;
+4. only then broaden to the second-tier families
+   `Q:0-1-3  P:0-2-3`, `Q:0-1-3  P:1-3-4`, and `Q:0-2-34  P:0-3-12`.
+
 ## Session Resume Note (2026-04-18)
 
 This worktree now has an owned experiment surface, a readable figure set, and a
