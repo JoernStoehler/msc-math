@@ -18,6 +18,10 @@ replace.
   `experiments/hko-local-maximum/exact-clarke/numerical-family-reconciliation.json`.
 - Exact endpoint certificate:
   `experiments/hko-local-maximum/exact-clarke/endpoint-prototype-certificate.json`.
+- Exact gradient-reduction certificate:
+  `experiments/hko-local-maximum/exact-clarke/segment-gradient-reduction.json`.
+- Exact dual-vertex row-reduction certificate:
+  `experiments/hko-local-maximum/exact-clarke/segment-a-gradient-reduction.json`.
 
 ## Paper-Level Picture
 
@@ -127,11 +131,44 @@ Moreover, the exact segment certificate shows that `xi` is constant along this
 segment. Since the height derivative of the action uses the KKT formula
 `dA/dh_k = -xi beta_k / (2 Q^2)` on visited facets and `0` on unvisited
 facets, the capacity-height derivative family is affine in `lambda`.
-Because the HKO volume derivative is uniform across facets by symmetry, the
-same is true for the `sys` height-gradient family on this segment. So the
-interior equality-case gradients should contribute no new extreme first-order
-directions beyond the endpoint gradients; the remaining work is to write this
-reduction cleanly and exactly in the theorem-facing checker.
+
+The repo now also contains an exact reduction artifact for the corresponding
+`sys` height-gradient family. It records:
+
+- the exact endpoint facetwise beta data;
+- the exact segment facetwise beta data;
+- the exact capacity-height derivative profiles on both endpoints and on the
+  whole segment;
+- zero affine residual on every facet for the capacity-height family;
+- an abstract `sys`-height model
+  `grad_sys = gamma * grad_capacity - delta * 1`
+  with common scalars `gamma, delta`, again with zero affine residual on every
+  facet.
+
+This height-space reduction is useful, but it is not yet the theorem-facing
+`R^40` reduction, because the exact dual-vertex row family does not collapse
+all the way to the two endpoint rows.
+
+The new dual-vertex row artifact records the correct Packet 2 reduction for the
+checker:
+
+- in exact dual-vertex coordinates, the seven-facet capacity row family is a
+  degree-`2` polynomial in `lambda`;
+- its `40` coordinates are exactly recovered by the Lagrange interpolation
+  through `lambda = 0`, `1/2`, and `1`;
+- because the Lagrange coefficients sum to `1` and the volume derivative row
+  is orbit-independent, the same three-row interpolation holds for the exact
+  `sys` rows.
+
+So the theorem-facing reduction surface is currently:
+
+- the neighboring seven-facet family does not reduce to the endpoint rows
+  alone in `R^40`;
+- it does reduce to the span of three exact prototype rows:
+  left endpoint, midpoint, and right endpoint.
+- the two segment endpoints coincide exactly with the corresponding six-facet
+  endpoint-family rows, so the only genuinely new prototype row contributed by
+  this neighboring seven-facet family is the midpoint row.
 
 ### Midpoint Representative
 
@@ -187,16 +224,19 @@ as a distinguished theorem-facing constant.
 
 - A paper-derived exact proof that the equality-case surface in the paper is
   exactly the KKT segment above in repo notation.
-- A proof that the equality-case `7`-facet families add no new extremal
-  first-order constraints beyond the endpoint family if that is indeed the
-  correct Clarke-theoretic reduction.
+- A paper-derived proof that the equality-case surface in the HKO billiard
+  geometry is exactly this neighboring-endpoint segment in repo notation.
+- The actual reduced active-gradient matrix built from the three-row segment
+  reduction surface and compared against the symmetry tangent space.
 
 ## Current Best Use
 
 Use this note as the working Packet 2 target surface:
 
-- if the paper geometry can be translated into these three symmetry-reduced
+- if the paper geometry can be translated into these symmetry-reduced
   prototypes, then Packet 3 can build the exact active-gradient matrix from
-  them rather than from `150` numerical orbit payloads;
+  the endpoint row together with the exact three-row reduction for each
+  neighboring equality-case segment, rather than from `150` numerical orbit
+  payloads;
 - if the paper geometry forces a different finite family surface, replace this
   note with the corrected exact catalog and record the mismatch explicitly.

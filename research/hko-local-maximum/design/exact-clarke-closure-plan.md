@@ -99,10 +99,18 @@ Close the first-order `M_10` theorem surface:
   `5 / (2 sqrt(5 - 2 sqrt(5)))` for all `lambda`.
 - In that exact segment family, `xi` is constant, so the capacity height
   derivatives are affine in `lambda`. Since the HKO volume derivative is
-  uniform across facets by symmetry, the same affine reduction should hold for
-  the `sys` height-gradient family. This is the current exact route to showing
-  that interior equality-case gradients add no new extreme first-order
-  directions beyond the endpoint gradients.
+  uniform across facets by symmetry, the same affine reduction holds for the
+  `sys` height-gradient family. This is useful supporting structure, but it is
+  not itself the theorem-facing `R^40` reduction.
+- The exact dual-vertex row certificate shows the correct first-order
+  reduction for the checker: on the neighboring seven-facet segment, the
+  capacity row family in `R^40` is degree `2` in `lambda` and is exactly
+  recovered from the prototype rows at `lambda = 0`, `1/2`, and `1`. Because
+  all minimizing rows share the same capacity and the same volume-derivative
+  row, the exact `sys` row family satisfies the same three-row interpolation.
+  The segment endpoints coincide exactly with the corresponding six-facet
+  endpoint-family rows, so Packet 3 should use endpoint-family rows together
+  with midpoint prototype rows, not an endpoint-only reduction.
 - Working Packet 2 hypothesis from the current paper-plus-numerics comparison:
   modulo diagonal `72^\circ` rotation and `q/p` exchange, the minimizing-family
   catalog may reduce to one six-facet endpoint prototype together with one
@@ -168,14 +176,19 @@ Deliverables:
   `research/hko-local-maximum/design/exact-clarke-orbit-catalog.md`.
 - Current exact endpoint certificate:
   `experiments/hko-local-maximum/exact-clarke/endpoint-prototype-certificate.json`.
+- Current exact gradient-reduction certificate:
+  `experiments/hko-local-maximum/exact-clarke/segment-gradient-reduction.json`.
+- Current exact dual-vertex row-reduction certificate:
+  `experiments/hko-local-maximum/exact-clarke/segment-a-gradient-reduction.json`.
 
 Checks:
 - every catalog family maps to current exact-action numerical minima;
 - every current exact-action numerical minimum is explained as either a catalog
   family instance or a duplicate representation.
 - if the paper-derived three-bounce equality cases contribute only segment
-  interiors between endpoint gradient classes, record that reduction explicitly
-  before promoting the endpoint family to theorem input.
+  interiors between endpoint gradient classes, record the exact finite
+  reduction in `R^40` and switch Packet 3 input from raw seven-facet rows to
+  the reduced prototype-row surface.
 
 Stop condition:
 - if the HKO paper does not determine a finite theorem-facing catalog without a
@@ -242,7 +255,10 @@ Checks:
 
 ## Immediate Next Steps
 
-1. Add this tracker to `TASKS.md` as the durable execution surface.
-2. Add SageMath to the devcontainer install surface.
-3. Build the exact geometry record and symmetry tangent basis.
-4. Reconcile the minima count surface before claiming theorem closure.
+1. Turn the exact segment-to-endpoint reduction into the reduced active-row
+   list used by Packet 3.
+2. Build a first exact active-gradient matrix over the reduced family surface.
+3. Add SageMath to the devcontainer install surface or record the chosen exact
+   runtime for Packet 3.
+4. Compare the reduced exact kernel certificate against the committed symmetry
+   tangent basis.

@@ -23,7 +23,17 @@ exact footholds:
 
 - one symmetry-reduced six-facet endpoint prototype is certified exactly;
 - one neighboring seven-facet equality-case surface is certified as an exact
-  one-parameter KKT segment with constant action.
+  one-parameter KKT segment with constant action;
+- one exact gradient-reduction artifact shows that, under the uniform
+  facet-volume derivative symmetry fact, the interior rows on that segment are
+  affine combinations of the endpoint rows.
+- one exact dual-vertex row-reduction artifact shows the theorem-facing `R^40`
+  statement instead: the segment does not collapse to two endpoint rows, but
+  its exact active-row family is spanned by the three prototype rows at
+  `lambda = 0`, `1/2`, and `1`.
+- the same artifact shows that the two segment endpoints are exactly the
+  corresponding six-facet endpoint rows, so the only genuinely new seven-facet
+  prototype row on this neighboring segment is the midpoint row.
 
 ## Research Question
 
@@ -158,11 +168,11 @@ another implementation line.
 ## Immediate Next Steps
 
 1. Extract the paper-derived orbit-family data needed for the exact gradients.
-2. Turn the current exact endpoint and KKT-segment certificates into a
-   theorem-facing statement about which active-gradient rows can be extreme.
+2. Turn the current exact endpoint and KKT-segment certificates into the
+   reduced active-row list used by the checker.
 3. Write down the exact dual-vertex coordinates of HKO2024 in repo notation.
-4. Prototype the matrix build in SageMath on the endpoint family first, then
-   add the segment-family reduction before writing the full checker.
+4. Prototype the matrix build in SageMath on the reduced prototype-row
+   surface, then compare its kernel against the committed symmetry basis.
 
 ## Related Files
 

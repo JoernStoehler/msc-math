@@ -1,0 +1,176 @@
+{
+  "beta_by_facet": {
+    "left": {
+      "0": "1/4 - sqrt(5)/20",
+      "1": "1/4 - sqrt(5)/20",
+      "2": "0",
+      "3": "sqrt(5)/10",
+      "4": "0",
+      "5": "0",
+      "6": "1/4 - sqrt(5)/20",
+      "7": "1/4 - sqrt(5)/20",
+      "8": "0",
+      "9": "sqrt(5)/10"
+    },
+    "right": {
+      "0": "sqrt(5)/10",
+      "1": "0",
+      "2": "1/4 - sqrt(5)/20",
+      "3": "1/4 - sqrt(5)/20",
+      "4": "0",
+      "5": "0",
+      "6": "1/4 - sqrt(5)/20",
+      "7": "1/4 - sqrt(5)/20",
+      "8": "0",
+      "9": "sqrt(5)/10"
+    },
+    "segment": {
+      "0": "sqrt(5)*lambda/10 - (5 - sqrt(5))*(lambda - 1)/20",
+      "1": "-(5 - sqrt(5))*(lambda - 1)/20",
+      "2": "lambda*(5 - sqrt(5))/20",
+      "3": "lambda*(5 - sqrt(5))/20 + sqrt(5)*(1 - lambda)/10",
+      "4": "0",
+      "5": "0",
+      "6": "1/4 - sqrt(5)/20",
+      "7": "1/4 - sqrt(5)/20",
+      "8": "0",
+      "9": "sqrt(5)/10"
+    }
+  },
+  "beta_names": {
+    "a": "sqrt(5) / 10",
+    "b": "(5 - sqrt(5)) / 20"
+  },
+  "capacity_affine_residual_by_facet": {
+    "0": "0",
+    "1": "0",
+    "2": "0",
+    "3": "0",
+    "4": "0",
+    "5": "0",
+    "6": "0",
+    "7": "0",
+    "8": "0",
+    "9": "0"
+  },
+  "capacity_height_derivative_by_facet": {
+    "left": {
+      "0": "(5 - sqrt(5))/(4*sqrt(5 - 2*sqrt(5)))",
+      "1": "(5 - sqrt(5))/(4*sqrt(5 - 2*sqrt(5)))",
+      "2": "0",
+      "3": "sqrt(5)/(2*sqrt(5 - 2*sqrt(5)))",
+      "4": "0",
+      "5": "0",
+      "6": "(5 - sqrt(5))/(4*sqrt(5 - 2*sqrt(5)))",
+      "7": "(5 - sqrt(5))/(4*sqrt(5 - 2*sqrt(5)))",
+      "8": "0",
+      "9": "sqrt(5)/(2*sqrt(5 - 2*sqrt(5)))"
+    },
+    "right": {
+      "0": "sqrt(5)/(2*sqrt(5 - 2*sqrt(5)))",
+      "1": "0",
+      "2": "(5 - sqrt(5))/(4*sqrt(5 - 2*sqrt(5)))",
+      "3": "(5 - sqrt(5))/(4*sqrt(5 - 2*sqrt(5)))",
+      "4": "0",
+      "5": "0",
+      "6": "(5 - sqrt(5))/(4*sqrt(5 - 2*sqrt(5)))",
+      "7": "(5 - sqrt(5))/(4*sqrt(5 - 2*sqrt(5)))",
+      "8": "0",
+      "9": "sqrt(5)/(2*sqrt(5 - 2*sqrt(5)))"
+    },
+    "segment": {
+      "0": "(2*sqrt(5)*lambda - (5 - sqrt(5))*(lambda - 1))/(4*sqrt(5 - 2*sqrt(5)))",
+      "1": "-(5 - sqrt(5))*(lambda - 1)/(4*sqrt(5 - 2*sqrt(5)))",
+      "2": "lambda*(5 - sqrt(5))/(4*sqrt(5 - 2*sqrt(5)))",
+      "3": "(lambda*(5 - sqrt(5)) + 2*sqrt(5)*(1 - lambda))/(4*sqrt(5 - 2*sqrt(5)))",
+      "4": "0",
+      "5": "0",
+      "6": "(5 - sqrt(5))/(4*sqrt(5 - 2*sqrt(5)))",
+      "7": "(5 - sqrt(5))/(4*sqrt(5 - 2*sqrt(5)))",
+      "8": "0",
+      "9": "sqrt(5)/(2*sqrt(5 - 2*sqrt(5)))"
+    }
+  },
+  "capacity_height_prefactor": "5/sqrt(5 - 2*sqrt(5))",
+  "endpoint_pair": {
+    "left_subset": [
+      0,
+      1,
+      3,
+      6,
+      7,
+      9
+    ],
+    "right_subset": [
+      0,
+      2,
+      3,
+      6,
+      7,
+      9
+    ],
+    "union_subset": [
+      0,
+      1,
+      2,
+      3,
+      6,
+      7,
+      9
+    ]
+  },
+  "segment_parameter": "lambda",
+  "sys_affine_residual_by_facet": {
+    "0": "0",
+    "1": "0",
+    "2": "0",
+    "3": "0",
+    "4": "0",
+    "5": "0",
+    "6": "0",
+    "7": "0",
+    "8": "0",
+    "9": "0"
+  },
+  "sys_height_reduction_model": {
+    "delta": "common scalar (sys / volume) * uniform volume-height derivative",
+    "gamma": "common scalar (capacity / volume) * capacity_height_prefactor",
+    "left": {
+      "0": "-delta + gamma*(5 - sqrt(5))/20",
+      "1": "-delta + gamma*(5 - sqrt(5))/20",
+      "2": "-delta",
+      "3": "-delta + sqrt(5)*gamma/10",
+      "4": "-delta",
+      "5": "-delta",
+      "6": "-delta + gamma*(5 - sqrt(5))/20",
+      "7": "-delta + gamma*(5 - sqrt(5))/20",
+      "8": "-delta",
+      "9": "-delta + sqrt(5)*gamma/10"
+    },
+    "right": {
+      "0": "-delta + sqrt(5)*gamma/10",
+      "1": "-delta",
+      "2": "-delta + gamma*(5 - sqrt(5))/20",
+      "3": "-delta + gamma*(5 - sqrt(5))/20",
+      "4": "-delta",
+      "5": "-delta",
+      "6": "-delta + gamma*(5 - sqrt(5))/20",
+      "7": "-delta + gamma*(5 - sqrt(5))/20",
+      "8": "-delta",
+      "9": "-delta + sqrt(5)*gamma/10"
+    },
+    "segment": {
+      "0": "-delta + gamma*(2*sqrt(5)*lambda - (5 - sqrt(5))*(lambda - 1))/20",
+      "1": "-delta - gamma*(5 - sqrt(5))*(lambda - 1)/20",
+      "2": "-delta + gamma*lambda*(5 - sqrt(5))/20",
+      "3": "-delta + gamma*(lambda*(5 - sqrt(5)) - 2*sqrt(5)*(lambda - 1))/20",
+      "4": "-delta",
+      "5": "-delta",
+      "6": "-delta + gamma*(5 - sqrt(5))/20",
+      "7": "-delta + gamma*(5 - sqrt(5))/20",
+      "8": "-delta",
+      "9": "-delta + sqrt(5)*gamma/10"
+    }
+  },
+  "theorem_use": "For lambda in [0,1], the seven-facet segment row lies in the convex hull of the two endpoint rows. Therefore interior segment points contribute no new extreme first-order rows once the endpoint rows are included."
+}
