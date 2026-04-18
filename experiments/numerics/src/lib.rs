@@ -1,3 +1,7 @@
 //! Shared helpers for dev-numerical-analysis experiments.
 //!
-//! Initially empty — shared code extraction is a separate task.
+//! The algebraic exactness spike lives here so multiple numerics binaries and
+//! tests can share the same experimental field, geometry, KKT, and catalog
+//! helpers without touching the library core.
+
+pub mod algebraic;

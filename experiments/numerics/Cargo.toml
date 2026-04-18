@@ -26,6 +26,10 @@ path = "kkt-inertia/main.rs"
 name = "num-unknown-predicates"
 path = "unknown-predicates/main.rs"
 
+[[bin]]
+name = "num-algebraic-exactness"
+path = "algebraic-exactness/main.rs"
+
 [[test]]
 name = "verify_numerics_tests"
 path = "error-bounds/tests.rs"
