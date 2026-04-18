@@ -22,6 +22,7 @@ Input Artifacts:
   - optionally a precomputed normalized dataset directory passed by `--normalized-dir`
 Output Artifacts:
   - experiments/sys-landscape/feature-pattern-search/feature_geometry.jsonl
+  - experiments/sys-landscape/feature-pattern-search/feature_skeleton.jsonl
   - experiments/sys-landscape/feature-pattern-search/feature_pattern_search_summary.md
   - experiments/sys-landscape/feature-pattern-search/feature_pattern_search_ridge.png
   - experiments/sys-landscape/feature-pattern-search/feature_pattern_search_rf.png
@@ -54,6 +55,7 @@ EXPERIMENT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = EXPERIMENT_DIR.parent.parent.parent
 
 FEATURE_JSONL = EXPERIMENT_DIR / "feature_geometry.jsonl"
+FEATURE_SKELETON_JSONL = EXPERIMENT_DIR / "feature_skeleton.jsonl"
 SUMMARY_MD = EXPERIMENT_DIR / "feature_pattern_search_summary.md"
 RIDGE_PNG = EXPERIMENT_DIR / "feature_pattern_search_ridge.png"
 RF_PNG = EXPERIMENT_DIR / "feature_pattern_search_rf.png"
@@ -73,7 +75,7 @@ SURFACES = [
     ("random_to_endpoint", "Random -> endpoint"),
     ("endpoint_to_random", "Endpoint -> random"),
 ]
-FEATURE_BLOCKS = ["null", "metadata", "geometry", "combined"]
+FEATURE_BLOCKS = ["null", "metadata", "geometry", "skeleton", "all"]
 MODEL_SPECS = [("ridge", "Ridge"), ("rf", "Random forest")]
 
 
@@ -86,6 +88,7 @@ class JoinedRow:
     sys: float
     metadata: dict[str, str | float]
     geometry: dict[str, float]
+    skeleton: dict[str, float]
 
 
 def cv_group_id(state: dict, regime: str) -> str:
@@ -200,7 +203,25 @@ def refresh_normalized_dataset(out_dir: Path) -> None:
     subprocess.run(cmd, cwd=REPO_ROOT, check=True)
 
 
-def load_joined_rows(normalized_dir: Path) -> tuple[list[JoinedRow], list[dict]]:
+def refresh_skeleton_features(normalized_dir: Path, out_path: Path) -> None:
+    cmd = [
+        "cargo",
+        "run",
+        "-p",
+        "exp-sys-landscape",
+        "--release",
+        "--bin",
+        "sys-feature-skeleton",
+        "--",
+        "--normalized-dir",
+        str(normalized_dir),
+        "--out",
+        str(out_path),
+    ]
+    subprocess.run(cmd, cwd=REPO_ROOT, check=True)
+
+
+def load_joined_rows(normalized_dir: Path) -> tuple[list[JoinedRow], list[dict], list[dict]]:
     states = load_jsonl(normalized_dir / "states.jsonl")
     capacities = {
         row["poly_id"]: row for row in load_jsonl(normalized_dir / "capacity_results.jsonl")
@@ -215,6 +236,12 @@ def load_joined_rows(normalized_dir: Path) -> tuple[list[JoinedRow], list[dict]]
         features = build_geometry_features(poly)
         geometry_rows.append({"poly_id": poly_id, **features})
         geometry_by_poly[poly_id] = features
+
+    skeleton_rows = load_jsonl(FEATURE_SKELETON_JSONL)
+    skeleton_by_poly = {
+        row["poly_id"]: {key: value for key, value in row.items() if key != "poly_id"}
+        for row in skeleton_rows
+    }
 
     rows: list[JoinedRow] = []
     for state in states:
@@ -240,9 +267,10 @@ def load_joined_rows(normalized_dir: Path) -> tuple[list[JoinedRow], list[dict]]
                     "backend": state["backend"],
                 },
                 geometry=geometry_by_poly[state["poly_id"]],
+                skeleton=skeleton_by_poly[state["poly_id"]],
             )
         )
-    return rows, geometry_rows
+    return rows, geometry_rows, skeleton_rows
 
 
 def build_feature_dict(row: JoinedRow, block: str) -> dict[str, float | str]:
@@ -250,8 +278,10 @@ def build_feature_dict(row: JoinedRow, block: str) -> dict[str, float | str]:
         return dict(row.metadata)
     if block == "geometry":
         return dict(row.geometry)
-    if block == "combined":
-        return {**row.metadata, **row.geometry}
+    if block == "skeleton":
+        return dict(row.skeleton)
+    if block == "all":
+        return {**row.metadata, **row.geometry, **row.skeleton}
     raise ValueError(f"unknown feature block {block}")
 
 
@@ -429,11 +459,12 @@ def write_summary(
             "- `null`: train-mean predictor with no features",
             "- `metadata`: facet count plus dataset/family/role/search-space/optimizer/backend",
             "- `geometry`: cheap dual-vertex summaries from `polytopes.jsonl`",
-            "- `combined`: metadata and geometry together",
+            "- `skeleton`: combinatorial counts and degree summaries from the exact 4D face lattice",
+            "- `all`: metadata, geometry, and skeleton together",
             "",
             "## Metrics",
             "",
-            "Reported metrics are test-set `R^2` and RMSE. Within-regime results use grouped CV keyed by shared source ancestry in the endpoint regime and by `state_id` in the random regime. Transfer results train on one regime and test on the other.",
+            "Reported metrics are test-set `R^2` and RMSE. Within-regime results use grouped CV keyed by persisted `root_group_id` whenever that field is present. Transfer results train on one regime and test on the other.",
             "",
         ]
     )
@@ -472,22 +503,23 @@ def write_summary(
 
     ridge_rows = { (row["surface"], row["block"]): row for row in results if row["model"] == "ridge" }
     geometry_random = ridge_rows[("within_random", "geometry")]
+    skeleton_random = ridge_rows[("within_random", "skeleton")]
     metadata_random = ridge_rows[("within_random", "metadata")]
     geometry_endpoint = ridge_rows[("within_endpoint", "geometry")]
+    skeleton_endpoint = ridge_rows[("within_endpoint", "skeleton")]
     metadata_endpoint = ridge_rows[("within_endpoint", "metadata")]
-    combined_random_to_endpoint = ridge_rows[("random_to_endpoint", "combined")]
+    all_random_to_endpoint = ridge_rows[("random_to_endpoint", "all")]
     geometry_endpoint_to_random = ridge_rows[("endpoint_to_random", "geometry")]
     lines.extend(
         [
             "",
             "## Interpretation",
             "",
-            f"- within-random ridge: metadata `R^2={format_metric(metadata_random['r2'])}`, geometry `R^2={format_metric(geometry_random['r2'])}`",
-            f"- within-endpoint ridge: metadata `R^2={format_metric(metadata_endpoint['r2'])}`, geometry `R^2={format_metric(geometry_endpoint['r2'])}`",
-            f"- random-to-endpoint transfer with combined ridge: `R^2={format_metric(combined_random_to_endpoint['r2'])}`",
+            f"- within-random ridge: metadata `R^2={format_metric(metadata_random['r2'])}`, geometry `R^2={format_metric(geometry_random['r2'])}`, skeleton `R^2={format_metric(skeleton_random['r2'])}`",
+            f"- within-endpoint ridge: metadata `R^2={format_metric(metadata_endpoint['r2'])}`, geometry `R^2={format_metric(geometry_endpoint['r2'])}`, skeleton `R^2={format_metric(skeleton_endpoint['r2'])}`",
+            f"- random-to-endpoint transfer with full ridge block: `R^2={format_metric(all_random_to_endpoint['r2'])}`",
             f"- endpoint-to-random transfer with geometry ridge: `R^2={format_metric(geometry_endpoint_to_random['r2'])}`",
-            "- cheap geometry summaries help inside the random regime, but they do not explain the endpoint regime and do not transfer across regimes.",
-            "- treat this as a bounded first pass: cheap geometry summaries only, no skeleton or orbit enrichments yet.",
+            "- this packet still stops before orbit-sensitive enrichments; the new signal surface is metadata plus cheap geometry plus pure skeleton features.",
         ]
     )
 
@@ -528,33 +560,43 @@ def main() -> None:
     if args.normalized_dir is not None:
         normalized_dir = args.normalized_dir.resolve()
         normalized_source_label = f"`{normalized_dir}`"
-        joined_rows, geometry_rows = load_joined_rows(normalized_dir)
+        refresh_skeleton_features(normalized_dir, FEATURE_SKELETON_JSONL)
+        joined_rows, geometry_rows, skeleton_rows = load_joined_rows(normalized_dir)
     else:
         with tempfile.TemporaryDirectory(prefix="feature-pattern-search-") as temp_dir:
             normalized_dir = Path(temp_dir) / "normalized"
             normalized_dir.mkdir(parents=True, exist_ok=True)
             refresh_normalized_dataset(normalized_dir)
             normalized_source_label = "temporary refresh via `cargo run -p exp-sys-landscape --release --bin sys-normalized-dataset`"
-            joined_rows, geometry_rows = load_joined_rows(normalized_dir)
+            refresh_skeleton_features(normalized_dir, FEATURE_SKELETON_JSONL)
+            joined_rows, geometry_rows, skeleton_rows = load_joined_rows(normalized_dir)
 
             write_feature_jsonl(geometry_rows)
+            with FEATURE_SKELETON_JSONL.open("w") as handle:
+                for row in skeleton_rows:
+                    handle.write(json.dumps(row) + "\n")
             results = run_evaluations(joined_rows)
             write_summary(normalized_source_label, joined_rows, results)
             plot_model_results(results, "ridge", RIDGE_PNG, "Feature Pattern Search: Ridge")
             plot_model_results(results, "rf", RF_PNG, "Feature Pattern Search: Random forest")
             print(f"Saved {FEATURE_JSONL}")
+            print(f"Saved {FEATURE_SKELETON_JSONL}")
             print(f"Saved {SUMMARY_MD}")
             print(f"Saved {RIDGE_PNG}")
             print(f"Saved {RF_PNG}")
             return
 
     write_feature_jsonl(geometry_rows)
+    with FEATURE_SKELETON_JSONL.open("w") as handle:
+        for row in skeleton_rows:
+            handle.write(json.dumps(row) + "\n")
     results = run_evaluations(joined_rows)
     write_summary(normalized_source_label, joined_rows, results)
     plot_model_results(results, "ridge", RIDGE_PNG, "Feature Pattern Search: Ridge")
     plot_model_results(results, "rf", RF_PNG, "Feature Pattern Search: Random forest")
 
     print(f"Saved {FEATURE_JSONL}")
+    print(f"Saved {FEATURE_SKELETON_JSONL}")
     print(f"Saved {SUMMARY_MD}")
     print(f"Saved {RIDGE_PNG}")
     print(f"Saved {RF_PNG}")

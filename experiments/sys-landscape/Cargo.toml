@@ -38,6 +38,10 @@ path = "variable-f-ascent/main.rs"
 name = "sys-normalized-dataset"
 path = "normalized-dataset/main.rs"
 
+[[bin]]
+name = "sys-feature-skeleton"
+path = "feature-skeleton/main.rs"
+
 [lints]
 workspace = true
 

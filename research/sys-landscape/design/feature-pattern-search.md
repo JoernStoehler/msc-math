@@ -32,11 +32,18 @@ Implementation status:
   (`R^2 ≈ 0.43` with ridge, vs `0.19` for the metadata baseline),
   but they fail within the endpoint regime (`R^2 ≈ -0.11`) and show
   no random/endpoint transfer (`R^2 < -5` on both transfer surfaces)
+- 2026-04-18: bounded `feature_skeleton.jsonl` enrichment landed via
+  `sys-feature-skeleton`
+- current skeleton result:
+  pure skeleton features also fail on the endpoint regime
+  (`R^2 ≈ -0.12` with ridge), and the full
+  `metadata + geometry + skeleton` block still underperforms metadata alone on
+  the endpoint surface
 - current implication:
-  there is no evidence yet for a cheap transferable pattern; the next
-  enrichment step, if pursued, should be richer local-max geometry
-  descriptors such as skeleton or orbit features rather than more provenance
-  metadata
+  there is still no evidence for a cheap transferable pattern; the next
+  enrichment step, if pursued, should move past pure combinatorics toward
+  richer face-level symplectic data or orbit-sensitive features rather than
+  more provenance metadata
 
 The design question here is not "which regressor should we try first?" The
 durable question is "what persisted dataset shape lets us try many methods
