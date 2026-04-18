@@ -61,11 +61,18 @@ Each subagent prompt should name:
 - Output format.
 - Decisions reserved for the main thread or Jörn.
 - Stop condition.
-- First command: `cd <required-cwd> && pwd`. If it fails or prints a different path, stop before task work.
-- For shell commands, set `workdir` to the required cwd or use `cd <required-cwd> && ...`.
-- For edits, target files under the required cwd. Do not edit `/workspaces/msc-math` unless it is the required cwd.
-- Before final, report `pwd` and `git status --short --branch` from the required cwd when the task used repo files.
-- For workers: "You are not alone in the codebase; do not revert or overwrite changes made by others."
+
+For repo-edit worker prompts, say it directly. Example:
+
+```text
+Required cwd/worktree: <required-cwd>
+
+Use this worktree for all commands and edits. Do not edit `main` or the root checkout.
+
+If you make or detect tracked edits outside <required-cwd>, revert them immediately when that revert is clearly safe. Otherwise stop and report the exact files before continuing.
+
+You are not alone in the codebase; do not revert or overwrite changes made by others.
+```
 
 Do not duplicate the same unresolved task across delegates.
 
