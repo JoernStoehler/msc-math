@@ -612,7 +612,7 @@ implementation starts.
 
 4. **Bounded face-level symplectic features**
    - Landed as `feature_face_symplectic.jsonl`, keyed by `poly_id`, with
-     summary-only ridge-polygon symplectic-area columns from ordered ridge
+     summary-only raw ridge-polygon symplectic-area columns from ordered ridge
      vertex cycles.
    - Column set:
      ridge symplectic-area mean/std/min/max/sum/max-share, plus small-area
@@ -624,7 +624,8 @@ implementation starts.
      block but still below metadata.
    - Interpretation:
      symplectic face summaries look substantially more informative than
-     Euclidean face summaries, but they still do not transfer across regimes.
+     Euclidean face summaries, but they are still scale-sensitive raw-area
+     features and they still do not transfer across regimes.
 
 ### LICCA-Blocked Packets
 

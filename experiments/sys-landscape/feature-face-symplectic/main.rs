@@ -39,9 +39,9 @@ struct FaceSymplecticFeatureRow {
     ridge_symp_area_abs_sum: f64,
     ridge_symp_area_abs_max_share: f64,
     ridge_symp_area_zero_fraction: f64,
-    ridge_symp_area_abs_le_1e3_fraction: f64,
-    ridge_symp_area_abs_le_1e2_fraction: f64,
-    ridge_symp_area_abs_le_1e1_fraction: f64,
+    ridge_symp_area_abs_le_1em3_fraction: f64,
+    ridge_symp_area_abs_le_1em2_fraction: f64,
+    ridge_symp_area_abs_le_1em1_fraction: f64,
 }
 
 fn parse_args() -> (PathBuf, PathBuf) {
@@ -208,9 +208,9 @@ fn build_row(poly: &PolytopeInputRow) -> FaceSymplecticFeatureRow {
         ridge_symp_area_abs_sum: ridge_symp_areas.iter().sum::<f64>(),
         ridge_symp_area_abs_max_share: max_share(&ridge_symp_areas),
         ridge_symp_area_zero_fraction: fraction_at_most(&ridge_symp_areas, 1e-12),
-        ridge_symp_area_abs_le_1e3_fraction: fraction_at_most(&ridge_symp_areas, 1e-3),
-        ridge_symp_area_abs_le_1e2_fraction: fraction_at_most(&ridge_symp_areas, 1e-2),
-        ridge_symp_area_abs_le_1e1_fraction: fraction_at_most(&ridge_symp_areas, 1e-1),
+        ridge_symp_area_abs_le_1em3_fraction: fraction_at_most(&ridge_symp_areas, 1e-3),
+        ridge_symp_area_abs_le_1em2_fraction: fraction_at_most(&ridge_symp_areas, 1e-2),
+        ridge_symp_area_abs_le_1em1_fraction: fraction_at_most(&ridge_symp_areas, 1e-1),
     }
 }
 

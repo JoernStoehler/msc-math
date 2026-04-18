@@ -2,7 +2,7 @@
 
 ## Dataset
 
-- normalized input source: temporary refresh via `cargo run -p exp-sys-landscape --release --bin sys-normalized-dataset -- --out-dir /tmp/feature-pattern-search-3i2mt8hc/normalized`
+- normalized input source: temporary refresh via `cargo run -p exp-sys-landscape --release --bin sys-normalized-dataset -- --out-dir /tmp/feature-pattern-search-7k8q5vjq/normalized`
 - joined rows: `282`
 - random rows: `170`
 - endpoint rows: `112`
@@ -47,7 +47,7 @@
 - `metadata`: facet count plus dataset/family/role/search-space/optimizer/backend
 - `geometry`: cheap dual-vertex summaries from `polytopes.jsonl`
 - `face_geometry`: edge-length and facet-3-volume summaries from the exact face geometry
-- `face_symplectic`: ridge-polygon symplectic-area summaries from ordered ridge vertex cycles
+- `face_symplectic`: scale-sensitive ridge-polygon symplectic-area summaries from ordered ridge vertex cycles
 - `skeleton`: combinatorial counts and degree summaries from the exact 4D face lattice
 - `omega`: ridge-local `omega_0` summaries, exact omega-sign structure, and directed transition-graph summaries
 - `orbit`: cached-`best_sigma` support size plus sigma-local geometry, `omega_0`, transition summaries, and bounded best-orbit KKT scalars
@@ -165,4 +165,5 @@ Reported metrics are test-set `R^2` and RMSE. Within-regime results use grouped 
 - random-forest strengthens the face-level picture: `face_geometry` reaches `R^2=0.6756` within random, while `face_symplectic` reaches `R^2=0.8166` within random and `0.2330` within endpoints.
 - random-to-endpoint transfer with full ridge block: `R^2=-9.8885`
 - endpoint-to-random transfer with trajectory ridge: `R^2=-6.1604`
+- `face_symplectic` is currently a scale-sensitive raw-area block; treat it as bounded-dataset evidence, not as an invariant feature family yet.
 - the richer orbit block now includes bounded best-orbit KKT scalars, using cached search-level payloads where available and a one-best-sigma fallback solve on older cache rows.
