@@ -96,7 +96,7 @@ HKO2024 lives in multiple ambient spaces (LP(5,5), LP(6,5), F=10, F=13, convex b
 - `experiments/hko-local-maximum/perturbation-neighborhood/`
 
 ### [active] [group:licca] LICCA-scale F=10 neighborhood falsification
-- Scale the 100-seed perturbation-neighborhood experiment to 10k+ perturbations with 3 step-size buckets (small/medium/large). Honest falsification attempt. Expected: no sys>HKO (strengthens conjecture). Real outcome: whatever the data says.
+- Remaining data/evidence refresh packet for the HKO local-maximality numerics surface: scale the perturbation-neighborhood experiment from the current local evidence to 10k+ perturbations with 3 step-size buckets (small/medium/large). Honest falsification attempt. Expected: no sys>HKO (strengthens conjecture). Real outcome: whatever the data says.
 - **Post-Kai priority:** optional publication-grade polish, not required for thesis sufficiency. If LICCA results are back before about 2026-04-21, integrate them; if not, keep the existing local evidence and state the large-scale run as pending/future.
 - **Handoff commit:** `fc7991e6` fixed the LICCA script readiness layer from the data-freshness packet; current checkout uses `experiments/...` package paths, not old `exp-*` deployment paths.
 - **Script readiness state (2026-04-15):** fixed the known `CARGO_TARGET_DIR` binary-path bug by running `"$CARGO_TARGET_DIR/release/hko-perturbation"`; added `job-smoke.sh`; kept build outside production `job.sh` with an executable preflight error that prints the exact `cargo build` command. Before LICCA submission, Jörn runs `cd ~/msc-math && CARGO_TARGET_DIR=/hpc/gpfs2/scratch/u/stoehljo/cargo-target cargo build --release -p exp-hko-local-maximum --bin hko-perturbation`, then `cd experiments/hko-local-maximum/perturbation-neighborhood && mkdir -p logs && sbatch ... job.sh`.
@@ -288,28 +288,28 @@ Instrument development. Results promote to `library/`.
 ### [open] [group:numerics] 4b. Numerical error bounds (verify-numerics)
 - `formal/numerics/error-bounds.tex` Parts I+II complete. Proven Q error bound, eta bound for well-conditioned problems.
 - 14 previously-failing tests now pass (329 pass, 0 fail).
-- Rationale for current state: degenerate orbits are never capacity-achieving, so final capacity comes from well-conditioned orbits with proven low error. Gap remains for publication.
-- Open: Part III (f64 algorithm description), eta bound for LP null-space search (39 violations on natural data with near-zero eigenvalues), GAP in cor:taylor-structure proof (needs Jörn).
+- Rationale for current state: degenerate orbits are never capacity-achieving, so final capacity comes from well-conditioned orbits with proven low error. The remaining gap is publication/writeup polish rather than a blocker for the two main thesis results.
+- Remaining open surface: Part III (f64 algorithm description), a thesis-facing treatment of the LP null-space search case (39 natural-data violations near near-zero eigenvalues), and the GAP in `cor:taylor-structure` (needs Jörn).
 - Post-Kai priority: publication polish and thesis confidence, not a prerequisite for the two main thesis results. Before about 2026-04-21, agents may close self-verifying pieces such as stale notes/tests; after that, leave explicit caveats or cut proof ambitions rather than opening new solver work.
 - `experiments/numerics/error-bounds/`, `experiments/numerics/error-bounds/algorithm-notes.md`
 
 ### [open] [group:numerics] Projection solver
 - 5-step algorithm: (1) solve equality constraints → (m-5)-dim affine space, (2) project H → reduced Hessian, (3) eigendecompose → null directions, (4) beta>0 as LP on projected null space, (5) recover multipliers.
-- Basic implementation in `kkt/projection_solver.rs`. Needs mathematical rigor + ablation comparison.
-- Post-Kai: defer broad promotion/refactor unless it becomes part of the local validation or stale-note cleanup before about 2026-04-21.
+- Basic implementation in `kkt/projection_solver.rs`. The remaining asks here are mathematical rigor and ablation/comparison writeup; treat broad promotion or refactor as defer/future polish unless a bounded local-validation or stale-note cleanup slice becomes useful before about 2026-04-21.
+- Post-Kai: do not let this row reopen a broad solver-development program during thesis closeout.
 - `experiments/numerics/error-bounds/algorithm-notes.md`
 
 ### [open] [group:numerics] Beta-LP unification
 - Replace `find_positive_beta_1d`/`find_positive_beta_nd` with single LP: maximize min_j beta_j subject to beta = beta_0 + V*alpha.
 - Previous branch deleted (tip `7ca81b53` has salvageable design: unified function, Type A/B/C eigenvector classification).
 - Thesis/code tension: thesis proves rank-deficient pairs are redundant (discard); code searches null space for beta>0 on *near*-singular systems (pseudoinverse beta_0 may have beta_i < 0 from noise; null-space shift recovers feasibility without changing Q). Not contradictory but needs explicit documentation.
-- Open question for Jörn: is filtering Type A directions mathematically justified?
-- Post-Kai: documentation of the tension is useful polish; implementation unification is deferable unless a bounded session can finish and verify it before about 2026-04-21.
+- Current blocker for implementation work: Jörn mathematical judgment on whether filtering Type A directions is justified.
+- Post-Kai: documentation of the tension is useful polish; keep implementation unification deferable unless that judgment lands and a bounded session can finish and verify it before about 2026-04-21.
 
 ### [open] [group:numerics] Solver numerical formal writeup
 - Per-module formal files for SVD, condition numbers, LU, eigendecomposition stability.
-- Multiple modules use SVD without shared error analysis.
-- Post-Kai: write only the pieces that directly support thesis text or current validation. Defer full per-module numerical formalization after about 2026-04-21.
+- Multiple modules use SVD without shared error analysis. For the thesis-close window, this row is only about the pieces that directly support thesis text or current validation.
+- Post-Kai: defer full per-module numerical formalization after about 2026-04-21 instead of treating it as required numerics closure work.
 
 ### [done] [2026-04] Crosspolytope capacity
 - c_EHZ = 4.0 (same as hypercube), sys=0.75. Exhaustive search through m=13.
