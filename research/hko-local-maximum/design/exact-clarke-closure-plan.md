@@ -152,6 +152,13 @@ Close the first-order `M_10` theorem surface:
   artifact is still planning/input-scaffolding rather than theorem input,
   because the seed choice is numerical, but it moves Packet 3 from “one
   endpoint seed” to “several exact endpoint seeds.”
+- The same widening step is now partially done on the seven-facet side: the
+  `6` midpoint-style seed orbits with current numerical segment coefficient
+  `1/2` have been converted into exact midpoint-family `sys` rows with exact
+  closure and normalization checks in
+  `experiments/hko-local-maximum/exact-clarke/midpoint-seed-rows.json`. On the
+  current numerical planning surface, this leaves only the `2` asymmetric
+  seven-facet seed orbits with coefficient `0.129573855671` unresolved.
 - Working Packet 2 hypothesis from the current paper-plus-numerics comparison:
   modulo diagonal `72^\circ` rotation and `q/p` exchange, the minimizing-family
   catalog may reduce to one six-facet endpoint prototype together with one
@@ -243,6 +250,8 @@ Deliverables:
   `experiments/hko-local-maximum/exact-clarke/numerical-permutation-orbits.json`.
 - Current exactified six-facet seed rows:
   `experiments/hko-local-maximum/exact-clarke/endpoint-seed-rows.json`.
+- Current exactified midpoint-style seven-facet seed rows:
+  `experiments/hko-local-maximum/exact-clarke/midpoint-seed-rows.json`.
 - Current billiard sigma-surface count ladder:
   `experiments/hko-local-maximum/exact-clarke/billiard-sigma-counts.json`.
 - Current exact-sigma feasibility probe:
@@ -327,8 +336,9 @@ Checks:
 
 1. Use the new permutation-orbit artifact to choose the next exact
    permutation-level seeds beyond the current endpoint/midpoint pair.
-2. Exactify the seven-facet seed families next, or justify a smaller subset of
-   them from the paper geometry before exactification.
+2. Resolve the remaining two asymmetric seven-facet seed orbits, either by
+   deriving their exact `lambda` values or by shrinking them away via a
+   paper-derived argument.
 3. Test how much row rank the widened seed surface adds beyond the current
    one-endpoint-plus-one-midpoint `20`-row obstruction.
 4. Build the first exact active-gradient matrix over a widened reduced family

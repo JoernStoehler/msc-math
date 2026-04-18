@@ -28,6 +28,10 @@ Packet 1 completed:
 - five numerical six-facet permutation seed orbits are now exactified into
   exact endpoint-family `sys` rows, each with exact closure and normalization
   checks.
+- six midpoint-style numerical seven-facet seed orbits are now exactified into
+  exact midpoint-family `sys` rows, each with exact closure and normalization
+  checks; only the two asymmetric `lambda ≈ 0.129573855671` seven-facet seed
+  orbits remain unresolved on the current numerical planning surface.
 
 ## Files
 
@@ -46,6 +50,7 @@ Packet 1 completed:
 | `derive_reduced_sys_prototypes.py` | Exact Packet 3 support script combining prototype capacity rows with the HKO volume row to emit exact prototype `sys` rows |
 | `classify_permutation_seed_orbits.py` | Packet 3 planning script classifying numerical representative permutations modulo HKO symmetries and cyclic relabeling |
 | `derive_endpoint_seed_rows.py` | Packet 3 support script exactifying the current numerical six-facet seed permutations into exact endpoint-family `sys` rows |
+| `derive_midpoint_seed_rows.py` | Packet 3 support script exactifying the midpoint-style numerical seven-facet seed permutations into exact midpoint-family `sys` rows |
 | `billiard-sigma-counts.json` | Generated Packet 2 count ladder for the HKO billiard combinatorics surface |
 | `billiard-exact-probe.json` | Generated timing probe for exact quartic KKT solves on sampled directed-feasible sigma words |
 | `hko-geometry.json` | Generated exact geometry record |
@@ -53,6 +58,7 @@ Packet 1 completed:
 | `reduced-sys-prototypes.json` | Generated exact reduced prototype `sys` rows and their interpolation/coincidence checks |
 | `numerical-permutation-orbits.json` | Generated numerical symmetry-quotiented permutation-seed count surface for Packet 3 planning |
 | `endpoint-seed-rows.json` | Generated exact six-facet seed rows chosen from the current numerical permutation-orbit planning surface |
+| `midpoint-seed-rows.json` | Generated exact midpoint-style seven-facet seed rows chosen from the current numerical permutation-orbit planning surface |
 | `hko-symmetry-tangent.json` | Generated exact symmetry tangent-space certificate |
 | `numerical-minima-summary.json` | Generated current numerical minima summary |
 | `numerical-family-reconciliation.json` | Generated Packet 2 bookkeeping summary of endpoint/equality-case classes |
@@ -77,6 +83,7 @@ python3 derive_hko_volume_derivative.py
 python3 derive_reduced_sys_prototypes.py
 python3 classify_permutation_seed_orbits.py
 python3 derive_endpoint_seed_rows.py
+python3 derive_midpoint_seed_rows.py
 ```
 
 ## Scope Boundary
