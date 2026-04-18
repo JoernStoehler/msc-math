@@ -5,6 +5,7 @@
 //! Input Artifacts: None (starts from the hardcoded HKO2024 polytope).
 //! Output Artifacts: experiments/hko-local-maximum/gradient-analysis/hko-neighborhood-sensitivity.jsonl
 //!         experiments/hko-local-maximum/gradient-analysis/hko-neighborhood-ascent.jsonl
+//!         experiments/hko-local-maximum/gradient-analysis/exact-certification-bank.jsonl
 //!
 //! Computes analytical derivatives d_sys/d_h_k and d_sys/d_n_k at the exact HKO2024
 //! polytope, then runs gradient ascent in joint (h, n) space. Tracks all near-optimal
@@ -22,14 +23,15 @@
 //! (`Hβ + Nμ + ηξ = 0`) instead of re-labeling it into a local asymmetric
 //! variant before derivative consumers use it again.
 
+use exp_hko_local_maximum::ehz_capacity_instrumented;
 use nalgebra::{Matrix4, Vector4};
+use real_algebraic::{Algebraic, OrderedField, Rational, TanPiFifth};
 use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
+use std::path::{Path, PathBuf};
 use std::time::Instant;
-use exp_hko_local_maximum::ehz_capacity_instrumented;
-use real_algebraic::{Algebraic, OrderedField, TanPiFifth};
-use symplectic::algorithms::OrbitKktData;
+use symplectic::algorithms::{solve_orbit_sigma, OrbitKktData, OrbitSolveBackend, OrbitSolveError};
 use symplectic::derivatives::{capacity_derivatives_a_from_orbit, volume_derivatives_a};
 use symplectic::ehz_capacity;
 use symplectic::exact::{capacity_derivatives_a_exact, solve_orbit_sigma_exact, ExactPolytope4D};
@@ -69,6 +71,17 @@ const MIN_STEP_FRACTION: f64 = 1e-12;
 /// Near machine epsilon (~1e-16); guards against treating f64 noise as
 /// a meaningful direction or rate. Used in step bounds and gradient checks.
 const EPS_NUMERICAL_ZERO: f64 = 1e-15;
+
+/// Hand-picked exact certification bank seed used by the exact-bank mode.
+///
+/// The HKO entries come from the algebraic exactness spike and the current
+/// HKO smoke artifact; the simplex control is the rational exact control case.
+const HKO_WINNING_SIGMA: &[usize] = &[1, 8, 7, 3, 4, 5, 9];
+const HKO_RANK_DEFICIENT_SIGMA: &[usize] = &[1, 7, 2, 8, 4, 6, 5];
+const HKO_FLOAT_WINNING_SIGMA: &[usize] = &[0, 1, 7, 3, 9, 5];
+const HKO_NEAR_OPTIMAL_SIGMA_A: &[usize] = &[0, 1, 7, 6, 3, 9];
+const HKO_NEAR_OPTIMAL_SIGMA_B: &[usize] = &[0, 6, 7, 2, 3, 9];
+const SIMPLEX_CONTROL_SIGMA: &[usize] = &[0, 2, 1, 3, 4];
 
 // ============================================================================
 // Output schemas
@@ -150,6 +163,141 @@ struct ExactBestSigmaDiagnostics {
     exact_capacity_gradient_a: Vec<[f64; 4]>,
     float_capacity_gradient_a: Vec<[f64; 4]>,
     max_abs_capacity_gradient_diff: f64,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum ExactBankTarget {
+    HkoPentagon,
+    SimplexControl,
+}
+
+impl ExactBankTarget {
+    fn polytope_name(self) -> &'static str {
+        match self {
+            Self::HkoPentagon => "hko_pentagon",
+            Self::SimplexControl => "simplex_control",
+        }
+    }
+
+    fn exact_field(self) -> &'static str {
+        match self {
+            Self::HkoPentagon => "q_tan_pi_fifth",
+            Self::SimplexControl => "rational",
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug)]
+struct ExactBankEntry {
+    row_name: &'static str,
+    sigma_label: &'static str,
+    target: ExactBankTarget,
+    sigma: &'static [usize],
+}
+
+const EXACT_BANK_ENTRIES: &[ExactBankEntry] = &[
+    ExactBankEntry {
+        row_name: "hko_exact_winning_sigma",
+        sigma_label: "winning_sigma",
+        target: ExactBankTarget::HkoPentagon,
+        sigma: HKO_WINNING_SIGMA,
+    },
+    ExactBankEntry {
+        row_name: "hko_exact_rank_deficient_sigma",
+        sigma_label: "rank_deficient_sigma",
+        target: ExactBankTarget::HkoPentagon,
+        sigma: HKO_RANK_DEFICIENT_SIGMA,
+    },
+    ExactBankEntry {
+        row_name: "hko_float_best_sigma",
+        sigma_label: "current_float_best_sigma",
+        target: ExactBankTarget::HkoPentagon,
+        sigma: HKO_FLOAT_WINNING_SIGMA,
+    },
+    ExactBankEntry {
+        row_name: "hko_near_optimal_sigma_a",
+        sigma_label: "near_optimal_sigma_a",
+        target: ExactBankTarget::HkoPentagon,
+        sigma: HKO_NEAR_OPTIMAL_SIGMA_A,
+    },
+    ExactBankEntry {
+        row_name: "hko_near_optimal_sigma_b",
+        sigma_label: "near_optimal_sigma_b",
+        target: ExactBankTarget::HkoPentagon,
+        sigma: HKO_NEAR_OPTIMAL_SIGMA_B,
+    },
+    ExactBankEntry {
+        row_name: "simplex_control_best_sigma",
+        sigma_label: "best_sigma",
+        target: ExactBankTarget::SimplexControl,
+        sigma: SIMPLEX_CONTROL_SIGMA,
+    },
+];
+
+#[derive(Debug, Serialize)]
+struct ExactCertificationBankRow {
+    row_name: String,
+    polytope: String,
+    exact_field: String,
+    sigma_label: String,
+    sigma: Vec<usize>,
+    exact_status: String,
+    float_status: String,
+    q_exact_f64: Option<f64>,
+    q_float_f64: Option<f64>,
+    action_exact_f64: Option<f64>,
+    action_float_f64: Option<f64>,
+    beta_exact_f64: Option<Vec<f64>>,
+    beta_float_f64: Option<Vec<f64>>,
+    exact_capacity_gradient_a: Option<Vec<[f64; 4]>>,
+    float_capacity_gradient_a: Option<Vec<[f64; 4]>>,
+    max_abs_q_diff: Option<f64>,
+    max_abs_action_diff: Option<f64>,
+    max_abs_beta_diff: Option<f64>,
+    max_abs_capacity_gradient_diff: Option<f64>,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+struct CliOptions {
+    smoke: bool,
+    exact_bank: bool,
+    canonical: bool,
+}
+
+impl CliOptions {
+    fn parse_from<I, S>(args: I) -> Self
+    where
+        I: IntoIterator<Item = S>,
+        S: AsRef<str>,
+    {
+        let mut smoke = false;
+        let mut exact_bank = false;
+        let mut canonical = false;
+
+        for arg in args {
+            match arg.as_ref() {
+                "--smoke" => smoke = true,
+                "--exact-bank" => exact_bank = true,
+                "--canonical" => canonical = true,
+                other => panic!("unsupported argument: {other}"),
+            }
+        }
+
+        assert!(
+            !(smoke && exact_bank),
+            "`--smoke` and `--exact-bank` are separate modes"
+        );
+        assert!(
+            !canonical || exact_bank,
+            "`--canonical` is only supported together with `--exact-bank`"
+        );
+
+        Self {
+            smoke,
+            exact_bank,
+            canonical,
+        }
+    }
 }
 
 // ============================================================================
@@ -260,6 +408,56 @@ fn exact_hko_polytope() -> ExactPolytope4D<TanPiFifthField> {
     .expect("exact HKO pentagon polytope")
 }
 
+fn exact_simplex_polytope() -> ExactPolytope4D<Rational> {
+    let z = Rational::from_i64(0);
+    ExactPolytope4D::new(vec![
+        [Rational::from_i64(-5), z.clone(), z.clone(), z.clone()],
+        [z.clone(), Rational::from_i64(-5), z.clone(), z.clone()],
+        [z.clone(), z.clone(), Rational::from_i64(-5), z.clone()],
+        [z.clone(), z.clone(), z.clone(), Rational::from_i64(-5)],
+        [
+            Rational::from_i64(5),
+            Rational::from_i64(5),
+            Rational::from_i64(5),
+            Rational::from_i64(5),
+        ],
+    ])
+    .expect("exact simplex control polytope")
+}
+
+#[derive(Debug)]
+struct SigmaDiagnostics {
+    q_f64: f64,
+    action_f64: f64,
+    beta_f64: Vec<f64>,
+    capacity_gradient_a: Vec<[f64; 4]>,
+}
+
+fn arrays_from_vectors(values: &[Vector4<f64>]) -> Vec<[f64; 4]> {
+    values
+        .iter()
+        .map(|grad| [grad[0], grad[1], grad[2], grad[3]])
+        .collect()
+}
+
+fn max_abs_slice_diff(lhs: &[f64], rhs: &[f64]) -> f64 {
+    lhs.iter()
+        .zip(rhs.iter())
+        .map(|(left, right)| (left - right).abs())
+        .fold(0.0, f64::max)
+}
+
+fn max_abs_array4_diff(lhs: &[[f64; 4]], rhs: &[[f64; 4]]) -> f64 {
+    lhs.iter()
+        .zip(rhs.iter())
+        .flat_map(|(left, right)| {
+            [0usize, 1, 2, 3]
+                .into_iter()
+                .map(move |idx| (left[idx] - right[idx]).abs())
+        })
+        .fold(0.0, f64::max)
+}
+
 fn max_abs_vector_diff(lhs: &[Vector4<f64>], rhs: &[[f64; 4]]) -> f64 {
     lhs.iter()
         .zip(rhs.iter())
@@ -271,7 +469,130 @@ fn max_abs_vector_diff(lhs: &[Vector4<f64>], rhs: &[[f64; 4]]) -> f64 {
         .fold(0.0, f64::max)
 }
 
-fn compute_exact_best_sigma_diagnostics(best_orbit: &OrbitKktData, float_d_cap_a: &[Vector4<f64>]) -> Option<ExactBestSigmaDiagnostics> {
+fn exact_sigma_diagnostics<F: OrderedField>(
+    polytope: &ExactPolytope4D<F>,
+    sigma: &[usize],
+) -> Option<SigmaDiagnostics> {
+    let orbit = solve_orbit_sigma_exact(polytope, sigma)?;
+    let gradient = capacity_derivatives_a_exact(polytope, &orbit);
+    Some(SigmaDiagnostics {
+        q_f64: orbit.q.to_f64(),
+        action_f64: orbit.action().to_f64(),
+        beta_f64: orbit.beta.iter().map(OrderedField::to_f64).collect(),
+        capacity_gradient_a: gradient
+            .iter()
+            .map(|grad| std::array::from_fn(|idx| grad[idx].to_f64()))
+            .collect(),
+    })
+}
+
+fn float_status_label(error: &OrbitSolveError) -> &'static str {
+    match error {
+        OrbitSolveError::UnsupportedBackend => "unsupported_backend",
+        OrbitSolveError::Inadmissible => "inadmissible",
+        OrbitSolveError::NumericalFailure => "numerical_failure",
+    }
+}
+
+fn float_sigma_diagnostics(
+    polytope: &Polytope4D,
+    sigma: &[usize],
+) -> Result<SigmaDiagnostics, OrbitSolveError> {
+    let orbit = solve_orbit_sigma(polytope, sigma, OrbitSolveBackend::SaddlePoint)?;
+    let gradient = capacity_derivatives_a_from_orbit(polytope, &orbit)
+        .expect("gradient-analysis float orbit payload carries closure multipliers");
+    Ok(SigmaDiagnostics {
+        q_f64: orbit.q,
+        action_f64: orbit.action,
+        beta_f64: orbit.beta,
+        capacity_gradient_a: arrays_from_vectors(&gradient),
+    })
+}
+
+fn build_exact_bank_row(entry: &ExactBankEntry) -> ExactCertificationBankRow {
+    let (exact_status, exact_row, float_status, float_row) = match entry.target {
+        ExactBankTarget::HkoPentagon => {
+            let exact = exact_sigma_diagnostics(&exact_hko_polytope(), entry.sigma);
+            let float =
+                float_sigma_diagnostics(&known_polytopes::hko_pentagon().polytope, entry.sigma);
+            (
+                if exact.is_some() {
+                    "solved".to_string()
+                } else {
+                    "inadmissible_or_unsolved".to_string()
+                },
+                exact,
+                match &float {
+                    Ok(_) => "solved".to_string(),
+                    Err(err) => float_status_label(err).to_string(),
+                },
+                float.ok(),
+            )
+        }
+        ExactBankTarget::SimplexControl => {
+            let exact = exact_sigma_diagnostics(&exact_simplex_polytope(), entry.sigma);
+            let float = float_sigma_diagnostics(&known_polytopes::simplex().polytope, entry.sigma);
+            (
+                if exact.is_some() {
+                    "solved".to_string()
+                } else {
+                    "inadmissible_or_unsolved".to_string()
+                },
+                exact,
+                match &float {
+                    Ok(_) => "solved".to_string(),
+                    Err(err) => float_status_label(err).to_string(),
+                },
+                float.ok(),
+            )
+        }
+    };
+
+    let (max_abs_q_diff, max_abs_action_diff, max_abs_beta_diff, max_abs_capacity_gradient_diff) =
+        match (&exact_row, &float_row) {
+            (Some(exact), Some(float)) => (
+                Some((exact.q_f64 - float.q_f64).abs()),
+                Some((exact.action_f64 - float.action_f64).abs()),
+                Some(max_abs_slice_diff(&exact.beta_f64, &float.beta_f64)),
+                Some(max_abs_array4_diff(
+                    &exact.capacity_gradient_a,
+                    &float.capacity_gradient_a,
+                )),
+            ),
+            _ => (None, None, None, None),
+        };
+
+    ExactCertificationBankRow {
+        row_name: entry.row_name.to_string(),
+        polytope: entry.target.polytope_name().to_string(),
+        exact_field: entry.target.exact_field().to_string(),
+        sigma_label: entry.sigma_label.to_string(),
+        sigma: entry.sigma.to_vec(),
+        exact_status,
+        float_status,
+        q_exact_f64: exact_row.as_ref().map(|row| row.q_f64),
+        q_float_f64: float_row.as_ref().map(|row| row.q_f64),
+        action_exact_f64: exact_row.as_ref().map(|row| row.action_f64),
+        action_float_f64: float_row.as_ref().map(|row| row.action_f64),
+        beta_exact_f64: exact_row.as_ref().map(|row| row.beta_f64.clone()),
+        beta_float_f64: float_row.as_ref().map(|row| row.beta_f64.clone()),
+        exact_capacity_gradient_a: exact_row
+            .as_ref()
+            .map(|row| row.capacity_gradient_a.clone()),
+        float_capacity_gradient_a: float_row
+            .as_ref()
+            .map(|row| row.capacity_gradient_a.clone()),
+        max_abs_q_diff,
+        max_abs_action_diff,
+        max_abs_beta_diff,
+        max_abs_capacity_gradient_diff,
+    }
+}
+
+fn compute_exact_best_sigma_diagnostics(
+    best_orbit: &OrbitKktData,
+    float_d_cap_a: &[Vector4<f64>],
+) -> Option<ExactBestSigmaDiagnostics> {
     let exact_polytope = exact_hko_polytope();
     let exact_orbit = solve_orbit_sigma_exact(&exact_polytope, &best_orbit.sigma)?;
     let exact_capacity_gradient = capacity_derivatives_a_exact(&exact_polytope, &exact_orbit);
@@ -295,13 +616,70 @@ fn compute_exact_best_sigma_diagnostics(best_orbit: &OrbitKktData, float_d_cap_a
         action_exact_f64,
         max_abs_q_diff_vs_float: (q_exact_f64 - best_orbit.q).abs(),
         max_abs_beta_diff_vs_float,
-        max_abs_capacity_gradient_diff: max_abs_vector_diff(float_d_cap_a, &exact_capacity_gradient_f64),
+        max_abs_capacity_gradient_diff: max_abs_vector_diff(
+            float_d_cap_a,
+            &exact_capacity_gradient_f64,
+        ),
         exact_capacity_gradient_a: exact_capacity_gradient_f64,
         float_capacity_gradient_a: float_d_cap_a
             .iter()
             .map(|grad| [grad[0], grad[1], grad[2], grad[3]])
             .collect(),
     })
+}
+
+fn exact_bank_output_path(base_dir: &Path, canonical: bool) -> PathBuf {
+    if canonical {
+        base_dir.join("gradient-analysis/exact-certification-bank.jsonl")
+    } else {
+        base_dir.join("gradient-analysis/smoke-exact-certification-bank.jsonl")
+    }
+}
+
+fn write_jsonl_rows<T: Serialize>(path: &Path, rows: &[T]) {
+    let file = File::create(path).expect("create JSONL output");
+    let mut writer = BufWriter::new(file);
+    for row in rows {
+        serde_json::to_writer(&mut writer, row).expect("write JSONL row");
+        writeln!(writer).expect("newline");
+    }
+    writer.flush().expect("flush JSONL output");
+}
+
+fn run_exact_bank(base_dir: &Path, canonical: bool) {
+    println!("═══════════════════════════════════════════════════════════");
+    println!("Exact Certification Bank");
+    println!("═══════════════════════════════════════════════════════════\n");
+
+    let output_path = exact_bank_output_path(base_dir, canonical);
+    let rows: Vec<ExactCertificationBankRow> = EXACT_BANK_ENTRIES
+        .iter()
+        .map(build_exact_bank_row)
+        .collect();
+
+    for row in &rows {
+        println!(
+            "  {}: exact={}, float={}, |Δq|={}, |Δaction|={}, |Δbeta|_max={}, |Δ∂c/∂a|_max={}",
+            row.row_name,
+            row.exact_status,
+            row.float_status,
+            row.max_abs_q_diff
+                .map(|value| format!("{value:.3e}"))
+                .unwrap_or_else(|| "n/a".to_string()),
+            row.max_abs_action_diff
+                .map(|value| format!("{value:.3e}"))
+                .unwrap_or_else(|| "n/a".to_string()),
+            row.max_abs_beta_diff
+                .map(|value| format!("{value:.3e}"))
+                .unwrap_or_else(|| "n/a".to_string()),
+            row.max_abs_capacity_gradient_diff
+                .map(|value| format!("{value:.3e}"))
+                .unwrap_or_else(|| "n/a".to_string()),
+        );
+    }
+
+    write_jsonl_rows(&output_path, &rows);
+    println!("\n  Wrote {}", output_path.display());
 }
 
 // ============================================================================
@@ -1045,17 +1423,100 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
 fn main() {
     let t0 = Instant::now();
     let base_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
-    let smoke = std::env::args().any(|a| a == "--smoke");
+    let options = CliOptions::parse_from(std::env::args().skip(1));
 
     std::fs::create_dir_all(base_dir.join("gradient-analysis"))
         .expect("create gradient-analysis output dir");
 
     println!("Gradient Analysis: HKO2024 sensitivity + gradient ascent\n");
 
-    run_phase_a(base_dir, smoke);
+    if options.exact_bank {
+        run_exact_bank(base_dir, options.canonical);
+    } else {
+        run_phase_a(base_dir, options.smoke);
+    }
 
     let elapsed = t0.elapsed().as_secs_f64();
     println!("\n═══════════════════════════════════════════════════════════");
     println!("Total time: {elapsed:.1}s");
     println!("═══════════════════════════════════════════════════════════");
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{
+        build_exact_bank_row, CliOptions, ExactBankEntry, ExactBankTarget, EXACT_BANK_ENTRIES,
+        HKO_WINNING_SIGMA, SIMPLEX_CONTROL_SIGMA,
+    };
+
+    #[test]
+    fn cli_options_parse_exact_bank_and_canonical() {
+        let parsed = CliOptions::parse_from(["--exact-bank", "--canonical"]);
+        assert_eq!(
+            parsed,
+            CliOptions {
+                smoke: false,
+                exact_bank: true,
+                canonical: true,
+            }
+        );
+    }
+
+    #[test]
+    #[should_panic(expected = "`--smoke` and `--exact-bank` are separate modes")]
+    fn cli_options_rejects_smoke_and_exact_bank_together() {
+        let _ = CliOptions::parse_from(["--smoke", "--exact-bank"]);
+    }
+
+    #[test]
+    #[should_panic(expected = "`--canonical` is only supported together with `--exact-bank`")]
+    fn cli_options_rejects_canonical_without_exact_bank() {
+        let _ = CliOptions::parse_from(["--canonical"]);
+    }
+
+    #[test]
+    fn exact_bank_contains_required_seed_rows() {
+        assert!(EXACT_BANK_ENTRIES.iter().any(|entry| {
+            entry.target == ExactBankTarget::HkoPentagon && entry.sigma == HKO_WINNING_SIGMA
+        }));
+        assert!(EXACT_BANK_ENTRIES.iter().any(|entry| {
+            entry.target == ExactBankTarget::SimplexControl && entry.sigma == SIMPLEX_CONTROL_SIGMA
+        }));
+    }
+
+    #[test]
+    fn simplex_control_row_solves_on_both_paths() {
+        let entry = ExactBankEntry {
+            row_name: "test_simplex_control",
+            sigma_label: "best_sigma",
+            target: ExactBankTarget::SimplexControl,
+            sigma: SIMPLEX_CONTROL_SIGMA,
+        };
+        let row = build_exact_bank_row(&entry);
+
+        assert_eq!(row.exact_status, "solved");
+        assert_eq!(row.float_status, "solved");
+        assert!(row.max_abs_q_diff.expect("q diff") < 1.0e-12);
+        assert!(row.max_abs_action_diff.expect("action diff") < 1.0e-12);
+        assert!(row.max_abs_beta_diff.expect("beta diff") < 1.0e-12);
+        assert!(row.max_abs_capacity_gradient_diff.expect("gradient diff") < 1.0e-12);
+    }
+
+    #[test]
+    fn hko_winning_row_stays_close_on_continuous_values() {
+        let entry = ExactBankEntry {
+            row_name: "test_hko_winning",
+            sigma_label: "winning_sigma",
+            target: ExactBankTarget::HkoPentagon,
+            sigma: HKO_WINNING_SIGMA,
+        };
+        let row = build_exact_bank_row(&entry);
+
+        assert_eq!(row.exact_status, "solved");
+        assert_eq!(row.float_status, "solved");
+        assert!(row.max_abs_q_diff.expect("q diff") < 1.0e-12);
+        assert!(row.max_abs_action_diff.expect("action diff") < 1.0e-12);
+        assert!(row.max_abs_beta_diff.expect("beta diff") < 1.0e-11);
+        assert!(row.max_abs_capacity_gradient_diff.expect("gradient diff") < 1.0e-10);
+    }
 }
