@@ -22,26 +22,33 @@ Packet 1 completed:
   emitted as a dedicated Packet 3 support artifact.
 - the reduced endpoint/midpoint prototype `sys` rows are now emitted exactly in
   the Packet 3 `R^40` coordinate order.
-- the current widened Packet 3 seed surface is now bundled into the
+- the current widened Packet 3 representative-row surface is now bundled into the
   backend-neutral witness artifact `widened-seed-witness.json` via
   `build_widened_seed_witness.py`.
 - `verify_widened_seed_witness.sage` is now the first concrete Sage verifier
   for Packet 3: it reconstructs the quartic field from that witness and
-  replays exact geometry, symmetry-rank, closure, normalization, and seed-row
+  replays exact geometry, symmetry-rank, closure, normalization, and representative-row
   rank checks.
 - the current widened-seed witness verification now runs successfully in the
   local devcontainer and emits `widened-seed-witness-verification.json`.
 - the next blocker is no longer volume-row or row-assembly arithmetic; it is
-  permutation-level prototype multiplicity. One endpoint seed plus one midpoint
-  seed expand to only `20` symmetry images, so that reduced surface cannot
+  permutation-level prototype multiplicity. One endpoint representative plus one midpoint
+  representative expand to only `20` symmetry images, so that reduced surface cannot
   reach the target active-matrix rank `25`.
-- five numerical six-facet permutation seed orbits are now exactified into
-  exact endpoint-family `sys` rows, each with exact closure and normalization
+- five numerical six-facet permutation-orbit representatives are now exactified
+  into exact endpoint-family `sys` rows, each with exact closure and normalization
   checks.
-- six midpoint-style numerical seven-facet seed orbits are now exactified into
-  exact midpoint-family `sys` rows, each with exact closure and normalization
-  checks; only the two asymmetric `lambda ≈ 0.129573855671` seven-facet seed
-  orbits remain unresolved on the current numerical planning surface.
+- six midpoint-style numerical seven-facet permutation-orbit representatives are
+  now exactified into exact midpoint-family `sys` rows, each with exact closure and normalization
+  checks; only the two asymmetric `lambda ≈ 0.129573855671` seven-facet representative
+  classes remain unresolved on the current numerical planning surface.
+
+Terminology note:
+
+- “representative” means one chosen numerical representative of a permutation
+  orbit class modulo the currently quotiented symmetries and cyclic relabeling;
+- some filenames still contain `seed` for continuity with earlier commits, but
+  theorem-facing prose in this note should read those as “representative”.
 
 ## Files
 
@@ -59,20 +66,20 @@ Packet 1 completed:
 | `derive_hko_volume_derivative.py` | Exact Packet 3 support script deriving the HKO dual-coordinate volume row in facet-major `R^40` order |
 | `derive_reduced_sys_prototypes.py` | Exact Packet 3 support script combining prototype capacity rows with the HKO volume row to emit exact prototype `sys` rows |
 | `classify_permutation_seed_orbits.py` | Packet 3 planning script classifying numerical representative permutations modulo HKO symmetries and cyclic relabeling |
-| `derive_endpoint_seed_rows.py` | Packet 3 support script exactifying the current numerical six-facet seed permutations into exact endpoint-family `sys` rows |
-| `derive_midpoint_seed_rows.py` | Packet 3 support script exactifying the midpoint-style numerical seven-facet seed permutations into exact midpoint-family `sys` rows |
-| `build_widened_seed_witness.py` | Packet 3 witness assembler that freezes the current widened exact seed surface into one backend-neutral JSON artifact |
-| `verify_widened_seed_witness.sage` | SageMath verifier for the widened seed witness; writes a machine-readable verification summary |
+| `derive_endpoint_seed_rows.py` | Packet 3 support script exactifying the current numerical six-facet representative permutations into exact endpoint-family `sys` rows |
+| `derive_midpoint_seed_rows.py` | Packet 3 support script exactifying the midpoint-style numerical seven-facet representative permutations into exact midpoint-family `sys` rows |
+| `build_widened_seed_witness.py` | Packet 3 witness assembler that freezes the current widened exact representative-row surface into one backend-neutral JSON artifact |
+| `verify_widened_seed_witness.sage` | SageMath verifier for the widened representative-row witness; writes a machine-readable verification summary |
 | `billiard-sigma-counts.json` | Generated Packet 2 count ladder for the HKO billiard combinatorics surface |
 | `billiard-exact-probe.json` | Generated timing probe for exact quartic KKT solves on sampled directed-feasible sigma words |
 | `hko-geometry.json` | Generated exact geometry record |
 | `hko-volume-derivative.json` | Generated exact HKO volume-row certificate |
 | `reduced-sys-prototypes.json` | Generated exact reduced prototype `sys` rows and their interpolation/coincidence checks |
 | `numerical-permutation-orbits.json` | Generated numerical symmetry-quotiented permutation-seed count surface for Packet 3 planning |
-| `endpoint-seed-rows.json` | Generated exact six-facet seed rows chosen from the current numerical permutation-orbit planning surface |
-| `midpoint-seed-rows.json` | Generated exact midpoint-style seven-facet seed rows chosen from the current numerical permutation-orbit planning surface |
-| `widened-seed-witness.json` | Generated backend-neutral Packet 3 witness bundle for geometry, symmetry, and the current widened exact seed rows |
-| `widened-seed-witness-verification.json` | Generated Sage verification summary for the current widened seed witness |
+| `endpoint-seed-rows.json` | Generated exact six-facet representative rows chosen from the current numerical permutation-orbit planning surface |
+| `midpoint-seed-rows.json` | Generated exact midpoint-style seven-facet representative rows chosen from the current numerical permutation-orbit planning surface |
+| `widened-seed-witness.json` | Generated backend-neutral Packet 3 witness bundle for geometry, symmetry, and the current widened exact representative rows |
+| `widened-seed-witness-verification.json` | Generated Sage verification summary for the current widened representative-row witness |
 | `hko-symmetry-tangent.json` | Generated exact symmetry tangent-space certificate |
 | `numerical-minima-summary.json` | Generated current numerical minima summary |
 | `numerical-family-reconciliation.json` | Generated Packet 2 bookkeeping summary of endpoint/equality-case classes |
@@ -120,12 +127,12 @@ theorem route. They currently verify only:
 - the quartic field and dual-geometry bundle already frozen by Packet 1;
 - exact symmetry-basis rank;
 - exact closure / normalization / common-scalar checks on the current widened
-  exact seed rows;
-- exact row ranks for the current endpoint and midpoint seed families.
+  exact representative rows;
+- exact row ranks for the current endpoint and midpoint representative families.
 
 They do **not** yet verify:
 
-- the two unresolved asymmetric seven-facet seed families;
+- the two unresolved asymmetric seven-facet representative families;
 - the final active-gradient matrix `G`;
 - the final kernel-equals-symmetry certificate.
 
@@ -148,22 +155,22 @@ That verifier currently passes and emits:
 - exact symmetry rank `15`,
 - endpoint family rank `5`,
 - midpoint family rank `6`,
-- widened seed-union rank `11`,
+- widened representative-row union rank `11`,
 - widened-seed-plus-symmetry rank `26`.
 
 Current exact warning from that same verification:
 
-- the current widened seed rows annihilate all `10` linear symplectic
+- the current widened representative rows annihilate all `10` linear symplectic
   generators in the committed symmetry basis;
 - they do **not** annihilate the current `4` translation generators or the
   current scaling generator;
-- equivalently, the current widened seed row matrix has right-kernel dimension
+- equivalently, the current widened representative-row matrix has right-kernel dimension
   `29`, not the target `15`, and its current affine/scaling symmetry
   compatibility is not yet correct enough for theorem use.
 
 So the next Packet 3 issue is now sharper than "add more active rows": first
 resolve whether the current translation/scaling tangent encoding or the
-current exact seed-row formula is missing a term or using the wrong convention.
+current exact representative-row formula is missing a term or using the wrong convention.
 
 The same witness shape is still intended to stay backend-neutral, so a future
 Rust producer should be able to emit it unchanged while Sage remains the

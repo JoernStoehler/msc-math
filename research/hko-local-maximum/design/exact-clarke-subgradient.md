@@ -40,17 +40,17 @@ exact footholds:
   and the corresponding reduced prototype `sys` rows are committed as exact
   Packet 3 support artifacts.
 - the next Packet 3 obstruction is now identified more sharply: one
-  endpoint-family seed plus one midpoint seed produce only `20` symmetry
+  endpoint-family representative plus one midpoint representative produce only `20` symmetry
   images, so they cannot by themselves yield an active matrix of rank `25`;
-  additional symmetry-inequivalent permutation-level seeds are required.
+  additional symmetry-inequivalent permutation-level representatives are required.
 - the first widened six-facet exactification step is now done: five
-  symmetry-quotiented numerical six-facet seed permutations have been
+  symmetry-quotiented numerical six-facet representative permutations have been
   exactified into endpoint-family `sys` rows with exact closure and
   normalization checks.
-- six midpoint-style seven-facet numerical seed permutations are now exactified
+- six midpoint-style seven-facet numerical representative permutations are now exactified
   as well; on the current numerical planning surface, only two asymmetric
-  seven-facet seed orbits remain unresolved, and each of those sits on the
-  same seven-subset orbit as an already exactified midpoint seed.
+  seven-facet representative classes remain unresolved, and each of those sits on the
+  same seven-subset orbit as an already exactified midpoint representative.
 
 ## Research Question
 
@@ -115,7 +115,7 @@ Default theorem-input preference:
 Take from HKO2024 and our exactified repo scaffolding:
 
 - the HKO2024 polytope itself,
-- whichever finite orbit-family or seed-family surface we can certify exactly
+- whichever finite orbit-family or representative-family surface we can certify exactly
   with the current trusted backend/witness setup,
 - the closed-form coefficients needed to write their gradients.
 
@@ -180,7 +180,7 @@ Preferred artifact shapes:
 Current concrete Packet 3 artifact shape:
 
 - one backend-neutral JSON witness bundle carrying the field, dual geometry,
-  symmetry basis, exact seed-row families, expected row counts/ranks, and
+  symmetry basis, exact representative-row families, expected row counts/ranks, and
   exact common scalar checks;
 - one Sage verifier that reads only that witness and writes a machine-readable
   verification summary.
@@ -222,10 +222,10 @@ another implementation line.
 2. Turn the current exact endpoint and KKT-segment certificates into the
    reduced active-row list used by the checker, now using the committed exact
    HKO volume row and the committed exact prototype `sys` rows.
-3. Choose the next permutation-level seeds using the new symmetry-quotiented
+3. Choose the next permutation-level representatives using the new symmetry-quotiented
    numerical planning surface in
    `experiments/hko-local-maximum/exact-clarke/numerical-permutation-orbits.json`.
-4. Resolve the remaining two asymmetric seven-facet seeds, or shrink them by a
+4. Resolve the remaining two asymmetric seven-facet representative classes, or shrink them by a
    paper-derived argument before exactification.
 5. Prototype the matrix build in SageMath on the widened reduced prototype-row
    surface, then compare its kernel against the committed symmetry basis.

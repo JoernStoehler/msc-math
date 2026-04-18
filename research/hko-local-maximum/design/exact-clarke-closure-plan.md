@@ -142,37 +142,37 @@ Close the first-order `M_10` theorem surface:
   endpoints coincide exactly with the corresponding six-facet endpoint-family
   `sys` rows. This is recorded in
   `experiments/hko-local-maximum/exact-clarke/reduced-sys-prototypes.json`.
-- A key Packet 3 obstruction is now explicit: one six-facet endpoint seed and
-  one seven-facet midpoint seed give only `20` symmetry images under the
+- A key Packet 3 obstruction is now explicit: one six-facet endpoint representative and
+  one seven-facet midpoint representative give only `20` symmetry images under the
   10-element HKO symplectic group, so that reduced surface can never reach the
   target active-matrix rank `25`. The remaining work is therefore not “apply
-  the symmetry group to the current seeds,” but “identify additional
-  symmetry-inequivalent permutation-level seeds.”
+  the symmetry group to the current representatives,” but “identify additional
+  symmetry-inequivalent permutation-level representatives.”
 - The new planning artifact
   `experiments/hko-local-maximum/exact-clarke/numerical-permutation-orbits.json`
   records the current numerical hint for that multiplicity: after quotienting
   the representative numerical minimizing permutations by HKO symmetries and
-  cyclic relabeling, the frozen surface currently shows `5` six-facet seed
-  orbits and `8` seven-facet seed orbits. This is a planning surface only, not
+  cyclic relabeling, the frozen surface currently shows `5` six-facet representative
+  classes and `8` seven-facet representative classes. This is a planning surface only, not
   theorem input.
 - The first exactification step beyond the original prototype pair is now done
-  on the six-facet side: the `5` current numerical six-facet seed orbits have
+  on the six-facet side: the `5` current numerical six-facet representative classes have
   been converted into exact endpoint-family `sys` rows with exact closure and
   normalization checks in
   `experiments/hko-local-maximum/exact-clarke/endpoint-seed-rows.json`. This
   artifact is still planning/input-scaffolding rather than theorem input,
-  because the seed choice is numerical, but it moves Packet 3 from “one
-  endpoint seed” to “several exact endpoint seeds.”
+  because the representative choice is numerical, but it moves Packet 3 from “one
+  endpoint representative” to “several exact endpoint representatives.”
 - The same widening step is now partially done on the seven-facet side: the
-  `6` midpoint-style seed orbits with current numerical segment coefficient
+  `6` midpoint-style representative classes with current numerical segment coefficient
   `1/2` have been converted into exact midpoint-family `sys` rows with exact
   closure and normalization checks in
   `experiments/hko-local-maximum/exact-clarke/midpoint-seed-rows.json`. On the
   current numerical planning surface, this leaves only the `2` asymmetric
-  seven-facet seed orbits with coefficient `0.129573855671` unresolved.
-  Importantly, those two asymmetric seeds lie on the same seven-subset orbits
-  as already exactified midpoint seeds, so the remaining seven-facet work is
-  best viewed as “extend two midpoint seed families to their full exact segment
+  seven-facet representative classes with coefficient `0.129573855671` unresolved.
+  Importantly, those two asymmetric representatives lie on the same seven-subset orbits
+  as already exactified midpoint representatives, so the remaining seven-facet work is
+  best viewed as “extend two midpoint representative families to their full exact segment
   families,” not “discover two completely new seven-facet family types.”
 - Working Packet 2 hypothesis from the current paper-plus-numerics comparison:
   modulo diagonal `72^\circ` rotation and `q/p` exchange, the minimizing-family
@@ -347,29 +347,29 @@ Checks:
 - Exact backend choice can dominate feasibility more than sigma count does.
   The `6240` directed-feasible sigma route currently looks too slow in sympy,
   but may become practical once the Rust number-field work lands.
-- The first local Sage Packet 3 check on the widened seed surface now reveals
-  an exact affine/scaling inconsistency: the current widened seed rows
+- The first local Sage Packet 3 check on the widened representative surface now reveals
+  an exact affine/scaling inconsistency: the current widened representative rows
   annihilate the `Sp(4)` generators but not the current translation/scaling
-  generators. So before treating the widened seed surface as a serious
+  generators. So before treating the widened representative surface as a serious
   approximation to the final active matrix, resolve whether the issue lies in
-  the affine/scaling tangent encoding, the exact seed-row formula, or the
+  the affine/scaling tangent encoding, the exact representative-row formula, or the
   current convention matching between those two surfaces.
 
 ## Immediate Next Steps
 
 1. Use the new permutation-orbit artifact to choose the next exact
-   permutation-level seeds beyond the current endpoint/midpoint pair.
-2. Resolve the new exact affine/scaling inconsistency on the widened seed
-   surface: current Sage verification shows that the seed rows annihilate the
+   permutation-level representatives beyond the current endpoint/midpoint pair.
+2. Resolve the new exact affine/scaling inconsistency on the widened representative
+   surface: current Sage verification shows that the representative rows annihilate the
    `Sp(4)` generators but not the current translation/scaling generators.
-3. Resolve the remaining two asymmetric seven-facet seed orbits, either by
+3. Resolve the remaining two asymmetric seven-facet representative classes, either by
    deriving their exact `lambda` values or by shrinking them away via a
    paper-derived argument.
 4. Freeze the backend-neutral witness contract for the large exact route:
    exact row dump, exact active matrix, exact rank/kernel basis, exact
    symmetry-space inclusion/equality checks, and one short theorem-facing
    summary artifact.
-5. Test how much row rank the widened seed surface adds beyond the current
+5. Test how much row rank the widened representative surface adds beyond the current
    one-endpoint-plus-one-midpoint `20`-row obstruction.
 6. Build the first exact active-gradient matrix over a widened reduced family
    surface, not just the one-endpoint-plus-one-midpoint surface.
@@ -401,7 +401,7 @@ Current target:
 ### 2. Widen The Exact Seed Surface Before Over-Compressing It
 
 Objective:
-- exactify more of the active-row seed surface before deciding whether a more
+- exactify more of the active-row representative surface before deciding whether a more
   compressed paper/symmetry reduction is computationally necessary.
 
 Why unblocked:
@@ -409,10 +409,10 @@ Why unblocked:
   the existing exact scaffolding.
 
 Current target:
-- the `2` remaining asymmetric seven-facet seed orbits on the current
+- the `2` remaining asymmetric seven-facet representative classes on the current
   numerical planning surface;
-- then a first widened exact seed catalog that includes the current `5`
-  endpoint seeds and current `6` midpoint-style seven-facet seeds.
+- then a first widened exact representative catalog that includes the current `5`
+  endpoint representatives and current `6` midpoint-style seven-facet representatives.
 
 ### 3. Freeze The Trusted Witness Contract
 
@@ -432,7 +432,7 @@ Current target:
 
 Current concrete first step:
 - `experiments/hko-local-maximum/exact-clarke/build_widened_seed_witness.py`
-  now assembles the current Packet 3 widened seed surface into
+  now assembles the current Packet 3 widened representative surface into
   `widened-seed-witness.json`;
 - `experiments/hko-local-maximum/exact-clarke/verify_widened_seed_witness.sage`
   is the first concrete Sage verifier on that contract.
@@ -484,9 +484,9 @@ Current target benchmark ladder:
 ## Suggested Priority Order
 
 1. Finish the paper-to-repo family catalog.
-2. Resolve the remaining asymmetric seven-facet seed families.
+2. Resolve the remaining asymmetric seven-facet representative families.
 3. Freeze the backend-neutral witness contract for the large exact route.
 4. Run or benchmark the simplest exact backend that can satisfy that contract
-   on the widened seed surface.
+   on the widened representative surface.
 5. Revisit the exhaustive `6240`-sigma route only after the faster backend is
    available and benchmarked.
