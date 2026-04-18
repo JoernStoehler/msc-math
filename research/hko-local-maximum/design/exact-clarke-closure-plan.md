@@ -25,14 +25,25 @@ Close the first-order `M_10` theorem surface:
   `translations + scaling + linear Sp(4)`.
 - Field policy: accept the actual smallest exact field needed by the HKO
   coordinates and orbit formulas; do not force the route to remain quadratic.
-- Tooling policy: SageMath is the primary exact algebra system.
-  The devcontainer should gain a reproducible Sage install surface.
+- Execution policy: default to the larger exact-computation route with the
+  simplest trustworthy setup. Use symmetry reductions and paper-derived
+  compression first as validation, bookkeeping, and explanatory surfaces; make
+  them load-bearing only if the larger exact route fails to become
+  thesis-ready.
+- Tooling policy: the checker is backend-agnostic as long as it emits the same
+  trusted witness contract. SageMath is the current default exact CAS surface.
   If the in-repo Rust number-field backend becomes available earlier and is
-  substantially faster on this workload, use it to pre-certify the large sigma
-  surface or to emit exact action/gap data feeding the final checker.
-- Input policy: the final theorem-facing orbit catalog must come from the HKO
-  geometry / paper route, not from floating-point active-set discovery.
-  Numerical artifacts may be used only as cross-checks and bookkeeping aids.
+  substantially faster on this workload, use it for the large exact surface as
+  long as it emits the same machine-readable certificate shape. SymPy remains a
+  valid small-scale scaffolding surface when performance is sufficient.
+- Input policy: the final theorem artifact may come from a larger exact finite
+  candidate or active surface if the backend can certify action minima/gaps
+  exactly and emit exact row/rank/kernel witnesses. Numerical artifacts may be
+  used for planning and cross-checks, but not as theorem evidence.
+- Trust policy: prefer untrusted computation with trusted exact witness
+  artifacts over intricate setup complexity whose only role is to reduce
+  compute. Extra symmetry/paper reductions remain welcome as validation and
+  geometric insight even when they are not computationally load-bearing.
 
 ## Current Known State
 
@@ -343,17 +354,17 @@ Checks:
 2. Resolve the remaining two asymmetric seven-facet seed orbits, either by
    deriving their exact `lambda` values or by shrinking them away via a
    paper-derived argument.
-3. Test how much row rank the widened seed surface adds beyond the current
+3. Freeze the backend-neutral witness contract for the large exact route:
+   exact row dump, exact active matrix, exact rank/kernel basis, exact
+   symmetry-space inclusion/equality checks, and one short theorem-facing
+   summary artifact.
+4. Test how much row rank the widened seed surface adds beyond the current
    one-endpoint-plus-one-midpoint `20`-row obstruction.
-4. Build the first exact active-gradient matrix over a widened reduced family
+5. Build the first exact active-gradient matrix over a widened reduced family
    surface, not just the one-endpoint-plus-one-midpoint surface.
-3. Add SageMath to the devcontainer install surface or record the chosen exact
-   runtime for Packet 3. If the Rust number-field backend lands first, benchmark
-   it directly on the `6240` directed-feasible sigma surface before deciding
-   whether the exhaustive exact route should replace the current smaller-input
-   plan.
-4. Compare the reduced exact kernel certificate against the committed symmetry
-   tangent basis.
+6. Benchmark the candidate exact backends against that witness contract:
+   current Sage route, current sympy scaffolding where feasible, and the Rust
+   number-field backend as soon as it is ready enough to run the same packet.
 
 ## Unblocked Before Fast Rust Exact Backend
 
@@ -376,53 +387,39 @@ Current target:
 - verify whether the current neighboring-endpoint segment is exactly the right
   repo-facing model for those paper equality cases.
 
-### 2. Write Down The Reduced Active-Row Catalog
+### 2. Widen The Exact Seed Surface Before Over-Compressing It
 
 Objective:
-- convert the current exact Packet 2 certificates into the finite row catalog
-  that Packet 3 should actually use.
+- exactify more of the active-row seed surface before deciding whether a more
+  compressed paper/symmetry reduction is computationally necessary.
 
 Why unblocked:
-- the key reduction artifacts already exist.
+- the current remaining unresolved packet is small enough to attack directly in
+  the existing exact scaffolding.
 
 Current target:
-- endpoint-family rows;
-- midpoint-family rows;
-- symmetry images of those prototype rows;
-- an explicit statement that the neighboring seven-facet segment contributes no
-  new rows outside the span of the endpoint rows together with the midpoint
-  row.
+- the `2` remaining asymmetric seven-facet seed orbits on the current
+  numerical planning surface;
+- then a first widened exact seed catalog that includes the current `5`
+  endpoint seeds and current `6` midpoint-style seven-facet seeds.
 
-### 3. Derive The Exact HKO Volume-Derivative Row In Dual Coordinates
+### 3. Freeze The Trusted Witness Contract
 
 Objective:
-- write down the exact `∂vol/∂a_k` row for HKO2024 in the chosen `R^40`
-  coordinate order.
+- make the final exact-checker pipeline certify the same theorem-facing facts
+  independent of the chosen exact backend.
 
 Why unblocked:
-- this is one fixed-polytope exact geometry computation, not a thousands-of-
-  sigmas certification program.
-
-Why useful:
-- once this row is explicit, the exact `sys` rows can be formed directly from
-  the exact capacity rows already derived on the reduced family surface.
-
-### 4. Assemble A Small Provisional Exact Active-Gradient Matrix
-
-Objective:
-- try the exact checker on the reduced family surface first, without waiting
-  for the `6240`-sigma exhaustive route.
-
-Why unblocked:
-- the reduced family surface is small compared to the full sigma surface.
+- the current artifact surfaces already determine most of the contract.
 
 Current target:
-- build exact rows for the endpoint and midpoint prototype families;
-- generate the symmetry copies;
-- form a provisional exact matrix `G_reduced`;
-- compare `ker(G_reduced)` against the committed exact symmetry tangent basis.
+- exact row artifact format;
+- exact active-matrix artifact format;
+- exact kernel-basis artifact format;
+- exact symmetry-inclusion/equality certificate format;
+- one short theorem-facing summary artifact that is backend-neutral.
 
-### 5. Prepare The Checker Architecture For Backend Swaps
+### 4. Prepare The Checker Architecture For Backend Swaps
 
 Objective:
 - make the final exact-checker pipeline backend-agnostic.
@@ -437,7 +434,7 @@ Current target:
 - explicit boundary between current sympy scaffolding, future Sage route, and
   future Rust exact backend.
 
-### 6. Tighten The Final Theorem Surface
+### 5. Tighten The Final Theorem Surface
 
 Objective:
 - write down the exact first-order theorem statement in the correct quotient
@@ -451,7 +448,7 @@ Current target:
 - Clarke directional derivative statement on the quotient;
 - exact certificate contract needed to justify the theorem wording.
 
-### 7. Queue The Backend Decision Test Explicitly
+### 6. Queue The Backend Decision Test Explicitly
 
 Objective:
 - as soon as the Rust number-field backend lands, measure the real cost of the
@@ -466,7 +463,9 @@ Current target benchmark ladder:
 ## Suggested Priority Order
 
 1. Finish the paper-to-repo family catalog.
-2. Write down the reduced active-row catalog.
-3. Attempt the small exact matrix route on that reduced family surface.
-4. Revisit the exhaustive `6240`-sigma route only after the faster backend is
+2. Resolve the remaining asymmetric seven-facet seed families.
+3. Freeze the backend-neutral witness contract for the large exact route.
+4. Run or benchmark the simplest exact backend that can satisfy that contract
+   on the widened seed surface.
+5. Revisit the exhaustive `6240`-sigma route only after the faster backend is
    available and benchmarked.

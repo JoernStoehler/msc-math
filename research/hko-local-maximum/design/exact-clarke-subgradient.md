@@ -2,10 +2,12 @@
 
 ## Purpose
 
-Record the proof-oriented route for the `M_10` local-maximality claim that avoids
-relying on our HK2017 or billiard search to identify the minimum-action orbit set.
-Instead, take the relevant orbit families from Haim--Kislev--Ostrover (2024) as
-input and run an exact linear-algebra check on the resulting active gradients.
+Record the proof-oriented route for the `M_10` local-maximality claim with the
+current execution default: prefer the largest exact-computation route that still
+has a simple, trustworthy setup and a backend-neutral witness artifact. Use the
+paper and symmetry reductions first as validation, bookkeeping, and geometric
+explanation; make them load-bearing only if the larger exact route fails to
+become thesis-ready.
 
 This note is a research/design surface, not an implementation logbook.
 
@@ -53,8 +55,10 @@ exact footholds:
 ## Research Question
 
 Can we prove the intended `M_10` subresult from `RESULTS.md` by exact
-computation over a number field, using only the HKO2024 paper for the
-combinatorics of the minimum-action orbit families?
+computation over a number field with a simple, trusted witness artifact, while
+keeping paper-derived orbit geometry and symmetry reductions as supporting
+validation and explanation surfaces rather than making them computationally
+load-bearing too early?
 
 Target statement shape:
 
@@ -69,7 +73,8 @@ first-order quotient-space statement.
 
 ## Decision
 
-Use SageMath as the primary exact algebra system.
+Use SageMath as the current primary exact algebra system, but keep the witness
+contract backend-agnostic.
 
 Reason:
 
@@ -85,13 +90,26 @@ Secondary confidence plan:
   independent exact block-embedding cross-check there.
 - Otherwise, treat the actual simple number field as the primary exact surface
   and do not force the route back into a quadratic formulation.
+- If the Rust number-field backend becomes ready and can emit the same witness
+  contract faster, allow it to replace Sage as the computational workhorse for
+  the larger exact route.
 
 ## Intended Input Surface
 
-Take from HKO2024, not from our search code:
+Default theorem-input preference:
+
+- a larger exact finite candidate or active surface is acceptable if the
+  backend can certify action minima/gaps exactly and emit exact row/rank/kernel
+  witnesses;
+- paper-derived orbit families and symmetry reductions remain important as
+  validation and explanation surfaces, and may become load-bearing only if the
+  larger exact route proves too costly or too opaque.
+
+Take from HKO2024 and our exactified repo scaffolding:
 
 - the HKO2024 polytope itself,
-- the combinatorial families of minimum-action orbits,
+- whichever finite orbit-family or seed-family surface we can certify exactly
+  with the current trusted backend/witness setup,
 - the closed-form coefficients needed to write their gradients.
 
 Take from our current repo only when it is purely definitional and already
@@ -101,13 +119,14 @@ understood:
 - the formula for `sys = c_EHZ^2 / (2 vol)`,
 - the definition of the symmetry tangent space in `R^40`.
 
-Do not make the exact checker depend on:
+Do not make the final theorem artifact depend on:
 
-- HK2017 orbit enumeration,
-- billiard search,
 - floating-point KKT solves,
 - numerical tie detection,
 - empirical active-set discovery.
+
+Numerical planning surfaces are acceptable for deciding what to exactify next,
+but they are not themselves theorem evidence.
 
 ## Expected Coefficient Field
 
@@ -148,6 +167,8 @@ Preferred artifact shapes:
 - a short generated theorem-facing summary for `formal/` or `thesis/`;
 - optional rational-block-embedding cross-check output when the field is
   quadratic.
+- The same artifact shape should be emitted independent of whether the backend
+  is Sage, SymPy scaffolding, or the future Rust exact backend.
 
 ## Minimal Mathematical Plan
 
