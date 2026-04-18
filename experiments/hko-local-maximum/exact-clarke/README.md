@@ -26,9 +26,11 @@ Packet 1 completed:
 | `check_packet1.py` | Pure-Python sympy fallback for the Packet 1 exact geometry / symmetry certificates |
 | `summarize_numerical_minima.py` | Cross-check summary of the current numerical exact-minimum surface |
 | `classify_numerical_minima.py` | Packet 2 bookkeeping classifier for six-facet endpoint classes and seven-facet equality-case classes |
+| `count_billiard_sigma_surface.py` | Packet 2 count ladder for raw billiard words, directed-feasible sigma words, valid KKT orbits, and exact minima |
 | `derive_endpoint_prototype.py` | Exact Packet 2 certificate for one endpoint prototype, one midpoint prototype, and the full equality-case beta segment between neighboring endpoints |
 | `derive_segment_gradient_reduction.py` | Exact Packet 2 certificate that the seven-facet KKT segment gives an affine height-gradient family |
 | `derive_segment_a_gradient_reduction.py` | Exact Packet 2 certificate that the seven-facet KKT segment gives a degree-2 dual-vertex row family spanned by three prototype rows |
+| `billiard-sigma-counts.json` | Generated Packet 2 count ladder for the HKO billiard combinatorics surface |
 | `hko-geometry.json` | Generated exact geometry record |
 | `hko-symmetry-tangent.json` | Generated exact symmetry tangent-space certificate |
 | `numerical-minima-summary.json` | Generated current numerical minima summary |
@@ -45,6 +47,7 @@ sage check.sage
 python3 check_packet1.py
 python3 summarize_numerical_minima.py
 python3 classify_numerical_minima.py
+python3 count_billiard_sigma_surface.py
 python3 derive_endpoint_prototype.py
 python3 derive_segment_gradient_reduction.py
 python3 derive_segment_a_gradient_reduction.py

@@ -180,6 +180,8 @@ Deliverables:
   `experiments/hko-local-maximum/exact-clarke/segment-gradient-reduction.json`.
 - Current exact dual-vertex row-reduction certificate:
   `experiments/hko-local-maximum/exact-clarke/segment-a-gradient-reduction.json`.
+- Current billiard sigma-surface count ladder:
+  `experiments/hko-local-maximum/exact-clarke/billiard-sigma-counts.json`.
 
 Checks:
 - every catalog family maps to current exact-action numerical minima;

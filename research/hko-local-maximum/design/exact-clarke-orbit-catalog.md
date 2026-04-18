@@ -22,6 +22,8 @@ replace.
   `experiments/hko-local-maximum/exact-clarke/segment-gradient-reduction.json`.
 - Exact dual-vertex row-reduction certificate:
   `experiments/hko-local-maximum/exact-clarke/segment-a-gradient-reduction.json`.
+- Billiard sigma-surface count ladder:
+  `experiments/hko-local-maximum/exact-clarke/billiard-sigma-counts.json`.
 
 ## Paper-Level Picture
 
@@ -37,6 +39,33 @@ The paper gives two minimizing mechanisms:
 
 So the remaining Packet 2 task is not to discover new numerical minima but to
 translate these two minimizing mechanisms into a finite repo-facing catalog.
+
+## Candidate Surface Scale
+
+The repo now records the current size of the HKO2024 finite candidate surfaces
+at each pruning rung:
+
+- raw billiard block words:
+  `50,400`, coming from the shape
+  `([Q|QQ][P|PP])^k` with `k = 2, 3`,
+  `15` blocks per side,
+  `60` non-overlapping block selections per side for each `k`,
+  and permutation factors
+  `60 * 60 * 1 * 2 = 7,200` for `k = 2`,
+  `60 * 60 * 2 * 6 = 43,200` for `k = 3`;
+- directed-feasible sigma words after the current `omega_0` cycle filter:
+  `6,240`;
+- current numerically valid KKT orbits in the committed HKO artifact:
+  `717`;
+- current exact minima in that artifact:
+  `150`.
+
+So the practical difference between two possible theorem inputs is large:
+
+- an exhaustive route starting from the already-valid orbit surface is only a
+  small multiple of the exact minima;
+- an exhaustive route starting from the theorem-native billiard sigma-word
+  surface pays a much larger front-end certification cost.
 
 ## Symmetry-Reduced Numerical Hypothesis
 
