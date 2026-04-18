@@ -382,7 +382,8 @@ half-domain.
 The routine symbolic eliminations for
 Proposition~\ref{prop:pentagon-rotation-two-bounce} and
 Lemmas~\ref{lem:pentagon-rotation-three-bounce-first-family} and
-\ref{lem:pentagon-rotation-three-bounce-second-family} are verified exactly by
+\ref{lem:pentagon-rotation-three-bounce-second-family} and
+\ref{lem:pentagon-rotation-three-bounce-third-family} are verified exactly by
 the script
 \begin{quote}\small\path{experiments/sys-landscape/pentagon-rotation-formula/cas_witnesses.py}\end{quote}
 That script starts from the reduced formulas for the branch parameters and
@@ -602,6 +603,127 @@ By the exact CAS witness from Remark~\ref{rem:pentagon-rotation-cas-witness},
 On $0 \le \theta < \pi/10$, every denominator factor is positive, and so are
 both sine factors. At $\theta=\pi/10$ the second sine factor vanishes. This
 proves the claim.
+\end{proof}
+\end{unverified}
+
+\begin{unverified}
+\begin{lemma}[The competitive EEE/EEE branch stays above the 2-bounce candidate]
+\label{lem:pentagon-rotation-three-bounce-third-family}
+Keep the notation of
+Lemma~\ref{lem:pentagon-rotation-three-bounce-first-family}, and write
+\[
+  \varphi := \frac{1+\sqrt{5}}{2}.
+\]
+Consider the affine 3-bounce support pattern
+\[
+  q : (e_0,e_3,e_1),
+  \qquad
+  p : (e_0,e_3,e_2),
+\]
+which is a convenient representative of the canonical affine signature
+\texttt{Q:0-1-3\ \ P:0-2-3}. Let
+\[
+  x_0 \in e_0,
+  \qquad
+  x_1 := x_0 - \varphi t_q(\theta)m_0(\theta) \in e_3,
+  \qquad
+  x_2 := x_1 - t_q(\theta)m_3(\theta) \in e_1,
+\]
+\[
+  y_0 \in R(\theta)e_0,
+  \qquad
+  y_1 := y_0 + \varphi t_p(\theta)n_3 \in R(\theta)e_3,
+  \qquad
+  y_2 := y_1 + t_p(\theta)n_1 \in R(\theta)e_2,
+\]
+with closure
+\[
+  x_0 = x_2 - t_q(\theta)m_2(\theta),
+  \qquad
+  y_0 = y_2 + t_p(\theta)n_0.
+\]
+Then the reduced support equations force
+\[
+  t_q(\theta) = t_p(\theta)
+  =
+  \frac{10+2\sqrt{5}}{4\tan\left(\frac{\pi}{5}\right)\sin\theta + 12\cos\theta},
+\]
+and the affine product action of this branch is
+\[
+  A_3(\theta)
+  =
+  \frac{
+    \frac{5}{2}\left(2+\sqrt{5}\right)
+  }
+  {
+    \tan\left(\frac{\pi}{5}\right)\sin\theta + 3\cos\theta
+  }.
+\]
+In particular,
+\[
+  A_3(\theta) > g(\theta)
+  \qquad
+  \text{for } 0 \le \theta < \frac{\pi}{10},
+\]
+and $A_3(\pi/10)=g(\pi/10)$.
+\end{lemma}
+
+\begin{proof}
+The vector identities
+\[
+  \varphi m_0(\theta) + m_3(\theta) + m_2(\theta) = 0,
+  \qquad
+  \varphi n_3 + n_1 + n_0 = 0
+\]
+fix the closure ratios in the displayed $q$- and $p$-cycles. The exact CAS
+witness from Remark~\ref{rem:pentagon-rotation-cas-witness} starts from these
+reduced support relations and checks the common scalar solve
+\[
+  t_q(\theta) = t_p(\theta)
+  =
+  \frac{10+2\sqrt{5}}{4\tan\left(\frac{\pi}{5}\right)\sin\theta + 12\cos\theta}
+\]
+and the action formula above. The same witness also checks
+\[
+  A_3(\theta) - g(\theta)
+  =
+  \frac{
+    5\bigl(A\cos\theta - B\sin\theta\bigr)
+  }
+  {
+    4\bigl(D\sin\theta + 12\cos\theta\bigr)\cos\theta
+  },
+\]
+where
+\[
+  A := 2(\sqrt{5}-1),
+  \qquad
+  B := (\sqrt{2}+\sqrt{10})\sqrt{5-\sqrt{5}},
+  \qquad
+  D := (\sqrt{10}-\sqrt{2})\sqrt{5-\sqrt{5}}.
+\]
+It further checks the constant identities
+\[
+  A = 8\sin\left(\frac{\pi}{10}\right),
+  \qquad
+  B = 8\cos\left(\frac{\pi}{10}\right),
+  \qquad
+  D = 4\tan\left(\frac{\pi}{5}\right).
+\]
+Therefore
+\[
+  A_3(\theta) - g(\theta)
+  =
+  \frac{
+    10\sin\left(\frac{\pi}{10}-\theta\right)
+  }
+  {
+    \bigl(4\tan\left(\frac{\pi}{5}\right)\sin\theta + 12\cos\theta\bigr)\cos\theta
+  }.
+\]
+On $0 \le \theta < \pi/10$, the numerator is positive, and every denominator
+factor is positive. At $\theta=\pi/10$ the numerator vanishes. This proves the
+claim.
 \end{proof}
 \end{unverified}
 

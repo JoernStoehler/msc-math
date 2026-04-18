@@ -44,7 +44,7 @@ Owned sweep status after the minima-safe rerun:
 |------|------|
 | `experiments/sys-landscape/pentagon-rotation-formula/main.rs` | owned theta sweep and orbit-class dump |
 | `experiments/sys-landscape/pentagon-rotation-formula/analyze.py` | branch normalization and formula checks |
-| `experiments/sys-landscape/pentagon-rotation-formula/cas_witnesses.py` | exact symbolic witness for the active 2-bounce branch and the first two competitive 3-bounce branches |
+| `experiments/sys-landscape/pentagon-rotation-formula/cas_witnesses.py` | exact symbolic witness for the active 2-bounce branch and the three implemented competitive 3-bounce branches |
 | `experiments/sys-landscape/pentagon-rotation-formula/theta-sweep.jsonl` | generated per-theta orbit data |
 | `formal/sys-landscape/pentagon-rotation-formula.tex` | private proof draft and theorem skeleton |
 
@@ -281,8 +281,8 @@ surface, even without the missing `three-bounce-branches.jsonl` artifact:
   so this branch is also strictly above `g(theta)` on
   `0 <= theta < pi/10`, with equality only at the midpoint.
 - CAS witness file:
-  the routine eliminations for the active `2`-bounce branch and these first two
-  `3`-bounce branch identities now live in
+  the routine eliminations for the active `2`-bounce branch and the currently
+  implemented competitive `3`-bounce branch identities now live in
   `experiments/sys-landscape/pentagon-rotation-formula/cas_witnesses.py`.
   The formal draft now stops at the reduced setup formulas and cites that
   script for the final exact simplification to the closed-form branch outputs.
@@ -317,12 +317,15 @@ private draft:
   `lem:pentagon-rotation-three-bounce-first-family`.
 - the same file now also contains
   `lem:pentagon-rotation-three-bounce-second-family`.
+- the same file now also contains
+  `lem:pentagon-rotation-three-bounce-third-family`.
 - the same file now contains a CAS witness remark pointing to
   `experiments/sys-landscape/pentagon-rotation-formula/cas_witnesses.py`.
 - the active `2`-bounce proposition has now been rewritten to the same
   “setup first, CAS for routine algebra” boundary.
-- the first two shortlisted `3`-bounce lemmas have now been tightened to that
-  same boundary too: only reduced support equations remain in the TeX proof.
+- the first three shortlisted `3`-bounce lemmas have now been tightened to
+  that same boundary too: only reduced support equations remain in the TeX
+  proof.
 - That lemma does not yet prove branch existence from first principles; it is a
   conditional computation for the explicit affine support patterns above.
 - Within those surfaces, the comparison with the `2`-bounce candidate is done:
@@ -401,41 +404,52 @@ The witness surface is now moving in exactly that direction:
 - it does **not** yet claim a symbolic positivity proof on
   `0 < theta < pi/10` unless such an interval check is added explicitly.
 
-For the `EEE / EEE` template, the recovered orbit at `theta = 14 degree` now
-gives a useful generic setup candidate. If the alternating facet sequence is
+For the `EEE / EEE` template, the recovered orbit at `theta = 14 degree`
+produced one correction and one real proof surface.
 
-- `q_0, p_0, q_1, p_1, q_2, p_2`
+Correction:
 
-with `q_i` and `p_i` all edge supports, then the affine cycle appears to obey
-the template equations
+- the earlier template note was indexed incorrectly on the `p` side.
+- in the convenient representative used below, the affine cycle is
+  ```
+  x_1 = x_0 - a_0 m_{p_0}(theta),
+  x_2 = x_1 - a_1 m_{p_1}(theta),
+  x_0 = x_2 - a_2 m_{p_2}(theta),
+  ```
+  and
+  ```
+  y_1 = y_0 + b_1 n_{q_1},
+  y_2 = y_1 + b_2 n_{q_2},
+  y_0 = y_2 + b_0 n_{q_0},
+  ```
+  after choosing the `p`-side state labels so that
+  `y_0 in R(theta)e_0`, `y_1 in R(theta)e_3`, `y_2 in R(theta)e_2`.
 
-\[
-  x_{i+1} = x_i - a_i\,m_{p_i}(\theta),
-  \qquad
-  y_{i+1} = y_i + b_i\,n_{q_{i+1}},
-\]
+What is now verified:
 
-cyclically modulo `3`, where `x_i \in e_{q_i}` and
-`y_i \in R(\theta)e_{p_i}`. On the tested representative
-`Q:0-1-3|P:0-2-3`, the recovered step directions match exactly that order:
+- `formal/sys-landscape/pentagon-rotation-formula.tex` now contains
+  `lem:pentagon-rotation-three-bounce-third-family` for the competitive
+  `EEE / EEE` branch `Q:0-1-3|P:0-2-3`.
+- the reduced support equations collapse to a common scalar
+  \[
+    t(\theta)
+    =
+    \frac{10+2\sqrt{5}}{4\tan(\pi/5)\sin\theta + 12\cos\theta},
+  \]
+  with closure ratios `(\varphi,1,1)` on the `q` side and `(\varphi,1,1)` on
+  the chosen `p`-side ordering.
+- the exact CAS witness now checks the resulting action formula
+  \[
+    A_3(\theta)
+    =
+    \frac{\frac52(2+\sqrt5)}{\tan(\pi/5)\sin\theta + 3\cos\theta},
+  \]
+  together with the exact gap identity used to show `A_3(\theta) > g(\theta)`
+  on `0 <= theta < pi/10`.
 
-- `q_0 -> q_1` uses `m_{p_0}`;
-- `q_1 -> q_2` uses `m_{p_1}`;
-- `q_2 -> q_0` uses `m_{p_2}`;
-- `p_0 -> p_1` uses `n_{q_1}`;
-- `p_1 -> p_2` uses `n_{q_2}`;
-- `p_2 -> p_0` uses `n_{q_0}`.
-
-Numerically, the same example also suggests the action formula
-
-\[
-  A_{\mathrm{EEE}}(\theta)
-  =
-  \frac{\cos(\pi/5)}{2}\sum_i \bigl(a_i + b_i\bigr),
-\]
-
-but that has not yet been promoted to a proved symbolic template identity.
-This is the next reusable setup surface to formalize.
+So the `EEE / EEE` surface is no longer just a heuristic branch note; the
+first competitive instance is now in the same setup-to-CAS style as the first
+two `EEV / EEV` families.
 
 ## Session Resume Note (2026-04-18)
 
