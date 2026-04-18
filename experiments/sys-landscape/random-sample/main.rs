@@ -2,15 +2,20 @@
 //!
 //! Goal: Compute systolic ratios for random 4D polytopes across facet counts F=5..12,
 //!   to probe whether random generic polytopes approach the Viterbo threshold.
-//! Input Artifacts: None (defaults to an untracked temp cache path).
-//! Output Artifacts: None (defaults to untracked temp output/cache paths).
+//! Input Artifacts: experiments/sys-landscape/cache.jsonl
+//! Output Artifacts: experiments/sys-landscape/random-sample/random-sweep.jsonl,
+//!         experiments/sys-landscape/cache.jsonl
 //!
 //! Architecture:
-//! 1. `cargo run -p exp-sys-landscape --release --bin sys-random-sample` generates dataset
-//! 2. Polytopes are generated via `generate_polytope` (blake3 per-attempt seeding)
+//! 1. Bare `cargo run -p exp-sys-landscape --release --bin sys-random-sample`
+//!    is a smoke/default run: it writes temp output + temp cache under `/tmp`.
+//! 2. Canonical refreshes pass explicit repo-owned paths, e.g.
+//!    `--out experiments/sys-landscape/random-sample/random-sweep.jsonl`
+//!    and `--cache experiments/sys-landscape/cache.jsonl`.
+//! 3. Polytopes are generated via `generate_polytope` (blake3 per-attempt seeding)
 //!    and cached in the sys-landscape family cache. Re-runs skip generation + capacity.
-//! 3. Writes to random-sample/random-sweep.jsonl
-//! 4. Python script plots sys vs F
+//! 4. Canonical runs write to `random-sample/random-sweep.jsonl`
+//! 5. Python script plots sys vs F
 //!
 //! Dataset design:
 //! - Random polytopes with facet counts F=5..12

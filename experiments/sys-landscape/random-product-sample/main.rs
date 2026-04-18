@@ -2,14 +2,19 @@
 //!
 //! Goal: Sample random Lagrangian products across polygon-pair buckets and
 //! record their systolic ratios.
-//! Input Artifacts: None (defaults to an untracked temp cache path).
-//! Output Artifacts: None (defaults to untracked temp output/cache paths).
+//! Input Artifacts: experiments/sys-landscape/cache.jsonl
+//! Output Artifacts: experiments/sys-landscape/random-product-sample/random-product-sweep.jsonl,
+//!         experiments/sys-landscape/cache.jsonl
 //!
 //! Architecture:
-//! 1. `cargo run -p exp-sys-landscape --release --bin sys-random-product-sample` generates dataset
-//! 2. Polytopes are cached in the sys-landscape family cache. Re-runs skip capacity.
-//! 3. Writes to random-product-sample/random-product-sweep.jsonl
-//! 4. Python script plots sys vs (k,m)
+//! 1. Bare `cargo run -p exp-sys-landscape --release --bin sys-random-product-sample`
+//!    is a smoke/default run: it writes temp output + temp cache under `/tmp`.
+//! 2. Canonical refreshes pass explicit repo-owned paths, e.g.
+//!    `--out experiments/sys-landscape/random-product-sample/random-product-sweep.jsonl`
+//!    and `--cache experiments/sys-landscape/cache.jsonl`.
+//! 3. Polytopes are cached in the sys-landscape family cache. Re-runs skip capacity.
+//! 4. Canonical runs write to `random-product-sample/random-product-sweep.jsonl`
+//! 5. Python script plots sys vs (k,m)
 //!
 //! Dataset design:
 //! - Random 2D polygons with k, m in {3,4,5,6}
