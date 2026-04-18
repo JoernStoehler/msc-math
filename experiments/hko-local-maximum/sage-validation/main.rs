@@ -2,7 +2,7 @@
 //!
 //! Goal: persist a canonical algebraic record of the selected HKO/control exact
 //! one-sigma calculations so Sage can recompute them independently and compare
-//! exact values plus kernel timings.
+//! exact values.
 //! Input Artifacts: None (starts from the hardcoded exact HKO/control fixtures).
 //! Output Artifacts: experiments/hko-local-maximum/sage-validation/sage-validation-input.jsonl
 //!
@@ -20,13 +20,9 @@ use exp_hko_local_maximum::{
 use real_algebraic::{canonical_element, CanonicalElement, OrderedField};
 use serde::Serialize;
 use std::fs::File;
-use std::hint::black_box;
 use std::io::{BufWriter, Write};
 use std::path::{Path, PathBuf};
-use std::time::Instant;
 use symplectic::exact::{capacity_derivatives_a_exact, solve_orbit_sigma_exact, ExactPolytope4D};
-
-const TIMING_REPETITIONS: usize = 7;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 struct CliOptions {
@@ -64,33 +60,20 @@ struct SageValidationInputRow {
     rust_action: CanonicalElement,
     rust_beta: Vec<CanonicalElement>,
     rust_capacity_gradient_a: Vec<Vec<CanonicalElement>>,
-    rust_solve_ns_median: u64,
-    rust_gradient_ns_median: u64,
-    rust_timing_repetitions: usize,
+}
+
+fn experiment_dir() -> PathBuf {
+    Path::new(env!("CARGO_MANIFEST_DIR")).join("sage-validation")
 }
 
 fn output_path(canonical: bool) -> PathBuf {
-    let base = Path::new("experiments/hko-local-maximum/sage-validation");
+    let base = experiment_dir();
     let filename = if canonical {
         "sage-validation-input.jsonl"
     } else {
         "smoke-sage-validation-input.jsonl"
     };
     base.join(filename)
-}
-
-fn median_duration_ns<F>(repetitions: usize, mut run: F) -> u64
-where
-    F: FnMut(),
-{
-    let mut samples = Vec::with_capacity(repetitions);
-    for _ in 0..repetitions {
-        let start = Instant::now();
-        run();
-        samples.push(start.elapsed().as_nanos() as u64);
-    }
-    samples.sort_unstable();
-    samples[repetitions / 2]
 }
 
 fn canonical_vec4<F: OrderedField>(vector: &[F; 4]) -> Vec<CanonicalElement> {
@@ -104,16 +87,6 @@ fn build_row<F: OrderedField>(
     let orbit = solve_orbit_sigma_exact(polytope, entry.sigma)
         .expect("selected Sage-validation sigma must solve exactly");
     let gradient = capacity_derivatives_a_exact(polytope, &orbit);
-
-    let solve_ns = median_duration_ns(TIMING_REPETITIONS, || {
-        let solved = solve_orbit_sigma_exact(black_box(polytope), black_box(entry.sigma))
-            .expect("timed exact solve must succeed");
-        black_box(solved);
-    });
-    let gradient_ns = median_duration_ns(TIMING_REPETITIONS, || {
-        let derived = capacity_derivatives_a_exact(black_box(polytope), black_box(&orbit));
-        black_box(derived);
-    });
 
     SageValidationInputRow {
         row_name: entry.row_name.to_string(),
@@ -131,9 +104,6 @@ fn build_row<F: OrderedField>(
         rust_action: canonical_element(&orbit.action()),
         rust_beta: orbit.beta.iter().map(canonical_element).collect(),
         rust_capacity_gradient_a: gradient.iter().map(canonical_vec4).collect(),
-        rust_solve_ns_median: solve_ns,
-        rust_gradient_ns_median: gradient_ns,
-        rust_timing_repetitions: TIMING_REPETITIONS,
     }
 }
 
@@ -151,6 +121,10 @@ fn build_rows() -> Vec<SageValidationInputRow> {
 }
 
 fn write_jsonl_rows<T: Serialize>(path: &Path, rows: &[T]) {
+    if let Some(parent) = path.parent() {
+        std::fs::create_dir_all(parent)
+            .unwrap_or_else(|error| panic!("create {}: {error}", parent.display()));
+    }
     let file =
         File::create(path).unwrap_or_else(|error| panic!("create {}: {error}", path.display()));
     let mut writer = BufWriter::new(file);
@@ -176,7 +150,8 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use super::{build_rows, output_path, CliOptions};
+    use super::{build_rows, experiment_dir, output_path, CliOptions};
+    use std::path::{Path, PathBuf};
 
     #[test]
     fn cli_options_accept_smoke_and_canonical() {
@@ -193,12 +168,24 @@ mod tests {
     #[test]
     fn output_paths_match_contract() {
         assert_eq!(
-            output_path(false).to_string_lossy(),
-            "experiments/hko-local-maximum/sage-validation/smoke-sage-validation-input.jsonl"
+            output_path(false),
+            PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+                .join("sage-validation")
+                .join("smoke-sage-validation-input.jsonl")
         );
         assert_eq!(
-            output_path(true).to_string_lossy(),
-            "experiments/hko-local-maximum/sage-validation/sage-validation-input.jsonl"
+            output_path(true),
+            PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+                .join("sage-validation")
+                .join("sage-validation-input.jsonl")
+        );
+    }
+
+    #[test]
+    fn experiment_dir_is_manifest_relative() {
+        assert_eq!(
+            experiment_dir(),
+            Path::new(env!("CARGO_MANIFEST_DIR")).join("sage-validation")
         );
     }
 

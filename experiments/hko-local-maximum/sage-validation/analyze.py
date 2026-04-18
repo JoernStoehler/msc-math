@@ -1,6 +1,6 @@
 """
 Goal: independently recompute the selected exact-bank rows in SageMath and
-compare them against the Rust exact export, including a small timing baseline.
+compare them against the Rust exact export.
 Input Artifacts: experiments/hko-local-maximum/sage-validation/sage-validation-input.jsonl
 Output Artifacts: experiments/hko-local-maximum/sage-validation/sage-validation-report.jsonl
 """
@@ -9,11 +9,12 @@ from __future__ import annotations
 
 import argparse
 import json
-import statistics
-import time
 from pathlib import Path
 
-from sage.all import QQ, RR, Matrix, NumberField, PolynomialRing, vector, tan, pi
+try:
+    from sage.all import QQ, RR, Matrix, NumberField, PolynomialRing, vector, tan, pi
+except ModuleNotFoundError as exc:
+    raise SystemExit("run this script with `sage -python analyze.py`") from exc
 
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
@@ -87,6 +88,14 @@ class FieldContext:
             return float(RR(value))
         return float(self.phi(value))
 
+    @staticmethod
+    def is_positive(value) -> bool:
+        return value > 0
+
+    @staticmethod
+    def is_nonpositive(value) -> bool:
+        return value <= 0
+
 
 def decode_rational(coeff_json: dict):
     return QQ(coeff_json["numer"]) / QQ(coeff_json["denom"])
@@ -129,7 +138,7 @@ def build_kkt_matrix(dual_vertices, sigma):
 
 def choose_positive_solution(context: FieldContext, particular, kernel_basis, beta_len: int):
     if not kernel_basis:
-        if all(context.as_float(entry) > 0 for entry in particular[:beta_len]):
+        if all(context.is_positive(entry) for entry in particular[:beta_len]):
             return particular, 0
         return None, 0
     if len(kernel_basis) != 1:
@@ -145,20 +154,19 @@ def choose_positive_solution(context: FieldContext, particular, kernel_basis, be
 
     for base, delta in zip(particular[:beta_len], direction[:beta_len]):
         if delta == 0:
-            if context.as_float(base) <= 0:
+            if context.is_nonpositive(base):
                 return None, 1
             continue
 
         bound = -base / delta
-        delta_sign = context.as_float(delta)
-        if delta_sign > 0:
-            if lower is None or context.as_float(bound - lower) > 0:
+        if context.is_positive(delta):
+            if lower is None or bound > lower:
                 lower = bound
         else:
-            if upper is None or context.as_float(bound - upper) < 0:
+            if upper is None or bound < upper:
                 upper = bound
 
-    if lower is not None and upper is not None and context.as_float(upper - lower) <= 0:
+    if lower is not None and upper is not None and upper <= lower:
         return None, 1
 
     if lower is None and upper is None:
@@ -171,7 +179,7 @@ def choose_positive_solution(context: FieldContext, particular, kernel_basis, be
         alpha = (lower + upper) / field(2)
 
     solution = particular + alpha * direction
-    if not all(context.as_float(entry) > 0 for entry in solution[:beta_len]):
+    if not all(context.is_positive(entry) for entry in solution[:beta_len]):
         return None, 1
     return solution, 1
 
@@ -226,21 +234,27 @@ def capacity_gradient(dual_vertices, sigma, orbit):
         out.append(scale * dq_da)
     return out
 
-
-def median_duration_ns(repetitions: int, fn) -> int:
-    samples = []
-    for _ in range(repetitions):
-        start = time.perf_counter_ns()
-        fn()
-        samples.append(time.perf_counter_ns() - start)
-    return int(statistics.median(samples))
-
-
 def max_abs_scalar_diff(context: FieldContext, left, right) -> float:
     return abs(context.as_float(left - right))
 
 
+def require_same_length(name: str, left, right) -> None:
+    if len(left) != len(right):
+        raise ValueError(f"{name} length mismatch: {len(left)} != {len(right)}")
+
+
+def require_same_matrix_shape(name: str, left, right) -> None:
+    require_same_length(f"{name} row count", left, right)
+    for index, (left_row, right_row) in enumerate(zip(left, right)):
+        if len(left_row) != len(right_row):
+            raise ValueError(
+                f"{name} column count mismatch at row {index}: "
+                f"{len(left_row)} != {len(right_row)}"
+            )
+
+
 def max_abs_vector_diff(context: FieldContext, left, right) -> float:
+    require_same_matrix_shape("capacity_gradient", left, right)
     values = [
         abs(context.as_float(l_entry - r_entry))
         for l_row, r_row in zip(left, right)
@@ -283,17 +297,10 @@ def validate_row(row: dict) -> dict:
     gradient = capacity_gradient(dual_vertices, sigma, orbit)
     sage_action = orbit["q"].parent()(1) / (orbit["q"].parent()(2) * orbit["q"])
 
-    solve_ns = median_duration_ns(
-        row["rust_timing_repetitions"],
-        lambda: solve_sigma(context, dual_vertices, sigma),
-    )
-    gradient_ns = median_duration_ns(
-        row["rust_timing_repetitions"],
-        lambda: capacity_gradient(dual_vertices, sigma, orbit),
-    )
-
     sage_beta = orbit["beta"]
     sage_gradient = [list(grad) for grad in gradient]
+    require_same_length("beta", sage_beta, rust_beta)
+    require_same_matrix_shape("capacity_gradient", sage_gradient, rust_gradient)
 
     q_match = orbit["q"] == rust_q
     action_match = sage_action == rust_action
@@ -328,11 +335,6 @@ def validate_row(row: dict) -> dict:
         "max_abs_capacity_gradient_diff": max_abs_vector_diff(
             context, sage_gradient, rust_gradient
         ),
-        "rust_solve_ns_median": row["rust_solve_ns_median"],
-        "rust_gradient_ns_median": row["rust_gradient_ns_median"],
-        "sage_solve_ns_median": solve_ns,
-        "sage_gradient_ns_median": gradient_ns,
-        "timing_repetitions": row["rust_timing_repetitions"],
     }
 
 
