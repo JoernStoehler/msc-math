@@ -240,6 +240,10 @@ sys as a continuous function on polytope space, no privileged threshold.
 - Bounded pass landed in `experiments/sys-landscape/feature-pattern-search/` with `feature_geometry`, `feature_skeleton`, `feature_omega`, and sigma-local `feature_orbit` blocks plus refreshed summary plots and markdown.
 - Result: cheap geometry helps within the random regime, sigma-local orbit features help the endpoint regime more than the other non-metadata blocks, but metadata still beats every non-metadata block on endpoints and all transfer surfaces remain strongly negative.
 - Closure: record the negative result in `RESULTS.md` as evidence for the hostile-landscape interpretation; do not open a novel method-development line here without a separate thesis-scope decision.
+- Next blocked direction for a future LICCA session: row count, not local code scaffolding, is now the main bottleneck if this line is reopened.
+- Highest-value LICCA follow-up: generate many more endpoint rows for `gradient-ascent-general` and `gradient-ascent-products`, then `variable-f-ascent`; random baselines already show within-regime signal and have lower marginal value than endpoint packets.
+- Current posterior from the bounded pass: more rows alone are unlikely to create a clean transferable random-to-endpoint heuristic, but LICCA-scale endpoint data is still plausibly high-value for revealing stronger endpoint-only structure or for making the current negative transfer result much more decisive.
+- Re-entry point: reuse the normalized dataset + feature-pattern-search pipeline exactly as-is, refresh the canonical ascent JSONLs / caches from LICCA outputs, rerun `sys-normalized-dataset`, then rerun `experiments/sys-landscape/feature-pattern-search/analyze.py` before inventing richer models.
 
 ### [future] Systematic landscape analysis
 - Gradient flow convergence, local maxima below sys=1, random noise effects.
