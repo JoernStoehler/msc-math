@@ -15,9 +15,10 @@ HKO-style polytopes whose intended coordinates live in an algebraic extension of
 
 ## Method
 
-- Implement an experiment-owned exact ordered-field interface in
-  `experiments/numerics/src/algebraic/`.
-- Implement one concrete field first:
+- Use the shared `real-algebraic` scalar layer for ordered-field arithmetic.
+- Keep exact 4D geometry, selected exact KKT solves, and experiment-owned
+  catalog/reporting code under `experiments/numerics/src/algebraic/`.
+- Use one concrete field first:
   `Q[t]/(t^4 - 10 t^2 + 5)` with `t = tan(pi/5)`.
 - Construct exact 4D polytopes over that field, including HKO's dual vertices.
 - Run selected exact KKT solves on:
@@ -29,8 +30,12 @@ HKO-style polytopes whose intended coordinates live in an algebraic extension of
 
 ## Generated Data
 
-- `experiments/numerics/algebraic-exactness/exact-polytopes.jsonl`
-- `experiments/numerics/algebraic-exactness/exact-kkt-comparison.jsonl`
+- Canonical tracked refresh:
+  - `experiments/numerics/algebraic-exactness/exact-polytopes.jsonl`
+  - `experiments/numerics/algebraic-exactness/exact-kkt-comparison.jsonl`
+- Default smoke run:
+  - `experiments/numerics/algebraic-exactness/smoke-exact-polytopes.jsonl`
+  - `experiments/numerics/algebraic-exactness/smoke-exact-kkt-comparison.jsonl`
 
 ## Success Criteria
 
@@ -43,7 +48,7 @@ HKO-style polytopes whose intended coordinates live in an algebraic extension of
 
 - No migration of `library::Polytope4D`.
 - No change to `library/src/database.rs` or the mirrored rational JSONL caches.
-- No arbitrary finite-extension backend in v1.
+- No runtime-defined finite-extension backend in v1.
 - No exhaustive exact HKO sigma sweep in v1.
 
 ## Commands
@@ -51,9 +56,13 @@ HKO-style polytopes whose intended coordinates live in an algebraic extension of
 ```bash
 cargo build -p dev-numerical-analysis --release
 cargo run -p dev-numerical-analysis --release --bin num-algebraic-exactness
+cargo run -p dev-numerical-analysis --release --bin num-algebraic-exactness -- --canonical
 ```
+
+- Default run writes untracked `smoke-*.jsonl` outputs for local inspection.
+- `--canonical` is the deliberate tracked-artifact refresh path.
 
 ## Follow-Up Design Note
 
 - Scalar-API planning for a reusable real-algebraic arithmetic layer lives in
-  [algebraic-scalar-api.md](/workspaces/msc-math/.codex/worktrees/algebraic-exactness-spike/research/numerics/design/algebraic-scalar-api.md).
+  [algebraic-scalar-api.md](./algebraic-scalar-api.md).

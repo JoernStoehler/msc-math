@@ -4,6 +4,10 @@
 //! but stays experiment-scoped and field-generic. It is intentionally small:
 //! enough for exact HKO-family geometry and rational controls, not a drop-in
 //! library replacement.
+//!
+//! TODO: add [def:...] to formal math for the exact dual-vertex polytope model.
+//! TODO: add [lem:...] to formal math for the exact 4D vertex enumeration and
+//! irredundancy checks implemented in this module.
 
 use super::field::{ExactOrderedField, ExactSign};
 use std::collections::BTreeSet;
@@ -380,8 +384,11 @@ fn check_irredundancy<F: ExactOrderedField>(
 
 #[cfg(test)]
 mod tests {
+    use super::dot4;
+    use crate::algebraic::field::{cmp_field, ExactOrderedField};
     use crate::algebraic::fixtures::{exact_hko_pentagon, exact_hypercube, exact_simplex};
     use nalgebra::DMatrix;
+    use std::cmp::Ordering;
     use symplectic::geom::known_polytopes;
 
     fn normalized_incidence_rows(rows: &[Vec<bool>]) -> Vec<Vec<bool>> {
@@ -409,6 +416,55 @@ mod tests {
             })
     }
 
+    fn assert_exact_polytope_self_consistent<F: ExactOrderedField>(polytope: &super::ExactPolytope4D<F>) {
+        let one = F::one();
+
+        for (vertex_idx, vertex) in polytope.vertices().iter().enumerate() {
+            let mut incident_count = 0usize;
+            for (facet_idx, dual) in polytope.dual_vertices().iter().enumerate() {
+                let value = dot4(vertex, dual);
+                let relation = cmp_field(&value, &one);
+                if polytope.incidence()[vertex_idx][facet_idx] {
+                    incident_count += 1;
+                    assert_eq!(
+                        relation,
+                        Ordering::Equal,
+                        "incident facet {facet_idx} should satisfy a_i.x = 1 at vertex {vertex_idx}"
+                    );
+                } else {
+                    assert_eq!(
+                        relation,
+                        Ordering::Less,
+                        "non-incident facet {facet_idx} should satisfy a_i.x < 1 at vertex {vertex_idx}"
+                    );
+                }
+            }
+            assert!(
+                incident_count >= 4,
+                "every stored 4D vertex should saturate at least four facets"
+            );
+        }
+
+        for row in 0..polytope.facet_count() {
+            assert_eq!(polytope.omega_signs()[row][row], 0, "omega diagonal should vanish");
+            for col in 0..polytope.facet_count() {
+                let expected_adjacency = row != col
+                    && (0..polytope.vertices().len())
+                        .any(|vertex| polytope.incidence()[vertex][row] && polytope.incidence()[vertex][col]);
+                assert_eq!(
+                    polytope.vertex_adjacency()[row][col],
+                    expected_adjacency,
+                    "facet adjacency should agree with shared exact vertices"
+                );
+                assert_eq!(
+                    polytope.omega_signs()[row][col],
+                    -polytope.omega_signs()[col][row],
+                    "omega sign matrix should be antisymmetric"
+                );
+            }
+        }
+    }
+
     #[test]
     fn simplex_geometry_matches_rational_control() {
         let exact = exact_simplex().expect("exact simplex");
@@ -417,6 +473,7 @@ mod tests {
         assert_eq!(exact.facet_count(), library.polytope.facet_count());
         assert_eq!(exact.vertices().len(), library.polytope.vertices().len());
         assert!(same_incidence(exact.incidence(), library.polytope.incidence()));
+        assert_exact_polytope_self_consistent(&exact);
     }
 
     #[test]
@@ -426,20 +483,29 @@ mod tests {
 
         assert_eq!(exact.vertices().len(), library.polytope.vertices().len());
         assert!(same_incidence(exact.incidence(), library.polytope.incidence()));
+        assert_exact_polytope_self_consistent(&exact);
     }
 
     #[test]
-    fn hko_exact_geometry_matches_current_dyadic_combinatorics() {
+    fn hko_exact_geometry_is_self_consistent_and_detects_known_zero_pairs() {
         let exact = exact_hko_pentagon().expect("exact hko");
-        let library = known_polytopes::hko_pentagon();
 
         assert_eq!(exact.facet_count(), 10);
         assert_eq!(exact.vertices().len(), 25);
-        assert!(same_incidence(exact.incidence(), library.polytope.incidence()));
-        assert!(same_bool_matrix(
-            exact.vertex_adjacency(),
-            library.polytope.vertex_adjacency()
-        ));
-        assert!(exact.omega_signs().iter().flatten().any(|&sign| sign == 0));
+        assert_exact_polytope_self_consistent(&exact);
+
+        for &(i, j) in &[(1usize, 6usize), (3usize, 8usize), (4usize, 9usize)] {
+            assert_eq!(exact.omega_signs()[i][j], 0, "known exact HKO zero pair ({i}, {j})");
+            assert_eq!(exact.omega_signs()[j][i], 0, "known exact HKO zero pair ({j}, {i})");
+        }
+    }
+
+    #[test]
+    fn hko_vs_dyadic_combinatorics_stays_diagnostic_only() {
+        let exact = exact_hko_pentagon().expect("exact hko");
+        let library = known_polytopes::hko_pentagon();
+
+        assert_eq!(exact.facet_count(), library.polytope.facet_count());
+        assert_eq!(exact.vertices().len(), library.polytope.vertices().len());
     }
 }
