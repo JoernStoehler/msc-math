@@ -26,12 +26,12 @@ Packet 1 completed:
 | `check_packet1.py` | Pure-Python sympy fallback for the Packet 1 exact geometry / symmetry certificates |
 | `summarize_numerical_minima.py` | Cross-check summary of the current numerical exact-minimum surface |
 | `classify_numerical_minima.py` | Packet 2 bookkeeping classifier for six-facet endpoint classes and seven-facet equality-case classes |
-| `derive_endpoint_prototype.py` | Exact Packet 2 certificate for one symmetry-reduced six-facet endpoint prototype |
+| `derive_endpoint_prototype.py` | Exact Packet 2 certificate for one endpoint prototype, one midpoint prototype, and the full equality-case beta segment between neighboring endpoints |
 | `hko-geometry.json` | Generated exact geometry record |
 | `hko-symmetry-tangent.json` | Generated exact symmetry tangent-space certificate |
 | `numerical-minima-summary.json` | Generated current numerical minima summary |
 | `numerical-family-reconciliation.json` | Generated Packet 2 bookkeeping summary of endpoint/equality-case classes |
-| `endpoint-prototype-certificate.json` | Generated exact endpoint-prototype beta/action certificate |
+| `endpoint-prototype-certificate.json` | Generated exact endpoint/midpoint prototype beta/action certificate |
 
 ## How To Run
 
@@ -86,8 +86,9 @@ At the current numerical level, the beta-pattern surface compresses much
 further than the raw gradient-class counts:
 
 - the six-facet exact minima use one beta multiset up to floating jitter;
-- the seven-facet exact minima split into exactly two beta multisets:
-  one midpoint-style family and one asymmetric split family.
+- the seven-facet exact minima appear numerically as two beta multisets, but
+  the exact prototype certificate now shows that these are representatives on
+  one constant-action segment between neighboring endpoint beta profiles.
 - for each seven-facet class, the current reconciliation artifact also records
   a facetwise beta-profile convex-combination witness against two neighboring
   six-facet endpoint classes.

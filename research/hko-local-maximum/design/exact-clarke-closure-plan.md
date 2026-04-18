@@ -61,8 +61,10 @@ Close the first-order `M_10` theorem surface:
   six-facet subsets form one orbit under diagonal `72^\circ` rotation plus
   `q/p` exchange, and the ten visited seven-facet subsets do as well.
 - Up to floating jitter in the current numerical artifact, the beta-pattern
-  surface compresses to one six-facet beta multiset and two seven-facet beta
-  multisets. This suggests that the remaining Packet 2 work is not combinatoric
+  surface compresses to one six-facet beta multiset and a one-parameter
+  seven-facet equality-case segment whose numerical collector representatives
+  currently appear as two beta multisets. This suggests that the remaining
+  Packet 2 work is not combinatoric
   subset enumeration but exact identification of a very small number of
   prototype beta-pattern families.
 - Current numerical-fit summary for those prototype beta multisets:
@@ -81,12 +83,26 @@ Close the first-order `M_10` theorem surface:
   `a = sqrt(5) / 10`, `b = (5 - sqrt(5)) / 20`,
   exact closure `0`, normalization `1`, and positive-orientation action
   `5 / (2 sqrt(5 - 2 sqrt(5)))`.
+- One midpoint-style seven-facet equality-case prototype is now certified
+  exactly as the facetwise average of neighboring endpoint beta profiles, with
+  beta pattern `{a, d, d, b, b, c, c}`,
+  `c = (5 - sqrt(5)) / 40`, `d = (5 + sqrt(5)) / 40`,
+  exact closure `0`, normalization `1`, and the same positive-orientation
+  action `5 / (2 sqrt(5 - 2 sqrt(5)))`.
+- The exact endpoint certificate also records the full one-parameter
+  seven-facet segment
+  `beta(lambda) = (1 - lambda) beta(E_left; U) + lambda beta(E_right; U)` on
+  the union subset `U = [0, 1, 2, 3, 6, 7, 9]`, with exact closure `0`,
+  normalization `1`, exact multiplier formulas `mu(lambda), xi(lambda)`,
+  exact stationarity residual `0`, constant
+  `Q = sqrt(5 - 2 sqrt(5)) / 5`, and therefore constant action
+  `5 / (2 sqrt(5 - 2 sqrt(5)))` for all `lambda`.
 - Working Packet 2 hypothesis from the current paper-plus-numerics comparison:
   modulo diagonal `72^\circ` rotation and `q/p` exchange, the minimizing-family
-  catalog may reduce to one six-facet endpoint prototype together with two
-  seven-facet equality-case beta prototypes (midpoint split and asymmetric
-  split). The remaining theorem work is to derive this reduction from the HKO
-  billiard geometry rather than infer it from the numerical collector.
+  catalog may reduce to one six-facet endpoint prototype together with one
+  seven-facet equality-case segment between neighboring endpoints. The
+  remaining theorem work is to derive this reduction from the HKO billiard
+  geometry rather than infer it from the numerical collector.
 
 ## Work Packets
 

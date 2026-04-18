@@ -37,11 +37,11 @@ translate these two minimizing mechanisms into a finite repo-facing catalog.
 ## Symmetry-Reduced Numerical Hypothesis
 
 Modulo diagonal `72^o` rotation and `q/p` exchange, the current exact-action
-numerical artifact suggests the following reduction:
+numerical artifact and the exact prototype certificates suggest the following
+reduction:
 
 - one endpoint `6`-facet prototype;
-- two equality-case `7`-facet beta prototypes:
-  one midpoint split and one asymmetric split.
+- one `7`-facet equality-case segment family joining neighboring endpoints.
 
 The raw numerical collector reports:
 
@@ -101,9 +101,31 @@ missing facet:
 - `beta(E_left; U) = [b, b, 0, a, b, b, a]`,
 - `beta(E_right; U) = [a, 0, b, b, b, b, a]`.
 
-### Midpoint Split
+### Equality-Case Segment
 
-The first `7`-facet beta prototype is the facetwise midpoint
+The paper's equality cases on the union subset `U` are naturally represented by
+the exact one-parameter facetwise segment
+
+- `beta_seg(U; lambda) = (1 - lambda) beta(E_left; U) + lambda beta(E_right; U)`.
+
+The repo now contains an exact certificate that for every `lambda`:
+
+- closure remains exactly `0`,
+- normalization remains exactly `1`,
+- the stationarity equations admit exact multiplier formulas
+  `mu(lambda), xi(lambda)`,
+- the top KKT residual is exactly `0`,
+- `Q(lambda) = sqrt(5 - 2 sqrt(5)) / 5`,
+- therefore the action remains
+  `5 / (2 sqrt(5 - 2 sqrt(5)))`.
+
+So the current exact evidence says that the theorem-facing equality-case
+surface is not a finite list of isolated `7`-facet beta points. It is a
+constant-action exact KKT segment between neighboring endpoint beta profiles.
+
+### Midpoint Representative
+
+The midpoint representative is the special value `lambda = 1/2`, giving
 
 - `beta_mid(U) = (beta(E_left; U) + beta(E_right; U)) / 2`
 - `= [(a+b)/2, b/2, b/2, (a+b)/2, b, b, a]`.
@@ -119,22 +141,26 @@ the midpoint multiset is
 
 This matches the dominant `7`-facet numerical family.
 
-### Asymmetric Split
+This midpoint prototype is now certified exactly in the repo as a point on that
+exact KKT segment:
 
-The second `7`-facet beta prototype is numerically consistent with a facetwise
-convex combination
+- positive permutation `[9, 2, 3, 6, 7, 1, 0]`,
+- beta profile `[a, c, d, b, b, c, d]`,
+- exact closure `0`,
+- exact normalization `1`,
+- the same exact action `5 / (2 sqrt(5 - 2 sqrt(5)))`.
 
-- `beta_asym(U) = (1 - lambda) beta(E_left; U) + lambda beta(E_right; U)`,
+### Asymmetric Numerical Representative
 
-for a coefficient
+One numerical collector representative on this exact segment uses
 
 - `lambda approx 0.129573855671`.
 
-On the ordered facets `[0, 1, 2, 3, 6, 7, 9]`, this gives
+On the ordered facets `[0, 1, 2, 3, 6, 7, 9]`, the segment formula gives
 
 - `[b + lambda (a-b), (1-lambda) b, lambda b, a - lambda (a-b), b, b, a]`.
 
-The current numerical fit suggests
+The current numerical artifact then shows
 
 - `b + lambda (a-b) approx 0.149263529615`,
 - `a - lambda (a-b) approx 0.212539869260`,
@@ -142,15 +168,15 @@ The current numerical fit suggests
 - `(1-lambda) b approx 0.120289934677`.
 
 The reconciliation artifact records exact agreement at the current rounded
-precision between this convex-combination formula and the collected asymmetric
-`7`-facet beta profiles.
+precision between this segment formula and the collected asymmetric
+`7`-facet beta profiles. The important point is that this `lambda` is now best
+viewed as one numerical representative on the exact equality-case segment, not
+as a distinguished theorem-facing constant.
 
 ## What Is Still Missing
 
-- A paper-derived exact proof that the equality-case surface reduces to the two
-  `7`-facet beta prototypes above.
-- An exact derivation of the asymmetric coefficient `lambda`, or a proof that
-  it is not an independent parameter in the theorem-facing catalog.
+- A paper-derived exact proof that the equality-case surface in the paper is
+  exactly the KKT segment above in repo notation.
 - A proof that the equality-case `7`-facet families add no new extremal
   first-order constraints beyond the endpoint family if that is indeed the
   correct Clarke-theoretic reduction.
