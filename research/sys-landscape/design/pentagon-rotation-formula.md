@@ -44,6 +44,7 @@ Owned sweep status after the minima-safe rerun:
 |------|------|
 | `experiments/sys-landscape/pentagon-rotation-formula/main.rs` | owned theta sweep and orbit-class dump |
 | `experiments/sys-landscape/pentagon-rotation-formula/analyze.py` | branch normalization and formula checks |
+| `experiments/sys-landscape/pentagon-rotation-formula/cas_witnesses.py` | exact symbolic witness for the active 2-bounce branch and the first two competitive 3-bounce branches |
 | `experiments/sys-landscape/pentagon-rotation-formula/theta-sweep.jsonl` | generated per-theta orbit data |
 | `formal/sys-landscape/pentagon-rotation-formula.tex` | private proof draft and theorem skeleton |
 
@@ -214,6 +215,77 @@ surface, even without the missing `three-bounce-branches.jsonl` artifact:
 - endpoint signal:
   `Q:0-2-34  P:2-4-01` disappears before the midpoint, at `17.75 degree`,
   so it is a concrete candidate for a contraction-endpoint analysis.
+- first-family endpoint mechanism:
+  the open-interval family `Q:0-1-23  P:2-3-01` does not appear at
+  `18 degree`; in the smoke branch data its near-midpoint raw representative
+  has two tiny beta entries, and contracting those entries yields the
+  midpoint-minimizing family `Q:0-1-3  P:0-2-3`.
+- first-family geometry at a generic angle:
+  recovering a representative at `10 degree` gives the compressed support
+  picture
+  `q : (edge e0, edge e4, vertex e1 \cap e2)` and
+  `p : (edge e2, edge e1, vertex e0 \cap e4)`,
+  i.e. in both factors the family looks like ``two adjacent edges plus the
+  opposite vertex,'' with opposite cyclic orientation in `q` and `p`.
+- first-family reconstruction packet:
+  for that same `10 degree` representative, the compressed `q`-triangle is
+  already forced by two line intersections:
+  the first and third `q` legs run in the directions `-n_1(theta)` and
+  `-n_2(theta)` of the rotated `p`-facet normals, so
+  `x \in e0` and `z = e1 \cap e2` determine `x`,
+  then `y \in e4` is forced by the `-n_1(theta)` direction.
+  Numerically this reproduces the recovered compressed `q` points exactly.
+- sign convention that matters for formulas:
+  the recovered raw `p` projection must be negated before matching it to the
+  billiard support data, because in our convention `J_0(q,p)=(-p,q)`.
+  With that sign correction, the compressed action of the first family at
+  `10 degree` is recovered exactly from the compressed data by
+  `sum <Delta q_i, -p_i>`, matching the smoke branch action to rounding error.
+- first-family closed formula:
+  the convenient representative
+  `q : (e0,e4,v12)`, `p : (e2,e1,w40(theta))`
+  now gives an explicit action formula
+  \[
+    A_1(\theta)
+    =
+    g(\theta)
+    +
+    \frac{
+      5\sin\left(\theta+\frac{\pi}{10}\right)
+      \sin\left(\frac{\pi}{10}-\theta\right)
+    }
+    {
+      4\sin^2\left(\theta+\frac{3\pi}{10}\right)\cos\theta
+    },
+  \]
+  where `g(theta) = ((5+sqrt(5))/4)^2 sec(theta)` is the active `2`-bounce
+  capacity. Hence this entire branch is strictly above the `2`-bounce
+  candidate on `0 <= theta < pi/10`, with equality only at the midpoint.
+- second-family closed formula:
+  the second competitive branch also admits a direct line-intersection model:
+  `q : (e0,e1,v34)`, `p : (e4,w01(theta),e3)`.
+  Its action is
+  \[
+    A_2(\theta)
+    =
+    g(\theta)
+    +
+    \frac{
+      5\sin\left(\theta+\frac{\pi}{10}\right)
+      \sin\left(\frac{\pi}{10}-\theta\right)
+    }
+    {
+      4\cos\theta\cos^2\left(\theta+\frac{\pi}{5}\right)
+    },
+  \]
+  so this branch is also strictly above `g(theta)` on
+  `0 <= theta < pi/10`, with equality only at the midpoint.
+- CAS witness file:
+  the routine eliminations for the active `2`-bounce branch and these first two
+  `3`-bounce branch identities now live in
+  `experiments/sys-landscape/pentagon-rotation-formula/cas_witnesses.py`.
+  The formal draft now stops at the reduced setup formulas and cites that
+  script for the final exact simplification to the closed-form branch outputs.
 
 This does not prove anything by itself, but it means a branchwise proof does not
 have to start from the full raw `sigma` soup. The first serious lower-bound or
@@ -230,6 +302,40 @@ Practical attack order for the next proof pass:
 4. only then broaden to the second-tier families
    `Q:0-1-3  P:0-2-3`, `Q:0-1-3  P:1-3-4`, and `Q:0-2-34  P:0-3-12`.
 
+One correction to the earlier reduction language: a boundary contraction does
+not have to land directly in `2`-bounce. The first shortlisted family appears
+to contract to another `3`-bounce midpoint family, so the safe formal statement
+is: ``contracts to a shorter orbit already known to satisfy the target bound,''
+not ``contracts to `2`-bounce.''
+
+## Fresh Progress (2026-04-18, continued)
+
+The first shortlisted family is now a proved calculation surface inside the
+private draft:
+
+- `formal/sys-landscape/pentagon-rotation-formula.tex` now contains
+  `lem:pentagon-rotation-three-bounce-first-family`.
+- the same file now also contains
+  `lem:pentagon-rotation-three-bounce-second-family`.
+- the same file now contains a CAS witness remark pointing to
+  `experiments/sys-landscape/pentagon-rotation-formula/cas_witnesses.py`.
+- the active `2`-bounce proposition has now been rewritten to the same
+  “setup first, CAS for routine algebra” boundary.
+- That lemma does not yet prove branch existence from first principles; it is a
+  conditional computation for the explicit affine support patterns above.
+- Within those surfaces, the comparison with the `2`-bounce candidate is done:
+  the differences collapse to positive factored expressions on
+  `0 <= theta < pi/10`.
+
+So the live blocker has narrowed again:
+
+1. formalize branch existence / identification for these two open-interval
+   families cleanly enough that the lemmas can be plugged into the reduction;
+2. classify the remaining midpoint-contraction families;
+3. decide whether the remaining second-tier families need their own explicit
+   formulas, or whether they can be handled by contraction order plus the
+   already larger empirical gap.
+
 ## Session Resume Note (2026-04-18)
 
 This worktree now has an owned experiment surface, a readable figure set, and a
@@ -238,6 +344,7 @@ chat history:
 
 - `experiments/sys-landscape/pentagon-rotation-formula/main.rs`
 - `experiments/sys-landscape/pentagon-rotation-formula/analyze.py`
+- `experiments/sys-landscape/pentagon-rotation-formula/cas_witnesses.py`
 - `formal/sys-landscape/pentagon-rotation-formula.tex`
 - `experiments/sys-landscape/pentagon-rotation-formula/signature_legend.txt`
 

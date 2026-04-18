@@ -98,294 +98,120 @@ Consequently,
 % proof is stable.]
 
 \begin{proof}
-We compute the active 2-bounce branch explicitly on the half-domain
-$0 \le \theta \le \pi/10$.
-
-\paragraph{2-bounce family.}
-The combinatorial classification of 2-bounce trajectories that cannot be
-translated into the interior depends only on the table pentagon and is the same
-as in the HKO proof: they are exactly the chords joining a vertex to a point on
-the opposite edge. By cyclic symmetry it is enough to study the family joining
-$v_0$ to the edge $[v_2,v_3]$.
-
+Set
 \[
-  x_\lambda := \lambda v_2 + (1-\lambda) v_3,
+  A := 1 + \cos\left(\frac{\pi}{5}\right),
+  \qquad
+  B := \sin\left(\frac{\pi}{5}\right).
+\]
+The HKO classification of non-translatable $2$-bounce trajectories depends only
+on the table pentagon, so on the half-domain it is enough to study the family
+joining the vertex $v_0$ to the opposite edge $[v_2,v_3]$. In the present
+coordinates that edge is vertical, so we parametrize it by
+\[
+  x_\lambda := \lambda v_2 + (1-\lambda)v_3
+  =
+  \left(
+    -\cos\left(\frac{\pi}{5}\right),
+    (2\lambda-1)B
+  \right),
   \qquad 0 \le \lambda \le 1.
 \]
-Since
+The corresponding chord vector is
 \[
-  v_2 = \left(
-    -\cos\left(\frac{\pi}{5}\right),
-    \sin\left(\frac{\pi}{5}\right)
-  \right),
-  \qquad
-  v_3 = \left(
-    -\cos\left(\frac{\pi}{5}\right),
-    -\sin\left(\frac{\pi}{5}\right)
-  \right),
-\]
-we have
-\[
-  x_\lambda
-  =
-  \left(
-    -\cos\left(\frac{\pi}{5}\right),
-    (2\lambda-1)\sin\left(\frac{\pi}{5}\right)
-  \right),
-\]
-and therefore the chord vector is
-\[
-  d_\lambda := x_\lambda - v_0
-  =
-  \left(
-    -\left(1+\cos\left(\frac{\pi}{5}\right)\right),
-    (2\lambda-1)\sin\left(\frac{\pi}{5}\right)
-  \right).
+  d_\lambda := x_\lambda - v_0 = (-A,(2\lambda-1)B).
 \]
 
-For the rotated support pentagon, write
+Write
 \[
   w_k(\theta) := R(\theta)v_k.
 \]
-On the half-domain $0 \le \theta \le \pi/10$, the vector $-d_\lambda$ stays in
-the normal cone of $w_0(\theta)$, while $d_\lambda$ stays in the union of the
-adjacent normal cones of $w_2(\theta)$ and $w_3(\theta)$. Therefore
+For $0 \le \theta \le \pi/10$, the vector $-d_\lambda$ stays in the normal cone
+of $w_0(\theta)$ and $d_\lambda$ stays in the union of the adjacent normal
+cones of $w_2(\theta)$ and $w_3(\theta)$. Hence the branch action is
 \[
-  h_{R(\theta)P_5}(-d_\lambda)
+  L_\theta(\lambda)
   =
-  \langle -d_\lambda, w_0(\theta)\rangle,
-\]
-and
-\[
-  h_{R(\theta)P_5}(d_\lambda)
-  =
-  \max\Bigl(
+  \langle -d_\lambda, w_0(\theta)\rangle
+  +
+  \max\bigl(
     \langle d_\lambda, w_2(\theta)\rangle,
     \langle d_\lambda, w_3(\theta)\rangle
-  \Bigr).
+  \bigr).
 \]
-The support-switch expression
+The support switch is determined by
 \[
-  \langle d_\lambda, w_2(\theta)-w_3(\theta)\rangle
+  \langle d_\lambda, w_2(\theta)-w_3(\theta)\rangle = 0,
 \]
-is affine and strictly increasing in~$\lambda$, because
+which reduces to the affine relation
 \[
-  \frac{d}{d\lambda}
-  \langle d_\lambda, w_2(\theta)-w_3(\theta)\rangle
-  =
-  4\sin^2\left(\frac{\pi}{5}\right)\cos\theta
-  >
-  0
-  \qquad
-  \text{for } 0 \le \theta \le \frac{\pi}{10}.
+  A\sin\theta + (2\lambda-1)B\cos\theta = 0.
 \]
-Hence there is a unique switch point, characterized by
-\[
-  \langle d_\lambda, w_2(\theta)-w_3(\theta)\rangle = 0.
-\]
-Since
-\[
-  w_2(\theta)-w_3(\theta)
-  =
-  R(\theta)(v_2-v_3)
-  =
-  2\sin\left(\frac{\pi}{5}\right)(-\sin\theta,\cos\theta),
-\]
-the support-switch equation becomes
-\[
-  \left(1+\cos\left(\frac{\pi}{5}\right)\right)\sin\theta
-  +
-  (2\lambda-1)\sin\left(\frac{\pi}{5}\right)\cos\theta
-  =
-  0.
-\]
-Using
-\[
-  \frac{1+\cos(\pi/5)}{\sin(\pi/5)}
-  =
-  \frac{2\cos^2(\pi/10)}{2\sin(\pi/10)\cos(\pi/10)}
-  =
-  \cot(\pi/10),
-\]
-this yields
+Thus the switch parameter is
 \[
   \lambda(\theta)
   =
-  \frac{1}{2}
-  -
-  \frac{\tan(\theta)}{2\tan(\pi/10)}.
+  \frac{1}{2} - \frac{\tan(\theta)}{2\tan(\pi/10)}.
 \]
-In particular, $\lambda(0)=1/2$ gives the opposite-edge midpoint and
-$\lambda(\pi/10)=0$ gives the diagonal endpoint $v_3$.
 
-Let
+For fixed $\theta$, the function $L_\theta$ is affine on the two support cells
+$\lambda \le \lambda(\theta)$ and $\lambda \ge \lambda(\theta)$. The routine
+trigonometric reduction of the corresponding derivatives is part of the exact
+CAS witness from Remark~\ref{rem:pentagon-rotation-cas-witness}, which records
 \[
-  L_\theta(\lambda)
-  :=
-  h_{R(\theta)P_5}(-d_\lambda)
-  +
-  h_{R(\theta)P_5}(d_\lambda)
-\]
-be the 2-bounce $T^\circ$-length along this family. Since
-$\langle d_\lambda,w_2(\theta)-w_3(\theta)\rangle$ is increasing in~$\lambda$,
-the active support is~$w_3(\theta)$ for $\lambda \le \lambda(\theta)$ and
-$w_2(\theta)$ for $\lambda \ge \lambda(\theta)$. Therefore
-\[
-  L_\theta(\lambda)
+  \frac{d}{d\lambda} L_\theta^{-}
   =
-  \langle -d_\lambda, w_0(\theta)\rangle
-  +
-  \langle d_\lambda, w_3(\theta)\rangle
+  -\sqrt{5}\sin\left(\theta+\frac{\pi}{10}\right),
   \qquad
-  \text{for } \lambda \le \lambda(\theta),
-\]
-and
-\[
-  L_\theta(\lambda)
+  \frac{d}{d\lambda} L_\theta^{+}
   =
-  \langle -d_\lambda, w_0(\theta)\rangle
-  +
-  \langle d_\lambda, w_2(\theta)\rangle
-  \qquad
-  \text{for } \lambda \ge \lambda(\theta).
+  \sqrt{5}\cos\left(\theta+\frac{2\pi}{5}\right).
 \]
-Since
-\[
-  d'_\lambda = \left(0, 2\sin\left(\frac{\pi}{5}\right)\right),
-\]
-the derivative on the left branch is
-\begin{align*}
-  L'_\theta(\lambda)
-  &=
-  \langle -d'_\lambda, w_0(\theta)\rangle
-  +
-  \langle d'_\lambda, w_3(\theta)\rangle \\
-  &=
-  2\sin\left(\frac{\pi}{5}\right)
-  \left(
-    \sin\left(\theta + \frac{6\pi}{5}\right) - \sin\theta
-  \right) \\
-  &=
-  4\sin\left(\frac{\pi}{5}\right)\sin\left(\frac{3\pi}{5}\right)
-  \cos\left(\theta + \frac{3\pi}{5}\right)
-  <
-  0,
-\end{align*}
-because
-$\theta + \frac{3\pi}{5} \in [\frac{3\pi}{5}, \frac{7\pi}{10}] \subset
-(\frac{\pi}{2}, \pi)$.
-On the right branch one gets
-\begin{align*}
-  L'_\theta(\lambda)
-  &=
-  \langle -d'_\lambda, w_0(\theta)\rangle
-  +
-  \langle d'_\lambda, w_2(\theta)\rangle \\
-  &=
-  2\sin\left(\frac{\pi}{5}\right)
-  \left(
-    \sin\left(\theta + \frac{4\pi}{5}\right) - \sin\theta
-  \right) \\
-  &=
-  4\sin\left(\frac{\pi}{5}\right)\sin\left(\frac{2\pi}{5}\right)
-  \cos\left(\theta + \frac{2\pi}{5}\right)
-  \ge
-  0,
-\end{align*}
-with strict inequality on $0 \le \theta < \pi/10$. Thus
-$L_\theta(\lambda)$ decreases up to $\lambda(\theta)$ and increases
-afterwards, so the unique minimizer is $\lambda(\theta)$.
+On $0 \le \theta \le \pi/10$, the left slope is strictly negative and the right
+slope is nonnegative, with equality on the right only at the endpoint
+$\theta=\pi/10$. Therefore $L_\theta$ decreases up to $\lambda(\theta)$ and
+then increases, so $\lambda(\theta)$ is the unique minimizing parameter on this
+family.
 
-\paragraph{Capacity along the active branch.}
-Set
-\[
-  A := 1+\cos\left(\frac{\pi}{5}\right).
-\]
-The support-switch equation implies
-\[
-  (2\lambda(\theta)-1)\sin\left(\frac{\pi}{5}\right)
-  =
-  -A\tan\theta,
-\]
-so the minimizing chord vector is
+Substituting the switch relation at the minimizing parameter gives
 \[
   d_{\lambda(\theta)} = (-A,-A\tan\theta).
 \]
-Therefore
+The same exact CAS witness verifies the support values
 \[
-  h_{R(\theta)P_5}(-d_{\lambda(\theta)})
-  =
-  \langle -d_{\lambda(\theta)}, w_0(\theta)\rangle
-  =
-  A(\cos\theta+\tan\theta\sin\theta)
-  =
-  A\sec\theta.
-\]
-At the minimizing parameter one may use $w_2(\theta)$ for the forward segment,
-because the support values at $w_2(\theta)$ and $w_3(\theta)$ agree there. Thus
-\begin{align*}
+  h_{R(\theta)P_5}(-d_{\lambda(\theta)}) = A\sec\theta,
+  \qquad
   h_{R(\theta)P_5}(d_{\lambda(\theta)})
-  &=
-  \langle d_{\lambda(\theta)}, w_2(\theta)\rangle \\
-  &=
-  A\left(
-    \cos\left(\frac{\pi}{5}\right)\cos\theta
-    +
-    \sin\left(\frac{\pi}{5}\right)\sin\theta
-    +
-    \tan\theta
-    \left(
-      \cos\left(\frac{\pi}{5}\right)\sin\theta
-      -
-      \sin\left(\frac{\pi}{5}\right)\cos\theta
-    \right)
-  \right) \\
-  &=
-  A\cos\left(\frac{\pi}{5}\right)\sec\theta.
-\end{align*}
-Hence the 2-bounce capacity candidate is
+  =
+  A\cos\left(\frac{\pi}{5}\right)\sec\theta,
+\]
+and therefore
 \[
   c_{2\text{-bounce}}(K_\theta)
   =
-  A\left(1+\cos\left(\frac{\pi}{5}\right)\right)\sec\theta
-  =
-  A^2 \sec\theta
-  \quad \text{for } 0 \le \theta \le \frac{\pi}{10}.
+  A^2\sec\theta.
 \]
-At $\theta=0$, this candidate value is $A^2$.
 
-The volume stays constant:
+Finally,
 \[
   \operatorname{vol}(K_\theta)=\operatorname{area}(P_5)^2,
   \qquad
-  \operatorname{area}(P_5)=\frac{5}{2}\sin\left(\frac{2\pi}{5}\right).
+  \operatorname{area}(P_5)=\frac{5}{2}\sin\left(\frac{2\pi}{5}\right),
 \]
-Therefore
+so
 \[
   \mathrm{sys}(K_\theta)
   \le
   \frac{A^4}{2\operatorname{area}(P_5)^2}\sec^2\theta.
 \]
-Using
-\[
-  \sin^2\left(\frac{2\pi}{5}\right)=\frac{5+\sqrt{5}}{8},
-  \qquad
-  A=\frac{5+\sqrt{5}}{4},
-\]
-we obtain
+The same witness also verifies the constant simplification
 \[
   \frac{A^4}{2\operatorname{area}(P_5)^2}
   =
-  \frac{(5+\sqrt{5})^4}{256}
-  \cdot
-  \frac{16}{25(5+\sqrt{5})}
-  =
-  \frac{(5+\sqrt{5})^3}{400}
-  =
   \frac{5+2\sqrt{5}}{10}.
 \]
-This proves the claimed secant law and the resulting upper bound on the
-systolic ratio.
+This proves the claimed secant law for the active $2$-bounce candidate and the
+resulting upper bound on the systolic ratio.
 \end{proof}
 \end{unverified}
 
@@ -524,9 +350,10 @@ Assume the following.
   $\theta_0 \in [0,\pi/10]$ that does not lie in any such strict-feasibility
   component, either:
   \begin{enumerate}
-  \item some $\beta_k(\theta_0)=0$, so the orbit contracts to a 2-bounce orbit
-    with the same action by Lemma~\ref{lem:orbit-contraction}, and that
-    contracted 2-bounce orbit is shown to have action at least~$g(\theta_0)$;
+  \item some $\beta_k(\theta_0)=0$, so repeated use of
+    Lemma~\ref{lem:orbit-contraction} contracts the orbit to a shorter
+    admissible orbit with the same action, and that contracted orbit is shown
+    separately to have action at least~$g(\theta_0)$;
     or
   \item that orbit is shown separately not to minimize.
   \end{enumerate}
@@ -544,11 +371,352 @@ Lemma~\ref{lem:pentagon-rotation-three-bounce-continuity} gives
 $A_\sigma(\theta_0) \ge g(\theta_0)$.
 If $\theta_0 \notin U_\sigma$, then assumption~(2) applies.
 In case~(a), Lemma~\ref{lem:orbit-contraction} reduces the action to a
-2-bounce orbit with the same value, and the remaining comparison with
+shorter orbit with the same value, and the remaining comparison with
 $g(\theta_0)$ is part of assumption~(2a).
 In case~(b), the orbit is not minimizing by assumption.
 Thus no minimizing 3-bounce orbit can have action below~$g(\theta)$ on the
 half-domain.
+\end{proof}
+\end{unverified}
+
+\begin{unverified}
+\begin{remark}[CAS witness for the routine branch simplifications]
+\label{rem:pentagon-rotation-cas-witness}
+The routine symbolic eliminations for
+Proposition~\ref{prop:pentagon-rotation-two-bounce} and
+Lemmas~\ref{lem:pentagon-rotation-three-bounce-first-family} and
+\ref{lem:pentagon-rotation-three-bounce-second-family} are verified exactly by
+the script
+\begin{quote}\small\path{experiments/sys-landscape/pentagon-rotation-formula/cas_witnesses.py}\end{quote}
+That script starts from the reduced formulas for the branch parameters and
+actions recorded in the proofs below and checks:
+\[
+  \lambda(\theta), \quad
+  \frac{d}{d\lambda}L_\theta^\pm, \quad
+  h_{R(\theta)P_5}(\pm d_{\lambda(\theta)}), \quad
+  c_{2\text{-bounce}}(K_\theta), \quad
+  \frac{c_{2\text{-bounce}}(K_0)^2}{2\operatorname{area}(P_5)^2},
+\]
+for the active $2$-bounce branch, and
+\[
+  A_i(\theta) - g(\theta) = \text{claimed gap}_i(\theta)
+\]
+for the first two shortlisted $3$-bounce families, by exact symbolic
+simplification. The developer command is
+\begin{quote}\small\path{uv run experiments/sys-landscape/pentagon-rotation-formula/cas_witnesses.py}\end{quote}
+Its logical shape is:
+\begin{quote}\ttfamily
+define $\theta$ as an exact symbolic variable\\
+define the reduced formulas for the active support pattern\\
+define the claimed closed form for the branch output\\
+assert \texttt{simplify(}output-claimed\_form\texttt{) = 0}
+\end{quote}
+\end{remark}
+\end{unverified}
+
+\begin{unverified}
+\begin{lemma}[The first shortlisted 3-bounce branch stays above the 2-bounce candidate]
+\label{lem:pentagon-rotation-three-bounce-first-family}
+Let
+\[
+  c := \cos\left(\frac{\pi}{5}\right),
+  \qquad
+  n_k := \left(
+    \cos\left(\frac{\pi}{2} + \frac{2\pi k}{5}\right),
+    \sin\left(\frac{\pi}{2} + \frac{2\pi k}{5}\right)
+  \right),
+  \qquad
+  m_k(\theta) := R(\theta)n_k.
+\]
+Consider the affine 3-bounce support pattern
+\[
+  q : (e_0,e_4,v_{12}),
+  \qquad
+  p : (e_2,e_1,w_{40}(\theta)),
+\]
+where
+\[
+  e_k := \left\{ q : \langle n_k, q \rangle = c \right\},
+  \qquad
+  v_{ij} := e_i \cap e_j,
+  \qquad
+  w_{ij}(\theta) := R(\theta)v_{ij}.
+\]
+This is a convenient representative of the canonical affine signature
+\texttt{Q:0-1-23\ \ P:2-3-01}.
+Let
+\[
+  z := v_{12},
+  \qquad
+  x := z - a(\theta)m_2(\theta) \in e_0,
+  \qquad
+  y := x - b(\theta)m_1(\theta) \in e_4,
+\]
+with $a(\theta), b(\theta) > 0$.
+Then the affine product action of this branch is
+\[
+  A_1(\theta)
+  =
+  g(\theta)
+  +
+  \frac{
+    5\sin\left(\theta+\frac{\pi}{10}\right)
+    \sin\left(\frac{\pi}{10}-\theta\right)
+  }
+  {
+    4\sin^2\left(\theta+\frac{3\pi}{10}\right)\cos\theta
+  },
+\]
+where
+\[
+  g(\theta)
+  :=
+  \left(1+\cos\left(\frac{\pi}{5}\right)\right)^2 \sec(\theta).
+\]
+In particular,
+\[
+  A_1(\theta) > g(\theta)
+  \qquad
+  \text{for } 0 \le \theta < \frac{\pi}{10},
+\]
+and $A_1(\pi/10)=g(\pi/10)$.
+\end{lemma}
+
+\begin{proof}
+Write
+\[
+  A := 1+\cos\left(\frac{\pi}{5}\right).
+\]
+The geometric reduction for this branch is the following.
+Since $z=v_{12}=(-\cos(\pi/10),-\sin(\pi/10))$ and $x \in e_0$, one has
+\[
+  c
+  =
+  \langle n_0, x \rangle
+  =
+  \langle n_0, z \rangle - a(\theta)\langle n_0, m_2(\theta) \rangle
+  =
+  -\sin\left(\frac{\pi}{10}\right)
+  +
+  a(\theta)\sin\left(\theta+\frac{3\pi}{10}\right).
+\]
+Using
+\[
+  \cos\left(\frac{\pi}{5}\right) + \sin\left(\frac{\pi}{10}\right)
+  =
+  \frac{\sqrt{5}}{2},
+\]
+this gives
+\[
+  a(\theta)
+  =
+  \frac{\sqrt{5}}
+       {2\sin\left(\theta+\frac{3\pi}{10}\right)}.
+\]
+Also, $y \in e_4$ implies
+\begin{align*}
+  c
+  &=
+  \langle n_4, y \rangle \\
+  &=
+  \langle n_4, z \rangle
+  -
+  a(\theta)\langle n_4, m_2(\theta) \rangle
+  -
+  b(\theta)\langle n_4, m_1(\theta) \rangle \\
+  &=
+  -1
+  +
+  a(\theta)\cos\left(\theta+\frac{\pi}{5}\right)
+  +
+  b(\theta)\sin\left(\theta+\frac{3\pi}{10}\right),
+\end{align*}
+because
+\[
+  \langle n_4, z \rangle = -1,
+  \qquad
+  \langle n_4, m_2(\theta) \rangle = -\cos\left(\theta+\frac{\pi}{5}\right),
+  \qquad
+  \langle n_4, m_1(\theta) \rangle = -\sin\left(\theta+\frac{3\pi}{10}\right).
+\]
+Hence
+\[
+  b(\theta)\sin\left(\theta+\frac{3\pi}{10}\right)
+  =
+  A - a(\theta)\cos\left(\theta+\frac{\pi}{5}\right).
+\]
+\[
+  \langle z-y, -w_{40}(\theta) \rangle
+  =
+  a(\theta) + \sin\left(\frac{\pi}{10}\right)b(\theta),
+\]
+so the affine product action reduces to
+\[
+  A_1(\theta)
+  =
+  c\,a(\theta) + c\,b(\theta) + \langle z-y, -w_{40}(\theta) \rangle
+  =
+  A\,a(\theta) + \frac{\sqrt{5}}{2}b(\theta).
+\]
+Here we used
+\[
+  \cos\left(\frac{\pi}{5}\right) + \sin\left(\frac{\pi}{10}\right)
+  =
+  \frac{\sqrt{5}}{2}.
+\]
+
+At this point the remaining elimination of $b(\theta)$ and the simplification
+of $A_1(\theta)-g(\theta)$ are routine symbolic algebra. By the exact CAS
+witness from Remark~\ref{rem:pentagon-rotation-cas-witness},
+\[
+  A_1(\theta) - g(\theta)
+  =
+  \frac{
+    5\sin\left(\theta+\frac{\pi}{10}\right)
+    \sin\left(\frac{\pi}{10}-\theta\right)
+  }
+  {
+    4\sin^2\left(\theta+\frac{3\pi}{10}\right)\cos\theta
+  }.
+\]
+On $0 \le \theta < \pi/10$, every denominator factor is positive, and so are
+both sine factors. At $\theta=\pi/10$ the second sine factor vanishes. This
+proves the claim.
+\end{proof}
+\end{unverified}
+
+\begin{unverified}
+\begin{lemma}[The second shortlisted 3-bounce branch stays above the 2-bounce candidate]
+\label{lem:pentagon-rotation-three-bounce-second-family}
+Keep the notation of
+Lemma~\ref{lem:pentagon-rotation-three-bounce-first-family}. Consider the
+affine 3-bounce support pattern
+\[
+  q : (e_0,e_1,v_{34}),
+  \qquad
+  p : (e_4,w_{01}(\theta),e_3),
+\]
+which is a convenient representative of the canonical affine signature
+\texttt{Q:0-1-34\ \ P:3-4-01}. Let
+\[
+  z := v_{34},
+  \qquad
+  x := z - a(\theta)m_3(\theta) \in e_0,
+  \qquad
+  y := x - b(\theta)m_4(\theta) \in e_1,
+\]
+with $a(\theta), b(\theta) > 0$.
+Then the affine product action of this branch is
+\[
+  A_2(\theta)
+  =
+  g(\theta)
+  +
+  \frac{
+    5\sin\left(\theta+\frac{\pi}{10}\right)
+    \sin\left(\frac{\pi}{10}-\theta\right)
+  }
+  {
+    4\cos\theta\cos^2\left(\theta+\frac{\pi}{5}\right)
+  }.
+\]
+In particular,
+\[
+  A_2(\theta) > g(\theta)
+  \qquad
+  \text{for } 0 \le \theta < \frac{\pi}{10},
+\]
+and $A_2(\pi/10)=g(\pi/10)$.
+\end{lemma}
+
+\begin{proof}
+Write again
+\[
+  A := 1+\cos\left(\frac{\pi}{5}\right).
+\]
+The geometric reduction is analogous. Since
+$z=v_{34}=(\cos(\pi/10),-\sin(\pi/10))$ and $x \in e_0$, one gets
+\[
+  c
+  =
+  \langle n_0, x \rangle
+  =
+  \langle n_0, z \rangle - a(\theta)\langle n_0, m_3(\theta) \rangle
+  =
+  -\sin\left(\frac{\pi}{10}\right)
+  +
+  a(\theta)\sin\left(\frac{3\pi}{10}-\theta\right).
+\]
+Hence
+\[
+  a(\theta)
+  =
+  \frac{\sqrt{5}}
+       {2\sin\left(\frac{3\pi}{10}-\theta\right)}.
+\]
+Also, $y \in e_1$ gives
+\begin{align*}
+  c
+  &=
+  \langle n_1, y \rangle \\
+  &=
+  \langle n_1, z \rangle
+  -
+  a(\theta)\langle n_1, m_3(\theta) \rangle
+  -
+  b(\theta)\langle n_1, m_4(\theta) \rangle \\
+  &=
+  -1
+  +
+  a(\theta)\sin\left(\theta+\frac{3\pi}{10}\right)
+  +
+  b(\theta)\cos\left(\theta+\frac{\pi}{5}\right),
+\end{align*}
+because
+\[
+  \langle n_1, z \rangle = -1,
+  \qquad
+  \langle n_1, m_3(\theta) \rangle = -\sin\left(\theta+\frac{3\pi}{10}\right),
+  \qquad
+  \langle n_1, m_4(\theta) \rangle = -\cos\left(\theta+\frac{\pi}{5}\right).
+\]
+Therefore
+\[
+  b(\theta)\cos\left(\theta+\frac{\pi}{5}\right)
+  =
+  A - a(\theta)\sin\left(\theta+\frac{3\pi}{10}\right).
+\]
+\[
+  \langle z-y, -w_{01}(\theta) \rangle
+  =
+  a(\theta) + \sin\left(\frac{\pi}{10}\right)b(\theta),
+\]
+so the affine product action again reduces to
+\[
+  A_2(\theta)
+  =
+  c\,a(\theta) + c\,b(\theta) + \langle z-y, -w_{01}(\theta) \rangle
+  =
+  A\,a(\theta) + \frac{\sqrt{5}}{2}b(\theta).
+\]
+
+Again, the remaining elimination and simplification are routine symbolic
+algebra. By the exact CAS witness from
+Remark~\ref{rem:pentagon-rotation-cas-witness},
+\[
+  A_2(\theta) - g(\theta)
+  =
+  \frac{
+    5\sin\left(\theta+\frac{\pi}{10}\right)
+    \sin\left(\frac{\pi}{10}-\theta\right)
+  }
+  {
+    4\cos\theta\cos^2\left(\theta+\frac{\pi}{5}\right)
+  }.
+\]
+On $0 \le \theta < \pi/10$, every denominator factor is positive, and so are
+both sine factors. At $\theta=\pi/10$ the second sine factor vanishes. This
+proves the claim.
 \end{proof}
 \end{unverified}
 
