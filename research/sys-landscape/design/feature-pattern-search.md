@@ -13,6 +13,16 @@ standard-method pass over existing random-sample and ascent artifacts, while
 laying the data foundation in a form that still makes sense if the analysis is
 later expanded for publication.
 
+Implementation status:
+
+- 2026-04-18: Stage 1 converter landed as
+  `cargo run -p exp-sys-landscape --release --bin sys-normalized-dataset`
+- verified normalized output counts on the current default source surface:
+  `282` states, `282` capacity rows, and `287` fixed-`F` step events
+- the converter currently relies on exact cache rows for `vertices_rational`,
+  so the shared `experiments/sys-landscape/cache.jsonl` must already contain the
+  fixed-`F` ascent endpoints; this session refreshed that cache contract
+
 The design question here is not "which regressor should we try first?" The
 durable question is "what persisted dataset shape lets us try many methods
 without rebuilding the whole data surface each time?"

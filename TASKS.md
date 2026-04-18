@@ -236,6 +236,7 @@ sys as a continuous function on polytope space, no privileged threshold.
 - Candidate outcomes: a transferable signal gives a conjecture or guided search strategy; no signal or only non-transferable structure supports the hostile-landscape conclusion.
 - Dependencies: random/polytope datasets are available now; use current local-maxima datasets immediately and extend to LICCA-returned local maxima if those artifacts arrive in time.
 - First implementation packet: add a `sys-*` converter that normalizes the existing random/ascent JSONLs into core tables (`polytopes`, `states`, `capacity_results`, `step_events`) with an explicit source-priority rule. Do not start with model fitting or force intermediate-state geometry that current trace logs do not contain.
+- Landed in this worktree as `sys-normalized-dataset`; verified current normalized counts are `282` states / `282` capacity rows / `287` step events once the refreshed `experiments/sys-landscape/cache.jsonl` includes the fixed-`F` ascent endpoints.
 - Acceptance: produce a bounded standard-method pass over random samples and ascent-found local maxima, report cross-validated predictive performance plus feature importance or failure mode, state whether any signal transfers between the two regimes, and update `RESULTS.md`.
 - Stop condition: if a real signal appears, surface it for Jörn's mathematical interpretation before turning it into a conjecture; if the standard-method pass yields no transferable signal, record that negative result and stop; do not open a novel method-development line here.
 

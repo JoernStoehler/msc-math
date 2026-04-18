@@ -16,6 +16,7 @@ use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 use symplectic::algorithms::billiard::facet_classification::FacetClassification;
+use symplectic::database::PolytopeRecord;
 use symplectic::derivatives::{
     clarke_directional_derivative_a, sys_subgradients_a, ClarkeSubdiffA,
 };
@@ -517,6 +518,8 @@ pub struct TraceRow {
 pub struct SeedResult {
     pub summary: SummaryRow,
     pub trace: Vec<TraceRow>,
+    pub final_polytope: Polytope4D,
+    pub final_record: PolytopeRecord,
 }
 
 /// Parsed CLI arguments shared across ascent binaries.

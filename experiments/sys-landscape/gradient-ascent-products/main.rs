@@ -353,6 +353,10 @@ fn process_seed(
     }
 
     let total_time_ms = t0.elapsed().as_secs_f64() * 1000.0;
+    let final_state = compute_active_sys_state(&best_polytope)?;
+    let final_capacity = final_state.capacity.capacity();
+    let mut final_record = PolytopeRecord::from_polytope(&best_polytope);
+    final_record = final_record.with_computed_fields(final_state.vol, 0.0, final_capacity, 0.0);
     let starting_dual_vertices_rational = dual_vertices_rational_strings(polytope);
     let final_dual_vertices_rational = dual_vertices_rational_strings(&best_polytope);
     let final_dvs: Vec<[f64; 4]> = best_polytope
@@ -383,6 +387,8 @@ fn process_seed(
             final_dual_vertices: final_dvs,
         },
         trace: all_trace,
+        final_record,
+        final_polytope: best_polytope,
     })
 }
 
@@ -485,6 +491,27 @@ fn main() {
 
         let name = format!("products_{i}");
         let result = process_seed(&name, i, &bucket_name, &polytope, &class, &mut rng_i)?;
+
+        if !no_db_update {
+            let mut db = db_for_closure.lock().expect("lock db for final insert");
+            let key = result.final_record.key();
+            db.entry(key)
+                .and_modify(|record| {
+                    if record.volume.is_none() {
+                        record.volume = result.final_record.volume;
+                    }
+                    if record.volume_err.is_none() {
+                        record.volume_err = result.final_record.volume_err;
+                    }
+                    if record.capacity.is_none() {
+                        record.capacity = result.final_record.capacity;
+                    }
+                    if record.capacity_err.is_none() {
+                        record.capacity_err = result.final_record.capacity_err;
+                    }
+                })
+                .or_insert_with(|| result.final_record.clone());
+        }
 
         // Per-seed progress print from inside the closure. Writing to stdout
         // via println! is thread-safe (line-buffered, each call flushes its
