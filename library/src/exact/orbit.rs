@@ -86,9 +86,11 @@ fn build_kkt_matrix<F: OrderedField>(
         }
     }
 
-    for i in 0..m {
-        matrix[i][m + 4] = F::one();
-        matrix[m + 4][i] = F::one();
+    for row in matrix.iter_mut().take(m) {
+        row[m + 4] = F::one();
+    }
+    for entry in matrix[m + 4].iter_mut().take(m) {
+        *entry = F::one();
     }
     rhs[m + 4] = F::one();
 
@@ -150,9 +152,10 @@ fn gauss_solve_with_null_space<F: OrderedField>(
                         continue;
                     }
                     let factor = aug[row][col].clone() / pivot.clone();
-                    for j in col..=n {
-                        let correction = aug[current_row][j].clone() * factor.clone();
-                        aug[row][j] = aug[row][j].clone() - correction;
+                    let pivot_tail: Vec<F> = aug[current_row][col..=n].to_vec();
+                    for (offset, entry) in aug[row][col..=n].iter_mut().enumerate() {
+                        let correction = pivot_tail[offset].clone() * factor.clone();
+                        *entry = entry.clone() - correction;
                     }
                 }
                 pivot_positions.push((current_row, col));
@@ -163,8 +166,8 @@ fn gauss_solve_with_null_space<F: OrderedField>(
     }
 
     let rank = pivot_positions.len();
-    for row in rank..n {
-        if !aug[row][n].is_zero() {
+    for entry in aug.iter().take(n).skip(rank) {
+        if !entry[n].is_zero() {
             return None;
         }
     }

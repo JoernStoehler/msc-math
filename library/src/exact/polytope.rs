@@ -180,9 +180,10 @@ fn rank_rows<F: OrderedField>(rows: &[Vec<F>], ncols: usize) -> usize {
                 continue;
             }
             let factor = mat[row][col].clone() / pivot.clone();
-            for j in col..ncols {
-                let correction = factor.clone() * mat[rank][j].clone();
-                mat[row][j] = mat[row][j].clone() - correction;
+            let pivot_tail: Vec<F> = mat[rank][col..ncols].to_vec();
+            for (offset, entry) in mat[row][col..ncols].iter_mut().enumerate() {
+                let correction = factor.clone() * pivot_tail[offset].clone();
+                *entry = entry.clone() - correction;
             }
         }
         rank += 1;
@@ -209,9 +210,10 @@ fn solve4<F: OrderedField>(rows: &[[F; 4]; 4], rhs: &[F; 4]) -> Option<[F; 4]> {
                 continue;
             }
             let factor = aug[row][col].clone() / pivot.clone();
-            for j in col..=4 {
-                let correction = aug[col][j].clone() * factor.clone();
-                aug[row][j] = aug[row][j].clone() - correction;
+            let pivot_tail: Vec<F> = aug[col][col..=4].to_vec();
+            for (offset, entry) in aug[row][col..=4].iter_mut().enumerate() {
+                let correction = pivot_tail[offset].clone() * factor.clone();
+                *entry = entry.clone() - correction;
             }
         }
     }
@@ -266,9 +268,11 @@ fn check_bounded<F: OrderedField>(dual_vertices: &[[F; 4]]) -> Result<(), ExactP
     Ok(())
 }
 
+type VertexDescriptors = Vec<BTreeSet<usize>>;
+
 fn enumerate_vertices<F: OrderedField>(
     dual_vertices: &[[F; 4]],
-) -> Result<(Vec<[F; 4]>, Vec<BTreeSet<usize>>), ExactPolytopeError> {
+) -> Result<(Vec<[F; 4]>, VertexDescriptors), ExactPolytopeError> {
     let mut vertices = Vec::new();
     let mut descriptors = Vec::new();
 
