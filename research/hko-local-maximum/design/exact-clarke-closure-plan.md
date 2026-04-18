@@ -159,6 +159,10 @@ Close the first-order `M_10` theorem surface:
   `experiments/hko-local-maximum/exact-clarke/midpoint-seed-rows.json`. On the
   current numerical planning surface, this leaves only the `2` asymmetric
   seven-facet seed orbits with coefficient `0.129573855671` unresolved.
+  Importantly, those two asymmetric seeds lie on the same seven-subset orbits
+  as already exactified midpoint seeds, so the remaining seven-facet work is
+  best viewed as “extend two midpoint seed families to their full exact segment
+  families,” not “discover two completely new seven-facet family types.”
 - Working Packet 2 hypothesis from the current paper-plus-numerics comparison:
   modulo diagonal `72^\circ` rotation and `q/p` exchange, the minimizing-family
   catalog may reduce to one six-facet endpoint prototype together with one

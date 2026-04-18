@@ -47,7 +47,8 @@ exact footholds:
   normalization checks.
 - six midpoint-style seven-facet numerical seed permutations are now exactified
   as well; on the current numerical planning surface, only two asymmetric
-  seven-facet seed orbits remain unresolved.
+  seven-facet seed orbits remain unresolved, and each of those sits on the
+  same seven-subset orbit as an already exactified midpoint seed.
 
 ## Research Question
 
