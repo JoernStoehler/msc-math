@@ -23,7 +23,7 @@ pub struct PolytopeRow {
     pub facet_count: usize,
     /// Dual vertices a_i (halfspace a_i^T x <= 1), one per facet.
     pub dual_vertices: Vec<[f64; 4]>,
-    /// 4D volume computed via qhull.
+    /// 4D volume computed by the canonical pure-Rust volume backend.
     pub volume: f64,
     /// EHZ capacity computed via the HK2017 algorithm.
     pub capacity: f64,
@@ -31,7 +31,7 @@ pub struct PolytopeRow {
     ///
     /// Mathematical correspondence: [def:systolic-ratio]
     pub sys: f64,
-    /// Time to compute volume via qhull (milliseconds).
+    /// Time to compute volume (milliseconds).
     pub time_volume_ms: f64,
     /// Time to compute EHZ capacity (milliseconds).
     pub time_capacity_ms: f64,
@@ -43,7 +43,6 @@ pub struct PolytopeRow {
     pub iterations: u64,
 
     // ---- Billiard algorithm fields (present only for Lagrangian products) ----
-
     /// EHZ capacity from the billiard algorithm.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub capacity_billiard: Option<f64>,

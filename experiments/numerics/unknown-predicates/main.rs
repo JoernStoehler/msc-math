@@ -112,7 +112,7 @@ fn main() {
             generate_random_polytopes(n_samples, facet_count, RANDOM_H_MIN, RANDOM_H_MAX, &mut rng);
 
         for (i, p) in polytopes.iter().enumerate() {
-            let vol = volume(p).expect("volume computation failed");
+            let vol = volume(p);
 
             let start = Instant::now();
             let result = ehz_capacity_pruned(p).expect("ehz_capacity_pruned failed");
@@ -123,7 +123,8 @@ fn main() {
                 .iter()
                 .map(|orbit| orbit.beta_margin)
                 .fold(f64::INFINITY, f64::min);
-            let has_unknown = (result.min_action_upper - result.min_action_lower) > ACTION_INTERVAL_TAU
+            let has_unknown = (result.min_action_upper - result.min_action_lower)
+                > ACTION_INTERVAL_TAU
                 || beta_min <= BETA_MARGIN_TAU;
             let sys = result.min_action * result.min_action / (2.0 * vol);
 
@@ -164,8 +165,7 @@ fn main() {
     println!("\n=== Part 2: Lagrangian-products ===\n");
 
     {
-        let steps =
-            ((PENTAGON_END_DEG - PENTAGON_START_DEG) / PENTAGON_STEP_DEG).round() as usize;
+        let steps = ((PENTAGON_END_DEG - PENTAGON_START_DEG) / PENTAGON_STEP_DEG).round() as usize;
         let (qn, qh) = regular_polygon_2d(5, 1.0);
         let (pn_base, ph_base) = regular_polygon_2d(5, 1.0);
 
@@ -177,7 +177,7 @@ fn main() {
             let polytope = lagrangian_product(&qn, &qh, &pn, &ph)
                 .expect("pentagon product construction failed");
 
-            let vol = volume(&polytope).expect("volume computation failed");
+            let vol = volume(&polytope);
 
             let start = Instant::now();
             let result = ehz_capacity_billiard(&polytope).expect("billiard error");
@@ -235,7 +235,7 @@ fn main() {
             let polytope = lagrangian_product(&qn, &qh, &pn, &ph)
                 .expect("polygon product construction failed");
 
-            let vol = volume(&polytope).expect("volume computation failed");
+            let vol = volume(&polytope);
 
             let start = Instant::now();
             let result = ehz_capacity_billiard(&polytope).expect("billiard error");

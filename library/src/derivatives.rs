@@ -153,7 +153,7 @@ pub fn sys_gradient_a_from_kkt_result(
     kkt: &KktResult,
 ) -> OrbitGradientA {
     let capacity = 1.0 / (2.0 * kkt.q_corrected);
-    let volume = volume(polytope).expect("volume computation failed");
+    let volume = volume(polytope);
     let d_capacity_da = capacity_derivatives_a_from_kkt_result(polytope, sigma, kkt);
     let d_volume_da = volume_derivatives_a(polytope);
 
@@ -170,7 +170,7 @@ pub fn sys_gradient_a_from_orbit(
 ) -> Result<OrbitGradientA, DerivativeError> {
     let mu = orbit.mu.ok_or(DerivativeError::MissingClosureMultiplier)?;
     let capacity = 1.0 / (2.0 * orbit.q);
-    let volume = volume(polytope).expect("volume computation failed");
+    let volume = volume(polytope);
     let d_capacity_da = capacity_derivatives_a(
         &orbit.beta,
         orbit.q,
@@ -222,8 +222,7 @@ pub fn volume_derivatives_a(polytope: &Polytope4D) -> OrbitGradientA {
             let n = a / a_norm;
             let h = 1.0 / a_norm;
 
-            let (s_k, centroid_k) =
-                facet_volume_and_centroid_3d_raw(duals, vertices, k);
+            let (s_k, centroid_k) = facet_volume_and_centroid_3d_raw(duals, vertices, k);
             if s_k < crate::geom::facet_volume::EPS_VOLUME_FLOOR {
                 return Vector4::zeros();
             }
@@ -260,10 +259,7 @@ pub fn capacity_subgradients_a(
 
 /// Directional derivative of one facet-indexed gradient in the perturbation
 /// direction `d`.
-pub fn directional_derivative_a(
-    grad: &[Vector4<f64>],
-    direction: &[Vector4<f64>],
-) -> f64 {
+pub fn directional_derivative_a(grad: &[Vector4<f64>], direction: &[Vector4<f64>]) -> f64 {
     grad.iter()
         .zip(direction.iter())
         .map(|(gk, dk)| gk.dot(dk))
@@ -371,7 +367,7 @@ mod tests {
         let eps = 1e-6;
         let fd = volume_derivatives_a_fd(duals, eps, |a| {
             let p = Polytope4D::from_f64(a.to_vec()).ok()?;
-            volume(&p).ok()
+            Some(volume(&p))
         });
 
         for k in 0..polytope.facet_count() {
@@ -381,7 +377,8 @@ mod tests {
             assert!(
                 rel_err < 1e-4,
                 "facet {k}: analytical={:?}, fd={:?}, rel_err={rel_err}",
-                analytical[k], fd[k]
+                analytical[k],
+                fd[k]
             );
         }
     }
@@ -451,15 +448,11 @@ mod tests {
             .expect("best simplex orbit should re-solve");
 
         let capacity = 1.0 / (2.0 * kkt.q_corrected);
-        let volume = volume(polytope).expect("simplex volume should compute");
+        let volume = volume(polytope);
         let d_capacity_da = capacity_derivatives_a_from_kkt_result(polytope, &sigma, &kkt);
         let d_volume_da = volume_derivatives_a(polytope);
-        let direct = systolic_ratio_gradient_a_from_parts(
-            capacity,
-            volume,
-            &d_capacity_da,
-            &d_volume_da,
-        );
+        let direct =
+            systolic_ratio_gradient_a_from_parts(capacity, volume, &d_capacity_da, &d_volume_da);
         let wrapped = sys_gradient_a_from_kkt_result(polytope, &sigma, &kkt);
 
         for (k, (lhs, rhs)) in wrapped.iter().zip(direct.iter()).enumerate() {
@@ -541,8 +534,7 @@ mod tests {
         let kp = known_polytopes::hypercube();
         let polytope = &kp.polytope;
 
-        let (best_q, best_beta, best_perm, best_mu, _best_xi) =
-            find_best_orbit(polytope);
+        let (best_q, best_beta, best_perm, best_mu, _best_xi) = find_best_orbit(polytope);
 
         assert!(
             best_q > 1e-10,
@@ -573,8 +565,12 @@ mod tests {
                 am[k][d] -= eps;
                 let pp = Polytope4D::from_f64(ap).unwrap();
                 let pm = Polytope4D::from_f64(am).unwrap();
-                let qp = solve_kkt_for(&pp, &best_perm).feasible().map(|r| r.q_corrected);
-                let qm = solve_kkt_for(&pm, &best_perm).feasible().map(|r| r.q_corrected);
+                let qp = solve_kkt_for(&pp, &best_perm)
+                    .feasible()
+                    .map(|r| r.q_corrected);
+                let qm = solve_kkt_for(&pm, &best_perm)
+                    .feasible()
+                    .map(|r| r.q_corrected);
                 let fd_kd = match (qp, qm) {
                     (Some(qp), Some(qm)) => {
                         let ap = 0.5 / qp;
@@ -594,9 +590,7 @@ mod tests {
     }
 
     /// Helper: find the best orbit for a polytope via library capacity + KKT re-solve.
-    fn find_best_orbit(
-        polytope: &Polytope4D,
-    ) -> (f64, Vec<f64>, Vec<usize>, Vec<f64>, f64) {
+    fn find_best_orbit(polytope: &Polytope4D) -> (f64, Vec<f64>, Vec<usize>, Vec<f64>, f64) {
         let ehz = crate::ehz_capacity_pruned(polytope)
             .expect("ehz_capacity should find an orbit on test polytopes");
         let perm = ehz.best_sigma().to_vec();

@@ -204,8 +204,7 @@ fn solve_kkt_svd_path(
             .fold(f64::INFINITY, f64::min);
         if sigma_c > EPS_SVD_FLOOR {
             for j in rank..size {
-                let delta_beta_norm: f64 =
-                    (0..m).map(|k| v_t[(j, k)].powi(2)).sum::<f64>().sqrt();
+                let delta_beta_norm: f64 = (0..m).map(|k| v_t[(j, k)].powi(2)).sum::<f64>().sqrt();
                 if delta_beta_norm > sv[j] / sigma_c {
                     return None;
                 }
@@ -254,11 +253,7 @@ fn solve_kkt_svd_path(
         })
         .map(|x: f64| x * x)
         .sum::<f64>()
-        + ((0..m)
-            .map(|i| beta_opt[i] * heights[perm[i]])
-            .sum::<f64>()
-            - 1.0)
-            .powi(2);
+        + ((0..m).map(|i| beta_opt[i] * heights[perm[i]]).sum::<f64>() - 1.0).powi(2);
     if constraint_residual.sqrt() > EPS_KKT_RESIDUAL {
         return None;
     }
@@ -267,11 +262,7 @@ fn solve_kkt_svd_path(
     Some((beta_opt, q_val))
 }
 
-fn solve_kkt(
-    normals: &[Vector4<f64>],
-    heights: &[f64],
-    perm: &[usize],
-) -> Option<(Vec<f64>, f64)> {
+fn solve_kkt(normals: &[Vector4<f64>], heights: &[f64], perm: &[usize]) -> Option<(Vec<f64>, f64)> {
     let m = perm.len();
     let (kkt, rhs) = build_kkt_system(normals, heights, perm);
     let lu = kkt.clone().full_piv_lu();
@@ -549,7 +540,7 @@ fn main() {
 
     // 2. Volume
     let start_vol = Instant::now();
-    let vol = volume(polytope).expect("volume computation failed");
+    let vol = volume(polytope);
     let time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
     println!("Volume: {vol:.10} ({time_volume_ms:.1} ms)");
 
@@ -569,7 +560,10 @@ fn main() {
         .map(|i| (0..f).filter(|&j| adj[(i, j)] && i != j).count() as f64)
         .sum::<f64>()
         / f as f64;
-    println!("\nDirected adjacency: avg out-degree = {avg_out_degree:.1} (of {} possible)", f - 1);
+    println!(
+        "\nDirected adjacency: avg out-degree = {avg_out_degree:.1} (of {} possible)",
+        f - 1
+    );
 
     // 5. Load checkpoint
     let checkpoint = load_checkpoint();
@@ -583,14 +577,22 @@ fn main() {
         start_m = cp.completed_m + 1;
         iterations = cp.iterations;
         prior_elapsed = cp.elapsed_secs;
-        best_certified = cp
-            .best_certified
-            .as_ref()
-            .map(|c| (c.action, c.subset.clone(), c.permutation.clone(), c.beta.clone()));
-        best_uncertain = cp
-            .best_uncertain
-            .as_ref()
-            .map(|c| (c.action, c.subset.clone(), c.permutation.clone(), c.beta.clone()));
+        best_certified = cp.best_certified.as_ref().map(|c| {
+            (
+                c.action,
+                c.subset.clone(),
+                c.permutation.clone(),
+                c.beta.clone(),
+            )
+        });
+        best_uncertain = cp.best_uncertain.as_ref().map(|c| {
+            (
+                c.action,
+                c.subset.clone(),
+                c.permutation.clone(),
+                c.beta.clone(),
+            )
+        });
         println!(
             "\nResuming from checkpoint: m={} done, {} iterations, {:.1}s prior",
             cp.completed_m, iterations, prior_elapsed
@@ -654,12 +656,8 @@ fn main() {
                     if beta_min > EPS_BETA_POSITIVE {
                         let update = best_certified.as_ref().is_none_or(|b| action < b.0);
                         if update {
-                            best_certified = Some((
-                                action,
-                                subset.clone(),
-                                perm.to_vec(),
-                                beta.clone(),
-                            ));
+                            best_certified =
+                                Some((action, subset.clone(), perm.to_vec(), beta.clone()));
                         }
                     }
 
@@ -667,8 +665,7 @@ fn main() {
                     if beta_min > -EPS_BETA_POSITIVE {
                         let update = best_uncertain.as_ref().is_none_or(|b| action < b.0);
                         if update {
-                            best_uncertain =
-                                Some((action, subset.clone(), perm.to_vec(), beta));
+                            best_uncertain = Some((action, subset.clone(), perm.to_vec(), beta));
                         }
                     }
                 }
@@ -676,9 +673,7 @@ fn main() {
         }
 
         let m_elapsed = m_start.elapsed().as_secs_f64();
-        println!(
-            "adj_perms={m_iterations:8}, kkt_solutions={m_kkt_solutions:6}, {m_elapsed:.2}s"
-        );
+        println!("adj_perms={m_iterations:8}, kkt_solutions={m_kkt_solutions:6}, {m_elapsed:.2}s");
 
         // Save checkpoint
         let total_elapsed = prior_elapsed + cap_start.elapsed().as_secs_f64();
@@ -705,8 +700,8 @@ fn main() {
     let time_capacity_ms = (prior_elapsed + cap_start.elapsed().as_secs_f64()) * 1000.0;
 
     // 7. Extract result
-    let certified = best_certified
-        .expect("no certified (S,σ) found — should not happen for valid polytopes");
+    let certified =
+        best_certified.expect("no certified (S,σ) found — should not happen for valid polytopes");
     let uncertain_cap = best_uncertain.map_or(certified.0, |b| b.0);
 
     assert!(

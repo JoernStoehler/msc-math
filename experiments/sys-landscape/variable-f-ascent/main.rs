@@ -33,10 +33,7 @@ use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::path::PathBuf;
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
 use symplectic::database::{load, save, DualVerticesKey, PolytopeRecord, SigmaAction};
-use symplectic::derivatives::{
-    capacity_derivatives_a_from_kkt_result,
-    volume_derivatives_a,
-};
+use symplectic::derivatives::{capacity_derivatives_a_from_kkt_result, volume_derivatives_a};
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
 use symplectic::geom::volume::volume;
@@ -178,7 +175,10 @@ struct GradientAscentRow {
 // ============================================================================
 
 fn compute_sys(polytope: &Polytope4D, db: &mut Db) -> Option<f64> {
-    let vol = volume(polytope).ok().filter(|&v| v > 0.0)?;
+    let vol = volume(polytope);
+    if vol <= 0.0 {
+        return None;
+    }
     let cap = compute_capacity(polytope, db)?;
     let sys = cap * cap / (2.0 * vol);
     sys.is_finite().then_some(sys)
@@ -281,7 +281,10 @@ fn gradient_ascent_phase_limited(
 
         let (cap, best_perm) = compute_capacity_result(&current, db)?;
         let kkt = solve_kkt_for(&current, &best_perm).feasible()?;
-        let vol = volume(&current).ok().filter(|&v| v > 0.0)?;
+        let vol = volume(&current);
+        if vol <= 0.0 {
+            return None;
+        }
         let sys = cap * cap / (2.0 * vol);
         let duals = current.dual_vertices_f64();
 

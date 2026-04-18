@@ -15,13 +15,15 @@ use serde::Serialize;
 use std::fs::File;
 use std::io::BufWriter;
 use std::path::Path;
-use symplectic::algorithms::{OrbitAdmissibility, OrbitKktData};
-use symplectic::algorithms::hk2017::orbit_recovery::recover_and_verify;
 use symplectic::algorithms::hk2017::for_each_sigma_pruned;
-use symplectic::geom::reeb_trajectory;
+use symplectic::algorithms::hk2017::orbit_recovery::recover_and_verify;
+use symplectic::algorithms::{OrbitAdmissibility, OrbitKktData};
 use symplectic::geom::known_polytopes::{self, KnownPolytope};
-use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktOutcome, EPS_BETA_POSITIVE, EPS_Q_POSITIVE};
+use symplectic::geom::reeb_trajectory;
 use symplectic::geom::skeleton::Skeleton;
+use symplectic::kkt::saddle_point_solver::{
+    solve_kkt_for, KktOutcome, EPS_BETA_POSITIVE, EPS_Q_POSITIVE,
+};
 
 /// Maximum number of orbits to export per polytope (keeps data.js manageable).
 const MAX_ORBITS: usize = 20;
@@ -114,11 +116,7 @@ fn collect_all_orbits(polytope: &symplectic::geom::polytope::Polytope4D) -> Vec<
             if q_val <= EPS_Q_POSITIVE {
                 return;
             }
-            let beta_min = result
-                .beta
-                .iter()
-                .cloned()
-                .fold(f64::INFINITY, f64::min);
+            let beta_min = result.beta.iter().cloned().fold(f64::INFINITY, f64::min);
             if beta_min <= EPS_BETA_POSITIVE {
                 return; // not certified
             }
@@ -276,7 +274,9 @@ fn generate_displaced_trajectories(
     let directions = ridge_displacement_directions(polytope, start_facet, last_facet);
     eprintln!(
         "  Ridge F_{} ∩ F_{}: {} displacement direction(s)",
-        start_facet, last_facet, directions.len()
+        start_facet,
+        last_facet,
+        directions.len()
     );
 
     let _ = skeleton; // skeleton available if needed for facet_centroid, unused here
@@ -286,13 +286,28 @@ fn generate_displaced_trajectories(
     for (i, disp) in directions.iter().enumerate() {
         // Try +ε first; if that pushes outside K, try -ε (the other side of the ridge).
         let mut displaced_start = recovery.breakpoints[0] + DISPLACEMENT_EPS * disp;
-        let mut traj = reeb_trajectory::simulate_with(polytope, displaced_start, start_facet, max_segments, 1e-6);
+        let mut traj = reeb_trajectory::simulate_with(
+            polytope,
+            displaced_start,
+            start_facet,
+            max_segments,
+            1e-6,
+        );
         if traj.segments.is_empty() {
             displaced_start = recovery.breakpoints[0] - DISPLACEMENT_EPS * disp;
-            traj = reeb_trajectory::simulate_with(polytope, displaced_start, start_facet, max_segments, 1e-6);
+            traj = reeb_trajectory::simulate_with(
+                polytope,
+                displaced_start,
+                start_facet,
+                max_segments,
+                1e-6,
+            );
         }
         if traj.segments.is_empty() {
-            eprintln!("  displaced v{}: simulation returned 0 segments in both directions", i + 1);
+            eprintln!(
+                "  displaced v{}: simulation returned 0 segments in both directions",
+                i + 1
+            );
             continue;
         }
 
@@ -374,7 +389,10 @@ fn generate_trajectories(
             if min_action_count == 1 {
                 format!("min-action orbit (c={:.4})", orbit.action)
             } else {
-                format!("min-action orbit #{} (c={:.4})", min_action_count, orbit.action)
+                format!(
+                    "min-action orbit #{} (c={:.4})",
+                    min_action_count, orbit.action
+                )
             }
         } else {
             format!("orbit #{} (action={:.4})", i + 1, orbit.action)
@@ -412,7 +430,10 @@ fn generate_trajectories(
 
     if trajectories.is_empty() {
         eprintln!("  All orbit recoveries failed. Using placeholder.");
-        return (generate_placeholder_trajectory(polytope, skeleton), Some(min_action));
+        return (
+            generate_placeholder_trajectory(polytope, skeleton),
+            Some(min_action),
+        );
     }
 
     (trajectories, Some(min_action))
@@ -489,7 +510,7 @@ pub fn export(name: &str, output: &Path) -> Result<(), String> {
     let capacity = computed_capacity.unwrap_or(kp.capacity);
 
     // Compute volume and systolic ratio
-    let vol = symplectic::geom::volume::volume(polytope).unwrap_or(0.0);
+    let vol = symplectic::geom::volume::volume(polytope);
     let systolic_ratio = if vol > 0.0 {
         capacity * capacity / (2.0 * vol)
     } else {
@@ -504,7 +525,11 @@ pub fn export(name: &str, output: &Path) -> Result<(), String> {
         vertex_count: polytope.vertices_f64().len(),
         edge_count: skeleton.edges.len(),
         ridge_count: skeleton.ridges.len(),
-        dual_vertices: polytope.dual_vertices_f64().iter().map(v4_to_array).collect(),
+        dual_vertices: polytope
+            .dual_vertices_f64()
+            .iter()
+            .map(v4_to_array)
+            .collect(),
         reeb_vectors,
         vertices: polytope.vertices_f64().iter().map(v4_to_array).collect(),
         edges: skeleton.edges.clone(),

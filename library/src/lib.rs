@@ -6,7 +6,7 @@
 //! # Submodules
 //!
 //! - `geom` — `Polytope4D` central type, symplectic form, exact rational
-//!   vertex enumeration, volume via qhull, polygon/Lagrangian-product
+//!   vertex enumeration, pure-Rust volume computation, polygon/Lagrangian-product
 //!   constructors, named polytopes.
 //! - `kkt` — context-free constrained QP solvers (saddle-point and
 //!   projection variants) + exact rational fallback.
@@ -35,14 +35,14 @@
 //!
 //! Mathematical proofs live in per-module `.tex` files under `formal/`.
 
-pub mod geom;
-pub mod kkt;
 pub mod algorithms;
 pub mod constants;
 pub mod database;
 pub mod dataset;
 pub mod derivatives;
 pub mod exact;
+pub mod geom;
+pub mod kkt;
 pub mod random;
 
 // ── Re-exports: public API surface ──
@@ -53,25 +53,17 @@ pub use geom::skeleton::Skeleton;
 pub use geom::QhullError;
 
 // Capacity algorithms
-pub use algorithms::billiard::{
-    BilliardError,
-};
+pub use algorithms::billiard::BilliardError;
 pub use algorithms::{
-    GeometricOrbitError,
-    OrbitAdmissibility,
-    OrbitGuaranteeMode,
-    OrbitKktData,
-    OrbitSearchError,
-    OrbitSearchResult,
-    OrbitSolveError,
-    OrbitSolveBackend,
+    GeometricOrbitError, OrbitAdmissibility, OrbitGuaranteeMode, OrbitKktData, OrbitSearchError,
+    OrbitSearchResult, OrbitSolveBackend, OrbitSolveError,
 };
 
 // Geometry utility functions
-pub use geom::volume::volume;
-pub use geom::symplectic_form::omega0;
 pub use geom::lagrangian_product::lagrangian_product;
 pub use geom::polygon::{regular_polygon_2d, rotate_polygon_2d};
+pub use geom::symplectic_form::omega0;
+pub use geom::volume::volume;
 
 // Geometry utility submodules
 pub use geom::known_polytopes;
@@ -88,9 +80,7 @@ pub fn ehz_capacity_pruned(polytope: &Polytope4D) -> Result<OrbitSearchResult, O
 }
 
 /// Explicit unpruned HK2017 frontend on the shared orbit/result surface.
-pub fn ehz_capacity_unpruned(
-    polytope: &Polytope4D,
-) -> Result<OrbitSearchResult, OrbitSearchError> {
+pub fn ehz_capacity_unpruned(polytope: &Polytope4D) -> Result<OrbitSearchResult, OrbitSearchError> {
     let (orbits, iterations) = algorithms::orbit_search::solve_sigma_stream(
         polytope,
         OrbitSolveBackend::SaddlePoint,
@@ -100,28 +90,46 @@ pub fn ehz_capacity_unpruned(
 }
 
 /// Explicit billiard frontend on the shared orbit/result surface.
-pub fn ehz_capacity_billiard(
-    polytope: &Polytope4D,
-) -> Result<OrbitSearchResult, BilliardError> {
+pub fn ehz_capacity_billiard(polytope: &Polytope4D) -> Result<OrbitSearchResult, BilliardError> {
     algorithms::billiard::facet_classification::classify_facets(polytope)?;
 
     let (orbits, iterations) = algorithms::orbit_search::solve_sigma_stream(
         polytope,
         OrbitSolveBackend::SaddlePoint,
-        |visit| algorithms::billiard::for_each_sigma(polytope, visit)
-            .expect("classify_facets already succeeded"),
+        |visit| {
+            algorithms::billiard::for_each_sigma(polytope, visit)
+                .expect("classify_facets already succeeded")
+        },
     )
     .map_err(|err| match err {
-        OrbitSearchError::UnsupportedBackend => unreachable!("router hardcodes saddle-point backend"),
-        OrbitSearchError::NoAdmissibleOrbit => unreachable!("f64-only aggregation should return a result"),
-        OrbitSearchError::NumericalFailure => unreachable!("solve_sigma_stream does not produce NumericalFailure"),
-        OrbitSearchError::ExactFallbackFailure => unreachable!("f64-only billiard router never exact-resolves"),
+        OrbitSearchError::UnsupportedBackend => {
+            unreachable!("router hardcodes saddle-point backend")
+        }
+        OrbitSearchError::NoAdmissibleOrbit => {
+            unreachable!("f64-only aggregation should return a result")
+        }
+        OrbitSearchError::NumericalFailure => {
+            unreachable!("solve_sigma_stream does not produce NumericalFailure")
+        }
+        OrbitSearchError::ExactFallbackFailure => {
+            unreachable!("f64-only billiard router never exact-resolves")
+        }
     })?;
-    algorithms::orbit_search::aggregate_orbits_f64_only(0.0, orbits, iterations).map_err(|err| match err {
-        OrbitSearchError::UnsupportedBackend => unreachable!("aggregation does not use backend selection"),
-        OrbitSearchError::NoAdmissibleOrbit => unreachable!("f64-only aggregation should return a result"),
-        OrbitSearchError::NumericalFailure => unreachable!("f64-only aggregation does not emit NumericalFailure"),
-        OrbitSearchError::ExactFallbackFailure => unreachable!("f64-only aggregation never exact-resolves"),
+    algorithms::orbit_search::aggregate_orbits_f64_only(0.0, orbits, iterations).map_err(|err| {
+        match err {
+            OrbitSearchError::UnsupportedBackend => {
+                unreachable!("aggregation does not use backend selection")
+            }
+            OrbitSearchError::NoAdmissibleOrbit => {
+                unreachable!("f64-only aggregation should return a result")
+            }
+            OrbitSearchError::NumericalFailure => {
+                unreachable!("f64-only aggregation does not emit NumericalFailure")
+            }
+            OrbitSearchError::ExactFallbackFailure => {
+                unreachable!("f64-only aggregation never exact-resolves")
+            }
+        }
     })
 }
 
@@ -146,8 +154,8 @@ mod auto_dispatch_tests {
     fn top_level_capacity_matches_billiard_on_lagrangian_products() {
         let kp = known_polytopes::lagrangian_triangle_product();
         let auto = ehz_capacity(&kp.polytope).expect("auto capacity");
-        let billiard = ehz_capacity_billiard(&kp.polytope)
-            .expect("billiard should accept Lagrangian product");
+        let billiard =
+            ehz_capacity_billiard(&kp.polytope).expect("billiard should accept Lagrangian product");
 
         assert!(
             (auto.capacity() - billiard.capacity()).abs() < 1e-10,

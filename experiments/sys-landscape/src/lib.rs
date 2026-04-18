@@ -154,10 +154,7 @@ pub fn compute_step_bound_detailed(
             }
         } else {
             // Non-simple vertex (>4 incident facets). Conservative bound.
-            let max_d = direction
-                .iter()
-                .map(|dk| dk.norm())
-                .fold(0.0f64, f64::max);
+            let max_d = direction.iter().map(|dk| dk.norm()).fold(0.0f64, f64::max);
             for (j, a_j) in duals.iter().enumerate() {
                 if vertex_facets.contains(&j) {
                     continue;
@@ -277,7 +274,10 @@ pub fn compute_sys_from_capacity(
     polytope: &Polytope4D,
     capacity: &OrbitSearchResult,
 ) -> Option<f64> {
-    let vol = volume(polytope).ok().filter(|&v| v > 0.0)?;
+    let vol = volume(polytope);
+    if vol <= 0.0 {
+        return None;
+    }
     let cap = capacity.capacity();
     let sys = cap * cap / (2.0 * vol);
     sys.is_finite().then_some(sys)
@@ -546,7 +546,9 @@ pub fn parse_ascent_args(
                 i += 2;
             }
             "--n-start" => {
-                n_start = value().parse().expect("--n-start must be a non-negative integer");
+                n_start = value()
+                    .parse()
+                    .expect("--n-start must be a non-negative integer");
                 i += 2;
             }
             "--seed" => {
@@ -634,10 +636,7 @@ pub fn open_ascent_writers(
     summary_path: &Path,
     trace_path: &Path,
     fresh: bool,
-) -> (
-    Arc<Mutex<BufWriter<File>>>,
-    Arc<Mutex<BufWriter<File>>>,
-) {
+) -> (Arc<Mutex<BufWriter<File>>>, Arc<Mutex<BufWriter<File>>>) {
     if fresh {
         let _ = std::fs::remove_file(summary_path);
         let _ = std::fs::remove_file(trace_path);
@@ -707,7 +706,9 @@ pub fn write_result(
     let summary_json = serde_json::to_string(&result.summary)
         .expect("SummaryRow serialization is infallible for f64/String fields");
     {
-        let mut w = summary_writer.lock().expect("summary writer mutex poisoned");
+        let mut w = summary_writer
+            .lock()
+            .expect("summary writer mutex poisoned");
         writeln!(w, "{summary_json}").expect("failed to write summary row");
         w.flush().expect("failed to flush summary row");
     }
@@ -752,10 +753,7 @@ pub fn write_result(
 pub fn run_parallel_seeds<F>(
     args: &AscentArgs,
     completed: &HashSet<String>,
-    writers: &(
-        Arc<Mutex<BufWriter<File>>>,
-        Arc<Mutex<BufWriter<File>>>,
-    ),
+    writers: &(Arc<Mutex<BufWriter<File>>>, Arc<Mutex<BufWriter<File>>>),
     best: &Arc<Mutex<(f64, String)>>,
     process: F,
 ) where
@@ -877,9 +875,8 @@ pub fn finalize_ascent_output(
     });
     // Remove duplicates from crash-resume (see doc comment on `write_result`).
     // dedup_by keeps the first of each adjacent run of equal keys.
-    trace_rows.dedup_by(|a, b| {
-        a.name == b.name && a.phase == b.phase && a.iteration == b.iteration
-    });
+    trace_rows
+        .dedup_by(|a, b| a.name == b.name && a.phase == b.phase && a.iteration == b.iteration);
     let trace_tmp = trace_path.with_extension("jsonl.tmp");
     {
         let f = File::create(&trace_tmp)
@@ -970,7 +967,10 @@ mod tests {
         let predicted = clarke_directional_derivative_a(&subdiff, &direction)
             .expect("nonempty subdifferential should evaluate");
 
-        assert!(predicted > 0.99, "predicted directional derivative = {predicted}");
+        assert!(
+            predicted > 0.99,
+            "predicted directional derivative = {predicted}"
+        );
         assert!(direction[0][0] > 0.99, "direction = {:?}", direction[0]);
         assert!(direction[0][1] > 0.99, "direction = {:?}", direction[0]);
     }
@@ -1002,9 +1002,25 @@ mod tests {
         )
         .expect("LP-bounded switching pair should admit a positive direction");
 
-        assert!(direction[q_idx][2].abs() < 1e-9, "direction = {:?}", direction[q_idx]);
-        assert!(direction[q_idx][3].abs() < 1e-9, "direction = {:?}", direction[q_idx]);
-        assert!(direction[p_idx][0].abs() < 1e-9, "direction = {:?}", direction[p_idx]);
-        assert!(direction[p_idx][1].abs() < 1e-9, "direction = {:?}", direction[p_idx]);
+        assert!(
+            direction[q_idx][2].abs() < 1e-9,
+            "direction = {:?}",
+            direction[q_idx]
+        );
+        assert!(
+            direction[q_idx][3].abs() < 1e-9,
+            "direction = {:?}",
+            direction[q_idx]
+        );
+        assert!(
+            direction[p_idx][0].abs() < 1e-9,
+            "direction = {:?}",
+            direction[p_idx]
+        );
+        assert!(
+            direction[p_idx][1].abs() < 1e-9,
+            "direction = {:?}",
+            direction[p_idx]
+        );
     }
 }

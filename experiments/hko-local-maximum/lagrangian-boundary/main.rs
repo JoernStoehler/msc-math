@@ -31,10 +31,10 @@ use std::io::{BufWriter, Write};
 use std::time::Instant;
 use symplectic::algorithms::billiard::bounce_count_from_sigma;
 use symplectic::algorithms::billiard::facet_classification::classify_facets;
+use symplectic::ehz_capacity_billiard;
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::volume::volume;
-use symplectic::ehz_capacity_billiard;
 
 const SEED: u64 = 42;
 
@@ -181,8 +181,9 @@ fn main() {
     let indices = lagrangian_component_indices(&base_duals);
 
     // Compute and write base row (epsilon = 0)
-    let base_vol = volume(base_polytope).expect("volume computation failed");
-    let base_billiard = ehz_capacity_billiard(base_polytope).expect("billiard classification failed");
+    let base_vol = volume(base_polytope);
+    let base_billiard =
+        ehz_capacity_billiard(base_polytope).expect("billiard classification failed");
     let base_cap = base_billiard.capacity();
     let base_sys = base_cap * base_cap / (2.0 * base_vol);
     let base_bounces = bounce_count_from_sigma(base_polytope, base_billiard.best_sigma())
@@ -257,10 +258,10 @@ fn main() {
             let billiard =
                 ehz_capacity_billiard(&polytope).expect("classification already succeeded");
 
-            let vol = match volume(&polytope) {
-                Ok(v) if v > 0.0 => v,
-                _ => continue,
-            };
+            let vol = volume(&polytope);
+            if vol <= 0.0 {
+                continue;
+            }
 
             let bounces = match bounce_count_from_sigma(&polytope, billiard.best_sigma()) {
                 Ok(Some(k)) => k,

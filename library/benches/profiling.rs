@@ -11,11 +11,12 @@ use rand_chacha::ChaCha8Rng;
 use symplectic::algorithms::facet_adjacency::{build_transition_matrix, is_feasible_cycle};
 use symplectic::algorithms::hk2017::combinations;
 use symplectic::algorithms::hk2017::permutations::for_each_cyclic_permutation;
+use symplectic::ehz_capacity_pruned;
 use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::volume::volume;
+use symplectic::geom::volume::{volume, volume_qhull};
 use symplectic::kkt::saddle_point_solver::{solve_kkt_for, KktOutcome};
 use symplectic::random::generate_random_polytopes;
-use symplectic::ehz_capacity_pruned;
+use symplectic::QhullError;
 
 // Same seed and height range as
 // experiments/verification/algorithm-comparison/benchmark/main.rs for consistency.
@@ -41,8 +42,13 @@ fn raw_inputs(f: usize) -> (Vec<Vector4<f64>>, Vec<f64>) {
 fn prebuilt_polytope(f: usize) -> Polytope4D {
     let (normals, heights) = raw_inputs(f);
     Polytope4D::from_f64(
-        normals.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect(),
-    ).expect("construction failed")
+        normals
+            .iter()
+            .zip(heights.iter())
+            .map(|(n, &h)| n / h)
+            .collect(),
+    )
+    .expect("construction failed")
 }
 
 /// Find a valid permutation for single-KKT benchmarks.
@@ -77,8 +83,13 @@ fn bench_construction(c: &mut Criterion) {
         group.bench_with_input(BenchmarkId::from_parameter(f), &f, |b, _| {
             b.iter(|| {
                 Polytope4D::from_f64(
-                    normals.iter().zip(heights.iter()).map(|(n, &h)| n / h).collect(),
-                ).expect("construction failed")
+                    normals
+                        .iter()
+                        .zip(heights.iter())
+                        .map(|(n, &h)| n / h)
+                        .collect(),
+                )
+                .expect("construction failed")
             });
         });
     }
@@ -140,9 +151,29 @@ fn bench_volume(c: &mut Criterion) {
     for &f in FACET_COUNTS {
         let polytope = prebuilt_polytope(f);
         group.bench_with_input(BenchmarkId::from_parameter(f), &f, |b, _| {
-            b.iter(|| volume(&polytope).expect("volume failed"));
+            b.iter(|| volume(&polytope));
         });
     }
+    group.finish();
+}
+
+fn bench_volume_qhull(c: &mut Criterion) {
+    let mut group = c.benchmark_group("volume_qhull");
+    group.sample_size(10);
+
+    for &f in FACET_COUNTS {
+        let polytope = prebuilt_polytope(f);
+        match volume_qhull(&polytope) {
+            Ok(_) => {
+                group.bench_with_input(BenchmarkId::from_parameter(f), &f, |b, _| {
+                    b.iter(|| volume_qhull(&polytope).expect("qhull benchmark"));
+                });
+            }
+            Err(QhullError::QhullNotInstalled) => break,
+            Err(err) => panic!("qhull benchmark warmup failed for F={f}: {err}"),
+        }
+    }
+
     group.finish();
 }
 
@@ -154,5 +185,6 @@ criterion_group!(
     bench_kkt_single,
     bench_pruning_check,
     bench_volume,
+    bench_volume_qhull,
 );
 criterion_main!(benches);

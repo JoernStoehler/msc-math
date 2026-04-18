@@ -41,13 +41,7 @@ fn perturbed_polytope(
 
 /// Compute FD volume derivatives: dvol/dh_k ~ (vol(h+eps*e_k) - vol(h-eps*e_k)) / (2*eps).
 ///
-/// Uses qhull-based volume. Note: qhull computes volume from the V-rep triangulation,
-/// which may introduce O(eps) systematic error for FD. The old code used
-/// `volume_divergence` (divergence theorem from H-rep) for cleaner FD.
-///
-/// TODO: If FD volume tests show excessive error, add a volume_divergence function
-/// to the volume module (dropped during migration). The divergence theorem computes
-/// vol = (1/4) sum h_i * vol_3D(F_i) directly from H-representation.
+/// Uses the pure-Rust star triangulation from `geom::volume`.
 fn fd_volume_derivatives(normals: &[Vector4<f64>], heights: &[f64]) -> Vec<f64> {
     let f = heights.len();
     (0..f)
@@ -56,8 +50,8 @@ fn fd_volume_derivatives(normals: &[Vector4<f64>], heights: &[f64]) -> Vec<f64> 
                 .expect("perturbed polytope +eps");
             let p_minus = perturbed_polytope(normals, heights, k, -FD_EPS_VOL)
                 .expect("perturbed polytope -eps");
-            let vol_plus = volume(&p_plus).expect("volume +eps");
-            let vol_minus = volume(&p_minus).expect("volume -eps");
+            let vol_plus = volume(&p_plus);
+            let vol_minus = volume(&p_minus);
             (vol_plus - vol_minus) / (2.0 * FD_EPS_VOL)
         })
         .collect()
@@ -75,12 +69,8 @@ fn fd_capacity_derivatives(normals: &[Vector4<f64>], heights: &[f64]) -> Vec<f64
                 .expect("perturbed polytope +eps");
             let p_minus = perturbed_polytope(normals, heights, k, -FD_EPS_CAP)
                 .expect("perturbed polytope -eps");
-            let cap_plus = ehz_capacity(&p_plus)
-                .expect("capacity +eps")
-                .capacity();
-            let cap_minus = ehz_capacity(&p_minus)
-                .expect("capacity -eps")
-                .capacity();
+            let cap_plus = ehz_capacity(&p_plus).expect("capacity +eps").capacity();
+            let cap_minus = ehz_capacity(&p_minus).expect("capacity -eps").capacity();
             (cap_plus - cap_minus) / (2.0 * FD_EPS_CAP)
         })
         .collect()
@@ -126,13 +116,7 @@ fn fd_capacity_height_simplex() {
 ///
 /// Polytopes: simplex, hypercube. Tolerance: 0.1% relative.
 ///
-/// TODO: This test uses qhull-based volume. The old code used `volume_divergence`
-/// (divergence theorem from H-rep) which gives clean FD with O(eps^2) truncation error.
-/// Qhull computes volume from V-rep triangulation, which introduces O(eps) systematic
-/// error in FD because the triangulation topology can change with small perturbations.
-/// If this test fails on hypercube, restore `volume_divergence` in geom/volume.rs.
 #[test]
-#[ignore] // Requires volume_divergence (dropped during migration) for clean FD
 fn euler_homogeneity_volume() {
     let polytopes: Vec<(&str, Polytope4D)> = vec![
         ("simplex", known_polytopes::simplex().polytope.clone()),
@@ -141,7 +125,7 @@ fn euler_homogeneity_volume() {
 
     for (name, poly) in &polytopes {
         let (normals, heights) = normals_and_heights(poly);
-        let vol = volume(poly).expect("volume");
+        let vol = volume(poly);
 
         let d_vol = fd_volume_derivatives(&normals, &heights);
         let euler_sum: f64 = heights.iter().zip(&d_vol).map(|(h, dv)| h * dv).sum();
@@ -244,9 +228,7 @@ fn euler_homogeneity_capacity() {
 
     for (name, kp) in &polytopes {
         let (normals, heights) = normals_and_heights(&kp.polytope);
-        let cap = ehz_capacity(&kp.polytope)
-            .expect("capacity")
-            .capacity();
+        let cap = ehz_capacity(&kp.polytope).expect("capacity").capacity();
 
         let d_cap = fd_capacity_derivatives(&normals, &heights);
         let euler_sum: f64 = heights.iter().zip(&d_cap).map(|(h, dc)| h * dc).sum();
@@ -322,10 +304,8 @@ fn fd_sys_height_euler() {
     for (name, kp) in &polytopes {
         let (normals, heights) = normals_and_heights(&kp.polytope);
 
-        let cap = ehz_capacity(&kp.polytope)
-            .expect("capacity")
-            .capacity();
-        let vol = volume(&kp.polytope).expect("volume");
+        let cap = ehz_capacity(&kp.polytope).expect("capacity").capacity();
+        let vol = volume(&kp.polytope);
         let sys = cap * cap / (2.0 * vol);
 
         // FD sys derivatives.
@@ -337,8 +317,8 @@ fn fd_sys_height_euler() {
                     perturbed_polytope(&normals, &heights, k, -FD_EPS_CAP).expect("perturbed -eps");
                 let cap_p = ehz_capacity(&p_plus).expect("cap +eps").capacity();
                 let cap_m = ehz_capacity(&p_minus).expect("cap -eps").capacity();
-                let vol_p = volume(&p_plus).expect("vol +eps");
-                let vol_m = volume(&p_minus).expect("vol -eps");
+                let vol_p = volume(&p_plus);
+                let vol_m = volume(&p_minus);
                 let sys_p = cap_p * cap_p / (2.0 * vol_p);
                 let sys_m = cap_m * cap_m / (2.0 * vol_m);
                 (sys_p - sys_m) / (2.0 * FD_EPS_CAP)

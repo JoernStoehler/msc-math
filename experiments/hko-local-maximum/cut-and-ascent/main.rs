@@ -22,10 +22,7 @@ use std::collections::HashSet;
 use std::fs::{File, OpenOptions};
 use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::time::Instant;
-use symplectic::derivatives::{
-    capacity_derivatives_a_from_kkt_result,
-    volume_derivatives_a,
-};
+use symplectic::derivatives::{capacity_derivatives_a_from_kkt_result, volume_derivatives_a};
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
@@ -254,7 +251,10 @@ fn compute_step_bound(polytope: &Polytope4D, direction: &[Vector4<f64>]) -> f64 
 // ============================================================================
 
 fn compute_sys(polytope: &Polytope4D) -> Option<f64> {
-    let vol = volume(polytope).ok().filter(|&v| v > 0.0)?;
+    let vol = volume(polytope);
+    if vol <= 0.0 {
+        return None;
+    }
     let cap = compute_capacity(polytope)?;
     let sys = cap * cap / (2.0 * vol);
     sys.is_finite().then_some(sys)
@@ -276,7 +276,9 @@ fn try_step_a(
 }
 
 fn compute_capacity(polytope: &Polytope4D) -> Option<f64> {
-    symplectic::ehz_capacity(polytope).ok().map(|r| r.capacity())
+    symplectic::ehz_capacity(polytope)
+        .ok()
+        .map(|r| r.capacity())
 }
 
 fn compute_capacity_result(polytope: &Polytope4D) -> Option<(f64, Vec<usize>)> {
@@ -303,7 +305,10 @@ fn gradient_ascent_phase(
 
         let (cap, best_perm) = compute_capacity_result(&current)?;
         let kkt = solve_kkt_for(&current, &best_perm).feasible()?;
-        let vol = volume(&current).ok().filter(|&v| v > 0.0)?;
+        let vol = volume(&current);
+        if vol <= 0.0 {
+            return None;
+        }
         let sys = cap * cap / (2.0 * vol);
         let duals = current.dual_vertices_f64();
 

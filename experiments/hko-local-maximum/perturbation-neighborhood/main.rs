@@ -18,10 +18,6 @@
 //! Row identity across eps buckets is `(eps, name)` - `name` alone is not unique
 //! between files generated at different eps. Analysis code must group by eps first.
 
-use symplectic::geom::known_polytopes;
-use symplectic::geom::polytope::Polytope4D;
-use symplectic::geom::volume::volume;
-use symplectic::ehz_capacity;
 use nalgebra::Vector4;
 use rand::Rng;
 use rand::SeedableRng;
@@ -31,6 +27,10 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::PathBuf;
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
+use symplectic::ehz_capacity;
+use symplectic::geom::known_polytopes;
+use symplectic::geom::polytope::Polytope4D;
+use symplectic::geom::volume::volume;
 
 const DEFAULT_SEED: u64 = 41;
 const DEFAULT_N_SAMPLES: usize = 100;
@@ -141,12 +141,19 @@ fn parse_args() -> Args {
         };
         match arg {
             "--n" => {
-                n = need_value("--n").parse().expect("--n must be a non-negative integer");
+                n = need_value("--n")
+                    .parse()
+                    .expect("--n must be a non-negative integer");
                 i += 2;
             }
             "--eps" => {
-                eps = need_value("--eps").parse().expect("--eps must be a finite f64");
-                assert!(eps.is_finite() && eps > 0.0, "--eps must be positive and finite");
+                eps = need_value("--eps")
+                    .parse()
+                    .expect("--eps must be a finite f64");
+                assert!(
+                    eps.is_finite() && eps > 0.0,
+                    "--eps must be positive and finite"
+                );
                 i += 2;
             }
             "--seed" => {
@@ -195,7 +202,7 @@ fn main() {
     let n_facets = base_duals.len();
 
     let start_vol = Instant::now();
-    let base_vol = volume(base_polytope).expect("volume computation failed");
+    let base_vol = volume(base_polytope);
     let base_time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
 
     let start_cap = Instant::now();
@@ -240,12 +247,11 @@ fn main() {
         };
 
         let start_vol = Instant::now();
-        let vol = volume(&perturbed.polytope).expect("volume computation failed");
+        let vol = volume(&perturbed.polytope);
         let time_volume_ms = start_vol.elapsed().as_secs_f64() * 1000.0;
 
         let start_cap = Instant::now();
-        let result = ehz_capacity(&perturbed.polytope)
-            .expect("capacity computation failed");
+        let result = ehz_capacity(&perturbed.polytope).expect("capacity computation failed");
         let time_capacity_ms = start_cap.elapsed().as_secs_f64() * 1000.0;
 
         let cap = result.capacity();
@@ -256,7 +262,11 @@ fn main() {
             sample_index: accepted + 1,
             is_base: false,
             dual_vertices: perturbed.dual_vertices.iter().map(v4_to_array).collect(),
-            delta_dual_vertices: perturbed.delta_dual_vertices.iter().map(v4_to_array).collect(),
+            delta_dual_vertices: perturbed
+                .delta_dual_vertices
+                .iter()
+                .map(v4_to_array)
+                .collect(),
             eps: args.eps,
             volume: vol,
             capacity: cap,

@@ -31,9 +31,7 @@ use std::io::{BufWriter, Write};
 use std::path::Path;
 use std::time::Instant;
 use symplectic::database::{self, DualVerticesKey, PolytopeRecord, SigmaAction, Source};
-use symplectic::derivatives::{
-    capacity_derivatives_a_from_kkt_result, volume_derivatives_a,
-};
+use symplectic::derivatives::{capacity_derivatives_a_from_kkt_result, volume_derivatives_a};
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
 use symplectic::geom::skeleton::Skeleton;
@@ -51,14 +49,8 @@ const H_MIN: f64 = 0.8;
 const H_MAX: f64 = 1.2;
 
 /// (facet_count, n_samples) pairs for random polytope generation.
-const SAMPLING_PLAN: &[(usize, usize)] = &[
-    (5, 200),
-    (6, 200),
-    (7, 200),
-    (8, 200),
-    (9, 100),
-    (10, 50),
-];
+const SAMPLING_PLAN: &[(usize, usize)] =
+    &[(5, 200), (6, 200), (7, 200), (8, 200), (9, 100), (10, 50)];
 
 // ============================================================================
 // Output schema
@@ -187,7 +179,11 @@ fn compute_gradient_dots(
     d_sys_a: &[Vector4<f64>],
     orbit_facets: &[usize],
 ) -> Vec<GradientDot> {
-    let normals: Vec<Vector4<f64>> = polytope.dual_vertices_f64().iter().map(|a| a / a.norm()).collect();
+    let normals: Vec<Vector4<f64>> = polytope
+        .dual_vertices_f64()
+        .iter()
+        .map(|a| a / a.norm())
+        .collect();
     let orbit_set: std::collections::HashSet<usize> = orbit_facets.iter().copied().collect();
 
     // Build ridge-neighbor lookup: for each facet k, list of neighbors
@@ -284,7 +280,7 @@ fn process_polytope(
         best_perm = c.best_perm.clone();
     } else {
         // No cache: full EHZ computation
-        vol = volume(polytope).ok()?;
+        vol = volume(polytope);
         let ehz_result = symplectic::ehz_capacity(polytope).ok()?;
         cap = ehz_result.capacity();
         iterations = ehz_result.iterations;
@@ -302,10 +298,7 @@ fn process_polytope(
     let skeleton = Skeleton::compute(polytope);
     let (ridge_omegas, orbit_omegas) = compute_omega_features(polytope, &skeleton, &best_perm);
 
-    let orbit_omega_min = orbit_omegas
-        .iter()
-        .cloned()
-        .fold(f64::INFINITY, f64::min);
+    let orbit_omega_min = orbit_omegas.iter().cloned().fold(f64::INFINITY, f64::min);
     let orbit_omega_mean = if orbit_omegas.is_empty() {
         0.0
     } else {
@@ -323,15 +316,15 @@ fn process_polytope(
         let worst = orbit_omegas.iter().cloned().fold(f64::INFINITY, f64::min);
         eprintln!(
             "WARNING: {}: {}/{} orbit omegas < 0 (worst: {:.6e})",
-            source, n_negative, orbit_omegas.len(), worst
+            source,
+            n_negative,
+            orbit_omegas.len(),
+            worst
         );
     }
 
     // Phase B: gradient dots (using library derivative functions with dual vertex parameterization)
-    let d_sys_a = compute_d_sys_a(
-        polytope, vol, cap, sys,
-        &best_perm, &kkt_result,
-    );
+    let d_sys_a = compute_d_sys_a(polytope, vol, cap, sys, &best_perm, &kkt_result);
     let gradient_dots = compute_gradient_dots(polytope, &skeleton, &d_sys_a, &best_perm);
 
     Some(OmegaRow {
@@ -365,8 +358,7 @@ fn main() {
 
     let owned_db_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("polytopes.jsonl");
     let mut db: HashMap<DualVerticesKey, PolytopeRecord> =
-        database::load_many(&[owned_db_path.as_path()])
-            .expect("failed to load database");
+        database::load_many(&[owned_db_path.as_path()]).expect("failed to load database");
     eprintln!("Loaded database: {} entries", db.len());
 
     let mut total = 0usize;
@@ -394,9 +386,13 @@ fn main() {
 
             // Source-based lookup
             let (polytope, cached) = if let Some((_, record)) = find_by_source(&db, &source_tag) {
-                let p = record.to_polytope().expect("failed to reconstruct polytope from database");
+                let p = record
+                    .to_polytope()
+                    .expect("failed to reconstruct polytope from database");
                 let c = cached_capacity_from_record(record);
-                if c.is_some() { hits_this_f += 1; }
+                if c.is_some() {
+                    hits_this_f += 1;
+                }
                 (p, c)
             } else {
                 // Generate new polytope
@@ -432,7 +428,9 @@ fn main() {
                     }
 
                     total += 1;
-                    if cached.is_some() { cache_hits += 1; }
+                    if cached.is_some() {
+                        cache_hits += 1;
+                    }
                 }
                 None => {
                     eprintln!("  SKIP: {} (capacity computation failed)", source_name);
@@ -444,7 +442,10 @@ fn main() {
         }
         eprintln!(
             "F={}: {} polytopes in {:.1}s ({} cache hits)",
-            f, n, t0.elapsed().as_secs_f64(), hits_this_f
+            f,
+            n,
+            t0.elapsed().as_secs_f64(),
+            hits_this_f
         );
     }
 
@@ -456,8 +457,11 @@ fn main() {
             if kp.polytope.facet_count() <= 10 {
                 list.push((kp.name.to_string(), kp.polytope.clone()));
             } else {
-                eprintln!("SKIP: {} (F={} > 10, too expensive for HK2017)",
-                          kp.name, kp.polytope.facet_count());
+                eprintln!(
+                    "SKIP: {} (F={} > 10, too expensive for HK2017)",
+                    kp.name,
+                    kp.polytope.facet_count()
+                );
             }
         }
         list
@@ -477,7 +481,10 @@ fn main() {
                     record.source = Some(Source::Known { name: name.clone() });
                     record = record.with_computed_fields(row.volume, 0.0, row.capacity, 0.0);
                     record = record.with_sigmas(
-                        vec![SigmaAction { perm: row.orbit_facets.clone(), action: row.capacity }],
+                        vec![SigmaAction {
+                            perm: row.orbit_facets.clone(),
+                            action: row.capacity,
+                        }],
                         0.0,
                     );
                     db.insert(key, record);
@@ -498,7 +505,10 @@ fn main() {
 
     eprintln!(
         "\nDone: {} polytopes written, {} failed, {} cache hits. Database: {} entries.",
-        total, failed, cache_hits, db.len()
+        total,
+        failed,
+        cache_hits,
+        db.len()
     );
     eprintln!("Output: {}", out_path.display());
 }

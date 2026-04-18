@@ -25,6 +25,7 @@
 //! Second-order analysis: if sys(K + εd) < sys(K) for all ε ≠ 0 and all flat d,
 //! then K is a strict local maximum. See formal/hko-local-maximum/second-order.tex for formal statement.
 
+use exp_hko_local_maximum::ehz_capacity_instrumented;
 use nalgebra::{DMatrix, Vector4};
 use rand::Rng as _;
 use rand::SeedableRng;
@@ -33,12 +34,8 @@ use serde::Serialize;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::time::Instant;
-use exp_hko_local_maximum::ehz_capacity_instrumented;
 use symplectic::algorithms::OrbitKktData;
-use symplectic::derivatives::{
-    capacity_derivatives_a_from_orbit,
-    volume_derivatives_a,
-};
+use symplectic::derivatives::{capacity_derivatives_a_from_orbit, volume_derivatives_a};
 use symplectic::ehz_capacity;
 use symplectic::geom::known_polytopes;
 use symplectic::geom::polytope::Polytope4D;
@@ -166,7 +163,7 @@ fn run_phase1(polytope: &Polytope4D) -> (BaseRow, Vec<Vec<f64>>) {
     let dim = f * 4; // 40 for F=10
 
     // Compute base quantities
-    let vol = volume(polytope).expect("volume computation failed");
+    let vol = volume(polytope);
     let instr = ehz_capacity_instrumented(polytope).expect("no valid orbits");
 
     let cap = instr.capacity;
@@ -347,13 +344,11 @@ fn run_phase2(
                 };
 
                 // Compute volume
-                let vol = match volume(&perturbed_poly) {
-                    Ok(v) if v > 0.0 => v,
-                    _ => {
-                        n_fail += 1;
-                        continue;
-                    }
-                };
+                let vol = volume(&perturbed_poly);
+                if vol <= 0.0 {
+                    n_fail += 1;
+                    continue;
+                }
 
                 let sys_val = cap * cap / (2.0 * vol);
                 let delta = sys_val - sys_base;
@@ -429,7 +424,10 @@ fn curvature_at_epsilon(
             .collect();
         let poly = Polytope4D::from_f64(perturbed).ok()?;
         let cap = ehz_capacity(&poly).ok()?.capacity();
-        let vol = volume(&poly).ok().filter(|&v| v > 0.0)?;
+        let vol = volume(&poly);
+        if vol <= 0.0 {
+            return None;
+        }
         Some(cap * cap / (2.0 * vol))
     };
 
@@ -571,7 +569,7 @@ fn main() {
     let known = known_polytopes::hko_pentagon();
     let polytope = &known.polytope;
     println!("HKO2024: F={}, known sys≈{:.6}", polytope.facet_count(), {
-        let v = volume(polytope).unwrap();
+        let v = volume(polytope);
         known.capacity * known.capacity / (2.0 * v)
     });
 

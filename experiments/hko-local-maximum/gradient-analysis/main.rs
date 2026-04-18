@@ -882,7 +882,7 @@ fn compute_step_bound_hn(polytope: &Polytope4D, g_h: &[f64], g_n: &[Vector4<f64>
 
 /// Safely compute sys for a polytope, catching panics from degenerate geometry.
 fn safe_sys(polytope: &Polytope4D) -> Option<(f64, f64, f64)> {
-    let vol = volume(polytope).unwrap_or(0.0);
+    let vol = volume(polytope);
     if vol <= 0.0 {
         return None;
     }
@@ -1051,7 +1051,7 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
     );
 
     let cap = instrumented.capacity;
-    let vol = volume(polytope).expect("volume failed");
+    let vol = volume(polytope);
     let sys = cap * cap / (2.0 * vol);
     println!("  Volume: {vol:.10}");
     println!("  Sys: {sys:.10}");
@@ -1264,7 +1264,7 @@ fn run_phase_a(base_dir: &std::path::Path, smoke: bool) {
             }
         };
         let cap = instr.capacity;
-        let vol = volume(&current).expect("volume");
+        let vol = volume(&current);
         let sys_now = cap * cap / (2.0 * vol);
         let best_orbit = &instr.orbits[0];
 

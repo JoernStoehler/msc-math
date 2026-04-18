@@ -38,16 +38,14 @@ fn main() {
 
     for i in 0..iterations {
         // Phase 1: Construction (rational vertex enum, incidence, adjacency, omega signs)
-        let p = symplectic::geom::polytope::Polytope4D::from_f64(
-            dual_vertices.clone(),
-        )
-        .expect("construction failed");
+        let p = symplectic::geom::polytope::Polytope4D::from_f64(dual_vertices.clone())
+            .expect("construction failed");
 
         // Phase 2: Capacity (enumeration, pruning, KKT solve, accumulation)
         let cap_result = ehz_capacity_pruned(&p).expect("capacity failed");
 
-        // Phase 3: Volume (qhull subprocess)
-        let vol = volume(&p).expect("volume failed");
+        // Phase 3: Volume (pure-Rust origin-star triangulation)
+        let vol = volume(&p);
 
         // Phase 4: Systolic ratio
         let sys = cap_result.capacity().powi(2) / (2.0 * vol);
@@ -55,7 +53,9 @@ fn main() {
         if i == 0 {
             eprintln!(
                 "  F={f}: capacity={:.6}, volume={:.6}, sys={:.6}",
-                cap_result.capacity(), vol, sys
+                cap_result.capacity(),
+                vol,
+                sys
             );
         }
     }
