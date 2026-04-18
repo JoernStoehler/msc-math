@@ -289,7 +289,7 @@ Instrument development. Results promote to `library/`.
 - `formal/numerics/error-bounds.tex` Parts I+II complete. Proven Q error bound, eta bound for well-conditioned problems.
 - 14 previously-failing tests now pass (329 pass, 0 fail).
 - Rationale for current state: degenerate orbits are never capacity-achieving, so final capacity comes from well-conditioned orbits with proven low error. The remaining gap is publication/writeup polish rather than a blocker for the two main thesis results.
-- Remaining open surface: Part III (f64 algorithm description), a thesis-facing treatment of the LP null-space search case (39 natural-data violations near-zero eigenvalues), and the GAP in `cor:taylor-structure` (needs Jörn).
+- Remaining open surface: Part III (f64 algorithm description), a thesis-facing treatment of the LP null-space search case (39 natural-data violations in cases with near-zero eigenvalues), and the GAP in `cor:taylor-structure` (needs Jörn).
 - Post-Kai priority: publication polish and thesis confidence, not a prerequisite for the two main thesis results. Before about 2026-04-21, agents may close self-verifying pieces such as stale notes/tests; after that, leave explicit caveats or cut proof ambitions rather than opening new solver work.
 - `experiments/numerics/error-bounds/`, `experiments/numerics/error-bounds/algorithm-notes.md`
 
