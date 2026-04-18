@@ -561,17 +561,20 @@ verification loops. They do not need new cluster-scale data before
 implementation starts.
 
 1. **Trajectory aggregate features from `step_events.jsonl`**
-   - Build a new `feature_trajectory.jsonl` keyed by endpoint `state_id` or
-     `poly_id`, then join it into the existing analyzer.
-   - Candidate columns:
-     total positive `delta_sys`, max single-step gain, within-cell vs overshoot
-     vs wiggle counts, gradient-norm summaries, phase count, escape-round
-     counts.
-   - Why next:
-     this is the cleanest remaining non-geometry surface, and the data already
-     exists in `step_events.jsonl`.
-   - Feedback loop:
-     strong. One extractor plus the current analyzer is enough to test value.
+   - Landed as `feature_trajectory.jsonl`, keyed by `state_id`, with scalar
+     summaries of fixed-`F` trace availability, overshoot mix, phase restarts,
+     step-size statistics, gradient norms, and gain concentration.
+   - Coverage:
+     `22 / 282` states (`10 / 10` general ascent, `12 / 12` product ascent,
+     `0 / 90` variable-F continuation, `0` random baselines).
+   - Result:
+     near-null. Ridge `R^2` is `-0.0140` within random, `0.0026` within the
+     endpoint union, and strongly negative on both transfer surfaces.
+   - Interpretation:
+     this closes the cheap scalar "maybe the signal is in fixed-`F` step-event
+     dynamics" branch for the current dataset; a richer trajectory line would
+     need either more traced endpoint rows or a more explicit state-graph
+     question.
 
 2. **Richer cached orbit/KKT scalar payload**
    - Extend experiment-side cache writes so endpoint records preserve a few more
@@ -631,10 +634,10 @@ These are now blocked primarily by row count, not by missing local scaffolding.
 
 If local work continues before new LICCA rows arrive, use this order:
 
-1. trajectory aggregate features
-2. richer cached orbit/KKT scalar payload
-3. bounded face-level Euclidean features
-4. bounded face-level symplectic features
+1. richer cached orbit/KKT scalar payload
+2. bounded face-level Euclidean features
+3. bounded face-level symplectic features
+4. only then revisit richer trajectory/state-graph methods
 
 If new LICCA rows arrive first, pause local feature proliferation and refresh
 the endpoint datasets before adding more model families.

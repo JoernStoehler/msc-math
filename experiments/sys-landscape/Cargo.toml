@@ -50,6 +50,10 @@ path = "feature-omega/main.rs"
 name = "sys-feature-orbit"
 path = "feature-orbit/main.rs"
 
+[[bin]]
+name = "sys-feature-trajectory"
+path = "feature-trajectory/main.rs"
+
 [lints]
 workspace = true
 

@@ -237,8 +237,8 @@ sys as a continuous function on polytope space, no privileged threshold.
 - Dependencies: random/polytope datasets are available now; use current local-maxima datasets immediately and extend to LICCA-returned local maxima if those artifacts arrive in time.
 - First implementation packet: add a `sys-*` converter that normalizes the existing random/ascent JSONLs into core tables (`polytopes`, `states`, `capacity_results`, `step_events`) with an explicit source-priority rule. Do not start with model fitting or force intermediate-state geometry that current trace logs do not contain.
 - Landed in this worktree as `sys-normalized-dataset`; verified current normalized counts are `282` states / `282` capacity rows / `287` step events once the refreshed `experiments/sys-landscape/cache.jsonl` includes the fixed-`F` ascent endpoints.
-- Bounded pass landed in `experiments/sys-landscape/feature-pattern-search/` with `feature_geometry`, `feature_skeleton`, `feature_omega`, and sigma-local `feature_orbit` blocks plus refreshed summary plots and markdown.
-- Result: cheap geometry helps within the random regime, sigma-local orbit features help the endpoint regime more than the other non-metadata blocks, but metadata still beats every non-metadata block on endpoints and all transfer surfaces remain strongly negative.
+- Bounded pass landed in `experiments/sys-landscape/feature-pattern-search/` with `feature_geometry`, `feature_skeleton`, `feature_omega`, sigma-local `feature_orbit`, and state-keyed `feature_trajectory` blocks plus refreshed summary plots and markdown.
+- Result: cheap geometry helps within the random regime, sigma-local orbit features help the endpoint regime more than the other non-metadata blocks, trajectory aggregates from fixed-`F` step logs stay near-null, metadata still beats every non-metadata block on endpoints, and all transfer surfaces remain strongly negative.
 - Closure: record the negative result in `RESULTS.md` as evidence for the hostile-landscape interpretation; do not open a novel method-development line here without a separate thesis-scope decision.
 - Next blocked direction for a future LICCA session: row count, not local code scaffolding, is now the main bottleneck if this line is reopened.
 - Highest-value LICCA follow-up: generate many more endpoint rows for `gradient-ascent-general` and `gradient-ascent-products`, then `variable-f-ascent`; random baselines already show within-regime signal and have lower marginal value than endpoint packets.
@@ -250,10 +250,10 @@ sys as a continuous function on polytope space, no privileged threshold.
 - Partial data in gradient-ascent experiments.
 - Witness-search successor line: `research/sys-landscape/design/witness-search-program.md:55-83`
 - Local unblocked queue after the bounded hostile-landscape closure:
-  1. trajectory aggregate features from `step_events.jsonl`
-  2. richer cached orbit/KKT scalar payload for endpoint rows
-  3. bounded face-level Euclidean feature summaries
-  4. bounded face-level symplectic feature summaries
+  1. richer cached orbit/KKT scalar payload for endpoint rows
+  2. bounded face-level Euclidean feature summaries
+  3. bounded face-level symplectic feature summaries
+  4. only after richer columns: trajectory/state-graph methods beyond the current scalar `feature_trajectory` block
 - LICCA-blocked queue:
   1. more `gradient-ascent-general` endpoint rows
   2. more `gradient-ascent-products` endpoint rows

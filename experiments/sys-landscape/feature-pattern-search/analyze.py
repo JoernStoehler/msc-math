@@ -25,6 +25,7 @@ Output Artifacts:
   - experiments/sys-landscape/feature-pattern-search/feature_skeleton.jsonl
   - experiments/sys-landscape/feature-pattern-search/feature_omega.jsonl
   - experiments/sys-landscape/feature-pattern-search/feature_orbit.jsonl
+  - experiments/sys-landscape/feature-pattern-search/feature_trajectory.jsonl
   - experiments/sys-landscape/feature-pattern-search/feature_pattern_search_summary.md
   - experiments/sys-landscape/feature-pattern-search/feature_pattern_search_ridge.png
   - experiments/sys-landscape/feature-pattern-search/feature_pattern_search_rf.png
@@ -60,6 +61,7 @@ FEATURE_JSONL = EXPERIMENT_DIR / "feature_geometry.jsonl"
 FEATURE_SKELETON_JSONL = EXPERIMENT_DIR / "feature_skeleton.jsonl"
 FEATURE_OMEGA_JSONL = EXPERIMENT_DIR / "feature_omega.jsonl"
 FEATURE_ORBIT_JSONL = EXPERIMENT_DIR / "feature_orbit.jsonl"
+FEATURE_TRAJECTORY_JSONL = EXPERIMENT_DIR / "feature_trajectory.jsonl"
 SUMMARY_MD = EXPERIMENT_DIR / "feature_pattern_search_summary.md"
 RIDGE_PNG = EXPERIMENT_DIR / "feature_pattern_search_ridge.png"
 RF_PNG = EXPERIMENT_DIR / "feature_pattern_search_rf.png"
@@ -79,7 +81,16 @@ SURFACES = [
     ("random_to_endpoint", "Random -> endpoint"),
     ("endpoint_to_random", "Endpoint -> random"),
 ]
-FEATURE_BLOCKS = ["null", "metadata", "geometry", "skeleton", "omega", "orbit", "all"]
+FEATURE_BLOCKS = [
+    "null",
+    "metadata",
+    "geometry",
+    "skeleton",
+    "omega",
+    "orbit",
+    "trajectory",
+    "all",
+]
 MODEL_SPECS = [("ridge", "Ridge"), ("rf", "Random forest")]
 
 
@@ -95,6 +106,7 @@ class JoinedRow:
     skeleton: dict[str, float]
     omega: dict[str, float]
     orbit: dict[str, float]
+    trajectory: dict[str, float]
 
 
 def cv_group_id(state: dict, regime: str) -> str:
@@ -263,9 +275,27 @@ def refresh_orbit_features(normalized_dir: Path, out_path: Path) -> None:
     subprocess.run(cmd, cwd=REPO_ROOT, check=True)
 
 
+def refresh_trajectory_features(normalized_dir: Path, out_path: Path) -> None:
+    cmd = [
+        "cargo",
+        "run",
+        "-p",
+        "exp-sys-landscape",
+        "--release",
+        "--bin",
+        "sys-feature-trajectory",
+        "--",
+        "--normalized-dir",
+        str(normalized_dir),
+        "--out",
+        str(out_path),
+    ]
+    subprocess.run(cmd, cwd=REPO_ROOT, check=True)
+
+
 def load_joined_rows(
     normalized_dir: Path,
-) -> tuple[list[JoinedRow], list[dict], list[dict], list[dict], list[dict]]:
+) -> tuple[list[JoinedRow], list[dict], list[dict], list[dict], list[dict], list[dict]]:
     states = load_jsonl(normalized_dir / "states.jsonl")
     capacities = {
         row["poly_id"]: row for row in load_jsonl(normalized_dir / "capacity_results.jsonl")
@@ -296,6 +326,11 @@ def load_joined_rows(
         row["poly_id"]: {key: value for key, value in row.items() if key != "poly_id"}
         for row in orbit_rows
     }
+    trajectory_rows = load_jsonl(FEATURE_TRAJECTORY_JSONL)
+    trajectory_by_state = {
+        row["state_id"]: {key: value for key, value in row.items() if key != "state_id"}
+        for row in trajectory_rows
+    }
 
     rows: list[JoinedRow] = []
     for state in states:
@@ -324,9 +359,10 @@ def load_joined_rows(
                 skeleton=skeleton_by_poly[state["poly_id"]],
                 omega=omega_by_poly[state["poly_id"]],
                 orbit=orbit_by_poly[state["poly_id"]],
+                trajectory=trajectory_by_state[state["state_id"]],
             )
         )
-    return rows, geometry_rows, skeleton_rows, omega_rows, orbit_rows
+    return rows, geometry_rows, skeleton_rows, omega_rows, orbit_rows, trajectory_rows
 
 
 def build_feature_dict(row: JoinedRow, block: str) -> dict[str, float | str]:
@@ -340,6 +376,8 @@ def build_feature_dict(row: JoinedRow, block: str) -> dict[str, float | str]:
         return dict(row.omega)
     if block == "orbit":
         return dict(row.orbit)
+    if block == "trajectory":
+        return dict(row.trajectory)
     if block == "all":
         return {
             **row.metadata,
@@ -347,6 +385,7 @@ def build_feature_dict(row: JoinedRow, block: str) -> dict[str, float | str]:
             **row.skeleton,
             **row.omega,
             **row.orbit,
+            **row.trajectory,
         }
     raise ValueError(f"unknown feature block {block}")
 
@@ -503,12 +542,21 @@ def write_summary(
     orbit_available_count = sum(
         1 for row in joined_rows if row.orbit["orbit_sigma_available"] > 0.5
     )
+    trajectory_available_count = sum(
+        1 for row in joined_rows if row.trajectory["trajectory_trace_available"] > 0.5
+    )
     orbit_available_by_dataset: dict[str, int] = {}
+    trajectory_available_by_dataset: dict[str, int] = {}
     for row in joined_rows:
         if row.orbit["orbit_sigma_available"] > 0.5:
             dataset = str(row.metadata["dataset"])
             orbit_available_by_dataset[dataset] = (
                 orbit_available_by_dataset.get(dataset, 0) + 1
+            )
+        if row.trajectory["trajectory_trace_available"] > 0.5:
+            dataset = str(row.metadata["dataset"])
+            trajectory_available_by_dataset[dataset] = (
+                trajectory_available_by_dataset.get(dataset, 0) + 1
             )
 
     best_rows = sorted(joined_rows, key=lambda row: row.sys, reverse=True)[:5]
@@ -523,6 +571,7 @@ def write_summary(
         f"- random rows: `{counts_by_regime['random']}`",
         f"- endpoint rows: `{counts_by_regime['endpoint']}`",
         f"- rows with cached sigma payload: `{orbit_available_count}`",
+        f"- rows with trace-derived trajectory payload: `{trajectory_available_count}`",
         "- dataset counts:",
     ]
     for dataset, count in sorted(counts_by_dataset.items()):
@@ -531,6 +580,11 @@ def write_summary(
     for dataset, count in sorted(counts_by_dataset.items()):
         lines.append(
             f"  - `{dataset}`: `{orbit_available_by_dataset.get(dataset, 0)}` / `{count}`"
+        )
+    lines.append("- trajectory trace coverage by dataset:")
+    for dataset, count in sorted(counts_by_dataset.items()):
+        lines.append(
+            f"  - `{dataset}`: `{trajectory_available_by_dataset.get(dataset, 0)}` / `{count}`"
         )
 
     lines.extend(
@@ -544,7 +598,8 @@ def write_summary(
             "- `skeleton`: combinatorial counts and degree summaries from the exact 4D face lattice",
             "- `omega`: ridge-local `omega_0` summaries, exact omega-sign structure, and directed transition-graph summaries",
             "- `orbit`: cached-`best_sigma` support size plus sigma-local geometry, `omega_0`, and transition summaries",
-            "- `all`: metadata, geometry, skeleton, omega, and orbit together",
+            "- `trajectory`: endpoint-keyed step-event aggregates such as overshoot mix, phase restarts, and gradient/step-size summaries",
+            "- `all`: metadata, geometry, skeleton, omega, orbit, and trajectory together",
             "",
             "## Metrics",
             "",
@@ -590,24 +645,26 @@ def write_summary(
     skeleton_random = ridge_rows[("within_random", "skeleton")]
     omega_random = ridge_rows[("within_random", "omega")]
     orbit_random = ridge_rows[("within_random", "orbit")]
+    trajectory_random = ridge_rows[("within_random", "trajectory")]
     metadata_random = ridge_rows[("within_random", "metadata")]
     geometry_endpoint = ridge_rows[("within_endpoint", "geometry")]
     skeleton_endpoint = ridge_rows[("within_endpoint", "skeleton")]
     omega_endpoint = ridge_rows[("within_endpoint", "omega")]
     orbit_endpoint = ridge_rows[("within_endpoint", "orbit")]
+    trajectory_endpoint = ridge_rows[("within_endpoint", "trajectory")]
     metadata_endpoint = ridge_rows[("within_endpoint", "metadata")]
     all_random_to_endpoint = ridge_rows[("random_to_endpoint", "all")]
-    orbit_endpoint_to_random = ridge_rows[("endpoint_to_random", "orbit")]
+    trajectory_endpoint_to_random = ridge_rows[("endpoint_to_random", "trajectory")]
     lines.extend(
         [
             "",
             "## Interpretation",
             "",
-            f"- within-random ridge: metadata `R^2={format_metric(metadata_random['r2'])}`, geometry `R^2={format_metric(geometry_random['r2'])}`, skeleton `R^2={format_metric(skeleton_random['r2'])}`, omega `R^2={format_metric(omega_random['r2'])}`, orbit `R^2={format_metric(orbit_random['r2'])}`",
-            f"- within-endpoint ridge: metadata `R^2={format_metric(metadata_endpoint['r2'])}`, geometry `R^2={format_metric(geometry_endpoint['r2'])}`, skeleton `R^2={format_metric(skeleton_endpoint['r2'])}`, omega `R^2={format_metric(omega_endpoint['r2'])}`, orbit `R^2={format_metric(orbit_endpoint['r2'])}`",
+            f"- within-random ridge: metadata `R^2={format_metric(metadata_random['r2'])}`, geometry `R^2={format_metric(geometry_random['r2'])}`, skeleton `R^2={format_metric(skeleton_random['r2'])}`, omega `R^2={format_metric(omega_random['r2'])}`, orbit `R^2={format_metric(orbit_random['r2'])}`, trajectory `R^2={format_metric(trajectory_random['r2'])}`",
+            f"- within-endpoint ridge: metadata `R^2={format_metric(metadata_endpoint['r2'])}`, geometry `R^2={format_metric(geometry_endpoint['r2'])}`, skeleton `R^2={format_metric(skeleton_endpoint['r2'])}`, omega `R^2={format_metric(omega_endpoint['r2'])}`, orbit `R^2={format_metric(orbit_endpoint['r2'])}`, trajectory `R^2={format_metric(trajectory_endpoint['r2'])}`",
             f"- random-to-endpoint transfer with full ridge block: `R^2={format_metric(all_random_to_endpoint['r2'])}`",
-            f"- endpoint-to-random transfer with orbit ridge: `R^2={format_metric(orbit_endpoint_to_random['r2'])}`",
-            "- this packet still stops before orbit recomputation; the new signal surface adds sigma-local orbit features derived only from cached `best_sigma` payloads.",
+            f"- endpoint-to-random transfer with trajectory ridge: `R^2={format_metric(trajectory_endpoint_to_random['r2'])}`",
+            "- this packet still stops before orbit recomputation; the added search-dynamics block is a scalar summary of existing fixed-F step-event logs, not a new state-graph model.",
         ]
     )
 
@@ -617,8 +674,9 @@ def write_summary(
 def plot_model_results(results: list[dict], model_name: str, out_path: Path, title: str) -> None:
     surface_labels = [label for _key, label in SURFACES]
     x = np.arange(len(SURFACES))
-    width = 0.14
+    width = 0.10
     fig, ax = plt.subplots(figsize=FIGSIZE_DUAL)
+    center = (len(FEATURE_BLOCKS) - 1) / 2.0
 
     for idx, block in enumerate(FEATURE_BLOCKS):
         heights = []
@@ -631,7 +689,7 @@ def plot_model_results(results: list[dict], model_name: str, out_path: Path, tit
                 and result["block"] == block
             )
             heights.append(row["r2"])
-        ax.bar(x + (idx - 2.5) * width, heights, width=width, label=block)
+        ax.bar(x + (idx - center) * width, heights, width=width, label=block)
 
     ax.axhline(0.0, color="black", linewidth=0.8, alpha=0.5)
     ax.set_xticks(x)
@@ -651,9 +709,15 @@ def main() -> None:
         refresh_skeleton_features(normalized_dir, FEATURE_SKELETON_JSONL)
         refresh_omega_features(normalized_dir, FEATURE_OMEGA_JSONL)
         refresh_orbit_features(normalized_dir, FEATURE_ORBIT_JSONL)
-        joined_rows, geometry_rows, skeleton_rows, omega_rows, orbit_rows = load_joined_rows(
-            normalized_dir
-        )
+        refresh_trajectory_features(normalized_dir, FEATURE_TRAJECTORY_JSONL)
+        (
+            joined_rows,
+            geometry_rows,
+            skeleton_rows,
+            omega_rows,
+            orbit_rows,
+            trajectory_rows,
+        ) = load_joined_rows(normalized_dir)
     else:
         with tempfile.TemporaryDirectory(prefix="feature-pattern-search-") as temp_dir:
             normalized_dir = Path(temp_dir) / "normalized"
@@ -663,9 +727,15 @@ def main() -> None:
             refresh_skeleton_features(normalized_dir, FEATURE_SKELETON_JSONL)
             refresh_omega_features(normalized_dir, FEATURE_OMEGA_JSONL)
             refresh_orbit_features(normalized_dir, FEATURE_ORBIT_JSONL)
-            joined_rows, geometry_rows, skeleton_rows, omega_rows, orbit_rows = (
-                load_joined_rows(normalized_dir)
-            )
+            refresh_trajectory_features(normalized_dir, FEATURE_TRAJECTORY_JSONL)
+            (
+                joined_rows,
+                geometry_rows,
+                skeleton_rows,
+                omega_rows,
+                orbit_rows,
+                trajectory_rows,
+            ) = load_joined_rows(normalized_dir)
 
             write_feature_jsonl(geometry_rows)
             with FEATURE_SKELETON_JSONL.open("w") as handle:
@@ -677,6 +747,9 @@ def main() -> None:
             with FEATURE_ORBIT_JSONL.open("w") as handle:
                 for row in orbit_rows:
                     handle.write(json.dumps(row) + "\n")
+            with FEATURE_TRAJECTORY_JSONL.open("w") as handle:
+                for row in trajectory_rows:
+                    handle.write(json.dumps(row) + "\n")
             results = run_evaluations(joined_rows)
             write_summary(normalized_source_label, joined_rows, results)
             plot_model_results(results, "ridge", RIDGE_PNG, "Feature Pattern Search: Ridge")
@@ -685,6 +758,7 @@ def main() -> None:
             print(f"Saved {FEATURE_SKELETON_JSONL}")
             print(f"Saved {FEATURE_OMEGA_JSONL}")
             print(f"Saved {FEATURE_ORBIT_JSONL}")
+            print(f"Saved {FEATURE_TRAJECTORY_JSONL}")
             print(f"Saved {SUMMARY_MD}")
             print(f"Saved {RIDGE_PNG}")
             print(f"Saved {RF_PNG}")
@@ -700,6 +774,9 @@ def main() -> None:
     with FEATURE_ORBIT_JSONL.open("w") as handle:
         for row in orbit_rows:
             handle.write(json.dumps(row) + "\n")
+    with FEATURE_TRAJECTORY_JSONL.open("w") as handle:
+        for row in trajectory_rows:
+            handle.write(json.dumps(row) + "\n")
     results = run_evaluations(joined_rows)
     write_summary(normalized_source_label, joined_rows, results)
     plot_model_results(results, "ridge", RIDGE_PNG, "Feature Pattern Search: Ridge")
@@ -709,6 +786,7 @@ def main() -> None:
     print(f"Saved {FEATURE_SKELETON_JSONL}")
     print(f"Saved {FEATURE_OMEGA_JSONL}")
     print(f"Saved {FEATURE_ORBIT_JSONL}")
+    print(f"Saved {FEATURE_TRAJECTORY_JSONL}")
     print(f"Saved {SUMMARY_MD}")
     print(f"Saved {RIDGE_PNG}")
     print(f"Saved {RF_PNG}")
