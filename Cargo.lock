@@ -521,6 +521,7 @@ dependencies = [
 name = "exp-sys-landscape"
 version = "0.1.0"
 dependencies = [
+ "blake3",
  "good_lp",
  "nalgebra",
  "num-bigint",
